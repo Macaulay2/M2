@@ -25,4 +25,6 @@ source .gdb-files
 # b evaluate.d:1179
 # d 1
 # b GC_default_warn_proc
+# can only to this after the program starts:
+# b __gmp_set_memory_functions
 source .gdb-run-it

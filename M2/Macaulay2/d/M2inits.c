@@ -44,17 +44,27 @@ static void init_gc(void) {
 #endif
      }
 
-static void *GC_realloc3 (void *s, size_t old, size_t new) {
+static void *GC_malloc_function (size_t new) {
+     void *p = GC_MALLOC(new);
+     if (p == NULL) outofmem();
+     return p;
+     }
+
+static void *GC_realloc_function (void *s, size_t old, size_t new) {
      void *p = GC_REALLOC(s,new);
      if (p == NULL) outofmem();
      return p;
      }
 
+static void GC_free_function (void *s, size_t old) {
+     GC_FREE(s);
+}
+
 static void M2_mp_set_memory_functions(void) {
-#    ifdef GC_DEBUG
-     mp_set_memory_functions((void *(*) (size_t))GC_debug_malloc,GC_realloc3,(void (*) (void *, size_t))GC_debug_free);
+#    if defined(GC_DEBUG) 
+     mp_set_memory_functions(GC_malloc_function,GC_realloc_function,GC_free_function);
 #    else
-     mp_set_memory_functions((void *(*) (size_t))GC_malloc      ,GC_realloc3,(void (*) (void *, size_t))GC_free      );
+     mp_set_memory_functions( (void *(*) (size_t)) GC_malloc, GC_realloc_function, (void (*) (void *, size_t)) GC_free );
 #    endif
      }
 
