@@ -600,7 +600,7 @@ M2_string system_syserrmsg()
      errno = 0;
      return s;
 #endif
-     }
+}
 
 int system_run(M2_string command){
      char *c = tocharstar(command);
