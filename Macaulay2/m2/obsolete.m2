@@ -17,8 +17,8 @@ submodule = X -> error "'submodule' has been removed"
 monomialCurve = X -> error "'monomialCurve' has been replaced by 'monomialCurveIdeal'"
 assign = X -> error "assign' has been replaced by <-'"
 
-undocumented(map,Module)
-map(Module) := Matrix => options -> (M) -> error "method for 'map(Module)' has been removed: use 'map(M,M,1)' instead"
+--undocumented(map,Module)
+--map(Module) := Matrix => options -> (M) -> error "method for 'map(Module)' has been removed: use 'map(M,M,1)' instead"
 undocumented(map,Ideal)
 map(Ideal) := Matrix => options -> (I) -> error "method for 'map(Ideal)' has been removed: use 'map(module I,module I, 1)' instead"
 undocumented(map,Ideal,Ideal)

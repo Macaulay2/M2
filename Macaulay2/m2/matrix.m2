@@ -380,6 +380,7 @@ borel Matrix := Matrix => m -> generators borel monomialIdeal m
 --------------------------------------------------------------------------
 ------------------------ matrix and map for modules ----------------------
 --------------------------------------------------------------------------
+map(Module) := Matrix => options -> (M) -> map(M,M,1)
 
 map(Module,Module) := Matrix => options -> (M,N) -> (
      F := ambient N;
