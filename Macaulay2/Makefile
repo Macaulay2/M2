@@ -92,3 +92,6 @@ clean ::; $(MAKE) -C Vasconcelos-appendix clean
 clean ::; $(MAKE) -C socket clean
 ################################# Mathematica
 clean ::; if [ -d Mathematica ]; then $(MAKE) -C Mathematica clean; fi
+################################# backup
+backup ::; $(MAKE) -C m2 backup
+backup ::; $(MAKE) -C docs backup

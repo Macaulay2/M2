@@ -111,7 +111,7 @@ fm1 := s -> concatenate (
 	       then ("HH_", name s#1, "^", name s#2, " ", name s#3)
 	       else if s#0 === homology
 	       then ("HH^", name s#1, "_", name s#2, " ", name s#3)
-	       else (s#0, "(", name s#1, ",", name s#2, ",", name s#3, ")")
+	       else (name s#0, "(", name s#1, ",", name s#2, ",", name s#3, ")")
 	       )
 	  else if #s === 3 then (
 	       if class s#0 === Symbol then (

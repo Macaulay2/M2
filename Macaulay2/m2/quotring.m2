@@ -113,11 +113,13 @@ Ring / Ideal := (R,I) -> if I == 0 then R else (
 	  gensgbI := generators gb gensI;
 	  n := if gensgbI == 0 then 0 else gensgbI_(0,0);
 	  if n < 0 then n = -n;
-	  if savedQuotients#?n 
+	  if n === 0 then ZZ
+	  else if savedQuotients#?n 
 	  then savedQuotients#n
 	  else (
 	       if n > 32767 then error "large characteristics not implemented yet";
-	       if not isPrime n then error "ZZ/n not implemented yet for composite n";
+	       if n > 1 and not isPrime n
+	       then error "ZZ/n not implemented yet for composite n";
 	       G := degreesMonoid 0;
 	       sendgg(ggPush n, ggPush G, ggcharp);
 	       S := new QuotientRing from newHandle();
@@ -125,7 +127,7 @@ Ring / Ideal := (R,I) -> if I == 0 then R else (
 	       S.ConvertToExpression = R.ConvertToExpression;
 	       S.presentation = gensgbI;
 	       S.char = n;
-	       if n =!= 0 then S.dim = 0 else S.dim = 1;
+	       if n === 1 then S.dim = -1 else if n === 0 then S.dim = 1 else S.dim = 0;
 	       S.ConvertToExpression = ConvertApply(expression, ConvertInteger);
 	       expression S := x -> convert(
 		    S.ConvertToExpression, sendgg(ggPush x, ggtonet)

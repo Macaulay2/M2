@@ -103,10 +103,16 @@ $(SCRIPTS) : makeM2.m2
 	rm -f $(SCRIPTS)
 	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
 
-../cache/Macaulay2.pre : $(MADEGFILES) ../bin/Macaulay2$(EXESUFFIX)
+../cache/Macaulay2.pre : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
 	rm -f ../cache/Macaulay2.tmp
 	../bin/Macaulay2 -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.pre
+
+backup : CVS/Entries
+CVS/Entries : $(GFILES)
+	mount /a.ext2
+	tar cfz /a.ext2/m2.tgz $?
+	umount /a.ext2
 
 all :: bare
 

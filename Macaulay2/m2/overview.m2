@@ -32,7 +32,6 @@ document { "mathematical overview",
 	       "ideals",
 	       MENU {
 		    TO "making ideals",
-		    TO "quotient rings",
 		    TO "algebraic operations on ideals"
 		    }
 	       ),
@@ -112,12 +111,16 @@ document { "polynomial rings",
      with ", TO "describe", ".",
      EXAMPLE "describe R",
      "Subscript notation can be used to obtain the zero element and the unit
-     element of a ring.",
+     element of a ring, or indeed, to obtain any multiple of the unit.",
      EXAMPLE "0_R",
      EXAMPLE "1_R",
+     EXAMPLE "11_R",
      "Subscript notation (the other way around) can be used to obtain the
      variables (generators) from the ring.  The first available index is 0.",
      EXAMPLE "R_0^10+R_1^3+R_2",
+     "It is also possible to obtain the variables in a ring from strings
+     containing their names.",
+     EXAMPLE ///R_"a"^10+R_"b"^3+R_"c"///,
      "The number of variables is provided by ", TO "numgens", ".",
      EXAMPLE "numgens R",
      EXAMPLE "apply(numgens R, i -> R_i^i)",
@@ -126,6 +129,20 @@ document { "polynomial rings",
      with ", TO "index", ".",
      EXAMPLE "index a",
      EXAMPLE "index f",
+     "The coefficient ring can be recovered with ", TO "coefficientRing", ".",
+     EXAMPLE "coefficientRing R",
+     "An element of the coefficient ring can be promoted to the polynomial ring.",
+     EXAMPLE "promote(11/2,R)",
+     "Conversely, an element of the polynomial ring which is known to be a scalar
+     can be lifted back to the coefficient ring.",
+     EXAMPLE "sc = (a-2)^2-a^2+4*a",
+     EXAMPLE "lift(sc,QQ)",
+     "In programs, the function ", TO "liftable", " can be used to see whether
+     this is possible.",
+     EXAMPLE "liftable(sc,QQ)",
+     EXAMPLE "liftable(c^3,QQ)",
+     "A random element of degree ", TT "n", " can be obtained with ", TO "random", ".",
+     EXAMPLE "random(2,R)",
      "We may construct polynomial rings over polynomial rings.",
      EXAMPLE "ZZ[a,b,c][d,e,f]",
      "When displaying an element of an iterated polynomial ring,
@@ -141,7 +158,8 @@ document { "polynomial rings",
      "The single-letter variables can be obtained with ", TO "vars", ".",
      EXAMPLE "vars (0..4)",
      EXAMPLE "ZZ[vars (0..4),vars(26..30),vars 51]",
-     "Subscripted variables can be used.",
+     "Subscripted variables can be used, provided the base for the subscripted
+     variable has not bee used for something else.",
      EXAMPLE "ZZ[t,p_0,p_1,q_0,q_1]",
      "Sequences of subscripted variables can be obtained.",
      EXAMPLE "ZZ[t,p_0..p_5,q_0..q_5]",
@@ -151,7 +169,19 @@ document { "polynomial rings",
      interfere with your original use of them as symbols.  Thus you should
      protect symbols which will be used in this way.",
      EXAMPLE "protect xx; protect yy; protect zz;",
-     EXAMPLE "ZZ[ee_[xx],ee_[yy],ee_[zz]]"
+     EXAMPLE "ZZ[ee_[xx],ee_[yy],ee_[zz]]",
+     "A basis of the part of the ring of a given degree can be obtained in
+     matrix form with ", TO "basis", ".",
+     EXAMPLE "basis(2,R)",
+     "The Hilbert series of a polynomial ring can be obtained.  Its power
+     series expansion is the generating function for the dimensions of the
+     degree ", TT "n", " parts.",
+     EXAMPLE "hilbertSeries R",
+     "We may use the option ", TO "Degrees", " to produce rings where the
+     generators have degrees other than 1.",
+     EXAMPLE "S = ZZ/101[a,b,c,d,Degrees=>{1,2,3,4}]",
+     EXAMPLE "random(5,S)",
+     EXAMPLE "hilbertSeries S"
      }
 
 document { "polynomial rings with other monomial orderings",
@@ -337,11 +367,6 @@ document { "manipulating polynomials",
      EXAMPLE "sort {b^2-1,a*b,a+1,a,b}"
      }
 
-document { "associative algebras",
-     "Eventually we will implement associative algebras, not necessarily
-     commutative."
-     }
-
 document { "polynomial rings with multi-degrees",
      "It is possible to set up a polynomial ring so that the degree of an
      element is a vector of integers.  For this, the option
@@ -349,7 +374,7 @@ document { "polynomial rings with multi-degrees",
      variables in the ring.  Each degree is itself a list of integers.  The
      degrees given must all be of the same length, and length zero is
      allowed, to get an ungraded ring.",
-     EXAMPLE "R = ZZ/101[a,b,Degrees=>{{1,2},{2,1}}]",
+     EXAMPLE "R = ZZ/101[a,b,c,Degrees=>{{1,2},{2,1},{1,0}}]",
      EXAMPLE "describe R",
      "At the moment there is a restriction on the degree vectors: the first
      entry must be greater than zero.  This restriction will be removed soon.",
@@ -357,8 +382,11 @@ document { "polynomial rings with multi-degrees",
      EXAMPLE "degree b^2",
      EXAMPLE "degree 0_R",
      EXAMPLE "degree 1_R",
-     "The degree of a polynomial is the least upper bound of the degrees 
-     of its monomials.",
+     "A random element of bi-degree ", TT "{m,n}", " can be obtained with
+     ", TO "random", ".",
+     EXAMPLE "random({15,15},R)",
+     "The function ", TO "degree", " applied to a polynomial will
+     return the least upper bound of the degrees of its monomials.",
      EXAMPLE "degree (a+b)",
      "We may recover the number of integers in each degree list for our ring
      as follows.",
@@ -414,18 +442,207 @@ document { "quotient rings",
      convention is that typing ", TT "x", " gives an element of the 
      quotient ring unless the polynomial ring has been assigned to a global variable.
      Here is an example of the opposite behavior.",
-     EXAMPLE "T = QQ[r,s,t]",
+     EXAMPLE "T = ZZ/101[r,s,t]",
      EXAMPLE "U = T/(r^3+s^3+t^3)",
      EXAMPLE "r^3+s^3+t^3",
      "Notice that this time, the variables end up in the ring ", TT "T", ".  The
      command ", TO "use", " will install variables for a specified ring.",
      EXAMPLE "use U",
      EXAMPLE "r^3+s^3+t^3",
+     "The functions ", TO "lift", " and ", TO "promote", " can be used to transfer
+     elements between the polynomial ring and its quotient ring.",
+     EXAMPLE ///lift(U_"r",T)///,
+     EXAMPLE ///promote(T_"r",U)///,
+     "A random element of degree ", TT "n", " can be obtained with ", TO "random", ".",
+     EXAMPLE "random(2,S)",
      "In a program we can tell whether a ring is a quotient ring.",
      EXAMPLE "isQuotientRing ZZ",
      EXAMPLE "isQuotientRing S",
-     "We can recover the coefficient ring.",
-     EXAMPLE "coefficientRing S"
+     "We can recover the ring of which a given ring is a quotient.",
+     EXAMPLE "ambient S",
+     "We can also recover the coefficient ring, as we could for the original 
+     polynomial ring.",
+     EXAMPLE "coefficientRing S",
+     "Here's how we can tell whether the defining relations of a quotient
+     ring were homogeneous.",
+     EXAMPLE "isHomogeneous S",
+     EXAMPLE "isHomogeneous U",
+     "We can obtain the characteristic of a ring with ", TO "char", ".",
+     EXAMPLE "char (ZZ/11)",
+     EXAMPLE "char S",
+     EXAMPLE "char U",
+     "The presentation of the quotient ring can be obtained as a matrix
+     with ", TO "presentation", ".",
+     EXAMPLE "presentation S",
+     "If a quotient ring has redundant defining relations, a new ring can
+     be made in which these are eliminated with ", TO "trim", ".",
+     EXAMPLE "R = ZZ/101[x,y,z]/(x-y,y-z,z-x)",
+     EXAMPLE "trim R"
      }
-     
-   
+
+document { "finite fields",
+     "The prime finite fields can be made easily as quotient rings of ", TT "ZZ", ".",
+     EXAMPLE "ZZ/101",
+     "In general, to make a finite field with ", TT "q", " elements, we use
+     ", TO "GF", ".",
+     EXAMPLE "k = GF 81",
+     "The generator of the field can be obtained as usual.",
+     EXAMPLE "k_0",
+     "Notice that the name of the generator is displayed with a ", TT "$", " in it
+     to indicate that it is not accessible by typing.  Of course, you could assign the
+     generator to the symbol of your choice, but it will still print the same way.",
+     EXAMPLE "a = k_0",
+     EXAMPLE "a^20+1",
+     "To specify a name for the generator when the field is created, use the ", TO "Variable", "
+     option.",
+     EXAMPLE "F = GF(16, Variable => b)",
+     EXAMPLE "b^20 + 1",
+     EXAMPLE "random F",
+     "Finite fields can be used as base rings for polynomial rings.",
+     EXAMPLE "R = F[x,y,z]",
+     EXAMPLE "random(2,R)",
+     "If you have a quotient ring that you know is a finite field, then you can
+     convert it to ring which is known by the system to be a finite field.",
+     EXAMPLE "GF (ZZ/2[T]/(T^9+T+1), Variable => T)",
+     "You may also provide your own choice of primitive element.  Internally,
+     elements of the finite field are stored as powers of the primitive element.",
+     EXAMPLE "k = GF (ZZ/2[T]/(T^9+T+1), PrimitiveElement => T^3+1)",
+     "Notice that ", TT "T", " is still recorded as an element of its
+     quotient ring, rather than this finite field.",
+     EXAMPLE "T",
+     "Use ", TO "promote", " to see how the generator ", TT "T", " appears as
+     an element of the finite field.",
+     EXAMPLE "promote(T,k)",
+     "Conversely, a given element of the finite field can be transferred back
+     to the quotient ring with ", TO "lift", ".",
+     EXAMPLE "lift(k_0, ring T)",
+     "We can even lift it back to the polynomial ring.",
+     EXAMPLE "lift(k_0, ambient ring T)"
+     }
+
+document { "fraction fields",
+     "The fraction field of a ring (which must be an integral domain) is obtained
+     with the function ", TO "frac", ".",
+     EXAMPLE "frac ZZ",
+     EXAMPLE "R = ZZ/101[x,y]/(x^3 + 1 + y^3)",
+     EXAMPLE "F = frac R",
+     "At the moment, it is also required that the coefficient ring be finite.",
+     PARA,
+     "After defining such a ring, fractions in it can be obtained by writing them
+     explicitly.",
+     EXAMPLE "x",
+     EXAMPLE "1/x",
+     EXAMPLE "x/1",
+     "Alternatively, after applying the function ", TO "use", " the symbols you used
+     become associated with the corresponding elements of the fraction field.",
+     EXAMPLE "use F",
+     EXAMPLE "x",
+     "Fractions are reduced to the extent possible.  This is done by computing the
+     syzygies between the numerator and denominator, and picking one of low degree.",
+     EXAMPLE "f = (x-y)*(x+y)/(x^6-y^6)",
+     EXAMPLE "(x^3 - y^3) * f",
+     "The parts of a fraction may be extracted.",
+     EXAMPLE "numerator f",
+     EXAMPLE "denominator f",
+     "Alternatively, the functions ", TO "lift", " and ", TO "liftable", " can
+     be used.",
+     EXAMPLE "liftable(1/f,R)",
+     EXAMPLE "liftable(f,R)",
+     EXAMPLE "lift(1/f,R)"
+     }
+
+document { "tensor products of rings",
+     "The operator ", TO "**", " or the function ", TO "tensor", " can be
+     used to construct tensor products of rings.",
+     EXAMPLE "ZZ/101[x,y]/(x^2-y^2) ** ZZ/101[a,b]/(a^3+b^3)",
+     "Other monomial orderings can be specified.",
+     EXAMPLE "T = tensor(ZZ/101[x,y], ZZ/101[a,b], MonomialOrder => Eliminate 2)",
+     "The options to ", TT "tensor", " can be discovered with ", TO "options", ".",
+     EXAMPLE "options tensor"
+     }
+
+document { "exterior algebras",
+     "Create an exterior algebra with explicit generators by creating a polynomial
+     ring with the option ", TO "SkewCommutative", ".",
+     EXAMPLE "R = ZZ/101[x,y,z, SkewCommutative => true]",
+     EXAMPLE "y*x",
+     EXAMPLE "(x+y+z)^2",
+     EXAMPLE "basis R",
+     EXAMPLE "basis(2,R)",
+     "At the moment, there is no way to construct an exterior algebra from a free module, but
+     you can take quotient rings of exterior algebras.",
+     }
+
+document { "symmetric algebras",
+     "Polynomial rings are symmetric algebras with explicit generators, and we have
+     already seen how to construct them.  But if you have a module, then its symmetric
+     algebra can be constructed with ", TO "symmetricAlgebra", ".",
+     EXAMPLE "R = QQ[a..d]",
+     EXAMPLE "S = symmetricAlgebra R^3",
+     EXAMPLE "describe S",
+     "The dollar signs used in displaying the names of the variables indicate that
+     the names were invented for us, and are not available by typing them, but you can
+     get them in the usual way by indexing.",
+     EXAMPLE "S_0+S_4",
+     EXAMPLE ///S_"$x_0"///,
+     "To specify the names of the variables when creating the ring, use the 
+     ", TO "Variables", " option.",
+     EXAMPLE "S = symmetricAlgebra(R^3, Variables => {t,u,v})",
+     "We can construct the symmetric algebra of a module that isn't
+     necessarily free.",
+     EXAMPLE "symmetricAlgebra(R^1/(R_0,R_1^3), Variables => {t})"
+     }
+
+document { "Weyl algebras",
+     "A Weyl algebra is the non-commutative algebra of algebraic differential 
+     operators on a polynomial ring.  To each variable ", TT "x", " corresponds 
+     the operator ", TT "dx", " which differentiates with respect to that 
+     variable.  The evident commutation relation takes the form 
+     ", TT "dx*x == x*dx + 1", ".",
+     PARA,
+     "The code for creating these algebras is under development."
+     }
+
+document { "associative algebras",
+     "Eventually we will implement associative algebras, not necessarily
+     commutative."
+     }
+
+document { "making ideals",
+     "The ideal generated by a list of ring elements can be constructed with the function
+     ", TO "ideal", ".",
+     EXAMPLE "R = ZZ/101[a..d];",
+     EXAMPLE "I = ideal (a^2, b^3-a, c^5-d)",
+     "If you have a matrix, then ", TT "ideal", " will produce the ideal generated
+     by the entries of the matrix.",
+     EXAMPLE "f = matrix {{a^2,b^2},{c^2,d^2}}",
+     EXAMPLE "J = ideal f",
+     "Once you have an ideal, then you may construct the quotient ring or the quotient
+     module (there is a difference).",
+     EXAMPLE "R/I",
+     EXAMPLE "M = R^1/I",
+     "The Krull dimension or codimension of the support of this quotient module can
+     be obtained directly.",
+     EXAMPLE "dim I",
+     EXAMPLE "codim I",
+     "If dimension of ", TT "M", " as a vector space is needed, then use ", TO "basis", ".",
+     EXAMPLE "basis (R/J)",
+     EXAMPLE "rank source oo",
+     NOINDENT,
+     "(Here ", TO "oo", " refers to the result on the previous line.",
+     PARA,
+     "The ", TT "i", "-th Fitting ideal of a module ", TT "M", " is the ideal whose 
+     generators are the ", TT "n-i", " by ", TT "n-i", " minors of a presentation
+     matrix involving ", TT "n", " generators.  It is independent of ", TT "n", " 
+     and the presentation, and can be computed as follows.",
+     EXAMPLE "fittingIdeal(0,M)",
+     EXAMPLE "fittingIdeal(1,M++R^1)",
+     "We may form the intersection or sum of two ideals.",
+     EXAMPLE "K = I+J",
+     EXAMPLE "L = intersect(I,J)",
+     "We may ask whether one ideal is contained in another.",
+     EXAMPLE "isSubset(I,J)",
+     EXAMPLE "isSubset(I,I+J)",
+     EXAMPLE "isSubset(I+J,J)"
+     }
+
