@@ -8,8 +8,7 @@ emacs html: all; $(MAKE) -C ../$@
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install phase1 check html clean distclean check \
-		default initialize phase2 phase3 phase4
+.PHONY: clean all install check html clean distclean check default initialize
 
 # CFLAGS =
 # LDFLAGS = -s
@@ -119,14 +118,18 @@ phase1 :: ../cache/Macaulay2-made
 phase2 :: initialize
 phase2 :: phase1
 phase2 :: ../cache/Macaulay2-pre cache/doc/.made cache/tests/.made
+	touch $@
 
 ../cache/Macaulay2-pre cache/doc/.made cache/tests/.made : \
-		$(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS)
+		$(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS) docseq docloads.m2
 	 #------ phase 2: making cache/doc/*.example, cache/tests/*.m2, and $@
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
 	mkdir  cache/tests
-	env M2HOME=.. ../libexec/Macaulay2 -q -silent '-ephase=2' @srcdir@/setup.m2 '-eexit(0)'
+	../../bin/M2 -q -silent \
+		'-e phase = 2' \
+		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
+		docloads.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 	touch cache/doc/.made cache/tests/.made
 
@@ -163,15 +166,29 @@ cache/doc/expression: expression; cp $< $@
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
 	 #------ phase 3: running new example input files: cache/doc/*.example
 	$(MAKE) -C cache/doc -f $(srcdir)/Makefile.egs srcdir=$(srcdir)
+	touch $@
 
 all :: phase4
 phase4 : phase3 ../cache/Macaulay2-doc
 ../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
 		$(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
+	 #------ phase 4: making $@
 	rm -f ../cache/Macaulay2-tmp
-	 #------ phase 4: making $@, cache/doc/*.html
-	env M2HOME=.. ../libexec/Macaulay2 -q -silent '-ephase=4' @srcdir@/setup.m2 '-eexit(0)'
-	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
+	../../bin/M2 -q -silent \
+		'-e phase = 4' \
+		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
+		docloads.m2 '-eexit(0)'
+	mv ../cache/Macaulay2-tmp $@
+	touch $@
+
+phase5 : phase4
+	 #------ phase 5: making cache/doc/*.html
+	../../bin/M2 -q -silent '-e phase = 5' \
+		'-e DocDatabase = new MutableHashTable' \
+		docloads.m2 '-eexit(0)'
+	touch $@
+
+all :: phase5
 
 ifdef NEWENGINE
 check:: test1

@@ -1431,3 +1431,23 @@ setupfun("fileExists",fileExists);
 --     else WrongArg(0+1,"an integer")
 --     );
 --setupfun("setFactorySeed",setFactorySeed);
+
+minimizeFilename(e:Expr):Expr := (
+     when e is s:string do Expr(minimizeFilename(s))
+     else WrongArg("a string")
+     );
+setupfun("minimizeFilename",minimizeFilename);
+
+relativizeFilename(e:Expr):Expr := (
+     when e
+     is t:Sequence do
+     if length(t) == 2 then
+     when t.0 is cwd:string do
+     when t.1 is filename:string do Expr(relativizeFilename(cwd,filename))
+     else WrongArg(2,"a string")
+     else WrongArg(1,"a string")
+     else WrongArg("a string or a pair of strings")
+     is filename:string do Expr(relativizeFilename(filename))
+     else WrongArg("a string or a pair of strings")
+     );
+setupfun("relativizeFilename",relativizeFilename);

@@ -4,7 +4,7 @@
 -- configuration
 -----------------------------------------------------------------------------
 maximumCodeWidth := 200
-filepath := x -> concatenate mingle(x,#x:pathSeparator)
+filepath := x -> minimizeFilename concatenate mingle(x,#x:pathSeparator)
 CachePrefix := filepath {"cache"}
 TestsPrefix := filepath {"cache", "tests"}
 documentationPath = {
@@ -12,16 +12,18 @@ documentationPath = {
      }
 addStartFunction(
      () -> (
-	  if getenv "M2HOME" === "" then error "environment variable M2HOME not set";
-	  path = join(path, {
-	       	    filepath{getenv "M2HOME","m2"},
-	       	    filepath{getenv "M2HOME","packages"}
+	  home := getenv "M2HOME";
+	  if home === "" then error "environment variable M2HOME not set";
+	  home = minimizeFilename home;
+	  path = join(apply(path, minimizeFilename), {
+	       	    filepath{home,"m2"},
+	       	    filepath{home,"packages"}
 		    });
 	  documentationPath = {
 	       filepath{"cache","doc"},			    -- this is where documentation is written
-	       filepath{getenv "M2HOME","m2","cache","doc"},
-	       filepath{getenv "M2HOME","packages","cache","doc"},
-	       filepath{getenv "M2HOME","packages","D-modules","cache","doc"}
+	       filepath{home,"m2","cache","doc"},
+	       filepath{home,"packages","cache","doc"},
+	       filepath{home,"packages","D-modules","cache","doc"}
 	       };
 	  )
      )
@@ -31,18 +33,15 @@ addStartFunction(
 writingExampleInputFiles  := () -> phase === 2
 writingTestInputFiles     := () -> phase === 2
 readingExampleOutputFiles := () -> phase === 4
-writingHtmlFiles          := () -> phase === 4
-writing                   := () -> phase === 2 or phase === 4
-docExtension := () -> (
-     if phase === 2 then "-tmp"		  -- writing, to be renamed -pre externally
-     else if phase === 3 then "-pre"	  -- reading
-     else if phase === 4 then "-tmp"	  -- writing, to be renamed -doc externally
-     else "-doc"			  -- reading
-     )
+writingHtmlFiles          := () -> phase === 5
+writingDocDatabase        := () -> phase === 2 or phase === 4
+readingDocFiles           := () -> phase === 2 or phase === 4 or phase === 5
+readingDocDatabase        := () -> not readingDocFiles()
+readingPreDocDatabase     := () -> phase === 3
+writing                   := () -> phase === 2 or phase === 4 or phase == 5
 -----------------------------------------------------------------------------
 -- initialization and finalization
 -----------------------------------------------------------------------------
-local DocDatabase
 local nodeBaseFilename
 local exampleOutputFilename				    -- nodeBaseFilename | ".out"
 local exampleCounter
@@ -56,22 +55,15 @@ docFilename := () -> (
      else (
 	  if getenv "M2HOME" === "" 
 	  then error "environment variable M2HOME not set";
-	  concatenate(getenv "M2HOME", pathSeparator, "cache", pathSeparator, "Macaulay2", docExtension())
+	  concatenate(getenv "M2HOME", pathSeparator, "cache", pathSeparator, "Macaulay2-doc", )
 	  )
      )
 
 addStartFunction( 
-     () -> DocDatabase = (
-	  t := docFilename();
-	  try openDatabase t
-	  else ( 
-	       stderr << "--warning: couldn't open help file " << t << endl;
-	       new MutableHashTable))
-     )
-if writing() then (
-     DocDatabase = openDatabaseOut docFilename();
-     addEndFunction(() -> (close DocDatabase; DocDatabase = null; ));
-     )
+     () -> (
+	  try DocDatabase = openDatabase docFilename() else ( 
+	       	    stderr << "--warning: couldn't open help file " << docFilename() << endl;
+	       	    new MutableHashTable)))
 Documentation = new MutableHashTable
 duplicateDocError := nodeName -> (
      stderr << concatenate ("warning: documentation already provided for '", nodeName, "'") 
@@ -199,28 +191,28 @@ formatDocumentTag Sequence := record(
 	       else if fSeq#?#s                       then fSeq#(#s)
 						      else toString) s))
 
-formatDocumentTagTO := method(SingleArgumentDispatch => true)
 fSeqTO := null
-formatDocumentTagTO Thing := x -> TT formatDocumentTag x
-formatDocumentTagTO Option := x -> (
-     if #x === 2 and getDoc x#1 =!= null 
-     then SEQ { toString x#0, "(..., ", TO x#1, ")", headline x#1 }
-     else TT formatDocumentTag x
-     )
-formatDocumentTagTO Sequence := (
-     s -> SEQ (
-	  if fSeqTO === null then (
-	       fSeqTO = fSeqInitialize(i -> TO i, i -> TO i);
-	       );
-	  (
-	       if #s == 0                               then toString
-	       else if fSeqTO#?(#s,s#0)                 then fSeqTO#(#s,s#0)
-	       else if #s >= 1 and fSeqTO#?(#s,s#0,s#1) then fSeqTO#(#s,s#0,s#1)
-	       else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) 
-	       					        then fSeqTO#(#s, class, class s#0, s#1)
-	       else if fSeqTO#?(#s, class, class s#0)   then fSeqTO#(#s, class, class s#0)
-	       else if fSeqTO#?#s                       then fSeqTO#(#s)
-						        else toString) s))
+-- formatDocumentTagTO := method(SingleArgumentDispatch => true)
+-- formatDocumentTagTO Thing := x -> TT formatDocumentTag x
+-- formatDocumentTagTO Option := x -> (
+--      if #x === 2 and getDoc x#1 =!= null 
+--      then SEQ { toString x#0, "(..., ", TO x#1, ")", headline x#1 }
+--      else TT formatDocumentTag x
+--      )
+-- formatDocumentTagTO Sequence := (
+--      s -> SEQ (
+-- 	  if fSeqTO === null then (
+-- 	       fSeqTO = fSeqInitialize(i -> TO i, i -> TO i);
+-- 	       );
+-- 	  (
+-- 	       if #s == 0                               then toString
+-- 	       else if fSeqTO#?(#s,s#0)                 then fSeqTO#(#s,s#0)
+-- 	       else if #s >= 1 and fSeqTO#?(#s,s#0,s#1) then fSeqTO#(#s,s#0,s#1)
+-- 	       else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) 
+-- 	       					        then fSeqTO#(#s, class, class s#0, s#1)
+-- 	       else if fSeqTO#?(#s, class, class s#0)   then fSeqTO#(#s, class, class s#0)
+-- 	       else if fSeqTO#?#s                       then fSeqTO#(#s)
+-- 						        else toString) s))
 
 -----------------------------------------------------------------------------
 -- verifying the keys
@@ -485,7 +477,6 @@ document List := z -> (
      body := drop(z,1);
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
-     -- stderr << "documenting " << nodeName << " in " << currentFileName << " in " << currentFileDirectory << endl;
      checkForNodeBaseFilename nodeName;
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
@@ -595,7 +586,8 @@ moreGeneral := s -> (
      )
 -----------------------------------------------------------------------------
 
-optTO := i -> if getDoc i =!= null then SEQ{ TO i, headline i } else formatDocumentTagTO i
+-- optTO := i -> if getDoc i =!= null then SEQ{ TO i, headline i } else formatDocumentTagTO i
+optTO := i -> SEQ{ TO i, headline i }
 
 smenu := s -> MENU (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
  menu := s -> MENU (optTO \ s)
@@ -1402,8 +1394,9 @@ htmlFilename := fkey -> (
 
 html TO := x -> (
      fkey := formatDocumentTag x#0;
+     nodeBaseDirectory := filepath ( nodeBaseFilename, ".." );
      concatenate ( 
-     	  "<A HREF=\"../../", htmlFilename fkey, "\">", 
+     	  "<A HREF=\"", relativizeFilename(nodeBaseDirectory, htmlFilename fkey), "\">", 
      	  htmlExtraLiteral fkey,
      	  "</A>",
      	  drop(toList x,1) 

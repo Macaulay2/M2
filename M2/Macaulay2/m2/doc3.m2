@@ -19,7 +19,8 @@ document { symbol phase,
      that we are running an example input file, and referring to Macaulay2.pre.
      The value 4 indicates that we are loading setup.m2, printing warning
      messages if the example output files are missing, and creating the final
-     version of the help file, called Macaulay2-doc."
+     version of the help file, called Macaulay2-doc.  The value 5 indicates
+     that we are reading creating the html files."
      }
 
 document { lineNumber,

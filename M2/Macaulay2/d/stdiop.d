@@ -17,7 +17,7 @@ use ctype;
 export Position := {filename:string, line:ushort, column:ushort, reloaded:uchar};
 export dummyPosition := Position("--dummy file name--",ushort(0),ushort(0),uchar(reloaded));
 shorten(s:string):string := (
-     -- shorten filenames like "/a/b/c/../d/e/f" to "/a/b/d/e/f"
+     -- shorten filenames like "/a/b/c/../d////e/f" to "/a/b/d/e/f"
      while true do (
 	  i := 0;
 	  j := 0;
@@ -31,6 +31,16 @@ shorten(s:string):string := (
 	       else if i+2 < length(s) && s.i == '/' && s.(i+1) == '.' && s.(i+2) == '/'
 	       then (
 		    s = substr(s,0,i) + substr(s,i+2);
+		    false
+		    )
+	       else if i+2 == length(s) && s.i == '/' && s.(i+1) == '.'
+	       then (
+		    s = substr(s,0,i);
+		    false
+		    )
+	       else if i+1 < length(s) && s.i == '/' && s.(i+1) == '/'
+	       then (
+		    s = substr(s,0,i) + substr(s,i+1);
 		    false
 		    )
 	       else true
@@ -47,20 +57,29 @@ isAbsolutePath(s:string):bool := (
      length(s) >= 3 && s.1 == ':' && s.2 == '/' ||
      s == "stdio"
      );
-export minimizeFilename(filename:string):string := (
-     ofilename := shorten(filename);
-     s := getcwd();
-     if !isAbsolutePath(filename) then filename = s + filename;
-     filename = shorten(filename);
+export absoluteFilename(filename:string):string := (
+     if !isAbsolutePath(filename) then filename = getcwd() + filename;
+     shorten(filename));
+export relativizeFilename(cwd:string,filename:string):string := (
+     -- what about MacOS?
+     cwd = absoluteFilename(cwd);
+     if length(cwd) == 0 || cwd.(length(cwd)-1) != '/' then cwd = cwd + '/';
+     filename = absoluteFilename(filename);
      i := 0;
-     while i < length(s) && i < length(filename) && s.i == filename.i do i = i+1;
-     while i > 0 && s.(i-1) != '/' do i = i-1;
+     while i < length(cwd) && i < length(filename) && cwd.i == filename.i do i = i+1;
+     if i < length(cwd) && i == length(filename) && cwd.i == '/' then i = i+1;
+     while i > 0 && cwd.(i-1) != '/' do i = i-1;
      filename = substr(filename,i);
-     while i < length(s) do (
-	  if s.i == '/' then filename = "../" + filename; 
+     while i < length(cwd)
+     do (
+	  if cwd.i == '/' then filename = "../" + filename; 
 	  i = i+1);
-     if length(ofilename) <= length(filename) then ofilename else filename
-     );
+     filename);
+export relativizeFilename(filename:string):string := relativizeFilename(getcwd(),filename);
+export minimizeFilename(filename:string):string := (
+     a := relativizeFilename(filename);
+     b := absoluteFilename(filename);
+     if length(a) <= length(b) then a else b);
 
 export tostring(w:Position) : string := (
      if w == dummyPosition 
