@@ -1371,13 +1371,11 @@ document {
 
 document {
      Key => true,
-     Headline => "Boolean value true",
      TT "true", " -- a value indicating truth."
      }
 
 document {
      Key => false,
-     Headline => "Boolean value false",
      TT "false", " -- a value indicating falsity."
      }
 

@@ -6,7 +6,6 @@ this is an old node, apparently
 
 document {
      Key => "ideals and modules",
-     Headline => "an overview",
      "In this section we present an overview of ideals and modules.
      For details, see ", TO "Ideal", " and ", TO "Module", ".",
      PARA,
@@ -438,7 +437,7 @@ document {
      }
 
 document {
-     Key => "Language and Programming Overview",
+     Key => "Programming Overview",
      "In this section we give a comprehensive overview of the user
      language and the main programming features of Macaulay 2.",
      Subnodes => {
@@ -459,7 +458,6 @@ document {
 
 document {
      Key => "variables and symbols",
-     Headline => "an overview",
      Subnodes => {
 	  TO "valid names",
 	  TO "assigning values",
@@ -472,7 +470,6 @@ document {
 
 document {
      Key => "functions",
-     Headline => "an overview",
      "In this section we present an overview of functions.",
      PARA,
      Subnodes => {
@@ -488,7 +485,6 @@ document {
 
 document {
      Key => "basic types",
-     Headline => "an overview",
      "The basic type of an object is the way the object is
      essentially implemented internally.  It is not possible for
      the user to create new basic types.  For details, see
@@ -505,7 +501,6 @@ document {
 
 document {
      Key => "control structures",
-     Headline => "an overview",
      Subnodes => {
 	  TO "loops",
 	  TO "mapping over lists",
@@ -518,7 +513,6 @@ document {
 
 document {
      Key => "input and output",
-     Headline => "an overview",
      Subnodes => {
 	  TO "printing to the screen",
 	  TO "reading files",
@@ -532,7 +526,6 @@ document {
 
 document {
      Key => "classes and types",
-     Headline => "an overview",
      Subnodes => {
 	  TO "what a class is",
 	  TO "installing methods",
@@ -1066,7 +1059,6 @@ document {
 
 document {
      Key => "strings",
-     Headline => "an overview",
      "A string is a sequence of characters.  Strings can
      be manipulated in various ways to produce printed output.
      One enters a string by surrounding a sequence of characters with
@@ -1121,7 +1113,6 @@ fghij"///,
 
 document {
      Key => "nets",
-     Headline => "an overview",
      "A net is a rectangular two-dimensional array of characters, together
      with an imaginary horizontal baseline that allows nets to be assembled
      easily into lines of text.  A string is regarded as a net with one row.",
@@ -1171,7 +1162,6 @@ document {
 
 document {
      Key => "lists",
-     Headline => "an overview",
      "A list is a handy way to store a series of things.  We create one
      by separating the elements of the series by commas and surrounding 
      the series with braces.",
@@ -1238,7 +1228,6 @@ document {
 
 document {
      Key => "sequences",
-     Headline => "an overview",
      "A sequence is like a list, except that parentheses are used
      instead of braces to create them and to print them.  Sequences
      are implemented in a more efficient way than lists, since a sequence is 
@@ -1301,7 +1290,6 @@ document {
 
 document {
      Key => "hash tables",
-     Headline => "an overview",
      "A hash table is a data structure that can implement a function
      whose domain is a finite set.  An element of the domain is called
      a key.  The hash table stores the key-value pairs in such a way
@@ -2014,11 +2002,11 @@ document {
      means the sum if ", TT "x", " and ", TT "y", " are integers, but it
      means the union if ", TT "x", " and ", TT "y", " are sets.  To implement this
      in a clean fashion, we store the code for doing things with sets
-     in something called ", TO "Set", " and store the code for doing things with integers
+     in something called ", TO "Set", " and we store the code for doing things with integers
      in something called ", TO "ZZ", ".  We say that each integer is an ", TO "instance", "
      of ", TO "ZZ", ", and ", TO "ZZ", " is the ", TO "class", " (or type) of each 
      integer.  The function ", TO "class", " provides the class of an object, and
-     the function ", TO "instance", " tells whether an given object is an
+     the function ", TO "instance", " tells whether a given object is an
      instance of a given class, or a subclass of it, and so on.",
      PARA,
      EXAMPLE {
