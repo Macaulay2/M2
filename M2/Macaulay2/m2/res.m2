@@ -20,13 +20,13 @@ resolution = method(
      Options => {
 	  Compute => true,
 	  LengthLimit => infinity,	  -- (infinity means numgens R)
-	  DegreeLimit => {},		  -- slant degree limit
+	  DegreeLimit => null,		  -- slant degree limit
 	  SyzygyLimit => infinity,	  -- number of min syzs found
 	  PairLimit => infinity,	  -- number of pairs computed
 	  HardDegreeLimit => {},          -- throw out information in degrees above this one
 	  -- HardLengthLimit => infinity,    -- throw out information in lengths above this one
 	  SortStrategy => 0,		  -- strategy choice for sorting s-pairs
-          Algorithm => 1		  -- algorithm 0 doesn't work yet
+          Algorithm => 1
 	  }
      )
 
@@ -127,39 +127,6 @@ documentOption { resolution, quote SortStrategy,
      "Not implemented yet."
      }
 
-inf := t -> if t === infinity then -1 else t
-
-spots := C -> select(keys C, i -> class i === ZZ)
-
-nres := (M,options) -> (
-     -- inhomogeneous case here
-     -- homogenize with respect to a new variable and then come back by setting
-     -- it to 1
-     R := ring M;
-     if not isHomogeneous R 
-     then error "resolutions over inhomogeneous quotient rings not implemented yet";
-     f := presentation M;
-     p := presentation R;
-     A := ring p;
-     k := coefficientRing A;
-     n := numgens A;
-     x := local x;
-     B := k[x_0 .. x_n];
-     forward := map(B,A,matrix{{x_1 .. x_n}});
-     q := forward p;
-     S := B / ideal q;
-     forward = map(S,R,matrix{{x_1 .. x_n}} ** S);
-     backward := map(R,S, 1 | vars R);
-     f = homogenize(forward f,x_0);
-     C := res (cokernel f, options);
-     complete C;
-     complete C.dd;
-     D := new ChainComplex;
-     D.ring = R;
-     scan(spots C, i -> D#i = backward C#i);
-     scan(spots C.dd, i -> D.dd#i = map(D_(i-1),D_i,backward C.dd#i));
-     D)
-
 TEST "
 R = ZZ/101[x,y]
 M = cokernel matrix {{x^2+y^4, y^2 + x*y^3 + 11, 1 + x*y^2}}
@@ -172,94 +139,128 @@ assert (HH_3 C == 0)
 assert (HH_4 C == 0)
 "
 
-resolution Module := (M,options) -> (
-     if not isHomogeneous M then nres(M,options)
-     else (
-	  R := ring M;
-	  degreelimit := options.DegreeLimit ;
-	  if class degreelimit === ZZ then degreelimit = {degreelimit}
-	  else if class degreelimit === List and all(degreelimit,i -> class i === ZZ)
-	  then ()
-	  else error "expected DegreeLimit to be an integer or list of integers";
-	  harddegreelimit := options.HardDegreeLimit ;
-	  if class harddegreelimit === ZZ then harddegreelimit = {harddegreelimit}
-	  else if class harddegreelimit === List and all(harddegreelimit,i -> class i === ZZ)
-	  then ()
-	  else error "expected HardDegreeLimit to be an integer or list of integers";
-	  maxlength := (
-	       if options.LengthLimit === infinity 
-	       then numgens R + 1
-	       else options.LengthLimit
-	       );
-	  if not M.?resolution
-     	  ------------------------
-	  ---- to be removed later!
-	  or M.resolution.Resolution.length < maxlength
-     	  ------------------------
-	  then M.resolution = (
-	       if not isField coefficientRing R
-	       then error "expected coefficient ring to be a field";
-	       if options.Algorithm =!= 2 and (monoid R).Options.SkewCommutative then (
-		    C := new ChainComplex;
-		    C.ring = R;
-		    f := presentation M;
-		    i := 0;
-		    C#i = target f;
-		    while (
-			 i = i+1;
-			 C#i = source f;
-			 C.dd#i = f;
-			 i < maxlength and f != 0
-			 ) do (
-			 f = syz f;
-			 );
-		    C)
-	       else (
-		    g := presentation M;
-		    if options.Algorithm === 0 then
-		        g = gens gb g;  -- this is needed since the (current)
-			                -- default algorithm, 0, needs a GB 
-					-- to be previously computed.
-		    W := new Resolution;
-		    W.ring = R;
+inf := t -> if t === infinity then -1 else t
+
+spots := C -> select(keys C, i -> class i === ZZ)
+
+resolutionByHomogenization := (M,options) -> (
+     R := ring M;
+     p := presentation R;
+     A := ring p;
+     k := coefficientRing A;
+     n := numgens A;
+     x := local x;
+     B := k[x_0 .. x_n, MonomialOrder => GRevLex];
+     forth := map(B,A,(vars B)_{0 .. n-1});
+     q := homogenize(generators gb forth p, B_n);
+     forceGB q;
+     S := B / ideal q;
+     forth = map(S,R,(vars S)_{0 .. n-1});
+     back := map(R,S, vars R | 1);
+     g := homogenize(generators gb forth presentation M,S_n);
+     forceGB g;
+     C := res (cokernel g, options);
+     complete C;
+     complete C.dd;
+     D := new ChainComplex;
+     D.ring = R;
+     scan(spots C, i -> D#i = back C#i);
+     scan(spots C.dd, i -> D.dd#i = map(D_(i-1),D_i,back C.dd#i));
+     D)
+
+resolutionBySyzygies := (M,options) -> (
+     R := ring M;
+     maxlength := (
+	  if options.LengthLimit === infinity 
+	  then numgens R + 1
+	  else options.LengthLimit
+	  );
+     C := new ChainComplex;
+     C.ring = R;
+     f := presentation M;
+     i := 0;
+     C#i = target f;
+     while (
+	  i = i+1;
+	  C#i = source f;
+	  C.dd#i = f;
+	  i < maxlength and f != 0 ) do f = syz f;
+     C)
+
+resolutionInEngine := (M,options) -> (
+     R := ring M;
+     degreelimit := (
+	  if class options.DegreeLimit === ZZ then {Options.DegreeLimit}
+	  else if degreelimit === null then degreelimit = {}
+	  else error "expected DegreeLimit to be an integer or null");
+     maxlength := (
+	  if options.LengthLimit === infinity 
+	  then numgens R + 1
+	  else options.LengthLimit
+	  );
+     if not M.?resolution 
+     or M.resolution.Resolution.length < maxlength
+     then M.resolution = (
+	  if not isField coefficientRing R
+	  then error "expected coefficient ring to be a field";
+	  g := presentation M;
+	  if options.Algorithm === 0 then
+	      g = gens gb g;  -- this is needed since the (current)
+			      -- default algorithm, 0, needs a GB 
+			      -- to be previously computed.
+	  harddegreelimit := (
+	       if class options.HardDegreeLimit === ZZ then {Options.HardDegreeLimit}
+	       else if harddegreelimit === null then harddegreelimit = {}
+	       else error "expected HardDegreeLimit to be an integer or null");
+	  W := new Resolution;
+	  W.ring = R;
+	  W.length = maxlength;
+	  W.DegreeLimit = degreelimit;
+	  W.handle = newHandle(ggPush g, 
+	       ggPush (
+		    if (monoid R).Options.SkewCommutative
+		    then 2
+		    else options.Algorithm
+		    ),
+	       ggPush maxlength,
+	       ggPush harddegreelimit,
+	       ggPush options.SortStrategy,
+	       ggres);
+	  C = new ChainComplex;
+	  C.ring = R;
+	  shield (C.Resolution = C.dd.Resolution = W);
+	  C
+	  );
+     C = M.resolution;
+     if C.?Resolution then (
+	  W = C.Resolution;
+	  if not W.?returnCode 
+	  or W.returnCode =!= 0 
+	  or W.length < maxlength
+	  or W.DegreeLimit < degreelimit
+	  then (
+	       scan(keys C,i -> if class i === ZZ then remove(C,i));
+	       scan(keys C.dd,i -> if class i === ZZ then remove(C.dd,i));
+	       resOptions := {
+		    maxlength,
+		    inf options.SyzygyLimit,
+		    inf options.PairLimit,
+		    0, 0, 0};                   -- MES: these are three other options,
+						-- to be filled in yet.
+	       if options.Compute then (
+		    sendgg(ggPush W, 
+			   ggPush degreelimit,
+			   ggPush resOptions,
+			   ggcalc);
+		    W.returnCode = eePopInt();
 		    W.length = maxlength;
-		    W.DegreeLimit = degreelimit;
-		    W.handle = newHandle(ggPush g, 
-			 ggPush options.Algorithm,
-			 ggPush maxlength,
-			 ggPush harddegreelimit,
-			 ggPush options.SortStrategy,
-			 ggres);
-		    C = new ChainComplex;
-		    C.ring = R;
-		    shield (C.Resolution = C.dd.Resolution = W);
-		    C)
-	       );
-	  C = M.resolution;
-	  if C.?Resolution then (
-	       W = C.Resolution;
-	       if not W.?returnCode 
-	       or W.returnCode =!= 0 
-	       or W.length < maxlength
-	       or W.DegreeLimit < degreelimit
-	       then (
-		    scan(keys C,i -> if class i === ZZ then remove(C,i));
-		    scan(keys C.dd,i -> if class i === ZZ then remove(C.dd,i));
-		    resOptions := {
-			 maxlength,
-			 inf options.SyzygyLimit,
-			 inf options.PairLimit,
-			 0, 0, 0};                   -- MES: these are three other options,
-						     -- to be filled in yet.
-		    if options.Compute then (
-			 sendgg(ggPush W, 
-				ggPush degreelimit,
-				ggPush resOptions,
-				ggcalc);
-			 W.returnCode = eePopInt();
-			 W.length = maxlength;
-			 )));
-	  C)
+		    )));
+     C)
+
+resolution Module := (M,options) -> (
+     if not isCommutative ring M then resolutionBySyzygies(M,options)
+     else if not isHomogeneous M then resolutionByHomogenization(M,options)
+     else resolutionInEngine(M,options)
      )
 
 resolution Ideal := (I,options) -> (

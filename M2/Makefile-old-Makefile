@@ -197,7 +197,7 @@ PORTING := CVS \
 	Macaulay2/c \
 	Macaulay2/d \
 	Macaulay2/dbm \
-	Macaulay2/e \
+	Macaulay2/e/CVS \
 	Macaulay2/e/misc \
 	Macaulay2/emacs \
 	Macaulay2/html \
@@ -210,8 +210,8 @@ PORTING := CVS \
 	Macaulay2/util \
 	WindowsNT \
 	bin factory gc gcStatic gmp libfac mp
-port : Macaulay2-$(VERSION)-porting-src.tgz
-Macaulay2-$(VERSION)-porting-src.tgz : Makefile
+port : Macaulay2-$(VERSION)-porting-src.tar.gz
+Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile
 	tar cf - `Export3 $(PORTING)` | gzip >$@
 ###################### Macaulay 2 documentation
 DOCFILES = 	Macaulay2/html \

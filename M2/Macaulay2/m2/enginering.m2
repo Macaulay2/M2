@@ -123,6 +123,7 @@ TEST "
     A = QQ[a..d]
     A = GF(5,2)[a..d]
     B = A/(a^2-d^2)
+    use A
     I = ideal(a,b)
     assert(ring I === A)
     I1 = I*B
@@ -134,6 +135,7 @@ TEST "
     assert(I3 == I3a)
     I4 = lift(I3,B)
     I5 = trim lift(I3,A)
+    use A
     assert(I5 == ideal(a,b,c^3,d^2))
 "
 -----------------------------------------------------------------------------
