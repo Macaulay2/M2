@@ -41,7 +41,7 @@ fix := s -> format concatenate s
        << "EXE=" << fix "$M2HOME/bin/Macaulay2" << endl
        << "DATA=" << fix "$M2HOME/cache/Macaulay2-`uname -m |sed s=/=-=g`-data" << endl
        << "SETUP=" << fix "$M2HOME/m2/setup.m2" << endl;
-       if getenv "SHAREDLIBS" =!= "" then ( M2
+       if getenv "SHARED" =!= "" then ( M2
 	    << ///if [ "" = "$LD_LIBRARY_PATH" ]/// << endl
        	    << ///then LD_LIBRARY_PATH="$M2HOME/lib"/// << endl
        	    << ///else LD_LIBRARY_PATH="$M2HOME/lib:$LD_LIBRARY_PATH"/// << endl

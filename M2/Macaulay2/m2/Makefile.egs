@@ -1,7 +1,6 @@
 # -*- Mode: Makefile -*-
 TOPDIR = ../../../..
 include $(TOPDIR)/config.Makefile
-include $(TOPDIR)/Makeconf
 
 ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent \

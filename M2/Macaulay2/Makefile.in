@@ -30,7 +30,7 @@ initialize :: cache
 cache :; mkdir $@
 clean ::; rm -rf cache
 ################################# lib
-ifdef SHAREDLIBS
+ifeq "$(SHARED)" "yes"
 justM2 all :: lib
 lib :; mkdir $@
 endif

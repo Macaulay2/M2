@@ -86,7 +86,10 @@ default:: TAGS.doc
 TAGS.doc : Makefile docseq
 	@echo making $@
 	@../util/echoout '>$@' $(foreach i, $(DOCSEQUENCE),  $(i),0)
+clean::; rm -f TAGS.doc
+
 default:: TAGS
+clean::; rm -f TAGS
 TAGS: Makefile dumpseq
 	@echo making $@
 	@../util/echoout '>$@' $(foreach i, \
@@ -196,24 +199,27 @@ tests:: test2
 test2: $(SCRIPTS)
 	 $(MAKE) -k -C cache/tests -f ../../Makefile.tests
 	touch $@
+clean::; rm -f test2
 
 tests:: test3
 test3:
 	echo 2+3 | ../bin/M2
 	touch $@
+clean::; rm -f test3
 
 ifeq ($(OS),linux-gnu)
 tests:: test4
 test4: ../util/screen
 	echo 2+3 | ../util/screen M2
 	touch $@
+clean::; rm -f test4
 endif
 
 gdb :; gdb ../bin/Macaulay2
 
 clean::
 	rm -rf ../cache/Macaulay2-$(ARCH)-data ../cache/Macaulay2-doc \
-		cache *.obj *.exe TAGS ../bin/M2 runexample \
+		cache *.obj *.exe ../bin/M2 runexample \
 		temp.data allfiles distfiles \
 		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core

@@ -32,17 +32,84 @@ AC_PROG_CC()
 AC_PROG_CXX()
 AC_PROG_YACC()
 
-M2_ENABLE_DUMPDATA()
-M2_WITH_SOCKS()
-M2_ENABLE_SHARED()
-M2_ENABLE_STRIP()
-M2_ENABLE_PROFILE()
-M2_ENABLE_OPTIMIZE()
-M2_ENABLE_DEBUG()
-M2_ENABLE_STATIC()
-M2_ENABLE_MEMDEBUG()
-M2_ENABLE_VERBOSE()
-M2_WITH_FACTORY()
+# 'with' options
+
+SOCKS=no
+AC_SUBST(SOCKS)
+AC_ARG_WITH(socks,[  --with-socks		  compile and link with socks5],SOCKS="$withval")
+case "$SOCKS" in
+   no) ;;
+   yes) AC_DEFINE(SOCKS,,whether to compile and link with socks5) ;;
+   *) echo configure: error: unrecognized value --with-socks="$withval" >&2; exit 1 ;;
+esac
+
+FACTORY=yes
+AC_SUBST(FACTORY)
+AC_ARG_WITH(factory,[  --without-factory       do not link with factory],FACTORY="$withval")
+case "$FACTORY" in
+   no) ;;
+   yes) FACTORYVERSION=`egrep '^factory_version=' $srcdir/factory/configure.in | sed s/.*=//`
+	AC_SUBST(FACTORYVERSION)
+	AC_DEFINE_UNQUOTED(FACTORYVERSION,$FACTORYVERSION,factory version number)
+	AC_DEFINE(FACTORY,,whether to link with factory)
+	;;
+   *) echo configure: error: unrecognized value --with-factory="$withval" >&2; exit 1 ;;
+esac
+
+# 'enable' options
+
+DUMPDATA=yes
+AC_SUBST(DUMPDATA)
+AC_ARG_ENABLE(dumpdata,[\
+  --disable-dumpdata      do not cache data with dumpdata
+  --enable-dumpdata=old   cache data with the old version of dumpdata\
+],DUMPDATA="$enableval")
+case "$DUMPDATA" in
+   no) ;;
+   old) ;;
+   yes) AC_DEFINE(NEWDUMPDATA,,whether to use the new version of dumpdata) ;;
+   *) echo configure: error: unrecognized value --enable-dumpdata="$enableval" >&2; exit 1 ;;
+esac
+case "$DUMPDATA" in
+   yes|old) AC_DEFINE(DUMPDATA,,whether to use dumpdata) ;;
+esac
+
+SHARED=no
+AC_SUBST(SHARED)
+AC_ARG_ENABLE(shared,[  --enable-shared         create shared libraries],SHARED="$enableval")
+case "$SHARED" in
+   no) ;;
+   yes) AC_DEFINE(SHARED,,whether to use shared libraries) ;;
+   *) echo configure: error: unrecognized value --enable-shared="$enableval" >&2; exit 1 ;;
+esac
+
+PROFILE=no
+AC_SUBST(PROFILE)
+AC_ARG_ENABLE(profile,[  --enable-profile        enable profiling],PROFILE="$enableval")
+
+DEBUG=no
+AC_SUBST(DEBUG)
+AC_ARG_ENABLE(debug,[  --enable-debug          enable debugging],DEBUG="$enableval")
+
+VERBOSE=no
+AC_SUBST(VERBOSE)
+AC_ARG_ENABLE(verbose,[  --enable-verbose        enable verbose memory allocation],VERBOSE="$enableval")
+
+STATIC=no
+AC_SUBST(STATIC)
+AC_ARG_ENABLE(static,[  --enable-static         enable static linking],STATIC="$enableval")
+
+MEMDEBUG=no
+AC_SUBST(MEMDEBUG)
+AC_ARG_ENABLE(memdebug,[  --enable-memdebug       enable memory allocation debugging],MEMDEBUG="$enableval")
+
+OPTIMIZE=yes
+AC_SUBST(OPTIMIZE)
+AC_ARG_ENABLE(profile,[  --disable-optimize      disable optimization],OPTIMIZE="$enableval")
+
+STRIP=yes
+AC_SUBST(STRIP)
+AC_ARG_ENABLE(strip,[  --disable-strip         do not strip the Macaulay 2 binary],STRIP="$enableval")
 
 AC_CHECK_FUNC(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing))
 AC_CHECK_FUNC(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing))

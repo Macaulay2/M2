@@ -567,10 +567,10 @@ CollectGarbage(e:Expr):Expr := (
      nullE);
 setupfun("collectGarbage",CollectGarbage);
 
-gcdump(e:Expr):Expr := (
-     dump();
-     nullE);
-setupfun("gcDump",gcdump);
+--gcdump(e:Expr):Expr := (
+--     dump();
+--     nullE);
+--setupfun("gcDump",gcdump);
 
 integermod(e:Expr):Expr := (
      when e
