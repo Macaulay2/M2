@@ -15,7 +15,7 @@
 
 #include "relem.hpp"
 
-#if 1
+#ifdef drg
 // debugging display routines to be called from gdb
 // needs factory to be configured without option --disable-streamio 
 void showvar(Variable &t) { cout << t << endl; }
@@ -204,13 +204,19 @@ void rawFactor(const RingElement *g,
   factoryseed(23984729);
   const Ring *R = g->get_ring();
   CanonicalForm h = convert(*g);
+#ifdef drg
+  GC_gcollect();			// debugging
+#endif
   CFFList q = Factorize(h);
+#ifdef drg
+  GC_gcollect();			// debugging
+#endif
   int nfactors = q.length();
 
   *result_factors = (RingElement_array *) getmem(sizeofarray((*result_factors),nfactors));
   (*result_factors)->len = nfactors;
 
-  *result_powers == makearrayint(nfactors);
+  *result_powers = makearrayint(nfactors);
 
   int next = 0;
   for (CFFListIterator i = q; i.hasItem(); i++) {

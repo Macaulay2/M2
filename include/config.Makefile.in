@@ -241,6 +241,10 @@ LDFLAGS += -L$(prefix)/lib
 endif
 endif
 
+ifeq "$(DEBUG)" "yes"
+CPPFLAGS += -DGC_DEBUG
+endif
+
 ifeq "$(OS)" "Darwin"
 # we don't know what this does, but some apple documentation writers seem to like it:
 LDFLAGS += -bind_at_load

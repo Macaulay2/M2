@@ -7,8 +7,6 @@
 
 extern void outofmem();
 
-void trap(void) {}
-
 void
 #if defined(__STDC__) || defined(_WIN32) && !defined(__CYGWIN32__)
 fatal(char *s,...)   {
