@@ -36,8 +36,7 @@ add := (face,words) -> (
 add( "font-lock-keyword-face", toString \ select(symbols, isKeyword && isAlpha))
 add( "font-lock-type-face", toString \ select(symbols, is Type))
 add( "font-lock-function-name-face", toString \ select(symbols, is Function))
-add( ",(if (boundp 'font-lock-constant-face) 'font-lock-constant-face 'font-lock-function-name-face)",
-     toString \ select(symbols, sym -> (
+add( ",font-lock-constant-face", toString \ select(symbols, sym -> (
 	       not (is Function) sym
 	       and not (is Type) sym
 	       and (sym === symbol null or value sym =!= null)

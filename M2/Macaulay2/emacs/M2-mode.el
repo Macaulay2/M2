@@ -166,5 +166,8 @@
 	  (w3-fetch (format "file:%s/html/%s" M2HOME (buffer-substring (match-beginning 1) (match-end 1))))
 	(error "didn't find key %s in file %s" key file)))))
 
+(require 'font-lock)
+(if (not (boundp 'font-lock-constant-face))
+    (setq font-lock-constant-face font-lock-function-name-face))
 (require 'M2-symbols)
 (provide 'M2-mode)
