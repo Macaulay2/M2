@@ -493,7 +493,7 @@ char **argv;
 		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
 	       }
 	       putstderr(buf);
-	       putstderr("--Copyright 1993-2001, D. R. Grayson and M. E. Stillman");
+	       putstderr("--Copyright 1993-2002, D. R. Grayson and M. E. Stillman");
 	       putstderr("--Singular-Factory " 
 		    FACTORYVERSION
 		    ", copyright 1993-2001, G.-M. Greuel, et al.");
