@@ -38,7 +38,7 @@ document { "using methods",
      PRE "          (lookup(C,X)) x",
      "is evaluated.  In other words, C is used as a key
      to obtain a function from X (or its parent, grandparent,
-     and so on), and the function is applied to x.  See ", TT "lookup", ".",
+     and so on), and the function is applied to x.  See ", TO "lookup", ".",
      PARA,
      "Installing a method named C for the class X is done with code such
      as ",

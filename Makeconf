@@ -65,6 +65,7 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# COMPILER    := microsoft' >>$@
 	echo '# PROFILE     := TRUE' >>$@
 	echo '# NOSTRIP     := TRUE' >>$@
+	echo '# NOSTATIC    := TRUE' >>$@
 	echo '# MEMDEBUG    := TRUE' >>$@
 	echo '# DEBUG       := TRUE' >>$@
 	echo '# VERBOSE     := TRUE' >>$@
