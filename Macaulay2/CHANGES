@@ -16,6 +16,12 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+Subscripted variables are now assigned to with statements like x_i=y,
+whereas before, we used x#i=y, and we had to have mentioned x_i
+previously.  This is part of a more general mechanism for assignment
+statements, where _ can be any of our binary or unary operators to
+which methods can be attached.
+
 map(Module) has been deprecated.  Use map(M,1) instead of map(M).
 
 PfaffiansComputation has been removed: 'pfaffians' no longer accepts

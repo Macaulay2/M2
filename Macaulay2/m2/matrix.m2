@@ -300,7 +300,7 @@ RingElement ++ ZZ := (r,s) -> matrix {{r}} ++ matrix {{s}}
 RingElement  | RingElement := Matrix => (r,s) -> matrix {{r}}  | matrix {{s}}
 RingElement || RingElement := Matrix => (r,s) -> matrix {{r}} || matrix {{s}}
 
-concatCols = mats -> (					    -- we erase this later
+concatCols = mats -> (
      mats = select(toList mats,m -> m =!= null);
      if # mats === 1 
      then mats#0
@@ -313,7 +313,7 @@ concatCols = mats -> (					    -- we erase this later
 	  then error "unequal targets";
 	  ggConcatCols(targets#0, Module.directSum apply(mats,source), mats)))
 
-concatRows = mats -> (					    -- we erase this later
+concatRows = mats -> (
      mats = select(toList mats,m -> m =!= null);
      if # mats === 1 
      then mats#0
