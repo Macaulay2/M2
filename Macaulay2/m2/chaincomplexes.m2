@@ -26,9 +26,7 @@ ChainComplex _ ZZ := Module => (C,i) -> (
      then C#i
      else if C.?Resolution then (
 	  gr := C.Resolution;
-     	  error "ggresmodule not re-implemented yet";
-	  sendgg(ggPush gr, ggPush i, ggresmodule);
-	  F := new Module from ring C;
+	  F := newModule(ring C,rawResolutionGetFree(gr.RawComputation,i));
 	  if F != 0 then C#i = F;
 	  F)
      else (ring C)^0                           -- for chain complexes of sheaves we'll want something else!
@@ -134,12 +132,10 @@ ChainComplexMap _ ZZ := Matrix => (f,i) -> if f#?i then f#i else (
      ta := (target f)_(i+de);
      if f.?Resolution then (
 	  gr := f.Resolution;
-     	  error "ggresmap not re-implemented yet";
-	  sendgg(ggPush gr, ggPush i, ggresmap);
-	  p := getMatrix ring gr;
+	  p := map(ta,so,rawResolutionGetMatrix(gr.RawComputation,i));
 	  if p != 0 then f#i = p;
 	  p)
-     else map(ta,so,0,Degree=>de))
+     else map(ta,so,0))
 
 ChainComplex#id = (C) -> (
      complete C;
@@ -604,14 +600,13 @@ regularity ChainComplex := C -> (
 
 regularity Module := (M) -> regularity resolution M
 
-rawbetti := method()
-rawbetti Resolution := X -> (
+rawbetti = method()
      -- returns a hash table with pairs of the form (d,i) => n
      -- where d is the multi-degree, i is the homological degree, and 
      -- n is the betti number.
-     error "ggbetti not re-implemented yet";
-     sendgg(ggPush X, ggbetti);
-     w := eePopIntarray();
+rawbetti Resolution := X -> (
+     bettiType := 0;
+     w := rawGBBetti(X.RawComputation, bettiType);
      lo := w#0;
      hi := w#1;
      len := w#2;
@@ -622,9 +617,6 @@ rawbetti Resolution := X -> (
      w = select(w, n -> n != 0);
      w )
 rawbetti ChainComplex := C -> (
-     -- returns a hash table with pairs of the form (d,i) => n
-     -- where d is the first component of the repaired multi-degree, i 
-     -- is the homological degree, and n is the betti number.
      if C.?Resolution and degreeLength ring C === 1 then (
      	  repair := (ring C).Repair;
      	  applyKeys( rawbetti C.Resolution, (d,i) -> (first repair d,i) )
@@ -680,9 +672,8 @@ chainComplex GradedModule := ChainComplex => (M) -> (
      C)
 -----------------------------------------------------------------------------
 
-ggConcatCols := (R,mats) -> map(R, rawDirectSum apply(toSequence mats, f -> f.RawMatrix))
-
-ggConcatBlocks := (R,mats) -> (
+concatCols := (R,mats) -> map(R, rawDirectSum apply(toSequence mats, f -> f.RawMatrix))
+concatBlocks := (R,mats) -> (
      mats = applyTable(mats, f -> f.RawMatrix);
      map(R, 
 	  rawDual rawDirectSum apply(toSequence mats, row -> rawDual rawDirectSum toSequence row)))
@@ -701,7 +692,7 @@ ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
 	  scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = map(
 		    E#(i-1),
 		    E#i,
-		    ggConcatBlocks(R, table(
+		    concatBlocks(R, table(
 			      E#(i-1).indices,
 			      E#i.indices,
 			      (j,k) -> (
@@ -787,7 +778,7 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := ChainComplexMap =
      map(
 	  F := (AB := A ** B) ** C,
 	  E :=  A ** (BC := B ** C),
-	  k -> ggConcatBlocks(R, apply(F_k.indices, (ab,c) -> (
+	  k -> concatBlocks(R, apply(F_k.indices, (ab,c) -> (
 			 apply(E_k.indices, (a,bc) -> (
 				   b := bc-c;  -- ab+c=k=a+bc, so b=bc-c=ab-a
 				   if A#?a and B#?b and C#?c

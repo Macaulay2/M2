@@ -738,7 +738,7 @@ document {
      PARA,
      "If the computation is interrupted or discontinued after the skeleton 
      has been successfully computed, then the partially completed
-     resolution is available as ", TT "M.resolution", ", and can be
+     resolution is available as ", TT "M.cache.resolution", ", and can be
      examined with ", TO "status", ".  The computation can be continued
      with ", TT "res M", ".  Here is an example, with an alarm interrupting
      the computation several times before it's complete.  (On my machine, 
@@ -751,18 +751,18 @@ document {
      alarm 3;
      res M;
      << "-- computation complete" << endl;
-     status M.resolution;
+     status M.cache.resolution;
      << res M << endl << endl;
      break;
      ) else (
      << "-- computation interrupted" << endl;
-     status M.resolution;
+     status M.cache.resolution;
      << "-- continuing the computation" << endl;
      )///
 	  },
      "If the user has a chain complex in hand which is known to be a
      projective resolution of ", TT "M", ", then it can be installed
-     with ", TT "M.resolution = C", ".",
+     with ", TT "M.cache.resolution = C", ".",
      PARA,
      "There are various optional arguments associated with ", TO "res", "
      which allow detailed control over the progress of the computation."

@@ -100,25 +100,25 @@ Dresolution Module := options -> M -> (
      pInfo (2, "\t\t\t Rank = " | rank source N | "\t time = " |
 	  tInfo | " seconds");
 
-     M.resolution = new ChainComplex;
-     M.resolution.ring = W;
-     M.resolution#0 = target m;
-     M.resolution#1 = source m;
-     M.resolution.dd#0 = map(W^0, target m, 0);
-     M.resolution.dd#1 = m;
+     M.cache.resolution = new ChainComplex;
+     M.cache.resolution.ring = W;
+     M.cache.resolution#0 = target m;
+     M.cache.resolution#1 = source m;
+     M.cache.resolution.dd#0 = map(W^0, target m, 0);
+     M.cache.resolution.dd#1 = m;
 
      i := 2;
      while source m != 0 and i <= options.LengthLimit do (
 	  pInfo (2, "\t Degree " | i | "...");
 	  tInfo = toString first timing (m = kerGB m);
-     	  M.resolution#i = source m;
-     	  M.resolution.dd#i = m;
+     	  M.cache.resolution#i = source m;
+     	  M.cache.resolution.dd#i = m;
 	  pInfo(2, "\t\t\t Rank = " | rank source m | "\t time = " |
 	       tInfo | " seconds");
 	  i = i+1;
 	  );
-     M.resolution.length = i-1;
-     M.resolution
+     M.cache.resolution.length = i-1;
+     M.cache.resolution
      )
 
 Dresolution (Ideal, List) := options -> (I, w) -> (
@@ -196,14 +196,14 @@ Dresolution (Module, List) := options -> (M, w) -> (
      N := presentation M;
      --if (isSubmodule M) then N := presentation ((ambient M)/M);
      -- get the degree shifts right (need to check this against OT paper)
-     if not M.?resolution 
-     then M.resolution = new MutableHashTable;
-     M.resolution#w = new ChainComplex;
-     M.resolution#w.ring = W;
+     if not M.cache.?resolution 
+     then M.cache.resolution = new MutableHashTable;
+     M.cache.resolution#w = new ChainComplex;
+     M.cache.resolution#w.ring = W;
      s := rank source N;
      t := rank target N;
-     M.resolution#w#0 = target N;
-     M.resolution#w.dd#0 = map(W^0, M.resolution#w#0, transpose (
+     M.cache.resolution#w#0 = target N;
+     M.cache.resolution#w.dd#0 = map(W^0, M.cache.resolution#w#0, transpose (
 	  compress matrix toList(t:{0_W})) );
 
      -- MAKE THE FIRST STEP OF THE RESOLUTION
@@ -223,9 +223,9 @@ Dresolution (Module, List) := options -> (M, w) -> (
 		    VWwt, shiftvec);
 	       )
 	  else shiftvec = shifts(Jgb, Vwt, shiftvec);
-	  M.resolution#w#1 = W^(-shiftvec);
-	  M.resolution#w.dd#1 = map(M.resolution#w#0, 
-	       M.resolution#w#1, HWtoW Jgb); 
+	  M.cache.resolution#w#1 = W^(-shiftvec);
+	  M.cache.resolution#w.dd#1 = map(M.cache.resolution#w#0, 
+	       M.cache.resolution#w#1, HWtoW Jgb); 
 	  );	
      pInfo(2, "\t\t\t Rank = " | #shiftvec | "\t time = " |
 	  tInfo | " seconds");
@@ -251,14 +251,14 @@ Dresolution (Module, List) := options -> (M, w) -> (
 		       	 VWwt, shiftvec);
 	       	    )
 	       else shiftvec = shifts(Jgb, Vwt, shiftvec);
-	       M.resolution#w#i = W^(-shiftvec);
-	       M.resolution#w.dd#i = map(M.resolution#w#(i-1),
-	       	    M.resolution#w#i, HWtoW Jgb);
+	       M.cache.resolution#w#i = W^(-shiftvec);
+	       M.cache.resolution#w.dd#i = map(M.cache.resolution#w#(i-1),
+	       	    M.cache.resolution#w#i, HWtoW Jgb);
 	       );
 	  pInfo(2, "\t\t\t Rank = " | #shiftvec | "\t time = " |
 	       tInfo | " seconds");
 	  i = i+1;
      	  );
      use W;
-     M.resolution#w
+     M.cache.resolution#w
      )
