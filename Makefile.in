@@ -43,9 +43,8 @@ announce::; @echo 'making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS
 always:
 lib/.exists:; mkdir -p lib; touch $@
 clean::; rm -rf lib
-clean::; rm -f config.cache
 clean::; rm -f core
-clean::; rm -f Makefile-configure.overrides config.log config.status configure
+distclean::; rm -f config.cache Makefile-configure.overrides config.log config.status configure
 distclean:: clean
 ################################# configure
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.h.in

@@ -55,3 +55,4 @@ import dbmreorganize(handle:int):int;
 import dbmstrerror():string;
 import readfile(fd:int):(null or string);
 import fileLength(fd:int):int;
+import fileExists(name:string):bool;

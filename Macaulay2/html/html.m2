@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+htmlDefaults#"BODY" = "BACKGROUND='recbg.jpg'"
+
 setrecursionlimit 4000
 
 documentationMemo := memoize documentation
@@ -42,12 +44,6 @@ htmlExtraLiteral := s -> concatenate apply(characters s, c -> htmlExtraLiteralTa
 html TO := x -> (
      fkey := formatDocumentTag x#0;
      concatenate("<A HREF=\"", linkFilename fkey, "\">", htmlExtraLiteral fkey, "</A>", drop(toList x,1))
-     )
-
-html BODY := x -> concatenate(
-     "<BODY BACKGROUND='recbg.jpg'>", newline,
-     apply(x, html), newline,
-     "</BODY>", newline
      )
 
 NEXT = new MutableHashTable

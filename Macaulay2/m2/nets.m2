@@ -39,10 +39,10 @@ toExternalString Manipulator := toString Manipulator := f -> if Symbols#?f then 
 toString Thing := string
 -----------------------------------------------------------------------------
 toExternalString String := format
-toString Net :=
-toExternalString Net := x -> (
-     concatenate(format concatenate between("\n",netRows x), "^", toString(height x - 1))
-     )
+
+toString Net := x -> concatenate between("\n",netRows x)
+toExternalString Net := x -> concatenate(format toString x, "^", toString(height x - 1))
+
 toExternalString MutableHashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
      toExternalString class s,
      if parent s =!= Nothing then (" of ", toExternalString parent s),

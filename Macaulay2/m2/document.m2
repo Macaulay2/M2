@@ -248,6 +248,7 @@ TABLE      = new MarkUpType
 ExampleTABLE = new MarkUpType
 PRE        = new MarkUpType
 TITLE      = new MarkUpType
+BASE	   = new MarkUpType
 HEAD       = new MarkUpType
 BODY       = new MarkUpType
 IMG	   = new MarkUpType
@@ -393,8 +394,8 @@ document List := z -> (
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
      -- stderr << "documenting " << nodeName << " in " << currentFile << " in " << currentFileDirectory << endl;
-     -- nodeBaseFilename = cacheFileName(concatenate(currentFileDirectory,DocumentationPrefix), nodeName);
-     nodeBaseFilename = concatenate(currentFileDirectory, DocumentationPrefix, toFilename nodeName);
+     nodeBaseFilename = cacheFileName(concatenate(currentFileDirectory,DocumentationPrefix), nodeName);
+     -- nodeBaseFilename = concatenate(currentFileDirectory, DocumentationPrefix, toFilename nodeName);
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
      )
@@ -1126,13 +1127,15 @@ tex PRE := x -> concatenate ( VERBATIM,
 text TT    := x -> concatenate   ("'", text \ toList x, "'")
 net TT     := x -> horizontalJoin splice ("'", net  \ toSequence x, "'")
 
+
+htmlDefaults = new MutableHashTable from {
+     "BODY" => "bgcolor='#e4e4ff'"
+     }
+
 html BODY := x -> concatenate(
-     "<BODY bgcolor='#e4e4ff'>",
-     newline,
-     apply(x, html),
-     newline,
-     "</BODY>",
-     newline
+     "<BODY ", htmlDefaults#"BODY", ">", newline,
+     apply(x, html), newline,
+     "</BODY>", newline
      )
 
 html IMG  := x -> "<IMG src=\"" | x#0 | "\">"
@@ -1297,11 +1300,12 @@ text SUP := x -> "^" | text x#0
 text SUB := x -> "_" | text x#0
 
 net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
+
 html TO := x -> (
-     node := formatDocumentTag x#0;
+     fkey := formatDocumentTag x#0;
      concatenate ( 
-     	  "<A HREF=\"", cacheFileName(documentationPath, node), ".html", "\">", 
-     	  html node,
+     	  "<A HREF=\"", cacheFileName(documentationPath, fkey), ".html", "\">", 
+     	  htmlExtraLiteral fkey,
      	  "</A>",
      	  drop(toList x,1) 
      	  )
@@ -1328,6 +1332,9 @@ html ITALIC := htmlMarkUpType "I"
 html UNDERLINE := htmlMarkUpType "U"
 html TEX := x -> x#0	    -- should do something else!
 html BOLD := htmlMarkUpType "B"
+
+html BASE := x -> concatenate("<BASE HREF=\"",x#0,"\">")
+tex BASE := text BASE := net BASE := x -> ""
 
 html Option := x -> toString x
 text Option := x -> toString x

@@ -428,6 +428,14 @@ int offset;
 #endif
 #endif
 
+int system_fileExists(M2_string name) {
+  char *cname = tocharstar(name);
+  struct stat buf;
+  int r = stat(cname,&buf);
+  GC_FREE(cname);
+  return r != ERROR;
+}
+
 int system_fileLength(int fd) {
   struct stat statbuf;
   if (ERROR == fstat(fd,&statbuf)) return ERROR;

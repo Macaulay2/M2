@@ -1,4 +1,22 @@
 # -*- Mode: Makefile -*-
+
+## to build:
+##	add overrides to the file Makefile-configure.overrides
+##		example: CONFIGURE_OPTIONS += --disable-dumpdata
+##	make -f Makefile-configure
+##	make
+##      make install
+## or
+##      ./configure --prefix=/usr/local ...
+##      make 
+##      make install
+
+## to rebuild configure script without using this makefile:
+##	autoconf
+##	autoheader
+
+#############################################################################
+
 default : stage2
 
 include Makefile-configure.overrides
@@ -22,22 +40,6 @@ Makefile-configure.overrides :
 	echo "# CONFIGURE_OPTIONS += --with-gmp" >>$@
 	echo "# CONFIGURE_OPTIONS += --with-gc" >>$@
 
-## to build:
-##	add overrides to the file Makefile-configure.overrides
-##		example: CONFIGURE_OPTIONS += --disable-dumpdata
-##	make -f Makefile-configure
-##	make
-##      make install
-## or
-##      ./configure --prefix=/usr/local ...
-##      make 
-##      make install
-
-## to rebuild configure script without using this makefile:
-##	autoconf
-##	autoheader
-
-#############################################################################
 # this list is the same as the one in configure.in
 export CONFIGURED_FILES := \
 	config.Makefile \
