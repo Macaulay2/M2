@@ -57,9 +57,6 @@ scan(keys DocumentationProvided,
 	  ))
 reachable#(getDocumentationTag "Macaulay 2") = true
 
-print (#(topicList()))
-topicList() / (i -> print peek i)
-
 assert( class doc "Macaulay 2" === SEQ )
 
 topName = "Macaulay 2"

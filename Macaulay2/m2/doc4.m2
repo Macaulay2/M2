@@ -474,7 +474,12 @@ document { quote addEndFunction,
 
 document { quote runStartFunctions,
      TT "runStartFunctions()", " -- call all the functions previously recorded
-     by ", TO "addStartFunction", " passing () as argument sequence."
+     by ", TO "addStartFunction", " passing ", TT "()", " as argument sequence."
+     }
+
+document { quote runEndFunctions,
+     TT "runEndFunctions()", " -- call all the functions previously recorded
+     by ", TO "addEndFunction", " passing ", TT "()", " as argument sequence."
      }
 
 document { "emacs",
