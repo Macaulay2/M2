@@ -2,6 +2,8 @@
 
 #include <factoryconf.h>
 
+extern int haveDumpdata();	/* in dumpdata/map.o */
+
 const char *get_libfac_version();	/* in version.cc */
 
 unsigned GC_version;		/* in libgc.a */
@@ -556,6 +558,7 @@ char **argv;
 #else
      actors5_DUMPDATA = FALSE;
 #endif
+     if (!haveDumpdata()) actors5_DUMPDATA = FALSE; /* even if dumpdata was enable at configuration time, we may not have implemented it in the C code */
      {
 	  char buf[100];
 	  unsigned major, minor, alpha;
