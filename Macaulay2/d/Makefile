@@ -212,10 +212,6 @@ allc : $(PROJECT:.d=.c) tmp_init.c
 ALLOBJ :=
 MISCO := M2lib.o scclib.o gc_cpp.o tmp_init.o memdebug.o
 
-ifeq ($(OS),Linux)
-ALLOBJ += ../dumpdata/dumpdata.o
-endif
-
 ifdef SHAREDLIBS
 LOADLIBES += -L../lib
 LDFLAGS += -rdynamic
@@ -231,6 +227,14 @@ else
 ALLOBJ += $(wildcard ../e/*.o)
 ALLOBJ += $(PROJECT:.d=.oo) 
 ALLOBJ += $(MISCO)
+endif
+
+ifeq ($(OS),Linux)
+ifndef NODUMPDATA
+LOADLIBES += -L../dumpdata
+LIBRARYFILES += ../dumpdata/libdump.a
+LIBRARYOPTIONS += -ldump
+endif
 endif
 
 ifneq "$(CC)" "cl"
@@ -313,8 +317,9 @@ LIBRARYOPTIONS += ../../lib/libfac.lib
 LIBRARYFILES += ../../lib/cf.lib
 LIBRARYOPTIONS += ../../lib/cf.lib
 else
+LOADLIBES += -L../dbm
 LIBRARYFILES += ../dbm/libdbm2.a
-LIBRARYOPTIONS += ../dbm/libdbm2.a
+LIBRARYOPTIONS += -ldbm2
 ifdef MP
 LIBRARYFILES += ../../lib/libMP.a
 LIBRARYOPTIONS += ../../lib/libMP.a
@@ -352,8 +357,7 @@ endif
 
 ../bin/Macaulay2 : $(ALLOBJ) $(LIBRARYFILES)
 	rm -f $@
-	@ echo 'linking $@ with $(LDFLAGS) $(LDLIBS)'
-	@ time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
+	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 ifndef CYGWIN32
 	$(STRIPCMD) $@
 endif

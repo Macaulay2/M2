@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/param.h>
@@ -6,15 +7,60 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include "dumpdata.h"
+#include "map.h"
+#include "warning.h"
+#include "std.h"
 
-typedef struct MAP {
-  void *from, *to;
-  char r, w, x, p;
-  int offset;
-  int dev_major, dev_minor, inode;
-  unsigned int chksum;
-  char *filename;
-} * map;
+#define TRUE 1
+#define FALSE 0
+#define OKAY 0
+#define STDERR 2
+
+/* start configuration section */
+#define DRYRUN 0
+/* end configuration section */
+
+static char mapfmt[] = "%p-%p %c%c %u\n";
+
+static int isStack(map m) {
+  void *p = &p;
+  return p - m->from >= 0 && m->to - p > 0;
+}
+
+static int isDumpable(map m) {
+  return m->w && m->r && !isStack(m);
+}
+  
+static unsigned int checksum(unsigned char *p, unsigned int len) {
+  unsigned int c = 0;
+  while (0 < len--) c = 23 * c + *p++;
+  return c;
+}
+
+static int isCheckable(map m) {
+  return !m->w && m->r && !isStack(m);
+}
+
+static void checkmap(map m) {
+  m->checksum = isCheckable(m) ? checksum(m->from, m->to - m->from) : 0;
+}
+
+static void checkmaps(int nmaps, struct MAP m[nmaps]) {
+  int i;
+  for (i=0; i<nmaps; i++) {
+    checkmap(&m[i]);
+  }
+}
+
+static void sprintmap(char *s, map m) {
+  sprintf(s,mapfmt, m->from, m->to, m->r ? 'r' : '-', m->w ? 'w' : '-', m->checksum);
+}
+
+static void fdprintmap(int fd, map m) {
+  char buf[200];
+  sprintmap(buf,m);
+  write(fd,buf,strlen(buf));
+}
 
 static void trim(char *s) {
   if (s == NULL) return;
@@ -23,83 +69,28 @@ static void trim(char *s) {
   if (s[0] == '\n') s[0] = 0;
 }
 
-static int isStack(map m) {
-  char dummy;
-  void *p = (void *)&dummy;
-  return p - m->from >= 0 && m->to - p > 0;
-}
-
-static int isDumpable(map m) {
-  return m->w == 'w' && m->r == 'r' && m->p == 'p' && !isStack(m);
-}
-
-static unsigned int checksum(unsigned char *p, unsigned int len) {
-  unsigned int c = 0;
-  while (0 < len--) c = 23 * c + *p++;
-  return c;
-}
-
-static char mapfmt [] = "%p-%p %c%c%c%c %08x %02x:%02x %8d      %s\n";
-static char mapfmt2[] = "%p-%p %c%c%c%c %08x %02x:%02x %8d %10u %s\n";
-
-#if 0
-static void printmap(FILE *f, map m) {
-  fprintf(f,mapfmt2,
-	 m->from, m->to,
-	 m->r, m->w, m->x, m->p,
-	 m->offset,
-	 m->dev_major, m->dev_minor, m->inode,
-	 m->chksum,
-	 m->filename
-	 );
-}
-#endif
-
-static void fdprintmap(int fd, map m) {
-  char buf[1000];
-  sprintf(buf,mapfmt2,
-	 m->from, m->to,
-	 m->r, m->w, m->x, m->p,
-	 m->offset,
-	 m->dev_major, m->dev_minor, m->inode,
-	 m->chksum,
-	 m->filename
-	 );
-  write(fd,buf,strlen(buf));
-}
-
-
-static void extend_memory(void *newbreak) {
+static int extend_memory(void *newbreak) {
   if (ERROR == brk(newbreak)) {
-    char buf[200];
-    sprintf(buf,"loaddata: out of memory (extending break from 0x%p to 0x%p)", sbrk(0), newbreak);
-    perror(buf);
-    _exit(1);
+    warning("loaddata: out of memory (extending break from 0x%p to 0x%p)", sbrk(0), newbreak);
+    return ERROR;
   }
+  else return OKAY;
 }
 
 static int install(int fd, map m, long *pos) {
   void *start = m->from, *finish = m->to;
   int len = finish - start;
-  int prot = (
-		    (m->r == 'r' ? PROT_READ : 0)
-		    |
-		    (m->w == 'w' ? PROT_WRITE : 0)
-		    |
-		    (m->x == 'x' ? PROT_EXEC : 0)
-		    );
+  int prot = (m->r ? PROT_READ : 0) | (m->w ? PROT_WRITE : 0) ;
   int offset = *pos;
-  int flags = (
-	       MAP_FIXED 
-	       | 
-	       (m->p == 'p' ? MAP_PRIVATE : 0)
-	       );
+  int flags = MAP_FIXED | MAP_PRIVATE;
   *pos += len;
-#if 0
-  printf("start=%p end=%p len=%x prot=%x flags=%x fd=%d offset=%x\n",start,m->to,len,prot,flags,fd,offset);
+#if DRYRUN
+  printf("start=%p end=%p len=%x prot=%x flags=%x fd=%d offset=%x\n",
+	 start,start+len,len,prot,flags,fd,offset);
   return OKAY;
 #else
-  if (finish - sbrk(0) > 0 && sbrk(0) - start >= 0) extend_memory(finish);
+  if (finish - sbrk(0) > 0 && sbrk(0) - start >= 0 && ERROR == extend_memory(finish)) 
+    return ERROR;
   return MAP_FAILED == mmap(start, len, prot, flags, fd, offset) ? ERROR : OKAY;
 #endif
 }
@@ -108,224 +99,113 @@ static int dumpmap(int fd, map m) {
   return write(fd, m->from, m->to-m->from);
 }
 
-static char mapfilename[] = "/proc/self/maps";
-
-#define NDUMPS 40
-
-static int getfile(char *filename, char buf[], int maxlen) {
-  int len = 0;
-  int fd = open(filename, O_RDONLY);
-  if (fd == ERROR) return ERROR;
-  maxlen --;			/* for null-termination */
-  while (len < maxlen) {
-    int r = read(fd,&buf[len],maxlen-len);
-    if (r == ERROR) return ERROR;
-    if (r == 0) break;
-    len += r;
-  }
-  close(fd);
-  buf[len] = 0;
-  return len;
-}
-
-static int filelen(char *filename) {
-  int n;
-  for (n = 4096; ; n *= 2) {
-    char buf[n];
-    int len = getfile(filename,buf,n);
-    if (len < n) return len;
-  }
-}
-
-static int numlines(unsigned char *buf, int buflen) {
-  int n = 0, last = '\n';
-  for (; *buf && buflen > 0; last=*buf++, buflen--) if (*buf == '\n') n++;
-  if (last != '\n') n++;
-  return n;
-}
-
-static void lines(unsigned char *buf, char *x[]) { /* destructive */
-  int n = 0;
-  while (*buf) {
-    x[n++] = buf;
-    for (; *buf; buf++) {
-      if (*buf == '\n') { *buf++ = 0; break; }
-    }
-  }
-}
-
-int dumpdata(const char *dumpfilename) {
-  struct MAP map, dumpmaps[NDUMPS];
-  int ndumps = 0, i;
-  char *p;
-  int maplen;
-  int fd = open(dumpfilename,O_WRONLY|O_CREAT|O_TRUNC,0666);
+int dumpdata(char const *dumpfilename) {
   long pos, n;
+  int nmaps = nummaps();
+  struct MAP dumpmaps[nmaps];
+  int i;
+  int fd = open(dumpfilename,O_WRONLY|O_CREAT|O_TRUNC,0666);
   if (fd == ERROR) {
-    fprintf(stderr, "can't open dump data file '%s'\n", dumpfilename);
+    warning("can't open dump data file '%s'\n", dumpfilename);
     return ERROR;
   }
-  maplen = filelen(mapfilename);
-  if (maplen == ERROR) {
-    fprintf(stderr, "dumpdata: can't open %s\n",mapfilename);
-    return ERROR;
-  }
+  if (ERROR == getmaps(nmaps,dumpmaps)) return ERROR;
+  checkmaps(nmaps,dumpmaps);
+  for (i=0; i<nmaps; i++) fdprintmap(fd,&dumpmaps[i]);
+  write(fd,"\n",1);
+  pos = lseek(fd,0,SEEK_END);
+  n = ((pos + EXEC_PAGESIZE - 1)/EXEC_PAGESIZE) * EXEC_PAGESIZE - pos;
   {
-    char mapbuf[maplen];
-    int nlines;
-    if (ERROR == getfile(mapfilename,mapbuf,maplen)) {
-      fprintf(stderr, "dumpdata: can't read %s\n",mapfilename);
+    char buf[n];
+    int i;
+    for (i=0; i<n; i++) buf[i] = '\n';
+    write(fd,buf,n);
+  }
+  for (i=0; i<nmaps; i++) {
+    if (isDumpable(&dumpmaps[i]) && ERROR == dumpmap(fd,&dumpmaps[i])) {
+      warning("warning dumping data to file '%s', [fd=%d, i=%d]\n", dumpfilename, fd, i);
+      close(fd);
       return ERROR;
     }
-    nlines = numlines(mapbuf,maplen);
-    {
-      int k;
-      char *linebuf[nlines];
-      char fn[maplen];
-      lines(mapbuf,linebuf);
-      for (k=0; k<nlines; k++) {
-	fn[0] = 0;
-	if (0 == sscanf(linebuf[k],mapfmt,
-	       &map.from, &p, &map.r, &map.w, &map.x, &map.p,
-	       &map.offset, &map.dev_major, &map.dev_minor, &map.inode, 
-	       fn)) break;
-	map.to = p;			/* work around a gcc bug */
-	map.filename = fn;
-	map.chksum = map.r == 'r' && map.w == '-' ? checksum((unsigned char *)map.from, map.to - map.from) : 0;
-	fdprintmap(fd,&map);
-	if (!isDumpable(&map)) continue;
-	if (ndumps == NDUMPS) {
-	  fprintf(stderr,"can't dump data, too many dumpable memory maps, recompile\n");
-	  return ERROR;
-	}
-	dumpmaps[ndumps++] = map;
-      }
-      pos = lseek(fd,0,SEEK_END);
-      n = ((pos + EXEC_PAGESIZE - 1)/EXEC_PAGESIZE) * EXEC_PAGESIZE - pos;
-      {
-	char buf[n];
-	int i;
-	for (i=0; i<n; i++) buf[i] = '\n';
-	write(fd,buf,n);
-      }
-      for (i=0; i<ndumps; i++) {
-	if (ERROR == dumpmap(fd,&dumpmaps[i])) {
-	  fprintf(stderr,"error dumping data to file '%s', [fd=%d, i=%d]\n", dumpfilename, fd, i);
-	  close(fd);
-	  return ERROR;
-	}
-      }
-      return close(fd);
-    }
   }
+  return close(fd);
 }
 
-int loaddata(const char *filename) {
-  struct MAP map, fmap, dumpmaps[NDUMPS];
-  int i, ndumps=0;
+int loaddata(char const *filename) {
+  int nmaps = nummaps();
+  struct MAP dumpedmap, currmap[nmaps], dumpmaps[40];
+  int i, ndumps=0, j=0;
   int fd = open(filename,O_RDONLY);
   int installed_one = FALSE;
-  long pos;
-  FILE *f;
-  char fbuf[1000], fn[1000], ffn[1000], buf[1000];
-  char *p;
-  FILE *maps;
-  if (fd == ERROR) {
-    fprintf(stderr, "loaddata: can't open file '%s'\n", filename);
-    return ERROR;
-  }
-  f = fdopen(fd,"r");
-  if (f == NULL) { fprintf(stderr, "loaddata: failed to open file from fd %d\n", fd); return ERROR; }
-  maps = fopen(mapfilename,"r");
-  if (maps == NULL) { fprintf(stderr, "loaddata: failed to open map file %s\n", mapfilename); return ERROR; }
+  FILE *f = fdopen(fd,"r");
+  if (ERROR == getmaps(nmaps,currmap)) return ERROR;
+  checkmaps(nmaps,currmap);
+  if (fd == ERROR || f == NULL) { warning("loaddata: can't open file '%s'\n", filename); return ERROR; }
   while (TRUE) {
-    int n, f_end;
+    char fbuf[200], buf[200];
+    int n, f_end, ret;
+    char r, w;
     fbuf[0]=0;
     f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
     if (f_end) break;
     trim(fbuf);
-
-    ffn[0] = 0;
-    n = sscanf(fbuf,mapfmt2,
-	       &fmap.from, &p, &fmap.r, &fmap.w, &fmap.x, &fmap.p,
-	       &fmap.offset, &fmap.dev_major, &fmap.dev_minor, &fmap.inode, &fmap.chksum, ffn);
-    if (11 > n) {
-      fprintf(stderr,"loaddata: in data file %s: invalid map: %s  [sscanf=%d]\n", filename, buf, n);
+    ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &dumpedmap.checksum);
+    if (5 != ret) {
+      warning("loaddata: in data file %s: invalid map: %s  [sscanf=%d]\n", filename, buf, n);
       return ERROR;
     }
-    fmap.to = p;			/* work around a gcc bug */
-    fmap.filename = ffn;
-
-    while (TRUE) {
-      buf[0]=0;
-      if (NULL == fgets(buf,sizeof buf,maps) || buf[0]=='\n') break;
-      trim(buf);
-      fn[0] = 0;
-      n = sscanf(buf,mapfmt,
-		 &map.from, &p, &map.r, &map.w, &map.x, &map.p,
-		 &map.offset, &map.dev_major, &map.dev_minor, &map.inode, fn);
-      if (10 > n) {
-	fprintf(stderr,"loaddata: in data file '%s': invalid map: %s [sscanf=%d]\n",mapfilename, buf, n);
-	return ERROR;
-      }
-      map.to = p;			/* work around a gcc bug */
-      map.filename = fn;
-      map.chksum = map.r == 'r' && map.w == '-' ? checksum((unsigned char *)map.from, map.to - map.from) : 0;
-      if (fmap.from - map.from <= 0) break;
-      if (map.w == '-') {
-	fprintf(stderr, "loaddata: map has appeared or changed its location:\n  %s\n", buf);
+    dumpedmap.r = r == 'r';
+    dumpedmap.w = w == 'w';
+    for (; j<nmaps; j++) {
+      if (dumpedmap.from - currmap[j].from <= 0) break;
+      if (isCheckable(&currmap[j])) {
+	warning("loaddata: map has appeared or changed its location:\n  %s\n", buf);
 	return ERROR;
       }
     };
 
-    if (!f_end && fmap.w == '-' && fmap.from - map.from < 0) {
-      fprintf(stderr, "loaddata: map has disappeared or changed its location:\n  %s\n", fbuf);
+    if (!f_end && !dumpedmap.w && dumpedmap.from - currmap[j].from < 0) {
+      warning("loaddata: map has disappeared or changed its location:\n  %s\n", fbuf);
       return ERROR;
     }
 
-    if (!f_end && fmap.from == map.from) {
-      if (fmap.r != map.r || fmap.w != map.w || fmap.x != map.x || fmap.p != map.p) {
-	fprintf(stderr, "loaddata: map protection has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
+    if (!f_end && dumpedmap.from == currmap[j].from) {
+      if (dumpedmap.r != currmap[j].r || dumpedmap.w != currmap[j].w) {
+	warning("loaddata: map protection has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
 	return ERROR;
       }
-      if (0 != strcmp(fmap.filename,map.filename)) { 
-	fprintf(stderr, "loaddata: map filename has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
+      if (dumpedmap.checksum != currmap[j].checksum) { 
+	warning("loaddata: checksum for map has changed from %u to %u\n",
+		dumpedmap.checksum, currmap[j].checksum);
 	return ERROR;
       }
-      if (fmap.chksum != map.chksum) { 
-	fprintf(stderr, "loaddata: checksum for map %s has changed from %u to %u\n",
-		fmap.filename, fmap.chksum, map.chksum);
-	return ERROR;
-      }
+      j++;
     }
-    if (!isDumpable(&fmap)) continue;
-    if (ndumps == NDUMPS) {
-      fprintf(stderr,"loaddata: too many dumpable memory maps, recompile\n");
+
+    if (!isDumpable(&dumpedmap)) continue;
+    if (ndumps == numberof(dumpmaps)) {
+      warning("too many maps dumped, recompile\n");
       return ERROR;
     }
-    dumpmaps[ndumps++] = fmap;
+    else dumpmaps[ndumps++] = dumpedmap;
 #if 0
-    printmap(stdout,&fmap);
+    fprintmap(stdout,&dumpedmap);
 #endif
   }
-  fclose(maps);
-  pos = ftell(f);
-  pos = ((pos + EXEC_PAGESIZE - 1)/EXEC_PAGESIZE) * EXEC_PAGESIZE;
-  for (i=0; i<ndumps; i++) {
-    if (ERROR == install(fd,&dumpmaps[i],&pos)) {
-      if (installed_one) {
-	char *p = "loaddata: failed to map memory completely\n";
-	write(STDERR,p,strlen(p));
-	_exit(1);
+  {
+    long pos = ftell(f);
+    pos = ((pos + EXEC_PAGESIZE - 1)/EXEC_PAGESIZE) * EXEC_PAGESIZE;
+    for (i=0; i<ndumps; i++) {
+      if (ERROR == install(fd,&dumpmaps[i],&pos)) {
+	if (installed_one) fatal("loaddata: failed to map memory completely\n");
+	else {
+	  warning("loaddata: failed to map any memory\n");
+	  fclose(f);
+	  return ERROR;
+	}
       }
-      else {
-	fprintf(stderr,"loaddata: failed to map any memory\n");
-	fclose(maps);
-	fclose(f);
-	return ERROR;
-      }
+      else installed_one = TRUE;
     }
-    installed_one = TRUE;
   }
   close(fd);
   return OKAY;
