@@ -17,24 +17,21 @@ PACKAGES += minimal
 # PACKAGES += SchurRings
 ##
 
-TMPPREFIX = tmp-packages
-
 REMAKE = false
 
 %.installed : %.m2
 	../bin/M2 \
 		-q \
 		--stop \
-		--prefix $(TMPPREFIX) \
+		--prefix $(encapdir) \
 		-e errorDepth=0 \
-		-e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"./$(TMPPREFIX)/\")" \
+		-e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"$(encapdir)/\")" \
 		-e "exit 0"
 	touch "$@"
 
 all :: $(PACKAGES:=.installed)
 
-clean::; rm -rf tmp $(TMPPREFIX) *.installed
-install: all; tar cf - -C $(TMPPREFIX) . | tar xfp - -C $(encapdir)
+clean::; rm -rf tmp *.installed
 
 Dmodules.installed :: @srcdir@/Dmodules/*.m2
 
