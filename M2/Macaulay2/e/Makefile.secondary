@@ -116,6 +116,7 @@ NAMES = \
 	gbbinom \
 	sagbi \
 	random \
+	gbZZ \
 	gb2 \
 	res2 \
 	respoly2

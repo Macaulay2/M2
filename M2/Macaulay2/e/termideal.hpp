@@ -11,6 +11,31 @@ struct mon_term
   mon_term * next;
   mon_term * prev;
 
+  bool      coeff_is_one;
+  int       expmask;
+  int       degree;
+  vec       gsyz;
+  vec       rsyz;
+  ring_elem     _coeff;
+  int *_monom;			// The monomial: do we need this?
+  int *_lead_exp;
+
+  ring_elem coeff() const { return _coeff; }
+  const int *monom() const { return _monom; }
+  const int *lead_exp() const { return _lead_exp; }
+
+  friend void i_stashes();
+  static stash *mystash;
+  void *operator new(size_t) { return mystash->new_elem(); }
+  void operator delete(void *p) { mystash->delete_elem(p); }
+};
+
+#if 0
+struct mon_term
+{
+  mon_term * next;
+  mon_term * prev;
+
   int       coeff_is_one;
   int       expmask;
   int       degree;
@@ -31,6 +56,7 @@ struct mon_term
   void *operator new(size_t) { return mystash->new_elem(); }
   void operator delete(void *p) { mystash->delete_elem(p); }
 };
+#endif
 
 class TermIdeal : public type
 {
@@ -38,8 +64,9 @@ private:
   const Ring *K;		// A p.i.d or a field?
   const Monoid *M;
   const PolynomialRing *R;
-  const FreeModule *F;		// free module for mon_term->elem->f
-  const FreeModule *Fsyz;	// free module for mon_term->elem->fsyz
+  const FreeModule *Gsyz;
+  const FreeModule *Rsyz;		// Free module with the same rank as the number
+				// of generators of the quotient ideal.
   int nvars;
   ring_elem one;
 
@@ -53,9 +80,13 @@ private:
   void link(mon_term *s, mon_term *t);
   void unlink(mon_term *s);
 
-  GB_elem *new_gb_elem(const vec f, const vec fsyz, int me) const;
-  mon_term *mult_mon_term(const int *m, mon_term *p) const;
-  mon_term *new_mon_term(GB_elem *bag) const;
+  //mon_term *mult_mon_term(const int *m, mon_term *p) const;
+
+  mon_term *new_mon_term(const ring_elem c, // Coefficient, constant
+			 const int *mon, // Monomial, constant
+			 vec gsyz, // Vector, consumed
+			 vec rsyz) const; // Vector, ring element
+
   mon_term *new_mon_term_head() const;
   void delete_mon_term(mon_term *&t) const;
 
@@ -71,7 +102,7 @@ private:
   // Comparison of terms
   int compare(mon_term *s, mon_term *t) const;
 public:
-  TermIdeal(const FreeModule *F, const FreeModule *Fsyz);
+  TermIdeal(const FreeModule *Gsyz, const FreeModule *Rsyz);
 				// It is valid for these to be NULL, if
 				// there is no baggage...
   ~TermIdeal();
@@ -81,6 +112,7 @@ public:
   static TermIdeal *make_termideal(const Matrix &m, int n);
   void append_to_matrix(Matrix m, int i) const;
   Matrix change_matrix() const;
+  Matrix ring_change_matrix() const;
 
   // Insertion of new monomials.
   mon_term *insert_minimal(mon_term *t);
@@ -90,7 +122,7 @@ public:
   // Finding divisors of monomials
   int find_first(const int *exp, mon_term *&result) const;
   void find_all_divisors(const int *exp, array<mon_term *> &result) const;
-
+  bool search(const int *coeff, const int *m, vec &result_gsyz, vec &result_rsyz) const;
 
 //////////////////////////////////////////////
 //  Input, output, infrastructure ////////////

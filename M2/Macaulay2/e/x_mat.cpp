@@ -936,8 +936,17 @@ void cmd_ti_ti(object &om, object &on)
   TermIdeal *ti = TermIdeal::make_termideal(m, n);
   gStack.insert(ti);
 }
-
-
+void cmd_ti_getchange(object &oti, object &on)
+{
+  TermIdeal *ti = oti->cast_to_TermIdeal();
+  Matrix result;
+  int n = on->int_of();
+  if (n == 0)
+    result = ti->change_matrix();
+  else 
+    result = ti->ring_change_matrix();
+  gStack.insert(result);
+}
 
 // Random number/element generation
 void cmd_random_seed(object &on)
@@ -1097,4 +1106,5 @@ void i_Matrix_cmds(void)
   // termideal routines
   install(ggmatrix, cmd_ti_matrix, TY_TERMIDEAL);
   install(ggtermideal, cmd_ti_ti, TY_MATRIX, TY_INT);
+  install(gggetchange, cmd_ti_getchange, TY_TERMIDEAL, TY_INT);
 }

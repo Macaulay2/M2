@@ -14,6 +14,7 @@ class WeylAlgebra : public PolynomialRing
   friend class FreeModule;
   friend class NGB_comp;
   friend class GB_comp;
+  friend class GBZZ_comp;
   friend class res_comp;
   friend class res2_comp;
   friend class GBinhom_comp;

@@ -19,6 +19,7 @@ class FreeModule : public type
 {
   friend class NGB_comp;
   friend class GB_comp;
+  friend class GBZZ_comp;
   friend class GBinhom_comp;
   friend class gb2_comp;
   friend class res_poly;
