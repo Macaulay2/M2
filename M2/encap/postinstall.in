@@ -4,15 +4,19 @@ TMP=/tmp/M2.tmp.$$
 
 cd "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"
 cd bin
-    <M2 >$TMP sed "s:^M2HOME=.*:M2HOME=$ENCAP_SOURCE/$ENCAP_PKGNAME/lib/Macaulay2-@PACKAGE_VERSION@:"
+
+    EDIT="s:^M2HOME=.*:M2HOME=$ENCAP_SOURCE/$ENCAP_PKGNAME/share/Macaulay2/@PACKAGE_VERSION@:"
+
+    <M2 >$TMP sed "$EDIT"
     mv $TMP M2
     chmod 0755 M2
 
-    <M2-help >$TMP sed "s:^M2HOME=.*:M2HOME=$ENCAP_SOURCE/$ENCAP_PKGNAME/lib/Macaulay2-@PACKAGE_VERSION@:"
+    <M2-help >$TMP sed "$EDIT"
     mv $TMP M2-help
     chmod 0755 M2-help
 
 
 cd "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"
 cd lib/@PACKAGE_NAME@/@PACKAGE_VERSION@
+
     ./setup
