@@ -177,6 +177,44 @@ There are two ways to compile Macaulay 2 under Windows 95 and NT.
 Linux notes
 ----------------------
 
+
+----------------------
+MacOS X notes
+----------------------
+This port was done with the help of Dave Morrison, Dennis Keeler and John Dalbec.
+The source is most conveniently compiled using the fink system at
+http://fink.sourceforge.net.  Soon there will be a macaulay2 fink package: this
+will automatically download, unpack, configure, compile and install all of the above
+libraries and macaulay2 itself.  The resulting compiled version can be used without
+fink, suitably modified.
+
+There are (1/10/02) several small issues still to be smoothed over, but M2 compiles
+fine on my titanium G4, running mac os 10.1, dev tools 10.1, and all of the tests
+pass.
+
+Issues remaining:
+  the fink ".info" file needs to be improved
+  gc: redefines _read, so that the linker complains about multiply defined symbols.
+      For now, I ignore the message, and it seems to work.  Boehm said that this 
+      wrapper is gone in the latest version, so I am not going to worry about this.
+  post install:
+      the M2, M2-help, and emacs/M2-init.el files need to be patched
+
+Each user needs to do the following after installation:
+  add to .emacs file
+    (load "/sw/lib/Macaulay2-0.9.1/emacs/M2-init.el")
+
+These are done by the fink macaulay2 package, but if you compile on your own,
+you may need to do the following:
+
+        ar x /sw/lib/libfac.a tmpl_inst.o
+        mv tmpl_inst.o libfac_tmpl_inst.o
+
+Dumpdata doesn't work, I haven't tried removing --disable-strip yet.
+Here is the configure line I have used that works:
+
+./configure --disable-strip --disable-dumpdata -prefix=/sw
+
 ----------------------
 HPUX notes
 ----------------------

@@ -10,7 +10,7 @@
 
 extern void fail(char *, int);
 extern void failpos(char *, int, node);
-extern int errors;
+extern int n_errors;
 volatile void fatal(char *s,...);
 void error(char *s,...);
 void warning(char *s,...);

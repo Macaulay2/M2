@@ -330,7 +330,7 @@ int main(int argc, char **argv){
 		    	 printtypelist();
 		    	 printstringlist();
 			 }
-		    if (errors > 0) {
+		    if (n_errors > 0) {
 			 quit();
 			 }
 		    n = newsuffixbase(argv[i],".c");
