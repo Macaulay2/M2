@@ -3,6 +3,19 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+WARNING: Syntax for computing sheaf cohomology has been changed.  Now HH^i(F)
+gives the single vector space, as expected.  To get the graded module
+whose n-th component is HH^i(F(n)) write HH^i(F(*)).  You will get an error
+message if that module is not finitely generated.  To ask for the graded
+submodule where just those components with n>=d are required, write
+HH^i(F(>=d)).  For n>d, write HH^i(F(>d)).  Warning: as before, you may get
+more components than you asked for; you could use 'truncate' to get the exact
+answer.
+
+more methods are working for coherent sheaves and varieties: dual, ^**, etc.
+
+new operator L^**n for tensor powers
+
 Fixed two bugs in computing global sections of a coherent sheaf: -- it was
 ignoring the degree option, and in some cases, it would give a missing method
 error message.
