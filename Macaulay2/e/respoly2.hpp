@@ -20,7 +20,8 @@ class res2_poly
   const PolynomialRing *R;
   const Monoid *M;
   const Ring *K;		// Coefficient field of R.
-  stash *pstash;
+
+  int respoly_size;
 
   res2term *new_term() const;
 

@@ -105,6 +105,7 @@ const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
       return 0;
     }
   return SkewPolynomialRing::create(P,skewvars);
+  // return P->create_SkewCommutative(skewvars);
 }
 
 const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
@@ -120,6 +121,7 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
       return 0;
     }
   return WeylAlgebra::create(P,diff_vars, comm_vars, homog_var);
+  // return P->create_WeylAlgebra(diff_vars, comm_vars, homog_var);
 }
 
 const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
@@ -140,8 +142,17 @@ const RingOrNull *IM2_Ring_frac(const Ring *R)
   return FractionField::create(R);
 }
 
-const RingOrNull *IM2_Ring_localization(const Ring *R, const Matrix *P)
+const RingOrNull *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
 {
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+#if 0
+  return P->create_FractionRing(Prime);
+#endif
   /* TODO */
   return 0;
 }
@@ -150,9 +161,15 @@ const RingOrNull * IM2_Ring_quotient(const Ring *R,
 				     const Matrix *I)
 {
 #warning "implement IM2_Ring_quotient"
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
 #if 0
   // TODO
-  return R->create_quotient(I);
+  return R->create_Quotient(I);
 #endif
   ERROR("not implemented yet");
   return 0;
@@ -163,6 +180,18 @@ const RingOrNull * IM2_Ring_quotient1(const Ring *R,
 /* if R is a polynomial ring of the form A[x]/J, and B = A/I (where A is a poly ring)
    then form the quotient ring B[x]/J. */
 {
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+#if 0
+  // TODO
+  return R->create_Quotient(B);
+#endif
+
+
 #warning "implement IM2_Ring_quotient1"
   ERROR("not implemented yet");
   return 0;

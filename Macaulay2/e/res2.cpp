@@ -402,7 +402,7 @@ void res2_comp::initialize(const Matrix *mat,
 
   P = mat->get_ring()->cast_to_PolynomialRing();
   assert(P != NULL);
-  R = new res2_poly((PolynomialRing *)P);
+  R = new res2_poly(const_cast<PolynomialRing *>(P));
   M = P->Nmonoms();
   K = P->Ncoeffs();
   generator_matrix = mat;
@@ -957,7 +957,7 @@ void res2_comp::new_pairs(res2_pair *p)
 
 	  thisvp.shrink(0);
 	  varpower::var(w,1,thisvp);
-	  Bag *b = new Bag((void *)0, thisvp);
+	  Bag *b = new Bag(static_cast<void *>(0), thisvp);
 	  elems.insert(b);
 	}
       // Remove the local variables
@@ -978,7 +978,7 @@ void res2_comp::new_pairs(res2_pair *p)
 	  varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
 	  if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
 	    continue;
-	  Bag *b = new Bag((void *)0, thisvp);
+	  Bag *b = new Bag(static_cast<void *>(0), thisvp);
 	  elems.insert(b);
 	}
     }
@@ -1011,7 +1011,7 @@ void res2_comp::new_pairs(res2_pair *p)
   int *m = M->make_one();
   for (j = mi.first(); j.valid(); j++)
     {
-      res2_pair *second = (res2_pair *) mi[j]->basis_ptr();
+      res2_pair *second = reinterpret_cast<res2_pair *>(mi[j]->basis_ptr());
       M->from_varpower(mi[j]->monom().raw(), m);
       M->mult(m, p->syz->monom, m);
       
@@ -1032,7 +1032,7 @@ int res2_comp::find_ring_divisor(const int *exp, ring_elem &result) const
   Bag *b;
   if (!P->get_quotient_monomials()->search_expvector(exp, b))
     return 0;
-  result = (Nterm *) b->basis_ptr();
+  result = reinterpret_cast<Nterm *>(b->basis_ptr());
   return 1;
 }
 
@@ -1045,7 +1045,7 @@ int res2_comp::find_divisor(const MonomialIdeal *mi,
   array<Bag *> bb;
   mi->find_all_divisors(exp, bb);
   if (bb.length() == 0) return 0;
-  result = (res2_pair *) (bb[0]->basis_ptr());
+  result = reinterpret_cast<res2_pair *>((bb[0]->basis_ptr()));
   // Now search through, and find the best one.  If only one, just return it.
   if (comp_printlevel >= 5)
     if (mi->length() > 1)
@@ -1068,7 +1068,7 @@ int res2_comp::find_divisor(const MonomialIdeal *mi,
   unsigned int lowest = result->pair_num;
   for (int i=1; i<bb.length(); i++)
     {
-      p = (res2_pair *) (bb[i]->basis_ptr());      
+      p = reinterpret_cast<res2_pair *>(bb[i]->basis_ptr());      
       if (p->pair_num < lowest)
 	{
 	  lowest = p->pair_num;
@@ -1225,10 +1225,10 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
 		      // it cannot have been set yet, and since we don't want
 		      // to waste space.
 		      auto_reduce_node *au = new auto_reduce_node;
-		      au->next = (auto_reduce_node *) (q->pivot_term);
+		      au->next = reinterpret_cast<auto_reduce_node *>(q->pivot_term);
 		      au->p = pivot->comp;
 		      au->pivot = lastterm;
-		      q->pivot_term = (res2term *) au;
+		      q->pivot_term = reinterpret_cast<res2term *>(au);
 		    }
 		  if (auto_reduce == 0)
 		    {
@@ -1612,7 +1612,7 @@ void res2_comp::handle_pair(res2_pair *p)
   res2_pair *q;
 
   // This is used only for full auto reduction type 2.
-  auto_reduce_node *au = (auto_reduce_node *) p->pivot_term;
+  auto_reduce_node *au = reinterpret_cast<auto_reduce_node *>(p->pivot_term);
 
   if (use_respolyHeaps)
     q = reduce3(f, p->syz, p->pivot_term, p);
@@ -1661,7 +1661,7 @@ void res2_comp::handle_pair(res2_pair *p)
       // other elements by 'q'.
       if (auto_reduce == 2)
 	{
-	  do_auto_reductions(q, (auto_reduce_node *) q->pivot_term);
+	  do_auto_reductions(q, reinterpret_cast<auto_reduce_node *>(q->pivot_term));
 	  q->pivot_term = NULL;
 	}
       else if (auto_reduce == 3)

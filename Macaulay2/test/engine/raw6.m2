@@ -94,7 +94,7 @@ m1 = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true,0)
 assert(-(-m) == m)
 assert((m-m) == m + (-m))
 --<< "make sure mutable matrices and immutable matrices are not ==" << endl;
-assert(m != m1)
+assert(not(m == m1))
 assert(rawIsZero(m-m1))
 assert(rawTarget m == F)
 assert(rawSource m == rawFreeModule(R,splice(0,2,2,2,11:0)))

@@ -1,5 +1,5 @@
 -- MES
-load "raw-util.m2"
+needs "raw-util.m2"
 -- This file tests most of the raw* routines, in the case when the
 -- ring is a singly graded polynomial ring over ZZ.
 -- raw* routines not yet tested here, for this ring:
@@ -202,6 +202,36 @@ ring x === C
 r = rawPromote(C, rawPromote(B,A_0))
 s = rawPromote(C, rawPromote(B,A_1))
 (r+s+x+X)^3
+
+---------------------------------
+-- fraction fields --------------
+---------------------------------
+needs "raw-util.m2"
+A = polyring(rawZZ(), {symbol x, symbol y, symbol z})
+B = rawFractionRing A
+f = rawFraction(B,x,y)
+f1 = rawFraction(B,y,x)
+f*f1
+assert((f-f)*f1 == 0)
+assert(f * f1 == 1)
+assert(1//f == f1)
+assert(rawPromote(B,x) == rawFraction(B,x,1_A))
+
+C = polyring(B, {symbol s, symbol t})
+x1 = rawPromote(C,rawPromote(B,x))
+y1 = rawPromote(C,rawPromote(B,y))
+z1 = rawPromote(C,rawPromote(B,z))
+s
+f = s//(x1*y1)
+g = f^2 + s^2
+assert(g - s^2 == f^2)
+
+
+
+g = rawFraction(B,x^2+y*z,y)
+h = rawFraction(B, 5*(3*x^2-x-y+1_A)^2*(y+z), 10*(3*x^2-x-y+1_A)^2*(x+y^2-1_A))
+h + 1_B//h
+
 --------------------------
 -- free module routines --
 --------------------------
@@ -309,7 +339,7 @@ m1 = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true,0)
 assert(-(-m) == m)
 assert((m-m) == m + (-m)) -- CURRENTLY FAILS BECAUSE OF HASH CODES
 --<< "make sure mutable matrices and immutable matrices are not ==" << endl;
-assert(m != m1)
+assert(not(m == m1))
 rawTarget m == F
 rawSource m == G
 rawMultiDegree m === {0}
@@ -382,14 +412,10 @@ rawSortColumns(m,1,1)
 rawMinors(2,m,0)
 
 m = rawMatrix1(R^4,4,(0_R,b,c,d, -b,0_R,f,g, -c,-f,0_R,i, -d,-g,-i,0_R),false,0)
-<< "equality checking of matrices is screwed up, since hash values are not being set correctly" << endl;
---assert(rawPfaffians(4,m) == rawMatrix1(R^1,1,singleton (d*f-c*g+b*i), false,0))
--- 
+--<< "equality checking of matrices is screwed up, since hash values are not being set correctly" << endl;
+assert(rawPfaffians(4,m) == rawMatrix1(R^1,1,singleton (d*f-c*g+b*i), false,0))
 
-n = mat{{x},{y},{z}}
-m * n
-
-
+R2 = polyring(rawZZ(), (symbol x, symbol y, symbol z))
 m = mat {{x+y+z, x*y+y*z+z*x, x*y*z-1, (x+y+z)^5+x*(x*y*z-1) + 13}}
 ch = mat{{-x^4-4*x^3*y-4*x^3*z-6*x^2*y^2-12*x^2*y*z-6*x^2*z^2
 	    -4*x*y^3-12*x*y^2*z-12*x*y*z^2-x*y*z-4*x*z^3
@@ -419,7 +445,7 @@ mr = rawMatrixRandom(R,10,10,.5,1,false,0)
 -------------------------------
 -- row and column operations --
 -------------------------------
-load "raw-util.m2"
+needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol a .. symbol f))
 m = rawMatrix1(R^3,3,(3_R,2_R,17_R,1_R,-5_R,13_R,0_R,2_R,1_R),true,0)
 assert(3_R === rawMatrixEntry(m,0,0))
@@ -480,7 +506,7 @@ assert try (rawMatrixEntry(m1,2,1,0_R); false) else true
 ------------------
 -- rawGCD --------
 ------------------
-load "raw-util.m2"
+needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (7*x+2*y+3*z)^2*(13*x^2+y-5)
 g = (9*x-2*y+3*z)^2*(13*x^2+y-5)
@@ -541,7 +567,7 @@ testfactor = (f) -> (
      assert(f === product apply(#g_0, i -> (g_0_i)^(g_1_i)))
      )
 
-load "raw-util.m2"
+needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (x+y)*(x-y)
 rawFactor f
@@ -557,7 +583,7 @@ f = (x+y)*(x-y)
 rawFactor f
 testfactor f
 
-load "raw-util.m2"
+needs "raw-util.m2"
 R = polyring(rawQQ(), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^3*(x^2+y^4+z^7-x*y-13*x*z^2+12)
 time rawFactor f
@@ -571,11 +597,10 @@ f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 --time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03
 --testfactor f
 f1 = rawMatrixDiff(mat{{x}},mat{{f}});
-f2 = rawGCD(f,rawMatrixEntry(f1,0,0));
+--f2 = rawGCD(f,rawMatrixEntry(f1,0,0)); -- CRASHES!!
+<< "rawGCD crashes on this one!" << endl;
 
-
-
-
+needs "raw-util.m2"
 R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 time rawFactor f -- .13 sec 1 Gz G4 tibook 1/19/03

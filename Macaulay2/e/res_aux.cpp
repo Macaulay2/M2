@@ -1,5 +1,6 @@
 // Copyright 1996 Michael E. Stillman
 // Included from 'res.cc'
+#include "matrixcon.hpp"
 
 int res_comp::n_pairs(int lev, int d) const
 {
@@ -245,9 +246,9 @@ void res_comp::stats(buffer &o) const
 	o << "---- level " << lev << " ----" << newline;
 	for (int i=0; i<resn[lev]->bin.length(); i++)
 	  {
-	    res_degree *pairs = resn[lev]->bin[i];
-	    if (pairs == NULL) continue;
-	    for (res_pair *p = pairs->first; p != NULL; p = p->next)
+	    res_degree *mypairs = resn[lev]->bin[i];
+	    if (mypairs == NULL) continue;
+	    for (res_pair *p = mypairs->first; p != NULL; p = p->next)
 	      {
 		o.put(i,4);
 		o << ' ';
@@ -269,8 +270,8 @@ FreeModule *res_comp::free_of(int i) const
   res_level *lev = resn[i];
   for (int j=0; j<lev->bin.length(); j++)
     {
-      res_degree *pairs = lev->bin[j];
-      for (res_pair *p = pairs->first; p != NULL; p = p->next)
+      res_degree *mypairs = lev->bin[j];
+      for (res_pair *p = mypairs->first; p != NULL; p = p->next)
 	{
 	  multi_degree(p, deg);
 	  result->append(deg, p->base_monom); // MES: add also p->compare_num as arg
@@ -288,17 +289,17 @@ FreeModule *res_comp::minimal_free_of(int i) const
   if (i < 0 || i > length_limit)
     return result;
   int *deg = degree_monoid()->make_one();
-  int nminimal = 0;
+  int nminimals = 0;
   res_level *lev = resn[i];
   for (int j=0; j<lev->bin.length(); j++)
     {
-      res_degree *pairs = lev->bin[j];
-      for (res_pair *p = pairs->first; p != NULL; p = p->next)
+      res_degree *mypairs = lev->bin[j];
+      for (res_pair *p = mypairs->first; p != NULL; p = p->next)
 	if (p->syz_type == SYZ_MINIMAL)
 	  {
 	    multi_degree(p, deg);
 	    result->append(deg);
-	    p->minimal_me = nminimal++;
+	    p->minimal_me = nminimals++;
 	  }
     }
   degree_monoid()->remove(deg);
@@ -308,19 +309,20 @@ FreeModule *res_comp::minimal_free_of(int i) const
 
 Matrix *res_comp::make(int level) const
 {
-  Matrix *result = new Matrix(free_of(level-1), free_of(level));
+  const FreeModule *F = free_of(level-1);
+  const FreeModule *G = free_of(level);
+  MatrixConstructor result(F, G, false /* not mutable */, NULL);
 
   int n = 0;
-  if (result->n_cols() == 0) return result;
+  if (G == 0) return result.to_matrix();
   res_level *lev = resn[level];
   for (int j=0; j<lev->bin.length(); j++)
     {
-      res_degree *pairs = lev->bin[j];
-      for (res_pair *p = pairs->first; p != NULL; p = p->next)
-	(*result)[n++] = R->to_vector(p->syz, result->rows());
+      res_degree *mypairs = lev->bin[j];
+      for (res_pair *p = mypairs->first; p != NULL; p = p->next)
+        result.set_column(n++, R->to_vector(p->syz, F));    
     }
-  
-  return result;
+  return result.to_matrix();
 }
 
 //////////////////////////////////////////////
@@ -353,8 +355,10 @@ void res_comp::reduce_minimal(int x, resterm *&f, array<res_pair *> &elems) cons
 
 Matrix *res_comp::make_minimal(int i) const
 {
-  Matrix *m = new Matrix(minimal_free_of(i-1), minimal_free_of(i));
-  if (i < 0 || i > length_limit) return m;
+  const FreeModule *F = minimal_free_of(i-1);
+  const FreeModule *G = minimal_free_of(i);
+  MatrixConstructor result(F, G, false /* not mutable */, NULL);
+  if (i < 0 || i > length_limit) return result.to_matrix();
   array<res_pair *> elems;
 
   res_level *lev = resn[i];
@@ -373,10 +377,10 @@ Matrix *res_comp::make_minimal(int i) const
 	      p->stripped_syz = R->strip(p->syz);
 	      reduce_minimal(x,p->stripped_syz, elems);
 	    }
-	  (*m)[thisx++] = R->to_vector(p->stripped_syz, m->rows(), 1);
+	  result.set_column(thisx++, R->to_vector(p->stripped_syz, F, 1));
 	}
     }
-  return m;
+  return result.to_matrix();
 }
 
 #if 0

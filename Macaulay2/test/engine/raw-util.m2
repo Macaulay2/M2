@@ -5,6 +5,7 @@
 trivmonoid = rawMonoid();
 degmonoid = (n) -> (
      mo := rawMonomialOrdering { GroupLex => n };
+     t := symbol t;
      varnames := if n === 1 then {"t"} else
         toList apply(1..n, i -> toString(t_i));
      rawMonoid(mo, 
@@ -37,7 +38,7 @@ polyring = (K, vars) -> (
      -- each element of vars should be a symbol!
      vars = toList vars;
      R := rawPolynomialRing(K, singlemonoid vars);
-     scan(#vars, i -> assign(vars#i, rawRingVar(R,i,1)));
+     scan(#vars, i -> vars#i <- rawRingVar(R,i,1));
      R)
 
 polyring2 = (K, vars, mo) -> (

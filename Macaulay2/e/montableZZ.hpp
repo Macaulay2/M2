@@ -44,8 +44,6 @@ public:
   /* Insert [coeff,exp,comp,id] into the table.  If there is already
      an element which is <= [exp,comp], this triple is still
      inserted.  If that is not desired, use find_divisors.
-     WARNING: once 'insert' is called, insert_ZZ, find_divisors_ZZ  routines
-     should not be called.
   */
 
   bool is_weak_member(mpz_ptr c, exponents exp, int comp) const;

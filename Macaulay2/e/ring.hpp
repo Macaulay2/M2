@@ -83,7 +83,7 @@ public:
   virtual bool is_commutative_ring() const { return true; }
   // Returns true iff this is a commutative ring.
 
-  virtual bool is_quotient_poly_ring() const { return false; }
+  virtual bool is_quotient_ring() const { return false; }
   // Returns true if this is a polynomial ring, (possibly with fractions),
   // with a quotient ideal.  This could be a non-commutative ring
   // with skew-commutative, Weyl algebra, or other multiplication.
@@ -114,10 +114,13 @@ public:
   void declare_field();
   ring_elem get_zero_divisor() const;
 
-  typedef enum {COEFF_ZZ, COEFF_QQ, COEFF_SMALL} CoefficientType;
-  virtual  CoefficientType coefficient_type() const { return COEFF_SMALL; }
+  typedef enum {COEFF_ZZ, COEFF_QQ, COEFF_BASIC} CoefficientType;
+  virtual  CoefficientType coefficient_type() const { return COEFF_BASIC; }
   // What the ultimate coefficient type is.  ZZ, QQ, finite fields return these 
   // three values.  Fraction fields return their ultimate value, as do poly rings.
+
+  virtual const Ring *get_ambient_ring() const { return this; }
+  virtual const Ring *get_denominator_ring() const { return 0; }
 
   ///////////////////////////////////
   // Casting up the ring hierarchy //
