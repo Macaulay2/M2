@@ -33,205 +33,6 @@ void GBRing::exponents_delete(exponents e)
   delete [] e;
 }
 
-/////////////
-// GRType ///
-/////////////
-// This class is used for translating vectors and ringelems to and from
-// gbvector's.
-
-
-class GRType_BASE : public GRType
-{
-  friend class GRType;
-
-  const Ring *R_;
-  GRType_BASE(const Ring *R) : GRType(NULL), R_(R) {}
-public:
-  GRType::tag type() const { return BASE; }
-
-  ring_elem to_ringelem(ring_elem coeff, 
-			const int *exp) const
-  {
-    return coeff;
-  }
-
-  ring_elem to_ringelem_denom(ring_elem coeff, 
-			      ring_elem denom, 
-			      int *exp) const
-  {
-    // To use this, the corresponding ring MUST have division defined
-    return R_->divide(coeff, denom);
-  }
-
-  void from_ringelem(gbvectorHeap &H, 
-		     ring_elem coeff, 
-		     int comp, 
-		     int *exp,
-		     int firstvar) const
-  {
-    GBRing *GR = H.get_gb_ring();
-    const FreeModule *F = H.get_freemodule();
-    const Monoid *M = GR->get_flattened_monoid();
-
-    gbvector *g;
-    // M is the flattened monoid
-    g = GR->gbvector_term(F, coeff, comp);
-    M->from_expvector(exp, g->monom);
-    H.add(g);
-  }
-};
-
-class GRType_QQ : public GRType
-{
-  // This is essentially identical to GRType_FRAC
-  // so maybe they should be a template?
-  friend class GRType;
-  const QQ *KR_;
-  ring_elem one_;
-  GRType_QQ(const QQ *KR) : GRType(0), KR_(KR)
-  {
-    const Ring *R = ZZ;
-    next_ = R->get_GRType();
-    one_ = R->from_int(1);
-  }
-public:
-  GRType::tag type() const { return FRAC_QQ; }
-
-  ring_elem to_ringelem(ring_elem coeff, 
-			const int *exp) const
-  {
-    ring_elem a = next_->to_ringelem(coeff,exp);
-    return KR_->fraction(a, one_);
-  }
-
-  ring_elem to_ringelem_denom(ring_elem coeff, 
-			      ring_elem denom, 
-			      int *exp) const
-  {
-    ring_elem a = next_->to_ringelem(coeff,exp);
-    return KR_->fraction(a, denom);
-  }
-
-  void from_ringelem(gbvectorHeap &H, 
-		     ring_elem coeff, 
-		     int comp, 
-		     int *exp,
-		     int firstvar) const
-  {
-    ring_elem a = KR_->numerator(coeff);
-    next_->from_ringelem(H, a, comp, exp, firstvar);
-  }
-};
-
-class GRType_FRAC : public GRType
-{
-  friend class GRType;
-  const FractionField *KR_;
-  ring_elem one_;
-  GRType_FRAC(const FractionField *KR) : GRType(0), KR_(KR)
-  {
-    const Ring *R = KR->get_ring();
-    next_ = R->get_GRType();
-    one_ = R->from_int(1);
-  }
-public:
-  GRType::tag type() const { return FRAC; }
-
-  ring_elem to_ringelem(ring_elem coeff, 
-			const int *exp) const
-  {
-    ring_elem a = next_->to_ringelem(coeff,exp);
-    return KR_->fraction(a, one_);
-  }
-
-  ring_elem to_ringelem_denom(ring_elem coeff, 
-			      ring_elem denom, 
-			      int *exp) const
-  {
-    ring_elem a = next_->to_ringelem(coeff,exp);
-    return KR_->fraction(a, denom);
-  }
-
-  void from_ringelem(gbvectorHeap &H, 
-		     ring_elem coeff, 
-		     int comp, 
-		     int *exp,
-		     int firstvar) const
-  {
-    ring_elem a = KR_->numerator(coeff);
-    next_->from_ringelem(H, a, comp, exp, firstvar);
-  }
-};
-
-class GRType_POLY : public GRType
-{
-  friend class GRType;
-  const PolynomialRing *P;
-  int _n_orig_vars;
-  int *_MONOM1;
-
-  GRType_POLY(const PolynomialRing *P0) : GRType(0), P(P0)
-  {
-    const Ring *R = P->Ncoeffs();
-    next_ = R->get_GRType();
-    _n_orig_vars = R->n_vars();
-    _MONOM1 = P->Nmonoms()->make_one();
-  }
-public:
-  GRType::tag type() const { return POLY; }
-
-  ring_elem to_ringelem(ring_elem coeff, 
-			const int *exp) const
-  {
-    ring_elem a = next_->to_ringelem(coeff, exp + _n_orig_vars);
-    P->Nmonoms()->from_expvector(exp, _MONOM1);
-    Nterm *t = P->term(a, _MONOM1);
-    return t;
-  }
-
-  ring_elem to_ringelem_denom(ring_elem coeff, 
-			      ring_elem denom, 
-			      int *exp) const
-  {
-    ring_elem a = next_->to_ringelem_denom(coeff, denom, exp + _n_orig_vars);
-    P->Nmonoms()->from_expvector(exp, _MONOM1);
-    Nterm *t = P->term(a, _MONOM1);
-    return t;
-  }
-
-  void from_ringelem(gbvectorHeap &H, 
-		     ring_elem coeff, 
-		     int comp, 
-		     int *exp,
-		     int firstvar) const
-  {
-    const Monoid *M = P->Nmonoms();
-    Nterm *t = coeff;
-    for ( ; t != 0; t=t->next)
-      {
-	M->to_expvector(t->monom, exp + firstvar);
-	next_->from_ringelem(H, t->coeff, comp, exp, firstvar + _n_orig_vars);
-      }
-  }
-};
-
-const GRType *GRType::make_BASE(const Ring *R)
-{
-  return new GRType_BASE(R);
-}
-const GRType *GRType::make_FRAC(const FractionField *R)
-{
-  return new GRType_FRAC(R);
-}
-const GRType *GRType::make_QQ(const QQ *R)
-{
-  return new GRType_QQ(R);
-}
-const GRType *GRType::make_POLY(const PolynomialRing *R)
-{
-  return new GRType_POLY(R);
-}
-
 ////////////////////////////////////////////////////////////////
 GBRing::~GBRing()
 {
@@ -252,26 +53,20 @@ GBRingSolvable::~GBRingSolvable()
 {
 }
 
-gbvector *used_to_determine_size = 0;
-
-GBRing::GBRing(const PolynomialRing *origR)
+GBRing::GBRing(const Ring *K0, const Monoid *M0)
   : _schreyer_encoded(false),
-    originalR(origR),
-    R(origR->get_flattened_ring()->cast_to_PolynomialRing()),
-    M(R->Nmonoms()),
-    K(R->Ncoeffs()),
-    _GT(origR->get_GRType()),
+    M(M0),
+    K(K0),
     _coeffs_ZZ(false),  // set below
     _nvars(M->n_vars()),
     _degrees(0), // set below
-    _nquotients(0),
-    _quotients(0),
-    _Rideal(0),
-    _RidealZZ(0),
+    _is_skew(false),
     _skew(),
-    _is_weyl_algebra(false),
-    _one(K->from_int(1)),
-    gbvector_size(sizeofgbvector(used_to_determine_size,M->monomial_size()))
+    is_weyl(false),
+    weyl(0),
+    is_solvable(false),
+    solvable(0),
+    _one(K->from_int(1))
 {
   _EXP1 = new int[_nvars+2];
   _EXP2 = new int[_nvars+2];
@@ -282,6 +77,9 @@ GBRing::GBRing(const PolynomialRing *origR)
   _MONOM1 = M->make_one();
   _MONOM2 = M->make_one();
 
+  gbvector *used_to_determine_size = 0;
+  gbvector_size = sizeofgbvector(used_to_determine_size,M->monomial_size());
+
   if (K == ZZ)
     _coeffs_ZZ = true;
 
@@ -289,16 +87,6 @@ GBRing::GBRing(const PolynomialRing *origR)
   _degrees = new int[_nvars];
   for (int i=0; i<_nvars; i++)
     _degrees[i] = M->primary_degree_of_var(i);
-
-  if (R->is_quotient_ring())
-    initialize_quotients();
-}
-
-void GBRing::initialize_quotients()
-{
-  // Loop through all of the quotient elements
-  //    For each, make a gbvector
-  // Also make an Rideal, and possibly an RidealZZ.
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -308,12 +96,10 @@ void GBRing::initialize_quotients()
 //////////////////////
 // Polynomial rings //
 //////////////////////
-GBRingPoly::GBRingPoly(const PolynomialRing *R0) : GBRing(R0) { }
 
-GBRing * GBRing::create_PolynomialRing(const PolynomialRing *R)
+GBRing * GBRing::create_PolynomialRing(const Ring *K, const Monoid *M)
 {
-  GBRing *result = new GBRingPoly(R);
-  return result;
+  return new GBRingPoly(K,M);
 }
 
 gbvector *GBRingPoly::mult_by_term(const FreeModule *F,
@@ -344,14 +130,20 @@ gbvector *GBRingPoly::mult_by_term(const FreeModule *F,
 // Skew commutative polynomial rings //
 ///////////////////////////////////////
 
-GBRingSkew::GBRingSkew(const SkewPolynomialRing *R0) : GBRing(R0)
+GBRingSkew::GBRingSkew(const Ring *K0, 
+		       const Monoid *M0, 
+		       SkewMultiplication skew0)
+  : GBRing(K0,M0)
 {
-  _skew = R0->_skew;
+  _is_skew = true;
+  _skew = skew0;
 }
 
-GBRing * GBRing::create_SkewPolynomialRing(const SkewPolynomialRing *R)
+GBRing * GBRing::create_SkewPolynomialRing(const Ring *K0, 
+					   const Monoid *M0, 
+					   SkewMultiplication skew0)
 {
-  return new GBRingSkew(R);
+  return new GBRingSkew(K0,M0,skew0);
 }
 
 gbvector *GBRingSkew::mult_by_term(const FreeModule *F,
@@ -392,25 +184,25 @@ gbvector *GBRingSkew::mult_by_term(const FreeModule *F,
 ///////////////////
 // Weyl algebra ///
 ///////////////////
-GBRingWeyl::GBRingWeyl(const WeylAlgebra *R0)
-  : GBRing(R0)
+GBRingWeyl::GBRingWeyl(const Ring *K0, const Monoid *M0, const WeylAlgebra *R0)
+  : GBRing(K0,M0)
 {
-  _is_weyl_algebra = true;
-  _W = R0;
+  is_weyl = true;
+  weyl = R0;
 }
 
-GBRingWeylZZ::GBRingWeylZZ(const WeylAlgebra *R0)
-  : GBRingWeyl(R0)
+GBRingWeylZZ::GBRingWeylZZ(const Ring *K0, const Monoid *M0, const WeylAlgebra *R0)
+  : GBRingWeyl(K0,M0,R0)
 {
-  _is_weyl_algebra = true;
-  _W = R0;
+  is_weyl = true;
+  weyl = R0;
 }
 
-GBRing * GBRing::create_WeylAlgebra(const WeylAlgebra *R)
+GBRing * GBRing::create_WeylAlgebra(const Ring *K0, const Monoid *M0, const WeylAlgebra *R0)
 {
-  if (R->get_flattened_ring()->Ncoeffs() == ZZ)
-    return new GBRingWeylZZ(R);
-  return new GBRingWeyl(R); 
+  if (K0 == ZZ)
+    return new GBRingWeylZZ(K0,M0,R0);
+  return new GBRingWeyl(K0,M0,R0); 
 }
 
 gbvector *GBRingWeyl::mult_by_term(const FreeModule *F,
@@ -421,7 +213,7 @@ gbvector *GBRingWeyl::mult_by_term(const FreeModule *F,
 {
   // Remember: this multiplies w/o regard to any quotient elements
   gbvectorHeap result(this,F);
-  return _W->gbvector_mult_by_term(result,f,u,monom,comp);
+  return weyl->gbvector_mult_by_term(result,f,u,monom,comp);
 }
 
 gbvector *GBRingWeylZZ::mult_by_term(const FreeModule *F,
@@ -432,20 +224,26 @@ gbvector *GBRingWeylZZ::mult_by_term(const FreeModule *F,
 {
   // Remember: this multiplies w/o regard to any quotient elements
   gbvectorHeap result(this,F);
-  return _W->gbvector_mult_by_term(result,f,u,monom,comp);
+  return weyl->gbvector_mult_by_term(result,f,u,monom,comp);
 }
 
 ///////////////////////
 // Solvable algebras //
 ///////////////////////
-GBRingSolvable::GBRingSolvable(const SolvableAlgebra *P)
-  : GBRing(P)
+GBRingSolvable::GBRingSolvable(const Ring *K0, 
+			       const Monoid *M0, 
+			       const SolvableAlgebra *R0)
+  : GBRing(K0,M0)
 {
+  is_solvable = true;
+  solvable = R0;
 }
 
-GBRing * GBRing::create_SolvableAlgebra(const SolvableAlgebra *R)
+GBRing * GBRing::create_SolvableAlgebra(const Ring *K0, 
+					const Monoid *M0, 
+					const SolvableAlgebra *R0)
 {
-  return 0;
+  return new GBRingSolvable(K0,M0,R0);
 }
 
 gbvector *GBRingSolvable::mult_by_term(const FreeModule *F,
@@ -985,7 +783,8 @@ void GBRing::gbvector_apply(const FreeModule *F,
 			    gbvector * & f, gbvector * & fsyz,
 			    const gbvector * gsyz,
 			    const gbvector **elems,
-			    const gbvector **elems_syz)
+			    const gbvector **elems_syz,
+			    const gbvector **quotients)
 {
   // modifies (f,fsyz)
   // gsyz is allowed to have negative elements.  These refer to 
@@ -999,7 +798,7 @@ void GBRing::gbvector_apply(const FreeModule *F,
     {
       if (gsyz->comp < 0)
 	{
-	  gbvector *v = mult_by_term(F, _quotients[-1-gsyz->comp],
+	  gbvector *v = mult_by_term(F, quotients[-1-gsyz->comp],
 				     gsyz->coeff,
 				     gsyz->monom,
 				     f->comp);
@@ -1375,56 +1174,6 @@ void GBRing::reduce_lead_term_heap(const FreeModule *F,
 }
 
 
-vec GBRing::gbvector_to_vec(const FreeModule *F, const gbvector *v) const
-{
-  vecHeap H(F);
-  
-  for (const gbvector *t = v; t != 0; t=t->next)
-    {
-      M->to_expvector(t->monom, _EXP1);
-      ring_elem a = _GT->to_ringelem(t->coeff, _EXP1);
-      vec w = F->raw_term(a, t->comp-1);
-      H.add(w);
-    }
-
-  return H.value();
-}
-
-vec GBRing::gbvector_to_vec_denom(const FreeModule *F, const gbvector *v,
-				  const ring_elem denom) const
-{
-  vecHeap H(F);
-  
-  for (const gbvector *t = v; t != 0; t=t->next)
-    {
-      M->to_expvector(t->monom, _EXP1);
-      ring_elem a = _GT->to_ringelem_denom(t->coeff, denom, _EXP1);
-      vec w = F->raw_term(a, t->comp-1);
-      H.add(w);
-    }
-
-  return H.value();
-}
-
-
-gbvector * GBRing::gbvector_from_vec(const FreeModule *F, 
-				     const vec v,
-				     ring_elem &result_denominator)
-{
-  gbvectorHeap H(this,F);
-  // TODO: remove common denominator!!
-  // result_denominator = _one;
-  // F->common_denominator(v, result_denominator);
-  // now mult through by this element...
-  // SERIOUS QUESTION: what ring is this element in????
-  for (vec w = v; w != 0; w=w->next)
-    {
-      _GT->from_ringelem(H, w->coeff, w->comp+1, _EXP1, 0);
-    }
-
-  result_denominator = K->from_int(1);
-  return H.value();
-}
 
 extern "C" void dvec(const GBRing *R, gbvector *v)
 {

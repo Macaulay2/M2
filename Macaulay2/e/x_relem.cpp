@@ -97,7 +97,13 @@ const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
 					 M2_arrayint skewvars)
 {
   /* TODO */
-  return SkewPolynomialRing::create(R,skewvars);
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+  return SkewPolynomialRing::create(P,skewvars);
 }
 
 const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,

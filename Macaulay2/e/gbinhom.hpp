@@ -15,8 +15,9 @@ class GBinhom_comp : public gb_comp
 private:
   // Ring information
   GBRing *GR;
-  const Monoid *M;
-  const Ring *K;
+  const PolynomialRing *originalR;
+  const Monoid *M; // flattened monomials
+  const Ring *K; // flattened coefficients
 
   const FreeModule *F;
   const FreeModule *Fsyz;

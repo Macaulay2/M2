@@ -11,9 +11,9 @@ extern int compare_type;
 gb_emitter::gb_emitter(const Matrix *m)
   : gens(m), g(NULL), n_left(m->n_cols()), n_i(0), n_in_degree(-1)
 {
-  const PolynomialRing *P = m->get_ring()->cast_to_PolynomialRing();
-  assert(P != 0);
-  GR = P->get_gb_ring();
+  originalR = m->get_ring()->cast_to_PolynomialRing();
+  assert(originalR != 0);
+  GR = originalR->get_gb_ring();
   this_degree = m->cols()->lowest_primary_degree() - 1;
   n_gens = 0;			// Also needs to be set at that time.
   these = new int[m->n_cols()];
@@ -40,7 +40,7 @@ int gb_emitter::calc_gb(int degree, const intarray & /*stop*/)
       if (g != NULL)
 	{
 	  ring_elem denom;
-	  gbvector *v = GR->gbvector_from_vec(gens->rows(),
+	  gbvector *v = originalR->translate_gbvector_from_vec(gens->rows(),
 					      (*gens)[these[n_i]],
 					      denom);
 	  g->receive_generator(v, these[n_i], denom);
@@ -90,11 +90,12 @@ void gbres_comp::setup(const Matrix *m,
 		     int strategy)
 {
   int i;
-  const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
-  if (R == NULL) assert(0);
-  GR = R->get_gb_ring();
+  originalR = m->get_ring()->cast_to_PolynomialRing();
+  if (originalR == NULL) assert(0);
+  GR = originalR->get_gb_ring();
 
-  FreeModule *Fsyz = R->make_FreeModule();
+#warning "FreeModules should be over what ring?"
+  FreeModule *Fsyz = originalR->make_FreeModule();
   if (length <= 0)
     {
       ERROR("resolution length must be at least 1");
@@ -145,11 +146,11 @@ void gbres_comp::setup(const Matrix *m,
       if (origsyz > 0) deg--;
       for (i=2; i<n_nodes-1; i++)
 	{
-	  FreeModule *F = R->make_FreeModule();
+	  FreeModule *F = originalR->make_FreeModule();
 	  nodes[i] = new gb2_comp(F,nodes[i-1],deg++,-1,i,strategy);
 	  nodes[i-1]->set_output(nodes[i]);
 	}
-      FreeModule *F = R->make_FreeModule();
+      FreeModule *F = originalR->make_FreeModule();
       nodes[n_nodes-1] = new gb2_comp(F,nodes[n_nodes-2],deg++,0,n_nodes-1,strategy);
       nodes[n_nodes-1]->set_output(NULL);      
     }
@@ -236,14 +237,14 @@ Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
       const FreeModule *Fsyz = nodes[1]->output_free_module();
 
       ring_elem denom;
-      gbvector * f = GR->gbvector_from_vec(F, (*m)[i], denom);
+      gbvector * f = originalR->translate_gbvector_from_vec(F, (*m)[i], denom);
       gbvector * fsyz = GR->gbvector_zero();
 
       nodes[1]->reduce(f, fsyz);
 
-      vec fv = GR->gbvector_to_vec_denom(F, f, denom);
+      vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
       GR->get_flattened_coefficients()->negate_to(denom);
-      vec fsyzv = GR->gbvector_to_vec_denom(Fsyz,fsyz, denom);
+      vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,fsyz, denom);
       (*red)[i] = fv;
       (*lift)[i] = fsyzv;
     }
@@ -261,14 +262,14 @@ Vector *gbres_comp::reduce(const Vector *v, Vector *&lift)
   const FreeModule *Fsyz = nodes[1]->output_free_module();
 
   ring_elem denom;
-  gbvector *f = GR->gbvector_from_vec(F, v->get_value(), denom);
+  gbvector *f = originalR->translate_gbvector_from_vec(F, v->get_value(), denom);
   gbvector *fsyz = NULL;
 
   nodes[1]->reduce(f, fsyz);
 
-  vec fv = GR->gbvector_to_vec_denom(F, f, denom);
+  vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
   GR->get_flattened_coefficients()->negate_to(denom);
-  vec fsyzv = GR->gbvector_to_vec_denom(Fsyz,fsyz, denom);
+  vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,fsyz, denom);
 
   lift = Vector::make_raw(Fsyz, fsyzv);
   return Vector::make_raw(F, fv);

@@ -105,6 +105,25 @@ public:
   virtual ring_elem lead_coeff(const ring_elem f) const;
   virtual ring_elem get_coeff(const ring_elem f, const int *m) const;
   virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const;
+
+  ///////////////////////////////////////////////////////
+  // Used in gbvector <--> vector/ringelem translation //
+  ///////////////////////////////////////////////////////
+protected:
+  ring_elem trans_one; // 1 as an element of ZZ.
+
+  virtual ring_elem trans_to_ringelem(ring_elem coeff, 
+				      const int *exp) const;
+  virtual ring_elem trans_to_ringelem_denom(ring_elem coeff, 
+					    ring_elem denom, 
+					    int *exp) const;
+  virtual void trans_from_ringelem(gbvectorHeap &H, 
+				   ring_elem coeff, 
+				   int comp, 
+				   int *exp,
+				   int firstvar) const;
+  
+  virtual trans_tag trans_type() const { return FRAC; }
 };
 
 #endif

@@ -31,7 +31,6 @@ RR *RR::create(const Monoid *D, double epsilon)
 {
   RR *result = new RR;
   result->initialize_RR(D, epsilon);
-  result->_grtype = GRType::make_BASE(result);
   return result;
 }
 

@@ -29,7 +29,6 @@ bigCC *bigCC::create(const Monoid *D)
 {
   bigCC *result = new bigCC;
   result->initialize_bigCC(D);
-  result->_grtype = GRType::make_BASE(result);
   return result;
 }
 

@@ -92,7 +92,8 @@ WeylAlgebra *WeylAlgebra::create(const Ring *R,
   if (!result->initialize_weyl(derivatives, commutatives, homog_var))
     return 0;
 
-  result->_grtype = GRType::make_POLY(result);
+  const PolynomialRing *flatR = R->get_flattened_ring();
+  result->_gb_ring = GBRing::create_WeylAlgebra(flatR->Ncoeffs(), flatR->Nmonoms(), result);
   return result;
 }
 

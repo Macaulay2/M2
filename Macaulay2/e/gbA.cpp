@@ -36,7 +36,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
       // MES: throw an error here.
       assert(0);
     }
-  _originalR = origR;
+  originalR = origR;
   R = origR->get_gb_ring();
 
   _nvars = R->get_flattened_monoid()->n_vars();
@@ -81,7 +81,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
-      gbvector *f = R->gbvector_from_vec(_F,(*m)[i], denom);
+      gbvector *f = originalR->translate_gbvector_from_vec(_F,(*m)[i], denom);
       spair *p = new_gen(i, f, denom);
       if (p != NULL)
 	{
@@ -1016,7 +1016,7 @@ const MatrixOrNull *gbA::get_matrix(int level, M2_bool minimize)
       compute();
       Matrix *result = new Matrix(_Fsyz);
       for (vector<gbvector *>::iterator i = _syz.begin(); i != _syz.end(); i++)
-	result->append(R->gbvector_to_vec(_Fsyz, *i));
+	result->append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
       return result;
     }
   else if (minimize)

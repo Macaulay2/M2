@@ -57,7 +57,6 @@ Z_mod *Z_mod::create(int p, const Monoid *D)
   Z_mod *result = new Z_mod;
   if (!result->initialize_Z_mod(p,D)) return 0;
 
-  result->_grtype = GRType::make_BASE(result);
   return result;
 }
 

@@ -14,7 +14,7 @@ bool SkewPolynomialRing::initialize_skew(M2_arrayint skewvars)
   return true;
 }
 
-SkewPolynomialRing *SkewPolynomialRing::create(const Ring *R,
+SkewPolynomialRing *SkewPolynomialRing::create(const PolynomialRing *R,
 					       M2_arrayint skewvars)
 {
   // CHECK: R is a polynomial ring, and is commutative.
@@ -22,8 +22,8 @@ SkewPolynomialRing *SkewPolynomialRing::create(const Ring *R,
 
   result->initialize_poly_ring(R->Ncoeffs(), R->Nmonoms());
   if (!result->initialize_skew(skewvars)) return 0;
-  result->_gb_ring = GBRing::create_SkewPolynomialRing(result);
-  result->_grtype = GRType::make_POLY(result);
+  const PolynomialRing *flatR = R->get_flattened_ring()->cast_to_PolynomialRing();
+  result->_gb_ring = GBRing::create_SkewPolynomialRing(flatR->Ncoeffs(), flatR->Nmonoms(),result->_skew);
   return result;
 }
 

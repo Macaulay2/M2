@@ -367,7 +367,7 @@ const Matrix *GBasis::get_minimal_gb()
   minimalize_gb();
   Matrix *result = new Matrix(F);
   for (vector<POLY>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
-    result->append(R->gbvector_to_vec(F, (*i).f));
+    result->append(originalR->translate_gbvector_to_vec(F, (*i).f));
   return result;
 }
 
@@ -376,7 +376,7 @@ const Matrix *GBasis::get_minimal_gens()
   Matrix *result = new Matrix(F);
   for (vector<gbelem *>::iterator i = gb.begin(); i != gb.end(); i++)
     if ((*i)->minlevel <= ELEM_TRIMMED)
-      result->append(R->gbvector_to_vec(F, (*i)->g.f));
+      result->append(originalR->translate_gbvector_to_vec(F, (*i)->g.f));
   return result;
 }
 
@@ -385,7 +385,7 @@ const Matrix *GBasis::get_change()
   minimalize_gb();
   Matrix *result = new Matrix(Fsyz);
   for (vector<POLY>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
-    result->append(R->gbvector_to_vec(Fsyz, (*i).fsyz));
+    result->append(originalR->translate_gbvector_to_vec(Fsyz, (*i).fsyz));
   return result;
 }
 
@@ -396,7 +396,7 @@ const Matrix *GBasis::get_leadterms(int nparts)
   for (vector<POLY>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
     {
       gbvector *f = R->gbvector_lead_term(nparts, F, (*i).f);
-      result->append(R->gbvector_to_vec(F, f));
+      result->append(originalR->translate_gbvector_to_vec(F, f));
     }
   return result;
 }
@@ -420,12 +420,12 @@ const MatrixOrNull *GBasis::matrix_remainder(const Matrix *m)
     {
       ring_elem denom;
       POLY g;
-      g.f = R->gbvector_from_vec(F, (*m)[i], denom);
+      g.f = originalR->translate_gbvector_from_vec(F, (*m)[i], denom);
       g.fsyz = R->gbvector_zero();
 
       remainder(g, 0, denom); // MES: this degree.  What should it be?
 
-      vec fv = R->gbvector_to_vec_denom(F, g.f, denom);
+      vec fv = originalR->translate_gbvector_to_vec_denom(F, g.f, denom);
       // MES: what about g.fsyz??
       (*red)[i] = fv;
     }
@@ -449,14 +449,14 @@ void GBasis::matrix_lift(const Matrix *m,
     {
       ring_elem denom;
       POLY g;
-      g.f = R->gbvector_from_vec(F, (*m)[i], denom);
+      g.f = originalR->translate_gbvector_from_vec(F, (*m)[i], denom);
       g.fsyz = R->gbvector_zero();
 
       remainder(g, 0, denom); // MES: this degree.  What should it be?
 
-      vec fv = R->gbvector_to_vec_denom(F, g.f, denom);
+      vec fv = originalR->translate_gbvector_to_vec_denom(F, g.f, denom);
       K->negate_to(denom);
-      vec fsyzv = R->gbvector_to_vec_denom(Fsyz,g.fsyz, denom);
+      vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,g.fsyz, denom);
       (**result_remainder)[i] = fv;
       (**result_quotient)[i] = fsyzv;
     }
@@ -472,7 +472,7 @@ int GBasis::contains(const Matrix *m)
     {
       ring_elem denom;
       POLY g;
-      g.f = R->gbvector_from_vec(F,(*m)[i], denom);
+      g.f = originalR->translate_gbvector_from_vec(F,(*m)[i], denom);
       g.fsyz = NULL;
       remainder(g,0);
       R->gbvector_remove(g.fsyz);

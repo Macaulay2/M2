@@ -33,7 +33,6 @@ CC *CC::create(const Monoid *D, double epsilon)
 {
   CC *result = new CC;
   result->initialize_CC(D, epsilon);
-  result->_grtype = GRType::make_BASE(result); // is this necessary?
   return result;
 }
 

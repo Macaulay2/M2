@@ -52,11 +52,8 @@ class GBRing
   // ii. is it UP or DOWN
 protected:
   bool _schreyer_encoded;
-  const PolynomialRing *originalR;
-  const PolynomialRing *R; // flattended poly ring: is this a quotient ring?
   const Monoid *M; // flattened monoid
   const Ring *K; // flattened coefficients
-  const GRType *_GT;
   bool _coeffs_ZZ; 
 
   int gbvector_size;
@@ -66,17 +63,23 @@ protected:
 
   bool _up_order; // is the free module order up or down?
 
+#if 0
   int _nquotients;
   gbvector **_quotients;
   MonomialIdeal *_Rideal;
   TermIdeal *_RidealZZ;
+#endif
 
+  bool _is_skew;
   SkewMultiplication _skew;
 
   // Weyl algebra information
   // Private data goes into the subclass
-  bool _is_weyl_algebra; // true if this is either a Weyl or homog Weyl algebra
-  const WeylAlgebra * _W;
+  bool is_weyl; // true if this is either a Weyl or homog Weyl algebra
+  const WeylAlgebra *weyl;
+
+  bool is_solvable;
+  const SolvableAlgebra *solvable;
 
   virtual ~GBRing();
 protected:
@@ -88,7 +91,6 @@ protected:
   int * _EXP1, *_EXP2, *_EXP3, *_EXP4;
   int * _SKEW1, *_SKEW2;
   int * _MONOM1, *_MONOM2;
-
 
   //////////////////////////////
   // Private support routines //
@@ -129,19 +131,21 @@ protected:
   const gbvector *find_coeff(const FreeModule *F,
 			     const gbvector *f, const gbvector *g) const;
 
-  GBRing(const PolynomialRing *origR);
-
-  void initialize_quotients();
+  GBRing(const Ring *K0, const Monoid *M0);
 
 public:
   // Each of these handles quotients as well
-  static GBRing * create_PolynomialRing(const PolynomialRing *R);
-  static GBRing * create_SkewPolynomialRing(const SkewPolynomialRing *R);
-  static GBRing * create_WeylAlgebra(const WeylAlgebra *R);
-  static GBRing * create_SolvableAlgebra(const SolvableAlgebra *R);
+  static GBRing * create_PolynomialRing(const Ring *K, const Monoid *M);
+  static GBRing * create_SkewPolynomialRing(const Ring *K0, 
+					    const Monoid *M0, 
+					    SkewMultiplication skew0);
+  static GBRing * create_WeylAlgebra(const Ring *K0, 
+				     const Monoid *M0, 
+				     const WeylAlgebra *W0);
+  static GBRing * create_SolvableAlgebra(const Ring *K0, 
+					 const Monoid *M0, 
+					 const SolvableAlgebra *R);
   
-
-  const PolynomialRing * get_flattened_ring() const { return R; }
   const Monoid * get_flattened_monoid() const { return M; }
   const Ring * get_flattened_coefficients() const { return K; }
   int n_vars() const { return _nvars; }
@@ -150,12 +154,14 @@ public:
   // Ring information //
   //////////////////////
 
+#if 0
   // array of quotient elements (all component 0).
   bool is_quotient_ring() const { return _nquotients > 0; }
   MonomialIdeal * get_quotient_monomials() const { return _Rideal; }
   TermIdeal * get_quotient_monomials_ZZ() const { return _RidealZZ; }
   int n_quotients() const { return _nquotients; }
   const gbvector * quotient_element(int i) const { return _quotients[i]; }
+#endif
 
   // skew commutativity
   bool is_skew_commutative() const { return _skew.n_skew_vars() > 0; }
@@ -164,23 +170,8 @@ public:
   gbvector * skew_poly(int i) const; // TODO
 
   // Weyl algebra
-  bool is_weyl_algebra() const { return _is_weyl_algebra; }
+  bool is_weyl_algebra() const { return is_weyl; }
   // returns true if this is a Weyl algebra OR a homog Weyl algebra
-  
-  /////////////////
-  // Translation //
-  /////////////////
-  gbvector * gbvector_from_vec(const FreeModule *F, 
-			       const vec v, 
-			       ring_elem &result_denominator);
-
-  vec gbvector_to_vec(const FreeModule *F, const gbvector *v) const;
-
-  vec gbvector_to_vec_denom(const FreeModule *F, 
-			    const gbvector *v,
-			    const ring_elem denom) const;
-  // Translate v/denom to a vector in F.  denom does not need to be positive,
-  // although it had better be non-zero.
 
 
   //////////////////////
@@ -356,7 +347,8 @@ public:
 		      gbvector * & f, gbvector * & fsyz,
 		      const gbvector * gsyz,
 		      const gbvector **elems,
-		      const gbvector **elems_syz);
+		      const gbvector **elems_syz,
+		      const gbvector **quotients);
   // gsyz is allowed to have negative elements.  These refer to 
   // quotient ring elements.  In this case, the component that
   // is used is the lead component of f. (i.e. this is designed for
@@ -370,7 +362,7 @@ class GBRingPoly : public GBRing
 {
 protected:
   friend class GBRing;
-  GBRingPoly(const PolynomialRing *P);
+  GBRingPoly(const Ring *K0, const Monoid *M0) : GBRing(K0,M0) { }
 public:
   virtual gbvector *mult_by_term(const FreeModule *F,
 				 const gbvector *f,
@@ -384,7 +376,7 @@ class GBRingWeyl : public GBRing
 {
 protected:
   friend class GBRing;
-  GBRingWeyl(const WeylAlgebra *W);
+  GBRingWeyl(const Ring *K0, const Monoid *M0, const WeylAlgebra *R0);
 public:
   virtual gbvector *mult_by_term(const FreeModule *F,
 				 const gbvector *f,
@@ -398,7 +390,7 @@ class GBRingWeylZZ : public GBRingWeyl
 {
 protected:
   friend class GBRing;
-  GBRingWeylZZ(const WeylAlgebra *W);
+  GBRingWeylZZ(const Ring *K0, const Monoid *M0, const WeylAlgebra *R0);
 public:
   virtual gbvector *mult_by_term(const FreeModule *F,
 				 const gbvector *f,
@@ -412,7 +404,8 @@ class GBRingSkew : public GBRing
 {
 protected:
   friend class GBRing;
-  GBRingSkew(const SkewPolynomialRing *P);
+  GBRingSkew(const Ring *K0, const Monoid *M0, SkewMultiplication skew0);
+
 public:
   virtual gbvector *mult_by_term(const FreeModule *F,
 				 const gbvector *f,
@@ -426,7 +419,7 @@ class GBRingSolvable : public GBRing
 {
 protected:
   friend class GBRing;
-  GBRingSolvable(const SolvableAlgebra *P);
+  GBRingSolvable(const Ring *K0, const Monoid *M0, const SolvableAlgebra *R0);
 public:
   virtual gbvector *mult_by_term(const FreeModule *F,
 				 const gbvector *f,
@@ -475,30 +468,6 @@ public:
   // Mainly used for debugging.
 };
 
-class GRType {
-protected:
-  typedef enum { BASE, FRAC_QQ, FRAC, POLY } tag;
-  const GRType *next_;
-  GRType(const GRType *next) : next_(next) {}
-public:
-  virtual ring_elem to_ringelem(ring_elem coeff, 
-				const int *exp) const = 0;
-  virtual ring_elem to_ringelem_denom(ring_elem coeff, 
-				      ring_elem denom, 
-				      int *exp) const = 0;
-  virtual void from_ringelem(gbvectorHeap &H, 
-			     ring_elem coeff, 
-			     int comp, 
-			     int *exp,
-			     int firstvar) const = 0;
-
-  virtual tag type() const = 0;
-
-  static const GRType *make_BASE(const Ring *R);
-  static const GRType *make_FRAC(const FractionField *R);
-  static const GRType *make_QQ(const QQ *Q);
-  static const GRType *make_POLY(const PolynomialRing *R);
-};
 
 #endif
 
