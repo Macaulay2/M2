@@ -10,6 +10,7 @@ ZZ.Engine = true
 ZZ.baseRings = {}
 ZZ.ConvertToExpression = ConvertInteger
 ZZ.degreeLength = 0
+ZZ.mathML = "<mi>&Zopf;</mi>"
 ZZ.frac = QQ
 degree ZZ := i -> {}
 promote(ZZ,ZZ) := (i,ZZ) -> i

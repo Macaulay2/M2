@@ -5,6 +5,7 @@ CC.synonym = "complex number"
 CC.isCommutative = true
 CC.texMath = ///{\mathbb C}///
 CC.isField = true
+CC.mathML = "<mi>&Copf;</mi>"
 
 ii = new CC from {0,1}
 

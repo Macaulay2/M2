@@ -158,6 +158,7 @@ tryload := (filename,load) -> (
 		    if not fileExists fullfilename then return false;
 		    -- stderr << "trying to load " << fullfilename << endl;		    -- debugging
 		    load fullfilename;
+     	       	    -- stderr << "done loading " << fullfilename << endl;		    -- debugging
 		    markLoaded(fullfilename,filename);
 		    true))))
 
