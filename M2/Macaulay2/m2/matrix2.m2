@@ -129,7 +129,9 @@ Matrix // Matrix := { Matrix,
 	       then gb(g | presentation M, 
 		    ChangeMatrix => true, SyzygyRows => rank source g)
 	       else gb(g,
-		    ChangeMatrix => true))),
+		    ChangeMatrix => true),
+	       Degree => degree f - degree g  -- do this in the engine instead
+	       )),
      TT "f//g", " -- yields a matrix h from matrices f and g such that f - g*h 
      is the reduction of f modulo a Groebner basis for the image of g.",
      SEEALSO "%"

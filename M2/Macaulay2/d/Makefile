@@ -95,7 +95,10 @@ CFLAGS   := $(CCFLAGS) $(WARNINGS)
 CXXFLAGS := $(CFLAGS)
 LDLIBS   := 
 LDFLAGS  := -L${LIBDIR} $(STRIPFLAG) $(DEBUGFLAGS)
-LDFLAGS  += -Wl,-Map,mapfile
+
+## uncomment the next line to get a link map file
+## LDFLAGS  += -Wl,-Map,mapfile
+
 #################################
 
 ifdef includeX11

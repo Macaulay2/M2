@@ -238,7 +238,7 @@ void cmd_Matrix_concat(object &on)
   int n = on->int_of();
   if (n <= 0)
     {
-      gError << "directsum: expected at least one matrix";
+      gError << "concat: expected at least one matrix";
       return;
     }
   for (i=0; i<n; i++)

@@ -289,7 +289,12 @@ extern char **environ;
 extern char timestamp[];
 static void clean_up();
 
-void nop(void *x){}		/* used below to keep variables out of registers */
+static void nop (p)		/* used below to keep variables out of registers */
+void *p;
+{}
+
+#define NOTHING(p) nop((void *)p)
+#define ONSTACK(p) nop((void *)&p)
 
 int main(argc,argv)
 int argc; 
@@ -297,8 +302,6 @@ char **argv;
 {
      char *p, **x;
      char **saveenvp = NULL;
-     /* I don't know why gcc gives this message: */
-     /*   warning: variable `saveenvp' might be clobbered by `longjmp' or `vfork' */
      int envc = 0;
      static int old_collections = 0;
      char **saveargv;
@@ -307,6 +310,9 @@ char **argv;
      static void *reserve = NULL;
      extern void actors4_setupargv();
      extern void interp_process();
+
+     ONSTACK(saveenvp);
+
      out_of_memory_jump_set = FALSE;
      abort_jump_set = FALSE;
 
@@ -352,7 +358,7 @@ char **argv;
 		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
 	       }
 	       putstderr(buf);
-	       putstderr("  Copyright 1993-1997, all rights reserved, D. R. Grayson and M. E. Stillman");
+	       putstderr("  Copyright 1993-1998, all rights reserved, D. R. Grayson and M. E. Stillman");
 #     	       ifdef FACTORY
 	       putstderr("  Factory " 
 		    FACTORYVERSION
@@ -372,7 +378,7 @@ char **argv;
 	  if (0 == strcmp(argv[n],"-silent")) break;
 	  }
 #if !defined(__MWERKS__)
-     nop((void *)&envc);
+     ONSTACK(envc);
 #endif
      GC_free_space_divisor = 14;
      if (0 != setjmp(loaddata_jump)) {
@@ -567,10 +573,6 @@ static void handler2(int k)
      longjmp(jumpbuffer,2);
      }
 
-static void nothing (p)
-char **p;
-{}
-
 #if !defined(__MWERKS__)
 static void *first_rw_page_after_etext() {
      void (*oldhandler)(int) = signal(SIGSEGV,handler);
@@ -582,7 +584,7 @@ static void *first_rw_page_after_etext() {
 	  else {
 	       char *t = (char *)p;
 	       char c = *t;
-	       nothing(&p);	/* fool the optimizer */
+	       ONSTACK(p);	/* fool the optimizer */
 	       *t = c;		/* try to write to page */
 	       break;		/* break if writable */
 	       }
@@ -663,9 +665,14 @@ static int probe() {
      int sig = -1;
      char c, *p, readable=FALSE, writable=FALSE;
      void (*oldhandler)(int) = signal(SIGSEGV,handler);
+
 #ifdef SIGBUS
      void (*oldhandler2)(int) = signal(SIGBUS,handler2);
 #endif
+
+     ONSTACK(p);
+     ONSTACK(readable);
+
 #if !defined(__MWERKS__)
      for (p=0; p<(char *)ENDDATA; p+=PAGESIZE) {
 	  int oldsig = sig, oldreadable = readable, oldwritable = writable;
