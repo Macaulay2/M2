@@ -1,4 +1,4 @@
-include ../Makefile.develop
+include ../../Makeconf
 
 TESTRESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2))
 

@@ -71,7 +71,7 @@ public:
   RingElement(const Ring *R, mpz_t n);
   RingElement(const Ring *R, int v, int e);
   RingElement(const Ring *R, ring_elem f);
-  RingElement(const Ring *R, RingElement a, monomial m);
+  RingElement(const Ring *R, RingElement a, Monomial m);
 
   ring_elem    get_value ()             const { return obj->val; }
   void         set_value (ring_elem f)       { obj->val = f; }
@@ -124,9 +124,9 @@ public:
   RingElement lead_term(int n=-1) const;
   RingElement rest() const;
   RingElement get_terms(int lo, int hi) const;
-  RingElement get_coeff(const monomial &m) const;
+  RingElement get_coeff(const Monomial &m) const;
   RingElement lead_coeff() const;
-  monomial  lead_monom() const;
+  Monomial  lead_monom() const;
   int       is_homogeneous() const;
   RingElement homogenize(int v, const int *wts) const;
   RingElement homogenize(int v, int deg, const int *wts) const;

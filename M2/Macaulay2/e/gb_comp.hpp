@@ -5,7 +5,8 @@
 
 #include "object.hpp"
 
-class binomialGB;
+class binomialGB_comp;
+class sagbi_comp;
 
 extern char system_interrupted;
 extern int comp_printlevel;
@@ -16,6 +17,8 @@ const int COMP_GB = 1;
 const int COMP_GBINHOM = 2;
 const int COMP_HERMITE = 3;
 const int COMP_GAUSS = 4;
+const int COMP_BINOMIAL_GB = 5;
+const int COMP_SAGBI = 6;
 
 // Possible strategy flags
 const int USE_HILB = 1;
@@ -99,8 +102,10 @@ public:
   const char * type_name      () const { return "GB computation"; }
   void text_out(ostream &o) const { o << "GB computation"; }
 
-  virtual binomialGB * cast_to_binomialGB() { return 0; }
-  virtual const binomialGB * cast_to_binomialGB() const { return 0; }
+  virtual binomialGB_comp * cast_to_binomialGB_comp() { return 0; }
+  virtual const binomialGB_comp * cast_to_binomialGB_comp() const { return 0; }
+  virtual sagbi_comp * cast_to_sagbi_comp() { return 0; }
+  virtual const sagbi_comp * cast_to_sagbi_comp() const { return 0; }
 };
 
 #endif

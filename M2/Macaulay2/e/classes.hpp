@@ -43,7 +43,7 @@ class object_element;
 
 class object;
 
-class monomial;
+class Monomial;
 
 class varpower;
 class int_bag;

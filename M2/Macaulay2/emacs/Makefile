@@ -1,4 +1,4 @@
-include ../Makefile.develop
+include ../../Makeconf
 
 ELFILES = M2-mode.el M2.el
 ALLFILES = makesyms.m2 Makefile $(ELFILES) emacs.hlp emacs.m2
