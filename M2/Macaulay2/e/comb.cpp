@@ -68,9 +68,10 @@ int comb::encode(int *a, int p)
 void comb::decode(int b, int *result, int p)
 {
   int tmp = b;
+  expand(0,p);
   int bot = 0, len = d_len(p) - 1, bit, i;
 
-  while (binom(len++,p) < tmp)
+  while (binom(len++,p) <= tmp)
     expand(len,p);
 
   for (i=p; i>0; i--)

@@ -55,7 +55,7 @@ public:
   T &rawelem(int i)
     { assert(i < max); return entries[i]; }
   const T &rawelem(int i) const
-    { return entries[i]; }
+    { assert(i < max); return entries[i]; }
 
   void append(const T &t) 
     { 
