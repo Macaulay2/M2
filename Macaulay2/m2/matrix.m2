@@ -1526,7 +1526,11 @@ image RingElement := f -> image matrix {{f}}
 Ideal = new Type of MutableHashTable
 net Ideal := (I) -> net new FunctionApplication from { ideal, I.generators }
 name Ideal := (I) -> name new FunctionApplication from { ideal, 
-     toSequence first entries gens I }
+     (
+	  v := toSequence first entries gens I;
+	  if #v === 1 then v#0 else v
+	  )
+     }
 
 isHomogeneous Ideal := (I) -> isHomogeneous I.generators
 genera(Ideal) := (I) -> genera module I

@@ -205,7 +205,7 @@ frac EngineRing := R -> (
 	  if R.?syms then F.syms = R.syms;
 	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
 	  scan(keys R,k -> if class k === String then F#k = promote(R#k,F));
-	  if not R.?name then use F;
+	  -- if not R.?name then use F;
 	  F))
 
 document { quote fraction,
