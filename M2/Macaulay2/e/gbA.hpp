@@ -200,7 +200,7 @@ public:
   /* This displays statistical information, and depends on the
      gbTrace value */
 
-  virtual enum ComputationStatusCode gb_status(int *degree); 
+  virtual int gb_complete_thru_degree();
   // The computation is complete up through this degree.
 
   /* Debug display routines */

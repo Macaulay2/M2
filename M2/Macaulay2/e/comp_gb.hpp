@@ -53,7 +53,7 @@ public:
 
   virtual void start_computation() = 0;
 
-  virtual enum ComputationStatusCode gb_status(int *degree) = 0; 
+  virtual int gb_complete_thru_degree() = 0;
   // The computation is complete up through this degree.
 
   ////////////////////////////////
