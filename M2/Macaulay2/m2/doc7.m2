@@ -617,36 +617,11 @@ assert( 1 == dim I )
 assert( 2 == codim I )
 "
 
-document { Ideal,
-     TT "Ideal", " -- the class of all ideals.",
-     PARA,
-     "The justification for considering an ideal I as different from a
-     submodule M of R^1 is some methods are different.  For example, M^3 is a
-     direct sum, whereas I^3 is still an ideal.  Similar remarks apply to
-     ", TO "dim", " and ", TO "codim", ".",
-     PARA,
-     "Creating ideals:",
-     MENU {
-	  TOH "annihilator",
-	  TOH "fittingIdeal",
-	  TOH "Grassmannian",
-	  TOH "ideal",
-	  TOH "quotient"
-	  },
-     "Operations on ideals:",
-     MENU {
-	  TOH (symbol +,Ideal,Ideal),
-	  TOH (symbol *,Ideal, Ideal),
-	  TOH (symbol ^,Ideal, ZZ),
-	  TOH "codim",
-	  TOH "decompose",
-	  TOH "dim",
-	  TOH "Fano",
-	  TOH "module",
-	  TOH "radical",
-	  TOH "removeLowestDimension",
-	  TOH "top"
-	  }
+document { Ideal, HEADLINE "the class of all ideals",
+     "The justification for considering an ideal ", TT "I", " as different from a
+     submodule ", TT "M", " of ", TT "R^1", " is some methods are different.
+     For example, ", TT "M^3", " is a direct sum, whereas ", TT "I^3", " is still 
+     an ideal."
      }
 
 document { (symbol *,Ideal,Ideal),
@@ -678,6 +653,7 @@ document { ideal,
       	  "ideal (c..h)"
 	  },
      }
+
 document { "ker",
      "See ", TO "kernel", "."
      }
@@ -857,11 +833,7 @@ document { content,
      coefficients."
      }
 
-document { QuotientRing,
-     TT "QuotientRing", " -- the class of all quotient rings.",
-     PARA,
-     SEEALSO {"/", Ring, Ideal}
-     }
+document { QuotientRing, HEADLINE "the class of all quotient rings" }
 document { isQuotientOf,
      TT "isQuotientOf(S,R)", " -- tells whether S is a quotient ring of R."
      }
@@ -1219,13 +1191,17 @@ document { hilbertSeries,
      SEEALSO {"degreesRing", "Order"}
      }
 document { ProjectiveHilbertPolynomial,
-     TT "ProjectiveHilbertPolynomial", " -- the class of all Hilbert
-     polynomials expressed in terms of the Hilbert polynomials of projective
-     space.",
+     HEADLINE "the class of all Hilbert polynomials",
+     "For convenience, these polynomials are expressed in terms of the Hilbert 
+     polynomials of projective space.",
      PARA,
      "The functions ", TO "degree", " and ", TO "dim", " are designed so they
      correspond the degree and dimension of the algebraic variety that may have
-     been used to produce the Hilbert polynomial."
+     been used to produce the Hilbert polynomial.",
+     EXAMPLE {
+	  "Z = Proj(QQ[x_0..x_12]/(x_0^3+x_12^3))",
+	  "hilbertPolynomial Z"
+	  }
      }
 
 document { (symbol " ", ProjectiveHilbertPolynomial, ZZ),

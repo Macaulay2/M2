@@ -1,169 +1,5 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-document { "the authors",
-     "The authors of Macaulay 2 and the bulk of this manual:",
-     MENU {
-	  TO "Daniel R. Grayson",
-	  TO "Michael E. Stillman"
-	  },
-     "Our co-author for the tutorials:",
-     MENU {
-	  TO "David Eisenbud",
-	  }
-     }
-
-document { "David Eisenbud",
-     HREF {"http://www.msri.org/people/staff/de/", "David Eisenbud "}, " ",
-     HREF {"mailto:de@msri.org", "<de@msri.org>"}, ".",
-     PARA,
-     "In this spot will go a brief biography of David Eisenbud."
-     }
-
-document { "Daniel R. Grayson",
-     HREF {"http://www.math.uiuc.edu/~dan", "Daniel R. Grayson"}, " ",
-     HREF {"mailto:dan@math.uiuc.edu", "<dan@math.uiuc.edu>"}, ".",
-     PARA,
-     "Daniel Grayson received his PhD in Mathematics from MIT in 1976, taught
-     at Columbia from 1976 to 1981, and came to the University of Illinois at
-     Urbana-Champaign in 1981, where he is a Professor.  His mathematical
-     research concerns algebraic K-theory, but he has always been intrigued
-     by computers.  In 1986 he joined with Stephen Wolfram and six other
-     co-authors to write ", ITALIC "Mathematica", " which in the years since
-     its introduction in 1988 has become the pre-eminent system for
-     mathematics on the computer.",
-     PARA,
-     IMG "Grayson2.jpg"
-     }
-
-document { "Michael E. Stillman",
-     HREF { "http://www.math.cornell.edu/~mike", "Michael E. Stillman"}, " ",
-     HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"},
-     PARA,
-     "Michael E. Stillman received his PhD in Mathematics from Harvard in 1983,
-     taught at University of Chicago 1983-85, was at Brandeis and then MIT 1985-87,
-     and then came to Cornell University.  His mathematical research concerns
-     computational algebraic geometry and algebraic geometry.  He started writing
-     syzygy programs as an undergraduate at the University of Illinois, and from
-     1983 to 1992 with David Bayer he wrote Macaulay, a specialized computer
-     algebra system for algebraic geometry and the predecessor of this program."
-     }
-
-document { "resources required",
-     "You will need about 12 megabytes of disk space to install Macaulay 2, though
-     this may vary.  It will need about 12 megabytes of RAM to run modest size problems,
-     and can benefit from any additional memory."
-     }
-
-document { "how to get this program",
-     "The program is available over the web at the Macaulay 2 home page",
-     PARA, 
-     HREF {"http://www.math.uiuc.edu/Macaulay2"}, 
-     PARA, 
-     "or by ftp to the host ", TT "ftp.math.uiuc.edu", " with user name ", TT "Macaulay2", " 
-     and password ", TT "Macaulay2", ".  There you will find the documentation, both in
-     readable form and available for downloading, the source code, ready for compiling
-     on the machine of your choice, and various precompiled versions, ready to run."
-     }
-
-document { "syntax",
-     "A newline ends a statement if it can, otherwise it acts like any
-     white space.",
-     EXAMPLE "2+\n3+\n4",
-     PARA,
-     "Parsing is determined by a triple of numbers attached to each token.
-     The following table (produced by ", TO "seeParsing", "), displays each
-     of these numbers.",
-     EXAMPLE "seeParsing()",
-     "Here is the way these numbers work.  The parser maintains a number
-     which we will call the current parsing level, or simply, the level.
-     The parser builds up an expression until it encounters an input token
-     whose precedence is less than or equal to the current level.  The
-     tokens preceding the offending token are bundled into an expression
-     appropriately and incorporated into the containing expression.",
-     PARA,
-     "When an operator or token is encountered, its scope serves as the
-     level for parsing the subsequent expression, unless the current level
-     is higher, in which case it is used.",
-     PARA,
-     "Consider a binary operator such as ", TT "*", ".  The relationship between
-     its scope and its precedence turns out to determine whether ", TT "a*b*c", "
-     is parsed as ", TT "(a*b)*c", " or as ", TT "a*(b*c)", ".  When the parser encounters
-     the second ", TT "*", ", the current parsing level is equal to the scope of
-     the first ", TT "*", ".  If the scope is less than the precedence, then
-     the second ", TT "*", " becomes part of the right hand operand of the
-     first ", TT "*", ", and the expression is parsed as ", TT "a*(b*c)", ".  Otherwise, the
-     expression is parsed as ", TT "(a*b)*c", ".",
-     PARA,
-     "For unary operators, the strength is used instead of the scope to reset
-     the current level.  The reason for having both numbers is that some
-     operators can be either unary or binary, depending on the context.
-     A good example is ", TO "#", " which binds as tightly as ", TO ".", "
-     when used as an infix operator, and binds as loosely as adjacency or
-     function application when used as a prefix operator.",
-     PARA,
-     "To handle expressions like ", TT "b c d", ", where there are no tokens present
-     which can serve as a binary multiplication operator, after parsing b,
-     the level will be set to 1 less than the precedence of an identifier,
-     so that ", TT "b c d", " will be parsed as ", TT "b (c d)", ".",
-     PARA,
-     "The exclamation point is allowed as a unary operator either to the
-     right or to the left of its operand.  The other unary operators occur
-     to the left of their operands.",
-     PARA,
-     "Three operators are treated specially, in that the empty expression
-     is allowed to the right of them.  These are newline, comma, and semicolon."
-     }
-
-document { "programming",
-     "Here are some useful programming constructs for controlling the flow 
-     of execution.",
-     MENU {
-	  (TOH "apply"),
-	  (TOH "if"),
-	  (TOH "scan"),
-	  (TOH "while"),
-	  (TOH ";"),
-	  },
-     "Controlling the scope of variables:",
-     MENU {
-	  (TOH ":="),
-	  (TOH "global"),
-	  (TOH "local"),
-	  (TOH "symbol")
-	  },
-     "Miscellaneous items:",
-     MENU {
-	  (TOH "--"),
-	  (TOH "==>"),
-	  (TOH "addEndFunction"),
-	  (TOH "addStartFunction"),
-	  (TOH "clearOutput"),
-	  (TOH "clearAll"),
-	  (TOH "Command"),
-     	  (TOH "erase"),
-	  (TOH "value"),
-	  (TOH "memoize"),
-	  (TOH "using methods"),
-	  (TOH "notImplemented"),
-	  (TOH "protect"),
-	  (TOH "runEndFunctions"),
-	  (TOH "runStartFunctions"),
-	  (TOH "setrecursionlimit"),
-	  SHIELD {
-	       (TO "syntax", " -- the syntax of the language")
-	       },
-	  (TOH "value")
-	  },
-     "For internal use only:",
-     MENU {
-	  (TOH "lineNumber"),
-	  (TOH "lookupCount"),
-	  (TOH "phase"),
-	  (TOH "runStartFunctions")
-	  }
-     }
-
-
 document { "shield",
      TT "shield x", " -- executes the expression ", TT "x", ", temporarily
      ignoring interrupts."
@@ -212,42 +48,6 @@ document { Position,
      the line number, and the column number."
      }
 
-document { "debugging",
-     "Here are some debugging tools.",
-     MENU {
-	  (TOH "assert"),
-	  (TOH "backtrace"),
-	  (TOH "benchmark"),
-	  (TOH "browse"),
-	  (TOH "code"),
-	  (TOH "currentFile"),
-	  (TOH "edit"),
-	  (TOH "error"),
-	  (TOH "errorDepth"),
-	  (TOH "examine"),
-	  (TOH "flag"),
-	  (TOH "frame"),
-	  (TOH "listUserSymbols"),
-     	  (TOH "locate"),
-	  (TOH "methods"),
-	  (TOH "on"),
-	  (TOH "peek"),
-	  (TOH "peek2"),
-	  (TOH "profile"),
-	  (TOH "shield"),
-	  (TOH "showStructure"),
-	  (TOH "showUserStructure"),
-	  (TOH "try"),
-	  (TOH "userSymbols")
-	  },
-     "These functions are for debugging the kernel interpreter itself, and
-     are not intended for users.",
-     MENU {
-	  (TOH "buckets"),
-	  TOH "seeParsing"
-	  }
-     }
-
 document { "currentFile",
      TT "currentFile", " -- a variable whose value is the name of the current
      source file."
@@ -291,61 +91,6 @@ document { seeParsing,
      precedence."
      }
 
-document { "subclass",
-     "We say that a class X is a subclass of a class P if P is X, or
-     P is the ", TO "parent", " of X, or P is the parent of the parent
-     of X, and so on.  See also ", TO "classes", "."
-     }
-
-document { "classes",
-     "Every thing ", TT "x", " belongs to a ", ITALIC "class", " ", TT "X", " -- a
-     hash table that indicates in a weak sort of way what type of thing ", TT "x", "
-     is.  We may also say that ", TT "x", " is an ", TO "instance", " 
-     of ", TT "X", ".  The mathematical notion of a set ", TT "X", " and an
-     element ", TT "x", " of ", TT "X", " can be 
-     modeled this way.  The class of ", TT "x", " can be obtained with the function
-     ", TO "class", ".",
-     PARA,
-     "Every thing ", TT "X", " also has a ", ITALIC "parent", " ", TT "P", ", which 
-     indicates a larger class to which every instance ", TT "x", " of ", TT "X", " belongs.  We 
-     also say that
-     ", TT "X", " is a ", TO "subclass", " of P.  For example, the mathematical
-     notion of a module P and a submodule ", TT "X", " may be modelled this way.
-     The parent of ", TT "x", " can be obtained with the function ", TO "parent", ".",
-     EXAMPLE {
-	  "parent 2",
-      	  "parent parent 2",
-      	  "class 2",
-      	  "parent class 2",
-      	  "class class 2",
-      	  "parent class class 2",
-	  },
-     PARA,
-     "The classes and parents provide a uniform way for operations on
-     things to locate the appropriate functions needed to perform them.
-     Please see ", TO "using methods", " and ", TO "binary method", " now for a 
-     brief discussion.",
-     PARA,
-     "For more details, see one of the topics below.",
-     MENU {
-	  TOH "newClass",
-	  TOH "new",
-	  TOH "ancestor",
-	  TOH "instance"
-	  },
-     "For related topics, see one of the following.",
-     MENU {
-	  TOH "uniform",
-	  TOH "Thing",
-	  TOH "Nothing",
-	  TOH "Type",
-	  TOH "MutableList",
-	  TOH "MutableHashTable",
-	  TOH "MutableHashTable",
-	  TOH "SelfInitializingType"
-	  }
-     }
-
 document { instance,
      TT "instance(x,X)", " -- tells whether ", TT "x", " is an instance
      of the type ", TT "X", ".",
@@ -354,81 +99,6 @@ document { instance,
      of the class of x, or a grandparent, and so on.",
      PARA,
      SEEALSO { "classes", "class", "parent" }
-     }
-
-document { "mathematics",
-     "Here we document the mathematical objects which form the heart of 
-     the system.",
-     MENU{
-	  TOH "combinatorial functions",
-     	  TOH "Set",
-	  TOH "Monoid",
-	  TOH "Ring",
-	  TOH "Ideal",
-	  TOH "Module",
-	  TOH "ModuleMap",
-	  TOH "Matrix",
-	  TOH "GradedModule",
-	  TOH "ChainComplex",
-	  TOH "GroebnerBasis",
-	  TOH "MonomialIdeal",
-	  TOH "Variety",
-	  TOH "CoherentSheaf",
-	  }
-     }
-
-document { "system",
-     "Loading files:",
-     MENU {
-	  TOH "autoload",
-	  TO "initialization file",
-	  TOH "input",
-	  TOH "load",
-	  TOH "needs"
-	  },
-     "Dumping and restoring the state of the system:",
-     MENU {
-	  TOH "dumpdata",
-	  TOH "loaddata",
-	  TOH "reloaded",
-	  TOH "restart",
-	  TOH "addStartFunction"
-	  },
-     "Interface to the operating system:",
-     MENU{
-	  TO "top level loop",
-	  TOH "alarm",
-	  TOH "currentDirectory",
-	  TOH "exec",
-	  TOH "exit",
-	  TOH "fork",
-	  TOH "getenv",
-	  TOH "processID",
-	  TOH "path",
-	  TOH "pathSeparator",
-	  TOH "quit",
-	  TOH "run",
-	  TOH "sleep",
-	  TOH "time",
-	  TOH "timing",
-	  TOH "tmpname",
-	  TOH "wait"
-	  },
-     "Variables with information about the state of the current process:",
-     MENU {
-	  TOH "commandLine",
-	  TOH "environment",
-	  TOH "version"
-	  },
-     "Miscellaneous commands:",
-     MENU {
-	  TOH "getWWW"
-	  },
-     "Dealing with the garbage collector:",
-     MENU {
-	  TOH "collectGarbage",
-	  TOH "gcDump"
-	  }
      }
 
 document { "pathSeparator",
@@ -457,36 +127,11 @@ document { alarm,
      causing it to provide incorrect answers."
      }
 
-document { "initialization file",
-     "The file ", TT "init.m2", " is loaded automatically when the
-     program is started.",
-     PARA,
-     "The file is sought in each of the directories of the ", TO "path", ",
-     and also in the home directory of the user.  At most one file is loaded.",
-     SEEALSO "load"
-     }
-
-document { Field,
-     TT "Field", " -- the class of all fields.",
-     PARA,
-     "Some fields:",
-     MENU {
-	  TOH "QQ",
-	  TOH "RR",
-	  TOH "CC"
-	  },
-     "Functions for creating fields:",
-     MENU {
-	  TOH "frac",
-	  TOH "GF"
-	  },
-     "Functions that can be applied to fields and rings:",
-     MENU {
-	  TOH "char",
-	  TOH "isField"
-	  },
-     EXAMPLE "isField (ZZ/101)",
-     SEEALSO "coefficientRing"
+document { Field, HEADLINE "the class of all fields",
+     "Use ", TO "isField", " to determine whether a given ring is a field,
+     since some rings that are fields, for implementation reasons, cannot
+     be instances of ", TO "Field", ".",
+     EXAMPLE "isField (ZZ/101)"
      }
 
 document { char,
@@ -534,7 +179,7 @@ document { symbol "\\",
      TT ///x \ y///, " -- a binary operator used for function application."
      }
 
-document { (symbol /, List, Function),
+document { (symbol /, VisibleList, Function),
      TT "w / f", " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
      results.  The same as ", TT "apply(w,f)", ".",
@@ -545,7 +190,7 @@ document { (symbol /, List, Function),
      SEEALSO {"apply", (symbol \,Function, List)}
      }
 
-document { (symbol \,Function, List),
+document { (symbol \,Function, VisibleList),
      TT ///f \ w///, " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
      results.  The same as ", TT "apply(w,f)", ".",
@@ -562,9 +207,7 @@ document { (symbol \,Function, List),
      SEEALSO {"apply", "@@", (symbol /,List, Function)}
      }
 
-document { String,
-     TT "String", " -- the class of all strings.",
-     PARA,
+document { String, HEADLINE "the class of all strings",
      "A string is thing which contains a sequence of characters (bytes).
      A string is normally entered as a sequence of characters surrounded 
      by quotation marks.",
@@ -610,9 +253,7 @@ document { "///",
      }
 
 document { Net,
-     HEADLINE "the class of all nets",
-     TT "Net", " -- the class of all nets.",
-     PARA,
+     HEADLINE "the class of all nets and strings",
      "A net is a generalization of a string which is designed to facilitate
      two-dimensional printing on ascii terminals.  It consists of a rectangular
      array of characters subdivided horizontally by an imaginary baseline.",
@@ -627,28 +268,10 @@ document { Net,
      PARA,
      "Warning: if so many characters are written to a file that an internal buffer
      is filled before the line ends or first net is seen, then the buffer will be 
-     flushed, and writing a net subsequently will produce an unexpected result.",
-     PARA,
-     "Operations on nets:",
-     MENU {
-	  TOH (symbol |, String, String),
-	  TOH (symbol ||, Net, Net),
-	  TOH (symbol ^,Net, ZZ),
-	  TOH "depth",
-	  TOH "height",
-	  TOH "horizontalJoin",
-	  TOH "netRows",
-	  TOH "stack",
-	  TOH "width",
-	  },
-     "Formatting expressions:",
-     MENU {
-	  TOH "net"
-	  },
-     SEEALSO "String"
+     flushed, and writing a net subsequently will produce an unexpected result."
      }
 
-document { net,
+document { net, "convert to net",
      TT "net x", " -- format ", TT "x", " for printing.",
      PARA,
      "This function is the primary function called upon by ", TO "<<", " to
@@ -671,13 +294,10 @@ document { net,
 	  "ZZ[x];",
       	  "x^2",
       	  "net x^2",
-	  },
-     EXAMPLE "code(net,List)",
-     PARA,
-     SEEALSO {"Net", "expression", "Expression", "Net"}
+	  }
      }
 
-document { horizontalJoin,
+document { horizontalJoin, HEADLINE "join nets or strings horizontally",
      TT "horizontalJoin(m,n,...)", " -- joins nets or strings by concatenating
      them horizontally.  The baselines in each of the nets are aligned
      appropriately.",
@@ -689,7 +309,7 @@ document { horizontalJoin,
      SEEALSO {"Net", (symbol |, String, String)}
      }
 
-document { stack,
+document { stack, HEADLINE "join nets or string vertically",
      TT "stack(m,n,...)", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the
      first argument.",
@@ -701,7 +321,7 @@ document { stack,
      PARA,
      "Tab characters in any of the strings are first expanded into spaces,
      assuming tab stops at every eighth column.",
-     SEEALSO {"Net", (symbol ||, Net, Net)}
+     SEEALSO { (symbol ||, Net, Net)}
      }
 
 document { (symbol ^, Net, ZZ),
@@ -746,16 +366,6 @@ document { class,
      SEEALSO "classes"
      }
 
-document { "combinatorial functions",
-     MENU {
-	  (TOH "random"),
-	  (TOH "binomial"),
-	  (TOH "subsets"),
-	  (TOH "tally"),
-	  (TOH "partitions")
-	  }
-     }
-
 document { hash,
      TT "hash x", " -- returns the hash code of ", TT "x", ".",
      PARA,
@@ -776,35 +386,14 @@ document { remove,
 	  }
      }
 
-document { "top level loop",
-     "The top level evaluation loop of the interpreter contains hooks so the user can
-     control how printing of the results of evaluation is done.  If the result is 
-     ", TO "null", " then nothing is printed.  Otherwise, the appropriate method
-     associated with the symbol ", TO "Print", " is applied to perform the printing,
-     unless the printing is to be suppressed, as indicated by a semicolon at the end
-     of the statement, in which case the ", TO "NoPrint", " method is applied.",
-     MENU {
-	  TOH "Print",
-	  TOH "NoPrint"
-	  }
-     }
-
 document { BasicList,
      HEADLINE "the class of all basic lists",
-     TT "BasicList", " -- the class of all things represented internally as a
-     list.  A list is a sequence of expressions indexed by integers
-     0, 1, ..., N-1, where N is the length of the sequence.",
+     "A list is a sequence of expressions indexed by integers
+     ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ", where ", TT "N", " is the length of the sequence.",
      PARA,
      "The reason for distinguishing ", TO "List", " from ", TT "BasicList", "
      is so lists can be treated as vectors, without everything else
      implemented as a basic list inheriting that behavior.",
-     PARA,
-     "Other types of list:",
-     MENU {
-	  TOH "Array",
-	  TOH "List",
-	  TOH "MutableList"
-	  },
      }
 
 document { toSequence,
@@ -820,47 +409,16 @@ document { toSequence,
 
 document { Boolean,
      HEADLINE "the class of Boolean values",
-     TT "Boolean", " -- the class whose two members are ", TO "true", " and
-     ", TO "false", ".",
-     PARA,
      "Predicate functions return these as values, and the logical connectives 
      expect to receive them as arguments.",
      PARA,
-     "Functions dealing with truth values.",
+     "Special operators dealing with truth values.",
      MENU {
 	  (TOH "not"),
 	  (TOH "and"),
 	  (TOH "or"),
 	  (TOH "if"),
-	  (TOH "select"),
 	  (TOH "while")
-	  }
-     }
-
-document { "numbers",
-     "There are four types of numbers:",
-     MENU {
-	  (TOH "CC"),
-	  (TOH "QQ"),
-	  (TOH "RR"),
-	  (TOH "ZZ")
-	  },
-     "Operations on numbers:",
-     MENU {
-	  TO "arithmetic functions",
-	  TO "integrate",
-	  TO "transcendental functions"
-	  },
-     "Standard predefined numbers:",
-     MENU {
-          (TOH "pi"),
-          (TOH "ii")
-	  },
-     "Some other quantities which are not quite numbers:",
-     MENU {
-	  TOH "infinity",
-	  TO "-infinity",
-	  TOH "indeterminate"
 	  }
      }
 
@@ -920,94 +478,6 @@ document { printString,
      is encountered, nothing is printed.",
      PARA,
      EXAMPLE ///printString(stdio, (a,10,"b",20,c))///
-     }
-
-document { "help functions",
-     "Online Macaulay 2 documentation is stored in ", TO "hypertext", "
-     form.",
-     PARA,
-     NOINDENT,
-     "Functions for accessing the documentation:",
-     MENU {
-	  TOH "apropos",
-	  TOH "briefDocumentation",
-	  TOH "documentation",
-	  TOH "examples",
-	  TOH "help", 
-	  TOH "topicList", 
-	  TOH "topics"
-	  },
-     "How to write documentation yourself:",
-     MENU {
-	  TOH "document",
-	  TOH "hypertext",
-	  },
-     "Output formatting routines:",
-     MENU {
-	  TOH "html",
-	  TOH "mathML",
-	  TOH "tex",
-	  TOH "text",
-	  },
-     "Some internals:",
-     MENU {
-	  TOH "Documentation",
-	  TOH "phase",
-	  },
-     SEEALSO "reading the documentation"
-     }
-
-document { "arithmetic functions",
-     "These arithmetic functions act on numbers, but some of them
-     are also act on more abstract entities, such as polynomials.",
-     MENU {
-	  (TOH "+"),
-	  (TOH "plus"),
-	  (TOH "-"),
-	  (TOH "minus"),
-	  (TOH "difference"),
-          (TOH "*"),
-          (TOH "times"),
-          (TOH "/"),
-          (TOH "//"),
-          (TOH "\\\\"),
-          (TOH "%"),
-	  (TOH "mod"),
-          (TOH "^"),
-          (TOH "power"),
-          (TOH "!"),
-          (TOH "xor"),
-          (TOH "&"),
-          (TOH "|"),
-          (TOH "<<"),
-          (TOH ">>"),
-          (TOH "gcd"),
-          (TOH "odd"),
-          (TOH "even"),
-          (TOH "ceiling"),
-          (TOH "floor"),
-	  (TOH "isPrime"),
-	  (TOH "factor"),
-          (TOH "Numeric")
-	  }
-     }
-
-document { "transcendental functions",
-     MENU {
-	  (TOH "abs"),
-	  (TOH "sin"),
-	  (TOH "cos"),
-	  (TOH "tan"),
-	  (TOH "asin"),
-	  (TOH "acos"),
-	  (TOH "atan"),
-	  (TOH "sinh"),
-	  (TOH "cosh"),
-	  (TOH "tanh"),
-	  (TOH "exp"),
-	  (TOH "log"),
-	  (TOH "sqrt")
-	  }
      }
 
 document { mutable,

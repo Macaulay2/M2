@@ -117,9 +117,9 @@ document { Tor,
      TT "Tor_i(M,N)", " -- compute the Tor module of two modules M, N.",
      SEEALSO{"ScriptedFunctor"}
      }
-document { MonomialIdeal,
-     TT "MonomialIdeal", " -- the class of all monomial ideals handled by
-     the ", TO "engine", "."
+document { MonomialIdeal, 
+     HEADLINE "the class of all monomial ideals handled by the engine",
+     SEEALSO "engine" 
      }
 
 --document { (complement, MonomialIdeal),
@@ -230,9 +230,7 @@ document { toDual,
      SEEALSO "fromDual"
      }
 
-document { GradedModule,
-     TT "GradedModule", " -- the class of all graded modules.",
-     PARA,
+document { GradedModule, HEADLINE "the class of all graded modules",
      "A new graded module can be made with 'M = new GradedModule'.
      The i-th module can be installed with a statement like ", TT "M#i=N", ",
      and can be retrieved with an expression like ", TT "M_i", ".  The ground
@@ -261,9 +259,7 @@ document { coimage,
      SEEALSO "GradedModule"
      }
 
-document { ChainComplex,
-     TT "ChainComplex", " -- the class of all chain complexes.",
-     PARA,
+document { ChainComplex, HEADLINE "the class of all chain complexes",
      "If ", TT "C", " is a chain complex, then ", TT "C_i", " will produce 
      the ", TT "i", "-th module in the complex, and ", TT "C.dd_i", " will 
      produce the differential whose source is ", TT "C_i", ".",
@@ -328,9 +324,7 @@ document { (length, ChainComplex),
      modules, even if those modules happen to be zero."
      }
 
-document { ChainComplexMap,
-     TT "ChainComplexMap", " -- the class of all maps between chain complexes.",
-     PARA,
+document { ChainComplexMap, HEADLINE "the class of all maps between chain complexes",
      "The usual algebraic operations are available: addition, subtraction,
      scalar multiplication, and composition.  The identity map from a
      chain complex to itself can be produced with ", TO "id", ".  An

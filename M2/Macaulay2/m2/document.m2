@@ -83,7 +83,11 @@ after := (w,s) -> mingle(w,#w:s)
 formatDocumentTag Option   := record(
      s -> concatenate (
 	  if class s#0 === Sequence 
-	  then ( toString s#0#0, "(", after(toString \ drop(s#0,1), ", "), " ", toString s#1, " => ...)" )
+	  then (
+	       if class s#0#0 === Symbol
+	       then ( "(", formatDocumentTag s#0, ", ", toString s#1, " => ...)" )
+	       else ( toString s#0#0, "(", after(toString \ drop(s#0,1), ", "), " ", toString s#1, " => ...)" )
+	       )
 	  else ( toString s#0, "(..., ", toString s#1, " => ...)" )
 	  )
      )
@@ -526,10 +530,10 @@ unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
 
 documentableMethods := s -> select(methods s, i -> not unDocumentable i)
 
-optionFor := s -> unique select( value \ values symbolTable(), f -> class f === Function and (options f)#?s )
+optionFor := s -> unique select( value \ values symbolTable(), f -> class f === Function and (options f)#?s)
 
 documentation Symbol := s -> (
-     a := apply(select(optionFor s,f -> not unDocumentableFunction f), f -> f => s);
+     a := apply(select(optionFor s,f -> not unDocumentable f), f -> f => s);
      b := documentableMethods s;
      SEQ {
 	  title s, 
@@ -611,24 +615,31 @@ ret := k -> (
 co := f -> (
      n := try code f;
      if n =!= null then PRE concatenate between(newline,netRows n)
-     else if unDocumentableFunction f
+     else if unDocumentable f
      then MENU { SEQ { "code for function not available" } }
      else MENU { SEQ { "code for ", TO toString f, " not available" } }
      )
 
-seecode := x -> if sameFunctionBody(x, method) then (
-     -- this could be improved a bit to handle f@@g, f==>g, etc, and put into 'code'
-     f := lookup x;
-     g := try original f;
-     SEQ {
-     	  SEQ { "Code:", co f },
-     	  if g =!= null then SEQ { "Original memoized code:", co g }
-	  }
+optionedFunction := {} ==> () -> ()
+
+seecode := x -> (
+     if sameFunctionBody(x, optionedFunction) then (
+     	  seecode last frame x
+     	  )
+     else (
+	  -- this could be improved a bit to handle f@@g, f==>g, etc, and put into 'code'
+	  f := lookup x;
+	  g := try original f;
+	  SEQ {
+	       SEQ { "Code:", co f },
+	       if g =!= null then SEQ { "Original memoized code:", co g }
+	       }
+	  )
      )
 
 documentation Function := f -> SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
 
-documentation Option := (
+documentation Option := v -> (
      (fn, opt) -> (
 	  SEQ { 
 	       title v, 
@@ -642,9 +653,10 @@ documentation Option := (
 		    }
 	       }
 	  )
-     ) @@ toSequence
+     ) toSequence v
 
-documentation Sequence := s -> if #s === 0 then null else (
+documentation Sequence := s -> (
+     if null === lookup s then error("expected ", formatDocumentTag s, " to be a method");
      t := typicalValue s;
      SEQ {
 	  title s, 

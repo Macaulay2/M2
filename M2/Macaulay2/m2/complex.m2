@@ -4,6 +4,7 @@ CC = new Field of BasicList
 CC.synonym = "complex number"
 CC.isCommutative = true
 
+
 ii = new CC from {0,1}
 
 CC.char = 0
@@ -16,6 +17,7 @@ mathML CC := z -> concatenate(
      "<cn type='complex'>",toString realPart z, "<sep/>", toString imaginaryPart z, "</cn>"
      )     
 
+conjugate = method(TypicalValue => CC)
 conjugate ZZ := identity
 realPart ZZ := identity
 imaginaryPart ZZ := z -> 0

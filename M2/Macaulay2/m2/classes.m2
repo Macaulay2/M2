@@ -9,6 +9,7 @@ Boolean.name = "Boolean"
 MutableHashTable.name = "MutableHashTable"
 Function.name = "Function"
 Sequence.name = "Sequence"
+VisibleList.name = "VisibleList"
 Error.name = "Error"
 erase symbol Error
 Database.name = "Database"
@@ -37,10 +38,9 @@ uniform = (x) -> same apply(x,class)
 
 -- Now some extra stuff:
 
-Function \ Sequence := Sequence => (f,v) -> apply(v,f)
-Function \ List     := List     => (f,v) -> apply(v,f)
-Sequence / Function := Sequence => (v,f) -> apply(v,f)
-    List / Function := List     => (v,f) -> apply(v,f)
+Function \ VisibleList := VisibleList => (f,v) -> apply(v,f)
+       List / Function :=        List => (v,f) -> apply(v,f) -- just because of conflict with List / Thing!
+VisibleList / Function := VisibleList => (v,f) -> apply(v,f)
 
 use = identity				  -- just temporary, until methods.m2
 

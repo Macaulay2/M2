@@ -3,10 +3,10 @@
 -- flag symbol sequence
 
 << Thing := x -> stdio << x
-File << Net := 
+File << Net    := 
 File << String := 
-File << Symbol := printString	   		      -- provisional
-File << Thing := (x,y) -> printString(x,string y)     -- provisional
+File << Symbol := File => printString	   		      -- provisional
+File << Thing  := File => (x,y) -> printString(x,string y)     -- provisional
 
 if class Manipulator =!= Symbol then error ///attempted to load "setup.m2" a second time///
 
@@ -28,8 +28,8 @@ GlobalAssignHook Manipulator := (X,x) -> if not Symbols#?x then Symbols#x = X
 GlobalReleaseHook Manipulator := (X,x) -> if Symbols#x === X then remove(Symbols,x)
 
 Manipulator Nothing := (m,null) -> null
-File << Manipulator := (o,m) -> m#0 o
-List << Manipulator := (o,m) -> (scan(o, o -> m#0 o); o)
+File << Manipulator := File => (o,m) -> m#0 o
+List << Manipulator := File => (o,m) -> (scan(o, o -> m#0 o); o)
 Nothing << Manipulator := (null,m) -> null
 
 oldclose := close

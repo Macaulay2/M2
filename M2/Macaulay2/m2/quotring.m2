@@ -249,3 +249,9 @@ char QuotientRing := (S) -> (
 	  R := ultimate(ambient,S);
 	  -- eventually we'll have to compute it correctly
 	  char R))
+
+singularLocus(Ring) := QuotientRing => (R) -> (
+     if not isAffineRing(R) then error "expected an affine ring";
+     R / minors(codim R, jacobian presentation R))
+
+singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)

@@ -224,6 +224,12 @@ ProjectiveHilbertPolynomial = new Type of HashTable
 
 ProjectiveHilbertPolynomial ZZ := (P,i) -> sum(pairs P, (n,c) -> c * binomial(n+i,n))
 
+hilbertPolynomial = method(
+     Options => { Projective => true }, 
+     TypicalValue => ProjectiveHilbertPolynomial )
+
+hilbertPolynomial Ideal := options -> (I) -> hilbertPolynomial(module I,options)
+
 euler ProjectiveHilbertPolynomial := (P) -> P(0)
 diff(ProjectiveHilbertPolynomial,ZZ) := ProjectiveHilbertPolynomial => (P,i) -> (
      new ProjectiveHilbertPolynomial from select(

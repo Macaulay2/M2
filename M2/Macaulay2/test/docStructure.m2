@@ -28,13 +28,15 @@ reach1 Thing := identity
 reach1 Sequence :=
 reach1 MarkUpList := x -> scan(x,reach1)
 reach1 TO := identity
+reach1 TOH := identity
 reach1 MENU := reach2
 
 reach2 Thing := identity
 reach2 Sequence :=
 reach2 MarkUpList := x -> scan(x,reach2)
 reach2 SHIELD := x -> null
-reach2 TO := x -> (
+reach2 TO  := 
+reach2 TOH := x -> (
      s := toString x#0;
      if not reachable#?s or not reachable#s then (
 	  reachable#s = true;

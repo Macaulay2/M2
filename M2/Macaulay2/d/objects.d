@@ -625,6 +625,7 @@ setupconst("null",nullE);
 setupconst("Boolean",Expr(booleanClass));
 setupconst("Database",Expr(dbClass));
 setupconst("Sequence",Expr(sequenceClass));
+setupconst("VisibleList",Expr(visibleListClass));
 setupconst("Array",Expr(arrayClass));
 setupconst("SymbolTable",Expr(symboltableClass));
 setupconst("Ring",Expr(ringClass));

@@ -34,7 +34,7 @@ document { parent,
      }
 
 document { Array,
-     HEADLINE "class of all arrays",
+     HEADLINE "class of all arrays -- [...]",
      "An array is like a list, except that brackets are used instead of
      braces when entering or displaying an array, and arrays can't be used
      as vectors.  Their main use is notational: for example, they appear
@@ -43,11 +43,12 @@ document { Array,
 	  "v = [a,b,c]",
 	  "v#2",
 	  "ZZ[a,b,c]"
-	  }
+	  },
+     SEEALSO "lists"
      }
 
 document { Sequence,
-     HEADLINE "class of all sequences",
+     HEADLINE "class of all sequences -- (...)",
      "A sequence is an ordered collection of things enclosed by parentheses
      and separated by commas.  Use ", TO "#", " to get the length of a
      sequence of to get one of the elements.",
@@ -56,7 +57,6 @@ document { Sequence,
 	  "#v",
 	  "v#2"
 	  },
-     PARA,
      SEEALSO "sequences"
      }
 
@@ -69,10 +69,22 @@ document { singleton,
 	  "singleton 3",
 	  "#oo",
 	  },
-     SEEALSO {"Sequence", "unSingleton"}
+     SEEALSO {"unSingleton"}
      }
 
-document { List, HEADLINE "class of all lists", SEEALSO "lists" }
+document { List, HEADLINE "class of all lists -- {...}", SEEALSO "lists" }
+
+document { VisibleList, HEADLINE "class of all visible lists",
+     "There are three types of lists that can be entered directly from
+     the keyboard, as follows.",
+     EXAMPLE {
+	  "{a,b,c}",
+	  "[a,b,c]",
+	  "(a,b,c)",
+	  },
+     "We introduce the class of visible lists as a convenience for
+     referring to lists of these types."
+     }
 
 document { Type,
      HEADLINE "class of all types",
@@ -80,9 +92,7 @@ document { Type,
      belongs to is a type.  A type is implemented as a hash table containing
      method functions for its instances.",
      PARA,
-     "The list of types known to the system is visible below.",
-     PARA,
-     SEEALSO {"parent", "class", "using methods"}
+     "The list of types known to the system is displayed below."
      }
 
 document { Print,
@@ -146,13 +156,13 @@ document { setrecursionlimit,
      permissible for calls to functions."
      }
 
-document { "commandLine",
+document { toString symbol commandLine,
      HEADLINE "the command line arguments",
      "A constant whose value is the list of arguments passed to the interpreter,
      including argument 0, the name of the program."
      }
 
-document { "environment",
+document { toString symbol environment,
      HEADLINE "the environment variables",
      "A constant whose value is the list containing the
      environment strings for the process."
@@ -352,16 +362,7 @@ document { scan, HEADLINE "apply a function to each element",
      SEEALSO { "select", "any", "all", "member"}
      }
 
-document { (scan,Sequence,Function), HEADLINE "apply a function to each element of a sequence",
-     TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
-     sequence ", TT "v", ".  The function values are discarded.",
-     EXAMPLE {
-	  "v = 0 .. 3",
-	  "scan(v, print)"
-	  }
-     }
-
-document { (scan,List,Function), HEADLINE "apply a function to each element of a list",
+document { (scan,BasicList,Function), HEADLINE "apply a function to each element of a list",
      TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
      list ", TT "v", ".  The function values are discarded.",
      EXAMPLE "scan({a,4,\"George\",2^100}, print)"
@@ -396,22 +397,18 @@ document { (scanPairs,HashTable,Function), HEADLINE "apply a function to pairs i
 document { select, HEADLINE "select elements from a list or hash table",
      SEEALSO{ "scan", "apply", "any", "all", "member", "mutable"}
      }
-document { (select,Sequence,Function), HEADLINE "select elements from a sequence",
-     TT "select(v,f)", " -- select elements of the sequence
-     ", TT "v", " that yield ", TT "true", " when the function 
-     ", TT "f", " is applied.",
-     PARA,
-     "The order of the elements in the result will be the same as
-     in the original sequence ", TT "v", "."
-     }
-document { (select,List,Function), HEADLINE "select elements from a list",
+document { (select,BasicList,Function), HEADLINE "select elements from a list",
      TT "select(v,f)", " -- select elements of the list
      ", TT "v", " that yield ", TT "true", " when the function 
      ", TT "f", " is applied.",
      PARA,
      "The order of the elements in the result will be the same as
-     in the original list ", TT "v", ".",
-     EXAMPLE "select({1,2,3,4,5}, odd)"
+     in the original list ", TT "v", ", and the class will be the same,
+     too.",
+     EXAMPLE {
+	  "select({1,2,3,4,5}, odd)",
+	  "select([1,2,3,4,5], odd)",
+	  }
      }
 document { (select,HashTable,Function), HEADLINE "select from a hash table",
      TT "select(v,f)", " -- select pairs of the hash table ", TT "v", "
@@ -421,22 +418,14 @@ document { (select,HashTable,Function), HEADLINE "select from a hash table",
      "The hash table should be immutable: to scan the values in a mutable hash
      table, use ", TT "scan(values x, f)", "."
      }
-document { (select,ZZ,Sequence,Function), HEADLINE "select elements from a sequence",
-     TT "select(n,v,f)", " -- select at most ", TT "n", " elements of 
-     the sequence ", TT "v", " that yield ", TT "true", " when the function 
-     ", TT "f", " is applied.",
-     PARA,
-     "The order of the elements in the result will be the same as
-     in the original sequence ", TT "v", "."
-     }
-document { (select,ZZ,List,Function), HEADLINE "select elements from a list",
+document { (select,ZZ,BasicList,Function), HEADLINE "select elements from a list",
      TT "select(n,v,f)", " -- select at most ", TT "n", " elements of the list
      ", TT "v", " that yield ", TT "true", " when the function 
      ", TT "f", " is applied.",
      PARA,
      "The order of the elements in the result will be the same as
      in the original list ", TT "v", ".",
-     EXAMPLE "select(2,{1,2,3,4,5}, odd)"
+     EXAMPLE "select(2,[1,2,3,4,5], odd)"
      }
 document { (select,ZZ,HashTable,Function), HEADLINE "select from a hash table",
      TT "select(n,v,f)", " -- select at most ", TT "n", " pairs of the hash 
@@ -574,9 +563,16 @@ document { prepend,
      SEEALSO{ "append", "join"}
      }
 
-document { "--", HEADLINE "comment",
-     TT "--", " introduces a comment in the text of a program.  The comment runs from
-     the double hyphen to the end of the line."
+document { "--",
+     HEADLINE "comment",
+     "Use a double hyphen (", TT "--", ") to introduce a comment in the text
+     of a program.  The comment runs from to the end of the line.",
+     PARA,
+     "Emacs does a good job displaying the comments in a different color
+     for visibility.",
+     EXAMPLE {
+	  "x = 1 -- this is a comment",
+	  }
      }
 
 document { ascii,
@@ -798,8 +794,7 @@ document { symbol "|", SEEALSO "||" }
 document { (symbol |, List, List),
      TT "v|w", " -- join two lists.", 
      PARA,
-     EXAMPLE "{1,2,3}|{4,5,6}",
-     SEEALSO "|"
+     EXAMPLE "{1,2,3}|{4,5,6}"
      }
 document { (symbol |, String, String),
      TT "s|t", " -- concatenates strings or nets horizontally.", 
@@ -813,15 +808,13 @@ document { (symbol |, String, String),
 	  },
      PARA,
      "If one of the two arguments is an integer, it is converted to a string first.",
-     EXAMPLE ///"t = " | 333///,      
-     SEEALSO {"|", "horizontalJoin", "Net"}
+     EXAMPLE ///"t = " | 333///
      }
 document { (symbol |, ZZ, ZZ),
      TT "m|n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'or'.",
      PARA,
-     EXAMPLE "5 | 12",
-     SEEALSO "|"
+     EXAMPLE "5 | 12"
      }
 document { (symbol |, Matrix, Matrix),
      TT "f|g", " -- concatenate matrices horizontally.",
@@ -836,11 +829,10 @@ document { (symbol |, Matrix, Matrix),
      will be multiplied by a suitable identity matrix.",
      PARA,
      EXAMPLE "2|f|3",
-     SEEALSO {"|", (symbol ||, Matrix, Matrix)}
+     SEEALSO {(symbol ||, Matrix, Matrix)}
      }
 
-document { symbol ||,
-     }
+document { symbol || }
 
 document { (symbol ||, Net, Net),
      TT "m||n", " -- joins nets or strings by concatenating
@@ -853,7 +845,7 @@ document { (symbol ||, Net, Net),
 	  ///x = "x" | "3"^1///,
       	  ///"<--- " | ( x || "" || x ) | " --->"///,
 	  },
-     SEEALSO {"||", "|", "Net", "stack"}
+     SEEALSO {"stack"}
      }
 document { (symbol ||, Matrix, Matrix),
      TT "f||g", " -- yields the matrix obtained from matrices ", TT "f", " and ", TT "g", " by
@@ -869,7 +861,7 @@ document { (symbol ||, Matrix, Matrix),
      will be multiplied by a suitable identity matrix.",
      EXAMPLE "p || 33",
      PARA,
-     SEEALSO{"||", (symbol ||, Matrix, Matrix)}
+     SEEALSO{(symbol |, Matrix, Matrix)}
      }
 
 document { "===",

@@ -6,11 +6,6 @@ Monoid = new Type of Type
 
 options Monoid := x -> null
 
-ZZ _ Monoid := MonoidElement => (i,M) -> (
-     if i === 1 then M#1
-     else error "expected integer to be 1"
-     )
-
 baseName Symbol := identity
 
 OrderedMonoid = new Type of Monoid

@@ -1,6 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-
 document { odd,
      TT "odd x", " -- returns true or false, tells whether x is an odd integer.",
      PARA,
@@ -97,18 +96,14 @@ document { promote,
      SEEALSO "baseRings"
      }
 
-document { RingElement,
-     TT "RingElement", " -- the class of all ring elements handled by the 
-     ", TO "engine", ".",
-     PARA,
-     SEEALSO "PolynomialRing"
+document { RingElement, HEADLINE "the class of all ring elements handled by the engine",
+     SEEALSO "engine"
      }
 
-
 document { EngineRing,
-     HEADLINE "the class of engine rings (including polynomial rings)",
-     TT "EngineRing", " -- denotes the class of all special-purpose engine
-     rings, such as finite fields.",
+     HEADLINE "the class of rings handled by the engine (including most rings)",
+     "The ", TO "engine", " handles most of the types of rings in the
+     system.",
      PARA,
      "The command ", TT "new Engine from x", " is not meant for general 
      users, and provides the developers with a way to create top-level 
@@ -138,6 +133,10 @@ assert ( 1 == numerator(b/b) )
 "
 
 document { FractionField, HEADLINE "the class of all fraction fields" }
+
+document { symbol frac,
+     "A symbol used as a key under which is stored the fraction field of a ring."
+     }
 
 document { frac,
      HEADLINE "constructing a fraction field",
@@ -201,8 +200,7 @@ document { denominator,
 
 document { QQ,
      HEADLINE "the class of all rational numbers",
-     EXAMPLE "1/2 + 3/5",
-     SEEALSO{"numbers", "arithmetic functions"}
+     EXAMPLE "1/2 + 3/5"
      }
 
 TEST ///
@@ -215,7 +213,7 @@ document { RR,
      "A real number is entered as a sequence of decimal digits with a point.",
      EXAMPLE "3.14159",
      PARA,
-     SEEALSO {"basictype", "numbers"}
+     SEEALSO {"basictype"}
      }
 
 document { CC,
@@ -227,10 +225,6 @@ document { CC,
       	  "z^5",
       	  "1/z",
 	  },
-     PARA,
-     "Here are some functions for use with complex numbers.",
-     PARA,
-     SEEALSO "numbers"
      }
 
 document { ii, HEADLINE "square root of -1" }
@@ -263,9 +257,7 @@ document { mod,
      element of ", TT "ZZ/n", "."
      }
 
-document { ProductRing,
-     TT "ProductRing", " -- the class of all product rings.",
-     PARA,
+document { ProductRing, HEADLINE "the class of all product rings",
      "If R and S are rings, then R * S denotes their product ring.
      If r and s are elements of R and S respectively, then an element
      of the product is provided by ", 
@@ -273,9 +265,7 @@ document { ProductRing,
      "This has to be rethought!"     
      }
 
-document { OrderedMonoid,
-     TT "OrderedMonoid", " -- the class of all ordered monoids.",
-     PARA,
+document { OrderedMonoid, HEADLINE "the class of all ordered monoids",
      "An ordered monoid is a multiplicative monoid together with an ordering of 
      its elements.  The ordering is required to be compatible with the 
      multiplication in the sense that if x < y then x z < y z.  The class
@@ -455,9 +445,7 @@ document { Schur,
      SEEALSO {"SchurRing"}
      }
 
-document { SchurRing,
-     TT "SchurRing", " -- the class of all Schur rings.",
-     PARA,
+document { SchurRing, HEADLINE "the class of all Schur rings",
      "A Schur ring is the representation ring for the general linear group of 
      n by n matrices, and one can be constructed with ", TO "Schur", ".",
      EXAMPLE "R = Schur 4",
@@ -481,10 +469,9 @@ document { (symbol _, SchurRing, List),
      SEEALSO "SchurRing"
      }
 
-document { IndexedVariableTable,
-     TT "IndexedVariableTable", " -- the class of those hash tables which
-     are used to hold the values of those indexed variables sharing a given
-     base name.",
+document { IndexedVariableTable, HEADLINE "the class of tables for indexed variables",
+     "These hash tables are used to hold the values of those indexed variables 
+     sharing a given base name.",
      PARA,
      EXAMPLE {
 	  "t_0",
@@ -511,9 +498,7 @@ document { assign,
      "to work with indexed variables.  See ", TO "<-", "."
      }
 
-document { IndexedVariable,
-     TT "IndexedVariable", " -- the class of all indexed variables.",
-     PARA,
+document { IndexedVariable, HEADLINE "the class of all indexed variables",
      "Indexed variables provide the possibility of producing 
      polynomial rings ", TT "R[x_0, x_1, ..., x_(n-1)]", " in n variables,
      where n is not known in advance.  If ", TT "x", " is an symbol,
@@ -532,9 +517,7 @@ document { IndexedVariable,
      SEEALSO "IndexedVariableTable"
      }
 
-document { MonoidElement,
-     TT "MonoidElement", " -- the class of all monoid elements.",
-     PARA,
+document { MonoidElement, HEADLINE "the class of all monoid elements",
      SEEALSO "monoid"
      }
 
@@ -578,13 +561,12 @@ document { Inverses,
      }
 
 document { GeneralOrderedMonoid,
-     TT "GeneralOrderedMonoid", " -- the class of all ordered free 
-     commutative monoids, as implemented by ", TO "monoid", ".",
-     PARA,
+     HEADLINE "the class of all ordered free commutative monoids",
      "This is the class of free monoids that can be handled by 
-     the ", TO "engine", ".",
+     the ", TO "engine", ".  Elements of such monoids are implemented
+     as instances of ", TO "MonoidElement", ".",
      PARA,
-     SEEALSO { "monoid", "Degrees", "MonoidElement"}
+     SEEALSO { "monoid" }
      }     
 
 document { (symbol _, Monoid, ZZ),
@@ -697,14 +679,32 @@ document { VariableOrder,
      SEEALSO "monoid"
      }
 
+monoidOptions := first frame first frame lookup(monoid,Array)
+assert( monoidOptions #? MonomialOrder )
+
 document { (monoid, Array), HEADLINE "make a polynomial ring or monoid ring",
      TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
-     "Optional arguments placed inside the array are treated just
-     as optional arguments to ", TO (monoid,Sequence), "."
+     PARA,
+     "Optional arguments (placed inside the array):",
+     MENU (TOH \ keys monoidOptions),
+     SEEALSO {(symbol " ", Ring, Array)}
      }
 
-document { (monoid, Sequence), HEADLINE "make a polynomial ring or monoid ring", 
-     TT "monoid (a,b,c,...)", " -- makes a free ordered commutative monoid on the variables listed."
+document { (symbol " ", Ring, Array),
+     HEADLINE "make a polynomial ring",
+     TT "R[...]", " -- produces the monoid ring from a ring ", TT "R", " and the
+     ordered monoid specified by ", TT "[...]", ".",
+     PARA,
+     "Optional arguments (placed inside the array):",
+     MENU (TOH \ keys monoidOptions),
+     SEEALSO "polynomial rings"
+     }
+
+document { (symbol " ",Ring, OrderedMonoid),
+     HEADLINE "make a polynomial ring",
+     TT "R M", " -- produces the monoid ring from a ring ", TT "R", " and an ordered monoid
+     ", TT "M", ".",
+     SEEALSO "polynomial rings"
      }
 
 document { (monoid, Ring), HEADLINE "get the monoid from a monoid ring",
@@ -739,9 +739,7 @@ document { monoid,
      }
 
 document { GeneralOrderedGroup,
-     TT "GeneralOrderedGroup", " -- the class of all ordered free 
-     commutative groups, as implemented by ", TO "group", ".",
-     PARA,
+     HEADLINE "the class of all ordered free commutative groups",
      "This is the class of free commutative groups that can be 
      handled by the ", TO "engine", ".",
      PARA,
@@ -843,7 +841,7 @@ document { vector,
      convertible to elements of the same ring."
      }
 
-document { Module, "the class of all modules",
+document { Module, HEADLINE "the class of all modules",
      "These modules are handled by the ", TO "engine", ".",
      PARA,
      "The most general module ", TT "M", " is represented as a submodule of a 
@@ -926,14 +924,12 @@ M = cokernel matrix {{a,b^2,c^3}}
 N = image M_{0}
 assert( M == N )
 "
-document { Vector,
-     TT "Vector", " -- the class of all elements of free modules which
-     are handled by the ", TO "engine", ".",
-     PARA,
+document { Vector, 
+     HEADLINE "the class of all elements of free modules which are handled by the engine",
      "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a free
      module over ", TT "R", ", then M is a subclass of Vector.",
      PARA,
-     SEEALSO "Module"
+     SEEALSO {"engine", "Module"}
      }
 
 document { (symbol _, Vector, ZZ),
