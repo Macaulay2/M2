@@ -131,9 +131,11 @@ extern "C" {
   /**** Random numbers ******************************/
   /**************************************************/
 
-  void IM2_random_seed(unsigned long seed); /* TODO */
+  void rawSetRandomSeed(M2_Integer seed);
 
-  unsigned long IM2_random(); /* TODO */
+  void rawSetRandomMax(M2_Integer maxN);
+
+  M2_Integer rawRandomInteger(M2_Integer maxN);
 
   /* Other random number routines of interest:
      ringelement

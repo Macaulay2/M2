@@ -23,6 +23,23 @@
 
 #include "matrix.hpp"
 #include "../d/M2mem.h"
+#include "random.hpp"
+
+
+void rawSetRandomSeed(M2_Integer seed)
+{
+  Random::set_seed(seed);
+}
+
+void rawSetRandomMax(M2_Integer maxN)
+{
+  Random::set_max_int(maxN);
+}
+
+M2_Integer rawRandomInteger(M2_Integer maxN)
+{
+  return Random::get_random_integer(maxN);
+}
 
 unsigned long IM2_Ring_hash(const Ring *R)
 {

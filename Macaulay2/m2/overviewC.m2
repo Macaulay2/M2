@@ -313,7 +313,7 @@ document {
      HEADER2 "Examples of monomial orders",
      HEADER3 "Lex => n",
      EXAMPLE {
-	  "R = ZZ[ab,c, MonomialOrder => {Lex => 4}];",
+	  "R = ZZ[a..d, MonomialOrder => {Lex => 4}];",
 	  "1+a+b+c+d+a*d+b*c"
 	  },
      HEADER3 "Weights => {...}",
