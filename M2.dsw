@@ -17,6 +17,27 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name m2
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name basictests
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name test
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "basictests"=.\Macaulay2\basictests\basictests.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name d
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -260,6 +281,27 @@ Package=<5>
 
 Package=<4>
 {{{
+}}}
+
+###############################################################################
+
+Project: "test"=.\Macaulay2\test\test.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name basictests
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name d
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name m2
+    End Project Dependency
 }}}
 
 ###############################################################################
