@@ -316,7 +316,7 @@ clean ::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep core gmon.out ma
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 all :: .gdbinit
-.gdbinit: .gdbinit.$(USER); cp $< $@
+.gdbinit:; if [ -f @srcdir@/.gdbinit.$(USER) ]; then cp @srcdir@/.gdbinit.$(USER) $@; fi
 clean::; rm -f .gdbinit
 
 # Local Variables:
