@@ -1229,7 +1229,8 @@ document { set,
 
 document { random,
      Headline => "get a random element",
-     "This function can be used to get random elements of various sorts."
+     "This function can be used to get random elements of various sorts.",
+     SEEALSO {"setRandomSeed"}
      }
 document { (random, ZZ), 
      Headline => "random integer",
@@ -1237,12 +1238,15 @@ document { (random, ZZ),
      PARA,
      "Warning: doesn't correctly handle the case when n an integer is larger
      than 2^31-1.",
-     EXAMPLE "tally apply(100, i -> random 10)"
+     EXAMPLE "tally apply(100, i -> random 10)",
+     SEEALSO {"setRandomSeed"}
      }
 
 document { (random, RR), 
      Headline => "random real number",
-     TT "random x", " -- yields a random real number in the range 0 .. x." }
+     TT "random x", " -- yields a random real number in the range 0 .. x.",
+     SEEALSO {"setRandomSeed"}
+     }
 
 document { (random, Ring),
      Headline => "random element of a ring",
@@ -1251,7 +1255,8 @@ document { (random, Ring),
 	  "R" => null,
 	  "r" => { "a random element of the ring ", TT "R" }
 	  },
-     "Note: not implemented yet for ", TO "RR", ", ", TO "CC", ", and polynomial rings."
+     "Note: not implemented yet for ", TO "RR", ", ", TO "CC", ", and polynomial rings.",
+     SEEALSO {"setRandomSeed"}
      }
 
 document { (random, ZZ, Ring),
@@ -1265,7 +1270,8 @@ document { (random, ZZ, Ring),
      EXAMPLE {
 	  "R = GF(9,Variable=>a)[x,y];",
 	  "random(3,R)"
-	  }
+	  },
+     SEEALSO {"setRandomSeed"}
      }
 
 document { (random, List, Ring),
@@ -1276,7 +1282,8 @@ document { (random, List, Ring),
 	  "R" => null,
 	  "r" => {"a random homogeneous element of degree ", TT "n"}
 	  },
-     "The length of ", TT "n", " should be the same as ", TT "degreeLength R", "."
+     "The length of ", TT "n", " should be the same as ", TT "degreeLength R", ".",
+     SEEALSO {"setRandomSeed"}
      }
 
 document { (random, Module, Module),
@@ -1286,7 +1293,8 @@ document { (random, Module, Module),
      EXAMPLE {
 	  "R = ZZ/101[x,y];",
       	  "random(R^{1,2,3},R^{1,2,3})"
-	  }
+	  },
+     SEEALSO {"setRandomSeed"}
      }
 
 document { true,

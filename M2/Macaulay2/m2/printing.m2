@@ -30,3 +30,12 @@ net Time := v -> (
      if x === null then t else net x || t
      )
 
+truncateOutput = method()
+truncateOutput ZZ := maxwidth -> (
+     Thing.BeforePrint = x -> (
+	  x = net x;
+	  if width x <= maxwidth then return x;
+	  stack apply( netRows x, row -> (
+		    if #row <= maxwidth then return row;
+		    concatenate(substring(row,0,maxwidth - 4), " ...")))))
+truncateOutput InfiniteNumber := maxwidth -> remove(Thing,BeforePrint)

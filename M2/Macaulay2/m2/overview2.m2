@@ -1735,6 +1735,18 @@ document { "printing to the screen",
      encountered.  This may be useful in displaying some tiny indication
      of computational progress to the user.",
      EXAMPLE ///scan(0 .. 20, i -> << "." << flush)///,
+     PARA,
+     "If long lines get displayed too slowly, such as in emacs, then the user may choose
+     to put a line such as ", TT "truncateOutput 100", " into an ", TO "initialization file", ".
+     Time is still spent creating the wide output which is eventually truncated.",
+     EXAMPLE {
+	  "truncateOutput 50",
+	  "41!",
+	  "42!",
+	  "43!",
+	  "truncateOutput infinity",
+	  "43!"
+	  }
      }
 
 document { "reading files",
