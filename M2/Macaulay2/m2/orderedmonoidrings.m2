@@ -124,7 +124,7 @@ commden := (f) -> (
 indices := (M,vars) -> apply(vars, x -> if class x === ZZ then x else (
 	  x = baseName x;
 	  if M.index#?x then M.index#x
-	  else error "expected a variable of the ring"))
+	  else error "expected a variable of the ring or an integer"))
 
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      (R,M) -> (
@@ -136,10 +136,12 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else if R.?basering and R.?flatmonoid then (R.basering, M ** R.flatmonoid)
 	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
 	       );
+	  local basering; local flatmonoid;
 	  Weyl := M.Options.WeylAlgebra =!= {};
-	  skewoption := M.Options.SkewCommutative;
+	  skews := M.Options.SkewCommutative;
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
-	  RM := if Weyl then (
+     	  local RM;
+	  if Weyl or R.?diffs0 then (
 	       diffs := M.Options.WeylAlgebra;
 	       if class diffs === Option 
 	       then diffs = {diffs}
@@ -147,47 +149,62 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       then error "expected list as WeylAlgebra option";
 	       diffs = apply(diffs, x -> if class x === Option then toList x else x);
 	       h    := select(diffs, x -> class x =!= List);
-	       if #h > 1 then error "WeylAlgebra: expected at most one homogenizing element";
+	       if #h > 1 then error "WeylAlgebra: expected at most one homogenizing variable";
 	       h = indices(M,h);
 	       if #h === 1 then h = h#0 else h = -1;
+     	       if R.?h then (
+		    if h == -1
+		    then h = R.h + num
+		    else (
+		    	 if R.h + num =!= h then error "expected the same homogenizing variable";
+			 )
+		    )
+	       else (
+		    if R.?diffs0 and h != -1 then error "coefficient Weyl algebra has no homogenizing variable";
+		    );
 	       diffs = select(diffs, x -> class x === List);
 	       diffs = apply(diffs, x -> (
 			 if #x =!= 2 then error "WeylAlgebra: expected x=>dx, {x,dx}";
 			 if class x#0 === Sequence and class x#1 === Sequence
 			 then (
-			      if #(x#0) =!= #(x#1) then error "WeylAlgebra: expected sequences of the same length";
+			      if #(x#0) =!= #(x#1) then error "expected sequences of the same length";
 			      mingle x
 			      )
 			 else toList x
 			 ));
 	       diffs = flatten diffs;
-	       local diffs0;
-	       local diffs1;
+	       local diffs0; local diffs1;
 	       diffs = pack(2,diffs);
 	       diffs0 = indices(M,first\diffs);
 	       diffs1 = indices(M,last\diffs);
-	       scan(diffs0,diffs1,(x,dx) -> 
-		    if not x<dx
-		    then error "WeylAlgebra: expected differentiation variables to occur to the right of their variables"
+	       if R.?diffs0 and R.?diffs1 then (
+		    diffs0 = join(diffs0, apply(R.diffs0, i -> i + num));
+		    diffs1 = join(diffs1, apply(R.diffs1, i -> i + num));
 		    );
-	       if isBasic R then new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(R.RawRing,M.RawMonoid),diffs0,diffs1,h)
-	       else notImplemented()
+	       scan(diffs0,diffs1,(x,dx) -> if not x<dx then error "expected differentiation variables to occur to the right of their variables");
+	       if R.?skews then error "coefficient ring has skew commuting variables";
+	       RM = new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(raw basering, raw flatmonoid),diffs0,diffs1,h);
+	       RM.diffs0 = diffs0;
+	       RM.diffs1 = diffs1;
+     	       if h != -1 then RM.h = h;
 	       )
-	  else if skewoption =!= false then (
-	       skewoption = (
-		    if skewoption === true
-		    then toList (0 .. num - 1)
-		    else if class skewoption === List and all(skewoption, i -> class i === ZZ)
-		    then indices(M,skewoption)
-		    else error "expected SkewCommutative option to be 'true' or a list of variables"
+	  else if skews =!= false or R.?skews then (
+	       if R.?diffs0 then error "coefficient ring is a Weyl algebra";
+	       skews = (
+		    if skews === false then {}
+		    else if skews === true then toList (0 .. num - 1)
+		    else if class skews === List and all(skews, i -> class i === ZZ)
+		    then indices(M,skews)
+		    else error "expected SkewCommutative option to be true, false, or a list of variables or integers"
 		    );
-	       if isBasic R then new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(R.RawRing,M.RawMonoid),skewoption)
-	       else notImplemented()
+	       if R.?skews then skews = join(skews, apply(R.skews, i -> i + num));
+	       RM = new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
+	       RM.skews = skews;
 	       )
 	  else (
 	       rawRM := rawPolynomialRing(raw basering, raw flatmonoid);
 	       if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawRM = rawQuotientRing(rawRM, raw R);
-	       new PolynomialRing from rawRM
+	       RM = new PolynomialRing from rawRM;
 	       );
 	  RM.basering = basering;
 	  RM.flatmonoid = flatmonoid;
