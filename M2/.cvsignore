@@ -11,3 +11,7 @@ Makeconf.ver
 tmplib
 manufactured.tgz
 TAGS
+Makefile
+config.Makefile
+config.h
+config.log

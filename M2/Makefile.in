@@ -12,13 +12,16 @@
 # Warning: if you move the directory tree, then factory needs to be reconfigured
 
 #############################################################################
-
 ifdef XYZZY
-  If you get an error message on this line, it's because you are not using
+  If you get an error message on this line, it is because you are not using
   the 'gnu' version of the 'make' program.  The source code for it is
   available at ftp://ftp.gnu.org/pub/gnu/make.
 endif
-
+#############################################################################
+include config.Makefile
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = $(srcdir)
 #############################################################################
 .PHONY : all always dirs clean FACTORYmade FACTORYconfigured FACTORYexports \
 	announce MACAULAY2 MACAULAY2.doc doc port default
