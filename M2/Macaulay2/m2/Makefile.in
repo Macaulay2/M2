@@ -176,7 +176,7 @@ endif
 
 check:: test2
 test2: phase1 ../libexec/Macaulay2
-	$(MAKE) -k -C cache/tests -f ../../@srcdir@/Makefile.tests
+	$(MAKE) -k -C cache/tests -f ../../@srcdir@/Makefile.tests srcdir=../../@srcdir@
 	touch $@
 clean::; rm -f test2
 
