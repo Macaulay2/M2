@@ -130,6 +130,7 @@ inline VECTYPE geobucket::remove_lead_term()
   VECTYPE result = heap[mLead];
   heap[mLead] = result->next;
   result->next = NULL;
+  mLead = -1;
   return result;
 }
 
