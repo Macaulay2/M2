@@ -452,15 +452,18 @@ moreGeneral := s -> (
 -----------------------------------------------------------------------------
 
 optTO := i -> if getDoc i =!= null then SEQ{ TO i, headline i } else formatDocumentTagTO i
+optTOCLASS := i -> if getDoc i =!= null then SEQ{ TO i, " (", OFCLASS class value i, ")", headline i } else formatDocumentTagTO i
 
 smenu := s -> UL (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
+smenuCLASS := s -> UL (optTOCLASS \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
  menu := s -> UL (optTO \ s)
 
 ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
 
 vowels := set characters "aeiouAEIOU"
-indefinite := s -> concatenate(if vowels#?(s#0) and not match("^one ",s) then "an " else "a ", s)
+indefiniteArticle := s -> if vowels#?(s#0) and not match("^one ",s) then "an " else "a "
+indefinite := s -> concatenate(indefiniteArticle s, s)
 synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 
 synonymAndClass := X -> (
@@ -472,7 +475,7 @@ justClass := X -> SEQ {"an instance of class ", TO X}
 
 OFCLASS = X -> (
      if parent X === Nothing then error "expected a class";
-     if X.?synonym then SHIELD TO2 {X, indefinite X.synonym}
+     if X.?synonym then SEQ {indefiniteArticle X.synonym, SHIELD TO2 {X, X.synonym}}
      else SEQ {"an object of class ", SHIELD TO X}
      )
 
@@ -807,7 +810,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 		    if #a > 0 then SEQ {"Functions", smenu a},
 		    if #m > 0 then SEQ {"Methods", smenu m},
 		    if #c > 0 then SEQ {"Symbols", smenu c},
-		    if #d > 0 then SEQ {"Other things", smenu d},
+		    if #d > 0 then SEQ {"Other things", smenuCLASS d},
 		    }
 	       },
 	  }
