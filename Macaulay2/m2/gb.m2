@@ -182,9 +182,9 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
 
 syz = method(Options => options gb)			    -- we seem to be ignoring these options!!
 generators      GroebnerBasis := Matrix =>            (G) -> map(target unbag G.matrix,,rawGBGetMatrix G.RawComputation)
-mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix G.RawComputation)
-syz             GroebnerBasis := Matrix => options -> (G) -> notImplemented() -- rawGBSyzygies
-getChangeMatrix GroebnerBasis := Matrix =>            (G) -> notImplemented() -- rawGBChangeOfBasis
+mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawGBMinimalGenerators G.RawComputation)
+syz             GroebnerBasis := Matrix => options -> (G) -> map(ring G, rawGBSyzygies G.RawComputation)
+getChangeMatrix GroebnerBasis := Matrix =>            (G) -> map(ring G, rawGBChangeOfBasis G.RawComputation)
 
 forceGB = method(
      TypicalValue => GroebnerBasis,
