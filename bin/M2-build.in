@@ -1,16 +1,27 @@
 #! /bin/sh
+
 # This version of the M2 script is useful while the program is being built.
+
 # In the case where DUMPDATA=no, it's able to find all the *.m2 files 
 # needed, even though they are scattered between locations in the source
 # directory tree and the build directory tree.
-# srcdir = @srcdir@ is usually a relative path
-SRCHOME="`dirname $0`/@srcdir@/../Macaulay2"
+
+# But, since this script uses $0 to locate the other files, it will not work
+# through a symbolic link.
+
+case "@srcdir@" in
+    /*) SRCHOME="@srcdir@/../Macaulay2" ;;
+     *) SRCHOME="`dirname $0`/@srcdir@/../Macaulay2" ;;
+esac
+
 M2HOME="`dirname $0`/../Macaulay2"
 export M2HOME
+
 SETUP="$SRCHOME/m2/setup.m2"
 EXE="$M2HOME/libexec/Macaulay2"
 DATA="$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
 M2PATH="-e path = { \"$SRCHOME/m2/\", \"$M2HOME/m2/\" }"
+
 if [ -f "$DATA" ]
 then exec "$EXE" "-e loaddata \"$DATA\"" -- "-e runStartFunctions()" "$@"
 else exec "$EXE" "$M2PATH" -ephase=1 "$SETUP" -ephase=0 "-e runStartFunctions()" "$@"
