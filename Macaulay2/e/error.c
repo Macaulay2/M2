@@ -17,47 +17,43 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include "error.h"
 
 #define MAXERROR 200
-static int _iserror = 0;
+static int iserror = 0;
 static char errmsg[MAXERROR] = {'\0'};
 
 void ERROR(char *s,...)
 {
   va_list ap;
+  if (iserror) INTERNAL_ERROR("ERROR called a second time, first message was: '%s'", errmsg);
   va_start(ap,s);
-  if (!_iserror)
-    {
-      _iserror = 1;
-      vsprintf(errmsg,s,ap);
-    }
+  iserror = 1;
+  vsprintf(errmsg,s,ap);
   va_end(ap);
 }
 
 void INTERNAL_ERROR(char *s,...)
 {
+  char buf[MAXERROR];
+  buf[0] = 0;
   va_list ap;
   va_start(ap,s);
-  vsprintf(errmsg,s,ap);
+  vsprintf(buf,s,ap);
   va_end(ap);
-  fprintf(stderr, "%s\n", errmsg);
-  exit(1);
+  fprintf(stderr, "--internal error: %s\n", buf);
+  /* exit(1); */
 }
 
 int error()
 {
-  return _iserror;
+  return iserror;
 }
 
 char *error_message()
 {
+  iserror = 0;
   return errmsg;
-}
-
-void clear_error()
-{
-  errmsg[0] = '\0';
-  _iserror = 0;
 }
 
 /*

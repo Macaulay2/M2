@@ -56,9 +56,7 @@ void IM2_initialize()
 
 M2_string IM2_last_error_message()
 {
-  M2_string result = tostring(error_message());
-  clear_error();
-  return result;
+  return tostring(error_message());
 }
 
 

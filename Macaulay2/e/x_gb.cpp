@@ -209,7 +209,7 @@ void IM2_GB_matrix_lift(Computation *C,
   GBComputation *G = C->cast_to_GBComputation();
   if (G != 0)
     G->matrix_lift(m, result_remainder, result_quotient);
-  ERROR("computation type unknown or not implemented");
+  else ERROR("computation type unknown or not implemented");
 }
 
 int 

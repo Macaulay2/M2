@@ -322,8 +322,7 @@ subquotient(Nothing,Matrix) := Module => (null,relns) -> (
 	  symbol cache => new CacheTable,
 	  symbol RawFreeModule => rE,
 	  symbol ring => R,
-	  symbol numgens => rawRank rE,
-	  0 => somethingElse					    -- zero vector!
+	  symbol numgens => rawRank rE
 	  };
      relns = align matrix relns;
      if E.?generators then (
@@ -346,7 +345,6 @@ subquotient(Matrix,Nothing) := Module => (subgens,null) -> (
 	  symbol RawFreeModule => rE,
 	  symbol ring => R,
 	  symbol numgens => rawRank rE,
-	  0 => somethingElse,					    -- zero vector!
      	  symbol generators => subgens
 	  };
      if E.?relations then (
@@ -373,7 +371,6 @@ subquotient(Matrix,Matrix) := Module => (subgens,relns) -> (
 	       symbol RawFreeModule => rE,
 	       symbol ring => R,
 	       symbol numgens => rawRank rE,
-	       0 => somethingElse,					    -- zero vector!
 	       symbol generators => subgens
 	       };
 	  if relns != 0 then (
