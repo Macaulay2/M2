@@ -602,117 +602,7 @@ regularity ChainComplex := C -> (
      if maxrow===null then 0 else maxrow)
 regularity Module := (M) -> regularity resolution M
 
--- BettiNumbers := C -> (
---      betti := new MutableHashTable;
---      maxrow := null;
---      minrow := null;
---      maxcol := null;
---      mincol := null;
---      maxcols := new MutableHashTable;
---      complete C;
---      scan(pairs C, (col,F) -> if class col === ZZ then (
--- 	       if not isFreeModule F
--- 	       then error "expected a chain complex of free modules";
--- 	       degs := apply(degrees F, first);
--- 	       betti#("total", col) = # degs;
--- 	       maxcol = if maxcol === null then col else max(col,maxcol);
--- 	       mincol = if mincol === null then col else min(col,mincol);
--- 	       scanPairs(tally degs, (j,m) -> (
--- 			 row := j-col;
--- 			 maxrow = if maxrow === null then row else max(row,maxrow);
--- 			 minrow = if minrow === null then row else min(row,minrow);
--- 			 betti#(row,col) = m + (
--- 			      if not betti#?(row,col) then 0 else betti#(row,col)
--- 			      );
--- 			 maxcols#row = (
--- 			      if not maxcols#?row then col 
--- 			      else max(maxcols#row, col)
--- 			      );
--- 			 ))));
---      betti#"mincol" = mincol;
---      betti#"minrow" = minrow;
---      betti#"maxcol" = maxcol;
---      betti#"maxrow" = maxrow;
---      betti)
--- 
--- resBetti := g -> (
---     sendgg(ggPush g, ggbetti);
---     eePopIntarray())
--- 
--- betti ChainComplex := C -> (
---      if C.?Resolution then (
--- 	  r := C.Resolution;
--- 	  v := resBetti r;
--- 	  minrow := v#0;
--- 	  maxrow := v#1;
--- 	  mincol := 0;
--- 	  maxcol := v#2;
--- 	  leftside := apply(
--- 	       splice {"total:", apply(minrow .. maxrow, i -> toString i | ":")},
--- 	       s -> (6-# s,s));
--- 	  v = drop(v,3);
--- 	  v = pack(maxcol-mincol+1,v);
--- 	  totals := apply(transpose v, sum);
--- 	  v = prepend(totals,v);
--- 	  v = transpose v;
--- 	  t := 0;
--- 	  while t < #v and sum v#(-t-1) === 0 do t = t + 1;
--- 	  v = drop(v,-t);
--- 	  v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
--- 	  v = apply(v, col -> (
--- 		    wid := 1 + max apply(col,i -> #i);
--- 		    apply(col, s -> (
--- 			      n := # s;
--- 			      w := (wid - n + 1)//2; 
--- 			      (w, s, wid-w-n)
--- 			      ))));
--- 	  v = prepend(leftside,v);
--- 	  v = transpose v;
--- 	  stack apply(v, concatenate))
---      else (
--- 	  betti := BettiNumbers C;
--- 	  mincol = betti#"mincol";
--- 	  minrow = betti#"minrow";
--- 	  maxcol = betti#"maxcol";
--- 	  maxrow = betti#"maxrow";
--- 	  betti = hashTable apply(pairs betti,(k,v) -> (k,toString v));
--- 	  colwids := newClass(MutableList, apply(maxcol-mincol+1, i->1));
--- 	  scan(pairs betti, (k,v) -> (
--- 		    if class k === Sequence
--- 		    then (
--- 			 (row,col) -> colwids#(col-mincol) = max(colwids#(col-mincol), # v)
--- 			 ) k 
--- 		    ) 
--- 	       );
--- 	  stack apply(splice {"total", minrow .. maxrow},
--- 	       row -> (
--- 		    concatenate(pad(5,toString row), ":",
--- 		    toList apply(mincol .. maxcol,
--- 			 col -> pad(
--- 			      1+colwids#(col-mincol),
--- 			      if not betti#?(row,col) then "." else betti#(row,col)
--- 			      )))))))
-
 rawbetti := method()
-rawbetti ChainComplex := C -> (
-     -- returns a hash table with pairs of the form (d,i) => n
-     -- where d is the first component of the repaired multi-degree, i 
-     -- is the homological degree, and n is the betti number.
-     if C.?Resolution then (
-     	  repair := (ring C).Repair;
-     	  applyKeys( rawbetti C.Resolution, (d,i) -> (first repair d,i) )
-	  )
-     else (
-     	  betti := new MutableHashTable;
-	  complete C;
-	  scan(pairs C,
-	       (i,F) -> if class i === ZZ then (
-	       	    if not isFreeModule F then error "expected a chain complex of free modules";
-	       	    scanPairs(tally apply(degrees F, first), 
-			 (d,n) -> betti#(d,i) = n + if betti#?(d,i) then betti#(d,i) else 0 )));
-	  new HashTable from betti
-	  )
-     )
 rawbetti Resolution := X -> (
      -- returns a hash table with pairs of the form (d,i) => n
      -- where d is the multi-degree, i is the homological degree, and 
@@ -728,15 +618,32 @@ rawbetti Resolution := X -> (
      w = hashTable toList splice w;
      w = select(w, n -> n != 0);
      w )
+rawbetti ChainComplex := C -> (
+     -- returns a hash table with pairs of the form (d,i) => n
+     -- where d is the first component of the repaired multi-degree, i 
+     -- is the homological degree, and n is the betti number.
+     if C.?Resolution and degreeLength ring C === 1 then (
+     	  repair := (ring C).Repair;
+     	  applyKeys( rawbetti C.Resolution, (d,i) -> (first repair d,i) )
+	  )
+     else (
+     	  betti := new MutableHashTable;
+	  complete C;
+	  p := select(pairs C, (i,F) -> class i === ZZ);
+	  hashTable flatten apply(p, (i,F) -> apply(pairs tally apply(degrees F, first), (d,n) -> (d,i) => n))
+	  )
+     )
 
 bettiDisplay := v -> (
      -- convert the hash table created by rawbetti to the standard display
-     k := keys v;
      v = applyKeys( v, (d,i) -> (d-i,i) );		    -- skew the degrees
-     mincol := min (last  \ k);
-     maxcol := max (last  \ k);
-     minrow := min (first \ k);
-     maxrow := max (first \ k);
+     k := keys v;
+     fi := first \ k;
+     la := last  \ k;
+     mincol := min la;
+     maxcol := max la;
+     minrow := min fi;
+     maxrow := max fi;
      v = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
      leftside := apply(
 	  splice {"total:", apply(minrow .. maxrow, i -> toString i | ":")},
