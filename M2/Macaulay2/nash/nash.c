@@ -16,6 +16,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include "env.h"
+
 #define TRUE 1
 #define FALSE 0
 #define ERROR (-1)

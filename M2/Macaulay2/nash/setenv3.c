@@ -1,26 +1,29 @@
+#include "env.h"
 #include <malloc.h>
 #include <string.h>
 
 #define ERROR (-1)
 extern char **environ;
 
-int setenv(char *v) {
+int setenv(char *name, char *value, int overwrite) {
   char **p, **newenv, **q;
-  char *veq = strchr(v,'=');
-  int n, ne;
-  if (veq == NULL) return ERROR;
-  n = veq - v;
+  int n, numenv;
+  for (numenv = 0, p = environ; *p; p++) numenv++;
+  n = strlen(name);
+  char *newitem = malloc(n + 1 + strlen(value) + 1);
+  strcpy(newitem,name);
+  strcat(newitem,"=");
+  strcat(newitem,value);
   for (p = environ; *p; p++) {
-    if (0 == strncmp(v,*p,n) && (*p)[n] == '=') {
-      *p = v;
+    if (0 == strncmp(name,*p,n) && (*p)[n] == '=') {
+      *p = newitem;
       return 0;
     }
   }
-  for (ne = 0, p = environ; *p; p++) ne++;
-  newenv = (char **)malloc((ne+2)*sizeof(char *));
+  newenv = (char **)malloc((numenv+2)*sizeof(char *));
   if (newenv == NULL) return ERROR;
   for (p = environ, q = newenv; *p; p++,q++) *q = *p;
-  *q++ = v;
+  *q++ = newitem;
   *q = NULL;
   return 0;
 }

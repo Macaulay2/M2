@@ -15,6 +15,7 @@ LDLIBS = -lenv
 PROGS = nash printenv unsetenv args
 all : nash
 all : nash printenv unsetenv
+nash unsetenv : libenv.a
 check : diff1 diff2 diff3 diff4 test1 
 test1 : nash;			$(NASH) -c "exec echo hi there"
 clean :;			rm -f nash printenv unsetenv \
