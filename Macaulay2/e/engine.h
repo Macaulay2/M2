@@ -210,8 +210,10 @@ extern "C" {
   MonomialOrdering *IM2_MonomialOrdering_NClex(int nvars); /* drg: connected rawMonomialOrdering*/
     /* NCLex => n */
 
-  MonomialOrdering *IM2_MonomialOrdering_component(void); /* drg: connected rawMonomialOrdering */
-    /* Component */
+  MonomialOrdering *IM2_MonomialOrdering_position(M2_bool up_or_down); /* drg: connected rawMonomialOrdering */
+    /* argument of true:  Position => Up, (should be the default)
+     * argument of false: Position => Down
+     */
 
   MonomialOrdering *IM2_MonomialOrdering_product(MonomialOrdering_array mo); /* drg: connected rawMonomialOrdering*/
     /* for tensor products */
