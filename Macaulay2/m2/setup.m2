@@ -70,16 +70,15 @@ applyMethod := (m,x) -> if x === null then x else (
      if method === null then x else method x
      )
 
-outputSymbols = new MutableHashTable
-
 outputLabel := ""
+
+OutputDictionary = newDictionary()
 
 commonProcessing := x -> (
      outputLabel = concatenate(interpreterDepth():"o",string lineNumber());
      x = applyMethod(AfterEval,x);
      if x =!= null then (
-     	  s := getGlobalSymbol outputLabel;
-     	  outputSymbols#s = true;
+     	  s := getGlobalSymbol(OutputDictionary,outputLabel);
      	  s <- x;
 	  );
      rot x;
@@ -169,5 +168,7 @@ addStartFunction(
 		    or
 		    tryload(getenv "HOME" | "/.init.m2", simpleLoad)))))
 erase symbol simpleLoad
+newPackage Output
+protect symbol Output
 newPackage User
-protect Macaulay2Dictionary
+protect Macaulay2.Dictionary

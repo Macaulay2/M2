@@ -28,6 +28,8 @@ removePackage Package := p -> (
      )
 removePackage String := s -> scan(packages, p -> if p.name == s then removePackage p)
 
+globalDictionaries = append(globalDictionaries,OutputDictionary)
+
 newPackage = method( Options => { Using => {}, Version => "0.0" } )
 newPackage(Package) := opts -> p -> (
      hide p.Dictionary;		    -- hide the old dictionary
@@ -37,7 +39,12 @@ newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      sym := value ("symbol " | title);
      removePackage title;
-     newdict := first if title === M2title then globalDictionaries else (globalDictionaries = prepend(newDictionary(),globalDictionaries));
+     newdict := (
+	  if title === M2title
+	  then first globalDictionaries
+	  else if title === "Output" then OutputDictionary
+	  else first (globalDictionaries = prepend(newDictionary(),globalDictionaries))
+	  );
      p := global currentPackage <- new Package from {
           symbol name => title,
 	  symbol Symbol => sym,
@@ -54,7 +61,7 @@ newPackage(String) := opts -> (title) -> (
 	  };
      globalAssignFunction(sym,p);
      sym <- p;
-     packages = append(packages,p);
+     packages = prepend(p,packages);
      p)
 
 newPackage(M2title,Version => version#"VERSION")

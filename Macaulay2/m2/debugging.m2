@@ -103,8 +103,7 @@ list2 := syms -> stack apply(syms, s ->  toString s | ": " | toString class valu
 listUserSymbols = Command ( type -> list2 userSymbols type )
 
 clearOutput = Command (() -> (
-     	  scan(keys outputSymbols, s -> (
-	       	    remove(outputSymbols,s);
+     	  scan(keys Output.Dictionary, s -> (
 		    s <- s;
 	       	    erase s))))
 

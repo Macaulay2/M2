@@ -48,6 +48,11 @@ assignment hook, described above.  Similarly, the function
 function 'setrecursionlimit' has been replaced by a variable called
 'recursionLimit'.
 
+'getGlobalSymbol' now may take two arugments, (DICT,NAME), in which
+case it will make a new global symbol called NAME in the global
+dictionary DICT, unless a global symbol with the same name already
+exists and is visible.
+
 'netRows' is now called 'unstack'
 
 New features for nets: if n is a Net, then #n is the number of rows,
