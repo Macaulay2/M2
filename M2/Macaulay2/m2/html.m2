@@ -271,9 +271,11 @@ assembleTree := (pkg,nodes) -> (
      repeatedReferences = new MutableHashTable;
      duplicateReferences = new MutableHashTable;
      linkTable = new HashTable from apply(nodes, tag -> (   -- collect links from each tag to its subnodes
-	       if pkg#"raw documentation"#?tag then (
-		    doc = pkg#"raw documentation"#tag;
-		    tag => first \ select(if doc.?Subnodes then doc.Subnodes else {}, x -> class x === TO))
+	       checkIsTag tag;
+	       fkey := DocumentTag.FormattedKey tag;
+	       if pkg#"raw documentation"#?fkey then (
+		    doc := pkg#"raw documentation"#fkey;
+		    tag => first \ select(if doc.?Subnodes then toList doc.Subnodes else {}, x -> class x === TO))
 	       else (
 		    tag => {}
 		    )
