@@ -230,32 +230,41 @@ gb Module := (M,options) -> (
      else gb(generators M, options))
 
 gb Matrix := (f,options) -> (
-     if ring source f =!= ring target f 
+     R := ring target f;
+     if ring source f =!= R
      then error "expected module map with source and target over the same ring";
      if not isFreeModule target f
      then error "Groebner bases of subquotient modules not yet implemented";
      if not isFreeModule source f
      then f = ambient f * generators source f;   -- sigh
-     type := {
-	  options.Syzygies,
-	  if options.Syzygies or options.ChangeMatrix
-	  then inf options.SyzygyRows else 0
-	  };
-     strat := processStrategy options.Strategy;
-     G := makeGB(f, type, strat);
-     if not options.StopBeforeComputation 
-     then runGB(G, (
-	       ggPush cl options.DegreeLimit,
-	       ggPush {
-		    inf options.BasisElementLimit,
-		    inf options.SyzygyLimit,
-		    inf options.PairLimit,
-		    inf options.CodimensionLimit,
-		    bool options.StopWithMinimalGenerators,
-		    inf options.SubringLimit,
-		    strat
-		    }));
-     G)
+     if isPolynomialRing R and not (isField coefficientRing R or coefficientRing R === ZZ)
+     then error "expected coefficient ring to be ZZ or a field";
+     if isPolynomialRing R and coefficientRing R === ZZ and not isHomogeneous f
+     then (
+	  -- do it by homogenization
+	  error "inhomogeneous Groebner bases over ZZ not implemented yet";
+	  )
+     else (
+	  type := {
+	       options.Syzygies,
+	       if options.Syzygies or options.ChangeMatrix
+	       then inf options.SyzygyRows else 0
+	       };
+	  strat := processStrategy options.Strategy;
+	  G := makeGB(f, type, strat);
+	  if not options.StopBeforeComputation 
+	  then runGB(G, (
+		    ggPush cl options.DegreeLimit,
+		    ggPush {
+			 inf options.BasisElementLimit,
+			 inf options.SyzygyLimit,
+			 inf options.PairLimit,
+			 inf options.CodimensionLimit,
+			 bool options.StopWithMinimalGenerators,
+			 inf options.SubringLimit,
+			 strat
+			 }));
+	  G))
      
 document { quote gb,
      TT "gb f", " -- compute the Groebner basis for the image of a ", TO "Matrix", " f.",

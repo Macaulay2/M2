@@ -11,15 +11,44 @@ use ctype;
 
 export Position := {filename:string, line:ushort, column:uchar, reloaded:uchar};
 export dummyPosition := Position("--dummy file name--",ushort(0),uchar(0),uchar(reloaded));
+shorten(s:string):string := (
+     -- shorten filenames like "/a/b/c/../d/e/f" to "/a/b/d/e/f"
+     while true do (
+	  i := 0;
+	  j := 0;
+	  while (
+	       if i == length(s) then return(s);
+	       if i+3 < length(s) && s.i == '/' && s.(i+1) == '.' && s.(i+2) == '.' && s.(i+3) == '/'
+	       then (
+		    s = substr(s,0,j) + substr(s,i+3);
+		    false
+		    )
+	       else if i+2 < length(s) && s.i == '/' && s.(i+1) == '.' && s.(i+2) == '/'
+	       then (
+		    s = substr(s,0,i) + substr(s,i+2);
+		    false
+		    )
+	       else true
+	       )
+	  do (
+	       if s.i == '/' then j=i;
+	       i = i+1;
+	       );
+	  );
+     );
 export minimizeFilename(filename:string):string := (
-     ofilename := filename;
+     ofilename := shorten(filename);
      s := getcwd();
      if !(s === "/") then s = s + "/";
+     if filename.0 != '/' then filename = s + filename;
+     filename = shorten(filename);
      i := 0;
      while i < length(s) && i < length(filename) && s.i == filename.i do i = i+1;
-     while i > 0 && (s.(i-1) != '/' || filename.(i-1) != '/') do i = i-1;
+     while i > 0 && s.(i-1) != '/' do i = i-1;
      filename = substr(filename,i);
-     while i < length(s) do (if s.i == '/' then filename = "../" + filename; i = i+1);
+     while i < length(s) do (
+	  if s.i == '/' then filename = "../" + filename; 
+	  i = i+1);
      if length(ofilename) <= length(filename) then ofilename else filename
      );
 

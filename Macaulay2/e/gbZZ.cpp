@@ -597,7 +597,6 @@ bool GBZZ_comp::auto_reduce_step()
      // Using ar_i, ar_j, reduce the gb element ar_i wrt ar_j.
      // Increment ar_i, ar_j as needed. If done, return false.
 {
-  return false;
   if (ar_j >= n_gb)
     {
       ar_i++;

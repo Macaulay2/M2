@@ -11,7 +11,7 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
        << version # "ARCH"
        << ".data\"'" << endl
        << "--" << endl
-       << "'-e path = append(path, \"" << M2HOME << "/m2\")'" << endl
+       << "'-e path = {\".\", \"" << M2HOME << "/m2\"}'" << endl
        << "'-e runStartFunctions()'" << endl
        << close;
        "../bin/M2.bat"
@@ -34,7 +34,7 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
 		 << " --"
 		 -- << " $TTY"
 		 << " "
-		 << format ( "-e path = append(path, "| format "$M2HOME/m2" | ")" )
+		 << format ( "-e path = {" | format "." | ", " | format "$M2HOME/m2" | "}" )
 		 << " "
 		 << format "-e runStartFunctions()" 
 		 )
@@ -49,7 +49,7 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
 		 << " "
 		 << "-ephase=0"
 		 << " "
-		 << format ( "-e path = append(path, " | format "$M2HOME/m2" | ")" )
+		 << format ( "-e path = {" | format "." | ", " | format "$M2HOME/m2" | "}" )
 		 << " "
 		 << format "-e runStartFunctions()" 
 		 )

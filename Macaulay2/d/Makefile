@@ -182,7 +182,7 @@ c-files.tar :: $(ALLC)
 # UTIL := $(PATHPARENT)util$(PATHSEP)
 UTIL := ../util/
 
-tmp_init.c : Makefile $(TOPDIR)/Makeconf
+tmp_init.c : Makefile $(TOPDIR)/Makeconf $(PROJECT)
 	 $(UTIL)timestmp >tmp
 	@echo "echoout '>>tmp' ..."
 	@$(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
