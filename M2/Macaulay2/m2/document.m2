@@ -139,7 +139,7 @@ formatDocumentTag Sequence := record(
 	  if fSeq === null then (
 	       fSeq = fSeqInitialize(toString,toStr);
 	       );
-	  (
+	  concatenate (
 	       if #s == 0                             then toString
 	       else if fSeq#?(#s,s#0)                 then fSeq#(#s,s#0)
 	       else if #s >= 1 and fSeq#?(#s,s#0,s#1) then fSeq#(#s,s#0,s#1)
