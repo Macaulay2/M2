@@ -300,7 +300,7 @@ document {
 
 document {
      Key => (isSquareFree,MonomialIdeal),
-     Headline => {"whether a monomial ideal is square free"},
+     Headline => "whether a monomial ideal is square free",
      Usage => "isSquareFree I",
      Inputs => {
 	  "I" => ""
@@ -329,7 +329,7 @@ document {
 
 document {
      Key => (standardPairs, MonomialIdeal),
-     Headline => {"finds the standard pairs of a monomial ideal"},
+     Headline => "finds the standard pairs of a monomial ideal",
      Usage => "standardPairs I",
      Inputs => {
 	  "I" => {"a monomial ideal"},
@@ -370,7 +370,7 @@ document {
 
 document {
      Key => (monomialSubideal, Ideal),
-     Headline => {"find the largest monomial ideal in an ideal"},
+     Headline => "find the largest monomial ideal in an ideal",
      Usage => "monomialSubideal I",
      Inputs => {
 	  "I" => {"an ", TT "Ideal", "."}

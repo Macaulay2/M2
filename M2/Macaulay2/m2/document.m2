@@ -407,25 +407,27 @@ processExamples := (pkg,fkey,docBody) -> (
 nonNull := x -> select(x,t->t=!=null)
 fixupList := x -> apply(nonNull x,fixup)
 enlist := x -> if class x === List then x else {x}
+chkIsString := (key,val) -> if class val === String then val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
-     Key => identity,
-     symbol DocumentTag => identity,
-     Usage => fixup,
-     Function => fixup,
-     Inputs => fixupList,
-     Outputs => fixupList,
-     Results => fixupList,
-     OldSynopsis => identity,				    -- old
-     FileName => identity,
-     Headline => identity,
-     Description => extractExamples @@ hypertext,
-     Caveat => v -> if v =!= null then fixup SEQ { HEADER3 "Caveat", SEQ v },
-     SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { HEADER3 "See also", UL (TO \ enlist v) },
-     Subnodes => v -> MENU apply(nonNull enlist v, x -> fixup (
+     Key => last,
+     symbol DocumentTag => last,
+     Usage => (key,val) -> fixup val,
+     Function => (key,val) -> fixup val,
+     FormattedKey => chkIsString,
+     Inputs => (key,val) -> fixupList val,
+     Outputs => (key,val) -> fixupList val,
+     Results => (key,val) -> fixupList val,
+     OldSynopsis => last,				    -- old
+     FileName => chkIsString,
+     Headline => chkIsString,
+     Description => (key,val) -> extractExamples hypertext val,
+     Caveat => (key,v) -> if v =!= null then fixup SEQ { HEADER3 "Caveat", SEQ v },
+     SeeAlso => (key,v) -> if v =!= {} and v =!= null then fixup SEQ { HEADER3 "See also", UL (TO \ enlist v) },
+     Subnodes => (key,v) -> MENU apply(nonNull enlist v, x -> fixup (
 	       if class x === TO then x
 	       else if class x === TOH then TO x#0
 	       else if class x === String then x
-	       else error ("unrecognizable Subnode list item: ",x," in node ",fkey)))
+	       else error ("unrecognizable Subnode list item: ",x)))
      }
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
@@ -444,6 +446,8 @@ documentOptions := new HashTable from {
      SeeAlso => true,
      Caveat => true,
      Subnodes => true }
+reservedNodeNames := set apply( {"Top", "Table of Contents", "Combined Index"}, toLower )
+
 document = method( SingleArgumentDispatch => true )
 
 document List := z -> document toSequence z
@@ -463,11 +467,12 @@ document Sequence := args -> (
 	  ) else error "missing Key";
      opts.DocumentTag = tag := makeDocumentTag(opts.Key, Package => currentPackage, FormattedKey => if opts.?FormattedKey then opts.FormattedKey);
      currentNodeName = DocumentTag.FormattedKey tag;
+     if reservedNodeNames#?currentNodeName then error("'document' encountered a reserved node name '",currentNodeName,"'");
      pkg := DocumentTag.Package tag;
      opts.Description = toList args;
      exampleBaseFilename = makeFileName(currentNodeName,if opts.?FileName then opts.FileName,currentPackage);
      if currentPackage#"documentation"#?currentNodeName then error ("warning: documentation already provided for '", currentNodeName, "'");
-     opts = new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val));
+     opts = new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key(key,val)));
      currentPackage#"documentation"#currentNodeName = opts;
      currentNodeName = null;
      )

@@ -343,6 +343,7 @@ document {
 
 document {
      Key => top,
+     FormattedKey => "top components",				    -- to avoid it looking like "Top", the top node in an info file
      Headline => "compute the top dimensional components",
      TT "top I", " -- yields the intersection of top dimensional primary
      components of the module or ideal ", TT "I", ".",
