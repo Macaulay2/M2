@@ -53,7 +53,7 @@ reach2(TO      ) := (x) -> (
      then (
 	  record node;
      	  descend();
-	  reach1 doc node;
+	  reach1 documentation node;
      	  ascend();
 	  ))
 --------------- body of book

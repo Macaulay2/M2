@@ -971,6 +971,7 @@ toHashTable(v:Sequence):Expr := (
      o := newHashTable(hashTableClass,nothingClass);
      foreach e at i in v do (
 	  when e
+	  is Nothing do nothing
 	  is pair:Sequence do (
 	       if length(pair) == 2 
 	       then (storeInHashTable(o,pair.0,pair.1);)

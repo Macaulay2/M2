@@ -81,7 +81,8 @@ scope2 SHIELD := x -> null
 scope2 TO := x -> (
      key := formatDocumentTag x#0;
      if UP#?key then (
-	  stderr
+	  -- stderr
+	  null
 	  << "key '" << key << "' already encountered" << endl
 	  << "    previous menu was in '" << UP#key << "'" << endl
 	  << "         this menu is in '" << thisKey << "'" << endl
@@ -176,7 +177,7 @@ if missing then error "missing some nodes"
 
 
 -- 
--- document { quote linkFilename,
+-- document { symbol linkFilename,
 --      TT "linkFilename s", " -- convert a string ", TT "s", " into a string 
 --      which can be used as a file name to contain HTML about the topic 
 --      referred to by ", TT "s", ".",
@@ -189,7 +190,7 @@ if missing then error "missing some nodes"
 --      SEEALSO "linkFilenameKeys"
 --      }
 -- 
--- document { quote linkFilenameKeys,
+-- document { symbol linkFilenameKeys,
 --      TT "linkFilenameKeys()", " -- returns a list of the strings which
 --      have been given to ", TO "linkFilename", ".",
 --      PARA,

@@ -3,7 +3,7 @@
 le := (a,b) -> (
      c := a ? b;
      if c === incomparable then error "incomparable elements encountered in sort";
-     c =!= quote >
+     c =!= symbol >
      )
 
 sort = (v) -> (
@@ -54,15 +54,15 @@ lexcompare := (v,w,i) -> (
      if i === # v
      then (
 	  if i === # w
-     	  then quote ==
-     	  else quote <)
+     	  then symbol ==
+     	  else symbol <)
      else (
 	  if i === # w
-	  then quote >
+	  then symbol >
 	  else (
      	       s := v#i ? w#i;
-     	       if s === quote < then quote <
-     	       else if s === quote > then quote >
+     	       if s === symbol < then symbol <
+     	       else if s === symbol > then symbol >
      	       else lexcompare(v,w,i+1))))
 
 
@@ -70,13 +70,13 @@ BasicList ? BasicList := (v,w) -> lexcompare(v,w,0)
 Sequence ? Sequence := (v,w) -> lexcompare(v,w,0)
 Type ? Type := (x,y) -> hash x ? hash y
 Thing ? Thing := (x,y) -> (
-     if x === y then quote ==
+     if x === y then symbol ==
      else (
 	  s := class x ? class y;
-	  if s =!= quote == then s
+	  if s =!= symbol == then s
 	  else (
 	       t := parent x ? parent y;
-	       if t =!= quote == then t
+	       if t =!= symbol == then t
 	       else hash x ? hash y
 	       )))
 

@@ -1,7 +1,7 @@
 --		Copyright 1996 by Daniel R. Grayson
 
-back := quote back
-menu := quote menu
+back := symbol back
+menu := symbol menu
 menu = method()
 
 RUNME := new SelfInitializingType of BasicList
@@ -69,7 +69,7 @@ menu(Function,Thing) := (x,back) -> (
 	  	    ("EDIT",(RUNME{()->edit x},(x,back)))});
 	  );
      try items = append(items,("ORIGINAL", (original x,(x,back))));
-     if doc x =!= null
+     if documentation x =!= null
      then items = append(items,("DOC",(RUNME{()->help x},(x,back))));
      showit(items, (x,back), 0))
 

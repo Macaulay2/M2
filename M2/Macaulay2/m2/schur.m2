@@ -27,7 +27,7 @@ newSchur := (R,M) -> (
      if R.?char then SR.char = R.char;
      SR.monoid = M;
      SR ? SR := (f,g) -> (
-	  if f == g then quote ==
+	  if f == g then symbol ==
 	  else leadMonomial f ? leadMonomial g
 	  );
      R * M := (r,m) -> (
@@ -100,7 +100,7 @@ Schur = method ( Options => { } )
 
 Schur(ZZ) := SchurRing => options -> n -> (
      R := ZZ;
-     x := quote x;
+     x := symbol x;
      prune := v -> drop(v, - # select(v,i -> i === 0));
      M := monoid[x_1 .. x_n];
      vec := apply(n, i -> apply(n, j -> if j<=i then 1 else 0));

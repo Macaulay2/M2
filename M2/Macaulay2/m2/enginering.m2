@@ -31,9 +31,9 @@ new EngineRing from String := (EngineRing, ggcmds) -> (
      R := new EngineRing of RingElement;
      R.Engine = true;
      R.handle = newHandle ggcmds;
-     new R from Handle := (R,h) -> new R from { (quote handle, h) };
+     new R from Handle := (R,h) -> new R from { (symbol handle, h) };
      new R := R -> newClass( R, hashTable { (
-		    quote handle, 
+		    symbol handle, 
 		    toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
 		    ) } );
      R#1 = 1_R;
@@ -43,7 +43,7 @@ new EngineRing from String := (EngineRing, ggcmds) -> (
 
 ZZ _ EngineRing := 
 promote(ZZ,EngineRing) := RingElement => (i,R) -> (
-     new R from {( quote handle, newHandle (ggPush R, ggINT, gg i, ggfromint) )}
+     new R from {( symbol handle, newHandle (ggPush R, ggINT, gg i, ggfromint) )}
      )
 
 -----------------------------------------------------------------------------
@@ -52,9 +52,9 @@ ZZZ = new EngineRing of RingElement
 ZZZ.generators = {}
 ZZZ.pop = () -> new ZZZ
 ZZZ.handle = newHandle ggEZZ
-new ZZZ from Handle := (ZZZ,h) -> new ZZZ from { (quote handle, h) };
+new ZZZ from Handle := (ZZZ,h) -> new ZZZ from { (symbol handle, h) };
 new ZZZ := ZZZ -> newClass( ZZZ, hashTable { (
-	       quote handle, 
+	       symbol handle, 
 	       toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
 	       ) } );
 ZZZ.newEngine = true
@@ -207,7 +207,7 @@ isHomogeneous RingElement := f -> (
      new ring x)
 
 RingElement ? RingElement := (x,y) -> (
-     if ring x === ring y and x == y then quote == else handle x ? handle y
+     if ring x === ring y and x == y then symbol == else handle x ? handle y
      );
 
 net RingElement := x -> stack lines sendgg(ggPush x, ggsee, ggpop);
@@ -624,7 +624,7 @@ promote(RingElement, RingElement) := RingElement => (r,o) -> (
 --     ggpromotenewh := concatenate (ggpromote,ggaddress,ggtonet);
 --     ggpush := lookup(ggPush,R);
 --     promote(R,S) := (f,S) -> newClass( S, hashTable { (
---		    quote handle, 
+--		    symbol handle, 
 --		    toHandle convert(ConvertInteger,
 --			 sendgg (ggPushS, ggpush f, ggpromotenewh)))});
 

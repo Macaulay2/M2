@@ -217,7 +217,7 @@ GradedModuleMap * GradedModuleMap := GradedModuleMap => (g,f) -> (
      h)
 GradedModule ** Module := GradedModule => (C,M) -> (
      P := youngest(C,M);
-     key := (C,M,quote **);
+     key := (C,M,symbol **);
      if P#?key then P#key
      else C**M = (
 	  D := new GradedModule;
@@ -226,7 +226,7 @@ GradedModule ** Module := GradedModule => (C,M) -> (
 	  D))
 Module ** GradedModule := GradedModule => (M,C) -> (
      P := youngest(M,C);
-     key := (M,C,quote **);
+     key := (M,C,symbol **);
      if P#?key then P#key
      else M**C = (
 	  D := new GradedModule;
@@ -271,7 +271,7 @@ GradedModule Array := GradedModule => (C,A) -> (
 
 GradedModule ** GradedModule := GradedModule => (C,D) -> (
      P := youngest(C,D);
-     key := (C,D,quote **);
+     key := (C,D,symbol **);
      if P#?key then P#key
      else C**D = (
 	  R := C.ring;

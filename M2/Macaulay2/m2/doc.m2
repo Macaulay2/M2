@@ -72,7 +72,7 @@ document { List,
      "Creating new lists or sequences:",
      MENU {
 	  TO "..",
-	  TO (quote :, ZZ, Thing),	  -- was ":"
+	  TO (symbol :, ZZ, Thing),	  -- was ":"
 	  TO "toList",
 	  TO "newClass",
 	  TO "sequence",
@@ -80,7 +80,7 @@ document { List,
 	  },
      "Selecting elements of lists:",
      MENU {
-	  TO (quote _, List, ZZ),
+	  TO (symbol _, List, ZZ),
 	  TO "#",
 	  TO "first",
 	  TO "last"
@@ -121,7 +121,7 @@ document { List,
 	  },
      "Combining lists:",
      MENU {
-	  TO (quote +,List,List),
+	  TO (symbol +,List,List),
 	  TO "demark",
 	  TO "fold",
 	  TO "mergePairs"
@@ -207,7 +207,7 @@ document { setrecursionlimit,
      permissible for calls to functions."
      }
 
-document { "commandLine",
+document { symbol commandLine,
      TT "commandLine", " -- a constant whose value is the list of arguments 
      passed to the interpreter, including argument 0, the name of the program.",
      }
@@ -223,7 +223,7 @@ document { Function,
      SEEALSO "functions"
      }
 
-document { "->",
+document { symbol ->,
      TT "x -> e", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
 	      else is the sequence of arguments.",
@@ -425,7 +425,7 @@ document { apply,
      an hash table ", TT "x", " by applying the function
      ", TT "f", " to each of the values of ", TT "x", ".  This means that
      if ", TT "x#k === v", " then ", TT "y#k === f(v)", ".",
-     SEEALSO {(quote /,List, Function), (quote \, Function, List)}
+     SEEALSO {(symbol /,List, Function), (symbol \, Function, List)}
      }
 
 document { scan,
@@ -476,7 +476,7 @@ document { select,
      SEEALSO{ "scan", "apply", "any", "all", "member", "mutable"}
      }
 
---document { quote find,
+--document { symbol find,
 --     TT "find(x,f)", " -- applies the function ", TT "f", " to each element
 --     of ", TT "x", ", returning the result not equal to ", TT "null", ".
 --     If no result is non-null, then it returns null."
@@ -645,7 +645,7 @@ document { "*",
      PRE "          * X := x -> ... ",
      "Here are some of the methods installed.",
      MENU {
-	  TO (quote *, Set, Set)
+	  TO (symbol *, Set, Set)
 	  },
      SEEALSO{ "times", "product" }
      }
@@ -661,11 +661,11 @@ document { "&",
      PARA,
      "See also:",
      MENU {
-	  TO (quote &,ZZ,ZZ)
+	  TO (symbol &,ZZ,ZZ)
 	  }
      }
 
-document { (quote &, ZZ, ZZ),
+document { (symbol &, ZZ, ZZ),
      TT "m & n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'and'."
      }
@@ -701,12 +701,12 @@ document { "+",
      class of ", TT "y", ".",
      PARA,
      MENU {
-	  TO (quote +, Set, Set)
+	  TO (symbol +, Set, Set)
 	  },
      SEEALSO{ "plus", "sum" }
      }
 
-document { (quote +, Set, Set),
+document { (symbol +, Set, Set),
      TT "s + t", " -- union of two sets",
      PARA,
      SEEALSO "+"
@@ -740,11 +740,11 @@ document { "/",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
      MENU {
-	  TO (quote /, Ring, Ideal),
-	  TO (quote /, Module, Module),
-	  TO (quote /, Module, Ideal),
-	  TO (quote /, Ideal, Ideal),
-	  TO (quote /, List, Function)
+	  TO (symbol /, Ring, Ideal),
+	  TO (symbol /, Module, Module),
+	  TO (symbol /, Module, Ideal),
+	  TO (symbol /, Ideal, Ideal),
+	  TO (symbol /, List, Function)
 	  }
      }
 
@@ -809,11 +809,11 @@ document { "/^",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
      MENU {
-	  TO (quote /^, Thing, ZZ)
+	  TO (symbol /^, Thing, ZZ)
 	  }
      }
 
-document { (quote /^, Thing, ZZ),
+document { (symbol /^, Thing, ZZ),
      TT "x /^ n", " -- computes the n-th divided power of x.",
      PARA,
      "This is implemented naively as ", TT "x^n/n!", ".",
@@ -927,20 +927,20 @@ document { "|",
      class of ", TT "y", ".",
      PARA,
      MENU {
-	  TO {(quote |, List, List), " -- join two lists"},
-	  TO {(quote |, String, String), " -- concatenate two strings or nets horizontally"},
-	  TO {(quote |, ZZ, ZZ), " -- logical OR of two integers"},
-	  TO {(quote |, Matrix, Matrix), " -- join two matrices horizontally"}
+	  TO {(symbol |, List, List), " -- join two lists"},
+	  TO {(symbol |, String, String), " -- concatenate two strings or nets horizontally"},
+	  TO {(symbol |, ZZ, ZZ), " -- logical OR of two integers"},
+	  TO {(symbol |, Matrix, Matrix), " -- join two matrices horizontally"}
 	  },
      SEEALSO "||"
      }
-document { (quote |, List, List),
+document { (symbol |, List, List),
      TT "v|w", " -- join two lists.", 
      PARA,
      EXAMPLE "{1,2,3}|{4,5,6}",
      SEEALSO "|"
      }
-document { (quote |, String, String),
+document { (symbol |, String, String),
      TT "s|t", " -- concatenates strings or nets horizontally.", 
      PARA,
      "The result is a string if the arguments are all strings, otherwise it
@@ -955,14 +955,14 @@ document { (quote |, String, String),
      EXAMPLE ///"t = " | 333///,      
      SEEALSO {"|", "horizontalJoin", "Net"}
      }
-document { (quote |, ZZ, ZZ),
+document { (symbol |, ZZ, ZZ),
      TT "m|n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'or'.",
      PARA,
      EXAMPLE "5 | 12",
      SEEALSO "|"
      }
-document { (quote |, Matrix, Matrix),
+document { (symbol |, Matrix, Matrix),
      TT "f|g", " -- concatenate matrices horizontally.",
      PARA,
      "It is assumed that ", TT "f", " and ", TT "g", " both have the same target.",
@@ -975,7 +975,7 @@ document { (quote |, Matrix, Matrix),
      will be multiplied by a suitable identity matrix.",
      PARA,
      EXAMPLE "2|f|3",
-     SEEALSO {"|", (quote ||, Matrix, Matrix)}
+     SEEALSO {"|", (symbol ||, Matrix, Matrix)}
      }
 
 document { "||",
@@ -988,12 +988,12 @@ document { "||",
      class of ", TT "y", ".",
      PARA,
      MENU {
-	  TO (quote ||, Net, Net),
-	  TO (quote ||, Matrix, Matrix)
+	  TO (symbol ||, Net, Net),
+	  TO (symbol ||, Matrix, Matrix)
 	  }
      }
 
-document { (quote ||, Net, Net),
+document { (symbol ||, Net, Net),
      TT "m||n", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the
      first one.",
@@ -1006,7 +1006,7 @@ document { (quote ||, Net, Net),
 	  },
      SEEALSO {"||", "|", "Net", "stack"}
      }
-document { (quote ||, Matrix, Matrix),
+document { (symbol ||, Matrix, Matrix),
      TT "f||g", " -- yields the matrix obtained from matrices ", TT "f", " and ", TT "g", " by
      concatenating the columns.",
      PARA,
@@ -1020,7 +1020,7 @@ document { (quote ||, Matrix, Matrix),
      will be multiplied by a suitable identity matrix.",
      EXAMPLE "p || 33",
      PARA,
-     SEEALSO{"||", (quote ||, Matrix, Matrix)}
+     SEEALSO{"||", (symbol ||, Matrix, Matrix)}
      }
 
 document { "===",
@@ -1082,7 +1082,7 @@ document { "==",
      -- ", TO "=!=", ".",
      PARA,
      "Warning: whether this comparison operator returns true is not necessarily 
-     related to whether the comparison operator ", TO "?", " returns ", TT "quote ==", ".",
+     related to whether the comparison operator ", TO "?", " returns ", TT "symbol ==", ".",
      PARA,
      SEEALSO{ "!=" }
      }
@@ -1093,7 +1093,7 @@ document { "!=",
      SEEALSO{ "==" }
      }
 
-document { "**", 
+document { symbol **, 
      TT "x ** y", " -- a binary operator used for tensor product and
      cartesian product.",
      PARA,
@@ -1104,7 +1104,7 @@ document { "**",
      class of ", TT "y", "."
      }
 
-document { (quote **, Set, Set),
+document { (symbol **, Set, Set),
      TT "X ** Y", " -- form the Cartesian product of two sets.",
      PARA,
      "Its elements are the sequences (x,y), where x is an element

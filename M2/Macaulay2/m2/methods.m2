@@ -112,7 +112,7 @@ OptionsRegistry#method = methodDefaults
 
 setup := (args, symbols) -> (
      scan(symbols, n -> (
-	  if Symbols#?n then error concatenate("function ",n," redefined");
+	  if Symbols#?n then error concatenate("function redefined");
 	  f := method args;
 	  Symbols#f = n;
 	  n <- f;
@@ -132,7 +132,7 @@ setup((), {
 	  hilbertFunction, content, monoid, leadTerm, leadCoefficient, leadMonomial, 
 	  leadComponent, degreesRing, newDegreesRing, degrees, annihilator, assign, numgens,
 	  autoload, ggPush, char, minprimes, relations, cone, pdim, random,
-	  det, presentation, quote use, degreesMonoid, newDegreesMonoid, submatrix,
+	  det, presentation, symbol use, degreesMonoid, newDegreesMonoid, submatrix,
 	  truncate, fraction
 	  })
 setup(TypicalValue => Module, {subquotient})
@@ -166,11 +166,9 @@ hilbertPolynomial = method(
      TypicalValue => ProjectiveHilbertPolynomial )
 factor = method( Options => { } )
 
-
 cohomology = method( Options => { 
 	  Degree => 0		  -- for local cohomology and sheaf cohomology
 	  } )
-
 homology = method( Options => { } )
 
 trim    = method ( Options => {
@@ -180,10 +178,10 @@ mingens = method ( Options => {
 	  -- DegreeLimit => {}
 	  } )
 
-width File := fileWidth; erase quote fileWidth
-width Net := netWidth; erase quote netWidth
-height Net := netHeight; erase quote netHeight
-depth Net := netDepth; erase quote netDepth
+width File := fileWidth; erase symbol fileWidth
+width Net := netWidth; erase symbol netWidth
+height Net := netHeight; erase symbol netHeight
+depth Net := netDepth; erase symbol netDepth
 width String := s -> #s
 height String := s -> 1
 depth String := s -> 0
@@ -191,24 +189,29 @@ depth String := s -> 0
 -----------------------------------------------------------------------------
 
 oldflatten := flatten
-erase quote flatten
+erase symbol flatten
 flatten = method(SingleArgumentDispatch=>true)
 flatten List     := List     => oldflatten
 flatten Sequence := Sequence => oldflatten
 coker = cokernel
 
 source = (h) -> (
-     if h#?(quote source) then h.source
-     else if (class h)#?(quote source) then (class h)#?(quote source)
+     if h#?(symbol source) then h.source
+     else if (class h)#?(symbol source) then (class h)#?(symbol source)
      else error ( toString h, " of class ", toString class h, " has no source" ))
 
 target = (h) -> (
      if h.?target then h.target
-     else if (class h)#?(quote target) then (class h)#?(quote target)
+     else if (class h)#?(symbol target) then (class h)#?(symbol target)
      else error (toString h | " of class " | toString class h | " has no target"))
 
 gens = generators
 
+-----------------------------------------------------------------------------
+oldvalue := value
+erase symbol value
+value = method()
+value Symbol := value String := oldvalue
 -----------------------------------------------------------------------------
 
 scanValues(HashTable,Function) := (x,f) -> scanPairs(x, (k,v) -> f v)
@@ -222,17 +225,17 @@ scanKeys(Database,Function) := (x,f) -> (
 	       ))
 
 oldnumerator := numerator
-erase quote numerator
+erase symbol numerator
 numerator = method()
 numerator QQ := oldnumerator
 
 olddenominator := denominator
-erase quote denominator
+erase symbol denominator
 denominator = method()
 denominator QQ := olddenominator
 
-erase quote newmethod1
-erase quote newmethod123c
+erase symbol newmethod1
+erase symbol newmethod123c
 
 emptyOptionTable := new OptionTable
 options Thing := X -> emptyOptionTable
@@ -250,6 +253,8 @@ computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
 	  ret)
      else M#Name#1
      )
+-----------------------------------------------------------------------------
+-- html stuff
 -----------------------------------------------------------------------------
 
 html = method(SingleArgumentDispatch=>true, TypicalValue => String)
@@ -269,6 +274,12 @@ EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expec
      MarkUpType Thing := (h,y) -> new h from {y}
 EmptyMarkUpType Thing := (h,y) -> error "expected empty list"
 
+makeList := method()
+makeList MarkUpType := X -> toString X
+makeList Type       := X -> concatenate("new ", toString X, " from ")
+toExternalString MarkUpList := s -> concatenate(makeList class s, toExternalString toList s)
+toString         MarkUpList := s -> concatenate(makeList class s, toString         toList s)
+
 htmlMarkUpType := s -> (
      on := "<" | s | ">";
      off := "</" | s | ">";
@@ -276,7 +287,7 @@ htmlMarkUpType := s -> (
 
 GlobalAssignHook MarkUpType := (X,x) -> (
      if not x.?name then (
-	  x.symbol = X;
+	  x.Symbol = X;
 	  x.name = string X;
      	  html x := htmlMarkUpType string X;
 	  );
@@ -296,6 +307,7 @@ ExampleTABLE = new MarkUpType
 PRE        = new MarkUpType
 TITLE      = new MarkUpType
 HEAD       = new MarkUpType
+HEADLINE   = new MarkUpType
 BODY       = new MarkUpType
 IMG	   = new MarkUpType
 HTML       = new MarkUpType
@@ -602,6 +614,8 @@ html ITALIC := x -> concatenate("<I>",apply(x,html),"</I>")
 
 texMath TEX := tex TEX := identity
 
+net HEADLINE := texMath HEADLINE := tex HEADLINE := text HEADLINE := html HEADLINE := s -> ""
+
 texMath SEQ := tex SEQ := x -> concatenate(apply(x, tex))
 text SEQ := x -> concatenate(apply(x, text))
 html SEQ := x -> concatenate(apply(x, html))
@@ -763,19 +777,18 @@ exitMethod := method(SingleArgumentDispatch => true)
 exitMethod ZZ := i -> exit i
 exitMethod Sequence := () -> exit 0
 quit = new Command from (() -> exit 0)
-erase quote exit
+erase symbol exit
 exit = new Command from exitMethod
 
-
+toExternalString Option := z -> concatenate splice (
+     if precedence z > precedence z#0 then ("(",toExternalString z#0,")") else toExternalString z#0,
+     " => ",
+     if precedence z > precedence z#1 then ("(",toExternalString z#1,")") else toExternalString z#1
+     )
 toString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toString z#0,")") else toString z#0,
      " => ",
      if precedence z > precedence z#1 then ("(",toString z#1,")") else toString z#1
      )
 
------------------------------------------------------------------------------
-oldvalue := value
-erase quote value
-value = method()
-value Symbol := value String := oldvalue
 

@@ -92,7 +92,7 @@
 -- for any left-exact, or contravariant right exact functor, e.g. Tor and Ext.
 -- 
 -- We apply the technique to a specific example
-R = ZZ/101[quote a..quote f]
+R = ZZ/101[symbol a..symbol f]
 I = minors(2,genericMatrix(R,a,2,3))
 J = ideal(I_0,I_1)
 K = J : I_2

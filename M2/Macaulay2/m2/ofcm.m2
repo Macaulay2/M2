@@ -153,10 +153,10 @@ makeit1 := (options) -> (
      else (
 	  mo := options.MonomialOrder;
 	  M.MonomialOrder = (
-	       if mo === quote RevLex then MOrlex (wts,firstdeg)
-	       else if mo === quote GRevLex then MOgrlex (wts,firstdeg)
-	       else if mo === quote Lex then MOlex (wts,firstdeg)
-	       else if mo === quote GLex then MOglex (wts,firstdeg)
+	       if mo === symbol RevLex then MOrlex (wts,firstdeg)
+	       else if mo === symbol GRevLex then MOgrlex (wts,firstdeg)
+	       else if mo === symbol Lex then MOlex (wts,firstdeg)
+	       else if mo === symbol GLex then MOglex (wts,firstdeg)
 	       else if instance(mo, Eliminate) then MOelim(wts,firstdeg, mo#0)
 	       else if instance(mo, ProductOrder) then MOproduct(wts, firstdeg, toList mo)
 	       else error("invalid MonomialOrder option: ", toString mo)
@@ -232,7 +232,7 @@ makeit1 := (options) -> (
 	  if i > # x
 	  then (
 	       if i > # y 
-	       then quote ==
+	       then symbol ==
 	       else y#-i#1 ? 0
 	       )
 	  else (
@@ -326,7 +326,7 @@ makeMonoid := (options) -> (
 
      if class options.Variables === ZZ 
      then (
-	 x := quote x;
+	 x := symbol x;
          options.Variables = toList (x_0 .. x_(options.Variables - 1)))
      else (
          options.Variables =

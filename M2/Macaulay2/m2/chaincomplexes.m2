@@ -386,7 +386,7 @@ poincareN ChainComplex := (C) -> (
 
 ChainComplex ** Module := ChainComplex => (C,M) -> (
      P := youngest(C,M);
-     key := (C,M,quote **);
+     key := (C,M,symbol **);
      if P#?key then P#key
      else C**M = (
 	  D := new ChainComplex;
@@ -401,7 +401,7 @@ ChainComplex ** Module := ChainComplex => (C,M) -> (
 
 Module ** ChainComplex := ChainComplex => (M,C) -> (
      P := youngest(M,C);
-     key := (M,C,quote **);
+     key := (M,C,symbol **);
      if P#?key then P#key
      else M**C = (
 	  D := new ChainComplex;
@@ -575,9 +575,9 @@ regularity Module := (M) -> regularity resolution M
 firstDegrees := method()
 firstDegrees Module := M -> (
      R := ring M;
-     if  M#?(quote firstDegrees) 
-     then M#(quote firstDegrees)
-     else M#(quote firstDegrees) = (
+     if  M#?(symbol firstDegrees) 
+     then M#(symbol firstDegrees)
+     else M#(symbol firstDegrees) = (
 	  rk := numgens M;
 	  nd := degreeLength R;
 	  if nd == 0 then toList (rk : 0)
@@ -709,12 +709,12 @@ tens := (R,f,g) -> (
 
 ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
      P := youngest(C,D);
-     key := (C,D,quote **);
+     key := (C,D,symbol **);
      if P#?key then P#key
      else C**D = (
 	  R := ring C;
 	  if ring D =!= R then error "expected chain complexes over the same ring";
-	  E := chainComplex (lookup(quote **, GradedModule, GradedModule))(C,D);
+	  E := chainComplex (lookup(symbol **, GradedModule, GradedModule))(C,D);
 	  scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = map(
 		    E#(i-1),
 		    E#i,
@@ -734,7 +734,7 @@ ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
 
 ChainComplex ** GradedModule := ChainComplex => (C,D) -> (
      P := youngest(C,D);
-     key := (C,D,quote **);
+     key := (C,D,symbol **);
      if P#?key then P#key
      else C**D = (
      	  C ** chainComplex D
@@ -743,7 +743,7 @@ ChainComplex ** GradedModule := ChainComplex => (C,D) -> (
 
 GradedModule ** ChainComplex := ChainComplex => (C,D) -> (
      P := youngest(C,D);
-     key := (C,D,quote **);
+     key := (C,D,symbol **);
      if P#?key then P#key
      else C**D = (
      	  chainComplex C ** D
@@ -752,7 +752,7 @@ GradedModule ** ChainComplex := ChainComplex => (C,D) -> (
 
 ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
      P := youngest(f,g);
-     key := (f,g,quote **);
+     key := (f,g,symbol **);
      if P#?key then P#key
      else f**g = (
 	  h := new ChainComplexMap;
@@ -774,7 +774,7 @@ ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
 
 ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> (
      P := youngest(f,C);
-     key := (f,C,quote **);
+     key := (f,C,symbol **);
      if P#?key then P#key
      else f**C = (
      	  f ** id_C
@@ -782,7 +782,7 @@ ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> (
      )
 ChainComplex ** ChainComplexMap := ChainComplexMap => (C,f) -> (
      P := youngest(C,f);
-     key := (C,f,quote **);
+     key := (C,f,symbol **);
      if P#?key then P#key
      else C**f = (
      	  id_C ** f
@@ -854,12 +854,12 @@ trans := (C,v) -> (
 	  apply(v, i -> if not Cc#?i then error "expected an index of a component of the direct sum");
 	  v)
      )
-ChainComplex _ Array := ChainComplexMap => (C,v) -> if C#?(quote _,v) then C#(quote _,v) else C#(quote _,v) = (
+ChainComplex _ Array := ChainComplexMap => (C,v) -> if C#?(symbol _,v) then C#(symbol _,v) else C#(symbol _,v) = (
      v = trans(C,v);
      D := directSum apply(toList v, i -> C.components#i);
      map(C,D,k -> C_k_v))
 
-ChainComplex ^ Array := ChainComplexMap => (C,v) -> if C#?(quote ^,v) then C#(quote ^,v) else C#(quote ^,v) = (
+ChainComplex ^ Array := ChainComplexMap => (C,v) -> if C#?(symbol ^,v) then C#(symbol ^,v) else C#(symbol ^,v) = (
      v = trans(C,v);
      D := directSum apply(toList v, i -> C.components#i);
      map(D,C,k -> C_k^v))

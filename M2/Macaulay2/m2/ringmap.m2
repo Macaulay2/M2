@@ -29,10 +29,10 @@ map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
 	  if n != numgens source m 
 	  then error ("encountered values for ", toString numgens source m," variables");
 	  new RingMap from {
-	       quote source => S,
-	       quote target => R,
-	       quote matrix => m,
-	       quote handle => newHandle(ggPush m, ggringmap)
+	       symbol source => S,
+	       symbol target => R,
+	       symbol matrix => m,
+	       symbol handle => newHandle(ggPush m, ggringmap)
 	       }
 	  )
      else if coefficientRing R === coefficientRing S
@@ -135,10 +135,10 @@ kernel RingMap := Ideal => options -> (f) -> if f.?kernel then f.kernel else f.k
 	  images = toList images;
 	  commonDenominator := images#0#1;
 	  k := coefficientRing R;
-	  d := quote d;
-	  h := quote h;
-	  x := quote x;
-	  y := quote y;
+	  d := symbol d;
+	  h := symbol h;
+	  x := symbol x;
+	  y := symbol y;
 	  S := k[x_1 .. x_n1, d, y_1 .. y_n2, h,
 	       MonomialOrder => Eliminate (n1 + 1),
 	       Degrees => join(
@@ -184,10 +184,10 @@ RingMap * RingMap := RingMap => (g,f) -> (
      if source g != target f then error "ring maps not composable";
      m := g f.matrix;
      new RingMap from {
-	  quote source => source f,
-	  quote target => target g,
-	  quote matrix => m,
-	  quote handle => newHandle(ggPush m, ggringmap)
+	  symbol source => source f,
+	  symbol target => target g,
+	  symbol matrix => m,
+	  symbol handle => newHandle(ggPush m, ggringmap)
 	  }
      )
 isHomogeneous RingMap := (f) -> (

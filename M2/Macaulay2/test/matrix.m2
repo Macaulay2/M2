@@ -72,8 +72,8 @@ constructTest = () -> (
 
 arithTest = () -> (
   -- tests some arithmetic, genericMatrix, pfaffians, minors, transpose
-  x = quote x;
-  y = quote y;
+  x = symbol x;
+  y = symbol y;
   R = ZZ/101[x_1 .. x_9, y_1 .. y_9];
   m1 = genericMatrix(R,x_1,3,3);
   m2 = genericMatrix(R,y_1,3,3);
@@ -116,19 +116,19 @@ detTest = () -> (
 degTest = () -> (
   -- This is a test of degrees, homogeniety checking
   -- First usual degrees
-  R = ZZ/101[quote a..quote f];
+  R = ZZ/101[symbol a..symbol f];
   F = R^{-4, -2};
   m = map(F,, {{a, b^2}, {c^3, d^4}});
   assert(isHomogeneous m);
   assert(isHomogeneous transpose m);
 
-  R = ZZ/101[quote a..quote f, Degrees => {3,4,5,7,9,10}];
+  R = ZZ/101[symbol a..symbol f, Degrees => {3,4,5,7,9,10}];
   F = R^{-5,-8};
   m = map(F,, {{f - c^2, e}, {d, a^2}});
   assert(isHomogeneous m);
   assert(isHomogeneous transpose m);
 
-  R = ZZ/101[quote a..quote f, Degrees => {{1, 1}, {1, 2}, {1, 3}, {1, -1}, {1, -2}, {1, -3}}];
+  R = ZZ/101[symbol a..symbol f, Degrees => {{1, 1}, {1, 2}, {1, 3}, {1, -1}, {1, -2}, {1, -3}}];
   F = R^{{-1,-2}};
   m = map(F, R^0, 0);
   --n = basis({5,2}, m);
@@ -215,7 +215,7 @@ hilbTest = () -> (
   -- test of Hilbert functions (these will compute Groebner bases)
 
   -- first a very simple test
-  R = ZZ/101[quote a..quote c];
+  R = ZZ/101[symbol a..symbol c];
   m = matrix {{a^2, a * b, b^2}};
   F = poincare cokernel m;
   use ring F;  -- this allows T to be used
@@ -233,13 +233,13 @@ hilbTest = () -> (
                          + 58 * T^7 - 32 * T^8 + 4 * T^9 + T^10);
 
   -- now for quasi homogeneous
-  R = ZZ/101[quote a..quote d, Degrees=>{1,2,3,4}];
+  R = ZZ/101[symbol a..symbol d, Degrees=>{1,2,3,4}];
   m = matrix {{a^3, a*b*c, a*d^2, c^4}};
   assert(poincare cokernel m == 1-T^3-T^6+T^8-T^9+T^11-T^12+T^14+2*T^15
                          -T^16-T^17+T^21-2*T^23+T^25);
 
   -- now for multi-degrees
-  R = ZZ/101[quote a..quote d, Degrees=>{{1,1,0,0,0},{1,0,1,0,0},{1,0,0,1,0},{1,0,0,0,1}}];
+  R = ZZ/101[symbol a..symbol d, Degrees=>{{1,1,0,0,0},{1,0,1,0,0},{1,0,0,1,0},{1,0,0,0,1}}];
   m = matrix{{a^3, a*b*c, a*d^2, c^4}};
   F = poincare cokernel m;
   assert(F == poincare resolution m);

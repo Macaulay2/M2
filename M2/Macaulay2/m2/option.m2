@@ -4,7 +4,7 @@ html Option := x -> toString x
 text Option := x -> toString x
 
 new HashTable from List := HashTable => (O,v) -> hashTable v
--- erase quote hashTable
+-- erase symbol hashTable
 
 OptionsRegistry = new MutableHashTable
 OptionTable = new Type of HashTable

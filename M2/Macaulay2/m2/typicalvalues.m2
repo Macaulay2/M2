@@ -1,19 +1,19 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-typicalValues # quote !             = ZZ
-typicalValues # quote !=            = Boolean
-typicalValues # quote #?            = Boolean
-typicalValues # quote ->            = Function
-typicalValues # quote ..            = Sequence
-typicalValues # quote .?            = Boolean
-typicalValues # quote <             = Boolean
-typicalValues # quote <=            = Boolean
-typicalValues # quote =!=           = Boolean
-typicalValues # quote ==            = Boolean
-typicalValues # quote ===           = Boolean
-typicalValues # quote =>            = Option
-typicalValues # quote >             = Boolean
-typicalValues # quote >=            = Boolean
+typicalValues # symbol !             = ZZ
+typicalValues # symbol !=            = Boolean
+typicalValues # symbol #?            = Boolean
+typicalValues # symbol ->            = Function
+typicalValues # symbol ..            = Sequence
+typicalValues # symbol .?            = Boolean
+typicalValues # symbol <             = Boolean
+typicalValues # symbol <=            = Boolean
+typicalValues # symbol =!=           = Boolean
+typicalValues # symbol ==            = Boolean
+typicalValues # symbol ===           = Boolean
+typicalValues # symbol =>            = Option
+typicalValues # symbol >             = Boolean
+typicalValues # symbol >=            = Boolean
 typicalValues # acos                = RR
 typicalValues # ancestor            = Boolean
 typicalValues # any                 = Boolean

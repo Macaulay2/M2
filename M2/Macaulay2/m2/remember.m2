@@ -1,7 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-originalFunction := quote originalFunction
-clearTable := quote clearTable
+originalFunction := symbol originalFunction
+clearTable := symbol clearTable
 memoize = f -> (
      if class f =!= Function then error "expected a function";
      values := new MutableHashTable;

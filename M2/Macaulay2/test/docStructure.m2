@@ -39,7 +39,7 @@ reach2 TO := x -> (
      if not reachable#?s or not reachable#s then (
 	  reachable#s = true;
 	  currentDescent = enter(currentDescent, formatDocumentTag s);
-	  reach1 doc s;
+	  reach1 documentation s;
 	  currentDescent = currentDescent.parent;
 	  ))
 

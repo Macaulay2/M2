@@ -8,8 +8,8 @@ monomialCurve = (S, a) -> (
     if not all(a, i -> instance(i,ZZ) and i >= 1)
       then error "expected positive integers";
     a = prepend(0,a);
-    s := quote s;
-    t := quote t;
+    s := symbol s;
+    t := symbol t;
     monsize := (options S).MonomialSize;
     R1 := (coefficientRing S)[s,t,MonomialSize=>monsize];
     R2 := (coefficientRing S)[Variables=>n+1,MonomialSize=>monsize];

@@ -1,6 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
--- flag quote sequence
+-- flag symbol sequence
 
 << Thing := x -> stdio << x
 File << Net := 
@@ -31,23 +31,23 @@ List << Manipulator := (o,m) -> (scan(o, o -> m#0 o); o)
 Nothing << Manipulator := (null,m) -> null
 
 oldclose := close
-erase quote close
+erase symbol close
 close = new Manipulator from oldclose
 
 oldcloseIn := closeIn
-erase quote closeIn
+erase symbol closeIn
 closeIn = new Manipulator from oldcloseIn
 
 oldcloseOut := closeOut
-erase quote closeOut
+erase symbol closeOut
 closeOut = new Manipulator from oldcloseOut
 
 oldflush := flush
-erase quote flush
+erase symbol flush
 flush = new Manipulator from oldflush
 
 oldendl := endl
-erase quote endl
+erase symbol endl
 endl = new Manipulator from oldendl
 
 if class path =!= List then path = { "." }
@@ -85,16 +85,16 @@ isAbsolutePath := (
 
 if class phase === Symbol then phase = 0
 
-erase quote "--newline--"
+erase symbol "--newline--"
 
 protect AfterEval
 protect AfterPrint
 protect BeforePrint
 
 rot := x -> (
-     quote oooo <- ooo;			  -- avoid GlobalAssignHook with <-
-     quote ooo <- oo;
-     quote oo <- x;
+     symbol oooo <- ooo;			  -- avoid GlobalAssignHook with <-
+     symbol ooo <- oo;
+     symbol oo <- x;
      )
 
 applyMethod := (m,x) -> if x === null then x else (
@@ -108,7 +108,7 @@ Print Thing := x -> (
      o := concatenate("o",string lineNumber());
      x = applyMethod(AfterEval,x);
      if x =!= null then (
-     	  s := value concatenate("quote ",o);
+     	  s := value concatenate("symbol ",o);
      	  outputSymbols#s = true;
      	  s <- x;
 	  );
@@ -124,7 +124,7 @@ Print Thing := x -> (
 NoPrint Thing := x -> (
      o := concatenate("o",string lineNumber());
      x = applyMethod(AfterEval,x);
-     s := value concatenate("quote ",o);
+     s := value concatenate("symbol ",o);
      s <- x;
      rot x;
      applyMethod(AfterNoPrint,x);
@@ -191,13 +191,13 @@ then tryload = (filename,load) -> (
 ///
 
 oldLoad := load
-erase quote load
+erase symbol load
 load = (filename) -> (
      if not tryload(filename,oldLoad) then error ("can't open file ", filename)
      )
 
 oldinput := input
-erase quote input
+erase symbol input
 input = (filename) -> (
      oldnotify := notify;
      notify = false;
@@ -209,14 +209,14 @@ needs = s -> if not loaded#?s then load s
 
 writableGlobals := new MutableHashTable
 scan((
-	  quote oooo,
-	  quote ooo,
-	  quote oo,
-	  quote path,
-	  -- quote writeExamples,
-	  -- quote readExamples,
-	  quote phase,
-	  quote compactMatrixForm
+	  symbol oooo,
+	  symbol ooo,
+	  symbol oo,
+	  symbol path,
+	  -- symbol writeExamples,
+	  -- symbol readExamples,
+	  symbol phase,
+	  symbol compactMatrixForm
 	  ), x -> writableGlobals#x = true)
 
 startFunctions := {}
@@ -229,17 +229,17 @@ OLDENGINE = getenv("OLDENGINE") == "TRUE"
 lastSystemSymbol = null
 
 if not version#"mp" then (
-     erase quote PutAnnotationPacket;
-     erase quote PutCommonMetaOperatorPacket;
-     erase quote PutCommonMetaTypePacket;
-     erase quote PutCommonOperatorPacket;
-     erase quote PutOperatorPacket;
-     erase quote WritePacket;
-     erase quote closeLink;
-     erase quote openLink;
-     erase quote writeMessage;
-     erase quote writePacket;
-     erase quote writeRawPacket;
+     erase symbol PutAnnotationPacket;
+     erase symbol PutCommonMetaOperatorPacket;
+     erase symbol PutCommonMetaTypePacket;
+     erase symbol PutCommonOperatorPacket;
+     erase symbol PutOperatorPacket;
+     erase symbol WritePacket;
+     erase symbol closeLink;
+     erase symbol openLink;
+     erase symbol writeMessage;
+     erase symbol writePacket;
+     erase symbol writeRawPacket;
      )
 
 load "loads.m2"
@@ -247,25 +247,25 @@ notify = true
 lastSystemSymbol = local privateSymbol
 
 if OLDENGINE then (
-     erase quote ZZZ;
-     erase quote NewMonomialOrder;
-     erase quote Component;
-     erase quote GroupLex;
-     erase quote GroupRevLex;
-     erase quote MonomialOrdering;
-     erase quote NCLex;
-     erase quote newDegreesMonoid;
-     erase quote newDegreesRing;
-     erase quote newEngine;
-     erase quote monomialOrdering;
-     erase quote clone;
+     erase symbol ZZZ;
+     erase symbol NewMonomialOrder;
+     erase symbol Component;
+     erase symbol GroupLex;
+     erase symbol GroupRevLex;
+     erase symbol MonomialOrdering;
+     erase symbol NCLex;
+     erase symbol newDegreesMonoid;
+     erase symbol newDegreesRing;
+     erase symbol newEngine;
+     erase symbol monomialOrdering;
+     erase symbol clone;
      )
-erase quote OLDENGINE
-erase quote outputSymbols
-erase quote lastSystemSymbol
+erase symbol OLDENGINE
+erase symbol outputSymbols
+erase symbol lastSystemSymbol
 
 if phase === 1 then scanPairs(symbolTable(),
-     (name,symbol) -> if not writableGlobals#?symbol then protect symbol
+     (name,sym) -> if not writableGlobals#?sym then protect sym
      )
 
 GlobalReleaseHook Function := (X,x) -> (

@@ -132,13 +132,13 @@ document { XCreateWindow,
      window, ", TT "a", " and ", TT "b", " are the width and
      height, ", TT "w", " is the width of the border, and ", TT "n", " is the name of the window."
      }
-) else erase quote XCreateWindow
+) else erase symbol XCreateWindow
 
 if class XDefaultRootWindow === Function then (
 document { XDefaultRootWindow,
      TT "XDefaultRootWindow()", " -- returns the id of the root window."
      }
-) else erase quote XDefaultRootWindow
+) else erase symbol XDefaultRootWindow
 
 document { format,
      TT "format s", " -- prepare a string s for output by converting nonprintable
@@ -810,8 +810,11 @@ document { hashTable,
      "The pairs may be of the form ", TT "a=>b", ", ", TT "{a,b}", ",
      or ", TT "(a,b)", ".",
      PARA,
+     "Missing entries in the list, represented by ", TO "null", ", will be silently
+     ignored.",
+     PARA,
      EXAMPLE {
-	  "x = hashTable {a=>b, c=>d}",
+	  "x = hashTable {a=>b, c=>d, }",
       	  "x#a"
 	  },
      }
@@ -939,7 +942,7 @@ document { globalAssignFunction,
      PARA,
      "The current way this function works is by storing the string used for
      printing under ", TT "X.name", " and storing the global variable under
-     ", TT "X.symbol", ".",
+     ", TT "X.Symbol", ".",
      PARA,
      "Another thing done by this function is to apply ", TO use, " to the thing.
      This is used for polynomial rings to assign values to the symbols representing
@@ -965,15 +968,6 @@ document { globalReleaseFunction,
      have acquired as their name the name of a global variable to which they have
      been assigned, will lose that name when a different value is assigned to
      the variable.",
-     PARA,
-     SEEALSO "globalAssignFunction"
-     }
-
-document { symbol,
-     TT "symbol", " -- a symbol used as a key in a hash table under which to store
-     the variable to which the hash table has been assigned as value.",
-     PARA,
-     "This is intended mainly for internal use.",
      PARA,
      SEEALSO "globalAssignFunction"
      }

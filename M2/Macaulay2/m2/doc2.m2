@@ -130,22 +130,19 @@ document { openListener,
      host at the Macaulay2 port (2500).",
      PARA,
      "Use ", TT "openInOut f", " to accept an incoming connection on the listener,
-     returning a new input output file which serves as the connection.",
-     RETURNS "File"
+     returning a new input output file which serves as the connection."
      }
 
 document { openIn,
      TT "openIn \"fff\"", "  -- opens an input file whose filename is ", TT "fff", ".",
      PARA,
-     "Other options are available.  For details, see ", TO "openInOut", ".",
-     RETURNS "File"
+     "Other options are available.  For details, see ", TO "openInOut", "."
      }
 
 document { openOut,
      TT "openOut \"fff\"", "  -- opens an output file whose filename is fff.",
      PARA,
-     "Other options are available.  For details, see ", TO "openInOut", ".",
-     RETURNS "File"
+     "Other options are available.  For details, see ", TO "openInOut", "."
      }
 
 document { openInOut,
@@ -186,8 +183,7 @@ document { openInOut,
      direction specified.  The only subtlety is that with ", TT ///openIn "!foo"///, "
      the standard input of the command ", TT "foo", " is closed, but with
      ", TT ///openOut "!foo"///, " the standard output of the command ", TT "foo", "
-     is connected to the standard output of the parent Macaulay 2 process.",
-     RETURNS "File"
+     is connected to the standard output of the parent Macaulay 2 process."
      }
 
 document { protect,
@@ -236,28 +232,28 @@ document { "<<",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
      MENU {
-	  TO (quote <<,File,Thing),
-	  TO (quote <<,Nothing,Thing),
-	  TO (quote <<,Thing),
-	  TO (quote <<, String, Thing)
+	  TO (symbol <<,File,Thing),
+	  TO (symbol <<,Nothing,Thing),
+	  TO (symbol <<,Thing),
+	  TO (symbol <<, String, Thing)
 	  }
      }
 
-document { (quote <<,ZZ, ZZ),
+document { (symbol <<,ZZ, ZZ),
      TT "i << j", " -- shifts the bits in the integer i leftward j places.",
      PARA,
      EXAMPLE "2 << 5",
      SEEALSO ">>"
      }
 
-document { (quote >>, ZZ, ZZ),
+document { (symbol >>, ZZ, ZZ),
      TT "i >> j", " -- shifts the bits in the integer i rightward j places.",
      PARA,
      EXAMPLE "256 >> 5",
      SEEALSO "<<"
      }
 
-document { (quote <<, String, Thing),
+document { (symbol <<, String, Thing),
      TT "\"name\" << x", " -- prints the expression x on the output file
      named \"name\".",
      PARA,
@@ -272,7 +268,7 @@ document { (quote <<, String, Thing),
 	  }
      }
 
-document { (quote <<, Thing),
+document { (symbol <<, Thing),
      TT "<< x", " -- prints the expression x on the standard output file ", 
      TO "stdio", ".",
      PARA,
@@ -297,7 +293,7 @@ document { ":",
 	  }
      }
 
-document { (quote :, ZZ, Thing),
+document { (symbol :, ZZ, Thing),
      TT "n : x", " -- repetition n times of x",
      PARA,
      "If ", TT "n", " is an integer and ", TT "x", " is anything, return a
@@ -355,8 +351,8 @@ document { incomparable,
      }
 
 document { "?",
-     TT "x ? y", " -- compares x and y, returning ", TT "quote <", ", ",
-     TT "quote >", ", ", TT "quote ==", ", or ", TO "incomparable", ".",
+     TT "x ? y", " -- compares x and y, returning ", TT "symbol <", ", ",
+     TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator with code
      such as ",
@@ -500,7 +496,7 @@ document { value,
      PARA,
      EXAMPLE {
 	  "a = 11111111111",
-      	  "x = quote a",
+      	  "x = symbol a",
       	  "x",
       	  "value x",
 	  "p = (expression 2)^3 * (expression 3)^2",
@@ -530,7 +526,7 @@ document { "global",
       	  "num",
       	  "global num",
 	  },
-     SEEALSO {"local", "quote"}
+     SEEALSO {"local", "symbol"}
      }
 
 document { erase,
@@ -547,24 +543,24 @@ document { "local",
       	  "f()",
       	  "t",
 	  },
-     SEEALSO {"global", "quote"}
+     SEEALSO {"global", "symbol"}
      }
 
-document { "quote",
-     TT "quote s", " -- provides the symbol ", TT "s", ", even if ", TT "s", " currently has a value.",
+document { "symbol",
+     TT "symbol s", " -- provides the symbol ", TT "s", ", even if ", TT "s", " currently has a value.",
      PARA,
      EXAMPLE {
 	  "num",
       	  "num = 5",
       	  "num",
-      	  "quote num",
+      	  "symbol num",
 	  },
      PARA,
      "If ", TT "s", " is an operator, then the corresponding symbol is provided.  This
      symbol is used by the interpreter in constructing keys for methods
      associated to the symbol.",
-     EXAMPLE "quote +",
-     SEEALSO {"local", "global"}
+     EXAMPLE "symbol +",
+     SEEALSO {"local", "global", "value"}
      }
 
 document { gcd,
@@ -628,8 +624,8 @@ document { "~",
      NOINDENT,
      "Here are the methods associated with this operator:",
      MENU {
-	  TO (quote ~, Module),
-	  TO (quote ~, Ring),
+	  TO (symbol ~, Module),
+	  TO (symbol ~, Ring),
      	  }
      }
 
@@ -756,10 +752,10 @@ document { Ring,
 	  },
      "Here are some functions:",
      MENU {
-	  {TO (quote _, ZZ, Ring), " -- get integer elements of a ring."},
-	  (TO (quote _,Ring,ZZ), " -- get a generator of a ring."),
-	  (TO (quote _,Ring,String), " -- getting generators by name"),
-	  (TO (quote _,Ring,List), " -- getting monomials with given exponents"),
+	  {TO (symbol _, ZZ, Ring), " -- get integer elements of a ring."},
+	  (TO (symbol _,Ring,ZZ), " -- get a generator of a ring."),
+	  (TO (symbol _,Ring,String), " -- getting generators by name"),
+	  (TO (symbol _,Ring,List), " -- getting monomials with given exponents"),
 	  TO "char",
 	  TO "coefficientRing",
 	  TO "lift",
@@ -770,8 +766,8 @@ document { Ring,
 	  },
      "Ways to create new rings:",
      MENU {
-	  (TO (quote **,Ring,Ring), " -- tensor product of rings"),
-	  (TO (quote " ", Ring, OrderedMonoid), " -- monoid ring"),
+	  (TO (symbol **,Ring,Ring), " -- tensor product of rings"),
+	  (TO (symbol " ", Ring, OrderedMonoid), " -- monoid ring"),
 	  (TO "symmetricAlgebra", " -- symmetric algebra")
 	  },
      "Here are some keys used in rings:",
@@ -782,7 +778,7 @@ document { Ring,
 	  }
      }
 
-document { (quote _, ZZ, Ring),
+document { (symbol _, ZZ, Ring),
      TT "1_R", " -- provides the unit element of a ring R.",
      BR, NOINDENT,
      TT "0_R", " -- provides the zero element of a ring R."

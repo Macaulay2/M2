@@ -2,11 +2,11 @@
 
 InfiniteNumber = new Type of HashTable
 
-sign := quote sign
+sign := symbol sign
 
 infinity = new InfiniteNumber from {
-     quote name => "infinity", 
-     quote symbol => infinity,
+     symbol name => "infinity", 
+     symbol symbol => infinity,
      sign => 1
      }
 
@@ -18,8 +18,8 @@ mathML InfiniteNumber := i -> (
 
 IndeterminateNumber = new Type of HashTable
 indeterminate = new IndeterminateNumber from {
-     quote name => "indeterminate",
-     quote symbol => quote indeterminate
+     symbol name => "indeterminate",
+     symbol symbol => symbol indeterminate
      }
 
 InfiniteNumber + ZZ := (i,j) -> i
@@ -34,25 +34,25 @@ InfiniteNumber * InfiniteNumber := (x,y) -> if x#sign === 1 then y else -y
 InfiniteNumber / InfiniteNumber := (x,y) -> indeterminate
 
 neginfinity := new InfiniteNumber from {
-     quote name => "-infinity", 
+     symbol name => "-infinity", 
      sign => -1
      }
 
 InfiniteNumber ? InfiniteNumber := (x,y) -> x#sign ? y#sign
 
 Thing ? InfiniteNumber := (x,y) -> (
-     if x === y then quote ==
-     else if y === infinity then quote <
-     else quote >
+     if x === y then symbol ==
+     else if y === infinity then symbol <
+     else symbol >
      )
 
 InfiniteNumber == Thing := (x,y) -> x === y
 Thing == InfiniteNumber := (x,y) -> x === y
 
 InfiniteNumber ? Thing := (x,y) -> (
-     if x === y then quote ==
-     else if x === infinity then quote >
-     else quote <
+     if x === y then symbol ==
+     else if x === infinity then symbol >
+     else symbol <
      )
 
 - InfiniteNumber := x -> (

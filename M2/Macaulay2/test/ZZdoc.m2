@@ -2,11 +2,11 @@
 
 -- this file has an unusual name so it will be done last.
 
-if class doc "Macaulay 2" =!= SEQ then (
+if class documentation "Macaulay 2" =!= SEQ then (
      stderr
      << ///Can't get started on checking documentation, top node missing, key Macaulay 2.///
      << endl;
-     if class doc "\"Macaulay 2\"" === SEQ then (
+     if class documentation "\"Macaulay 2\"" === SEQ then (
      	  stderr << ///Hmm, the quoted key "Macaulay 2" is there!/// << endl;
 	  );
      error "top documentation node missing"
@@ -55,20 +55,20 @@ reach TO := x -> (
      if not reachable#?s or not reachable#s
      then (
 	  reachable#s = true;
-	  reach doc s;
+	  reach documentation s;
 	  ))
 
 scan(keys DocumentationProvided,
      s -> (
 	  reachable#s = false;
-	  d := doc s;
+	  d := documentation s;
 	  currentPage = s;
 	  verify d;
 	  ))
 reachable#"Macaulay 2" = true
 
 topName = "Macaulay 2"
-reach doc topName
+reach documentation topName
 scan(sort pairs DocumentationMissing,
      (s,w) -> warning(
 	  if tab#?s then tab#s,
@@ -85,11 +85,11 @@ scan(sort keys unreachable,
 	  "documentation for '"|toString s|"' not reachable"))
 
 DocumentationNotNeeded = new MutableHashTable
-DocumentationNotNeeded#(quote
+DocumentationNotNeeded#(symbol
      ) = true
-DocumentationNotNeeded#(quote[) = true
-DocumentationNotNeeded#(quote{) = true
-DocumentationNotNeeded#(quote() = true
+DocumentationNotNeeded#(symbol[) = true
+DocumentationNotNeeded#(symbol{) = true
+DocumentationNotNeeded#(symbol() = true
 
 scan(sort pairs tab, (n,s) -> (
      tag := toString s;

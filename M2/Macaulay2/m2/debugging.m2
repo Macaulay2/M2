@@ -1,11 +1,11 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 olderror := error
-erase quote error
+erase symbol error
 error = args -> olderror apply(
      sequence args, x -> if class x === String then x else toString x
      )
-protect quote error
+protect symbol error
 
 on = f -> (
      n := toString f;

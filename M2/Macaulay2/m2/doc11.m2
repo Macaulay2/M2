@@ -49,9 +49,9 @@ document { "getting started",
      "A value can be assigned to a variable with ", TO "=", ".",
      EXAMPLE "s = \"hi there\"",
      "Strings may be concatenated horizontally with ", TT "|", ", (see 
-     ", TO (quote |, String, String), ").",
+     ", TO (symbol |, String, String), ").",
      EXAMPLE "s | \" - \" | s",
-     "or vertically with ", TT "||", ", (see ", TO (quote ||, Net, Net), ").",
+     "or vertically with ", TT "||", ", (see ", TO (symbol ||, Net, Net), ").",
      EXAMPLE "s || \" - \" || s",
      "A list of expressions can be formed with braces.",
      EXAMPLE "{1, 2, s}",
@@ -131,7 +131,7 @@ document { "getting started",
      "We can produce the cokernel with ", TO "cokernel", "; no computation is
      performed.",
      EXAMPLE "cokernel f",
-     "The direct sum is formed with ", TO (quote ++,Module,Module), ".",
+     "The direct sum is formed with ", TO (symbol ++,Module,Module), ".",
      EXAMPLE "N = kernel f ++ cokernel f",
      "The answer is expressed in terms of the ", TO "subquotient", " function, which
      produces subquotient modules.  Each subquotient module is accompanied
@@ -243,6 +243,7 @@ document {
 	  TO "H5",
 	  TO "H6",
 	  TO "HEAD",
+	  TO "HEADLINE",
 	  TO "HR",
 	  TO "HREF",
 	  TO "HTML",
@@ -257,7 +258,6 @@ document {
 	  TO "OL",
 	  TO "PARA",
 	  TO "PRE",
-	  TO "RETURNS",
 	  TO "SAMP",
 	  TO "SEEALSO",
 	  TO "SEQ",
@@ -316,7 +316,7 @@ document { HR,
      }
 
 document {
-     quote text,
+     symbol text,
      "text x -- convert ", TO "hypertext", " to text format",
      PARA,
      "The return value is a string which is suitable display on an
@@ -324,7 +324,7 @@ document {
      }
 
 document {
-     quote html,
+     symbol html,
      "html x -- convert ", TO "hypertext", " to html format",
      PARA,
      "The return value is a string which is suitable for use in an
@@ -360,6 +360,17 @@ document { HEAD,
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
+     PARA,
+     SEEALSO "hypertext"
+     }
+
+document { HEADLINE,
+     TT "HEADLINE x", " -- encloses x in a hypertext HEADLINE item.",
+     PARA,
+     "The argument ", TT "x", " should be a string, or a list or sequence of
+     strings or hypertext items.  This item is ordinarily invisible, but if it
+     occurs as the first item in a documentation node, it can be used as a brief
+     descriptor to accompany links to the node from menus in other nodes.",
      PARA,
      SEEALSO "hypertext"
      }
@@ -900,7 +911,7 @@ document { Command,
      }
 
 
-document{quote monomialCurve, 
+document{symbol monomialCurve, 
     TT "monomialCurve(R,a)", " -- yields the defining ideal of the projective
     curve given parametrically on an affine piece by 
     t |---> (t^a1, ..., t^an).",
@@ -957,7 +968,7 @@ document { Fano,
      and returns an ideal in it."
      }
 
-document{quote Grassmannian, 
+document{symbol Grassmannian, 
     TT "Grassmannian(k,r,R) or Grassmannian(k,r)", " -- given natural numbers
      k <= r,
         and optionally a ring R with at least binomial(r+1,k+1)
@@ -1022,10 +1033,10 @@ document { methods,
      TT "methods F", " -- produces a list of those methods associated with the
      function or type F.",
      BR, NOINDENT,
-     TT "methods quote **", " -- produces a list of the methods 
+     TT "methods symbol **", " -- produces a list of the methods 
      usable with the operator ", TT "**", ".",
      BR, NOINDENT,
-     TT "methods (quote **, X)", " -- produces a list of the 
+     TT "methods (symbol **, X)", " -- produces a list of the 
      methods usable with the operator ", TT "**", " and a thing of
      class ", TT "X", ".",
      BR, NOINDENT,
@@ -1066,11 +1077,11 @@ document { Monoid,
           },
      "Operations on monoids:",
      MENU {
-          (TO (quote **,Monoid,Monoid), " -- product of monoids."),
+          (TO (symbol **,Monoid,Monoid), " -- product of monoids."),
           (TO "generators", "        -- get the generators of the monoid"),
-          (TO (quote _, ZZ, Monoid), "         -- get the unit element"),
-          (TO (quote _, Monoid, ZZ), "         -- get a generator from a monoid"),
-          (TO (quote " ",Ring, OrderedMonoid), " -- make a monoid ring")
+          (TO (symbol _, ZZ, Monoid), "         -- get the unit element"),
+          (TO (symbol _, Monoid, ZZ), "         -- get a generator from a monoid"),
+          (TO (symbol " ",Ring, OrderedMonoid), " -- make a monoid ring")
           },
      PARA,
      "Keys:",
@@ -1081,7 +1092,7 @@ document { Monoid,
           }
      }
 
-document { (quote _, ZZ, Monoid),
+document { (symbol _, ZZ, Monoid),
      TT "1_M", " -- provides the unit element of a group or monoid
      ", TT "M", "."
      }

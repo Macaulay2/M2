@@ -464,7 +464,7 @@ f 6
 assert( a == 7 )
 "
 
-document { (quote _, Tally, Thing),     
+document { (symbol _, Tally, Thing),     
      TT "t_x", " -- returns the number of times ", TT "x", " is counted
      by ", TT "x", ".",
      SEEALSO "Tally"
@@ -475,11 +475,11 @@ document { Tally,
      PARA,
      "Operations:",
      MENU {
-	  (TO (quote **,Tally,Tally), " -- Cartesian product"),
-	  (TO (quote +,Tally,Tally), "  -- sum"),
-	  (TO (quote -,Tally,Tally), "  -- difference"),
-	  (TO (quote ?,Tally,Tally), "  -- comparison"),
-	  (TO (quote _,Tally,Thing), "  -- access"),
+	  (TO (symbol **,Tally,Tally), " -- Cartesian product"),
+	  (TO (symbol +,Tally,Tally), "  -- sum"),
+	  (TO (symbol -,Tally,Tally), "  -- difference"),
+	  (TO (symbol ?,Tally,Tally), "  -- comparison"),
+	  (TO (symbol _,Tally,Thing), "  -- access"),
 	  (TO "tally", "                -- tally the elements of a list"),
 	  (TO "toList", "               -- a list of the elements"),
 	  (TO (sum,Tally), "           -- add the elements"),
@@ -487,7 +487,7 @@ document { Tally,
 	  }
      }
 
-document { (quote **, Tally, Tally),
+document { (symbol **, Tally, Tally),
      TT "x ** y", " -- produces the Cartesian product of two tallies.",
      PARA,
      "One of the arguments may be a ", TO "Set", ".",
@@ -500,13 +500,13 @@ document { (quote **, Tally, Tally),
      SEEALSO {"Tally", "tally"}
      }
 
-document { (quote ?, Tally, Tally),
-     TT "x ? y", " -- compares two tallies, returning ", TT "quote <", ", ",
-     TT "quote >", ", ", TT "quote ==", ", or ", TO "incomparable", ".",
+document { (symbol ?, Tally, Tally),
+     TT "x ? y", " -- compares two tallies, returning ", TT "symbol <", ", ",
+     TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
      SEEALSO "Tally"
      }
 
-document { (quote +, Tally, Tally),
+document { (symbol +, Tally, Tally),
      TT "x + y", " -- produces the union of two tallies.",
      PARA,
      "One of the arguments may be a ", TO "Set", ".",
@@ -519,7 +519,7 @@ document { (quote +, Tally, Tally),
      SEEALSO {"Tally", "tally"}
      }
 
-document { (quote -, Tally, Tally),
+document { (symbol -, Tally, Tally),
      TT "x - y", " -- produces the difference of two tallies.",
      PARA,
      EXAMPLE "tally {a,a,b,c} - tally {c,d,d}",
@@ -556,11 +556,11 @@ document { Set,
 	  },
      "Operations on sets:",
      MENU {
-	  (TO (quote +,Set,Set), " -- union"),
-	  (TO (quote ++,Set, Set), " -- disjoint union"),
-	  (TO (quote -,Set, Set), "  -- difference"),
-	  (TO (quote *,Set,Set), " -- intersection"),
-	  (TO (quote **, Set, Set), " -- Cartesian product"),
+	  (TO (symbol +,Set,Set), " -- union"),
+	  (TO (symbol ++,Set, Set), " -- disjoint union"),
+	  (TO (symbol -,Set, Set), "  -- difference"),
+	  (TO (symbol *,Set,Set), " -- intersection"),
+	  (TO (symbol **, Set, Set), " -- Cartesian product"),
 	  (TO "#", " -- the number of elements"),
 	  (TO "member", " -- whether something is a member"),
 	  (TO (product,Set), " -- multiply the elements"),
@@ -572,7 +572,7 @@ document { Set,
 	  }
      }
 
-document { (quote -, Set, Set),
+document { (symbol -, Set, Set),
      TT "x - y", " -- the difference of two sets.",
      SEEALSO {"Set", "-"}
      }
@@ -590,14 +590,14 @@ document { isSubset,
 	  }
      }
 
-document { (quote ++, Set, Set),
+document { (symbol ++, Set, Set),
      TT "x ++ y", " -- the disjoint union of two sets.",
      PARA,
      EXAMPLE "set {a,b,c} ++ set {b,c,d}",
      SEEALSO {"Set", "++"}
      }
 
-document { (quote *, Set, Set),
+document { (symbol *, Set, Set),
      TT "x * y", " -- the intersection of two sets.",
      PARA,
      EXAMPLE "set {1,2,3} * set {2,3,4}",
@@ -979,7 +979,7 @@ document { join,
      If there is just one argument, and it's mutable, a copy is returned.",
      EXAMPLE "join({1,2,3},{a,b,c},{7,8,9})",
      PARA,
-     "The operator ", TO (quote |, List, List), " can be used as a synonym."
+     "The operator ", TO (symbol |, List, List), " can be used as a synonym."
      }
 
 document { take,
@@ -1144,7 +1144,7 @@ document { partitions,
      }
 
 document { examples,
-     -- this should come after the doc for partitions, because of the example
+     -- this should come after the documentation for partitions, because of the example
      TT "examples f", " -- returns a list of strings containing examples
      of code using the function ", TT "f", " provided in the documentation
      of ", TT "f", ".",
@@ -1161,11 +1161,11 @@ TEST ///
      assert( # examples MutableList > 0 )
 ///
 
-document { (quote +, List, List),
+document { (symbol +, List, List),
      TT "v + w", " -- the sum of two vectors represented as lists."
      }
 
-document { (quote _, List, List),
+document { (symbol _, List, List),
      TT "w_{i,j,...}", " -- selects entries from a list or sequence ", TT "w", ".",
      PARA,
      EXAMPLE {
@@ -1598,7 +1598,7 @@ document { print,
      PARA,
      "The return value is ", TO "null", "."
      }
-document { (quote <<, File, Thing),
+document { (symbol <<, File, Thing),
      TT "f << x", " -- prints the expression x on the output file f.",
      PARA,
      "Returns f as its value.  Parsing associates leftward, so that 

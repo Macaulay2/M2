@@ -7,7 +7,7 @@ sat1 = m -> (
     R := ring m;
     divideByVariable(generators gb m,R_(numgens R - 1)))
 
-document{ quote sat1,
+document{ symbol sat1,
      TT "sat1(m)", " -- returns (m : lastvar^*), if the monomial
      order is the reverse lex order."
      }
@@ -24,8 +24,8 @@ subrg = (f, I, S) -> (
   F := source f;
   n1 := #( generators R );
   n2 := numgens F;
-  x := quote x;
-  y := quote y;
+  x := symbol x;
+  y := symbol y;
   RS = (coefficientRing R)[y_0 .. y_(n2-1), x_0 .. x_(n1-1)];
   xvars := matrix table(1, n1, (j,i)->x_i);
   yvars := matrix table(1, n2, (j,i)->y_i);
@@ -37,14 +37,14 @@ subrg = (f, I, S) -> (
   mingens image substitute((sat1 generators gb J),mapback)
   )
 
-document{quote subrg,
+document{symbol subrg,
      TT "subrg(f,I,S)", " -- returns the image of V(I) in Proj S
      under the rational map defined by f."
      }
  
 suber = (f, S) -> subrg(f, map(R^1, 0), S)
 
-document{quote suber,
+document{symbol suber,
      "suber(f,S)", " -- returns the image of the projective space
      under the rational map defined by f."
      }

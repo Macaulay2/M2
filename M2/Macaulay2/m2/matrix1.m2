@@ -315,7 +315,7 @@ flatten Matrix := Matrix => m -> (
      then m
      else reshape(R^1, G ** dual F ** R^{- degree m}, m))
 
-flip = (F,G) -> (
+flip = Matrix => (F,G) -> (
   sendgg(ggPush F, ggPush G, ggflip);
   getMatrix ring F)
 
@@ -392,7 +392,7 @@ AfterPrint Matrix := AfterNoPrint Matrix := f -> (
      << endl;
      )
 
-precedence Matrix := x -> precedence quote x
+precedence Matrix := x -> precedence symbol x
 
 compactMatrixForm = true
 
@@ -472,7 +472,7 @@ jacobian Ideal := Matrix => (I) -> jacobian generators I
 poincare Ideal := (I) -> poincare module I
 hilbertPolynomial Ideal := options -> (I) -> hilbertPolynomial(module I,options)
 
-protect quote Order
+protect symbol Order
 assert( class infinity === InfiniteNumber )
 hilbertSeries = method(Options => {
      	  Order => infinity
@@ -518,7 +518,7 @@ ideal Matrix := Ideal => (f) -> (
      	  g := map(R^1,,f);			  -- in case the degrees are wrong
      	  if isHomogeneous g then f = g;
 	  );
-     new Ideal from { quote generators => f, quote ring => R } )
+     new Ideal from { symbol generators => f, symbol ring => R } )
 
 ideal Module := Ideal => (M) -> (
      F := ambient M;
@@ -665,9 +665,9 @@ cover(Matrix) := Matrix => (f) -> matrix f
 
 rank Matrix := (f) -> rank image f
 
-erase quote reduce
-erase quote newMatrix
-erase quote concatRows
-erase quote concatCols
-erase quote samering
-erase quote ggConcatBlocks
+erase symbol reduce
+erase symbol newMatrix
+erase symbol concatRows
+erase symbol concatCols
+erase symbol samering
+erase symbol ggConcatBlocks

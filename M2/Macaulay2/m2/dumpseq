@@ -1,5 +1,4 @@
 command.m2
-document.m2
 classes.m2
 option.m2
 methods.m2
@@ -11,6 +10,7 @@ convert.m2
 system.m2
 debugging.m2
 remember.m2
+document.m2
 set.m2
 handles.m2
 gbinterface.m2

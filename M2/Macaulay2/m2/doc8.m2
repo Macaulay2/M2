@@ -6,20 +6,20 @@ document { pdim,
      "For now, the method is to measure the length of a projective resolution."
      }
 
-document { (quote /, Module, Module),
+document { (symbol /, Module, Module),
      TT "M/N", " -- computes the quotient module ", TT "M/N", ".",
      PARA,
      "The modules should be submodules of the same module."
      }
 
-document { (quote /, Module, Ideal),
+document { (symbol /, Module, Ideal),
      TT "M/I", " -- computes the quotient module ", TT "M/IM", ",
      where ", TT "M", " is a module and ", TT "I", " is an ideal.",
      PARA,
      "The module and ideal should belong to the same ring."
      }
 
-document { (quote /, Ideal, Ideal),
+document { (symbol /, Ideal, Ideal),
      TT "I/J", " -- produces the quotient module ", TT "(I+J)/J", ", where
      ", TT "I", " and ", TT "J", " are ideals in a ring.",
      PARA,
@@ -37,13 +37,13 @@ document { annihilator,
      "For an abbreviation, use ", TO "ann", "."
      }
 
-document { (quote _, Module, ZZ),
+document { (symbol _, Module, ZZ),
      TT "M_i", " -- get the ", TT "i", "-th generator of a module ", TT "M", "",
      PARA,
      EXAMPLE "(ZZ^5)_2"
      }
 
-document { (quote ^,Module,Array),
+document { (symbol ^,Module,Array),
      TT "M^[i,j,k]", " -- projection onto some factors of a direct sum module.",
      PARA,
      "The module ", TT "M", " should be a direct sum, and the result is the matrix
@@ -56,10 +56,10 @@ document { (quote ^,Module,Array),
       	  "M^[1]",
       	  "M^[1,0]",
 	  },
-     SEEALSO {(quote ^,Matrix,Array), (quote _,Module,Array),(quote ^,Module,List)}
+     SEEALSO {(symbol ^,Matrix,Array), (symbol _,Module,Array),(symbol ^,Module,List)}
      }
 
-document { (quote _,Module,Array),
+document { (symbol _,Module,Array),
      TT "M_[i,j,k]", " -- extract some columns of blocks from a matrix ", TT "f", ".",
      PARA,
      "The module ", TT "M", " should be a direct sum, and the result is the matrix
@@ -72,9 +72,9 @@ document { (quote _,Module,Array),
       	  "M_[1]",
       	  "M_[1,0]",
 	  },
-     SEEALSO {submatrix, (quote _,Matrix,Array), (quote ^,Module,Array),(quote _,Module,List)}
+     SEEALSO {submatrix, (symbol _,Matrix,Array), (symbol ^,Module,Array),(symbol _,Module,List)}
      }
-document { (quote ^, Module, List),
+document { (symbol ^, Module, List),
      TT "M^{i,j,k,...}", " -- provides the projection map from a free module
      ", TT "M", " to the free module corresponding to the basis vectors whose
      index numbers are listed.",
@@ -82,7 +82,7 @@ document { (quote ^, Module, List),
      EXAMPLE "(ZZ^5)^{2,3}",
      SEEALSO {"_", Module, List}
      }
-document { (quote _, Module, List),
+document { (symbol _, Module, List),
      TT "M_{i,j,k,...}", " -- provides a map from a free module to the module
      ", TT "M", " which sends the basis vectors to the generators of ", TT "M", "
      whose index numbers are listed.",
@@ -262,27 +262,7 @@ document { gb,
      false depending on whether syzygies or the change of basis matrix are 
      to be computed, and ", TT "i", " is the number of rows of the syzygy matrix to 
      be retained.  The computation can be continued by repeating the 
-     ", TT "gb", " command with the same options.",
-     PARA,
-     "Optional arguments and flags:",
-     MENU {
-	  (TO (gb => DegreeLimit), "   -- compute only up to this degree"),
-	  (TO "BasisElementLimit", "   -- stop when this number of minimal generators is obtained"),
-	  (TO (gb => SyzygyLimit), "   -- stop when this number of syzygies is obtained"),
-	  (TO (gb => PairLimit), " -- stop when this number of pairs is handled"),
-	  (TO (gb => CodimensionLimit), "    -- stop when this codimension is reached"),
-	  (TO (gb => Strategy), " -- specify the strategy used to compute Groebner bases")
-	  },
-     "Optional arguments and flags for internal use only:",
-     MENU {
-	  (TO (gb => ChangeMatrix), " -- whether to produce the change of basis matrix"),
-	  (TO (gb => StopBeforeComputation), " -- whether to stop the computation immediately"),
-	  (TO (gb => StopWithMinimalGenerators), "   -- whether to produce a set of minimal generators"),
-	  (TO Syzygies, " -- whether to collect syzygies"),
-	  (TO SyzygyRows, " -- if syzygies are to be collected, the number
-	       rows of the syzygy matrix to collect")
-	  },
-     SEEALSO "GroebnerBasis"
+     ", TT "gb", " command with the same options."
      }
 
 document { StopBeforeComputation,
@@ -299,6 +279,7 @@ document { StopBeforeComputation,
      }
 
 document { gb => StopBeforeComputation,
+     HEADLINE "whether to stop the computation immediately",
      TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
      PARA,
      "Tells whether not to start the computation, with the default value
@@ -320,7 +301,8 @@ document { DegreeLimit,
 	  }
      }
 
-document { gb => DegreeLimit,
+document { gb => DegreeLimit, 
+     HEADLINE "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should halt after dealing 
      with degree n.",
@@ -334,7 +316,8 @@ document { gb => DegreeLimit,
 	  }
      }
 
-document { BasisElementLimit,
+document { BasisElementLimit, 
+     HEADLINE "stop when this number of minimal generators is obtained",
      TT "BasisElementLimit", " -- keyword for an optional argument used with
      ", TO "gb", ", ", TO "pushForward", ", ", TO "pushForward1", ", 
      and ", TO "syz", ", which can be used to specify that the computation should
@@ -360,7 +343,8 @@ document { SyzygyLimit,
 	  }
      }
 
-document { gb => SyzygyLimit,
+document { gb => SyzygyLimit, 
+     HEADLINE "stop when this number of syzygies is obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should stop
      after a certain number of syzygies have computed.",
@@ -391,7 +375,8 @@ document { PairLimit,
 	  }
      }
 
-document { gb => PairLimit,
+document { gb => PairLimit, 
+     HEADLINE "stop when this number of pairs is handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the
      computation should be stopped after a certain number of S-pairs
@@ -422,7 +407,8 @@ document { CodimensionLimit,
 	  }
      }
 
-document { gb => CodimensionLimit,
+document { gb => CodimensionLimit, 
+     HEADLINE "stop when this codimension is reached",
      TT "CodimensionLimit => n", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should stop when
      the codimension of the zero set of the ideal (or submodule) generated
@@ -449,7 +435,8 @@ document { StopWithMinimalGenerators,
 	  }
      }
 
-document { gb => StopWithMinimalGenerators,
+document { gb => StopWithMinimalGenerators, 
+     HEADLINE "whether to produce a set of minimal generators",
      TT "StopWithMinimalGenerators", " -- keyword for an optional argument used 
      with ", TO "gb", ", which, if the value provided is ", TT "true", "
      indicates that the computation should stop as
@@ -479,7 +466,8 @@ document { Strategy,
 	  }
      }
 
-document { gb => Strategy,
+document { gb => Strategy, 
+     HEADLINE "specify the strategy used to compute Groebner bases",
      TT "gb(f,Strategy => v)", " -- an option for ", TO "gb", " which can
      be used to specify the strategy to be used in the computation.",
      PARA,
@@ -523,7 +511,8 @@ document { LongPolynomial,
      successfully by Thomas Yan, graduate student in CS at Cornell."
      }
 
-document { Syzygies,
+document { Syzygies, 
+     HEADLINE "whether to collect syzygies",
      TT "Syzygies", " -- keyword for an optional argument used with
      ", TO "gb", " and ", TO "syz", ", which indicates whether the 
      syzygies should be computed.",
@@ -542,12 +531,16 @@ document { ChangeMatrix,
      	  }
      }
 
-document { gb => ChangeMatrix,
+document { gb => ChangeMatrix, 
+     HEADLINE "whether to produce the change of basis matrix",
      TT "ChangeMatrix => true", " -- an optional argument for ", TO "gb", " which
-     specifies whether to compute the change of basis matrix."
+     specifies whether to compute the change of basis matrix.",
+     PARA,
+     "Intended for internal use only."
      }
      
-document { SyzygyRows,
+document { SyzygyRows, 
+     HEADLINE "the number rows of the syzygy matrix to collect",
      TT "SyzygyRows", " -- keyword for an optional argument used with
      ", TO "gb", " and ", TO "syz", ", which specifies how many rows of 
      the syzygy matrix to retain.",
@@ -725,14 +718,14 @@ document { modulo,
      "If ", TT "f", " is null, then it's taken to be the identity.  If ", TT "g", " is null, it's
      taken to be zero."
      }
-document { (quote //, Matrix, Matrix),
+document { (symbol //, Matrix, Matrix),
      TT "f//g", " -- yields a matrix ", TT "h", " from matrices ", TT "f", " and ", TT "g", " 
      such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Groebner basis 
      for the image of ", TT "g", ".",
      PARA,
      "If the remainder ", TT "f - g*h", " is zero, then the quotient ", TT "f//g", "
      satisfies the equation ", TT "f = g * (f//g)", ".",
-     SEEALSO {(quote %, Matrix, Matrix)}
+     SEEALSO {(symbol %, Matrix, Matrix)}
      } 
 
 TEST "
@@ -750,19 +743,19 @@ assert isWellDefined g
 assert not isWellDefined map(R^1,cokernel matrix {{a}})
 "
 
-document { (quote //, Matrix, RingElement),
+document { (symbol //, Matrix, RingElement),
      TT "f//r", " -- yields a matrix h from a matrix f and a ring element r
      such that f - r*h is the reduction of f modulo a Groebner basis 
      for the image of r times the identity matrix.",
      SEEALSO "%"
      } 
 
-document { (quote %, Matrix, Matrix),
+document { (symbol %, Matrix, Matrix),
      TT "f % g", " -- yields the reduction of the columns of the matrix
      ", TT "f", " modulo a Groebner basis of the matrix ", TT "g", "."
      }
 
-document { (quote %, Matrix, RingElement),
+document { (symbol %, Matrix, RingElement),
      TT "f % r", " -- yields the reduction of the columns of the matrix
      ", TT "f", " modulo the ring element ", TT "r", "."
      }
@@ -1185,7 +1178,7 @@ TEST "
     S1 = modifyRing(R,MonomialOrder=>Eliminate 2,Degrees=>{1,1,1,1})
 "
 
-document { (quote **, Ring, Ring),
+document { (symbol **, Ring, Ring),
      TT "R ** S", " -- tensor product of rings.",
      PARA,
      "For complete documentation, see ", TO "tensor", "."

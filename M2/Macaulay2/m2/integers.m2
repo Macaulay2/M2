@@ -19,7 +19,7 @@ new ZZ := ZZ -> ZZ.pop()		  -- new integers all come from the engine stack
 ZZ >> ZZ := ZZ => (i,j) -> i << -j
 
 oldgcd := gcd
-erase quote gcd
+erase symbol gcd
 gcd = method()
 
 gcd(ZZ,ZZ) := ZZ => oldgcd
@@ -71,10 +71,10 @@ random RR := RR => x -> (
 	  );
      x * (randomint() / d))
 
-erase quote randomint
+erase symbol randomint
 
 ceiling = x -> - floor(-x)
 
 isUnit ZZ := x -> x == 1 or x == -1
 
-ZZ & ZZ := ZZ => lookup(quote &, ZZ, ZZ)
+ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)

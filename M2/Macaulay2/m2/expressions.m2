@@ -4,9 +4,9 @@ precedence = method(SingleArgumentDispatch=>true)
 
 -- local variables
 local PowerPrecedence
-EmptyName := quote EmptyName
-unit := quote unit
-operator := quote operator
+EmptyName := symbol EmptyName
+unit := symbol unit
+operator := symbol operator
 letters := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 digits := set characters "0123456789"
 endsWithIdentifier := s -> (
@@ -411,32 +411,32 @@ toString Table := m -> concatenate(
 -----------------------------------------------------------------------------
 
 binary := new HashTable from {
-     quote * => ((x,y) -> x*y),		  -- 
-     quote + => ((x,y) -> x+y),		  -- 
-     quote - => ((x,y) -> x-y),		  -- 
-     quote / => ((x,y) -> x/y),		  -- 
-     quote // => ((x,y) -> x//y),	  -- 
-     quote ^ => ((x,y) -> x^y),		  -- 
-     quote == => ((x,y) -> x==y),	  -- 
-     quote .. => ((x,y) -> x..y),	  -- 
-     quote % => ((x,y) -> x%y),
-     quote @ => ((x,y) -> x@y),
-     quote \ => ((x,y) -> x\y),
-     quote @@ => ((x,y) -> x@@y),
-     quote & => ((x,y) -> x&y),
-     quote ? => ((x,y) -> x?y),
-     quote | => ((x,y) -> x|y),
-     quote => => ((x,y) -> x=>y),
-     quote || => ((x,y) -> x||y),
-     quote << => ((x,y) -> x<<y),
-     quote >> => ((x,y) -> x>>y),
-     quote : => ((x,y) -> x:y),
-     -- quote :: => ((x,y) -> x::y),
-     quote ++ => ((x,y) -> x++y),
-     quote ** => ((x,y) -> x**y),
-     quote /^ => ((x,y) -> x/^y),
-     quote _ => ((x,y) -> x_y),
-     quote " " => ((x,y) -> x y)
+     symbol * => ((x,y) -> x*y),		  -- 
+     symbol + => ((x,y) -> x+y),		  -- 
+     symbol - => ((x,y) -> x-y),		  -- 
+     symbol / => ((x,y) -> x/y),		  -- 
+     symbol // => ((x,y) -> x//y),	  -- 
+     symbol ^ => ((x,y) -> x^y),		  -- 
+     symbol == => ((x,y) -> x==y),	  -- 
+     symbol .. => ((x,y) -> x..y),	  -- 
+     symbol % => ((x,y) -> x%y),
+     symbol @ => ((x,y) -> x@y),
+     symbol \ => ((x,y) -> x\y),
+     symbol @@ => ((x,y) -> x@@y),
+     symbol & => ((x,y) -> x&y),
+     symbol ? => ((x,y) -> x?y),
+     symbol | => ((x,y) -> x|y),
+     symbol => => ((x,y) -> x=>y),
+     symbol || => ((x,y) -> x||y),
+     symbol << => ((x,y) -> x<<y),
+     symbol >> => ((x,y) -> x>>y),
+     symbol : => ((x,y) -> x:y),
+     -- symbol :: => ((x,y) -> x::y),
+     symbol ++ => ((x,y) -> x++y),
+     symbol ** => ((x,y) -> x**y),
+     symbol /^ => ((x,y) -> x/^y),
+     symbol _ => ((x,y) -> x_y),
+     symbol " " => ((x,y) -> x y)
      }
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 value BinaryOperation := (m) -> (
@@ -516,7 +516,7 @@ padto := (s,n) -> (
      k := n - stringlen s;
      if k === 0 then s else (s, k))
 
--- document { quote stringlen,
+-- document { symbol stringlen,
 --      TT "stringlen s", " -- returns the length of the string s.  The argument
 --      may also be a sequence or list of strings and symbols, and so
 --      on, recursively, in which case the lengths of the various elements
@@ -526,7 +526,7 @@ padto := (s,n) -> (
 --      SEEALSO {"String", "concatenate", "#" }
 --      }
 
-erase quote stringlen
+erase symbol stringlen
 
 nopar := x -> (
      -- this is like net Sequence except we omit the parentheses.
@@ -991,12 +991,12 @@ TeX = x -> (
 --     run ( "netscape -remote 'openFile(" | fn | ")'; rm " | fn );
 --     )
 --
---document { quote netscape,
+--document { symbol netscape,
 --     TT "netscape x", " -- convert x to html format, contact a netscape
 --     process currently running on the same host, and have it display
 --     it.",
 --     PARA,
---     "Try this example: ", TT "netscape doc netscape", "."
+--     "Try this example: ", TT "netscape documentation netscape", "."
 --     }
 
 -----------------------------------------------------------------------------
@@ -1028,42 +1028,25 @@ mathML Thing := x -> mathML expression x
 File << Thing := (o,x) -> printString(o,net x)
 List << Thing := (o,x) -> (x = net x; scan(o, o -> printString(o,x)); o)
 
-nodocs := new MutableHashTable from {
-     (quote < , true),
-     (quote > , true),
-     (quote == , true)
-     }
-
-briefDoc := x -> (
-     if class x =!= String and not nodocs#?x then (
-	 d := doc x;
-	 if d =!= null then (
-	      i := 0;
-	      while i < #d and class d#i =!= PARA do i = i+1;
-	      if i > 0 then << endl << text take(d,i) << endl;
-	      );
-	 )
-     )
-
 AfterPrint Thing := x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x;
      << endl;
-     briefDoc x;
+     briefDocumentation x;
      )
 
 AfterPrint Expression := x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x
      << endl;
-     briefDoc x;
+     briefDocumentation x;
      )
 
 AfterPrint Holder := x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x << " " << class x#0
      << endl;
-     briefDoc x;
+     briefDocumentation x;
      )
 
 AfterPrint ZZ := identity
@@ -1115,7 +1098,7 @@ backtrace = () -> apply(toList deepSplice report,
 	  else i
 	  )
      )
-erase quote report
+erase symbol report
 
 -----------------------------------------------------------------------------
 
@@ -1129,18 +1112,18 @@ value Entity := x -> if x.?value then x.value else x
 use Entity := x -> if x.?use then x.use x else x
 
 RightArrow = Entity {
-     quote texMath => ///\rightarrow{}///,
-     quote html    => ///<IMG SRC="RightArrow.gif">///,
-     quote name    => "RightArrow",
-     quote net     => "--->",
-     quote symbol  => quote RightArrow
+     symbol texMath => ///\rightarrow{}///,
+     symbol html    => ///<IMG SRC="RightArrow.gif">///,
+     symbol name    => "RightArrow",
+     symbol net     => "--->",
+     symbol symbol  => symbol RightArrow
      }
 
 DownArrow = Entity {
-     quote texMath => ///\downarrow{}///,
-     quote html    => ///<IMG SRC="DownArrow.gif">///,
-     quote name    => "DownArrow",
-     quote net     => "|" || "|" || "V",
-     quote symbol  => quote DownArrow
+     symbol texMath => ///\downarrow{}///,
+     symbol html    => ///<IMG SRC="DownArrow.gif">///,
+     symbol name    => "DownArrow",
+     symbol net     => "|" || "|" || "V",
+     symbol symbol  => symbol DownArrow
      }
 
