@@ -1,0 +1,8 @@
+#! /bin/sh
+
+while true
+do	echo make "$@"
+	make "$@" && exit 0
+	[ -f .restart ] || exit 1
+	rm .restart
+done

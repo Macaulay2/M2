@@ -1,0 +1,15 @@
+In this directory we have code to convert the online documentation
+into book form.  The result doesn't look much like a "book" yet --
+we'll work on that.
+
+Type:
+
+	make install
+
+The result:
+
+	M2book.dvi		a printable manual
+	M2hbook.dvi		a hypertex version, viewable with xhdvi
+
+These files can also be downloaded separately from us.
+

@@ -1,0 +1,2 @@
+strings.oo : strings.d
+strings.oo strings.sig : system.sig

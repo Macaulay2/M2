@@ -1,0 +1,152 @@
+			Installation of Macaulay 2
+
+----------------------
+1. Introduction
+----------------------
+
+Macaulay 2 is a software system for algebraic geometry research, written by
+Daniel R. Grayson and Michael E. Stillman with support of the National
+Science Foundation.
+
+----------------------
+2. Installation
+----------------------
+
+Make the files that are needed by runnning this command:
+
+	setup
+
+or
+	./setup
+
+if it's unix and '.' is not first on your path.  Then copy the shell script
+bin/M2 (or bin/M2.bat if it's MSDOS) somewhere on your path -- it contains
+the absolute path of the current directory -- and issue the command
+
+	M2
+
+to start the program.  To see if it works, make a ring with
+
+	R = ZZ/101[x,y,z]
+
+and then make a resolution with
+
+	res coker vars R
+
+If you move the directory tree, just remove bin/M2 and start over.
+
+One of the things that running 'setup' does is to create a file called
+bin/Macaulay2-XXXX.data, where XXXX is the name of your architecture as
+provided by running 'uname -m'.  This feature is intended solely for Sun 4
+machines, where the differences between certain pairs of architectures (e.g.,
+sun4d and sun4c) are slight enough that the same binary file bin/Macaulay2
+will work on both, but the bin/Macaulay2-XXXX.data files will differ enough
+so that the program will not work if you try to replace one by the other.  If
+you have both sun4c machines and sun4d machines, you can run 'setup' on each
+of these in the same directory tree.
+
+------------------------------------------------------------------
+2.1. Notes on Windows 95 installation
+------------------------------------------------------------------
+
+    After unpacking, check to ensure that there are less than a dozen files
+    in this directory.  If not, perhaps you have unzipped the distribution
+    file using PKUNZIP and forgotten to specify -d on the command line,
+    thereby failing to recover the subdirectory structure of the
+    distribution.  If so, then you should start over.
+
+    If you used PKUNZIP to unpack the files, or if you are running under
+    Windows 3.1, then the filenames were all truncated to 8+3 characters.
+    This may cause problems during setup when trying to read files such as
+    m2/underscore.m2.  In order to get the long file names under Windows 95,
+    you should use "PKZIP for Windows" from PKWare at http://www.pkware.com
+    or "WinZip" from Nico Mak Computing at http://www.winzip.com to unpack
+    the file.  Alternatively, to settle for short file names, you can edit
+    the batch files SETUP.BAT and BIN\M2.BAT and change LFN=Y to LFN=N.  (The
+    symbol LFN stands for Long File Names.)
+
+    We have not tested this yet under MSDOS.  You will need a DPMI extended
+    memory manager, such as CSDPMI, available at our web site.  Assuming you
+    can get it to work, then if you switch from MSDOS to WINDOWS 95, or vice
+    versa, you will have to run SETUP again, for the *.DAT files will differ.
+
+    There is a way to run Macaulay 2 and retain the output after it scrolls
+    off the screen.  Run M2 in the text editor EPSILON with the command
+    'start-process'.  It works fine!  EPSILON is available for trial from
+    Lugaru Software at http://lugaru.com/epsinfo.html.  We also have our own
+    interface under development for you.
+
+----------------------
+3. The manual
+----------------------
+
+The manual is available in various forms, and includes tutorials as
+well as descriptions of each function.
+
+A. While running Macaulay 2.
+
+    While running Macaulay2, on-line help is available on 
+    predefined functions and types, and other topics.  For example,
+    'help Matrix' gives information about matrices, and
+    'help matrix' describes the 'matrix' command.
+
+    Also useful is the 'apropos' command: 'apropos "Matrix"' will return
+    a list containing all identifiers containing the string "Matrix".
+    One caveat: it is case sensititive, so that for example the 'matrix'
+    routine will not appear on the list.
+
+B. With netscape
+
+    The directory 'html' contains the documentation in HTML form.  You
+    may view it with the command 'netscape html/index.html'.
+
+C. In book form
+
+    The directory 'book' contains the code for creating the book form of
+    the documentation, in TeX.  But if you don't have gnu make you might
+    want to just down load the dvi files for the book from the web site -
+    the file is M2book.dvi, or M2hbook.dvi if you want the HyperTeX
+    version viewable with xhdvi.
+
+----------------------
+4. Other documentation
+----------------------
+
+The file emacs/emacs.hlp gives a brief tutorial introduction to the use of
+emacs with Macaulay 2, and includes some lines of emacs code to put into your
+.emacs file.  One nice feature of emacs' Macaulay 2 mode is command
+completion.
+
+Read the file CHANGES to see what changes have been made since the last
+version you used.
+
+See the file licenses/README for information about copyright and licenses for
+the program, its code, and the libraries it uses.
+
+----------------------
+5. Distribution
+----------------------
+
+Take a look at the home page for Macaulay 2
+
+	http://www.math.uiuc.edu/Macaulay2
+
+or the ftp site
+
+	ftp://math.uiuc.edu/Macaulay2
+
+to download the source code or versions of Macaulay 2 for various machines.
+
+----------------------
+6. Other help
+----------------------
+
+Send email to 
+
+	Dan Grayson <dan@math.uiuc.edu>
+
+or
+
+	Mike Stillman <mike@math.cornell.edu>
+
+if you get stuck!

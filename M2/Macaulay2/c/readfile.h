@@ -1,0 +1,18 @@
+/*		Copyright 1993 by Daniel R. Grayson		*/
+
+struct CURRENT {
+     char *filename, *text, *eot;
+     int lineno, column;
+     bool wrapit;
+     } ;
+extern struct CURRENT cur;
+extern bool do_setup;
+extern bool iswhite(char);
+extern void read_setup();
+extern node gettoken(void);
+extern bool validtoken(char *);
+extern void advance(void);
+extern node readfile(char *filename);
+extern int tabwidth;
+extern bool sigreadfile(char *, char **);
+extern char *sigpath;
