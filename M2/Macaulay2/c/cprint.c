@@ -391,6 +391,8 @@ void cprintsomesizeof(node t, node arraylen){
 	  }
      }
 
+#define CLEAR_MEMORY FALSE
+
 void cprintgetmem(node g){
   node s = CAR(g);
   node t = type(s);
@@ -408,18 +410,27 @@ void cprintgetmem(node g){
   else {
     if (gc) {
       if (atomic(t)) put("GC_malloc_atomic");
-      else put("GC_malloc_clear"); /* see comment below! */
+      else {
+#if CLEAR_MEMORY
+	put("GC_malloc_clear"); /* see comment below! */
+#else
+	put("GC_malloc");
+#endif
+      }
     }
     else put("malloc");
     put("(");
     cprintsomesizeof(t, length(g)==2 ? CADR(g) : NULL);
     put(");\n");
-    if (!( gc && !atomic(t))) {
-      /* we write GC_malloc_clear to include a test for return value zero */
+#if CLEAR_MEMORY
+    /* we write GC_malloc_clear to include a test for return value zero */
+    if (!( gc && !atomic(t))) 
+#endif
+      {
       put("     if (0 == ");
       cprint(s);
       put(") outofmem()");
-    }
+      }
   }
 }
 
