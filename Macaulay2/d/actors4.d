@@ -792,11 +792,11 @@ linesfun(e:Expr):Expr := (
      when e
      is a:Sequence do
      if length(a) == 2 then
-     when a.0
+     when a.1
      is s:string do 
-     when a.1 is ch:string do lines(s,ch)
-     else WrongArg(2,"a string")
+     when a.0 is ch:string do lines(s,ch)
      else WrongArg(1,"a string")
+     else WrongArg(2,"a string")
      else WrongNumArgs(2)
      is s:string do linesE(s)
      else WrongArgString());

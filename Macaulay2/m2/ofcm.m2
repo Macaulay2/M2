@@ -371,7 +371,7 @@ makeit1 := (options) -> (
 	       );
 	  );
      betwNames := (m,v) -> concatenate between(m,
-	  apply(v, x -> concatenate lines(toString x, " "))
+	  apply(v, x -> concatenate lines(" ", toString x))
 	  );
      skewvariables := if options.SkewCommutative === false then {0}
           else if options.SkewCommutative === true then {1}

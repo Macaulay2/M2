@@ -378,7 +378,7 @@ processExamples := (docBody) -> (
 		    stderr << "warning : can't open input file '" << nodeBaseFilename << ".out'" << endl;
 		    );
 	       );
-	  exampleResults = separate(exampleResults,"\1");
+	  exampleResults = separate("\1",exampleResults);
 	  exampleCounter = 0;
 	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".example");
 	  docBody = apply(docBody,processExamplesLoop);
