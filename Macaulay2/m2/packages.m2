@@ -40,18 +40,16 @@ toString Dictionary := d -> (
 
 globalAssignFunction = (X,x) -> (
      reverseDictionaryRecord (X,x);
-     if not x#?(symbol name) then (			    -- phase this out
+     if mutable x and not x#?(symbol name) then (			    -- phase this out
 	  x.Symbol = X;
-	  x.name = toString X;
 	  );
      use x;
      )
 
 globalReleaseFunction = (X,x) -> (
      reverseDictionaryRemove (X,x);
-     if x.?Symbol and X === x.Symbol
+     if mutable x and  x.?Symbol and X === x.Symbol
      then (
-	  remove(x,symbol name);
 	  remove(x,symbol symbol);
 	  )
      )
