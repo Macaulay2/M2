@@ -542,7 +542,7 @@ TEST "
   --    Strategy=>Iterate, Strategy=>Linear
   R = ZZ/101[a..d]
   I1 = monomialCurve(R, {1,3,7})
-  I2 = ideal((gens I1)_{1,2})
+  I2 = ideal((gens I1)_{0,1})
   I3 = quotient(I2,I1)
   I4 = quotient(I2,I3)
   I5 = quotient(I2, c)

@@ -233,13 +233,7 @@ vec FreeModule::copy(vec v) const
 
 void FreeModule::remove(vec &v) const
 {
-  while (v != NULL)
-    {
-      vecterm *tmp = v;
-      v = v->next;
-      K->remove(tmp->coeff);
-      R->vecstash->delete_elem(tmp);
-    }
+  R->remove_vector(v);
 }
 
 ring_elem FreeModule::get_coefficient(vec v, int e) const

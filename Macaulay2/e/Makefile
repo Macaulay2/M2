@@ -87,33 +87,11 @@ INTERFACE = \
 INTERFACE_H = obj_int obj_iarr obj_str obj_ptr
 
 ESTUFF = \
-	EZZp \
-	Emonorder \
-	Emonoid \
-	Epoly \
-	Ering \
-	Evector \
-	Efreemod \
-	Ematrix \
-	Eringmap \
-	Eio \
-	EGB \
-	Ecommands \
+	Eschreyer \
 	Espairs \
 	EGB1 \
-	Eschreyer \
-	Einterface \
-	Elookup
-
-#	Emonlookup \
-#	Emonideal
-
-E_H = \
-	Edefs.hpp \
-	Ehashtab.hpp \
-	Ematrix.hpp \
-	Eringmap.hpp \
-	Epolywrap.hpp
+	Elookup \
+	Einterface
 
 COMMANDS = \
 	x_monoid \
@@ -128,7 +106,6 @@ COMMANDS = \
 	gbnod
 
 NAMES = \
-	newmonorder \
 	serial \
 	error \
 	ntuple \
@@ -151,8 +128,6 @@ NAMES = \
 	GF \
 	schur \
 	monideal \
-	monideal2 \
-	montable \
 	termideal \
 	newspair \
 	assprime \
@@ -170,6 +145,7 @@ NAMES = \
 	monomial \
 	varpower \
 	monoid \
+	gb_comp \
 	gb \
 	spair \
 	gbinhom \
@@ -181,13 +157,44 @@ NAMES = \
 	res2 \
 	respoly2
 
+NOT_USED_YET = \
+	EEGBmemory \
+	EEGB1 \
+	EEGB \
+	EEspairs \
+	Emonlookup \
+	Emonideal \
+	newmonorder \
+	monideal2 \
+	montable \
+
+OLDESTUFF = \
+	EZZp \
+	Emonorder \
+	Emonoid \
+	Epoly \
+	Ering \
+	Evector \
+	Efreemod \
+	Ematrix \
+	Eringmap \
+	Eio \
+	EGB \
+	Ecommands \
+
+E_H = \
+	Edefs.hpp \
+	Ehashtab.hpp \
+	Ematrix.hpp \
+	Eringmap.hpp \
+	Epolywrap.hpp
+
 NAMES_H = \
 	comp \
 	ringelem \
 	style \
 	classes \
 	index \
-	gb_comp \
 	respair2
 
 C_FILES = mac2

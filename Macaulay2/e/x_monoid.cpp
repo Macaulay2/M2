@@ -4,7 +4,11 @@
 
 #include "monoid.hpp"
 #include "monorder.hpp"
+
+#if defined(MIKE_NEWMONORDER)
 #include "newmonorder.hpp"
+#endif
+
 void cmd_zero_monoid()
 {
   gStack.insert(trivial_monoid);
@@ -166,14 +170,14 @@ void cmd_mo_general(object &odegs, object &oorder, object &oinv, object &oinvdeg
     gStack.insert(new object_mon_order(mo));
 }
 #endif
+#if defined(MIKE_NEWMONORDER)
 void cmd_mo_make(object &oa)
 {
   intarray *a = oa->intarray_of();
   const new_mon_order *mo = new new_mon_order(a->raw());
   gStack.insert(new object_new_mon_order(mo));
 }
-
-#include "monideal2.hpp"
+#endif
 
 void i_monoid_cmds(void)
 {
@@ -205,5 +209,8 @@ void i_monoid_cmds(void)
   install(ggmonoid, cmd_Monoid,
 	  TY_MON_ORDER, TY_STRING, TY_MONOID, TY_INTARRAY, TY_INTARRAY);
 
+#if defined(MIKE_NEWMONORDER)
   install(ggzeromonoid, cmd_mo_make, TY_INTARRAY);
+#endif
+
 }

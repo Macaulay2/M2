@@ -80,6 +80,10 @@ public:
 
   int kind() const { return _kind; }
 
+  static gb_comp *make(Matrix &m, bool dosyz, int nsyz, int strategy);
+  static gb_comp *make(Matrix &m, bool dosyz, int nsyz, RingElement &hf, int strategy);
+  static gb_comp *force(Matrix &gens, Matrix &gb, Matrix &change, Matrix &syz);
+
   virtual int calc(const int *deg, const intarray &stop_conditions) = 0;
   
   virtual void stats() const = 0;

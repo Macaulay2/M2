@@ -734,11 +734,12 @@ int gb2_comp::calc_gb(int deg, const intarray &stop)
   // prematurely, our state will be one of STATE_NEW_DEGREE,
   // STATE_GB, STATE_GENS.
 
+  int n1,n2;
   if (state == STATE_NEW_DEGREE)
     {
       if (use_hilb)
 	{
-	  int n1,n2;
+	  //int n1,n2;
 	  if (syz != NULL)
 	    {
 	      ret = syz->hilbertNumeratorCoefficient(this_degree, n1);
@@ -770,7 +771,7 @@ int gb2_comp::calc_gb(int deg, const intarray &stop)
 	  // Should only display this if there are some pairs.
 	  o << '[' << level << ',' << npairs;
 	  if (use_hilb)
-	    o << ",e" << n_gb_syz;
+	    o << ",e" << n_gb_syz << "," << n1 << "," << n2;
 	  o << ']';
 	  emit(o.str());
 	}

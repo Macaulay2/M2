@@ -70,6 +70,7 @@ public:
   virtual bool is_quotient_poly_ring() const { return base_ring != NULL; }
   virtual bool is_graded() const    { return isgraded; } // MES: change this
   virtual bool is_expensive() const { return 1; }
+  virtual bool is_commutative_ring() const { return !M->is_skew(); }
 
   virtual void text_out(buffer &o) const;
 

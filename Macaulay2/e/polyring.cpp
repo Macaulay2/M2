@@ -13,6 +13,8 @@
 #include "geopoly.hpp"
 #include "serial.hpp"
 
+#include "gb_comp.hpp"
+
 #define POLY(q) ((q).poly_val)
 
 buffer debugo;
@@ -1191,8 +1193,6 @@ ring_elem PolynomialRing::gcd_extended(const ring_elem f, const ring_elem g,
   return result;
 }
 
-#include "EGB1.hpp"
-
 void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
 			    ring_elem &x, ring_elem &y) const
 {
@@ -1247,7 +1247,7 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   o.reset();
 #endif
 
-      EGB1 *g = new EGB1(m,true,-1,0);
+      gb_comp *g = gb_comp::make(m,true,-1,0);
       bump_up(g);
       g->calc(0, syzygy_stop_conditions);
       Matrix s = g->syz_matrix();

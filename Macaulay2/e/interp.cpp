@@ -17,7 +17,11 @@ extern void execute(int opcode); // In primitive.cc
 extern void i_stashes();
 extern int i_text_io();
 extern int i_sys_cmds();
+
+#if defined(MIKE_NEWENGINE)
 extern void i_Ecommands();
+#endif
+
 extern void i_monoid_cmds();
 extern void i_monomial_cmds();
 extern void i_NGB_cmds();
@@ -45,7 +49,11 @@ void GB_gbstart(void)
   i_stashes();
   i_text_io();
   i_sys_cmds();
+
+#if defined(MIKE_NEWENGINE)
   i_Ecommands();
+#endif
+
   i_monoid_cmds();
   i_monomial_cmds();
   i_NGB_cmds();

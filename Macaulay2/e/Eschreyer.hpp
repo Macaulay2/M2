@@ -2,7 +2,9 @@
 #ifndef _Eschreyer_hpp_
 #define _Eschreyer_hpp
 
-#include "Einterface.hpp"
+#include "polyring.hpp"
+#include "matrix.hpp"
+#include "geovec.hpp"
 
 class GBKernelComputation : public type
 {
