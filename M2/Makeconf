@@ -70,7 +70,7 @@ export EXESUFFIX
 
 all:: announce
 announce ::
-	@echo '## making Macaulay 2 version $(VERSION) for $(SYSTEM) ##'
+	@echo '## making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) ##'
 
 ################################# Makeconf.lcl
 
