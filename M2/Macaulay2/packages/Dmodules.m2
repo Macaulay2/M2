@@ -1,9 +1,7 @@
-newPackage Dmodules
-needs "D-modules/Dloadfile.m2"
-needs "D-modules/DMODdoc.m2"
-
+newPackage( Dmodules, Version => "1.0")
+needs "Dmodules/Dloadfile.m2"
+needs "Dmodules/DMODdoc.m2"
 -- erase the internal symbols
-assert( Dmodules.?Dictionary and class Dmodules.Dictionary === Dictionary )
 scan({"createCommAlgebra", "CommAlgebra", "createAssCommRing", "ThetaRing",
      "createThetaRing", "createIntRing", "createHomWeylAlgebra", "zeroize",
      "DBIGPRIME", "computeLocalization", "invPermute", "gbW1",
