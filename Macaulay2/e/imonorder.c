@@ -488,6 +488,7 @@ void monomialOrderEncode(const MonomialOrder *mo,
 			    monomial result_psums)
      /* Given 'expon', compute the encoded partial sums value */
 {
+  if (mo == 0) return;
   int i,j,nvars,s;
   int *p1;
   struct mo_block *b = mo->blocks;
@@ -581,6 +582,7 @@ int monomialOrderFromActualExponents(const MonomialOrder *mo,
    If a variable is negative, and shouldn't be, 0 is returned.
    Otherwise 1 is returned. */
 {
+  if (mo == 0) return;
   int i;
   int result = 1;
   for (i=0; i<mo->nvars; i++)
@@ -605,6 +607,7 @@ int monomialOrderToActualExponents(const MonomialOrder *mo,
 				      const_exponents expon, 
 				      exponents result_exp)
 {
+  if (mo == 0) return;
   int i;
   for (i=0; i<mo->nvars; i++)
     {
@@ -615,7 +618,7 @@ int monomialOrderToActualExponents(const MonomialOrder *mo,
 
 void monomialOrderDecode(const MonomialOrder *mo, const_monomial psums, exponents expon)
 {
-
+  if (mo == 0) return;
   int i,j,nvars;
   struct mo_block *b = mo->blocks;
   int nblocks = mo->nblocks;
