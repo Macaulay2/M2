@@ -131,9 +131,9 @@ bookFile << ///
 	      d := documentationMemo node;
 	      if class d#0 === CENTER then d = drop(d,1);
 	      bookFile << endl << endl
+	      << "\\hypertarget{" << n << "}{}" << endl
 	      << sectionType n << "{" << cmrLiteral formatDocumentTag node << "}"
 	      << "\\label{" << n << "}" << endl
-	      << "\\hypertarget{" << n << "}{}" << endl
 	      << concatenate booktex d << endl;
 	      )
 	 )

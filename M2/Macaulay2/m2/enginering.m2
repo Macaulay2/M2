@@ -639,7 +639,7 @@ liftable(QQ,Ring) := (f,R) -> try (lift(f,R);true) else false
 
 isUnit(RingElement) := (f) -> 1 % ideal f == 0
 
-Ring _ String := RingElement => (x,s) -> x#s		  -- gets variable from its name
+Ring _ String := RingElement => (x,s) -> x#s
 
 random Ring := RingElement => (R) -> (
      if R.?random then R.random()
