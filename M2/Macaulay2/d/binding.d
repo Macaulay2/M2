@@ -93,18 +93,18 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
      entry);
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary):Symbol := (
      s := makeEntry(word,position,dictionary);
-     if dictionary == globalDictionary && isalnum(word.name)
+     if dictionary.frameID == 0 && isalnum(word.name)
      then globalFrame.values.(s.frameindex) = Expr(SymbolClosure(globalFrame,s));
      s);
 export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
-     entry := makeSymbol(w,dummyPosition,globalDictionary);
+     entry := makeSymbol(w,dummyPosition,globalDictionaryList.dictionary);
      entry.protected = true;
      when globalFrame.values.(entry.frameindex)
      is s:SymbolClosure do s
      else SymbolClosure(globalFrame,entry));
 makeKeyword(w:Word):SymbolClosure := (
      -- keywords differ from symbols in that their initial value is null
-     entry := makeEntry(w,dummyPosition,globalDictionary);
+     entry := makeEntry(w,dummyPosition,globalDictionaryList.dictionary);
      entry.protected = true;
      SymbolClosure(globalFrame,entry));
 export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(makeUniqueWord(s,parseWORD));
@@ -345,7 +345,7 @@ atend(cleanGlobalFrame);
 -----------------------------------------------------------------------------
 lookupCountIncrement := 1;
 lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
-     if table == dummySymbolHashTable then error("dummy table used");
+     if table == dummySymbolHashTable then error("dummy symbol table used");
      entryList := table.buckets.(
 	  word.hash & (length(table.buckets)-1)
 	  );
@@ -361,23 +361,29 @@ lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
 	       );
 	  entryList = entryListCell.next));
 
-globalLookup(word:Word):(null or Symbol) := (
-     dictionary := globalDictionary;
+export globalLookup(word:Word):(null or Symbol) := (
+     p := globalDictionaryList;
      while true do (
-	  when lookup(word,dictionary.symboltable)
+	  d := p.dictionary;
+	  while true do (
+	       when lookup(word,d.symboltable)
+	       is e:Symbol do return(e)
+	       is null do (
+		    if d.outerDictionary == d
+		    then (break;)
+		    else d = d.outerDictionary));
+	  if p == p.next
+	  then (break;)
+	  else p = p.next);
+     NULL);
+export lookup(w:Word,d:Dictionary):(null or Symbol) := (
+     while true do (
+	  when lookup(w,d.symboltable)
 	  is e:Symbol do return(e)
 	  is null do (
-	       if dictionary.outerDictionary == dictionary 		    -- e.g.: dummyDictionary, globalDictionary, and the first in a chain of local scopes
-	       then return(NULL)
-	       else dictionary = dictionary.outerDictionary; )));
-export lookup(word:Word,dictionary:Dictionary):(null or Symbol) := (
-     while true do (
-	  when lookup(word,dictionary.symboltable)
-	  is e:Symbol do return(e)
-	  is null do (
-	       if dictionary.outerDictionary == dictionary 		    -- e.g.: dummyDictionary, globalDictionary, and the first in a chain of local scopes
-	       then return(globalLookup(word))
-	       else dictionary = dictionary.outerDictionary; )));
+	       if d == d.outerDictionary
+	       then return(globalLookup(w))
+	       else d = d.outerDictionary)));
 lookup(token:Token,forcedef:bool):void := (
      n := length(token.word.name);
      if n >= 1 && isdigit(token.word.name.0) 
@@ -395,7 +401,7 @@ lookup(token:Token,forcedef:bool):void := (
 	       if forcedef
 	       then (
 		    -- undefined variables are defined as global and static here
-	       	    token.dictionary = globalDictionary;
+	       	    token.dictionary = globalDictionaryList.dictionary;
 	       	    makeSymbol(token);
 		    )
 	       else (
@@ -558,7 +564,7 @@ bindassignment(assn:Binary,dictionary:Dictionary,colon:bool):void := (
      is binary:Binary do (
 	  bind(binary.lhs,dictionary);
 	  bindop(binary.operator,dictionary);
-	  bind(binary.rhs, if binary.operator.word == DotS.symbol.word then globalDictionary else dictionary );
+	  bind(binary.rhs, if binary.operator.word == DotS.symbol.word then globalDictionaryList.dictionary else dictionary );
 	  bind(body,dictionary);
 	  if colon then (
 	       if ! opHasBinaryMethod(binary.operator.entry)
@@ -633,7 +639,7 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  then (
 	       bind(binary.lhs,dictionary);
 	       bindop(binary.operator,dictionary);
-	       bind(binary.rhs,globalDictionary);
+	       bind(binary.rhs,globalDictionaryList.dictionary);
 	       when binary.rhs
 	       is token:Token do (
 		    if token.word.typecode != TCid
@@ -645,7 +651,7 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  then (
 	       bind(binary.lhs,dictionary);
 	       bindop(binary.operator,dictionary);
-	       bind(binary.rhs,globalDictionary);
+	       bind(binary.rhs,globalDictionaryList.dictionary);
 	       when binary.rhs
 	       is token:Token do (
 		    if token.word.typecode != TCid
@@ -671,7 +677,7 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  )
      is q:GlobalQuote do (
 	  bind(q.operator,dictionary);
-	  bind(q.rhs,globalDictionary);
+	  bind(q.rhs,globalDictionaryList.dictionary);
 	  )
      is q:Quote do (
 	  bind(q.operator,dictionary);
@@ -737,7 +743,7 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
      );
 export bind(e:ParseTree):bool := (
      HadError = false;
-     bind(e,globalDictionary);
+     bind(e,globalDictionaryList.dictionary);
      !HadError
      );
 export localBind(e:ParseTree,dictionary:Dictionary):bool := (

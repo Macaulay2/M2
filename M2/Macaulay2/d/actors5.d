@@ -612,12 +612,14 @@ erase(s:Symbol,table:SymbolHashTable):bool := (
      false
      );
 erase(s:Symbol):bool := (
-     d := globalDictionary;
-     while true do (
-	  if erase(s,d.symboltable) then return(true);
-	  if d == d.outerDictionary then return(false);
-	  d = d.outerDictionary;
-	  ));
+     p := globalDictionaryList;
+     while (
+	  d := p.dictionary;
+	  while (
+	       if erase(s,d.symboltable) then return(true);
+	       d != d.outerDictionary ) do d = d.outerDictionary;
+	  p != p.next) do p = p.next;
+     false);
 erase(e:Expr):Expr := (
      when e is s:SymbolClosure do if erase(s.symbol) then e
      else WrongArg("a global symbol")
@@ -1177,7 +1179,7 @@ setupfun("relativizeFilename",relativizeFilename);
 
 isGlobalSymbol(e:Expr):Expr := (
      when e is s:string do (
-	  when lookup(makeUniqueWord(s,parseWORD),globalDictionary)
+	  when globalLookup(makeUniqueWord(s,parseWORD))
 	  is x:Symbol do True
 	  is null do False
 	  )
@@ -1187,9 +1189,9 @@ setupfun("isGlobalSymbol",isGlobalSymbol);
 getGlobalSymbol(e:Expr):Expr := (
      when e is s:string do (
 	  w := makeUniqueWord(s,parseWORD);
-	  when lookup(w,globalDictionary) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
+	  when globalLookup(w) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
 	  is null do (
-	       t := makeSymbol(w,dummyPosition,globalDictionary);
+	       t := makeSymbol(w,dummyPosition,globalDictionaryList.dictionary);
 	       globalFrame.values.(t.frameindex)))
      else WrongArgString());
 setupfun("getGlobalSymbol",getGlobalSymbol);
@@ -1268,15 +1270,16 @@ setupfun("frames", frames);
 
 getGlobalDictionary(e:Expr):Expr := (
      when e
-     is a:Sequence do if length(a) == 0 then Expr(globalDictionary) else WrongNumArgs(0)
+     is a:Sequence do if length(a) == 0 then Expr(globalDictionaryList.dictionary) else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("globalDictionary", getGlobalDictionary);
 
 pushDictionary(e:Expr):Expr := (
      when e
      is a:Sequence do if length(a) == 0 then (
-	  globalDictionary = newGlobalDictionary(globalDictionary);
-	  Expr(globalDictionary))
+	  g := newGlobalDictionary(globalDictionaryList.dictionary);
+	  globalDictionaryList.dictionary = g;
+	  Expr(g))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("pushDictionary", pushDictionary);
@@ -1284,11 +1287,26 @@ setupfun("pushDictionary", pushDictionary);
 popDictionary(e:Expr):Expr := (
      when e
      is a:Sequence do if length(a) == 0 then (
-	  o := globalDictionary;
-	  if o.outerDictionary == o then buildErrorPacket("tried to pop the global dictionary")
+	  o := globalDictionaryList.dictionary;
+	  if o.outerDictionary == o then buildErrorPacket("no more dictionaries to pop")
 	  else (
-	       globalDictionary = o.outerDictionary;
+	       globalDictionaryList.dictionary = o.outerDictionary;
 	       Expr(o)))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("popDictionary", popDictionary);
+
+useDictionary(e:Expr):Expr := (
+     when e is d:Dictionary do (
+	  -- insert this dictionary second in line
+	  if globalDictionaryList.next == globalDictionaryList then (
+	       -- detect pointer to self indicating end
+	       globalDictionaryList.next = DictionaryList(d,self);
+	       )
+	  else (
+	       -- 'next' pointer is legitimate, so use it
+	       globalDictionaryList.next = DictionaryList(d,globalDictionaryList.next);
+	       );
+	  nullE)
+     else WrongArg("a dictionary"));
+setupfun("useDictionary", useDictionary);
