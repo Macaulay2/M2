@@ -188,8 +188,9 @@ tmp_init.c : $(DFILES)
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
 
-## we put M2inits.o here so its constructor gets run first!
-## we put M2initschk.o here, assuming its constructors get run *after* those of M2inits, to verify that sequence of events
+## We put M2inits.o here so its constructor gets run first, before those of libcf, placed above.
+## This assumes that that link runs the constructors in reverse order -- those rightmost on the command line are run first.
+## We put M2initschk.o here, assuming its constructors get run *after* those of M2inits, to verify that sequence of events.
 LIBRARYOPTIONS += M2initschk.o M2inits.o
 LIBRARYFILES   += M2initschk.o M2inits.o
 
