@@ -195,32 +195,21 @@ warned := new MutableHashTable
 
 package TO := x -> (
      key := normalizeDocumentTag x#0;
+     pkg := packageTag key;
      fkey := formatDocumentTag key;
      pkgs := select(packages, P -> P =!= User and P =!= Output);
      p := select(pkgs, P -> P#"documentation"#?fkey);
-     if #p == 1 then return p#0;
-     if #p > 1 then error("documentation for ",fkey," occurs in multiple packages: ", concatenate between(", ",apply(p,P -> P.name)));
-     if class key === Symbol then (
-	  pkg := package key;
-	  if pkg =!= User then (
-	       if not warned#?key then (
-		    stderr << "warning: documentation for symbol " << key << " in package " << pkg.name << " not found" << endl;
-		    warned#key = true;
-		    );
-	       return pkg;
-	       );
-	  );
-     if class key === Sequence then (
-	  -- it might be a link to documentation for a method such as : TO (kernel, RingMap)
-	  p = apply(toList key, package);
-	  -- now find the youngest of the packages involved by checking for the largest hash code
-	  pkg = last last sort(apply(p, P -> (hash P,P)));
-	  stderr << "warning: documentation for method " << fkey << " not found, assuming it will be found in package " << pkg.name << " eventually" << endl;
-	  return pkg;
-	  );
-     stderr << "warning: documentation for \"" << fkey << "\" not found, assuming it will be found in package " << Main << " eventually" << endl;
-     return Main;
-     )
+     if #p == 1 then (
+	  p = p#0;
+	  if pkg =!= p then stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it seems to belong in " << pkg << endl;
+	  p)
+     else if #p > 1 then (
+	  error("documentation for ",fkey," occurs in multiple packages: ", concatenate between(", ",apply(p,P -> P.name)));
+	  )
+     else (
+	  if not warned#?key then stderr << "warning: documentation for \"" << fkey << "\" not found, assuming it will be found in package " << pkg << " eventually" << endl;
+	  warned#key = true;
+     	  pkg))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

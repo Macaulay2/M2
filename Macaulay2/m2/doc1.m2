@@ -740,12 +740,12 @@ document docTemplate {
      }
 ///
 	  
-document { symbol "coker",
+document { symbol coker,
      Headline => "cokernel of a map",
      "An abbreviation for ", TO "cokernel", "."
      }
 
-document { cokernel,
+document { symbol cokernel,
      Headline => "cokernel of a map",
      TT "cokernel f", " -- produces the cokernel of the module homomorphism f",
      PARA,

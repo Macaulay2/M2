@@ -30,12 +30,12 @@ document { (symbol /, Ideal, Ideal),
      SEEALSO "Module"
      }
 
-document { symbol "ann",
+document { symbol ann,
      Headline => "the annihilator ideal",
      TT "ann", " -- a synonym for ", TO "annihilator", "."
      }
 
-document { annihilator,
+document { symbol annihilator,
      Headline => "the annihilator ideal",
      TT "annihilator M", " -- produce the annihilator ideal of a 
      module, ideal, ring element, or coherent sheaf.",

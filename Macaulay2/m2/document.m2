@@ -22,8 +22,9 @@ addStartFunction(
 -- Documentation = new MutableHashTable
 
 duplicateDocWarning := () -> (
-     stderr << concatenate ("warning: documentation already provided for '", currentNodeName, "'") 
-     << newline << flush; )
+     error ("warning: documentation already provided for '", currentNodeName, "'");
+     -- stderr << concatenate ("warning: documentation already provided for '", currentNodeName, "'") << newline << flush;
+     )
 
 -----------------------------------------------------------------------------
 -- unformatting document tags
@@ -91,9 +92,9 @@ packageTag          = method(SingleArgumentDispatch => true)
 packageTag   Symbol := s -> if class value s === Package then value s else package s
 packageTag   String := s -> currentPackage
 packageTag  Package := identity
-packageTag Sequence := s -> package youngest s
+packageTag Sequence := s -> youngest \\ package \ s
 packageTag   Option := s -> package youngest toSequence s
-packageTag    Thing := s -> error "can't provide package for documentation tag of unknown type"
+packageTag    Thing := s -> error "can't determine package for documentation tag of unknown type"
 
 -----------------------------------------------------------------------------
 -- formatting document tags
