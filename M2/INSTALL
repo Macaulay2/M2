@@ -33,7 +33,7 @@ depend on some of the earlier ones.
 				      add -DLARGE_CONFIG -DNO_DEBUGGING
 	     -- make
 	     -- cp gc.a /usr/lib/libgc.a
-	     -- cp include/gc.h and include/gc_cpp.h /usr/include
+	     -- cp include/gc.h include/gc_cpp.h /usr/include
 
     library: gdbm
     release: gdbm-1.8.0
@@ -47,7 +47,7 @@ depend on some of the earlier ones.
 		the installed files, so change BINOWN and BINGRP to suit you.
 
     library: gmp
-    release: gmp-4.0
+    release: gmp-4.0.1
      author: Torbjorn Granlund <tege@nada.kth.se>
     bugs to: <bug-gmp@prep.ai.mit.edu>
      get at: ftp://ftp.gnu.org/gnu/gmp
@@ -89,6 +89,7 @@ depend on some of the earlier ones.
 		or else it gets confused about the NOSTREAMIO option.  Do it this way:
 			cd libfac
 			patch -p1 < ...../INSTALL.libfac-0.3.2-diffs
+			./configure
 			make DEFS=-DHAVE_SINGULAR_ERROR
 			make prefix=/usr/local/... install
 
