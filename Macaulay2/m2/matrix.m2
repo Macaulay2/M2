@@ -164,9 +164,7 @@ document { quote lcmDegree,
      TT "lcmDegree F", " -- I don't know what this is supposed to do.",
      }
 
-local newMatrix				  -- defined below
-
-reduce := (tar) -> (
+reduce = (tar) -> (					    -- we erase this later
      if not isFreeModule tar and not ring tar === ZZ then (
 	  g := gb presentation tar;
 	  sendgg(ggPush g, ggPush 1, ggpick, ggreduce, ggpop);
@@ -192,7 +190,7 @@ RingElement * Matrix := (r,m) -> (
      reduce T;
      newMatrix(T, source m))
 
-newMatrix = (tar,src) -> (
+newMatrix = (tar,src) -> (				    -- we erase this later
      R := ring tar;
      p := new Matrix;
      p.source = src;
@@ -432,7 +430,7 @@ ggConcatRows := (tar,src,mats) -> (
      then f = map(target f, source f, f, Degree => degree mats#0);
      f)
 
-ggConcatBlocks := (tar,src,mats) -> (
+ggConcatBlocks = (tar,src,mats) -> (			    -- we erase this later
      sendgg (
 	  apply(mats, row -> ( 
 		    apply(row, m -> ggPush m), 
@@ -444,7 +442,7 @@ ggConcatBlocks := (tar,src,mats) -> (
      then f = map(target f, source f, f, Degree => degree mats#0#0);
      f)
 
-samering := mats -> (
+samering = mats -> (					    -- we erase this later
      R := ring mats#0;
      if not all ( mats, m -> ring m === R )
      then error "expected matrices over the same ring";
@@ -630,7 +628,7 @@ ZZ ++ RingElement :=
 RingElement ++ ZZ :=
 RingElement ++ RingElement := (r,s) -> matrix {{r}} ++ matrix {{s}}
 
-concatCols := mats -> (
+concatCols = mats -> (					    -- we erase this later
      mats = select(toList mats,m -> m =!= null);
      if # mats === 1 
      then mats#0
@@ -643,7 +641,7 @@ concatCols := mats -> (
 	  then error "unequal targets";
 	  ggConcatCols(targets#0, Module.directSum apply(mats,source), mats)))
 
-concatRows := mats -> (
+concatRows = mats -> (					    -- we erase this later
      mats = select(toList mats,m -> m =!= null);
      if # mats === 1 
      then mats#0
@@ -655,27 +653,6 @@ concatRows := mats -> (
 	  and not all(sources, F -> isFreeModule F)
 	  then error "unequal sources";
 	  ggConcatRows(Module.directSum apply(mats,target), sources#0, mats)))
-
-concatBlocks := mats -> (
-     if not isTable mats then error "expected a table of matrices";
-     if #mats === 1
-     then concatCols mats#0
-     else if #(mats#0) === 1
-     then concatRows (mats/first)
-     else (
-     	  samering flatten mats;
-	  sources := unique applyTable(mats,source);
-	  N := sources#0;
-	  if not all(sources, F -> F == N) and not all(sources, F -> all(F,isFreeModule))
-	  then error "unequal sources";
-	  targets := unique transpose applyTable(mats,target);
-	  M := targets#0;
-	  if not all(targets, F -> F == M) and not all(targets, F -> all(F,isFreeModule))
-	  then error "unequal targets";
-     	  ggConcatBlocks(
-	       Module.directSum (mats/first/target),
-	       Module.directSum (mats#0/source),
-	       mats)))
 
 Matrix | Matrix := (f,g) -> concatCols(f,g)
 RingElement | Matrix := (f,g) -> concatCols(f**id_(target g),g)
@@ -693,6 +670,57 @@ Matrix || ZZ := (f,g) -> concatRows(f,g*id_(source f))
 listZ := v -> (
      if not all(v,i -> class i === ZZ) then error "expected list of integers";
      )
+
+Matrix _ List := (f,v) -> (
+     v = splice v;
+     listZ v;
+     submatrix(f,v)
+     )
+
+document { (quote _, Matrix, List),
+     TT "f_{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
+     columns numbered i, j, k, ... .",
+     PARA,
+     "Repetitions of the indices are allowed.",
+     PARA,
+     "If the list of column indices is a permutation of 0 .. n-1, where n is
+     the number of columns, then the result is the corresponding permutation
+     of the columns of f.",
+     PARA,
+     EXAMPLE "R = ZZ/101[a..f];",
+     EXAMPLE {
+	  "p = matrix {{a,b,c},{d,e,f}}",
+      	  "p_{1}",
+      	  "p_{1,1,2}",
+      	  "p_{2,1,0}",
+	  },
+     SEEALSO "_"
+     }
+
+Matrix ^ List := (f,v) -> (
+     v = splice v;
+     listZ v;
+     submatrix(f,v,)
+     )
+
+document { (quote ^,Matrix,List),
+     TT "f^{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
+     rows numbered i, j, k, ... .",
+     PARA,
+     "Repetitions of the indices are allowed.",
+     PARA,
+     "If the list of row indices is a permutation of 0 .. n-1, where n is
+     the number of rows, then the result is the corresponding permutation
+     of the rows of f.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[a..f]",
+      	  "p = matrix {{a,b,c},{d,e,f}}",
+      	  "p^{1}",
+      	  "p^{1,0}",
+	  },
+     SEEALSO "^"
+     }
 
 submatrix(Matrix,List,Nothing) := (m,rows,cols) -> (
      submatrix(m, rows, 0 .. numgens source m - 1)
@@ -1035,38 +1063,6 @@ map(Module,Matrix) := options -> (M,f) -> (
 	  );
      map(M,source f ** R^{-first diffs},f)
      )
-
-degreeCheck := (d,R) -> (
-     if class d === ZZ then d = {d};
-     if class d === List
-     and all(d,i -> class i === ZZ) 
-     and #d === degreeLength R
-     then d
-     else (
-	  if degreeLength R === 1
-	  then error "expected degree to be an integer or list of integers of length 1"
-	  else error (
-	       "expected degree to be a list of integers of length ",
-	       string degreeLength R
-	       )
-	  )
-     )
-
-map(Module,Module,Matrix) := options -> (M,N,f) -> (
-     if M === f.target and N === f.source
-     and (options.Degree === null or options.Degree === degree f)
-     then f
-     else (
-	  R := ring M;
-	  N' := cover N ** R;
-	  sendgg (ggPush cover M, ggPush N', ggPush f,
-	       ggPush (
-		    if options.Degree === null
-		    then toList (degreeLength R : 0)
-		    else degreeCheck(options.Degree, R)),
-	       ggmatrix);
-	  reduce M;
-	  newMatrix(M,N)))
 
 inducedMap = method (
      Options => {

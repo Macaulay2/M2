@@ -147,19 +147,6 @@ document { quote Type,
      SEEALSO {"parent",  "class", "using methods"}
      }
 
-document { "enclosed",
-     TT "enclosed", " -- a term used in the documentation to describe an expression
-     whose hash code distinguishes it from all other enclosed
-     expressions.  Enclosed expressions include Objects or Lists 
-     which are mutable, and Symbols.  Unenclosed expressions
-     have hash codes which are computed from the contents of the
-     expression, so it may happen that the hash codes are the same
-     when the contents are different, or the contents are the same
-     and the expressions are different.",
-     PARA,
-     SEEALSO "hashing"
-     }
-
 document { quote Print,
      TT "Print", " -- a method applied at top level to print the result, 
      ", TT "r", " of an evaluation.",

@@ -34,7 +34,6 @@ document { quote Tally,
 	  (TO (quote _,Tally,Thing), "  -- access"),
 	  (TO "tally", "                -- tally the elements of a list"),
 	  (TO "toList", "               -- a list of the elements"),
-	  (TO "apply(Tally,Function)", " -- apply a function to elements of a tally."),
 	  (TO (sum,Tally), "           -- add the elements"),
 	  (TO (product,Tally), "       -- multiply the elements")
 	  }
@@ -81,17 +80,6 @@ document { (quote +, Tally, Tally),
      SEEALSO {"Tally", "tally"}
      }
 
-document { "apply(Tally,Function)",
-     TT "apply(x,f)", " -- applies the function ", TT "f", " to each element of the
-     tally ", TT "x", ", accumulating the results in a tally.",
-     PARA,
-     EXAMPLE {
-	  "x = tally {-1,-1,-2,1}",
-      	  "apply(x,abs)",
-	  },
-     SEEALSO {"Tally", "tally"}
-     }
-
 singleton := tally {0}
 
 Tally - Tally := (x,y) -> select(merge(x,applyPairs(y,(k,v)->(k,-v)),plus),i -> i =!= 0)
@@ -121,10 +109,10 @@ document { quote tally,
      SEEALSO "Tally"
      }
 
-TEST "
-assert( name tally {1,1,1,2,1,3,2} === \"tally {4 : 1, 2 : 2, 1 : 3}\" )
+TEST ///
+assert( name tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 => 1}" )
 assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
-"
+///
 
 Set.name = "Set"
 document { quote Set,
@@ -142,7 +130,6 @@ document { quote Set,
 	  (TO (quote *,Set,Set), " -- intersection"),
 	  (TO (quote **, Set, Set), " -- Cartesian product"),
 	  (TO quote #, " -- the number of elements"),
-	  (TO "apply(Set,Function)", "  -- applying a function to elements"),
 	  (TO member, " -- whether something is a member"),
 	  (TO (product,Set), " -- multiply the elements"),
 	  (TO (isSubset,Set,Set), " -- whether a set is a subset of another"),
@@ -169,7 +156,7 @@ name Set := x -> (
      else "new " | name class x | " from " | name keys x
      )
 Set + Set := (x,y) -> merge(x,y,(i,j)->i)
-Set ++ Set := (x,y) -> apply(x,i->(0,i)) + apply(y,j->(1,j))
+Set ++ Set := (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))
 Set ** Set := (x,y) -> combine(x,y,identity,(i,j)->i,)
 special := quote special
 Set * Set := (x,y) -> (
@@ -177,7 +164,7 @@ Set * Set := (x,y) -> (
      then set select(keys x, k -> y#?k)
      else set select(keys y, k -> x#?k)
      )
-Set - Set := (x,y) -> applyKeys(x, i -> if not y#?i then i)
+Set - Set := (x,y) -> applyPairs(x, (i,v) -> if not y#?i then (i,v))
 sum Set := s -> sum toList s
 product Set := s -> product toList s
 unique = x -> keys set x

@@ -147,7 +147,9 @@ document { "valid names",
 	  "o2",
 	  },
      "Other symbols refer to functions built in to Macaulay 2 which provide
-     much of its functionality, as we will learn."
+     much of its functionality, as we will learn.",
+     PARA,
+     "The class of all symbols is ", TO "Symbol", "."
      }
 
 document { "assigning values",
@@ -307,25 +309,35 @@ document { "making functions",
      EXAMPLE {
 	  "(i -> i^2) 7",
 	  },
-     "Functions can even create new functions and return them.",
+     "Another way to make new functions is to compose two old ones
+     with the operator ", TO "@@", ".",
      EXAMPLE {
-	  "g = i -> j -> i+j",
-	  "h = g 7",
-	  "h 100",
+	  "sincos = sin @@ cos",
+	  "sincos 2.2",
+	  "sin(cos(2.2))",
 	  },
-     "What happened here is that when ", TT "g 7", " was evaluated, the value ", TT "7", "
-     was assigned to ", TT "i", " and the body of ", TT "g", " was evaluated, producing
-     the function ", TT "j -> i+j", " which was then assigned to ", TT "h", ".  When the
-     expression ", TT "h 100", " was evaluated, the value ", TT "100", " was assigned to
-     ", TT "j", " and the body of ", TT "h", ", which is ", TT "i+j", ", was evaluated,
-     yielding ", TT "107", ".  As long as the function ", TT "h", " is reachable, the 
-     memory location where the value of ", TT "i", " is stored will be reserved, and kept
-     distinct from other uses of the same code.  This means we can reuse ", TT "g", " without
-     fear, as we demonstrate in the following code.",
+     "Code that implements composition of functions is easy to write, because
+     functions can create new functions and return them.  We illustrate
+     this by writing a function called ", TT "compose", " which will
+     compose two functions, just as the operator ", TO "@@", " did
+     above.",
      EXAMPLE {
-	  "k = g 37",
-	  "{h 100, k 100}"
-	  }
+	  "compose = (f,g) -> x -> f(g(x))",
+	  "sincos = compose(sin,cos)",
+	  "cossin = compose(cos,sin)",
+	  "sincos 2.2",
+	  "cossin 2.2",
+	  },
+     "We created two composite functions in the example above to illustrate an
+     important point.  The parameters ", TT "f", " and ", TT "g", " acquire
+     values when ", TT "sincos", " is created, and they acquire different values when
+     ", TT "cossin", " is created.  These two sets of values do not interfere 
+     which each other, and the memory they occupy will be retained as long 
+     as they are needed.  Indeed, the body of both functions is
+     ", TT "x -> f(g(x))", ", and the only difference between them is the
+     values assigned to the parameters ", TT "f", " and ", TT "g", ".",
+     PARA,
+     "The class of all functions is ", TO "Function", "."
      }
 
 document { "making functions with a variable number of arguments",
@@ -424,10 +436,6 @@ document { "making new functions with optional arguments",
 	  },
      }
 
-document { "replacements for commands and scripts from Macaulay",
-     "This node has not been written yet."
-     }
-
 document { "conditional execution",
      "The basic way to control the execution of code is with the ", TO "if", "
      expression.  Such an expression typically has the form ", TT "if X then Y else Z", "
@@ -451,8 +459,7 @@ document { "conditional execution",
 	  },
      "There is a variety of predicate functions (such as ", TT "<", ") which yield
      ", TT "true", " or ", TT "false", " and can be used as the predicate in 
-     an ", TT "if", " expression. Here is a partial list of such functions 
-     and operators: ",
+     an ", TT "if", " expression. They include ",
      TO "==", ", ",
      TO "!=", ", ",
      TO "===", ", ",
@@ -463,6 +470,8 @@ document { "conditional execution",
      TO ">=", ", ",
      TO ".?", ", ",
      TO "#?", ", ",
+     TO "even", ", ",
+     TO "odd", ", ",
      TO "member", ", ",
      TO "mutable", ", ",
      TO "isAffineRing", ", ",
@@ -487,19 +496,20 @@ document { "conditional execution",
      TO "isSubset", ", ",
      TO "isSurjective", ", ",
      TO "isTable", ", ",
-     TO "isUnit", ", ",
+     TO "isUnit", ", and ",
      TO "isWellDefined", ".  Results of these tests may be combined with 
      ", TT "not", ", ", TT "and", ", and ", TT "or", "."
      }
 
 document { "loops",
      "An expression of the form ", TT "while X do Y", " operates by evaluating
-     ", TT "X", " repeatedly.  Each time the value of ", TT "X", " is true, ", TT "Y", " is evaluated once.
-     When finally the value of ", TT "X", " is false then ", TT "null", " is returned as the value
-     of the ", TT "while", " expression.",
+     ", TT "X", " repeatedly.  Each time the value of ", TT "X", " is true, 
+     ", TT "Y", " is evaluated and its value is discarded.  When finally
+     the value of ", TT "X", " is false the special value ", TT "null", " is 
+     returned as the value of the ", TT "while", " expression.",
      EXAMPLE {
 	  "i = 0;",
-	  ///while i < 20 do (<< " " << i; i = i + 1); << endl///
+	  ///while i < 20 do (<< " " << i; i = i + 1); << endl;///
 	  },
      "In the example above, ", TT "X", " is the predicate ", TT "i < 20", " and ", TT "Y", " is
      the code ", TT ///(<< " " << i; i = i + 1)///, ".  Notice the use of the
@@ -625,6 +635,7 @@ fghij"///,
 	  "substring(x,5)",
 	  "substring(x,5,2)",
 	  },
+     "The class of all strings is ", TO "String", "."
      }
 
 document { "nets",
@@ -639,7 +650,11 @@ document { "nets",
 	  "(x+y)^2",
 	  "n = net oo",
 	  },
-     "We may use ", TO "peek", " to clarify the extent of a net.",
+     "The net ", TT "n", " above looks exactly the same as the original polynomial -
+     that's because a polynomial is printed by printing its net.  But the net 
+     ", TT "n", " is no longer usable as a polynomial; it's just an 
+     array of characters.  We may use ", TO "peek", " to clarify the extent of 
+     a net.",
      EXAMPLE "peek n",
      "One way to create nets directly is with the operator ", TT "||", ", 
      which concatenates strings or nets vertically.",
@@ -663,7 +678,8 @@ document { "nets",
      EXAMPLE {
 	  "netRows x",
 	  "peek oo"
-	  }
+	  },
+     "The class of all nets is ", TO "Net", "."
      }
 
 document { "lists",
@@ -673,9 +689,12 @@ document { "lists",
      EXAMPLE "x = {a,b,c,d,e}",
      "We retrieve the length of a list with the operator ", TO "#", ".",
      EXAMPLE "#x",
-     "We use it also to obtain a particular element.  Warning: we number
-     the elements starting with 0.",
+     "We use it also to obtain a particular element.  The elements are 
+     nubered consecutively starting with 0.",
      EXAMPLE "x#2",
+     "The elements of a list are stored in consecutive memory locations,
+     so the operation above is fast.",
+     PARA,
      "The functions ", TO "first", " and ", TO "last", " retrieve the
      first and last elements of a list.",
      EXAMPLE "first x, last x",
@@ -719,6 +738,10 @@ document { "lists",
      TO "sort", ", ",
      TO "take", ", and ",
      TO "unique", ".",
+     PARA,
+     "The class of all lists is ", TO "List", ", and the class of all
+     basic lists, useful for deriving news types of list which do not
+     inherit methods for treating lists as vectors, is ", TO "BasicList", "."
      }
 
 document { "sequences",
@@ -776,7 +799,8 @@ document { "sequences",
 	  "toSequence oo",
 	  },
      "Other functions for dealing especially with sequences
-     include ", TO "sequence", " and ", TO "deepSplice", "."
+     include ", TO "sequence", " and ", TO "deepSplice", ".  The class of all
+     sequences is ", TO "Sequence", "."
      }
 
 document { "hash tables",
@@ -854,11 +878,12 @@ document { "hash tables",
      TO "pairs", ", ",
      TO "remove", ", ",
      TO "scanKeys", ", ",
-     TO "scanPairs", ", ",
-     TO "select", ", and ",
+     TO "scanPairs", ", and ",
      TO "values", ".",
      PARA,
-     "For details of the mechanism underlying hash tables, see ", TO "hashing", ".",
+     "For details of the mechanism underlying hash tables, see ", TO "hashing", ".
+     The class of all hash tables is ", TO "HashTable", ", and the class of all
+     mutable hash tables is ", TO "MutableHashTable", ".",
      }
 
 document { "hashing",
@@ -874,13 +899,13 @@ document { "hashing",
      to be large enough that typically one may expect each bucket to hold fewer than
      three key-value pairs.  The key is used  as follows to determine in which
      bucket the key-value pair is to be stored.  The function ", TO "hash", " 
-     is applied to the key to produce in a deterministic way an integer called
-     the hash-code, and the remainder of the hash-code upon division by the
+     is applied to the key to produce, in a deterministic way, an integer called
+     the hash code, and the remainder of the hash code upon division by the
      number of buckets tells which bucket will be used.",
      PARA,
      "It is ", BOLD "essential", " that the
      hash code of a key never change, for otherwise the next 
-     attempt to find the key in the hash table have an unpredictable 
+     attempt to find the key in the hash table will have an unpredictable 
      result - the new hash code of the key may or may not lead to 
      the same bucket, and the value may or may not be located.",
      PARA,
@@ -922,8 +947,8 @@ document { "hashing",
      	       choice for such a hash code is the 
      	       address in memory of the thing.  But this address can change
      	       depending on environmental factors not under the control of the
-     	       interpreter, and thus lead to unpredictable behavior.)
-	       A disadvantage
+     	       interpreter, and thus its use as a hash code would lead 
+	       to unpredictable behavior.)  A disadvantage
 	       of this approach is that the strong comparison operator could not
 	       examine the contents of mutable objects!  (Remember that
 	       if the hash codes are different, the strong comparison must declare
@@ -940,9 +965,9 @@ document { "hashing",
      with initial value 1000000 is incremented each time a mutable thing is
      created, and its value is taken as the hash code of the thing and stored
      within it.  The strong comparison test cannot depend on the contents of
-     mutable things, and thus we may call such things ", TO "enclosed", ".
-     For mutable things, the test for equality must be the same as equality
-     of the hash codes.",
+     mutable things, and thus such things appear to be containers with opaque
+     walls.  For mutable things, the test for equality must be the same as 
+     equality of the hash codes.",
      PARA,
      "It is essential to have some hash tables for which equality amounts
      to equality of the contents.  This cannot be achieved for mutable
@@ -966,13 +991,103 @@ document { "hashing",
      SEEALSO "HashTable"
      }
 
-document { "making new types",
-     "This node has not been written yet."
+document { "mapping over lists",
+     "In programming, loops which operate on consecutive elements of a
+     list are common, so we offer various ways to apply functions to
+     each of the elements of a list, along with various ways to treat the
+     returned values.",
+     PARA,
+     "The most basic operation is provided by ", TO "scan", ", which applies
+     a function consecutively to each element of a list, discarding the
+     values returned.",
+     EXAMPLE "scan({a,b,c}, print)",
+     "By contrast, ", TO "apply", " will produced a list containing the
+     values returned.",
+     EXAMPLE "apply({1,2,3,4}, i -> i^2)",
+     "This operation is so common that we offer two shorthand notations for
+     it, one with the function on the right and one with the function on
+     the left.",
+     EXAMPLE {
+	  ///{1,2,3,4} / (i -> i^2)///,
+	  ///(i -> i^2) \ {1,2,3,4}///,
+	  },
+     "The associativity of these operators during parsing is set up so the 
+     following code works as one would wish.",
+     EXAMPLE {
+	  ///{1,2,3,4} / (i -> i^2) / (j -> 1000*j)///,
+	  ///(j -> 1000*j) \ (i -> i^2) \ {1,2,3,4}///,
+	  ///(j -> 1000*j) @@ (i -> i^2) \ {1,2,3,4}///,
+	  },
+     "The function ", TO "apply", " can also be used with two lists of the same
+     length, in which case it will apply the function consecutively to
+     corresponding elements of the two lists.",
+     EXAMPLE {
+	  "apply({1,2,3}, {7,8,9}, (i,j) -> 1000*i+j)"
+	  },
+     "The function ", TO "table", " can be used to create a table (doubly
+     nested list) from two lists and a function of two arguments.  It applies
+     the function consecutively to an element from the first list and an
+     element from the second list.",
+     EXAMPLE {
+	  "table({1,2,3},{7,8},(i,j) -> 1000*i+j)"
+	  },
+     "The function ", TO "applyTable", " can be used to apply a function to 
+     each element of a doubly nested list (table).  Occasionally matrices
+     are represented as a table, so this is a useful facility.",
+     EXAMPLE {
+	  "applyTable( {{1,2,3},{4,5}}, i -> i^2)"
+	  },
+     "We may use ", TO "select", " to select those elements from a list
+     that satisfy some condition.  In the next example, we use the function
+     ", TO "even", " to select the even numbers from a list.",
+     EXAMPLE "select({1,2,3,4,5,6,7,8,9,10}, even)",
+     "An optional first argument to ", TO "select", " allows us to specify the
+     maximum number of elements selected.",
+     EXAMPLE "select(2,{1,2,3,4,5,6,7,8,9,10}, even)",
+     "We may use ", TO "any", " to tell whether there is at least one element of 
+     a list satisfying a condition, and ", TO "all", " to tell whether all 
+     elements satisfy it.",
+     EXAMPLE {
+	  "any({1,2,3,4,5,6,7,8,9,10}, even)",
+	  "all({1,2,3,4,5,6,7,8,9,10}, even)",
+	  },
+     "We can use ", TO "position", " to tell us the position of the first element
+     in a list satisfying a condition.",
+     EXAMPLE {
+	  "position({1,3,5,7,8,9,11,13,15,16},even)",
+	  },
+     "The functions ", TO "fold", " and ", TO "accumulate", " provide various
+     ways to apply a function of two arguments to the elements of a list.  One
+     of the arguments is the next element from the list, and the other argument
+     is the value returned by the previous application of the function.  As an
+     example, suppose we want to convert the list ", TT "{7,3,5,4,2}", " of digits
+     into the corresponding number ", TT "73542", ".  The formula
+     ", TT "(((7*10+3)*10+5)*10+4)+2", " is a fast way to do it that doesn't
+     involve computing high powers of 10 separately.  We can do this with
+     ", TO "fold", " and the following code.",
+     EXAMPLE {
+	  "fold((i,j) -> i*10+j, {7,3,5,4,2})",
+	  },
+     "It is possible to give an additional argument to ", TO "fold", " so
+     that lists of length 0 can be handled correctly."
      }
 
-document { "mapping over lists",
+document { "mapping over hash tables",
+     "In this section we examine various ways to apply functions to each
+     entry in a hash table.  Each entry consists of a key and the
+     corresponding value, so the situation is a bit more complicated than
+     mapping functions over lists; it's hard to know whether it's the keys
+     or the values which are of primary importance.  A first guess would be
+     that it's possible to make do with mapping functions that accept
+     key-value pairs and return new key-value pairs, but it turns out
+     that mapping a function that accepts just values and produces new
+     values, without changing the keys, can be done efficiently because the 
+     overall organization of the hash table with respect to its keys and 
+     their hash codes remains the same."
+     }
+
+document { "making new types",
      "This node has not been written yet."
-     -- scan, apply, accumulate, any, all, fold, ...
      }
 
 document { "error handling",
@@ -996,10 +1111,6 @@ document { "installing methods",
      }
 
 document { "method functions with a variable number of arguments",
-     "This node has not been written yet."
-     }
-
-document { "mapping over hash tables",
      "This node has not been written yet."
      }
 

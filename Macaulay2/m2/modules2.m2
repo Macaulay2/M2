@@ -399,7 +399,7 @@ diff ProjectiveHilbertPolynomial := (P) -> diff(P,1)
 ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := (h,k) -> (
      select( merge(h,k,plus), c -> c =!= 0 )
      )
-- ProjectiveHilbertPolynomial := h -> apply(h,minus)
+- ProjectiveHilbertPolynomial := h -> applyValues(h,minus)
 ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := (h,k) -> h + -k
 ProjectiveHilbertPolynomial == ProjectiveHilbertPolynomial := (h,k) -> h === k
 dim ProjectiveHilbertPolynomial := (P) -> if #P === 0 then -1 else max keys P
@@ -407,7 +407,7 @@ degree ProjectiveHilbertPolynomial := (P) -> if #P === 0 then 0 else P#(dim P)
 ZZ * ProjectiveHilbertPolynomial := (b,h) -> (
      if b === 1 then h 
      else if b === 0 then new ProjectiveHilbertPolynomial from {}
-     else apply(h,c -> b*c)
+     else applyValues(h,c -> b*c)
      )
 
 PPP := new Holder from {"P"}

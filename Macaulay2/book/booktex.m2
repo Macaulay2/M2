@@ -129,7 +129,8 @@ crossReference := (key,text) -> (
 	  );
      if hypertex then ( ///\null\special{html:<A href="#///, sectionNumber, ///">}/// ),
      "\\cite{", cmrLiteral text, "}{", sectionNumber, "}",
-     if hypertex then   ///\special{html:</A>}///
+     if hypertex then   ///\special{html:</A>}///,
+     "%", newline
      )
 
 booktex = method(SingleArgumentDispatch=>true)

@@ -371,7 +371,7 @@ makeit1 := (options) -> (
 --	mo = MOwtfcn(firstdeg, wts)
 --     else if mo === General then
 --	mo = MOgeneral(firstdeg, order, invorder, invdegs)
-     else error "invalid MonomialOrder option";
+     else error("invalid MonomialOrder option: ", name mo);
      M.MonomialOrder = mo;
 
      M.generatorSymbols = varlist;

@@ -75,8 +75,7 @@ scan(sort keys unreachable,
 	  if tab#?s then tab#s,
 	  "documentation for '"|toString s|"' not reachable"))
 
-DocumentationNotNeeded = new MutableHashTable from apply(
-     toList (tab#"a" .. tab#"Z"), s -> (getDocumentationTag s,true))
+DocumentationNotNeeded = new MutableHashTable
 DocumentationNotNeeded#(quote
      ) = true
 DocumentationNotNeeded#(quote[) = true
@@ -88,18 +87,7 @@ scan(sort pairs tab, (n,s) -> (
      if not DocumentationProvided#?tag and not DocumentationNotNeeded#?tag
      then warning(s,"no documentation for symbol '"|n|"'")))
 
-scan(tab#"a" .. tab#"Z", 
-     i -> if lookupCount i != 1 
-     then warning(i,
-	  "indeterminate '"|name i|"' has been used "|name lookupCount i|" times"
-	  ))
-
 -- symbols which have been seen only once and are not protected
-() -> (
-     -- mention these symbols one more time so we don't report them.
-     a b c d e f g h i j k l m n o p q r s t u v w x y z
-     A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-     )
 unset := sort select (values tab, s -> 
      class s === Symbol
      and lookupCount s === 1
@@ -107,8 +95,5 @@ unset := sort select (values tab, s ->
      and string s =!= "\n"
      )
 scan(unset, s -> warning(s,"symbol '"|name s|"' seen only once"))
-
-vals := select(tab#"a" .. tab#"Y", s -> value s =!= s)
-scan(vals, s -> warning(s,"indeterminate '"|name s|"' has a value already"))
 
 if haderror then exit 1

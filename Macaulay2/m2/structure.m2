@@ -94,12 +94,3 @@ document { quote delete,
 	  },
      SEEALSO "member"
      }
-
-accumulate = (f,x,v) -> prepend(x,apply(v, y -> (x = f(x,y))))
-
-document { quote accumulate,
-     TT "accumulate(f,x0,{x1,...,xn})", " -- computes the list 
-     ", TT "{x0,f(x0,x1),f(f(x0,x1),x2),f(f(f(x0,x1),x2),x3),...}", ".",
-     PARA,
-     EXAMPLE "accumulate(plus,1,{10,100,1000})"
-     }

@@ -337,7 +337,7 @@ resolution Module := o -> (M) -> (
      if oR.?SkewCommutative and oR.SkewCommutative and isHomogeneous M then (
 	  (resolutionInEngine default(o,Algorithm2))(M))
      else if k === ZZ or not isCommutative R then (resolutionBySyzygies o)(M)
-     else if not isHomogeneous M then resolutionByHomogenization(M,o)
+     else if not isHomogeneous M then (resolutionByHomogenization o)(M)
      else if isQuotientRing R then (resolutionInEngine default(o,Algorithm2))(M)
      else (resolutionInEngine default(o,Algorithm1))(M)
      )
@@ -370,9 +370,10 @@ document { (resolution, Module),
      SEEALSO {"ChainComplex", "resolution"}
      }
 
-resolution Matrix := o -> (f) -> (
-     extend(resolution(target f, o), resolution(source f, o), matrix f)
-     )
+resolution Matrix := options -> (f) -> extend(
+     resolution(target f, options), 
+     resolution(source f, options), 
+     matrix f)
 document { (resolution, Matrix),
      TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
      chain map from a resolution of the source of ", TT "f", " to a resolution of the
@@ -447,7 +448,7 @@ nmonoms := g -> (
     sendgg(ggPush g, ggnmonoms);
     eePopIntarray())
 
-ResolutionStatus := options -> (r) -> (
+status Resolution := options -> (r) -> (
      v := {};
      lab := {};
      if options#TotalPairs     === true then (
@@ -505,7 +506,7 @@ statusDefaults := new OptionTable from {
      Monomials => false
      }
 status = method (Options => statusDefaults)
-status ChainComplex := options -> (C) -> ResolutionStatus(C.Resolution, options)
+status ChainComplex := options -> (C) -> status(C.Resolution, options)
 document { quote status,
      TT "status C", " -- displays the status of the computation of a
      chain complex C constructed by ", TO "resolution", ".  The display has
@@ -534,4 +535,3 @@ document { quote Monomials,
      TT "Monomials", " -- an option for ", TO "status", " which specifies
      whether to display the number of monomials."
      }
-status Resolution := options -> (r) -> ResolutionStatus(r, options)
