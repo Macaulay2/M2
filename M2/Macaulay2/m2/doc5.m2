@@ -402,6 +402,20 @@ document { Package,
 	  }
      }
 
+document { "printWidth",
+     Synopsis => {
+	  Usage => "printWidth = n",
+	  Inputs => {
+	       "n" => ZZ => "the width to use for wrapping printed output"
+	       },
+	  Results => {
+	       "The function ", TT "wrap", " will use ", TT "n", " as the window width when wrapping
+	       certain types of output."
+	       }
+	  }
+     }
+	  
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

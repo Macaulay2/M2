@@ -260,16 +260,18 @@ document{ cokoszul,
      TT "cokoszul(i,x,(ring x)^1)", "."}
 
 document{ koszulComplex,
+     -- this node has to be replace by three
      Headline => "the Koszul complex",
-     Usage => {TT "koszulComplex x", " or ", TT "koszulComplex(x,M)"},
+     -- Usage => {TT "koszulComplex x", " or ", TT "koszulComplex(x,M)"},
      PARA, "Here, ", TT "x", " may be either an ideal or a ", TT "1", " by
      ", TT "n", "matrix.  ", TT "M", " is a module over the ring 
      of ", TT "x", "."
      }
 
 document{ cokoszulComplex,
+     -- this node has to be replace by three
      Headline => "the \"co-Koszul\" complex",
-     Usage => {TT "cokoszulComplex x", " or ", TT "cokoszulComplex(x,M)"},
+     -- Usage => {TT "cokoszulComplex x", " or ", TT "cokoszulComplex(x,M)"},
      PARA, TT "cokoszulComplex(x,M)", " is the complex ", TT "Hom(KK x, M)",
      ".
        ", TT "cokoszulComplex x", " is the same as ",

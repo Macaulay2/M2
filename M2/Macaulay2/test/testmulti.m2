@@ -1,4 +1,4 @@
--- Test of multi-homogeniety.
+-- Test of multi-homogeneity.
 -- This should include: hilbert functions, gb's, syzygies, resolutions
 --   basis, homogeneity (?), ...
 

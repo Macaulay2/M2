@@ -1194,11 +1194,11 @@ setupfun("mkdir",mkdir);
 --     );
 --setupfun("setFactorySeed",setFactorySeed);
 
-export printWidth := 80;
+export printWidth := 0;
 
 wrap(e:Expr):Expr := (
      wid := printWidth;
-     sep := '-';
+     sep := char(0);
      net := dummyNet;
      when e
      is s:Sequence do (
@@ -1230,9 +1230,7 @@ wrap(e:Expr):Expr := (
      is s:string do net = toNet(s)
      is n:Net do net = n
      else return WrongArg("a string or a net");
-     if wid < 0 then wid = -wid;
-     if wid == 0 then wid = printWidth;
-     if wid == 0 then wid = 80;
+     if wid <= 0 then return e;
      Expr(wrap(wid,sep,net)));
 setupfun("wrap",wrap);
 

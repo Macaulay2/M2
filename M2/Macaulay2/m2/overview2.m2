@@ -198,7 +198,7 @@ document { "bases of parts of modules",
 
 
 document { "free resolutions of modules",
-     "The function ", TO "resolution", " (also called ", TO "res", "),
+     "The function ", TO "resolution", " (also called ", TT "res", "),
      can be used to produce a free resolution of a module.",
      EXAMPLE {
 	  "R = ZZ/101[x,y];",

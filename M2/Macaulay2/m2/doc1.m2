@@ -35,10 +35,10 @@ document { Synopsis,
 	  "The list ", TT "opts", " should be a list of options, each of which is in one of the
 	  following forms."},
      UL {
-	  { TO "Usage", " => \"USAGESTRING\""},
-	  { TO "Inputs", " => INPUTLIST"},
-	  { TO "Outputs", " => OUTPUTLIST"},
-	  { TO "Results", " => RESULTLIST"}
+	  { TO "Usage", " => ", TT "\"USAGESTRING\""},
+	  { TO "Inputs", " => ", TT "INPUTLIST"},
+	  { TO "Outputs", " => ", TT "OUTPUTLIST"},
+	  { TO "Results", " => ", TT "RESULTLIST"}
 	  },
      PARA {
 	  "The only entry that is mandatory is USAGESTRING, which should show a typical usage of
@@ -1145,16 +1145,14 @@ document { (symbol #, BasicList, ZZ),
      "If ", TT "i", " is out of range, an error is signalled. If  ", TT "i", " 
      is negative, then the ", TT "i", "-th entry counting from the end is provided.",
      PARA,
-     "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is mutable.",
-     SEEALSO {(symbol #?, BasicList, ZZ)}
+     "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is mutable."
      }
 document { (symbol #, Sequence, ZZ),
      Headline => "get element from sequence",
      TT "x#i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
      PARA,
      "If ", TT "i", " is out of range, an error is signalled. If  ", TT "i", " 
-     is negative, then the ", TT "i", "-th entry counting from the end is provided.",
-     SEEALSO {(symbol #, Sequence, ZZ)}
+     is negative, then the ", TT "i", "-th entry counting from the end is provided."
      }
 document { (symbol #?, HashTable, Thing),
      Headline => "check for value in hash table",

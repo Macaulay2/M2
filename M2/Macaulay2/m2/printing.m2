@@ -40,6 +40,15 @@ truncateOutput ZZ := maxwidth -> (
 		    concatenate(substring(0,maxwidth - 4,row), " ...")))))
 truncateOutput InfiniteNumber := maxwidth -> remove(Thing,BeforePrint)
 
+ParagraphList = new Type of BasicList
+net ParagraphList := x -> (
+     x = toList x;
+     x = net \ x;					    -- convert each to net
+     x = select(x, p -> width p > 0);			    -- omit null strings
+     x = between("",x);                                     -- double spacing
+     x = apply(x,p -> wrap(printWidth - promptWidth(), net p));	-- wrap each one
+     stack x)
+
 -- not printing:
 Bag = new SelfInitializingType of MutableList
 unbag = method()

@@ -310,7 +310,7 @@ document { gb,
 
 document { StopBeforeComputation,
      Headline => "initialize but do not begin the computation",
-     TT "StopBeforeComputation", " -- an option used certain functions to cause
+     TT "StopBeforeComputation", " -- an option used by certain functions to cause
      the computation to be initialized but not begun."
      }
 

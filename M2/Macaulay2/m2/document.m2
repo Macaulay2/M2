@@ -482,7 +482,9 @@ getDocBody Thing := key -> (
 	  docBody = select(docBody, s -> class s =!= Option);
 	  if #docBody > 0 then (
 	       if doExamples then docBody = processExamples(pkg, fkey, docBody);
-	       SEQ { PARA BOLD "Description", PARA {docBody} })))
+	       if class key === String 
+	       then PARA {docBody}
+	       else SEQ { PARA BOLD "Description", PARA {docBody} })))
 
 title := s -> PARA { STRONG formatDocumentTag s, headline s }
 
@@ -677,11 +679,6 @@ synopsis Thing := f -> (
      inp := o#Inputs;
      out := o#Outputs;
      res := o#Results;
---     usa := getOption(SYN,Usage);
---     fun := getOption(SYN,Function);
---     inp := getOptionList(SYN,Inputs);
---     out := getOptionList(SYN,Outputs);
---     res := getOptionList(SYN,Results);
      iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
      if class inp === SEQ then inp = toList inp;
      ino := select(inp, x -> iso x);
@@ -713,11 +710,11 @@ synopsis Thing := f -> (
 	  );
      inp = alter \ inp;
      out = alter \ out;
-     if SYN =!= null then (
+     if #SYN > 0 then (
 	  SEQ {						    -- to be implemented
      	       PARA BOLD "Synopsis",
 	       UL {
-     	       	    if usa#?0 then PARA { "Usage: ", if class use === String then TT usa else usa},
+     	       	    if usa#?0 then PARA { "Usage: ", if class usa === String then TT usa else usa},
 		    if fun =!= null then SEQ { "Function: ", TO fun }
 		    else if class f === Sequence and f#?0 then (
 	       		 if class f#0 === Function 
@@ -827,7 +824,11 @@ seecode := x -> (
      )
 
 documentationValue := method()
-documentationValue(Symbol,Function) := (s,f) -> SEQ { ret f, fmeth f, seecode f }
+documentationValue(Symbol,Function) := (s,f) -> SEQ { 
+     ret f, 
+     fmeth f, 
+     -- seecode f 
+     }
 documentationValue(Symbol,Type) := (s,X) -> (
      syms := unique flatten(values \ globalDictionaries);
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableTag key), (key,Y) -> key);
@@ -835,9 +836,9 @@ documentationValue(Symbol,Type) := (s,X) -> (
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
-	  if #b > 0 then ( 
+	  if #b > 0 then SEQ { 
 	       PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"},
-	       PARA {SHIELD smenu b}),
+	       SHIELD smenu b},
 	  if #a > 0 then PARA {"Functions and methods returning ", indefinite synonym X, " :", SHIELD smenu a },
 	  if #c > 0 then PARA {"Methods for using ", indefinite synonym X, " :", SHIELD smenu c},
 	  if #e > 0 then PARA {"Fixed objects of class ", toString X, " :", SHIELD smenu e},
@@ -907,7 +908,7 @@ documentation Sequence := s -> (
 	       title s, 
 	       synopsis s,
 	       getDocBody(s),
-	       seecode s
+	       -- seecode s
 	       }
 	  ))
 
