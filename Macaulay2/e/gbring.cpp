@@ -55,7 +55,7 @@ GBRingSolvable::~GBRingSolvable()
 }
 
 GBRing::GBRing(const Ring *K0, const Monoid *M0)
-  : _schreyer_encoded(false),
+  : _schreyer_encoded(true),
     M(M0),
     K(K0),
     _coeffs_ZZ(false),  // set below
@@ -295,6 +295,25 @@ gbvector * GBRing::gbvector_term(const FreeModule *F, ring_elem coeff, int comp)
   return v;
 }
 
+gbvector * GBRing::gbvector_term_exponents(const FreeModule *F, 
+					   ring_elem coeff, 
+					   const int *exp, 
+					   int comp)
+  // Returns coeff*exp*e_sub_i in F, where exp is an exponent vector.
+{
+  gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
+  v->coeff = coeff;
+  v->comp = comp;
+  v->next = 0;
+  M->from_expvector(exp,v->monom);
+
+  const SchreyerOrder *S;
+  if (_schreyer_encoded && (S = F->get_schreyer_order()) != 0)
+    S->schreyer_up(v->monom, comp-1, v->monom);
+
+  return v;
+}
+
 gbvector * GBRing::gbvector_copy_term(const gbvector *t)
 {
   gbvector *v = reinterpret_cast<gbvector *>(GC_MALLOC(gbvector_size));
@@ -361,7 +380,7 @@ int GBRing::gbvector_term_weight(const FreeModule *F,
 int GBRing::gbvector_degree(const FreeModule *F, 
 			    const gbvector *f)
 {
-  /* Return the maximum degree of any term of a */
+  /* Return the maximum degree of any term of f */
   bool first_term = true;
   int deg = 0;
   if (f == 0) return 0;
@@ -379,6 +398,17 @@ int GBRing::gbvector_degree(const FreeModule *F,
 	if (tdeg > deg) deg = tdeg;
     }
   return deg;
+}
+
+void GBRing::gbvector_multidegree(const FreeModule *F, 
+				  const gbvector *f,
+				  int *&result_degree)
+{
+  /* Return the multi degree of the first term of f */
+  gbvector_get_lead_monomial(F,f,_MONOM1);
+  result_degree = M->degree_monoid()->make_one();
+  M->multi_degree(_MONOM1, result_degree);
+  M->degree_monoid()->mult(result_degree, F->degree(f->comp-1), result_degree);
 }
 
 int GBRing::gbvector_compare(const FreeModule *F,

@@ -173,13 +173,11 @@ private:
 
   // Hilbert function information
   char use_hilb;
-  hilb_comp *hf_comp;		// The HF computation, used to compute 'hf'.
-				// In case of interrupts, we require that this
-				// computation be restarted (reasoning: it is usually not
-				// so bad, and it complicates the logic quite a bit).
   RingElement *hf;		// The Hilbert function, as so far computed
   int n_hf;			// The HF has been computed for this many GB elements.
 				// (Used to determine whether to recompute HF).
+  Matrix *hf_matrix;		// The mutable matrix of initial monomials, used to determine HF.
+
   const RingElement *hf_orig;
   int n_gb_syz;
   int n_in_degree;		// The number of new elements that we expect to find

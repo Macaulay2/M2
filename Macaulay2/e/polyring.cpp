@@ -2461,7 +2461,7 @@ vec PolynomialRing::translate_gbvector_to_vec(const FreeModule *F, const gbvecto
 
   for (const gbvector *t = v; t != 0; t=t->next)
     {
-      M->to_expvector(t->monom, trans_EXP1);
+      get_gb_ring()->gbvector_get_lead_exponents(F, t, trans_EXP1);
       ring_elem a = trans_to_ringelem(t->coeff, trans_EXP1);
       vec w = F->raw_term(a, t->comp-1);
       H.add(w);
@@ -2479,6 +2479,7 @@ vec PolynomialRing::translate_gbvector_to_vec_denom(const FreeModule *F,
   
   for (const gbvector *t = v; t != 0; t=t->next)
     {
+      get_gb_ring()->gbvector_get_lead_exponents(F, t, trans_EXP1);
       M->to_expvector(t->monom, trans_EXP1);
       ring_elem a = trans_to_ringelem_denom(t->coeff, denom, trans_EXP1);
       vec w = F->raw_term(a, t->comp-1);

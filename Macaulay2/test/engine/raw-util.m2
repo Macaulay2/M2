@@ -16,8 +16,11 @@ degmonoid = (n) -> (
 	  trivring,
 	  {}))
 
+degring1 := rawPolynomialRing(rawZZ(), degmonoid 1)
+
 degring = (n) -> (
      if n === 0 then trivring
+     else if n === 1 then degring1
      else rawPolynomialRing(rawZZ(), degmonoid n))
 
 singlemonoid = vars -> (
@@ -54,7 +57,7 @@ polyring2 = (K, vars, mo) -> (
      M := rawMonoid(mo, apply(vars, toString), 
 	       degring 1, (#vars):1);
      R := rawPolynomialRing(K, M);
-     scan(#vars, i -> assign(vars#i, rawRingVar(R,i,1)));
+     scan(#vars, i -> vars#i <- rawRingVar(R,i,1));
      R)
 
 mat = (tab) -> (

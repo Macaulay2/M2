@@ -872,7 +872,7 @@ bool gbA::reduce(spair *p)
   /* If false is returned, this routine has grabbed the spair 'p'. */
   int count = 0;
   compute_s_pair(p); /* Changes the type, possibly */
-  if (gbTrace == 10)
+  if (gbTrace >= 10)
     {
       buffer o;
       o << "reducing ";
@@ -903,7 +903,7 @@ bool gbA::reduce(spair *p)
 		// f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
 		// p <-- c*p-d*f
 		gbelem *g = gb[t->_val];
-		if (gbTrace == 10)
+		if (gbTrace >= 10)
 		  {
 		    buffer o;
 		    o << "swapping GB element\n    ";
@@ -915,7 +915,7 @@ bool gbA::reduce(spair *p)
 		  }
 		R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
 		lookupZZ->change_coefficient(t, MPZ_VAL(g->g.f->coeff));
-		if (gbTrace == 10)
+		if (gbTrace >= 10)
 		  {
 		    buffer o;
 		    R->gbvector_text_out(o, _F, p->f());
@@ -966,7 +966,7 @@ bool gbA::reduce(spair *p)
 				       g.f, g.fsyz);
 	}
       _stats_nreductions++;
-      if (gbTrace == 10)
+      if (gbTrace >= 10)
 	{
 	  buffer o;
 	  o << "  reducing by ";
@@ -991,7 +991,7 @@ bool gbA::reduce(spair *p)
 	  return false;
 	}
     }
-  if (gbTrace == 3) 
+  if (gbTrace >= 4) 
     {
       buffer o;
       o << "." << count;
@@ -1189,7 +1189,7 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
 	    }
 	  count++;
 	  //	  _stats_ntail++;
-	  if (gbTrace == 10)
+	  if (gbTrace >= 10)
 	    {
 	      buffer o;
 	      o << "  tail reducing by ";
@@ -1210,7 +1210,7 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
     }
   f.f = h.f;
   f.fsyz = h.fsyz;
-  if (gbTrace == 3)
+  if (gbTrace >= 4)
     {
       buffer o;
       o << "," << count;
@@ -1273,7 +1273,7 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
 				       use_denom, denom);
 	  count++;
 	  //	  _stats_ntail++;
-	  if (gbTrace == 10)
+	  if (gbTrace >= 10)
 	    {
 	      buffer o;
 	      o << "  tail reducing by ";
@@ -1289,7 +1289,7 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
   R->gbvector_remove_content(h.f, h.fsyz, use_denom, denom);
   f.f = h.f;
   f.fsyz = h.fsyz;
-  if (gbTrace == 3)
+  if (gbTrace >= 4)
     {
       buffer o;
       o << "," << count;
@@ -1311,7 +1311,7 @@ void gbA::auto_reduce_by(int id)
     {
       gbelem *g = gb[i];
       if (g->deg < me->deg) return;
-      if (gbTrace == 10)
+      if (gbTrace >= 10)
 	{
 	  buffer o;
 	  o << "auto reduce " << id << " by " << i;
@@ -1396,7 +1396,7 @@ void gbA::insert(POLY f, int minlevel)
 
   if (gbTrace >= 10)
     {
-      lookupZZ->showmontable();
+      //      lookupZZ->showmontable();
       showgb();
     }
 }

@@ -3,6 +3,8 @@
 
 load "raw-util.m2"
 
+R1 = polyring(rawQQ(), (symbol x, symbol y, symbol z))
+
 R1 = rawPolynomialRing(rawQQ(), singlemonoid{x,y,z})
 x = rawRingVar(R1,0,1)
 y = rawRingVar(R1,1,1)
@@ -330,7 +332,42 @@ assert(m === mat{{7*a^2+a+1}})
 needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 m = mat{{a^2,b^2,a*c}}
-F = rawFreeModule(R,m)
+F = rawFreeModule m
+m = rawMatrix1(F,1,(b,a,0_R),false,0)
+G = rawGB(m,false,0,{},false,0,0,0)
+gbTrace = 10
+rawStartComputation G 
+rawGBGetLeadTerms(G,10)
+<< "DO A MORE SUBSTANTIAL Schreyer order GB" << endl;
+--------------------------------------------
+-- Groebner bases using hilbert functions --
+--------------------------------------------
+needs "raw-util.m2"
+gbTrace = 3
+R = polyring(rawQQ(), (symbol x, symbol y, symbol z, symbol w))
+G = mat{{(3*x+y+z+w)^4, (7*x+2*y+3*z)^4 + x*w^3, (x+y+z)^4}}
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp;
+h = rawHilbert m
+-- redo the computation, using this HF.
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+rawGBSetHilbertFunction(Gcomp, h)
+rawStartComputation Gcomp
+m1 = rawGBGetMatrix Gcomp;
+assert(m == m1)
+
+R1 = polyring2(rawQQ(), (symbol x, symbol y, symbol z, symbol w), rawMonomialOrdering { Lex  => 4})
+G = mat{{(3*x+y+z+w)^4, (7*x+2*y+3*z)^4 + x*w^3, (x+y+z)^4}}
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+time rawStartComputation Gcomp
+m1 = rawGBGetMatrix Gcomp;
+assert(rawHilbert m1 == h)
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+rawGBSetHilbertFunction(Gcomp, h)
+time rawStartComputation Gcomp
+m2 = rawGBGetMatrix Gcomp;
+assert(m1 == m2)
 ------------------------------
 -- Groebner bases over ZZ ----
 ------------------------------
@@ -398,6 +435,14 @@ Gcomp = rawGB(G,false,0,{},false,0,0,0)
 rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp
 assert(m == mat{{24336_R, 2*y, y^3, 2*x+y^2-3900, x*y^2+12168, x^2+y^2}})
+
+-- The following example fails, probably due to huge numbers
+R1 = polyring2(rawZZ(), (symbol x, symbol y, symbol z, symbol w), rawMonomialOrdering { Lex  => 4})
+G = mat{{(3*x+y+z+w)^4, (7*x+2*y+3*z)^4 + x*w^3, (x+y+z)^4}}
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+<< "can we get thisZZ GB working?" << endl;
+--time rawStartComputation Gcomp
+--m1 = rawGBGetMatrix Gcomp;
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw4.okay "

@@ -22,11 +22,21 @@ m4 = rawResolutionGetMatrix(C,4)
 assert(m1*m2 == 0)
 assert(m2*m3 == 0)
 assert(m3*m4 == 0)
+
+R = ZZ/101[a,b,c]
+m = matrix{{a^2,b^2,c^2*b-a^3}}
+M = coker m
+gbTrace = 3
+C = res(M, Strategy => 2)
+C.dd
+C.dd^2
+betti C
+res M
 ----------------------------------
 -- Koszul complex on 3 elements --
 -- Algorithm 0                  --
 ----------------------------------
--- NOT FUNCTIONAL YET
+needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 m = mat{{a,b,c}}
 gbTrace=3
@@ -69,8 +79,61 @@ F2 = rawTarget m2
 F3 = rawSource m2
 F3b = rawTarget m3
 assert(F3 == F3b)
-
 ----------------------------------
+-- Koszul complex on 3 elements --
+-- Algorithm 3                  --
+----------------------------------
+-- CURRENTLY FAILS
+needs "raw-util.m2"
+R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
+m = mat{{a,b,c}}
+gbTrace=10
+C = rawResolution(m,true,5,false,0,3,0)
+
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+
+rawStartComputation C
+rawGBBetti(C,0)
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+m4 = rawResolutionGetMatrix(C,4)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+F = rawSource m1
+F2 = rawTarget m2
+F3 = rawSource m2
+F3b = rawTarget m3
+assert(F3 == F3b)
+----------------------------------
+-- Twisted cubic                --
+-- Algorithm 2                  --
+----------------------------------
+needs "raw-util.m2"
+R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
+m = mat{{b^2-a*c,a*d-b*c,c^2-b*d}}
+gbTrace=3
+C = rawResolution(m,true,5,false,0,2,0)
+
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+
+rawStartComputation C
+rawGBBetti(C,0)
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+m4 = rawResolutionGetMatrix(C,4)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+F = rawSource m1
+F2 = rawTarget m2
+F3 = rawSource m2
+F3b = rawTarget m3
+assert(F3 == F3b)
+----------------------------------
+
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
 m = mat{{b^2-a*c,a*d-b*c,c^2-b*d}}
 C = rawResolution(m,true,5,false,0,1,0)

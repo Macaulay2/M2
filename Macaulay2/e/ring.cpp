@@ -275,8 +275,8 @@ void Ring::trans_from_ringelem(gbvectorHeap &H,
   const FreeModule *F = H.get_freemodule();
   const Monoid *M = GR->get_flattened_monoid();
   
-  gbvector *g = GR->gbvector_term(F, coeff, comp);
-  M->from_expvector(exp, g->monom);
+  gbvector *g = GR->gbvector_term_exponents(F, coeff, exp, comp);
+
   H.add(g);
 }
 ////////////////////////////////////////////
