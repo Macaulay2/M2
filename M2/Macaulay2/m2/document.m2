@@ -86,6 +86,7 @@ normalizeDocumentTag   String := s -> if isGlobalSymbol s then getGlobalSymbol s
 normalizeDocumentTag   Symbol := identity
 normalizeDocumentTag Sequence := identity
 normalizeDocumentTag   Option := identity
+normalizeDocumentTag  Nothing := x -> symbol null
 normalizeDocumentTag    Thing := x -> (
      t := reverseDictionary x;
      if t === null then error "encountered unidentifiable document tag";
@@ -760,6 +761,12 @@ seecode := x -> (
      then SEQ { "Code:", PRE concatenate between(newline,unstack n) }
      )
 
+hasDocumentation = x -> (
+     fkey := formatDocumentTag x;
+     pkgs := select(packages, P -> P =!= User and P =!= Output); -- see also packages.m2
+     p := select(pkgs, P -> P#"raw documentation"#?fkey);
+     0 < #p)
+
 documentation Function := f -> SEQ { 
      title f, synopsis f, usage f, type f, ret f, fmeth f, optargs f, seecode f 
      }
@@ -774,8 +781,7 @@ documentation Option := v -> (
 	       usage v,
 	       BOLD "See also:",
 	       SHIELD MENU {
-		    SEQ{ "Default value: ",
-			 if class default =!= ZZ then TOH toString default else toString default },
+		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
 		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
 		    SEQ{ "Option name: ", TOH opt }
 		    }

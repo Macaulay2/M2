@@ -185,7 +185,8 @@ package TO := x -> (
 	  stderr << "warning: documentation for method " << fkey << " not found, assuming it will be found in package " << pkg.name << " eventually" << endl;
 	  return pkg;
 	  );
-     error("documentation for \"",fkey,"\" not found among current packages (", concatenate between(", ",apply(pkgs,P -> P.name)),")");
+     stderr << "warning: documentation for \"" << fkey << "\" not found, assuming it will be found in package " << Main << " eventually" << endl;
+     return Main;
      )
 
 -- Local Variables:

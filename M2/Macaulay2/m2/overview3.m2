@@ -352,7 +352,7 @@ document { "Macaulay 2",
      get started with it.",
      MENU {
 	  (TO "User's Guide", " -- This is the place to get started"),
- 	  (TO "Mathematical Vignettes", " -- Several extended examples"),
+ 	  (TO "Mathematical Tutorials", " -- Several extended examples"),
 	  (TO "Reference Manual", " -- Complete documentation for every type and function in Macaulay 2"),
 	  (TO "Developer's Corner", " -- For experts only")
 	  }

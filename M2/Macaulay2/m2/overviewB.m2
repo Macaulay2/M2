@@ -549,7 +549,7 @@ document { "working with multiple rings",   -- DOUBLE CHECK BEING DONE WITH THIS
      	       cannot type ", TT "ZZ/101[s,t]/I", " as the computer 
      	       sees ", TT "ZZ/101[s,t]", " as different from ", TT "R2", " and 
      	       so does not see ", TT "I", " as being in this ring.  For more 
-     	       about defining rings see ", TO "Rings", ".  We now work with 
+     	       about defining rings see ", TO "rings", ".  We now work with 
      	       moving between ", TT "R2", " and ", TT "R3", ".",
 	       },
      	  SECTION { "moving between rings using use and substitute",
