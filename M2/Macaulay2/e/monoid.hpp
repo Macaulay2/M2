@@ -185,25 +185,30 @@ inline void Monoid::power(const int *m, int n, int *result) const
 
 // WARNING!! 'divide' assumes that division is possible
 inline void Monoid::divide(const int *m, const int *n, int *result) const
-    { for (int i=0; i<nwords; i++) *result++ = *m++ - *n++; }
-
+    { 
+      for (int i=nwords; i>0; i--) 
+	*result++ = *m++ - *n++; 
+    }
 
 inline int Monoid::compare(const int *m, const int *n) const
 {
-  for (int i=0; i<nwords; i++, m++, n++)
+  int i = nwords;
+  if (i == 0) return EQ;
+  while (1)
     {
-      if (*m > *n) return 1;
-      if (*m < *n) return -1;
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      if (--i == 0) return EQ;
+      m++, n++;
     }
-  return 0;
 }
+
 inline int Monoid::compare(const int *m, int mcomp, const int *n, int ncomp) const
 {
   int cmp = compare(m,n);
   if (cmp != EQ) return cmp;
-  cmp = mcomp - ncomp;
-  if (cmp < 0) return LT;
-  if (cmp > 0) return GT;
+  if (mcomp < ncomp) return LT;
+  if (mcomp > ncomp) return GT;
   return EQ;
 }
 #endif
