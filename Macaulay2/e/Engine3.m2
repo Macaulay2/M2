@@ -21,13 +21,13 @@ mo3 = monomialOrder(RevLex=>2,RevLex=>4)
 mo4 = monomialOrder(Lex=>2,RevLexWeights=>{1,2,3,4})
 mo5 = monomialOrder(LexWeights=>{3,5},Weights=>{0,0,-1},RevLexWeights=>{1,2,3,4})
 
--- (Graded?) reverse lex order
+-- Graded reverse lex order
 makeRing monomialOrder(RevLex=>6)  
-leadTerm(a+b^100)
-leadTerm(a*c + b^2) == b^2
-leadTerm(a*b-1_R)  -- FAILS
-leadTerm(a^3 - b^3) == a^3
-leadTerm(a^3 - b^4) 
+assert(leadTerm(a+b^100) == b^100)
+assert(leadTerm(a*c + b^2) == b^2)
+assert(leadTerm(a*b-1_R) == a*b)
+assert(leadTerm(a^3 - b^3) == a^3)  -- FAILS!!
+assert(leadTerm(a^3 - b^4) == -b^4)
 
 
 -- Lex order (not graded)
