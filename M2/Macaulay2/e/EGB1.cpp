@@ -816,7 +816,6 @@ void EGB1::update_pairs(egb_elem *m)
 // Reduction //
 ///////////////
 
-
 int EGB1::gb_reduce(vector_heap &fh, vector_heap &fsyzh, EVector &f, EVector &fsyz) const
 {
   buffer o;
@@ -1165,6 +1164,8 @@ EGB1::~EGB1()
   // Finally, decrement ref counts
   bump_down(F);
   bump_down(Fsyz);
+
+  delete exponent_stash;
 }
 
 //////////////////////////////////////

@@ -44,6 +44,8 @@ Ring::Ring(const Ring &R)
   M(R.M),
   D(R.D),
   HRing(R.HRing),
+  zero_divisor((Nterm *)0),
+  isfield(false),
   vecstash(R.vecstash),
   resstash(R.resstash)
 {
@@ -52,6 +54,8 @@ Ring::Ring(const Ring &R)
 
 Ring::~Ring()
 {
+  // PROBLEM: zero_divisor needs to be freed.
+  // PROBLEM: resstash, vecstash need to be freed, if this is not a quotient.
   if (K != NULL) bump_down((Ring *) K);
 }
 

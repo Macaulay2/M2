@@ -72,6 +72,14 @@ void FractionField::simplify(frac_elem *f) const
 {
   ring_elem x, y;
   R->syzygy(f->numer, f->denom, x, y);
+  if (R->is_zero(x))
+    {
+      //R->zero_divisor = y;
+      R->remove(x);
+      gError << "zero divisor found";
+      return;
+      // NOW QUIT whatever computation is going on!! MES
+    }
   R->negate_to(y);
   R->remove(f->numer);
   R->remove(f->denom);

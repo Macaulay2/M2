@@ -49,7 +49,7 @@ void cmd_gb_make(object &om,
   // Now we dispatch according to the kind of computation we are
   // asked to do.
   
-  if (R->is_field())
+  if (R->n_vars() == 0 && R->is_field())
     gStack.insert(new GaussElimComputation(m, dosyz, nsyz));
   else if (R->is_Z()) // MES later: || R->is_pid())
     gStack.insert(new HermiteComputation(m, dosyz, nsyz));
