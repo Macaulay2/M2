@@ -794,7 +794,7 @@ document { Ring,
      "Common ways to make a ring:",
      MENU {
 	  TO (symbol /, Ring, Ideal),
-	  TO (Ring, Array),
+	  TO (symbol " ", Ring, Array),
 	  TO "GF",
 	  },
      "Common functions for accessing the variables or elemenets in a ring:",

@@ -92,10 +92,10 @@ document { (diff,Matrix,Matrix),
 	  "h = diff(m,n)",
 	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
 	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."},
-	  "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ", whose 
-     	       entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, " is the result of differentiating
-     	       ", TT { "n", SUB "j,l" }, " by the differential operator corresponding 
-	       to ", TT {"m", SUB "i,k", "."}
+	  "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
+	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
+	       is the result of differentiating ", TT { "n", SUB "j,l" }, "
+	       by the differential operator corresponding to ", TT {"m", SUB "i,k", "."}
 	       },
 	  },
      PARA,
@@ -244,7 +244,7 @@ document { jacobian,
       	  "p = symmetricPower(2,vars R)",
       	  "jacobian p",
 	  },
-     "Caveat: if a matrix or ideal over a quotient polynomial ring S/J
+     CAVEAT "If a matrix or ideal over a quotient polynomial ring S/J
      is given, then only the derivatives of the given elements are
      computed and NOT the derivatives of elements of J."
      }

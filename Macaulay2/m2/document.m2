@@ -472,10 +472,6 @@ getSynopsis := key -> (
      x := getOption(getDoc key, Synopsis);
      if x =!= null then SEQ x)
 
-getCaveat := key -> (
-     x := getOption(getDoc key, CAVEAT);
-     if x =!= null then SEQ x)
-
 evenMoreGeneral := key -> (
      t := nextMoreGeneral key;
      if t === null and class key === Sequence then key#0 else t)
@@ -496,7 +492,7 @@ optTO := i -> (
      then SEQ{ TO i, headline i }
      else if class i === Sequence and #i > 0 and class first i === Function and getDoc first i =!= null
      then SEQ{ 
-	  TO first i, "(", SEQ between(",", toList apply(drop(i,1), formatDocumentTag)), ")",
+	  TO first i, "(", SEQ between(",", toList apply(drop(i,1), c -> TO c)), ")",
 	  headline first i
 	  }
      else TT formatDocumentTag i
@@ -518,6 +514,8 @@ synonymAndClass := X -> (
      then SEQ {indefinite X.synonym, " (of class ", TO X, ")"}
      else SEQ {"an object of class ", TO X}
      )     
+
+justClass := X -> SEQ {"an object of class ", TO X}
 
 usage := s -> (
      o := getDocBody s;
@@ -714,7 +712,7 @@ documentation Option := v -> (
 	  SEQ { 
 	       title v, 
 	       usage v,
-	       "See also:",
+	       BOLD "See also:",
 	       SHIELD MENU {
 		    SEQ{ "Default value: ",
 			 if class (options fn)#opt =!= ZZ
@@ -729,13 +727,10 @@ documentation Option := v -> (
      ) toSequence v
 
 documentation Sequence := s -> (
-     if null === lookup s then error("expected ", formatDocumentTag s, " to be a method");
+     if null === lookup s then error("expected ", toString s, " to be a method");
      t := typicalValue s;
      desc1 := desc2 := desc3 := descv := ".";
-     arg1 := "1"; 
-     arg2 := "2";
-     arg3 := "3";
-     retv := "returned";
+     retv := arg1 := arg2 := arg3 := null;
      SYN := getSynopsis s;
      d := x -> SEQ { ": ", SEQ x };
      if SYN =!= null then (
@@ -758,11 +753,32 @@ documentation Sequence := s -> (
 	  BOLD "Synopsis:",
 	  SHIELD MENU {
 	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
-	       SEQ {if class s#0 === Function then "Function: " else "Operator: ", TO s#0 },
-	       SEQ {"Argument ", arg1, ", ", synonymAndClass s#1, desc1 }, if #s > 2 then 
-	       SEQ {"Argument ", arg2, ", ", synonymAndClass s#2, desc2 }, if #s > 3 then
-	       SEQ {"Argument ", arg3, ", ", synonymAndClass s#3, desc3 }, if t =!= Thing then
-	       SEQ {"Value "   , retv, ", ", synonymAndClass t  , descv},
+	       if s#0 =!= symbol " " then
+	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0 },
+	       SEQ { "Input:",
+		    MENU {
+			 if arg1 === null
+			 then SEQ {justClass s#1, desc1 }
+			 else SEQ {arg1, ", ", justClass s#1, desc1 }, 
+			 if #s > 2 then
+			 if arg2 === null
+			 then SEQ {justClass s#2, desc2 } 
+			 else SEQ {arg2, ", ", justClass s#2, desc2 }, 
+			 if #s > 3 then
+			 if arg3 === null
+			 then SEQ {justClass s#3, desc3 }
+			 else SEQ {arg3, ", ", justClass s#3, desc3 }
+			 }
+		    },
+	       if t =!= Thing or retv =!= null or descv =!= "." 
+	       then SEQ {
+	       	    "Output:",
+	       	    MENU {
+		    	 if retv === null
+		    	 then SEQ {justClass t, descv}
+		    	 else SEQ {retv, ", ", justClass t  , descv}
+		    	 },
+		    },
 	       optargs s,
 	       moreGeneral s
      	       },
@@ -799,7 +815,9 @@ TEST = (e) -> if phase === 2 then (
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
-     if #v > 0 then SEQ { PARA{}, "See also:", SHIELD MENU (TO \ v) })
+     if #v > 0 then SEQ { PARA{}, BOLD "See also:", SHIELD MENU (TO \ v) })
+
+CAVEAT = v -> SEQ { PARA{}, BOLD "Caveat:", MENU { SEQ v } }
 
 -----------------------------------------------------------------------------
 -- html output
@@ -1142,6 +1160,7 @@ html TEX := x -> x#0
 addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, headline i#0 } else i)
 
 html MENU := x -> concatenate (
+     newline,
      "<MENU>", newline,
      apply(addHeadlines x, s -> if s =!= null then ("<LI>", html s, newline)),
      "</MENU>", newline, 

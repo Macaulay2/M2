@@ -766,7 +766,7 @@ document { Grassmannian,
      EXAMPLE "J = Grassmannian(1,3)",
      EXAMPLE "R = QQ[a..f];",
      EXAMPLE "J = Grassmannian(1,3,R)",
-     "Caveat: currently, this ideal is constructed using relations on minors
+     CAVEAT "Currently, this ideal is constructed using relations on minors
      of a generic matrix.  It should really use the Plucker equations"
      }
 

@@ -142,7 +142,7 @@ document { truncate,
      The ring of M should be a (quotient of a) polynomial ring, 
      where the coefficient ring, k, is a field.",
      PARA,
-     "Caveat: if the degrees of the variables are not all one, then there is
+     CAVEAT "If the degrees of the variables are not all one, then there is
      currently a bug in the routine: some generators of higher degree than i
      may be duplicated in the generator list",
      PARA,
@@ -804,8 +804,8 @@ document { homogenize,
      PARA,
      "The weights that may be used are limited (roughly) to the range -2^30 .. 2^30.",
      PARA,
-     "Caveats and bugs: If the homogenization overflows the monomial, this is not
-     reported as an error"
+     CAVEAT "If the homogenization overflows the monomial, this is not
+     reported as an error."
      }
 
 TEST "
@@ -918,7 +918,7 @@ document { selectInSubring,
       	  "selectInSubring(3,m)",
 	  },
      PARA,
-     "Caveats: this routine doesn't do what one would expect for graded orders
+     CAVEAT "This routine doesn't do what one would expect for graded orders
      such as 'GLex'.  There, the first part of the monomial order is the degree, 
      which is usually not zero.  This routine should detect and correct this.",
      SEEALSO "polynomial rings with other monomial orderings"
@@ -938,7 +938,7 @@ document { divideByVariable,
       	  "divideByVariable(m,a)",
       	  "divideByVariable(m,a,1)",
 	  },
-     "Caveats and limitations: you can only divide by a variable, not a monomial,
+     CAVEAT "You can only divide by a variable, not a monomial,
      and you have little control on what power will be divided.  This routine is mostly
      used by the saturation commands as a fast internal way of dividing.",
      PARA,
