@@ -84,8 +84,21 @@ export copy(p:Position):Position := Position(
 export PosFile := {file:file, lastchar:int, pos:Position};
 export makePosFile(o:file):PosFile := PosFile(o, 0,
      Position(o.filename, ushort(1), ushort(0), uchar(reloaded)));
-export peek(o:PosFile, offset:int):int := peek(o.file,offset);
-export peek(o:PosFile):int := peek(o.file);
+export peek(o:PosFile, offset:int):int := (
+     i := 0;
+     prevchar := o.lastchar;
+     c := 0;
+     while (
+	  c = peek(o.file,i);
+	  if c == int('\n') && prevchar == int('\r') then offset = offset + 1;
+	  prevchar = c;
+	  i < offset
+	  )
+     do (
+	  i = i+1;
+	  );
+     c);
+export peek(o:PosFile):int := peek(o,0);
 export isatty(o:PosFile):bool := o.file.inisatty;
 export close(o:PosFile):int := close(o.file);
 export setprompt(o:PosFile,prompt:function(file):void):void := (
