@@ -1,6 +1,7 @@
 // (c) 1995 Michael E. Stillman
 
 #include "monomial.hpp"
+#include "monoid.hpp"
 
 Monomial::Monomial() : 
   immutable_object(0)
@@ -85,19 +86,33 @@ bool Monomial::is_equal(const Monomial &b) const
   return varpower::is_equal(ints(), b.ints());
 }
 
-int Monomial::compare(const Monomial &b) const
+int Monomial::compare(const Monoid *M, const Monomial &b) const
 {
-  return varpower::compare(ints(), b.ints());
+  int *monom1 = M->make_one();
+  int *monom2 = M->make_one();
+  M->from_varpower(ints(), monom1);
+  M->from_varpower(b.ints(), monom2);
+  int result = M->compare(monom1, monom2);
+  M->remove(monom1);
+  M->remove(monom2);
+  return result;
+}
+
+bool Monomial::divides(const Monoid *M, const Monomial &b) const
+{
+  int *monom1 = M->make_one();
+  int *monom2 = M->make_one();
+  M->from_varpower(ints(), monom1);
+  M->from_varpower(b.ints(), monom2);
+  bool result = M->divides(monom1, monom2);
+  M->remove(monom1);
+  M->remove(monom2);
+  return result;
 }
 
 int Monomial::simple_degree() const
 {
   return varpower::simple_degree(ints());
-}
-
-bool Monomial::divides(const Monomial &b) const
-{
-  return varpower::divides(ints(), b.ints());
 }
 
 Monomial *Monomial::lcm(const Monomial &b) const

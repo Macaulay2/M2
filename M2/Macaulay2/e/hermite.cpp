@@ -415,23 +415,6 @@ Matrix *HermiteComputation::reduce(const Matrix *m, Matrix *&lift)
   return red;
 }
 
-Vector *HermiteComputation::reduce(const Vector *v, Vector *&lift)
-{
-  if (!v->free_of()->is_equal(gens->rows()))
-    {
-      ERROR("reduce: vector is in incorrect free module");
-      return 0;
-    }
-  vec f = gens->rows()->copy(v->get_value());
-  vec fsyz = NULL;
-
-  gb_reduce(f, fsyz);
-  syz->rows()->negate_to(fsyz);
-
-  lift = Vector::make_raw(syz->rows(), fsyz);
-  return Vector::make_raw(gens->rows(), f);
-
-}
 int HermiteComputation::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that

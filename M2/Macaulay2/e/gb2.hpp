@@ -273,7 +273,6 @@ public:
 
   // reduction
   Matrix *reduce(const Matrix *m, Matrix *&lift);
-  Vector *reduce(const Vector *v, Vector *&lift);
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   void betti_minimal(intarray &result);

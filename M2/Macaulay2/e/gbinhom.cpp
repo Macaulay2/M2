@@ -867,27 +867,6 @@ Matrix *GBinhom_comp::reduce(const Matrix *m, Matrix *&lift)
   return red;
 }
 
-Vector *GBinhom_comp::reduce(const Vector *v, Vector *&lift)
-{
-  if (!v->free_of()->is_equal(F))
-    {
-      ERROR("reduce: vector is in incorrect free module");
-      return 0;
-    }
-  ring_elem denom;
-  gbvector *f = originalR->translate_gbvector_from_vec(F, v->get_value(), denom);
-  gbvector *fsyz = NULL;
-
-  gb_reduce(f, fsyz);
-
-  vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
-  K->negate_to(denom);
-  vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,fsyz, denom);
-
-  lift = Vector::make_raw(Fsyz, fsyzv);
-  return Vector::make_raw(F, fv);
-}
-
 int GBinhom_comp::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that

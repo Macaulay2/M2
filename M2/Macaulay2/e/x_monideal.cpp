@@ -55,13 +55,13 @@ const MonomialIdeal *IM2_MonomialIdeal_intersect(const MonomialIdeal *I,
   return I->intersect(*J);
 }
 
-const MonomialIdeal *IM2_MonomialIdeal_quotient1(const MonomialIdeal *I, 
+const MonomialIdeal *IM2_MonomialIdeal_colon1(const MonomialIdeal *I, 
 						 const Monomial *a)
 {
   return I->quotient(a->ints());
 }
 
-const MonomialIdeal *IM2_MonomialIdeal_quotient(const MonomialIdeal *I, 
+const MonomialIdeal *IM2_MonomialIdeal_colon(const MonomialIdeal *I, 
 						const MonomialIdeal *J)
 {
   return I->quotient(*J);

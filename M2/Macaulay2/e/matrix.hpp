@@ -57,21 +57,6 @@ public:
 
   Matrix(const MonomialIdeal * mi);
 
-#if 0
-  static const MatrixOrNull * make(const FreeModule *target,
-				   const Vector_array *V);
-
-  static const MatrixOrNull * make(const FreeModule *target,
-				   const FreeModule *source,
-				   const M2_arrayint deg,
-				   const Vector_array *V);
-
-  static const MatrixOrNull * make(const FreeModule *target,
-				   const FreeModule *source,
-				   const M2_arrayint deg,
-				   const Matrix *M);
-#endif
-
   static const MatrixOrNull * make(const FreeModule *target,
 				   int ncols,
 				   const RingElement_array *M,

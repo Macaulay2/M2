@@ -1195,12 +1195,6 @@ Matrix *binomialGB_comp::reduce(const Matrix *m, Matrix *&/*lift*/)
   return 0;
 }
 
-Vector *binomialGB_comp::reduce(const Vector *v, Vector *&/*lift*/)
-{
-  ERROR("MES: not implemented yet");
-  return 0;
-}
-
 int binomialGB_comp::contains(const Matrix */*m*/)
 {
   ERROR("MES: not implemented yet");

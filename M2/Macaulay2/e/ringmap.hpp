@@ -5,7 +5,6 @@
 #include "ring.hpp"
 
 class RingElement;
-class Vector;
 class Matrix;
 
 class RingMap : public immutable_object
@@ -54,7 +53,6 @@ public:
 		      const int *vp) const;
 
   RingElementOrNull *eval(const RingElement *r) const;
-  VectorOrNull *eval(const FreeModule *resultfree, const Vector *v) const;
   MatrixOrNull *eval(const FreeModule *newrows, const Matrix *m) const;
 
   void text_out(buffer &o) const;

@@ -37,8 +37,8 @@ public:
 
   bool is_one() const;
   bool is_equal(const Monomial &b) const;
-  bool divides(const Monomial &b) const;
-  int compare(const Monomial &b) const;
+  bool divides(const Monoid *M, const Monomial &b) const;
+  int compare(const Monoid *M, const Monomial &b) const;
   int simple_degree() const;
 
   void text_out(buffer &o) const { varpower::elem_text_out(o, val.raw()); }

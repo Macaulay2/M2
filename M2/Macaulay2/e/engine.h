@@ -16,7 +16,6 @@ class FreeModule;
 class MonomialIdeal;
 class Matrix;
 class RingElement;
-class Vector;
 class RingMap;
 class SparseMutableMatrix;
 class Computation;
@@ -29,7 +28,6 @@ typedef struct Monoid Monoid;
 typedef struct Ring Ring;
 typedef struct RingElement RingElement;
 typedef struct FreeModule FreeModule;
-typedef struct Vector Vector;
 typedef struct Matrix Matrix;
 typedef struct RingMap RingMap;
 typedef struct SparseMutableMatrix SparseMutableMatrix;
@@ -58,7 +56,6 @@ typedef RingElement RingElementOrNull;
 typedef FreeModule FreeModuleOrNull;
 typedef Matrix MatrixOrNull;
 typedef MonomialIdeal MonomialIdealOrNull;
-typedef Vector VectorOrNull;
 typedef RingMap RingMapOrNull;
 typedef Computation ComputationOrNull;
 
@@ -94,11 +91,6 @@ typedef struct ArrayPair {
   Monomial_array *monoms;
   RingElement_array *coeffs;
 } *ArrayPairOrNull;  
-
-typedef struct Vector_array {
-  unsigned int len;
-  const Vector *array[1];
-} Vector_array;
 
 typedef struct Matrix_array {
   unsigned int len;
@@ -143,44 +135,68 @@ extern "C" {
   /**************************************************/
   /**** Monomial routines ***************************/
   /**************************************************/
+  /* Monomials in the engine: are not associated with a monoid, and may have negative
+   * exponents.  Monomials are immutable objects.
+   */
+
   const MonomialOrNull *IM2_Monomial_var(int v, int e); /* drg: connected 'rawVar' */
+  /* return the monomial v^e */
 
   const MonomialOrNull *IM2_Monomial_make(const M2_arrayint m); /* drg: connected rawMonomialMake */
     /* Takes an array of the form [n, v1, e1, v2, e2, ..., vn, en]
        and returns the monomial v1^e1*v2^e2*...vn^en.
-       ASSUMPTION: v1 > v2 > ... > vn >= 0, each en is > 0. */
+       ASSUMPTION: v1 > v2 > ... > vn >= 0, each en is not 0. */
 
   M2_bool IM2_Monomial_is_equal(const Monomial *a, const Monomial *b); /* drg: connected === */
 
   M2_bool IM2_Monomial_is_one(const Monomial *a); /* drg: connected rawMonomialIsOne */
 
-  int IM2_Monomial_compare(const Monomial *a, const Monomial *b); /* drg: connected intrinsic */
+  int IM2_Monomial_compare(const Monoid *M, const Monomial *a, const Monomial *b); /* drg: connected intrinsic */
+  /* returns -1, 0, or 1, if a < b, a==b, a > b respectively, in the monomial ordering
+   * in the monoid M 
+   */
 
+  M2_bool IM2_Monomial_divides(const Monoid *M, const Monomial *a, const Monomial *b);
+  /* returns true if in the monoid M, there is a monomial c such that a*c === b */
+
+  MonomialOrNull *IM2_Monomial_divide(const Monoid *M, const Monomial *a, const Monomial *b);
+  /* returns a/b if b divides a in the monoid M, and null otherwise. */
+
+#if 0
   M2_bool IM2_Monomial_divides(const Monomial *a, const Monomial *b);
 
+
   int IM2_Monomial_degree(const Monomial *a); /* drg: connected rawDegree*/
+#endif
 
   const MonomialOrNull *IM2_Monomial_mult(const Monomial *a, 
 					  const Monomial *b); /* drg: connected * */
 
-  const Monomial *IM2_Monomial_quotient(const Monomial *a, 
-					const Monomial *b); /* drg: connected rawQuotient */
+  const Monomial *IM2_Monomial_colon(const Monomial *a, 
+				     const Monomial *b); /* drg: connected rawColon */
+  /* returns the monomial whose i th exponent is max(ai-bi,0) */
 
   const MonomialOrNull *IM2_Monomial_power(const Monomial *a, int n); /* drg: connected ^ */
+  /* return a^n, n is any integer, null is returned on overflow. */
 
   const Monomial *IM2_Monomial_lcm(const Monomial *a, 
 				   const Monomial *b); /* drg: connected rawLCM*/
+  /* return the monomial whose i th exponent is max(ai,bi) */
 
   const Monomial *IM2_Monomial_gcd(const Monomial *a, 
 				   const Monomial *b); /* drg: connected rawGCD */
+  /* return the monomial whose i th exponent is min(ai,bi) */
 
   const Monomial *IM2_Monomial_sat(const Monomial *a, 
 				   const Monomial *b); /* drg: connected rawSaturate */
+  /* return the monomial whose i th exponent is ai if bi is 0, 0 if bi != 0 */
 
   const Monomial *IM2_Monomial_radical(const Monomial *a); /* drg: connected rawRadical*/
+  /* return the monomial whose i th exponent is 1 if ai != 0 */
 
   const Monomial_pair *IM2_Monomial_syz(const Monomial *a, 
 					const Monomial *b); /* drg: connected rawSyzygy */
+  /* */
 
   unsigned long IM2_Monomial_hash(const Monomial *a); /* drg: connected hash */
 
@@ -648,101 +664,6 @@ extern "C" {
      */
   
   /**************************************************/
-  /**** Vector routines *****************************/
-  /**************************************************/
-
-  const FreeModule * 
-  IM2_Vector_freemodule(
-	  const Vector *v); /* drg: connected rawFreeModule*/
-    /* The ambient free module of the vector v. */
-
-  const RingElement_array * IM2_Vector_to_ringelements(const Vector *v); /* drg: connected rawVectorEntries*/
-    /* Returns an array of all of the components of the vector v. */
-
-  const RingElementOrNull * IM2_Vector_component(const Vector *v, int i); /* drg: connected rawVectorEntry*/
-    /* The i th component (0..rank(F)-1), where F is the ambient free
-       module of v. */
-
-  const M2_string IM2_Vector_to_string(const Vector *v); /* drg: connected */
-
-  unsigned long IM2_Vector_hash(const Vector *v); /* TODO */ /* drg: waiting, returning 0 */
-
-  M2_bool IM2_Vector_is_zero(const Vector *a); /* drg: connected rawIsZero*/
-
-  M2_bool IM2_Vector_is_equal(const Vector *a,
-			      const Vector *b); /* drg: connected === */
-    /* a and b will not be equal if their ambient free modules are not 
-       identical (same pointers). */
-
-  const VectorOrNull * IM2_Vector_make(const FreeModule *F, 
-				       RingElement_array *v); /* drg: connected rawVector*/
-    /* Creates a vector in F from its dense representation in v.
-       NULL is returned if the length is wrong, or the base rings are
-       not all the same */
-
-  const VectorOrNull * IM2_Vector_e_sub(const FreeModule *F, int i); /* drg: connected rawModuleEntry*/
-
-  const Vector * IM2_Vector_zero(const FreeModule *F); /* drg: connected rawZero*/
-
-  const Vector * IM2_Vector_negate(const Vector *v); /* drg: connected */
-
-  const VectorOrNull * IM2_Vector_add(const Vector *v, 
-				      const Vector *w); /* drg: connected */
-  
-  const VectorOrNull * IM2_Vector_subtract(const Vector *v, 
-					   const Vector *w); /* drg: connected */
-
-  const VectorOrNull * IM2_Vector_scalar_mult(const RingElement *r,
-					      const Vector *v); /* TODO */
-
-  const VectorOrNull * IM2_Vector_scalar_right_mult(const Vector *v,
-						    const RingElement *r); /* drg: connected */
-
-  const VectorOrNull *IM2_Vector_term(const FreeModule *F,
-				      const RingElement *a,
-				      int component); /* drg: connected rawTerm*/
-
-  M2_bool IM2_Vector_is_graded(const Vector *a); /* drg: connected rawIsHomogeneous*/
-
-  M2_arrayint IM2_Vector_multidegree(const Vector *a); /* drg: connected rawMultiDegree*/
-
-  /**************************************************/
-  /**** polynomial vector routines ******************/
-  /**************************************************/
-
-  M2_Integer_pair_OrNull *IM2_Vector_degree(const Vector *a, 
-					    const M2_arrayint wts); /* TODO */
-  /* The first component of the degree is used, unless the degree monoid is trivial,
-     in which case the degree of each variable is taken to be 1. 
-     Returns lo,hi degree.  If the ring is not a graded ring or a polynomial ring
-     then (0,0) is returned.
-  */
-
-  const VectorOrNull *IM2_Vector_homogenize_to_degree(const Vector *a,
-						int v,
-						int deg,
-						const M2_arrayint wts); /* drg: connected rawHomogenize*/
-
-  const VectorOrNull *IM2_Vector_homogenize(const Vector *a,
-					    int v,
-					    const M2_arrayint wts); /* drg: connected rawHomogenize*/
-						
-  const Vector *IM2_Vector_get_terms(const Vector *a,
-				     int lo, int hi); /* drg: connected rawGetTerms*/
-    /* Returns the sum of some monomials of 'a', starting at 'lo',
-       going up to 'hi'.  If either of these are negative, it is an index
-       from the end of the vector. */
-
-
-  const RingElementOrNull *IM2_Vector_lead_coeff(const Vector *a); /* drg: connected rawLeadCoefficient*/
-
-  const MonomialOrNull *IM2_Vector_lead_monomial(const Vector *a); /* TODO */
-
-  int IM2_Vector_lead_component(const Vector *a); /* drg: connected rawLeadComponent*/
-
-  int IM2_Vector_n_terms(const Vector *a); /* drg: connected rawTermCount*/
-
-  /**************************************************/
   /**** Matrix routines *****************************/
   /**************************************************/
 
@@ -761,10 +682,6 @@ extern "C" {
   unsigned long  IM2_Matrix_hash(const Matrix *M); /* TODO */ /* drg: waiting, returning 0 */
 
   const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c); /* drg: connected rawMatrixEntry*/
-
-#if 0
-  const Vector * IM2_Matrix_get_column(const Matrix *M, int c); /* drg: connected rawMatrixColumn, used in rawMatrixColumns*/
-#endif
 
   /*******************************************************************************/
   const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
@@ -844,9 +761,6 @@ extern "C" {
 
   const MatrixOrNull * IM2_Matrix_scalar_right_mult(const Matrix *M, 
 						    const RingElement *f); /* TODO */
-
-  const VectorOrNull * IM2_Matrix_scalar_mult_vec(const Matrix *M, 
-						  const Vector *v); /* drg: connected * */
 
   const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms); /* drg: connected rawConcat*/
 
@@ -1052,10 +966,6 @@ extern "C" {
   const RingElementOrNull * IM2_RingMap_eval_ringelem(const RingMap *F, 
 						      const RingElement *a); /* drg: connected rawRingMapEval*/
 
-  const VectorOrNull * IM2_RingMap_eval_vector(const RingMap *F, 
-					       const FreeModule *newTarget,
-					       const Vector *v); /* drg: connected rawRingMapEval*/
-
   const MatrixOrNull * IM2_RingMap_eval_matrix(const RingMap *F, 
 					       const FreeModule *newTarget,
 					       const Matrix *M); /* drg: connected rawRingMapEval*/
@@ -1154,13 +1064,13 @@ extern "C" {
   const MonomialIdealOrNull *IM2_MonomialIdeal_intersect(const MonomialIdeal *I, 
 							 const MonomialIdeal *J); /* drg: connected rawIntersect*/
   
-  const MonomialIdeal *IM2_MonomialIdeal_quotient1(const MonomialIdeal *I, 
-						   const Monomial *a); /* drg: connected rawQuotient*/
+  const MonomialIdeal *IM2_MonomialIdeal_colon1(const MonomialIdeal *I, 
+						   const Monomial *a); /* drg: connected rawColon*/
   /* If I = (m1, ..., mr),
      Form the monomial ideal (I : a) = (m1:a, ..., mr:a) */
 
-  const MonomialIdealOrNull *IM2_MonomialIdeal_quotient(const MonomialIdeal *I, 
-							const MonomialIdeal *J); /* drg: connected rawQuotient*/
+  const MonomialIdealOrNull *IM2_MonomialIdeal_colon(const MonomialIdeal *I, 
+						      const MonomialIdeal *J); /* drg: connected rawColon*/
   /* Form the monomial ideal (I : J) = intersect(I:m1, ..., I:mr),
      where J = (m1,...,mr) */
 

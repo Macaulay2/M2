@@ -35,14 +35,6 @@ IM2_RingMap_eval_ringelem(const RingMap *F,
   return F->eval(a);
 }
 
-const VectorOrNull * 
-IM2_RingMap_eval_vector(const RingMap *F, 
-			const FreeModule *newTarget,
-			const Vector *v)
-{
-  return F->eval(newTarget,v);
-}
-
 const MatrixOrNull * 
 IM2_RingMap_eval_matrix(const RingMap *F, 
 			const FreeModule *newTarget,

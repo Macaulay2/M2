@@ -59,7 +59,6 @@ public:
 
   void gb_reduce(vec &f, vec &fsyz) const;
   Matrix *reduce(const Matrix *m, Matrix *&lift);
-  Vector *reduce(const Vector *v, Vector *&lift);
 
   virtual int contains(const Matrix *m);
   virtual bool is_equal(const gb_comp *q);

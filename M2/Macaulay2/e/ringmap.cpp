@@ -201,13 +201,6 @@ RingElementOrNull *RingMap::eval(const RingElement *r) const
   return result;
 }
 
-VectorOrNull *RingMap::eval(const FreeModule *F, const Vector *v) const
-{
-  Vector *result = Vector::make_raw(F, v->free_of()->eval(this, F, v->get_value()));
-  if (error()) return 0;
-  return result;
-}
-
 MatrixOrNull *RingMap::eval(const FreeModule *F, const Matrix *m) const
 {
   Matrix *result = new Matrix(F);
