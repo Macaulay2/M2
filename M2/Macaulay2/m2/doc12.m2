@@ -164,20 +164,31 @@ document { join,
      "The operator ", TO (symbol |, List, List), " can be used as a synonym."
      }
 
+document { (take,BasicList,ZZ),
+     Synopsis => {
+	  "w = take(v,n)",
+	  "v" => null,
+	  "n" => null,
+	  "w" => {"a list containing the first ", TT "n", " elements of 
+	       the list ", TT "v", " if ", TT "n", " is positive, or
+	       the last ", TT "-n", " elements if ", TT "n", " is negative."}
+	  },
+     EXAMPLE { "take({a,b,c,d,e,f},3)", "take({a,b,c,d,e,f},-2)" }
+     }
+
+document { (take,BasicList,List),
+     Synopsis => {
+	  "w = take(v,{m,n})",
+	  "v" => null,
+	  "{m,n}" => "a pair of natural numbers",
+	  "w" => {"a list containing those elements of the list
+	       ", TT "v", " in positions ", TT "m", " through ", TT "n", "." }
+	  },
+     EXAMPLE "take({a,b,c,d,e,f},{2,4})"
+     }
+
 document { take,
      Headline => "take some elements from a list",
-     TT "take(v,n)    ", " -- yields a list containing the first n elements of the list v.",
-     BR,NOINDENT,
-     TT "take(v,-n)", "    -- yields a list containing the last n elements of the list v.",
-     BR,NOINDENT,
-     TT "take(v,{m,n})", " -- yields a list containing the elements of the list v 
-     in positions m through n.",
-     PARA,
-     EXAMPLE {
-	  "take({a,b,c,d,e,f},3)",
-	  "take({a,b,c,d,e,f},-3)",
-	  "take({a,b,c,d,e,f},{2,4})",
-	  },
      SEEALSO "drop"
      }
 
@@ -199,7 +210,8 @@ document { positions,
      Headline => "which elements of a list satisfy a condition",
      TT "positions(v,f)", " -- yields a list of integers giving the positions of the
      elements of the list ", TT "v", " which yield the value ", TT "true", " when
-     the function ", TT "f", " is applied."
+     the function ", TT "f", " is applied.",
+     SEEALSO "position"
      }
 
 TEST "
@@ -209,7 +221,8 @@ assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
 document { position,
      Headline => "find first element of a list satisfying a condition",
      TT "position(v,f)", " -- returns the index of the first element of ", TT "v", " satisfying 
-     the condition ", TT "f", ", or ", TT "null", " if there is none."
+     the condition ", TT "f", ", or ", TT "null", " if there is none.",
+     SEEALSO "positions"
      }
 
 document { delete,
@@ -327,22 +340,44 @@ TEST ///
      assert( # examples MutableList > 0 )
 ///
 
-document { (symbol +, List, List),
-     Headline => "sum of two vectors",
-     TT "v + w", " -- the sum of two vectors represented as lists."
-     }
+document { (symbol -, List), Headline => "negation of a vector",
+     Synopsis => {
+	  "w = -v",
+	  "v" => "a list interpreted as a vector",
+	  "w" => {"the negation of ", TT "v"}}}
 
-document { (symbol _, List, List),
+document { (symbol +, List, List), Headline => "sum of two vectors",
+     Synopsis => {
+	  "x = v+w",
+	  "v" => "a list interpreted as a vector",
+	  "w" => "a list interpreted as a vector",
+	  "x" => "the sum of the two vectors"}}
+
+document { (symbol -, List, List), Headline => "sum of two vectors",
+     Synopsis => {
+	  "x = v-w",
+	  "v" => "a list interpreted as a vector",
+	  "w" => "a list interpreted as a vector",
+	  "x" => "the difference of the two vectors"}}
+
+document { (symbol _, VisibleList, List),
      Headline => "get some entries of a list",
-     TT "w_{i,j,...}", " -- selects entries from a list or sequence ", TT "w", ".",
-     PARA,
+     Synopsis => {
+	  "v = w_{i,j,...}",
+	  "w" => "a list",
+	  "{i,j,...}" => "the list of subscripts",
+	  "v" => "the list of entries ", TT "{w_i, w_j, ...}", "."
+	  },
      EXAMPLE {
 	  "w = {a,b,c,d,e,f,g,h};",
       	  "w_{1,3,4}",
 	  },
      "We can use this operation to compute composition of permutations
      represented as lists.",
-     EXAMPLE "{4,2,3,1,0} _ {2,1,3,4,0}"
+     EXAMPLE "{4,2,3,1,0} _ {2,1,3,4,0}",
+     "Remark: any subscripts which are sequences will have their elements
+     spliced into the rest of the list.",
+     EXAMPLE "{a,b,c,d,e}_{2..4}"
      }
 
 document { number,

@@ -106,9 +106,9 @@ gauss := (f,a,b,k,n) -> (
 integrate = (f,a,b) -> (
      if class f != Function then error (
 	  "'integrate' expected argument 1 to be a function");
-     try a = a + 0. else error (
+     try (a = a + 0.) else error (
 	  "'integrate' expected argument 2 to be a number");
-     try b = b + 0. else error (
+     try (b = b + 0.) else error (
 	  "'integrate' expected argument 3 to be a number");
      gauss(f,a,b,4,6)
      )

@@ -3,6 +3,12 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+parsing precedence of 'if' changed so that it's lower than '='.  So if you
+	have something like 'if a=b then c' then change it to
+	'if (a=b) then c'.  Same for 'try'.  This shoudln't be a problem,
+	because one usually types 'if a=b then c' by mistake
+	instead of 'if a==b then c'.
+
 new keyword 'list' and new control structure:
 	while p list x
 which evaluates x repeatedly as long as p remains true, returning a list of the

@@ -77,6 +77,20 @@ document { "if",
      else ", TO "null", " is provided."
      }
 
+document { "for",
+     Headline => "loop control",
+     TT "for i from a to b while c list x do y", " -- repeatedly evaluate x and ", TT "y", " as
+     long as c is true, letting the variable ", TT "i", " be
+     assigned the values ", TT "a", ", ", TT "a+1", ", ", TT "a+2", ", ..., ", TT "b", ",
+     returning a list of the values of ", TT "x", " encountered.",
+     PARA,
+     "Each of the clauses ", TT "from a", ", ", TT "to b", ",
+     ", TT "while c", ", ", TT "list x", ", and ", TT "do y", " is optional,
+     provided either the ", TT "list x", " or the ", TT "do y", " clause is 
+     present.  If the ", TT "list x", " clause is absent, then ", TO "null", "
+     is returned."
+     }     
+
 document { "while",
      Headline => "loop control",
      TT "while p do x", " -- repeatedly evaluates ", TT "x", " as long 
@@ -97,9 +111,24 @@ document { "while",
 	  }
      }
 
+document { "list",
+     Headline => "loop control",
+     TT "list", " -- a keyword used with ", TO "while", ", and ", TO "for", "."
+     }
+
+document { "from",
+     Headline => "loop control",
+     TT "from", " -- a keyword used with ", TO "for", " and ", TO "new", "."
+     }
+
+document { "to",
+     Headline => "loop control",
+     TT "to", " -- a keyword used with ", TO "for", "."
+     }
+
 document { "do",
      Headline => "loop control",
-     TT "do", " -- a keyword used with ", TO "while", "."
+     TT "do", " -- a keyword used with ", TO "while", ", and ", TO "for", "."
      }
 
 document { "try",

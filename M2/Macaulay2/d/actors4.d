@@ -979,6 +979,14 @@ locate(e:Code):void := (
 	  locate(f.arg2);
 	  locate(f.arg3);)
      is f:multaryCode do ( lookat(f.position); foreach c in f.args do locate(c);)
+     is f:forCode do (
+	  lookat(f.position);
+	  locate(f.fromclause);
+	  locate(f.toclause);
+	  locate(f.whileclause);
+	  locate(f.listclause);
+	  locate(f.doclause);
+	  )
      is f:openScopeCode do locate(f.body)
      is f:functionCode do (locate(f.parms);locate(f.body);)
      is v:CodeSequence do foreach c in v do locate(c)

@@ -550,7 +550,7 @@ type := s -> (
 	  then SEQ {
 	       "The ",
 	       if X.?synonym then X.synonym else "object",
-	       " ", TT toExternalString s, " is a member of the class ", TO class s, ".\n"
+	       " ", toString s, " is a member of the class ", TO class s, ".\n"
 	       },
 	  if instance(s,Type) then (
 	       SEQ {
@@ -560,10 +560,10 @@ type := s -> (
 		    if parent s =!= Thing then SEQ {
 			 "Each ", synonym s, " is also a member of class ", TO parent s, ".",
 			 PARA{},
-			 "More general types:",
-			 MENU (
+			 "More general types (whose methods may also apply) :",
+			 SHIELD MENU (
 			      Y := parent s;
-			      while Y =!= Thing list Y do Y = parent Y
+			      while Y =!= Thing list TO toString Y do Y = parent Y
 			      )
 			 }
 		    }
@@ -672,6 +672,19 @@ synopsis Sequence := s -> (
 	  }
      )
 
+unDocumentable := method(SingleArgumentDispatch => true)
+unDocumentable Thing := x ->false
+unDocumentable Function := f -> class f === Function and match(toString f, "--Function*--")
+unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
+
+documentableMethods := s -> select(methods s, i -> not unDocumentable i)
+
+fmeth := f -> (
+     b := documentableMethods f;
+     if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
+     then b = select(b, x -> x =!= (f,Sequence));
+     if #b > 0 then SEQ {"Ways to use ", TT toString f," :", BR{}, SHIELD smenu b} )
+
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
 briefDocumentation = x -> (
@@ -736,13 +749,6 @@ op := s -> if operator#?s then (
 	  }
      )
 
-unDocumentable := method(SingleArgumentDispatch => true)
-unDocumentable Thing := x ->false
-unDocumentable Function := f -> class f === Function and match(toString f, "--Function*--")
-unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
-
-documentableMethods := s -> select(methods s, i -> not unDocumentable i)
-
 optionFor := s -> unique select( value \ values symbolTable(), f -> class f === Function and (options f)#?s)
 
 documentation Symbol := s -> (
@@ -791,12 +797,6 @@ documentation HashTable := x -> (
      	  type x,
 	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, SHIELD smenu c, PARA{}},
 	  })
-
-fmeth := f -> (
-     b := documentableMethods f;
-     if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
-     then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ {"Ways to use ", TT toString f," :", BR{}, SHIELD smenu b} )
 
 ret := k -> (
      t := typicalValue k;

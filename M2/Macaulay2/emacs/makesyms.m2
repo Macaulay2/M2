@@ -22,7 +22,8 @@ add := (face,words) -> (
      )
 
 add( "font-lock-keyword-face",
-     { "if", "do", "else", "then", "or", "and", "not", "try", "new", "while",
+     { "if", "do", "else", "then", "or", "and", "not", "try", "new", "while", "list",
+	  "for", "from", "to",
 	  "symbol", "global", "local", "of", "from" })
 
 add( "font-lock-type-face",
