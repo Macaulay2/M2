@@ -32,6 +32,8 @@ test1: checkit
 	./checkit dump "hi there"
 	./checkit load "look!"
 	touch "$@"
+debug1:; gdb --args ./checkit dump "hi there"
+debug2:; gdb --args ./checkit load "look!"
 clean ::; rm -f "$@"
 
 distclean : clean
