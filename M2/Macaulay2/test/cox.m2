@@ -12,7 +12,7 @@
 --  
 R = QQ[a..d, MonomialOrder => {Position => Down}]
 
-M = matrix{{a2+b2, a3 - 2*b*c*d, a - b},{c2 - d2, b3 + a*c*d, c+d}}
+M = matrix{{a^2+b^2, a^3 - 2*b*c*d, a - b},{c^2 - d^2, b^3 + a*c*d, c+d}}
 
 gens gb M
 -- 
@@ -22,3 +22,7 @@ gens gb M
 --   It would be wonderful if you could check this in Macaulay 2.  
 --     Many thanks, David
 -- 
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test cox.out "
+-- End:
