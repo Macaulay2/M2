@@ -76,6 +76,9 @@ if firstTime then (
      File << Net := File << Symbol := File << String := printString;
      << Thing := x -> stdio << x;
      String | String := String => concatenate;
+
+     if String #? (String => concatenate) then error "internal error: 1";
+
      Function _ Thing := Function => (f,x) -> y -> f splice (x,y);
      String | String := String => concatenate;
      String | ZZ := String => (s,i) -> concatenate(s,string i);
