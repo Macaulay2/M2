@@ -50,7 +50,8 @@ AssociativeNoOptions := () -> (
 SingleArgWithOptions := opts -> (
      if class opts =!= OptionTable then opts = new OptionTable from opts;
      methodFunction := opts ==> 
-     options -> arg -> (
+     options ->
+         arg -> (
 	  -- Common code for every method with options, single argument
 	  f := lookup(methodFunction, class arg);
 	  if f === null then noMethod arg
@@ -64,7 +65,8 @@ AssociativeWithOptions := opts -> error "associative methods with options not im
 MultipleArgsWithOptions := opts -> (
      if class opts =!= OptionTable then opts = new OptionTable from opts;
      methodFunction := opts ==> 
-     options -> arg -> (
+     options ->
+         arg -> (
 	  -- Common code for methods with options, multiple arguments.
 	  -- Dispatches on type of argument.
 	  f := lookup(methodFunction, class arg);
@@ -72,7 +74,8 @@ MultipleArgsWithOptions := opts -> (
 	  )
      ;
      methodFunction(Sequence) := 
-     options -> args -> (
+     options ->
+        args -> (
 	  -- Common code for every method with options, multiple arguments
 	  -- Dispatches on type of arguments ('args' is a sequence).
 	  f := lookup prepend(methodFunction,apply(args,class));

@@ -1,31 +1,38 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-document { "invoking the program",
+document { "Invoking the program",
+     "On systems with a command line interface, the following commands
+     can be used to start the program.  When the program starts up,
+     the ", TO "initialization file", ", ", TT "init.m2", ", will be loaded.",
+     PARA, NOINDENT,
      TT "M2", " -- starts the program.",
-     PARA,
+     PARA, NOINDENT,
      TT "M2 file1 file2 ... ", " -- starts the program, reading and 
      executing the specified files.",
      PARA,
      "These are the options that can also be provided on the command
      line.",
      MENU {
-	  {TT "--", "       -- ignore previous arguments after reloading data"},
-	  {TT "-e x", "     -- evaluates the expression x"},
-	  {TT "-h", "       -- displays the usage message"},
-	  {TT "-n", "       -- print no input prompts"},
-	  {TT "-q", "       -- suppresses loading of init file 'init.m2'"},
-	  {TT "-s", "       -- stops execution if an error occurs"},
-	  {TT "-silent", "  -- don't print the startup banner"},
-	  {TT "-tty", "     -- assume stdin is a tty"},
-	  {TT "-x", "       -- special mode for running examples"},
+	  {TT "--", "         -- ignore previous arguments after reloading data"},
+	  {TT "-e x", "       -- evaluates the expression x"},
+	  {TT "-h", "         -- displays the usage message"},
+	  {TT "-mpwprompt", " -- MPW-style imput prompts"},
+	  {TT "-n", "         -- print no input prompts"},
+	  {TT "-q", "         -- suppresses loading of init file 'init.m2'"},
+	  {TT "-s", "         -- stops execution if an error occurs"},
+	  {TT "-silent", "    -- don't print the startup banner"},
+	  {TT "-tty", "       -- assume stdin is a tty"},
+	  {TT "-x", "         -- special mode for running examples"},
 	  },
-     TT "M2", " is actually a shell script which calls the executable file
+     "The file ", TT "M2", " is actually a shell script which calls the executable file
      with appropriate arguments for loading the Macaulay 2 code previously
      compiled.",
-     SEEALSO "initialization file"
+     PARA,
+     "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
+     ", TO "end", ", or the end of file character."
      }
 
-document { "copyright and license",
+document { "Copyright and license",
      "Macaulay 2, its object code and source code, and its documentation,
      are copyright by Daniel R. Grayson and Michael E. Stillman.  We 
      permit you to make copies under the following conditions.",
@@ -100,7 +107,7 @@ document { "GNU MP",
      by section 6 of the GNU license.  We fulfill the terms of its license 
      by offering you the source code of the program, available at our
      web site and our anonymous ftp site.",
-     SEEALSO "how to get this program"
+     SEEALSO "How to get this program"
      }
 
 document { "operators",
@@ -161,7 +168,7 @@ document { "operators",
      	  }
      }
 
-document { "acknowledgements",
+document { "Acknowledgements",
      "We thank the National Science Foundation for generous funding since
      1993 for this project, Gert-Martin Greuel and Ruediger Stobbe for the
      incorporation of their ", TO "Factory library", ", Michael Messollen for
@@ -175,7 +182,7 @@ document { "acknowledgements",
 
 -- load "tutorials.m2"
 
-document { "miscellaneous topics",
+document { "Miscellaneous Topics",
      "Some of these topics will have to be merged with sections above.",
      MENU {
 	  TO "classes",
@@ -200,7 +207,7 @@ document { "internals",
 	  }
      }
 
-document { "reading the documentation",
+document { "Reading the Documentation",
      "The documentation is divided into the main parts, the ", TO "User's Guide", "
      and the ", TO "Reference Manual", ".  The reference manual is organized mainly
      according to the types of things, and reflects the particular way we've
@@ -216,45 +223,41 @@ document { "reading the documentation",
      form, suitable for viewing with a web browser such as lynx or Netscape,
      and this is the best way to view it.  Each documentation page has a text
      box for entering a search string.  This will work if you view the documentation
-     at our web site; it will work on you local machine only if you or your
+     at our web site; it will work on your local machine only if you or your
      system administrator has already installed ", TT "htdig", ", which is a 
      free indexing package available at ", TT "http://www.htdig.org/", ".",
      PARA,
-     "The directory ", TT "Macaulay2/book", " contains the code for producing
-     the documentation in TeX form, which can be printed with ", TT "dvips", " 
-     or viewed on your screen with ", TT "xdvi", ".  The hypertext links 
-     in the book can be followed if you get ", TT "xdvi", " version 20a
-     or later.  (If your old ", TT "xdvi", " complains about the unknown special
-     commands that implement hypertext links, you can give it the option 
-     ", TT "-hushspecials", " to silence it.)  The source code for ", TT "xdvi", " 
-     can be obtained at one of the CTAN mirror sites in the directory
-     ", TT "dviware/xdvik", ".  Obtain a list of CTAN mirror sites by
-     fingering ", TT "ctan@ftp.tex.ac.uk", ".",
+     "The directory ", TT "Macaulay2/book", " contains
+     the documentation in TeX form, which can be printed with ", TT "dvips", " or
+     viewed on your screen with a dvi previewer such as ", TT "xdvi", ".  There 
+     is also a ", TT "pdf", " version of the documentation which can be viewed 
+     with Acobe's Acrobat Reader or with ", TT "xpdf", ".  Currently, these
+     viewers do not offer the ability to cut and paste text.",
      PARA,
      "Finally, all the documentation can be viewed within the program in
      text form using ", TO "help", "."
      }
 
-document { "preface",
+document { "Preface",
      MENU {
-	  TO "how to get this program",
-	  TO "resources required",
-	  TO "invoking the program",
-	  TO "getting started",
-	  TO "copyright and license",
-	  TO "acknowledgements",
-	  TO "the authors",
+	  TO "How to get this program",
+	  TO "Resources required",
+	  TO "Invoking the program",
+	  TO "Getting started",
+	  TO "Copyright and license",
+	  TO "Acknowledgements",
+	  TO "The authors",
 	  }
      }
 
 document { "User's Guide",
      "Here are the basic concepts needed to use Macaulay 2 effectively.",
      MENU {
-	  TO "preface",
-	  TO "reading the documentation",
-	  TO "mathematical overview",
-	  TO "language and programming overview",
-	  TO "miscellaneous topics",
+	  TO "Preface",
+	  TO "Reading the Documentation",
+	  TO "Mathematical Overview",
+	  TO "Language and Programming Overview",
+	  TO "Miscellaneous Topics",
 	  }
      }
 
@@ -388,7 +391,7 @@ document { "specifying typical values",
      }
 
 
-document { "the authors",
+document { "The authors",
      "The authors of Macaulay 2 and the bulk of this manual:",
      MENU {
 	  TO "Daniel R. Grayson",
@@ -436,16 +439,16 @@ document { "Michael E. Stillman",
      algebra system for algebraic geometry and the predecessor of this program."
      }
 
-document { "resources required",
+document { "Resources required",
      "You will need about 12 megabytes of disk space to install Macaulay 2, though
      this may vary.  It will need about 12 megabytes of RAM to run modest size problems,
      and can benefit from any additional memory."
      }
 
-document { "how to get this program",
+document { "How to get this program",
      "The program is available over the web at the Macaulay 2 home page",
      PARA, 
-     HREF {"http://www.math.uiuc.edu/Macaulay2"}, 
+     CENTER HREF {"http://www.math.uiuc.edu/Macaulay2"}, 
      PARA,
      NOINDENT,
      "or by ftp to the host ", TT "ftp.math.uiuc.edu", " with user name ", TT "Macaulay2", " 
@@ -661,7 +664,6 @@ document { "initialization file",
      SEEALSO "load"
      }
 
-
 document { "combinatorial functions",
      MENU {
 	  TO "random",
@@ -720,14 +722,15 @@ document { "help functions",
 	  TO "Documentation",
 	  TO "phase",
 	  },
-     SEEALSO "reading the documentation"
+     SEEALSO "Reading the Documentation"
      }
 
-document { "getting started",
+document { "Getting started",
      "The best way to run Macaulay 2 is with emacs - for details on getting
-     that set up, see ", TO "emacs", ".  Learning emacs is worth the effort!
-     Alternatively, you may start Macaulay 2 with the command ", TT "M2", "
-     in a shell window.  On most Unix systems Macaulay 2 will start very
+     that set up, see ", TO "emacs", ".  (On MacOS systems, we include a shareware
+     editor called ", TT "alpha", " for this purpose.)  Learning emacs is worth 
+     the effort! Alternatively, you may start Macaulay 2 with the command ", TT "M2", "
+     in a shell window.  On most systems Macaulay 2 will start very
      quickly, but other parts of the program may have to be loaded from the
      disk later, causing a slight delay.",
      PARA,
@@ -814,7 +817,8 @@ document { "getting started",
      "(We reserve single letter symbols such as ", TT "Z", " for use as variables in rings,
      hence we must use something like ", TT "ZZ", " to stand for the ring of integers.
      It may remind you of the \"blackboard bold\" font of AMSTeX.  If you prefer
-     ", TT "Z", " to ", TT "ZZ", ", you may put ", TT "Z=ZZ", " in your ", TO "initialization file", ".)",
+     ", TT "Z", " to ", TT "ZZ", ", you may put ", TT "Z=ZZ", " in your
+     ", TO "initialization file", ".)",
      EXAMPLE "(x+y)^5",
      "Rings and certain other types of things acquire the name of the global
      variable they are assigned to.",

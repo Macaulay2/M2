@@ -34,14 +34,14 @@ codeFunction := (f,depth) -> (
 	  if not match(toString f, "--Function*") then ( "-- code for " | toString f | ":" ),
 	  getSourceLines locate f,
 	  if isOptionedFunction f then (
-	       "-- original function f without options processing:", codeFunction(last frame f,depth+1)
+	       "-- original function f:", codeFunction(last frame f,depth+1)
 	       )
 	  else if isComposedFunction f then (
 	       "-- left hand function f:" , codeFunction((frame f)#0,depth+1),
 	       "-- right hand function g:", codeFunction((frame f)#1,depth+1)
 	       )
 	  else if isMemoizedFunction f then (
-	       "-- original function f before being memoized:", codeFunction(first frame f,depth+1)
+	       "-- original function f:", codeFunction(first frame f,depth+1)
 	       )
 	  )
      )

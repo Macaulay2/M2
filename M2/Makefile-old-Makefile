@@ -347,7 +347,7 @@ DISTFILES := 	Macaulay2/README.txt \
 		Macaulay2/setup \
 		Macaulay2/cache/Macaulay2-doc \
 		Macaulay2/packages \
-		Macaulay2/bin \
+		Macaulay2/bin/Macaulay2 \
 		Macaulay2/m2 \
 		Macaulay2/emacs \
 		Macaulay2/tutorial/final

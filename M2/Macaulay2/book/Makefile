@@ -28,6 +28,7 @@ TEX=latex
 %.pdf : %.tex
 	pdf$(TEX) $*
 	makeindex $*
+	pdf$(TEX) $*
 
 all:: M2book.tex
 

@@ -1,17 +1,25 @@
 << "-- beginning computation --" << endl
+<< "-- " << first lines get "!uname -a" << endl
+<< "-- Macaulay2 " << version#"VERSION"
+<< ", compiled with " << version#"compiler"
+<< endl
 
 rr = ZZ/101[a..Z];
-cc = timing res coker genericMatrix(rr,a,3,9)
-ti = cc#0
-re = cc#1
+ti = first timing (re = res coker genericMatrix(rr,a,3,9))
+
 vv = apply(8,i->rank re_i)
 assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 
-<< "-- " << first lines get "!uname -a" << endl
-<< "-- " <<  toString ti << " seconds"
-<< ", Macaulay2 " << version#"VERSION"
-<< ", compiled with " << version#"compiler"
-<< endl
+<< "-- res39: " <<  toString ti << " seconds" << endl
+
+SS = ZZ/101[a..t]
+MM = SS^1/Grassmannian(2,5,SS)
+ti = first timing (re = res MM)
+vv = apply(11,i->rank re_i)
+assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
+
+<< "-- resG25: " <<  toString ti << " seconds" << endl
+
 
 -- Results:
 
@@ -30,12 +38,14 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 -- Linux noether.matematik.su.se 2.1.121 #3 Wed Sep 16 10:05:16 CEST 1998 alpha unknown (600 mHz)
 -- 1.20106 seconds, 0.8.46
 
+-- Linux rhenium 2.2.14 #21 Mon Jan 31 17:41:33 CST 2000 i686 unknown
+-- Macaulay2 0.8.57, compiled with gcc 2.95
+-- res39: 1.29 seconds
+-- resG25: 19.97 seconds
+
 -- Linux localhost.localdomain 2.2.1 #101 Fri Feb 5 16:17:12 EST 1999 ppc unknown
 -- (250 MHz Macintosh Powerbook G3)
 -- 1.67 seconds, Macaulay 2 version 0.8.52
-
--- Linux rhenium 2.3.26 #4 Tue Nov 9 22:34:26 CST 1999 i686 unknown, Thinkpad 770Z laptop on battery power
--- 1.9 seconds, Macaulay2 0.8.55, compiled with gcc 2.95
 
 -- SunOS orion.math.uiuc.edu 5.5.1 Generic_103640-26 sun4u sparc SUNW,Ultra-4
 -- 2.14 seconds, Macaulay2 0.8.53, compiled with gcc 2.8

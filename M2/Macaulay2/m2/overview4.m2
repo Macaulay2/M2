@@ -70,7 +70,9 @@ tutorial and manual, come back and continue from this point.",
 PARA,
 "Edit your ", TT ".emacs", " initialization file, located in your home directory,
 creating one if necessary.  (Under Windows, this file is called ", TT "_emacs", ".)
-Insert into it the following lines of emacs-lisp code.",
+Insert into it the following lines of emacs-lisp code (which can also
+be found in the file ", TT "emacs/emacs-hlp.txt", ", or obtained by running
+", TT ///help "running Macaulay 2 in emacs"///, " in Macaulay 2).",
 PARA,
 CODE ///(setq auto-mode-alist (append auto-mode-alist '(("\\.m2$" . M2-mode))))
 (autoload 'M2-mode "M2-mode.el" "Macaulay 2 editing mode" t)

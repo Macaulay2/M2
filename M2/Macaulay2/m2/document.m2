@@ -481,20 +481,29 @@ title := s -> SEQ { CENTER { BIG formatDocumentTag s, headline s }, PARA{} }
 
 inlineMenu := x -> between(", ", TO \ x)
 
-type := s -> SEQ {
-     "The object ", TT toExternalString s, " is a member of each of the following
-     classes, most specific first: ", inlineMenu ancestors1 class s, ".\n",
-     if instance(s,Type) then (
-     	  d := ancestors s;
-	  SEQ {
-	       if s.?synonym then SEQ {
-	       	    "     Each object of class ", toString s, " is also called ", indefinite s.synonym, ".\n",},
-	       if #d > 0 then SEQ {
-		    "     Each ", synonym s, " is also a: ", inlineMenu d, "."},
-	       PARA{}
+type := s -> (
+     an := drop(ancestors1 class s, -1);
+     SEQ {
+	  if #an === 0 then null else
+	  if #an === 1 then SEQ {
+     	       "The object ", TT toExternalString s, " is a member of the class ", TO first an, ".\n",
 	       }
-	  )
-     }
+	  else SEQ {
+     	       "The object ", TT toExternalString s, " is a member of each of the following
+     	       classes, most specific first: ", inlineMenu an, ".\n"
+	       },
+	  if instance(s,Type) then (
+	       d := ancestors s;
+	       SEQ {
+		    if s.?synonym then SEQ {
+			 "     Each object of class ", toString s, " is also called ", indefinite s.synonym, ".\n",},
+		    if #d > 0 then SEQ {
+			 "     Each ", synonym s, " is also a: ", inlineMenu d, "."}
+		    }
+	       ),
+	  PARA{}
+	  }
+     )
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
@@ -657,7 +666,7 @@ documentation Sequence := s -> (
      SEQ {
 	  title s, 
 	  usage s,
-	  "See also:",
+	  "Synopsis of use:",
 	  if #s==2 and not instance(s#1,Type)
 	  then SHIELD MENU {
 	       SEQ {"Hash table: ", TO s#1 },
