@@ -225,7 +225,7 @@ if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then 
      while ( s = readlink fn; s =!= null ) do (prev = fn; fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s););
      if prev =!= null then setPrefixFromBindir dir prev)
 
-packagePrefixPath = { prefixDirectory }
+packagePath = { prefixDirectory }
 
 phase := 1
 
@@ -395,7 +395,7 @@ if not noinitfile then (
      path = join(
 	  {homeDirectory | packageSuffix | "local/" | LAYOUT#"datam2", homeDirectory | packageSuffix | "code/"},
 	  path);
-     packagePrefixPath = prepend(homeDirectory | packageSuffix | "local/", packagePrefixPath);
+     packagePath = prepend(homeDirectory | packageSuffix | "local/", packagePath);
      )
 if sourceHomeDirectory  =!= null then path = append(path, sourceHomeDirectory|"m2/")
 if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
