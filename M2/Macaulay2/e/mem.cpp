@@ -166,7 +166,7 @@ void stash::stats(buffer &o)
   o << s;
 
   for (stash *p = stash_list; p != NULL; p = p->next)
-    if (p->n_allocs > 0)
+    //    if (p->n_allocs > 0)
       p->text_out(o);
 
   o << "handles: highwater = " << gHandles.highwater() << ", current = " 

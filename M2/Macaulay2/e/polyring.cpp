@@ -25,8 +25,6 @@ PolynomialRing::PolynomialRing(const Ring *K, const Monoid *MF)
   base_ring(NULL)
 {
   isgraded = MF->degree_monoid()->n_vars() > 0;
-  normal_exp = normal_exp_a.alloc(nvars);
-  normal_m = normal_m_a.alloc(M->monomial_size());
 
   // Set up the polynomial stash
   pstash = new stash("polys", 
@@ -35,7 +33,6 @@ PolynomialRing::PolynomialRing(const Ring *K, const Monoid *MF)
 
 
   coefficients_are_ZZ = (K->is_Z());
-  Rsyz = NULL;
   RidealZ = NULL;
 
   bool isfield = (nvars == 0 && K->is_field());
@@ -48,14 +45,10 @@ PolynomialRing::PolynomialRing(const PolynomialRing *R, const array<ring_elem> &
 {
   bump_up((Ring *) base_ring);
 
-  normal_exp = normal_exp_a.alloc(nvars);
-  normal_m = normal_m_a.alloc(M->monomial_size());
-
   // Use the stash for R
   pstash = base_ring->pstash;
 
   coefficients_are_ZZ = (K->is_Z());
-  Rsyz = NULL;
   RidealZ = NULL;
 
   bool isfield = (nvars == 0 && K->is_field());
@@ -65,11 +58,18 @@ PolynomialRing::PolynomialRing(const PolynomialRing *R, const array<ring_elem> &
 
 PolynomialRing::~PolynomialRing()
 {
+  // Remove zero_divisor
+  remove(zero_divisor);
   if (base_ring == NULL)
-    delete pstash;
+    {
+      delete pstash;
+    }
   else
     {
-      // MES: remove Rideal
+      for (int i=0; i<quotient_ideal.length(); i++)
+	base_ring->remove(quotient_ideal[i]);
+
+      delete RidealZ;
       bump_down((Ring *) base_ring);
     }
 }
@@ -77,7 +77,6 @@ PolynomialRing::~PolynomialRing()
 PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
 {
   PolynomialRing *obj = new PolynomialRing(K,MF);
-  obj->Rsyz = obj->make_FreeModule();
   return (PolynomialRing *) intern(obj);
 }
 
@@ -103,6 +102,12 @@ PolynomialRing *PolynomialRing::create(
 	}
 
   return (PolynomialRing *) intern(obj);
+}
+
+const FreeModule *PolynomialRing::get_Rsyz() const 
+{
+  if (RidealZ == NULL) return NULL;
+  return RidealZ->get_Rsyz();
 }
 
 Matrix PolynomialRing::get_ideal() const
@@ -218,7 +223,7 @@ void PolynomialRing::make_RidealZ(const array<ring_elem> &polys)
 {
   // If coefficients_are_ZZ, then
   // this routine sets the fields:
-  // quotient_ideal, RidealZ, Rsyz,
+  // quotient_ideal, RidealZ.
 
   const PolynomialRing *S = base_ring;
   while (S->base_ring != NULL) S = S->base_ring;
@@ -226,7 +231,6 @@ void PolynomialRing::make_RidealZ(const array<ring_elem> &polys)
   RidealZ = TermIdeal::make_ring_termideal(S,
 			   base_ring->quotient_ideal, 
 			   polys,
-			   Rsyz,
 			   quotient_ideal);
 }
 void PolynomialRing::make_Rideal(const array<ring_elem> &polys)
@@ -255,7 +259,8 @@ void PolynomialRing::make_Rideal(const array<ring_elem> &polys)
       vp.shrink(0);
     }
 
-  Rideal = MonomialIdeal(this, elems);
+  //  Rideal = MonomialIdeal(this, elems);
+  Rideal = MonomialIdeal(base_ring, elems);
 
   for (Index<MonomialIdeal> j = Rideal.first(); j.valid(); j++)
     {
@@ -1674,6 +1679,7 @@ void PolynomialRing::apply_ring_elements(Nterm * &f, vec rsyz, const array<ring_
 }
 void PolynomialRing::normal_form_ZZ(Nterm *&f) const
 {
+  const FreeModule *Rsyz = get_Rsyz();
   Nterm head;
   Nterm *result = &head;
 
@@ -1708,6 +1714,8 @@ void PolynomialRing::normal_form(Nterm *&f) const
   Nterm head;
   Nterm *result = &head;
   Nterm *t = f;
+  int *normal_m = M->make_one();
+  int *normal_exp = new int[nvars];
   while (t != NULL)
     {
       M->to_expvector(t->monom, normal_exp);
@@ -1728,6 +1736,8 @@ void PolynomialRing::normal_form(Nterm *&f) const
 	  result = result->next;
 	}
     }
+  delete [] normal_exp;
+  M->remove(normal_m);
   result->next = NULL;
   f = head.next;
 }

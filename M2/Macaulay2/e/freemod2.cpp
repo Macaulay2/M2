@@ -40,7 +40,6 @@ void FreeModule::initialize(const Ring *RR)
     }
 
   bump_up((Ring *) R);
-  bump_up((Ring *) K);
 }
 
 FreeModule::FreeModule(const Ring *RR)
@@ -104,7 +103,6 @@ FreeModule::~FreeModule()
       M->remove(TO_EXP_monom);
     }
   bump_down((Ring *) R);
-  bump_down((Ring *) K);
 }
 
 FreeModule *FreeModule::new_free() const

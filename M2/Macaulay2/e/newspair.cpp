@@ -71,7 +71,7 @@ void s_pair_set::remove_pair(S_pair *&s)
 {
   s->next = NULL;
   Gsyz->remove(s->gsyz);
-  Rsyz->remove(s->rsyz);
+  if (s->rsyz != NULL) Rsyz->remove(s->rsyz);
   delete s;
   s = NULL;
 }
