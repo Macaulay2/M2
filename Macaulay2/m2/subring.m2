@@ -266,7 +266,7 @@ pushForward(RingMap, Module) := (f,M,options) -> (
      )
 
 document { quote pushForward,
-     TT "pushForward", "(f,M) -- yields an R-presentation of the S-module M, where
+     TT "pushForward(f,M)", " -- yields an R-presentation of the S-module M, where
      f:R --> S is a ring map, and M is considered as an R-module via f.",
      PARA,
      "If M is not finitely generated over R, then an error is raised.",

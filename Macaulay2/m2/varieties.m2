@@ -321,11 +321,12 @@ cohomology(ZZ,CoherentSheaf) := (i,G,opts) -> (
 
 document { (cohomology, ZZ, CoherentSheaf),
      TT "HH^i(F)", " -- for a coherent sheaf F on a projective variety X, computes
-     the direct sum over natural numbers n, of the cohomology groups of F(n).",
+     the direct sum over at least the natural numbers ", TT "n", ", of the
+     ", TT "i", "-th cohomology groups of F(n).",
      BR,
      NOINDENT,
-     TT "HH^i(F, Degree=>e)", " -- same as above, but n ranges over the integers
-     at least as large as e.",
+     TT "HH^i(F, Degree=>e)", " -- same as above, but ", TT "n", " ranges over at least
+     the integers at least as large as ", TT "e", ".",
      PARA,
      EXAMPLE {
 	  "R = QQ[a,b,c,d]/(a^4+b^4+c^4+d^4);",
