@@ -770,10 +770,12 @@ hasDocumentation = x -> (
 hr1 := newline | "-----------------------------------------------------------------------------" | newline
 hr := v -> concatenate mingle(#v + 1 : hr1 , v)
 
+trimwhole := x -> selectRegexp ( "^\n*(.*[^\n]|)\n*$",1, x)
+
 help = method(SingleArgumentDispatch => true)
 help List := v -> hr apply(v, help)
 help Thing := s -> (
-     "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| text documentation s
+     "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| trimwhole text documentation s
      )
 
 -----------------------------------------------------------------------------
