@@ -165,6 +165,8 @@ test2: ../util/screen
 	echo 2+3 | ../util/screen M2
 	touch $@
 
+gdb : ; gdb ../bin/Macaulay2
+
 clean::
 	rm -rf ../cache/Macaulay2-$(ARCH)-data ../cache/Macaulay2-doc \
 		../tmp/Examples ../tmp/Tests *.obj *.exe bare \

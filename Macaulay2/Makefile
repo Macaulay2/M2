@@ -57,7 +57,7 @@ tests ::; $(MAKE) -C dbm tests
 clean ::; $(MAKE) NODEPENDS=1 -C dbm clean
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# dumpdata
-all ::; $(MAKE) -C dumpdata
+all ::; $(MAKE) -C dumpdata all
 clean ::; $(MAKE) NODEPENDS=1 -C dumpdata clean
 tests ::; $(MAKE) -C dumpdata tests
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc

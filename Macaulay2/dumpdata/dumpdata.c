@@ -239,7 +239,7 @@ int loaddata(const char *filename) {
   maps = fopen(mapfilename,"r");
   if (maps == NULL) { fprintf(stderr, "loaddata: failed to open map file %s\n", mapfilename); return ERROR; }
   while (TRUE) {
-    int n, maps_end, f_end;
+    int n, f_end;
     fbuf[0]=0;
     f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
     if (f_end) break;
@@ -256,10 +256,9 @@ int loaddata(const char *filename) {
     fmap.to = p;			/* work around a gcc bug */
     fmap.filename = ffn;
 
-    do {
+    while (TRUE) {
       buf[0]=0;
-      maps_end = NULL == fgets(buf,sizeof buf,maps) || buf[0]=='\n';
-      if (maps_end) break;
+      if (NULL == fgets(buf,sizeof buf,maps) || buf[0]=='\n') break;
       trim(buf);
       fn[0] = 0;
       n = sscanf(buf,mapfmt,
@@ -272,7 +271,17 @@ int loaddata(const char *filename) {
       map.to = p;			/* work around a gcc bug */
       map.filename = fn;
       map.chksum = map.r == 'r' && map.w == '-' ? checksum((unsigned char *)map.from, map.to - map.from) : 0;
-    } while (fmap.from - map.from > 0);
+      if (fmap.from - map.from <= 0) break;
+      if (map.w == '-') {
+	fprintf(stderr, "loaddata: map has appeared or changed its location:\n  %s\n", buf);
+	return ERROR;
+      }
+    };
+
+    if (!f_end && fmap.w == '-' && fmap.from - map.from < 0) {
+      fprintf(stderr, "loaddata: map has disappeared or changed its location:\n  %s\n", fbuf);
+      return ERROR;
+    }
 
     if (!f_end && fmap.from == map.from) {
       if (fmap.r != map.r || fmap.w != map.w || fmap.x != map.x || fmap.p != map.p) {

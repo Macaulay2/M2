@@ -1,5 +1,6 @@
 dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp
-b exit
 handle SIGSEGV nostop pass noprint
-# b system_loaddata
-# b malloc.c:198
+b main
+run setup.m2 '-eGF(4)'
+b ffops.cc:49
+continue
