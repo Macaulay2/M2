@@ -268,6 +268,10 @@ ZZ * RawMatrix := (n,f) -> (
      R := rawRing rawTarget f;
      n_R * f
      )
+QQ * RawMatrix := (n,f) -> (
+     R := rawRing rawTarget f;
+     n_R * f
+     )
 
 RawMatrix ** RawMatrix := rawTensor
 

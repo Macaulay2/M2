@@ -1216,48 +1216,46 @@ extern "C" {
 
   MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense); /* connected to rawMutableMatrix, OK */
 
-     /* DAN DAN DAN : routines below here for mutable matrices not really connected yet */
-
   M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M, 
 				       M2_arrayint rows,
 				       M2_arrayint cols,
-				       RingElement_array *values);
+				       RingElement_array *values); /* connected to rawSetMatrixValues, OK */
   /* Given three arrays of the same length, 'rows', 'cols', 'values', set the
      corresponding values of M.  If any elements are out of range, ignore those
      triples.  If the type of ring element is not valid, or the sizes of the
      matrices do not match, return false. */
 
-  MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N); /* drg: connected + */
+  MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N); /* drg: connected +, OK */
     /* If the sizes do not match, then NULL is returned.  If they do match,
        the addition is performed.  If the targets are not equal, the target 
        of the result is set to have each degree zero.  Similarly with the
        source, and also with the degree of the matrix. */
 
-  MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const MutableMatrix *N); /* drg: connected - */
+  MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const MutableMatrix *N); /* drg: connected -, OK */
     /* If the sizes do not match, then NULL is returned.  If they do match,
        the addition is performed.  If the targets are not equal, the target 
        of the result is set to have each degree zero.  Similarly with the
        source, and also with the degree of the matrix. */
 
-  MutableMatrix * IM2_MutableMatrix_negate(const MutableMatrix *M); /* drg: connected - */
+  MutableMatrix * IM2_MutableMatrix_negate(const MutableMatrix *M); /* drg: connected -, OK */
 
   MutableMatrixOrNull * IM2_MutableMatrix_mult(const MutableMatrix *M, 
 					       const MutableMatrix *N, 
-					       M2_bool opposite_mult); /* drg: connected * */
+					       M2_bool opposite_mult); /* drg: connected *, OK */
     /* If the sizes do not match, then NULL is returned.  If they do match,
        the multiplication is performed, and the source and target are taken from N,M
        respectively.  The degree of the result is the sum of the two degrees */
 
   MutableMatrixOrNull * IM2_MutableMatrix_scalar_mult(const RingElement *f,
 						      const MutableMatrix *M, 
-						      M2_bool opposite_mult); /* drg: connected * */
+						      M2_bool opposite_mult); /* drg: connected *, OK */
 
   MutableMatrixOrNull * IM2_MutableMatrix_submatrix(const MutableMatrix *M,
 						    const M2_arrayint rows,
-						    const M2_arrayint cols); /* drg: connected rawSubmatrix*/
+						    const M2_arrayint cols); /* drg: connected rawSubmatrix, OK */
   
   MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
-						     const M2_arrayint cols); /* drg: connected rawSubmatrix*/
+						     const M2_arrayint cols); /* drg: connected rawSubmatrix, OK */
 
 
   /***************************************************

@@ -408,15 +408,15 @@ export rawMonoid(e:Expr):Expr := (
      if length(s) == 0 then Expr(Ccode(RawMonoid,"(engine_RawMonoid)IM2_Monoid_trivial()"))
      else if length(s) == 4 then 
      when s.0 is mo:RawMonomialOrdering do
-     if isListOfStrings(s.1) then (
-	  names := getListOfStrings(s.1);
+     if isSequenceOfStrings(s.1) then (
+	  names := getSequenceOfStrings(s.1);
 	  when s.2 is degreesRing:RawRing do
 	  if isSequenceOfSmallIntegers(s.3) then (
 	       degs := getSequenceOfSmallIntegers(s.3);
 	       rawMonoid(mo,names,degreesRing,degs))
 	  else WrongArg(4,"a sequence of small integers (flattened degrees)")
 	  else WrongArg(3,"the degrees ring"))
-     else WrongArg(2,"a list of strings to be used as names")
+     else WrongArg(2,"a sequence of strings to be used as names")
      else WrongArg(1,"a monomial ordering")
      else buildErrorPacket("expected 0 or 4 arguments")
      else buildErrorPacket("expected 0 or 4 arguments")
@@ -1848,7 +1848,20 @@ export rawSubmatrix(e:Expr):Expr := (
 		    "(M2_arrayint)", rows, ",",
 		    "(M2_arrayint)", cols,
 		    ")" ) ) )
-     else WrongArg(1,"a raw matrix")
+     else 
+     when s.0 is M:RawMutableMatrix do 
+     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else (
+	  rows := getSequenceOfSmallIntegers(s.1);
+	  cols := getSequenceOfSmallIntegers(s.2);
+	  toExpr(Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)",
+		    "IM2_MutableMatrix_submatrix(",
+		    "(MutableMatrix *)", M, ",",
+		    "(M2_arrayint)", rows, ",",
+		    "(M2_arrayint)", cols,
+		    ")" ) ) )
+     else 
+     WrongArg(1,"a raw matrix or mutable matrix")
      else if length(s) == 2 then
      when s.0 is M:RawMatrix do 
      if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else (
@@ -1858,7 +1871,17 @@ export rawSubmatrix(e:Expr):Expr := (
 		    "(Matrix *)", M, ",",
 		    "(M2_arrayint)", cols,
 		    ")" ) ) )
-     else WrongArg(1,"a raw matrix")
+     else 
+     when s.0 is M:RawMutableMatrix do 
+     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else (
+	  cols := getSequenceOfSmallIntegers(s.1);
+	  toExpr(Ccode(RawMutableMatrixOrNull, "(engine_RawMutableMatrixOrNull)",
+		    "IM2_MutableMatrix_submatrix1(",
+		    "(MutableMatrix *)", M, ",",
+		    "(M2_arrayint)", cols,
+		    ")" ) ) )
+     else 
+     WrongArg(1,"a raw matrix or mutable matrix")
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("rawSubmatrix",rawSubmatrix);
@@ -2453,7 +2476,7 @@ export rawGB(e:Expr):Expr := (
      else WrongArgInteger(7)
      else WrongArgInteger(6)
      else WrongArgBoolean(5)
-     else WrongArg(4,"a list of small integers")
+     else WrongArg(4,"a sequence of small integers")
      else WrongArgInteger(3)
      else WrongArgBoolean(2)
      else WrongArg(1,"a raw matrix")
@@ -2984,29 +3007,40 @@ export rawSetMatrixValues(e:Expr):Expr := (
      when s.1 is l:List do (
      when isSequenceOfPairsOfSmallIntegers(l.v) is t:string do return WrongArg(t) else nothing;
      	when s.0 
+--- wait for IM2_MutableMatrix_set_values to be redesigned
+-- 	is M:RawMutableMatrix do (
+-- 		if isSequenceOfRingElements(s.2) then toExpr(
+-- 		     Ccode(bool,
+-- 			"IM2_MutableMatrix_set_values(",
+-- 			"(MutableMatrix*)", M, ",",
+-- 			"(M2_arrayint)", getSequenceOfPairsOfSmallIntegers(l.v), ",",
+-- 			"(RingElement_array*)", getSequenceOfRingElements(s.2), ")"
+-- 			))
+-- 		else WrongArg(3, "a sequence of ring elements")
+-- 	     )
      	is M:LMatrixRR do (
-		if isListOfReals(s.2) then (
-			Ccode(void,
+		if isSequenceOfReals(s.2) then (
+		     Ccode(void,
 			"LP_LMatrixRR_set_values(",
 			"(LMatrixRR *)", M, ",",
 			"(M2_arrayint)", getSequenceOfPairsOfSmallIntegers(l.v), ",",
-			"(M2_double_array *)", getListOfReals(s.2), ")"
+			"(M2_double_array *)", getSequenceOfReals(s.2), ")"
 			);
 			nullE
 			)
-		else WrongArg(3, "a list of reals")
+		else WrongArg(3, "a sequence of reals")
 		)
 	is M:LMatrixCC do (
-		if isListOfComplex(s.2) then (
-			Ccode(void,
+		if isSequenceOfComplex(s.2) then (
+		     Ccode(void,
 			"LP_LMatrixCC_set_values(",
 			"(LMatrixCC *)", M, ",",
 			"(M2_arrayint)", getSequenceOfPairsOfSmallIntegers(l.v), ",",
-			"(M2_complex_array *)", getListOfComplex(s.2), ")"
+			"(M2_complex_array *)", getSequenceOfComplex(s.2), ")"
 			);
 			nullE
 			)
-		else WrongArg(3, "a list of complexes")
+		else WrongArg(3, "a sequence of complexes")
 		)
 	else WrongArg(1, "a matrixRR or matrixCC")
 	)

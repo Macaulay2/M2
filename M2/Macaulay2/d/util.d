@@ -102,15 +102,15 @@ export getSequenceOfSmallIntegers(e:Expr) : array(int) := (
 	  abort("internal error: getSequenceOfSmallIntegers.");
 	  array(int)()));
 
-export isListOfStrings(e:Expr) : bool := (
-     when e is l:List do (
-     	  foreach i in l.v do when i is string do nothing else return false;
+export isSequenceOfStrings(e:Expr) : bool := (
+     when e is s:Sequence do (
+     	  foreach i in s do when i is string do nothing else return false;
 	  true)
      else false);
-export getListOfStrings(e:Expr) : array(string) := (
-     when e is l:List do 
-     new array(string) len length(l.v) do (
-	  foreach i in l.v do when i is a:string do provide a else nothing;
+export getSequenceOfStrings(e:Expr) : array(string) := (
+     when e is s:Sequence do 
+     new array(string) len length(s) do (
+	  foreach i in s do when i is a:string do provide a else nothing;
 	  provide "";
 	  )
      else array(string)()
@@ -204,52 +204,54 @@ export toExpr(x:RawArrayPairOrNull):Expr := (
 ------------------------------
 -- for lapack
 ------------------------------
+
+---- these routines were too lenient:
+-- export isSequenceOfReals(e:Expr) : bool := (
+--      when e
+--      is s:Sequence do (
+-- 	  foreach i in s do (
+-- 	       when i is a:Real do nothing else return false);
+-- 	  true)
+--      is Real do true
+--      else false);
+-- export getSequenceOfReals(e:Expr) : array(double) := (
+--      when e
+--      is s:Sequence do (
+-- 	  new array(double) len length(s) do (
+-- 	       foreach i in s do 
+-- 	       when i 
+-- 	       is a:Real do provide a.v
+-- 	       else abort("internal error: getSequenceOfReals");
+-- 	       abort("internal error: getSequenceOfReals");
+-- 	       )
+-- 	  )
+--      is a:Real do array(double)(a.v)
+--      else array(double)());
+
 export isSequenceOfReals(e:Expr) : bool := (
-     when e
-     is s:Sequence do (
-	  foreach i in s do (
+     when e is l:Sequence do (
+     	  foreach i in l do (
 	       when i is a:Real do nothing else return false);
 	  true)
-     is Real do true
      else false);
 export getSequenceOfReals(e:Expr) : array(double) := (
-     when e
-     is s:Sequence do (
-	  new array(double) len length(s) do (
-	       foreach i in s do 
-	       when i 
-	       is a:Real do provide a.v
-	       else abort("internal error: getSequenceOfReals");
-	       abort("internal error: getSequenceOfReals");
-	       )
-	  )
-     is a:Real do array(double)(a.v)
-     else array(double)());
-
-export isListOfReals(e:Expr) : bool := (
-     when e is l:List do (
-     	  foreach i in l.v do (
-	       when i is a:Real do nothing else return false);
-	  true)
-     else false);
-export getListOfReals(e:Expr) : array(double) := (
-     when e is l:List do 
-     new array(double) len length(l.v) do (
-	  foreach i in l.v do when i is a:Real do provide a.v else nothing;
+     when e is l:Sequence do 
+     new array(double) len length(l) do (
+	  foreach i in l do when i is a:Real do provide a.v else nothing;
 	  )
      else array(double)()
      );
 
-export isListOfComplex(e:Expr) : bool := (
-     when e is l:List do (
-     	  foreach i in l.v do (
+export isSequenceOfComplex(e:Expr) : bool := (
+     when e is l:Sequence do (
+     	  foreach i in l do (
 	       when i is a:Complex do nothing else return false);
 	  true)
      else false);
-export getListOfComplex(e:Expr) : array(Complex) := (
-     when e is l:List do 
-     new array(Complex) len length(l.v) do (
-	  foreach i in l.v do when i is a:Complex do provide a else nothing;
+export getSequenceOfComplex(e:Expr) : array(Complex) := (
+     when e is l:Sequence do 
+     new array(Complex) len length(l) do (
+	  foreach i in l do when i is a:Complex do provide a else nothing;
 	  )
      else array(Complex)()
      );
