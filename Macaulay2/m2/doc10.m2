@@ -10,18 +10,15 @@ TEST ///
      E = image D_[0]
      E = coimage D_[0]
 ///
-document { Resolution,
-    TT "Resolution", " -- the class of all resolution computations, as well
-    as the key used in a ", TO "ChainComplex", " to store the resolution it
-    comes from.",
+
+document { symbol Resolution,
+     "A key used in a ", TO "ChainComplex", " to store the resolution it comes from."
+     }
+
+document { Resolution, HEADLINE "the class of all resolution computations",
     PARA,
     "These resolutions are internal engine objects not meant to be examined
     by the user.",
-    PARA,
-    "Functions dealing with resolutions:",
-    MENU {
-	 TOH "status"
-	 }
     }
 
 document { "res",
@@ -328,109 +325,6 @@ document { removeLowestDimension,
      SEEALSO {"top", "saturate", "quotient", "radical", "decompose"}
      }
 
-document { "component example",
-     "The following simple example illustrates the use of 
-     ", TO "removeLowestDimension", ",", TO "top", ",", TO "radical",
-     ", and ", TO "decompose", ".",
-     EXAMPLE {
-	  "R = ZZ/32003[a..d];",
-      	  "I = monomialCurve(R,{1,3,4})",
-      	  "J = ideal(a^3,b^3,c^3-d^3)",
-      	  "I = intersect(I,J)",
-      	  "removeLowestDimension I",
-      	  "top I",
-      	  "radical I",
-      	  "decompose I"
-	  },
-     }
-
-document { "top-method",
-     "If M is a module in a polynomial ring R, then the implementations of 
-     ", TO "top", " and ", TO "removeLowestDimension", " are based on 
-     the following observations:",
-     MENU {
-	  "codim Ext^d(M,R) >= d, for all d (if the module is non-zero)",
-	  "If P is an associated prime of M of codimension d := codim P > codim M,
-	  then codim Ext^d(M,R) = d and the annihilator of Ext^d(M,R) is contained
-	  in P",
-	  "If codim Ext^d(M,R) = d, then there really is an associated prime 
-	  of codimension d.",
-	  "If M is R/I, then top(I) = ann Ext^c(R/I,R), where c = codim I"
-	  }
-     }
-
-TEST "
-    R = ZZ/32003[a..d]
-    I = monomialCurve(R,{1,3,4})
-    J = ideal(a^3,b^3,c^3-d^3)
-    I = intersect(I,J)
-    removeLowestDimension I
-    top I
-    radical I
-    decompose I
-"
-TEST "
-    -- test of removeLowestDimension
-    R = ZZ/32003[a,b,c]
-    I = ideal(a^2,b^2)
-    J = ideal(a^3,b^3,c^3)
-    I = intersect(I,J)
-    time (I1 = removeLowestDimension I)
-    time top I
-    time radical I
-"
-
-     
-TEST "
-    -- examples of use of: radical, UnmixedRadical, 
-    -- top, removeLowestDimension
-
-    -- example 1: a simple monomial ideal
-    R = ZZ/101[a..d]
-    I = intersect(ideal(a^2,b^2,c), ideal(a,b^3,c^2))
-    time (Irad = radical(I,Unmixed=>true))
-
-    -- example 2: 
-    R = ZZ/101[a..d]
-    I = intersect(ideal(a^2,b^2,c), ideal(a,d^4), ideal(b^2,c^2,d^2))
-    time (Itop = top I)
-    time (I1 = removeLowestDimension I)
-    time (Irad = radical I)
-"
-
-TEST "
-R = ZZ/101[symbol a..symbol d]
-I = monomialCurve(R,{1,2,3})
-I^2
-removeLowestDimension(I^2)
-assert(I == 
-     radical(I^2)
-     )
-assert(I == 
-     radical(I^2, Unmixed=>true)
-     )
-assert(
-     top (I^2) == I^2
-     )
-S = R/(a^3, b^3)
-I = ideal(0_S)
-J = I^2
-J1 = top J
-J1 == J   
-time (radical I)
-
--- 3 by 3 nilpotent matrices
-R = ZZ/101[vars(0..8)]
-M = genericMatrix(R,a,3,3)
-I = ideal (M^3)
-I1 = ideal(I_0,I_1,I_2)
-codim I1
-radical(I, CompleteIntersection=>I1)
--- radical(I,Unmixed=>true)
--- I1 = removeLowestDimension I
--- I2 = removeLowestDimension I1
-"
-
 document { factor,
      TT "factor x", " -- factors x.",
      PARA,
@@ -656,7 +550,13 @@ document { showUserStructure,
      PARA,
      "Each such class is displayed to the right of its parent.",
      PARA,
-     "A type is an instance ", TO "Type", ".",
+     "A type is an instance of the class ", TO "Type", ".",
+     EXAMPLE {
+	  "X = new Type of List",
+	  "Y = new Type of X",
+	  "Z = new Type of X",
+	  "showUserStructure",
+	  },
      SEEALSO { "showStructure", "parent"}
      }
 
@@ -671,6 +571,9 @@ document { showStructure,
      "Each such type is displayed to the right of its parent.",
      PARA,
      "A type is an instance ", TO "Type", ".",
+     EXAMPLE {
+	  "showStructure {List, Array, Sequence, MutableHashTable, ZZ, Ring, Monoid}",
+	  },
      SEEALSO { "showUserStructure", "parent"}
      }
 
@@ -728,40 +631,22 @@ document { (cohomology, ZZ, Module),
 	  }
      }
 
-document { Variety,
-     TT "Variety", " -- the class of all algebraic varieties.",
-     PARA,
-     NOINDENT,
-     "Types of algebraic varieties:",
-     MENU {
-	  TOH "AffineVariety",
-	  TOH "ProjectiveVariety",
-	  },
+document { Variety, HEADLINE "the class of all algebraic varieties",
      SEEALSO "CoherentSheaf"
      }
 
-document { AffineVariety,
-     TT "AffineVariety", " -- the class of all algebraic varieties, a subclass of
-     ", TO "Variety", ".",
-     PARA,
+document { AffineVariety, HEADLINE "the class of all affine varieties",
      "To create an affine variety, use ", TO "Spec", ".",
      EXAMPLE {
-	  "R = QQ[x,y];",
-	  "Spec R"
-	  },
-     SEEALSO "CoherentSheaf"
+	  "Spec(QQ[x,y])"
+	  }
      }
 
-document { ProjectiveVariety,
-     TT "ProjectiveVariety", " -- the class of all projective varieties, a subclass of
-     ", TO "Variety", ".",
-     PARA,
-     "To create an affine variety, use ", TO "Proj", ".",
+document { ProjectiveVariety, HEADLINE "the class of all projective varieties",
+     "To create a projective variety, use ", TO "Proj", ".",
      EXAMPLE {
-	  "R = QQ[x,y];",
-	  "Proj R"
-	  },
-     SEEALSO "CoherentSheaf"
+	  "Proj(QQ[x,y])",
+	  }
      }
 
 document { Spec,

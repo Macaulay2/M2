@@ -90,18 +90,6 @@ document { "basic rings",
 	  },
      }
 
-document { (symbol " ", Ring, Array),
-     HEADLINE "make a polynomial ring",
-     TT "R[...]", " -- produces the monoid ring from a ring ", TT "R", " and the
-     ordered monoid specified by ", TT "[...]", ".",
-     SEEALSO "polynomial rings"
-     }
-document { (symbol " ",Ring, OrderedMonoid),
-     HEADLINE "make a polynomial ring",
-     TT "R M", " -- produces the monoid ring from a ring ", TT "R", " and an ordered monoid
-     ", TT "M", ".",
-     SEEALSO "polynomial rings"
-     }
 document { "polynomial rings",
      "A polynomial ring can be created with the usual mathematical notation.",
      EXAMPLE "ZZ[x,y,z]",

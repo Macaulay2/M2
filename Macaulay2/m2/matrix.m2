@@ -606,3 +606,17 @@ inducesWellDefinedMap(Module,Nothing,Matrix) := (M,N,f) -> inducesWellDefinedMap
 inducesWellDefinedMap(Nothing,Module,Matrix) := (M,N,f) -> inducesWellDefinedMap(target f,N,f)
 inducesWellDefinedMap(Nothing,Nothing,Matrix) := (M,N,f) -> true
 
+vars Ring := Matrix => R -> (
+     g := generators R;
+     if R.?vars then R.vars else R.vars =
+     map(R^1,,{g}))
+
+generators Module := Matrix => M -> if M.?generators then M.generators else id_(ambient M)
+
+relations Module := Matrix => M -> (
+     if M.?relations then M.relations 
+     else (
+	  R := ring M;
+	  map(ambient M,R^0,0)
+	  )
+     )

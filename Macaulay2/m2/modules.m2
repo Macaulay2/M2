@@ -50,16 +50,6 @@ numgens Module := M -> (
      else M.numgens
      )
 
-generators Module := Matrix => M -> if M.?generators then M.generators else id_(ambient M)
-
-relations Module := Matrix => M -> (
-     if M.?relations then M.relations 
-     else (
-	  R := ring M;
-	  map(ambient M,R^0,0)
-	  )
-     )
-
 toString Module := M -> if M.?name then M.name else (
      if M.?relations then (
 	  if M.?generators

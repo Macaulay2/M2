@@ -4,6 +4,7 @@ Variety = new Type of MutableHashTable
 AffineVariety = new Type of Variety
 ProjectiveVariety = new Type of Variety
 ring Variety := (X) -> X.ring
+hilbertPolynomial Variety := ProjectiveHilbertPolynomial => opts -> X -> hilbertPolynomial ring X
 Spec = method()
 expression AffineVariety := (X) -> new FunctionApplication from { Spec, X.ring }
 net AffineVariety := (X) -> net expression X

@@ -1,8 +1,6 @@
 StateTable = new Type of HashTable
 
-document { StateTable,
-     TT "StateTable", " -- the class of all state tables.",
-     PARA,
+document { StateTable, HEADLINE "the class of all state tables",
      "State tables are hash tables designed to be used in the implementation
      of finite state machines.  The state of such a machine can be mostly
      encapsulated in a state table whose keys are the possible inputs and whose
@@ -69,8 +67,7 @@ document { (symbol ||, StateTable, StateTable),
 StateTableAlternative = new Type of BasicList
 fixStateTableEntry(StateTableAlternative,Thing) := (a,s) -> apply(toSequence a, i -> {i,s})
 document { StateTableAlternative,
-     TT "StateTableAlternative", " -- the class of all state table alternative lists.",
-     PARA,
+     HEADLINE "the class of all state table alternative lists",
      "These are lists of keys, which when encountered by ", TO "stateTable", " to
      make a state table, will create an entry for each of the keys in the list.",
      EXAMPLE {

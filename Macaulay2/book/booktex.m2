@@ -37,7 +37,8 @@ reach1(Sequence) :=
 reach1(MarkUpList) := x -> scan(x,reach1)
 reach1(List    ) := x -> scan(x,reach1)
 reach1(MENU    ) := reach2
-reach1(TO      ) := (x) -> (
+reach1(TO      ) := 
+reach1(TOH     ) := (x) -> (
      node := x#0;
      nodeTable2#node = true;
      )
@@ -47,7 +48,8 @@ reach2(Sequence) :=
 reach2(MarkUpList) := x -> scan(x,reach2)
 reach2(List    ) := x -> scan(x,reach2)
 reach2(SHIELD  ) := reach1
-reach2(TO      ) := (x) -> (
+reach2(TO      ) := 
+reach2(TOH     ) := (x) -> (
      node := formatDocumentTag x#0;
      if not fileNumberTable#?node
      then (
@@ -134,7 +136,7 @@ crossReference := (key,text) -> (
      )
 
 booktex = method(SingleArgumentDispatch=>true)
-booktex TO  := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0)
+booktex TO := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0) 
 
 menuLevel := 2
 

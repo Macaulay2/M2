@@ -44,13 +44,13 @@ reach Sequence := reach MarkUpList := x -> scan(x,reach)
 
 DocumentationProvided := set topicList()
 
-verify TO := x -> (
+verify TO := verify TOH := x -> (
      s := formatDocumentTag x#0;
      if not DocumentationProvided#?s and not DocumentationMissing#?s 
      then DocumentationMissing#s = currentPage;
      )
 
-reach TO := x -> (
+reach TO := reach TOH := x -> (
      s := formatDocumentTag x#0;
      if not reachable#?s or not reachable#s
      then (

@@ -162,9 +162,7 @@ assert ( rank cokernel f == 0 )
 assert(R^{0,0} == R^2)
 assert(R^{0,0} != R^{0,1})
 "
-document { GroebnerBasis,
-     TT "GroebnerBasis", " -- the class of all Groebner bases.",
-     PARA,
+document { GroebnerBasis, HEADLINE "the class of all Groebner bases",
      "A Groebner basis in Macaulay 2 consists of a
       Groebner basis computation, and several associated matrices. 
       Normally you don't need to refer to these objects directly, as many
@@ -947,9 +945,7 @@ document { Variable,
      a symbol to be used as a name for the generator of the Galois field."
      }
 
-document { GaloisField,
-     TT "GaloisField", " -- the class of all Galois fields.",
-     PARA,
+document { GaloisField, HEADLINE "the class of all Galois fields",
      "A Galois field is a finite field implemented in the ", TO "engine", ",
      and created with ", TO "GF", "."
      }

@@ -2,6 +2,13 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+New class VisibleList.  List, Sequence, and Array are now types of VisibleList.
+Functions fold, accumulate, and methods List / Function, Function \ List, are
+extended to work with VisibleLists.
+
+New function HEADLINE -- use this as the first entry in documentation to
+give a capsule summary (1/2 line long).
+
 new function 'sameFunctionBody', tells whether two functions are perhaps different
 closures of the same function body.
 

@@ -257,23 +257,6 @@ leadCoefficient RingElement := RingElement => (f) -> (
      	  k.pop());
      leadCoefficient f)
 
-leadMonomial RingElement := MonoidElement => (f) -> (
-     R := ring f;
-     leadMonomial R := if R.?newEngine then (
-	  f -> (
-	       sendgg(ggPush R, ggPush ((coefficientRing R)#1), ggPush f, ggleadmonom, ggterm);
-	       R.pop()
-	       )
-	  )
-     else (
-     	  M := monoid R;
-	  f -> (
-	       sendgg(ggPush f, ggleadmonom);
-	       M.pop()
-	       )
-	  );
-     leadMonomial f)
-
 degree RingElement := f -> if f == 0 then -infinity else (
      sendgg(ggPush f, ggdegree);
      eePopIntarray())
@@ -651,3 +634,16 @@ liftable(ZZ,Ring) :=
 liftable(QQ,Ring) := (f,R) -> try (lift(f,R);true) else false
 
 isUnit(RingElement) := (f) -> 1 % ideal f == 0
+
+Ring _ String := RingElement => (x,s) -> x#s		  -- gets variable from its name
+
+random Ring := RingElement => (R) -> (
+     if R.?random then R.random()
+     else error "no method found for item of class Ring"
+     )
+
+ZZ _ Ring := RingElement => (i,R) -> (
+     if i === 1 then R#1
+     else if i === 0 then R#0
+     else i * R#1
+     )

@@ -115,7 +115,6 @@ setup((), {
 	  truncate, fraction
 	  })
 setup(TypicalValue => RR, {realPart, imaginaryPart})
-setup(TypicalValue => CC, {conjugate})
 setup(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField
@@ -160,8 +159,7 @@ depth String := s -> 0
 oldflatten := flatten
 erase symbol flatten
 flatten = method(SingleArgumentDispatch=>true)
-flatten List     := List     => oldflatten
-flatten Sequence := Sequence => oldflatten
+flatten VisibleList := VisibleList => oldflatten
 coker = cokernel
 
 source = (h) -> (

@@ -477,12 +477,6 @@ leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
 poincare Ideal := (I) -> poincare module I
 
-hilbertPolynomial = method(
-     Options => { Projective => true }, 
-     TypicalValue => ProjectiveHilbertPolynomial )
-
-hilbertPolynomial Ideal := options -> (I) -> hilbertPolynomial(module I,options)
-
 protect symbol Order
 assert( class infinity === InfiniteNumber )
 hilbertSeries = method(Options => {
@@ -595,12 +589,6 @@ dual(Matrix) := Matrix => f -> (
 InverseMethod Matrix := m -> if m#?-1 then m#-1 else m#-1 = (
      id_(target m) // m
      )
-
-singularLocus(Ring) := QuotientRing => (R) -> (
-     if not isAffineRing(R) then error "expected an affine ring";
-     R / minors(codim R, jacobian presentation R))
-
-singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
 
 Matrix _ Array := Matrix => (f,v) -> f * (source f)_v
 Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f

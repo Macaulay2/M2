@@ -1,18 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-Ring _ String := RingElement => (x,s) -> x#s		  -- gets variable from its name
-
-random Ring := RingElement => (R) -> (
-     if R.?random then R.random()
-     else error "no method found for item of class Ring"
-     )
-
-ZZ _ Ring := RingElement => (i,R) -> (
-     if i === 1 then R#1
-     else if i === 0 then R#0
-     else i * R#1
-     )
-
 poincare Ring := R -> poincare R^1
 
 dim Ring := R -> (
@@ -25,11 +12,6 @@ char Ring := R -> (
      else error("characteristic of ", toString R, " unknown"))
 
 generators Ring := R -> {}
-
-vars Ring := Matrix => R -> (
-     g := generators R;
-     if R.?vars then R.vars else R.vars =
-     map(R^1,,{g}))
 
 numgens Ring := R -> #generators R
 

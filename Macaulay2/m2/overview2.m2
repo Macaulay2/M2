@@ -1371,7 +1371,55 @@ document { "what a class is",
      }
 
 document { "installing methods",
-     "This node has not been written yet."
+     "The method to be used for computing an expression such as ", TT "-x", " depends 
+     on the type of ", TT "x", ".  For example, the method for negating a polynomial
+     differs from the method for negating an integer modulo 111.  Each
+     method is a function of one variable, and is stored in the class 
+     of ", TT "x", " under a key which is referred to as the name of the method.
+     For some built-in methods the method name is a symbol, but for
+     methods created with ", TO "method", ", the method name is the same
+     as the function used for calling it up.",
+     PARA,
+     "Let's assume that ", TT "X", " is the class of ", TT "x", ".  The way to install a method
+     for the negation of an instance ", TT "x", " of ", TT "X", " is with a statement of the 
+     following form.",
+     PRE "- X := x ->( ... )",
+     "Here ", TT "( ... )", " represents the body of the function, consisting of
+     suitable code for the operation at hand.",
+     PARA,
+     "The method installed by the code above is automatically inherited by
+     ", TO "subclass", "es of X.  Here is a brief description of the way 
+     this works.  Suppose ", TT "X", " is the ", TO "parent", " of ", TT "P", ".  When an expression
+     ", TT "-p", " is to be evaluated, where the class of ", TT "p", " is ", TT "P", ", then the method for
+     ", TT "-P", " is applied, unless there isn't one, in which case the method for
+     ", TT "-X", " is applied, and so on, all the way up the chain of parents to the
+     topmost ancestor of everything, which is called ", TO "Thing", ".",
+     PARA,
+     "As an extreme example of inheritance, code like", 
+     PRE "- Thing := x -> ...",
+     "will install a method for negating anything, which will take
+     effect as a last resort whenever more a specifically defined method
+     isn't found.",
+     PARA,
+     "The user may introduce new methods as well as new method names.  So it
+     is important to understand how methods are installed and consulted.",
+     PARA,
+     "Applying a method named ", TT "C", " to a thing ", TT "x", " whose class is ", TT "X", " means that",
+     PRE "(lookup(C,X)) x",
+     "is evaluated.  In other words, ", TT "C", " is used as a key
+     to obtain a function from ", TT "X", " (or its parent, grandparent,
+     and so on), and the function is applied to ", TT "x", ".  See ", TO "lookup", ".",
+     PARA,
+     "Installing a method named ", TT "C", " for the class ", TT "X", " is done with code such
+     as ",
+     PRE "C X := (x) -> ( ... )",
+     "where ", TT "( ... )", " represents suitable code for the operation at hand.",
+     PARA,
+     "Here is the routine for making new methods.",
+     MENU {
+	  TOH "method"
+	  },
+     SEEALSO{"binary method", "classes", "lookup"}
      }
 
 document { "method functions with a variable number of arguments",

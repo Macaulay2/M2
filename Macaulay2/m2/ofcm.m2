@@ -2,6 +2,28 @@
 
 MonoidElement = new Type of BasicList
 
+ZZ _ Monoid := MonoidElement => (i,M) -> (
+     if i === 1 then M#1
+     else error "expected integer to be 1"
+     )
+
+leadMonomial RingElement := MonoidElement => (f) -> (
+     R := ring f;
+     leadMonomial R := if R.?newEngine then (
+	  f -> (
+	       sendgg(ggPush R, ggPush ((coefficientRing R)#1), ggPush f, ggleadmonom, ggterm);
+	       R.pop()
+	       )
+	  )
+     else (
+     	  M := monoid R;
+	  f -> (
+	       sendgg(ggPush f, ggleadmonom);
+	       M.pop()
+	       )
+	  );
+     leadMonomial f)
+
 makeSparse := (v) -> select(apply(#v, i -> (i,v#i)), (k,v) -> v != 0)
 
 GeneralOrderedMonoid = new Type of OrderedMonoid

@@ -36,12 +36,11 @@ Symbol _ Thing := IndexedVariable => (v,i) -> (
      if class value v === IndexedVariableTable
      then new IndexedVariable from {value v,i}
      else (
-     	  v <- x := new IndexedVariableTable;
-     	  x.name = toString v;
-	  x.Symbol = v;
-     	  new IndexedVariable from {x,i}
-	  )
-     )
+     	  v <- x := new IndexedVariableTable from {
+	       symbol name => toString v,
+	       symbol Symbol => v
+	       };
+     	  new IndexedVariable from {x,i}))
 
 Sequence .. Sequence := Sequence => (v,w) -> (
      n := #v;
@@ -57,10 +56,7 @@ List .. List := Sequence => (v,w) -> apply(toSequence v .. toSequence w, toList)
 IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (
      x := v#0;
      if x =!= w#0 
-     then error ("unmatching base names in ",
-	  toString v#0,"_",toString v#1,
-	  " .. ",
-	  toString w#0,"_",toString w#1);
+     then error("unmatching base names in ", toString v#0,"_",toString v#1, " .. ", toString w#0,"_",toString w#1);
      toSequence apply(v#1 .. w#1, s -> x_s))	  
 
 expression IndexedVariable := x -> new Subscript from { expression x#0, expression x#1 }

@@ -121,17 +121,13 @@ document { stdio,
      PARA,
      "Use this file to get input from the terminal, or to display information
      on the user's screen.  This is the file always used by ", TO "print", "
-     and used ", TO "<<", " if it is not explicitly given a file.",
-     PARA,
-     SEEALSO { "File" }
+     and used ", TO "<<", " if it is not explicitly given a file."
      }
 
 document { stderr,
      TT "stderr", " -- the standard error output file.",
      PARA,
-     "Use this file to display error messages on the user's screen.",
-     PARA,
-     SEEALSO { "File" }
+     "Use this file to display error messages on the user's screen."
      }
 
 document { openListener,
@@ -707,8 +703,6 @@ document { unique,
 
 document { Ring,
      HEADLINE "the class of all rings",
-     TT "Ring", " -- the class of all rings.",
-     PARA,
      "A ring is a set together with operations +, -, * and elements 0, 1 
      satisfying the usual rules.  In this system, it is also understood to 
      be a ZZ-algebra, which means that the operations where one argument is 
@@ -722,12 +716,9 @@ document { (symbol _, ZZ, Ring),
      }
 
 
-document { SymbolTable,
-     TT "SymbolTable", " -- the class of all symbol tables.",
-     PARA,
+document { SymbolTable, HEADLINE "the class of all symbol tables",
      "In a symbol table, each key is string containing the name of 
      a symbol, and the corresponding value is the symbol itself.",
-     PARA,
      SEEALSO "Symbol"
      }
 
@@ -819,90 +810,6 @@ document { use,
      SEEALSO "GlobalAssignHook"
      }
 
-document { "reading the documentation",
-     "The documentation for Macaulay 2 is available in several formats.
-     The directory ", TT "Macaulay2/html", " contains the documentation in html
-     form, suitable for viewing with a web browser such as lynx or Netscape,
-     and this is the best way to view it.",
-     PARA,
-     "The directory ", TT "Macaulay2/book", " contains the code for producing
-     the documentation in TeX form, which can be printed with ", TT "dvips", " 
-     or viewed on your screen with ", TT "xdvi", ".  The hypertext links 
-     in the book can be followed if you get ", TT "xdvi", " version 20a
-     or later.  (If your old ", TT "xdvi", " complains about the unknown special
-     commands that implement hypertext links, you can give it the option 
-     ", TT "-hushspecials", " to silence it.)  The source code for ", TT "xdvi", " 
-     can be obtained at one of the CTAN mirror sites in the directory
-     ", TT "dviware/xdvik", ".  Obtain a list of CTAN mirror sites by
-     fingering ", TT "ctan@ftp.tex.ac.uk", ".",
-     PARA,
-     "Finally, all the documentation can be viewed within the program in
-     text form using ", TO "help", "."
-     }
-
-document { "Macaulay 2",
-     IMG "9planets.gif", PARA,
-     "Macaulay 2 is a software system devoted to supporting research in 
-     algebraic geometry and commutative algebra.  The current version is 
-     ", version#"VERSION", ".  The program is still under development, but
-     most of the main features are working.  We are eager to help new users
-     get started with it.",
-     MENU {
-     	  {
-     	       H2 "Preface",
-	       MENU {
-		    TO "how to get this program",
-		    TO "resources required",
-		    TO "reading the documentation",
-		    TO "copyright and license",
-		    TO "acknowledgements",
-		    TO "the authors",
-		    }
-	       },
-	  {
-	       H2 "User's Guide",
-	       "Here are the basic concepts needed to use Macaulay 2 effectively.",
-	       MENU {
-		    TO "getting started",
-	  	    TO "invoking the program",
-		    TO "mathematical overview",
-		    TO "language and programming overview",
-		    TO "miscellaneous topics",
-		    },
-	       },
-	  {
-	       H2 "Mathematical Vignettes",
-	       "In this section we present some tutorials which aim to introduce
-	       the user to some mathematical ways of using Macaulay 2.  The tutorials
-	       are relatively independent of each other, and each one introduces the use
-	       of some features of Macaulay 2 in a slow and leisurely way, assuming the
-	       reader is already familiar with the mathematical concepts involved.  
-	       ", SHIELD TO "David Eisenbud", " joins us as a co-author of these tutorials.",
-	       MENU {
-		    TO "Elementary uses of Groebner bases",
-		    TO "Canonical Embeddings of Plane Curves and Gonality",
-		    TO "Fano varieties",
-		    TO "Divisors",
-		    }
-	       },
-     	  { 
-	       H2 "Reference Manual",
-	       "This section is intended to offer detailed documentation on
-	       every aspect of the system of interest to users.",
-	       MENU {
-		    TOH "Thing",
-		    },
-     	       },
-	  {
-	       H2 "Developer's Corner",
-	       MENU {
-	       	    TO "engine",
-		    TO "internals",
-	       	    }
-	       },
-	  }
-     }
-
   --  types := new MutableHashTable
   --  itemize := (sym) -> (
   --       thing := value sym;
@@ -933,32 +840,6 @@ document { "Macaulay 2",
   --       )
   --  types = null
 
-document { "miscellaneous topics",
-     "Some of these topics will have to be merged with sections above.",
-     MENU {
-	  TO "classes",
-	  TO "operators",
-	  TO "programming",
-	  TO "mathematics", 
-	  TO "executing other programs",
-	  TO "debugging",
-	  TO "system",
-	  TO "help functions",
-	  TO "syntax",
-	  TO "replacements for commands and scripts from Macaulay",
-	  TO "obsolete functions and symbols",
-     	  }
-     }     
-
-document { "internals",
-     "Here are some functions and classes that are intended for internal use 
-     by the developers only.",
-     MENU {
-	  TOH "formatDocumentTag",
-	  TOH "setSpin",
-	  }
-     }
-
 document { setSpin,
      TT "setSpin n", " -- sets the interval between calls to spin the cursor on
      the Macintosh.",
@@ -966,183 +847,8 @@ document { setSpin,
      "The value returned is the previous interval."
      }
 
-load "tutorials.m2"
-
-document { "acknowledgements",
-     "We thank the National Science Foundation for generous funding since
-     1993 for this project, Gert-Martin Greuel and Ruediger Stobbe for the
-     incorporation of their ", TO "Factory library", ", Michael Messollen for
-     the incorporation of his ", TO "Factorization and characteristic sets library", ",
-     and David Eisenbud, Wolfram Decker and Sorin Popescu for
-     early support, encouragement and suggestions.  We also acknowledge an
-     intellectual debt to David Bayer, who, with Michael Stillman,
-     wrote Macaulay, a specialized computer algebra system for algebraic
-     geometry and the predecessor of this program."
-     }
-
-document { "copyright and license",
-     "Macaulay 2, its object code and source code, and its documentation,
-     are copyright by Daniel R. Grayson and Michael E. Stillman.  We 
-     permit you to make copies under the following conditions.",
-     PARA,
-     -- this paragraph has to be duplicated in licenses/README
-     "Provided you are a person (and not a corporate entity), you may make as
-     many copies of Macaulay 2 as you like for your personal non-commercial
-     use.  You may install copies of Macaulay 2 on computers owned by
-     Universities, Colleges, High Schools, and other schools in such a way
-     that students and staff of those institutions may use it.  You may
-     modify and distribute the source code in the Macaulay 2 language we
-     provide you, but you must retain our copyright notices and mark modified
-     source code so others will know that it's been modified.  You may print
-     out the manual and make copies of it for your personal use.",
-     PARA,
-     "If your intended use of Macaulay 2 is not covered by the license above,
-     please contact us so we can work something out.  Notice that in the
-     license above we have not granted you permission to make copies of
-     Macaulay 2 to be sold, distributed on media which are sold, or
-     distributed along with software which is sold.  We have not granted you
-     permission to make derivative works, or to distribute them.  If you
-     encounter a copy which appears not to conform to the terms of the
-     license above, we would like to hear about it.",
-     PARA,
-     "Various libraries have been compiled into Macaulay 2.",
-     MENU {
-	  SHIELD TO "Factory library",
-	  SHIELD TO "Factorization and characteristic sets library",
-	  -- SHIELD TO "MP: Multi Protocol",
-	  SHIELD TO "GNU MP",
-	  SHIELD TO "GC garbage collector"
-	  }
-     }
-
-document { "GC garbage collector",
-     "Macaulay 2 uses the excellent garbage collector 'GC' written by Hans-J. Boehm
-     and Alan J. Demers and generously provided to the publinc.  The copyright is 
-     contained in its README file which we provide in the 
-     file ", TT "Macaulay2/licenses/gc.lic", ".",
-     SEEALSO {"collectGarbage", "gcDump"}
-     }
-
-document { "Factory library",
-     "With the kind permission of the authors of Singular, G.-M. Greuel,
-     G. Pfister, H. Schoenemann and R. Stobbe, University of Kaiserslautern,
-     Macaulay 2 incorporates 'Factory', a Singular library of polynomial
-     routines which provides for factorization of polynomials. That library
-     is copyright 1996 by Gert-Martin Greuel and Ruediger Stobbe.  We provide
-     a copy of the license in the file ", TT "Macaulay2/licenses/factory.lic", ".",
-     SEEALSO {"factor", "gcd"}
-     }
-
-document { "Factorization and characteristic sets library",
-     "With the kind permission of the author, Michael Messollen, University
-     of Saarbruecken, Macaulay 2 incorporates a library of routines which
-     provides factorization of multivariate polynomials over finite fields
-     and computation of the minimal associated primes of ideals via
-     characteristic sets.  That library is copyright 1996 by Michael
-     Messollen.  We provide a copy of the license in the file
-     ", TT "Macaulay2/licenses/libfac.lic", ".",
-     SEEALSO {"factor", "gcd", "decompose", "irreducibleCharacteristicSeries"}
-     }
-
-document { "GNU MP",
-     "The GNU MP library provides routines for arbitrary precision
-     integer and floating point arithmetic.  Version 2.0 of the library
-     is provided to us under the GNU LIBRARY GENERAL PUBLIC LICENSE,
-     a copy of which is provided to you as part of the Macaulay 2
-     package in the file ", TT "Macaulay2/licenses/gnulib.lic", ".  
-     Macaulay 2 contains no derivative of GNU MP, and works with it by 
-     being linked with it, and hence the Macaulay2 executable is covered 
-     by section 6 of the GNU license.  We fulfill the terms of its license 
-     by offering you the source code of the program, available at our
-     web site and our anonymous ftp site.",
-     SEEALSO "how to get this program"
-     }
-
-document { "operators",
-     "Here is a list of unary and binary operators in the language.  Many
-     of them can have methods installed for handling arguments of specific
-     types.",
-     MENU {
-          (TO " ", " -- function application"),
-          (TO ",", " -- separates elements of lists or sequences"),
-          (TO ";", " -- statement separator"),
-          (TO "=", " -- assignment"),
-          (TO "<-", " -- assignment with left hand side evaluated"),
-          (TO ":=", " -- assignment of method or new local variable"),
-          (TO "==", " -- equal"),
-          (TO "!=", " -- not equal"),
-          (TO "===", " -- strictly equal"),
-          (TO "=!=", " -- strictly not equal"),
-          (TO "<", " -- less than"),
-          (TO "<=", " -- less than or equal"),
-          (TO "=>", " -- option"),
-          (TO ">", " -- greater than"),
-          (TO ">=", " -- greater than or equal"),
-          (TO "?", " -- comparison"),
-	  (TO "or", " -- or"),
-	  (TO "and", " -- and"),
-          (TO "not", " -- negation"),
-          (TO "..", " -- sequence builder"),
-          (TO "+", " -- addition"),
-          (TO "-", " -- subtraction"),
-          (TO "*", " -- multiplication"),
-          (TO "/", " -- division"),
-          (TO "//", " -- quotient"),
-          (TO "\\\\", " -- left quotient"),
-          (TO "%", " -- remainder"),
-          (TO "^", " -- power"),
-          (TO "/^", " -- divided power"),
-          (TO "!", " -- factorial"),
-          (TO "++", " -- direct sum"),
-          (TO "**", " -- tensor product"),
-          (TO "<<", " -- file output, bit shifting"),
-          (TO ">>", " -- bit shifting"),
-          (TO "_", " -- subscripting"),
-          (TO ".", " -- hash table access or assignment"),
-          (TO ".?", " -- test for hash table access"),
-          (TO "#", " -- hash table access; length of a list, sequence or hash table"),
-          (TO "#?", " -- test for hash table access"),
-          (TO "|", " -- horizontal concatenation of strings or matrices"),
-          (TO "||", " -- vertical concatentation of strings or matrices"),
-          (TO "&", " -- bit-wise and"),
-          (TO ":", " -- ideal quotient, repetitions"),
-          (TO "\\", " -- applying a function to elements of a list"),
-          (TO "/", " -- applying a function to elements of a list"),
-          (TO "==>", " -- attaching options to a function"),
-          (TO "@@", " -- composing functions"),
-          (TO "@", " -- "),
-          (TO "&&", " -- "),
-          (TO "^^", " -- "),
-          (TO "~", " -- ")
-     	  }
-     }
-
 document { "=>",
      TT "x => y", " -- a binary operator which produces a type of list called
      an ", TO "Option", "."
      }
 
-document { "invoking the program",
-     TT "M2", " -- starts the program.",
-     PARA,
-     TT "M2 file1 file2 ... ", " -- starts the program, reading and 
-     executing the specified files.",
-     PARA,
-     "These are the options that can also be provided on the command
-     line.",
-     MENU {
-	  {TT "--", "       -- ignore previous arguments after reloading data"},
-	  {TT "-e x", "     -- evaluates the expression x"},
-	  {TT "-h", "       -- displays the usage message"},
-	  {TT "-n", "       -- print no input prompts"},
-	  {TT "-q", "       -- suppresses loading of init file 'init.m2'"},
-	  {TT "-s", "       -- stops execution if an error occurs"},
-	  {TT "-silent", "  -- don't print the startup banner"},
-	  {TT "-tty", "     -- assume stdin is a tty"},
-	  {TT "-x", "       -- special mode for running examples"},
-	  },
-     TT "M2", " is actually a shell script which calls the executable file
-     with appropriate arguments for loading the Macaulay 2 code previously
-     compiled.",
-     SEEALSO "initialization file"
-     }

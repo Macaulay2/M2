@@ -1025,8 +1025,8 @@ mathML QQ := i -> concatenate(
      )
 mathML Thing := x -> mathML expression x
 
-File << Thing := (o,x) -> printString(o,net x)
-List << Thing := (o,x) -> (x = net x; scan(o, o -> printString(o,x)); o)
+File << Thing := File => (o,x) -> printString(o,net x)
+List << Thing := List => (o,x) -> (x = net x; scan(o, o -> printString(o,x)); o)
 
 AfterPrint Thing := x -> (
      << endl;				  -- double space

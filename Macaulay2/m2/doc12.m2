@@ -1,22 +1,29 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-document { accumulate,
-     TT "accumulate(f,x0,{x1,...,xn})", " -- computes the list 
-     ", TT "{f(x0,x1),f(f(x0,x1),x2),...}", ".",
-     BR,NOINDENT,
-     TT "accumulate({xn,...,x1},x0,f)", " -- computes the list 
-     ", TT "{...,f(x2,f(x1,x0)),f(x1,x0)}", ".",
-     BR,NOINDENT,
-     TT "accumulate(f,{x0,x1,...,xn})", " -- computes the list 
-     ", TT "{f(x0,x1),f(f(x0,x1),x2),...}", ".",
-     BR,NOINDENT,
-     TT "accumulate({xn,...,x1,x0},f)", " -- computes the list 
-     ", TT "{...,f(x2,f(x1,x0)),f(x1,x0)}", ".",
-     PARA,
+document { (accumulate, Function, Thing, VisibleList),
+     TT "accumulate(f,x0,{x1,...,xn})", " -- computes the list ", TT "{f(x0,x1),f(f(x0,x1),x2),...}", ".",
      EXAMPLE {
-	  "accumulate(plus,1,{10,100,1000})",
-	  "accumulate(toList,{a,b,c,d})",
-	  },
+	  "accumulate(identity, a, {b,c,d,e})",
+	  "accumulate (times, 1, 1 .. 10)"
+	  }
+     }
+document { (accumulate, Function, VisibleList),
+     TT "accumulate(f,{x0,x1,...,xn})", " -- computes the list ", TT "{f(x0,x1),f(f(x0,x1),x2),...}", ".",
+     EXAMPLE {
+	  "accumulate(identity, {a,b,c,d,e})",
+	  "accumulate(plus, 0 .. 10)"
+	  }
+     }
+document { (accumulate, VisibleList, Thing, Function),
+     TT "accumulate({xn,...,x1},x0,f)", " -- computes the list ", TT "{...,f(x2,f(x1,x0)),f(x1,x0)}", ".",
+     EXAMPLE "accumulate({a,b,c,d}, e, identity)"
+     }
+document { (accumulate, VisibleList, Function),
+     TT "accumulate({xn,...,x1,x0},f)", " -- computes the list ", TT "{...,f(x2,f(x1,x0)),f(x1,x0)}", ".",
+     EXAMPLE "accumulate({a,b,c,d,e}, identity)"
+     }
+document { accumulate,
+     HEADLINE "apply binary operator repeatedly",
      SEEALSO {"fold"}
      }
 
@@ -27,17 +34,24 @@ TEST ///
      assert( accumulate({a,b,c,d},toList) == {{a, {b, {c, d}}}, {b, {c, d}}, {c, d}} )
 ///     
 
-document { fold,
+document { (fold, Function, Thing, VisibleList),
      TT "fold(f,x0,{x1,...,xn})", " -- computes ", TT "f(...f(f(x0,x1),x2)...)}", ".",
-     BR,NOINDENT,
-     TT "fold({xn,...,x1},x0,f)", " -- computes ", TT "f(...f(x2,f(x1,x0))...)}", ".",
-     BR,NOINDENT,
+     EXAMPLE "fold(identity, a, {b,c,d,e})"
+     }
+document { (fold, Function, VisibleList),
      TT "fold(f,{x0,x1,...,xn})", " -- computes ", TT "f(...f(f(x0,x1),x2)...)}", ".",
-     BR,NOINDENT,
+     EXAMPLE "fold(identity, {a,b,c,d,e})"
+     }
+document { (fold, VisibleList, Thing, Function),
+     TT "fold({xn,...,x1},x0,f)", " -- computes ", TT "f(...f(x2,f(x1,x0))...)}", ".",
+     EXAMPLE "fold({a,b,c,d}, e, identity)"
+     }
+document { (fold, VisibleList, Function),
      TT "fold({xn,...,x1,x0},f)", " -- computes ", TT "f(...f(x2,f(x1,x0))...)}", ".",
-     EXAMPLE {
-	  "fold(toList, {a,b,c,d,e})"
-	  },
+     EXAMPLE "fold({a,b,c,d,e}, identity)"
+     }
+document { fold,
+     HEADLINE "apply binary operator repeatedly",
      SEEALSO {"accumulate"}
      }
 
@@ -57,35 +71,19 @@ document { demark,
      EXAMPLE "demark(\"+\",{\"a\",\"b\",\"c\"})"
      }
 
-document { InfiniteNumber,
-     TT "InfiniteNumber", " -- the class of all infinite numbers.",
-     PARA,
-     SEEALSO { "infinity", "-infinity" }
-     }
+document { InfiniteNumber, HEADLINE "the class of all infinite numbers" }
 
-document { infinity,
-     TT "infinity", " -- a representation of infinity.",
-     PARA,
-     SEEALSO { "-infinity", "InfiniteNumber" }
-     }
+document { infinity, HEADLINE "infinity" }
 
 document { IndeterminateNumber,
-     TT "IndeterminateNumber", " -- the class of indeterminate numbers (of
-     which there is only one).",
-     PARA,
-     SEEALSO "indeterminate"
+     HEADLINE "the class of all indeterminate numbers",
+     "Indeterminate numbers result, for exmaple, from multiplying 0 by infinity.
+     There is only one instance of this class."
      }
 
 document { indeterminate,
-     TT "indeterminate", " -- a representation of an indeterminat number, such as might
-     result from multiplying 0 by infinity.",
-     PARA,
-     SEEALSO "IndeterminateNumber"
-     }
-
-document { "-infinity",
-     TT "-infinity", " -- a representation of negative infinity.",
-     SEEALSO { "infinity", "InfiniteNumber" }
+     TT "indeterminate", " -- a representation of an indeterminate number,
+     such as might result from multiplying 0 by infinity.",
      }
 
 document { max,
@@ -203,23 +201,6 @@ document { delete,
 	  "delete(c,{a,b,c,d,e,a,b,c,d,e})",
 	  },
      SEEALSO "member"
-     }
-
-document { "functions",
-     "There are two types of functions, those functions built in
-     to the system, and those created by the user, but in practice
-     the user has no way of distinguishing the two types.  The user
-     creates new functions with the ", TO "->", " operator.",
-     PARA,
-     "Operations on functions:",
-     MENU {
- 	  (TO "@@", " -- composition"),
-	  (TO "ultimate", " -- ultimate value for an iteration")
- 	  },
-     "Particular functions:",
-     MENU {
-	  TO "identity"
-	  }
      }
 
 TEST "
@@ -383,27 +364,17 @@ document { member,
 
 document { sum,
      TT "sum", " -- provides the sum of the members of a list, set, 
-     or chain complex, optionally with a function applied to each one.",
-     PARA,
-     MENU {
-	  TO {(sum, List), " -- sum the elements of a list or sequence"},
-	  TO {(sum, List, List, Function), " -- sum results of applying a function"},
-	  TO {(sum, List, Function), " -- sum results of applying a function"},
-	  TO {(sum, ZZ, Function), " -- sum consecutive values of a function"},
-	  TO {(sum, Tally), " -- sum elements of a tally"},
-	  TO {(sum, Set), " -- sum elements of a tally"},
-	  TO {(sum, ChainComplex), " -- sum modules in a chain complex"},
-	  TO {(sum, ChainComplexMap), " -- sum components in a map of chain complexes"}
-	  },
-     SEEALSO "product"
+     or chain complex, optionally with a function applied to each one."
      }
 document { (sum, List),
-     TT "sum v", " -- yields the sum of the elements in the list v.",
+     HEADLINE "sum the elements of a list",
+     TT "sum v", " -- yields the sum of the elements in the list ", TT "v", ".",
      PARA,
      EXAMPLE "sum {1,2,3,4,5}",
      SEEALSO "sum"
      }
 document { (sum, List, List, Function),
+     HEADLINE "sum results of applying a function pairwise",
      TT "sum(v,w,f)", " -- yields the sum of the results obtained by
      applying ", TT "f", " to each of the pairs ", TT "(i,j)", " of elements from 
      the lists or sequences ", TT "v", " and ", TT "w", ", which should be of 
@@ -416,6 +387,7 @@ document { (sum, List, List, Function),
      SEEALSO "sum"
      }
 document { (sum, List, Function),
+     HEADLINE "sum results of applying a function",
      TT "sum(v,f)", " -- yields the sum of the expressions obtained by
      applying ", TT "f", " to each of the elements of the list or sequence ", TT "v", ".",
      PARA,
@@ -423,12 +395,14 @@ document { (sum, List, Function),
      SEEALSO "sum"
      }
 document { (sum, ZZ, Function),
+     HEADLINE "sum consecutive values of a function",
      TT "sum(n,f)", " -- compute the sum ", TT "f(0) + f(1) + ... + f(n-1)", ".",
      PARA,
      EXAMPLE "sum(10, i -> i^2)",
      SEEALSO "sum"
      }
 document { (sum, Tally),
+     HEADLINE "sum of elements",
      TT "sum v", " -- yields the sum of the elements in the tally ", TT "v", ".",
      PARA,
      EXAMPLE {
@@ -438,6 +412,7 @@ document { (sum, Tally),
      SEEALSO "sum"
      }
 document { (sum, Set),
+     HEADLINE "sum of elements",
      TT "sum v", " -- yields the sum of the elements in the set ", TT "v", ".",
      PARA,
      EXAMPLE {
@@ -449,28 +424,19 @@ document { (sum, Set),
 
 document { product,
      TT "product", " -- provides the product of the members of a list or set,
-     optionally with a function applied to each one.",
-     PARA,
-     MENU {
-	  TO {(product, List), " -- product the elements of a list or sequence"},
-	  TO {(product, List, List, Function), " -- product results of applying a function"},
-	  TO {(product, List, Function), " -- product results of applying a function"},
-	  TO {(product, ZZ, Function), " -- product consecutive values of a function"},
-	  TO {(product, Tally), " -- product elements of a tally"},
-	  TO {(product, Set), " -- product elements of a tally"}
-	  }
+     optionally with a function applied to each one."
      }
 document { (product, List),
+     HEADLINE "product of elements",
      TT "product v", " -- yields the product of the elements in the list v.",
      PARA,
-     EXAMPLE "product {1,2,3,4,5}",
-     SEEALSO "product"
+     EXAMPLE "product {1,2,3,4,5}"
      }
 document { (product, List, List, Function),
+     HEADLINE "product of results of applying a function pairwise",
      TT "product(v,w,f)", " -- yields the product of the results obtained by
      applying ", TT "f", " to each of the pairs ", TT "(i,j)", " of elements from 
-     the lists or sequences ", TT "v", " and ", TT "w", ", which should be of 
-     the same length.",
+     the lists ", TT "v", " and ", TT "w", ", which should be of the same length.",
      PARA,
      EXAMPLE {
 	  "M = monoid [x,y,z];",
@@ -479,6 +445,7 @@ document { (product, List, List, Function),
      SEEALSO "product"
      }
 document { (product, List, Function),
+     HEADLINE "product of values of a function",
      TT "product(v,f)", " -- yields the product of the expressions obtained by
      applying ", TT "f", " to each of the elements of the list or sequence ", TT "v", ".",
      PARA,
@@ -486,12 +453,14 @@ document { (product, List, Function),
      SEEALSO "product"
      }
 document { (product, ZZ, Function),
+     HEADLINE "product of consecutive values of a function",
      TT "product(n,f)", " -- compute the product ", TT "f(0) * f(1) * ... * f(n-1)", ".",
      PARA,
      EXAMPLE "product(5, i -> 2*i+1)",
      SEEALSO "product"
      }
 document { (product, Tally),
+     HEADLINE "product of elements",
      TT "product v", " -- yields the product of the elements in the tally ", TT "v", ".",
      PARA,
      EXAMPLE {
@@ -501,8 +470,8 @@ document { (product, Tally),
      SEEALSO "product"
      }
 document { (product, Set),
+     HEADLINE "product of elements",
      TT "product v", " -- yields the product of the elements in the set ", TT "v", ".",
-     PARA,
      EXAMPLE {
 	  "a = set select(1..50, isPrime)",
       	  "product a",
@@ -530,9 +499,10 @@ document { toExternalString,
      }
 
 document { HeaderType,
-     TT "HeaderType", " -- the class of all types ", TT "X", " of lists which can be
-     constructed by expressions of the form ", TT "X {a,b,c,...}", ".  They
-     also act on sequences.",
+     HEADLINE "a class of lists with abbreviated constructors",
+     "These are the types ", TT "X", " of lists which can be constructed
+     by expressions of the form ", TT "X {a,b,c,...}", ".  They also
+     act on sequences.",
      PARA,
      EXAMPLE {
 	  "X = new HeaderType of BasicList",
@@ -542,9 +512,10 @@ document { HeaderType,
      }
 
 document { WrapperType,
-     TT "WrapperType", " -- the class of all types ", TT "X", " of lists which can be
-     constructed by expressions of the form ", TT "X {a,b,c,...}", ", or, for lists
-     of length one, by an expression of the form ", TT "X a", ".  They also act
+     HEADLINE "a class of lists with abbreviated constructors",
+     "These are the types ", TT "X", " of lists which can be constructed
+     by expressions of the form ", TT "X {a,b,c,...}", ", or, for lists of
+     length one, by an expression of the form ", TT "X a", ".  They also act
      on sequences.",
      PARA,
      EXAMPLE {
@@ -555,8 +526,7 @@ document { WrapperType,
      SEEALSO {"HeaderType", "SelfInitializingType"}
      }
 
-document { AssociativeExpression,
-     }
+document { AssociativeExpression }
 
 document { Holder,
      TT "Holder", " -- a type of ", TO "Expression", ".",
@@ -584,9 +554,7 @@ document { DoubleArrow,
      "This is experimental, and intended for internal use only."
      }
 
-document { Expression,
-     TT "Expression", " -- the class of all expressions.",
-     PARA,
+document { Expression, HEADLINE "the class of all expressions",
      "These expressions are symbolic representations of algebraic
      expressions, mainly useful in printing.  The method for 
      producing them is ", TO "expression", ".  The usual algebraic
@@ -822,10 +790,10 @@ document { columnate,
 	  }
      }
 
-document { ScriptedFunctor,
-     TT "ScriptedFunctor", " -- the class of all functors which accept a 
-     subscript or a superscript, the primary example of which is ", TO "HH", ".",
-     SEEALSO {"subscript", "superscript", "argument", "OO", "id"}
+document { ScriptedFunctor, HEADLINE "the class of all scripted functors",
+     "A scripted functor accepts a subscript or a superscript:
+     the primary example is ", TO "HH", ".",
+     SEEALSO {"subscript", "superscript", "argument"}
      }
 
 document { argument,

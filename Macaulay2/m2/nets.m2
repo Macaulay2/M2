@@ -25,7 +25,13 @@ toString Sequence := s -> (
      else concatenate("(",between(",",toString \ s),")")
      )
 toString Command := toExternalString Command := f -> if Symbols#?f then string Symbols#f else "--Command--"
-net Function := toString Function := f -> if Symbols#?f then string Symbols#f else "--Function--"
+
+fm := (fn,li,co) -> concatenate("--Function[", fn, ":", toString li, ":", toString co, "]--")
+net Function := toString Function := f -> (
+     if Symbols#?f then string Symbols#f 
+     else try fm locate f else "--Function--"
+     )
+
 toExternalString Manipulator := toString Manipulator := f -> if Symbols#?f then string Symbols#f else "--Manipulator--"
 toString Thing := string
 -----------------------------------------------------------------------------
@@ -102,8 +108,8 @@ toExternalString Symbol := s -> (			    -- experimental
      )
 
 net Symbol := string
-File << Symbol := (o,s) -> o << string s		    -- provisional
-File << Thing  := (o,s) -> o << toString s		    -- provisional
+File << Symbol := File => (o,s) -> o << string s		    -- provisional
+File << Thing  := File => (o,s) -> o << toString s		    -- provisional
 -----------------------------------------------------------------------------
 net Option := z -> net expression z
 

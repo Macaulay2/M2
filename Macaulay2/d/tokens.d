@@ -319,7 +319,6 @@ export typeClass := newHashTable(mutableHashTableClass,mutableHashTableClass);
        newbasictype():HashTable := newtypeof(thingClass);
 export basicListClass := newbasictype();
 export mutableListClass := newtypeof(basicListClass);
-export listClass := newtypeof(basicListClass);
 export timeClass := newtypeof(basicListClass);
 export optionClass := newtypeof(basicListClass);
 export fileClass := newbasictype();
@@ -331,9 +330,13 @@ export netClass := newbasictype();
 export stringClass := newtypeof(netClass);
 export booleanClass := newbasictype();
 export dbClass := newbasictype();
-export sequenceClass := newbasictype();
 export symboltableClass := newtypeof(hashTableClass);
-export arrayClass := newtypeof(basicListClass);
+
+export visibleListClass := newtypeof(basicListClass);
+export listClass := newtypeof(visibleListClass);
+export sequenceClass := newtypeof(visibleListClass);
+export arrayClass := newtypeof(visibleListClass);
+
 export ringClass := newtypeof(typeClass);
        newbasicringtype():HashTable := newHashTable(ringClass,thingClass);
 export integerClass := newbasicringtype();
