@@ -19,7 +19,7 @@ fix := s -> format concatenate s
        "../bin/M2.bat"
        << "@echo off" << endl
        << "set LFN=Y" << endl
-       << dossify concatenate (M2HOME, "/bin/Macaulay2") 
+       << dossify concatenate (M2HOME, "/libexec/Macaulay2") 
        << " @" << concatenate (M2HOME, "/bin/M2.arg") 
        << " %1 %2 %3 %4 %5 %6 %7 %8 %9" << endl
        << close;
@@ -38,8 +38,8 @@ fix := s -> format concatenate s
        << "#! /bin/sh" << endl
        << "M2HOME='" << M2HOME << "'" << endl
        << "export M2HOME" << endl
-       << "EXE=" << fix "$M2HOME/bin/Macaulay2" << endl
-       << "DATA=" << fix "$M2HOME/cache/Macaulay2-`uname -m |sed s=/=-=g`-data" << endl
+       << "EXE=" << fix "$M2HOME/libexec/Macaulay2" << endl
+       << "DATA=" << fix "$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data" << endl
        << "SETUP=" << fix "$M2HOME/m2/setup.m2" << endl;
        if getenv "SHARED" =!= "" then ( M2
 	    << ///if [ "" = "$LD_LIBRARY_PATH" ]/// << endl

@@ -2,7 +2,7 @@
 
 # Targets to use:
 #	all:	make a binary distribution
-#	justM2:	make Macalay2/bin/Macaulay2 and Macaulay2/bin/M2, and setup
+#	justM2:	make Macalay2/libexec/Macaulay2 and Macaulay2/bin/M2, and setup
 #               for running it
 #	doc:	make the documentation
 #	port:   make a porting source distribution
@@ -38,6 +38,8 @@ FILES := Makefile README patches
 SUBDIRS := gc gmp factory libfac Macaulay2
 export PATH := bin:$(PATH)
 ################################# preparation
+all:: announce
+announce::; @echo 'making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL)'
 always:
 lib/.exists:; mkdir -p lib; touch $@
 clean::; rm -rf lib
@@ -331,7 +333,7 @@ DISTFILES := 	Macaulay2/README.txt \
 		Macaulay2/setup \
 		Macaulay2/cache/Macaulay2-doc \
 		Macaulay2/packages/*.m2 \
-		Macaulay2/bin/Macaulay2 \
+		Macaulay2/libexec/Macaulay2 \
 		Macaulay2/m2/*.m2 \
 		Macaulay2/m2/Makefile \
 		Macaulay2/emacs \

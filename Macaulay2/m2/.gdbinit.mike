@@ -1,4 +1,4 @@
-file ../bin/Macaulay2
+file ../libexec/Macaulay2
 #set environment LD_LIBRARY_PATH /home/geometry/dan/src/M2/Macaulay2/lib
 #set environment LOADDATA_IGNORE_CHECKSUMS yes
 dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp

@@ -67,7 +67,7 @@ load "final/divisors.out"
 
 reach2 TO "tutorials"
 --------------- appendix
--- docDatabase = openDatabase "../bin/Macaulay2.doc"
+-- docDatabase = openDatabase "../libexec/Macaulay2.doc"
 -- unreachedNodes = new MutableHashTable
 -- scankeys(docDatabase, 
 --     node -> (

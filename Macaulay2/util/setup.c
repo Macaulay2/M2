@@ -32,7 +32,7 @@ main(int argc, char **argv) {
 		dirWithBackslashes,dir);
 	fprintf(M2,
 		"#! /bin/sh\n"
-		"'%s/bin/Macaulay2'"
+		"'%s/libexec/Macaulay2'"
 		/* " -tty" */
 		" '%s/bin/startup.m2'"
 		" \"$@\""

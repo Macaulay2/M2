@@ -13,11 +13,11 @@ TESTRESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2))
 
 all:: $(TESTRESULTS)
 
-$(TESTRESULTS) : ../bin/Macaulay2
+$(TESTRESULTS) : ../libexec/Macaulay2
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../bin/Macaulay2 -silent $< '-e exit 0'
+	@ ../libexec/Macaulay2 -silent $< '-e exit 0'
 	@ touch $@
 
 clean  :	

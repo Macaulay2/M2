@@ -9,7 +9,7 @@ INSTALL_DATA = $(INSTALL)
 
 ############################## main target
 all :: compat.h
-all :: ../bin/Macaulay2
+all :: ../libexec/Macaulay2
 ############################## useful targets
 all-c-files ::
 remove-c-files ::
@@ -408,7 +408,7 @@ ifneq "$(CC)" "cl"
 LDLIBS += -lm
 endif
 
-../bin/Macaulay2 : $(ALLOBJ) $(LIBRARYFILES)
+../libexec/Macaulay2 : $(ALLOBJ) $(LIBRARYFILES)
 	rm -f $@
 	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 	$(STRIPCMD) $@
