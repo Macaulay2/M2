@@ -20,19 +20,11 @@ VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
-#############################################################################
-.PHONY : all always dirs clean announce MACAULAY2 MACAULAY2.doc doc port default
-################################# default
+.PHONY : all always dirs clean announce MACAULAY2 MACAULAY2.doc doc port default lsm
 default: all
-################################# all
 all::
-#################################
-FILES := Makefile README patches
-SUBDIRS := gc gmp factory libfac Macaulay2
-export PATH := bin:$(PATH)
 ################################# preparation
-all:: announce
-announce::; @echo 'making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL)'
+justM2 all::; @echo 'making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL)'
 always:
 clean::; rm -rf lib
 clean::; rm -f core
@@ -47,13 +39,6 @@ else
 TARGET := Macaulay2-$(DESC).tar.gz
 DOCTARGET := Macaulay2-$(VERSION)-doc.tar.gz
 endif
-justM2 all:: announce
-announce ::
-	@echo '## making $(TARGET)'
-doc:: announce.doc
-announce.doc ::
-	@echo '## making $(DOCTARGET)'
-
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
 all :: $(TARGET)
@@ -87,44 +72,6 @@ Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
 # 	@echo "  $@ contains everything but the documentation"
 # 	@echo "-----------------------------------------------------------------------------"
 clean ::; $(MAKE) -C Macaulay2 $@
-###################### Macaulay 2 porting source distribution
-PORTING := \
-	CVS \
-	bin \
-	config \
-	include \
-	Macaulay2/CVS \
-	Macaulay2/basictests \
-	Macaulay2/c \
-	Macaulay2/c2 \
-	Macaulay2/d \
-	Macaulay2/dbm \
-	Macaulay2/dumpdata \
-	Macaulay2/e/CVS \
-	Macaulay2/e/misc \
-	Macaulay2/emacs \
-	Macaulay2/html \
-	Macaulay2/m2 \
-	Macaulay2/msdos \
-	Macaulay2/packages \
-	Macaulay2/test \
-	Macaulay2/tutorial \
-	Macaulay2/util
-portfilenames:
-	Export3 $(PORTING)
-port: Macaulay2-$(VERSION)-porting-src.tar.gz
-Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile
-	tar cf - `Export3 $(PORTING)` | gzip >$@
-testport: testport-clean testport-files testport-go testport-clean
-testport-clean:
-	rm -rf tmp/M2
-clean :: testport-clean
-testport-files: Macaulay2-$(VERSION)-porting-src.tar.gz
-	mkdir -p tmp/M2
-	gunzip <$< |tar xf - -C tmp/M2
-testport-go:
-	@echo '## testing porting source'
-	$(MAKE) -C tmp/M2
 ###################### Macaulay 2 documentation
 DOCFILES = Macaulay2/html
 Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES)
@@ -139,21 +86,8 @@ Macaulay2-$(VERSION)-doc.zip : $(DOCFILES)
 	@echo "-----------------------------------------------------------------------------"
 MACAULAY2.doc:
 	$(MAKE) -C Macaulay2 doc
-# doc:: MACAULAY2
 doc:: MACAULAY2.doc 
 doc:: $(DOCTARGET)
-################################# nondist
-# print the files in the directory tree that are not part of the distribution
-nondist :
-	(Export; find . -name CVS -prune -o -type f -print ) | sort | uniq -u
-################################# CVS
-clean::
-	find .  \( \
-		   -type f -name '.#*' \
-		-o -type d -name Release \
-		-o -name '*.pdb' \
-		\) |xargs rm -rf
-	rm -f M2.ncb M2.opt
 ################################# final status messages
 justM2 all doc::
 	@echo "--------------------- done making '$@' --------------------"
@@ -176,28 +110,11 @@ manufactured.tgz : Makefile
 		Macaulay2/m2/cache-tmp/Examples/*.m2 \
 		Macaulay2/m2/cache-tmp/Tests/*.m2 \
 		Macaulay2/html
-################################# automated compilation
-update:
-	cvs update -d -P
-	$(MAKE)
-checkin:
-	cvs ci -m "check-in from $(NODENAME) [$(ARCH) $(OS) $(REL)]"
-################################# TAGS
-TAGS: always
-	etags `find . \( -name '*.h' -o -name '*.c' -o -name '*.s' \
-		-o -name '*.S' \
-		-o -name '*.d' \
-		-o -name '*.in' -o -name '*.m2' \)`
-clean::; rm -f TAGS
-PATH:
-	printenv $@
 ################################# lsm
-lsm:
-	sendmail lsm@execpc.com <Macaulay2.LSM
-
+lsm:; sendmail lsm@execpc.com <Macaulay2.LSM
 ################################# configure
 # make this one last
-distclean ::; rm -f $(CONFIGURED_FILES) include/config.h config.Makefile
+distclean ::; rm -f @CONFIGURED_FILES@ include/config.h config.Makefile
 
 # Local Variables:
 # mode: Makefile
