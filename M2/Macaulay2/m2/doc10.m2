@@ -347,7 +347,7 @@ document { factor,
      "For small integers factorization is done by trial division.  Eventually
      we will have code for large integers.  For multivariate polynomials the
      factorization is done with code of Michael Messollen (see 
-     ", TO "Factorization and characteristic sets library", ").  For univariate
+     ", TO "Singular-Libfac", ").  For univariate
      polynomials the factorization is in turn done with code of 
      Gert-Martin Greuel and Ruediger Stobbe (see ", TO "Factory library", ").",
      EXAMPLE {

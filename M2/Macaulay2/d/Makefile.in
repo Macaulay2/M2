@@ -4,7 +4,7 @@ VPATH = @srcdir@
 DEPENDS = yes
 ############################## main target
 all :: compat.h
-all :: ../libexec/Macaulay2
+all :: ../libexec/Macaulay2$(EXE)
 ############################## useful targets
 all-c-files ::
 remove-c-files ::
@@ -329,7 +329,7 @@ ifneq "$(CC)" "cl"
 LDLIBS += -lm
 endif
 
-../libexec/Macaulay2 : $(ALLOBJ) $(LIBRARYFILES)
+../libexec/Macaulay2$(EXE) : $(ALLOBJ) $(LIBRARYFILES)
 	rm -f $@
 	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 	$(STRIPCMD) $@
@@ -348,7 +348,7 @@ clean ::
 	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep mapfile \
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
 		$(DNAMES:.d=.c) TAGS \
-		core core.* compat.c compat.h c-files.tar tmp_init.c ../libexec/Macaulay2
+		core core.* compat.c compat.h c-files.tar tmp_init.c ../libexec/Macaulay2$(EXE)
 distclean : clean
 	rm -f Makefile
 

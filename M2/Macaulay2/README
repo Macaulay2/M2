@@ -16,7 +16,7 @@ National Science Foundation, for which we thank them.
 2. Installation
 ----------------------
 
-We assume you are installing a binary distribution.
+We assume now that you are installing a binary distribution.
 
 If you are installing Macaulay 2 on a Windows machine, see the special
 instructions in a later section of this document.
@@ -25,46 +25,97 @@ You have downloaded an unpacked a file with a name something like
 
     Macaulay2-0.9-i686-Linux.tar.gz
 
-Untarring this file creates a directory called Macaulay2-0.9, whose
-subdirectories and files are organized as follows:
+Untarring this file creates a directory called Macaulay2-0.9, where 0.9 may be
+replaced by the current version number, and whose subdirectories and files are
+organized as follows:
 
     Macaulay2-0.9/bin/M2
-		the shell script that starts Macaulay2
-		edit it if you change the location of Macaulay2's files
+	    - the shell script that starts Macaulay2.
+    Macaulay2-0.9/bin/M2-help
+	    - a shell script that starts your web browser reading the online
+	      documentation in the form of html files
+    Macaulay2-0.9/INSTALL
+	    - a one line pointer to this file
+    Macaulay2-0.9/lib/Macaulay2-0.9/README
+	    - this file
     Macaulay2-0.9/lib/Macaulay2-0.9/
-		the directory containing Macaulay2's files
+	    - the directory containing Macaulay2's files.
     Macaulay2-0.9/lib/Macaulay2-0.9/setup
-		a shell script that dumps pseudo-compiled Macaulay 2 code
+	    - a shell script that dumps pseudo-compiled Macaulay 2 code.
     Macaulay2-0.9/encapinfo
-		a configuration file used by 'epkg' to install packages
+	    - a configuration file used by 'epkg' to install packages.
     Macaulay2-0.9/postinstall
-		a shell script used by 'epkg' when installing packages
+	    - a shell script used by 'epkg' when installing packages.
+	      It runs 'setup' for you (see below) and edits the file bin/M2 to 
+	      record the location of Macaulay2's directory.
 
-Run this command:
+There are two ways to install the package:
 
-	setup
+    1. Automatically, with 'epkg'.
 
-or
-	./setup
+	Put the entire Macaulay2-0.9 directory tree in the source directory
+	for epkg, which is /usr/local/encap by default.  Then run
 
-if it's unix and '.' is not first on your path.  Then copy the script bin/M2
-(or bin/M2.bat if it's Windows) somewhere on your path (under Unix we suggest
-/usr/local/bin).  (The script contains the absolute path of the current
-directory.)  Now issue the command
+		epkg Macaulay2
 
-	M2
+	The program 'epkg' is available from
 
-to start the program.
+		http://encap.cso.uiuc.edu/epkg/
 
-    NOTE: On some types of computers Macaulay 2 will take extra time to
-    start up: it will print "loading source code" and load the contents of
-    about 100 files containing code written in the Macaulay 2 language.  On
-    other types of computers, this process is replaced by one we call
-    "loaddata", which is much quicker because it involves mapping into
-    memory a large file containing an image of the data segment of the
-    program saved with "dumpdata" by the "setup" script mentioned above.
+    2. Manually
 
-To see if Macaulay 2 works, make a ring with
+	There are four steps.
+
+	a.  Edit the shell script bin/M2 to record the location of Macaulay2's files.
+	    The line starting with 'M2HOME=' should be made to look like
+		M2HOME=/.../Macaulay2-*.*/lib/Macaulay2-*.*
+	    where you replace ... by the path to the directory created
+	    by untarring, and *.* is the version number provided.
+
+	    Then put a link to it from a directory on your path.
+
+	b.  Edit the shell script bin/M2-help (relative to the top of the distribution
+	    directory tree) to record the location of Macaulay2's files, as above.
+
+	    Then put a link to it from a directory on your path.
+
+	c.  Edit the file emacs/M2-init.el (located relative to the directory
+	    this README file is in) to record the location of Macaulay2's files.
+	    The first line should be
+		(defvar M2HOME "/.../Macaulay2-*.*/lib/Macaulay2-*.*")
+	    where ... is replaced by the same path as in step (a) above.
+
+	d.  Optionally run this command:
+
+		setup
+
+	    or
+		./setup
+
+	    if it's unix and '.' is not first on your path.
+
+		NOTE (for system administrators): On some types of computers
+		Macaulay 2 will take extra time to start up: it will print
+		"loading source code" and load the contents of about 100
+		files containing code written in the Macaulay 2 language.
+		On other types of computers, this process is replaced by one
+		we call "loaddata", which is much quicker because it
+		involves mapping into memory a large file containing an
+		image of the data segment of the program saved with
+		"dumpdata" by the "setup" script mentioned above.  That
+		'dumpdata' file is named libexec/Macaulay2-*-data, where *
+		identifies the type of system you have.  That file and the
+		binary executable file libexec/Macaulay2.exe or
+		libexec/Macaulay2 are the only architecture dependent files:
+		the rest may be shared.  On Sun machines, the differences
+		between architectures sun4d and sun4c are slight enough that
+		the binary file bin/Macaulay2 will work on both, but the
+		libexec/Macaulay2-XXXX.data files will differ.  If you have
+		both of these types of machines, you can run 'setup' on each
+		of these in the same directory tree.
+
+After installing the package, to see if Macaulay 2 works, run 'M2',
+make a ring with
 
 	R = ZZ/101[x,y,z]
 
@@ -75,31 +126,11 @@ and then make a resolution with
 Here's what you should get:
 
 	      1      3      3      1
-	o2 = R  <-- R  <-- R  <-- R
+	o2 = R  <-- R  <-- R  <-- R  <-- 0
 
-	     0      1      2      3
+	     0      1      2      3      4
 
-If, at some later time, you wish to move the directory tree, just run setup
-again and install the new bin/M2 it creates on your path.
-
-One of the things that running 'setup' may do is to create a file called
-bin/Macaulay2-XXXX.data, where XXXX is the name of your machine's
-architecture.  To see what your machine's architecture is, run the command
-'uname -m'.  This way of naming that file is intended for Unix environments
-where machines of different architectures must coexist.  That file and the
-binary executable file bin/Macaulay2.exe or bin/Macaulay2 are the only
-architecture dependent files: the rest may be shared.  On Sun machines, the
-differences between architectures sun4d and sun4c are slight enough that the
-binary file bin/Macaulay2 will work on both, but the bin/Macaulay2-XXXX.data
-files will differ.  If you have both of these types of machines, you can run
-'setup' on each of these in the same directory tree.
-
-Make sure you also download and install the manual.  It is kept in a separate
-file at our web site, the name of which is something like this:
-
-	Macaulay2-0.9-doc.tar.gz
-
-Unpack it in the same directory.
+	o2 : ChainComplex
 
 The directions above are intended mainly for system administrators.  The next
 thing that individual users should do is to read the file emacs/README.  On
@@ -131,14 +162,6 @@ B. With a web browser
     The directory 'html' contains the documentation in HTML form.  Start
     at the file 'html/index.html' using your favorite web browser, such as
     Netscape or Internet Explorer.
-
-C. In book form
-
-    The directory 'book' contains the code for creating the book form of
-    the documentation, in TeX.  But if you don't have gnu make you might
-    want to just down load the dvi files for the book from the web site -
-    the file is M2book.dvi, or M2hbook.dvi if you want the HyperTeX
-    version viewable with xhdvi.
 
 ----------------------
 4. Other documentation

@@ -6,10 +6,22 @@ M2 : M2-build.in
 	../config.status --file=$@:$<
 	rm -f config.log
 	chmod 0755 $@
-install : $(bindir)/M2
+
+install :: $(bindir)/M2
 $(bindir)/M2 : M2-final.in
 	$(INSTALL) -d $(bindir)
 	sed -e 's,^M2HOME=.*,M2HOME=$(prefix)/lib/Macaulay2-@PACKAGE_VERSION@,' $< >"$@".tmp
 	mv "$@".tmp "$@"
 	chmod 0755 "$@"
+
+all :: M2-help
+	[ -x $< ] || chmod a+x $<
+
+install :: $(bindir)/M2-help
+$(bindir)/M2-help : M2-help
+	$(INSTALL) -d $(bindir)
+	sed -e 's,^M2HOME=.*,M2HOME=$(prefix)/lib/Macaulay2-@PACKAGE_VERSION@,' $< >"$@".tmp
+	mv "$@".tmp "$@"
+	chmod 0755 "$@"
+
 clean :; rm -f M2

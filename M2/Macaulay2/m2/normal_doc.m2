@@ -1,3 +1,5 @@
+-- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
+
 --Documentation and tests for the functions normalization and isNormal.
 document { (isNormal,Ring),
      Headline => "determine if a reduced ring is normal",
@@ -6,17 +8,27 @@ document { (isNormal,Ring),
 	  i.e. if both of the Serre conditions R1 and S2 hold."
 	  },
      Synopsis => {
-	  "S = isNormal R",
+	  "isNormal R",
 	  "R" => {"reduced ring"},
-	  "S" => {"returns true if ", TT "R", " is R1 and S2 and false 
-	           otherwise."},
-	  }
+	  {"returns true if ", TT "R", " is R1 and S2 and false 
+	       otherwise."},
+	  },
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
+	  "isNormal R",
+	  "S = ZZ/101[a_7,a_6,x,y,z]/ideal(x^2-a_6*z,a_6*x-a_7*z,a_6^2-a_7*x,a_7^2-y^2-z^2)",
+	  "isNormal S",
+	  },
+     PARA "In the example above ", TT "S", " is the Integral Closure 
+     of ", TT "R", " given in the form ", TT "T/J", " where T is a polynomial 
+     ring and J is an ideal."
      }
 document { integralClosure,
      Headline => "compute the integral closure of a ring",
      SEEALSO {"ICMap", "ICFractions", "conductor"}
      }
 
+---------  Take out the w and do options as Variable - where??
 document { (integralClosure,Ring),
      Headline => "compute the integral closure of a ring",
      Usage => {
@@ -28,19 +40,31 @@ document { (integralClosure,Ring),
 	  "S = integralClosure (R)",	
 	  "R" => {"a reduced ring"},
 	  "w" => {"an unassigned symbol"},
-	  "S" => {"a minimal presentation of the integral closure of ", 
-	       TT "R", "in its total ring of fractions where the new 
-	       variables are 
-	       indexed variables using ", TT "w", "."}
+	  "S" => {"The integral closure of ", 
+	       TT "R", "in its total ring of fractions given as a quotient ring 
+	       using new variables are indexed variables using ", TT "w", "."}
+	  },
+     EXAMPLE {
+	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
+      	  "S = integralClosure (R)"
 	  },
      PARA, "The function ", TO "integralClosure", " was written 
      so that certain information can be retrieved if desired.  
      The information of largest interest is the fractions that 
-     correspond to the added variables in the presentation of 
-     the integral closure that is the output of the function.  
-     The map and the corresponding fractions can be obtained by
-     typing ", TT "R.IC.fractions", " where R is the the affine 
-     domain given as input into ", TT "integralClosure", ".",  
+     correspond to the added variables in this description of 
+     the integral closure.  Unfortunately, all of the added features 
+     currently only work on affine domains.
+     The map and the corresponding fractions are obtained as 
+     a matrix using the function", TO "ICfractions R", " where R is 
+     an affine domain.  This function can be run without first 
+     using ", TT "integralClosure", ".  The natrual map from ", TT "R", " into 
+     its integral closure is obtained using the function ", TO "ICmap", " and 
+     the conductor of the integral closure of R into R is found 
+     using ", TT "conductor (ICmap R)", ".  Note that 
+     both ", TT "ICfractions", " and ", TT "ICmap", " take the input 
+     ring ", TT "R", " as input rather than the output 
+     of ", TT "integralClosure", " in this way you can use these 
+     functions without running ", TT "integralClosure", ".",
      SEEALSO {"conductor"},
      "The function ", TT "integralClosure", " is based on
      Theo De Jong's paper, An Algorithm for 
@@ -49,37 +73,53 @@ document { (integralClosure,Ring),
      by Amelia Taylor, ", TT "ataylor@math.rutgers.edu", "."
      }
     
-document{ integralClosure => VarName,
-     Headline=> "choose the name of the new variables introduced in computing 
-     the integral closure of an affine domain."
+document{ integralClosure => Variable,
+     Headline=> "Sets the name of the indexed variables introduced in computing 
+     the integral closure of a reduced ring."
      }
 
 document { (ICmap,Ring),
-     Headline => "compute the map from a reduced ring to its integral closure.",
+     Headline => "natural map from an affine domain into its integral closure.",
      Usage => {
-	  TT "ICmap R", "-- compute the map from a reduced ring", TT "R", " to 
-	  it's integral closure."
+	  TT "ICmap R", "-- compute the natural map from an affine 
+	  domain", TT "R", " into it's integral closure."
 	  },
      Synopsis => {
 	  "F = ICmap R",
-	  "R" => {"reduce ring"},
+	  "R" => {"affine domain"},
 	  "S" => {"returns a map from ", TT "R", " to its integral closure"},
 	  },
+     "Note that if an integrally closed ring is given as input a map from 
+     the ring to itself is returned.",
+     	  EXAMPLE {
+	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
+      	  "ICmap R"
+	  }
      }
 
 document { (ICfractions,Ring),
-     Headline => "Compute the fractions integral over a reduced ring.",
+     Headline => "Compute the fractions integral over a domain.",
      Usage => {
 	  TT "ICfractions R", "-- compute the fractions in the fraction
 	  field of ", TT "R", " that generate the integral closure of ", TT "R", 
-	  " over R.  The set may not be minimal."
+	  " over R"
 	  },
      Synopsis => {
 	  "M = ICfractions R",
-	  "R" => {"reduced ring"},
+	  "R" => {"affine domain"},
 	  "M" => {"returns a matrix of fractions that generate the integral
 	       closure of ", TT "R", " over R."},
 	  },
+     EXAMPLE {
+	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
+      	  "S = ICfractions R",
+	  "integralClosure(R,Variable => a)"
+	  },
+     "Thus the new variables a_7 and a_6 correspond to the 
+     fractions respectively.  The program currently also returns the original 
+     variables as part of the matrix.  In this way the user can see if any are 
+     simplified out of the ring during the process of computing the integral
+     closure."
      }
 ------------------------------------------------------------------------------
 
@@ -95,6 +135,10 @@ document{(conductor,RingMap),
 	  "F" => {"A finite ring map from a ring ", TT "R", 
 	       " to a ring ", TT "S", "."},
 	  "C" => {"the conductor ideal of ", TT "S", " into ", TT "R", "."},
+	  },
+     EXAMPLE {
+	  "R = QQ[x,y,z]/ideal(x^6-z^6-y^2*z^4);",
+	  "conductor(ICmap R)"
 	  },
      PARA, "The command ", TT "conductor", " calls the 
      command ", TT "pushForward", ".  Currently, the 

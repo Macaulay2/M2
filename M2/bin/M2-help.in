@@ -1,0 +1,3 @@
+#! /bin/sh
+M2HOME="`dirname $0`/../Macaulay2"
+${WWBROWSER:-netscape} "$M2HOME/html/index.html"
