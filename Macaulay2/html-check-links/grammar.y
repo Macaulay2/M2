@@ -154,7 +154,7 @@ static void checkURL(char *s) {
     warning("unchecked external link: %s",s);
     return;
   }
-  t = rindex(s,'#'); if (t != NULL) *t = 0;
+  t = strrchr(s,'#'); if (t != NULL) *t = 0;
   if (*s == 0) return;
   s = concat(s[0] == '/' ? rootname : dirname,s);
   if (-1 == access(s, R_OK)) {

@@ -18,6 +18,7 @@ HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o
 SRCFILES := $(HFILES) $(CNAMES) grammar.y
 CPPFLAGS += -I../../include
+CPPFLAGS += -I@srcdir@
 ############################## compiling
 scc1 : $(OFILES)
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
