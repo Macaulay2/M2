@@ -4,6 +4,7 @@
 clone = method()
 targ = method()
 src = method()
+matrixType = method()
 symm = method()
 exterior = method()
 submod = method()
@@ -24,6 +25,8 @@ if ERing === quote ERing then
   ERing = new Type of MutableHashTable
 if EFreeModule === quote EFreeModule then
   EFreeModule = new Type of MutableHashTable
+if ERingElement === quote ERingElement then
+  ERingElement = new Type of MutableHashTable
 if EVector === quote EVector then
   EVector = new Type of MutableHashTable
 if EMatrix === quote EMatrix then
@@ -31,19 +34,27 @@ if EMatrix === quote EMatrix then
 if ERingMap === quote ERingMap then
   ERingMap = new Type of MutableHashTable
 
-if ERingElement === quote ERingElement then
-  ERingElement = new Type of EVector
 
 ------------------------------------------------------------
-BeforePrint ECoefficientRing := (R) -> sendgg(ggPush R, ggsee)
-BeforePrint MonOrder := (R) -> sendgg(ggPush R, ggsee)
-BeforePrint EMonoid := (R) -> sendgg(ggPush R, ggsee)
-BeforePrint ERing := (R) -> sendgg(ggPush R, ggsee)
-BeforePrint EFreeModule := (R) -> sendgg(ggPush R, ggsee)
-BeforePrint ERingElement := (R) -> sendgg(ggPush R, ggsee)
-BeforePrint EVector := (R) -> sendgg(ggPush R, ggsee)
-BeforePrint EMatrix := (R) -> sendgg(ggPush R, ggsee)
-BeforePrint ERingMap := (R) -> sendgg(ggPush R, ggsee)
+--BeforePrint ECoefficientRing := (R) -> sendgg(ggPush R, ggsee)
+--BeforePrint MonOrder := (R) -> sendgg(ggPush R, ggsee)
+--BeforePrint EMonoid := (R) -> sendgg(ggPush R, ggsee)
+--BeforePrint ERing := (R) -> sendgg(ggPush R, ggsee)
+--BeforePrint EFreeModule := (R) -> sendgg(ggPush R, ggsee)
+--BeforePrint ERingElement := (R) -> sendgg(ggPush R, ggsee)
+--BeforePrint EVector := (R) -> sendgg(ggPush R, ggsee)
+--BeforePrint EMatrix := (R) -> sendgg(ggPush R, ggsee)
+--BeforePrint ERingMap := (R) -> sendgg(ggPush R, ggsee)
+------------------------------------------------------------
+net ECoefficientRing := (R) -> see R
+net MonOrder := (R) -> see R
+net EMonoid := (R) -> see R
+net ERing := (R) -> see R
+net EFreeModule := (R) -> see R 
+net ERingElement := (R) -> see R
+net EVector := (R) -> see R
+net EMatrix := (R) -> see R
+net ERingMap := (R) -> see R
 ------------------------------------------------------------
 newECoefficientRing = () -> (
      v := new ECoefficientRing;
@@ -184,9 +195,8 @@ polyring = (K,M,ZD,degs) -> engine(ggpolyring, ZD, degs, K, M, ERing)
 
 weyl = (K,M,diffs,comms,ZD,degs) -> engine(ggweylalgebra, ZD, degs, K, M, diffs, comms, -1, ERing)
 
-weylhom = (K,M,diffs,comms,homvar,ZD,degs) -> 
+weylhom = (K,M,diffs,comms,homvar,ZD,degs) ->
     engine(ggweylalgebra, ZD, degs, K, M, diffs, comms, homvar, ERing)
-
 skewpolyring = (K,M,skews,ZD,degs) -> engine(ggskewpolyring, ZD, degs, K, M, skews, ERing)
 
 -----------------
@@ -224,6 +234,8 @@ EFreeModule _ Sequence := (F,arg) -> (
 -- Ring Elements --
 -------------------
 
+ring ERingElement := (a) -> engine(gggetring, a, ERing)
+
 ZZ _ ERing := (n,R) -> engine(ggfromint, R, n, ERingElement)
 
 ERing _ Sequence := (R,a) -> (
@@ -236,6 +248,58 @@ ERing _ List := (R,a) -> (
      -- check: a is a list of integers of even length.
      one := 1_EZ;
      engine(ggterm, R, one, a, ERingElement))
+
+ERingElement == ERingElement := (v,w) -> engine(ggisequal, v, w, Boolean)
+ERingElement == ZZ := (v,n) -> (
+     if n =!= 0 then error "cannot compare ring element to non-zero integer";
+     sendgg(ggPush v, ggiszero);
+     eePopBool())
+- ERingElement := (v) -> engine(ggnegate, v, ERingElement)
+ERingElement + ERingElement := (v,w) -> (
+     sendgg(ggPush v, ggPush w, ggadd);
+     newERingElement())
+ERingElement - ERingElement := (v,w) -> (
+     sendgg(ggPush v, ggPush w, ggsubtract);
+     newERingElement())
+ZZ * ERingElement := (n,v) -> (
+     sendgg(ggPush n, ggPush v, ggmult);
+     newERingElement())
+ERingElement * ERingElement := (v,w) -> (
+     sendgg(ggPush v, ggPush w, ggmult);
+     newERingElement())
+ERingElement ^ ZZ := (v,n) -> (callgg(ggpower,v,n); newERingElement())
+
+leadCoefficient ERingElement := (v) -> (
+    sendgg(ggPush v, ggleadcoeff);
+    newERingElement())
+leadMonomial ERingElement := (v) -> (
+     sendgg(ggPush v, ggleadmonom);
+     eePopIntarray())
+leadTerm(ERingElement) := (v) -> (
+    sendgg(ggPush v, ggPush (-1), ggleadterm);
+    newERingElement())
+leadTerm(ERingElement,ZZ) := (v,n) -> (
+    sendgg(ggPush v, ggPush n, ggleadterm);
+    newERingElement())
+
+degree ERingElement := (v) -> (
+    sendgg(ggPush v, ggdegree);
+	eePopIntarray())
+degreeWeights(ERingElement,List) := (v,wts) -> (
+    -- check: wts is a vector of length = #vars in the ring.
+    sendgg(ggPush v, ggPush wts, ggdegree);
+    hi := eePopInt();
+    lo := eePopInt();
+    {lo, hi})
+isGraded ERingElement := (v) -> (
+    sendgg(ggPush v, ggishomogeneous);
+    eePopBool())
+
+size ERingElement := (v) -> (
+    sendgg(ggPush v, gglength);
+    eePopInt())
+getTerms (ERingElement, ZZ, ZZ) := (v,lo,hi) ->
+    engine(gggetterms, v, lo, hi, ERingElement)
 
 -------------
 -- EVector --
@@ -258,13 +322,13 @@ EVector - EVector := (v,w) -> (
 ZZ * EVector := (n,v) -> (
      sendgg(ggPush n, ggPush v, ggmult);
      newEVector())
-EVector * EVector := (v,w) -> (
-     sendgg(ggPush v, ggPush w, ggmult);
+ERingElement * EVector := (f,w) -> (
+     sendgg(ggPush f, ggPush w, ggmult);
      newEVector())
-rightMultiply = (v,w) -> (     
-     sendgg(ggPush v, ggPush w, ggrightmult);
+EVector * ERingElement := (v,f) -> (     
+     sendgg(ggPush v, ggPush f, ggrightmult);
      newEVector())
-EVector ^ ZZ := (v,n) -> (callgg(ggpower,v,n); newEVector())
+
 EVector _ ZZ := (v,n) -> (
     sendgg(ggPush v, ggPush n, ggelem);
     newEVector())
@@ -302,7 +366,7 @@ leadComponent EVector := (v) -> (
     eePopInt())
 leadCoefficient EVector := (v) -> (
     sendgg(ggPush v, ggleadcoeff);
-    eePopInt())
+    newERingElement())
 leadMonomial EVector := (v) -> (
      sendgg(ggPush v, ggleadmonom);
      eePopIntarray())
@@ -325,113 +389,164 @@ homogenize(EVector,List,List) := (v,var'd,wts) -> (
     -- check: wts is of length #vars in ring
     sendgg(ggPush v, ggPush var'd#0, ggPush var'd#1, ggPush wts, gghomogenize);
     newEVector())
-    
+
+--------------
+-- ERingMap --
+--------------
+eringmap =               (m) -> engine(ggringmap, m, ERingMap)
+ring ERingMap         := (f) -> engine(gggetring, f, ERing)
+ERingMap ERingElement := (f,r) -> engine(ggev, f, r, ERingElement)
+ERingMap EVector :=      (f,r) -> (
+     F1 := ambient r;
+     R := ring F;
+     F := R^(rank F1);
+     engine(ggev, f, F, r, EVector))
+ERingMap EMatrix :=      (f,r) -> (
+     F1 := targ r;
+     R := ring f;
+     F := R^(rank F1);
+     engine(ggev, f, F, r, EMatrix))
+
 -------------
 -- EMatrix --
 -------------
 ematrix = (R,elems) -> (
     rank := #elems;
-	elems = transpose elems;
-	F := R^rank;
-	vecs := apply(elems, v -> evector(F,v));
-	scan(vecs, v -> sendgg ggPush v);
-	sendgg(ggPush F, ggPush (#elems), ggPush {}, ggmatrix);
-	newEMatrix())
+    elems = transpose elems;
+    F := R^rank;
+    vecs := apply(elems, v -> evector(F,v));
+    scan(vecs, v -> sendgg ggPush v);
+    sendgg(ggPush F, ggPush (#elems), ggPush 3, ggPush {}, ggmatrix);
+    newEMatrix())
 
 targ EMatrix := (m) -> (sendgg(ggPush m, gggetrows); newEFreeModule())
 src EMatrix := (m) -> (sendgg(ggPush m, gggetcols); newEFreeModule())
-
+matrixType EMatrix := (m) -> (sendgg(ggPush m, ggsetshift); eePopInt())
+degree EMatrix := (m) -> (sendgg(ggPush m, gggetshift); eePopIntarray())
+     
 EMatrix _ ZZ := (m,c) -> (sendgg(ggPush m, ggPush c, ggelem); newEVector())
 EMatrix _ Sequence := (m,x) -> (
     sendgg(ggPush m, ggPush x#0, ggPush x#1, ggelem);
-	newEVector())
+    newERingElement())
 
 EMatrix == EMatrix := (m,n) -> (
     sendgg(ggPush m, ggPush n, ggisequal);
-	eePopBool())
+    eePopBool())
 EMatrix == ZZ := (m,n) -> (
     if n =!= 0 then error "cannot compare matrix to integer";
     sendgg(ggPush m, ggiszero);
-	eePopBool())
+    eePopBool())
 
 EMatrix + EMatrix := (m,n) -> (
     sendgg(ggPush m, ggPush n, ggadd);
-	newEMatrix())
+    newEMatrix())
 - EMatrix := (m) -> (
     sendgg(ggPush m, ggnegate);
-	newEMatrix())
+    newEMatrix())
 EMatrix - EMatrix := (m,n) -> (
     sendgg(ggPush m, ggPush n, ggsubtract);
-	newEMatrix())
+    newEMatrix())
+ERingElement * EMatrix := (a,m) -> engine(ggmult,a,m,EMatrix)
+EMatrix * ERingElement := (m,a) -> engine(ggmult,m,a,EMatrix)
+     
 EMatrix * EMatrix := (m,n) -> (
     sendgg(ggPush m, ggPush n, ggmult);
-	newEMatrix())
+    newEMatrix())
 ZZ * EMatrix := (a,m) -> (
     sendgg(ggPush a, ggPush m, ggmult);
-	newEMatrix())
+    newEMatrix())
 transpose EMatrix := (m) -> (
     sendgg(ggPush m, ggtranspose);
-	newEMatrix())
+    newEMatrix())
 
 ZZ _ EFreeModule := (i,F) -> (
     if i === 1 then (
-	    sendgg(ggPush F, ggiden);
-		newEMatrix())
-	else if i === 0 then (
-	    sendgg(ggPush F, ggPush F, ggzeromat);
-		newEMatrix()))
+	 sendgg(ggPush F, ggiden);
+	 newEMatrix())
+    else if i === 0 then (
+	 sendgg(ggPush F, ggPush F, ggzeromat);
+	 newEMatrix()))
 
 EMatrix ** EMatrix := (m,n) -> (
     sendgg(ggPush m, ggPush n, ggtensor);
-	newEMatrix())
+    newEMatrix())
 EMatrix ++ EMatrix := (m,n) -> (
     sendgg(ggPush m, ggPush n, ggdirectsum);
-	newEMatrix())
+    newEMatrix())
 
 submatrix(EMatrix,List) := (m,a) -> (
     -- test: a is an array of integers, all within the range 0..c-1, where
-	-- c is the number of columns of m.
-	sendgg(ggPush m, ggPush a, ggsubmatrix);
-	newEMatrix())
+    -- c is the number of columns of m.
+    sendgg(ggPush m, ggPush a, ggsubmatrix);
+    newEMatrix())
 submatrix(EMatrix,List,List) := (m,rows,cols) -> (
     -- test: rows is an array of integers, all within the range 0..r-1, where
-	-- r is the number of rows, and cols is an integer array  all within the
-	-- rank 0..c-1, where c is the number of columns of m.
-	sendgg(ggPush m, ggPush rows, ggPush cols, ggsubmatrix);
-	newEMatrix())
+    -- r is the number of rows, and cols is an integer array  all within the
+    -- rank 0..c-1, where c is the number of columns of m.
+    sendgg(ggPush m, ggPush rows, ggPush cols, ggsubmatrix);
+    newEMatrix())
 
 isGraded EMatrix := (m) -> (
     sendgg(ggPush m, ggishomogeneous);
-	eePopBool())
+    eePopBool())
 EMatrix * EVector := (m,v) -> (
     sendgg(ggPush m, ggPush v, ggmult);
-	newEVector())
+    newEVector())
 reshape(EMatrix,EFreeModule,EFreeModule) := (m,F,G) -> (
     sendgg(ggPush m, ggPush F, ggPush G, ggreshape);
-	newEMatrix())
+    newEMatrix())
 flip(EFreeModule,EFreeModule) := (F,G) -> (
     sendgg(ggPush F, ggPush G, ggflip);
-	newEMatrix())
+    newEMatrix())
 koszul(ZZ,EMatrix) := (p,m) -> (
     sendgg(ggPush m, ggPush p, ggkoszul);
-	newEMatrix())
+    newEMatrix())
 koszul(EMatrix,EMatrix) := (m,n) -> (
     sendgg(ggPush m, ggPush n, ggkoszul);
-	newEMatrix())
+    newEMatrix())
 leadTerm(EMatrix) := (m) -> leadTerm(m,-1,true)
 leadTerm(EMatrix,ZZ,Boolean) := (m,n,samecomp) -> (
     samecomp = if samecomp then 1 else 0;
     sendgg(ggPush m, ggPush n, ggPush samecomp, ggleadterm);
-	newEMatrix())
+    newEMatrix())
 random(ERing,ZZ,ZZ) := (R,r,c) -> (
     sendgg(ggPush R, ggPush r, ggPush c, ggrandom);
-	newEMatrix())
+    newEMatrix())
 modtensor(EMatrix,EMatrix) := (m,n) -> (
     sendgg(ggPush m, ggPush n, ggmontensor);
-	newEMatrix())
+    newEMatrix())
 exteriorProduct(ZZ,ZZ,EFreeModule) := (p,q,F) -> (
     sendgg(ggPush p, ggPush q, ggPush F, ggexteriorproduct);
-	newEMatrix())
+    newEMatrix())
 EMatrix | EMatrix := (m,n) -> (
     sendgg(ggPush m, ggPush n, ggPush 2, ggconcat);
-	newEMatrix())
+    newEMatrix())
+
+diff (EMatrix,EMatrix) := (m,n) -> engine(ggdiff,m,n,EMatrix)
+contract (EMatrix,EMatrix) := (m,n) -> engine(ggcontract,m,n,EMatrix)
+sortcols = (m,degorder,monorder) -> engine(ggsortcolumns,m,degorder,monorder,Intarray)
+coefficients(List, EMatrix) := (a,m) -> (
+     sendgg(ggPush m, ggPush a, ggcoeffs);
+     res1 := newEMatrix();
+     res2 := newEMatrix();
+     {res1, res2})
+---------------------------
+-- Useful little diddies --
+---------------------------
+makeRing = (mo) -> (
+  K = ZmodP 101;
+  M = emonoid(mo, toList(0..5), "a b c d e f");
+  R = polyring(K, M, degreeRing 1, {1,1,1,1,1,1});
+  a = R_(1_K,{0,1});
+  b = R_(1_K,{1,1});
+  c = R_(1_K,{2,1});
+  d = R_(1_K,{3,1});
+  e = R_(1_K,{4,1});
+  f = R_(1_K,{5,1});
+  R
+  )
+
+getentries = (m) -> (
+     nrows := rank targ m;
+     ncols := rank src m;
+     apply(nrows, r -> apply(ncols, c -> m_(r,c))))

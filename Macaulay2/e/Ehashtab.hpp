@@ -37,7 +37,7 @@ class EHashTable
       if (btype == TY_EFreeModule)
         return false;
       else
-        return a->cast_to_EVector()->isEqual(b->cast_to_EVector());
+        return a->cast_to_EVector()->isEqual(*b->cast_to_EVector());
   }
 public:
   EHashTable() {

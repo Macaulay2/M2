@@ -5,18 +5,18 @@
 stash *Polynomials::poly_stash = 0;
 stash *Polynomials::term_list_stash = 0;
 
-Polynomials::Polynomials(const ECoefficientRing *K)
+Polynomials::Polynomials(const ERing *K)
   : K(K)
 {
   if (poly_stash == 0)
-    poly_stash = new stash("poly heads", sizeof(struct poly));
+    poly_stash = new stash("mpoly heads", sizeof(struct mpoly));
   if (term_list_stash == 0)
     term_list_stash = new stash("term lists", sizeof(struct term_list));
 }
 
-poly *Polynomials::new_poly() const
+mpoly *Polynomials::new_poly() const
 {
-  return (poly *) poly_stash->new_elem();
+  return (mpoly *) poly_stash->new_elem();
 }
 
 term_list *Polynomials::new_term_list() const
@@ -24,7 +24,7 @@ term_list *Polynomials::new_term_list() const
   return (term_list *) term_list_stash->new_elem();
 }
 
-void Polynomials::delete_poly(poly *f) const
+void Polynomials::delete_poly(mpoly *f) const
 {
   poly_stash->delete_elem(f);
 }
@@ -34,23 +34,23 @@ void Polynomials::delete_term_list(term_list *t) const
   term_list_stash->delete_elem(t);
 }
 
-poly *Polynomials::fromInteger(int a) const
+mpoly *Polynomials::fromInteger(int a) const
 {
-  field b = K->from_int(a);
+  ERingElement b = K->from_int(a);
   if (K->is_zero(b))
     return 0;
-  poly *result = new_poly();
+  mpoly *result = new_poly();
   result->variable = 0;
   result->stuff.coefficient = b;
   return result;
 }
 
-poly *Polynomials::variablePower(int v, int e) const
+mpoly *Polynomials::variablePower(int v, int e) const
 {
   if (e == 0 || v == 0)
     return fromInteger(1);
 
-  poly *result = new_poly();
+  mpoly *result = new_poly();
   term_list *t = new_term_list();
   t->next = 0;
   t->exponent = e;
@@ -70,7 +70,7 @@ void Polynomials::remove_term_list(term_list *t) const
       delete_term_list(tmp);
     }
 }
-void Polynomials::remove(poly *&f) const
+void Polynomials::remove(mpoly *&f) const
 {
   if (f == 0) return;
   if (f->variable == 0)
@@ -97,10 +97,10 @@ term_list *Polynomials::clone_term_list(const term_list *t) const
   return head.next;
 }
 
-poly *Polynomials::clone(const poly *f) const
+mpoly *Polynomials::clone(const mpoly *f) const
 {
   if (f == 0) return 0;
-  poly *result = new_poly();
+  mpoly *result = new_poly();
   result->variable = f->variable;
   if (result->variable == 0)
     result->stuff.coefficient = K->clone(f->stuff.coefficient);
@@ -109,19 +109,19 @@ poly *Polynomials::clone(const poly *f) const
   return result;
 }
 
-int Polynomials::leadVariable(const poly *f) const
+int Polynomials::leadVariable(const mpoly *f) const
 {
   if (f == 0) return 0;
   return f->variable;
 }
-const poly *Polynomials::leadCoefficient(const poly *f) const
+const mpoly *Polynomials::leadCoefficient(const mpoly *f) const
 {
   if (f == 0) return 0;
   if (f->variable == 0) return f;
   return f->stuff.terms->coefficient;
 }
 
-term_list *Polynomials::new_term_list(int e, poly *g) const
+term_list *Polynomials::new_term_list(int e, mpoly *g) const
 {
   // Consumes 'g'.
   term_list *result = new_term_list();
@@ -131,11 +131,11 @@ term_list *Polynomials::new_term_list(int e, poly *g) const
   return result;
 }
 
-poly *Polynomials::new_poly(int var, term_list *t) const
+mpoly *Polynomials::new_poly(int var, term_list *t) const
 {
   // Consumes 't'.
   if (t == 0) return 0;
-  poly *result;
+  mpoly *result;
   if (t->exponent == 0) 
     {
       result = t->coefficient;
@@ -206,7 +206,7 @@ term_list *Polynomials::add_term_list(term_list *s, term_list *t) const
     }
 }
 
-poly *Polynomials::add(poly *f, poly *g) const
+mpoly *Polynomials::add(mpoly *f, mpoly *g) const
 {
   // Consumes 'f' and 'g'
   if (f == 0) return g;
@@ -232,7 +232,7 @@ poly *Polynomials::add(poly *f, poly *g) const
 }
 
 void Polynomials::text_out(buffer &o, 
-			   const poly *f, 
+			   const mpoly *f, 
 			   bool p_parens,
 			   bool p_one,
 			   bool p_plus) const
@@ -240,6 +240,8 @@ void Polynomials::text_out(buffer &o,
   if (f == 0) o << "0";
   else if (f->variable == 0)
     {
+      K->elem_text_out(o, f->stuff.coefficient);
+#if 0
       int a = f->stuff.coefficient;
       if (a > 0 && p_plus) o << '+';
       else if (a < 0) 
@@ -251,6 +253,7 @@ void Polynomials::text_out(buffer &o,
 	o << "1";
       else if (a != 1)
 	o << a;
+#endif
     }
   else
     terms_text_out(o,f->stuff.terms,f->variable,p_parens,p_one,p_plus);

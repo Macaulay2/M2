@@ -2,21 +2,6 @@
 
 #include "array.hpp"
 
-template <class T> 
-void array<T>::expand(int newtop)
-{
-  int newlen = ::max(len,1);
-  for (; newtop>=newlen; newlen *= 2);
-  T *tmp = new T [newlen];
-  engine_alloc(newlen * sizeof(T));
-
-  for (int j = 0; j<max; j++) tmp[j] = entries[j];
-  engine_dealloc(len * sizeof(T));
-  delete [] entries;
-  entries = tmp;
-  len = newlen;
-}
-
 #define ARRAY(T) array< T >
 
 #include "intarray.hpp"

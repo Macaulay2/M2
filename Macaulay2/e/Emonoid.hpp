@@ -6,7 +6,8 @@
 #include "Emonorder.hpp"
 
 class polynomial;
-class EMonomialTable;
+class ECommMonomialTable;
+class ENCMonomialTable;
 class ECommMonoid;
 class ENCMonoid;
 
@@ -15,14 +16,14 @@ class monomial
 public:
   monomial *next;		// Next hash bucket...
   uint32 hashval;
-  int * partial_sums;
-  int * exponents;
+  int * monom;  // Commutative case and non-commutative case handle this differently.
 };
 
 class EMonoid : public type
 {
 protected:
   int nvars;
+  int ncommvars;     // number of commutative variables.
   int componentloc;
   int nslots;
   EMonomialOrder *monorder;
@@ -31,7 +32,7 @@ protected:
 		    // in the i th place, during text output.  Only
 		    // used for commutative case.
   char **var_names;	// Names of the variables. 0..nvars-1
-  monomial *_one;
+  const monomial *_one;
 
   bool *isnonnegativevar;  // array 0..nvars-1: if true, then negative exponents
                            // are not allowed.
@@ -71,6 +72,9 @@ public:
   int n_vars() const 
     {return nvars;}
 
+  int n_commuting_vars() const
+    {return ncommvars;}
+
   int n_slots() const
     {return nslots;}
 
@@ -80,8 +84,8 @@ public:
   void remove(monomial *) const
     {}
 
-  monomial *clone(const monomial *a) const 
-    { return (monomial *) a; }
+  const monomial *clone(const monomial *a) const 
+    { return a; }
     
   bool is_equal(const monomial *a, const monomial *b) const
     { return a == b; }
@@ -89,20 +93,13 @@ public:
   bool is_one(const monomial *a) const
     { return a == _one; }
 
-  const int *get_partial_sums(const monomial *m) const
-    { return m->partial_sums; }
-
-  virtual uint32 hash_exponents(const int *exponents) const = 0;
-  virtual uint32 hash_encoded(const int *exponents) const = 0;
-
   virtual int compare(const monomial *a, int acomp,
 		      const monomial *b, int bcomp) const = 0;
   virtual int compare(const monomial *a,
 		      const monomial *b, 
 		      int n) const = 0;
-  virtual monomial *monomial_from_exponents(const int *exp) const = 0;
-  virtual monomial *monomial_from_encoded(const int *encoded) const { return 0; }
-  virtual monomial *monomial_from_variable_exponent_pairs(const intarray &term) const = 0;
+  virtual const monomial *monomial_from_exponents(const int *exp) const = 0;
+  virtual const monomial *monomial_from_variable_exponent_pairs(const intarray &term) const = 0;
 
   virtual const int * to_exponents(const monomial *m) const = 0;
     // Returns a pointer to an exponent vector that WILL BE OVERWRITTEN by
@@ -118,19 +115,19 @@ public:
   virtual void to_variable_exponent_pairs(const monomial *m, intarray &result) const = 0;
     // Translate the monomial to an array of (variable,exponent) pairs.
 
-  virtual int encoded_length(const int *encoded) const = 0;
+  virtual const monomial *mult(const monomial *a, const monomial *b) const = 0;
+  virtual const monomial *divide(const monomial *a, const monomial *b) const = 0;
+  virtual bool divides(const monomial *a, const monomial *b) const = 0;
+  virtual const monomial *power(const monomial *a, int n) const = 0;
 
-  virtual monomial *mult(const monomial *a, const monomial *b) const = 0;
-  virtual monomial *divide(const monomial *a, const monomial *b) const = 0;
-
-  int degree(const monomial *a, const int *wts) const;
+  virtual int degree(const monomial *a, const int *wts) const = 0;
   
   virtual void stats() const = 0;
   virtual void text_out(buffer &o) const = 0;
   virtual void bin_out(buffer &o) const = 0;
   virtual void elem_text_out(buffer &o, const monomial *a) const = 0;
   virtual void elem_bin_out(buffer &o, const monomial *a) const = 0;
-  virtual monomial *elem_binary_in(istream &i) const = 0;
+  virtual const monomial *elem_binary_in(istream &i) const = 0;
 
   virtual const ENCMonoid *toNCMonoid() const { return 0; }
   virtual const ECommMonoid *toCommMonoid() const { return 0; }
@@ -144,8 +141,7 @@ public:
 
 class ENCMonoid : public EMonoid
 {
-  EMonomialTable *T;  // Or, how should this be set?
-  int *MULT_exp;
+  ENCMonomialTable *T;  // Or, how should this be set?
 
   // Noncommutative fields:
   int n_nc_blocks;
@@ -168,13 +164,13 @@ public:
     { return is_comm[v]; }
 
   void to_variable_exponent_pairs(const monomial *m, intarray &result) const;
-  monomial *monomial_from_variable_exponent_pairs(const intarray &term) const;
+  const monomial *monomial_from_exponents(const int *exponents) const;
+  const monomial *monomial_from_variable_exponent_pairs(const intarray &term) const;
 
-  monomial *monomial_from_encoded(const int *encoded) const;
-
-  monomial *monomial_from_exponents(const int *exp) const;
+  // Remove these?
   const int * to_exponents(const monomial *m) const;
   void copy_exponents(const monomial *m, int *&result) const;  
+  ////////////
 
   int compare(const monomial *a, int acomponent,
 	      const monomial *b, int bcomponent) const;
@@ -182,14 +178,19 @@ public:
 	      const monomial *b,
 	      int n) const;
 
+  virtual int degree(const monomial *a, const int *wts) const;
+  uint32 hash(const int *encoded) const;
 
-  int encoded_length(const int *encoded) const;
-  virtual uint32 hash_exponents(const int *exponents) const { return 0; }
-  virtual uint32 hash_encoded(const int *encoded) const;
-
-  monomial *mult(const monomial *a, const monomial *b) const;
-  monomial *divide(const monomial *a, const monomial *b) const; // return c, if b = a*c
+  const monomial *mult(const monomial *a, const monomial *b) const;
+  // MES: Need several divide routines (leftDivide, rightDivide, biDivide(which can return several))
+  // also need leftDivides, etc.
+  const monomial *divide(const monomial *a, const monomial *b) const; // return c, if b = a*c
     // divide should only be used when it is known that there exists such a c in the monoid.
+  bool divides(const monomial *a, const monomial *b) const { 
+    gError << "divides for non-comm case not yet implemented";
+    return false;
+  }
+  virtual const monomial *power(const monomial *a, int n) const;
 
   virtual void stats() const;
 
@@ -198,34 +199,18 @@ public:
 
   virtual void elem_text_out(buffer &o, const monomial *a) const;
   virtual void elem_bin_out(buffer &o, const monomial *a) const;
-  virtual monomial *elem_binary_in(istream &i) const;
+  virtual const monomial *elem_binary_in(istream &i) const;
 
   virtual const ENCMonoid *toNCMonoid() const { return this; }
 
   class_identifier class_id() const { return CLASS_ENCMonoid; }
-
-  // The format for non-commutative monomials (but, may have some blocks of 
-  // commutative variables)
-  // total length?
-  // [encoded slots, with length of the word for the varexp parts]
-  // [exponents of comm part only]
-  // [Non-comm (v,e) pairs]
-  // 
-  // 
-  // monomial_from_variable_exponent_pairs
-  // get_variable_exponents
-  // mult
-  // compare
-  // divide
-  // 
 };
 
 class ECommMonoid : public EMonoid
 {
   static ECommMonoid *_trivial;
-  EMonomialTable *T;  // Or, how should this be set?
+  ECommMonomialTable *T;
   uint32 *hash_multiplier;
-  int *MULT_exp;
 
   ECommMonoid(EMonomialOrder *mo,          // grabs
 		    const int *print,      // copies
@@ -244,22 +229,19 @@ public:
   
   void copy_exponents(const monomial *m, int *&result) const;  
   const int * to_exponents(const monomial *m) const;
-  monomial *monomial_from_exponents(const int *exp) const;
-  monomial *unchecked_monomial_from_exponents(const int *exp) const;
-
-  monomial *monomial_from_variable_exponent_pairs(const intarray &term) const;
+  const monomial *monomial_from_exponents(const int *exp) const;
+  const monomial *unchecked_monomial_from_exponents(int *exp) const;
+  const monomial *monomial_from_variable_exponent_pairs(const intarray &term) const;
   void to_variable_exponent_pairs(const monomial *m, intarray &result) const;
 
   bool isCommutativeVariable(int) const 
     { return true; }
 
-  int encoded_length(const int *) const
-    { return nslots; }
-  virtual uint32 hash_exponents(const int *exponents) const;
-  virtual uint32 hash_encoded(const int *exponents) const { return 0; }
+  uint32 hash(const int *exponents) const;
 
-  monomial *mult(const monomial *a, const monomial *b) const; 
-  monomial *divide(const monomial *a, const monomial *b) const; // return c, if b = a*c
+  const monomial *mult(const monomial *a, const monomial *b) const; 
+  const monomial *divide(const monomial *a, const monomial *b) const; // return c, if b = a*c
+  const monomial *power(const monomial *a, int n) const;
 
   int compare(const monomial *a, int acomponent,
 	      const monomial *b, int bcomponent) const;
@@ -273,15 +255,16 @@ public:
   // Commutative case: is b-a >= 0 in every component.
 
   // Other useful routines
-  monomial *lcm(const monomial *a, const monomial *b) const;
-  monomial *gcd(const monomial *a, const monomial *b) const;
+  virtual int degree(const monomial *a, const int *wts) const;
+  const monomial *lcm(const monomial *a, const monomial *b) const;
+  const monomial *gcd(const monomial *a, const monomial *b) const;
 
   virtual void stats() const;
 
   // I/O
   virtual void elem_text_out(buffer &o, const monomial *a) const;
   virtual void elem_bin_out(buffer &o, const monomial *a) const;
-  virtual monomial *elem_binary_in(istream &i) const;
+  virtual const monomial *elem_binary_in(istream &i) const;
 
   virtual const ECommMonoid *toCommMonoid() const { return this; }
 
@@ -291,6 +274,6 @@ public:
 // These are currently in Ecommands.cpp
 void appendMonomialToIntarray(const EMonoid *M, const monomial *m, intarray &result);
 intarray monomialToIntarray(const EMonoid *M, const monomial *m);
-monomial *monomialFromIntarray(const EMonoid *D, const intarray &mapdeg);
+const monomial *monomialFromIntarray(const EMonoid *D, const intarray &mapdeg);
 
 #endif

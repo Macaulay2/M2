@@ -4,6 +4,7 @@
 
 EMonomialOrder::EMonomialOrder()
   : nvars(0),
+    ncommvars(0),
     nslots(0),
     componentloc(-1),
     nblocks(0),
@@ -203,19 +204,22 @@ void EMonomialOrder::append_block(mon_order_node *b)
   newblocks[nblocks] = b;
   this->nblocks++;
   this->nvars += b->n;
+  this->ncommvars += b->n;
   this->nslots += b->nslots;
   if (b->typ == MO_NC_LEX)
-    this->n_nc_blocks++;
+    {
+      this->n_nc_blocks++;
+      this->ncommvars -= b->n;
+    }
 
   delete [] order;
   this->order = newblocks;
 }
 
-void EMonomialOrder::encode(const int *exp, int *result_psums) const
+void EMonomialOrder::encode_commutative(const int *exp, int *result_psums) const
 {
-  int j, k, wtval, pow, sum;
+  int j, wtval;
   int *psum;
-  int firstpast = nslots; // Only used for noncommutative monomials
   const int *expit;
   for (int i=0; i<nblocks; i++)
     {
@@ -259,15 +263,7 @@ void EMonomialOrder::encode(const int *exp, int *result_psums) const
 	  break;
 
 	case MO_NC_LEX:
-	  sum = 0;
-	  for (k=0; k<b->n; k++)
-	    {
-	      pow = exp[b->first_exp + k];
-	      sum += pow;
-	      for (j=0; j<pow; j++)
-		result_psums[firstpast++] = k;
-	    }
-	  result_psums[b->first_slot] = sum;
+	  assert(0);
 	  break;
 
 	default:
@@ -275,6 +271,94 @@ void EMonomialOrder::encode(const int *exp, int *result_psums) const
 	  break;
 	}
     }
+}
+
+void EMonomialOrder::encode_noncommutative(const intarray &varexp, int *result) const
+{
+  // This is a low-level routine: varexp is expected to be an array of length
+  // 2*N, sone N.  Also, all commutative variable-exponent pairs go first, then
+  // all var-exp pairs for first non-comm block, then second non-comm block, etc.
+  //
+  // result is expected to be a pointer obtained from MA, containing at least enough 
+  // space for this monomial.
+  int i, j, wtval, sum, ncvar;
+
+  result++;  // We will put in the length field at the end
+  int firstpast = nslots+ncommvars;
+
+  int *commpart = result + nslots;
+  for (i=0; i<ncommvars; i++)
+    commpart[i] = 0;
+  for (ncvar=0; ncvar < varexp.length(); ncvar += 2)
+    {
+      if (!is_comm_var[varexp[ncvar]]) break;
+      commpart[varexp[ncvar]] += commpart[varexp[ncvar+1]];
+    }
+  // And now ncvar is set for use below.
+  const int *expit;
+  int *psum;
+
+  for (i=0; i<nblocks; i++)
+    {
+      mon_order_node *b = order[i];
+      switch (b->typ)
+	{
+	case MO_LEX:
+	  psum = result + b->first_slot;
+	  expit = commpart + b->first_exp;
+	  for (j=0; j<b->n; j++)
+	    *psum++ = *expit++;
+	  break;
+
+	case MO_REVLEX:
+	  psum = result + b->first_slot + b->nslots;
+	  expit = commpart + b->first_exp;
+	  *--psum = *expit++;
+	  for (j=1; j<b->n; j++)
+	    {
+	      --psum;
+	      *psum = *expit++ + psum[1];
+	    }
+	  break;
+
+	case MO_WTREVLEX:
+	  psum = result + b->first_slot + b->nslots;
+	  expit = commpart + b->first_exp;
+	  *--psum = b->weights[0] * (*expit++);
+	  for (j=1; j<b->nweights; j++)
+	    {
+	      --psum;
+	      *psum = b->weights[j] * (*expit++) + psum[1];
+	    }
+	  break;
+
+	case MO_WTFCN:
+	  wtval = 0;
+	  for (j=0; j<varexp.length(); j += 2)
+	    if (varexp[j] < b->nweights)
+	      wtval += varexp[j+1] * b->weights[varexp[j]];
+	  result[b->first_slot] = wtval;
+	  break;
+
+	case MO_NC_LEX:
+	  sum = 0;
+	  for ( ; ncvar < varexp.length(); ncvar += 2)
+	    if (varexp[ncvar] >= b->first_exp + b->n) break;
+	    else {
+	      sum += 2;
+	      result[firstpast++] = varexp[ncvar];
+	      result[firstpast++] = varexp[ncvar+1];
+	    }
+	  result[b->first_slot] = sum;
+	  break;
+
+	default:
+	  // MES
+	  break;
+	}
+    }
+  // Now we put the length field back in:
+  result[-1] = firstpast+1;
 }
 
 void EMonomialOrder::decode(const int *psums, int *result_exp) const
@@ -369,13 +453,15 @@ void EMonomialOrder::set_noncommutative_parameters(
        int &nncblocks,
        int * &nclengths,
        bool * & isncslots,
-       bool * & is_comm) const
+       bool * & is_comm)
 {
   int i;
   nncblocks = n_nc_blocks;
   nclengths = new int[nncblocks];
   isncslots = new bool[nslots];
   is_comm = new bool[nvars];
+
+  this->is_comm_var = is_comm;  // This will remain valid as long as the monoid is around.
 
   for (i=0; i<nvars; i++)
     is_comm[i] = true;

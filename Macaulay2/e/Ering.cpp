@@ -6,24 +6,70 @@
 #include "Ematrix.hpp"
 #include "Ehashtab.hpp"
 
-////////////////////
-// ECommPolynomialRing //
-////////////////////
-
-ECommPolynomialRing::ECommPolynomialRing()
-  : EPolynomialRing(),
-    M(0)
+///////////
+// ERing //
+///////////
+void ERing::initialize(
+        int nvars, 
+        int totalvars, 
+        const ERing *K,
+        const EPolynomialRing *ZZDD, // if 0, set to the trivial poly ring ZZ[].
+        int *_degs   // grabbed
+        )
 {
+  // Create the two stashes, if needed
+  if (vec_stash == 0)
+    {
+      vec_stash = new stash("vectors", sizeof(evec0));
+      vecpoly_stash = new stash("poly vectors", sizeof(evec));
+    }
+
+  this->K = K;
+  bump_up(K);
+  this->nvars = nvars;
+  this->totalvars = totalvars;
+  this->evec_stash = vec_stash;  // Polynomial rings will change this.
+  if (ZZDD == 0)
+    ZZDD = ECommPolynomialRing::getTrivialRing();  // this is ZZ[].
+  this->ZD = ZZDD;
+  bump_up(ZZDD);
+  this->D = ZZDD->getMonoid()->toCommMonoid();
+  this->_degrees = _degs;
+  this->_cover = 0;
+  this->GBring = 0;
+}
+ERing::~ERing()
+{
+  // What to remove here?
+  delete _degrees;
+  bump_down(ZD);
+  bump_down(K);
 }
 
-ECommPolynomialRing::ECommPolynomialRing(
-      const ECoefficientRing *KK,
+const int *ERing::getDegreeVector(int i) const
+{
+  if (i < 0 || i > n_degrees())
+    {
+      gError << "internal error: getDegreeVector";
+      return _degrees;
+    }
+  return _degrees + n_vars() * i;
+}
+
+/////////////////////////
+// ECommPolynomialRing //
+/////////////////////////
+
+ECommPolynomialRing *ECommPolynomialRing::_trivial = 0;
+
+void ECommPolynomialRing::initialize(
+      const ERing *KK,
       const ECommMonoid *MM,
       const EPolynomialRing *ZD,
       int *degs)  // grabbed
-  : EPolynomialRing(KK,ZD,degs),
-    M(MM)
 {
+  EPolynomialRing::initialize(KK,MM->n_vars(),ZD,degs);
+  M = MM;
   bump_up(M);
 }
 
@@ -33,31 +79,69 @@ ECommPolynomialRing::~ECommPolynomialRing()
 }
 
 ECommPolynomialRing *ECommPolynomialRing::make(
-      const ECoefficientRing *KK,
+      const ERing *KK,
       const ECommMonoid *MM,
       const EPolynomialRing *ZD,
       int *degs)  // grabbed: length should be exactly nvars * ndegrees.
 {
-  ECommPolynomialRing *R = new ECommPolynomialRing(KK,MM,ZD,degs);
-  R->R1 = R->makeFreeModule(1);
+  ECommPolynomialRing *R = new ECommPolynomialRing;
+  R->initialize(KK,MM,ZD,degs);
   return R;
 }
 
-///////////////////////////////////
-// ESkewCommPolynomialRing //
-///////////////////////////////////
+void ECommPolynomialRing::makeTrivialRing()
+  // REWRITE!!
+{
+  ECommPolynomialRing *triv = new ECommPolynomialRing;
+  // Set all of the fields from ERing, EPolynomialRing, ECommPolynomialRing
+  const ECommMonoid *M = ECommMonoid::getTrivialMonoid();
+  
+  // ERing fields
+  triv->K = EZZ::make();
+  triv->nvars = 0;
+  triv->totalvars = 0;
+  triv->evec_stash = vecpoly_stash;
+  triv->D = M;
+  triv->ZD = triv;
+  triv->_degrees = 0;
+  triv->GBring = 0;
+  triv->_cover = 0;
 
-ESkewCommPolynomialRing::ESkewCommPolynomialRing(
-	      const ECoefficientRing *KK, 
+  // EPolynomialRing fields(s)
+  triv->epoly_stash = new stash("polynomials", sizeof(epoly));
+
+  // ECommPolynomialRing field(s)
+  triv->M = M;
+
+  bump_up(M);
+  bump_up(triv);  // Now it will never go away.
+  _trivial = triv;
+}
+
+const ECommPolynomialRing *ECommPolynomialRing::getTrivialRing()
+  // ZZ as a polynomial ring, trivial degree ring.
+{
+  if (_trivial == 0)
+    makeTrivialRing();
+  return _trivial;
+}
+
+/////////////////////////////
+// ESkewCommPolynomialRing //
+/////////////////////////////
+
+void ESkewCommPolynomialRing::initialize(
+	      const ERing *KK, 
 	      const ECommMonoid *MM, 
 	      const EPolynomialRing *ZD,
 	      int *degs, // grabbed
 	      int nskew, 
 	      int *skew)
-  : ECommPolynomialRing(KK,MM,ZD,degs), nskew(nskew)
 {
+  ECommPolynomialRing::initialize(KK,MM,ZD,degs);
   int i;
   int n = MM->n_vars();
+  this->nskew = nskew;
   this->skewvars = new bool[n];
   this->skewlist = new int[nskew];
   for (i=0; i<n; i++)
@@ -80,21 +164,21 @@ ESkewCommPolynomialRing::~ESkewCommPolynomialRing()
 }
 
 ESkewCommPolynomialRing *ESkewCommPolynomialRing::make(
-              const ECoefficientRing *KK, 
+              const ERing *KK, 
 	      const ECommMonoid *MM, 
 	      const EPolynomialRing *ZD,
 	      int *degs, // grabbed
 	      int nskew, 
 	      int *skew)
 {
-  ESkewCommPolynomialRing *R = new ESkewCommPolynomialRing(KK,MM,ZD,degs,nskew,skew);
-  R->R1 = R->makeFreeModule(1);
+  ESkewCommPolynomialRing *R = new ESkewCommPolynomialRing;
+  R->initialize(KK,MM,ZD,degs,nskew,skew);
   return R;
 }
 
-EVector *ESkewCommPolynomialRing::makeTerm(
+EVector ESkewCommPolynomialRing::vec_term(
           const EFreeModule *F, 
-	  const field a, 
+	  const ERingElement a, 
 	  const monomial *m, 
 	  int x) const
 {
@@ -102,7 +186,7 @@ EVector *ESkewCommPolynomialRing::makeTerm(
   for (int i=0; i<nskew; i++)
     if (exponents[skewlist[i]] > 1) 
       return F->zero();
-  return ECommPolynomialRing::makeTerm(F,a,m,x);
+  return ECommPolynomialRing::vec_term(F,a,m,x);
 }
 
 int ESkewCommPolynomialRing::exp_skew_vars(const int *exp, int *result) const
@@ -161,63 +245,6 @@ int ESkewCommPolynomialRing::skew_mult_sign(const monomial *m, const monomial *n
 	return 0;
     }
 }
-
-/*
- * mult1: multiply the single term 'f' by the vector 'v'.
- */
-
-EVector *ESkewCommPolynomialRing::skew_mult1(
-    const EFreeModule *resultF,
-    bool component_from_f,
-    const poly *f,			// A single term, either in the ring, or in resultF.
-    const poly *g) const
-{
-  EVector *result = new EVector;
-  poly head;
-  poly *res = &head;
-  int len = 0;
-  for (const poly *h = g; h != 0; h=h->next)
-    {
-      int sgn = skew_mult_sign(f->monom, h->monom);
-      if (sgn == 0) continue;
-      len++;
-      poly *tm = newTerm();
-      tm->coeff = K->mult(f->coeff, h->coeff);
-      if (sgn < 0)
-	{
-	  field a = K->negate(tm->coeff);
-	  K->remove(tm->coeff);
-	  tm->coeff = a;
-	}
-      tm->monom = M->mult(f->monom, h->monom);
-      tm->component = (component_from_f ? f->component : h->component);
-      res->next = tm;
-      res = res->next;
-    }
-  res->next = 0;
-  result->len = len;
-  result->elems = head.next;
-  result->F = resultF;
-  return result;
-}
-
-EVector *ESkewCommPolynomialRing::mult(
-    const EVector *f, 
-    const EVector *g,
-    bool component_from_f) const
-{
-  const EFreeModule *resultF = (component_from_f ? f->F : g->F);
-  if (f->len == 0) return resultF->zero();
-  if (f->len == 1) return skew_mult1(resultF,component_from_f,f->elems,g->elems);
-  EVectorHeap h(resultF);
-  for (poly *fterm = f->elems; fterm != 0; fterm = fterm->next)
-    {
-      EVector *gv = skew_mult1(resultF,component_from_f,fterm,g->elems);
-      h.add(gv);
-    }
-  return h.value();
-}
-
 ////////////////////
 // EWeylAlgebra /////
 ////////////////////
@@ -226,26 +253,29 @@ int EWeylAlgebra::binomtop = 15;
 int EWeylAlgebra::diffcoeffstop = 10;
 int **EWeylAlgebra::binomtable = 0;
 int **EWeylAlgebra::diffcoeffstable = 0;
-EWeylAlgebra::EWeylAlgebra(const ECoefficientRing *KK, 
-                           const ECommMonoid *MM, 
-                           const EPolynomialRing *ZD,
-                           int *degs,  // grabbed, length not checked
-			   int npairs, 
-			   const int *deriv, const int *comm,
-			   bool is_homog, int homog_var)
-  : ECommPolynomialRing(KK,MM,ZD,degs), 
-    nderivatives(npairs),
-    homogeneous_weyl_algebra(is_homog),
-    homog_var(homog_var)
+
+void EWeylAlgebra::initialize(
+        const ERing *KK, 
+        const ECommMonoid *MM, 
+        const EPolynomialRing *ZD,
+        int *degs,  // grabbed, length not checked
+	int npairs, 
+        const int *deriv, const int *comm,
+	bool is_homog, int homog_var)
 {
-  derivative = new int[nderivatives];
-  commutative = new int[nderivatives];
+  ECommPolynomialRing::initialize(KK,MM,ZD,degs);
+  this->nderivatives = npairs;
+  this->homogeneous_weyl_algebra = is_homog;
+  this->homog_var = homog_var;
+
+  this->derivative = new int[nderivatives];
+  this->commutative = new int[nderivatives];
   for (int i=0; i<nderivatives; i++)
     {
       derivative[i] = deriv[i];
       commutative[i] = comm[i];
     }
-  initialize();
+  initialize1();
 }
 
 EWeylAlgebra::~EWeylAlgebra()
@@ -254,7 +284,7 @@ EWeylAlgebra::~EWeylAlgebra()
   delete [] commutative;
 }
 
-EWeylAlgebra *EWeylAlgebra::make(const ECoefficientRing *KK, 
+EWeylAlgebra *EWeylAlgebra::make(const ERing *KK, 
                                  const ECommMonoid *MM, 
                                  const EPolynomialRing *ZD,
                                  int *degs,  // grabbed, length not checked
@@ -269,12 +299,12 @@ EWeylAlgebra *EWeylAlgebra::make(const ECoefficientRing *KK,
       if (comm[i] < 0 || comm[i] >= nvars)
 	return 0;
     }
-  EWeylAlgebra *R = new EWeylAlgebra(KK,MM,ZD,degs,npairs,deriv,comm,false,0);
-  R->R1 = R->makeFreeModule(1);
+  EWeylAlgebra *R = new EWeylAlgebra;
+  R->initialize(KK,MM,ZD,degs,npairs,deriv,comm,false,0);
   return R;
 }
 
-EWeylAlgebra *EWeylAlgebra::make(const ECoefficientRing *KK, 
+EWeylAlgebra *EWeylAlgebra::make(const ERing *KK, 
                                  const ECommMonoid *MM, 
                                  const EPolynomialRing *ZD,
                                  int *degs,  // grabbed, length not checked
@@ -292,13 +322,12 @@ EWeylAlgebra *EWeylAlgebra::make(const ECoefficientRing *KK,
       if (comm[i] < 0 || comm[i] >= nvars)
 	return 0;
     }
-  EWeylAlgebra *R = new EWeylAlgebra(KK,MM,ZD,degs,npairs,deriv,comm,true,homog_var);
-  R->R1 = R->makeFreeModule(1);
+  EWeylAlgebra *R = new EWeylAlgebra;
+  R->initialize(KK,MM,ZD,degs,npairs,deriv,comm,true,homog_var);
   return R;
 }
 
-
-void EWeylAlgebra::initialize()
+void EWeylAlgebra::initialize1()
 {
   if (binomtable == 0)
     {
@@ -350,7 +379,7 @@ void EWeylAlgebra::initialize()
     }
 }
 
-field EWeylAlgebra::binomial(int top, int bottom) const
+ERingElement EWeylAlgebra::binomial(int top, int bottom) const
 {
   // This should be located elsewhere
   // Assumption: bottom <= top, top >= 0, bottom >= 0.
@@ -358,29 +387,29 @@ field EWeylAlgebra::binomial(int top, int bottom) const
   if (bottom == 1) return K->from_int(top);
   if (top <= binomtop)
     return K->from_int(binomtable[top][bottom]);
-  field result = K->one();
+  ERingElement result = K->one();
   for (int a=0; a<bottom; a++)
     {
-      field b = K->from_int(top-a);
-      field result1 = K->mult(result,b);
+      ERingElement b = K->from_int(top-a);
+      ERingElement result1 = K->mult(result,b);
       K->remove(result);
       K->remove(b);
-      field c = K->from_int(a+1);
+      ERingElement c = K->from_int(a+1);
       result = K->divide(result1,c);
       K->remove(c);
     }
   return result;
 }
 
-field EWeylAlgebra::multinomial(field c, const int *top, const int *bottom) const
+ERingElement EWeylAlgebra::multinomial(ERingElement c, const int *top, const int *bottom) const
 {
   // Assumed: top[i] >= bottom[i] for all i.
-  field result = K->clone(c);
+  ERingElement result = K->clone(c);
   for (int i=0; i<nderivatives; i++)
     if (bottom[i] > 0)
       {
-	field a = binomial(top[i],bottom[i]);
-	field b = K->mult(a,result);
+	ERingElement a = binomial(top[i],bottom[i]);
+	ERingElement b = K->mult(a,result);
 	K->remove(a);
 	K->remove(result);
 	result = b;
@@ -414,125 +443,6 @@ bool EWeylAlgebra::increment(int *current_derivative,
   return true;
 }
 
-EVector *EWeylAlgebra::mult(const EVector *f, const EVector *g, bool component_from_f) const
-{
-  const EFreeModule *resultF = (component_from_f ? f->F : g->F);
-  if (f->len == 0) return resultF->zero();
-  if (f->len == 1) return weyl_mult1(resultF,component_from_f,f->elems,g->elems);
-  EVectorHeap h(resultF);
-  for (poly *fterm = f->elems; fterm != 0; fterm = fterm->next)
-    {
-      EVector *gv = weyl_mult1(resultF,component_from_f,fterm,g->elems);
-      h.add(gv);
-    }
-  return h.value();
-}
-
-EVector *EWeylAlgebra::weyl_mult1(
-    const EFreeModule *resultF,
-    bool component_from_f,
-    const poly *f,			// A single term, either in the ring, or in resultF.
-    const poly *g) const
-{
-  int *top_derivative = new int[nderivatives];
-  int *current_derivative = new int[nderivatives];
-  EVectorHeap result(resultF);
-
-  extractDerivativePart(M->to_exponents(f->monom), top_derivative);
-  for (int i=0; i<nderivatives; i++) current_derivative[i] = 0;
-  // Loop over each current_derivative <= top_derivative.
-  do {
-      field c = multinomial(f->coeff, top_derivative, current_derivative);
-      EVector *h = diff(resultF,component_from_f,c,f,current_derivative,g);
-      K->remove(c);
-      result.add(h);
-  } while (increment(current_derivative, top_derivative));
-
-  delete [] top_derivative;
-  delete [] current_derivative;
-  return result.value();
-}
-
-EVector *EWeylAlgebra::diff(const EFreeModule *resultF,
-			  bool component_from_f,
-			  const field c,
-			  const poly *f, // A single monomial
-			  const int *derivatives, 
-			  const poly *v) const
-{
-  // This isn't really differentiation, but it is close.
-  // It is the inner loop of the multiplication routine for the Weyl algebra.
-  // Returns: sum of d*[n,derivative]*c*n*m/(derivative,derivatives) e_i, for each
-  // term d*n*e_i of v which satisfies: x part of n is >= derivatives,
-  // and where the multiplication and division of monomials is in the commutative
-  // monoid.
-
-  poly head;
-  poly *result = &head;
-  int i, len = 0;
-  int *exp = new int[nderivatives];
-  int *deriv_exp = new int[M->n_vars()];
-  for (i=0; i<M->n_vars(); i++)
-    deriv_exp[i] = 0;
-  if (homogeneous_weyl_algebra)
-    {
-      int sum = 0;
-      for (i=0; i<nderivatives; i++)
-	{
-	  sum += 2*derivatives[i];
-	  deriv_exp[derivative[i]] = derivatives[i];
-	  deriv_exp[commutative[i]] = derivatives[i];
-	}
-      deriv_exp[homog_var] = sum;
-    }
-  else
-    for (i=0; i<nderivatives; i++)
-      {
-	deriv_exp[derivative[i]] = derivatives[i];
-	deriv_exp[commutative[i]] = derivatives[i];
-      }
-  monomial *deriv_monomial = M->monomial_from_exponents(deriv_exp);
-
-  for (const poly *t = v; t != 0; t = t->next)
-    {
-      // This first part checks whether the x-part of t->monom is divisible by
-      // 'derivatives'.  If so, true is returned, and the resulting monomial is set.
-      extractCommutativePart(M->to_exponents(t->monom), exp);
-      if (divides(derivatives,exp))
-	{
-	  field a = diff_coefficients(c,derivatives,exp);
-	  if (K->is_zero(a))
-	    {
-	      K->remove(a);
-	      continue;
-	    }
-	  field b = K->mult(a, t->coeff);
-	  K->remove(a);
-	  if (K->is_zero(b))
-	    {
-	      K->remove(b);
-	      continue;
-	    }
-	  // Now compute the new monomial:
-	  poly *g = newTerm();
-	  g->coeff = b;
-	  monomial *m1 = M->mult(f->monom,t->monom);
-	  g->monom = M->divide(m1,deriv_monomial);
-	  g->component = (component_from_f ? f->component : t->component);
-	  result->next = g;
-	  result = g;
-	  len++;
-	}
-    }
-  result->next = 0;
-  EVector *resultv = new EVector;
-  resultv->len = len;
-  resultv->F = resultF;
-  resultv->elems = head.next;
-  delete [] exp;
-  return resultv;
-}
-
 void EWeylAlgebra::extractDerivativePart(const int *exponents, int *result_derivatives) const
 {
   // exponents: 0..nvars-1
@@ -548,16 +458,16 @@ void EWeylAlgebra::extractCommutativePart(const int *exponents, int *result_exp)
     result_exp[i] = exponents[commutative[i]];
 }
 
-field EWeylAlgebra::diff_coefficients(const field c, const int *derivatives, const int *exponents) const
+ERingElement EWeylAlgebra::diff_coefficients(const ERingElement c, const int *derivatives, const int *exponents) const
 {
-  field result = K->clone(c);
+  ERingElement result = K->clone(c);
   for (int i=0; i<nderivatives; i++)
     {
       if (derivatives[i] == 0) continue;
       if (exponents[i] <= diffcoeffstop)
 	{
-	  field g = K->from_int(diffcoeffstable[exponents[i]][derivatives[i]]);
-	  field h = K->mult(result,g);
+	  ERingElement g = K->from_int(diffcoeffstable[exponents[i]][derivatives[i]]);
+	  ERingElement h = K->mult(result,g);
 	  K->remove(g);
 	  K->remove(result);
 	  result = h;
@@ -566,8 +476,8 @@ field EWeylAlgebra::diff_coefficients(const field c, const int *derivatives, con
 	}
       else for (int j=derivatives[i]-1; j>=0; j--)
 	{
-	  field g = K->from_int(exponents[i]-j);
-	  field h = K->mult(result,g);
+	  ERingElement g = K->from_int(exponents[i]-j);
+	  ERingElement h = K->mult(result,g);
 	  K->remove(g);
 	  K->remove(result);
 	  result = h;
@@ -581,12 +491,14 @@ field EWeylAlgebra::diff_coefficients(const field c, const int *derivatives, con
 //////////////////////
 // ENCPolynomialRing //
 //////////////////////
-ENCPolynomialRing::ENCPolynomialRing(const ECoefficientRing *KK, 
-                                     const ENCMonoid *MM,
-                                     const EPolynomialRing *ZD,
-                                     int *degs)  // grabbed, length not checked
-:  EPolynomialRing(KK,ZD,degs), M(MM)
+void ENCPolynomialRing::initialize(
+      const ERing *KK,
+      const ENCMonoid *MM,
+      const EPolynomialRing *ZD,
+      int *degs)  // grabbed
 {
+  EPolynomialRing::initialize(KK,MM->n_vars(),ZD,degs);
+  M = MM;
   bump_up(M);
 }
 
@@ -595,13 +507,14 @@ ENCPolynomialRing::~ENCPolynomialRing()
   bump_down(M);
 }
 
-ENCPolynomialRing *ENCPolynomialRing::make(const ECoefficientRing *KK, 
-                                           const ENCMonoid *MM,
-                                           const EPolynomialRing *ZD,
-                                           int *degs)  // grabbed, length not checked
+ENCPolynomialRing *ENCPolynomialRing::make(
+      const ERing *KK,
+      const ENCMonoid *MM,
+      const EPolynomialRing *ZD,
+      int *degs)  // grabbed: length should be exactly nvars * ndegrees.
 {
-  ENCPolynomialRing *R = new ENCPolynomialRing(KK,MM,ZD,degs);
-  R->R1 = R->makeFreeModule(1);
+  ENCPolynomialRing *R = new ENCPolynomialRing;
+  R->initialize(KK,MM,ZD,degs);
   return R;
 }
 
@@ -609,98 +522,27 @@ ENCPolynomialRing *ENCPolynomialRing::make(const ECoefficientRing *KK,
 // EPolynomialRing //
 ///////////////////////////
 
-EPolynomialRing *EPolynomialRing::_trivial = 0;
-
-void ECommPolynomialRing::initializeTrivialRing()
+void EPolynomialRing::initialize(
+             const ERing *K, 
+             int nvars,  // only the variables from the monoid, not from K.
+             const EPolynomialRing *ZZDD,
+             int * _degs  // grabbed
+             )
 {
-  if (_trivial != 0) return;
-  ECommPolynomialRing *triv = new ECommPolynomialRing;
-  triv->D = ECommMonoid::getTrivialMonoid();
-  triv->ZD = _trivial;
-  triv->M = ECommMonoid::getTrivialMonoid();
-  bump_up(triv->M);
-  bump_up(triv);  // Now it will never go away.
-  triv->R1 = triv->makeFreeModule(1);
-  _trivial = triv;
+  ERing::initialize(nvars, 
+                    nvars + K->n_vars(),
+                    K,
+                    ZZDD,
+                    _degs);
+  epoly_stash = new stash("polynomials", sizeof(epoly));
+  evec_stash = vecpoly_stash;
 }
-
-const EPolynomialRing *EPolynomialRing::getTrivialRing()
-  // ZZ as a polynomial ring, trivial degree ring.
-{
-  if (_trivial == 0)
-    ECommPolynomialRing::initializeTrivialRing();
-  return _trivial;
-}
-
-EPolynomialRing::EPolynomialRing()
-  : K(EZZ::ZZ()),
-    polyblocks(0),
-    freelist(0),
-    D(0),
-    ZD(0),
-    _degrees(0),
-    R1(0)
-{
-  // Only used to construct the trivial ring.
-}
-
-EPolynomialRing::EPolynomialRing(const ECoefficientRing *KK, 
-                                 const EPolynomialRing *ZZDD,
-                                 int * degs  // grabbed
-                                 )
-  : K(KK),
-    polyblocks(0),
-    freelist(0),
-    D(0),
-    ZD(ZZDD),
-    _degrees(degs),
-    R1(0)
-{
-  if (ZD == 0)
-    {
-      ECommPolynomialRing::initializeTrivialRing();
-      ZD = _trivial;
-    }
-  D = ZD->getMonoid();
-  bump_up(K);
-  bump_up(ZD);
-}
-
-EPolynomialRing::EPolynomialRing(const ECoefficientRing *KK)
-  : K(KK),
-    polyblocks(0),
-    freelist(0),
-    D(0),
-    ZD(0),
-    _degrees(0),
-    R1(0)
-{
-  if (ZD == 0)
-    {
-      ECommPolynomialRing::initializeTrivialRing();
-      ZD = _trivial;
-    }
-  D = ZD->getMonoid();
-  bump_up(K);
-  bump_up(ZD);
-}
-
 EPolynomialRing::~EPolynomialRing()
 {
-  bump_down(K);
+  delete epoly_stash;
 }
 
-const ENCPolynomialRing *EPolynomialRing::toENCPolynomialRing() const
-{
-  return 0;
-}
-
-const EPolynomialRing *EPolynomialRing::getCover() const
-{
-  return this;
-}
-
-EFreeModule *EPolynomialRing::makeFreeModule(int rank) const
+EFreeModule *ERing::makeFreeModule(int rank) const
   // Make a free module over this ring.
 {
   if (rank < 0)
@@ -708,10 +550,8 @@ EFreeModule *EPolynomialRing::makeFreeModule(int rank) const
       gError << "freemodule rank must be non-negative";
       return 0;
     }
-  if (rank == 1 && R1 != 0)
-    return R1;
   EFreeModule *result;
-  if (isQuotient())
+  if (getCover())
     {
       EFreeModule *F = getCover()->makeFreeModule(rank);
       result = new EFreeModule(this,F);
@@ -725,7 +565,7 @@ EFreeModule *EPolynomialRing::makeFreeModule(int rank) const
   return result;
 }
 
-EFreeModule *EPolynomialRing::makeFreeModule(int rank, const monomial **degrees) const
+EFreeModule *ERing::makeFreeModule(int rank, const monomial **degrees) const
   // Make a free module over this ring.
 {
   if (rank < 0)
@@ -734,7 +574,7 @@ EFreeModule *EPolynomialRing::makeFreeModule(int rank, const monomial **degrees)
       return 0;
     }
   EFreeModule *result;
-  if (isQuotient())
+  if (getCover())
     {
       EFreeModule *F = getCover()->makeFreeModule(rank,degrees);
       result = new EFreeModule(this,F);
@@ -748,10 +588,11 @@ EFreeModule *EPolynomialRing::makeFreeModule(int rank, const monomial **degrees)
   return result;
 }
 
-EFreeModule *EPolynomialRing::makeFreeModule(int rank, 
-                                      const monomial **degrees,  // grabbed
-                                      const monomial **ordering, // grabbed
-                                      int *tiebreaks) const     // grabbed
+EFreeModule *EPolynomialRing::makeSchreyerFreeModule(
+       int rank, 
+       const monomial **degrees,  // grabbed
+       const monomial **ordering, // grabbed
+       int *tiebreaks) const     // grabbed
 {
   if (rank < 0)
     {
@@ -759,9 +600,9 @@ EFreeModule *EPolynomialRing::makeFreeModule(int rank,
       return 0;
     }
   EFreeModule *result;
-  if (isQuotient())
+  if (getCover())
     {
-      EFreeModule *F = getCover()->makeFreeModule(rank,degrees,ordering,tiebreaks);
+      EFreeModule *F = getCover()->makeSchreyerFreeModule(rank,degrees,ordering,tiebreaks);
       result = new EFreeModule(this,F);
     }
   else
@@ -773,7 +614,7 @@ EFreeModule *EPolynomialRing::makeFreeModule(int rank,
   return result;
 }
 
-EFreeModule *EPolynomialRing::makeFreeModule(const EMatrix *m) const
+EFreeModule *EPolynomialRing::makeSchreyerFreeModule(const EMatrix *m) const
 {
   const EFreeModule *G = m->getSource();
   if (G->getRing() != this)
@@ -789,350 +630,71 @@ EFreeModule *EPolynomialRing::makeFreeModule(const EMatrix *m) const
   for (int i=0; i<rank; i++)
     {
       degrees[i] = G->getDegree(i);
-      if (m->column(i)->isZero())
+      if (m->column(i).isZero())
         {
           ordering[i] = M->one();
           tiebreaks[i] = 0;
         }
       else
         {
-          ordering[i] = m->column(i)->elems->monom;
-          tiebreaks[i]  = m->column(i)->elems->component;
+          ordering[i] = m->column(i).elems->monom;
+          tiebreaks[i]  = m->column(i).elems->component;
         }
     }
-  return makeFreeModule(rank,degrees,ordering,tiebreaks);
+  return makeSchreyerFreeModule(rank,degrees,ordering,tiebreaks);
 }
 
-const int *EPolynomialRing::getDegreeVector(int i) const
+
+epoly *EPolynomialRing::divide(const epoly *a, const epoly *b) const
 {
-  if (i < 0 || i > n_degrees())
+  gError << "division not yet implemented here";
+  return 0;
+}
+
+epoly *EPolynomialRing::power(const epoly *f, int n) const
+{
+  // The exponent 'n' should be >= 0 here.
+  epoly * prod = _from_int(1);
+  epoly * base = clone(f);
+  epoly * tmp;
+
+  for (;;)
     {
-      gError << "internal error: getDegreeVector";
-      return _degrees;
+      if ((n % 2) != 0)
+	{
+	  tmp = mult(base, prod);
+	  remove(prod);
+	  prod = tmp;
+	}
+      n >>= 1;
+      if (n == 0)
+	{
+	  remove(base);
+	  return prod;
+	}
+      else
+	{
+	  tmp = mult(base, base);
+	  remove(base);
+	  base = tmp;
+	}
     }
-  return _degrees + n_vars() * i;
 }
 
-void EPolynomialRing::deleteTerm(poly *f) const
-{
-  if (f == 0) return;
-  f->next = freelist;
-  ((EPolynomialRing *) this)->freelist = f;
-}
-
-void EPolynomialRing::delete_terms(poly *f) const
-{
-  while (f != 0) {
-    poly *tmp = f;
-    f = f->next;
-    deleteTerm(tmp);
-  }
-}
-
-poly *EPolynomialRing::newBlockOfTerms() const
-{
-  block_polys *F = new block_polys;
-  F->next = polyblocks;
-  ((EPolynomialRing *) this)->polyblocks = F;
-  F->blocks[N_POLYS_PER_BLOCK-1].next = 0;
-  for (int i=N_POLYS_PER_BLOCK-2; i>=0; --i)
-    F->blocks[i].next = &F->blocks[i+1];
-  return &F->blocks[0];
-}
-
-poly *EPolynomialRing::newTerm() const
-{
-  if (freelist == 0)
-    ((EPolynomialRing *) this)->freelist = newBlockOfTerms();
-
-  poly *result = freelist;
-  ((EPolynomialRing *) this)->freelist = freelist->next;
-  result->next = 0;
-  return result;
-}
-
-poly *EPolynomialRing::copy_term(const poly *t) const
-{
-  poly *result = newTerm();
-  result->coeff = t->coeff;  // Copy this!! ??
-  result->component = t->component;
-  result->monom = t->monom;
-  result->next = 0;
-  return result;
-}
-
-int EPolynomialRing::n_terms(const poly *f) const
-{
-  int result = 0;
-  for ( ; f != 0; f=f->next) result++;
-  return result;
-}
-
-int EPolynomialRing::add_to(poly *&f, poly *&g) const
-{
-  // f += g, and the number of monomials of the result is returned.
-  const EMonoid *M = getMonoid();
-  if (g == 0) return n_terms(f);
-  if (f == 0) { f = g; g = 0; return n_terms(f); }
-  int len = 0;
-  poly head;
-  poly *result = &head;
-  while (1)
-    switch (M->compare(f->monom, f->component, 
-		       g->monom, g->component))
-      {
-      case LT:
-	result->next = g;
-	result = result->next;
-	len++;
-	g = g->next;
-	if (g == 0) 
-	  {
-	    len += n_terms(f);
-	    result->next = f; 
-	    f = head.next;
-	    return len;
-	  }
-	break;
-      case GT:
-	result->next = f;
-	result = result->next;
-	len++;
-	f = f->next;
-	if (f == 0) 
-	  {
-	    len += n_terms(g);
-	    result->next = g;
-	    f = head.next;
-	    g = 0; 
-	    return len;
-	  }
-	break;
-      case EQ:
-	poly *tmf = f;
-	poly *tmg = g;
-	f = f->next;
-	g = g->next;
-	tmf->coeff = K->add(tmf->coeff, tmg->coeff);
-	if (K->is_zero(tmf->coeff))
-	  {
-	    K->remove(tmf->coeff);
-	    deleteTerm(tmf);
-	  }
-	else
-	  {
-	    result->next = tmf;
-	    result = result->next;
-	    len++;
-	  }
-	K->remove(tmg->coeff);
-	deleteTerm(tmg);
-	if (g == 0) 
-	  {
-	    len += n_terms(f);
-	    result->next = f;
-	    f = head.next;
-	    return len;
-	  }
-	if (f == 0) 
-	  {
-	    len += n_terms(g);
-	    result->next = g; 
-	    f = head.next;
-	    g = 0;
-	    return len;
-	  }
-	break;
-      }
-}
-
-void EPolynomialRing::addTo(EVector *&F, EVector *&G) const
-{
-  const EMonoid *M = getMonoid();
-  poly *f = F->elems;
-  poly *g = G->elems;
-  G->elems = 0;
-  F->len += G->len;
-  G->len = 0;
-  if (g == 0) return;
-  if (f == 0) { F->elems = g; return; }
-  poly head;
-  poly *result = &head;
-  while (1)
-    switch (M->compare(f->monom, f->component, 
-		       g->monom, g->component))
-      {
-      case LT:
-	result->next = g;
-	result = result->next;
-	g = g->next;
-	if (g == 0) 
-	  {
-	    result->next = f; 
-	    F->elems = head.next;
-	    return;
-	  }
-	break;
-      case GT:
-	result->next = f;
-	result = result->next;
-	f = f->next;
-	if (f == 0) 
-	  {
-	    result->next = g; 
-	    F->elems = head.next;
-	    return;
-	  }
-	break;
-      case EQ:
-	poly *tmf = f;
-	poly *tmg = g;
-	f = f->next;
-	g = g->next;
-	tmf->coeff = K->add(tmf->coeff, tmg->coeff);
-	if (K->is_zero(tmf->coeff))
-	  {
-	    F->len--;
-	    K->remove(tmf->coeff);
-	    deleteTerm(tmf);
-	  }
-	else
-	  {
-	    result->next = tmf;
-	    result = result->next;
-	  }
-	F->len--;
-	K->remove(tmg->coeff);
-	deleteTerm(tmg);
-	if (g == 0) 
-	  {
-	    result->next = f; 
-	    F->elems = head.next;
-	    return;
-	  }
-	if (f == 0) 
-	  {
-	    result->next = g; 
-	    F->elems = head.next;
-	    return;
-	  }
-	break;
-      }
-}
-
-EVector *EPolynomialRing::makeTerm(const EFreeModule *F, const field a, const monomial *m, int x) const
-{
-  if (K->is_zero(a)) return F->zero();
-  EVector *result = new EVector;
-  result->F = F;
-
-  result->len = 1;
-  result->elems = newTerm();
-  result->elems->coeff = a;
-  result->elems->component = x;
-  result->elems->monom = m;
-  result->elems->next = 0;
-
-  return result;
-}
-
-/*
- * mult1: multiply the single term 'f' by the vector 'g'.  The component is taken from
- * 'f' if is_left is true, otherwise the component comes from 'g'.
- */
-
-EVector *EPolynomialRing::mult1(
-    const EFreeModule *resultF,
-    bool is_left,
-    const poly *f, 
-    const poly *g) const
-{
-  EVector *result = new EVector;
-  poly head;
-  poly *res = &head;
-  int len = 0;
-  for (const poly *h = g; h != 0; h=h->next)
-    {
-      len++;
-      poly *tm = newTerm();
-      tm->coeff = K->mult(f->coeff, h->coeff);
-      tm->monom = getMonoid()->mult(f->monom, h->monom);
-      tm->component = (is_left ? f->component : h->component);
-      res->next = tm;
-      res = res->next;
-    }
-  res->next = 0;
-  result->len = len;
-  result->elems = head.next;
-  result->F = resultF;
-  return result;
-}
-
-EVector *EPolynomialRing::mult(const EVector *f, const EVector *g, bool component_from_f) const
-{
-  const EFreeModule *resultF = (component_from_f ? f->F : g->F);
-  if (f->len == 0) return resultF->zero();
-  if (f->len == 1) return mult1(resultF,component_from_f,f->elems,g->elems);
-  EVectorHeap h(resultF);
-  for (poly *fterm = f->elems; fterm != 0; fterm = fterm->next)
-    {
-      EVector *gv = mult1(resultF,component_from_f,fterm,g->elems);
-      h.add(gv);
-    }
-  return h.value();
-}
-// Multiply: One of these two must be a vector in R1.  The result is in the
-// other...
-EVector *EPolynomialRing::multiply(
-    const EVector *f, 
-    const EVector *g) const
-{
-  return mult(f,g,false);
-}
-
-EVector *EPolynomialRing::rightMultiply(
-    const EVector *f, 
-    const EVector *g) const
-{
-  return mult(f,g,true);
-}
-
-///////////////////////////////
-// Ring Element Construction //
-///////////////////////////////
-
-ERingElement *EPolynomialRing::fromInteger(int a) const
-{
-  field b = K->from_int(a);
-  return makeTerm(R1,b,getMonoid()->one(),0);
-}
-
-ERingElement *EPolynomialRing::makeRingVariable(int v, int exponent) const
+ERingElement EPolynomialRing::make_ring_variable(int v, int exponent) const
 {
   intarray term;
   term.append(v);
   term.append(exponent);
-  monomial *m = getMonoid()->monomial_from_variable_exponent_pairs(term);
-  if (m == 0) return 0;
+  const monomial *m = getMonoid()->monomial_from_variable_exponent_pairs(term);
+  if (m == 0) return zero();
 
-  return makeTerm(R1,getCoefficientRing()->one(), m, 0);
+  return make_term(getCoefficientRing()->one(), m);
 }
 
-ERingElement *EPolynomialRing::makeRingTerm(const ERingElement *c, const intarray &term) const
+ERingElement EPolynomialRing::make_term(const ERingElement c, const intarray &term) const
 {
-  // Now check that the coefficient ring of 'coeff' is the same as the coefficient ring.
-  if ((c->getFreeModule()->getRing()->getCoefficientRing() != getCoefficientRing())
-      || (c->getFreeModule()->getRing()->n_vars() > 0))
-    {
-      gError << "expected coefficient in coefficient ring";
-      return 0;
-    }
-  if (c->len == 0)
-    return R1->zero();
-  field a = c->elems->coeff;
-
-  monomial *m = getMonoid()->monomial_from_variable_exponent_pairs(term);
-  if (m == 0) return 0;
-
-  return makeTerm(R1,a, m, 0);
+  const monomial *m = getMonoid()->monomial_from_variable_exponent_pairs(term);
+  //  ERingElement a = K->clone(c);
+  return make_term(c, m);
 }

@@ -52,6 +52,7 @@ private:
   };
 
   int nvars;
+  int ncommvars;
   int nslots;
   int componentloc;		// If 5, then the component goes between slot 4 and slot 5.
 
@@ -60,9 +61,15 @@ private:
 
   int n_nc_blocks;		// number of non-commutative blocks
 
+  bool * is_comm_var;		// An array 0..nvars-1: is the ith variable commutative?
+				// This is a reference to the array created for the monoid.
+				// So, we don't free it here.  This is ONLY used in the
+				// non-commutative case in the routine encode_noncommutative.
+
   EMonomialOrder();		// Private: The only routine that creates a monomial order is
 				// 'make'.
 
+  
   void append_block(mon_order_node *b);
   void append_block(int nzeros, mon_order_node *b);
   mon_order_node* find_block(int v) const;
@@ -95,20 +102,22 @@ public:
   
   // Get features of the monomial order
   int n_vars() const {return nvars;}     // Size of 'expvector's
+  int n_commuting_vars() const {return ncommvars;}
   int n_slots() const {return nslots;}   // Size of 'partial sums'
   int n_blocks() const {return nblocks;}
   int component_loc() const {return componentloc;}
   int n_slots(int n) const;  // Number of slots used in the first n blocks in the order.
   
-  // Encode and decode
-  void encode(const int *exp, int *result_psums) const;
+  // Encode and decode -- These are LOW LEVEL easy to MISUSE functions
+  void encode_commutative(const int *exponents, int *result) const;
+  void encode_noncommutative(const intarray &varexp, int *result) const;
   void decode(const int *psums, int *result_exp) const;
 
   // Non-commutative stuff
   void set_noncommutative_parameters(int &nblocks,
 				     int * &nclengths,
 				     bool * & isncslots,
-				     bool * & is_comm) const;
+				     bool * & is_comm);
 
   // I/O:  All of these routines are in io.cpp
   void text_out(buffer &o) const;

@@ -13,27 +13,29 @@ class ERingMap : public type
     bool monom_is_one;
     bool bigelem_is_one;
 
-    field coeff;		// this variable maps to coeff*monom*bigelem
+    ERingElement coeff;		// this variable maps to coeff*monom*bigelem
 				// where coeff is 1 if isone is true.
 				// and   monom is 1 if mon_isone is true,
 				// and   bigelem is 1 if bigone_isone is true.
 				// coeff is an element of type K.
-    monomial *monom;		// This is a monomial in R.
-    EVector *bigelem;
+    const monomial *monom;	// This is a monomial in R.
+    ERingElement bigelem;
   };
 
-  const EPolynomialRing *R;	// This is the target ring.
-
+  bool ispolyring;
+  const ERing *R;		// This is the target ring.
+  const EMonoid *M;		
+  const ERing *K;		// This is the coefficient ring of the target, 
+				// if R is a polynomial ring
   int nvars;			// Number of variables in the source ring.
   var *_elem;			// elem[i] is the structure representing the image of
 				// the i th variable.
 public:
-  ERingMap(const EMatrix &m);
+  ERingMap(const EMatrix *m);
   ~ERingMap();
 
-  void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
-  void binary_out(ostream &o) const;
+  virtual void bin_out(buffer &o) const;
   static EFreeModule *binary_in(istream &i);
 
   virtual ERingMap * cast_to_ERingMap() { return this; }
@@ -44,19 +46,24 @@ public:
   const char * type_name   () const { return "ERingMap"; }
 
 public:
-  const EPolynomialRing *getTarget() const { return R; }
+  const ERing *getTarget() const { return R; }
 
-  EVector *evaluateTerm(const EFreeModule *Ftarget,
-			const ECoefficientRing *K, const EMonoid *M, 
-			field a, monomial *m, int x) const;
+  ERingElement evaluateTerm(
+			const ERing *K,
+			ERingElement a, const intarray &varexp) const;
+
+  EVector evaluateVectorTerm(const EFreeModule *Ftarget,
+			const ERing *K,
+			ERingElement a, const intarray &varexp, int x) const;
 
   // Each ring type must implement:
   // Evector *evaluate(const ERingMap *map, const EFreeModule *Ftarget,
   //                   const EVector *v)
   // This routine should call evaluateTerm
 
-  EVector *evaluate(const EFreeModule *Ftarget, EVector *v) const;
-  EMatrix *evaluate(const EFreeModule *Ftarget, EMatrix *m) const;
+  ERingElement evaluate(const ERing *source, ERingElement f) const;
+  EVector evaluate(const EFreeModule *Ftarget, const EVector &v) const;
+  EMatrix *evaluate(const EFreeModule *Ftarget, const EMatrix *m) const;
 };
 
 #endif

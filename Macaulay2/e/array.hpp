@@ -36,6 +36,8 @@ public:
 
   void shrink(int newmax) { max = ::min(max, newmax); }
 
+  T * get_raw_array() { return entries; }
+
   T &operator[](int i)
     {
       if (i < max) return entries[i];
@@ -76,5 +78,20 @@ public:
       return *this;
     }
 };
+
+template <class T> 
+void array<T>::expand(int newtop)
+{
+  int newlen = ::max(len,1);
+  for (; newtop>=newlen; newlen *= 2);
+  T *tmp = new T [newlen];
+  engine_alloc(newlen * sizeof(T));
+
+  for (int j = 0; j<max; j++) tmp[j] = entries[j];
+  engine_dealloc(len * sizeof(T));
+  delete [] entries;
+  entries = tmp;
+  len = newlen;
+}
 
 #endif
