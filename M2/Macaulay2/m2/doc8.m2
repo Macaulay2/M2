@@ -748,9 +748,9 @@ h = matrix {{t,u,v,w,x}}
 h1 = mingens image h
 
 assert ( h1 == matrix {{
-	       a*b^3+b^4+b^3*c,
 	       a^4+4*a^3*b+6*a^2*b^2-3*b^4+4*a^3*c+12*a^2*b*c+12*a*b^2*c+6*a^2*c^2
-	       +12*a*b*c^2+6*b^2*c^2+4*a*c^3+4*b*c^3+c^4
+	       +12*a*b*c^2+6*b^2*c^2+4*a*c^3+4*b*c^3+c^4,
+	       a*b^3+b^4+b^3*c
 	       }} )
 "
 
