@@ -20,7 +20,7 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
     (run-hooks (intern-soft (concat "comint-M2-hook")))))
 
 (defvar M2-history nil "The history of recent Macaulay2 command lines.")
-(defvar M2-command "M2 " "*The Macaulay2 command line.")
+(defvar M2-command "M2 " "*The default Macaulay2 command line.")
 
 (defun M2 (command)
   "Run Macaulay 2 in a buffer."
@@ -29,11 +29,11 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
     (if current-prefix-arg
 	(read-from-minibuffer
 	 "M2 command line: "
-	 (if M2-history (car M2-history) "M2 ")
+	 (if M2-history (car M2-history) M2-command)
 	 nil
 	 nil
 	 (if M2-history '(M2-history . 1) 'M2-history))
-      M2-command)))
+      (if M2-history (car M2-history) M2-command))))
   (M2-comint-run command)
   )
 
