@@ -300,11 +300,6 @@ document { symbol gbTrace,
      PARA,
      "The value returned is the old tracing level."
      }
-
-document { GBtype,
-     TT "GBtype", " -- a key used in a Groebner basis, under which is stored
-     a list, recording the type of Groebner basis computation done."
-     }
      
 document { gb,
      Headline => "compute a Groebner basis",

@@ -23,7 +23,7 @@ gbDefaults := new OptionTable from {
 	  -- arguments to IM2_GB_make
 	  SyzygyRows => infinity,			    -- n_rows_to_keep (-1 if infinity)
 	  Syzygies => false,				    -- collect_syz parameter
-     	  HardDegreeLimit => null,			    -- stop_after_degree and degree_limit
+     	  HardDegreeLimit => null,			    -- use_max_degree and degree_limit
      	  -- modifies the arguments tIM2_GB_makeo 
 	  ChangeMatrix => false,			    -- calculate change of basis matrix, too, for '//' operation
      	  -- hints to GB_make
@@ -47,12 +47,15 @@ computationIsComplete := (f,type) -> f.cache#?type and f.cache#type.?returnCode 
 getComputation := (f,type) -> f.cache#?type
 
 toEngineNat  := n -> if n === infinity then -1 else n
-toEngineBool := b -> if b then 1 else 0
 
-gbTypeCode   := opts    -> new OptionTable from { SyzygyRows => opts.SyzygyRows, Syzygies => opts.Syzygies, HardDegreeLimit => opts.HardDegreeLimit }
-gbOnly       := gbTypeCode new OptionTable from { SyzygyRows => 0              , Syzygies => false        , HardDegreeLimit => null }
-gbWithChg    := gbTypeCode new OptionTable from { SyzygyRows => infinity       , Syzygies => false        , HardDegreeLimit => null }
-gbWithSyzygy := gbTypeCode new OptionTable from { SyzygyRows => infinity       , Syzygies => true         , HardDegreeLimit => null }
+gbTypeCode   := opts    -> new OptionTable from { 
+     SyzygyRows => if opts.Syzygies or opts.ChangeMatrix then opts.SyzygyRows else 0,
+     Syzygies => opts.Syzygies,
+     HardDegreeLimit => opts.HardDegreeLimit }
+gbOnly       := gbTypeCode new OptionTable from { SyzygyRows => 0       , Syzygies => false, ChangeMatrix => false, HardDegreeLimit => null }
+gbWithChg    := gbTypeCode new OptionTable from { SyzygyRows => infinity, Syzygies => false, ChangeMatrix => true , HardDegreeLimit => null }
+gbWithSyzygy := gbTypeCode new OptionTable from { SyzygyRows => infinity, Syzygies => true , ChangeMatrix => false, HardDegreeLimit => null }
+
 gbGetSuitable := (f,type) -> (
      if f.cache#?type then f.cache#type
      else if type === gbOnly and computationIsComplete(f,gbWithChg) then getComputation(f,gbWithChg)
@@ -69,8 +72,14 @@ strategyCodes := new HashTable from {			    -- new: ok
 processStrategy := (v) -> (
      if class v =!= List then v = {v};
      sum(v, s->(
-	       if not strategyCodes#?s then error("unknown strategy '", toString s, "' encountered");
+	       if not strategyCodes#?s then error("unknown strategy encountered");
 	       strategyCodes#s)))     
+
+processAlgorithm := (a) -> (
+     if a === Homogeneous then 1
+     else if a === Inhomogeneous then 2
+     else if a === null then 0
+     else error ("unknown algorithm encountered");
 
 gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )
 
@@ -88,54 +97,44 @@ gb Module := GroebnerBasis => options -> (M) -> (
 	       SyzygyRows => numgens source m))
      else gb(generators M, options))
 
-gb Matrix := GroebnerBasis => options -> (f) -> (
+	  -- handle the Hilbert numerator later, which might be here:
+	  -- if not withSyz and f.?cache and f.cache.?cokernel and f.cache.cokernel.?poincare then ( ggPush f.cache.cokernel.poincare );
+
+
+gb Matrix := GroebnerBasis => opts -> (f) -> (
      R := ring target f;
      if ring source f =!= R then error "expected module map with source and target over the same ring";
      if not isFreeModule target f then error "Groebner bases of subquotient modules not yet implemented";
      if not isFreeModule source f then f = ambient f * generators source f;   -- sigh
      if isPolynomialRing R and not (isField coefficientRing R or coefficientRing R === ZZ) then error "expected coefficient ring to be ZZ or a field"; -- remove later
-     type := {
-	  options.Syzygies,
-	  if options.Syzygies or options.ChangeMatrix then toEngineNat options.SyzygyRows else 0 -- new: okay
-	  };
-     strategy := processStrategy options.Strategy;
-     if f.cache#?type then f.cache#type
-     else if type===gbOnly and computationIsComplete(f,gbWithChg) then getComputation(f,gbWithChg)
-     else if ( type===gbOnly or type===gbWithChg ) and computationIsComplete(f,gbWithSyzygy) then getComputation(f,gbWithSyzygy)
-     else (
-	  G := new GroebnerBasis;
-	  withSyz := type#0;
-	  rowsToKeep := type#1;
-	  G.GBtype = type;
+     type := gbTypeCode opts;
+     G := gbGetSuitable(f,type);
+     if G === null then (
+	  G = new GroebnerBasis;
 	  G.matrix = f;
 	  G.ring = ring f;
 	  G.target = target f;
 	  G.RawComputation = rawGB(
 	       raw f,
-	       toEngineBool withSyz,
-	       rowsToKeep,
-	       ...
+	       type.Syzygies,
+	       toEngineNat type.SyzygyRows,
+	       opts.HardDegreeLimit =!= null,
+	       if opts.HardDegreeLimit =!= null then opts.HardDegreeLimit else 0,
+	       processAlgorithm opts.Algorithm,
+	       processStrategy opts.Strategy
 	       );
-	  G.handle = newHandle (
-
-	       if not withSyz and f.?cache and f.cache.?cokernel and f.cache.cokernel.?poincare then (
-	            ggPush f.cache.cokernel.poincare		    -- the Poincare polynomial
-	            )
-
-	       ggPush strategy, 	  -- which strategy to use (0=default)
-	       gggb);
-	  f.cache#type = G;			  -- do this last (interrupts!)
+	  f.cache#type = G;			  -- do this last, in case of an interrupt
 	  );
-     if not options.StopBeforeComputation 
+     if not opts.StopBeforeComputation 
      then runGB(G, (
-	       ggPush checkListOfIntegers options.DegreeLimit,
+	       ggPush checkListOfIntegers opts.DegreeLimit,
 	       ggPush {
-		    toEngineNat options.BasisElementLimit,
-		    toEngineNat options.SyzygyLimit,
-		    toEngineNat options.PairLimit,
-		    toEngineNat options.CodimensionLimit,
-		    toEngineBool options.StopWithMinimalGenerators,
-		    toEngineNat options.SubringLimit,
+		    toEngineNat opts.BasisElementLimit,
+		    toEngineNat opts.SyzygyLimit,
+		    toEngineNat opts.PairLimit,
+		    toEngineNat opts.CodimensionLimit,
+		    toEngineBool opts.StopWithMinimalGenerators,
+		    toEngineNat opts.SubringLimit,
 		    strat
 		    }));
      G)
@@ -190,7 +189,6 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
           nsyz
 	  };
      g := new GroebnerBasis;
-     g.GBtype = type;
      g.matrix = f;
      g.ring = ring f;
      g.target = target f;
