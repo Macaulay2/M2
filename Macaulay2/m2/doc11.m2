@@ -560,6 +560,14 @@ document { HREF,
      SEEALSO "hypertext"
      }
 
+document { ANCHOR,
+     Headline => "HTML anchor",
+     TT "ANCHOR{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext A anchor
+     named ", TT "u", ".",
+     PARA,
+     SEEALSO "hypertext"
+     }
+
 document { MENU,
      Headline => "HTML MENU item",
      TT "MENU x", " -- encloses the list x as a hypertext MENU.",

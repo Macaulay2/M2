@@ -101,9 +101,11 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
   (let ((word (comint-word "a-zA-Z")))
     (if word (comint-dynamic-simple-complete word M2-symbols))))
 
-(defvar M2-font-lock-keywords
-  '((eval . (cons M2-comint-prompt-regexp 'font-lock-warning-face)))
-  "Additional expressions to highlight in M2 mode.")
+(if (fboundp 'turn-on-font-lock)
+    (progn
+      (defvar M2-font-lock-keywords
+	'((eval . (cons M2-comint-prompt-regexp 'font-lock-warning-face)))
+	"Additional expressions to highlight in M2 mode.")))
 
 (add-hook 'comint-M2-hook 
 	  (function 
@@ -129,14 +131,16 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
 	     (local-set-key "\^Cc" 'switch-to-completions)
 	     (local-set-key "\^Cd" 'M2-find-documentation)
 	     (set-syntax-table M2-mode-syntax-table)
-	     (turn-on-font-lock)
-	     (make-local-variable 'font-lock-keywords)
-	     (setq font-lock-keywords M2-mode-font-lock-keywords)
-	     (make-local-variable 'font-lock-defaults)
-	     (setq font-lock-defaults '(
-					M2-mode-font-lock-keywords
-					M2-font-lock-keywords
-					))
+	     (if (fboundp 'turn-on-font-lock)
+		 (progn
+		   (turn-on-font-lock)
+		   (make-local-variable 'font-lock-keywords)
+		   (setq font-lock-keywords M2-mode-font-lock-keywords)
+		   (make-local-variable 'font-lock-defaults)
+		   (setq font-lock-defaults '(
+					      M2-mode-font-lock-keywords
+					      M2-font-lock-keywords
+					      ))))
 	     (setq comint-dynamic-complete-functions 
 		   '(
 		     M2-dynamic-complete-symbol

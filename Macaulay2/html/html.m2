@@ -175,12 +175,27 @@ time scan(keys linkFollowedTable, fkey -> (
      )
 
 -- create the master index
+al := characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+i := 0
+
 masterFileName << html HTML {
      HEAD { TITLE masterNodeName },
      BODY {
 	  H2 masterNodeName,
 	  CENTER topNodeButton,
-	  MENU apply(sort keys masterIndex, key -> HREF {linkFilename key, formatDocumentTag key}),
+	  PARA,
+	  CENTER between(" ",apply(al, c -> HREF {"#"|c, c})),
+	  PARA,
+	  MENU apply(sort keys masterIndex, fkey -> SEQ {
+		    if al#?i and fkey >= al#i then (
+			 s := select(drop(al,i), c -> fkey >= c);
+			 i = i + #s;
+			 SEQ apply(s, c -> ANCHOR {c, ""})
+			 ),
+		    HREF {linkFilename fkey, fkey}}),
+	  PARA,
+	  CENTER between(" ",apply(al, c -> HREF {"#"|c, c})),
+	  PARA,
 	  CENTER topNodeButton
 	  }
      } << endl << close
