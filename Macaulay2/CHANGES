@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The function "remove" can now be used to remove an element from a list
+or sequence, like this: remove({a,b,c},1).
+
 Warning: the operator ==> has been renamed to >>> so a new operator,
 ==>, with higher parsing precedence, can be introduced for use as
 "implication" in logical expressions.  Other new operators introduced
