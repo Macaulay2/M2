@@ -108,6 +108,10 @@ html Symbol := html Boolean := toString
 
 texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
+VBOXop := op -> v -> stack \\ op \ toList v
+net VBOX := VBOXop net
+info VBOX := VBOXop info
+
 vert := op -> x -> net (					    -- we have to be prepared for a mixture of vertical and horizontal items
      new ParagraphList from select(
      	       sublists(toList x, i -> instance(i,MarkUpListParagraph), op, i -> horizontalJoin(op \ i)),

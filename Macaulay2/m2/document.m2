@@ -747,17 +747,17 @@ synopsis Thing := key -> (
 	  fixup SEQ {				  -- to be implemented
      	       PARA BOLD "Synopsis",
 	       UL {
-     	       	    if usa =!= null then PARA { "Usage: ", if class usa === String then TT usa else usa},
+     	       	    if usa =!= null then SEQ { "Usage: ", if class usa === String then TT usa else usa},
 		    if fun =!= null then SEQ { "Function: ", TO fun }
 		    else if class key === Sequence and key#?0 then (
 	       		 if class key#0 === Function 
 			 then SEQ { "Function: ", TO key#0 }
 			 else SEQ { "Operator: ", TO key#0 }
 			 ),
-		    if inp#?0 then PARA { "Inputs:", UL inp },
-		    if ino#?0 then PARA { "Optional inputs:", UL ino },
-		    if out#?0 then PARA { "Outputs:", UL out },
-		    if res#?0 then PARA { "Results:", UL res }
+		    if inp#?0 then VBOX { "Inputs:", UL inp },
+		    if ino#?0 then VBOX { "Optional inputs:", UL ino },
+		    if out#?0 then VBOX { "Outputs:", UL out },
+		    if res#?0 then VBOX { "Results:", UL res }
 		    }
 	       }
 	  ))
@@ -965,11 +965,13 @@ help List := v -> (
      printWidth = printWidth - 2;
      r := boxList apply(v, x -> net documentation x);
      printWidth = printWidth + 2;
+     << endl;
      pager r)
 help Thing := s -> (
      if s === () then s = "initial help";
      r := documentation s;
      if r === null then r = Hypertext { "No documentation found for '", formatDocumentTag s, "'"};
+     << endl;
      pager net r)
 help = Command help
 
