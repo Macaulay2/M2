@@ -654,7 +654,7 @@ installPackage Package := opts -> pkg -> (
 		    ));
 
      	  -- Make sure the processed documentation database exists, even if empty, so when running the examples,
-	  -- M2 doesn't read in all the documentation sources each time.  For the package Macaulay2Doc this makes a big
+	  -- M2 doesn't read in all the documentation sources each time.  For the package Macaulay2 this makes a big
 	  -- difference.
 	  dbname := docDir | "documentation.db";
      	  if not fileExists dbname then (
