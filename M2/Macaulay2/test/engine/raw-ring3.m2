@@ -58,3 +58,15 @@ n1 = gens gb n
 
 n2 = substitute(n1, S)
 A2 = S/ideal(n2)
+
+-------------------
+-- Test: degrees in tower of rings
+load "raw-util.m2"
+A = ZZ[a,b]
+B = A[x,y]
+raw B
+C = ZZ[s,t][x,y]
+raw C
+f = 11 + 2*s^3 + 3*t^4 + 4*x + 5*y
+monomials(0..3,f)
+coefficients(0..3,f)
