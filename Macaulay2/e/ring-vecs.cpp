@@ -158,7 +158,7 @@ void Ring::elem_text_out(buffer &o, const vecterm * v) const
 // Routines which modify a vec ////////
 ///////////////////////////////////////
 
-void Ring::mult(vec &v, const ring_elem r, bool left_mult) const
+void Ring::mult(vec &v, const ring_elem r, bool opposite_mult) const
 {
   if (this->is_zero(r))
     {
@@ -171,10 +171,10 @@ void Ring::mult(vec &v, const ring_elem r, bool left_mult) const
     {
       //old version: this->mult_to(p->next->coeff, a);
       ring_elem c;
-      if (left_mult)
-	c = this->mult(r,p->next->coeff);
-      else 
+      if (opposite_mult)
 	c = this->mult(p->next->coeff, r);
+      else 
+	c = this->mult(r,p->next->coeff);
       p->next->coeff = c;
       if (this->is_zero(p->next->coeff))
 	{
@@ -186,7 +186,7 @@ void Ring::mult(vec &v, const ring_elem r, bool left_mult) const
   v = head.next;
 }
 
-void Ring::mult_row(vec &v, int i, const ring_elem r, bool left_mult) const
+void Ring::mult_row(vec &v, int i, const ring_elem r, bool opposite_mult) const
 {
   vecterm head;
   head.next = v;
@@ -196,10 +196,10 @@ void Ring::mult_row(vec &v, int i, const ring_elem r, bool left_mult) const
     else if (p->next->comp == i)
       {
 	ring_elem c;
-	if (left_mult)
-	  c = mult(r, p->next->coeff);
-	else
+	if (opposite_mult)
 	  c = mult(p->next->coeff, r);
+	else
+	  c = mult(r, p->next->coeff);
 	p->next->coeff = c;
 	if (this->is_zero(p->next->coeff))
 	  {
@@ -213,7 +213,7 @@ void Ring::mult_row(vec &v, int i, const ring_elem r, bool left_mult) const
 
 vec Ring::mult_vec_matrix(const Matrix *m,
 			  vec v,
-			  bool left_mult) const
+			  bool opposite_mult) const
 {
   // Multiply m * v, using left or right mult for each scalar mult.
 
@@ -225,7 +225,7 @@ vec Ring::mult_vec_matrix(const Matrix *m,
   for ( ; v != NULL; v = v->next)
     {
       vec w = this->copy(m->elem(v->comp));
-      mult(w, v->coeff, left_mult);
+      mult(w, v->coeff, opposite_mult);
       this->add(result, w);
     }
   return result;
@@ -396,7 +396,7 @@ void Ring::add(vec &v, vec &w) const
       }
 }
 
-void Ring::vec_row_op(vec &v, int i, ring_elem r, int j, bool left_mult) const
+void Ring::vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) const
 {
   vec p;
   vec vec2 = 0;
@@ -408,10 +408,10 @@ void Ring::vec_row_op(vec &v, int i, ring_elem r, int j, bool left_mult) const
       }
   if (vec2 == 0) return;
   ring_elem r1;
-  if (left_mult)
-    r1 = this->mult(r, vec2->coeff);
-  else 
+  if (opposite_mult)
     r1 = this->mult(vec2->coeff, r);
+  else 
+    r1 = this->mult(r, vec2->coeff);
   vecterm head;
 #warning "BUG??? check that r1 is zero!!"
   head.next = v;
