@@ -18,12 +18,12 @@
 
 /* for factor-init.c */
 #define INTERIOR_POINTERS 0	/* */
-#define GMP_USES_GC 1		/* adds 0.05 : 7.12, 7.13, 7.14, 7.12, 7.10, 7.10 */
-#define GMP_TESTS_RETURN_VALUE_FROM_GC 1 /* subtracts 0.05, so leave it in */
+#define GMP_USES_GC 0		/* adds 0.05 : 7.12, 7.13, 7.14, 7.12, 7.10, 7.10 */
+#define GMP_TESTS_RETURN_VALUE_FROM_GC 0 /* subtracts 0.05, so leave it in */
 #define FACTORY_USES_GC_DIRECTLY 0	/* adds 5.20 sec */
 #define FACTORY_TESTS_RETURN_VALUE_FROM_GC 0
-#define REPLACE_GETBLOCK 1	/* no change, our code is identical */
-#define REPLACE_MALLOC_BY_GC_IN_GETBLOCK 1 /* 7.06, 7.11, 7.09, 7.08 -- speeds it up! */
+#define REPLACE_GETBLOCK 0	/* no change, our code is identical */
+#define REPLACE_MALLOC_BY_GC_IN_GETBLOCK 0 /* 7.06, 7.11, 7.09, 7.08 -- speeds it up! */
 #define REPLACE_GC_FREE_BY_NOP 0 /* 7.63, 7.64, 7.62 */
 
 /* consequences */

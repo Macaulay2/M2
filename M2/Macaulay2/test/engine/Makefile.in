@@ -24,7 +24,7 @@ LDLIBS =
 # factor.poly was generated with toString (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3
 CFLAGS := -g -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Wno-unused-label
 CFLAGS += -O3
-# CFLAGS += -fomit-frame-pointer
+CFLAGS += -fomit-frame-pointer
 CXXFLAGS := $(CFLAGS)
 LDFLAGS =  -g -L/capybara/lib
 LDFLAGS += -Wl,-Map,mapfile
@@ -32,8 +32,8 @@ LDFLAGS += -Wl,-Map,mapfile
 # CFLAGS += -pg
 # CXXFLAGS += -pg
 # LDFLAGS += -pg
-# LDLIBS := -lcf-pg -lcfmem-pg -lntl-pg -lgmp-pg -lgc-pg -lm
-LDLIBS := -lcf -lcfmem -lntl -lgmp -lgc -lm
+# LDLIBS := -lcf-pg -lcfmem-pg -lntl-pg -lgmp-pg -lgc-pg -ldl -lm
+LDLIBS := -lcf -lcfmem -lntl -lgmp -lgc -ldl -lm
 
 benchmark gmon.out : factor factor.poly mapfile.demangled
 	time ./factor < @srcdir@/factor.poly >factor.out

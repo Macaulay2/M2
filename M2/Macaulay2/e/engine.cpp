@@ -36,7 +36,6 @@ static bool initialized = false;
  */
 void IM2_initialize()
 {
-  extern void i_factor_cmds();
   if (initialized) return;
   initialized = true;
   doubles                  = new doubling_stash;
@@ -45,7 +44,6 @@ void IM2_initialize()
   globalQQ = QQ::create(Monoid::get_trivial_monoid());
   Random::i_random();
   factory_setup();
-  i_factor_cmds();
 }
 
 /** Engine error handling mechanism.

@@ -36,6 +36,44 @@ void showcfl(CFList &t) { cout << t << endl; }
 void showcffl(CFFList &t) { cout << t << endl; }
 #endif
 
+struct enter_factory { 
+  void *(*save_gmp_allocate_func  )(size_t);
+  void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
+  void  (*save_gmp_free_func      )(void *, size_t);
+  void enter() {
+    save_gmp_allocate_func = __gmp_allocate_func;
+    save_gmp_reallocate_func = __gmp_reallocate_func;
+    save_gmp_free_func = __gmp_free_func;
+    factory_setup();
+  }
+  void exit() {
+    __gmp_allocate_func = save_gmp_allocate_func;
+    __gmp_reallocate_func = save_gmp_reallocate_func;
+    __gmp_free_func = save_gmp_free_func;
+  }
+  enter_factory:: enter_factory() { enter(); }
+  enter_factory::~enter_factory() { exit(); }
+};
+
+struct enter_M2 { 
+  void *(*save_gmp_allocate_func  )(size_t);
+  void *(*save_gmp_reallocate_func)(void *, size_t, size_t);
+  void  (*save_gmp_free_func      )(void *, size_t);
+  void enter() {
+    save_gmp_allocate_func = __gmp_allocate_func;
+    save_gmp_reallocate_func = __gmp_reallocate_func;
+    save_gmp_free_func = __gmp_free_func;
+    M2_setup();
+  }
+  void exit() {
+    __gmp_allocate_func = save_gmp_allocate_func;
+    __gmp_reallocate_func = save_gmp_reallocate_func;
+    __gmp_free_func = save_gmp_free_func;
+  }
+  enter_M2:: enter_M2() { enter(); }
+  enter_M2::~enter_M2() { exit(); }
+};
+
 static const RingElement * convert(const Ring *R, CanonicalForm h) {
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {
@@ -43,18 +81,15 @@ static const RingElement * convert(const Ring *R, CanonicalForm h) {
 	       static const unsigned int base = 1 << 16;
 	       intarray v;
 	       int sign;
-	       if (h < 0) {
-		    sign = -1;
-		    h = -h;
+	       {
+		 enter_factory a;
+		 if (h < 0) { sign = -1; h = -h; } else sign = 1;
+		 while ( h != 0 ) {
+		      CanonicalForm k = h % base;
+		      v.append(k.intval());
+		      h /= base;
+		 }
 	       }
-	       else sign = 1;
-	       factory_setup();
-	       while ( h != 0 ) {
-		    CanonicalForm k = h % base;
-		    v.append(k.intval());
-		    h /= base;
-	       }
-	       M2_setup();
 	       mpz_t x;
 	       mpz_init(x);
 	       for (int i = v.length() - 1; i >= 0; i--) {
@@ -66,10 +101,7 @@ static const RingElement * convert(const Ring *R, CanonicalForm h) {
 	       mpz_clear(x);
 	       return RingElement::make_raw(R, ret);
 	  }
-	  else {
-	    M2_setup();
-	    return RingElement::make_raw(R, R->from_int(h.intval()));
-	  }
+	  else return RingElement::make_raw(R, R->from_int(h.intval()));
      }
      ring_elem result = R->from_int(0);
      for (int j = 0; j <= h.degree(); j++) {
@@ -83,27 +115,16 @@ static const RingElement * convert(const Ring *R, CanonicalForm h) {
        r1 = R->mult(r1,v);
        R->add_to(result,r1);
      }
-     M2_setup();
      return RingElement::make_raw(R,result);
 }
 
-struct enter_factory { 
-  enter_factory:: enter_factory() { factory_setup(); }
-  enter_factory::~enter_factory() { M2_setup(); }
-};
-
-struct leave_factory { 
-  leave_factory:: leave_factory() { M2_setup(); }
-  leave_factory::~leave_factory() { factory_setup(); }
-};
-
-static enter_factory before;
+static enter_factory x;
  static int base_set = 0;
  static CanonicalForm base;
-static leave_factory after;
+static enter_M2 y;
 
 static CanonicalForm convert(const mpz_ptr p) {
-     factory_setup();
+     enter_factory a;
      int size = p -> _mp_size;
      int sign = size < 0 ? -1 : 1;
      if (size < 0) size = -size;
@@ -125,7 +146,6 @@ static CanonicalForm convert(const mpz_ptr p) {
 	  }
      }
      m = m * sign;
-     M2_setup();
      return m;
 }
 
@@ -133,7 +153,6 @@ static CanonicalForm convert(const mpz_ptr p) {
 #define MPQ_VAL(f) (M2_Rational ((f).poly_val))
 
 enum coeff_type { FAC_ZZp, FAC_ZZ, FAC_QQ, FAC_BAD_RING };
-
 
 static coeff_type get_ring_type(const Ring *R)
 {
@@ -169,7 +188,7 @@ static CanonicalForm convert(const RingElement &g) {
      }
      const Monoid *M = R->Nmonoms();
      intarray vp;
-     factory_setup();
+     enter_factory a;
      setCharacteristic(R->charac());
      if (Q != NULL) On( SW_RATIONAL );
      CanonicalForm f = 0;
@@ -185,7 +204,6 @@ static CanonicalForm convert(const RingElement &g) {
 #endif
 			  : CanonicalForm(0) // shouldn't happen
 			  );
-       factory_setup();
        for (int l = 1; l < vp[0] ; l++) {
 	 m *= power(
 		    Variable(1 + (
@@ -200,18 +218,15 @@ static CanonicalForm convert(const RingElement &g) {
        f += m;
      }
      if (Q != NULL) Off( SW_RATIONAL );
-     M2_setup();
      return f;
 }
 
 void displayCF(Ring *R, const CanonicalForm &h)
 {
   buffer o;
-  factory_setup();
   const RingElement *g = convert(R,h);
   o << IM2_RingElement_to_string(g);
   emit(o.str());
-  M2_setup();
 }
 #endif
 
@@ -223,10 +238,9 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl
   //          << "q = " << q << endl;
-  factory_setup();
+  enter_factory a;
   CanonicalForm h = gcd(p,q);
   const RingElement *r = convert(f->get_ring(),h);
-  M2_setup();
   return r;
 #else
   ERROR("'factory' library not installed");
@@ -238,14 +252,13 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
 {
 #warning "check that the rings of f and g both polynomial rings"
 #ifdef FACTORY
+  enter_factory a;
   CanonicalForm p = convert(*f);
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl
   //          << "q = " << q << endl;
-  factory_setup();
   CanonicalForm h = Prem(p,q);
   const RingElement *r = convert(f->get_ring(),h);
-  M2_setup();
   return r;
 #else
   ERROR("'factory' library not installed");
@@ -258,38 +271,30 @@ void rawFactor(const RingElement *g,
 	       M2_arrayint_OrNull *result_powers)
 {
 #ifdef FACTORY
-  {
-    factoryseed(23984729);
-    const Ring *R = g->get_ring();
-    CanonicalForm h = convert(*g);
-    // displayCF(R,h);
-    CFFList q;
-    if (R->charac() == 0) {
-      factory_setup();
-      q = factorize(h);		// suitable for k = QQ, comes from libcf (factory)
-      M2_setup();
-    }
-    else {
-      factory_setup();
-      q = Factorize(h);		// suitable for k = ZZ/p, comes from libfac
-      M2_setup();
-    }
-    int nfactors = q.length();
-
-    *result_factors = (RingElement_array *) getmem(sizeofarray((*result_factors),nfactors));
-    (*result_factors)->len = nfactors;
-
-    *result_powers = makearrayint(nfactors);
-
-    int next = 0;
-    factory_setup();
-    for (CFFListIterator i = q; i.hasItem(); i++) {
-      (*result_factors)->array[next] = convert(R,i.getItem().factor());
-      (*result_powers)->array[next++] = i.getItem().exp();
-      factory_setup();
-    }
+  enter_factory a;
+  factoryseed(23984729);
+  const Ring *R = g->get_ring();
+  CanonicalForm h = convert(*g);
+  // displayCF(R,h);
+  CFFList q;
+  if (R->charac() == 0) {
+    q = factorize(h);		// suitable for k = QQ, comes from libcf (factory)
   }
-  M2_setup();
+  else {
+    q = Factorize(h);		// suitable for k = ZZ/p, comes from libfac
+  }
+  int nfactors = q.length();
+
+  *result_factors = (RingElement_array *) getmem(sizeofarray((*result_factors),nfactors));
+  (*result_factors)->len = nfactors;
+
+  *result_powers = makearrayint(nfactors);
+
+  int next = 0;
+  for (CFFListIterator i = q; i.hasItem(); i++) {
+    (*result_factors)->array[next] = convert(R,i.getItem().factor());
+    (*result_powers)->array[next++] = i.getItem().exp();
+  }
 #else
   ERROR("'factory' library not installed");
 #endif
@@ -313,6 +318,7 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 	  }
      }
 
+     enter_factory a;
 
      List<int> t = neworderint(I);
 
@@ -355,6 +361,8 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 	  }
      }
 
+     enter_factory a;
+
      List<CFList> t = IrrCharSeries(I);
 
      Matrix_array *result = (Matrix_array *) getmem(sizeofarray(result,t.length()));
@@ -369,6 +377,7 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 	  for (ListIterator<CanonicalForm> j = u; j.hasItem(); j++) {
 	    result1->array[next1++] = convert(R,j.getItem());
 	  }
+	  enter_M2 b;
 	  result->array[next++] = IM2_Matrix_make1(M->rows(), u.length(), result1, false, false);
      }
      
@@ -393,7 +402,6 @@ static void gcd_ring_elem(object &ff, object &gg) {
      gStack.insert(convert(R,h));
 }
 
-#if 0
 static void extgcd_ring_elem(object &ff, object &gg) {
      const RingElement &f = ff -> cast_to_RingElement();
      const RingElement &g = gg -> cast_to_RingElement();
@@ -404,7 +412,6 @@ static void extgcd_ring_elem(object &ff, object &gg) {
      gStack.insert(convert(R,q));
      gStack.insert(convert(R,h));
 }
-#endif
 
 static void pseudo_remainder(object &ff, object &gg) {
      const RingElement &f = ff -> cast_to_RingElement();
@@ -510,17 +517,6 @@ static void ideal_charset(object &mm) {
      }
      gStack.insert(new object_int(t.length()));
 }    
-
-void i_factor_cmds() {
-     install(ggfactor, factor_ring_elem, TY_RING_ELEM);
-     install(ggfactor1, gcd_ring_elem, TY_RING_ELEM, TY_RING_ELEM);
-     // install(ggfactor, extgcd_ring_elem, TY_RING_ELEM, TY_RING_ELEM);
-     install(ggfactor2, pseudo_remainder, TY_RING_ELEM, TY_RING_ELEM);
-     install(ggfactor1, ideal_reorder, TY_MATRIX);
-     install(ggfactor2, ideal_charset, TY_MATRIX);
-}
-
-#else
 
 #endif
 // Local Variables:
