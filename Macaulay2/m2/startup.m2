@@ -349,7 +349,10 @@ if firstTime and not noloaddata and version#"dumpdata" then (
 packageSuffix = ".Macaulay2/"
 
 path = {}
+
 path = append(path, getenv "HOME" | "/" | packageSuffix | "local/" | LAYOUT#"datam2")
+packagePrefixPath = append(packagePrefixPath, getenv "HOME" | "/" | packageSuffix | "local/")
+
 if sourceHomeDirectory  =!= null then path = append(path, sourceHomeDirectory|"m2/")
 if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
 if prefixDirectory      =!= null then path = append(path, prefixDirectory | LAYOUT#"m2")

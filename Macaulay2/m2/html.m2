@@ -50,7 +50,7 @@ htmlFilename DocumentTag := tag -> (
      if pkg === null then toFilename fkey|".html"
      else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
 
-html IMG  := x -> concatenate("<img src=\"", rel x#0, "\" alt=\", x#1, \"/>")
+html IMG  := x -> concatenate("<img src=\"", rel x#0, "\" alt=\"", x#1, "\"/>")
 html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), "/>",newline)
 html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
 tex  HREF := x -> concatenate("\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</a>}")
@@ -776,12 +776,9 @@ makePackageIndex Sequence := () -> makePackageIndex packagePrefixPath
 makePackageIndex List := packagePrefixPath -> (
      -- this code is still experimental
      absoluteLinks = true;
-     htmlDirectory = LAYOUT#"docm2";
-     -- p := prefixDirectory | htmlDirectory;
-     -- setupButtons();
+     htmlDirectory = getenv "HOME" | "/" | packageSuffix;
      key := "package index";
-     -- tag := makeDocumentTag key;
-     -- p | "index.html"
+     getenv "HOME" | "/" | packageSuffix | "index.html"
      << html HTML { 
 	  HEAD {
 	       TITLE {key, commentize headline key},
@@ -791,7 +788,7 @@ makePackageIndex List := packagePrefixPath -> (
 	       -- buttonBar tag, HR{},
 	       PARA BOLD "Index of installed packages:",
 	       UL apply(packagePrefixPath, prefixDirectory -> (
-			 p := prefixDirectory | htmlDirectory;
+			 p := prefixDirectory | LAYOUT#"docm2";
 			 r := readDirectory p;
 			 r = select(r, fn -> fn != "." and fn != "..");
 			 r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
@@ -801,8 +798,7 @@ makePackageIndex List := packagePrefixPath -> (
 		    )
 	       }
 	  } << endl
-     -- << close
-     ;
+     << close
      )
 
 -- Local Variables:
