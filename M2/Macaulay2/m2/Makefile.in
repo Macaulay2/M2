@@ -1,5 +1,6 @@
 # @configure_input@
 justM2 default :: initialize phase1
+quick-install : justM2 install
 include ../../include/config.Makefile
 VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; pwd)

@@ -12,7 +12,8 @@ all::
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
-package = $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
+M2_PACKAGE_NAME = undefined
+package = Macaulay2-$(PACKAGE_VERSION)
 ARCH    = @ARCH@
 OS      = @OS@
 REL     = @REL@
@@ -51,10 +52,12 @@ DEFS = @DEFS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 
-# file system layout:
+# Macaulay 2 file system layout definitions :
 #  see http://www.pathname.com/fhs/
 #      http://fink.sourceforge.net/doc/packaging/fslayout.php
 #      http://cr.yp.to/unix.html, the section on "Filesystem layout"
+
+# prologue
 
 prefix = @prefix@
 encapdir = @encapdir@
@@ -64,20 +67,37 @@ target = $(encapdir)/$(package)
 else
 target = $(prefix)
 endif
+
+# common layout
+
 bindir = $(target)/bin
 libdir = $(target)/lib
-libm2dir = $(libdir)/$(PACKAGE_TARNAME)/$(PACKAGE_VERSION)
-cachedir = $(libm2dir)/cache
-libexecdir = $(libm2dir)/libexec
-packagesdir = $(libdir)/packages
 datadir = $(target)/share
 mandir = $(datadir)/man
 man1dir = $(mandir)/man1
+man3dir = $(mandir)/man3
 emacsdir = $(datadir)/emacs/site-lisp
-sharedir = $(datadir)/$(PACKAGE_TARNAME)/$(PACKAGE_VERSION)
-m2dir = $(sharedir)/m2
 docdir = $(datadir)/doc
-docm2dir = $(docdir)/$(PACKAGE_TARNAME)
+docm2dir = $(docdir)/Macaulay2
+
+# packages layout
+
+packagesdir = $(datadir)/Macaulay2/packages
+docpackagesdir = $(docm2dir)/packages
+packagesrcdir = $(packagesdir)/$(M2_PACKAGE_NAME)
+packagedocdir = $(docpackagesdir)/$(M2_PACKAGE_NAME)
+packageimagesdir = $(packagedocdir)/images
+packagehtmldir = $(packagedocdir)/html
+
+# M2 layout
+
+libm2dir = $(libdir)/Macaulay2/$(PACKAGE_VERSION)
+cachedir = $(libm2dir)/cache
+libexecdir = $(libm2dir)/libexec
+
+sharedir = $(datadir)/Macaulay2/$(PACKAGE_VERSION)
+m2dir = $(sharedir)/m2
+
 docm2reldir = $(docm2dir)/$(PACKAGE_VERSION)
 emacsdocdir = $(docm2reldir)/emacs
 htmldocdir = $(docm2reldir)/html

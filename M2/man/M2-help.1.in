@@ -1,4 +1,4 @@
-.TH M2 1 "@PACKAGE_TARNAME@-@PACKAGE_VERSION@" "" "@PACKAGE_NAME@"
+.TH M2 1 "" "@PACKAGE_TARNAME@-@PACKAGE_VERSION@" "@PACKAGE_NAME@"
 .\" see groff(7) and groff_man(7)
 .SH "NAME"
 M2-help - start your web browser pointing at the documentation for Macaulay 2

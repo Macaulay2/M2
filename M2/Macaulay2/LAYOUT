@@ -14,7 +14,9 @@ See also http://cr.yp.to/unix.html, the section on "Filesystem layout", for anot
 we'll support eventually, too, as an option.
 
 The paths in the chart below are relative to ".".  When the files are installed by the system
-administrator, then "." is usually /usr, /usr/local, or /sw.
+administrator, then "." is usually /usr, /usr/local, or /sw.  The environment variable PREFIX is set
+to the latter directory in the script "M2" so Macaulay2 can find the files of the packages, which
+are installed independently.
 
 When the files are packaged into a tar file by the package author, then the name of the tar file
 should be PACKAGE-RELEASE.tar.gz, where PACKAGE is the package name, e.g., "Macaulay2" or
@@ -34,7 +36,7 @@ directories.  The uppercase names are environment variables set, soon to be obso
 A typical package is distributed independently - in the layout below we illustrate the method with
 the package "D-modules".
 
-    ./                                                  [ prefix ]
+    ./                                                  [ prefix PREFIX= ]
       bin/                                              [ bindir ]
 	  M2
       lib/                                              [ libdir ]
@@ -48,7 +50,9 @@ the package "D-modules".
       share/                                            [ datadir ]
 	    man/                                        [ mandir ]
 		man1/                                   [ man1dir ]
-		     M2*.1
+		     *.1
+		man3/                                   [ man3dir ]
+		     M2::*.3
 	    emacs/site-lisp/                            [ emacsdir ]
 			    M2.el
 			    M2-*.el
@@ -57,7 +61,8 @@ the package "D-modules".
 			       *.m2
 		      packages/                         [ packagesdir ] (on the Macaulay2 load path)
 			       D-modules.m2
-			       D-modules/*.m2
+			       D-modules/		[ packagesrcdir ]
+					 *.m2
 	    doc/                                        [ docdir ]
 		Macaulay2/                              [ docm2dir ]
 			  index.html                    (machine generated)
@@ -71,9 +76,13 @@ the package "D-modules".
 				html/index.html         [ htmldocdir ]
 				     *.html
 				emacs/*                 [ emacsdocdir ]
-			  packages/
-				   D-modules/COPYING
+			  packages/				[ docpackagesdir ]
+				   D-modules/			[ packagedocdir ]
+					     COPYING
 					     LICENSE
 					     README
-					     html/index.html
-						  *.html          (e.g., bFunction.html)
+					     images/		[ packageimagesdir ]
+						    *.gif
+						    *.jpg
+					     html/index.html    [ packagehtmldir ]
+						  *.html
