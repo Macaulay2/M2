@@ -1578,7 +1578,7 @@ assert( degree U4 == 0 )
 TEST "
 R=ZZ/101[x]
 assert(monomialIdeal vars R != 0)
-assert(monomialIdeal map(R^1,0) == 0)
+assert(monomialIdeal map(R^1,R^1,0) == 0)
 "
 
 TEST ///
