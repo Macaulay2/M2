@@ -715,10 +715,23 @@ documentationValue(Symbol,HashTable) := (s,x) -> (
      SEQ { if #c > 0 then PARA {"Functions installed in ", toString x, " :", SHIELD smenu c}})
 documentationValue(Symbol,Thing) := (s,x) -> SEQ { }
 documentationValue(Symbol,Package) := (s,pkg) -> (
+     e := pkg#"exported symbols";
+     a := select(e,x -> instance(value x,Function));
+     b := select(e,x -> instance(value x,Type));
+     c := select(e,x -> instance(value x,Symbol));
+     d := toList(set e - set a - set b - set c);
      SEQ {
 	  PARA BOLD "Version", 
 	  PARA { "This documentation describes version ", pkg.Options.Version, " of the package." },
-	  if #pkg#"exported symbols" > 0 then SEQ { PARA BOLD "Exported symbols", smenu pkg#"exported symbols" },
+	  if #pkg#"exported symbols" > 0 then PARA {
+	       BOLD "Exports",
+	       UL {
+		    if #a > 0 then SEQ {"Functions", smenu a},
+		    if #b > 0 then SEQ {"Types", smenu b},
+		    if #c > 0 then SEQ {"Symbols", smenu c},
+		    if #d > 0 then SEQ {"Other things", smenu d},
+		    }
+	       }
 	  }
      )
 

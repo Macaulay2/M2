@@ -105,11 +105,12 @@ style := () -> LITERAL {///
 
 links := () ->
 LITERAL ///
-    <LINK REL="HOME" TITLE="Advanced Bash-Scripting Guide" HREF="index.html">
-    <LINK REL="UP" TITLE="Advanced Topics" HREF="part4.html">
-    <LINK REL="PREVIOUS" TITLE="Advanced Topics" HREF="part4.html">
-    <LINK REL="NEXT" TITLE="Globbing" HREF="globbingref.html">
-    <LINK REL="stylesheet" HREF="common/kde-common.css" TYPE="text/css">
+    <link rel="Home" title="Advanced Bash-Scripting Guide" href="index.html">
+    <link rel="Up" title="Advanced Topics" href="part4.html">
+    <link rel="Previous" title="Advanced Topics" href="part4.html">
+    <link rel="Next" title="Globbing" href="globbingref.html">
+    <link rel="Index" title="Globbing" href="index.html">
+    <link rel="stylesheet" href="common/kde-common.css" type="text/css">
 ///
 
 -- validate := LITERAL ///
@@ -267,7 +268,7 @@ makeHtmlNode = key -> (
      << html HTML { 
 	  HEAD {
 	       TITLE {key, headline key},
-	       style()
+	       style(), links()
 	       },
 	  BODY { 
 	       buttonBar key,
@@ -333,7 +334,7 @@ makeMasterIndex := keylist -> (
      << encoding << endl
      << doctype << endl     
      << html HTML {
-	  HEAD { TITLE title, style() },
+	  HEAD { TITLE title, style(), links() },
 	  BODY {
 	       HEADER2 title, PARA,
 	       topNodeButton, 
@@ -476,10 +477,10 @@ check Package := pkg -> (
 	       if class t === String then (
 	       	    cmd := commandLine#0 | " --silent -q -e 'load \""|pkg#"title"|".m2\"'";
 	       	    stderr << "-- test " << i << ": " << cmd << endl;
-	       	    "!" | cmd << t << endl << "exit" << endl << close;
+	       	    "!" | cmd << t << endl << close;
 		    )
 	       else if class t === Function then (
-		    stderr << "-- test " << i << ": " << code t << endl;
+		    stderr << "-- test " << i << ":" << endl << code t << endl;
 		    t()))))
 
 -- Local Variables:
