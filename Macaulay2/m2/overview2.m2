@@ -540,8 +540,9 @@ document {
 	  TO "making new classes",
 	  TO "inheritance from parents",
 	  TO "printing and formatting for new classes",
-	  TO "method functions",
 	  TO "making a new method function",
+	  TO (method, SingleArgumentDispatch),
+	  TO (method, Options),
 	  }
      }
 
@@ -2212,11 +2213,11 @@ document {
      be applied to evaluate the expression ", TT "y+z", ", and see
      what happens.",
      EXAMPLE {
-	  "Y + X := (a,b) -> XY;",
-	  "X + Z := (a,b) -> ZX;",
+	  "Y + X := (a,b) -> YX;",
+	  "X + Z := (a,b) -> XZ;",
 	  "y + z"
 	  },
-     "The result is the symbol ", TT "XY", ".  The reason is that
+     "The result is the symbol ", TT "YX", ".  The reason is that
      after finding that no method applies directly for adding
      an instance of ", TT "Y", " to an instance of ", TT "Z", ", the 
      search continues: ", TT "Z", " is replaced by its parent ", TT "X", ", 
