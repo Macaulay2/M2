@@ -82,12 +82,12 @@ bookFile << ///
 
 \def\beginsection#1{{\bf #1}}
 
-\font\headerFontOne=cmbx12 scaled \magstep 1
-\font\headerFontTwo=cmbx12 scaled \magstep 1
-\font\headerFontThree=cmbx12
-\font\headerFontFour=cmbx12
-\font\headerFontFive=cmbx10
-\font\headerFontSix=cmbx10
+% \font\headerFontOne=cmbx12 scaled \magstep 1
+% \font\headerFontTwo=cmbx12 scaled \magstep 1
+% \font\headerFontThree=cmbx12
+% \font\headerFontFour=cmbx12
+% \font\headerFontFive=cmbx10
+% \font\headerFontSix=cmbx10
 
 \begin{document}
         \title{Macaulay 2 \\ A system for computations in \\ algebraic geometry and commutative algebra}

@@ -559,7 +559,7 @@ document { "system",
 	  TO "sleep",
 	  TO "time",
 	  TO "timing",
-	  TO "tmpname",
+	  TO "temporaryFileName",
 	  TO "wait"
 	  },
      "Variables with information about the state of the current process:",

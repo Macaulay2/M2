@@ -7,10 +7,11 @@ document { exit,
      NOINDENT, 
      TT "exit", " -- terminates the program and returns 0 as return code.",
      PARA,
-     "Files are flushed and closed.  Another way to exit is to type the end of
-     file character, which is typically set to Control-D in unix systems, and is
-     Control-Z under MS-DOS.",
-     SEEALSO "quit"
+     "Files are flushed and closed.  Functions registered with ", TO "addStartFunction", "
+     are called, unless a nonzero return value has been provided.  Another
+     way to exit is to type the end of file character, which is typically
+     set to Control-D in unix systems, and is Control-Z under Windows.",
+     SEEALSO {"quit"}
      }
 
 document { quit,
@@ -401,7 +402,7 @@ document { Database,
      "A database file is just like a hash table, except both the keys and
      values have to be strings.",
      EXAMPLE {
-	  ///filename = tmpname "test.dbm"///,
+	  ///filename = temporaryFileName () | ".dbm"///,
       	  ///x = openDatabaseOut filename///,
       	  ///x#"first" = "hi there"///,
       	  ///x#"first"///,
@@ -465,10 +466,6 @@ document { addEndFunction,
      TT "addEndFunction (() -> ...)", " -- record a function for later 
      execution, when the program is exited.",
      PARA,
-     "Warning: in the current implementation, the function will be run
-     only if the program is explicitly exited with ", TO "exit", ", and not
-     if it encounters end of file.",
-     PARA,
      SEEALSO "runEndFunctions"
      }
 
@@ -486,8 +483,6 @@ document { runEndFunctions,
      Headline => "run the ending functions",
      TT "runEndFunctions()", " -- call all the functions previously recorded
      by ", TO "addEndFunction", ".",
-     PARA,
-     "This function is intended for internal use only.",
      PARA,
      "The funuctions are called with no arguments."
      }

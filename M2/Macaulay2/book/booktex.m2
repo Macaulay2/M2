@@ -4,7 +4,7 @@ errorDepth 0
 
 documentationMemo = memoize documentation
 
-asciiLineWidth = 60
+maximumCodeWidth = 60
 
 getNameFromNumber = new MutableHashTable
 otherNodes = new MutableHashTable
@@ -148,23 +148,6 @@ reach2 TO "Appendix"
 ---------------
 close docDatabase
 ---------------
-ttLiteralTable = new MutableHashTable
-scan(characters ascii(0 .. 255), 
-     c -> ttLiteralTable#c = concatenate(///{\char///, toString first ascii c, "}"))
-scan(characters ascii(32 .. 126), c -> ttLiteralTable#c = c)
-scan(characters "\\{}$&#^_%~", c -> ttLiteralTable#c = concatenate("{\\char", toString first ascii c, "}"))
--- scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))
-ttLiteralTable#"\n" = "\n"
-ttLiteralTable#"\t" = "\t"
-ttLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
-     	       	    	-- see page 381 of TeX Book
-ttLiteral = s -> concatenate apply(characters s, c -> ttLiteralTable#c)
----------------
-cmrLiteralTable = copy ttLiteralTable
-scan(characters "^=_\\<>|{}", c -> cmrLiteralTable#c = concatenate("{\\tt\\char",toString first ascii c,"}"))
-cmrLiteral = s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
----------------
-
 UnknownReference := "???"
 
 crossReference := (key,text,optional) -> (
@@ -216,7 +199,6 @@ booktex MENU := x -> concatenate(
      )
 
 booktex HREF := s -> concatenate( "\\href{", ttLiteral s#0, "}{", booktex s#-1, "}" )
-booktex Headline := s -> ""
 booktex TEX := identity
 booktex NOINDENT := (x) -> ///\noindent\ignorespaces
 ///
@@ -234,79 +216,8 @@ booktex Boolean := booktex Symbol := toString
 booktex BasicList := booktex Sequence := x -> concatenate apply(x,booktex)
 booktex String := cmrLiteral
 booktex ITALIC := x -> concatenate("{\\sl ",booktex toList x,"}")
-verbatim = x -> concatenate (
-     "\\beginverbatim%", newline,
-     ttLiteral concatenate x,
-     "\\endverbatim{}"
-     )
-booktex TT := verbatim
 shorten := s -> (
      while #s > 0 and s#-1 == "" do s = drop(s,-1);
      while #s > 0 and s#0 == "" do s = drop(s,1);
      s)
 
-booktex H1 := x -> concatenate (
-     ///\medskip\noindent\begingroup\headerFontOne%
-///,
-     apply(toList x, tex),
-     ///\endgroup\par\smallskip%
-///
-     )
-booktex H2 := x -> concatenate (
-     ///\medskip\noindent\begingroup\headerFontTwo%
-///,
-     apply(toList x, tex),
-     ///\endgroup\par\smallskip%
-///
-     )
-booktex H3 := x -> concatenate (
-     ///\medskip\noindent\begingroup\headerFontThree%
-///,
-     apply(toList x, tex),
-     ///\endgroup\par\smallskip%
-///
-     )
-booktex H4 := x -> concatenate (
-     ///\medskip\noindent\begingroup\headerFontFour%
-///,
-     apply(toList x, tex),
-     ///\endgroup\par\smallskip%
-///
-     )
-booktex H5 := x -> concatenate (
-     ///\medskip\noindent\begingroup\headerFontFive%
-///,
-     apply(toList x, tex),
-     ///\endgroup\par\smallskip%
-///
-     )
-booktex H6 := x -> concatenate (
-     ///\medskip\noindent\begingroup\headerFontSix%
-///,
-     apply(toList x, tex),
-     ///\endgroup\par\smallskip%
-///
-     )
-
-booktex ExampleTABLE := x -> concatenate apply(x,y -> booktex y#1)
-
-booktex CODE :=
-booktex PRE := x -> concatenate (
-     ///
-\beginverbatim%
-\penalty-200
-///,
-     between(newline, 
-	  shorten lines concatenate x
-	  / (line ->
-	       if #line <= asciiLineWidth then line
-	       else concatenate(substring(line,0,asciiLineWidth), " ..."))
-	  / ttLiteral
-	  / (line -> if line === "" then ///\penalty-170/// else line)
-	  ),
-     ///
-\endverbatim
-\penalty-200
-\noindent
-///
-     )

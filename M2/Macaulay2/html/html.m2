@@ -13,8 +13,11 @@ BUTTON = (s,alt) -> (
      else LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center alt=\"[", alt, "]\">")
      )
 
-topFileName = "index.html"
+prefix = ""
 topNodeName = "Macaulay 2"
+topFileName = cacheFileName(prefix,topNodeName,"index") | ".html"
+linkFilename = s -> cacheFileName(prefix,s) | ".html"
+
 topNodeButton = HREF { topFileName, BUTTON("top.gif","top") }
 
 nullButton = BUTTON("null.gif",null)
@@ -23,16 +26,6 @@ masterFileName = "master.html"
 masterNodeName = "master index"
 masterIndexButton = HREF { masterFileName, BUTTON("index.gif","index") }
 
-fourDigits = i -> (
-     s := toString i;
-     concatenate(4-#s:"0", s)
-     )
-
-linkFilenameCounter = 0
-linkFilename = memoize(
-     s -> fourDigits (linkFilenameCounter = linkFilenameCounter + 1) | ".html",
-     { topNodeName => topFileName }
-     )
 
 htmlLiteralTable := new MutableHashTable
 scan(characters ascii(0 .. 255), c -> htmlLiteralTable#c = c)
@@ -168,7 +161,7 @@ time scanKeys(docFile,
      )
 close docFile
 
-<< "pass 3, writing " << linkFilenameCounter << " html files" << endl
+<< "pass 3, writing html files" << endl
 time scan(keys linkFollowedTable, fkey -> (
 	  linkFilename fkey
 	  << html HTML { 

@@ -46,15 +46,17 @@ eliminate (Ideal, List) := (I,v) -> (
 eliminate (Ideal, RingElement) := (I,v) -> eliminate(I,{v})
 
 document { eliminate,
-     EXAMPLE ///
-R = ZZ/101[x,a,b,c,d,Degrees=>{1,1,2,1,2}]
-f = x^2+a*x+b
-g = x^2+c*x+d
-time eliminate(ideal(f,g),x)
-time ideal resultant(f,g,x)
-sylvesterMatrix(f,g,x)
-discriminant(f,x) ///,
-SEEALSO "sylvesterMatrix"
+     EXAMPLE {
+	  ///needs "eliminate.m2"///,
+	  "R = ZZ/101[x,a,b,c,d,Degrees=>{1,1,2,1,2}];",
+	  "f = x^2+a*x+b",
+	  "g = x^2+c*x+d",
+	  "time eliminate(ideal(f,g),x)",
+	  "time ideal resultant(f,g,x)",
+	  "sylvesterMatrix(f,g,x)",
+	  "discriminant(f,x)"
+	  },
+     SEEALSO "sylvesterMatrix"
      }
 
 -----------------------------------------------
@@ -97,18 +99,21 @@ document { resultant,
 a variable in that ring.  The result is the determinant of the Sylvester matrix, 
 ", TT "sylvesterMatrix(f,g,x)", ".  The resultant of f and its derivative with respect to x is the
 discriminant, ", TT "discriminant(f,x).",
-     EXAMPLE ///
-R = ZZ[x,a,b,c,d]
-f = x^2+a*x+b
-g = x^2+c*x+d
-resultant(f,g,x)
-sylvesterMatrix(f,g,x)
-discriminant(f,x) ///,
-SEEALSO ("sylvesterMatrix", "discriminant", "eliminate")
-}
+     EXAMPLE {
+	  ///needs "eliminate.m2"///,
+	  "R = ZZ[x,a,b,c,d];",
+	  "f = x^2+a*x+b",
+	  "g = x^2+c*x+d",
+	  "resultant(f,g,x)",
+	  "sylvesterMatrix(f,g,x)",
+	  "discriminant(f,x)"
+	  },
+     SEEALSO ("sylvesterMatrix", "discriminant", "eliminate")
+     }
 
 
 TEST ///
+needs "eliminate.m2"
 R = ZZ/101[a..d]
 time I = monomialCurve(R,{1,3,4})
 time eliminate(I,{b})

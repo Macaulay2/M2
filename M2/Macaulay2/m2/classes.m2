@@ -95,7 +95,10 @@ addEndFunction = g -> (
      g)
 runEndFunctions = () -> scan(endFunctions, f -> f())
 
-exit1 := ret -> (runEndFunctions(); exit ret)
+exit1 := ret -> (
+     if ret === 0 then runEndFunctions();
+     exit ret
+     )
 erase symbol exit
 exit = exit1
 

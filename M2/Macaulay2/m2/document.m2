@@ -4,8 +4,9 @@
 -- configuration
 -----------------------------------------------------------------------------
 maximumCodeWidth := 81
-CachePrefix := "cache-tmp"
-NameFile := concatenate(CachePrefix,"/Examples/FileNames")
+CachePrefix          := "cache/"
+DocumentationPrefix  := CachePrefix | "doc/"
+TestsPrefix          := CachePrefix | "tests/"
 -----------------------------------------------------------------------------
 -- initialization and finalization
 -----------------------------------------------------------------------------
@@ -338,30 +339,11 @@ exprCounter := 0
 file := null
 fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 -----------------------------------------------------------------------------
-saveNameHashTable := null
-     NameHashTable := () -> if saveNameHashTable =!= null then saveNameHashTable else saveNameHashTable = (
-	  if phase === 4 then hashTable value get NameFile
-	  else (
-	       try  new MutableHashTable from hashTable value get NameFile
-	       else new MutableHashTable
-	       )
-	  )
-     addEndFunction( () -> (
-	       if phase === 2 then (
-		    stderr << "writing " << NameFile << endl;
-		    NameFile << toExternalString pairs NameHashTable() << endl << close;);
-	       saveNameHashTable = null))
------------------------------------------------------------------------------
 nodeBaseFilename := ""
 exampleCounter := 0
 exampleOutputFile := null
 exampleResultsFound := false
 exampleResults := {}
-makeBaseFilename := nodeName -> (
-     if (NameHashTable())#?nodeName then (NameHashTable())#nodeName
-     else (
-	  if phase === 4 then error("internal error: documentation node '", nodeName, "' has no sequence number");
-	  (NameHashTable())#nodeName = concatenate( CachePrefix,"/Examples/", fourDigits(#(NameHashTable())))))
 processExample := x -> (
      exampleCounter = exampleCounter + 1;
      exampleOutputFile << x << endl;
@@ -372,7 +354,7 @@ processExample := x -> (
 	       stderr << "warning : input file " << nodeBaseFilename 
 	       << ".out terminates prematurely" << endl;
 	       );
-	  {x, CODE concatenate("in = ",x)}
+	  {x, CODE concatenate("i", toString exampleCounter, " = ",x)}
 	  ))
 processExamplesLoop := s -> (
      if class s === EXAMPLE then {
@@ -388,21 +370,18 @@ extractExamples EXAMPLE    := x -> toList x
 extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
 processExamples := (docBody) -> (
      examples := extractExamples docBody;
-     if phase > 1 and #examples > 0 then (
-	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".m2");
-	  exampleResults = try (
-	       exampleResultsFound = true;
-	       get (nodeBaseFilename | ".out")
-	       ) else (
+     if #examples > 0 then (
+	  exampleResultsFound = true;
+	  exampleResults = "";
+	  try exampleResults = get (nodeBaseFilename | ".out") else (
 	       exampleResultsFound = false;
 	       if phase === 4 or phase === 5 then (
-		    stderr << "warning : can't open input file '" 
-	       	    << nodeBaseFilename << ".out'" << endl;
+		    stderr << "warning : can't open input file '" << nodeBaseFilename << ".out'" << endl;
 		    );
-	       ""
 	       );
 	  exampleResults = separate(exampleResults,"\1");
 	  exampleCounter = 0;
+	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".m2");
 	  docBody = apply(docBody,processExamplesLoop);
 	  close exampleOutputFile;
 	  );
@@ -415,7 +394,7 @@ document List := z -> (
      body := drop(z,1);
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
-     nodeBaseFilename = makeBaseFilename nodeName;
+     nodeBaseFilename = cacheFileName(DocumentationPrefix, nodeName);
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
      )
@@ -592,13 +571,15 @@ optargs Thing := x -> null
 optargs Function := f -> (
      o := options f;
      if o =!= null then SEQ {
-	  "Optional arguments :", PARA{},
+	  NOINDENT{},
+	  "Optional arguments :", newline,
 	  SHIELD smenu apply(keys o, t -> f => t)})
 
 optargs Sequence := s -> (
      o := options s;
      if o =!= null then SEQ {
-	  "Optional arguments :", PARA{}, 
+	  NOINDENT{},
+	  "Optional arguments :", newline,
 	  SHIELD smenu apply(keys o, t -> s => t)}
      else optargs s#0)
 
@@ -695,7 +676,11 @@ fmeth := f -> (
      b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ {"Ways to use ", TT toString f," :", BR{}, SHIELD smenu b} )
+     if #b > 0 then SEQ {
+	  NOINDENT{},
+	  "Ways to use ", TT toString f," :", newline, 
+	  SHIELD smenu b
+	  } )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
@@ -879,9 +864,8 @@ help Thing := s -> (
 -----------------------------------------------------------------------------
 
 TEST = (e) -> if phase === 2 then (
-     testFileCounter = testFileCounter + 1;
-     openOut concatenate(CachePrefix,"/Tests/", fourDigits testFileCounter, ".m2") 
-     << e << endl << close;
+     cacheFileName TestsPrefix | ".m2" << e << endl << close;
+     null
      )
 
 SEEALSO = v -> (
@@ -905,52 +889,38 @@ htmlExtraLiteralTable := copy htmlLiteralTable
 htmlExtraLiteralTable#" " = "&nbsp;"
 htmlExtraLiteral := s -> concatenate apply(characters s, c -> htmlExtraLiteralTable#c)
 -----------------------------------------------------------------------------
-ttLiteralTable := new MutableHashTable
-scan(0 .. 255, c -> ttLiteralTable#(ascii{c}) = concatenate(///{\char ///, string c, "}"))
-scan(characters ascii(32 .. 126), c -> ttLiteralTable#c = c)
--- scan(characters "\\{}$&#^_%~", c -> ttLiteralTable#c = concatenate("{\\char ", string (ascii c)#0, "}"))
--- scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))
+texLiteralTable := new MutableHashTable
+    scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, string c, "}"))
+    scan(characters ascii(32 .. 126), c -> texLiteralTable#c = c)
+    scan(characters "\\{}$&#^_%~|<>", c -> texLiteralTable#c = concatenate("{\\char ", string (ascii c)#0, "}"))
+    texLiteralTable#"\n" = "\n"
+    texLiteralTable#"\r" = "\r"
+    texLiteralTable#"\t" = "\t"
+    texLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
+				   -- see page 381 of TeX Book
+texLiteral := s -> concatenate apply(characters s, c -> texLiteralTable#c)
 
-cmrLiteralTable := copy ttLiteralTable
-
-ttBreak :=
+HALFLINE := ///\vskip 4.75pt
 ///
-\leavevmode\hss\endgraf
+ENDLINE := ///\leavevmode\hss\endgraf
 ///
+VERBATIM := ///\begingroup\baselineskip=9.5pt\tt\parskip=0pt
+///
+ENDVERBATIM := ///\endgroup{}///
 
-(
-if #newline === 1 
-then ttLiteralTable#newline = ttBreak 
-else if #newline === 2 then (
-     ttLiteralTable#(newline#0) = "";
-     ttLiteralTable#(newline#1) = ttBreak;
+texExtraLiteralTable := copy texLiteralTable
+texExtraLiteralTable#" " = "\\ "
+texExtraLiteral := s -> concatenate between(ENDLINE,
+     apply(lines s, l -> apply(characters l, c -> texExtraLiteralTable#c))
      )
-)
-
-ttLiteralTable#" " = ///\ ///
-ttLiteralTable#"\t" = "\t"
-ttLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
-                               -- see page 381 of TeX Book
-ttLiteral := s -> concatenate apply(characters s, c -> ttLiteralTable#c)
------------------------------------------------------------------------------
-cmrLiteralTable#"\n" = "\n"
-cmrLiteralTable#"\r" = "\r"
-cmrLiteralTable#"\t" = "\t"
-cmrLiteralTable#"\\" = "{\\tt \\char`\\\\}"
-cmrLiteralTable# "<" = "{\\tt \\char`\\<}"
-cmrLiteralTable# ">" = "{\\tt \\char`\\>}"
-cmrLiteralTable# "|" = "{\\tt \\char`\\|}"
-cmrLiteralTable# "{" = "{\\tt \\char`\\{}"
-cmrLiteralTable# "}" = "{\\tt \\char`\\}}"
-cmrLiteral := s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 -----------------------------------------------------------------------------
 
 html String := htmlLiteral
 mathML String := htmlLiteral
-tex String := cmrLiteral
+tex String := texLiteral
 texMath String := s -> (
      if #s === 1 then s
-     else concatenate("\\text{", cmrLiteral s, "}")
+     else concatenate("\\text{", texLiteral s, "}")
      )
 text String := identity
 
@@ -1131,28 +1101,30 @@ shorten := s -> (
      while #s > 0 and s#-1 == "" do s = drop(s,-1);
      while #s > 0 and s#0 == "" do s = drop(s,1);
      s)
-tex PRE := x -> concatenate (
-     ///\par
-\vskip 4 pt
-{%
-     \tt
-     \baselineskip=9.5pt
+
+verbatim := x -> concatenate ( VERBATIM, texExtraLiteral concatenate x, ENDVERBATIM )
+
+tex TT := texMath TT := verbatim
+tex CODE :=
+tex PRE := x -> concatenate ( VERBATIM,
+     ///\penalty-200
 ///,
-     between(newline, 
-	  shorten lines concatenate x
-	  / (line ->
-	       if #line <= maximumCodeWidth then line
-	       else concatenate(substring(line,0,maximumCodeWidth - 4), " ..."))
-	  / ttLiteral
-	  / (line -> if line === "" then ///\penalty-500/// else line)
-	  / (line -> (line,///\leavevmode\hss\endgraf///))
-	  ),
-     ///
-     }
-\par
-\noindent
+     HALFLINE,
+     shorten lines concatenate x
+     / (line ->
+	  if #line <= maximumCodeWidth then line
+	  else concatenate(substring(line,0,maximumCodeWidth), " ..."))
+     / texExtraLiteral
+     / (line -> if line === "" then ///\penalty-170/// else line)
+     / (line -> (line, ENDLINE)),
+     ENDVERBATIM,
+     HALFLINE,
+     ///\penalty-200\par{}
 ///
      )
+
+text TT    := x -> concatenate   ("'", text \ toList x, "'")
+net TT     := x -> horizontalJoin splice ("'", net  \ toSequence x, "'")
 
 html BODY := x -> concatenate(
      "<BODY bgcolor='#e4e4ff'>",
@@ -1195,11 +1167,6 @@ text List := x -> concatenate("{", between(",", apply(x,text)), "}")
 html Sequence := x -> concatenate("(", between(",", apply(x,html)), ")")
 html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 
-tex     TT := x -> concatenate   (///{\tt {}///, ttLiteral concatenate (tex     \ toList x), "}")
-texMath TT := x -> concatenate   (///{\tt {}///, ttLiteral concatenate (texMath \ toList x), "}")
-text    TT := x -> concatenate   ("'", text \ toList x, "'")
-net     TT := x -> horizontalJoin splice ("'", net  \ toSequence x, "'")
-
 net CODE := x -> stack lines concatenate x
 
 html CODE   := x -> concatenate( 
@@ -1214,7 +1181,7 @@ html HREF := x -> (
 text HREF := x -> "\"" | x#-1 | "\""
 tex HREF := x -> (
      concatenate(
-	  ///\special{html:<A href="///, ttLiteral x#0, ///">}///,
+	  ///\special{html:<A href="///, texLiteral x#0, ///">}///,
 	  tex x#-1,
 	  ///\special{html:</A>}///
 	  )
@@ -1226,7 +1193,7 @@ html ANCHOR := x -> (
 text ANCHOR := x -> "\"" | x#-1 | "\""
 tex ANCHOR := x -> (
      concatenate(
-	  ///\special{html:<A name="///, ttLiteral x#0, ///">}///,
+	  ///\special{html:<A name="///, texLiteral x#0, ///">}///,
 	  tex x#-1,
 	  ///\special{html:</A>}///
 	  )
@@ -1257,12 +1224,9 @@ text MENU := x -> concatenate(
 net MENU := x -> "    " | stack apply(toList addHeadlines x, net)
 
 tex MENU := x -> concatenate(
-     ///
-\begingroup\parindent=40pt
-///,
-     apply(addHeadlines x, x -> if x =!= null then ( ///\item {$\bullet$}///, tex x, newline)),
-     "\\endgroup", newline, newline)
-
+     ///\begin{itemize}///, newline,
+     apply(addHeadlines x, x -> if x =!= null then ( ///\item ///, tex x, newline)),
+     ///\end{itemize}///, newline)
 
 html UL   := x -> concatenate(
      "<UL>", newline,
@@ -1337,7 +1301,15 @@ text SUP := x -> "^" | text x#0
 text SUB := x -> "_" | text x#0
 
 net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
-html TO := x -> concatenate ( "<A HREF=\"", "\">", html formatDocumentTag x#0, "</A>", drop(toList x,1) )
+html TO := x -> (
+     node := formatDocumentTag x#0;
+     concatenate ( 
+     	  "<A HREF=\"", cacheFileName(DocumentationPrefix, node), ".html", "\">", 
+     	  html node,
+     	  "</A>",
+     	  drop(toList x,1) 
+     	  )
+     )
 tex  TO := x -> tex TT formatDocumentTag x#0
 
              toh := op -> x -> op SEQ{ new TO from x, headline x#0 }
@@ -1360,3 +1332,45 @@ text Option := x -> toString x
 net BIG := x -> net x#0
 net CENTER := x -> net x#0
 
+tex H1 := x -> concatenate (
+     ///\medskip\noindent\begingroup\font\headerFontOne=cmbx12 scaled \magstep 1\headerFontOne%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+tex H2 := x -> concatenate (
+     ///\medskip\noindent\begingroup\font\headerFontTwo=cmbx12 scaled \magstep 1\headerFontTwo%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+tex H3 := x -> concatenate (
+     ///\medskip\noindent\begingroup\font\headerFontThree=cmbx12\headerFontThree%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+tex H4 := x -> concatenate (
+     ///\medskip\noindent\begingroup\font\headerFontFour=cmbx12\headerFontFour%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+tex H5 := x -> concatenate (
+     ///\medskip\noindent\begingroup\font\headerFontFive=cmbx10\headerFontFive%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
+tex H6 := x -> concatenate (
+     ///\medskip\noindent\begingroup\font\headerFontSix=cmbx10\headerFontSix%
+///,
+     apply(toList x, tex),
+     ///\endgroup\par\smallskip%
+///
+     )
