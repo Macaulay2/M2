@@ -1,6 +1,0 @@
-stdio.oo : stdio.d
-stdio.oo stdio.sig : system.sig
-stdio.oo stdio.sig : strings.sig
-stdio.oo stdio.sig : C.sig
-stdio.oo stdio.sig : varstrings.sig
-stdio.oo stdio.sig : nets.sig

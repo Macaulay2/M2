@@ -1,7 +1,0 @@
-ctype.oo : ctype.d
-ctype.oo ctype.sig : system.sig
-ctype.oo ctype.sig : strings.sig
-ctype.oo ctype.sig : C.sig
-ctype.oo ctype.sig : varstrings.sig
-ctype.oo ctype.sig : nets.sig
-ctype.oo ctype.sig : stdio.sig
