@@ -8,7 +8,8 @@ endif
 
 LATERESULTS := missingDoc.okay
 
-all :: $(RESULTS)
+all check :: ; $(MAKE) -C engine $@
+all check :: $(RESULTS)
 
 $(RESULTS) : ../bin/M2
 $(LATERESULTS) : ../bin/M2 ../cache/Macaulay2-doc ../cache/Macaulay2-made

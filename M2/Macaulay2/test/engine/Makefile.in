@@ -1,0 +1,19 @@
+# @configure_input@
+include ../../../include/config.Makefile
+VPATH = @srcdir@
+RESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2))) $(notdir $(patsubst %.m2-input, %.okay, $(wildcard @srcdir@/*.m2-input)))
+all :: $(RESULTS)
+$(RESULTS) : ../../bin/M2
+ARGS := --silent --stop -q
+
+# uncomment this for further debugging:
+# ARGS += -e 'errorDepth = 0'
+
+%.okay : %.m2
+	@ echo testing $<
+	@ ulimit -t 600; time ../../bin/M2 $(ARGS) $< -e 'exit(0)'
+	@ touch $@
+
+clean :; rm -f *.okay
+distclean: clean; rm -f Makefile
+Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/test/engine/Makefile
