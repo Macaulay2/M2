@@ -95,10 +95,15 @@ silentRobustNet = (wid,ht,sec,y) -> (
 	  try timelimit (sec, () -> checkString toString y)
 	  else
 	  simpleToString y))
-silentRobustNetWithClass := (wid,ht,sec,y) -> (			    -- we know wid is at least 80
+silentRobustNetWithClass = (wid,ht,sec,y) -> (			    -- we know wid is at least 80
      part2 := horizontalJoin(" (of class ", silentRobustNet(wid//2,           ht,sec,class y), ")");
      part1 :=                               silentRobustNet(wid - width part2,ht,sec,      y);
      horizontalJoin(part1, part2));
+silentRobustString = (wid,sec,y) -> (
+     trunc(wid,1,
+	  try timelimit (sec, () -> checkString toString y)
+	  else
+	  simpleToString y))
 
 hush := false
 scan(binaryOperators, op -> 

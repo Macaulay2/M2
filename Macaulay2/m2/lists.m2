@@ -3,11 +3,11 @@
 -- singleton = x -> toSequence {x}
 typicalValues#singleton = Sequence
 
-List _ ZZ    := (x,i) -> x#i
-installAssignmentMethod(symbol "_", MutableList, ZZ, (x,i,v) -> x#i = v)
+Sequence _ ZZ := List _ ZZ := (s,i) -> s#i
+String _ ZZ := String => (s,i) -> s#i
+String _ Sequence := String => (s,i) -> ((j,k) -> substring(j,k,s)) i
 
 List | List  := List => join
-
 List + List  := List => (v,w) -> apply(v,w,plus)
      - List  := List => v -> apply(v,minus)
 List - List  := List => (v,w) -> apply(v,w,difference)
