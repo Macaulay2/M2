@@ -506,16 +506,18 @@ installPackage Package := o -> pkg -> (
      infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay 2 package") << endl;
      infofile << "END-INFO-DIR-ENTRY" << endl << endl;
      byteOffsets := new MutableHashTable;
+     topNodeName := DocumentTag.FormattedKey topDocumentTag;
+     subst := n -> if n === topNodeName then "Top" else n;
+     chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
      traverse(unbag pkg#"table of contents", tag -> (
-	       checkIsTag tag;
 	       key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
-	       if tag === topDocumentTag then fkey = "Top";
-	       byteOffsets# #byteOffsets = concatenate("Node: ",fkey,"\177",toString length infofile);
-	       infofile << "\037" << endl << "File: " << infobasename << ", Node: " << fkey;
-	       if NEXT#?tag then infofile << ", Next: " << DocumentTag.FormattedKey NEXT#tag;
-	       if PREV#?tag then infofile << ", Prev: " << DocumentTag.FormattedKey PREV#tag;
-	       if UP#?tag   then infofile << ", Up: " << DocumentTag.FormattedKey UP#tag;
+	       chk fkey;
+	       byteOffsets# #byteOffsets = concatenate("Node: ",subst fkey,"\177",toString length infofile);
+	       infofile << "\037" << endl << "File: " << infobasename << ", Node: " << subst fkey;
+	       if NEXT#?tag then infofile << ", Next: " << subst DocumentTag.FormattedKey NEXT#tag;
+	       if PREV#?tag then infofile << ", Prev: " << subst DocumentTag.FormattedKey PREV#tag;
+	       if UP#?tag   then infofile << ", Up: " << subst DocumentTag.FormattedKey UP#tag;
      	       infofile << endl << endl << info documentation key << endl));
      infofile << "\037" << endl << "Tag Table:" << endl;
      scan(values byteOffsets, b -> infofile << b << endl);
