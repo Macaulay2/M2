@@ -1015,7 +1015,11 @@ export eval(c:Code):Expr := (
 	       ));
      when e is err:Error do (
 	  if SuppressErrors then return e;
-	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage then return e;
+	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage
+	  then (
+	       if err.position == dummyPosition then err.position = codePosition(c); -- there will be no way to enter the debugger to figure out an unhandled break
+	       return e;
+	       );
 	  p := codePosition(c);
      	  if int(p.loadDepth) >= errorDepth && !err.position === p then (
 	       oldReportFrame := err.report.code.frame;

@@ -100,7 +100,10 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 			 lastvalue = eval(f);	  -- run it
 			 if lastvalue == endInput then return nullE;
 			 when lastvalue is err:Error do (
-			      if AbortIfError || err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then return lastvalue;
+			      if AbortIfError then return lastvalue;
+			      if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then (
+				   printErrorMessage(err.position,"warning: unhandled " + err.message);
+				   );
 			      if err.message == unwindMessage 
 			      then lastvalue = nullE
 			      else setGlobalVariable(errorReportS, toExpr(err.report));

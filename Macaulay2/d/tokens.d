@@ -475,10 +475,10 @@ export parseWORD    := newParseinfo();
 
 -- debugging
 
-export returnMessage := "return message";
-export continueMessage := "continue message";
-export breakMessage := "break message";
-export unwindMessage := "unwind message";
+export returnMessage := "return command";
+export continueMessage := "continue command";
+export breakMessage := "break command";
+export unwindMessage := "unwind command";
 export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";
 
