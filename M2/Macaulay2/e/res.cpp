@@ -888,7 +888,7 @@ int res_comp::calc(const int *DegreeLimit,
 	{
 	  buffer o;
 	  o << '{' << n_degree << '}';
-	  emit(o.str());
+	  emit_wrapped(o.str());
 	}
 
       if (n_level == 2)

@@ -196,20 +196,24 @@ document { returnCode,
      }
 
 document { gbTrace,
-     HEADLINE " -- provide tracing output during Groebner basis computations",
+     HEADLINE " -- provide tracing output during various computations in the
+     engine.",
      TT "gbTrace n", " -- set the tracing level for the ", TO "engine", " to
-     level n.  Meaningful values for n are 0, 1, 2, and 3.",
+     level ", TT "n", ".  Meaningful values for the user ", TT "n", " are
+     0, 1, 2, and 3.",
      PARA,
      "The notations used in tracing are :",
      MENU {
 	  "g       - a generator reduced to something nonzero and has been added to the basis.",
 	  "m       - an S-pair reduced to something nonzero and has been added to the basis.",
 	  "z       - an S-pair reduced to zero, and a syzygy has been recorded.",
+	  "u       - an S-pair reduced to zero, but the syzygy need not be recorded.",
 	  "o       - an S-pair or generator reduced to zero, but no new syzygy occurred.",
 	  "r       - an S-pair has been removed.",
-	  "{2}     - beginning to reduce the S-pairs of multi-degree {2}",
-	  "(7)     - 7 more S-pairs among basis elements need to be reduced",
+	  "{2}     - beginning to reduce the S-pairs of multi-degree {2}.",
+	  "(7)     - 7 more S-pairs among basis elements need to be reduced.",
 	  "(8,9)   - there are 8 S-pairs to do in this degree, and 9 more in higher degrees.",
+	  ".       - a minor has been computed, or something has happened while computing a resolution.",
 	  },
      PARA,
      "The value returned is the old tracing level."
