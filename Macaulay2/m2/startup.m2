@@ -45,6 +45,13 @@ if firstTime then (
 	  ZZ.InputContinuationPrompt = lineno -> "";
 	  symbol currentPrompts <- noPrompts;
 	  );
+     ctrlA := ascii 1;
+     examplePrompts = () -> (
+	  lastprompt := "";
+	  ZZ.InputPrompt = lineno -> concatenate(ctrlA, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));
+	  ZZ.InputContinuationPrompt = lineno -> #lastprompt;
+	  symbol currentPrompts <- examplePrompts;
+	  );
 
      startFunctions := {};
      addStartFunction = f -> ( startFunctions = append(startFunctions,f); f);
@@ -235,6 +242,7 @@ usage := arg -> (
      << "    -q                 don't load user's init.m2 file" << newline
      << "    -E '...'           evaluate expression '...' before initialization" << newline
      << "    -e '...'           evaluate expression '...' after initialization" << newline
+     << "    -x                 example prompts, don't use readline" << newline
      << "environment:"       << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
      << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
@@ -283,7 +291,7 @@ action := hashTable {
      "--copyright" => arg -> if phase == 1 then fullCopyright = true,
      "--no-prompts" => arg -> if phase == 1 then noPrompts(),
      "--notify" => arg -> if phase <= 2 then notify = true,
-     "-x" => obsolete,
+     "-x" => arg -> examplePrompts(),
      "-s" => obsolete,
      "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
      "--stop" => arg -> (if phase == 1 then stopIfError = true; debuggingMode = false;), -- see also M2lib.c and tokens.d
