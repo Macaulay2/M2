@@ -186,16 +186,6 @@ document {
      }
 
 document {
-     Key => "internals",
-     "Here are some functions and classes that are intended for internal use 
-     by the developers only.",
-     UL {
-	  TO "formatDocumentTag",
-	  TO "setSpin",
-	  }
-     }
-
-document {
      Key => "Reading the documentation",
      "The documentation for Macaulay 2 is available in several formats.
      The directory ", TT (LAYOUT#"packagehtml" "Macaulay2"), " 
@@ -314,7 +304,6 @@ document {
      Key =>  "Developer's Corner",
      Subnodes => {
 	  TO "engine",
-	  TO "internals",
 	  }
      }
 

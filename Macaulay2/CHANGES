@@ -46,7 +46,8 @@ map(Module) has been deprecated.  Use map(M,1) instead of map(M).
 PfaffiansComputation has been removed: 'pfaffians' no longer accepts
 optional arguments.
 
-Hypertext format items removed for lack of use: BASE, VAR, BIG.
+Hypertext format items removed for lack of use: BASE, VAR, BIG, DFN,
+XMP, CITE, SAMP.
 
 The sort order for symbols has been changed to the normal way, for
 agreement with the sort order for strings.  Formerly, we mimicked the

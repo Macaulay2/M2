@@ -11,7 +11,7 @@ document {
      can be used to convert it to straight ascii text, suitable for
      viewing on an ascii terminal, but in most circumstances, that conversion
      will be done automatically when hypertext is displayed.",
-     SeeAlso => {"MarkUpList", "MarkUpType", "Entity"}
+     SeeAlso => {"MarkUpList", "MarkUpType"}
      }
 
 document {

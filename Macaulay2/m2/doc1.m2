@@ -20,7 +20,6 @@ document {						    -- rewrite this!
 	  TOH "Outputs",
 	  TOH "Consequences",
 	  TOH "FileName",
-	  TOH "Description",
 	  TOH "Caveat",
 	  TOH "EXAMPLE",
 	  TOH "SeeAlso",
@@ -219,14 +218,6 @@ document {
      PARA,
      EXAMPLE "printExamples partitions",
      SeeAlso => {"examples", "document"}
-     }
-document {
-     Key => formatDocumentTag,
-     Headline => "format documentation tags",
-     TT "formatDocumentTag x", " -- formats the tags used with ", TO "TO", " for
-     display purposes in documents.",
-     PARA,
-     "This function is intended for internal use only."
      }
 document {
      Key => uniform,

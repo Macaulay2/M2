@@ -688,8 +688,6 @@ check Package := pkg -> (
 		    stderr << "-- test " << i << ":" << endl << code t << endl;
 		    t()))))
 
-htmlDebug = () -> commandInterpreter local x
-
 relativizeFilename2 = on relativizeFilename
 
 makePackageIndex = method(SingleArgumentDispatch => true)
