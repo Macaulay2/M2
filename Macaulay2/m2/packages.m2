@@ -126,7 +126,7 @@ export = method(SingleArgumentDispatch => true)
 export Symbol := x -> export singleton x
 export Sequence := v -> export toList v
 export List := v -> (
-     if not all(v, x -> class x === Symbol) then error "expected a list of symbols";
+     if not all(v, x -> instance(x, Symbol)) then error "expected a list of symbols";
      if currentPackage === null then error "no current package";
      currentPackage#"exported symbols" = join(currentPackage#"exported symbols",v);
      if currentPackage =!= Macaulay2 then scan(v, s -> (

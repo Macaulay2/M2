@@ -45,8 +45,8 @@ AssociativeNoOptions := () -> (
 	  );
      methodFunction)
 
-chkopt0 := k -> if not ( class k === Symbol ) then error "expected SYMBOL => VALUE"
-chkopt  := o -> if not ( class o === Option and #o === 2 and class o#0 === Symbol ) then error "expected SYMBOL => VALUE"
+chkopt0 := k -> if not ( instance(k, Symbol) ) then error "expected SYMBOL => VALUE"
+chkopt  := o -> if not ( class o === Option and #o === 2 and instance(o#0, Symbol) ) then error "expected SYMBOL => VALUE"
 chkopts := x -> if class x === OptionTable then scan(keys x,chkopt0) else if class x === List then scan(x,chkopt) else error "expected list of optional arguments"
 
 SingleArgWithOptions := opts -> (

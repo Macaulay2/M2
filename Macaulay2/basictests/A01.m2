@@ -121,7 +121,8 @@ assert( x#?(symbol |, String, String) )
 assert( x# (symbol |, String, String) === concatenate )
 
 -- test method installation and lookup
-assert( class symbol | === Symbol )
+assert( class symbol | === Keyword )
+assert( class symbol x === Symbol )
 assert( class concatenate === Function )
 assert( class String === Type )
    -- first do it manually

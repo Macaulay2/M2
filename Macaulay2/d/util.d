@@ -168,6 +168,7 @@ export getSequenceOfMatrices(e:Expr) : RawMatrixArray := (
 export engineErrorMessage():Expr := buildErrorPacket(EngineError("unknown engine error"));
 
 export toExpr(x:RawRingOrNull):Expr := when x is r:RawRing do Expr(r) is null do engineErrorMessage();
+export toExprOrNull(x:RawRingOrNull):Expr := when x is r:RawRing do Expr(r) is null do nullE;
 export toExpr(x:RawMonomialIdealOrNull):Expr := when x is r:RawMonomialIdeal do Expr(r) is null do engineErrorMessage();
 export toExprSeq(x:RawArrayInt):Expr := Expr(new Sequence len length(x) do foreach i in x do provide Expr(toInteger(i)));
 export toExpr(x:RawArrayInt):Expr := Expr(list(new Sequence len length(x) do foreach i in x do provide Expr(toInteger(i))));

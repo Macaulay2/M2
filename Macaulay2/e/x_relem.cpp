@@ -208,17 +208,16 @@ const RingOrNull *rawAmbientRing(const Ring *R)
    ring is ZZ[s,t][x,y,z]. This routine is provided only for debugging the engine. */
 {
 #warning implement rawAmbientRing
-  return R;
+  return NULL;
 }
 
-M2_bool rawDenominatorRing(const Ring *R, RingOrNull **resultRing)
+const RingOrNull *rawDenominatorRing(const Ring *R)
 /* If elements of R may have denominators, then this routine returns true, and 
    the ambient ring for denominators is placed into resultRing. Otherwise, false
    is returned. This routine is provided only for debugging the engine. */
 {
 #warning implement rawDenominatorRing
-  *resultRing = 0;
-  return false;
+  return NULL;
 }
 /*********************************************************************/
 
