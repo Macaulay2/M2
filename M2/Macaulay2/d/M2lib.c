@@ -412,7 +412,7 @@ char **argv;
 #ifdef MEM_DEBUG
      GC_all_interior_pointers = TRUE; /* set this before using gc routines!  (see gc.h) */
 #endif
-     GC_free_space_divisor = 3;	/* this was intended to be used only when we are about to dump data */
+     GC_free_space_divisor = 2;	/* this was intended to be used only when we are about to dump data */
 
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  char **environ0;

@@ -99,6 +99,12 @@ export printErrorMessage(position:Position,message:string):void := (
      	  stderr << position << ' ' << message << endl;
 	  );
      );
+export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
+     if !SuppressErrors then (
+     	  flush(stdout);
+     	  stderr << Position(filename,line,column,uchar(0)) << ' ' << message << endl;
+	  );
+     );
 export (o:file) << (p:(null or Position)):file := (
      when p is null do o is w:Position do o << w
      );

@@ -64,7 +64,7 @@ export Dictionary := {
      };
 export Token := {		-- a word, as encountered in the input
      word:Word,			--   the word
-     position:Position,		--   the location where it was encountered
+     filename:string, line:ushort, column:ushort, loadDepth:uchar, -- position:Position, --   the location where it was encountered
      dictionary:Dictionary,	--   the dictionary active at the time it was encountered
      entry:Symbol,     	  	--   the symbol table entry, found in the dictionary above, or one for wider lexical scope
      followsNewline:bool        --   whether it followed white space with a newline in it
@@ -174,7 +174,7 @@ export parallelAssignmentCode := {
 export nullCode := {};
 export realCode := {x:double,position:Position};
 export integerCode := {x:Integer,position:Position};
-export stringCode := {x:string,position:Position};
+export stringCode := {x:string};
 export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
 export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
@@ -462,7 +462,15 @@ export dummySymbol := Symbol(
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(globalMemoryReferenceCode(0,dummyPosition));
-export dummyToken   := Token(dummyWord,dummyPosition,Macaulay2Dictionary,dummySymbol,false);
+export dummyToken   := Token(dummyWord,
+     dummyPosition.filename,
+     dummyPosition.line,
+     dummyPosition.column,
+     dummyPosition.loadDepth,
+     Macaulay2Dictionary,dummySymbol,false);
+export position(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth);
+export printErrorMessage(t:Token,message:string):void := printErrorMessage(position(t),message);
+
 export parseEOF     := newParseinfo();
 export parseWORD    := newParseinfo();
 
@@ -583,7 +591,7 @@ export codePosition(e:Code):Position := (
      is f:sequenceCode do f.position
      is f:listCode do f.position
      is f:arrayCode do f.position
-     is f:stringCode do f.position
+     is f:stringCode do dummyPosition
      is f:ternaryCode do f.position
      is f:unaryCode do f.position
      );

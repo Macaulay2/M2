@@ -156,11 +156,11 @@ accumulate(e:ParseTree,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      ret
      );
 export errorunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     printErrorMessage(token1.position,"syntax error at '" + token1.word.name + "'");
+     printErrorMessage(token1,"syntax error at '" + token1.word.name + "'");
      errorTree
      );
 export errorbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int,obeylines:bool):ParseTree := (
-     printErrorMessage(token2.position,"syntax error at '" + token2.word.name + "'");
+     printErrorMessage(token2,"syntax error at '" + token2.word.name + "'");
      errorTree
      );
 export defaultunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -186,7 +186,7 @@ export nnunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree 
 export precSpace := 0;		-- filled in later by binding.d
 export defaultbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      if token2.followsNewline then (
-     	  printErrorMessage(token2.position,"missing semicolon or comma on previous line?");
+     	  printErrorMessage(token2,"missing semicolon or comma on previous line?");
      	  errorTree)
      else (
      	  ret := token2.word.parse.funs.unary(token2,file,precSpace-1,obeylines);
@@ -212,7 +212,7 @@ export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      	       token = gettoken(file,obeylines);
 	       token.word.parse.funs.unary(token,file,prec,obeylines)
 	       )
-     	  else ParseTree(dummy(token.position))
+     	  else ParseTree(dummy(position(token)))
 	  );
      if ret == errorTree then (
 	  if isatty(file) then flush(file) else skip(file,prec));
@@ -289,8 +289,8 @@ export unaryparen(left:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
 	  if rightparen == right.word.name
 	  then accumulate(ParseTree(Parentheses(left,e,right)),file,prec,obeylines)
 	  else (
-	       printErrorMessage(right.position, "expected \"" + rightparen + "\"");
-	       printErrorMessage(left.position," ... to match this");
+	       printErrorMessage(right, "expected \"" + rightparen + "\"");
+	       printErrorMessage(left," ... to match this");
 	       errorTree)));
 export unarywhile(
      whileToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -317,8 +317,8 @@ export unarywhile(
 	       ret := ParseTree(WhileList(whileToken,predicate,token2,listClause));
 	       accumulate(ret,file,prec,obeylines)))
      else (
-	  printErrorMessage(token2.position,"syntax error : expected 'do' or 'list'");
-	  printErrorMessage(whileToken.position," ... to match this 'while'");
+	  printErrorMessage(token2,"syntax error : expected 'do' or 'list'");
+	  printErrorMessage(whileToken," ... to match this 'while'");
 	  errorTree));
 
 export unaryfor(
@@ -363,13 +363,15 @@ export unaryfor(
 	  r := ParseTree(For(forToken, var, fromClause, toClause,whenClause, listClause, doClause, dummyDictionary));
 	  accumulate(r,file,prec,obeylines))
      else (
-	  printErrorMessage(token2.position,"syntax error : expected 'do' or 'list'");
-	  printErrorMessage(forToken.position," ... to match this 'for'");
+	  printErrorMessage(token2,"syntax error : expected 'do' or 'list'");
+	  printErrorMessage(forToken," ... to match this 'for'");
 	  errorTree));
 
 unstringToken(q:Token):Token := (
      if q.word.typecode == TCstring 
-     then Token(makeUniqueWord(parseString(q.word.name),q.word.parse),q.position,q.dictionary,q.entry,q.followsNewline)
+     then Token(makeUniqueWord(parseString(q.word.name),q.word.parse),
+	  q.filename, q.line, q.column, q.loadDepth,	    -- q.position,
+	  q.dictionary,q.entry,q.followsNewline)
      else q);
 export unaryquote(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -395,8 +397,8 @@ export unaryif(ifToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
      thenToken := gettoken(file,false);
      if thenToken == errorToken then return errorTree;
      if thenToken.word != thenW then (
-	  printErrorMessage(thenToken.position,"syntax error : expected 'then'");
-	  printErrorMessage(ifToken.position," ... to match this 'if'");
+	  printErrorMessage(thenToken,"syntax error : expected 'then'");
+	  printErrorMessage(ifToken," ... to match this 'if'");
 	  return errorTree);
      thenClause := parse(file,thenW.parse.unaryStrength,obeylines);
      if thenClause == errorTree then return errorTree;
@@ -418,8 +420,8 @@ export unarytry(tryToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  elseToken := gettoken(file,false);
 	  if elseToken == errorToken then return errorTree;
 	  if elseToken.word != elseW then (
-	       printErrorMessage(elseToken.position,"syntax error : expected 'else'");
-	       printErrorMessage(tryToken.position," ... to match this 'try'");
+	       printErrorMessage(elseToken,"syntax error : expected 'else'");
+	       printErrorMessage(tryToken," ... to match this 'try'");
 	       return errorTree);
 	  elseClause := parse(file,elseW.parse.unaryStrength,obeylines);
 	  if elseClause == errorTree then return errorTree;
@@ -448,26 +450,26 @@ export treePosition(e:ParseTree):Position := (
      while true do (
 	  when e
 	  is dummy do return dummyPosition
-	  is token:Token do return token.position
+	  is token:Token do return position(token)
 	  is adjacent:Adjacent do e = adjacent.lhs
-	  is binary:Binary do return binary.operator.position
-	  is a:Arrow do return a.operator.position
-	  is unary:Unary do return unary.operator.position
-	  is postfix:Postfix do return postfix.operator.position
-	  is a:Quote do return a.operator.position
-	  is a:GlobalQuote do return a.operator.position
-	  is a:LocalQuote do return a.operator.position
-	  is ee:Parentheses do return ee.left.position
-	  is ee:EmptyParentheses do return ee.left.position
-     	  is i:IfThen do return i.ifToken.position
-	  is i:TryElse do return i.tryToken.position
-	  is i:Try do return i.tryToken.position
-     	  is i:IfThenElse do return i.ifToken.position
-     	  is w:For do return w.forToken.position
-     	  is w:WhileDo do return w.whileToken.position
-     	  is w:WhileList do return w.whileToken.position
-     	  is w:WhileListDo do return w.whileToken.position
+	  is binary:Binary do return position(binary.operator)
+	  is a:Arrow do return position(a.operator)
+	  is unary:Unary do return position(unary.operator)
+	  is postfix:Postfix do return position(postfix.operator)
+	  is a:Quote do return position(a.operator)
+	  is a:GlobalQuote do return position(a.operator)
+	  is a:LocalQuote do return position(a.operator)
+	  is ee:Parentheses do return position(ee.left)
+	  is ee:EmptyParentheses do return position(ee.left)
+     	  is i:IfThen do return position(i.ifToken)
+	  is i:TryElse do return position(i.tryToken)
+	  is i:Try do return position(i.tryToken)
+     	  is i:IfThenElse do return position(i.ifToken)
+     	  is w:For do return position(w.forToken)
+     	  is w:WhileDo do return position(w.whileToken)
+     	  is w:WhileList do return position(w.whileToken)
+     	  is w:WhileListDo do return position(w.whileToken)
      	  is s:StartDictionary do e = s.body
-	  is n:New do return n.newtoken.position
+	  is n:New do return position(n.newtoken)
 	  )
      );

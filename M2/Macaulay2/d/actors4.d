@@ -1062,7 +1062,7 @@ locate(e:Code):void := (
      is v:arrayCode do foreach c in v.z do locate(c)
      is nullCode do nothing
      is v:realCode do lookat(v.position)
-     is v:stringCode do lookat(v.position)
+     is v:stringCode do nothing
      is v:integerCode do lookat(v.position)
      );
 

@@ -212,20 +212,19 @@ export convert(e:ParseTree):Code := (
      is token:Token do (
 	  var := token.entry;
 	  wrd := token.word;
-	  pos := token.position;
 	  if wrd.typecode == TCdouble
-	  then Code(realCode(parseDouble(wrd.name),pos))
+	  then Code(realCode(parseDouble(wrd.name),position(token)))
 	  else if wrd.typecode == TCint
-	  then Code(integerCode(parseInt(wrd.name),pos))
+	  then Code(integerCode(parseInt(wrd.name),position(token)))
  	  else if wrd.typecode == TCstring
 	  then (
 	       s := parseString(wrd.name);
-	       Code(stringCode(s, pos))
+	       Code(stringCode(s))
 	       )
 	  else (
 	       if var.frameID == 0
-	       then Code(globalMemoryReferenceCode(var.frameindex,pos))
-	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,pos))
+	       then Code(globalMemoryReferenceCode(var.frameindex,position(token)))
+	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,position(token)))
 	       )
 	  )
      is a:Adjacent do Code(
@@ -287,14 +286,14 @@ export convert(e:ParseTree):Code := (
 	       is u:Unary do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
-			 Code(globalSymbolClosureCode(u.operator.entry,u.operator.position)),
+			 Code(globalSymbolClosureCode(u.operator.entry,position(u.operator))),
 			 convert(u.rhs),
 			 convert(b.rhs),
 			 treePosition(e)))
 	       is u:Postfix do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
-			 Code(globalSymbolClosureCode(u.operator.entry,u.operator.position)),
+			 Code(globalSymbolClosureCode(u.operator.entry,position(u.operator))),
 			 convert(u.lhs),
 			 convert(b.rhs),
 			 treePosition(e)))
@@ -309,7 +308,7 @@ export convert(e:ParseTree):Code := (
 			 Code(ternaryCode(
 				   AssignElemFun,
 				   convert(c.lhs),
-			 	   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
+			 	   Code(globalSymbolClosureCode(crhs.entry,position(crhs))),
 				   convert(b.rhs),
 				   treePosition(e)))
 			 else dummyCode --should not happen
@@ -317,7 +316,7 @@ export convert(e:ParseTree):Code := (
 		    else Code(multaryCode(
 			      InstallValueFun,
 			      CodeSequence(
-				   Code(globalSymbolClosureCode(c.operator.entry,c.operator.position)), 
+				   Code(globalSymbolClosureCode(c.operator.entry,position(c.operator))), 
 				   convert(c.lhs),
 				   convert(c.rhs),
 				   convert(b.rhs)),
@@ -369,11 +368,11 @@ export convert(e:ParseTree):Code := (
 			      treePosition(e))))
 	       is u:Unary do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(globalSymbolClosureCode(u.operator.entry,u.operator.position)),
+			 Code(globalSymbolClosureCode(u.operator.entry,position(u.operator))),
 			 convert(u.rhs), convert(b.rhs), treePosition(e)))
 	       is u:Postfix do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(globalSymbolClosureCode(u.operator.entry,u.operator.position)),
+			 Code(globalSymbolClosureCode(u.operator.entry,position(u.operator))),
 			 convert(u.lhs), convert(b.rhs), treePosition(e)))
 	       is c:Binary do (
 		    if c.operator.entry == SharpS.symbol
@@ -395,7 +394,7 @@ export convert(e:ParseTree):Code := (
 			 Code(ternaryCode(
 				   AssignElemFun,
 				   convert(c.lhs),
-			 	   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
+			 	   Code(globalSymbolClosureCode(crhs.entry,position(crhs))),
 				   convert(b.rhs),
 				   treePosition(e)))
 			 else dummyCode --should not happen
@@ -403,7 +402,7 @@ export convert(e:ParseTree):Code := (
 		    else Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence(
-			 	   Code(globalSymbolClosureCode(c.operator.entry,c.operator.position)),
+			 	   Code(globalSymbolClosureCode(c.operator.entry,position(c.operator))),
 				   convert(c.lhs),
 				   convert(c.rhs),
 				   convert(b.rhs)),

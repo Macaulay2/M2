@@ -321,7 +321,7 @@ export InverseS := makeProtectedSymbolClosure("InverseMethod");
 export InverseE := Expr(InverseS);
 -----------------------------------------------------------------------------
 export makeSymbol(token:Token):Symbol := (
-     e := makeSymbol(token.word,token.position,token.dictionary);
+     e := makeSymbol(token.word,position(token),token.dictionary);
      token.entry = e;
      e);
 HadError := false;
@@ -331,7 +331,7 @@ export makeErrorTree(e:ParseTree,message:string):void := (
      );
 export makeErrorTree(e:Token,message:string):void := (
      HadError = true;
-     printErrorMessage(e.position,message);
+     printErrorMessage(e,message);
      );
 makeSymbol(e:ParseTree,dictionary:Dictionary):void := (
      when e
@@ -382,7 +382,7 @@ lookup(token:Token,forcedef:bool):void := (
      	  is entry:Symbol do (
 	       token.entry = entry;
 	       if entry.flagLookup then (
-		    printErrorMessage(token.position,"flagged symbol encountered");
+		    printErrorMessage(token,"flagged symbol encountered");
 		    );
 	       )
      	  else (
@@ -393,7 +393,7 @@ lookup(token:Token,forcedef:bool):void := (
 	       	    makeSymbol(token);
 		    )
 	       else (
-	       	    printErrorMessage(token.position,"undefined token " + token.word.name);
+	       	    printErrorMessage(token,"undefined token " + token.word.name);
 	       	    HadError=true;))));
 lookup(token:Token):void := lookup(token,true);
 lookuponly(token:Token):void := lookup(token,false);
@@ -475,7 +475,7 @@ bindTokenLocally(token:Token,dictionary:Dictionary):void := (
      when r
      is entry:Symbol do (
 	  if dictionary.frameID == entry.frameID
-	  then printErrorMessage(token.position, "warning: local declaration of " + token.word.name
+	  then printErrorMessage(token, "warning: local declaration of " + token.word.name
 	       + " shields variable with same name" );
 	  )
      else nothing;
