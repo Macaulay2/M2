@@ -39,11 +39,11 @@ export Symbol := {		    -- symbol table entry for a symbol
      unary:unop,
      postfix:unop,
      binary:binop,
-     frameID:int,		    -- seqno of frame for scope containing it, 0 indicates the globalFrame
+     frameID:int,		    -- seqno of frame for dictionary containing it, 0 indicates the globalFrame
      frameindex:int,		    -- index within the frame of its value
      lookupCount:int,		    -- number of times looked up
      protected:bool,	            -- whether protected against assignment by the user
-     valueCouldChange:bool,         -- whether its value could ever change, even if protected, e.g., commandLine, or by rebinding in a transient scope
+     valueCouldChange:bool,         -- whether its value could ever change, even if protected, e.g., commandLine, or by rebinding in a transient dictionary
      flagLookup:bool		    -- whether to warn when symbol is used
      };
 export SymbolListCell := {entry:Symbol, next:SymbolList};
@@ -52,19 +52,20 @@ export SymbolHashTable := {
      buckets:array(SymbolList),	 -- length always a power of 2
      numEntries:int 
      };
-export Scope := {
+export Dictionary := {
+     hash:int,						    -- assigned sequentially
      symboltable:SymbolHashTable,
-     outerScope:Scope,
+     outerDictionary:Dictionary,          -- next outer dictionary, or pointer to self if none
      frameID:int,	        -- -1 for dummy, 0 for global, then 1,2,3,...
      framesize:int,
      transient:bool	        -- whether there can be multiple frames
-     	       	    	        -- for the global scope and file scopes : no
+     	       	    	        -- for the global dictionary and file scopes : no
 				-- for function closures : yes
      };
 export Token := {		-- a word, as encountered in the input
      word:Word,			--   the word
      position:Position,		--   the location where it was encountered
-     scope:Scope,		--   the scope in which it was encountered
+     dictionary:Dictionary,		--   the dictionary in which it was encountered
      entry:Symbol,     	  	--   the symbol table entry
      followsNewline:bool        --   whether it followed white space with a newline in it
      };
@@ -75,7 +76,7 @@ export Adjacent := {lhs:ParseTree, rhs:ParseTree};
 export For := {
      forToken:Token, variable:ParseTree,
      fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree, listClause:ParseTree, doClause:ParseTree,
-     scope:Scope					    -- filled in later
+     dictionary:Dictionary					    -- filled in later
      };
 export WhileDo := {
      whileToken:Token, predicate:ParseTree,
@@ -106,10 +107,10 @@ export ArrayParseTree := array(ParseTree);
 export Parentheses := { left:Token, contents:ParseTree, right:Token };
 export EmptyParentheses := { left:Token, right:Token };
 export dummy := {position:Position};
-export StartScope := {scope:Scope, body:ParseTree};
+export StartDictionary := {dictionary:Dictionary, body:ParseTree};
 export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
-     or EmptyParentheses or IfThen or IfThenElse or StartScope 
+     or EmptyParentheses or IfThen or IfThenElse or StartDictionary 
      or Quote or GlobalQuote or LocalQuote
      or TryElse or Try or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
@@ -135,15 +136,10 @@ export CompiledFunctionClosure := {
 export Sequence := array(Expr);
 export Frame := {
      outerFrame:Frame, 
-     frameID:int,			  -- seqno of corresponding scope
+     frameID:int,			  -- seqno of corresponding dictionary
      values:Sequence
      };
 export dummyFrame := Frame(self,-1,Sequence());   -- self pointer depended on by structure.d:apply()
-export Dictionary := {	    -- for global scopes, one for each package; no frame needed, since all the variable values reside in the global frame
-     hash:int,
-     scope:Scope,
-     outerDictionary:Dictionary
-     };
 export FunctionClosure := { frame:Frame, model:functionCode };
 export SymbolClosure := {frame:Frame, symbol:Symbol};
 export List := {
@@ -228,14 +224,14 @@ export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position}
 export CodeSequence := array(Code);
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
 export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code,
-     scope:Scope, position:Position} ;
+     dictionary:Dictionary, position:Position} ;
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
 export ternop := function(Code,Code,Code):Expr;
 export multop := function(CodeSequence):Expr;
-export openScopeCode := {scope:Scope, body:Code};
+export openScopeCode := {dictionary:Dictionary, body:Code};
 export functionDescription := {
-     frameID:int,		    -- seqno of scope
+     frameID:int,		    -- seqno of dictionary
      framesize:int,
      numparms:int,		    -- number of formal parameters
      restargs:bool,		    -- whether last parm gets rest of args
@@ -258,22 +254,28 @@ export Code := (exprCode or variableCode
 
 export newSymbolHashTable():SymbolHashTable := SymbolHashTable( new array(SymbolList) len 10 do provide NULL, 0);
 export ScopeList := null or ScopeListCell;
-export ScopeListCell := {scope:Scope, next:ScopeList};
+export ScopeListCell := {dictionary:Dictionary, next:ScopeList};
 
 dummySymbolFrameIndex := 0;
-export globalScope := Scope(newSymbolHashTable(),self,0,dummySymbolFrameIndex+1,false);
+export globalDictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,dummySymbolFrameIndex+1,false);
 export globalFrame := Frame(dummyFrame,0,Sequence(
 	  nullE						    -- value for dummySymbol, the first symbol
 	  ));
-export globalDictionary := Dictionary(nextHash(), globalScope, self);
-export newGlobalScope(scope:Scope):Scope := Scope(newSymbolHashTable(),scope,0,0,false);
+export newGlobalDictionary(dictionary:Dictionary):Dictionary := Dictionary(nextHash(),newSymbolHashTable(),dictionary,0,0,false);
 
-export numLocalScopes := 0;
+numLocalScopes := 0;
 export localFrame := globalFrame;
-export newLocalScope(scope:Scope):Scope := (
-     s := Scope(newSymbolHashTable(),scope,numLocalScopes,0,true);
+export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      numLocalScopes = numLocalScopes + 1;
-     s);
+     Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalScopes,0,true));
+export newLocalDictionary():Dictionary := (
+     numLocalScopes = numLocalScopes + 1;
+     Dictionary(nextHash(),newSymbolHashTable(),self,numLocalScopes,0,
+	  false						    -- the first local dictionary is usually (?) non-transient
+	  )
+     );
+
+export newLocalFrame(dictionary:Dictionary):Frame := Frame(dummyFrame, dictionary.frameID, new Sequence len dictionary.framesize do provide nullE);
 
 -- hash tables for exprs
 
@@ -299,11 +301,9 @@ export nopr := -1;						    -- represents unused precedence
 export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary,dummybinary));
 export dummyWord    := Word("--dummy word--",TCnone,0,newParseinfo());
 export dummySymbolHashTable := newSymbolHashTable();
-
-export dummyScope := (
-     s := Scope(dummySymbolHashTable,self,numLocalScopes,0,false);
+export dummyDictionary := (
      numLocalScopes = numLocalScopes + 1;
-     s);
+     Dictionary(nextHash(),dummySymbolHashTable,self,numLocalScopes,0,false));
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 export emptySequence := Sequence();
@@ -331,12 +331,12 @@ export thingClass := HashTable(
 export dummySymbol := Symbol(
      dummyWord,nextHash(),dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-     globalScope.frameID,dummySymbolFrameIndex,1,true,true,false
+     globalDictionary.frameID,dummySymbolFrameIndex,1,true,true,false
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(exprCode(Expr(dummySymbolClosure),dummyPosition)); -- was Code(CodeSequence());
-export dummyToken   := Token(dummyWord,dummyPosition,globalScope,dummySymbol,false);
+export dummyToken   := Token(dummyWord,dummyPosition,globalDictionary,dummySymbol,false);
 export parseEOF     := newParseinfo();
 export parseWORD    := newParseinfo();
 

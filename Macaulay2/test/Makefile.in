@@ -1,7 +1,7 @@
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@
-RESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2)))
+RESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2))) $(notdir $(patsubst %.m2-input, %.okay, $(wildcard @srcdir@/*.m2-input)))
 ifneq "$(DUMPDATA)" "no"
 RESULTS := $(RESULTS) dumpdata.okay
 endif
@@ -13,11 +13,17 @@ all :: $(RESULTS)
 $(RESULTS) : ../bin/M2
 $(LATERESULTS) : ../bin/M2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 
-ARGS := -q -e 'path=append(path,"@srcdir@/../packages/")' -e 'errorDepth(0)' --silent
+ARGS := --silent --stop -q -e 'path=join(path,{"@srcdir@/","@srcdir@/../packages/"})' -e 'errorDepth(0)'
 
 %.okay : %.m2
 	@ echo testing $<
 	@ ulimit -t 600; time ../bin/M2 $(ARGS) $< -e 'exit(0)'
+	@ touch $@
+
+# this version redirects the input (some bugs are detectable only this way
+%.okay : %.m2-input
+	@ echo testing $<
+	@ ulimit -t 600; time ../bin/M2 $(ARGS) <$<
 	@ touch $@
 
 clean  :	
@@ -27,3 +33,6 @@ distclean: clean
 	rm -f Makefile
 
 docStructure.out : docStructure.m2
+
+Makefile : Makefile.in
+	cd ../..; ./config.status Macaulay2/test/Makefile

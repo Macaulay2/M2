@@ -147,7 +147,7 @@ export frame(frameID:int):Frame := (
      	  while f.frameID > frameID do f = f.outerFrame;
      	  if f.frameID != frameID 
 	  then (
-	       stderr << "frame for scope " << frameID << " not found" << endl;
+	       stderr << "frame for dictionary " << frameID << " not found" << endl;
 	       stderr << "frames active for scopes: ";
 	       f = localFrame;
 	       while f.frameID > -1 do (
@@ -180,9 +180,9 @@ parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
 
 export convert(e:ParseTree):Code := (
      when e
-     is s:StartScope do (
-	  if s.scope.framesize != 0
-	  then Code(openScopeCode(s.scope,convert(s.body)))
+     is s:StartDictionary do (
+	  if s.dictionary.framesize != 0
+	  then Code(openScopeCode(s.dictionary,convert(s.body)))
 	  else convert(s.body)
 	  )
      is w:For do Code(
@@ -190,7 +190,7 @@ export convert(e:ParseTree):Code := (
 	       convert(w.fromClause), convert(w.toClause),
 	       convert(w.whenClause), convert(w.listClause), 
 	       convert(w.doClause),
-	       w.scope,
+	       w.dictionary,
 	       treePosition(e)))
      is w:WhileDo do Code(
 	  binaryCode(WhileDoFun,convert(w.predicate),convert(w.doClause),
@@ -654,14 +654,14 @@ export eval(c:Code):Expr := (
      is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
      is b:multaryCode do b.f(b.args)
      is n:forCode do (
-	  localFrame = Frame(localFrame,n.scope.frameID,
-	       new Sequence len n.scope.framesize do provide nullE);
+	  localFrame = Frame(localFrame,n.dictionary.frameID,
+	       new Sequence len n.dictionary.framesize do provide nullE);
 	  x := ForFun(n);
 	  localFrame = localFrame.outerFrame;
 	  x)
      is n:openScopeCode do (
-	  localFrame = Frame(localFrame,n.scope.frameID,
-	       new Sequence len n.scope.framesize do provide nullE);
+	  localFrame = Frame(localFrame,n.dictionary.frameID,
+	       new Sequence len n.dictionary.framesize do provide nullE);
 	  x := eval(n.body);
 	  localFrame = localFrame.outerFrame;
 	  x)
@@ -695,23 +695,23 @@ export eval(c:Code):Expr := (
 	  e)
      else e);
 export setup(word:Word):void := (
-     makeSymbol(word,dummyPosition,globalScope);
+     makeSymbol(word,dummyPosition,globalDictionary);
      );
 export setup(word:Word,fn:unop):void := (
-     e := makeSymbol(word,dummyPosition,globalScope);
+     e := makeSymbol(word,dummyPosition,globalDictionary);
      e.unary = fn;
      );
 export setup(word:Word,fn:binop):void := (
-     e := makeSymbol(word,dummyPosition,globalScope);
+     e := makeSymbol(word,dummyPosition,globalDictionary);
      e.binary = fn;
      );
 export setup(word:Word,fun1:unop,fun2:binop):void := (
-     e := makeSymbol(word,dummyPosition,globalScope);
+     e := makeSymbol(word,dummyPosition,globalDictionary);
      e.unary = fun1;
      e.binary = fun2;
      );
 export setup(word:Word,fun1:unop,fun2:unop):void := (
-     e := makeSymbol(word,dummyPosition,globalScope);
+     e := makeSymbol(word,dummyPosition,globalDictionary);
      e.unary = fun1;
      e.postfix = fun2;
      );
@@ -736,21 +736,21 @@ export setupop(s:SymbolClosure,fun:unop):void := s.symbol.unary = fun;
 export setupfun(name:string,fun:unop):void := (
      word := makeUniqueWord(name,
 	  parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
-     entry := makeSymbol(word,dummyPosition,globalScope);
+     entry := makeSymbol(word,dummyPosition,globalDictionary);
      entry.unary = fun;
      entry.protected = true;
      );     
 export setupfun(name:string,value:fun):void := (
      word := makeUniqueWord(name,parseWORD);
-     entry := makeSymbol(word,dummyPosition,globalScope);
+     entry := makeSymbol(word,dummyPosition,globalDictionary);
      globalFrame.values.(entry.frameindex) = Expr(CompiledFunction(value,nextHash()));
      entry.protected = true;
      );
 export setupvar(name:string,value:Expr):Symbol := (
      word := makeUniqueWord(name,parseWORD);
-     when lookup(word,globalScope)
+     when lookup(word,globalDictionary)
      is null do (
-     	  entry := makeSymbol(word,dummyPosition,globalScope);
+     	  entry := makeSymbol(word,dummyPosition,globalDictionary);
      	  globalFrame.values.(entry.frameindex) = value;
 	  entry)
      is entry:Symbol do (

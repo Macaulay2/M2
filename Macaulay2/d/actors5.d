@@ -28,7 +28,7 @@ use engine;
 -- getParsing(o:file):void := (
 --      o
 --      << endl << endl
---      << "word      precedence scope unaryStrength" << endl << endl
+--      << "word      precedence dictionary unaryStrength" << endl << endl
 --      << ("<WORDS>",12)
 --      << (parseWORD.precedence,-7)
 --      << (parseWORD.binaryStrength,-7)
@@ -616,7 +616,7 @@ erase(e:Expr):Expr := (
 	  --if s.symbol.protected
 	  --then buildErrorPacket("attempt to erase a protected symbol")
 	  --else 
-	  if erase(s.symbol,globalScope.symboltable)
+	  if erase(s.symbol,globalDictionary.symboltable)
 	  then e
 	  else WrongArg("a global symbol"))
      else WrongArg("a symbol")
@@ -1175,7 +1175,7 @@ setupfun("relativizeFilename",relativizeFilename);
 
 isGlobalSymbol(e:Expr):Expr := (
      when e is s:string do (
-	  when lookup(makeUniqueWord(s,parseWORD),globalScope)
+	  when lookup(makeUniqueWord(s,parseWORD),globalDictionary)
 	  is x:Symbol do True
 	  is null do False
 	  )
@@ -1185,9 +1185,9 @@ setupfun("isGlobalSymbol",isGlobalSymbol);
 getGlobalSymbol(e:Expr):Expr := (
      when e is s:string do (
 	  w := makeUniqueWord(s,parseWORD);
-	  when lookup(w,globalScope) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
+	  when lookup(w,globalDictionary) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
 	  is null do (
-	       t := makeSymbol(w,dummyPosition,globalScope);
+	       t := makeSymbol(w,dummyPosition,globalDictionary);
 	       globalFrame.values.(t.frameindex)))
      else WrongArgString());
 setupfun("getGlobalSymbol",getGlobalSymbol);
@@ -1273,9 +1273,8 @@ setupfun("globalDictionary", getGlobalDictionary);
 pushDictionary(e:Expr):Expr := (
      when e
      is a:Sequence do if length(a) == 0 then (
-	  globalScope = newGlobalScope(globalScope);
-	  globalDictionary = Dictionary(nextHash(), globalScope, globalDictionary);
-	  nullE)
+	  globalDictionary = newGlobalDictionary(globalDictionary);
+	  Expr(globalDictionary))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("pushDictionary", pushDictionary);
@@ -1283,12 +1282,11 @@ setupfun("pushDictionary", pushDictionary);
 popDictionary(e:Expr):Expr := (
      when e
      is a:Sequence do if length(a) == 0 then (
-	  if globalFrame.outerFrame == dummyFrame
-	  then nullE
+	  o := globalDictionary;
+	  if o.outerDictionary == o then buildErrorPacket("tried to pop the global dictionary")
 	  else (
-	       globalScope = globalScope.outerScope;
-     	       globalDictionary = globalDictionary.outerDictionary;
-	       nullE))
+	       globalDictionary = o.outerDictionary;
+	       Expr(o)))
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("popDictionary", popDictionary);

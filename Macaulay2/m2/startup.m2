@@ -278,4 +278,4 @@ setDefaultValues()
 if firstTime and not nosetup then loadSetup()
 runStartFunctions()
 processCommandLineOptions()
-interpreter()
+if interpreter() then exit 0 else exit 1

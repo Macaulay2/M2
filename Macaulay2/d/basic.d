@@ -186,7 +186,7 @@ export reverse(a:List):List := sethash(
      List( a.class, reverse(a.v), 0, a.mutable), a.mutable 
      );
 copy(f:Frame):Frame := (
-     if f.frameID == 0			  -- the global scope?
+     if f.frameID == 0			  -- the global dictionary?
      then f
      else Frame(
 	  copy(f.outerFrame),
