@@ -72,13 +72,29 @@ void Random::set_max_int(M2_Integer N)
   }
 }
 
-M2_Integer Random::get_random_integer(M2_Integer mxN)
+M2_Integer Random::get_random_integer(M2_Integer mxN) // this one is used for random integers internally in random matrices and polynomials
 {
   M2_Integer result = newitem(__mpz_struct);
   if (mpz_fits_sint_p(mxN)) {
        // return a number in the range -mxN .. mxN-1
        int32 n = mpz_get_si(mxN);
        mpz_init_set_si(result,Random::random0(2*n)-n);
+  }
+  else {
+       // return a number in the range 0 .. mxN-1
+       mpz_init(result);
+       mpz_urandomm(result, state, mxN);
+  }
+  return result;
+}
+
+M2_Integer Random::get_random_integer_0(M2_Integer mxN)	// this one is used for random integers at top level
+{
+  M2_Integer result = newitem(__mpz_struct);
+  if (mpz_fits_sint_p(mxN)) {
+       // return a number in the range 0 .. mxN-1
+       int32 n = mpz_get_si(mxN);
+       mpz_init_set_si(result,Random::random0(n));
   }
   else {
        // return a number in the range 0 .. mxN-1

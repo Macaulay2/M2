@@ -38,7 +38,7 @@ void rawSetRandomMax(M2_Integer maxN)
 
 M2_Integer rawRandomInteger(M2_Integer maxN)
 {
-  return Random::get_random_integer(maxN);
+  return Random::get_random_integer_0(maxN);
 }
 
 unsigned long IM2_Ring_hash(const Ring *R)
