@@ -359,7 +359,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       usage();
 	       exit 1;
 	       )
-	  else if phase == 3 then load arg;
+	  else if phase == 3 then if class load === Function then load arg else simpleLoad arg;
 	  argno = argno+1;
 	  );
      loadDepth = ld;

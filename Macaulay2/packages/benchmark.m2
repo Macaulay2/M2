@@ -1,3 +1,6 @@
+newPackage "benchmark"
+export benchmark
+
 << "-- beginning computation " << get "!date"
 << "-- " << first lines get "!uname -a" << endl
 << "-- Macaulay2 " << version#"VERSION"
@@ -43,18 +46,26 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 -- res39: 0.37 seconds
 -- resG25: 6.1 seconds
 
--- beginning computation Sat May 25 17:27:49 CDT 2002
--- Linux lisboa.ks.uiuc.edu 2.4.16 #9 Tue Feb 19 14:11:28 CST 2002 i686 unknown
--- model name      : Intel(R) Pentium(R) 4 CPU 1700MHz
--- Macaulay2 0.9, compiled with gcc 3.0
--- res39: 0.44 seconds
--- resG25: 8.43 seconds
+--   this one is a dual G5 2.5 Mhz in 32 bit mode
+--   the new engine code is rather new not manually optimized yet
+-- beginning computation Wed Jan 12 21:50:29 EST 2005
+-- Darwin habanero.local 7.7.0 Darwin Kernel Version 7.7.0: Sun Nov  7 16:06:51 PST 2004; root:xnu/xnu-517.9.5.obj~1/RELEASE_PPC  Power Macintosh powerpc
+-- Macaulay2 0.9.5, compiled with gcc 3.3.0
+-- res39: 0.72 seconds
+-- resG25: 6.82 seconds
 
 -- beginning computation Thu Oct 17 00:26:02 CEST 2002
 -- Linux abuch.imf.au.dk 2.4.9-34smp #1 SMP Sat Jun 1 05:54:57 EDT 2002 i686 unknown
 -- Macaulay2 0.9.2, compiled with gcc 2.96
 -- res39: 0.47 seconds
 -- resG25: 7.82 seconds
+
+-- beginning computation Sat May 25 17:27:49 CDT 2002
+-- Linux lisboa.ks.uiuc.edu 2.4.16 #9 Tue Feb 19 14:11:28 CST 2002 i686 unknown
+-- model name      : Intel(R) Pentium(R) 4 CPU 1700MHz
+-- Macaulay2 0.9, compiled with gcc 3.0
+-- res39: 0.44 seconds
+-- resG25: 8.43 seconds
 
 -- FreeBSD euclid.math.purdue.edu 4.5-RELEASE FreeBSD i386
 -- Macaulay2 0.9.2, compiled with gcc 2.95
