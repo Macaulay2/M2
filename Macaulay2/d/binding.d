@@ -169,7 +169,7 @@ bump();
      listW = token("list"); makeKeyword(listW);
 bump();
      export ColonEqualW := binaryright(":="); makeKeyword(ColonEqualW);
-     export EqualW := binaryright("="); makeKeyword(EqualW);
+     export EqualW := binaryright("="); export EqualS := makeKeyword(EqualW);
      export LeftArrowW := binaryright("<-"); export LeftArrowS := makeKeyword(LeftArrowW);
      export RightArrowW := binaryright("->",arrowop); makeKeyword(RightArrowW);
      export DoubleArrowS := makeKeyword(binaryright("=>"));
@@ -318,7 +318,9 @@ export GlobalAssignE := Expr(GlobalAssignS);
 export GlobalReleaseS := makeProtectedSymbolClosure("GlobalReleaseHook");
 export GlobalReleaseE := Expr(GlobalReleaseS);
 
-export EqualE := Expr(EqualEqualS);
+export EqualE := Expr(EqualS);
+
+export EqualEqualE := Expr(EqualEqualS);
 export LessE := Expr(LessS);
 export GreaterE := Expr(GreaterS);
 

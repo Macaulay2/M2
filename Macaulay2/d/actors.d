@@ -953,23 +953,37 @@ InstallMethodFun = installMethodFun;
 
 mess1 := "objects on left hand side of assignment are not types (use ':=' instead?)";
 
+
+-- this new version just looks up a method for user code, which *could* do the same thing
 installValueFun(args:CodeSequence):Expr := (
-     a := eval(args.1);
-     when a is Error do a
-     is aa:HashTable do (
-	  b := eval(args.2);
-	  when b is Error do b 
-	  is bb:HashTable do (
-	       opr := eval(args.0);
-	       when opr is Error do opr
-	       else (
-		    x := eval(args.3);
-		    when x is Error do x
-		    else installValue(opr,aa,bb,x)
-		    )
-	       )
-	  else buildErrorPacket(mess1))
-     else buildErrorPacket(mess1));
+     oper := eval(args.0);
+     when oper is Error do return oper else nothing;
+     x := eval(args.1);
+     when x is Error do return x else nothing;
+     y := eval(args.2);
+     when y is Error do return y else nothing;
+     meth := lookupBinaryMethod(Class(x),Class(y),Expr(Sequence(oper,EqualE))); -- i.e., x*y=z is looked up under ((symbol *,symbol =),class x,class y)
+     if meth == nullE then return MissingAssignmentMethodPair(oper,x,y);
+     z := eval(args.3);
+     apply(meth,x,y,z));
+-- this old version was used for stashing values somewhere
+-- installValueFun(args:CodeSequence):Expr := (
+--      a := eval(args.1);
+--      when a is Error do a
+--      is aa:HashTable do (
+-- 	  b := eval(args.2);
+-- 	  when b is Error do b 
+-- 	  is bb:HashTable do (
+-- 	       opr := eval(args.0);
+-- 	       when opr is Error do opr
+-- 	       else (
+-- 		    x := eval(args.3);
+-- 		    when x is Error do x
+-- 		    else installValue(opr,aa,bb,x)
+-- 		    )
+-- 	       )
+-- 	  else buildErrorPacket(mess1))
+--      else buildErrorPacket(mess1));
 InstallValueFun = installValueFun;
 
 unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
@@ -986,25 +1000,35 @@ unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
 	  else printErrorMessageE(argtype,"expected a hash table")));
 UnaryInstallMethodFun = unaryInstallMethodFun;
 
-unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
-     Argtype := eval(argtype);
-     when Argtype is Error 
-     do Argtype 
-     else when Argtype is
-     o:HashTable do (
-	  methv := eval(meth);
-	  when methv is Error do methv else (
-	       bodyv := eval(body);
-	       when bodyv is Error do bodyv else (
-	  	    storeInHashTable(o,
-			 Expr(Sequence(methv)),  -- distinguishing feature of "values"
-			      	   	  -- so after -x the answer can be stored in x#(seq quote -)
-			 bodyv)
-		    )
-	       )
-	  )
-     else printErrorMessageE(argtype,"expected a hash table")
-     );
+unaryInstallValueFun(meth:Code,lhs:Code,rhs:Code):Expr := (
+     oper := eval(meth);
+     when oper is Error do return oper else nothing;
+     y := eval(lhs);
+     when y is Error do return y else nothing;
+     method := lookup(Class(y),Expr(Sequence(oper,EqualE))); -- i.e., *y=z is looked up under ((symbol *,symbol =),class y)
+     if method == nullE then return MissingAssignmentMethod(oper,y);
+     z := eval(rhs);
+     apply(method,y,z));
+-- this old version was used for stashing values somewhere
+-- unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
+--      Argtype := eval(argtype);
+--      when Argtype is Error 
+--      do Argtype 
+--      else when Argtype is
+--      o:HashTable do (
+-- 	  methv := eval(meth);
+-- 	  when methv is Error do methv else (
+-- 	       bodyv := eval(body);
+-- 	       when bodyv is Error do bodyv else (
+-- 	  	    storeInHashTable(o,
+-- 			 Expr(Sequence(methv)),  -- distinguishing feature of "values"
+-- 			      	   	  -- so after -x the answer can be stored in x#(seq quote -)
+-- 			 bodyv)
+-- 		    )
+-- 	       )
+-- 	  )
+--      else printErrorMessageE(argtype,"expected a hash table")
+--      );
 UnaryInstallValueFun = unaryInstallValueFun;
 
 flatten(a:Sequence):Sequence := (
