@@ -2,49 +2,86 @@
 
 -- make an html file for each documentation node
 
+BUTTON = (s,alt) -> LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center alt=\"", alt, "\">")
+
 masterIndex = new MutableHashTable
 masterFileName = "master.html"
 masterNodeName = "master index"
-masterIndexButton := HREF { 
-     masterFileName,
-     LITERAL "<IMG src=\"redsq_info.gif\" border=0 align=center alt=index>" 
-     }
+masterIndexButton := HREF { masterFileName, BUTTON("redsq_info.gif","index") }
 
 topFileName = "index.html"
 topNodeName = "Macaulay 2"
 topNodeAlias = "table of contents"
-topNodeButton := HREF { 
-     topFileName,
-     LITERAL "<IMG src=\"star_home.gif\" border=0 align=center alt=top>"
-     }
+topNodeButton := HREF { topFileName, BUTTON("star_home.gif","top") }
 
 databaseFileName = "../cache/Macaulay2.doc"
 errorDepth 0
 
 scandb = (db,f) -> scanKeys(db,k->f(k,db#k))
 
-next := key -> LITERAL "<IMG src=\"redsq_next.gif\" border=0 align=center alt=next>"
-prev := key -> LITERAL "<IMG src=\"redsq_back.gif\" border=0 align=center alt=previous>"
-up   := key -> LITERAL "<IMG src=\"up.gif\" border=0 align=center alt=up>"
+NEXT = new MutableHashTable
+PREV = new MutableHashTable
+UP   = new MutableHashTable
+
+nextButton := BUTTON("redsq_next.gif","next")
+prevButton := BUTTON("redsq_back.gif","previous")
+upButton := BUTTON("up.gif","up")
+
+next = key -> if NEXT#?key then HREF { linkFilename NEXT#key, nextButton } else nextButton
+prev = key -> if PREV#?key then HREF { linkFilename PREV#key, prevButton } else prevButton
+up   = key -> if   UP#?key then HREF { linkFilename   UP#key,   upButton } else   upButton
+
+scope = method()
+scope2 = method()
+
+this := null
+last := null
+
+scope Sequence := scope BasicList := x -> scan(x,scope)
+scope Thing := x -> null
+scope MENU := x -> scan(x,scope2)
+scope2 Thing := x -> null
+scope2 Sequence := scope BasicList := x -> scan(x,scope2)
+scope2 SHIELD := x -> null
+scope2 TO := x -> (
+     key := getDocumentationTag x#0;
+     if last =!= null then (
+	  PREV#key = last;
+	  NEXT#last = key;
+	  );
+     UP#key = this;
+     last = key;
+     )
+	  
+preprocess = (key,doc) -> (
+     doc = try value doc else error ("value ", doc);
+     this = key;
+     last = null;
+     scope doc;
+     )
+scandb(openDatabase databaseFileName, preprocess) 
+
+error ""
 
 process := (key,doc) -> (
      -- stderr << key << endl;
      filename := linkFilename key;
      masterIndex#key = filename;
-     key = value key;
-     title := formatDocumentTag key;
+     vkey := value key;
+     title := formatDocumentTag vkey;
      filename << html HTML { 
 	  HEAD TITLE title,
 	  BODY {
 	       H2 title,
 	       try value doc else error ("value ", doc),
-	       HR{},
-	       if key =!= topNodeName then topNodeButton,
-	       masterIndexButton,
-	       prev key, up key, next key,
+	       HR,
+	       CENTER {
+		    if vkey =!= topNodeName then topNodeButton,
+		    masterIndexButton,
+		    prev key, up key, next key,
+		    }
 	       }
 	  } << endl << close)
-
 scandb(openDatabase databaseFileName, process) 
 
 missing := false;
@@ -90,4 +127,5 @@ run concatenate (
      masterIndex#(format "Macaulay 2"),
      " index.html")
 
-if missing then exit 1
+if missing then error "missing some nodes"
+

@@ -1475,3 +1475,123 @@ document { "making new functions with optional arguments",
 	  "f(5,11,a=>10^20)",
 	  },
      }
+
+document { "replacements for commands and scripts from Macaulay",
+     "This node has not been written yet."
+     }
+
+document { "conditional execution",
+     "This node has not been written yet."
+     }
+
+document { "loops",
+     "This node has not been written yet."
+     }
+
+document { "sq",
+     "This node has not been written yet."
+     }
+
+document { "making new types",
+     "This node has not been written yet."
+     }
+
+document { "mapping over lists",
+     "This node has not been written yet."
+     }
+
+document { "error handling",
+     "This node has not been written yet."
+     }
+
+document { "communicating with programs",
+     "This node has not been written yet."
+     }
+
+document { "making a new method function",
+     "This node has not been written yet."
+     }
+
+document { "what a class is",
+     "This node has not been written yet."
+     }
+
+document { "sequences",
+     "This node has not been written yet."
+     }
+
+document { "installing methods",
+     "This node has not been written yet."
+     }
+
+document { "method functions with a variable number of arguments",
+     "This node has not been written yet."
+     }
+
+document { "mapping over hash tables",
+     "This node has not been written yet."
+     }
+
+document { "hash tables,",
+     "This node has not been written yet."
+     }
+
+document { "local variables in a function",
+     "This node has not been written yet."
+     }
+
+document { "creating and writing files",
+     "This node has not been written yet."
+     }
+
+document { "inheritance from parents",
+     "This node has not been written yet."
+     }
+
+document { "nets",
+     "This node has not been written yet."
+     }
+
+document { "strings",
+     "This node has not been written yet."
+     }
+
+document { "printing to the screen",
+     "This node has not been written yet."
+     }
+
+document { "two dimensional formatting",
+     "This node has not been written yet."
+     }
+
+document { "lists",
+     "This node has not been written yet."
+     }
+
+document { "running programs",
+     "This node has not been written yet."
+     }
+
+document { "using sockets",
+     "This node has not been written yet."
+     }
+
+document { "reading files",
+     "This node has not been written yet."
+     }
+
+document { "(quote @, List, Function)",
+     "This node has not been written yet."
+     }
+
+document { "getting input from the user",
+     "This node has not been written yet."
+     }
+
+document { "method functions with optional arguments",
+     "This node has not been written yet."
+     }
+
+document { "(quote @, OptionTable, Function)",
+     "This node has not been written yet."
+     }
