@@ -162,6 +162,14 @@ M2_string system_tostring(char const *s)
      return p;
      }
 
+M2_string system_tostringn(char const *s, int n)
+{
+     M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
+     p->len = n;
+     memcpy(p->array,s,n);
+     return p;
+     }
+
 int actors5_sizeofDouble() { return sizeof(double); }
 
 double actors5_convertnettodouble(M2_string p,int pos) {
@@ -312,11 +320,24 @@ double x;
      }
 
 M2_string system_readlink(M2_string filename) {
-	char *fn = tocharstar(filename);
-	char buf[5000];
-	M2_string s = readlink(fn,buf,sizeof buf) == -1 ? system_tostring("") : system_tostring(buf);
-	GC_FREE(fn);
-	return s;
+  char *fn = tocharstar(filename);
+  int size = 100;
+  M2_string s = NULL;
+  while (TRUE) {
+    char buf[size];
+    int r = readlink(fn,buf,sizeof buf);
+    if (r == -1) {
+      s = system_tostring("");
+      break;
+    }
+    if (r < size) {
+      s = system_tostringn(buf,r);
+      break;
+    }
+    size *= 2;			/* r == size, try again */
+  }
+  GC_FREE(fn);
+  return s;
 }
 
 M2_string system_errfmt(M2_string filename, int lineno, int colno) {
