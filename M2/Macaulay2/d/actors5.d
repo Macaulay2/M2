@@ -3,7 +3,10 @@
 use C;
 use system; 
 use util;
-use convertr;
+use evaluate;
+use common;
+use evaluate;
+use common;
 use binding;
 use nets;
 use parser;
@@ -24,33 +27,6 @@ use objects;
 use actors4;
 use engine;
 
-
--- getParsing(o:file):void := (
---      o
---      << endl << endl
---      << "word      precedence dictionary unaryStrength" << endl << endl
---      << ("<WORDS>",12)
---      << (parseWORD.precedence,-7)
---      << (parseWORD.binaryStrength,-7)
---      << (parseWORD.unaryStrength,-7) << endl;
---      foreach hashListX in hashTable do (
--- 	  hashList := hashListX;
--- 	  while true do
--- 	  when hashList
--- 	  is null do break
--- 	  is hashCell:WordListCell do (
--- 	       if hashCell.word.parse != parseWORD 
--- 	       then (
--- 		    o << (hashCell.word.name,12)
--- 		    << (hashCell.word.parse.precedence,-7) 
--- 		    << (hashCell.word.parse.binaryStrength,-7) 
--- 		    << (hashCell.word.parse.unaryStrength,-7) 
--- 		    << endl;
--- 		    );
--- 	       hashList = hashCell.next;
--- 	       );
--- 	  );
---      );
 getParsing(e:Expr):Expr := (
      when e
      is s:SymbolClosure
@@ -436,6 +412,19 @@ bitandfun(e:Expr):Expr := (
  	  else WrongNumArgs(2))
      else WrongNumArgs(2));
 installMethod(AmpersandS,integerClass,integerClass,bitandfun);
+
+showFrames(f:Frame):void := (
+     stdout << " frames bound :";
+     while (
+	  stdout << " " << f.frameID << " [" << f.valuesUsed;
+	  if f.valuesUsed != length(f.values) then stdout << "<" << length(f.values);
+	  stdout << "]";
+	  f != f.outerFrame ) do (
+	  stdout << ",";
+	  f = f.outerFrame;
+	  );
+     stdout << endl;
+     );
 
 examine(e:Expr):Expr := (
      when e

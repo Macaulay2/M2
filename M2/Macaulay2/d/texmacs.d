@@ -9,6 +9,8 @@ use tokens;
 use objects;
 use binding;
 use convertr;
+use evaluate;
+use common;
 use struct;
 
 TeXmacsEvaluate := makeProtectedSymbolClosure("TeXmacsEvaluate");
