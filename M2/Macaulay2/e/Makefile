@@ -2,7 +2,7 @@
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 # MES:
-CXXFLAGS = -DGCMALLOC -DDEBUG
+# CXXFLAGS = -DGCMALLOC -DDEBUG
 
 %.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< $(OUTPUT_OPTION)

@@ -124,3 +124,392 @@ document { quote ggweylalg,
       are not yet allowed.  This restriction will be gone soon."
      } 
 
+TEST ///
+-------------------------------------
+-- ZZZ: ring,vector,matrix operations
+-------------------------------------
+R = ZZZ
+-- ring element operations
+assert(31_R == 31)
+assert((-31)_R == - (31_R))
+assert(5_R - 5_R == 0)
+assert(size (1_R) == 1)
+assert(size (0_R) == 0)
+assert(3 * 2_R == 6_R)
+assert(3_R * 2_R == 6_R)
+try assert(0 != (2^40)_R) else "ERROR: 2^40 is still 0"
+assert(2^40 == (2^40)_R)
+assert((3^8)_R == 3 * (3^7)_R)
+assert((1_R - 1_R)^50 == 0)
+assert try leadCoefficient (1_R) else true
+assert try leadTerm (1_R) else true
+assert try leadMonomial (1_R) else true
+assert try someTerms(1_R, 1, 1) else true
+assert(degree(1_R) == {})
+degree(0_R) == -infinity  -- is this really what we want?
+try degree(1_R, {}) else "ERROR: ggdegree with weights needs front-end interface"
+try random R else error "random not working yet" -- ERROR: routine not implemented
+-- vectors
+F = R^4
+v = 3*F_0 + 2*F_1 + 0*F_2
+try assert(false) else "POSSIBLE error: allow front end to make vectors/sparse vectors?"
+assert(0_F == 0)
+assert(leadComponent v == 1)
+assert(v_0 == 3)
+assert(v_1 == 2)
+assert(v_2 == 0)
+assert(v != F_1)
+assert(v == F_0 + F_0 + F_0 + F_1 + F_1)
+assert(try leadCoefficient v else true)
+assert(leadTerm v == 2*F_1)  -- FAILS: wrong engine interface
+assert(leadTerm(0_F) == 0) -- FAILS: wrong engine interface
+assert(v - v == 0)
+assert(v + v + v == 3*v)
+assert(v + v + v == v*3) -- FAILS: need front end interface
+assert(v + v + v == (3_R)*v)
+assert(- (-v) == v)
+someTerms(v,1,1) -- FAILS: need front end interface
+degree v == {}
+degree (0_F) == {} -- Inconsistent with degree of a zero ring element
+homogenize(v,1_R) -- error message is funny: "key not found in hash table"
+-- matrices
+random(R^2, R^3) -- incorrect stack arguments for command ggmatrix
+                     -- need to IMPLEMENT kbasis first
+m = matrix(R, {{1,2,3,4,5},{12,14,16,18,20}})
+m1 = matrix {{1_R, 2_R, 3_R, 4_R, 5_R}, {12, 14, 16, 18, 20}}
+assert(entries m == entries m1)
+assert(entries transpose m == transpose entries m)
+assert(m_{0,1} == matrix(R, {{1,2},{12,14}}))
+assert(m_(1,1) == 14)
+assert(m + (-m) == 0)
+assert(m + m == 2*m)
+assert(m + m == m*2)
+assert(m + m == (2_R)*m)
+assert(m + m == m*(2_R)) -- NOT implemented
+assert(leadTerm m) -- Incorrect engine interface for gginitial
+p = id_(R^5)
+p ++ p == id_(R^10)  -- Engine BUG: ggddirectsum needs to check its types.
+assert(entries p == table(5,5,(i,j)->if i===j then 1 else 0))
+p = map(R^5,R^7,0)
+assert(p == 0)
+m = matrix{{1,2,3,4}}
+assert(koszul(1,m) == m) -- INCORRECT
+assert(koszul(2,m) != 0) -- INCORRECT
+m = matrix(ZZ, {{1,10},{20,100}})
+mm = m ** R 
+assert(mm ** mm == matrix(R,{{1, 10, 10, 100}, {20, 100, 200, 1000}, {20, 200, 100, 1000}, {400, 2000, 2000, 10000}})) -- ggmatrix problem
+m1 = transpose matrix(R,{{1,1,1}}) -- segmentation fault (after lots of stuff)
+m2 = matrix{{3_R}}
+entries relations (coker m1 ** coker m2 ) == {{3, 0, 0, 1}, {0, 3, 0, 1}, {0, 0, 3, 1}}
+diff(m2,m1) -- Segmentation fault
+contract(m2,m1) -- Segmentation fault
+
+m = matrix(R,{{1,0,-1,3,-4}})
+try assert false else error "Descending order seems to not be descending."
+entries (m _ (sortColumns m)) == {{-4, -1, 1, 3, 0}}-- 0 is at the end: is this what we want?
+-- homogenize, elim, sat, coefficients: polynomial ring only
+-- reshape,flip,exteriorProduct
+assert(flip(R^2,R^3) == matrix(R,{{1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0}, {0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 1}}))
+m = map(R^1, R^6, (i,j) -> 6*i + j)
+assert(reshape(R^2,R^3,m) == matrix (R,{{0, 2, 4}, {1, 3, 5}}))
+assert(wedgeProduct(2,3,ZZ^5) ** R == wedgeProduct(2,3,R^5))  -- FAILS
+
+
+-----------------------------------------
+-- ZZZ/101: ring,vector,matrix operations
+-----------------------------------------
+R = ZZZ/101
+-- ring element operations
+assert(100_R == -1)
+assert(101_R == 0)
+assert(31_R == 31)
+assert((-31)_R == - (31_R))
+assert(5_R - 5_R == 0)
+assert(size (1_R) == 1)
+assert(size (0_R) == 0)
+assert(3 * 2_R == 6_R)
+assert(3_R * 2_R == 6_R)
+assert((2_R)^40 == 36)
+try assert((2^40)_R == 36) else error "from_int(ZZ) not fully implemented"
+assert((3^8)_R == 3 * (3^7)_R)
+assert((1_R - 1_R)^50 == 0)
+assert try leadCoefficient (1_R) else true
+assert try leadTerm (1_R) else true
+assert try leadMonomial (1_R) else true
+assert try someTerms(1_R, 1, 1) else true
+assert(degree(1_R) == {})
+degree(0_R) == -infinity  -- is this really what we want?
+try degree(1_R, {}) else "ERROR: ggdegree with weights needs front-end interface"
+try random R else error "random not working yet" -- ERROR: routine not implemented
+-- vectors
+F = R^4
+v = 3*F_0 + 2*F_1 + 0*F_2
+try assert(false) else "POSSIBLE error: allow front end to make vectors/sparse vectors?"
+assert(0_F == 0)
+assert(leadComponent v == 1)
+assert(v_0 == 3)
+assert(v_1 == 2)
+assert(v_2 == 0)
+assert(v != F_1)
+assert(v == F_0 + F_0 + F_0 + F_1 + F_1)
+assert(try leadCoefficient v else true)
+assert(leadTerm v == 2*F_1)  -- FAILS: wrong engine interface
+assert(leadTerm(0_F) == 0) -- FAILS: wrong engine interface
+assert(v - v == 0)
+assert(v + v + v == 3*v)
+assert(v + v + v == v*3) -- FAILS: need front end interface
+assert(v + v + v == (3_R)*v)
+assert(- (-v) == v)
+someTerms(v,1,1) -- FAILS: need front end interface
+degree v == {}
+degree (0_F) == {} -- Inconsistent with degree of a zero ring element
+homogenize(v,1_R) -- error message is funny: "key not found in hash table"
+-- matrices
+random(R^2, R^3) -- incorrect stack arguments for command ggmatrix
+                     -- need to IMPLEMENT kbasis first
+m = matrix(R, {{1,2,3,4,5},{12,14,16,18,20}})
+m1 = matrix {{1_R, 2_R, 3_R, 4_R, 5_R}, {12, 14, 16, 18, 20}}
+assert(entries m == entries m1)
+assert(entries transpose m == transpose entries m)
+assert(m_{0,1} == matrix(R, {{1,2},{12,14}}))
+assert(m_(1,1) == 14)
+assert(m + (-m) == 0)
+assert(m + m == 2*m)
+assert(m + m == m*2)
+assert(m + m == (2_R)*m)
+assert(m + m == m*(2_R)) -- NOT implemented
+assert(leadTerm m) -- Incorrect engine interface for gginitial
+p = id_(R^5)
+p ++ p == id_(R^10)  -- Engine BUG: ggddirectsum needs to check its types.
+assert(entries p == table(5,5,(i,j)->if i===j then 1 else 0))
+p = map(R^5,R^7,0)
+assert(p == 0)
+m = matrix{{1,2,3,4}}
+assert(koszul(1,m) == m) -- INCORRECT
+assert(koszul(2,m) != 0) -- INCORRECT
+m = matrix(ZZ, {{1,10},{20,100}})
+mm = m ** R 
+assert(mm ** mm == matrix(R,{{1, 10, 10, 100}, {20, 100, 200, 1000}, {20, 200, 100, 1000}, {400, 2000, 2000, 10000}})) -- ggmatrix problem
+m1 = transpose matrix(R,{{1,1,1}}) -- segmentation fault (after lots of stuff)
+m2 = matrix{{3_R}}
+entries relations (coker m1 ** coker m2 ) == {{3, 0, 0, 1}, {0, 3, 0, 1}, {0, 0, 3, 1}}
+diff(m2,m1) -- Segmentation fault
+contract(m2,m1) -- Segmentation fault
+
+m = matrix(R,{{1,0,-1,3,-4}})
+try assert false else error "Descending order seems to not be descending."
+error "what about sorting columns?"
+entries (m _ (sortColumns m)) == {{-4, -1, 1, 3, 0}}-- 0 is at the end: is this what we want?
+-- homogenize, elim, sat, coefficients: polynomial ring only
+-- reshape,flip,exteriorProduct
+assert(flip(R^2,R^3) == matrix(R,{{1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0}, {0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 1}}))
+m = map(R^1, R^6, (i,j) -> 6*i + j)
+assert(reshape(R^2,R^3,m) == matrix (R,{{0, 2, 4}, {1, 3, 5}}))
+assert(wedgeProduct(2,3,ZZ^5) ** R == wedgeProduct(2,3,R^5))  -- FAILS
+
+-------------------------------------
+-- ZZZ/101[a..d]
+-------------------------------------
+R = ZZZ/101[a..d,NewMonomialOrder=>RevLex=>4]
+-- ring element operations
+assert(31_R == 31)
+assert((-31)_R == - (31_R))
+assert(5_R - 5_R == 0)
+assert(size (1_R) == 1)
+assert(size (0_R) == 0)
+assert(3 * 2_R == 6_R)
+assert(3_R * 2_R == 6_R)
+try assert(0 != (2^40)_R) else "ERROR: 2^40 is still 0"
+assert(2^40 == (2^40)_R)
+assert((3^8)_R == 3 * (3^7)_R)
+assert((1_R - 1_R)^50 == 0)
+assert(leadCoefficient(1_R) == 1)
+assert(leadTerm(1_R) == 1)
+assert(leadMonomial(1_R) == {}) -- Returns incorrect type...
+f = a+3*b^2 + b*c - 1
+assert(size f == 4)
+assert(size(f - f) == 0)
+assert(f + f == 2*f)
+assert(f^3 == f*f*f)
+assert(leadCoefficient f == 3)
+assert(leadTerm f == 3*b^2)
+assert(leadTerm f == someTerms(f,0,1))
+assert(leadTerm (f - leadTerm f) == someTerms(f,1,1))
+assert(degree f == {2})
+assert(degree(1_R) == {0})
+degree(0_R) == -infinity  -- is this really what we want?
+try degree(1_R, {0,4,0,0}) == 8 else "ERROR: ggdegree with weights needs front-end interface"
+try random R else error "random not working yet" -- ERROR: routine not implemented
+-- vectors
+F = R^4
+v = (3*a*b+1)*F_0 + (a+b+c+d)*F_1 + 0*F_2
+try assert(false) else "POSSIBLE error: allow front end to make vectors/sparse vectors?"
+assert(0_F == 0)
+assert(leadComponent v == 0)
+assert(v_0 == 3*a*b+1)
+assert(v_1 == a+b+c+d)
+assert(v_2 == 0)
+assert(v != F_1)
+assert(0*v == 0)
+leadCoefficient v -- SEGMENTATION FAULT
+assert(leadTerm v == 2*F_1)  -- FAILS: wrong engine interface
+assert(leadTerm(0_F) == 0) -- FAILS: wrong engine interface
+assert(v - v == 0)
+assert(v + v + v == 3*v)
+assert(v + v + v == v*3) -- FAILS: need front end interface
+assert(v + v + v == (3_R)*v)
+assert(- (-v) == v)
+someTerms(v,1,1) -- FAILS: need front end interface
+assert(degree v == {2})
+degree (0_F) == {} -- Inconsistent with degree of a zero ring element
+homogenize(v,d) -- INFINITE LOOP
+-- matrices
+random(R^2, R^3) -- incorrect stack arguments for command ggmatrix
+                     -- need to IMPLEMENT kbasis first
+m = matrix(R, {{1,2,3,4,5},{12,14,16,18,20}})
+m1 = matrix {{1_R, 2_R, 3_R, 4_R, 5_R}, {12, 14, 16, 18, 20}}
+assert(entries m == entries m1)
+assert(entries transpose m == transpose entries m)
+assert(m_{0,1} == matrix(R, {{1,2},{12,14}}))
+assert(m_(1,1) == 14)
+assert(m + (-m) == 0)
+assert(m + m == 2*m)
+assert(m + m == m*2)
+assert(m + m == (2_R)*m)
+assert(m + m == m*(2_R)) -- NOT implemented
+assert(leadTerm m) -- Incorrect engine interface for gginitial
+p = id_(R^5)
+p ++ p == id_(R^10)  -- Engine BUG: ggddirectsum needs to check its types.
+assert(entries p == table(5,5,(i,j)->if i===j then 1 else 0))
+p = map(R^5,R^7,0)
+assert(p == 0)
+m = matrix{{1,2,3,4}}
+assert(koszul(1,m) == m) -- INCORRECT
+assert(koszul(2,m) != 0) -- INCORRECT
+m = matrix(ZZ, {{1,10},{20,100}})
+mm = m ** R 
+assert(mm ** mm == matrix(R,{{1, 10, 10, 100}, {20, 100, 200, 1000}, {20, 200, 100, 1000}, {400, 2000, 2000, 10000}})) -- ggmatrix problem
+m1 = transpose matrix(R,{{1,1,1}})
+m2 = matrix{{3_R}}
+entries relations (coker m1 ** coker m2 ) == {{3, 0, 0, 1}, {0, 3, 0, 1}, {0, 0, 3, 1}}
+diff(m2,m1)
+contract(m2,m1)
+
+m = matrix{{a,b,c,a^2,b*c,b^2,b^3}}
+assert(m _ (sortColumns m) == matrix {{c, b, a, b*c, b^2, a^2, b^3}})
+
+-- homogenize, elim, sat, coefficients: polynomial ring only
+-- reshape,flip,exteriorProduct
+assert(flip(R^2,R^3) == matrix(R,{{1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0}, {0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 1}}))
+m = map(R^1, R^6, (i,j) -> 6*i + j)
+assert(reshape(R^2,R^3,m) == matrix (R,{{0, 2, 4}, {1, 3, 5}}))
+assert(wedgeProduct(2,3,ZZ^5) ** R == wedgeProduct(2,3,R^5))  -- FAILS
+
+-------------------------------------
+-- Weyl algebra  NOT DONE
+-------------------------------------
+R = ZZZ/101[a,b,Da,Db,NewMonomialOrder=>RevLex=>4,Degrees=>{1,1,-1,-1},WeylAlgebra=>{a=>Da,b=>Db}]
+-- ring element operations
+assert(31_R == 31)
+assert((-31)_R == - (31_R))
+assert(5_R - 5_R == 0)
+assert(size (1_R) == 1)
+assert(size (0_R) == 0)
+assert(3 * 2_R == 6_R)
+assert(3_R * 2_R == 6_R)
+try assert(0 != (2^40)_R) else "ERROR: 2^40 is still 0"
+assert(2^40 == (2^40)_R)
+assert((3^8)_R == 3 * (3^7)_R)
+assert((1_R - 1_R)^50 == 0)
+assert(leadCoefficient(1_R) == 1)
+assert(leadTerm(1_R) == 1)
+assert(leadMonomial(1_R) == {}) -- Returns incorrect type...
+f = Da*a
+assert(f == a*Da + 1)
+theta = Da*a
+theta^2*a 
+Da*theta
+theta^2
+theta^3
+assert(size f == 4)
+assert(size(f - f) == 0)
+assert(f + f == 2*f)
+assert(f^3 == f*f*f)
+assert(leadCoefficient f == 3)
+assert(leadTerm f == 3*b^2)
+assert(leadTerm f == someTerms(f,0,1))
+assert(leadTerm (f - leadTerm f) == someTerms(f,1,1))
+assert(degree f == {2})
+assert(degree(1_R) == {0})
+degree(0_R) == -infinity  -- is this really what we want?
+try degree(1_R, {0,4,0,0}) == 8 else "ERROR: ggdegree with weights needs front-end interface"
+try random R else error "random not working yet" -- ERROR: routine not implemented
+-- vectors
+F = R^4
+v = (3*a*b+1)*F_0 + (a+b+c+d)*F_1 + 0*F_2
+try assert(false) else "POSSIBLE error: allow front end to make vectors/sparse vectors?"
+assert(0_F == 0)
+assert(leadComponent v == 0)
+assert(v_0 == 3*a*b+1)
+assert(v_1 == a+b+c+d)
+assert(v_2 == 0)
+assert(v != F_1)
+assert(0*v == 0)
+leadCoefficient v -- SEGMENTATION FAULT
+assert(leadTerm v == 2*F_1)  -- FAILS: wrong engine interface
+assert(leadTerm(0_F) == 0) -- FAILS: wrong engine interface
+assert(v - v == 0)
+assert(v + v + v == 3*v)
+assert(v + v + v == v*3) -- FAILS: need front end interface
+assert(v + v + v == (3_R)*v)
+assert(- (-v) == v)
+someTerms(v,1,1) -- FAILS: need front end interface
+assert(degree v == {2})
+degree (0_F) == {} -- Inconsistent with degree of a zero ring element
+homogenize(v,d) -- INFINITE LOOP
+-- matrices
+m = matrix{{a,b},{Da,Db}}
+m^2  -- fails: ggiszero
+assert(not(m == 0))
+m*m -- fails: ggiszero
+entries m == {{a,b},{Da,Db}}
+m = matrix(R, {{1,2,3,4,5},{12,14,16,18,20}})
+m1 = matrix {{1_R, 2_R, 3_R, 4_R, 5_R}, {12, 14, 16, 18, 20}}
+assert(entries m == entries m1)
+assert(entries transpose m == transpose entries m)
+assert(m_{0,1} == matrix(R, {{1,2},{12,14}}))
+assert(m_(1,1) == 14)
+assert(m + (-m) == 0)
+assert(m + m == 2*m)
+assert(m + m == m*2)
+assert(m + m == (2_R)*m)
+assert(m + m == m*(2_R)) -- NOT implemented
+assert(leadTerm m) -- Incorrect engine interface for gginitial
+p = id_(R^5)
+p ++ p == id_(R^10)  -- Engine BUG: ggddirectsum needs to check its types.
+assert(entries p == table(5,5,(i,j)->if i===j then 1 else 0))
+p = map(R^5,R^7,0)
+assert(p == 0)
+m = matrix{{1,2,3,4}}
+assert(koszul(1,m) == m) -- INCORRECT
+assert(koszul(2,m) != 0) -- INCORRECT
+m = matrix(ZZ, {{1,10},{20,100}})
+mm = m ** R 
+assert(mm ** mm == matrix(R,{{1, 10, 10, 100}, {20, 100, 200, 1000}, {20, 200, 100, 1000}, {400, 2000, 2000, 10000}})) -- ggmatrix problem
+m1 = transpose matrix(R,{{1,1,1}})
+m2 = matrix{{3_R}}
+entries relations (coker m1 ** coker m2 ) == {{3, 0, 0, 1}, {0, 3, 0, 1}, {0, 0, 3, 1}}
+diff(m2,m1)
+contract(m2,m1)
+
+m = matrix{{a,b,c,a^2,b*c,b^2,b^3}}
+assert(m _ (sortColumns m) == matrix {{c, b, a, b*c, b^2, a^2, b^3}})
+
+-- homogenize, elim, sat, coefficients: polynomial ring only
+-- reshape,flip,exteriorProduct
+assert(flip(R^2,R^3) == matrix(R,{{1, 0, 0, 0, 0, 0}, {0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0}, {0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 1}}))
+m = map(R^1, R^6, (i,j) -> 6*i + j)
+assert(reshape(R^2,R^3,m) == matrix (R,{{0, 2, 4}, {1, 3, 5}}))
+assert(wedgeProduct(2,3,ZZ^5) ** R == wedgeProduct(2,3,R^5))  -- FAILS
+
+///
