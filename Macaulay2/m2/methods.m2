@@ -11,7 +11,7 @@ protect Options
 
 t := c -> (
      n := try toString c else "--unprintable--";
-     if #n > 200 then n = sustring(n,0,200) | "...";
+     if #n > 200 then n = substring(n,0,200) | "...";
      n)
 
 noMethod := args -> (

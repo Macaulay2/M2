@@ -114,7 +114,7 @@ detTest = () -> (
   assert (ideal(m1*m1) == minors(6,m)))
 
 degTest = () -> (
-  -- This is a test of degrees, homogeniety checking
+  -- This is a test of degrees, homogeneity checking
   -- First usual degrees
   R = ZZ/101[symbol a..symbol f];
   F = R^{-4, -2};
@@ -133,7 +133,7 @@ degTest = () -> (
   m = map(F, R^0, 0);
   --n = basis({5,2}, m);
 
-  -- homogeniety and degrees
+  -- homogeneity and degrees
   R = ZZ/7[vars(0..8)];
   m = genericMatrix(R, a, 3, 3);
   m2 = m * m;

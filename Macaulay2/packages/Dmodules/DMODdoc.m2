@@ -1,31 +1,5 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-/// *** DOCUMENT PATTERN ***
-document { (functionName, Type, Type),
-     Headline => "very short description",
-     Usage => {
-	  TT "functionName(Type,Type)", " -- do this and that "
-	  },
-     OldSynopsis => {
-     	  "A = functionName(B,C)",
-	  "B" => {"parameter description"},
-	  "C" => {"parameter description"},
-	  "A" => {"output description"}
-	  },
-     "...MAIN TEXT: DEFINITION, REFERENCES,..."
-     EXAMPLE {
-	"needs \"D-modules.m2\"",
-	"Line 1",
-	"Line 2",
-	"..."
-	},
-     CAVEAT {
-	  "Small things that are wrong and/or peculiar"
-	  },
-     SEEALSO { "..." }
-     }
-///
-
 INSERTUSAGE := l->{ --!!! until "Usage =>" doesn't work
      {BOLD "Usage: ", PARA, l, PARA} 
      }
@@ -121,7 +95,7 @@ document { "D-modules Package",
 document { (ExternalProduct),
      Headline => "external product of modules or complexes"
      }
-document { (ExternalProduct=>TwistMap),
+document { (ExternalProduct,TwistMap),
      Headline => "indicates whether TwistMap should be computed"
      }
 document { (TwistMap),
@@ -152,7 +126,7 @@ document { (bFunction),
 	  }
      }
 
-document { (bFunction => Strategy),
+document { (bFunction,Strategy),
      Headline => "specify strategy for computing b-function",
      UL { 
 	  {BOLD "IntRing", " -- the simplest algorithm available. 
@@ -269,16 +243,16 @@ document { (bFunction, Module, List, List),
 	  "The Weyl algebra should not have any parameters. 
      	  Similarly, it should not be a homogeneous Weyl algebra"
 	  },
-     SEEALSO => { "globalBFunction", "factorBFunction" }
+     SEEALSO { "globalBFunction", "factorBFunction" }
      }
 
 
-document { (globalBFunction => Strategy),
+document { (globalBFunction,Strategy),
      Headline => "specify strategy for computing global b-function",
      SHIELD UL { 
 	  {BOLD "IntRing, TryGeneric, NonGeneric", 
 	       " -- passed to ", TO "bFunction",  ", see ", 
-	       TO (bFunction => Strategy) },
+	       TO (bFunction,Strategy) },
 	  {BOLD "ViaAnnFs", " -- computes ", 
 	       EM "J(s)=Ann(f", SUP "s", EM ")", " and then intersects ", 
 	       EM "J(s)+D[s]f}", " with ", EM "K[s]"},
@@ -337,7 +311,7 @@ document {  (globalBFunction),
 	  "The Weyl algebra should not have any parameters. 
      	  Similarly, it should not be a homogeneous Weyl algebra"
 	  },
-     SEEALSO => { "bFunction", "factorBFunction" }
+     SEEALSO { "bFunction", "factorBFunction" }
      }
                
 document { (factorBFunction--!!!, RingElement
@@ -473,7 +447,7 @@ document { (AnnIFs--, Ideal, RingElement
 	  parameters: it should be a pure Weyl algebra. Similarly, 
 	  this ring should not be a homogeneous Weyl algebra."
      	  },
-     SEEALSO => {"AnnFs", "WeylAlgebra"}
+     SEEALSO {"AnnFs", "WeylAlgebra"}
      }  
 
 document { (Dtrace--, ZZ
@@ -510,7 +484,7 @@ document { getHomSwitch,
      SEEALSO {"setHomSwitch"}
      }  
 
-document { (localCohom => Strategy),
+document { (localCohom,Strategy),
      Headline => "specify strategy for local cohomology",
      "This option together with ", TO "LocStrategy", " determines a strategy for ", 
      TT "localCohom(...Ideal...)", " and ", TT "localCohom(...Ideal, Module...)", ".",
@@ -554,9 +528,9 @@ document { (OaTa),
      "see ", TO "localCohom"
      } 
 document { (LocStrategy) }
-document { (localCohom => LocStrategy),
+document { (localCohom,LocStrategy),
      Headline => "specify localization strategy for local cohomology",
-     "See ", TO (localCohom => Strategy)
+     "See ", TO (localCohom,Strategy)
      }
 document { (OaTaWa),
      Headline => "an option for localCohom => LocStrategy",
@@ -710,7 +684,7 @@ document { (pruneLocalCohom),
      Headline => "prunes local cohomology modules",
      SEEALSO {"localCohom"} 
      }
-document { (paramBpoly=>GroundField),
+document { (paramBpoly,GroundField),
      Headline => "characteristic for modular computation"
      }
 document {(GroundField)}
@@ -774,9 +748,9 @@ document {(AnnG),
 document {(isHolonomic),
      Headline => "determines whether a D-module (or ideal in Weyl algebra) is holonomic"
      } 
-document {(DHom=>Strategy),
+document { (DHom,Strategy),
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution=>Strategy)
+	  TO (Dresolution,Strategy)
 }
 document { (DHom),
      Headline=>"D-homomorphisms between holonomic D-modules",
@@ -818,9 +792,9 @@ document { (DHom),
      SEEALSO {"DExt", "Drestriction"}
      }
 
-document {(DExt=>Strategy),
+document { (DExt,Strategy),
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution=>Strategy)
+	  TO (Dresolution,Strategy)
 }
 document {(DExt=>Special)}
 document {(Special),
@@ -870,7 +844,7 @@ document { (DExt),
      SEEALSO {"DHom", "Drestriction"}
      }
 
-document { (PolySols=>Alg),
+document { (PolySols,Alg),
      Headline => "algorithm for finding polynomial solutions",
      UL {
 	  {BOLD "GD", " -- uses Groebner deformations"},
@@ -924,9 +898,9 @@ document { (PolySols),
      SEEALSO {"RatSols", "Dintegration"}
      },
 
-document {(PolyExt=>Strategy),
+document { (PolyExt,Strategy),
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution=>Strategy)
+	  TO (Dresolution,Strategy)
 }
 document { (PolyExt),
      Headline => "dimensions of Ext groups between 
@@ -1009,9 +983,9 @@ document { (RatSols),
      SEEALSO {"PolySols", "RatExt", "DHom"} 
      },
 
-document {(RatExt=>Strategy),
+document { (RatExt,Strategy),
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution=>Strategy)
+	  TO (Dresolution,Strategy)
 }
 document { (RatExt),
      Headline => 
@@ -1367,7 +1341,7 @@ document { (Ddual),
      SEEALSO {"Ddim", "Dtransposition"}
      }
 
-document { (Dlocalize=>Strategy),
+document { (Dlocalize,Strategy),
      Headline=>"strategy for computing a localization of a D-module",
      UL{
 	  {BOLD "Oaku", " -- use the Oaku algorithm"},
@@ -1478,7 +1452,7 @@ document { (DlocalizationMap),
      }
 
 
-document { (Dresolution=>Strategy),
+document { (Dresolution,Strategy),
      Headline => "strategy for computing a resolution of a D-module",
      UL { 
 	  {BOLD "Schreyer", 
@@ -1550,9 +1524,9 @@ document { (Dres),
      SEEALSO{"Dresolution"}
      }	
 
-document {(Drestriction=>Strategy),
+document { (Drestriction,Strategy),
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution=>Strategy)
+	  TO (Dresolution,Strategy)
 	  }
 document { (Drestriction),
      Headline => "restriction modules of a D-module",
@@ -1705,9 +1679,9 @@ document { (IntegrateComplex),
      SEEALSO {"Dintegration" }
      }
 
-document {(Dintegration=>Strategy),
+document { (Dintegration,Strategy),
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution=>Strategy)
+	  TO (Dresolution,Strategy)
 }
 document { (Dintegration),
      Headline => "integration modules of a D-module",
@@ -1981,9 +1955,9 @@ document { (WeylClosure),
 	  
      SEEALSO {"Dlocalize", "singLocus", "Drank"}
      }
-document {(deRham=>Strategy),
+document { (deRham,Strategy),
 	  "Option is passed to Dresolution. See ",
-	  TO (Dresolution=>Strategy)
+	  TO (Dresolution,Strategy)
 }
 document { (deRham),
      Headline => "deRham cohomology groups",
@@ -2250,7 +2224,7 @@ document { (Dprune),
 document { (Dprune2),
      Headline => "prunes a matrix over a Weyl algebra (phased out)"
      }
-document { (Dprune=>optGB),
+document { (Dprune,optGB),
      Headline => "indicates whether Grobner basis should be computed"
      }
 document { (optGB),
