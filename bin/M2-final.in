@@ -1,8 +1,10 @@
 #! /bin/sh
-M2HOME="`dirname $0`/../Macaulay2"
+PREFIX=@prefix@
+M2HOME="$PREFIX/share/Macaulay2/@PACKAGE_VERSION@"
+M2LIB="$PREFIX/lib/Macaulay2/@PACKAGE_VERSION@"
 export M2HOME
-EXE="$M2HOME/libexec/Macaulay2"
-DATA="$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
+EXE="$M2LIB/libexec/Macaulay2"
+DATA="$M2LIB/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
 SETUP="$M2HOME/m2/setup.m2"
 if [ -f "$DATA" ]
 then exec "$EXE" "-e loaddata \"$DATA\"" -- "-e runStartFunctions()" "$@"
