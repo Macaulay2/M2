@@ -171,7 +171,7 @@ net Array := x -> horizontalJoin deepSplice (
 net BasicList := x -> horizontalJoin deepSplice (
       net class x, 
       "{",
-      toSequence between(comma,apply(x,net)),
+      toSequence between(comma,apply(toList x,net)),
       "}")
 net MutableList := x -> horizontalJoin ( net class x, "{...}" )
 net HashTable := x -> (

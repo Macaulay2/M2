@@ -378,7 +378,7 @@ document List := z -> (
 -----------------------------------------------------------------------------
 
 topicList = () -> sort join(
-     if DocDatabase === null then {} else keys DocDatabase,
+     if DocDatabase === null then {} else value \ keys DocDatabase,
      keys Documentation)
 
 getExampleInputs := method(SingleArgumentDispatch => true)
@@ -446,9 +446,9 @@ nextMoreGeneral := s -> (
      )
 
 getOption := (s,tag) -> (
-     if not instance(s,BasicList) then error ("class = ", toString class s);
-     x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
-     if #x > 0 then x#0#1)
+     if class s === SEQ then (
+     	  x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
+     	  if #x > 0 then x#0#1))
 
 getHeadline := key -> (
      d := getOption(getDoc key, HEADLINE);
@@ -528,9 +528,9 @@ documentation String := s -> (
 	  )
      )
 documentation Thing := s -> SEQ { title s, usage s, type s }
-binary := set binaryOperators
-prefix := set prefixOperators
-postfix := set postfixOperators
+binary := set binaryOperators; erase symbol binaryOperators
+prefix := set prefixOperators; erase symbol prefixOperators
+postfix := set postfixOperators; erase symbol postfixOperators
 operator := binary + prefix + postfix
 op := s -> if operator#?s then (
      ss := toString s;

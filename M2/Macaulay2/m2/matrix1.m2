@@ -1,5 +1,7 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
+module = method()
+
 matrix(Ring,List) := Matrix => options -> (R,m) -> (
      if not isTable m then error "expected a table";
      map(R^#m,,m,options))
@@ -510,7 +512,6 @@ Ideal == Ideal := (I,J) -> (
 Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
-module = method()
 module Ideal := Module => I -> image I.generators
 
 ideal Matrix := Ideal => (f) -> (

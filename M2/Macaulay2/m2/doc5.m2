@@ -640,6 +640,6 @@ document { eeLift,
      }
 
 document { symbol directSum,
-     HEADLINE => "speciy method for forming direct sums",
+     HEADLINE => "specify method for forming direct sums",
      SEEALSO "directSum"
      }

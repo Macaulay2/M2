@@ -808,6 +808,21 @@ document { get,
      SEEALSO{ "File", "read" }
      }
 
+document { separate,
+     HEADLINE => "split a string into pieces",
+     TT "separate(s,d)", " -- split the string ", TT "s", " into pieces 
+     delimited by the string ", TT "d", ".",
+     PARA,
+     "The value is a list of the pieces, the number of which is one
+     more than the number of occurences of d in s, so that the pieces
+     may be reassembled with ", TO "between", ".",
+     EXAMPLE {
+	  ///separate( "a.b.c.d", "." )///,
+	  ///peek separate( "a.b.c.d", "." )///,
+	  ///concatenate between("=",ooo)///
+	  }
+     }
+
 document { lines,
      HEADLINE => "split a string into lines",
      TT "lines s", " -- yields an array of strings obtained from the

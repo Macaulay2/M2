@@ -75,7 +75,6 @@ getc File := String => getc
 getenv String := String => getenv
 hashTable List := HashTable => hashTable
 typicalValues#horizontalJoin = Net
-typicalValues#verticalJoin = Net
 horizontalJoin BasicList := Net => horizontalJoin
 netRows Net := List => netRows
 join(BasicList,BasicList) := BasicList => join
@@ -136,3 +135,6 @@ scan(BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
 locate Symbol := locate Function := locate Sequence := locate Nothing := Sequence => locate
+separate(String,String) := List => separate
+lines(String,String) := List => lines
+lines String := List => lines
