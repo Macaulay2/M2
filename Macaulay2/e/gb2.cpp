@@ -282,7 +282,7 @@ Vector *gbres_comp::reduce(const Vector *v, Vector *&lift)
 FreeModule *gbres_comp::free_module(int level)
 {
   if (level >= 0 && level <= n_nodes-1)
-    return (FreeModule *) nodes[level]->output_free_module();
+    return const_cast<FreeModule *>(nodes[level]->output_free_module());
   return nodes[0]->output_free_module()->get_ring()->make_FreeModule();
 
 }

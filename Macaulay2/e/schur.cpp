@@ -110,7 +110,7 @@ void SchurRing::text_out(buffer &o) const
 void SchurRing::to_partition(const int *m, int *exp) const
     // exp[1]..exp[nvars] are set
 {
-  M_->to_expvector(m, ((SchurRing *) this)->_EXP1);
+  M_->to_expvector(m, const_cast<SchurRing *>(this)->_EXP1);
   exp[_nvars] = _EXP1[_nvars-1];
   for (int i=_nvars-1; i>=1; i--)
     exp[i] = exp[i+1] + _EXP1[i-1];
@@ -119,7 +119,7 @@ void SchurRing::from_partition(const int *exp, int *m) const
 {
   _EXP1[_nvars-1] = exp[_nvars];
   for (int i=_nvars-1; i>0; i--)
-    ((SchurRing *) this)->_EXP1[i-1] = exp[i] - exp[i+1];
+    const_cast<SchurRing *>(this)->_EXP1[i-1] = exp[i] - exp[i+1];
   M_->from_expvector(_EXP1, m);
 }
 
@@ -259,7 +259,7 @@ ring_elem SchurRing::mult_by_term(const ring_elem f,
   for (Nterm *t = f; t != NULL; t = t->next)
     {
       ring_elem a = K_->mult(c, t->coeff);
-      ring_elem g = ((SchurRing *) this)->mult_monomials(t->monom, m);
+      ring_elem g = const_cast<SchurRing *>(this)->mult_monomials(t->monom, m);
       for (Nterm *s = g; s != NULL; s = s->next)
 	{
 	  ring_elem b = K_->mult(a, s->coeff);
