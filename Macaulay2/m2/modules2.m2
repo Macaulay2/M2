@@ -657,16 +657,18 @@ assert isIsomorphism p^-1
 assert ( p * p^-1 == id_M )
 assert ( p^-1 * p == id_N )
 "
-
 -----------------------------------------------------------------------------
-
-dual Module := F -> (
-     if not isFreeModule F then kernel transpose presentation F
-     else (
-     	  sendgg (ggPush F, ggtranspose); 
-     	  new Module from ring F))
 document { quote dual,
-     TT "dual M", " -- computes the dual of a module or chain complex."
+     TT "dual M", " -- the dual."
+     }
+
+dual Module := { Module,
+     F -> (
+	  if not isFreeModule F then kernel transpose presentation F
+	  else (
+	       sendgg (ggPush F, ggtranspose); 
+	       new Module from ring F)),
+     TT "dual M", " -- the dual of a module."
      }
 -----------------------------------------------------------------------------
 Hom(Module, Module) := (M,N) -> (

@@ -88,20 +88,17 @@ document { ".",
      PARA,
      "May also be used in an assignment.",
      PARA,
-     "Warning: the symbol k could occur in the local scope, obscuring
-     the global symbol k one really wants.  Here is an example.",
-     PARA,
      EXAMPLE "x = new MutableHashTable;",
      EXAMPLE "x.k = 444",
-     EXAMPLE "(k -> x.k = 555) ();",
      EXAMPLE "x.k",
      EXAMPLE "peek x",
      SEEALSO ("#", ".?", "global")
      }
 
 document { ".?",
-     TT "x.?k", " -- the same as x#?(global k).",
+     TT "x.?k", " -- the same as x#?(global k), tells whether a value is
+     available with ", TT "x.k", ".",
      PARA,
-     SEEALSO( "#?" )
+     SEEALSO( ".", "#?" )
      }
 

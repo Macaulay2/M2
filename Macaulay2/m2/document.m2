@@ -122,13 +122,45 @@ examples = x -> (
 
 fm := (o,s) -> (
      if class s === Sequence then (
-	  if #s === 4 then o << s#0 << "(" << s#1 << "," << s#2 << "," << s#3 << ")"
-	  else if #s === 3 then (
-	       if class s#0 === Symbol 
-     	       then o << s#1 << " " << s#0 << " " << s#2
-     	       else o << s
+	  if #s === 4 then (
+	       if s#0 === NewOfFromMethod 
+	       then o << "new " << s#1 << " of " << s#2 << " from " << s#3
+	       else if s#0 === cohomology
+	       then o << "HH_" << s#1 << "^" << s#2 << " " << s#3
+	       else if s#0 === homology
+	       then o << "HH^" << s#1 << "_" << s#2 << " " << s#3
+	       else o << s#0 << "(" << s#1 << "," << s#2 << "," << s#3 << ")"
 	       )
-	  else if #s === 2 then o << s#0 << "(" << s#1 << ")"
+	  else if #s === 3 then (
+	       if class s#0 === Symbol then (
+		    if s#0 === NewFromMethod
+		    then o << "new " << s#1 << " from " << s#2
+		    else if s#0 === NewOfMethod
+		    then o << "new " << s#1 << " of " << s#2
+		    else if string s#0 === " "
+		    then o << s#1 << " " << s#2
+		    else o << s#1 << " " << s#0 << " " << s#2
+		    )
+	       else if s#0 === homology
+	       then o << "HH_" << s#1 << " " << s#2
+	       else if s#0 === cohomology
+	       then o << "HH^" << s#1 << " " << s#2
+     	       else o << s#0 << "(" << s#1 << "," << s#2 << ")"
+	       )
+	  else if #s === 2 then (
+	       if class s#0 === ScriptedFunction then (
+		    hh := s#0;
+		    if hh.?subscript and hh.?superscript
+		    then (
+			 o << s#0 << " _ " << s#1
+			 << "  or  " << s#0 << " ^ " << s#1
+			 )
+		    else if hh.?subscript then o << s#0 << " _ " << s#1
+		    else o << s#0 << " ^ " << s#1
+		    )
+	       else if s#0 === NewMethod then o << "new " << s#1
+	       else o << s#0 << " " << s#1
+	       )
 	  else o << s
 	  )
      else o << s
@@ -142,6 +174,7 @@ briefHelp := (o,s) -> (
      then (
 	  fm (o,s);
 	  o << " : no documentation available" << endl;
+	  false
 	  )
      else if class d === List then (
 	  fm (o,s);
@@ -149,10 +182,23 @@ briefHelp := (o,s) -> (
 	  d = drop(d,2);
      	  i := 0;
      	  while i < #d and d#i =!= PARA do i = i+1;
+	  thereWasMore := i < #d;
 	  d = take(d,i);
 	  if #d > 0 then o << endl << text repl d << endl;
-	  )
-     else o << text d << endl;
+	  thereWasMore)
+     else (
+	  o << text d << endl;
+	  false))
+
+previousMethods := new MutableHashTable
+saveMethod := meth -> (
+     if previousMethods#?meth 
+     then previousMethods#meth
+     else (
+     	  i := #previousMethods//2;
+     	  previousMethods#i = meth;
+     	  previousMethods#meth = i;
+     	  i)
      )
 
 help2 := (o,s) -> (
@@ -171,7 +217,11 @@ help2 := (o,s) -> (
      if class s =!= Sequence then (
 	  m := methods s;
 	  if #m > 0 then (
-	       scan(m, i -> ( hr o; briefHelp (o,i); ));
+	       scan(m, meth -> (
+			 hr o; 
+			 if briefHelp(o,meth)
+			 then o << endl << "Type 'help " << saveMethod meth << "' for more help." << endl;
+			 ));
 	       hr o;
 	       );
 	  );
@@ -186,6 +236,15 @@ help = s -> (
      then (
 	  scan(s, i -> ( hr o; help2 (o,i); ));
 	  hr o;
+	  )
+     else if class s === ZZ then (
+	  if 0 <= s and s < #previousMethods then (
+	       o << endl;
+	       help2 (o,previousMethods#s);
+	       )
+	  else (
+	       stderr << "No documentation on " << s << endl;
+	       )
 	  )
      else (
 	  o << endl;
@@ -405,11 +464,24 @@ document { quote doc,
 
 document { quote help,
      -- no PARA in this documentation, so it all gets displayed.
-     TT "help s", " -- displays the online documentation for ", TT "s", ".",
-     BR,
-     NOINDENT, TT "help \"Macaulay 2\"", " -- displays the base of the documentation
+     TT "help X", " -- displays the online documentation for ", TT "X", ".",
+     BR, NOINDENT,
+     TT "help \"Macaulay 2\"", " -- displays the base of the online documentation
      tree.",
-     SEEALSO("topics")
+     BR, NOINDENT,
+     TT "help methods X", " -- displays help messages about the methods usable
+     with things of type ", TT "X", ".",
+     BR, NOINDENT,
+     TT "help methods quote **", " -- displays help messages about the accessible
+     with the operator ", TT "**", ".",
+     BR, NOINDENT,
+     TT "help methods (quote **, X)", " -- displays help messages about the 
+     methods usable with the operator ", TT "**", " and a thing of
+     class ", TT "X", ".",
+     BR, NOINDENT,
+     TT "help methods (X, Y)", " -- displays help messages about the 
+     methods usable with a thing of class ", TT "X", " and a thing of class
+     ", TT "Y", "."
      }
 
 document { quote topicList,

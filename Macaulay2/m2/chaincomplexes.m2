@@ -1,12 +1,43 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 ChainComplex = new Type of GradedModule
-new ChainComplex := (cl) -> (
-     C := newClass(ChainComplex,new MutableHashTable); -- sigh
-     b := C.dd = new ChainComplexMap;
-     b.degree = -1;
-     b.source = b.target = C;
-     C)
+new ChainComplex := { ChainComplex,
+     (cl) -> (
+	  C := newClass(ChainComplex,new MutableHashTable); -- sigh
+	  b := C.dd = new ChainComplexMap;
+	  b.degree = -1;
+	  b.source = b.target = C;
+	  C),
+     TT "C = new ChainComplexMap", " -- make a new chain complex.",
+     PARA,
+     "The new chain complex is initialized with a differential of
+     degree ", TT "-1", " accessible as ", TT "C.dd", " and of type
+     ", TO "ChainComplexMap", ".  You can take the new chain complex and
+     fill in the ring, the modules, and the differentials.",
+     EXAMPLE "C = new ChainComplex;",
+     EXAMPLE "C.ring = ZZ;",
+     EXAMPLE "C#2 = ZZ^1;",
+     EXAMPLE "C#3 = ZZ^2;",
+     EXAMPLE "C.dd#3 = matrix {{3,-11}};",
+     EXAMPLE "C",
+     EXAMPLE "C.dd"
+     }
+
+-- a useful hack
+Documentation#(quote ., ChainComplex, dd) = { ChainComplexMap, 
+     identity,
+     TT "C.dd", " -- gets the differentials from a chain complex",
+     PARA,
+     "The differentials are stored as the members in a chain complex
+     map of degree ", TT "-1", ".  The map ", TT "C.dd_i", " is the
+     one whose source is the module ", TT "C_i", ".",
+     EXAMPLE "R = ZZ/101[a,b];",
+     EXAMPLE "C = resolution cokernel vars R",
+     EXAMPLE "C.dd",
+     EXAMPLE "C.dd_2"
+     }
+ChainComplex#(quote ., ChainComplex, dd) = identity
+
 document { quote ChainComplex,
      TT "ChainComplex", " -- the class of all chain complexes.",
      PARA,
@@ -50,41 +81,63 @@ document { quote ChainComplex,
      EXAMPLE "C.dd",
      SEEALSO ("Resolution", "dd")
      }
-document { "C_i",
-     TT "C_i", " -- yields the i-th module from a chain complex C.",
+complete ChainComplex := { ChainComplex,     
+     C -> (
+     	  if C.?Resolution then (i := 0; while C_i != 0 do i = i+1);
+     	  C),
+     TT "complete C", " -- fills in the modules of a chain complex
+     obtained as a resolution with information from the engine.",
+     PARA,
+     "For the sake of efficiency, when a chain complex arises as
+     a resolution of a module, the free modules are not filled in until
+     they are needed.  This routine can be used to fill them all in, and
+     is called internally when a chain complex is printed.
+     Normally users will not need this function, unless they use ", TO "#", " to
+     obtain the modules of the chain complex, or use ", TO "keys", " to
+     see which spots are occupied by modules.",
+     EXAMPLE "R = ZZ/101[a..d]",
+     EXAMPLE "C = resolution cokernel vars R;",
+     EXAMPLE "keys C",
+     EXAMPLE "complete C;",
+     EXAMPLE "keys C"     
+     }
+
+ChainComplex _ ZZ := { ChainComplex,
+     (C,i) -> (
+	  if C#?i 
+	  then C#i
+	  else if C.?Resolution then (
+	       gr := C.Resolution;
+	       sendgg(ggPush gr, ggPush i, ggresmodule);
+	       F := new Module from ring C;
+	       if F != 0 then C#i = F;
+	       F)
+	  else (ring C)^0
+	  ),
+     TT "C_i", " -- yields the i-th module in a chain complex C.",
      PARA,
      "Returns the zero module if no module has been stored in the
-     i-th spot.",
-     PARA,
-     "See also ", TO "ChainComplex", " and ", TO "_", "."
+     i-th spot.  You can use code like ", TT "C#?i", " to determine
+     if there is a module in the i-th spot (if the chain complex
+     arose as a resolution, use ", TO "complete ChainComplex", " to 
+     fill all the spots with their modules."
      }
-complete ChainComplex := C -> (
-     if C.?Resolution then (i := 0; while C_i != 0 do i = i+1);
-     C)
-name ChainComplex := C -> (
-     complete C;
-     maxdeg := -10000;			  -- sigh
-     scan(pairs C, (k,v) -> if class k === ZZ and k > maxdeg then maxdeg = k);
-     concatenate between(" <- ",elements apply(0 .. maxdeg, i -> name C_i)))
-ChainComplex _ ZZ := (C,i) -> (
-     if C#?i 
-     then C#i
-     else if C.?Resolution then (
-	  gr := C.Resolution;
-	  sendgg(ggPush gr, ggPush i, ggresmodule);
-	  F := new Module from ring C;
-	  if F != 0 then C#i = F;
-	  F)
-     else (ring C)^0
-     )
+
 spots := C -> select(keys C, i -> class i === ZZ)
 union := (x,y) -> keys(set x + set y)
 
-length ChainComplex := (C) -> (
-     complete C;
-     s := spots C;
-     if #s === 0 then 0 else max s - min s
-     )
+length ChainComplex := { ChainComplex,
+     (C) -> (
+	  complete C;
+	  s := spots C;
+	  if #s === 0 then 0 else max s - min s
+	  ),
+     TT "length C", " -- the length of a chain complex.",
+     PARA,
+     "The length of a chain complex is defined to be the difference
+     between the smallest and largest indices of spots occupied by
+     modules, even if those modules happen to be zero."
+     }
 
 document { "C.dd_i",
      TT "C.dd_i", " -- yields the i-th differential from a chain complex C",
@@ -96,6 +149,7 @@ document { "C.dd_i",
      PARA,
      "See also ", TO "ChainComplex", "."
      }
+
 net ChainComplex := C -> if C.?name then net C.name else (
      complete C;
      s := sort spots C;
@@ -142,13 +196,17 @@ ring ChainComplexMap := C -> ring source C
 complete ChainComplexMap := f -> (
      if f.?Resolution then ( i := 1; while f_i != 0 do i = i+1; );
      f)
+
+lineOnTop := (s) -> concatenate(width s : "-") || s
+
 net ChainComplexMap := f -> (
      complete f;
      v := between("",
-	  apply( sort select(spots f, i -> f_i != 0),
+	  apply(sort spots f,
 	       i -> horizontalJoin (
-		    net i, ": ", net target f_i, " <--",
-		    net f_i, "-- ", net source f_i 
+		    net (i+f.degree), " : ", net target f_i, " <--",
+		    lineOnTop net f_i,
+		    "-- ", net source f_i, " : ", net i
 		    )
 	       )
 	  );
@@ -464,21 +522,21 @@ document { quote poincare,
 	  }
      }
 
-poincareN = (C) -> (
-     s := local S;
-     t := local T;
-     G := group [s, t_0 .. t_(degreeLength ring C - 1)];
-     -- this stuff has to be redone as in Poincare itself, DRG
-     R := ZZ G;
-     use R;
-     f := 0_R;
-     complete C;
-     scan(keys C, n -> (
-	       if class n === ZZ
-	       then scanPairs(tally degrees C_n, 
-	       	    (d,m) -> f = f + m * G_0^n * product(# d, j -> G_(j+1)^(d_j)))));
-     f )
-document { quote poincareN,
+poincareN ChainComplex := { ChainComplex,
+     (C) -> (
+	  s := local S;
+	  t := local T;
+	  G := group [s, t_0 .. t_(degreeLength ring C - 1)];
+	  -- this stuff has to be redone as in Poincare itself, DRG
+	  R := ZZ G;
+	  use R;
+	  f := 0_R;
+	  complete C;
+	  scan(keys C, n -> (
+		    if class n === ZZ
+		    then scanPairs(tally degrees C_n, 
+			 (d,m) -> f = f + m * G_0^n * product(# d, j -> G_(j+1)^(d_j)))));
+	  f ),
      TT "poincareN C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
      PARA,
@@ -489,37 +547,43 @@ document { quote poincareN,
      EXAMPLE "poincareN resolution cokernel vars R"
      }
 
-ChainComplex ** Module := (C,M) -> (
-     D := new ChainComplex;
-     D.ring = ring C;
-     complete C.dd;
-     scan(keys C.dd,i -> if class i === ZZ then (
-	       f := D.dd#i = C.dd#i ** M;
-	       D#i = source f;
-	       D#(i-1) = target f;
-	       ));
-     D)
-Module ** ChainComplex := (M,C) -> (
-     D := new ChainComplex;
-     D.ring = ring C;
-     complete C.dd;
-     scan(keys C.dd,i -> if class i === ZZ then (
-	       f := D.dd#i = M ** C.dd#i;
-	       D#i = source f;
-	       D#(i-1) = target f;
-	       ));
-     D)
-document { "ChainComplex ** Module",
-     TT "C ** M", " -- produces the tensor product of a ", TO "ChainComplex", " C and
-     a ", TO "Module", ".",
-     PARA,
-     TT "M ** C", " -- produces the tensor product of a ", TO "Module", " M and 
-     a ", TO "ChainComplex", " C.",
-     PARA,
-     "See also ", TO "**", "."
+ChainComplex ** Module := { ChainComplex,
+     (C,M) -> (
+	  D := new ChainComplex;
+	  D.ring = ring C;
+	  complete C.dd;
+	  scan(keys C.dd,i -> if class i === ZZ then (
+		    f := D.dd#i = C.dd#i ** M;
+		    D#i = source f;
+		    D#(i-1) = target f;
+		    ));
+	  D),
+     "tensor product"
+     }
+
+Module ** ChainComplex := { ChainComplex,
+     (M,C) -> (
+	  D := new ChainComplex;
+	  D.ring = ring C;
+	  complete C.dd;
+	  scan(keys C.dd,i -> if class i === ZZ then (
+		    f := D.dd#i = M ** C.dd#i;
+		    D#i = source f;
+		    D#(i-1) = target f;
+		    ));
+	  D),
+     "tensor product"
      }
 -----------------------------------------------------------------------------
-homology(ZZ,ChainComplex) := (i,C) -> homology(C.dd_i, C.dd_(i+1))
+
+homology(ZZ,ChainComplex) := { Module,
+     (i,C) -> homology(C.dd_i, C.dd_(i+1)),
+     TT "HH_i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
+     EXAMPLE "R = ZZ/101[x,y]",
+     EXAMPLE "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
+     EXAMPLE "M = HH_1 C",
+     EXAMPLE "prune M",
+     }
 
 TEST "
 S = ZZ/101[x,y,z]
@@ -532,51 +596,46 @@ assert ( 0 == HH_3 res M )
 assert ( 0 == HH_4 res M )
 "
 
-document { "HH_i C",
-     TT "HH_i C", " -- produce the i-th homology module of a chain complex C.",
-     EXAMPLE "R = ZZ/101[x,y]",
-     EXAMPLE "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
-     EXAMPLE "M = HH_1 C",
-     EXAMPLE "prune M",
-     SEEALSO ( "HH", "ChainComplex", "ScriptedFunctor" )
-     }
-
-cohomology(ZZ,ChainComplex) := (i,C) -> HH_-i C
-
-document { "HH^i C",
-     TT "HH^i C", " -- produce the i-th cohomology module of a chain complex C",
+cohomology(ZZ,ChainComplex) := { ChainComplex,
+     (i,C) -> HH_-i C,
+     TT "HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      PARA,
-     "This is the same as HH_(-i) C.",
-     PARA,
-     "See also ", TO "HH", " and ", TO "ChainComplex", "."
+     "By definition, this is the same as HH_(-i) C."
      }
 
 chainComplex = method(SingleArgumentDispatch=>true)
 
-chainComplex Sequence := chainComplex List := maps -> (
-     C := new ChainComplex;
-     R := C.ring = ring target maps#0;
-     scan(#maps, i -> (
-	       f := maps#i;
-	       if R =!= ring f
-	       then error "expected maps over the same ring";
-	       if i > 0 and C#i != target f then (
-		    diff := degrees C#i - degrees target f;
-		    if same diff
-		    then f = f ** R^(- diff#0)
-		    else error "expected composable maps";
-		    );
-	       C.dd#(i+1) = f;
-	       if i === 0 then C#i = target f;
-	       C#(i+1) = source f;
-	       ));
-     C)
-chainComplex Matrix := f -> chainComplex {f}
-document { quote chainComplex,
-     TT "chainComplex(f,g,h,...)", " -- create a chain complex whose differentials are
-     the maps f, g, h, ... serving as d_0, d_1, d_2, ... respectively.",
+chainComplex Matrix := { ChainComplex,
+     f -> chainComplex {f},
+     TT "chainComplex f", " -- create a chain complex ", TT "C", " with
+     the map ", TT "f", " serving as the differential ", TT "C.dd_1", "."
+     }
+
+chainComplex Sequence := chainComplex List := { ChainComplex,
+     maps -> (
+	  if #maps === 0 then error "expected at least one map";
+	  C := new ChainComplex;
+	  R := C.ring = ring target maps#0;
+	  scan(#maps, i -> (
+		    f := maps#i;
+		    if R =!= ring f
+		    then error "expected maps over the same ring";
+		    if i > 0 and C#i != target f then (
+			 diff := degrees C#i - degrees target f;
+			 if same diff
+			 then f = f ** R^(- diff#0)
+			 else error "expected composable maps";
+			 );
+		    C.dd#(i+1) = f;
+		    if i === 0 then C#i = target f;
+		    C#(i+1) = source f;
+		    ));
+	  C),
+     TT "chainComplex(f,g,h,...)", " -- create a chain complex ", TT "C", " whose
+     differentials are the maps ", TT "f", ", ", TT "g", ", ", TT "h", ".",
      PARA,
-     "See also ", TO "ChainComplex", "."
+     "The map ", TT "f", " appears as ", TT "C.dd_1", ", the map ", TT "g", " appears
+     as ", TT "C.dd_2", ", and so on."
      }
 
 betti Matrix := f -> (
@@ -609,69 +668,76 @@ betti Module := M -> (
 	  )
      )
 
-ChainComplex ++ ChainComplex := (C,D) -> (
-     Cd := C.dd;
-     Dd := D.dd;
-     E := new ChainComplex;
-     Ed := E.dd;
-     R := E.ring = ring C;
-     if R =!= ring D then error "expected chain complexes over the same ring";
-     complete C;
-     complete D;
-     scan(union(spots C, spots D), i -> E#i = C_i ++ D_i);
-     complete Cd;
-     complete Dd;
-     scan(union(spots Cd, spots Dd), i -> Ed#i = Cd_i ++ Dd_i);
-     E.components = {C,D};
-     E)
+ChainComplex ++ ChainComplex := { ChainComplex,
+     (C,D) -> (
+	  Cd := C.dd;
+	  Dd := D.dd;
+	  E := new ChainComplex;
+	  Ed := E.dd;
+	  R := E.ring = ring C;
+	  if R =!= ring D then error "expected chain complexes over the same ring";
+	  complete C;
+	  complete D;
+	  scan(union(spots C, spots D), i -> E#i = C_i ++ D_i);
+	  complete Cd;
+	  complete Dd;
+	  scan(union(spots Cd, spots Dd), i -> Ed#i = Cd_i ++ Dd_i);
+	  E.components = {C,D};
+	  E),
+     "direct sum"
+     }
 
-components ChainComplex := C -> if C.?components then C.components else {C}
+components ChainComplex := { ChainComplex,
+     C -> if C.?components then C.components else {C},
+     TT "components C", " -- returns from which C was formed, if C
+     was formed as a direct sum.",
+     PARA,
+     SEEALSO "isDirectSum"
+     }
 
-ChainComplex Array := (C,A) -> (
-     if # A =!= 1 then error "expected array of length 1";
-     n := A#0;
-     D := new ChainComplex;
-     b := D.dd;
-     D.ring = ring C;
-     complete C;
-     scan(pairs C,(i,F) -> if class i === ZZ then D#(i-n) = F);
-     complete C.dd;
-     if even n
-     then scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = f)
-     else scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = -f);
-     D)
-document { "C[i]",
+ChainComplex Array := { ChainComplex,
+     (C,A) -> (
+	  if # A =!= 1 then error "expected array of length 1";
+	  n := A#0;
+	  D := new ChainComplex;
+	  b := D.dd;
+	  D.ring = ring C;
+	  complete C;
+	  scan(pairs C,(i,F) -> if class i === ZZ then D#(i-n) = F);
+	  complete C.dd;
+	  if even n
+	  then scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = f)
+	  else scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = -f);
+	  D),
      TT "C[i]", " -- shifts the chain complex C, producing a new chain complex
      D in which D_j is C_(i+j).  The signs of the differentials are reversed
-     if i is odd.",
-     PARA,
-     "See also ", TO "ChainComplex", "."
+     if i is odd."
      }
 
-Hom(ChainComplex, Module) := (C,N) -> (
-     c := C.dd;
-     complete c;
-     D := new ChainComplex;
-     D.ring = ring C;
-     b := D.dd;
-     scan(keys c, i -> if class i === ZZ then (
-	       j := - i + 1;
-	       f := b#j = Hom(c_i,N);
-	       D#j = source f;
-	       D#(j-1) = target f;
-	       ));
-     D)
-
-document { "Hom(C,M)",
+Hom(ChainComplex, Module) := { ChainComplex,
+     (C,N) -> (
+	  c := C.dd;
+	  complete c;
+	  D := new ChainComplex;
+	  D.ring = ring C;
+	  b := D.dd;
+	  scan(keys c, i -> if class i === ZZ then (
+		    j := - i + 1;
+		    f := b#j = Hom(c_i,N);
+		    D#j = source f;
+		    D#(j-1) = target f;
+		    ));
+	  D),
      TT "Hom(C,M)", " -- produces the Hom complex from a chain complex C and
-     a module M.",
-     PARA,
-     "See also ", TO "ChainComplex", "."
+     a module M."
      }
 
-dual ChainComplex := C -> (
-     R := ring C;
-     Hom(C,R^1) )
+dual ChainComplex := { ChainComplex,
+     (C) -> (
+	  R := ring C;
+	  Hom(C,R^1) ),
+     TT "dual C", " -- the dual of a chain complex."
+     }
 
 regularity ChainComplex := C -> (
      maxrow := null;

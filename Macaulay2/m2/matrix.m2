@@ -1744,10 +1744,13 @@ Hom(Matrix, Module) := (f,N) -> (
      if not (isFreeModule source f and isFreeModule target f) then notImplemented();
      (transpose f) ** N)
 
-dual(Matrix) := f -> (
-     R := ring f;
-     Hom(f,R^1)
-     )
+dual(Matrix) := { Matrix,
+     f -> (
+	  R := ring f;
+	  Hom(f,R^1)
+	  ),
+     TT "dual f", " -- the dual (transpose) of a homomorphism."
+     }
 
 InverseMethod Matrix := m -> if m#?-1 then m#-1 else m#-1 = (
      id_(target m) // m

@@ -1,12 +1,21 @@
 --		Copyright 1995 by Daniel R. Grayson
 
-ScriptedFunction = new Type of HashTable
+ScriptedFunction = new Type of MutableHashTable
 ScriptedFunction ^ Thing := (G,i) -> (
      if G#?superscript then G#superscript i
      else error("no method for ", name G, "^", name i))
 ScriptedFunction _ Thing := (G,i) -> (
      if G#?subscript then G#subscript i
      else error("no method for ", name G, "_", name i))
+
+GlobalAssignHook ScriptedFunction := (X,x) -> (
+     if not x#?(quote name) then x.name = X
+     )
+GlobalReleaseHook ScriptedFunction := (X,x) -> (
+     if x#?(quote name) and X === x.name
+     then remove(x,quote name)
+     )
+
 id = new ScriptedFunction from { 
      subscript => (
 	  (x) -> (
