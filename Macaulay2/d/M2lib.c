@@ -520,7 +520,6 @@ char **argv;
 	       break;
        	       }
 	  if (0 == strcmp(argv[n],"-silent")) break;
-	  if (0 == strcmp(argv[n],"--texmacs")) break;
 	  }
 #if !defined(__MWERKS__)
      ONSTACK(envc);

@@ -143,14 +143,6 @@ document { alarm,
      causing it to provide incorrect answers."
      }
 
-document { Field,
-     Headline => "the class of all fields",
-     "Use ", TO "isField", " to determine whether a given ring is a field,
-     since some rings that are fields, for implementation reasons, cannot
-     be instances of ", TO "Field", ".",
-     EXAMPLE "isField (ZZ/101)"
-     }
-
 document { char,
      Headline => "the characteristic of a field or ring",
      TT "char F", " -- returns the characteristic of the ring ", TT "F", ".",

@@ -268,3 +268,37 @@ singularLocus(Ring) := QuotientRing => (R) -> (
      )
 
 singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
+
+toField = R -> (
+     R.frac = R;
+     R.isField = true;
+     if R.?Engine and R.Engine then (
+	  sendgg(ggPush R, ggdeclarefield);
+	  R / R := (x,y) -> (
+	       try (
+		    sendgg(ggPush x, ggPush y, ggdiv);
+		    R.pop())
+	       else (
+		    if y != 0 then R.nonUnit = y;
+		    error "division by non-invertible element attempted";
+		    )
+	       );
+	  )
+     )
+
+getNonUnit = R -> (
+     if R.?nonUnit then R.nonUnit
+     else if R.?Engine and R.Engine then (
+     	  sendgg(ggPush R, gggetzerodivisor);
+     	  r := R.pop();
+	  if r != 0 then r
+	  )
+     )
+
+getZeroDivisor = R -> (
+     if R.?Engine and R.Engine then (
+     	  sendgg(ggPush R, gggetzerodivisor);
+     	  r := R.pop();
+	  if r != 0 then r
+	  )
+     )

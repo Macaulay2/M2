@@ -294,7 +294,6 @@ export process():void := (
 	       else if arg === "-x" then xprompt = true
 	       else if arg === "--texmacs" then (
 		    texmacsMode = true;
-		    
 		    )
 	       else if arg === "-tty" then (
 		    stdin.inisatty = true;

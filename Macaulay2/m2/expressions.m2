@@ -1064,7 +1064,10 @@ print = x -> (<< net x << endl; null)
 texMath RR := toString
 texMath ZZ := toString
 texMath Thing := x -> texMath expression x
-texMath Symbol := toString
+texMath Symbol := x -> (
+     x = toString x;
+     if #x === 1 then x else concatenate("\\text{",x, "}")
+     )
 
 tex Expression := x -> concatenate("$",texMath x,"$")
 tex Thing := x -> tex expression x

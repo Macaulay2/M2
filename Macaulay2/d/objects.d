@@ -643,7 +643,6 @@ setupconst("VisibleList",Expr(visibleListClass));
 setupconst("Array",Expr(arrayClass));
 setupconst("SymbolTable",Expr(symboltableClass));
 setupconst("Ring",Expr(ringClass));
-setupconst("Field",Expr(fieldClass));
 setupconst("Nothing",Expr(nothingClass));
 
 assigntofun(lhs:Code,rhs:Code):Expr := (

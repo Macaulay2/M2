@@ -130,7 +130,10 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
 	  if F_0 == y then xx else error "expected a generator"
 	  );
      F.order = p^n;
-     F / F := (f,g) -> f // g;		  -- it is a field
+     F / F := (x,y) -> (
+	  sendgg ( ggPush x, ggPush y, ggdiv);
+	  new F);
+     -- F / F := (f,g) -> f // g;		  -- it is a field
      F))
 
 random GaloisField := F -> (
@@ -142,11 +145,17 @@ dim GaloisField := R -> 0
 
 isField GaloisField := F -> true
 isField QuotientRing := R -> (
+     R.?isField and R.isField
+     or
      ambient R === ZZ and isPrime char R
      or
      ambient R === ZZZ and isPrime char R
      )
-isField Ring := R -> R === QQ
+isField Ring := R -> (
+     R.?isField and R.isField
+     or
+     R === QQ
+     )
 
 isAffineRing = method(TypicalValue => Boolean)
 isAffineRing Ring := R -> isField R

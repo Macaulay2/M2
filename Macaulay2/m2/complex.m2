@@ -1,9 +1,10 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-CC = new Field of BasicList
+CC = new Ring of BasicList
 CC.synonym = "complex number"
 CC.isCommutative = true
 CC.texMath = ///{\mathbb C}///
+CC.isField = true
 
 ii = new CC from {0,1}
 

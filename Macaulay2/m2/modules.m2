@@ -84,16 +84,18 @@ toExternalString Module := M -> if M.?name then M.name else (
 	  )
      )
 
-net Module := M -> net (
+expression Module := M -> (
      if M.?relations 
      then if M.?generators
-     then new FunctionApplication from { subquotient, (M.generators, M.relations) }
-     else new FunctionApplication from { cokernel, M.relations }
+     then new FunctionApplication from { subquotient, (expression M.generators, expression M.relations) }
+     else new FunctionApplication from { cokernel, expression M.relations }
      else if M.?generators
-     then new FunctionApplication from { image, M.generators }
+     then new FunctionApplication from { image, expression M.generators }
      else if numgens M === 0 then 0
-     else new Superscript from {ring M, numgens M}
+     else new Superscript from {expression ring M, numgens M}
      )
+
+net Module := M -> net expression M
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it

@@ -286,15 +286,6 @@ document { mod,
      "The result is an element of ", TT "ZZ/n", "."
      }
 
-document { ProductRing,
-     Headline => "the class of all product rings",
-     "If R and S are rings, then R * S denotes their product ring.
-     If r and s are elements of R and S respectively, then an element
-     of the product is provided by ", 
-     PRE "          new R*S from {r,s}",
-     "This has to be rethought!"     
-     }
-
 document { OrderedMonoid,
      Headline => "the class of all ordered monoids",
      "An ordered monoid is a multiplicative monoid together with an ordering of 
