@@ -605,3 +605,17 @@ radical(I, CompleteIntersection=>I1)
 -- I2 = removeLowestDimension I1
 "
 
+document { "computing Groebner bases",
+     "In this section we give some more detail about how to handle
+     the computation of Groebner bases.",
+     
+     "This node has not been written yet."
+     }
+
+document { "computing syzygies",
+     "This node has not been written yet."
+     }
+
+document { "computing resolutions",
+     "This node has not been written yet."
+     }
