@@ -110,7 +110,7 @@ document { char,
 
 document { basictype,
      Headline => "the basic type of an object",
-     Synopsis => {
+     OldSynopsis => {
 	  "T = basictype x",
 	  "x" => "anything",
 	  "T" => { "class representing the basic type of ", TT "x" }

@@ -26,10 +26,10 @@ document { document,
 	       when the user types the name of this object at top level.  In its
 	       absence, the synopsis, if any, is displayed, otherwise the
 	       available methods are displayed." },
-	  SEQ { TT ///Synopsis => { "z = f(x,y)", "x" => ..., "y" => ..., "z" => ... }///,
+	  SEQ { TT ///OldSynopsis => { "z = f(x,y)", "x" => ..., "y" => ..., "z" => ... }///,
 	       " -- synopsis of the use of a function with a return value."
 	       },
-	  SEQ { TT ///Synopsis => { "f(x,y)", "x" => ..., "y" => ..., null }///,
+	  SEQ { TT ///OldSynopsis => { "f(x,y)", "x" => ..., "y" => ..., null }///,
 	       " -- synopsis of the use of a function without a return value."
 	       },
 	  SEQ { TT ///EXAMPLE { "...", "..." }///, " -- bits of example code to display"},
@@ -125,7 +125,7 @@ document { topicList,
 
 document { topics,
      Headline => "display available help topics",
-     Synopsis => {
+     OldSynopsis => {
 	  "topics"
 	  },
      "This command displays a list of topics on which help is available, in columnated form.",
@@ -434,7 +434,7 @@ document { (symbol ">>>", OptionTable, Function),
      Usage => { TT "defs >>> fun", " -- a new function made from the
 	  function ", TT "fun", " that processes optional arguments
 	  specified by ", TT "defs", "."},
-     Synopsis => {
+     OldSynopsis => {
 	  "g = defs >>> fun",
 	  "defs" => { "a hash table whose keys are the names
      of the optional arguments, and whose values are the
@@ -469,7 +469,7 @@ document { (symbol ">>>", OptionTable, Function),
 
 document { method => SingleArgumentDispatch,
      Headline => "method functions with a variable number of arguments",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = method(SingleArgumentDispatch => true)",
 	  "f" => "a method function that treats several arguments as
 	  a single argument, i.e., as a sequence."
@@ -613,7 +613,7 @@ document { isConstant,
      }
 
 document { (isConstant, RingElement),
-     Synopsis => {
+     OldSynopsis => {
 	  "t = isConstant f",
 	  "f" => null,
 	  "t" => {"whether the polynomial ", TT "f", " is constant"}
@@ -625,7 +625,7 @@ document { isHomogeneous,
      }
 
 document { (isHomogeneous,Matrix),
-     Synopsis => {
+     OldSynopsis => {
 	  "t = isHomogeneous f",
 	  "f" => { "a map ", TT "F", " <-- ", TT "G", "" },
 	  "t" => {"whether the matrix ", TT "f", " is homogeneous"}
@@ -796,7 +796,7 @@ document { ambient,
      }
 
 document { (ambient,Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "F = ambient M",
 	  "M" => null,
 	  "F" => {"the ambient free module of ", TT "M", "."}
@@ -848,7 +848,7 @@ document { generators,
      }
 
 document { (generators,Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "g = generators M",
 	  "M" => null,
 	  "g" => {"the matrix of generators of ", TT "M", "."}
@@ -897,11 +897,11 @@ document { scanValues,
 
 document { GlobalAssignHook,
      Headline => "hook for assignment to global variables",
-     NewSynopsis => {
+     Synopsis => {
 	  Usage => "X.GlobalAssignHook = f",
 	  Inputs => {
 	       "X" => Type => "",
-	       "f" => Function => "a function of two variables: the symbol to which a value is about to be assigned, and the value being assigned",
+	       "f" => Function => " of two variables: the symbol to which a value is about to be assigned, and the value being assigned",
 	       },
 	  Results => {
 	       {TT "f", " will be called just before an assignment to a global variable of an instance of class ", TT "X", " occurs"}
@@ -963,7 +963,7 @@ document { complete,
      }
 
 document { (drop, BasicList, List),
-     Synopsis => {
+     OldSynopsis => {
 	  "w = drop(v,{m,n})",
 	  "v" => null,
 	  "{m,n}" => "a pair of natural numbers",
@@ -974,7 +974,7 @@ document { (drop, BasicList, List),
      }
 
 document { (drop, BasicList, ZZ),
-     Synopsis => {
+     OldSynopsis => {
 	  "w = drop(v,n)",
 	  "v" => null,
 	  "n" => null,

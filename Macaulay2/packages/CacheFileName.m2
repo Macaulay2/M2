@@ -75,7 +75,7 @@ document { cacheFileName,
      }
 
 document { (cacheFileName, String, String),
-     Synopsis => {
+     OldSynopsis => {
 	  ///fn = cacheFileName(prefix,key)///,
 	  "prefix" => "the prefix from which to construct the file name",
 	  "key" => "a key, which can be anything"
@@ -94,7 +94,7 @@ document { (cacheFileName, String, String),
      }
 
 document { (cacheFileName, String, String, String),
-     Synopsis => {
+     OldSynopsis => {
 	  ///fn = cacheFileName(prefix,key,base)///,
 	  "prefix" => "the prefix from which to construct the file name",
 	  "key" => "a key, which can be anything",
@@ -116,7 +116,7 @@ document { (cacheFileName, String, String, String),
      }
 
 document { (cacheFileName, List, String),
-     Synopsis => {
+     OldSynopsis => {
 	  ///fn = cacheFileName(path,key)///,
 	  "path" => "a search path (list) of prefixes from which to construct the
 	        file name",

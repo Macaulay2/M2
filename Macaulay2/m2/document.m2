@@ -436,8 +436,8 @@ getUsage := key -> (
      x := getOption(getDoc key, Usage);
      if x =!= null then SEQ x)
 
-getSynopsis := key -> getOption(getDoc key, Synopsis)
-getNewSynopsis := key -> getOption(getDoc key, NewSynopsis)
+getSynopsis := key -> getOption(getDoc key, OldSynopsis)
+getNewSynopsis := key -> getOption(getDoc key, Synopsis)
 
 evenMoreGeneral := key -> (
      t := nextMoreGeneral key;
@@ -530,7 +530,7 @@ optargs Sequence := s -> (
 --     
 --     in a general documentation node:
 --
---     	  Synopsis => {
+--     	  OldSynopsis => {
 --	       usage,
 --	       input1,
 --	       input2,
@@ -546,7 +546,7 @@ optargs Sequence := s -> (
 --
 --     better way:
 --
---     	  NewSynopsis => {                 -- each "..." can be replaced by { "...", ... }, which will be converted to a SEQ
+--     	  Synopsis => {                 -- each "..." can be replaced by { "...", ... }, which will be converted to a SEQ
 --
 --	       Usage => "...",				    -- typical way of using the thing
 --
@@ -611,7 +611,7 @@ alter := x -> (
 	       if class y === Option and #y === 2 then (
 		    if istype y#0 then (
 			 if y#1 =!= null and y#1 =!= ""
-			 then SEQ { TT x#0, ", ", justSynonym y#0, ": ", SEQ y#1 }
+			 then SEQ { TT x#0, ", ", justSynonym y#0, SEQ y#1 }
 			 else SEQ { TT x#0, ", ", justSynonym y#0 }
 			 )
 		    else error "expected type to left of '=>' in synopsis"
@@ -624,7 +624,7 @@ alter := x -> (
 newSynopsis := method(SingleArgumentDispatch => true)
 newSynopsis Thing := f -> (
      SYN := getNewSynopsis f;
-     usa := getOptionList(SYN,Usage);
+     usa := getOption(SYN,Usage);
      inp := getOptionList(SYN,Inputs);
      iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
      ino := select(inp, x -> iso x);
@@ -636,9 +636,9 @@ newSynopsis Thing := f -> (
      out = alter \ out;
      if SYN =!= null then (
 	  SEQ {						    -- to be implemented
-     	       BOLD "New synopsis",
+     	       PARA BOLD "New synopsis",
 	       UL {
-     	       	    if usa#?0 then PARA { "Usage: ", SEQ usa },
+     	       	    if usa#?0 then PARA { "Usage: ", TT usa },
 		    if inp#?0 then PARA { "Inputs:", UL inp },
 		    if ino#?0 then PARA { "Optional inputs:", UL ino },
 		    if out#?0 then PARA { "Outputs:", UL out },
@@ -657,7 +657,7 @@ synopsis Thing := f -> (
 	       else SEQ SYN#i
 	       );
 	  SEQ {
-	       PARA BOLD "Synopsis",
+	       PARA BOLD "OldSynopsis",
 	       SHIELD UL {
 		    if SYN#?0 then SEQ { "Usage: ", TT SYN#0},
 		    if SYN#?1 then SEQ { "Input:", UL { t 1, t 2, t 3 } },
@@ -695,7 +695,7 @@ synopsis Sequence := s -> (
 	       );
 	  );
      SEQ {
-	  PARA BOLD "Synopsis",
+	  PARA BOLD "OldSynopsis",
 	  SHIELD UL {
 	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
 	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0, headline s#0 },

@@ -6,7 +6,7 @@ document { (functionName, Type, Type),
      Usage => {
 	  TT "functionName(Type,Type)", " -- do this and that "
 	  },
-     Synopsis => {
+     OldSynopsis => {
      	  "A = functionName(B,C)",
 	  "B" => {"parameter description"},
 	  "C" => {"parameter description"},
@@ -37,7 +37,7 @@ document { "D-modules Package",
 	  TT ///load "D-modules.m2"///, 
 	  "."
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "Provides a collection of algorithms for D-modules"
 	  },     
      FileName => "index",
@@ -195,7 +195,7 @@ document { (bFunction, Ideal, List),
 	  TT "bFunction(I,w)", " -- find the b-function of ", EM "I", 
 	  " with respect to weight vector ", EM "w"
 	  },
-     Synopsis => {
+     OldSynopsis => {
      	  "b = bFunction(I,w)",
 	  "I" => {"a holonomic ideal in the Weyl algebra ", 
 	       EM {"A", SUB "n", "(K)"}, "."},
@@ -237,7 +237,7 @@ document { (bFunction, Module, List, List),
 	  " with respect to weight vector ", EM "w", " and shift vector ", 
 	  EM "m"
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "b = bFunction(M,w,m)",
 	  "M" => {"a holonomic module over a Weyl algebra ", 
 	       EM {"A", SUB "n", "(K)"}},
@@ -305,7 +305,7 @@ document {  (globalBFunction),
      INSERTUSAGE {
 	  TT "globalBFunction f", " -- find the global b-function of ", TT "f"
 	  },
-     Synopsis => {
+     OldSynopsis => {
      	  "b = globalBFunction(f)",
 	  "f" => {"a polynomial in a Weyl algebra 
 	       (should not contain differential variables)"},
@@ -346,7 +346,7 @@ document { (factorBFunction--!!!, RingElement
      INSERTUSAGE {
 	  TT "factorBFunction b", " -- factor polynomial ", TT "b"
 	  },
-     Synopsis => {
+     OldSynopsis => {
      	  "f = bFunction b",
 	  "b" => {"a polynomial obtained via one of the b-function routines"},
 	  "f" => {"the factorization of ", TT "b"}
@@ -381,7 +381,7 @@ document { (globalB),
 	  TT "globalB(I,f)", " -- find global b-function and b-operator 
           for a D-module and a polynomial"
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "H = globalB(I,f)", 
 	  "I" => {"a holonomic ideal"},
 	  "f" => {"a polynomial in a Weyl algebra 
@@ -421,7 +421,7 @@ document { (AnnFs--, RingElement
 	  TT "AnnFs(f)", " -- find the annihilator ideal of ", 
 	  EM {"f", SUP "s"}, " in the ring ", EM {"A", SUB "n", "[s]"}
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "I = AnnFs(f)",
 	  "f" => { 
 	       "a polynomial in a Weyl algebra ", EM {"A", SUB "n"},  
@@ -454,7 +454,7 @@ document { (AnnIFs--, Ideal, RingElement
 	  EM {"f", SUP "s", " \\otimes 1", SUB {"A", SUB "n", "/I"}}, 
 	  " in the ring ", EM {"A", SUB "n", "[s]"}
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "J = AnnIFs(I,f)",
 	  "I" => {
 	       "represents a holonomic D-module ", 
@@ -479,7 +479,7 @@ document { (AnnIFs--, Ideal, RingElement
 document { (Dtrace--, ZZ
 	  ),
      Headline => "set the depth of comments made by D-module routines",
-     Synopsis => {
+     OldSynopsis => {
 	  "o = Dtrace n",
 	  "n" => { "new level" },
 	  "o" => { "old level" }
@@ -497,7 +497,7 @@ document { (setHomSwitch--, Boolean
      INSERTUSAGE {"sets the switch that determines whether homogenized 
 	  ", TO "WeylAlgebra", 
 	  " is used in certain D-module algorithms"},
-     Synopsis => {
+     OldSynopsis => {
 	  "o = setHomSwitch n",
 	  "n" => { "new value" },
 	  "o" => { "old value" }
@@ -584,7 +584,7 @@ document { (localCohom, Ideal),
 	  EM {"H", SUB "I", "(R)"}, " where ", EM "I", 
 	  " is an ideal of ", EM "R", ", which is a ring of polynomials" 
 	  },
-     Synopsis => { 
+     OldSynopsis => { 
 	  "H = localCohom I", 
 	  "I" => {
 	       "an ideal of ", 
@@ -645,7 +645,7 @@ document { (localCohom, Ideal, Module),
 	  EM {"H", SUB "I", "(M)"}, " where ", EM "I", 
 	  " is an ideal in a polynomial ring and ", EM "M", " is a D-module"
 	  },
-     Synopsis => { 
+     OldSynopsis => { 
 	  "H = localCohom(I,M)", 
 	  "I" => {
 	       "an ideal of ", 
@@ -717,7 +717,7 @@ document {(GroundField)}
 document { (paramBpoly),
      Headline => "compute the list of all possible Bernstein-Sato polynomials 
      for a polynomial with parametric coefficients",
-     Synopsis => { 
+     OldSynopsis => { 
 	  "L = paramBpoly(f,filename)", 	  
      	  "f" => {
 	       "a polynomial in Weyl algebra ", EM "A_n(Q)"
@@ -741,7 +741,7 @@ document { (paramBpoly),
 
 document { (makeCyclic),
      Headline => "finds a cyclic generator of a D-module",
-     Synopsis => {
+     OldSynopsis => {
      	  "H = makeCyclic M", 
 	  "M" => {
 	       "a map such that ", TT "coker M", " is a 

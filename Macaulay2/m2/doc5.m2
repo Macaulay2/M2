@@ -329,7 +329,7 @@ assert ( toString x === \"set {1, 2, 3}\" )
 
 document { (symbol ^**, Module, ZZ),
      Headline => "tensor power",
-     Synopsis => {
+     OldSynopsis => {
 	  "N = M^**i",
 	  "M" => null,
 	  "i" => null,
@@ -339,7 +339,7 @@ document { (symbol ^**, Module, ZZ),
 
 document { (symbol ^**, CoherentSheaf, ZZ),
      Headline => "tensor power",
-     Synopsis => {
+     OldSynopsis => {
 	  "N = M^**i",
 	  "M" => null,
 	  "i" => null,
@@ -352,7 +352,7 @@ document { setRandomSeed,
      }
 
 document { (setRandomSeed, ZZ),
-     Synopsis => {
+     OldSynopsis => {
 	  "setRandomSeed i",
 	  "i" => null
 	  },
@@ -367,7 +367,7 @@ document { (setRandomSeed, ZZ),
      }
 
 document { (setRandomSeed, String),
-     Synopsis => {
+     OldSynopsis => {
 	  ///setRandomSeed s///,
 	  "s" => null
 	  },
@@ -383,7 +383,7 @@ document { (setRandomSeed, String),
      }
 
 document { truncateOutput,
-     Synopsis => {
+     OldSynopsis => {
 	  "truncateOutput w",
 	  "w" => "the maximum output line width to enforce"
 	  },
@@ -405,7 +405,7 @@ document { Package,
 
 end
 
-document { Synopsis,
+document { OldSynopsis,
      }
 
 

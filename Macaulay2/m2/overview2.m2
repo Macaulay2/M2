@@ -2193,7 +2193,7 @@ document { "inheritance from parents",
 
 document { method => Options,
      Headline => "method functions with optional arguments",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = method(Options => {a=>x, b=>y, ...})",
 	  "{a=>x, b=>y, ...}" => {
 	       "a list of names ", TT "a", ", ", TT "b", ", ..., for optional

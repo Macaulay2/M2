@@ -88,7 +88,7 @@ document { (diff,Matrix,Matrix),
      Usage => {
 	  TT "diff(m,n)", " -- differentiate ", TT "n", " with respect to ", TT "m"
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "h = diff(m,n)",
 	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
 	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."},
@@ -131,7 +131,7 @@ document { (contract,Matrix,Matrix),
      Usage => {
 	  TT "contract(m,n)", " -- contract ", TT "n", " with respect to ", TT "m"
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "h = contract(m,n)",
 	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
 	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."},
@@ -265,7 +265,7 @@ document { inducesWellDefinedMap,
      }
 
 document { (map,Module,Module,Function),
-     Synopsis => {
+     OldSynopsis => {
 	  "h = map(M,N,f)",
 	  "M" => {},
 	  "N" => {},
@@ -935,7 +935,7 @@ R = ZZ/101[t]
 
 document { (symbol /, Ring, RingElement),
      Headline => "quotient ring",
-     Synopsis => {
+     OldSynopsis => {
 	  "S = R/f",
 	  "R" => null,
 	  "f" => { "an element of ", TT "R", "" },
@@ -945,7 +945,7 @@ document { (symbol /, Ring, RingElement),
 
 document { (symbol /, Ring, Sequence),
      Headline => "quotient ring",
-     Synopsis => {
+     OldSynopsis => {
 	  "S = R/(f,g,h,...)",
 	  "R" => null,
 	  "(f,g,h,...)" => { "a sequence of elements of ", TT "R", "" },
@@ -955,7 +955,7 @@ document { (symbol /, Ring, Sequence),
 
 document { (symbol /, Ring, Ideal),
      Headline => "quotient ring",
-     Synopsis => {
+     OldSynopsis => {
 	  "S = R/I",
 	  "R" => null,
 	  "I" => { "an ideal of ", TT "R", "" },
@@ -986,7 +986,7 @@ document { koszul,
 document { (koszul,ZZ,Matrix),
      Usage => { TT "koszul(i,f)", " -- provides the ", TT "i", "-th symmetric 
 	  power of the matrix ", TT "f", "."},
-     Synopsis => {
+     OldSynopsis => {
 	  "g = koszul(i,f)",
 	  "i" => null,
 	  "f" => null,
@@ -1004,7 +1004,7 @@ document { symmetricPower,
 document { (symmetricPower,ZZ,Matrix),
      Usage => { TT "symmetricPower(i,f)", " -- provides the ", TT "i", "-th symmetric 
 	  power of the matrix ", TT "f", "."},
-     Synopsis => {
+     OldSynopsis => {
 	  "g = symmetricPower(i,f)",
 	  "i" => null,
 	  "f" => null,
@@ -1017,7 +1017,7 @@ document { (symmetricPower,ZZ,Matrix),
 document { (exteriorPower,ZZ,Matrix),
      Usage => { TT "exteriorPower(p,f)", " -- provides the ", TT "p", "-th exterior 
 	  power of the matrix ", TT "f", "."},
-     Synopsis => {
+     OldSynopsis => {
 	  "g = exteriorPower(p,f)",
 	  "p" => null,
 	  "f" => null,
@@ -1040,7 +1040,7 @@ document { (exteriorPower,ZZ,Matrix),
 
 document { (symbol _,Function,Thing),
      Headline => "attach the first argument to a function of two or more arguments",
-     Synopsis => {
+     OldSynopsis => {
 	  "g = f_x",
 	  "f" => "a function of two or more arguments",
 	  "x" => "anything",
@@ -1129,7 +1129,7 @@ document { (minors,ZZ,Matrix),
      Usage => {
 	  TT "minors(p,m)", " -- ideal of ", TT "p", " by ", TT "p", " minors of the matrix ", TT "m"
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "J = minors(p,m)",
 	  "p" => {"the size of minors to compute"},
 	  "m" => {"a matrix between free modules"},
@@ -1250,7 +1250,7 @@ document { det,
 document { (det,Matrix),
      Headline => "determinant of a matrix",
      Usage => {TT "det f", " -- compute the determinant of the matrix ", TT "f", "."},
-     Synopsis => {
+     OldSynopsis => {
 	  "d = det f",
 	  "f" => { "a square matrix"},
 	  "d" => { "the determinant of ", TT "f"}
@@ -1587,7 +1587,7 @@ document { codim,
      }
 
 document { (codim, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "c = codim M",
 	  "M" => {"A module over a ring ", TT "R", "."},
 	  "c" => {"The number ", TT "dim R - dim M", "."}
@@ -1665,7 +1665,7 @@ document { prune,
      }
 
 document { (prune, Matrix),
-     Synopsis => {
+     OldSynopsis => {
 	  "h = prune f",
 	  "f" => null,
 	  "h" => { "the map corresponding to f obtained by pruning its source
@@ -1676,7 +1676,7 @@ document { (prune, Matrix),
      }
 
 document { (prune, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "N = prune M",
 	  "M" => null,
 	  "N" => { "a module isomorphic to ", TT "M", " with a minimal number of

@@ -302,7 +302,7 @@ document{ HK,
 
 document{ (depth,Ideal,Module),
      Headline => {"the ", TT "I", "-depth of ", TT "M"},
-     Synopsis => {
+     OldSynopsis => {
 	  "d = depth(I,M)",
 	  "I" => null,
 	  "M" => null,

@@ -7,7 +7,7 @@ document { (isNormal,Ring),
 	  TT "isNormal R", "-- determine if a ring ", TT "R", " is normal, 
 	  i.e. if both of the Serre conditions R1 and S2 hold."
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "isNormal R",
 	  "R" => {"reduced ring"},
 	  {"returns true if ", TT "R", " is R1 and S2 and false 
@@ -36,7 +36,7 @@ document { (integralClosure,Ring),
 	  closure of a reduced ring ", TT "R", "in its total ring of 
 	  fractions using additional variables indexed by ", TT "w", "."
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "S = integralClosure (R)",	
 	  "R" => {"a reduced ring"},
 	  "w" => {"an unassigned symbol"},
@@ -84,7 +84,7 @@ document { (ICmap,Ring),
 	  TT "ICmap R", "-- compute the natural map from an affine 
 	  domain", TT "R", " into it's integral closure."
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "F = ICmap R",
 	  "R" => {"affine domain"},
 	  "S" => {"returns a map from ", TT "R", " to its integral closure"},
@@ -104,7 +104,7 @@ document { (ICfractions,Ring),
 	  field of ", TT "R", " that generate the integral closure of ", TT "R", 
 	  " over R"
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "M = ICfractions R",
 	  "R" => {"affine domain"},
 	  "M" => {"returns a matrix of fractions that generate the integral
@@ -130,7 +130,7 @@ document{(conductor,RingMap),
 	  " into ", TT "R", " where ", TT "S", " is a finitely 
 	  generated ", TT "R", " module via the ring map ", TT "F", "."
     	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "C = conductor F",
 	  "F" => {"A finite ring map from a ring ", TT "R", 
 	       " to a ring ", TT "S", "."},

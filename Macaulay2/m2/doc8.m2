@@ -44,7 +44,7 @@ document { symbol annihilator,
      }
 
 document { (annihilator, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "I = annihilator M",
 	  "M" => "a module, or an ideal or ring element",
 	  "I" => { "The annihilator, ", TT "ann", "(M) = { f in R | fM = 0 }",
@@ -132,7 +132,7 @@ document { (symbol _, Module, List),
 
 document { (symbol _, Ideal, List),
      Headline => "map from free module to some generators",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = I_{i,j,k,...}",
 	  "I" => null,
 	  "{i,j,k,...}" => "a list of integers",
@@ -152,7 +152,7 @@ document { (symbol _, Ideal, List),
 
 document { (basis,List,Module),
      Headline => "basis of the part of a module of a certain degree",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = basis(i,M)",
 	  "i" => "the degree of the desired part of the module",
 	  "M" => "a module",
@@ -173,7 +173,7 @@ document { (basis,List,Module),
 
 document { (basis,Module),
      Headline => "basis of a module",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = basis M",
 	  "M" => "a module",
 	  "f" => {
@@ -189,7 +189,7 @@ document { (basis,Module),
 
 document { (basis,Ring),
      Headline => "basis of a ring",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = basis R",
 	  "R" => "a ring",
 	  "f" => {
@@ -707,7 +707,7 @@ document { syz,
 
 document { (syz, GroebnerBasis),
      Headline => "retrieve the syzygy matrix",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = syz G",
 	  "G" => {"the Groebner basis of a matrix ", TT "h"},
 	  "f" => {"the matrix of syzygies among the columns of ", TT "h"}
@@ -719,7 +719,7 @@ document { (syz, GroebnerBasis),
 
 document { (syz, Matrix),
      Headline => "compute the syzygy matrix",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = syz h",
 	  "h" => {"a matrix"},
 	  "f" => {"the matrix of minimal generators for the syzygies among
@@ -1138,7 +1138,7 @@ document { isField, Headline => "whether something is a field",
      }
 
 document { toField, Headline => "declare that a ring is a field",
-     Synopsis => {
+     OldSynopsis => {
 	  "toField R",
 	  "R" => "a ring",
      	  null
@@ -1159,7 +1159,7 @@ document { toField, Headline => "declare that a ring is a field",
      }
 
 document { getNonUnit, Headline => "retrieve a previously discovered non-unit",
-     Synopsis => {
+     OldSynopsis => {
 	  "r = getNonUnit R",
 	  "R" => "a ring in which division by a non-unit has been attempted",
 	  "r" => "the non-unit"
@@ -1170,7 +1170,7 @@ document { getNonUnit, Headline => "retrieve a previously discovered non-unit",
      }
 
 document { getZeroDivisor, Headline => "retrieve a previously discovered zero divisor",
-     Synopsis => {
+     OldSynopsis => {
 	  "r = getZeroDivisor R",
 	  "R" => "a ring in which a zero-divisor has been found",
 	  "r" => "the zero divisor"
@@ -1211,7 +1211,7 @@ document { RingMap,
      }
 
 document { (symbol **, RingMap, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "N = f ** M",
 	  "f" => { "a ring map from ", TT "R", " to ", TT "S", "." },
 	  "M" => { "an ", TT "R", "-module" },
@@ -1228,7 +1228,7 @@ document { (symbol **, RingMap, Module),
      }
 
 document { (symbol " ", RingMap, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "N = f M",
 	  "f" => { "a ring map from ", TT "R", " to ", TT "S", "." },
 	  "M" => { "a free ", TT "R", "-module ", TT "R^n", " or a submodule of one" },
@@ -1274,7 +1274,7 @@ document { map => DegreeMap,
 
 document { (map,Ring,Ring,Matrix),
      Headline => "make a ring map",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = map(R,S,m)",
 	  "R" => "the target ring",
 	  "S" => "the source ring",
@@ -1313,7 +1313,7 @@ document { (map,Ring,Ring,Matrix),
 
 document { (map,Ring,Ring,List),
      Headline => "make a ring map",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = map(R,S,m)",
 	  "R" => "the target ring",
 	  "S" => "the source ring",

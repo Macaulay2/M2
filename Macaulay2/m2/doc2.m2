@@ -570,7 +570,7 @@ document { abs,
 
 document { "sin",
      Headline => "sine function", 
-     Synopsis => {
+     OldSynopsis => {
 	  "y = sin x",
 	  "x" => null,
 	  "y" => { "the sine of ", TT "x", "" }
@@ -579,7 +579,7 @@ document { "sin",
 
 document { cos,
      Headline => "cosine function", 
-     Synopsis => {
+     OldSynopsis => {
 	  "y = cos x",
 	  "x" => null,
 	  "y" => { "the cosine of ", TT "x", "" }
@@ -588,7 +588,7 @@ document { cos,
 
 document { symbol tan,
      Headline => "tangent function",
-     Synopsis => {
+     OldSynopsis => {
 	  "y = tan x",
 	  "x" => null,
 	  "y" => { "the tangent of ", TT "x", "" }
@@ -597,7 +597,7 @@ document { symbol tan,
 
 document { asin,
      Headline => "arcsine function", 
-     Synopsis => {
+     OldSynopsis => {
 	  "y = asin x",
 	  "x" => null,
 	  "y" => { "the arcsine of ", TT "x", "" }
@@ -606,7 +606,7 @@ document { asin,
 
 document { acos,
      Headline => "arccosine function", 
-     Synopsis => {
+     OldSynopsis => {
 	  "y = acos x",
 	  "x" => null,
 	  "y" => { "the arccosine of ", TT "x", "" }
@@ -618,7 +618,7 @@ document { atan,
      }
 
 document { (atan,RR),
-     Synopsis => {
+     OldSynopsis => {
 	  "y = atan x",
 	  "x" => null,
 	  "y" => { "the arctangent of ", TT "x", "" }
@@ -626,7 +626,7 @@ document { (atan,RR),
      }
 
 document { (atan,RR,RR),
-     Synopsis => {
+     OldSynopsis => {
 	  "t = atan(x,y)",
 	  "x" => null,
 	  "y" => null,
@@ -638,7 +638,7 @@ document { (atan,RR,RR),
 
 document { sinh,
      Headline => "hyperbolic sine function",
-     Synopsis => {
+     OldSynopsis => {
 	  "y = sinh x",
 	  "x" => null,
 	  "y" => { "the hyperbolic sine of ", TT "x", "" }
@@ -647,7 +647,7 @@ document { sinh,
 
 document { cosh,
      Headline => "hyperbolic cosine function",
-     Synopsis => {
+     OldSynopsis => {
 	  "y = cosh x",
 	  "x" => null,
 	  "y" => { "the hyperbolic cosine of ", TT "x", "" }
@@ -656,7 +656,7 @@ document { cosh,
 
 document { tanh,
      Headline => "hyperbolic tangent function",
-     Synopsis => {
+     OldSynopsis => {
 	  "y = tanh x",
 	  "x" => null,
 	  "y" => { "the hyperbolic tangent of ", TT "x", "" }
@@ -665,7 +665,7 @@ document { tanh,
 
 document { exp,
      Headline => "exponential function",
-     Synopsis => {
+     OldSynopsis => {
 	  "y = exp x",
 	  "x" => null,
 	  "y" => { "the exponential of ", TT "x", "" }
@@ -674,7 +674,7 @@ document { exp,
 
 document { log,
      Headline => "logarithm function",
-     Synopsis => {
+     OldSynopsis => {
 	  "y = log x",
 	  "x" => null,
 	  "y" => { "the logarithm of ", TT "x", "" }
@@ -683,7 +683,7 @@ document { log,
 
 document { sqrt,
      Headline => "square root function",
-     Synopsis => {
+     OldSynopsis => {
 	  "y = sqrt x",
 	  "x" => null,
 	  "y" => { "the square root of ", TT "x", "" }
@@ -692,7 +692,7 @@ document { sqrt,
 
 document { floor,
      Headline => "floor function",
-     Synopsis => {
+     OldSynopsis => {
 	  "y = floor x",
 	  "x" => null,
 	  "y" => { "the largest integer less than or equal to the number ", TT "x" }
@@ -701,7 +701,7 @@ document { floor,
 
 document { ceiling,
      Headline => "ceiling function",
-     Synopsis => {
+     OldSynopsis => {
 	  "y = ceiling x",
 	  "x" => null,
 	  "y" => { "the largest integer greater than or equal to the number ", TT "x" }
@@ -710,7 +710,7 @@ document { ceiling,
 
 document { run,
      Headline => "run an external command", 
-     Synopsis => {
+     OldSynopsis => {
 	  "r = run s",
 	  "s" => {"a command string ", TT "s", " understandable by your operating system"},
 	  "r" => "the exit status of the command (a small integer which is normally zero)"
@@ -738,7 +738,7 @@ document { value,
 
 document { (value,Symbol),
      Headline => "evaluate a symbol",
-     Synopsis => {
+     OldSynopsis => {
 	  "x = value s",
 	  "s" => null,
 	  "x" => {"the value of ", TT "s", ""}
@@ -753,7 +753,7 @@ document { (value,Symbol),
 
 document { (value,String),
      Headline => "evaluate a string",
-     Synopsis => {
+     OldSynopsis => {
 	  "x = value s",
 	  "s" => {},
 	  "x" => {"the value of ", TT "s", ""}
@@ -774,7 +774,7 @@ a+a"///,
 -- fix this:
 -- document { (value,Expression),
 --      Headline => "evaluate an expression",
---      Synopsis => {
+--      OldSynopsis => {
 -- 	  "x = value s",
 -- 	  "s" => null,
 -- 	  "x" => {"the value of ", TT "s", ""}
@@ -938,7 +938,7 @@ document { mergePairs,
 
 document { merge,
      Headline => "merge hash tables",
-     Synopsis => {
+     OldSynopsis => {
 	  "z = merge(x,y,g)",
 	  "x" => {"a hash table"},
 	  "y" => {"a hash table"},
@@ -963,7 +963,7 @@ document { merge,
 
 document { combine,
      Headline => "combine hash tables",
-     Synopsis => {
+     OldSynopsis => {
 	  "z = combine(x,y,f,g,h)",
 	  "x" => "a hash table",
 	  "y" => {"a hash table of the same class as ", TT "x"},
@@ -1010,7 +1010,7 @@ document { combine,
 
 document { ancestor,
      Headline => "whether one thing is an ancestor of another",
-     Synopsis => {
+     OldSynopsis => {
 	  "b = ancestor(x,y)",
 	  "x" => null,
 	  "y" => null,
@@ -1169,7 +1169,7 @@ document { symbol "=>",
 
 document { (symbol " ", RingElement, Array),
      Headline => "substitution of variables",
-     Synopsis => {
+     OldSynopsis => {
 	  "r = f[a,b,c]",
 	  "f" => null,
 	  "[a,b,c]" => { "an array of ring elements" },
@@ -1186,7 +1186,7 @@ document { (symbol " ", RingElement, Array),
      
 document { (symbol _, Symbol, Ring),
      Headline => "generator of a ring with a given name",
-     Synopsis => {
+     OldSynopsis => {
 	  "r = x_R",
 	  "x" => null,
 	  "R" => null,
@@ -1196,7 +1196,7 @@ document { (symbol _, Symbol, Ring),
      
 document { (symbol _, IndexedVariable, Ring),
      Headline => "generator of a ring with a given name",
-     Synopsis => {
+     OldSynopsis => {
 	  "r = x_R",
 	  "x" => null,
 	  "R" => null,
@@ -1207,7 +1207,7 @@ document { (symbol _, IndexedVariable, Ring),
      
 document { (symbol _, RingElement, Ring),
      Headline => "generator of a ring with a given name",
-     Synopsis => {
+     OldSynopsis => {
 	  "r = x_R",
 	  "x" => null,
 	  "R" => null,
