@@ -29,6 +29,7 @@ include/.exists:; mkdir -p include; touch $@
 clean::; rm -rf include
 clean::; rm -f config.cache
 clean::; rm -f core
+rmcores :; find . '(' -name core -o -name gmon.out -o -name profile ')' -exec rm '{}' ';'
 ################################ GC
 all:: GC
 clean::; rm -f gc/*.obj gc/*.lib
@@ -42,13 +43,16 @@ endif
 
 GC_TARGETS := gc.a
 
+GC_CFLAGS := $(CFLAGS)
+GC_CFLAGS += -DLARGE_CONFIG -DNO_SIGNALS
+
 # The only reason to have ALL_INTERIOR_POINTERS on is if we are using GC_malloc for C++ routines.
-GC_CFLAGS := -O2 -g -DLARGE_CONFIG -DNO_SIGNALS -DALL_INTERIOR_POINTERS $(DEBUGFLAGS)
-GC_CFLAGS := -O2 -g -DLARGE_CONFIG -DNO_SIGNALS $(DEBUGFLAGS)
+# GC_CFLAGS +=  -DALL_INTERIOR_POINTERS
 
 ifndef VERBOSE
 GC_CFLAGS += -DSILENT
 endif
+
 ifdef DEBUG
 # GC_TARGETS += test
 else
@@ -68,7 +72,7 @@ else
 gc/gc.a: 	  always
 	$(MAKE) -C gc CXX='$(CXX)' CC='$(CC)' AS='$(AS)' \
 		AR='$(AR)' RANLIB='$(RANLIB)' \
-		CFLAGS='$(CFLAGS) $(GC_CFLAGS)' $(GC_TARGETS)
+		CFLAGS='$(GC_CFLAGS)' $(GC_TARGETS)
 endif
 
 clean::; $(MAKE) -C gc clean
@@ -91,9 +95,10 @@ gmp/mpf/libmpf.a : make-gmp
 gmp/libgmp.a : make-gmp
 
 make-gmp : gmp/config.status
-	$(MAKE) -C gmp
+	$(MAKE) -C gmp CFLAGS="$(CFLAGS)"
 gmp/config.status: gmp/configure
-	cd gmp; ./configure --silent --cache-file=../config.cache
+	cd gmp; \
+	./configure --silent --cache-file=../config.cache
 
 clean::; -$(MAKE) -C gmp distclean
 
@@ -216,7 +221,7 @@ DISTFILES := 	Macaulay2/README \
 		Macaulay2/setup \
 		Macaulay2/cache/Macaulay2.doc \
 		Macaulay2/bin Macaulay2/m2 Macaulay2/emacs Macaulay2/tutorial/final/*.out
-Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
+Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) rmcores
 	tar cf - $(DISTFILES) | gzip >$@
 clean ::; rm -f Macaulay2-$(DESC).tar.gz
 all :: MACAULAY2 Macaulay2-$(DESC).tar.gz
@@ -247,13 +252,13 @@ PORTING := CVS \
 	WindowsNT \
 	bin factory gc gcStatic gmp libfac mp
 port : Macaulay2-$(VERSION)-porting-src.tar.gz
-Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile
+Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile rmcores
 	tar cf - `Export3 $(PORTING)` | gzip >$@
 ###################### Macaulay 2 documentation
 DOCFILES = 	Macaulay2/html \
 		Macaulay2/book/M2book.dvi \
 		Macaulay2/Vasconcelos-appendix/appendix.dvi
-Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES)
+Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) rmcores
 	tar cf - $(DOCFILES) | gzip >$@
 MACAULAY2.doc: MACAULAY2
 	$(MAKE) -C Macaulay2 doc

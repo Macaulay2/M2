@@ -117,6 +117,10 @@ CVS/Entries : $(GFILES)
 	tar cfv - $? | (cd /a.ext2; mkdir -p m2; cd m2; tar xf -)
 	umount /a.ext2
 
+profile : gmon.out
+	gprof ../bin/Macaulay2 >profile
+clean ::; rm -f profile
+
 all :: bare
 
 all :: ../cache/Macaulay2.doc
@@ -129,7 +133,7 @@ all :: ../cache/Macaulay2.doc
 tests: $(SCRIPTS)
 	 $(MAKE) -k -C ../tmp/Tests -f ../../m2/Makefile.tests
 
-clean:
+clean::
 	rm -rf ../cache/Macaulay2-$(ARCH).data ../cache/Macaulay2.doc \
 		../tmp/Examples ../tmp/Tests \
 		TAGS ../bin/M2 runexample \
