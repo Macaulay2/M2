@@ -30,7 +30,7 @@ static MonomialOrdering *make_mon_order(int n)
   return z; /* Note that getmem_atomic returns zeroed memory */
 }
 
-int IM2_MonomialOrdering_nvars(MonomialOrdering *mo)
+int IM2_MonomialOrdering_nvars(const MonomialOrdering *mo)
 {
   int i, sum = 0;
   for (i=0; i<mo->len; i++)
@@ -39,7 +39,7 @@ int IM2_MonomialOrdering_nvars(MonomialOrdering *mo)
   return sum;
 }
 
-int IM2_MonomialOrdering_n_invertible_vars(MonomialOrdering *mo)
+int IM2_MonomialOrdering_n_invertible_vars(const MonomialOrdering *mo)
 {
   int i, sum = 0;
   for (i=0; i<mo->len; i++)
@@ -326,7 +326,7 @@ unsigned long IM2_MonomialOrdering_hash(MonomialOrdering *mo)
   return mo->_hash;
 }
 
-M2_string IM2_MonomialOrdering_to_string(MonomialOrdering *mo)
+M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
 {
   int i;
   char s[200];

@@ -48,7 +48,7 @@ const Ring *IM2_Ring_QQ(void)
   return globalQQ;
 }
 
-const RingOrNull *IM2_Ring_ZZp(int p, const Monoid *deg_monoid)
+const RingOrNull *IM2_Ring_ZZp(int p)
   /* p must be a prime number <= 32767 */
 {
   if (p <= 1 || p >= 32750)
@@ -56,7 +56,7 @@ const RingOrNull *IM2_Ring_ZZp(int p, const Monoid *deg_monoid)
       ERROR("ZZP: expected a prime number p in range 2 <= p <= 32749");
       return 0;
     }
-  return Z_mod::create(p,deg_monoid);
+  return Z_mod::create(p);
 }
 
 const RingOrNull *IM2_Ring_GF(const RingElement *f)
@@ -68,24 +68,24 @@ const RingOrNull *IM2_Ring_GF(const RingElement *f)
   return GF::create(f);
 }
 
-const RingOrNull *IM2_Ring_RR(double precision, const Monoid *deg_monoid)
+const RingOrNull *IM2_Ring_RR(double precision)
 {
-  return RR::create(deg_monoid, precision);
+  return RR::create(precision);
 }
 
-const RingOrNull *IM2_Ring_CC(double precision, const Monoid *deg_monoid)
+const RingOrNull *IM2_Ring_CC(double precision)
 {
-  return CC::create(deg_monoid, precision);
+  return CC::create(precision);
 }
 
-const RingOrNull *IM2_Ring_bigRR(const Monoid *deg_monoid)
+const RingOrNull *IM2_Ring_bigRR()
 {
-  return bigRR::create(deg_monoid);
+  return bigRR::create();
 }
 
-const RingOrNull *IM2_Ring_bigCC(const Monoid *deg_monoid)
+const RingOrNull *IM2_Ring_bigCC()
 {
-  return bigCC::create(deg_monoid);
+  return bigCC::create();
 }
 
 const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)

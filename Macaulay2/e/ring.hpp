@@ -42,16 +42,10 @@ protected:
   bool _isfield;		// true means yes, or declared yes.
 				// If a zero divisor is found, isfield is set to false.
 
-  bool _isquotientring;		// True if constructed via Ring(const Ring &R).
-				// If true, then vecstash,resstash are not owned.
-
   bool _is_ZZ_quotient;		// true if this is a quotient of a polynomial ring over ZZ, AND
 				// there is an integer in the factored ideal.
   ring_elem _ZZ_quotient_value;	// This is the integer in the factor ideal, if is_ZZ_quotient is set.
 
-
-
-  
   void initialize_ring(int charac, int nvars, int totalvars, const Ring *K, 
 	const Monoid *M, const Monoid *D);
   Ring() {}

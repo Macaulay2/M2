@@ -18,19 +18,19 @@ RR::~RR()
 {
 }
 
-bool RR::initialize_RR(const Monoid *D, double epsilon) 
+bool RR::initialize_RR(double epsilon) 
 {
   initialize_ring(0,0,0,this,
 		  Monoid::get_trivial_monoid(),
-		  D);
+		  Monoid::get_trivial_monoid());
   _epsilon = epsilon;
   return true;
 }
 
-RR *RR::create(const Monoid *D, double epsilon)
+RR *RR::create(double epsilon)
 {
   RR *result = new RR;
-  result->initialize_RR(D, epsilon);
+  result->initialize_RR(epsilon);
   return result;
 }
 

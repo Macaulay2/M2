@@ -24,9 +24,9 @@ class RR : public Ring
 protected:
   RR() {}
   virtual ~RR();
-  bool initialize_RR(const Monoid *D, double epsilon);
+  bool initialize_RR(double epsilon);
 public:
-  static RR * create(const Monoid *D, double epsilon);
+  static RR * create(double epsilon);
 
   RR * cast_to_RR() { return this; }
   const RR * cast_to_RR() const { return this; }

@@ -28,9 +28,9 @@ class bigCC : public Ring
 protected:
   bigCC() {}
   virtual ~bigCC() {}
-  bool initialize_bigCC(const Monoid *D);
+  bool initialize_bigCC();
 public:
-  static bigCC * create(const Monoid *D);
+  static bigCC * create();
 
   bigCC * cast_to_bigCC() { return this; }
   const bigCC * cast_to_bigCC() const { return this; }

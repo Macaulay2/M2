@@ -32,7 +32,7 @@ unsigned long IM2_Monoid_hash(Monoid *M)
   return M->get_hash_value();
 }
 
-M2_string IM2_Monoid_to_string(Monoid *M)
+M2_string IM2_Monoid_to_string(const Monoid *M)
 {
   buffer o;
   M->text_out(o);

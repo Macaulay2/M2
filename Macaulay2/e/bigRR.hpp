@@ -24,9 +24,9 @@ class bigRR : public Ring
 protected:
   bigRR() {}
   virtual ~bigRR() {}
-  bool initialize_bigRR(const Monoid *D);
+  bool initialize_bigRR();
 public:
-  static bigRR * create(const Monoid *D);
+  static bigRR * create();
 
   bigRR * cast_to_bigRR() { return this; }
   const bigRR * cast_to_bigRR() const { return this; }

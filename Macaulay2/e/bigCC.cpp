@@ -11,11 +11,11 @@
 
 mpf_ptr bigCC::_epsilon = NULL;
 
-bool bigCC::initialize_bigCC(const Monoid *D) 
+bool bigCC::initialize_bigCC() 
 {
   initialize_ring(0,0,0,this,
 		  Monoid::get_trivial_monoid(),
-		  D);
+		  Monoid::get_trivial_monoid());
   _elem_size = sizeof(M2_BigComplex_struct);
   _zero_elem = new_elem();
   if (_epsilon == NULL) {
@@ -25,10 +25,10 @@ bool bigCC::initialize_bigCC(const Monoid *D)
   return true;
 }
 
-bigCC *bigCC::create(const Monoid *D)
+bigCC *bigCC::create()
 {
   bigCC *result = new bigCC;
-  result->initialize_bigCC(D);
+  result->initialize_bigCC();
   return result;
 }
 

@@ -21,9 +21,9 @@ class CC : public Ring
 protected:
   CC() {}
   virtual ~CC();
-  bool initialize_CC(const Monoid *D, double epsilon);
+  bool initialize_CC(double epsilon);
 public:
-  static CC * create(const Monoid *D, double epsilon);
+  static CC * create(double epsilon);
 
   CC * cast_to_CC() { return this; }
   const CC * cast_to_CC() const { return this; }
