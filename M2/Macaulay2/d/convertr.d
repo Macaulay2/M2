@@ -170,7 +170,7 @@ export frame(frameID:int):Frame := (			    -- old version, becoming obsolete
 	       fatal("exiting");
 	       );
      	  f));
-export frameAndVerify(frameID:int,nestingDepth:int):Frame := (	    -- transitional version, just to verify nestingDepth
+export frameWithNestingDepth(frameID:int,nestingDepth:int):Frame := (	    -- transitional version, just to verify nestingDepth
      if frameID == 0 then (
 	  stderr << "warning: nesting depth not applicable to global frame" << endl;
 	  globalFrame)
@@ -199,7 +199,7 @@ export frameAndVerify(frameID:int,nestingDepth:int):Frame := (	    -- transition
 	       );
      	  f));
 
-export frameByDepth(nestingDepth:int):Frame := (	    -- new version
+export frameByNestingDepth(nestingDepth:int):Frame := (	    -- new version
      f := localFrame;
      while nestingDepth > 0 do (
 	  f = f.outerFrame;
@@ -233,11 +233,19 @@ nestingDepth(frameID:int,d:Dictionary):int := (
      n);
 
 tokenAssignment(e:ParseTree,b:Binary,t:Token):Code := (
-     Code(assignmentCode(nestingDepth(t.entry.frameID,t.dictionary),t.entry,convert(b.rhs),treePosition(e)))
+     Code(assignmentCode(nestingDepth(t.entry.frameID,t.dictionary),t.entry.frameindex,t.entry,convert(b.rhs),treePosition(e)))
      );
 
 parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
-     Code(parallelAssignmentCode(makeSymbolSequence(b.lhs),convert(b.rhs),treePosition(e)))
+     s := makeSymbolSequence(b.lhs);
+     n := length(s);
+     Code(parallelAssignmentCode(
+	       new array(int) len n do foreach x in s do provide nestingDepth(x.frameID,b.operator.dictionary),
+	       new array(int) len n do foreach x in s do provide x.frameindex,
+	       s,					    -- becoming obsolete
+	       convert(b.rhs),
+	       treePosition(e)
+	       ))
      );
 
 export convert(e:ParseTree):Code := (

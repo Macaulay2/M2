@@ -224,7 +224,7 @@ bump();
      precBracket := prec;
 bump();
      export BackslashBackslashS := makeKeyword(binaryright("\\\\"));
-bump();
+     -- bump(); -- removed so we can intermingle \\ with \ in expressions : see method for 'Function \\ VisibleList'
      export StarS := makeKeyword(unaryleft("*"));
      export DivideS := makeKeyword(binaryleft("/"));
      export LeftDivideS := makeKeyword(binaryright("\\"));
