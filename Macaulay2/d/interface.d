@@ -365,12 +365,12 @@ setupfun("rawNumberOfInvertibleVariables",rawNumberOfInvertibleVariables);
 -----------------------------------------------------------------------------
 -- monoids
 
-export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesMonoid:RawMonoid,degs:array(int)):Expr := (
+export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesRing:RawRing,degs:array(int)):Expr := (
      when Ccode(RawMonoidOrNull, 
 	  "(engine_RawMonoidOrNull)IM2_Monoid_make(",
 	      "(MonomialOrdering *)", mo, ",",
 	      "(M2_stringarray)", names, ",",
-	      "(Monoid *)", degreesMonoid, ",",
+	      "(Ring *)", degreesRing, ",",
 	      "(M2_arrayint)", degs,
 	  ")")
      is m:RawMonoid do Expr(m)
@@ -383,12 +383,12 @@ export rawMonoid(e:Expr):Expr := (
      when s.0 is mo:RawMonomialOrdering do
      if isListOfStrings(s.1) then (
 	  names := getListOfStrings(s.1);
-	  when s.2 is degreesMonoid:RawMonoid do
+	  when s.2 is degreesRing:RawRing do
 	  if isSequenceOfSmallIntegers(s.3) then (
 	       degs := getSequenceOfSmallIntegers(s.3);
-	       rawMonoid(mo,names,degreesMonoid,degs))
+	       rawMonoid(mo,names,degreesRing,degs))
 	  else WrongArg(4,"a sequence of small integers (flattened degrees)")
-	  else WrongArg(3,"the degrees monoid"))
+	  else WrongArg(3,"the degrees ring"))
      else WrongArg(2,"a list of strings to be used as names")
      else WrongArg(1,"a monomial ordering")
      else buildErrorPacket("expected 0 or 4 arguments")
@@ -450,7 +450,8 @@ setupfun("rawIndices",rawIndices);
 
 export rawPolynomialRing(e:Expr):Expr := (
      when e is a:Sequence do 
-     if length(a) == 2 then 
+     if length(a) == 0 then Expr(Ccode( RawRing, "(engine_RawRing)IM2_Ring_trivial_polyring()" ))
+     else if length(a) == 2 then 
      when a.0 is K:RawRing do 
      when a.1 is M:RawMonoid do toExpr(Ccode(RawRingOrNull,
 	       "(engine_RawRingOrNull)IM2_Ring_polyring(",
@@ -460,8 +461,8 @@ export rawPolynomialRing(e:Expr):Expr := (
 	       ))
      else WrongArg(2,"a raw monoid")
      else WrongArg(1,"a raw ring")
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
+     else WrongArg("0 or 2 arguments")
+     else WrongArg("0 or 2 arguments"));
 setupfun("rawPolynomialRing",rawPolynomialRing);
 
 export rawSkewPolynomialRing(e:Expr):Expr := (

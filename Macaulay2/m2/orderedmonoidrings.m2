@@ -51,11 +51,18 @@ degreeLength PolynomialRing := (RM) -> degreeLength monoid RM
 
 degreesRing ZZ := PolynomialRing => memoize(
      (n) -> (
-	  Zn := degreesMonoid n;
-	  ZZn := ZZ Zn;
-	  ZZn.name = "ZZ[" | Zn.name | "]";
-     	  use ZZn
-	  ))
+	  local ZZn;
+	  local Zn;
+	  if n == 0 then (
+	       ZZn = new PolynomialRing from rawPolynomialRing();
+	       ZZn.name = "ZZ[]";
+	       ZZn)
+	  else (
+	       Zn = degreesMonoid n;
+	       ZZn = ZZ Zn;
+	       ZZn.name = "ZZ[" | Zn.name | "]";
+     	       use ZZn;
+	       ZZn)))
 
 degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
