@@ -67,9 +67,6 @@ document { (annihilator, Module),
      version is to compute the annihilator of each generator of the module ",
      TT "M", " and to intersect these two by two.  Each annihilator is
      done using a submodule quotient.",
-     PARA,
-     "An alternate algorithm is to do one large submodule quotient.  This 
-     version is implemented in the routine ", TO "annihilator'", ".",
      SEEALSO {(symbol :, Module, Module), (quotient, Module, Module)}
      }
 
@@ -255,7 +252,7 @@ document { GroebnerBasis,
      computation, and several associated matrices. Normally you don't
      need to refer to these objects directly, as many operations on
      matrices and modules create them, and refer to them.  For more
-     information, see ", TO "Groebner bases", " or
+     information, see ", TO "Groebner bases and related computations", " or
      ", TO "computing Groebner bases", "."
      }
 
@@ -1007,7 +1004,7 @@ document { selectInSubring,
 	  order is the degree, which is usually not zero.  This routine 
 	  should detect and correct this."
      },
-     SEEALSO "polynomial rings with other monomial orderings"
+     SEEALSO "monomial orderings"
      }
 
 document { divideByVariable,
@@ -1187,7 +1184,6 @@ document { isAffineRing, Headline => "whether something is an affine ring",
 
 document { RingMap,
      Headline => "the class of all ring maps",
-     SEEALSO "maps between rings",
      "Common ways to make a ring map:",
      MENU {
 	  TO (map,Ring,Ring),

@@ -716,7 +716,7 @@ document { MonomialOrder,
 	  TO "ProductOrder"
           },
      "Eventually, more general monomial orders will be allowed.", -- MES
-     SEEALSO {"polynomial rings with other monomial orderings", "Weights"}
+     SEEALSO {"monomial orderings", "Weights"}
      }
 
 document { Weights,

@@ -39,7 +39,7 @@ document { "COPYING",
 	  if sourceHomeDirectory =!= null then get(sourceHomeDirectory | "COPYING")
 	  else if prefixDirectory =!= null then get(prefixDirectory | LAYOUT#"docm2rel" | "COPYING")
 	  else (
-	       stderr << "--warning: can't locate file \"COPYING\"" << endl;
+	       stderr << "warning: can't locate file \"COPYING\"" << endl;
 	       "see the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991, available at http://www.gnu.org/licenses/gpl.txt"
 	       )
 	  )

@@ -874,7 +874,7 @@ document { "associative algebras",
       	  "random(5,S)",
       	  "hilbertSeries S"
 	  },
-     SEEALSO { "polynomial rings with other monomial orderings",  "PolynomialRing"}
+     SEEALSO { "monomial orderings",  "PolynomialRing"}
 ///
 
 
@@ -894,6 +894,10 @@ document { "construction of free modules",
      PARA,
      "For graded free modules, and finding the degrees of the 
      generators, see ", TO "graded modules", ".",
+     }
+
+document { "graded modules",
+     -- Mike must have wanted a node with this name...
      }
 
 document { "matrices to and from modules",
