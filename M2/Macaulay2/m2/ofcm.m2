@@ -293,12 +293,9 @@ makeMonoid := (options) -> (
      -- check the options for consistency, and set everything to the correct defaults
      options = new MutableHashTable from options;
 
-     if class options.SkewCommutative =!= Boolean
-     or class options.Inverses =!= Boolean
-     then error "expected true or false in option";
+     if class options.Inverses =!= Boolean then error "expected true or false in option";
      
-     if options.SkewCommutative and options.Inverses
-     then error "skew commutative ring with inverses requested";
+     if options.SkewCommutative =!= false and options.Inverses then error "skew commutative ring with inverses requested";
 
      -- First check the variable names
      if class options.Variables === ZZ 

@@ -132,7 +132,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  if not R.?RawRing then error "expected coefficient ring handled by the engine";
      	  num := numgens M;
 	  Weyl := M.Options.WeylAlgebra =!= {};
-	  Skew := M.Options.SkewCommutative;
+	  skewoption := M.Options.SkewCommutative;
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
 	  RM := if Weyl then (
 	       diffs := M.Options.WeylAlgebra;
@@ -168,15 +168,15 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       if isBasic R then new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(R.RawRing,M.RawMonoid),diffs0,diffs1,h)
 	       else notImplemented()
 	       )
-	  else if Skew then (
-	       skews := (
-		    if M.Options.SkewCommutative === true
+	  else if skewoption =!= false then (
+	       skewoption = (
+		    if skewoption === true
 		    then toList (0 .. num - 1)
-		    else if class M.Options.SkewCommutative === List
-		    then indices(M,M.Options.SkewCommutative)
+		    else if class skewoption === List
+		    then indices(M,skewoption)
 		    else error "expected SkewCommutative option to be 'true' or a list of variables"
 		    );
-	       if isBasic R then new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(R.RawRing,M.RawMonoid),skews)
+	       if isBasic R then new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(R.RawRing,M.RawMonoid),skewoption)
 	       else notImplemented()
 	       )
 	  else (
