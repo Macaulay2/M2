@@ -35,9 +35,9 @@ void Matrix::initialize(const FreeModule *r,
 		     const FreeModule *c,
 		     const int *deg)
 {
-  _rows = (FreeModule *)r;
-  _cols = (FreeModule *)c;
-  _degree_shift = (int *) deg;
+  _rows = const_cast<FreeModule *>(r);
+  _cols = const_cast<FreeModule *>(c);
+  _degree_shift = const_cast<int *>(deg);
 
   vec Zero = NULL;
   for (int i=0; i<c->rank(); i++) 

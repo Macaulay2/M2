@@ -94,7 +94,7 @@ void GBinhom_comp::force(const Matrix *m, const Matrix *gb0, const Matrix *mchan
   set_up0(m, csyz, mchange->n_rows());
 
   Fsyz = mchange->rows();
-  syz = (Matrix *) msyz;
+  syz = const_cast<Matrix *>(msyz);
 
   for (int i=0; i<gb0->n_cols(); i++)
     {
@@ -474,10 +474,10 @@ int GBinhom_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
     }
   while (f != NULL)
     {
-      Bag *b;
       GR->gbvector_get_lead_exponents(F, f, div_totalexp);
 #warning "quotient ring stuff"
 #if 0
+      Bag *b;
       if (GR->is_quotient_ring() 
 	  && GR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
@@ -532,10 +532,10 @@ int GBinhom_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 
   while ((lead = fb.get_lead_term()) != NULL)
     {
-      Bag *b;
       GR->gbvector_get_lead_exponents(F, lead, div_totalexp);
 #warning "quotient ring stuff"
 #if 0
+      Bag *b;
       if (GR->is_quotient_ring()
 	  && GR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{

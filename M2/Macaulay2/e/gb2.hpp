@@ -97,7 +97,7 @@ public:
   virtual int n_gb_elems() const { return 0; }
   virtual const FreeModule *output_free_module() { return gens->rows(); }
   virtual Matrix *min_gens_matrix() { return new Matrix(gens->rows()); }
-  virtual Matrix *get_matrix() { return (Matrix *)gens; }
+  virtual Matrix *get_matrix() { return const_cast<Matrix *>(gens); }
   virtual Matrix *initial_matrix(int) { return new Matrix(gens->rows()); }
   virtual Matrix *gb_matrix() { return new Matrix(gens->rows()); }
   virtual Matrix *change_matrix() { return new Matrix(gens->rows()); }

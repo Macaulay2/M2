@@ -17,12 +17,12 @@ VectorOperations::~VectorOperations()
 
 sparse_vector *VectorOperations::new_sparse_vector() const
 {
-  return (sparse_vector *)((VectorOperations *)this)->vecstash->new_elem();
+  return (sparse_vector *)(const_cast<VectorOperations *>(this)->vecstash->new_elem());
 }
 
 void VectorOperations::remove_sparse_vector_node(sparse_vector *n) const
 {
-  ((VectorOperations *)this)->vecstash->delete_elem(n);
+  const_cast<VectorOperations *>(this)->vecstash->delete_elem(n);
 }
 
 sparse_vector *VectorOperations::make_sparse_vector(int r, ring_elem a) const

@@ -1487,7 +1487,7 @@ void PolynomialRing::debug_out(const ring_elem f) const
 void PolynomialRing::debug_outt(const Nterm *f) const
 {
   buffer o;
-  ring_elem g = (Nterm *) f;
+  ring_elem g = const_cast<Nterm *>(f);
   elem_text_out(o, g);
   emit_line(o.str());
 }

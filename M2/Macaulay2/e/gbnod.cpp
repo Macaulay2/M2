@@ -24,7 +24,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
   M = GR->get_flattened_monoid();
   K = GR->get_flattened_coefficients();
 
-  F = (FreeModule *) ggens->output_free_module();
+  F = const_cast<FreeModule *>(ggens->output_free_module());
 
   gens = ggens;
   syz = NULL;
