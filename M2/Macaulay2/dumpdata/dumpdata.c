@@ -10,6 +10,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#ifndef MAP_FAILED
+#define MAP_FAILED	((__ptr_t) -1)
+#endif
 #include "dumpdata.h"
 #include "map.h"
 #include "warning.h"
