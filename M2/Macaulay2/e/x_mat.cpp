@@ -1100,8 +1100,7 @@ void cmd_ti_search(object &oti, object &om)
 // Random number/element generation
 void cmd_random_seed(object &on)
 {
-  long n = on->int_of();
-  Random::set_seed(n);
+  Random::set_seed((int32)(on->int_of()));
 }
 void cmd_random_maxint(object &on)
 {
