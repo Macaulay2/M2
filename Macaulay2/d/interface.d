@@ -1265,7 +1265,7 @@ rawMatrixEntry(e:Expr):Expr := (
      if !isInt(c) then WrongArgSmallInteger(3) else (
 	  Expr(Ccode(RawRingElement,
 		    "(engine_RawRingElement)",
-		    "IM2_Matrix_get_element(", "(Matrix *)", M, ",", toInt(r), ",", toInt(c), ")" ) ) )
+		    "IM2_Matrix_get_entry(", "(Matrix *)", M, ",", toInt(r), ",", toInt(c), ")" ) ) )
      else WrongArgInteger(3)
      else WrongArgInteger(2)
      else WrongArg(1,"a raw matrix")
@@ -1793,7 +1793,7 @@ rawMatrixRowChange(e:Expr):Expr := (
      when s.1 is targetRow:Integer do if !isInt(targetRow) then WrongArgSmallInteger(2) else
      when s.2 is r:RawRingElement do
      when s.3 is sourceRow:Integer do if !isInt(sourceRow) then WrongArgSmallInteger(4) else (
-	  if Ccode(bool, "IM2_MutableMatrix_row_change(", "(Matrix *)", M, ",", toInt(targetRow), ",", "(RingElement *)", r, ",", toInt(sourceRow), ")" )
+	  if Ccode(bool, "IM2_MutableMatrix_row_operation(", "(Matrix *)", M, ",", toInt(targetRow), ",", "(RingElement *)", r, ",", toInt(sourceRow), ")" )
 	  then nullE
 	  else buildErrorPacket(EngineError("error changing raw matrix row")))
      else WrongArgInteger(4)
@@ -1809,7 +1809,7 @@ rawMatrixColumnChange(e:Expr):Expr := (
      when s.1 is targetColumn:Integer do if !isInt(targetColumn) then WrongArgSmallInteger(2) else
      when s.2 is r:RawRingElement do
      when s.3 is sourceColumn:Integer do if !isInt(sourceColumn) then WrongArgSmallInteger(4) else (
-	  if Ccode(bool, "IM2_MutableMatrix_column_change(", "(Matrix *)", M, ",", toInt(targetColumn), ",", "(RingElement *)", r, ",", toInt(sourceColumn), ")" )
+	  if Ccode(bool, "IM2_MutableMatrix_column_operation(", "(Matrix *)", M, ",", toInt(targetColumn), ",", "(RingElement *)", r, ",", toInt(sourceColumn), ")" )
 	  then nullE
 	  else buildErrorPacket(EngineError("error changing raw matrix column")))
      else WrongArgInteger(4)
