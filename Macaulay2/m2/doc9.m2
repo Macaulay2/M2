@@ -862,12 +862,14 @@ document { saturate => MinimalGenerators,
      }
 
 document { Elimination,
+     HEADLINE "compute the saturation by elimination",
      TT "Strategy => Elimination", " -- an option value for ", TO "saturate", " 
      which indicates that the saturation of (I:f) should be computed by
      eliminating z from (I,f*z-1), where z is a new variable."
      }
 
 document { Bayer,
+     HEADLINE "use the method in Bayer's thesis",
      TT "Strategy => Bayer", " -- an option value for ", TO "saturate", " which
      indicates that the method of Bayer's thesis should be used.",
      PARA,
@@ -877,6 +879,7 @@ document { Bayer,
      }
 
 document { Iterate,
+     HEADLINE "use successive ideal quotients (the default)",
      TT "Strategy => Iterate", " -- an option value for ", TO "saturate", " which
      indicates that successive ideal or module quotients should be used.",
      PARA,
@@ -884,6 +887,7 @@ document { Iterate,
      }
 
 document { Linear,
+     HEADLINE "use the reverse lex order",
      TT "Strategy => Linear", " -- an option value for ", TO "saturate", " which
      indicates that the reverse lex order should be used to compute the saturation.",
      PARA,
