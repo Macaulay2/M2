@@ -13,7 +13,7 @@ distclean :: clean
 
 $(TESTRESULTS) : ../bin/M2
 
-ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
+ARGS := --silent -q --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"' -e errorDepth=0
 
 %.okay : %.m2
 	@ echo testing $<
