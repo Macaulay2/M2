@@ -70,4 +70,16 @@ popDictionary = d -> (
      dictionaries drop(dictionaries(),1);
      d)
 
-     
+dictionary := s -> (
+     n := toString s;
+     r := select(dictionaries(), d -> d#?n and d#n === s);
+     if #r === 0 then null else first r
+     )
+
+package = method ()
+package Symbol := s -> (
+     d := dictionary s;
+     if d === null then return(null);
+     r := select(packages,p -> p#"dictionary" === d);
+     if #r > 0 then first r)
+package Thing := x -> if Symbols#?x then package Symbols#x
