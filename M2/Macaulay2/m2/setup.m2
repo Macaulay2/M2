@@ -2,7 +2,7 @@
 
 if class Manipulator =!= Symbol then ( 
      printString(stderr, "warning: skipping setup.m2, already loaded\n"); flush stderr; 
-     endInput )
+     end )
 
 if class Manipulator =!= Symbol then error "setup.m2 already loaded"
 

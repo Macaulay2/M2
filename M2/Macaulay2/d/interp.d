@@ -66,7 +66,7 @@ laststmtno := -1;
 -- SecondaryPrompt := makeProtectedSymbolClosure("SecondaryPrompt");
 Print := makeProtectedSymbolClosure("Print");
 NoPrint := makeProtectedSymbolClosure("NoPrint");
-endInput := makeProtectedSymbolClosure("endInput");
+endInput := makeProtectedSymbolClosure("end");
 (x:Position) === (y:Position) : bool := (
      x == y || x.filename === y.filename && x.line == y.line && x.column == y.column
      );
@@ -290,11 +290,15 @@ topLevel(e:Expr):Expr := (
      ret);
 setupfun("commandInterpreter",topLevel);
 
+breakLoopFrameS := setupconst("breakLoopFrame",nullE);
 breakLoop(f:Frame):bool := (
+     dc := localDictionaryClosure(f);
+     setGlobalVariable(breakLoopFrameS,Expr(dc));
      interpreterDepth = interpreterDepth + 1;
      ret := when loadprint("-",StopIfError, 
-	  newStaticLocalDictionaryClosure(localDictionaryClosure(f))) is Error do false else true;
+	  newStaticLocalDictionaryClosure(dc)) is Error do false else true;
      interpreterDepth = interpreterDepth - 1;
+     setGlobalVariable(breakLoopFrameS,nullE);
      ret);
 breakLoopFun = breakLoop;
 

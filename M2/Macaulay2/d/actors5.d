@@ -594,7 +594,7 @@ erase(e:Expr):Expr := (
      	       	    	 if d.protected then return(buildErrorPacket("symbol is in a protected dictionary"));
 			 table.numEntries = table.numEntries - 1;
 			 table.buckets.i = entryListCell.next;
-			 return(e);
+			 return(nullE);
 			 );
 		    lastCell := entryListCell;
 		    entryList = entryListCell.next;
@@ -606,7 +606,7 @@ erase(e:Expr):Expr := (
      	       	    	 	   if d.protected then return(buildErrorPacket("symbol is in a protected dictionary"));
 				   table.numEntries = table.numEntries - 1;
 				   lastCell.next = entryListCell.next;
-				   return(e);
+				   return(nullE);
 				   );
 			      lastCell = entryListCell;
 			      entryList = entryListCell.next;
@@ -1284,6 +1284,7 @@ localDictionaries(f:Frame):Expr := Expr(
 localDictionaries(e:Expr):Expr := (
      when e
      is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(localFrame))
+     is dc:DictionaryClosure do localDictionaries(dc.frame)
      is sc:SymbolClosure do localDictionaries(sc.frame)
      is fc:FunctionClosure do localDictionaries(fc.frame)
      is cfc:CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols

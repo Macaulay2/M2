@@ -479,7 +479,7 @@ assert(P#1 == H)
 ///
 
 
-endInput
+end
 
 
 
