@@ -36,7 +36,7 @@ document {
 
 document {
      Key => "null",
-     Headline => "nothingness",
+     Headline => "the unique member of the empty class",
      "When it is the value of an expression entered into the interpreter, the
      output line doesn't appear.  Empty spots in a list are represented by
      it.",

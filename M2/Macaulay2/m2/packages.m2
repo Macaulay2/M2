@@ -263,9 +263,10 @@ package Thing := x -> (
      d := dictionary x;
      if d =!= null then package d)
 package Symbol := s -> (
-     d := dictionary s;
-     if d === PackageDictionary then value s
-     else if d =!= null then package d )
+     n := toString s;
+     scan(globalDictionaries, d -> if d#?n and d#n === s then (
+	       if d === PackageDictionary and class value s === Package then break value s
+	       else if package d =!= null then break package d)));
 package HashTable := package Function := x -> if ReverseDictionary#?x then package ReverseDictionary#x
 
 Package.GlobalAssignHook = (X,x) -> if not ReverseDictionary#?x then ReverseDictionary#x = X;     -- not 'use x';

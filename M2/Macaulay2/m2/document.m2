@@ -722,6 +722,7 @@ briefSynopsis := key -> (
 			 SEQ { TO2{ [fn,optionName], concatenate(toString optionName," => ...") }, hd }
 			 ))));
      (inp',out') := types key;
+     inp' = select(inp', T -> T =!= Nothing);
      if out' === {Thing} then out' = {};		    -- not informative enough
      if #inp === 0 then (
 	  inp = apply(inp', T -> T => "");
