@@ -29,7 +29,7 @@ document { "Invoking the program",
      compiled.",
      PARA,
      "To terminate the program, one may type ", TO "exit", ", ", TO "quit", ",
-     ", TO "end", ", or the end of file character."
+     ", TO "endInput", ", or the end of file character."
      }
 
 document { "Macaulay2/COPYING",

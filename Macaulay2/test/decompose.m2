@@ -57,7 +57,7 @@ I = ideal ( a+b+c+d+e, a*b + b*c + c*d + d*e + e*a ,
 decompose I
 assert ( 75 == # decompose I )
 
-end
+endInput
 
 -- we don't have enough time to test this one
 
@@ -71,7 +71,7 @@ decompose I
 assert ( 25 == # decompose I )
 
 
-end
+endInput
 
 -- this one crashes deep in FACTORY code
 

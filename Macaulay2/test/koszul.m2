@@ -6,7 +6,7 @@ g = matrix {
 f = koszul(4,vars S)
 assert( f - g == 0 )
 
-end
+endInput
 
 -- Local Variables:
 -- compile-command: "make koszul.okay"

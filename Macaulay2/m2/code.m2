@@ -102,7 +102,7 @@ methods Type := F -> (
 		    )
 	       )
 	  );
-     scan(pairs first dictionaries(),
+     scan(flatten(pairs \ dictionaries()),
 	  (Name,sym) -> (
 	       x := value sym;
 	       if instance(x,Type) and not seen#?x then (
@@ -118,7 +118,7 @@ methods Sequence := F -> (
      seen := new MutableHashTable;
      found := new MutableHashTable;
      tallyF := tally F;
-     scan(pairs globalDictionary(),
+     scan(flatten(pairs \ dictionaries()),
 	  (Name,sym) -> (
 	       x := value sym;
 	       if instance(x,Type) and not seen#?x then (
@@ -133,7 +133,7 @@ methods Thing := F -> (
      if F === HH then return join(methods homology, methods cohomology);
      seen := new MutableHashTable;
      found := new MutableHashTable;
-     scan(pairs first dictionaries(),
+     scan(flatten(pairs \ dictionaries()),
 	  (Name,sym) -> (
 	       x := value sym;
 	       if instance(x,Type) and not seen#?x then (

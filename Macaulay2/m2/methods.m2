@@ -116,7 +116,7 @@ setup := (args, symbols) -> (
 	  )))
 
 setup((), { 
-	  entries, borel, prune, gcdCoefficients, singularLocus, end,
+	  entries, borel, prune, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,

@@ -17,19 +17,23 @@ installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 M2title := "Macaulay2"
 
 record := (sym,val) -> (
+     if Symbols#?(value sym) then remove(Symbols,value sym);
      sym <- val;
      Symbols#val = sym;
      )
 
 newPackage = method( Options => { Using => {}, Version => "0.0" } )
+newPackage(Package) := opts -> p -> newPackage(p.name,opts)
+newPackage(Symbol) := opts -> p -> newPackage(toString p,opts)
 newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      sym := value ("symbol " | title);
+     newdict := if title === M2title then first dictionaries() else first dictionaries prepend(newDictionary(),dictionaries());
      p := global currentPackage <- new Package from {
           symbol name => title,
 	  symbol Symbol => sym,
 	  "outerPackage" => currentPackage,
-     	  "dictionary" => if title === M2title then first dictionaries() else first dictionaries prepend(newDictionary(),dictionaries()),
+     	  "dictionary" => newdict,
 	  "version" => opts.Version,
 	  "test inputs" => new MutableHashTable,
 	  "raw documentation" => new MutableHashTable,
@@ -47,11 +51,11 @@ newPackage(String) := opts -> (title) -> (
 
 newPackage(M2title,Version => version#"VERSION")
 
-end Package := p -> (
+endPackage = p -> (
      if p =!= currentPackage then error ("package not open");
      if p =!= Macaulay2 then (
-	  d := dictionaries();
-	  assert( d#0 === p#"dictionary" );
-	  dictionaries rotate(d,1);		    -- move this dictionary to the end
+	  if first dictionaries() =!= p#"dictionary" then error ("another dictionary is open");
+	  dictionaries rotate(dictionaries(),1);
 	  );
+     currentPackage = null;
      p)

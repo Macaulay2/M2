@@ -1,6 +1,6 @@
 --		Copyright 1998 by Daniel R. Grayson
 
-end -- disable this test
+endInput -- disable this test
 
 Descent = new Type of MutableHashTable
 stars = n -> (
