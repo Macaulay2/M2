@@ -28,12 +28,12 @@ all : phase3 phase4
 	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.doc
 .m2.okay:
 	@ echo testing $<
-	@- $(EXE) -silent setup.m2 $< -eexit(0)
+	@- $(EXE) --silent setup.m2 $< -eexit(0)
 	@ echo okay >$@
 .m2.out:
 	@ echo running example $*.m2
 	@ sed 1d <$*.m2 >tmp.in
-	@- $(EXE) -silent -x -s -ephase=3 setup.m2 <tmp.in >tmp.out
+	@- $(EXE) --silent -x -s -ephase=3 setup.m2 <tmp.in >tmp.out
 	@ del tmp.in
 	@ mv tmp.out $*.out
 phase2 : ..\cache\Macaulay2.pre

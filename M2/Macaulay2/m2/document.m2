@@ -51,11 +51,18 @@ duplicateDocWarning := () -> (
 -- most things can't be documented; some can, because they always know what
 -- symbol they are associated with.  Hmm, this seems to be have two purposes,
 -- should fix.
+-- This also seems to conflict with formatDocumentTag, which now tries to decide the same thing!
+-- FIX
 -----------------------------------------------------------------------------
 unDocumentable := method(SingleArgumentDispatch => true)
 unDocumentable Thing := x ->true
 unDocumentable Function := f -> class f === Function and match("^--Function.*--$", toString f)
 unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
+scan( {
+	  IndeterminateNumber,Manipulator, Manipulator, ScriptedFunctor, InfiniteNumber, Boolean, CC,
+      	  Command, File, Nothing, Symbol, Type, Entity, Package, String, Option
+	  },
+     TYPE -> unDocumentable TYPE := x -> false)
 -----------------------------------------------------------------------------
 -- unformatting document tags
 -----------------------------------------------------------------------------
@@ -99,19 +106,8 @@ formatDocumentTag           = method(SingleArgumentDispatch => true)
 	  
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 
-formatDocumentTag Thing    := key -> (
-     -- giving an error is better than trying willy-nilly to convert the key to a string, because
-     -- the key might be a matrix, which gets converted to a gigantic string 
-     error("can't document \"", try net key else try toString key else "this", "\"")
-     )
-
-scan( {
-	  IndeterminateNumber,Manipulator, Manipulator, ScriptedFunctor, InfiniteNumber, Boolean, CC,
-      	  Command, File, Function, Nothing, Symbol, Type, Entity
-	  },
-     type -> formatDocumentTag type := toString)
+formatDocumentTag Thing    := toString
 formatDocumentTag String   := s -> s
-
 
 after := (w,s) -> mingle(w,#w:s)
 formatDocumentTag Option   := record(
@@ -358,6 +354,7 @@ document List := z -> (
      key := z#0;
      verifyTag key;
      body := drop(z,1);
+     if unDocumentable key then error("undocumentable type of thing: '",class key,"'");
      currentNodeName = formatDocumentTag key;
      nodeBaseFilename = makeFileName(currentNodeName,getFileName body);
      d := currentPackage#"raw documentation";
@@ -450,8 +447,9 @@ getHeadline := key -> (
      )
 
 getUsage := key -> (
-     x := getOption(getDoc key, Usage);
-     if x =!= null then SEQ x)
+     if not unDocumentable key then (
+     	  x := getOption(getDoc key, Usage);
+     	  if x =!= null then SEQ x))
 
 getSynopsis := key -> getOption(getDoc key, Synopsis)
 
@@ -647,7 +645,7 @@ fmeth := f -> (
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
 briefDocumentation = x -> (
-     if noBriefDocClasses#?(class x) or noBriefDocThings#?x then null
+     if noBriefDocClasses#?(class x) or noBriefDocThings#?x or unDocumentable x then null
      else (
 	  r := getUsage x;
 	  if r =!= null then << endl << text r << endl
