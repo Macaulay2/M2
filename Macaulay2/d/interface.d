@@ -1164,7 +1164,7 @@ export rawCompare(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawRingElement do 
-     when a.1 is y:RawRingElement do if Ccode(bool, "rawRingElementCompare(", "(RingElement *)", x, ",", "(RingElement *)", y, ")" ) then True else False
+     when a.1 is y:RawRingElement do Expr(toInteger(Ccode(int, "rawRingElementCompare(", "(RingElement *)", x, ",", "(RingElement *)", y, ")" )))
      else WrongArg(2,"a raw ring element")
      else WrongArg(1,"a raw ring element")
      else WrongNumArgs(2)
