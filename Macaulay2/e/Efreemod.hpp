@@ -35,9 +35,8 @@ public:
 
   int hash() const { return _rank; }
   
-  void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
-  void binary_out(ostream &o) const;
+  virtual void bin_out(buffer &o) const;
   static EFreeModule *binary_in(istream &i);
 
   const ERing *getCoefficientRing() const

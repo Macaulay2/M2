@@ -115,6 +115,11 @@ public:
   virtual EVector vec_right_mult(const EVector &a, const ERingElement b) const;
   virtual EVector vec_evaluate(const ERingMap *map, const EFreeModule *Ftarget, const EVector &v) const;
 
+  virtual bool promote(const ERing *Rf, const ERingElement f, ERingElement &result) const;
+  virtual bool lift(const ERing *Rg, const ERingElement f, ERingElement &result) const;
+  virtual bool vec_promote(const EVector &v, const EFreeModule *resultF, EVector &result) const;
+  virtual bool vec_lift(const EVector &v, const EFreeModule *resultF, EVector &result) const;
+
 protected:
   virtual epoly *mult1(const epoly *a, // single term
 		       const epoly *b  // entire polynomial

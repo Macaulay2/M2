@@ -46,6 +46,28 @@ EMatrix *EMatrix::make(const EFreeModule *F,
   EMatrix *result = new EMatrix(F,G,elements,type,d);
   return result;
 }
+EMatrix *EMatrix::make(const EFreeModule *F,
+	  const EFreeModule *G,
+	  const EMatrix *elements, // Take the columns from 'elements'
+	  int type,
+	  const monomial *d)  // GRABS the array and elements in 'elements'.
+{
+  if ((F->rank() != elements->getTarget()->rank())
+      || (G->rank() != elements->getSource()->rank()))
+    {
+      gError << "expected free modules of same rank";
+      return 0;
+    }
+  if ((F->getRing() != elements->getRing()) || G->getRing() != elements->getRing())
+    {
+      gError << "expected same ring";
+      return 0;
+    }
+  EVector *newcols = allocate_columns(G->rank());
+  for (int i=0; i<G->rank(); i++)
+    newcols[i] = elements->column(i).translate(F);
+  return make(F,G,newcols,type,d);
+}
 
 EVector *EMatrix::allocate_columns(int c)
 {
@@ -621,6 +643,72 @@ EMatrix *EMatrix::evaluate(const ERingMap *f, const EFreeModule *newTarget) cons
   EFreeModule *G = EFreeModule::makeFreeModuleFromDegrees(getRing(),n_cols(),newcols);
   return make(newTarget, G, newcols, type);
 }
+bool EMatrix::promote(const EFreeModule *newTarget, EMatrix * & result) const
+{
+  // Try to promote each column.  If any fail, remove what has been done, and return false.
+  // The 'degree' of the map is kept the same if the degree monoids are the same, otherwise
+  // the new degree is 0.  Similarly, the 'type' of the matrix is kept the same, unless
+  // the new ring is commutative (type is then always 'both'), or if the new ring is
+  // non-commutative, but the old ring is commutative: THIS CAN'T HAPPEN!
+  EVector *newcols = allocate_columns(n_cols());
+  for (int i=0; i<n_cols(); i++)
+    {
+      if (!column(i).promote(newTarget, newcols[i]))
+	{
+	  // Clean up and exit
+	  delete [] newcols;
+	  return false;
+	}
+    }
+
+  // Now set the degree and the type.
+  const monomial *mapdegree;
+  if (getRing()->getDegreeMonoid() == newTarget->getDegreeMonoid())
+    mapdegree = getMapDegree();
+  else
+    mapdegree = getRing()->getDegreeMonoid()->one();
+
+  int type = getMatrixType();
+  //if (newTarget()->getRing()->isCommutative())
+  //  type = both;
+
+  // Make the matrix
+  EFreeModule *newSource = EFreeModule::makeFreeModuleFromDegrees(newTarget->getRing(),
+								  n_cols(),newcols);
+  result =  make(newTarget, newSource, newcols, type, mapdegree);
+  return true;
+}
+bool EMatrix::lift(const EFreeModule *newTarget, EMatrix * & result) const
+{
+  EVector *newcols = allocate_columns(n_cols());
+  for (int i=0; i<n_cols(); i++)
+    {
+      if (!column(i).lift(newTarget, newcols[i]))
+	{
+	  // Clean up and exit
+	  delete [] newcols;
+	  return false;
+	}
+    }
+
+  // Now set the degree and the type.
+  const monomial *mapdegree;
+  if (getRing()->getDegreeMonoid() == newTarget->getDegreeMonoid())
+    mapdegree = getMapDegree();
+  else
+    mapdegree = getRing()->getDegreeMonoid()->one();
+
+  int type = getMatrixType();
+  //if (!newTarget()->getRing()->isCommutative())
+  //  type = left;
+
+  // Make the matrix 
+  EFreeModule *newSource = EFreeModule::makeFreeModuleFromDegrees(newTarget->getRing(),
+								  n_cols(),newcols);
+  result = make(newTarget, newSource, newcols, type, mapdegree);
+  return true;
+}
+
 void EMatrix::selectInSubring(int n, intarray &result) const
 {
 #if 0

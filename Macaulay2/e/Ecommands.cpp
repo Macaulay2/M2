@@ -201,47 +201,44 @@ static bool grabDegreeInfo(int nvars, const EPolynomialRing *&ZD, int *&degrees)
       bad = true;
       degs = 0;
     }
-  else
-    degs = gStack[0]->intarray_of();
-
   if (!gStack.in_bounds(1) || gStack[1]->type_id() != TY_ERing)
     {
       gError << "ring construction: expected degree ring";
       bad = true;
       ZD = 0;
     }
-  else
+  if (bad)
     {
-      const ERing *ZD1 = gStack[1]->cast_to_ERing();
-      ZD = ZD1->toPolynomialRing();
-      if (ZD == 0)
+      gStack.poppem(2);
+      return false;
+    }
+  
+  degs = gStack[0]->intarray_of();
+  const ERing *ZD1 = gStack[1]->cast_to_ERing();
+  gStack.poppem(2);
+  ZD = ZD1->toPolynomialRing();
+  if (ZD == 0)
+    {
+      if (ZD1 == EZZ::make())
+	ZD = ECommPolynomialRing::getTrivialRing();
+      else
 	{
-	  if (ZD1 == EZZ::make())
-	    ZD = ECommPolynomialRing::getTrivialRing();
-	  else
-	    bad = true;
+	  gError << "expected ZZ or polynomial ring for degree ring";
+	  return false;
 	}
     }
 
-  if (bad)
+  if (degs->length() != nvars * ZD->n_vars())
     {
-      gError << "expected ZZ or polynomial ring for degree ring";
-      degrees = 0;
-    }
-  if (!bad && degs->length() != nvars * ZD->n_vars())
-    {
-      bad = true;
       gError << "wrong length for degree vector";
-      degrees = 0;
+      return false;
     }
-  else
-    {
-      degrees = new int[degs->length()];
-      for (int i=0; i<degs->length(); i++)
-        degrees[i] = (*degs)[i];
-    }
-  gStack.poppem(2);
-  return !bad;
+
+  degrees = new int[degs->length()];
+  for (int i=0; i<degs->length(); i++)
+    degrees[i] = (*degs)[i];
+
+  return true;
 }
 static void cmd_EPolynomialRing(object &o1, object &o2)
 {
@@ -264,8 +261,8 @@ static void cmd_EWeylAlgebra(object &o1, object &o2, object &o3, object &o4, obj
 {
   ERing *K = o1->cast_to_ERing();
   EMonoid * M = o2->cast_to_EMonoid();
-  intarray *diffs = o3->intarray_of();
-  intarray *comms = o4->intarray_of();
+  intarray *comms = o3->intarray_of();
+  intarray *diffs = o4->intarray_of();
   if (diffs->length() != comms->length())
     {
       gError << "Weyl algebra: expected same length arrays";
@@ -882,6 +879,16 @@ static void cmd_ERingElement_isequal(object &o1, object &o2)
   int s = R->is_equal(*r, *r2);
   gStack.insert(make_object_int(s));
 }
+static void cmd_ERingElement_isequal2(object &o1, object &o2)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  int a = o2->int_of();  // MES: when arbitrary precision is back, change this!!
+  const ERing *R = r->getRing();
+  ERingElement b = R->from_int(a);
+  int s = R->is_equal(*r, b);
+  R->remove(b);
+  gStack.insert(make_object_int(s));
+}
 static void cmd_ERingElement_iszero(object &o1)
 {
   object_ERingElement *r = o1->cast_to_ERingElement();
@@ -1092,6 +1099,68 @@ static void cmd_ERingMap_eval_EMatrix(object &o1, object &o2, object &o3)
   gStack.insert(result);
 }
 
+static void cmd_ERingElement_promote(object &oR, object &of)
+{
+  const ERing *newR = oR->cast_to_ERing();
+  object_ERingElement * f = of->cast_to_ERingElement();
+  const ERing *Rf = f->getRing();
+  ERingElement result;
+  if (newR->promote(Rf, f->getValue(), result))
+    gStack.insert(make_object_ERingElement(newR,result));
+  else
+    gError << "cannot promote given ring element";
+}
+static void cmd_ERingElement_lift(object &oR, object &of)
+{
+  const ERing *newR = oR->cast_to_ERing();
+  object_ERingElement * f = of->cast_to_ERingElement();
+  const ERing *Rf = f->getRing();
+  ERingElement result;
+  if (Rf->lift(newR, f->getValue(), result))
+    gStack.insert(make_object_ERingElement(newR,result));
+  else
+    gError << "cannot lift given ring element";
+}
+static void cmd_EVector_promote(object &oF, object &of)
+{
+  const EFreeModule *newF = oF->cast_to_EFreeModule();
+  EVector *v = of->cast_to_EVector();
+  EVector result;
+  if (v->promote(newF, result))
+    gStack.insert(make_object_EVector(result));
+  else
+    gError << "cannot promote given vector";
+}
+static void cmd_EVector_lift(object &oF, object &of)
+{
+  const EFreeModule *newF = oF->cast_to_EFreeModule();
+  EVector *v = of->cast_to_EVector();
+  EVector result;
+  if (v->lift(newF, result))
+    gStack.insert(make_object_EVector(result));
+  else
+    gError << "cannot lift given vector";
+}
+static void cmd_EMatrix_promote(object &oF, object &of)
+{
+  const EFreeModule *newF = oF->cast_to_EFreeModule();
+  EMatrix *m = of->cast_to_EMatrix();
+  EMatrix *result = 0;
+  if (m->promote(newF, result))
+    gStack.insert(result);
+  else
+    gError << "cannot promote given matrix";
+}
+static void cmd_EMatrix_lift(object &oF, object &of)
+{
+  const EFreeModule *newF = oF->cast_to_EFreeModule();
+  EMatrix *m = of->cast_to_EMatrix();
+  EMatrix *result = 0;
+  if (m->lift(newF, result))
+    gStack.insert(result);
+  else
+    gError << "cannot promote given matrix";
+}
 
 
 ///////////////////////
@@ -1217,6 +1286,27 @@ static void cmd_EMatrix2(object &orows, object &ocols, object &otype, object &om
     delete [] newcols;
   else
     gStack.insert(EMatrix::make(F,G,newcols,newtype,mapdegree));
+}
+static void cmd_EMatrix3(object &orows, object &ocols, object &om, object &otype, object &omapdeg)
+     // Create a matrix from elements on the stack.
+     // On stack: v0 v1 v2 ... v(ncols-1) rows:EFreeModule cols:EFreeModule mapdeg:intarray>> matrix
+{
+  EFreeModule *G = ocols->cast_to_EFreeModule();
+  EFreeModule *F = orows->cast_to_EFreeModule();
+  EMatrix *m = om->cast_to_EMatrix();
+  intarray *mapdeg = omapdeg->intarray_of();
+  
+  int newtype = otype->int_of();
+  if (newtype <= 0 || newtype > 3)
+    {
+      gError << "incorrect matrix type (left,right or both)";
+      return;
+    }
+  const monomial *mapdegree = monomialFromIntarray(F->getDegreeMonoid(),*mapdeg);
+  if (mapdegree == 0)
+    return;
+  else
+    gStack.insert(EMatrix::make(F,G,m,newtype,mapdegree));
 }
 
 static void cmd_EMatrix_getTarget(object &o1)
@@ -1682,6 +1772,7 @@ void i_Ecommands(void)
   install(ggterm, cmd_ERingElement_term, TY_ERing, TY_ERingElement, TY_INTARRAY);
 
   install(ggisequal, cmd_ERingElement_isequal, TY_ERingElement, TY_ERingElement);
+  install(ggisequal, cmd_ERingElement_isequal2, TY_ERingElement, TY_INT);
   install(ggiszero, cmd_ERingElement_iszero, TY_ERingElement);
   install(ggnegate, cmd_ERingElement_negate, TY_ERingElement);
   install(ggadd, cmd_ERingElement_add, TY_ERingElement, TY_ERingElement);
@@ -1746,6 +1837,7 @@ void i_Ecommands(void)
 
   install(ggmatrix, cmd_EMatrix1, TY_EFreeModule, TY_INT, TY_INT, TY_INTARRAY);
   install(ggmatrix, cmd_EMatrix2, TY_EFreeModule, TY_EFreeModule, TY_INT, TY_INTARRAY);
+  install(ggmatrix, cmd_EMatrix3, TY_EFreeModule, TY_EFreeModule, TY_EMatrix, TY_INT, TY_INTARRAY);
 
   install(ggisequal, cmd_EMatrix_isEqual, TY_EMatrix, TY_EMatrix);
   install(ggiszero, cmd_EMatrix_isZero, TY_EMatrix);
@@ -1820,13 +1912,12 @@ void i_Ecommands(void)
   install(ggev, cmd_ERingMap_eval_ERingElement, TY_ERingMap, TY_ERingElement);
   install(ggev, cmd_ERingMap_eval_EVector, TY_ERingMap, TY_EFreeModule, TY_EVector);
   install(ggev, cmd_ERingMap_eval_EMatrix, TY_ERingMap, TY_EFreeModule, TY_EMatrix);
-#if 0
-  install(ggpromote, cmd_ERingElement_promote, TY_RING, TY_RING_ELEM);
+
+  install(ggpromote, cmd_ERingElement_promote, TY_ERing, TY_ERingElement);
   install(ggpromote, cmd_EMatrix_promote, TY_EFreeModule, TY_EMatrix);
   install(ggpromote, cmd_EVector_promote, TY_EFreeModule, TY_EVector);
 
-  install(gglift, cmd_ERingElement_lift, TY_RING, TY_RING_ELEM);
+  install(gglift, cmd_ERingElement_lift, TY_ERing, TY_ERingElement);
   install(gglift, cmd_EMatrix_lift, TY_EFreeModule, TY_EMatrix);
   install(gglift, cmd_EVector_lift, TY_EFreeModule, TY_EVector);
-#endif
 }
