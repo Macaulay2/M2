@@ -99,4 +99,4 @@ poincare coker M
 hilbertSeries coker M
 assert(hilbertPolynomial coker M === new ProjectiveHilbertPolynomial from {0 => 2352, 1 => -449, 2 => -65, 3 => 38, 4 => 1})
 assert(degree coker M === 1)
-assert(codim coker M === 3)
+assert(codim coker M === 3) -- CRASHES

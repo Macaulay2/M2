@@ -53,14 +53,12 @@ elim = (vars1,vars2) -> (
 
 polyring = (K, vars) -> (
      -- each element of vars should be a symbol!
-     vars = toList vars;
      R := rawPolynomialRing(K, singlemonoid vars);
      scan(#vars, i -> vars#i <- rawRingVar(R,i,1));
      R)
 
 polyring2 = (K, vars, mo) -> (
      -- each element of vars should be a symbol!
-     vars = toList vars;
      M := rawMonoid(mo, apply(vars, toString), 
 	       degring 1, (#vars):1);
      R := rawPolynomialRing(K, M);
@@ -68,7 +66,6 @@ polyring2 = (K, vars, mo) -> (
      R)
 
 polyring3 = (K, vars, mo, degs) -> (
-     vars = toList vars;
      degs = toList flatten splice degs;
      ndegs := (#degs)//(#vars);
      M := rawMonoid(mo, apply(vars, toString), 

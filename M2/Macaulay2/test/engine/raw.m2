@@ -92,7 +92,7 @@ assert( 1_k - 10 == 92 )
 
 degs = {{1},{1},{1}}
 m' = makeMonomialOrdering( null, false, 3, degs / first, {}, {} )
-n' = rawMonoid(m',{"x","y","z"},degring 1,flatten degs)
+n' = rawMonoid(m',("x","y","z"),degring 1,flatten degs)
 
 
 rawProductMonomialOrdering (m',m',m')
@@ -284,12 +284,12 @@ y^2
 
 degs = {};
 doublyGradedOrdering = makeMonomialOrdering( null, false, 2, degs, {}, {GroupLex => 2} )
-doublyGraded = rawMonoid(doublyGradedOrdering,{"s","t"},trivial,degs)
+doublyGraded = rawMonoid(doublyGradedOrdering,("s","t"),trivial,degs)
 doublyGradedRing = rawPolynomialRing(rawZZ(), doublyGraded)
 
 degs = {{2,3}, {1,0}, {1,1}}
 m'' = makeMonomialOrdering( null, false, 3, degs / first, {}, {2,1} )
-n'' = rawMonoid(m'',{"x","y","z"},doublyGradedRing,flatten degs)
+n'' = rawMonoid(m'',("x","y","z"),doublyGradedRing,flatten degs)
 
 R = rawPolynomialRing(rawZZ(),n'')
 x = R_0
