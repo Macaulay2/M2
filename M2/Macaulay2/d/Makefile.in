@@ -111,9 +111,11 @@ CXXFLAGS += $(WARNINGS)
 
 ifeq (gcc,$(CC))
 ifeq (yes,$(shell if gcc -Wl,-v 2>&1 | grep -q 'GNU ld' ; then echo yes ; else echo no ; fi))
+ifdef MAPFILE
 ## - use this to get a memory map listing from the gnu linker
 MADEFILES += mapfile
 LDFLAGS  += -Wl,-Map,mapfile
+endif
 endif
 endif
 
@@ -198,7 +200,7 @@ compat.c compat.h : configure ../../include/config.h
 endif
 
 M2types.o : M2types.h
-M2lib.o scclib.o : compat.h cxx-wrappers.h
+M2lib.o scclib.o : compat.h
 M2lib.o scclib.o : ../c/compat.h ../c/compat.c types.h memdebug.h ../../include/config.h
 memdebug.o scclib.o actors5.o gc_cpp.o  : memdebug.h
 gc_cpp.o : ../../include/config.h
@@ -322,8 +324,7 @@ endif
 
 libM2d.a: $(ALLOBJ)
 	$(AR) r $@ $^
-	-$(RANLIB) libM2d.a
-
+	$(RANLIB) libM2d.a
 
 MADEFILES += ../bin/M2$(EXE)
 ../bin/M2$(EXE) : libM2d.a main.o $(LIBRARYFILES)

@@ -251,6 +251,13 @@ ifeq "$(OS)" "Darwin"
 LDFLAGS += -bind_at_load
 endif
 
+ALTIVEC = @ALTIVEC@
+ifeq "$(ALTIVEC)" "yes"
+LDFLAGS += -faltivec
+CFLAGS += -faltivec
+CXXFLAGS += -faltivec
+endif
+
 # Local Variables:
 # compile-command: "make -f Makefile-configuration"
 # End:

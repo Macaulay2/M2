@@ -136,6 +136,7 @@ COMMANDS = \
 	x_monom \
 	x_monoid \
 	x_relem \
+	M2-factory \
 	x_free \
 	x_mat \
 	x_monideal \
