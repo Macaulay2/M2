@@ -1076,12 +1076,15 @@ static int signdivide(int n, const int *a, const int *b, int *exp)
   if (sign == 0) return 1;
   return -1;
 }
-MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
+MatrixOrNull *Matrix::koszul(int nvars0, const Matrix *r, const Matrix *c)
 {
+#warning "rewrite koszul of monomials"
+  ERROR("not reimplemented yet");
+  return 0;
+#if 0
   // First check rings: r,c,'this' should be row vectors.
   // and the ring should be a polynomial ring
   const FreeModule *F = r->cols();
-
 
   const PolynomialRing *P = F->get_ring()->cast_to_PolynomialRing();
   if (P == NULL) return 0;
@@ -1099,19 +1102,16 @@ MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
   for (int i=0; i<ncols; i++)
     {
       if (c->elem(i) == 0) continue;
-      const int *a = P->lead_logical_monomial(c->elem(i)->coeff);
-      M->to_expvector(a, aexp);
+      P->lead_logical_exponents(nvars0,c->elem(i)->coeff,aexp);
       for (int j=0; j<nrows; j++)
 	{
 	  if (r->elem(j) == 0) continue;
-	  const int *b = P->lead_logical_monomial(r->elem(j)->coeff);
-	  M->to_expvector(b, bexp);
+	  P->lead_logical_exponents(nvars0,r->elem(j)->coeff,bexp);
 	  int sign = signdivide(nvars, aexp, bexp, result_exp);
 	  if (sign != 0)
 	    {
-	      const int *m;
-#warning "does m need to be initialized?"
-	      M->from_expvector(m, result_exp);
+	      const int *m = M->make_one();
+	      M->from_expvector(result_exp, m);
 	      ring_elem s = (sign > 0 ? K->one() : K->minus_one());
 	      ring_elem f = P->make_logical_term(s,m);
 	      mat.set_entry(j,i,f);
@@ -1122,6 +1122,7 @@ MatrixOrNull *Matrix::koszul(const Matrix *r, const Matrix *c)
   deletearray(bexp);
   deletearray(result_exp);
   return mat.to_matrix();
+#endif
 }
 
 Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)

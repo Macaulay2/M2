@@ -343,7 +343,8 @@ const MatrixOrNull * IM2_Matrix_koszul(int p, const Matrix *M)
 const MatrixOrNull * IM2_Matrix_koszul_monoms(const Matrix *M,
 					      const Matrix *N)
 {
-  return Matrix::koszul(M,N);
+#warning "check with 0.9.2 about what this should even do"
+  return Matrix::koszul(0,M,N);
 }
 
 const MatrixOrNull * IM2_Matrix_symm(int p, const Matrix *M)

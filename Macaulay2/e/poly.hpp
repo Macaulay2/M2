@@ -219,7 +219,7 @@ public:
   // the end.  get_terms(--,f,0,0) is the logical lead term of f.
 
   virtual const int * lead_flat_monomial(const ring_elem f) const = 0;
-  virtual const int * lead_logical_monomial(const ring_elem f) const = 0;
+  virtual void lead_logical_exponents(int nvars0, const ring_elem f, int * result_exp) const = 0;
 
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const = 0;
 
