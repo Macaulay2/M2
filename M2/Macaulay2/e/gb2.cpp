@@ -231,9 +231,8 @@ Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  MatrixConstructor mat_red(m->rows(), m->cols(), m->degree_shift(), false);
-  MatrixConstructor mat_lift(nodes[1]->output_free_module(), m->cols(), 
-			     m->degree_monoid()->make_one(), false);
+  MatrixConstructor mat_red(m->rows(), m->cols(), false, m->degree_shift());
+  MatrixConstructor mat_lift(nodes[1]->output_free_module(), m->cols(), false);
 
   for (int i=0; i<m->n_cols(); i++)
     {

@@ -24,7 +24,8 @@ public:
   MatrixConstructor();
   MatrixConstructor(const FreeModule *target, int ncols, bool is_mutable);
   MatrixConstructor(const FreeModule *target, const FreeModule *source, 
-		    const int *deg, bool is_mutable);
+		    bool is_mutable,
+		    const int *deg = 0);
   
   // The copy constructor just does the default thing: copy over all items.
 

@@ -27,7 +27,7 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target, int ncols, bool i
 }
 
 MatrixConstructor::MatrixConstructor(const FreeModule *target, const FreeModule *source, 
-				     const int *deg0, bool is_mutable)
+				     bool is_mutable, const int *deg0)
  : R(target->get_ring()),
    rows(target),
    cols(source),
@@ -37,7 +37,7 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target, const FreeModule 
   for (int i=0; i<source->rank(); i++)
     entries.push_back(0);
 
-  deg = R->degree_monoid()->make_new(deg0);
+  deg = (deg0 == 0 ? R->degree_monoid()->make_one() : R->degree_monoid()->make_new(deg0));
 }
 
 void MatrixConstructor::append(vec v) 

@@ -416,7 +416,7 @@ const MatrixOrNull *GBasis::matrix_remainder(const Matrix *m)
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  MatrixConstructor red(m->rows(), m->cols(), m->degree_shift(), false);
+  MatrixConstructor red(m->rows(), m->cols(), false, m->degree_shift());
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -443,8 +443,8 @@ void GBasis::matrix_lift(const Matrix *m,
       *result_remainder = 0;
       *result_quotient = 0;
   }
-  MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift(),false);
-  MatrixConstructor mat_quotient(Fsyz, m->cols(), m->degree_monoid()->make_one(), false);
+  MatrixConstructor mat_remainder(m->rows(), m->cols(), false, m->degree_shift());
+  MatrixConstructor mat_quotient(Fsyz, m->cols(), false);
 
   const Ring *K = R->get_flattened_coefficients();
   for (int i=0; i<m->n_cols(); i++)

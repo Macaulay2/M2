@@ -26,7 +26,7 @@ DetComputation::DetComputation(const Matrix *M0, int p0,
       FreeModule *G = M->cols()->exterior(p);
       int *deg = R->degree_monoid()->make_new(M->degree_shift());
       R->degree_monoid()->power(deg, p, deg);
-      result = MatrixConstructor(F,G,deg,M0->is_mutable());
+      result = MatrixConstructor(F,G,M0->is_mutable(),deg);
       R->degree_monoid()->remove(deg);
     }
   else

@@ -870,7 +870,7 @@ int gb2_comp::hilbertNumeratorCoefficient(int deg, int &result)
 //--- Obtaining matrices as output -------
 Matrix *gb2_comp::min_gens_matrix()
 {
-  MatrixConstructor mat(F,Fsyz,F->degree_monoid()->make_one(), false);
+  MatrixConstructor mat(F,Fsyz, false);
   int j = 0;
   for (int i=0; i<gb.length(); i++)
     if (gb[i]->is_min)

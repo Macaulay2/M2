@@ -424,6 +424,13 @@ M2_bool IM2_MutableMatrix_set_col_change(Matrix *M,
   return M->setColumnChangeMatrix(colChange);
 }
 
+const RingElement * IM2_Matrix_dot_product(const Matrix *M, int c1, int c2)
+{
+  ring_elem a;
+  M->dot_product(c1,c2,a);
+  return RingElement::make_raw(M->get_ring(), a);
+}
+
 /////////////////////////////////////////////////////////////////////
 const M2_bool IM2_Matrix_is_zero(const Matrix *M)
 {
