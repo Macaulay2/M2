@@ -20,8 +20,9 @@ AnnFs(RingElement) := Ideal => f -> (
 ------------------------------------------------------------------------------
 AnnIFs = method()
 AnnIFs(Ideal, RingElement) := Ideal => (I, f) -> (
-     pInfo(1, "AnnFIs: Warning! The method expects an f-saturated module"); 
+     pInfo(1, "AnnIFs: Warning! The method expects an f-saturated module"); 
      W := ring I;
+     createDpairs W;
      n := numgens W;
           
      t := symbol t;
@@ -47,7 +48,7 @@ AnnIFs(Ideal, RingElement) := Ideal => (I, f) -> (
      KI := ideal homogenize(gens tempKI, u, wts);
      
      g := (entries gens KI)#0 | { u * v - 1 } | 
-     if isHomogeneous f 
+     if isHomogeneous f and I == ideal W.dpairVars#1
      then {sum(#(WTUV.dpairVars#0), i->(
 		    WTUV.dpairVars#0#i * WTUV.dpairVars#1#i
 		    )) + (first degree f - 1)*t*dt + (first degree f)}

@@ -18,8 +18,16 @@ doc :
 	../bin/M2 -q '-e phase=2' eliminate.m2  '-e exit 0'
 	$(MAKE) -k -C $(DOC) -f ../../../m2/Makefile.egs
 
-tests : doc
+tests :: doc
 	$(MAKE) -k -C $(TEST) -f ../../../m2/Makefile.tests
+
+tests :: test-D-modules
+test-D-modules :
+	for i in D-modules/TST/*.tst.m2 ;\
+	do echo running test file $$i ;\
+	   ../bin/M2 -q '-e path = prepend( "D-modules/", path )' "-e input \"$$i\"" '-e exit 0' \
+	   || exit 1 ;\
+	done
 
 initialize :: cache $(DOC) $(TEST)
 clean :; rm -rf cache

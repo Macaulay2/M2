@@ -185,7 +185,7 @@ LLL Matrix := options -> (M) -> (
        )
      else
        doLLL(M.cache.LLL, options.Steps);
-     M.cache.LLL.A
+     matrix M.cache.LLL.A
      )
 
 ----------------------------------------------
