@@ -32,7 +32,8 @@ debug Macaulay2
 kerGB := m -> (
      -- m should be a matrix which is a GB, and
      -- whose source has the Schreyer order.
-     map(ring m,schreyerOrder rawKernelOfGB raw m)
+     -- The resulting map will have the same form.
+     map(ring m, rawKernelOfGB raw m)
      )
 
 --------------------------------------------------------------------------------
