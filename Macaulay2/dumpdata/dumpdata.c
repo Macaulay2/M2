@@ -35,6 +35,13 @@ static int isStack(map m) {
   return p - m->from >= 0 && m->to - p > 0;
 }
 
+static int isStatic(map m) {
+  static char p0[] = "h";
+  static char q0[1];
+  void *p = (void *)(p0), *q = (void *)(q0);
+  return p - m->from >= 0 && m->to - p > 0 || q - m->from >= 0 && m->to - q > 0;
+}
+
 static int isDumpable(map m) {
   return m->w && m->r && !isStack(m);
 }
@@ -219,7 +226,7 @@ int loaddata(char const *filename) {
 	fclose(f);
 	return ERROR;
       }
-      if (dumpedmap.to != currmap[j].to) {
+      if (dumpedmap.to != currmap[j].to && !isStatic(&dumpedmap)) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
 	warning("loaddata: map has changed its size.\n  from: %s\n    to: %s\n",fbuf,buf);

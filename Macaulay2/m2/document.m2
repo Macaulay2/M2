@@ -20,6 +20,7 @@ addStartFunction(
 -----------------------------------------------------------------------------
 -- the phase encoding, obsolete
 -----------------------------------------------------------------------------
+writableGlobals.phase = true
 writingInputFiles         := () -> phase === 2
 readingExampleOutputFiles := () -> phase === 4
 writingFinalDocDatabase   := () -> phase === 4
