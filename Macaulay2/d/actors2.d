@@ -445,6 +445,7 @@ expected(type:string,returned:bool):Expr := buildErrorPacket(
 wrongTarget():Expr := buildErrorPacket("'new' expected a type of list or hash table");
 
 transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
+     -- same as above, but parent specified
      basicType := basictype(class);
      when e
      is Error do e
@@ -458,10 +459,10 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 			 if mutable || o.mutable then copy(o.table) else o.table,
 			 class, parent, o.numEntries, 0, mutable);
 		    if mutable then (
-			 if !ancestor(class,cacheTableClass) then o.hash = nextHash();
+			 if !ancestor(class,cacheTableClass) then x.hash = nextHash();
 			 )
-		    else o.hash = hash(o);
-		    Expr(o)))
+		    else x.hash = hash(x);
+		    Expr(x)))
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
@@ -499,14 +500,15 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
 	       if o.class == class then e
 	       else (
 	       	    mutable := ancestor(class,mutableHashTableClass);
-		    Expr(
-			 sethash(
-			      HashTable(
-				   if mutable || o.mutable 
-				   then copy(o.table) else o.table,
-				   class,o.parent,
-				   o.numEntries,0,false),
-			      mutable))))
+		    x := HashTable(
+			 if mutable || o.mutable then copy(o.table) else o.table,
+			 class, o.parent, o.numEntries, 0, mutable);
+		    if mutable then (
+			 if !ancestor(class,cacheTableClass) then x.hash = nextHash();
+			 )
+		    else x.hash = hash(x);
+		    Expr(x))
+	       )
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (

@@ -354,7 +354,7 @@ document { factor,
 	  "R = ZZ/101[u]",
       	  "factor (u^3-1)",
 	  },
-     "The constant term is provided as the last factor.",
+     "The constant term is provided as the last factor, if necessary.",
      EXAMPLE {
 	  "F = frac(ZZ/101[t])",
       	  "factor ((t^3-1)/(t^3+1))",

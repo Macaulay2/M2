@@ -218,21 +218,20 @@ makeit1 := (options) -> (
      then error "expected Weights option to be a list or list of lists of integers";
      if n != 0 and #wts % n != 0 or n == 0 and #wts != 0
      then error "expected Weights option length to be a multiple of the number of variables";
-     if options.?NewMonomialOrder and options.NewMonomialOrder =!= null then (
+     engineOrdering := if options.?NewMonomialOrder and options.NewMonomialOrder =!= null 
+     then (
 	  M.newEngine = true;
-	  M.MonomialOrder = monomialOrdering options.NewMonomialOrder;
+	  monomialOrdering options.NewMonomialOrder;
 	  )
      else (
 	  mo := options.MonomialOrder;
-	  M.MonomialOrder = (
-	       if mo === symbol RevLex then MOrlex (wts,primaryDegrees)
-	       else if mo === symbol GRevLex then MOgrlex (wts,primaryDegrees)
-	       else if mo === symbol Lex then MOlex (wts,primaryDegrees)
-	       else if mo === symbol GLex then MOglex (wts,primaryDegrees)
-	       else if instance(mo, Eliminate) then MOelim(wts,primaryDegrees, mo#0)
-	       else if instance(mo, ProductOrder) then MOproduct(wts, primaryDegrees, toList mo)
-	       else error("invalid MonomialOrder option: ", toString mo)
-	       )
+	  if mo === symbol RevLex then MOrlex (wts,primaryDegrees)
+	  else if mo === symbol GRevLex then MOgrlex (wts,primaryDegrees)
+	  else if mo === symbol Lex then MOlex (wts,primaryDegrees)
+	  else if mo === symbol GLex then MOglex (wts,primaryDegrees)
+	  else if instance(mo, Eliminate) then MOelim(wts,primaryDegrees, mo#0)
+	  else if instance(mo, ProductOrder) then MOproduct(wts, primaryDegrees, toList mo)
+	  else error("invalid MonomialOrder option: ", toString mo)
 	  );
      M.generatorSymbols = varlist;
      M.generatorExpressions = apply(varlist,
@@ -378,7 +377,7 @@ makeit1 := (options) -> (
           else if options.SkewCommutative === true then {1}
 	  else prepend(2, indices(M, options.SkewCommutative));
      M.handle = newHandle (
-	  ggPush M.MonomialOrder,
+	  ggPush engineOrdering,
 	  if M.?newEngine then ggPush variableOrder,
 	  ggPush betwNames(" ",M.generators),		    -- or "" to omit them
 	  if not M.?newEngine then (
@@ -485,9 +484,6 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      if opts.MonomialOrder === null then
           -- use the product order
           opts.MonomialOrder = GRevLex;
---             Product=>
---             {{# M.Variables,M.MonomialOrder}, 
---             {# N.Variables,N.MonomialOrder}};
      if opts.Degrees === null then (
 	  ndegs := (
 	       if # M.Degrees > 0
