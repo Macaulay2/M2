@@ -740,6 +740,6 @@ document { symbol ##, HEADLINE "uncurry a function",
      }
 
 -- these files are made at compile time
-load "gbdoc.m2"
-load "gbfunctions.m2"
+--load "gbdoc.m2"
+--load "gbfunctions.m2"
 
