@@ -201,6 +201,10 @@ $(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libe
 		'-e errorDepth 0' \
 		'-e makeHTML("Macaulay 2", DocDatabase)' '-e exit 0'
 install ::
+	install -d $(docm2dir)
+	ln -s $(PACKAGE_VERSION) $(docm2dir)/currentVersion
+
+install ::
 	$(INSTALL_PROGRAM) -d "$(htmldocdir)"
 	cd $(TARGETDIR) && tar cf - *.html | tar xf - -C "$(htmldocdir)"
 
@@ -239,10 +243,13 @@ test4: ../util/screen
 clean::; rm -f test4
 endif
 
-$(m2dir):; $(INSTALL) -d $(m2dir)
-install:: $(m2dir)
+install::
+	install -d $(datam2dir)
+	ln -s $(PACKAGE_VERSION) $(datam2dir)/currentVersion
+
 install:: $(DUMPEDM2FILES) $(DOCSEQUENCE)
-	$(INSTALL_DATA) $^ $(m2dir)
+	install -d $(m2dir)
+	install $^ $(m2dir)
 
 clean::
 	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc \

@@ -44,10 +44,9 @@ endPackage = () -> (
 
 makeHTMLPages = method()
 makeHTMLPages Package := p -> (
-     currentHTMLDirectory = concatenate(
-	  p.name,"-",p.version,"/share/doc/Macaulay2/packages/StateTables/html/"
-	  );
+     buildDirectory = p.name | "-" | p.version;
+     htmlDirectory = buildDirectory | "/share/doc/Macaulay2/packages/" | p.name | "/html/";
      keys := unique join(p#"symbols",p#"docs");
      ret := makeHtmlNode \ keys;
-     "created " | toString( #ret ) | " html pages: " | stack keys
+     "pages " | stack keys | " in " | htmlDirectory
      )
