@@ -7,6 +7,7 @@
 #include "text_io.hpp"
 
 extern char system_interrupted;
+extern "C" void spincursor(void);
 int comp_printlevel = 0;
 
 extern ring_elem hilb(const Matrix &M, const Ring *RR);
@@ -850,6 +851,7 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 				     stop_gb, stop_syz, stop_pairs, 
 				     stop_codim, stop_min_gens, stop_subring);
       if (is_done != COMP_COMPUTING) break;
+      spincursor();
       if (system_interrupted) 
 	{
 	  is_done = COMP_INTERRUPTED;
