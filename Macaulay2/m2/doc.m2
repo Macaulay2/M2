@@ -1871,10 +1871,12 @@ document { "reading the documentation",
      PARA,
      "The directory ", TT "Macaulay2/book", " contains the code for producing
      the documentation in TeX form, which can be printed with ", TT "dvips", " 
-     or viewed on yoru screen with ", TT "xdvi", ".  The hypertext links 
+     or viewed on your screen with ", TT "xdvi", ".  The hypertext links 
      in the book can be followed if you get ", TT "xdvi", " version 20a
-     or later.  The source code for ", TT "xdvi", " can
-     be obtained at one of the CTAN mirror sites in the directory
+     or later.  (If your old ", TT "xdvi", " complains about the unknown special
+     commands that implement hypertext links, you can give it the option 
+     ", TT "-hushspecials", " to silence it.)  The source code for ", TT "xdvi", " 
+     can be obtained at one of the CTAN mirror sites in the directory
      ", TT "dviware/xdvik", ".  Obtain a list of CTAN mirror sites by
      fingering ", TT "ctan@ftp.tex.ac.uk", ".",
      PARA,

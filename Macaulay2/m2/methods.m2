@@ -1586,7 +1586,7 @@ document { quote Hom,
      "Implemented with a method of the same name.",
      PARA,
      "Use ", TO "homomorphism", " to convert an element of the module of
-     homomorphism to a matrix."
+     homomorphisms to a matrix."
      }
 document { quote gens,
      "See ", TO "generators", "."
