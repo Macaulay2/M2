@@ -754,10 +754,10 @@ synopsis Thing := key -> (
 			 then SEQ { "Function: ", TO key#0 }
 			 else SEQ { "Operator: ", TO key#0 }
 			 ),
-		    if inp#?0 then VBOX { "Inputs:", UL inp },
-		    if ino#?0 then VBOX { "Optional inputs:", UL ino },
-		    if out#?0 then VBOX { "Outputs:", UL out },
-		    if res#?0 then VBOX { "Results:", UL res }
+		    if inp#?0 then SEQ1 { "Inputs:", UL inp },
+		    if ino#?0 then SEQ1 { "Optional inputs:", UL ino },
+		    if out#?0 then SEQ1 { "Outputs:", UL out },
+		    if res#?0 then SEQ1 { "Results:", UL res }
 		    }
 	       }
 	  ))

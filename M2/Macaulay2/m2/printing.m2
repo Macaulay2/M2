@@ -44,9 +44,7 @@ ParagraphList = new Type of BasicList
 net ParagraphList := x -> (
      x = toList x;
      x = net \ x;					    -- convert each to net
-     x = select(x, p -> width p > 0);			    -- omit null strings
      x = apply(x,p -> wrap net p);
-     x = between("",x);					    -- double space
      stack x)
 
 -- not printing:
