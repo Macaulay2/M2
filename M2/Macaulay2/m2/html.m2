@@ -691,7 +691,7 @@ installPackage Package := opts -> pkg -> (
 	       else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
 	       then copyFile(outf',outf)
 	       else (
-		    error "debug me";
+		    -- error "debug me";
 		    runFile(inf,outf,tmpf,desc,pkg,identity,".");
 		    );
 	       ));
