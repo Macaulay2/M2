@@ -173,31 +173,41 @@ getstring(o:PosFile):(null or Word) := (
 lookingatcomment(file:PosFile):bool := (
      peek(file,0) == int('-') && peek(file,1) == int('-')
      );
-skipwhite(file:PosFile):void := (
+skipwhite(file:PosFile):bool := (
+     sawNewline := false;
      while true do (
 	  if lookingatcomment(file)
-	  then while !isnewline(peek(file)) && peek(file) != EOF do getc(file)
+	  then (
+	       while !isnewline(peek(file)) && peek(file) != EOF do getc(file);
+	       sawNewline = true;
+	       )
 	  else 
-	  if iswhite(peek(file)) then (getc(file); while iswhite(peek(file)) do getc(file))
+	  if iswhite(peek(file)) then (
+	       if isgray(getc(file)) then sawNewline = true; 
+	       while iswhite(peek(file)) do (
+	       	    if isgray(getc(file)) then sawNewline = true; 
+		    )
+	       )
 	  else break;
-	  ));
-export errorToken := Token(dummyWord,dummyPosition,globalScope,dummySymbol);
+	  );
+     sawNewline);
+export errorToken := Token(dummyWord,dummyPosition,globalScope,dummySymbol,false);
 export gettoken(file:PosFile):Token := (
      -- warning : tokenbuf is static
      while true do (
-	  skipwhite(file);
+	  sawNewline := skipwhite(file);
 	  pos := copy(file.pos);
 	  ch := peek(file);
-     	  if iseof(ch) then return(Token(wordEOF,pos,globalScope,dummySymbol))
+     	  if iseof(ch) then return(Token(wordEOF,pos,globalScope,dummySymbol,false))
 	  else if isnewline(ch) then (
 	       getc(file);
-	       return(Token(newlineW,pos,globalScope,dummySymbol)))
+	       return(Token(newlineW,pos,globalScope,dummySymbol,false)))
 	  else if isalpha(ch) then (
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
 	       return(Token(
 			 unique(takestring(tokenbuf),parseWORD),
-			 pos,globalScope,dummySymbol)))
+			 pos,globalScope,dummySymbol,sawNewline)))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
 	       while isdigit(peek(file)) do (
@@ -218,21 +228,21 @@ export gettoken(file:PosFile):Token := (
 	       s := takestring(tokenbuf);
 	       return(Token(
 			 Word(s,typecode,0, parseWORD),
-			 pos,globalScope,dummySymbol))) 
+			 pos,globalScope,dummySymbol,sawNewline))) 
 	  else if ch == int('/') && peek(file,1) == int('/') && peek(file,2) == int('/') then (
 	       when getstringslashes(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return(errorToken)
 		    )
-	       is word:Word do return(Token(word,pos,globalScope,dummySymbol)))
+	       is word:Word do return(Token(word,pos,globalScope,dummySymbol,sawNewline)))
 	  else if isquote(ch) then (
 	       when getstring(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return(errorToken)
 		    )
-	       is word:Word do return(Token(word,pos,globalScope,dummySymbol)))
+	       is word:Word do return(Token(word,pos,globalScope,dummySymbol,sawNewline)))
 	  else if ch == 27 && peek(file,1) == int('$') && peek(file,2) == int('B') then (
 	       -- junet = iso-2022-7bit
 	       tokenbuf << char(getc(file));-- esc
@@ -250,14 +260,14 @@ export gettoken(file:PosFile):Token := (
 		    );
 	       return(Token(
 			 unique(takestring(tokenbuf),parseWORD),
-			 pos,globalScope,dummySymbol)))
+			 pos,globalScope,dummySymbol,sawNewline)))
 	  else (
 	       when recognize(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return(errorToken)
 		    )
-	       is word:Word do return(Token(word,pos,globalScope,dummySymbol)))));
+	       is word:Word do return(Token(word,pos,globalScope,dummySymbol,sawNewline)))));
 export gettoken(file:PosFile,obeylines:bool):Token := (
      while true do (
 	  w := gettoken(file);

@@ -130,8 +130,6 @@ buttonBar = (key) -> CENTER {
 	<input type="hidden" name="format"   value="builtin-short">
 	<input type="hidden" name="sort"     value="score">
 	<input type="hidden" name="config"   value="htdig-M2">
-	<input type="hidden" name="restrict" value="">
-	<input type="hidden" name="exclude"  value="">
      </form>
      ///)
      }

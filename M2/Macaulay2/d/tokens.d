@@ -67,7 +67,8 @@ export Token := {		-- a word, as encountered in the input
      word:Word,			--   the word
      position:Position,		--   the location where it was encountered
      scope:Scope,		--   the scope in which it was encountered
-     entry:Symbol     	  	--   the dictionary entry
+     entry:Symbol,     	  	--   the dictionary entry
+     followsNewline:bool        --   whether it followed white space with a newline in it
      };
 
 -- ParseTree
@@ -286,7 +287,7 @@ export dummySymbol   := Symbol(
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
      globalScope.seqno,-1,1,true,true,false
      );
-export dummyToken   := Token(dummyWord,dummyPosition,globalScope,dummySymbol);
+export dummyToken   := Token(dummyWord,dummyPosition,globalScope,dummySymbol,false);
 export parseEOL     := makedummy();
 export parseEOF     := makedummy();
 export parseWORD    := makedummy();
