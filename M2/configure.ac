@@ -170,8 +170,15 @@ AC_ARG_ENABLE(lapack,
 
 AC_SUBST(encapsrc)
 AC_ARG_WITH(encapsrc,
-    AC_HELP_STRING(--with-encapsrc=...,encap directory [PREFIX/encap]),
+    AC_HELP_STRING(--with-encapsrc=...,encap directory (PREFIX/encap)),
     encapsrc="$withval",
+    )
+
+AC_SUBST(LIBGDB)
+AC_ARG_WITH(LIBGDB,
+    AC_HELP_STRING(--with-libgdb=...,libgdb option (-lgdb)),
+    LIBGDB="$withval",
+    LIBGDB="-lgdb"
     )
 
 AC_SUBST(GC_FOR_NEW)
