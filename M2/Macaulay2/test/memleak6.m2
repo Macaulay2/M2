@@ -52,8 +52,7 @@ example=Ap
 	collectGarbage()
 	k = # netRows engineHeap()
 	k'= # netRows engineMemory()
-        n = 30
-
+        n = 40
 
 f = i->(
      if i%20==0 then collectGarbage();
@@ -80,8 +79,8 @@ scan(n,f)
 	collectGarbage()
 	K = # netRows engineHeap()
 	K'= # netRows engineMemory()
-	stderr << "total number of handles wasted per iteration : " << K-k << endl
-	stderr << "total number of memory types wasted per iteration : " << K'-k' << endl
+	stderr << "total number of handles wasted : " << K-k << endl
+	stderr << "total number of memory types wasted : " << K'-k' << endl
 	w = floor( 1/2 + (K-k)/n )
 	w' = floor( 1/2 + (K'-k')/n )
 	stderr << "average number of handles wasted per iteration : " << w << endl
