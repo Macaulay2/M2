@@ -225,7 +225,7 @@ document {
      Key => (resolution, Matrix),
      Headline => "given a module map represented by a matrix, produce a comparison map between resolutions of its source and target",
      Usage => "resolution f",
-     Inputs => { { "f" => {"a module homomorphism ", TT "N <--- M"} } },
+     Inputs => { "f" => {"a module homomorphism ", TT "N <--- M"} },
      Outputs => { {"a chain map from a projective resolution of the source of ", TT "f", " to a resolution of the target of ", TT "f" } },
      Examples => EXAMPLE {
 	  "R = ZZ[x,y,z]",
