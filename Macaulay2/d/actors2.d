@@ -192,13 +192,14 @@ setupfun("values",values);
 pairs(e:Expr):Expr := (
      when e
      is o:Dictionary do list(
-	  new Sequence len o.symboltable.numEntries do
-	  foreach bucket in o.symboltable.buckets do (
-	       p := bucket;
-	       while true do (
-		    when p
-		    is q:SymbolListCell do (provide Expr(Sequence(Expr(q.entry.word.name),Expr(SymbolClosure(globalFrame,q.entry)))); p=q.next;)
-		    else break; )))
+	  new Sequence len o.symboltable.numEntries do (
+	       foreach bucket in o.symboltable.buckets do (
+		    p := bucket;
+		    while true do (
+			 when p
+			 is q:SymbolListCell do (provide Expr(Sequence(Expr(q.entry.word.name),Expr(SymbolClosure(globalFrame,q.entry)))); p=q.next;)
+			 else break; ));
+	       ))
      is o:HashTable do list(
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
