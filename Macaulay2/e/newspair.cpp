@@ -1,28 +1,41 @@
 // Copyright 1996  Michael E. Stillman
 
 #include "newspair.hpp"
+#include "text_io.hpp"
 
 stash *GB_elem::mystash;
 stash *S_pair::mystash;
+stash *gen_pair::mystash;
 stash *s_pair_bunch::mystash;
 stash *s_pair_set::mystash;
 
 extern int comp_printlevel;
 
+gen_pair::gen_pair()
+{
+}
+
+gen_pair::gen_pair(vec f, vec fsyz)
+  : next(NULL),
+    f(f),
+    fsyz(fsyz)
+{
+}
+
 S_pair::S_pair()
 {
 }
 
-S_pair::S_pair(int is_gen, vec f, vec fsyz)
+S_pair::S_pair(vec fsyz)
 : next(NULL), 
-  is_gen(is_gen),
-  f(f),
   fsyz(fsyz)
 {
 }
 
-s_pair_set::s_pair_set(const FreeModule *FF, const FreeModule *GG)
-: F(FF), G(GG), heap(NULL), this_deg(NULL),
+s_pair_set::s_pair_set(const FreeModule *FF, 
+		       const FreeModule *FFsyz,
+		       const FreeModule *GGsyz)
+: F(FF), Fsyz(FFsyz), Gsyz(GGsyz), heap(NULL), this_deg(NULL),
   nelems(0), ngens(0), ncomputed(0)
 {
 }
@@ -52,25 +65,44 @@ void s_pair_set::remove_pair_list(S_pair *&p)
     }
 }
 
+void s_pair_set::remove_pair(S_pair *&s)
+{
+  s->next = NULL;
+  Gsyz->remove(s->fsyz);
+  delete s;
+  s = NULL;
+}
+
+void s_pair_set::remove_gen_list(gen_pair *&p)
+{
+  while (p != NULL)
+    {
+      gen_pair *s = p;
+      p = p->next;
+      remove_gen(s);
+    }
+}
+
+void s_pair_set::remove_gen(gen_pair *&s)
+{
+  s->next = NULL;
+  F->remove(s->f);
+  Fsyz->remove(s->fsyz);
+  delete s;
+  s = NULL;
+}
+
 void s_pair_set::flush_degree(s_pair_bunch *&p)
 {
   remove_pair_list(p->pairs);
-  remove_pair_list(p->gens);
+  remove_gen_list(p->gens);
   remove_pair_list(p->unsorted_pairs);
-  remove_pair_list(p->unsorted_gens);
+  remove_gen_list(p->unsorted_gens);
   p->next = NULL;
   delete p;
   p = NULL;
 }
 
-void s_pair_set::remove_pair(S_pair *&s)
-{
-  s->next = NULL;
-  F->remove(s->f);
-  G->remove(s->fsyz);
-  delete s;
-  s = NULL;
-}
 
 //////////////////////////////////////////////
 //// Sorting /////////////////////////////////
@@ -79,10 +111,13 @@ void s_pair_set::remove_pair(S_pair *&s)
 int s_pair_set::compare(S_pair *f, S_pair *g) const
 {
   // Note: we are only comparing elements of the same degree
-  // and either both are gens or both are pairs.
-  
-  if (f->is_gen) return F->compare(f->f, g->f);
-  return G->compare(f->fsyz, g->fsyz);
+  return Gsyz->compare(f->fsyz, g->fsyz);
+}
+
+int s_pair_set::compare(gen_pair *f, gen_pair *g) const
+{
+  // Note: we are only comparing elements of the same degree
+  return F->compare(f->f, g->f);
 }
 
 S_pair *s_pair_set::merge(S_pair *f, S_pair *g) const
@@ -142,6 +177,63 @@ void s_pair_set::sort(S_pair *& p) const
   p = merge(p1, p2);
 }
 
+gen_pair *s_pair_set::merge(gen_pair *f, gen_pair *g) const
+{
+  // Sort in ascending degree order, then ascending monomial order
+  if (g == NULL) return f;
+  if (f == NULL) return g;
+  gen_pair head;
+  gen_pair *result = &head;
+  while (1)
+    switch (compare(f, g))
+      {
+      case 1:
+	result->next = g;
+	result = result->next;
+	g = g->next;
+	if (g == NULL) 
+	  {
+	    result->next = f;
+	    return head.next;
+	  }
+	break;
+      case -1:
+      case 0:
+	result->next = f;
+	result = result->next;
+	f = f->next;
+	if (f == NULL) 
+	  {
+	    result->next = g; 
+	    return head.next;
+	  }
+	break;
+      }
+}
+void s_pair_set::sort(gen_pair *& p) const
+{
+  if (p == NULL || p->next == NULL) return;
+  gen_pair *p1 = NULL;
+  gen_pair *p2 = NULL;
+  while (p != NULL)
+    {
+      gen_pair *tmp = p;
+      p = p->next;
+      tmp->next = p1;
+      p1 = tmp;
+
+      if (p == NULL) break;
+      tmp = p;
+      p = p->next;
+      tmp->next = p2;
+      p2 = tmp;
+    }
+
+  sort(p1);
+  sort(p2);
+  p = merge(p1, p2);
+}
+
 //////////////////////////////////////////////
 //// Insertion ///////////////////////////////
 //////////////////////////////////////////////
@@ -168,24 +260,23 @@ s_pair_bunch *s_pair_set::get_degree(int d)
 }
 void s_pair_set::insert(S_pair *&p)
 {
-  if (p->is_gen)
-    {
-      int deg = F->primary_degree(p->f);
-      s_pair_bunch *q = get_degree(deg);
-      p->next = q->unsorted_gens;
-      q->unsorted_gens = p;
-      q->ngens++;
-      ngens++;
-    }
-  else
-    {
-      int deg = G->primary_degree(p->fsyz);
-      s_pair_bunch *q = get_degree(deg);
-      p->next = q->unsorted_pairs;
-      q->unsorted_pairs = p;
-      q->nelems++;
-      nelems++;
-    }
+  int deg = Gsyz->primary_degree(p->fsyz);
+  s_pair_bunch *q = get_degree(deg);
+  p->next = q->unsorted_pairs;
+  q->unsorted_pairs = p;
+  q->nelems++;
+  nelems++;
+  p = NULL;
+}
+
+void s_pair_set::insert(gen_pair *&p)
+{
+  int deg = F->primary_degree(p->f);
+  s_pair_bunch *q = get_degree(deg);
+  p->next = q->unsorted_gens;
+  q->unsorted_gens = p;
+  q->ngens++;
+  ngens++;
   p = NULL;
 }
 
@@ -233,12 +324,12 @@ S_pair *s_pair_set::next_pair()	// Returns NULL if no more in this degree.
   return result;
 }
 
-S_pair *s_pair_set::next_gen()	// Returns NULL if no more in this degree.
+gen_pair *s_pair_set::next_gen()	// Returns NULL if no more in this degree.
 				// OR if an element of lower degree has appeared.
 {
   if (this_deg != heap) return NULL;
 
-  S_pair *result = this_deg->gens;
+  gen_pair *result = this_deg->gens;
   if (result == NULL) return NULL;
   this_deg->gens = result->next;
   this_deg->ngens--;
@@ -269,16 +360,15 @@ void s_pair_set::flush_degree()
 
 void s_pair_set::debug_out(buffer &o, S_pair *s) const
 {
-  if (s->is_gen)
-    {
-      o<< "  gen  ";
-      F->elem_text_out(o, s->f);
-    }
-  else
-    {
-      o << "  pair ";
-      G->elem_text_out(o, s->fsyz);
-    }
+  o << "  pair ";
+  Gsyz->elem_text_out(o, s->fsyz);
+  o << newline;
+}
+
+void s_pair_set::debug_out(buffer &o, gen_pair *s) const
+{
+  o<< "  gen  ";
+  F->elem_text_out(o, s->f);
   o << newline;
 }
 
@@ -320,6 +410,7 @@ void s_pair_set::stats()
       for (p = heap; p != NULL; p = p->next)
 	{
 	  S_pair *s;
+	  gen_pair *t;
 	  o << "-- degree " << p->mydeg << " ---" << newline;
 	  for (s = heap->pairs; s != NULL; s = s->next)
 	    debug_out(o, s);
@@ -327,11 +418,12 @@ void s_pair_set::stats()
 	  for (s = heap->unsorted_pairs; s != NULL; s = s->next)
 	    debug_out(o, s);
 	  o << "-- gens -------" << newline;
-	  for (s = heap->gens; s != NULL; s = s->next)
-	    debug_out(o, s);
+	  for (t = heap->gens; t != NULL; t = t->next)
+	    debug_out(o, t);
 	  o << "-- unsorted -------" << newline;
-	  for (s = heap->unsorted_gens; s != NULL; s = s->next)
-	    debug_out(o, s);
+	  for (t = heap->unsorted_gens; t != NULL; t = t->next)
+	    debug_out(o, t);
 	}
     }
+  emit(o.str());
 }

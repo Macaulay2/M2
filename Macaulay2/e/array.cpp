@@ -59,6 +59,9 @@ template class ARRAY(hm_elem *);
 template class ARRAY(gb_elem *);
 template class ARRAY(monideal_pair *);
 
+#include "gbZZ.hpp"
+template class ARRAY(GB_elem *);
+
 #include "respoly2.hpp"
 #include "res2.hpp"
 template class ARRAY(res2_pair *);

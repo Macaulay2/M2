@@ -28,20 +28,28 @@ struct GB_elem
   void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
+struct gen_pair
+{
+  gen_pair *next;
+  vec f;
+  vec fsyz;
+
+  gen_pair();
+  gen_pair(vec f, vec fsyz);
+  // infrastructure
+  friend void i_stashes();
+  static stash *mystash;
+  void *operator new(size_t) { return mystash->new_elem(); }
+  void operator delete(void *p) { mystash->delete_elem(p); }
+};
 struct S_pair
 {
   S_pair *next;
-  char is_gen;			// 0 means spair, 1 means gen.  spairs get sorted
-				// by degree, then fsyz, gens get sorted by degree, then f.
-  vec f;			// A vector in F, NULL iff the s-pair has not yet been
-				// computed, OR at the end of a reduction, if the element
-				// reduced to 0.
-  vec fsyz;			// A vector in G: each index corresponds to a GB elem
-				// G should use a Schreyer order
+  vec fsyz;
 
-  S_pair(int is_gen, vec f, vec fsyz);
   S_pair();
-
+  S_pair(vec fsyz);
+  // infrastructure
   friend void i_stashes();
   static stash *mystash;
   void *operator new(size_t) { return mystash->new_elem(); }
@@ -54,9 +62,9 @@ struct s_pair_bunch
   int mydeg;
 
   S_pair *pairs;
-  S_pair *gens;
+  gen_pair *gens;
   S_pair *unsorted_pairs;
-  S_pair *unsorted_gens;
+  gen_pair *unsorted_gens;
 
   int nelems;			// Number remaining
   int ngens;			// Number remaining
@@ -74,7 +82,7 @@ struct s_pair_bunch
 
 class s_pair_set
 {
-  const FreeModule *F, *G;
+  const FreeModule *F, *Fsyz, *Gsyz;
 
   s_pair_bunch *heap;		// Sorted by increasing degree
   s_pair_bunch *this_deg;	// Points to current degree (which should be the first)
@@ -91,20 +99,30 @@ class s_pair_set
   void sort(S_pair *&p) const;
   S_pair *merge(S_pair *p, S_pair *q) const;
 
+  int compare(gen_pair *f, gen_pair *g) const;
+  void sort(gen_pair *&p) const;
+  gen_pair *merge(gen_pair *p, gen_pair *q) const;
+
   s_pair_bunch *get_degree(int d);
 
   void debug_out(buffer &o, S_pair *s) const;
-public:
-  s_pair_set(const FreeModule *F, const FreeModule *G);
-  ~s_pair_set();
+  void debug_out(buffer &o, gen_pair *s) const;
+
   void remove_pair(S_pair *&s);
   void remove_pair_list(S_pair *&p);
 
-  void insert(S_pair *&p);	// Insert an s-pair or generator
+  void remove_gen(gen_pair *&s);
+  void remove_gen_list(gen_pair *&p);
+public:
+  s_pair_set(const FreeModule *F, const FreeModule *Fsyz, const FreeModule *Gsyz);
+  ~s_pair_set();
+
+  void insert(S_pair *&p);	// Insert an s-pair
+  void insert(gen_pair *&p);	// Insert a generator
 
   int next_degree(int &nextdeg);	// Returns number to be done in nextdeg.
   S_pair *next_pair();		// Returns NULL if no more
-  S_pair *next_gen();		// Returns NULL if no more
+  gen_pair *next_gen();		// Returns NULL if no more
   void flush_degree();
 
   int n_elems_left() const { return nelems; } // The number currently contained in this set

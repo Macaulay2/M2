@@ -163,6 +163,7 @@ class RingMap;
 
 class gb_comp;
   class GB_comp;
+  class GBZZ_comp;
   class NGB_comp;
   class GBinhom_comp;
   class HermiteComputation;
