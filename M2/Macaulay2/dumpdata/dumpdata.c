@@ -155,6 +155,7 @@ int loaddata(char const *filename) {
       if (isCheckable(&currmap[j])) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
+	trim(buf);
 	warning("loaddata: map has appeared or changed its location: %s\n",buf);
 	fclose(f);
 	return ERROR;
@@ -171,6 +172,7 @@ int loaddata(char const *filename) {
       if (dumpedmap.r != currmap[j].r || dumpedmap.w != currmap[j].w || dumpedmap.x != currmap[j].x) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
+	trim(buf);
 	warning("loaddata: map protection has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
 	fclose(f);
 	return ERROR;
@@ -178,6 +180,7 @@ int loaddata(char const *filename) {
       if (dumpedmap.to != currmap[j].to && !isStatic(&dumpedmap)) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
+	trim(buf);
 	warning("loaddata: map has changed its size.\n  from: %s\n    to: %s\n",fbuf,buf);
 	fclose(f);
 	return ERROR;
@@ -185,6 +188,7 @@ int loaddata(char const *filename) {
       if (dumpedmap.checksum != currmap[j].checksum) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
+	trim(buf);
 	warning("loaddata: checksum has changed from %u to %u for map %s\n",
 		dumpedmap.checksum, currmap[j].checksum, buf);
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {

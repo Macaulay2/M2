@@ -113,15 +113,34 @@ assert( x#?"asdf" )
 assert( not x#?"df" )
 assert( x#"asdf" === 2 )
 
+x = new MutableHashTable
+x#(symbol |, String, String) = concatenate
+assert( x#?(symbol |, String, String) )
+assert( x# (symbol |, String, String) === concatenate )
+
 -- test method installation and lookup
-String | String := concatenate
-assert( lookup(symbol |, String, String ) =!= null )
-assert( class lookup(symbol |, String, String ) === Function )
-assert( lookup(symbol |, String, String ) === concatenate )
-assert( "asdf" | "adsf" === "asdfadsf" )
+assert( class symbol | === Symbol )
+assert( class concatenate === Function )
+assert( class String === Type )
+   -- first do it manually
+  String # (symbol |, String, String) = concatenate
+  assert( String #? (symbol |, String, String) )
+  assert( String # (symbol |, String, String) === concatenate )
+  assert( lookup(symbol |, String, String ) =!= null )
+  assert( class lookup(symbol |, String, String ) === Function )
+  assert( lookup(symbol |, String, String ) === concatenate )
+  assert( "asdf" | "adsf" === "asdfadsf" )
+   -- then do it the right way, with a different operator
+  String || String := concatenate
+  assert( String #? (symbol ||, String, String) )
+  assert( String # (symbol ||, String, String) === concatenate )
+  assert( lookup(symbol ||, String, String ) =!= null )
+  assert( class lookup(symbol ||, String, String ) === Function )
+  assert( lookup(symbol ||, String, String ) === concatenate )
+  assert( "asdf" || "adsf" === "asdfadsf" )
 
 -- test |
-assert( 12|5 === 13 )
+assert( 12|5 === 13 )					    -- this is a method, too.
 
 -- test &
 assert( 12&5 === 4 )

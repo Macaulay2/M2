@@ -1,5 +1,8 @@
 -- startup.m2
+
 -- this file gets incorporated into the executable file bin/Macaulay2 as the string 'startupString'
+
+--		Copyright 1993-2003 by Daniel R. Grayson
 
 firstTime := not Array.?name
 

@@ -1,4 +1,4 @@
---		Copyright 1993-2002 by Daniel R. Grayson
+--		Copyright 1993-2003 by Daniel R. Grayson
 
 if class Manipulator =!= Symbol then ( 
      printString(stderr, "warning: skipping setup.m2, already loaded\n"); flush stderr; 
@@ -11,7 +11,6 @@ writableGlobals := set (
      symbol documentationPath, symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm,
      symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol currentPrompts, symbol currentPackage,
      symbol packages, symbol currentDictionary
-     -- symbol TeXmacsMode, symbol phase			    -- obsolete!
      )
 
 Symbols = new MutableHashTable
@@ -31,7 +30,7 @@ addStartFunction(
 	  )
      )
 
--- maniupulators
+-- manipulators
 
 Manipulator = new Type of BasicList
 Manipulator.synonym = "manipulator"
@@ -117,16 +116,14 @@ markLoaded := (filename,origfilename) -> (
      loaded#origfilename = true; 
      if notify then (
 	  filename = minimizeFilename filename;
-	  -- stderr << "--loaded " << filename << endl
+	  stderr << "--loaded " << filename << endl
 	  );
      )
 
 isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
 
 tryload := (filename,loadfun) -> (
-     -- if notify then << "--loading " << filename << endl;
      if isAbsolutePath filename or isSpecial filename then (
-	  -- stderr << "trying to load " << filename << endl;		    -- debugging
 	  if not fileExists filename then return false;
 	  loadfun filename;
 	  markLoaded(filename,filename);
@@ -139,11 +136,8 @@ tryload := (filename,loadfun) -> (
 	       dir -> (
 		    if class dir =!= String then error "member of 'path' not a string";
 		    fullfilename := dir | filename;
-	  	    -- stderr << "checking for existence of " << fullfilename << endl; -- debugging
 		    if not fileExists fullfilename then return false;
-		    -- stderr << "trying to load " << fullfilename << endl;	    -- debugging
 		    loadfun fullfilename;
-		    -- stderr << "done loading " << fullfilename << endl;		    -- debugging
 		    markLoaded(fullfilename,filename);
 		    true))))
 
@@ -163,14 +157,15 @@ needs = s -> if not loaded#?s then load s
 
 new HashTable from List := HashTable => (O,v) -> hashTable v
 
+load "loads.m2"
+stderr << "--loaded loads.m2" << endl
+
+lastSystemSymbol = local newPrivateSymbol
+
 addStartFunction(
      () -> scanPairs(symbolTable(), (name,sym) -> if not writableGlobals#?sym then protect sym)
      )
 
-load "loads.m2"
-stderr << "--loaded *.m2" << endl
-
-lastSystemSymbol = local newPrivateSymbol
 notify = true
 
 addStartFunction(
@@ -184,6 +179,7 @@ addStartFunction(
 		    or
 		    tryload(getenv "HOME" | "/.init.m2", simpleLoad)))))
 
+erase symbol simpleLoad
+
 addStartFunction( () -> ( loadDepth (1 + loadDepth()); errorDepth (1 + errorDepth()); ) )
 
-erase symbol simpleLoad

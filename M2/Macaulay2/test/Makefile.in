@@ -17,7 +17,7 @@ ARGS := -q '-epath=append(path,"@srcdir@/../packages/")' '-eerrorDepth(0)' --sil
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ulimit -t 600; time env M2HOME=@srcdir@/.. ../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
+	@ ulimit -t 600; time ../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@
 
 clean  :	
