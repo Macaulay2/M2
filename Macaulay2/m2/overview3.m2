@@ -341,12 +341,18 @@ document {
 	  TO "Preface",
 	  TO "Getting started",
 	  TO "Mathematical Overview",
+     	  TO "Algorithmic Overview, including Groebner bases",
+     	  TO "The Macaulay 2 Language",			    -- one line techniques, using packages
+	  TO "Programming Overview",			    -- multiple line techniques, saved in a function in a file, writing packages
  	  TO "Mathematical Examples",
-	  TO "Programming Overview",
      	  TO "Frequently encountered problems",
 	  TO "Packages",
 	  TO "Replacements for commands and scripts from Macaulay",
 	  }
+     }
+
+document { Key => "Algorithmic Overview, including Groebner bases",
+     TO "Groebner bases and related computations",
      }
 
 document { Key => "Frequently encountered problems",
@@ -357,8 +363,20 @@ document { Key => "Frequently encountered problems",
 
 document { Key => "Packages",
      Subnodes => {
-	  TO "Using packages",
-	  TO "Writing packages"
+	  TO "Using packages",				    -- ?
+	  TO "Writing packages",			    -- ?
+     	  -- these next ones might not be needed:
+     	  TO "loading a library",
+     	  TO "how to get documentation on a library",
+     	  "available libraries",
+	  TO "blow ups",
+	  TO "convex hulls and polar cones",
+	  TO "D-modules",
+	  TO "elimination theory",
+	  TO "graphing curves and surfaces via 'surf'",
+	  TO "invariants of finite groups",
+	  TO "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction",
+	  TO "SAGBI bases",
 	  }
      }
 

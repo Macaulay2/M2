@@ -1439,7 +1439,7 @@ document {
 
 document {
      Key => substitute,
-     Headline => "substitute values for variables",
+     Headline => "substituting values for variables",
      TT "substitute(f,v)", " -- substitute values for the variables in the matrix,
      module, vector, polynomial, or monomial ", TT "f", " as specified by ", TT "v", ".", 
      PARA,
