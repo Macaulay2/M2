@@ -12,9 +12,8 @@ ZZ _ Monoid := MonoidElement => (i,M) -> (
 leadMonomial RingElement := MonoidElement => (f) -> (
      R := ring f;
      M := monoid R;
-     leadMonomial R := (
-	  f -> new M from rawLeadMonomial f.RawRingElement
-	  );
+     n := numgens M;
+     leadMonomial R := f -> new M from rawLeadMonomial(n, f.RawRingElement);
      leadMonomial f)
 
 makeSparse := (v) -> select(apply(#v, i -> (i,v#i)), (k,v) -> v != 0)
@@ -345,7 +344,7 @@ RingElement _ MonoidElement := RingElement => (f,m) -> (
      R := coefficientRing RM;
      M := monoid RM;
      if M =!= class m then error "expected monomial from same ring";
-     RM _ M := (f,m) -> new R from rawCoefficient(f.RawRingElement, m.RawMonomial);
+     RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, f.RawRingElement, m.RawMonomial);
      f _ m)
 
 -- Local Variables:

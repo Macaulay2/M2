@@ -474,7 +474,7 @@ extern "C" {
   int rawRingElementCompare(const RingElement *a,
 			    const RingElement *b);
   /* Superficially compares two ring elements a,b from the same ring.  If the ring is
-     a polynomial ring, then the lead monomials are compared.  If the ring is ZZ or QQ
+     a polynomial ring, then the lead flat monomials are compared.  If the ring is ZZ or QQ
      then a > b iff |a| > |b|.
      -1 means that a < b
      0 means that a == b (not equal, but this order does not distinguish them)
@@ -547,11 +547,11 @@ extern "C" {
 	    const RingElement *a); /* drg: connected rawLeadCoefficient*/
 
   const MonomialOrNull *IM2_RingElement_lead_monomial(
-            int nvars, /* number of vaariables in an outermost monoid */
+            int nvars, /* number of variables in an outermost monoid */
 	    const RingElement *a); /* drg: connected rawLeadMonomial*/
 
   int IM2_RingElement_n_terms(
-            int nvars, /* number of vaariables in an outermost monoid */
+            int nvars, /* number of variables in an outermost monoid */
             const RingElement *a); /* drg: connected rawTermCount*/
 
   ArrayPairOrNull IM2_RingElement_list_form(
