@@ -16,6 +16,7 @@ class MonomialTable;
 class MonomialTableZZ;
 
 class PolynomialRing;
+class PolyRingFlat;
 class PolyRing;
 class PolyRingSkew;
 class PolyRingWeyl;
@@ -33,17 +34,94 @@ class GBComputation;
 class PolynomialRing : public Ring
 {
   bool is_graded_;
+
 protected:
+  // Most skew-mult specific poly code is in skewpoly.{hpp,cpp}.  However, var, homogenize,
+  //   and diff_term all have a small amount of skew commutative specific code.
+  bool is_skew_;
+  SkewMultiplication skew_; // Completely ignored if is_skew_ is false.
+
+  bool is_weyl_; // true iff numerR_ is a Weyl algebra.
+  bool is_solvable_; // true iff numerR_ is a solvable algebra.
+
+  Ring::CoefficientType coeff_type_;
+  bool overZZ_; // true iff this is a quotient over ZZ.
   QRingInfo *qinfo_;
+  bool is_ZZ_quotient_;		// true if this is a quotient of a polynomial ring over ZZ, AND
+				// there is an integer in the factored ideal.
+  ring_elem ZZ_quotient_value_;	// This is the integer in the factor ideal, if is_ZZ_quotient is set.
+
+  int poly_size_;
+
+  int nvars_;
+  const Ring *K_;
+  const Monoid *M_;
+  const PolyRing *numerR_; // numerator ring, possibly 'this'
+                           // This is always a PolyRing, with no quotient elements
+                           // If ring is basic[M]/I, then numerR is basic[M]
+                           // If ring is QQ[M]/I, then numerR is ZZ[M].
+                           // skew and weyl multiplication is determined by this ring.
+                           // initialize_PolynomialRing will set these values,
+                           //   if numerR_ != this.
+  const Ring *denomR_; // denominator ring, or NULL
+                       // If ring is basic[M]/I, this is NULL
+                       // If ring is QQ[M]/I, this is ZZ
+  const PolynomialRing *ambientR_; // ambient ring (i.e. no quotients), possibly 'this'.
+                       // If ring is basic[M]/I, then ambientR_ is same as numerR_
+                       // If ring is QQ[M]/I, then ambientR_ is QQ[M].
+
+  GBRing * gb_ring_;
 
   void setIsGraded(bool new_val) { is_graded_ = new_val; }
-  void setQuotientInfo(QRingInfo *qinfo0) { qinfo_ = qinfo0; }
+  void setQuotientInfo(QRingInfo *qinfo0);
+  void initialize_PolynomialRing(const Ring *K,
+				 const Monoid *M,
+				 const PolyRing *numeratorR,
+				 const PolynomialRing *ambientR,
+				 const Ring *denomR);
 
   virtual ~PolynomialRing();
-  PolynomialRing() : is_graded_(true), qinfo_(new QRingInfo) {}
+  PolynomialRing() : is_graded_(true), is_skew_(false), qinfo_(new QRingInfo) {}
+
+  static PolynomialRing *create_quotient(const PolynomialRing *R, 
+					 std::vector<Nterm *, gc_allocator<Nterm *> > &elems);
+  // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
+  // They should also form a GB.
 
 public:
-  int n_vars() const { return _nvars; }
+  static PolynomialRing *create_quotient(const PolynomialRing *R, 
+					 const Matrix *M);
+
+  static PolynomialRing *create_quotient(const PolynomialRing *R, 
+					 const PolynomialRing *B);
+  // R should be an ambient poly ring
+  // B should have: ambient of B is the logical coeff ring of R
+  //   i.e. R = A[x], B = A/I
+  // return A[x]/I.
+
+  Matrix * getPresentation() const;
+
+
+
+
+  bool is_basic_ring() const { return false; } // The default is to be a basic ring.
+
+  bool is_poly_ring() const { return true; }
+  // Returns true if this is a polynomial ring, possibly with fractions
+  // and possibly with quotient ideal, and possibly with non-commutative
+  // multiplication.  Equivalent to (cast_to_PolynomialRing() != 0).
+
+  bool is_graded() const { return is_graded_; }
+  // Is this ring graded, with the given grading?
+  // polynomial rings are graded
+  // Weyl algebras can be graded or not
+  // quotient polynomial rings can be graded or not.
+
+  CoefficientType coefficient_type() const { return coeff_type_; }
+  // What the ultimate coefficient type is.  ZZ, QQ, finite fields return these 
+  // three values.  Fraction fields return their ultimate value, as do poly rings.
+
+  int n_vars() const { return nvars_; }
 
   static PolynomialRing *create_quotient_ring(const Matrix *M);
 
@@ -54,33 +132,7 @@ public:
   // MY BAD: sometimes means flat coeffs, sometimes logical coeffs
   // Both Ncoeffs and Nmonoms need to be totally removed.
 
-  virtual const Ring *getCoefficients() const = 0;
-  // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
-  // is another PolyRing.
-
-  virtual const Monoid *getMonoid() const = 0;
-  // The implementation monoid of this ring.
-
-  virtual const PolyRing * getAmbientRing() const = 0;
-  // Yields the ambient PolyRing corresponding to this polynomial ring
-  // This ring has no quotients, no fractions (not even QQ), but may have
-  // skew, weyl, or solvable multiplication, or even (later) be an associative
-  // free algebra.
-
-  virtual const RingOrNull *getDenominatorRing() const = 0;
-  // If this ring has no denominators, NULL is returned.  Otherwise the ring which
-  // implements denominators is returned.  When one asks for a denominator for elements of
-  // 'this', the result value is its ring.
-
-  virtual GBRing *get_gb_ring() const = 0;
-
-  virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
-  virtual       PolynomialRing * cast_to_PolynomialRing()        { return this; }
-
-  virtual bool is_basic_ring() const { return false; }
-
   // Quotient ring information
-  virtual bool        is_quotient_ring() const { return false; }
   const MonomialTable * get_quotient_MonomialTable() const 
   { return qinfo_->get_quotient_MonomialTable(); }
   
@@ -91,33 +143,90 @@ public:
   { return qinfo_->get_quotient_MonomialTableZZ(); }
 
   int n_quotients() const { return qinfo_->n_quotients(); }
+
   Nterm * quotient_element(int i) const { return qinfo_->quotient_element(i); }
+
   const gbvector * quotient_gbvector(int i) const { return qinfo_->quotient_gbvector(i); }
 
-  virtual const MonomialIdeal * make_basis_MonomialIdeal() const 
+  const MonomialIdeal * make_basis_MonomialIdeal() const 
   { return  get_quotient_monomials(); }
   // Returns the monomial ideal consisting of monomials which are initial terms
   // in this quotient ring.  IE, the set of all monomials outside of this 
   // ideal form a generating set for the ring as a
   // module over the ring getLogicalCoefficients().
 
+  bool is_quotient_ring() const { return n_quotients() > 0; }
+
   // skew commutativity 
-  virtual bool is_skew_commutative() const { return false; }
-  virtual int n_skew_commutative_vars() const { return 0; }
-  virtual int skew_variable(int i) const { return -1; }
-  virtual bool is_skew_var(int v) const { return false; }
+  bool is_skew_commutative() const { return is_skew_; }
+  int n_skew_commutative_vars() const { return skew_.n_skew_vars(); }
+  int skew_variable(int i) const { return skew_.skew_variable(i); }
+  bool is_skew_var(int v) const { return skew_.is_skew_var(v); }
+  const SkewMultiplication & getSkewInfo() const { return skew_; }
 
-  virtual bool is_pid() const = 0;
-  virtual bool has_gcd() const = 0;
-  virtual bool is_graded() const { return is_graded_; }
-  virtual bool is_poly_ring() const { return true; }
-  virtual bool is_quotient_poly_ring() const { return false; }
+  virtual bool is_commutative_ring() const { return !is_weyl_ && !is_skew_ && !is_solvable_; }
+  // Returns true iff this is a commutative ring.
 
-  virtual CoefficientType coefficient_type() const
-  { return getCoefficients()->coefficient_type(); }
+  virtual bool is_weyl_algebra() const { return is_weyl_; }
+  // Returns true if this is a polynomial ring (possibly with quotient)
+  // (possibly with ZZ fractions, or other commutative fractions)
+  // but with Weyl algebra multiplication on some of the variables.
 
-  virtual int n_fraction_vars() const
-  { return 0; }
+  virtual bool is_skew_commutative_ring() const { return is_skew_; }
+  // Returns true if this is a polynomial ring (possibly with quotient)
+  // (possibly with ZZ fractions, or other commutative fractions)
+  // but with some variables anti-commuting.
+
+  virtual bool is_solvable_algebra() const { return is_solvable_; }
+
+  virtual const PolyRing * getNumeratorRing() const { return numerR_; }
+
+  virtual const PolynomialRing * getAmbientRing() const { return ambientR_; }
+  // Yields the ambient PolyRing corresponding to this polynomial ring
+  // This ring has no quotients, no fractions (not even QQ), but may have
+  // skew, weyl, or solvable multiplication, or even (later) be an associative
+  // free algebra.
+
+  virtual const RingOrNull *getDenominatorRing() const { return denomR_; }
+  // If this ring has no denominators, NULL is returned.  Otherwise the ring which
+  // implements denominators is returned.  When one asks for a denominator for elements of
+  // 'this', the result value is its ring.
+
+  virtual GBRing *get_gb_ring() const { return gb_ring_; }
+
+  virtual const Ring *getCoefficients() const { return K_; }
+  // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
+  // is another PolyRing.
+
+  virtual const Monoid *getMonoid() const { return M_; }
+  // The implementation monoid of this ring.
+
+  virtual bool is_pid() const       { return (nvars_ == 1 && K_->is_field())
+				       || (nvars_ == 0 && K_->is_pid()); }
+  virtual bool has_gcd() const      { return (nvars_ == 1 && K_->is_field())
+				       || (nvars_ == 0 && K_->has_gcd()); }
+
+  virtual bool is_fraction_poly_ring() const { return getDenominatorRing() != 0; }
+  // returns true if this ring has fractions.  This includes
+  // polynomial rings over QQ, polynomial rings over fraction fields,
+  // fraction rings, and localizations.
+  // If this returns true, then 'get_denominator_ring()' returns non-NULL value.
+  // 
+
+  virtual int n_fraction_vars() const {
+    const Ring *D = getDenominatorRing();
+    if (D == 0) return 0;
+    const PolynomialRing *DR = D->cast_to_PolynomialRing();
+    if (DR == 0) return 0;
+    return DR->n_vars();
+  }
+
+  virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
+  virtual       PolynomialRing * cast_to_PolynomialRing()        { return this; }
+
+  ////////////////////////////////
+  // To possibly be over-ridded //
+  ////////////////////////////////
 
   virtual void text_out(buffer &o) const = 0;
 
@@ -224,6 +333,7 @@ public:
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const = 0;
   virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const = 0;
 
+  virtual Nterm * numerator(ring_elem f) const = 0;
 protected:
   void sort(Nterm *&f) const;
 public:
@@ -257,6 +367,17 @@ public:
   // is ignored).
 };
 
+class PolyFrac : public PolynomialRing
+// The class of polynomial rings implemented as (numer,denom)
+{
+};
+
+class PolyRingFlat : public PolynomialRing
+// The class of polynomial rings implemented as a pointer (single value).
+{
+public:
+  virtual Nterm * numerator(ring_elem f) const { return f; }
+};
 
 
 

@@ -11,7 +11,7 @@ bool WeylAlgebra::initialize_weyl(
 	M2_arrayint comms,
 	int homog_var)
 {
-  if (homog_var >= _nvars)
+  if (homog_var >= nvars_)
     {
       ERROR("Weyl algebra homogenizing variable out of range");
       return false;
@@ -24,12 +24,12 @@ bool WeylAlgebra::initialize_weyl(
     }
   for (unsigned int i=0; i<derivs->len; i++)
     {
-      if (derivs->array[i] < 0 || derivs->array[i] >= _nvars)
+      if (derivs->array[i] < 0 || derivs->array[i] >= nvars_)
 	{
 	  ERROR("Weyl algebra: variable out of range");
 	  return false;
 	}
-      if (comms->array[i] < 0 || comms->array[i] >= _nvars)
+      if (comms->array[i] < 0 || comms->array[i] >= nvars_)
 	{
 	  ERROR("Weyl algebra: variable out of range");
 	  return false;
@@ -88,7 +88,7 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K,
 
   result->initialize_poly_ring(K,M);
   if (!result->initialize_weyl(derivs,comms,homog_var)) return 0;
-  result->_gb_ring = GBRing::create_WeylAlgebra(K,M,result);
+  result->gb_ring_ = GBRing::create_WeylAlgebra(K,M,result);
   return result;
 }
 
@@ -328,9 +328,9 @@ Nterm * WeylAlgebra::weyl_diff(
 
   int i;
   int *exp = newarray(int,_nderivatives);
-  int *deriv_exp = newarray(int,_nvars);
-  int *result_exp = newarray(int,_nvars);
-  for (i=0; i<_nvars; i++)
+  int *deriv_exp = newarray(int,nvars_);
+  int *result_exp = newarray(int,nvars_);
+  for (i=0; i<nvars_; i++)
     deriv_exp[i] = 0;
   if (_homogeneous_weyl_algebra)
     {
@@ -374,7 +374,7 @@ Nterm * WeylAlgebra::weyl_diff(
 	  // Now compute the new monomial:
 	  Nterm *tm = new_term();
 	  tm->coeff = b;
-	  for (int i2=0; i2<_nvars; i2++)
+	  for (int i2=0; i2<nvars_; i2++)
 	    result_exp[i2] += expf[i2] - deriv_exp[i2];
 	  M_->from_expvector(result_exp, tm->monom);
 
@@ -395,7 +395,7 @@ ring_elem WeylAlgebra::mult_by_term(const ring_elem f,
 {
   int *top_derivative = newarray(int,_nderivatives);
   int *current_derivative = newarray(int,_nderivatives);
-  int *expf = newarray(int,_nvars);
+  int *expf = newarray(int,nvars_);
   polyheap result(this);
 
   M_->to_expvector(m, expf);
@@ -445,9 +445,9 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
 
   int i;
   int *exp = newarray(int,_nderivatives);
-  int *deriv_exp = newarray(int,_nvars);
-  int *result_exp = newarray(int,_nvars);
-  for (i=0; i<_nvars; i++)
+  int *deriv_exp = newarray(int,nvars_);
+  int *result_exp = newarray(int,nvars_);
+  for (i=0; i<nvars_; i++)
     deriv_exp[i] = 0;
   if (_homogeneous_weyl_algebra)
     {
@@ -492,7 +492,7 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
 	  gbvector *tm = GR->new_raw_term();
 	  tm->comp = comp + t->comp;
 	  tm->coeff = b;
-	  for (int i2=0; i2<_nvars; i2++)
+	  for (int i2=0; i2<nvars_; i2++)
 	    result_exp[i2] += expf[i2] - deriv_exp[i2];
 	  M_->from_expvector(result_exp, tm->monom);
 
@@ -517,7 +517,7 @@ gbvector * WeylAlgebra::gbvector_mult_by_term(
 {
   int *top_derivative = newarray(int,_nderivatives);
   int *current_derivative = newarray(int,_nderivatives);
-  int *expf = newarray(int,_nvars);
+  int *expf = newarray(int,nvars_);
 
   GBRing *GR = result.get_gb_ring();
   const FreeModule *F = result.get_freemodule();
@@ -542,7 +542,7 @@ gbvector * WeylAlgebra::gbvector_mult_by_term(
 ring_elem WeylAlgebra::multinomial(const int *exptop, const int *exp) const
 {
   ring_elem result = K_->from_int(1);
-  for (int i=0; i<_nvars; i++)
+  for (int i=0; i<nvars_; i++)
     if (exptop[i] > 0)
       {
 	for (int j=exptop[i]; j > exp[i]; j--)

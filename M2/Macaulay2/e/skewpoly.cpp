@@ -9,8 +9,8 @@ SkewPolynomialRing::~SkewPolynomialRing()
 
 bool SkewPolynomialRing::initialize_skew(M2_arrayint skewvars)
 {
-  _is_skew = true;
-  _skew = SkewMultiplication(_nvars, skewvars->len, skewvars->array);
+  is_skew_ = true;
+  skew_ = SkewMultiplication(nvars_, skewvars->len, skewvars->array);
   return true;
 }
 
@@ -22,7 +22,7 @@ SkewPolynomialRing *SkewPolynomialRing::create(const Ring *K,
 
   result->initialize_poly_ring(K,M);
   if (!result->initialize_skew(skewvars)) return 0;
-  result->_gb_ring = GBRing::create_SkewPolynomialRing(K,M,result->_skew);
+  result->gb_ring_ = GBRing::create_SkewPolynomialRing(K,M,result->skew_);
   return result;
 }
 
@@ -70,7 +70,7 @@ ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f,
   for (Nterm *s = f; s != NULL; s = s->next)
     {
       M_->to_expvector(s->monom, _EXP2);
-      int sign = _skew.mult_sign(_EXP1, _EXP2);
+      int sign = skew_.mult_sign(_EXP1, _EXP2);
       if (sign == 0) continue;
 
       Nterm *t = new_term();

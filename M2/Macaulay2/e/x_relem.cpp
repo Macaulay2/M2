@@ -234,12 +234,14 @@ const RingOrNull * IM2_Ring_quotient(const Ring *R,
       ERROR("expected a polynomial ring");
       return 0;
     }
-
+  return PolynomialRing::create_quotient(P,I);
+#if 0
   const PolyQQ *RQ = R->cast_to_PolyQQ();
   if (RQ != 0)
     return PolyQQ::create_quotient(RQ,I);
 
   return PolyRingQuotient::create(P,I);
+#endif
 }
 
 const RingOrNull * IM2_Ring_quotient1(const Ring *R, 
@@ -247,6 +249,15 @@ const RingOrNull * IM2_Ring_quotient1(const Ring *R,
 /* if R is a polynomial ring of the form A[x]/J, and B = A/I (where A is a poly ring)
    then form the quotient ring B[x]/J. */
 {
+  const PolynomialRing *R1 = R->cast_to_PolynomialRing();
+  const PolynomialRing *B1 = B->cast_to_PolynomialRing();
+  if (R1 == 0 || B1 == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+  return PolyRingQuotient::create_quotient(R1,B1);
+#if 0
   const PolyQQ *RQ = R->cast_to_PolyQQ();
   if (RQ != 0)
     {
@@ -267,6 +278,7 @@ const RingOrNull * IM2_Ring_quotient1(const Ring *R,
       return 0;
     }
   return PolyRingQuotient::create(R1,B1);
+#endif
 }
 
 const RingOrNull *IM2_Ring_schur(const Ring *R)

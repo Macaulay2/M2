@@ -69,7 +69,18 @@ QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
   deletearray(exp);
 }
 
-void QRingInfo_field::reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const
+QRingInfo_field_basic::QRingInfo_field_basic(
+      const PolyRing *ambientR,
+      const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients)
+  : QRingInfo_field(ambientR, quotients)
+{
+}
+
+QRingInfo_field_basic::~QRingInfo_field_basic()
+{
+}
+
+void QRingInfo_field_basic::reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const
 {
   const Monoid *M = R->getMonoid();
   M->divide(f->monom, g->monom, MONOM1_);
@@ -89,7 +100,7 @@ void QRingInfo_field::reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) 
   f = f1;
 }
 
-void QRingInfo_field::normal_form(ring_elem& f) const
+void QRingInfo_field_basic::normal_form(ring_elem& f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
@@ -119,7 +130,7 @@ void QRingInfo_field::normal_form(ring_elem& f) const
   f = head.next;
 }
 
-void QRingInfo_field::normal_form(const FreeModule *F, gbvector *&f) const
+void QRingInfo_field_basic::normal_form(const FreeModule *F, gbvector *&f) const
 {
   GBRing *GR = R->get_gb_ring();
   const Monoid *M = R->getMonoid();

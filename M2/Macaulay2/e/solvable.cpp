@@ -21,7 +21,7 @@ SolvableAlgebra *SolvableAlgebra::create(const Ring *K,
 
   result->initialize_poly_ring(K,M);
   if (!result->initialize_solvable(Q)) return 0;
-  result->_gb_ring = GBRing::create_SolvableAlgebra(K,M,result);
+  result->gb_ring_ = GBRing::create_SolvableAlgebra(K,M,result);
   return result;
 }
 

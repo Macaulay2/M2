@@ -61,7 +61,7 @@ void PolyRing::make_trivial_ZZ_poly_ring()
 					  trivial_poly_ring);
   
   const PolyRing *flatR = trivial_poly_ring;
-  trivial_poly_ring->_gb_ring = GBRing::create_PolynomialRing(flatR->Ncoeffs(), 
+  trivial_poly_ring->gb_ring_ = GBRing::create_PolynomialRing(flatR->Ncoeffs(), 
 							      flatR->Nmonoms());
 }
 
@@ -71,28 +71,25 @@ void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
 // and make_trivial_ZZ_poly_ring.
 {
   initialize_ring(K->charac(),
-		  M->n_vars(),
 		  deg_ring);
 
-  K_ = K;
-  M_ = M;
-  _poly_size = 
+  initialize_PolynomialRing(K, M,
+			    this,
+			    this,
+			    NULL);
+  poly_size_ = 
     sizeof(Nterm) + sizeof(int) * (M_->monomial_size() - 1);
 
-  _gb_ring = 0;
+  gb_ring_ = 0;
 
-  _coefficients_are_ZZ = (K_->is_ZZ());
-  if (deg_ring->Nmonoms() == 0)
+  if (deg_ring->getMonoid() == 0)
     this->setIsGraded(true);
   else
-    this->setIsGraded(deg_ring->Nmonoms()->n_vars() > 0);
-  _is_skew = 0;
-  _EXP1 = newarray(int,_nvars);
-  _EXP2 = newarray(int,_nvars);
-  _EXP3 = newarray(int,_nvars);
+    this->setIsGraded(deg_ring->getMonoid()->n_vars() > 0);
 
-  _is_ZZ_quotient = false;
-  _ZZ_quotient_value = ZERO_RINGELEM;
+  _EXP1 = newarray(int,nvars_);
+  _EXP2 = newarray(int,nvars_);
+  _EXP3 = newarray(int,nvars_);
 
   zeroV = from_int(0);
   oneV = from_int(1);
@@ -108,7 +105,7 @@ const PolyRing *PolyRing::create(const Ring *K, const Monoid *M)
 {
   PolyRing *R = new PolyRing;
   R->initialize_poly_ring(K,M);
-  R->_gb_ring = GBRing::create_PolynomialRing(K,M);
+  R->gb_ring_ = GBRing::create_PolynomialRing(K,M);
   return R;
 }
 
@@ -151,7 +148,7 @@ void PolyRing::text_out(buffer &o) const
 
 Nterm *PolyRing::new_term() const
 {
-  Nterm *result = GETMEM(Nterm *, _poly_size);
+  Nterm *result = GETMEM(Nterm *, poly_size_);
   result->next = NULL;
   result->coeff = 0;  // This value is never used, one hopes...
   // In fact, it gets used in the line below:       K->remove(tmp->coeff);
@@ -210,8 +207,8 @@ ring_elem PolyRing::from_double(double n) const
 
 ring_elem PolyRing::var(int v) const
 {
-  for (int i=0; i<_nvars; i++) _EXP1[i] = 0;
-  if (v >= 0 && v < _nvars) _EXP1[v] = 1;
+  for (int i=0; i<nvars_; i++) _EXP1[i] = 0;
+  if (v >= 0 && v < nvars_) _EXP1[v] = 1;
   else 
     {
       return ZERO_RINGELEM;
@@ -338,7 +335,7 @@ bool PolyRing::is_equal(const ring_elem f, const ring_elem g) const
 	}
       if (b == NULL) return false;
       if (!K_->is_equal(a->coeff, b->coeff)) return false;
-      if (_nvars > 0 && (M_->compare(a->monom, b->monom) != 0))
+      if (nvars_ > 0 && (M_->compare(a->monom, b->monom) != 0))
 	return false;
     }
 }
@@ -424,7 +421,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
   // assert(wts[v] != 0);
   // If an error occurs, then return 0, and set gError.
 
-  int *exp = newarray(int, _nvars);
+  int *exp = newarray(int, nvars_);
 
   Nterm head;
   Nterm *result = &head;
@@ -432,7 +429,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
     {
       M_->to_expvector(a->monom, exp);
       int e = 0;
-      for (int i=0; i<_nvars; i++) e += wts->array[i] * exp[i];
+      for (int i=0; i<nvars_; i++) e += wts->array[i] * exp[i];
       if (((d-e) % wts->array[v]) != 0)
 	{
 	  // We cannot homogenize, so clean up and exit.
@@ -442,7 +439,7 @@ ring_elem PolyRing::homogenize(const ring_elem f,
 	  return result;
 	}
       exp[v] += (d - e) / wts->array[v];
-      if (_is_skew && _skew.is_skew_var(v) && exp[v] > 1)
+      if (is_skew_ && skew_.is_skew_var(v) && exp[v] > 1)
 	continue;
       result->next = new_term();
       result = result->next;
@@ -532,9 +529,9 @@ void PolyRing::internal_add_to(ring_elem &ff, ring_elem &gg) const
 	f = f->next;
 	g = g->next;
 	K_->add_to(tmf->coeff, tmg->coeff);
-	if (_is_ZZ_quotient)
+	if (is_ZZ_quotient_)
 	  {
-	    ring_elem t = K_->remainder(tmf->coeff, _ZZ_quotient_value);
+	    ring_elem t = K_->remainder(tmf->coeff, ZZ_quotient_value_);
 	    tmf->coeff = t;
 	  }
 	if (!K_->is_zero(tmf->coeff))
@@ -760,7 +757,7 @@ ring_elem PolyRing::invert(const ring_elem f) const
       }
 #warning "invert doesn't handle quotient rings yet"
 #if 0
-  if (_nvars == 1 && _quotient_ideal.length() == 1 && K_->is_field())
+  if (nvars_ == 1 && _quotient_ideal.length() == 1 && K_->is_field())
     {
       ring_elem u,v;
       ring_elem F = _quotient_ideal[0];
@@ -811,11 +808,11 @@ bool PolyRing::imp_attempt_to_cancel_lead_term(ring_elem &f,
   bool result = (K_->is_zero(r));  // true means lead term will be cancelled.
   if (!K_->is_zero(coeff))
     {
-      if (_is_skew)
+      if (is_skew_)
 	{
 	  M_->to_expvector(t->monom, _EXP1);
 	  M_->to_expvector(s->monom, _EXP2);
-	  int sign = _skew.divide(_EXP1, _EXP2, _EXP3);
+	  int sign = skew_.divide(_EXP1, _EXP2, _EXP3);
 	  M_->from_expvector(_EXP3, monom);
 	  if (sign < 0) K_->negate_to(coeff);
 	  imp_subtract_multiple_to(f, coeff, monom, g);
@@ -831,7 +828,7 @@ bool PolyRing::imp_attempt_to_cancel_lead_term(ring_elem &f,
 
 ring_elem PolyRing::gcd(const ring_elem ff, const ring_elem gg) const
 {
-  if (_nvars != 1)
+  if (nvars_ != 1)
     {
       ERROR("multivariate gcd not yet implemented");
       return ZERO_RINGELEM;
@@ -1275,7 +1272,7 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
       if (degree_monoid()->n_vars() != 0) flast = M_->primary_degree(z->monom);
       else {
 	M_->to_expvector(z->monom, _EXP1);
-	flast = ntuple::degree(_nvars, _EXP1);
+	flast = ntuple::degree(nvars_, _EXP1);
       }
 
     }
@@ -1288,7 +1285,7 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
       if (degree_monoid()->n_vars() != 0) gfirst = M_->primary_degree(z->monom);
       else {
 	M_->to_expvector(z->monom, _EXP1);
-	gfirst = ntuple::degree(_nvars, _EXP1);
+	gfirst = ntuple::degree(nvars_, _EXP1);
       }
 
       for ( ; z->next != 0; z = z->next);
@@ -1296,7 +1293,7 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
       if (degree_monoid()->n_vars() != 0) glast = M_->primary_degree(z->monom);
       else {
 	M_->to_expvector(z->monom, _EXP1);
-	glast = ntuple::degree(_nvars, _EXP1);
+	glast = ntuple::degree(nvars_, _EXP1);
       }
 
       gval = abs(gfirst-glast);
@@ -1311,7 +1308,7 @@ Nterm * PolyRing::powerseries_division_algorithm(Nterm *f, Nterm *g, Nterm *&quo
       if (degree_monoid()->n_vars() != 0) ffirst = M_->primary_degree(t->monom);
       else {
 	M_->to_expvector(t->monom, _EXP1);
-	ffirst = ntuple::degree(_nvars, _EXP1);
+	ffirst = ntuple::degree(nvars_, _EXP1);
       }
 
       int fval = abs(ffirst-flast);
@@ -1373,7 +1370,7 @@ ring_elem PolyRing::get_logical_coeff(const Ring *coeffR, const Nterm *&f) const
 #warning "this cast should be to polynomial ring w/o fractions"
   const PolynomialRing *KR = coeffR->cast_to_PolynomialRing();
   assert(KR);
-  const PolyRing *K = KR->getAmbientRing();
+  const PolyRing *K = KR->getNumeratorRing();
   Nterm head;
   Nterm *inresult = &head;
   inresult->next = 0;
@@ -1626,11 +1623,11 @@ ring_elem PolyRing::diff_term(const int *m, const int *n,
 {
   int sign = 0;
   if (!M_->divides(m, n)) return K_->from_int(0);
-  if (_is_skew && use_coeff)
+  if (is_skew_ && use_coeff)
     {
       M_->to_expvector(m, _EXP1);
       M_->to_expvector(n, _EXP2);
-      sign = _skew.diff(_EXP1, _EXP2, _EXP3);
+      sign = skew_.diff(_EXP1, _EXP2, _EXP3);
       M_->from_expvector(_EXP3, resultmon);
     }
   else
@@ -1643,7 +1640,7 @@ ring_elem PolyRing::diff_term(const int *m, const int *n,
   M_->to_expvector(m, exp1);
   M_->to_expvector(n, exp2);
 
-  if (_is_skew && sign < 0)
+  if (is_skew_ && sign < 0)
     K_->negate_to(result);
 
   for (int i=0; i<n_vars(); i++)

@@ -167,15 +167,6 @@ public:
   // Ring information //
   //////////////////////
 
-#if 0
-  // array of quotient elements (all component 0).
-  bool is_quotient_ring() const { return _nquotients > 0; }
-  MonomialIdeal * get_quotient_monomials() const { return _Rideal; }
-  TermIdeal * get_quotient_monomials_ZZ() const { return _RidealZZ; }
-  int n_quotients() const { return _nquotients; }
-  const gbvector * quotient_element(int i) const { return _quotients[i]; }
-#endif
-
   // skew commutativity
   bool is_skew_commutative() const { return _skew.n_skew_vars() > 0; }
   int n_skew_commutative_vars() const { return _skew.n_skew_vars(); }

@@ -12,7 +12,7 @@
 
 bool QQ::initialize_QQ() 
 {
-  initialize_ring(0,0);
+  initialize_ring(0);
   _elem_size = sizeof(mpq_t);
   _zero_elem = new_elem();// this sets the element to 0.
 #if 0
