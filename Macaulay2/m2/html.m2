@@ -39,7 +39,6 @@ htmlFilename = key -> (				   -- returns the relative path from the PREFIX to th
      else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
-net IMG := tex IMG  := x -> ""
 
 html HREF := x -> (
      "<A HREF=\"" 					    -- "
@@ -48,7 +47,7 @@ html HREF := x -> (
      | html last x 
      | "</A>"
      )
-net HREF := x -> net last x
+
 tex HREF := x -> (
      concatenate(
 	  ///\special{html:<A href="///, 		    -- "
@@ -78,7 +77,6 @@ html TO := x -> (
      	  )
      )
 
-net TO2 := x -> concatenate drop(toList x,1)
 html TO2 := x -> (
      key := normalizeDocumentTag x#0;
      formattedKey := formatDocumentTag key;

@@ -40,7 +40,7 @@ makeList Type       := X -> concatenate("new ", toString X, " from ")
 toExternalString MarkUpList := s -> concatenate(makeList class s, toExternalString toList s)
 toString         MarkUpList := s -> concatenate(makeList class s, toString         toList s)
 
-htmlMarkUpType = s -> (
+htmlMarkUpType := s -> (
      on := "<" | s | ">";
      off := "</" | s | ">";
      t -> concatenate(on, apply(t,html), off))
@@ -71,12 +71,6 @@ HTML       = new MarkUpType of MarkUpList
 BIG        = new MarkUpType of MarkUpList
 HEADER1    = new MarkUpType of MarkUpListParagraph
 HEADER2    = new MarkUpType of MarkUpListParagraph
-net TITLE := 
-net HEADER1 := 
-net HEADER2 := x -> (
-     r := "" || horizontalJoin apply(x,net);
-     r || concatenate( width r : "-" )
-     )
 HEADER3    = new MarkUpType of MarkUpListParagraph
 HEADER4    = new MarkUpType of MarkUpListParagraph
 HEADER5    = new MarkUpType of MarkUpListParagraph

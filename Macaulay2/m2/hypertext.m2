@@ -1,6 +1,19 @@
 --		Copyright 1993-2004 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
+-- sublists, might be worthy making public
+-----------------------------------------------------------------------------
+sublists := (x,f,g,h) -> (
+     -- x is a list with elements i
+     -- apply g to those i for which f i is true
+     -- apply h to the sublists, possibly empty, including those at the beginning and end, of elements between the ones for which f i is true
+     -- return the results in the same order
+     p := positions(x, f);
+     mingle(
+	  apply( prepend(-1,p), append(p,#x), (i,j) -> h take(x,{i+1,j-1})),
+	  apply( p, i -> g x#i)))
+
+-----------------------------------------------------------------------------
 -- html output
 -----------------------------------------------------------------------------
 
@@ -41,16 +54,20 @@ texExtraLiteral := s -> demark(ENDLINE,
      apply(lines s, l -> apply(characters l, c -> texExtraLiteralTable#c))
      )
 -----------------------------------------------------------------------------
-net TITLE := 
-net HEADER1 := 
-net HEADER2 := x -> (
+-- the default case
+defop := op -> x -> concatenate apply(x,op)
+html MarkUpList := defop html
+tex MarkUpList := defop tex
+info MarkUpList := defop info
+net MarkUpList := defop net
+texMath MarkUpList := defop texMath
+mathML MarkUpList := defop mathML
+
+net TITLE := net HEADER1 := net HEADER2 := x -> (
      r := "" || horizontalJoin apply(x,net);
      r || concatenate( width r : "-" )
      )
-
-info TITLE := 
-info HEADER1 := 
-info HEADER2 := x -> (
+info TITLE := info HEADER1 := info HEADER2 := x -> (
      r := "" || horizontalJoin apply(x,info);
      r || concatenate( width r : "*" )
      )
@@ -91,19 +108,12 @@ html Symbol := html Boolean := toString
 
 texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
-html MarkUpList := x -> concatenate apply(x,html)
-tex MarkUpList := x -> concatenate apply(x,tex)
-info MarkUpList := x -> horizontalJoin apply(x,info)
-net MarkUpList := x -> horizontalJoin apply(x,net)
-texMath MarkUpList := x -> concatenate apply(x,texMath)
-mathML MarkUpList := x -> concatenate apply(x,mathML)
-
-vert := (x,op) -> op (					    -- we have to be prepared for a mixture of vertical and horizontal items
+vert := op -> x -> net (					    -- we have to be prepared for a mixture of vertical and horizontal items
      new ParagraphList from select(
      	       sublists(toList x, i -> instance(i,MarkUpListParagraph), op, i -> horizontalJoin(op \ i)),
 	       n -> width n > 0))
-net SEQ := net PARA := net Hypertext := x -> vert(x,net)
-info SEQ := info PARA := info Hypertext := x -> vert(x,info)
+net SEQ := net PARA := net Hypertext := vert net
+info SEQ := info PARA := info Hypertext := vert info
 
 
 html BR := x -> ///
@@ -307,9 +317,9 @@ net UL := net OL := net DL := x -> (
 
 * String := x -> help x					    -- so the user can cut paste the menu line to get help!
 
-NLop := (op,x) -> stack apply(#x, i -> toString (i+1) | " : " | wrap(printWidth - 10, op x#i))
-net NL := x -> NLop(net,x)
-info NL := x -> NLop(info,x)
+NLop := op -> x -> stack apply(#x, i -> toString (i+1) | " : " | wrap(printWidth - 10, op x#i))
+net NL := NLop net
+info NL := NLop info
 
 tex UL := x -> concatenate(
      ///\begin{itemize}///, newline,
@@ -322,14 +332,8 @@ html UL := x -> concatenate (
      apply(addHeadlines x, s -> if s =!= null then ("<li>", html s, "</li>", newline)),
      "</ul>", newline)
 
-html OL   := x -> concatenate(
-     "<ol>", newline,
-     apply(x,s -> ("<li>", html s, "</li>", newline)),
-     "</ol>", newline )
-html NL   := x -> concatenate(
-     "<nl>", newline,
-     apply(x, s -> ("<li>", html s, newline)),
-     "</nl>", newline)
+html OL   := x -> concatenate( "<ol>", newline, apply(x,s -> ("<li>", html s, "</li>", newline)), "</ol>", newline )
+html NL   := x -> concatenate( "<nl>", newline, apply(x,s -> ("<li>", html s, "</li>", newline)), "</nl>", newline)
 html DL   := x -> (
      "<dl>" 
      | concatenate apply(x, p -> (
@@ -344,6 +348,12 @@ html DL   := x -> (
 
 texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
 texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
+
+opSU := (op,n) -> x -> (horizontalJoin apply(x, op))^n
+net SUP := opSU(net,1)
+info SUP := opSU(info,1)
+net SUB := opSU(net,-1)
+info SUB := opSU(info,-1)
 
 tex  TO := x -> (
      key := x#0;
@@ -361,6 +371,10 @@ tex  TO := x -> (
 net TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
 info TO := x -> concatenate ("*Note ",formatDocumentTag x#0,"::")
 
+info TO2 := net TO2 := x -> concatenate drop(toList x,1)
+info IMG := net IMG := tex IMG  := x -> ""
+info HREF := net HREF := x -> net last x
+
              toh := op -> x -> op SEQ{ new TO from x, headline x#0 }
             htoh := op -> x -> op SEQ{ new TO from x, headline x#0 }
 net  TOH :=  toh net
@@ -370,10 +384,10 @@ info TOH :=  toh info
 
 tex LITERAL := html LITERAL := x -> concatenate x
 html EmptyMarkUpType := html MarkUpType := X -> html X{}
-html ITALIC := htmlMarkUpType "I"
-html UNDERLINE := htmlMarkUpType "U"
+html ITALIC := t -> concatenate("<I>", apply(t,html), "</I>")
+html UNDERLINE := t -> concatenate("<U>", apply(t,html), "</U>")
+html BODY := t -> concatenate("<B>", apply(t,html), "</B>")
 html TEX := x -> x#0	    -- should do something else!
-html BOLD := htmlMarkUpType "B"
 
 tex BASE := net BASE := x -> ""
 
@@ -495,3 +509,6 @@ net TOC := net @@ redoTOC
 info TOC := info @@ redoTOC
 tex TOC := tex @@ redoTOC
 
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- End:
