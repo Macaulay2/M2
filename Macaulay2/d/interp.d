@@ -50,21 +50,6 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      then printErrorMessageE(f,"no method for '" + methodname.symbol.word.name + "'")
      else apply(method,g)
      );
-errorReportS := setupconst("errorReport",nullE);
-errorReportS.protected = false;
-
-num(x:CodeClosureList):int := (
-     n := 0;
-     while (
-	  if x.code != dummyCodeClosure then n = n+1;
-	  x != x.next
-	  ) do x = x.next;
-    n);
-toExpr(x:CodeClosureList):Expr := Expr(list(
-	  new Sequence len num(x)
-	  do while (
-	       if x.code != dummyCodeClosure then provide x.code;
-	       x != x.next) do x = x.next));
 
 readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,returnLastvalue:bool,stopIfBreakReturnContinue:bool):Expr := (
      lastvalue := nullE;
@@ -93,7 +78,7 @@ readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,re
 	       if !(s.word == SemicolonW || s.word == NewlineW)
 	       then (
 		    printErrorMessage(s,"syntax error");
-		    if stopIfError then return Expr(Error(position(s),"syntax error",dummyCodeClosureList,nullE,false));
+		    if stopIfError then return Expr(Error(position(s),"syntax error",nullE,false,dummyFrame));
 		    )
 	       else (
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols
@@ -111,7 +96,6 @@ readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,re
 				   )
 			      else (
 			      	   if stopIfError then return lastvalue;
-				   setGlobalVariable(errorReportS, toExpr(err.report));
 				   );
 			      )
 			 else (
@@ -119,10 +103,6 @@ readeval4(file:TokenFile,printout:bool,stopIfError:bool,dictionary:Dictionary,re
 				   g := PrintOut(lastvalue,s.word == SemicolonW,f);
 				   when g is err:Error do (
 					g = update(err,"at print",f);
-					when g is err2:Error do (
-					     setGlobalVariable(errorReportS, toExpr(err2.report));
-					     )
-					else nothing;
 					if stopIfError then return g;
 					)
 				   else nothing)))

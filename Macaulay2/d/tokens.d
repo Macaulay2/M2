@@ -261,14 +261,13 @@ export List := {
      hash:int,
      mutable:bool
      };
-export CodeClosureList := {code:CodeClosure, next:CodeClosureList};
 
 export Error := {
      position:Position,
      message:string,
-     report:CodeClosureList,
      value:Expr,
-     printed:bool
+     printed:bool,
+     frame:Frame
      };
 export Database := {
      filename:string,
@@ -462,7 +461,6 @@ globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(nullCode());
 export NullCode := Code(nullCode());
 export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
-export dummyCodeClosureList := CodeClosureList(dummyCodeClosure,self);
 export dummyToken   := Token(dummyWord,
      dummyPosition.filename,
      dummyPosition.line,
@@ -485,8 +483,7 @@ export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";
 export steppingMessage := "stepping";
 
-export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,dummyCodeClosureList,nullE,false));
-export buildErrorPacket(message:string,report:CodeClosureList):Expr := Expr(Error(dummyPosition,message,report,nullE,false));
+export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
 
 dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
 export debuggerFun := dummyDebuggerFun;
@@ -546,6 +543,8 @@ export visibleListClass := newtypeof(basicListClass);
 export listClass := newtypeof(visibleListClass);
 export sequenceClass := newtypeof(visibleListClass);
 export arrayClass := newtypeof(visibleListClass);
+export errorMessageClass := newtypeof(basicListClass);
+export missingMethodClass := newtypeof(errorMessageClass);
 
 export ringClass := newtypeof(typeClass);
        newbasicringtype():HashTable := newHashTable(ringClass,thingClass);

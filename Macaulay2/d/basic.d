@@ -210,11 +210,10 @@ export list(e:Expr,f:Expr):Expr := list(Sequence(e,f));
 export list(e:Expr,f:Expr,g:Expr):Expr := list(Sequence(e,f,g));
 export list(e:Expr,f:Expr,g:Expr,h:Expr):Expr := list(Sequence(e,f,g,h));
 
-
 export Array(a:Sequence):Expr := (
      r := List(arrayClass,a,0,false);
      r.hash = hash(r);
-     Expr(r));     
+     Expr(r));
 export Array(e:Expr):Expr := (
      when e
      is a:Sequence do Array(a)

@@ -10,7 +10,7 @@ stopIfError = false
 gotarg := arg -> any(commandLine, s -> s == arg)
 if gotarg "--stop" then stopIfError = true
 
-firstTime := class ReverseDictionary === Symbol
+firstTime := class PackageDictionary === Symbol
 
 -- here we put local variables that might be used by the global definitions below
 match := X -> 0 < #(matches X);
@@ -27,6 +27,7 @@ if firstTime then (
 		symbol List, symbol MutableHashTable, symbol MutableList, symbol Net,
 		symbol Nothing, symbol Option, symbol QQ, symbol RR, symbol RR, symbol CC,
 		symbol Ring, symbol Sequence, symbol String, symbol Symbol, symbol Thing,
+		symbol Error, symbol MissingMethod,
 		symbol Time, symbol Type, symbol VisibleList, symbol ZZ},
 	  s -> ReverseDictionary#(value s) = s		    -- get an early start for debugging
 	  );

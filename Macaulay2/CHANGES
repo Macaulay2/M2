@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The symbol 'errorReport' has been removed.  It is no longer needed,
+now that there is a real debugger.
+
 Methods for map(Module), map(Ideal), map(Ideal,Ideal),
 map(Module,Matrix), map(Module,ZZ), map(Module,RingElement) have been
 removed, in an attempt to get the methods for "map" to be more

@@ -537,6 +537,8 @@ setupconst("Database",Expr(dbClass));
 setupconst("Sequence",Expr(sequenceClass));
 setupconst("VisibleList",Expr(visibleListClass));
 setupconst("Array",Expr(arrayClass));
+setupconst("Error",Expr(errorMessageClass));
+setupconst("MissingMethod",Expr(missingMethodClass));
 setupconst("Ring",Expr(ringClass));
 setupconst("Nothing",Expr(nothingClass));
 setupconst("LMatrixRR",Expr(LMatrixRRClass));
