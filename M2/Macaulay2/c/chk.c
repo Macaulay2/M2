@@ -1233,7 +1233,13 @@ node chkCcode(node e, env v){
 	  e = CDR(e);
 	  }
      if (bad) return bad_K;
-     else return cons(Ccode_S,cons(t,reverse(r)));
+     else {
+	  node z;
+	  r = reverse(r);
+	  z = cons(Ccode_S,cons(t,r));
+	  if (t != void_T) z = entmp(z,v);
+	  return z;
+          }
      }
 
 void returngather(env v){

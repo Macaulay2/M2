@@ -793,22 +793,22 @@ tostringfun(e:Expr):Expr := (
      is Sequence do Expr("<<a sequence>>")
      is HashTable do Expr("<<a hash table>>")
      is List do Expr("<<a list>>")
-     is x:LMatrixRR do Expr(Ccode(string, "LP_LMatrixRR_to_string((LMatrixRR*)",x,")" ))
-     is x:LMatrixCC do Expr(Ccode(string, "LP_LMatrixCC_to_string((LMatrixCC*)",x,")" ))
-     is x:RawMonomial do Expr(Ccode(string, "IM2_Monomial_to_string((Monomial*)",x,")" ))
-     is x:RawFreeModule do Expr(Ccode(string, "IM2_FreeModule_to_string((FreeModule*)",x,")" ))
-     is x:RawMatrix do Expr(Ccode(string, "IM2_Matrix_to_string((Matrix*)",x,")" ))
-     is x:RawRingMap do Expr(Ccode(string, "IM2_RingMap_to_string((RingMap*)",x,")" ))
-     is x:RawMonomialOrdering do Expr(Ccode(string, "IM2_MonomialOrdering_to_string((MonomialOrdering*)",x,")" ))
-     is x:RawMonoid do Expr(Ccode(string, "IM2_Monoid_to_string((Monoid*)",x,")" ))
-     is x:RawRing do Expr(Ccode(string, "IM2_Ring_to_string((Ring*)",x,")" ))
-     is x:RawRingElement do Expr( Ccode(string, "IM2_RingElement_to_string((RingElement*)",x,")" ) )
+     is x:LMatrixRR do Expr(Ccode(string, "(string)LP_LMatrixRR_to_string((LMatrixRR*)",x,")" ))
+     is x:LMatrixCC do Expr(Ccode(string, "(string)LP_LMatrixCC_to_string((LMatrixCC*)",x,")" ))
+     is x:RawMonomial do Expr(Ccode(string, "(string)IM2_Monomial_to_string((Monomial*)",x,")" ))
+     is x:RawFreeModule do Expr(Ccode(string, "(string)IM2_FreeModule_to_string((FreeModule*)",x,")" ))
+     is x:RawMatrix do Expr(Ccode(string, "(string)IM2_Matrix_to_string((Matrix*)",x,")" ))
+     is x:RawRingMap do Expr(Ccode(string, "(string)IM2_RingMap_to_string((RingMap*)",x,")" ))
+     is x:RawMonomialOrdering do Expr(Ccode(string, "(string)IM2_MonomialOrdering_to_string((MonomialOrdering*)",x,")" ))
+     is x:RawMonoid do Expr(Ccode(string, "(string)IM2_Monoid_to_string((Monoid*)",x,")" ))
+     is x:RawRing do Expr(Ccode(string, "(string)IM2_Ring_to_string((Ring*)",x,")" ))
+     is x:RawRingElement do Expr( Ccode(string, "(string)IM2_RingElement_to_string((RingElement*)",x,")" ) )
      is x:RawMonomialIdeal do Expr(
 	  "<<raw monomial ideal>>"
 	  -- Ccode(string, "IM2_MonomialIdeal_to_string((MonomialIdeal*)",x,")" )
 	  )
      is BigComplex do Expr("<<big complex number>>")
-     is c:RawComputation do Expr(Ccode(string, "IM2_GB_to_string((Computation*)",c,")" ))
+     is c:RawComputation do Expr(Ccode(string, "(string)IM2_GB_to_string((Computation*)",c,")" ))
      );
 setupfun("toString",tostringfun).protected = false;
 
