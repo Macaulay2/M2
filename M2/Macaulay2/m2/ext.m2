@@ -218,7 +218,7 @@ Ext(Module,Module) := (N,M) -> (
 	  s := f / (g -> nullhomotopy (g*id_E));
 	  X := local X;
 	  k := coefficientRing Q;
-	  T := k[X_0 .. X_(c-1), toSequence Q.syms, 
+	  T := k[X_0 .. X_(c-1), toSequence Q.generatorSymbols, 
 	       Degrees => {
 		    apply(0 .. c-1,i -> adjust { - first degree f_i, -2}), 
 		    n : adjust {1,0}

@@ -26,26 +26,28 @@ verify := method(SingleArgumentDispatch=>true)
 local Reach
 reach := method(SingleArgumentDispatch=>true)
 DocumentationMissing := new MutableHashTable
-reachable := new MutableHashTable
+reachable = new MutableHashTable
 verify Thing := x -> null
-verify Sequence := verify BasicList := x -> scan(x,verify)
+verify Sequence := verify HtmlList := x -> scan(x,verify)
 reach Thing := x -> null
-reach Sequence := reach BasicList := x -> scan(x,reach)
-DocumentationProvided := set topicList()
+reach Sequence := reach HtmlList := x -> scan(x,reach)
+
+DocumentationProvided := set apply(topicList(), getDocumentationTag)
+
 verify TO := x -> (
-     s := x#0;
-     if class s =!= String then s = name s;
+     s := getDocumentationTag x#0;
      if not DocumentationProvided#?s and not DocumentationMissing#?s 
      then DocumentationMissing#s = currentPage;
      )
+
 reach TO := x -> (
-     s := x#0;
-     if class s =!= String then s = name s;
+     s := getDocumentationTag x#0;
      if not reachable#?s or not reachable#s
      then (
 	  reachable#s = true;
 	  reach doc s;
 	  ))
+
 scan(keys DocumentationProvided,
      s -> (
 	  reachable#s = false;
@@ -53,7 +55,8 @@ scan(keys DocumentationProvided,
 	  currentPage = s;
 	  verify d;
 	  ))
-reachable#"Macaulay 2" = true
+reachable#(getDocumentationTag "Macaulay 2") = true
+assert( class doc "Macaulay 2" === SEQ )
 reach doc "Macaulay 2"
 scan(sort pairs DocumentationMissing,
      (s,w) -> warning(
@@ -71,18 +74,19 @@ scan(sort keys unreachable,
 	  "documentation for '"|toString s|"' not reachable"))
 
 DocumentationNotNeeded = new MutableHashTable from apply(
-     toList (tab#"a" .. tab#"Z"), s -> (s,true))
+     toList (tab#"a" .. tab#"Z"), s -> (getDocumentationTag s,true))
 DocumentationNotNeeded#(quote
      ) = true
 DocumentationNotNeeded#(quote[) = true
 DocumentationNotNeeded#(quote{) = true
 DocumentationNotNeeded#(quote() = true
 
-scan(sort pairs tab, (n,s) -> 
-     if not DocumentationProvided#?n and not DocumentationNotNeeded#?s
-     then warning(s,"no documentation for symbol '"|n|"'"))
+scan(sort pairs tab, (n,s) -> (
+     tag := getDocumentationTag s;
+     if not DocumentationProvided#?tag and not DocumentationNotNeeded#?tag
+     then warning(s,"no documentation for symbol '"|n|"'")))
 
-scan(tab#"a" .. tab#"Y", 
+scan(tab#"a" .. tab#"Z", 
      i -> if lookupCount i != 1 
      then warning(i,
 	  "indeterminate '"|name i|"' has been used "|name lookupCount i|" times"

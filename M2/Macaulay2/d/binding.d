@@ -48,6 +48,9 @@ binaryleftword(s:string):Word := (
 nleft(s:string):Word := (
      install(s,unique(s,parseinfo(prec,prec,prec,
 		    parsefuns(errorunary,nbinaryop)))));
+nleftword(s:string):Word := (
+     unique(s,parseinfo(prec,prec,prec,
+		    parsefuns(errorunary,nbinaryop))));
 nunaryleft(s:string):Word := (
      install(s,unique(s,parseinfo(prec,prec,prec,
 		    parsefuns(nunaryop,nbinaryop)))));
@@ -194,7 +197,7 @@ bump();
 bump(2);
      semicolonW = nleft(";");
      export semicolonS := makeProtectedSymbolClosure(semicolonW);
-     newlineW = nleft("--newline--");
+     newlineW = nleftword("--newline--");
      export newlineS := makeProtectedSymbolClosure(newlineW);
 bump();
      export commaW := nunaryleft(",");
@@ -208,6 +211,7 @@ bump();
      export EqualW := binaryright("=");
      export LeftArrowW := binaryright("<-");
      export RightArrowW := binaryright("->",arrowop);
+     makeProtectedSymbolClosure(RightArrowW);
 bump();
      newscope := prec;
      ofW = token("of");
@@ -271,7 +275,7 @@ bump();
 bump();
      export AtS := makeProtectedSymbolClosure(binaryright("@"));
 bump();
-     export AdjacentS:=makeProtectedSymbolClosure(" ");
+     export AdjacentS:=makeProtectedSymbolClosure(binaryright(" "));
 
      precObject = prec;
      parseWORD.precedence = prec;
@@ -411,10 +415,9 @@ lookup(
 	       )
 	  is e:Symbol do return(e)));
 lookup(token:Token,forcedef:bool):void := (
-     if isdigit(token.word.name.0) 
-     || token.word.name.0 == '.' 
-     && length(token.word.name) >= 2
-     && isdigit(token.word.name.1)
+     n := length(token.word.name);
+     if n >= 1 && isdigit(token.word.name.0) 
+     || n >= 2 && token.word.name.0 == '.' && isdigit(token.word.name.1)
      then nothing
      else (
      	  when lookup(token.word,token.scope)

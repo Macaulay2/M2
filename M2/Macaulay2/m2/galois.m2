@@ -155,7 +155,7 @@ GF(Ring) := (S,options) -> unpack(S, (R,p,n,f) -> (
      then xx = baseName xx
      else (
 	  if g =!= null and g == S_0 
-	  then xx = S.syms#0
+	  then xx = S.generatorSymbols#0
 	  else xx = local x;
 	  );
      if g === null
@@ -189,7 +189,7 @@ GF(Ring) := (S,options) -> unpack(S, (R,p,n,f) -> (
      F.degreeLength = degreeLength R;
      F.char = p;
      F.frac = F;
-     F.syms = {xx};
+     F.generatorSymbols = {xx};
      F.generators = {F_0};
      baseName F := y -> (
 	  if F_0 == y then xx else error "expected a generator"

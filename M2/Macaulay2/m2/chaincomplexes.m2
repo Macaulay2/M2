@@ -157,7 +157,7 @@ document { "C.dd_i",
      "See also ", TO "ChainComplex", "."
      }
 
-net ChainComplex := C -> if C.?name then net C.name else (
+net ChainComplex := C -> if C.?name then C.name else (
      complete C;
      s := sort spots C;
      if # s === 0 then "0"
@@ -670,16 +670,36 @@ document { (cohomology,ZZ,ChainComplex),
 
   homology(ZZ,ChainComplexMap) := (i,f) -> inducedMap(homology(i,target f), homology(i,source f),f_i)
 cohomology(ZZ,ChainComplexMap) := (i,f) -> homology(-i,f)
+document { (homology,ZZ,ChainComplexMap),
+     TT "HH_i f", " -- provides the map on the ", TT "i", "-th homology module
+     by a map ", TT "f", " of chain complexes.",
+     PARA,
+     SEEALSO ("homology", "HH")
+     }
+document { (cohomology,ZZ,ChainComplexMap),
+     TT "HH^i f", " -- provides the map on the ", TT "i", "-th cohomology module
+     by a map ", TT "f", " of chain complexes.",
+     PARA,
+     SEEALSO ("cohomology", "HH")
+     }
 
-  homology(ChainComplex) := (C) -> (
-       H := new GradedModule;
-       complete C;
-       scan(spots C, i -> H#i = homology(i,C));
-       H)
-  homology(ChainComplexMap) := (f) -> (
-       g := new GradedModuleMap;
-       scan(spots f, i -> g#i = homology(i,f));
-       g)
+homology(ChainComplex) := (C) -> (
+     H := new GradedModule;
+     H.ring = ring C;
+     complete C;
+     scan(spots C, i -> H#i = homology(i,C));
+     H)
+document { (homology,ChainComplex),
+     TT "HH C", " -- produces the direct sum of the homology modules of the
+     chain complex ", TT "C", " as a graded module.",
+     PARA,
+     SEEALSO ("GradedModule", "HH")
+     }
+
+homology(ChainComplexMap) := (f) -> (
+     g := new GradedModuleMap;
+     scan(spots f, i -> g#i = homology(i,f));
+     g)
 
 chainComplex = method(SingleArgumentDispatch=>true)
 

@@ -89,17 +89,16 @@ repl := z -> (
      else z
      )
 
+getDocumentationTag = x -> (
+     while Documentation#?x and not class Documentation#x === SEQ do x = Documentation#x;
+     x)
+
 doc = x -> (
-     if class x === Symbol then x = string x;
-     if Documentation#?x then (
-	  d := Documentation#x;
-	  if class d === Symbol and value d === x then d = string d;
-	  if Documentation#?d then d = Documentation#d;
-	  if class d === SEQ then d
-	  else if class d === String and DocDatabase#?d then evaluate DocDatabase#d
-	  else if class d === List then d
-	  else null)
-     else if DocDatabase#?x then evaluate DocDatabase#x else null)
+     x = getDocumentationTag x;
+     if Documentation#?x and class Documentation#x === SEQ then evaluate Documentation#x
+     else if DocDatabase#?x then evaluate DocDatabase#x
+     else null
+     )
 
 err := nodeName -> error("warning: documentation already provided for '", nodeName, "'")
 
@@ -115,11 +114,11 @@ topicList = () -> sort select(keysDoc(), i -> class i === String)
 
 examples = x -> (
      if Documentation#?x then x = Documentation#x;
-     x = string x;
+     x = name x;
      if ExampleHashTable#?x then ExampleHashTable#x else {}
      )
 
-fm1 := s -> concatenate (
+formatDocumentTag = s -> concatenate (
      if class s === Sequence then (
 	  if #s === 4 then (
 	       if class s#0 === ScriptedFunctor
@@ -168,32 +167,35 @@ fm1 := s -> concatenate (
 	       )
 	  else (name s)
 	  )
-     else (name s)
+     else if class s === Option and #s === 2 and class s#0 === Function then (
+	  (name s#0, "(", name s#1, " => ...)")
+	  )
+     else if class s === String then s
+     else if class s === Symbol then string s
+     else name s
      )
-
-fm := (o,s) -> o << fm1 s
 
 hr := (o) -> o << "-----------------------------------------------------------------------------" << endl
 
-briefHelp := (o,s) -> (
-     d := doc s;
-     if d === null 
-     then (
-	  o << fm1 s << " --> Thing" << endl;		  -- no documentation available
-	  false
-	  )
-     else if class d === List then (
-	  o << fm1 s << " --> " << d#0 << endl;
-	  d = drop(d,2);
-     	  i := 0;
-     	  while i < #d and d#i =!= PARA do i = i+1;
-	  thereWasMore := i < #d;
-	  d = take(d,i);
-	  if #d > 0 then o << endl << text repl d << endl;
-	  thereWasMore)
-     else (
-	  o << text d << endl;
-	  false))
+--briefHelp := (o,s) -> (
+--     d := doc s;
+--     if d === null 
+--     then (
+--	  o << formatDocumentTag s << " --> Thing" << endl;		  -- no documentation available
+--	  false
+--	  )
+--     else if class d === List then (
+--	  o << formatDocumentTag s << " --> " << d#0 << endl;
+--	  d = drop(d,2);
+--     	  i := 0;
+--     	  while i < #d and d#i =!= PARA do i = i+1;
+--	  thereWasMore := i < #d;
+--	  d = take(d,i);
+--	  if #d > 0 then o << endl << text repl d << endl;
+--	  thereWasMore)
+--     else (
+--	  o << text d << endl;
+--	  false))
 
 previousMethods := new MutableHashTable
 saveMethod := meth -> (
@@ -209,45 +211,8 @@ saveMethod := meth -> (
 help2 := (o,s) -> (
      d := doc s;
      if d === null 
-     then (
-	  o << fm1 s << " --> Thing" << endl;		  -- no documentation available
-	  )
-     else if class d === List then (
-	  o << fm1 s << " --> " << d#0 << endl;
-	  if #d > 2 then o << endl << text repl drop(d,2) << endl;
-	  )
-     else o << text d << endl;
---     if class s =!= Sequence then (
---	  m := methods s;
---	  if #m > 0 then (
---	       scan(m, meth -> (
---			 hr o; 
---			 if briefHelp(o,meth) then (
---			      o << endl
---			      << "Type 'help "
---			      << saveMethod meth 
---			      << "' for more help." << endl;
---			      );
---			 ));
---	       hr o;
---	       );
---	  );
---     if # options value s > 0 then (
---	  o << "Options and default values:" << endl;
---	  hr o;
---	  scan(rsort pairs options value s, (option,default) -> (
---		    o << s << "( ... , " << option << " => " << default << ") :" << endl;
---		    if Documentation#?(value s,option)
---		    then (
---			 o << endl << text repl Documentation#(value s,option) << endl;
---			 )
---		    else (
---			 o << endl << "No documentation available." << endl;
---			 );
---		    hr o;
---		    )
---	       );
---	  );
+     then o << "No documentation available for '" << formatDocumentTag s << "'." << endl
+     else o << "Documentation for " << formatDocumentTag s << endl << text d << endl;
      )
 
 OS := "operating system"
@@ -418,6 +383,7 @@ storeDoc := (docBody) -> (
 	  DocDatabase#nodeName = name docBody;
 	  );
      )
+
 document = z -> (
      if class z != List then error "expected a list";
      if #z === 0 then error "expected a nonempty list";
@@ -429,22 +395,11 @@ document = z -> (
 	  opt := key#1;
 	  if not (options fn)#?opt then error ("expected ", name opt, " to be an option of ", name fn);
 	  );
-     if class key === String
-     then (
-	  nodeName = key;
-	  )
-     else if class key === Symbol
-     then (
-	  nodeName = string key;	  -- string and name differ on symbols like "quote @"!
-	  Documentation#key = nodeName;
-	  )
-     else (
-	  nodeName = name key;
-	  Documentation#key = nodeName;
-	  );
-     if phase === 1 and not writableGlobals#?key and class key === Symbol 
-     then protect key;
-     if documentableValue key then Documentation#(value key) = nodeName;
+     if phase === 1 and not writableGlobals#?key and class key === Symbol then protect key;
+     if documentableValue key then Documentation#(value key) = key;
+     nodeName = name key;
+     Documentation#key = nodeName;
+     if substring(nodeName,0,6) === "quote " then Documentation#(substring(nodeName,6)) = nodeName;
      nodeBaseFilename = makeBaseFilename();
      docBody := repl toList apply(1 .. #z - 1, i -> z#i); -- drop isn't defined yet
      docBody = processExamples docBody;
@@ -462,7 +417,7 @@ exportDocumentation = () -> (
 		    nodeBaseFilename = makeBaseFilename();
 		    z := Documentation#key;
 		    docBody := drop(z,2);
-		    docBody = join({ concatenate(fm1 key, " --> ", name z#0), PARA}, docBody);
+		    docBody = join({ concatenate(formatDocumentTag key, " --> ", name z#0), PARA}, docBody);
 		    docBody = repl docBody;
 		    docBody = processExamples docBody;
 		    storeDoc docBody;
@@ -638,3 +593,9 @@ assert( null =!= doc "sin")
 assert( null =!= doc quote sin)
 ///
 
+document { quote formatDocumentTag,
+     TT "formatDocumentTag x", " -- formats the tags used with ", TO "TO", " for
+     display purposes in documents.",
+     PARA,
+     "This function is intended for internal use only."
+     }

@@ -422,6 +422,15 @@ document { quote Descending,
      arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
      }
 
+document { quote DegreeOrder,
+     TT "DegreeOrder", " -- an optional argument for use with certain
+     functions, used to specify sort order.",
+     PARA,
+     MENU {
+	  TO (sortColumns => DegreeOrder)
+	  }
+     }
+
 document { (sortColumns => DegreeOrder),
      TT "DegreeOrder => x", " -- an optional argument for use with the function
      ", TO "sortColumns", ".",

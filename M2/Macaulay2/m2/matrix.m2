@@ -23,36 +23,42 @@ document { quote Matrix,
      TO "Module", ".  The degree of the map is not necessarily 0, and may
      be obtained with ", TO "degree", ".",
      PARA,
-     "Multiplication of matrices corresponds to composition of maps, and 
-     when f and g are maps so that the target Q of g equals the source P of f,
-     the product f*g is defined, its source is the source of g, and its target
-     is the target of f.  The degree of f*g is the sum of the degrees
-     of f and of g.  The product is also defined when P != Q, provided only that
-     P and Q are free modules of the same rank.  If the degrees of P differ
-     from the corresponding degrees of Q by the same degree d, then the degree
-     of f*g is adjusted by d so it will have a good chance to be homogeneous,
-     and the target and source of f*g are as before.",
+     "Multiplication of matrices corresponds to composition of maps, and when
+     ", TT "f", " and ", TT "g", " are maps so that the target ", TT "Q", "
+     of ", TT "g", " equals the source ", TT "P", " of ", TT "f", ", the
+     product ", TT "f*g", " is defined, its source is the source of ", TT
+     "g", ", and its target is the target of ", TT "f", ".  The degree of ",
+     TT "f*g", " is the sum of the degrees of ", TT "f", " and of ", TT "g",
+     ".  The product is also defined when ", TT "P", " != ", TT "Q", ",
+     provided only that ", TT "P", " and ", TT "Q", " are free modules of the
+     same rank.  If the degrees of ", TT "P", " differ from the corresponding
+     degrees of ", TT "Q", " by the same degree ", TT "d", ", then the degree
+     of ", TT "f*g", " is adjusted by ", TT "d", " so it will have a good
+     chance to be homogeneous, and the target and source of ", TT "f*g", "
+     are as before.", 
      PARA,
-     "If h is a matrix then h_j is the j-th column of the matrix, and 
-     h_j_i is the entry in row i, column j.  The notation h_(i,j) can be
-     used as an abbreviation for h_j_i, allowing row and column indices
-     to be written in the customary order.",
+     "If ", TT "h", " is a matrix then ", TT "h_j", " is the ", TT "j", "-th
+     column of the matrix, and ", TT "h_j_i", " is the entry in row ", TT
+     "i", ", column ", TT "j", ".  The notation ", TT "h_(i,j)", " can be
+     used as an abbreviation for ", TT "h_j_i", ", allowing row and column
+     indices to be written in the customary order.",
      PARA,
      "If ", TT "m", " and ", TT "n", " are matrices, ", TT "a", " is a ring element, 
-     and ", TT "i", " is an integer, then 'm+n', 'm-n', '-m', 'm n', 'a m', 
-     and 'i m' denote the usual matrix arithmetic.  'm == n', and 'm == 0' are used 
-     to check equality of matrices.",
+     and ", TT "i", " is an integer, then ", TT "m+n", ", ", TT "m-n", ", 
+     ", TT "-m", ", ", TT "m n", ", ", TT "a*m", ", and ", TT "i*m", " denote the
+     usual matrix arithmetic.  Use ", TT "m == n", ", and ", TT "m == 0", " to 
+     check equality of matrices.",
      PARA,
      "Operations which produce matrices:", 
      MENU {
 	  TO "flip",
-          (TO "genericMatrix", "(R,x,r,c)        -- an r by c generic matrix"),
-          (TO "genericSkewMatrix", "(R,x,r)      -- an r by r generic skew matrix"),
-          (TO "genericSymmetricMatrix", "(R,x,r) -- an r by r generic symmetric matrix"),
-	  (TO "id", "_F                          -- identity map F <--- F"),
-	  (TO "matrix", "                        -- create a matrix"),
-	  (TO "map", "                           -- create a map of modules"),
-	  (TO "random", "(F,G)                   -- a random graded matrix F <-- G")
+          (TO "genericMatrix", " -- an generic matrix"),
+          (TO "genericSkewMatrix", " -- an generic skew-symmetric matrix"),
+          (TO "genericSymmetricMatrix", " -- a generic symmetric matrix"),
+	  (TO "id", " -- identity maps"),
+	  (TO "matrix", " -- create a matrix"),
+	  (TO "map", " -- create a map of modules"),
+	  (TO "random", " -- a random homgeneous matrix")
 	  },
      "Operations on matrices:",
      MENU {
@@ -95,7 +101,6 @@ document { quote Matrix,
 	  (TO "entries", "             -- the entries of m"),
 	  (TO "exteriorPower", "       -- exterior power of m"),
           (TO "flatten", "             -- collect entries of a matrix into one row"),
-	  TO "poincare",
 	  (TO "inducedMap", "          -- a map induced on subquotients"),
 	  (TO "inducesWellDefinedMap", " -- whether a matrix would induce a well defined map"),
           (TO "isHomogeneous", "       -- whether a matrix is homogeneous"),
@@ -110,8 +115,8 @@ document { quote Matrix,
           (TO "leadTerm", "            -- lead monomial matrix of the columns of a matrix"),
  	  (TO "minors", "              -- ideal minors of a matrix"),
 	  TO "modulo",
-	  (TO "pfaffians", "(i,m)      -- ideal of i by i Pfaffians of the skew
-		symmetric matrix m"),
+	  (TO "pfaffians", " -- ideal of i by i Pfaffians of a skew symmetric matrix"),
+	  TO "poincare",
 	  TO "reshape",
           (TO "ring", "                -- the base ring of a matrix"),
 	  TO "singularLocus",
@@ -1852,8 +1857,13 @@ homology(Matrix,Matrix) := (g,f) -> (
 	  );
      subquotient(h, if N.?relations then f | N.relations else f))
 
-TEST "
-"
+document { (homology,Matrix,Matrix),
+     TT "homology(g,f)", " -- computes the homology module ", TT "ker g/im f", ".",
+     PARA,
+     "Here ", TT "g", " and ", TT "f", " should be composable maps with ", TT "g*f", "
+     equal to zero.",
+     SEEALSO "homology"
+     }
 
 Hom(Matrix, Module) := (f,N) -> (
      if isFreeModule source f and isFreeModule target f

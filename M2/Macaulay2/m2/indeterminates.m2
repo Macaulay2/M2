@@ -41,7 +41,7 @@ Thing .. Thing := (a,z) -> (
      toSequence apply(aa .. zz, value)
      )
 
-document { "..",
+document { quote "..",
      TT "m .. n", " -- produces a sequence of integers in the range from m to 
      n inclusive. If n is less than m then the result is an empty sequence.",
      PARA,

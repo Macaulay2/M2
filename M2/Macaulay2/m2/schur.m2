@@ -2,7 +2,7 @@
 
 SchurRing = new Type of EngineRing
 
-name SchurRing := S -> "Schur(" | string (# (monoid S).syms) | ")"
+name SchurRing := S -> "Schur(" | string (# (monoid S).generatorSymbols) | ")"
 
 newSchur := (R,M) -> (
      if not (M.?Engine and M.Engine) 

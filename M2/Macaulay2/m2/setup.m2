@@ -26,7 +26,7 @@ if class phase === Symbol then phase = 0
 
 Manipulator = new Type of BasicList
 new Manipulator from Function := (Manipulator,f) -> new Manipulator from {f}
-Manipulator.name = quote Manipulator
+Manipulator.name = "Manipulator"
 Manipulator Database := Manipulator File := (m,o) -> m#0 o
 Manipulator Nothing := (m,null) -> null
 File << Manipulator := (o,m) -> m#0 o
@@ -43,6 +43,8 @@ flush = new Manipulator from oldflush
 oldendl := endl
 erase quote endl
 endl = new Manipulator from oldendl
+
+erase quote "--newline--"
 
 << Thing := x -> stdout << x
 File << Net := File << Symbol := File << String := printString
@@ -140,11 +142,6 @@ addStartFunction = g -> (
      startFunctions = append(startFunctions,g);
      g)
 runStartFunctions = () -> scan(startFunctions, f -> f())
-
--- erase space symbol
-X := new Type of HashTable
-X X := identity
-erase (keys X)#0#0
 
 << "--loading source code..." << endl
 load "loads.m2"

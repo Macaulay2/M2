@@ -147,7 +147,7 @@ coefficientRing FractionField := F -> coefficientRing F.baseRings#-1
 	isField FractionField := F -> true
             net FractionField := F -> (
 		 if F.?name
-		 then net F.name
+		 then F.name
 		 else net new FunctionApplication from { frac, F.baseRings#-1 }
 		 )
 
@@ -206,7 +206,7 @@ frac EngineRing := R -> (
 	       s = promote(s,F);
 	       sendgg ( ggPush r, ggPush s, ggdiv);
 	       new F);
-	  if R.?syms then F.syms = R.syms;
+	  if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
 	  if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
 	  scan(keys R,k -> if class k === String then F#k = promote(R#k,F));
 	  F))
@@ -251,7 +251,7 @@ degreeLength Ring := R -> R.degreeLength
 use Ring := R -> (
      if R.?ring then use R.ring;
      try generators R;
-     if R.?generators and R.?syms then scan(R.syms,R.generators,assign);
+     if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,assign);
      if R.?use then R.use R;
      R)
 

@@ -1,7 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 IndexedVariableTable = new Type of MutableHashTable
-expression IndexedVariableTable := x -> hold x.name
+expression IndexedVariableTable := x -> hold x.symbol
 precedence IndexedVariableTable := x -> 70
 baseName IndexedVariableTable := x -> (
      if x.?name then x.name
@@ -20,12 +20,17 @@ document { quote IndexedVariableTable,
      }
 
 IndexedVariable = new Type of BasicList
-name IndexedVariable := x -> concatenate(name x#0,"_",name x#1)
-expression IndexedVariable := x -> new Subscript from {
-     expression x#0,expression x#1
-     }
-
-net IndexedVariable := x -> net new Subscript from {x#0,x#1}
+name IndexedVariable := v -> (
+     x := v#0;
+     i := v#1;
+     -- if x#?i then concatenate(name x.symbol,"_",name i) else 
+     concatenate(string x.symbol,"_",name i)
+     )
+net IndexedVariable := v -> (
+     x := v#0;
+     i := v#1;
+     net new Subscript from { expression x.symbol, expression i}
+     )
 vars IndexedVariable := x -> {x}
 IndexedVariable ? IndexedVariable := (x,y) -> (
      if x#0 === y#0 then y#1 ? x#1
@@ -39,11 +44,12 @@ IndexedVariableTable _ Thing := (x,i) -> (
      else new IndexedVariable from {x,i}
      )
 Symbol _ Thing := (v,i) -> (
-     if class value v === IndexedVariableTable and (value v).name === v
-     then (value v)_i
+     if class value v === IndexedVariableTable
+     then new IndexedVariable from {value v,i}
      else (
      	  v <- x := new IndexedVariableTable;
-     	  x.name = v;
+     	  x.name = string v;
+	  x.symbol = v;
      	  new IndexedVariable from {x,i}
 	  )
      )

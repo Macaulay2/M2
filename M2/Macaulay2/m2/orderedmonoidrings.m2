@@ -83,13 +83,13 @@ document { quote exponents,
 
 name PolynomialRing := R -> name R.baseRings#-1 | name monoid R
 expression PolynomialRing := R -> (
-     if R.?name
-     then expression R.name
+     if R.?symbol
+     then expression R.symbol
      else (expression R.baseRings#-1) (expression monoid R)
      )
 net PolynomialRing := R -> (
      if R.?name
-     then net R.name
+     then R.name
      else (net R.baseRings#-1) | (net monoid R)
      )
 
@@ -314,7 +314,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	       v := factor f;		  -- constant term always last
 	       #v === 2 and v#1#1 === 1 and v#0#1 === 1
 	       );
-	  RM.syms = M.syms;
+	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generators = apply(M.generators, m -> RM#(name m) = RM#0 + m);
 	  scan(keys R, k -> if class k === String then RM#k = promote(R#k,RM));
 	  RM.use = x -> (

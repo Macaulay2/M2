@@ -8,13 +8,8 @@ ScriptedFunction _ Thing := (G,i) -> (
      if G#?subscript then G#subscript i
      else error("no method for ", name G, "_", name i))
 
-GlobalAssignHook ScriptedFunction := (X,x) -> (
-     if not x#?(quote name) then x.name = X
-     )
-GlobalReleaseHook ScriptedFunction := (X,x) -> (
-     if x#?(quote name) and X === x.name
-     then remove(x,quote name)
-     )
+GlobalAssignHook ScriptedFunction := globalAssignFunction
+GlobalReleaseHook ScriptedFunction := globalReleaseFunction
 
 id = new ScriptedFunction from { 
      subscript => (
@@ -44,13 +39,8 @@ document { quote ScriptedFunction,
      }
 
 ScriptedFunctor = new Type of MutableHashTable
-GlobalAssignHook ScriptedFunctor := (X,x) -> (
-     if not x#?(quote name) then x.name = X
-     )
-GlobalReleaseHook ScriptedFunctor := (X,x) -> (
-     if x#?(quote name) and X === x.name
-     then remove(x,quote name)
-     )
+GlobalAssignHook ScriptedFunctor := globalAssignFunction
+GlobalReleaseHook ScriptedFunctor := globalReleaseFunction
 ScriptedFunctor ^ Thing := (G,i) -> (
      if G#?superscript 
      then G#superscript i

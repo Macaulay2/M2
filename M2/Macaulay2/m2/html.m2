@@ -21,10 +21,10 @@ htmlExtraLiteral := s -> concatenate apply(characters s, c -> htmlExtraLiteralTa
 -----------------------------------------------------------------------------
 ttLiteralTable := new MutableHashTable
 scan(0 .. 255, 
-     c -> ttLiteralTable#(ascii{c}) = concatenate(///{\char///, string c, "}"))
+     c -> ttLiteralTable#(ascii{c}) = concatenate(///{\char ///, string c, "}"))
 scan(characters ascii(32 .. 126), c -> ttLiteralTable#c = c)
 scan(characters "\\{}$&#^_%~", 
-     c -> ttLiteralTable#c = concatenate("{\\char", string (ascii c)#0, "}"))
+     c -> ttLiteralTable#c = concatenate("{\\char ", string (ascii c)#0, "}"))
 scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))
 
 cmrLiteralTable := copy ttLiteralTable
@@ -52,12 +52,12 @@ ttLiteral := s -> concatenate apply(characters s, c -> ttLiteralTable#c)
 cmrLiteralTable#"\n" = "\n"
 cmrLiteralTable#"\r" = "\r"
 cmrLiteralTable#"\t" = "\t"
-cmrLiteralTable#"\\" = "{\\tt\\char`\\\\}"
-cmrLiteralTable# "<" = "{\\tt\\char`\\<}"
-cmrLiteralTable# ">" = "{\\tt\\char`\\>}"
-cmrLiteralTable# "|" = "{\\tt\\char`\\|}"
-cmrLiteralTable# "{" = "{\\tt\\char`\\{}"
-cmrLiteralTable# "}" = "{\\tt\\char`\\}}"
+cmrLiteralTable#"\\" = "{\\tt \\char`\\\\}"
+cmrLiteralTable# "<" = "{\\tt \\char`\\<}"
+cmrLiteralTable# ">" = "{\\tt \\char`\\>}"
+cmrLiteralTable# "|" = "{\\tt \\char`\\|}"
+cmrLiteralTable# "{" = "{\\tt \\char`\\{}"
+cmrLiteralTable# "}" = "{\\tt \\char`\\}}"
 cmrLiteral := s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 -----------------------------------------------------------------------------
 
@@ -131,9 +131,7 @@ ListHead List := (h,y) -> new h from y
 ListHead HtmlList := (h,y) -> new h from {y}
 ListHead String := (h,s) -> h {s}
 ListHead Sequence := (h,s) -> h {s}
-GlobalAssignHook ListHead := (X,x) -> (
-     if not x#?(quote name) then x.name = X
-     )
+GlobalAssignHook ListHead := globalAssignFunction
 
 newListHead := (x) -> (
      on := "<" | x | ">";
@@ -302,7 +300,7 @@ text SEQ   := x -> concatenate(apply(x, text))
 html SEQ   := x -> concatenate(apply(x, html))
 
 TT         = newListHead "TT"
-tex TT := x -> concatenate(///{\tt{}///, ttLiteral x#0, "}")
+tex TT := x -> concatenate(///{\tt {}///, ttLiteral x#0, "}")
 text TT := x -> concatenate("'", x#0, "'")
 
 EM         = newListHead "EM"
@@ -353,7 +351,7 @@ tex MENU := x -> concatenate(
      ///
 \begingroup\parindent=40pt
 ///,
-     apply(x, x -> ( ///\item{$\bullet$}///, tex x, newline)),
+     apply(x, x -> ( ///\item {$\bullet$}///, tex x, newline)),
      "\\endgroup", newline, newline)
 
 UL         = newListHead "UL"
@@ -428,15 +426,16 @@ text DL   := x -> concatenate(
 
 TO         = newListHead "TO"
 ff := {"\"","\""}
-text TO   := x -> concatenate (
-     if class x#0 === String
-     then mingle(ff,x)
-     else mingle(ff,toList x/name)
+
+text TO   := x -> concatenate ( 
+     "\"", getDocumentationTag x#0, "\"",
+     drop(toList x, 1)
      )
+
 html TO   := x -> concatenate (
-     if class x#0 === String
-     then ("<A HREF=\"", linkFilename x#0, "\">", html x#0, "</A>", apply(drop(x,1), html))
-     else ("<A HREF=\"", linkFilename name x#0, "\">", html name x#0, "</A>", apply(drop(x,1), html))
+     "<A HREF=\"", linkFilename getDocumentationTag x#0, "\">", html formatDocumentTag x#0, "</A>", 
+     drop(toList x,1)
      )
-tex TO := x -> tex TT x#0
+
+tex TO := x -> tex TT formatDocumentTag x#0
 

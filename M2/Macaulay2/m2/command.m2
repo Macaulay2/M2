@@ -3,11 +3,11 @@
 -- documentation is in doc.m2 because this file loaded early
 
 SelfInitializingType = new Type of Type
-SelfInitializingType.name = quote SelfInitializingType
+SelfInitializingType.name = "SelfInitializingType"
 SelfInitializingType Thing := (T,z) -> new T from z
 
 Command = new SelfInitializingType of BasicList
-Command.name = quote Command
+Command.name = "Command"
 new Command from Function := (command,f) -> command {f}
 new Command from String   := (command,cmdname) -> command {
      x -> (

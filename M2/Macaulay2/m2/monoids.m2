@@ -34,7 +34,7 @@ document { quote Monoid,
      "Keys:",
      MENU {
 	  TO "index",
-	  TO "syms"
+	  TO "generatorSymbols"
 	  }
      }
 

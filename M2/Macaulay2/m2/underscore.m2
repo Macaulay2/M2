@@ -31,7 +31,7 @@ document { quote #,
      SEEALSO( "#?", "#" )
      }
 
-document { "#?",
+document { quote #?,
      TT "x#?i", " -- tells whether there is a value associated to the key i in 
      the hash table x; or else whether the i-th element of x exists if x is a list, 
      array, or sequence; or else whether the i-th character of x exists if x
@@ -40,7 +40,7 @@ document { "#?",
      SEEALSO( "#" )
      }
 
-document { "_",
+document { quote "_",
      TT "x_i", " -- a binary operator which is used for various
      mathematica operations that are customarily written with subscripts.",
      PARA,
@@ -62,8 +62,8 @@ document { "_",
 	  (TO "M_{i}", "      -- get a generator mapping to a module"),
 	  (TO "G_i", "        -- get a generator from a monoid"),
 	  (TO "R_i", "        -- get a generator from a ring"),
-	  (TO "Tor", "_i      -- Tor functor"),
-	  (TO "HH", "_i       -- homology functor"),
+	  (TO "Tor", "        -- Tor functor"),
+	  (TO "HH", "         -- homology functor"),
 	  (TO "v_i", "        -- get an entry from a vector"),
 	  (TO "S_v", "        -- make an element of a Schur ring")
 	  }
@@ -81,7 +81,7 @@ document { "w_{i,j}",
 
      }
 
-document { ".",
+document { quote ".",
      TT "x.k", " -- the same as x#(global k), i.e., treat ", TT "k", " as
      a global symbol and provide the value stored in the hash table ", TT "x", " 
      under the key ", TT "k", ".",
@@ -95,7 +95,7 @@ document { ".",
      SEEALSO ("#", ".?", "global")
      }
 
-document { ".?",
+document { quote ".?",
      TT "x.?k", " -- the same as x#?(global k), tells whether a value is
      available with ", TT "x.k", ".",
      PARA,

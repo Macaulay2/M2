@@ -7,15 +7,24 @@ Sequence / Function := List / Function := (v,f) -> apply(v,f)
 
 use = identity				  -- just temporary, until methods.m2
 
-GlobalAssignHook Type := (X,x) -> (
-     if not x#?(quote name) then x.name = X;
+globalAssignFunction = (X,x) -> (
+     if not x#?(quote name) then (
+	  x.symbol = X;
+	  x.name = string X;
+	  );
      use x;
      )
 
-GlobalReleaseHook Type := (X,x) -> (
-     if x#?(quote name) and X === x.name
-     then remove(x,quote name)
+globalReleaseFunction = (X,x) -> (
+     if x.?symbol and X === x.symbol
+     then (
+	  remove(x,quote name);
+	  remove(x,quote symbol);
+	  )
      )
+
+GlobalAssignHook Type := globalAssignFunction
+GlobalReleaseHook Type := globalReleaseFunction
 
 lookupi := x -> (
      r := lookup x;
@@ -24,7 +33,11 @@ lookupi := x -> (
 
 name = s -> (
      if s.?name
-     then string s.name
+     then (
+	  if class s.name === String or class s.name === Net
+	  then s.name
+	  else error "expected value stored under 'name' to be a string or net"
+	  )
      else (
 	  f := lookup(name,class s);
 	  if f =!= null 
@@ -38,7 +51,31 @@ name = s -> (
 name Thing := string
 name String := format;
 
-name Symbol := s -> error "'name' applied to symbol too early in setup"
+     alphabet := new MutableHashTable
+     scan( characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", c -> alphabet#c = true)
+     operators := new MutableHashTable
+     scan( { quote or, quote do, quote else, quote then, quote of, quote shield,
+	       quote from, quote and, quote not, quote if, quote try, 
+	       quote new, quote while, quote quote, quote global, quote local,
+	       quote timing, quote time
+	       },
+	  i -> operators#i = concatenate("quote ", string i))
+     scan(pairs symbolTable(), (n,s) -> (
+	       if not alphabet#?(n#0) then (
+		    operators#s = concatenate("quote ",n);
+		    )
+	       )
+	  )
+     alphabet = null
+     operators#(quote " ") = ///quote " "///
+     operators#(quote \) = ///quote "\\"///
+
+name Symbol := s -> (
+     if operators#?s then operators#s 
+     else if value s === s then string s
+     else concatenate("quote ", string s)
+     )
+
 name Function := f -> error "'name' applied to function too early in setup"
 
 name MutableHashTable := s -> concatenate (

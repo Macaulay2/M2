@@ -255,6 +255,13 @@ allfiles: Makefile
 	@$(UTIL)echoout '>allfiles.tmp' $(ALLFILES)
 	@<allfiles.tmp sort|uniq >allfiles
 	@rm allfiles.tmp
+
+backup : CVS/Entries
+CVS/Entries : $(ALLFILES)
+	mount /a.ext2
+	tar cfv - $? | (cd /a.ext2; mkdir -p d; cd d; tar xf -)
+	umount /a.ext2
+
 wc:
 	wc -l $(WC1FILES)
 clean :
