@@ -115,7 +115,9 @@ assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      is x:Sequence do buildErrorPacket("assignment attempted to element of sequence")
      is x:HashTable do storeInHashTable(x,lhsindex,rhs)
      is x:Database do dbmstore(x,lhsindex,rhs)
-     is x:DictionaryClosure do storeInDictionary(x,lhsindex,rhs)
+     is dc:DictionaryClosure do (
+	  if dc.dictionary.protected then printErrorMessage(lhsarray,"attempted to create symbol in protected dictionary")
+	  else storeInDictionary(dc,lhsindex,rhs))
      else printErrorMessage(lhsarray,"expected a list, hash table, database, or dictionary")
      );
 AssignElemFun = assignelemfun;

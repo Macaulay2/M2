@@ -1270,6 +1270,7 @@ getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when globalLookup(w) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
      is null do (
+	  if d.protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
 	  t := makeSymbol(w,dummyPosition,d);
 	  globalFrame.values.(t.frameindex)));
 getglobalsym(s:string):Expr := getglobalsym(globalDictionary,s);
