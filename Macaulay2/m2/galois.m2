@@ -66,7 +66,7 @@ GF(ZZ,ZZ) := GaloisField => options -> (p,n) -> (
      if n === 1 then ZZ/p
      else (
 	  x := if options.Variable === null then local a else baseName options.Variable;
-	  R := ZZ/p[x,MonomialSize => 16];
+	  R := ZZ/p[x];
 	  t := R_0;
 	  while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
 	  GF(R/f,options,Variable => x)))

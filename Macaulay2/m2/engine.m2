@@ -199,7 +199,7 @@ RawRingElement == RawRingElement := (x,y) -> x === y
 ring RawRingElement := rawRing
 degree RawRingElement := rawMultiDegree
 size RawRingElement := rawTermCount
-someTerms(RawRingElement,ZZ,ZZ) := (f,i,n) -> rawGetTerms(f,i,i+n-1)
+someTerms(ZZ,RawRingElement,ZZ,ZZ) := (nvars,f,i,n) -> rawGetTerms(nvars,f,i,i+n-1)
 leadCoefficient RawRingElement := rawLeadCoefficient
 leadMonomial RawRingElement := rawLeadMonomial
 denominator RawRingElement := rawDenominator
