@@ -1820,7 +1820,11 @@ int FreeModule::primary_degree(const vec f) const
 {
   if (f == NULL) return 0;
   if (M == NULL) return 0;
-  return primary_degree(f->comp) + M->primary_degree(f->monom);
+  M->divide(f->monom, base_monom(f->comp), f->monom);
+  int deg = M->primary_degree(f->monom);
+  M->mult(f->monom, base_monom(f->comp), f->monom);
+
+  return primary_degree(f->comp) + deg;
 }
 
 void FreeModule::degree_weights(const vec f, const int *wts, int &lo, int &hi) const

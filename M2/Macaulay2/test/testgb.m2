@@ -5,23 +5,27 @@
 -- 
 
 strat = LongPolynomial;
+--strat = Primary;
+
 
 checkEngine := (f, str) -> (
   str2 := sendgg (ggPush f, ggsee);
   assert(str == str2);)
 
+sortcols = (m) -> m_(sortColumns m)
+
 -- Easy first case
 
     R = ZZ/101[a..d];
     m = matrix{{a*b-c^2, c*b}};
-    assert(generators gb(m, Strategy=>strat) == matrix{{a*b-c^2, b*c, c^3}})
+    assert(sortcols generators gb(m, Strategy=>strat) == sortcols matrix{{a*b-c^2, b*c, c^3}})
 
 
     R = ZZ/101[a,b,c,d];
     m = matrix{{a*b - c^2, a*c - d^2, b*c - c*d}};
     checkEngine(generators gb(m, Strategy=>strat),
-       -- "bc-cd ac-d2 ab-c2 bd2-d3 c3-d3 c2d2-ad3 a2d3-cd4 "
-          "ab-c2 ac-d2 bc-cd c3-d3 bd2-d3 c2d2-ad3 a2d3-cd4 "
+       "bc-cd ac-d2 ab-c2 bd2-d3 c3-d3 c2d2-ad3 a2d3-cd4 "
+--          "ab-c2 ac-d2 bc-cd c3-d3 bd2-d3 c2d2-ad3 a2d3-cd4 "
        | newline);
     assert(image m == image matrix 
        {{b*c-c*d, a*c-d^2, a*b-c^2, b*d^2-d^3, c^3-d^3, c^2*d^2-a*d^3, a^2*d^3-c*d^4}})
@@ -39,15 +43,15 @@ checkEngine := (f, str) -> (
     m = matrix {{r^3, r^2*s, r^2*t, r*t^2, r*s*t, t^3}} - matrix {{a,b,c,d,e,f}};
     n = selectInSubring(1,generators gb(m, Strategy=>strat));
     checkEngine(n, 
-	 "bc-ae c2-ad cd-af bd-ce de-bf d2-cf ce2-b2f ae3-b3f "
-   	 -- old one : "de-bf d2-cf cd-af bd-ce c2-ad bc-ae ce2-b2f ae3-b3f "
+	 -- "bc-ae c2-ad cd-af bd-ce de-bf d2-cf ce2-b2f ae3-b3f "
+   	 "de-bf d2-cf cd-af bd-ce c2-ad bc-ae ce2-b2f ae3-b3f "
 	 | newline)
 
 
     -- Easy first case computing minimal generators
     R = ZZ/101[a..d];
     m = matrix{{a*b-c^2, b*c, c^3}};
-    assert(mingens image m == matrix{{a*b-c^2, b*c}})
+    assert(sortcols mingens image m == sortcols matrix{{a*b-c^2, b*c}})
 
 
     -- 3 by 3 commuting matrices
@@ -109,7 +113,7 @@ checkEngine := (f, str) -> (
     f = a*b^2 + c^3;
     g = (a+b+c)^3;
     m = matrix{{a*f + b*g, f, g}};
-    assert(mingens image m == matrix{{g+2*f,f}})
+    assert(sortcols mingens image m == sortcols matrix{{g+2*f,f}})
 
 
     -- working over quotient rings

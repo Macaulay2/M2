@@ -5,7 +5,7 @@
 stash *gb_elem::mystash;
 stash *s_pair::mystash;
 
-int compare_type = 0;
+int compare_type = 0;  // gb2.cpp: changes this value sometimes, usually to 0.
 static int spair_heap_size[NHEAP] = {4, 16, 64, 256, 1024, 4048, 16384,
    65536, 262144, 1677721};
 
@@ -60,6 +60,15 @@ int s_pair_heap::compare(s_pair *f, s_pair *g) const
     if (cmp < 0) return -1;
     break;
   case 1:
+    cmp = M->compare(f->lcm, g->lcm);
+    if (cmp != 0) return -cmp; // MES: changed cmp to -cmp, to try out different order 2/21/00.
+    if (f->first == NULL || g->first == NULL)
+      return 0;
+    cmp = f->first->me - g->first->me;
+    if (cmp > 0) return 1;
+    if (cmp < 0) return -1;
+    break;
+  case 2:
     if (f->first != NULL && g->first != NULL)
       {
 	cmp = f->first->me - g->first->me;
@@ -80,7 +89,7 @@ int s_pair_heap::compare(s_pair *f, s_pair *g) const
     if (cmp > 0) return 1;
     if (cmp < 0) return -1;
     break;
-  case 2:
+  default:
     return -1;
     break;
   }
