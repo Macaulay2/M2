@@ -779,7 +779,7 @@ Matrix *Matrix::mult(const Matrix *m, bool opposite_mult) const
   degree_monoid()->remove(deg);
 
   for (int i=0; i<m->n_cols(); i++)
-    (*result)[i] = R->mult_vec_matrix(this, elem(i), opposite_mult);
+    (*result)[i] = R->mult_vec_matrix(this, m->elem(i), opposite_mult);
   return result;
 }
 

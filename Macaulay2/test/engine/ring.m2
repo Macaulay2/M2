@@ -145,7 +145,7 @@ S = ZZ[X,Y,WeylAlgebra => {X=>Y}]
 
 X*Y
 Y*X
-matrix {{X}} * matrix {{Y}}				    -- oops
+matrix {{X}} * matrix {{Y}} -- oops
 -- assert( matrix {{X}} * matrix {{Y}} == matrix {{Y*X}} )
 
 -- Local Variables:
