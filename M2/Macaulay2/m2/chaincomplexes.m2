@@ -9,6 +9,7 @@ ChainComplex = new Type of GradedModule
 ChainComplex.synonym = "chain complex"
 new ChainComplex := ChainComplex => (cl) -> (
      C := newClass(ChainComplex,new MutableHashTable); -- sigh
+     C.cache = new CacheTable;
      b := C.dd = new ChainComplexMap;
      b.degree = -1;
      b.source = b.target = C;

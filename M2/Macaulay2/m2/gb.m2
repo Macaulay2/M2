@@ -197,7 +197,7 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
                then id_(source f)
                else options.ChangeMatrix;
      syzmat := if options.SyzygyMatrix === null
-               then map(target changemat, 0)
+               then map(target changemat, target changemat, 0)
                else options.SyzygyMatrix;
      nsyz := numgens target changemat;
      if nsyz >= numgens source minmat then nsyz = -1;

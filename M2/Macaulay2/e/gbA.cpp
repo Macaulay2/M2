@@ -142,6 +142,7 @@ gbA::spair *gbA::new_gen(int i, gbvector *f, ring_elem denom)
 
   if (R->gbvector_is_zero(f))
     {
+      originalR->get_quotient_info()->normal_form(_Fsyz, fsyz);
       if (!R->gbvector_is_zero(fsyz))
 	{
 	  //vec fsyzvec = _GR->gbvector_to_vec(_Fsyz,fsyz);
@@ -1038,7 +1039,8 @@ int gbA::find_good_monomial_divisor_ZZ(
   int n = 0;
 
   vector<MonomialTableZZ::mon_term *,gc_alloc> divisors;
-  ealpha = degf - weightInfo_->exponents_weight(e);
+  ealpha = degf - weightInfo_->exponents_weight(e) - _F->primary_degree(x-1);
+
 
   /* First search for ring divisors */
   if (ringtableZZ)
@@ -1083,7 +1085,7 @@ int gbA::find_good_term_divisor_ZZ(
   int n = 0;
 
   vector<MonomialTableZZ::mon_term *,gc_alloc> divisors;
-  ealpha = degf - weightInfo_->exponents_weight(e);
+  ealpha = degf - weightInfo_->exponents_weight(e) - _F->primary_degree(x-1);
 
   /* First search for ring divisors */
   if (ringtableZZ)
@@ -1127,7 +1129,8 @@ int gbA::find_good_divisor(exponents e,
   int n = 0;
 
   vector<MonomialTable::mon_term *,gc_alloc> divisors;
-  ealpha = degf - weightInfo_->exponents_weight(e);
+  ealpha = degf - weightInfo_->exponents_weight(e)
+             - _F->primary_degree(x-1);
 
   /* First search for ring divisors */
   if (ringtable)
@@ -1429,17 +1432,21 @@ void gbA::handle_elem(POLY f, gbelem_type minlevel)
       if (gbTrace == 3)
 	emit_wrapped("m");
     }
-  else if (!R->gbvector_is_zero(f.fsyz))
+  else 
     {
-      /* This is a syzygy */
-      collect_syzygy(f.fsyz);
-      if (gbTrace == 3)
-	emit_wrapped("z");
-    }
-  else
-    {
-      if (gbTrace == 3)
-	emit_wrapped("o");
+      originalR->get_quotient_info()->normal_form(_Fsyz, f.fsyz);
+      if (!R->gbvector_is_zero(f.fsyz))
+	{
+	  /* This is a syzygy */
+	  collect_syzygy(f.fsyz);
+	  if (gbTrace == 3)
+	    emit_wrapped("z");
+	}
+      else
+	{
+	  if (gbTrace == 3)
+	    emit_wrapped("o");
+	}
     }
 }
 
@@ -1662,10 +1669,7 @@ const MatrixOrNull *gbA::get_syzygies()
   MatrixConstructor mat(_Fsyz, 0);
   for (vector<gbvector *,gc_alloc>::iterator i = _syz.begin(); i != _syz.end(); i++)
     {
-      gbvector *z = *i;
-      originalR->get_quotient_info()->normal_form(_Fsyz, z);
-      if (z != 0)
-	mat.append(originalR->translate_gbvector_to_vec(_Fsyz, z));
+      mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
     }
   return mat.to_matrix();
 }

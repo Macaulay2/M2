@@ -16,14 +16,12 @@ quot0 := options -> (I,J) -> (
     -- this is the version when I, J are ideals,
     R := (ring I)/I;
     mR := transpose generators J ** R;
-    << "about to compute syzygies over quotient" << endl;
     g := syz gb(mR,
            options,
            Strategy=>LongPolynomial,
            Syzygies=>true,SyzygyRows=>1);
     -- The degrees of g are not correct, so we fix that here:
     -- g = map(R^1, null, g);
-    << "about to lift back to original ring" << endl;    
     lift(ideal g, ring I)
     )
 
