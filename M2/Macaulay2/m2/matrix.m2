@@ -246,14 +246,12 @@ samering = mats -> (					    -- we erase this later
 
 Matrix.directSum = args -> (
      R := ring args#0;
-     if not all(args, f -> ring f === R) 
-     then error "expected matrices all over the same ring";
-     sendgg(apply(args, ggPush), ggPush (#args), ggdirectsum);
+     if not all(args, f -> ring f === R) then error "expected matrices all over the same ring";
      new Matrix from {
+	  symbol RawMatrix => rawDirectSum toSequence (raw\args),
 	  symbol ring => R,
 	  symbol source => directSum apply(args,source),
 	  symbol target => directSum apply(args,target),
-	  symbol handle => newHandle "",
 	  symbol cache => new CacheTable,
 	  symbol components => toList args
 	  })

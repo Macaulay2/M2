@@ -230,6 +230,7 @@ RawRing ^ List := (R,i) -> rawFreeModule(R,toSequence( - flatten splice i ))
 
 rank RawFreeModule := rawRank
 
+RawFreeModule == RawFreeModule := (v,w) -> v === w
 RawFreeModule ** RawFreeModule := rawTensor
 
 -- matrices

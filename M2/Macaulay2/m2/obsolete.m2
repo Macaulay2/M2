@@ -1,7 +1,7 @@
 --		Copyright 1997-2002 by Daniel R. Grayson
 
 -- old internal engine routines:
-scan({eeLift,sendgg,ggPush,ConvertJoin,ConvertRepeat,ConvertApply,newHandle},
+scan({sendgg,ggPush,ConvertJoin,ConvertRepeat,ConvertApply,newHandle},
      s -> s <- X -> error ("'", s, "' has been removed"))
 
 unlist = X -> error "'unlist' has been replaced by toSequence"
