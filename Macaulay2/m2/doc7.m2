@@ -84,12 +84,20 @@ document { (diff,ProjectiveHilbertPolynomial,ZZ),
      }
 
 document { (diff,Matrix,Matrix),
-     TT "diff(m,n)", " -- differentiate the matrix ", TT "n", " by the matrix ", TT "m", ".",
-     PARA,
-     "Given matrices ", TT "m : F0 <--- F1", ", and ", TT "n : G0 <--- G1", ", produce a matrix
-     with the shape ", TT "diff(m,n) : F0' ** G0 <--- F1' ** G1", ", whose 
-     entry in the slot ", TT "((i,j),(k,l))", " is the result of differentiating
-     n_(j,l) by the differential operator corresponding to ", TT "m_(i,k)", ".",
+     HEADLINE => "differentiate a matrix by a matrix",
+     USAGE => {
+	  TT "diff(m,n)", " -- differentiate ", TT "n", " with respect to ", TT "m"
+	  },
+     SYNOPSIS => {
+	  "h = diff(m,n)",
+	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f, p."},
+	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g, q."},
+	  "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ", whose 
+     	       entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, " is the result of differentiating
+     	       ", TT { "n", SUB "j,l" }, " by the differential operator corresponding 
+	       to ", TT {"m", SUB "i,k", "."}
+	       },
+	  },
      PARA,
      "If ", TT "m", " or ", TT "n", " is a ring element, then it is interpreted
      as a one-by-one matrix.  If ", TT "m", " is a vector, it is interpreted as
@@ -98,27 +106,25 @@ document { (diff,Matrix,Matrix),
      elements, then the result will be a ring element rather than a one-by-one
      matrix.  If ", TT "m", " is a vector and ", TT "n", " is a ring element,
      then the result will be a vector rather than a matrix with one column.",
-     PARA,
      EXAMPLE {
 	  "R = ZZ/101[a..d]",
       	  "m = genericMatrix(R,a,2,2)",
       	  "diff(transpose m,m*m)",
 	  },
-     PARA,
-     "The most common usage of this function is when m : F <--- R^1
-     and n : R^1 <--- G.  In this case the result is a matrix with shape
-     diff(m,n) : F' <--- G, and the (i,j) th entry is the result of
-     differentiating n_j by the differential operator corresponding to m_i.",
+     "The most common usage is when ", TT "m", " has one column and ", TT "n", "
+     has one row.  In this case the result ", TT "h", " is a matrix whose
+     (i,j)-th entry is the result of differentiating ", TT {"n", SUB "j"}, " by the
+     differential operator corresponding to ", TT {"m", SUB "i"}, ".",
      EXAMPLE {
 	  "m = matrix {{a,b,c,d}}",
       	  "n = matrix {{a^2, (b + c)*(a + d), a*b*c}}",
-      	  "p = diff(transpose m,n)",
-      	  "target p",
-      	  "source p",
+      	  "h = diff(transpose m,n)",
+      	  "target h",
+      	  "source h",
 	  },
      PARA,
      "As another example, we show how to compute the Wronskian of a
-     polynomial f.",
+     polynomial ", TT "f", ".",
      EXAMPLE {
 	  "R = ZZ/101[a, x .. z]",
       	  "f = matrix {{x^3 + y^3 + z^3 - a*x*y*z}}",
@@ -136,12 +142,12 @@ document { (diff,Matrix,Matrix),
      basis elements.",
      EXAMPLE {
 	  "R = ZZ/101[x]",
-	  "A = R^{0,-1}; B = R^{0,-2}; C = R^{0,-4}; D = R^{0,-8};",
-	  "m = random(A,B)",
-	  "n = random(C,D)",
-	  "diff(m,n)",
-	  "degrees target oo, degrees source oo",
-	  "degrees (dual A ** C), degrees (dual B ** D)",
+	  "F = R^{0,-1}; P = R^{0,-2}; G = R^{0,-4}; Q = R^{0,-8};",
+	  "m = random(F,P)",
+	  "n = random(G,Q)",
+	  "h = diff(m,n)",
+	  "degrees target h, degrees source h",
+	  "degrees (dual F ** G), degrees (dual P ** Q)",
 	  },
      PARA,
      SEEALSO { "contract", "jacobian" }

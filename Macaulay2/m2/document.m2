@@ -468,6 +468,14 @@ getUsage := key -> (
      x := getOption(getDoc key, USAGE);
      if x =!= null then SEQ x)
 
+getSynopsis := key -> (
+     x := getOption(getDoc key, SYNOPSIS);
+     if x =!= null then SEQ x)
+
+getCaveat := key -> (
+     x := getOption(getDoc key, CAVEAT);
+     if x =!= null then SEQ x)
+
 evenMoreGeneral := key -> (
      t := nextMoreGeneral key;
      if t === null and class key === Sequence then key#0 else t)
@@ -717,24 +725,42 @@ documentation Option := v -> (
 documentation Sequence := s -> (
      if null === lookup s then error("expected ", formatDocumentTag s, " to be a method");
      t := typicalValue s;
+     desc1 := desc2 := desc3 := descv := ".";
+     arg1 := "1"; 
+     arg2 := "2";
+     arg3 := "3";
+     retv := "returned";
+     SYN := getSynopsis s;
+     d := x -> SEQ { ": ", SEQ x };
+     if SYN =!= null then (
+	  if SYN#?1 and s#?1 then (
+	       if class SYN#1 == Option then (arg1 = TT SYN#1#0; desc1 = d SYN#1#1;)
+	       else desc1 = d SYN#1;
+	  if SYN#?2 and s#?2 then (
+	       if class SYN#2 == Option then (arg2 = TT SYN#2#0; desc2 = d SYN#2#1;)
+	       else desc2 = d SYN#2);
+	  if SYN#?3 and s#?3 then (
+	       if class SYN#3 == Option then (arg3 = TT SYN#3#0; desc3 = d SYN#3#1;)
+	       else desc3 = d SYN#3);
+     	  if SYN#?-1 then (
+	       if class SYN#-1 == Option then (retv = TT SYN#-1#0; descv = d SYN#-1#1;)
+	       else descv = d SYN#-1);
+	       );
+	  );
      SEQ {
 	  title s, 
-	  usage s,
-	  "Synopsis of use:",
-	  if #s==2 and not instance(s#1,Type)
-	  then SHIELD MENU {
-	       SEQ {"Hash table: ", TO s#1 },
-	       SEQ {"Key: ", TO s#0 },
-	       }
-	  else SHIELD MENU {
-	       SEQ {"Operator: ", TO s#0 },
-	       SEQ {"Class of argument 1: ", TO s#1 }, if #s > 2 then 
-	       SEQ {"Class of argument 2: ", TO s#2 }, if #s > 3 then
-	       SEQ {"Class of argument 3: ", TO s#3 }, if t =!= Thing then
-	       SEQ {"Class of typical returned value: ", TO t},
+	  "Synopsis:",
+	  SHIELD MENU {
+	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
+	       SEQ {if class s#0 === Function then "Function: " else "Operator: ", TO s#0 },
+	       SEQ {"Argument ", arg1, ", of class ", TO s#1, desc1 }, if #s > 2 then 
+	       SEQ {"Argument ", arg2, ", of class ", TO s#2, desc2 }, if #s > 3 then
+	       SEQ {"Argument ", arg3, ", of class ", TO s#3, desc3 }, if t =!= Thing then
+	       SEQ {"Value ", retv, ", typically of class ", TO t, descv},
 	       optargs s,
 	       moreGeneral s
      	       },
+	  usage s,
 	  seecode s
 	  }
      )
@@ -936,7 +962,7 @@ html EXAMPLE := x -> concatenate html ExampleTABLE apply(toList x, x -> {x, CODE
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
 text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y#1, newline)))
-net ExampleTABLE := x -> "    " | stack between("",apply(x, y -> "" | net y#1 || ""))
+net ExampleTABLE := x -> "    " | stack between("",apply(toList x, y -> "" | net y#1 || ""))
 
 tex TABLE := x -> concatenate applyTable(x,tex)
 texMath TABLE := x -> concatenate (
@@ -1070,8 +1096,10 @@ text List := x -> concatenate("{", between(",", apply(x,text)), "}")
 html Sequence := x -> concatenate("(", between(",", apply(x,html)), ")")
 html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 
-texMath TT := tex TT := x -> concatenate(///{\tt {}///, ttLiteral concatenate x, "}")
-text TT := net TT := x -> concatenate("'", x, "'")
+tex     TT := x -> concatenate   (///{\tt {}///, ttLiteral concatenate (tex     \ toList x), "}")
+texMath TT := x -> concatenate   (///{\tt {}///, ttLiteral concatenate (texMath \ toList x), "}")
+text    TT := x -> concatenate   ("'", text \ toList x, "'")
+net     TT := x -> horizontalJoin("'", net  \ toList x, "'")
 
 net CODE := x -> stack lines concatenate x
 
@@ -1198,6 +1226,9 @@ text DL   := x -> concatenate(
 
 texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
 texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
+
+text SUP := x -> "^" | text x#0
+text SUB := x -> "_" | text x#0
 
 net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
 html TO := x -> concatenate ( "<A HREF=\"", "\">", html formatDocumentTag x#0, "</A>", drop(toList x,1) )
