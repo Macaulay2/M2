@@ -253,6 +253,37 @@ document {
       	  "truncate({7,24}, S^1 ++ S^{{-8,-20}})"
 	  },
      }
+
+document {
+     Key => (schreyerOrder,Matrix),
+     Headline => "create a free module having a Schreyer monomial order",
+     Usage => "schreyerOrder m",
+     Inputs => {
+	  "m" => "a matrix with source a free module F"
+	  },
+     Outputs => {
+	  {
+	       "the same free module as F, except it is endowed with 
+	       a Schreyer, or induced, monomial order"
+	       }
+	  },
+     "Given a matrix m with define a monomial order ",
+     EXAMPLE {
+	  "R = ZZ/101[a..d];",
+	  "m = matrix{{a,b,c,d}};",
+	  "F = schreyerOrder m",
+	  "f = map(target m, F, m)",
+	  "g = syz f",
+	  "leadTerm g"
+	  },
+     SeeAlso => {
+	  "Schreyer monomial orders",
+	  leadTerm,
+	  (schreyerOrder,Module)
+	  }
+     }
+
+     
 -----------------------------------------------------------------------------
 
 TEST "

@@ -49,6 +49,16 @@ f = R_{1,1}
 dim f
 g = f*f
 assert(dim g == (dim f)^2)
+listForm g
+rawPairs(raw g)
+toString raw g
+load "raw-util.m2"
+rawSchurDimension
+S = ZZ[a..d]
+listForm(a^2+b^2+c^3)
+exponents(a^2+b^2+c^3)
+code(exponents,RingElement)
+code(listForm,RingElement)
 
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw2.okay "
 -- End:

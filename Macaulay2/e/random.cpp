@@ -23,9 +23,9 @@ void Random::i_random()
 {
   seed = MASK;
   maxint = RingElement::make_raw(globalZZ, globalZZ->from_int(10));
-  maxint32 = 10;
+  maxint32 = 100;
 
-  mpz_init_set_si(_maxN, 10);
+  mpz_init_set_si(_maxN, 100);
   gmp_randinit_default(_st);
 }
 

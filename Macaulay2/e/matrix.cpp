@@ -1086,6 +1086,9 @@ Matrix *Matrix::random(const Ring *R,
 		       int special_type, // 0: general, 1:upper triangular, others?
 		       M2_bool is_mutable_flag)
 {
+  bool doing_fraction = false;
+  int threshold;
+
   FreeModule *F = R->make_FreeModule(r);
   FreeModule *G = R->make_FreeModule(c);
   MatrixConstructor mat(F,G,is_mutable_flag);
@@ -1097,11 +1100,25 @@ Matrix *Matrix::random(const Ring *R,
   mpz_t a;
   mpz_init(a);
 
+  if (fraction_non_zero != 1.0)
+    {
+      doing_fraction = true;
+      int f = fraction_non_zero * 10000;
+      threshold = 10000 - f;
+      printf("threshold is %d\n", threshold);
+    }
+
+
   if (special_type == 0)
     {
       for (int i=0; i<c; i++)
 	for (int j=0; j<r; j++)
 	  {
+	    if (doing_fraction)
+	      {
+		int32 u = Random::random0(10000);
+		if (u > threshold) continue;
+	      }
 	    Random::random_integer(a);
 	    mat.set_entry(j,i,R->from_int(a));
 	  }
@@ -1113,6 +1130,11 @@ Matrix *Matrix::random(const Ring *R,
 	  int top = (i>=r ? r : i);
 	  for (int j=0; j<top; j++)
 	    {
+	      if (doing_fraction)
+		{
+		  int32 u = Random::random0(10000);
+		  if (u > threshold) continue;
+		}
 	      Random::random_integer(a);
 	      mat.set_entry(j,i,R->from_int(a));
 	    }
