@@ -5,7 +5,7 @@
 document { "Mathematical Overview",
      "In this section we give a comprehensive overview of the main 
      mathematical types of Macaulay 2, their construction and most common
-     operations.",
+     operations. WARNING: this overview is currently under construction.",
      PARA,
      MENU {
 	  TO "rings",
@@ -70,7 +70,8 @@ document { "rings",
 		    TO "symmetric algebras",
 		    TO "tensor products of rings",
 		    TO "Weyl algebras",
-		    (TO "Schur rings", " -- monomials represent irreducible representations of GL(n)"),
+		    (TO "Schur rings", 
+			 " -- monomials represent irreducible representations of GL(n)"),
 		    TO "associative algebras"
 		    }
 	       )
@@ -81,7 +82,8 @@ document { "rings",
 
 document { "ideals",
      HEADER2 "An overview",     
-     "In Macaulay 2, once a ring (see ",TO "rings", ") is defined, ideals are constructed in the usual way
+     "In Macaulay 2, once a ring (see ",TO "rings", 
+     ") is defined, ideals are constructed in the usual way
      by giving a set of generators.",
      MENU {
 	  TO "creating an ideal",
@@ -301,11 +303,11 @@ document { "using external libraries",
      	  TO "how to get documentation on a library",
      	  ("available libraries",
 	       MENU {
-	       	    (TO "blow ups", " -- goodluck.m2"),
+	       	    (TO "blow ups", ""),
 	       	    (TO "convex hulls and polar cones", " -- polarCone.m2"),
 	       	    (TO "D-modules", " -- D-modules.m2"),
 	       	    (TO "elimination theory", " -- eliminate.m2"),
-	       	    (TO "graphing curves and surfaces via 'surf'", " -- inyourdreams.m2"),
+	       	    (TO "graphing curves and surfaces via 'surf'", ""),
 	       	    (TO "invariants of finite groups", " -- invariants.m2"),
 	       	    (TO "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction", " -- LLL.m2"),
 	       	    (TO "SAGBI bases", " -- sagbi.m2")
@@ -357,32 +359,6 @@ document { "rings that are available for Groebner basis computations",
 -- GB nodes -------
 -------------------
 
-document { "what is a Groebner basis?",
-     }
-
-document { "finding a Groebner basis",
-     }
-
-document { "elimination of variables",
-     }
-
-document { "Hilbert functions",
-     }
-
-document { "syzygies",
-     }
-
-document { "saturation",
-     }
-
-document { "fibers of maps",
-     }
-
-document { "solving systems of polynomial equations",
-     }
-
-document { "fine control of a Groebner basis computation",
-     }
 
 -------------------
 -- library nodes --

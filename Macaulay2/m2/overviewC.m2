@@ -1109,3 +1109,73 @@ document { "tensor products of modules",
 
 document { "Tor and Ext",
      }
+
+-------------------
+-- GB nodes -------
+-------------------
+
+document { "what is a Groebner basis?",
+     }
+
+document { "finding a Groebner basis",
+     }
+
+document { "elimination of variables",
+     }
+
+document { "Hilbert functions",
+     }
+
+document { "syzygies",
+     }
+
+document { "saturation",
+     }
+
+document { "fibers of maps",
+     }
+
+document { "solving systems of polynomial equations",
+     }
+
+/// 
+Plan for the next node:
+-- groebner basis object
+-- getting it, 'snapshot'
+-- information about a GB computation:
+--   verbose
+--   summary
+-- using the Hilbert function
+-- computing only partial gbs
+-- tricks which might help
+--   change monomial order
+--   homogenize
+--   compact monomials
+--   remove linear equations, and the corresponding variable.
+--   computing up to a given degree
+///
+document { "fine control of a Groebner basis computation",
+     "Sometimes a Groebner basis computation doesn't finish quickly enough.  If so
+     then this section might be of use. THIS PAGE IS UNDER CONSTRUCTION."
+     TOC {
+	  SECTION { "Partially computed Groebner bases",
+	       "Suppose that you have computed part of a Groebner basis.  For
+	       example, you may have interrupted the computation using CTRL-C 
+	       (typing 'c' while holding the CTRL key down, in emacs, you have to 
+	       type CTRL-C twice), or you may have given options requesting only
+	       partial computation.",
+     	       EXAMPLE "R = ZZ/32003[a..e];",
+	       EXAMPLE "I = ideal(random(3,R),random(3,R),random(3,R))",
+	       EXAMPLE "gens gb(I,PairLimit=>7);"
+	       "Get the Groebner basis object:",
+	       EXAMPLE "g = gb(I,StopBeforeComputation => true);",
+	       EXAMPLE "leadTerm gens g",
+	       "We can make a Groebner basis snapshot by using StopBeforeComputation:",
+	       EXAMPLE "gbSnapshot = (I) -> gens gb(I,StopBeforeComputation => true);",
+	       EXAMPLE "leadTerm gbSnapshot(I)"
+	       }
+--	  SECTION { ""
+--	       }
+	 }
+     }
+
