@@ -7,7 +7,7 @@
 #include "polyring.hpp"
 #include "comp.hpp"
 #include "gb_comp.hpp"
-#include "Z.hpp"
+#include "ZZ.hpp"
 
 struct hm_elem
 {

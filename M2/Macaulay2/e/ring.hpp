@@ -8,7 +8,7 @@
 
 ///// Ring Hierarchy ///////////////////////////////////
 
-class Z;
+class ZZ;
 class QQ;
 class RR;
 class Z_mod;
@@ -72,8 +72,8 @@ public:
   virtual FreeModule *make_FreeModule() const;
   virtual FreeModule *make_FreeModule(int n) const;
 
-  virtual const Z * cast_to_Z() const         { return 0; }
-  virtual       Z * cast_to_Z()               { return 0; }
+  virtual const ZZ * cast_to_ZZ() const         { return 0; }
+  virtual       ZZ * cast_to_ZZ()               { return 0; }
   virtual const QQ * cast_to_QQ() const         { return 0; }
   virtual       QQ * cast_to_QQ()               { return 0; }
   virtual const RR * cast_to_RR() const         { return 0; }
@@ -247,8 +247,8 @@ public:
 
 };
 
-#include "Z.hpp"
-extern Z *globalZZ;
+#include "ZZ.hpp"
+extern ZZ *globalZZ;
 extern QQ *globalQQ;
 extern RR *globalRR;
 #endif

@@ -1,7 +1,7 @@
 // Copyright 1995 Michael E. Stillman.
 
-#ifndef _Z_hh_
-#define _Z_hh_
+#ifndef _ZZ_hh_
+#define _ZZ_hh_
 
 #include "ring.hpp"
 #include <gmp.h>
@@ -9,7 +9,7 @@
 #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
 #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 
-class Z : public Ring
+class ZZ : public Ring
 {
   int _elem_size;
   mpz_ptr _zero_elem;
@@ -18,14 +18,14 @@ class Z : public Ring
   void remove_elem(mpz_ptr f) const;
 
 protected:
-  Z() {}
-  virtual ~Z() {}
+  ZZ() {}
+  virtual ~ZZ() {}
   bool initialize_ZZ(const Monoid *D);
 public:
-  static Z * create(const Monoid *D);
+  static ZZ * create(const Monoid *D);
 
-  Z * cast_to_Z() { return this; }
-  const Z * cast_to_Z() const { return this; }
+  ZZ * cast_to_ZZ() { return this; }
+  const ZZ * cast_to_ZZ() const { return this; }
 
 // The following are all the routines required by 'ring'
   virtual bool is_ZZ() const         { return true; }
@@ -41,7 +41,7 @@ public:
   static bool get_ui(unsigned int &result, mpz_t n);
   static bool get_si(int &result, mpz_t n);
 
-  // If the base ring of a is Z:
+  // If the base ring of a is ZZ:
   // To get a bignum from a RingElement a, use: MPZ_VAL(a.get_value())
   // To get a bignum from an ring_elem  a, use: MPZ_VAL(a)
 

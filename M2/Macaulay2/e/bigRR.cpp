@@ -1,7 +1,7 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "bigRR.hpp"
-#include "Z.hpp"
+#include "ZZ.hpp"
 #include "text_io.hpp"
 #include "monoid.hpp"
 #include "relem.hpp"
@@ -313,7 +313,7 @@ ring_elem bigRR::power(const ring_elem f, mpz_t n) const
 {
   mpf_ptr result = new_elem();
   int n1;
-  if (!Z::get_si(n1, n)) 
+  if (!ZZ::get_si(n1, n)) 
     { ERROR("exponent too large"); }
   else
     mpf_pow_ui(result, MPF_VAL(f), n1);

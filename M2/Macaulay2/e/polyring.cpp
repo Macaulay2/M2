@@ -5,7 +5,7 @@
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "matrix.hpp"
-#include "Z.hpp"
+#include "ZZ.hpp"
 #include "ntuple.hpp"
 #include "termideal.hpp"
 #include "gbring.hpp"
@@ -828,7 +828,7 @@ ring_elem PolynomialRing::power2(const ring_elem ff, mpz_t m) const
 
   for (;;)
     {
-      if (Z::mod_ui(n,2) == 1)
+      if (ZZ::mod_ui(n,2) == 1)
 	{
 	  tmp = mult(prod, base);
 	  prod = tmp;
@@ -897,7 +897,7 @@ ring_elem PolynomialRing::power(const ring_elem f0, mpz_t n) const
       int n1;
       // In this case, the computation may only be formed in two
       // cases: (1) f is a constant, or (2) n is small enough
-      if (Z::get_si(n1,n))
+      if (ZZ::get_si(n1,n))
 	{
 	  result = power(f,n1);
 	}

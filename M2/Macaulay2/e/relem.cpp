@@ -6,7 +6,7 @@
 #include "frac.hpp"
 #include "QQ.hpp"
 
-Z *globalZZ;
+ZZ *globalZZ;
 QQ *globalQQ;
 RR *globalRR;
 

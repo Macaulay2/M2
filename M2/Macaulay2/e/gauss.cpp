@@ -5,7 +5,7 @@
 #include "text_io.hpp"
 #include "vector.hpp"
 
-extern Z *globalZZ;
+extern ZZ *globalZZ;
 
 gm_elem *GaussElimComputation::new_gen(int i)
 {

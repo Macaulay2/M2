@@ -1,6 +1,6 @@
 // Copyright 1995 Michael E. Stillman
 
-#include "Z.hpp"
+#include "ZZ.hpp"
 #include "GF.hpp"
 #include "text_io.hpp"
 #include "monoid.hpp"
@@ -350,7 +350,7 @@ ring_elem GF::power(const ring_elem f, int n) const
 ring_elem GF::power(const ring_elem f, mpz_t n) const
 {
   if (f == _ZERO) return _ZERO;
-  int exp = Z::mod_ui(n, Q1_);
+  int exp = ZZ::mod_ui(n, Q1_);
   int m = (f * exp) % Q1_;
   if (m <= 0) m += Q1_;
   return m;

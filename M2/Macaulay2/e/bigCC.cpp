@@ -1,7 +1,7 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "bigCC.hpp"
-#include "Z.hpp"
+#include "ZZ.hpp"
 #include "text_io.hpp"
 #include "monoid.hpp"
 #include "relem.hpp"
@@ -411,7 +411,7 @@ ring_elem bigCC::power(const ring_elem f, int n) const
 ring_elem bigCC::power(const ring_elem f, mpz_t n) const
 {
   int n1;
-  if (!Z::get_si(n1, n)) 
+  if (!ZZ::get_si(n1, n)) 
     { 
       ERROR("exponent too large"); 
       return from_int(1);

@@ -10,7 +10,7 @@
 #include <iostream>
 #include "matrix.hpp"
 #include "z_mod_p.hpp"
-#include "Z.hpp"
+#include "ZZ.hpp"
 #include "frac.hpp"
 
 #warning "most of this file commented out temporarily"
