@@ -271,7 +271,7 @@ public:
 
   void set_entry(vec &v, int i, ring_elem r) const;
   void mult(vec &v, const ring_elem r, bool opposite_mult) const; // multiplies v <- r * v or v * r
-  void mult_row(vec &v, int i, const ring_elem r, bool opposite_mult) const;
+  void mult_row(vec &v, const ring_elem r, int i, bool opposite_mult) const;
   void add(vec &v, vec &w) const; // v <- v+w, w is set to 0.
   void interchange_rows(vec &v, int i, int j) const;
   void vec_row_op(vec &v, int i, ring_elem r, int j, bool opposite_mult) const;
