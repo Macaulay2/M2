@@ -256,9 +256,9 @@ MISCO := M2lib.o scclib.o tmp_init.o memdebug.o
 # MISCO += gc_cpp.o
 
 ifeq ($(OS),Linux)
-MISCO += readline.o
-LIBRARYOPTIONS += -ldl -lncurses
-LDFLAGS += -rdynamic
+# MISCO += readline.o
+# LIBRARYOPTIONS += -ldl -lncurses
+# LDFLAGS += -rdynamic
 endif
 
 ifdef SHAREDLIBS

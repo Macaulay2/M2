@@ -221,6 +221,7 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	  file(nextHash(),     	    	  -- hash
 	       name,	 		  -- filename
 	       0,			  -- pid
+	       false,false,false,false,false,
 	       false,	       	    	  -- listener
 	       NOFD,   	    	          -- listenerfd
 	       NOFD,	      	   	  -- connection
@@ -257,6 +258,7 @@ usageMessage():void := (
 	  + "    -q              don't load init file" + newline
 	  + "    -s              stop if an error occurs" + newline
 	  + "    -silent         don't print the startup banner" + newline
+	  + "    --texmacs       TeXmacs session mode" + newline
 	  + "    -tty            assume stdin and stdout are ttys" + newline
 	  + "    -x              examples-prompt mode" + newline
 	  ));
@@ -288,6 +290,12 @@ export process():void := (
 		    else nothing;
 		    )	       
 	       else if arg === "-x" then xprompt = true
+	       else if arg === "--texmacs" then (
+		    stdIO.halfduplex = true;
+		    stdIO.outputting = true;
+		    stdIO.inputting = true;
+		    stdIO << BEGIN;			    -- might want to get rid of this
+		    )
 	       else if arg === "-tty" then (
 		    stdin.inisatty = true;
 		    stdin.echo = false;

@@ -18,7 +18,7 @@
 	   . font-lock-keyword-face)
 	  ("\\<\\(at\\|in\\|by\\|from\\|to\\|if\\|op\\|package\\|signature\\|use\\)\\>"
 	   . font-lock-keyword-face)
-	  ("\\<\\(export\\|import\\|then\\|else\\|break\\|provide\\)\\>"
+	  ("\\<\\(export\\|import\\|then\\|else\\|break\\|provide\\|return\\)\\>"
 	   . font-lock-keyword-face)
 	  )
 	)      

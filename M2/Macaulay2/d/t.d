@@ -1,2 +1,2 @@
-yy := array(int,4);
-xx := yy(1,2,3,4);
+n := 10;
+for i from 0 to n do k := i;
