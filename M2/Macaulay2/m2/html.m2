@@ -335,7 +335,7 @@ separateExampleOutput = s -> (
 makeMasterIndex := keylist -> (
      fn := buildDirectory | htmlDirectory | indexFileName;
      title := "Symbol Index";
-     << "--making  '" << title << "' in " << fn << endl;
+     stderr << "--making  '" << title << "' in " << fn << endl;
      fn
      << html HTML {
 	  HEAD { TITLE title, links() },
@@ -355,7 +355,7 @@ makeMasterIndex := keylist -> (
 makeTableOfContents := () -> (
      fn := buildDirectory | htmlDirectory | tocFileName;
      title := DocumentTag.FormattedKey topDocumentTag | " : Table of Contents";
-     << "--making  '" << title << "' in " << fn << endl;
+     stderr << "--making  '" << title << "' in " << fn << endl;
      fn
      << html HTML {
 	  HEAD { TITLE title, links() },
@@ -375,7 +375,11 @@ ulimit := null
 runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
      if fileExists outf and fileTime outf >= fileTime inf
      then (
-	  -- stderr << "--leaving " << desc << " in file " << outf << endl;
+	  if debugLevel > 0 then stderr << "--leaving " << desc << " in file " << outf << endl;
+	  )
+     else if fileExists tmpf and fileTime tmpf >= fileTime inf
+     then (
+	  stderr << "--skipping " << desc << " in file " << outf << " due to errors last time" << endl;
 	  )
      else (
 	  announcechange();
@@ -436,8 +440,8 @@ installPackage = method(Options => {
           InstallPrefix => () -> homeDirectory | packageSuffix | "local/",
 	  Encapsulate => true,
 	  IgnoreExampleErrors => true,
-	  MakeInfo => true,
-	  RemakeAllDocumentation => true,
+	  MakeInfo => false,
+	  RemakeAllDocumentation => false,
 	  AbsoluteLinks => false,
 	  MakeLinks => true,
 	  RunDirectory => ".",
@@ -702,10 +706,10 @@ installPackage Package := opts -> pkg -> (
      scan(nodes, tag -> (
 	       fkey := DocumentTag.FormattedKey tag;
 	       if not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
-	       	    -- stderr << "--skipping   " << tag << endl;
+	       	    if debugLevel > 0 then stderr << "--skipping   " << tag << endl;
 		    )
 	       else (
-	       	    -- stderr << "--processing " << tag << endl;
+	       	    if debugLevel > 0 then stderr << "--processing " << tag << endl;
 	       	    pkg#"processed documentation"#fkey = documentation tag;
 		    );
 	       ));
@@ -784,7 +788,7 @@ installPackage Package := opts -> pkg -> (
 	  printWidth = savePW;
 	  )
      else (
-	  stderr << "--not making info file, as instructed" << endl;
+	  stderr << "--not making info file" << endl;
 	  );
 
      -- make postinstall and preremove files, if encap
@@ -830,7 +834,7 @@ installPackage Package := opts -> pkg -> (
 	  fkey := DocumentTag.FormattedKey tag;
 	  fn := buildDirectory | htmlFilename tag;
 	  if fileExists fn and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
-	  -- stderr << "--making html page for " << tag << endl;
+	  stderr << "--making html page for " << tag << endl;
 	  fn
 	  << html HTML { 
 	       HEAD {
