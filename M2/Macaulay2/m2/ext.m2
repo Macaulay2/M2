@@ -111,8 +111,8 @@ Ext(Module,Module) := Module => (M,N) -> (
     fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
     S := K(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
       Degrees => splice {
-        apply(0 .. c-1,i -> {-2, - first degree f_i}), 
-        n : {0,1}
+        apply(0 .. c-1, i -> {-2, - first degree f_i}),
+	apply(0 .. n-1, j -> { 0,   first degree A_j})
         },
       Adjust => v -> {- fudge * v#0 + v#1, - v#0},
       Repair => w -> {- w#1, - fudge * w#1 + w#0}
@@ -160,8 +160,17 @@ Ext(Module,Module) := Module => (M,N) -> (
     Delta := map(Cstar, Cstar, 
       transpose sum(keys blks, m -> S_m * toS sum blks#m),
       Degree => {-1,0});
-    DeltaBar := Delta ** toS N';
-    assert(isHomogeneous DeltaBar);
+    ins1 := deg -> prepend(0,deg);
+    ins  := degs -> apply(degs,ins1);
+    -- we can't use "toS N'" because ring maps don't 
+    -- tell how to set the degrees when tensoring
+    N'' := cokernel map(
+	 S^(- ins degrees target relations N'),
+	 S^(- ins degrees source relations N'),
+	 toS relations N',
+	 Degree => ins1 degree relations N');
+    DeltaBar := Delta ** N'';
+    assert isHomogeneous DeltaBar;
     assert(DeltaBar * DeltaBar == 0);
     -- now compute the total Ext as a single homology module
     prune homology(DeltaBar,DeltaBar)))
