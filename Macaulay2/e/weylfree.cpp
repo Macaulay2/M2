@@ -193,7 +193,6 @@ vec WeylFreeModule::imp_mult_by_term(const ring_elem c, const int *m, const vec 
 	      expd[j] += expdiff[d];
 	    }
 	}
-      // diff_subtract(expdiff, exp, expd); // expdiff-exp --> back to differential op
       M->from_expvector(expd, expm);
 
       vec h = FreeModule::imp_mult_by_term(c1, expm, g);

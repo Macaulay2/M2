@@ -365,13 +365,6 @@ void cmd_PolynomialRing(object &oK, object &oMF)
   const Monoid *MF = oMF->cast_to_Monoid();
   gStack.insert(PolynomialRing::create(K,MF));
 }
-void cmd_WeylAlgebra(object &oK, object &oMF, object &oa)
-{
-  const Ring *K = oK->cast_to_Ring();
-  const Monoid *MF = oMF->cast_to_Monoid();
-  const intarray *a = oa->intarray_of();
-  gStack.insert(WeylAlgebra::create(K, MF, *a));
-}
 static void cmd_WeylAlgebra1(object &o1, object &o2, object &o3, object &o4, object &o5)
 {
   const Ring *K = o1->cast_to_Ring();
@@ -492,8 +485,7 @@ void i_ring_elem_cmds(void)
   install(ggGF, cmd_GF, TY_RING_ELEM);
   //  install(ggGF, cmd_GF2, TY_RING);
   install(ggpolyring, cmd_PolynomialRing, TY_RING, TY_MONOID);
-  install(ggweylalgebra, cmd_WeylAlgebra, TY_RING, TY_MONOID, 
-	  TY_INTARRAY);
+
   install(ggweylalgebra, cmd_WeylAlgebra1, TY_RING, TY_MONOID, 
 	  TY_INTARRAY, TY_INTARRAY, TY_INT);
 

@@ -7,28 +7,6 @@
 
 #include "weylfree.hpp"
 
-WeylAlgebra::WeylAlgebra(const Ring *K, 
-			 const Monoid *MF, 
-			 const intarray &a)
-  : PolynomialRing(K,MF)
-{
-  _derivative = new int[nvars];
-  _commutative = new int [nvars];
-  int i;
-  for (i=0; i<nvars; i++)
-    {
-      _derivative[i] = -1;
-      _commutative[i] = -1;
-    }
-  for (i=0; i<a.length(); i+=2)
-    {
-      if (a[i] >= 0)
-	_derivative[a[i]] = a[i+1];
-      if (a[i+1] >= 0)
-	_commutative[a[i+1]] = a[i];
-    }
-}
-
 WeylAlgebra::WeylAlgebra(
         const Ring *KK, 
         const Monoid *MF, 
@@ -53,17 +31,8 @@ WeylAlgebra::WeylAlgebra(
 
 WeylAlgebra::~WeylAlgebra()
 {
-  delete [] _derivative;
-  delete [] _commutative;
-
   delete [] derivative;
   delete [] commutative;
-}
-
-WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF, const intarray &a)
-{
-  WeylAlgebra *obj = new WeylAlgebra(K,MF,a);
-  return (WeylAlgebra *) intern(obj);
 }
 
 WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF, 
@@ -441,16 +410,6 @@ ring_elem WeylAlgebra::multinomial(const int *exptop, const int *exp) const
   return result;
 }
 
-void WeylAlgebra::diff_subtract(const int *exp1, const int *exp2, int *result) const
-{
-  int i;
-  for (i=0; i<nvars; i++) result[i] = 0;
-  for (i=0; i<nvars; i++)
-    {
-      int c = exp1[i] - exp2[i];
-      if (c > 0) result[_commutative[i]] = c;
-    }
-}
 #if 0
 ring_elem WeylAlgebra::imp_mult_by_term(const ring_elem f, 
 			       const ring_elem c, const int *m) const
@@ -507,7 +466,6 @@ ring_elem WeylAlgebra::imp_mult_by_term(const ring_elem f,
 	      expd[j] += expdiff[d];
 	    }
 	}
-      // diff_subtract(expdiff, exp, expd); // expdiff-exp --> back to differential op
       M->from_expvector(expd, expm);
 
       ring_elem h = PolynomialRing::imp_mult_by_term(g, c1, expm);
