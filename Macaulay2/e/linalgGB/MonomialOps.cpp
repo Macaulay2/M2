@@ -1,6 +1,6 @@
 // Copyright 2004 Michael E. Stillman
 
-#include "MonomialOps.h"
+#include "MonomialOps.hpp"
 #include "monoms.h"
 
 uninterned_monomial MonomialOps::mult(MemoryBlock &B, monomial a, monomial b)
