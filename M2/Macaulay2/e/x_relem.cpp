@@ -45,6 +45,22 @@ void cmd_Ring_from_int(object &oF, object &on)
   gStack.insert(RingElement(F,MPZ_VAL(n.get_value())));
 }
 
+void cmd_Ring_from_double(object &oF, object &on)
+{
+  const Ring *F = oF->cast_to_Ring();
+  const RingElement &n = on->cast_to_RingElement();
+
+  if (n.get_ring() != RRR)
+    {
+      gError << "from_double requires a double precision floating point number";
+      return;
+    }
+
+  double a = RRR->to_double(n.get_value());
+  ring_elem b = F->from_double(a);
+  gStack.insert(RingElement(F,b));
+}
+
 static int inline isequal2(const RingElement x, const RingElement y) {
   // Amazingly inserting this little routine fixes a bug in Microsoft CL
   // which causes cmd_Ring_isequal below to return true when it shouldn't.
@@ -501,7 +517,8 @@ void i_ring_elem_cmds(void)
 {
   assert(trivial_monoid != NULL);
   ZZ = Z::create(trivial_monoid);
-  RRR = RR::create(trivial_monoid);
+  double default_epsilon = .000000000001;
+  RRR = RR::create(trivial_monoid,default_epsilon);
 
   // Ring Creation
   install(ggZ, cmd_Z);
@@ -535,6 +552,7 @@ void i_ring_elem_cmds(void)
   install(ggisunit, cmd_Ring_isunit, TY_RING_ELEM);
 
   // ring element commands
+  install(ggfromdouble, cmd_Ring_from_double, TY_RING, TY_RING_ELEM);
   install(ggfromint, cmd_Ring_from_int, TY_RING, TY_INT);
   install(ggvar, cmd_Ring_var, TY_INT, TY_INT, TY_RING);
 

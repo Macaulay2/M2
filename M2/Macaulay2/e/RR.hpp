@@ -14,15 +14,16 @@ class RR : public Ring
   typedef RRelem_rec *RRelem;
 
   stash *RR_stash;
+  double epsilon;  // Elements closer than this are considered identical.
 
   RRelem new_elem() const;
   void remove_elem(RRelem f) const;
 
-  RR(const Monoid *D);
+  RR(const Monoid *D, double epsilon);
 protected:
   virtual ~RR();
 public:
-  static RR * create(const Monoid *D);
+  static RR * create(const Monoid *D, double epsilon);
 
   class_identifier class_id() const { return CLASS_RR; }
 
@@ -34,6 +35,8 @@ public:
 
   RR * cast_to_RR() { return this; }
   const RR * cast_to_RR() const { return this; }
+
+  double to_double(ring_elem a);
 
 // The following are all the routines required by 'ring'
   virtual bool is_pid() const       { return 1; }

@@ -14,14 +14,16 @@
 #define RR_VAL(f) ((RRELEM_VAL(f))->val)
 #define RR_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 
-RR::RR(const Monoid *D) : Ring(0,0,0,this /* Visual C WARNING */,trivial_monoid,D)
+RR::RR(const Monoid *D,double epsilon) 
+  : Ring(0,0,0,this /* Visual C WARNING */,trivial_monoid,D),
+    epsilon(epsilon)
 {
   RR_stash = new stash("RR", sizeof(RRelem_rec));
 }
 
-RR *RR::create(const Monoid *D)
+RR *RR::create(const Monoid *D, double epsilon)
 {
-  RR *obj = new RR(D);
+  RR *obj = new RR(D,epsilon);
   return (RR *) intern(obj);
 }
 
@@ -38,9 +40,11 @@ void RR::write_object(object_writer &o) const
 RR *RR::read_object(object_reader &i)
 {
   object_element *obj;
+  double epsilon;
   i >> obj;
+  i >> epsilon;
   Monoid *D = obj->cast_to_Monoid();
-  return new RR(D);
+  return new RR(D,epsilon);
 }
 
 void RR::text_out(buffer &o) const
@@ -60,6 +64,11 @@ ring_elem RR::from_double(double a) const
   result->val = a;
   return RR_RINGELEM(result);
 }
+double RR::to_double(ring_elem a)
+{
+  return RR_VAL(a);
+}
+
 void RR::remove_elem(RRelem f) const
 {
   if (f == NULL) return;
@@ -70,8 +79,17 @@ ring_elem RR::random() const
 {
   int d = 1000000;
   long r = Random::random0(2*d);
-  double a = r/d - 1.0;
+  double a = (r*1.0)/d - 1.0;
   return RR::from_double(a);
+}
+
+int compare_RR(double a, double b, double epsilon)
+  // This is our notion of equality
+{
+  double c = a-b;
+  if (c > epsilon) return GT;
+  if (c < -epsilon) return LT;
+  return EQ;
 }
 
 void RR::elem_text_out(buffer &o, const ring_elem ap) const
@@ -80,9 +98,9 @@ void RR::elem_text_out(buffer &o, const ring_elem ap) const
 
   char s[100];
 
-  bool is_neg = (a < 0.0);
+  bool is_neg = compare_RR(a,0.0,epsilon) == LT;
   a = fabs(a);
-  bool is_one = (a == 1.0);
+  bool is_one = compare_RR(a,1.0,epsilon) == EQ;
 
   if (!is_neg && p_plus) o << '+';
   if (is_one) 
@@ -140,36 +158,27 @@ bool RR::lift(const Ring *, const ring_elem, ring_elem &) const
   return false;
 }
 
-bool RR::is_unit(const ring_elem f) const
-{
-  double a = RR_VAL(f);
-  return a != 0.0;
-}
-
 bool RR::is_zero(const ring_elem f) const
 {
-  double a = RR_VAL(f);
-  return a == 0.0;
+  return compare_RR(RR_VAL(f),0.0,epsilon) == EQ;;
+}
+
+bool RR::is_unit(const ring_elem f) const
+{
+  return !RR::is_zero(f);
 }
 
 bool RR::is_equal(const ring_elem f, const ring_elem g) const
 {
-  double a = RR_VAL(f);
-  double b = RR_VAL(g);
-  return a == b;
+  return compare_RR(RR_VAL(f),RR_VAL(g),epsilon) == EQ;
 }
 int RR::compare(const ring_elem f, const ring_elem g) const
 {
-  double a = RR_VAL(f);
-  double b = RR_VAL(g);
-  if (a > b) return GT;
-  if (a < b) return LT;
-  return EQ;
+  return compare_RR(RR_VAL(f),RR_VAL(g),epsilon);
 }
 int RR::is_positive(const ring_elem f) const
 {
-  double a = RR_VAL(f);
-  return a > 0;
+  return compare_RR(RR_VAL(f),0.0,epsilon) == GT;
 }
 
 ring_elem RR::copy(const ring_elem f) const
@@ -186,8 +195,7 @@ void RR::remove(ring_elem &f) const
 
 ring_elem RR::preferred_associate(ring_elem f) const
 {
-  double a = RR_VAL(f);
-  if (a >= 0) return RR::from_double(1.0);
+  if (RR::is_positive(f) >= 0) return RR::from_double(1.0);
   return RR::from_double(-1.0);
 }
 
@@ -263,7 +271,7 @@ ring_elem RR::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
   // If g != 0.0 then rem = 0, return f/g
   double a = RR_VAL(g);
   double b = RR_VAL(f);
-  if (g == 0.0)
+  if (RR::is_zero(g))
     {
       rem = RR::from_double(b);
       return RR::from_double(0.0);
@@ -279,9 +287,8 @@ ring_elem RR::remainder(const ring_elem f, const ring_elem g) const
 {
   // If g == 0.0 then rem = f
   // If g != 0.0 then rem = 0
-  double a = RR_VAL(g);
   double b = RR_VAL(f);
-  if (a == 0.0)
+  if (RR::is_zero(g))
     return RR::from_double(b);
   else
     return RR::from_double(0.0);
@@ -293,7 +300,7 @@ ring_elem RR::quotient(const ring_elem f, const ring_elem g) const
   // If g != 0.0 then rem = 0, return f/g
   double a = RR_VAL(g);
   double b = RR_VAL(f);
-  if (g == 0.0)
+  if (RR::is_zero(g))
     return RR::from_double(0.0);
   else
     return RR::from_double(b/a);
@@ -312,7 +319,7 @@ ring_elem RR::gcd(const ring_elem f, const ring_elem g) const
 {
   double a1 = RR_VAL(f);
   double b1 = RR_VAL(g);
-  if (b1 == 0.0 && a1 == 0.0)
+  if (RR::is_zero(b1) && RR::is_zero(a1))
     return RR::from_double(0.0);
   else
     return RR::from_double(1.0);
@@ -323,13 +330,13 @@ ring_elem RR::gcd_extended(const ring_elem f, const ring_elem g,
 {
   double a1 = RR_VAL(f);
   double b1 = RR_VAL(g);
-  if (b1 != 0.0)
+  if (!RR::is_zero(b1))
     {
       u = RR::from_double(0.0);
       v = RR::from_double(1/b1);
       return RR::from_double(1.0);
     }
-  else if (a1 != 0.0)
+  else if (!RR::is_zero(a1))
     {
       u = RR::from_double(1/a1);
       v = RR::from_double(0.0);
@@ -348,7 +355,7 @@ void RR::syzygy(const ring_elem a, const ring_elem b,
 {
   double a1 = RR_VAL(a);
   double b1 = RR_VAL(b);
-  if (b1 == 0.0)
+  if (RR::is_zero(b1))
     {
       x = RR::from_double(0);
       y = RR::from_double(1);

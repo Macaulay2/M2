@@ -359,10 +359,19 @@ static void cmd_EMO_test(object &o1, object &o2, object &o3)
 }
 #endif  // MIKE_EMONOID
 
+void cmd_monheap_test(void)
+{
+  extern void monheap_make_sure_works();
+
+  monheap_make_sure_works();
+}
+
 void i_monoid_cmds(void)
 {
   // Construction of new monoid objects
   install(ggzeromonoid, cmd_zero_monoid);
+
+  install(ggtest, cmd_monheap_test);
 
 #ifdef MIKE_OLD_MONOID
   trivial_monoid = new Monoid(new monoid_info, sizeof(int)*8);
@@ -411,7 +420,8 @@ void i_monoid_cmds(void)
   install(ggMOproduct, cmd_EMO_product, TY_EMonomialOrder, TY_EMonomialOrder);
   install(ggMONClex, cmd_EMO_NClex, TY_INT, TY_EMonomialOrder);
 
-  install(ggtest, cmd_EMO_test, TY_INT, TY_INTARRAY, TY_EMonomialOrder);
+  
+  // install(ggtest, cmd_EMO_test, TY_INT, TY_INTARRAY, TY_EMonomialOrder);
 #endif
 
 #ifdef MIKE_NEWMONORDER

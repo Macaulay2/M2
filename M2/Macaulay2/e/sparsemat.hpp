@@ -32,6 +32,8 @@ public:
 	       ring_elem b1, ring_elem b2) const;
   void scale(sparse_vector *&v, const ring_elem a) const;
   void scaleRow(sparse_vector *&v, int r, const ring_elem a) const;
+  void divide(sparse_vector *&v, const ring_elem a) const;
+  void divideRow(sparse_vector *&v, int r, const ring_elem a) const;
   void interchangeRows(sparse_vector *&v, int r1, int r2) const;
   void add(sparse_vector *&v, sparse_vector *&w) const;
   void addRowMultiple(sparse_vector *&v, int r1, ring_elem a, int r) const;
@@ -106,19 +108,29 @@ public:
 	       ring_elem a1, ring_elem a2,
 	       ring_elem b1, ring_elem b2,
 	       bool doRecording=true);
+
   void interchangeRows(int r1, int r2, bool doRecording=true);
   void interchangeColumns(int c1, int c2, bool doRecording=true);
+
   void scaleRow(int r, ring_elem a, bool doRecording=true);
   void scaleColumn(int c, ring_elem a, bool doRecording=true);
+
+  void divideRow(int r, ring_elem a, bool doRecording=true);
+  void divideColumn(int c, ring_elem a, bool doRecording=true);
+
   void addRowMultiple(int r1, ring_elem a, int r, bool doRecording=true);
+    // replace [row r] by [row r] + a*[row r1].
+
   void addColumnMultiple(int c1, ring_elem a, int c, bool doRecording=true);
+    // replace [col c] by [col c] + a*[col c1].
 
   ring_elem dotProduct(int c1, int c2) const;
+
+  void columnReduce(int pivot_column, int c, bool doRecording=true);
   // Let c1, c2 denote these two columns pivot_column, c.
   // If a1,a2 are the lead coefficients of c1, c2, respectively, then set:
   //   matrix[c2] = c2 - (a2/a1) * c1.
   // If a1 is '1', then division is not performed.
-  void columnReduce(int pivot_column, int c, bool doRecording=true);
 
   // Let c1, c2 denote these two columns pivot_column, c.
   // If a1,a2 are the lead coefficients of c1, c2, respectively,
@@ -132,9 +144,9 @@ public:
 
   void sortColumns(int lo, int hi, bool doRecording=true);
 
+  void permuteColumns(int lo, int hi, int *permutation, bool doRecording=true);
   // Permute the columns of the matrix, at least those in the range lo..hi.
   // i.e. matrix[c] is moved to matrix[sortval[c]].
-  void permuteColumns(int lo, int hi, int *permutation, bool doRecording=true);
 
   void normalizeColumn(int c, bool doRecording=true);
 

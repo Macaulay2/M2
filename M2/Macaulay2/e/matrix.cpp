@@ -1106,6 +1106,15 @@ void Matrix::sort(int degorder, int monorder, intarray &result) const
   rows()->sort(obj->entries, degs, degorder, monorder, result);
 }
 
+#if 0
+// Working on this: 5/1/2001.
+Matrix Matrix::monomials(const int *vars) const
+  // Given the 1 row matrix 'this', return a 1 row matrix consisting of
+  // all monomials in the variables 'vars', sorted in ascending degree order.
+{
+  
+}
+#endif
 Matrix Matrix::coeffs(const int *vars, Matrix &result_monoms) const
 {
   Matrix result_coeffs(rows());

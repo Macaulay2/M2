@@ -323,7 +323,7 @@ int bin_int_in(char *&s, int &len)
 
 //// translation of 'double'.
 union to_double {
-  unsigned char s[sizeof(double)/8];
+  unsigned char s[sizeof(double)];
   double a;
 };
 
@@ -331,16 +331,16 @@ void bin_double_out(buffer &o, double n)
 {
   union to_double D;
   D.a = n;
-  for (unsigned int i=0; i<sizeof(double)/8; i++)
+  for (unsigned int i=0; i<sizeof(double); i++)
     o << D.s[i];
 }
 
 double bin_double_in(char *&s, int &len)
 {
   union to_double D;
-  for (unsigned int i=0; i<sizeof(double)/8; i++)
+  for (unsigned int i=0; i<sizeof(double); i++)
     D.s[i] = *s++;
-  len += sizeof(double)/8;
+  len -= sizeof(double);
   return D.a;
 }
 
