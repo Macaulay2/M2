@@ -582,6 +582,7 @@ erase(e:Expr):Expr := (
      when e is t:SymbolClosure do (
 	  s := t.symbol;
 	  d := globalDictionary;
+	  if t.frame != globalFrame then return(WrongArg("a global symbol"));
 	  while (
 	       table := d.symboltable;
 	       i := s.word.hash & (length(table.buckets)-1);
@@ -610,12 +611,12 @@ erase(e:Expr):Expr := (
 			      lastCell = entryListCell;
 			      entryList = entryListCell.next;
 			      )
-			 is null do nothing;
+			 is null do break;
 			 );
 		    )
 	       is null do nothing;
 	       d != d.outerDictionary ) do d = d.outerDictionary;
-	  WrongArg("a global symbol"))
+	  buildErrorPacket("symbol has already been erased"))
      else WrongArg("a symbol")
      );
 setupfun("erase", erase);
