@@ -95,7 +95,11 @@
   )
 
 (defvar M2-history nil "The history of recent Macaulay2 command lines.")
-(defvar M2-command "M2 " "*The default Macaulay2 command line.")
+(defvar M2-command 
+  (concat "M2  --print-width " (number-to-string (- (screen-width) 1)) " ")
+  "*The default Macaulay2 command line.")
+
+
 
 (defun M2 (command)
   "Run Macaulay 2 in a buffer.  With a prefix argument, the command line that runs Macaulay 2
@@ -114,7 +118,7 @@
    (make-comint "M2" ; specifying "M2" here means the buffer will be named *M2*
 		(or (getenv "SHELL") "/bin/sh") ; name of program
 		nil			; starting input file
-		"-c" (concat "echo; set -x; " command " --print-width " (number-to-string (- (screen-width) 1)) " ")		; arguments to the program
+		"-c" (concat "echo; set -x; " command)		; arguments to the program
 		)
    )
   (M2-comint-mode)

@@ -546,6 +546,16 @@ int actors5_WindowWidth(int fd) {
 #endif
      }
 
+int actors5_WindowHeight(int fd) {
+#if defined(__DJGPP__) || defined(__alpha) || defined(_WIN32)
+     return 0;
+#else
+     struct winsize x;
+     ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
+     return x.ws_row;
+#endif
+     }
+
 /*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

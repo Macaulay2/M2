@@ -5,24 +5,24 @@ pad = method()
 pad(String,ZZ) := String => (s,n) -> concatenate(s,n-# s)
 pad(ZZ,String) := String => (n,s) -> concatenate(n-# s,s)
 
-columnate = (s,w) -> (
-     lens := apply(s,i -> #i);
-     ncols := (w+1) // (max lens + 1);
+columnate = (wid,items) -> (
+     lens := apply(items,i -> #i);
+     ncols := (wid+1) // (max lens + 1);
      if ncols === 0 then ncols = 1;
-     nrows := (# s + ncols - 1)//ncols;
+     nrows := (# items + ncols - 1)//ncols;
      local newcols;
      local newrows;
      while (
-	  ncols < # s and (
+	  ncols < # items and (
 	       newcols = ncols+1;
-	       newrows = (# s + ncols - 1)//newcols;
-	       w >= newcols - 1 + sum apply(pack(newrows, lens), max)
+	       newrows = (# items + ncols - 1)//newcols;
+	       wid >= newcols - 1 + sum apply(pack(newrows, lens), max)
 	       )
 	  ) do (
 	  ncols = newcols;
 	  nrows = newrows;
 	  );
-     horizontalJoin between(" ", apply(pack(nrows,s), col -> stack col)))
+     horizontalJoin between(" ", apply(pack(nrows,items), col -> stack col)))
 
 net Time := v -> (
      t := "-- " | toString v#0 | " seconds";

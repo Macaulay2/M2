@@ -102,10 +102,10 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
 	       ),
 	  dictionary.symboltable));
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary):Symbol := (
-     s := makeEntry(word,position,dictionary);
+     entry := makeEntry(word,position,dictionary);
      if dictionary.frameID == 0 && isalnum(word.name)
-     then globalFrame.values.(s.frameindex) = Expr(SymbolClosure(globalFrame,s));
-     s);
+     then globalFrame.values.(entry.frameindex) = Expr(SymbolClosure(globalFrame,entry));
+     entry);
 export makeProtectedSymbolClosure(w:Word):SymbolClosure := (
      entry := makeSymbol(w,dummyPosition,globalDictionary);
      entry.protected = true;
@@ -116,7 +116,9 @@ makeKeyword(w:Word):SymbolClosure := (
      -- keywords differ from symbols in that their initial value is null
      entry := makeEntry(w,dummyPosition,globalDictionary);
      entry.protected = true;
-     SymbolClosure(globalFrame,entry));
+     sc := SymbolClosure(globalFrame,entry);
+     globalFrame.values.(entry.frameindex) = Expr(sc);
+     sc);
 export makeProtectedSymbolClosure(s:string):SymbolClosure := makeProtectedSymbolClosure(makeUniqueWord(s,parseWORD));
 makeKeyword(s:string):SymbolClosure := makeKeyword(makeUniqueWord(s,parseWORD));
 -----------------------------------------------------------------------------
