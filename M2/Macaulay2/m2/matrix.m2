@@ -1,6 +1,6 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
-ModuleMap = new Type of MutableHashTable
+ModuleMap = new Type of HashTable
 ModuleMap.synonym = "module map"
 
 Matrix = new Type of ModuleMap
@@ -39,12 +39,13 @@ RingElement * Matrix := (r,m) -> (
      newMatrix(T, source m))
 
 newMatrix = (tar,src) -> (				    -- we erase this later
-     R := ring tar;
-     p := new Matrix;
-     p.source = src;
-     p.target = tar;
-     p.handle = newHandle "";
-     p)
+     new Matrix from {
+	  symbol ring => ring tar,
+	  symbol source => src,
+	  symbol target => tar,
+	  symbol handle => newHandle "",
+	  symbol cache => new CacheTable
+	  })
 
 getMatrix = (R) -> newMatrix(
      (sendgg(ggdup,gggetrows); new Module from R),
@@ -128,12 +129,13 @@ RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
 ZZ - Matrix := (i,f) -> if i === 0 then -f else i*id_(target f) - f
 Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*id_(target f)
 
-- Matrix := Matrix => f -> (
-     h := new Matrix;
-     h.source = source f;
-     h.target = target f;
-     h.handle = newHandle (ggPush f, ggnegate);
-     h)
+- Matrix := Matrix => f -> new Matrix from {
+     symbol ring => ring f,
+     symbol source => source f,
+     symbol target => target f,
+     symbol handle => newHandle (ggPush f, ggnegate),
+     symbol cache => new CacheTable
+     }
 
 setdegree := (M,N,type,degree) -> (
      R := ring M;
@@ -182,7 +184,7 @@ Matrix ^ ZZ := Matrix => (f,n) -> (
      if n === 0 then id_(target f)
      else SimplePowerMethod (f,n))
 
-transpose Matrix := Matrix => (m) -> if m.?transpose then m.transpose else m.transpose = (
+transpose Matrix := Matrix => (m) -> if m.cache.?transpose then m.cache.transpose else m.cache.transpose = (
      if not (isFreeModule source m and isFreeModule target m) 
      then error "expected a map between free modules";
      sendgg (ggPush m, ggtranspose);
@@ -209,8 +211,8 @@ toString Matrix := m -> concatenate ( "matrix ", toString entries m )
 isIsomorphism Matrix := f -> coker f == 0 and ker f == 0
 
 isHomogeneous Matrix := m -> (
-     if m.?isHomogeneous then m.isHomogeneous 
-     else m.isHomogeneous = (
+     if m.cache.?isHomogeneous then m.cache.isHomogeneous 
+     else m.cache.isHomogeneous = (
 	  isHomogeneous ring target m
 	  and isHomogeneous ring source m
 	  and (
@@ -266,9 +268,14 @@ Matrix.directSum = args -> (
      if not all(args, f -> ring f === R) 
      then error "expected matrices all over the same ring";
      sendgg(apply(args, ggPush), ggPush (#args), ggdirectsum);
-     f := newMatrix(directSum apply(args,target),directSum apply(args,source));
-     f.components = toList args;
-     f)
+     new Matrix from {
+	  symbol ring => R,
+	  symbol source => directSum apply(args,source),
+	  symbol target => directSum apply(args,target),
+	  symbol handle => newHandle "",
+	  symbol cache => new CacheTable,
+	  symbol components => toList args
+	  })
 
 isDirectSum = method()
 isDirectSum Module := (M) -> M.?components
@@ -509,25 +516,24 @@ map(Module,Module) := Matrix => options -> (M,N) -> (
 
 map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
      R := ring M;
-     if r == 0 then (
-	  f := new Matrix;
-	  f.handle = newHandle(ggPush cover M, ggPush cover N, ggzeromat);
-	  f.source = N;
-	  f.target = M;
-	  f.ring = ring M;
-	  f)
+     if r == 0 then new Matrix from {
+	  symbol handle => newHandle(ggPush cover M, ggPush cover N, ggzeromat),
+	  symbol source => N,
+	  symbol target => M,
+	  symbol ring => ring M,
+	  symbol cache => new CacheTable
+	  }
      else if numgens cover M == numgens cover N then map(M,N,r * id_(cover M)) 
      else error "expected 0, or source and target with same number of generators")
 
 map(Module,Module,ZZ) := Matrix => options -> (M,N,i) -> (
-     if i === 0 then (
-	  R := ring M;
-	  f := new Matrix;
-	  f.handle = newHandle(ggPush cover M, ggPush cover N, ggzeromat);
-	  f.source = N;
-	  f.target = M;
-	  f.ring = ring M;
-	  f)
+     if i === 0 then new Matrix from {
+	  symbol handle => newHandle(ggPush cover M, ggPush cover N, ggzeromat),
+	  symbol source => N,
+	  symbol target => M,
+	  symbol ring => ring M,
+	  symbol cache => new CacheTable
+	  }
      else if M == N then map(M,i)
      else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M)) 
      else error "expected 0, or source and target with same number of generators")
@@ -542,13 +548,16 @@ map(Module,RingElement) := Matrix => options -> (M,r) -> (
 
 map(Module) := Matrix => options -> (M) -> (
      R := ring M;
-     f := new Matrix;
      sendgg(ggPush cover M, ggiden);
      if options.Degree =!= null then error "Degree option encountered with identity matrix";
      reduce M;
-     f.handle = newHandle "";
-     f.source = f.target = M;
-     f)
+     new Matrix from {
+     	  symbol handle => newHandle "",
+	  symbol source => M,
+	  symbol target => M,
+	  symbol ring => R,
+	  symbol cache => new CacheTable
+	  })
 
 map(Module,ZZ) := Matrix => options -> (M,i) -> (
      if i === 0 then map(M,M,0)

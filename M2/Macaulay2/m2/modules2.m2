@@ -624,7 +624,7 @@ basis Module := Matrix => M -> if M.?basis then M.basis else M.basis = (
      map(M,,getMatrix R))
 
 basis Ring := Matrix => R -> if R.?basis then R.basis else R.basis = basis(R^1)
-basis Ideal := Matrix => I -> if I.?basis then I.basis else I.basis = basis module I
+basis Ideal := Matrix => I -> if I.cache.?basis then I.cache.basis else I.cache.basis = basis module I
 -----------------------------------------------------------------------------
 
 truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)

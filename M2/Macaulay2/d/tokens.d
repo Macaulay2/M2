@@ -319,6 +319,7 @@ export typeClass := newHashTable(mutableHashTableClass,mutableHashTableClass);
        hashTableClass.class = typeClass;
        newtypeof(parent:HashTable):HashTable := newHashTable(typeClass,parent);
        newbasictype():HashTable := newtypeof(thingClass);
+export cacheTableClass := newtypeof(mutableHashTableClass);
 export basicListClass := newbasictype();
 export mutableListClass := newtypeof(basicListClass);
 export timeClass := newtypeof(basicListClass);

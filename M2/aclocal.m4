@@ -58,7 +58,6 @@ AC_DEFUN(M2_CONFIGURED_FILES,
  Macaulay2/c2/Makefile\
  Macaulay2/d/Makefile\
  Macaulay2/dbm/Makefile\
- Macaulay2/docs/Makefile\
  Macaulay2/docs/nsf-final-report-2000/Makefile\
  Macaulay2/docs/nsf-proposal-1998/Makefile\
  Macaulay2/dumpdata/Makefile\

@@ -718,7 +718,7 @@ document { "computing Groebner bases",
      again, but this time with a hint about the Hilbert function, so first
      we must erase the memory of the Groebner basis computed above.",
      EXAMPLE {
-	  "remove(f,{false,0})",
+	  "remove(f.cache,{false,0})",
 	  },
      "Now we provide the hint and compute the Groebner basis anew.",
      EXAMPLE {

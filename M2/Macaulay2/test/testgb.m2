@@ -103,7 +103,7 @@ sortcols = (m) -> m_(sortColumns m)
                Degrees=>{1,1,1,2,2,2,2,2,2},
                MonomialOrder => Lex];
     J = substitute(I, R1);
-    J.poincare = h1;
+    J.cache.poincare = h1;
     g = gb(J, Strategy=>strat);
     assert(image generators gb I == image substitute(generators g, R))
 

@@ -21,7 +21,9 @@ ZZ >> ZZ := ZZ => (i,j) -> i << -j
 
 oldgcd := gcd
 erase symbol gcd
-gcd = method()
+gcd = method(Associative => true)
+
+gcd List := x -> gcd toSequence x
 
 gcd(ZZ,ZZ) := ZZ => (x,y) -> oldgcd(x,y)
 

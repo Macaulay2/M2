@@ -170,9 +170,9 @@ resolution Matrix := ChainComplexMap => options -> (f) -> extend(
      matrix f)
 
 resolution Ideal := ChainComplex => options -> (I) -> resolution(
-     if I.?quotient 
-     then I.quotient
-     else I.quotient = (ring I)^1/I,
+     if I.cache.?quotient 
+     then I.cache.quotient
+     else I.cache.quotient = (ring I)^1/I,
      options)
 
 -- MES: these need to be documented.  They also only work currently
