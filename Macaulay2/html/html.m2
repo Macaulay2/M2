@@ -17,12 +17,12 @@ html BODY := x -> concatenate(
 masterIndex = new MutableHashTable
 masterFileName = "master.html"
 masterNodeName = "master index"
-masterIndexButton := HREF { masterFileName, BUTTON("redsq_info.gif","index") }
+masterIndexButton := HREF { masterFileName, BUTTON("index.gif","index") }
 
 topFileName = "index.html"
-topNodeName = "Macaulay 2"
+topNodeName = "\"Macaulay 2\""
 topNodeAlias = "table of contents"
-topNodeButton := HREF { topFileName, BUTTON("star_home.gif","top") }
+topNodeButton := HREF { topFileName, BUTTON("top.gif","top") }
 
 databaseFileName = "../cache/Macaulay2-doc"
 errorDepth 0
@@ -33,13 +33,13 @@ NEXT = new MutableHashTable
 PREV = new MutableHashTable
 UP   = new MutableHashTable
 
-nextButton := BUTTON("redsq_next.gif","next")
-prevButton := BUTTON("redsq_back.gif","previous")
+nextButton := BUTTON("next.gif","next")
+prevButton := BUTTON("previous.gif","previous")
 upButton := BUTTON("up.gif","up")
 
-next = key -> if NEXT#?key then HREF { linkFilename NEXT#key, nextButton } else nextButton
-prev = key -> if PREV#?key then HREF { linkFilename PREV#key, prevButton } else prevButton
-up   = key -> if   UP#?key then HREF { linkFilename   UP#key,   upButton } else   upButton
+next = key -> if NEXT#?key then HREF { linkFilename NEXT#key, nextButton }
+prev = key -> if PREV#?key then HREF { linkFilename PREV#key, prevButton }
+up   = key -> if   UP#?key then HREF { linkFilename   UP#key,   upButton }
 
 scope = method(SingleArgumentDispatch => true)
 scope2 = method(SingleArgumentDispatch => true)

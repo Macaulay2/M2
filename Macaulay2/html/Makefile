@@ -2,7 +2,14 @@ TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
 
-all :: index.html
+all :: up.gif next.gif previous.gif top.gif index.gif index.html
+
+up.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Up\" \"up.gif\")"  -b '(gimp-quit 0)'
+next.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Next\" \"next.gif\")"  -b '(gimp-quit 0)'
+previous.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Previous\" \"previous.gif\")"  -b '(gimp-quit 0)'
+index.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Index\" \"index.gif\")"  -b '(gimp-quit 0)'
+top.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Top\" \"top.gif\")"  -b '(gimp-quit 0)'
+
 index.html : html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
 	rm -f ./*.html
 	../bin/M2 -q html.m2 '-eexit(0)'
