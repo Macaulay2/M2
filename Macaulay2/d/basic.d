@@ -21,6 +21,7 @@ export hash(e:Expr):int := (
      is b:Boolean do if b.v then 444777 else 777333
      is Nothing do 333889
      is x:List do x.hash
+     is x:Dictionary do x.hash
      is x:Rational do hash(x)
      is x:BigReal do hash(x)
      is x:BigComplex do hash(x)

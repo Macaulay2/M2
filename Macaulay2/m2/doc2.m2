@@ -1061,22 +1061,13 @@ document { (symbol _, ZZ, Ring),
      TT "n_R", " -- promotes the integer ", TT "n", " to the ring ", TT "R", ".",
      }
 
-document { SymbolTable,
-     Headline => "the class of all symbol tables",
-     "In a symbol table, each key is string containing the name of 
-     a symbol, and the corresponding value is the symbol itself.",
-     SEEALSO "Symbol"
-     }
-
 document { symbolTable,
      Headline => "the global symbols",
      TT "symbolTable()", " -- constructs an hash table containing the 
      global symbol table.",
      PARA,
      "Each key is a string containing the name of a symbol, and the 
-     corresponding value is the symbol itself.",
-     PARA,
-     SEEALSO "SymbolTable"
+     corresponding value is the symbol itself."
      }
 
 document { applyPairs,

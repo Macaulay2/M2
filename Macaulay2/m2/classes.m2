@@ -19,7 +19,6 @@ MutableList.synonym = "mutable list"
 File.synonym = "file"
 Array.synonym = "array"
 Symbol.synonym = "symbol"
-SymbolTable.synonym = "symbol table"
 BigReal.synonym = "big real"
 ZZ.synonym = "integer"
 ZZ.tex = ///$\mathbb Z$///

@@ -368,8 +368,7 @@ document List := z -> (
 -----------------------------------------------------------------------------
 
 topicList = () -> sort join(
-     if DocDatabase === null then {} else value \ keys DocDatabase,
-     keys Documentation
+     if DocDatabase === null then {} else value \ keys DocDatabase
      )
 
 getExampleInputs := method(SingleArgumentDispatch => true)
@@ -1434,7 +1433,7 @@ undocumentedSymbols = () -> select(
      x -> (
 	  if (
 	       -- x =!= value x and        -- ignore symbols with no value assigned
-	       not DocDatabase#?(toString x) and not Documentation#?(toString x) 
+	       not DocDatabase#?(toString x)
 	       ) 
      	  then (
 	       undocErr x;

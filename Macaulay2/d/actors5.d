@@ -582,14 +582,14 @@ removefun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("remove",removefun);
 
-erase(s:Symbol,dictionary:Dictionary):bool := (
-     i := s.word.hash & (length(dictionary.hashTable)-1);
-     entryList := dictionary.hashTable.i;
+erase(s:Symbol,table:SymbolHashTable):bool := (
+     i := s.word.hash & (length(table.buckets)-1);
+     entryList := table.buckets.i;
      when entryList
      is entryListCell:SymbolListCell do (
 	  if entryListCell.entry == s
 	  then (
-	       dictionary.hashTable.i = entryListCell.next;
+	       table.buckets.i = entryListCell.next;
 	       return(true);
 	       );
 	  lastCell := entryListCell;
@@ -616,7 +616,7 @@ erase(e:Expr):Expr := (
 	  --if s.symbol.protected
 	  --then buildErrorPacket("attempt to erase a protected symbol")
 	  --else 
-	  if erase(s.symbol,globalScope.dictionary)
+	  if erase(s.symbol,globalScope.symboltable)
 	  then e
 	  else WrongArg("a global symbol"))
      else WrongArg("a symbol")
