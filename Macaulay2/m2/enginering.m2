@@ -88,6 +88,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
        toString FractionField := F -> if F.?name then F.name else "frac(" | toString last F.baseRings | ")"
         numgens FractionField := F -> numgens last F.baseRings
 	isField FractionField := F -> true
+	    dim FractionField := F -> 0
             net FractionField := F -> (
 		 if F.?name then F.name
 		 else net new FunctionApplication from { frac, last F.baseRings }
