@@ -25,7 +25,13 @@ enum {
 
   TY_Vector,
   TY_Monomial,
-
+#if 0
+  TY_APolynomialRing,
+  TY_APolynomial,
+  TY_ARing,
+  TY_ARingElement,
+  TY_AVector,
+#endif
   TY_Computation
 };
 
@@ -37,6 +43,7 @@ enum class_identifier {
   CLASS_RingElement,
   CLASS_Vector,
   CLASS_Matrix,
+  CLASS_SparseMutableMatrix,
   CLASS_MonomialIdeal,
   CLASS_monomial,
 
@@ -61,6 +68,14 @@ enum class_identifier {
 
   CLASS_RingMap,
 
+#if defined(ARING)
+  CLASS_APolynomialRing,
+  CLASS_APolynomial,
+  CLASS_ARing,  // This will become several types...
+  CLASS_ARingElement,
+  CLASS_AVector,
+#endif
+
   CLASS_DetComputation,
   CLASS_PfaffianComputation,
   CLASS_GaussElimComputation,
@@ -69,6 +84,7 @@ enum class_identifier {
   CLASS_binomialGB_comp,
   CLASS_GBinhom_comp,
   CLASS_HermiteComputation,
+  CLASS_MatrixComputation,
   CLASS_hilb_comp,
   CLASS_gb_comp,
   CLASS_res_comp,
@@ -84,6 +100,15 @@ enum type_identifier {
     TY_RING_MAP, TY_MONIDEAL, TY_TERMIDEAL,
     TY_MON_ORDER, TY_NEW_MON_ORDER,
     TY_MONOID, TY_MONOMIAL,
+#if defined(ARING)
+  TY_APolynomialRing,
+  TY_APolynomial,
+  TY_ARing,
+  TY_ARingElement,
+  TY_AVector,
+#endif
+    TY_SparseMutableMatrix,
+    TY_MatrixComputation,
     TY_COMP, 
     TY_HILB_COMP,
     TY_GB_COMP,
@@ -159,6 +184,7 @@ class FreeModule;
 class RingElement;
 class Vector;
 class Matrix;
+class SparseMutableMatrix;
 class RingMap;
 
 class gb_comp;
@@ -167,6 +193,7 @@ class gb_comp;
   class NGB_comp;
   class GBinhom_comp;
   class HermiteComputation;
+class MatrixComputation;
 class hilb_comp;
   class computation;
     class DetComputation;
@@ -179,5 +206,12 @@ class gb_emitter;
 
 class object_writer;
 class object_reader;
+
+#if defined(ARING)
+class PolynomialRing;
+class Polynomial;
+#endif
+
+
 #endif
 

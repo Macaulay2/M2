@@ -17,6 +17,8 @@
 #include "assprime.hpp"
 #include "random.hpp"
 
+#include "sparsemat.hpp"
+
 void cmd_Matrix1(object &orows, object &ocols)
      // Create a matrix from elements on the stack.
      // On stack: v0 v1 v2 ... v(c-1) rows:intarray c:int >> matrix
@@ -993,6 +995,302 @@ void cmd_random(object & /*oF*/, object & /*oG*/,
 {
 }
 
+void cmd_sparse_make(object &oR, object &o1, object &o2)
+{
+  const Ring *R = oR->cast_to_Ring();
+  int r = o1->int_of();
+  int c = o2->int_of();
+  SparseMutableMatrix *m = new SparseMutableMatrix(R,r,c);
+  gStack.insert(m);
+}
+void cmd_sparse_make2(object &om)
+{
+  const Matrix M = om->cast_to_Matrix();
+  SparseMutableMatrix *m = new SparseMutableMatrix(M);
+  gStack.insert(m);
+}
+void cmd_sparse_to_matrix(object &om)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  gStack.insert(m->toMatrix());
+}
+void cmd_sparse_iden(object &oR, object &o1)
+{
+  const Ring *R = oR->cast_to_Ring();
+  int n = o1->int_of();
+  SparseMutableMatrix *m = SparseMutableMatrix::identity(R,n);
+  gStack.insert(m);
+}
+void cmd_sparse_setrowops(object &om, object &on)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  SparseMutableMatrix *n = on->cast_to_SparseMutableMatrix();
+  m->setRowChangeMatrix(n);
+}
+void cmd_sparse_setcolops(object &om, object &on)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  SparseMutableMatrix *n = on->cast_to_SparseMutableMatrix();
+  m->setColumnChangeMatrix(n);
+}
+void cmd_sparse_getrowops(object &om)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  SparseMutableMatrix *n = m->getRowChangeMatrix();
+  if (n == 0)
+    gError << "no row operation matrix set";
+  else
+    gStack.insert(n);
+}
+void cmd_sparse_getcolops(object &om)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  SparseMutableMatrix *n = m->getColumnChangeMatrix();
+  if (n == 0)
+    gError << "no column operation matrix set";
+  else
+    gStack.insert(n);
+}
+void cmd_sparse_getEntry(object &om, object &o1, object &o2)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int r = o1->int_of();
+  int c = o2->int_of();
+  ring_elem result;
+  ring_elem a;
+  if (m->getEntry(r,c,a))
+    result = m->getRing()->copy(a);
+  else
+    result = m->getRing()->from_int(0);
+  RingElement f(m->getRing(), result);
+  gStack.insert(f);
+}
+
+void cmd_sparse_setEntry(object &om, object &o1, object &o2, object &oa)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int r = o1->int_of();
+  int c = o2->int_of();
+  RingElement a = oa->cast_to_RingElement();
+  if (m->getRing() != a.Ring_of())
+    {
+      gError << "same ring required";
+      return;
+    }
+  ring_elem b = m->getRing()->copy(a.get_value());
+  m->setEntry(r,c,b);
+}
+void cmd_sparse_interchangeRows(object &om, object &o1, object &o2)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int r1 = o1->int_of();
+  int r2 = o2->int_of();
+  m->interchangeRows(r1,r2);
+}
+
+void cmd_sparse_interchangeColumns(object &om, object &o1, object &o2)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int c1 = o1->int_of();
+  int c2 = o2->int_of();
+  m->interchangeColumns(c1,c2);
+}
+
+void cmd_sparse_addRowMultiple(object &om, object &o1, object &oa, object &o2)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int r1 = o1->int_of();
+  int r = o2->int_of();
+  RingElement a = oa->cast_to_RingElement();
+  if (m->getRing() != a.Ring_of())
+    {
+      gError << "same ring required";
+      return;
+    }
+  m->addRowMultiple(r1,a.get_value(),r);
+}
+
+void cmd_sparse_addColumnMultiple(object &om, object &o1, object &oa, object &o2)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int c1 = o1->int_of();
+  int c = o2->int_of();
+  RingElement a = oa->cast_to_RingElement();
+  if (m->getRing() != a.Ring_of())
+    {
+      gError << "same ring required";
+      return;
+    }
+  m->addColumnMultiple(c1,a.get_value(),c);
+}
+
+void cmd_sparse_scaleRow(object &om, object &o1, object &oa)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int i = o1->int_of();
+  RingElement a = oa->cast_to_RingElement();
+  if (m->getRing() != a.Ring_of())
+    {
+      gError << "same ring required";
+      return;
+    }
+  m->scaleRow(i,a.get_value());
+}
+void cmd_sparse_scaleColumn(object &om, object &o1, object &oa)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int i = o1->int_of();
+  RingElement a = oa->cast_to_RingElement();
+  if (m->getRing() != a.Ring_of())
+    {
+      gError << "same ring required";
+      return;
+    }
+  m->scaleColumn(i,a.get_value());
+}
+
+void cmd_sparse_reduce1(object &om, object &o1, object &o2, object &owhich)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int i1 = o1->int_of();
+  int i2 = o2->int_of();
+  int which = owhich->int_of();
+  if (which == 1)
+    m->gcdColumnReduce(i1,i2);
+  else
+    m->columnReduce(i1,i2);
+}
+
+static void do_2by2(SparseMutableMatrix *m, 
+		    int r1, int r2,
+		    bool by_row)
+{
+  // Now get the four ring elements on the stack
+  
+  if (!gStack.in_bounds(3))
+    {
+      gError << "incorrect arguments";
+      return;
+    }
+  for (int i=0; i<4; i++)
+    if (gStack[i]->type_id() != TY_RING_ELEM)
+      {
+	gError << "incorrect arguments";
+	return;
+      }
+  RingElement B2 = gStack.remove()->cast_to_RingElement();
+  RingElement B1 = gStack.remove()->cast_to_RingElement();
+  RingElement A2 = gStack.remove()->cast_to_RingElement();
+  RingElement A1 = gStack.remove()->cast_to_RingElement();
+  // Now check the rings against m's:
+  const Ring *R = m->getRing();
+  if (B2.Ring_of() != R
+      || B1.Ring_of() != R
+      || A2.Ring_of() != R
+      || A1.Ring_of() != R)
+    {
+      gError << "incorrect ring";
+      return;
+    }
+
+  ring_elem b2 = B2.get_value();
+  ring_elem b1 = B1.get_value();
+  ring_elem a2 = A2.get_value();
+  ring_elem a1 = A1.get_value();
+  if (by_row)
+    m->row2by2(r1,r2,a1,a2,b1,b2);
+  else
+    m->column2by2(r1,r2,a1,a2,b1,b2);
+}
+
+void cmd_sparse_row2by2(object &om, object &o1, object &o2)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int i = o1->int_of();
+  int j = o2->int_of();
+  do_2by2(m,i,j,true);
+}
+void cmd_sparse_column2by2(object &om, object &o1, object &o2)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int i = o1->int_of();
+  int j = o2->int_of();
+  do_2by2(m,i,j,false);
+}
+
+void cmd_sparse_find_unit(object &om, object &olo, object &ohi)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int c_lo = olo->int_of();
+  int c_hi = ohi->int_of();
+  int r,c,best;
+  if (m->findGoodUnitPivot(c_lo, c_hi, r, c, best))
+    {
+      gStack.insert(make_object_int(r));
+      gStack.insert(make_object_int(c));
+      gStack.insert(make_object_int(best));
+    }
+  else
+    {
+      gStack.insert(make_object_int(-1));
+      gStack.insert(make_object_int(-1));
+      gStack.insert(make_object_int(-1));
+    }
+}
+void cmd_sparse_sort(object &om, object &olo, object &ohi)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int c_lo = olo->int_of();
+  int c_hi = ohi->int_of();
+  m->sortColumns(c_lo, c_hi);
+}
+void cmd_sparse_permute(object &om, object &olo, object &ohi, object &operm)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int c_lo = olo->int_of();
+  int c_hi = ohi->int_of();
+  intarray *perm = operm->intarray_of();
+  m->permuteColumns(c_lo, c_hi, perm->raw());
+}
+void cmd_sparse_dot(object &om, object &olo, object &ohi)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int c1 = olo->int_of();
+  int c2 = ohi->int_of();
+  ring_elem a = m->dotProduct(c1,c2);
+  RingElement result(m->getRing(), a);
+  gStack.insert(result);
+}
+void cmd_sparse_lead_coeff(object &om, object &o)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int c = o->int_of();
+  ring_elem a = m->leadCoefficient(c);
+  RingElement result(m->getRing(), a);
+  gStack.insert(result);
+}
+
+void cmd_sparse_lead_row(object &om, object &o)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int c = o->int_of();
+  int r = m->leadRow(c);
+  gStack.insert(make_object_int(r));
+}
+void cmd_sparse_numrows(object &om)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int n = m->n_rows();
+  gStack.insert(make_object_int(n));
+}
+void cmd_sparse_numcols(object &om)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  int n = m->n_cols();
+  gStack.insert(make_object_int(n));
+}
+
+
 void i_Matrix_cmds(void)
 {
   install(ggmatrix, cmd_Matrix1, TY_FREEMODULE, TY_INT);
@@ -1121,4 +1419,45 @@ void i_Matrix_cmds(void)
   install(ggtermideal, cmd_ti_ti, TY_MATRIX, TY_INT);
   install(gggetchange, cmd_ti_getchange, TY_TERMIDEAL, TY_INT);
   install(ggsearch, cmd_ti_search, TY_TERMIDEAL, TY_MATRIX);
+
+  // sparse matrix routines
+
+  install(ggsparsematrix, cmd_sparse_make, TY_RING, TY_INT, TY_INT);
+  install(ggsparsematrix, cmd_sparse_make2, TY_MATRIX);
+  install(ggmatrix, cmd_sparse_to_matrix, TY_SparseMutableMatrix);
+  install(ggiden, cmd_sparse_iden, TY_RING, TY_INT);
+  install(ggsetRowChange, cmd_sparse_setrowops, TY_SparseMutableMatrix, TY_SparseMutableMatrix);
+  install(ggsetColChange, cmd_sparse_setcolops, TY_SparseMutableMatrix, TY_SparseMutableMatrix);
+  install(gggetRowChange, cmd_sparse_getrowops, TY_SparseMutableMatrix);
+  install(gggetColChange, cmd_sparse_getcolops, TY_SparseMutableMatrix);
+  install(ggelem, cmd_sparse_getEntry, 
+	  TY_SparseMutableMatrix, TY_INT, TY_INT);
+  install(ggSetEntry, cmd_sparse_setEntry, 
+	  TY_SparseMutableMatrix, TY_INT, TY_INT, TY_RING_ELEM);
+  install(ggRowInterchange, cmd_sparse_interchangeRows, 
+	  TY_SparseMutableMatrix, TY_INT, TY_INT);
+  install(ggColumnInterchange, cmd_sparse_interchangeColumns, 
+	  TY_SparseMutableMatrix, TY_INT, TY_INT);
+  install(ggRowAddMultiple, cmd_sparse_addRowMultiple, 
+	  TY_SparseMutableMatrix, TY_INT, TY_RING_ELEM, TY_INT);
+  install(ggColumnAddMultiple, cmd_sparse_addColumnMultiple, 
+	  TY_SparseMutableMatrix, TY_INT, TY_RING_ELEM, TY_INT);
+
+  install(ggRow2by2, cmd_sparse_row2by2, TY_SparseMutableMatrix, TY_INT, TY_INT);
+  install(ggColumn2by2, cmd_sparse_column2by2, TY_SparseMutableMatrix, TY_INT, TY_INT);
+#if 0
+  install(ggRowGCDReduce, cmd_sparse_gcdRowReduce, TY_SparseMutableMatrix, TY_INT, TY_INT, TY_INT);
+  install(ggColumnGCDReduce, cmd_sparse_gcdColumnReduce, TY_INT, TY_INT, TY_INT);
+#endif
+  install(ggRowScale, cmd_sparse_scaleRow, TY_SparseMutableMatrix, TY_INT, TY_RING_ELEM);
+  install(ggColumnScale, cmd_sparse_scaleColumn, TY_SparseMutableMatrix, TY_INT, TY_RING_ELEM);
+  install(ggreduce, cmd_sparse_reduce1, TY_SparseMutableMatrix, TY_INT, TY_INT, TY_INT);
+  install(ggfindGoodUnitPivot, cmd_sparse_find_unit, TY_SparseMutableMatrix, TY_INT, TY_INT);
+  install(ggsortcolumns, cmd_sparse_sort, TY_SparseMutableMatrix, TY_INT, TY_INT);
+  install(ggpermute, cmd_sparse_permute, TY_SparseMutableMatrix, TY_INT, TY_INT, TY_INTARRAY);
+  install(ggmult, cmd_sparse_dot, TY_SparseMutableMatrix, TY_INT, TY_INT);
+  install(ggleadcoeff, cmd_sparse_lead_coeff, TY_SparseMutableMatrix, TY_INT);
+  install(ggleadcomp, cmd_sparse_lead_row, TY_SparseMutableMatrix, TY_INT);
+  install(ggnumrows, cmd_sparse_numrows, TY_SparseMutableMatrix);
+  install(ggnumcols, cmd_sparse_numcols, TY_SparseMutableMatrix);
 }

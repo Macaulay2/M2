@@ -44,6 +44,7 @@ public:
 
   ring_elem numerator(ring_elem f) const;
   ring_elem denominator(ring_elem f) const;
+  ring_elem fraction(const ring_elem top, const ring_elem bottom) const;
 
 // The following are all the routines required by 'ring'
   virtual bool is_field() const     { return 1; }

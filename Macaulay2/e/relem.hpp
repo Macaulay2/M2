@@ -138,6 +138,7 @@ public:
 
   RingElement numerator() const;
   RingElement denominator() const;
+  RingElement fraction(const Ring *R, const RingElement &bottom) const;
 };
 
 //-----------------------------------------------------------------

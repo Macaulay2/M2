@@ -291,6 +291,20 @@ void cmd_FractionField_denominator(object &of)
   gStack.insert(f.denominator());
 }
 
+void cmd_FractionField_fraction(object &oR, object &o1, object &o2)
+{
+  const Ring *R = oR->cast_to_Ring();
+  const FractionField *K = R->cast_to_FractionField();
+  if (K == NULL)
+    {
+      gError << "fraction field required";
+      return;
+    }
+  RingElement a = o1->cast_to_RingElement();
+  RingElement b = o2->cast_to_RingElement();
+  gStack.insert(a.fraction(K,b));
+}
+
 
 
 void cmd_Z_mod(object &r, object &oM)
@@ -498,5 +512,5 @@ void i_ring_elem_cmds(void)
   // fraction field elements
   install(ggnumerator, cmd_FractionField_numerator, TY_RING_ELEM);
   install(ggdenominator, cmd_FractionField_denominator, TY_RING_ELEM);
-
+  install(ggfraction, cmd_FractionField_fraction, TY_RING, TY_RING_ELEM, TY_RING_ELEM);
 }

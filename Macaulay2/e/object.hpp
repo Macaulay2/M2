@@ -66,6 +66,9 @@ public:
   virtual res2_comp   * cast_to_res2_comp()    { return 0; }
   virtual gbres_comp  * cast_to_gbres_comp()    { return 0; }
 
+  virtual SparseMutableMatrix * cast_to_SparseMutableMatrix() { return 0; }
+  virtual MatrixComputation * cast_to_MatrixComputation() { return 0; }
+
   virtual const object_mon_order   * cast_to_mon_order()      const { return 0; }
   virtual const object_new_mon_order   * cast_to_new_mon_order()      const { return 0; }
   virtual const Monoid      * cast_to_Monoid()      const { return 0; }
@@ -79,6 +82,12 @@ public:
   virtual const res_comp    * cast_to_res_comp()    const { return 0; }
   virtual const res2_comp   * cast_to_res2_comp()   const { return 0; }
   virtual const gbres_comp  * cast_to_gbres_comp()   const { return 0; }
+
+
+#if defined(ARING)
+  virtual const PolynomialRing * cast_to_PolynomialRing() const { return 0; }
+  virtual const Polynomial * cast_to_Polynomial() const { return 0; }
+#endif
 
   virtual RingElement   cast_to_RingElement();
   virtual Matrix        cast_to_Matrix();

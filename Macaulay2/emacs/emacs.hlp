@@ -4,18 +4,12 @@
                       -- do not edit -- 
 
 
-The best way to run Macaulay 2 is with GNU emacs,
-a versatile text editor written by Richard Stallman which
-runs well under most UNIX systems.  Its
-web page is "http://www.gnu.org/software/emacs/emacs.html"
-and the software can be obtained from one of the ftp sites listed
-at "http://www.gnu.org/order/ftp.html"; the primary ftp
-site is "ftp://ftp.gnu.org/pub/gnu".
-
-There is a version of emacs for Windows NT and Windows 95 called 'NTemacs'.
-See "http://www.cs.washington.edu/homes/voelker/ntemacs.html" for
-details about how to get it, as well as information about how to swap your
-caps lock and control keys.
+Because some answers can be very wide, it is a good idea to run Macaulay 2
+in a window which does not wrap output lines and allows the
+user to scroll horizontally to see the rest of the output.  We
+provide a package for 'emacs' which implements this, in
+'emacs/M2.el'.  It also provides for dynamic completion
+of symbols in the language.
 
 There is an ASCII version of this section of the documentation distributed
 in the file 'emacs/emacs.hlp'.  It might be useful for you to visit
@@ -82,7 +76,7 @@ should be on your path.
 You may use 'C-x o' freely to switch from one window to the other.
 Verify that Macaulay 2 is running by entering a command such as '2+2'.  
 Now paste the following text into a buffer, unless you have the ASCII
-version of this documentation in an emacs buffer already, and position
+version of this documentation in an emacs buffer already, position
 the cursor on the first line of code, and press the 'F11' function 
 key (or 'C-C s') repeatedly to present each line to Macaulay 2.
 

@@ -55,6 +55,10 @@ void GB_gbstart(void)
   i_gbres_cmds();
   i_factor_cmds();
   Random::i_random();
+#if defined(ARING)
+  extern void i_ARING();
+  i_ARING();
+#endif
 }
 
 void *GBgbprocess(char *instream, int inlen)

@@ -59,6 +59,26 @@ coeffs
 m:matrix vars:intarray >> coeffs:matrix monoms:matrix OR m:matrix >> coeffs:matrix monoms:matrix
 Given an integer array 'vars' containing variable numbers from 0..numvars ring m-1, find the monomials in these variables, and their coefficients, placing these in the matrices 'coeffs' and 'monoms'.  For the second version: Let x_i be the smallest index variable that occurs in the 'j' th column of 'm'. Then the j th column of coeffs contains the (vector) coefficient of the highest power of this variable, and the j th element of monoms is x_i^n, if n is this highest power.
 
+ggColumn2by2
+column2by2
+a1:RingElement a2:RingElement b1:RingElement b2:RingElement m:SparseMutableMatrix c1:int c2:int >> .
+Modifies columns 'c1' and 'c2' of matrix 'm' as follows: column r1 is replaced with a1*(column c1)+a2*(column c2), and column c2 is replaced with b1*(column c1)+b2*(column c2).  The assignment to columns c1,c2 are performed simultaneously.
+
+ggColumnAddMultiple
+ColumnAddMultiple
+m:SparseMutableMatrix c1:int a:RingElement c:int >> .
+Destructively set m[column c] = m[column c] + a * m[column c1].
+
+ggColumnInterchange
+ColumnInterchange
+m:SparseMutableMatrix c1:int c2:int >> .
+Destructively interchange the two given columns of 'm'. 
+
+ggColumnScale
+ColumnScale
+m:SparseMutableMatrix c:int a:RingElement >> .
+Destructively set m[column c] = a * m[column c].
+
 ggcompare
 compare
 a:monomial b:monomial >> int
@@ -145,8 +165,8 @@ Push a copy of the n th element on the stack.
 
 ggelem
 elem
-vector i >> ring_elem;  OR  matrix i >> vector;  OR  matrix i j >> ringelem
-Vector version: yields the i th coefficient of the vector.  Matrix versions: Place either the i th column of the matrix, or the (i,j) th entry of the matrix onto the stack.
+v:Vector r:int >> RingElement;  OR  m:Matrix c:int >> Vector;  OR  m:Matrix r:int c:int >> RingElement OR m:SparseMutableMatrix r:int c:int >> RingElement
+Vector version: yields the r th coefficient of the vector.  Matrix versions: Place either the c th column of the matrix, or the (r,c) th entry of the matrix onto the stack.
 
 ggelim
 elim
@@ -183,6 +203,11 @@ factor
 ... >> ...
 experimental
 
+ggfindGoodUnitPivot
+findGoodUnitPivot
+m:SparseMutableMatrix c1:int c2:int >> r:int c:int
+Find a unit (currently: only checks for 1, -1), m[r,c], which would minimize 'fill-ins', at least in the range of columns c1..c2.  If no 1 or -1 is found in the matrix in this range of columns, then r and c are both set to -1.
+
 ggflip
 flip
 F:freemodule G:freemodule >> matrix
@@ -192,6 +217,11 @@ ggforget
 forget
 h:int >> .
 Remove a reference to the given integer handle.  This should match an original call to ggaddress.
+
+ggfraction
+fraction
+R:Ring a:RingElement b:RingElement >> RingElement
+Yields the element a/b in the fraction field R, if R is the fraction field of the rings of a and b.  If not, an error is returned.
 
 ggfractionfield
 fractionfield
@@ -233,6 +263,11 @@ getcoeff
 f:ringelem m:monomial >> a:ringelem
 Yields the (possibly zero) coefficient of the monomial 'm' in the polynomial 'f'.
 
+gggetColChange
+getColChange
+m:SparseMutableMatrix >> n:SparseMutableMatrix
+Return the column operation recording matrix for 'm', if one has been set.  If not, an error is given.
+
 gggetcols
 getcols
 matrix >> intarray
@@ -257,6 +292,16 @@ gggetring
 getring
 var >> ring
 Place the base ring of the given variable onto the stack.  If that variable does not have a base ring (e.g. an int), then put the current ring onto the stack.
+
+gggetRowChange
+getRowChange
+m:SparseMutableMatrix >> n:SparseMutableMatrix
+Return the row operation recording matrix for 'm', if one has been set.  If not, an error is given.
+
+gggetColumnChange
+getColumnChange
+m:SparseMutableMatrix >> n:SparseMutableMatrix
+Return the column operation recording matrix for 'm', if one has been set.  If not, an error is given.
 
 gggetrows
 getrows
@@ -459,6 +504,16 @@ lift
 S:ring f:ringelem >> g:ringelem
 Lift f to an element g of S.  If R is the base ring of f, then S ---> R should be one of the following extensions: (1) R ---> R (in which case f is returned without change), (2) S ---> R=S/I, (in which case f can always be lifted: note that S itself may be a quotient base ring of R), (3) S ---> R=S[x1..xn], (an error is returned if f is not a scalar), (4) S ---> R=frac S, (an error is returned if f is not an element of S), (5) S=Z/p[x]/(F(x)) ---> GF(p,n).  An error indication is returned if the ring extension is not one of these, or in the situations indicated.
 
+ggLLLinit
+LLLinit
+m:Matrix threshold:RingElement flag:int >> A:SparseMutableMatrix LLLstate:SparseMutableMatrix
+Setup the computation of the LLL reduction of the matrix 'm' (over ZZ).  There is no engine LLL computation object.  Instead, the answer will appear in 'A' (after using ggLLLcalc), using the internal state 'LLLstate'.  The threshold should be an element of ZZ or QQ, in the range (1/4, 1].  If flag is non-zero, then the change of basis column multiplier matrix for 'A' is set.  After the computation is complete (or before, to view the partial answer), this multiplier matrix B can be obtained using gggetColChange on A.  The final answers satisfy: A = m*B.  For more information about LLL reduction, see H. Cohen, A Course in Computational Algebraic Number Theory, Springer Lecture notes in Math, 138.
+
+ggLLLcalc
+LLLcalc
+A:SparseMutableMatrix LLLstate:SparseMutableMatrix nsteps:int >> int
+Compute the LLL reduction of the matrix A, using the state setup originally by ggLLLinit.  Compute 'nsteps' amount.  If this is -1, compute until done, or interrupted.  See the documentation for ggLLLinit for more information.  Return values: if an error: -2 (e.g. the columns of 'A' are not independent), if completely done: 0, if interrupted: -1, if done with the given number of steps, but not completely done: 9.
+
 ggmatrix
 matrix
 v0 v1 ... v(c-1) rows:freemodule cols:freemodule >> matrix;  OR  v0 v1 ... v(c-1) rows:freemodule c:int >> matrix;  OR  vecinfo monideal >> matrix
@@ -564,15 +619,30 @@ nmonoms
 res_comp >> intarray
 Return an intarray in the same format as in 'ggpairs' describing the number of monomials present in each level/degree of the resolution.
 
+ggnumcols
+numcols
+m:SparseMutableMatrix >> int
+Yields the number of columns of 'm'.
+
 ggnumerator
 numerator
 f:ringelem >> g:ringelem
 If f = g/h is an element of a fraction field frac(R), return the numerator g in R.
 
+ggnumrows
+numrows
+m:SparseMutableMatrix >> int
+Yields the number of rows of 'm'.
+
 ggpairs
 pairs
 res_comp >> intarray
 Return an intarray describing upper bounds on the graded betti numbers.  Equivalently, these numbers represent the number of S-pair computations that have been/or will be computed.  The format for this array is: [low degree, high degree, max level, b0, b1, ...], where the betti numbers have been flattened by rows.  Thus, b_((i-lo)*len + lev) gives the number of elements at level 'lev' in slanted degree 'i', where lo, hi, len are the first three elements in the output intarray.
+
+ggpermute
+permute
+m:SparseMutableMatrix lo:int hi:int perm:intarray >> .
+Permute the columns lo..hi of 'm' using the elements perm[0]..perm[hi-lo+1].  That is, column c is moved to column perm[c-lo].
 
 ggpfaffs
 pfaffs
@@ -684,6 +754,26 @@ resNmodule
 gr:res_comp i:int >> freemodule
 Return the i th free module of the (possibly non-minimal) resolution 'gr'.
 
+ggRow2by2
+row2by2
+a1:RingElement a2:RingElement b1:RingElement b2:RingElement m:SparseMutableMatrix r1:int r2:int >> .
+Modifies rows 'r1' and 'r2' of matrix 'm' as follows: row r1 is replaced with a1*(row r1)+a2*(row r2), and row r2 is replaced with b1*(row r1)+b2*(row r2).  The assignment to rows r1,r2 are performed simultaneously.
+
+ggRowAddMultiple
+RowAddMultiple
+m:SparseMutableMatrix r1:int a:RingElement r:int >> .
+Destructively set m[row r] = m[row r] + a * m[row r1].  Note: this is less efficient than the corresponding column operation.
+
+ggRowInterchange
+RowInterchange
+m:SparseMutableMatrix r1:int r2:int >> .
+Destructively interchange the two given rows of 'm'.  Note: this is less efficient than the corresponding column operation.
+
+ggRowScale
+RowScale
+m:SparseMutableMatrix r:int a:RingElement >> .
+Destructively set m[row r] = a * m[row r]. Note: this is less efficient than the corresponding column operation.
+
 ggsagbi
 sagbi
 m:matrix >> sagbi_comp
@@ -719,6 +809,21 @@ send
 remote_gb_comp >> .
 Send the generators to the remote machine. In development.
 
+ggsetColChange
+setColChange
+m:SparseMutableMatrix n:SparseMutableMatrix >> .
+Set 'm' to record column operations in the matrix 'n'.  The matrix 'n' should have the same number of columns as 'm' has columns. (Thus, each time a column operation is performed on 'm', it is also performed on 'n'.
+
+ggSetEntry
+setEntry
+m:SparseMutableMatrix r:int c:int a:RingElement >> .
+Set m[r,c] := a, assuming that the ring of 'a' is the same as the ring of 'm', and the indices are in range.
+
+ggsetRowChange
+setRowChange
+m:SparseMutableMatrix n:SparseMutableMatrix >> .
+Set 'm' to record row operations in the matrix 'n'.  The matrix 'n' should have the same number of columns as 'm' has rows.  Thus, each time a row operation is performed on 'm', the corresponding column operation is performed on the matrix 'n'.
+
 ggsetshift
 setshift
 m:matrix d:intarray >> .
@@ -739,10 +844,20 @@ skeleton
 r:res_comp >> .
 Compute the skeleton of the resolution.  This is a debugging facility.  To see the number of pairs, use ggpairs after this, or grab the lead terms by using ggresNmap.
 
+ggSmithNormalForm
+SmithNormalForm
+m:matrix n:int >> SmithNormalFormComputation
+Create a computation to compute the Smith normal form for the matrix 'm'.  The base ring of 'm' should be a computable PID, e.g. ZZ or k[x], where k is a field.  If 'n' is non-zero, then enough information is collected to give the isomorphism matrix from the cokernel of the smith normal form matrix to the cokernel of 'm'.  As usual with computations, 'ggcalc' is used to perform the computation.  'gggetchange' gets the matrix representing this isomorphism (the change of basis matrix), assuming that the parameter 'n' is non-zero.  'gggetgb' returns the matrix whose cokernel is isomorphic to coker m.  If the computation is not complete, an intermediate value is returned.  Finally, 'ggstatus' returns an integer representing the current status of the computation.  (0 = computation is complete).
+
 ggsortcolumns
 sortcolumns
-m:matrix degorder:int monorder:int>> intarray
-Return an integer array giving the permutation of columns required to sort the columns of 'm'. The order used is determined from the signs of degorder, monorder: if degorder is positive (negative), then the columns are sorted into ascending (descending) degree order.  If degorder is 0, or for columns having the same degree, if monorder is positive (negative), then these columns are sorted in ascending (descending) monomial order.
+m:matrix degorder:int monorder:int>> intarray  OR m:SparseMutableMatrix lo:int hi:int >> intarray
+Return an integer array giving the permutation of columns required to sort the columns of 'm'. The order used is determined from the signs of degorder, monorder: if degorder is positive (negative), then the columns are sorted into ascending (descending) degree order.  If degorder is 0, or for columns having the same degree, if monorder is positive (negative), then these columns are sorted in ascending (descending) monomial order.  SECOND FORM: sort the columns lo..hi of 'm', and return the resulting permutation in the result, which is an array of length hi-lo+1.  The sort order used is: zero vectors are least, then the row of the lead term is considered (higher lead terms are sorted later), finally, if the coefficients are ZZ, the absolute value is considered, or, if this is a polynomial ring, the (simple) degree is considered, with larger values sorted later. (CURRENTLY: no intarray is returned: the sort is simply performed 6/30/98).
+
+ggsparsematrix
+sparsematrix
+R:ring r:int c:int >> SparseMutableMatrix OR m:Matrix >> SparseMutableMatrix
+Create a so-called sparse matrix.  In the first case, the matrix is set to the zero r by c matrix over the ring R.  In the second case, the matrix is set to the matrix 'm', using a different representation.  This representation stores only non-zero components, and for each component, the entire ring element is stored as one element (this is different than the order required by the Groebner basis routines).  Routines that act on these SparseMutableMatrix's include: ggelem, ggset, ggRowInterchange, ggColumnInterchange, ggRowAddMultiple, ggColumnAddMultiple, ggRowScale, ggColumnScale.
 
 ggsparsevector
 sparsevector
@@ -758,6 +873,11 @@ ggstats
 stats
 gb_comp >> .;  OR res_comp >> .
 Return a string describing the state of the Groebner or resolution computation, and the number of S-pair and generator computations remaining in each degree.
+
+ggstatus
+status
+SmithNormalFormComputation >> int OR ...
+Return an integer describing the state of the computation: 0 means the computation is done.  Any non-zero value means that the computation is not complete.
 
 ggSTRING
 string
