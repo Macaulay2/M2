@@ -567,13 +567,24 @@ html MENU := x -> html redoMENU x
 
 info MENU := r -> stack join(
      {"* Menu:",""},
-     sublists(toList r, 
+     pre := "* ";
+     printWidth = printWidth - #pre;
+     ret := sublists(toList r, 
 	  x -> not ( class x === TO ),
-	  x -> stack("",x),			    -- we can assume x is a String
-	  v -> stack apply(v, i -> (
-		    t := concatenate("* ", DocumentTag.FormattedKey i#0,"::");
+	  x -> stack("",info PARA x),
+	  v -> stack apply(v, i -> pre | (
+		    t := DocumentTag.FormattedKey i#0 | "::";
 		    h := headline i#0;
-		    if h === null then t else concatenate(t,30-#t:" ","  ",h)))))
+		    if h =!= null then (
+		    	 t = concatenate(t,28-#t:" ","  ");
+			 wt := #t;
+		    	 printWidth = printWidth - wt;
+		    	 t = t | info PARA h;
+		    	 printWidth = printWidth + wt;
+			 );
+		    t)));
+     printWidth = printWidth + #pre;
+     ret)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
