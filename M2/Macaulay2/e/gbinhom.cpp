@@ -528,8 +528,8 @@ int GBinhom_comp::gb_geo_reduce(vec &f, vec &fsyz)
   int *reduce_ndiv = a_reduce_ndiv.alloc(M->n_vars());
   int count = 0;
 
-  geobucket fb(F);
-  geobucket fsyzb(Fsyz);
+  vecHeap fb(F);
+  vecHeap fsyzb(Fsyz);
   fb.add(f);
   fsyzb.add(fsyz);
   vecterm *lead;

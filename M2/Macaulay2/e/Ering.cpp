@@ -561,7 +561,7 @@ EFreeModule *ERing::makeFreeModule(int rank) const
       result = new EFreeModule(this,rank);
       result->setCover(result);
     }
-  EUniqueObjects.insertEFreeModule(result);
+  EUniqueObjects->insertEFreeModule(result);
   return result;
 }
 
@@ -584,7 +584,7 @@ EFreeModule *ERing::makeFreeModule(int rank, const monomial **degrees) const
       result = new EFreeModule(this,rank,degrees);
       result->setCover(result);
     }
-  EUniqueObjects.insertEFreeModule(result);
+  EUniqueObjects->insertEFreeModule(result);
   return result;
 }
 
@@ -610,7 +610,7 @@ EFreeModule *EPolynomialRing::makeSchreyerFreeModule(
       result = new EFreeModule(this,rank,degrees,ordering,tiebreaks);
       result->setCover(result);
     }
-  EUniqueObjects.insertEFreeModule(result);
+  EUniqueObjects->insertEFreeModule(result);
   return result;
 }
 

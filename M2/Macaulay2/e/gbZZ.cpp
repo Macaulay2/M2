@@ -1010,8 +1010,8 @@ void GBZZ_comp::gb_geo_reduce(vec &f, vec &fsyz)
   // set in GBZZ_comp::GBZZ_comp.
   int count = 0;
 
-  geobucket fb(F);
-  geobucket fsyzb(Fsyz);
+  vecHeap fb(F);
+  vecHeap fsyzb(Fsyz);
   fb.add(f);
   fsyzb.add(fsyz);
   vecterm *lead;

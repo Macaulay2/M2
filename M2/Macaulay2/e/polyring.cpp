@@ -756,7 +756,7 @@ ring_elem PolynomialRing::mult(const ring_elem f, const ring_elem g) const
 #endif
 ring_elem PolynomialRing::mult(const ring_elem f, const ring_elem g) const
 {
-  geobucket H(this);
+  polyheap H(this);
   for (Nterm *a = f; a != NULL; a = a->next)
     {
       ring_elem h = mult_by_term(g, a->coeff, a->monom);
@@ -1303,7 +1303,7 @@ ring_elem PolynomialRing::eval(const RingMap *map, const ring_elem f) const
   if (target->is_poly_ring())
     {
       intarray vp;
-      geobucket H(target);
+      polyheap H(target);
       
       for (Nterm *t = f; t != NULL; t = t->next)
 	{

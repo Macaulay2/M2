@@ -28,7 +28,7 @@ vec WeylFreeModule::imp_mult_by_term(const ring_elem c, const int *m, const vec 
   //  return FreeModule::imp_mult_by_term(c,m,v);
    // return c*m*f
 
-  geobucket H(this);
+  vecHeap H(this);
 
   int i,j;
   int nvars = M->n_vars();
