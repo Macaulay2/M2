@@ -122,7 +122,7 @@ int system_write(int fd, M2_string buffer, int len){
      return write(fd,buffer->array,len);
      }
 
-struct M2_string_struct system_newline_contents = { 1, { '\n' } };
+static struct M2_string_struct system_newline_contents = { 1, { '\n' } };
 M2_string system_newline = &system_newline_contents;
 
 char *tocharstar(s)

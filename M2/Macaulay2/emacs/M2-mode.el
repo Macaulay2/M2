@@ -3,6 +3,8 @@
 ;; (autoload 'M2-mode "M2-mode.el" "Macaulay 2 editing mode" t)
 ;;;;
 
+(provide 'M2-mode)
+
 (defvar M2-mode-hook nil
   "*Hook evaluated when first loading Macaulay 2 mode.")
 
@@ -32,6 +34,7 @@
   (make-local-variable 'comment-start-skip)
   (setq comment-start-skip "-- *")
   (local-set-key "\^C\t" 'M2-dynamic-complete-symbol)
+  (turn-on-font-lock)
   (run-hooks 'M2-mode-hook)
   )
 
@@ -137,3 +140,4 @@
 			    (back-to-indentation))
 		       (indent-to i)
 		       ) ) ) ) )
+

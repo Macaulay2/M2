@@ -322,6 +322,11 @@ char **argv;
        argv[0][1] = ':';
        strcpy(argv[0]+2,argv[0]+3);
      }
+     {
+       /* change all \ in path to executable to / */
+       char *p;
+       for (p=argv[0]; *p; p++) if (*p == '\\') *p = '/';
+     }
 #endif
 
      out_of_memory_jump_set = FALSE;
