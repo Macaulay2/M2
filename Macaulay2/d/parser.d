@@ -97,6 +97,7 @@ export parseChar(s:string):char := (
 
 
 export thenW := dummyWord;		  -- filled in by binding.d
+export whenW := dummyWord;		  -- filled in by binding.d
 export elseW := dummyWord;		  -- filled in by binding.d
 export ofW := dummyWord;		  -- filled in by binding.d
 export doW := dummyWord;		  -- filled in by binding.d
@@ -367,7 +368,7 @@ export unaryfor(
      if var == errorTree then return(errorTree);
      fromtoken := dummyToken; fromclause := dummyTree;
      totoken := dummyToken; toclause := dummyTree;
-     whiletoken := dummyToken; whileclause := dummyTree;
+     whentoken := dummyToken; whenclause := dummyTree;
      listtoken := dummyToken; listclause := dummyTree;
      dotoken := dummyToken; doclause := dummyTree;
      token2 := gettoken(file,false);
@@ -384,22 +385,17 @@ export unaryfor(
 	  if toclause == errorTree then return(errorTree);
      	  token2 = gettoken(file,false);
 	  );
-     if token2.word == whileW then (
-	  whiletoken = token2;
-	  whileclause = parse(file,token2.word.parse.scope,obeylines);
-	  if whileclause == errorTree then return(errorTree);
+     if token2.word == whenW then (
+	  whentoken = token2;
+	  whenclause = parse(file,token2.word.parse.scope,obeylines);
+	  if whenclause == errorTree then return(errorTree);
      	  token2 = gettoken(file,false);
 	  );
      if token2.word == doW then (
 	  dotoken = token2;
 	  doclause = parse(file,token2.word.parse.scope,obeylines);
 	  if doclause == errorTree then return(errorTree);
-	  r := ParseTree(For(
-		    fortoken,var, fromtoken,fromclause,
-	       	    totoken,toclause, whiletoken,whileclause, listtoken, listclause, 
-		    dotoken,doclause,
-		    dummyScope
-		    ));
+	  r := ParseTree(For( fortoken, var, fromclause, toclause, whenclause, listclause,doclause, dummyScope ));
 	  accumulate(r,file,prec,obeylines))
      else if token2.word == listW then (
 	  listclause = parse(file,listW.parse.scope,obeylines);
@@ -410,12 +406,7 @@ export unaryfor(
 	       doclause = parse(file,doW.parse.scope,obeylines);
 	       if doclause == errorTree then return(errorTree);
 	       );
-	  r := ParseTree(For(
-		    fortoken,var, fromtoken,fromclause,
-	       	    totoken,toclause, whiletoken,whileclause, listtoken, listclause, 
-		    dotoken,doclause,
-		    dummyScope
-		    ));
+	  r := ParseTree(For(fortoken, var, fromclause, toclause,whenclause, listclause, doclause, dummyScope));
 	  accumulate(r,file,prec,obeylines))
      else (
 	  errorpos(token2.position,"syntax error : expected 'do' or 'list'");

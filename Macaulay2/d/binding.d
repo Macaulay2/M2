@@ -71,7 +71,7 @@ export treePosition(e:ParseTree):Position := (
 	  is i:TryElse do return(i.trytoken.position)
 	  is i:Try do return(i.trytoken.position)
      	  is i:IfThenElse do return(i.iftoken.position)
-     	  is w:For do return(w.whiletoken.position)
+     	  is w:For do return(w.fortoken.position)
      	  is w:WhileDo do return(w.whiletoken.position)
      	  is w:WhileList do return(w.whiletoken.position)
      	  is w:WhileListDo do return(w.whiletoken.position)
@@ -196,6 +196,7 @@ bump();
      export LongDoubleArrowS := makeProtectedSymbolClosure(binaryright("==>"));
 bump();
      specialprec = prec;
+     whenW = token("when");
      ofW = token("of");
      fromW = token("from");
      toW = token("to");
@@ -693,7 +694,7 @@ export bind(e:ParseTree,scope:Scope):void := (
 	  bindSingleParm(w.variable,newscop);
 	  bind(w.fromclause,scope);
 	  bind(w.toclause,scope);
-	  bind(w.whileclause,newscop);
+	  bind(w.whenclause,newscop);
 	  bind(w.listclause,newscop);
 	  bind(w.doclause,newscop);
 	  w.scope = newscop;

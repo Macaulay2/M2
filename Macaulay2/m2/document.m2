@@ -640,8 +640,7 @@ synopsis Sequence := s -> (
 	  BOLD "Synopsis:",
 	  SHIELD MENU {
 	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
-	       if s#0 =!= symbol " " then
-	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0 },
+	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0, headline s#0 },
 	       SEQ { "Input:",
 		    MENU {
 			 if arg1 === null
@@ -724,7 +723,9 @@ op := s -> if operator#?s then (
 	       "This operator may be used as a binary operator in an expression \n",
 	       "like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary method", "s"}, " \n",
 	       "for handling such expressions with code such as ",
-	       PRE ("         X "|ss|" Y := (x,y) -> ..."), 
+	       if ss == " "
+	       then PRE ("         X Y := (x,y) -> ...")
+	       else PRE ("         X "|ss|" Y := (x,y) -> ..."), 
 	       NOINDENT{},
 	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the \n",
 	       "class of ", TT "y", ".", PARA{}
@@ -774,11 +775,11 @@ documentation Type := X -> (
      SEQ {
 	  title X, 
 	  synopsis X,
-	  usage X,
      	  type X,
 	  if #b > 0 then SEQ {
 	       "Types of ", if X.?synonym then X.synonym else toString X, " :", PARA{},
 	       smenu b, PARA{}},
+	  usage X,
 	  if #a > 0 then SEQ {
 	       "Functions and methods returning a ",
 	       indefinite synonym X, " :", PARA{},
@@ -887,18 +888,12 @@ htmlLiteralTable#"&" = "&amp;"
 htmlLiteralTable#">" = "&gt;"
 htmlLiteral := s -> concatenate apply(characters s, c -> htmlLiteralTable#c)
 
-htmlExtraLiteralTable := new MutableHashTable
-scan(characters ascii(0 .. 255), c -> htmlExtraLiteralTable#c = c)
-htmlExtraLiteralTable#"\"" = "&quot;"
+htmlExtraLiteralTable := copy htmlLiteralTable
 htmlExtraLiteralTable#" " = "&nbsp;"
-htmlExtraLiteralTable#"&" = "&amp;"
-htmlExtraLiteralTable#"<" = "&lt;"
-htmlExtraLiteralTable#">" = "&gt;"
 htmlExtraLiteral := s -> concatenate apply(characters s, c -> htmlExtraLiteralTable#c)
 -----------------------------------------------------------------------------
 ttLiteralTable := new MutableHashTable
-scan(0 .. 255, 
-     c -> ttLiteralTable#(ascii{c}) = concatenate(///{\char ///, string c, "}"))
+scan(0 .. 255, c -> ttLiteralTable#(ascii{c}) = concatenate(///{\char ///, string c, "}"))
 scan(characters ascii(32 .. 126), c -> ttLiteralTable#c = c)
 -- scan(characters "\\{}$&#^_%~", c -> ttLiteralTable#c = concatenate("{\\char ", string (ascii c)#0, "}"))
 -- scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))

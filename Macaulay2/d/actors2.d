@@ -747,7 +747,7 @@ WhileListDoFun = whilelistdofun;
 forfun(c:forCode):Expr := (
      fromclause := c.fromclause;
      toclause := c.toclause;
-     predicate := c.whileclause;
+     predicate := c.whenclause;
      listclause := c.listclause;
      doclause := c.doclause;
      r := if listclause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;

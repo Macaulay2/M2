@@ -983,7 +983,7 @@ locate(e:Code):void := (
 	  lookat(f.position);
 	  locate(f.fromclause);
 	  locate(f.toclause);
-	  locate(f.whileclause);
+	  locate(f.whenclause);
 	  locate(f.listclause);
 	  locate(f.doclause);
 	  )

@@ -123,6 +123,9 @@ document { sort,
 	  "sort {c,e,a,f,b,f}",
 	  "sort {4,2,6,3,8,2}"
 	  },
+     "Note: we have modified the sort order for strings so that symbols come
+     before alphanumeric characters, and upper and lower case characters are
+     sorted together.",
      SEEALSO { "rsort", "<=", "?" }
      }
 
@@ -136,9 +139,11 @@ document { rsort,
 	  "rsort {g,d,w,s,c,a,r}",
 	  "rsort {4,2,3,1}",
 	  },
+     "Note: we have modified the sort order for strings so that symbols come
+     before alphanumeric characters, and upper and lower case characters are
+     sorted together.",
      SEEALSO { "sort", "<=", "?" }
      }
-
 
 document { pack,
      Headline => "pack elements of a list into shorter ones",
