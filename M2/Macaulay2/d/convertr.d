@@ -21,34 +21,22 @@ dummyMultaryFun(c:CodeSequence):Expr := (
 dummyForFun(c:forCode):Expr := (
      error("dummy for function called");
      nullE);
-dummyGlobalAssignmentFun(x:globalAssignmentCode):Expr := (
-     error("dummy global assignment function called");
-     nullE);
-dummyLocalAssignmentFun(x:localAssignmentCode):Expr := (
-     error("dummy local assignment function called");
-     nullE);
-dummyParallelAssignmentFun(x:parallelAssignmentCode):Expr := (
-     error("dummy parallel assignment function called");
-     nullE);
 
-export LocalAssignmentFun := dummyLocalAssignmentFun;	-- filled in later in actors2.d
-export GlobalAssignmentFun := dummyGlobalAssignmentFun;	-- filled in later in actors2.d
-export ParallelAssignmentFun := dummyParallelAssignmentFun;	-- filled in later in actors2.d
-export AdjacentFun := dummyBinaryFun;	-- filled in later in actors.d
-export AssignElemFun := dummyTernaryFun;	-- filled in later in actors.d
-export AssignQuotedElemFun := dummyTernaryFun;	-- filled in later in actors.d
-export TryElseFun := dummyBinaryFun; 	-- filled in later in actors.d
-export TryFun := dummyUnaryFun; 	-- filled in later in actors.d
-export IfThenFun := dummyBinaryFun;	-- filled in later in actors.d
-export IfThenElseFun := dummyTernaryFun;-- filled in later in actors.d
-export ForFun := dummyForFun;      -- filled in later in actors.d
-export WhileDoFun := dummyBinaryFun;      -- filled in later in actors.d
-export WhileListFun := dummyBinaryFun;      -- filled in later in actors.d
-export WhileListDoFun := dummyTernaryFun;      -- filled in later in actors.d
-export NewFun := dummyUnaryFun;	  -- filled in later in actors.d
-export NewFromFun := dummyBinaryFun;	  -- filled in later in actors.d
-export NewOfFun := dummyBinaryFun;	  -- filled in later in actors.d
-export NewOfFromFun := dummyTernaryFun;	  -- filled in later in actors.d
+export AdjacentFun := dummyBinaryFun;	-- filled in later
+export AssignElemFun := dummyTernaryFun;	-- filled
+export AssignQuotedElemFun := dummyTernaryFun;	-- filled
+export TryElseFun := dummyBinaryFun; 	-- filled in later
+export TryFun := dummyUnaryFun; 	-- filled in later
+export IfThenFun := dummyBinaryFun;	-- filled in later
+export IfThenElseFun := dummyTernaryFun;-- filled in later
+export ForFun := dummyForFun;      -- filled in later
+export WhileDoFun := dummyBinaryFun;      -- filled in later
+export WhileListFun := dummyBinaryFun;      -- filled in later
+export WhileListDoFun := dummyTernaryFun;      -- filled in later
+export NewFun := dummyUnaryFun;	  -- filled in later
+export NewFromFun := dummyBinaryFun;	  -- filled in later
+export NewOfFun := dummyBinaryFun;	  -- filled in later
+export NewOfFromFun := dummyTernaryFun;	  -- filled in later
 
 export AssignNewFun := dummyBinaryFun;
 export AssignNewOfFun := dummyTernaryFun;
@@ -179,7 +167,7 @@ export convert(e:ParseTree):Code := (
      when e
      is s:StartDictionary do (
 	  if s.dictionary.framesize != 0
-	  then Code(openDictionaryCode(s.dictionary,convert(s.body)))
+	  then Code(newLocalFrameCode(s.dictionary.frameID,s.dictionary.framesize,convert(s.body)))
 	  else convert(s.body)
 	  )
      is w:For do Code(

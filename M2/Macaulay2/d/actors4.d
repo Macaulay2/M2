@@ -1054,7 +1054,7 @@ locate(e:Code):void := (
 	  locate(f.listClause);
 	  locate(f.doClause);
 	  )
-     is f:openDictionaryCode do locate(f.body)
+     is f:newLocalFrameCode do locate(f.body)
      is f:functionCode do (locate(f.parms);locate(f.body);)
      is v:sequenceCode do foreach c in v.x do locate(c)
      is v:listCode do foreach c in v.y do locate(c)
