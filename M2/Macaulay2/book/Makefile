@@ -5,7 +5,7 @@ DVIPSFLAGS = -z
 TEX=latex
 
 %.bux : %.tex
-	$(TEX) '\scrollmode \input $<'
+	$(TEX) $*
 	makeindex $*
 	mv $*.dvi $*-prelim.dvi
 	cp $*.aux $*.bux
@@ -15,10 +15,10 @@ TEX=latex
 	bibtex $*
 %.dvi : %.tex
 %.dvi : %.bbl
-	$(TEX) '\scrollmode \input $*'
+	$(TEX) $*
 	makeindex $*
 	if grep -s "Rerun to get cross-references right." $*.log; \
-	then $(TEX) '\scrollmode \input $*'; \
+	then $(TEX) $*; \
 	     makeindex $* ; \
 	fi
 %.ps : %.dvi
@@ -26,7 +26,7 @@ TEX=latex
 	rm -f body.tmp head.tmp
 
 %.pdf : %.tex
-	pdf$(TEX) '\scrollmode \input $*'
+	pdf$(TEX) $*
 	makeindex $*
 
 all:: M2book.tex
@@ -41,6 +41,6 @@ M2book.tex : ../cache/Macaulay2-doc book.m2 booktex.m2
 	../bin/M2 -q book.m2 '-e exit 0'
 	mv M2book.tmp M2book.tex
 
-clean :; rm -rf M2book.tex *.dvi *.log *.aux *.out *.tmp *.pdf \
-	*.bib *.bbl *.blg M2book-prelim.dvi *.ilg *.ind *.toc *.idx *.bux
+clean :; rm -rf M2book.tex *.dvi *.log *.aux *.out *.tmp *.pdf *.ps \
+	*.bbl *.blg M2book-prelim.dvi *.ilg *.ind *.toc *.idx *.bux
 

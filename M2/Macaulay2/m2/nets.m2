@@ -24,7 +24,7 @@ toString Sequence := s -> (
      if # s === 1 then concatenate("singleton ",toString s#0)
      else concatenate("(",between(",",toString \ s),")")
      )
-toString Command := toExternalString Command := f -> if Symbols#?f then string Symbols#f else "--Command--"
+net Command := toString Command := toExternalString Command := f -> if Symbols#?f then string Symbols#f else "--Command--"
 
 net Function := toString Function := f -> (
      if Symbols#?f then string Symbols#f 

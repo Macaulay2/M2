@@ -221,6 +221,59 @@ document { "reading the documentation",
      text form using ", TO "help", "."
      }
 
+document { "Preface",
+     MENU {
+	  TO "how to get this program",
+	  TO "resources required",
+	  TO "reading the documentation",
+	  TO "copyright and license",
+	  TO "acknowledgements",
+	  TO "the authors",
+	  }
+     }
+
+document { "User's Guide",
+     "Here are the basic concepts needed to use Macaulay 2 effectively.",
+     MENU {
+	  TO "Preface",
+	  TO "getting started",
+	  TO "invoking the program",
+	  TO "mathematical overview",
+	  TO "language and programming overview",
+	  TO "miscellaneous topics",
+	  }
+     }
+
+document { "Mathematical Vignettes",
+     "In this section we present some tutorials which aim to introduce
+     the user to some mathematical ways of using Macaulay 2.  The tutorials
+     are relatively independent of each other, and each one introduces the use
+     of some features of Macaulay 2 in a slow and leisurely way, assuming the
+     reader is already familiar with the mathematical concepts involved.  
+     ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
+     MENU {
+	  TO "Elementary uses of Groebner bases",
+	  TO "Canonical Embeddings of Plane Curves and Gonality",
+	  TO "Fano varieties",
+	  TO "Divisors",
+	  }
+     }
+
+document { "Reference Manual",
+     "This section is intended to offer detailed documentation on
+     every aspect of the system of interest to users.",
+     MENU {
+	  TO "Thing",
+	  }
+     }
+
+document {  "Developer's Corner",
+     MENU {
+	  TO "engine",
+	  TO "internals",
+	  }
+     }
+
 document { "Macaulay 2",
      IMG "9planets.gif", PARA,
      "Macaulay 2 is a software system devoted to supporting research in 
@@ -229,58 +282,10 @@ document { "Macaulay 2",
      most of the main features are working.  We are eager to help new users
      get started with it.",
      MENU {
-     	  {
-     	       H2 "Preface",
-	       MENU {
-		    TO "how to get this program",
-		    TO "resources required",
-		    TO "reading the documentation",
-		    TO "copyright and license",
-		    TO "acknowledgements",
-		    TO "the authors",
-		    }
-	       },
-	  {
-	       H2 "User's Guide",
-	       "Here are the basic concepts needed to use Macaulay 2 effectively.",
-	       MENU {
-		    TO "getting started",
-	  	    TO "invoking the program",
-		    TO "mathematical overview",
-		    TO "language and programming overview",
-		    TO "miscellaneous topics",
-		    },
-	       },
-	  {
-	       H2 "Mathematical Vignettes",
-	       "In this section we present some tutorials which aim to introduce
-	       the user to some mathematical ways of using Macaulay 2.  The tutorials
-	       are relatively independent of each other, and each one introduces the use
-	       of some features of Macaulay 2 in a slow and leisurely way, assuming the
-	       reader is already familiar with the mathematical concepts involved.  
-	       ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
-	       MENU {
-		    TO "Elementary uses of Groebner bases",
-		    TO "Canonical Embeddings of Plane Curves and Gonality",
-		    TO "Fano varieties",
-		    TO "Divisors",
-		    }
-	       },
-     	  { 
-	       H2 "Reference Manual",
-	       "This section is intended to offer detailed documentation on
-	       every aspect of the system of interest to users.",
-	       MENU {
-		    TO "Thing",
-		    },
-     	       },
-	  {
-	       H2 "Developer's Corner",
-	       MENU {
-	       	    TO "engine",
-		    TO "internals",
-	       	    }
-	       },
+	  TO "User's Guide",
+ 	  TO "Mathematical Vignettes",
+	  TO "Reference Manual",
+	  TO "Developer's Corner"
 	  }
      }
 
@@ -427,7 +432,8 @@ document { "how to get this program",
      "The program is available over the web at the Macaulay 2 home page",
      PARA, 
      HREF {"http://www.math.uiuc.edu/Macaulay2"}, 
-     PARA, 
+     PARA,
+     NOINDENT,
      "or by ftp to the host ", TT "ftp.math.uiuc.edu", " with user name ", TT "Macaulay2", " 
      and password ", TT "Macaulay2", ".  There you will find the documentation, both in
      readable form and available for downloading, the source code, ready for compiling
@@ -485,7 +491,7 @@ document { "syntax",
 
 document { "debugging",
      "Here are some debugging tools.",
-     MENU {
+     SHIELD MENU {
 	  TO "assert",
 	  TO "backtrace",
 	  TO "benchmark",
@@ -574,7 +580,7 @@ document { "classes",
 
 document { "system",
      "Loading files:",
-     MENU {
+     SHIELD MENU {
 	  TO "autoload",
 	  TO "initialization file",
 	  TO "input",
@@ -582,12 +588,12 @@ document { "system",
 	  TO "needs"
 	  },
      "Echoing characters:",
-     MENU {
+     SHIELD MENU {
 	  TO "clearEcho",
 	  TO "setEcho"
 	  },
      "Dumping and restoring the state of the system:",
-     MENU {
+     SHIELD MENU {
 	  TO "dumpdata",
 	  TO "loaddata",
 	  TO "reloaded",
@@ -596,7 +602,7 @@ document { "system",
 	  TO "addEndFunction"
 	  },
      "Interface to the operating system:",
-     MENU{
+     SHIELD MENU{
 	  TO "top level loop",
 	  TO "alarm",
 	  TO "currentDirectory",
@@ -616,17 +622,17 @@ document { "system",
 	  TO "wait"
 	  },
      "Variables with information about the state of the current process:",
-     MENU {
+     SHIELD MENU {
 	  TO "commandLine",
 	  TO "environment",
 	  TO "version"
 	  },
      "Miscellaneous commands:",
-     MENU {
+     SHIELD MENU {
 	  TO "getWWW"
 	  },
      "Dealing with the garbage collector:",
-     MENU {
+     SHIELD MENU {
 	  TO "collectGarbage",
 	  TO "gcDump"
 	  }
@@ -674,7 +680,7 @@ document { "help functions",
      PARA,
      NOINDENT,
      "Functions for accessing the documentation:",
-     MENU {
+     SHIELD MENU {
 	  TO "apropos",
 	  TO "briefDocumentation",
 	  TO "documentation",
@@ -684,19 +690,19 @@ document { "help functions",
 	  TO "topics"
 	  },
      "How to write documentation yourself:",
-     MENU {
+     SHIELD MENU {
 	  TO "document",
 	  TO "hypertext",
 	  },
      "Output formatting routines:",
-     MENU {
+     SHIELD MENU {
 	  TO "html",
 	  TO "mathML",
 	  TO "tex",
 	  TO "text",
 	  },
      "Some internals:",
-     MENU {
+     SHIELD MENU {
 	  TO "Documentation",
 	  TO "phase",
 	  },
