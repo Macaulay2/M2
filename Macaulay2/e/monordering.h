@@ -12,9 +12,10 @@ enum MonomialOrdering_type
   MO_REVLEX = 10,
   MO_WEIGHTS = 11,
   MO_LAURENT = 12, /* Lex order here */
-  MO_NC_LEX = 13, /* Lex order, non-commutative */
-  MO_POSITION_UP = 14,
-  MO_POSITION_DOWN = 15
+  MO_LAURENT_REVLEX = 13, /* Rev lex order here */
+  MO_NC_LEX = 14, /* Lex order, non-commutative */
+  MO_POSITION_UP = 15,
+  MO_POSITION_DOWN = 16
 };
 
 typedef struct mon_part_rec_

@@ -122,6 +122,13 @@ MonomialOrdering *rawGroupLexMonomialOrdering(int nvars)
   result->array[0] = p;
   return result;
 }
+MonomialOrdering *rawGroupRevLexMonomialOrdering(int nvars)
+{
+  mon_part p = mo_make(MO_LAURENT_REVLEX, nvars, 0);
+  MonomialOrdering *result = make_mon_order(1);
+  result->array[0] = p;
+  return result;
+}
 MonomialOrdering *rawNClexMonomialOrdering(int nvars)
 {
   mon_part p = mo_make(MO_NC_LEX, nvars, 0);
@@ -158,7 +165,6 @@ static MonomialOrdering *M2_mo_offset(MonomialOrdering *mo, int offset)
     }
   return result;
 }
-
 
 MonomialOrdering *rawJoinMonomialOrdering(MonomialOrdering_array M)
 {
@@ -200,95 +206,6 @@ MonomialOrdering *rawProductMonomialOrdering(MonomialOrdering_array M)
     }
   return result;
 }
-
-
-#if 0
-
-extern MonomialOrdering IM2_MonomialOrdering_read_xml(FILE *f)
-{
-  MonomialOrdering result = 0;
-  MonomialOrdering mo;
-  int *wts;
-  int nv;
-  char str[1000];
-  
-  for (;;)
-    {
-      fscanf(f, "%s", str);
-      if (strcmp("lex",str) == 0)
-	{
-	  fscanf(f, "%d", &nv);
-	  mo = rawLexMonomialOrdering(nv);
-	}
-      else if (strcmp("lex2",str) == 0)
-	{
-	  fscanf(f, "%d", &nv);
-	  mo = rawLexMonomialOrdering2(nv);
-	}
-      else if (strcmp("lex4",str) == 0)
-	{
-	  fscanf(f, "%d", &nv);
-	  mo = rawLexMonomialOrdering4(nv);
-	}
-      else if (strcmp("grevlex",str) == 0)
-	{
-	  wts = intarray_read(f, &nv);
-	  mo = rawGRevLexMonomialOrdering(nv,wts);
-	  FREE(wts);
-	}
-      else if (strcmp("grevlex2",str) == 0)
-	{
-	  wts = intarray_read(f, &nv);
-	  mo = rawGRevLexMonomialOrdering2(nv,wts);
-	  FREE(wts);
-	}
-      else if (strcmp("grevlex4",str) == 0)
-	{
-	  wts = intarray_read(f, &nv);
-	  mo = rawGRevLexMonomialOrdering4(nv,wts);
-	  FREE(wts);
-	}
-      else if (strcmp("revlex",str) == 0)
-	{
-	  fscanf(f, "%d", &nv);
-	  mo = rawRevLexMonomialOrdering(nv);
-	}
-      else if (strcmp("weights",str) == 0)
-	{
-	  wts = intarray_read(f, &nv);
-	  mo = rawWeightsMonomialOrdering(nv,wts);
-	  FREE(wts);
-	}
-      else if (strcmp("laurent",str) == 0)
-	{
-	  fscanf(f, "%d", &nv);
-	  mo = rawGroupLexMonomialOrdering(nv);
-	}
-      else if (strcmp("NClex",str) == 0)
-	{
-	  fscanf(f, "%d", &nv);
-	  mo = rawNClexMonomialOrdering(nv);
-	}
-      else if (strcmp("component",str) == 0)
-	{
-	  mo = IM2_MonomialOrdering_component();
-	}
-      else if (strcmp("</order>", str) == 0)
-	{
-	  break;
-	}
-      else
-	{
-	  fprintf(stderr, "unknown block type \"%s\" for monomial order", str);
-	  exit(1);
-	}
-
-      mo_append(&result,mo);
-    }
-
-  return result;
-}
-#endif
 
 M2_string intarray_to_string(int len, int *p)
 {
@@ -380,6 +297,9 @@ M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo)
 	break;
       case MO_LAURENT:
 	sprintf(s, "GroupLex => %d", p->nvars);
+	break;
+      case MO_LAURENT_REVLEX:
+	sprintf(s, "GroupRevLex => %d", p->nvars);
 	break;
       case MO_NC_LEX:
 	sprintf(s, "NCLex => %d", p->nvars);
