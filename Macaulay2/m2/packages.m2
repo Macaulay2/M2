@@ -1,16 +1,10 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
-saveValues = varlist -> (
-     valuelist := apply(varlist, x -> value x);
-     () -> apply(varlist, valuelist, (x,n) -> x <- n))
-
 addStartFunction( () -> path = join({"./", sourceHomeDirectory|"packages/"},path) )
 
 currentPackage = null
 
 packages = new VerticalList from {}
-
-PseudoDictionary = new Type of MutableHashTable		    -- temporary fiction, obsolete now
 
 Package = new Type of MutableHashTable
 Package.synonym = "package"
@@ -20,39 +14,30 @@ installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 
 net Package := p -> p#"package title" | " version " | p#"package version";
 
+M2title := "Macaulay 2"
+
 newPackage = method( Options => { Using => {} } )
 newPackage(String,String) := opts -> (title,vers) -> (
-     doctable := new MutableHashTable;
-     -- documentationPath = append(documentationPath,doctable);
-     restore := saveValues { global currentPackage, global currentDictionary };
      global currentPackage <- new Package from {
-	  "restore" => restore,
+	  "outerPackage" => currentPackage,
+     	  "dictionary" => if title === M2title then globalDictionary() else pushDictionary(),
 	  "package title" => title,
 	  "package version" => vers,
-     	  "dictionary" => currentDictionary = new PseudoDictionary, -- ! make dictionaries first class objects
 	  "test inputs" => new MutableHashTable,
-	  "raw documentation" => doctable,
+	  "raw documentation" => new MutableHashTable,
 	  "example inputs" => new MutableHashTable,
 	  "example outputs" => new MutableHashTable,
 	  "edited documentation" => new MutableHashTable,
 	  "html documentation" => new MutableHashTable,
 	  "options" => opts,
-	  "initial global symbols" => new MutableList from values globalDictionary(),
 	  "file directory" => currentFileDirectory
 	  }
      )
 
 end Package := p -> (
      if p =!= currentPackage then error ("package not open");
-     p#"dictionary" = new PseudoDictionary from (
-	  apply(keys (set values globalDictionary() - set p#"initial global symbols"), 
-	       s -> toString s => s));
-     remove(p,"initial global symbols");
      packages = append(packages,p);
-     p#"restore"();
-     remove(p,"restore");
      if not p.?name then p.name = p#"package title";
      p )
 
-Macaulay2 = newPackage("Macaulay 2",version#"VERSION")
-Macaulay2#"initial global symbols" = {}
+Macaulay2 = newPackage(M2title,version#"VERSION")

@@ -1046,7 +1046,7 @@ locate(e:Code):void := (
 	  locate(f.listClause);
 	  locate(f.doClause);
 	  )
-     is f:openScopeCode do locate(f.body)
+     is f:openDictionaryCode do locate(f.body)
      is f:functionCode do (locate(f.parms);locate(f.body);)
      is v:CodeSequence do foreach c in v do locate(c)
      );
