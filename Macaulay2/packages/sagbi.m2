@@ -23,7 +23,7 @@ the matrix F.",
      for a graded subalgebra.",
      EXAMPLE ///
      ///,
-     CAVEAT "If F : R <-- S, then R and S should be polynomial
+     Caveat => "If F : R <-- S, then R and S should be polynomial
      rings, and not quotient rings.",
      PARA,
      "References: Kapur, D., Madlener, K. (1989). A completion procedure

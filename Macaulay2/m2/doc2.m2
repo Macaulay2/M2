@@ -13,7 +13,7 @@ document {
 	  "timing 3^30",
       	  "peek oo",
 	  },
-     SEEALSO "Time"
+     SeeAlso => "Time"
      }
 
 document {
@@ -23,7 +23,7 @@ document {
      used, and returns the value of ", TT "e", ".",
      PARA,
      EXAMPLE "time 3^30",
-     SEEALSO "timing"
+     SeeAlso => "timing"
      }
 
 document {
@@ -33,7 +33,7 @@ document {
      is a ", TO "BasicList", " of the form ", TT "{t,v}", ", where ", TT "t", " 
      is the number of seconds of cpu time used, and ", TT "v", " is the value 
      of the the expression.",
-     SEEALSO "timing"
+     SeeAlso => "timing"
      }
 
 document {
@@ -110,7 +110,7 @@ document {
 	  "for i from 3 to 6 do print i",
 	  "for i when i^2 < 90 list i",
 	  },
-     SEEALSO { "loops", "while", "return" }
+     SeeAlso => { "loops", "while", "return" }
      }     
 
 document {
@@ -129,7 +129,7 @@ document {
      ", TO "true", ", returning a list of the values of ", TT "x", " 
      encountered.",BR,
      PARA,
-     SEEALSO { "loops", "break", "for" }
+     SeeAlso => { "loops", "break", "for" }
      }
 
 document {
@@ -145,7 +145,7 @@ document {
      "Warning: trying to break from a loop controlled by ", TO "table", " will
      probably not do what you expect, since ", TO "table", " is implemented by two nested
      loops controlled to ", TT "apply", ", and only the innter one will stop.",
-     SEEALSO { "scan", "while", "for" }
+     SeeAlso => { "scan", "while", "for" }
      }
 
 document {
@@ -165,7 +165,7 @@ document {
 	  "f 3",
 	  "f 4"
 	  },
-     SEEALSO { "break" }
+     SeeAlso => { "break" }
      }
 
 document {
@@ -218,7 +218,7 @@ document {
      Headline => "list the open files",
      TT "openFiles()", " -- produces a list of all currently open files.",
      PARA,
-     SEEALSO { "File" }
+     SeeAlso => { "File" }
      }
 
 document {
@@ -373,7 +373,7 @@ document {
      Inputs => { "i" => null, "j" => null },
      Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation rightward ", TT "j", " places" }},
      EXAMPLE "256 >> 5",
-     SEEALSO {(symbol <<,ZZ, ZZ)}
+     SeeAlso => {(symbol <<,ZZ, ZZ)}
      }
 document {
      Key => (symbol <<, ZZ, ZZ),
@@ -382,7 +382,7 @@ document {
      Inputs => { "i" => null, "j" => null },
      Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation leftward ", TT "j", " places" }},
      EXAMPLE "256 << 5",
-     SEEALSO {(symbol >>,ZZ, ZZ)}
+     SeeAlso => {(symbol >>,ZZ, ZZ)}
      }
 
 document {
@@ -409,7 +409,7 @@ document {
      TT "<< x", " -- prints the expression x on the standard output file ", TO "stdio", ".",
      PARA,
      EXAMPLE "<< \"abcdefghij\" << endl",
-     SEEALSO {"<<"}
+     SeeAlso => {"<<"}
      }
 
 document {
@@ -439,7 +439,7 @@ document {
      TT "getc f", " -- obtains one byte from the input file f and provides it as a 
      string of length 1.  On end of file an empty string of is returned.",
      PARA,
-     SEEALSO { "File" },
+     SeeAlso => { "File" },
      PARA,
      "Bug: the name is cryptic and should be changed."
      }
@@ -543,7 +543,7 @@ document {
      PARA,
      "The value of the expression x <- y is x, with its new contents.",
      PARA,
-     SEEALSO "="
+     SeeAlso => "="
      }
 
 document {
@@ -568,7 +568,7 @@ document {
      as value a sequence containing the trailing elements of the right hand side.
      If the right hand side is not a sequence, then ", TT "a", " gets the value, and
      ", TT "b", " and ", TT "c", " get ", TO "null", ".",
-     SEEALSO {"HashTable", ":=", "GlobalReleaseHook", "GlobalAssignHook"}
+     SeeAlso => {"HashTable", ":=", "GlobalReleaseHook", "GlobalAssignHook"}
      }
 
 
@@ -774,7 +774,7 @@ document {
       	  "num",
       	  "global num",
 	  },
-     SEEALSO {"local", "symbol" }
+     SeeAlso => {"local", "symbol" }
      }
 
 document {
@@ -795,7 +795,7 @@ document {
       	  "f()",
       	  "t",
 	  },
-     SEEALSO {"global", "symbol"
+     SeeAlso => {"global", "symbol"
      }
      }
 
@@ -815,7 +815,7 @@ document {
      symbol is used by the interpreter in constructing keys for methods
      associated to the symbol.",
      EXAMPLE "symbol +",
-     SEEALSO {"local", "global", "value"
+     SeeAlso => {"local", "global", "value"
      }
      }
 
@@ -823,7 +823,7 @@ document {
      Key => gcd,
      Headline => "greatest common divisor",
      TT "gcd(x,y,...)", " -- yields the greatest common divisor of ", TT "x", ", ", TT "y", ", ... .",
-     SEEALSO "gcdCoefficients"
+     SeeAlso => "gcdCoefficients"
      }
 
 document {
@@ -836,7 +836,7 @@ document {
      an integer may be used to represent a number of spaces.",
      PARA,
      EXAMPLE "concatenate {\"a\",(\"s\",3,\"d\"),\"f\"}",
-     SEEALSO { "String"} 
+     SeeAlso => { "String"} 
      }
 
 document {
@@ -864,7 +864,7 @@ document {
      PARA,
      EXAMPLE "characters \"asdf\"",
      PARA,
-     SEEALSO "String"
+     SeeAlso => "String"
      }
 
 document {
@@ -903,7 +903,7 @@ document {
      for the operations which have already been installed for them will return
      values in the original object, rather than in the copy.",
      PARA,
-     SEEALSO { "newClass" }
+     SeeAlso => { "newClass" }
      }
 
 document {
@@ -922,7 +922,7 @@ document {
      collide.  The class of the result is taken to be the minimal common
      ancestor of the class of ", TT "x", " and the class of ", TT "y", ".",
      PARA,
-     SEEALSO { "merge" }
+     SeeAlso => { "merge" }
      }
 
 document {
@@ -941,7 +941,7 @@ document {
 	       ", TT "g(x#k,y#k)", " is used instead." } },
      "If ", TT "x", " and ", TT "y", " have the same class and parent, then so will ", TT "z", ".",
      PARA "This function is useful for multiplying monomials or adding polynomials.",
-     SEEALSO {"combine"}
+     SeeAlso => {"combine"}
      }
 
 document {
@@ -1000,7 +1000,7 @@ document {
      Inputs => { "x" => Type => null, "y" => Type => null },
      Outputs => { {"whether ", TT "y", " is an ancestor of ", TT "x"} },
      "The ancestors of ", TT "x", " are ", TT "x", ", ", TT "parent x", ", ", TT "parent parent x", ", and so on.",
-     SEEALSO "classes and types"
+     SeeAlso => "classes and types"
      }
 
 document {
@@ -1017,13 +1017,13 @@ document {
      EXAMPLE {
 	  "toList set {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}"
 	  },
-     SEEALSO {"sort"}
+     SeeAlso => {"sort"}
      }
 
 document {
      Key => Ring,
      Headline => "the class of all rings",
-     SEEALSO "rings",
+     SeeAlso => "rings",
      "Common ways to make a ring:",
      UL {
 	  TO (symbol /, Ring, Ideal),
@@ -1086,7 +1086,7 @@ document {
 	  "x#2",
 	  "y#b",
 	  },
-     SEEALSO { "applyValues", "applyKeys", "scanPairs"
+     SeeAlso => { "applyValues", "applyKeys", "scanPairs"
      }
      }
 
@@ -1105,7 +1105,7 @@ document {
 	  "applyKeys(x, k -> k + 100)",
 	  },
      PARA,
-     SEEALSO {"applyValues","applyPairs"
+     SeeAlso => {"applyValues","applyPairs"
      }
      }
 
@@ -1123,7 +1123,7 @@ document {
 	  "applyValues(x, v -> v + 100)",
 	  },
      PARA,
-     SEEALSO {"applyPairs","applyKeys"
+     SeeAlso => {"applyPairs","applyKeys"
      }
      }
 
@@ -1147,7 +1147,7 @@ document {
      PARA,
      "When a ring is assigned to a global variable, this function is
      automatically called for it.",
-     SEEALSO "GlobalAssignHook"
+     SeeAlso => "GlobalAssignHook"
      }
 
 document {

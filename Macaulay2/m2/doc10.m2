@@ -33,7 +33,7 @@ document {
      PARA,
      "This option is relevant only for homogeneous modules.",
      PARA,
-     CAVEAT "One might get some matrix entries of slightly higher degree than requested.",
+     Caveat => "One might get some matrix entries of slightly higher degree than requested.",
      EXAMPLE {
 	  "R = ZZ/101[x,y,z,w];",
       	  "M = cokernel matrix {{x*y-z^2,y^2-w^2}}",
@@ -225,7 +225,7 @@ document {
      TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
      chain map from a resolution of the source of ", TT "f", " to a resolution of the
      target of ", TT "f", ".",
-     SEEALSO "free resolutions of modules"
+     SeeAlso => "free resolutions of modules"
      }
 
 document {
@@ -312,7 +312,7 @@ document {
      rather than, for example, 5, the methods used will produce the radical of ", TT "I", ".  Of
      course, you may do the computation over ", TT "QQ", ", but it will often run much
      slower.  In general, this routine still needs to be tuned for speed.",
-     SEEALSO {"top", "removeLowestDimension", "saturate", "quotient"}
+     SeeAlso => {"top", "removeLowestDimension", "saturate", "quotient"}
      }
 
 document {
@@ -354,7 +354,7 @@ document {
      Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae
      paper.  For a very brief description of the method used, see ", 
      TO "top-method", ".",
-     SEEALSO {"removeLowestDimension", "saturate", "quotient", "radical"}
+     SeeAlso => {"removeLowestDimension", "saturate", "quotient", "radical"}
      }
 
 document {
@@ -372,7 +372,7 @@ document {
      "Computes one free resolution, and some homology groups, but no
      projections or determinants are used.  For a very brief description
      of the method used, see ", TO "top-method", ".",
-     SEEALSO {"top", "saturate", "quotient", "radical", "decompose"}
+     SeeAlso => {"top", "saturate", "quotient", "radical", "decompose"}
      }
 
 document {
@@ -629,7 +629,7 @@ document {
 	  "Z = new Type of X",
 	  "showUserStructure",
 	  },
-     SEEALSO { "showStructure", "parent"}
+     SeeAlso => { "showStructure", "parent"}
      }
 
 
@@ -648,7 +648,7 @@ document {
      EXAMPLE {
 	  "showStructure",
 	  },
-     SEEALSO { "showUserStructure", "parent"}
+     SeeAlso => { "showUserStructure", "parent"}
      }
 
 document {
@@ -712,7 +712,7 @@ document {
 document {
      Key => Variety,
      Headline => "the class of all algebraic varieties", 
-     SEEALSO "varieties"
+     SeeAlso => "varieties"
      }
 
 document {
@@ -776,7 +776,7 @@ document {
      TT "M~", " -- produce the coherent sheaf on a projective variety ", TT "X", "
      corresponding to a homegeneous module ", TT "M", ".",
      PARA,
-     SEEALSO "CoherentSheaf"
+     SeeAlso => "CoherentSheaf"
      }
 
 document {
@@ -861,7 +861,7 @@ document {
      Headline => "quotient of coherent sheaves",
      TT "F / G", " -- quotient of coherent sheaves.",
      PARA,
-     SEEALSO "CoherentSheaf"
+     SeeAlso => "CoherentSheaf"
      }
 
 
@@ -932,7 +932,7 @@ document {
      PARA,
      "Note: use ", TT "HH^i(F(*))", " to try to compute the whole graded module.  The
      computation will fail if the module is not finitely generated.",
-     SEEALSO {
+     SeeAlso => {
 	  "HH",
 	  (cohomology, ZZ, CoherentSheaf)
 	  }
@@ -950,8 +950,8 @@ document {
 	       over the coefficient field of ", TT "X", "." 
 	       }
 	  },
-     SEEALSO "coherent sheaves",
-     SEEALSO {
+     SeeAlso => "coherent sheaves",
+     SeeAlso => {
 	  "HH",
 	  (cohomology, ZZ, SumOfTwists)
 	  }
@@ -994,7 +994,7 @@ document {
 	       ", TT "d", "."
 	       }
 	  },
-     SEEALSO (symbol _, RingElement, List)
+     SeeAlso => (symbol _, RingElement, List)
      }
 
 document {
@@ -1008,7 +1008,7 @@ document {
 	       }
 	  },
      "The length of ", TT "d", " should be the same as the degree length of ", TT "f", ".",
-     SEEALSO {(symbol _, RingElement, ZZ), "degreeLength"}
+     SeeAlso => {(symbol _, RingElement, ZZ), "degreeLength"}
      }
 
 -- Local Variables:

@@ -32,7 +32,7 @@ document {
      values are instances of the class X.",
      PARA,
      "Protected symbols are excluded from the list.",
-     SEEALSO "listUserSymbols"
+     SeeAlso => "listUserSymbols"
      }
 
 
@@ -47,7 +47,7 @@ document {
      PARA,
      "This function is useful after using ", TO "loaddata", " to restore 
      a previous session.",
-     SEEALSO {"userSymbols"}
+     SeeAlso => {"userSymbols"}
      }
 
 document {
@@ -56,7 +56,7 @@ document {
      TT "clearOutput", " -- a command which attempts to release memory by 
      clearing the values retained by the output line symbols.",
      PARA,
-     SEEALSO { "clearAll" }
+     SeeAlso => { "clearAll" }
      }
 
 document {
@@ -65,7 +65,7 @@ document {
      TT "clearAll", " -- a command which attempts to release memory by clearing 
      the values retained by the output line symbols and all the user symbols.",
      PARA,
-     SEEALSO {"userSymbols", "clearOutput"}
+     SeeAlso => {"userSymbols", "clearOutput"}
      }
 
 document {
@@ -130,7 +130,7 @@ document {
      reloaded with ", TO "loaddata", " will not appear in the backtrace.",
      PARA,
      "To increase the size of the stack trace, reduce the ", TT "errorDepth", ".",
-     SEEALSO { "loadDepth" }
+     SeeAlso => { "loadDepth" }
      }
 
 document {
@@ -148,7 +148,7 @@ document {
      heeded.  If the load depth is ", TT "i", " then the arguments between
      the ", TT "i", "-th and the ", TT "i+1", "-st occurence of ", TT "--", "
      are the ones heeded.",
-     SEEALSO { "errorDepth" }
+     SeeAlso => { "errorDepth" }
      }
 
 document {
@@ -222,7 +222,7 @@ document {
      Headline => "get a count from a tally",
      TT "t_x", " -- returns the number of times ", TT "x", " is counted
      by ", TT "t", ".",
-     SEEALSO "Tally"
+     SeeAlso => "Tally"
      }
 
 document {
@@ -243,7 +243,7 @@ document {
       	  "y = tally {1,2,2,2}",
      	  "x ** y",
 	  },
-     SEEALSO {"Tally", "tally"}
+     SeeAlso => {"Tally", "tally"}
      }
 
 document {
@@ -251,7 +251,7 @@ document {
      Headline => "comparison of tallies",
      TT "x ? y", " -- compares two tallies, returning ", TT "symbol <", ", ",
      TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
-     SEEALSO "Tally"
+     SeeAlso => "Tally"
      }
 
 document {
@@ -266,7 +266,7 @@ document {
       	  "y = tally {b,c,c,d,d,d}",
       	  "x + y",
 	  },
-     SEEALSO {"Tally", "tally"}
+     SeeAlso => {"Tally", "tally"}
      }
 
 document {
@@ -275,7 +275,7 @@ document {
      TT "x - y", " -- produces the difference of two tallies.",
      PARA,
      EXAMPLE "tally {a,a,b,c} - tally {c,d,d}",
-     SEEALSO "Tally"
+     SeeAlso => "Tally"
      }
 
 document {
@@ -293,7 +293,7 @@ document {
       	  "y_{a,b}",
 	  },
      PARA,
-     SEEALSO "Tally"
+     SeeAlso => "Tally"
      }
 
 TEST ///
@@ -316,7 +316,7 @@ document {
      Key => (symbol -, Set, Set),
      Headline => "set difference",
      TT "x - y", " -- the difference of two sets.",
-     SEEALSO {"Set", "-"}
+     SeeAlso => {"Set", "-"}
      }
 
 document {
@@ -358,23 +358,19 @@ assert ( toString x === \"set {1, 2, 3}\" )
 document {
      Key => (symbol ^**, Module, ZZ),
      Headline => "tensor power",
-     OldSynopsis => {
-	  "N = M^**i",
+     Usage => "N = M^**i",
+     Inputs => {
 	  "M" => null,
-	  "i" => null,
-	  "N" => { "the i-th tensor power of M" }
-	  }
+	  "i" => null},
+     Outputs => {"N" => { "the i-th tensor power of M" }}
      }
 
 document {
      Key => (symbol ^**, CoherentSheaf, ZZ),
      Headline => "tensor power",
-     OldSynopsis => {
-	  "N = M^**i",
-	  "M" => null,
-	  "i" => null,
-	  "N" => { "the i-th tensor power of M" }
-	  }
+     Usage => "N = M^**i",
+     Inputs => {"M" => null, "i" => null,},
+     Outputs => {"N" => { "the i-th tensor power of M" }}
      }    
 
 document {
@@ -384,12 +380,11 @@ document {
 
 document {
      Key => (setRandomSeed, ZZ),
-     OldSynopsis => {
-	  "setRandomSeed i",
-	  "i" => null
-	  },
-     "Sets the random number seed to the low-order 32 bits of the integer ", TT "i", ".
-     The sequence of future pseudo-random results is determined by the seed.",
+     Usage => "setRandomSeed i",
+     Inputs => {"i" => null},
+     Results => {
+     	  "Sets the random number seed to the low-order 32 bits of the integer ", TT "i", ".
+     	  The sequence of future pseudo-random results is determined by the seed."},
      EXAMPLE {
 	  "setRandomSeed 123456",
 	  "for i to 10 list random 100",
@@ -400,13 +395,12 @@ document {
 
 document {
      Key => (setRandomSeed, String),
-     OldSynopsis => {
-	  ///setRandomSeed s///,
-	  "s" => null
-	  },
-     "Sets the random number seed to an integer computed from ", TT "s", ".  Every character 
-     of the string contributes to the seed, but only 32 bits of data are used.
-     The sequence of future pseudo-random results is determined by the seed.",
+     Usage => ///setRandomSeed s///,
+     Inputs => {"s" => null},
+     Results => {
+	  "Sets the random number seed to an integer computed from ", TT "s", ".  Every character 
+	  of the string contributes to the seed, but only 32 bits of data are used.
+	  The sequence of future pseudo-random results is determined by the seed."},
      EXAMPLE {
 	  ///setRandomSeed "thrkwjsxz"///,
 	  ///for i to 10 list random 100///,
@@ -417,14 +411,14 @@ document {
 
 document {
      Key => truncateOutput,
-     OldSynopsis => {
-	  "truncateOutput w",
-	  "w" => "the maximum output line width to enforce"
-	  },
-     "If ", TT "w", " is ", TO "infinity", " then truncation is turned off.",
-     PARA,
-     "This function works by assigning a value to ", TT "Thing.BeforePrint", ", which
-     may conflict with other ", TO "BeforePrint", " methods installed by the user.",
+     Usage => "truncateOutput w",
+     Inputs => {"w" => ZZ => null},
+     Outputs => {},
+     Results => {
+	  "The maximum output line width is set to ", TT "w", ", which should be an integer or ", TO "infinity", ".  
+	  This function works by assigning a value to ", TT "Thing.BeforePrint", ", which 
+     	  may conflict with other ", TO "BeforePrint", " methods installed by the user, or those installed by the system that do line wrapping."
+	  }
      }
 
 document {

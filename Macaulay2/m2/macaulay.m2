@@ -350,7 +350,7 @@ document {
      EXAMPLE "rows = {0,1,2}",
      EXAMPLE "cols = {0,3}",
      EXAMPLE "result = map(R^3, 2, (i,j) -> R_(rows_i + cols_j))",
-     --SEEALSO (genericMatrix, genericSymmetricMatrix, genericSkewMatrix),
+     --SeeAlso => (genericMatrix, genericSymmetricMatrix, genericSkewMatrix),
      
      HEADER3 "characteristic <ring> [result integer]",
      "To obtain the characteristic of a ring ", TT "R", ", use ",

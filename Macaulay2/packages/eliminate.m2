@@ -57,7 +57,7 @@ document {
 	  "sylvesterMatrix(f,g,x)",
 	  "discriminant(f,x)"
 	  },
-     SEEALSO "sylvesterMatrix"
+     SeeAlso => "sylvesterMatrix"
      }
 
 -----------------------------------------------
@@ -110,7 +110,7 @@ discriminant, ", TT "discriminant(f,x).",
 	  "sylvesterMatrix(f,g,x)",
 	  "discriminant(f,x)"
 	  },
-     SEEALSO {"sylvesterMatrix", "discriminant", "eliminate"}
+     SeeAlso => {"sylvesterMatrix", "discriminant", "eliminate"}
      }
 
 

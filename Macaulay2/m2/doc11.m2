@@ -14,7 +14,7 @@ document {
      Headline => "the class of mark-up types used with hypertext", 
      PARA,
      "Intended for internal use only.",
-     SEEALSO "EmptyMarkUpType"
+     SeeAlso => "EmptyMarkUpType"
      }
 
 document {
@@ -47,7 +47,7 @@ document {
      PARA,
      "The return value is a string which is suitable for use in an
      html file, readable by a world wide web client such as netscape.",
-     SEEALSO "mathML"
+     SeeAlso => "mathML"
      }
 
 document {
@@ -63,7 +63,7 @@ document {
      34    345    3455       7
 ",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -74,7 +74,7 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -85,7 +85,7 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -96,7 +96,7 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -106,7 +106,7 @@ document {
      PARA,
      "The argument ", TT "x", " should be a string containing the URL of the image.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -118,7 +118,7 @@ document {
      strings or hypertext items.  The result is that the entries in the
      list or sequence are displayed sequentially.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -129,7 +129,7 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -145,7 +145,7 @@ document {
      " produces ",
      HEADER1 "Interesting thing",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -161,7 +161,7 @@ document {
      " produces ",
      HEADER2 "Interesting thing",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -177,7 +177,7 @@ document {
      " produces ",
      HEADER3 "Interesting thing",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -193,7 +193,7 @@ document {
      " produces ",
      HEADER4 "Interesting thing",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -209,7 +209,7 @@ document {
      " produces ",
      HEADER5 "Interesting thing",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -225,7 +225,7 @@ document {
      " produces ",
      HEADER6 "Interesting thing",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -241,7 +241,7 @@ document {
      34    345    3455       7
 ",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -257,7 +257,7 @@ document {
      34    345    3455       7
 ",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -273,7 +273,7 @@ document {
      34    345    3455       7
 ",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -287,7 +287,7 @@ document {
      results are left where they can be found the next time the same
      EXAMPLE is encountered.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -316,7 +316,7 @@ document {
      OldSynopsis => {
 	  ///SECTION { "title of the section", ... contents of the section ... }///
 	  },
-     SEEALSO { "TOC" }
+     SeeAlso => { "TOC" }
      }
 
 document {
@@ -329,7 +329,7 @@ document {
      SECTION { "section title 3", ... }
      }///
      	  },
-     SEEALSO { "SECTION" }
+     SeeAlso => { "SECTION" }
      }
 
 document {
@@ -344,7 +344,7 @@ document {
      PARA,
      VAR "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -358,7 +358,7 @@ document {
      "Here is an example.",
      DFN "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -373,7 +373,7 @@ document {
      PARA,
      STRONG "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -388,7 +388,7 @@ document {
      PARA,
      BIG "Here is some big text.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -403,7 +403,7 @@ document {
      PARA,
      SMALL "Here is some small text.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -415,7 +415,7 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -427,7 +427,7 @@ document {
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -442,7 +442,7 @@ document {
      PARA,
      SAMP "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -457,7 +457,7 @@ document {
      PARA,
      KBD "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -473,7 +473,7 @@ document {
      PARA,
      ITALIC "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -488,7 +488,7 @@ document {
      PARA,
      UNDERLINE "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -513,7 +513,7 @@ document {
      PARA,
      TT "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -528,7 +528,7 @@ document {
      PARA,
      EM "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -543,7 +543,7 @@ document {
      PARA,
      CITE "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -558,7 +558,7 @@ document {
      PARA,
      BOLD "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -573,7 +573,7 @@ document {
      PARA,
      CODE "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -582,7 +582,7 @@ document {
      TT "HREF{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext HREF link
      pointing to the url ", TT "u", ".",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -591,7 +591,7 @@ document {
      TT "ANCHOR{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext A anchor
      named ", TT "u", ".",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -606,7 +606,7 @@ document {
      "produces",
      UL {"first","second","third"},
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -629,7 +629,7 @@ document {
 	  {"third heading","third item's text"}
 	  },
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -645,7 +645,7 @@ document {
      "produces",
      OL {"first","second","third"},
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -660,7 +660,7 @@ document {
      "produces",
      NL {"first","second","third"},
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -672,7 +672,7 @@ document {
      "This item is mainly of interest for hypertext that ultimately will
      be viewed with TeX, for html viewers don't indent paragraphs.",
      PARA,
-     SEEALSO "hypertext"
+     SeeAlso => "hypertext"
      }
 
 document {
@@ -723,7 +723,7 @@ document {
 	  "(c = Command \"date\";)",
 	  "c"
 	  },
-     SEEALSO {"run", "AfterEval"}
+     SeeAlso => {"run", "AfterEval"}
      }
 
 
@@ -804,7 +804,7 @@ document {
      EXAMPLE "J = Grassmannian(1,3)",
      EXAMPLE "R = QQ[a..f];",
      EXAMPLE "J = Grassmannian(1,3,R)",
-     CAVEAT "Currently, this ideal is constructed using relations on minors
+     Caveat => "Currently, this ideal is constructed using relations on minors
      of a generic matrix.  It should really use the Pluecker equations."
      }
 
@@ -829,7 +829,7 @@ document {
      of the items listed.",
      PARA,
      EXAMPLE "code methods use",
-     SEEALSO "methods"
+     SeeAlso => "methods"
      }
 
 document {

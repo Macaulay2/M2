@@ -68,7 +68,7 @@ document {
      TT "examine x", " -- display internal information about a symbol ", TT "x", ".",
      PARA,
      "This function is intended for debugging the interpreter itself.",
-     SEEALSO "debugging"
+     SeeAlso => "debugging"
      }
 
 document {
@@ -87,7 +87,7 @@ document {
      "We say that x is an instance of X if X is the class of x, or a parent
      of the class of x, or a grandparent, and so on.",
      PARA,
-     SEEALSO { "classes and types", "class", "parent" }
+     SeeAlso => { "classes and types", "class", "parent" }
      }
 
 document {
@@ -137,7 +137,7 @@ document {
      EXAMPLE ///stack sort (toString \
      select(values Main.Dictionary, i -> parent value i === Thing)
      )///,
-     SEEALSO "basic types"
+     SeeAlso => "basic types"
      }
 
 document {
@@ -180,7 +180,7 @@ document {
      "This operator is left associative, which means that ", TT "w / f / g", "
      is interpreted as meaning ", TT "(w / f) / g", ".",
      EXAMPLE "{1,2,3} / (i -> i+1) / (j -> j^2)",
-     SEEALSO {"apply", (symbol \,Function, VisibleList)}
+     SeeAlso => {"apply", (symbol \,Function, VisibleList)}
      }
 
 document {
@@ -199,7 +199,7 @@ document {
 	  ///sin \ sin \ {1,2,3}///,
       	  ///sin @@ sin \ {1,2,3}///,
 	  },
-     SEEALSO {"apply", "@@", (symbol /,List, Function)}
+     SeeAlso => {"apply", "@@", (symbol /,List, Function)}
      }
 
 document {
@@ -250,7 +250,7 @@ document {
 	  "/// \\ \" ///",
       	  "ascii oo",
 	  },
-     SEEALSO "String"
+     SeeAlso => "String"
      }
 
 document {
@@ -314,7 +314,7 @@ document {
      zero depth.  This might be unexpected.",
      PARA,
      "Null arguments are allowed and ignored.",
-     SEEALSO {"Net", (symbol |, String, String)}
+     SeeAlso => {"Net", (symbol |, String, String)}
      }
 
 document {
@@ -333,7 +333,7 @@ document {
      assuming tab stops at every eighth column.",
      PARA,
      "Null arguments are allowed and ignored.",
-     SEEALSO { (symbol ||, Net, Net)}
+     SeeAlso => { (symbol ||, Net, Net)}
      }
 
 document {
@@ -355,7 +355,7 @@ document {
      TT "width f", " -- determines the width of the terminal associated to an
      output file ", TT "f", ", if any.", BR,NOINDENT, 
      TT "width n", " -- the width of a net ", TT "n", ".",
-     SEEALSO {"Net", "File"}
+     SeeAlso => {"Net", "File"}
      }
 
 document {
@@ -366,7 +366,7 @@ document {
      "The height of a net is the number of rows of characters it has above
      the baseline.  It may be a negative number, but the depth plus the 
      height is always the total number of rows, which is not negative.",
-     SEEALSO {"Net", "depth"}
+     SeeAlso => {"Net", "depth"}
      }
 
 document {
@@ -377,7 +377,7 @@ document {
      "The depth of a net is the number of rows of characters it has below
      the baseline.  It may be a negative number, but the depth plus the 
      height is always the total number of rows, which is not negative.",
-     SEEALSO {"Net", "height"}
+     SeeAlso => {"Net", "height"}
      }
 
 document {
@@ -385,7 +385,7 @@ document {
      Headline => "class of an object",
      TT "class x", " -- yields the class of ", TT "x", ".",
      PARA,
-     SEEALSO "classes and types"
+     SeeAlso => "classes and types"
      }
 
 document {
@@ -470,7 +470,7 @@ document {
      PARA,
      EXAMPLE "ab12345cde",
      PARA,
-     SEEALSO {"local", "global", "symbol", ":="}
+     SeeAlso => {"local", "global", "symbol", ":="}
      }
 
 document {
@@ -530,7 +530,7 @@ document {
      PARA,
      "The contents of a mutable hash table do not participate in strong comparison
      with ", TO "===", " or in ", TO "hashing", ".",
-     SEEALSO {"MutableList", "MutableHashTable"}
+     SeeAlso => {"MutableList", "MutableHashTable"}
      }
 
 document {

@@ -258,7 +258,7 @@ document {
 	  with ", TT "g = N.cache.prePruningMap", ".  This is intentionally similar
 	  in form to the case with ", TT "prune", " and ", TT "pruningMap",
 	  "."},
-     SEEALSO {
+     SeeAlso => {
 	  "prune", "pruningMap", "prePruningMap"
 	  }	  
      }
@@ -271,7 +271,7 @@ document {
      PARA,
      "This map exists only after ", TT "N = prePrune M", " has been executed
      at least once, and then the map can be obtained with ", TT "N.cache.prePruningMap", ".",
-     SEEALSO {(prePrune, Module), "pruningMap"}
+     SeeAlso => {(prePrune, Module), "pruningMap"}
      }
 
 document {
@@ -285,7 +285,7 @@ document {
 	  },
      PARA, "This is designed to be the inverse of the function ",
      TO "homomorphism", ".",
-     SEEALSO "homomorphism"
+     SeeAlso => "homomorphism"
      }
 
 document {
@@ -305,7 +305,7 @@ document {
 	       "In terms of 'elements': ",
 	       TT "g(l)(m) = f(l ** m)", "."}
           },
-     SEEALSO (homTensorAdjoint,Matrix,Module,Module)
+     SeeAlso => (homTensorAdjoint,Matrix,Module,Module)
      }
 
 document {
@@ -320,7 +320,7 @@ document {
 	       PARA, "In terms of 'elements': ",
 	       TT "g(f)(l)(m) = f(l ** m)", "."}
           },
-     SEEALSO (homTensorAdjoint,Module,Module,Module)
+     SeeAlso => (homTensorAdjoint,Module,Module,Module)
      }
 
 document {
@@ -339,7 +339,7 @@ document {
 	       TT "f", ".", PARA, "In terms of 'elements': ",
 	       TT "g(l ** m) = f(l)(m)", "."}
 	  },
-     SEEALSO (tensorHomAdjoint,Matrix,Module,Module)
+     SeeAlso => (tensorHomAdjoint,Matrix,Module,Module)
      }
 
 document {
@@ -354,7 +354,7 @@ document {
 	       "In terms of 'elements': ",
 	       TT "g(f)(l ** m) = f(l)(m)", "."}
           },
-     SEEALSO (tensorHomAdjoint,Module,Module,Module)
+     SeeAlso => (tensorHomAdjoint,Module,Module,Module)
      }
 
 document {
@@ -373,7 +373,7 @@ document {
 	       "In terms of 'elements': ",
 	       TT "h(l ** g)(f) = f(g(l))", "."}
           },
-     SEEALSO { "tensorEvaluation", "bidualMap",
+     SeeAlso => { "tensorEvaluation", "bidualMap",
                (homTensorAdjoint,Module,Module,Module),
                (tensorHomAdjoint,Module,Module,Module) }
      }
@@ -392,7 +392,7 @@ document {
 	       "In terms of 'elements': ",
 	       TT "h(f ** n)(l) = f(l) ** n", "."}
           },
-     SEEALSO { "homEvaluation",
+     SeeAlso => { "homEvaluation",
                (homTensorAdjoint,Module,Module,Module),
                (tensorHomAdjoint,Module,Module,Module) }
      }
@@ -408,7 +408,7 @@ document {
                "In terms of 'elements': ", 
 	       TT "h(m)(f) = f(m)", "."}
           },
-     SEEALSO (homEvaluation,Module,Module,Module)
+     SeeAlso => (homEvaluation,Module,Module,Module)
      }
 
 --- end ---

@@ -39,7 +39,7 @@ document {
      PARA,
      "The entire structure of types and their parents can be displayed
      with ", TO "showStructure", ".",
-     SEEALSO "classes and types"
+     SeeAlso => "classes and types"
      }
 
 document {
@@ -54,7 +54,7 @@ document {
 	  "v#2",
 	  "ZZ[a,b,c]"
 	  },
-     SEEALSO "lists"
+     SeeAlso => "lists"
      }
 
 document {
@@ -68,7 +68,7 @@ document {
 	  "#v",
 	  "v#2"
 	  },
-     SEEALSO "sequences"
+     SeeAlso => "sequences"
      }
 
 document {
@@ -85,13 +85,13 @@ document {
 	  "singleton 3",
 	  "#oo",
 	  },
-     SEEALSO {"unSingleton"}
+     SeeAlso => {"unSingleton"}
      }
 
 document {
      Key => List,
      Headline => "the class of all lists -- {...}",
-     SEEALSO "lists",
+     SeeAlso => "lists",
      PARA,
      "Common operations on lists:",
      UL {
@@ -285,7 +285,7 @@ document {
      UL {
 	  TO "return"
 	  },
-     SEEALSO "functions"
+     SeeAlso => "functions"
      }
 
 document {
@@ -383,7 +383,7 @@ document {
 	  },
      "If the largest element occurs more than once, then the first occurrence
      is used.  If ", TT "x", " has length 0 an error results.",
-     SEEALSO { (minPosition,BasicList) }
+     SeeAlso => { (minPosition,BasicList) }
      }
 
 document {
@@ -399,7 +399,7 @@ document {
 	  },
      "If the smallest element occurs more than once, then the first occurrence
      is used.  If ", TT "x", " has length 0 an error results.",
-     SEEALSO { (maxPosition,BasicList) }
+     SeeAlso => { (maxPosition,BasicList) }
      }
 
 document {
@@ -450,7 +450,7 @@ document {
 	  "splice ((a,b),c,(d,(e,f)))",
       	  "splice [(a,b),c,(d,(e,f))]",
 	  },
-     SEEALSO "deepSplice"
+     SeeAlso => "deepSplice"
      }
 
 document {
@@ -462,7 +462,7 @@ document {
      "Works also for sequences, and leaves other expressions unchanged.
      Copying the list v is always done when v is mutable.",
      EXAMPLE "deepSplice { (a,b,(c,d,(e,f))), g, h }",
-     SEEALSO "splice"
+     SeeAlso => "splice"
      }
 
 document {
@@ -500,7 +500,7 @@ document {
 	  },
      "The result ", TT "r", " will have the same class as ", TT "v", ".",
      EXAMPLE "apply([1,3,5,7], i->i^2)",
-     SEEALSO {(symbol /,VisibleList, Function), (symbol \, Function, VisibleList)}
+     SeeAlso => {(symbol /,VisibleList, Function), (symbol \, Function, VisibleList)}
      }
 
 document {
@@ -522,13 +522,13 @@ document {
 document {
      Key => apply,
      Headline => "apply a function to each element",
-     SEEALSO { "mapping over lists"}
+     SeeAlso => { "mapping over lists"}
      }
 
 document {
      Key => scan,
      Headline => "apply a function to each element",
-     SEEALSO { "mapping over lists"}
+     SeeAlso => { "mapping over lists"}
      }
 
 document {
@@ -568,13 +568,13 @@ document {
      "This function requires an immutable hash table.  To scan the pairs in
      a mutable hash table, use ", TT "scan(pairs x, f)", ".",
      PARA,
-     SEEALSO "scan"
+     SeeAlso => "scan"
      }
 
 document {
      Key => select,
      Headline => "select elements from a list or hash table",
-     SEEALSO{ "scan", "apply", "any", "all", "member", "mutable"}
+     SeeAlso =>{ "scan", "apply", "any", "all", "member", "mutable"}
      }
 document {
      Key => (select,BasicList,Function),
@@ -640,7 +640,7 @@ document {
      hash table, f is applied to each pair (k,x) consisting of a key k
      and a value x from v.",
      PARA,
-     SEEALSO{ "scan", "apply", "select", "all", "member"}
+     SeeAlso =>{ "scan", "apply", "select", "all", "member"}
      }
 
 document {
@@ -662,7 +662,7 @@ document {
      stored under ", TT "name", " from the hash table ", TT "x", ",
      which therefore must be mutable.",
      PARA,
-     SEEALSO "toString"
+     SeeAlso => "toString"
      }
 
 document {
@@ -682,14 +682,14 @@ document {
      "If an error occurs while evaluating the expressions in the file,
      reading is stopped.",
      PARA,
-     SEEALSO{ "path", "needs", "load"}
+     SeeAlso =>{ "path", "needs", "load"}
      }
 
 document {
      Key => end,
      Headline => "stop loading a file",
      TT "end", " -- a symbol which causes loading of a file to be stopped.",
-     SEEALSO{ "needs", "load", "input" }
+     SeeAlso =>{ "needs", "load", "input" }
      }
 
 document {
@@ -705,7 +705,7 @@ document {
      PARA,
      "If one of the top level expressions in the file evaluates to the symbol ", TO "end", "
      the reading of the file is stopped at that point.",
-     SEEALSO{ "path", "needs", "input"}
+     SeeAlso =>{ "path", "needs", "input"}
      }
 
 document {
@@ -714,7 +714,7 @@ document {
      TT "needs \"f\"", " -- loads the file named ", TT "f", " if it hasn't 
      been loaded yet.",
      PARA,
-     SEEALSO "load"
+     SeeAlso => "load"
      }
 
 document {
@@ -739,7 +739,7 @@ document {
      Headline => "power",
      TT "power(x,n)", " -- yields the ", TT "n", "-th power of ", TT "x", ".",
      PARA,
-     SEEALSO "^"
+     SeeAlso => "^"
      }
 
 document {
@@ -764,7 +764,7 @@ document {
      PARA,
      EXAMPLE "append( {a,b,c}, x )",
      PARA,
-     SEEALSO{ "prepend", "join"}
+     SeeAlso =>{ "prepend", "join"}
      }
 
 document {
@@ -775,7 +775,7 @@ document {
      PARA,
      EXAMPLE "prepend( x, {a,b,c} )",
      PARA,
-     SEEALSO{ "append", "join"}
+     SeeAlso =>{ "append", "join"}
      }
 
 document {
@@ -804,7 +804,7 @@ document {
 	  {"the string whose characters have the ASCII codes listed in ", TT "v"}
 	  },
      EXAMPLE {///ascii {65,66,67}///, ///ascii oo///},
-     SEEALSO { (ascii, String) }
+     SeeAlso => { (ascii, String) }
      }
 
 document {
@@ -817,13 +817,13 @@ document {
 	  {"the list of (small integer) ASCII codes of the characters of ", TT "s"}
 	  },
      EXAMPLE {///ascii "abcdef"///, ///ascii oo///, ///first ascii "A"///},
-     SEEALSO { (ascii, List) }
+     SeeAlso => { (ascii, List) }
      }
 
 document {
      Key => symbol " ", 
      Headline => "blank operator for adjacent expressions",
-     SEEALSO(symbol " ", Function, Thing)		    -- not really a method
+     SeeAlso =>(symbol " ", Function, Thing)		    -- not really a method
      }
 
 document {
@@ -837,7 +837,7 @@ document {
      Headline => "a binary operator, usually used for multiplication",
      TT "x * y", " -- usually yields the product of x and y.",
      PARA,
-     SEEALSO{ "times", "product" }
+     SeeAlso =>{ "times", "product" }
      }
 
 document {
@@ -868,7 +868,7 @@ document {
      TT "x + y", " -- a binary operator used for addition in many situations
      and for union of sets.",
      PARA,
-     SEEALSO{ "plus", "sum" }
+     SeeAlso =>{ "plus", "sum" }
      }
 
 document {
@@ -884,7 +884,7 @@ document {
      BR,NOINDENT,
      TT "- y", "   -- a unary operator usually used for negation.",
      PARA,
-     SEEALSO{ "difference", "minus" }
+     SeeAlso =>{ "difference", "minus" }
      }
 
 document {
@@ -893,7 +893,7 @@ document {
      TT "x / y", " -- a binary operator usually used for division, yielding a
      fraction, or for quotients (ring by ideal, etc.).",
      PARA,
-     SEEALSO { "//" }
+     SeeAlso => { "//" }
      }
 
 document {
@@ -907,7 +907,7 @@ document {
      TT "x // y", " -- a binary operator used for quotients in the same
      ring (with a possible remainder).",
      PARA,
-     SEEALSO { "/" }
+     SeeAlso => { "/" }
      }
 
 document {
@@ -1017,7 +1017,7 @@ document {
 	  },
      "Input files are buffered, so the current contents of the buffer are returned
      if the buffer is not empty, otherwise reading from the file is attempted first.",
-     SEEALSO {"openIn", "get", "isReady"}
+     SeeAlso => {"openIn", "get", "isReady"}
      }
 document {
      Key => (read,File,ZZ),
@@ -1031,7 +1031,7 @@ document {
 	  },
      "Input files are buffered, so the current contents of the buffer are returned
      if the buffer is not empty, otherwise reading from the file is attempted first.",
-     SEEALSO {"openIn", "get", "isReady"}
+     SeeAlso => {"openIn", "get", "isReady"}
      }
 
 document {
@@ -1063,7 +1063,7 @@ document {
 	  ///unlink "junk"///,
      	  if version#"operating system" =!= "Windows-95-98-NT" then ///get "!date"///
 	  },
-     SEEALSO{ "File", "read" }
+     SeeAlso =>{ "File", "read" }
      }
 
 document {
@@ -1098,7 +1098,7 @@ document {
      other words, it will break a line at \"\\r\\n\", \"\\n\", or \"\\r\".",
      PARA,
      "The string ", TT "nl", " should be a string of length 1 or 2.",
-     SEEALSO "newline"
+     SeeAlso => "newline"
      }
 
 document {
@@ -1111,13 +1111,13 @@ document {
      Key => "not",
      Headline => "negation",
      TT "not x", " -- yields the negation of x, which must be true or false.",
-     SEEALSO{ "and", "or" }
+     SeeAlso =>{ "and", "or" }
      }
 
 document {
      Key => symbol "|", 
      Headline => "a binary operator",
-     SEEALSO "||" }
+     SeeAlso => "||" }
 
 document {
      Key => (symbol |, List, List),
@@ -1168,7 +1168,7 @@ document {
      will be multiplied by a suitable identity matrix.",
      PARA,
      EXAMPLE "2|f|3",
-     SEEALSO {(symbol ||, Matrix, Matrix)}
+     SeeAlso => {(symbol ||, Matrix, Matrix)}
      }
 
 document {
@@ -1189,7 +1189,7 @@ document {
 	  ///x = "x" | "3"^1///,
       	  ///"<--- " | ( x || "" || x ) | " --->"///,
 	  },
-     SEEALSO {"stack"}
+     SeeAlso => {"stack"}
      }
 
 document {
@@ -1208,7 +1208,7 @@ document {
      will be multiplied by a suitable identity matrix.",
      EXAMPLE "p || 33",
      PARA,
-     SEEALSO{(symbol |, Matrix, Matrix)}
+     SeeAlso =>{(symbol |, Matrix, Matrix)}
      }
 
 document {
@@ -1236,7 +1236,7 @@ document {
      EXAMPLE "matrix {{2}} == matrix {{2}}",
      EXAMPLE "matrix {{2}} == matrix {{3}}",
      PARA,
-     SEEALSO{ "==",  "=!=" }
+     SeeAlso =>{ "==",  "=!=" }
      }
 
 document {
@@ -1271,7 +1271,7 @@ document {
      "Warning: whether this comparison operator returns true is not necessarily 
      related to whether the comparison operator ", TO "?", " returns ", TT "symbol ==", ".",
      PARA,
-     SEEALSO{ "!=" }
+     SeeAlso =>{ "!=" }
      }
 
 document {
@@ -1279,7 +1279,7 @@ document {
      Headline => "inequality",
      TT "x != y", " -- the negation of ", TT "x == y", ".",
      PARA,
-     SEEALSO{ "==" }
+     SeeAlso =>{ "==" }
      }
 
 document {
@@ -1302,7 +1302,7 @@ document {
      PARA,
      EXAMPLE "set {1,2} ** set {a,b,c}",
      PARA,
-     SEEALSO { "**", "Set" }
+     SeeAlso => { "**", "Set" }
      }
 
 document {
@@ -1310,14 +1310,14 @@ document {
      Headline => "make a set",
      TT "set v", " -- yields the set whose elements are the members of the list v.",
      PARA,
-     SEEALSO { "Set" }
+     SeeAlso => { "Set" }
      }
 
 document {
      Key => random,
      Headline => "get a random element",
      "This function can be used to get random elements of various sorts.",
-     SEEALSO {"setRandomSeed"}
+     SeeAlso => {"setRandomSeed"}
      }
 document {
      Key => (random, ZZ), 
@@ -1327,14 +1327,14 @@ document {
      "Warning: doesn't correctly handle the case when n an integer is larger
      than 2^31-1.",
      EXAMPLE "tally apply(100, i -> random 10)",
-     SEEALSO {"setRandomSeed"}
+     SeeAlso => {"setRandomSeed"}
      }
 
 document {
      Key => (random, RR), 
      Headline => "random real number",
      TT "random x", " -- yields a random real number in the range 0 .. x.",
-     SEEALSO {"setRandomSeed"}
+     SeeAlso => {"setRandomSeed"}
      }
 
 document {
@@ -1348,7 +1348,7 @@ document {
 	  { "a random element of the ring ", TT "R" }
 	  },
      "Note: not implemented yet for ", TO "RR", ", ", TO "CC", ", and polynomial rings.",
-     SEEALSO {"setRandomSeed"}
+     SeeAlso => {"setRandomSeed"}
      }
 
 document {
@@ -1366,7 +1366,7 @@ document {
 	  "R = GF(9,Variable=>a)[x,y];",
 	  "random(3,R)"
 	  },
-     SEEALSO {"setRandomSeed"}
+     SeeAlso => {"setRandomSeed"}
      }
 
 document {
@@ -1381,7 +1381,7 @@ document {
 	  {"a random homogeneous element in the ring ", TT "R", " of multi-degree ", TT "n"}
 	  },
      "The length of ", TT "n", " should be the same as ", TT "degreeLength R", ".",
-     SEEALSO {"setRandomSeed"}
+     SeeAlso => {"setRandomSeed"}
      }
 
 document {
@@ -1393,7 +1393,7 @@ document {
 	  "R = ZZ/101[x,y];",
       	  "random(R^{1,2,3},R^{1,2,3})"
 	  },
-     SEEALSO {"setRandomSeed"}
+     SeeAlso => {"setRandomSeed"}
      }
 
 document {

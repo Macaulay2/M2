@@ -891,7 +891,7 @@ document {
       	  "random(5,S)",
       	  "hilbertSeries S"
 	  },
-     SEEALSO { "monomial orderings",  "PolynomialRing"}
+     SeeAlso => { "monomial orderings",  "PolynomialRing"}
 ///
 
 

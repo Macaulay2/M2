@@ -40,7 +40,7 @@ document {
 	  "I" => {"an ", TO Ideal, " in a polynomial ring"},
 	  "J" => {"an ", TO Ideal, ", the generic initial ideal of ", TT "I", "."}
 	  },
-     SEEALSO "lexgin"
+     SeeAlso => "lexgin"
      }
 end
 

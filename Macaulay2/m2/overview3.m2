@@ -56,7 +56,7 @@ document {
      to the public.  It is available at
      ", HREF "http://www.hpl.hp.com/personal/Hans_Boehm/gc/", ".",
      PARA,
-     SEEALSO {"collectGarbage" }
+     SeeAlso => {"collectGarbage" }
      }
 
 document {
@@ -216,7 +216,7 @@ document {
 	  TOH "help", 
 	  TOH "topics"
 	  },
-     SEEALSO "Writing documentation"
+     SeeAlso => "Writing documentation"
      }
 
 document {
@@ -608,7 +608,7 @@ document {
      PARA,
      "As an added convenience, if the file is in the home directory, its name can
      be ", TT ".init.m2", ".",
-     SEEALSO "load"
+     SeeAlso => "load"
      }
 
 document {

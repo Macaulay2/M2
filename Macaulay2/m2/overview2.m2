@@ -431,7 +431,7 @@ document {
 	  "F = sheaf coker matrix {{a,b}}",
 	  "module F",
 	  },
-     SEEALSO {
+     SeeAlso => {
 	  (cohomology, ZZ, CoherentSheaf),
 	  (cohomology, ZZ, SumOfTwists)
 	  }
@@ -627,7 +627,7 @@ document {
      variables are given new values which are the generators of the 
      polynomial ring.",
      PARA,
-     SEEALSO { "GlobalAssignHook", "GlobalReleaseHook" }
+     SeeAlso => { "GlobalAssignHook", "GlobalReleaseHook" }
      }
 
 document {
@@ -711,7 +711,7 @@ document {
 	  },
      "Be careful not to assign a value to ", TT "x", " itself if you wish to continue
      using it as a subscripted variable.",
-     SEEALSO {"IndexedVariable","IndexedVariableTable"}
+     SeeAlso => {"IndexedVariable","IndexedVariableTable"}
      }
 
 document {
@@ -1487,7 +1487,7 @@ document {
      mutable thing, whose contents are not examined by the routines.
      This provides another argument in favor of taking the second approach listed
      above.",
-     SEEALSO "HashTable"
+     SeeAlso => "HashTable"
      }
 
 document {
@@ -1857,7 +1857,7 @@ document {
      Headline => "test for end of file",
      TT "atEndOfFile f", " -- tells whether an input file ", TT "f", " is at the end.",
      PARA,
-     SEEALSO {"File"}
+     SeeAlso => {"File"}
      }
 
 document {
@@ -1962,7 +1962,7 @@ document {
      else
      EXAMPLE "wait pid",
      PARA,
-     SEEALSO { "openInOut", "openListener" }
+     SeeAlso => { "openInOut", "openListener" }
      }
 
 document {
@@ -2182,7 +2182,7 @@ document {
      "where ", TT "( ... )", " represents suitable code for the operation at hand.",
      PARA,
      "The routine for making new methods is ", TO "method", ".",
-     SEEALSO{"binary methods"}
+     SeeAlso =>{"binary methods"}
      }
 
 document {

@@ -31,7 +31,7 @@ document {
      TT "I/J", " -- produces the quotient module ", TT "(I+J)/J", ", where
      ", TT "I", " and ", TT "J", " are ideals in a ring.",
      PARA,
-     SEEALSO "Module"
+     SeeAlso => "Module"
      }
 
 document {
@@ -72,7 +72,7 @@ document {
      version is to compute the annihilator of each generator of the module ",
      TT "M", " and to intersect these two by two.  Each annihilator is
      done using a submodule quotient.",
-     SEEALSO {(symbol :, Module, Module), (quotient, Module, Module)}
+     SeeAlso => {(symbol :, Module, Module), (quotient, Module, Module)}
      }
 
 document {
@@ -98,7 +98,7 @@ document {
       	  "M^[1]",
       	  "M^[1,0]",
 	  },
-     SEEALSO {(symbol ^,Matrix,Array), (symbol _,Module,Array),(symbol ^,Module,List)}
+     SeeAlso => {(symbol ^,Matrix,Array), (symbol _,Module,Array),(symbol ^,Module,List)}
      }
 
 document {
@@ -116,7 +116,7 @@ document {
       	  "M_[1]",
       	  "M_[1,0]",
 	  },
-     SEEALSO {submatrix, (symbol _,Matrix,Array), (symbol ^,Module,Array),(symbol _,Module,List)}
+     SeeAlso => {submatrix, (symbol _,Matrix,Array), (symbol ^,Module,Array),(symbol _,Module,List)}
      }
 document {
      Key => (symbol ^, Module, List),
@@ -126,7 +126,7 @@ document {
      index numbers are listed.",
      PARA,
      EXAMPLE "(ZZ^5)^{2,3}",
-     SEEALSO {"_", Module, List}
+     SeeAlso => {"_", Module, List}
      }
 
 document {
@@ -137,7 +137,7 @@ document {
      whose index numbers are listed.",
      PARA,
      EXAMPLE "(ZZ^5)^{2,3}",
-     SEEALSO {"^", Module, List}
+     SeeAlso => {"^", Module, List}
      }
 
 document {
@@ -158,7 +158,7 @@ document {
 	  "f = I_{0,2}",
 	  "image f"
 	  },
-     SEEALSO { (module, Ideal) }
+     SeeAlso => { (module, Ideal) }
      }
 
 document {
@@ -177,7 +177,7 @@ document {
      "The degree ", TT "i", " is a multi-degree, represented as a list of 
      integers.  If the number of degrees is just 1, then ", TT "i", " may
      be provided as an integer.",
-     SEEALSO {
+     SeeAlso => {
 	  (basis,Module),
 	  "bases of parts of modules"
 	  }
@@ -194,7 +194,7 @@ document {
 	       basis elements to a basis, over the ground field, of ", TT "M", "."
 	       }
 	  },
-     SEEALSO {
+     SeeAlso => {
 	  (basis,List,Module),
 	  "bases of parts of modules"
 	  }
@@ -229,7 +229,7 @@ document {
      The ring of M should be a (quotient of a) polynomial ring, 
      where the coefficient ring, k, is a field.",
      PARA,
-     CAVEAT {
+     Caveat => {
 	  "If the degrees of the variables are not all one, then there is
      	  currently a bug in the routine: some generators of higher degree
 	  than ", TT "i", " may be duplicated in the generator list."
@@ -376,7 +376,7 @@ document {
      ", TO "gb", ", ", TO "pushForward", ", ", TO "pushForward1", ", 
      and ", TO "syz", ", which can be used to specify that the computation should
      stop after a certain number of Groebner basis elements have been discovered.",
-     SEEALSO "computing Groebner bases"
+     SeeAlso => "computing Groebner bases"
      }
 
 document {
@@ -686,7 +686,7 @@ document {
      TT "mingens M", " -- returns a minimal generating set for the module ", TT "M", ",
      represented as a matrix whose target is the ambient free module of ", TT "M", ".",
      PARA,
-     SEEALSO "GroebnerBasis"
+     SeeAlso => "GroebnerBasis"
      }
 
 TEST "
@@ -824,7 +824,7 @@ document {
      PARA,
      "If the remainder ", TT "f - g*h", " is zero, then the quotient ", TT "f//g", "
      satisfies the equation ", TT "f = g * (f//g)", ".",
-     SEEALSO {(symbol %, Matrix, Matrix)}
+     SeeAlso => {(symbol %, Matrix, Matrix)}
      } 
 
 TEST "
@@ -848,7 +848,7 @@ document {
      TT "f//r", " -- yields a matrix h from a matrix f and a ring element r
      such that f - r*h is the reduction of f modulo a Groebner basis 
      for the image of r times the identity matrix.",
-     SEEALSO "%"
+     SeeAlso => "%"
      } 
 
 document {
@@ -951,7 +951,7 @@ document {
      PARA,
      "The weights that may be used are limited (roughly) to the range -2^30 .. 2^30.",
      PARA,
-     CAVEAT {
+     Caveat => {
 	  "If the homogenization overflows the monomial, this is not
      	  reported as an error."
 	  }
@@ -989,7 +989,7 @@ document {
 	  "R = QQ[x,y]",
       	  "terms (x+2*y-1)^2",
 	  },
-     SEEALSO "coefficients"
+     SeeAlso => "coefficients"
      }
 
 document {
@@ -1075,13 +1075,13 @@ document {
       	  "selectInSubring(3,m)",
 	  },
      PARA,
-     CAVEAT {
+     Caveat => {
 	  "This routine doesn't do what one would expect for graded orders
      	  such as ", TT "GLex", ".  There, the first part of the monomial 
 	  order is the degree, which is usually not zero.  This routine 
 	  should detect and correct this."
      },
-     SEEALSO "monomial orderings"
+     SeeAlso => "monomial orderings"
      }
 
 document {
@@ -1099,7 +1099,7 @@ document {
       	  "divideByVariable(m,a)",
       	  "divideByVariable(m,a,1)",
 	  },
-     CAVEAT "You can only divide by a variable, not a monomial,
+     Caveat => "You can only divide by a variable, not a monomial,
      and you have little control on what power will be divided.  This routine is mostly
      used by the saturation commands as a fast internal way of dividing.",
      PARA,
@@ -1219,14 +1219,14 @@ document {
      TT "order", " -- used as a key inside finite fields under which is
      stored the number of elements in the field.  Intended for internal use only",
      PARA,
-     SEEALSO "GaloisField"
+     SeeAlso => "GaloisField"
      }
 
 document {
      Key => isField, Headline => "whether something is a field",
      "No computation is done -- the question is whether the ring was
      explicitly constructed a field.",
-     SEEALSO "toField"
+     SeeAlso => "toField"
      }
 
 document {
@@ -1260,7 +1260,7 @@ document {
 	  },
      "Warning: this function does not work yet for divisions attempted in the course
      of computing a Groebner basis or resolution.",
-     SEEALSO { "toField", "getZeroDivisor" }
+     SeeAlso => { "toField", "getZeroDivisor" }
      }
 
 document {
@@ -1270,7 +1270,7 @@ document {
 	  "R" => "a ring in which a zero-divisor has been found",
 	  "r" => "the zero divisor"
 	  },
-     SEEALSO { "toField", "getNonUnit" }
+     SeeAlso => { "toField", "getNonUnit" }
      }
 
 document {
@@ -1322,7 +1322,7 @@ document {
 	  "f ** coker vars R",
 	  "f ** image vars R"
 	  },
-     SEEALSO { (symbol " ", RingMap, Module) }
+     SeeAlso => { (symbol " ", RingMap, Module) }
      }
 
 document {
@@ -1339,14 +1339,14 @@ document {
 	  "f = map(S,R,{t^2,t^3})",
 	  "f image vars R"
 	  },
-     SEEALSO { (symbol " ", RingMap, Module) }
+     SeeAlso => { (symbol " ", RingMap, Module) }
      }
 
 document {
      Key => DegreeMap,
      "A name for an optional argument used with ", TT "map", " when
      creating a ring map.",
-     SEEALSO { (map, DegreeMap) }
+     SeeAlso => { (map, DegreeMap) }
      }
 
 document {
@@ -1434,7 +1434,7 @@ document {
 	  "f = map(R,S,{x^2,x*y,y^2})",
 	  "f(a+b+c^2)"
 	  },
-     SEEALSO {(map,Ring,Ring,Matrix)}
+     SeeAlso => {(map,Ring,Ring,Matrix)}
      }
 
 document {
@@ -1502,7 +1502,7 @@ document {
      Headline => "the ideal of the graph of a ring map",
      TT "graphIdeal f", " -- provides the ideal of the graph of the map
      associated to the ring map f.",
-     SEEALSO "graphRing"
+     SeeAlso => "graphRing"
      }
 
 document {
@@ -1510,7 +1510,7 @@ document {
      Headline => "the ring of the graph of a ring map",
      TT "graphRing f", " -- provides the ring of the graph of the map
      associated to the ring map f.",
-     SEEALSO "graphIdeal"
+     SeeAlso => "graphIdeal"
      }
 
 document {
@@ -1554,7 +1554,7 @@ document {
      consists of cubics, then to find a quadratic relation, this option
      should be set to at least 6, by specifying, for example, ", 
      TT "DegreeLimit => 6", ".  The default is ", TT "infinity", ".",
-     SEEALSO {"pushForward1", "DegreeLimit"}
+     SeeAlso => {"pushForward1", "DegreeLimit"}
      }
 
 document {
@@ -1632,7 +1632,7 @@ document {
 	  (TT "MonomialOrder => ProductOrder", " -- use the product order"),
 	  (TT "MonomialOrder => LexOrder", " -- use lexical order"),
 	  },
-     SEEALSO "EliminationOrder"
+     SeeAlso => "EliminationOrder"
      }
 
 document {

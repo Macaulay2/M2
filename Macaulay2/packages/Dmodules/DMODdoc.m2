@@ -210,7 +210,7 @@ document {
      	  "I = ideal(x_1, D_2-1)",
      	  "bFunction(I,{1, 0})",
      	  },
-     CAVEAT {
+     Caveat => {
 	  "The ring of I should not have any parameters: 
      	  it should be a pure Weyl algebra. Similarly, this ring 
 	  should not be a homogeneous ", TO "WeylAlgebra"
@@ -254,7 +254,7 @@ document {
 	  "factorBFunction bFunction(M, {1}, {0,0,0})",
 	  "factorBFunction bFunction(M, {1}, {1,2,3})"
      	  },
-     CAVEAT => {
+     Caveat => {
 	  "The Weyl algebra should not have any parameters. 
      	  Similarly, it should not be a homogeneous Weyl algebra"
 	  },
@@ -326,7 +326,7 @@ document {
      	  "f = x^10",
     	  "globalBFunction f"
      	  },
-     CAVEAT => {
+     Caveat => {
 	  "The Weyl algebra should not have any parameters. 
      	  Similarly, it should not be a homogeneous Weyl algebra"
 	  },
@@ -354,7 +354,7 @@ document {
      	  "b = globalBFunction f",
      	  "factorBFunction b"
      	  },
-     CAVEAT {
+     Caveat => {
 	  "f should be an output of one of the b-function routines"
      	  },
      SEEALSO { 
@@ -439,7 +439,7 @@ document {
      	  "f = x_1 + x_2 * z + x_3 * z^2 + x_4 * z^3",
      	  "AnnFs f"
      	  },
-     CAVEAT {"
+     Caveat => {"
 	  The ring of f should not have any parameters, 
      	  i.e. it should be a pure Weyl algebra. 
 	  Also this ring should not be a homogeneous Weyl algebra."},
@@ -469,7 +469,7 @@ document {
 	  "W = QQ[x,dx, WeylAlgebra=>{x=>dx}]",
 	  "AnnIFs (ideal dx, x^2)"
 	  }, 
-     CAVEAT => {"
+     Caveat => {"
      	  Caveats and known problems: The ring of f should not have any 
 	  parameters: it should be a pure Weyl algebra. Similarly, 
 	  this ring should not be a homogeneous Weyl algebra."
@@ -533,7 +533,7 @@ document {
 	  {BOLD "OaTa", " -- restriction algorithm is used, 
 	       which is due to T. Oaku and N. Takayama [2]"}   
 	  },
-          --CAVEAT {"When WaltherOTW strategy is used the error 'Bad luck!' 
+          --Caveat => {"When WaltherOTW strategy is used the error 'Bad luck!' 
           --may appear. This means your are not a lucky individual...
 	  --The glitch is due to the fact that the localizations are iterated 
 	  --for this particular strategy; it was resolved for WaltherOaku, 
@@ -615,7 +615,7 @@ document {
      	  "h = localCohom I",
      	  "pruneLocalCohom h"
 	  },
-     CAVEAT {"The modules returned are not simplified, 
+     Caveat => {"The modules returned are not simplified, 
      	  use ", TO "pruneLocalCohom", "."}
      }  
 
@@ -683,7 +683,7 @@ document {
      	  "h = localCohom(I, W^1 / ideal{dX,dY,dZ})",
      	  "pruneLocalCohom h"
 	  },
-     CAVEAT {"The modules returned are not simplified, 
+     Caveat => {"The modules returned are not simplified, 
      	  use ", TO "pruneLocalCohom", "."}
      }
 
@@ -753,7 +753,7 @@ document {
 	  "A =  (QQ [a,b,c]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
      	  "paramBpoly(a*x^2 + b*x*y + c*y^2, \"quadratic\")"
 	  },
-     CAVEAT {
+     Caveat => {
 	  "A finite field should be used in place of ", EM "Q", 
 	  " in order to speed up computations. This routine works only
 	  on relatively small examples."
@@ -781,7 +781,7 @@ document {
 	  "M = matrix {{dx,0,0},{0,dx,0},{0,0,dx}} -- coker M = QQ[x]^3", 
 	  "h = makeCyclic M"
 	  },
-     CAVEAT {"The module ", EM "M", " must be holonomic."},
+     Caveat => {"The module ", EM "M", " must be holonomic."},
      SEEALSO {"isHolonomic"}
      }  
 document {(Generator),
@@ -836,7 +836,7 @@ document {
      	"DHom(M,N)"
 	},
      PARA,
-     CAVEAT {"Input modules ", EM "M", ", ", EM "N", ", ", 
+     Caveat => {"Input modules ", EM "M", ", ", EM "N", ", ", 
 	  EM "D/I", " and ", EM "D/J",
 	  " should be holonomic."},
      SEEALSO {"DExt", "Drestriction"}
@@ -889,7 +889,7 @@ document {
      	"DExt(M,N)"
 	},
      PARA,
-     CAVEAT{"Input modules M, N, D/I, or D/J should be holonomic.",
+     Caveat =>{"Input modules M, N, D/I, or D/J should be holonomic.",
 	  "Does not yet compute explicit reprentations of Ext groups
 	  such as Yoneda representation."},
 
@@ -991,7 +991,7 @@ document {
      	"M = W^1/ideal(x^2*D^2)",
      	"PolyExt(M)"},
      PARA,
-     CAVEAT{"Does not yet compute explicit representations of
+     Caveat =>{"Does not yet compute explicit representations of
 	  Ext groups such as Yoneda representation."},
      SEEALSO {"PolySols", "RatExt", "DExt", "Dintegration"}
      }
@@ -1034,7 +1034,7 @@ document {
      	"RatSols I"
 	},
      PARA,
-     CAVEAT{"The most efficient method to find rational solutions is
+     Caveat =>{"The most efficient method to find rational solutions is
 	  to find the singular locus, then try to find its irreducible
 	  factors.  With these, call RatSols(I, ff, w), where w
 	  should be generic enough so that the PolySols routine
@@ -1088,7 +1088,7 @@ document {
      	"M = W^1/ideal(x*D+5)",
      	"RatExt(M)"},
      PARA,
-     CAVEAT{"Input modules M or D/I should be holonomic."},
+     Caveat =>{"Input modules M or D/I should be holonomic."},
 
      SEEALSO {"Dresolution", "Dintegration"}
      }
@@ -1211,7 +1211,7 @@ document {
      	"Dtransposition L"
 	},
      PARA,
-     CAVEAT{"The standard transposition of a left ideal should be a right
+     Caveat =>{"The standard transposition of a left ideal should be a right
 	  ideal, however M2 currently doesn't support right modules.
 	  Thus the output is left ideal generated by the transposition
 	  of the previous generators."},
@@ -1379,7 +1379,7 @@ document {
      PARA,
      "Abbreviations :",
      UL{"makeWA"},
-     CAVEAT{"The polynomial ring R must be commutative."},
+     Caveat =>{"The polynomial ring R must be commutative."},
      SEEALSO {"WeylAlgebra"}
      }
 
@@ -1410,7 +1410,7 @@ document {
      	"Ddual I"
 	},
      PARA,
-     CAVEAT{"The input module ", EM "M", " should be holonomic.  The user should
+     Caveat =>{"The input module ", EM "M", " should be holonomic.  The user should
 	  check this manually with the script ", TT "Ddim", "."},
      SEEALSO {"Ddim", "Dtransposition"}
      }
@@ -1701,7 +1701,7 @@ document {
      	"Drestriction(I,{1,0})"
 	},
      PARA,
-     CAVEAT{"The module ", EM "M", " should be specializable to the subspace.
+     Caveat =>{"The module ", EM "M", " should be specializable to the subspace.
 	  This is true for holonomic modules.",
 	  "The weight vector ", EM "w", " should be a list of ", EM "n",
 	  " numbers if ", EM "M", 
@@ -1875,7 +1875,7 @@ document {
      	"Dintegration(I,{1,0})"
 	},
      PARA,
-     CAVEAT{"The module M should be specializable to the subspace.
+     Caveat =>{"The module M should be specializable to the subspace.
 	  This is true for holonomic modules.",
 	  "The weight vector w should be a list of n numbers if M
 	  is a module over the nth Weyl algebra."},
@@ -1965,7 +1965,7 @@ document {
      	"I = gkz (A,b)"
 	},
 
-     CAVEAT{"gkz always returns a different ring and will use variables
+     Caveat =>{"gkz always returns a different ring and will use variables
 	  x_1,...,x_n, D_1,...D_n."},
 
      SEEALSO {"AppellF1"}
@@ -1987,7 +1987,7 @@ document {
      	"I = AppellF1(w)"
 	},
      PARA,
-     CAVEAT{"AppellF1 always returns a different ring and will
+     Caveat =>{"AppellF1 always returns a different ring and will
 	  use variables x and y. Input should be a List of 4
 	  numbers."},
 
@@ -2010,7 +2010,7 @@ document {
      	"I = PolyAnn f"
 	},
      PARA,
-     CAVEAT{"The input f should be an element of a Weyl algebra,
+     Caveat =>{"The input f should be an element of a Weyl algebra,
 	  and not an element of a commutative polynomial ring.
 	  However, f should only involve commutative variables."},
 
@@ -2039,7 +2039,7 @@ document {
      	"I = RatAnn (g,f)"
 	},
      PARA,
-     CAVEAT{"The inputs f and g should be elements of a Weyl algebra,
+     Caveat =>{"The inputs f and g should be elements of a Weyl algebra,
 	  and not elements of a commutative polynomial ring.
 	  However, f and g should only use the commutative variables."},
 
@@ -2082,7 +2082,7 @@ document {
      	"WeylClosure I"
 	},
      PARA,
-     CAVEAT{"The ideal I should be finite rank, which can be tested
+     Caveat =>{"The ideal I should be finite rank, which can be tested
 	  manually by Drank.", "The Weyl closure of non-finite rank
 	  ideals or arbitrary submodules has not been implemented."},
 	  
@@ -2278,7 +2278,7 @@ document {
      	"inw(I, {-1,-3,1,3})"
 	},
      PARA,
-     CAVEAT{"The weight vector ", EM "w = (u,v)", " must have ", 
+     Caveat =>{"The weight vector ", EM "w = (u,v)", " must have ", 
 	  EM "u+v>=0", "."},
      SEEALSO {"gbw", "setHomSwitch"}
      },
@@ -2317,7 +2317,7 @@ document {
      	"gbw(I, {-1,-3,1,3})"
 	},
      PARA,
-     CAVEAT{"The weight vector ", EM "w = (u,v)", " must have ", 
+     Caveat =>{"The weight vector ", EM "w = (u,v)", " must have ", 
 	  EM "u+v>=0", "."},
      SEEALSO {"inw", "setHomSwitch"}
      }
