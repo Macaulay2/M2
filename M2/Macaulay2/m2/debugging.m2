@@ -159,20 +159,22 @@ listUserSymbols = Command ( type -> listSymbols userSymbols type )
 
 usage := () -> (
      << endl
-     << "useful debugger commands:" << endl
-     << "    break                   leave the debugger" << endl
-     << "    end                     restart debugger one step earlier" << endl
-     << "    listLocalSymbols        display local symbols and their values" << endl
-     << "    listUserSymbols         display user symbols and their values" << endl
-     << "    continue                execute the same code again" << endl
-     << "    return                  return 'null' as the value of the code" << endl
-     << "    return x                return 'x' as the value of the code" << endl
+     << " -- useful debugger commands:" << endl
+     << " --     break                   leave the debugger" << endl
+     << " --     end                     restart debugger one step earlier" << endl
+     << " --     listLocalSymbols        display local symbols and their values" << endl
+     << " --     listUserSymbols         display user symbols and their values" << endl
+     << " --     continue                execute the same code again" << endl
+     << " --     return                  return 'null' as the value of the code" << endl
+     << " --     return x                return 'x' as the value of the code" << endl
      )
 
 firstTime := true
 debuggerHook = () -> if interpreterDepth > 1 then (
      -- << listLocalSymbols errorCode << endl;
-     if firstTime then ( usage(); firstTime = false; ))
+     if firstTime then ( usage(); firstTime = false; );
+     << endl << " -- code just attempted: " << code errorCode << endl
+     )
 
 clearOutput = Command (() -> scan(values Output.Dictionary, s -> ( s <- null; erase s )))
 

@@ -59,7 +59,7 @@ void emit(char *s)
 
 void emit_line(char *s)
 {
-  fprintf(stdout, "%s%s", s, "\n");
+  fprintf(stdout, "%s%s%s", s, "\n", wrapping_prefix);
   fflush(stdout);
 }
 

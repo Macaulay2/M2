@@ -1,4 +1,4 @@
-gbTrace = 5
+gbTrace = 1
 oops := () -> stderr << "warning: segmentation fault commented out" << endl
 chk  := () -> stderr << "warning: error commented out" << endl
 cmp = method()
@@ -199,7 +199,7 @@ gb (I,DegreeLimit => 1)
 gb (I,DegreeLimit => 2)
 gb (I,DegreeLimit => 3)
 gb (I,DegreeLimit => 4)
-end
+
 G = gb I
 peek G
 g = gens G
@@ -217,6 +217,7 @@ peek f.cache
 
 status G
 
+end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "
 -- compile-command: "M2 --debug-M2 --stop -e 'input \"ring.m2\"' -e 'exit 0' "

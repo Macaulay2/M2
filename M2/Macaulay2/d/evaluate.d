@@ -1020,7 +1020,9 @@ export eval(c:Code):Expr := (
 		    if (! p.filename==="stdio") && debuggingMode && !stopIfError && stdIO.inisatty && stdIO.outisatty then (
 			 if !err.printed then printError(err);
 			 printErrorMessage(err.position,"--entering debugger--");
-			 when debuggerFun(err.report.code.frame,err.report.code.code) is z:Error do (
+			 z := debuggerFun(err.report.code.frame,err.report.code.code);
+			 printErrorMessage(err.position,"--leaving debugger--");
+			 when z is z:Error do (
 			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
 			      if z.message == returnMessage then return z.value;
 			      if z.message == continueMessage then return eval(c);
