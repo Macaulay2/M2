@@ -34,8 +34,8 @@ InfiniteNumber == ZZ := (x,y) -> false
 ZZ // InfiniteNumber := ZZ / InfiniteNumber := (x,y) -> 0
 InfiniteNumber // ZZ := InfiniteNumber / ZZ := (x,y) -> if y > 0 then x else if y < 0 then -x else indeterminate
 ZZ == InfiniteNumber := (x,y) -> false
-ZZ ? InfiniteNumber := (x,y) -> if y === infinity then symbol < else symbol >
-InfiniteNumber ? ZZ := (x,y) -> if x === infinity then symbol > else symbol <
+Thing ? InfiniteNumber := (x,y) -> if y === infinity then symbol < else symbol >
+InfiniteNumber ? Thing := (x,y) -> if x === infinity then symbol > else symbol <
 
 texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
 mathML InfiniteNumber := i -> if i === infinity then "<mrow><mo>-</mo><mi>&infin;</mi></mrow>" else "<mi>&infin;</mi>"
