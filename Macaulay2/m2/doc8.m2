@@ -486,6 +486,7 @@ document { gb => Strategy,
      "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
 	  TO "EGB",
+	  TO "GBinhom",
 	  TO "LongPolynomial",
 	  TO "Sort"
 	  }
@@ -501,6 +502,13 @@ document { Sort,
 
 document { EGB,
      TT "EGB", " -- a strategy used with the keyword ", TO "Strategy", ".",
+     PARA,
+     "This feature is currently under development."
+     }
+
+
+document { GBinhom,
+     TT "GBinhom", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA,
      "This feature is currently under development."
      }
