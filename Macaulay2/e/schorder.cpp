@@ -57,7 +57,10 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
 }
 
 bool SchreyerOrder::is_equal(const SchreyerOrder *G) const
+// A schreyer order is never equal to a non-Schreyer order, even 
+// if the monomials are all ones.
 {
+  if (G == NULL) return false;
   for (int i=0; i<rank(); i++)
     {
       if (compare_num(i) != G->compare_num(i))
@@ -230,15 +233,15 @@ int SchreyerOrder::schreyer_compare(const int *m,
 				    const int *n,
 				    int n_comp) const
 {
-  const int *ms = base_monom(m_comp-1);
-  const int *ns = base_monom(n_comp-1);
+  const int *ms = base_monom(m_comp);
+  const int *ns = base_monom(n_comp);
   for (int i=M->monomial_size(); i>0; --i)
     {
       int cmp = *ms++ + *m++ - *ns++ - *n++;
       if (cmp < 0) return LT;
       if (cmp > 0) return GT;
     }
-  int cmp = compare_num(m_comp-1) - compare_num(n_comp-1);
+  int cmp = compare_num(m_comp) - compare_num(n_comp);
   if (cmp < 0) return LT;
   if (cmp > 0) return GT;
   return EQ;

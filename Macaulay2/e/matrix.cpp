@@ -1217,7 +1217,7 @@ Matrix *Matrix::lead_term(int nparts) const
   MatrixConstructor mat(rows(),cols(),is_mutable(),degree_shift());
 
   for (int i=0; i<n_cols(); i++)
-    mat.set_column(i, P->vec_lead_term(nparts, elem(i)));
+    mat.set_column(i, P->vec_lead_term(nparts, rows(), elem(i)));
   return mat.to_matrix();
 }
 

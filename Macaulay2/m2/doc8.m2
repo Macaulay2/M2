@@ -255,11 +255,67 @@ document {
      }
 
 document {
+     Key => "Schreyer order",
+     Headline => "induced monomial order on a free module",
+     "The Schreyer order is a monomial order on a free module which is particularly
+     efficient for computing Groebner bases and syzygies.  The size of Groebner bases
+     of submodules using such orders is often much much smaller than if a position over term
+     or term over position order would be used.  We call these Schreyer orders, after
+     Frank Olaf-Schreyer, who used them to give an algorithm for syzygies, and who also 
+     recognized many of their beneficial properties.  See Schreyer.... for more 
+     information.",
+     PARA,
+     "Let F be a free module, with basis e_0, e_1, ..., e_r (unit column vectors),
+     and suppose that a e_i, and b e_j are monomials in F (that is, a and b are monomials in
+     the base ring, and e_i and e_j are elements of the basis of F).  Suppose also that 
+     m0, m1, ..., mr are monomials of a free module G (which is itself endowed with a monomial
+     order).",
+     PARA,
+     "Then, a e_i > b e_j if a mi > b mj, in the order on G, or, if a mi and b mj are 
+     scalar multiples of each other, if i > j.",
+     PARA,
+     "In Macaulay 2, free modules with a Schreyer order on them can be created using ", 
+     TO (schreyerOrder,Matrix), ".",
+     EXAMPLE {
+	  "R = ZZ/101[a..d];",
+	  "m = matrix{{a,b,c,d}};",
+	  "F = schreyerOrder m",
+	  "f = map(target m, F, m)",
+	  "g = syz f",
+	  "leadTerm g"
+	  },
+     "In Macaulay 2, free modules are displayed without any indication of whether they are
+     endowed with a Schreyer order or not.  To determine whether one is, use ", 
+     TO (schreyerOrder,Module), ".  If the result is the zero matrix, then the monomial order
+     associated with this free module is not a Schreyer order.  Instead it is the 
+     order determined directly from the ring.",
+     EXAMPLE {
+	  "schreyerOrder target m",
+	  "schreyerOrder source g"
+	  },
+     "Over quotient rings, the multiplication a mi and b mj are over the ambient polynomial
+     ring, not the quotient.",
+     PARA,
+     "It is fine for the free module G above to be endowed with a Schreyer order too.",
+     PARA,
+     "The only places that Schreyer orders are considered is in computation of Groebner bases,
+     syzygies, and free resolutions, and with the ", TO leadTerm, " routine.",
+     SeeAlso => {
+	  leadTerm,
+	  (schreyerOrder,Matrix),
+	  (schreyerOrder,Module),
+	  gb,
+	  syz,
+	  resolution
+	  }
+     }
+
+document {
      Key => (schreyerOrder,Matrix),
      Headline => "create a free module having a Schreyer monomial order",
      Usage => "schreyerOrder m",
      Inputs => {
-	  "m" => "a matrix with source a free module F"
+	  "m" => "G <-- F between free modules"
 	  },
      Outputs => {
 	  {
@@ -267,6 +323,15 @@ document {
 	       a Schreyer, or induced, monomial order"
 	       }
 	  },
+     "Given a matrix m : F --> G, the Schreyer order on the monomials
+     of F is given by: If a e_i and b e_j are monomials of F, i.e. a and b are 
+     monomials in the ring, and
+     e_i and e_j are unit column vectors of F, then a e_i > b e_j iff
+     either leadterm(m)(a e_i) > leadterm(m)(b e_j) or they are k-multiples of
+     the same monomial in G, and i > j.",
+     PARA,
+     "If the base ring is a quotient ring, we think of leadterm(m) as a matrix
+     over the ambient polynomial ring",
      "Given a matrix m with define a monomial order ",
      EXAMPLE {
 	  "R = ZZ/101[a..d];",

@@ -1,5 +1,8 @@
 -- Mike's to do list, new version, started 3/29/04
 
+BUGS: 
+      Grassmannian(2,5)
+
 packages:
 	gin
 	lexideal

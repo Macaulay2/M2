@@ -1792,22 +1792,47 @@ ring_elem PolyRing::lead_term(int nparts, const ring_elem f) const
   return head.next;
 }
 
-vec PolyRing::vec_lead_term(int nparts, vec v) const
+const vecterm * PolyRing::vec_find_lead_term(const FreeModule *F, vec v) const
+// Returns a pointer to the lead vector of v.
+// This works if F has a Schreyer order, or an up/down order.
+{
+  if (v == 0) return v;
+  const vecterm * lead = v;
+  const SchreyerOrder *S = F->get_schreyer_order();
+  if (S)
+    {
+      for (vec w = v->next; w != 0; w = w->next)
+	{
+	  if (S->schreyer_compare(POLY(lead->coeff)->monom, 
+				  lead->comp,
+				  POLY(w->coeff)->monom, 
+				  w->comp) == LT)
+	    {
+	      lead = w;
+	    }
+	}
+    }
+  else
+    {
+      for (vec w = v->next; w != 0; w = w->next)
+	{
+	  if (M_->compare(POLY(lead->coeff)->monom, 
+			  lead->comp,
+			  POLY(w->coeff)->monom, 
+			  w->comp) == LT)
+	    {
+	      lead = w;
+	    }
+	}
+    }
+  return lead;
+}
+
+vec PolyRing::vec_lead_term(int nparts, const FreeModule *F, vec v) const
 {
   // The first step is to find the lead monomial.
 
-  if (v == 0) return 0;
-  vec lead = v;
-  for (vec w = v->next; w != 0; w = w->next)
-    {
-      if (M_->compare(POLY(lead->coeff)->monom, 
-		      lead->comp,
-		      POLY(w->coeff)->monom, 
-		      w->comp) == LT)
-	{
-	  lead = w;
-	}
-    }
+  const vecterm * lead = vec_find_lead_term(F,v);
 
   // Now that we have the lead term, use the first n parts of the monomial
   // ordering
@@ -1815,6 +1840,7 @@ vec PolyRing::vec_lead_term(int nparts, vec v) const
   ring_elem r = PolyRing::lead_term(nparts, lead->coeff);
   return make_vec(lead->comp, r);
 }
+
 
 
 ///////////////////////////////////

@@ -222,9 +222,13 @@ public:
   virtual ring_elem lead_term(int nparts, const ring_elem f) const;
 
 public:
-  virtual vec vec_lead_term(int nparts, vec v) const;
+  virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const;
 
 protected:
+  const vecterm * vec_find_lead_term(const FreeModule *F, vec v) const;
+  // Returns a pointer to the lead vector of v.
+  // This works if F has a Schreyer order, or an up/down order.
+
   ring_elem diff_term(const int *m, const int *n, 
 		      int *resultmon,
 		      int use_coeff) const;
