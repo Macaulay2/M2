@@ -19,7 +19,7 @@ export WordListCell := { word:Word, next:WordList };
 export hashTable := (
      new array(WordList) 
      len 7313			-- just a convenient prime number
-     do provide(null())
+     do provide null()
      );
 export makeUniqueWord(s:string,p:parseinfo):Word := (
      h := hash(s);

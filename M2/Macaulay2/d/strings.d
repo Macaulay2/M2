@@ -10,7 +10,7 @@ import substr(x:string,start:int):string;
 export concatenate(x:array(string)):string := (
      n := 0;
      foreach y in x do n = n + length(y);
-     new string len n do foreach y in x do foreach z in y do provide(z));
+     new string len n do foreach y in x do foreach z in y do provide z);
 export between(s:string,x:array(string)):string := (
      if length(x) == 0
      then ""
