@@ -643,7 +643,9 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
 				       gbvector * &f,
 				       gbvector * &fsyz,
 				       const gbvector *g,
-				       const gbvector *gsyz)
+				       const gbvector *gsyz,
+				       bool use_denom,
+				       ring_elem &denom)
 {
   int comp;
   const ring_elem a = f->coeff;
@@ -662,6 +664,7 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
       gbvector_mult_by_coeff_to(f,u); // modifies f
       gbvector_mult_by_coeff_to(flead,u);
       gbvector_mult_by_coeff_to(fsyz,u);
+      if (use_denom) K->mult_to(denom, u);
     }
   // mult f,flead by u (if u != 1)
   // now mult g to cancel
@@ -680,22 +683,34 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
     }
 }
 
-void GBRing::gbvector_reduce_lead_term_coeff(const FreeModule *F,
+void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
 				       const FreeModule *Fsyz,
 				       gbvector * flead,
 				       gbvector * &f,
 				       gbvector * &fsyz,
 				       const gbvector *g,
-				       const gbvector *gsyz,
-				       ring_elem &denom)
-  // This routine varies from  gbvector_reduce_lead_term in just ONE LINE:
-  // where denom gets multiplied by the multiplier to f (if not 1).
+				       const gbvector *gsyz)
+{
+  ring_elem junk;
+  gbvector_reduce_lead_term(F,Fsyz,flead,f,fsyz,g,gsyz,false,junk);
+}
+
+bool GBRing::gbvector_reduce_lead_term_ZZ(const FreeModule *F,
+					  const FreeModule *Fsyz,
+					  gbvector * &f,
+					  gbvector * &fsyz,
+					  const gbvector *g,
+					  const gbvector *gsyz)
+  // Never multiplies f by anything.  IE before(f), after(f) are equiv. mod g.
+  // this should ONLY be used if K is globalZZ.
 {
   int comp;
   const ring_elem a = f->coeff;
   const ring_elem b = g->coeff;
-  ring_elem u,v;
-  K->syzygy(a,b,u,v); // If possible, u==1, anyway, u>0
+  ring_elem u,v,rem;
+  assert(globalZZ == K);
+  v = globalZZ->divide(a,b,rem);
+  bool result = globalZZ->is_zero(rem);
   gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
   gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
   divide_exponents(_EXP1,_EXP2,_EXP3);
@@ -703,14 +718,6 @@ void GBRing::gbvector_reduce_lead_term_coeff(const FreeModule *F,
     comp = f->comp;
   else
     comp = 0;
-  if (!K->is_equal(u,_one))
-    {
-      gbvector_mult_by_coeff_to(f,u); // modifies f
-      gbvector_mult_by_coeff_to(flead,u);
-      gbvector_mult_by_coeff_to(fsyz,u);
-      K->mult_to(denom, u);
-    }
-  // mult f,flead by u (if u != 1)
   // now mult g to cancel
   if (is_skew_commutative())
     {
@@ -725,6 +732,7 @@ void GBRing::gbvector_reduce_lead_term_coeff(const FreeModule *F,
       gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM1, comp);
       gbvector_add_to(Fsyz,fsyz,result_syz1);
     }
+  return result;
 }
 
 void GBRing::gbvector_cancel_lead_terms(
@@ -749,6 +757,62 @@ void GBRing::gbvector_cancel_lead_terms(
   const ring_elem b = g->coeff;
   ring_elem u,v;
   K->syzygy(a,b,u,v); // If possible, u==1, anyway, u>0
+  gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
+  gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
+  exponent_syzygy(_EXP1,_EXP2,_EXP3,_EXP4);
+  if (g->comp == 0)
+    comp = f->comp;
+  else
+    comp = 0;
+  if (is_skew_commutative())
+    {
+      // Note that _EXP3 * _EXP1 = _EXP4 * _EXP2 up to sign
+      if (_skew.mult_sign(_EXP3, _EXP1) !=
+	  _skew.mult_sign(_EXP4, _EXP2))
+	K->negate_to(v);
+    }
+  M->from_expvector(_EXP3, _MONOM1);
+  M->from_expvector(_EXP4, _MONOM2);
+  result = mult_by_term(F,f, u,_MONOM1,0);
+  gbvector *result1 = mult_by_term(F,g, v,_MONOM2,comp);
+  gbvector_add_to(F,result,result1);
+  if (fsyz == 0 && gsyz == 0) 
+    result_syz = 0;
+  else
+    {
+      result_syz = mult_by_term(Fsyz,fsyz, u,_MONOM1,0);
+      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM2, comp);
+      gbvector_add_to(Fsyz,result_syz,result_syz1);
+    }
+}
+
+void GBRing::gbvector_combine_lead_terms_ZZ(
+		    const FreeModule *F,
+		    const FreeModule *Fsyz,
+		    const gbvector *f,
+		    const gbvector *fsyz,
+		    const gbvector *g,
+		    const gbvector *gsyz,
+		    gbvector *&result,
+		    gbvector *&result_syz)
+  // If u*x^A*leadmonom(f) + v*x^B*leadmonom(g) = gcd(u,v)*monom (mod lower terms),
+  // set result := u*x^A*f + v*x^B*g
+  //     resultsyz := u*x^A*fsyz + v*x^B*gyz
+  // To keep in mind:
+  //  (a) Schreyer orders
+  //  (b) Quotient ideal
+  // Currently: this does nothing with the quotient ring
+{
+  int comp;
+  const ring_elem a = f->coeff;
+  const ring_elem b = g->coeff;
+  mpz_t gab,u1,v1;
+  mpz_init(gab);
+  mpz_init(u1);
+  mpz_init(v1);
+  mpz_gcdext(gab,u1,v1,MPZ_VAL(a),MPZ_VAL(b));
+  ring_elem u = MPZ_RINGELEM(u1);
+  ring_elem v = MPZ_RINGELEM(v1);
   gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
   gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
   exponent_syzygy(_EXP1,_EXP2,_EXP3,_EXP4);
@@ -845,13 +909,13 @@ void GBRing::lower_content_ZZ(gbvector *f, M2_Integer content) const
 
 void GBRing::gbvector_remove_content_ZZ(gbvector *f, 
 					gbvector *fsyz,
-					mpz_t denom) const
+					bool use_denom,
+					ring_elem &denom) const
   // let c = gcd(content(f),content(fsyz)).
   // set f := f/c,  fsyz := fsyz/c.
   // denom *= c
 {
   // This routine assumes that the coeff ring is ZZ (originally QQ).
-
   gbvector *g = f;
   gbvector *gsyz = fsyz;
   mpz_t content;
@@ -893,12 +957,16 @@ void GBRing::gbvector_remove_content_ZZ(gbvector *f,
     mpz_neg(content,content);
   divide_coeff_exact_to_ZZ(f,content);
   divide_coeff_exact_to_ZZ(fsyz,content);
-  mpz_mul(denom, content, denom);
+  if (use_denom)
+    {
+      denom = globalZZ->mult(denom, MPZ_RINGELEM(content));
+    }
   mpz_clear(content);
 }
 
 void GBRing::gbvector_remove_content(gbvector *f, 
 				     gbvector *fsyz,
+				     bool use_denom,
 				     ring_elem &denom)
   // let c = gcd(content(f),content(fsyz)).
   // set f := f/c,  fsyz := fsyz/c, denom *= c.
@@ -907,9 +975,7 @@ void GBRing::gbvector_remove_content(gbvector *f,
 {
   if (_coeffs_ZZ) 
     {
-      mpz_ptr d = MPZ_VAL(denom);
-      gbvector_remove_content_ZZ(f,fsyz,d);
-      // denom contains the changes to d...
+      gbvector_remove_content_ZZ(f,fsyz,use_denom,denom);
       return;
     }
   // At this point, our coefficient ring is a field (What about
@@ -921,7 +987,7 @@ void GBRing::gbvector_remove_content(gbvector *f,
   cinv = K->invert(c);
   gbvector_mult_by_coeff_to(f,cinv);
   gbvector_mult_by_coeff_to(fsyz,cinv);
-  K->mult_to(denom,c);
+  if (use_denom) K->mult_to(denom,c);
 }
 
 void GBRing::gbvector_remove_content(gbvector *f, 
@@ -929,8 +995,8 @@ void GBRing::gbvector_remove_content(gbvector *f,
   // let c = gcd(content(f),content(fsyz)).
   // set f := f/c,  fsyz := fsyz/c.
 {
-  ring_elem denom = K->from_int(0);
-  gbvector_remove_content(f,fsyz,denom);
+  ring_elem junk;
+  gbvector_remove_content(f,fsyz,false,junk);
 }
 
 ////////////////////
@@ -980,6 +1046,41 @@ void GBRing::gbvector_auto_reduce(const FreeModule *F,
       gbvector_add_to(F,f,g1);
       gbvector_add_to(Fsyz,fsyz,gsyz1);
       gbvector_remove_content(f,fsyz);
+
+      if (gbTrace == 10)
+	{
+	  buffer o;
+	  o << "auto reducing by ";
+	  gbvector_text_out(o, F, g);
+	  o << "\n  --  giving ";
+	  gbvector_text_out(o, F, f);
+	  emit_line(o.str());
+	}
+
+    }
+}
+
+void GBRing::gbvector_auto_reduce_ZZ(const FreeModule *F,
+				  const FreeModule *Fsyz,
+				  gbvector * &f, 
+				  gbvector * &fsyz,
+				  const gbvector *g, 
+				  const gbvector *gsyz)
+  // If g = a*x^A*ei + lower terms
+  // and if f = ... + b*x^A*ei + ...
+  // and if v*a + b is the balanced remainder of b by a
+  // then set f := f + v*g, fsyz := fsyz + v*gsyz
+  // No content is removed.
+{
+  assert(globalZZ == K);
+  const gbvector *t;
+  if ((t = find_coeff(F,f,g)) != 0)
+    {
+      ring_elem v = globalZZ->quotient(t->coeff, g->coeff);
+      gbvector *g1 = gbvector_mult_by_coeff(g,v);
+      gbvector *gsyz1 = gbvector_mult_by_coeff(gsyz,v);
+      gbvector_add_to(F,f,g1);
+      gbvector_add_to(Fsyz,fsyz,gsyz1);
 
       if (gbTrace == 10)
 	{

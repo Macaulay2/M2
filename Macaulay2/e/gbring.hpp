@@ -126,7 +126,8 @@ protected:
 
   void gbvector_remove_content_ZZ(gbvector *f, 
 				  gbvector *fsyz,
-				  mpz_t denom) const;
+				  bool use_denom,
+				  ring_elem &denom) const;
 
   const gbvector *find_coeff(const FreeModule *F,
 			     const gbvector *f, const gbvector *g) const;
@@ -274,24 +275,37 @@ public:
 				 gbvector * &f,
 				 gbvector * &fsyz,
 				 const gbvector *g,
-				 const gbvector *gsyz);
+				 const gbvector *gsyz,
+				 bool use_denom,
+				 ring_elem &denom);
   // Reduce f wrt g, where leadmonom(g) divides leadmonom(f)
   // If u leadmonom(f) = v x^A leadmonom(g) (as monomials, ignoring lower terms),
   // then: flead := u * flead
   //       f := u*f - v*x^A*g
   //       fsyz := u*fsyz - v*x^A*gsyz
-
-  void gbvector_reduce_lead_term_coeff(const FreeModule *F,
-				       const FreeModule *Fsyz,
-				       gbvector * flead,
-				       gbvector * &f,
-				       gbvector * &fsyz,
-				       const gbvector *g,
-				       const gbvector *gsyz,
-				       ring_elem &denom);
-  // Same as gbvector_reduce_lead_term, except that 
+  // If use_denom is true, then 
   // denom is set to u*denom.
 
+  void gbvector_reduce_lead_term(const FreeModule *F,
+				 const FreeModule *Fsyz,
+				 gbvector * flead,
+				 gbvector * &f,
+				 gbvector * &fsyz,
+				 const gbvector *g,
+				 const gbvector *gsyz);
+  // Same as calling gbvector_reduce_lead_term with use_denom=false.
+
+  bool gbvector_reduce_lead_term_ZZ(const FreeModule *F,
+				    const FreeModule *Fsyz,
+				    gbvector * &f,
+				    gbvector * &fsyz,
+				    const gbvector *g,
+				    const gbvector *gsyz);
+  // Never multiplies f by anything.  IE before(f), after(f) are equiv. mod g.
+  // this should ONLY be used if K is globalZZ.
+  // Sets f := f - v*m*g, where the resulting lead coeff of in(before(f)) is either 0
+  // or is the balanced remainder of leadcoeff(f) by leadcoeff(g).
+  // Returns true iff this remainder is 0.
 
   void gbvector_cancel_lead_terms(
 				  const FreeModule *F,
@@ -302,6 +316,23 @@ public:
 				  const gbvector *gsyz,
 				  gbvector *&result,
 				  gbvector *&result_syz);
+
+void GBRing::gbvector_combine_lead_terms_ZZ(
+		    const FreeModule *F,
+		    const FreeModule *Fsyz,
+		    const gbvector *f,
+		    const gbvector *fsyz,
+		    const gbvector *g,
+		    const gbvector *gsyz,
+		    gbvector *&result,
+		    gbvector *&result_syz);
+  // If u*x^A*leadmonom(f) + v*x^B*leadmonom(g) = gcd(u,v)*monom (mod lower terms),
+  // set result := u*x^A*f + v*x^B*g
+  //     resultsyz := u*x^A*fsyz + v*x^B*gyz
+  // To keep in mind:
+  //  (a) Schreyer orders
+  //  (b) Quotient ideal
+  // Currently: this does nothing with the quotient ring
   
   void reduce_lead_term_heap(const FreeModule *F,
 			     const FreeModule *Fsyz,
@@ -315,7 +346,9 @@ public:
   
   void gbvector_remove_content(gbvector *f, 
 			       gbvector *fsyz,
+			       bool use_denom,
 			       ring_elem &denom);
+
   // if c = content(f,fsyz), then 
   //  f = f//c
   //  fsyz = fsyz//c
@@ -325,11 +358,10 @@ public:
   // If coeff ring is not ZZ, but is a field, c is chosen so that
   // f is monic (if not 0, else fsyz will be monic).
 
-
   void gbvector_remove_content(gbvector *f, 
 			       gbvector *fsyz);
-  // let c = gcd(content(f),content(fsyz)).
-  // set f := f/c,  fsyz := fsyz/c.
+  // Same as calling gbvector_remove_content with use_denom=false.
+
 
   void gbvector_auto_reduce(const FreeModule *F,
 			    const FreeModule *Fsyz,
@@ -337,6 +369,18 @@ public:
 			    gbvector * &fsyz,
 			    const gbvector *g, 
 			    const gbvector *gsyz);
+
+  void gbvector_auto_reduce_ZZ(const FreeModule *F,
+			       const FreeModule *Fsyz,
+			       gbvector * &f, 
+			       gbvector * &fsyz,
+			       const gbvector *g, 
+			       const gbvector *gsyz);
+  // If g = a*x^A*ei + lower terms
+  // and if f = ... + b*x^A*ei + ...
+  // and if v*a + b is the balanced remainder of b by a
+  // then set f := f + v*g, fsyz := fsyz + v*gsyz
+  // No content is removed.
 
   void gbvector_text_out(buffer &o,
 			 const FreeModule *F,

@@ -65,7 +65,7 @@ MonomialTable *MonomialTable::make(int nvars)
   result = new MonomialTable;
   result->_nvars = nvars;
   result->_count = 0;
-
+  result->_coeffs_ZZ = 0;
   /* The first entry is a dummy entry.  Components 
      will always start at 1. */
   result->_head.push_back(0);
@@ -156,6 +156,8 @@ void MonomialTable::insert(exponents exp, int comp, int id)
      in some order (lex order?).  No element is ever removed.
   */
 
+  assert(_coeffs_ZZ <= 0);
+  _coeffs_ZZ = -1;
   if (comp >= (int)_head.size())
     {
       for (int i=_head.size(); i <= comp; i++)
