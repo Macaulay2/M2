@@ -42,20 +42,16 @@ export lines(s:string):array(string) := (
      while true do (
 	  j := index(s,i);
 	  if j == -1 then (
-     	       -- if i != length(s) then nlines = nlines + 1;
 	       break;
 	       );
-	  if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n'
-	  then i = j+2
-	  else i = j+1;
-	  nlines = nlines + 1;
+	  i = j + if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n' then 2 else 1;
+	  if i < length(s) then nlines = nlines + 1;	    -- don't count the bit after the last newline if it's empty
 	  );
      i = 0;
      new array(string) len nlines do (
 	  while true do (
 	       j := index(s,i);
 	       if j == -1 then (
-		    -- if i != length(s) then provide untabify(substr(s,i));
 		    provide untabify(substr(s,i));
 		    break;
 		    )
