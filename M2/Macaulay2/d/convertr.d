@@ -472,7 +472,7 @@ export tostring(c:Code):string := (
 	       " ",tostring(x.body),")"))
      is x:globalAssignmentCode do concatenate(array(string)("(= ",x.lhs.word.name," ",tostring(x.rhs),")"))
      is x:globalMemoryReferenceCode do concatenate(array(string)("(fetch ",tostring(x.frameindex),")"))
-     is x:globalSymbolClosureCode  do x.symbol.word.name
+     is x:globalSymbolClosureCode  do join("'",x.symbol.word.name)
      is x:integerCode do tostring(x.x)
      is x:listCode do concatenate(array(string)( "(list ", between(" ",new array(string) len length(x.y) do foreach s in x.y do provide tostring(s)), ")"))
      is x:localAssignmentCode do concatenate(array(string)("(store ",tostring(x.frameindex)," ",tostring(x.nestingDepth)," ",tostring(x.rhs),")"))
@@ -480,7 +480,7 @@ export tostring(c:Code):string := (
      is x:localSymbolClosureCode do concatenate(array(string)("(local ",x.symbol.word.name," nestingDepth: ",tostring(x.nestingDepth),")"))
      is x:multaryCode do concatenate(array(string)( "(OP ", between(" ",new array(string) len length(x.args) do foreach c in x.args do provide tostring(c)), ")" ))
      is x:newLocalFrameCode do concatenate(array(string)())
-     is x:nullCode do "NULL"
+     is x:nullCode do "(null)"
      is x:parallelAssignmentCode do (
 	  n := length(x.nestingDepth);
 	  concatenate(
@@ -491,7 +491,7 @@ export tostring(c:Code):string := (
 			 for i from 0 to n-1 do 
 			 if x.lhs.i == dummySymbol 
 			 then provide concatenate(array(string)("(",tostring(x.frameindex.i)," ",tostring(x.nestingDepth.i),")"))
-			 else provide x.lhs.i.word.name),
+			 else provide join("'",x.lhs.i.word.name)),
 		    ") ", tostring(x.rhs), ")" ) ) )
      is x:realCode do tostring(x.x)
      is x:sequenceCode do (
