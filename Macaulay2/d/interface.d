@@ -631,11 +631,11 @@ export rawDeclareField(e:Expr):Expr := (
      else WrongArg("a raw ring"));
 setupfun("rawDeclareField",rawDeclareField);
 
-export rawGetZeroDivisor(e:Expr):Expr := (
+export rawGetNonUnit(e:Expr):Expr := (
      when e is K:RawRing do Expr(Ccode(RawRingElement, 
 	       "(engine_RawRingElement)IM2_Ring_get_zero_divisor(", "(Ring *)", K, ")" ))
      else WrongArg("a raw ring"));
-setupfun("rawGetZeroDivisor",rawGetZeroDivisor);
+setupfun("rawGetNonUnit",rawGetNonUnit);
 
 -----------------------------------------------------------------------------
 -- ring elements

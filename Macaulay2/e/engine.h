@@ -375,7 +375,7 @@ extern "C" {
     /* Declare that K is a field.  The ring K can then be used as the coefficient
        ring for computing Groebner bases,etc.  */
 
-  const RingElement * IM2_Ring_get_zero_divisor(const Ring *K); /* drg: connected rawGetZeroDivisor*/
+  const RingElement * IM2_Ring_get_zero_divisor(const Ring *K); /* drg: connected rawGetNonUnit */
     /* Return a non-unit for the ring K, if one has been found, or the zero
        element, if not. Perhaps we should name this 'get_non_unit'.  This
        function currently never seems to return a non-zero value, but I plan 

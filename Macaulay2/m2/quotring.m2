@@ -243,35 +243,16 @@ toField = R -> (
      R.frac = R;
      R.isField = true;
      if R.?Engine and R.Engine then (
-	  sendgg(ggPush R, ggdeclarefield);
-	  R / R := (x,y) -> (
-	       try (
-		    sendgg(ggPush x, ggPush y, ggdiv);
-		    R.pop())
-	       else (
-		    if y != 0 then R.nonUnit = y;
-		    error "division by non-invertible element attempted";
-		    )
-	       );
+	  rawDeclareField raw R;
+	  R / R := (x,y) -> notImplemented();
 	  );
      R)
 
 getNonUnit = R -> (
      if R.?nonUnit then R.nonUnit
      else if R.?Engine and R.Engine then (
-     	  sendgg(ggPush R, gggetzerodivisor);
-     	  r := R.pop();
-	  if r != 0 then r
-	  )
-     )
-
-getZeroDivisor = R -> (
-     if R.?Engine and R.Engine then (
-     	  sendgg(ggPush R, gggetzerodivisor);
-     	  r := R.pop();
-	  if r != 0 then r
-	  )
-     )
+	  r := rawGetNonUnit R;
+	  if r != 0 then new R from r))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

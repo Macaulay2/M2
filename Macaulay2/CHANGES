@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+Function 'getZeroDivisor' removed.
+
 New functions 'symlinkDirectory' and 'unSymlinkDirectory'.  The former
 works like copyDirectory, except it creates relative symbolic links
 instead of copying the individual files.  The latter undoes that
