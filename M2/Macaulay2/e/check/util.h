@@ -29,8 +29,6 @@ void display_relem(const RingElement *f);
 void display_freemodule(const FreeModule *F);
 void display_matrix(const Matrix *f);
 
-#warning void display_sparsemat(const MutableMatrix *f);
-
 int is_eq(M2_string elem, char *answer);
 int arrayint_is_eq(M2_arrayint a, M2_arrayint b);
 

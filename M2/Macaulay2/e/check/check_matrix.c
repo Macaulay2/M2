@@ -28,7 +28,7 @@ void test_coeffs(Test *pTest)
 
   F = IM2_FreeModule_make(R,1);
   elems = make_ringelem_array(1,f);
-#warning error    M = IM2_Matrix_make1(F,1,elems,0);
+  M = IM2_Matrix_make1(F,1,elems,0,0);
 
   display_matrix(M);
 
@@ -52,7 +52,7 @@ void test_matrix_ops(Test *pTest,const Matrix *M, const Matrix *N)
   const Matrix *MN = IM2_Matrix_tensor(M,N);
   display_matrix(MN);
 
-#warning error    P = IM2_Matrix_identity(IM2_Matrix_get_target(M));
+  P = IM2_Matrix_identity(IM2_Matrix_get_target(M),0,0);
   P1 = IM2_Matrix_add(
 		      IM2_Matrix_tensor(M,N),
 		      IM2_Matrix_tensor(P,N));
@@ -89,8 +89,8 @@ void test_matrix_ZZ(Test *pTest)
   const Matrix *M, *N;
   for (r=0; r<5; r++)
     for(c=0; c<5; c++)
-      elems->array[next++] = IM2_RingElement_from_Integer(R, make_integer(10*r+c));
-#warning error    M = IM2_Matrix_make1(F,5,elems,0);
+      elems->array[next++] = IM2_RingElement_from_Integer(R, make_integer(r+6*c));
+  M = IM2_Matrix_make1(F,5,elems,0,0);
   ct_test(pTest,is_eq(IM2_Matrix_to_string(M),
 		      "0 6  12 18 24 \n"
 		      "1 7  13 19 25 \n"
@@ -102,10 +102,10 @@ void test_matrix_ZZ(Test *pTest)
   elems = alloc_ringelem_array(9);
   for (r=0; r<3; r++)
     for(c=0; c<3; c++)
-      elems->array[next++] = IM2_RingElement_from_Integer(R, make_integer(-r+c));
+      elems->array[next++] = IM2_RingElement_from_Integer(R, make_integer(r-c));
   F = IM2_FreeModule_make(R, 3);
-#warning error    N = IM2_Matrix_make1(F,3,elems,0);
-  ct_test(pTest,is_eq(IM2_Matrix_to_string(M),
+  N = IM2_Matrix_make1(F,3,elems,0,0);
+  ct_test(pTest,is_eq(IM2_Matrix_to_string(N),
 		      "0 -1 -2 \n"
 		      "1 0  -1 \n"
 		      "2 1  0  \n"));

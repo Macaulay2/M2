@@ -241,11 +241,16 @@ public:
 //  Matrix routines //////////////////////////
 //////////////////////////////////////////////
 
+#if 0
   void reshape          (const Matrix &m, Matrix &result) const;
   void transpose_matrix (const Matrix &m, Matrix &result) const;
 
   vec sub_vector(const FreeModule *F, vec v, 
 		     const M2_arrayint r) const;
+
+  vec mult_by_matrix(const Matrix *m,
+			 const FreeModule *F, 
+			 vec v) const;
 
   vec component_shift(int n, const FreeModule *F, 
 			  vec v) const;
@@ -253,10 +258,9 @@ public:
   vec tensor_shift(int n, int m, 
 		       const FreeModule *F,
 		       vec v) const;
-
-  vec mult_by_matrix(const Matrix *m,
-			 const FreeModule *F, 
-			 vec v) const;
+  vec tensor(const FreeModule *F, vec v, 
+		 const FreeModule *G, vec w) const;
+#endif
 
 //////////////////////////////////////////////
 //  Misc routines  ///////////////////////////
@@ -265,8 +269,6 @@ public:
   vec eval(const RingMap *map, const FreeModule *F,
 	       const vec v) const;
 
-  vec tensor(const FreeModule *F, vec v, 
-		 const FreeModule *G, vec w) const;
 
 #if 0
   void auto_reduce(array<vec> &vecs) const;

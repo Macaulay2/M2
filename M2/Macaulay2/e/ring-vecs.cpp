@@ -4,18 +4,25 @@
 #include "text_io.hpp"
 #include <vector>
 #include "matrix.hpp"
-
+#include "geovec.hpp"
 //  Notes: ring_elem's are treated as immutable objects: they are not changed, and 
 // the fact that one cannot change is used throughout.
 
 vec Ring::new_vec() const
 {
+#if 0
+  vec result = new vecterm;
+  fprintf(stdout,"new vec term %x\n", result);
+  return result;
+#endif
   return new vecterm;
 }
 
 void Ring::remove_vec_node(vec n) const
 {
   // Should we just let them go, or free them?
+  //fprintf(stdout,"free vec term %x\n", n);
+
   deleteitem(n);
 }
 
@@ -123,6 +130,52 @@ vec Ring::sub_vector(const vecterm * v, const M2_arrayint r) const
 
   sort(result);
   return result;
+}
+
+vec Ring::component_shift(int n, vec v) const
+{
+  vecterm head;
+  vec result = &head;
+  for (const vecterm *p = v; p != 0; p=p->next)
+    {
+      vec w = new_vec();
+      result->next = w;
+      result = w;
+      w->comp = p->comp + n;
+      w->coeff = p->coeff; // copy is not done
+    }
+  result->next = 0;
+  return head.next;
+}
+
+vec Ring::tensor_shift(int n, int m, vec v) const
+{
+  vecterm head;
+  vecterm *result = &head;
+
+  for ( ; v != NULL; v = v->next)
+    {
+      vec w = new_vec();
+      result->next = w;
+      result = w;
+      w->comp = n * v->comp + m;
+      w->coeff = v->coeff; // copy is not done
+    }
+  result->next = NULL;
+  return head.next;
+}
+
+vec Ring::tensor(const FreeModule *F, vec v, 
+		 const FreeModule *G, vec w) const
+{
+  vecHeap H(F);
+  for ( ; v != NULL; v = v->next)
+    {
+      vec w1 = component_shift(v->comp * G->rank(),w);
+      mult_vec_to(w1,v->coeff,false);
+      H.add(w1);
+    }
+  return H.value();
 }
 
 void Ring::elem_text_out(buffer &o, const vecterm * v) const

@@ -364,6 +364,7 @@ vec FreeModule::rightmult(const vec w, const ring_elem f) const
 //  Matrix routines //////////////////////////
 //////////////////////////////////////////////
 
+#if 0
 vec FreeModule::component_shift(int n, const FreeModule *F, 
 			  vec v) const
 {
@@ -396,6 +397,8 @@ vec FreeModule::tensor_shift(int n, int m,
   result->next = NULL;
   return head.next;
 }
+
+// NOT NEEDED ANYMORE
 
 vec FreeModule::sub_vector(const FreeModule *F, vec v, 
 				const M2_arrayint r) const
@@ -465,6 +468,7 @@ void FreeModule::transpose_matrix(const Matrix &m, Matrix &result) const
     sort(result.elem(c));
 }
 
+
 vec FreeModule::mult_by_matrix(const Matrix *m,
 				 const FreeModule *F, 
 				 vec v) const
@@ -482,6 +486,7 @@ vec FreeModule::mult_by_matrix(const Matrix *m,
   return result;
 }
 
+
 vec FreeModule::tensor(const FreeModule *F, vec v, 
 			 const FreeModule *G, vec w) const
 {
@@ -496,7 +501,7 @@ vec FreeModule::tensor(const FreeModule *F, vec v,
     }
   return H.value();
 }
-
+#endif
 
 ///////////////////////////////////////////////////
 // Sorting a list of vectors (and maybe degrees) //

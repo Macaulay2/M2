@@ -27,7 +27,7 @@ private:
   Matrix(const FreeModule *rows, 
 	 const FreeModule *cols,
 	 const int *degree_shift,
-	 vector<vec> & entries,
+	 vector<vec,gc_alloc> & entries,
 	 bool is_mutable_flag);
 
 
