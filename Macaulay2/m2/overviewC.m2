@@ -274,7 +274,54 @@ document {
      }
 
 document {
-     Key => "monomial orderings",
+     Key => "monomial orderings", 
+     HEADER2 "The default monomial order: GRevLex",
+     "Every polynomial ring in Macaulay 2 comes equipped with an ordering on
+     the monomials.  The default ordering is GRevLex: the graded reverse lexicographic
+     order. Supose that m = x^A and n = x^B are monomials of a polynomial ring R having 
+     r variables,
+     where A = (a1, ..., ar) and B = (b1, ..., br) are exponent vectors.  Then 
+     the GRevLex order is defined by: x^A > x^B if either x^A has higher degree
+     than x^B, or the degrees are the same, and the LAST non-zero entry of A-B is NEGATIVE.",
+     HEADER2 "Specifying alternate monomial orders",
+     "We can choose different orderings of the monomials.  The
+     choice of ordering can make a difference in the time taken in
+     various computations.",
+     EXAMPLE {
+	  "R = ZZ[a..d];",
+	  "a*d + b*c"     
+     	  },
+     "Notice that the monomials are displayed in descending monomial order .",
+     HEADER2 "Examples of monomial orders",
+     HEADER3 "Lex => n",
+     EXAMPLE {
+	  "R = ZZ[ab,c, MonomialOrder => {Lex => 4}];",
+	  "1+a+b+c+d+a*d+b*c"
+	  },
+     HEADER3 "Weights => {...}",
+     EXAMPLE {
+	  "R = ZZ[a..d,MonomialOrder => {Weights => {1,0,0,1}}];",
+	  "1+a+b+c+d+a*d+b*c"
+	  },
+     "The explicit way to get GRevLex is given in the following example:",
+     EXAMPLE {
+	  "R = ZZ[a..d,MonomialOrder=>GrevLex]"
+     },
+     HEADER3 "GRevLex => {...}",
+     HEADER3 "Position => Up or Position => Down",
+     HEADER3 "GroupLex => n",
+     HEADER3 "GroupRevLex => n",
+     Subnodes => {
+	  TO "examples of monomial orders",
+	  TO "general monomial orders",
+	  TO "term orders",
+	  TO "local orders",
+	  TO "negative exponents"
+	  }
+     }
+
+document {
+     Key => "monomial orderingsOLD",
      -- Defining the orders
      -- MonomialOrder option.  Currently: Weights option.
      -- Philosophy: each ring comes equipped with a monomial order.

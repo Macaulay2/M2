@@ -421,6 +421,18 @@ assert(leadTerm(1,f) == matrix{{(a+b+c)*x^3}})
 assert(leadTerm(2,f) == matrix{{a*x^3}})
 assert(leadTerm(3,f) == leadTerm(2,f))
 
+R = ZZ[symbol a .. symbol d, MonomialOrder => { RevLex => 1, GRevLex => 2, RevLex => 1}]
+f = matrix{{1+a+b+c+d+b*d}}
+assert(leadTerm(0,f) == f)
+assert(leadTerm(1,f) == matrix{{b+b*d+c+1+d}})
+assert(leadTerm(2,f) == matrix{{b+b*d}})
+assert(leadTerm(3,f) - matrix{{b}} == 0)
+
+-- Schreyer order initial terms
+R = ZZ[symbol a..symbol d, MonomialOrder => Lex]
+F = schreyerOrder matrix{{c,d^3,a^2}}
+g = map(F, R^1, {{a},{b},{c}})
+assert(leadTerm g - matrix{{0},{0},{c}} == 0)
 ---------------------------
 -- rawEliminateVariables --
 ---------------------------

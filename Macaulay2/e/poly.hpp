@@ -225,6 +225,8 @@ public:
 
   virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const = 0;
 
+  virtual vec vec_top_coefficient(const vec v, int &var, int &exp) const = 0;
+
   virtual gbvector * translate_gbvector_from_ringelem(ring_elem coeff) const = 0;
 
   virtual gbvector * translate_gbvector_from_vec(const FreeModule *F, 

@@ -697,6 +697,19 @@ const M2_arrayint IM2_Matrix_keep_vars(int nparts, const Matrix *M)
   return M->elim_keep(nparts);
 }
 
+Matrix_pair_OrNull * rawTopCoefficients(const Matrix *M)
+{
+  Matrix *coeffs;
+  Matrix *monoms;
+  coeffs = M->top_coefficients(monoms);
+  if (coeffs == NULL)
+    return NULL;
+  Matrix_pair_OrNull *result = new Matrix_pair;
+  result->a = monoms;
+  result->b = coeffs;
+  return result;
+}
+
 Matrix_int_pair * IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegree)
   /* If M = [v1, ..., vn], and x = 'var'th variable in the ring, 
      return the matrix [w1,...,wn], where wi * x^(ai) = vi,
@@ -712,6 +725,12 @@ Matrix_int_pair * IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegr
   result->b = actualdegree;
   return result;
 }
+
+const Matrix * IM2_Matrix_compress(const Matrix *M)
+{
+  return M->compress();
+}
+
 
   /* MES: there are more matrix routines after this... */
 

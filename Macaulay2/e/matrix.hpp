@@ -245,7 +245,7 @@ public:
 
   MatrixOrNull *monomials(M2_arrayint vars) const;
 
-  Matrix *lead_var_coefficient(Matrix * &monoms) const;
+  Matrix *top_coefficients(Matrix * &monoms) const;
 
   const MatrixOrNull * basis(M2_arrayint lo_degree,
 			     M2_arrayint hi_degree,
@@ -301,6 +301,8 @@ public:
   M2_arrayint elim_vars(int nparts) const;
   M2_arrayint elim_keep(int nparts) const;
   Matrix *divide_by_var(int n, int maxd, int &maxdivided) const; // maxd<0 means divide by as much as possible
+
+  Matrix *compress() const; // Remove zero columns
 
   static Matrix *random(const Ring *R, int r, int c);
 

@@ -321,6 +321,11 @@ public:
     return R_->PolyRing::vec_lead_term(nparts, F, v);
   }
 
+  virtual vec vec_top_coefficient(const vec v, int &var, int &exp) const {
+#warning "vec_top_coefficient not implemented for fraction rings"
+  }
+
+
   virtual gbvector * translate_gbvector_from_ringelem(ring_elem coeff) const {
     return R_->PolyRing::translate_gbvector_from_ringelem(coeff);
   }

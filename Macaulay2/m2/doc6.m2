@@ -624,7 +624,7 @@ document {
      monoids or rings to specify that the variables should be ",
      TT "x_0, ..., x_n", "."}
 document {
-     Key => MonomialOrder,
+     Key => "MonomialOrderOLD",
      Headline => "monomial ordering",
      TT "MonomialOrder", " -- an optional argument used with monoids to indicate a
      monomial ordering other than the default (graded reverse lexicographic)",
@@ -640,6 +640,43 @@ document {
           },
      "Eventually, more general monomial orders will be allowed.", -- MES
      SeeAlso => {"monomial orderings", "Weights"}}
+document {
+     Key => MonomialOrder,
+     Headline => "monomial ordering",
+     TT "MonomialOrder", " -- an optional argument used with monoids and
+     polynomial rings to indicate a
+     monomial ordering other than the default (graded reverse lexicographic)",
+     PARA,
+     "In the most general setting, a monomial ordering is given by a list of
+     permissible elements, listed and described below.  Monomials are compared 
+     using the first element of the list.  If they are indistinguishable using this
+     first element, they are compared using the second element, and so on.  At the
+     end, if necessary, the graded reverse lexicographic order is used to compare the
+     monomials.  For examples, see below, or see ", TO "monomial orderings", ".",
+     PARA,
+     "Permissible elements:",
+     UL {
+	  (TO "GRevLex", " => n -- A graded reverse lexicographic block of variables"),
+	  (TO "GRevLexSmall", " => n -- Same, but with exponents packed two per word"),
+	  (TO "GRevLexTiny", " => n -- Same, but packed 4 per word"),
+	  (TO "Lex", " => n"),
+	  (TO "LexSmall", " => n"),
+	  (TO "LexTiny", " => n"),
+	  (TO "Weights", " => {...}"),
+	  (TO "Position", " => Up  or  Position => Down"),
+	  (TO "RevLex", " => n"),
+     	  (TO "GroupLex", " => n"),
+	  (TO "GroupRevLex", " => n")
+          },
+     PARA,
+     "Some examples of monomial orders.  Note that if only one item is in the list, 
+     we can dispense with the list.",
+     UL {
+	  (TT "MonomialOrder => {GrevLex=>2, GRevLex=>3}", " -- a product order"),
+	  (TT "MonomialOrder => {Weights=>{1,13,6,2}}", " -- a weight order"),
+	  (TT "MonomialOrder => Weights=>{1,13,6,2}", " -- same"),
+	  },
+     SeeAlso => {"monomial orderings"}}
 document {
      Key => Weights,
      Headline => "specify monomial ordering by weights",
