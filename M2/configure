@@ -1228,6 +1228,7 @@ test "$LDFLAGS"    && echo "   LDFLAGS=$LDFLAGS"
 test "$CPPFLAGS"   && echo "   CPPFLAGS=$CPPFLAGS"
 test "$CXX"        && echo "   CXX=$CXX"
 test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
+test "$LD_LIBRARY_PATH"   && echo "   LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
