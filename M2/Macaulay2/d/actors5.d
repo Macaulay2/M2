@@ -1460,3 +1460,14 @@ isGlobalSymbol(e:Expr):Expr := (
 	  )
      else WrongArg("a string"));
 setupfun("isGlobalSymbol",isGlobalSymbol);
+
+getGlobalSymbol(e:Expr):Expr := (
+     when e is s:string do (
+	  w := makeUniqueWord(s,parseWORD);
+	  Expr(
+	       SymbolClosure( globalFrame,
+	  	    when lookup(w,globalScope) is x:Symbol do x
+	  	    is null do makeEntry(w,dummyPosition,globalScope)
+		    )))
+     else WrongArg("a string"));
+setupfun("getGlobalSymbol",getGlobalSymbol);
