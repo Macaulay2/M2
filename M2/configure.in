@@ -11,9 +11,7 @@ AC_PROG_INSTALL
 AC_CHECK_FUNC(__finite,,AC_DEFINE(__finite,finite,if __finite is missing))
 AC_CHECK_FUNC(__isnan,,AC_DEFINE(__isnan,isnan,if __isnan is missing))
 
-echo contents of confdefs.h: >&6
-sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
-
+M2_SHOW_CONFDEFS
 M2_IS_DECLARED(char **,sys_errlist)
 M2_IS_DECLARED(char **,h_errlist)
 

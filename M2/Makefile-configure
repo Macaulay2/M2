@@ -75,9 +75,9 @@ export CONFIGURED_FILES := \
 default : stage2
 
 stage1 : configure include/config.h.in
-configure : configure.in
+configure : configure.in aclocal.m4
 	autoconf
-include/config.h.in : configure.in
+include/config.h.in : configure.in aclocal.m4
 	autoheader
 #	touch $@
 
