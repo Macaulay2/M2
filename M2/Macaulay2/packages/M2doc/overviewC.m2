@@ -299,8 +299,52 @@ document {
      The choice of monomial order can make a difference in the
      time and space required for various computations, especially Groebner basis computations.",
      PARA,
-     HEADER2 "Specifying alternate monomial orders"
+     Subnodes => {
+	  TO "examples of specifying alternate monomial orders",
+	  TO "monomial orders for free modules",
+	  TO "operations involving monomial orders",
+	  TO "packing monomials for efficiency",
+	  "Definitions of the specific monomial orders",
+	  TO "GRevLex, Lex, Weights, product orders",
+	  TO "general definition",
+	  "Developers corner",
+	  TO "obtaining the monomial order of a ring"
+	  }
      }
+document {
+     Key => "examples of specifying alternate monomial orders",
+     "For definitions of these monomial orders, see ", 
+     TO "GRevLex, Lex, Weights, product orders",
+     HEADER2 "Lexicographic order",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder=>Lex]",
+	  "a+b^100+c*d"
+	  },
+     HEADER2 "Graded lexicographic order",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder=>{Weights=>4:1,Lex}]",
+	  "a+b^100+c*d"
+	  },
+     HEADER2 "Elimination order",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder=>{Weights=>4:1,Lex}]",
+	  "a+b^100+c*d"
+	  },
+     
+     }
+document {
+     Key => "monomial orders for free modules",
+     }
+document {
+     Key => "operations involving monomial orders"
+     }
+document {
+     Key => "packing monomials for efficiency"
+     }
+document {
+     Key => "obtaining the monomial order of a ring"
+     }
+
 
 document {
      Key => "monomial orderings1", 
