@@ -41,6 +41,7 @@ peek2(Sequence,ZZ) := (s,depth) -> (
 
 precOption := precedence ( 1 => 2 )
 
+peek2(Dictionary,ZZ) := 
 peek2(HashTable,ZZ) := (s,depth) -> (
      if depth === 0 
      then net s
