@@ -115,9 +115,8 @@ simpleInput := input
 input = (filename) -> tryload(filename,simpleInput,false)
 
 setnotify := () -> (
-     -- notify = true			-- notify after initialization, commented out
+     notify = true			-- notify after initialization
      )
--- erase symbol notify    -- we have to erase this while we have a chance
 
 needs = s -> if not loaded#?s then load s
 
@@ -125,6 +124,7 @@ new HashTable from List := HashTable => (O,v) -> hashTable v
 
 load "loads.m2"
 -- don't define any global variables below this point
+stderr << "--loaded setup.m2" << endl
 setnotify()
 addStartFunction(
      () -> (

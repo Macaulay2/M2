@@ -25,7 +25,7 @@ scc1 : $(OFILES)
 $(OFILES) : $(HFILES)
 grammar.o : grammar.c; $(CC) $(CPPFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## miscellaneous
-TAGS: $(SRCFILES); etags $(SRCFILES)
+TAGS: $(SRCFILES); etags $^
 ############################## cleaning
 # we purposely don't delete grammar.c so it can be used for porting
 clean :
@@ -33,3 +33,6 @@ clean :
 		scc.install TAGS scc core y.tab.h y.output
 distclean : clean
 	rm -f Makefile
+
+Makefile : Makefile.in
+	cd ../..; ./config.status Macaulay2/c/Makefile

@@ -144,7 +144,7 @@ void pushbackenv(env v){
      }
 
 bool typematch(node e, node f){
-     return e == f || e == undefined_T || f == undefined_T;
+     return e == f || e == undefined_T || f == undefined_T || e == returned_T || f == returned_T ;
      }
 
 node lookupfunction(node fun, node argtypes){
@@ -528,8 +528,7 @@ node chkstring(node e){
      }
 
 node entmp(node e, env v){
-     node tmp;
-     tmp = newtmp(type(e),v,TRUE);
+     node tmp = newtmp(type(e),v,TRUE);
      perform(list(3,assign_S,tmp,e),v);
      return tmp;
      }
@@ -1016,9 +1015,11 @@ node chktypecase(node e, env v){
 	  casecode = chk(list(2,blockn_K,casecode),v);
 	  casecodetype = type(casecode);
 	  if (firstcasecodetype == NULL) {
-	       firstcasecodetype = casecodetype;
-	       if (firstcasecodetype != void_T) {
-	       	    vtmp = newtmp(firstcasecodetype,v,TRUE);
+	       if (casecodetype != returned_T) {
+		    firstcasecodetype = casecodetype;
+		    if (firstcasecodetype != void_T) {
+			 vtmp = newtmp(firstcasecodetype,v,TRUE);
+			 }
 		    }
 	       }
 	  else {
@@ -1027,7 +1028,7 @@ node chktypecase(node e, env v){
 		    }
 	       }
 	  if (casecode != NULL) {
-	       if (firstcasecodetype != void_T) assign(vtmp,casecode,v);
+	       if (firstcasecodetype != void_T && casecodetype != returned_T) assign(vtmp,casecode,v);
 	       else perform(casecode,v);
 	       }
 	  unwind(&v->symbols);
@@ -1117,7 +1118,7 @@ node chkoror(node e, env v) {
 node chkif(node e, env v) {
      if (length(e) == 4 || length(e) == 3) {
 	  node b,bafter,thenclause,elseclause = NULL,l = newlabel(), m=NULL;
-	  node elsetype, vtmp = NULL;
+	  node thentype = NULL, elsetype = NULL, vtmp = NULL;
      	  pushenv(&v);
 	  b = chk(enblock(cadr(e)),v);
 	  if (b != bad_K && type(b) != bool_T) {
@@ -1128,7 +1129,7 @@ node chkif(node e, env v) {
 	  performlist(bafter,v);
 	  if (length(e)==4) elseclause = chk(enblock(cadddr(e)),v);
 	  elsetype = type(elseclause);
-	  if (elsetype != void_T) {
+	  if (elsetype != void_T && elsetype != returned_T) {
 	       vtmp = newtmp(elsetype,v,TRUE);
 	       assign(vtmp,elseclause,v);
 	       }
@@ -1141,6 +1142,7 @@ node chkif(node e, env v) {
 	  perform(list(2,label_S,l), v);
 	  performlist(bafter,v);
 	  thenclause = chk(enblock(caddr(e)),v);
+	  thentype = type(thenclause);
 	  if (thenclause == bad_K || elseclause == bad_K || b == bad_K) return bad_K;
 	  if (elsetype == deferred_T) {
 	       errorpos(caddr(e),"undefined");
@@ -1150,11 +1152,12 @@ node chkif(node e, env v) {
 	       errorpos(caddr(e),"undefined");
 	       return bad_K;
 	       }
-	  if (length(e) == 4 && !typematch(type(thenclause),elsetype)) {
+	  if (length(e) == 4 && !typematch(thentype,elsetype)) {
 	       errorpos(e,"then/else clauses not of same type");
 	       return bad_K;
 	       }
-	  if (elsetype != void_T) {
+	  if (elsetype != void_T && thentype != returned_T) {
+	       if (vtmp == NULL && elsetype == returned_T) vtmp = newtmp(thentype,v,TRUE);
 	       assign(vtmp,thenclause,v);
 	       releaselater(vtmp,v);
 	       }
@@ -1312,7 +1315,7 @@ node chkreturn(node e,env v){
 	       }
      	  returngather(v);
 	  perform(list(1,return_S),v);
-	  return NULL;
+	  return returnedThing_K;
 	  }
      else {
 	  node r = chk(cadr(e),v);
@@ -1339,7 +1342,7 @@ node chkreturn(node e,env v){
      	  returngather(v);
 	  perform(list(2,return_S,cast(rettype,r,v)),v);
 #endif
-	  return NULL;
+	  return returnedThing_K;
 	  }
      }
 

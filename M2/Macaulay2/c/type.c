@@ -181,7 +181,7 @@ node type(node e){		/* assume e is checked previously */
 		    if (h == array_take_S) {
 			 return elementtype(type(CADR(e)));
 			 }
-		    if (h == return_S) return void_T;
+		    if (h == return_S) return returned_T;
 		    if (h == Ccode_S) return cadr(e);
 		    assert(FALSE);
 		    }

@@ -285,6 +285,7 @@ special(s:string,f:function(Token,TokenFile,int,bool):ParseTree,prec:int):Symbol
 
      export returnS := special("return",nunaryop,narrow);
      export breakS := special("break",nunaryop,narrow);
+     export continueS := special("continue",nunaryop,narrow);
 
      special("while",unarywhile,wide);
      special("if",unaryif,wide);

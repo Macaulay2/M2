@@ -86,12 +86,12 @@ export setupconst(name:string,value:Expr):Symbol := (
      s);
 setup(commaW,dummyBinaryFun);
 
+export returnMessage := "return message";
+export continueMessage := "continue message";
+export breakMessage := "break message";
 
-export returnMessage := "return value";
-export breakMessage := "break value";
-
-export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,emptySequence,nullE));
-export buildErrorPacket(message:string,report:Expr):Expr := Expr(Error(dummyPosition,message,report,nullE));
+export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,dummyCodeClosureList,nullE));
+export buildErrorPacket(message:string,report:CodeClosureList):Expr := Expr(Error(dummyPosition,message,report,nullE));
 
 export quoteit(name:string):string := "'" + name + "'";
 export NotYet(desc:string):Expr := buildErrorPacket(desc + " not implemented yet");
@@ -144,21 +144,15 @@ export TooManyArgs(name:string,m:int):Expr := (
      else buildErrorPacket(quoteit(name) + " expected at most " 
 	  + tostring(m) + " arguments"));
 export errorDepth := 0;
+export report(c:Code):CodeClosureList := CodeClosureList(CodeClosure(localFrame,c),self);
+export report(c:Code,x:CodeClosureList):CodeClosureList := CodeClosureList(CodeClosure(localFrame,c),x);
 export printErrorMessage(e:Code,message:string):Expr := (
      p := codePosition(e);
      if int(p.loadDepth) >= errorDepth
      then (
      	  printErrorMessage(p,message);
-     	  Expr(Error(p,message,emptySequence,nullE)))
+     	  Expr(Error(p,message,report(e),nullE)))
      else buildErrorPacket(message));
-export printErrorMessage(e:Code,message:string,report:Expr):Expr := (
-     p := codePosition(e);
-     if int(p.loadDepth) >= errorDepth
-     then (
-     	  printErrorMessage(p,message);
-     	  Expr(Error(p,message,report,nullE)))
-     else buildErrorPacket(message));
-
 export backtr(z:Expr):Expr := (
      when z is err:Error do 
      if err.position == dummyPosition 
@@ -167,9 +161,9 @@ export backtr(z:Expr):Expr := (
      then z
      else buildErrorPacket("--backtrace--",err.report)
      else z);
-export backtr(z:Expr,report:Expr):Expr := (
+export backtr(z:Expr,report:CodeClosure):Expr := (
      when z is err:Error do (
-	  err.report = Expr(Sequence(report,err.report));
+	  err.report = CodeClosureList(report,err.report);
 	  backtr(z))
      else z);
 export backtrFunction(z:Expr):Expr := (
@@ -178,7 +172,7 @@ export backtrFunction(z:Expr):Expr := (
 	  then err.value
 	  else backtr(z))
      else z);
-export backtrFunction(z:Expr,report:Expr):Expr := (
+export backtrFunction(z:Expr,report:CodeClosure):Expr := (
      when z is err:Error do (
 	  if err.message == returnMessage 
 	  then err.value
@@ -189,7 +183,7 @@ export backtrLoop(z:Expr):Expr := (
 	  if err.message == breakMessage then err.value
 	  else backtr(z))
      else z);
-export backtrLoop(z:Expr,report:Expr):Expr := (
+export backtrLoop(z:Expr,report:CodeClosure):Expr := (
      when z is err:Error do (
 	  if err.message == breakMessage then err.value
 	  else backtr(z,report))
@@ -213,8 +207,7 @@ export MissingMethodPair(method:SymbolClosure,left:Expr,right:Expr):Expr := (
 	  buildErrorPacket(
 	       "expected pair to have a method for "
 	       +quoteit(method.symbol.word.name)
-	       ),
-	  list(Expr(method),left,right)));
+	       )));
 
 -----------------------------------------------------------------------------
 -- Database stuff

@@ -1504,13 +1504,13 @@ adjacentfun(lhs:Code,rhs:Code):Expr := (
 	  when e is Error do e
 	  else (
 	       ret := ff.fn(e);
-	       when ret is Error do backtr(ret,list(left,e)) else ret))
+	       when ret is Error do backtr(ret) else ret))
      is ff:CompiledFunctionClosure do (
 	  e := eval(rhs);
 	  when e is Error do e
 	  else (
 	       ret := ff.fn(e,ff.env);
-	       when ret is Error do backtr(ret,list(left,e)) else ret))
+	       when ret is Error do backtr(ret) else ret))
      is Error do left
      else binarymethod(left,rhs,AdjacentS));
 AdjacentFun = adjacentfun;
