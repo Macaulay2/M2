@@ -4,6 +4,11 @@ Changes made, most recent ones first:
 
 New in 0.9.0:
 
+The functions 'factor' now returns factors of polynomials in the same order
+every time.  As a result 'decompose' will be more deterministic, too.  This
+was accomplished simply by setting the random number seed used by
+Singular-Factory to a constant every time.
+
 The function 'unique' has been rewritten to be more deterministic and a bit
 slower: the list returned has elements in the order as first encountered in
 the list submitted.

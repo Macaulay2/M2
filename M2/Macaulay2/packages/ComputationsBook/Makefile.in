@@ -27,24 +27,30 @@ tests: $(CHAPTERS:=.test)
 %.test :
 	$(MAKE) -C $* -f ../Makefile TOPDIR=../$(TOPDIR) run-1-test
 
-run-1-test: chapter.out.expected.trim chapter.out.trim
+run-1-test: test.out.expected.trim test.out.trim
 	diff -u $^
 
-chapter.out.trim : chapter.out patterns
-	egrep -v -f patterns <$< >$@
+test.out.trim : test.out patterns ../patterns
+	sed -f ../patterns -f patterns <$< >$@
 
-chapter.out.expected.trim : chapter.out.expected patterns
-	egrep -v -f patterns <$< >$@
+test.out.expected.trim : test.out.expected patterns ../patterns
+	sed -f ../patterns -f patterns <$< >$@
+
+changes:
+	for i in $(CHAPTERS); \
+	do diff -u $$i/chapter.m2 $$i/test.m2 ;\
+	   diff -u $$i/chapter.out.expected $$i/test.out.expected ;\
+	done
 
 clean::
 	rm -f */*.trim
 
-chapter.out : chapter.m2 \
+test.out : test.m2 \
 		../../../bin/M2 ../../../libexec/Macaulay2 \
 		../../../cache/Macaulay2-doc ../../../cache/Macaulay2-made
 	ulimit -v 160000 && \
-	time nice -19 ../../../bin/M2 -x -s -q <chapter.m2 >chapter.out.tmp && \
-	mv chapter.out.tmp chapter.out
+	time nice -19 ../../../bin/M2 -x -s -q <test.m2 >test.out.tmp && \
+	mv test.out.tmp test.out
 
 clean::
 	rm -f */*.out programming/foo
