@@ -29,6 +29,8 @@ mutableMatrix MutableMatrix := o -> (m) -> map(ring m, rawMutableMatrix(raw m, o
 
 matrix MutableMatrix := o -> m -> map(ring m, rawMatrix raw m)
 
+installAssignmentMethod(symbol "_",MutableMatrix, Sequence, (M,ij,val) -> (raw M)_ij = raw val)
+
 mutableZero = method(Options => {Dense => true})
 mutableZero(Ring,ZZ,ZZ) := o -> (R,nrows,ncols) -> 
   map(R,rawMutableMatrix(raw R,nrows,ncols,o.Dense))
