@@ -89,6 +89,7 @@ $(TOPDIR)/Makeconf.lcl :
 	echo 'NOMP        := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
 	echo '# SOCKS       := TRUE' >>$@
+	echo '# if you change CC or CXX, then remove config.cache' >>$@
 	echo 'CC            := gcc' >>$@
 	echo 'CXX           := g++' >>$@
 include $(TOPDIR)/Makeconf.lcl
@@ -203,6 +204,39 @@ export CXXFLAGS += -fomit-frame-pointer
 export LDFLAGS  += -s
 export STRIPCMD := strip
 endif
+
+ifeq "$(CC) $(ARCH)" "pgcc i586"
+export CFLAGS   += -mpentium
+endif
+
+ifeq "$(CC) $(ARCH)" "pgcc i686"
+export CFLAGS   += -mpentiumpro
+endif
+
+ifeq "$(CXX) $(ARCH)" "pg++ i586"
+export CXXFLAGS += -mpentium
+endif
+
+ifeq "$(CXX) $(ARCH)" "pg++ i686"
+export CXXFLAGS += -mpentiumpro
+endif
+
+ifeq "$(CC) $(ARCH)" "gcc i586"
+export CFLAGS   += -mpentium
+endif
+
+ifeq "$(CC) $(ARCH)" "gcc i686"
+export CFLAGS   += -mpentiumpro
+endif
+
+ifeq "$(CXX) $(ARCH)" "g++ i586"
+export CXXFLAGS += -mpentium
+endif
+
+ifeq "$(CXX) $(ARCH)" "g++ i686"
+export CXXFLAGS += -mpentiumpro
+endif
+
 endif
 
 ifdef MEMDEBUG
