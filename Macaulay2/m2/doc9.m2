@@ -1111,11 +1111,10 @@ TEST ///
      N = cokernel random (R^3, R^{2:-2})
      M = cokernel random (R^3, R^{2:-2})
      E = Ext(N,M)
-     adj = E.adjust
      scan(4, d -> (
 	  bd := basis Ext^d(N,M);
 	  assert(
-	       tally splice apply(-10..10,i -> rank source basis(adj {-d,i},E) : {i}) ===
+	       tally splice apply(-10..10,i -> rank source basis({-d,i},E) : {i}) ===
 	       tally apply(rank source bd, i -> degree bd_i))))
 ///
 
