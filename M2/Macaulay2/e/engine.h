@@ -1165,6 +1165,7 @@ enum ComputationStatusCode
   COMP_DONE_MIN_GENS     = 8,
   COMP_DONE_STEPS        = 9,  // Possible Hilbert function return value
   COMP_DONE_SUBRING_LIMIT= 10,
+  COMP_NOT_STARTED = 11,
   COMP_COMPUTING = 100
 };
 

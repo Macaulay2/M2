@@ -52,6 +52,11 @@ void Computation::text_out(buffer &o)
   o << "-- computation --";
 }
 
+void Computation::set_status(enum ComputationStatusCode c)
+{
+  computation_status = c;
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

@@ -74,6 +74,8 @@ private:
   int _first_gb_element; /* First index past the skew variable squares, quotient elements,
 			   in the array in G */
 
+  int _complete_thru_this_degree; /* Used in reporting status to the user */
+
   /* stats */
   int _stats_ngcd1;
   int _stats_nreductions;
@@ -142,7 +144,7 @@ private:
 
   void insert(POLY f, int minlevel);
   bool s_pair_step();
-  int computation_is_complete();
+  enum ComputationStatusCode computation_is_complete();
 
   /* Making the minimal GB */
   void poly_auto_reduce(vector<POLY> &mat);
