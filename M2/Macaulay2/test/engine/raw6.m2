@@ -177,6 +177,15 @@ assert(m1 == rawSubmatrix(m3,(6,7,8)))
 assert(m1 == rawSubmatrix(m3,(0,1,2)))
 assert(try (rawConcat(m1,rawDual m3); false) else true)
 
+M = rawFreeModule(R,(-1,-2))
+N = rawFreeModule(R,(3,4))
+P = rawFreeModule(R,(0,2))
+f = rawMatrix2(M,N,1:0,(0_R,0_R,0_R,0_R),false,0)
+g = rawMatrix2(M,P,1:0,(0_R,0_R,0_R,0_R),false,0)
+assert ( rawTarget f === rawTarget g )
+assert ( rawSource f ++ rawSource g === rawSource rawConcat(f,g) )
+assert ( rawTarget f === rawTarget rawConcat(f,g) )
+
 -------------------
 -- rawDirectSum ---
 -------------------

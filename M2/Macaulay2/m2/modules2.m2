@@ -683,15 +683,14 @@ truncate(List,Module) := Module => (deg,M) -> (
 	  then generators gb M.relations 
 	  else map(F, R^0, 0)
 	  );
+     error "'IM2_Matrix_truncate' not implemented yet";
      sendgg(ggPush top, ggPush bottom, ggPush deg, ggtruncate);
      subquotient(getMatrix R, if M.?relations then M.relations))
 
 truncate(ZZ,Module) := Module => (deg,M) -> truncate({deg},M)
 truncate(ZZ,Ideal) := Ideal => (deg,M) -> truncate({deg},M)
 
-issub := (f,g) -> -1 === (
-     error "rawGBContains doesn't work yet after re-implementation";
-     rawGBContains(raw gb g,raw f))
+issub := (f,g) -> -1 === rawGBContains(raw gb g,raw f)
 
 isSubset(Module,Module) := (M,N) -> (
      -- here is where we could use gb of a subquotient!

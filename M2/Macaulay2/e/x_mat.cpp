@@ -514,7 +514,6 @@ const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
 	  mat.set_column_degree(next++, M->cols()->degree(j));
 	}
     }
-  mat.compute_column_degrees();
   return mat.to_matrix();
 }
 

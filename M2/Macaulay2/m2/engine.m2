@@ -221,6 +221,8 @@ RawMonomialIdeal.synonym = "raw monomial ideal"
 RawFreeModule.name = "RawFreeModule"
 RawFreeModule.synonym = "raw ring"
 
+RawFreeModule ++ RawFreeModule := rawDirectSum
+
 degrees RawFreeModule := rawMultiDegree
 
 ZZ _ RawFreeModule := (i,F) -> (
