@@ -581,6 +581,22 @@ setupconst("version", Expr(x));
 setupconst("startupString1", Expr(startupString1));
 setupconst("startupString2", Expr(startupString2));
 
+remove(x:Sequence,i:int):Sequence := (
+     n := length(x);
+     if i < 0 then i = i + n;
+     if 0 <= i && i < n then (
+	  new Sequence len n-1 do foreach y at j in x do if i != j then provide y
+	  )
+     else x
+     );
+
+remove(x:List,i:int):List := (
+     v := remove(x.v,i);
+     if v == x.v then return x;
+     r := List(x.class, v, 0, x.mutable);
+     r.hash = hash(r);
+     r);
+
 removefun(e:Expr):Expr := (
      when e
      is args:Sequence do (
@@ -588,6 +604,14 @@ removefun(e:Expr):Expr := (
 	  then WrongNumArgs(2)
 	  else (
 	       when args.0
+	       is x:List do (
+		    when args.1 is i:Integer do
+		     if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
+		    else WrongArgInteger(2))
+	       is x:Sequence do (
+		    when args.1 is i:Integer do
+		    if isInt(i) then Expr(remove(x,toInt(i))) else WrongArgSmallInteger(2)
+		    else WrongArgInteger(2))
 	       is o:HashTable do (
 		    ret := remove(o,args.1);
 		    when ret is Error do ret else nullE)
