@@ -339,8 +339,8 @@ Nterm * WeylAlgebra::weyl_diff(
 	  // Now compute the new monomial:
 	  Nterm *tm = new_term();
 	  tm->coeff = b;
-	  for (int i=0; i<_nvars; i++)
-	    result_exp[i] += expf[i] - deriv_exp[i];
+	  for (int i2=0; i2<_nvars; i2++)
+	    result_exp[i2] += expf[i2] - deriv_exp[i2];
 	  M_->from_expvector(result_exp, tm->monom);
 
 	  // Append to the result
@@ -456,8 +456,8 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
 	  gbvector *tm = GR->new_raw_term();
 	  tm->comp = comp + t->comp;
 	  tm->coeff = b;
-	  for (int i=0; i<_nvars; i++)
-	    result_exp[i] += expf[i] - deriv_exp[i];
+	  for (int i2=0; i2<_nvars; i2++)
+	    result_exp[i2] += expf[i2] - deriv_exp[i2];
 	  M_->from_expvector(result_exp, tm->monom);
 
 	  // Append to the result

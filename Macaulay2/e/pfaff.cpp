@@ -2,13 +2,13 @@
 
 #include "pfaff.hpp"
 
-PfaffianComputation::PfaffianComputation(const Matrix *M, int p)
-  : R(M->get_ring()),
-    M(M),
+PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
+  : R(M0->get_ring()),
+    M(M0),
     pfaffs(new Matrix(R->make_FreeModule(1))),
-    p(p),
+    p(p0),
     I(0),
-    row_set(p)
+    row_set(p0)
 {
   endI = comb::binom(M->n_rows(), p);
 }
@@ -46,36 +46,36 @@ int PfaffianComputation::calc(int nsteps)
     }
 }
 
-ring_elem PfaffianComputation::calc_pfaff(int *r, int p)
+ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
      // Compute the pfaffian of the (skew symmetric) 
-     // minor with rows and columns r[0]..r[p-1].
-     // assumption: p is an even number.
+     // minor with rows and columns r[0]..r[p2-1].
+     // assumption: p2 is an even number.
 {
 //  int found;
-//  const ring_elem &result = lookup(r,p,found);
+//  const ring_elem &result = lookup(r,p2,found);
 //  if (found) return result;
   int i;
-  if (p == 2) return M->elem(r[0],r[1]);
+  if (p2 == 2) return M->elem(r[0],r[1]);
   ring_elem result = R->from_int(0);
 
   int negate = 1;
-  for (i=p-2; i>=0; i--)
+  for (i=p2-2; i>=0; i--)
     {
 #if 0
       int tmp = r[i];
-      r[i] = r[p-2];
-      r[p-2] = tmp;
+      r[i] = r[p2-2];
+      r[p2-2] = tmp;
 #else
-      swap(r[i],r[p-2]);
+      swap(r[i],r[p2-2]);
 #endif
       negate = !negate;
-      ring_elem g = M->elem(r[p-2],r[p-1]);
+      ring_elem g = M->elem(r[p2-2],r[p2-1]);
       if (R->is_zero(g)) 
 	{
 	  R->remove(g);
 	  continue;
 	}
-      ring_elem h = calc_pfaff(r,p-2);
+      ring_elem h = calc_pfaff(r,p2-2);
       ring_elem gh = R->mult(g,h);
       R->remove(g);
       R->remove(h);
@@ -87,8 +87,8 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p)
   
   // pulling out the columns has disordered r. Fix it.
   
-  int temp = r[p-2];
-  for (i=p-2; i>0; i--)
+  int temp = r[p2-2];
+  for (i=p2-2; i>0; i--)
     r[i] = r[i-1];
   r[0] = temp;
 

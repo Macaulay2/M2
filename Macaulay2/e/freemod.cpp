@@ -405,9 +405,9 @@ vec FreeModule::sub_vector(const FreeModule *F, vec v,
   for (i=0; i<F->rank(); i++)
     trans.append(-1);
 
-  for (unsigned i=0; i<r->len; i++)
-    if (r->array[i] >= 0 && r->array[i] < F->rank())
-      trans[r->array[i]] = i;
+  for (unsigned j=0; j<r->len; j++)
+    if (r->array[j] >= 0 && r->array[j] < F->rank())
+      trans[r->array[j]] = j;
 
   vecterm head;
   vecterm *result = &head;

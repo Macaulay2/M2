@@ -75,7 +75,7 @@ int exponent_table_get(exponent_table *E, const exponent expon)
   return (int) Table_get(E->table,expon);
 }
 
-void ** exponent_table_to_array(exponent_table *E)
+const void ** exponent_table_to_array(exponent_table *E)
 {
   return Table_toArray(E->table, NULL);
 }

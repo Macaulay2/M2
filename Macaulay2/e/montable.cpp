@@ -198,10 +198,10 @@ struct sorter : public binary_function<exponents,exponents,bool> {
   int nvars;
   const vector<exponents> &exps;
   const vector<int> &comps;
-  sorter(int nvars, 
-	 const vector<exponents> &exps,
-	 const vector<int> &comps) 
-    : nvars(nvars), exps(exps), comps(comps) {}
+  sorter(int nvars0, 
+	 const vector<exponents> &exps0,
+	 const vector<int> &comps0) 
+    : nvars(nvars0), exps(exps0), comps(comps0) {}
   bool operator()(int x, int y) {
     exponents xx = exps[x];
     exponents yy = exps[y];

@@ -5,15 +5,15 @@
 
 extern int gbTrace;
 
-DetComputation::DetComputation(const Matrix *M, int p,
-			       bool do_exterior,
-			       int strategy)
-  : R(M->get_ring()),
-    M(M),
+DetComputation::DetComputation(const Matrix *M0, int p0,
+			       bool do_exterior0,
+			       int strategy0)
+  : R(M0->get_ring()),
+    M(M0),
     done(false),
-    p(p),
-    do_exterior(do_exterior),
-    strategy(strategy),
+    p(p0),
+    do_exterior(do_exterior0),
+    strategy(strategy0),
     row_set(NULL),
     col_set(NULL),
     this_row(0),
@@ -162,10 +162,10 @@ int DetComputation::calc(int nsteps)
 {
   for (;;)
     {
-      int result = step();
+      int r = step();
       if (gbTrace >= 3)
 	emit_wrapped(".");
-      if (result == COMP_DONE)
+      if (r == COMP_DONE)
 	return COMP_DONE;
       if (--nsteps == 0)
 	return COMP_DONE_STEPS;
@@ -174,22 +174,22 @@ int DetComputation::calc(int nsteps)
     }
 }
 
-void DetComputation::get_minor(int *r, int *c, int p, ring_elem **D)
+void DetComputation::get_minor(int *r, int *c, int p0, ring_elem **D0)
 {
-  for (int i=0; i<p; i++)
-    for (int j=0; j<p; j++)
-      D[i][j] = M->elem(r[i],c[j]);
+  for (int i=0; i<p0; i++)
+    for (int j=0; j<p0; j++)
+      D0[i][j] = M->elem(r[i],c[j]);
 }
 
-bool DetComputation::get_pivot(ring_elem **D, int r, ring_elem &pivot, int &pivot_col)
+bool DetComputation::get_pivot(ring_elem **D0, int r, ring_elem &pivot, int &pivot_col)
   // Get a non-zero column 0..r in the r th row.
 {
   // MES: it would be worthwhile to find a good pivot.
   for (int c=0; c<=r; c++)
-    if (!R->is_zero(D[r][c]))
+    if (!R->is_zero(D0[r][c]))
     {
       pivot_col = c;
-      pivot = D[r][c];
+      pivot = D0[r][c];
       return true;
     }
   return false;
@@ -212,16 +212,16 @@ ring_elem DetComputation::detmult(ring_elem f1, ring_elem g1,
   return a;
 }
 
-void DetComputation::gauss(ring_elem **D, int i, int r, int pivot_col, ring_elem lastpivot)
+void DetComputation::gauss(ring_elem **D0, int i, int r, int pivot_col, ring_elem lastpivot)
 {
-  ring_elem f = D[i][pivot_col];
-  ring_elem pivot = D[r][pivot_col];
+  ring_elem f = D0[i][pivot_col];
+  ring_elem pivot = D0[r][pivot_col];
 
   for (int c=0; c<pivot_col; c++)
-    D[i][c] = detmult(pivot,D[i][c],f,D[r][c],lastpivot);
+    D0[i][c] = detmult(pivot,D0[i][c],f,D0[r][c],lastpivot);
 
   for (int c=pivot_col+1; c<=r; c++)
-    D[i][c-1] = detmult(pivot,D[i][c],f,D[r][c],lastpivot);
+    D0[i][c-1] = detmult(pivot,D0[i][c],f,D0[r][c],lastpivot);
 
   R->remove(f);
 }
@@ -263,57 +263,57 @@ ring_elem DetComputation::bareiss_det()
 
   R->remove(pivot);
   R->remove(lastpivot);
-  ring_elem result = D[0][0];
+  ring_elem r = D[0][0];
   D[0][0] = (Nterm*)0;
 
-  if (sign < 0) R->negate_to(result);
+  if (sign < 0) R->negate_to(r);
 
-  return result;
+  return r;
 }
-ring_elem DetComputation::calc_det(int *r, int *c, int p)
-     // Compute the determinant of the minor with rows r[0]..r[p-1]
-     // and columns c[0]..c[p-1].
+ring_elem DetComputation::calc_det(int *r, int *c, int p0)
+     // Compute the determinant of the minor with rows r[0]..r[p0-1]
+     // and columns c[0]..c[p0-1].
 {
 //  int found;
-//  const ring_elem &result = lookup(r,c,p,found);
+//  const ring_elem &result = lookup(r,c,p0,found);
 //  if (found) return result;
   int i;
-  if (p == 1) return M->elem(r[0],c[0]);
-  ring_elem result = R->from_int(0);
+  if (p0 == 1) return M->elem(r[0],c[0]);
+  ring_elem answer = R->from_int(0);
 
   int negate = 1;
-  for (i=p-1; i>=0; i--)
+  for (i=p0-1; i>=0; i--)
     {
 #if 1
-      swap(c[i],c[p-1]);
+      swap(c[i],c[p0-1]);
 #else
       int tmp = c[i];
-      c[i] = c[p-1];
-      c[p-1] = tmp;
+      c[i] = c[p0-1];
+      c[p0-1] = tmp;
 #endif
       negate = !negate;
-      ring_elem g = M->elem(r[p-1],c[p-1]);
+      ring_elem g = M->elem(r[p0-1],c[p0-1]);
       if (R->is_zero(g)) 
 	{
 	  R->remove(g);
 	  continue;
 	}
-      ring_elem h = calc_det(r,c,p-1);
+      ring_elem h = calc_det(r,c,p0-1);
       ring_elem gh = R->mult(g,h);
       R->remove(g);
       R->remove(h);
       if (negate)
-	R->subtract_to(result, gh);
+	R->subtract_to(answer, gh);
       else
-	R->add_to(result, gh);
+	R->add_to(answer, gh);
     }
   
   // pulling out the columns has disordered c. Fix it.
   
-  int temp = c[p-1];
-  for (i=p-1; i>0; i--)
+  int temp = c[p0-1];
+  for (i=p0-1; i>0; i--)
     c[i] = c[i-1];
   c[0] = temp;
 
-  return result;
+  return answer;
 }

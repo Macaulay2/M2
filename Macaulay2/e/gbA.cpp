@@ -946,10 +946,10 @@ struct gbelem_sorter : public binary_function<int,int,bool> {
   GBRing *R;
   const FreeModule *F;
   const vector<GBasis::gbelem *> &gb;
-  gbelem_sorter(GBRing *R,
-		const FreeModule *F,
+  gbelem_sorter(GBRing *R0,
+		const FreeModule *F0,
 		const vector<GBasis::gbelem *> &g)
-    : R(R), F(F), gb(g) {}
+    : R(R0), F(F0), gb(g) {}
   bool operator()(int xx, int yy) {
     gbvector *x = gb[xx]->g.f;
     gbvector *y = gb[yy]->g.f;
@@ -1148,7 +1148,7 @@ void gbA::text_out(buffer &o)
 {
   o << "# pairs computed = " << _n_pairs_computed << newline;
   if (gbTrace >= 5 && gbTrace % 2 == 1)
-    for (int i=0; i<G->gb.size(); i++)
+    for (unsigned int i=0; i<G->gb.size(); i++)
       {
 	o << i << '\t';
 	R->gbvector_text_out(o, _F, G->gb[i]->g.f);

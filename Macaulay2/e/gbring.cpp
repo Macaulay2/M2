@@ -14,9 +14,9 @@ void MemoryAllocator::new_slab()
 {
   // grab a new slab, and chop it into element_size pieces, placing them
   // onto the free list.
-  slab *new_slab = new slab;
-  new_slab->next = top_slab;
-  top_slab = new_slab;
+  slab *newSlab = new slab;
+  newSlab->next = top_slab;
+  top_slab = newSlab;
 
   // Time to chop it up.
 
@@ -189,7 +189,7 @@ class GRType_POLY : public GRType
   int _n_orig_vars;
   int *_MONOM1;
 
-  GRType_POLY(const PolynomialRing *P) : GRType(0), P(P)
+  GRType_POLY(const PolynomialRing *P0) : GRType(0), P(P0)
   {
     const Ring *R = P->Ncoeffs();
     next_ = R->get_GRType();
@@ -325,12 +325,7 @@ void GBRing::initialize_quotients()
 //////////////////////
 // Polynomial rings //
 //////////////////////
-GBRingPoly::GBRingPoly(const PolynomialRing *R)
-  : GBRing(R)
-{
-  // Nothing more to do
-}
-
+GBRingPoly::GBRingPoly(const PolynomialRing *R0) : GBRing(R0) { }
 
 GBRing * GBRing::create_PolynomialRing(const PolynomialRing *R)
 {
@@ -366,10 +361,9 @@ gbvector *GBRingPoly::mult_by_term(const FreeModule *F,
 // Skew commutative polynomial rings //
 ///////////////////////////////////////
 
-GBRingSkew::GBRingSkew(const SkewPolynomialRing *R)
-  : GBRing(R)
+GBRingSkew::GBRingSkew(const SkewPolynomialRing *R0) : GBRing(R0)
 {
-  _skew = R->_skew;
+  _skew = R0->_skew;
 }
 
 GBRing * GBRing::create_SkewPolynomialRing(const SkewPolynomialRing *R)
@@ -415,18 +409,18 @@ gbvector *GBRingSkew::mult_by_term(const FreeModule *F,
 ///////////////////
 // Weyl algebra ///
 ///////////////////
-GBRingWeyl::GBRingWeyl(const WeylAlgebra *R)
-  : GBRing(R)
+GBRingWeyl::GBRingWeyl(const WeylAlgebra *R0)
+  : GBRing(R0)
 {
   _is_weyl_algebra = true;
-  _W = R;
+  _W = R0;
 }
 
-GBRingWeylZZ::GBRingWeylZZ(const WeylAlgebra *R)
-  : GBRingWeyl(R)
+GBRingWeylZZ::GBRingWeylZZ(const WeylAlgebra *R0)
+  : GBRingWeyl(R0)
 {
   _is_weyl_algebra = true;
-  _W = R;
+  _W = R0;
 }
 
 GBRing * GBRing::create_WeylAlgebra(const WeylAlgebra *R)
@@ -576,6 +570,7 @@ int GBRing::gbvector_term_weight(const FreeModule *F,
 			   const gbvector *f)
 {
 #warning "gbvector_term_weight not implemented"
+  return 0;
 }
 
 int GBRing::gbvector_degree(const FreeModule *F, 
@@ -1192,10 +1187,10 @@ void GBRing::gbvector_auto_reduce(const FreeModule *F,
 // gbvector heap operations //
 //////////////////////////////
 
-gbvectorHeap::gbvectorHeap(GBRing *GR, const FreeModule *FF)
-: GR(GR),
+gbvectorHeap::gbvectorHeap(GBRing *GR0, const FreeModule *FF)
+: GR(GR0),
   F(FF),
-  K(GR->get_flattened_coefficients()),
+  K(GR0->get_flattened_coefficients()),
   top_of_heap(-1),
   mLead(-1)
 {

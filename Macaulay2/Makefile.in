@@ -41,6 +41,7 @@ distclean clean ::; $(MAKE) DEPENDS=no -C html-check-links $@
 distclean clean ::; $(MAKE) DEPENDS=no -C c $@
 all justM2 ::; $(MAKE) -C c all
 ################################# e
+all check justM2 initialize ::; $(MAKE) -C e DEPENDS=no initialize
 justM2 ::; $(MAKE) -C e all
 all check ::; $(MAKE) -C e $@
 initialize distclean clean ::; $(MAKE) DEPENDS=no -C e $@

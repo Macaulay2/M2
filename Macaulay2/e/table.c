@@ -122,12 +122,12 @@ void *Table_remove(T *table, const void *key) {
 		}
 	return NULL;
 }
-void **Table_toArray(T *table, void *end) {
+const void **Table_toArray(T *table, void *end) {
 	int i, j = 0;
-	void **array;
+	const void **array;
 	struct binding *p;
 	assert(table);
-	array = (void **) ALLOC((2*table->length + 1)*sizeof (*array));
+	array = (const void **) ALLOC((2*table->length + 1)*sizeof (*array));
 	for (i = 0; i < table->size; i++)
 		for (p = table->buckets[i]; p; p = p->link) {
 			array[j++] = (const void *)p->key;

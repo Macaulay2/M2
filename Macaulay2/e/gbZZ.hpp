@@ -25,9 +25,9 @@ struct GB_elem
   GB_elem()
     : f(NULL), fsyz(NULL), lead_exp(NULL), 
       sugar_degree(0) {}
-  GB_elem(gbvector *f, gbvector *fsyz, int sugar_degree) 
-    : f(f), fsyz(fsyz), lead_exp(NULL), 
-      sugar_degree(sugar_degree) {}
+  GB_elem(gbvector *f0, gbvector *fsyz0, int sugar_degree0) 
+    : f(f0), fsyz(fsyz0), lead_exp(NULL), 
+      sugar_degree(sugar_degree0) {}
 };
 
 

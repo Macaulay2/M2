@@ -4,8 +4,8 @@
 
 stash *VectorOperations::vecstash = 0;
 
-VectorOperations::VectorOperations(const Ring *K)
-: K(K)
+VectorOperations::VectorOperations(const Ring *K0)
+: K(K0)
 {
   if (vecstash == 0)
     vecstash = new stash("sparse_vectors", sizeof(sparse_vector));
@@ -476,9 +476,9 @@ SparseMutableMatrix::SparseMutableMatrix(const Matrix *m)
     }
 }
 
-SparseMutableMatrix::SparseMutableMatrix(const Ring *K, int nrows, int ncols)
+SparseMutableMatrix::SparseMutableMatrix(const Ring *K0, int nrows0, int ncols0)
 {
-  initialize(K,nrows,ncols);
+  initialize(K0,nrows0,ncols0);
 }
 
 SparseMutableMatrix * SparseMutableMatrix::make(const Ring *K, int nrows, int ncols)

@@ -182,15 +182,18 @@ RES =   -e "s/geobucket/respolyHeap/g"  -e "s/FREEMODULETYPE/const res2_poly/g" 
 geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
 geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
 geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
+
+# this target is used by the Makefile in the parent directory
 initialize :: $(addsuffix .hpp, $(GENERATED_H))
+
 tags:: TAGS
 TAGS: $(HHFILES) $(CCFILES); etags $^
 clean::; rm -f *.lo *.o $(LIBGB) TAGS $(addsuffix .hpp, $(GENERATED_H))
 clean::; $(MAKE) -C tests $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
-%.dep: %.cpp; $(CXX) -MM $(CPPFLAGS) $< | sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@
-%.dep: %.c;   $(CC)  -MM $(CPPFLAGS) $< | sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@
-clean::; rm -f *.dep
+%.dep: %.cpp; $(CXX) -MM $(CPPFLAGS) $< >dep-$$$$.tmp && <dep-$$$$.tmp sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm dep-$$$$.tmp
+%.dep: %.c;   $(CC)  -MM $(CPPFLAGS) $< >dep-$$$$.tmp && <dep-$$$$.tmp sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm dep-$$$$.tmp
+clean::; rm -f *.dep dep-*.tmp
 ifeq "$(DEPENDS)" "yes"
 include $(CFILES:.c=.dep) $(CCFILES:.cpp=.dep)
 endif

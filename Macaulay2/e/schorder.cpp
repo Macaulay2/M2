@@ -3,12 +3,12 @@
 #include "comb.hpp"
 #include "polyring.hpp"
 
-void SchreyerOrder::append(int compare_num, const int *base_monom)
+void SchreyerOrder::append(int compare_num0, const int *baseMonom)
 {
   int *me = _order.alloc(_nslots);
-  *me++ = compare_num;
+  *me++ = compare_num0;
   for (int i=1; i<_nslots; i++)
-    *me++ = *base_monom++;
+    *me++ = *baseMonom++;
   _rank++;
 }
 

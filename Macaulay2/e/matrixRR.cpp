@@ -141,11 +141,11 @@ extern "C" void cblas_dgemm(const int Order,     // how matrices are stored, by 
 			    const int ldc);      // rows of C
 
 
-void LMatrixRR::initialize(int nrows, int ncols, double *array)
+void LMatrixRR::initialize(int nrows0, int ncols0, double *array)
 {
-  _nrows = nrows;
-  _ncols = ncols;
-  int len = nrows * ncols;
+  _nrows = nrows0;
+  _ncols = ncols0;
+  int len = nrows0 * ncols0;
   _array = (double *) getmem_atomic(sizeof(double) * len);
   if (array == 0)
     {
@@ -159,12 +159,12 @@ void LMatrixRR::initialize(int nrows, int ncols, double *array)
     }
 }
 
-LMatrixRR::LMatrixRR(int nrows, int ncols)
-  : _nrows(nrows),
-    _ncols(ncols)
+LMatrixRR::LMatrixRR(int nrows0, int ncols0)
+  : _nrows(nrows0),
+    _ncols(ncols0)
 {
-  initialize(nrows, ncols, 0);
-  // We assume that nrows, ncols >= 0.
+  initialize(nrows0, ncols0, 0);
+  // We assume that nrows0, ncols0 >= 0.
 }
 
 
@@ -597,7 +597,7 @@ LMatrixRROrNull * LMatrixRR::LU(LMatrixRR *L, LMatrixRR *U, LMatrixRR *P)
   return U;
 }
 
-LMatrixCCOrNull * LMatrixRR::eigenvalues(LMatrixCC *eigenvalues)
+LMatrixCCOrNull * LMatrixRR::eigenvalues(LMatrixCC *eigvals)
 {
   if (_nrows != _ncols) {
     ERROR("expected a square matrix");
@@ -612,7 +612,7 @@ LMatrixCCOrNull * LMatrixRR::eigenvalues(LMatrixCC *eigenvalues)
   double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
   int info;
 
-  LMatrixRR * real = new LMatrixRR(size,1); // real components of eigenvalues
+  LMatrixRR * real = new LMatrixRR(size,1); // real components of eigvals
   LMatrixRR * imag = new LMatrixRR(size,1); // imaginary components
 
   dgeev_(&dont, &dont, 
@@ -630,22 +630,22 @@ LMatrixCCOrNull * LMatrixRR::eigenvalues(LMatrixCC *eigenvalues)
     }
   else if (info > 0) 
     {
-      ERROR("the QR algorithm in dgeev failed to compute all eigenvalues");
+      ERROR("the QR algorithm in dgeev failed to compute all eigvals");
       return 0;
     }
 
-  eigenvalues->resize(size, 1);
+  eigvals->resize(size, 1);
   for (int i = 0; i < size; i++) {
-    eigenvalues->_array[2*i] = real->_array[i];
-    eigenvalues->_array[2*i+1] = imag->_array[i];
+    eigvals->_array[2*i] = real->_array[i];
+    eigvals->_array[2*i+1] = imag->_array[i];
   }
 
-  return eigenvalues;
+  return eigvals;
   
 }
 
-LMatrixCC * LMatrixRR::eigenvectors(LMatrixCC *eigenvalues,
-				    LMatrixCC *eigenvectors)
+LMatrixCC * LMatrixRR::eigenvectors(LMatrixCC *eigvals,
+				    LMatrixCC *eigvecs)
 {
   if (_nrows != _ncols) {
     ERROR("expected a square matrix");
@@ -661,16 +661,16 @@ LMatrixCC * LMatrixRR::eigenvectors(LMatrixCC *eigenvalues,
   double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
   int info;
 
-  LMatrixRR * real = new LMatrixRR(size,1); // real components of eigenvalues
+  LMatrixRR * real = new LMatrixRR(size,1); // real components of eigvals
   LMatrixRR * imag = new LMatrixRR(size,1); // imaginary components
-  LMatrixRR * eigen = new LMatrixRR(size,size); // eigenvectors
+  LMatrixRR * eigen = new LMatrixRR(size,size); // eigvecs
 
   dgeev_(&dont, &doit, 
 	 &size, copythis->_array, &size,
 	 real->_array, 
 	 imag->_array,
-	 (double *)0, &size,  /* left eigenvectors */
-	 eigen->_array, &size,  /* right eigenvectors */
+	 (double *)0, &size,  /* left eigvecs */
+	 eigen->_array, &size,  /* right eigvecs */
 	 workspace, &wsize, &info);
 
   if (info < 0)       
@@ -680,36 +680,36 @@ LMatrixCC * LMatrixRR::eigenvectors(LMatrixCC *eigenvalues,
     }
   else if (info > 0) 
     {
-      ERROR("the QR algorithm in dgeev failed to compute all eigenvalues");
+      ERROR("the QR algorithm in dgeev failed to compute all eigvals");
       return 0;
     }
 
-  // Make the complex arrays of eigenvalues and eigenvectors
-  eigenvalues->resize(size, 1);
-  eigenvectors->resize(size, size);
+  // Make the complex arrays of eigvals and eigvecs
+  eigvals->resize(size, 1);
+  eigvecs->resize(size, size);
   for (int j = 0; j < size; j++) {
-    eigenvalues->_array[2*j] = real->_array[j];
-    eigenvalues->_array[2*j+1] = imag->_array[j];
+    eigvals->_array[2*j] = real->_array[j];
+    eigvals->_array[2*j+1] = imag->_array[j];
     int loc = j*size;
     if (imag->_array[j] == 0) {
       for (int i = 0; i < size; i++)
-	eigenvectors->_array[2*(loc+i)] = eigen->_array[loc+i];
+	eigvecs->_array[2*(loc+i)] = eigen->_array[loc+i];
     } else if (imag->_array[j] > 0) {
       for (int i = 0; i < size; i++) {
-	eigenvectors->_array[2*(loc+i)] = eigen->_array[loc+i];
-	eigenvectors->_array[2*(loc+i) + 1] = eigen->_array[loc+size+i];
-	eigenvectors->_array[2*(loc+size+i)] = eigen->_array[loc+i];
-	eigenvectors->_array[2*(loc+size+i) + 1] = -eigen->_array[loc+size+i];
+	eigvecs->_array[2*(loc+i)] = eigen->_array[loc+i];
+	eigvecs->_array[2*(loc+i) + 1] = eigen->_array[loc+size+i];
+	eigvecs->_array[2*(loc+size+i)] = eigen->_array[loc+i];
+	eigvecs->_array[2*(loc+size+i) + 1] = -eigen->_array[loc+size+i];
       }
     } 
   }
 
-  return eigenvectors;
+  return eigvecs;
   
 }
 
 
-LMatrixRROrNull * LMatrixRR::eigenvalues_symmetric(LMatrixRR *eigenvalues)
+LMatrixRROrNull * LMatrixRR::eigenvalues_symmetric(LMatrixRR *eigvals)
 {
   if (_nrows != _ncols) {
     ERROR("expected a square matrix");
@@ -726,11 +726,11 @@ LMatrixRROrNull * LMatrixRR::eigenvalues_symmetric(LMatrixRR *eigenvalues)
   double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
   int info;
 
-  eigenvalues->resize(size,1);
+  eigvals->resize(size,1);
 
   dsyev_(&dont, &triangle, 
 	 &size, copythis->_array, 
-	 &size, eigenvalues->_array,
+	 &size, eigvals->_array,
 	 workspace, &wsize, &info);
 
   if (info < 0)
@@ -744,11 +744,11 @@ LMatrixRROrNull * LMatrixRR::eigenvalues_symmetric(LMatrixRR *eigenvalues)
       return 0;
     }
 
-  return eigenvalues;
+  return eigvals;
 }
 
-LMatrixRROrNull * LMatrixRR::eigenvectors_symmetric(LMatrixRR *eigenvalues, 
-						    LMatrixRR *eigenvectors)
+LMatrixRROrNull * LMatrixRR::eigenvectors_symmetric(LMatrixRR *eigvals, 
+						    LMatrixRR *eigvecs)
 {
   if (_nrows != _ncols) {
     ERROR("expected a square matrix");
@@ -763,12 +763,12 @@ LMatrixRROrNull * LMatrixRR::eigenvectors_symmetric(LMatrixRR *eigenvalues,
   double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
   int info;
 
-  eigenvectors->set_matrix(this);
-  eigenvalues->resize(size,1);
+  eigvecs->set_matrix(this);
+  eigvals->resize(size,1);
 
   dsyev_(&doit, &triangle, 
-	 &size, eigenvectors->_array, 
-	 &size, eigenvalues->_array,
+	 &size, eigvecs->_array, 
+	 &size, eigvals->_array,
 	 workspace, &wsize, &info);
 
   if (info < 0)
@@ -782,7 +782,7 @@ LMatrixRROrNull * LMatrixRR::eigenvectors_symmetric(LMatrixRR *eigenvalues,
       return 0;
     }
 
-  return eigenvectors;
+  return eigvecs;
 }
 
 

@@ -87,8 +87,8 @@ public:
   RingElement *fraction(const Ring *R, const RingElement *bottom) const;
 };
 
-inline RingElement::RingElement(const Ring *R, ring_elem f) : 
-  immutable_object(0), R(R), val(f)
+inline RingElement::RingElement(const Ring *R0, ring_elem f) : 
+  immutable_object(0), R(R0), val(f)
 {
 }
 

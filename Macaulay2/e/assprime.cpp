@@ -119,12 +119,12 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
 	  return ;
 	case 1 : 
 	  if (codim < min_codim)
-	    for (index_varpower i = m; i.valid(); ++i)
-	      if (exp[i.var()] == 0)
+	    for (index_varpower i2 = m; i2.valid(); ++i2)
+	      if (exp[i2.var()] == 0)
 		{
-		  exp[i.var()] = 1 ;
+		  exp[i2.var()] = 1 ;
 		  ass_prime_generator(mi->next(p), codim+1) ;
-		  exp[i.var()] = -1 ;
+		  exp[i2.var()] = -1 ;
 		}
 	  return ;
 	}
