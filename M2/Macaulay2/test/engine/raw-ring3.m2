@@ -1,0 +1,49 @@
+-- Test of towers of quotient rings --
+
+-- many things not working here yet...
+
+needs "raw-util.m2"
+errorDepth = 0
+
+R = ZZ[x,y,z]
+assert(rawAmbientRing raw R === raw R)
+assert(rawDenominatorRing raw R === null)
+
+A = R/(x^2+3*y^3-4)
+describe A
+toString A -- WRONG
+toExternalString A -- WRONG TOO??
+
+R2 = ZZ[x,y,z]
+assert(rawAmbientRing raw A === raw R)
+assert not (rawAmbientRing raw A === raw R2)
+assert(rawDenominatorRing raw A === null)
+
+B = R[a,b,c]
+rawAmbientRing raw B
+
+R = ZZ[x,y,z]
+S = R[a,b,c]
+ambS = ZZ[a,b,c,x,y,z,Degrees=>{1,1,1,0,0,0},MonomialOrder=>{3,3}]
+  -- currently an error: degrees must be positive?
+ambS = ZZ[a,b,c,x,y,z,MonomialOrder=>{3,3}]
+
+use R
+A = R/(x^2+3*y^3-4)
+
+use A
+m = ideal(3*x-4, y*z-3)
+gens gb m
+m1 = substitute(gens gb m, ambS)
+A1 = ambS/ideal(m1)
+presentation A1
+describe A1
+toString A1
+A2 = ZZ [a, b, c, x, y, z, Option {MonomialOrder, {3, 3}}]/(3*x-4,20*z^2-243*y,y*z-3,27*y^2+x*z-8*z,x*z^2-8*z^2+81*y,x^2*z+9*y^2-4*z,x^3+y^3-x^2-x)
+  -- fails
+use A1
+n = ideal(a*x+b*y+c*z)
+n1 = gens gb n
+
+n2 = substitute(n1, S)
+A2 = S/ideal(n2)
