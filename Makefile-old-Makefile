@@ -190,6 +190,11 @@ ifdef FACTORY
 else
 	echo '#undef FACTORY' >>tmp.tmp
 endif
+ifdef GCMALLOC
+	echo '#define GCMALLOC' >>tmp.tmp
+else
+	echo '#undef GCMALLOC' >>tmp.tmp
+endif
 	mv tmp.tmp $@
 clean::; rm -f Makeconf.h
 ###################### Macaulay 2 binary distribution
