@@ -32,7 +32,8 @@ P=kk[p_1..p_6]**kk[y_0..y_3]
 pluecker=ideal{y_0*y_1-p_1,y_0*y_2-p_2,y_0*y_3-p_3,y_1*y_2-p_4,y_1*y_3-p_5,y_2*y_3-p_6}
 plgb=gb pluecker
 MA=substitute(fA.dd_3,matrix{{y_0..y_3}})
-MA % plgb
+try MA % plgb						    -- this line crashed before
+     	       	    	      	   	     	       	    -- now it just gives an error
 -- Local Variables:
 -- compile-command: "make bug.okay"
 -- End:
