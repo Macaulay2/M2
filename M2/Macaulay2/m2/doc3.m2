@@ -572,13 +572,20 @@ document {
      "Some functions accept optional inputs in addition to their required inputs.  In the documentation,
      such an optional input is indicated by writing ", TT "NAME => ...", ", where ", TT "NAME", " is the
      name of the optional input, and the dots indicate the place where the user will provide the
-     value of the optional input.  The optional input can provided between parentheses along with the
-     other inputs (arguments) of the function.  For example, if the function is normally used with two
-     required inputs, then instead of typing ", TT "f(x,y)", ", you may type like
-     ", TT "f(x,y,NAME=>t)", ", where ", TT "t", " is the value to be provided to ", TT "f", " as
-     the value of the optional input with name ", TT "NAME", ".  The optional inputs can be inserted
+     value of the optional input.",
+     PARA,
+     "Optional inputs can be provided between parentheses along with the
+     other inputs (or arguments) of the function.  For example, if the function is normally used with two
+     required inputs, then instead of typing ", TT "f(x,y)", ", you may type 
+     ", TT "f(x,y,FOO => t, BAR => u)", ", where ", TT "t", " is the value to be provided to ", TT "f", " as
+     the value of the optional input named ", TT "FOO", " and ", TT "u", " is the value to be
+     provided to ", TT "f", " as the value of the optional input named ", TT "BAR", ".",
+     PARA,
+     "The optional inputs can be inserted
      in any order, and may even occur before the required inputs.  If more than one optional input with the same
-     option name are given, then the value accompanying the right-most one is the value provided to the function."
+     option name are given, then the value accompanying the right-most one is the value provided to the function.",
+     PARA,
+     "Use ", TO (options,Function), " to discover the optional arguments accepted by a function."
      }
 
 -- Local Variables:

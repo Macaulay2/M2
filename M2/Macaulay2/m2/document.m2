@@ -915,7 +915,7 @@ documentation Array := key -> (		    -- optional argument
      Hypertext fixuptop ( title key, synopsis key, makeDocBody key,
 	  PARA BOLD "Further information", 
 	  fixup UL {
-	       SEQ{ "Default value: ", if hasDocumentation default then TOH {default} else TT toString default },
+	       SEQ{ "Default value: ", if hasDocumentation default then TO {default} else TT toString default },
 	       SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
 	       SEQ{ "Option name: ", TOH {opt} }
 	       },
