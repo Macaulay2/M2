@@ -53,6 +53,11 @@ depend on some of the earlier ones.
      get at: ftp://ftp.gnu.org/gnu/gmp
     license: gmp/COPYING.LIB
       notes: on Solaris, gmp will use both cc and gcc; don't worry
+	     Also, make sure you patch the source with the diffs in INSTALL.gmp-4.1-patch
+		or else it gets confused when including modern versions of gmp.h.
+	 	Do it this way:
+			cd factory
+			patch -p1 < ...../INSTALL.gmp-4.1-patch
 
     library: Singular-factory (libcf libcfmem)
     release: factory-1.3b, tar file date 2001/06/25
@@ -69,6 +74,11 @@ depend on some of the earlier ones.
 	     make
 	     make install
 		-- don't bother with 'make gftables'
+	     Also, make sure you patch the source with the diffs in INSTALL.factory-2.0.2-patch,
+		or else it gets confused when including modern versions of gmp.h.
+	 	Do it this way:
+			cd factory
+			patch -p1 < ...../INSTALL.factory-2.0.2-patch
 
     library: Singular-libfac
     release: libfac-0.3.2, tar file date 2001/06/28
@@ -85,10 +95,10 @@ depend on some of the earlier ones.
 		error messages about duplicate declarations.
 	     Also, ignore the warning message about factory.h being missing, if you think you've put
 		it in $prefix/include.
-	     Also, make sure you patch the source with the diffs in INSTALL.libfac-0.3.2-diffs,
+	     Also, make sure you patch the source with the diffs in INSTALL.libfac-0.3.2-patch,
 		or else it gets confused about the NOSTREAMIO option.  Do it this way:
 			cd libfac
-			patch -p1 < ...../INSTALL.libfac-0.3.2-diffs
+			patch -p1 < ...../INSTALL.libfac-0.3.2-patch
 			./configure
 			make DEFS=-DHAVE_SINGULAR_ERROR
 			make prefix=/usr/local/... install
