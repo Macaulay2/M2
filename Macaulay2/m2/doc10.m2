@@ -527,7 +527,10 @@ document { getWWW,
      with ", TT "TEXT", ".",
      PARA,
      "This doesn't work under Solaris because Sun doesn't provide sockets
-     or name service to statically linked programs like this one."
+     or name service to statically linked programs like this one.",
+     PARA,
+     "Accessing a secure web site (whose URL begins with ", TT "https:", ")
+     depends on your having installed ", TT "openssl", " on your system."
      }
 
 document { browse,
