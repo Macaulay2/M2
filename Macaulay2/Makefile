@@ -5,9 +5,9 @@ all ::				# everything needed for the distribution
 tests ::
 doc : html book Vasconcelos-appendix
 ################################# setup
-all :: initialize
+all :: initialize config
 include ../Makeconf
-.PHONY: default tests all clean dirs misc \
+.PHONY: default tests all clean dirs misc config \
 		initialize doc html book exe zip
 ROOT := $(shell basename `pwd`)
 ################################# version
@@ -48,6 +48,7 @@ tests ::; $(MAKE) -C dbm tests
 clean ::; $(MAKE) NODEPENDS=1 -C dbm clean
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# d
+config ::; $(MAKE) NODEPENDS=1 -C d compat.h
 all ::; util/restart d/restart.tmp $(MAKE) -C d all
 clean ::; $(MAKE) NODEPENDS=1 -C d clean
 wc ::;  $(MAKE) -C d NODEPENDS=1 wc
