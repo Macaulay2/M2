@@ -121,6 +121,11 @@ bool EGB1::set_up(const Matrix &m, int csyz, int nsyz, int strat)
 {
   // Returns false if an error is found.  That is, if the ring of 'm' is not
   // appropriate.
+  n_gb = n_subring = 0;
+  n_pairs = n_computed = 0;
+  n_saved_gcd = n_saved_lcm = n_saved_gcd_choice = 0;
+  next_gb_num = 1;
+
   int i;
   nvars = I.n_vars();
   exponent_stash = new stash("exponents", nvars * sizeof(int));
@@ -159,11 +164,7 @@ bool EGB1::set_up(const Matrix &m, int csyz, int nsyz, int strat)
   strategy = strat;
 
   is_ideal = (nrows == 1 && !csyz) && (!I.ring_is_weyl_algebra());
-
-  n_gb = n_subring = 0;
-  n_pairs = n_computed = 0;
-  n_saved_gcd = n_saved_lcm = 0;
-  next_gb_num = 1;
+  use_hilb_function = false;
   return true;
 }
 
@@ -542,21 +543,58 @@ void EGB1::sort_pairs(es_pair *&p) const
   p = merge_pairs(p1, p2);
 }
 
-void EGB1::choose_nice_pair(es_pair *&p) const
+void EGB1::choose_nice_pair(es_pair *&p)
 {
-  if (comp_printlevel >= 10)
+  if (comp_printlevel >= 5)
     {
       int len = 0; 
       for (es_pair *a = p; a!=0; a=a->next) len++;
-      buffer o;
-      o << "sp" << len;
-      emit(o.str());
+      if (len > 1)
+	{
+	  buffer o;
+	  if (comp_printlevel >= 7)
+	    {
+	      o << "choice of spair: ";
+	      for (es_pair *q = p; q!= 0; q = q->next)
+		{
+		  o << "    ";
+		  spair_debug_out(o, q);
+		}
+	    }
+	  else
+	    o << "sp" << len;
+	  emit(o.str());
+	}
     }
-  es_pair *answer = p;
-  p = p->next;
-  answer->next = 0;
-  remove_pairs(p);
-  p = answer;
+  if (p->next == 0) return;
+  if (is_ideal)
+    {
+      // See if one is a gcd 1 pair.
+      // If so, keep that one.
+      if (is_gcd_one_pair(p))
+	{
+	  es_pair *rest = p->next;
+	  p->next = 0;
+	  remove_pairs(rest);
+	  return;
+	}
+      for (es_pair *q = p; q->next != 0; q = q->next)
+	{
+	  if (is_gcd_one_pair(q->next))
+	    {
+	      es_pair *answer = q->next;
+	      q->next = answer->next;
+	      remove_pairs(p);
+	      p = answer;
+	      p->next = 0;
+	      n_saved_gcd_choice++;
+	      return;
+	    }
+	}
+    }
+  es_pair *rest = p->next;
+  p->next = 0;
+  remove_pairs(rest);
 }
 void EGB1::choose_unique_pairs(es_pair *&p) const
 {
@@ -688,6 +726,7 @@ void EGB1::update_pairs(egb_elem *m)
 {
   // Step 1: remove un-needed old pairs
   // NOTE: we don't need to check the elements of the current degree?
+  // THIS UPDATE of old pairs uses PRIVATE DATA in 'spairs'.
   es_pair head;
   head.next = spairs->heap;
   es_pair *p = &head;
@@ -699,6 +738,7 @@ void EGB1::update_pairs(egb_elem *m)
 	tmp->next = 0;
 	remove_pair(tmp);
 	n_saved_lcm++;
+	spairs->nelems--;
       }
   else
     p = p->next;
@@ -776,25 +816,27 @@ int EGB1::gb_reduce(vector_heap &fh, vector_heap &fsyzh, EVector &f, EVector &fs
 {
   vector_collector freduced = I.start_collection(F);
 
-  ringelement coeff;  // This is just 'visited'
-  monomial *mon;      // Same here: so don't free these elements
-  int comp = 0;
+  ringelement hcoefficient;
+  int *hexponents = const_cast<int *&>(mReduceExp);
+  int hcomponent = 0;
+  monomial *hmonomial;
+
   ering_elem *r = 0;
   egb_elem *g = 0;
-  while (I.get_lead_term_from_heap(fh,coeff,mon,comp) != 0)
+  while (I.get_lead_term_from_heap(fh,hcoefficient,hmonomial,hcomponent) != 0)
     {
-      I.to_exponents(mon, const_cast<int *&>(mReduceExp));
-      if (I.ring_is_quotient() && ring_table->find_divisor(mReduceExp, r))
+      I.to_exponents(hmonomial, hexponents);
+      if (I.ring_is_quotient() && ring_table->find_divisor(hexponents, r))
 	{
-	  I.ring_cancel_lead_terms(fh,fsyzh,
-				  coeff, mReduceExp, comp,
-				  r->f);
+	  I.ring_cancel_lead_terms(fh,
+				   hcoefficient, hexponents, hcomponent,
+				   r->lcm, r->f);
 	}
-      else if (gb[comp]->find_divisor(mReduceExp, g))
+      else if (gb[hcomponent]->find_divisor(hexponents, g))
 	{
 	  I.cancel_lead_terms(fh,fsyzh,
-			     coeff,mReduceExp,
-			     g->lcm, g->f, g->fsyz);
+			      hcoefficient,hexponents,
+			      g->lcm, g->f, g->fsyz);
 	}
       else
 	{
@@ -882,7 +924,6 @@ void EGB1::s_pair_step(es_pair *p)
   n_computed++;
   bool is_gen = (p->type == SP_GEN);
   int degree = p->degree;
-  n_computed++;
   if (comp_printlevel >= 8) spair_debug_out(p);
   compute_s_pair(p, fh, fsyzh);
   remove_pair(p);
@@ -991,9 +1032,11 @@ int EGB1::new_calc(const EStopConditions &stop)
   if (comp_printlevel >= 4)
     {
       buffer o;
-      o << "Number of gb elements       = " << n_gb << newline;
+      o << "Number of min gb elements   = " << n_gb << newline;
+      o << "Number of all gb elements   = " << gbLarge.length() << newline;
       o << "Number of pairs             = " << n_pairs << newline;
       o << "Number of gcd=1 pairs       = " << n_saved_gcd << newline;
+      o << "Number of gcd=1 pairs chosen= " << n_saved_gcd_choice << newline;
       o << "Number of gcd tails=1 pairs = " << n_saved_lcm << newline;
       o << "Number of pairs computed    = " << n_computed << newline;
       emit(o.str());
@@ -1006,7 +1049,7 @@ int EGB1::new_calc(const EStopConditions &stop)
 ////////////////////////
 
 EGB1::EGB1(const Matrix &m, int csyz, int nsyz, int strat)
-  : gb_comp(13), I(m.Ring_of())
+  : gb_comp(13), I(m.get_ring())
 {
   set_up(m, csyz, nsyz, strat);
 }
@@ -1365,6 +1408,88 @@ void EGB1::stats() const
   emit(o.str());
 }
 
+#if 0
+/// MES: new linear algebra code.
+
+class LinearAlgebraGBMatrix
+{
+  struct column_info {
+    const int *monom;
+    int component;
+  };
+  struct row_info {
+    const int *monom;
+    int component;
+    int who_divides_me;
+    int compare_value;
+  };
+
+  vector< row_info > cols;
+  vector< column_info > rows;
+
+  // Also need a hash table of monomials, which links into 'rows'.
+
+  SparseMutableMatrix mat;
+
+  int nextrow;  // Next one to process
+  int nextcol;  // Next one to process
+
+public:
+  void append_row(int *monom, int component);
+  // Only appends this row if it is not already there.
+
+  void append_column(int *monom, int component);
+  // Doesn't bother to check whether the column is here.
+
+  void process_next_row();
+  // Takes the next row, determines who divides it, and appends the appropriate
+  // column.
+
+  void process_next_column();
+  // Takes the next column, performs the multiplication, and creates the
+  // sparse_vector, add it to 'mat'.  In the process, many new rows might be
+  // appended.
+
+public:
+  // Create the matrix, given a set of spairs, and a list of GB elements.
+
+  // LU Decompose the matrix
+
+  // Read off the new GB elements
+
+  // Read off the syzygies
+};
+
+void LinearAlgebraGBMatrix::append_row(int *monom, int component)
+{
+  row_info r;
+  r.monom = monom;
+  r.component = component;
+  if (MT[component]->find_divisor(monom, b))
+    r.who_divides_me = b->tag();
+  else
+    r.who_divides_me = -1;
+  r.compare_value = 0;
+  rows.push_back(r);
+}
+void LinearAlgebraGBMatrix::append_column(int *monom, int component)
+{
+  col_info c;
+  c.monom = monom;
+  c.component = component;
+}
+void LinearAlgebraGBMatrix::process_next_row()
+{
+  if (++next_row == rows.size())
+    return;
+  row_info &r = rows[next_row];
+  if (r.who_divides_me < 0)
+    return;
+  I.divide_monomials(r.monom
+  
+}
+
+#endif
 
 
 #if 0

@@ -12,14 +12,6 @@
 class PolynomialRing : public Ring
 {
   friend class FreeModule;
-  friend class NGB_comp;
-  friend class GB_comp;
-  friend class GBZZ_comp;
-  friend class res_comp;
-  friend class res2_comp;
-  friend class GBinhom_comp;
-  friend class gb2_comp;
-
 protected:
   PolynomialRing(const Ring *K, const Monoid *MF);
   PolynomialRing(const PolynomialRing *R, const array<ring_elem> &I);

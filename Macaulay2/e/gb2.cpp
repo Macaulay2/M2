@@ -85,7 +85,7 @@ void gbres_comp::setup(const Matrix &m,
 		     int strategy)
 {
   int i;
-  const Ring *R = m.Ring_of()->cast_to_PolynomialRing();
+  const Ring *R = m.get_ring()->cast_to_PolynomialRing();
   if (R == NULL) assert(0);
 
   FreeModule *Fsyz = R->make_FreeModule();
@@ -257,7 +257,7 @@ FreeModule *gbres_comp::free_module(int level)
 {
   if (level >= 0 && level <= n_nodes-1)
     return nodes[level]->output_free_module();
-  return nodes[0]->output_free_module()->Ring_of()->make_FreeModule();
+  return nodes[0]->output_free_module()->get_ring()->make_FreeModule();
 
 }
 Matrix gbres_comp::min_gens_matrix(int level)

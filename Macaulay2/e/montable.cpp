@@ -3,13 +3,15 @@
 #include "montable.hpp"
 #include "text_io.hpp"
 
+stash *tagged_monomial<int>::mystash;
+
 template <class Tag>
 void display(MonomialTable<Tag> &mi)
 {
   buffer o;
   for (MonomialTable<Tag>::iterator p = mi.first(); p.valid(); ++p)
     {
-      const MonomialTable<Tag>::tagged_monomial *t = *p;
+      const tagged_monomial<Tag> *t = *p;
       varpower::elem_text_out(o, p.get_monomial().raw());
       o << "(";
       o << p.get_tag();

@@ -45,7 +45,7 @@ void EInterface::divide_exponents(const exponent_vector *exp1,
 {
   ntuple::divide(nvars_,exp1,exp2,result);
   if (M->is_skew())
-    sign = M->skew_mult_sign(result,exp2);
+    sign = M->exp_skew_mult_sign(result,exp2);
 }
 
 void EInterface::exponent_syzygy(const exponent_vector *exp1,
@@ -54,13 +54,14 @@ void EInterface::exponent_syzygy(const exponent_vector *exp1,
 				 exponent_vector *result2,
 				 int &sign) const
 {
-  ntuple::syz(nvars_,exp1,exp2,result1,result2);
-  // The following can be optimized
   if (M->is_skew())
     {
-      emit_line("skew case not yet implemented");
-      abort();
+      ntuple::syz(nvars_,exp1,exp2,result1,result2);
+      sign *= M->exp_skew_mult_sign(result1,exp1);
+      sign *= M->exp_skew_mult_sign(result2,exp2);
     }
+  else
+    ntuple::syz(nvars_,exp1,exp2,result1,result2);
 }
 
 
@@ -75,46 +76,71 @@ Matrix EInterface::make_matrix(freemodule F, array< vec > &columns) const
   return result;
 }
 
-void EInterface::cancel_lead_terms(vector_heap &fh, vector_heap &fsyzh,
-				   const ringelement &coeff, 
-				   const exponent_vector *mon,
-				   const exponent_vector *flead,
-				   const vec &g,
-				   const vec &gsyz) const
+void EInterface::cancel_lead_terms(vector_heap &h, vector_heap &hsyz,
+			 const ringelement &hcoefficient, 
+			 const exponent_vector *hexponents,
+			 const exponent_vector *gexponents,
+			 const vec &g,
+			 const vec &gsyz) const
 {
   int *mCancelExp = new int[nvars_];
   if (true) //(!coeffs_QQ)
     {
       // In this case we assume that 'g' is monic.
       int sign = 1;  
-      vec h,hsyz;
-      divide_exponents(mon, flead, mCancelExp, sign);
+      vec f,fsyz;
+      divide_exponents(hexponents, gexponents, mCancelExp, sign);
         // sign is only set in skew commutative case.
 
       if (sign == 1)
 	{
-	  ringelement c = negate_coefficient(coeff);
-	  h = mult_by_term(fh.get_target(), c, mCancelExp, g);
-	  hsyz = mult_by_term(fsyzh.get_target(), c, mCancelExp, gsyz);
+	  ringelement c = negate_coefficient(hcoefficient);
+	  f = mult_by_term(h.get_target(), c, mCancelExp, g);
+	  fsyz = mult_by_term(hsyz.get_target(), c, mCancelExp, gsyz);
 	  remove_coefficient(c);
 	}
       else
 	{
-	  h = mult_by_term(fh.get_target(), coeff, mCancelExp, g);
-	  hsyz = mult_by_term(fsyzh.get_target(), coeff, mCancelExp, gsyz);
+	  f = mult_by_term(h.get_target(), hcoefficient, mCancelExp, g);
+	  fsyz = mult_by_term(hsyz.get_target(), hcoefficient, mCancelExp, gsyz);
 	}
-      fh.add(h);
-      fsyzh.add(hsyz);
+      h.add(f);
+      hsyz.add(fsyz);
     }
   delete [] mCancelExp;
 }
 
-void EInterface::ring_cancel_lead_terms(vector_heap &h, vector_heap &hsyz,
-					const ringelement &coeff, 
-					const exponent_vector *mon,
-					int comp,
-					const polynomial &g) const
+void EInterface::ring_cancel_lead_terms(vector_heap &h,
+			      const ringelement &hcoefficient, 
+			      const exponent_vector *hexponents,
+			      int hcomponent,
+			      const exponent_vector *gexponents,
+			      const polynomial &g) const
 {
+  int *mCancelExp = new int[nvars_];
+  if (true) //(!coeffs_QQ)
+    {
+      // In this case we assume that 'g' is monic.
+      int sign = 1;  
+      vec f;
+      divide_exponents(hexponents, gexponents, mCancelExp, sign);
+        // sign is only set in skew commutative case.
+
+      if (sign == 1)
+	{
+	  ringelement c = negate_coefficient(hcoefficient);
+	  f = ring_mult_by_term(h.get_target(), c, mCancelExp, hcomponent, g);
+	  remove_coefficient(c);
+	}
+      else
+	{
+	  f = ring_mult_by_term(h.get_target(), 
+				hcoefficient, mCancelExp, hcomponent, 
+				g);
+	}
+      h.add(f);
+    }
+  delete [] mCancelExp;
 }
 
 

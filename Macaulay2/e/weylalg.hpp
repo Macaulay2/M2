@@ -11,14 +11,6 @@ class WeylFreeModule;
 
 class WeylAlgebra : public PolynomialRing
 {
-  friend class FreeModule;
-  friend class NGB_comp;
-  friend class GB_comp;
-  friend class GBZZ_comp;
-  friend class res_comp;
-  friend class res2_comp;
-  friend class GBinhom_comp;
-  friend class gb2_comp;
   friend class WeylFreeModule;
 
 protected:
@@ -115,8 +107,6 @@ public:
   virtual ring_elem power(const ring_elem f, mpz_t n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 #if 0
-  virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
-
   // These are not well defined here, so an error is given.
   virtual ring_elem gcd(const ring_elem f, const ring_elem g) const;
   virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 

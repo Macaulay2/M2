@@ -35,7 +35,7 @@ void cmd_Matrix1(object &orows, object &ocols)
 	  break;
 	}
       Vector v = gStack[i]->cast_to_Vector();
-      if (v.Ring_of() != F->Ring_of())
+      if (v.get_ring() != F->get_ring())
 	{
 	  gError << "matrix: vector has incorrect base ring";
 	  break;
@@ -63,7 +63,7 @@ void cmd_Matrix2(object &orows, object &ocols)
 	  break;
 	}
       Vector v = gStack[i]->cast_to_Vector();
-      if (v.Ring_of() != F->Ring_of())
+      if (v.get_ring() != F->get_ring())
 	{
 	  gError << "matrix: vector has incorrect base ring";
 	  break;
@@ -94,7 +94,7 @@ void cmd_Matrix2a(object &orows, object &ocols, object &odeg)
 	  break;
 	}
       Vector v = gStack[i]->cast_to_Vector();
-      if (v.Ring_of() != F->Ring_of())
+      if (v.get_ring() != F->get_ring())
 	{
 	  gError << "matrix: vector has incorrect base ring";
 	  break;
@@ -110,7 +110,7 @@ void cmd_Matrix4(object &orows, object &ocols, object &om)
   FreeModule *F = orows->cast_to_FreeModule();
   FreeModule *G = ocols->cast_to_FreeModule();
   Matrix m = om->cast_to_Matrix();
-  if (F->Ring_of() != G->Ring_of() || F->Ring_of() != m.Ring_of())
+  if (F->get_ring() != G->get_ring() || F->get_ring() != m.get_ring())
     {
       gError << "same base ring expected";
       return;
@@ -132,7 +132,7 @@ void cmd_Matrix5(object &orows, object &ocols, object &om, object &odeg)
   FreeModule *F = orows->cast_to_FreeModule();
   FreeModule *G = ocols->cast_to_FreeModule();
   Matrix m = om->cast_to_Matrix();
-  if (F->Ring_of() != G->Ring_of() || F->Ring_of() != m.Ring_of())
+  if (F->get_ring() != G->get_ring() || F->get_ring() != m.get_ring())
     {
       gError << "same base ring expected";
       return;
@@ -204,7 +204,7 @@ void cmd_Matrix_elem2(object &oM, object &on, object &om)
       << M.n_cols()-1;
   else
     {
-      RingElement result(M.Ring_of(), M.elem(n,m));
+      RingElement result(M.get_ring(), M.elem(n,m));
       gStack.insert(result);
     }
 }
@@ -262,7 +262,7 @@ void cmd_Matrix_concat(object &on)
   for (i=n-1; i>=0; i--)
     {
       Matrix a = gStack[i]->cast_to_Matrix();
-      if (a.Ring_of() != m.Ring_of())
+      if (a.get_ring() != m.get_ring())
 	gError << "matrix concat: different base rings";
       else if (a.n_rows() != m.n_rows())
 	gError << "matrix concat: row sizes are not equal";
@@ -359,7 +359,7 @@ void cmd_Matrix_initial(object &oM, object &on)
 void cmd_Matrix_initial1(object &oM)
 {
   Matrix M = oM->cast_to_Matrix();
-  int n = 1 + M.Ring_of()->n_vars();
+  int n = 1 + M.get_ring()->n_vars();
   gStack.insert(M.lead_term(n));
 }
 
@@ -437,7 +437,7 @@ void cmd_Matrix_dsum_several(object &on)
   for (i=n-2; i>=0; i--)
     {
       Matrix a = gStack[i]->cast_to_Matrix();
-      if (a.Ring_of() != result.Ring_of())
+      if (a.get_ring() != result.get_ring())
 	gError << "matrix directsum: different base rings";
       else 
 	result = result.direct_sum(a);
@@ -502,7 +502,7 @@ void cmd_Matrix_exterior_product(object &op, object &oq,
 void cmd_Matrix_homog(object &oa, object &on, object &owts)
 {
   Matrix a = oa->cast_to_Matrix();
-  const Ring *R = a.Ring_of();
+  const Ring *R = a.get_ring();
   int v = on->int_of();
   intarray *wts = owts->intarray_of();
   if (v < 0 || v > R->n_vars())
@@ -530,7 +530,7 @@ void cmd_Matrix_kbasis(object &oa, object &ob, object &od)
 {
   Matrix a = oa->cast_to_Matrix();
   Matrix b = ob->cast_to_Matrix();
-  if (a.Ring_of() != b.Ring_of())
+  if (a.get_ring() != b.get_ring())
     {
       gError << "'kbasis': different rings";
       return;
@@ -546,7 +546,7 @@ void cmd_Matrix_truncate(object &oa, object &ob, object &od)
 {
   Matrix a = oa->cast_to_Matrix();
   Matrix b = ob->cast_to_Matrix();
-  if (a.Ring_of() != b.Ring_of())
+  if (a.get_ring() != b.get_ring())
     {
       gError << "'truncate': different rings";
       return;
@@ -562,7 +562,7 @@ void cmd_Matrix_kbasis(object &oa, object &ob)
 {
   Matrix a = oa->cast_to_Matrix();
   Matrix b = ob->cast_to_Matrix();
-  if (a.Ring_of() != b.Ring_of())
+  if (a.get_ring() != b.get_ring())
     {
       gError << "'kbasis': different rings";
       return;
@@ -649,13 +649,13 @@ void cmd_Matrix_coeffs(object &om, object &op)
 {
   Matrix M = om->cast_to_Matrix();
   intarray *vars = op->intarray_of();
-  const PolynomialRing *R = M.Ring_of()->cast_to_PolynomialRing();
+  const PolynomialRing *R = M.get_ring()->cast_to_PolynomialRing();
   if (R == NULL)
     {
       gError << "coeffs: need a polynomial ring";
       return;
     }
-  int nvars = M.Ring_of()->n_vars();
+  int nvars = M.get_ring()->n_vars();
   int *v = new int[nvars];
   int i;
   for (i=0; i<nvars; i++) v[i] = 0;
@@ -1054,7 +1054,7 @@ void cmd_mi_assprimes(object &oa)
 void cmd_ti_matrix(object &oti)
 {
   TermIdeal *ti = oti->cast_to_TermIdeal();
-  Matrix result(ti->Ring_of());
+  Matrix result(ti->get_ring());
   ti->append_to_matrix(result, 0);
   gStack.insert(result);
 }
@@ -1192,7 +1192,7 @@ void cmd_sparse_setEntry(object &om, object &o1, object &o2, object &oa)
   int r = o1->int_of();
   int c = o2->int_of();
   RingElement a = oa->cast_to_RingElement();
-  if (m->getRing() != a.Ring_of())
+  if (m->getRing() != a.get_ring())
     {
       gError << "same ring required";
       return;
@@ -1222,7 +1222,7 @@ void cmd_sparse_addRowMultiple(object &om, object &o1, object &oa, object &o2)
   int r1 = o1->int_of();
   int r = o2->int_of();
   RingElement a = oa->cast_to_RingElement();
-  if (m->getRing() != a.Ring_of())
+  if (m->getRing() != a.get_ring())
     {
       gError << "same ring required";
       return;
@@ -1236,7 +1236,7 @@ void cmd_sparse_addColumnMultiple(object &om, object &o1, object &oa, object &o2
   int c1 = o1->int_of();
   int c = o2->int_of();
   RingElement a = oa->cast_to_RingElement();
-  if (m->getRing() != a.Ring_of())
+  if (m->getRing() != a.get_ring())
     {
       gError << "same ring required";
       return;
@@ -1249,7 +1249,7 @@ void cmd_sparse_scaleRow(object &om, object &o1, object &oa)
   SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
   int i = o1->int_of();
   RingElement a = oa->cast_to_RingElement();
-  if (m->getRing() != a.Ring_of())
+  if (m->getRing() != a.get_ring())
     {
       gError << "same ring required";
       return;
@@ -1261,7 +1261,7 @@ void cmd_sparse_scaleColumn(object &om, object &o1, object &oa)
   SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
   int i = o1->int_of();
   RingElement a = oa->cast_to_RingElement();
-  if (m->getRing() != a.Ring_of())
+  if (m->getRing() != a.get_ring())
     {
       gError << "same ring required";
       return;
@@ -1304,10 +1304,10 @@ static void do_2by2(SparseMutableMatrix *m,
   RingElement A1 = gStack.remove()->cast_to_RingElement();
   // Now check the rings against m's:
   const Ring *R = m->getRing();
-  if (B2.Ring_of() != R
-      || B1.Ring_of() != R
-      || A2.Ring_of() != R
-      || A1.Ring_of() != R)
+  if (B2.get_ring() != R
+      || B1.get_ring() != R
+      || A2.get_ring() != R
+      || A1.get_ring() != R)
     {
       gError << "incorrect ring";
       return;

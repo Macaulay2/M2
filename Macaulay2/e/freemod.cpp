@@ -1304,7 +1304,7 @@ void FreeModule::auto_reduce(array<vec> & vecs) const
   array<MonomialIdeal> mis;
   sort(vecs, degs, 0, 1, indices);
   for (int x=0; x<rank(); x++)
-    mis.append(MonomialIdeal(Ring_of()));
+    mis.append(MonomialIdeal(get_ring()));
   for (int i=0; i<vecs.length(); i++)
     {
       // Reduce each one in turn, and replace.
@@ -2097,7 +2097,7 @@ vec FreeModule::eval(const RingMap *map, const FreeModule *F,
 	  r = K->eval(map, t->coeff);
 	}
       g = F->term(t->comp, r);
-      F->Ring_of()->remove(r);
+      F->get_ring()->remove(r);
       H.add(g);
     }
   return H.value();
@@ -2126,7 +2126,7 @@ vec FreeModule::eval(const RingMap *map, const FreeModule *F,
 	  r = K->eval(map, t->coeff);
 	}
       g = F->term(t->comp, r);
-      F->Ring_of()->remove(r);
+      F->get_ring()->remove(r);
       F->add_to(result, g);
     }
   return result;

@@ -483,7 +483,7 @@ ring_elem FractionField::gcd_extended(const ring_elem f, const ring_elem,
 
 ring_elem FractionField::eval(const RingMap *map, const ring_elem a) const
 {
-  const Ring *S = map->Ring_of();
+  const Ring *S = map->get_ring();
   const frac_elem *f = FRAC_VAL(a);
   ring_elem top = R->eval(map, f->numer);
   if (S->is_zero(top)) return top;

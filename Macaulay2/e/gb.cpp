@@ -15,7 +15,7 @@ stash *GB_comp::mystash;
 void GB_comp::set_up0(const Matrix &m, int csyz, int nsyz)
 {
   int i;
-  R = m.Ring_of()->cast_to_PolynomialRing();
+  R = m.get_ring()->cast_to_PolynomialRing();
   if (R == NULL)
     {
       gError << "ring is not a polynomial ring";
@@ -129,7 +129,7 @@ GB_comp::GB_comp(const Matrix &m, int csyz, int nsyz,
   // MES
   set_up(m, csyz, nsyz, strat);
   hf_orig = hf;
-  hf_diff = RingElement(hf.Ring_of());
+  hf_diff = RingElement(hf.get_ring());
   use_hilb = true;
   hilb_step = 1;
 }
@@ -342,17 +342,19 @@ void GB_comp::find_pairs(gb_elem *p)
 
   // Add in syzygies arising from a base ring
 
-  if (F->is_quotient_ring)
-    for (j = R->Rideal.first(); j.valid(); j++)
-      {
-	Nterm * f = (Nterm *) R->Rideal[j]->basis_ptr();
-	M->lcm(f->monom, p->f->monom, find_pairs_lcm);
-	vplcm.shrink(0);
-	M->to_varpower(find_pairs_lcm, vplcm);
-	s_pair *q = new_ring_pair(p, find_pairs_lcm);
-	elems.insert(new Bag(q, vplcm));
-      }
-
+  if (R->is_quotient_ring())
+    {
+      const MonomialIdeal &Rideal = R->get_quotient_monomials();
+      for (j = Rideal.first(); j.valid(); j++)
+	{
+	  Nterm * f = (Nterm *) Rideal[j]->basis_ptr();
+	  M->lcm(f->monom, p->f->monom, find_pairs_lcm);
+	  vplcm.shrink(0);
+	  M->to_varpower(find_pairs_lcm, vplcm);
+	  s_pair *q = new_ring_pair(p, find_pairs_lcm);
+	  elems.insert(new Bag(q, vplcm));
+	}
+    }
   // Add in syzygies arising as s-pairs
   MonomialIdeal &mi1 = monideals[p->f->comp]->mi;
   for (Index<MonomialIdeal> i = mi1.first(); i.valid(); i++)
@@ -464,7 +466,8 @@ void GB_comp::gb_reduce(vec &f, vec &fsyz)
     {
       Bag *b;
       M->to_expvector(f->monom, div_totalexp);
-      if (F->is_quotient_ring && R->Rideal.search_expvector(div_totalexp, b))
+      if (R->is_quotient_ring() 
+	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  F->imp_ring_cancel_lead_term(f, g, coeff, reduce_ndiv);
@@ -520,12 +523,13 @@ void GB_comp::gb_geo_reduce(vec &f, vec &fsyz)
   vecHeap fsyzb(Fsyz);
   fb.add(f);
   fsyzb.add(fsyz);
-  vecterm *lead;
+  const vecterm *lead;
   while ((lead = fb.get_lead_term()) != NULL)
     {
       Bag *b;
       M->to_expvector(lead->monom, div_totalexp);
-      if (F->is_quotient_ring && R->Rideal.search_expvector(div_totalexp, b))
+      if (R->is_quotient_ring() 
+	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  M->divide(lead->monom, g->monom, reduce_ndiv);
@@ -752,7 +756,7 @@ int GB_comp::coeff_of(const RingElement &h, int deg) const
   // This is a bit of a kludge of a routine.  The idea is to loop through
   // all the terms of the polynomial h, expand out the exponent, and to add
   // up the small integer values of the coefficients of those that have exp[0]=deg.
-  const PolynomialRing *P = h.Ring_of()->cast_to_PolynomialRing();
+  const PolynomialRing *P = h.get_ring()->cast_to_PolynomialRing();
 
   int *exp = new int[P->n_vars()];
   int result = 0;
@@ -885,7 +889,7 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 		    {
 		      // Set up the Hilbert function computation
 		      delete hf_comp;
-		      hf_comp = new hilb_comp(hf_orig.Ring_of()->cast_to_PolynomialRing(), 
+		      hf_comp = new hilb_comp(hf_orig.get_ring()->cast_to_PolynomialRing(), 
 					      gbmatrix);
 		      hilb_step = 2;
 		    }

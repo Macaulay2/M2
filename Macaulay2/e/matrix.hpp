@@ -25,7 +25,7 @@ class Matrix_rec : public mutable_object
     : mutable_object(), 
       rows((FreeModule *)r), 
       cols((FreeModule *)c),
-      degree_shift(r->Ring_of()->degree_monoid()->make_new(deg))
+      degree_shift(r->get_ring()->degree_monoid()->make_new(deg))
       { bump_up(rows); bump_up(cols); 
 	vec zero = NULL;
         for (int i=0; i<c->rank(); i++) 
@@ -78,8 +78,8 @@ public:
 
   Matrix(const MonomialIdeal &mi);
 
-  const Ring *Ring_of() const { return rows()->Ring_of(); }
-  const Monoid *degree_monoid() const { return Ring_of()->degree_monoid(); }
+  const Ring *get_ring() const { return rows()->get_ring(); }
+  const Monoid *degree_monoid() const { return get_ring()->degree_monoid(); }
 
   vec &operator[](int i) { return obj->entries[i]; }
   const vec &operator[](int i) const { return obj->entries[i]; }

@@ -24,7 +24,7 @@ EMonomialLookupTable::EMonomialLookupTable(const Ring *R, queue<Bag *> &elems, q
 	bins[d] = new queue<Bag *>;
       bins[d]->insert(b);
     }
-  int n = Ring_of()->n_vars();
+  int n = get_ring()->n_vars();
   intarray exp;
   for (int i=0; i < bins.length(); i++)
     if (bins[i] != NULL)
@@ -118,7 +118,7 @@ MonomialIdeal MonomialIdeal::intersect(const MonomialIdeal &J) const
 		      J[j]->monom().raw(), b->monom());
 	new_elems.insert(b);
       }
-  MonomialIdeal result(Ring_of(), new_elems);
+  MonomialIdeal result(get_ring(), new_elems);
   return result;
 }
 
@@ -132,7 +132,7 @@ MonomialIdeal MonomialIdeal::intersect(const int *m) const
       varpower::lcm(operator[](i)->monom().raw(), m, b->monom());
       new_elems.insert(b);
     }
-  MonomialIdeal result(Ring_of(), new_elems);
+  MonomialIdeal result(get_ring(), new_elems);
   return result;
 }
 
@@ -148,7 +148,7 @@ MonomialIdeal MonomialIdeal::operator*(const MonomialIdeal &J) const
 		       b->monom());
 	new_elems.insert(b);
       }
-  MonomialIdeal result(Ring_of(), new_elems);
+  MonomialIdeal result(get_ring(), new_elems);
   return result;
 }
 
@@ -165,7 +165,7 @@ MonomialIdeal MonomialIdeal::operator+(const MonomialIdeal &J) const
       Bag *b = new Bag( J[j] );
       new_elems.insert(b);
     }
-  MonomialIdeal result(Ring_of(), new_elems);
+  MonomialIdeal result(get_ring(), new_elems);
   return result;
 }
 
@@ -173,7 +173,7 @@ MonomialIdeal MonomialIdeal::operator-(const MonomialIdeal &J) const
     // Create the monomial ideal consisting of those elements of 'this'
     // that are not in 'J'.  The baggage is left the same.
 {
-  MonomialIdeal result(Ring_of());
+  MonomialIdeal result(get_ring());
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
       Bag *c;
@@ -196,13 +196,13 @@ MonomialIdeal MonomialIdeal::quotient(const int *m) const
       varpower::divide(operator[](i)->monom().raw(), m, b->monom());
       new_elems.insert(b);
     }
-  MonomialIdeal result(Ring_of(), new_elems);
+  MonomialIdeal result(get_ring(), new_elems);
   return result;
 }
 
 MonomialIdeal MonomialIdeal::quotient(const MonomialIdeal &J) const
 {
-  MonomialIdeal result(Ring_of());
+  MonomialIdeal result(get_ring());
   Bag *b = new Bag(0);
   varpower::one(b->monom());
   result.insert(b);
@@ -217,7 +217,7 @@ MonomialIdeal MonomialIdeal::quotient(const MonomialIdeal &J) const
 #if 0
 MonomialIdeal MonomialIdeal::socle(const MonomialIdeal &J) const
 {
-  MonomialIdeal result(Ring_of());
+  MonomialIdeal result(get_ring());
   for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
     {
       for (index_varpower j = operator[](i)->monom().raw(); j.valid(); j++)
@@ -244,13 +244,13 @@ MonomialIdeal MonomialIdeal::erase(const int *m) const
       varpower::erase(operator[](i)->monom().raw(), m, b->monom());
       new_elems.insert(b);
     }
-  MonomialIdeal result(Ring_of(), new_elems);
+  MonomialIdeal result(get_ring(), new_elems);
   return result;
 }
 
 MonomialIdeal MonomialIdeal::sat(const MonomialIdeal &J) const
 {
-  MonomialIdeal result(Ring_of());
+  MonomialIdeal result(get_ring());
   Bag *b = new Bag(0);
   varpower::one(b->monom());
   result.insert(b);
@@ -271,7 +271,7 @@ MonomialIdeal MonomialIdeal::radical() const
       varpower::radical( operator[](i)->monom().raw(), b->monom() );
       new_elems.insert(b);
     }
-  MonomialIdeal result(Ring_of(), new_elems);
+  MonomialIdeal result(get_ring(), new_elems);
   return result;
 }
 
@@ -305,11 +305,11 @@ MonomialIdeal MonomialIdeal::borel() const
     {
       Bag *b = operator[](i);
       intarray bexp;
-      varpower::to_ntuple(Ring_of()->n_vars(), b->monom().raw(), bexp);
+      varpower::to_ntuple(get_ring()->n_vars(), b->monom().raw(), bexp);
       borel1(new_elems, bexp.raw(),
-	     Ring_of()->n_vars()-1, Ring_of()->n_vars());
+	     get_ring()->n_vars()-1, get_ring()->n_vars());
     }
-  MonomialIdeal result(Ring_of(), new_elems);
+  MonomialIdeal result(get_ring(), new_elems);
   return result;
 }
 
@@ -320,8 +320,8 @@ int MonomialIdeal::is_borel() const
       Bag *b = operator[](i);
       Bag *c;
       intarray bexp;
-      varpower::to_ntuple(Ring_of()->n_vars(), b->monom().raw(), bexp);
-      for (int j=Ring_of()->n_vars()-1; j>=1; j--)
+      varpower::to_ntuple(get_ring()->n_vars(), b->monom().raw(), bexp);
+      for (int j=get_ring()->n_vars()-1; j>=1; j--)
 	if (bexp[j] > 0)
 	  {
 	    bexp[j]--;

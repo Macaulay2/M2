@@ -309,7 +309,7 @@ FreeModule *FreeModule::exterior(int p) const
   FreeModule *result;
 
   if (p == 0) 
-    result = Ring_of()->make_FreeModule(1);
+    result = get_ring()->make_FreeModule(1);
   result = new_free();
   if (p > rank() || p < 0) return result;
 

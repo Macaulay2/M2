@@ -75,11 +75,6 @@ int Ring::coerce_to_int(ring_elem) const
   return 0;
 }
 
-MonomialIdeal Ring::get_quotient_monomials() const
-{
-  return MonomialIdeal(this);
-}
-
 ring_elem Ring::random() const
 {
   gError << "random scalar elements for this ring are not implemented";

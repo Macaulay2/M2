@@ -15,7 +15,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
 {
   level = lev;
   int i;
-  R = FFsyz->Ring_of()->cast_to_PolynomialRing();
+  R = FFsyz->get_ring()->cast_to_PolynomialRing();
   if (R == NULL)
     {
       gError << "internal error - ring is not a polynomial ring";
@@ -249,16 +249,19 @@ void gb2_comp::find_pairs(gb_elem *p)
 
   // Add in syzygies arising from a base ring
 
-  if (F->is_quotient_ring)
-    for (j = R->Rideal.first(); j.valid(); j++)
-      {
-	Nterm * f = (Nterm *) R->Rideal[j]->basis_ptr();
-	M->lcm(f->monom, f_m, find_pairs_lcm);
-	vplcm.shrink(0);
-	M->to_varpower(find_pairs_lcm, vplcm);
-	s_pair *q = new_ring_pair(p, find_pairs_lcm);
-	elems.insert(new Bag(q, vplcm));
-      }
+  if (R->is_quotient_ring())
+    {
+      const MonomialIdeal &Rideal = R->get_quotient_monomials();
+      for (j = Rideal.first(); j.valid(); j++)
+	{
+	  Nterm * f = (Nterm *) Rideal[j]->basis_ptr();
+	  M->lcm(f->monom, f_m, find_pairs_lcm);
+	  vplcm.shrink(0);
+	  M->to_varpower(find_pairs_lcm, vplcm);
+	  s_pair *q = new_ring_pair(p, find_pairs_lcm);
+	  elems.insert(new Bag(q, vplcm));
+	}
+    }
 
   // Add in syzygies arising as s-pairs
   MonomialIdeal &mi1 = monideals[p->f->comp]->mi;
@@ -369,7 +372,8 @@ void gb2_comp::gb_reduce(vec &f, vec &fsyz)
       Bag *b;
       M->divide(f->monom, F->base_monom(f->comp), s);
       M->to_expvector(s, div_totalexp);
-      if (F->is_quotient_ring && R->Rideal.search_expvector(div_totalexp, b))
+      if (R->is_quotient_ring() 
+	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  F->imp_ring_cancel_lead_term(f, g, coeff, reduce_ndiv);
@@ -424,7 +428,8 @@ void gb2_comp::gb_geo_reduce(vec &f, vec &fsyz)
       Bag *b;
       M->divide(lead->monom, F->base_monom(lead->comp), s);
       M->to_expvector(s, div_totalexp);
-      if (F->is_quotient_ring && R->Rideal.search_expvector(div_totalexp, b))
+      if (R->is_quotient_ring() 
+	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  M->divide(lead->monom, g->monom, reduce_ndiv);

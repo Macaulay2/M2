@@ -4,10 +4,10 @@
 
 AssociatedPrimes::AssociatedPrimes(const MonomialIdeal &I)
   : state(do_codim),
-    min_codim(I.Ring_of()->n_vars()+1),
-    nvars(I.Ring_of()->n_vars()),
+    min_codim(I.get_ring()->n_vars()+1),
+    nvars(I.get_ring()->n_vars()),
     mi(I.radical()),
-    ass_primes(I.Ring_of())
+    ass_primes(I.get_ring())
 {
   exps = new int *[nvars+1];
   for (int i=0; i<=nvars; i++)
@@ -17,9 +17,9 @@ AssociatedPrimes::AssociatedPrimes(const MonomialIdeal &I)
 AssociatedPrimes::AssociatedPrimes(const MonomialIdeal &I, int cod)
   : state(do_primes),
     min_codim(cod),
-    nvars(I.Ring_of()->n_vars()),
+    nvars(I.get_ring()->n_vars()),
     mi(I.radical()),
-    ass_primes(I.Ring_of())
+    ass_primes(I.get_ring())
 {
   exps = new int *[nvars+1];
   for (int i=0; i<=nvars; i++)

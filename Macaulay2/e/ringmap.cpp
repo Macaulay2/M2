@@ -8,7 +8,7 @@ stash *RingMap::mystash;
 
 
 RingMap::RingMap(const Matrix &m)
-: R(m.Ring_of())
+: R(m.get_ring())
 {
   bump_up(R);
   M = R->Nmonoms();
@@ -173,7 +173,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 
 RingElement RingMap::eval(const RingElement &r) const
 {
-  RingElement result(Ring_of(), r.Ring_of()->eval(this, r.get_value()));
+  RingElement result(get_ring(), r.get_ring()->eval(this, r.get_value()));
   return result;
 }
 

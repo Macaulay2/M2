@@ -560,7 +560,7 @@ ring_elem WeylAlgebra::eval(const RingMap *map, const ring_elem f) const
   // The way we collect the result depends on whether the target ring
   // is a polynomial ring: if so, use a heap structure.  If not, just add to the result.
 
-  const Ring *target = map->Ring_of();
+  const Ring *target = map->get_ring();
   if (target->is_poly_ring())
     {
       intarray vp;

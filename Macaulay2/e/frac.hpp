@@ -38,7 +38,7 @@ public:
   FractionField * cast_to_FractionField() { return this; }
   const FractionField * cast_to_FractionField() const { return this; }
 
-  const Ring *Ring_of() const { return R; }
+  const Ring *get_ring() const { return R; }
 
   ring_elem numerator(ring_elem f) const;
   ring_elem denominator(ring_elem f) const;

@@ -113,6 +113,7 @@ public:
   bool is_skew() const;
   int is_skew_var(int v) const;
   int skew_mult_sign(const int *m, const int *n) const;
+  int exp_skew_mult_sign(const int *exp1, const int *exp2) const;
   int skew_mult(const int *m, const int *n, int *result) const;
   int skew_divide(const int *m, const int *n, int *result) const;
       // If the result is s (1,or -1), then m = s * n * result

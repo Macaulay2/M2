@@ -27,7 +27,7 @@ stash *Matrix_rec::mystash;
 
 Matrix_rec::~Matrix_rec()
 { 
-  rows->Ring_of()->degree_monoid()->remove(degree_shift);
+  rows->get_ring()->degree_monoid()->remove(degree_shift);
   for (int i=0; i<cols->rank(); i++) rows->remove(entries[i]);
   bump_down(rows); 
   bump_down(cols); 
@@ -43,24 +43,24 @@ Matrix::Matrix(const FreeModule *r,
 Matrix::Matrix(const FreeModule *r, 
 	       const FreeModule *c)
 { 
-  int *one = r->Ring_of()->degree_monoid()->make_one();
+  int *one = r->get_ring()->degree_monoid()->make_one();
   obj = new Matrix_rec(r,c,one);
-  r->Ring_of()->degree_monoid()->remove(one);
+  r->get_ring()->degree_monoid()->remove(one);
 }
 
 Matrix::Matrix(const FreeModule *r)
 { 
-  int *one = r->Ring_of()->degree_monoid()->make_one();
+  int *one = r->get_ring()->degree_monoid()->make_one();
   obj = new Matrix_rec(r,r->new_free(),one);
-  r->Ring_of()->degree_monoid()->remove(one);
+  r->get_ring()->degree_monoid()->remove(one);
 }
 
 Matrix::Matrix(const MonomialIdeal &mi) 
 { 
-  const FreeModule *r = mi.Ring_of()->make_FreeModule(1);
-  int *one = r->Ring_of()->degree_monoid()->make_one();
+  const FreeModule *r = mi.get_ring()->make_FreeModule(1);
+  int *one = r->get_ring()->degree_monoid()->make_one();
   obj = new Matrix_rec(r,r->new_free(),one);
-  r->Ring_of()->degree_monoid()->remove(one);
+  r->get_ring()->degree_monoid()->remove(one);
 
   append_monideal(mi,0);
 }
@@ -138,7 +138,7 @@ void Matrix::set_degree_shift(const intarray &deg)
 Matrix Matrix::zero(const FreeModule *F, const FreeModule *G)
 {
   Matrix result(F,G);
-  if (F->Ring_of() != G->Ring_of())
+  if (F->get_ring() != G->get_ring())
     gError << "free modules have different base rings";
   for (int i=0; i<G->rank(); i++)
     result[i] = F->zero();
@@ -157,14 +157,14 @@ Matrix Matrix::operator+(const Matrix &m) const
 {
   Matrix result(rows(), cols());
 
-  if (Ring_of() != m.Ring_of())
+  if (get_ring() != m.get_ring())
     gError << "matrices have different base rings";
   else if (rows()->rank() != m.rows()->rank()
 	   || cols()->rank() != m.cols()->rank())
     gError << "matrices have different shapes";
   else
     {
-      const Ring *R = Ring_of();
+      const Ring *R = get_ring();
       const FreeModule *F = rows();
       const FreeModule *G = cols();
 
@@ -193,14 +193,14 @@ Matrix Matrix::operator-(const Matrix &m) const
 {
   Matrix result(rows(), cols());
 
-  if (Ring_of() != m.Ring_of())
+  if (get_ring() != m.get_ring())
     gError << "matrices have different base rings";
   else if (rows()->rank() != m.rows()->rank()
 	   || cols()->rank() != m.cols()->rank())
     gError << "matrices have different shapes";
   else
     {
-      const Ring *R = Ring_of();
+      const Ring *R = get_ring();
       const FreeModule *F = rows();
       const FreeModule *G = cols();
 
@@ -296,8 +296,8 @@ Matrix Matrix::transpose() const
 Matrix Matrix::operator*(const ring_elem r) const
 {
   int *deg = degree_monoid()->make_one();
-  if (!Ring_of()->is_zero(r))
-    Ring_of()->degree(r, deg);
+  if (!get_ring()->is_zero(r))
+    get_ring()->degree(r, deg);
   degree_monoid()->mult(deg, degree_shift(), deg);
   Matrix result(rows(), cols(), deg);
   for (int i=0; i<n_cols(); i++)
@@ -307,7 +307,7 @@ Matrix Matrix::operator*(const ring_elem r) const
 
 Matrix Matrix::concat(const Matrix &m) const
 {
-  if (Ring_of() != m.Ring_of())
+  if (get_ring() != m.get_ring())
     {
       gError << "concat: different base rings";
       return Matrix(rows(), cols());
@@ -332,7 +332,7 @@ Matrix Matrix::concat(const Matrix &m) const
 
 Matrix Matrix::direct_sum(const Matrix &m) const
 {
-  if (Ring_of() != m.Ring_of())
+  if (get_ring() != m.get_ring())
     {
       gError << "concat: different base rings";
       return Matrix(rows(), cols());
@@ -360,7 +360,7 @@ Matrix Matrix::direct_sum(const Matrix &m) const
 
 Matrix Matrix::operator*(const Matrix &m) const
 {
-  if (Ring_of() != m.Ring_of())
+  if (get_ring() != m.get_ring())
     {
       gError << "matrix mult: different base rings";
       return Matrix(rows(), cols());
@@ -384,7 +384,7 @@ Matrix Matrix::operator*(const Matrix &m) const
 
 Matrix Matrix::module_tensor(const Matrix &m) const
 {
-  if (Ring_of() != m.Ring_of())
+  if (get_ring() != m.get_ring())
     {
       gError << "module tensor: different base rings";
       return Matrix(rows(), cols());
@@ -456,7 +456,7 @@ Matrix Matrix::random(const FreeModule *F, const FreeModule *G,
 #endif		      
 Matrix Matrix::tensor(const Matrix &m) const
 {
-  if (Ring_of() != m.Ring_of())
+  if (get_ring() != m.get_ring())
     {
       gError << "matrix tensor: different base rings";
       return Matrix(rows(), cols());
@@ -482,7 +482,7 @@ Matrix Matrix::tensor(const Matrix &m) const
 
 Matrix Matrix::diff(const Matrix &m, int use_coef) const
 {
-  if (Ring_of() != m.Ring_of())
+  if (get_ring() != m.get_ring())
     {
       gError << "matrix diff: different base rings";
       return Matrix(rows(), cols());
@@ -528,7 +528,7 @@ void Matrix::minimal_lead_terms_ZZ(intarray &result) const
   array<TermIdeal *> mis;
   const array<vec> vecs = obj->entries;
   rows()->sort(vecs, degs, 0, 1, indices);
-  const PolynomialRing *P = Ring_of()->cast_to_PolynomialRing();
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   const FreeModule *Rsyz = P->get_Rsyz();
   FreeModule *Gsyz = P->make_FreeModule(vecs.length());
   bump_up(Gsyz);
@@ -560,7 +560,7 @@ void Matrix::minimal_lead_terms_ZZ(intarray &result) const
 Matrix Matrix::minimal_lead_terms_ZZ() const
 {
   int x;
-  const PolynomialRing *P = Ring_of()->cast_to_PolynomialRing();
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   FreeModule *Gsyz = P->make_FreeModule(n_cols());
   bump_up(Gsyz);
   array< queue<tagged_term *> > allterms;
@@ -600,7 +600,7 @@ Matrix Matrix::minimal_lead_terms_ZZ() const
 
 void Matrix::minimal_lead_terms(intarray &result) const
 {
-  if (Ring_of()->Ncoeffs()->is_Z())
+  if (get_ring()->Ncoeffs()->is_Z())
     {
       minimal_lead_terms_ZZ(result);
       return;
@@ -611,7 +611,7 @@ void Matrix::minimal_lead_terms(intarray &result) const
   const array<vec> vecs = obj->entries;
   rows()->sort(vecs, degs, 0, 1, indices);
   for (int x=0; x<n_cols(); x++)
-    mis.append(MonomialIdeal(Ring_of()));
+    mis.append(MonomialIdeal(get_ring()));
   for (int i=0; i<vecs.length(); i++)
     {
       vec v = vecs[indices[i]];
@@ -632,16 +632,16 @@ void Matrix::minimal_lead_terms(intarray &result) const
 Matrix Matrix::lead_var_coefficient(Matrix &monoms) const
 {
   Matrix result(rows());
-  monoms = Matrix(Ring_of()->make_FreeModule(1));
+  monoms = Matrix(get_ring()->make_FreeModule(1));
   int var, exp;
   for (int i=0; i<n_cols(); i++)
     {
       vec u = elem(i);
       vec v = rows()->lead_var_coefficient(u, var, exp);
       result.append(v);
-      ring_elem a = Ring_of()->var(var,exp);
+      ring_elem a = get_ring()->var(var,exp);
       vec w = monoms.rows()->term(0,a);
-      Ring_of()->remove(a);
+      get_ring()->remove(a);
       monoms.append(w);
     }
   return result;
@@ -667,7 +667,7 @@ Matrix Matrix::sat(int n, int maxd) const
 	  int d = rows()->degree_of_var(n, elem(i));
 	  if (maxd >= 0 && d > maxd)
 	    d = maxd;
-	  degree_monoid()->power(Ring_of()->Nmonoms()->degree_of_var(n), d, newdeg);
+	  degree_monoid()->power(get_ring()->Nmonoms()->degree_of_var(n), d, newdeg);
 	  degree_monoid()->divide(cols()->degree(i), newdeg, newdeg);
 	  result.cols()->change_degree(i, newdeg);
 	  result[i] = rows()->divide_by_var(n, d, elem(i));
@@ -685,7 +685,7 @@ Matrix Matrix::koszul(int p) const
   FreeModule *F = cols()->exterior(p-1);
   FreeModule *G = cols()->exterior(p);
   Matrix result(F, G, degree_shift());
-  if (p <= 0 || p > Ring_of()->n_vars()) return result;
+  if (p <= 0 || p > get_ring()->n_vars()) return result;
   intarray carray(p);
   int *a = carray.alloc(p);
   for (int c=0; c < result.n_cols(); c++)
@@ -730,7 +730,7 @@ Matrix Matrix::koszul(const Matrix &r, const Matrix &c)
 {
   // First check rings: r,c,'this' should be row vectors.
   const FreeModule *F = r.cols();
-  const Ring *R = F->Ring_of();
+  const Ring *R = F->get_ring();
   const Monoid *M = R->Nmonoms();
   
   // Create result matrix
@@ -738,7 +738,7 @@ Matrix Matrix::koszul(const Matrix &r, const Matrix &c)
 
   if (M == NULL) return result;
 
-  int nvars = F->Ring_of()->n_vars();
+  int nvars = F->get_ring()->n_vars();
   int nrows = r.n_cols();
   int ncols = c.n_cols();
   int *aexp = new int[nvars];
@@ -825,10 +825,10 @@ Matrix Matrix::wedge_product(int p, int q, const FreeModule *F)
 	      col++;
 	      continue;
 	    }
-	  ring_elem r = F->Ring_of()->from_int(sgn);
+	  ring_elem r = F->get_ring()->from_int(sgn);
 	  int row = comb::encode(c,p+q);
 	  result[col++] = Fn->term(row,r);
-	  F->Ring_of()->remove(r);
+	  F->get_ring()->remove(r);
 	}
     }
 
@@ -880,8 +880,8 @@ void Matrix::text_out(buffer &o) const
       for (r=0; r<nrows; r++)
 	{
 	  ring_elem f = elem(r,c);
-	  Ring_of()->elem_text_out(p[r], f);
-	  Ring_of()->remove(f);
+	  get_ring()->elem_text_out(p[r], f);
+	  get_ring()->remove(f);
 	  if (p[r].size() > maxcount)
 	    maxcount = p[r].size();
 	}
@@ -910,8 +910,8 @@ int Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
     // exp2 is a scratch value.  It is a paramter so we only have to allocate 
     // it once...
 {
-  Ring_of()->Nmonoms()->to_expvector(m, exp2);
-  int nvars = Ring_of()->n_vars();
+  get_ring()->Nmonoms()->to_expvector(m, exp2);
+  int nvars = get_ring()->n_vars();
   for (int i=0; i<nvars; i++)
     {
       if (vars[i] == 0) continue;
@@ -920,7 +920,7 @@ int Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
       else 
 	exp2[i] = 0;
     }
-  Ring_of()->Nmonoms()->from_expvector(exp2, m);
+  get_ring()->Nmonoms()->from_expvector(exp2, m);
   return 1;
 }
 vec Matrix::strip_vector(vec &f, const int *vars, 
@@ -932,7 +932,7 @@ vec Matrix::strip_vector(vec &f, const int *vars,
       vmonom = NULL;
       return NULL;
     }
-  if (Ring_of()->Nmonoms() == NULL)
+  if (get_ring()->Nmonoms() == NULL)
     {
       vmonom = F->e_sub_i(0);
       vec result = f;
@@ -940,10 +940,10 @@ vec Matrix::strip_vector(vec &f, const int *vars,
       return result;
     }
   // At this point, we know that we have a polynomial ring
-  int nvars = Ring_of()->n_vars();
+  int nvars = get_ring()->n_vars();
   int *exp = new int[nvars];
   int *scratch_exp = new int[nvars];
-  const Monoid *M = Ring_of()->Nmonoms();
+  const Monoid *M = get_ring()->Nmonoms();
 
   M->to_expvector(f->monom, exp);
   for (int i=0; i<nvars; i++)
@@ -1087,7 +1087,7 @@ void Matrix::sort(int degorder, int monorder, intarray &result) const
 Matrix Matrix::coeffs(const int *vars, Matrix &result_monoms) const
 {
   Matrix result_coeffs(rows());
-  result_monoms = Matrix(Ring_of()->make_FreeModule(1));	// One row matrix
+  result_monoms = Matrix(get_ring()->make_FreeModule(1));	// One row matrix
   for (int j=0; j<n_cols(); j++)
     {
       vec f = rows()->copy(elem(j));
@@ -1104,6 +1104,12 @@ Matrix Matrix::coeffs(const int *vars, Matrix &result_monoms) const
 
 MonomialIdeal Matrix::make_monideal(int n) const
 {
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      gError << "expected polynomial ring";
+      return MonomialIdeal(get_ring());
+    }
   queue <Bag *> new_elems;
   for (int i=0; i<n_cols(); i++)
     {
@@ -1116,9 +1122,9 @@ MonomialIdeal Matrix::make_monideal(int n) const
     }
 
   // If the base ring is a quotient ring, include these lead monomials.
-  if (Ring_of()->is_quotient_poly_ring())
+  if (P->is_quotient_ring())
     {
-      MonomialIdeal Rideal = Ring_of()->get_quotient_monomials();
+      const MonomialIdeal &Rideal = P->get_quotient_monomials();
       for (Index<MonomialIdeal> j = Rideal.first(); j.valid(); j++)
 	{
 	  Bag *b = new Bag(-1, Rideal[j]->monom());
@@ -1126,14 +1132,14 @@ MonomialIdeal Matrix::make_monideal(int n) const
 	}
     }
 
-  MonomialIdeal result(Ring_of(), new_elems);
+  MonomialIdeal result(get_ring(), new_elems);
   return result;
 }
 
 MonomialIdeal Matrix::make_skew_monideal(int n) const
 {
   MonomialIdeal result = make_monideal(n);
-  const Monoid *M = Ring_of()->Nmonoms();
+  const Monoid *M = get_ring()->Nmonoms();
   if (M != NULL && M->is_skew())
     {
       intarray vp;
@@ -1174,7 +1180,7 @@ void Matrix::symm1(Matrix &result,
 	{
 	  ring_elem g = elem(0,i);
 	  vec h = result.rows()->mult(g, f);
-	  Ring_of()->remove(g);
+	  get_ring()->remove(g);
 	  symm1(result, h, i, pow-1);
 	}
       result.rows()->remove(f);
@@ -1213,11 +1219,11 @@ static const Monoid * kb_D;
 
 void Matrix::k_basis_insert() const
 {
-  Ring_of()->Nmonoms()->from_expvector(kb_exp, kb_mon);
-  Ring_of()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
-  ring_elem tmp = Ring_of()->term(Ring_of()->Ncoeffs()->from_int(1), kb_mon);
+  get_ring()->Nmonoms()->from_expvector(kb_exp, kb_mon);
+  get_ring()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
+  ring_elem tmp = get_ring()->term(get_ring()->Ncoeffs()->from_int(1), kb_mon);
   kb_result.append(rows()->mult(tmp, kb_vec));
-  Ring_of()->remove(tmp);
+  get_ring()->remove(tmp);
 }
 void Matrix::k_basis0(int firstvar) const
     // Recursively add to the result matrix all monomials in the
@@ -1225,15 +1231,15 @@ void Matrix::k_basis0(int firstvar) const
 {
   for (int i=firstvar; i<kb_n_vars; i++)
     {
-      if (Ring_of()->Nmonoms()->is_skew() &&
-	    Ring_of()->Nmonoms()->is_skew_var(i) &&
+      if (get_ring()->Nmonoms()->is_skew() &&
+	    get_ring()->Nmonoms()->is_skew_var(i) &&
 	    kb_exp[i] >= 1)
 	{
 	  continue;
 	}
 
       kb_exp[i]++;
-      kb_D->mult(kb_exp_degree, Ring_of()->Nmonoms()->degree_of_var(i),
+      kb_D->mult(kb_exp_degree, get_ring()->Nmonoms()->degree_of_var(i),
 		     kb_exp_degree);
 
       int cmp = kb_D->primary_value(kb_exp_degree) - kb_D->primary_value(kb_deg);
@@ -1259,7 +1265,7 @@ void Matrix::k_basis0(int firstvar) const
 	}
 
       kb_exp[i]--;
-      kb_D->divide(kb_exp_degree, Ring_of()->Nmonoms()->degree_of_var(i),
+      kb_D->divide(kb_exp_degree, get_ring()->Nmonoms()->degree_of_var(i),
 		   kb_exp_degree);
     }
 }
@@ -1274,10 +1280,10 @@ Matrix Matrix::k_basis(Matrix bot, const int *d, int do_trunc) const
 {
   kb_do_trunc = do_trunc;
   kb_result = Matrix(rows());
-  kb_n_vars = Ring_of()->n_vars();
-  kb_D = Ring_of()->degree_monoid();
+  kb_n_vars = get_ring()->n_vars();
+  kb_D = get_ring()->degree_monoid();
 
-  kb_mon = Ring_of()->Nmonoms()->make_one();
+  kb_mon = get_ring()->Nmonoms()->make_one();
   kb_deg = kb_D->make_one();
   intarray kb_exp_a;
   kb_exp = kb_exp_a.alloc(kb_n_vars);
@@ -1307,7 +1313,7 @@ Matrix Matrix::k_basis(Matrix bot, const int *d, int do_trunc) const
 	      
 	      kb_exp_a.shrink(0);
 	      varpower::to_ntuple(kb_n_vars, b->monom().raw(), kb_exp_a);
-	      Ring_of()->Nmonoms()->degree_of_varpower(b->monom().raw(), 
+	      get_ring()->Nmonoms()->degree_of_varpower(b->monom().raw(), 
 						       kb_exp_degree);
 
 	      int cmp = kb_D->primary_value(kb_exp_degree) 
@@ -1332,8 +1338,8 @@ Matrix Matrix::k_basis(Matrix bot, const int *d, int do_trunc) const
   kb_D->remove(kb_deg);
   kb_D->remove(kb_exp_degree);
   kb_D->remove(e);
-  Ring_of()->Nmonoms()->remove(kb_mon);
-  kb_result = Matrix(Ring_of()); // This is so no large global data will be laying around.
+  get_ring()->Nmonoms()->remove(kb_mon);
+  kb_result = Matrix(get_ring()); // This is so no large global data will be laying around.
 
   return result;
 }
@@ -1343,16 +1349,16 @@ void Matrix::k_basis1(int firstvar) const
     // Recursively add to the result matrix all monomials in the
     // variables 0..topvar having degree 'deg' which are not in 'mi'.
 {
-  Ring_of()->Nmonoms()->from_expvector(kb_exp, kb_mon);
-  Ring_of()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
-  ring_elem tmp = Ring_of()->term(Ring_of()->Ncoeffs()->from_int(1), kb_mon);
+  get_ring()->Nmonoms()->from_expvector(kb_exp, kb_mon);
+  get_ring()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
+  ring_elem tmp = get_ring()->term(get_ring()->Ncoeffs()->from_int(1), kb_mon);
   kb_result.append(rows()->mult(tmp, kb_vec));
-  Ring_of()->remove(tmp);
+  get_ring()->remove(tmp);
 
   for (int i=firstvar; i<kb_n_vars; i++)
     {
-      if (Ring_of()->Nmonoms()->is_skew() &&
-	    Ring_of()->Nmonoms()->is_skew_var(i) &&
+      if (get_ring()->Nmonoms()->is_skew() &&
+	    get_ring()->Nmonoms()->is_skew_var(i) &&
 	    kb_exp[i] >= 1)
 	{
 	  continue;
@@ -1374,9 +1380,9 @@ Matrix Matrix::k_basis(Matrix bot) const
     // finite dimension, and if so, return a basis.
 {
   kb_result = Matrix(rows());
-  kb_n_vars = Ring_of()->n_vars();
+  kb_n_vars = get_ring()->n_vars();
 
-  kb_mon = Ring_of()->Nmonoms()->make_one();
+  kb_mon = get_ring()->Nmonoms()->make_one();
   intarray kb_exp_a;
   kb_exp = kb_exp_a.alloc(kb_n_vars);
 
@@ -1403,8 +1409,8 @@ Matrix Matrix::k_basis(Matrix bot) const
 	}
     }
 
-  Ring_of()->Nmonoms()->remove(kb_mon);  
+  get_ring()->Nmonoms()->remove(kb_mon);  
   Matrix result = kb_result;
-  kb_result = Matrix(Ring_of()); // This is so no large global data will be laying around.
+  kb_result = Matrix(get_ring()); // This is so no large global data will be laying around.
   return result;
 }

@@ -586,17 +586,15 @@ int Monoid::is_skew_var(int v) const
   return (moninfo->skew_vars[v]);
 }
 
-int Monoid::skew_mult_sign(const int *m, const int *n) const
+static int sort_sign(int a, int *v1, int b, int *v2)
 {
-  int a = skew_vars(m, skew_mvars);
-  int b = skew_vars(n, skew_nvars);
   if (a == 0 || b == 0) return 1;
-  int result = 0;
+  int result = 0; // number of sign switches
   a--;
   b--;
   for (;;)
     {
-      if (skew_mvars[a] < skew_nvars[b])
+      if (v1[a] < v2[b])
 	{
 	  b--;
 	  if (b < 0)
@@ -604,7 +602,7 @@ int Monoid::skew_mult_sign(const int *m, const int *n) const
 	      return (result % 2 == 0 ? 1 : -1);
 	    }
 	}
-      else if (skew_mvars[a] > skew_nvars[b])
+      else if (v1[a] > v2[b])
 	{
 	  result += b+1;
 	  a--;
@@ -616,6 +614,20 @@ int Monoid::skew_mult_sign(const int *m, const int *n) const
       else 
 	return 0;
     }
+}
+
+int Monoid::exp_skew_mult_sign(const int *exp1, const int *exp2) const
+{
+  int a = exp_skew_vars(exp1, skew_mvars);
+  int b = exp_skew_vars(exp2, skew_nvars);
+  return sort_sign(a,skew_mvars, b, skew_nvars);
+}
+
+int Monoid::skew_mult_sign(const int *m, const int *n) const
+{
+  int a = skew_vars(m, skew_mvars);
+  int b = skew_vars(n, skew_nvars);
+  return sort_sign(a,skew_mvars, b, skew_nvars);
 }
 
 int Monoid::skew_mult(const int *m, const int *n, int *result) const

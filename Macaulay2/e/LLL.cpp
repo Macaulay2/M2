@@ -26,7 +26,7 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 
 bool LLLoperations::setThreshold(const RingElement threshold, ring_elem& num, ring_elem &den)
 {
-  const Ring *R = threshold.Ring_of();
+  const Ring *R = threshold.get_ring();
   if (R == ZZ)
     {
       num = ZZ->copy(threshold.get_value());
@@ -36,7 +36,7 @@ bool LLLoperations::setThreshold(const RingElement threshold, ring_elem& num, ri
   const FractionField *KK = R->cast_to_FractionField();
   if (KK != 0)
     {
-      const Ring *K = KK->Ring_of();
+      const Ring *K = KK->get_ring();
       if (K == ZZ)
 	{
 	  num = ZZ->copy(KK->numerator(threshold.get_value()));
@@ -96,7 +96,7 @@ bool LLLoperations::initializeLLL(const Matrix &m,
 				  SparseMutableMatrix *& LLLstate)
 {
   // First check m: should be a matrix over ZZ.
-  if (m.Ring_of() != ZZ)
+  if (m.get_ring() != ZZ)
     {
       gError << "LLL only defined for matrices over ZZ";
       return false;

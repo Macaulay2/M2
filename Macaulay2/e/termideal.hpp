@@ -147,7 +147,7 @@ public:
 //  Input, output, infrastructure ////////////
 //////////////////////////////////////////////
 public:
-  const Ring * Ring_of() const { return R; }
+  const Ring * get_ring() const { return R; }
 
   void text_out(buffer &o) const;
   void bin_out(buffer &o) const;

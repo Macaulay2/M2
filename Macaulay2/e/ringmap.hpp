@@ -12,7 +12,7 @@ public:
   RingMap(const Matrix &m);
   ~RingMap();
 
-  const Ring *Ring_of() const { return R; }
+  const Ring *get_ring() const { return R; }
   const ring_elem elem(int i) const { return map[i]; }
 
   ring_elem eval_term(const Ring *coeff_ring, const ring_elem coeff, 
@@ -73,7 +73,7 @@ public:
   RingMap(const Matrix &m);
   ~RingMap();
 
-  const Ring *Ring_of() const { return R; }
+  const Ring *get_ring() const { return R; }
   const ring_elem elem(int i) const { return _elem[i].bigelem; }
   
   ring_elem eval_term(const Ring *coeff_ring, const ring_elem coeff, 

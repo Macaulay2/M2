@@ -6,19 +6,28 @@
 #include "varpower.hpp"
 
 template <class Tag>
+struct tagged_monomial
+{
+  intarray mon;
+  Tag b;
+  
+  tagged_monomial(const intarray &mon, Tag b) : mon(mon), b(b) {}
+  tagged_monomial(Tag b) : b(b) {}
+
+  friend void i_stashes();
+  static stash *mystash;
+  void *operator new(size_t) { return mystash->new_elem(); }
+  void operator delete(void *p) { mystash->delete_elem(p); }
+};
+
+template <class Tag>
 class MonomialTable
 {
   class iterator; 
+  friend class iterator;
+  typedef tagged_monomial<Tag> tagged_monomial;
 
-  struct tagged_monomial
-  {
-    intarray mon;
-    Tag b;
-
-    tagged_monomial(const intarray &mon, Tag b) : mon(mon), b(b) {}
-    tagged_monomial(Tag b) : b(b) {}
-  };
-
+protected:
   class node // monomial ideal internal node ///
   {
     friend void i_stashes();
@@ -63,13 +72,11 @@ class MonomialTable
 protected:
   node *mi;
   int count;
-public:  
-  MonomialTable() : mi(0), count(0) {}
-  ~MonomialTable();
 
+protected:
   static node *next(node *p);
   static node *prev(node *p);
-private:
+
   void remove_nodes(node *p);
 
   void insert1(node *&p, tagged_monomial *b);
@@ -79,16 +86,21 @@ private:
   void do_tree(node *p, int depth, int indent, int disp) const;
   int debug_check(node *p, node *up) const;
 
-public:
+public:  
+  MonomialTable() : mi(0), count(0) {}
+  ~MonomialTable();
+
   static MonomialTable<Tag> *create(vector<tagged_monomial *> &elems, 
 				    vector<tagged_monomial *> &rejects);
   static MonomialTable<Tag> *create(vector<tagged_monomial *> &elems);
 
+#if 0
   static void minimalize_monomials(vector<tagged_monomial *> &monoms, 
-			      vector<tagged_monomial *> &rejects);
+				   vector<tagged_monomial *> &rejects);
   // Removes elements which are strictly divisible by other elements.
   // The resulting minimal elements are placed into 'monoms', with the property that
   // all monomials in 'monoms' which are equal, and minimal, are contiguous in the result 'monoms'.
+#endif
 
   int length() const { return count; }
 
@@ -120,6 +132,9 @@ public:
 
   void find_all_divisors(int nvars, const int *exp, vector<const tagged_monomial *> &b) const;
         // Search. Return a list of all elements which divide 'exp'.
+
+  void find_all_divisees(int nvars, const int *exp, vector<const tagged_monomial *> &b) const;
+        // Search. Return a list of all elements which are divisible by 'exp'.
 
   void debug_out(int disp=1) const;
 
@@ -202,7 +217,7 @@ bool MonomialTable<Tag>::find_divisor(int nvars, const int *exp, tagged_monomial
       if (p->tag == node::LEAF) 
 	{
 	  b = p->baggage();
-	  return 1;
+	  return true;
 	} 
 
       p = p->down();	
@@ -213,7 +228,6 @@ template <class Tag>
 void MonomialTable<Tag>::find_all_divisors(int nvars, const int *exp, 
 					   vector<const tagged_monomial *> &b) const
 {
-  b.shrink(0);
   if (mi == NULL) return;
 
   node *p = mi;
@@ -236,7 +250,7 @@ void MonomialTable<Tag>::find_all_divisors(int nvars, const int *exp,
 
       if (p->tag == node::LEAF) 
 	{
-	  b.append(p->baggage());
+	  b.push_back(p->baggage());
 	} 
       else
 	p = p->down();	
@@ -249,7 +263,7 @@ bool MonomialTable<Tag>::find_divisor_of_varpower(const int *m, tagged_monomial 
 {
   intarray exp;
   int nvars = 0;
-  if (m[0] > 0) nvars = varpower::var(m[1]);
+  if (m[0] > 0) nvars = 1 + varpower::var(m[1]);
   varpower::to_ntuple(nvars, m, exp);
   return search_expvector(nvars, exp.raw(), b);
 }
@@ -479,6 +493,7 @@ void MonomialTable<Tag>::remove1(node *p)
     }
   if (p == NULL) mi = NULL;
 }
+
 
 #endif
 

@@ -30,7 +30,7 @@ void cmd_Ring_from_int(object &oF, object &on)
   const Ring *F = oF->cast_to_Ring();
   const RingElement &n = on->cast_to_RingElement();
 
-  if (n.Ring_of() != ZZ)
+  if (n.get_ring() != ZZ)
     {
       gError << "from_int requires an integer";
       return;
@@ -49,10 +49,10 @@ static int inline isequal2(const RingElement x, const RingElement y) {
 void cmd_Ring_isequal(object &oa, object &ob)
 {
   const RingElement a = oa->cast_to_RingElement();
-  const Ring *Ra = a.Ring_of();
+  const Ring *Ra = a.get_ring();
   int result;
   const RingElement b = ob->cast_to_RingElement();
-  const Ring *Rb = b.Ring_of();
+  const Ring *Rb = b.get_ring();
   if (Ra == Rb)
     result = a.is_equal(b);
   else if (Ra == ZZ)
@@ -159,7 +159,7 @@ void cmd_Ring_power(object &oa, object &on)
   RingElement a = oa->cast_to_RingElement();
   RingElement b = on->cast_to_RingElement();
 
-  if (b.Ring_of() != ZZ)
+  if (b.get_ring() != ZZ)
     {
       gError << "must use integers for exponentiation";
       return;
@@ -175,7 +175,7 @@ void cmd_PolynomialRing_term(object &oR, object &oa, object &om)
   const Ring *R = oR->cast_to_Ring();
   RingElement a = oa->cast_to_RingElement();
   Monomial m = om->cast_to_Monomial();
-  if (R->Ncoeffs() != a.Ring_of())
+  if (R->Ncoeffs() != a.get_ring())
     { gError << "term: incorrect arguments"; return; }
   if (R->n_vars() == 0)
     { gError << "term: need a polynomial ring"; return; }
@@ -221,7 +221,7 @@ void cmd_PolynomialRing_homogenize(object &oelem, object &ov, object &owts)
   RingElement r = oelem->cast_to_RingElement();
   int v = ov->int_of();
   intarray *wts = owts->intarray_of();
-  const Ring *R = r.Ring_of();
+  const Ring *R = r.get_ring();
   if (v < 0 || v >= R->n_vars())
     {
       gError << "homogenization: improper ring variable";
@@ -249,7 +249,7 @@ void cmd_PolynomialRing_homogenize1(object &oelem, object &ov, object &odeg, obj
   int deg = odeg->int_of();
   intarray *wts = owts->intarray_of();
 
-  const Ring *R = r.Ring_of();
+  const Ring *R = r.get_ring();
   if (v < 0 || v >= R->n_vars())
     {
       gError << "homogenization: improper ring variable";
@@ -275,7 +275,7 @@ void cmd_PolynomialRing_homogenize1(object &oelem, object &ov, object &odeg, obj
 void cmd_FractionField_numerator(object &of)
 {
   RingElement f = of->cast_to_RingElement();
-  const Ring *R = f.Ring_of();
+  const Ring *R = f.get_ring();
   const FractionField *K = R->cast_to_FractionField();
   if (K == NULL)
     {
@@ -288,7 +288,7 @@ void cmd_FractionField_numerator(object &of)
 void cmd_FractionField_denominator(object &of)
 {
   RingElement f = of->cast_to_RingElement();
-  const Ring *R = f.Ring_of();
+  const Ring *R = f.get_ring();
   const FractionField *K = R->cast_to_FractionField();
   if (K == NULL)
     {
@@ -407,7 +407,7 @@ void cmd_qring(object &om)
       gError << "quotient ring expects matrix with one row";
       return;
     }
-  const PolynomialRing *P = m.Ring_of()->cast_to_PolynomialRing();
+  const PolynomialRing *P = m.get_ring()->cast_to_PolynomialRing();
   if (P == NULL)
     {
       gError << "qring: expected polynomial ring";
@@ -440,7 +440,7 @@ void cmd_qring2(object &on, object &oR)
 	  break;
 	}
       RingElement f = gStack[i]->cast_to_RingElement();
-      if (f.Ring_of() != P)
+      if (f.get_ring() != P)
 	{
 	  gError << "qring: ring element has incorrect base ring";
 	  break;
@@ -460,7 +460,7 @@ void cmd_schur(object &oK, object &oMF)
 void cmd_schur_dim(object &of)
 {
   RingElement f = of->cast_to_RingElement();
-  const Ring *R = f.Ring_of();
+  const Ring *R = f.get_ring();
   const SchurRing *F = R->cast_to_SchurRing();
   if (F == NULL)
     {

@@ -121,8 +121,8 @@ public:
   void text_out(buffer &o) const;
   void bin_out(buffer &o) const;
 
-  const Ring * Ring_of() const { return obj->R; }
-  const Monoid* degree_monoid() const { return Ring_of()->degree_monoid(); }
+  const Ring * get_ring() const { return obj->R; }
+  const Monoid* degree_monoid() const { return get_ring()->degree_monoid(); }
   
   // Insertion of new monomials.  
   void insert_minimal(Bag *b);

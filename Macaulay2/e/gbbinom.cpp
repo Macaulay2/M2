@@ -1052,7 +1052,7 @@ void binomialGB_comp::add_generators(const Matrix &m)
   int i;
   binomial f;
   binomial_gb_elem *p;
-  if (m.Ring_of()->is_Z())
+  if (m.get_ring()->is_Z())
     {
       for (i=0; i<m.n_cols(); i++)
 	{

@@ -61,7 +61,7 @@ public:
   void elem_text_out(buffer &o, const res2term *f) const; // Used for debugging and stats
   void elem_text_out(const res2term *f) const; // Used for debugging and stats
 
-  const PolynomialRing *  Ring_of()      const { return R; }
+  const PolynomialRing *  get_ring()      const { return R; }
 };
 
 inline const res2_pair *res2_poly::lead_component(const res2term *f) const { return f->comp; }

@@ -11,7 +11,7 @@ stash *mon_term::mystash;
 TermIdeal::TermIdeal(const PolynomialRing *AA, const FreeModule *GGsyz)
 {
   A = AA;
-  R = GGsyz->Ring_of()->cast_to_PolynomialRing();
+  R = GGsyz->get_ring()->cast_to_PolynomialRing();
   assert(R != NULL);
   M = R->Nmonoms();
   K = R->Ncoeffs();
@@ -255,7 +255,7 @@ int TermIdeal::compare(mon_term *p, mon_term *q) const
 TermIdeal *TermIdeal::make_termideal(const Matrix &m, int n)
 {
   int i;
-  const PolynomialRing *R = m.Ring_of()->cast_to_PolynomialRing();
+  const PolynomialRing *R = m.get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *A = R->get_base_poly_ring();
   while (A->is_quotient_ring())
     A = A->get_base_poly_ring();
@@ -356,7 +356,7 @@ void TermIdeal::append_to_matrix(Matrix m, int i) const
       gError << "index out of range";
       return;
     }
-  if (m.Ring_of() != R)
+  if (m.get_ring() != R)
     {
       gError << "incorrect base ring";
       return;
@@ -707,10 +707,10 @@ Matrix TermIdeal::search(const Matrix &m) const
 	  }
 
   // If the base ring is a quotient ring, include these lead monomials.
-  if (m.Ring_of()->is_quotient_poly_ring())
+  if (m.get_ring()->is_quotient_poly_ring())
     {
       i = 0;
-      MonomialIdeal Rideal = m.Ring_of()->get_quotient_monomials();
+      MonomialIdeal Rideal = m.get_ring()->get_quotient_monomials();
       for (Index<MonomialIdeal> j = Rideal.first(); j.valid(); j++, i++)
 	{
 	  Nterm *f = (Nterm *) Rideal[j]->basis_ptr();

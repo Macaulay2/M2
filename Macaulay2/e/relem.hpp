@@ -13,7 +13,7 @@
 // Usual operations, such as +, -, *, / are defined automatically.
 //
 // To check that the ring of f is Z: 
-//    f.Ring_of()->is_Z()
+//    f.get_ring()->is_Z()
 //
 // To extract the various limbs of f: (NOT FUNCTIONAL YET)
 //    
@@ -79,7 +79,7 @@ public:
 
   ring_elem    get_value ()             const { return obj->val; }
   void         set_value (ring_elem f)       { obj->val = f; }
-  const Ring * Ring_of  ()             const { return obj->R; }
+  const Ring * get_ring  ()             const { return obj->R; }
 
   // ring arithmetic
 
@@ -175,23 +175,23 @@ inline RingElement::RingElement(const Ring *R, ring_elem f) :
 
 inline bool RingElement::is_zero() const
 {
-  return Ring_of()->is_zero(obj->val);
+  return get_ring()->is_zero(obj->val);
 }
 
 inline bool RingElement::is_unit() const
 {
-  return Ring_of()->is_unit(obj->val);
+  return get_ring()->is_unit(obj->val);
 }
 
 inline bool RingElement::is_equal(const RingElement &b) const
 {
   if (this == &b) return true;
-  if (Ring_of() != b.Ring_of())
+  if (get_ring() != b.get_ring())
     {
       gError << "cannot compare ring elements from different rings";
       return false;
     }
-  return Ring_of()->is_equal(obj->val, b.obj->val);
+  return get_ring()->is_equal(obj->val, b.obj->val);
 }
 
 #endif

@@ -193,16 +193,25 @@ public:
 			    const polynomial &r) const;
 
   void cancel_lead_terms(vector_heap &h, vector_heap &hsyz,
-			 const ringelement &coeff, 
-			 const exponent_vector *mon,
-			 const exponent_vector *hlead,
+			 const ringelement &hcoefficient, 
+			 const exponent_vector *hexponents,
+			 const exponent_vector *gexponents,
 			 const vec &g,
 			 const vec &gsyz) const;
-  void ring_cancel_lead_terms(vector_heap &h, vector_heap &hsyz,
-			      const ringelement &coeff, 
-			      const exponent_vector *mon,
-			      int comp,
+  // h -= c*hcoefficient*t*g, hsyz -= c*hcoefficient*t*gsyz, where
+  // where leadterm(h) = hcoefficient*hlead*hcomponent, and 
+  // leadterm(g) = gexponents*hcomponent, and
+  // c in K, t is a monomial, such that in(h) = in(c*hcoefficient*t*g).
+
+  void ring_cancel_lead_terms(vector_heap &h,
+			      const ringelement &hcoefficient, 
+			      const exponent_vector *hexponents,
+			      int hcomponent,
+			      const exponent_vector *gexponents,
 			      const polynomial &g) const;
+  // Set h -= c*hcoefficient*t*g*hcomponent  (IS THIS WHAT WE WANT IN GENERAL??)
+  // where c in K, t a monomial, are chosen so that
+  // in(h) = in(c*hcoefficient*t*g*hcomponent).
 			       
   // Creation of an engine matrix
   Matrix make_matrix(freemodule F, array< vec > &columns) const;

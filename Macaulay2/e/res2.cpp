@@ -406,7 +406,7 @@ void res2_comp::initialize(Matrix mat,
 {
   int i;
 
-  P = mat.Ring_of()->cast_to_PolynomialRing();
+  P = mat.get_ring()->cast_to_PolynomialRing();
   assert(P != NULL);
   R = new res2_poly((PolynomialRing *)P);
   M = P->Nmonoms();
@@ -977,19 +977,22 @@ void res2_comp::new_pairs(res2_pair *p)
 
   // Second, add in syzygies arising from the base ring, if any
   // The baggage of each of these is NULL
-  if (P->base_ring != NULL)
-    for (j = P->Rideal.first(); j.valid(); j++)
-      {
-	// Compute (P->quotient_ideal->monom : p->monom)
-	// and place this into a varpower and Bag, placing
-	// that into 'elems'
-	thisvp.shrink(0);
-	varpower::divide(P->Rideal[j]->monom().raw(), vp.raw(), thisvp);
-	if (varpower::is_equal(P->Rideal[j]->monom().raw(), thisvp.raw()))
-	  continue;
-	Bag *b = new Bag(0, thisvp);
-	elems.insert(b);
-      }
+  if (P->is_quotient_ring())
+    {
+      const MonomialIdeal &Rideal = P->get_quotient_monomials();
+      for (j = Rideal.first(); j.valid(); j++)
+	{
+	  // Compute (P->quotient_ideal->monom : p->monom)
+	  // and place this into a varpower and Bag, placing
+	  // that into 'elems'
+	  thisvp.shrink(0);
+	  varpower::divide(Rideal[j]->monom().raw(), vp.raw(), thisvp);
+	  if (varpower::is_equal(Rideal[j]->monom().raw(), thisvp.raw()))
+	    continue;
+	  Bag *b = new Bag(0, thisvp);
+	  elems.insert(b);
+	}
+    }
   
   // Third, add in syzygies arising from previous elements of this same level
   // The baggage of each of these is their corresponding res2_pair
@@ -1036,9 +1039,9 @@ int res2_comp::find_ring_divisor(const int *exp, ring_elem &result) const
      // and result is set to be that ring element.
      // Otherwise 0 is returned.
 {
-  if (P->base_ring == NULL) return 0;
+  if (!P->is_quotient_ring()) return 0;
   Bag *b;
-  if (!P->Rideal.search_expvector(exp, b))
+  if (!P->get_quotient_monomials().search_expvector(exp, b))
     return 0;
   result = (Nterm *) b->basis_ptr();
   return 1;

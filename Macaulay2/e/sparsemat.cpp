@@ -409,7 +409,7 @@ void SparseMutableMatrix::initialize(const Ring *KK, int nr, int nc)
 
 SparseMutableMatrix::SparseMutableMatrix(const Matrix &m)
 {
-  initialize(m.Ring_of(), m.n_rows(), m.n_cols());
+  initialize(m.get_ring(), m.n_rows(), m.n_cols());
   // Now loop through and get all (non-zero) entries.
   for (int c=0; c<m.n_cols(); c++)
     {

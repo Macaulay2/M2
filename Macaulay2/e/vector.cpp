@@ -80,7 +80,7 @@ Vector Vector::operator-(const Vector &b) const
 Vector Vector::operator*(const RingElement &b) const
 {
   Vector result(free_of());
-  if (Ring_of() != b.Ring_of())
+  if (get_ring() != b.get_ring())
     gError << "scalar multiplication requires both elements to have the same "
       << "base ring";
   else 
@@ -96,7 +96,7 @@ Vector Vector::operator*(int n) const
 
 RingElement Vector::get_coefficient(int i) const
 {
-  RingElement result(Ring_of(), free_of()->get_coefficient(obj->val, i));
+  RingElement result(get_ring(), free_of()->get_coefficient(obj->val, i));
   return result;
 }
 
@@ -113,7 +113,7 @@ Vector Vector::lead_term() const
 
 RingElement Vector::lead_coefficient() const
 {
-  RingElement result(Ring_of(), free_of()->lead_coefficient(obj->val));
+  RingElement result(get_ring(), free_of()->lead_coefficient(obj->val));
   return result;
 }
 
@@ -124,7 +124,7 @@ bool Vector::is_homogeneous() const
 
 intarray Vector::degree() const
 {
-  const Ring *R = Ring_of();
+  const Ring *R = get_ring();
   const FreeModule *F = free_of();
   intarray result;
 

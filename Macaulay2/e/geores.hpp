@@ -8,7 +8,7 @@
 // Redefine:
 // res2_poly
 //    routines that should be implemented in this class:
-//    add_to, compare, Ring_of, remove
+//    add_to, compare, get_ring, remove
 // res2term *
 //    fields of this structure type should include:
 //    next, coeff
@@ -45,7 +45,7 @@ static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
 
 inline respolyHeap::respolyHeap(const res2_poly *FF)
 : F(FF),
-  K(FF->Ring_of()->Ncoeffs()),
+  K(FF->get_ring()->Ncoeffs()),
   top_of_heap(-1),
   mLead(-1)
 {

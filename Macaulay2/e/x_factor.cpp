@@ -106,7 +106,7 @@ static CanonicalForm convert(const mpz_ptr p) {
 #define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
 
 static CanonicalForm convert(const RingElement &g) {
-     const Ring *R = g.Ring_of();
+     const Ring *R = g.get_ring();
      const int n = R->n_vars();
      const Ring *F = R->Ncoeffs();
      const Z_mod *Zn = F->cast_to_Z_mod();
@@ -114,7 +114,7 @@ static CanonicalForm convert(const RingElement &g) {
      const FractionField *Q = (
 			       NULL != F->cast_to_FractionField()
 			       &&
-			       NULL != F->cast_to_FractionField()->Ring_of()->cast_to_Z()
+			       NULL != F->cast_to_FractionField()->get_ring()->cast_to_Z()
 			       ?
 			       F->cast_to_FractionField()
 			       :
@@ -165,7 +165,7 @@ static CanonicalForm convert(const RingElement &g) {
 static void gcd_ring_elem(object &ff, object &gg) {
      const RingElement &f = ff -> cast_to_RingElement();
      const RingElement &g = gg -> cast_to_RingElement();
-     const Ring *R = f.Ring_of();
+     const Ring *R = f.get_ring();
      CanonicalForm p = convert(f);
      CanonicalForm q = convert(g);
      cerr << "p = " << p << endl
@@ -178,7 +178,7 @@ static void gcd_ring_elem(object &ff, object &gg) {
 static void extgcd_ring_elem(object &ff, object &gg) {
      const RingElement &f = ff -> cast_to_RingElement();
      const RingElement &g = gg -> cast_to_RingElement();
-     const Ring *R = f.Ring_of();
+     const Ring *R = f.get_ring();
      CanonicalForm p, q;
      CanonicalForm h = extgcd(convert(f),convert(g),p,q);
      gStack.insert(convert(R,p));
@@ -190,14 +190,14 @@ static void extgcd_ring_elem(object &ff, object &gg) {
 static void pseudo_remainder(object &ff, object &gg) {
      const RingElement &f = ff -> cast_to_RingElement();
      const RingElement &g = gg -> cast_to_RingElement();
-     const Ring *R = f.Ring_of();
+     const Ring *R = f.get_ring();
      CanonicalForm h = Prem(convert(f),convert(g));
      gStack.insert(convert(R,h));
 }
 
 static void factor_ring_elem(object &gg) {
      const RingElement &g = gg -> cast_to_RingElement();
-     const Ring *R = g.Ring_of();
+     const Ring *R = g.get_ring();
      CanonicalForm h = convert(g);
      CFFList q = Factorize(h);
      for (CFFListIterator i = q; i.hasItem(); i++) {
@@ -209,7 +209,7 @@ static void factor_ring_elem(object &gg) {
 
 static void ideal_reorder(object &mm) {
      const Matrix &m = mm -> cast_to_Matrix();
-     const Ring *R = m.Ring_of();
+     const Ring *R = m.get_ring();
      const int N = R->n_vars();
      const Ring *F = R->Ncoeffs();
      const Z_mod *Zn = F->cast_to_Z_mod();
@@ -217,7 +217,7 @@ static void ideal_reorder(object &mm) {
      const FractionField *Q = (
 			       NULL != F->cast_to_FractionField()
 			       &&
-			       NULL != F->cast_to_FractionField()->Ring_of()->cast_to_Z()
+			       NULL != F->cast_to_FractionField()->get_ring()->cast_to_Z()
 			       ?
 			       F->cast_to_FractionField()
 			       :
@@ -253,14 +253,14 @@ static void ideal_reorder(object &mm) {
 
 static void ideal_charset(object &mm) {
      const Matrix &m = mm -> cast_to_Matrix();
-     const Ring *R = m.Ring_of();
+     const Ring *R = m.get_ring();
      const Ring *F = R->Ncoeffs();
      const Z_mod *Zn = F->cast_to_Z_mod();
      const Z *Z0 = F->cast_to_Z();
      const FractionField *Q = (
 			       NULL != F->cast_to_FractionField()
 			       &&
-			       NULL != F->cast_to_FractionField()->Ring_of()->cast_to_Z()
+			       NULL != F->cast_to_FractionField()->get_ring()->cast_to_Z()
 			       ?
 			       F->cast_to_FractionField()
 			       :
