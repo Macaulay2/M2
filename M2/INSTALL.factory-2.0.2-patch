@@ -1,0 +1,13 @@
+--- factory/cf_gmp.h.orig	Tue Jan 22 02:20:45 2002
++++ factory/cf_gmp.h	Wed Apr 24 22:35:53 2002
+@@ -6,8 +6,10 @@
+ 
+ #include <config.h>
+ 
++#undef __cplusplus
+ extern "C" {
+ #include <gmp.h>
+ }
++#define __cplusplus 1
+ 
+ #endif /* ! INCL_CF_GMP_H */

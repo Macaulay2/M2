@@ -1,0 +1,18 @@
+--- gmp-4.1/gmp-h.in.orig	Wed Jan 16 16:33:23 2002
++++ gmp-4.1/gmp-h.in	Sat Apr 13 07:59:10 2002
+@@ -1967,11 +1967,11 @@
+ #ifdef __cplusplus
+ #include <iosfwd>
+ __GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpz_srcptr);
+-__GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpq_srcptr);
+-__GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpf_srcptr);
++// __GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpq_srcptr);
++// __GMP_DECLSPEC std::ostream& operator<< (std::ostream &, mpf_srcptr);
+ __GMP_DECLSPEC std::istream& operator>> (std::istream &, mpz_ptr);
+-__GMP_DECLSPEC std::istream& operator>> (std::istream &, mpq_ptr);
+-__GMP_DECLSPEC std::istream& operator>> (std::istream &, mpf_ptr);
++// __GMP_DECLSPEC std::istream& operator>> (std::istream &, mpq_ptr);
++// __GMP_DECLSPEC std::istream& operator>> (std::istream &, mpf_ptr);
+ #endif
+ 
+ 

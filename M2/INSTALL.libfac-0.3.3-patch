@@ -1,0 +1,24 @@
+diff -ur libfac.orig/factor/Factor.cc libfac/factor/Factor.cc
+--- libfac.orig/factor/Factor.cc	Tue Jan 22 02:20:50 2002
++++ libfac/factor/Factor.cc	Sat Jun 22 12:30:11 2002
+@@ -758,7 +758,7 @@
+   TIMING_START(factorize_time);
+   // search an "optimal" main variavble
+   int mv=F.level();
+-  if (! F.isUnivariate() )
++  if (mv != LEVELBASE && ! F.isUnivariate() )
+   {
+      mv=find_mvar(F);
+      if (mv!=F.level())
+diff -ur libfac.orig/factor/tmpl_inst.cc libfac/factor/tmpl_inst.cc
+--- libfac.orig/factor/tmpl_inst.cc	Tue Jan 22 02:20:50 2002
++++ libfac/factor/tmpl_inst.cc	Sat Jun 22 12:30:49 2002
+@@ -80,7 +80,7 @@
+ #ifndef NOSTREAMIO
+ template ostream & operator << ( ostream &, const List<CFList> & );
+ template ostream & operator << ( ostream &, const List<Variable> & );
+-template ostream & operator << ( ostream &, const List<int> & );
++// template ostream & operator << ( ostream &, const List<int> & );
+ template ostream & operator << ( ostream &, const Array<int> & );
+ #endif
+ 
