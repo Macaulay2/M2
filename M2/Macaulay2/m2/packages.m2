@@ -193,7 +193,13 @@ closePackage String := title -> (
 	  protect dict;					    -- maybe don't do this, as it will be private
 	  protect exportDict;
 	  );
-     if pkg.name =!= "Main" then globalDictionaries = prepend(exportDict,pkg#"previous dictionaries");
+     if pkg.name =!= "Main" then (
+	  globalDictionaries = pkg#"previous dictionaries";
+	  scan(keys exportDict, nam -> if isGlobalSymbol nam then (
+		    stderr << "warning: global symbol '" << nam << "' obscured by package " << title << endl;
+		    ));
+	  globalDictionaries = prepend(exportDict,globalDictionaries);
+	  );
      hook := pkg#"close hook";
      fileExitHooks = select(fileExitHooks, f -> f =!= hook);
      currentPackage = pkg#"previous package";
