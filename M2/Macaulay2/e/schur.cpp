@@ -92,7 +92,11 @@ bool SchurRing::initialize_schur()
 SchurRing * SchurRing::create(const PolynomialRing *R)
 {
   SchurRing *result = new SchurRing;
-  result->initialize_poly_ring(R->Ncoeffs(), R->Nmonoms());
+#warning "Schur rings have a problem with flattened monoids"
+  result->initialize_poly_ring(R->getLogicalCoefficients(),
+			       R->getLogicalMonoid(),
+			       R->getLogicalCoefficients(),
+			       R->getLogicalMonoid());
   if (!result->initialize_schur()) return 0;
   // NO gbring, grtype...
   return result;

@@ -80,25 +80,73 @@ bool WeylAlgebra::initialize_weyl(
   return true;
 }
 
-WeylAlgebra *WeylAlgebra::create(const PolynomialRing *R,
-				 M2_arrayint derivatives,
-				 M2_arrayint commutatives,
+WeylAlgebra *WeylAlgebra::create(const Ring *K,
+				 const Monoid *M,
+				 const Ring *originalK,
+				 const Monoid *originalM,
+				 M2_arrayint derivs,
+				 M2_arrayint comms,
 				 int homog_var)
 {
-  // CHECK: if R->Ncoeffs() is not commutative, then this is an error.
   WeylAlgebra *result = new WeylAlgebra;
 
-  result->initialize_poly_ring(R->Ncoeffs(), R->Nmonoms());
-  if (!result->initialize_weyl(derivatives, commutatives, homog_var))
-    return 0;
-
-  const PolynomialRing *flatR = R->get_flattened_ring();
-  result->_gb_ring = GBRing::create_WeylAlgebra(flatR->Ncoeffs(), 
-						flatR->Nmonoms(), 
-						result);
+  result->initialize_poly_ring(K,M,originalK,originalM);
+  if (!result->initialize_weyl(derivs,comms,homog_var)) return 0;
+  result->_gb_ring = GBRing::create_WeylAlgebra(K,M,result);
   return result;
 }
 
+WeylAlgebra *WeylAlgebra::create(const PolynomialRing *R,
+				 M2_arrayint derivs,
+				 M2_arrayint comms,
+				 int homog_var)
+{
+  return create(R->getCoefficients(),
+		R->getMonoid(),
+		R->getLogicalCoefficients(),
+		R->getLogicalMonoid(),
+		derivs,
+		comms,
+		homog_var);
+}
+
+const WeylAlgebra *WeylAlgebra::createPolyRing(const Monoid *M) const
+  // creates this[M], which is commutative in M variables, but skew commutative in
+  // (some of) the variables of this
+{
+  const Monoid *newM = Monoid::tensor_product(M, getMonoid());
+  if (newM == 0) return 0;
+  
+  int nvars = M->n_vars();
+  M2_arrayint new_derivs = makearrayint(_nderivatives);
+  M2_arrayint new_comms = makearrayint(_nderivatives);
+
+  int new_homog_var;
+  if (_homog_var >= 0)
+    new_homog_var = _homog_var + nvars;
+  else 
+    new_homog_var = -1;
+
+  for (int i=0; i<_nderivatives; i++)
+    {
+      new_derivs->array[i] = (_derivative[i] >= 0 ?
+			      nvars + _derivative[i]
+			      :
+			      -1);
+      new_comms->array[i]  = (_commutative[i] >= 0 ?
+			      nvars + _commutative[i]
+			      :
+			      -1);
+    }
+
+  return create(getCoefficients(),
+		newM,
+		this,
+		M,
+		new_derivs,
+		new_comms,
+		new_homog_var);
+}
 
 void WeylAlgebra::text_out(buffer &o) const
 {

@@ -74,6 +74,8 @@ time (
        i = i+1;
        ))
 
+assert(2 == rawLeadCoefficient(2*x))
+
 x100 = rawRingVar(R1,0,100)
 x1000 = rawRingVar(R1,0,1000)
 assert(x1000 * x1000 == rawRingVar(R1,0,2000))
@@ -189,6 +191,29 @@ f^2
 --------------------------------------
 -- poly rings over other poly rings --
 --------------------------------------
+needs "raw-util.m2"
+A = polyring(rawZZ(), 1 : symbol x)
+B = polyring(A, 1 : symbol y)
+A === ring x
+x1 = rawPromote(B,x)
+f = (x1+y)^3
+rawLeadCoefficient(x1+y)
+g = x1*y^3+(1+x1)*y
+
+assert(2 == rawTermCount g)
+rawLeadCoefficient g
+rawLeadMonomial g 
+rawGetTerms(g,0,0) -- the lead term
+rawGetTerms(g,1,1)
+rawGetTerms(g,2,2)
+rawPairs g
+
+h1 = rawTerm(B,(x+1)^3,rawMakeMonomial{(0,3)})
+h2 = rawPromote(B, (x+1)^3) * y^3 
+assert(h1 == h2)
+
+
+
 needs "raw-util.m2"
 A = polyring(rawZZ(), (symbol r, symbol s))
 B = rawPolynomialRing(A, singlemonoid(symbol x, symbol y, symbol z))

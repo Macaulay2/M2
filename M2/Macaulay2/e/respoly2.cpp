@@ -283,7 +283,7 @@ vec res2_poly::to_vector(const res2term *f, const FreeModule *F,
       int x = tm->comp->me; // MES: Currently used for non-minimal as well...
       M->divide(tm->monom, tm->comp->syz->monom, mon);
 
-      ring_elem a = R->term(tm->coeff, mon);
+      ring_elem a = R->make_flat_term(tm->coeff, mon);
       vec tmp = R->make_vec(x,a);
       H.add(tmp);
     }

@@ -339,7 +339,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
 
   queue<Bag *> rejects;
   Bag *b;
-  MonomialIdeal mi(originalR->get_flattened_ring(), elems, rejects);
+  MonomialIdeal mi(originalR, elems, rejects);
   while (rejects.remove(b))
     {
       s_pair *q2 = reinterpret_cast<s_pair *>(b->basis_ptr());

@@ -10,11 +10,20 @@
 
 class SkewPolynomialRing : public PolyRing
 {
-protected:
+  static SkewPolynomialRing *create(const Ring *K,
+			     const Monoid *M,
+			     const Ring *originalK,
+			     const Monoid *originalM,
+			     M2_arrayint skewvars);
+
   bool initialize_skew(M2_arrayint skewvars);
+
+  virtual const SkewPolynomialRing *createPolyRing(const Monoid *M) const;
+  // creates this[M], which is commutative in M variables, but skew commutative in
+  // (some of) the variables of this
+
   SkewPolynomialRing() {}
   virtual ~SkewPolynomialRing();
-
 public:
   static SkewPolynomialRing *create(const PolynomialRing *R,
 				    M2_arrayint skewvars);
@@ -30,7 +39,7 @@ public:
   virtual ring_elem power(const ring_elem f, mpz_t n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 
-public:
+protected:
   virtual ring_elem imp_mult_by_term(const ring_elem f, 
 				     const ring_elem c, 
 				     const int *m) const;

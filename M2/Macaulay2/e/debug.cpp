@@ -33,6 +33,14 @@ void dringelem(const Ring *R, const ring_elem f)
   emit(o.str());
 }
 
+void dNterm(const Ring *R, const Nterm *f)
+{
+  buffer o;
+  ring_elem g = const_cast<Nterm *>(f);
+  R->elem_text_out(o,g);
+  emit(o.str());
+}
+
 void dvec(const Ring *R, const vec v)
 {
   buffer o;

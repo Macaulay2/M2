@@ -690,6 +690,7 @@ ring_elem FractionField::get_terms(const ring_elem f, int, int) const
   return f;
 }
 
+#if 0
 ///////////////////////////////////
 // translation gbvector <--> vec //
 ///////////////////////////////////
@@ -717,6 +718,7 @@ void FractionField::trans_from_ringelem(gbvectorHeap &H,
   ring_elem a = this->numerator(coeff);
   get_ring()->trans_from_ringelem(H, a, comp, exp, firstvar);
 }
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

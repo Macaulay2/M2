@@ -140,22 +140,6 @@ ring_elem Ring::preferred_associate(ring_elem f) const
   return invert(f);
 }
 
-int Ring::n_terms(const ring_elem) const
-{
-  return 1;
-}
-ring_elem Ring::term(const ring_elem a, const int *) const
-{
-  return copy(a);
-}
-ring_elem Ring::lead_coeff(const ring_elem f) const
-{
-  return f;
-}
-ring_elem Ring::get_coeff(const ring_elem f, const int *) const
-{
-  return f;
-}
 ring_elem Ring::get_terms(const ring_elem f, int, int) const
 {
   return f;
@@ -242,7 +226,7 @@ M2_arrayint Ring::support(const ring_elem a) const
 // Translation gbvector <--> ringelem/vec //
 ////////////////////////////////////////////
 // This version is valid ONLY for base rings (not QQ!)
-
+#if 0
 #include "gbring.hpp"
 Ring::trans_tag Ring::trans_type() const { return BASE; }
 
@@ -273,6 +257,8 @@ void Ring::trans_from_ringelem(gbvectorHeap &H,
 
   H.add(g);
 }
+#endif
+
 ////////////////////////////////////////////
 /////////////////////////////////////////////////////
 

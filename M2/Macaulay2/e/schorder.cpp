@@ -18,7 +18,7 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
   const Ring *R = m->get_ring();
   const SchreyerOrder *S = m->rows()->get_schreyer_order();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
-  const Monoid *M = P->Nmonoms();
+  const Monoid *M = P->getMonoid();
   SchreyerOrder *result = new SchreyerOrder(M);
   int rk = m->n_cols();
   if (rk == 0) return result;
@@ -43,9 +43,9 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
       if (v == NULL)
 	M->one(base);
       else if (S == NULL)
-	M->copy(P->lead_monomial(v->coeff), base);
+	M->copy(P->lead_flat_monomial(v->coeff), base);
       else
-	M->mult(P->lead_monomial(v->coeff), S->base_monom(i), base);
+	M->mult(P->lead_flat_monomial(v->coeff), S->base_monom(i), base);
 
       result->append(ties[i], base);
     }

@@ -15,8 +15,9 @@ bool QQ::initialize_QQ()
   initialize_ring(0,0,0);
   _elem_size = sizeof(mpq_t);
   _zero_elem = new_elem();// this sets the element to 0.
+#if 0
   trans_one = globalZZ->from_int(1);
-
+#endif
   zeroV = from_int(0);
   oneV = from_int(1);
   minus_oneV = from_int(-1);
@@ -398,6 +399,7 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a) const
   return result;
 }
 
+#if 0
 ///////////////////////////////////
 // translation gbvector <--> vec //
 ///////////////////////////////////
@@ -425,6 +427,7 @@ void QQ::trans_from_ringelem(gbvectorHeap &H,
   ring_elem a = this->numerator(coeff);
   globalZZ->trans_from_ringelem(H, a, comp, exp, firstvar);
 }
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -20,15 +20,15 @@ ComputationOrNull *Computation::choose_gb(const Matrix *m,
 					  int strategy)
 {
   const Ring *R1 = m->get_ring();
-  const PolynomialRing *R2 = R1->cast_to_PolynomialRing();
+  const PolynomialRing *R = R1->cast_to_PolynomialRing();
 
-  if (R2 == 0)
+  if (R == 0)
     {
       // Look for the correct computation type here.
+      ERROR("GB of non-polynomial rings not re-implemented");
 #warning "handle non polynomial rings"
       return 0;
     }
-  const PolynomialRing *R = R2->get_flattened_ring();
 
   bool is_graded = (R->is_graded() && m->is_homogeneous());
   //bool ring_is_base = R->is_basic_ring();

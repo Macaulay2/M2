@@ -130,8 +130,8 @@ private:
   const PolynomialRing *originalR;
   GBRing *GR;
   const PolynomialRing *R;
-  const Monoid *M; // flattened monomials
-  const Ring *K;  // flattened coefficients
+  const Monoid *M; // flattened monomials (same as R->getMonoid())
+  const Ring *K;  // flattened coefficients (same as R->getCoefficients())
 
   FreeModule *F;
   FreeModule *Fsyz;	// This is a Schreyer module

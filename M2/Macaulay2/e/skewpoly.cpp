@@ -14,19 +14,48 @@ bool SkewPolynomialRing::initialize_skew(M2_arrayint skewvars)
   return true;
 }
 
+SkewPolynomialRing *SkewPolynomialRing::create(const Ring *K,
+					       const Monoid *M,
+					       const Ring *originalK,
+					       const Monoid *originalM,
+					       M2_arrayint skewvars)
+{
+  SkewPolynomialRing *result = new SkewPolynomialRing;
+
+  result->initialize_poly_ring(K,M,originalK,originalM);
+  if (!result->initialize_skew(skewvars)) return 0;
+  result->_gb_ring = GBRing::create_SkewPolynomialRing(K,M,result->_skew);
+  return result;
+}
+
 SkewPolynomialRing *SkewPolynomialRing::create(const PolynomialRing *R,
 					       M2_arrayint skewvars)
 {
-  // CHECK: R is a polynomial ring, and is commutative.
-  SkewPolynomialRing *result = new SkewPolynomialRing;
+  return create(R->getCoefficients(),
+		R->getMonoid(),
+		R->getLogicalCoefficients(),
+		R->getLogicalMonoid(),
+		skewvars);
+}
 
-  result->initialize_poly_ring(R->Ncoeffs(), R->Nmonoms());
-  if (!result->initialize_skew(skewvars)) return 0;
-  const PolynomialRing *flatR = R->get_flattened_ring()->cast_to_PolynomialRing();
-  result->_gb_ring = GBRing::create_SkewPolynomialRing(flatR->Ncoeffs(), 
-						       flatR->Nmonoms(),
-						       result->_skew);
-  return result;
+const SkewPolynomialRing *SkewPolynomialRing::createPolyRing(const Monoid *M) const
+  // creates this[M], which is commutative in M variables, but skew commutative in
+  // (some of) the variables of this
+{
+  const Monoid *newM = Monoid::tensor_product(M, getMonoid());
+  if (newM == 0) return 0;
+  
+  int nskew = n_skew_commutative_vars();
+  int nvars = M->n_vars();
+  M2_arrayint newskewvars = makearrayint(nskew);
+  for (int i=0; i<nskew; i++)
+    newskewvars->array[i] = nvars + skew_variable(i);
+
+  return create(getCoefficients(),
+		newM,
+		this,
+		M,
+		newskewvars);
 }
 
 

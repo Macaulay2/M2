@@ -252,10 +252,6 @@ public:
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
   virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const;
 
-  virtual int n_terms(const ring_elem f) const;
-  virtual ring_elem term(const ring_elem a, const int *m) const;
-  virtual ring_elem lead_coeff(const ring_elem f) const;
-  virtual ring_elem get_coeff(const ring_elem f, const int *m) const;
   virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const;
 
   virtual ring_elem homogenize(const ring_elem f, int v, int deg, 
@@ -278,6 +274,7 @@ public:
   // All others should redefine these routines
 
 public:
+#if 0
   typedef enum { BASE, FRAC_QQ, FRAC, POLY } trans_tag;
   virtual ring_elem trans_to_ringelem(ring_elem coeff, 
 				      const int *exp) const;
@@ -291,7 +288,7 @@ public:
 				   int firstvar) const;
   
   virtual trans_tag trans_type() const;
-
+#endif
   ////////////////////////////////////////////////////////  
 
 

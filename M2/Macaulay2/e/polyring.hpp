@@ -50,19 +50,21 @@ class PolyRing : public PolynomialRing
 {
   friend class GBRingSkew;
   friend class FreeModule;
+
+  void initialize_poly_ring(const Ring *K, const Monoid *M, 
+			    const Ring *originalK, const Monoid *originalM, 
+			    const PolynomialRing *deg_ring);
+  // Only to be called from initialize_poly_ring and make_trivial_ZZ_poly_ring
+
+  static const PolyRing *create_poly_ring(const Ring *K, const Monoid *M,
+				   const Ring *originalK, const Monoid *originalM);
 protected:
-#if 0
-  virtual PolyRing *createPolyRing(const Monoid *M);
+  virtual const PolyRing *createPolyRing(const Monoid *M) const;
   // Create the PolyRing this[M].  This is virtual, since it must be the same type of noncomm
   // as 'this'.  e.g., if K has skew comm variables, so does the result.
-#endif
 
-  const PolyRing * make_flattened_ring();
-
-  void initialize_poly_ring(const Ring *K, const Monoid *M);
-
-  void initialize_poly_ring(const Ring *K, const Monoid *M, const PolynomialRing *deg_ring);
-  // Only to be called from initialize_poly_ring and make_trivial_ZZ_poly_ring
+  void initialize_poly_ring(const Ring *K, const Monoid *M,
+			    const Ring *originalK, const Monoid *originalM);
 
   virtual ~PolyRing();
   PolyRing() {}
@@ -70,11 +72,13 @@ protected:
   static PolyRing *trivial_poly_ring;
   static void make_trivial_ZZ_poly_ring();
 public:
-  static PolyRing *create(const Ring *K, const Monoid *MF);
+  static const PolyRing *create(const Ring *K, const Monoid *M);
 
 protected:
   const Ring *K_;
   const Monoid *M_;
+  const Ring *logicalK_;
+  const Monoid *logicalM_;
 
   int _poly_size;
 
@@ -84,7 +88,6 @@ protected:
 
   
   GBRing *_gb_ring;
-  const PolyRing *flattened_ring;
 
   // Quotient ring information
   const PolyRing *_base_ring; // == NULL iff this is not a quotient ring
@@ -116,17 +119,19 @@ public:
   virtual const RingOrNull *getDenominatorRing() const { return 0; }
 
   virtual const Ring *getCoefficients() const { return K_; }
-  // The coefficient ring of 'this'.  This is either a non polynomial ring, or it is a PolyRing.
-
-  virtual const Ring *getFlatCoefficients() const { return K_; }
   // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
   // is another PolyRing.
 
-  virtual const Monoid *getMonoid() const { return M_; }
-  // The monoid of this polynomial ring.
+  virtual const Ring *getLogicalCoefficients() const { return logicalK_; }
+  // The logical coefficient ring of 'this'.  
+  // This is either a non polynomial ring, or it is a PolyRing.
 
-  virtual const Monoid *getFlatMonoid() const { return M_; }
+  virtual const Monoid *getMonoid() const { return M_; }
   // The implementation monoid of this ring.
+
+  virtual const Monoid *getLogicalMonoid() const { return logicalM_; }
+  // The logical monoid of this polynomial ring.
+
 
 
 
@@ -139,7 +144,6 @@ public:
 
   virtual bool is_basic_ring() const { return false; }
   GBRing *get_gb_ring() const { return _gb_ring; }
-  const PolyRing * get_flattened_ring() const {  return flattened_ring; }
 
   // Quotient ring information
   bool        is_quotient_ring() const { return (_base_ring != NULL); }
@@ -252,16 +256,25 @@ public:
   virtual ring_elem mult_by_term(const ring_elem f, 
 				  const ring_elem c, const int *m) const;
 
-  virtual int n_terms(const ring_elem f) const;
-  virtual ring_elem term(const ring_elem a, const int *m) const;
-  virtual ring_elem lead_coeff(const ring_elem f) const;
+  virtual int n_flat_terms(const ring_elem f) const;
+  virtual int n_logical_terms(const ring_elem f) const;
+
   virtual ring_elem get_coeff(const ring_elem f, const int *m) const;
   virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const;
 
-  const int * lead_monomial(const ring_elem f) const;
+  virtual ring_elem make_flat_term(const ring_elem a, const int *m) const;
+  virtual ring_elem make_logical_term(const ring_elem a, const int *m) const;
+
+  virtual ring_elem lead_flat_coeff(const ring_elem f) const;
+  virtual ring_elem lead_logical_coeff(const ring_elem f) const;
+
+  virtual const int * lead_flat_monomial(const ring_elem f) const;
+  virtual const int * lead_logical_monomial(const ring_elem f) const;
+
   ring_elem lead_term(const ring_elem f) const; // copies the lead term
   int compare(const ring_elem f, const ring_elem g) const; // compares the lead terms
 
+  virtual ArrayPairOrNull list_form(const ring_elem f) const;
 #if 0
   // do we need this here?
   virtual void make_monic(ring_elem &f) const;
@@ -278,7 +291,17 @@ protected:
   ring_elem diff_term(const int *m, const int *n, 
 		      int *resultmon,
 		      int use_coeff) const;
+
+
+  void get_logical_monomial(const Nterm *f, int *& result_monomial) const;
+
+  ring_elem get_logical_coeff(const Ring *coeffR, const Nterm *&f) const;
+  // Given an Nterm f, return the coeff of its logical monomial, in the
+  // polynomial ring coeffR.  f is modified, in that it is replaced by
+  // the pointer to the first term of f not used (possibly 0).
+
 public:
+
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
   virtual bool in_subring(int n, const ring_elem a) const;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
@@ -329,13 +352,12 @@ protected:
 public:
   Nterm *resize(const PolyRing *R, Nterm *f) const;
   void sort(Nterm *&f) const;
-  void debug_out(const ring_elem f) const;
-  void debug_outt(const Nterm *f) const;
 
   ///////////////////////////////////////////////////////
   // Used in gbvector <--> vector/ringelem translation //
   ///////////////////////////////////////////////////////
   // These are only meant to be called by Ring's.
+#if 0
 private:
   int *trans_EXP1; // Used by translate_* routines.
 public:
@@ -353,19 +375,21 @@ public:
 				   int firstvar) const;
   
   virtual trans_tag trans_type() const { return POLY; }
+#endif
 public:
-   gbvector * translate_gbvector_from_vec(const FreeModule *F, 
- 			       const vec v, 
- 			       ring_elem &result_denominator) const;
- 
-   vec translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const;
- 
-   vec translate_gbvector_to_vec_denom(const FreeModule *F, 
- 			    const gbvector *v,
- 			    const ring_elem denom) const;
-   // Translate v/denom to a vector in F.  denom does not need to be positive,
-   // although it had better be non-zero.
-
+  gbvector *translate_gbvector_from_ringelem(ring_elem coeff) const;
+  
+  gbvector * translate_gbvector_from_vec(const FreeModule *F, 
+					 const vec v, 
+					 ring_elem &result_denominator) const;
+  
+  vec translate_gbvector_to_vec(const FreeModule *F, const gbvector *v) const;
+  
+  vec translate_gbvector_to_vec_denom(const FreeModule *F, 
+				      const gbvector *v,
+				      const ring_elem denom) const;
+  // Translate v/denom to a vector in F.  denom does not need to be positive,
+  // although it had better be non-zero.
 };
 
 #endif

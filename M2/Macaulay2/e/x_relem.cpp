@@ -102,15 +102,13 @@ const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
 					 M2_arrayint skewvars)
 {
-  /* TODO */
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0) 
     {
       ERROR("expected a polynomial ring");
       return 0;
     }
-  return SkewPolynomialRing::create(P,skewvars);
-  // return P->create_SkewCommutative(skewvars);
+  return SkewPolynomialRing::create(P,skewvars); // returns 0 if P is not commutative
 }
 
 const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
@@ -118,15 +116,14 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
 					M2_arrayint diff_vars,
 					int homog_var)
 {
-  /* TODO */
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0) 
     {
       ERROR("expected a polynomial ring");
       return 0;
     }
+  // returns 0 if P is not commutative:
   return WeylAlgebra::create(P,diff_vars, comm_vars, homog_var);
-  // return P->create_WeylAlgebra(diff_vars, comm_vars, homog_var);
 }
 
 const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
@@ -138,6 +135,7 @@ const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
       ERROR("expected a polynomial ring");
       return 0;
     }
+  // returns 0 if P is not commutative:
   return SolvableAlgebra::create(P,Q);
 }
 
@@ -492,17 +490,15 @@ const RingElementOrNull *IM2_RingElement_term(const Ring *R,
       ERROR("requires a polynomial ring");
       return 0;
     }
-  if (P->Ncoeffs() != a->get_ring())
+  if (P->getLogicalCoefficients() != a->get_ring())
     {
       ERROR("term: expected same ring");
       return 0;
     }
 
-  int *mon = P->Nmonoms()->make_one();
-  P->Nmonoms()->from_varpower(m->ints(), mon);
-  /* Caution: I am considering ringelem's which live in RingElement's to
-     be immutable, and so to not need copying */
-  ring_elem val = P->term(a->get_value(), mon);
+  int *mon = P->getLogicalMonoid()->make_one();
+  P->getLogicalMonoid()->from_varpower(m->ints(), mon);
+  ring_elem val = P->make_logical_term(a->get_value(), mon);
   
   return RingElement::make_raw(R,val);
 }
@@ -559,6 +555,10 @@ ArrayPairOrNull IM2_RingElement_list_form(const RingElement *f)
       ERROR("expected a polynomial");
       return 0;
     }
+  return P->list_form(f->get_value());
+}
+
+#if 0
   int n = f->n_terms();
   Monomial_array *monoms = GETMEM(Monomial_array *, sizeofarray(monoms,n));
   RingElement_array *coeffs = GETMEM(RingElement_array *, sizeofarray(coeffs,n));
@@ -567,7 +567,25 @@ ArrayPairOrNull IM2_RingElement_list_form(const RingElement *f)
   ArrayPairOrNull result = newitem(ArrayPair);
   result->monoms = monoms;
   result->coeffs = coeffs;
-  
+
+  const Ring *K = P->getLogicalCoefficients();
+  intarray resultvp;
+  Nterm *t = f->get_value();
+  int next = 0;
+  while (t != 0)
+    {
+      ring_elem c = P->get_logical_coeff(K, t); // increments t to the next term of f.
+      P->getMonoid()->to_expvector(t->monom, exp);
+      varpower::from_ntuple(nvars, exp, resultvp);
+      monoms->array[next] = Monomial::make(resultvp.raw());
+      assert( monoms->array[next] != NULL );
+      coeffs->array[next] = RingElement::make_raw(K, c);
+      assert( coeffs->array[next] != NULL );
+      next++;
+      resultvp.shrink(0);
+    }
+  return result;
+
   intarray resultvp;
   Nterm *t = f->get_value();
   int next = 0;
@@ -582,7 +600,7 @@ ArrayPairOrNull IM2_RingElement_list_form(const RingElement *f)
       resultvp.shrink(0);
     }
   return result;
-}
+#endif
 
 const RingElementOrNull *IM2_RingElement_numerator(const RingElement *a)
 {
