@@ -445,14 +445,14 @@ examine(e:Expr):Expr := (
 	  stdout
 	  << s.position << endl
 	  << " word.name:" << present(s.word.name) << endl
-	  << " scopenum:" << s.scopenum << endl
+	  << " frameID:" << s.frameID << endl
 	  << " frameindex:" << s.frameindex << endl
 	  << " lookupCount:" << s.lookupCount << endl
 	  << " protected:" << s.protected << endl
-	  << " transientScope:" << s.transientScope << endl
+	  << " valueCouldChange:" << s.valueCouldChange << endl
 	  << " frames bound for scopes:";
-	  while f.scopenum >= 0 do (
-	       stdout << " " << f.scopenum;
+	  while f.frameID >= 0 do (
+	       stdout << " " << f.frameID;
 	       f = f.outerFrame;
 	       );
 	  stdout << endl;
@@ -463,13 +463,13 @@ examine(e:Expr):Expr := (
 	  desc := model.desc;
 	  stdout
 	  << " restargs:" << desc.restargs << endl
-	  << " scopenum:" << desc.scopenum << endl
+	  << " frameID:" << desc.frameID << endl
 	  << " framesize:" << desc.framesize << endl
 	  << " numparms:" << desc.numparms << endl
 	  << " hasClosure:" << desc.hasClosure << endl
 	  << " frames bound for scopes:";
-	  while f.scopenum >= 0 do (
-	       stdout << " " << f.scopenum;
+	  while f.frameID >= 0 do (
+	       stdout << " " << f.frameID;
 	       f = f.outerFrame;
 	       );
 	  stdout << endl; 
@@ -478,8 +478,8 @@ examine(e:Expr):Expr := (
 	  if length(s) == 0 then (
 	       f := localFrame;
 	       stdout << "frames currently bound for scopes:";
-	       while f.scopenum >= 0 do (
-		    stdout << " " << f.scopenum;
+	       while f.frameID >= 0 do (
+		    stdout << " " << f.frameID;
 		    f = f.outerFrame;
 		    );
 	       stdout << endl;
@@ -1245,12 +1245,12 @@ setupfun("frame", frame);
 
 numFrames(f:Frame):int := (
      n := 0;
-     while f.outerFrame != f && f.scopenum > 0 do (n = n+1; f = f.outerFrame);
+     while f.outerFrame != f && f.frameID > 0 do (n = n+1; f = f.outerFrame);
      n);
 
 listFrames(f:Frame):Expr := list(
      new Sequence len numFrames(f) do (
-	  while f.outerFrame != f && f.scopenum > 0 do (provide listFrame(f.values); f = f.outerFrame);
+	  while f.outerFrame != f && f.frameID > 0 do (provide listFrame(f.values); f = f.outerFrame);
 	  )
      );     
 
@@ -1273,10 +1273,8 @@ setupfun("globalDictionary", getGlobalDictionary);
 pushDictionary(e:Expr):Expr := (
      when e
      is a:Sequence do if length(a) == 0 then (
-	  globalScope = newScope(globalScope);
-	  globalScope.transient = false;
-	  globalFrame = Frame(globalFrame, globalScope.seqno, new Sequence len globalScope.framesize do provide nullE);
-	  globalDictionary = Dictionary(nextHash(), globalScope, globalFrame, globalDictionary);
+	  globalScope = newGlobalScope(globalScope);
+	  globalDictionary = Dictionary(nextHash(), globalScope, globalDictionary);
 	  nullE)
      else WrongNumArgs(0)
      else WrongNumArgs(0));
@@ -1289,7 +1287,6 @@ popDictionary(e:Expr):Expr := (
 	  then nullE
 	  else (
 	       globalScope = globalScope.outerScope;
-     	       globalFrame = globalFrame.outerFrame;
      	       globalDictionary = globalDictionary.outerDictionary;
 	       nullE))
      else WrongNumArgs(0)

@@ -54,7 +54,7 @@ export makeEntry(word:Word,position:Position,scope:Scope):Symbol := (
 	  nextHash(), 
 	  position,
 	  dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-	  scope.seqno, 
+	  scope.frameID, 
 	  frameindex,
 	  1,				  -- first lookup is now
 	  false,			  -- not protected
@@ -69,7 +69,7 @@ export makeEntry(word:Word,position:Position,scope:Scope):Symbol := (
 			 foreach y in globalFrame.values do provide y;
 			 while true do provide nullE;
 			 ))))
-     else if scope.seqno == localFrame.scopenum then (
+     else if scope.frameID == localFrame.frameID then (
 	  -- this should take care of scopes which span a file,
 	  -- and have a single frame which ought to be allowed to grow
 	  if scope.framesize > length(localFrame.values) then (
@@ -336,7 +336,7 @@ atend(cleanGlobalFrame);
 -----------------------------------------------------------------------------
 lookupCountIncrement := 1;
 lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
-     if table == dummyDictionary then error("dummy table used");
+     if table == dummySymbolHashTable then error("dummy table used");
      entryList := table.buckets.(
 	  word.hash & (length(table.buckets)-1)
 	  );
@@ -352,7 +352,7 @@ lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
 	       );
 	  entryList = entryListCell.next));
 lookup( word:Word,criterion:function(Symbol):bool,table:SymbolHashTable ):(null or Symbol) := (
-     if table == dummyDictionary then error("dummy table used");
+     if table == dummySymbolHashTable then error("dummy table used");
      entryList := table.buckets.(
 	  word.hash & (length(table.buckets)-1)
 	  );
@@ -491,7 +491,7 @@ bindTokenLocally(token:Token,scope:Scope):void := (
      lookupCountIncrement = 1;
      when r
      is entry:Symbol do (
-	  if scope.seqno == entry.scopenum
+	  if scope.frameID == entry.frameID
 	  then printErrorMessage(token.position, "warning: local declaration of " + token.word.name
 	       + " shields variable with same name" );
 	  )
@@ -602,7 +602,7 @@ bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
      else makeErrorTree(assn.operator, 
 	  "left hand side of assignment inappropriate"));
 bindnewscope(e:ParseTree,scope:Scope):ParseTree := (
-     n := newScope(scope);
+     n := newLocalScope(scope);
      bind(e,n);
      ParseTree(StartScope(n,e)));
 SawClosure := false;
@@ -687,13 +687,13 @@ export bind(e:ParseTree,scope:Scope):void := (
      is q:Quote do (
 	  bind(q.operator,scope);
 	  bind(q.rhs,scope);
-	  if q.rhs.entry.scopenum != globalFrame.scopenum 
+	  if q.rhs.entry.frameID != globalFrame.frameID 
 	  then SawClosure = true; 
 	  )
      is a:Arrow do (
 	  SawClosure = false;
-	  newscop := newScope(scope);
-	  a.desc = functionDescription(newscop.seqno,0,0,false,false);
+	  newscop := newLocalScope(scope);
+	  a.desc = functionDescription(newscop.frameID,0,0,false,false);
 	  bindParenParmList(a.lhs,newscop,a.desc);
 	  bind(a.rhs,newscop);
 	  a.desc.framesize = newscop.framesize;
@@ -714,7 +714,7 @@ export bind(e:ParseTree,scope:Scope):void := (
 	  bind(w.doClause,scope);
 	  )
      is w:For do (
-	  newscop := newScope(scope);
+	  newscop := newLocalScope(scope);
 	  bindSingleParm(w.variable,newscop);
 	  bind(w.fromClause,scope);
 	  bind(w.toClause,scope);

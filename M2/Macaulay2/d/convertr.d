@@ -140,25 +140,25 @@ makeSymbolSequence(e:ParseTree):SymbolSequence := (
 	  else break;					    -- shouldn't happen
 	  );
      v);
-export frame(scopenum:int):Frame := (
-     if scopenum == 0 then outermostGlobalFrame
+export frame(frameID:int):Frame := (
+     if frameID == 0 then globalFrame
      else (
      	  f := localFrame;
-     	  while f.scopenum > scopenum do f = f.outerFrame;
-     	  if f.scopenum != scopenum 
+     	  while f.frameID > frameID do f = f.outerFrame;
+     	  if f.frameID != frameID 
 	  then (
-	       stderr << "frame for scope " << scopenum << " not found" << endl;
+	       stderr << "frame for scope " << frameID << " not found" << endl;
 	       stderr << "frames active for scopes: ";
 	       f = localFrame;
-	       while f.scopenum > -1 do (
-		    stderr << " " << f.scopenum;
+	       while f.frameID > -1 do (
+		    stderr << " " << f.frameID;
 		    f = f.outerFrame;
 		    );
 	       stderr << endl;
 	       fatal("exiting");
 	       );
      	  f));
-export makeSymbolClosure(s:Symbol):SymbolClosure := SymbolClosure(frame(s.scopenum),s);
+export makeSymbolClosure(s:Symbol):SymbolClosure := SymbolClosure(frame(s.frameID),s);
 allExprCodes(cs:CodeSequence):bool := (
      foreach c in cs do when c is exprCode do nothing else return(false);
      return(true);
@@ -233,8 +233,8 @@ export convert(e:ParseTree):Code := (
 	  then Code(exprCode(parseInt(wrd.name),pos))
  	  else if wrd.typecode == TCstring
 	  then Code(exprCode(parseString(wrd.name), pos))
-	  else if var.protected && !var.transientScope
-	  then Code(exprCode(frame(var.scopenum).values.(var.frameindex), pos))
+	  else if var.protected && !var.valueCouldChange
+	  then Code(exprCode(frame(var.frameID).values.(var.frameindex), pos))
 	  else Code(variableCode(var,pos)))
      is a:Adjacent do Code(
 	  binaryCode(AdjacentFun, convert(a.lhs),convert(a.rhs),
@@ -455,7 +455,7 @@ export convert(e:ParseTree):Code := (
 	       )
 	  else Code(unaryCode(u.operator.entry.unary,convert(u.rhs),treePosition(e))))
      is q:Quote do (
-	  if q.rhs.entry.scopenum == globalFrame.scopenum
+	  if q.rhs.entry.frameID == globalFrame.frameID
 	  then Code(exprCode(
 		    Expr(SymbolClosure(globalFrame,q.rhs.entry)),
 		    treePosition(e)))
@@ -645,7 +645,7 @@ export eval(c:Code):Expr := (
      is n:exprCode do (
 	  --couldtrace=false; 
 	  n.v)
-     is var:variableCode do frame(var.v.scopenum).values.(var.v.frameindex)
+     is var:variableCode do frame(var.v.frameID).values.(var.v.frameindex)
      is u:unaryCode do u.f(u.rhs)
      is b:binaryCode do b.f(b.lhs,b.rhs)
      is m:functionCode do Expr(FunctionClosure(localFrame, m))
@@ -654,13 +654,13 @@ export eval(c:Code):Expr := (
      is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
      is b:multaryCode do b.f(b.args)
      is n:forCode do (
-	  localFrame = Frame(localFrame,n.scope.seqno,
+	  localFrame = Frame(localFrame,n.scope.frameID,
 	       new Sequence len n.scope.framesize do provide nullE);
 	  x := ForFun(n);
 	  localFrame = localFrame.outerFrame;
 	  x)
      is n:openScopeCode do (
-	  localFrame = Frame(localFrame,n.scope.seqno,
+	  localFrame = Frame(localFrame,n.scope.frameID,
 	       new Sequence len n.scope.framesize do provide nullE);
 	  x := eval(n.body);
 	  localFrame = localFrame.outerFrame;
