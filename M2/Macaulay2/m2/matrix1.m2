@@ -498,8 +498,8 @@ isHomogeneous Ideal := (I) -> isHomogeneous I.generators
 
 degrees Ideal := I -> degrees source gens I
 
-genera(Ideal) := (I) -> genera module I
-euler(Ideal) := (I) -> euler module I
+genera(Ideal) := (I) -> genera ((ring I)^1/I)
+euler(Ideal) := (I) -> euler ((ring I)^1/I)
 
 RingElement * Ideal := Ideal => (r,I) -> ideal (r ** generators I)
 ZZ * Ideal := (r,I) -> ideal (r * generators I)
@@ -530,7 +530,7 @@ numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
-poincare Ideal := (I) -> poincare module I
+poincare Ideal := (I) -> poincare ((ring I)^1/I)
 Ideal _ List := (I,w) -> (module I)_w
 
 protect symbol Order
@@ -540,7 +540,7 @@ hilbertSeries = method(Options => {
 	  }
      )
 
-hilbertSeries Ideal := options -> (I) -> hilbertSeries(module I,options)
+hilbertSeries Ideal := options -> (I) -> hilbertSeries((ring I)^1/I,options)
 
 ring Ideal := (I) -> I.ring
 

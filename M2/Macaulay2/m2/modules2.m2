@@ -264,7 +264,7 @@ hilbertPolynomial = method(
      Options => { Projective => true }, 
      TypicalValue => ProjectiveHilbertPolynomial )
 
-hilbertPolynomial Ideal := options -> (I) -> hilbertPolynomial(module I,options)
+hilbertPolynomial Ideal := options -> (I) -> hilbertPolynomial((ring I)^1/I,options)
 
 euler ProjectiveHilbertPolynomial := (P) -> P(0)
 diff(ProjectiveHilbertPolynomial,ZZ) := ProjectiveHilbertPolynomial => (P,i) -> (

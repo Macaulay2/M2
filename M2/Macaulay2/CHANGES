@@ -2,6 +2,14 @@ Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
 
+New in 0.9.2:
+
+Changed the behavior of 'hilbertSeries', 'hilbertPolynomial', 'poincare',
+'euler', and 'genera' when applied to an ideal, so that the result returned
+is that for the corresponding quotient ring.
+
+-----------------------------------------------------------------------------
+
 New in 0.9.1:
 
 Updated versions of files from Amelia Taylor : normal.m2 and minPres.m2, for
