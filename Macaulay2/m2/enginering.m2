@@ -369,9 +369,18 @@ someTerms(RingElement,ZZ,ZZ) := (f,i,n) -> (
 	  new S))
 
 baseName RingElement := x -> (
-     if size x === 1
-     and leadCoefficient x == 1
-     then baseName leadMonomial x
+     if size x === 1 and leadCoefficient x == 1
+     then (
+     	  R := ring x;
+     	  if R.?newEngine then (
+	       sendgg(ggPush x, ggleadmonom);
+	       v := eePopIntarray();
+	       if #v === 2 and v#1 === 1 then R.generatorSymbols#(v#0)
+	       else error "expected a generator"
+	       )
+     	  else baseName leadMonomial x
+	  )
+     else error "expected a generator"
      )
 
 leadCoefficient RingElement := (f) -> (
@@ -385,10 +394,19 @@ leadCoefficient RingElement := (f) -> (
 
 leadMonomial RingElement := (f) -> (
      R := ring f;
-     M := monoid R;
-     leadMonomial R := f -> (
-	  sendgg(ggPush f, ggleadmonom);
-	  M.pop());
+     leadMonomial R := if R.?newEngine then (
+	  f -> (
+	       sendgg(ggPush R, ggPush ((coefficientRing R)#1), ggPush f, ggleadmonom, ggterm);
+	       R.pop()
+	       )
+	  )
+     else (
+     	  M := monoid R;
+	  f -> (
+	       sendgg(ggPush f, ggleadmonom);
+	       M.pop()
+	       )
+	  );
      leadMonomial f)
 
 degree RingElement := f -> if f == 0 then -infinity else (
