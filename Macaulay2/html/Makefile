@@ -4,6 +4,10 @@ include $(TOPDIR)/Makeconf
 
 all :: up.gif next.gif previous.gif top.gif index.gif index.html
 
+# for gimp to find this *.scm file, put
+# (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts:/home/geometry/dan/src/M2/Macaulay2/html")
+# into ~/.gimp/gimprc
+
 up.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Up\" \"up.gif\")"  -b '(gimp-quit 0)'
 next.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Next\" \"next.gif\")"  -b '(gimp-quit 0)'
 previous.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Previous\" \"previous.gif\")"  -b '(gimp-quit 0)'

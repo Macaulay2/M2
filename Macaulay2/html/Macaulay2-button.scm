@@ -22,7 +22,6 @@
 		0 0			;x1 y1
 		0 0			;x2 y2
 		)
-    ; (gimp-edit-fill image drawable)
     (gimp-palette-set-foreground '(0 0 255))
     (gimp-floating-sel-anchor
      (car (gimp-text image drawable x-text y-text text border antialias size size-type
@@ -39,5 +38,5 @@
  "Dan Grayson <dan@math.uiuc.edu>" "public domain" "1997"
  "" 
  SF-VALUE "text" "\"Next\""
- SF-VALUE "filename" "\"up.gif\""
+ SF-VALUE "filename" "\"/tmp/next-button.gif\""
  )

@@ -13,14 +13,15 @@ document { "the authors",
      }
 
 document { "David Eisenbud",
-     "David Eisenbud ", TT "<de@cs.brandeis.edu>", ".",
+     HREF {"http://www.msri.org/people/staff/de/", "David Eisenbud "}, " ",
+     HREF {"mailto:de@msri.org", "<de@msri.org>"}, ".",
      PARA,
-     "In this spot will go a brief biography of David Eisenbud, a
-     commutative algebraist and algebraic geometer at Brandeis University."
+     "In this spot will go a brief biography of David Eisenbud."
      }
 
 document { "Daniel R. Grayson",
-     "Daniel R. Grayson ", TT " <dan@math.uiuc.edu>", ".",
+     HREF {"http://www.math.uiuc.edu/~dan", "Daniel R. Grayson"}, " ",
+     HREF {"mailto:dan@math.uiuc.edu", "<dan@math.uiuc.edu>"}, ".",
      PARA,
      "Daniel Grayson received his PhD in Mathematics from MIT in 1976, taught
      at Columbia from 1976 to 1981, and came to the University of Illinois at
@@ -35,7 +36,8 @@ document { "Daniel R. Grayson",
      }
 
 document { "Michael E. Stillman",
-     "Michael E. Stillman ", TT "<mike@math.cornell.edu>", ".",
+     HREF { "http://www.math.cornell.edu/~mike", "Michael E. Stillman"}, " ",
+     HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"},
      PARA,
      "Michael E. Stillman received his PhD in Mathematics from Harvard in 1983,
      taught at University of Chicago 1983-85, was at Brandeis and then MIT 1985-87,
