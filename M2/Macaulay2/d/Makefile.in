@@ -138,7 +138,7 @@ ifneq "$(CC)" "cl"
 LDLIBS  += -L${LIBDIR}
 endif
 
-ifeq ($(OS),Linux)
+ifeq ($(OS),linux-gnu)
 ## - use this to get a memory map listing from the gnu linker
 LDFLAGS  += -Wl,-Map,mapfile
 endif
@@ -177,7 +177,7 @@ endif
 ifndef SHAREDLIBS
 ifndef NOSTATIC
 LDFLAGS += -static
-ifeq ($(OS),Linux)
+ifeq ($(OS),linux-gnu)
 # this is for gc somehow, see the end of gc/config.h
 LDFLAGS += -Wl,-defsym,_DYNAMIC=0
 endif
@@ -198,14 +198,14 @@ ifdef SHAREDLIBS
 # LDLIBS += -lnsl -lnss_files -ldb -lnss_compat -lnss_db -lnss_dns -lnss_nis -lresolv
 endif
 ifndef NOSTATIC
-ifeq ($(OS),Linux)
+ifeq ($(OS),linux-gnu)
 # so I tried it, but it doesn't work...
 # ALLOBJ += /usr/lib/libnsl.a /usr/lib/libnss_*.a
 endif
 endif
 
 
-#ifeq ($(OS),Linux)
+#ifeq ($(OS),linux-gnu)
 #LDLIBS += -lieee
 #endif
 
@@ -263,7 +263,7 @@ MISCO := M2lib.o scclib.o tmp_init.o memdebug.o
 # calls to gc.
 # MISCO += gc_cpp.o
 
-ifeq ($(OS),Linux)
+ifeq ($(OS),linux-gnu)
 # MISCO += readline.o
 # LIBRARYOPTIONS += -ldl -lncurses
 # LDFLAGS += -rdynamic
@@ -295,7 +295,7 @@ ifneq "$(CC)" "cl"
 # ALLOBJ += compat.o
 endif
 
-ifeq ($(OS),Linux)
+ifeq ($(OS),linux-gnu)
 # The maintainers of linux' libstdc++ unwisely decided to incorporate
 # their own private versions of routines from libc in their library!
 # Unforgiveable, since the symbols defined differ (of course).
@@ -303,7 +303,7 @@ ifeq ($(OS),Linux)
 putc.o : /usr/lib/libc.a; ar x $^ $@
 endif
 
-ifeq ($(OS),Linux)
+ifeq ($(OS),linux-gnu)
 # ALLOBJ += malloc.o
 # LDFLAGS += -rdynamic
 malloc.o : /usr/lib/libc.a; ar x $^ $@

@@ -117,16 +117,6 @@ endif
 
 #################################
 
-export CC
-export CXX
-CFLAGS = -g
-CXXFLAGS = -g
-ifndef NOOPTIM 
-CFLAGS += -O3 -fexpensive-optimizations
-# CXXFLAGS += -O2
-CXXFLAGS += -O3 -fexpensive-optimizations
-endif
-
 ifdef CYGWIN32
 # CFLAGS += '-Dabort()=exit(1)'
 # CXXFLAGS += '-Dabort()=exit(1)'

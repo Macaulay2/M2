@@ -13,7 +13,7 @@ include $(TOPDIR)/Makeconf
 
 CPPFLAGS += -I../include
 EXES := echoout timestmp restart update 
-ifeq ($(OS),Linux)
+ifeq ($(OS),linux-gnu)
 EXES += screen
 endif
 

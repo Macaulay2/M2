@@ -1,6 +1,6 @@
  -*- Mode: sh -*-
 AC_INIT(Makeconf)
-VERSION=$(cat version)
+VERSION="$(cat version)"
 AC_SUBST(VERSION)
 AC_DEFINE_UNQUOTED(VERSION,"$VERSION",version number)
 AC_CONFIG_AUX_DIR(config)
