@@ -238,8 +238,8 @@ public:
     return result;
   }
 
-  virtual ring_elem make_logical_term(const ring_elem a, const int *m) const {
-    ring_elem result = R_->PolyRing::make_logical_term(a,m);
+  virtual ring_elem make_logical_term(const Ring *coeffR, const ring_elem a, const int *exp) const {
+    ring_elem result = R_->PolyRing::make_logical_term(coeffR,a,exp);
     normal_form(result);
     return result;
   }

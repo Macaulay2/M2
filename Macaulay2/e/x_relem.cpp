@@ -561,16 +561,11 @@ const RingElementOrNull *IM2_RingElement_term(const Ring *R,
       ERROR("requires a polynomial ring");
       return 0;
     }
-  if (P->getLogicalCoefficients() != a->get_ring())
-    {
-      ERROR("term: expected same ring");
-      return 0;
-    }
 
-  int *mon = P->getLogicalMonoid()->make_one();
-  P->getLogicalMonoid()->from_varpower(m->ints(), mon);
-  ring_elem val = P->make_logical_term(a->get_value(), mon);
-  
+  int nvars0 = P->n_vars() - a->get_ring()->n_vars();
+  int *exp = newarray(int,nvars0);
+  varpower::to_ntuple(nvars0, m->ints(), exp);
+  ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
   return RingElement::make_raw(R,val);
 }
 

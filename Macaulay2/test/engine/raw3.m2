@@ -74,12 +74,12 @@ rawFromNumber(R1,1.4) -- this is 1.  Is this a feature or a bug?
 -- rawFromNumber(R1,1+ii) -- gives an error now, good.
 f = rawFromNumber(R1,3)
 assert (try (rawToInteger f) else true)
-time scan(1..10000, i -> if i =!= 0 then assert(i == rawToInteger rawLeadCoefficient rawFromNumber(R1,i)))
-time scan(1..10000, i -> assert(i == rawToInteger rawLeadCoefficient rawFromNumber(R1,i)))
+time scan(1..10000, i -> if i =!= 0 then assert(i == rawToInteger rawLeadCoefficient(rawZZ(), rawFromNumber(R1,i))))
+time scan(1..10000, i -> assert(i == rawToInteger rawLeadCoefficient(rawZZ(), rawFromNumber(R1,i))))
 time (
      i = 1;
      while i < 10000 do (
-       assert(i == rawToInteger rawLeadCoefficient rawFromNumber(R1,i));
+       assert(i == rawToInteger rawLeadCoefficient(rawZZ(),rawFromNumber(R1,i)));
        i = i+1;
        ))
 
