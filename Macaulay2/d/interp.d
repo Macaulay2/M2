@@ -132,7 +132,7 @@ readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure,re
       setGlobalVariable(currentFileName,savecf);
      localFrame = saveLocalFrame;
      ret);
-readeval(file:TokenFile,returnLastvalue:bool):Expr := readeval3(file,false,true,newStaticLocalDictionaryClosure(),returnLastvalue);
+readeval(file:TokenFile,returnLastvalue:bool):Expr := readeval3(file,false,true,newStaticLocalDictionaryClosure(file.posFile.file.filename),returnLastvalue);
 
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
@@ -154,15 +154,15 @@ loadprintstdin(stopIfError:bool,dc:DictionaryClosure):Expr := (
 	  file.posFile.file.eof = false; -- erase eof indication so we can try again (e.g., recursive calls to topLevel)
 	  r));
 
-loadprint(s:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
-     when openTokenFile(s)
+loadprint(filename:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
+     when openTokenFile(filename)
      is errmsg do False
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,topLevelPrompt);
 	  r := readeval3(file,true,stopIfError,dc,false);
 	  t := (
-	       if s === "-"			 -- whether it's stdin
+	       if filename === "-"			 -- whether it's stdin
 	       then (
 		    file.posFile.file.eof = false; -- erase eof indication so we can try again (e.g., recursive calls to topLevel)
 		    0
@@ -175,12 +175,12 @@ loadprint(s:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
 	       if t == ERROR
 	       then buildErrorPacket("error closing file") 
 	       else nullE)));
-load(s:string):Expr := (
-     when openTokenFile(s)
+load(filename:string):Expr := (
+     when openTokenFile(filename)
      is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
 	  r := readeval(file,false);
-	  t := if !(s==="-") then close(file) else 0;
+	  t := if !(filename==="-") then close(file) else 0;
 	  when r is err:Error do (
 	       if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then err.value else r
 	       )
@@ -197,9 +197,9 @@ setupfun("load",load).protected = false;
 
 input(e:Expr):Expr := (
      when e
-     is s:string do (
+     is filename:string do (
 	  -- we should have a way of setting normal prompts while inputting
-	  ret := loadprint(s,true,newStaticLocalDictionaryClosure());
+	  ret := loadprint(filename,true,newStaticLocalDictionaryClosure(filename));
 	  previousLineNumber = -1;
 	  ret)
      else buildErrorPacket("expected string as file name"));
@@ -257,25 +257,25 @@ export topLevel():bool := (
      else true
      );
 
-topLevel(dc:DictionaryClosure):Expr := loadprint("-",stopIfError,dc);
-topLevel(f:Frame):Expr := topLevel(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
-topLevel(e:Expr):Expr := (
+commandInterpreter(dc:DictionaryClosure):Expr := loadprint("-",stopIfError,dc);
+commandInterpreter(f:Frame):Expr := commandInterpreter(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
+commandInterpreter(e:Expr):Expr := (
      incrementInterpreterDepth();
        ret := 
        when e is s:Sequence do (
 	    if length(s) == 0 then loadprint("-",stopIfError,newStaticLocalDictionaryClosure())
 	    else WrongNumArgs(0,1)
 	    )
-       is x:DictionaryClosure do topLevel(x)
-       is x:SymbolClosure do topLevel(x.frame)
-       is x:CodeClosure do topLevel(x.frame)
-       is x:FunctionClosure do topLevel(x.frame)
-       is cfc:CompiledFunctionClosure do topLevel(emptyFrame)	    -- some values are there, but no symbols
-       is CompiledFunction do topLevel(emptyFrame)		    -- no values or symbols are there
+       is x:DictionaryClosure do commandInterpreter(x)
+       is x:SymbolClosure do commandInterpreter(x.frame)
+       is x:CodeClosure do commandInterpreter(x.frame)
+       is x:FunctionClosure do commandInterpreter(x.frame)
+       is cfc:CompiledFunctionClosure do commandInterpreter(emptyFrame)	    -- some values are there, but no symbols
+       is CompiledFunction do commandInterpreter(emptyFrame)		    -- no values or symbols are there
        else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
      decrementInterpreterDepth();
      ret);
-setupfun("commandInterpreter",topLevel);
+setupfun("commandInterpreter",commandInterpreter);
 
 errorCodeS := setupconst("errorCode",nullE);
 debugger(f:Frame,c:Code):Expr := (

@@ -806,7 +806,7 @@ extern "C" {
   M2_bool IM2_Matrix_is_mutable(const Matrix *M);
   /* Is the matrix M mutable? */ /* TO BE CONNECTED */
 
-  const MatrixOrNull * IM2_Matrix_make3(const FreeModule *target,
+  const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
 					const FreeModule *source,
 					const M2_arrayint deg,
 					const Matrix *M,

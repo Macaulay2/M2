@@ -128,7 +128,7 @@ localSymbols Function := ls
 
 -- make this work eventually:
 -- localSymbols() := () -> if errorCode === null then ls() else ls errorCode
--- meanwhile:
+-- meanwhile: (see also method123())
 nullaryMethods # (singleton localSymbols) = () -> if errorCode === null then ls() else ls errorCode
 
 localSymbols(Type,Symbol) :=

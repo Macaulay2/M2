@@ -1255,72 +1255,121 @@ rawTarget(e:Expr):Expr := (
      );
 setupfun("rawTarget",rawTarget);
 
-rawMatrix(e:Expr):Expr := (
-     when e
-     is M:RawMutableMatrix do (
-	  Expr(Ccode(RawMatrix, "(engine_RawMatrix)",
-		    "IM2_MutableMatrix_to_matrix(", 
-		    "(MutableMatrix *)", M, ")"
-		    )))
-     is I:RawMonomialIdeal do (
-	  Expr(Ccode(RawMatrix, "(engine_RawMatrix)",
-		    "IM2_MonomialIdeal_to_matrix(", 
-		    "(MonomialIdeal *)", I, ")"
-		    )))
-     is s:Sequence do (
-	  if length(s) == 2 then (
-	       when s.0 is target:RawFreeModule do (
-		    if isSequenceOfVectors(s.1) then (
-			 toExpr(Ccode( RawMatrixOrNull, 
-	       			   "(engine_RawMatrixOrNull)IM2_Matrix_make1(",
-	       			   "(FreeModule*)",target,",",
-				   "(Vector_array*)", getSequenceOfVectors(s.1),
-	       			   ")" )
-			      )
-			 )
-		    else WrongArg(2,"a sequence of raw vectors")
-		    )
-	       else WrongArg(1,"a raw free module")
-	       )
-	  else if length(s) == 4 then (
-	       when s.0 is target:RawFreeModule do (
-		    when s.1 is source:RawFreeModule do (
-			 if isSequenceOfSmallIntegers(s.2) then (
-			      when s.3 is M:RawMatrix do (
-				   toExpr(Ccode( RawMatrixOrNull, 
-					     "(engine_RawMatrixOrNull)IM2_Matrix_make3(",
-					     "(FreeModule*)",target,",",
-					     "(FreeModule*)",source,",",
-					     "(M2_arrayint)",getSequenceOfSmallIntegers(s.2),",",
-					     "(Matrix*)",M,
-					     ")" 
-					     )
-					)
-				   )
-			      else if isSequenceOfVectors(s.3) then (
-				   toExpr(Ccode( RawMatrixOrNull, 
-					     "(engine_RawMatrixOrNull)IM2_Matrix_make2(",
-					     "(FreeModule*)",target,",",
-					     "(FreeModule*)",source,",",
-					     "(M2_arrayint)",getSequenceOfSmallIntegers(s.2),",",
-					     "(Vector_array*)",getSequenceOfVectors(s.3),
-					     ")" 
-					     )
-					)
-				   )
-			      else WrongArg(4,"a raw matrix or a sequence of raw vectors")
-			      )
-			 else WrongArg(3,"a sequence of small integers")
-			 )
-		    else WrongArg(2,"a raw free module")
-		    )
-	       else WrongArg(1,"a raw free module")
-	       )
-	  else buildErrorPacket("expected 2 or 4 arguments")
-	  )
-     else buildErrorPacket("expected a raw monomial ideal or mutable matrix, or 2 or 4 arguments")
-     );
-setupfun("rawMatrix",rawMatrix);
+rawMatrix1(e:Expr):Expr := (
+     when e is s:Sequence do 
+     if length(s) != 4 then WrongNumArgs(4) else
+     when s.0 is target:RawFreeModule do 
+     when s.1 is ncols:Integer do if !isInt(ncols) then WrongArgSmallInteger(2) else 
+     if isSequenceOfRingElements(s.2) then 
+     when s.3 is mutable:Boolean do 
+     toExpr(Ccode(RawMatrixOrNull, 
+	       "(engine_RawMatrixOrNull)IM2_Matrix_make1(",
+	       "(FreeModule*)", target, ",",
+	       toInt(ncols), ",",
+	       "(RingElement_array *)", getSequenceOfRingElements(s.2), ",", -- entries
+	       mutable == True, ")"))
+     else WrongArgBoolean(4)
+     else WrongArg(3,"a sequence of ring elements")
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw free module")
+     else WrongNumArgs(4));
+setupfun("rawMatrix1",rawMatrix1);
+
+rawMatrix2(e:Expr):Expr := (
+     when e is s:Sequence do 
+     if length(s) != 5 then WrongNumArgs(5) else
+     when s.0 is target:RawFreeModule do 
+     when s.1 is source:RawFreeModule do
+     if !isListOfSmallIntegers(s.2) then WrongArg(3,"a list of small integers") else
+     if !isSequenceOfRingElements(s.3) then WrongArg(4,"a sequence of ring elements") else
+     when s.4 is mutable:Boolean do toExpr(Ccode(RawMatrixOrNull, 
+	       "(engine_RawMatrixOrNull)IM2_Matrix_make2(",
+	       "(FreeModule*)", target, ",",
+	       "(FreeModule*)", source, ",",
+	       "(M2_arrayint)", getListOfSmallIntegers(s.2), ",", -- deg
+	       "(RingElement_array *)", getSequenceOfRingElements(s.3), ",", -- entries
+	       mutable == True, ")"))
+     else WrongArgBoolean(5)
+     else WrongArg(2,"a raw free module")
+     else WrongArg(1,"a raw free module")
+     else WrongNumArgs(5));
+setupfun("rawMatrix2",rawMatrix2);
+
+rawMatrixRemake(e:Expr):Expr := (
+     when e is s:Sequence do 
+     if length(s) != 5 then WrongNumArgs(5) else
+     when s.0 is target:RawFreeModule do 
+     when s.1 is source:RawFreeModule do
+     if !isListOfSmallIntegers(s.2) then WrongArg(3,"a list of small integers") else
+     when s.3 is M:RawMatrix do
+     when s.4 is mutable:Boolean do toExpr(Ccode(RawMatrixOrNull, 
+	       "(engine_RawMatrixOrNull)IM2_Matrix_remake(",
+	       "(FreeModule*)", target, ",",
+	       "(FreeModule*)", source, ",",
+	       "(M2_arrayint)", getListOfSmallIntegers(s.2), ",", -- deg
+	       "(Matrix*)", M, ",",
+	       mutable == True, ")"))
+     else WrongArgBoolean(5)
+     else WrongArg(4,"a raw matrix")
+     else WrongArg(2,"a raw free module")
+     else WrongArg(1,"a raw free module")
+     else WrongNumArgs(5));
+setupfun("rawMatrixRemake",rawMatrixRemake);
+
+rawSparseatrix1(e:Expr):Expr := (
+     when e is s:Sequence do 
+     if length(s) != 6 then WrongNumArgs(6) else
+     when s.0 is target:RawFreeModule do 
+     when s.1 is ncols:Integer do if !isInt(ncols) then WrongArgSmallInteger(2) else 
+     if isListOfSmallIntegers(s.2) then
+     if isListOfSmallIntegers(s.3) then
+     if isSequenceOfRingElements(s.4) then 
+     when s.5 is mutable:Boolean do 
+     toExpr(Ccode(RawMatrixOrNull, 
+	       "(engine_RawMatrixOrNull)IM2_Matrix_make_sparse1(",
+	       "(FreeModule*)", target, ",",
+	       toInt(ncols), ",",
+	       "(M2_arrayint)", getListOfSmallIntegers(s.2), ",", -- rows
+	       "(M2_arrayint)", getListOfSmallIntegers(s.3), ",", -- cols
+	       "(RingElement_array *)", getSequenceOfRingElements(s.4), ",", -- entries
+	       mutable == True, ")"))
+     else WrongArgBoolean(6)
+     else WrongArg(5,"a sequence of ring elements")
+     else WrongArg(4,"a list of small integers")
+     else WrongArg(3,"a list of small integers")
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw free module")
+     else WrongNumArgs(6));
+setupfun("rawSparseatrix1",rawSparseatrix1);
+
+rawSparseatrix2(e:Expr):Expr := (
+     when e is s:Sequence do 
+     if length(s) != 7 then WrongNumArgs(7) else
+     when s.0 is target:RawFreeModule do 
+     when s.1 is source:RawFreeModule do
+     if isListOfSmallIntegers(s.2) then
+     if isListOfSmallIntegers(s.3) then
+     if isListOfSmallIntegers(s.4) then
+     if isSequenceOfRingElements(s.5) then 
+     when s.6 is mutable:Boolean do 
+     toExpr(Ccode(RawMatrixOrNull, 
+	       "(engine_RawMatrixOrNull)IM2_Matrix_make_sparse2(",
+	       "(FreeModule*)", target, ",",
+	       "(FreeModule*)", source, ",",
+	       "(M2_arrayint)", getListOfSmallIntegers(s.2), ",", -- deg
+	       "(M2_arrayint)", getListOfSmallIntegers(s.3), ",", -- rows
+	       "(M2_arrayint)", getListOfSmallIntegers(s.4), ",", -- cols
+	       "(RingElement_array *)", getSequenceOfRingElements(s.5), ",", -- entries
+	       mutable == True, ")"))
+     else WrongArgBoolean(7)
+     else WrongArg(6,"a sequence of ring elements")
+     else WrongArg(5,"a list of small integers")
+     else WrongArg(4,"a list of small integers")
+     else WrongArg(3,"a list of small integers")
+     else WrongArg(2,"a raw free module")
+     else WrongArg(1,"a raw free module")
+     else WrongNumArgs(7));
+setupfun("rawSparseatrix2",rawSparseatrix2);
 
 rawConcat(e:Expr):Expr := (
      if isSequenceOfMatrices(e) then

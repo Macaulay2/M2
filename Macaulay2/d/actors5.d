@@ -701,6 +701,11 @@ method123(e:Expr,env:Sequence):Expr := (
 	       f := lookup(Class(args.0),env.0);
 	       if f == nullE then f = env.1;
 	       apply(f, args.0))
+	  else if length(args) == 0 then (
+	       f := lookup(env.0);
+	       if f == nullE then f = env.1;
+	       Expr(Sequence(f, e))			    -- debugging
+	       )
 	  else apply(env.1, args))
      else (
 	  f := lookup(Class(e),env.0);
@@ -1421,6 +1426,14 @@ storeE := Expr(CompiledFunction(store,nextHash()));
 foreach s in syms do storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,s)),storeE);
 storeE = nullE;
 syms = SymbolSequence();
+
+export fileDictionaries := newHashTable(mutableHashTableClass,nothingClass); sethash(fileDictionaries,true);
+setupconst("fileDictionaries",Expr(fileDictionaries));
+
+export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (
+     d := newStaticLocalDictionaryClosure();
+     storeInHashTable(fileDictionaries,Expr(filename),Expr(d));
+     d);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"

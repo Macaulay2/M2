@@ -101,7 +101,7 @@ M2_bool IM2_Matrix_is_mutable(const Matrix *M)
 }
  
 
-const MatrixOrNull * IM2_Matrix_make3(const FreeModule *target,
+const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
 				      const FreeModule *source,
 				      const M2_arrayint deg,
 				      const Matrix *M,
@@ -130,7 +130,7 @@ const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
   return Matrix::make(target,source,deg,V);
 }
 
-const MatrixOrNull * IM2_Matrix_make3(const FreeModule *target,
+const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
 				      const FreeModule *source,
 				      const M2_arrayint deg,
 				      const Matrix *M)
