@@ -11,8 +11,8 @@ echo =======================================================
 echo Making bin/M2
 if   %DUMPDATA%
 then ../bin/Macaulay2 "-e loaddata \"../cache/Macaulay2-`uname -m | sed s=/=-=g `-data\"" \
-            -- '-e runStartFunctions()' makeM2.m2 '-e exit 0'
-else ../bin/Macaulay2 \
+            -- -q '-e runStartFunctions()' makeM2.m2 '-e exit 0'
+else ../bin/Macaulay2 -q \
             '-e phase=1' setup.m2 '-e phase=0' \
             '-e runStartFunctions()' makeM2.m2 '-e exit 0'
 fi
