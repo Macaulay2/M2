@@ -26,7 +26,7 @@ document {
 	  TO "symmetric algebras",
 	  TO "tensor products of rings",
 	  TO "Weyl algebras",
-	  TO "Schur rings", 
+	  -- TO "Schur rings", 
 	  TO "associative algebras",
        	  },
      PARA,

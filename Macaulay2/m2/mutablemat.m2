@@ -39,7 +39,12 @@ mutableIdentity = method(Options => {Dense => true})
 mutableIdentity(Ring,ZZ) := o -> (R,nrows) -> 
   map(R,rawMutableIdentity(raw R,nrows,o.Dense))
 
-MutableMatrix _ Sequence := (m,rc) -> new ring m from (raw m)_rc
+MutableMatrix _ Sequence := (m,rc) -> (
+     n := (raw m)_rc;
+     if class n === RawRingElement then new ring m from n
+     else if class n === RawMutableMatrix then map(ring m, n)
+     else error "internal error"
+     )
 MutableMatrix == MutableMatrix := (m,n) -> raw m == raw n
 
 setRowChange = method()

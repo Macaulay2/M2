@@ -938,7 +938,7 @@ document {
      }
 
 document {
-     Key => currentDirectory,
+     Key => "currentDirectory",
      Headline => "current working directory",
      TT "currentDirectory", " is the name of the current directory,
      together with an extra slash (or appropriate path separator)."

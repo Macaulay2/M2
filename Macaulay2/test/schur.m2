@@ -1,3 +1,4 @@
+needsPackage "SchurRings"
 A = Schur 4
 f = A_{1}
 assert( f*f == A_{2} + A_{1,1} )

@@ -123,6 +123,74 @@ schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
 	  new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
      S)
 
+beginDocumentation()
+
+document {
+     Key => "Schur rings",
+     Headline => "monomials representing irreducible representations of GL(n)",
+     "Given a positive integer ", TT "n", ", 
+     we may define a polynomial ring over ", TO "ZZ", " in ", TT "n", " variables, whose
+     monomials correspond to the irreducible representations of GL(n), and where 
+     multiplication is given by the decomposition of the tensor product of representations",
+     PARA,
+     "We create such a ring in Macaulay 2 using the ", TO "Schur", " function:",
+     EXAMPLE "R = Schur 4;",
+     "A monomial represents the irreducible representation with a given highest weight. 
+     The standard 4 dimensional representation is",
+     EXAMPLE "V = R_{1}",
+     "We may see the dimension of the corresponding irreducible representation using ", TO "dim",
+     ":",
+     EXAMPLE "dim V",
+     "The third symmetric power of V is obtained by",
+     EXAMPLE "W = R_{3}",
+     EXAMPLE "dim W",
+     "and the third exterior power of V can be obtained using",
+     EXAMPLE "U = R_{1,1,1}",
+     EXAMPLE "dim U",
+     "Multiplication of elements corresponds to tensor product of representations.  The 
+     value is computed using a variant of the Littlewood-Richardson rule.",
+     EXAMPLE "V * V",
+     EXAMPLE "V^3",
+     "One cannot make quotients of this ring, and Groebner bases and related computations
+     do not work, but I'm not sure what they would mean..."
+     }
+
+document {
+     Key => Schur,
+     Headline => "make a Schur ring",
+     TT "Schur n", " -- creates a Schur ring of degree n.",
+     PARA,
+     "This is the representation ring for the general linear group of n by n
+     matrices.",
+     PARA,
+     SeeAlso => {"SchurRing"}}
+document {
+     Key => SchurRing,
+     Headline => "the class of all Schur rings",
+     "A Schur ring is the representation ring for the general linear group of 
+     n by n matrices, and one can be constructed with ", TO "Schur", ".",
+     EXAMPLE "R = Schur 4",
+     "The element corresponding to the Young diagram ", TT "{3,2,1}", " is
+     obtained as follows.",
+     EXAMPLE "R_{3,2,1}",
+     "The dimension of the underlying virtual representation can be obtained
+     with ", TO "dim", ".",
+     EXAMPLE "dim R_{3,2,1}",
+     "Multiplication in the ring comes from tensor product of representations.",
+     EXAMPLE "R_{3,2,1} * R_{1,1}",
+     SeeAlso => {"_", SchurRing, List}}
+document {
+     Key => (symbol _, SchurRing, List),
+     Headline => "make an element of a Schur ring",
+     TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
+     to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
+     PARA,
+     "The row lengths should be in decreasing order.",
+     SeeAlso => "SchurRing"}
+
+-----------------------------------------------------------------------------
+-- the rest of this file used to be schur.m2
+-----------------------------------------------------------------------------
 
 -- BUG in M2: R_0 .. R_n does not always give elements in the ring R!!
 -- workaround:
@@ -419,56 +487,58 @@ weyman = (i,L,ranks) -> (
      B := preBott(i,L,ranks);
      doBott(i,B))
 
-///
-cauchy = (i,L,Rs) -> (
-     -- Rs is a list (R1,R2) of symmRing's, R1 <--> V, R2 <--> W
-     -- L is a list of pairs (f,g), where
-     --   f in R1, g in R2.
-     -- compute the i th exterior power of L.
-     -- 
-	       
-     )
-
-jacobiTrudi = (lambda, R) -> (
-     -- lambda is a partition of d
-     -- R is an "hring n", some n.
-     -- returns: s[lambda] as an element of R.
-     n := #lambda;
-     det map(R^n, n, (i,j) -> (
-	       p := lambda#i-i+j;
-	       if p < 0 then 0_R
-	       else if p == 0 then 1_R else h_p))
-     )
-htos = (d,R) -> (
-     -- d is an integer >= 0
-     -- R is an 'hring n'
-     if not R.?toSchur then R.toSchur = new MutableHashTable;
-     if not R.toSchur#?d then (
-     	  n := numgens R;
-     	  P := parts(d,n);
-     	  S := matrix {apply(P, x -> jacobiTrudi(x,R)) };
-     	  H := transpose basis(d,R);
-     	  B := transpose contract(H,S);
-	  R.toSchur#d = (H,B^(-1), P);
-	  );
-     R.toSchur#d
-     )     
-
-tos = (f) -> (
-     -- f is a homogeneous polynomial in 'hring n', of degree d
-     d := first degree f;
-     R := ring f;
-     (H,C,P) := htos(d,R);
-     fInS := transpose contract(H,matrix{{f}}) * C;
-     fInS = flatten entries fInS;
-     fInS = apply(fInS, x -> if x == 0 then 0 else leadCoefficient(x));
-     S := R.Schur;
-     sum apply(#P, i -> fInS_i * S_(P_i))
-     )
-///     
-	  
+------- old stuff
+---- cauchy = (i,L,Rs) -> (
+----      -- Rs is a list (R1,R2) of symmRing's, R1 <--> V, R2 <--> W
+----      -- L is a list of pairs (f,g), where
+----      --   f in R1, g in R2.
+----      -- compute the i th exterior power of L.
+----      -- 
+---- 	       
+----      )
+---- 
+---- jacobiTrudi = (lambda, R) -> (
+----      -- lambda is a partition of d
+----      -- R is an "hring n", some n.
+----      -- returns: s[lambda] as an element of R.
+----      n := #lambda;
+----      det map(R^n, n, (i,j) -> (
+---- 	       p := lambda#i-i+j;
+---- 	       if p < 0 then 0_R
+---- 	       else if p == 0 then 1_R else h_p))
+----      )
+---- htos = (d,R) -> (
+----      -- d is an integer >= 0
+----      -- R is an 'hring n'
+----      if not R.?toSchur then R.toSchur = new MutableHashTable;
+----      if not R.toSchur#?d then (
+----      	  n := numgens R;
+----      	  P := parts(d,n);
+----      	  S := matrix {apply(P, x -> jacobiTrudi(x,R)) };
+----      	  H := transpose basis(d,R);
+----      	  B := transpose contract(H,S);
+---- 	  R.toSchur#d = (H,B^(-1), P);
+---- 	  );
+----      R.toSchur#d
+----      )     
+---- 
+---- tos = (f) -> (
+----      -- f is a homogeneous polynomial in 'hring n', of degree d
+----      d := first degree f;
+----      R := ring f;
+----      (H,C,P) := htos(d,R);
+----      fInS := transpose contract(H,matrix{{f}}) * C;
+----      fInS = flatten entries fInS;
+----      fInS = apply(fInS, x -> if x == 0 then 0 else leadCoefficient(x));
+----      S := R.Schur;
+----      sum apply(#P, i -> fInS_i * S_(P_i))
+----      )
      
 end
+
+-----------------------------------------------------------------------------
+-- some tests that can be incorporated into the documentation later
+-----------------------------------------------------------------------------
 
 restart
 load "schur.m2"
@@ -688,6 +758,7 @@ schur = (lambda) -> (
 
 
 end
+
 restart
 load "schur.m2"
 (H,E,P,S) = symmRings 4
