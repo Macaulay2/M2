@@ -321,7 +321,7 @@ R = polyring(rawZZp(101), (symbol x, symbol y, symbol z, symbol w))
 G = mat{{(3*x+y+z+w)^4, (7*x+2*y+3*z)^4 + x*w^3, (x+y+z)^4}}
 Gcomp = rawGB(G,false,0,{},false,0,0,0)
 rawStartComputation Gcomp
-m = rawGBGetMatrix Gcomp;  -- CRASHES
+m = rawGBGetMatrix Gcomp;
 h = rawHilbert m
 -- redo the computation, using this HF.
 Gcomp = rawGB(G,false,0,{},false,0,0,0)
@@ -413,7 +413,7 @@ assert(m == mat{{24336_R, 2*y, y^3, 2*x+y^2-3900, x*y^2+12168, x^2+y^2}})
 R1 = polyring2(rawZZ(), (symbol x, symbol y, symbol z, symbol w), rawMonomialOrdering { Lex  => 4})
 G = mat{{(3*x+y+z+w)^4, (7*x+2*y+3*z)^4 + x*w^3, (x+y+z)^4}}
 Gcomp = rawGB(G,false,0,{},false,0,0,0)
-<< "can we get thisZZ GB working?" << endl;
+<< "can we get this GB over ZZ working?" << endl;
 --time rawStartComputation Gcomp
 --m1 = rawGBGetMatrix Gcomp;
 -----------------------------------
@@ -435,6 +435,7 @@ A = rawQuotientRing(R,m)
 P = mat{{rawPromote(A,x), rawPromote(A,y), rawPromote(A,z), rawPromote(A,w)}}
 P1 = rawsyz P
 P2 = rawsyz P1 -- (One problem: syzygyies are not reduced mod ideal)
+print "ERROR: syzygies are not reduced modulo the quotient ideal"
 P3 = rawsyz P2
 P * P1
 P1 * P2

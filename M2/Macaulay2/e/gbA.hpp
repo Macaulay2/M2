@@ -201,6 +201,7 @@ private:
   /* Hilbert function handling */
   void flush_pairs(); // Used to flush the rest of the pairs in the current degree.
   RingElementOrNull *compute_hilbert_function(); // Compute the HF of _hilb_matrix.
+  Matrix *make_lead_term_matrix(); // The submodule of all lead terms
 
   /* reduction */
   void auto_reduce_by(int id);
