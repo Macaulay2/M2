@@ -100,7 +100,8 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
 	  else var = local a;
 	  );
      d := p^n-1;
-     F := new GaloisField from rawGaloisField raw primitiveElement;
+     rF := rawGaloisField raw primitiveElement;
+     F := new GaloisField from rF;
      toString F := h -> toString expression h;
      net F := h -> net expression h;
      F.baseRings = append(S.baseRings,S);

@@ -186,11 +186,15 @@ exportMutable Sequence := v -> (
 
 addStartFunction( () -> if prefixDirectory =!= null then Macaulay2#"package prefix" = prefixDirectory )
 
+saveCurrentPackage := currentPackage
+
 newPackage("Macaulay2", 
      DebuggingMode => debuggingMode, 
      Version => version#"VERSION", 
      TopNodeName => "Macaulay 2",
      Headline => "A computer algebra system designed to support algebraic geometry")
+
+Macaulay2#"test inputs" = saveCurrentPackage#"test inputs"
 
 findSynonyms = method()
 findSynonyms Symbol := x -> (

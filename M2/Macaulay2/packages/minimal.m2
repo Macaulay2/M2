@@ -14,8 +14,11 @@ f = x -> print "hi there!"
 
 beginDocumentation()
 
+TEST "assert( f() === null )"
+
 document { Key => "minimal",
-     Headline => "a minimal example of a Macaulay 2 package"
+     Headline => "a minimal example of a Macaulay 2 package",
+     "This package is just a minimal example of a package."
      }
 
 document { Key => "f",
@@ -29,5 +32,3 @@ document { Key => "f",
 	  "f()"
 	  }
      }
-
-TEST "assert( f() === null )"
