@@ -1029,7 +1029,7 @@ document { (exteriorPower,ZZ,Matrix),
 	  "g" => { "the ", TT "p", "-th exterior power of the matrix ", TT "f", "."}
 	  },
      "Note: we may write ", TT "exteriorPower_p f", " instead of
-     ", TT "exteriorPower(p,f)", "; see ", TO "(symbol _,Function,Thing)", ".",
+     ", TT "exteriorPower(p,f)", "; see ", TO (symbol _,Function,Thing), ".",
      EXAMPLE {
 	  "R = ZZ/2[x,y];",
 	  "f = random(R^3,R^{3:-1})",

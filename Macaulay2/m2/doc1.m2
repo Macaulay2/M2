@@ -645,7 +645,7 @@ document { (isHomogeneous,Matrix),
 	  },
      "Associated with every matrix is an arbitary integer called
      its degree: it has nothing to do with the degrees of the entries
-     of the matrix; see ", TO "(degree,Matrix)", ".  The
+     of the matrix; see ", TO (degree,Matrix), ".  The
      matrix ", TT "f", " is called homogeneous if every entry
      ", TT "f_(i,j)", " has degree equal to
      ", TT "degree G_i - degree F_j + degree f", ".  Another way to
