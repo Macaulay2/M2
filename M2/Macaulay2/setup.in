@@ -1,12 +1,16 @@
-#! /bin/sh -xe
+#! /bin/sh -x
 DUMPDATA="@DUMPDATA@"
+PREFIX=../../..
+M2DIR=$PREFIX/share/Macaulay2/Macaulay2/m2
+BINDIR=$PREFIX/bin
 cd cache
-M2DIR=../../../../share/Macaulay2/@PACKAGE_VERSION@/m2
-test -d "$M2DIR"
-ARCH=`uname -m`
-export ARCH
+M2DIR=../$M2DIR
+BINDIR=../$BINDIR
+if ! test -f "$M2DIR/setup.m2"
+then echo "--error: Macaulay 2 sources not found in $M2DIR" >&2
+     exit 1
+fi
 if [ "$DUMPDATA" = yes ]
 then echo Dumping data
-     M2HOME=.. \
-     ../bin/M2 -silent -q -e 'phase=1' "$M2DIR/setup.m2" "$M2DIR/dumpdata.m2"  -e 'dump()' -e 'exit 0'
+     $BINDIR/M2 -q --stop -e 'errorDepth = 0' --dumpdata
 fi
