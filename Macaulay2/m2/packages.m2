@@ -123,6 +123,30 @@ exportMutable {
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
 	  }
 
+findSynonyms = method()
+findSynonyms Symbol := x -> (
+     r := {};
+     scan(globalDictionaries, d -> scan(pairs d, (nam,sym) -> if x === sym then r = append(r,nam)));
+     sort r)
+
+checkShadow = () -> (
+     d := globalDictionaries;
+     n := #d;
+     for i from 0 to n-1 do
+     for j from i+1 to n-1 do
+     scan(keys d#i, nam -> if d#j#?nam then (
+	       stderr << "--warning: symbol '" << nam << "' in " << d#j << " is shadowed by symbol in " << d#i << endl;
+	       sym := d#j#nam;
+	       w := findSynonyms sym;
+	       w = select(w, s -> s != nam);
+	       if #w > 0 then stderr << "--   synonym(s) for " << nam << ": " << concatenate between(", ",w) << endl
+	       else if member(UserDictionary,globalDictionaries) then for i from 0 do (
+		    newsyn := nam | "$" | toString i;
+		    if not isGlobalSymbol newsyn then (
+			 UserDictionary#newsyn = sym;
+			 stderr << "--   new synonym provided for '" << nam << "': " << newsyn << endl;
+			 break)))))
+
 closePackage = method()
 closePackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);
@@ -141,11 +165,8 @@ closePackage String := title -> (
 	  protect exportDict;
 	  );
      if pkg#"title" =!= "Main" then (
-	  globalDictionaries = pkg#"previous dictionaries";
-	  scan(keys exportDict, nam -> if isGlobalSymbol nam then (
-		    stderr << "warning: global symbol '" << nam << "' obscured by package " << title << endl;
-		    ));
-	  globalDictionaries = prepend(exportDict,globalDictionaries);
+	  globalDictionaries = prepend(exportDict,pkg#"previous dictionaries");
+     	  checkShadow();
 	  );
      hook := pkg#"close hook";
      fileExitHooks = select(fileExitHooks, f -> f =!= hook);
@@ -212,6 +233,10 @@ needsPackage = method()
 needsPackage String := s -> (
      if PackageDictionary#?s then use value PackageDictionary#s
      else load (s | ".m2")
+     )
+
+beginDocumentation = () -> (
+     stderr << "beginDocumentation: currentFileDirectory = " << currentFileDirectory << endl;
      )
 
 -- Local Variables:

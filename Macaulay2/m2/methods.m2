@@ -9,14 +9,17 @@ noapp := (f,x) -> error(
 
 protect Options
 
-t := c -> try toString c else "--unprintable--"
+t := c -> (
+     n := try toString c else "--unprintable--";
+     if #n > 200 then n = sustring(n,0,200) | "...";
+     n)
 
 noMethod := args -> (
      if class args === Sequence 
      then if 0 < #args and #args <= 3 
-     then error("no method found for items of classes ",t apply(args, class))
-     else error("no method found for item of class Sequence and length ",t(#args))
-     else error("no method found for item of class ", t class args)
+     then error("no method found for ", t args, ", items of classes ",t apply(args, class))
+     else error("no method found for ", t args, ", item of class Sequence and length ",t(#args))
+     else error("no method found for ", t args, ", item of class ", t class args)
      )
 
 methodDefaults := new OptionTable from {
