@@ -3,7 +3,7 @@ TOPDIR = ../../../..
 include $(TOPDIR)/config.Makefile
 include $(TOPDIR)/Makeconf
 
-ifndef NODUMPDATA
+ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent \
 	'-e loaddata "$(M2HOME)/cache/Macaulay2-$(ARCH)-data"' \
 	-- -x -s $(M2HOME)/m2/eg.m2
