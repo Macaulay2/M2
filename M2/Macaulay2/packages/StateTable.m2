@@ -189,3 +189,6 @@ document { done,
      PARA,
      SEEALSO "StateTable"
      }
+
+scan(cacheFileNameKeys(""), key -> cacheFileName("",key) | ".html" << html documentation key << close)
+

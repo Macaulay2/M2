@@ -394,7 +394,8 @@ document List := z -> (
      body := drop(z,1);
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
-     nodeBaseFilename = cacheFileName(DocumentationPrefix, nodeName);
+     -- stderr << "documenting " << nodeName << " in " << currentFile << " in " << currentFileDirectory << endl;
+     nodeBaseFilename = cacheFileName(concatenate(currentFileDirectory,DocumentationPrefix), nodeName);
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
      )
@@ -864,7 +865,7 @@ help Thing := s -> (
 -----------------------------------------------------------------------------
 
 TEST = (e) -> if phase === 2 then (
-     cacheFileName TestsPrefix | ".m2" << e << endl << close;
+     cacheFileName concatenate(currentFileDirectory,TestsPrefix) | ".m2" << e << endl << close;
      null
      )
 
@@ -1304,7 +1305,7 @@ net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop
 html TO := x -> (
      node := formatDocumentTag x#0;
      concatenate ( 
-     	  "<A HREF=\"", cacheFileName(DocumentationPrefix, node), ".html", "\">", 
+     	  "<A HREF=\"", cacheFileName(documentationPath, node), ".html", "\">", 
      	  html node,
      	  "</A>",
      	  drop(toList x,1) 
@@ -1314,7 +1315,7 @@ tex  TO := x -> (
      node := formatDocumentTag x#0;
      tex SEQ {
      	  TT formatDocumentTag x#0,
-     	  " [", LITERAL { ///\ref{///, cacheFileName(DocumentationPrefix, node), ///}/// },
+     	  " [", LITERAL { ///\ref{///, cacheFileName(documentationPath, node), ///}/// },
 	  "]"
 	  }
      )

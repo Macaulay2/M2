@@ -1,6 +1,5 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
-extern char *gmp_version;	/* removed the 'static' in gmp/version.c */
 #include "readline.h"
 #include "types.h"
 
@@ -404,7 +403,7 @@ char **argv;
      void main_inits();
      static void *reserve = NULL;
      extern void actors4_setupargv();
-     extern void interp_process(), interp_process2();;
+     extern void interp_process(), interp_process2(), interp_topLevel();
 
 #if defined(__MWERKS__) && !defined(__BUILDING_MPW__)
 	int n_mac_args = 4;
@@ -515,7 +514,7 @@ char **argv;
 		       );
 	       putstderr(buf);
 	       putstderr("--GNU libc and libg++, copyright, Free Software Foundation");
-	       sprintf(buf,"--GNU MP %s, copyright, Free Software Foundation",gmp_version);
+	       sprintf(buf,"--GNU MP %s, copyright, Free Software Foundation",__gmp_version);
 	       putstderr(buf);
 	       break;
        	       }

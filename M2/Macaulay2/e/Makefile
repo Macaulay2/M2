@@ -349,7 +349,7 @@ else
 #$(LIB): $(LIB)($(OFILES))
 #	-$(RANLIB) $(LIB)
 $(LIB): $(OFILES)
-	$(AR) $(ARFLAGS) $@ $?
+	$(AR) $(ARFLAGS) $@ $^
 	-$(RANLIB) $(LIB)
 
 endif
