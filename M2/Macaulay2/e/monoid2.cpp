@@ -221,12 +221,14 @@ Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
 
   int next = 0;
   for (v=0; v<n1; v++)
-    for (i=0; i<ndegs; i++)
-      degs->array[next++] = M1->degvals_->array[next++];
+    for (i=0; i<ndegs; i++) {
+      degs->array[next] = M1->degvals_->array[next];
+      next++;
+    }
 
   for (v=0; v<n2; v++)
     for (i=0; i<ndegs; i++)
-      degs->array[next++] = 1;
+      degs->array[next++] = 0;
 
   return Monoid::create(M,names,DR,degs);
 }
