@@ -284,11 +284,15 @@ M2_string interp_dirname(M2_string s) {
   return tostring(t);
 }
 
+static M2_string last_cwd;
+
 M2_string system_getcwd()
 {
      /* this function now adds a terminal / to the directory name */
      char buf[700];
-     char *x = getcwd(buf,sizeof(buf)-1);
+     char *x;
+     if (last_cwd != NULL) return last_cwd;
+     x = getcwd(buf,sizeof(buf)-1);
 #if defined(_WIN32)
      char *p;
      for (p=x; *p; p++) if (*p == '\\') *p = '/';
@@ -298,7 +302,7 @@ M2_string system_getcwd()
 #else
      if (0 != strcmp(buf,"/")) strcat(buf,"/");
 #endif
-     if (x != NULL) return tostring(x);
+     if (x != NULL) return last_cwd = tostring(x);
      return tostring("");
      }
 
@@ -494,7 +498,6 @@ int system_fileTime(M2_string name) {
 
 int system_mkdir(M2_string name) {
   char *cname = tocharstar(name);
-  struct stat buf;
   int r = mkdir(cname,0777);
   GC_FREE(cname);
   return r;

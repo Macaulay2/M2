@@ -261,4 +261,4 @@ addStartFunction(
 	  )
      )
 
-addStartFunction( () -> ( loadDepth 1; errorDepth 1; ) )
+addStartFunction( () -> ( loadDepth (1 + loadDepth()); errorDepth (1 + errorDepth()); ) )

@@ -278,6 +278,8 @@ document { errorDepth,
      time the code was parsed as the error depth is now.  Typically, the
      error depth is set so that messages from code pre-interpreted and
      reloaded with ", TO "loaddata", " will not appear in the backtrace.",
+     PARA,
+     "To increase the size of the stack trace, reduce the ", TT "errorDepth", ".",
      SEEALSO { "loadDepth" }
      }
 
@@ -292,6 +294,11 @@ document { loadDepth,
      code is displayed only if the load depth was at least as large at the
      time the code was parsed as the error depth is now.  The load depth 
      is incremented each time ", TO "loaddata", " is run.",
+     PARA,
+     "The load depth also determines which command line arguments are
+     heeded.  If the load depths is ", TT "i", " then the arguments between
+     the ", TT "i", "-th and the ", TT "i+1", "-st occurence of ", TT "--", "
+     are the ones heeded.",
      SEEALSO { "errorDepth" }
      }
 

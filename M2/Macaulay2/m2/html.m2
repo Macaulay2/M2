@@ -337,12 +337,12 @@ makeHTML = (builddir,finaldir) -> (
 
 makeHTMLPages = method(Options => { 
 	  TemporaryDirectory => "tmp/", 
-	  FinalDirectory => "/usr/local/"		    -- should be able to discover this!
+	  FinalDirectory => "tmp/"
 	  })
 makeHTMLPages Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = pkg.name;
-     buildDirectory = minimizeFilename(o.TemporaryDirectory | "/" | pkg.name | "-" | pkg.version | "/");
+     buildDirectory = minimizeFilename(o.TemporaryDirectory | "/");
      finalDirectory = minimizeFilename(o.FinalDirectory | "/");
      htmlDirectory = LAYOUT#"packagehtml" pkg.name;
      keys := unique join(pkg#"symbols",pkg#"docs");
