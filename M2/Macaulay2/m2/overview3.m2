@@ -305,6 +305,7 @@ document {  "Developer's Corner",
      }
 
 document { "Macaulay 2",
+     FileName => "index",
      IMG "9planets.gif", PARA,
      "Macaulay 2 is a software system devoted to supporting research in 
      algebraic geometry and commutative algebra, developed with funding

@@ -20,21 +20,22 @@ tt := new MutableHashTable from toList apply(0 .. 255, i -> (
 	  c => c
 	  ));
 
-tt#"/" = "%sl"				  -- can't occur in a file name: unix
-tt#"?" = "%qu"					     -- has a meaning in URLs
-tt#"#" = "%sh"					     -- has a meaning in URLs
-tt#":" = "%co"				    -- has a meaning for shells: unix
-tt#"\""= "%qu"				    -- has a meaning for shells: unix
-tt#";" = "%sc"				    -- has a meaning for shells: unix
-tt#"\\"= "%bs"				    -- has a meaning for shells: unix
-tt#" " = "%sp"				    -- has a meaning for shells: unix
-tt#"%" = "%pc"					      -- our escape character
-tt#"$" = "%do"				    -- has a meaning for shells: unix
-tt#"|" = "%vb"				    -- has a meaning for shells: unix
-tt#"&" = "%am"				    -- has a meaning for shells: unix
-tt#"<" = "%lt"				    -- has a meaning for shells: unix
-tt#">" = "%gt"				    -- has a meaning for shells: unix
-tt#"!" = "%ep"				    -- has a meaning for shells: unix
+tt#"/" = "_sl_"				  -- can't occur in a file name: unix
+tt#"%" = "_pc_"					     -- has a meaning in URLs
+tt#"?" = "_qu_"					     -- has a meaning in URLs
+tt#"#" = "_sh_"					     -- has a meaning in URLs
+tt#"\""= "_qu_"				    -- has a meaning for shells: unix
+tt#"\\"= "_bs_"				    -- has a meaning for shells: unix
+tt#"$" = "_do_"				    -- has a meaning for shells: unix
+tt#"&" = "_am_"				    -- has a meaning for shells: unix
+tt#"<" = "_lt_"				    -- has a meaning for shells: unix
+tt#">" = "_gt_"				    -- has a meaning for shells: unix
+tt#"!" = "_ep_"				    -- has a meaning for shells: unix
+tt#"|" = "_vb_"				    -- has a meaning for shells: unix
+tt#":" = "_co_"				    -- has a meaning for shells: unix
+tt#";" = "_sc_"				    -- has a meaning for shells: unix
+tt#" " = "_sp_"				    -- has a meaning for shells: unix
+tt#"_" = "_us_"					      -- our escape character
 
 uu := new HashTable from {
      "index" => "index%",
@@ -61,7 +62,6 @@ indexTable := memoize(
      prefix -> (
 	  fn := prefix | "Macaulay2-index-cache.db";
 	  local tb;
-     	  next := 0;
 	  try (
 	       tb = openDatabaseOut fn;
 	       ) 
@@ -69,7 +69,6 @@ indexTable := memoize(
 	       tb = openDatabase fn;
 	       )
 	  else tb = new HashTable;
-	  next = #(keys tb);
 	  store := (key,val) -> (
 	       if #key > 300 then error "suspiciously long key";
 	       if not mutable tb then error (
@@ -79,12 +78,14 @@ indexTable := memoize(
 		    );
 	       tb#key = val
 	       );
+     	  next := null;
 	  makeName := key -> (
-	       if false
+	       if true
 	       then (
 	       	    toFilename key	    -- for OSes with long file names
 	       	    )
 	       else (			    -- for OSes with short file names
+     	       	    if next === null then next = #(keys tb);
 	       	    val := fourDigits next;
 	       	    next = next+1;
 	       	    val
@@ -107,9 +108,9 @@ indexTable := memoize(
      )
 
 cacheFileName = method()
-cacheFileName(String) := (prefix) -> (
-     (indexTable prefix)#keysFun ()
-     )
+-- cacheFileName(String) := (prefix) -> (
+--      apply((indexTable prefix)#keysFun (), value)
+--      )
 cacheFileName(String,Thing) := (prefix,key) -> (
      (indexTable prefix)#getFun toExternalString key
      )
