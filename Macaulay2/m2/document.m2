@@ -242,7 +242,7 @@ file := null
 -----------------------------------------------------------------------------
 
 getOption := (s,tag) -> (
-     if class s === BODY or class s === SEQ then (
+     if class s === SEQ then (
      	  x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
      	  if #x > 0 then x#0#1 else null)
      else null
@@ -364,7 +364,7 @@ document List := z -> (
      if d#?currentNodeName then duplicateDocWarning();
      d#currentNodeName = toExternalString extractExamples (
      	  -- fixup body
-     	  BODY body
+     	  SEQ body
 	  );
      currentNodeName = null;
      )
@@ -674,10 +674,7 @@ fmeth := f -> (
      b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then PARA {
-	  "Ways to use ", TT toString f," :", newline, 
-	  SHIELD smenu b
-	  } )
+     if #b > 0 then SEQ { PARA { "Ways to use ", TT toString f }, SHIELD smenu b } )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 briefDocumentation = method(SingleArgumentDispatch => true)
@@ -710,7 +707,7 @@ documentation String := s -> (
      else (
 	  b := getDocBody(s);
 	  if b === null then null
-	  else join( BODY { title s, PARA{" "} }, b )
+	  else join( SEQ { title s, PARA{" "} }, b )
 	  )
      )
 
@@ -980,10 +977,9 @@ net MarkUpList := x -> horizontalJoin apply(x,net)
 texMath MarkUpList := x -> concatenate apply(x,texMath)
 mathML MarkUpList := x -> concatenate apply(x,mathML)
 
-net HEAD := x -> ""
-net BODY := x -> (
+net SEQ := x -> (					    -- we have to be prepared for a mixture of vertical and horizontal items
      x = toList x;
-     p := positions(x, i -> instance(i,MarkUpListParagraph));
+     p := positions(x, i -> instance(i,MarkUpListParagraph)); -- these ones have to stand as independent paragraphs, the ones in between can be joined horizontally
      x = select(
 	  apply(
 	       mingle(
@@ -1197,8 +1193,9 @@ addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, head
 
 net UL := 
 net OL := 
-net DL := x -> stack apply(toList x, i -> "* " | wrap(printWidth - 10, net i))
-net NL := x -> stack apply(toList x, i -> toString i | ": " | wrap(printWidth - 10, net i))
+net DL := x -> stack apply(toList x, i -> "  * " | wrap(printWidth - 10, net i))
+* String := x -> help x					    -- so the user can cut paste the menu line to get help!
+net NL := x -> stack apply(#x, i -> toString (i+1) | " : " | wrap(printWidth - 10, net x#i))
 
 tex UL := x -> concatenate(
      ///\begin{itemize}///, newline,

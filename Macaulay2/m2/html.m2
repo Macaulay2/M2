@@ -77,6 +77,7 @@ html TO := x -> (
      	  )
      )
 
+net TO2 := x -> concatenate drop(toList x,1)
 html TO2 := x -> (
      key := normalizeDocumentTag x#0;
      formattedKey := formatDocumentTag key;
