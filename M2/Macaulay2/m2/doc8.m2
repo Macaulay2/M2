@@ -40,7 +40,7 @@ document { symbol annihilator,
      TT "annihilator M", " -- produce the annihilator ideal of a 
      module, ideal, ring element, or coherent sheaf.",
      PARA,
-     "For an abbreviation, use ", TO "ann", "."
+     "For an abbreviation, use ", TT "ann", "."
      }
 
 document { (annihilator, Module),

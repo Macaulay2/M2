@@ -53,7 +53,12 @@ AssociativeNoOptions := () -> (
 	  );
      methodFunction)
 
+chkopt0 := k -> if not ( class k === Symbol ) then error "expected SYMBOL => VALUE"
+chkopt  := o -> if not ( class o === Option and #o === 2 and class o#0 === Symbol ) then error "expected SYMBOL => VALUE"
+chkopts := x -> if class x === OptionTable then scan(keys x,chkopt0) else if class x === List then scan(x,chkopt) else error "expected list of optional arguments"
+
 SingleArgWithOptions := opts -> (
+     chkopts opts;
      if class opts =!= OptionTable then opts = new OptionTable from opts;
      methodFunction := opts >>> 
      options ->
@@ -65,9 +70,13 @@ SingleArgWithOptions := opts -> (
      methodOptions#methodFunction = opts;
      methodFunction)
 
-AssociativeWithOptions := opts -> error "associative methods with options not implemented yet"
+AssociativeWithOptions := opts -> (
+     chkopts opts;
+     error "associative methods with options not implemented yet"
+     )
 
 MultipleArgsWithOptions := opts -> (
+     chkopts opts;
      if class opts =!= OptionTable then opts = new OptionTable from opts;
      methodFunction := opts >>> 
      options ->
@@ -93,7 +102,8 @@ MultipleArgsNoOptions := () -> (
      methodFunction Sequence := newmethod123c( methodFunction, noMethod, {} );
      methodFunction)     
 
-method = methodDefaults >>> options -> () -> (
+method = methodDefaults >>> options -> args -> (
+     if args =!= () then error "expected only optional arguments";
      methodFunction := (
 	  if options.Options === null then (
        	       if options.Associative then AssociativeNoOptions()

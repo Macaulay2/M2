@@ -748,7 +748,7 @@ document { symbol cokernel,
      "The generators of the cokernel are provided by the generators of the target
      of ", TT "f", ".  In other words, ", TT "cover target f", " and ", TT "cover cokernel f", " are equal.",
      PARA,
-     "For an abbreviation, use ", TO "coker", ".",
+     "For an abbreviation, use ", TT "coker", ".",
      SEEALSO {"kernel", "cover"}
      }
 
@@ -833,7 +833,7 @@ document { generators,
      Headline => "matrix of generators",
      TT "generators x", " -- produces the generators of x.",
      PARA,
-     "For an abbreviation, use ", TO "gens", ".",
+     "For an abbreviation, use ", TT "gens", ".",
      PARA,
      "Produces the generators of a Groebner basis, a polynomial ring,
      a monoid ring, a free module, a free group, a submodule given by

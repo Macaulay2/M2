@@ -688,7 +688,6 @@ newSynopsis Thing := f -> (
      	  out = merget(out,out');
 	  );
      inp = alter \ inp;
-     ino = alter \ ino;
      out = alter \ out;
      if SYN =!= null then (
 	  SEQ {						    -- to be implemented

@@ -739,7 +739,7 @@ document { kernel,
      "If ", TT "f", " is a ring element, it will be interpreted as a one by one
      matrix.",
      PARA,
-     "For an abbreviation, use ", TO "ker", "."
+     "For an abbreviation, use ", TT "ker", "."
      }
 
 document { SubringLimit,
