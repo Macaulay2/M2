@@ -830,7 +830,7 @@ hasDocumentation = x -> (
      p := select(value \ values PackageDictionary, P -> P#"documentation"#?fkey);
      0 < #p)
 
-pager = x -> "!" | (if getenv "PAGER" == "" then "more" else getenv "PAGER") << x << close
+pager = x -> "!" | (if getenv "PAGER" == "" then "less" else getenv "PAGER") << x << close
 help = method(SingleArgumentDispatch => true)
 help List := v -> (
      printWidth = printWidth - 2;
