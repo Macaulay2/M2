@@ -22,8 +22,6 @@ protect AfterEval
 protect AfterPrint
 protect BeforePrint
 
-breakLoop = () -> if interpreterDepth == 1 then error "entering break loop for debugging"
-
 OutputDictionary = new Dictionary
 
 oo := getGlobalSymbol(OutputDictionary,"oo");

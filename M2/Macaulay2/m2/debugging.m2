@@ -144,23 +144,25 @@ abbreviate := x -> (
 
 ll := f -> (
      lv := reverse \\ flatten \\ sortByHash \ values \ localDictionaries f;
-     if #lv > 0 then net Table (
+     if #lv == 0 then "--no local variables"
+     else net Table (
 	  prepend(
 	       {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
 	       apply (lv, s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s}))))
 
 localVariables = Command(
      x -> if x === () then (
-	       if errorCode === null then error "no break loop active";
+	       if errorCode === null then error "no debugger active";
 	       ll errorCode
 	       )
 	  else ll x)
 
 usage := () -> (
      << endl
-     << "useful break loop commands:" << endl
-     << "    break                   leave the break loop" << endl
-     << "    end                     end this break loop and restart one step earlier" << endl
+     << "useful debugger commands:" << endl
+     << "    break                   leave the debugger" << endl
+     << "    end                     restart debugger one step earlier" << endl
+     << "    localVariables          display local variables" << endl
      << "    continue                execute the same code again" << endl
      << "    return                  return 'null' as the value of the code" << endl
      << "    return x                return 'x' as the value of the code" << endl
@@ -170,11 +172,7 @@ firstTime := true
 
 interpreterHook = () -> if interpreterDepth > 1 then (
      << localVariables errorCode << endl;
-     if firstTime then (
-	  usage();
-	  firstTime = false;
-	  )
-     )
+     if firstTime then ( usage(); firstTime = false; ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
