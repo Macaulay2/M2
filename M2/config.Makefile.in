@@ -28,6 +28,7 @@ STATIC = @STATIC@
 GMP = @GMP@
 GMPLIB = @GMPLIB@
 GC_FOR_NEW = @GC_FOR_NEW@
+GC = @GC@
 
 CC = @CC@
 CXX = @CXX@
