@@ -16,7 +16,6 @@
 
 (setq process-coding-system-alist (cons '("M2" . raw-text) process-coding-system-alist))
 
-
 (defun m2-mode() (M2-mode))		;setting file variables lowers the case
 
 (defun M2-common()
@@ -63,13 +62,13 @@
   (M2-common)
   (local-set-key "\177" 'backward-delete-char-untabify)
   (local-set-key "\^M" 'M2-newline-and-indent)
-  (local-set-key "\m" 'M2-electric-tab)
+  (local-set-key "\t" 'M2-electric-tab)
   (local-set-key "}" 'M2-electric-right-brace)
   (local-set-key ";" 'M2-electric-semi)
   (local-set-key "\^Cd" 'M2-find-documentation)
   )
 
-(define-derived-mode M2-comint-mode comint-mode "Macaulay 2 shell"
+(define-derived-mode M2-comint-mode comint-mode "Macaulay 2 Interaction"
   "Major mode for interacting with a Macaulay 2 process.
 
 \\{M2-comint-mode-map}"
