@@ -28,7 +28,7 @@ include/config.h.in : configure.in
 	autoheader
 #	touch $@
 
-stage2 : Makefile config.h
+stage2 : Makefile include/config.h
 config.status : configure Makefile-configure
 	./configure $(CONFIGURE_OPTIONS) --no-create
 CONFIGURED_FILES := config.Makefile Makefile include/config.h
@@ -38,6 +38,6 @@ $(CONFIGURED_FILES) : $(CONFIGURED_FILES:=.in) config.status
 
 TARGETS = all install dist check clean distclean uninstall
 
-$(TARGETS) :: Makefile config.h
+$(TARGETS) :: Makefile include/config.h
 	make $@
 
