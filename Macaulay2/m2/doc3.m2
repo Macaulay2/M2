@@ -46,9 +46,9 @@ document { backtrace,
      SEEALSO {"Expression", "Position"}
      }
 
-document { Position,
+document { FilePosition,
      Headline => "the class of all file positions",
-     TT "Position", " -- a type of list designed to represent a position
+     TT "FilePosition", " -- a type of list designed to represent a position
      in a file.",
      PARA,
      "It's implemented as a list whose three elements are the file name,

@@ -84,7 +84,7 @@ grevOption := (key,v) -> (
      else error "expected an integer or a list of integers")
 optionFixes := hashTable {
      Weights => (key,val) -> key => val,
-     Component => (key,val) -> key => val,
+     Position => (key,val) -> key => val,
      Lex => intOption,
      LexSmall => intOption,
      LexTiny => intOption,
@@ -98,7 +98,7 @@ optionFixes := hashTable {
      
 ordOption := o -> fixup ( o => numvars - varcount )
 symbolFixes := hashTable {
-     Component => o -> Component => null,
+     Position => o -> Component => null,
      RevLex => ordOption,
      GRevLex => ordOption,
      Lex => ordOption,
