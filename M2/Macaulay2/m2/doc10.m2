@@ -798,7 +798,7 @@ document { (codim, CoherentSheaf),
      HEADLINE "codimension of support"
      }
 
-document { (rank, CoherentSheaf)
+document { (rank, CoherentSheaf),
      HEADLINE "the rank of a coherent sheaf",
      }
 
@@ -844,7 +844,7 @@ document { cotangentSheaf,
      }
 
 document { (cotangentSheaf, ZZ, ProjectiveVariety),
-     HEADLINE "make an exterior power of the cotangent sheaf"
+     HEADLINE "make an exterior power of the cotangent sheaf",
      TT "cotangentSheaf(p,X)", " -- calculate the ", TT "p", "-th exterior power of
      the cotangent sheaf of a variety ", TT "X", "."
      }
