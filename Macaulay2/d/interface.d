@@ -1,4 +1,4 @@
---		Copyright 1994-2002 by Daniel R. Grayson
+--		Copyright 1994-2004 by Daniel R. Grayson
 
 -- this file contains top level routines that call the C++ code in the engine
 
@@ -27,8 +27,12 @@ use evaluate;
 use common;
 
 -----------------------------------------------------------------------------
--- types
+-- debugging
 
+export rawGetErrorMessage(e:Expr):Expr := (
+     s := Ccode(string, "(string)IM2_last_error_message()");
+     if length(s) == 0 then nullE else Expr(s));
+setupfun("rawGetErrorMessage",rawGetErrorMessage);
 
 -----------------------------------------------------------------------------
 -- monomials
@@ -480,10 +484,10 @@ export rawCC(e:Expr):Expr := (
      else WrongArg("a real number"));
 setupfun("rawCC",rawCC);
 
-rawBigRR(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RRR()" )) else WrongNumArgs(0);
+export rawBigRR(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RRR()" )) else WrongNumArgs(0);
 setupfun("rawBigRR",rawBigRR);
 
-rawBigCC(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CCC()" )) else WrongNumArgs(0);
+export rawBigCC(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CCC()" )) else WrongNumArgs(0);
 setupfun("rawBigCC",rawBigCC);
 
 export rawIndexIfVariable(e:Expr):Expr := (
@@ -567,7 +571,7 @@ export rawSolvableAlgebra(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawSolvableAlgebra",rawSolvableAlgebra);
 
-rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
+export rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 
@@ -583,7 +587,7 @@ rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal
      else WrongNumArgs(2));
 setupfun("rawLocalRing",rawLocalRing);
 
-rawQuotientRing(e:Expr):Expr := (			    -- localization at a prime ideal
+export rawQuotientRing(e:Expr):Expr := (			    -- localization at a prime ideal
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is R:RawRing do 
@@ -773,7 +777,7 @@ export rawIsHomogeneous(e:Expr):Expr := (
      );
 setupfun("rawIsHomogeneous",rawIsHomogeneous);
 
-rawIsDense(e:Expr):Expr := (
+export rawIsDense(e:Expr):Expr := (
      when e is x:RawMatrix do
      toExpr(Ccode( bool, "IM2_Matrix_is_implemented_as_dense(", "(Matrix*)",x, ")" ))
      else WrongArg("a raw matrix"));
@@ -2826,7 +2830,7 @@ setupfun("rawSolve", rawSolve);
 -- LLL
 -----------------------------------------------------------------------------
 
-rawLLL(e:Expr):Expr := (
+export rawLLL(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is M:RawMutableMatrix do
      when s.1 is threshold:RawRingElement do (

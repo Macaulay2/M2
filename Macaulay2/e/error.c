@@ -52,6 +52,7 @@ int error()
 
 char *error_message()
 {
+  if (iserror == 0) return "";
   iserror = 0;
   return errmsg;
 }
