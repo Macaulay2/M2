@@ -594,7 +594,7 @@ makeDocBody Thing := key -> (
 	       then PARA {docBody}
 	       else SEQ { PARA BOLD "Description", PARA {docBody} })))
 
-title := s -> PARA { STRONG formatDocumentTag s, commentize headline s }
+title := s -> TITLE { STRONG formatDocumentTag s, commentize headline s }
 
 type := S -> fixup (
      s := value S;

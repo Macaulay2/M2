@@ -489,33 +489,38 @@ installPackage Package := o -> pkg -> (
      pkg#"links next" = NEXT;
      pkg#"links prev" = PREV;
 
+     -- make info file
+     savePW := printWidth;
+     printWidth = 79;
+     infodir := buildDirectory|LAYOUT#"info";
+     makeDirectory infodir;
+     infobasename := (if pkg === Main then "Macaulay2" else pkg#"title")|".info";
+     infofile := openOut (infodir|infobasename);
+     stderr << "--making info file in " << infofile << endl;
+     infofile << "This is " << infofile << " produced by Macaulay 2, version " << version#"VERSION" << endl << endl
+     << "INFO-DIR-SECTION Math" << endl
+     << "START-INFO-DIR-ENTRY" << endl
+     << "* Macaulay2: (Macaulay2).	A computer algebra system designed to support algebraic geometry" << endl
+     << "END-INFO-DIR-ENTRY" << endl << endl;
+     traverse(unbag pkg#"table of contents", tag -> (
+	       checkIsTag tag;
+	       key := DocumentTag.Key tag;
+	       fkey := DocumentTag.FormattedKey tag;
+	       if tag === topDocumentTag then fkey = "Top";
+	       infofile << "\037" << endl << "File: " << infobasename << ", Node: " << fkey;
+	       if NEXT#?tag then infofile << ", Next: " << DocumentTag.FormattedKey NEXT#tag;
+	       if PREV#?tag then infofile << ", Prev: " << DocumentTag.FormattedKey PREV#tag;
+	       if UP#?tag   then infofile << ", Up: " << DocumentTag.FormattedKey UP#tag;
+     	       infofile << endl << endl << info documentation key << endl));
+     infofile << close;
+     printWidth = savePW;
+
      -- make html files
      htmlDirectory = LAYOUT#"packagehtml" pkg#"title";
      setupButtons();
      makeDirectory (buildDirectory|htmlDirectory);     
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      ret := makeHtmlNode \ nodes;
-
-     -- make info file
-     savePW := printWidth;
-     printWidth = 79;
-     infodir := buildDirectory|LAYOUT#"info";
-     makeDirectory infodir;
-     infofile := openOut (infodir|pkg#"title"|".info");
-     stderr << "--making info file in " << infofile << endl;
-     infofile << "This is " << infofile << " produced by Macaulay 2, version " << version#"VERSION" << endl;
-     traverse(unbag pkg#"table of contents", tag -> (
-	       checkIsTag tag;
-	       key := DocumentTag.Key tag;
-	       fkey := DocumentTag.FormattedKey tag;
-	       if tag === topDocumentTag then fkey = "Top";
-	       infofile << "\037" << endl << "File: " << infofile << ", Node: " << fkey;
-	       if NEXT#?tag then infofile << ", Next: " << DocumentTag.FormattedKey NEXT#tag;
-	       if PREV#?tag then infofile << ", Prev: " << DocumentTag.FormattedKey PREV#tag;
-	       if UP#?tag   then infofile << ", Up: " << DocumentTag.FormattedKey UP#tag;
-     	       infofile << endl << info documentation key << endl));
-     infofile << close;
-     printWidth = savePW;
 
      -- make master.html with master index of all the html files
      makeMasterIndex nodes;
