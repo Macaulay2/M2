@@ -290,8 +290,8 @@ Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  MatrixConstructor mat_red(m->rows(), m->cols(), false, m->degree_shift());
-  MatrixConstructor mat_lift(nodes[1]->output_free_module(), m->cols(), false);
+  MatrixConstructor mat_red(m->rows(), m->cols(), m->degree_shift());
+  MatrixConstructor mat_lift(nodes[1]->output_free_module(), m->cols());
 
   for (int i=0; i<m->n_cols(); i++)
     {
@@ -328,35 +328,35 @@ const FreeModule *gbres_comp::free_module(int level) const
 const Matrix *gbres_comp::min_gens_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return Matrix::zero(free_module(level-1), free_module(level), false);
+    return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->min_gens_matrix();
 }
 const Matrix *gbres_comp::get_matrix(int level)
 {
 #warning "if the matrix could change in the future, we MUST copy it"
   if (level <= 0 || level >= n_nodes)
-    return Matrix::zero(free_module(level-1), free_module(level), false);
+    return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->get_matrix();
 }
 
 const Matrix *gbres_comp::initial_matrix(int n, int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return Matrix::zero(free_module(level-1), free_module(level), false);
+    return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->initial_matrix(n);
 }
 
 const Matrix *gbres_comp::gb_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return Matrix::zero(free_module(level-1), free_module(level), false);
+    return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->gb_matrix();
 }
 
 const Matrix *gbres_comp::change_matrix(int level)
 {
   if (level <= 0 || level >= n_nodes)
-    return Matrix::zero(free_module(level-1), free_module(level), false);
+    return Matrix::zero(free_module(level-1), free_module(level));
   return nodes[level]->change_matrix();
 }
 

@@ -35,8 +35,10 @@ void gb2_comp::setup(FreeModule *FFsyz,
 
   spairs = new s_pair_heap(M);
 
+#warning "broken hf_matrix"
+#if 0
   hf_matrix = const_cast<Matrix *>(Matrix::make(F, 0, 0, true));
-
+#endif
   n_gb = n_mingens = n_subring = 0;
   n_gb_first = 0;
   n_pairs = n_pairs_computed = 0;
@@ -515,8 +517,11 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
       gbvector *new_f = p->f;
       ring_elem a = originalR->make_flat_term(originalR->getCoefficients()->one(), 
 					      f_m);
+#warning "broken hf_matrix"
+#if 0
       hf_matrix->append_column(0);
       hf_matrix->set_entry(new_f->comp-1,hf_matrix->n_cols()-1, a);
+#endif
     }
 
   M->remove(f_m);

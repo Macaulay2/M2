@@ -7,17 +7,15 @@ MatrixConstructor::MatrixConstructor()
   : R(0),
     rows(0),
     cols(0),
-    deg(0),
-    will_be_mutable(true)
+    deg(0)
 {
 }
 
-MatrixConstructor::MatrixConstructor(const FreeModule *target, int ncols, bool is_mutable)
+MatrixConstructor::MatrixConstructor(const FreeModule *target, int ncols)
   : R(target->get_ring()),
     rows(target),
     cols(0),
-    deg(0),
-    will_be_mutable(is_mutable)
+    deg(0)
 {
   cols = R->make_FreeModule(ncols); // MAKE THIS UNFROZEN...
 
@@ -28,12 +26,12 @@ MatrixConstructor::MatrixConstructor(const FreeModule *target, int ncols, bool i
   deg = R->degree_monoid()->make_one();
 }
 
-MatrixConstructor::MatrixConstructor(const FreeModule *target, const FreeModule *source, 
-				     bool is_mutable, const int *deg0)
+MatrixConstructor::MatrixConstructor(const FreeModule *target, 
+				     const FreeModule *source, 
+				     const int *deg0)
  : R(target->get_ring()),
    rows(target),
-   cols(source),
-   will_be_mutable(is_mutable)
+   cols(source)
 {
   entries.reserve(source->rank());
   for (int i=0; i<source->rank(); i++)
@@ -107,7 +105,7 @@ Matrix * MatrixConstructor::to_matrix()
 {
   //  if (!will_be_mutable && !cols->is_frozen)
   //    cols->freeze(hashval);
-  return new Matrix(rows, cols, deg, entries, will_be_mutable);
+  return new Matrix(rows, cols, deg, entries);
 }
 
 // Local Variables:

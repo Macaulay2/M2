@@ -1132,7 +1132,7 @@ ComputationOrNull *GB_comp::set_hilbert_function(const RingElement *hf)
 const MatrixOrNull *GB_comp::get_gb()
 {
   start_computation();
-  MatrixConstructor mat(_F, _gb.length(), false);
+  MatrixConstructor mat(_F, _gb.length());
   for (int i=0; i<_gb.length(); i++)
     {
       vec v = originalR->translate_gbvector_to_vec(_F,_gb[i]->f);
@@ -1155,7 +1155,7 @@ const MatrixOrNull *GB_comp::get_mingens()
 const MatrixOrNull *GB_comp::get_change()
 {
   start_computation();
-  MatrixConstructor mat(_Fsyz, _gb.length(), false);
+  MatrixConstructor mat(_Fsyz, _gb.length());
   for (int i=0; i<_gb.length(); i++)
     mat.set_column(i,originalR->translate_gbvector_to_vec(_Fsyz,_gb[i]->fsyz));
   return mat.to_matrix();
@@ -1164,7 +1164,7 @@ const MatrixOrNull *GB_comp::get_change()
 const MatrixOrNull *GB_comp::get_syzygies()
 {
   start_computation();
-  MatrixConstructor mat(_Fsyz, _syz.length(), false);
+  MatrixConstructor mat(_Fsyz, _syz.length());
   for (int i=0; i<_syz.length(); i++)
     mat.set_column(i,originalR->translate_gbvector_to_vec(_Fsyz,_syz[i]));
   return mat.to_matrix();
@@ -1173,7 +1173,7 @@ const MatrixOrNull *GB_comp::get_syzygies()
 const MatrixOrNull *GB_comp::get_initial(int nparts)
 {
   start_computation();
-  MatrixConstructor mat(_Fsyz, _gb.length(), false);
+  MatrixConstructor mat(_Fsyz, _gb.length());
   for (int i=0; i<_gb.length(); i++)
     {
       gbvector *f = _GR->gbvector_lead_term(nparts, _F, _gb[i]->f);
@@ -1197,7 +1197,7 @@ const MatrixOrNull *GB_comp::matrix_remainder(const Matrix *m)
        return 0;
   }
   start_computation();
-  MatrixConstructor red(m->rows(), m->cols(), false, m->degree_shift());
+  MatrixConstructor red(m->rows(), m->cols(), m->degree_shift());
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -1229,8 +1229,8 @@ void GB_comp::matrix_lift(const Matrix *m,
       *result_quotient = 0;
   }
   start_computation();
-  MatrixConstructor mat_remainder(m->rows(), m->cols(), false, m->degree_shift());
-  MatrixConstructor mat_quotient(_Fsyz, 0, false);
+  MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
+  MatrixConstructor mat_quotient(_Fsyz, 0);
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;

@@ -26,13 +26,13 @@ DetComputation::DetComputation(const Matrix *M0, int p0,
       FreeModule *G = M->cols()->exterior(p);
       int *deg = R->degree_monoid()->make_new(M->degree_shift());
       R->degree_monoid()->power(deg, p, deg);
-      result = MatrixConstructor(F,G,M0->is_mutable(),deg);
+      result = MatrixConstructor(F,G,deg);
       R->degree_monoid()->remove(deg);
     }
   else
     {
       F = R->make_FreeModule(1);
-      result = MatrixConstructor(F,0,M0->is_mutable());
+      result = MatrixConstructor(F,0);
     }
 
   if (do_trivial_case())
@@ -137,7 +137,7 @@ bool DetComputation::do_trivial_case()
 void DetComputation::clear()
 {
   if (do_exterior) return;
-  result = MatrixConstructor(F,0,M->is_mutable());
+  result = MatrixConstructor(F,0);
 }
 
 void DetComputation::set_next_minor(const int *rows, const int *cols)
