@@ -61,8 +61,6 @@ distclean:: clean
 ifeq "$(CC)" "cl"
 all:: ;	$(MAKE) -C WindowsNT
 endif
-all install :: ; $(MAKE) -C man $@
-install-strip :: ; $(MAKE) -C man install
 all distclean check clean install install-strip :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
 DIRS := $(target) $(bindir) $(libm2dir) $(man1dir) $(emacsdir) $(m2dir) $(docm2reldir)

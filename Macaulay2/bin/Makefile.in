@@ -16,6 +16,9 @@ $(bindir)/M2-load-libs : M2-load-libs ; $(INSTALL) $^ $@
 install       :: $(bindir)/M2-emacs
 $(bindir)/M2-emacs : M2-emacs ; $(INSTALL) $^ $@
 
+install       :: $(bindir)/M2-help
+$(bindir)/M2-help : M2-help ; $(INSTALL) $^ $@
+
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/bin/Makefile
 # Local Variables:
