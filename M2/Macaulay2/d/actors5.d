@@ -1464,10 +1464,9 @@ setupfun("isGlobalSymbol",isGlobalSymbol);
 getGlobalSymbol(e:Expr):Expr := (
      when e is s:string do (
 	  w := makeUniqueWord(s,parseWORD);
-	  Expr(
-	       SymbolClosure( globalFrame,
-	  	    when lookup(w,globalScope) is x:Symbol do x
-	  	    is null do makeEntry(w,dummyPosition,globalScope)
-		    )))
+	  when lookup(w,globalScope) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
+	  is null do (
+	       t := makeSymbol(w,dummyPosition,globalScope);
+	       globalFrame.values.(t.frameindex)))
      else WrongArg("a string"));
 setupfun("getGlobalSymbol",getGlobalSymbol);

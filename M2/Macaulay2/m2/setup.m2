@@ -102,7 +102,7 @@ commonProcessing := x -> (
      outputLabel = concatenate("o",string lineNumber());
      x = applyMethod(AfterEval,x);
      if x =!= null then (
-     	  s := value concatenate("symbol ",outputLabel);
+     	  s := getGlobalSymbol outputLabel;
      	  outputSymbols#s = true;
      	  s <- x;
 	  );

@@ -81,9 +81,19 @@ storeDoc := (nodeName,docBody) -> (
 unformatTag := new MutableHashTable
 record      := f -> x -> (val := f x; unformatTag#val = x; val)
 unformat    := s -> (
-     if isGlobalSymbol s then value s
+     if isGlobalSymbol s 
+     and value getGlobalSymbol s =!= null	  -- keywords have null value
+     then value getGlobalSymbol s
      else if unformatTag#?s then unformatTag#s
      else s
+     )
+
+-----------------------------------------------------------------------------
+-- getting database records
+-----------------------------------------------------------------------------
+
+getRecord := key -> (
+     if Documentation#?key then Documentation#key else if DocDatabase#?key then DocDatabase#key
      )
 
 -----------------------------------------------------------------------------
@@ -168,7 +178,7 @@ fSeqTO := null
 formatDocumentTagTO := method(SingleArgumentDispatch => true)
 formatDocumentTagTO Thing := x -> TT formatDocumentTag x
 formatDocumentTagTO Option := x -> (
-     if #x === 2 and getDoc x#1 =!= null 
+     if #x === 2 and getRecord toString x#1 =!= null 
      then SEQ { toString x#0, "(..., ", TO x#1, " => ...)", headline x#1 }
      else TT formatDocumentTag x
      )
@@ -191,11 +201,7 @@ formatDocumentTagTO Sequence := (
 -- getting database records
 -----------------------------------------------------------------------------
 
-getRecord := key -> (
-     if Documentation#?key then Documentation#key else if DocDatabase#?key then DocDatabase#key
-     )
-
-getDoc     := key -> value getRecord formatDocumentTag key
+getDoc := key -> value getRecord formatDocumentTag key
 getDocBody := key -> (
      a := getDoc key;
      if a =!= null then select(a, s -> class s =!= Option))
