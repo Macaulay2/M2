@@ -969,56 +969,51 @@ document { "displaying matrices",
      }
      
 document { "manipulating matrices",
-     "In previous sections we have learned various ways to make matrices.  Now
-     we discuss methods for manipulating matrices.",
-     PARA,
-     "The principal way to extract a submatrix of a matrix is with ", TO "submatrix", ".",
-     EXAMPLE {
-	  "R = ZZ/101[a .. o];",
-	  "p = genericMatrix(R, a, 3, 5)",
-	  "submatrix(p,{1,2},{3,4})",
+     "Some simple information about matrices:",
+     MENU {
+	  TO (degree,Matrix),
+	  TO (degrees,Matrix),
+	  TO (entries,Matrix),
+	  TO (isHomogeneous,Matrix),
+	  TO (ring,Matrix),
+	  TO (source,Matrix),
+	  TO (target,Matrix),
+     	  TO (trace,Matrix),
+	  TO (symbol _, Matrix, Sequence),
+	  TO (symbol ==, Matrix, ZZ),
 	  },
-     "A subset of columns can be extracted with ", TO "_", " and a subset of the rows
-     can be extracted with ", TO "^", ".",
-     EXAMPLE {
-	  "p^{1,2}",
-	  "p_{3,4}",
+     "Some common algebraic operations on matrices:",
+     MENU {
+	  TO (symbol +,Matrix,Matrix),
+	  TO (symbol -,Matrix),
+	  TO (symbol -,Matrix,Matrix),
+	  TO (symbol *,Matrix,Matrix),
+	  TO (symbol ^,Matrix,ZZ),
+	  TO (symbol ==,Matrix,Matrix),
+	  TO (symbol **,Matrix,Matrix),
+	  TO (symbol //,Matrix,Matrix),
+	  TO (symbol %,Matrix,Matrix),
+	  TO (symbol ++,Matrix,Matrix),
+	  TO (symbol |,Matrix,Matrix),
+	  TO (symbol ||,Matrix,Matrix),
+	  TO (symbol ^,Matrix,List),
+	  TO (symbol _,Matrix,List),
+     	  TO (sortColumns,Matrix),
+	  TO (submatrix,Matrix,List,List),
+	  TO (substitute,Matrix,List),
+	  TO (substitute,Matrix,Matrix),
+	  TO (transpose,Matrix),
 	  },
-     "Since ", TO "^", " and ", TO "_", " have the same parsing precedence, and
-     associate to the left by default, these operations can be combined without 
-     adding parentheses, giving a slower form of ", TO "submatrix", ".",
-     EXAMPLE {
-	  "p^{1,2}_{3,4}",
-	  "p_{3,4}^{1,2}",
+     "Some computations on matrices:",
+     MENU {
+	  TO (exteriorPower,ZZ,Matrix),
+	  TO (isInjective,Matrix),
+	  TO (isSurjective,Matrix),
+	  TO (isIsomorphism,Matrix),
+	  TO (pfaffians,ZZ,Matrix),
+	  TO (rank,Matrix),
+	  TO (symmetricPower,ZZ,Matrix),
 	  },
-     "A single entry of a matrix can be extracted as follows.",
-     EXAMPLE {
-	  "p_(1,3)",
-	  },
-     "We can ", TO "transpose", " a matrix.",
-     EXAMPLE "transpose p",
-     "We can test whether a matrix, regarded as a linear transformation, is
-     injective or surfective.",
-     EXAMPLE {
-	  "isSurjective p",
-	  "isInjective p",
-	  "isInjective transpose p",
-	  },
-     "We can use ", TO "diff", " to differentiate a matrix with respect to a
-     variable and ", TO "contract", " to contract.",
-     EXAMPLE {
-	  "q = matrix {{a^2,b^2,c^2},{a*b,b*c,a*c}}",
-	  "diff(a,q)",
-	  "contract(a,q)",
-	  },
-     NOINDENT, "These operations have a meaning when the first argument
-     is itself a polynomial, or even a matrix of polynomials.",
-     EXAMPLE {
-	  "r = matrix{{1,a,a^2,a^3}}",
-	  "diff(transpose r,r)",
-	  "contract(transpose r,r)",
-	  },
-     "For more information about matrices, see ", TO "Matrix", "."
      }
 
 document { "computations",

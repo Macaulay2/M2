@@ -106,51 +106,12 @@ document { (diff,Matrix,Matrix),
      elements, then the result will be a ring element rather than a one-by-one
      matrix.  If ", TT "m", " is a vector and ", TT "n", " is a ring element,
      then the result will be a vector rather than a matrix with one column.",
-     EXAMPLE {
-	  "R = ZZ/101[a..d]",
-      	  "m = genericMatrix(R,a,2,2)",
-      	  "diff(transpose m,m*m)",
-	  },
+     PARA,
      "The most common usage is when ", TT "m", " has one column and ", TT "n", "
      has one row.  In this case the result ", TT "h", " is a matrix whose
-     ", TT "(i,j)", "-th entry is the result of differentiating ", TT {"n", SUB "j"}, " by the
-     differential operator corresponding to ", TT {"m", SUB "i"}, ".",
-     EXAMPLE {
-	  "m = matrix {{a,b,c,d}}",
-      	  "n = matrix {{a^2, (b + c)*(a + d), a*b*c}}",
-      	  "h = diff(transpose m,n)",
-      	  "target h",
-      	  "source h",
-	  },
-     PARA,
-     "As another example, we show how to compute the Wronskian of a
-     polynomial ", TT "f", ".",
-     EXAMPLE {
-	  "R = ZZ/101[a, x .. z]",
-      	  "f = matrix {{x^3 + y^3 + z^3 - a*x*y*z}}",
-      	  "v = matrix {{x,y,z}}",
-      	  "W = diff(transpose v * v, f)",
-      	  "Wf = minors(3,W)",
-	  },
-     PARA,
-     "The free modules which are provided as the result of differentiation are 
-     chosen to preserve homogeneity.  Just as with ", TO "contract", ",  it
-     should come as no surprise that the source and target of
-     ", TT "diff(m,n)", " are the same as those we would get from
-     the tensor product ", TT "transpose m^-1 ** n", ", if only ", TT "m", "
-     were invertible.  We illustrate that now, by displaying the degrees of the
-     basis elements.",
-     EXAMPLE {
-	  "R = ZZ/101[x]",
-	  "F = R^{0,-1}; P = R^{0,-2}; G = R^{0,-4}; Q = R^{0,-8};",
-	  "m = random(F,P)",
-	  "n = random(G,Q)",
-	  "h = diff(m,n)",
-	  "degrees target h, degrees source h",
-	  "degrees (dual F ** G), degrees (dual P ** Q)",
-	  },
-     PARA,
-     SEEALSO { "contract", "jacobian" }
+     ", TT "(i,j)", "-th entry is the result of differentiating ", TT {"n", SUB "j"}, "
+     by the differential operator corresponding to ", TT {"m", SUB "i"}, ".",
+     SEEALSO "diff and contract"
      }
 
 document { (diff, ProjectiveHilbertPolynomial),
@@ -166,51 +127,26 @@ document { contract,
      }
 
 document { (contract,Matrix,Matrix),
-     TT "usage: contract(m, n)", " -- contract the matrix ", TT "n", " by the matrix ", TT "m", "",
-     PARA,
-     "This function is identical to ", TO "diff", ", except that contraction is
-     used instead of differentiation.  This means for example that ", TT "x^3", "
-     contracted by ", TT "x^2", " is ", TT "x", ", not ", TT "6 x", ".  For example, ",
-     EXAMPLE {
-	  "R = ZZ/101[a..c]",
-      	  "contract(transpose matrix {{a,b,c}}, matrix {{(a+b+c)^3, a^2 * b^3 * c^2}})",
+     Headline => "contract a matrix by a matrix",
+     Usage => {
+	  TT "contract(m,n)", " -- contract ", TT "n", " with respect to ", TT "m"
+	  },
+     Synopsis => {
+	  "h = contract(m,n)",
+	  "m" => {"a map ", TT "m : F <--- P", " between free modules of ranks f and p."},
+	  "n" => {"a map ", TT "n : G <--- Q", " between free modules of ranks g and q."},
+	  "h" => {"a matrix with the shape ", TT "h : dual F ** G <--- dual P ** Q", ",
+	       whose entry in the slot ", TT {"h", SUB "g*i+j,q*k+l"}, "
+	       is the result of contracting ", TT { "n", SUB "j,l" }, "
+	       by ", TT {"m", SUB "i,k", "."}
+	       },
 	  },
      PARA,
-     "As another example, the Sylvester resultant between homogeneous polynomials
-     ", TT "f(x,y)", " and ", TT "g(x,y)", " can be found in the following way.",
-     EXAMPLE {
-	  "R = (ZZ/101[a,b])[x,y]",
-      	  "f = a * x^3 + b * x^2 * y + y^3",
-      	  "g = b * x^3 + a * x * y^2 + y^3",
-	  },
-     "Multiply each of these by all quadrics, obtaining a set of elements in
-     degree 5.",
-     EXAMPLE "n = matrix {{f,g}} ** symmetricPower(2,vars R)",
-     "Now create the matrix of coefficients by using contract against all
-     monomials of degree 5 in ", TT "x", " and ", TT "y", ".",
-     EXAMPLE {
-	  "M = contract(transpose symmetricPower(5,vars R), n)",
-      	  "Resfg = minors(6, M)",
-	  },
+     "This function is identical to ", TO (diff,Matrix,Matrix), ", except that 
+     the multiplication by integers that occurs during differentiation is
+     omitted.",
      PARA,
-     "The free modules which are provided as the result of differention are carefully
-     chosen to preserve homogeneity.  Contraction is essentially a partially
-     defined division operation, so it should come as no surprise that
-     the source and target of ", TT "contract(m, n)", " are the same as those we
-     would get from the tensor product ", TT "transpose m^-1 ** n", ", if only ", TT "m", "
-     were invertible.  We illustrate that now, by displaying the degrees of the
-     basis elements.",
-     EXAMPLE {
-	  "R = ZZ/101[x]",
-	  "A = R^{0,-1}; B = R^{0,-2}; C = R^{0,-4}; D = R^{0,-8};",
-	  "m = random(A,B)",
-	  "n = random(C,D)",
-	  "contract(m,n)",
-	  "degrees target oo, degrees source oo",
-	  "degrees (dual A ** C), degrees (dual B ** D)",
-	  },
-     PARA,
-     SEEALSO "diff"
+     SEEALSO "diff and contract"
      }
 
 TEST "
@@ -998,45 +934,124 @@ assert( ZZ/2 === ZZ/(4,6) )
 R = ZZ/101[t]
 "
 
+document { (symbol /, Ring, RingElement),
+     Headline => "quotient ring",
+     Synopsis => {
+	  "S = R/f",
+	  "R" => null,
+	  "f" => { "an element of ", TT "R", "" },
+	  "S" => { "the quotient ring ", TT "R/Rf", "."}
+	  }
+     }
+
+document { (symbol /, Ring, Sequence),
+     Headline => "quotient ring",
+     Synopsis => {
+	  "S = R/(f,g,h,...)",
+	  "R" => null,
+	  "(f,g,h,...)" => { "a sequence of elements of ", TT "R", "" },
+	  "S" => { "the quotient ring ", TT "R/(Rf+Rg+Rh+...)", "."}
+	  }
+     }
+
 document { (symbol /, Ring, Ideal),
      Headline => "quotient ring",
-     TT "R/I", " -- form a quotient ring.",
-     PARA,
-     "Here ", TT "I", " may be: an element of ", TT "R", "; a sequence of elements of
-     ", TT "R", "; or a submodule of ", TT "R^1", ".",
-     PARA,
+     Synopsis => {
+	  "S = R/I",
+	  "R" => null,
+	  "I" => { "an ideal of ", TT "R", "" },
+	  "S" => "the quotient ring"
+	  },
      "The names of the variables are assigned values in the new quotient ring
-     by automatically running ", TT "use R", ", unless R has a name,
-     or one of the rings R is a quotient ring of has a name.",
+     by automatically running ", TT "use R", ", unless ", TT "R", " has a name,
+     or one of the rings ", TT "R", " is a quotient ring of has a name.
+     See: ", TO "use", ".",
      PARA,
-     "Quotient rings are bulky objects, because they contain a Groebner basis
-     for their ideals, so only quotients of ", TT "ZZ", " are remembered
-     forever.  Typically the ring created by ", TT "R/I", " will
-     be a brand new ring, and its elements will be incompatible with the
-     elements of previously created quotient rings for the same ideal.",
+     "Warning: quotient rings are bulky objects, because they contain 
+     a Groebner basis for their ideals, so only quotients of ", TT "ZZ", " 
+     are remembered forever.  Typically the ring created by ", TT "R/I", " 
+     will be a brand new ring, and its elements will be incompatible with 
+     the elements of previously created quotient rings for the same ideal.",
      PARA,
      EXAMPLE {
 	  "ZZ/2 === ZZ/(4,6)",
       	  "R = ZZ/101[t]",
       	  "R/t === R/t",
-	  },
-     PARA,
-     SEEALSO {"QuotientRing", "use"}
+	  }
      }
 
 document { koszul,
-     Headline => "a differential in a Koszul map",
-     TT "koszul(i,f)", " -- provides the i-th differential in the Koszul complex
-     associated to f.",
+     Headline => "a differential in a Koszul complex"
+     }
+
+document { (koszul,ZZ,Matrix),
+     Usage => { TT "symmetricPower(i,f)", " -- provides the ", TT "i", "-th symmetric 
+	  power of the matrix ", TT "f", "."},
+     Synopsis => {
+	  "g = koszul(i,f)",
+	  "i" => null,
+	  "f" => null,
+	  "g" => { "the ", TT "i", "-th differential in the Koszul complex of the
+	       map ", TT "f", "."}
+	  },
      PARA,
-     "Here f should be a 1 by n matrix."
+     "Here ", TT "f", " should be a ", TT "1", " by ", TT "n", " matrix."
      }
 
 document { symmetricPower,
-     Headline => "symmetric power",
-     TT "symmetricPower(i,f)", " -- provides the i-th symmetric power of the matrix f.",
+     Headline => "symmetric power"
+     }
+
+document { (symmetricPower,ZZ,Matrix),
+     Usage => { TT "symmetricPower(i,f)", " -- provides the ", TT "i", "-th symmetric 
+	  power of the matrix ", TT "f", "."},
+     Synopsis => {
+	  "g = symmetricPower(i,f)",
+	  "i" => null,
+	  "f" => null,
+	  "g" => { "the ", TT "i", "-th symmetric power of the matrix ", TT "f", "."}
+	  },
      PARA,
-     "Here f should be a 1 by n matrix."
+     "Note: in the current implementation, ", TT "f", " should have just one row."
+     }
+
+document { (exteriorPower,ZZ,Matrix),
+     Usage => { TT "exteriorPower(i,f)", " -- provides the ", TT "i", "-th exterior 
+	  power of the matrix ", TT "f", "."},
+     Synopsis => {
+	  "g = exteriorPower(i,f)",
+	  "i" => null,
+	  "f" => null,
+	  "g" => { "the ", TT "i", "-th exterior power of the matrix ", TT "f", "."}
+	  },
+     "Note: we may write ", TT "exteriorPower_i f", " instead of
+     ", TT "exteriorPower(i,f)", "; see ", TO "(symbol _,Function,Thing)", ".",
+     EXAMPLE {
+	  "R = ZZ/2[x,y];",
+	  "f = random(R^3,R^{3:-1})",
+	  "exteriorPower_2 f"
+	  }
+     }
+
+document { (symbol _,Function,Thing),
+     Headline => "attach the first argument to a function of two arguments",
+     Synopsis => {
+	  "g = f_x",
+	  "f" => "a function of two arguments",
+	  "x" => "anything",
+	  "g" => {
+	       "a new function with the property that ", TT "g y", "
+	       returns the value of  ", TT "f(x,y)", "."
+	       }
+	  },
+     "This abbreviation allows us to save a bit of typing, and in some
+     cases, agrees with standard mathematical notation.",
+     EXAMPLE {
+	  "R = ZZ[a .. i];",
+	  "f = genericMatrix(R,a,3,3)",
+	  "exteriorPower(2,f)",
+	  "exteriorPower_2 f"
+	  }
      }
 
 document { MinorsComputation,
