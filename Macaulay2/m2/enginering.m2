@@ -149,6 +149,7 @@ ZZZ.baseRings = {ZZ}
 ZZZ.ConvertToExpression = ConvertInteger
 ZZZ.degreeLength = 0
 net ZZZ := name ZZZ := see
+expression ZZZ := n -> expression lift(n,ZZ)
 
 -----------------------------------------------------------------------------
 
@@ -421,7 +422,7 @@ expression RingElement := (r) -> (
 	  A := ultimate(ambient,R);
 	  expression R := lookup(expression,A);
 	  expression r)
-     else error ("no method found for element of ring", name R)
+     else error ("no method found for element of ring ", name R)
      )
 
 leadTermSetup := (R) -> (
@@ -716,6 +717,13 @@ lift(RingElement, RingElement) := (r,o) -> (
 	       r)
 	  );
      lift(r,o))
+
+lift(ZZZ,ZZ) := (r,o) -> (
+     convert(
+	  ConvertApply((r,a,b,c)->c, ConvertInteger,ConvertInteger,ConvertInteger,ConvertInteger),
+	  callgg(ggtonet, r)
+	  )
+     )
 
 lift(ZZ,Ring) :=
 lift(QQ,Ring) :=

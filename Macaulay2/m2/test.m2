@@ -1,4 +1,8 @@
 errorDepth 0
+l = matrix {{5}}
+m = matrix {{5_ZZZ}}
+print m
+ideal 5_ZZZ
 k = ZZZ/5
 print k
 o = monomialOrdering(RevLex => 4)
@@ -12,9 +16,9 @@ print options M
 R = k M
 print R
 print see R
-engineStack()
+print ("engine stack: " | engineStack())
 f = (1+x+y^3)^3
 print leadMonomial f
 print baseName t
-print listForm f
-print standardForm f
+-- print listForm f
+-- print standardForm f
