@@ -105,7 +105,7 @@ phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
 	 #------ phase 1: reading *.m2 (not the documentation), making $@
 	rm -f ../$(DUMPDATAFILE)
-	cd ../libexec && time env M2HOME=.. ../libexec/Macaulay2 -q -silent -tty \
+	cd ../libexec && time env M2LIB=.. M2HOME=.. ../libexec/Macaulay2 -q -silent -tty \
 		'-e path = {"../m2/"}' \
 		@srcdir@/setup.m2 @srcdir@/dumpdata.m2 '-edump()'
 else
@@ -127,7 +127,7 @@ phase2 :: ../cache/Macaulay2-pre cache/doc/.made cache/tests/.made
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
 	mkdir  cache/tests
-	../../bin/M2 -q -silent \
+	M2LIB=.. M2HOME=.. ../../bin/M2 -q -silent \
 		'-e phase = 2' \
 		'-e errorDepth 0' \
 		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
@@ -137,7 +137,7 @@ phase2 :: ../cache/Macaulay2-pre cache/doc/.made cache/tests/.made
 
 ## .gdbinit
 justM2 all:: .gdbinit .gdb-files .gdb-run-it
-gdb: .gdbinit .gdb-files; env M2HOME=.. gdb ../libexec/Macaulay2
+gdb: .gdbinit .gdb-files; env M2LIB=.. M2HOME=.. gdb ../libexec/Macaulay2
 .gdbinit: .gdbinit.$(USER); cp $< $@
 clean::; rm -f .gdbinit
 .gdbinit.$(USER):; cp @srcdir@/.gdbinit.dan $@
@@ -145,6 +145,7 @@ clean::; rm -f .gdbinit
 	echo 'file ../libexec/Macaulay2' >$@
 	: echo 'dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp' >>$@
 	echo 'set environment M2HOME ..' >>$@
+	echo 'set environment M2LIB ..' >>$@
 clean :: ; rm -f .gdb-files
 .gdb-run-it:
 	echo 'echo \n' >$@
@@ -158,7 +159,7 @@ CVS/Entries : $(M2FILES)
 	umount /a.ext2
 
 profile : gmon.out
-	env M2HOME=.. gprof ../libexec/Macaulay2 >profile
+	env M2LIB=.. M2HOME=.. gprof ../libexec/Macaulay2 >profile
 clean ::; rm -f profile
 
 INPUTS := cache/doc/sample cache/doc/expression
@@ -176,7 +177,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 		$(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	 #------ phase 4: making $@
 	rm -f ../cache/Macaulay2-tmp
-	../../bin/M2 -q -silent \
+	M2LIB=.. M2HOME=.. ../../bin/M2 -q -silent \
 		'-e phase = 4' \
 		'-e errorDepth 0' \
 		'-e DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
@@ -189,7 +190,7 @@ TARGETDIR = cache/doc
 phase5 : $(TARGETDIR)/index.html
 $(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
 	 #------ phase 5: making html documentation
-	../../bin/M2 -q -silent \
+	M2HOME=.. M2LIB=.. ../../bin/M2 -q -silent \
 		'-e phase = 5' \
 		'-e errorDepth 0' \
 		'-e makeHTML("Macaulay 2", DocDatabase)' '-e exit 0'
