@@ -12,8 +12,10 @@ ac_help=
 ac_default_prefix=/usr/local
 # Any additions from configure.in:
 ac_help="$ac_help
+\
   --disable-dumpdata      do not cache data with dumpdata
-  --enable-dumpdata=old   cache data with the old version of dumpdata"
+  --enable-dumpdata=old   cache data with the old version of dumpdata\
+"
 
 # Initialize some variables set by options.
 # The variables have the same names as the options, with
@@ -524,9 +526,14 @@ else
 fi
 
 
+VERSION=$(cat version)
+
+cat >> confdefs.h <<EOF
+#define VERSION "$VERSION"
+EOF
 
 ac_aux_dir=
-for ac_dir in $srcdir $srcdir/.. $srcdir/../..; do
+for ac_dir in config $srcdir/config; do
   if test -f $ac_dir/install-sh; then
     ac_aux_dir=$ac_dir
     ac_install_sh="$ac_aux_dir/install-sh -c"
@@ -538,7 +545,7 @@ for ac_dir in $srcdir $srcdir/.. $srcdir/../..; do
   fi
 done
 if test -z "$ac_aux_dir"; then
-  { echo "configure: error: can not find install-sh or install.sh in $srcdir $srcdir/.. $srcdir/../.." 1>&2; exit 1; }
+  { echo "configure: error: can not find install-sh or install.sh in config $srcdir/config" 1>&2; exit 1; }
 fi
 ac_config_guess=$ac_aux_dir/config.guess
 ac_config_sub=$ac_aux_dir/config.sub
@@ -551,7 +558,7 @@ else { echo "configure: error: can not run $ac_config_sub" 1>&2; exit 1; }
 fi
 
 echo $ac_n "checking host system type""... $ac_c" 1>&6
-echo "configure:555: checking host system type" >&5
+echo "configure:562: checking host system type" >&5
 
 host_alias=$host
 case "$host_alias" in
@@ -599,7 +606,7 @@ else { echo "configure: error: can not run $ac_config_sub" 1>&2; exit 1; }
 fi
 
 echo $ac_n "checking host system type""... $ac_c" 1>&6
-echo "configure:603: checking host system type" >&5
+echo "configure:610: checking host system type" >&5
 
 host_alias=$host
 case "$host_alias" in
@@ -620,7 +627,7 @@ host_os=`echo $host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 echo "$ac_t""$host" 1>&6
 
 echo $ac_n "checking target system type""... $ac_c" 1>&6
-echo "configure:624: checking target system type" >&5
+echo "configure:631: checking target system type" >&5
 
 target_alias=$target
 case "$target_alias" in
@@ -638,7 +645,7 @@ target_os=`echo $target | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 echo "$ac_t""$target" 1>&6
 
 echo $ac_n "checking build system type""... $ac_c" 1>&6
-echo "configure:642: checking build system type" >&5
+echo "configure:649: checking build system type" >&5
 
 build_alias=$build
 case "$build_alias" in
@@ -663,7 +670,7 @@ test "$host_alias" != "$target_alias" &&
 
   
   echo $ac_n "checking cached system tuple""... $ac_c" 1>&6
-echo "configure:667: checking cached system tuple" >&5
+echo "configure:674: checking cached system tuple" >&5
   if { test x"${ac_cv_host_system_type+set}" = x"set" &&
        test x"$ac_cv_host_system_type" != x"$host"; } ||
      { test x"${ac_cv_build_system_type+set}" = x"set" &&
@@ -671,7 +678,7 @@ echo "configure:667: checking cached system tuple" >&5
      { test x"${ac_cv_target_system_type+set}" = x"set" &&
        test x"$ac_cv_target_system_type" != x"$target"; }; then
       echo "$ac_t""different" 1>&6
-      { echo "configure: error: remove config.cache and re-run configure" 1>&2; exit 1; }
+      
   else
     echo "$ac_t""ok" 1>&6
   fi
@@ -679,22 +686,10 @@ echo "configure:667: checking cached system tuple" >&5
   ac_cv_build_system_type="$build"
   ac_cv_target_system_type="$target"
 
-
-echo host_cpu = $host_cpu
-echo host_vendor = $host_vendor
-echo host_os = $host_os
-
-VERSION=0.8.61
-
-cat >> confdefs.h <<EOF
-#define VERSION "$VERSION"
-EOF
-
-
 # Extract the first word of "ranlib", so it can be a program name with args.
 set dummy ranlib; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:698: checking for $ac_word" >&5
+echo "configure:693: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_RANLIB'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -733,7 +728,7 @@ fi
 # SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
 # ./install, which can be erroneously created by make from ./install.sh.
 echo $ac_n "checking for a BSD compatible install""... $ac_c" 1>&6
-echo "configure:737: checking for a BSD compatible install" >&5
+echo "configure:732: checking for a BSD compatible install" >&5
 if test -z "$INSTALL"; then
 if eval "test \"`echo '$''{'ac_cv_path_install'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -785,13 +780,12 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL_PROGRAM}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
-
 for ac_prog in mawk gawk nawk awk
 do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:795: checking for $ac_word" >&5
+echo "configure:789: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_AWK'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -823,7 +817,7 @@ done
 # Extract the first word of "gcc", so it can be a program name with args.
 set dummy gcc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:827: checking for $ac_word" >&5
+echo "configure:821: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -853,7 +847,7 @@ if test -z "$CC"; then
   # Extract the first word of "cc", so it can be a program name with args.
 set dummy cc; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:857: checking for $ac_word" >&5
+echo "configure:851: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -904,7 +898,7 @@ fi
       # Extract the first word of "cl", so it can be a program name with args.
 set dummy cl; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:908: checking for $ac_word" >&5
+echo "configure:902: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -936,7 +930,7 @@ fi
 fi
 
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works""... $ac_c" 1>&6
-echo "configure:940: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
+echo "configure:934: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) works" >&5
 
 ac_ext=c
 # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
@@ -947,12 +941,12 @@ cross_compiling=$ac_cv_prog_cc_cross
 
 cat > conftest.$ac_ext << EOF
 
-#line 951 "configure"
+#line 945 "configure"
 #include "confdefs.h"
 
 main(){return(0);}
 EOF
-if { (eval echo configure:956: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:950: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   ac_cv_prog_cc_works=yes
   # If we can't run a trivial program, we are probably using a cross compiler.
   if (./conftest; exit) 2>/dev/null; then
@@ -978,12 +972,12 @@ if test $ac_cv_prog_cc_works = no; then
   { echo "configure: error: installation or configuration problem: C compiler cannot create executables." 1>&2; exit 1; }
 fi
 echo $ac_n "checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler""... $ac_c" 1>&6
-echo "configure:982: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
+echo "configure:976: checking whether the C compiler ($CC $CFLAGS $LDFLAGS) is a cross-compiler" >&5
 echo "$ac_t""$ac_cv_prog_cc_cross" 1>&6
 cross_compiling=$ac_cv_prog_cc_cross
 
 echo $ac_n "checking whether we are using GNU C""... $ac_c" 1>&6
-echo "configure:987: checking whether we are using GNU C" >&5
+echo "configure:981: checking whether we are using GNU C" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_gcc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -992,7 +986,7 @@ else
   yes;
 #endif
 EOF
-if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:996: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
+if { ac_try='${CC-cc} -E conftest.c'; { (eval echo configure:990: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
   ac_cv_prog_gcc=yes
 else
   ac_cv_prog_gcc=no
@@ -1011,7 +1005,7 @@ ac_test_CFLAGS="${CFLAGS+set}"
 ac_save_CFLAGS="$CFLAGS"
 CFLAGS=
 echo $ac_n "checking whether ${CC-cc} accepts -g""... $ac_c" 1>&6
-echo "configure:1015: checking whether ${CC-cc} accepts -g" >&5
+echo "configure:1009: checking whether ${CC-cc} accepts -g" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_cc_g'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1047,7 +1041,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1051: checking for $ac_word" >&5
+echo "configure:1045: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_CXX'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1079,7 +1073,7 @@ test -n "$CXX" || CXX="gcc"
 
 
 echo $ac_n "checking whether the C++ compiler ($CXX $CXXFLAGS $LDFLAGS) works""... $ac_c" 1>&6
-echo "configure:1083: checking whether the C++ compiler ($CXX $CXXFLAGS $LDFLAGS) works" >&5
+echo "configure:1077: checking whether the C++ compiler ($CXX $CXXFLAGS $LDFLAGS) works" >&5
 
 ac_ext=C
 # CXXFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
@@ -1090,12 +1084,12 @@ cross_compiling=$ac_cv_prog_cxx_cross
 
 cat > conftest.$ac_ext << EOF
 
-#line 1094 "configure"
+#line 1088 "configure"
 #include "confdefs.h"
 
 int main(){return(0);}
 EOF
-if { (eval echo configure:1099: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1093: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   ac_cv_prog_cxx_works=yes
   # If we can't run a trivial program, we are probably using a cross compiler.
   if (./conftest; exit) 2>/dev/null; then
@@ -1121,12 +1115,12 @@ if test $ac_cv_prog_cxx_works = no; then
   { echo "configure: error: installation or configuration problem: C++ compiler cannot create executables." 1>&2; exit 1; }
 fi
 echo $ac_n "checking whether the C++ compiler ($CXX $CXXFLAGS $LDFLAGS) is a cross-compiler""... $ac_c" 1>&6
-echo "configure:1125: checking whether the C++ compiler ($CXX $CXXFLAGS $LDFLAGS) is a cross-compiler" >&5
+echo "configure:1119: checking whether the C++ compiler ($CXX $CXXFLAGS $LDFLAGS) is a cross-compiler" >&5
 echo "$ac_t""$ac_cv_prog_cxx_cross" 1>&6
 cross_compiling=$ac_cv_prog_cxx_cross
 
 echo $ac_n "checking whether we are using GNU C++""... $ac_c" 1>&6
-echo "configure:1130: checking whether we are using GNU C++" >&5
+echo "configure:1124: checking whether we are using GNU C++" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_gxx'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1135,7 +1129,7 @@ else
   yes;
 #endif
 EOF
-if { ac_try='${CXX-g++} -E conftest.C'; { (eval echo configure:1139: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
+if { ac_try='${CXX-g++} -E conftest.C'; { (eval echo configure:1133: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } | egrep yes >/dev/null 2>&1; then
   ac_cv_prog_gxx=yes
 else
   ac_cv_prog_gxx=no
@@ -1154,7 +1148,7 @@ ac_test_CXXFLAGS="${CXXFLAGS+set}"
 ac_save_CXXFLAGS="$CXXFLAGS"
 CXXFLAGS=
 echo $ac_n "checking whether ${CXX-g++} accepts -g""... $ac_c" 1>&6
-echo "configure:1158: checking whether ${CXX-g++} accepts -g" >&5
+echo "configure:1152: checking whether ${CXX-g++} accepts -g" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_cxx_g'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1190,7 +1184,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1194: checking for $ac_word" >&5
+echo "configure:1188: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_YACC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1226,9 +1220,7 @@ DUMPDATA=yes
 # Check whether --enable-dumpdata or --disable-dumpdata was given.
 if test "${enable_dumpdata+set}" = set; then
   enableval="$enable_dumpdata"
-  
-DUMPDATA="$enableval"
-
+  DUMPDATA="$enableval"
 fi
 
 case "$DUMPDATA" in
@@ -1248,12 +1240,12 @@ EOF
 esac
 
 echo $ac_n "checking for __finite""... $ac_c" 1>&6
-echo "configure:1252: checking for __finite" >&5
+echo "configure:1244: checking for __finite" >&5
 if eval "test \"`echo '$''{'ac_cv_func___finite'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1257 "configure"
+#line 1249 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char __finite(); below.  */
@@ -1276,7 +1268,7 @@ __finite();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1280: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1272: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func___finite=yes"
 else
@@ -1300,12 +1292,12 @@ EOF
 fi
 
 echo $ac_n "checking for __isnan""... $ac_c" 1>&6
-echo "configure:1304: checking for __isnan" >&5
+echo "configure:1296: checking for __isnan" >&5
 if eval "test \"`echo '$''{'ac_cv_func___isnan'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1309 "configure"
+#line 1301 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char __isnan(); below.  */
@@ -1328,7 +1320,7 @@ __isnan();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1332: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1324: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func___isnan=yes"
 else
@@ -1352,12 +1344,12 @@ EOF
 fi
 
 echo $ac_n "checking for __isinf""... $ac_c" 1>&6
-echo "configure:1356: checking for __isinf" >&5
+echo "configure:1348: checking for __isinf" >&5
 if eval "test \"`echo '$''{'ac_cv_func___isinf'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1361 "configure"
+#line 1353 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char __isinf(); below.  */
@@ -1380,7 +1372,7 @@ __isinf();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1384: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1376: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func___isinf=yes"
 else
@@ -1404,18 +1396,17 @@ EOF
 fi
 
 
-
   echo contents of confdefs.h: >&6
   sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
   
 
   echo $ac_n "checking for sys_errlist""... $ac_c" 1>&6
-echo "configure:1414: checking for sys_errlist" >&5
+echo "configure:1405: checking for sys_errlist" >&5
 if eval "test \"`echo '$''{'ac_cv_func_sys_errlist'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1419 "configure"
+#line 1410 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char sys_errlist(); below.  */
@@ -1438,7 +1429,7 @@ sys_errlist();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1442: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1433: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func_sys_errlist=yes"
 else
@@ -1464,12 +1455,12 @@ fi
 
 
   echo $ac_n "checking for herror""... $ac_c" 1>&6
-echo "configure:1468: checking for herror" >&5
+echo "configure:1459: checking for herror" >&5
 if eval "test \"`echo '$''{'ac_cv_func_herror'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1473 "configure"
+#line 1464 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char herror(); below.  */
@@ -1492,7 +1483,7 @@ herror();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1496: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1487: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func_herror=yes"
 else
@@ -1518,12 +1509,12 @@ fi
 
 
   echo $ac_n "checking whether sys_errlist is declared""... $ac_c" 1>&6
-echo "configure:1522: checking whether sys_errlist is declared" >&5
+echo "configure:1513: checking whether sys_errlist is declared" >&5
 if eval "test \"`echo '$''{'m2_cv_sys_errlist_is_declared'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1527 "configure"
+#line 1518 "configure"
 #include "confdefs.h"
 
       #include <stdio.h>
@@ -1533,7 +1524,7 @@ int main() {
 char ** x = sys_errlist
 ; return 0; }
 EOF
-if { (eval echo configure:1537: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:1528: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   m2_cv_sys_errlist_is_declared=yes
 else
@@ -1555,12 +1546,12 @@ EOF
 
 
   echo $ac_n "checking whether h_errlist is declared""... $ac_c" 1>&6
-echo "configure:1559: checking whether h_errlist is declared" >&5
+echo "configure:1550: checking whether h_errlist is declared" >&5
 if eval "test \"`echo '$''{'m2_cv_h_errlist_is_declared'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1564 "configure"
+#line 1555 "configure"
 #include "confdefs.h"
 
       #include <stdio.h>
@@ -1570,7 +1561,7 @@ int main() {
 char ** x = h_errlist
 ; return 0; }
 EOF
-if { (eval echo configure:1574: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:1565: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   m2_cv_h_errlist_is_declared=yes
 else
@@ -1591,7 +1582,57 @@ EOF
   fi
 
 
-################ finish up
+CONFIGURED_FILES="config.Makefile\
+ Makefile\
+ Macaulay2/Makefile\
+ Macaulay2/m2/Makefile\
+ Macaulay2/ComputationsBook/Makefile\
+ Macaulay2/ComputationsBook/book/Makefile\
+ Macaulay2/ComputationsBook/chapters/TEMPLATE/Makefile\
+ Macaulay2/ComputationsBook/chapters/authorInstructions/Makefile\
+ Macaulay2/ComputationsBook/chapters/completeIntersections/Makefile\
+ Macaulay2/ComputationsBook/chapters/d-modules/Makefile\
+ Macaulay2/ComputationsBook/chapters/sample1/Makefile\
+ Macaulay2/ComputationsBook/chapters/sample2/Makefile\
+ Macaulay2/ComputationsBook/chapters/schemes/Makefile\
+ Macaulay2/ComputationsBook/chapters/solving/Makefile\
+ Macaulay2/ComputationsBook/inputs/Makefile\
+ Macaulay2/ComputationsBook/lncse-macros/Makefile\
+ Macaulay2/ComputationsBook/proposals/Makefile\
+ Macaulay2/ComputationsBook/util/Makefile\
+ Macaulay2/Mathematica/Makefile\
+ Macaulay2/Vasconcelos-appendix/Makefile\
+ Macaulay2/basictests/Makefile\
+ Macaulay2/benchmarks/Makefile\
+ Macaulay2/benchmarks2/Makefile\
+ Macaulay2/book/Makefile\
+ Macaulay2/c/Makefile\
+ Macaulay2/c2/Makefile\
+ Macaulay2/d/Makefile\
+ Macaulay2/dbm/Makefile\
+ Macaulay2/docs/Makefile\
+ Macaulay2/docs/nsf-final-report-2000/Makefile\
+ Macaulay2/docs/nsf-proposal-1998/Makefile\
+ Macaulay2/dumpdata/Makefile\
+ Macaulay2/e/Makefile\
+ Macaulay2/emacs/Makefile\
+ Macaulay2/experiments/Makefile\
+ Macaulay2/gmp-macros/Makefile\
+ Macaulay2/html/Makefile\
+ Macaulay2/mike-slides/Makefile\
+ Macaulay2/mike-tut/Makefile\
+ Macaulay2/packages/Makefile\
+ Macaulay2/schubert/Makefile\
+ Macaulay2/screen/Makefile\
+ Macaulay2/slides/Makefile\
+ Macaulay2/socket/Makefile\
+ Macaulay2/test/Makefile\
+ Macaulay2/tex/Makefile\
+ Macaulay2/texmacs/Makefile\
+ Macaulay2/thread/Makefile\
+ Macaulay2/tutorial/Makefile\
+ Macaulay2/setup\
+ Macaulay2/util/Makefile"
 
 trap '' 1 2 15
 cat > confcache <<\EOF
@@ -1694,59 +1735,57 @@ done
 ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
-trap 'rm -fr `echo "
-		config.Makefile
-	Makefile
-	Macaulay2/Makefile
-	Macaulay2/m2/Makefile
-	Macaulay2/ComputationsBook/Makefile
-	Macaulay2/ComputationsBook/book/Makefile
-	Macaulay2/ComputationsBook/chapters/TEMPLATE/Makefile
-	Macaulay2/ComputationsBook/chapters/authorInstructions/Makefile
-	Macaulay2/ComputationsBook/chapters/completeIntersections/Makefile
-	Macaulay2/ComputationsBook/chapters/d-modules/Makefile
-	Macaulay2/ComputationsBook/chapters/sample1/Makefile
-	Macaulay2/ComputationsBook/chapters/sample2/Makefile
-	Macaulay2/ComputationsBook/chapters/schemes/Makefile
-	Macaulay2/ComputationsBook/chapters/solving/Makefile
-	Macaulay2/ComputationsBook/inputs/Makefile
-	Macaulay2/ComputationsBook/lncse-macros/Makefile
-	Macaulay2/ComputationsBook/proposals/Makefile
-	Macaulay2/ComputationsBook/util/Makefile
-	Macaulay2/Mathematica/Makefile
-	Macaulay2/Vasconcelos-appendix/Makefile
-	Macaulay2/basictests/Makefile
-	Macaulay2/benchmarks/Makefile
-	Macaulay2/benchmarks2/Makefile
-	Macaulay2/book/Makefile
-	Macaulay2/c/Makefile
-	Macaulay2/c2/Makefile
-	Macaulay2/d/Makefile
-	Macaulay2/dbm/Makefile
-	Macaulay2/docs/Makefile
-	Macaulay2/docs/nsf-final-report-2000/Makefile
-	Macaulay2/docs/nsf-proposal-1998/Makefile
-	Macaulay2/dumpdata/Makefile
-	Macaulay2/e/Makefile
-	Macaulay2/emacs/Makefile
-	Macaulay2/experiments/Makefile
-	Macaulay2/gmp-macros/Makefile
-	Macaulay2/html/Makefile
-	Macaulay2/mike-slides/Makefile
-	Macaulay2/mike-tut/Makefile
-	Macaulay2/packages/Makefile
-	Macaulay2/schubert/Makefile
-	Macaulay2/screen/Makefile
-	Macaulay2/slides/Makefile
-	Macaulay2/socket/Makefile
-	Macaulay2/test/Makefile
-	Macaulay2/tex/Makefile
-	Macaulay2/texmacs/Makefile
-	Macaulay2/thread/Makefile
-	Macaulay2/tutorial/Makefile
-	Macaulay2/setup
-	Macaulay2/util/Makefile
-	 include/config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
+trap 'rm -fr `echo "config.Makefile\
+ Makefile\
+ Macaulay2/Makefile\
+ Macaulay2/m2/Makefile\
+ Macaulay2/ComputationsBook/Makefile\
+ Macaulay2/ComputationsBook/book/Makefile\
+ Macaulay2/ComputationsBook/chapters/TEMPLATE/Makefile\
+ Macaulay2/ComputationsBook/chapters/authorInstructions/Makefile\
+ Macaulay2/ComputationsBook/chapters/completeIntersections/Makefile\
+ Macaulay2/ComputationsBook/chapters/d-modules/Makefile\
+ Macaulay2/ComputationsBook/chapters/sample1/Makefile\
+ Macaulay2/ComputationsBook/chapters/sample2/Makefile\
+ Macaulay2/ComputationsBook/chapters/schemes/Makefile\
+ Macaulay2/ComputationsBook/chapters/solving/Makefile\
+ Macaulay2/ComputationsBook/inputs/Makefile\
+ Macaulay2/ComputationsBook/lncse-macros/Makefile\
+ Macaulay2/ComputationsBook/proposals/Makefile\
+ Macaulay2/ComputationsBook/util/Makefile\
+ Macaulay2/Mathematica/Makefile\
+ Macaulay2/Vasconcelos-appendix/Makefile\
+ Macaulay2/basictests/Makefile\
+ Macaulay2/benchmarks/Makefile\
+ Macaulay2/benchmarks2/Makefile\
+ Macaulay2/book/Makefile\
+ Macaulay2/c/Makefile\
+ Macaulay2/c2/Makefile\
+ Macaulay2/d/Makefile\
+ Macaulay2/dbm/Makefile\
+ Macaulay2/docs/Makefile\
+ Macaulay2/docs/nsf-final-report-2000/Makefile\
+ Macaulay2/docs/nsf-proposal-1998/Makefile\
+ Macaulay2/dumpdata/Makefile\
+ Macaulay2/e/Makefile\
+ Macaulay2/emacs/Makefile\
+ Macaulay2/experiments/Makefile\
+ Macaulay2/gmp-macros/Makefile\
+ Macaulay2/html/Makefile\
+ Macaulay2/mike-slides/Makefile\
+ Macaulay2/mike-tut/Makefile\
+ Macaulay2/packages/Makefile\
+ Macaulay2/schubert/Makefile\
+ Macaulay2/screen/Makefile\
+ Macaulay2/slides/Makefile\
+ Macaulay2/socket/Makefile\
+ Macaulay2/test/Makefile\
+ Macaulay2/tex/Makefile\
+ Macaulay2/texmacs/Makefile\
+ Macaulay2/thread/Makefile\
+ Macaulay2/tutorial/Makefile\
+ Macaulay2/setup\
+ Macaulay2/util/Makefile include/config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
 
@@ -1778,6 +1817,7 @@ s%@includedir@%$includedir%g
 s%@oldincludedir@%$oldincludedir%g
 s%@infodir@%$infodir%g
 s%@mandir@%$mandir%g
+s%@VERSION@%$VERSION%g
 s%@host@%$host%g
 s%@host_alias@%$host_alias%g
 s%@host_cpu@%$host_cpu%g
@@ -1793,7 +1833,6 @@ s%@build_alias@%$build_alias%g
 s%@build_cpu@%$build_cpu%g
 s%@build_vendor@%$build_vendor%g
 s%@build_os@%$build_os%g
-s%@VERSION@%$VERSION%g
 s%@RANLIB@%$RANLIB%g
 s%@INSTALL_PROGRAM@%$INSTALL_PROGRAM%g
 s%@INSTALL_SCRIPT@%$INSTALL_SCRIPT%g
@@ -1803,6 +1842,7 @@ s%@CC@%$CC%g
 s%@CXX@%$CXX%g
 s%@YACC@%$YACC%g
 s%@DUMPDATA@%$DUMPDATA%g
+s%@CONFIGURED_FILES@%$CONFIGURED_FILES%g
 
 CEOF
 EOF
@@ -1844,58 +1884,57 @@ EOF
 
 cat >> $CONFIG_STATUS <<EOF
 
-CONFIG_FILES=\${CONFIG_FILES-"	config.Makefile
-	Makefile
-	Macaulay2/Makefile
-	Macaulay2/m2/Makefile
-	Macaulay2/ComputationsBook/Makefile
-	Macaulay2/ComputationsBook/book/Makefile
-	Macaulay2/ComputationsBook/chapters/TEMPLATE/Makefile
-	Macaulay2/ComputationsBook/chapters/authorInstructions/Makefile
-	Macaulay2/ComputationsBook/chapters/completeIntersections/Makefile
-	Macaulay2/ComputationsBook/chapters/d-modules/Makefile
-	Macaulay2/ComputationsBook/chapters/sample1/Makefile
-	Macaulay2/ComputationsBook/chapters/sample2/Makefile
-	Macaulay2/ComputationsBook/chapters/schemes/Makefile
-	Macaulay2/ComputationsBook/chapters/solving/Makefile
-	Macaulay2/ComputationsBook/inputs/Makefile
-	Macaulay2/ComputationsBook/lncse-macros/Makefile
-	Macaulay2/ComputationsBook/proposals/Makefile
-	Macaulay2/ComputationsBook/util/Makefile
-	Macaulay2/Mathematica/Makefile
-	Macaulay2/Vasconcelos-appendix/Makefile
-	Macaulay2/basictests/Makefile
-	Macaulay2/benchmarks/Makefile
-	Macaulay2/benchmarks2/Makefile
-	Macaulay2/book/Makefile
-	Macaulay2/c/Makefile
-	Macaulay2/c2/Makefile
-	Macaulay2/d/Makefile
-	Macaulay2/dbm/Makefile
-	Macaulay2/docs/Makefile
-	Macaulay2/docs/nsf-final-report-2000/Makefile
-	Macaulay2/docs/nsf-proposal-1998/Makefile
-	Macaulay2/dumpdata/Makefile
-	Macaulay2/e/Makefile
-	Macaulay2/emacs/Makefile
-	Macaulay2/experiments/Makefile
-	Macaulay2/gmp-macros/Makefile
-	Macaulay2/html/Makefile
-	Macaulay2/mike-slides/Makefile
-	Macaulay2/mike-tut/Makefile
-	Macaulay2/packages/Makefile
-	Macaulay2/schubert/Makefile
-	Macaulay2/screen/Makefile
-	Macaulay2/slides/Makefile
-	Macaulay2/socket/Makefile
-	Macaulay2/test/Makefile
-	Macaulay2/tex/Makefile
-	Macaulay2/texmacs/Makefile
-	Macaulay2/thread/Makefile
-	Macaulay2/tutorial/Makefile
-	Macaulay2/setup
-	Macaulay2/util/Makefile
-	"}
+CONFIG_FILES=\${CONFIG_FILES-"config.Makefile\
+ Makefile\
+ Macaulay2/Makefile\
+ Macaulay2/m2/Makefile\
+ Macaulay2/ComputationsBook/Makefile\
+ Macaulay2/ComputationsBook/book/Makefile\
+ Macaulay2/ComputationsBook/chapters/TEMPLATE/Makefile\
+ Macaulay2/ComputationsBook/chapters/authorInstructions/Makefile\
+ Macaulay2/ComputationsBook/chapters/completeIntersections/Makefile\
+ Macaulay2/ComputationsBook/chapters/d-modules/Makefile\
+ Macaulay2/ComputationsBook/chapters/sample1/Makefile\
+ Macaulay2/ComputationsBook/chapters/sample2/Makefile\
+ Macaulay2/ComputationsBook/chapters/schemes/Makefile\
+ Macaulay2/ComputationsBook/chapters/solving/Makefile\
+ Macaulay2/ComputationsBook/inputs/Makefile\
+ Macaulay2/ComputationsBook/lncse-macros/Makefile\
+ Macaulay2/ComputationsBook/proposals/Makefile\
+ Macaulay2/ComputationsBook/util/Makefile\
+ Macaulay2/Mathematica/Makefile\
+ Macaulay2/Vasconcelos-appendix/Makefile\
+ Macaulay2/basictests/Makefile\
+ Macaulay2/benchmarks/Makefile\
+ Macaulay2/benchmarks2/Makefile\
+ Macaulay2/book/Makefile\
+ Macaulay2/c/Makefile\
+ Macaulay2/c2/Makefile\
+ Macaulay2/d/Makefile\
+ Macaulay2/dbm/Makefile\
+ Macaulay2/docs/Makefile\
+ Macaulay2/docs/nsf-final-report-2000/Makefile\
+ Macaulay2/docs/nsf-proposal-1998/Makefile\
+ Macaulay2/dumpdata/Makefile\
+ Macaulay2/e/Makefile\
+ Macaulay2/emacs/Makefile\
+ Macaulay2/experiments/Makefile\
+ Macaulay2/gmp-macros/Makefile\
+ Macaulay2/html/Makefile\
+ Macaulay2/mike-slides/Makefile\
+ Macaulay2/mike-tut/Makefile\
+ Macaulay2/packages/Makefile\
+ Macaulay2/schubert/Makefile\
+ Macaulay2/screen/Makefile\
+ Macaulay2/slides/Makefile\
+ Macaulay2/socket/Makefile\
+ Macaulay2/test/Makefile\
+ Macaulay2/tex/Makefile\
+ Macaulay2/texmacs/Makefile\
+ Macaulay2/thread/Makefile\
+ Macaulay2/tutorial/Makefile\
+ Macaulay2/setup\
+ Macaulay2/util/Makefile"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
 for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then

@@ -44,7 +44,10 @@ lib/.exists:; mkdir -p lib; touch $@
 clean::; rm -rf lib
 clean::; rm -f config.cache
 clean::; rm -f core
+distclean:: clean
 rmcores :; find . '(' -name core -o -name gmon.out -o -name profile ')' -exec rm '{}' ';'
+################################# configure
+distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.h.in
 ################################ SETUP
 ifeq "$(CC)" "cl"
 justM2 all:: ;	$(MAKE) -C WindowsNT
@@ -155,8 +158,9 @@ gmp/config.status: gmp/configure
 endif
 
 GMPclean clean::
-	-$(MAKE) -C gmp distclean
+	-$(MAKE) -C gmp clean
 	rm -f lib/gmp.lib lib/libmpn.a lib/libmpz.a lib/libmpq.a lib/libmpf.a lib/libgmp.a
+distclean::; -$(MAKE) -C gmp distclean
 
 ###################### FACTORY
 
@@ -236,10 +240,12 @@ lib/libcf.a lib/FACTORYinstalled: lib/.exists $(FACTORYexports)
 	rm -f lib/libcfmem.a
 	touch $@
 FACTORYclean clean::
-	-$(MAKE) -C factory $(FACTORYMAKEFLAGS) distclean
+	-$(MAKE) -C factory $(FACTORYMAKEFLAGS) clean
 	cd factory; rm -f *.cpp *.pdb
 	rm -f lib/cf.lib lib/libcf.a lib/FACTORYinstalled
 clean::; rm -rf share
+distclean::; -$(MAKE) -C factory $(FACTORYMAKEFLAGS) distclean
+
 ###################### LIBFAC
 justM2 all:: LIBFAC
 
@@ -283,8 +289,9 @@ endif
 
 include/factor.h: libfac/factor.h ; cp $< $@
 LIBFACclean clean::
-	-$(MAKE) -C libfac distclean
+	-$(MAKE) -C libfac clean
 	rm -f lib/libfac.a lib/libfac.lib
+distclean::; -$(MAKE) -C libfac distclean
 
 ###################### MP
 
@@ -302,7 +309,7 @@ mp/libMP.a: mp/Makefile
 lib/libMP.a: mp/MP/libMP.a lib/.exists; cp $< $@; ranlib $@
 include/MP.h: mp/MP/MP.h ; cp $< $@
 include/MP_Config.h: mp/MP/MP_Config.h ; cp $< $@
-clean::; -$(MAKE) -C mp distclean
+distclean clean::; -$(MAKE) -C mp $@
 clean::; rm -f 'mp/&'
 ################################# Makeconf.h
 justM2 all:: Makeconf.h

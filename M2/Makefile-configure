@@ -1,6 +1,6 @@
 # -*- Mode: Makefile -*-
 
-CONFIGURE_OPTIONS = --prefix=/tmp/Macaulay2
+CONFIGURE_OPTIONS = --prefix=/tmp/Macaulay2-$(shell cat version)
 CONFIGURE_ENVIRON = CFLAGS="-O3 -fexpensive-optimizations"
 
 # for CC=cl we want CXXFLAGS and CFLAGS = -O2 -Zi -nologo -G5 -W3 -GR -GX
