@@ -57,7 +57,7 @@ isAbsolutePath(s:string):bool := (
      -- eventually make this happen only in MSDOS
      length(s) >= 1 && s.0 == '/' ||
      length(s) >= 3 && s.1 == ':' && s.2 == '/' ||
-     s == "stdio"
+     s === "stdio"
      );
 export absoluteFilename(filename:string):string := (
      if !isAbsolutePath(filename) then filename = getcwd() + filename;
