@@ -510,8 +510,8 @@ installPackage Package := o -> pkg -> (
 	       checkIsTag tag;
 	       key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
-	       byteOffsets# #byteOffsets = concatenate("Node: ",fkey,"\177",toString length infofile);
 	       if tag === topDocumentTag then fkey = "Top";
+	       byteOffsets# #byteOffsets = concatenate("Node: ",fkey,"\177",toString length infofile);
 	       infofile << "\037" << endl << "File: " << infobasename << ", Node: " << fkey;
 	       if NEXT#?tag then infofile << ", Next: " << DocumentTag.FormattedKey NEXT#tag;
 	       if PREV#?tag then infofile << ", Prev: " << DocumentTag.FormattedKey PREV#tag;
