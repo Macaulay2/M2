@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <gc.h>
-#include "../../include/config.h"
+#include "memdebug.h"
+#include "config.h"
 #include "debug.h"
 
 void trap(void) {}
 void *trapaddr = (void *)1;
-void trapchk(void *p) { if (p == trapaddr) trap(); }
+int trapcount = 0;
+int trapset = 0;
+void trapchk(void *p) { trapcount++; if (trapcount == trapset || p == trapaddr) trap(); }
 
 /*
  Local Variables:

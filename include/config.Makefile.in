@@ -192,17 +192,25 @@ endif
 
 DEBUGFLAGS :=
 
+ifeq "$(MEMDEBUG)" "yes"
+DEBUG = yes
+endif
+
 ifeq "$(DEBUG)" "yes"
-DEBUGFLAGS += -DDEBUG
-else
-DEBUGFLAGS += -DNDEBUG
+STRIP = no
 endif
 
 ifeq "$(PROFILE)" "yes"
 CFLAGS   += -pg
 CXXFLAGS += -pg
 LDFLAGS  += -pg
-STRIP := no
+STRIP = no
+endif
+
+ifeq "$(DEBUG)" "yes"
+DEBUGFLAGS += -DDEBUG
+else
+DEBUGFLAGS += -DNDEBUG
 endif
 
 ifeq "$(GCC)" "yes"
@@ -236,7 +244,7 @@ EXE :=
 endif
 
 ifeq "$(MEMDEBUG)" "yes"
-DEBUGFLAGS += -DMEM_DEBUG
+DEBUGFLAGS += -DMEMDEBUG
 endif
 
 DUMPDATAFILE := cache/Macaulay2-$(ARCH)-data

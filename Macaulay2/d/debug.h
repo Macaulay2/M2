@@ -11,6 +11,8 @@ extern "C" {
 
   extern void trap(void);
   extern void *trapaddr;
+  extern int trapcount;
+  extern int trapset;
   extern void trapchk(void *);
 
 #ifdef DEBUG
