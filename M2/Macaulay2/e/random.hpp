@@ -33,7 +33,7 @@ public:
 
   static void random_integer(M2_Integer a); // a should be an mpz_t which has been initialized
 
-  static void set_seed(int32 s);
+  static void set_seed(M2_Integer s);
   static void set_max_int(M2_Integer N); // values will be in the range 0..N-1
   static M2_Integer get_random_integer(M2_Integer maxN);
 };
