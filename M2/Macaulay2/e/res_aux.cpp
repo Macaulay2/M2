@@ -65,7 +65,6 @@ const M2_arrayint res_comp::get_betti(int type) const
   int lo = low_degree();
   int hi = high_degree();
   int len = (type == 0 ? length_limit : max_level());
-  int totallen = 3 + (hi-lo+1)*(len+1);
 
   int *bettis;
   betti_init(lo,hi,len,bettis);

@@ -31,9 +31,6 @@ public:
 
   const Ring *get_ring() const { return R_; }
 
-  virtual const Ring *get_ambient_ring() const { return R_->get_ambient_ring(); }
-  virtual const Ring *get_denominator_ring() const { return R_->get_ambient_ring(); }
-
   ring_elem numerator(ring_elem f) const;
   ring_elem denominator(ring_elem f) const;
   ring_elem fraction(const ring_elem top, const ring_elem bottom) const;

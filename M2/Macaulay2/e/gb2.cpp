@@ -376,7 +376,7 @@ void gbres_comp::text_out(buffer &o) const
 M2_arrayint gbres_comp::betti_minimal() const
     // Negative numbers represent upper bounds
 {
-  int lev, i, j, d, k;
+  int lev, i, d;
   int lo = nodes[0]->output_free_module()->lowest_primary_degree();
   if (n_nodes >= 2)
     {

@@ -53,9 +53,9 @@ bool WeylAlgebra::initialize_weyl(
   // Now set whether this ring is graded.  This will be the case iff
   // deg(x_i) + deg(D_i) = 2 deg(h), for every i.
   if (_homog_var < 0) 
-    this->_isgraded = false;
+    this->setIsGraded(false);
   else {
-    this->_isgraded = true;
+    this->setIsGraded(true);
     const Monoid *D = degree_monoid();
     const int *degh = M_->degree_of_var(_homog_var);
     int *deg2h = D->make_one();
@@ -542,7 +542,7 @@ ring_elem WeylAlgebra::power(const ring_elem f, mpz_t n) const
 
 ring_elem WeylAlgebra::power(const ring_elem f, int n) const
 {
-  return PolynomialRing::power2(f,n);
+  return PolyRing::power2(f,n);
 }
 
 // Local Variables:

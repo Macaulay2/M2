@@ -44,7 +44,7 @@ void IM2_initialize()
 
   // This next routine initializes: globalZZ, trivial_monoid, trivial_poly_ring,
   // and makes sure their degree rings are interconnected.
-  PolynomialRing::get_trivial_poly_ring();
+  PolyRing::get_trivial_poly_ring();
 
   globalQQ = QQ::create();
 

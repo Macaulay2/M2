@@ -15,6 +15,7 @@ class Z_mod;
 class GF;
 class FractionField;
 class PolynomialRing;
+class PolyRing;
 class SkewPolynomialRing;
 class SchurRing;
 class WeylAlgebra;
@@ -120,9 +121,6 @@ public:
   // What the ultimate coefficient type is.  ZZ, QQ, finite fields return these 
   // three values.  Fraction fields return their ultimate value, as do poly rings.
 
-  virtual const Ring *get_ambient_ring() const { return this; }
-  virtual const Ring *get_denominator_ring() const { return 0; }
-
   ///////////////////////////////////
   // Casting up the ring hierarchy //
   ///////////////////////////////////
@@ -138,6 +136,10 @@ public:
   virtual       GF * cast_to_GF()               { return 0; }
   virtual const PolynomialRing * cast_to_PolynomialRing()  const      { return 0; }
   virtual       PolynomialRing * cast_to_PolynomialRing()             { return 0; }
+
+  virtual const PolyRing * cast_to_PolyRing()  const      { return 0; }
+  virtual       PolyRing * cast_to_PolyRing()             { return 0; }
+
   virtual const FractionField * cast_to_FractionField() const    { return 0; }
   virtual       FractionField * cast_to_FractionField()          { return 0; }
   virtual const SchurRing * cast_to_SchurRing() const { return 0; }
@@ -192,7 +194,6 @@ public:
 
   virtual ring_elem copy(const ring_elem f) const = 0;
   virtual void remove(ring_elem &f) const = 0;
-  void remove_vector(vec &v) const;
 
           void negate_to(ring_elem &f) const;
           void add_to(ring_elem &f, ring_elem &g) const;

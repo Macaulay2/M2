@@ -91,12 +91,12 @@ const RingOrNull *IM2_Ring_bigCC()
 
 const Ring *IM2_Ring_trivial_polyring()
 {
-  return PolynomialRing::get_trivial_poly_ring();
+  return PolyRing::get_trivial_poly_ring();
 }
 
 const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 {
-  return PolynomialRing::create(K,M);
+  return PolyRing::create(K,M);
 }
 
 const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,

@@ -62,6 +62,33 @@ statistics routine for Computation
   summary or stats for a computation should be in the toString.
   -- rawSummary(computation)
 
+------------
+polynomial ring construction:
+
+classes:
+  PolynomialRing
+    PolyRing
+      Skew
+      Weyl
+    PolyFrac
+      PolyFracQQ -- maybe
+    QuotientPolyRing
+    QuotientPolyFrac
+  NCPolynomialRing
+    QuotientNCPolyRing -- ??
+
+to construct
+  A = ZZ[s,t]
+  B = A/I
+  C = B[x,y,z]
+  D = C/J
+do:
+  A = rawPolynomialRing(rawZZ(), [s,t]) -- [s,t] stands for that monoid
+  B = rawQuotient(A, gens gb I)
+  C1 = rawPolynomialRing(rawAmbientRing B, [x,y,z])
+  C = rawQuotient(C1, B)  -- rawAmbientRing C == C1
+  D = rawQuotient(C, gens gb J)  -- rawAmbientRing D == C1
+------------
 
  term over position (TOP) :
 

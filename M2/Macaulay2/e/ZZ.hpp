@@ -33,7 +33,7 @@ public:
   typedef mpz_ptr element_type;
 
   //////////////////////////////////////////////
-  // Creation of globalZZ is done in PolynomialRing::make_trivial_ZZ_poly_ring
+  // Creation of globalZZ is done in PolyRing::make_trivial_ZZ_poly_ring
   // These two routines should not be called from elsewhere
   ZZ() {}
   bool initialize_ZZ(const PolynomialRing *deg_ring);

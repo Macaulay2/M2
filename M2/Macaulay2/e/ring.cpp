@@ -22,7 +22,7 @@ void Ring::initialize_ring(int P0,
   _nvars = nvars;
   _totalvars = totalvars;
   if (DR == 0)
-    degree_ring = PolynomialRing::get_trivial_poly_ring();
+    degree_ring = PolyRing::get_trivial_poly_ring();
   else
     degree_ring = DR;
 
@@ -64,11 +64,6 @@ void Ring::declare_field()
 ring_elem Ring::get_zero_divisor() const 
 { 
   return copy(_zero_divisor); 
-}
-
-
-void Ring::remove_vector(vec &v) const
-{
 }
 
 void Ring::mult_to(ring_elem &f, const ring_elem g) const
@@ -273,7 +268,6 @@ void Ring::trans_from_ringelem(gbvectorHeap &H,
 {
   GBRing *GR = H.get_gb_ring();
   const FreeModule *F = H.get_freemodule();
-  const Monoid *M = GR->get_flattened_monoid();
   
   gbvector *g = GR->gbvector_term_exponents(F, coeff, exp, comp);
 

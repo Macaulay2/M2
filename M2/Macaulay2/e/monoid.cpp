@@ -18,7 +18,7 @@ void Monoid::set_trivial_monoid_degree_ring(const PolynomialRing *DR)
   M->moninfo->degree_monoid = M;
 }
 
-// ONLY to be called by PolynomialRing::get_trivial_poly_ring()
+// ONLY to be called by PolRing::get_trivial_poly_ring()
 
 monoid_info::monoid_info()
 : nvars(0),

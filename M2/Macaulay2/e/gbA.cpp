@@ -1743,7 +1743,9 @@ const MatrixOrNull *gbA::get_gb()
   minimalize_gb();
   const vector<POLY,gc_alloc> & mingb = minimal_gb->get();
   MatrixConstructor mat(_F,0,false/*not mutable*/);
+#if 0
   int j=0;
+#endif
   for (vector<POLY,gc_alloc>::const_iterator i = mingb.begin(); i != mingb.end(); i++)
     {
 #if 0

@@ -8,7 +8,7 @@
 
 ///// Ring Hierarchy ///////////////////////////////////
 
-class SkewPolynomialRing : public PolynomialRing
+class SkewPolynomialRing : public PolyRing
 {
 protected:
   bool initialize_skew(M2_arrayint skewvars);
