@@ -119,7 +119,12 @@ protected:
   
   int n_terms(const poly *f) const;
   int add_to(poly *&f, poly *&g) const;
-  
+
+public:
+  // Creation of ring elements
+  ERingElement *fromInteger(int a) const;
+  ERingElement *makeRingVariable(int v, int exponent) const;
+  ERingElement *makeRingTerm(const ERingElement *coeff, const intarray &term) const;
 public:
   void addTo(EVector *&v, EVector *&w) const;
   EVector *multiply(const EVector *f, const EVector *v) const;
@@ -144,9 +149,8 @@ public:
   
   // Display
   virtual void elem_text_out(buffer &o, const ERingElement *f) const;
-  virtual void text_out(ostream &o) const = 0;
   virtual void text_out(buffer &o) const = 0;
-  virtual void binary_out(ostream &) const {}
+  virtual void bin_out(buffer &) const {}
 
   //static EPolynomialRing *binary_in(istream &i);
 
@@ -195,9 +199,8 @@ public:
   virtual const EWeylAlgebra *toEWeylAlgebra() const { return 0; }
   virtual const ESkewCommPolynomialRing *toESkewCommPolynomialRing() const { return 0; }
 
-  virtual void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
-  virtual void binary_out(ostream &o) const;
+  virtual void bin_out(buffer &o) const;
 
   class_identifier class_id() const { return CLASS_ECommPolynomialRing; }
 };
@@ -269,9 +272,8 @@ public:
 
   virtual EVector *mult(const EVector *f, const EVector *g, bool component_from_f) const;
 
-  virtual void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
-  virtual void binary_out(ostream &o) const;
+  virtual void bin_out(buffer &o) const;
   static EWeylAlgebra *binary_in(istream &i);
 
   virtual const EWeylAlgebra *toEWeylAlgebra() const { return this; }
@@ -319,7 +321,6 @@ public:
   virtual EVector *makeTerm(const EFreeModule *F, const field a, const monomial *m, int x) const;
   virtual EVector *mult(const EVector *f, const EVector *g, bool component_from_f) const;
 
-  virtual void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
 
   virtual const ESkewCommPolynomialRing *toESkewCommPolynomialRing() const { return this; }
@@ -346,7 +347,6 @@ public:
                     int *degs  // grabbed, length not checked
                     );
 
-  virtual void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
 
   virtual const ENCPolynomialRing *toENCPolynomialRing() const { return this; }

@@ -112,11 +112,10 @@ public:
 				     bool * & is_comm) const;
 
   // I/O:  All of these routines are in io.cpp
-  void text_out(ostream &o) const;
   void text_out(buffer &o) const;
+  void bin_out(buffer &o) const;
 
   int * put_binary() const;  // NOT DONE
-  void binary_out(ostream &o) const;
 
   static EMonomialOrder *get_binary(const int *monorder);
   static EMonomialOrder *binary_in(istream &i);

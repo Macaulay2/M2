@@ -661,8 +661,8 @@ EMatrix *EMatrix::koszul(const EMatrix *r, const EMatrix *c)
   int nvars = M->n_vars();
   int nrows = F->rank();
   int ncols = G->rank();
-  const int *aexp;
-  const int *bexp;
+  const int *aexp = new int[nvars];
+  const int *bexp = new int[nvars];
   int *result_exp = new int[nvars];
   for (int i=0; i<ncols; i++)
     {

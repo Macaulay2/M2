@@ -620,6 +620,7 @@ void ECommPolynomialRing::initializeTrivialRing()
   triv->M = ECommMonoid::getTrivialMonoid();
   bump_up(triv->M);
   bump_up(triv);  // Now it will never go away.
+  triv->R1 = triv->makeFreeModule(1);
   _trivial = triv;
 }
 
@@ -787,8 +788,8 @@ EFreeModule *EPolynomialRing::makeFreeModule(const EMatrix *m) const
     }
   const EMonoid *M = getMonoid();
   int rank = m->n_cols();
-  const monomial **degrees = new monomial *[rank];
-  const monomial **ordering = new monomial *[rank];
+  const monomial **degrees = new const monomial *[rank];
+  const monomial **ordering = new const monomial *[rank];
   int *tiebreaks = new int[rank];
   for (int i=0; i<rank; i++)
     {
@@ -1101,3 +1102,42 @@ EVector *EPolynomialRing::rightMultiply(
   return mult(f,g,true);
 }
 
+///////////////////////////////
+// Ring Element Construction //
+///////////////////////////////
+
+ERingElement *EPolynomialRing::fromInteger(int a) const
+{
+  field b = K->from_int(a);
+  return makeTerm(R1,b,getMonoid()->one(),0);
+}
+
+ERingElement *EPolynomialRing::makeRingVariable(int v, int exponent) const
+{
+  intarray term;
+  term.append(v);
+  term.append(exponent);
+  monomial *m = getMonoid()->monomial_from_variable_exponent_pairs(term);
+  if (m == 0) return 0;
+
+  return makeTerm(R1,getCoefficientRing()->one(), m, 0);
+}
+
+ERingElement *EPolynomialRing::makeRingTerm(const ERingElement *c, const intarray &term) const
+{
+  // Now check that the coefficient ring of 'coeff' is the same as the coefficient ring.
+  if ((c->getFreeModule()->getRing()->getCoefficientRing() != getCoefficientRing())
+      || (c->getFreeModule()->getRing()->n_vars() > 0))
+    {
+      gError << "expected coefficient in coefficient ring";
+      return 0;
+    }
+  if (c->len == 0)
+    return R1->zero();
+  field a = c->elems->coeff;
+
+  monomial *m = getMonoid()->monomial_from_variable_exponent_pairs(term);
+  if (m == 0) return 0;
+
+  return makeTerm(R1,a, m, 0);
+}

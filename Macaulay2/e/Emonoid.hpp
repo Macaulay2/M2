@@ -92,6 +92,8 @@ public:
   const int *get_partial_sums(const monomial *m) const
     { return m->partial_sums; }
 
+  virtual void get_variable_exponent_pairs(const monomial *m, intarray &result) const = 0;
+
   virtual uint32 hash_exponents(const int *exponents) const = 0;
   virtual uint32 hash_encoded(const int *exponents) const = 0;
 
@@ -102,6 +104,7 @@ public:
 		      int n) const = 0;
   virtual monomial *monomial_from_exponents(const int *exp) const = 0;
   virtual monomial *monomial_from_encoded(const int *encoded) const = 0;
+  virtual monomial *monomial_from_variable_exponent_pairs(const intarray &term) const = 0;
   virtual const int * to_exponents(const monomial *m) const = 0;
   virtual int encoded_length(const int *encoded) const = 0;
 
@@ -111,12 +114,10 @@ public:
   int degree(const monomial *a, const int *wts) const;
   
   virtual void stats() const = 0;
-  virtual void text_out(ostream &o) const = 0;
   virtual void text_out(buffer &o) const = 0;
-  virtual void binary_out(ostream &o) const = 0;
-  virtual void elem_text_out(ostream &o, const monomial *a) const = 0;
+  virtual void bin_out(buffer &o) const = 0;
   virtual void elem_text_out(buffer &o, const monomial *a) const = 0;
-  virtual void elem_binary_out(ostream &o, const monomial *a) const = 0;
+  virtual void elem_bin_out(buffer &o, const monomial *a) const = 0;
   virtual monomial *elem_binary_in(istream &i) const = 0;
 
   virtual const ENCMonoid *toNCMonoid() const { return 0; }
@@ -155,8 +156,10 @@ public:
     { return is_comm[v]; }
 
   int encoded_length(const int *encoded) const;
+  void get_variable_exponent_pairs(const monomial *m, intarray &result) const;
   monomial *monomial_from_encoded(const int *encoded) const;
   monomial *monomial_from_exponents(const int *exp) const;
+  monomial *monomial_from_variable_exponent_pairs(const intarray &term) const;
   const int * to_exponents(const monomial *m) const;
   
   int compare(const monomial *a, int acomponent,
@@ -174,13 +177,11 @@ public:
 
   virtual void stats() const;
 
-  virtual void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
-  virtual void binary_out(ostream &o) const;
+  virtual void bin_out(buffer &o) const;
 
-  virtual void elem_text_out(ostream &o, const monomial *a) const;
   virtual void elem_text_out(buffer &o, const monomial *a) const;
-  virtual void elem_binary_out(ostream &o, const monomial *a) const;
+  virtual void elem_bin_out(buffer &o, const monomial *a) const;
   virtual monomial *elem_binary_in(istream &i) const;
 
   virtual const ENCMonoid *toNCMonoid() const { return this; }
@@ -206,17 +207,18 @@ public:
 				 const char **names); // copies
   virtual ~ECommMonoid();
 
-  virtual void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
-  virtual void binary_out(ostream &o) const;
+  virtual void bin_out(buffer &o) const;
   static ECommMonoid *binary_in(istream &i);
   
   int encoded_length(const int *) const
     { return nslots; }
 
+  void get_variable_exponent_pairs(const monomial *m, intarray &result) const;
   monomial *unchecked_monomial_from_exponents(const int *exp) const;
   monomial *monomial_from_exponents(const int *exp) const;
   monomial *monomial_from_encoded(const int *encoded) const;
+  monomial *monomial_from_variable_exponent_pairs(const intarray &term) const;
 
   bool isCommutativeVariable(int) const 
     { return true; }
@@ -250,9 +252,8 @@ public:
   virtual void stats() const;
 
   // I/O
-  virtual void elem_text_out(ostream &o, const monomial *a) const;
   virtual void elem_text_out(buffer &o, const monomial *a) const;
-  virtual void elem_binary_out(ostream &o, const monomial *a) const;
+  virtual void elem_bin_out(buffer &o, const monomial *a) const;
   virtual monomial *elem_binary_in(istream &i) const;
 
   virtual const ECommMonoid *toCommMonoid() const { return this; }

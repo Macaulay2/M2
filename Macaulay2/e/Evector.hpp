@@ -39,7 +39,7 @@ public:
     {if (len == 0) return F->getCoefficientRing()->zero(); else return elems->coeff;}
 
   const monomial *leadMonomial() const
-    {if (len == 0) return F->getMonoid()->one(); else return elems->monom;}
+    {if (len == 0) return 0; else return elems->monom;}
 
   int leadComponent() const
     {if (len == 0) return 0; else return elems->component; }
@@ -128,7 +128,7 @@ public:
   EVector *homogenize(int v, const int *wts) const;
   
   // I/O
-  void text_out(ostream &o) const;
+  void bin_out(buffer &o) const;
   void text_out(buffer &o) const;
   ostream &binary_out(ostream &o) const;
 

@@ -31,12 +31,16 @@ if EMatrix === quote EMatrix then
 if ERingMap === quote ERingMap then
   ERingMap = new Type of MutableHashTable
 
+if ERingElement === quote ERingElement then
+  ERingElement = new Type of EVector
+
 ------------------------------------------------------------
 BeforePrint ECoefficientRing := (R) -> sendgg(ggPush R, ggsee)
 BeforePrint MonOrder := (R) -> sendgg(ggPush R, ggsee)
 BeforePrint EMonoid := (R) -> sendgg(ggPush R, ggsee)
 BeforePrint ERing := (R) -> sendgg(ggPush R, ggsee)
 BeforePrint EFreeModule := (R) -> sendgg(ggPush R, ggsee)
+BeforePrint ERingElement := (R) -> sendgg(ggPush R, ggsee)
 BeforePrint EVector := (R) -> sendgg(ggPush R, ggsee)
 BeforePrint EMatrix := (R) -> sendgg(ggPush R, ggsee)
 BeforePrint ERingMap := (R) -> sendgg(ggPush R, ggsee)
@@ -66,6 +70,11 @@ newEFreeModule = () -> (
      v.handle = newHandle();
      v)
 
+newERingElement = () -> (
+     v := new ERingElement;
+     v.handle = newHandle();
+     v)
+
 newEVector = () -> (
      v := new EVector;
      v.handle = newHandle();
@@ -81,7 +90,7 @@ newERingMap = () -> (
      v.handle = newHandle();
      v)
 ------------------------------------------------------------
-ZmodP = (p) -> (sendgg(ggPush p, ggEcharp); newHandle())
+ZmodP = (p) -> (sendgg(ggPush p, ggEcharp); newERing())
 EZ = (sendgg(ggEZZ); newERing())
 
 degreeRing = (ndegs) -> (
@@ -239,6 +248,23 @@ EFreeModule _ Sequence := (F,arg) -> (
      sendgg(ggPush F, ggPush toList(arg#0), ggPush arg#1, ggterm);
      newEVector())
 
+-------------------
+-- Ring Elements --
+-------------------
+
+ZZ _ ERing := (n,R) -> (
+     sendgg(ggPush R, ggPush n, ggfromint);
+     newERingElement())
+
+ERing _ Sequence := (R,a) -> (
+     sendgg(ggPush R, ggPush (a#0), ggPush (a#1), ggterm);
+     newERingElement())
+
+ERing _ List := (R,a) -> (
+     -- check: a is a list of integers of even length.
+     sendgg(ggPush R, ggPush 1_EZ, ggPush a, ggterm);
+     newERingElement())
+
 -------------
 -- EVector --
 -------------
@@ -315,6 +341,9 @@ leadComponent EVector := (v) -> (
 leadCoefficient EVector := (v) -> (
     sendgg(ggPush v, ggleadcoeff);
     eePopInt())
+leadMonomial EVector := (v) -> (
+     sendgg(ggPush v, ggleadmonom);
+     eePopIntarray())
 leadTerm(EVector) := (v) -> (
     sendgg(ggPush v, ggPush (-1), ggPush 1, ggleadterm);
     newEVector())
@@ -327,7 +356,7 @@ leadTerm(EVector,ZZ,ZZ) := (v,n,samecomp) -> (
 homogenize(EVector,ZZ,List) := (v,var,wts) -> (
     -- check: var is in range
     -- check: wts is of length #vars in ring
-    sendgg(ggPush v, ggPush va, ggPush wts, gghomogenize);
+    sendgg(ggPush v, ggPush var, ggPush wts, gghomogenize);
     newEVector())
 homogenize(EVector,List,List) := (v,var'd,wts) -> (
     -- check: var is in range
