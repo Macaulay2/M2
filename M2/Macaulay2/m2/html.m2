@@ -411,8 +411,8 @@ runString := (x,pkg) -> (
      result := if fileExists outf then get outf;
      if result =!= null then (
 	  stderr
-	  << "--test input :" << x << endl
-	  << "--test output:" << result << endl << endl;
+	  << "--test input : " << stack lines x << endl
+	  << "--test output: " << stack lines result << endl << endl;
 	  );
      rmall();
      result)
