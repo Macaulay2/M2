@@ -446,8 +446,8 @@ document { "conditional execution",
      EXAMPLE {
 	  ///(-4 .. 4) / 
      (i -> if i < 0 then "neg" 
-	  else if i == 0 then "zer" 
-	  else "pos")///
+          else if i == 0 then "zer" 
+          else "pos")///
 	  },
      "The else clause may be omitted from an ", TT "if", " expression.  In that case, 
      if value of the predicate ", TT "X", " is false, then ", TT "null", " is provided 
@@ -498,7 +498,7 @@ document { "conditional execution",
      TO "isTable", ", ",
      TO "isUnit", ", and ",
      TO "isWellDefined", ".  Results of these tests may be combined with 
-     ", TT "not", ", ", TT "and", ", and ", TT "or", "."
+     ", TO "not", ", ", TO "and", ", and ", TO "or", "."
      }
 
 document { "loops",
@@ -864,21 +864,13 @@ document { "hash tables",
 	  "x#?4",
 	  },
      "Other functions for manipulating hash tables include ",
-     TO "apply", ", ",
-     TO "applyKeys", ", ",
-     TO "applyPairs", ", ",
      TO "browse", ", ",
-     TO "combine", ", ",
      TO "copy", ", ",
      TO "hashTable", ", ",
      TO "keys", ", ",
-     TO "merge", ", ",
      TO "mutable", ", ",
-     TO "new", ", ",
      TO "pairs", ", ",
-     TO "remove", ", ",
-     TO "scanKeys", ", ",
-     TO "scanPairs", ", and ",
+     TO "remove", ", and ",
      TO "values", ".",
      PARA,
      "For details of the mechanism underlying hash tables, see ", TO "hashing", ".
@@ -1073,24 +1065,218 @@ document { "mapping over lists",
      }
 
 document { "mapping over hash tables",
-     "In this section we examine various ways to apply functions to each
-     entry in a hash table.  Each entry consists of a key and the
-     corresponding value, so the situation is a bit more complicated than
-     mapping functions over lists; it's hard to know whether it's the keys
-     or the values which are of primary importance.  A first guess would be
-     that it's possible to make do with mapping functions that accept
-     key-value pairs and return new key-value pairs, but it turns out
-     that mapping a function that accepts just values and produces new
-     values, without changing the keys, can be done efficiently because the 
-     overall organization of the hash table with respect to its keys and 
-     their hash codes remains the same."
-     }
-
-document { "making new types",
-     "This node has not been written yet."
+     "Each entry in a hash table consists of a key and a value.  We provide
+     three ways to map functions over a hash table, depending on whether the
+     function is to receive a value and return a new value, to receive a key
+     and return a new key, or to receive a key-value pair and return a new
+     key-value pair.  The corresponding functions, ", TO "applyValues", ",
+     ", TO "applyKeys", ", and ", TO "applyPairs", " are illustrated in the
+     next example.",
+     EXAMPLE {
+	  "x = new HashTable from {a=>1, b=>2}",
+	  "applyValues(x, value -> 1000*value)",
+	  "applyKeys(x, key -> {key})",
+	  "applyPairs(x, (key,value) -> (value,key))",
+	  },
+     "The functions, ", TO "scanValues", ", ", TO "scanKeys", ", and 
+     ", TO "scanPairs", " are similar, but the values returned are discarded
+     instead of being assembled into a new hash table.",
+     EXAMPLE {
+	  "x = new HashTable from {a=>1, b=>2}",
+	  "scanValues(x, print)",
+	  "scanKeys(x, print)",
+	  "scanPairs(x, print)",
+	  },
+     "The function ", TO "merge", " can be used to merge two hash tables.  The
+     result is a hash table whose keys are those occuring in one of the two
+     incoming hash tables.  We must provide a function of two arguments
+     which is used to combine the values when a key occurs in both hash tables.",
+     EXAMPLE {
+	  "y = new HashTable from {b=>200, c=>300}",
+	  "merge(x, y, plus)",
+	  },
+     "The function ", TO "combine", " can be used to combine two hash tables ", TT "x", "
+     and ", TT "y", " into a new hash table.  Three functions must be provided.  The first 
+     one produces new keys from a key of ", TT "x", " and a key of ", TT "y", ".  The
+     second one produces a new values from a value of ", TT "x", " and a value
+     of ", TT "y", ".  The third one is used to combine values when two new keys
+     turn out to be the same.",
+     EXAMPLE {
+     	  "combine(x,y,identity,times,plus)",
+	  },
      }
 
 document { "error handling",
+     "When an error occurs in your program, an error message will appear that
+     gives the name of the file, the line number, and the column number of
+     the code that provoked the error.",
+     PARA,
+     "You may use the function ", TO "error", " in your programs to signal
+     errors.  Your error message will appear on the screen and execution
+     will be stopped.",
+     PARA,
+     "The function ", TO "try", " can be used to catch an error before
+     execution is stopped and to continue or to try something else."
+     }
+
+document { "printing to the screen",
+     "Use the operator ", TO "<<", " to print something to the screen.",
+     EXAMPLE {
+	  "<< 2^100"
+	  },
+     "Notice that the value returned is the standard output file
+     ", TO "stdout", ".  We can also use ", TO "<<", " as a binary
+     operator to print explicitly to this file, and the output will 
+     appear on the screen.",
+     EXAMPLE {
+	  "stdout << 2^100"
+	  },
+     "The associativity of the operator ", TO "<<", " during parsing is
+     arranged so that the following code will work in a useful way.",
+     EXAMPLE ///<< "The answer is " << 2^100 << ".";///,
+     "Printing works fine with nets, too.",
+     EXAMPLE ///<< "The answer is " << "aaa"||"bb"||"c" << ".";///,
+     "In the presence of nets, which are used whenever you print something
+     that is formatted two-dimensionally, the only correct way to terminate a line
+     is with ", TO "endl", ", even though a string called ", TO "newline", "
+     is available to you.",
+     EXAMPLE {
+	  ///R = ZZ[x,y];///,
+	  ///f = (x+y+1)^2; g = (x-y+1)^2///,
+	  ///<< "f = " << f << endl << "g = " << g << endl;///,
+	  },
+     "Output is saved in a buffer until the end of the line is encountered.
+     If nets are not involved, you may use ", TO "flush", " to force
+     the output to appear on the screen before the end of the line is
+     encountered.  This may be useful in displaying some tiny indication
+     of computational progress to the user.",
+     EXAMPLE ///scan(0 .. 20, i -> << "." << flush)///,
+     }
+
+document { "reading files",
+     "Typically a file will contain code written in the Macaulay 2 language.
+     To load and execute that code, use ", TO "load", ".",
+     EXAMPLE ///load "sample"///,
+     "The command ", TO "needs", " can be used to load a file only if
+     it hasn't already been loaded.",
+     EXAMPLE ///needs "sample"///,
+     "For debugging purposes, it is sometimes useful to be able to simulate
+     entering the lines of a file one by one.  We use ", TO "input", " for
+     this.",
+     EXAMPLE ///input "sample"///,
+     "The functions above look for files in every directory listed by
+     the variable ", TO "path", ".  Our sample file is located in the
+     directory called ", TT "packages", ", which is on the path.  Another
+     copy of the sample file is located in our current directory.",
+     EXAMPLE "path",
+     "The function ", TO "get", " can be used to obtain the entire contents
+     of a file as a single string.",
+     EXAMPLE ///x = get "sample"///,
+     "Use ", TO "peek", " to observe the extent of this string.",
+     EXAMPLE ///peek x///,
+     "The resulting string has newlines in it; we can use ", TO "lines", "
+     to break it apart into a list of strings, with one row in each string.",
+     EXAMPLE ///y = lines x///,
+     "Use ", TO "peek", " to observe the extent of these strings.",
+     EXAMPLE ///peek y///,
+     "We could even use ", TO "verticalJoin", " to assemble the lines of the
+     file into a net.",
+     EXAMPLE ///verticalJoin y///,
+     }
+
+document { "getting input from the user",
+     "The function ", TO "read", " can be used to prompt the user and obtain
+     a line of input as a string.  In response to the prompt, we enter
+     ", TT "sample", " and press return.",
+     EXAMPLE {
+	  ///filename = read "file name : "
+sample///,
+     	  },
+     "Let's use ", TO "peek", " to verify that this string contains no newline
+     characters.",
+     EXAMPLE ///peek filename///,
+     "If necessary, we may use ", TO "value", " to evaluate the string provided
+     by the user.  In this example, we enter ", TT "(x+y)^2", " in response to
+     the prompt.",
+     EXAMPLE {
+	  ///R = ZZ[x,y];///,
+	  ///s = read "polynomial : "
+(x+y)^2///,
+     	  ///value s///
+	  }
+     }
+
+document { "creating and writing files",
+     "We can print to a file in essentially the same way we print to the screen.
+     In the simplest case, we create the entire file with one command; we
+     give the file name as the initial left hand operand of ", TO "<<", ",
+     and we close the file with ", TO "close", ".  Files must be closed
+     before they can be used for something else.",
+     EXAMPLE {
+	  ///"testfile" << "print " << 2^100 << endl << close///,
+	  ///get "testfile"///,
+	  ///load "testfile"///,
+	  },
+     "More complicated files may require printing to the file multiple times.  One
+     way to handle this is to assign the open file created the first time we
+     use ", TO "<<", " to a variable, so we can use it for subsequent print operations
+     and for closing the file.",
+     EXAMPLE {
+	  ///f = "testfile" << ""///,
+	  ///f << "hi" << endl///,
+	  ///f << "ho" << endl///,
+	  ///f << close///,
+	  ///peek get "testfile"///,
+	  },
+     }
+
+document { "two dimensional formatting",
+     "We have seen that ", TO "nets", " are potentially useful for two
+     dimesional formatting of output to an ascii terminal with limited
+     graphical ability.  We present now a few more hints about putting
+     this idea into practice.  Nets are used extensively in Macaulay 2
+     for formatting, for example, for formatting of polynomials.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z];",
+	  "f = random(R^1,R^{5:-3})",
+	  },
+     PARA,
+     "Normally matrices such as the one above are displayed in compact
+     notation that originated with Macaulay.  Setting the global flag
+     ", TO "compactMatrixForm", " to ", TO "false", " will modify that
+     behavior.",
+     EXAMPLE "f",
+     "There is a type of thing called ", TO "Expression", " which will
+     allow you to set up things that print out as powers, sums, products,
+     matrices, and so on, without enjoying all of the algebraic properties
+     of such things.  There are various types of expression, such as
+     ", TO "Power", ", ", TO "Sum", ", ", TO "Divide", ", ", TO "Minus", ",
+     and ", TO "Product", " which we can use for this.",
+     EXAMPLE {
+	  "Divide(Minus a,b)",
+	  "Power(Sum(3,4,5),7)",
+	  "Sum(1,2, Minus 3, 4,5)",
+     	  },
+     "Actually, the formation of such expressions is contagious, in the sense
+     that the basic algebraic operations will construct expressions for you if
+     one of their two operands is already an expression.",
+     EXAMPLE {
+	  "Minus a / b",
+	  "(Sum(3,4,5))^7",
+	  "1 + 2 + Minus 3 + 4 + 5",
+	  },
+     "In the last example above, ", TT "1 + 2", " was evaluated first, so it
+     yielded ", TT "3", " but after that the contagion set in.",
+     PARA,
+     "The function ", TO "expression", " can be used to convert a polynomial
+     to an expression of this form.",
+     EXAMPLE {
+	  "(x+y)^2",
+	  "expression oo"
+     }
+
+document { "making new types",
      "This node has not been written yet."
      }
 
@@ -1114,19 +1300,7 @@ document { "method functions with a variable number of arguments",
      "This node has not been written yet."
      }
 
-document { "creating and writing files",
-     "This node has not been written yet."
-     }
-
 document { "inheritance from parents",
-     "This node has not been written yet."
-     }
-
-document { "printing to the screen",
-     "This node has not been written yet."
-     }
-
-document { "two dimensional formatting",
      "This node has not been written yet."
      }
 
@@ -1138,15 +1312,7 @@ document { "using sockets",
      "This node has not been written yet."
      }
 
-document { "reading files",
-     "This node has not been written yet."
-     }
-
 document { (quote @, List, Function),
-     "This node has not been written yet."
-     }
-
-document { "getting input from the user",
      "This node has not been written yet."
      }
 

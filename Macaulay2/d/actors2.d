@@ -706,7 +706,7 @@ close(g:Expr):Expr := (
      when g
      is f:file do ( 
 	  if f.fd == -1 then return(errorExpr("file already closed"));
-	  if close(f) == 0 then nullE 
+	  if close(f) == 0 then g
 	  else errorExpr(
 	       if f.pid != 0
 	       then "error closing pipe"

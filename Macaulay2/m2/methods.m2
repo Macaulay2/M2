@@ -163,7 +163,7 @@ scan({
 	  dim, Hom, diff, contract, exteriorPower, subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace, binomial, subquotient,
 	  getchange, poincare, cover, super, poincareN, terms,
-	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, stats, 
+	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, scanValues, stats, 
 	  substitute, rank, complete, ambient, top, transpose, length, baseName,
 	  degree, degreeLength, coefficients, isHomogeneous, size,
 	  isIsomorphism, exponents, 
@@ -250,6 +250,8 @@ target = (h) -> (
 gens = generators
 
 -----------------------------------------------------------------------------
+
+scanValues(HashTable,Function) := (x,f) -> scanPairs(x, (k,v) -> f v)
 
 scanKeys(HashTable,Function) := (x,f) -> scanPairs(x, (k,v) -> f k)
 scanKeys(Database,Function) := (x,f) -> (

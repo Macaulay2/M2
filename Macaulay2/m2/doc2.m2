@@ -528,7 +528,8 @@ document { quote concatenate,
 document { quote error,
      TT "error s", " -- causes an error message s to be displayed.",
      PARA,
-     "The error message s (which should be a string) is printed.
+     "The error message s (which should be a string or a sequence of
+     things which can be converted to strings and concatenated) is printed.
      Execution of the code is interrupted, and control is returned
      to top level.",
      PARA,

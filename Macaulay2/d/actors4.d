@@ -528,7 +528,11 @@ setupfun("currentDirectory",getcwdfun);
 
 getfun(e:Expr):Expr := (
      when e
-     is f:file do Expr(readfile(f.fd))
+     is f:file do (
+	  if f.fd == -1
+	  then WrongArg("an open file")
+	  else Expr(readfile(f.fd))
+	  )
      is filename:string do (
 	  when get(filename)
 	  is e:errmsg do errorExpr(e.message)
@@ -541,6 +545,12 @@ readpromptfun():void := (
      stdout << readprompt;
      flush(stdout));
 
+tokenbuf := newvarstring(100);
+getline(o:file):string := (
+     ch := 0;
+     while ( ch = getc(o); !(isnewline(ch) || ch == EOF))
+     do ( tokenbuf << char(ch); );
+     takestring(tokenbuf));
 readfun(e:Expr):Expr := (
      when e
      is f:file do Expr(read(f))
@@ -548,8 +558,11 @@ readfun(e:Expr):Expr := (
 	  readprompt = p;
 	  oldprompt := stdin.prompt;
 	  stdin.prompt = readpromptfun;
-	  r := read(stdin);
+	  r := getline(stdin);				    -- used to be read(stdin);
 	  stdin.prompt = oldprompt;
+	  -- n := length(r);
+	  -- while n>0 && (r.(n-1) == '\n' || r.(n-1) == '\r') do n = n-1;
+	  -- if n < length(r) then r = substr(r,0,n);
 	  Expr(r))	  
      is s:Sequence do (
 	  if length(s) == 0
@@ -723,7 +736,8 @@ tostringfun(e:Expr):Expr := (
 	  if f == stdin then "stdin"
 	  else if f == stdout then "stdout"
 	  else if f == stderr then "stderr"
-	  else "--file "+f.filename+"--"
+	  else if f.fd == -1 then "--closed file--"
+	  else "--open file "+f.filename+"--"
 	  )
      is b:Boolean do Expr(if b.v then "true" else "false")
      is b:Nothing do Expr("null")

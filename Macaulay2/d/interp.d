@@ -162,7 +162,13 @@ setupfun("load",load);
 
 input(e:Expr):Expr := (
      when e
-     is s:string do loadprint(s)
+     is s:string do (
+	  oldxprompt := xprompt;
+	  xprompt = false;
+	  ret := loadprint(s);
+	  xprompt = oldxprompt;
+	  laststmtno = -1;
+	  ret)
      else errorExpr("expected string as file name"));
 setupfun("input",input);
 

@@ -575,11 +575,19 @@ document { quote someTerms,
      }
 
 document { quote scanKeys,
-     TT "scanKeys(x,f)", " -- apply the function f to each key used in the
-     hash table or database x.",
+     TT "scanKeys(x,f)", " -- apply the function ", TT "f", " to each key used in the
+     hash table or database ", TT "x", ".",
      PARA,
-     "This function requires an immutable hash table.  To scan the pairs in
+     "This function requires an immutable hash table.  To scan the keys in
      a mutable hash table, use ", TT "scan(keys x, f)", "."
+     }
+
+document { quote scanValues,
+     TT "scanValues(x,f)", " -- apply the function ", TT "f", " to each value
+     appearing in the hash table ", TT "x", ".",
+     PARA,
+     "This function requires an immutable hash table.  To scan the values in
+     a mutable hash table, use ", TT "scan(values x, f)", "."
      }
 
 document { quote GlobalAssignHook,
