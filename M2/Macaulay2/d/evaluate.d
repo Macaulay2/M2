@@ -764,7 +764,12 @@ export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr := (
      else (
 	  method := lookupBinaryMethod(Class(left),Class(right),Expr(methodkey),
 	       methodkey.symbol.hash);
-	  if method == nullE then MissingMethodPair(methodkey,left,right)
+	  if method == nullE then (
+	       if methodkey == AdjacentS
+	       then when left is f:SymbolClosure do buildErrorPacket("symbol '" + f.symbol.word.name + "' has not been defined as a function")
+	       else MissingMethodPair(methodkey,left,right)
+	       else MissingMethodPair(methodkey,left,right)
+	       )
 	  else apply(method,left,right)));
 
 -----------------------------------------------------------------------------
