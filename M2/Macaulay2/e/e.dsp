@@ -126,8 +126,8 @@ BuildCmds= \
 	echo made cmdnames.hpp \
 	gawk -f misc/cmdinst.awk <misc\cmdnames.input >cmdinst.hpp \
 	echo made cmdinst.hpp \
-	gawk -f misc/cmdg.awk <misc\cmdnames.input >cmdnames.m2 \
-	echo made cmdnames.m2 \
+	gawk -f misc/cmdg.awk <misc\cmdnames.input >..\m2\cmdnames.m2 \
+	echo made ..\m2\cmdnames.m2 \
 	
 
 "cmdnames.hpp" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
@@ -136,16 +136,12 @@ BuildCmds= \
 "cmdinst.hpp" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
 
-"cmdnames.m2" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+"../m2/cmdnames.m2" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
    $(BuildCmds)
 # End Custom Build
 
 !ENDIF 
 
-# End Source File
-# Begin Source File
-
-SOURCE=.\cmdnames.m2
 # End Source File
 # Begin Source File
 
