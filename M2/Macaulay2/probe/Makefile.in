@@ -36,6 +36,6 @@ addresses : probe.out
 		>> syms
 	sort syms > addresses
 	rm syms
-clean ::; rm -f addresses probe
-Makefile : Makefile.in
-	cd ../..; ./config.status Macaulay2/probe/Makefile
+clean ::; rm -f addresses probe probe.o probe.out
+distclean : clean ; rm -f Makefile.in
+Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/probe/Makefile

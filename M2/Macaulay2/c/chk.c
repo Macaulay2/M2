@@ -5,7 +5,6 @@
 node chkcolon(node, env);
 node chklhscolon(node, env);
 const struct ENV empty_env;
-void spin(env);
 
 bool cancellable(node e, node f){
      return (iscons(e) && (
@@ -782,7 +781,6 @@ node chkforeach(node e, env v) {
 	  }
      loop = newlabel();
      perform(list(2,label_S,loop),v);
-     spin(v);
      v->loop = TRUE;
      v->break_loop_label = endlabel;
      chklistn(code,v);
@@ -824,16 +822,6 @@ node chkforeach(node e, env v) {
      return NULL;
      }
 
-void spin(env v){
-     if (spincursor) {
-	  perform(list(3,if_S,
-		    list(4,infix_S,equal_S,
-		    	 list(3,prefix_S,minusminus_S,spincount_S),
-			 zero),
-		    list(2,funcall_S,spincursor_S)),v);
-	  }
-     }
-
 node chkuntil(node e, env v, bool until) {
      bool breaklabelused, afterlabelused = FALSE;
      node b,bafter,l = newlabel(), afterlabel=newlabel(), endlabel=newlabel();
@@ -871,7 +859,6 @@ node chkuntil(node e, env v, bool until) {
 	  afterlabelused = TRUE;
 	  }
      performlist(bafter,v);
-     spin(v);
      v->loop = TRUE;
      v->break_loop_label = endlabel;
      v->continue_loop_label = l;
@@ -1566,7 +1553,6 @@ node chknewarray(node e, env v){
 	       list(4,infix_S,equal_S,len,zero), 
 	       list(2,goto_S,v->make_break_label)),v);
      perform(list(2,label_S,continuelabel),v);
-     spin(v);
      v->disable_breaks = TRUE;
      chk(cons(block_K,args),v);
      push(v->before,list(2,goto_S,continuelabel));

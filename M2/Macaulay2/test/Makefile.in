@@ -30,13 +30,8 @@ ARGS := --silent --stop -q -e 'path=join(path,{"@srcdir@/","@srcdir@/../packages
 	@ ulimit -t 600; time ../bin/M2 $(ARGS) <$< >$*.out
 	@ touch $@
 
-clean  :	
-	rm -f *.okay
-
-distclean: clean
-	rm -f Makefile
-
+clean::; rm -f *.okay *.out core
+distclean:: clean; rm -f Makefile
+clean distclean::; $(MAKE) -C engine $@
 docStructure.out : docStructure.m2
-
-Makefile : Makefile.in
-	cd ../..; ./config.status Macaulay2/test/Makefile
+Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/test/Makefile

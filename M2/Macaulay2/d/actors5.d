@@ -671,13 +671,6 @@ factorInteger(e:Expr):Expr := (
      else WrongArgSmallInteger());
 setupfun("factorInteger",factorInteger);
 
-setSpin(e:Expr):Expr := (
-     when e is i:Integer do (
-	  if isInt(i) then Expr(toInteger(setspinspan(toInt(i))))
-	  else WrongArgSmallInteger())
-     else WrongArgSmallInteger());
-setupfun("setSpin",setSpin);
-
 -- method functions for use in closures
 method1(e:Expr,env:Sequence):Expr := (
      -- env.0 : the primary method function, used as key for lookup

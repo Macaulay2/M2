@@ -9,7 +9,6 @@ bool noline = FALSE;
 bool do_sig = FALSE;
 bool gc = FALSE;
 bool noinits = FALSE;
-bool spincursor = FALSE;
 bool arraychks = TRUE;
 bool do_memstats = TRUE;
 bool do_countstats = FALSE;
@@ -154,8 +153,6 @@ extern void fatalarrayindex();\n\
 extern void fatalarraylen();\n\
 extern void destroy();\n\
 extern void outofmem();\n\
-extern void spincursor();\n\
-extern int spincount;\n\
 extern int do_memstats;\n\
 extern int numchunks[2];\n\
 extern int numbytes[2];\n\
@@ -238,10 +235,6 @@ int main(int argc, char **argv){
 	       }
 	  if (EQUAL == strcmp(argv[i],"-nogcc")) {
 	       gcc = FALSE;
-	       continue;
-	       }
-     	  if (EQUAL == strcmp(argv[i],"-spincursor")) {
-	       spincursor = TRUE;
 	       continue;
 	       }
 	  if (EQUAL == strcmp(argv[i],"-yydebug")) {

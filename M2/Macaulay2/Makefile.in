@@ -22,6 +22,7 @@ $(docm2reldir)/LAYOUT  : LAYOUT  ; $(INSTALL_DATA) $< "$@"
 ################################# srcdir
 initialize :: srcdir
 srcdir :; ln -s "@srcdir@" srcdir
+clean::; rm -f srcdir
 ################################# cache
 initialize :: cache
 cache :; mkdir $@
@@ -74,7 +75,10 @@ install ::; $(INSTALL_PROGRAM) setup $(libm2dir)
 distclean ::; rm -f setup
 ################################# packages
 # from now on, all packages will be separate entities
-# all install check clean distclean ::; $(MAKE) -C packages $@
+# all install check ::; $(MAKE) -C packages $@
+clean distclean ::; $(MAKE) -C packages $@
+################################# probe
+clean distclean ::; $(MAKE) -C probe $@
 ################################# images
 doc :: images
 install distclean clean ::; $(MAKE) -C images $@

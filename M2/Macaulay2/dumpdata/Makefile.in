@@ -33,6 +33,7 @@ test1: checkit
 	./checkit dump "hi there"
 	./checkit load "look!"
 	touch "$@"
+clean::; rm -f test1
 debug1:; gdb --args ./checkit dump "hi there"
 debug2:; gdb --args ./checkit load "look!"
 clean ::; rm -f "$@"
@@ -44,3 +45,4 @@ Makefile : Makefile.in
 all::testprintmaps
 	./$<
 testprintmaps:libdump.a
+clean::; rm -f testprintmaps

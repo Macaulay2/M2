@@ -911,7 +911,6 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 -----------------------------------------------------------------------------
 
 export eval(c:Code):Expr := (
-     -- spincursor(); -- probably obsolete
      e := (
 	  if interrupted then (
 	       if alarmed then (

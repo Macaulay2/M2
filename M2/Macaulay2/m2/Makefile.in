@@ -23,6 +23,7 @@ MADEM2FILES := loads.m2 Macaulay2-doc.m2
 
 initialize:: srcdir
 srcdir:; ln -s @srcdir@ srcdir
+clean::; rm -f srcdir
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -48,6 +49,7 @@ loads.m2 : loads.awk loadsequence
 Macaulay2-doc.m2 : loads.awk docseq 
 	@echo making $@
 	@awk -f $^ >$@
+clean::; rm -f Macaulay2-doc.m2
 
 ################################# cache
 cache cache/doc ../tutorial/final/cache/doc :; mkdir -p $@
@@ -139,6 +141,7 @@ phase3 : initialize phase1 cache/doc/sample cache/doc/expression
 	 #------ phase 3: running new example input files: cache/doc/*.example
 	$(MAKE) -C cache/doc -f ../../Makefile.egs srcdir=$(srcdir)
 	touch $@
+clean::; rm -rf phase3
 
 all :: phase4
 phase4 : phase3 ../cache/Macaulay2-doc

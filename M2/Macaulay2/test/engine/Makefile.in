@@ -14,6 +14,6 @@ ARGS := --silent --stop -q
 	@ ulimit -t 600; ../../bin/M2 $(ARGS) $< -e 'exit(0)'
 	@ touch $@
 
-clean :; rm -f *.okay
+clean::; rm -f *.okay core
 distclean: clean; rm -f Makefile
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/test/engine/Makefile
