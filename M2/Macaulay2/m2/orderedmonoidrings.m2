@@ -70,9 +70,7 @@ degreesRing PolynomialRing := PolynomialRing => R -> (
 
 generators PolynomialRing := R -> R.generators
 coefficientRing PolynomialRing := Ring => R -> last R.baseRings
-allGenerators PolynomialRing := R -> join(
-     apply(allGenerators coefficientRing R, a -> a * 1_R),
-     generators R)
+allGenerators PolynomialRing := R -> join(generators R, apply(allGenerators coefficientRing R, a -> a * 1_R))
 isHomogeneous PolynomialRing := R -> (
      k := coefficientRing R;
      isField k or isHomogeneous k)
