@@ -188,6 +188,7 @@ toString Thing := simpleToString			    -- if all else fails...
 --      if isGlobalSymbol n and getGlobalSymbol n === s then n else concatenate("$",n)     
 --      )
 toString Symbol := simpleToString
+toString Keyword := s -> concatenate("symbol \"", simpleToString s, "\"")
 
 toExternalString = method(SingleArgumentDispatch => true, TypicalValue => String)
 
@@ -237,6 +238,7 @@ flatten VisibleList := VisibleList => oldflatten
 -----------------------------------------------------------------------------
 
 dictionary = method()
+dictionary Keyword := s -> Macaulay2.Dictionary
 dictionary Symbol := s -> (				    -- eventually every symbol will know what dictionary it's in, perhaps
      n := toString s;
      scan(globalDictionaries, d -> if d#?n and d#n === s then break d))

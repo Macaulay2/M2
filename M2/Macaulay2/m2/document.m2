@@ -853,14 +853,12 @@ documentation String := key -> (
 binary := set binaryOperators
 prefix := set prefixOperators
 postfix := set postfixOperators
-other := set otherOperators
-operatorSet = set join(binaryOperators, prefixOperators, postfixOperators, otherOperators)
+operator := set join(binaryOperators, prefixOperators, postfixOperators)
 erase symbol binaryOperators
 erase symbol prefixOperators
 erase symbol postfixOperators
-erase symbol otherOperators
 
-op := s -> if operatorSet#?s then (
+op := s -> if operator#?s then (
      ss := toString s;
      fixup SEQ {
 	  if binary#?s then PARA {

@@ -211,7 +211,7 @@ bump();
      export QuestionS := makeKeyword(binaryleft("?"));
      export NotEqualEqualEqualS := makeKeyword(binaryleft("=!="));
      export NotEqualS := makeKeyword(binaryleft("!="));
-     export inS := makeKeyword(binaryleft("in"));
+     export inS := makeKeyword(binaryleftword("in"));
 -- operations on terms that yield terms:
 bump();
      export BarBarS := makeKeyword(binaryleft("||"));
@@ -472,10 +472,6 @@ export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLes
      LessS, GreaterS, LessEqualS, GreaterEqualS		    -- surprising to find these here...
      );
 export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS );
-export opsOther := array(SymbolClosure)( SharpS, DoubleArrowS,
-     EqualEqualEqualS, EqualEqualS,
-     QuestionS, NotEqualEqualEqualS, SharpSharpS, SharpQuestionS, DotS, DotQuestionS,
-     ExclamationS );
 
 opHasBinaryMethod(o:Symbol):bool := (
      foreach s in opsWithBinaryMethod do if s.symbol == o then return true;

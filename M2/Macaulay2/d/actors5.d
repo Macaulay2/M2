@@ -1131,8 +1131,6 @@ setupconst("prefixOperators",Expr(new array(Expr) len length(opsWithUnaryMethod)
      foreach s in opsWithUnaryMethod do provide Expr(s))));
 setupconst("postfixOperators",Expr(new array(Expr) len length(opsWithPostfixMethod) do (
      foreach s in opsWithPostfixMethod do provide Expr(s))));
-setupconst("otherOperators",Expr(new array(Expr) len length(opsOther) do (
-     foreach s in opsOther do provide Expr(s))));
 
 fileExists(e:Expr):Expr := (
      when e is name:string do toExpr(fileExists(name))
@@ -1301,18 +1299,23 @@ setupfun("relativizeFilename",relativizeFilename);
 
 nodecount := 0;
 countnodes(n:LexNode):void := (
-     nodecount = 0;
+     when n.word is w:Word do nodecount = nodecount + 1 else nothing;
+     when n.next is m:LexNode do countnodes(m) else nothing;
+     when n.further is m:LexNode do countnodes(m) else nothing;
      );
-operatorStrings(e:Expr):Expr := (
-     when e is s:Sequence do if length(s) == 0 then (
-	  node := baseLexNode;
-	  nodecount = 0;
-	  countnodes(baseLexNode);
-	  Expr(new Sequence len nodecount do (
-		    provide nullE
-		    )))
-     else WrongNumArgs(0) else WrongNumArgs(0));
-setupfun("operatorStrings",operatorStrings);
+countnodes(baseLexNode);
+operatorNames := new Sequence len nodecount do provide nullE;
+nodecount = 0;
+fillnodes(n:LexNode):void := (
+     when n.word is w:Word do (
+	  operatorNames.nodecount = Expr(w.name);
+	  nodecount = nodecount + 1;
+	  ) else nothing;
+     when n.next is m:LexNode do fillnodes(m) else nothing;
+     when n.further is m:LexNode do fillnodes(m) else nothing;
+     );
+fillnodes(baseLexNode);
+setupconst("operatorNames",Expr(operatorNames));
 
 isglobalsym(s:string):Expr := when globalLookup(makeUniqueWord(s,parseWORD)) is x:Symbol do True is null do False;
 issym(d:Dictionary,s:string):Expr := when lookup(makeUniqueWord(s,parseWORD),d) is x:Symbol do True is null do False;
