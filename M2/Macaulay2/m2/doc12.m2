@@ -298,11 +298,6 @@ document { examples,
      TT "examples f", " -- returns a list of strings containing examples
      of code using the function ", TT "f", " provided in the documentation
      of ", TT "f", ".",
-     PARA,
-     EXAMPLE {
-	  ///examples partitions///,
-      	  ///printExamples partitions///,
-	  },
      SEEALSO {"document", "printExamples"}
      }
 
