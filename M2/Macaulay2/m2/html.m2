@@ -461,7 +461,7 @@ uninstallPackage Package := o -> pkg -> (
      stderr << "--uninstalling package " << pkg << " in " << buildDirectory << endl;
      -- unmake symbolic links
      if o.Encapsulate and o.MakeLinks then (
-	  symlinkDirectory(buildDirectory, installDirectory, Verbose => true, Undo => true);
+	  symlinkDirectory(buildDirectory, installDirectory, Verbose => debugLevel > 0, Undo => true);
 	  );
      )
 
@@ -528,7 +528,7 @@ installPackage Package := opts -> pkg -> (
 	  bn := buildPackage | ".m2";
 	  fn := currentSourceDir|bn;
 	  if not fileExists fn then error("file ", fn, " not found");
-	  copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose=>true);
+	  copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose => debugLevel > 0);
 
 	  -- copy source subdirectory
 	  srcDirectory := LAYOUT#"packagesrc" pkg#"title";
@@ -570,26 +570,26 @@ installPackage Package := opts -> pkg -> (
 		    inf << val << close;
 		    )));
 
-     -- make test input files
-     testsDir := buildDirectory|LAYOUT#"packagetests" pkg#"title";
-     infn2  := n -> testsDir|toString n|".m2";
-     outfn2 := n -> testsDir|toString n|".out";
-     tmpfn2 := n -> testsDir|toString n|".errors";
-     stderr << "--making test input files in " << testsDir << endl;
-     makeDirectory testsDir;
-     testsDir|".linkdir" << close;
-     scan(pairs pkg#"test inputs", (key,str) -> if class str === String then (
-	       (n,fn) := key;
-	       inf := infn2 n;
-	       val := "-- " | fn | "\n" | str | "\n";
-	       if fileExists inf and get inf === val
-	       then (
-		    if debugLevel > 1 then stderr << "--leaving test input file: " << key << endl;
-		    )
-	       else (
-		    if debugLevel > 1 then stderr << "--making test input file: " << key << endl;
-		    inf << val << close;
-		    )));
+--     -- make test input files
+--     testsDir := buildDirectory|LAYOUT#"packagetests" pkg#"title";
+--     infn2  := n -> testsDir|toString n|".m2";
+--     outfn2 := n -> testsDir|toString n|".out";
+--     tmpfn2 := n -> testsDir|toString n|".errors";
+--     stderr << "--making test input files in " << testsDir << endl;
+--     makeDirectory testsDir;
+--     testsDir|".linkdir" << close;
+--     scan(pairs pkg#"test inputs", (key,str) -> if class str === String then (
+--	       (n,fn) := key;
+--	       inf := infn2 n;
+--	       val := str | "\n";
+--	       if fileExists inf and get inf === val
+--	       then (
+--		    if debugLevel > 1 then stderr << "--leaving test input file: " << key << endl;
+--		    )
+--	       else (
+--		    if debugLevel > 1 then stderr << "--making test input file: " << key << endl;
+--		    inf << val << close;
+--		    )));
 
      -- cache raw documentation in database, and check for changes
      rawDocUnchanged := new MutableHashTable;
@@ -670,32 +670,32 @@ installPackage Package := opts -> pkg -> (
 	       ));
      if haderror and not opts.IgnoreExampleErrors then error "error(s) occurred running example files";
 
-     -- make test output files, or else copy them from the old package directory tree
-     oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";
-     infn2'  := n -> oldTestsDir|toString n|".m2";
-     outfn2' := n -> oldTestsDir|toString n|".out";
-     stderr << "--making test result files in " << testsDir << endl;
-     haderror = false;
-     scan(pairs pkg#"test inputs", (key,inputs) -> (
-     	       -- args:
-	       (n,fn) := key;
-	       inf := infn2 n;
-	       outf := outfn2 n;
-	       tmpf := tmpfn2 n;
-	       inf' := infn2' n;
-	       outf' := outfn2' n;
-	       desc := "test results for " | toString key;
-     	       if fileExists outf and fileTime outf >= fileTime inf then (
-		    -- do nothing
-		    )
-	       else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
-	       then copyFile(outf',outf)
-	       else (
-		    -- error "debug me";
-		    runFile(inf,outf,tmpf,desc,pkg,identity,".");
-		    );
-	       ));
-     if haderror then error "error(s) occurred running test files";
+--      -- make test output files, or else copy them from the old package directory tree
+--      oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";
+--      infn2'  := n -> oldTestsDir|toString n|".m2";
+--      outfn2' := n -> oldTestsDir|toString n|".out";
+--      stderr << "--making test result files in " << testsDir << endl;
+--      haderror = false;
+--      scan(pairs pkg#"test inputs", (key,inputs) -> (
+--      	       -- args:
+-- 	       (n,fn) := key;
+-- 	       inf := infn2 n;
+-- 	       outf := outfn2 n;
+-- 	       tmpf := tmpfn2 n;
+-- 	       inf' := infn2' n;
+-- 	       outf' := outfn2' n;
+-- 	       desc := "test results for " | toString key;
+--      	       if fileExists outf and fileTime outf >= fileTime inf then (
+-- 		    -- do nothing
+-- 		    )
+-- 	       else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
+-- 	       then copyFile(outf',outf)
+-- 	       else (
+-- 		    -- error "debug me";
+-- 		    runFile(inf,outf,tmpf,desc,pkg,identity,".");
+-- 		    );
+-- 	       ));
+--      if haderror then error "error(s) occurred running test files";
 
      -- process documentation
      stderr << "--processing documentation nodes..." << endl;
@@ -705,7 +705,7 @@ installPackage Package := opts -> pkg -> (
 	       	    -- stderr << "--skipping   " << tag << endl;
 		    )
 	       else (
-	       	    stderr << "--processing " << tag << endl;
+	       	    -- stderr << "--processing " << tag << endl;
 	       	    pkg#"processed documentation"#fkey = documentation tag;
 		    );
 	       ));
@@ -854,7 +854,7 @@ installPackage Package := opts -> pkg -> (
 
      -- make symbolic links
      if opts.Encapsulate and opts.MakeLinks then (
-	  symlinkDirectory(buildDirectory, installDirectory, Verbose => true)
+	  symlinkDirectory(buildDirectory, installDirectory, Verbose => debugLevel > 0)
 	  );
 
      -- make new package index
