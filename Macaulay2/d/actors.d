@@ -122,6 +122,19 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 plus(e:Expr):Expr := accumulate(plus0,plus1,op+,e);
 setupfun("plus",plus);
 
+plusfun1(rhs:Code):Expr := (
+     r := eval(rhs);
+     when r
+     is Error do r
+     is Real do r
+     is Integer do r
+     is BigReal do r
+     is Rational do r
+     is RawRingElement do r
+     is RawMatrix do r
+     is LMatrixRR do r
+     is LMatrixCC do r
+     else unarymethod(rhs,PlusS));
 plusfun(lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
      when l is Error do l
@@ -129,7 +142,7 @@ plusfun(lhs:Code,rhs:Code):Expr := (
      	  r := eval(rhs);
      	  when r is Error do r
 	  else l+r));
-setup(PlusS,plusfun);
+setup(PlusS,plusfun1,plusfun);
 export - (rhs:Expr) : Expr := (
      when rhs
      is x:Real do Expr(Real(-x.v))

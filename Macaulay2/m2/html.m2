@@ -135,29 +135,6 @@ fakeMenu := x -> (
 
 commentize := s -> if s =!= null then concatenate(" -- ",s)
 
-makeHtmlNode = method()
-makeHtmlNode DocumentTag := tag -> (
-     key := DocumentTag.Key tag;
-     fkey := DocumentTag.FormattedKey tag;
-     fn := buildDirectory | htmlFilename tag;
-     if debugLevel > 1 then stderr << "--making html page for " << tag << endl;
-     fn
-     << encoding << endl
-     << doctype << endl
-     << html HTML { 
-	  HEAD {
-	       TITLE {fkey, commentize headline key},
-	       style(), links()
-	       },
-	  BODY { 
-	       buttonBar tag,
-	       if UP#?tag then SEQ between(" > ", apply(upAncestors tag, i -> TO i)),
-	       HR{}, 
-	       documentation key,			    -- a better way??
-	       }
-	  }
-     << endl << close)
-
 -----------------------------------------------------------------------------
 
 checkIsTag := tag -> ( assert(class tag === DocumentTag); tag )
@@ -476,6 +453,10 @@ installPackage Package := o -> pkg -> (
 	       ));
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
+     -- process documentation
+     stderr << "--processing documentation nodes" << endl;
+     scan(nodes, tag -> pkg#"processed documentation"#(DocumentTag.FormattedKey tag) = documentation tag);
+
      -- make table of contents, including next, prev, and up links
      stderr << "--assembling table of contents" << endl;
      assembleTree(pkg,nodes);
@@ -514,7 +495,7 @@ installPackage Package := o -> pkg -> (
 	       if NEXT#?tag then infofile << ", Next: " << infoTagConvert' DocumentTag.FormattedKey NEXT#tag;
 	       if PREV#?tag then infofile << ", Prev: " << infoTagConvert' DocumentTag.FormattedKey PREV#tag;
 	       if UP#?tag   then infofile << ", Up: " << infoTagConvert' DocumentTag.FormattedKey UP#tag;
-     	       infofile << endl << endl << info documentation key << endl));
+     	       infofile << endl << endl << info pkg#"processed documentation"#fkey << endl));
      infofile << "\037" << endl << "Tag Table:" << endl;
      scan(values byteOffsets, b -> infofile << b << endl);
      infofile << "\037" << endl << "End Tag Table" << endl;
@@ -559,7 +540,27 @@ installPackage Package := o -> pkg -> (
      setupButtons();
      makeDirectory (buildDirectory|htmlDirectory);     
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
-     ret := makeHtmlNode \ nodes;
+     scan(nodes, tag -> (
+	  key := DocumentTag.Key tag;
+	  fkey := DocumentTag.FormattedKey tag;
+	  fn := buildDirectory | htmlFilename tag;
+	  if debugLevel > 1 then stderr << "--making html page for " << tag << endl;
+	  fn
+	  << encoding << endl
+	  << doctype << endl
+	  << html HTML { 
+	       HEAD {
+		    TITLE {fkey, commentize headline key},
+		    style(), links()
+		    },
+	       BODY { 
+		    buttonBar tag,
+		    if UP#?tag then SEQ between(" > ", apply(upAncestors tag, i -> TO i)),
+		    HR{}, 
+		    pkg#"processed documentation"#fkey,
+		    }
+	       }
+	  << endl << close));
 
      -- make master.html with master index of all the html files
      makeMasterIndex nodes;

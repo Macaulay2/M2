@@ -196,14 +196,14 @@ html ExampleTABLE := x -> concatenate(
      )			 
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
-truncateString := s -> if width s <= printWidth then s else concatenate(substring(s,0,printWidth-1),"$")
-truncateNet := n -> if width n <= printWidth then n else stack(apply(unstack n,truncateString))
+truncateString := s -> if printWidth == 0 or width s <= printWidth then s else concatenate(substring(s,0,printWidth-1),"$")
+truncateNet    := n -> if printWidth == 0 or width n <= printWidth then n else stack(apply(unstack n,truncateString))
 
 info ExampleTABLE := net ExampleTABLE := x -> (
      p := "    ";
-     printWidth = printWidth - #p -2;
+     if printWidth != 0 then printWidth = printWidth - #p -2;
      r := p | boxList apply(toList x, y -> truncateNet net y#1);
-     printWidth = printWidth + #p + 2;
+     if printWidth != 0 then printWidth = printWidth + #p + 2;
      r)
 info EXAMPLE := net EXAMPLE := x -> net ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
