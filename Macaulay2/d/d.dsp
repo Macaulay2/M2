@@ -49,7 +49,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /debug /machine:I386 /out:"Release/Macaulay2.exe"
+# ADD LINK32 ../e/Release/e.lib  ../../libfac/Release/libfac.lib ../../factory/Release/factory.lib ../../gmp/Release/gmp.lib ../../gmp/mpn/Release/mpn.lib ../../gmp/mpz/Release/mpz.lib ../dbm/Release/dbm.lib ../../gcStatic/Release/gc.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /debug /machine:I386 /out:"Release/Macaulay2.exe"
 # SUBTRACT LINK32 /map
 
 !ELSEIF  "$(CFG)" == "d - Win32 Debug"
@@ -74,7 +74,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 ../../gmp/Debug/gmp.lib ../../gmp/mpn/Debug/mpn.lib ../../gmp/mpz/Debug/mpz.lib ../dbm/Debug/dbm.lib ../e/Debug/e.lib ../../gcStatic/Debug/gc.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /debug /machine:I386 /out:"Debug/Macaulay2.exe" /pdbtype:sept
+# ADD LINK32 ../e/Debug/e.lib  ../../libfac/Debug/libfac.lib ../../factory/Debug/factory.lib ../../gmp/Debug/gmp.lib ../../gmp/mpn/Debug/mpn.lib ../../gmp/mpz/Debug/mpz.lib ../dbm/Debug/dbm.lib ../../gcStatic/Debug/gc.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:console /debug /machine:I386 /out:"Debug/Macaulay2.exe" /pdbtype:sept
 
 !ENDIF 
 

@@ -50,7 +50,7 @@ void Z_mod::text_out(ostream &o) const
   o << "Z/" << P;
 }
 
-inline int Z_mod::to_int(int f) const
+int Z_mod::to_int(int f) const
 {
   int n = exp_table[f];
   if (n > P/2) n -= P;
