@@ -797,6 +797,12 @@ netDepth(e:Expr):Expr := (
      else WrongArg("a net"));
 setupfun("netDepth",netDepth);
 
+netRows(e:Expr):Expr := (
+     when e
+     is n:Net do list(new Sequence len length(n.body) do foreach s in n.body do provide Expr(s))
+     else WrongArg("a net"));
+setupfun("netRows",netRows);
+
 alarm(e:Expr):Expr := (
      when e is i:Integer do 
      if isInt(i)

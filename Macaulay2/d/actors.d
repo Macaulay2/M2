@@ -605,8 +605,8 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 	       is bb:HashTable do (
 		    if ancestor(bb.class,typeClass)
 		    then installMethod(a,bb,eval(args.3))
-		    else errorExpr("expected right hand parameter type"))
-	       else errorExpr("expected right hand parameter hash table or sequence"))
+		    else errorExpr("expected right hand parameter to be a type"))
+	       else errorExpr("expected right hand parameter to be a hash table or sequence"))
 	  else errorExpr("encountered symbol instead of a class"))
      else errorExpr("expected operator to be a symbol"));
 installFun(args:CodeSequence):Expr := (

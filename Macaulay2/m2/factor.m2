@@ -116,11 +116,7 @@ document { quote irreducibleCharacteristicSeries,
      "This is an internal routine used by ", TO "decompose", "."
      }
 
-factor ZZ := (n,options) -> (
-     new Product from apply(sort pairs factorInteger n, 
-	  (p,i)-> new Power from {p,i}
-	  )
-     )
+factor ZZ := (n,options) -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i} )
 factor QQ := (r,options) -> factor numerator r / factor denominator r
 erase quote factorInteger
 -----------------------------------------------------------------------------

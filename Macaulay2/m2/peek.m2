@@ -2,6 +2,7 @@
 
 peek2 := method()
 
+peek2(Symbol,ZZ) := (s,depth) -> if depth === 0 then string s else name s
 peek2(Thing,ZZ) := (s,depth) -> net s
 peek2(BasicList,ZZ) := (s,depth) -> (
      if depth === 0 then net s
@@ -12,7 +13,23 @@ peek2(BasicList,ZZ) := (s,depth) -> (
 	       apply(s,
 	       	    value -> peek2(value,depth-1))),
 	  "}"
-	  ))
+	  )
+     )
+peek2(String, ZZ) := (s,depth) -> if depth === 0 then s else format s
+
+boxNet := x -> ( 
+     s := concatenate("+", width x : "-", "+");
+     n := height x + depth x;
+     if n === 0 then (
+     	  (s || x || s) ^ (height x)
+	  )
+     else (
+     	  t := (verticalJoin (n : "|")) ^ (height x - 1);
+     	  (s || t | x | t || s) ^ (height x)
+	  )
+     )
+
+peek2(Net, ZZ) := (s,depth) -> if depth === 0 then s else boxNet s
 
 peek2(Sequence,ZZ) := (s,depth) -> (
      if depth === 0 then net s
@@ -53,7 +70,7 @@ peek2(HashTable,ZZ) := (s,depth) -> (
 
 peek = method()
 
-peek(Thing,ZZ) := (s,depth) -> ( << peek2(s,depth) << endl; )
+peek(Thing,ZZ) := (s,depth) -> peek2(s,depth)
 
 peek(Thing) := s -> peek(s,1)
 

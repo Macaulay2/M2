@@ -379,11 +379,7 @@ Matrix * Vector := (m,v) -> (
      sendgg(ggPush m, ggPush v, ggmult);
      new m.target)
 
-expression Matrix := m -> (
-     rows := numgens target m;
-     cols := numgens source m;
-     new MatrixExpression from applyTable(entries m, expression)
-     )
+expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
 
 name Matrix := m -> concatenate (
      -- "matrix (", name target m, ", ", name source m, ", ", name entries m, ")"
@@ -1741,9 +1737,9 @@ net Matrix := f -> (
      else (
 	  R := ring target f;
 	  m := verticalJoin toSequence apply(
-	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate(" | ",x,"|"));
+	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"));
 	  if degreeLength R > 0 -- and isHomogeneous f
-	  then m = verticalJoin (degrees cover target f / name) | m;
+	  then m = horizontalJoin(verticalJoin(degrees cover target f / name), " ", m);
 	  m))
 
 image Matrix := f -> (

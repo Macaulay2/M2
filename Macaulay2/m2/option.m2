@@ -1,7 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 Option = new Type of BasicList
-MarkUpType Option := (x,y) -> x {y}
 html Option := x -> name x
 text Option := x -> name x
 

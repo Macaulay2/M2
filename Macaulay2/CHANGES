@@ -2,6 +2,13 @@ Changes made, most recent ones first:
 
 New in 0.8.42:
 
+'net String' now does not put quotes around the string, and
+'net Net' does not put a box around the net.  This changes
+the appearance of displayed objects containing strings, but you
+can still use 'peek' to see the quotes around the strings.
+
+'HeldString' removed in favor of 'Held'
+
 type 'HtmlList' renamed to 'MarkUpList'
 
 type 'ListHead' renamed to 'MarkUpType'

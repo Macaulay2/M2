@@ -62,7 +62,7 @@ masterFileName << html HTML {
 	  },
      BODY {
 	  H2 masterNodeName,
-	  MENU apply(sort pairs masterIndex, (key, fname) -> HREF {fname, key}),
+	  MENU apply(sort pairs masterIndex, (key, fname) -> HREF {fname, formatDocumentTag key}),
      	  PARA, "Go to ", HREF {topFileName, topNodeAlias}, "."
 	  }
      } << endl << close

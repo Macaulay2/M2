@@ -47,8 +47,10 @@ endl = new Manipulator from oldendl
 erase quote "--newline--"
 
 << Thing := x -> stdout << x
-File << Net := File << Symbol := File << String := printString
-File << Thing := (x,y) -> printString(x,string y) -- provisional
+File << Net := printString
+File << String := printString
+File << Symbol := printString	   		      -- provisional
+File << Thing := (x,y) -> printString(x,string y)     -- provisional
 
 protect AfterEval
 protect AfterPrint

@@ -291,11 +291,6 @@ computeAndCache := (M,options,name,goodEnough,computeIt) -> (
      )
 -----------------------------------------------------------------------------
 
-BeforePrint Symbol := lookup(name,Symbol)
-net Symbol := lookup(name,Symbol)
-
------------------------------------------------------------------------------
-
 html = method(SingleArgumentDispatch=>true)
 text = method(SingleArgumentDispatch=>true)
 tex = method(SingleArgumentDispatch=>true)
@@ -333,12 +328,14 @@ HR         = new EmptyMarkUpType
 PARA       = new MarkUpType
 EXAMPLE    = new MarkUpType
 TABLE      = new MarkUpType
+ExampleTABLE = new MarkUpType
 PRE        = new MarkUpType
 TITLE      = new MarkUpType
 HEAD       = new MarkUpType
 BODY       = new MarkUpType
 IMG	   = new MarkUpType
 HTML       = new MarkUpType
+CENTER     = new MarkUpType
 H1         = new MarkUpType
 H2         = new MarkUpType
 H3         = new MarkUpType
@@ -440,16 +437,22 @@ cmrLiteral := s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 
 html String := htmlLiteral
 tex String := cmrLiteral
+texMath String := cmrLiteral
 text String := identity
 
 texMath List := x -> concatenate("\\{", between(",", apply(x,texMath)), "\\}")
 texMath Sequence := x -> concatenate("(", between(",", apply(x,texMath)), ")")
 
-tex Nothing := html Nothing := text Nothing := x -> ""
+texMath Nothing := tex Nothing := html Nothing := text Nothing := x -> ""
 
+texMath Boolean := texMath Symbol :=
 tex Boolean := tex Symbol :=
 text Symbol := text Boolean := 
 html Symbol := html Boolean := string
+
+net Symbol := s -> if operators#?s then operators#s else string s
+File << Symbol := (o,s) -> o << net s	  -- replaces a method installed in setup.m2
+erase quote operators			  -- created in name.m2
 
 linkFilenameTable := new MutableHashTable
 linkFilenameCounter := 0
@@ -467,10 +470,14 @@ linkFilename = s -> (
 html MarkUpList := x -> concatenate apply(x,html)
 text MarkUpList := x -> concatenate apply(x,text)
 tex MarkUpList := x -> concatenate apply(x,tex)
+net MarkUpList := x -> horizontalJoin apply(toList x,net)
+texMath MarkUpList := x -> concatenate apply(x,tex)
 
-html MarkUpType := H -> html H{}
-text MarkUpType := H -> text H{}
-tex  MarkUpType := H -> tex  H{}
+--html MarkUpType := H -> html H{}
+--text MarkUpType := H -> text H{}
+--tex MarkUpType := H -> tex H{}
+--net MarkUpType := H -> net H{}
+--texMath MarkUpType := H -> tex H{}
 
 html BR := x -> ///
 <BR>
@@ -482,6 +489,7 @@ tex  BR := x -> ///
 ///
 
 html NOINDENT := x -> ""
+net NOINDENT := x -> ""
 text NOINDENT := x -> ""
 tex  NOINDENT := x -> ///
 \noindent\ignorespaces
@@ -505,29 +513,61 @@ html PARA := x -> concatenate(///
      ///
 </P>
 ///)
-tex PARA := text PARA := x -> ///
-
-///
+tex PARA := x -> concatenate(newline, newline, apply(x,tex))
+text PARA := x -> concatenate(newline, newline, apply(x,text))
 
 text EXAMPLE := x -> concatenate apply(x,i -> text PRE i)
-html EXAMPLE := x -> concatenate html TABLE apply(x, x -> {PRE x})
+html EXAMPLE := x -> concatenate html ExampleTABLE apply(toList x, x -> CODE x)
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
+text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y, newline)))
 
+net TABLE := x -> net MatrixExpression toList x
 tex TABLE := x -> concatenate applyTable(x,tex)
+texMath TABLE := x -> concatenate (
+     ///
+\matrix{
+///,
+     apply(x,
+	  row -> (
+	       apply(row,item -> (texMath item, "&")),
+	       ///\cr
+///
+	       )
+	  ),
+     ///}
+///
+     )
+
+tex ExampleTABLE := x -> concatenate apply(x,tex)
 
 html TABLE := x -> concatenate(
+     newline,
+     "<TABLE>",
+     newline,
+     apply(x, row -> ( 
+	       "  <TR>",
+	       newline,
+	       apply(row, item -> ("    <TD ALIGN=CENTER>", html item, "</TD>",newline)),
+	       "  </TR>",
+	       newline)),
+     "</TABLE>",
+     newline
+     )			 
+
+html ExampleTABLE := x -> concatenate(
      newline,
      "<P>",
      "<CENTER>",
      "<TABLE cellspacing='0' cellpadding='12' border='4' bgcolor='#80ffff' width='100%'>",
      newline,
-     apply(x, row -> ( 
-	       "  <TR>",
-	       newline,
-	       apply(row, item -> ("    <TD NOWRAP>", html item, "</TD>",newline)),
-	       "  </TR>",
-	       newline)),
+     apply(x, 
+	  item -> (
+	       "  <TR>", newline,
+	       "    <TD NOWRAP>", html item, "</TD>", newline,
+	       "  </TR>", newline
+	       )
+	  ),
      "</TABLE>",
      "</CENTER>",
      "</P>"
@@ -589,14 +629,26 @@ tex  IMG  := x -> ""
 
 html LISTING := t -> "<LISTING>" | concatenate toSequence t | "</LISTING>";
 
-tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
+texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
+
+texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
 html ITALIC := x -> concatenate("<I>",apply(x,html),"</I>")
 
-tex TEX   := identity
+texMath TEX := tex TEX := identity
 
-tex SEQ   := x -> concatenate(apply(x, tex))
-text SEQ   := x -> concatenate(apply(x, text))
-html SEQ   := x -> concatenate(apply(x, html))
+texMath SEQ := tex SEQ := x -> concatenate(apply(x, tex))
+text SEQ := x -> concatenate(apply(x, text))
+html SEQ := x -> concatenate(apply(x, html))
+net SEQ := x -> (
+     x = toList x;
+     p := join({-1},positions(x,i -> class i === PARA or class i === BR),{#x});
+     verticalJoin apply(#p - 1, 
+	  i -> horizontalJoin join(
+	       if i > 0 then apply(toList x#(p#i), net) else {},
+	       apply(take(x,{p#i+1, p#(i+1)-1}), net)
+	       )
+	  )
+     )
 
 tex Sequence := tex List := x -> concatenate("$",texMath x,"$")
 
@@ -606,8 +658,10 @@ text List := x -> concatenate("{", between(",", apply(x,text)), "}")
 html Sequence := x -> concatenate("(", between(",", apply(x,html)), ")")
 html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 
-tex TT := x -> concatenate(///{\tt {}///, ttLiteral x#0, "}")
-text TT := x -> concatenate("'", x#0, "'")
+texMath TT := tex TT := x -> concatenate(///{\tt {}///, ttLiteral concatenate x, "}")
+text TT := net TT := x -> concatenate("'", x, "'")
+
+net CODE := x -> verticalJoin lines concatenate x
 
 html CODE   := x -> concatenate( 
      "<CODE>", 
@@ -739,8 +793,8 @@ html TO   := x -> concatenate (
 
 tex TO := x -> tex TT formatDocumentTag x#0
 
-tex SUP := x -> concatenate( "^{", apply(x, tex), "}" )
-tex SUB := x -> concatenate( "_{", apply(x, tex), "}" )
+texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
+texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
 
 -----------------------------------------------------------------------------
 -- start documentation here
@@ -752,7 +806,8 @@ document { quote document,
      "The documentation ", TT "d", " should be ", TO "hypertext", ".  The topic
      ", TT "s", " may be one of the special forms useable with ", TO "TO", ".  As
      a convenience, lists and sequences in ", TT "d", " are converted to ", TT "SEQ", "
-     mark up items.",
+     mark up items, and instances of ", TO "MarkUpType", ", such as ", TO "PARA", "
+     are converted to empty instances of their type.",
      PARA,
      SEEALSO {"help functions"}
      }
