@@ -23,7 +23,8 @@ ifeq "$(DEBUG)" "yes"
 ALLOBJ += debug.o
 endif
 
-CFILES += M2inits.c M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c
+OPTCFILES := M2inits.c
+CFILES += M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c
 SRCFILES += $(OPTCFILES) $(CFILES)
 ALLOBJ += $(CFILES:.c=.o)
 
@@ -186,7 +187,12 @@ tmp_init.c : $(DFILES)
 ###################### libraries
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
+
+## we put M2init.o here so its constructor gets run first!
+LIBRARYOPTIONS += M2inits.o
+
   # -- we do not need -lcfmem, because we include replacement routines in d/scclib.c
+LIBRARYOPTIONS += $(LAPACKLIBS)
 LIBRARYOPTIONS += -lntl
 LIBRARYOPTIONS += $(LIBGMP)
 LIBRARYOPTIONS += -lgc
@@ -194,7 +200,6 @@ LIBRARYOPTIONS += -lgdbm
 LIBRARYOPTIONS += -lreadline -lhistory -lcurses
   # we successfully avoid using streamio, but we need the personality function in libstc++
 LIBRARYOPTIONS += -lstdc++
-LIBRARYOPTIONS += $(LAPACKLIBS)
 LOADLIBES := $(LIBRARYOPTIONS) $(LOADLIBES)
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 
