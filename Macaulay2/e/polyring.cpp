@@ -20,6 +20,8 @@
 
 #define POLY(q) ((q).poly_val)
 
+PolynomialRing *PolynomialRing::trivial_poly_ring = 0; // Will be ZZ[]
+
 PolynomialRing::~PolynomialRing()
 {
   // Nothing to do
@@ -75,6 +77,22 @@ PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
   const PolynomialRing *flatR = result->get_flattened_ring();
   result->_gb_ring = GBRing::create_PolynomialRing(flatR->Ncoeffs(), flatR->Nmonoms());
   return result;
+}
+
+const PolynomialRing *PolynomialRing::get_trivial_poly_ring()
+{
+  if (trivial_poly_ring == 0)
+    {
+      Monoid *M = Monoid::get_trivial_monoid();
+      trivial_poly_ring = new PolynomialRing();
+      trivial_poly_ring->initialize_poly_ring(globalZZ,M);
+      const PolynomialRing *flatR = trivial_poly_ring;
+      trivial_poly_ring->_gb_ring = GBRing::create_PolynomialRing(flatR->Ncoeffs(), 
+								  flatR->Nmonoms());
+      Monoid::set_trivial_monoid_degree_ring(trivial_poly_ring);
+    }
+
+  return trivial_poly_ring;
 }
 
 #if 0

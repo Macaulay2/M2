@@ -21,13 +21,6 @@ void Ring::initialize_ring(int P0,
   _totalvars = totalvars;
   D_ = D;
 
-  if (D_->n_vars() > 0)
-    {
-      _HRing = PolynomialRing::create(globalZZ, D_);
-    }
-  else
-    _HRing = 0;
-
   _zero_divisor = ZERO_RINGELEM;
   _isfield = false;
 

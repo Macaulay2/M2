@@ -7,10 +7,22 @@
 #include "ntuple.hpp"
 #include "../d/M2mem.h"
 
+#include "polyring.hpp"
+
 Monoid *Monoid::trivial_monoid = 0;
+
+void Monoid::set_trivial_monoid_degree_ring(const PolynomialRing *DR)
+{
+  Monoid *M = get_trivial_monoid();
+  M->moninfo->degree_ring = DR;
+  M->moninfo->degree_monoid = DR->Nmonoms();
+}
+
+// ONLY to be called by PolynomialRing::get_trivial_poly_ring()
 
 monoid_info::monoid_info()
 : nvars(0),
+  degree_ring(NULL),
   degree_monoid(NULL),
   _mo(0),
   mo(mon_order::trivial()),		// the trivial monomial order
@@ -25,12 +37,15 @@ monoid_info::monoid_info()
 monoid_info::monoid_info(MonomialOrdering *mo2, 
 			 mon_order *mmo,
 			 M2_stringarray s,
-			 const Monoid *deg_monoid,
+			 const PolynomialRing *deg_ring,
 			 M2_arrayint degs)
   : nvars(rawNumberOfVariables(mo2)),
-  varnames(s),
-  degvals(degs),
-  degree_monoid(deg_monoid), _mo(mo2), mo(mmo)
+    varnames(s),
+    degvals(degs),
+    degree_ring(deg_ring),
+    degree_monoid(deg_ring->degree_monoid()), 
+    _mo(mo2), 
+    mo(mmo)
 { 
   int ngroup = rawNumberOfInvertibleVariables(mo2);
     
@@ -241,11 +256,11 @@ static mon_order *make_mon_order(MonomialOrdering *mo)
 
 Monoid *Monoid::create(MonomialOrdering *mo,
 		       M2_stringarray names,
-		       const Monoid *deg_monoid,
+		       const PolynomialRing *deg_ring,
 		       M2_arrayint degs)
 {
   unsigned int nvars = rawNumberOfVariables(mo);;
-  unsigned int eachdeg = deg_monoid->n_vars();
+  unsigned int eachdeg = deg_ring->n_vars();
   if (degs->len != nvars * eachdeg)
     {
       ERROR("degree list should be of length %d", nvars * eachdeg);
@@ -269,7 +284,7 @@ Monoid *Monoid::create(MonomialOrdering *mo,
   // create internal monomial order
   mon_order *mmo = make_mon_order(mo);
   if (mmo == 0) return 0;
-  monoid_info *moninf = new monoid_info(mo, mmo, names, deg_monoid, degs);
+  monoid_info *moninf = new monoid_info(mo, mmo, names, deg_ring, degs);
   
   return new Monoid(moninf, 16);
 }
@@ -296,8 +311,8 @@ Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
   for (i=0; i<n2; i++)
     names->array[n1+i] = m2->varnames->array[i];
 
-  const Monoid *D = M1->degree_monoid();
-  int ndegs = D->n_vars();
+  const PolynomialRing *DR = M1->get_degree_ring();
+  int ndegs = DR->n_vars();
 
   M2_arrayint degs = makearrayint(ndegs*n);
 
@@ -310,7 +325,7 @@ Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
     for (i=0; i<ndegs; i++)
       degs->array[next++] = 1;
 
-  return Monoid::create(M,names,D,degs);
+  return Monoid::create(M,names,DR,degs);
 }
 
 void Monoid::text_out(buffer &o) const

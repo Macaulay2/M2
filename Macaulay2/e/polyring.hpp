@@ -53,6 +53,8 @@ protected:
   void initialize_poly_ring(const Ring *K, const Monoid *M);
   virtual ~PolynomialRing();
   PolynomialRing() {}
+
+  static PolynomialRing *trivial_poly_ring;
 public:
   static PolynomialRing *create(const Ring *K, const Monoid *MF);
 
@@ -96,6 +98,7 @@ public:
   const Ring *  Ncoeffs()       const { return K_; }
   const Monoid * Nmonoms()       const { return M_; }
 
+  static const PolynomialRing *get_trivial_poly_ring();
 
   static PolynomialRing *create_quotient_ring(GBComputation *G);
 
