@@ -6,15 +6,18 @@
 
 MonomialIIdeal *MonomialIIdeal::make(const Matrix &m, int component)
 {
+  return NULL;
 }
 
 MonomialIIdeal *MonomialIIdeal::make(const Ring *R, 
 			      vector<MonomialTable<int>::tagged_monomial *> &new_elems)
 {
+  return NULL;
 }
  
 Matrix MonomialIIdeal::to_matrix() const
 {
+  return NULL;
 }
 
 bool MonomialIIdeal::is_equal(const MonomialIIdeal *I) const
@@ -127,32 +130,42 @@ bool MonomialIIdeal::is_borel() const
 
 MonomialIIdeal *MonomialIIdeal::radical() const
 {
+  return NULL;
 }
 MonomialIIdeal *MonomialIIdeal::add(MonomialIIdeal *I) const
 {
+  return NULL;
 }
 MonomialIIdeal *MonomialIIdeal::mult(MonomialIIdeal *J) const
 {
+  return NULL;
 }
 MonomialIIdeal *MonomialIIdeal::intersect(const int *m) const // m is a varpower monomial
 {
+  return NULL;
 }
 MonomialIIdeal *MonomialIIdeal::quotient(const int *m) const // m is a varpower monomial
 {
+  return NULL;
 }
 MonomialIIdeal *MonomialIIdeal::quotient(const MonomialIIdeal *J) const
 {
+  return NULL;
 }
 MonomialIIdeal *MonomialIIdeal::erase(const int *m) const // m is a varpower monomial
 {
+  return NULL;
 }
 MonomialIIdeal *MonomialIIdeal::sat(const MonomialIIdeal *J) const
 {
+  return NULL;
 }
 MonomialIIdeal *MonomialIIdeal::intersect(const MonomialIIdeal *J) const
 {
+  return NULL;
 }
 MonomialIIdeal *MonomialIIdeal::operator-(const MonomialIIdeal *F) const
 {
+  return NULL;
 }
 

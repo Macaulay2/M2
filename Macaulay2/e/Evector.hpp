@@ -141,7 +141,7 @@ public:
     
 
   // Degrees
-  bool isGraded(monomial *&result_degree) const;
+  bool isGraded(const monomial *&result_degree) const;
   const monomial *degree() const;
   void degreeLoHi(const monomial *&lo, const monomial *&hi) const;
   void degreeWeightsLoHi(int i, int &lo, int &hi) const;

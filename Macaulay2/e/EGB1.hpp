@@ -195,8 +195,8 @@ private:
   es_pair *merge_pairs(es_pair *f, es_pair *g) const;
   void sort_pairs(es_pair * &p) const;
 
-  void choose_nice_pair(es_pair *&p);
-  void choose_unique_pairs(es_pair * &p) const;
+  void choose_nice_pair(es_pair *&p); 
+  void choose_unique_pairs(es_pair * &p);
   
 private:
   ERingTable *create_ring_table() const;
@@ -206,7 +206,7 @@ private:
     // Find a GB element which divides m*comp, if one exists.
     // Problem: which one should one choose?
 
-  void minimalize_pairs(es_pair *&p) const;
+  void minimalize_pairs(es_pair *&p) ;
     // Takes a list of s-pairs, and chooses a set which generate.
 
   void update_pairs(egb_elem *p);

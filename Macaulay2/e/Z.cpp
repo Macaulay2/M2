@@ -101,7 +101,7 @@ void Z::elem_text_out(buffer &o, const ring_elem ap) const
   char *str;
 
   bool is_neg = (mpz_cmp_si(a, 0) == -1);
-  bool is_one = (mpz_cmp_si(a, 1) == 0 || mpz_cmp_si(a, -1) == 0);
+  bool is_one = (mpz_cmp_si(a, 1) == 0 || mpz_cmp_si(a, (unsigned)-1) == 0);
 
   int size = mpz_sizeinbase(a, 10) + 2;
 
@@ -172,7 +172,7 @@ bool Z::is_unit(const ring_elem f) const
 {
   mpz_ptr a = MPZ_VAL(f);
   return (mpz_cmp_si(a, 1)==0 ||
-	  mpz_cmp_si(a, -1)==0);
+	  mpz_cmp_si(a, (unsigned)-1)==0);
 }
 
 bool Z::is_zero(const ring_elem f) const

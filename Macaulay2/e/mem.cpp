@@ -36,7 +36,7 @@ stash::~stash()
 {
   while (slabs != NULL)
     {
-      void *p = slabs;
+      slab *p = slabs;
       slabs = slabs->next;
       delete p;
     }

@@ -169,7 +169,7 @@ bool EMatrix::isGraded() const
   for (int i=0; i<n_cols(); i++)
     {
       if (column(i).isZero()) continue;
-      monomial *d;
+      const monomial *d;
       if (!column(i).isGraded(d))
         return false;
       if (!D->is_equal(d, D->mult(getSource()->getDegree(i), mapdegree)))

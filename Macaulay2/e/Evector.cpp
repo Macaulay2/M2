@@ -86,9 +86,9 @@ EVector EVector::rightMultiply(const ERingElement a) const
   return getRing()->vec_right_mult(*this,a);
 }
 
-bool EVector::isGraded(monomial *&result_degree) const
+bool EVector::isGraded(const monomial *&result_degree) const
 {
-  monomial *lo;
+  const monomial *lo;
   degreeLoHi(lo,result_degree);
   return F->getDegreeMonoid()->is_equal(lo,result_degree);
 }
@@ -110,7 +110,7 @@ void EVector::degreeLoHi(const monomial *&lo, const monomial *&hi) const
 
 const monomial *EVector::degree() const
 {
-  monomial *lo, *hi;
+  const monomial *lo, *hi;
   degreeLoHi(lo,hi);
   return hi;
 }
