@@ -81,6 +81,12 @@ docFile := openDatabase databaseFileName
 
 scandb(docFile, preprocess) 
 
+buttonBar := (key) -> CENTER {
+     if key =!= topNodeName then topNodeButton,
+     masterIndexButton,
+     prev key, up key, next key,
+     }
+
 process := (key,doc) -> (
      -- stderr << key << endl;
      filename := linkFilename key;
@@ -90,14 +96,12 @@ process := (key,doc) -> (
      filename << html HTML { 
 	  HEAD TITLE title,
 	  BODY {
+	       buttonBar key,
+	       HR,
 	       H2 title,
 	       try value doc else error ("value ", doc),
 	       HR,
-	       CENTER {
-		    if key =!= topNodeName then topNodeButton,
-		    masterIndexButton,
-		    prev key, up key, next key,
-		    }
+	       buttonBar key
 	       }
 	  } << endl << close)
 scandb(docFile, process) 

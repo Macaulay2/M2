@@ -318,7 +318,7 @@ hypertex = true
 
 HREF       = newListHead "HREF"
 html HREF := x -> (
-     "<A HREF=\"" | x#0 | "\">" | x#-1 | "</A>"
+     "<A HREF=\"" | x#0 | "\">" | html x#-1 | "</A>"
      )
 text HREF := x -> "\"" | x#-1 | "\""
 tex HREF := x -> (
