@@ -389,7 +389,7 @@ rank Module := M -> (
      if isFreeModule M then numgens M 
      else if degreeLength ring M === 0 and isField ring M then numgens prune M
      else (
-	  f := poincare M;
+	  f := poincare M // poincare ring M;
 	  T := (ring f)_0;
 	  substitute(f,{T=>1})
 	  )
