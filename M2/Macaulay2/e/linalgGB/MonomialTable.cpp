@@ -1,8 +1,8 @@
 // (c) 1994-2004 Michael E. Stillman
 
-#include "MonomialTable.h"
+#include "MonomialTable.hpp"
 #include "../text_io.hpp"
-#include "Monomials.h"
+#include "Monomials.hpp"
 #include "monoms.h"
 
 extern int gbTrace;

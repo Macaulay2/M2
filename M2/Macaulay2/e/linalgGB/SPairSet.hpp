@@ -3,7 +3,7 @@
 #ifndef __SPairSet_h_
 #define __SPairSet_h_
 
-#include "MonomialSet.h"
+#include "MonomialSet.hpp"
 #include "lingb.hpp"
 
 class SPairSet : public our_new_delete

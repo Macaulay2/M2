@@ -1,7 +1,7 @@
 #include "linalgGB.hpp"
 #include "../z_mod_p.hpp"
 #include "../matrix.hpp"
-#include "MonomialTable.h"
+#include "MonomialTable.hpp"
 #include <map>
 
 GBComputation *createLinearAlgebraGB(const Matrix *m,
@@ -71,7 +71,7 @@ LinAlgGB<CoefficientRing>::LinAlgGB(CoefficientRing *K,
 #include <vector>
 #include "../text_io.hpp"
 #include "monoms.h"
-#include "MonomialOps.h"
+#include "MonomialOps.hpp"
 #include "../matrix.hpp"
 #include "../mutablemat.hpp"
 #include "../matrixcon.hpp"

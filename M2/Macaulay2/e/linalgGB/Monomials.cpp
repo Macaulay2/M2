@@ -1,4 +1,4 @@
-#include "Monomials.h"
+#include "Monomials.hpp"
 #include "../buffer.hpp"
 
 void monomial_text_out(buffer &o, monomial m)

@@ -7,8 +7,8 @@
 #include "../poly.hpp"
 #include <map>
 #include <vector>
-#include "MonomialSet.h"
-#include "SPairSet.h"
+#include "MonomialSet.hpp"
+#include "SPairSet.hpp"
 #include "../coeffrings.hpp"
 
 class MonomialLookupTable;

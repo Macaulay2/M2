@@ -1,8 +1,8 @@
 #include "../polyring.hpp"
 #include "../freemod.hpp"
-#include "Monomials.h"
-#include "MonomialSet.h"
-#include "SPairSet.h"
+#include "Monomials.hpp"
+#include "MonomialSet.hpp"
+#include "SPairSet.hpp"
 #include "lingb.hpp"
 #include "monoms.h"
 
@@ -166,7 +166,7 @@ MutableMatrix * M2Interface<CoefficientRing>::to_M2_MutableMatrix(
   return result;
 }
 
-#include "SPairSet.cc"
+#include "SPairSet.cpp"
 #include "linalgGB.cpp"
 
 template class M2Interface<CoefficientRingZZp>;
