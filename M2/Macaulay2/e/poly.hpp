@@ -43,6 +43,8 @@ protected:
   PolynomialRing() : is_graded_(true), qinfo_(new QRingInfo) {}
 
 public:
+  int n_vars() const { return _nvars; }
+
   static PolynomialRing *create_quotient_ring(const Matrix *M);
 
   QRingInfo *get_quotient_info() const { return qinfo_; }

@@ -166,7 +166,13 @@ const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
 const RingOrNull *IM2_Ring_frac(const Ring *R)
 {
   if (R == globalZZ) return globalQQ;
-  return FractionField::create(R);
+  const PolyRing *P = R->cast_to_PolyRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring with no fractions");
+      return 0;
+    }
+  return FractionField::create(P);
 }
 
 const RingOrNull *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
@@ -566,7 +572,10 @@ const RingElementOrNull *IM2_RingElement_term(const Ring *R,
       return 0;
     }
 
-  int nvars0 = P->n_vars() - a->get_ring()->n_vars();
+  int nvars0 = P->n_vars();
+  const PolynomialRing *K = a->get_ring()->cast_to_PolynomialRing();
+  if (K != 0)
+    nvars0 -= K->n_vars();
   int *exp = newarray(int,nvars0);
   varpower::to_ntuple(nvars0, m->ints(), exp);
   ring_elem val = P->make_logical_term(a->get_ring(), a->get_value(), exp);
