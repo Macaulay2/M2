@@ -768,7 +768,7 @@ extern "C" {
   MatrixOrNull *IM2_Matrix_random(const Ring *R, 
 				  int r, int c, 
 				  double fraction_non_zero, 
-				  int special_type, // 0: general, 1:upper triangular, others?
+				  int special_type, /* 0: general, 1:upper triangular, others? */
 				  M2_bool is_mutable,
 				  int preference); /* connected to rawMatrixRandom */
 

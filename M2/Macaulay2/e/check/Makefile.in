@@ -21,8 +21,7 @@ ifeq "$(OS)" "Darwin"
 LDFLAGS += -multiply_defined suppress
 endif
 
-LDLIBS += ../../d/M2inits1.o $(LIBRARYFILES) $(LAPACKLIBS) -lfac -lcf -lntl \
-     $(LIBGMP) -lgc -lm -lc -lstdc++ ../../d/M2mem.o ../../d/M2inits2.o
+LDLIBS += ../../d/M2inits1.o  ../../d/M2mem.o ../../d/M2inits2.o ../../d/gmp_init.o ../../d/tokens_stub.o $(LIBRARYFILES) $(LAPACKLIBS) -lfac -lcf -lfac -lcfmem -lntl -lgmp -lgc -ldl -lm -lc -lstdc++
 CFLAGS += -g -ansi
 
 COBJ = ../../d/debug.o ../../d/M2types.o ../../d/M2inits.o util.o src_test/Ctest.o src_test/Csuite.o
@@ -41,6 +40,5 @@ clean distclean::; $(MAKE) -C src_test $@
 distclean::; rm -f Makefile
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check "
 # End:
-
