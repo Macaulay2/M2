@@ -956,6 +956,8 @@ documentation Symbol := S -> (
      	  documentationValue(S,value S),
 	  type S, theExamples S, caveat S, programmingHint S, seealso S, theMenu S ))
 
+documentation DocumentTag := tag -> documentation DocumentTag.Key tag
+
 documentation Sequence := key -> (
      if key#?-1 and instance(key#-1,Symbol) then (		    -- optional argument
 	  fn := unSingleton drop(key,-1);

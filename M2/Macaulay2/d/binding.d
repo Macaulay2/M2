@@ -229,7 +229,7 @@ bump();
      export DotDotS := makeKeyword(binaryleft(".."));
 bump();
      export MinusS := makeKeyword(unaryleft("-"));	    -- also binary
-     export PlusS := makeKeyword(binaryleft("+"));
+     export PlusS := makeKeyword(unaryleft("+"));	    -- also binary
      export PlusPlusS := makeKeyword(binaryleft("++"));
 bump();
      export StarStarS := makeKeyword(binaryleft("**"));
@@ -468,7 +468,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, inS);
-export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, LessLessS, notS, DeductionS,
+export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, PlusS, LessLessS, notS, DeductionS,
      LessS, GreaterS, LessEqualS, GreaterEqualS		    -- surprising to find these here...
      );
 export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS );
