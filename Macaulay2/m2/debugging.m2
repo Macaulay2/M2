@@ -170,7 +170,7 @@ usage := () -> (
      )
 
 firstTime := true
-interpreterHook = () -> if interpreterDepth > 1 then (
+debuggerHook = () -> if interpreterDepth > 1 then (
      << listLocalSymbols errorCode << endl;
      if firstTime then ( usage(); firstTime = false; ))
 

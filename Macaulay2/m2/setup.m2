@@ -115,9 +115,9 @@ load "loads.m2"
 
 stderr << "--loaded setup.m2" << endl
 notify = true
-newPackage Output
+newPackage(Output, DebuggingMode => debuggingMode)
 protect symbol Output
-newPackage User
+newPackage(User, DebuggingMode => debuggingMode)
 User#"file directory" = null
 protect Main.Dictionary
 
