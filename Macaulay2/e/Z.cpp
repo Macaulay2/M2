@@ -202,6 +202,17 @@ bool Z::is_equal(const ring_elem f, const ring_elem g) const
 
   return mpz_cmp(a, b) == 0;
 }
+int Z::compare(const ring_elem f, const ring_elem g) const
+{
+  mpz_ptr a = MPZ_VAL(f);
+  mpz_ptr b = MPZ_VAL(g);
+  return mpz_cmp(a,b);
+}
+int Z::is_positive(const ring_elem f) const
+{
+  mpz_ptr a = MPZ_VAL(f);
+  return mpz_cmp_si(a,0) > 0;
+}
 
 ring_elem Z::copy(const ring_elem f) const
 {
@@ -297,9 +308,38 @@ ring_elem Z::divide(const ring_elem f, const ring_elem g) const
 }
 ring_elem Z::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
 {
+#if 0
   mpz_ptr result = new_elem();
   mpz_ptr resultmod = new_elem();
   mpz_divmod(result, resultmod, MPZ_VAL(f), MPZ_VAL(g));
+  rem = MPZ_RINGELEM(resultmod);
+  return MPZ_RINGELEM(result);
+#endif
+  mpz_ptr result = new_elem();
+  mpz_ptr resultmod = new_elem();
+
+  mpz_tdiv_qr(result, resultmod, MPZ_VAL(f), MPZ_VAL(g));
+  mpz_t ghalf;
+  mpz_init(ghalf);
+  mpz_tdiv_q_2exp(ghalf, MPZ_VAL(g), 1);
+
+  if (mpz_cmp(ghalf,resultmod) == -1)  // ghalf < rem
+    {
+      mpz_add_ui(result, result, 1);
+      mpz_sub(resultmod, resultmod, MPZ_VAL(g));
+    }
+  else 
+    {
+      mpz_neg(ghalf, ghalf);
+      int cmp = mpz_cmp(ghalf,resultmod);
+      int odd = mpz_mod_ui(ghalf, MPZ_VAL(g),2);  // The ghalf is a dummy
+      if (cmp == 1 || (!odd & cmp == 0))
+	{
+	  mpz_sub_ui(result, result, 1);
+	  mpz_add(resultmod, resultmod, MPZ_VAL(g));
+	}
+    }
+  mpz_clear(ghalf);
   rem = MPZ_RINGELEM(resultmod);
   return MPZ_RINGELEM(result);
 }

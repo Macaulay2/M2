@@ -69,7 +69,7 @@ random(ZZ,Ring) := (n,R) -> random({n},R)
 random(Module, Module) := (F,G) -> (
      R := ring F;
      p := char R;
-     if p === 0 then error "not implemented yet for characteristic 0";
+     if p === 0 then p = ZZ;
      if R =!= ring G then error "modules over different rings";
      degreesTable := table(degrees F, degrees G, 
 	  (i,j) -> toList apply(j,i,difference));

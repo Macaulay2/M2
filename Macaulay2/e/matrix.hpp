@@ -166,6 +166,11 @@ public:
 				  // which are maximal in the order under
 				  // the first n weight vectors
 
+private:
+  void minimal_lead_terms_ZZ(intarray &result) const;
+public:
+  void minimal_lead_terms(intarray &result) const;
+
   void elim(int n, intarray &result) const;
   Matrix sat(int n, int maxd) const; // maxd<0 means divide by as much as possible
 

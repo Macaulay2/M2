@@ -22,14 +22,13 @@ struct GB_elem
   vec fsyz;
   int *lead_exp;
   bool is_min;			// eventually: TY_MINIMAL, TY_SMALL_GB, TY_LARGE_GB, TY_REMOVED
-  int me;
   
   GB_elem()
     : next(NULL),
-      f(NULL), fsyz(NULL), lead_exp(NULL), is_min(0), me(0) {}
+      f(NULL), fsyz(NULL), lead_exp(NULL), is_min(0) {}
   GB_elem(vec f, vec fsyz, int is_min) 
     : next(NULL),
-      f(f), fsyz(fsyz), lead_exp(NULL), is_min(is_min), me(0) {}
+      f(f), fsyz(fsyz), lead_exp(NULL), is_min(is_min) {}
 
   // infrastructure
   friend void i_stashes();
@@ -58,10 +57,12 @@ private:
   const FreeModule *Rsyz;	// NOT a Schreyer order.
 
   int this_degree;
-
+  int prev_degree;		// Used only in determining if we are continuing
+				// with a degree, or starting a new one.
   // state information
   int state;  // GB_COMP_*
   int ar_i, ar_j;		// State info used for autoreduction
+  int ar_first_in_deg;		// First element in the current degree.
   int np_i;			// State info used for new pairs
 
   s_pair_set *spairs;
@@ -69,9 +70,13 @@ private:
   array<GB_elem *> gb;
   array<TermIdeal *> termideals;
 
+  intarray gblocs;		// permutation of 0..gb.length()-1
+				// Used for auto reduction, creating gb matrix.
+  intarray gbpairlocs;		// permutation of 0..gb.length()-1
+				// Used for s-pair construction.
+
   // Syzygies collected
   Matrix syz;
-  Matrix gbmatrix;
 
   // statistics information, much is kept with the s_set
   int n_gb;
@@ -109,7 +114,7 @@ private:
 
   // void gb_geo_reduce(vec &f, vec &fsyz) const;
 
-  void find_pairs(GB_elem *p);
+  void find_pairs(int me);
 
   void insert_gb_element(vec f, vec fsyz, bool is_minimal);
   bool insert_syzygy(vec fsyz);
@@ -117,6 +122,8 @@ private:
 
   int gb_sort_partition(int lo, int hi);
   void gb_sort(int lo, int hi);
+  int autoreduce_sort_partition(int lo, int hi);
+  void autoreduce_sort(int lo, int hi);
 
   int next_degree();
   int computation_complete(const int *stop_degree,

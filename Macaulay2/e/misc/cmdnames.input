@@ -469,6 +469,11 @@ mem
 . >> .
 Place some user readable memory usage information onto the output string.
 
+ggminleadterms
+minleadterms
+m:matrix >> intarray
+Returns the indices of the columns of 'm' whose lead terms minimally generate the lead monomial, or term, submodule.
+
 ggmod
 mod
 a:ringelem b:ringelem >> ringelem

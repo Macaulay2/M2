@@ -106,6 +106,8 @@ public:
   void insert_s_pair(vec gsyz, vec rsyz);
   bool next_s_pair(vec &gsyz, vec &rsyz);
 
+  bool lowest_degree(int &lodeg) const;	// Sets 'lodeg' to lowest degree of a pair or gen,
+				        // Returns true if any pairs or gens left, else false.
   int next_degree(int &nextdeg);	// Returns number to be done in nextdeg.
   void flush_degree();
 

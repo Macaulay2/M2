@@ -600,6 +600,13 @@ void cmd_pfaffs(object &om, object &op)
   gStack.insert(new PfaffianComputation(M,p));
   engine_alloc(sizeof(PfaffianComputation));
 }
+void cmd_Matrix_minleadterms(object &om)
+{
+  Matrix M = om->cast_to_Matrix();
+  object_intarray *result = new object_intarray;
+  M.minimal_lead_terms(*result->intarray_of());
+  gStack.insert(result);
+}
 void cmd_Matrix_simplify(object &om, object &on)
 {
   Matrix M = om->cast_to_Matrix();
@@ -1067,6 +1074,7 @@ void i_Matrix_cmds(void)
   install(ggcoeffs, cmd_Matrix_coeffs, TY_MATRIX, TY_INTARRAY);
   install(ggcoeffs, cmd_Matrix_var_coeffs, TY_MATRIX);
 
+  install(ggminleadterms, cmd_Matrix_minleadterms, TY_MATRIX);
   install(ggsimplify, cmd_Matrix_simplify, TY_MATRIX, TY_INT);
   install(ggsortcolumns, cmd_Matrix_sort, TY_MATRIX, TY_INT, TY_INT);
   install(ggautoreduce, cmd_Matrix_autoreduce, TY_MATRIX);
