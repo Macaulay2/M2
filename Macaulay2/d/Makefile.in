@@ -23,7 +23,7 @@ ifeq "$(DEBUG)" "yes"
 ALLOBJ += debug.o
 endif
 
-OPTCFILES := M2inits.c
+OPTCFILES := M2inits.c M2initschk.c
 CFILES += M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c
 SRCFILES += $(OPTCFILES) $(CFILES)
 ALLOBJ += $(CFILES:.c=.o)
@@ -188,8 +188,10 @@ tmp_init.c : $(DFILES)
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
 
-## we put M2init.o here so its constructor gets run first!
-LIBRARYOPTIONS += M2inits.o
+## we put M2inits.o here so its constructor gets run first!
+## we put M2initschk.o here, assuming its constructors get run *after* those of M2inits, to verify that sequence of events
+LIBRARYOPTIONS += M2initschk.o M2inits.o
+LIBRARYFILES   += M2initschk.o M2inits.o
 
   # -- we do not need -lcfmem, because we include replacement routines in d/scclib.c
 LIBRARYOPTIONS += $(LAPACKLIBS)
