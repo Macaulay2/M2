@@ -30,7 +30,7 @@ export hash(e:Expr):int := (
 	  h := 27449;
 	  foreach y in x do h = h * 27457 + hash(y);
 	  h)
-     is x:string do hash(x) + 37467
+     is x:string do hash(x)				    -- for strings, keep internal and external hash the same
      is x:Real do hash(x.v)
      is x:Complex do hash(x.re) + 7 * hash(x.im)
      is n:Net do (

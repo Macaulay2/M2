@@ -45,10 +45,10 @@ dumpdatafun(e:Expr):Expr := (
 	  stdin.insize = 0;
 	  stdin.eof = false;
 	  stdin.inindex = 0;
-	  oldErrorDepth := ErrorDepth;
-	  ErrorDepth = LoadDepth + 1;
+	  olderrorDepth := errorDepth;
+	  errorDepth = loadDepth + 1;
 	  r := dumpdata(s);
-	  ErrorDepth = oldErrorDepth;
+	  errorDepth = olderrorDepth;
 	  stdin.insize = o;
 	  stdin.eof = p;
 	  stdin.inindex = q;
@@ -1340,26 +1340,52 @@ storeGlobalDictionaries(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      else WrongNumArgs(2));
 storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,globalDictionariesS)),Expr(CompiledFunction(storeGlobalDictionaries,nextHash())));
 
-loadDepthS := setupvar("loadDepth",Expr(toInteger(LoadDepth)));
-recursionLimitS := setupvar("recursionLimit",Expr(toInteger(recursionlimit)));
-errorDepthS := setupvar("errorDepth",Expr(toInteger(ErrorDepth)));
-storeIntegerVariable(e:Expr):Expr := (			    -- called with (symbol,newvalue)
+export setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
+export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
+
+export stopIfError := false;
+
+debuggingModeS := setupvar("debuggingMode",toExpr(debuggingMode));
+loadDepthS := setupvar("loadDepth",toExpr(loadDepth));
+recursionLimitS := setupvar("recursionLimit",toExpr(recursionlimit));
+errorDepthS := setupvar("errorDepth",toExpr(errorDepth));
+stopIfErrorS := setupvar("stopIfError",toExpr(stopIfError));
+syms := SymbolSequence(debuggingModeS,loadDepthS,errorDepthS,recursionLimitS,stopIfErrorS);
+
+export setDebuggingMode(b:bool):void := (
+     debuggingMode = b;
+     setGlobalVariable(debuggingModeS,toExpr(b));
+     );
+export setloadDepth(b:int):void := (
+     loadDepth = b;
+     setGlobalVariable(loadDepthS,toExpr(b));
+     );
+export setstopIfError(b:bool):void := (
+     stopIfError = b;
+     setGlobalVariable(stopIfErrorS,toExpr(b));
+     );
+
+msg := "global assignment hook encountered unknown symbol/value combination";
+store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
      when e
      is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
 	  sym := s.0;
 	  when s.1
-	  is i:Integer do (
-	       if !isInt(i) then buildErrorPacket("expected new value to be a small integer")
-	       else (
-		    n := toInt(i);
-		    if sym === loadDepthS then (LoadDepth = n; nullE)
-		    else if sym === errorDepthS then (ErrorDepth = n; nullE)
-		    else if sym === recursionLimitS then (recursionlimit = n; nullE)
-		    else buildErrorPacket("global assignment hook encountered unknown symbol"))
-	       )
-	  else buildErrorPacket("expected new value to be an integer"))
+	  is b:Boolean do (
+	       if sym === debuggingModeS then (debuggingMode = b.v; e)
+	       else if sym === stopIfErrorS then (stopIfError = b.v; e)
+	       else buildErrorPacket(msg))
+	  is i:Integer do 
+	  if !isInt(i) then buildErrorPacket(msg)
+	  else (
+	       n := toInt(i);
+	       if sym === loadDepthS then (loadDepth = n; e)
+	       else if sym === errorDepthS then (errorDepth = n; e)
+	       else if sym === recursionLimitS then (recursionlimit = n; e)
+	       else buildErrorPacket(msg))
+	  else buildErrorPacket(msg))
      else WrongNumArgs(2));
-f := Expr(CompiledFunction(storeIntegerVariable,nextHash()));
-storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,loadDepthS)),f);
-storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,errorDepthS)),f);
-storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,recursionLimitS)),f);
+storeE := Expr(CompiledFunction(store,nextHash()));
+foreach s in syms do storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,s)),storeE);
+storeE = nullE;
+syms = SymbolSequence();
