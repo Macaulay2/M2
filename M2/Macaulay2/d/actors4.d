@@ -583,7 +583,8 @@ setupfun("isReady",isReadyFun);
 
 atEOFfun(e:Expr):Expr := (
      when e
-     is f:file do toBoolean ( !f.input || f.eof || f.insize == f.inindex && isReady(f.infd) > 0 && !filbuf(f) )
+     is f:file do toBoolean ( !f.input || f.eof || f.insize == f.inindex && isReady(f.infd) > 0 
+	  && 0 == filbuf(f) )
      else WrongArg("a file"));
 setupfun("atEndOfFile",atEOFfun);
 
@@ -637,9 +638,14 @@ wait(e:Expr):Expr := (
      );
 setupfun("wait",wait);
 
+readE(f:file):Expr := (
+     when read(f)
+     is e:errmsg do buildErrorPacket(e.message)
+     is s:string do Expr(s));
+
 readfun(e:Expr):Expr := (
      when e
-     is f:file do Expr(read(f))
+     is f:file do readE(f)
      is p:string do (
 	  readprompt = p;
 	  oldprompt := stdin.prompt;
@@ -649,7 +655,7 @@ readfun(e:Expr):Expr := (
 	  Expr(r))	  
      is s:Sequence do (
 	  if length(s) == 0
-	  then Expr(read(stdin))
+	  then readE(stdin)
 	  else if length(s) == 2
 	  then (
 	       when s.0

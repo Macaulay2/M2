@@ -58,6 +58,7 @@ import fileLength(fd:int):int;
 import fileExists(name:string):bool;
 import fileTime(name:string):int;
 import mkdir(name:string):int;
-import directoryExists(name:string):bool;
+import isDirectory(name:string):int;
+import isRegularFile(name:string):int;
 import readlink(filename:string):string;
 import readDirectory(name:string):(null or array(string));

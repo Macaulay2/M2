@@ -231,8 +231,8 @@ fakeMenu := x -> (
      )
 
 makeHtmlNode = fkey -> (
-     -- stderr << "--fkey=" << fkey << endl;		    --  debugging
      fn := buildDirectory | htmlFilename fkey;
+     stderr << "--making html page for " << fkey << " in " << fn << endl;
      fn << html HTML { 
 	  HEAD TITLE {fkey, headline fkey},
 	  BODY { 
@@ -344,15 +344,25 @@ assemble Package := o -> pkg -> (
      buildPackage = pkg.name;
      buildDirectory = minimizeFilename(o.TemporaryDirectory | "/");
      finalDirectory = minimizeFilename(o.FinalDirectory | "/");
-     htmlDirectory = LAYOUT#"packagehtml" pkg.name;
-     makeDirectory (buildDirectory|htmlDirectory);
-     srcDirectory := LAYOUT#"packagesrc" pkg.name;
-     makeDirectory (buildDirectory|srcDirectory);
+
+     -- copy source file
+     pkgDirectory := LAYOUT#"packages";
+     makeDirectory (buildDirectory|pkgDirectory);
      fn := pkg.name | ".m2";
      if not fileExists fn then error("file ", fn, " not found");
-     buildDirectory | srcDirectory | fn << get fn << close;
-     keys := unique join(pkg#"symbols",pkg#"docs");
-     stderr << "making html pages in " << buildDirectory << htmlDirectory << endl;
-     ret := makeHtmlNode \ keys;
-     -- << "pages " | stack keys | " in " | htmlDirectory << endl;
+     copyFile(fn, buildDirectory|pkgDirectory|fn, Verbose=>true);
+
+     -- copy source subdirectory
+     srcDirectory := LAYOUT#"packagesrc" pkg.name;
+     makeDirectory (buildDirectory|srcDirectory);
+     dn := pkg.name;
+     if fileExists dn
+     then copyDirectory(dn, buildDirectory|srcDirectory, Verbose=>true, Exclude => {"CVS"});
+
+     -- make html files
+     htmlDirectory = LAYOUT#"packagehtml" pkg.name;
+     makeDirectory (buildDirectory|htmlDirectory);     
+     nodes := unique join(values pkg#"dictionary",keys pkg#"raw documentation");
+     stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
+     ret := makeHtmlNode \ toString \ nodes;
      )

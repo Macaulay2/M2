@@ -142,11 +142,11 @@ unique := x -> (
 tryload := (filename,load) -> (
      if notify then << "--loading " << filename << endl;
      if isAbsolutePath filename or isSpecial filename then (
+	  if not fileExists filename then return false;
 	  -- stderr << "trying to load " << filename << endl;		    -- debugging
-	  if load filename then (
-	       markLoaded(filename,filename);
-	       true)
-	  else false)
+	  load filename;
+	  markLoaded(filename,filename);
+	  true)
      else (
           if class path =!= List then error "expected 'path' to be a list (of strings)";
           {} =!= select(1,
@@ -155,10 +155,11 @@ tryload := (filename,load) -> (
 		    if class dir =!= String 
 		    then error "member of 'path' not a string";
 		    fullfilename := dir | filename;
+		    if not fileExists fullfilename then return false;
 		    -- stderr << "trying to load " << fullfilename << endl;		    -- debugging
-		    result := load fullfilename;
-		    if result then markLoaded(fullfilename,filename);
-		    result))))
+		    load fullfilename;
+		    markLoaded(fullfilename,filename);
+		    true))))
 
 oldLoad := load
 erase symbol load
@@ -187,6 +188,7 @@ scan((
 	  symbol currentDirectory,
 	  symbol documentationPath,			    -- being removed...
 	  symbol DocDatabase,
+	  symbol currentDictionary,
 	  symbol currentFileName,
 	  symbol compactMatrixForm,
 	  symbol TeXmacsMode

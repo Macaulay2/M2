@@ -467,17 +467,25 @@ int offset;
 int system_fileExists(M2_string name) {
   char *cname = tocharstar(name);
   struct stat buf;
-  int r = stat(cname,&buf);
+  int r = lstat(cname,&buf);
   GC_FREE(cname);
   return r != ERROR;
 }
 
-int system_directoryExists(M2_string name) {
+int system_isDirectory(M2_string name) {
   char *cname = tocharstar(name);
   struct stat buf;
-  int r = stat(cname,&buf);
+  int r = lstat(cname,&buf);
   GC_FREE(cname);
-  return r != ERROR && S_ISDIR(buf.st_mode);
+  return r == ERROR ? -1 : S_ISDIR(buf.st_mode);
+}
+
+int system_isRegularFile(M2_string name) {
+  char *cname = tocharstar(name);
+  struct stat buf;
+  int r = lstat(cname,&buf);
+  GC_FREE(cname);
+  return r == ERROR ? -1 : S_ISREG(buf.st_mode);
 }
 
 int always(const struct dirent *p) { return 1; }
@@ -517,7 +525,7 @@ int system_fileTime(M2_string name) {
   struct stat buf;
   int r;
   errno = 0;
-  r = stat(cname,&buf);
+  r = lstat(cname,&buf);
   GC_FREE(cname);
   if (r == ERROR) return 0;	/* check errno! */
   return buf.st_mtime;

@@ -2,12 +2,98 @@
 
 makeDir := name -> if not fileExists name then mkdir name
 
-makeDirectory = name -> (
+makeDirectory = method()
+makeDirectory String := name -> (
      name = minimizeFilename name;
      parts := separate("/", name);
      if last parts === "" then parts = drop(parts,-1);
      if first parts === "" then parts = prepend("/"|first parts, drop(parts,1));
      makeDir fold((a,b) -> ( makeDir a; a|"/"|b ), parts))
+
+fileOptions := new OptionTable from { 
+     Exclude => set {},	-- eventually we change from a set to a regular expression or a list of them
+     Verbose => false 
+     }
+
+copyFile = method(Options => fileOptions)
+copyFile(String,String) := opts -> (src,tar) -> (
+     if opts.Verbose then stderr << "--copying: " << src << " -> " << tar << endl;
+     tar << get src << close;
+     )
+
+baseFilename = fn -> (
+     fn = separate("/",fn);
+     while #fn > 0 and fn#-1 === "" do fn = drop(fn,-1);
+     last fn)
+
+findFiles = method(Options => fileOptions)
+findFiles String := opts -> name -> (
+     ex := opts.Exclude;
+     if class ex =!= Set then (
+     	  if class ex =!= List then ex = {ex};
+     	  ex = set ex;
+	  opts = merge(opts, new OptionTable from {Exclude => ex}, last);
+	  );
+     if ex#?(baseFilename name) or not fileExists name then return {};
+     if not isDirectory name then return {name};
+     if not name#-1 === "/" then name = name | "/";
+     prepend(name,flatten apply(drop(readDirectory name,2), f -> findFiles(name|f,opts)))
+     )
+
+copyDirectory = method(Options => fileOptions)
+-- The unix 'cp' command is confusing when copying directories, because the
+-- result depends on whether the destination exists:
+--    % ls
+--    % mkdir -p a/bbbb
+--    % mkdir t
+--    % cp -a a t
+--    % cp -a a u
+--    % ls t
+--    a
+--    % ls u
+--    bbbb
+-- One way to make it less confusing is to name '.' as the source, but the
+-- definition of recursive copying is still unclear.
+--    % mkdir v
+--    % cp -a a/. v
+--    % cp -a a/. w
+--    % ls v
+--    bbbb
+--    % ls w
+--    bbbb
+-- One result of the confusion is that doing the command twice can result in
+-- something different the second time.  We wouldn't want that!
+--    % cp -a a z
+--    % ls z
+--    bbbb
+--    % cp -a a z
+--    % ls z
+--    a  bbbb
+-- So we make our 'copyDirectory' function operate like 'cp -a a/. v'.
+-- For safety, we insist the destination directory already exist.
+-- Normally the base names of the source and destination directories will be
+-- the same.
+copyDirectory(String,String) := opts -> (src,dst) -> (
+     if not fileExists src then error("directory not found: ",src);
+     if not isDirectory src then error("file not a directory: ",src);
+     if not src#-1 === "/" then src = src | "/";
+     if not dst#-1 === "/" then dst = dst | "/";
+     transform := fn -> dst | substring(fn,#src);
+     scan(findFiles(src,opts), 
+	  srcf -> (
+	       tarf := transform srcf;
+	       if tarf#-1 === "/" 
+	       then (
+		    if not isDirectory tarf then mkdir tarf 
+		    )
+	       else (
+     		    if not isRegularFile srcf 
+		    then stderr << "--skipping: non regular file: " << srcf << endl
+		    else copyFile(srcf,tarf,opts)
+		    )
+	       )
+	  )
+     );
 
 -----------------------------------------------------------------------------
 

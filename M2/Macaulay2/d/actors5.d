@@ -1426,15 +1426,27 @@ readDirectory(e:Expr):Expr := (
      when e is name:string do (
 	  r := readDirectory(name);
 	  when r is null do buildErrorPacket("can't read directory '" + name + "' : " + syserrmsg())
-	  is x:array(string) do Expr(new Sequence len length(x) do foreach i in x do provide(Expr(i))))
+	  is x:array(string) do Expr(list(new Sequence len length(x) do foreach i in x do provide(Expr(i)))))
      else WrongArgString());
 setupfun("readDirectory",readDirectory);
 
-directoryExists(e:Expr):Expr := (
-     when e is name:string do toBoolean(directoryExists(name))
+isDirectory(e:Expr):Expr := (
+     when e is name:string do (
+	  r := isDirectory(name);
+	  if r == -1 then buildErrorPacket("can't see file '" + name + "' : " + syserrmsg())
+	  else if r == 1 then True else False)
      else WrongArgString()
      );
-setupfun("directoryExists",directoryExists);
+setupfun("isDirectory",isDirectory);
+
+isRegularFile(e:Expr):Expr := (
+     when e is name:string do (
+	  r := isRegularFile(name);
+	  if r == -1 then buildErrorPacket("can't see file '" + name + "' : " + syserrmsg())
+	  else if r == 1 then True else False)
+     else WrongArgString()
+     );
+setupfun("isRegularFile",isRegularFile);
 
 fileTime(e:Expr):Expr := (
      when e is name:string do (
