@@ -86,29 +86,24 @@ EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      when x is Error do x
      else (
      	  y := eval(rhs);
-     	  when y is Error do y
-	  else if x == y || equal(x,y) == True then True
+     	  when y 
+	  is Error do y
+	  is Integer do equal(x,y)
+	  is SymbolClosure do equal(x,y)
+	  is Rational do equal(x,y)
+	  is Real do equal(x,y)
+	  is BigReal do equal(x,y)
+	  is Boolean do equal(x,y)
+	  is Net do equal(x,y)
+	  is string do equal(x,y)
+	  is FunctionClosure do equal(x,y)
+	  is CompiledFunctionClosure do equal(x,y)
+	  is CompiledFunction do equal(x,y)
 	  else (
-	       cx := Class(x);
-	       cy := Class(y);
-	       if cx == cy && (
-		    cx == integerClass ||
-		    cx == symbolClass ||
-		    cx == rationalClass ||
-		    cx == doubleClass ||
-		    cx == bigRealClass ||
-		    cx == booleanClass ||
-		    cx == netClass ||
-		    cx == stringClass ||
-		    cx == functionClass ||
-		    cx == booleanClass
-		    )
-	       then False
-	       else (
-		    method := lookupBinaryMethod(cx,cy,EqualEqualS);
-		    if method == nullE 
-		    then MissingMethodPair(EqualEqualS,x,y)
-		    else apply(method,x,y)))));
+	       method := lookupBinaryMethod(Class(x),Class(y),EqualEqualS);
+	       if method == nullE 
+	       then MissingMethodPair(EqualEqualS,x,y)
+	       else apply(method,x,y))));
 setup(EqualEqualS,EqualEqualfun);
 not(z:Expr):Expr := (
      when z is Error do z 
