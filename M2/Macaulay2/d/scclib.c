@@ -23,6 +23,15 @@ unsigned int n;
      return p;
      }
 
+char *GC_malloc_clear(n)
+unsigned int n;
+{
+  char *p = GC_malloc(n);
+  if (p == NULL) outofmem();
+  memset(p,0,n);
+  return p;
+}
+
 char *getmem_atomic(n)
 unsigned int n;
 {
