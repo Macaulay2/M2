@@ -793,7 +793,7 @@ extern "C" {
 					       M2_bool is_mutable); /* drg: connected rawSparseMatrix2 */
 
   M2_bool IM2_Matrix_is_mutable(const Matrix *M);
-  /* Is the matrix M mutable? */ /* TO BE CONNECTED */
+  /* Is the matrix M mutable? */ /* drg : connected rawIsMutable */
 
   const MatrixOrNull * IM2_Matrix_remake(const FreeModule *target,
 					const FreeModule *source,
