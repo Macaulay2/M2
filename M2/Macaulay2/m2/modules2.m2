@@ -87,23 +87,19 @@ Module ** Ring := Module => (M,R) -> (
 	  ))
 
 Matrix ** Ring := Matrix => (f,R) -> (
-     P := youngest(f,R);
-     key := (f,R,symbol **);
-     if P#?key then P#key
-     else f**R = (
-	  k := ring source f;
-	  S := ring target f;
-	  if k === R and S === R then f
-	  else if S === R then (
-	       -- map(target f, (source f ** R) ** R^(-degree f), f)
-	       map(target f, source f ** R, f, Degree => degree f)
-	       )
-	  else map(
-	       -- this will be pretty slow
-	       target f ** R, source f ** R, applyTable(entries f, r -> promote(r,R)),
-	       Degree => if isQuotientOf(R,k) then degree f else degree 1_R
-	       )
-	  ))
+     k := ring source f;
+     S := ring target f;
+     if k === R and S === R then f
+     else if S === R then (
+	  -- map(target f, (source f ** R) ** R^(-degree f), f)
+	  map(target f, source f ** R, f, Degree => degree f)
+	  )
+     else map(
+	  -- this will be pretty slow
+	  target f ** R, source f ** R, applyTable(entries f, r -> promote(r,R)),
+	  Degree => if isQuotientOf(R,k) then degree f else degree 1_R
+	  )
+     )
 
 -----------------------------------------------------------------------------       
 poincare Module := M -> (
