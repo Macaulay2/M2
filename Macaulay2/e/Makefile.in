@@ -1,9 +1,7 @@
 #ARING = true
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
-srcdir = @srcdir@
-top_srcdir = @top_srcdir@
-VPATH = $(srcdir)
+VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
@@ -35,6 +33,8 @@ endif
 
 CPPFLAGS += -I../../include #-DNDEBUG  #MES
 CPPFLAGS += -I$(prefix)/include
+CPPFLAGS += -I../c2
+CPPFLAGS += -I.
 
 ifdef ARING
 CPPFLAGS += -DARING
@@ -283,12 +283,12 @@ geores.hpp: geoT.hpp
 #geopoly.hpp: geoT.hpp
 #	awk '{sub(/FREEMODULETYPE/, "Ring"); sub(/VECTYPE/, "Nterm *"); print }' geoT.hpp >$@
 
-cmdnames.m2 : misc/cmdnames.input misc/cmdg.awk
-	$(AWK) -f misc/cmdg.awk misc/cmdnames.input >cmdnames.m2
-cmdnames.hpp : misc/cmdnames.input
-	$(AWK) -f misc/cmdh.awk $^ >$@
-cmdinst.hpp : misc/cmdnames.input
-	$(AWK) -f misc/cmdinst.awk $^ >$@
+cmdnames.m2 : misc/cmdg.awk misc/cmdnames.input
+	$(AWK) -f  $^ >cmdnames.m2
+cmdnames.hpp : misc/cmdh.awk misc/cmdnames.input
+	$(AWK) -f $^ >$@
+cmdinst.hpp : misc/cmdinst.awk misc/cmdnames.input
+	$(AWK) -f $^ >$@
 
 tags:: TAGS
 
@@ -303,17 +303,14 @@ Makefile : Makefile.in
 	cd $(TOPDIR); config.status Macaulay2/e/Makefile
 
 # should remake these two manually once in a while -- not all systems have makedepend
-Makefile-o.depends:
-	( $(CC) -M $(CPPFLAGS) $(CFLAGS) $(CFILES); \
-	  $(CC) -M $(CPPFLAGS) $(CXXFLAGS) $(CCFILES) ) > "$@"
-Makefile-lo.depends:
-	touch $@
+Makefile-c.depends: $(CFILES)
+	$(CC) -M $(CPPFLAGS) $(CFLAGS) $^ >"$@"
+Makefile-cc.depends: $(CCFILES) 
+	$(CC) -M $(CPPFLAGS) $(CXXFLAGS) $^ >"$@"
 
 ifndef NODEPENDS
-include Makefile-o.depends
-ifeq "$(SHARED)" "yes"
-include Makefile-lo.depends
-endif
+include Makefile-c.depends
+include Makefile-cc.depends
 endif
 
 allfiles: Makefile

@@ -1,15 +1,14 @@
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
-srcdir = @srcdir@
-top_srcdir = @top_srcdir@
-VPATH = $(srcdir)
+VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
 
 FILES := Makefile tutbook.m2 titlepage.tex \
 	final/--INDEX final/*.m2 prelim/*.m2 translate.c
-TUTORIALS := $(wildcard final/*.m2)
+TUTORIALS := ../tutorial/final/Fano.m2 ../tutorial/final/canEmbed.m2 \
+		 ../tutorial/final/divisors.m2 ../tutorial/final/elementary.m2
 OUTPUTS := $(TUTORIALS:.m2=.out)
 
 # Amazingly, under WINDOWS, whether the output from translate has nonzero length
@@ -19,7 +18,8 @@ OUTPUTS := $(TUTORIALS:.m2=.out)
 # Names that don't work: tmpaaa.m2 temp.m2 fooobaaar
 TMPIN := aaa
 %.out : %.m2
-	cp $*.m2 $(TMPIN)
+	cp $< $(TMPIN)
+	mkdir -p `dirname $*`
 	./translate <$(TMPIN) >$*.out
 	[ -s $*.out ]
 	rm $(TMPIN)

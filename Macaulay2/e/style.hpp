@@ -50,7 +50,7 @@ inline void swap(T &t1, T &t2)
 
 // Mike, the following typedef is wrong on some machines.
 // typedef unsigned long int uint32;
-#include "../c2/targettypes.h"
+#include "targettypes.h"
 
 const int LT = -1;
 const int EQ = 0;
