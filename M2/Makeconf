@@ -14,7 +14,7 @@ export VERSION	      := 0.8.52
 export NODENAME       := $(shell uname -n)
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
-export REL            := $(shell uname -r | sed s=/=-=g )
+export REL            := $(shell uname -r | sed -e s=/=-=g -e 's= =+=' )
 
 export SYSTEM         := $(ARCH) $(OS) $(REL)
 export LIBDIR	      := ../../lib
@@ -33,6 +33,9 @@ ifeq "$(OS)" "CYGWIN32-95"
 export CYGWIN32 = TRUE
 endif
 ifeq "$(OS)" "CYGWIN32-NT"
+export CYGWIN32 = TRUE
+endif
+ifeq "$(OS)" "CYGWIN_NT-4.0"
 export CYGWIN32 = TRUE
 endif
 
@@ -81,18 +84,17 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# NOSTRIP     := TRUE' >>$@
 	echo '# NOSTATIC    := TRUE' >>$@
 	echo '# NOOPTIM     := TRUE' >>$@
-	echo '# SHAREDLIBS  := TRUE' >>$@
 	echo '# MEMDEBUG    := TRUE' >>$@
 	echo '# DEBUG       := TRUE' >>$@
 	echo '# VERBOSE     := TRUE' >>$@
 	echo 'export OLDENGINE := TRUE' >>$@
-	echo 'GCMALLOC    := TRUE' >>$@
 	echo '# NODUMPDATA  := TRUE' >>$@
 	echo 'NEWDUMPDATA  := TRUE' >>$@
 	echo 'NOMP        := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
 	echo '# SOCKS       := TRUE' >>$@
 	echo '# if you change CC or CXX, then remove config.cache' >>$@
+	echo '# SHAREDLIBS  := TRUE' >>$@
 	echo '# set LIBC manually for Linux' >>$@
 	echo '# LIBC        := -glibc' >>$@
 	echo 'CC            := gcc' >>$@
@@ -192,12 +194,6 @@ else
 DEBUGFLAGS += -DNDEBUG
 endif
 
-ifdef GCMALLOC
-CFLAGS   += -DGCMALLOC
-CXXFLAGS += -DGCMALLOC
-export CFLAGS
-endif
-
 ifdef PROFILE
 export CFLAGS   += -pg
 export CXXFLAGS += -pg
@@ -265,3 +261,6 @@ endif
 MAKEFLAGS += -w
 
 endif
+
+export CFLAGS += -DMACAULAY2
+export CXXFLAGS += -DMACAULAY2

@@ -1348,6 +1348,9 @@ document { "communicating with programs",
      exclamation point; the rest of the file name will be taken as the
      command to run.  In this example, we also peek at the string
      to see whether it includes a newline character.",
+     if version#"operating system" === "Windows-95-98-NT"
+     then PRE "<< example doesn't work under Windows >>"
+     else
      EXAMPLE {
 	  ///peek get "!uname -a"///,
 	  },
@@ -1357,6 +1360,9 @@ document { "communicating with programs",
      this example we open a connection to the unix utility ", TT "egrep", "
      and use it to locate the symbol names in Macaulay2 that begin with
      ", TT "in", ".",
+     if version#"operating system" === "Windows-95-98-NT"
+     then PRE "<< example doesn't work under Windows >>"
+     else
      EXAMPLE {
 	  ///f = openInOut "!egrep '^in'"///,
 	  ///scan(keys symbolTable(), key -> f << key << endl)///,
@@ -1377,6 +1383,9 @@ document { "communicating with programs",
      whether it has arrived at the end.  We illustrate it in the following
      example by simulating a computation that takes 5 seconds to complete,
      printing one dot per second while waiting.",
+     if version#"operating system" === "Windows-95-98-NT"
+     then PRE "<< example doesn't work under Windows >>"
+     else
      EXAMPLE {
 	  ///f = openIn "!sleep 5; echo -n the answer is 4"///,
 	  ///isReady f///,

@@ -270,13 +270,15 @@ clean:
 
 Makefile-o.depends: Makefile $(HFILES) $(CCFILES) $(CFILES)
 	touch $@
-	makedepend -o.o -f$@ -Y -I../../include -- $(CFLAGS) -- $(CCFILES) $(CFILES)
+	-makedepend -o.o -f$@ -Y -I../../include -- $(CFLAGS) -- $(CCFILES) $(CFILES)
 Makefile-lo.depends: Makefile $(HFILES) $(CCFILES) $(CFILES)
 	touch $@
-	makedepend -o.lo -f$@ -Y -I../../include -- $(CFLAGS) -- $(CCFILES) $(CFILES)
+	-makedepend -o.lo -f$@ -Y -I../../include -- $(CFLAGS) -- $(CCFILES) $(CFILES)
 
+ifndef NODEPENDS
 include Makefile-o.depends
 include Makefile-lo.depends
+endif
 
 allfiles: Makefile
 	@echo making allfiles
@@ -289,7 +291,10 @@ dups-okay: dups-tmp
 	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
 	 else touch $@; fi
 
+ifeq ($(OS),Linux)
+	# don't run it elsewhere because we may not have gnu sort and gnu uniq there
 tests:: dups-okay
+endif
 
 install:
 

@@ -1,5 +1,6 @@
 /* error printing routines that don't use the heap or static memory */
 
+#include <string.h>
 #include <unistd.h>
 #include <stdio.h>
 #include "warning.h"

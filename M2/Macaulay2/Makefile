@@ -46,7 +46,7 @@ all ::; $(MAKE) -C c all
 clean ::; $(MAKE) NODEPENDS=1 -C c clean
 wc ::;  $(MAKE) -C c NODEPENDS=1 wc
 ################################# c2
-all ::; $(MAKE) -C c2 targettypes.h
+all ::; $(MAKE) NODEPENDS=1 -C c2 targettypes.h
 clean ::; $(MAKE) NODEPENDS=1 -C c2 clean
 ################################# e
 all ::; $(MAKE) -C e all
@@ -60,8 +60,10 @@ clean ::; $(MAKE) NODEPENDS=1 -C dbm clean
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# dumpdata
 ifndef NODUMPDATA
+ifdef NEWDUMPDATA
 all ::; $(MAKE) -C dumpdata all
 tests ::; $(MAKE) -C dumpdata tests
+endif
 endif
 clean ::; $(MAKE) NODEPENDS=1 -C dumpdata clean
 wc ::;  $(MAKE) -C dumpdata NODEPENDS=1 wc

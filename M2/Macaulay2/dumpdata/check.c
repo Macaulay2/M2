@@ -1,3 +1,4 @@
+#include <string.h>
 #include <setjmp.h>
 #include <stdlib.h>
 #include <stddef.h>

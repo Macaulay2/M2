@@ -71,7 +71,7 @@ protected:
   // Degree information
   const ECommMonoid *D;		// Degree Monoid
   const EPolynomialRing *ZD;	// Usually the ring ZZ[D], although a different base may be used.
-  const int *_degrees;
+  int *_degrees;
   
   // GB information
   const ERing *GBring;  // For polynomial rings over ZZ,ZZp, GBring is 'this'

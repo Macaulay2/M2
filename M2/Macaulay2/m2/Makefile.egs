@@ -11,19 +11,20 @@ else
 ARGS := -silent -x -s -ephase=1 ../../m2/setup.m2 -ephase=0 ../../m2/eg.m2
 endif
 
-ifdef CYGWIN32
-# Sigh, some bug under Windows with bash.exe and pipes makes redirection of
-# input files unreliable, so we use our 'input' command instead.
-%.out : %.m2
-	@ if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
-	 then touch $*.out ; \
-	 else \
-	   echo "running example $*"; \
-	   ../../bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' >$*.tmp && \
-	   mv $*.tmp $*.out && \
-	   cp $*.m2 $*.old ; \
-	 fi
-else
+# ifdef CYGWIN32
+# # Sigh, some bug under Windows with bash.exe and pipes makes redirection of
+# # input files unreliable, so we use our 'input' command instead.
+# %.out : %.m2
+# 	@ if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
+# 	 then touch $*.out ; \
+# 	 else \
+# 	   echo "running example $*"; \
+# 	   echo ../../bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' ">$*.tmp" ; \
+# 	   ../../bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' >$*.tmp && \
+# 	   mv $*.tmp $*.out && \
+# 	   cp $*.m2 $*.old ; \
+# 	 fi
+# else
 %.out : %.m2
 	@ if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
 	 then touch $*.out ; \
@@ -33,7 +34,7 @@ else
 	   mv $*.tmp $*.out && \
 	   cp $*.m2 $*.old ; \
 	 fi
-endif
+# endif
 
 INFILES  := $(wildcard *.m2)
 OUTFILES := $(INFILES:.m2=.out)

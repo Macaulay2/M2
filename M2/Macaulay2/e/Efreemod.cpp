@@ -343,6 +343,7 @@ EFreeModule * EFreeModule::symm(int p) const
 {
   // By laziness, or for whatever reason, the result of this operation will NOT
   // have an induced order.
+  return NULL;
 }
 
 ///////////////////////

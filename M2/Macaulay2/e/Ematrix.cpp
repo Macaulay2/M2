@@ -17,7 +17,7 @@ EMatrix::EMatrix(const EFreeModule *F,
   ncolumns(G->rank()),
   columns(elements),
   mapdegree(d),
-  type(type),
+  theType(type),
   gb(0)
 {
   bump_up(target);
@@ -40,8 +40,8 @@ EMatrix *EMatrix::make(const EFreeModule *F,
 	      int type,
 	      const monomial *d)  // GRABS the array and elements in 'elements'.
 {
-  if (type != left && type != right && type != both)
-    type = left;
+  if (type != EMatrix_left && type != EMatrix_right && type != EMatrix_both)
+    type = EMatrix_left;
   if (d == 0) d = F->getDegreeMonoid()->one();
   EMatrix *result = new EMatrix(F,G,elements,type,d);
   return result;
@@ -197,7 +197,7 @@ ERingElement EMatrix::entry(int r, int c) const
 
 EMatrix *EMatrix::add(const EMatrix *m) const
 {
-  int newtype = (type & m->type);
+  int newtype = (theType & m->theType);
   if (newtype == 0)
     gError << "cannot add left-matrix and right-matrix";
   else if (getRing() != m->getRing())
@@ -237,7 +237,7 @@ EMatrix *EMatrix::add(const EMatrix *m) const
 
 EMatrix *EMatrix::subtract(const EMatrix *m) const
 {
-  int newtype = (type & m->type);
+  int newtype = (theType & m->theType);
   if (newtype == 0)
     gError << "cannot add left-matrix and right-matrix";
   else if (getRing() != m->getRing())
@@ -280,7 +280,7 @@ EMatrix *EMatrix::negate() const
   EVector *newcols = allocate_columns(n_cols());
   for (int i=0; i<n_cols(); i++)
     newcols[i] = column(i).negate();
-  return make(getTarget(), getSource(), newcols, type, getMapDegree());
+  return make(getTarget(), getSource(), newcols, theType, getMapDegree());
 }
 
 EMatrix *EMatrix::submatrix(const intarray &c) const
@@ -293,7 +293,7 @@ EMatrix *EMatrix::submatrix(const intarray &c) const
       newcols[i] = getTarget()->zero();
     else
       newcols[i] = column(c[i]).clone();
-  return make(getTarget(), G, newcols, type, getMapDegree());
+  return make(getTarget(), G, newcols, theType, getMapDegree());
 }
 
 EMatrix *EMatrix::submatrix(const intarray &r, const intarray &c) const
@@ -309,7 +309,7 @@ EMatrix *EMatrix::submatrix(const intarray &r, const intarray &c) const
       newcols[i] = getTarget()->zero();
     else
       newcols[i] = column(c[i]).subvector(F,r);
-  return make(F, G, newcols, type, getMapDegree());
+  return make(F, G, newcols, theType, getMapDegree());
 }
 
 EMatrix *EMatrix::transpose() const
@@ -332,8 +332,8 @@ EMatrix *EMatrix::transpose() const
   for (int r=0; r<G->rank(); r++)
     newcols[r].sort();
 
-  int newtype = both - type;
-  if (newtype == 0) newtype = both;
+  int newtype = EMatrix_both - theType;
+  if (newtype == 0) newtype = EMatrix_both;
   return make(F, G, newcols, newtype, newdeg);
 }
 
@@ -341,7 +341,7 @@ EMatrix *EMatrix::leftMultiply(ERingElement a) const
 {
   // Note: we cannot check that the ring of 'a' is the same as the ring of 'this'.
   // but this had better be the case!!
-  if (type == right)
+  if (theType == EMatrix_right)
     {
       gError << "cannot multiply right-matrix by element on the left";
       return 0;
@@ -350,13 +350,13 @@ EMatrix *EMatrix::leftMultiply(ERingElement a) const
   for (int i=0; i<n_cols(); i++)
     newcols[i] = column(i).leftMultiply(a);
   const monomial *deg = getDegreeMonoid()->mult(getMapDegree(), getRing()->degree(a));
-  return make(getTarget(),getSource(),newcols,type,deg);
+  return make(getTarget(),getSource(),newcols,theType,deg);
 }
 EMatrix *EMatrix::rightMultiply(ERingElement a) const
 {
   // Note: we cannot check that the ring of 'a' is the same as the ring of 'this'.
   // but this had better be the case!!
-  if (type == left)
+  if (theType == EMatrix_left)
     {
       gError << "cannot multiply left-matrix by element on the right";
       return 0;
@@ -365,7 +365,7 @@ EMatrix *EMatrix::rightMultiply(ERingElement a) const
   for (int i=0; i<n_cols(); i++)
     newcols[i] = column(i).rightMultiply(a);
   const monomial *deg = getDegreeMonoid()->mult(getMapDegree(), getRing()->degree(a));
-  return make(getTarget(),getSource(),newcols,type,deg);
+  return make(getTarget(),getSource(),newcols,theType,deg);
 }
 
 EVector EMatrix::vectorImage(const EVector &v) const
@@ -383,7 +383,7 @@ EVector EMatrix::vectorImage(const EVector &v) const
       ERingElement a = getRing()->vec_term_to_ring(*t);
       // Multiply t by the vector column(t->component):
       EVector w;
-      if (type != right)
+      if (theType != EMatrix_right)
 	w = column(t->component).leftMultiply(a);
       else
 	w = column(t->component).rightMultiply(a);
@@ -395,7 +395,7 @@ EVector EMatrix::vectorImage(const EVector &v) const
 
 EMatrix *EMatrix::multiply(const EMatrix * m) const
 {
-  int newtype = (type & m->type);
+  int newtype = (theType & m->theType);
   if (newtype == 0)
     {
       gError << "cannot compose left-matrix with a right-matrix";
@@ -430,7 +430,7 @@ EMatrix *EMatrix::flip(const EFreeModule *F, const EFreeModule *G)
   for (int g=0; g<G->rank(); g++)
     for (int f=0; f<F->rank(); f++)
       newcols[next++] = H->basisElement(f * G->rank() + g);
-  return make(H,H,newcols,both);
+  return make(H,H,newcols,EMatrix_both);
 }
 
 EMatrix *EMatrix::reshape(const EFreeModule *F, const EFreeModule *G) const
@@ -464,7 +464,7 @@ EMatrix *EMatrix::reshape(const EFreeModule *F, const EFreeModule *G) const
       }
   for (c=0; c<G->rank(); c++)
     newcols[c].sort();
-  return make(F,G,newcols,type);
+  return make(F,G,newcols,theType);
 }
 
 EMatrix *EMatrix::concatenate(const EMatrix *m) const
@@ -489,12 +489,12 @@ EMatrix *EMatrix::concatenate(const EMatrix *m) const
   for (i=0; i<m->n_cols(); i++)
     newcols[nc+i] = m->column(i).translate(getTarget());
 
-  return make(getTarget(), G, newcols, type, getMapDegree());
+  return make(getTarget(), G, newcols, theType, getMapDegree());
 }
 
 EMatrix *EMatrix::directSum(const EMatrix *m) const
 {
-  int newtype = (type & m->type);
+  int newtype = (theType & m->theType);
   if (newtype == 0)
     {
       gError << "expected either both right-matrices or both left-matrices";
@@ -535,12 +535,12 @@ EMatrix *EMatrix::moduleTensor(const EMatrix *m) const
       gError << "module tensor product: different base rings";
       return 0;
     }
-  if (!((type & right) || (m->type & left)))
+  if (!((theType & EMatrix_right) || (m->theType & EMatrix_left)))
     {
       gError << "module tensor: expected left and right module";
       return 0;
     }
-  int newtype = (type & left) | (m->type & right);
+  int newtype = (theType & EMatrix_left) | (m->theType & EMatrix_right);
   if (newtype == 0)
     {
       gError << "expected bi-module";
@@ -606,7 +606,7 @@ EMatrix *EMatrix::tensor(const EMatrix *m) const
     for (j=0; j<m->n_cols(); j++)
       newcols[next++] = column(i).tensor(F, m->column(j));
 				 
-  return make(F,G,newcols,type,mapdeg);
+  return make(F,G,newcols,theType,mapdeg);
 }
 
 EMatrix *EMatrix::leadTerm(int n, bool same_component_only) const
@@ -619,7 +619,7 @@ EMatrix *EMatrix::leadTerm(int n, bool same_component_only) const
   EVector *newcols = allocate_columns(n_cols());
   for (int i=0; i<n_cols(); i++)
     newcols[i] = column(i).leadTerm(n,same_component_only);
-  return make(getTarget(), getSource(), newcols, type, getMapDegree());
+  return make(getTarget(), getSource(), newcols, theType, getMapDegree());
 }
 EMatrix * EMatrix::homogenize(int v, int nwts, const int *wts) const
 {
@@ -633,7 +633,7 @@ EMatrix * EMatrix::homogenize(int v, int nwts, const int *wts) const
           return 0;
         }
     }
-  return make(getTarget(), getSource(), newcols, type, getMapDegree());
+  return make(getTarget(), getSource(), newcols, theType, getMapDegree());
 }
 EMatrix *EMatrix::evaluate(const ERingMap *f, const EFreeModule *newTarget) const
 {
@@ -641,7 +641,7 @@ EMatrix *EMatrix::evaluate(const ERingMap *f, const EFreeModule *newTarget) cons
   for (int i=0; i<n_cols(); i++)
     newcols[i] = f->evaluate(newTarget, column(i));
   EFreeModule *G = EFreeModule::makeFreeModuleFromDegrees(getRing(),n_cols(),newcols);
-  return make(newTarget, G, newcols, type);
+  return make(newTarget, G, newcols, theType);
 }
 bool EMatrix::promote(const EFreeModule *newTarget, EMatrix * & result) const
 {
@@ -668,14 +668,14 @@ bool EMatrix::promote(const EFreeModule *newTarget, EMatrix * & result) const
   else
     mapdegree = getRing()->getDegreeMonoid()->one();
 
-  int type = getMatrixType();
+  int theType = getMatrixType();
   //if (newTarget()->getRing()->isCommutative())
-  //  type = both;
+  //  theType = EMatrix_both;
 
   // Make the matrix
   EFreeModule *newSource = EFreeModule::makeFreeModuleFromDegrees(newTarget->getRing(),
 								  n_cols(),newcols);
-  result =  make(newTarget, newSource, newcols, type, mapdegree);
+  result =  make(newTarget, newSource, newcols, theType, mapdegree);
   return true;
 }
 bool EMatrix::lift(const EFreeModule *newTarget, EMatrix * & result) const
@@ -698,14 +698,14 @@ bool EMatrix::lift(const EFreeModule *newTarget, EMatrix * & result) const
   else
     mapdegree = getRing()->getDegreeMonoid()->one();
 
-  int type = getMatrixType();
+  int theType = getMatrixType();
   //if (!newTarget()->getRing()->isCommutative())
-  //  type = left;
+  //  theType = EMatrix_left;
 
   // Make the matrix 
   EFreeModule *newSource = EFreeModule::makeFreeModuleFromDegrees(newTarget->getRing(),
 								  n_cols(),newcols);
-  result = make(newTarget, newSource, newcols, type, mapdegree);
+  result = make(newTarget, newSource, newcols, theType, mapdegree);
   return true;
 }
 
@@ -784,7 +784,7 @@ EMatrix *EMatrix::koszul(int p) const
   
   EVector *newcols = initialize_columns(F,G->rank());
   if (p <= 0 || p > getRing()->n_vars())
-    return make(F,G,newcols,type,getMapDegree());
+    return make(F,G,newcols,theType,getMapDegree());
   int *a = new int[p];
   for (int c=0; c < G->rank(); c++)
     {
@@ -806,7 +806,7 @@ EMatrix *EMatrix::koszul(int p) const
 	    newcols[c].addTo(temp);
 	}
     }
-  return make(F,G,newcols,type,getMapDegree());
+  return make(F,G,newcols,theType,getMapDegree());
 }
 
 EMatrix *EMatrix::koszul(const EMatrix *r, const EMatrix *c)
@@ -845,19 +845,17 @@ EMatrix *EMatrix::koszul(const EMatrix *r, const EMatrix *c)
   
   EVector *newcols = initialize_columns(F,G->rank());
   
-  int nvars = M->n_vars();
-  int nrows = F->rank();
-  int ncols = G->rank();
-  const int *aexp = new int[nvars];
-  const int *bexp = new int[nvars];
+  const int nvars = M->n_vars();
+  const int nrows = F->rank();
+  const int ncols = G->rank();
   int *result_exp = new int[nvars];
-  for (int i=0; i<ncols; i++)
+  for (i=0; i<ncols; i++)
     {
-      aexp = M->to_exponents(c->column(i).leadMonomial());
+      const int *aexp = M->to_exponents(c->column(i).leadMonomial());
       for (int j=0; j<nrows; j++)
 	{
-	  bexp = M->to_exponents(r->column(j).leadMonomial());
-	  int sign = signdivide(nvars, aexp, bexp, result_exp);
+	  const int *bexp = M->to_exponents(r->column(j).leadMonomial());
+	  const int sign = signdivide(nvars, aexp, bexp, result_exp);
 	  if (sign != 0)
 	    {
 	      evec *p = R->vec_new_term();
@@ -870,10 +868,8 @@ EMatrix *EMatrix::koszul(const EMatrix *r, const EMatrix *c)
 	}
       newcols[i].sort();
     }
-  delete [] aexp;
-  delete [] bexp;
   delete [] result_exp;
-  return make(F,G,newcols,both,r->getMapDegree());
+  return make(F,G,newcols,EMatrix_both,r->getMapDegree());
 }
 
 EMatrix *EMatrix::exteriorProduct(int p, int q, const EFreeModule *F)

@@ -628,5 +628,6 @@ const int * ENCMonoid::to_exponents(const monomial *m) const
 {
   assert(0);
   // WHAT??
+  return NULL;
 }
 

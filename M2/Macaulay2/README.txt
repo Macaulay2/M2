@@ -198,8 +198,8 @@ address will get forwarded to both of us.
 
     We are currently using the Microsoft Visual C/C++ compiler, running under
     Windows NT, to compile Macaulay 2 as a 32 bit application.  It should
-    work equally well under Windows 95, Windows 98, and Windows NT.  Let us
-    know if it doesn't.  It should also work on both 486 and Pentium machines.
+    work equally well under Windows 95, Windows 98, and Windows NT.  It
+    should also work on both 486 and Pentium machines.
 
     We don't support Macaulay 2 for Windows 3.1 or for MSDOS, but the source
     code is available on our web site, and you're welcome to try to compile
@@ -216,6 +216,34 @@ address will get forwarded to both of us.
     http://www.cs.washington.edu/homes/voelker/ntemacs.html .  We recommend it
     highly - it includes on line tutorials and documentation, and once you
     learn it, you will probably want to make it your only text editor.
+
+    One problem with running Macaulay2 in a shell window inside emacs running
+    bash is that Macaulay2 can't tell it is talking to a tty, and hence won't
+    offer input prompts soon enough.  To fix this problem, add "-tty" as an
+    argument to the command line when starting the program, like this:
+
+	     M2 -tty
+
+    This problem also affects running Macaulay2 inside emacs using our
+    macros.  Assuming you have version 20, add the following line to your
+    .emacs file:
+
+	(setq explicit-M2-args '("-tty"))
+
+    Another problem that may occur wehn running Macaulay2 inside emacs is
+    the appearance of ASCII carriage return characters on the screen at the
+    end of each line as "^M" combinations.  To eliminate this, put the
+    following lines in your .emacs file.
+
+	(setq process-coding-system-alist
+	      (cons (cons "M2" 'raw-text) process-coding-system-alist))
+
+    or maybe even
+
+	(setq process-coding-system-alist
+              (cons (cons "M2" (cons 'raw-text-dos 'raw-text-unix))
+	            process-coding-system-alist))
+
     Eventually you may want to interchange the control key with the caps lock
     key on your Windows keyboard.  This can be done.  For Windows 95, you can
     use the Kernel Toys from Microsoft, available at

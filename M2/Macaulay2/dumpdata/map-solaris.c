@@ -14,6 +14,7 @@
 #include <sys/fault.h>
 #include <sys/syscall.h>
 #include <sys/procfs.h>
+#include <sys/ioctl.h>
 #include "map.h"
 #include "std.h"
 
@@ -26,14 +27,18 @@ static int openproc() {
 extern int nummaps() {
   int nmaps, fd = openproc();
   if (fd == ERROR) return ERROR;
-  if (ERROR == ioctl(fd, PIOCNMAP, &nmaps)) return ERROR;
+  if (ERROR == ioctl(fd, PIOCNMAP, &nmaps)) {
+    close(fd);
+    perror("can't get number of memory maps\n");
+    exit(1);
+  }
   close(fd);
   return nmaps;
 }
 
 extern int getmaps(int nmaps, struct MAP maps[nmaps]) {
   int i;
-  prmap_t buf[nmaps];
+  prmap_t buf[nmaps+1];
   int fd = openproc();
   if (fd == ERROR) return ERROR;
   if (ERROR == ioctl(fd, PIOCMAP, buf)) {

@@ -176,7 +176,11 @@ $CC $TMP $LDFLAGS >/dev/null 2>&1 ||
 
 cat <<'EOF' >$TMP
 #include <netdb.h>
-main(){ herror((char *)0); }
+extern int h_nerr;
+main(){ 
+    int i = h_nerr;
+    herror((char *)0); 
+    }
 EOF
 $CC $TMP $LDFLAGS >/dev/null 2>&1 || 
 	echo '#define NO_HERROR 1' \
