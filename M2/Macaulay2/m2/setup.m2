@@ -223,9 +223,11 @@ document { quote Options,
      argument names and their values.  The table will be stored in the
      ", TO "OptionsRegistry", " and can be recovered with the function
      ", TO "options", ".",
-     EXAMPLE "f = method(Options => {Slope => 1, Intercept => 1})",
-     EXAMPLE "f RR := (x,options) -> options.Slope * x + options.Intercept",
-     EXAMPLE "f(5.,Slope=>100)",
+     EXAMPLE {
+	  "f = method(Options => {Slope => 1, Intercept => 1})",
+      	  "f RR := (x,options) -> options.Slope * x + options.Intercept",
+      	  "f(5.,Slope=>100)",
+	  },
      PARA,
      "Here is a complete list of symbols which are used as names of options: ",
      between( ", ",

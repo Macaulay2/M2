@@ -30,8 +30,10 @@ document { quote subtable,
      TT "subtable(u,v,m)", " -- yields the subtable of the table m obtained from the
      list u of row numbers and the list v of column numbers.",
      PARA,
-     EXAMPLE "m = table(5,5,identity)",
-     EXAMPLE "subtable({1,3,4},toList(2..4), m)"
+     EXAMPLE {
+	  "m = table(5,5,identity)",
+      	  "subtable({1,3,4},toList(2..4), m)"
+	  },
      }
 
 isTable = m -> (

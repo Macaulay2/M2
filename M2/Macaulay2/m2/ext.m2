@@ -43,11 +43,13 @@ document { quote Ext,
      be used to convert ", TT "{i,-d}", " into the degree actually used.
      This adjusted multi-degree can be used with ", TO "basis", ", as in the
      example below.",
-     EXAMPLE "R = ZZ/101[x,y]/ideal(x^3,y^2);",
-     EXAMPLE "N = cokernel random (R^1, R^{-2,-2})",
-     EXAMPLE "E = Ext(N,N)",
-     EXAMPLE "rank source basis( E.adjust {-3,-2}, E)",
-     EXAMPLE "rank source basis( {-3}, Ext^2(N,N) )",
+     EXAMPLE {
+	  "R = ZZ/101[x,y]/ideal(x^3,y^2);",
+      	  "N = cokernel random (R^1, R^{-2,-2})",
+      	  "E = Ext(N,N)",
+      	  "rank source basis( E.adjust {-3,-2}, E)",
+      	  "rank source basis( {-3}, Ext^2(N,N) )",
+	  },
      SEEALSO{"ScriptedFunctor", "adjust"}
      }
 
@@ -66,10 +68,12 @@ document { quote dd,
      map of degree ", TT "-1", ".  The map ", TT "C.dd_i", " is the
      one whose source is the module ", TT "C_i", ", and it is arranged to
      be zero if no map has been stored in that spot.",
-     EXAMPLE "R = ZZ/101[a,b];",
-     EXAMPLE "C = resolution cokernel vars R",
-     EXAMPLE "C.dd",
-     EXAMPLE "C.dd_2",
+     EXAMPLE {
+	  "R = ZZ/101[a,b];",
+      	  "C = resolution cokernel vars R",
+      	  "C.dd",
+      	  "C.dd_2",
+	  },
      SEEALSO "ChainComplex"
      }
 	  

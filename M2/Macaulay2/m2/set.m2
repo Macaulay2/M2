@@ -45,9 +45,11 @@ document { (quote **, Tally, Tally),
      PARA,
      "One of the arguments may be a ", TO "Set", ".",
      PARA,
-     EXAMPLE "x = tally {a,a,b}",
-     EXAMPLE "y = tally {1,2,2,2}",
-     EXAMPLE "x ** y",
+     EXAMPLE {
+	  "x = tally {a,a,b}",
+      	  "y = tally {1,2,2,2}",
+     	  "x ** y",
+	  },
      SEEALSO {"Tally", "tally"}
      }
 
@@ -69,9 +71,11 @@ document { (quote +, Tally, Tally),
      PARA,
      "One of the arguments may be a ", TO "Set", ".",
      PARA,
-     EXAMPLE "x = tally {a,a,a,b,b,c}",
-     EXAMPLE "y = tally {b,c,c,d,d,d}",
-     EXAMPLE "x + y",
+     EXAMPLE {
+	  "x = tally {a,a,a,b,b,c}",
+      	  "y = tally {b,c,c,d,d,d}",
+      	  "x + y",
+	  },
      SEEALSO {"Tally", "tally"}
      }
 
@@ -79,8 +83,10 @@ document { "apply(Tally,Function)",
      TT "apply(x,f)", " -- applies the function ", TT "f", " to each element of the
      tally ", TT "x", ", accumulating the results in a tally.",
      PARA,
-     EXAMPLE "x = tally {-1,-1,-2,1}",
-     EXAMPLE "apply(x,abs)",
+     EXAMPLE {
+	  "x = tally {-1,-1,-2,1}",
+      	  "apply(x,abs)",
+	  },
      SEEALSO {"Tally", "tally"}
      }
 
@@ -105,8 +111,10 @@ document { quote tally,
      y_i is the number of times i appears in x, or is 0 if
      i doesn't appear in the list.",
      PARA,
-     EXAMPLE "y = tally {1,2,3,a,b,1,2,a,1,2,{a,b},{a,b},a}",
-     EXAMPLE "y_{a,b}",
+     EXAMPLE {
+	  "y = tally {1,2,3,a,b,1,2,a,1,2,{a,b},{a,b},a}",
+      	  "y_{a,b}",
+	  },
      PARA,
      SEEALSO "Tally"
      }

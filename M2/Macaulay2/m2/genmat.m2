@@ -17,8 +17,10 @@ document { quote genericMatrix,
      TT "genericMatrix(R,x,m,n)", " -- produce an m by n matrix of variables drawn
      from the ring R, starting with variable x.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "genericMatrix(R,a,2,2)"
+     EXAMPLE {
+	  "R = ZZ/101[a..d]",
+      	  "genericMatrix(R,a,2,2)"
+	  },
      }
 
 genericSkewMatrix = (R,first,n) -> (

@@ -109,9 +109,11 @@ document { quote isPrimitive,
      TT "isPrimitive g", " -- determines whether ", TT "g", " is a primitive
      element of a finite field.",
      PARA,
-     EXAMPLE "R = ZZ/5[t]/(t^2+t+1)",
-     EXAMPLE "isPrimitive t",
-     EXAMPLE "isPrimitive (t-1)"
+     EXAMPLE {
+	   "R = ZZ/5[t]/(t^2+t+1);",
+      	   "isPrimitive t",
+      	   "isPrimitive (t-1)"
+	   },
      }
 
 TEST "

@@ -303,8 +303,10 @@ document { quote splice,
      Copying the list v is always done when v is mutable.
      Certain functions always splice their arguments or their argument
      lists for the sake of convenience.",
-     EXAMPLE "splice ((a,b),c,(d,(e,f)))",
-     EXAMPLE "splice [(a,b),c,(d,(e,f))]",
+     EXAMPLE {
+	  "splice ((a,b),c,(d,(e,f)))",
+      	  "splice [(a,b),c,(d,(e,f))]",
+	  },
      SEEALSO "deepSplice"
      }
 
@@ -338,8 +340,10 @@ document { quote apply,
      list ", TT "v", ", returning the list of results. If ", TT "v", " is 
      a sequence, then a sequence is returned.",
      PARA,
-     EXAMPLE "apply(1 .. 5, i->i^2)",
-     EXAMPLE "apply({1,3,5,7}, i->i^2)",
+     EXAMPLE {
+	  "apply(1 .. 5, i->i^2)",
+      	  "apply({1,3,5,7}, i->i^2)",
+	  },
      PARA,
      NOINDENT,
      TT "apply(v,w,f)", " -- produces, from lists or 
@@ -350,8 +354,10 @@ document { quote apply,
      that class.  If ", TT "v", " and ", TT "w", " are sequences, then so
      is the result.",
      PARA,
-     EXAMPLE "apply(1 .. 5, a .. e, identity)",
-     EXAMPLE "apply({1,3,5,7}, i->i^2)",
+     EXAMPLE {
+	  "apply(1 .. 5, a .. e, identity)",
+      	  "apply({1,3,5,7}, i->i^2)",
+	  },
      PARA,
      NOINDENT,
      TT "apply(n,f)", " -- equivalent to apply(list (0 .. n-1),f), for an integer n.",
@@ -406,8 +412,10 @@ document { quote select,
      hash table should be immutable: to scan the values in a mutable hash
      table, use ", TT "scan(values x, f)", ".",
      PARA,
-     EXAMPLE "select({1,2,3,4,5}, odd)",
-     EXAMPLE "select(2,{1,2,3,4,5}, odd)",
+     EXAMPLE {
+	  "select({1,2,3,4,5}, odd)",
+      	  "select(2,{1,2,3,4,5}, odd)",
+	  },
      PARA,
      SEEALSO{ "scan", "apply", "any", "all", "member", "mutable"}
      }
@@ -431,12 +439,15 @@ document { quote any,
      }
 
 document { quote describe,
-     TT "describe x", " -- prints the real name of ", TT "x", ", ignoring the
-     possible presence of a value for ", TT "x.name", ".",
+     TT "describe x", " -- prints the real name of ", TT "x", ", bypassing the
+     feature which causes certian types of things to acquire the names of
+     global variables to which they ar assigned.",
      PARA,
-     EXAMPLE "R = ZZ/101[a,b,c,d]",
-     EXAMPLE "R",
-     EXAMPLE "describe R",
+     EXAMPLE {
+	  "R = ZZ/101[a,b,c,d];",
+      	  "R",
+      	  "describe R",
+	  },
      PARA,
      SEEALSO "name"
      }
@@ -444,7 +455,7 @@ document { quote describe,
 document { quote input,
      TT "input \"f\"", " -- reads and executes the commands found in the 
      file named f, echoing the input, printing the values, and incrementing
-     the line numbers.",
+     the line number.",
      PARA,
      "The file is sought along the ", TO "path", ", unless the name of the
      file begins with '/' or './' or '../' .",
@@ -453,16 +464,20 @@ document { quote input,
      }
 
 document { quote load,
-     TT "load \"f\"", " -- reads and executes the commands found in the file named f.",
+     TT "load \"f\"", " -- reads and executes Macaulay 2 expressions found
+     in the file named ", TT "f", ".",
      PARA,
      "The file is sought along the ", TO "path", ", unless the name of the
-     file begins with the character(s) in ", TO "pathSeparator", ".",
+     file begins with the character(s) in ", TO "pathSeparator", ".  The
+     file is read without echoing the input, printing the values, or
+     incrementing the line number.",
      PARA,
      SEEALSO{ "path", "needs", "input"}
      }
 
 document { quote needs,
-     TT "needs \"f\"", " -- loads the file named f if it hasn't been loaded yet.",
+     TT "needs \"f\"", " -- loads the file named ", TT "f", " if it hasn't 
+     been loaded yet.",
      PARA,
      SEEALSO "load"
      }
@@ -481,24 +496,24 @@ document { quote times,
      }
 
 document { quote power,
-     TT "power(x,n)", " -- yields the n-th power of x.",
+     TT "power(x,n)", " -- yields the n-th power of ", TT "x", ".",
      PARA,
      SEEALSO "^"
      }
 
 document { quote difference, 
-     TT "difference(x,y)", " -- returns x-y." 
+     TT "difference(x,y)", " -- returns ", TT "x-y", "." 
      }
 
 document { quote minus,
-     TT "minus(x)   ", " -- yields -x.",
+     TT "minus(x)   ", " -- yields ", TT "-x", ".",
      PARA,
      "minus(x,y)  -- yields x-y, but see also ", TO "difference", "."
      }
 
 document { quote append,
-     TT "append(v,x)", " -- yields the list obtained by appending x to the 
-     list v.  Similarly if v is a sequence.",
+     TT "append(v,x)", " -- yields the list obtained by appending ", TT "x", " to the 
+     list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      PARA,
      EXAMPLE "append( {a,b,c}, x )",
      PARA,
@@ -507,7 +522,7 @@ document { quote append,
 
 document { quote prepend,
      TT "prepend(x,v)", " -- yields the list obtained by prepending x to the 
-     list v.  Similarly if v is a sequence.",
+     list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      PARA,
      EXAMPLE "prepend( x, {a,b,c} )",
      PARA,
@@ -521,20 +536,25 @@ document { "--",
 
 document { quote ascii,
      TT "ascii s", " -- convert a string to a list of ascii codes.", BR,
-     "ascii v -- convert a list of ascii codes to a string.",
+     NOINDENT,
+     TT "ascii v", " -- convert a list of ascii codes to a string.",
      PARA,
+     EXAMPLE {///ascii "abcdef"///, ///ascii oo///},
      SEEALSO{ "String" }
      }
 
 document { quote transnet,
-     TT "transnet v", " -- takes a list v of integers, and assembles the bytes of the
+     TT "transnet v", " -- takes a list ", TT "v", " of integers, and assembles the bytes of the
      integers, four at a time, in network order (high order byte
      first), into a string.",
+     BR,
+     BR,
+     NOINDENT,
+     TT "transnet s", " -- takes a string ", TT "s", " whose length is a multiple 
+     of 4, and assembles its bytes four at a time into integers, returning the list 
+     of assembled integers.",
      PARA,
-     "transnet s -- takes a string s whose length is a multiple of 4, and 
-     assembles them four at a time into integers, returning the list of
-     assembled integers.",
-     PARA,
+     EXAMPLE { "transnet {1,2,3}", "transnet oo"},
      SEEALSO{ "String" }
      }
 
@@ -737,8 +757,10 @@ document { (quote /^, Thing, ZZ),
      PARA,
      "This is implemented naively as ", TT "x^n/n!", ".",
      PARA,
-     EXAMPLE "ZZ/101[x]",
-     EXAMPLE "x/^3"
+     EXAMPLE {
+	  "ZZ/101[x];",
+      	  "x/^3"
+	  },
      }
 
 document { quote substring,
@@ -796,13 +818,15 @@ document { quote get,
      TT "get f", " -- yields a string containing the rest of the input from the 
      file f.",
      PARA,
-     EXAMPLE "\"/tmp/foooooo\" << \"hi there\" << endl << close",
-     EXAMPLE "get \"/tmp/foooooo\"",
-     EXAMPLE "get \"!date\"",
+     EXAMPLE {
+	  ///"junk" << "hi there" << endl << close///,
+      	  ///get "junk"///,
+      	  ///get "!date"///,
+	  },
      if version#"operating system" =!= "SunOS"
      and version#"operating system" =!= "CYGWIN32-NT"
      and version#"operating system" =!= "CYGWIN32-95"
-     then EXAMPLE "get \"$localhost:daytime\"",
+     then EXAMPLE ///get "$localhost:daytime"///,
      SEEALSO{ "File", "String", "read" }
      }
 
@@ -860,9 +884,11 @@ document { (quote |, String, String),
      PARA,
      "The result is a string if the arguments are all strings, otherwise it
      is a net.  The baselines of the nets are aligned.",
-     EXAMPLE ///"abc" | "def"///,
-     EXAMPLE ///x = "abc" || "ABC"///,
-     EXAMPLE ///x|"x"|x///,
+     EXAMPLE {
+	  ///"abc" | "def"///,
+      	  ///x = "abc" || "ABC"///,
+      	  ///x|"x"|x///,
+	  },
      PARA,
      "If one of the two arguments is an integer, it is converted to a string first.",
      EXAMPLE ///"t = " | 333///,      
@@ -879,9 +905,11 @@ document { (quote |, Matrix, Matrix),
      TT "f|g", " -- concatenate matrices horizontally.",
      PARA,
      "It is assumed that ", TT "f", " and ", TT "g", " both have the same target.",
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
-     EXAMPLE "f|f|f",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
+      	  "f|f|f",
+	  },
      "If one of the arguments is ring element or an integer, then it
      will be multiplied by a suitable identity matrix.",
      PARA,
@@ -909,18 +937,24 @@ document { (quote ||, Net, Net),
      them vertically.  The baseline of the result is the baseline of the
      first one.",
      PARA,
-     EXAMPLE ///x = "x" | "3"^1///,
-     EXAMPLE ///"<--- " | ( x || "" || x ) | " --->"///,
+     "In this example, we build a large net with arrows to indicate
+     the location of the baseline.",
+     EXAMPLE {
+	  ///x = "x" | "3"^1///,
+      	  ///"<--- " | ( x || "" || x ) | " --->"///,
+	  },
      SEEALSO {"||", "|", "Net", "verticalJoin"}
      }
 document { (quote ||, Matrix, Matrix),
      TT "f||g", " -- yields the matrix obtained from matrices ", TT "f", " and ", TT "g", " by
      concatenating the columns.",
      PARA,
-     EXAMPLE "R = ZZ[a..h]",
-     EXAMPLE "p = matrix {{a,b},{c,d}}",
-     EXAMPLE "q = matrix {{e,f},{g,h}}",
-     EXAMPLE "p || q",
+     EXAMPLE {
+	  "R = ZZ[a..h];",
+      	  "p = matrix {{a,b},{c,d}}",
+      	  "q = matrix {{e,f},{g,h}}",
+      	  "p || q",
+	  },
      "If one of the arguments is ring element or an integer, then it
      will be multiplied by a suitable identity matrix.",
      EXAMPLE "p || 33",
@@ -1029,11 +1063,17 @@ document { quote random,
      PARA,
      "Warning: doesn't correctly handle the case when n an integer is larger
      than 2^31-1.",
-     EXAMPLE "tally apply(100, i -> random 10)",
-     EXAMPLE "R = ZZ/101[t]",
-     EXAMPLE "sum(7,i->random 101 * t^i)",
-     EXAMPLE "R = ZZ/101[x,y]",
-     EXAMPLE "random(R^{1,2,3},R^{1,2,3})"
+     EXAMPLE {
+	  "tally apply(100, i -> random 10)",
+	  },
+     EXAMPLE {
+	  "R = ZZ/101[t];",
+      	  "sum(7,i->random 101 * t^i)",
+	  },
+     EXAMPLE {
+	  "R = ZZ/101[x,y];",
+      	  "random(R^{1,2,3},R^{1,2,3})"
+	  },
      }
 
 document { quote true,
@@ -1055,8 +1095,10 @@ document { quote "timing",
      PARA,
      "The default method for printing such timing results is to display the
      timing separately in a comment below the computed value.",
-     EXAMPLE "timing 3^30",
-     EXAMPLE "peek oo",
+     EXAMPLE {
+	  "timing 3^30",
+      	  "peek oo",
+	  },
      SEEALSO "Time"
      }
 
@@ -1079,15 +1121,17 @@ document { quote Time,
 document { quote null,
      TT "null", " -- a symbol that represents the presence of nothing.",
      PARA,
-     "Printing it causes nothing to appear.  When it is the value of an
-     expression entered into the interpreter, the output line doesn't appear.
-     Empty spots in a list are represented by it.",
+     "When it is the value of an expression entered into the interpreter, the
+     output line doesn't appear.  Empty spots in a list are represented by
+     it.",
      PARA,
      "It is the only member of the class ", TO "Nothing", ".",
      PARA,
-     EXAMPLE "x = {2,3,,4}",
-     EXAMPLE "x#2",
-     EXAMPLE "name x#2",
+     EXAMPLE {
+	  "x = {2,3,,4}",
+      	  "x#2",
+      	  "name x#2",
+	  },
      SEEALSO { "Nothing" }
      }
 
@@ -1154,7 +1198,7 @@ document { quote openFiles,
 document { quote stdin,
      TT "stdin", " -- the standard input file.",
      PARA,
-     "Use this file to get input from the terminal",
+     "Use this file to get input from the terminal.",
      PARA,
      "See also ", TO "File", "."
      }
@@ -1177,20 +1221,28 @@ document { quote stderr,
 
 document { quote openIn,
      TT "openIn \"fff\"", "  -- opens an input file whose filename is fff.",
-     PARA,
+     BR,BR,NOINDENT,
      TT "openIn \"!cmd\"", " -- opens an input file which corresponds to a pipe 
      receiving the output from the shell command ", TT "cmd", ".",
-     PARA,
-     "openIn \"$hostname:service\" -- opens a socket and returns a file which
-     can be used both for input and output.  There must be a process accepting
-     connections for the desired service on the specified host.  This feature
-     is not available on Sun computers, because Sun doesn't provide static 
-     versions of crucial libraries dealing with network communications, or
-     the static version doesn't provide network name service for looking
-     up hostnames.",
+     BR,BR,NOINDENT,
+     TT "openIn \"$hostname:service\"", " -- opens a socket and returns a file which
+     can be used both for input and output.",
      PARA,
      "The class of all files is ", TO "File", ".",
      PARA,
+     EXAMPLE {
+	  ///"junk" << "abcdefghijk" << endl << close///,
+	  ///f = openIn "junk"///,
+	  ///read f///,
+	  ///close f///,
+	  },
+     PARA,
+     "In order to open a socket successfully, there must be a process
+     accepting connections for the desired service on the specified host.
+     This feature is not available on Sun computers, because Sun doesn't
+     provide static versions of crucial libraries dealing with network
+     communications, or the static version doesn't provide network name
+     service for looking up hostnames.",
      if version#"operating system" =!= "SunOS"
      and version#"operating system" =!= "CYGWIN32-NT"
      and version#"operating system" =!= "CYGWIN32-95"
@@ -1256,8 +1308,10 @@ document { (quote <<, String, Thing),
      with something like ", TT "\"name\"<<x<<y<<z", ".  It will often be convenient 
      to let the last output operation close the file, as illustrated below.",
      PARA,
-     EXAMPLE "\"foo\" << 2^30 << endl << close",
-     EXAMPLE "get \"foo\""
+     EXAMPLE {
+	  "\"foo\" << 2^30 << endl << close",
+      	  "get \"foo\""
+	  }
      }
 
 document { (quote <<, Thing),
@@ -1351,10 +1405,12 @@ document { quote ?,
      PRE "         X ? Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
-     EXAMPLE "3 ? 4",
-     EXAMPLE "\"book\" ? \"boolean\"",
-     EXAMPLE "3 ? 3.",
-     EXAMPLE "3 ? \"a\"",
+     EXAMPLE {
+	  "3 ? 4",
+      	  "\"book\" ? \"boolean\"",
+      	  "3 ? 3.",
+      	  "3 ? \"a\"",
+	  },
      "It would be nice to implement an operator like this one for everything
      in such a way that the set of all things in the language would be
      totally ordered, so that it could be used in the implementation of
@@ -1368,8 +1424,10 @@ document { quote ;,
      expressions.  The value of the sequence is the value of its
      last expression, unless it is omitted, in which case the value
      is ", TO "null", ".",
-     EXAMPLE "(3;4;5)",
-     EXAMPLE "(3;4;5;)"
+     EXAMPLE {
+	  "(3;4;5)",
+      	  "(3;4;5;)"
+	  }
      }
 
 document { quote <-,
@@ -1468,24 +1526,28 @@ document { quote wait,
      }
 
 document { quote value,
-     TT "value s", " -- provides the value of the symbol s.",
+     TT "value s", " -- provides the value of the symbol ", TT "s", ".",
      PARA,
-     "The expression s is evaluated, so this is different from simply typing s.",
+     "The expression ", TT "s", " is evaluated, so this is different from simply typing ", TT "s", ".",
      PARA,
-     EXAMPLE "t = 11",
-     EXAMPLE "x = quote t",
-     EXAMPLE "x",
-     EXAMPLE "value x"
+     EXAMPLE {
+	  "t = 11",
+      	  "x = quote t",
+      	  "x",
+      	  "value x"
+	  }
      }
 
 document { quote "global",
      TT "global s", " -- provides the global symbol s, even if s currently has 
      a value.",
      PARA,
-     EXAMPLE "num",
-     EXAMPLE "num = 5",
-     EXAMPLE "num",
-     EXAMPLE "global num",
+     EXAMPLE {
+	  "num",
+      	  "num = 5",
+      	  "num",
+      	  "global num",
+	  },
      SEEALSO {"local", "quote"}
      }
 
@@ -1498,22 +1560,25 @@ document { quote "local",
      TT "local s", " -- provides the local symbol ", TT "s", ", creating
      a new symbol if necessary.  The initial value of a local
      symbol is ", TT "null", ".",
-     EXAMPLE "f = () -> ZZ[local t]",
-     EXAMPLE "f()",
-     EXAMPLE "t",
+     EXAMPLE {
+	  "f = () -> ZZ[local t]",
+      	  "f()",
+      	  "t",
+	  },
      SEEALSO {"global", "quote"}
      }
 
 document { quote quote,
      TT "quote s", " -- provides the symbol s, even if s currently has a value.",
      PARA,
-     EXAMPLE "num",
-     EXAMPLE "num = 5",
-     EXAMPLE "num",
-     EXAMPLE "num = quote num",
-     EXAMPLE "num",
+     EXAMPLE {
+	  "num",
+      	  "num = 5",
+      	  "num",
+      	  "quote num",
+	  },
      PARA,
-     "If s is an operator, then the corresponding symbol is provided.  This
+     "If ", TT "s", " is an operator, then the corresponding symbol is provided.  This
      symbol is used by the interpreter in constructing keys for methods
      associated to the symbol.",
      EXAMPLE "quote +",
@@ -2068,11 +2133,15 @@ document { "invoking the program",
      "These are the options that can also be provided on the command
      line.",
      MENU {
-	  {TT "-e x", "     -- executes the expression x"},
+	  {TT "--", "       -- ignore previous arguments after reloading data"},
+	  {TT "-e x", "     -- evaluates the expression x"},
 	  {TT "-h", "       -- displays the usage message"},
+	  {TT "-n", "       -- print no input prompts"},
 	  {TT "-q", "       -- suppresses loading of init file 'init.m2'"},
 	  {TT "-s", "       -- stops execution if an error occurs"},
-	  {TT "-xprompt", " -- special mode for running examples"}
+	  {TT "-silent", "  -- don't print the startup banner"},
+	  {TT "-tty", "     -- assume stdin is a tty"},
+	  {TT "-x", "       -- special mode for running examples"},
 	  },
      TT "M2", " is actually a shell script which calls the executable file
      with appropriate arguments for loading the Macaulay 2 code previously
@@ -2371,12 +2440,14 @@ document { "classes",
      ", TT "X", " is a ", TO "subclass", " of P.  For example, the mathematical
      notion of a module P and a submodule ", TT "X", " may be modelled this way.
      The parent of ", TT "x", " can be obtained with the function ", TO "parent", ".",
-     EXAMPLE "parent 2",
-     EXAMPLE "parent parent 2",
-     EXAMPLE "class 2",
-     EXAMPLE "parent class 2",
-     EXAMPLE "class class 2",
-     EXAMPLE "parent class class 2",
+     EXAMPLE {
+	  "parent 2",
+      	  "parent parent 2",
+      	  "class 2",
+      	  "parent class 2",
+      	  "class class 2",
+      	  "parent class class 2",
+	  },
      PARA,
      "The classes and parents provide a uniform way for operations on
      things to locate the appropriate functions needed to perform them.
@@ -2517,7 +2588,8 @@ document { "initialization file",
      program is started.",
      PARA,
      "The file is sought in each of the directories of the ", TO "path", ",
-     and also in the home directory of the user."
+     and also in the home directory of the user.",
+     SEEALSO "load"
      }
 
 document { quote Field,
@@ -2640,8 +2712,10 @@ document { (quote \,Function, List),
      EXAMPLE ///(j -> j^2) \ (i -> i+1) \ {1,2,3}///,
      "The precendence is lower than that of ", TT "@@", ".  Hence, the following 
      two examples yield the same result.",
-     EXAMPLE ///sin \ sin \ {1,2,3}///,
-     EXAMPLE ///sin @@ sin \ {1,2,3}///,
+     EXAMPLE {
+	  ///sin \ sin \ {1,2,3}///,
+      	  ///sin @@ sin \ {1,2,3}///,
+	  },
      SEEALSO {"apply", "@@", (quote /,List, Function)}
      }
 
@@ -2663,8 +2737,10 @@ document { quote String,
         \\\"             \"
         \\t             tab
         \\xxx           ascii character with octal value xxx",
-     EXAMPLE "\"abc\\001\\002\\n\\f\\t\"",
-     EXAMPLE "ascii oo",
+     EXAMPLE {
+	  "\"abc\\001\\002\\n\\f\\t\"",
+      	  "ascii oo",
+	  },
      PARA,
      "For an alternate method of entering strings which does not involve
      any escape sequences, see ", TO "///", ".",
@@ -2690,8 +2766,10 @@ document { "///",
      "This method for entering a string involves no escape characters, so
      it can be used for easily inserting large chunks of text into a string
      without treating the characters ", TT "\\", " and ", TT "\"", " specially.",
-     EXAMPLE "/// \\ \" ///",
-     EXAMPLE "ascii oo",
+     EXAMPLE {
+	  "/// \\ \" ///",
+      	  "ascii oo",
+	  },
      SEEALSO "String"
      }
 
@@ -2746,11 +2824,15 @@ document { quote net,
      "A string is formatted by wrapping it in quotation marks and converting
      nonprinting characters to escape sequences.  A net is formatted for printing
      by enclosing it in a box.",
-     EXAMPLE "\"a string\"",
-     EXAMPLE "net \"a string\"",
-     EXAMPLE "ZZ[x]",
-     EXAMPLE "x^2",
-     EXAMPLE "net x^2",
+     EXAMPLE {
+	  "\"a string\"",
+      	  "net \"a string\"",
+	  },
+     EXAMPLE {
+	  "ZZ[x];",
+      	  "x^2",
+      	  "net x^2",
+	  },
      EXAMPLE "code(net,List)",
      PARA,
      SEEALSO {"Net", "expression", "Expression", "Net"}
@@ -3003,59 +3085,76 @@ document { "lists, arrays, and sequences",
      The class of all sequences is ", TO "Sequence", ".",
      PARA,
      EXAMPLE "t = (3,4,5)",
+     "The length can be obtained with the prefix operator ", TO "#", ".",
      EXAMPLE "# t",
      PARA,
      "Sequences of length zero and one cannot be created with commas,
-     so there are special constructions. for them.  Use ", TO "seq", " to
+     so there are special constructions for them.  Use ", TO "seq", " to
      create a sequence of length one, and ", TO "()", " to create a sequence
      of length zero.",
      PARA,
-     EXAMPLE "u = ()",
-     EXAMPLE "# u",
-     EXAMPLE "v = seq 45",
-     EXAMPLE "# v",
+     EXAMPLE {
+	  "u = ()",
+      	  "# u",
+	  },
+     EXAMPLE {
+	  "v = seq 45",
+      	  "# v",
+	  },
      PARA,
      "A list is created by surrounding a sequence with braces.
      Use ", TO "{}", " to create a list of length zero.
      The class of all lists is ", TO "List", ".",
+     EXAMPLE {
+	  "w = {3,4,5}",
+      	  "# w",
+      	  "# {}",
+	  },
      PARA,
-     EXAMPLE "w = {3,4,5}",
-     EXAMPLE "# w",
-     EXAMPLE "# {}",
-     PARA,
-     EXAMPLE "x = {(3,4,5)}",
-     EXAMPLE "# x",
-     EXAMPLE "y = {(3,4,5),7}",
-     EXAMPLE "# y",
+     "The elements of a list can be lists or sequences.",
+     EXAMPLE {
+	  "x = {(3,4,5)}",
+      	  "# x",
+      	  "y = {(3,4,5),7}",
+      	  "# y",
+	  },
      PARA,
      "Lists can be used as vectors.",
-     EXAMPLE "2*{3,4,5} - {0,0,1}",     
-     "A table is a list of lists of the same length.  The inner lists
-     are regarded as rows when the table is displayed two-dimensionally.",
+     EXAMPLE "10000*{3,4,5} + {1,2,3}",     
+     "A table is a list whose elemensts are lists all of the same length.  
+     The inner lists are regarded as rows when the table is displayed as a
+     two-dimensional array.",
      PARA,
-     EXAMPLE "z = {{a,1},{b,2},{c,3}}",
-     EXAMPLE "new MatrixExpression from z",
+     EXAMPLE {
+	  "z = {{a,1},{b,2},{c,3}}",
+      	  "new MatrixExpression from z",
+	  },
      PARA,
      "An array is created by surrounding a sequence with brackets.
      Use ", TO "[]", " to create a list of length zero.
-     An array is a type of basic list, which means that the class
-     ", TO "Array", " of all arrays has ", TO "BasicList", " as its parent.",
-     EXAMPLE "f = [3,4,5]",
-     EXAMPLE "class f",
-     EXAMPLE "parent class f",
+     Arrays and lists are a type of basic list, which means that the class
+     ", TO "Array", " of all arrays and the class ", TO "List", " of all 
+     lists have a class called ", TO "BasicList", " as parent.",
+     EXAMPLE {
+	  "f = {3,4,5}",
+      	  "class f",
+      	  "parent class f",
+      	  "f = [3,4,5]",
+      	  "class f",
+      	  "parent class f",
+	  },
      "Omitting an element of a sequence, list, or array, causes the
-     non-printing symbol ", TO "null", " to be inserted in its place.",
+     symbol ", TO "null", " to be inserted in its place.",
      PARA,
      EXAMPLE "g = (3,4,,5)",
-     EXAMPLE "g#2",
-     EXAMPLE "(3,4,,5) == (3,4,null,5)",
      PARA,
-     "One calls functions with the notation f(x,y,z); here you may 
-     think of x, y, and z as the three arguments to f, or you may 
-     regard the sequence (x,y,z) as the single argument of f.
-     For the former, one takes a function f of the form",
+     "Sequences are used for calling functions with multiple arguments.
+     One calls a function with the notation ", TT "f(x,y,z)", "; here you may 
+     think of ", TT "x", ", ", TT "y", ", and ", TT "z", " as three arguments to ", TT "f", ", or you may 
+     regard the sequence ", TT "(x,y,z)", " as a single argument of ", TT "f", ".
+     For the former, the function ", TT "f", " will be of the following form.",
      PRE "          (a,b,c) -> ...",
-     "For the latter, one takes f of the form",
+     "For the latter, one takes f of the following form.",
      PRE "                t -> ...",
      "Types of list:",
      MENU {
@@ -3151,8 +3250,10 @@ document { quote toSequence,
      PARA,
      "If x is a sequence, then x is returned.",
      PARA,
-     EXAMPLE "toSequence {1,2,3}",
-     EXAMPLE "toSequence (1,2,3)"
+     EXAMPLE {
+	  "toSequence {1,2,3}",
+      	  "toSequence (1,2,3)"
+	  },
      }
 
 document { quote Boolean,
@@ -3259,7 +3360,7 @@ document { quote File,
           (TO "<<", "         -- print to file"),
 	  (TO "endl", "       -- end a line"),
           (TO "flush", "      -- flush a file"),
-	  (TO "netscape", "   -- call netscape to display an expression"),
+	  -- (TO "netscape", "   -- call netscape to display an expression"),
 	  (TO "printString", "  -- print a generalized string"),
           (TO "print", "      -- print an expression on a line"),
 	  (TO "TeX", "        -- call TeX to display an expression")
@@ -3288,13 +3389,15 @@ document { quote File,
      }
 
 document { quote printString,
-     TT "printString(o,s)", " -- send the string s to the output file o.",
+     TT "printString(o,s)", " -- send the string ", TT "s", " to the output file ", TT "o", ".",
      PARA,
-     "The argument s may also be a sequence or list, in which case
+     "The argument ", TT "s", " may also be a sequence or list, in which case
      its elements are printed.  If an integer is encountered, then
      it specifies a number of spaces to be printed.  If a symbol
      or indeterminate is encountered, its name is printed.  If ", TT "null", "
-     is encountered, nothing is printed."
+     is encountered, nothing is printed.",
+     PARA,
+     EXAMPLE ///printString(stdout, (a,10,"b",20,c))///
      }
 
 document { "help functions",
@@ -3305,6 +3408,8 @@ document { "help functions",
      "Functions for accessing the documentation:",
      MENU {
 	  TO "apropos",
+	  TO "doc",
+	  TO "examples",
 	  TO "help", 
 	  TO "topicList", 
 	  TO "topics"
@@ -3315,6 +3420,11 @@ document { "help functions",
 	  TO "hypertext",
 	  TO "html",
 	  TO "text"
+	  },
+     "Some internals:",
+     MENU {
+	  TO "Documentation",
+	  TO "phase",
 	  },
      SEEALSO "reading the documentation"
      }
@@ -3594,9 +3704,11 @@ document { quote sequence,
      TT "sequence v", " -- returns v if v is a sequence, otherwise makes
      a sequence of length one containing v.",
      PARA,
-     EXAMPLE "sequence 4",
-     EXAMPLE "sequence {4,5}",
-     EXAMPLE "sequence (4,5)",
+     EXAMPLE {
+	  "sequence 4",
+      	  "sequence {4,5}",
+      	  "sequence (4,5)",
+	  },
      PARA,
      "See also ", TO "seq", " and ", TO "lists, arrays, and sequences", "."
      }
@@ -3617,9 +3729,11 @@ document { quote mingle,
      PARA,
      "When one of the lists is exhausted, it is ignored.",
      PARA,
-     EXAMPLE "mingle({1,2,3,4},{a},{F,F,F,F,F,F,F,F,F,F})",
-     EXAMPLE "concatenate mingle( apply(5,name) , apply(4,i->\",\") )",
-     EXAMPLE "pack(mingle {{1,2,3},{4,5,6}}, 2)"
+     EXAMPLE {
+	  "mingle({1,2,3,4},{a},{F,F,F,F,F,F,F,F,F,F})",
+      	  "concatenate mingle( apply(5,name) , apply(4,i->\",\") )",
+      	  "pack(mingle {{1,2,3},{4,5,6}}, 2)"
+	  }
      }
 
 document { quote SelfInitializingType,
@@ -3628,9 +3742,11 @@ document { quote SelfInitializingType,
      "A self initializing type X will produce an instance of X from
      initial data v with the expression 'X v'.",
      PARA,
-     EXAMPLE "X = new SelfInitializingType of BasicList",
-     EXAMPLE "x = X {1,2,3}",
-     EXAMPLE "class x",
+     EXAMPLE {
+	  "X = new SelfInitializingType of BasicList",
+      	  "x = X {1,2,3}",
+      	  "class x",
+	  },
      PARA,
      TO "Command", " is an example of a self initializing type."
      }
@@ -3732,8 +3848,10 @@ document { "apply(Set,Function)",
      TT "apply(x,f)", " -- apply a function ", TT "f", " to each element of a
      ", TO "Set", " ", TT "x", ", producing a new set.",
      PARA,
-     EXAMPLE "x = set {1,2,3}",
-     EXAMPLE "apply(x,x -> x^2)"
+     EXAMPLE {
+	  "x = set {1,2,3}",
+      	  "apply(x,x -> x^2)"
+	  }
      }
 
 document { quote lookupCount,
@@ -3750,14 +3868,16 @@ document { quote version,
 document { quote Database,
      TT "Database", " -- the class of all database files.",
      PARA,
-     EXAMPLE ///filename = tmpname "test.dbm"///,
-     EXAMPLE ///x = openDatabaseOut filename///,
-     EXAMPLE ///x#"first" = "hi there"///,
-     EXAMPLE ///x#"first"///,
-     EXAMPLE ///x#"second" = "ho there"///,
-     EXAMPLE ///scanKeys(x,print)///,
-     EXAMPLE ///close x///,
-     EXAMPLE ///run ("rm -f " | filename)///,
+     EXAMPLE {
+	  ///filename = tmpname "test.dbm"///,
+      	  ///x = openDatabaseOut filename///,
+      	  ///x#"first" = "hi there"///,
+      	  ///x#"first"///,
+      	  ///x#"second" = "ho there"///,
+      	  ///scanKeys(x,print)///,
+      	  ///close x///,
+      	  ///run ("rm -f " | filename)///,
+	  },
      "Functions:",
      MENU {
 	  {TO "openDatabase", "    -- open a database file"},
@@ -3817,9 +3937,11 @@ document { quote evaluate,
      Macaulay 2 language, parse it in its own scope, evaluate it and return
      the value.",
      PARA,
-     EXAMPLE "evaluate \"2+2\"",
-     EXAMPLE "evaluate \"a :=2\"",
-     EXAMPLE "a"
+     EXAMPLE {
+	  "evaluate \"2+2\"",
+      	  "evaluate \"a :=2\"",
+      	  "a"
+	  }
      }
 
 document { quote addStartFunction,
@@ -3931,7 +4053,7 @@ PARA,
 "You may use ", TT "C-x o", " freely to switch from one window to the other.
 Verify that Macaulay 2 is running by entering a command such as ", TT "2+2", ".  
 Now paste the following text into a buffer, unless you have the ASCII
-version of this documentation in an emacs buffer already, and position
+version of this documentation in an emacs buffer already, position
 the cursor on the first line of code, and press the ", TT "F11", " function 
 key (or ", TT "C-C s", ") repeatedly to present each line to Macaulay 2.",
 PARA,
@@ -4137,10 +4259,12 @@ document { quote MutableHashTable,
      "Normally the entries in a mutable hash table are not printed, to prevent
      infinite loops in the printing routines.  To print them out, use 
      ", TO "peek", ".",
-     EXAMPLE "x = new MutableHashTable",
-     EXAMPLE "scan(0 .. 30, i -> x#i = i^2)",
-     EXAMPLE "x # 20",
-     EXAMPLE "x #? 40",
+     EXAMPLE {
+	  "x = new MutableHashTable",
+      	  "scan(0 .. 30, i -> x#i = i^2)",
+      	  "x # 20",
+      	  "x #? 40",
+	  },
      SEEALSO "HashTable"
      }
 
@@ -4170,8 +4294,10 @@ document { quote hashTable,
      "The pairs may be of the form ", TT "a=>b", ", ", TT "{a,b}", ",
      or ", TT "(a,b)", ".",
      PARA,
-     EXAMPLE "x = hashTable {a=>b, c=>d}",
-     EXAMPLE "x#a"
+     EXAMPLE {
+	  "x = hashTable {a=>b, c=>d}",
+      	  "x#a"
+	  },
      }
 
 document { quote toList,
@@ -4180,8 +4306,10 @@ document { quote toList,
      PARA,
      "This is a good way to convert a list of some type to a list of type
      ", TO "List", ".",
-     EXAMPLE "x = set {a,b,c,d}",
-     EXAMPLE "toList x"
+     EXAMPLE {
+	  "x = set {a,b,c,d}",
+      	  "toList x"
+	  },
      }
 
 document { quote hypertex,
@@ -4189,10 +4317,12 @@ document { quote hypertex,
      ", TO "tex", " should incorporate hypertext links into its output.",
      PARA,
      "The convention adopted by ", TT "xhdvi", " is the one used.",
-     EXAMPLE ///n = HREF {"http://www.uiuc.edu","UIUC"};///,
-     EXAMPLE ///<< tex n;///,
-     EXAMPLE ///hypertex = false;///,
-     EXAMPLE ///<< tex n;///
+     EXAMPLE {
+	  ///n = HREF {"http://www.uiuc.edu","UIUC"};///,
+      	  ///<< tex n;///,
+      	  ///hypertex = false;///,
+      	  ///<< tex n;///
+	  }
      }
 
 document { quote saturate,
@@ -4223,15 +4353,19 @@ document { quote saturate,
     "For example, one way to homogenize an ideal is to
     homogenize the generators and then saturate with respect to
     the homogenizing variable.",
-    EXAMPLE "R = ZZ/32003[a..d]",
-    EXAMPLE "I = ideal(a^3-b, a^4-c)",
-    EXAMPLE "Ih = homogenize(I,d)",
-    EXAMPLE "saturate(Ih,d)",
+    EXAMPLE {
+	 "R = ZZ/32003[a..d];",
+     	 "I = ideal(a^3-b, a^4-c)",
+     	 "Ih = homogenize(I,d)",
+     	 "saturate(Ih,d)",
+	 },
     "We can use this command to remove graded submodules of 
     finite length.",
-    EXAMPLE "m = ideal vars R",
-    EXAMPLE "M = R^1 / (a * m^2)",
-    EXAMPLE "M / saturate 0_M",
+    EXAMPLE {
+	 "m = ideal vars R",
+     	 "M = R^1 / (a * m^2)",
+     	 "M / saturate 0_M",
+	 },
     "Allowable options include:",
     MENU {
         TO (saturate => DegreeLimit),
@@ -4291,16 +4425,18 @@ document { quote globalAssignFunction,
      This is used for polynomial rings to assign values to the symbols representing
      the variables (indeterminates) in the ring.",
      PARA,
-     EXAMPLE "X = new Type of MutableHashTable",
-     EXAMPLE "x = new X",
-     EXAMPLE "GlobalAssignHook X := globalAssignFunction",
-     EXAMPLE "GlobalReleaseHook X := globalReleaseFunction",
-     EXAMPLE "x' = new X",
-     EXAMPLE "t = {x,x'}",
-     EXAMPLE "x = x' = 44",
-     EXAMPLE "t",
-     EXAMPLE "code globalAssignFunction",
-     SEEALSO { "name", "symbol" }
+     EXAMPLE {
+	  "X = new Type of MutableHashTable",
+      	  "x = new X",
+      	  "GlobalAssignHook X := globalAssignFunction",
+      	  "GlobalReleaseHook X := globalReleaseFunction",
+      	  "x' = new X",
+      	  "t = {x,x'}",
+      	  "x = x' = 44",
+      	  "t",
+      	  "code globalAssignFunction",
+	  },
+     SEEALSO { "name", "symbol", "SelfInitializingType" }
      }
 
 document { quote globalReleaseFunction,

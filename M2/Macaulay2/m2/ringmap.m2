@@ -90,21 +90,23 @@ document { "making ring maps",
      number of variables in the polynomial ring ", TT "S", "; or it may
      be a square matrix over the common coefficient ring of the two rings,
      in which case it is used as the matrix of a linear change of coordinates.",
-     EXAMPLE "R = ZZ/101[a,b];",
-     EXAMPLE "m = symmetricPower(3, vars R)",
-     EXAMPLE "rank source m",
-     EXAMPLE "S = ZZ/101[s_1 .. s_oo]",
-     EXAMPLE "f = map(R,S,m)",
-     EXAMPLE "f s_2",
-     EXAMPLE "f vars S",
-     EXAMPLE "kernel f",
-     EXAMPLE "generators oo",
-     EXAMPLE "f oo",
-     EXAMPLE "U = ZZ/101[t,u,v]",
-     EXAMPLE "g = map(S,U,{s_1+s_2, s_2 + s_3, s_3+s_4})",
-     EXAMPLE "f * g",
-     EXAMPLE "kernel oo",
-     EXAMPLE "f g generators oo",
+     EXAMPLE {
+	  "R = ZZ/101[a,b];",
+      	  "m = symmetricPower(3, vars R)",
+      	  "rank source m",
+      	  "S = ZZ/101[s_1 .. s_oo]",
+      	  "f = map(R,S,m)",
+      	  "f s_2",
+      	  "f vars S",
+      	  "kernel f",
+      	  "generators oo",
+      	  "f oo",
+      	  "U = ZZ/101[t,u,v]",
+      	  "g = map(S,U,{s_1+s_2, s_2 + s_3, s_3+s_4})",
+      	  "f * g",
+      	  "kernel oo",
+      	  "f g generators oo",
+	  },
      PARA,
      "The class of all ring maps is ", TO "RingMap", "."
      }
@@ -348,11 +350,13 @@ document { quote substitute,
      PARA,
      "If v is a list of options ", TT "{a => f, b => g, ...}", " then the variable
      ", TT "a", " is replaced by the polynomial ", TT "f", ", etc.",
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "f = x+2*y+3*z",
-     EXAMPLE "substitute(f,{x=>x^3, y=>y^3})",
-     EXAMPLE "S = ZZ/101[z,y,x]",
-     EXAMPLE "substitute(f,S)"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "f = x+2*y+3*z",
+      	  "substitute(f,{x=>x^3, y=>y^3})",
+      	  "S = ZZ/101[z,y,x]",
+      	  "substitute(f,S)"
+	  },
      }
 
 RingMap Ideal := (f,I) -> ideal f module I

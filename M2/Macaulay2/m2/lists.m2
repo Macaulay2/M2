@@ -18,8 +18,10 @@ Sequence _ List := List _ List := (x,y) -> apply(splice y, i -> x#i)
 document { (quote _, List, List),
      TT "w_{i,j,...}", " -- selects entries from a list or sequence ", TT "w", ".",
      PARA,
-     EXAMPLE "w = {a,b,c,d,e,f,g,h};",
-     EXAMPLE "w_{1,3,4}",
+     EXAMPLE {
+	  "w = {a,b,c,d,e,f,g,h};",
+      	  "w_{1,3,4}",
+	  },
      "We can use this operation to compute composition of permutations
      represented as lists.",
      EXAMPLE "{4,2,3,1,0} _ {2,1,3,4,0}"
@@ -86,10 +88,12 @@ document { quote member,
      TT "member(e,x)", " -- whether ", TT "e", " is an element of the list, set, or 
      sequence ", TT "x", ".",
      PARA,
-     EXAMPLE "x = {a,b,c,d,e};",
-     EXAMPLE "member(c,x)",
-     EXAMPLE "member(f,x)",
-     SEEALSO {"positions", "Set"}
+     EXAMPLE {
+	  "x = {a,b,c,d,e};",
+      	  "member(c,x)",
+      	  "member(f,x)",
+      	  {"positions", "Set"}
+	  },
      }
 
 sum(List) := x -> plus toSequence x
@@ -137,8 +141,10 @@ document { (sum, List, List, Function),
      the lists or sequences ", TT "v", " and ", TT "w", ", which should be of 
      the same length.",
      PARA,
-     EXAMPLE "R = ZZ[x,y,z];",
-     EXAMPLE "sum({2,3,4},{x,y,z},(i,j)->j^i)",
+     EXAMPLE {
+	  "R = ZZ[x,y,z];",
+      	  "sum({2,3,4},{x,y,z},(i,j)->j^i)",
+	  },
      SEEALSO "sum"
      }
 document { (sum, List, Function),
@@ -157,15 +163,19 @@ document { (sum, ZZ, Function),
 document { (sum, Tally),
      TT "sum v", " -- yields the sum of the elements in the tally ", TT "v", ".",
      PARA,
-     EXAMPLE "a = tally{1,1,1,1,1,10,10,10,100,100}",
-     EXAMPLE "sum a",
+     EXAMPLE {
+	  "a = tally{1,1,1,1,1,10,10,10,100,100}",
+      	  "sum a",
+	  },
      SEEALSO "sum"
      }
 document { (sum, Set),
      TT "sum v", " -- yields the sum of the elements in the set ", TT "v", ".",
      PARA,
-     EXAMPLE "a = set{1,100,10000}",
-     EXAMPLE "sum a",
+     EXAMPLE {
+	  "a = set{1,100,10000}",
+      	  "sum a",
+	  },
      SEEALSO "sum"
      }
 
@@ -212,8 +222,10 @@ document { (product, List, List, Function),
      the lists or sequences ", TT "v", " and ", TT "w", ", which should be of 
      the same length.",
      PARA,
-     EXAMPLE "M = monoid [x,y,z];",
-     EXAMPLE "product({2,3,4},{x,y,z},(i,j)->j^i)",
+     EXAMPLE {
+	  "M = monoid [x,y,z];",
+      	  "product({2,3,4},{x,y,z},(i,j)->j^i)",
+	  },
      SEEALSO "product"
      }
 document { (product, List, Function),
@@ -232,14 +244,18 @@ document { (product, ZZ, Function),
 document { (product, Tally),
      TT "product v", " -- yields the product of the elements in the tally ", TT "v", ".",
      PARA,
-     EXAMPLE "a = tally{2,2,2,2,2,3,3,3,5,5}",
-     EXAMPLE "product a",
+     EXAMPLE {
+	  "a = tally{2,2,2,2,2,3,3,3,5,5}",
+      	  "product a",
+	  },
      SEEALSO "product"
      }
 document { (product, Set),
      TT "product v", " -- yields the product of the elements in the set ", TT "v", ".",
      PARA,
-     EXAMPLE "a = set select(1..50, isPrime)",
-     EXAMPLE "product a",
+     EXAMPLE {
+	  "a = set select(1..50, isPrime)",
+      	  "product a",
+	  },
      SEEALSO "product"
      }

@@ -193,12 +193,15 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 
 usageMessage():void := (
      usage(argv.0 + " [options...] filename ..." + newline 
-	  + "    -h              print this usage message" + newline
-	  + "    -s              stop if error" + newline
+	  + "    --              ignore previous arguments after reloading data" + newline
 	  + "    \"-e x\"          evaluate expression x" + newline
-	  + "    -x              examples-prompt mode" + newline
-	  + "    -n              no input prompt" + newline
+	  + "    -h              print this usage message" + newline
+	  + "    -n              print no input prompts" + newline
+	  + "    -q              don't load init file" + newline
+	  + "    -s              stop if an error occurs" + newline
+	  + "    -silent         don't print the startup banner" + newline
 	  + "    -tty            assume stdin and stdout are ttys" + newline
+	  + "    -x              examples-prompt mode" + newline
 	  ));
 
 export process():void := (

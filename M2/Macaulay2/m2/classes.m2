@@ -53,10 +53,12 @@ document { quote MutableList,
      infinite loops in the printing routines.  To print them out, use 
      ", TO "peek", ".",
      PARA,
-     EXAMPLE "s = new MutableList from {a,b,c};",
-     EXAMPLE "s#2 = 1234;",
-     EXAMPLE "s",
-     EXAMPLE "peek s",
+     EXAMPLE {
+	  "s = new MutableList from {a,b,c};",
+      	  "s#2 = 1234;",
+	  "s",
+      	  "peek s",
+	  },
      SEEALSO {"lists, arrays, and sequences", "BasicList"}
      }
 

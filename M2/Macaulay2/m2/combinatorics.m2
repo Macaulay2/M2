@@ -93,6 +93,28 @@ document { quote partitions,
      TT "partitions(n,k)", " -- returns a list of the partitions of the integer n
      into terms each of which does not exceed k.",
      PARA,
-     EXAMPLE "partitions 4",
-     EXAMPLE "partitions(4,2)",
+     EXAMPLE {
+	  "partitions 4",
+      	  "partitions(4,2)",
+	  },
      }
+
+document { quote examples,
+     -- this should come after the doc for partitions, because of the example
+     TT "examples f", " -- returns a list of strings containing examples
+     of code using the function ", TT "f", " provided in the documentation
+     of ", TT "f", ".",
+     PARA,
+     EXAMPLE {
+	  ///examples partitions///,
+      	  ///printExamples partitions///,
+	  },
+     SEEALSO {"document", "printExamples"}
+     }
+
+TEST ///
+     assert( class examples MutableList === List )
+     assert( # examples MutableList > 0 )
+///
+
+

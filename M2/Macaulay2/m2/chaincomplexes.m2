@@ -42,8 +42,10 @@ document { quote ChainComplex,
      PARA,
      "The default display for a chain complex shows the modules and
      the stage at which they appear.",
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "C = resolution cokernel matrix {{x,y,z}}",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "C = resolution cokernel matrix {{x,y,z}}",
+	  },
      "In order to see the matrices of the differentials, examine 'C.dd'.",
      EXAMPLE "C.dd",
      SEEALSO {"Resolution", "dd"}
@@ -63,11 +65,13 @@ document { (complete, ChainComplex),
      Normally users will not need this function, unless they use ", TO "#", " to
      obtain the modules of the chain complex, or use ", TO "keys", " to
      see which spots are occupied by modules.",
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "C = resolution cokernel vars R;",
-     EXAMPLE "keys C",
-     EXAMPLE "complete C;",
-     EXAMPLE "keys C"     
+     EXAMPLE {
+	  "R = ZZ/101[a..d];",
+      	  "C = resolution cokernel vars R;",
+      	  "keys C",
+      	  "complete C;",
+      	  "keys C"
+	  }
      }
 
 ChainComplex _ ZZ := (C,i) -> (
@@ -440,17 +444,21 @@ cone ChainComplexMap := f -> (
 document { quote cone,
      TT "cone f", " -- produce the mapping cone of a map f of chain complexes",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "m = image vars R",
-     EXAMPLE "m2 = image symmetricPower(2,vars R)",
-     EXAMPLE "M = R^1/m2",
-     EXAMPLE "N = R^1/m",
-     EXAMPLE "C = cone extend(resolution N,resolution M,id_(R^1))",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "m = image vars R",
+      	  "m2 = image symmetricPower(2,vars R)",
+      	  "M = R^1/m2",
+      	  "N = R^1/m",
+      	  "C = cone extend(resolution N,resolution M,id_(R^1))",
+	  },
      "Let's check that the homology is correct.  HH_0 should be 0.",
      EXAMPLE "prune HH_0 C",
      "HH_1 should be isomorphic to m/m2.",
-     EXAMPLE "prune HH_1 C",
-     EXAMPLE "prune (m/m2)"
+     EXAMPLE {
+	  "prune HH_1 C",
+      	  "prune (m/m2)"
+	  }
      }
 nullhomotopy ChainComplexMap := f -> (
      s := new ChainComplexMap;
@@ -487,22 +495,25 @@ nullhomotopy ChainComplexMap := f -> (
 document { quote nullhomotopy,
      TT "nullhomotopy f", " -- produce a nullhomotopy for a map f of 
      chain complexes.",
-     PARA, "Whether f is null homotopic is not checked.",
+     PARA, 
+     "Whether f is null homotopic is not checked.",
      PARA,
      "Here is part of an example provided by Luchezar Avramov.  We
      construct a random module over a complete intersection, resolve 
      it over the polynomial ring, and produce a null homotopy for the
      map which is multiplication by one of the defining equations
      for the complete intersection.",
-     EXAMPLE "A = ZZ/101[x,y]",
-     EXAMPLE "M = cokernel random(A^3, A^{-2,-2})",
-     EXAMPLE "R = cokernel matrix {{x^3,y^4}}",
-     EXAMPLE "N = prune (M**R)",
-     EXAMPLE "C = resolution N",
-     EXAMPLE "d = C.dd",
-     EXAMPLE "s = nullhomotopy (x^3 * id_C)",
-     EXAMPLE "s*d + d*s",
-     EXAMPLE "s^2"
+     EXAMPLE {
+	  "A = ZZ/101[x,y];",
+      	  "M = cokernel random(A^3, A^{-2,-2})",
+      	  "R = cokernel matrix {{x^3,y^4}}",
+      	  "N = prune (M**R)",
+      	  "C = resolution N",
+      	  "d = C.dd",
+      	  "s = nullhomotopy (x^3 * id_C)",
+      	  "s*d + d*s",
+      	  "s^2"
+	  },
      }
 -----------------------------------------------------------------------------
 poincare ChainComplex := C -> (
@@ -532,20 +543,24 @@ document { quote poincare,
      "The variable ", TT "T", " is defined in a hidden local scope, so will print out
      as ", TT "$T", " and not be directly accessible.",
      PARA,
-     EXAMPLE "R = ZZ/101[x_0 .. x_3,y_0 .. y_3]",
-     EXAMPLE "m = matrix table (2, 2, (i,j) -> x_(i+2*j))",
-     EXAMPLE "n = matrix table (2, 2, (i,j) -> y_(i+2*j))",
-     EXAMPLE "f = flatten (m*n - n*m)",
-     EXAMPLE "poincare cokernel f",
+     EXAMPLE {
+	  "R = ZZ/101[x_0 .. x_3,y_0 .. y_3]",
+      	  "m = matrix table (2, 2, (i,j) -> x_(i+2*j))",
+      	  "n = matrix table (2, 2, (i,j) -> y_(i+2*j))",
+      	  "f = flatten (m*n - n*m)",
+      	  "poincare cokernel f",
+	  },
      PARA,
      TT "(cokernel f).poincare = p", " -- inform the system that the Poincare 
      polynomial of the cokernel of f is p.  This can speed the computation 
      of a Groebner basis of f.",
-     EXAMPLE "R = ZZ/101[t_0 .. t_17]",
-     EXAMPLE "T = (degreesRing R)_0",
-     EXAMPLE "f = genericMatrix(R,t_0,3,6)",
-     EXAMPLE "(cokernel f).poincare = 3-6*T+15*T^2-20*T^3+15*T^4-6*T^5+T^6",
-     EXAMPLE "gb f",
+     EXAMPLE {
+	  "R = ZZ/101[t_0 .. t_17]",
+      	  "T = (degreesRing R)_0",
+      	  "f = genericMatrix(R,t_0,3,6)",
+      	  "(cokernel f).poincare = 3-6*T+15*T^2-20*T^3+15*T^4-6*T^5+T^6",
+      	  "gb f",
+	  },
      "Keys used:",
      MENU {
 	  TO "poincareComputation"
@@ -573,8 +588,10 @@ document { quote poincareN,
      "The polynomial has a term S^i T_0^(d_0) ... T_(n-1)^(d_(n-1)) in it
      for each basis element of C_i with multi-degree {d_0,...,d_(n-1)}.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "poincareN resolution cokernel vars R"
+     EXAMPLE {
+	  "R = ZZ/101[a..d]",
+      	  "poincareN resolution cokernel vars R"
+	  },
      }
 
 ChainComplex ** Module := (C,M) -> (
@@ -603,10 +620,12 @@ Module ** ChainComplex := (M,C) -> (
 homology(ZZ,ChainComplex) := (i,C) -> homology(C.dd_i, C.dd_(i+1))
 document { (homology,ZZ,ChainComplex),
      TT "HH_i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
-     EXAMPLE "R = ZZ/101[x,y]",
-     EXAMPLE "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
-     EXAMPLE "M = HH_1 C",
-     EXAMPLE "prune M",
+     EXAMPLE {
+	  "R = ZZ/101[x,y]",
+      	  "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
+      	  "M = HH_1 C",
+      	  "prune M",
+	  },
      }
 
 TEST "
@@ -768,8 +787,10 @@ ChainComplex ++ ChainComplex := (C,D) -> (
 document { (quote ++,ChainComplex,ChainComplex),
      TT "C++D", " -- direct sum of chain complexes.",
      PARA,
-     EXAMPLE "C = resolution cokernel matrix {{4,5}}",
-     EXAMPLE "C ++ C[-2]"
+     EXAMPLE {
+	  "C = resolution cokernel matrix {{4,5}}",
+      	  "C ++ C[-2]"
+	  },
      }
 
 components ChainComplex := C -> if C.?components then C.components else {C}
@@ -996,22 +1017,26 @@ document { quote betti,
      of a ", TO "GroebnerBasis", " G.",
      PARA,
      "Here is a sample display:",
-     EXAMPLE "R = ZZ/101[a..h]",
-     EXAMPLE "p = genericMatrix(R,a,2,4)",
-     EXAMPLE "q = generators gb p",
-     EXAMPLE "C = resolution cokernel leadTerm q",
-     EXAMPLE "betti C",
+     EXAMPLE {
+	  "R = ZZ/101[a..h]",
+      	  "p = genericMatrix(R,a,2,4)",
+      	  "q = generators gb p",
+      	  "C = resolution cokernel leadTerm q",
+      	  "betti C",
+	  },
      "The top row of the display indicates the ranks of the free module C_j
      in column j.  The entry below in row i column j gives the number of
      basis elements of degree i+j.",
      PARA,
      "If these numbers are needed in a program, one way to get them is
      with ", TO "tally", ".",
-     EXAMPLE "degrees C_2",
-     EXAMPLE "t2 = tally degrees C_2",
-     EXAMPLE "peek t2",
-     EXAMPLE "t2_{2}",
-     EXAMPLE "t2_{3}"
+     EXAMPLE {
+	  "degrees C_2",
+      	  "t2 = tally degrees C_2",
+      	  "peek t2",
+      	  "t2_{2}",
+      	  "t2_{3}"
+	  }
      }
 
 TEST "
@@ -1048,20 +1073,24 @@ document { (sum, ChainComplex),
      TT "sum C", " -- yields the sum of the modules in a chain complex.",
      PARA,
      "The degrees of the components are preserved.",
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "C = res coker vars R",
-     EXAMPLE "sum C",
-     EXAMPLE "degrees oo",
+     EXAMPLE {
+	  "R = ZZ/101[a..d];",
+      	  "C = res coker vars R",
+      	  "sum C",
+      	  "degrees oo",
+	  },
      SEEALSO {"sum",(sum, ChainComplexMap)}
      }
 document { (sum, ChainComplexMap),
      TT "sum C", " -- yields the sum of the modules in a chain complex map.",
      PARA,
      "The degrees of the components are preserved.",
-     EXAMPLE "R = ZZ/101[a..c]",
-     EXAMPLE "C = res coker vars R",
-     EXAMPLE "sum C.dd",
-     EXAMPLE "betti oo",
+     EXAMPLE {
+	  "R = ZZ/101[a..c];",
+      	  "C = res coker vars R",
+      	  "sum C.dd",
+      	  "betti oo",
+	  },
      SEEALSO {"sum", (sum, ChainComplex)}
      }
 
@@ -1072,11 +1101,13 @@ document { (NewMethod, ChainComplex),
      degree ", TT "-1", " accessible as ", TT "C.dd", " and of type
      ", TO "ChainComplexMap", ".  You can take the new chain complex and
      fill in the ring, the modules, and the differentials.",
-     EXAMPLE "C = new ChainComplex;",
-     EXAMPLE "C.ring = ZZ;",
-     EXAMPLE "C#2 = ZZ^1;",
-     EXAMPLE "C#3 = ZZ^2;",
-     EXAMPLE "C.dd#3 = matrix {{3,-11}};",
-     EXAMPLE "C",
-     EXAMPLE "C.dd"
+     EXAMPLE {
+	  "C = new ChainComplex;",
+      	  "C.ring = ZZ;",
+      	  "C#2 = ZZ^1;",
+      	  "C#3 = ZZ^2;",
+      	  "C.dd#3 = matrix {{3,-11}};",
+      	  "C",
+      	  "C.dd"
+	  },
      }

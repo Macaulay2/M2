@@ -505,8 +505,10 @@ Module ++ Module := directSum
 document { (quote ++,Module,Module),
      TT "M++N", " -- computes the direct sum of two modules.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..c];",
-     EXAMPLE "image vars R ++ kernel vars R",
+     EXAMPLE {
+	  "R = ZZ/101[a..c];",
+      	  "image vars R ++ kernel vars R",
+	  },
      "Projection and inclusion maps for direct sums:",
      MENU {
 	  TO (quote ^,Module,Array),
@@ -520,10 +522,12 @@ document { (quote ++,Matrix,Matrix),
      PARA,
      "If an argument is a ring element or integer, it is promoted
      to a one by one matrix.",
-     EXAMPLE "R = ZZ/101[a..c];",
-     EXAMPLE "vars R ++ transpose vars R",
-     EXAMPLE "oo^[1]",
-     EXAMPLE "a++b++c",
+     EXAMPLE {
+	  "R = ZZ/101[a..c];",
+      	  "vars R ++ transpose vars R",
+      	  "oo^[1]",
+      	  "a++b++c",
+	  },
      "Selecting rows or columns of blocks:",
      MENU {
 	  TO (quote ^,Matrix,Array),
@@ -652,9 +656,11 @@ document { quote submatrix,
      The (i,j)-th entry of the result is m_(rows_i, cols_j).  If necessary, any
      sequences in the lists are spliced into the list.",
      PARA,
-     EXAMPLE "R = ZZ/101[a .. o]",
-     EXAMPLE "m = genericMatrix(R, a, 3, 5)",
-     EXAMPLE "submatrix(m, {1,2,0}, {0..2, 4})",
+     EXAMPLE {
+	  "R = ZZ/101[a .. o]",
+      	  "m = genericMatrix(R, a, 3, 5)",
+      	  "submatrix(m, {1,2,0}, {0..2, 4})",
+	  },
      PARA,
      "If ", TT "rows", " or ", TT "cols", " is omitted, all the indices are used.",
      EXAMPLE "submatrix(m, {1,2}, )",
@@ -696,27 +702,33 @@ document { quote diff,
      matrix.  If ", TT "m", " is a vector and ", TT "n", " is a ring element,
      then the result will be a vector rather than a matrix with one column.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "m = genericMatrix(R,a,2,2)",
-     EXAMPLE "diff(transpose m,m*m)",
+     EXAMPLE {
+	  "R = ZZ/101[a..d]",
+      	  "m = genericMatrix(R,a,2,2)",
+      	  "diff(transpose m,m*m)",
+	  },
      PARA,
      "The most common usage of this function is when m : F <--- R^1
      and n : R^1 <--- G.  In this case the result is a matrix with shape
      diff(m,n) : F' <--- G, and the (i,j) th entry is the result of
      differentiating n_j by the differential operator corresponding to m_i.",
-     EXAMPLE "m = matrix {{a,b,c,d}}",
-     EXAMPLE "n = matrix {{a^2, (b + c)*(a + d), a*b*c}}",
-     EXAMPLE "p = diff(transpose m,n)",
-     EXAMPLE "target p",
-     EXAMPLE "source p",
+     EXAMPLE {
+	  "m = matrix {{a,b,c,d}}",
+      	  "n = matrix {{a^2, (b + c)*(a + d), a*b*c}}",
+      	  "p = diff(transpose m,n)",
+      	  "target p",
+      	  "source p",
+	  },
      PARA,
      "As another example, we show how to compute the Wronskian of a
      polynomial f.",
-     EXAMPLE "R = ZZ/101[a, x .. z]",
-     EXAMPLE "f = matrix {{x^3 + y^3 + z^3 - a*x*y*z}}",
-     EXAMPLE "v = matrix {{x,y,z}}",
-     EXAMPLE "W = diff(transpose v * v, f)",
-     EXAMPLE "Wf = minors(3,W)",
+     EXAMPLE {
+	  "R = ZZ/101[a, x .. z]",
+      	  "f = matrix {{x^3 + y^3 + z^3 - a*x*y*z}}",
+      	  "v = matrix {{x,y,z}}",
+      	  "W = diff(transpose v * v, f)",
+      	  "Wf = minors(3,W)",
+	  },
      PARA,
      SEEALSO { "contract", "jacobian" }
      }
@@ -738,21 +750,27 @@ document { quote contract,
      "This function is identical to ", TO "diff", ", except that contraction is
      used instead of differentiation.  This means for example that x^3
      contracted by x^2 is x, not 6 x.  For example, ",
-     EXAMPLE "R = ZZ/101[a..c]",
-     EXAMPLE "diff(transpose matrix {{a,b,c}}, matrix {{(a+b+c)^3, a^2 * b^3 * c^2}})",
+     EXAMPLE {
+	  "R = ZZ/101[a..c]",
+      	  "diff(transpose matrix {{a,b,c}}, matrix {{(a+b+c)^3, a^2 * b^3 * c^2}})",
+	  },
      PARA,
      "As another example, the Sylvester resultant between homogeneous polynomials
      f(x,y) and g(x,y) can be found in the following way.",
-     EXAMPLE "R = (ZZ/101[a,b])[x,y]",
-     EXAMPLE "f = a * x^3 + b * x^2 * y + y^3",
-     EXAMPLE "g = b * x^3 + a * x * y^2 + y^3",
+     EXAMPLE {
+	  "R = (ZZ/101[a,b])[x,y]",
+      	  "f = a * x^3 + b * x^2 * y + y^3",
+      	  "g = b * x^3 + a * x * y^2 + y^3",
+	  },
      "Multiply each of these by all quadrics, obtaining a set of elements in
      degree 5:",
      EXAMPLE "n = matrix {{f,g}} ** symmetricPower(2,vars R)",
      "Now create the matrix of coefficients by using contract against all
      monomials of degree 5 in x and y.",
-     EXAMPLE "M = contract(transpose symmetricPower(5,vars R), n)",
-     EXAMPLE "Resfg = minors(6, M)",
+     EXAMPLE {
+	  "M = contract(transpose symmetricPower(5,vars R), n)",
+      	  "Resfg = minors(6, M)",
+	  },
      PARA,
      SEEALSO "diff"
      }
@@ -779,15 +797,19 @@ document { quote jacobian,
      TT "jacobian I", " -- compute the matrix of derivatives of the 
      generators of I w.r.t. all of the variables",
      PARA,
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "I = monomialCurve(R,{1,3,4})",
-     EXAMPLE "A = R/I",
-     EXAMPLE "jacobian A",
+     EXAMPLE {
+	  "R = ZZ/101[a..d];",
+      	  "I = monomialCurve(R,{1,3,4})",
+      	  "A = R/I",
+      	  "jacobian A",
+	  },
      "For a one row matrix, the derivatives w.r.t. all the variables
      is given",
-     EXAMPLE "R = ZZ/101[a..c]",
-     EXAMPLE "p = symmetricPower(2,vars R)",
-     EXAMPLE "jacobian p",
+     EXAMPLE {
+	  "R = ZZ/101[a..c]",
+      	  "p = symmetricPower(2,vars R)",
+      	  "jacobian p",
+	  },
      "Caveat: if a matrix or ideal over a quotient polynomial ring S/J
      is given, then only the derivatives of the given elements are
      computed and NOT the derivatives of elements of J."
@@ -811,10 +833,12 @@ document { quote leadTerm,
      by retaining those monomials of each entry which agree on the first i 
      weight vectors.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "leadTerm (3 + 8*a^2*b + 7*b*c^2)",
-     EXAMPLE "leadTerm matrix {{a,b},{c,d}}",
-     EXAMPLE "leadTerm matrix {{c,d},{a,b}}",
+     EXAMPLE {
+	  "R = ZZ/101[a..d]",
+      	  "leadTerm (3 + 8*a^2*b + 7*b*c^2)",
+      	  "leadTerm matrix {{a,b},{c,d}}",
+      	  "leadTerm matrix {{c,d},{a,b}}",
+	  },
      SEEALSO {"leadCoefficient", "leadMonomial", "leadComponent"}
      }
 
@@ -832,8 +856,10 @@ document { quote borel,
    of the columns of ", TT "m", ".",
   PARA,
   "For example, if R = ZZ/101[a..f], then",
-  EXAMPLE "R = ZZ/101[a..e]",
-  EXAMPLE "borel matrix {{a*d*e, b^2}}"
+  EXAMPLE {
+       "R = ZZ/101[a..e]",
+       "borel matrix {{a*d*e, b^2}}"
+       }
   }
 
 --------------------------------------------------------------------------
@@ -1342,8 +1368,10 @@ document { (matrix,Ring,List),
      "This is essentially the same as ", TO (matrix,List), " together with
      the specification of the ring.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..f]",
-     EXAMPLE "matrix(R, {{a,b,0},{d,0,f}})",
+     EXAMPLE {
+	  "R = ZZ/101[a..f]",
+      	  "matrix(R, {{a,b,0},{d,0,f}})",
+	  },
      SEEALSO {"map", "matrix"}
      }
 
@@ -1359,11 +1387,13 @@ document { (map,Module,Matrix),
      TT "map(M,p)", " -- recasts a matrix p to a map whose target is M by
      tensoring p with a graded free module of rank 1.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y]",
-     EXAMPLE "p = matrix{{x,y}}",
-     EXAMPLE "q = map(R^{3},p)",
-     EXAMPLE "degrees target q",
-     EXAMPLE "degrees source q",
+     EXAMPLE {
+	  "R = ZZ/101[x,y]",
+      	  "p = matrix{{x,y}}",
+      	  "q = map(R^{3},p)",
+      	  "degrees target q",
+      	  "degrees source q",
+	  },
      SEEALSO {"map", "matrix"}
      }
 
@@ -1372,20 +1402,24 @@ document { (map,Module,Module,List),
      to the module M whose entries are obtained from the doubly-nested list
      v of ring elements.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "p = map(R^2,R^{-2,-2},{{x^2,0},{0,y^2}})",
-     EXAMPLE "isHomogeneous p",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "p = map(R^2,R^{-2,-2},{{x^2,0},{0,y^2}})",
+      	  "isHomogeneous p",
+	  },
      SEEALSO {"map", "matrix"}
      }
 document { (map,Module,Module,Matrix),
      TT "map(M,N,p)", " -- recasts the matrix p as a map (matrix) from
      the module N to the module M.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "p = matrix {{x,y,z}}",
-     EXAMPLE "q = map(R^1,R^3,p)",
-     EXAMPLE "degrees source p",
-     EXAMPLE "degrees source q",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "p = matrix {{x,y,z}}",
+      	  "q = map(R^1,R^3,p)",
+      	  "degrees source p",
+      	  "degrees source q",
+	  },
      SEEALSO {"map", "matrix"}
      }
 document { (map,Module,Module,RingElement),
@@ -1395,11 +1429,13 @@ document { (map,Module,Module,RingElement),
      "If r is nonzero, then M and N should be equal, or differ at most by
      a degree (i.e., by tensoring with a graded free module of rank 1).",
      PARA,
-     EXAMPLE "R = ZZ/101[x]",
-     EXAMPLE "map(R^2,R^3,0)",
-     EXAMPLE "map(R^2,R^2,x)",
-     EXAMPLE "q = map(R^2,R^2,x,Degree=>1)",
-     EXAMPLE "isHomogeneous q",
+     EXAMPLE {
+	  "R = ZZ/101[x]",
+      	  "map(R^2,R^3,0)",
+      	  "map(R^2,R^2,x)",
+      	  "q = map(R^2,R^2,x,Degree=>1)",
+      	  "isHomogeneous q",
+	  },
      PARA,
      SEEALSO {"map", "matrix"}
      }
@@ -1413,8 +1449,10 @@ document { (map,Module,RingElement),
      TT "map(M,r)", " -- construct the map from M to itself which is provided
      by scalar multiplication by the ring element r.",
      PARA,
-     EXAMPLE "R = ZZ/101[x]",
-     EXAMPLE "map(R^2,x)",
+     EXAMPLE {
+	  "R = ZZ/101[x]",
+      	  "map(R^2,x)",
+	  },
      SEEALSO {"map", "matrix"}
      }
 document { quote Degree,
@@ -1425,11 +1463,13 @@ document { quote Degree,
      length of the list should be the same as the length of a degree for the
      ring, see ", TO "degreeLength", ".",
      PARA,
-     EXAMPLE "R = ZZ/101[x]",
-     EXAMPLE "p = map(R^1, R^1, {{x^4}})",
-     EXAMPLE "isHomogeneous p",
-     EXAMPLE "q = map(R^1, R^1, {{x^4}}, Degree => 4)",
-     EXAMPLE "isHomogeneous q",
+     EXAMPLE {
+	  "R = ZZ/101[x]",
+      	  "p = map(R^1, R^1, {{x^4}})",
+      	  "isHomogeneous p",
+      	  "q = map(R^1, R^1, {{x^4}}, Degree => 4)",
+      	  "isHomogeneous q",
+	  },
      SEEALSO {"map", "matrix", (inducedMap => Degree)}
      }
 
@@ -1461,10 +1501,12 @@ document { (map,Module,Nothing,List),
      is to be a free module constructed with an attempt made to assign degrees
      to its basis elements so as to make the map homogeneous of degree zero.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y]",
-     EXAMPLE "f = map(R^2,,{{x^2,y^2},{x*y,0}})",
-     EXAMPLE "degrees source f",
-     EXAMPLE "isHomogeneous f",
+     EXAMPLE {
+	  "R = ZZ/101[x,y]",
+      	  "f = map(R^2,,{{x^2,y^2},{x*y,0}})",
+      	  "degrees source f",
+      	  "isHomogeneous f",
+	  },
      SEEALSO {"map", "matrix"}
      }
 
@@ -1495,19 +1537,25 @@ document { (matrix,List),
      free module serving as source so that the map will be homogeneous and of
      degree zero.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "p = matrix {{x,y,z}}",
-     EXAMPLE "degrees source p",
-     EXAMPLE "isHomogeneous p",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "p = matrix {{x,y,z}}",
+      	  "degrees source p",
+      	  "isHomogeneous p",
+	  },
      "Notice that the degrees were set up so that p is homogeneous, because
      the source module is not explicitly specified by the user.  The next
      example involves block matrices.",
-     EXAMPLE "q = vars R",
-     EXAMPLE "matrix {{q,q,q}}",
-     EXAMPLE "matrix {{q},{q},{q}}",
+     EXAMPLE {
+	  "q = vars R",
+      	  "matrix {{q,q,q}}",
+      	  "matrix {{q},{q},{q}}",
+	  },
      "Here we construct a matrix from column vectors.",
-     EXAMPLE "F = R^3",
-     EXAMPLE "matrix {F_2, F_1, x*F_0 + y*F_1 + z*F_2}",
+     EXAMPLE {
+	  "F = R^3",
+      	  "matrix {F_2, F_1, x*F_0 + y*F_1 + z*F_2}",
+	  },
      SEEALSO {"map", "matrix"}
      }
 
@@ -1644,11 +1692,13 @@ document { quote subquotient,
 	  },
      "This is the general form in which modules are represented, and
      subquotient modules are often returned as values of computations.",
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "M = kernel vars R ++ cokernel vars R",
-     EXAMPLE "generators M",
-     EXAMPLE "relations M",
-     EXAMPLE "prune M",
+     EXAMPLE {
+	  "R = ZZ/101[a..d]",
+      	  "M = kernel vars R ++ cokernel vars R",
+      	  "generators M",
+      	  "relations M",
+      	  "prune M",
+	  },
      SEEALSO {"generators", "relations"}
      }
 
@@ -1877,8 +1927,10 @@ document { quote ideal,
      "ideal v", " -- produces the ideal spanned by a list or sequence of ring
      elements.",
      PARA,
-     EXAMPLE "ZZ[a..i]",
-     EXAMPLE "ideal (c..h)"
+     EXAMPLE {
+	  "ZZ[a..i]",
+      	  "ideal (c..h)"
+	  },
      }
 
 kernel = method(Options => {
@@ -2002,10 +2054,12 @@ document { (quote ^,Matrix,Array),
      composition with the projection onto the sum of the components numbered
      ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
      PARA,
-     EXAMPLE "f = map(ZZ^2 ++ ZZ^2, ZZ^2, {{1,2},{3,4},{5,6},{7,8}})",
-     EXAMPLE "f^[0]",
-     EXAMPLE "f^[1]",
-     EXAMPLE "f^[1,0]",
+     EXAMPLE {
+	  "f = map(ZZ^2 ++ ZZ^2, ZZ^2, {{1,2},{3,4},{5,6},{7,8}})",
+      	  "f^[0]",
+      	  "f^[1]",
+      	  "f^[1,0]",
+	  },
      SEEALSO {submatrix, (quote ^,Module,Array), (quote _,Matrix,Array)}
      }
 
@@ -2016,10 +2070,12 @@ document { (quote _,Matrix,Array),
      composition with the inclusion into the sum of the components numbered
      ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
      PARA,
-     EXAMPLE "f = map(ZZ^2 ++ ZZ^2, ZZ^2, {{1,2},{3,4},{5,6},{7,8}})",
-     EXAMPLE "f^[0]",
-     EXAMPLE "f^[1]",
-     EXAMPLE "f^[1,0]",
+     EXAMPLE {
+	  "f = map(ZZ^2 ++ ZZ^2, ZZ^2, {{1,2},{3,4},{5,6},{7,8}})",
+      	  "f^[0]",
+      	  "f^[1]",
+      	  "f^[1,0]",
+	  },
      SEEALSO {submatrix, (quote _,Module,Array), (quote ^,Matrix,Array)}
      }
 
@@ -2040,10 +2096,12 @@ document { (quote _, Matrix, List),
      of the columns of f.",
      PARA,
      EXAMPLE "R = ZZ/101[a..f]",
-     EXAMPLE "p = matrix {{a,b,c},{d,e,f}}",
-     EXAMPLE "p_{1}",
-     EXAMPLE "p_{1,1,2}",
-     EXAMPLE "p_{2,1,0}",
+     EXAMPLE {
+	  "p = matrix {{a,b,c},{d,e,f}}",
+      	  "p_{1}",
+      	  "p_{1,1,2}",
+      	  "p_{2,1,0}",
+	  },
      SEEALSO "_"
      }
 
@@ -2062,10 +2120,12 @@ document { (quote ^,Matrix,List),
      the number of rows, then the result is the corresponding permutation
      of the rows of f.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..f]",
-     EXAMPLE "p = matrix {{a,b,c},{d,e,f}}",
-     EXAMPLE "p^{1}",
-     EXAMPLE "p^{1,0}",
+     EXAMPLE {
+	  "R = ZZ/101[a..f]",
+      	  "p = matrix {{a,b,c},{d,e,f}}",
+      	  "p^{1}",
+      	  "p^{1,0}",
+	  },
      SEEALSO "^"
      }
 
@@ -2086,9 +2146,11 @@ document { quote entries,
      TT "entries f", " -- produces the matrix of the homomorphism f as a doubly
      nested list of ring elements.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "p = matrix {{x^2,y^2},{x*y*z, x^3-y^3}}",
-     EXAMPLE "entries p"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "p = matrix {{x^2,y^2},{x*y*z, x^3-y^3}}",
+      	  "entries p"
+	  },
      }
 TEST"
 R=ZZ/101[a..f]

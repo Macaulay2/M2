@@ -139,7 +139,7 @@ newListHead := (x) -> (
      html T := t -> concatenate(on, apply(t,html), off);
      T )
 
-BrHead := newListHead "BrHead"
+BrHead = newListHead "BrHead"
 BrHead.name = "BrHead"
 html BrHead := x -> newline | "<BR>" | newline
 text BrHead := x -> newline
@@ -149,7 +149,7 @@ tex  BrHead := x -> ///
 name BrHead := x -> "BR"
 BR          = BrHead {}
 
-NoindentHead := newListHead "NoindentHead"
+NoindentHead = newListHead "NoindentHead"
 NoindentHead.name = "NoindentHead"
 html NoindentHead := x -> ""
 tex  NoindentHead := x -> ///
@@ -159,7 +159,7 @@ text NoindentHead := x -> ""
 name NoindentHead := x -> "NOINDENT"
 NOINDENT          = NoindentHead {}
 
-HrHead := newListHead "HrHead"
+HrHead = newListHead "HrHead"
 HrHead.name = "HrHead"
 html HrHead := x -> newline | "<HR>" | newline
 
@@ -175,7 +175,7 @@ tex  HrHead := x -> ///
 name HrHead := x -> "HR"
 HR          = HrHead {}
 
-ParaHead := newListHead "ParaHead"
+ParaHead = newListHead "ParaHead"
 ParaHead.name = "ParaHead"
 html ParaHead := x -> newline | "<P>" | newline
 text ParaHead := x -> concatenate(newline,newline)
@@ -185,7 +185,7 @@ PARA          = ParaHead {}
 
 EXAMPLE    = newListHead "EXAMPLE"
 text EXAMPLE := x -> concatenate apply(toList x,i -> text PRE i)
-html EXAMPLE := x -> concatenate apply(toList x, x -> html TABLE {{PRE x}})
+html EXAMPLE := x -> concatenate html TABLE apply(toList x, x -> {PRE x})
 
 TABLE      = newListHead "TABLE"
 text TABLE := x -> (
@@ -197,13 +197,16 @@ html TABLE := x -> concatenate(
      "<P>",
      "<CENTER>",
      "<TABLE cellspacing='0' cellpadding='12' border='4' bgcolor='#80ffff' width='100%'>",
+     newline,
      apply(x, row -> ( 
-	       "<TR>", 
-	       apply(row, item -> ("<TD NOWRAP>", html item, "</TD>")),
-	       "</TR>")),
+	       "  <TR>",
+	       newline,
+	       apply(row, item -> ("    <TD NOWRAP>", html item, "</TD>",newline)),
+	       "  </TR>",
+	       newline)),
      "</TABLE>",
      "</CENTER>",
-     "<P>"
+     "</P>"
      )			 
 
 PRE        = newListHead "PRE"

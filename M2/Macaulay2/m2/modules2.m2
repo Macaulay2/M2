@@ -70,10 +70,12 @@ document { (quote **, Matrix, Module),
      PARA,
      "When ", TT "N", " is a free module of rank 1 the net effect of the
      operation is to shift the degrees of ", TT "f", ".",
-     EXAMPLE "R = ZZ/101[t]",
-     EXAMPLE "f = matrix {{t}}",
-     EXAMPLE "degrees source f",
-     EXAMPLE "degrees source (f ** R^{-3})",
+     EXAMPLE {
+	  "R = ZZ/101[t]",
+      	  "f = matrix {{t}}",
+      	  "degrees source f",
+      	  "degrees source (f ** R^{-3})",
+	  },
      SEEALSO {"Matrix", "Module"}
      }
 
@@ -96,9 +98,11 @@ document { (quote **, Module, Ring),
      R.",
      PARA,
      "The ring of M should be a base ring of R.",
-     EXAMPLE "R = ZZ/101[x,y];",
-     EXAMPLE "M = coker vars R",
-     EXAMPLE "M ** R[t]"
+     EXAMPLE {
+	  "R = ZZ/101[x,y];",
+      	  "M = coker vars R",
+      	  "M ** R[t]"
+	  },
      }
 
 Matrix ** Ring := (f,R) -> (
@@ -120,8 +124,10 @@ document { (quote **, Matrix, Ring),
      PARA,
      "The ring of f should be a base ring of R.  The degree of the map is
      preserved.",
-     EXAMPLE "R = ZZ/101[a..c]",
-     EXAMPLE "f = basis(2,R)",
+     EXAMPLE {
+	  "R = ZZ/101[a..c]",
+      	  "f = basis(2,R)",
+	  },
      "A map of R-modules can be obtained by tensoring.",
      EXAMPLE "f ** R"
      }
@@ -293,14 +299,18 @@ document { quote hilbertSeries,
      PARA,
      "If an optional integer argument labelled ", TO "Order", " is used, then
      the power series is expanded to that order.",
-     EXAMPLE "R = ZZ/101[x, Degrees => {2}]",
-     EXAMPLE "hilbertSeries(R/x^2)",
-     EXAMPLE "numerator oo",
-     EXAMPLE "expand oo",
-     EXAMPLE "poincare (R/x^2)",
-     EXAMPLE "hilbertSeries(R/x^2, Order => 12)",
-     EXAMPLE "R=ZZ/101[x, Degrees => {{1,1}}]",
-     EXAMPLE "hilbertSeries (R/x^2)",
+     EXAMPLE {
+	  "R = ZZ/101[x, Degrees => {2}];",
+      	  "hilbertSeries(R/x^2)",
+      	  "numerator oo",
+      	  "expand oo",
+      	  "poincare (R/x^2)",
+      	  "hilbertSeries(R/x^2, Order => 12)",
+	  },
+     EXAMPLE {
+	  "R=ZZ/101[x, Degrees => {{1,1}}];",
+      	  "hilbertSeries (R/x^2)",
+	  },
      SEEALSO {"degreesRing", "Order"}
      }
 
@@ -336,8 +346,10 @@ document { (quote " ", ProjectiveHilbertPolynomial, ZZ),
      TT "P i", " -- the value of a projective Hilbert polynomial ", TT "P", " at 
      an integer ", TT "i", ".",
      PARA,
-     EXAMPLE "P = projectiveHilbertPolynomial 2",
-     EXAMPLE "apply(0 .. 12, i -> P i)",
+     EXAMPLE {
+	  "P = projectiveHilbertPolynomial 2",
+      	  "apply(0 .. 12, i -> P i)",
+	  },
      SEEALSO ProjectiveHilbertPolynomial
      }
 
@@ -459,10 +471,12 @@ document { quote Projective,
      specifies that the Hilbert polynomial produced should be expressed as a 
      polynomial in the degree.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "S = image map(R, R, {a^4, a^3*b, a*b^3, b^4})",
-     EXAMPLE "presentation S",
-     EXAMPLE "h = hilbertPolynomial S",
+     EXAMPLE {
+	  "R = ZZ/101[a..d]",
+      	  "S = image map(R, R, {a^4, a^3*b, a*b^3, b^4})",
+      	  "presentation S",
+      	  "h = hilbertPolynomial S",
+	  },
      PARA,
      "The rational quartic curve in P^3 is therefore 'like' 4 copies of P^1, with
      three points missing.  One can see this by noticing that there is a deformation
@@ -470,9 +484,11 @@ document { quote Projective,
      in three successive points.",
      PARA,
      "These Hilbert polynomials can serve as Hilbert functions, too.",
-     EXAMPLE "h 3",
-     EXAMPLE "basis(3,S)",
-     EXAMPLE "rank source basis(3,S)",
+     EXAMPLE {
+	  "h 3",
+      	  "basis(3,S)",
+      	  "rank source basis(3,S)",
+	  },
      PARA,
      "Note that the Hilbert polynomial of P^i is z |--> binomial(z + i, i).",
      PARA,
@@ -548,8 +564,10 @@ document { quote codim,
      "If ", TT "M", " is an ", TT "R", "-module, then the number return by this 
      routine is ", TT "dim R - dim M", ".  This does not agree with the usual
      definition of codimension unless ", TT "Spec R", " is irreducible.",
-     EXAMPLE "R = QQ[x,y]/(ideal(x,y) * ideal(x-1))",
-     EXAMPLE "codim (R^1/(x,y))"
+     EXAMPLE {
+	  "R = QQ[x,y]/(ideal(x,y) * ideal(x-1))",
+      	  "codim (R^1/(x,y))"
+	  },
      }
 
 document { quote dim,
@@ -927,10 +945,12 @@ document { (quote ^,Module,Array),
      obtained by projection onto the sum of the components numbered
      ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
      PARA,
-     EXAMPLE "M = ZZ^2 ++ ZZ^3",
-     EXAMPLE "M^[0]",
-     EXAMPLE "M^[1]",
-     EXAMPLE "M^[1,0]",
+     EXAMPLE {
+	  "M = ZZ^2 ++ ZZ^3",
+      	  "M^[0]",
+      	  "M^[1]",
+      	  "M^[1,0]",
+	  },
      SEEALSO {(quote ^,Matrix,Array), (quote _,Module,Array),(quote ^,Module,List)}
      }
 
@@ -941,10 +961,12 @@ document { (quote _,Module,Array),
      obtained by inclusion from the sum of the components numbered
      ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
      PARA,
-     EXAMPLE "M = ZZ^2 ++ ZZ^3",
-     EXAMPLE "M_[0]",
-     EXAMPLE "M_[1]",
-     EXAMPLE "M_[1,0]",
+     EXAMPLE {
+	  "M = ZZ^2 ++ ZZ^3",
+      	  "M_[0]",
+      	  "M_[1]",
+      	  "M_[1,0]",
+	  },
      SEEALSO {submatrix, (quote _,Matrix,Array), (quote ^,Module,Array),(quote _,Module,List)}
      }
 -----------------------------------------------------------------------------
@@ -1043,23 +1065,31 @@ document { quote basis,
      PARA,
      "Alternatively, if the coefficient ring of the ring of ", TT "M", " is ", TT "ZZ", ", then the
      basis returned is a basis only modulo torsion.",
-     EXAMPLE "R = ZZ/101[a..c]",
-     EXAMPLE "f = basis(2,R)",
+     EXAMPLE {
+	  "R = ZZ/101[a..c];",
+      	  "f = basis(2,R)",
+	  },
      "A map of R-modules can be obtained by tensoring.",
-     EXAMPLE "f ** R",
-     EXAMPLE "basis(2, ideal(a,b,c)/ideal(a^2,b^2,c^2))",
-     EXAMPLE "basis(R/(a^2-a*b, b^2-c^2, b*c))",
-     EXAMPLE "S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}]",
-     EXAMPLE "basis({7,24}, S)",
+     EXAMPLE {
+	  "f ** R",
+      	  "basis(2, ideal(a,b,c)/ideal(a^2,b^2,c^2))",
+      	  "basis(R/(a^2-a*b, b^2-c^2, b*c))",
+	  },
+     EXAMPLE {
+      	  "S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}]",
+      	  "basis({7,24}, S)",
+	  },
      "Here is another example.",
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "f = basis(3, ideal(a^2, b^2))",
+     EXAMPLE {
+	  "R = ZZ/101[a..d]",
+      	  "f = basis(3, ideal(a^2, b^2))",
+	  },
      "Notice that the matrix of ", TT "f", " is expressed in terms of the
      generators of the ideal.  The reason is that the ideal is the target
      of ", TT "f", ", and matrices are always expressed in terms of the
      generators of the target.",
      EXAMPLE "target f",
-     "The command ", TO "super", " is useful for this.",
+     "The command ", TO "super", " is useful for getting around this.",
      EXAMPLE "super f"
      }
 
@@ -1103,11 +1133,15 @@ document { quote truncate,
      currently a bug in the routine: some generators of higher degree than i
      may be duplicated in the generator list",
      PARA,
-     EXAMPLE "R = ZZ/101[a..c]",
-     EXAMPLE "truncate(2,R^1)",
-     EXAMPLE "truncate(2, ideal(a,b,c^3)/ideal(a^2,b^2,c^4))",
-     EXAMPLE "S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}]",
-     EXAMPLE "truncate({7,24}, S^1 ++ S^{{-8,-20}})"
+     EXAMPLE {
+	  "R = ZZ/101[a..c];",
+      	  "truncate(2,R^1)",
+      	  "truncate(2, ideal(a,b,c^3)/ideal(a^2,b^2,c^4))",
+	  },
+     EXAMPLE {
+      	  "S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];",
+      	  "truncate({7,24}, S^1 ++ S^{{-8,-20}})"
+	  },
      }
 -----------------------------------------------------------------------------
 

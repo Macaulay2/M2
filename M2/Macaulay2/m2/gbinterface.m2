@@ -35,9 +35,11 @@ document { quote look,
      as ", TT "look", " if it's alone on the command line.",
      PARA,
      "Used mainly for debugging the engine.",
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "sendgg ggPush R",
-     EXAMPLE "look"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "sendgg ggPush R",
+	  "look"
+	  }
      }
      
 engineStack = new Command from (() -> (<< sendgg ggstack;))
@@ -48,10 +50,12 @@ document { quote engineStack,
      as ", TT "engineStack", " if it's alone on the command line.",
      PARA,
      "Used mainly for debugging the engine.",
-     EXAMPLE "ZZ/101[x,y,z]",
-     EXAMPLE "f = matrix {{x,y,z}}",
-     EXAMPLE "sendgg ggPush f",
-     EXAMPLE "engineStack"
+     EXAMPLE {
+	  "ZZ/101[x,y,z]",
+      	  "f = matrix {{x,y,z}}",
+      	  "sendgg ggPush f",
+      	  "engineStack"
+	  },
      }
      
 heap = new Command from (() -> (<< sendgg ggheap;))
@@ -62,9 +66,11 @@ document { quote heap,
      as ", TT "heap", " if it's alone on the command line.",
      PARA,
      "Used mainly for debugging the engine.",
-     EXAMPLE "ZZ/101[x,y,z];",
-     EXAMPLE "matrix {{x,y,z}}",
-     EXAMPLE "heap"
+     EXAMPLE {
+	  "ZZ/101[x,y,z];",
+      	  "matrix {{x,y,z}}",
+      	  "heap"
+	  },
      }
      
 engineMemory = new Command from (() -> (<< sendgg ggmem;))
@@ -75,9 +81,11 @@ document { quote engineMemory,
      as ", TT "engineMemory", " if it's alone on the command line.",
      PARA,
      "Used mainly for debugging the engine.",
-     EXAMPLE "ZZ/101[x,y,z];",
-     EXAMPLE "matrix {{x,y,z}}",
-     EXAMPLE "engineMemory"
+     EXAMPLE {
+	  "ZZ/101[x,y,z];",
+      	  "matrix {{x,y,z}}",
+      	  "engineMemory"
+	  }
      }
 
 see = (X) -> (
@@ -95,11 +103,13 @@ document { quote see,
      "see X -- display the engine object corresponding to the ring, matrix,
      module, or ring element X.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "see R",
-     EXAMPLE "see (x+1)^6",
-     EXAMPLE "see handle (x*y*z)",
-     EXAMPLE "see 0"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "see R",
+      	  "see (x+1)^6",
+      	  "see handle (x*y*z)",
+      	  "see 0"
+	  }
      }
 -----------------------------------------------------------------------------
 

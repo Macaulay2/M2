@@ -99,7 +99,7 @@ getDocumentationTag = x -> (
 
 doc = x -> (
      x = getDocumentationTag x;
-     if Documentation#?x and class Documentation#x === SEQ then evaluate Documentation#x
+     if Documentation#?x and class Documentation#x === SEQ then Documentation#x
      else if DocDatabase#?x then evaluate DocDatabase#x
      else null
      )
@@ -119,7 +119,7 @@ topicList = () -> sort select(keysDoc(), i -> class i === String)
 examples = x -> (
      if Documentation#?x then x = Documentation#x;
      x = name x;
-     if ExampleHashTable#?x then ExampleHashTable#x else {}
+     if ExampleHashTable#?x then select(ExampleHashTable#x, i -> i =!= null) else {}
      )
 
 formatDocumentTag = s -> concatenate (
@@ -337,25 +337,22 @@ makeBaseFilename := () -> (
 	  )
      );
 
--- exampleBox := x -> PRE x
-exampleBox := x -> TABLE {{CODE x}}
-
-processExample := x -> (
-     exampleCounter = exampleCounter + 1;
-     exampleOutputFile << x << endl;
-     if exampleResults#?exampleCounter
-     then exampleBox exampleResults#exampleCounter
-     else (
-	  if #exampleResults === exampleCounter then (
-	       stderr << "warning : input file " << nodeBaseFilename 
-	       << ".out terminates prematurely" << endl;
-	       );
-	  exampleBox concatenate("in = ",x)
-	  ))
+processExample := x -> { CODE (
+	  exampleCounter = exampleCounter + 1;
+	  exampleOutputFile << x << endl;
+	  if exampleResults#?exampleCounter
+	  then exampleResults#exampleCounter
+	  else (
+	       if #exampleResults === exampleCounter then (
+		    stderr << "warning : input file " << nodeBaseFilename 
+		    << ".out terminates prematurely" << endl;
+		    );
+	       concatenate("in = ",x)
+	       ))}
 
 processExamplesLoop := s -> (
-     if class s === EXAMPLE then SEQ apply(toList s,processExample)
-     else if class s === Sequence or basictype s === List
+     if class s === EXAMPLE then TABLE apply(select(toList s, i -> i =!= null), processExample)
+     else if class s === Sequence or instance(s,ListHead)
      then apply(s,processExamplesLoop)
      else s)
 
@@ -455,11 +452,13 @@ SEEALSO = v -> (
 Nothing << Thing := (x,y) -> null
 
 document { quote document,
-     TT "document {quote s, d}", " -- install documentation d for symbol s.",
+     TT "document {s, d}", " -- install documentation ", TT "d", " for 
+     the topic ", TT "s", ".",
      PARA,
-     "The documentation d should be ", TO "hypertext", ".",
+     "The documentation ", TT "d", " should be ", TO "hypertext", ".  The topic
+     ", TT "s", " may be one of the special forms useable with ", TO "TO", ".",
      PARA,
-     SEEALSO {"help", "doc", "phase", "examples", "Documentation"}
+     SEEALSO {"help functions"}
      }
 
 document { quote TEST,
@@ -475,16 +474,19 @@ document { quote between,
      }
 
 document { quote SEEALSO,
-     TT "SEEALSO {\"a\",\"b\"}", " -- inserts, into a documentation page, a sentence
+     TT "SEEALSO {a, b, ...}", " -- inserts, into a documentation page, a sentence
      instructing the reader to see some other topics.",
      PARA,
+     "The topics may have the special forms used with ", TO "TO", ".",
      SEEALSO "document"
      }
 
 document { quote doc,
      TT "doc s", " -- provides the online documention for the topic s, in
      internal ", TO "hypertext", " form, suitable for conversion to
-     text with ", TO "text", " or to html with ", TO "html", "."
+     text with ", TO "text", " or to html with ", TO "html", ".",
+     PARA,
+     EXAMPLE "doc partitions"
      }
 
 document { quote help,
@@ -541,23 +543,6 @@ document { quote apropos,
      "The pattern may contain '*'s as wild card characters.",
      EXAMPLE "apropos \"scan\""
      }
-
-document { quote examples,
-     TT "examples f", " -- returns a list of strings containing examples
-     of code using the function ", TT "f", " provided in the documentation
-     of ", TT "f", ".",
-     PARA,
-     EXAMPLE ///examples partitions///,
-     EXAMPLE ///print \ examples partitions;///,
-     SEEALSO {"document", "printExamples"}
-     }
-
-TEST ///
-     assert( class examples MutableList === List )
-     assert( # examples MutableList > 0 )
-///
-
-
 
 printExamples = f -> scan(examples f, i -> << i << endl)
 

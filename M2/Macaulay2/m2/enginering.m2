@@ -239,8 +239,10 @@ document { quote frac,
      "If ", TT "R", " has no name yet, then the names for its symbols will
      be usurped as names for the corresponding elements of ", TT "R", ".",
      PARA,
-     EXAMPLE "F = frac (ZZ/101[x,y])",
-     EXAMPLE "1/x + 1/y + 1/2",
+     EXAMPLE {
+	  "F = frac (ZZ/101[x,y])",
+      	  "1/x + 1/y + 1/2",
+	  },
      SEEALSO "FractionField"
      }
 

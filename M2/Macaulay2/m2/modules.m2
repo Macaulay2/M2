@@ -139,10 +139,12 @@ document { quote isFreeModule,
      PARA,
      "To determine whether M is isomorphic to a free module, one may prune
      M first.",
-     EXAMPLE "R = ZZ/101[x,y]",
-     EXAMPLE "M = kernel vars R",
-     EXAMPLE "isFreeModule M",
-     EXAMPLE "isFreeModule prune M"
+     EXAMPLE {
+	  "R = ZZ/101[x,y]",
+      	  "M = kernel vars R",
+      	  "isFreeModule M",
+      	  "isFreeModule prune M"
+	  },
      }
 
 isSubmodule = method()
@@ -299,9 +301,11 @@ document { (quote ==, Module, Module),
      "Two modules are equal if they are isomorphic as subquotients of the
      same ambient free module.",
      PARA,
-     EXAMPLE "R = ZZ/101[x]",
-     EXAMPLE "image matrix {{2,x},{1,5}} == R^2",
-     EXAMPLE "image matrix {{2,x},{0,5}} == R^2"
+     EXAMPLE {
+	  "R = ZZ/101[x]",
+      	  "image matrix {{2,x},{1,5}} == R^2",
+      	  "image matrix {{2,x},{0,5}} == R^2"
+	  },
      }
 
 TEST "
@@ -411,9 +415,11 @@ Vector _ ZZ := (v,i) -> (
 document { (quote _, Vector, ZZ),
      TT "v_i", " -- produce the i-th entry of a vector or module element v.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..f]",
-     EXAMPLE "v = vector {a,b,c}",
-     EXAMPLE "v_1",
+     EXAMPLE {
+	  "R = ZZ/101[a..f]",
+      	  "v = vector {a,b,c}",
+      	  "v_1",
+	  },
      SEEALSO {"_"}
      }
 
@@ -478,11 +484,13 @@ document { quote degrees,
      TT "degrees M", " -- provides a list of multi-degrees for the basis
      elements of a free module M.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "E = R^5",
-     EXAMPLE "degrees E",
-     EXAMPLE "F = R^{1,2,3,4}",
-     EXAMPLE "degrees F"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "E = R^5",
+      	  "degrees E",
+      	  "F = R^{1,2,3,4}",
+      	  "degrees F"
+	  },
      }
 
 Module ^ ZZ := (M,i) -> directSum (i:M)
@@ -532,9 +540,11 @@ document { (quote ^, Ring, List),
      "The degrees i, j, ... may themselves be multi-degrees, represented
      as lists of integers.  The operator ", TO ":", " may be used to
      indicate repetitions.",
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "F = R^{1,4:2,3,3:4}",
-     EXAMPLE "degrees F",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "F = R^{1,4:2,3,3:4}",
+      	  "degrees F",
+	  },
      SEEALSO {"degrees", "^"}
      }
 
@@ -641,10 +651,12 @@ rank Module := M -> (
 document { quote rank,
      TT "rank M", " -- computes the rank of the module M.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "p = vars R;",
-     EXAMPLE "rank kernel p",
-     EXAMPLE "rank cokernel p"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "p = vars R;",
+      	  "rank kernel p",
+      	  "rank cokernel p"
+	  },
      }
 
 ambient Module := M -> (

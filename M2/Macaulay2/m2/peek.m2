@@ -67,9 +67,11 @@ document {
      PARA,
      "It applies the default output method to the object s,
      bypassing the installed method for objects of its class.",
-     EXAMPLE "t = set {1,2,3}",
-     EXAMPLE "peek t",
-     EXAMPLE "new MutableHashTable from {a=>3, b=>44}",
-     EXAMPLE "peek oo"
+     EXAMPLE {
+	  "t = set {1,2,3}",
+      	  "peek t",
+      	  "new MutableHashTable from {a=>3, b=>44}",
+      	  "peek oo"
+	  }
      }
 

@@ -154,10 +154,12 @@ document { quote pushForward1,
      PARA,
      "As an example, the following fragment computes the ideal of the
      rational normal curve. This could also be done using ", TO "monomialCurve", ".",
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "S = ZZ/101[s,t]",
-     EXAMPLE "f = map(S,R,matrix{{s^4, s^3*t, s*t^3, t^4}})",
-     EXAMPLE "pushForward1(f,S^1)",
+     EXAMPLE {
+	  "R = ZZ/101[a..d];",
+      	  "S = ZZ/101[s,t];",
+      	  "f = map(S,R,matrix{{s^4, s^3*t, s*t^3, t^4}})",
+      	  "pushForward1(f,S^1)",
+	  },
      PARA,
      "Options:",
      MENU {
@@ -174,11 +176,14 @@ document { quote pushForward1,
      PARA,
      "The computation is stashed inside the ring map, until the computation has
      finished completely.  This means that you may interrupt this command, and 
-     later restart it. You may alo obtain partial results.",
-     EXAMPLE "f = map(S,R,matrix{{s^4, s^3*t, s*t^3, t^4}})",
-     EXAMPLE "pushForward1(f,S^1,DegreeLimit=>4)",
+     later restart it. You may alo obtain partial results, as follows.",
+     EXAMPLE {
+	  "f = map(S,R,matrix{{s^4, s^3*t, s*t^3, t^4}})",
+      	  "pushForward1(f,S^1,DegreeLimit=>4)",
+	  },
      "After interrupting a computation (using control-C), you may view the
-     equations so far obtained using",
+     equations so far obtained by using the ", TT "PairLimit", " option to prevent any
+     further work from being done.",
      EXAMPLE "pushForward1(f,S^1,PairLimit=>0)",
      "The type ", TO "PushforwardComputation", " is used internally by our current implementation.",
      }

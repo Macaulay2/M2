@@ -60,9 +60,11 @@ document { quote trim,
      PARA,
      "Also works for rings and ideals.",
      PARA,
-     EXAMPLE "R = ZZ/101[x]",
-     EXAMPLE "M = subquotient( matrix {{x,x^2,x^3}}, matrix {{x^3,x^4,x^5}})",
-     EXAMPLE "trim M"
+     EXAMPLE {
+	  "R = ZZ/101[x]",
+      	  "M = subquotient( matrix {{x,x^2,x^3}}, matrix {{x^3,x^4,x^5}})",
+      	  "trim M"
+	  }
      }
 
 TEST "
@@ -283,9 +285,11 @@ document { quote index,
     Variables are indexed starting at 0, and ending at n-1, where n is the number
     of variables in the ring of 'v'.",
     PARA,
-    EXAMPLE "R = ZZ/101[a..d,t]",
-    EXAMPLE "index a",
-    EXAMPLE "index t",
+    EXAMPLE {
+	 "R = ZZ/101[a..d,t]",
+     	 "index a",
+     	 "index t",
+	 },
     "If the ring element 'v' is not a variable, an error is generated.",
     PARA,
     "The symbol ", TT "index", " is also as a key used in 
@@ -374,10 +378,12 @@ document { quote homogenize,
      so that the result is homogeneous with respect to the given list w of
      integers provided as weights for the variables.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z,Degrees => {1,2,3}]",
-     EXAMPLE "f = 1 + y + z^2",
-     EXAMPLE "homogenize(f,x)",
-     EXAMPLE "homogenize(f,x,{1,0,-1})",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z,Degrees => {1,2,3}]",
+      	  "f = 1 + y + z^2",
+      	  "homogenize(f,x)",
+      	  "homogenize(f,x,{1,0,-1})",
+	  },
      PARA,
      "The weights that may be used are limited (roughly) to the range -2^30 .. 2^30.",
      PARA,
@@ -432,8 +438,10 @@ terms RingElement := f -> (
 document { quote terms,
      TT "terms f", " -- provide a list of terms of a polynomial.",
      PARA,
-     EXAMPLE "R = QQ[x,y]",
-     EXAMPLE "terms (x+2*y-1)^2",
+     EXAMPLE {
+	  "R = QQ[x,y]",
+      	  "terms (x+2*y-1)^2",
+	  },
      SEEALSO "coefficients"
      }
 
@@ -505,12 +513,14 @@ document { quote sortColumns,
 	  TO (sortColumns => DegreeOrder),
 	  TO (sortColumns => MonomialOrder)
 	  },
-     EXAMPLE "R = ZZ/101[a..c];",
-     EXAMPLE "f = matrix{{1,a,a^2,b^2,b,c,c^2,a*b,b*c,a*c}}",
-     EXAMPLE "s = sortColumns f",
-     EXAMPLE "f_s",
-     EXAMPLE "s = sortColumns(f,DegreeOrder => Descending)",
-     EXAMPLE "f_s"
+     EXAMPLE {
+	  "R = ZZ/101[a..c];",
+      	  "f = matrix{{1,a,a^2,b^2,b,c,c^2,a*b,b*c,a*c}}",
+      	  "s = sortColumns f",
+      	  "f_s",
+      	  "s = sortColumns(f,DegreeOrder => Descending)",
+      	  "f_s"
+	  },
      }
 
 -----------------------------
@@ -529,11 +539,13 @@ document { quote selectInSubring,
      monomial order.",
      PARA,
      "For example, consider the graded lexicographic order",
-     EXAMPLE "R = ZZ/101[a..d,MonomialOrder=>Lex]",
-     EXAMPLE "m = matrix{{b^2-c^2, a^2 - b^2, c*d}}",
-     EXAMPLE "selectInSubring(1,m)",
-     EXAMPLE "selectInSubring(2,m)",
-     EXAMPLE "selectInSubring(3,m)",
+     EXAMPLE {
+	  "R = ZZ/101[a..d,MonomialOrder=>Lex]",
+      	  "m = matrix{{b^2-c^2, a^2 - b^2, c*d}}",
+      	  "selectInSubring(1,m)",
+      	  "selectInSubring(2,m)",
+      	  "selectInSubring(3,m)",
+	  },
      PARA,
      "Caveats: this routine doesn't do what one would expect for graded orders
      such as 'GLex'.  There, the first part of the monomial order is the degree, 
@@ -561,10 +573,12 @@ document { quote divideByVariable,
      TT "divideByVariable(m,v,d)", " -- divide each column of the matrix 'm' by 
      as high a power of the variable 'v' as possible, but divide by no more than v^d.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "m = matrix{{a*b, a^2*c}, {a*b^2, a^4*d}}",
-     EXAMPLE "divideByVariable(m,a)",
-     EXAMPLE "divideByVariable(m,a,1)",
+     EXAMPLE {
+	  "R = ZZ/101[a..d]",
+      	  "m = matrix{{a*b, a^2*c}, {a*b^2, a^4*d}}",
+      	  "divideByVariable(m,a)",
+      	  "divideByVariable(m,a,1)",
+	  },
      "Caveats and limitations: you can only divide by a variable, not a monomial,
      and you have little control on what power will be divided.  This routine is mostly
      used by the saturation commands as a fast internal way of dividing.",
@@ -613,9 +627,11 @@ document { quote newCoordinateSystem,
      PARA,
      "The ring ", TT "S", " should have the same number of variables as 
      ", TT "S", ".",
-     EXAMPLE "R = ZZ/101[a..d]",
-     EXAMPLE "S = ZZ/101[p..s]",
-     EXAMPLE "newCoordinateSystem(S,matrix{{a+2*b,3*c-d}})"
+     EXAMPLE {
+	  "R = ZZ/101[a..d]",
+      	  "S = ZZ/101[p..s]",
+      	  "newCoordinateSystem(S,matrix{{a+2*b,3*c-d}})"
+	  },
      }
 
 lift(Matrix,Ring) := (f,S) -> (
