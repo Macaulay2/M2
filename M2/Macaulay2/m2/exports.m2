@@ -39,6 +39,7 @@ exportMutable (
 	)
 
 export (
+        symbol viewDocumentation,
         symbol RemakeAllDocumentation,
         symbol DegreeRank,
         symbol dismiss,

@@ -69,6 +69,7 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
 -- Here we assemble them together, so we don't have to recompute the information later.
 DocumentTag = new Type of BasicList
 DocumentTag.synonym = "document tag"
+toExternalString DocumentTag := x -> error "can't convert DocumentTag to external string"
 makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
 	  FormattedKey => null,
 	  Package => null
@@ -108,6 +109,23 @@ hasDocumentation := key -> isDocumentableThing key and (
      pkg := DocumentTag.Package tag;
      fkey := DocumentTag.FormattedKey tag;
      null =!= fetchRawDocumentation(pkg,fkey))
+-----------------------------------------------------------------------------
+-- Here we introduce the class FormattedDocumentTag, which contains just the parts of a DocumentTag that are strings
+--     the formatted key            e.g., "Module ** Module"
+--     the package title            e.g., "Macaulay2", or "" if there is none
+-- The main point is that toExternalString will work for objects of this type, and thus they can be stored externally
+-- as part of the documentation.
+FinalDocumentTag = new Type of BasicList
+FinalDocumentTag.synonym = "final document tag"
+FinalDocumentTag.FormattedKey = method(SingleArgumentDispatch => true)
+FinalDocumentTag.FormattedKey FinalDocumentTag := x -> x#0
+FinalDocumentTag.Title = method(SingleArgumentDispatch => true)
+FinalDocumentTag.Title FinalDocumentTag := x -> x#1
+toFinalDocumentTag = method()
+toFinalDocumentTag DocumentTag := x -> new FinalDocumentTag from { DocumentTag.FormattedKey x, DocumentTag.Title x }
+FinalDocumentTag ? FinalDocumentTag := (x,y) -> x#0 ? y#0
+net FinalDocumentTag := x -> concatenate ( FinalDocumentTag.Title x, " :: ", FinalDocumentTag.FormattedKey x )
+toString FinalDocumentTag := x -> error "who wants a string?"
 
 -----------------------------------------------------------------------------
 
@@ -308,7 +326,8 @@ fixup List       := z -> fixup SEQ z
 fixup Sequence   := z -> fixup SEQ z
 -- fixup Option
 fixup UL         := z -> splice apply(nonnull z, i -> SEQ fixup if class i === TO then TOH {i#0} else i)
-fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
+-- fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
+fixup TO         := x -> TO if x#?1 then { toFinalDocumentTag makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { toFinalDocumentTag makeDocumentTag x#0 }
 fixup TO2        := x -> TO2{ makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 fixup TOH        := x -> TOH{ makeDocumentTag x#0 }
 fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
