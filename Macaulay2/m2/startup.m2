@@ -397,7 +397,7 @@ if not noinitfile then (
 	  path);
      packagePath = prepend(homeDirectory | packageSuffix | "local/", packagePath);
      )
-if sourceHomeDirectory  =!= null then path = append(path, sourceHomeDirectory|"m2/")
+if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"m2/",sourceHomeDirectory|"packages/"})
 if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
 if prefixDirectory      =!= null then path = append(path, prefixDirectory | LAYOUT#"m2")
 if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"test/", sourceHomeDirectory|"test/engine/"})

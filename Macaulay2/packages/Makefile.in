@@ -2,7 +2,7 @@
 
 ## here is the list of those package files to install with Macaulay2
 PACKAGES =
-PACKAGES += CacheFileName.m2
+# PACKAGES += CacheFileName.m2
 PACKAGES += Dmodules.m2
 PACKAGES += Elimination.m2
 PACKAGES += FirstPackage.m2
@@ -32,7 +32,7 @@ all :: $(PACKAGES:.m2=.installed)
 	touch "$@"
 
 clean::; rm -rf tmp tmp-packages *.installed
-install: all; tar cf - -C tmp-packages . | tar xfpv - -C $(encapdir)
+install: all; tar cf - -C tmp-packages . | tar xfp - -C $(encapdir)
 
 Dmodules.installed :: @srcdir@/Dmodules/*.m2
 

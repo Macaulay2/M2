@@ -29,12 +29,16 @@ String.Wrap = x -> wr("",x)
 
 closePackage "Macaulay2"
 
+installedPackages := {"PrimaryDecomposition"}
+loadPackage \ installedPackages 
+
 currentPackage = null					    -- eliminate the phony package we used for collecting test inputs
 
 addStartFunction( 
      () -> (
      	  dismiss "User";
 	  newPackage("User", DebuggingMode => true);
+	  needsPackage \ installedPackages;
 	  )
      )
 

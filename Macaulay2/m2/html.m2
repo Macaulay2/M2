@@ -368,17 +368,14 @@ makeTableOfContents := () -> (
 	  } << endl << close
      )
 
-test := opt -> if run("2>/dev/null ulimit "|opt) == 0 then opt else "";
-ulimit := "ulimit" | test " -t 40" | test " -m 60000"| test " -v 60000";
+test := opt -> if run("2>/dev/null "|opt) == 0 then opt else "";
+utest := opt -> if run("2>/dev/null ulimit "|opt) == 0 then opt else "";
+ulimit := null
 
 runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
      if fileExists outf and fileTime outf >= fileTime inf
      then (
 	  -- stderr << "--leaving " << desc << " in file " << outf << endl;
-	  )
-     else if fileExists tmpf and fileTime tmpf >= fileTime inf
-     then (
-	  stderr << "--leaving error report from " << desc << " in file " << tmpf << endl;
 	  )
      else (
 	  announcechange();
@@ -386,7 +383,11 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 	  ldpkg := "-e 'needsPackage \""|toString pkg|"\"'";
 	  args := "--silent --print-width 80 --stop --int -e errorDepth=0 -q" | " " | ldpkg;
 	  cmdname := commandLine#0;
-	  cmd := ulimit | "; cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >" | format tmpf | " 2>&1";
+	  if ulimit === null then (
+	       ulimit = test "ulimit" | utest " -t 40" | utest " -m 60000"| utest " -v 60000";
+	       if ulimit != "" then ulimit = ulimit | "; ";
+	       );
+	  cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >" | format tmpf | " 2>&1";
 	  stderr << cmd << endl;
 	  r := run cmd;
 	  if r == 0 then (

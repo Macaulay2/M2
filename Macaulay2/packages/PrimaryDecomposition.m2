@@ -17,7 +17,6 @@ export (
      printExamples,
      quotMin,
      radicalContainment,
-     somethingElse,
      sortByDegree
      )
 
