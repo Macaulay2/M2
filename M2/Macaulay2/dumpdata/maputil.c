@@ -24,7 +24,7 @@ void checkmaps(int nmaps, struct MAP m[nmaps]) {
   }
 }
 
-char mapfmt[] = "%08p-%08p %c%c%c %u\n"; /* could have to be changed on a 64 bit machine */
+char mapfmt[] = "%010p-%010p %c%c%c %u\n"; /* could have to be changed on a 64 bit machine; note: the field width includes 2 extra for the 0x */
 
 int isStack(map m) {
   void *p = &p;
