@@ -3,16 +3,16 @@ echo -- loading .gdbinit\n
 # so we send a message to the loaddata routine to ignore that
 set environment LOADDATA_IGNORE_CHECKSUMS yes
 
-directory ~/local/share/capybara/packages/libfac/TMP/libfac/
-directory ~/local/share/capybara/packages/libfac/TMP/libfac/factor/
-directory ~/local/share/capybara/packages/factory/TMP/factory/
-directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/
-directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/mpn/
-directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/mpz/
-directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/mpq/
-directory ~/local/share/capybara/packages/gmp/TMP/gmp-4.1.2/mpf/
-directory ~/local/share/capybara/packages/gc/TMP/gc6.3alpha2/
-directory ~/local/share/capybara/packages/gdbm/TMP/gdbm-1.8.3/
-directory ~/local/share/capybara/packages/readline/TMP/readline-4.3:
+directory /usr/tmp/libfac-build/libfac/
+directory /usr/tmp/libfac-build/libfac/factor/
+directory /usr/tmp/factory-build/factory/
+directory /usr/tmp/gmp-build/gmp-4.1.2/
+directory /usr/tmp/gmp-build/gmp-4.1.2/mpn/
+directory /usr/tmp/gmp-build/gmp-4.1.2/mpz/
+directory /usr/tmp/gmp-build/gmp-4.1.2/mpq/
+directory /usr/tmp/gmp-build/gmp-4.1.2/mpf/
+directory /usr/tmp/gc-build/gc6.3alpha2/
+directory /usr/tmp/gdbm-build/gdbm-1.8.3/
+directory /usr/tmp/readline-build/readline-4.3:
 source .gdb-files
 source .gdb-run-it

@@ -661,8 +661,6 @@ export setupargv():void := (
      setupconst("environment",toExpr(envp));
      );
 
--- setupargv();
-
 substrfun(e:Expr):Expr := (
      when e is args:Sequence do
      if length(args) == 3 then
