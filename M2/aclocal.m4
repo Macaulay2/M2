@@ -24,25 +24,4 @@ AC_DEFUN(M2_SHOW_CONFDEFS,[
   sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
   ])
 
-dnl this list is the same as the one in Makefile
-AC_DEFUN(M2_CONFIGURED_FILES,
-[config.Makefile\
- Makefile-run\
- Macaulay2/Makefile\
- Macaulay2/m2/Makefile\
- Macaulay2/basictests/Makefile\
- Macaulay2/book/Makefile\
- Macaulay2/c/Makefile\
- Macaulay2/c2/Makefile\
- Macaulay2/d/Makefile\
- Macaulay2/dbm/Makefile\
- Macaulay2/dumpdata/Makefile\
- Macaulay2/e/Makefile\
- Macaulay2/emacs/Makefile\
- Macaulay2/html/Makefile\
- Macaulay2/packages/Makefile\
- Macaulay2/packages/ComputationsBook/Makefile\
- Macaulay2/test/Makefile\
- Macaulay2/tutorial/Makefile\
- Macaulay2/setup\
- Macaulay2/util/Makefile])
+AC_DEFUN(M2_CONFIGURED_FILES,[`cat config.files`])
