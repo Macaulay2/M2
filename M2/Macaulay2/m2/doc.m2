@@ -592,7 +592,7 @@ document { (select,ZZ,HashTable,Function),
 
 --document { find,
 --     TT "find(x,f)", " -- applies the function ", TT "f", " to each element
---     of ", TT "x", ", returning the result not equal to ", TT "null", ".
+--     of ", TT "x", ", returning the result not equal to ", TO "null", ".
 --     If no result is non-null, then it returns null."
 --     }
 

@@ -438,7 +438,7 @@ document { firstkey,
      TT "firstkey f", " -- return the first key available in the database
      file ", TT "f", ".",
      PARA,
-     "Returns ", TT "null", " if none.",
+     "Returns ", TO "null", " if none.",
      PARA,
      SEEALSO "Database"
      }
@@ -448,7 +448,7 @@ document { nextkey,
      TT "nextkey f", " -- return the next key available in the database
      file ", TT "f", ".",
      PARA,
-     "Returns ", TT "null", " if none.",
+     "Returns ", TO "null", " if none.",
      PARA,
      SEEALSO "Database"
      }

@@ -229,7 +229,7 @@ assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
 document { position,
      Headline => "find first element of a list satisfying a condition",
      TT "position(v,f)", " -- returns the index of the first element of ", TT "v", " satisfying 
-     the condition ", TT "f", ", or ", TT "null", " if there is none.",
+     the condition ", TT "f", ", or ", TO "null", " if there is none.",
      SEEALSO "positions"
      }
 

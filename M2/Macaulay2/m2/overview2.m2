@@ -1019,7 +1019,7 @@ document { "conditional execution",
           else "pos")///
 	  },
      "The else clause may be omitted from an ", TT "if", " expression.  In that case, 
-     if value of the predicate ", TT "X", " is false, then ", TT "null", " is provided 
+     if value of the predicate ", TT "X", " is false, then ", TO "null", " is provided 
      as the value of the ", TT "if", " expression.",
      EXAMPLE {
 	  ///(-4 .. 4) / 
@@ -1039,7 +1039,7 @@ document { "loops",
      ", TT "while X do Y", " operates by evaluating
      ", TT "X", " repeatedly.  Each time the value of ", TT "X", " is true, 
      ", TT "Y", " is evaluated and its value is discarded.  When finally
-     the value of ", TT "X", " is false the special value ", TT "null", " is 
+     the value of ", TT "X", " is false the special value ", TO "null", " is 
      returned as the value of the ", TT "while", " expression.",
      EXAMPLE {
 	  "i = 0;",

@@ -1486,7 +1486,7 @@ assert isDirectSum (QQ^1 ++ QQ^2)
 document { youngest,
      Headline => "the youngest member of a sequence",
      TT "youngest s", " -- return the youngest mutable hash table in the sequence
-     ", TT "s", ", if any, else ", TT "null", "."
+     ", TT "s", ", if any, else ", TO "null", "."
      }
 
 document { (symbol ++,Module,Module),

@@ -310,7 +310,7 @@ document { memoize,
      each of the form ", TT "x => v", ", where ", TT "v", " is the value to
      be provided for the argument ", TT "x", ".",
      PARA,
-     "Warning: when the value returned by ", TT "f", " is ", TT "null", ", it will always be 
+     "Warning: when the value returned by ", TT "f", " is ", TO "null", ", it will always be 
      recomputed, even if the same arguments are presented.",
      PARA,
      "Warning: the new function created by ", TT "memoize", " will save
