@@ -81,6 +81,11 @@ override(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("override",override);
 -----------------------------------------------------------------------------
+equalmethod(x:Expr,y:Expr):Expr := (
+     method := lookupBinaryMethod(Class(x),Class(y),EqualEqualS);
+     if method == nullE 
+     then MissingMethodPair(EqualEqualS,x,y)
+     else apply(method,x,y));
 EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
      when x is Error do x
@@ -88,29 +93,22 @@ EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      	  y := eval(rhs);
      	  when y 
 	  is Error do y
-	  is Integer do equal(x,y)
-	  is SymbolClosure do equal(x,y)
-	  is Rational do equal(x,y)
-	  is Real do equal(x,y)
-	  is BigReal do equal(x,y)
-	  is Boolean do equal(x,y)
-	  is Net do equal(x,y)
-	  is string do equal(x,y)
-	  is FunctionClosure do equal(x,y)
-	  is CompiledFunctionClosure do equal(x,y)
-	  is CompiledFunction do equal(x,y)
-	  else (
-	       method := lookupBinaryMethod(Class(x),Class(y),EqualEqualS);
-	       if method == nullE 
-	       then MissingMethodPair(EqualEqualS,x,y)
-	       else apply(method,x,y))));
+	  is Integer do when x is Integer do equal(x,y) else equalmethod(x,y)
+	  is SymbolClosure do when x is SymbolClosure do equal(x,y) else equalmethod(x,y)
+	  is Rational do when x is Rational do equal(x,y) else equalmethod(x,y)
+	  is Real do when x is Real do equal(x,y) else equalmethod(x,y)
+	  is BigReal do when x is BigReal do equal(x,y) else equalmethod(x,y)
+	  is Boolean do when x is Boolean do equal(x,y) else equalmethod(x,y)
+	  is Net do when x is Net do equal(x,y) else equalmethod(x,y)
+	  is string do when x is string do equal(x,y) else equalmethod(x,y)
+	  else equalmethod(x,y)));
 setup(EqualEqualS,EqualEqualfun);
 not(z:Expr):Expr := (
      when z is Error do z 
      else if z == True then False 
      else if z == False then True
      else buildErrorPacket("expected true or false"));
-notequalfun(lhs:Code,rhs:Code):Expr := not(EqualEqualfun(lhs,rhs));
+notequalfun(lhs:Code,rhs:Code):Expr := notFun(EqualEqualfun(lhs,rhs));
 setup(NotEqualS,notequalfun);
 
 compare(left:Expr,right:Expr):Expr := (

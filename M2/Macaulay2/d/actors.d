@@ -705,14 +705,15 @@ logandfun(lhs:Code,rhs:Code):Expr := (
 		    else binarymethod(a,b,andS)))
 	  else binarymethod(a,rhs,andS)));
 setup(andS,logandfun);
-lognotfun(rhs:Code):Expr := (
+export notFun(a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(a,notS);
+export notFun(rhs:Code):Expr := (
      a := eval(rhs);
      when a
      is Error do a
      else if a == True then False
      else if a == False then True
      else unarymethod(a,notS));
-setup(notS,lognotfun);
+setup(notS,notFun);
 factorial(rhs:Code):Expr := (
      when eval(rhs)
      is x:Error do Expr(x)
