@@ -44,3 +44,5 @@ install ::
 	$(INSTALL_DATA) *.m2 $(datadir)/Macaulay2/packages
 	$(INSTALL_DATA) cache/doc/* $(datadir)/Macaulay2/packages/cache/doc
 
+distclean : clean
+	rm -f Makefile
