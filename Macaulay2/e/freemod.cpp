@@ -1436,13 +1436,13 @@ void FreeModule::sort(const array<vec> &vecs,
 
   sort_vecs = &vecs;
   sort_degs = NULL;
-  if (deg_ascending && degrees.length() != vecs.length())
-    {
-      gError << "sort: specified degree dort, without giving degrees";
-      return;
-    }
-  else
+  if (deg_ascending) {
+    if (degrees.length() != vecs.length()) {
+	gError << "sort: specified degree order, without giving degrees";
+	return;
+      }
     sort_degs = degrees.raw();
+  }
 
   sort_range(0,vecs.length()-1);
   sort_vals = NULL;
