@@ -1336,6 +1336,21 @@ kill(e:Expr):Expr := (
      else WrongArg("a file"));
 setupfun("kill",kill);
 
+setEcho(e:Expr):Expr := (
+     when e is f:file do (
+	  f.echo = true;
+	  nullE
+	  )
+     else nullE);
+setupfun("setEcho",setEcho);
+clearEcho(e:Expr):Expr := (
+     when e is f:file do (
+	  f.echo = false;
+	  nullE
+	  )
+     else nullE);
+setupfun("clearEcho",clearEcho);
+
 setupconst("typicalValues", Expr(typicalValues));
 setupconst("binaryOperators",Expr(new array(Expr) len length(opsWithBinaryMethod) do (
      foreach s in opsWithBinaryMethod do provide Expr(s))));
