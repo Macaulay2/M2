@@ -338,6 +338,9 @@ void HermiteComputation::text_out(buffer &o)
   /* This displays statistical information, and depends on the
      gbTrace value */
 {
+  extern void makeNTLMatrixZZ(int nrows, int ncols);
+  makeNTLMatrixZZ(10,30);
+
   for (int i=0; i<gens->n_rows(); i++)
     if (initial[i] != NULL)
       {

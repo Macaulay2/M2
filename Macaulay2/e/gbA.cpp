@@ -1039,7 +1039,7 @@ int gbA::find_good_monomial_divisor_ZZ(
   int n = 0;
 
   vector<MonomialTableZZ::mon_term *, gc_allocator<MonomialTableZZ::mon_term *> > divisors;
-  ealpha = degf - weightInfo_->exponents_weight(e) - _F->primary_degree(x-1);
+  ealpha = degf - weightInfo_->exponents_weight(e,x);
 
 
   /* First search for ring divisors */
@@ -1085,7 +1085,7 @@ int gbA::find_good_term_divisor_ZZ(
   int n = 0;
 
   vector<MonomialTableZZ::mon_term *, gc_allocator<MonomialTableZZ::mon_term *> > divisors;
-  ealpha = degf - weightInfo_->exponents_weight(e) - _F->primary_degree(x-1);
+  ealpha = degf - weightInfo_->exponents_weight(e,x);
 
   /* First search for ring divisors */
   if (ringtableZZ)
@@ -1129,8 +1129,7 @@ int gbA::find_good_divisor(exponents e,
   int n = 0;
 
   vector<MonomialTable::mon_term *, gc_allocator<MonomialTable::mon_term *> > divisors;
-  ealpha = degf - weightInfo_->exponents_weight(e)
-             - _F->primary_degree(x-1);
+  ealpha = degf - weightInfo_->exponents_weight(e,x);
 
   /* First search for ring divisors */
   if (ringtable)

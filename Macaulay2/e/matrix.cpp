@@ -101,7 +101,9 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
 	}
     }
 
-  MatrixConstructor mat(target, source, deg->array);
+  int *degshift = R->degree_monoid()->make_one();
+  R->degree_monoid()->from_expvector(deg->array, degshift);
+  MatrixConstructor mat(target, source, degshift);
 
   if (M != 0)
     {
@@ -187,7 +189,12 @@ const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
 					 const M2_arrayint cols,
 					 const RingElement_array *entries)
 {
-  MatrixConstructor mat(target, source, deg->array);
+#warning "check that all rings are correct, give error otherwise"
+  const Ring *R = target->get_ring();
+  int *degshift = R->degree_monoid()->make_one();
+  R->degree_monoid()->from_expvector(deg->array, degshift);
+
+  MatrixConstructor mat(target, source, degshift);
   if (!Matrix::make_sparse_vecs(mat, target, source->rank(), rows, cols, entries))
     return 0; // error message has already been sent
   return mat.to_matrix();
@@ -216,7 +223,9 @@ const MatrixOrNull * Matrix::remake(const FreeModule *target,
       return 0;
     }
 
-  MatrixConstructor mat(target, source, deg->array);
+  int *degshift = R->degree_monoid()->make_one();
+  R->degree_monoid()->from_expvector(deg->array, degshift);
+  MatrixConstructor mat(target, source, degshift);
   for (int i=0; i<source->rank(); i++)
     mat.set_column(i, R->copy_vec(_entries[i]));
   return mat.to_matrix();
