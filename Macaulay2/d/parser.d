@@ -155,6 +155,14 @@ accumulate(e:ParseTree,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
 	  );
      ret
      );
+export errorunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
+     errorpos(token1.position,"syntax error at '" + token1.word.name + "'");
+     errorTree
+     );
+export errorbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int,obeylines:bool):ParseTree := (
+     errorpos(token2.position,"syntax error at '" + token2.word.name + "'");
+     errorTree
+     );
 export defaultunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      accumulate(ParseTree(token1),file,prec,obeylines)
      );
@@ -168,6 +176,13 @@ export nunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
      ret := nparse(file,token1.word.parse.unaryStrength,obeylines);
      if ret == errorTree then ret
      else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines));
+export nnunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
+     if token1.word.parse.precedence <= prec
+     then errorunary(token1,file,prec,obeylines)
+     else (
+	  ret := nparse(file,token1.word.parse.unaryStrength,obeylines);
+	  if ret == errorTree then ret
+	  else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines)));
 export precSpace := 0;		-- filled in later by binding.d
 export defaultbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      if token2.followsNewline then (
@@ -213,14 +228,6 @@ export nbinaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeyline
 export arrowop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      e := parse(file,token2.word.parse.binaryStrength,obeylines);
      if e == errorTree then e else ParseTree(Arrow(lhs, token2, e, dummyDesc)));
-export errorunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     errorpos(token1.position,"syntax error at '" + token1.word.name + "'");
-     errorTree
-     );
-export errorbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int,obeylines:bool):ParseTree := (
-     errorpos(token2.position,"syntax error at '" + token2.word.name + "'");
-     errorTree
-     );
 MatchPair := {left:string, right:string, next:(null or MatchPair)};
 matchList := (null or MatchPair)(NULL);
 export addmatch(left:string, right:string):void := (

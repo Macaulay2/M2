@@ -675,11 +675,11 @@ whiledofun(predicate:Code,body:Code):Expr := (
      while true do (
 	  p := eval(predicate);
 	  when p is err:Error 
-	  do return(if err.message == breakMessage then err.report else p)
+	  do return(if err.message == breakMessage then err.value else p)
 	  else if p == True then (
 	       b := eval(body);
 	       when b is err:Error 
-	       do return(if err.message == breakMessage then err.report else b) 
+	       do return(if err.message == breakMessage then err.value else b) 
 	       else nothing;
 	       )
 	  else if p == False then break
@@ -694,11 +694,11 @@ whilelistfun(predicate:Code,body:Code):Expr := (
      while true do (
 	  p := eval(predicate);
 	  when p is err:Error
-	  do return(if err.message == breakMessage then err.report else p)
+	  do return(if err.message == breakMessage then err.value else p)
 	  else if p == True then (
 	       b := eval(body);
 	       when b is err:Error 
-	       do return(if err.message == breakMessage then err.report else b) 
+	       do return(if err.message == breakMessage then err.value else b) 
 	       else (
 		    if i == n then (
 			 n = 2*n;
@@ -725,11 +725,11 @@ whilelistdofun(predicate:Code,listClause:Code,doClause:Code):Expr := (
      i := 0;
      while true do (
 	  p := eval(predicate);
-	  when p is err:Error do return(if err.message == breakMessage then err.report else p)
+	  when p is err:Error do return(if err.message == breakMessage then err.value else p)
 	  else if p == True then (
 	       b := eval(listClause);
 	       when b is err:Error
-	       do return(if err.message == breakMessage then err.report else b)
+	       do return(if err.message == breakMessage then err.value else b)
 	       else (
 		    if i == length(r) then (
 			 r = new Sequence len 2*length(r) do (
@@ -742,7 +742,7 @@ whilelistdofun(predicate:Code,listClause:Code,doClause:Code):Expr := (
 		    );
      	       c := eval(doClause);
 	       when c is err:Error
-	       do return(if err.message == breakMessage then err.report else c) 
+	       do return(if err.message == breakMessage then err.value else c) 
 	       else nothing;
 	       )
 	  else if p == False then break
@@ -785,7 +785,7 @@ forfun(c:forCode):Expr := (
 	  if predicate != dummyCode then (
 	       p := eval(predicate);
 	       when p is err:Error do (
-		    if err.message == breakMessage then return(err.report)
+		    if err.message == breakMessage then return(err.value)
 		    else return(p)
 		    )
 	       else if p == False then break
@@ -794,7 +794,7 @@ forfun(c:forCode):Expr := (
 	  if listClause != dummyCode then (
 	       b := eval(listClause);
 	       when b is err:Error do (
-		    if err.message == breakMessage then return(err.report)
+		    if err.message == breakMessage then return(err.value)
 		    else return(b)
 		    )
 	       else (
@@ -811,7 +811,7 @@ forfun(c:forCode):Expr := (
 	  if doClause != dummyCode then (
 	       b := eval(doClause);
 	       when b is err:Error do (
-		    if err.message == breakMessage then return(err.report)
+		    if err.message == breakMessage then return(err.value)
 		    else return(b)
 		    )
 	       else nothing;

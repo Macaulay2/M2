@@ -148,7 +148,7 @@ export List := {
      hash:int,
      mutable:bool
      };
-export Error := {position:Position, message:string, report:Expr};
+export Error := {position:Position, message:string, report:Expr, value:Expr};
 export Handle := {
      handle:int
      };

@@ -97,7 +97,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 	       then (
 		    errorpos(s.position,"syntax error");
 		    if AbortIfError 
-		    then return(Expr(Error(s.position,"syntax error",emptySequence)));
+		    then return(Expr(Error(s.position,"syntax error",emptySequence,nullE)));
 		    )
 	       else (
 		    if localBind(parsed,scope) -- assign scopes to tokens, look up
@@ -108,7 +108,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 			 when lastvalue is err:Error do (
 			      if err.message == returnMessage
 			      || err.message == breakMessage
-			      then lastvalue = err.report;
+			      then lastvalue = err.value;
 			      )
 			 else nothing;
 			 when lastvalue is err:Error do (

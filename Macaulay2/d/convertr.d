@@ -487,8 +487,8 @@ export codePosition(e:Code):Position := (
 export returnMessage := "return value";
 export breakMessage := "break value";
 
-export errorExpr(message:string):Expr := Expr(Error(dummyPosition,message,emptySequence));
-export errorExpr(message:string,report:Expr):Expr := Expr(Error(dummyPosition,message,report));
+export errorExpr(message:string):Expr := Expr(Error(dummyPosition,message,emptySequence,nullE));
+export errorExpr(message:string,report:Expr):Expr := Expr(Error(dummyPosition,message,report,nullE));
 export quoteit(name:string):string := "'" + name + "'";
 export NotYet(desc:string):Expr := errorExpr(desc + " not implemented yet");
 export WrongArg(desc:string):Expr := errorExpr("expected " + desc);
@@ -542,14 +542,14 @@ export errorpos(e:Code,message:string):Expr := (
      if int(p.reloaded) >= ErrorDepth
      then (
      	  errorpos(p,message);
-     	  Expr(Error(p,message,emptySequence)))
+     	  Expr(Error(p,message,emptySequence,nullE)))
      else errorExpr(message));
 export errorpos(e:Code,message:string,report:Expr):Expr := (
      p := codePosition(e);
      if int(p.reloaded) >= ErrorDepth
      then (
      	  errorpos(p,message);
-     	  Expr(Error(p,message,report)))
+     	  Expr(Error(p,message,report,nullE)))
      else errorExpr(message));
 export eval(c:Code):Expr;
 hadError := false;
@@ -742,10 +742,10 @@ setupop(shieldS,shieldfun);
 
 returnFun(a:Code):Expr := (
      e := eval(a);
-     when e is Error do e else Expr(Error(dummyPosition,returnMessage,e)));
+     when e is Error do e else Expr(Error(dummyPosition,returnMessage,emptySequenceE,e)));
 setupop(returnS,returnFun);
 
 breakFun(a:Code):Expr := (
      e := eval(a);
-     when e is Error do e else Expr(Error(dummyPosition,breakMessage,e)));
+     when e is Error do e else Expr(Error(dummyPosition,breakMessage,emptySequenceE,e)));
 setupop(breakS,breakFun);

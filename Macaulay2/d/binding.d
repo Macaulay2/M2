@@ -115,7 +115,7 @@ binaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec  ,nopr,p
 binaryleftword(s:string):Word :=           unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop)));
 nleft(s:string)         :Word := install(s,unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop))));
 nleftword(s:string)     :Word :=           unique(s,parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop)));
-nunaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec  ,prec,parsefuns(nunaryop  ,nbinaryop))));
+nunaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec  ,prec,parsefuns(nnunaryop ,nbinaryop))));
 token(s:string)         :Word :=           unique(s,parseinfo(prec,nopr  ,prec,parsefuns(errorunary,errorbinary)));
 binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree)
                         :Word := install(s,unique(s,parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binary))));

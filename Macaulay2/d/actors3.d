@@ -564,7 +564,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message == returnMessage
-			      then provide err.report
+			      then provide err.value
 			      else (
 				   errret = tmp;
 			      	   while true do provide nullE;
@@ -590,7 +590,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage
-				   then provide err.report
+				   then provide err.value
 				   else (
 					errret = tmp;
 					while true do provide nullE;
@@ -616,7 +616,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message == returnMessage
-			      then provide err.report
+			      then provide err.value
 			      else (
 				   errret = tmp;
 			      	   while true do provide nullE;
@@ -642,7 +642,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage
-				   then provide err.report
+				   then provide err.value
 				   else (
 					errret = tmp;
 					while true do provide nullE;
@@ -715,7 +715,7 @@ map(a:Sequence,f:Expr):Expr := (
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage
-				   then provide err.report
+				   then provide err.value
 				   else (
 					errret = tmp;
 					while true do provide nullE;
@@ -751,7 +751,7 @@ map(a:Sequence,f:Expr):Expr := (
 				   tmp := eval(body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage
-					then provide err.report
+					then provide err.value
 					else (
 					     errret = tmp;
 					     while true do provide nullE;
@@ -783,7 +783,7 @@ map(a:Sequence,f:Expr):Expr := (
 				   tmp := eval(body);
 				   when tmp is err:Error do (
 					if err.message == returnMessage
-					then provide err.report
+					then provide err.value
 					else (
 					     errret = tmp;
 					     while true do provide nullE;
@@ -811,7 +811,7 @@ map(a:Sequence,f:Expr):Expr := (
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage
-				   then provide err.report
+				   then provide err.value
 				   else (
 					errret = tmp;
 					while true do provide nullE;
@@ -845,7 +845,7 @@ map(a:Sequence,f:Expr):Expr := (
 					tmp := eval(body);
 					when tmp is err:Error do (
 					     if err.message == returnMessage
-					     then provide err.report
+					     then provide err.value
 					     else (
 						  errret = tmp;
 						  while true do provide nullE;
@@ -867,7 +867,7 @@ map(a:Sequence,f:Expr):Expr := (
 					tmp := eval(body);
 					when tmp is err:Error do (
 					     if err.message == returnMessage
-					     then provide err.report
+					     then provide err.value
 					     else (
 						  errret = tmp;
 						  while true do provide nullE;
@@ -902,7 +902,7 @@ map(a:Sequence,f:Expr):Expr := (
 					tmp := eval(body);
 					when tmp is err:Error do (
 					     if err.message == returnMessage
-					     then provide err.report
+					     then provide err.value
 					     else (
 						  errret = tmp;
 						  while true do provide nullE;
@@ -937,7 +937,7 @@ map(a:Sequence,f:Expr):Expr := (
 					tmp := eval(body);
 					when tmp is err:Error do (
 					     if err.message == returnMessage
-					     then provide err.report
+					     then provide err.value
 					     else (
 						  errret = tmp;
 						  while true do provide nullE;
@@ -1015,7 +1015,7 @@ map(n:int,f:Expr):Expr := (
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message == returnMessage
-			      then provide err.report
+			      then provide err.value
 			      else (
 				   errret = tmp;
 			      	   while true do provide nullE;
@@ -1035,7 +1035,7 @@ map(n:int,f:Expr):Expr := (
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage
-				   then provide err.report
+				   then provide err.value
 				   else (
 					errret = tmp;
 					while true do provide nullE;
@@ -1050,7 +1050,7 @@ map(n:int,f:Expr):Expr := (
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage
-				   then provide err.report
+				   then provide err.value
 				   else (
 					errret = tmp;
 					while true do provide nullE;
@@ -1095,7 +1095,7 @@ map(e:Expr,f:Expr):Expr := (
 --	  if ancestor(obj.class,Tally) then mapkeys(f,obj) else mapvalues(f,obj))
      is b:List do (
 	  c := map(b.v,f);
-	  when c is err:Error do if err.message == breakMessage then err.report else c
+	  when c is err:Error do if err.message == breakMessage then err.value else c
 	  is v:Sequence do list(b.class,v,b.mutable)
 	  else nullE			  -- will not happen
 	  )
@@ -1111,7 +1111,7 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	  is a2:Sequence do map(a1,a2,f)
 	  is b2:List do (
 	       c := map(a1,b2.v,f);
-	       when c is err:Error do if err.message == breakMessage then err.report else c
+	       when c is err:Error do if err.message == breakMessage then err.value else c
 	       is v:Sequence do list(b2.class,v,b2.mutable)
 	       else nullE		  -- will not happen
 	       )
@@ -1120,7 +1120,7 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	  when e2
 	  is a2:Sequence do (
 	       c := map(b1.v,a2,f);
-	       when c is err:Error do if err.message == breakMessage then err.report else c
+	       when c is err:Error do if err.message == breakMessage then err.value else c
 	       is v:Sequence do list(b1.class,v,b1.mutable)
 	       else nullE		  -- will not happen
 	       )
@@ -1132,7 +1132,7 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 		    class = listClass;
 		    );
 	       c := map(b1.v,b2.v,f);
-	       when c is err:Error do if err.message == breakMessage then err.report else c
+	       when c is err:Error do if err.message == breakMessage then err.value else c
 	       is v:Sequence do list(class,v,mutable)
 	       else nullE		  -- will not happen
 	       )
