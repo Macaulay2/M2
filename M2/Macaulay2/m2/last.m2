@@ -48,7 +48,7 @@ if not Macaulay2#?"raw documentation database" or not isOpen Macaulay2#"raw docu
 
 addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2#"source directory" = sourceHomeDirectory )
 
-addStartFunction( () -> makePackageIndex() )
+addStartFunction( () -> if not member("-q",commandLine) then makePackageIndex() )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

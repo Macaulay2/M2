@@ -1327,21 +1327,21 @@ document {
      PARA,
      "In Macaulay 2, each ring has a multiplicative order associated with it.
      The default is the graded reverse lexicographic order:",
-     EXAMPLE "R = QQ[a..d,MonomialOrder=>GRevLex]",
-     EXAMPLE "F = a^3 + d^2 + a*d + b*c + 1",
-     EXAMPLE "-- R = QQ[a..d,MonomialOrder=>RevLex] -- THIS FAILS",
-     EXAMPLE "substitute(F,R)",
-     EXAMPLE "R = QQ[a..d,MonomialOrder=>Lex]",
-     EXAMPLE "substitute(F,R)",
-     EXAMPLE "R = QQ[a..d,Weights=>{1,1,0,0}]",
-     EXAMPLE "substitute(F,R)",
-     EXAMPLE "R = QQ[a..d,Weights=>{-1,0,0,0}]",
-     EXAMPLE "substitute(F,R)",
-     EXAMPLE "R = QQ[a..d,Weights=>{-1,-1,-1,-1}]",
-     EXAMPLE "substitute(F,R)",
-     EXAMPLE "R = QQ[a..d,MonomialOrder=>ProductOrder{1,3}]",
-     EXAMPLE "substitute(F,R)",
-
+     EXAMPLE {
+	  "R = QQ[a..d,MonomialOrder=>GRevLex]",
+     	  "F = a^3 + d^2 + a*d + b*c + 1",
+	  "R = QQ[a..d,MonomialOrder=>RevLex]",
+	  "substitute(F,R)",
+	  "R = QQ[a..d,MonomialOrder=>Lex]",
+	  "substitute(F,R)",
+	  "R = QQ[a..d,Weights=>{1,1,0,0}]",
+	  "substitute(F,R)",
+	  "R = QQ[a..d,Weights=>{-1,0,0,0}]",
+	  "substitute(F,R)",
+	  "R = QQ[a..d,Weights=>{-1,-1,-1,-1}]",
+	  "substitute(F,R)",
+	  "R = QQ[a..d,MonomialOrder=>ProductOrder{1,3}]",
+	  "substitute(F,R)"},
      "Given a term order, the lead monomial is the term whose monomial is greatest
      in this order.",
      EXAMPLE "leadTerm F"          
@@ -1402,19 +1402,19 @@ document {
 	       (typing 'c' while holding the CTRL key down, in emacs, you have to 
 	       type CTRL-C twice), or you may have given options requesting only
 	       partial computation.",
-     	       EXAMPLE "R = ZZ/32003[a..e];",
-	       EXAMPLE "I = ideal(random(3,R),random(3,R),random(3,R))",
-	       EXAMPLE "gens gb(I,PairLimit=>7);",
+     	       EXAMPLE {
+		    "R = ZZ/32003[a..e];",
+	            "I = ideal(random(3,R),random(3,R),random(3,R))",
+	            "gens gb(I,PairLimit=>7);"},
 	       "Get the Groebner basis object:",
-	       EXAMPLE "g = gb(I,StopBeforeComputation => true);",
-	       EXAMPLE "leadTerm gens g",
+	       EXAMPLE {
+		    "g = gb(I,StopBeforeComputation => true);",
+	       	    "leadTerm gens g"},
 	       "We can make a Groebner basis snapshot by using StopBeforeComputation:",
-	       EXAMPLE "gbSnapshot = (I) -> gens gb(I,StopBeforeComputation => true);",
-	       EXAMPLE "leadTerm gbSnapshot(I)"
-	       
+	       EXAMPLE {
+		    "gbSnapshot = (I) -> gens gb(I,StopBeforeComputation => true);",
+	            "leadTerm gbSnapshot(I)"}
 --	  SUBSECTION ""
---	       
-	 
      }
 
 TEST ///
