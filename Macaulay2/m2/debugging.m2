@@ -112,33 +112,44 @@ truncate := s -> (
 
 sortByHash := v -> last \ sort \\ (i -> (hash i, i)) \ v
 
-abbreviate := x -> (
-     if class x === Function and match("^--Function.*--$", toString x) then "..."
-     else x)
-
-localSymbols = f -> reverse \\ flatten \\ sortByHash \ values \ localDictionaries f
-
-listSymbols := x -> (
-     if #x == 0 then "--no local variables"
-     else net Table (
-	  prepend(
-	       {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
-	       apply (x, s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s}))))
-
-listLocalSymbols = Command(
-     f -> listSymbols localSymbols (
-	  if f === () then (
-	       if errorCode === null then error "no debugger active";
-	       errorCode
-	       )
-	  else f))
-
 select2 := (type,syms) -> apply(
      sort apply(
 	  select(syms, sym -> mutable sym and instance(value sym,type)),
 	  symb -> (hash symb, symb)
 	  ),
      (h,s) -> s)
+
+ls := f -> reverse \\ flatten \\ sortByHash \ values \ localDictionaries f
+localSymbols = method()
+localSymbols Pseudocode :=
+localSymbols Symbol :=
+localSymbols Dictionary :=
+localSymbols Function := ls
+
+-- make this work eventually:
+-- localSymbols() := () -> if errorCode === null then ls() else ls errorCode
+-- meanwhile:
+nullaryMethods # (singleton localSymbols) = () -> if errorCode === null then ls() else ls errorCode
+
+localSymbols(Type,Symbol) :=
+localSymbols(Type,Dictionary) :=
+localSymbols(Type,Function) :=
+localSymbols(Type,Pseudocode) := (X,f) -> select2(X,localSymbols f)
+
+localSymbols Type := X -> select2(X,localSymbols ())
+
+abbreviate := x -> (
+     if class x === Function and match("^--Function.*--$", toString x) then "..."
+     else x)
+
+listSymbols = x -> (
+     if #x == 0 then "--no local variables"
+     else net Table (
+	  prepend(
+	       {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
+	       apply (x, s -> {s,":",net class value s, "--", truncate net abbreviate value s, pos s}))))
+
+listLocalSymbols = Command(f -> listSymbols localSymbols f)
 
 userSymbols = type -> (
      if type === () then type = Thing;
