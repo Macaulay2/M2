@@ -490,6 +490,7 @@ export buildErrorPacket(message:string,report:CodeClosureList):Expr := Expr(Erro
 dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
 export debuggerFun := dummyDebuggerFun;
 export stopIfError := false;
+foreach s in argv do if s === "--stop" then stopIfError = true;
 export debuggingMode := true;
 export printError(err:Error):Error := (
      printErrorMessage(err.position, if err.printed then "--back trace--" else err.message);

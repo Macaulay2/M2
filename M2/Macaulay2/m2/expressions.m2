@@ -1145,11 +1145,17 @@ expression Sequence := v -> apply(v,expression)
 -- expression Thing := x -> new FunctionApplication from { expression, x }
 
 expression HashTable := x -> (
-     if x.?name then new Holder from {x.name}
-     else new FunctionApplication from { 
+     new FunctionApplication from { 
 	  expression class x, 
 	  apply(pairs x, (k,v) -> expression(k=>v)) 
 	  }
+     )
+expression MutableHashTable := x -> (
+     new Holder from {"--a mutable hash table--"}
+     )
+expression Type := x -> (
+     if ReverseDictionary#?x then new Holder from {toString ReverseDictionary#x}
+     else new Holder from {"--a type--"}
      )
 expression BasicList := x -> (
      new FunctionApplication from { 

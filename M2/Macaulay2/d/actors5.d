@@ -1236,6 +1236,13 @@ wrap(e:Expr):Expr := (
      Expr(wrap(wid,sep,net)));
 setupfun("wrap",wrap);
 
+dillyDallyFun(e:Expr):Expr := (				    -- for debugging interrupts in compiled code
+     while true do (
+	  sleep(1);
+	  if interrupted then return buildErrorPacket("dilly dally: interrupted");
+	  ));
+setupfun("dillyDally",dillyDallyFun);
+
 minimizeFilename(e:Expr):Expr := (
      when e is s:string do Expr(minimizeFilename(s))
      else WrongArgString()
