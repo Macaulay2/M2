@@ -222,7 +222,8 @@ bool PolyRingQuotient::lift(const Ring * Rg, const ring_elem f, ring_elem &resul
 bool PolyRingQuotient::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 // f is an element of Rf.  result will be an element in 'this'.
 {
-  if (Rf == R_)
+  const PolynomialRing *R1 = Rf->cast_to_PolynomialRing();
+  if (Rf == R_ || (R1 != 0 && R_ == R1->getAmbientRing()))
     {
       result = copy(f);
       normal_form(result);
