@@ -1,5 +1,7 @@
 --		Copyright 1993-1998 by Daniel R. Grayson and Michael E. Stillman
 
+clone = method()
+
 MonomialOrdering = new Type of MutableHashTable
 net MonomialOrdering := name MonomialOrdering := see
 
@@ -77,3 +79,14 @@ monomialOrdering = args -> (
      m := mo;
      mo = null;
      m)
+
+clone MonomialOrdering := (mo) -> (
+     o := new MonomialOrdering;
+     o.handle = newHandle (ggPush mo, ggMOclone);
+     o
+     )
+
+MonomialOrdering ** MonomialOrdering := (mo,mo2) -> (
+     result := clone mo;
+     sendgg(ggPush result,ggPush mo2,ggMOproduct);
+     result)
