@@ -87,32 +87,6 @@ showStructure = Command(types -> show1 if types === () then select1 flatten(valu
 
 -----------------------------------------------------------------------------
 
-select2 := (type,syms) -> apply(
-     sort apply(
-	  select(syms, sym -> mutable sym and instance(value sym,type)),
-	  symb -> (hash symb, symb)
-	  ),
-     (h,s) -> s)
-
-userSymbols = type -> (
-     if type === () then type = Thing;
-     select2(type,values User.Dictionary))
-
-list2 := syms -> stack apply(syms, s ->  toString s | ": " | toString class value s)
-
-listUserSymbols = Command ( type -> list2 userSymbols type )
-
-clearOutput = Command (() -> scan(values Output.Dictionary, s -> ( s <- null; erase s )))
-
-clearAll = Command (() -> ( 
-     	  unmarkAllLoadedFiles();
-	  clearOutput(); 
-	  scan(userSymbols(), i -> i <- i);
-	  )
-     )
-
-erase symbol unmarkAllLoadedFiles			    -- symbol was created in setup.m2
-
 typicalValues#frame = MutableList
 
 pos := s -> (
@@ -144,18 +118,33 @@ abbreviate := x -> (
 
 localSymbols = f -> reverse \\ flatten \\ sortByHash \ values \ localDictionaries f
 
+listSymbols := x -> (
+     if #x == 0 then "--no local variables"
+     else net Table (
+	  prepend(
+	       {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
+	       apply (x, s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s}))))
+
 listLocalSymbols = Command(
-     f -> (
+     f -> listSymbols localSymbols (
 	  if f === () then (
 	       if errorCode === null then error "no debugger active";
-	       f = errorCode
-	       );
-	  lv := localSymbols f;
-	  if #lv == 0 then "--no local variables"
-	  else net Table (
-	       prepend(
-		    {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
-		    apply (lv, s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s})))))
+	       errorCode
+	       )
+	  else f))
+
+select2 := (type,syms) -> apply(
+     sort apply(
+	  select(syms, sym -> mutable sym and instance(value sym,type)),
+	  symb -> (hash symb, symb)
+	  ),
+     (h,s) -> s)
+
+userSymbols = type -> (
+     if type === () then type = Thing;
+     select2(type,values User.Dictionary))
+
+listUserSymbols = Command ( type -> listSymbols userSymbols type )
 
 usage := () -> (
      << endl
@@ -170,10 +159,20 @@ usage := () -> (
      )
 
 firstTime := true
-
 interpreterHook = () -> if interpreterDepth > 1 then (
-     << localSymbols errorCode << endl;
+     << listLocalSymbols errorCode << endl;
      if firstTime then ( usage(); firstTime = false; ))
+
+clearOutput = Command (() -> scan(values Output.Dictionary, s -> ( s <- null; erase s )))
+
+clearAll = Command (() -> ( 
+     	  unmarkAllLoadedFiles();
+	  clearOutput(); 
+	  scan(userSymbols(), i -> i <- i);
+	  )
+     )
+
+erase symbol unmarkAllLoadedFiles			    -- symbol was created in setup.m2
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
