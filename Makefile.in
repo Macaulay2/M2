@@ -43,6 +43,7 @@ lib/.exists:; mkdir -p lib; touch $@
 clean::; rm -rf lib
 clean::; rm -f config.cache
 clean::; rm -f core
+clean::; rm -f Makefile-configure.overrides config.log config.status configure
 distclean:: clean
 rmcores :; find . '(' -name core -o -name gmon.out -o -name profile ')' -exec rm '{}' ';'
 ################################# configure
@@ -329,6 +330,7 @@ ifdef SHAREDLIBS
 DISTFILES += Macaulay2/lib
 endif
 distributions :; mkdir $@
+clean ::; rm -rf distributions
 distributions/Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) rmcores distributions
 	tar cf - $(DISTFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"
@@ -339,7 +341,6 @@ distributions/Macaulay2-$(DESC).zip : Makefile $(DISTFILES) distributions
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
 	@echo "-----------------------------------------------------------------------------"
-clean ::; rm -f distributions
 install clean ::; $(MAKE) -C Macaulay2 $@
 ###################### Macaulay 2 porting source distribution
 PORTING := CVS \
