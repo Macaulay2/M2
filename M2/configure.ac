@@ -210,9 +210,13 @@ AC_MSG_RESULT([yes])
 LIBS="$SAVELIBS"
 
 # M2_SHOW_CONFDEFS()
+
+# the next three are obsolete:
 M2_IS_THERE(sys_errlist)
 M2_IS_THERE(herror)
 M2_IS_THERE(gnu_get_libc_version)
+AC_CHECK_DECLS([sys_errlist herror gnu_get_libc_version])
+
 M2_IS_DECLARED(char **,sys_errlist)
 M2_IS_DECLARED(char **,h_errlist)
 AC_CONFIG_HEADER(include/config.h)

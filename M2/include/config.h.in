@@ -6,6 +6,10 @@
 /* whether to use dumpdata */
 #undef DUMPDATA
 
+/* Define to 1 if you have the declaration of `sys_errlist herror
+   gnu_get_libc_version', and to 0 if you don't. */
+#undef HAVE_DECL_SYS_ERRLIST_HERROR_GNU_GET_LIBC_VERSION
+
 /* Define to 1 if you have the declaration of `sys_nerr', and to 0 if you
    don't. */
 #undef HAVE_DECL_SYS_NERR

@@ -481,6 +481,25 @@ int system_fileLength(int fd) {
   return statbuf.st_size;
 }
 
+int system_fileTime(M2_string name) {
+  char *cname = tocharstar(name);
+  struct stat buf;
+  int r;
+  errno = 0;
+  r = stat(cname,&buf);
+  GC_FREE(cname);
+  if (r == ERROR) return 0;	/* check errno! */
+  return buf.st_mtime;
+}
+
+int system_mkdir(M2_string name) {
+  char *cname = tocharstar(name);
+  struct stat buf;
+  int r = mkdir(cname,0777);
+  GC_FREE(cname);
+  return r;
+}
+
 M2_string system_readfile(fd)
 int fd;
 {
