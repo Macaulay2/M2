@@ -185,6 +185,7 @@ CoherentSheaf(*) := F -> F(>=-infinity)
 
 SumOfTwists = new Type of HashTable
 CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from { "object" => F, "bound" => b}
+SheafOfRings LowerBound := SumOfTwists => (O,b) -> O^1 b
 net SumOfTwists := S -> net S#"object" | "(>=" | net S#"bound" | ")"
 
 cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (

@@ -4,8 +4,8 @@ X = Proj R
 scan(-4 .. 4, i -> assert( HH^0 OO_X(i) == QQ^1 ))
 scan(-4 .. 4, i -> assert( HH^1 OO_X(i) == QQ^0 ))
 
-scan(0 .. 4, i -> assert( HH^0 OO_X(>=i) == R^{0} ))
-scan(-5 .. -1, i -> assert( HH^0 OO_X(>=i) == R^{-i} ))
+scan(0 .. 4, i -> assert( HH^0 (OO_X)(>=i) == R^{0} ))
+scan(-5 .. -1, i -> assert( HH^0 (OO_X)(>=i) == R^{-i} ))
 
 -- sheaves on P^1
 R = QQ[x,y]
@@ -48,7 +48,7 @@ R = QQ[x,y,z]
 S = R/(x^3+y^3+z^3)
 X = Proj S
 I = sheaf_X module ideal(x,y+z)
-assert( degree (OO_X/I) == 1 )
+assert( degree ((OO_X)^1/I) == 1 )
 L = dual I
 L^**2
 L^**3
