@@ -10,7 +10,7 @@
 -- we've turned off checking for existence of files...
 
 local prefix, local topNodeButton
-local haderror, local nullButton, local masterIndexButton
+local haderror, local nullButton, local masterIndexButton, local tocButton
 local NEXT, local PREV, local UP, local CONTENTS
 local nextButton, local prevButton, local upButton
 local masterIndex
@@ -19,6 +19,7 @@ buildPackage := null					    -- name of the package currently being built
 topNodeName := null					    -- name of the top node of this package
 topFileName := "index.html"				    -- top node's file name, constant
 indexFileName := "master.html"  			    -- file name for master index of topics in a package
+tocFileName := "toc.html"       			    -- file name for the table of contents of a package
 buildDirectory := "/tmp/"				    -- the root of the relative paths:
 htmlDirectory := ""					    -- relative path to the html directory
 
@@ -148,12 +149,11 @@ buttonBar := (key) -> TABLE { {
 	       next key, prev key, up key,
      	       if key =!= topNodeName then topNodeButton else nullButton,
      	       masterIndexButton,
+     	       tocButton,
      	       LITERAL ///</p>///
 	       },
 
 	  } }
-
-documentationMemo := memoize ( key -> documentation(key) )
 
 BUTTON := (s,alt) -> (
      s = rel s;
@@ -191,9 +191,9 @@ makeHtmlNode = key -> (
 	       },
 	  BODY { 
 	       buttonBar key,
-	       if UP#?key then SEQ { "Locator: ", between(" >> ", apply(upAncestors key, i -> TOH i)) },
+	       if UP#?key then SEQ { between(" > ", apply(upAncestors key, i -> TO i)) },
 	       HR{}, 
-	       documentationMemo key,
+	       documentation key,
 	       }
 	  }
      << endl << close)
@@ -227,6 +227,10 @@ net ForestNode := x -> stack apply(toList x,net)
 net TreeNode := x -> (
      y := net x#1;
      net x#0 || (stack (height y + depth y : " |  ")) | y)
+
+toDoc := method()
+toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
+toDoc TreeNode := x -> SEQ { TO x#0, toDoc x#1 }
 
 local visitCount
 local externalReferences
@@ -343,7 +347,7 @@ assembleTree Package := pkg -> (
 	  scan(m, (fkey,key) -> (
 		    linkTable#fkey = {};
 		    -- stderr << "scanning documentation for  '" << fkey << "'" << endl;
-		    scope(fkey,documentationMemo key)));
+		    scope(fkey,documentation key)));
 	  nodesToScope = new MutableHashTable from (set keys nodesToScope - set m);
 	  );
      CONTENTS = getTrees();
@@ -358,6 +362,7 @@ assembleTree Package := pkg -> (
 setupButtons := () -> (
      gifpath := LAYOUT#"images";
      topNodeButton = LABEL { "top node", HREF { htmlDirectory|topFileName, BUTTON (gifpath|"top.gif","top") } };
+     tocButton = LABEL { "table of contents", HREF { htmlDirectory|tocFileName, BUTTON (gifpath|"toc.gif","toc") } };
      nullButton = BUTTON(gifpath|"null.gif","null");
      masterIndexButton = LABEL { "index", HREF { htmlDirectory|indexFileName, BUTTON(gifpath|"index.gif","index") } };
      nextButton = BUTTON(gifpath|"next.gif","next");
@@ -395,6 +400,24 @@ makeMasterIndex := keylist -> (
 	       topNodeButton, 
 	       PARA between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
 	       UL apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey }),
+	       }
+	  } << endl << close
+     )
+
+makeTableOfContents := () -> (
+     fn := buildDirectory | htmlDirectory | tocFileName;
+     title := topNodeName | " : Table of Contents";
+     << "--making  '" << title << "' in " << fn << endl;
+     fn
+     << encoding << endl
+     << doctype << endl     
+     << html HTML {
+	  HEAD { TITLE title, style(), links() },
+	  BODY {
+	       HEADER2 title, PARA,
+	       topNodeButton, 
+	       HR{},
+	       toDoc CONTENTS
 	       }
 	  } << endl << close
      )
@@ -526,6 +549,9 @@ installPackage Package := o -> pkg -> (
 
      -- make master.html with master index of all the html files
      makeMasterIndex nodes;
+
+     -- make table of contents
+     makeTableOfContents();
 
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;

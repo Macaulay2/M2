@@ -209,7 +209,7 @@ package TO := x -> (
      if #p == 1 then (
 	  p = p#0;
 	  if pkg =!= p then
-	  if pkg == null
+	  if pkg === null
 	  then stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it wasn't predicted" << endl
 	  else stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it seems to belong in " << pkg << endl;
 	  p)
