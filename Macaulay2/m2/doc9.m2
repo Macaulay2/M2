@@ -34,8 +34,8 @@ document { pushForward => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      SHIELD MENU {
-	  TOH "NonLinear",
-     	  TOH "Linear"
+	  TO "NonLinear",
+     	  TO "Linear"
 	  }
      }
 
@@ -507,8 +507,8 @@ document { quotient => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      SHIELD MENU {
-	  TOH "Iterate",
-          TOH "Linear"
+	  TO "Iterate",
+          TO "Linear"
           }
      }
 
@@ -847,8 +847,8 @@ document { MinimalGenerators,
      which specifies whether to compute minimal generators for the result.",
      PARA,
      MENU {
-	  TOH (quotient => MinimalGenerators),
-	  TOH (saturate => MinimalGenerators),
+	  TO (quotient => MinimalGenerators),
+	  TO (saturate => MinimalGenerators),
 	  },
      PARA,
      "The default value is ", TT "true", "."

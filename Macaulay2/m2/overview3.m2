@@ -195,8 +195,8 @@ document { "internals",
      "Here are some functions and classes that are intended for internal use 
      by the developers only.",
      MENU {
-	  TOH "formatDocumentTag",
-	  TOH "setSpin",
+	  TO "formatDocumentTag",
+	  TO "setSpin",
 	  }
      }
 
@@ -271,7 +271,7 @@ document { "Macaulay 2",
 	       "This section is intended to offer detailed documentation on
 	       every aspect of the system of interest to users.",
 	       MENU {
-		    TOH "Thing",
+		    TO "Thing",
 		    },
      	       },
 	  {
@@ -486,36 +486,36 @@ document { "syntax",
 document { "debugging",
      "Here are some debugging tools.",
      MENU {
-	  (TOH "assert"),
-	  (TOH "backtrace"),
-	  (TOH "benchmark"),
-	  (TOH "browse"),
-	  (TOH "code"),
-	  (TOH "currentFile"),
-	  (TOH "edit"),
-	  (TOH "error"),
-	  (TOH "errorDepth"),
-	  (TOH "examine"),
-	  (TOH "flag"),
-	  (TOH "frame"),
-	  (TOH "listUserSymbols"),
-     	  (TOH "locate"),
-	  (TOH "methods"),
-	  (TOH "on"),
-	  (TOH "peek"),
-	  (TOH "peek2"),
-	  (TOH "profile"),
-	  (TOH "shield"),
-	  (TOH "showStructure"),
-	  (TOH "showUserStructure"),
-	  (TOH "try"),
-	  (TOH "userSymbols")
+	  TO "assert",
+	  TO "backtrace",
+	  TO "benchmark",
+	  TO "browse",
+	  TO "code",
+	  TO "currentFile",
+	  TO "edit",
+	  TO "error",
+	  TO "errorDepth",
+	  TO "examine",
+	  TO "flag",
+	  TO "frame",
+	  TO "listUserSymbols",
+     	  TO "locate",
+	  TO "methods",
+	  TO "on",
+	  TO "peek",
+	  TO "peek2",
+	  TO "profile",
+	  TO "shield",
+	  TO "showStructure",
+	  TO "showUserStructure",
+	  TO "try",
+	  TO "userSymbols"
 	  },
      "These functions are for debugging the kernel interpreter itself, and
      are not intended for users.",
      MENU {
-	  (TOH "buckets"),
-	  TOH "seeParsing"
+	  TO "buckets",
+	  TO "seeParsing"
 	  }
      }
 
@@ -555,75 +555,75 @@ document { "classes",
      PARA,
      "For more details, see one of the topics below.",
      SHIELD MENU {
-	  TOH "newClass",
-	  TOH "new",
-	  TOH "ancestor",
-	  TOH "instance"
+	  TO "newClass",
+	  TO "new",
+	  TO "ancestor",
+	  TO "instance"
 	  },
      "For related topics, see one of the following.",
      SHIELD MENU {
-	  TOH "uniform",
-	  TOH "Thing",
-	  TOH "Nothing",
-	  TOH "Type",
-	  TOH "MutableList",
-	  TOH "MutableHashTable",
-	  TOH "SelfInitializingType"
+	  TO "uniform",
+	  TO "Thing",
+	  TO "Nothing",
+	  TO "Type",
+	  TO "MutableList",
+	  TO "MutableHashTable",
+	  TO "SelfInitializingType"
 	  }
      }
 
 document { "system",
      "Loading files:",
      MENU {
-	  TOH "autoload",
+	  TO "autoload",
 	  TO "initialization file",
-	  TOH "input",
-	  TOH "load",
-	  TOH "needs"
+	  TO "input",
+	  TO "load",
+	  TO "needs"
 	  },
      "Dumping and restoring the state of the system:",
      MENU {
-	  TOH "dumpdata",
-	  TOH "loaddata",
-	  TOH "reloaded",
-	  TOH "restart",
-	  TOH "addStartFunction",
-	  TOH "addEndFunction"
+	  TO "dumpdata",
+	  TO "loaddata",
+	  TO "reloaded",
+	  TO "restart",
+	  TO "addStartFunction",
+	  TO "addEndFunction"
 	  },
      "Interface to the operating system:",
      MENU{
 	  TO "top level loop",
-	  TOH "alarm",
-	  TOH "currentDirectory",
-	  TOH "exec",
-	  TOH "exit",
-	  TOH "fork",
-	  TOH "getenv",
-	  TOH "processID",
-	  TOH "path",
-	  TOH "pathSeparator",
-	  TOH "quit",
-	  TOH "run",
-	  TOH "sleep",
-	  TOH "time",
-	  TOH "timing",
-	  TOH "tmpname",
-	  TOH "wait"
+	  TO "alarm",
+	  TO "currentDirectory",
+	  TO "exec",
+	  TO "exit",
+	  TO "fork",
+	  TO "getenv",
+	  TO "processID",
+	  TO "path",
+	  TO "pathSeparator",
+	  TO "quit",
+	  TO "run",
+	  TO "sleep",
+	  TO "time",
+	  TO "timing",
+	  TO "tmpname",
+	  TO "wait"
 	  },
      "Variables with information about the state of the current process:",
      MENU {
-	  TOH "commandLine",
-	  TOH "environment",
-	  TOH "version"
+	  TO "commandLine",
+	  TO "environment",
+	  TO "version"
 	  },
      "Miscellaneous commands:",
      MENU {
-	  TOH "getWWW"
+	  TO "getWWW"
 	  },
      "Dealing with the garbage collector:",
      MENU {
-	  TOH "collectGarbage",
-	  TOH "gcDump"
+	  TO "collectGarbage",
+	  TO "gcDump"
 	  }
      }
 
@@ -639,11 +639,11 @@ document { "initialization file",
 
 document { "combinatorial functions",
      MENU {
-	  (TOH "random"),
-	  (TOH "binomial"),
-	  (TOH "subsets"),
-	  (TOH "tally"),
-	  (TOH "partitions")
+	  TO "random",
+	  TO "binomial",
+	  TO "subsets",
+	  TO "tally",
+	  TO "partitions"
 	  }
      }
 
@@ -655,11 +655,11 @@ document { "top level loop",
      unless the printing is to be suppressed, as indicated by a semicolon at the end
      of the statement, in which case the ", TO "NoPrint", " method is applied.",
      MENU {
-	  TOH "AfterEval",
-	  TOH "AfterPrint",
-	  TOH "AfterNoPrint",
-	  TOH "NoPrint",
-	  TOH "Print",
+	  TO "AfterEval",
+	  TO "AfterPrint",
+	  TO "AfterNoPrint",
+	  TO "NoPrint",
+	  TO "Print",
 	  }
      }
 
@@ -670,30 +670,30 @@ document { "help functions",
      NOINDENT,
      "Functions for accessing the documentation:",
      MENU {
-	  TOH "apropos",
-	  TOH "briefDocumentation",
-	  TOH "documentation",
-	  TOH "examples",
-	  TOH "help", 
-	  TOH "topicList", 
-	  TOH "topics"
+	  TO "apropos",
+	  TO "briefDocumentation",
+	  TO "documentation",
+	  TO "examples",
+	  TO "help", 
+	  TO "topicList", 
+	  TO "topics"
 	  },
      "How to write documentation yourself:",
      MENU {
-	  TOH "document",
-	  TOH "hypertext",
+	  TO "document",
+	  TO "hypertext",
 	  },
      "Output formatting routines:",
      MENU {
-	  TOH "html",
-	  TOH "mathML",
-	  TOH "tex",
-	  TOH "text",
+	  TO "html",
+	  TO "mathML",
+	  TO "tex",
+	  TO "text",
 	  },
      "Some internals:",
      MENU {
-	  TOH "Documentation",
-	  TOH "phase",
+	  TO "Documentation",
+	  TO "phase",
 	  },
      SEEALSO "reading the documentation"
      }

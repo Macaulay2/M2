@@ -1394,7 +1394,7 @@ document { "installing methods",
      "As an extreme example of inheritance, code like", 
      PRE "- Thing := x -> ...",
      "will install a method for negating anything, which will take
-     effect as a last resort whenever more a specifically defined method
+     effect as a last resort whenever a more specifically defined method
      isn't found.",
      PARA,
      "The user may introduce new methods as well as new method names.  So it
@@ -1413,7 +1413,7 @@ document { "installing methods",
      PARA,
      "Here is the routine for making new methods.",
      MENU {
-	  TOH "method"
+	  TO "method"
 	  },
      SEEALSO{"binary method", "classes", "lookup"}
      }

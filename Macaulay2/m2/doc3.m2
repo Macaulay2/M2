@@ -421,11 +421,11 @@ document { Boolean,
      PARA,
      "Special operators dealing with truth values.",
      SHIELD MENU {
-	  TOH "not",
-	  TOH "and",
-	  TOH "or",
-	  TOH "if",
-	  TOH "while"
+	  TO "not",
+	  TO "and",
+	  TO "or",
+	  TO "if",
+	  TO "while"
 	  }
      }
 

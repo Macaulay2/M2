@@ -232,13 +232,13 @@ document { HashTable,
      PARA,
      "Access functions:",
      SHIELD MENU {
- 	  TOH "#",
- 	  TOH "."
+ 	  TO "#",
+ 	  TO "."
  	  },
      "Query functions:",
      SHIELD MENU {
- 	  TOH "#?",
- 	  TOH ".?"
+ 	  TO "#?",
+ 	  TO ".?"
  	  }
      }
 
@@ -660,8 +660,8 @@ document { symbol "^",
      PARA,
      "When computing powers, one of the following methods is used.",
      MENU {
-	  TOH "SimplePowerMethod",
-	  TOH "BinaryPowerMethod"
+	  TO "SimplePowerMethod",
+	  TO "BinaryPowerMethod"
 	  },
      NOINDENT, "In addition, if n is 0, then the unit element 
      ", TT "(class x)#1", " is returned.  If n is negative, then the method

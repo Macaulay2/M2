@@ -68,9 +68,9 @@ document { loaddata,
      "The file should have been created with ", TO "dumpdata", ".  Everything will
      be returned to its former state except:",
      SHIELD MENU {
-	  TOH "reloaded",
-	  TOH "environment",
-	  TOH "commandLine",
+	  TO "reloaded",
+	  TO "environment",
+	  TO "commandLine",
 	  "whether the standard input is echoed and prompts to the 
 	  standard output are properly flushed, which depends on whether 
 	  the standard input is a terminal."
@@ -612,10 +612,10 @@ document { saturate,
 document { saturate => Strategy,
      "The strategy option value should be one of the following:",
     SHIELD MENU {
-        (TOH "Linear", "      -- use the reverse lex order"),
-	(TOH "Iterate", "     -- use successive ideal quotients (the default)"),
-	(TOH "Bayer", "       -- use the method in Bayer's thesis"),
-	(TOH "Elimination", " -- compute the saturation ", TT "(I:f)", " by eliminating ", TT "z", " from ", TT "(I,f*z-1)", "")
+        (TO "Linear", "      -- use the reverse lex order"),
+	(TO "Iterate", "     -- use successive ideal quotients (the default)"),
+	(TO "Bayer", "       -- use the method in Bayer's thesis"),
+	(TO "Elimination", " -- compute the saturation ", TT "(I:f)", " by eliminating ", TT "z", " from ", TT "(I,f*z-1)", "")
         },
      }
 
