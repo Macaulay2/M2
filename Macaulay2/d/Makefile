@@ -338,8 +338,10 @@ c-port: $(ALLC) tmp_init.c gc_cpp.cc scclib.c memdebug.c memdebug.h compat.c com
 interpret.a : $(ALLOBJ)
 	ar rcs $@ $^ tmp_init.o
 ############################## probe memory for dumpdata
-probe : probe.c
+probe : probe.c probe.h
 	$(CC) -g -static -I$(INCDIR) probe.c $(OUTPUT_OPTION)
+probe.h :
+	echo "/* insert temporary fixes here */" >$@
 test-probe : probe
 	nm probe |grep -v "gcc2_compiled\|gnu_compiled\0| \." >syms
 	./probe abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz b c d >> syms
