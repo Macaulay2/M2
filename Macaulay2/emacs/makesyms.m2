@@ -6,10 +6,16 @@ is := X -> s -> instance(value s, X)
 Function && Function := (f,g) -> s -> f s and g s
 
 f := openOut "M2-symbols.el"
+f2 := openOut "M2-symbols"
 
 f << "(defvar M2-symbols '(" << endl
 
-scan( rsort select (symbols, isAlpha), s -> f << "    " << format toString s << endl)
+scan( rsort select (symbols, isAlpha), s -> (
+	  f << "    " << format toString s << endl;
+	  f2 << toString s << endl;
+	  ))
+
+f2 << close
 
 f << "   )" << endl
 f << "  " << format ///A list of the symbols available in Macaulay 2, for use with dynamic completion./// << endl

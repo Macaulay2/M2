@@ -292,7 +292,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    error "factorization over QQ not implemented yet";
 	       	    d := commden f;
 		    f = d * f;
-		    new Divide from { (fac options)(f), d }
+		    if d === 1 
+		    then (fac options)(f) 
+		    else new Divide from { (fac options)(f), d }
 		    )
 	       )
 	  else fac;

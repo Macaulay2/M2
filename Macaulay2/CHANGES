@@ -3,6 +3,10 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+'lcm' and 'gcd' will now accept more than two arguments.
+
+Added 'lcm'.
+
 The total Ext function H = Ext(M,N) formerly stored its adjustment function
 (for adjusting the bidegrees to make the first component positive) in 
 H.adjust.  This has been superceded by a general method for creating

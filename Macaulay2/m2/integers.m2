@@ -22,10 +22,13 @@ ZZ >> ZZ := ZZ => (i,j) -> i << -j
 oldgcd := gcd
 erase symbol gcd
 gcd = method(Associative => true)
+-- lcm = method(Associative => true)
 
 gcd List := x -> gcd toSequence x
+-- lcm List := x -> lcm toSequence x
 
 gcd(ZZ,ZZ) := ZZ => (x,y) -> oldgcd(x,y)
+-- lcm(ZZ,ZZ) := ZZ => (x,y) -> x*y//gcd(x,y)
 
 -- powermod := (m,e,p) -> m^e % p;
 

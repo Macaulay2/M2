@@ -162,7 +162,6 @@ makeit1 := (options) -> (
 	  if options.Inverses then GeneralOrderedGroup else GeneralOrderedMonoid 
 	  ) of MonoidElement;
      M.Engine = true;
-     M.Options = options;
      varlist := options.Variables;
      n := # varlist;
      externalDegrees := options.Degrees;
@@ -170,9 +169,20 @@ makeit1 := (options) -> (
      M.degreeLength = if externalDegrees#?0 then # externalDegrees#0 else 0;
      internalDegrees := apply(externalDegrees,options.Adjust);
      order := transpose internalDegrees;
-     firstdeg := if #order === 0 then toList(n:1) else order#0;
+     primaryDegrees := if #order === 0 then toList(n:1) else order#0;
+     if not all(primaryDegrees, d -> d>0) then (
+	  if all(primaryDegrees, d -> d<0) then (
+	       adjust := if options.Adjust === identity then minus else minus @@ options.Adjust;
+	       repair := if options.Repair === identity then minus else minus @@ options.Repair;
+	       options = new OptionTable from join ( pairs options, {Adjust => adjust, Repair => repair} );
+	       internalDegrees = apply(externalDegrees,options.Adjust);
+	       order = transpose internalDegrees;
+	       primaryDegrees = order#0;
+	       )
+	  else error "first component of each degree should be positive"
+	  );
      variableOrder := toList (0 .. n-1);
-     wts := flatten options.Weights;
+     wts := splice flatten options.Weights;
      if not all(wts,i -> class i === ZZ)
      then error "expected Weights option to be a list or list of lists of integers";
      if n != 0 and #wts % n != 0 or n == 0 and #wts != 0
@@ -184,12 +194,12 @@ makeit1 := (options) -> (
      else (
 	  mo := options.MonomialOrder;
 	  M.MonomialOrder = (
-	       if mo === symbol RevLex then MOrlex (wts,firstdeg)
-	       else if mo === symbol GRevLex then MOgrlex (wts,firstdeg)
-	       else if mo === symbol Lex then MOlex (wts,firstdeg)
-	       else if mo === symbol GLex then MOglex (wts,firstdeg)
-	       else if instance(mo, Eliminate) then MOelim(wts,firstdeg, mo#0)
-	       else if instance(mo, ProductOrder) then MOproduct(wts, firstdeg, toList mo)
+	       if mo === symbol RevLex then MOrlex (wts,primaryDegrees)
+	       else if mo === symbol GRevLex then MOgrlex (wts,primaryDegrees)
+	       else if mo === symbol Lex then MOlex (wts,primaryDegrees)
+	       else if mo === symbol GLex then MOglex (wts,primaryDegrees)
+	       else if instance(mo, Eliminate) then MOelim(wts,primaryDegrees, mo#0)
+	       else if instance(mo, ProductOrder) then MOproduct(wts, primaryDegrees, toList mo)
 	       else error("invalid MonomialOrder option: ", toString mo)
 	       )
 	  );
@@ -345,6 +355,7 @@ makeit1 := (options) -> (
 	       ),
 	  ggmonoid) ;
      M.use = x -> scan(M.generatorSymbols,M.vars,assign);
+     M.Options = options;
      M)
 
 makeit1 = memoize makeit1

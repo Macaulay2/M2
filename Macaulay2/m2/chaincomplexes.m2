@@ -104,7 +104,7 @@ degree ChainComplexMap := f -> f.degree
 net ChainComplexMap := f -> (
      complete f;
      v := between("",
-	  apply(sort union(spots f.source, spots f.target / (i -> i - f.degree)),
+	  apply(sort intersection(spots f.source, spots f.target / (i -> i - f.degree)),
 	       i -> horizontalJoin (
 		    net (i+f.degree), " : ", net target f_i, " <--",
 		    lineOnTop net f_i,

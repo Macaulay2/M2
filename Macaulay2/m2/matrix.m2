@@ -18,6 +18,9 @@ reduce = (tar) -> (					    -- we erase this later
 	  sendgg(ggPush g, ggPush 1, ggpick, ggreduce, ggpop);
 	  ))
 
+QQ * Matrix := (r,m) -> (r * 1_(ring m)) * m
+Matrix * QQ := (m,r) -> (r * 1_(ring m)) * m
+
 ZZ * Matrix := (i,m) -> (
      sendgg(ggPush ring m, ggPush i, ggfromint, ggPush m, ggmult);
      T := target m;

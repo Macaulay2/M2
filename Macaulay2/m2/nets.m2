@@ -162,24 +162,22 @@ net HashTable := x -> (
      	  net class x,
 	  "{", 
 	  -- the first line prints the parts vertically, second: horizontally
- 	  stack sort apply(pairs x,(k,v) -> horizontalJoin(net k, " => ", net v)),
+ 	  stack (horizontalJoin \ sort apply(pairs x,(k,v) -> (net k, " => ", net v))),
 	  -- between(", ", apply(pairs x,(k,v) -> net k | "=>" | net v)), 
 	  "}" 
      	  )
      )
 net MutableHashTable := x -> if x.?name then x.name else horizontalJoin ( net class x, "{...}" )
 
-tex Net := n -> (
-     if height n === 1 and depth n === 0 then first netRows n
-     else concatenate(					    -- this is not quite right, yet
-     	  ///\vtop{///,
-	       newline,
-	       apply(netRows n, x -> (///\hbox{///, tex TT x, ///}///, newline)),
-	       ///}///,
-     	  newline
-     	  )
-     )
+texMath Net := n -> concatenate (
+     ///{\arraycolsep=0pt
+\begin{matrix}
+///,
+     between(///\\
+///, netRows n / characters / (i -> apply(i,c -> (///\tt ///,c))) / (s -> between("&",s))),
+     ///
+\end{matrix}}
+///)
 
-texMath Net := n -> if height n === 1 and depth n === 0 then texMath first netRows n else tex n
 
 erase symbol string
