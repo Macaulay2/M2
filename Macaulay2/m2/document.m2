@@ -507,23 +507,6 @@ type := S -> (
      	  }
      )
 
-optargs := method(SingleArgumentDispatch => true)
-
-optargs Thing := x -> null
-     
-optargs Function := f -> (
-     o := options f;
-     if o =!= null then SEQ {
-	  "Optional arguments :", newline,
-	  SHIELD smenu apply(keys o, t -> f => t)})
-
-optargs Sequence := s -> (
-     o := options s;
-     if o =!= null then SEQ {
-	  "Optional arguments :", newline,
-	  SHIELD smenu apply(keys o, t -> s => t)}
-     else optargs s#0)
-
 --there are two uses:
 --
 --     in a documentation node for a method, e.g., document { (...,...), ... }
@@ -603,26 +586,13 @@ protect Results
 istype := X -> parent X =!= Nothing
 alter := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then (
-	       if x#1 =!= null and x#1 =!= ""
-	       then SEQ { justSynonym x#0, ": ", x#1 }
-	       else SEQ { justSynonym x#0 }
-	       )
+	  if istype x#0 then SEQ { justSynonym x#0, x#1 }
 	  else if class x#0 === String then (
-	       y := x#1;
-	       if class y === Option and #y === 2 then (
-		    if istype y#0 then (
-			 if y#1 =!= null and y#1 =!= ""
-			 then SEQ { TT x#0, ", ", justSynonym y#0, y#1 }
-			 else SEQ { TT x#0, ", ", justSynonym y#0 }
-			 )
+	       if class x#1 === Option and #x#1 === 2 then (
+		    if istype x#1#0 then SEQ { TT x#0, ", ", justSynonym x#1#0, x#1#1 }
 		    else error "expected type to left of '=>' in synopsis"
 		    )
-	       else (
-	       	    if x#1 =!= null and x#1 =!= ""
-	       	    then SEQ { TT x#0, ": ", x#1 }
-	       	    else SEQ { TT x#0 }
-		    )
+	       else SEQ { TT x#0, x#1 }
 	       )
 	  else error "expected string or type to left of '=>' in synopsis"
 	  )
@@ -658,6 +628,16 @@ merget := (v,v') -> apply(v,v',(a,t) -> (
 	       else t => a)
 	  else a))
 
+optargs := method(SingleArgumentDispatch => true)
+optargs Thing := x -> null
+optargs Function := f -> (
+     o := options f;
+     if o =!= null then PARA { "Optional arguments :", SHIELD smenu apply(keys o, t -> f => t)})
+optargs Sequence := s -> (
+     o := options s;
+     if o =!= null then PARA { "Optional arguments :", SHIELD smenu apply(keys o, t -> s => t)}
+     else optargs s#0)
+
 newSynopsis := method(SingleArgumentDispatch => true)
 newSynopsis Thing := f -> (
      SYN := getNewSynopsis f;
@@ -672,7 +652,7 @@ newSynopsis Thing := f -> (
      if #inp === 0 then (
 	  inp = apply(inp', T -> T => "");
 	  )
-     else (
+     else if #inp' =!= 0 then (
      	  if #inp =!= #inp' then error "mismatched number of inputs";
      	  inp = merget(inp,inp');
 	  );
@@ -691,10 +671,15 @@ newSynopsis Thing := f -> (
      	       PARA BOLD "Synopsis",
 	       UL {
      	       	    if usa#?0 then PARA { "Usage: ", TT usa },
-		    if inp#?0 then PARA { "Inputs:", UL inp },
-		    if ino#?0 then PARA { "Optional inputs:", UL ino },
-		    if out#?0 then PARA { "Outputs:", UL out },
-		    if res#?0 then PARA { "Results:", UL res }
+		    if class f === Sequence and f#?0 then (
+	       		 if class f#0 === Function 
+			 then SEQ { "Function: ", TO f#0, headline f#0 }
+			 else SEQ { "Operator: ", TO f#0 }
+			 ),
+		    if inp#?0 then PARA { "Inputs:", SHIELD UL inp },
+		    if ino#?0 then PARA { "Optional inputs:", SHIELD UL ino },
+		    if out#?0 then PARA { "Outputs:", SHIELD UL out },
+		    if res#?0 then PARA { "Results:", SHIELD UL res }
 		    }
 	       }
 	  ))
