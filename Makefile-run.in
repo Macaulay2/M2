@@ -76,7 +76,7 @@ endif
 distributions :; mkdir $@
 clean ::; rm -rf distributions
 distributions/Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) distributions
-	tar cf - $(DISTFILES) | gzip >$@
+	tar cf - $(DISTFILES) | gzip >"$@"
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
 	@echo "-----------------------------------------------------------------------------"
