@@ -277,27 +277,44 @@ document { "Mathematical Vignettes",
 
 document { "Reference Manual",
      "This section is intended to offer detailed documentation on
-     every aspect of the system of interest to users.",
+     every aspect of the system of interest to users.  We organize the
+     software and therefore the documentation primarily according to
+     the types of objects, and secondarily according to the functions
+     available for dealing with objects of a given type.  For example,
+     if you want to know how to get a projective resolution of an ideal,
+     you should first find either the section dealing with ideals or 
+     the section dealing with chain complexes.  More briefly, look first
+     for the noun and then for the verb.",
      PARA,
-     "Some types of things with mathematical interest.",
+     "In line with that advice, we list here some types of things
+     with particular mathematical interest.",
      MENU {
-	  TO "ChainComplex",
-	  TO "GroebnerBasis",
+	  TO "Ring",
 	  TO "Ideal",
 	  TO "Matrix",
 	  TO "Module",
-	  TO "Ring",
 	  TO "RingMap",
+	  TO "GroebnerBasis",
+	  TO "ChainComplex",
 	  TO "Variety",
 	  },
      "Some types of things of interest to the programmer and user.",
      MENU {
-	  TO "File",
 	  TO "Function",
-	  TO "List",
-	  TO "Sequence",
+	  TO "VisibleList",
+	  TO "File",
 	  },
-     "Everything else is explained as a type of ", TO "Thing", "."
+     "We've mentioned that our software is organized according to the
+     types of things there are.  The types form a hierarchy; for example,
+     a polynomial ring is a type of ring, and an affine variety is a
+     type of variety.  At the top of the hierarchy sits ", TO "Thing", ";
+     everything is a thing, and every type is a type of thing.  The
+     documentation is organized here as a view of the hierarchy from the
+     top down, so you can find everything (eventually) in the following
+     section, its subsections, or the sections it refers to.",
+     MENU {
+     	  TO "Thing"
+	  }
      }
 
 document {  "Developer's Corner",

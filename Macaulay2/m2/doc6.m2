@@ -449,6 +449,9 @@ document { (symbol _, Ring, ZZ),
      HEADLINE "get a variable by number",
      TT "R_i", " -- produce the ", TT "i", "-th generator of a ring ", TT "R", ".",
      PARA,
+     "The indexing of generators is based on 0, so ", TT "R_0", " would be
+     the first one, and so on.",
+     PARA,
      EXAMPLE {
 	  "R = ZZ[a..d]",
       	  "R_2"
@@ -756,9 +759,11 @@ document { (monoid, Array),
      }
 
 document { (symbol " ", Ring, Array),
-     HEADLINE "make a polynomial ring",
+     HEADLINE "the standard way to make a polynomial ring",
      TT "R[...]", " -- produces the monoid ring from a ring ", TT "R", " and the
      ordered monoid specified by ", TT "[...]", ".",
+     PARA,
+     "This is the customary way to make a polynomial ring.",
      PARA,
      "Optional arguments (placed inside the array):",
      MENU (TO \ keys monoidOptions),
@@ -1044,11 +1049,11 @@ document { (symbol ^, Ring, List),
      as lists of integers.  The operator ", TO ":", " may be used to
      indicate repetitions.",
      EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
+	  "R = ZZ/101[x,y,z];",
       	  "F = R^{1,4:2,3,3:4}",
       	  "degrees F",
 	  },
-     SEEALSO {"degrees", "^"}
+     SEEALSO {"degrees"}
      }
 
 document { components,

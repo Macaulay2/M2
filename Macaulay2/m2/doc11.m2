@@ -22,7 +22,15 @@ document { EmptyMarkUpType,
 document { SHIELD,
      HEADLINE "shield menu items so they don't produce subsections",
      TT "SHIELD v", " -- indicates that the ", TO "hypertext", " links in the
-     menu ", TT "v", " will not lead immediately to subsections of the book."
+     menu ", TT "v", " will not lead immediately to subsections of the book.",
+     PARA,
+     "The documentation is organized as a tree, rooted at the most general
+     type (", TO "Thing", "), and descending to more specific types.  The
+     branches of the tree are those menu items that are not protected by
+     ", TT "SHIELD", ".  The book is created by searching the tree in a
+     depth-first fashion, and printing the sections as they are encountered.
+     Sections never encountered are assembled alphabetically into an
+     appendix."
      }
 
 document { PARA,

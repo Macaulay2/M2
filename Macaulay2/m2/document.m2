@@ -3,6 +3,7 @@
 -----------------------------------------------------------------------------
 -- configuration
 -----------------------------------------------------------------------------
+maximumCodeWidth := 81
 CachePrefix := "cache-tmp"
 NameFile := concatenate(CachePrefix,"/Examples/FileNames")
 -----------------------------------------------------------------------------
@@ -377,7 +378,7 @@ topicList = () -> sort join(
      if DocDatabase === null then {} else keys DocDatabase,
      keys Documentation)
 
-getExampleInputs := method()
+getExampleInputs := method(SingleArgumentDispatch => true)
 getExampleInputs Thing        := t -> {}
 getExampleInputs ExampleTABLE := t -> apply(toList t, first)
 getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
@@ -467,8 +468,10 @@ briefDocumentation = x -> (
      else if headline x =!= null then << endl << headline x << endl
      )
 
-smenu := s -> MENU (optionalTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
- menu := s -> MENU (optionalTO \ s)
+optTO := i -> if getUsage i =!= null then TO i else TT formatDocumentTag i
+
+smenu := s -> MENU (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
+ menu := s -> MENU (optTO \ s)
 
 ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
@@ -592,7 +595,7 @@ documentation Type := X -> (
 	  usage X,
      	  type X,
 	  if #b > 0 then SEQ {"Types of ", toString X, " :", PARA{}, smenu b, PARA{}},
-	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, SHIELD smenu a, PARA{}},
+	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, smenu a, PARA{}},
 	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, smenu c, PARA{}},
 	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, SHIELD smenu e, PARA{}},
 	  })
@@ -637,13 +640,13 @@ typicalValue := k -> (
 
 ret := k -> (
      t := typicalValue k;
-     if t =!= Thing then SEQ {"Class of typical returned value: ", TO t, headline t}
+     if t =!= Thing then SEQ {"Class of returned value: ", TO t, headline t}
      )
 seecode := x -> (
      f := lookup x;
      n := code f;
      if n =!= null 
-     and height n + depth n <= 10
+     and height n + depth n <= 10 and width n <= maximumCodeWidth
      then SEQ { "Code:", PRE concatenate between(newline,netRows n) }
      )
 documentation Function := f -> SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
@@ -963,8 +966,8 @@ tex PRE := x -> concatenate (
      between(newline, 
 	  shorten lines concatenate x
 	  / (line ->
-	       if #line <= 81 then line
-	       else concatenate(substring(line,0,71), " ..."))
+	       if #line <= maximumCodeWidth then line
+	       else concatenate(substring(line,0,maximumCodeWidth - 4), " ..."))
 	  / ttLiteral
 	  / (line -> if line === "" then ///\penalty-500/// else line)
 	  / (line -> (line,///\leavevmode\hss\endgraf///))

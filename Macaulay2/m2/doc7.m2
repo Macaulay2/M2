@@ -684,7 +684,7 @@ assert( 2 == codim I )
 document { Ideal,
      HEADLINE "the class of all ideals",
      "The justification for considering an ideal ", TT "I", " as different from a
-     submodule ", TT "M", " of ", TT "R^1", " is some methods are different.
+     submodule ", TT "M", " of ", TT "R^1", " is that some methods are different.
      For example, ", TT "M^3", " is a direct sum, whereas ", TT "I^3", " is still 
      an ideal."
      }

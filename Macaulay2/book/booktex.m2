@@ -1,5 +1,7 @@
 --		Copyright 1997 by Daniel R. Grayson
 
+errorDepth 0
+
 documentationMemo = memoize documentation
 
 asciiLineWidth = 60
