@@ -204,10 +204,9 @@ ifdef FACTORY
 else
 	echo '#undef FACTORY' >>tmp.tmp
 endif
+	echo '#undef GCMALLOC' >>tmp.tmp
 ifdef GCMALLOC
 	echo '#define GCMALLOC' >>tmp.tmp
-else
-	echo '#undef GCMALLOC' >>tmp.tmp
 endif
 	mv tmp.tmp $@
 clean::; rm -f Makeconf.h
@@ -223,6 +222,9 @@ DISTFILES := 	Macaulay2/README \
 		Macaulay2/bin Macaulay2/m2 Macaulay2/emacs Macaulay2/tutorial/final/*.out
 Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) rmcores
 	tar cf - $(DISTFILES) | gzip >$@
+	@echo "-----------------------------------------------------------------------------"
+	@echo "  $@ contains everything but the documentation"
+	@echo "-----------------------------------------------------------------------------"
 clean ::; rm -f Macaulay2-$(DESC).tar.gz
 all :: MACAULAY2 Macaulay2-$(DESC).tar.gz
 clean ::; $(MAKE) -C Macaulay2 clean
@@ -260,6 +262,9 @@ DOCFILES = 	Macaulay2/html \
 		Macaulay2/Vasconcelos-appendix/appendix.dvi
 Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) rmcores
 	tar cf - $(DOCFILES) | gzip >$@
+	@echo "-----------------------------------------------------------------------------"
+	@echo "  $@ contains the documentation"
+	@echo "-----------------------------------------------------------------------------"
 MACAULAY2.doc: MACAULAY2
 	$(MAKE) -C Macaulay2 doc
 doc:: MACAULAY2.doc Macaulay2-$(VERSION)-doc.tar.gz
@@ -271,3 +276,8 @@ nondist :
 clean::
 	@echo pruning old CVS version files
 	find . -type f -name '.#*' -exec rm '{}' ';'
+################################# status messages
+all::
+	@echo "--------------------- done making 'all' --------------------"
+doc::
+	@echo "--------------------- done making 'doc' --------------------"
