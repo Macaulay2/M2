@@ -4,6 +4,7 @@ VPATH = @srcdir@
 
 ## here is the list of those package files to install with Macaulay2
 PACKAGES = M2doc
+PACKAGES += PrimaryDecomposition
 PACKAGES += CacheFileName
 PACKAGES += ConvexHulls
 PACKAGES += Dmodules
@@ -11,7 +12,6 @@ PACKAGES += Elimination
 PACKAGES += FirstPackage
 PACKAGES += GenericInitialIdeal
 PACKAGES += Markov
-PACKAGES += PrimaryDecomposition
 PACKAGES += minimal
 # PACKAGES += SchurRings
 ##
