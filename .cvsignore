@@ -1,5 +1,5 @@
-Makefile-configure.overrides
-Makefile
+Makefile.overrides
+Makefile-run
 include
 lib
 share

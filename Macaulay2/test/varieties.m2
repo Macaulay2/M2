@@ -13,7 +13,6 @@ wR = R^{-r}
 E1 = Ext^(r-1)(N,wR)
 degrees E1
 min degrees E1
-min degrees E1 + e + 1		    -- this can't be right
 -- Local Variables:
 -- compile-command: "make varieties.okay"
 -- End:

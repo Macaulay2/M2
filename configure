@@ -840,7 +840,7 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL_PROGRAM}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
-for ac_prog in gawk mawk nawk awk
+for ac_prog in mawk gawk nawk awk
 do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -1814,7 +1814,7 @@ EOF
 
 
 CONFIGURED_FILES="config.Makefile\
- Makefile\
+ Makefile-run\
  Macaulay2/Makefile\
  Macaulay2/m2/Makefile\
  Macaulay2/basictests/Makefile\
@@ -1935,7 +1935,7 @@ ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
 trap 'rm -fr `echo "config.Makefile\
- Makefile\
+ Makefile-run\
  Macaulay2/Makefile\
  Macaulay2/m2/Makefile\
  Macaulay2/basictests/Makefile\
@@ -2071,7 +2071,7 @@ EOF
 cat >> $CONFIG_STATUS <<EOF
 
 CONFIG_FILES=\${CONFIG_FILES-"config.Makefile\
- Makefile\
+ Makefile-run\
  Macaulay2/Makefile\
  Macaulay2/m2/Makefile\
  Macaulay2/basictests/Makefile\

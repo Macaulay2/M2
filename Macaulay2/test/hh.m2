@@ -1,7 +1,7 @@
 A = ZZ/101[a,b,c,d]
 R = A/(a^4+b^4+c^4+d^4)
 X = Proj R
-H = HH^0(cotangentSheaf(2,X));
+H = HH^0((cotangentSheaf(2,X))(>=0));
 basis(0,H)
 betti res (coker lift(presentation H,A) ** coker presentation R )
 q = hilbertSeries H
