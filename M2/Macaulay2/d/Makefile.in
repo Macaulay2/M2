@@ -148,7 +148,7 @@ ifeq ($(OS) $(CC),Windows-95-98-NT gcc)
 LDFLAGS  += -Wl,-Map,mapfile
 endif
 
-ifeq ($(OS),SunOS)
+ifeq ($(OS),solaris2.7)
 ## - use this to get a memory map listing from the linker
 ##   if using Sun's ld.  Sigh, it comes to stdout.
 # LDFLAGS  += -Wl,-m
@@ -186,7 +186,7 @@ endif
 
 ALLOBJ :=
 
-ifeq ($(OS),SunOS)
+ifeq ($(OS),solaris2.7)
 LDLIBS += -lsocket -lnsl
 endif
 
@@ -212,8 +212,8 @@ endif
 # -lsunmath makes suns obey ieee for floating point operations, at
 # -liberty is /usr/local/lib/libiberty.a, and it has random() in it
 # least under solaris
-ifeq ($(OS) $(REL),SunOS 5.4)
-LDLIBS += -lsunmath -liberty
+ifeq ($(OS),solaris2.7)
+# LDLIBS += -lsunmath -liberty
 endif
 
 ifeq ($(OS),MS-DOS)
