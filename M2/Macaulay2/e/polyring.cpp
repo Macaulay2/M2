@@ -126,7 +126,7 @@ void PolynomialRing::make_Rideal(const array<ring_elem> &polys)
       ring_elem q = copy(base_ring->quotient_ideal[i]);
       if (is_zero(q)) continue;
       M->to_varpower(POLY(q)->monom, vp);
-      elems.insert(new Bag(q, vp));
+      elems.insert(new Bag((void *)q, vp));
       vp.shrink(0);
     }
 
@@ -136,7 +136,7 @@ void PolynomialRing::make_Rideal(const array<ring_elem> &polys)
       ring_elem q = copy(polys[i]);
       if (is_zero(q)) continue;
       M->to_varpower(POLY(q)->monom, vp);
-      elems.insert(new Bag(q, vp));
+      elems.insert(new Bag((void *)q, vp));
       vp.shrink(0);
     }
 

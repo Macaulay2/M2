@@ -7,7 +7,7 @@ struct CURRENT {
      } ;
 extern struct CURRENT cur;
 extern bool do_setup;
-extern bool iswhite(char);
+extern bool iswhite(int);
 extern void read_setup();
 extern node gettoken(void);
 extern bool validtoken(char *);

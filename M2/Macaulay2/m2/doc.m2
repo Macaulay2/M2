@@ -766,6 +766,8 @@ document { quote get,
      EXAMPLE "get \"/tmp/foooooo\"",
      EXAMPLE "get \"!date\"",
      if version#"operating system" =!= "SunOS"
+     and version#"operating system" =!= "CYGWIN32-NT"
+     and version#"operating system" =!= "CYGWIN32-95"
      then EXAMPLE "get \"$localhost:daytime\"",
      SEEALSO( "File", "String", "read" )
      }
@@ -1095,6 +1097,8 @@ document { quote openIn,
      "The class of all files is ", TO "File", ".",
      PARA,
      if version#"operating system" =!= "SunOS"
+     and version#"operating system" =!= "CYGWIN32-NT"
+     and version#"operating system" =!= "CYGWIN32-95"
      then EXAMPLE ///get "$localhost:daytime"///,
      SEEALSO "File"
      }
@@ -1369,9 +1373,7 @@ document { quote floor,
 document { quote run,
      TT "run s", " -- runs the command string s by passing it to the operating system.",
      PARA,
-     "The return value is the exit status of the command.",
-     PARA,
-     EXAMPLE "run \"ls -l /etc/g*\""
+     "The return value is the exit status of the command."
      }
 
 document { quote wait,
@@ -3628,13 +3630,14 @@ document { quote version,
 document { quote Database,
      TT "Database", " -- the class of all database files.",
      PARA,
-     EXAMPLE "run \"rm -f /tmp/tmpdbm*\"",
-     EXAMPLE "x = openDatabaseOut \"/tmp/tmpdbm\"",
-     EXAMPLE "x#\"first\" = \"hi there\"",
-     EXAMPLE "x#\"first\"",
-     EXAMPLE "x#\"second\" = \"ho there\"",
-     EXAMPLE "scanKeys(x,print)",
-     EXAMPLE "run \"rm -f /tmp/tmpdbm*\"",
+     EXAMPLE ///filename = tmpname "test.dbm"///,
+     EXAMPLE ///x = openDatabaseOut filename///,
+     EXAMPLE ///x#"first" = "hi there"///,
+     EXAMPLE ///x#"first"///,
+     EXAMPLE ///x#"second" = "ho there"///,
+     EXAMPLE ///scanKeys(x,print)///,
+     EXAMPLE ///close x///,
+     EXAMPLE ///run ("rm -f " | filename)///,
      "Functions:",
      MENU {
 	  {TO "openDatabase", "    -- open a database file"},

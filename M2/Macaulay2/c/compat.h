@@ -23,7 +23,7 @@ extern char errfmtnc[];
 #define HAS_SYSTYPES_H
 #define VA_START_HAS_TWO_ARGS
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN32__)
 #define __WIN32__
 /* This is for Microsoft's Visual C/C++ compiler, version 4, /Za */
 #include <direct.h>

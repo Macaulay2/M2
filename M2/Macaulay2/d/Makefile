@@ -58,14 +58,21 @@ ALLFILES := $(WC1FILES) $(PROJECT:.d=.dep) $(PROJECT:.d=.sig)
 SCC1 := ../c/scc1
 .SUFFIXES: .d .oo .sig .dep .res .test .m2
 .PHONY : clean all tests
+
+SCCFLAGS = -O
+
+ifneq "$(CC)" "gcc"
+SCCFLAGS += -nogcc
+endif
+
 %.dep : %.d
-	$(SCC1) -nogcc -dep -J. $*.d
+	$(SCC1) -dep -J. $*.d
 	mv $*.dp $*.dep
 	../util/update $*.sg $*.sig
 %.c   : %.d
-	$(SCC1) $(SCCFLAGS) +gc -J. -noline -nogcc $<
+	$(SCC1) $(SCCFLAGS) +gc -J. -noline $<
 %.oo  : %.d
-	$(SCC1) $(SCCFLAGS) +gc -J. -nogcc $<
+	$(SCC1) $(SCCFLAGS) +gc -J. $<
 	$(CC) -o $*.oo $(CPPFLAGS) $(CCFLAGS) -c $*.c
 	rm $*.c
 %     : %.oo;	$(CC) -o $@ $< $(LDFLAGS) $(LOADLIBES)
@@ -82,7 +89,6 @@ CPPFLAGS := -I$(INCDIR) -I. -DGaCo=1 $(DEBUGFLAGS)
 
 WARNINGS := -Wall -Wshadow -Wcast-qual
 
-SCCFLAGS := -O
 CCFLAGS  := -O3 -g
 
 CFLAGS   := $(CCFLAGS) $(WARNINGS)
@@ -156,14 +162,18 @@ remove-c-files ::; rm -rf $(ALLC)
 c-files.tar :: $(ALLC)
 	tar cf $@ $(ALLC)
 ##############################
+
+# UTIL := $(PATHPARENT)util$(PATHSEP)
+UTIL := ../util/
+
 tmp_init.c : Makefile $(TOPDIR)/Makeconf
-	timestmp >>tmp
+	 $(UTIL)timestmp >tmp
 	@echo "echoout '>>tmp' ..."
-	@echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
-	echoout '>>tmp' 'int main_inits() {'
+	@$(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
+	 $(UTIL)echoout '>>tmp' 'int main_inits() {'
 	@echo "echoout '>>tmp' ..."
-	@echoout '>>tmp' $(foreach f, $(PROJECT:.d=), '   $(f)__prepare();')
-	echoout '>>tmp' '   return 0;}'
+	@$(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), '   $(f)__prepare();')
+	 $(UTIL)echoout '>>tmp' '   return 0;}'
 	mv tmp tmp_init.c
 
 .._c_compat.c: ../c/compat.c; cp $^ $@
@@ -180,15 +190,21 @@ probe : probe.c
 	$(CC) -static -I$(INCDIR) -g -o probe probe.c
 test-probe : probe
 	nm probe |grep -v "gcc2_compiled\|gnu_compiled\0| \." >syms
-	probe a b c d >> syms
+	./probe a b c d >> syms
 	sort syms > addresses
 	rm syms
 ############################## miscellaneous
 
+ifdef MP
+LIBMP = ../../lib/libMP.a
+else
+LIBMP =
+endif
+
 ../bin/Macaulay2 : $(ALLOBJ) ../e/*.o tmp_init.o \
 		../../lib/libgc.a \
 		../../lib/libgmp.a \
-		../../lib/libMP.a \
+		$(LIBMP) \
 		../../lib/libfac.a \
 		../../lib/libcf.a ../../lib/libcfmem.a \
 		../../lib/libmpf.a \
@@ -198,14 +214,16 @@ test-probe : probe
 	rm -f $@
 	@ echo 'linking $@ with $(LDFLAGS) $(LOADLIBES)'
 	@ time $(PURIFYCMD) $(CC) -o $@ $(LDFLAGS) $^ $(LOADLIBES)
+ifndef CYGWIN32
 	$(STRIPCMD) $@
+endif
 all:: TAGS
 TAGS: Makefile
 	@echo making TAGS
-	@echoout -r2 '>TAGS' $(foreach i, $(SRCFILES),  $(i),0)
+	@$(UTIL)echoout -r2 '>TAGS' $(foreach i, $(SRCFILES),  $(i),0)
 allfiles: Makefile
 	@echo making allfiles
-	@echoout '>allfiles.tmp' $(ALLFILES)
+	@$(UTIL)echoout '>allfiles.tmp' $(ALLFILES)
 	@<allfiles.tmp sort|uniq >allfiles
 	@rm allfiles.tmp
 wc:

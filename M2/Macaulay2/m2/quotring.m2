@@ -181,7 +181,7 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else (
      if not R.?name and all(predecessors R, A -> not A.?name) then use S;
      S)
 
-Ring / ZZ := Ring / RingElement := Ring / Sequence := (R,f) -> R / ideal f
+Ring / ZZ := Ring / RingElement := Ring / List := Ring / Sequence := (R,f) -> R / ideal f
 
 presentation QuotientRing := R -> (
      if R.?presentation then R.presentation else R.presentation = (

@@ -5,7 +5,7 @@
 #undef _POSIX_THREAD_SAFE_FUNCTIONS
 #undef _REENTRANT
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN32__)
 #define alloca _alloca
 #endif
 
@@ -48,7 +48,9 @@ extern char *libfac_version;
 #include <sys/stat.h>
 #endif
 
-#if !defined(__MWERKS__) && !defined(_WIN32)
+#if defined(__MWERKS__)
+#elif defined(_WIN32) && !defined(__CYGWIN32__)
+#else
 #include <sys/time.h>
 #include <sys/wait.h>
 #endif
@@ -59,13 +61,23 @@ extern char *libfac_version;
 #include <string.h>
 #include <math.h>
 
-#if !defined(_WIN32)
+#if defined(_WIN32) && !defined(__CYGWIN32__)
+#else
 #include <alloca.h>
 #endif
 
 #include <setjmp.h>
 
-#if defined(__DJGPP__) || defined(__MWERKS__) || defined(_WIN32)
+#ifdef __CYGWIN32__
+#define HAVE_SOCKETS TRUE
+#include <sys/ioctl.h>		/* just for window width */
+#include <termios.h>		/* just for window width */
+#include <sys/mman.h>		/* needed for mmap() */
+#include <sys/socket.h>		/* needed for args to socket(), bind() */
+#include <netdb.h>     	    	/* needed for gethostbyname() */
+#include <netinet/in.h>	    	/* needed for struct sockaddr_in */
+#include <arpa/inet.h>	   	/* needed for inet_addr() */
+#elif defined(__DJGPP__) || defined(__MWERKS__) || defined(_WIN32) && !defined(__CYGWIN32__)
 #define HAVE_SOCKETS FALSE
 #else
 #define HAVE_SOCKETS TRUE
@@ -83,7 +95,7 @@ extern char *libfac_version;
 #include <libc/dosio.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN32__)
 #include <io.h>
 #endif
 
@@ -208,7 +220,7 @@ Font font;
 void trap(){}
 
 static void
-#if defined(__STDC__) || defined(_WIN32)  
+#if defined(__STDC__) || defined(_WIN32) && !defined(__CYGWIN32__)
 fatal(char *s,...)   {
      va_list ap;
 #else
@@ -218,7 +230,7 @@ va_dcl
      va_list ap;
      char *s;
 #endif
-#if defined(__STDC__) || defined(_WIN32)  
+#if defined(__STDC__) || defined(_WIN32) && !defined(__CYGWIN32__)
      va_start(ap,s);
 #else
      va_start(ap);
@@ -425,7 +437,7 @@ typedef struct {
      } *arrayint;
 
 int system_write(int fd, M2_string buffer, int len){
-     if (buffer->len < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
+     if ((int)buffer->len < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
      return write(fd,buffer->array,len);
      }
 
@@ -434,6 +446,7 @@ M2_string system_newline;
 M2_string actors5_VERSION;
 M2_string actors5_OS;
 M2_string actors5_ARCH;
+M2_string actors5_NODENAME;
 M2_string actors5_REL;
 M2_string actors5_DATE;
 M2_string actors5_TIME;
@@ -449,7 +462,7 @@ int fd;
 M2_string buffer;
 int len;
 {
-     if (buffer->len < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
+     if ((int)buffer->len < len) fatalarrayindex(len,buffer->len,__FILE__,__LINE__,-1);
      return read(fd,buffer->array,len);
      }
 
@@ -462,7 +475,7 @@ int offset;
      if (offset < 0) {
 	  fatalarrayindex(offset,buffer->len,__FILE__,__LINE__,-1);
 	  }
-     if (buffer->len < len+offset) {
+     if ((int)buffer->len < len+offset) {
 	  fatalarrayindex(len+offset,buffer->len,__FILE__,__LINE__,-1);
 	  }
      return read(fd,buffer->array+offset,len);
@@ -605,7 +618,7 @@ void GC_free2 (void *s, size_t old) {
      GC_FREE(s);
      }
 
-void main(argc,argv)
+int main(argc,argv)
 int argc; 
 char **argv;
 {
@@ -624,7 +637,7 @@ char **argv;
      out_of_memory_jump_set = FALSE;
      abort_jump_set = FALSE;
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN32__)
      _setmode(STDIN ,_O_BINARY);
      _setmode(STDOUT,_O_BINARY);
      _setmode(STDERR,_O_BINARY);
@@ -749,6 +762,7 @@ char **argv;
      actors5_VERSION = tostring(VERSION);
      actors5_OS = tostring(OS);
      actors5_ARCH = tostring(ARCH);
+     actors5_NODENAME = tostring(NODENAME);
      actors5_REL = tostring(REL);
      actors5_LIBFACVERSION = tostring(libfac_version);
      actors5_FACTORYVERSION = tostring(FACTORYVERSION);
@@ -819,6 +833,7 @@ char **argv;
 	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
 #endif
      exit(system_returncode);
+     return(system_returncode);
      }
 
 static void close_all_dbms();
@@ -861,7 +876,7 @@ char **tocharstarstar(p)
 stringarray p;
 {
      char **s = (char **)getmem((1 + p->len)*sizeof(char *));
-     int i;
+     unsigned int i;
      for (i=0; i<p->len; i++) s[i] = tocharstar(p->array[i]);
      s[i] = NULL;
      return s;
@@ -929,7 +944,7 @@ int len;
 {
      M2_string p;
      if (start < 0) start = 0;
-     if (start + len > x->len) len = x->len - start;
+     if (start + len > (int)x->len) len = x->len - start;
      if (len < 0) len = 0;
      p = (M2_string) getmem(sizeofarray(p,len));
      p->len = len;
@@ -1079,7 +1094,7 @@ stringarray argv;
      int i;
      char **av = tocharstarstar(argv);
      execvp(av[0],av);
-     for (i=0; i<argv->len; i++) {
+     for (i=0; i<(int)argv->len; i++) {
      	  GC_FREE(av[i]);
 	  }
      GC_FREE(av);
@@ -1147,7 +1162,7 @@ double x;
      h ^= (int) x;
 #else
      unsigned char *p = (unsigned char *)&x;
-     int i;
+     unsigned int i;
      for (i=0; i<sizeof(x); i++) {
 	  h = 231*h + p[i];
 	  }
@@ -1155,7 +1170,7 @@ double x;
      return h;
      }
 
-extern etext, end;
+extern int etext, end;
 
 #ifndef PAGESIZE
 #define PAGESIZE 4096
@@ -1198,7 +1213,7 @@ static void *first_rw_page_after_etext() {
      }
 #endif
 
-int probe();
+static int probe();
 
 int system_dumpdata(datafilename)
 M2_string datafilename;
@@ -1987,7 +2002,15 @@ int actors5_rxmatch(M2_string text, M2_string pattern) {
 double lgamma(double x) { return -1. ; }	/* sigh, fix later */
 #endif
 
-#ifdef _WIN32
+#if defined(__CYGWIN32__)
+void abort() {
+  putstderr("abort() called");
+  *(int*)-1=0;
+  exit(1);
+}
+#endif
+
+#if defined(_WIN32) && !defined(__CYGWIN32__)
 #ifndef ENOSYS
 #define ENOSYS 0
 #endif

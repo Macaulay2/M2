@@ -102,7 +102,7 @@ document { "map(Ring,Ring,...)",
      EXAMPLE "f oo",
      EXAMPLE "U = ZZ/101[t,u,v]",
      EXAMPLE "g = map(S,U,{s_1+s_2, s_2 + s_3, s_3+s_4})",
-     EXAMPLE "f g",
+     EXAMPLE "f * g",
      EXAMPLE "kernel oo",
      EXAMPLE "f g generators oo",
      PARA,
@@ -259,7 +259,7 @@ annihilator E
 
 image RingMap := f -> f.source / kernel f
 
-RingMap RingMap := (g,f) -> (
+RingMap * RingMap := (g,f) -> (
      if source g != target f then error "ring maps not composable";
      m := g f.matrix;
      new RingMap from {

@@ -3,3 +3,5 @@ c.dsp
 scc1
 y.output
 y.tab.h
+*.orig
+*.rej

@@ -122,7 +122,11 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
 		     M2-dynamic-complete-symbol
 		     comint-dynamic-complete-filename)))))
 
-(load "M2-symbols" nil t)
+(defvar M2-symbols '()
+  "A list of the symbols available in Macaulay 2, for use with
+  dynamic completion."
+  )
+(load "M2-symbols" t t) 
 
 (defun M2-to-end-of-prompt()
      "Move to end of prompt matching M2-comint-prompt-regexp on this line."

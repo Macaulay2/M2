@@ -14,11 +14,6 @@ TOPDIR = .
 include Makeconf
 FILES := Makefile Makeconf README patches
 SUBDIRS := gc gmp factory libfac Macaulay2
-all:: announce
-announce ::
-	@echo "######################################################"
-	@echo 'making Macaulay 2 version $(VERSION) for $(SYSTEM)'
-	@echo "######################################################"
 ################################# preparation
 always:
 lib/.exists:; mkdir -p lib; touch $@
@@ -36,7 +31,7 @@ lib/libgc.a: 	  gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
 include/gc.h:	  gc/gc.h include/.exists;	cp $< $@
 include/gc_cpp.h: gc/gc_cpp.h include/.exists;	cp $< $@
 gc/gc.a: 	  always
-	$(MAKE) -C gc CC=gcc AS=$(AS) CFLAGS='$(GC_CFLAGS)' gc.a
+	$(MAKE) -C gc CC=$(CC) AS=$(AS) CFLAGS='$(GC_CFLAGS)' gc.a
 clean::; $(MAKE) -C gc clean
 clean::; rm -f gc/base_lib
 ###################### GMP
@@ -70,7 +65,12 @@ clean::; -$(MAKE) -C gmp distclean
 
 all:: FACTORY
 
-FACTORY: FACTORYconfigured FACTORYmade lib/FACTORYinstalled
+ifdef CYGWIN32
+FACTORY :: factory/malloc.h
+factory/malloc.h :; touch $@
+endif
+
+FACTORY:: FACTORYconfigured FACTORYmade lib/FACTORYinstalled
 
 FACTORYexports := \
 		factory/libcf.a \
@@ -90,8 +90,10 @@ FACTORYexports := \
 FACTORYconfigured: factory/config.status
 factory/config.status factory/GNUmakefile : factory/GNUmakefile.in factory/configure
 	cd factory;\
-	GMP_INCLUDE_PATH=../include;\
-	export GMP_INCLUDE_PATH;\
+	GMP_INCLUDE_PATH=../include \
+	CFLAGS="$(CFLAGS)" \
+	CXXFLAGS="$(CXXFLAGS)" \
+	LDFLAGS="$(LDFLAGS)" \
 	./configure --cache-file=../config.cache --prefix=.. --with-memman --with-optimize
 FACTORYmade:; $(MAKE) -C factory
 lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
@@ -102,19 +104,22 @@ clean::; -$(MAKE) -C factory distclean
 clean::; rm -rf share
 ###################### LIBFAC
 all:: LIBFAC
-LIBFAC:		libfac \
+LIBFAC:		libfac libfac/OPTOBJ \
 		libfac/config.status libfac/libfac.a include/factor.h lib/libfac.a
+libfac/OPTOBJ :; mkdir $@
 libfac/config.status : libfac/configure
 	cd libfac; ./configure --cache-file=../config.cache --includedir=../include
 libfac/libfac.a : always
-	$(MAKE) CXX=g++ OPTCXX=g++ -C libfac libfac
+	$(MAKE) CXX=$(CXX) OPTCXX=$(CXX) -C libfac libfac
 include/factor.h: libfac/factor.h include/.exists; cp $< $@
 lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
 clean::; -$(MAKE) -C libfac distclean
 ###################### MP
 # warning: perl is needed to recreate mp/MP/MP.h - but this file is
 # provided with the distribution.
+ifdef MP
 all:: MP
+endif
 MP:	mp mp/config.status mp/Makefile mp/libMP.a \
 	lib/libMP.a include/MP.h include/MP_Config.h
 mp/config.status mp/Makefile : mp/configure
@@ -131,20 +136,29 @@ all:: Makeconf.h
 Makeconf.h : Makeconf Makeconf.var Makeconf.lcl
 	echo "/* This file created automatically, don't edit. */" >tmp.tmp
 	echo '#define VERSION "$(VERSION)"' >>tmp.tmp
+	echo '#define NODENAME "$(NODENAME)"' >>tmp.tmp
 	echo '#define OS "$(OS)"' >>tmp.tmp
 	echo '#define ARCH "$(ARCH)"' >>tmp.tmp
 	echo '#define REL "$(REL)"' >>tmp.tmp
 ifdef FACTORYVERSION
-	echo '#define FACTORYVERSION "$(FACTORYVERSION)"' >>tmp.tmp
+	echo '#define FACTORYVERSION $(FACTORYVERSION)' >>tmp.tmp
+else
+	echo '#undef FACTORYVERSION' >>tmp.tmp
 endif
 ifdef DUMPDATA
 	echo '#define DUMPDATA' >>tmp.tmp
+else
+	echo '#undef DUMPDATA' >>tmp.tmp
 endif
 ifdef MP
 	echo '#define MP' >>tmp.tmp
+else
+	echo '#undef MP' >>tmp.tmp
 endif
 ifdef FACTORY
 	echo '#define FACTORY' >>tmp.tmp
+else
+	echo '#undef FACTORY' >>tmp.tmp
 endif
 	mv tmp.tmp $@
 clean::; rm -f Makeconf.h

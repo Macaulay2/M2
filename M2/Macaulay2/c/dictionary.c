@@ -121,7 +121,7 @@ void undefine(node s){
      }
 
 void init_dictionary(env v){
-     int i;
+     unsigned int i;
      keyword_T = newtype(NULL,NULL,TRUE);
      interntype(keyword_T);
      type_T = newtype(NULL,NULL,TRUE);
@@ -297,7 +297,7 @@ node lookupword(node f, env v){
 
 void printstringlist(){
      node p;
-     int h;
+     unsigned int h;
      pput("\nString Table\n");
      for (h=0; h<numberof(hash_buckets); h++) {
 	  for (p = hash_buckets[h]; p != NULL; p = CDR(p)) {

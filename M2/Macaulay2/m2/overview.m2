@@ -84,6 +84,11 @@ document { "basic rings",
      EXAMPLE "123/4",
      EXAMPLE "123.4",
      EXAMPLE "123+4*ii",
+     "The usual arithmetic operations are available.",
+     EXAMPLE "4/5 + 2/3",
+     EXAMPLE "10^20",
+     EXAMPLE "3*5*7",
+     EXAMPLE "5!",
      "An additional pair of division operations which produce integral quotients
      and remainders is available.",
      EXAMPLE "1234//100",
@@ -112,7 +117,7 @@ document { "polynomial rings",
      EXAMPLE "1_R",
      "Subscript notation (the other way around) can be used to obtain the
      variables (generators) from the ring.  The first available index is 0.",
-     EXAMPLE "R_0+R_1^3+R_2^10",
+     EXAMPLE "R_0^10+R_1^3+R_2",
      "The number of variables is provided by ", TO "numgens", ".",
      EXAMPLE "numgens R",
      EXAMPLE "apply(numgens R, i -> R_i^i)",
@@ -354,7 +359,11 @@ document { "polynomial rings with multi-degrees",
      EXAMPLE "degree 1_R",
      "The degree of a polynomial is the least upper bound of the degrees 
      of its monomials.",
-     EXAMPLE "degree (a+b)"
+     EXAMPLE "degree (a+b)",
+     "We may recover the number of integers in each degree list for our ring
+     as follows.",
+     EXAMPLE "degreeLength R",
+     EXAMPLE "degreeLength ZZ"
      }
 
 document { "maps between rings",
@@ -367,13 +376,23 @@ document { "maps between rings",
      EXAMPLE "S = ZZ/101[x,y,z];",
      EXAMPLE "f = map(R,S,{a^2,a*b,b^2})",
      NOINDENT,
-     "(Notice that the target of ", TT "f", " is the first argument of ", TO "map", "
+     "(Notice that the target of ", TT "f", " is the first argument of ", TT "map", "
      and the source of ", TT "f", " is the second argument.)",
      PARA,
-     "We can apply this ring map to an element of ", TT "S", " in the usual way.",
+     "We can apply this ring map to elements of ", TT "S", " in the usual way.",
      EXAMPLE "f(x+y+z)",
+     EXAMPLE "f S_2",
+     "Composition of ring maps is possible.",
+     EXAMPLE "g = map(S,ZZ/101[t],{x+y+z})",
+     EXAMPLE "f * g",
+     "The defining matrix of ", TT "f", " can be recovered with the
+     key ", TT "matrix", ".",
+     EXAMPLE "f.matrix",
      "We can produce the kernel of ", TT "f", " with ", TO "kernel", ".",
      EXAMPLE "kernel f",
+     "We can produce the image of ", TT "f", " with ", TO "image", ".  It is
+     computed as its source ring modulo its kernel.",
+     EXAMPLE "image f",
      "We can check whether the map is homogeneous with ", TO "isHomogeneous", ".",
      EXAMPLE "isHomogeneous f",
      "We can obtain the ring of the graph of ", TT "f", " with ", TO "graphRing", ".",
@@ -381,6 +400,32 @@ document { "maps between rings",
      "We can obtain the ideal of the graph of ", TT "f", " with ", TO "graphIdeal", ",
      except that currently the result is a matrix rather than an ideal, sigh.",
      EXAMPLE "graphIdeal f"
-     
      }
 
+document { "quotient rings",
+     "The usual notation is used to form quotient rings.  A Groebner basis is computed
+     and used to reduce ring elements to normal form after arithmetic operations.",
+     EXAMPLE "R = ZZ/11",
+     EXAMPLE "6_R + 7_R",
+     EXAMPLE "S = QQ[x,y,z]/(x^2-y, y^3-z)",
+     EXAMPLE "{1,x,x^2,x^3,x^4,x^5,x^6,x^7,x^8}",
+     "In the example above you might have wondered whether typing ", TT "x", "
+     would give an element of ", TT "S", " or an element of ", TT "QQ[x,y,z]", ".  Our
+     convention is that typing ", TT "x", " gives an element of the 
+     quotient ring unless the polynomial ring has been assigned to a global variable.
+     Here is an example of the opposite behavior.",
+     EXAMPLE "T = QQ[r,s,t]",
+     EXAMPLE "U = T/(r^3+s^3+t^3)",
+     EXAMPLE "r^3+s^3+t^3",
+     "Notice that this time, the variables end up in the ring ", TT "T", ".  The
+     command ", TO "use", " will install variables for a specified ring.",
+     EXAMPLE "use U",
+     EXAMPLE "r^3+s^3+t^3",
+     "In a program we can tell whether a ring is a quotient ring.",
+     EXAMPLE "isQuotientRing ZZ",
+     EXAMPLE "isQuotientRing S",
+     "We can recover the coefficient ring.",
+     EXAMPLE "coefficientRing S"
+     }
+     
+   

@@ -35,16 +35,16 @@ node DoubleN(char *s, unsigned int len) {
      return q;
      }
 
-bool iswhite(char c) {
+bool iswhite(int c) {
      return (c == ' ' || c == '\n' || c == 0
 	  || c == '\t' || c == '\r' || c == '\f');
      }
 
-bool istokenfirst(char c) {
+bool istokenfirst(int c) {
      return isalpha(c) || c=='_';
      }
 
-bool istoken(char c) {
+bool istoken(int c) {
      return isalnum(c) || c=='_';
      }
 
@@ -56,7 +56,7 @@ bool validtoken(char *s) {
 
 bool alldigits(char *s, unsigned int n){
      while (n > 0) {
-	  if (!isdigit(*s)) return FALSE;
+	  if (!isdigit((int)*s)) return FALSE;
 	  s++;
 	  n--;
 	  }
@@ -65,7 +65,7 @@ bool alldigits(char *s, unsigned int n){
 
 bool allhexdigits(char *s, unsigned int n){
      while (n > 0) {
-	  if (isdigit(*s) 
+	  if (isdigit((int)*s) 
 	       || ('a' <= *s && *s <= 'f') 
 	       || ('A' <= *s && *s <= 'F')
 	       ) {
@@ -101,12 +101,12 @@ bool doubleq(char *p, unsigned int n) {
 	       p++, n--;
 	       break;
 	       }
-	  if (!isdigit(*p)) return FALSE;
+	  if (!isdigit((int)*p)) return FALSE;
 	  p++, n--;
 	  }
      while (TRUE) {
 	  if (n==0) return TRUE;
-	  if (!isdigit(*p)) return FALSE;
+	  if (!isdigit((int)*p)) return FALSE;
 	  p++, n--;
 	  }
      }
@@ -173,7 +173,7 @@ node gettoken(){
      else {
 	  bool digitssofar = TRUE;
 	  while (TRUE) {
-	       if (!isdigit(*cur.text)) digitssofar = FALSE;
+	       if (!isdigit((int)*cur.text)) digitssofar = FALSE;
      	       advance();
 	       if (cur.text == cur.eot) break;
 	       if (*cur.text == '.' && digitssofar) continue;
@@ -363,7 +363,7 @@ xor(x:uint, y:uint):uint ::= Ccode(uint,\"(\",x,\" ^ \",y,\")\");","\n\
 
 void read_setup(){
      node e;
-     int i;
+     unsigned int i;
      struct CURRENT save;
      if (noinits) return;
      save = cur;
