@@ -4,7 +4,7 @@ needsPackage "FirstPackage"
 secondFunction = () -> apply(5, firstFunction)
 document {
      Key => SecondPackage,
-     Headline => "an example of a package that depends on another"
+     Headline => "an example of a package that depends on another",
      "This package depends on ", TO "FirstPackage", " and loads it,
      but the functions of ", TO "FirstPackage", " are not exposed
      to the user."

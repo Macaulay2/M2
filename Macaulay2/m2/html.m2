@@ -44,6 +44,7 @@ rel := url -> (
      	  else relativizeFilename(htmlDirectory, url)))
 
 htmlFilename = method(SingleArgumentDispatch => true)
+htmlFilename Thing := x -> htmlFilename makeDocumentTag x
 htmlFilename DocumentTag := tag -> (
      fkey := DocumentTag.FormattedKey tag;
      pkgtitle := DocumentTag.Title tag;
@@ -436,7 +437,8 @@ installPackage = method(Options => {
 	  RemakeAllDocumentation => true,
 	  AbsoluteLinks => false,
 	  MakeLinks => true,
-	  RunDirectory => "."
+	  RunDirectory => ".",
+	  DebuggingMode => false
 	  })
 
 uninstallPackage = method(Options => options installPackage)
@@ -468,7 +470,7 @@ installPackage String := opts -> pkg -> (
 	  );
      fl := forceLoadDocumentation;
      forceLoadDocumentation = true;
-     loadPackage pkg;
+     loadPackage(pkg, DebuggingMode => opts.DebuggingMode);
      forceLoadDocumentation = fl;
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then return installPackage(value PackageDictionary#pkg, opts);
      error ("can't load or locate package '",pkg,"', unknown problem");
@@ -858,6 +860,17 @@ makePackageIndex List := packagePrefixPath -> (
 	  } << endl
      << close;
      )
+
+runnable := fn -> 0 < # select(1,apply(separate(":", getenv "PATH"),p -> p|"/"|fn),fileExists)
+
+viewHTML = url -> (
+     if runnable "firefox" then run("firefox "|url) else
+     if runnable "open" then run("open "|url) else
+     if runnable "netscape" then run("netscape -remote \"openURL("|url|")") else
+     error "can't find firefox, open, or netscape"
+     )
+
+viewDocumentation = key -> viewHTML ( prefixDirectory | htmlFilename key )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
