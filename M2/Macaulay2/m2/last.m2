@@ -29,10 +29,10 @@ String.Wrap = x -> wr("",x)
 
 closePackage "Macaulay2"
 
-installedPackages := {"PrimaryDecomposition"}
+installedPackages := {"PrimaryDecomposition", "M2doc"}
 loadPackage \ installedPackages 
 
-currentPackage = null					    -- eliminate the phony package we used for collecting test inputs
+-- currentPackage = null					    -- eliminate the phony package we used for collecting TEST inputs
 
 addStartFunction( 
      () -> (
@@ -40,14 +40,6 @@ addStartFunction(
 	  newPackage("User", DebuggingMode => true);
 	  needsPackage \ installedPackages;
 	  )
-     )
-
-if not Macaulay2#?"raw documentation database" or not isOpen Macaulay2#"raw documentation database" then (
-     currentPackage = Macaulay2;
-     stderr << "--loading Macaulay2-doc.m2" << endl;
-     notify = true;
-     load "Macaulay2-doc.m2";
-     currentPackage = null;
      )
 
 addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2#"source directory" = sourceHomeDirectory|"m2/" )

@@ -19,9 +19,9 @@ assert( not isGlobalSymbol "Macaulay2" )
 getGlobalSymbol(PackageDictionary,"Macaulay2")
 getGlobalSymbol(PackageDictionary,"User")
 
-Macaulay2 = new MutableHashTable		     -- just temporary
-Macaulay2#"test inputs" = new MutableHashTable	     -- just temporary, so we can accumulate TEST inputs
-currentPackage = Macaulay2
+-- Macaulay2 = new MutableHashTable		     -- just temporary
+-- Macaulay2#"test inputs" = new MutableHashTable	     -- just temporary, so we can accumulate TEST inputs
+-- currentPackage = Macaulay2
 
 -----------
 

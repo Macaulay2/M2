@@ -498,15 +498,7 @@ installPackage Package := opts -> pkg -> (
      
      -- check that we've read the raw documentation
      if #rawDoc > 0 then null
-     else (
-	  if pkg === Macaulay2 then (
-     	       currentPackage = Macaulay2;
-     	       stderr << "--loading Macaulay2-doc.m2" << endl;
-	       load "Macaulay2-doc.m2";
-     	       currentPackage = null;
-	       )
-	  else reloadPackage(pkg#"title",opts)
-	  );
+     else reloadPackage(pkg#"title",opts);
      
      -- here's where we get the list of nodes from the raw documentation
      nodes := packageTagList(pkg,topDocumentTag);

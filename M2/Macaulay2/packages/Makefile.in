@@ -2,6 +2,7 @@
 
 ## here is the list of those package files to install with Macaulay2
 PACKAGES =
+PACKAGES += M2doc.m2
 PACKAGES += CacheFileName.m2
 PACKAGES += ConvexHulls.m2
 PACKAGES += Dmodules.m2
