@@ -37,18 +37,18 @@ net MonomialIdeal := I -> (
 	  )
      )
 
-MonomialIdeal ^ ZZ := (I,n) -> SimplePowerMethod(I,n)
+MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)
 
 monomialIdeal MonomialIdeal := I -> (
-     if instance(I, MonomialIdeal) then (
+     if instance(I, MonomialIdeal) then (		    -- this is weird!
           sendgg(ggPush I, ggcopy);
           newMonomialIdeal ring I))
 
-monomialIdeal Matrix := f -> (
+monomialIdeal Matrix := MonomialIdeal => f -> (
      sendgg(ggPush f, ggPush 0, ggmonideal);
      newMonomialIdeal ring f)
 
-monomialIdeal(ZZ,Matrix) := (i,m) -> (
+monomialIdeal(ZZ,Matrix) := MonomialIdeal => (i,m) -> (
      sendgg(ggPush m, ggPush i, ggmonideal);
      newMonomialIdeal ring m)
 
@@ -61,11 +61,11 @@ MonomialIdeal == ZZ := (m,i) -> (
      else error "asked to compare monomial ideal to nonzero integer")
 ZZ == MonomialIdeal := (i,m) -> m == i
 
-MonomialIdeal +  MonomialIdeal := BinaryMonomialIdealOperation ggadd
-MonomialIdeal *  MonomialIdeal := BinaryMonomialIdealOperation ggmult
+MonomialIdeal +  MonomialIdeal := MonomialIdeal => BinaryMonomialIdealOperation ggadd
+MonomialIdeal *  MonomialIdeal := MonomialIdeal => BinaryMonomialIdealOperation ggmult
 
 
-radical MonomialIdeal := options -> (I) -> (UnaryMonomialIdealOperation ggradical) I
+radical MonomialIdeal := MonomialIdeal => options -> (I) -> (UnaryMonomialIdealOperation ggradical) I
 --document { quote radical,
 --     TT "radical I", " -- compute the radical of a ", TO "MonomialIdeal", " I.",
 --     PARA,
@@ -76,9 +76,9 @@ radical MonomialIdeal := options -> (I) -> (UnaryMonomialIdealOperation ggradica
 --     }
 
 --MonomialIdeal : Monomial := BinaryMonomialIdealOperation ggdiv
-MonomialIdeal : MonomialIdeal := BinaryMonomialIdealOperation ggdiv
+MonomialIdeal : MonomialIdeal := MonomialIdeal => BinaryMonomialIdealOperation ggdiv
 
-saturate(MonomialIdeal, MonomialIdeal) := options -> (I,J) -> (
+saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => options -> (I,J) -> (
      (BinaryMonomialIdealOperation ggsat) (I,J)
      )
 
@@ -130,7 +130,7 @@ intersect(Sequence) := args -> (
     else error "expected modules, ideals, or monomial ideals"
     )
 
-borel MonomialIdeal := UnaryMonomialIdealOperation ggborel
+borel MonomialIdeal := MonomialIdeal => UnaryMonomialIdealOperation ggborel
 isBorel MonomialIdeal := m -> (
      sendgg(ggPush m, ggisborel);
      eePopBool())
@@ -151,6 +151,6 @@ poincare MonomialIdeal := M -> ( --poincare matrix m
         M.poincare = ZZn.pop());
      M.poincare)
 
-minprimes MonomialIdeal := m -> (
+minprimes MonomialIdeal := MonomialIdeal => m -> (
      sendgg(ggPush m, ggprimes);
      newMonomialIdeal ring m)

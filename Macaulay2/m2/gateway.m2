@@ -1,24 +1,5 @@
 --		Copyright 1995 by Daniel R. Grayson
 
-ScriptedFunction = new Type of MutableHashTable
-ScriptedFunction ^ Thing := (G,i) -> (
-     if G#?superscript then G#superscript i
-     else error("no method for ", toString G, "^", toString i))
-ScriptedFunction _ Thing := (G,i) -> (
-     if G#?subscript then G#subscript i
-     else error("no method for ", toString G, "_", toString i))
-
-GlobalAssignHook ScriptedFunction := globalAssignFunction
-GlobalReleaseHook ScriptedFunction := globalReleaseFunction
-
-id = new ScriptedFunction from { 
-     subscript => (
-	  (x) -> (
-	       r := lookup(id,class x);
-	       if r =!= null then r x
-	       else error ("no method 'id_' found for item of class ", toString class x)))
-     }
-
 ScriptedFunctor = new Type of MutableHashTable
 GlobalAssignHook ScriptedFunctor := globalAssignFunction
 GlobalReleaseHook ScriptedFunctor := globalReleaseFunction
@@ -46,6 +27,14 @@ args(Thing,Sequence) := (i,args) -> prepend(i,args)
 args(Thing,Thing) := identity
 args(Thing,Thing,Sequence) := (i,j,args) -> prepend(i,prepend(j,args))
 args(Thing,Thing,Thing) := identity
+
+id = new ScriptedFunctor from { 
+     subscript => (
+	  (x) -> (
+	       r := lookup(id,class x);
+	       if r =!= null then r x
+	       else error ("no method 'id_' found for item of class ", toString class x)))
+     }
 
 HH = new ScriptedFunctor from {
      subscript => (

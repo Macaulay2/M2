@@ -502,7 +502,7 @@ document { char,
      }
 
 document { basictype,
-     TT "basictype x", " -- yields a symbol representing the basic type of ", TT "x", ".",
+     TT "basictype x", " -- yields the class representing the basic type of ", TT "x", ".",
      PARA,
      "Every thing has basic type which tells what sort of thing it
      really is, internally.  It is not possible for the user to create 

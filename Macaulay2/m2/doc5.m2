@@ -1689,29 +1689,10 @@ document { columnate,
 	  }
      }
 
-document { ScriptedFunction,
-     TT "ScriptedFunction", " -- the class of all scripted functions,
-     by which we mean those functions 'f' of one argument 'x' which
-     accept their argument as a subscript 'f_x' or as a superscript 'f^x'.",
-     PARA,
-     "To create a new subscripted function use a statement of the following
-     form.",
-     PRE "     f = new ScriptedFunction from { subscript => (x) -> ... }",
-     "To create a new superscripted function use a statement of the following
-     form.",
-     PRE "     f = new ScriptedFunction from { superscript => (x) -> ... }",
-     "The subscript and superscript options can be combined to create a
-     scripted function which accepts either a subscript or a superscript.",
-     PARA,
-     "A good example of a subscripted function is ", TO "identity", ".",
-     PARA,
-     SEEALSO "ScriptedFunctor"
-     }
-
 document { ScriptedFunctor,
      TT "ScriptedFunctor", " -- the class of all functors which accept a 
      subscript or a superscript, the primary example of which is ", TO "HH", ".",
-     SEEALSO {"subscript", "superscript", "argument"}
+     SEEALSO {"subscript", "superscript", "argument", "OO", "id"}
      }
 
 document { argument,

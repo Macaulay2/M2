@@ -146,62 +146,70 @@ getExampleInputs := t -> (
 
 examples = x -> getExampleInputs doc x
 
+Strings := hashTable {
+     Sequence => "(...)",
+     List => "{...}",
+     Array => "[...]"
+     }
+
+toStr := s -> if Strings#?s then Strings#s else toString s
+
 formatDocumentTag = s -> concatenate (
      if class s === Sequence then (
 	  if #s === 4 then (
 	       if class s#0 === ScriptedFunctor
 	       then (
 		    if s#0 .? subscript
-		    then (toString s#0, "_", toString s#1, "(", toString s#2, ",", toString s#3, ")")
-		    else (toString s#0, "^", toString s#1, "(", toString s#2, ",", toString s#3, ")")
+		    then (toStr s#0, "_", toStr s#1, "(", toStr s#2, ",", toStr s#3, ")")
+		    else (toStr s#0, "^", toStr s#1, "(", toStr s#2, ",", toStr s#3, ")")
 		    )
 	       else if s#0 === NewOfFromMethod
-	       then ("new ", toString s#1, " of ", toString s#2, " from ", toString s#3)
+	       then ("new ", toStr s#1, " of ", toStr s#2, " from ", toStr s#3)
 	       else if s#0 === cohomology
-	       then ("HH_", toString s#1, "^", toString s#2, " ", toString s#3)
+	       then ("HH_", toStr s#1, "^", toStr s#2, " ", toStr s#3)
 	       else if s#0 === homology
-	       then ("HH^", toString s#1, "_", toString s#2, " ", toString s#3)
-	       else (toString s#0, "(", toString s#1, ",", toString s#2, ",", toString s#3, ")")
+	       then ("HH^", toStr s#1, "_", toStr s#2, " ", toStr s#3)
+	       else (toStr s#0, "(", toStr s#1, ",", toStr s#2, ",", toStr s#3, ")")
 	       )
 	  else if #s === 3 then (
 	       if class s#0 === Symbol then (
 		    if s#0 === NewFromMethod
-		    then ("new ", toString s#1, " from ", toString s#2)
+		    then ("new ", toStr s#1, " from ", toStr s#2)
 		    else if s#0 === NewOfMethod
-		    then ("new ", toString s#1, " of ", toString s#2)
+		    then ("new ", toStr s#1, " of ", toStr s#2)
 		    else if s#0 === quote " "
-		    then (toString s#1, " ", toString s#2)
-		    else (formatDocumentTag s#1, " ", toString s#0, " ", toString s#2)
+		    then (toStr s#1, " ", toStr s#2)
+		    else (formatDocumentTag s#1, " ", toStr s#0, " ", toStr s#2)
 		    )
 	       else if s#0 === homology
-	       then ("HH_", toString s#1, " ", toString s#2)
+	       then ("HH_", toStr s#1, " ", toStr s#2)
 	       else if s#0 === cohomology
-	       then ("HH^", toString s#1, " ", toString s#2)
-     	       else (toString s#0, "(", toString s#1, ",", toString s#2, ")")
+	       then ("HH^", toStr s#1, " ", toStr s#2)
+     	       else (toStr s#0, "(", toStr s#1, ",", toStr s#2, ")")
 	       )
 	  else if #s === 2 then (
-	       if class s#0 === ScriptedFunction then (
+	       if class s#0 === ScriptedFunctor then (
 		    hh := s#0;
 		    if hh.?subscript and hh.?superscript
 		    then (
-			 (toString s#0, " _ ", toString s#1, "  or  ", toString s#0, " ^ ", toString s#1)
+			 (toStr s#0, " _ ", toStr s#1, "  or  ", toStr s#0, " ^ ", toStr s#1)
 			 )
-		    else if hh.?subscript then (toString s#0, " _ ", toString s#1)
-		    else (toString s#0, " ^ ", toString s#1)
+		    else if hh.?subscript then (toStr s#0, " _ ", toStr s#1)
+		    else (toStr s#0, " ^ ", toStr s#1)
 		    )
 	       else if s#0 === homology
-	       then ("HH ", toString s#1)
+	       then ("HH ", toStr s#1)
 	       else if s#0 === cohomology
-	       then ("HH ", toString s#1)
-	       else if s#0 === NewMethod then ("new ", toString s#1)
-	       else if s#0 === quote ~ then (toString s#1, " ", toString s#0) -- postfix!
-	       else if class s#0 === Symbol then (toString s#0, " ", toString s#1)
-	       else (toString s#0, " ", toString s#1)
+	       then ("HH ", toStr s#1)
+	       else if s#0 === NewMethod then ("new ", toStr s#1)
+	       else if s#0 === quote ~ then (toStr s#1, " ", toStr s#0) -- postfix!
+	       else if class s#0 === Symbol then (toStr s#0, " ", toStr s#1)
+	       else (toStr s#0, " ", toStr s#1)
 	       )
-	  else (toString s)
+	  else toString s
 	  )
      else if class s === Option and #s === 2 and class s#0 === Function then (
-	  (toString s#0, "(", toString s#1, " => ...)")
+	  (toStr s#0, "(", toStr s#1, " => ...)")
 	  )
      else if class s === String then (
 	  if s#0 === "\"" and s#-1 === "\"" then value s

@@ -22,7 +22,7 @@ Ext = new ScriptedFunctor from {
 	  )
      }
 	  
-Ext(ZZ, Module, Module) := (i,M,N) -> (
+Ext(ZZ, Module, Module) := Module => (i,M,N) -> (
      R := ring M;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
@@ -42,7 +42,7 @@ Ext(ZZ, Module, Module) := (i,M,N) -> (
 	       then kernel Hom(b_(i+1),N)
 	       else Hom(C_i,N))))
 
-Ext(ZZ, Matrix, Module) := (i,f,N) -> (
+Ext(ZZ, Matrix, Module) := Matrix => (i,f,N) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
@@ -56,7 +56,7 @@ Ext(ZZ, Matrix, Module) := (i,f,N) -> (
 	  Et':= target Et.pruningMap;
 	  Es.pruningMap^-1 * inducedMap(Es',Et',Hom(g_i,N)) * Et.pruningMap))
 
-Ext(ZZ, Module, Matrix) := (i,N,f) -> (
+Ext(ZZ, Module, Matrix) := Matrix => (i,N,f) -> (
      R := ring f;
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";
      if R =!= ring N then error "expected modules over the same ring";
@@ -96,7 +96,7 @@ factorizations := (m) -> (
 
 makeAdjust := fudge -> v -> {- fudge * v#1 + v#0, - v#1}
 
-Ext(Module,Module) := (N,M) -> (
+Ext(Module,Module) := Module => (N,M) -> (
      R := ring N;
      if R =!= ring M then error "expected modules over the same ring";
      if not isCommutative R then error "'Ext' not implemented yet for noncommutative rings.";

@@ -6,7 +6,7 @@
 Fano = method()
 Grassmannian = method()
 
-Fano(ZZ,Ideal,Ring) := (k,X,GR) -> (
+Fano(ZZ,Ideal,Ring) := Ideal => (k,X,GR) -> (
   -- Get info about the base ring of X:
   -- The coefficient ring (to make new rings of
   -- the same characteristic, for example)
@@ -58,7 +58,7 @@ Fano(ZZ,Ideal,Ring) := (k,X,GR) -> (
   ker gr
 )
 
-Fano(ZZ, Ideal) := (k,X) -> (
+Fano(ZZ, Ideal) := Ideal => (k,X) -> (
   KK:=coefficientRing ring X;
   r := (numgens ring X) - 1;
   -- We can specify a private ring with binomial(r+1,k+1)
@@ -69,14 +69,14 @@ Fano(ZZ, Ideal) := (k,X) -> (
 )
 
 
-Grassmannian(ZZ,ZZ,Ring) := (k,r,R) ->( 
+Grassmannian(ZZ,ZZ,Ring) := Ideal => (k,r,R) ->( 
         KK := coefficientRing R;
         RPr := KK[Variables => r+1];
         Pr := ideal(0_RPr);
         substitute( Fano(k,Pr) , vars R )
      )
 
-Grassmannian(ZZ,ZZ) := (k,r) -> (
+Grassmannian(ZZ,ZZ) := Ideal => (k,r) -> (
         R := ZZ/31991[
                vars(0..(binomial(r+1,k+1)-1))
                     ];

@@ -12,7 +12,7 @@ GradedModule == GradedModule := (C,D) -> (
 	       not D#?i and C#i == 0 or
 	       not C#?i and D#i == 0
 	       )))
-GradedModule _ ZZ := (M,i) -> if M#?i then M#i else (ring M)^0
+GradedModule _ ZZ := Module => (M,i) -> if M#?i then M#i else (ring M)^0
 net GradedModule := C -> if C.?name then C.name else (
      s := sort spots C;
      if # s === 0 then "0"
@@ -39,7 +39,7 @@ net GradedModuleMap := f -> (
 	  );
      if # v === 0 then "0"
      else stack v)
-GradedModuleMap _ ZZ := (f,i) -> (
+GradedModuleMap _ ZZ := Matrix => (f,i) -> (
      if f#?i then f#i else map((target f)_(i+f.degree),(source f)_i,0)
      )
 GradedModule#id = (M) -> (
@@ -50,7 +50,7 @@ GradedModule#id = (M) -> (
      scan(spots M, i -> f#i = id_(M_i));
      f
      )
-- GradedModuleMap := f -> (
+- GradedModuleMap := GradedModuleMap => f -> (
      g := new GradedModuleMap;
      g.source = f.source;
      g.target = f.target;
@@ -98,7 +98,7 @@ ZZ * GradedModuleMap := (n,f) -> (
      g.degree = f.degree;
      scan(spots f, i -> g#i = n * f_i);
      g)
-GradedModuleMap ^ ZZ := (f,n) -> (
+GradedModuleMap ^ ZZ := GradedModuleMap => (f,n) -> (
      if n === -1 then (
 	  h := new GradedModuleMap;
 	  h.ring = f.ring;
@@ -134,7 +134,7 @@ GradedModuleMap ^ ZZ := (f,n) -> (
 			 )
 		    ));
 	  g))
-GradedModuleMap + GradedModuleMap := (f,g) -> (
+GradedModuleMap + GradedModuleMap := GradedModuleMap => (f,g) -> (
      if source f != source g
      or target f != target g
      or f.degree != g.degree then (
@@ -147,7 +147,7 @@ GradedModuleMap + GradedModuleMap := (f,g) -> (
      h.degree = f.degree;
      scan(union(spots f, spots g), i -> h#i = f_i + g_i);
      h)
-GradedModuleMap - GradedModuleMap := (f,g) -> (
+GradedModuleMap - GradedModuleMap := GradedModuleMap => (f,g) -> (
      if source f != source g
      or target f != target g
      or f.degree != g.degree then (
@@ -186,7 +186,7 @@ GradedModule.directSum = v -> (
      E	       
      )
 
-GradedModuleMap ++ GradedModuleMap := (f,g) -> (
+GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
      if f.degree != g.degree then (
 	  error "expected maps of the same degree";
 	  );
@@ -202,10 +202,10 @@ GradedModuleMap ++ GradedModuleMap := (f,g) -> (
 
 isDirectSum GradedModule := (M) -> M.?components
 components GradedModuleMap := f -> if f.?components then f.components else {f}
-GradedModuleMap _ Array := (f,v) -> f * (source f)_v
-GradedModuleMap ^ Array := (f,v) -> (target f)^v * f
+GradedModuleMap _ Array := GradedModuleMap => (f,v) -> f * (source f)_v
+GradedModuleMap ^ Array := GradedModuleMap => (f,v) -> (target f)^v * f
 
-GradedModuleMap * GradedModuleMap := (g,f) -> (
+GradedModuleMap * GradedModuleMap := GradedModuleMap => (g,f) -> (
      if target f != source g then error "expected composable maps of graded modules";
      h := new GradedModuleMap;
      h.ring = f.ring;
@@ -215,7 +215,7 @@ GradedModuleMap * GradedModuleMap := (g,f) -> (
      scan(union(spots f, apply(spots g, i -> i - f.degree)),
 	  i -> h#i = g_(i+f.degree) * f_i);
      h)
-GradedModule ** Module := (C,M) -> (
+GradedModule ** Module := GradedModule => (C,M) -> (
      P := youngest(C,M);
      key := (C,M,quote **);
      if P#?key then P#key
@@ -224,7 +224,7 @@ GradedModule ** Module := (C,M) -> (
 	  D.ring = C.ring;
 	  scan(spots C, i -> D#i = C#i ** M);
 	  D))
-Module ** GradedModule := (M,C) -> (
+Module ** GradedModule := GradedModule => (M,C) -> (
      P := youngest(M,C);
      key := (M,C,quote **);
      if P#?key then P#key
@@ -236,7 +236,7 @@ Module ** GradedModule := (M,C) -> (
 
 gradedModule = method(SingleArgumentDispatch=>true)
 
-gradedModule Sequence := gradedModule List := modules -> (
+gradedModule Sequence := gradedModule List := GradedModule => modules -> (
      C := new GradedModule;
      R := C.ring = ring modules#0;
      scan(#modules, i -> (
@@ -246,9 +246,9 @@ gradedModule Sequence := gradedModule List := modules -> (
 	       C#i = M;
 	       ));
      C)
-gradedModule Module := M -> gradedModule singleton M
+gradedModule Module := GradedModule => M -> gradedModule singleton M
 
-GradedModule ++ GradedModule := (C,D) -> (
+GradedModule ++ GradedModule := GradedModule => (C,D) -> (
      E := new GradedModule;
      R := E.ring = C.ring;
      if R =!= D.ring then error "expected graded modules over the same ring";
@@ -256,12 +256,12 @@ GradedModule ++ GradedModule := (C,D) -> (
      E.components = {C,D};
      E)
 
-GradedModule ++ Module := (C,M) -> C ++ gradedModule M
-Module ++ GradedModule := (M,C) -> gradedModule M ++ C
+GradedModule ++ Module := GradedModule => (C,M) -> C ++ gradedModule M
+Module ++ GradedModule := GradedModule => (M,C) -> gradedModule M ++ C
 
 components GradedModule := C -> if C.?components then C.components else {C}
 
-GradedModule Array := (C,A) -> (
+GradedModule Array := GradedModule => (C,A) -> (
      if # A =!= 1 then error "expected array of length 1";
      n := A#0;
      D := new GradedModule;
@@ -269,7 +269,7 @@ GradedModule Array := (C,A) -> (
      scan(spots C, i -> D#(i-n) = C#i);
      D)
 
-GradedModule ** GradedModule := (C,D) -> (
+GradedModule ** GradedModule := GradedModule => (C,D) -> (
      P := youngest(C,D);
      key := (C,D,quote **);
      if P#?key then P#key
@@ -296,7 +296,7 @@ GradedModule ** GradedModule := (C,D) -> (
 
 gradedModuleMap = method(SingleArgumentDispatch=>true)
 
-gradedModuleMap Sequence := gradedModuleMap List := maps -> (
+gradedModuleMap Sequence := gradedModuleMap List := GradedModuleMap => maps -> (
      if #maps === 0 then error "expected at least one argument";
      f := new GradedModuleMap;
      R := f.ring = ring maps#0;
@@ -310,7 +310,7 @@ gradedModuleMap Sequence := gradedModuleMap List := maps -> (
      f.target = gradedModule(target \ maps);
      f.degree = 0;
      f)
-gradedModuleMap ModuleMap := M -> gradedModuleMap singleton M
+gradedModuleMap ModuleMap := GradedModuleMap => M -> gradedModuleMap singleton M
 
 single := (v) -> (
      if not same v 
@@ -336,14 +336,14 @@ GradedModuleMap.matrix = options -> (e) -> (
      f
      )
 
-kernel GradedModuleMap := options -> (f) -> (
+kernel GradedModuleMap := GradedModule => options -> (f) -> (
      E := new GradedModule;
      E.ring = f.ring;
      scan(spots f, i -> E#i = kernel f#i);
      E
      )
 
-image GradedModuleMap := (f) -> (
+image GradedModuleMap := GradedModule => (f) -> (
      E := new GradedModule;
      E.ring = f.ring;
      d := f.degree;
@@ -351,14 +351,14 @@ image GradedModuleMap := (f) -> (
      E
      )
 
-coimage GradedModuleMap := (f) -> (
+coimage GradedModuleMap := GradedModule => (f) -> (
      E := new GradedModule;
      E.ring = f.ring;
      scan(spots f, i -> E#i = coimage f#i);
      E
      )
 
-cokernel GradedModuleMap := (f) -> (
+cokernel GradedModuleMap := GradedModule => (f) -> (
      E := new GradedModule;
      E.ring = f.ring;
      d := f.degree;
@@ -366,36 +366,36 @@ cokernel GradedModuleMap := (f) -> (
      E
      )
 
-cover GradedModule := (M) -> (
+cover GradedModule := GradedModule => (M) -> (
      E := new GradedModule;
      E.ring = M.ring;
      scan(spots M, i -> E#i = cover M#i);
      E)
 
-ambient GradedModule := (M) -> (
+ambient GradedModule := GradedModule => (M) -> (
      E := new GradedModule;
      E.ring = M.ring;
      scan(spots M, i -> E#i = ambient M#i);
      E)
 
-super GradedModule := (M) -> (
+super GradedModule := GradedModule => (M) -> (
      E := new GradedModule;
      E.ring = M.ring;
      scan(spots M, i -> E#i = super M#i);
      E)
 
-prune GradedModule := (M) -> (
+prune GradedModule := GradedModule => (M) -> (
      E := new GradedModule;
      E.ring = M.ring;
      scan(spots M, i -> E#i = prune M#i);
      E)
 
-prune GradedModuleMap := f -> map(prune(f.target), prune(f.source), k -> prune f_k)
+prune GradedModuleMap := GradedModuleMap => f -> map(prune(f.target), prune(f.source), k -> prune f_k)
 
 complete GradedModule := (M) -> null
 rank GradedModule := (M) -> sum(spots M, i -> rank M#i)
 
-map(GradedModule,GradedModule,Function) := options -> (C,D,f) -> (
+map(GradedModule,GradedModule,Function) := GradedModuleMap => options -> (C,D,f) -> (
      h := new GradedModuleMap;
      h.source = D;
      h.target = C;
@@ -415,7 +415,7 @@ ggConcatBlocks := (R,mats) -> (
 	  ggPush(#mats), ggconcat, ggtranspose );
      getMatrix R)
      
-tensorAssociativity(GradedModule,GradedModule,GradedModule) := (A,B,C) -> (
+tensorAssociativity(GradedModule,GradedModule,GradedModule) := GradedModuleMap => (A,B,C) -> (
      R := ring A;
      map(
 	  F := (AB := A ** B) ** C,

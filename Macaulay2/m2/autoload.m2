@@ -8,7 +8,6 @@ autoload(Symbol,String) := (symbol,filename) -> (
 	  then error("symbol '", toString symbol, "' didn't acquire a new value in file '", filename, "'");
 	  (value symbol) x
 	  );
-     protect symbol;
      )
 
 autoload(Function,String) := (symbol,filename) -> null

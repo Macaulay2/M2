@@ -680,16 +680,6 @@ document { "&&",
      class of ", TT "y", "."
      }
 
--- document { quote ::,
---      TT "x :: y", " -- a binary operator.",
---      PARA,
---      "The user may install ", TO {"binary method", "s"}, " for this operator 
---      with code such as ",
---      PRE "         X :: Y := (x,y) -> ...",
---      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
---      class of ", TT "y", "."
---      }
-
 document { "^^",
      TT "x ^^ y", " -- a binary operator.",
      PARA,

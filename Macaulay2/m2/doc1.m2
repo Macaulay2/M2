@@ -573,6 +573,56 @@ document { SingleArgumentDispatch,
 	  }
      }
 
+document { "specifying typical values",
+     "For the purpose of construction good documentation automatically, it
+     is useful to specify the type of value typically returned by a function
+     or method.  For example, the function ", TO "isModule", " returns a boolean
+     value, and this is specified when creating the method function with the
+     option ", TO "TypicalValue", " as follows.",
+     PRE ///isModule = method(TypicalValue => Boolean)///,
+     PARA,
+     "Other functions, such as ", TO "prune", ", return values of various types,
+     depending on the type of the arguments provided.  To install a
+     function ", TT "f", " as the handler for ", TT "prune", " applied to a matrix,
+     we would normally use the following statement.",
+     PRE ///prune Matrix := f///,
+     "To specify that the value typically returned is a matrix (of class ", TT "Matrix", "),
+     we replace ", TT "f", " by ", TT "Matrix => f", ", as follows.",
+     PRE ///prune Matrix := Matrix => f///,
+     "Here is the way our code looks.",
+     EXAMPLE "code(prune, Matrix)",
+     "The information is stored in the hash table ", TO "typicalValues", ", and can
+     be recovered like this.",
+     EXAMPLE "typicalValues#(prune,Matrix)",
+     PARA,
+     "Warning: don't imagine that a definition of the form ",
+     PRE "f = t -> (...)",
+     "can be replaced with a declaration of the following form.",
+     PRE "f = X => t -> (...)",
+     "The difference here is that here we are using simple assignment, rather than
+     installing a method.  To document the return type is ", TT "X", " in this case, 
+     make an entry in ", TT "typicalValues", " directly.",
+     PRE "f = t -> (...)\ntypicalValues#f = X"
+     }
+
+document { "typicalValues",
+     TT "typicalValues", " -- a hash table used to store information about
+     the type of values typically returned by functions and methods.",
+     PARA,
+     "This information is used only to build documentation automatically.",
+     SEEALSO { "specifying typical values" }
+     }
+
+document { TypicalValues,
+     TT "TypicalValues => X", " -- an option to ", TO "method", "
+     which specifies that values returned by the method function will
+     typically be of type ", TT "X", ".",
+     PARA,
+     "This information is used only to build documentation automatically, and
+     is stored in the hash table ", TO "typicalValues", ".",
+     SEEALSO { "specifying typical values" }
+     }
+
 document { method,
      TT "f = method()", " -- creates a method function",
      PARA,
@@ -580,8 +630,9 @@ document { method,
      MENU {
 	  TO "Associative",
 	  -- TO "ClassArgument",
+	  TO "Options",
 	  TO "SingleArgumentDispatch",
-	  TO "Options"
+	  TO "TypicalValues"
 	  },
      PARA,
      "The code above creates a method function which takes up to three 
@@ -923,11 +974,6 @@ document { (quote <<, Nothing, Thing),
      PARA,
      "The intention here is that you can use ", TT "null", " as a dummy
      output file."
-     }
-
-document { (quote =>, Thing, Thing),
-     TT "x => y", " -- an ", TO "Option", ", used as an optional argument with 
-     some functions."
      }
 
 document { mathML,

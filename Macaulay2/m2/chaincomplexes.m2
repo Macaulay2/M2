@@ -1,18 +1,18 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 ChainComplex = new Type of GradedModule
-new ChainComplex := (cl) -> (
+new ChainComplex := ChainComplex => (cl) -> (
      C := newClass(ChainComplex,new MutableHashTable); -- sigh
      b := C.dd = new ChainComplexMap;
      b.degree = -1;
      b.source = b.target = C;
      C)
 
-complete ChainComplex := C -> (
+complete ChainComplex := ChainComplex => C -> (
      if C.?Resolution then (i := 0; while C_i != 0 do i = i+1);
      C)
 
-ChainComplex _ ZZ := (C,i) -> (
+ChainComplex _ ZZ := Module => (C,i) -> (
      if C#?i 
      then C#i
      else if C.?Resolution then (
@@ -21,10 +21,10 @@ ChainComplex _ ZZ := (C,i) -> (
 	  F := new Module from ring C;
 	  if F != 0 then C#i = F;
 	  F)
-     else (ring C)^0
+     else (ring C)^0					    -- for chain complexes of sheaves we'll want something else!
      )
 
-ChainComplex ^ ZZ := (C,i) -> C_-i
+ChainComplex ^ ZZ := Module => (C,i) -> C_-i
 
 spots := C -> select(keys C, i -> class i === ZZ)
 union := (x,y) -> keys(set x + set y)
@@ -62,8 +62,8 @@ complete ChainComplexMap := f -> (
 
 lineOnTop := (s) -> concatenate(width s : "-") || s
 
-sum ChainComplex := C -> directSum apply(sort spots C, i -> C_i)
-sum ChainComplexMap := f -> (
+sum ChainComplex := Module => C -> directSum apply(sort spots C, i -> C_i)
+sum ChainComplexMap := Matrix => f -> (
      R := ring f;
      T := target f;
      t := sort spots T;
@@ -101,7 +101,7 @@ net ChainComplexMap := f -> (
      if # v === 0 then "0"
      else stack v)
 ring ChainComplexMap := (f) -> ring source f
-ChainComplexMap _ ZZ := (f,i) -> (
+ChainComplexMap _ ZZ := Matrix => (f,i) -> (
      if f#?i 
      then f#i
      else if f.?Resolution then (
@@ -123,7 +123,7 @@ ChainComplex#id = (C) -> (
      f.degree = 0;
      scan(spots C, i -> f#i = id_(C_i));
      f)
-- ChainComplexMap := f -> (
+- ChainComplexMap := ChainComplexMap => f -> (
      complete f;
      g := new ChainComplexMap;
      g.source = f.source;
@@ -178,7 +178,7 @@ ZZ * ChainComplexMap := (n,f) -> (
      g.degree = f.degree;
      scan(spots f, i -> g#i = n * f_i);
      g)
-ChainComplexMap ^ ZZ := (f,n) -> (
+ChainComplexMap ^ ZZ := ChainComplexMap => (f,n) -> (
      if source f != target f then error "expected source and target to be the same";
      if n < 0 then error "expected nonnegative integer";
      if n === 0 then id_(source f)
@@ -203,7 +203,7 @@ ChainComplexMap ^ ZZ := (f,n) -> (
 			 )
 		    ));
 	  g))
-ChainComplexMap + ChainComplexMap := (f,g) -> (
+ChainComplexMap + ChainComplexMap := ChainComplexMap => (f,g) -> (
      if source f != source g
      or target f != target g
      or f.degree != g.degree then (
@@ -217,7 +217,7 @@ ChainComplexMap + ChainComplexMap := (f,g) -> (
      complete g;
      scan(union(spots f, spots g), i -> h#i = f_i + g_i);
      h)
-ChainComplexMap - ChainComplexMap := (f,g) -> (
+ChainComplexMap - ChainComplexMap := ChainComplexMap => (f,g) -> (
      if source f != source g
      or target f != target g
      or f.degree != g.degree then (
@@ -245,7 +245,7 @@ ChainComplexMap == ZZ := (f,i) -> (
      if i === 0 then all(spots f, j -> f_j == 0)
      else source f == target f and f == i id_(source f))
 ZZ == ChainComplexMap := (i,f) -> f == i
-ChainComplexMap ++ ChainComplexMap := (f,g) -> (
+ChainComplexMap ++ ChainComplexMap := ChainComplexMap => (f,g) -> (
      if f.degree != g.degree then (
 	  error "expected maps of the same degree";
 	  );
@@ -263,10 +263,10 @@ isHomogeneous ChainComplexMap := f -> all(spots f, i -> isHomogeneous f_i)
 
 isDirectSum ChainComplex := (C) -> C.?components
 components ChainComplexMap := f -> if f.?components then f.components else {f}
-ChainComplexMap _ Array := (f,v) -> f * (source f)_v
-ChainComplexMap ^ Array := (f,v) -> (target f)^v * f
+ChainComplexMap _ Array := ChainComplexMap => (f,v) -> f * (source f)_v
+ChainComplexMap ^ Array := ChainComplexMap => (f,v) -> (target f)^v * f
 
-RingMap ChainComplex := (f,C) -> (
+RingMap ChainComplex := ChainComplex => (f,C) -> (
      D := new ChainComplex;
      D.ring = target f;
      complete C;
@@ -275,7 +275,7 @@ RingMap ChainComplex := (f,C) -> (
      scan(spots C.dd, i -> D.dd#i = map(D_(i-1),D_i, f C.dd#i));
      D)
 
-ChainComplexMap * ChainComplexMap := (g,f) -> (
+ChainComplexMap * ChainComplexMap := ChainComplexMap => (g,f) -> (
      if target f != source g then error "expected composable maps of chain complexes";
      h := new ChainComplexMap;
      h.source = source f;
@@ -289,7 +289,7 @@ ChainComplexMap * ChainComplexMap := (g,f) -> (
 
 extend = method()
 
-extend(ChainComplex,ChainComplex,Matrix) := (D,C,fi)-> (
+extend(ChainComplex,ChainComplex,Matrix) := ChainComplexMap => (D,C,fi)-> (
      i := 0;
      j := 0;
      f := new ChainComplexMap;
@@ -305,7 +305,7 @@ extend(ChainComplex,ChainComplex,Matrix) := (D,C,fi)-> (
 	  );
      f)
 
-cone ChainComplexMap := f -> (
+cone ChainComplexMap := ChainComplex => f -> (
      if f.degree =!= 0 then error "expected a map of chain complexes of degree zero";
      C := source f;
      D := target f;
@@ -322,7 +322,7 @@ cone ChainComplexMap := f -> (
 	       );
      E)
 
-nullhomotopy ChainComplexMap := f -> (
+nullhomotopy ChainComplexMap := ChainComplexMap => f -> (
      s := new ChainComplexMap;
      s.ring = ring f;
      s.source = C := source f;
@@ -384,7 +384,7 @@ poincareN ChainComplex := (C) -> (
 		    (d,m) -> f = f + m * G_0^n * product(# d, j -> G_(j+1)^(d_j)))));
      f )
 
-ChainComplex ** Module := (C,M) -> (
+ChainComplex ** Module := ChainComplex => (C,M) -> (
      P := youngest(C,M);
      key := (C,M,quote **);
      if P#?key then P#key
@@ -399,7 +399,7 @@ ChainComplex ** Module := (C,M) -> (
 		    ));
 	  D))
 
-Module ** ChainComplex := (M,C) -> (
+Module ** ChainComplex := ChainComplex => (M,C) -> (
      P := youngest(M,C);
      key := (M,C,quote **);
      if P#?key then P#key
@@ -415,30 +415,29 @@ Module ** ChainComplex := (M,C) -> (
 	  D))
 -----------------------------------------------------------------------------
 
-homology(ZZ,ChainComplex) := opts -> (i,C) -> homology(C.dd_i, C.dd_(i+1))
+homology(ZZ,ChainComplex) := Module => opts -> (i,C) -> homology(C.dd_i, C.dd_(i+1))
+cohomology(ZZ,ChainComplex) := Module => opts -> (i,C) -> homology(-i, C)
 
-cohomology(ZZ,ChainComplex) := opts -> (i,C) -> homology(-i, C)
-  homology(ZZ,ChainComplexMap) := opts -> (i,f) -> (
-       inducedMap(homology(i+degree f,target f), homology(i,source f),f_i)
-       )
+homology(ZZ,ChainComplexMap) := Matrix => opts -> (i,f) -> (
+     inducedMap(homology(i+degree f,target f), homology(i,source f),f_i)
+     )
+cohomology(ZZ,ChainComplexMap) := Matrix => opts -> (i,f) -> homology(-i,f)
 
-cohomology(ZZ,ChainComplexMap) := opts -> (i,f) -> homology(-i,f)
-
-homology(ChainComplex) := opts -> (C) -> (
+homology(ChainComplex) := GradedModule => opts -> (C) -> (
      H := new GradedModule;
      H.ring = ring C;
      complete C;
      scan(spots C, i -> H#i = homology(i,C));
      H)
 
-gradedModule(ChainComplex) := (C) -> (
+gradedModule(ChainComplex) := GradedModule => (C) -> (
      H := new GradedModule;
      H.ring = ring C;
      complete C;
      scan(spots C, i -> H#i = C#i);
      H)
 
-homology(ChainComplexMap) := opts -> (f) -> (
+homology(ChainComplexMap) := GradedModuleMap => opts -> (f) -> (
      g := new GradedModuleMap;
      g.degree = f.degree;
      g.source = HH f.source;
@@ -448,21 +447,21 @@ homology(ChainComplexMap) := opts -> (f) -> (
 
 chainComplex = method(SingleArgumentDispatch=>true)
 
-chainComplex Matrix := f -> chainComplex {f}
+chainComplex Matrix := ChainComplexMap => f -> chainComplex {f}
 
-chainComplex Sequence := chainComplex List := maps -> (
-     if #maps === 0 then error "expected at least one map";
+chainComplex Sequence := chainComplex List := ChainComplex => maps -> (
+     if #maps === 0 then error "expected at least one differential map";
      C := new ChainComplex;
      R := C.ring = ring target maps#0;
      scan(#maps, i -> (
 	       f := maps#i;
 	       if R =!= ring f
-	       then error "expected maps over the same ring";
+	       then error "expected differential maps over the same ring";
 	       if i > 0 and C#i != target f then (
 		    diff := degrees C#i - degrees target f;
 		    if same diff
 		    then f = f ** R^(- diff#0)
-		    else error "expected composable maps";
+		    else error "expected composable differential maps";
 		    );
 	       C.dd#(i+1) = f;
 	       if i === 0 then C#i = target f;
@@ -496,11 +495,11 @@ ChainComplex.directSum = args -> (
      scan(unique flatten (args/spots), n -> C#n = directSum apply(args, D -> D_n));
      scan(spots C, n -> if C#?(n-1) then C.dd#n = directSum apply(args, D -> D.dd_n));
      C)
-ChainComplex ++ ChainComplex := (C,D) -> directSum(C,D)
+ChainComplex ++ ChainComplex := ChainComplex => (C,D) -> directSum(C,D)
 
 components ChainComplex := C -> if C.?components then C.components else {C}
 
-ChainComplex Array := (C,A) -> (
+ChainComplex Array := ChainComplex => (C,A) -> (
      if # A =!= 1 then error "expected array of length 1";
      n := A#0;
      D := new ChainComplex;
@@ -514,7 +513,7 @@ ChainComplex Array := (C,A) -> (
      else scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = -f);
      D)
 
-Hom(ChainComplex, Module) := (C,N) -> (
+Hom(ChainComplex, Module) := ChainComplex => (C,N) -> (
      c := C.dd;
      complete c;
      D := new ChainComplex;
@@ -528,7 +527,7 @@ Hom(ChainComplex, Module) := (C,N) -> (
 	       ));
      D)
 
-Hom(Module, ChainComplex) := (M,C) -> (
+Hom(Module, ChainComplex) := ChainComplex => (M,C) -> (
      complete C.dd;
      D := new ChainComplex;
      D.ring = ring C;
@@ -539,11 +538,11 @@ Hom(Module, ChainComplex) := (M,C) -> (
 	       ));
      D)
 
-dual ChainComplex := (C) -> (
+dual ChainComplex := ChainComplex => (C) -> (
 	  R := ring C;
 	  Hom(C,R^1))
 
-Hom(ChainComplexMap, Module) := (f,N) -> (
+Hom(ChainComplexMap, Module) := ChainComplexMap => (f,N) -> (
      g := new ChainComplexMap;
      d := g.degree = f.degree;
      g.source = Hom(target f, N);
@@ -551,7 +550,7 @@ Hom(ChainComplexMap, Module) := (f,N) -> (
      scan(spots f, i -> g#(-i-d) = Hom(f#i,N));
      g)
 
-Hom(Module, ChainComplexMap) := (N,f) -> (
+Hom(Module, ChainComplexMap) := ChainComplexMap => (N,f) -> (
      g := new ChainComplexMap;
      d := g.degree = f.degree;
      g.source = Hom(N, source f);
@@ -559,8 +558,7 @@ Hom(Module, ChainComplexMap) := (N,f) -> (
      scan(spots f, i -> g#i = Hom(N,f#i));
      g)
 
-transpose ChainComplexMap := 
-dual ChainComplexMap := f -> Hom(f, (ring f)^1)
+transpose ChainComplexMap := dual ChainComplexMap := ChainComplexMap => f -> Hom(f, (ring f)^1)
 
 regularity ChainComplex := C -> (
      maxrow := null;
@@ -686,7 +684,7 @@ syzygyScheme = (C,i,v) -> (
      g := extend(resolution cokernel transpose (C.dd_i * v), dual C[i], transpose v);
      prune cokernel (C.dd_1  * transpose g_(i-1)))
 -----------------------------------------------------------------------------
-chainComplex GradedModule := (M) -> (
+chainComplex GradedModule := ChainComplex => (M) -> (
      C := new ChainComplex from M;
      b := C.dd = new ChainComplexMap;
      b.degree = -1;
@@ -709,7 +707,7 @@ tens := (R,f,g) -> (
      sendgg (ggPush f, ggPush g, ggtensor);
      getMatrix R)
 
-ChainComplex ** ChainComplex := (C,D) -> (
+ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
      P := youngest(C,D);
      key := (C,D,quote **);
      if P#?key then P#key
@@ -734,7 +732,7 @@ ChainComplex ** ChainComplex := (C,D) -> (
 					0))))));
 	  E))
 
-ChainComplex ** GradedModule := (C,D) -> (
+ChainComplex ** GradedModule := ChainComplex => (C,D) -> (
      P := youngest(C,D);
      key := (C,D,quote **);
      if P#?key then P#key
@@ -743,7 +741,7 @@ ChainComplex ** GradedModule := (C,D) -> (
 	  )
      )
 
-GradedModule ** ChainComplex := (C,D) -> (
+GradedModule ** ChainComplex := ChainComplex => (C,D) -> (
      P := youngest(C,D);
      key := (C,D,quote **);
      if P#?key then P#key
@@ -752,7 +750,7 @@ GradedModule ** ChainComplex := (C,D) -> (
 	  )
      )
 
-ChainComplexMap ** ChainComplexMap := (f,g) -> (
+ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
      P := youngest(f,g);
      key := (f,g,quote **);
      if P#?key then P#key
@@ -774,7 +772,7 @@ ChainComplexMap ** ChainComplexMap := (f,g) -> (
 					else map(F',E'c#(E'i#(i,j)),0)))})));
 	  h))
 
-ChainComplexMap ** ChainComplex := (f,C) -> (
+ChainComplexMap ** ChainComplex := ChainComplexMap => (f,C) -> (
      P := youngest(f,C);
      key := (f,C,quote **);
      if P#?key then P#key
@@ -782,7 +780,7 @@ ChainComplexMap ** ChainComplex := (f,C) -> (
      	  f ** id_C
 	  )
      )
-ChainComplex ** ChainComplexMap := (C,f) -> (
+ChainComplex ** ChainComplexMap := ChainComplexMap => (C,f) -> (
      P := youngest(C,f);
      key := (C,f,quote **);
      if P#?key then P#key
@@ -796,7 +794,7 @@ max ChainComplex := C -> max spots C
 
 tensorAssociativity = method()
 
-tensorAssociativity(Module,Module,Module) := (A,B,C) -> map((A**B)**C,A**(B**C),1)
+tensorAssociativity(Module,Module,Module) := Matrix => (A,B,C) -> map((A**B)**C,A**(B**C),1)
 
 newMatrix := (tar,src) -> (
      R := ring tar;
@@ -806,7 +804,7 @@ newMatrix := (tar,src) -> (
      p.handle = newHandle "";
      p)
      
-tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := (A,B,C) -> (
+tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := ChainComplexMap => (A,B,C) -> (
      R := ring A;
      map(
 	  F := (AB := A ** B) ** C,
@@ -834,7 +832,7 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := (A,B,C) -> (
      -- 			      * (A_a ** BC_bc^[(b,c)])
      -- 			      )) * E_k^[(a,bc)]))
 
-Module Array := (M,v) -> (
+Module Array := ChaniComplex => (M,v) -> (
      if #v =!= 1 then error "expected array of length 1";
      n := v#0;
      if class n =!= ZZ then error "expected [n] with n an integer";
@@ -843,8 +841,8 @@ Module Array := (M,v) -> (
      C#-n = M;
      C)
 
-ChainComplexMap _ Array := (f,v) -> f * (source f)_v
-ChainComplexMap ^ Array := (f,v) -> (target f)^v * f
+ChainComplexMap _ Array := ChainComplexMap => (f,v) -> f * (source f)_v
+ChainComplexMap ^ Array := ChainComplexMap => (f,v) -> (target f)^v * f
 
 trans := (C,v) -> (
      if C.?indexComponents then (
@@ -856,17 +854,17 @@ trans := (C,v) -> (
 	  apply(v, i -> if not Cc#?i then error "expected an index of a component of the direct sum");
 	  v)
      )
-ChainComplex _ Array := (C,v) -> if C#?(quote _,v) then C#(quote _,v) else C#(quote _,v) = (
+ChainComplex _ Array := ChainComplexMap => (C,v) -> if C#?(quote _,v) then C#(quote _,v) else C#(quote _,v) = (
      v = trans(C,v);
      D := directSum apply(toList v, i -> C.components#i);
      map(C,D,k -> C_k_v))
 
-ChainComplex ^ Array := (C,v) -> if C#?(quote ^,v) then C#(quote ^,v) else C#(quote ^,v) = (
+ChainComplex ^ Array := ChainComplexMap => (C,v) -> if C#?(quote ^,v) then C#(quote ^,v) else C#(quote ^,v) = (
      v = trans(C,v);
      D := directSum apply(toList v, i -> C.components#i);
      map(D,C,k -> C_k^v))
 
-map(ChainComplex,ChainComplex,Function) := options -> (C,D,f) -> (
+map(ChainComplex,ChainComplex,Function) := ChainComplexMap => options -> (C,D,f) -> (
      h := new ChainComplexMap;
      h.source = D;
      h.target = C;
@@ -879,9 +877,9 @@ map(ChainComplex,ChainComplex,Function) := options -> (C,D,f) -> (
      h
      )
 
-map(ChainComplex,ChainComplex,ChainComplexMap) := options -> (C,D,f) -> map(C,D,k -> f_k)
+map(ChainComplex,ChainComplex,ChainComplexMap) := ChainComplexMap => options -> (C,D,f) -> map(C,D,k -> f_k)
 
-map(ChainComplex,ChainComplex) := options -> (C,D) -> (
+map(ChainComplex,ChainComplex) := ChainComplexMap => options -> (C,D) -> (
      h := new ChainComplexMap;
      h.source = D;
      h.target = C;
@@ -890,7 +888,7 @@ map(ChainComplex,ChainComplex) := options -> (C,D) -> (
      h
      )
 
-kernel ChainComplexMap := options -> (f) -> (
+kernel ChainComplexMap := ChainComplex => options -> (f) -> (
      D := source f;
      C := new ChainComplex;
      C.ring = ring f;
@@ -899,7 +897,7 @@ kernel ChainComplexMap := options -> (f) -> (
      scan(spots C, k -> if C#?(k-1) then C.dd#k = (D.dd_k * map(D_k,C_k)) // map(D_(k-1),C_(k-1)));
      C)
 
-coimage ChainComplexMap := (f) -> (
+coimage ChainComplexMap := ChainComplex => (f) -> (
      D := source f;
      C := new ChainComplex;
      C.ring = ring f;
@@ -908,7 +906,7 @@ coimage ChainComplexMap := (f) -> (
      scan(spots C, k -> if C#?(k-1) then C.dd#k = map(C#(k-1),C#k,matrix D.dd_k));
      C)
 
-cokernel ChainComplexMap := (f) -> (
+cokernel ChainComplexMap := ChainComplex => (f) -> (
      D := target f;
      deg := f.degree;
      C := new ChainComplex;
@@ -918,7 +916,7 @@ cokernel ChainComplexMap := (f) -> (
      scan(spots C, k -> if C#?(k-1) then C.dd#k = map(C#(k-1),C#k,matrix D.dd_k));
      C)
 
-image ChainComplexMap := (f) -> (
+image ChainComplexMap := ChainComplex => (f) -> (
      D := target f;
      E := source f;
      deg := f.degree;
@@ -929,7 +927,7 @@ image ChainComplexMap := (f) -> (
      scan(spots C, k -> if C#?(k-1) then C.dd#k = map(C#(k-1),C#k,matrix E.dd_(k-deg)));
      C)
 
-prune ChainComplex := (C) -> (
+prune ChainComplex := ChainComplex => (C) -> (
      D := new ChainComplex;
      complete C;
      complete C.dd;
@@ -938,7 +936,7 @@ prune ChainComplex := (C) -> (
      scan(spots C.dd, i -> D.dd#i = prune C.dd#i);
      D)
 
-prune ChainComplexMap := (f) -> (
+prune ChainComplexMap := ChainComplexMap => (f) -> (
      complete f;
      map(prune target f, prune source f, k -> prune f#k)
      )

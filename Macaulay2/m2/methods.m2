@@ -24,6 +24,8 @@ methodDefaults := new OptionTable from {
      Options => null
      }
 
+methodFunctionOptions = new MutableHashTable
+
 method = args -> processArgs(
   args,
   methodDefaults,
@@ -101,36 +103,48 @@ method = args -> processArgs(
 	  )
 	);
       if options.TypicalValue =!= Thing then typicalValues#methodFunction = options.TypicalValue;
+      methodFunctionOptions#methodFunction = options;
       methodFunction
       )
   )
 
 OptionsRegistry#method = methodDefaults
 
-scan({ 
-	  realPart, conjugate, imaginaryPart, borel, isBorel, codim, 
+setup := (args, symbols) -> (
+     scan(symbols, n -> (
+	  if Symbols#?n then error concatenate("function ",n," redefined");
+	  f := method args;
+	  Symbols#f = n;
+	  n <- f;
+	  )))
+
+setup((), { 
+	  borel, codim, 
 	  lcmDegree, gcdDegree, prune, euler, genera, gcdCoefficients,
-	  isWellDefined, isInjective, isSurjective, singularLocus, isSubset,
+	  singularLocus, 
 	  dim, Hom, diff, contract, exteriorPower, subsets, partitions, member,
-	  koszul, symmetricPower, basis, coefficientRing, trace, binomial, subquotient,
+	  koszul, symmetricPower, basis, coefficientRing, trace, binomial,
 	  getchange, poincare, cover, super, poincareN, terms,
 	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, scanValues, stats, 
 	  substitute, rank, complete, ambient, top, transpose, length, baseName,
-	  degree, degreeLength, coefficients, isHomogeneous, size,
-	  isIsomorphism, exponents, height, depth, width, regularity, nullhomotopy,
-	  hilbertFunction, content, monoid, isPrime, leadTerm, leadCoefficient, leadMonomial, isField,
+	  degree, degreeLength, coefficients, size, sum, product,
+	  exponents, height, depth, width, regularity, nullhomotopy,
+	  hilbertFunction, content, monoid, leadTerm, leadCoefficient, leadMonomial, 
 	  leadComponent, degreesRing, newDegreesRing, degrees, annihilator, assign, numgens,
 	  autoload, ggPush, char, minprimes, relations, cone, pdim, random,
-	  frac, betti, det, ring, presentation, quote use, degreesMonoid, newDegreesMonoid, submatrix,
+	  det, presentation, quote use, degreesMonoid, newDegreesMonoid, submatrix,
 	  truncate, fraction
-	  },
-     n -> (
-	  if Symbols#?n then error concatenate("function ",n," redefined");
-	  f := method();
-	  Symbols#f = n;
-	  n <- f;
-	  )
-     )
+	  })
+setup(TypicalValue => Module, {subquotient})
+setup(TypicalValue => RR, {realPart, imaginaryPart})
+setup(TypicalValue => CC, {conjugate})
+setup(TypicalValue => Boolean,
+     {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
+	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField
+	  })
+setup(TypicalValue => FractionField, {frac})
+setup(TypicalValue => Ring, {ring})
+setup(TypicalValue => Net, {betti})
 
 use Thing := identity
 
@@ -138,32 +152,25 @@ use HashTable := x -> (
      if x.?use then x.use x; 
      x)
 
-radical = method( Options=>{
-	  Unmixed=>false,
-	  CompleteIntersection => null
-	  }
-     )
-
-isUnit = method(TypicalValue => Boolean)
-sum = method()
-product = method()
-toString = method(SingleArgumentDispatch => true); typicalValues#toString = String
-toExternalString = method(SingleArgumentDispatch => true)
-max = method(SingleArgumentDispatch=>true)
-min = method(SingleArgumentDispatch=>true)
-ideal = method(SingleArgumentDispatch=>true)
-options = method(SingleArgumentDispatch=>true)
-submodule = method(SingleArgumentDispatch=>true)
-directSum = method(SingleArgumentDispatch=>true)
-intersect = method(SingleArgumentDispatch=>true)
-net = method(SingleArgumentDispatch=>true)
-vars = method(SingleArgumentDispatch=>true)
-expression = method(SingleArgumentDispatch=>true)
+radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
+toString = method(SingleArgumentDispatch => true, TypicalValue => String)
+toExternalString = method(SingleArgumentDispatch => true, TypicalValue => String)
+ideal = method(SingleArgumentDispatch=>true, TypicalValue => Ideal)
+options = method(SingleArgumentDispatch=>true, TypicalValue => OptionTable)
+submodule = method(SingleArgumentDispatch=>true, TypicalValue => Module)
+setup(SingleArgumentDispatch=>true, {max,min,directSum,intersect,vars})
+net = method(SingleArgumentDispatch=>true, TypicalValue => Net)
+expression = method(SingleArgumentDispatch=>true, TypicalValue => Expression)
+hilbertPolynomial = method(
+     Options => { Projective => true }, 
+     TypicalValue => ProjectiveHilbertPolynomial )
 factor = method( Options => { } )
+
 
 cohomology = method( Options => { 
 	  Degree => 0		  -- for local cohomology and sheaf cohomology
 	  } )
+
 homology = method( Options => { } )
 
 trim    = method ( Options => {
@@ -172,7 +179,7 @@ trim    = method ( Options => {
 mingens = method ( Options => { 
 	  -- DegreeLimit => {}
 	  } )
-hilbertPolynomial = method( Options => { Projective => true } )
+
 width File := fileWidth; erase quote fileWidth
 width Net := netWidth; erase quote netWidth
 height Net := netHeight; erase quote netHeight
@@ -245,11 +252,11 @@ computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
      )
 -----------------------------------------------------------------------------
 
-html = method(SingleArgumentDispatch=>true)
-text = method(SingleArgumentDispatch=>true)
-tex = method(SingleArgumentDispatch=>true)
-texMath = method(SingleArgumentDispatch=>true)
-mathML = method(SingleArgumentDispatch=>true)
+html = method(SingleArgumentDispatch=>true, TypicalValue => String)
+text = method(SingleArgumentDispatch=>true, TypicalValue => String)
+tex = method(SingleArgumentDispatch=>true, TypicalValue => String)
+texMath = method(SingleArgumentDispatch=>true, TypicalValue => String)
+mathML = method(SingleArgumentDispatch=>true, TypicalValue => String)
 
 -----------------------------------------------------------------------------
 

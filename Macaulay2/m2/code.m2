@@ -1,18 +1,4 @@
---		Copyright 1995 by Daniel R. Grayson
-
--- search := (filename,fun) -> (
---      if substring(filename,0,1) === "/" 
---      or substring(filename,0,2) === "./" 
---      or substring(filename,0,3) === "../" then try fun filename else null
---      else (
--- 	  ret := null;
--- 	  select(1,path, 
--- 	       dir -> (
--- 	       	    fn := if dir == "." then filename else dir | "/" | filename;
--- 	       	    try (ret = fun fn; true) else false));
--- 	  ret))
--- getpath := (filename) -> search(filename,get)
--- resolve := (filename) -> search(filename,fn -> (close openIn fn; fn))
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 location := method(SingleArgumentDispatch=>true)
 location Sequence := args -> (

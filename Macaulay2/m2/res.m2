@@ -148,7 +148,7 @@ Algorithm0 := new OptionTable from { Algorithm => 0 }
 Algorithm1 := new OptionTable from { Algorithm => 1 }
 Algorithm2 := new OptionTable from { Algorithm => 2 }
 
-resolution Module := o -> (M) -> (
+resolution Module := ChainComplex => o -> (M) -> (
      R := ring M;
      k := ultimate(coefficientRing, R);
      oR := options R;
@@ -163,12 +163,12 @@ resolution Module := o -> (M) -> (
      else (resolutionInEngine default(o,Algorithm1))(M)
      )
 
-resolution Matrix := options -> (f) -> extend(
+resolution Matrix := ChainComplexMap => options -> (f) -> extend(
      resolution(target f, options), 
      resolution(source f, options), 
      matrix f)
 
-resolution Ideal := options -> (I) -> resolution(
+resolution Ideal := ChainComplex => options -> (I) -> resolution(
      if I.?quotient 
      then I.quotient
      else I.quotient = (ring I)^1/I,
@@ -178,22 +178,22 @@ resolution Ideal := options -> (I) -> resolution(
 -- for correct strategy... (non-Schreyer resolution).  In fact, the
 -- only way to obtain that is use Strategy => xxx, some xxx.
 
-mingens(ZZ,Resolution) := options -> (level,g) -> (
+mingens(ZZ,Resolution) := Matrix => options -> (level,g) -> (
      sendgg(ggPush g, ggPush level, gggetmingens);
      getMatrix ring g			  -- we're losing information here! MES
      )
 
-generators(ZZ,Resolution) := (level,g) -> (
+generators(ZZ,Resolution) := Matrix => (level,g) -> (
      sendgg(ggPush g, ggPush level, gggetgb);
      getMatrix ring g)
 
 -- this is undocumented debugging junk of Mike's
 
-getchange(ZZ,Resolution) := (level,g) -> (
+getchange(ZZ,Resolution) := Matrix => (level,g) -> (
      sendgg(ggPush g, ggPush level, gggetchange);
      getMatrix ring g)
 
-leadTerm(ZZ, ZZ, Resolution) := (n,level,g) -> (
+leadTerm(ZZ, ZZ, Resolution) := Matrix => (n,level,g) -> (
      sendgg(ggPush g, ggPush n, ggPush level, gginitial);
      getMatrix ring g)
 
