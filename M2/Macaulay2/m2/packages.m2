@@ -33,31 +33,27 @@ reverseDictionaryRemove = (X,x) -> (
 	       break)))
 
 toString Dictionary := d -> (
-     r := reverseDictionary d;
-     if r =!= null then return toString r;
+     if ReverseDictionary#?d then return toString ReverseDictionary#d;
      if length d == 0 then "Dictionary{}" else "Dictionary{..." | toString length d | "...}"
      )
 
 globalAssignFunction = (X,x) -> (
-     reverseDictionaryRecord (X,x);
-     if mutable x and not x#?(symbol name) then (			    -- phase this out
-	  x.Symbol = X;
-	  );
+     ReverseDictionary#x = X;
      use x;
      )
 
 globalReleaseFunction = (X,x) -> (
-     reverseDictionaryRemove (X,x);
-     if mutable x and  x.?Symbol and X === x.Symbol
-     then (
-	  remove(x,symbol symbol);
+     remove(ReverseDictionary,x);
+     )
+
+scan(
+     {Type,ScriptedFunctor}, 
+     X -> (
+	  X.GlobalAssignHook = globalAssignFunction; 
+	  X.GlobalReleaseHook = globalReleaseFunction;
 	  )
      )
 
-Type.GlobalAssignHook = globalAssignFunction
-Type.GlobalReleaseHook = globalReleaseFunction
-ScriptedFunctor.GlobalAssignHook = globalAssignFunction
-ScriptedFunctor.GlobalReleaseHook = globalReleaseFunction
 installMethod(GlobalAssignHook,Package,globalAssignFunction)
 installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 
@@ -96,6 +92,7 @@ newPackage(String) := opts -> (title) -> (
 	  "old debugging mode" => debuggingMode,
 	  "test inputs" => new MutableHashTable,
 	  "reverse dictionary" => new MutableHashTable,
+	  "print names" => new MutableHashTable,
 	  "raw documentation" => new MutableHashTable,
 	  "documentation" => new MutableHashTable,
 	  "example inputs" => new MutableHashTable,
@@ -130,14 +127,14 @@ newPackage("Main",
 
 Command.GlobalAssignHook = 
 Function.GlobalAssignHook = 
-Manipulator.GlobalAssignHook = (X,x) -> reverseDictionaryRecord(X,x)
+Manipulator.GlobalAssignHook = (X,x) -> ReverseDictionary#X = x
 
 Function.GlobalReleaseHook = 
-Manipulator.GlobalReleaseHook = (X,x) -> reverseDictionaryRemove(X,x)
+Manipulator.GlobalReleaseHook = (X,x) -> remove(ReverseDictionary,x)
 
 Command.GlobalReleaseHook = (X,x) -> (
      stderr << "warning: " << toString X << " redefined" << endl;
-     reverseDictionaryRemove(X,x);
+     remove(ReverseDictionary,x);
      )
 
 closePackage = p -> (
@@ -148,7 +145,7 @@ closePackage = p -> (
      scan(values d,
 	  s -> (
 	       if not ws#?s then protect s;
-	       if value s =!= s and not p#"reverse dictionary"#?(value s) then p#"reverse dictionary"#(value s) = s;
+	       if value s =!= s and not ReverseDictionary#?(value s) then ReverseDictionary#(value s) = s;
 	       ));
      if p =!= Main then (			    -- protect it later
 	  protect p.Dictionary;
@@ -173,23 +170,17 @@ dictionary = method()
 dictionary Symbol := s -> (				    -- eventually every symbol will know what dictionary it's in, perhaps
      n := toString s;
      scan(globalDictionaries, d -> if d#?n and d#n === s then break d))
-dictionary Thing := x -> (
-     s := reverseDictionary x;
-     if s === null then null else dictionary s
-     )
+dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictionary#x
 
 package = method ()
 package Dictionary := d -> scan(packages, pkg -> if pkg.Dictionary === d then break pkg)
-package Symbol := s -> (
-     d := dictionary s;
-     if d === null then return null;
-     package d)
-package HashTable := package Function := x -> (
-     X := reverseDictionary x;
-     if X =!= null then package X)
 package Thing := x -> (
      d := dictionary x;
      if d =!= null then package d)
+package Symbol := s -> (
+     d := dictionary s;
+     if d =!= null then package d)
+package HashTable := package Function := x -> if ReverseDictionary#?x then package ReverseDictionary#x
 
 warned := new MutableHashTable
 

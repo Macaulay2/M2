@@ -1,6 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-document { length,
+document { "length",
      Headline => "length"
      }
 

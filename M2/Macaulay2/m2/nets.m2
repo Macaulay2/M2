@@ -21,14 +21,15 @@ Net.AfterPrint = identity
 toString MutableHashTable := s -> (
      if s.?name and class s.name === String then return s.name;
      if s.?Symbol and class s.Symbol === Symbol then return toString s.Symbol;
-     r := reverseDictionary s;
-     if r =!= null then return toString r;
      concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
+toString Type := X -> (
+     if X.?name and class X.name === String then return X.name;
+     if X.?Symbol and class X.Symbol === Symbol then return toString X.Symbol;
+     if ReverseDictionary#?X then return toString ReverseDictionary#X;
+     concatenate(toString class X, " of ", toString parent X, "{...", toString(#X), "...}"))
 toString HashTable := s -> (
      if s.?name and class s.name === String then return s.name;
      if s.?Symbol and class s.Symbol === Symbol then return toString s.Symbol;
-     r := reverseDictionary s;
-     if r =!= null then return toString r;
      concatenate (
 	  "new ", toString class s,
 	  if parent s =!= Nothing then (" of ", toString parent s),
@@ -48,22 +49,18 @@ toString Sequence := s -> (
      else concatenate("(",between(",",toString \ s),")")
      )
 net Command := toString Command := toExternalString Command := f -> (
-     X := reverseDictionary f;
-     if X =!= null then toString X else "--Command--"
+     if ReverseDictionary#?f then return toString ReverseDictionary#f else "--Command--"
      )
 
 net Function := toString Function := f -> (
-     X := reverseDictionary f;
-     if X =!= null then toString X else (
-	  t := locate f;
-	  if t === null then "--Function--" 
-	  else concatenate("--Function[", t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4, "]--")
-	  )
+     if ReverseDictionary#?f then return toString ReverseDictionary#f;
+     t := locate f;
+     if t === null then "--Function--" 
+     else concatenate("--Function[", t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4, "]--")
      )
 
 toExternalString Manipulator := toString Manipulator := f -> (
-     X := reverseDictionary f;
-     if X =!= null then toString X else "--Manipulator--"
+     if ReverseDictionary#?f then return toString ReverseDictionary#f else "--Manipulator--"
      )
 -----------------------------------------------------------------------------
 toExternalString String := format
@@ -72,20 +69,14 @@ toString Net := x -> concatenate between("\n",unstack x)
 toExternalString Net := x -> concatenate(format toString x, "^", toString(height x - 1))
 
 toExternalString MutableHashTable := s -> (
-     if s.?name and class s.name === String then return s.name;
-     r := reverseDictionary s;
-     if r =!= null then return toString r;
+     if ReverseDictionary#?s then return toString ReverseDictionary#s;
      error "anonymous mutable hash table cannot be converted to external string";
---     concatenate (
---	  toExternalString class s,
---	  if parent s =!= Nothing then (" of ", toExternalString parent s),
---	  "{...", toString(#s), "...}"
---	  )
+     )
+toExternalString Type := s -> (
+     if ReverseDictionary#?s then return toString ReverseDictionary#s;
+     error "anonymous type cannot be converted to external string";
      )
 toExternalString HashTable := s -> (
-     if s.?name and class s.name === String then return s.name;
-     r := reverseDictionary s;
-     if r =!= null then return toString r;
      concatenate (
 	  "new ", toExternalString class s,
 	  if parent s =!= Nothing then (" of ", toExternalString parent s),
@@ -197,8 +188,6 @@ net MutableList := x -> horizontalJoin ( net class x, "{...", toString(#x), "...
 net HashTable := x -> (
      if x.?name and class x.name === String then return x.name;
      if x.?Symbol and class x.Symbol === Symbol then return toString x.Symbol;
-     r := reverseDictionary x;
-     if r =!= null then return toString r;
      horizontalJoin flatten ( 
      	  net class x,
 	  "{", 
@@ -211,9 +200,12 @@ net HashTable := x -> (
 net MutableHashTable := x -> (
      if x.?name and class x.name === String then return x.name;
      if x.?Symbol and class x.Symbol === Symbol then return toString x.Symbol;
-     r := reverseDictionary x;
-     if r =!= null then return toString r;
      horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" ))
+net Type := X -> (
+     if X.?name and class X.name === String then return X.name;
+     if X.?Symbol and class X.Symbol === Symbol then return toString X.Symbol;
+     if ReverseDictionary#?X then return toString ReverseDictionary#X;
+     horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
 
 texMath Net := n -> concatenate (
      ///{\arraycolsep=0pt

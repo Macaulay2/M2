@@ -2,6 +2,8 @@
 
 ScriptedFunctor = new Type of MutableHashTable
 ScriptedFunctor.synonym = "scripted functor"
+net ScriptedFunctor := lookup(net,Type)
+
 ScriptedFunctor ^ Thing := (G,i) -> (
      if G#?superscript 
      then G#superscript i

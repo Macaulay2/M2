@@ -10,7 +10,7 @@ stopIfError = false
 gotarg := arg -> any(commandLine, s -> s == arg)
 if gotarg "--stop" then stopIfError = true
 
-firstTime := not Array.?name
+firstTime := class ReverseDictionary === Symbol
 
 -- here we put local variables that might be used by the global definitions below
 match := X -> 0 < #(matches X);
@@ -18,37 +18,17 @@ match := X -> 0 < #(matches X);
 if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again
      -- with all these already done and global variables set to read-only
-     Array.name = "Array";
-     BasicList.name = "BasicList";
-     BigReal.name = "BigReal";
-     BigComplex.name = "BigComplex";
-     Boolean.name = "Boolean";
-     CacheTable.name = "CacheTable";
-     Pseudocode.name = "Pseudocode";
-     Database.name = "Database";
-     Dictionary.name = "Dictionary";
-     File.name = "File";
-     Function.name = "Function";
-     HashTable.name = "HashTable";
-     List.name = "List";
-     MutableHashTable.name = "MutableHashTable";
-     MutableList.name = "MutableList";
-     Net.name = "Net";
-     Nothing.name = "Nothing";
-     Option.name = "Option";
-     QQ.name = "QQ";
-     RR.name = "RR";
-     RR.name = "RR";
-     CC.name = "CC";					    -- new internal complex number class, to replace CC later
-     Ring.name = "Ring";
-     Sequence.name = "Sequence";
-     String.name = "String";
-     Symbol.name = "Symbol";
-     Thing.name = "Thing";
-     Time.name = "Time";
-     Type.name = "Type";
-     VisibleList.name = "VisibleList";
-     ZZ.name = "ZZ";
+     ReverseDictionary = new MutableHashTable;
+     scan(
+	  {symbol Array, symbol BasicList, symbol BigReal, symbol BigComplex,
+		symbol Boolean, symbol CacheTable, symbol Pseudocode, symbol Database,
+		symbol Dictionary, symbol File, symbol Function, symbol HashTable,
+		symbol List, symbol MutableHashTable, symbol MutableList, symbol Net,
+		symbol Nothing, symbol Option, symbol QQ, symbol RR, symbol RR, symbol CC,
+		symbol Ring, symbol Sequence, symbol String, symbol Symbol, symbol Thing,
+		symbol Time, symbol Type, symbol VisibleList, symbol ZZ},
+	  s -> ReverseDictionary#(value s) = s		    -- get an early start for debugging
+	  );
      notify = false;
 
      normalPrompts = () -> (
