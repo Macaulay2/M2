@@ -295,9 +295,7 @@ divideByVariable(Matrix, RingElement, ZZ) := Matrix => (m,v,d) -> (
 
 compress = method()
 
-compress Matrix := Matrix => (m) -> (
-     R := ring m;
-     map(R, rawMatrixCompress m.Rawmatrix))
+compress Matrix := Matrix => (m) -> map(ring m, rawMatrixCompress m.RawMatrix)
 
 newCoordinateSystem = method()
 

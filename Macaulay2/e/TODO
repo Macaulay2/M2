@@ -175,6 +175,24 @@ do:
      It would be wonderful if you could check this in Macaulay 2.  
        Many thanks, David
 
+-- required engine routines: 
+   gcdExtended
+   forceGB
+   autoReduce
+   someMinors
+   compare of ring elements
+   simplify (make it several?)
+   findNonMember
+   setRandomSeed   
+   schur
+   compress
+   topCoefficients
+
+-- just need m2 file connecting, possibly debugging in engine
+   monideal routines   
+   toField, getNonUnit, getZeroDivisor
+
+-- add GB type
 -------------------------------------------------
 -- gg engine lines, as found on 8/2/04, 9am. ----
 -------------------------------------------------
@@ -201,13 +219,13 @@ do:
 --    modules2.m2
 	truncate(List,Module)
 --    monideal.m2
-	monomialIdeal MonomialIdeal
-	poincare MonomialIdeal
-	minprimes MonomialIdeal
+	monomialIdeal MonomialIdeal  REMOVED
+	poincare MonomialIdeal DONE EXCEPT: need rawHilbert MonomialIdeal
+	minprimes MonomialIdeal DONE: except the name is bad
 --    multilin.m2
 	someMinors -- this is never called? But we want the functionality
 --    ofcm.m2
-	promote(MonoidElement,RingElement)
+	promote(MonoidElement,RingElement): BUG: (1_ZZ has no RawRingElement, 1_(ZZ/5) does)
 --    orderedmonoidrings.m2
 	is skew ring degree info correct?
 	RM ? RM

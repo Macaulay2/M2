@@ -12,6 +12,7 @@ ideal MonomialIdeal := (I) -> ideal generators I
 newMonomialIdeal := (R,rawI) -> new MonomialIdeal from {
      symbol numgens => rawNumgens rawI,
      symbol RawMonomialIdeal => rawI,
+     symbol cache => new CacheTable,
      symbol ring => R
      }
 
@@ -42,9 +43,7 @@ MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)
 Ring / MonomialIdeal := (R,I) -> R / ideal I
 
 monomialIdeal MonomialIdeal := I -> (
-     if instance(I, MonomialIdeal) then (		    -- this is weird!
-          sendgg(ggPush I, ggcopy);
-          newMonomialIdeal ring I))
+     error "the function monomialIdeal applied to a MonomialIdeal has been removed")
 
 monomialIdeal Matrix := MonomialIdeal => f -> (
      if numgens target f =!= 1 then error "expected a matrix with 1 row";
@@ -126,21 +125,19 @@ intersect(Sequence) := args -> (
 borel MonomialIdeal := MonomialIdeal => UnaryMonomialIdealOperation rawStronglyStableClosure
 isBorel MonomialIdeal := m -> UnaryMonomialIdealOperation rawIsStronglyStable
 codim MonomialIdeal := m -> rawCodimension raw m
-poincare MonomialIdeal := M -> ( --poincare matrix m
+
+poincare MonomialIdeal := M -> (
      R := ring M;
      ZZn := degreesRing(R);
-     if not M.?poincare then (
-	if not M.cache.?poincareComputation then (
-	    sendgg(ggPush ZZn, ggPush M, gghilb);
-	    M.cache.poincareComputation = newHandle());
-        sendgg(ggPush M.cache.poincareComputation, ggPush (-1), ggcalc);
-	sendgg(ggPush M.cache.poincareComputation, gggetvalue);
-        M.poincare = ZZn.pop());
-     M.poincare)
+     if not M.cache.?poincare then
+     -- MES: as soon as Dan connects rawHilbert MonomialIdeal
+     -- remove the word 'generators' below.
+         M.cache.poincare = new ZZn from rawHilbert rawMonomialIdealToMatrix M.RawMonomialIdeal; 
+     M.cache.poincare
+     )
 
 minprimes MonomialIdeal := MonomialIdeal => m -> (
-     sendgg(ggPush m, ggprimes);
-     newMonomialIdeal ring m)
+     newMonomialIdeal(ring m, rawAssociatedPrimes m.RawMonomialIdeal))
 
 -----------------------------------------------------------------------------
 -- this code below here is by Greg Smith
