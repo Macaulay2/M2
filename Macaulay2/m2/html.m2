@@ -469,6 +469,7 @@ installPackage Package := o -> pkg -> (
      rawdbname := docDir | "rawdocumentation.db";
      stderr << "--storing raw documentation in " << rawdbname << endl;
      makeDirectory docDir;
+     if isOpen pkg#"raw documentation database" then close pkg#"raw documentation database";
      rawdocDatabase := openDatabaseOut rawdbname;
      scan(nodes, tag -> (
 	       fkey := DocumentTag.FormattedKey tag;
