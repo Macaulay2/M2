@@ -173,13 +173,7 @@ const RingOrNull * IM2_Ring_quotient(const Ring *R,
       ERROR("expected a polynomial ring");
       return 0;
     }
-  const PolyRing *P1 = P->cast_to_PolyRing();
-  if (P1 == 0)
-    {
-      ERROR("quotients of fraction polynomial rings, or other polynomial rings is not handled yet");
-      return 0;
-    }
-  if (I->get_ring() != P1)
+  if (I->get_ring() != P)
     {
       ERROR("expected matrix to be over the same ring");
     }
@@ -188,7 +182,7 @@ const RingOrNull * IM2_Ring_quotient(const Ring *R,
       ERROR("expected a one row matrix of quotient elements");
       return 0;
     }
-  return PolyRingQuotient::create(P1,I);
+  return PolyRingQuotient::create(P,I);
 }
 
 const RingOrNull * IM2_Ring_quotient1(const Ring *R, 

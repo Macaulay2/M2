@@ -5,6 +5,17 @@
 needs "raw-util.m2"
 errorDepth = 0
 
+A = ZZ[x]
+B = A[y]
+use A
+C = A/(2*x^3-3*x-1)
+D1 = rawQuotientRing(raw B, raw C)
+
+D2 = ZZ[y,x,MonomialOrder=>{1,1}]/(2*x^3-3*x-1)
+D2/(x*y-x-1)
+
+D2 = rawQuotientRing(D1,matrix{{
+
 R = ZZ[x,y,z]
 assert(rawAmbientRing raw R === raw R)
 assert(rawDenominatorRing raw R === null)
