@@ -69,7 +69,7 @@ pushtest := options -> (f,M) -> (
 	result := f.cache#comp#1 g;
 	--if isdone g then f.cache#comp = {result};  -- MES: There is NO way to check this yet!!
 
-	-- MES: check if the monomial order restricts to S.  If so, then do
+	-- MES: check if the monomial order restricts to S. S If so, then do
         -- forceGB result;
 	result
 	)
