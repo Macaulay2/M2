@@ -155,6 +155,7 @@ noinitfile := false
 interpreter := commandInterpreter
 
 getRealPath := fn -> (					    -- use this later if realpath doesn't work
+     local s;
      while ( s = readlink fn; s =!= null ) do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
      fn)
 
@@ -196,6 +197,7 @@ if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then 
      encapDirectory = prefixDirectory;
      prev := null;
      fn := pathsearch commandLine#0;
+     local s;
      while ( s = readlink fn; s =!= null ) do (prev = fn; fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s););
      if prev =!= null then setPrefixFromBindir dir prev)
 
