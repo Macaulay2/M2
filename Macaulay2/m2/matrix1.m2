@@ -36,8 +36,17 @@ makeRawTable := (R,p) -> (					    -- this is messy
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
-     f := rawMatrixRemake1(raw target p, raw p,0);
-     map(M, newModule(ring source p, rawSource f), f)
+     if M.?generators then (
+	  M' := source M.generators;
+	  if numgens M' != numgens target p then error "expected matrix and new target module to agree";
+     	  f := rawMatrixRemake1(raw M', raw p,0);
+     	  map(M, newModule(ring source p, rawSource f), f)
+	  )
+     else (
+	  if numgens M != numgens target p then error "expected matrix and new target module to agree";
+     	  f = rawMatrixRemake1(raw M, raw p,0);
+     	  map(M, newModule(ring source p, rawSource f), f)
+	  )
      )
 
 degreeCheck := (d,R) -> (
