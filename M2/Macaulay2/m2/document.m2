@@ -289,7 +289,7 @@ fixup String     := z -> z				    -- "..."
 fixup List       := z -> SEQ apply(z, fixup)		    -- {...} becomes SEQ{...}
 fixup Sequence   := z -> SEQ toList apply(z, fixup)	    -- (...) becomes SEQ{...}
 fixup MarkUpList := z -> apply(z,fixup)			    -- recursion
-fixup Option     := z -> z#0 => fixup z#1		    -- HEADLINE => "...", USAGE => "..."
+fixup Option     := z -> z#0 => fixup z#1		    -- Headline => "...", Usage => "..."
 fixup TO         := z -> z				    -- TO{x}
 fixup TOH        := z -> z				    -- TOH{x}
 fixup MarkUpType := z -> z{}				    -- convert PARA to PARA{}
@@ -460,16 +460,16 @@ getOption := (s,tag) -> (
      	  if #x > 0 then x#0#1))
 
 getHeadline := key -> (
-     d := getOption(getDoc key, HEADLINE);
+     d := getOption(getDoc key, Headline);
      if d =!= null then SEQ join( {"  --  ", SEQ d} )
      )
 
 getUsage := key -> (
-     x := getOption(getDoc key, USAGE);
+     x := getOption(getDoc key, Usage);
      if x =!= null then SEQ x)
 
 getSynopsis := key -> (
-     x := getOption(getDoc key, SYNOPSIS);
+     x := getOption(getDoc key, Synopsis);
      if x =!= null then SEQ x)
 
 getCaveat := key -> (
@@ -512,6 +512,12 @@ vowels := set characters "aeiouAEIOU"
 indefinite := s -> concatenate(if vowels#?(s#0) and not match(s,"one *") then "an " else "a ", s)
 
 synonym := X -> if X.?synonym then X.synonym else "object of class " | toString X
+
+synonymAndClass := X -> (
+     if X.?synonym
+     then SEQ {indefinite X.synonym, " (of class ", TO X, ")"}
+     else SEQ {"an object of class ", TO X}
+     )     
 
 usage := s -> (
      o := getDocBody s;
@@ -749,14 +755,14 @@ documentation Sequence := s -> (
 	  );
      SEQ {
 	  title s, 
-	  "Synopsis:",
+	  BOLD "Synopsis:",
 	  SHIELD MENU {
 	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
 	       SEQ {if class s#0 === Function then "Function: " else "Operator: ", TO s#0 },
-	       SEQ {"Argument ", arg1, ", of class ", TO s#1, desc1 }, if #s > 2 then 
-	       SEQ {"Argument ", arg2, ", of class ", TO s#2, desc2 }, if #s > 3 then
-	       SEQ {"Argument ", arg3, ", of class ", TO s#3, desc3 }, if t =!= Thing then
-	       SEQ {"Value ", retv, ", typically of class ", TO t, descv},
+	       SEQ {"Argument ", arg1, ", ", synonymAndClass s#1, desc1 }, if #s > 2 then 
+	       SEQ {"Argument ", arg2, ", ", synonymAndClass s#2, desc2 }, if #s > 3 then
+	       SEQ {"Argument ", arg3, ", ", synonymAndClass s#3, desc3 }, if t =!= Thing then
+	       SEQ {"Value "   , retv, ", ", synonymAndClass t  , descv},
 	       optargs s,
 	       moreGeneral s
      	       },

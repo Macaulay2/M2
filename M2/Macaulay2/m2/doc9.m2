@@ -53,7 +53,7 @@ document { UseHilbertFunction,
      }
 
 document { Ext,
-     HEADLINE => "compute an Ext module",
+     Headline => "compute an Ext module",
      TT "Ext^i(M,N)", " -- compute the Ext module of two modules M, N.",
      PARA,
      NOINDENT,
@@ -86,7 +86,7 @@ document { Ext,
      }
 
 document { adjust,
-     HEADLINE => "adjust the degree in a total Ext module",
+     Headline => "adjust the degree in a total Ext module",
      TT "adjust", " -- a symbol used as a key under which to store a degree
      adjustment function used by ", TO "Ext", ".",
      PARA,
@@ -94,7 +94,7 @@ document { adjust,
      }
 
 document { dd,
-     HEADLINE => "differential in a chain complex",
+     Headline => "differential in a chain complex",
      TT "dd", " -- a symbol used as a key in a chain complex, under which
      are stored the differentials.",
      PARA,
@@ -116,13 +116,13 @@ assert( toString Tor == \"Tor\" )
 "
 
 document { Tor,
-     HEADLINE => "compute a Tor module",
+     Headline => "compute a Tor module",
      TT "Tor_i(M,N)", " -- compute the Tor module of two modules M, N.",
      SEEALSO{"ScriptedFunctor"}
      }
 
 document { MonomialIdeal, 
-     HEADLINE => "the class of all monomial ideals handled by the engine",
+     Headline => "the class of all monomial ideals handled by the engine",
      SEEALSO "engine" 
      }
 
@@ -150,7 +150,7 @@ document { MonomialIdeal,
 
 
 document { monomialIdeal,
-     HEADLINE => "make a monomial ideal"
+     Headline => "make a monomial ideal"
      }
 
 document { (monomialIdeal, Matrix),
@@ -198,18 +198,18 @@ assert(
 "
 
 document { intersect,
-     HEADLINE => "compute an intersection",
+     Headline => "compute an intersection",
      TT "intersect(M,N,...)", " -- calculate the intersection of 
      submodules of the same free module, or of monomial ideals in the same ring."
      }
 
 document { isBorel,
-     HEADLINE => "whether an ideal is Borel fixed",
-     HEADLINE => "whether an ideal is fixed by upper triangular changes of coordinates"
+     Headline => "whether an ideal is Borel fixed",
+     Headline => "whether an ideal is fixed by upper triangular changes of coordinates"
      }
 
 document { minprimes,
-     HEADLINE => "compute the minimal primes",
+     Headline => "compute the minimal primes",
      TT "minprimes I", " -- compute the minimal primes of a monomial ideal I.",
      PARA,
      "Not working yet."
@@ -245,7 +245,7 @@ document { toDual,
      }
 
 document { GradedModule,
-     HEADLINE => "the class of all graded modules",
+     Headline => "the class of all graded modules",
      "A new graded module can be made with 'M = new GradedModule'.
      The i-th module can be installed with a statement like ", TT "M#i=N", ",
      and can be retrieved with an expression like ", TT "M_i", ".  The ground
@@ -254,22 +254,22 @@ document { GradedModule,
      }
 
 document { GradedModuleMap,
-     HEADLINE => "the class of all maps between graded modules",
+     Headline => "the class of all maps between graded modules",
      SEEALSO "GradedModule"
      }
 
 document { gradedModule,
-     HEADLINE => "make a graded module",
+     Headline => "make a graded module",
      TT "gradedModule", " -- a method for creating graded modules."
      }
 
 document { gradedModuleMap,
-     HEADLINE => "make a map of graded modules",
+     Headline => "make a map of graded modules",
      TT "gradedModuleMap", " -- a method for creating maps of graded modules."
      }
 
 document { coimage,
-     HEADLINE => "coimage of a map",
+     Headline => "coimage of a map",
      TT "coimage f", " -- coimage of a map.",
      PARA,
      "The coimage of a map differs slightly from the image, in that the
@@ -280,7 +280,7 @@ document { coimage,
      }
 
 document { ChainComplex,
-     HEADLINE => "the class of all chain complexes",
+     Headline => "the class of all chain complexes",
      "If ", TT "C", " is a chain complex, then ", TT "C_i", " will produce 
      the ", TT "i", "-th module in the complex, and ", TT "C.dd_i", " will 
      produce the differential whose source is ", TT "C_i", ".",
@@ -305,7 +305,7 @@ document { ChainComplex,
      }
 
 document { (complete, ChainComplex),
-     HEADLINE => "complete the internal parts",
+     Headline => "complete the internal parts",
      TT "complete C", " -- fills in the modules of a chain complex
      obtained as a resolution with information from the engine.",
      PARA,
@@ -326,7 +326,7 @@ document { (complete, ChainComplex),
      }
 
 document { (symbol _, ChainComplex, ZZ),
-     HEADLINE => "get component",
+     Headline => "get component",
      TT "C_i", " -- yields the i-th module in a chain complex C.",
      PARA,
      "Returns the zero module if no module has been stored in the
@@ -337,7 +337,7 @@ document { (symbol _, ChainComplex, ZZ),
      }
 
 document { (length, ChainComplex),
-     HEADLINE => "length of a chain complex or graded module",
+     Headline => "length of a chain complex or graded module",
      TT "length C", " -- the length of a chain complex.",
      PARA,
      "The length of a chain complex is defined to be the difference
@@ -346,7 +346,7 @@ document { (length, ChainComplex),
      }
 
 document { ChainComplexMap,
-     HEADLINE => "the class of all maps between chain complexes",
+     Headline => "the class of all maps between chain complexes",
      "The usual algebraic operations are available: addition, subtraction,
      scalar multiplication, and composition.  The identity map from a
      chain complex to itself can be produced with ", TO "id", ".  An
@@ -355,14 +355,14 @@ document { ChainComplexMap,
      identity map."
      }
 document { (symbol _, ChainComplexMap, ZZ),
-     HEADLINE => "get component",
+     Headline => "get component",
      TT "p_i", " -- for a map p : C -> D of chain complexes of degree d, provides
      the component p_i : C_i -> D_(i+d).",
      SEEALSO "ChainComplexMap"
      }
 
 document { extend,
-     HEADLINE => "extend a partial map of chain complexes",
+     Headline => "extend a partial map of chain complexes",
      TT "extend(D,C,f0)", " -- produces a lifting of a map ", TT "f0 : D_0 <--- C_0", "
      to a map ", TT "f: D <--- C", " of chain complexes of degree 0."
      }
@@ -376,7 +376,7 @@ E = cone g
 "
 
 document { cone,
-     HEADLINE => "mapping cone of a chain map",
+     Headline => "mapping cone of a chain map",
      TT "cone f", " -- produce the mapping cone of a map f of chain complexes",
      PARA,
      EXAMPLE {
@@ -397,7 +397,7 @@ document { cone,
      }
 
 document { nullhomotopy,
-     HEADLINE => "make a null homotopy",
+     Headline => "make a null homotopy",
      TT "nullhomotopy f", " -- produce a nullhomotopy for a map f of 
      chain complexes.",
      PARA, 
@@ -422,7 +422,7 @@ document { nullhomotopy,
      }
 
 document { poincare,
-     HEADLINE => "assemble degrees into polynomial",
+     Headline => "assemble degrees into polynomial",
      TT "poincare C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
      BR,NOINDENT,
@@ -451,7 +451,7 @@ document { poincare,
      }
 
 document { poincareN,
-     HEADLINE => "assemble degrees into polynomial",
+     Headline => "assemble degrees into polynomial",
      TT "poincareN C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
      PARA,
@@ -465,7 +465,7 @@ document { poincareN,
      }
 
 document { (homology,ZZ,ChainComplex),
-     HEADLINE => "homology of a chain complex",
+     Headline => "homology of a chain complex",
      TT "HH_i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      EXAMPLE {
 	  "R = ZZ/101[x,y]",
@@ -487,7 +487,7 @@ assert ( 0 == HH_4 res M )
 "
 
 document { (symbol :, Ideal, Ideal),
-     HEADLINE => "ideal quotient",
+     Headline => "ideal quotient",
      TT "I:J", " -- computes the ideal quotient.",
      PARA,
      "The notation ", TT "I:J", " is equivalent to ", TT "quotient(I,J)", ",
@@ -496,7 +496,7 @@ document { (symbol :, Ideal, Ideal),
      }
 
 document { quotient,
-     HEADLINE => "ideal or submodule quotient",
+     Headline => "ideal or submodule quotient",
      TT "quotient(I,J)", " -- computes the ideal or submodule quotient ", TT "(I:J)", ".", 
      PARA,
      "The arguments should be ideals in the same ring, or submodules of the same
@@ -891,14 +891,14 @@ document { saturate => MinimalGenerators,
      }
 
 document { Elimination,
-     HEADLINE => "compute the saturation by elimination",
+     Headline => "compute the saturation by elimination",
      TT "Strategy => Elimination", " -- an option value for ", TO "saturate", " 
      which indicates that the saturation of (I:f) should be computed by
      eliminating z from (I,f*z-1), where z is a new variable."
      }
 
 document { Bayer,
-     HEADLINE => "use the method in Bayer's thesis",
+     Headline => "use the method in Bayer's thesis",
      TT "Strategy => Bayer", " -- an option value for ", TO "saturate", " which
      indicates that the method of Bayer's thesis should be used.",
      PARA,
@@ -908,7 +908,7 @@ document { Bayer,
      }
 
 document { Iterate,
-     HEADLINE => "use successive ideal quotients (the default)",
+     Headline => "use successive ideal quotients (the default)",
      TT "Strategy => Iterate", " -- an option value for ", TO "saturate", " which
      indicates that successive ideal or module quotients should be used.",
      PARA,
@@ -916,7 +916,7 @@ document { Iterate,
      }
 
 document { Linear,
-     HEADLINE => "use the reverse lex order",
+     Headline => "use the reverse lex order",
      TT "Strategy => Linear", " -- an option value for ", TO "saturate", " which
      indicates that the reverse lex order should be used to compute the saturation.",
      PARA,
@@ -1256,14 +1256,14 @@ TEST ///
      ///
 
 document { (cohomology,ZZ,ChainComplex),
-     HEADLINE => "cohomology of a chain complex",
+     Headline => "cohomology of a chain complex",
      TT "HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      PARA,
      "By definition, this is the same as HH_(-i) C."
      }
 
 document { (homology,ZZ,ChainComplexMap),
-     HEADLINE => "homology of a chain complex map",
+     Headline => "homology of a chain complex map",
      TT "HH_i f", " -- provides the map on the ", TT "i", "-th homology module
      by a map ", TT "f", " of chain complexes.",
      PARA,
@@ -1271,7 +1271,7 @@ document { (homology,ZZ,ChainComplexMap),
      }
 
 document { (cohomology,ZZ,ChainComplexMap),
-     HEADLINE => "cohomology of a chain complex map",
+     Headline => "cohomology of a chain complex map",
      TT "HH^i f", " -- provides the map on the ", TT "i", "-th cohomology module
      by a map ", TT "f", " of chain complexes.",
      PARA,
@@ -1279,7 +1279,7 @@ document { (cohomology,ZZ,ChainComplexMap),
      }
 
 document { (homology,ChainComplex),
-     HEADLINE => "homology of a chain complex",
+     Headline => "homology of a chain complex",
      TT "HH C", " -- produces the direct sum of the homology modules of the
      chain complex ", TT "C", " as a graded module.",
      PARA,
@@ -1287,18 +1287,18 @@ document { (homology,ChainComplex),
      }
 
 document { chainComplex,
-     HEADLINE => "make a chain complex",
+     Headline => "make a chain complex",
      TT "chainComplex", " -- a method for creating chain complexes.",
      }
 
 document { (chainComplex, Matrix),
-     HEADLINE => "make a small chain complex",
+     Headline => "make a small chain complex",
      TT "chainComplex f", " -- create a chain complex ", TT "C", " with
      the map ", TT "f", " serving as the differential ", TT "C.dd_1", "."
      }
 
 document { (chainComplex, Sequence),
-     HEADLINE => "make a chain complex",
+     Headline => "make a chain complex",
      TT "chainComplex(f,g,h,...)", " -- create a chain complex ", TT "C", " whose
      differentials are the maps ", TT "f", ", ", TT "g", ", ", TT "h", ".",
      PARA,
@@ -1307,7 +1307,7 @@ document { (chainComplex, Sequence),
      }
 
 document { (symbol ++,ChainComplex,ChainComplex),
-     HEADLINE => "direct sum",
+     Headline => "direct sum",
      TT "C++D", " -- direct sum of chain complexes.",
      PARA,
      EXAMPLE {
@@ -1324,25 +1324,25 @@ document { (components, ChainComplex),
      }
 
 document { (symbol " ", ChainComplex, Array),
-     HEADLINE => "chain complex degree shift",
+     Headline => "chain complex degree shift",
      TT "C[i]", " -- shifts the chain complex C, producing a new chain complex
      D in which D_j is C_(i+j).  The signs of the differentials are reversed
      if i is odd."
      }
 
 document { (Hom,ChainComplex,Module),
-     HEADLINE => "Hom",
+     Headline => "Hom",
      TT "Hom(C,M)", " -- produces the Hom complex from a chain complex C and
      a module M."
      }
 
 document { (dual, ChainComplex),
-     HEADLINE => "dual",
+     Headline => "dual",
      TT "dual C", " -- the dual of a chain complex."
      }
 
 document { regularity,
-     HEADLINE => "compute the regularity",
+     Headline => "compute the regularity",
      TT "regularity M", " -- computes the regularity of a module or chain complex C.",
      PARA,
      "For a free chain complex C, the regularity r is the smallest number so that 
@@ -1351,7 +1351,7 @@ document { regularity,
      }
 
 document { betti,
-     HEADLINE => "display degrees in a free resolution",
+     Headline => "display degrees in a free resolution",
      TT "betti C", " -- display the graded Betti numbers for a ", TO "ChainComplex", " C.",
      PARA,
      NOINDENT,
@@ -1405,13 +1405,13 @@ assert( P == poincare prune W )
 "
 
 document { syzygyScheme,
-     HEADLINE => "construct a syzygy scheme",
+     Headline => "construct a syzygy scheme",
      TT "syzygyScheme(C,i,v)", " -- produce the syzygy scheme from a map
      ", TT "v : R^j ---> C_i", " which selects some syzygies from a resolution ", TT "C", "."
      }
 
 document { (sum, ChainComplex),
-     HEADLINE => "direct sum of the components of a chain complex",
+     Headline => "direct sum of the components of a chain complex",
      TT "sum C", " -- yields the sum of the modules in a chain complex.",
      PARA,
      "The degrees of the components are preserved.",
@@ -1425,7 +1425,7 @@ document { (sum, ChainComplex),
      }
 
 document { (sum, ChainComplexMap),
-     HEADLINE => "direct sum of the components of a chain map",
+     Headline => "direct sum of the components of a chain map",
      TT "sum C", " -- yields the sum of the modules in a chain complex map.",
      PARA,
      "The degrees of the components are preserved.",
@@ -1439,7 +1439,7 @@ document { (sum, ChainComplexMap),
      }
 
 document { (NewMethod, ChainComplex),
-     HEADLINE => "make a new chain complex from scratch",
+     Headline => "make a new chain complex from scratch",
      TT "C = new ChainComplex", " -- make a new chain complex.",
      PARA,
      "The new chain complex is initialized with a differential of
@@ -1458,7 +1458,7 @@ document { (NewMethod, ChainComplex),
      }
 
 document { (chainComplex,GradedModule),
-     HEADLINE => "make a chain complex from a graded module",
+     Headline => "make a chain complex from a graded module",
      TT "chainComplex M", " -- convert a graded module to a chain complex by
      installing the zero map as differential.",
      PARA,
@@ -1466,7 +1466,7 @@ document { (chainComplex,GradedModule),
      }
 
 document { (symbol **, ChainComplex, ChainComplex),
-     HEADLINE => "tensor product",
+     Headline => "tensor product",
      TT "C**D", " -- the tensor product of two chain complexes.",
      PARA,
      "The result, ", TT "E", ", is a chain complex.  Each module ", TT "E_k", " 
@@ -1477,47 +1477,47 @@ document { (symbol **, ChainComplex, ChainComplex),
      }
 
 document { (symbol **, ChainComplex, GradedModule),
-     HEADLINE => "tensor product",
+     Headline => "tensor product",
      TT "C**D", " -- the tensor product of a chain complex with a graded module.",
      PARA,
      "The result is a chain complex."
      }
 
 document { (symbol **, GradedModule, ChainComplex),
-     HEADLINE => "tensor product",
+     Headline => "tensor product",
      TT "C**D", " -- the tensor product of a graded module with a chain complex.",
      PARA,
      "The result is a chain complex."
      }
 
 document { (symbol **, ChainComplexMap, ChainComplex),
-     HEADLINE => "tensor product",
+     Headline => "tensor product",
      TT "f ** C", " -- tensor product of a map of chain complexes with a chain complex.",
      PARA,
      SEEALSO "ChainComplexMap"
      }
 
 document { (symbol **, ChainComplex, ChainComplexMap),
-     HEADLINE => "tensor product",
+     Headline => "tensor product",
      TT "C ** f", " -- tensor product of a chain complex with a map of chain complexes.",
      PARA,
      SEEALSO "ChainComplexMap"
      }
 
 document { (symbol **, ChainComplexMap, ChainComplexMap),
-     HEADLINE => "tensor product",
+     Headline => "tensor product",
      TT "f ** g", " -- tensor product of two maps of chain complexes.",
      PARA,
      SEEALSO "ChainComplexMap"
      }
 
 document { (max,ChainComplex),
-     HEADLINE => " -- maximum index in a chain complex",
+     Headline => " -- maximum index in a chain complex",
      TT "max C", " -- the maximum index occuring in a chain complex."
      }
 
 document { (min,ChainComplex),
-     HEADLINE => "minimum index in a chain complex",
+     Headline => "minimum index in a chain complex",
      TT "min C", " -- the minimum index occuring in a chain complex."
      }
 
@@ -1532,7 +1532,7 @@ TEST ///
      ///
 
 document { tensorAssociativity,
-     HEADLINE => "associativity isomorphisms for tensor products",
+     Headline => "associativity isomorphisms for tensor products",
      TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
      A**(B**C) to (A**B)**C.",
      PARA,
@@ -1541,7 +1541,7 @@ document { tensorAssociativity,
      }
 
 document { (symbol " ", Module, Array),
-     HEADLINE => "make a chain complex from a module",
+     Headline => "make a chain complex from a module",
      TT "M[n]", " -- create a chain complex with the module M concentrated
      in degree -n.",
      PARA,
@@ -1549,7 +1549,7 @@ document { (symbol " ", Module, Array),
      }
 
 document { (map,ChainComplex,ChainComplex,Function),
-     HEADLINE => "make a map of chain complexes",
+     Headline => "make a map of chain complexes",
      TT "map(C,D,f)", " -- construct a map from the chain complex ", TT "D", " to the chain
      complex ", TT "C", " which in degree ", TT "k", " is the map provided
      as the value of ", TT "f(k)", ".",

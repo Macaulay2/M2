@@ -116,13 +116,13 @@ Matrix == ZZ := (m,i) -> (
      )
 ZZ == Matrix := (i,m) -> m == i
 
-Matrix + Matrix := Matrix => BinaryMatrixOperationSame ggadd
+Matrix + Matrix := Matrix => (f,g) -> (BinaryMatrixOperationSame ggadd)(f,g)
 Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
 RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
 ZZ + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
 Matrix + ZZ := (f,i) -> if i === 0 then f else f + i*id_(target f)
 
-Matrix - Matrix := Matrix => BinaryMatrixOperationSame ggsubtract
+Matrix - Matrix := Matrix => (f,g) -> (BinaryMatrixOperationSame ggsubtract)(f,g)
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
 RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
 ZZ - Matrix := (i,f) -> if i === 0 then -f else i*id_(target f) - f
@@ -432,7 +432,7 @@ submatrix(Matrix,List) := Matrix => (m,cols) -> (
 	  ggsubmatrix);
      getMatrix ring m)
 
-diff(Matrix, Matrix) := Matrix => BinaryMatrixOperation ggdiff
+diff(Matrix, Matrix) := Matrix => (m,n) -> (BinaryMatrixOperation ggdiff)(m,n)
 diff(RingElement, RingElement) := RingElement => (f,g) -> (
      (diff(matrix{{f}},matrix{{g}}))_(0,0)
      )
@@ -446,7 +446,7 @@ diff(Vector, Matrix) := (v,m) -> diff(matrix {v}, m)
 diff(RingElement)    := f -> diff(vars ring f, f)
 diff(Matrix)         := m -> diff(vars ring m, m)
 
-contract (Matrix, Matrix) := Matrix => BinaryMatrixOperation ggcontract
+contract (Matrix, Matrix) := Matrix => (f,g) -> (BinaryMatrixOperation ggcontract)(f,g)
 contract(RingElement, RingElement) := RingElement => (f,g) -> (
      (contract(matrix{{f}},matrix{{g}}))#(0,0)
      )

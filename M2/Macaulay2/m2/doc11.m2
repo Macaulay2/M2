@@ -3,24 +3,24 @@
 -- html.m2 documentation
 
 document { MarkUpList, 
-     HEADLINE => "the class of mark-up lists used with hypertext",
+     Headline => "the class of mark-up lists used with hypertext",
      PARA,
      "Intended for internal use only."
      }
 
 document { MarkUpType,
-     HEADLINE => "the class of mark-up types used with hypertext", 
+     Headline => "the class of mark-up types used with hypertext", 
      PARA,
      "Intended for internal use only.",
      SEEALSO "EmptyMarkUpType"
      }
 
 document { EmptyMarkUpType,
-     HEADLINE => "the class of empty mark-up types used with hypertext"
+     Headline => "the class of empty mark-up types used with hypertext"
      }
 
 document { SHIELD,
-     HEADLINE => "shield menu items so they don't produce subsections",
+     Headline => "shield menu items so they don't produce subsections",
      TT "SHIELD v", " -- indicates that the ", TO "hypertext", " links in the
      menu ", TT "v", " will not lead immediately to subsections of the book.",
      PARA,
@@ -34,22 +34,22 @@ document { SHIELD,
      }
 
 document { PARA,
-     HEADLINE => "paragraph separator",
+     Headline => "paragraph separator",
      TT "PARA x", " -- a ", TO "hypertext", " paragraph.",
      }
 
 document { BR,
-     HEADLINE => "line break",
+     Headline => "line break",
      TT "BR{}", " -- a ", TO "hypertext", " line break."
      }
 
 document { HR,
-     HEADLINE => "horizontal rule",
+     Headline => "horizontal rule",
      TT "HR{}", " -- a ", TO "hypertext", " horiziontal rule."
      }
 
 document { text,
-     HEADLINE => "convert hypertext to text",
+     Headline => "convert hypertext to text",
      TT "text x", " -- convert ", TO "hypertext", " to text format",
      PARA,
      "The return value is a string which is suitable display on an
@@ -57,7 +57,7 @@ document { text,
      }
 
 document { html,
-     HEADLINE => "convert hypertext to html format",
+     Headline => "convert hypertext to html format",
      TT "html x", " -- convert ", TO "hypertext", " to html format",
      PARA,
      "The return value is a string which is suitable for use in an
@@ -66,7 +66,7 @@ document { html,
      }
 
 document { PRE,
-     HEADLINE => "preformatted text",
+     Headline => "preformatted text",
      TT "PRE x", " -- encloses ", TT "x", " in a hypertext PRE item.",
      PARA,
      "The argument ", TT "x", " should be a string, possibly containing newlines.",
@@ -81,7 +81,7 @@ document { PRE,
      }
 
 document { TITLE,
-     HEADLINE => "hypertext title",
+     Headline => "hypertext title",
      TT "TITLE x", " -- encloses ", TT "x", " in a hypertext TITLE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -91,7 +91,7 @@ document { TITLE,
      }
 
 document { HEAD,
-     HEADLINE => "HTML HEAD item",
+     Headline => "HTML HEAD item",
      TT "HEAD x", " -- encloses ", TT "x", " in a hypertext HEAD item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -100,9 +100,9 @@ document { HEAD,
      SEEALSO "hypertext"
      }
 
-document { HEADLINE,
-     HEADLINE => "make a documentation HEADLINE item",
-     TT "HEADLINE => x", " -- an option for ", TO "document", " to specify
+document { Headline,
+     Headline => "make a documentation Headline item",
+     TT "Headline => x", " -- an option for ", TO "document", " to specify
      the headline.",
      PARA,
      "The argument ", TT "x", " should be a string, to be used as a brief
@@ -112,7 +112,7 @@ document { HEADLINE,
      }
 
 document { BODY,
-     HEADLINE => "HTML BODY item",
+     Headline => "HTML BODY item",
      TT "BODY x", " -- encloses ", TT "x", " in a hypertext BODY item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -122,7 +122,7 @@ document { BODY,
      }
 
 document { IMG,
-     HEADLINE => "HTML IMG item",
+     Headline => "HTML IMG item",
      TT "IMG x", " -- encloses ", TT "x", " in a hypertext IMG item.",
      PARA,
      "The argument ", TT "x", " should be a string containing the URL of the image.",
@@ -131,7 +131,7 @@ document { IMG,
      }
 
 document { SEQ,
-     HEADLINE => "hypertext sequence",
+     Headline => "hypertext sequence",
      TT "SEQ x", " -- encloses ", TT "x", " in a hypertext SEQ item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -142,7 +142,7 @@ document { SEQ,
      }
 
 document { HTML,
-     HEADLINE => "HTML item",
+     Headline => "HTML item",
      TT "HTML x", " -- encloses ", TT "x", " in a hypertext HTML item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -152,7 +152,7 @@ document { HTML,
      }
 
 document { H1,
-     HEADLINE => "HTML H1 item",
+     Headline => "HTML H1 item",
      TT "H1 x", " -- encloses ", TT "x", " in a hypertext H1 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -167,7 +167,7 @@ document { H1,
      }
 
 document { H2,
-     HEADLINE => "HTML H2 item",
+     Headline => "HTML H2 item",
      TT "H2 x", " -- encloses ", TT "x", " in a hypertext H2 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -182,7 +182,7 @@ document { H2,
      }
 
 document { H3,
-     HEADLINE => "HTML H3 item",
+     Headline => "HTML H3 item",
      TT "H3 x", " -- encloses ", TT "x", " in a hypertext H3 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -197,7 +197,7 @@ document { H3,
      }
 
 document { H4,
-     HEADLINE => "HTML H4 item",
+     Headline => "HTML H4 item",
      TT "H4 x", " -- encloses ", TT "x", " in a hypertext H4 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -212,7 +212,7 @@ document { H4,
      }
 
 document { H5,
-     HEADLINE => "HTML H5 item",
+     Headline => "HTML H5 item",
      TT "H5 x", " -- encloses ", TT "x", " in a hypertext H5 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -227,7 +227,7 @@ document { H5,
      }
 
 document { H6,
-     HEADLINE => "HTML H6 item",
+     Headline => "HTML H6 item",
      TT "H6 x", " -- encloses ", TT "x", " in a hypertext H6 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -242,7 +242,7 @@ document { H6,
      }
 
 document { LISTING,
-     HEADLINE => "HTML LISTING item",
+     Headline => "HTML LISTING item",
      TT "LISTING x", " -- encloses ", TT "x", " in a hypertext LISTING item.",
      PARA,
      "The argument ", TT "x", " should be a string.",
@@ -257,7 +257,7 @@ document { LISTING,
      }
 
 document { XMP,
-     HEADLINE => "HTML XMP item",
+     Headline => "HTML XMP item",
      TT "XMP x", " -- encloses ", TT "x", " in a hypertext XMP item.",
      PARA,
      "The argument ", TT "x", " should be a string.",
@@ -272,7 +272,7 @@ document { XMP,
      }
 
 document { BLOCKQUOTE,
-     HEADLINE => "HTML BLOCKQUOTE item",
+     Headline => "HTML BLOCKQUOTE item",
      TT "BLOCKQUOTE x", " -- encloses ", TT "x", " in a hypertext BLOCKQUOTE item.",
      PARA,
      "The argument ", TT "x", " should be a string.",
@@ -287,7 +287,7 @@ document { BLOCKQUOTE,
      }
 
 document { EXAMPLE,
-     HEADLINE => "HTML EXAMPLE item",
+     Headline => "HTML EXAMPLE item",
      TT "EXAMPLE x", " -- evaluates the string or list of strings
      ", TT "x", " as Macaulay 2 code, inserting the results in
      hypertext preformatted ", TO "PRE", " items.",
@@ -300,24 +300,24 @@ document { EXAMPLE,
      }
 
 document { TABLE,
-     HEADLINE => "hypertext table",
+     Headline => "hypertext table",
      TT "TABLE x", " -- produces a hypertext TABLE from a list of lists."
      }
 
 document { LITERAL,
-     HEADLINE => "hypertext literal text",
+     Headline => "hypertext literal text",
      TT "LITERAL x", " -- produces a special hypertext item which contains
      HTML text that should be left unchanged by ", TO "html", "."
      }
 
 document { ExampleTABLE,
-     HEADLINE => "hypertext list of examples",
+     Headline => "hypertext list of examples",
      TT "ExampleTABLE x", " -- produces a hypertext display suitable for displaying
      a list of examples."
      }
 
 document { VAR,
-     HEADLINE => "HTML VAR item",
+     Headline => "HTML VAR item",
      TT "VAR x", " -- encloses ", TT "x", " in a hypertext VAR item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -331,7 +331,7 @@ document { VAR,
      }
 
 document { DFN,
-     HEADLINE => "HTML DFN item",
+     Headline => "HTML DFN item",
      TT "DFN x", " -- encloses ", TT "x", " in a hypertext DFN item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -344,7 +344,7 @@ document { DFN,
      }
 
 document { STRONG,
-     HEADLINE => "HTML STRONG item",
+     Headline => "HTML STRONG item",
      TT "STRONG x", " -- encloses ", TT "x", " in a hypertext STRONG item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -358,7 +358,7 @@ document { STRONG,
      }
 
 document { CENTER,
-     HEADLINE => "HTML CENTER item",
+     Headline => "HTML CENTER item",
      TT "CENTER x", " -- encloses ", TT "x", " in a hypertext CENTER item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -367,7 +367,7 @@ document { CENTER,
      }
 
 document { BIG,
-     HEADLINE => "HTML BIG item",
+     Headline => "HTML BIG item",
      TT "BIG x", " -- encloses ", TT "x", " in a hypertext BIG item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -381,7 +381,7 @@ document { BIG,
      }
 
 document { SMALL,
-     HEADLINE => "HTML SMALL item",
+     Headline => "HTML SMALL item",
      TT "SMALL x", " -- encloses ", TT "x", " in a hypertext SMALL item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -395,7 +395,7 @@ document { SMALL,
      }
 
 document { SUB,
-     HEADLINE => "HTML subscript",
+     Headline => "HTML subscript",
      TT "SUB x", " -- encloses ", TT "x", " in a hypertext ", TT "SUB", " item,
      thereby making it a subscript.",
      PARA,
@@ -406,7 +406,7 @@ document { SUB,
      }
 
 document { SUP,
-     HEADLINE => "HTML superscript",
+     Headline => "HTML superscript",
      TT "SUP x", " -- encloses ", TT "x", " in a hypertext ", TT "SUP", " item,
      thereby making it a superscript.",
      PARA,
@@ -417,7 +417,7 @@ document { SUP,
      }
 
 document { SAMP,
-     HEADLINE => "HTML SAMP item",
+     Headline => "HTML SAMP item",
      TT "SAMP x", " -- encloses ", TT "x", " in a hypertext SAMP item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -431,7 +431,7 @@ document { SAMP,
      }
 
 document { KBD,
-     HEADLINE => "HTML KBD item",
+     Headline => "HTML KBD item",
      TT "KBD x", " -- encloses ", TT "x", " in a hypertext KBD item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -445,7 +445,7 @@ document { KBD,
      }
 
 document { ITALIC,
-     HEADLINE => "HTML italic font",
+     Headline => "HTML italic font",
      TT "ITALIC x", " -- encloses ", TT "x", " in a hypertext ITALIC item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -460,7 +460,7 @@ document { ITALIC,
      }
 
 document { UNDERLINE,
-     HEADLINE => "HTML underlining",
+     Headline => "HTML underlining",
      TT "UNDERLINE x", " -- encloses ", TT "x", " in a hypertext UNDERLINE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -474,7 +474,7 @@ document { UNDERLINE,
      }
 
 document { TEX,
-     HEADLINE => "hypertext TEX item",
+     Headline => "hypertext TEX item",
      TT "TEX s", " -- includes the string ", TT "s", ", presumably
      containing TeX commands, in the TeX version of the documentation
      containing this ", TO "hypertext", " item.",
@@ -483,7 +483,7 @@ document { TEX,
      }
 
 document { TT,
-     HEADLINE => "HTML TT item",
+     Headline => "HTML TT item",
      TT "TT x", " -- encloses ", TT "x", " in a hypertext TT item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -497,7 +497,7 @@ document { TT,
      }
 
 document { EM,
-     HEADLINE => "HTML EM item",
+     Headline => "HTML EM item",
      TT "EM x", " -- encloses ", TT "x", " in a hypertext EM item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -511,7 +511,7 @@ document { EM,
      }
 
 document { CITE,
-     HEADLINE => "HTML CITE item",
+     Headline => "HTML CITE item",
      TT "CITE x", " -- encloses ", TT "x", " in a hypertext CITE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -525,7 +525,7 @@ document { CITE,
      }
 
 document { BOLD,
-     HEADLINE => "HTML BOLD item",
+     Headline => "HTML BOLD item",
      TT "BOLD x", " -- encloses ", TT "x", " in a hypertext BOLD item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -539,7 +539,7 @@ document { BOLD,
      }
 
 document { CODE,
-     HEADLINE => "HTML CODE item",
+     Headline => "HTML CODE item",
      TT "CODE x", " -- encloses ", TT "x", " in a hypertext CODE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -553,7 +553,7 @@ document { CODE,
      }
 
 document { HREF,
-     HEADLINE => "HTML link",
+     Headline => "HTML link",
      TT "HREF{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext HREF link
      pointing to the url ", TT "u", ".",
      PARA,
@@ -561,7 +561,7 @@ document { HREF,
      }
 
 document { MENU,
-     HEADLINE => "HTML MENU item",
+     Headline => "HTML MENU item",
      TT "MENU x", " -- encloses the list x as a hypertext MENU.",
      PARA,
      "The argument ", TT "x", " should be a list of hypertext items or strings.",
@@ -575,7 +575,7 @@ document { MENU,
      }
 
 document { UL,
-     HEADLINE => "HTML UL item",
+     Headline => "HTML UL item",
      TT "UL x", " -- encloses the list x as a hypertext UL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list of strings or hypertext items.",
@@ -589,7 +589,7 @@ document { UL,
      }
 
 document { DL,
-     HEADLINE => "HTML DL item",
+     Headline => "HTML DL item",
      TT "DL x", " -- encloses the list x as a hypertext DL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list, each member of which should be
@@ -611,7 +611,7 @@ document { DL,
      }
 
 document { OL,
-     HEADLINE => "HTML OL item",
+     Headline => "HTML OL item",
      TT "OL x", " -- encloses the list x as a hypertext OL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list of strings or hypertext items.
@@ -626,7 +626,7 @@ document { OL,
      }
 
 document { NL,
-     HEADLINE => "HTML NL item",
+     Headline => "HTML NL item",
      TT "NL x", " -- encloses the list x as a hypertext NL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list of strings or hypertext items.",
@@ -640,7 +640,7 @@ document { NL,
      }
 
 document { NOINDENT,
-     HEADLINE => "cancel hypertext indentation",
+     Headline => "cancel hypertext indentation",
      TT "NOINDENT{}", " -- specifies that no indentation should be used
      for following hypertext items.",
      PARA,
@@ -651,7 +651,7 @@ document { NOINDENT,
      }
 
 document { TO,
-     HEADLINE => "hypertext documentation link",
+     Headline => "hypertext documentation link",
      TT "TO \"x\"", " -- produces a hypertext link to the documentation page labelled ", TT "x", ".",
      PARA,
      "See also ", TO "hypertext", ".  The word ", ITALIC "hypertext", " in the previous
@@ -677,7 +677,7 @@ document { TO,
      }
 
 document { Command,
-     HEADLINE => "the class of all commands",
+     Headline => "the class of all commands",
      "A command behaves as a function does if it is followed by an adjacent
      expression which can serve as its argument or argument list.  In addition,
      if it appears as the value of an expression typed by the user at top
@@ -693,7 +693,7 @@ document { Command,
 
 
 document { monomialCurve, 
-     HEADLINE => "make a monomial curve",
+     Headline => "make a monomial curve",
      TT "monomialCurve(R,a)", " -- yields the defining ideal of the projective
      curve given parametrically on an affine piece by 
      t |---> (t^a1, ..., t^an).",
@@ -736,7 +736,7 @@ TEST ///
 ///
 
 document { Fano, 
-     HEADLINE => "Fano scheme",
+     Headline => "Fano scheme",
      TT "Fano(k,I,GR) or  Fano(k,I)", " -- computes 
      the ideal of a Fano scheme in the Grassmannian.",
      PARA,
@@ -752,7 +752,7 @@ document { Fano,
      }
 
 document { Grassmannian,
-     HEADLINE => "find the ideal of a Grassmannian",
+     Headline => "find the ideal of a Grassmannian",
      TT "Grassmannian(k,r)", " -- Grassmannian of k-planes in P^r",BR,NOINDENT,
      TT "Grassmanian(k,r,R)", 
      PARA,
@@ -771,7 +771,7 @@ document { Grassmannian,
      }
 
 document { code,
-     HEADLINE => "display source code",
+     Headline => "display source code",
      TT "code f", " -- prints out the source code of the function f.",
      BR, NOINDENT,
      TT "code(f,X)", " -- prints out the source code of the particular 
@@ -794,7 +794,7 @@ document { code,
      }
 
 document { edit,
-     HEADLINE => "edit source code",
+     Headline => "edit source code",
      TT "edit", " -- a command which starts the text editor",
      BR,NOINDENT,
      TT "edit f", " -- starts the text editor at the source code of the
@@ -823,7 +823,7 @@ document { edit,
      }
 
 document { methods,
-     HEADLINE => "list methods",
+     Headline => "list methods",
      TT "methods F", " -- produces a list of those methods associated with the
      function or type F.",
      BR, NOINDENT,
@@ -847,7 +847,7 @@ document { methods,
      }
 
 document { isTable,
-     HEADLINE => "whether something is a rectangular list of lists",
+     Headline => "whether something is a rectangular list of lists",
      PARA,
      "Warning: it is not possible to represent a 0-by-k matrix 
      as a list of lists.",
@@ -858,7 +858,7 @@ document { isTable,
      }
 
 document { Monoid,
-     HEADLINE => "the class of all monoids",
+     Headline => "the class of all monoids",
      "A monoid is a set with a multiplicative operation on
      it and an identity element.  A typical monoid is the set
      of monomials in a polynomial ring, which we consider to be
@@ -866,7 +866,7 @@ document { Monoid,
      }
 
 document { (symbol _, ZZ, Monoid),
-     HEADLINE => "get unit element",
+     Headline => "get unit element",
      TT "1_M", " -- provides the unit element of a group or monoid ", TT "M", "."
      }
 
