@@ -1,6 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 CC = new Field of BasicList
+CC.synonym = "complex number"
 CC.isCommutative = true
 
 ii = new CC from {0,1}

@@ -14,7 +14,45 @@ addEndFunction(() -> (
 	       close DocDatabase;
 	       DocDatabase = null;
 	       )))
-
+docExtension := () -> (
+     if phase === 2 then "-tmp"		  -- writing, to be renamed -pre externally
+     else if phase === 3 then "-pre"	  -- reading
+     else if phase === 4 then "-tmp"	  -- writing, to be renamed -doc externally
+     else "-doc"			  -- reading
+     )
+docFilename := () -> (
+     progname := commandLine#0;
+     if substring(progname,0,1) === "\"" then progname = substring(progname,1);
+     if version#"operating system" === "MACOS" then "::cache:Macaulay2-doc"
+     else concatenate(
+	  between(pathSeparator,drop(lines(progname,pathSeparator),-2)),
+	  pathSeparator, "cache", pathSeparator, "Macaulay2", docExtension()))
+if phase === 1 then addStartFunction( 
+     () -> DocDatabase = (
+	  try openDatabase docFilename()
+	  else ( stderr << "--warning: couldn't open help file " << docFilename() << endl; new MutableHashTable)))
+if phase === 2 or phase === 4 then DocDatabase = openDatabaseOut docFilename()
+Documentation = new MutableHashTable
+duplicateDocError := nodeName -> (
+     stderr << concatenate ("warning: documentation already provided for '", nodeName, "'") 
+     << newline << flush; )
+storeDoc := (nodeName,docBody) -> (
+     -- note: nodeName and docBody should both be strings which can be evaluated with 'value'.
+     -- That usually means making then with 'toExternalString'.
+     if mutable DocDatabase then (
+	  if DocDatabase#?nodeName then duplicateDocError nodeName;
+	  DocDatabase#nodeName = docBody;
+	  )
+     else (
+     	  if Documentation#?nodeName then duplicateDocError nodeName;
+     	  Documentation#nodeName = docBody;
+	  )
+     )
+docDatabase := memoize (x -> if DocDatabase#?x then value DocDatabase#x)
+getDoc := x -> (
+     d := docDatabase x;
+     if d =!= null then d else if Documentation#?x then value Documentation#x
+     )
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
@@ -72,30 +110,110 @@ verifyTag Option   := s -> (
      if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
 
 -----------------------------------------------------------------------------
+-- html input
+-----------------------------------------------------------------------------
+
+html = method(SingleArgumentDispatch=>true, TypicalValue => String)
+text = method(SingleArgumentDispatch=>true, TypicalValue => String)
+tex = method(SingleArgumentDispatch=>true, TypicalValue => String)
+texMath = method(SingleArgumentDispatch=>true, TypicalValue => String)
+mathML = method(SingleArgumentDispatch=>true, TypicalValue => String)
+
+MarkUpList = new Type of BasicList
+
+     MarkUpType = new Type of Type
+EmptyMarkUpType = new Type of MarkUpType
+     MarkUpType List := (h,y) -> new h from y
+EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expected empty list"
+     MarkUpType Thing := (h,y) -> new h from {y}
+EmptyMarkUpType Thing := (h,y) -> error "expected empty list"
+
+makeList := method()
+makeList MarkUpType := X -> toString X
+makeList Type       := X -> concatenate("new ", toString X, " from ")
+toExternalString MarkUpList := s -> concatenate(makeList class s, toExternalString toList s)
+toString         MarkUpList := s -> concatenate(makeList class s, toString         toList s)
+
+htmlMarkUpType := s -> (
+     on := "<" | s | ">";
+     off := "</" | s | ">";
+     t -> concatenate(on, apply(t,html), off))
+
+GlobalAssignHook MarkUpType := (X,x) -> (
+     if not x.?name then (
+	  x.Symbol = X;
+	  x.name = string X;
+     	  html x := htmlMarkUpType string X;
+	  );
+     )
+
+new MarkUpType := theMarkUpType -> new theMarkUpType of MarkUpList
+
+BR         = new EmptyMarkUpType
+NOINDENT   = new EmptyMarkUpType
+HR         = new EmptyMarkUpType
+PARA       = new MarkUpType
+EXAMPLE    = new MarkUpType
+TABLE      = new MarkUpType
+ExampleTABLE = new MarkUpType
+PRE        = new MarkUpType
+TITLE      = new MarkUpType
+HEAD       = new MarkUpType
+HEADLINE   = new MarkUpType
+BODY       = new MarkUpType
+IMG	   = new MarkUpType
+HTML       = new MarkUpType
+CENTER     = new MarkUpType
+H1         = new MarkUpType
+H2         = new MarkUpType
+H3         = new MarkUpType
+H4         = new MarkUpType
+H5         = new MarkUpType
+H6         = new MarkUpType
+LISTING    = new MarkUpType
+LITERAL    = new MarkUpType
+XMP        = new MarkUpType
+BLOCKQUOTE = new MarkUpType
+VAR        = new MarkUpType
+DFN        = new MarkUpType
+STRONG     = new MarkUpType
+BIG        = new MarkUpType
+SMALL      = new MarkUpType
+SAMP       = new MarkUpType
+KBD        = new MarkUpType
+SUB        = new MarkUpType
+SUP        = new MarkUpType
+ITALIC     = new MarkUpType
+UNDERLINE  = new MarkUpType
+TEX	   = new MarkUpType
+SEQ	   = new MarkUpType
+new SEQ from List := (SEQ,v) -> select (splice apply(v,
+	  i -> if class i === SEQ then toSequence i
+	  else if class i === List then toSequence SEQ i
+	  else i ),
+     j -> j =!= null)
+TT         = new MarkUpType
+EM         = new MarkUpType
+CITE       = new MarkUpType
+BOLD       = new MarkUpType
+CODE       = new MarkUpType
+HREF       = new MarkUpType
+SHIELD     = new MarkUpType
+MENU       = new MarkUpType
+UL         = new MarkUpType
+OL         = new MarkUpType
+NL         = new MarkUpType
+DL 	   = new MarkUpType
+TO         = new MarkUpType
+
+MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
+MarkUpList _ MarkUpList := (x,y) -> SEQ{x,SUB y}
+
+-----------------------------------------------------------------------------
 -- installing the documentation
 -----------------------------------------------------------------------------
 
 Nothing << Thing := (x,y) -> null			    -- turning off the output is easy to do
-docExtension := () -> (
-     if phase === 2 then "-tmp"		  -- writing, to be renamed -pre externally
-     else if phase === 3 then "-pre"	  -- reading
-     else if phase === 4 then "-tmp"	  -- writing, to be renamed -doc externally
-     else "-doc"			  -- reading
-     )
-docFilename := () -> (
-     progname := commandLine#0;
-     if substring(progname,0,1) === "\"" then progname = substring(progname,1);
-     if version#"operating system" === "MACOS" then "::cache:Macaulay2-doc"
-     else concatenate(
-	  between(pathSeparator,drop(lines(progname,pathSeparator),-2)),
-	  pathSeparator, "cache", pathSeparator, "Macaulay2", docExtension()))
-if phase === 1 then addStartFunction( 
-     () -> DocDatabase = (
-	  try openDatabase docFilename()
-	  else ( stderr << "--warning: couldn't open help file " << docFilename() << endl; new MutableHashTable)))
-if phase === 2 or phase === 4 then DocDatabase = openDatabaseOut docFilename()
-
-Documentation = new MutableHashTable
 DocumentableValueType := hashTable { 
      Boolean => true, 
      HashTable => true, 
@@ -119,12 +237,6 @@ fixup MarkUpList := z -> apply(z,fixup)			    -- recursion
 fixup TO         := z -> z				    -- TO{x}
 fixup MarkUpType := z -> z{}				    -- convert PARA to PARA{}
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
-
-duplicateDocError := nodeName -> (
-     stderr
-     << concatenate ("warning: documentation already provided for '", nodeName, "'") 
-     << newline << flush;
-     )
 
 testFileCounter := 0
 exprCounter := 0
@@ -167,7 +279,10 @@ processExample := x -> (
 	  {x, CODE concatenate("in = ",x)}
 	  ))
 processExamplesLoop := s -> (
-     if class s === EXAMPLE then ExampleTABLE apply(select(toList s, i -> i =!= null), processExample)
+     if class s === EXAMPLE then {
+	  PARA{},
+	  ExampleTABLE apply(select(toList s, i -> i =!= null), processExample),
+	  PARA{}}
      else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)
@@ -192,16 +307,6 @@ processExamples := (docBody) -> (
 	  close exampleOutputFile;
 	  );
      docBody )
-storeDocLocally := (nodeName,docBody) -> (
-     if Documentation#?nodeName then duplicateDocError nodeName;
-     Documentation#nodeName = docBody;
-     )
-storeDoc := (nodeName,docBody) -> (
-     if phase === 0 then storeDocLocally(nodeName,docBody)
-     else if phase === 2 or phase === 4 then (
-	  if DocDatabase#?nodeName then duplicateDocError nodeName;
-	  if mutable DocDatabase then DocDatabase#nodeName = docBody
-	  else storeDocLocally(nodeName,docBody)))
 document = method()
 document List := z -> (
      if #z === 0 then error "expected a nonempty list";
@@ -242,16 +347,12 @@ apropos = (pattern) -> (
      mat := "*" | toString pattern | "*";
      sort select( keys symbolTable(), i -> match(i,mat)))
 
-getDoc := x -> (
-     x = formatDocumentTag x;
-     value if Documentation#?x then Documentation#x else if DocDatabase#?x then DocDatabase#x )
-
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
 briefDocumentation = x -> (
      if noBriefDocClasses#?(class x) or noBriefDocThings#?x then null
      else (
-	 d := getDoc x;
+	 d := getDoc formatDocumentTag x;
 	 if d =!= null then (
 	      i := 0;
 	      while i < #d and class d#i =!= PARA do i = i+1;
@@ -259,34 +360,35 @@ briefDocumentation = x -> (
 
 headline := memoize (
      key -> (
-	  d := getDoc key;
+	  d := getDoc formatDocumentTag key;
 	  if d =!= null and class first d === HEADLINE 
 	  then SEQ join( {"  --  "}, toList first d ) ) )
 
-items := s -> apply(s, i -> SEQ{ TO formatDocumentTag i, headline i } )
-smenu := s -> MENU sort items s
-menu := s -> MENU items s
+smenu := s -> MENU ((i -> SEQ{ TO i, headline i }) \ sort (formatDocumentTag \ s))
+menu := s -> MENU apply(s, i -> SEQ{ TO formatDocumentTag i, headline i } )
 
 ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
 
-usage := s -> (
-     o := getDoc s;
-     SEQ { PARA{}, "Usage:", PARA{}, if o === null then "No other documentation found." else o }
-     )
-
 vowels := hashTable apply(characters "aeiouAEIOU", i -> i => true)
 indefinite := s -> concatenate(if vowels#?(s#0) then "an " else "a ", s)
 
-documentation = method()
-documentation(Thing,Thing,Thing) := documentation(Thing,Thing) := s -> null
+synonym := X -> if X.?synonym then X.synonym else toString X
+
+usage = s -> (
+     o := getDoc formatDocumentTag s;
+     SEQ { PARA{}, "Usage :", PARA{}, if o === null then "No other documentation found." else o }
+     )
+
+documentation = method(SingleArgumentDispatch => true)
+documentation String := s -> getDoc toExternalString s
 documentation Thing := s -> if Symbols#?s then documentation Symbols#s
-type := s -> SEQ {"Class of ", toString s, " and its ancestors:", menu ancestors1 class s}
+type := s -> SEQ {"The object ", toString s, " is a :", PARA{}, menu ancestors1 class s, PARA{}}
 documentation Symbol := s -> (
      a := apply(options s, f -> f => s);
      SEQ {
      	  type s,
-	  if #a > 0 then SEQ {"Functions with optional argument ", toString s, ":", smenu a},
+	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, smenu a, PARA{}},
 	  usage s
      	  } )
 documentation Type := X -> (
@@ -299,10 +401,15 @@ documentation Type := X -> (
      d := ancestors X;
      SEQ {
      	  type X,
-	  if #d > 0 then SEQ {"Ancestors of ", toString X, ":", menu d},
-	  if #b > 0 then SEQ {"Types of ", toString X, ":", smenu b},
-	  if #a > 0 then SEQ {"Making ", indefinite toString X, ":", smenu a},
-	  if #c > 0 then SEQ {"Handling ", indefinite toString X, "s:", smenu c},
+	  if X.?synonym then SEQ {
+	       "Each object of class ", toString X, 
+	       " is also called ", indefinite X.synonym, ".", PARA{}},
+	  if #b > 0 then SEQ {"Types of ", toString X, " :", PARA{}, smenu b, PARA{}},
+	  if #d > 0 then SEQ {"Each ",
+	       if X.?synonym then X.synonym else "object of class "| toString X,
+	       " is also a :", PARA{}, menu d, PARA{}},
+	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, smenu a, PARA{}},
+	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, smenu c, PARA{}},
 	  usage X
 	  })
 
@@ -310,51 +417,42 @@ fmeth := f -> (
      b := methods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ {"Ways to use ",toString f,":", smenu b} )     
+     if #b > 0 then SEQ {"Ways to use ",toString f," :", PARA{}, smenu b, PARA{}} )     
 
-optargs := f -> (
+optargs := method(SingleArgumentDispatch => true)
+optargs Thing := x -> null
+optargs Function := f -> (
      a := apply(keys options f, s -> f => s);
-     if #a > 0 then SEQ {"Optional arguments:", smenu a} )
+     if #a > 0 then SEQ {"Optional arguments :", PARA{}, smenu a, PARA{}})
 
 ret := k -> (
      t := (
-	  if typicalValues#?k 
-	  then typicalValues#k 
-	  else if class k === Sequence and typicalValues#?(k#0)
-	  then typicalValues#(k#0)
+	  if typicalValues#?k then typicalValues#k 
+	  else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
 	  else Thing
 	  );
-     if t =!= Thing then SEQ {"Type of value returned is typically ", TO toString t, ".", PARA{}}
+     if t =!= Thing then SEQ {"Value returned is typically of type ", TO toString t, ".", PARA{}}
      )
 
-documentation(Function          ) :=  f      -> SEQ { type f, ret f, fmeth f, optargs f, usage f }
-documentation(Function,Type     ) := (f,X)   -> SEQ { ret(f,X), optargs f, usage(f,X) }
-documentation(Symbol  ,Type,Type) :=
-documentation(Function,Type,Type) := (f,X,Y) -> SEQ { ret(f,X,Y), optargs f, usage(f,X,Y) }
-documentation(Option) := v -> (
-     (fn, opt) -> SEQ { PARA{}, "default: ", toString opt, " => ", toString (options fn)#opt, usage f }
+documentation Function :=  f -> SEQ { type f, ret f, fmeth f, optargs f, usage f }
+documentation Option := v -> (
+     (fn, opt) -> SEQ { PARA{}, "default: ", toString opt, " => ", toString (options fn)#opt, usage fn }
      ) toSequence v
+documentation Sequence := s -> if #s == 0 then null else SEQ { ret s, optargs s#0, usage s }
 
-help2 := (o,s) -> (
+help2 := s -> (
      d := documentation s;
      if d === null 
-     then o << "No documentation available for '" << formatDocumentTag s << "'." << endl
-     else o << "Documentation for " << formatDocumentTag s << ":" << endl << endl << text d << endl;
+     then "No documentation available for '" |formatDocumentTag s | "'."
+     else "Documentation for " | formatDocumentTag s | " :" || "  " | net d
      )
 
-hr := (o) -> o << "-----------------------------------------------------------------------------" << endl
+hr1 := "-----------------------------------------------------------------------------"
+hr := v -> stack mingle(#v + 1 : hr1 , v)
 
-help1 := (o,s) -> (
-     if class s === List 
-     then scan(s, i -> ( hr o; help2 (o,i); ))
-     else ( o << endl; help2 (o,s); );
-     o )
-
-help = s -> (
-     if getenv "PAGER" === "" or getenv "TERM" === "emacs" 
-     then help1(stdio,s)
-     else help1(openOut concatenate("!", getenv "PAGER"), s) << close;
-     )
+help = method()
+help List := v -> hr apply(v, help2)
+help Thing := help2
 
 -----------------------------------------------------------------------------
 -- helper functions useable in documentation
@@ -378,3 +476,420 @@ SEEALSO = v -> (
 	       append(#v-2 : ", ", ", and ")
 	       ),
      	  "."))
+
+-----------------------------------------------------------------------------
+-- html output
+-----------------------------------------------------------------------------
+htmlLiteralTable := new MutableHashTable
+scan(characters ascii(0 .. 255), c -> htmlLiteralTable#c = c)
+htmlLiteralTable#"\"" = "&quot;"
+htmlLiteralTable#"<" = "&lt;"
+htmlLiteralTable#"&" = "&amp;"
+htmlLiteralTable#">" = "&gt;"
+htmlLiteral := s -> concatenate apply(characters s, c -> htmlLiteralTable#c)
+
+htmlExtraLiteralTable := new MutableHashTable
+scan(characters ascii(0 .. 255), c -> htmlExtraLiteralTable#c = c)
+htmlExtraLiteralTable#"\"" = "&quot;"
+htmlExtraLiteralTable#" " = "&nbsp;"
+htmlExtraLiteralTable#"&" = "&amp;"
+htmlExtraLiteralTable#"<" = "&lt;"
+htmlExtraLiteralTable#">" = "&gt;"
+htmlExtraLiteral := s -> concatenate apply(characters s, c -> htmlExtraLiteralTable#c)
+-----------------------------------------------------------------------------
+ttLiteralTable := new MutableHashTable
+scan(0 .. 255, 
+     c -> ttLiteralTable#(ascii{c}) = concatenate(///{\char ///, string c, "}"))
+scan(characters ascii(32 .. 126), c -> ttLiteralTable#c = c)
+scan(characters "\\{}$&#^_%~", 
+     c -> ttLiteralTable#c = concatenate("{\\char ", string (ascii c)#0, "}"))
+scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))
+
+cmrLiteralTable := copy ttLiteralTable
+
+ttBreak :=
+///
+\leavevmode\hss\endgraf
+///
+
+(
+if #newline === 1 
+then ttLiteralTable#newline = ttBreak 
+else if #newline === 2 then (
+     ttLiteralTable#(newline#0) = "";
+     ttLiteralTable#(newline#1) = ttBreak;
+     )
+)
+
+ttLiteralTable#" " = ///\ ///
+ttLiteralTable#"\t" = "\t"
+ttLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
+                               -- see page 381 of TeX Book
+ttLiteral := s -> concatenate apply(characters s, c -> ttLiteralTable#c)
+-----------------------------------------------------------------------------
+cmrLiteralTable#"\n" = "\n"
+cmrLiteralTable#"\r" = "\r"
+cmrLiteralTable#"\t" = "\t"
+cmrLiteralTable#"\\" = "{\\tt \\char`\\\\}"
+cmrLiteralTable# "<" = "{\\tt \\char`\\<}"
+cmrLiteralTable# ">" = "{\\tt \\char`\\>}"
+cmrLiteralTable# "|" = "{\\tt \\char`\\|}"
+cmrLiteralTable# "{" = "{\\tt \\char`\\{}"
+cmrLiteralTable# "}" = "{\\tt \\char`\\}}"
+cmrLiteral := s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
+-----------------------------------------------------------------------------
+
+html String := htmlLiteral
+mathML String := htmlLiteral
+tex String := cmrLiteral
+texMath String := cmrLiteral
+text String := identity
+
+texMath List := x -> concatenate("\\{", between(",", apply(x,texMath)), "\\}")
+texMath Sequence := x -> concatenate("(", between(",", apply(x,texMath)), ")")
+
+mathML Nothing := texMath Nothing := tex Nothing := html Nothing := text Nothing := x -> ""
+
+mathML Symbol := x -> concatenate("<ci>",string x,"</ci>")
+
+texMath Boolean := texMath Symbol := 
+tex Boolean := tex Symbol :=
+text Symbol := text Boolean := 
+html Symbol := html Boolean := string
+
+
+html MarkUpList := x -> concatenate apply(x,html)
+text MarkUpList := x -> concatenate apply(x,text)
+tex MarkUpList := x -> concatenate apply(x,tex)
+net MarkUpList := x -> peek x
+texMath MarkUpList := x -> concatenate apply(x,texMath)
+mathML MarkUpList := x -> concatenate apply(x,mathML)
+
+--html MarkUpType := H -> html H{}
+--text MarkUpType := H -> text H{}
+--tex MarkUpType := H -> tex H{}
+--net MarkUpType := H -> net H{}
+--texMath MarkUpType := H -> tex H{}
+
+html BR := x -> ///
+<BR>
+///
+text BR := x -> ///
+///
+tex  BR := x -> ///
+\hfil\break
+///
+
+html NOINDENT := x -> ""
+net NOINDENT := x -> ""
+text NOINDENT := x -> ""
+tex  NOINDENT := x -> ///
+\noindent\ignorespaces
+///
+
+html HR := x -> ///
+<HR>
+///
+text HR := x -> ///
+-----------------------------------------------------------------------------
+///
+tex  HR := x -> ///
+\hfill\break
+\line{\leaders\hrule\hfill}
+///
+
+html PARA := x -> (
+     if #x === 0 
+     then ///
+<P>
+///
+     else concatenate(///
+<P>
+///,
+          apply(x,html),
+          ///
+</P>
+///
+          )
+     )
+
+tex PARA := x -> concatenate(///
+\par
+///,
+     apply(x,tex))
+
+text PARA := x -> concatenate(newline, newline, apply(x,text))
+
+text EXAMPLE := x -> concatenate apply(x,i -> text PRE i)
+html EXAMPLE := x -> concatenate html ExampleTABLE apply(toList x, x -> {x, CODE concatenate("in = ",x)})
+
+text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
+text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y#1, newline)))
+net ExampleTABLE := x -> "    " | stack between("",apply(x, y -> "" | net y#1 || ""))
+
+net TABLE := x -> net MatrixExpression toList x
+tex TABLE := x -> concatenate applyTable(x,tex)
+texMath TABLE := x -> concatenate (
+     ///
+\matrix{
+///,
+     apply(x,
+	  row -> (
+	       apply(row,item -> (texMath item, "&")),
+	       ///\cr
+///
+	       )
+	  ),
+     ///}
+///
+     )
+
+tex ExampleTABLE := x -> concatenate apply(x,y -> tex y#1)
+
+html TABLE := x -> concatenate(
+     newline,
+     "<TABLE>",
+     newline,
+     apply(x, row -> ( 
+	       "  <TR>",
+	       newline,
+	       apply(row, item -> ("    <TD ALIGN=CENTER>", html item, "</TD>",newline)),
+	       "  </TR>",
+	       newline)),
+     "</TABLE>",
+     newline
+     )			 
+
+html ExampleTABLE := x -> concatenate(
+     newline,
+     "<P>",
+     "<CENTER>",
+     "<TABLE cellspacing='0' cellpadding='12' border='4' bgcolor='#80ffff' width='100%'>",
+     newline,
+     apply(x, 
+	  item -> (
+	       "  <TR>", newline,
+	       "    <TD NOWRAP>", html item#1, "</TD>", newline,
+	       "  </TR>", newline
+	       )
+	  ),
+     "</TABLE>",
+     "</CENTER>",
+     "</P>"
+     )			 
+
+text PRE   := x -> concatenate(
+     newline,
+     demark(newline,
+	  apply(lines concatenate x, s -> concatenate("     ",s))),
+     newline
+     )
+html PRE   := x -> concatenate( 
+     "<PRE>", 
+     html demark(newline,
+	  apply(lines concatenate x, s -> concatenate("     ",s))),
+     "</PRE>"
+     )
+
+shorten := s -> (
+     while #s > 0 and s#-1 == "" do s = drop(s,-1);
+     while #s > 0 and s#0 == "" do s = drop(s,1);
+     s)
+tex PRE := x -> concatenate (
+     ///\par
+\vskip 4 pt
+{%
+     \tt
+     \baselineskip=9.5pt
+///,
+     between(newline, 
+	  shorten lines concatenate x
+	  / (line ->
+	       if #line <= 81 then line
+	       else concatenate(substring(line,0,71), " ..."))
+	  / ttLiteral
+	  / (line -> if line === "" then ///\penalty-500/// else line)
+	  / (line -> (line,///\leavevmode\hss\endgraf///))
+	  ),
+     ///
+     }
+\par
+\noindent
+///
+     )
+
+html BODY := x -> concatenate(
+     "<BODY bgcolor='#e4e4ff'>",
+     newline,
+     apply(x, html),
+     newline,
+     "</BODY>",
+     newline
+     )
+
+html IMG  := x -> "<IMG src=\"" | x#0 | "\">"
+text IMG  := x -> ""
+tex  IMG  := x -> ""
+
+html LISTING := t -> "<LISTING>" | concatenate toSequence t | "</LISTING>";
+
+texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
+
+texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
+html ITALIC := x -> concatenate("<I>",apply(x,html),"</I>")
+
+texMath TEX := tex TEX := identity
+
+net HEADLINE := texMath HEADLINE := tex HEADLINE := text HEADLINE := html HEADLINE := s -> ""
+
+texMath SEQ := tex SEQ := x -> concatenate(apply(x, tex))
+text SEQ := x -> concatenate(apply(x, text))
+html SEQ := x -> concatenate(apply(x, html))
+net SEQ := x -> (
+     x = toList x;
+     p := join({-1},positions(x,i -> class i === PARA or class i === BR),{#x});
+     stack apply(#p - 1, 
+	  i -> horizontalJoin apply(take(x,{p#i+1, p#(i+1)-1}), net)
+	  )
+     )
+
+tex Sequence := tex List := x -> concatenate("$",texMath x,"$")
+
+text Sequence := x -> concatenate("(", between(",", apply(x,text)), ")")
+text List := x -> concatenate("{", between(",", apply(x,text)), "}")
+
+html Sequence := x -> concatenate("(", between(",", apply(x,html)), ")")
+html List := x -> concatenate("{", between(",", apply(x,html)), "}")
+
+texMath TT := tex TT := x -> concatenate(///{\tt {}///, ttLiteral concatenate x, "}")
+text TT := net TT := x -> concatenate("'", x, "'")
+
+net CODE := x -> stack lines concatenate x
+
+html CODE   := x -> concatenate( 
+     "<CODE>", 
+     demark( ("<BR>",newline), apply(lines concatenate x, htmlExtraLiteral) ),
+     "</CODE>"
+     )
+
+html HREF := x -> (
+     "<A HREF=\"" | x#0 | "\">" | html x#-1 | "</A>"
+     )
+text HREF := x -> "\"" | x#-1 | "\""
+tex HREF := x -> (
+--   if hypertex then 
+     concatenate(
+	  ///\special{html:<A href="///, ttLiteral x#0, ///">}///,
+	  tex x#-1,
+	  ///\special{html:</A>}///
+	  )
+--     else (
+--	  if #x == 2
+--	  then concatenate(tex x#1, " (the URL is ", tex TT x#0, ")")
+--	  else tex TT x#0
+--	  )
+     )
+
+html SHIELD := x -> concatenate apply(x,html)
+text SHIELD := x -> concatenate apply(x,text)
+
+html TEX := x -> x#0
+
+html MENU := x -> concatenate (
+     "<MENU>", newline,
+     apply(x, s -> if s =!= null then ("<LI>", html s, newline)),
+     "</MENU>", newline, 
+     "<P>", newline)
+
+text MENU := x -> concatenate(
+     newline,
+     apply(x, s -> if s =!= null then ("    ", text s, newline))
+     )
+
+net MENU := x -> "    " | stack apply(toList x, net)
+
+tex MENU := x -> concatenate(
+     ///
+\begingroup\parindent=40pt
+///,
+     apply(x, x -> if x =!= null then ( ///\item {$\bullet$}///, tex x, newline)),
+     "\\endgroup", newline, newline)
+
+
+html UL   := x -> concatenate(
+     "<UL>", newline,
+     apply(x, s -> ("<LI>", html s, newline)),
+     "</UL>", newline, 
+     "<P>", newline)
+
+text UL   := x -> concatenate(
+     newline,
+     apply(x, s -> ("    ", text s, newline)))
+
+html OL   := x -> concatenate(
+     "<OL>", newline,
+     apply(x,s -> ("<LI>", html s, newline)),
+     "</OL>", newline, 
+     "<P>", newline
+     )
+text OL   := x -> concatenate(
+     newline,
+     apply(x,s -> ("    ", text s, newline)))
+
+html NL   := x -> concatenate(
+     "<NL>", newline,
+     apply(x, s -> ("<LI>", html s, newline)),
+     "</NL>", newline, 
+     "<P>", newline)
+text NL   := x -> concatenate(
+     newline,
+     apply(x,s -> ("    ",text s, newline)))
+
+html DL   := x -> (
+     "<DL>" 
+     | concatenate apply(x, p -> (
+	       if class p === List or class p === Sequence then (
+		    if # p === 2 then "<DT>" | html p#0 | "<DD>" | html p#1
+		    else if # p === 1 then "<DT>" | html p#0
+		    else error "expected a list of length 1 or 2"
+		    )
+	       else "<DT>" | html p
+	       ))
+     | "</DL>")	  
+text DL   := x -> concatenate(
+     newline, 
+     newline,
+     apply(x, p -> (
+	       if class p === List or class p === Sequence then (
+		    if # p === 2 
+		    then (
+			 "    ", text p#0, newline,
+			 "    ", text p#1,
+			 newline,
+			 newline)
+		    else if # p === 1 
+		    then ("    ", 
+			 text p#0, 
+			 newline, 
+			 newline)
+		    else error "expected a list of length 1 or 2"
+		    )
+	       else ("    ", 
+		    text p#0, 
+		    newline, 
+		    newline)
+	       )),
+     newline,
+     newline)
+
+texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
+texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
+net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
+html TO := x -> concatenate ( "<A HREF=\"", "\">", html formatDocumentTag x#0, "</A>", drop(toList x,1) )
+tex  TO := x -> tex TT formatDocumentTag x#0
+html LITERAL := x -> x#0
+html EmptyMarkUpType := html MarkUpType := X -> html X{}
+html ITALIC := htmlMarkUpType "I"
+html UNDERLINE := htmlMarkUpType "U"
+html TEX := x -> x#0	    -- should do something else!
+html BOLD := htmlMarkUpType "B"

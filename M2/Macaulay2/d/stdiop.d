@@ -105,6 +105,9 @@ export getc(o:PosFile):int := (
 	       o.pos.line = o.pos.line + 1;
 	       o.pos.column = uchar(0);
 	       )
+	  else if c == int('\t') then (
+	       o.pos.column = uchar(((int(o.pos.column)+8)/8)*8);
+	       )
 	  else (
 	       o.pos.column = o.pos.column + 1;
 	       )

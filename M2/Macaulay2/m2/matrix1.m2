@@ -315,9 +315,10 @@ flatten Matrix := Matrix => m -> (
      then m
      else reshape(R^1, G ** dual F ** R^{- degree m}, m))
 
-flip = Matrix => (F,G) -> (
-  sendgg(ggPush F, ggPush G, ggflip);
-  getMatrix ring F)
+flip = method()
+flip(Module,Module) := Matrix => (F,G) -> (
+     sendgg(ggPush F, ggPush G, ggflip);
+     getMatrix ring F)
 
 align := f -> (
      if isHomogeneous f and any(degree f, i -> i =!= 0) then map(target f,,f) else f

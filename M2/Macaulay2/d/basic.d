@@ -177,6 +177,7 @@ export list(class:HashTable,e:Expr):Expr := (
      else list(class,Sequence(e)));
 export emptylist := list(Sequence());
 export list():Expr := emptylist;
+export list(e:Expr):Expr := list(Sequence(e));
 export list(e:Expr,f:Expr):Expr := list(Sequence(e,f));
 export list(e:Expr,f:Expr,g:Expr):Expr := list(Sequence(e,f,g));
 export list(e:Expr,f:Expr,g:Expr,h:Expr):Expr := list(Sequence(e,f,g,h));
