@@ -1047,6 +1047,12 @@ locate(e:Code):void := (
 	  locate(f.arg2);
 	  locate(f.arg3);)
      is f:multaryCode do ( lookat(f.position); foreach c in f.args do locate(c);)
+     is f:ifCode do (
+	  lookat(f.position);
+	  locate(f.predicate);
+	  locate(f.thenClause);
+	  locate(f.elseClause);
+	  )
      is f:forCode do (
 	  lookat(f.position);
 	  locate(f.fromClause);

@@ -162,6 +162,7 @@ export globalAssignmentCode := {
      rhs:Code,
      position:Position
      };
+export ifCode := { predicate:Code, thenClause:Code, elseClause:Code, position:Position };
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {
@@ -224,6 +225,7 @@ export Code := (
      or sequenceCode
      or listCode
      or arrayCode
+     or ifCode
      or newLocalFrameCode				    -- soon obsolete
      or functionCode
      );
@@ -464,6 +466,7 @@ export dummySymbol := Symbol(
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(nullCode());
+export NullCode := Code(nullCode());
 export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
 export dummyCodeClosureList := CodeClosureList(dummyCodeClosure,self);
 export dummyToken   := Token(dummyWord,
@@ -579,6 +582,7 @@ export codePosition(e:Code):Position := (
      when e
      is f:binaryCode do f.position
      is f:forCode do f.position
+     is f:ifCode do f.position
      is f:functionCode do codePosition(f.parms)
      is f:globalAssignmentCode do f.position
      is f:globalMemoryReferenceCode do f.position
