@@ -5,6 +5,8 @@ use strings;
 use varstrin;
 use nets;
 
+export printingPrecision := 6;
+
 export HashCounter := 1000000;
 export nextHash():int := (
      HashCounter = HashCounter + 1;

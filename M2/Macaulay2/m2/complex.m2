@@ -1,17 +1,16 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-CC = new Ring of BasicList
 CC.synonym = "complex number"
 CC.isCommutative = true
 CC.texMath = ///{\mathbb C}///
 CC.isField = true
 CC.mathML = "<mi>&Copf;</mi>"
 
-ii = new CC from {0,1}
+-- ii = new CC from {0,1}
 
 CC.char = 0
-CC#0 = new CC from {0,0}
-CC#1 = new CC from {1,0}
+-- CC#0 = new CC from {0,0}
+-- CC#1 = new CC from {1,0}
 
 CC.degreeLength = 0
 
