@@ -95,7 +95,8 @@ void stash::delete_elem(void *p)
   if (n_per_slab == 0)
     {
       deleted_amount += element_size;
-      delete [] p;
+      char *q = (char *)p;
+      delete [] q;
       return;
     }
   *((void **) p) = free_list;

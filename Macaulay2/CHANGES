@@ -4,13 +4,37 @@ Changes made, most recent ones first:
 
 New in 0.9.0:
 
+The function 'unique' has been rewritten to be more deterministic and a bit
+slower: the list returned has elements in the order as first encountered in
+the list submitted.
+
+New function 'truncateOutput' can be used truncate output lines that are too
+long.  This is useful if long lines get displayed too slowly, such as in
+emacs, sigh.
+
+New function 'setRandomSeed' can be used to set the seed (starting point) for
+the random number generator from an integer or a string.
+
+Added new html items TOC and SECTION to enable a web page to be divided into
+sections, together with a menu that provides internal links to each of them.
+
+Changed the HTML items H1, H2, H3, H4, H5, H6, to HEADER1, HEADER2, ...  That
+frees up some short names for users!
+
+The four libraries (gc, singular-factory, singular-libfac, and gmp) are
+no longer included.  Instructions are given in the top-level README for
+downloading them and compiling them.
+
+Macaulay 2 is now licensed under the terms of the GNU General Public
+License.
+
 routines for computing global Ext of coherent sheaves donated by Greg Smith
 installed: 
-	Ext(ZZ,CoherentSheaf,SumOfTwists)
-	Ext(ZZ,SheafOfRings,SumOfTwists)
-	Ext(ZZ,SheafOfRings,CoherentSheaf)
-	Ext(ZZ,CoherentSheaf,SheafOfRings)
-	Ext(ZZ,SheafOfRings,SheafOfRings)
+	Ext^ZZ(CoherentSheaf,SumOfTwists)
+	Ext^ZZ(SheafOfRings,SumOfTwists)
+	Ext^ZZ(SheafOfRings,CoherentSheaf)
+	Ext^ZZ(CoherentSheaf,SheafOfRings)
+	Ext^ZZ(SheafOfRings,SheafOfRings)
 
 LLL in package LLL.m2 now returns a matrix, rather than a "sparse matrix".
 

@@ -558,6 +558,8 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      F := outTable#VResolution;
      restrictTable := outTable#GenCycles;
 
+     local answer;
+
      if restrictTable#n == 0 then answer = 0_K
      else (
      	  chainMap := new MutableHashTable;

@@ -923,8 +923,6 @@ import GCVERSION:string;
 import GMPVERSION:string;
 import FACTORYVERSION:string;
 import DUMPDATA:bool;
-import FACTORY:bool;
-import MP:bool;
 setupconst("newline", Expr(newline));
 
 x := newHashTable(hashTableClass,nothingClass);
@@ -936,14 +934,10 @@ storeInHashTable(x,Expr("compiler"),Expr(CCVERSION));
 storeInHashTable(x,Expr("compile time"),Expr(DATE+" "+TIME));
 storeInHashTable(x,Expr("compile node name"),Expr(NODENAME));
 storeInHashTable(x,Expr("dumpdata"),Expr(if DUMPDATA then True else False));
-storeInHashTable(x,Expr("factory"),Expr(if FACTORY then True else False));
-storeInHashTable(x,Expr("mp"),Expr(if MP then True else False));
 storeInHashTable(x,Expr("gc version"),Expr(GCVERSION));
 storeInHashTable(x,Expr("gmp version"),Expr(GMPVERSION));
-if FACTORY then (
-     storeInHashTable(x,Expr("libfac version"),Expr(LIBFACVERSION));
-     storeInHashTable(x,Expr("factory version"),Expr(FACTORYVERSION));
-     );
+storeInHashTable(x,Expr("libfac version"),Expr(LIBFACVERSION));
+storeInHashTable(x,Expr("factory version"),Expr(FACTORYVERSION));
 sethash(x,false);
 setupconst("version", Expr(x));
 

@@ -29,3 +29,5 @@ allfiles : Makefile;
 clean:
 	rm -f M2-symbols.el emacs-hlp.txt emacs.m2
 
+distclean : clean
+	rm -f Makefile

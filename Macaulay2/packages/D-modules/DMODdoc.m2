@@ -2,12 +2,12 @@ document { "D-modules Package",
      "Welcome to the online documentation for the Macaulay 2 
      D-modules package.",
      PARA,
-     H3 "How to make Weyl algebras:",
+     HEADER3 "How to make Weyl algebras:",
      MENU{TO {"WeylAlgebra", " -- 
 	       The class of Weyl algebras"}},
      
      PARA,
-     H3 "Grobner deformations and other basic commands:",
+     HEADER3 "Grobner deformations and other basic commands:",
      MENU{--TO {"gbw", " -- Grobner bases with respect to weight vectors"},
 	  --TO {"inw", " -- initial ideals with respect to weight vectors"},
 	  --TO {"Fourier", " -- Fourier transform"},
@@ -16,20 +16,20 @@ document { "D-modules Package",
 	  },
      
      --PARA,
-     --H3 "Some examples of D-modules:",
+     --HEADER3 "Some examples of D-modules:",
      --MENU{TO {"gkz", " -- Gelfand-Kapranov-Zelevinsky hypergeometric system"},
 --	  TO {"AppellF1", " -- Appell F1 system"},
 --	  TO {"PolyAnn", " -- annihilator of a polynomial"},
 --	  TO {"RatAnn", " -- annihilator of a rational function"}},
      --PARA,
-     --H3 "Basic invariants of D-modules:",
+     --HEADER3 "Basic invariants of D-modules:",
      --MENU{TO {"Ddim", " -- dimension"}, 
 --	  TO {"Drank"," -- holonomic rank"}, 
 	--  TO {"charIdeal", " -- characteristic ideal"},
 	 -- TO {"singLocus", " -- singular locus"}},
 
      PARA,
-     H3 "B-functions:",
+     HEADER3 "B-functions:",
      MENU {
 	  TO {"bFunction", " -- b-function"}, 
 	  TO {"globalBFunction", " -- global b-function"},
@@ -43,7 +43,7 @@ document { "D-modules Package",
 	  TO {"AnnIFs", " -- annihilator ideal for an arbitrary D-module"}
 	  },
      PARA,
-     H3 "Applications:",
+     HEADER3 "Applications:",
      MENU{
 	  TO {"localCohom", "-- local cohomology"}
 	  --TO {"deRham", " -- deRham cohomology"},
@@ -52,7 +52,7 @@ document { "D-modules Package",
 	  --TO {"diffOps", " -- differential operators on affine varieties"}
 	  },
      PARA,
-     H3 "Miscellaneous:",
+     HEADER3 "Miscellaneous:",
      MENU{
 	  --TO {"createDpairs", 
 	  --     " -- tags coordinate and derivation variables"},
@@ -65,7 +65,7 @@ document { "D-modules Package",
 ///
 
      PARA,
-     H3 "B-functions:",
+     HEADER3 "B-functions:",
      MENU{
 	  makeLink docBFunction,
 	  makeLink docGlobalBFunction,
@@ -85,7 +85,7 @@ document { "D-modules Package",
 	  },
      
      PARA,
-     H3 "Resolutions and Functors:",
+     HEADER3 "Resolutions and Functors:",
      MENU{TO {"Dresolution", " -- resolutions"}, 
 	  TO {"Dlocalize", " -- localization"}, 
      	  TO {"WeylClosure", " -- Weyl closure"},
@@ -97,7 +97,7 @@ document { "D-modules Package",
 
                
      PARA,
-     H3 "Programming aids:",
+     HEADER3 "Programming aids:",
      MENU{TO {"createDpairs", " -- tags coordinate and derivation variables"},
 	  TO {"Dtrace", " -- toggles verbose comments"},
 	  TO {"setHomSwitch", " -- toggles use of homogeneous Weyl algebra"}}
