@@ -357,12 +357,14 @@ document { quote OO,
 
 cotangentSheaf = method()
 cotangentSheaf ProjectiveVariety := (X) -> (
-     if X.?cotangentSheaf then X.cotangentSheaf else X.cotangentSheaf = (
+     if X.?cotangentSheaf
+     then X.cotangentSheaf
+     else X.cotangentSheaf = (
 	  R := ring X;
 	  F := presentation R;
-	  sheaf(prune homology(vars ring F ** R,jacobian F ** R), X)
-	  )
-     )
+	  sheaf( prune 
+	       homology(vars ring F ** R,jacobian F ** R), X)))
+
 document { (cotangentSheaf, ProjectiveVariety),
      TT "cotangentSheaf X", " -- calculate the cotangent sheaf of a variety ", TT "X", ".",
      PARA,

@@ -150,6 +150,11 @@ load "loads.m2"
 
 setrecursionlimit 300
 
+clear = () -> (
+     clearAll();
+     scan(userSymbols(), i -> i <- i);
+     )
+
 userSymbols = type -> (			  -- last symbol introduced
      if type === () then type = Thing;
      tab := symbolTable();
