@@ -119,7 +119,7 @@ pass1 := () -> (
      scan(undocumentedSymbols(), 
 	  x -> (
 	       haderror = true;
-	       follow x;
+	       follow toString x;
 	       )
 	  )
      )

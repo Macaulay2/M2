@@ -364,7 +364,10 @@ fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 -----------------------------------------------------------------------------
 makeFileName := (key,filename) -> (			 -- may return 'null'
      prefix := first documentationPath;
-     if filename =!= null then cacheFileName(prefix, key, filename)
+     if filename =!= null then (
+	  if writing() then cacheFileName(prefix, key, filename)
+	  else prefix | filename
+	  )
      else (
      	  t := cacheFileName(if writing() then first documentationPath, documentationPath, key);
 	  if #t > 1 then (

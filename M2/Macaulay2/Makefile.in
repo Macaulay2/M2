@@ -66,7 +66,7 @@ all :: setup
 install ::; $(INSTALL_PROGRAM) setup $(packagedir)
 distclean ::; rm -f setup
 ################################# packages
-install check clean distclean ::; $(MAKE) -C packages $@
+all install check clean distclean ::; $(MAKE) -C packages $@
 ################################# html
 doc :: html
 html ::; $(MAKE) -C html all

@@ -21,7 +21,7 @@ ARGS += '-e path = prepend("$(srcdir)/",path)'
 %.out : %.example
 	@if [ -f ./"$*.out" ] && cmp -s ./"$*.example" ./"$*.example.old" ; \
 	then touch ./"$*.out" ; \
-	else echo "running example $*"; \
+	else echo "making $@ from $^"; \
 	     if env M2HOME=../../.. ../../../libexec/Macaulay2 $(ARGS) <./"$*.example" >./"$*.tmp" ; \
 	     then mv ./"$*.tmp" ./"$*.out" ; \
 		  cp ./"$*.example" ./"$*.example.old" ; \
