@@ -495,7 +495,7 @@ type := S -> (
      	       f := (T -> while T =!= Thing list parent T do T = parent T) s;
 	       SEQ splice {
 		    if #f>1 then ", with ancestor classes " else ", with ancestor class ", 
-		    toSequence mingle(f / (T -> TO T), splice { #f-2 : ", ", ", and " } ) 
+		    toSequence between(" < ", f / (T -> TO T)) 
 		    }
 	       ),
 	  "."
@@ -707,7 +707,7 @@ documentationValue(Symbol,Type) := (s,X) -> (
      SEQ {
 	  if #b > 0 then ( 
 	       PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"},
-	       PARA {smenu b}),
+	       PARA {SHIELD smenu b}),
 	  if #a > 0 then PARA {"Functions and methods returning ", indefinite synonym X, " :", SHIELD smenu a },
 	  if #c > 0 then PARA {"Methods for using ", indefinite synonym X, " :", SHIELD smenu c},
 	  if #e > 0 then PARA {"Fixed objects of class ", toString X, " :", SHIELD smenu e},

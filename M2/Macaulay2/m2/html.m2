@@ -255,7 +255,11 @@ makeTree := x -> (
 makeForest := x -> new ForestNode from makeTree \ x
 
 leaves := () -> keys set flatten values linkTable
-roots := () -> sort keys ( set keys linkTable - set leaves() )
+roots := () -> (
+     x := keys ( set keys linkTable - set leaves() );
+     if not member(topNodeName,x) then stderr << "--warning: top node name " << topNodeName << " not a root" << endl;
+     x = select(x,k -> k =!= topNodeName);
+     prepend(topNodeName, sort x))
 getTrees := topNode -> (
      visitCount = new MutableHashTable;
      return makeForest roots())
@@ -397,7 +401,7 @@ makeMasterIndex := keylist -> (
 	  HEAD { TITLE title, style(), links() },
 	  BODY {
 	       HEADER2 title, PARA,
-	       topNodeButton, 
+	       topNodeButton, tocButton,
 	       PARA between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
 	       UL apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey }),
 	       }
@@ -415,7 +419,7 @@ makeTableOfContents := () -> (
 	  HEAD { TITLE title, style(), links() },
 	  BODY {
 	       HEADER2 title, PARA,
-	       topNodeButton, 
+	       topNodeButton, masterIndexButton,
 	       HR{},
 	       toDoc CONTENTS
 	       }
