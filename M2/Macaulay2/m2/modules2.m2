@@ -619,6 +619,8 @@ basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
      k := coefficientRing A;
      if M.?generators then notImplemented();		    -- because we are about to ask for a presentation
      pres := generators gb presentation M;
+     lo = -lo;						    -- the engine has the signs wrong!!!
+     hi = -hi;
      f := map(M,,rawBasis(raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit));
      s := sortColumns f;
      f = f_s;
