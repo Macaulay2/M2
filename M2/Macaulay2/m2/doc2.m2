@@ -79,16 +79,29 @@ document { "if",
 
 document { "for",
      Headline => "loop control",
-     TT "for i from a to b while c list x do y", " -- repeatedly evaluate x and ", TT "y", " as
-     long as c is true, letting the variable ", TT "i", " be
-     assigned the values ", TT "a", ", ", TT "a+1", ", ", TT "a+2", ", ..., ", TT "b", ",
+     TT "for i from a to b when c list x do y", " -- repeatedly 
+     evaluate ", TT "x", " and ", TT "y", " as long as ", TT "c", " is
+     true, letting the variable ", TT "i", " be assigned the values
+     ", TT "a", ", ", TT "a+1", ", ", TT "a+2", ", ..., ", TT "b", ",
      returning a list of the values of ", TT "x", " encountered.",
      PARA,
      "Each of the clauses ", TT "from a", ", ", TT "to b", ",
-     ", TT "while c", ", ", TT "list x", ", and ", TT "do y", " is optional,
+     ", TT "when c", ", ", TT "list x", ", and ", TT "do y", " is optional,
      provided either the ", TT "list x", " or the ", TT "do y", " clause is 
-     present.  If the ", TT "list x", " clause is absent, then ", TO "null", "
-     is returned."
+     present.  If the clause ", TT "from a", " is missing, then ", TT "from 0", "
+     is assumed.  If the clause ", TT "to b", " is missing, then no upper limit
+     is imposed on the value of ", TT "i", ".  If the clause
+     ", TT "list x", " is absent, then ", TO "null", " is returned.",
+     PARA,
+     "The numbers ", TT "a", " and ", TT "b", " must be small integers that fit
+     into a single word.",
+     PARA,
+     "The variable ", TT "i", " is a new local variable whose scope includes 
+     only the expressions ", TT "c", ", ", TT "x", ", and ", TT "y", ".",
+     EXAMPLE {
+	  "for i from 3 to 6 do print i",
+	  "for i when i^2 < 90 list i",
+	  }
      }     
 
 document { "while",
@@ -107,7 +120,8 @@ document { "while",
      EXAMPLE {
 	  ///i = 1; while i < 100 do (<< i << " "; i = 2*i); << endl///,
 	  ///i = 1; while (i = 2*i; i < 100) list i///,
-	  ///i = 1; while i < 100 list i do i = 2*i///
+	  ///i = 1; while i < 100 list i do i = 2*i///,
+	  ///i = List; while i =!= Thing list i do i = parent i///
 	  }
      }
 

@@ -457,8 +457,7 @@ document { Boolean,
 	  TO "not",
 	  TO "and",
 	  TO "or",
-	  TO "if",
-	  TO "while"
+	  TO "if"
 	  }
      }
 
