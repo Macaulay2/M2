@@ -396,7 +396,7 @@ export eval(c:Code):Expr := (
      is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
      is b:multaryCode do b.f(b.args)
      is n:forCode do (
-	  localFrame = Frame(localFrame,n.dictionary.frameID,n.dictionary.framesize,false,new Sequence len n.dictionary.framesize do provide nullE);
+	  localFrame = Frame(localFrame,n.frameID,n.framesize,false,new Sequence len n.framesize do provide nullE);
 	  x := ForFun(n);
 	  localFrame = localFrame.outerFrame;
 	  x)

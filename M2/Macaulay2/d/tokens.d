@@ -131,6 +131,104 @@ export CompiledFunctionClosure := {
      env:Sequence
      };
 
+-- Code
+
+export localSymbolClosureCode := {
+     nestingDepth:int,
+     symbol:Symbol,
+     position:Position
+     };
+export globalSymbolClosureCode := {
+     symbol:Symbol,
+     position:Position
+     };
+export localMemoryReferenceCode := {
+     nestingDepth:int,
+     frameindex:int,
+     position:Position
+     };
+export globalMemoryReferenceCode := {
+     frameindex:int,
+     position:Position
+     };
+export localAssignmentCode := {
+     nestingDepth:int,
+     frameindex:int,
+     rhs:Code,
+     position:Position
+     };
+export globalAssignmentCode := {
+     lhs:Symbol,
+     rhs:Code,
+     position:Position
+     };
+
+export SymbolSequence := array(Symbol);
+export parallelAssignmentCode := {
+     nestingDepth:array(int), -- spots corresponding to local variables are filled with -1
+     frameindex:array(int),
+     lhs:SymbolSequence, -- spots corresponding to local variables are filled with dummySymbol
+     rhs:Code,
+     position:Position};
+
+export nullCode := {};
+export realCode := {x:double,position:Position};
+export integerCode := {x:Integer,position:Position};
+export stringCode := {x:string,hash:int,position:Position};
+export unaryCode := {f:unop,rhs:Code,position:Position};
+export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
+export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
+
+export CodeSequence := array(Code);
+export sequenceCode := {x:CodeSequence, position:Position};
+export listCode     := {y:CodeSequence, position:Position};
+export arrayCode    := {z:CodeSequence, position:Position};
+export multaryCode := {f:multop, args:CodeSequence, position:Position};
+export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code,
+     frameID:int, framesize:int, position:Position} ;
+export unop := function(Code):Expr;
+export binop := function(Code,Code):Expr;
+export ternop := function(Code,Code,Code):Expr;
+export multop := function(CodeSequence):Expr;
+export newLocalFrameCode := {
+     frameID:int,
+     framesize:int,
+     body:Code
+     };
+export functionDescription := {
+     frameID:int,		    -- seqno of dictionary
+     framesize:int,
+     numparms:int,		    -- number of formal parameters
+     restargs:bool		    -- whether last parm gets rest of args
+     };
+export dummyDesc := functionDescription(-1,0,0,false);
+export functionCode := { 
+     parms:Code,			  -- just for display purposes
+     body:Code, 
+     desc:functionDescription
+     };
+export Code := (
+     nullCode
+     or realCode
+     or stringCode
+     or integerCode
+     or globalMemoryReferenceCode
+     or localMemoryReferenceCode
+     or globalAssignmentCode
+     or localAssignmentCode
+     or parallelAssignmentCode
+     or globalSymbolClosureCode 
+     or localSymbolClosureCode
+     or unaryCode or binaryCode 
+     or ternaryCode or multaryCode or forCode
+     or sequenceCode
+     or listCode
+     or arrayCode
+     or newLocalFrameCode				    -- soon obsolete
+     or functionCode
+     );
+export CodeWrapper := { code:Code };
+
 -- Expr
 
 export Sequence := array(Expr);
@@ -187,6 +285,7 @@ export Expr := (
      BigComplex or
      BigReal or
      Boolean or
+     CodeWrapper or
      CompiledFunction or
      CompiledFunctionClosure or
      Complex or
@@ -228,103 +327,6 @@ export toExpr(v:bool):Expr := if v then True else False;
 
 export nullE := Expr(Nothing());
 export notfoundE := Expr(Nothing());			    -- internal use only, not visible to user
-
--- Code
-
-export localSymbolClosureCode := {
-     nestingDepth:int,
-     symbol:Symbol,
-     position:Position
-     };
-export globalSymbolClosureCode := {
-     symbol:Symbol,
-     position:Position
-     };
-export localMemoryReferenceCode := {
-     nestingDepth:int,
-     frameindex:int,
-     position:Position
-     };
-export globalMemoryReferenceCode := {
-     frameindex:int,
-     position:Position
-     };
-export localAssignmentCode := {
-     nestingDepth:int,
-     frameindex:int,
-     rhs:Code,
-     position:Position
-     };
-export globalAssignmentCode := {
-     lhs:Symbol,
-     rhs:Code,
-     position:Position
-     };
-
-export SymbolSequence := array(Symbol);
-export parallelAssignmentCode := {
-     nestingDepth:array(int), -- spots corresponding to local variables are filled with -1
-     frameindex:array(int),
-     lhs:SymbolSequence, -- spots corresponding to local variables are filled with dummySymbol
-     rhs:Code,
-     position:Position};
-
-export nullCode := {};
-export realCode := {x:double,position:Position};
-export integerCode := {x:Integer,position:Position};
-export stringCode := {x:string,hash:int,position:Position};
-export unaryCode := {f:unop,rhs:Code,position:Position};
-export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
-export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
-
-export CodeSequence := array(Code);
-export sequenceCode := {x:CodeSequence, position:Position};
-export listCode     := {y:CodeSequence, position:Position};
-export arrayCode    := {z:CodeSequence, position:Position};
-export multaryCode := {f:multop, args:CodeSequence, position:Position};
-export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code,
-     dictionary:Dictionary, position:Position} ;
-export unop := function(Code):Expr;
-export binop := function(Code,Code):Expr;
-export ternop := function(Code,Code,Code):Expr;
-export multop := function(CodeSequence):Expr;
-export newLocalFrameCode := {
-     frameID:int,
-     framesize:int,
-     body:Code
-     };
-export functionDescription := {
-     frameID:int,		    -- seqno of dictionary
-     framesize:int,
-     numparms:int,		    -- number of formal parameters
-     restargs:bool		    -- whether last parm gets rest of args
-     };
-export dummyDesc := functionDescription(-1,0,0,false);
-export functionCode := { 
-     parms:Code,			  -- just for display purposes
-     body:Code, 
-     desc:functionDescription
-     };
-export Code := (
-     nullCode
-     or realCode
-     or stringCode
-     or integerCode
-     or globalMemoryReferenceCode
-     or localMemoryReferenceCode
-     or globalAssignmentCode
-     or localAssignmentCode
-     or parallelAssignmentCode
-     or globalSymbolClosureCode 
-     or localSymbolClosureCode
-     or unaryCode or binaryCode 
-     or ternaryCode or multaryCode or forCode
-     or sequenceCode
-     or listCode
-     or arrayCode
-     or newLocalFrameCode				    -- soon obsolete
-     or functionCode
-     );
 
 -- scopes
 
@@ -499,6 +501,7 @@ export optionClass := newtypeof(basicListClass);
 export fileClass := newbasictype();
 export functionClass := newbasictype();
 export symbolClass := newbasictype();
+export codeClass := newbasictype();
 export errorClass := newbasictype();
 export netClass := newbasictype();
 export stringClass := newtypeof(netClass);
@@ -584,3 +587,5 @@ export codePosition(e:Code):Position := (
      is f:ternaryCode do f.position
      is f:unaryCode do f.position
      );
+
+export debugLevel := 0;

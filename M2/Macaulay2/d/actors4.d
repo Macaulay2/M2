@@ -818,6 +818,7 @@ tostringfun(e:Expr):Expr := (
      is Nothing do Expr("null")
      is f:Database do Expr(f.filename)
      is Net do Expr("--net--")
+     is CodeWrapper do Expr("--code--")
      is CompiledFunction do Expr("--compiled function--")
      is CompiledFunctionClosure do Expr("--compiled function closure--")
      is FunctionClosure do Expr("--function closure--")

@@ -7,6 +7,16 @@ import join(x:string,y:string):string;
 import substr(x:string,start:int,leng:int):string;
 import substr(x:string,start:int):string;
 
+export concatenate(x:array(string)):string := (
+     n := 0;
+     foreach y in x do n = n + length(y);
+     new string len n do foreach y in x do foreach z in y do provide(z));
+export between(s:string,x:array(string)):string := (
+     if length(x) == 0
+     then ""
+     else if length(x) == 1 then x.0
+     else concatenate(new array(string) len 2*length(x)-1 do foreach y in x do (provide y; provide s)));
+
 export (s:string) + (t:string) : string := join(s,t);
 export (s:string) + (c:char) : string := join(s,string(c));
 export (c:char) + (t:string) : string := join(string(c),t);

@@ -5,7 +5,7 @@
 -- we need some other way to determine whether to load docs
 -- shall we still cache them or not?
 -- if phase === 2 or phase === 4 or phase == 5 then load "Macaulay2-doc.m2"
-load "Macaulay2-doc.m2"
+-- load "Macaulay2-doc.m2"
 
 recursionLimit = 300
 
@@ -24,7 +24,7 @@ writableGlobals := set (
      symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol currentPrompts, symbol currentPackage,
      symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify, symbol loadDepth, 
      symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol Output, symbol debuggingMode, 
-     symbol stopIfError
+     symbol stopIfError, symbol debugLevel
      )
 
 scan(pairs Macaulay2.Dictionary, (name,sym) -> if not writableGlobals#?sym then protect sym)

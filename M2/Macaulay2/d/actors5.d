@@ -1346,11 +1346,12 @@ export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
 export stopIfError := false;
 
 debuggingModeS := setupvar("debuggingMode",toExpr(debuggingMode));
+debugLevelS := setupvar("debugLevel",toExpr(debugLevel));
 loadDepthS := setupvar("loadDepth",toExpr(loadDepth));
 recursionLimitS := setupvar("recursionLimit",toExpr(recursionlimit));
 errorDepthS := setupvar("errorDepth",toExpr(errorDepth));
 stopIfErrorS := setupvar("stopIfError",toExpr(stopIfError));
-syms := SymbolSequence(debuggingModeS,loadDepthS,errorDepthS,recursionLimitS,stopIfErrorS);
+syms := SymbolSequence(debuggingModeS,loadDepthS,errorDepthS,recursionLimitS,stopIfErrorS,debugLevelS);
 
 export setDebuggingMode(b:bool):void := (
      debuggingMode = b;
@@ -1381,6 +1382,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       n := toInt(i);
 	       if sym === loadDepthS then (loadDepth = n; e)
 	       else if sym === errorDepthS then (errorDepth = n; e)
+	       else if sym === debugLevelS then (debugLevel = n; e)
 	       else if sym === recursionLimitS then (recursionlimit = n; e)
 	       else buildErrorPacket(msg))
 	  else buildErrorPacket(msg))
