@@ -6,9 +6,96 @@ New command line option --restricted disables the use of the following system
 calls: open, pipe, socket, connect, fork.  It also attempts "chroot .", which
 will fail unless running as root, and then tries "setuid ...
 
+Function 'group' removed.  Use new monomial ordering options instead.
+
 -----------------------------------------------------------------------------
 
 Changes made, most recent ones first:
+
+-----------------------------------------------------------------------------
+
+New in 0.9.4:
+
+New basic types Complex and LMatrixRR introduced to support internal matrices
+of machine precision complex numbers and arbitrary precision real numbers.
+
+The interface to the gb engine consisting of a narrow two-way stream of bytes
+has been removed.  All the symbols whose names begin with "gg" have been
+removed.  New basic types RawObject, RawMonomial, RawMonomialOrdering,
+RawMonoid, RawMonomialIdeal, RawRing, RawRingElement, RawRingMap,
+RawFreeModule, RawVector, RawMatrix, and RawMutableMatrix introduced to
+support internal engine types.
+
+Input prompts are now handled at top level, and can be customized by the user.
+Take a look at the functions normalPrompts, examplePrompts, and noPrompts in
+m2/startup.m2.  The each of those functions stores itself in the variable
+currentPrompts so you can alter the prompts and then restore them later.
+
+We've eliminated the need for a separate shell script called M2, whose job
+was to record the home directory of the Macaulay2 source files in the
+environment variable "M2HOME" and then execute Macaulay2 itself.  The shell
+script M2 has been replaced by a symbolic link.  The environment variable
+"M2HOME" is now used just during compilation to indicate where the source
+code is (starting with the file $M2HOME/m2/setup.m2).  Even then, it is not
+needed if the executable is located in $M2HOME/bin/Macaulay2, for that
+location is available to the program from command line argument number 0,
+even if symbolic links are involved.  The elimination of the shell script was
+accomplished by incorporating a source file "startup.m2" into the executable
+binary as a string stored as the value of the variable 'startupString'.
+
+We've rearranged the order of the arguments for 'substring', but still accept
+the old order.  It will now accept the integer arguments first and the string
+argument last.  This follows the new general principle that arguments with
+the same type as the return value should come last.
+
+Fixed the makefiles so when compiling with debug enabled, errors in the
+examples files will not halt the make.
+
+The function 'match' has been changed completely, in a way not compatible
+with earlier uses.  It now implemements GNU regular expression matching.  The
+order of the two arguments has been reversed.  A new companion function
+'matches' is provided which returns a list of pairs of integers showing the
+locations of the matched substrings.  Example:
+
+    i1 : select( {"a","aaa","aab","bbb"}, match_"a+b$")
+
+    o1 = {aab}
+
+    o1 : List
+
+New function 'expandWord' (not available on all systems):
+
+    i1 : expandWord "~dan"
+
+    o1 = {/home/dan}
+
+    o1 : List
+
+    i2 : expandWord "a b c d"
+
+    o2 = {a, b, c, d}
+
+    o2 : List
+
+    i3 : expandWord "$(date)"
+
+    o3 = {Fri, Aug, 23, 14:03:17, CDT, 2002}
+
+    o3 : List
+
+    i4 : expandWord "*.m2"
+
+    o4 = {docloads.m2, foo.m2, loads.m2, tutorials.m2}
+
+    o4 : List
+
+New function 'fileTime' gives the time a file was last modified:
+
+    i5 : expandWord "*.m2" / fileTime
+
+    o5 = {1025363859, 1024950359, 1030028440, 1025363859}
+
+    o5 : List
 
 -----------------------------------------------------------------------------
 
