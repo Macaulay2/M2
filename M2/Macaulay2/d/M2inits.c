@@ -133,12 +133,15 @@ void*     getBlock ( size_t size                                  ) { return GC_
 void* reallocBlock ( void * block, size_t oldsize, size_t newsize ) { return GC_realloc3(block,oldsize,newsize); }
 void     freeBlock ( void * block, size_t size                    ) { return GC_free2(block, size);              }
 
+int M2inits_run;
+
 void M2inits(void) __attribute__ ((constructor));
 void M2inits(void) {
   init_gc();
   test_gc();
   init_gmp();
   IM2_initialize();
+  M2inits_run = 1;
 }
 
 /*

@@ -58,6 +58,7 @@ extern "C" {
   extern char **tocharstarstar_malloc(M2_stringarray);
   extern M2_stringarray tostrings(int,char **);
   
+  extern int M2inits_run;
   extern void outofmem(void);
   extern char *getmem(unsigned int);
   extern char *getmem_atomic(unsigned int n);

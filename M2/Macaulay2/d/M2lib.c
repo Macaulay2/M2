@@ -286,6 +286,11 @@ char **argv;
      extern void interp_process(), interp_process2();
      extern int interp_topLevel();
 
+     if (!M2inits_run) {
+       fprintf(stderr,"internal error: constructor M2inits() failed to run\n");
+       exit(1);
+     }
+
      ONSTACK(saveenvp);
 
 #if defined(_WIN32)
@@ -382,7 +387,6 @@ char **argv;
 
      trap();
      arginits(argc,saveargv);
-     M2inits();
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
      system_newline = tostring(newline);
