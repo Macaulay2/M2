@@ -6,12 +6,6 @@ PolynomialRing::~PolynomialRing()
 {
 }
 
-void PolynomialRing::appendQuotientElement(Nterm *f, gbvector *g)
-{
-  quotient_ideal_.push_back(f);
-  quotient_gbvectors_.push_back(g);
-}
-
 
 #if 0
 const RRing *PPolynomialRing::findCoefficientRing(const RRing *A) const

@@ -28,15 +28,16 @@ class GBRingSkew;
 class GBComputation;
 
 #include "ring.hpp"
+#include "qring.hpp"
 
 class PolynomialRing : public Ring
 {
   bool is_graded_;
-  vector<Nterm *, gc_alloc> quotient_ideal_;
-  vector<gbvector *, gc_alloc> quotient_gbvectors_;
 protected:
-  void appendQuotientElement(Nterm *f, gbvector *g);
+  QRingInfo *qinfo_;
+
   void setIsGraded(bool new_val) { is_graded_ = new_val; }
+  void setQuotientInfo(QRingInfo *qinfo0) { qinfo_ = qinfo0; }
 
   virtual ~PolynomialRing();
   PolynomialRing() {}
@@ -85,12 +86,18 @@ public:
 
   // Quotient ring information
   virtual bool        is_quotient_ring() const { return false; }
-  virtual const MonomialTable * get_quotient_MonomialTable() const { return 0; }
-  virtual const MonomialIdeal *  get_quotient_monomials() const { return 0; }
-  virtual const MonomialTableZZ * get_quotient_MonomialTableZZ() const { return 0; }
-  int n_quotients() const { return quotient_ideal_.size(); }
-  Nterm * quotient_element(int i) const { return quotient_ideal_[i]; }
-  const gbvector * quotient_gbvector(int i) const { return quotient_gbvectors_[i]; }
+  const MonomialTable * get_quotient_MonomialTable() const 
+  { return qinfo_->get_quotient_MonomialTable(); }
+  
+  const MonomialIdeal *  get_quotient_monomials() const 
+  { return qinfo_->get_quotient_monomials(); }
+
+  const MonomialTableZZ * get_quotient_MonomialTableZZ() const
+  { return qinfo_->get_quotient_MonomialTableZZ(); }
+
+  int n_quotients() const { return qinfo_->n_quotients(); }
+  Nterm * quotient_element(int i) const { return qinfo_->quotient_element(i); }
+  const gbvector * quotient_gbvector(int i) const { return qinfo_->quotient_gbvector(i); }
 
   virtual const MonomialIdeal * make_basis_MonomialIdeal() const 
   { return  get_quotient_monomials(); }

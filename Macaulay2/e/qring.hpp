@@ -3,12 +3,20 @@
 #ifndef _qring_hpp_
 #define _qring_hpp_
 
-#include "poly.hpp"
+#include "ringelem.hpp"
+#include <vector>
+
+class PolyRing;
+class FreeModule;
+class MonomialIdeal;
+class MonomialTable;
+class MonomialTableZZ;
+class gbvector;
 
 class QRingInfo
 {
-  vector<Nterm *, gc_alloc> quotient_ideal;
-  vector<gbvector *, gc_alloc> quotient_gbvectors;
+  std::vector<Nterm *, gc_alloc> quotient_ideal;
+  std::vector<gbvector *, gc_alloc> quotient_gbvectors;
 
 protected:
   const PolyRing *R;
@@ -28,7 +36,17 @@ public:
   const gbvector * quotient_gbvector(int i) const { return quotient_gbvectors[i]; }
 
   virtual void normal_form(ring_elem &f) const = 0;
-  virtual void normal_form(const FreeModule *F, gbvector *&f) const = 0;
+
+  //  virtual void normal_form(const FreeModule *F, gbvector *&f) const = 0;
+
+  virtual const MonomialIdeal *  get_quotient_monomials() const { return 0; }
+  // Each bag value is an "Nterm *".
+
+  virtual const MonomialTable * get_quotient_MonomialTable() const { return 0; }
+  // Each id is an index into quotient_ideal_
+
+  virtual const MonomialTableZZ * get_quotient_MonomialTableZZ() const { return 0; }
+  // Each id is an index into quotient_ideal_
 };
 
 class QRingInfo_field : public QRingInfo
@@ -39,11 +57,17 @@ class QRingInfo_field : public QRingInfo
   void reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_field(const PolyRing *ambientR,
-		  const vector<Nterm *, gc_alloc> &quotients);
+		  const std::vector<Nterm *, gc_alloc> &quotients);
   ~QRingInfo_field();
 
-  void normal_form_field(ring_elem &f) const;
-  void normal_form_field(const FreeModule *F, gbvector *&f) const;
+  void normal_form(ring_elem &f) const;
+  //  void normal_form(const FreeModule *F, gbvector *&f) const;
+
+  virtual const MonomialIdeal *  get_quotient_monomials() const { return Rideal; }
+  // Each bag value is an "Nterm *".
+
+  virtual const MonomialTable * get_quotient_MonomialTable() const { return ringtable; }
+  // Each id is an index into quotient_ideal_
 };
 
 class QRingInfo_ZZ : public QRingInfo
@@ -57,11 +81,14 @@ class QRingInfo_ZZ : public QRingInfo
   bool reduce_lead_term_ZZ(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_ZZ(const PolyRing *ambientR,
-	       const vector<Nterm *, gc_alloc> &quotients);
+	       const std::vector<Nterm *, gc_alloc> &quotients);
   ~QRingInfo_ZZ();
 
-  void normal_form_ZZ(ring_elem &f) const;
-  void normal_form_ZZ(const FreeModule *F, gbvector *&f) const;
+  void normal_form(ring_elem &f) const;
+  //  void normal_form(const FreeModule *F, gbvector *&f) const;
+
+  virtual const MonomialTableZZ * get_quotient_MonomialTableZZ() const { return ringtableZZ; }
+  // Each id is an index into quotient_ideal_
 };
 
 #endif

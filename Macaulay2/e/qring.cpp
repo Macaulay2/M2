@@ -19,6 +19,10 @@ QRingInfo::QRingInfo(const PolyRing *ambientR)
   MONOM1_ = R->getMonoid()->make_one();
 }
 
+QRingInfo_field::~QRingInfo_field()
+{
+}
+
 QRingInfo_field::QRingInfo_field(const PolyRing *ambientR,
 				 const vector<Nterm *, gc_alloc> &quotients)
   : QRingInfo(ambientR)
@@ -84,7 +88,7 @@ void QRingInfo_field::reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) 
   f = f1;
 }
 
-void QRingInfo_field::normal_form_field(ring_elem& f) const
+void QRingInfo_field::normal_form(ring_elem& f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
@@ -114,6 +118,9 @@ void QRingInfo_field::normal_form_field(ring_elem& f) const
   f = head.next;
 }
 
+QRingInfo_ZZ::~QRingInfo_ZZ()
+{
+}
 
 QRingInfo_ZZ::QRingInfo_ZZ(const PolyRing *ambientR,
 			   const vector<Nterm *, gc_alloc> &quotients)
@@ -180,7 +187,7 @@ bool QRingInfo_ZZ::reduce_lead_term_ZZ(Nterm * &f, const Nterm * g) const
   return result;
 }
 
-void QRingInfo_ZZ::normal_form_ZZ(ring_elem& f) const
+void QRingInfo_ZZ::normal_form(ring_elem& f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
