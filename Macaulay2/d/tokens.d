@@ -224,6 +224,16 @@ export notfoundE := Expr(Nothing());			    -- internal use only, not visible to 
 
 export exprCode := {v:Expr,position:Position};
 export variableCode := {v:Symbol,position:Position};
+export localMemoryReferenceCode := {
+     nestingDepth:int,
+     frameindex:int,
+     frameID:int,					    -- soon to be obsolete
+     position:Position
+     };
+export staticMemoryReferenceCode := {
+     frameindex:int,
+     position:Position
+     };
 export assignmentCode := {
      nestingDepth:int,					    -- new
      frameindex:int,					    -- new
@@ -266,7 +276,9 @@ export functionCode := {
      body:Code, 
      desc:functionDescription
      };
-export Code := (exprCode or variableCode 
+export Code := (
+     exprCode 						    -- soon obsolete
+     or variableCode or localMemoryReferenceCode or staticMemoryReferenceCode
      or unaryCode or binaryCode 
      or ternaryCode or multaryCode or forCode
      or CodeSequence or openDictionaryCode or functionCode
