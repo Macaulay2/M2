@@ -69,6 +69,8 @@ scan(keys DocumentationProvided,
 	  ))
 reachable#"Macaulay 2" = true
 
+assert( class doc "Macaulay 2" === SEQ )
+
 topName = "Macaulay 2"
 reach documentation topName
 scan(sort pairs DocumentationMissing,
