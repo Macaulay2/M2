@@ -1,7 +1,8 @@
-#include "M2types.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "M2types.h"
+#include "M2mem.h"
 
 #if defined(__DJGPP__) || defined(_WIN32)
 #define NEWLINE "\r\n"
@@ -12,30 +13,6 @@
 #endif
 
 char newline[] = NEWLINE;
-
-char *getmem(unsigned int n)
-{
-  char *p;
-  p = GC_MALLOC(n);
-  if (p == NULL) outofmem();
-  return p;
-}
-
-char *getmem_malloc(unsigned int n)
-{
-  char *p;
-  p = malloc(n);
-  if (p == NULL) outofmem();
-  return p;
-}
-
-char *getmem_atomic(unsigned int n)
-{
-  char *p;
-  p = GC_MALLOC_ATOMIC(n);
-  if (p == NULL) outofmem();
-  return p;
-}
 
 static struct M2_string_struct system_newline_contents = { 1, { '\n' } };
 M2_string system_newline = &system_newline_contents;
@@ -156,3 +133,9 @@ M2_string strings_enlarge(int n, M2_string x) {
   memset(p->array+x->len,0,n);
   return p;
 }
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+ End:
+*/

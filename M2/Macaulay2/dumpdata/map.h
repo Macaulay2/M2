@@ -1,12 +1,10 @@
 #ifndef MAP_H
 #define MAP_H
 
-typedef char bool;
-
 typedef struct MAP {
   /* these fields filled in by machine dependent code */
   void *from, *to;
-  bool r, w, x;
+  char r, w, x;
   /* extra fields ignored by machine dependent code, filled in later */
   unsigned int checksum;
 } *map;

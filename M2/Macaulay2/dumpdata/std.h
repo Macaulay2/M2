@@ -21,3 +21,12 @@ typedef unsigned long long uintP;
 #define STDOUT 1
 #define STDERR 2
 #define numberof(x) (sizeof(x)/sizeof(x[0]))
+
+typedef char bool;
+
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
+ End:
+*/

@@ -5,6 +5,7 @@
 #include "monoid.hpp"
 #include "varpower.hpp"
 #include "ntuple.hpp"
+#include "../d/M2mem.h"
 
 Monoid *Monoid::trivial_monoid = 0;
 

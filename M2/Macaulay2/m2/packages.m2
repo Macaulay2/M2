@@ -153,6 +153,28 @@ package Symbol := s -> (
      if d === null then return(null);
      r := select(packages,p -> p.Dictionary === d);
      if #r > 0 then first r)
+
+warned := new MutableHashTable
+
+package TO := x -> (
+     key := formatDocumentTag x#0;
+     pkgs := select(packages, P -> P =!= User);
+     p := select(pkgs, P -> P#"raw documentation"#?key);
+     if #p == 1 then return p#0;
+     if #p > 1 then error("documentation for ",key," occurs in multiple packages: ", concatenate between(", ",apply(p,P -> P.name)));
+     if isGlobalSymbol key then (
+	  sym := getGlobalSymbol key;
+	  pkg := package sym;
+	  if pkg =!= User then (
+	       if not warned#?key then (
+		    stderr << "--warning: documentation for symbol " << sym << " in package " << pkg.name << " not found" << endl;
+		    warned#key = true;
+		    );
+	       return pkg;
+	       );
+	  );
+     error("documentation for ",key," not found in any current package: ", concatenate between(", ",apply(pkgs,P -> P.name)));
+     )
 package Thing := x -> (					    -- try hard
      X := reverseDictionary x;
      if X =!= null then package X

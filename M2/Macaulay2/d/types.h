@@ -1,9 +1,3 @@
-#include "M2types.h"
-#include "../e/engine.h"
-#include "config.h"
-#include "compat.h"		/* same include files seen by *.c files produced from *.d files */
-#include "targettypes.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>		/* to get PATH_MAX */
@@ -123,6 +117,15 @@ void *sbrk();		/* not really ansi standard, sigh */
 #undef link
 #endif
 
+
+#include "M2types.h"
+#include "../e/engine.h"
+#include "config.h"
+#include "compat.h"		/* same include files seen by *.c files produced from *.d files */
+#include "targettypes.h"
+
+
+
 #if defined(__NeXT__)
  /* on the NeXT Step i386 machine, brk always returns -1, and doesn't work. */
 #   define brk(p) (int)sbrk(p-sbrk(0))
@@ -139,11 +142,7 @@ int brk();		/* not really ansi standard, sigh */
 
 #define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) + (len)*sizeof(s->array[0]))
 
-void M2_inits();
-
 extern unsigned GC_version;		/* in libgc.a */
-
-void trap();
 
 #if defined(__STDC__) || defined(_WIN32) && !defined(__CYGWIN32__)
 extern void fatal(char *s,...);
@@ -167,9 +166,7 @@ extern char *progname;
 extern char *gnu_get_libc_version();
 #endif
 
-#ifdef NEWDUMPDATA
 #include "../dumpdata/dumpdata.h"
-#endif
 
 #ifdef FACTORY
 extern int libfac_interruptflag;

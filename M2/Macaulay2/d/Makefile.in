@@ -18,13 +18,16 @@ SRCFILES :=
 
 ## *.c files
 
+# we want M2inits1 to be first on the command line
+ALLOBJ = M2inits1.o
+
 OPTCFILES += debug.c
 ifeq "$(DEBUG)" "yes"
 ALLOBJ += debug.o
 endif
 
-OPTCFILES := M2inits.c M2initschk.c
-CFILES += M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c
+OPTCFILES += M2inits1.c M2inits2.c
+CFILES += M2inits.c M2initschk.c M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c
 SRCFILES += $(OPTCFILES) $(CFILES)
 ALLOBJ += $(CFILES:.c=.o)
 
@@ -161,7 +164,7 @@ clean :: ; rm -f layout.m2 startup.c
 
 ifeq "$(DUMPDATA)" "yes"
 LOADLIBES += -L../dumpdata
-LIBRARYFILES += ../dumpdata/libdump.a
+LIBRARYDEPS += ../dumpdata/libdump.a
 LIBRARYOPTIONS += -ldump
 endif
 
@@ -193,11 +196,11 @@ LIBRARYOPTIONS += -lntl
   # -- we do not need -lcfmem, because we include replacement routines in d/scclib.c
 LIBRARYOPTIONS += $(LAPACKLIBS)
 
-## We put M2inits.o here so its constructor gets run first, before those of libcf, placed above.
-## This assumes that that link runs the constructors in reverse order -- those rightmost on the command line are run first.
-## We put M2initschk.o here, assuming its constructors get run *after* those of M2inits, to verify that sequence of events.
-LIBRARYOPTIONS += M2initschk.o M2inits.o
-LIBRARYFILES   += M2initschk.o M2inits.o
+## We put M2inits2.o here so (on some machines) its constructor gets run first, before those of libcf and libntl, placed above.
+## This assumes that that 'ld' (the linker) runs the constructors in reverse order -- those rightmost on the command line are run first.
+## (To cover all bases, we put M2inits1.o at the left end of the link command line.)
+LIBRARYOPTIONS += M2inits2.o
+LIBRARYDEPS   += M2inits2.o
 
 LIBRARYOPTIONS += $(LIBGMP)
 LIBRARYOPTIONS += -lgc
@@ -212,7 +215,7 @@ LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 # LDLIBS += -lc ../compat/compat.a
 
 clean::; rm -f ../bin/M2$(EXE)
-../bin/M2$(EXE) : $(ALLOBJ) main.o $(LIBRARYFILES) ../e/libgb.a
+../bin/M2$(EXE) : $(ALLOBJ) main.o $(LIBRARYDEPS) ../e/libgb.a
 	time $(CC) $(LDFLAGS) $(ALLOBJ) main.o ../e/libgb.a $(LOADLIBES) $(LDLIBS) -o "$@".tmp
 	$(STRIPCMD) "$@".tmp
 	mv "$@".tmp "$@"

@@ -8,7 +8,7 @@
 /******************************************************/
 /*these next lines added by MES, July 2002, to use our gc routines..*/
 #include "gc.h"
-#include "../d/M2types.h"
+#include "../d/M2mem.h"
 #define ALLOC getmem
 #define  NEW(p) ((p) = (void *) ALLOC((long)sizeof *(p)))
 #define FREE(ptr) ((void)(GC_FREE((ptr)), (ptr) = 0))

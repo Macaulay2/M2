@@ -2,6 +2,7 @@
 #include "matrixCC.hpp"
 #include "stdio.h"
 #include "string.h"
+#include "../d/M2mem.h"
 
 double LMatrixRR::_epsilon = 0.0;
 

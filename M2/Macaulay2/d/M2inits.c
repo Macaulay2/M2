@@ -7,8 +7,9 @@
 #include <gc.h>
 #include "config.h"
 #include "M2types.h"
+#include "M2inits.h"
+#include "M2mem.h"
 
-extern void outofmem();
 extern void IM2_initialize();
 
 char *progname;
@@ -135,13 +136,14 @@ void     freeBlock ( void * block, size_t size                    ) { return GC_
 
 int M2inits_run;
 
-void M2inits(void) __attribute__ ((constructor));
 void M2inits(void) {
+  if (M2inits_run) return;
   init_gc();
   test_gc();
   init_gmp();
   IM2_initialize();
   M2inits_run = 1;
+  M2inits1(), M2inits2();	/* just to ensure that M2inits1.o and M2inits2.o were actually linked in! */
 }
 
 /*

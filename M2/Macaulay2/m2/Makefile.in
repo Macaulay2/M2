@@ -174,7 +174,7 @@ install::install-main
 install-main: all
 	M2 -q --stop \
 	   -e 'errorDepth = 0' \
-	   -e 'installPackage(Main, Encapsulate => $(ENCAP), Prefix => "$(prefix)") ' \
+	   -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAP), Prefix => "$(prefix)") ' \
 	   -e 'exit 0 '
 
 clean::

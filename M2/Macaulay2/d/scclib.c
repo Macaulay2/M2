@@ -1,11 +1,11 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
-#include "types.h"
-
-#include "../c/compat.c"
 #include <dirent.h>
 
-extern void outofmem();
+#include "types.h"
+#include "M2mem.h"
+#include "../c/compat.c"
+#include "debug.h"
 
 void
 #if defined(__STDC__) || defined(_WIN32) && !defined(__CYGWIN32__)
@@ -898,56 +898,6 @@ int M2lseek(int fd, long offset, int whence)
     return ftell((FILE *)fd);
 }
 
-#endif
-
-#if 0
-
-void *malloc1 (size_t size_in_bytes) {
-     void *p;
-     p = malloc(size_in_bytes);
-     if (p == NULL) outofmem();
-     return p;
-     }
-
-void *realloc3 (void *s, size_t old, size_t new) {
-     void *p = realloc(s,new);
-     if (p == NULL) outofmem();
-     return p;
-     }
-
-void free2 (void *s, size_t old) {
-     free(s);
-     }
-
-#endif
-
-#if 0
-
-/* This routine is obtained by merging the code from
-   versions of it found in the source for the new libg++ 2.0.8 and the old libc 5.4.23.
-   The crucial line missing from the modern code was the one that initialized _fileno. */
-
-void _IO_init(register _IO_FILE *fp, int flags) {
-  fp->_flags = _IO_MAGIC|flags;
-  fp->_IO_buf_base = NULL;
-  fp->_IO_buf_end = NULL;
-  fp->_IO_read_base = NULL;
-  fp->_IO_read_ptr = NULL;
-  fp->_IO_read_end = NULL;
-  fp->_IO_write_base = NULL;
-  fp->_IO_write_ptr = NULL;
-  fp->_IO_write_end = NULL;
-  fp->_chain = NULL; /* Not necessary. */
-  fp->_IO_save_base = NULL;
-  fp->_IO_backup_base = NULL;
-  fp->_IO_save_end = NULL;
-  fp->_markers = NULL;
-  fp->_cur_column = 0;
-  fp->_fileno = -1;
-#ifdef _IO_MTSAFE_IO
-  _IO_lock_init (*fp->_lock);
-#endif
-}
 #endif
 
 #if defined(HAVE_WORDEXP) && defined(HAVE_WORDEXP_H)

@@ -57,11 +57,6 @@ extern "C" {
   extern char **tocharstarstar(M2_stringarray);
   extern char **tocharstarstar_malloc(M2_stringarray);
   extern M2_stringarray tostrings(int,char **);
-  
-  extern int M2inits_run;
-  extern void outofmem(void);
-  extern char *getmem(unsigned int);
-  extern char *getmem_atomic(unsigned int n);
 #if defined(__cplusplus)
 }
 #endif
@@ -74,3 +69,9 @@ extern "C" {
 extern void dummy_GC_warn_proc(char *, GC_word);
 
 #endif
+
+/*
+ Local Variables:
+ compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
+ End:
+*/

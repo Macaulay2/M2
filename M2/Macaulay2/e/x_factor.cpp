@@ -14,6 +14,7 @@
 #include "frac.hpp"
 
 #include "relem.hpp"
+#include "../d/M2mem.h"
 
 #ifdef drg
 // debugging display routines to be called from gdb
