@@ -40,6 +40,8 @@ findFiles String := opts -> name -> (
      prepend(name,flatten apply(drop(readDirectory name,2), f -> findFiles(name|f,opts)))
      )
 
+backupFileRegexp = "\.~[0-9.]+~$"					    -- we don't copy backup files.
+
 copyDirectory = method(Options => fileOptions)
 -- The unix 'cp' command is confusing when copying directories, because the
 -- result depends on whether the destination exists:
@@ -89,6 +91,8 @@ copyDirectory(String,String) := opts -> (src,dst) -> (
 	       else (
      		    if not isRegularFile srcf 
 		    then stderr << "--skipping: non regular file: " << srcf << endl
+		    else if match(backupFileRegexp,srcf)
+		    then stderr << "--skipping: backup file: " << srcf << endl
 		    else copyFile(srcf,tarf,opts)
 		    )
 	       )

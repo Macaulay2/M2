@@ -354,6 +354,7 @@ assemble = method(Options => {
 	  FinalDirectory => "tmp/",
 	  Encapsulate => true
 	  })
+
 assemble Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = pkg.name;
