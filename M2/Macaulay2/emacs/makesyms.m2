@@ -3,7 +3,7 @@ alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 isKeyword := s -> not mutable s and s =!= symbol null and value s === null
 isAlpha := s -> alphabet#?((toString s)#0)
 is := X -> s -> instance(value s, X)
-Function && Function := (f,g) -> s -> f s and g s
+Function and Function := (f,g) -> s -> f s and g s
 
 f := openOut "M2-symbols.el"
 f2 := openOut "M2-symbols"
@@ -37,7 +37,7 @@ add := (face,words) -> (
      <<  " . " << face << ")" << endl
      )
 
-add( "font-lock-keyword-face", toString \ select(symbols, isKeyword && isAlpha))
+add( "font-lock-keyword-face", toString \ select(symbols, isKeyword and isAlpha))
 add( "font-lock-type-face", toString \ select(symbols, is Type))
 add( "font-lock-function-name-face", toString \ select(symbols, is Function))
 add( ",font-lock-constant-face", toString \ select(symbols, sym -> (
