@@ -4,9 +4,8 @@ getSourceLines := method(SingleArgumentDispatch=>true)
 getSourceLines Nothing := null -> null
 getSourceLines Sequence := (filename,start,stop) -> if filename =!= "stdio" then (
      wp := set characters " \t);";
-     file := get filename;
-     if file === null then error ("couldn't find file ", filename);
-     file = lines file;
+     if not fileExists filename then error ("couldn't find file ", filename);
+     file := lines get filename;
      while (
 	  file#?stop 
      	  and (				  -- can improve this
@@ -32,7 +31,7 @@ isMemoizedFunction := f -> sameFunctionBody(f,memoizedFunction)
 codeFunction := (f,depth) -> (
      if depth <= limit and locate f =!= null then stack(
 	  -- if not match(toString f, "--Function*") then ( "-- code for " | toString f | ":" ),
-	  getSourceLines locate f,
+	  try getSourceLines locate f else "source code file not available",
 	  if isOptionedFunction f then (
 	       "-- original function f:", codeFunction(last frame f,depth+1)
 	       )

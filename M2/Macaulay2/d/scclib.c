@@ -291,9 +291,9 @@ M2_string system_getcwd()
 {
      /* this function now adds a terminal / to the directory name */
      char buf[700];
-     char *x;
-     if (last_cwd != NULL) return last_cwd;
-     x = getcwd(buf,sizeof(buf)-1);
+     /* We have to get the cwd each time, because otherwise we might pick up the
+        cwd from when dumpdata was run, which could have been different from now. */
+     char *x = getcwd(buf,sizeof(buf)-1);
 #if defined(_WIN32)
      char *p;
      for (p=x; *p; p++) if (*p == '\\') *p = '/';
@@ -303,7 +303,7 @@ M2_string system_getcwd()
 #else
      if (0 != strcmp(buf,"/")) strcat(buf,"/");
 #endif
-     if (x != NULL) return last_cwd = tostring(x);
+     if (x != NULL) return tostring(x);
      return tostring("");
      }
 

@@ -37,13 +37,13 @@ rel := url -> (
 
 htmlFilename = (nodename) -> (	-- returns the relative path from the PREFIX to the file
      if nodename === topNodeName then (
-	  if buildPackage === null
+	  if buildPackage === "Macaulay2"
 	  then LAYOUT#"htmldoc" | topFileName
 	  else LAYOUT#"packagehtml" buildPackage | topFileName
 	  )
      else (
 	  basename := toFilename nodename | ".html";
-	  if buildPackage === null
+	  if buildPackage === "Macaulay2"
 	  or finalDirectory =!= "" 
 	  and fileExists minimizeFilename(finalDirectory | "/" | LAYOUT#"htmldoc" | basename)
 	  then LAYOUT#"htmldoc" | basename
@@ -94,11 +94,10 @@ html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
 documentationMemo := memoize documentation		    -- for speed
 
 BUTTON := (s,alt) -> (
-     -- if not fileExists s then error ("file ", s, " doesn't exist");
-     s = relativizeFilename(htmlDirectory,s);
+     s = rel s;
      if alt === null
-     then LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center>")
-     else LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center alt=\"[", alt, "]\">")
+     then LITERAL concatenate("<IMG src=\"",s,"\" border=0>\n")
+     else LITERAL concatenate("<IMG src=\"",s,"\" border=0 alt=\"[", alt, "]\">\n")
      )
 
 upAncestors := key -> reverse (
@@ -282,25 +281,29 @@ pass5 := () -> (
 -- making the html pages
 -----------------------------------------------------------------------------
 
+setupButtons := () -> (
+     gifpath := LAYOUT#"images";
+     topNodeButton = HREF { htmlDirectory|topFileName, BUTTON (gifpath|"top.gif","top") };
+     nullButton = BUTTON(gifpath|"null.gif",null);
+     masterIndexButton = HREF { htmlDirectory|masterFileName, BUTTON(gifpath|"index.gif","index") };
+     nextButton = BUTTON(gifpath|"next.gif","next");
+     prevButton = BUTTON(gifpath|"previous.gif","previous");
+     upButton = BUTTON(gifpath|"up.gif","up");
+     )
+
 makeHTML = (builddir,finaldir) -> (
      buildDirectory = minimizeFilename(builddir | "/");
      finalDirectory = minimizeFilename(finaldir | "/");
      docdatabase = DocDatabase;				    -- used to be an argument
      topNodeName = "Macaulay 2";			    -- used to be an argument
      htmlDirectory = LAYOUT#"htmldoc";
-     buildPackage = null;
-     gifpath := LAYOUT#"images";
+     buildPackage = "Macaulay2";
      prefix = htmlDirectory;
-     topNodeButton = HREF { topFileName, BUTTON (checkFile(gifpath|"top.gif"),"top") };
-     nullButton = BUTTON(checkFile(gifpath|"null.gif"),null);
-     masterIndexButton = HREF { masterFileName, BUTTON(checkFile(gifpath|"index.gif"),"index") };
-     nextButton = BUTTON(checkFile(gifpath|"next.gif"),"next");
-     prevButton = BUTTON(checkFile(gifpath|"previous.gif"),"previous");
-     upButton = BUTTON(checkFile(gifpath|"up.gif"),"up");
+     setupButtons();
      sav := if htmlDefaults#?"BODY" then htmlDefaults#"BODY";
      htmlDefaults#"BODY" = concatenate(
 	  "BACKGROUND=\"",				    -- "
-	  relativizeFilename(htmlDirectory,checkFile(gifpath|"recbg.jpg")),
+	  relativizeFilename(htmlDirectory,gifpath|"recbg.jpg"),
 	  "\""						    -- "
 	  );
      lastKey = null;
@@ -330,6 +333,21 @@ makeHTML = (builddir,finaldir) -> (
 -- assembling packages -- eventually to be merged with 
 -- the code above for making html for Macaulay 2 itself
 -----------------------------------------------------------------------------
+
+makeMasterIndex := keylist -> (
+     fn := buildDirectory | htmlDirectory | masterFileName;
+     title := topNodeName | " Index";
+     << "--making  '" << title << "' in " << fn << endl;
+     fn << html HTML {
+	  HEAD { TITLE title },
+	  BODY {
+	       HEADER2 title, PARA,
+	       CENTER topNodeButton, PARA,
+	       CENTER between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), PARA,
+	       MENU apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey })
+	       }
+	  } << endl << close
+     )
 
 assemble = method(Options => { 
 	  TemporaryDirectory => "tmp/", 
@@ -366,10 +384,14 @@ assemble Package := o -> pkg -> (
 
      -- make html files
      htmlDirectory = LAYOUT#"packagehtml" buildPackage;
+     setupButtons();
      makeDirectory (buildDirectory|htmlDirectory);     
      nodes := unique join(keys pkg#"dictionary",keys pkg#"raw documentation",{topNodeName});
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      ret := makeHtmlNode \ toString \ nodes;
+
+     -- make master.html with master index of all the html files
+     makeMasterIndex nodes;
 
      -- make example input files
      exampleDir := buildDirectory|LAYOUT#"packageexamples" buildPackage;
