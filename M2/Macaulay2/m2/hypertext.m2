@@ -55,13 +55,13 @@ texExtraLiteral := s -> demark(ENDLINE,
      )
 -----------------------------------------------------------------------------
 -- the default case
-defop := op -> x -> concatenate apply(x,op)
-html MarkUpList := defop html
-tex MarkUpList := defop tex
-info MarkUpList := defop info
-net MarkUpList := defop net
-texMath MarkUpList := defop texMath
-mathML MarkUpList := defop mathML
+defop := (joiner,op) -> x -> joiner apply(x,op)
+info MarkUpList := defop(horizontalJoin,info)
+net MarkUpList := defop(horizontalJoin,net)
+html MarkUpList := defop(concatenate,html)
+tex MarkUpList := defop(concatenate,tex)
+texMath MarkUpList := defop(concatenate,texMath)
+mathML MarkUpList := defop(concatenate,mathML)
 
 net TITLE := net HEADER1 := net HEADER2 := x -> (
      r := "" || horizontalJoin apply(x,net);
@@ -114,7 +114,6 @@ vert := op -> x -> net (					    -- we have to be prepared for a mixture of vert
 	       n -> width n > 0))
 net SEQ := net PARA := net Hypertext := vert net
 info SEQ := info PARA := info Hypertext := vert info
-
 
 html BR := x -> ///
 <BR>
@@ -178,7 +177,15 @@ html ExampleTABLE := x -> concatenate(
      )			 
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
-info ExampleTABLE := net ExampleTABLE := x -> "    " | boxList apply(toList x, y -> net y#1)
+truncateString := s -> if width s <= printWidth then s else concatenate(substring(s,0,printWidth-1),"$")
+truncateNet := n -> if width n <= printWidth then n else stack(apply(unstack n,truncateString))
+
+info ExampleTABLE := net ExampleTABLE := x -> (
+     p := "    ";
+     printWidth = printWidth - #p -2;
+     r := p | boxList apply(toList x, y -> truncateNet net y#1);
+     printWidth = printWidth + #p + 2;
+     r)
 info EXAMPLE := net EXAMPLE := x -> net ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
 tex TABLE := x -> concatenate applyTable(x,tex)
@@ -301,9 +308,11 @@ tex ANCHOR := x -> (
 
 html TEX := x -> x#0
 
-addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, headline i#0 } else i)
+commentize := s -> if s =!= null then concatenate(" -- ",s)
 
-addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, headline i#0 } else i)
+addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, commentize headline i#0 } else i)
+
+addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, commentize headline i#0 } else i)
 
 info HR := net HR := x -> "-----------------------------------------------------------------------------"
 
@@ -375,11 +384,11 @@ info TO2 := net TO2 := x -> concatenate drop(toList x,1)
 info IMG := net IMG := tex IMG  := x -> ""
 info HREF := net HREF := x -> net last x
 
-             toh := op -> x -> op SEQ{ new TO from x, headline x#0 }
-            htoh := op -> x -> op SEQ{ new TO from x, headline x#0 }
-net  TOH :=  toh net
+             toh := op -> x -> op SEQ{ new TO from x, commentize headline x#0 }
+            htoh := op -> x -> op SEQ{ new TO from x, commentize headline x#0 }
+net TOH :=  toh net
 html TOH :=  toh html
-tex  TOH :=  toh tex
+tex TOH :=  toh tex
 info TOH :=  toh info
 
 tex LITERAL := html LITERAL := x -> concatenate x
@@ -508,6 +517,23 @@ html TOC := html @@ redoTOC
 net TOC := net @@ redoTOC
 info TOC := info @@ redoTOC
 tex TOC := tex @@ redoTOC
+
+net MENU := r -> net SEQ prepend(
+     PARA BOLD "Menu",
+     sublists(toList r, 
+	  x -> not ( class x === TO ),
+	  x -> PARA{x},
+	  v -> UL apply(v, i -> TOH i#0 )))
+
+info MENU := r -> stack join(
+     {"* Menu:",""},
+     sublists(toList r, 
+	  x -> not ( class x === TO ),
+	  x -> stack("",x),			    -- we can assume x is a String
+	  v -> stack apply(v, i -> (
+		    t := concatenate("* ",formatDocumentTag i#0,"::");
+		    h := headline i#0;
+		    if h === null then t else concatenate(t,30-#t:" ","  ",h)))))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

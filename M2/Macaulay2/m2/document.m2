@@ -349,7 +349,7 @@ fixupTable := new HashTable from {
      Description => extractExamples @@ hypertext,
      Caveat => v -> if v =!= null then fixup SEQ { PARA BOLD "Caveat", SEQ v },
      SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ enlist v) },
-     Subnodes => v -> apply(nonNull enlist v, x -> (
+     Subnodes => v -> MENU apply(nonNull enlist v, x -> (
 	       if class x === TO then x
 	       else if class x === TOH then TO x#0
 	       else if class x === String then x
@@ -357,14 +357,7 @@ fixupTable := new HashTable from {
      }
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
-theMenu := key -> (
-     r := getOption(key,Subnodes);
-     if r =!= null then SEQ prepend(
-	  PARA BOLD "Subnodes", 				    -- for info mode, we need to put out "* Menu:" here.
-	  sublists(r, 
-	       x -> not ( class x === TO or class x === TOH ),
-	       x -> PARA{x},
-	       v -> UL apply(v, i -> TOH i#0 ))))
+theMenu := key -> getOption(key,Subnodes)
 documentOptions := new HashTable from {
      Key => true,
      FormattedKey => true,
@@ -490,17 +483,19 @@ headline = memoize (
 	       key =!= null
 	       )
 	  do null;
-	  if d =!= null then concatenate(" -- ",d)))
+	  if d =!= null then d))
+
+commentize := s -> if s =!= null then concatenate(" -- ",s)
 
 moreGeneral := s -> (
      n := nextMoreGeneral s;
-     if n =!= null then SEQ { "Next more general method: ", TO n, headline n }
+     if n =!= null then SEQ { "Next more general method: ", TO n, commentize headline n }
      )
 
 -----------------------------------------------------------------------------
 
-optTO := i -> if getDoc i =!= null then SEQ{ TO i, headline i } else formatDocumentTagTO i
-optTOCLASS := i -> if getDoc i =!= null then SEQ{ TO i, " (", OFCLASS class value i, ")", headline i } else formatDocumentTagTO i
+optTO := i -> if getDoc i =!= null then SEQ{ TO i, commentize headline i } else formatDocumentTagTO i
+optTOCLASS := i -> if getDoc i =!= null then SEQ{ TO i, " (", OFCLASS class value i, ")", commentize headline i } else formatDocumentTagTO i
 
 smenu := s -> UL (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
 smenuCLASS := s -> UL (optTOCLASS \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
@@ -537,7 +532,7 @@ makeDocBody Thing := key -> (
 	       then PARA {docBody}
 	       else SEQ { PARA BOLD "Description", PARA {docBody} })))
 
-title := s -> PARA { STRONG formatDocumentTag s, headline s }
+title := s -> PARA { STRONG formatDocumentTag s, commentize headline s }
 
 inlineMenu := x -> between(", ", TO \ x)
 
@@ -723,7 +718,7 @@ x -> (
      r := synopsis x;
      if r =!= null then << endl << r << endl
      else (
-	  if headline x =!= null then << endl << headline x << endl;
+	  if headline x =!= null then << endl << commentize headline x << endl;
 	  if class x === Function then (
 	       s := fmeth x;
 	       if s =!= null then << endl << s << endl;)))
@@ -778,7 +773,7 @@ optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f
 
 ret := k -> (
      t := typicalValue k;
-     if t =!= Thing then PARA {"Class of returned value: ", TO t, headline t}
+     if t =!= Thing then PARA {"Class of returned value: ", TO t, commentize headline t}
      )
 seecode := x -> (
      f := lookup x;
