@@ -310,7 +310,8 @@ matrix(List) := Matrix => options -> (m) -> (
 
 Module#id = (M) -> map(M,1)
 
-reshape = (F, G, m) -> (
+reshape = method()
+reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> (
      if not isFreeModule F or not isFreeModule G
      then error "expected source and target to be free modules";
      sendgg(ggPush m, ggPush F, ggPush G, ggreshape);
@@ -318,9 +319,10 @@ reshape = (F, G, m) -> (
 
 -- adjoint1:  m : F --> G ** H ===> F ** dual G --> H
 -- adjoint:   m : F ** G --> H ===> F --> dual G ** H
-adjoint1 = (m,G,H) -> reshape(H, (source m) ** (dual G), m)
-
-adjoint =  (m,F,G) -> reshape((dual G) ** (target m), F, m)
+adjoint1 = method()
+adjoint1(Matrix,Module,Module) := Matrix => (m,G,H) -> reshape(H, (source m) ** (dual G), m)
+adjoint  = method()
+adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> reshape((dual G) ** (target m), F, m)
 
 flatten Matrix := Matrix => m -> (
      R := ring m;

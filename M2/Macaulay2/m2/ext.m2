@@ -76,9 +76,6 @@ Ext(ZZ, Module, Ideal) := (i,M,J) -> Ext^i(M,module J)
 Ext(ZZ, Ideal, Ring) := (i,I,R) -> Ext^i(module I,R^1)
 Ext(ZZ, Ideal, Ideal) := (i,I,J) -> Ext^i(module I,module J)
 Ext(ZZ, Ideal, Module) := (i,I,N) -> Ext^i(module I,N)
-Ext(ZZ, Ring, Ring) := (i,S,R) -> Ext^i(S^1,R^1)
-Ext(ZZ, Ring, Ideal) := (i,S,J) -> Ext^i(S^1,module J)
-Ext(ZZ, Ring, Module) := (i,S,N) -> Ext^i(S^1,N)
 
 -- total ext over complete intersections
 
@@ -168,3 +165,9 @@ Ext(Module,Module) := Module => (N,M) -> (
 
 Adjust					  -- just use it again
 Repair					  -- just use it again
+
+Ext(Module, Ring) := (M,R) -> Ext(M,R^1)
+Ext(Module, Ideal) := (M,J) -> Ext(M,module J)
+Ext(Ideal, Ring) := (I,R) -> Ext(module I,R^1)
+Ext(Ideal, Ideal) := (I,J) -> Ext(module I,module J)
+Ext(Ideal, Module) := (I,N) -> Ext(module I,N)

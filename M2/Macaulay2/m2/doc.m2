@@ -909,18 +909,30 @@ document { reverse,
      EXAMPLE "reverse {a,b,c,d}"
      }
 
-document { read,
-     Headline => "read from a file",
-     TT "read f", "  -- yields a string obtained by reading bytes from the input file
-     ", TT "f", ".",BR,
-     NOINDENT, 
-     TT "read ()", " -- reads from ", TT "stdio", ", getting input from the user.",BR,
-     NOINDENT, 
-     TT "read s", "  -- reads from ", TT "stdio", ", getting input from the user, prompting
-     with the string ", TT "s", ".",BR,
-     PARA,
-     "Input files are buffered, so the current contents of the buffer are returned
-     if the buffer is not empty, otherwise reading from the file is attempted first.",
+document { (read,Sequence),
+     Synopsis => {
+	  "s = read()",
+     	  "()" => null,
+	  "s" => { "a string obtained by reading from the standard input 
+	       file ", TO "stdio", "." }
+	  }
+     }
+
+document { (read,String),
+     Synopsis => {
+	  "s = read p",
+     	  "p" => "a string containing a prompt to be displayed for the user",
+	  "s" => { "a string obtained by reading from the standard
+	       input file ", TO "stdio", "." }
+	  }
+     }
+
+document { (read,File),
+     Synopsis => {
+	  "s = read f",
+     	  "f" => "an input file",
+	  "s" => { "a string obtained by reading from ", TT "f", "." }
+	  },
      if version#"operating system" =!= "Windows-95-98-NT"
      then EXAMPLE {
 	  ///f = openInOut "!cat"///,
@@ -930,7 +942,24 @@ document { read,
 	  ///read f///,
 	  ///isReady f///,
 	  },
-     SEEALSO {"isReady", "get"}
+     SEEALSO {"isReady"}
+     }
+
+document { (read,File,ZZ),
+     Synopsis => {
+	  "s = read(f,n)",
+     	  "f" => "a file",
+	  "n" => "an integer specifying the maximum number of bytes to read",
+	  "s" => { "a string obtained by reading from ", TT "f", "." }
+	  }
+     }
+
+document { read,
+     Headline => "read from a file",
+     PARA,
+     "Input files are buffered, so the current contents of the buffer are returned
+     if the buffer is not empty, otherwise reading from the file is attempted first.",
+     SEEALSO {"openIn", "get"}
      }
 
 document { get,

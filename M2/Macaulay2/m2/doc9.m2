@@ -52,45 +52,85 @@ document { UseHilbertFunction,
      TT "UseHilbertFunction", " -- an option for ", TO "pushForward1", "."
      }
 
-document { Ext,
-     Headline => "compute an Ext module",
-     TT "Ext^i(M,N)", " -- compute the Ext module of two modules M, N.",
+document { (Ext,Module,Module),
+     Synopsis => {
+	  "H = Ext(M,N)",
+	  "M" => null,
+	  "N" => null,
+	  "H" => { "the Ext module of ", TT "M", " and ", TT "N", ",
+	       as a bigraded module, with the modules ", TT {"Ext", SUP "i", "(M,N)"}, "
+	       for all values of ", TT "i", " appearing simultaneously." }
+	  },
      PARA,
-     NOINDENT,
-     TT "Ext(M,N)", " -- compute the total Ext module of two modules M, N.",
-     PARA,
-     "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as
-     a module in the evident way.",
+     "The modules ", TT "M", " and ", TT "N", " should be graded (homogeneous) modules 
+     over the same ring.",
      PARA,
      "The computation of the total Ext module is possible for modules over the
      ring ", TT "R", " of a complete intersection, according the algorithm
      of Shamash-Eisenbud-Avramov-Buchweitz.  The result is provided as a finitely
-     presented module over a new ring with one additional variable for each
-     equation of ", TT "R", ".  The variables in this new ring have degree
-     length 2; we would have liked to arrange for the degree ", TT "i", "-- 
-     part of ", TT "Ext^d(M,N)", " to appear as the degree ", TT "{-d,i}", "
-     part of ", TT "E = Ext(M,N)", ", but for technical and hopefully temporary
-     reasons, this wasn't possible.  So meanwhile, we provide a function 
-     ", TT "E.adjust", " in the result returned by ", TT "Ext", " which can
-     be used to convert ", TT "{-d,i}", " into the degree actually used.
-     This adjusted multi-degree can be used with ", TO "basis", ", as in the
-     example below.",
+     presented module over a new ring with one additional variable of degree
+     ", TT "{-2,-d}", " for each equation of degree ", TT "d", " defining ", TT "R", ".  The 
+     variables in this new ring have degree length 2, i.e., is bigraded, with the
+     degree ", TT "i", " part of ", TT "Ext^n(M,N)", " appearing as the degree
+     ", TT "{-n,i}", " part of ", TT "Ext(M,N)", ".  We illustrate this in 
+     the following example.",
      EXAMPLE {
-	  "R = ZZ/101[x,y]/ideal(x^3,y^2);",
-      	  "N = cokernel random (R^1, R^{-2,-2})",
-      	  "E = Ext(N,N)",
-      	  "rank source basis( E.adjust {-2,-3}, E)",
+	  "R = QQ[x,y]/(x^3,y^2);",
+      	  "N = cokernel matrix {{x^2, x*y}}",
+      	  "H = Ext(N,N);",
+	  "ring H",
+	  "S = ring H;",
+	  "H",
+	  "isHomogeneous H",
+      	  "rank source basis( {-2,-3}, H)",
       	  "rank source basis( {-3}, Ext^2(N,N) )",
 	  },
-     SEEALSO{"ScriptedFunctor", "adjust"}
+     SEEALSO{"ScriptedFunctor", "Adjust", "Repair"}
      }
 
-document { adjust,
-     Headline => "adjust the degree in a total Ext module",
-     TT "adjust", " -- a symbol used as a key under which to store a degree
-     adjustment function used by ", TO "Ext", ".",
+document { (Ext,ZZ,Module,Module),
+     Synopsis => {
+	  "H = Ext^i(M,N)",
+	  "i" => null,
+	  "M" => null,
+	  "N" => null,
+	  "H" => { "the Ext module of ", TT "M", " and ", TT "N", "." }
+	  },
+     "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as
+     a module in the evident way.",
+     }
+
+document { Ext,
+     Headline => "compute an Ext module"
+     }
+
+document { Adjust,
+     Headline => "adjust the multi-degree",
+     TT "Adjust", " -- an option used when creating a polynomial ring
+     to specify a linear function for transforming multi-degrees of monomials 
+     into multi-degrees whose first component is positive, for internal use.",
      PARA,
-     "This use of this symbol will eventually not be needed."
+     "This facility is used in particular by ", TT "(Ext,Module,Module)", ".",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ[x,y, Degrees => {-1,-2}, 
+	  Repair => d -> -d,
+	  Adjust => d -> -d];",
+     	  ///degree \ gens R///,
+	  "transpose vars R"
+     	  },
+     SEEALSO { "Repair" }
+     }
+
+document { Repair,
+     Headline => "repair the multi-degree",
+     TT "Adjust", " -- an option used when creating a polynomial ring
+     to specify a linear function for transforming internally used multi-degrees
+     (whose first component is positive) of monomials into the original externally 
+     used multi-degrees.",
+     PARA,
+     "This facility is used in particular by ", TT "(Ext,Module,Module)", ".",
+     SEEALSO { "Adjust" }
      }
 
 document { dd,

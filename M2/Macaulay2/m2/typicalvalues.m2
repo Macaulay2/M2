@@ -126,6 +126,7 @@ echoOn File := Nothing => echoOn
 
 kill File := Nothing => kill
 read File := String => read
+read (File,ZZ) := String => read
 read Sequence := String => read
 read String := String => read
 newHandle Thing := Handle => newHandle

@@ -854,7 +854,7 @@ document { "diff and contract",
      ", TT "diff(m,n)", " are the same as those we would get from
      the tensor product ", TT "transpose m^-1 ** n", ", if 
      only ", TT "m", " were invertible.",
-     SEEALSO { (diff,Matrix,Matrix), (contract,Matrix,Matrix) }
+     SEEALSO { (diff,Matrix,Matrix), (contract,Matrix,Matrix), "reshape", "adjoint" }
      }
 
 document { "computing syzygies",

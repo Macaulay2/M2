@@ -449,7 +449,7 @@ export treePosition(e:ParseTree):Position := (
 	  when e
 	  is dummy do return(dummyPosition)
 	  is token:Token do return(token.position)
-	  is adjacent:Adjacent do e = adjacent.rhs
+	  is adjacent:Adjacent do e = adjacent.lhs
 	  is binary:Binary do return(binary.operator.position)
 	  is a:Arrow do return(a.operator.position)
 	  is unary:Unary do return(unary.operator.position)
