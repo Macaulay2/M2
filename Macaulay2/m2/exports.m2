@@ -38,8 +38,8 @@ exportMutable (
 	)
 
 export (
+        symbol Undo,
         symbol symlinkDirectory,
-        symbol unSymlinkDirectory,
         symbol symlink,
      	symbol reduceHilbert,
 	symbol Date,
@@ -701,6 +701,7 @@ export (
 	symbol installAssignmentMethod,
 	symbol installMethod,
 	symbol installPackage,
+	symbol uninstallPackage,
 	symbol instance,
 	symbol integralClosure,
 	symbol integrate,

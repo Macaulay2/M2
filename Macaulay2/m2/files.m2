@@ -1,5 +1,7 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+printpass := ID -> x -> (stderr << ID << ": " << x << endl; x)
+
 makeDir := name -> if name != "" and (not fileExists name or not isDirectory (name | "/.")) then mkdir name
 
 length File := f -> #f
@@ -13,7 +15,8 @@ makeDirectory String := name -> (			    -- make the whole path, too
 
 fileOptions := new OptionTable from { 
      Exclude => set {},	-- eventually we change from a set to a regular expression or a list of them
-     Verbose => false 
+     Verbose => false,
+     Undo => false
      }
 
 copyFile = method(Options => fileOptions)
@@ -100,9 +103,9 @@ copyDirectory(String,String) := opts -> (src,dst) -> (
 		    )
 	       else (
      		    if not isRegularFile srcf 
-		    then stderr << "--skipping: non regular file: " << srcf << endl
+		    then stderr << "--  skipping: non regular file: " << srcf << endl
 		    else if match(backupFileRegexp,srcf)
-		    then stderr << "--skipping: backup file: " << srcf << endl
+		    then stderr << "--  skipping: backup file: " << srcf << endl
 		    else copyFile(srcf,tarf,opts)))));
 symlinkDirectory = method(Options => fileOptions)
 symlinkDirectory(String,String) := opts -> (src,dst) -> (
@@ -120,51 +123,29 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 		    )
 	       else (
      		    if not isRegularFile srcf 
-		    then stderr << "--skipping: non regular file: " << srcf << endl
+		    then stderr << "--  skipping: non regular file: " << srcf << endl
 		    else if match(backupFileRegexp,srcf)
-		    then stderr << "--skipping: backup file: " << srcf << endl
+		    then stderr << "--  skipping: backup file: " << srcf << endl
 		    else (
 			 tardir := concatenate between("/",drop(separate("/",tarf),-1)); -- directory part of file name
 			 relsrcf := relativizeFilename(tardir,srcf);
-			 stderr << "tardir = " << tardir << endl;
-			 stderr << "srcf = " << srcf << endl;
-			 stderr << "relsrcf = relativizeFilename(tardir,srcf) = " << relsrcf << endl;
-			 if opts.Verbose then stderr << "--symlinking: " << relsrcf << " -> " << tarf << endl;
-			 if fileExists tarf then (
-			      stderr << "--skipping: file " << tarf << " already exists" << endl;
-			      )
-			 else symlink(relsrcf,tarf))))));
-unSymlinkDirectory = method(Options => fileOptions)
-unSymlinkDirectory(String,String) := opts -> (src,dst) -> (
-     if not fileExists src then error("directory not found: ",src);
-     if not isDirectory src then error("file not a directory: ",src);
-     if not src#-1 === "/" then src = src | "/";
-     if not dst#-1 === "/" then dst = dst | "/";
-     transform := fn -> dst | substring(fn,#src);
-     scan(findFiles(src,opts), 
-	  srcf -> (
-	       tarf := transform srcf;
-	       if tarf#-1 === "/" 
-	       then (
-		    if not isDirectory tarf then mkdir tarf 
-		    )
-	       else (
-     		    if not isRegularFile srcf 
-		    then stderr << "--skipping: non regular file: " << srcf << endl
-		    else if match(backupFileRegexp,srcf)
-		    then stderr << "--skipping: backup file: " << srcf << endl
-		    else (
-			 tardir := concatenate drop(separate("/",tarf),-1); -- directory part of file name
-			 relsrcf := relativizeFilename(tardir,srcf);
-			 if opts.Verbose then stderr << "--unsymlinking: " << relsrcf << " -> " << tarf << endl;
-			 if not fileExists tarf then (
-			      stderr << "--skipping: " << tarf << " does not exists " << endl;
-			      )
-			 else if relsrcf =!= readlink tarf then (
-			      stderr << "--skipping: expected " << tarf << " to be a symlink to " << relsrcf << endl;
-			      )
-			 else removeFile tarf;
-			 )))));
+			 if not opts.Undo then (
+			      if opts.Verbose then stderr << "--symlinking: " << relsrcf << " -> " << tarf << endl;
+			      if fileExists tarf then (
+				   if readlink tarf === relsrcf
+				   then stderr << "--  skipping: link already exists" << endl
+				   else stderr << "--  warning: file " << tarf << " already exists, not what we want" << endl;
+				   )
+			      else symlink(relsrcf,tarf))
+			 else (
+			      if opts.Verbose then stderr << "--unsymlinking: " << relsrcf << " -> " << tarf << endl;
+			      if not fileExists tarf then (
+				   stderr << "--  skipping: link does not exist" << endl;
+				   )
+			      else if relsrcf =!= readlink tarf then (
+				   stderr << "--  skipping: unexpected file " << tarf << endl;
+				   )
+			      else removeFile tarf))))))
 
 -----------------------------------------------------------------------------
 

@@ -240,10 +240,8 @@ currentPackage = null
 UserDictionary = new Dictionary				    -- no package comes with this dictionary
 
 load "loads.m2"
-stderr << "--loaded setup.m2" << endl
+if notify then stderr << "--loaded " << currentFileName << endl
 
-notify = true
-addEndFunction (() -> notify = false)
 protect Macaulay2.Dictionary
 
 -- Local Variables:
