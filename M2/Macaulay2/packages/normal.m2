@@ -1,5 +1,7 @@
 radical0 = (I) -> (
-     I = ideal mingens gens gb I;
+     I = ideal mingens ideal gens gb I;
+     --I = trim I;
+     III = I;
      << "-----take radical of     = " << transpose gens I << endl;
      comps := decompose I;
      result := if #comps === 1 then comps#0
@@ -182,7 +184,7 @@ newICnode = (R) -> (
      C.degrees = degrees source vars ring I;
      C.blocks = {numgens ring I};
      C.basefield = coefficientRing ring I;
-     C.vars = toSequence (ring I).syms;
+     C.vars = toSequence (ring I).generatorSymbols;
      R.IC = C;
      C)
 
