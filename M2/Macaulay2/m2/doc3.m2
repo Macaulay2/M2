@@ -25,10 +25,9 @@ document { symbol phase,
 
 document { lineNumber,
      Headline => "current line number",
-     TT "lineNumber()", " -- returns the current line number.",
+     TT "lineNumber", " -- the current line number.",
      BR, NOINDENT,
-     TT "lineNumber n", " -- sets the line number to ", TO "n", " and
-     returns the old line number.",
+     TT "lineNumber = n", " -- sets the line number to ", TO "n", ".",
      }
 
 document { FilePosition,

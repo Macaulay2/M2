@@ -145,3 +145,14 @@ M2_string strings_join(M2_string x,M2_string y)
   memcpy(p->array+x->len,y->array,y->len);
   return p;
 }
+
+M2_string strings_enlarge(int n, M2_string x) {
+  M2_string p;
+  int m = x->len + n;
+  if (n <= 0) return x;
+  p = (M2_string) getmem_atomic(sizeofarray(p,m));
+  p->len = m;
+  memcpy(p->array,x->array,x->len);
+  memset(p->array+x->len,0,n);
+  return p;
+}

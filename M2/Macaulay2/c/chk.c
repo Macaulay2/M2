@@ -1703,8 +1703,8 @@ node chkdefun(node e,env v){
      }
 
 node redef(node newsym,node oldsym) {
-     warningpos(newsym,"symbol being redefined");
-     warningpos(oldsym,"here is the previous definition");
+     errorpos(newsym,"symbol being redefined");
+     errorpos(oldsym,"here is the previous definition");
      return bad_K;
      }
 

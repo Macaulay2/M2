@@ -83,7 +83,7 @@ map(Ring,Ring,List) := RingMap => options -> (R,S,m) -> map(R,S,matrix(R,{m}),op
 
 RingMap.AfterPrint = RingMap.AfterNoPrint = f -> (
      << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber() << " : " << class f;
+     << concatenate(interpreterDepth:"o") << lineNumber << " : " << class f;
      << " " << target f << " <--- " << source f << endl;
      )
 

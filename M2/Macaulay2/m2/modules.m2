@@ -382,7 +382,7 @@ End = (M) -> Hom(M,M)
 Module.AfterPrint = M -> (
      << endl;				  -- double space
      n := rank ambient M;
-     << concatenate(interpreterDepth:"o") << lineNumber() << " : "
+     << concatenate(interpreterDepth:"o") << lineNumber << " : "
      << ring M
      << "-module";
      if M.?generators then

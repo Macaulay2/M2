@@ -175,7 +175,7 @@ net MonomialIdeal := (I) -> (
 
 MonomialIdeal.AfterPrint = MonomialIdeal.AfterNoPrint = (I) -> (
      << endl;				  
-     << concatenate(interpreterDepth:"o") << lineNumber() << " : MonomialIdeal of " 
+     << concatenate(interpreterDepth:"o") << lineNumber << " : MonomialIdeal of " 
      << ring I << endl;
      )
 

@@ -106,10 +106,11 @@ if firstTime then (
      endl = new Manipulator from endl;
 
      Thing.NoPrint = x -> null;
-     Thing.Print = x -> flush (				    -- this is the internal flush function, not the Manipulator
-	  << newline << "o" << lineNumber() << " = ";
+     Thing.Print = x ->  (
+	  << newline << "o" << lineNumber << " = ";
 	  try << x;
-	  << newline);
+	  << newline << flush;
+	  );
 
      first = x -> x#0;
      last = x -> x#-1;
