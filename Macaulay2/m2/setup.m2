@@ -103,30 +103,14 @@ load = (filename) -> tryload(filename,simpleLoad,notify)
 
 simpleInput := input
 input = (filename) -> tryload(filename,simpleInput,false)
-
-setnotify := () -> (
-     notify = true			-- notify after initialization
-     )
-
 needs = s -> if not loaded#?s then load s
 
-new HashTable from List := HashTable => (O,v) -> hashTable v
-
 load "loads.m2"
+
 -- don't define any global variables below this point
+
 stderr << "--loaded setup.m2" << endl
-setnotify()
-addStartFunction(
-     () -> (
-	  if not debuggingMode then errorDepth = loadDepth = loadDepth + 1;
-	  if not member("-q",commandLine) then (
-	       if fileExists "init.m2" then tryload("init.m2", simpleLoad, true)
-	       else if getenv "HOME" =!= "" then (
-		    fn := getenv "HOME" | "/init.m2";
-		    if fileExists fn then tryload(fn, simpleLoad, true)
-		    else (
-		    	 fn = getenv "HOME" | "/.init.m2";
-		    	 tryload(getenv "HOME" | "/.init.m2", simpleLoad, true))))))
+notify = true
 newPackage Output
 protect symbol Output
 newPackage User
