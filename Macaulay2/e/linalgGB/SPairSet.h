@@ -4,10 +4,7 @@
 #define __SPairSet_h_
 
 #include "MonomialSet.h"
-#include "interface.h"
-
-class LinearAlgebraGB;
-class gbelem;
+#include "lingb.hpp"
 
 class SPairSet : public our_new_delete
 {
@@ -57,6 +54,7 @@ class SPairSet : public our_new_delete
 
   static spair *make_spair_gen(int deg, monomial lcm, int column);
 
+  template<typename gb_array>
   int find_new_pairs(const gb_array &gb,
 		    bool remove_disjoints);
   // returns the number of new pairs found, using the last element on this list
@@ -88,6 +86,7 @@ class SPairSet : public our_new_delete
 
 };
 
+template<typename gb_array>
 class SPairConstructor : public our_new_delete
 {
  public:

@@ -1,4 +1,72 @@
 #include "linalgGB.hpp"
+#include "../matrix.hpp"
+#include "MonomialTable.h"
+#include <map>
+
+GBComputation *createLinearAlgebraGB(const Matrix *m,
+				     M2_bool collect_syz,
+				     int n_rows_to_keep,
+				     M2_arrayint gb_weights,
+				     int strategy,
+				     M2_bool use_max_degree,
+				     int max_degree)
+{
+  const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
+  const Ring *K = R->getCoefficients();
+  GBComputation *G;
+  if (K->cast_to_Z_mod() != 0)
+    {
+      CoefficientRingZZp *L = new CoefficientRingZZp(K->charac());
+      G = new LinAlgGB<CoefficientRingZZp>(L,m,
+					   collect_syz,
+					   n_rows_to_keep,
+					   gb_weights,
+					   use_max_degree,
+					   max_degree,
+					   strategy);
+    }
+  return G;
+}
+
+template<typename CoefficientRing>
+LinAlgGB<CoefficientRing>::LinAlgGB(CoefficientRing *K,
+	   const Matrix *m, 
+	   M2_bool collect_syz, 
+	   int n_rows_to_keep,
+	   M2_arrayint gb_weights,
+	   int strategy, 
+	   M2_bool use_max_degree,
+	   int max_degree)
+  : S(&H)
+{
+  originalR = m->get_ring()->cast_to_PolynomialRing();
+  F = m->rows();
+  coeffK = K;
+
+  n_subring = 0;
+  n_pairs_computed = 0;
+  n_gens_left = m->n_cols();
+
+  lookup = new MonomialLookupTable;
+
+  this_degree = -1;
+  next_col_to_process = 0;
+  next_row_to_process = 0;
+  weights = gb_weights;
+
+  // Set the gens array
+  M2Interface<CoefficientRing>::from_M2_matrix(K, m, &H, weights, gens);
+
+  for (int i=0; i<gens.size(); i++)
+    {
+      gbelem *g = gens[i];
+      S.insert(SPairSet::make_spair_gen(g->deg, g->f.monoms[0], i));
+    }
+
+  set_status(COMP_NOT_STARTED);
+}
+
+#include "linalgGB.hpp"
 #include <vector>
 #include "../text_io.hpp"
 #include "monoms.h"
@@ -19,21 +87,24 @@
 //    module orders, Schreyer orders, syzygies, hilbert functions, ZZ,
 //    quotients.
 
-void LinearAlgebraGB::allocate_poly(poly &result, size_t len)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::allocate_poly(poly &result, size_t len)
 {
   result.len = len;
   result.coeffs = newarray(COEFF_TYPE, len);
   result.monoms = newarray(monomial, len);
 }
 
-void LinearAlgebraGB::allocate_sparse_row(sparse_row &result, size_t len)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::allocate_sparse_row(row_elem &result, size_t len)
 {
   result.len = len;
   result.coeffs = newarray(COEFF_TYPE, len);
   result.comps = newarray(int, len);
 }
 
-void LinearAlgebraGB::append_row(monomial m, int elem)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::append_row(monomial m, int elem)
 {
   /* Make a new row.  Should we also do
      process_row (and therefore process_vector)  here?
@@ -42,48 +113,34 @@ void LinearAlgebraGB::append_row(monomial m, int elem)
   row_elem r;
   r.monom = m;
   r.elem = elem;
-  rows.push_back(r);
+  mat->rows.push_back(r);
 }
 
-void LinearAlgebraGB::append_column(monomial m)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::append_column(monomial m)
 {
   column_elem c;
-  c.comp = 0;
   c.monom = m;
   c.gb_divisor = -2;
   c.ord = 0;
-  columns.push_back(c);
+  mat->columns.push_back(c);
 }
 
-int LinearAlgebraGB::column(monomial m)
+template<typename CoefficientRing>
+int LinAlgGB<CoefficientRing>::column(monomial m)
 {
-  int next_column = columns.size();
+  int next_column = mat->columns.size();
   std::pair<const monomial, int> p(m, next_column);
-  monomial_map::iterator i = H0.find(m);
-  if (i != H0.end())
+  typename coefficient_matrix::monomial_map::iterator i = mat->H0.find(m);
+  if (i != mat->H0.end())
     return (*i).second;
-  H0.insert(p);
+  mat->H0.insert(p);
   append_column(m);
   return next_column;
 }
 
-int LinearAlgebraGB::mult_monomials(monomial m, monomial n)
-{
-  // Multiply the two monomials m and n, using the monomial set H.
-  // Then, look in thisH to see if it exists already.
-  // If so: return the corresponding key (which is the column number)
-  // If not: insert it into thisH, do an append_column
-  // and return that column number.
-  
-  uninterned_monomial mn;
-  monomial result;
-  mn = H.reserve(MONOMIAL_LENGTH(m) + MONOMIAL_LENGTH(n));
-  monomial_mult(m,n,mn);
-  H.find_or_insert(mn,result);
-  return column(result);
-}
-
-void LinearAlgebraGB::process_row(int r)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::process_row(int r)
 {
   /* Do the multiplication, and process the 
      resulting vector.
@@ -96,19 +153,18 @@ void LinearAlgebraGB::process_row(int r)
 
   // There are 2 cases: the monomial of row r is NULL.
   // This means that we use a generator instead of a GB element
-  row_elem &re = rows[r];
-  sparse_row &mg = re.row;
+  row_elem &re = mat->rows[r];
   monomial m = re.monom;
   if (m == NULL)
     {
       poly &g = gens[re.elem]->f;
-      allocate_sparse_row(mg, g.len);
+      allocate_sparse_row(re, g.len);
       for (int i=0; i<g.len; i++)
-	coeffK->init_set(mg.coeffs+i, g.coeffs+i);
+	coeffK->init_set(re.coeffs+i, g.coeffs+i);
 
       for (int i=0; i<g.len; i++)
 	{
-	  mg.comps[i] = column(g.monoms[i]);
+	  re.comps[i] = column(g.monoms[i]);
 	  // the above routine creates a new column if it is not there yet
 	}
     }
@@ -117,7 +173,7 @@ void LinearAlgebraGB::process_row(int r)
       poly &g = gb[re.elem]->f;
       
       // step 1: find size of the polynomial, allocate a new polynomial
-      allocate_sparse_row(mg, g.len);
+      allocate_sparse_row(re, g.len);
       
       // step 2: do the multiplication.  Note that this does not need
       // multiplication in the base field/ring.
@@ -129,17 +185,18 @@ void LinearAlgebraGB::process_row(int r)
       
       // It would be interesting to see if using iterators changes speed at all
       for (int i=0; i<g.len; i++)
-	coeffK->init_set(mg.coeffs+i, g.coeffs+i);
+	coeffK->init_set(re.coeffs+i, g.coeffs+i);
       for (int i=0; i<g.len; i++)
 	{
 	  monomial n = MonomialOps::mult(&H, m, g.monoms[i]);
-	  mg.comps[i] = column(n);
+	  re.comps[i] = column(n);
 	  // the above routine creates a new column if it is not there yet
 	}
     }
 }
 
-void LinearAlgebraGB::process_column(int c)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::process_column(int c)
 {
   /* If this column has been handled before, return.
      Otherwise, find a GB element whose lead term
@@ -147,7 +204,7 @@ void LinearAlgebraGB::process_column(int c)
      as not an initial element, OR append a row
   */
 
-  column_elem &ce = columns[c];
+  column_elem &ce = mat->columns[c];
   if (ce.gb_divisor >= -1)
     return;
   tagged_monomial *b;
@@ -165,7 +222,8 @@ void LinearAlgebraGB::process_column(int c)
     ce.gb_divisor = -1;
 }
 
-void LinearAlgebraGB::process_s_pair(SPairSet::spair *p)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::process_s_pair(SPairSet::spair *p)
 {
   switch (p->type) {
   case SPairSet::SPAIR_SPAIR:
@@ -195,9 +253,10 @@ void LinearAlgebraGB::process_s_pair(SPairSet::spair *p)
 }
 
 static int ncomparisons = 0;
+template <typename CoefficientRing>
 struct monomial_sorter : public binary_function<int,int,bool> {
-  typedef std::vector<LinearAlgebraGB::column_elem, 
-                               gc_allocator<LinearAlgebraGB::column_elem> >
+  typedef std::vector<column_elem, 
+                               gc_allocator<column_elem> >
             col_array ;
 
   col_array columns;
@@ -208,8 +267,8 @@ struct monomial_sorter : public binary_function<int,int,bool> {
     {
       ncomparisons++;
       /* return the boolean value a < b */
-      LinearAlgebraGB::column_elem &m = columns[a];
-      LinearAlgebraGB::column_elem &n = columns[b];
+      column_elem &m = columns[a];
+      column_elem &n = columns[b];
       // First compare degrees, then weights, then do revlex lt routine
       int cmp = m.ord - n.ord;
       if (cmp > 0) return false;
@@ -221,32 +280,34 @@ struct monomial_sorter : public binary_function<int,int,bool> {
     }
 };
 
-void LinearAlgebraGB::set_comparisons()
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::set_comparisons()
 {
   /* Sort the monomials */
   /* set the comparison values in the current matrix */
   /* Should we also go thru the matrix and set the values? */
 
   std::vector<int, gc_allocator<int> > a;
-  a.reserve(columns.size());
-  for (int i=0; i<columns.size(); i++)
+  a.reserve(mat->columns.size());
+  for (int i=0; i<mat->columns.size(); i++)
     {
       // Set the degree, weight
-      columns[i].ord = monomial_weight(columns[i].monom, weights);
+      mat->columns[i].ord = monomial_weight(mat->columns[i].monom, weights);
       a.push_back(i);
     }
 
   ncomparisons = 0;
-  sort(a.begin(), a.end(), monomial_sorter(columns));
+  sort(a.begin(), a.end(), monomial_sorter<CoefficientRing>(mat->columns));
   fprintf(stderr, "ncomparisons = %d\n", ncomparisons);
 
   for (int i=0; i<a.size(); i++)
     {
-      columns[a[i]].ord = i;
+      mat->columns[a[i]].ord = i;
     }
 }
 
-void LinearAlgebraGB::make_matrix()
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::make_matrix()
 {
   /* loop through all spairs, process,
      then while there are any columns to process, do so,
@@ -254,6 +315,7 @@ void LinearAlgebraGB::make_matrix()
      Is this the best order to do it in?  Maybe not...
   */
 
+  mat = new coefficient_matrix;
   SPairSet::spair *p;
   while (p = S.get_next_pair())
     {
@@ -263,14 +325,14 @@ void LinearAlgebraGB::make_matrix()
 
   for (;;)
     {
-      if (next_row_to_process < rows.size())
+      if (next_row_to_process < mat->rows.size())
 	process_row(next_row_to_process++);
-      else if (next_col_to_process < columns.size())
+      else if (next_col_to_process < mat->columns.size())
 	process_column(next_col_to_process++);
       else break;
     }
 
-  fprintf(stderr, "--matrix--%d by %d\n", rows.size(), columns.size());
+  fprintf(stderr, "--matrix--%d by %d\n", mat->rows.size(), mat->columns.size());
   show_row_info();
   show_column_info();
   //  show_matrix();
@@ -282,31 +344,36 @@ void LinearAlgebraGB::make_matrix()
   show_column_info();
 }
 
-void LinearAlgebraGB::LU_decompose()
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::LU_decompose()
 {
 }
 
-void LinearAlgebraGB::sparse_row_to_poly(sparse_row &r, poly &g)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::sparse_row_to_poly(row_elem &r, poly &g)
 {
   allocate_poly(g, r.len);
   for (int i=0; i<r.len; i++)
     {
       coeffK->init_set(g.coeffs+i, r.coeffs+i);
-      g.monoms[i] = columns[r.comps[i]].monom;
+      g.monoms[i] = mat->columns[r.comps[i]].monom;
     }
 }
 
-gbelem *LinearAlgebraGB::make_gbelem(poly &g)
+template<typename CoefficientRing>
+mygbelem<typename CoefficientRing::elem> *
+LinAlgGB<CoefficientRing>::make_gbelem(poly &g)
 {
   gbelem *result = new gbelem;
   swap(result->f,g);
-  poly_set_degrees(weights,result->f,result->deg,result->alpha);
+  M2Interface<CoefficientRing>::poly_set_degrees(coeffK,weights,result->f,result->deg,result->alpha);
   result->is_minimal = 1;
   result->minlevel = ELEM_MIN_GB;
   return result;
 }
 
-void LinearAlgebraGB::insert_gb_element(poly &g)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::insert_gb_element(poly &g)
 {
   // Grabs g.  Needs to set degree, alpha degree.
   gbelem *result = make_gbelem(g);
@@ -316,7 +383,8 @@ void LinearAlgebraGB::insert_gb_element(poly &g)
   gb.push_back(result);
 }
 
-void LinearAlgebraGB::new_GB_elements()
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::new_GB_elements()
 {
   /* After LU decomposition, loop through each
      row of the matrix.  If the corresponding 
@@ -327,35 +395,37 @@ void LinearAlgebraGB::new_GB_elements()
      If instead the lead term is not new, then keep track of this
      information somehow: place ... into a monheap...
   */
-  for (int r=0; r<rows.size(); r++)
+  for (int r=0; r<mat->rows.size(); r++)
     {
-      if (rows[r].row.len == 0) continue;
-      int c = rows[r].row.comps[0];
-      if (columns[c].gb_divisor < 0)
+      if (mat->rows[r].len == 0) continue;
+      int c = mat->rows[r].comps[0];
+      if (mat->columns[c].gb_divisor < 0)
 	{
 	  poly g;
-	  sparse_row_to_poly(rows[r].row, g); // This grabs the row poly
-	                                      // leaving a zero poly
+	  sparse_row_to_poly(mat->rows[r], g); // This grabs the row poly
+	                                       // leaving a zero poly
 	  insert_gb_element(g);
 	  S.find_new_pairs(gb, false);
 	}
     }
 }
 
-void LinearAlgebraGB::s_pair_step()
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::s_pair_step()
 {
   make_matrix();
   LU_decompose();
   new_GB_elements();
   // reset rows and columns and other matrix aspects
-  rows.clear();
-  columns.clear();
-  H0.clear();
+  mat->rows.clear();
+  mat->columns.clear();
+  mat->H0.clear();
   next_col_to_process = 0;
   next_row_to_process = 0;
 }
 
-enum ComputationStatusCode LinearAlgebraGB::computation_is_complete()
+template<typename CoefficientRing>
+enum ComputationStatusCode LinAlgGB<CoefficientRing>::computation_is_complete()
 {
   // This handles everything but stop_.always, stop_.degree_limit
   if (stop_.basis_element_limit > 0 && gb.size() > stop_.basis_element_limit) 
@@ -377,7 +447,8 @@ enum ComputationStatusCode LinearAlgebraGB::computation_is_complete()
   return COMP_COMPUTING;
 }
 
-void LinearAlgebraGB::start_computation()
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::start_computation()
 {
   int npairs;
   enum ComputationStatusCode is_done = COMP_COMPUTING;
@@ -412,7 +483,9 @@ void LinearAlgebraGB::start_computation()
   set_status(is_done);
 }
 
-LinearAlgebraGB::LinearAlgebraGB(const Matrix *m,
+#if 0
+template<typename CoefficientRing>
+LinAlgGB<CoefficientRing>::LinearAlgebraGB(const Matrix *m,
 				  M2_bool collect_syz, 
 				  int n_rows_to_keep,
 				  M2_arrayint gb_weights,
@@ -448,13 +521,17 @@ LinearAlgebraGB::LinearAlgebraGB(const Matrix *m,
   show_gb_array(gens);
   set_status(COMP_NOT_STARTED);
 }
+#endif
 
-LinearAlgebraGB::~LinearAlgebraGB()
+template<typename CoefficientRing>
+LinAlgGB<CoefficientRing>::~LinAlgGB()
 {
 #warning "anything to delete?"
 }
 
-LinearAlgebraGB * LinearAlgebraGB::create(const Matrix *m, 
+#if 0
+template<typename CoefficientRing>
+LinAlgGB * LinAlgGB<CoefficientRing>::create(const Matrix *m, 
 				  M2_bool collect_syz, 
 				  int n_rows_to_keep,
 				  M2_arrayint gb_weights,
@@ -463,7 +540,7 @@ LinearAlgebraGB * LinearAlgebraGB::create(const Matrix *m,
 				  int max_degree)
 {
   buffer o;
-  o << "entering LinearAlgebraGB::create" << newline;
+  o << "entering LinAlgGB<CoefficientRing>::create" << newline;
   emit(o.str());
   LinearAlgebraGB *result = new LinearAlgebraGB(m,
 						collect_syz,
@@ -474,12 +551,14 @@ LinearAlgebraGB * LinearAlgebraGB::create(const Matrix *m,
 						max_degree);
   return result;
 }
+#endif
 
 /*************************
  ** Top level interface **
  *************************/
 
-ComputationOrNull *LinearAlgebraGB::set_hilbert_function(const RingElement *hf)
+template<typename CoefficientRing>
+ComputationOrNull *LinAlgGB<CoefficientRing>::set_hilbert_function(const RingElement *hf)
 {
 #if 0
   _hf_orig = hf;
@@ -492,15 +571,16 @@ ComputationOrNull *LinearAlgebraGB::set_hilbert_function(const RingElement *hf)
   return 0;
 }
 
-const MatrixOrNull *LinearAlgebraGB::get_gb()
+template<typename CoefficientRing>
+const MatrixOrNull *LinAlgGB<CoefficientRing>::get_gb()
 {
-  MatrixConstructor mat(F,0);
+  MatrixConstructor result(F,0);
   for (int i=0; i<gb.size(); i++)
     {
-      vec v = to_M2_vec(gb[i]->f, F);
-      mat.append(v);
+      vec v = M2Interface<CoefficientRing>::to_M2_vec(coeffK,gb[i]->f, F);
+      result.append(v);
     }
-  return mat.to_matrix();
+  return result.to_matrix();
 #if 0
   minimalize_gb();
   return minimal_gb->get_gb();
@@ -508,7 +588,8 @@ const MatrixOrNull *LinearAlgebraGB::get_gb()
   return 0;
 }
 
-const MatrixOrNull *LinearAlgebraGB::get_mingens()
+template<typename CoefficientRing>
+const MatrixOrNull *LinAlgGB<CoefficientRing>::get_mingens()
 {
 #if 0
   MatrixConstructor mat(_F,0);
@@ -520,7 +601,8 @@ const MatrixOrNull *LinearAlgebraGB::get_mingens()
   return 0;
 }
 
-const MatrixOrNull *LinearAlgebraGB::get_change()
+template<typename CoefficientRing>
+const MatrixOrNull *LinAlgGB<CoefficientRing>::get_change()
 {
 #if 0
   minimalize_gb();
@@ -529,7 +611,8 @@ const MatrixOrNull *LinearAlgebraGB::get_change()
   return 0;
 }
 
-const MatrixOrNull *LinearAlgebraGB::get_syzygies()
+template<typename CoefficientRing>
+const MatrixOrNull *LinAlgGB<CoefficientRing>::get_syzygies()
 {
 #if 0
   // The (non-minimal) syzygy matrix
@@ -543,7 +626,8 @@ const MatrixOrNull *LinearAlgebraGB::get_syzygies()
   return 0;
 }
 
-const MatrixOrNull *LinearAlgebraGB::get_initial(int nparts)
+template<typename CoefficientRing>
+const MatrixOrNull *LinAlgGB<CoefficientRing>::get_initial(int nparts)
 {
 #if 0
   minimalize_gb();
@@ -552,7 +636,8 @@ const MatrixOrNull *LinearAlgebraGB::get_initial(int nparts)
   return 0;
 }
 
-const MatrixOrNull *LinearAlgebraGB::matrix_remainder(const Matrix *m)
+template<typename CoefficientRing>
+const MatrixOrNull *LinAlgGB<CoefficientRing>::matrix_remainder(const Matrix *m)
 {
 #if 0
   minimalize_gb();
@@ -561,7 +646,8 @@ const MatrixOrNull *LinearAlgebraGB::matrix_remainder(const Matrix *m)
   return 0;
 }
 
-void LinearAlgebraGB::matrix_lift(const Matrix *m,
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::matrix_lift(const Matrix *m,
 		 MatrixOrNull **result_remainder,
 		 MatrixOrNull **result_quotient
 		 )
@@ -572,7 +658,8 @@ void LinearAlgebraGB::matrix_lift(const Matrix *m,
 #endif
 }
 
-int LinearAlgebraGB::contains(const Matrix *m)
+template<typename CoefficientRing>
+int LinAlgGB<CoefficientRing>::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
@@ -584,7 +671,8 @@ int LinearAlgebraGB::contains(const Matrix *m)
   return 0;
 }
 
-int LinearAlgebraGB::complete_thru_degree() const
+template<typename CoefficientRing>
+int LinAlgGB<CoefficientRing>::complete_thru_degree() const
   // The computation is complete up through this degree.
 {
 #if 0
@@ -593,7 +681,8 @@ int LinearAlgebraGB::complete_thru_degree() const
   return 0;
 }
 
-void LinearAlgebraGB::text_out(buffer &o)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::text_out(buffer &o)
   /* This displays statistical information, and depends on the
      gbTrace value */
 {
@@ -607,14 +696,15 @@ void LinearAlgebraGB::text_out(buffer &o)
       }
 }
 
-void LinearAlgebraGB::show_gb_array(const gb_array &g)
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::show_gb_array(const gb_array &g)
 {
   // Debugging routine
   // Display the array, and all of the internal information in it too.
   buffer o;
   for (int i=0; i<g.size(); i++)
     {
-      vec v = to_M2_vec(g[i]->f, F);
+      vec v = M2Interface<CoefficientRing>::to_M2_vec(coeffK,g[i]->f, F);
       o << "element " << i 
 	<< " degree " << g[i]->deg 
 	<< " alpha " << g[i]->alpha 
@@ -625,38 +715,40 @@ void LinearAlgebraGB::show_gb_array(const gb_array &g)
   emit(o.str());
 }
 
-void LinearAlgebraGB::show_row_info()
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::show_row_info()
 {
   // Debugging routine
-  for (int i=0; i<rows.size(); i++)
+  for (int i=0; i<mat->rows.size(); i++)
     {
-      fprintf(stderr, "%4d ", rows[i].elem);
-      if (rows[i].monom == 0)
+      fprintf(stderr, "%4d ", mat->rows[i].elem);
+      if (mat->rows[i].monom == 0)
 	fprintf(stderr, "generator");
       else
-	monomial_elem_text_out(stderr, rows[i].monom);
+	monomial_elem_text_out(stderr, mat->rows[i].monom);
       fprintf(stderr, "\n");
     }
 }
 
-void LinearAlgebraGB::show_column_info()
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::show_column_info()
 {
   // Debugging routine
-  for (int i=0; i<columns.size(); i++)
+  for (int i=0; i<mat->columns.size(); i++)
     {
-      fprintf(stderr, "comp %4d gbdivisor %4d ord %4d monomial ", 
-	      columns[i].comp,
-	      columns[i].gb_divisor,
-	      columns[i].ord);
-      monomial_elem_text_out(stderr, columns[i].monom);
+      fprintf(stderr, "gbdivisor %4d ord %4d monomial ", 
+	      mat->columns[i].gb_divisor,
+	      mat->columns[i].ord);
+      monomial_elem_text_out(stderr, mat->columns[i].monom);
       fprintf(stderr, "\n");
     }
 }
 
-void LinearAlgebraGB::show_matrix()
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::show_matrix()
 {
   // Debugging routine
-  MutableMatrix *q = to_M2_MutableMatrix(originalR->getCoefficients(),rows,columns);
+  MutableMatrix *q = M2Interface<CoefficientRing>::to_M2_MutableMatrix(originalR->getCoefficients(),mat);
   buffer o;
   q->text_out(o);
   emit(o.str());
