@@ -355,6 +355,18 @@ assert(rawHomogenize(m,6,(1,1,1,1,1,1,1))
 ---------------------
 -- rawCoefficients --
 ---------------------
+-- a simple example first:
+needs "raw-util.m2"
+A = polyring(rawZZ(), (symbol a, symbol b))
+B = polyring(A, (symbol x, symbol y))
+a = rawPromote(B,a)
+b = rawPromote(B,b)
+m = mat{{a*x+b*y}}
+m2 = mat{{x^2,x*y,y^2}}
+m3 = mat{{x^3,x^2*y,x*y^2,y^3}}
+M = m ** m2
+C = rawCoefficients((0,1), m3,M)
+assert(m3 * C == M)
 
 -------------------
 -- rawMonomials ---

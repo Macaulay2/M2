@@ -641,18 +641,22 @@ const Matrix_pair_OrNull * IM2_Matrix_coeffs(const Matrix *M, M2_arrayint vars)
   return 0;
 }
 
-const MatrixOrNull * IM2_Matrix_get_coeffs(const M2_arrayint vars,
-					   const M2_arrayint monoms,
-					   const Matrix *M)
-{
-  return M->coeffs(vars,monoms);
-}
-
 const MatrixOrNull * rawCoefficients(const M2_arrayint vars,
 				     const Matrix *monoms,
 				     const Matrix *M)
 {
   return M->coeffs(vars,monoms);
+}
+
+const MatrixOrNull * rawBasis(const Matrix *M,
+			      M2_arrayint lo_degree, /* possibly length 0 */
+			      M2_arrayint hi_degree,
+			      M2_arrayint wt,
+			      M2_arrayint vars,
+			      M2_bool do_truncation,
+			      int limit)
+{
+  return M->Matrix::basis(lo_degree,hi_degree,wt,vars,do_truncation,limit);
 }
 
 const MatrixOrNull * IM2_Matrix_monomials(const M2_arrayint vars, 

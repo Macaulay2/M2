@@ -242,15 +242,16 @@ public:
 
   MatrixOrNull *coeffs(M2_arrayint vars, const Matrix *monoms) const;
 
-  MatrixOrNull *coeffs(M2_arrayint vars, const M2_arrayint monoms) const;
-  // to be removed soon
-
   MatrixOrNull *monomials(M2_arrayint vars) const;
 
   Matrix *lead_var_coefficient(Matrix * &monoms) const;
 
-  Matrix *k_basis(const Matrix *bot, const int *d, bool do_trunc) const;
-  Matrix *k_basis(const Matrix *bot) const;
+  const MatrixOrNull * basis(M2_arrayint lo_degree,
+			     M2_arrayint hi_degree,
+			     M2_arrayint wt,
+			     M2_arrayint vars,
+			     bool do_truncation,
+			     int limit) const;
 
   Matrix *exterior(int p,int strategy) const;
   Matrix *minors(int p,int strategy) const;
