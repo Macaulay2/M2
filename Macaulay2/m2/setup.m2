@@ -201,15 +201,10 @@ Thing.NoPrint = x -> (
      applyMethod(AfterNoPrint,x);
      )
 
-loaded := new MutableHashTable
-unmarkAllLoadedFiles = () -> loaded = new MutableHashTable  -- symbol will be erased in debugging.m2
-
 markLoaded := (filename,origfilename,notify) -> ( 
-     loaded#origfilename = true; 
-     if notify then (
-	  filename = minimizeFilename filename;
-	  stderr << "--loaded " << filename << endl
-	  );
+     filename = minimizeFilename filename;
+     filesLoaded#origfilename = filename; 
+     if notify then stderr << "--loaded " << filename << endl;
      )
 
 isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
@@ -242,7 +237,7 @@ load = (filename) -> tryload(filename,simpleLoad,notify)
 
 simpleInput := input
 input = (filename) -> tryload(filename,simpleInput,false)
-needs = s -> if not loaded#?s then load s
+needs = s -> if not filesLoaded#?s then load s
 
 load "loads.m2"
 if notify then stderr << "--loaded " << currentFileName << endl

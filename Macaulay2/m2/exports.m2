@@ -39,6 +39,7 @@ exportMutable (
 	)
 
 export (
+        symbol filesLoaded,
         symbol viewDocumentation,
         symbol RemakeAllDocumentation,
         symbol DegreeRank,
