@@ -227,7 +227,7 @@ Matrix.directSum = args -> (
 	  })
 
 isDirectSum = method()
-isDirectSum Module := (M) -> M.?cache.components
+isDirectSum Module := (M) -> M.cache.?components
 
 components Module := M -> if M.cache.?components then M.cache.components else {M}
 components Matrix := f -> if f.cache.?components then f.cache.components else {f}
@@ -283,11 +283,11 @@ Option.directSum = args -> (
      if y =!= null and y#?key then y#key else (
 	  type := single apply(modules, class);
 	  if not type.?directSum then error "no method for direct sum";
-	  S := type.directSum modules;
-	  if y =!= null then y#key = S;
-     	  keys := S.indices = toList args/first;
-     	  S.indexComponents = new HashTable from apply(#keys, i -> keys#i => i);
-	  S))
+	  M := type.directSum modules;
+	  if y =!= null then y#key = M;
+     	  keys := M.cache.indices = toList args/first;
+     	  M.cache.indexComponents = new HashTable from apply(#keys, i -> keys#i => i);
+	  M))
 Matrix ++ Matrix := Matrix => directSum
 Module ++ Module := Module => directSum
 

@@ -89,7 +89,7 @@ ZZquotient := (R,I) -> (
 	  S.baseRings = {R};
 	  S.relations = gensI;
 	  S.isCommutative = R.isCommutative;
-	  S.presentation = gensgbI;
+	  S.presentation = matrix{{n}};
 	  S.order = S.char = n;
 	  if n === 1 then S.dim = -1 else if n === 0 then S.dim = 1 else S.dim = 0;
 	  expression S := x -> hold rawToInteger raw x;
@@ -116,7 +116,7 @@ EngineRing / Ideal := (R,I) -> (
      while class A === QuotientRing do A = last A.baseRings;
      gensI := I.generators ** R;
      gensgbI := generators gb gensI;
-     rawQuotientRing(raw R, raw gensbI);
+     rawQuotientRing(raw R, raw gensgbI);
      sendgg(ggPush gensgbI, ggqring);
      S := new QuotientRing from newHandle();
      if R.?Adjust then S.Adjust = R.Adjust;

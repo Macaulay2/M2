@@ -22,7 +22,7 @@ ARGS += -e 'errorDepth=0'
 
 %.okay : %.m2
 	@ echo testing $<
-	ulimit -t 600; time ../bin/M2 $(ARGS) -e 'input "$<"' -e 'exit(0)'
+	ulimit -t 600; echo 'input "$<"; exit 0' | time ../bin/M2 $(ARGS)
 	touch $@
 
 # this version redirects the input (some bugs are detectable only this way

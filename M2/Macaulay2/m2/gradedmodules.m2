@@ -205,8 +205,8 @@ GradedModuleMap ++ GradedModuleMap := GradedModuleMap => (f,g) -> (
      h)
 
 
-isDirectSum GradedModule := (M) -> M.?cache.components
-components GradedModuleMap := f -> if f.?cache.components then f.cache.components else {f}
+isDirectSum GradedModule := (M) -> M.cache.?components
+components GradedModuleMap := f -> if f.cache.?components then f.cache.components else {f}
 GradedModuleMap _ Array := GradedModuleMap => (f,v) -> f * (source f)_v
 GradedModuleMap ^ Array := GradedModuleMap => (f,v) -> (target f)^v * f
 
@@ -428,8 +428,8 @@ tensorAssociativity(GradedModule,GradedModule,GradedModule) := GradedModuleMap =
 					* tensorAssociativity(A#a,B#b,C#c)
 					* (A#a ** BC#bc^[(b,c)])
 					)
-				   else map(F_k.cache.components#(F_k.indexComponents#(ab,c)),
-					     E_k.cache.components#(E_k.indexComponents#(a,bc)),
+				   else map(F_k.cache.components#(F_k.cache.indexComponents#(ab,c)),
+					     E_k.cache.components#(E_k.cache.indexComponents#(a,bc)),
 					     0))))))
 	  ))
 

@@ -17,7 +17,7 @@ newMonomialIdeal := (R,rawI) -> new MonomialIdeal from {
 
 monomialIdealOfRow := (i,m) -> newMonomialIdeal(ring m,rawMonomialIdeal(raw m, i))
 
-codim Module := M -> if M.?codim then M.codim else M.codim = (
+codim Module := M -> if M.cache.?codim then M.cache.codim else M.cache.codim = (
      R := ring M;
      if M == 0 then infinity
      else if isField R then 0
@@ -135,9 +135,7 @@ isBorel MonomialIdeal := m -> (
      sendgg(ggPush m, ggisborel);
      eePopBool())
 
-codim MonomialIdeal := m -> (
-     sendgg(ggPush m, ggcodim);
-     eePopInt())
+codim MonomialIdeal := m -> rawCodimension raw m
 
 poincare MonomialIdeal := M -> ( --poincare matrix m
      R := ring M;

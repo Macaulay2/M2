@@ -707,8 +707,8 @@ ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
 				   else if j#0 === k#0 - 1 and j#1 === k#1 
 				   then tens(R, matrix C.dd_(k#0), map cover D#(k#1))
 				   else map(
-					E#(i-1).cache.components#(E#(i-1).indexComponents#j),
-					E#i.cache.components#(E#i.indexComponents#k),
+					E#(i-1).cache.components#(E#(i-1).cache.indexComponents#j),
+					E#i.cache.components#(E#i.cache.indexComponents#k),
 					0))))));
 	  E))
 
@@ -741,10 +741,10 @@ ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
 	  deg := h.degree = f.degree + g.degree;
 	  scan(spots E, n -> if F#?(n+deg) then (
 		    E' := E#n;
-		    E'i := E'.indexComponents;
+		    E'i := E'.cache.indexComponents;
 		    E'c := E'.cache.components;
 		    F' := F#(n+deg);
-		    F'i := F'.indexComponents;
+		    F'i := F'.cache.indexComponents;
 		    h#n = map(F',E', matrix {
 			      apply(E'.indices, (i,j) -> (
 					t := (i+f.degree, j+g.degree);
@@ -788,8 +788,8 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := ChainComplexMap =
 					* tensorAssociativity(A#a,B#b,C#c)
 					* (A#a ** BC#bc^[(b,c)])
 					)
-				   else map(F_k.cache.components#(F_k.indexComponents#(ab,c)),
-					     E_k.cache.components#(E_k.indexComponents#(a,bc)),
+				   else map(F_k.cache.components#(F_k.cache.indexComponents#(ab,c)),
+					     E_k.cache.components#(E_k.cache.indexComponents#(a,bc)),
 					     0))))))
 	       ))
 
@@ -815,8 +815,8 @@ ChainComplexMap _ Array := ChainComplexMap => (f,v) -> f * (source f)_v
 ChainComplexMap ^ Array := ChainComplexMap => (f,v) -> (target f)^v * f
 
 trans := (C,v) -> (
-     if C.?indexComponents then (
-	  Ci := C.indexComponents;
+     if C.cache.?indexComponents then (
+	  Ci := C.cache.indexComponents;
 	  apply(v, i -> if Ci#?i then Ci#i else error "expected an index of a component of the direct sum"))
      else (
      	  if not C.cache.?components then error "expected a direct sum of chain complexes";
