@@ -38,6 +38,7 @@ reach1 Thing := identity
 reach1 Sequence := reach1 BasicList := x -> scan(x,reach1)
 reach1 SHIELD := x -> scan(x,reach3)
 reach1 MENU := x -> scan(x,reach2)
+reach1 optionalTO := identity
 reach1 TO := reach1 TOH := (x) -> (
      node := formatDocumentTag x#0;
      if not getNumberFromName#?node and not otherNodes#?node 
@@ -50,6 +51,7 @@ goOver := node -> (
      reach1 documentationMemo node;
      ascend();
      )
+reach2 optionalTO := identity
 reach2 TO := reach2 TOH := (x) -> (
      node := formatDocumentTag x#0;
      if not getNumberFromName#?node
@@ -128,7 +130,7 @@ cmrLiteral = s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 
 UnknownReference := "???"
 
-crossReference := (key,text) -> (
+crossReference := (key,text,optional) -> (
      sectionNumber := (
 	  if getNumberFromName#?key
 	  then sectionNumberTable#(getNumberFromName#key)
@@ -139,12 +141,15 @@ crossReference := (key,text) -> (
 	       )
 	  );
      if sectionNumber === UnknownReference
-     then (                                  "{\\bf ", cmrLiteral text,  "} [", sectionNumber, "]" )
+     then if optional 
+     then (                                  "{\\bf ", cmrLiteral text,  "}" )
+     else (                                  "{\\bf ", cmrLiteral text,  "} [", sectionNumber, "]" )
      else ( "\\hyperlink{", sectionNumber, "}{{\\bf ", cmrLiteral text, "}} [", sectionNumber, "]" )
      )
 
 booktex = method(SingleArgumentDispatch=>true)
-booktex TO := booktex TOH := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0) 
+booktex TO := booktex TOH := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0,false) 
+booktex optionalTO := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0,true) 
 
 menuLevel := 2
 
@@ -162,7 +167,7 @@ booktex MENU := x -> concatenate(
 	       ///\hangindent///, toString menuLevel, ///\parindent
 ///,
 	       -- ///\textindent{$\bullet$}///,
-	       booktex x,
+	       booktex if instance(x,TO) then SEQ{ x, headline x#0 } else x,
 	       (menuLevel = menuLevel - 1;),
 	       ///%
 \par
@@ -252,8 +257,8 @@ booktex ExampleTABLE := x -> concatenate apply(x,y -> booktex y#1)
 booktex CODE :=
 booktex PRE := x -> concatenate (
      ///\par
-\penalty-200
 \beginverbatim%
+\penalty-200
 ///,
      between(newline, 
 	  shorten lines concatenate x
@@ -261,7 +266,7 @@ booktex PRE := x -> concatenate (
 	       if #line <= asciiLineWidth then line
 	       else concatenate(substring(line,0,asciiLineWidth), " ..."))
 	  / ttLiteral
-	  / (line -> if line === "" then ///\penalty-500/// else line)
+	  / (line -> if line === "" then ///\penalty-170/// else line)
 	  ),
      ///
 \endverbatim
