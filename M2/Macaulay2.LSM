@@ -1,0 +1,28 @@
+To: Linux Software Map <lsm@execpc.com>
+Subject: Macaulay 2
+Reply-to: dan@math.uiuc.edu
+
+Begin4
+Title:          Macaulay 2
+Version:        0.8.56
+Entered-date:2000-02-07
+Description:    Symbolic algebra program designed to support research in
+		commutative algebra and algebraic geometry.  It's good
+		at computing Groebner bases and free resolutions of
+		modules over various rings.  This amounts to giving
+		qualitative information about systems of polynomial 
+		equations in several variables.
+Keywords:       equation variety scheme polynomial Macaulay Groebner basis
+		homomorphism ideal syzygy
+Author:         Daniel R. Grayson <dan@math.uiuc.edu>
+		Michael E. Stillman <mike@math.cornell.edu>
+Maintained-by:  Daniel R. Grayson <dan@math.uiuc.edu>
+		Michael E. Stillman <mike@math.cornell.edu>
+Primary-site:   http://www.math.uiuc.edu/Macaulay2
+Alternate-site: none
+Original-site:  same
+Platforms:      Linux, Unix, Windows 95, Macintosh.
+Copying-policy: Free for personal non-commercial or educational use,
+		but copyright by the authors - see the license/README
+		file.  Source code available.
+End
