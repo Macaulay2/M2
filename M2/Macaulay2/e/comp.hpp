@@ -6,7 +6,7 @@
 #include "hash.hpp"
 
 extern "C" char system_interrupted;
-extern int comp_printlevel;
+extern int gbTrace;
 extern "C" void system_spincursor(void);
 
 enum comp_return_value

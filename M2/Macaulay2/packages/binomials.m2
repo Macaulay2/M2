@@ -132,7 +132,7 @@ sendgg(ggPush m.binomialGB, ggstats)
 time gens gb m
 
 
-gbTrace 5
+gbTrace = 5
 load "binomials.m2"
 R = ZZ/101[s,t,a..d,Degrees=>{1,1,4,4,4,4},MonomialOrder=>Eliminate 2]
 m = matrix{{a-s^4, b-s^3*t, c-s*t^3, d-t^4}}

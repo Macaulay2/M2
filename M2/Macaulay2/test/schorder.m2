@@ -7,7 +7,7 @@ C = res(coker gens I, Strategy=>2)
 M = C.dd_2
 F = target M
 see F
-gbTrace 3
+gbTrace = 3
 M1 = syz M
 M2 = C.dd_3
 image M1 == image M2   -- since M1 fails above, this should fail, but

@@ -655,7 +655,7 @@ S = ZZ/32003[x_1 .. x_12, y_1 .. y_12]
 v1 = genericMatrix(S,y_1,1,12)
 gelem = (F) -> ideal(v1 - substitute(F vars R, S))
 G1 = apply(G, gelem)
-gbTrace 3
+gbTrace = 3
 JJ = intersect toSequence G1;
 JJ1 = substitute(JJ, vars R | map(R^1, R^12, 0));
 JJ1 = compress gens JJ1

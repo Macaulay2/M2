@@ -7,12 +7,6 @@ net GroebnerBasis := g -> net gens g
 
 summary GroebnerBasis := g -> (sendgg(ggPush g, ggstats);)
 
-gbTrace = (n) -> (
-     if class n === ZZ then (
-	  stderr << "warning: engine tracing not re-implemented yet" << endl
-	  )
-     else error "expected an integer" )
-
 bool := t -> if t then 1 else 0
 
 gbOnly       := {false,  0}
@@ -20,8 +14,6 @@ gbWithChg    := {false, -1}
 gbWithSyzygy := {true , -1}
 --     	    	        ^^ --- number of rows to retain, or -1 for all
 --     	         ^^^^ -------- whether to collect syzygies
-
--- tracingLevel := 0
 
 makeGB := (f,type,strategy) -> (
      if f.cache#?type then f.cache#type
@@ -43,9 +35,6 @@ makeGB := (f,type,strategy) -> (
 	  g := new GroebnerBasis;
 	  withSyz := type#0;
 	  rowsToKeep := type#1;
-	  -- if tracingLevel >= 3 then (
-	  --     << "keeping " << rowsToKeep << " rows of the syzygies" << endl;
-	  --     );
 	  g.GBtype = type;
 	  g.matrix = f;
 	  g.ring = ring f;
@@ -56,13 +45,9 @@ makeGB := (f,type,strategy) -> (
 	       ggPush bool withSyz,
 	       ggPush rowsToKeep,
 	       if not withSyz and f.?cache and f.cache.?cokernel and f.cache.cokernel.?poincare then (
-		    -- if tracingLevel >= 3 then (
-			-- << "using Poincare polynomial " << f.cokernel.poincare << " as hint" << endl;
-			-- );
 	            ggPush f.cache.cokernel.poincare		    -- the Poincare polynomial
 	            )
 	       else (
-		    -- if tracingLevel >= 3 then << "no Poincare polynomial as hint" << endl;
      	       	    null
 		    ),
 	       ggPush strategy, 	  -- which strategy to use (0=default)
@@ -71,8 +56,6 @@ makeGB := (f,type,strategy) -> (
 	  g))
 
 runGB := (G,ggcmds) -> (
-     -- gbTrace ( tracingLevel = gbTrace 0 );
-     -- if tracingLevel >= 4 then << "computing gb with type " << G.GBtype << endl;
      sendgg(ggPush G, ggcmds);
      sendgg ggcalc;
      G.returnCode = eePopInt();

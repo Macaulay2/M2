@@ -50,8 +50,6 @@ newLLLComputation = (m, threshold, hasChangeOfBasis) -> (
 
 
 doLLL = (C,count) -> (
-     verbose := gbTrace(0);
-     gbTrace(verbose);
      A := C.A;
      n := numcols A;
      lambda := C.lambda;
@@ -80,7 +78,7 @@ doLLL = (C,count) -> (
 	  );
      k := C.k;
      while k <= n and count =!= 0 do (
-	  if verbose>0 then (
+	  if gbTrace>0 then (
 	      << "." << k << flush;
 	      if count % 15 === 0 then (<< newline););
 	  count=count-1;
@@ -227,8 +225,6 @@ newLLLKernelComputation = (m) -> (
      result)
 
 doKernelLLL = (C,count) -> (
-     verbose := gbTrace(0);
-     gbTrace(verbose);
      A := C.A;
      D := C.D;
      lambda := C.lambda;
@@ -271,7 +267,7 @@ doKernelLLL = (C,count) -> (
 	       );
 	  );
      while k <= n and count =!= 0 do (
-	  if verbose>0 then (
+	  if gbTrace>0 then (
 	      << "." << k << flush;
 	      if count % 15 === 0 then (<< newline););
 	  count = count-1;
@@ -394,8 +390,6 @@ newLLLHermiteComputation = (m, threshold, hasChangeOfBasis) -> (
      result)
 
 doHermiteLLL = (C,count) -> (
-     verbose := gbTrace(0);
-     gbTrace(verbose);
      A := C.A;
      m := numcols A;
      lambda := C.lambda;
@@ -460,7 +454,7 @@ doHermiteLLL = (C,count) -> (
 	  );
      k := C.k;
      while k <= m and count =!= 0 do (
-	  if verbose>0 then (
+	  if gbTrace>0 then (
 	      << "." << k << flush;
 	      if count % 15 === 0 then (<< newline););
 	  count = count-1;
@@ -855,8 +849,6 @@ agcdLLL = (s) -> (
      );
      
 ahermiteLLL = (G) -> (
-     verbose := gbTrace(0);
-     gbTrace(verbose);
      m := numgens source G;
      n := numgens target G;
      row1 = 0;
@@ -926,7 +918,7 @@ ahermiteLLL = (G) -> (
      k = 2;
      count := -1;
      while k <= m do (
-	  if verbose>0 then (
+	  if gbTrace>0 then (
 	      << "." << k << flush;
 	      if count % 15 === 0 then (<< newline););
 	  count = count-1;
@@ -988,7 +980,7 @@ testLLL = (m) -> (
 load "../e/LLL.m2"
 m = transpose matrix{{1,1,1,1},{0,1,2,3}}  
 AA = LLL(m,Engine=>true)
-gbTrace 2
+gbTrace = 2
 calcLLL(AA_0,AA_1,-1)
 
 time gcdLLL {3,7,11}
@@ -1054,7 +1046,7 @@ assert(m * mh == m1)
 m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
 m = syz m1
 mz = LLL(m)
-gbTrace 2
+gbTrace = 2
 assert(m1 * matrix mz == 0)
 assert(isLLL matrix mz)
 
@@ -1143,7 +1135,7 @@ isLLL m1   -- NO
 time LLL m1  -- 44.9 seconds (front-end implementation)
              -- Quality of output is higher still
 
-gbTrace 1
+gbTrace = 1
 hermiteLLL M -- LONG time
 
 -----------------------------------------------------------

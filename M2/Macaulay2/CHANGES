@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The function "gbTrace" has been replaced by a variable.  So now,
+instead of typing "gbTrace 1" you would type "gbTrace = 1".
+
 The variable "Symbols" has been removed, in favor of a reverse
 dictionary for each immutable symbol in each package.
 

@@ -565,7 +565,7 @@ sqrt(a:Expr):Expr := (
      is x:Real do Expr(Real(sqrt(x.v)))
      is x:BigReal do Expr(sqrt(x))
      is Error do a
-     else buildErrorPacket("expected a double"));
+     else WrongArg("a double or big real"));
 setupfun("sqrt",sqrt);
 map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);

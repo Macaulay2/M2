@@ -74,6 +74,7 @@ TAGS: loadsequence
 				@srcdir@/*.awk \
 				@srcdir@/../basictests/*.m2 \
 				@srcdir@/../test/*.m2 \
+				@srcdir@/../test/engine/*.m2 \
 				@srcdir@/../html/*.m2 \
 				@srcdir@/../book/*.m2 \
 				@srcdir@/../packages/*.m2 \

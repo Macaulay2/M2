@@ -216,7 +216,7 @@ public:
   
   virtual void text_out(buffer &o); 
   /* This displays statistical information, and depends on the
-     comp_printlevel value */
+     gbTrace value */
 
 };  
 

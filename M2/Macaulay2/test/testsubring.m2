@@ -110,7 +110,7 @@ test8 = () -> (
                e*a^3*b + a*b^3*c + b*c^3*d + c*d^3*e + d*e^3*a,
                e^2*a*b^2 + a^2*b*c^2 + b^2*c*d^2 + c^2*d*e^2 + d^2*e*a^2}};
     f = map(R,S,matrix{{a+b,2*a+c,3*a+d,4*a+e}});
-    -- gbTrace 3;
+    -- gbTrace = 3;
     time J2 = pushForward1(f, cokernel I,MonomialOrder=>ProductOrder);
     )
 

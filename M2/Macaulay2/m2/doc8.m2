@@ -280,7 +280,7 @@ document { returnCode,
 
 document { gbTrace,
      Headline => "provide tracing output during various computations in the 	 engine.",
-     TT "gbTrace n", " -- set the tracing level for the ", TO "engine", " to
+     TT "gbTrace = n", " -- set the tracing level for the ", TO "engine", " to
      level ", TT "n", ".  Meaningful values for the user ", TT "n", " are
      0, 1, 2, and 3.",
      PARA,

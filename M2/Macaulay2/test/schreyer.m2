@@ -42,9 +42,9 @@ p = 101
 --	       s -> (
 --		    << "n = " << n << " d = " << d << " s = " << s << "\n";
 --		    I := artinianGorensteinRing(p,n,d,s);
---		    gbTrace 2;
+--		    gbTrace = 2;
 --		    time C := resolution I;
---		    gbTrace 0;
+--		    gbTrace = 0;
 --		    betti C;
 --		    )
 --	       )
