@@ -17,7 +17,7 @@ runGB := (G,ggcmds) -> (
 checkListOfIntegers := method()
 checkListOfIntegers ZZ := t -> {t}
 checkListOfIntegers List := t -> (
-     if not all(t, i -> if class i === ZZ) then error "expected list of integers");
+     if not all(t, i -> class i === ZZ) then error "expected list of integers";
      t)
 
 gbDefaults := new OptionTable from {
@@ -80,7 +80,7 @@ processAlgorithm := (a) -> (
      if a === Homogeneous then 1
      else if a === Inhomogeneous then 2
      else if a === null then 0
-     else error ("unknown algorithm encountered");
+     else error ("unknown algorithm encountered"))
 
 gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )
 
