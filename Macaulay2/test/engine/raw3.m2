@@ -445,7 +445,28 @@ rawFactor f
 load "raw-util.m2"
 R = polyring(rawQQ(), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^3*(x^2+y^4+z^7-x*y-13*x*z^2+12)
-rawFactor f
+time rawFactor f
+f = (x+3*y-14)^10*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
+time rawFactor f -- 5.63 sec 1 Gz G4 tibook 1/19/03
+
+R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
+f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
+time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03
+
+R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
+f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
+time rawFactor f -- .13 sec 1 Gz G4 tibook 1/19/03
+
+R = polyring(rawZZ(), singleton symbol x)
+f = x^20+13*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
+g = x^20+17*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
+h = x^20+21*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
+F = f*g*h
+time rawFactor F -- 4.1 sec 1 Gz G4 tibook 1/19/03
+F = f^2*g^2*h^3;
+time rawFactor F -- 1.41 sec 1 Gz G4 tibook 1/19/03
+F = f^2*g^2*h^2;
+time rawFactor F -- 4.25 sec 1 Gz G4 tibook 1/19/03
 
 -- TODO: 
 --  compress
