@@ -13,7 +13,6 @@ struct frac_elem
 class FractionField : public Ring
 {
   const Ring *R_;		// Base ring.  Assumed to be a domain.
-  int _elem_size;
   ring_elem _MINUS_ONE;		// this is -1 in the ring R.
 
   frac_elem *new_frac_elem() const;

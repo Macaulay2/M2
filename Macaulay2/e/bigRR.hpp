@@ -8,8 +8,13 @@
 #include "ring.hpp"
 #include <gmp.h>
 
+#define MPF_VAL(f) (reinterpret_cast<mpf_ptr>((f).poly_val))
+#define MPF_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
+#if 0
 #define MPF_VAL(f) (mpf_ptr ((f).poly_val))
 #define MPF_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
+#endif
 
 class bigRR : public Ring
 {

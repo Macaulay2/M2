@@ -8,8 +8,13 @@
 #include "../d/M2mem.h"
 #include "relem.hpp"
 
+#if 0
 #define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
 #define FRAC_RINGELEM(a) ((ring_elem) (Nterm *) (a))
+#endif
+
+#define FRAC_VAL(f) (reinterpret_cast<frac_elem *>((f).poly_val))
+#define FRAC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
 Ring::CoefficientType FractionField::coefficient_type() const
 {
@@ -33,7 +38,6 @@ bool FractionField::initialize_frac(const Ring *R)
 		  R->degree_monoid());
 
   R_ = R;
-  _elem_size = sizeof(frac_elem);
   _MINUS_ONE = R->from_int(-1);
 
   zeroV = from_int(0);
@@ -72,7 +76,7 @@ ring_elem FractionField::denominator(ring_elem f) const
 
 frac_elem *FractionField::new_frac_elem() const
 {
-  return (frac_elem *) getmem(_elem_size);
+  return newitem(frac_elem);
 }
 
 ring_elem FractionField::fraction(const ring_elem top, const ring_elem bottom) const

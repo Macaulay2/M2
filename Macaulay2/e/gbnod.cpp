@@ -31,7 +31,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
   gens = ggens;
   syz = NULL;
 
-  Fsyz = (FreeModule *) FFsyz;
+  Fsyz = const_cast<FreeModule *>(FFsyz);
 
   spairs = new s_pair_heap(M);
 
@@ -239,7 +239,9 @@ void gb2_comp::find_pairs(gb_elem *p)
       M->lcm(find_pairs_m, f_m, find_pairs_lcm);
       vplcm.shrink(0);
       M->to_varpower(find_pairs_lcm, vplcm);
-      s_pair *q = new_s_pair(p, (gb_elem *)(*mi1)[i]->basis_ptr(), find_pairs_lcm);
+      s_pair *q = new_s_pair(p, 
+			     reinterpret_cast<gb_elem *>((*mi1)[i]->basis_ptr()), 
+			     find_pairs_lcm);
       elems.insert(new Bag(q, vplcm));
     }
 
@@ -256,7 +258,7 @@ void gb2_comp::find_pairs(gb_elem *p)
   MonomialIdeal *mi = new MonomialIdeal(R, elems, rejects);
   while (rejects.remove(b))
     {
-      s_pair *q = (s_pair *) b->basis_ptr();
+      s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q);
       deleteitem(b);
     }
@@ -265,7 +267,7 @@ void gb2_comp::find_pairs(gb_elem *p)
   for (j = mi->first(); j.valid(); j++)
     {
       n_pairs++;
-      s_pair *q = (s_pair *) (*mi)[j]->basis_ptr();
+      s_pair *q = reinterpret_cast<s_pair *>((*mi)[j]->basis_ptr());
       if (is_ideal2 && q->syz_type == SPAIR_PAIR)
 	{
 	  // MES: the following line is suspect, for Schreyer orders
@@ -355,7 +357,7 @@ void gb2_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 #endif
 if (monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
 	{
-	  gb_elem *q = (gb_elem *) b->basis_ptr();
+	  gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
 	  GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,q->f,q->fsyz);
 	  count++;
 	  if (gbTrace == 10)
@@ -425,7 +427,7 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 #endif
 if (monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
 	{
-	  gb_elem *q = (gb_elem *) b->basis_ptr();
+	  gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
 	  GR->reduce_lead_term_heap(F,Fsyz,
 				    lead, div_totalexp,
 				    result,fb,fsyzb,

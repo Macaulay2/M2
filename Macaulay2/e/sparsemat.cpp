@@ -18,7 +18,8 @@ VectorOperations::~VectorOperations()
 
 sparse_vector *VectorOperations::new_sparse_vector() const
 {
-  return (sparse_vector *)(const_cast<VectorOperations *>(this)->vecstash->new_elem());
+  return reinterpret_cast<sparse_vector *>
+       (const_cast<VectorOperations *>(this)->vecstash->new_elem());
 }
 
 void VectorOperations::remove_sparse_vector_node(sparse_vector *n) const
@@ -761,7 +762,7 @@ void SparseMutableMatrix::normalizeColumn(int c, bool doRecording)
   if (K->is_ZZ())
     {
       ring_elem a = matrix[c]->coefficient;
-      mpz_ptr b = (mpz_ptr)a.poly_val;
+      mpz_ptr b = MPZ_VAL(a);
       if (mpz_sgn(b) < 0)
 	scaleColumn(c,minus_one,doRecording);
     }
@@ -1201,8 +1202,8 @@ int SparseMutableMatrix::compare_sparse_vectors(sparse_vector *v, sparse_vector 
     {
       bool negate_a = false;
       bool negate_b = false;
-      mpz_ptr a = (mpz_ptr)v->coefficient.poly_val;
-      mpz_ptr b = (mpz_ptr)w->coefficient.poly_val;
+      mpz_ptr a = MPZ_VAL(v->coefficient);
+      mpz_ptr b = MPZ_VAL(w->coefficient);
       if (mpz_sgn(a) < 0)
 	{
 	  negate_a = true;

@@ -6,8 +6,17 @@
 #include "ring.hpp"
 #include <gmp.h>
 
+#if 0
 #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
 #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
+#endif
+
+#define MPZ_VAL(f) (reinterpret_cast<mpz_ptr>((f).poly_val))
+#define MPZ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
+// The following lines are here only to remove complaints about old style casts from gmp
+extern "C" inline int mask_mpz_cmp_si(mpz_t x, long int i) { return mpz_cmp_si(x,i); }
+extern "C" inline int mask_mpq_cmp_si(mpq_t x, long int i, long int j) { return mpq_cmp_si(x,i,j); }
 
 class ZZ : public Ring
 {

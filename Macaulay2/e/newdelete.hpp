@@ -13,6 +13,9 @@
 // this replaces all uses of the construction "delete x":
 #define deleteitem(x) GC_FREE(x)
 
+// This is used instead of newitem(T) when the size is not known to the c++ compiler
+#define GETMEM(T,size) reinterpret_cast<T>(getmem(size))
+
 #include <gc.h>
 #include "../d/memdebug.h"
 

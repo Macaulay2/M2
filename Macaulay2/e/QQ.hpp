@@ -6,8 +6,13 @@
 #include "ring.hpp"
 #include <gmp.h>
 
+#define MPQ_VAL(f) (reinterpret_cast<M2_Rational>((f).poly_val))
+#define MPQ_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
+#if 0
 #define MPQ_VAL(f) (M2_Rational ((f).poly_val))
 #define MPQ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
+#endif
 
 class QQ : public Ring
 {

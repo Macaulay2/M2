@@ -250,8 +250,11 @@ const M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
   if (R == globalZZ)
     {
       ring_elem f = a->get_value();
+      return MPZ_VAL(f);
+#if 0
       Nterm *t = f;
       return (M2_Integer)(t);
+#endif
     }
   else if (R->cast_to_Z_mod() != 0)
     {
@@ -393,8 +396,8 @@ M2_Integer_pair_OrNull *IM2_RingElement_degree(const RingElement *a,
   M2_Integer_pair *p = new M2_Integer_pair;
   p->a = newitem(__mpz_struct);
   p->b = newitem(__mpz_struct);
-  mpz_init_set_si(p->a, (long)lo);
-  mpz_init_set_si(p->b, (long)hi);
+  mpz_init_set_si(p->a, static_cast<long>(lo));
+  mpz_init_set_si(p->b, static_cast<long>(hi));
   return p;
 }
 
@@ -493,11 +496,11 @@ ArrayPairOrNull IM2_RingElement_list_form(const RingElement *f)
       return 0;
     }
   int n = f->n_terms();
-  Monomial_array *monoms = (Monomial_array *) getmem(sizeofarray(monoms,n));
-  RingElement_array *coeffs = (RingElement_array *) getmem(sizeofarray(coeffs,n));
+  Monomial_array *monoms = GETMEM(Monomial_array *, sizeofarray(monoms,n));
+  RingElement_array *coeffs = GETMEM(RingElement_array *, sizeofarray(coeffs,n));
   monoms->len = n;
   coeffs->len = n;
-  ArrayPairOrNull result = (ArrayPairOrNull) getmem(sizeof(*result));
+  ArrayPairOrNull result = newitem(ArrayPair);
   result->monoms = monoms;
   result->coeffs = coeffs;
   

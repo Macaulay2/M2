@@ -347,7 +347,9 @@ void GB_comp::find_pairs(gb_elem *p)
       _M->lcm(find_pairs_m, f_m, find_pairs_lcm);
       vplcm.shrink(0);
       _M->to_varpower(find_pairs_lcm, vplcm);
-      s_pair *q = new_s_pair(p, (gb_elem *)(*mi1)[i]->basis_ptr(), find_pairs_lcm);
+      s_pair *q = new_s_pair(p, 
+			     reinterpret_cast<gb_elem *>((*mi1)[i]->basis_ptr()), 
+			     find_pairs_lcm);
       elems.insert(new Bag(q, vplcm));
     }
 
@@ -364,13 +366,13 @@ void GB_comp::find_pairs(gb_elem *p)
   MonomialIdeal mi(originalR->get_flattened_ring(), elems, rejects);
   while (rejects.remove(b))
     {
-      s_pair *q = (s_pair *) b->basis_ptr();
+      s_pair *q = reinterpret_cast<s_pair *>(b->basis_ptr());
       remove_pair(q);
       deleteitem(b);
     }
   for (j = mi.first(); j.valid(); j++)
     {
-      s_pair *q = (s_pair *) mi[j]->basis_ptr();
+      s_pair *q = reinterpret_cast<s_pair *>(mi[j]->basis_ptr());
       if (_is_ideal && q->syz_type == SPAIR_PAIR)
 	{
 	  _M->gcd(q->first->f->monom, q->second->f->monom, find_pairs_m);
@@ -462,7 +464,7 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 #endif
 	if (_monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
 	{
-	  gb_elem *q = (gb_elem *) b->basis_ptr();
+	  gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
 	  _GR->gbvector_reduce_lead_term(_F,_Fsyz,head.next,f,fsyz,q->f,q->fsyz);
 	  count++;
 	  _n_reductions++;
@@ -534,7 +536,7 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 #endif
 	if (_monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
 	{
-	  gb_elem *q = (gb_elem *) b->basis_ptr();
+	  gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
 	  _GR->reduce_lead_term_heap(_F,_Fsyz,
 				    lead, div_totalexp,
 				    result,fb,fsyzb,
@@ -1122,7 +1124,7 @@ ComputationOrNull *GB_comp::set_hilbert_function(const RingElement *hf)
   //  -- if the computation has already been started, this will fail
   //     So probably an error should be given, and 0 returned in this case.
   _hf_orig = hf;
-  _hf_diff = RingElement::make_raw(hf->get_ring(), (Nterm*)0);
+  _hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
   _use_hilb = true;
   _hilb_new_elems = true;
   return this;

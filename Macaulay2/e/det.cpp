@@ -54,7 +54,7 @@ DetComputation::DetComputation(const Matrix *M0, int p0,
   for (int i=0; i<p; i++)
     {
       D[i] = newarray(ring_elem,p);
-      for (int j=0; j<p;j++) D[i][j] = (Nterm *)0;
+      for (int j=0; j<p;j++) D[i][j] = ZERO_RINGELEM;
     }
 }
 
@@ -255,13 +255,13 @@ ring_elem DetComputation::bareiss_det()
 	if (c != pivot_col)
 	  R->remove(D[r][c]);
 	else
-	  D[r][c] = (Nterm *)0;
+	  D[r][c] = ZERO_RINGELEM;
     }
 
   R->remove(pivot);
   R->remove(lastpivot);
   ring_elem r = D[0][0];
-  D[0][0] = (Nterm*)0;
+  D[0][0] = ZERO_RINGELEM;
 
   if (sign < 0) R->negate_to(r);
 

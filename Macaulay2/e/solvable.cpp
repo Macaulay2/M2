@@ -35,7 +35,7 @@ ring_elem SolvableAlgebra::imp_mult_by_term(const ring_elem f,
 {
   // TODO
 #warning "implement SolvableAlgebra::imp_mult_by_term"
-  return (Nterm*)NULL;
+  return ZERO_RINGELEM;
 }
 
 ring_elem SolvableAlgebra::power(const ring_elem f, mpz_t n) const
@@ -46,7 +46,7 @@ ring_elem SolvableAlgebra::power(const ring_elem f, mpz_t n) const
   else 
     {
       ERROR("exponent too large");
-      return (Nterm *)NULL;
+      return ZERO_RINGELEM;
     }
 }
 

@@ -8,10 +8,16 @@
 #include "ring.hpp"
 #include <gmp.h>
 
+#if 0
 #define BIGCC_VAL(f) (M2_BigComplex ((f).poly_val))
+#define BIGCC_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
+#endif
+
+#define BIGCC_VAL(f) (reinterpret_cast<M2_BigComplex>((f).poly_val))
+#define BIGCC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
+
 #define BIGCC_RE(f) (&BIGCC_VAL(f)->re)  // returns actual value, not copy
 #define BIGCC_IM(f) (&BIGCC_VAL(f)->im)
-#define BIGCC_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 
 class bigCC : public Ring
 {

@@ -229,8 +229,9 @@ static void iquotient_and_sum(MonomialIdeal &I,
 	  int d = varpower::simple_degree(b->monom().raw());
 	  if (d >= bins.length())
 	    for (int j=bins.length(); j<=d; j++)
-	      bins.append((queue<Bag *> *)NULL);
-	  if (bins[d] == (queue<Bag *> *)NULL)
+	      // bins.append((queue<Bag *> *)NULL);
+	      bins.append(NULL);
+	  if (bins[d] == NULL) //(queue<Bag *> *)NULL)
 	    bins[d] = new queue<Bag *>;
 	  bins[d]->insert(b);
 	}
