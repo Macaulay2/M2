@@ -43,6 +43,13 @@ degree RRR := i -> {}
 isConstant RRR := i -> true
 round = x -> floor(x + 0.5)
 
+promote(RR,RR) := (i,o) -> i
+promote(ZZ,RR) := (i,o) -> i + 0.
+promote(QQ,RR) := 
+promote(ZZ,RR) := (i,o) -> i + 0.
+promote(RR,Ring) := (r,S) -> promote(r,S#0)
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
