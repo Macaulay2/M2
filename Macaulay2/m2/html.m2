@@ -323,7 +323,7 @@ separateExampleOutput = s -> (
 
 makeMasterIndex := keylist -> (
      fn := buildDirectory | htmlDirectory | indexFileName;
-     title := DocumentTag.FormattedKey topDocumentTag | " Index";
+     title := "Combined Index";
      << "--making  '" << title << "' in " << fn << endl;
      fn
      << encoding << endl
