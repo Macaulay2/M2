@@ -500,23 +500,47 @@ installPackage Package := o -> pkg -> (
      stderr << "--making info file in " << infofile << endl;
      upto30 := t -> concatenate(t,30-#t:" ");
      infofile << "This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
-     infofile << "INFO-DIR-SECTION Math" << endl;
+     infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
      infofile << "START-INFO-DIR-ENTRY" << endl;
      infofile << upto30 concatenate( "* ", infotitle, ": (", infotitle, ").") << "  ";
      infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay 2 package") << endl;
      infofile << "END-INFO-DIR-ENTRY" << endl << endl;
+     byteOffsets := new MutableHashTable;
      traverse(unbag pkg#"table of contents", tag -> (
 	       checkIsTag tag;
 	       key := DocumentTag.Key tag;
 	       fkey := DocumentTag.FormattedKey tag;
+	       byteOffsets# #byteOffsets = concatenate("Node: ",fkey,"\177",toString length infofile);
 	       if tag === topDocumentTag then fkey = "Top";
 	       infofile << "\037" << endl << "File: " << infobasename << ", Node: " << fkey;
 	       if NEXT#?tag then infofile << ", Next: " << DocumentTag.FormattedKey NEXT#tag;
 	       if PREV#?tag then infofile << ", Prev: " << DocumentTag.FormattedKey PREV#tag;
 	       if UP#?tag   then infofile << ", Up: " << DocumentTag.FormattedKey UP#tag;
      	       infofile << endl << endl << info documentation key << endl));
+     infofile << "\037" << endl << "Tag Table:" << endl;
+     scan(values byteOffsets, b -> infofile << b << endl);
+     infofile << "\037" << endl << "End Tag Table" << endl;
      infofile << close;
      printWidth = savePW;
+
+     -- make postinstall and preremove files, if encap
+     if o.Encapsulate then (
+	  stderr << "--making postinstall and preremove files in " << buildDirectory << endl;
+	  buildDirectory | "postinstall" 
+	  << ///#! /bin/sh -e/// << endl
+	  << ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0/// << endl
+	  << ///for i in *.info/// << endl
+	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")/// << endl
+	  << ///done/// << endl
+	  << close;
+     	  buildDirectory | "preremove"
+	  << ///#! /bin/sh -x/// << endl
+	  << ///cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0/// << endl
+	  << ///for i in *.info/// << endl
+	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" --delete "$i")/// << endl
+	  << ///done/// << endl
+ 	  << close;
+	  );
 
      -- make html files
      htmlDirectory = LAYOUT#"packagehtml" pkg#"title";

@@ -53,6 +53,7 @@ newPackage = method(
 	  Version => "0.0", 
 	  DebuggingMode => false,
 	  BriefTitle => null,
+	  InfoDirSection => "Math",
 	  Headline => null,
 	  TopNodeName => null } )
 newPackage(String) := opts -> (title) -> (
