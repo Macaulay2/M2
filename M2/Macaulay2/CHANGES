@@ -16,6 +16,17 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+Behavior of polynomial rings over polynomial rings has changed.  The
+variables in the coefficient ring will have degree 0 in the larger
+ring.
+
+New optional argument 'DegreeRank' for monoids and polynomial rings :
+it specifies the number of components each multi-degree should have.
+Example:
+    i4 : ZZ[x,y,z,DegreeRank => 3]
+    o4 = ZZ [x, y, z, Degrees => {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}]
+    o4 : PolynomialRing
+
 'delete' has been modified so it uses the strict equality operator
 '===' instead of '=='.
 
