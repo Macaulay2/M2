@@ -19,6 +19,7 @@ peek2(String, ZZ) := (s,depth) -> if depth === 0 then s else format s
 
 boxNets = method()
 boxNets List := nets -> (
+     nets = net \ nets;
      wid := if #nets === 0 then 0 else max \\ width \ nets;
      side := stack between("+", apply(nets, n -> (stack (height n + depth n : "|")) ^ (height n - 1)));
      w := side | stack between(concatenate (wid:"-"), nets) | side;

@@ -327,7 +327,7 @@ processExamplesLoop := s -> (
      then apply(s,processExamplesLoop)
      else s)
 processExamples := (key,docBody) -> (
-     thePackage = packageTag key;
+     -- thePackage = packageTag key;
      currentNodeName = formatDocumentTag key;
      if debugLevel > 0 then stderr << "thePackage = " << endl;
      exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,thePackage);
@@ -1009,7 +1009,7 @@ text EXAMPLE := x -> concatenate apply(#x, i -> text PRE concatenate("i",toStrin
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
-text ExampleTABLE := x -> boxNets apply(toList x, y -> text y#1)
+text ExampleTABLE := x -> "\n" | toString ("        " | boxNets apply(toList x, y -> text y#1)) | "\n"
 net ExampleTABLE := x -> "    " | stack between("",apply(toList x, y -> "" | net y#1 || ""))
 
 tex TABLE := x -> concatenate applyTable(x,tex)
@@ -1125,9 +1125,18 @@ html ITALIC := x -> concatenate("<I>",apply(x,html),"</I>")
 
 texMath TEX := tex TEX := x -> concatenate toList x
 
-texMath SEQ := tex SEQ := x -> concatenate(apply(x, tex))
-text SEQ := x -> concatenate(apply(x, text))
-html SEQ := x -> concatenate(apply(x, html))
+texMath SEQ := tex SEQ := x -> concatenate(apply(toList x, tex))
+text SEQ := x -> (
+     x = toList x;
+     P := PARA{};
+     p := positions(x, i -> i === P);
+     p = apply(prepend(-1,p),append(p,#p),identity);
+     p = select(p, (i,j) -> i+1 < j);
+     x = apply(p, (i,j) -> text \ take(x, {i+1,j-1}));
+     x = flatten between(P,x);
+     concatenate \\ text \ x
+     )
+html SEQ := x -> concatenate(apply(toList x, html))
 net SEQ := x -> (
      x = toList x;
      p := join({-1},positions(x,i -> class i === PARA or class i === BR),{#x});
