@@ -130,6 +130,7 @@ inline res2term * respolyHeap::remove_lead_term()
   res2term * result = heap[mLead];
   heap[mLead] = result->next;
   result->next = NULL;
+  mLead = -1;
   return result;
 }
 
