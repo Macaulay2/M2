@@ -131,7 +131,7 @@ public:
   ////////////////////////
   // Arithmetic //////////
   ////////////////////////
-
+#if 0
   virtual ring_elem from_double(double n) const = 0;
   virtual ring_elem from_int(int n) const = 0;
   virtual ring_elem from_int(mpz_ptr n) const = 0;
@@ -174,7 +174,7 @@ public:
   virtual void elem_text_out(buffer &o, const ring_elem f) const = 0;
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const = 0;
-
+#endif
   /////////////////////////
   // Polynomial routines //
   /////////////////////////
@@ -230,8 +230,9 @@ public:
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const = 0;
   virtual ring_elem divide_by_expvector(const int *exp, const ring_elem a) const = 0;
 
+protected:
   void sort(Nterm *&f) const;
-
+public:
   virtual const vecterm * vec_locate_lead_term(const FreeModule *F, vec v) const = 0;
   // Returns a pointer to the vector term of v which contains the lead term (of the
   // numerator). 
