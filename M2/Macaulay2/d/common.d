@@ -237,7 +237,7 @@ export printErrorMessage(c:Code,message:string):Expr := (
      p := codePosition(c);
      if int(p.loadDepth) >= errorDepth
      then Expr(
-	  -- printError
+	  printError					    -- keep this in so "update" can emit error messages
 	  (Error(p,message,CodeClosureList(CodeClosure(noRecycle(localFrame),c),self),nullE,false)))
      else buildErrorPacket(message));
 
