@@ -79,13 +79,13 @@ export isSequenceOfSmallIntegers(s:Sequence) : bool := (
 export isSequenceOfSmallIntegers(e:Expr) : bool := (
      when e
      is s:Sequence do isSequenceOfSmallIntegers(s)
-     is l:List do (
-     	  foreach i in l.v do (
-	       when i is a:Integer do (
-		    if !isInt(a) then return false;
-		    )
-	       else return false);
-	  true)
+     is l:List do isSequenceOfSmallIntegers(l.v)
+     else false);
+export isNullOrSequenceOfSmallIntegers(e:Expr) : bool := (
+     if e == nullE then return(true);
+     when e
+     is s:Sequence do isSequenceOfSmallIntegers(s)
+     is l:List do isSequenceOfSmallIntegers(l.v)
      else false);
 
 export getSequenceOfSmallIntegers(s:Sequence) : array(int) := (
@@ -99,8 +99,16 @@ export getSequenceOfSmallIntegers(s:Sequence) : array(int) := (
      );
 export getSequenceOfSmallIntegers(e:Expr) : array(int) := (
      when e
-     is l:List do getSequenceOfSmallIntegers(l.v)
      is s:Sequence do getSequenceOfSmallIntegers(s)
+     is l:List do getSequenceOfSmallIntegers(l.v)
+     else (
+	  abort("internal error: getSequenceOfSmallIntegers.");
+	  array(int)()));
+export getNullOrSequenceOfSmallIntegers(e:Expr) : RawArrayIntOrNull := (
+     if e == nullE then return(NULL);
+     when e
+     is s:Sequence do getSequenceOfSmallIntegers(s)
+     is l:List do getSequenceOfSmallIntegers(l.v)
      else (
 	  abort("internal error: getSequenceOfSmallIntegers.");
 	  array(int)()));
