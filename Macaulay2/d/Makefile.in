@@ -131,6 +131,7 @@ CXXFLAGS += $(WARNINGS)
 
 ifneq "$(CC)" "cl"
 LDLIBS  += -L../../lib
+LDLIBS  += -L$(prefix)/lib
 endif
 
 ifeq ($(OS),Linux)
