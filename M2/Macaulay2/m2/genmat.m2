@@ -60,7 +60,7 @@ random(List,Ring) := (deg,R) -> (
      then error ("expected length of degree vector to be ", degreeLength R);
      if deg === {} then random R
      else (
-	  m := basis(deg, R) ** R;
+	  m := basis(deg, R);
 	  --p := char R;
 	  n := randommat(R,numgens source m,1);
 	  --n := matrix table(numgens source m,1, x -> promote(random p,R));
@@ -84,7 +84,7 @@ random(Module, Module) := (F,G) -> (
 	        map(F,G,randmat))
 	       --map(F,G,table(numgens F, numgens G, x -> random p))
 	  else (
-	       m := basis(deg,R) ** R;
+	       m := basis(deg,R);
 	       s := degreesTally#deg;
 	       reshape(F,G, 
 		    m * randommat(R, numgens source m, s))))
@@ -101,7 +101,7 @@ random(Module, Module) := (F,G) -> (
 			      numused = numused + 1;
 			      r))
 		    else (
-			 m := basis(deg,R) ** R;
+			 m := basis(deg,R);
 			 k := numgens source m;
 			 if k === 0
 			 then () -> 0_R

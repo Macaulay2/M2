@@ -341,7 +341,7 @@ groupElement := (F,monoms) ->
 invariants1 = method()
 invariants1(Group,ZZ) := (G, d) -> (
      R := ring G;
-     m := basis(d,R) ** R;
+     m := basis(d,R);
      p := matrix apply(G.generators, g -> (
 		    m1 := groupElement(g, m);
 		    {m1 - id_(target m1)}));
@@ -349,11 +349,11 @@ invariants1(Group,ZZ) := (G, d) -> (
 
 invariants = method()	
 invariants(Group,ZZ) := (G,d) -> (
-     m := basis(d,R) ** R;
+     m := basis(d,R);
      mingens ideal reynolds(G,m))
 
 invcount = 50
-degn = (d,R) -> matrix basis(d,R) ** R
+degn = (d,R) -> matrix basis(d,R)
 invariants(Group,ZZ,ZZ) := (G,d,expected) -> (
      dn = degn(d,ring G);
      n := numgens source dn;
@@ -474,8 +474,8 @@ primaryInvariants = (G) -> (
 	  d = d+1;
 	  << "degree " << d;
 	  -- The next (commented out) line seems to be slower...
-          -- m1 = matrix basis(d,coker subAlgebraBasis(gens I,d)) ** R;
-          m1 = matrix basis(d,R) ** R;
+          -- m1 = matrix basis(d,coker subAlgebraBasis(gens I,d));
+          m1 = matrix basis(d,R);
 	  m1 = mingens ideal reynolds(G,m1);
 	  << " has " << numgens source m1 << " possible elements" << endl;
 	  -- Next, compute the number of new primary invariants:
@@ -608,7 +608,7 @@ TEST ///
     F2 = map(R,R,{x_0, a*x_1, a^2*x_2})
     G = newGroup {F1,F2}
     P = gens time primaryInvariants G
-    S = map(R^1,,matrix basis(coker P) ** R)
+    S = map(R^1,,matrix basis(coker P))
     kemper(G,P,S)
 ///
 

@@ -1,5 +1,11 @@
 Changes made, most recent ones first:
 -----------------------------------------------------------------------------
+New in 0.8.51:
+
+'basis' modified so it returns a matrix whose source and target are *both*
+over the same ring.  As a consequence, more correct information about degrees
+is available from 'pushforward'.
+
 New in 0.8.50:
 
 'engineStack' now returns a net which you can print, rather than printing it

@@ -365,7 +365,7 @@ TEST "
 TEST "
   R = ZZ/101[a..d]
   M = coker matrix{{a,b},{c,d}}
-  m1 = basis(2,M) ** R
+  m1 = basis(2,M)
   image m1
   M1 = subquotient(matrix m1, relations M)
   Q1 = M1 : a  

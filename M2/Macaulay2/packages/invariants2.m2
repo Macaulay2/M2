@@ -54,7 +54,7 @@ subAlgebraBasis = (m,d) -> (
      R := ring m;
      n := numgens source m;
      R1 := (coefficientRing R)[Variables=>n,Degrees => degrees source m];
-     m1 := basis(d,R1) ** R1;
+     m1 := basis(d,R1);
      ideal substitute(m1, m))
 
 expandPowerSeries = (a,n) -> (

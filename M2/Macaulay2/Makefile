@@ -49,6 +49,7 @@ clean ::; $(MAKE) NODEPENDS=1 -C c clean
 wc ::;  $(MAKE) -C c NODEPENDS=1 wc
 ################################# e
 all ::; $(MAKE) -C e all
+tests ::; $(MAKE) -C e tests
 clean ::; $(MAKE) NODEPENDS=1 -C e clean
 wc ::;  $(MAKE) -C e NODEPENDS=1 wc
 ################################# dbm

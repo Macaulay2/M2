@@ -30,7 +30,7 @@ degrees C_1
 degrees C_2
 degrees C_3
 mi = monomialIdeal o23
-basis({5,10,10},M) ** R
+basis({5,10,10},M)
 basis({5,10,10}, R)
 basis({10,20,20},M)
 

@@ -303,6 +303,12 @@ Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*1_(ring f)
      h.handle = newHandle (ggPush f, ggnegate);
      h)
 
+setdegree := (M,N,type,degree) -> sendgg (
+     if R.?newEngine 
+     then (ggPush M, ggPush N, ggPush type, ggPush degree)
+     else (ggdup, ggPush degree, ggsetshift)
+     )
+
 Matrix * Matrix := (m,n) -> (
      if source m == target n then (
 	  if ring target m =!= ring target n then (
@@ -328,16 +334,14 @@ Matrix * Matrix := (m,n) -> (
 	  if not isFreeModule P or not isFreeModule Q or rank P =!= rank Q
 	  then error "maps not composable";
 	  dif := degrees P - degrees Q;
-	  if same dif then (
-	       sendgg (ggPush m, ggPush n, ggmult, 
-		    ggdup, ggPush (degree m + degree n + dif#0), ggsetshift);
-	       reduce M;
-	       newMatrix(M,N))
-	  else (
-	       sendgg (ggPush m, ggPush n, ggmult, 
-		    ggdup, ggPush toList (degreeLength R:0), ggsetshift);
-	       reduce M;
-	       newMatrix(M,N))))
+	  sendgg (ggPush m, ggPush n, ggmult);
+	  setdegree (M,N,
+	       3,				    -- 1=left 2=right 3=both
+	       if same dif
+	       then (degree m + degree n + dif#0)
+ 	       else toList (degreeLength R:0));
+	  reduce M;
+	  newMatrix(M,N)))
 
 Matrix ^ ZZ := (f,n) -> (
      if n === 0 then id_(target f)
@@ -1041,8 +1045,7 @@ map(Module) := options -> (M) -> (
      R := ring M;
      f := new Matrix;
      sendgg(ggPush cover M, ggiden);
-     if options.Degree =!= null 
-     then sendgg(ggdup, ggPush options.Degree, ggsetshift);
+     if options.Degree =!= null then error "Degree option encountered with identity matrix";
      reduce M;
      f.handle = newHandle "";
      f.source = f.target = M;
