@@ -23,7 +23,9 @@ writeHtmlPage := nodeName -> (
 -- find items to document
 -----------------------------------------------------------------------------
 
+setrecursionlimit 4000
 prefix := first documentationPath
+documentationMemo := memoize documentation
 
 scope := method(SingleArgumentDispatch => true)
 scope2 := method(SingleArgumentDispatch => true)
@@ -34,6 +36,10 @@ thisKey := null
 
 linkFollowedTable := new MutableHashTable
 masterIndex = new MutableHashTable
+NEXT = new MutableHashTable
+PREV = new MutableHashTable
+UP   = new MutableHashTable
+
 follow := key -> (
      fkey := formatDocumentTag key;
      if not linkFollowedTable#?fkey then (
@@ -79,4 +85,16 @@ scope2 TO := scope2 TOH := x -> (
 << "pass 1, descending through documentation tree" << endl
 time follow topNodeName
 
-scan(keys linkFollowedTable, print)
+<< "pass 2, checking for unreachable documentation nodes" << endl
+time scan(keys DocDatabase,
+     key -> (
+	  if not match(DocDatabase#key,"goto *") then (
+	       -- fkey := formatDocumentTag value key;
+	       fkey := key;
+	       if not linkFollowedTable#?fkey then (
+	       	    haderror = true;
+	       	    stderr << "documentation node '" << key << "' not reachable" << endl;
+	       	    )
+	       )
+	  )
+     )

@@ -2,7 +2,7 @@
 include ../../include/config.Makefile
 IMAGES = \
 	up.gif next.gif previous.gif top.gif index.gif null.gif \
-	recbg.jpg 9planets.gif
+	recbg.jpg 9planets.gif Grayson2.jpg
 all :: $(IMAGES)
 all :: index.html
 
@@ -44,6 +44,7 @@ top.gif : @srcdir@/top.gif ; cp $< $@
 null.gif : @srcdir@/null.gif ; cp $< $@
 recbg.jpg : @srcdir@/recbg.jpg ; cp $< $@
 9planets.gif : @srcdir@/9planets.gif ; cp $< $@
+Grayson2.jpg : @srcdir@/Grayson2.jpg ; cp $< $@
 clean ::; rm -f *.gif *.jpg
 endif
 

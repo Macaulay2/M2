@@ -127,7 +127,7 @@ document { "ideals to and from modules",
 	       polynomial of the module ", TT "I", " if the input 
 	       is ", TT "hilbertPolynomial I", ".",     
 	       PARA, "For basic information about working with 
-	       modules see ", TO "modules I", "."
+	       modules see ", TO "modules: part I", "."
 	       }
 	  }
      }
