@@ -86,6 +86,7 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# NODUMPDATA  := TRUE' >>$@
 	echo '# NOMP        := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
+	echo '# SOCKS       := TRUE' >>$@
 	echo 'CC            := gcc' >>$@
 	echo 'CXX           := g++' >>$@
 include $(TOPDIR)/Makeconf.lcl

@@ -1411,6 +1411,9 @@ M2_string oper1;
 
 void C__prepare() {}
 
+int actors4_isReady(int fd) {
+}
+
 int actors5_WindowWidth(int fd) {
 #if defined(__DJGPP__) || defined(__alpha) || defined(__MWERKS__) || defined(_WIN32)
      return 0;

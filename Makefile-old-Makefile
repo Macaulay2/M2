@@ -257,6 +257,11 @@ ifdef MP
 else
 	echo '#undef MP' >>tmp.tmp
 endif
+ifdef SOCKS
+	echo '#define SOCKS' >>tmp.tmp
+else
+	echo '#undef SOCKS' >>tmp.tmp
+endif
 ifdef FACTORY
 	echo '#define FACTORY' >>tmp.tmp
 else
