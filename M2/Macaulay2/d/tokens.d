@@ -265,7 +265,7 @@ export newGlobalDictionary():Dictionary := Dictionary(nextHash(),newSymbolHashTa
 export globalDictionary := Macaulay2Dictionary;
 
 numLocalScopes := 0;
-export localFrame := globalFrame;
+export localFrame := dummyFrame;
 export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      numLocalScopes = numLocalScopes + 1;
      Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalScopes,0,true));
