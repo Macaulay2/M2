@@ -4,6 +4,7 @@
 #include "comb.hpp"
 #include "bin_io.hpp"
 #include "polyring.hpp"
+#include "serial.hpp"
 
 //////////////////////////////////////////////
 //  Construction/Destruction routines ////////
@@ -14,7 +15,7 @@ void FreeModule::initialize(const Ring *RR)
   // type() should already be set.
   R = RR;
 
-  const PolynomialRing *P = RR->cast_to_poly_ring();
+  const PolynomialRing *P = RR->cast_to_PolynomialRing();
   if (P == NULL)
     {
       ty = FREE;
@@ -124,11 +125,16 @@ int FreeModule::hash() const
   return 0;
 }
 
-void FreeModule::binary_out(buffer &o) const
+void FreeModule::write_object(object_writer &o) const
 {
-  bin_int_out(o, class_id());
-  R->binary_out(o);
+  //  o << class_id() << R;
   // MESXX: not done yet!!
+}
+
+FreeModule *FreeModule::read_object(object_reader &i)
+{
+  // MESXX
+  return 0;
 }
 
 //////////////////////////////////////////////

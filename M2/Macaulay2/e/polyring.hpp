@@ -18,6 +18,11 @@ class PolynomialRing : public Ring
   friend class res2_comp;
   friend class GBinhom_comp;
   friend class gb2_comp;
+
+protected:
+  PolynomialRing(const Ring *K, const Monoid *MF);
+  PolynomialRing(const PolynomialRing *R, const array<ring_elem> &I);
+  virtual ~PolynomialRing();
 protected:
   stash *pstash;
 
@@ -33,16 +38,23 @@ protected:
   intarray normal_m_a;
   int *normal_exp;
   int *normal_m;
+
 public:
-  PolynomialRing(const Ring *K, const Monoid *MF);
-  PolynomialRing(const PolynomialRing *R, const array<ring_elem> &I);
-
-  virtual ~PolynomialRing();
-
+  static PolynomialRing *create(const Ring *K, const Monoid *MF);
+  static PolynomialRing *create(const PolynomialRing *R, const array<ring_elem> &I);
+  
   class_identifier class_id() const { return CLASS_PolynomialRing; }
 
-  virtual const PolynomialRing * cast_to_poly_ring()  const { return this; }
-  virtual       PolynomialRing * cast_to_poly_ring()        { return this; }
+  // Equality check, hash function, serialize
+  bool equals(const object_element *o) const;
+  int hash() const;
+  virtual void write_object(object_writer &o) const;
+  static PolynomialRing *read_object(object_reader &i);
+  void write_element(object_writer &o, const ring_elem f) const;
+  void read_element(object_reader &i, ring_elem &result) const;
+
+  virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
+  virtual       PolynomialRing * cast_to_PolynomialRing()        { return this; }
 
   // Queries for quotient ring
   bool        is_quotient_ring() const { return (base_ring != NULL); }

@@ -43,7 +43,7 @@ void cmd_FreeModule1(object &oR, object &on)
 void cmd_FreeModule2(object &oR, object &oa, object &om, object &onums)
 {
   const Ring *R = oR->cast_to_Ring();
-  if (R->cast_to_poly_ring() == NULL)
+  if (R->cast_to_PolynomialRing() == NULL)
     {
       gError << "polynomial ring required for Schreyer order";
       return;

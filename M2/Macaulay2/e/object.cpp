@@ -37,6 +37,13 @@ bool object_element::equals(const object_element * /* o */ ) const
   return false;
 }
 
+object_element *object_element::intern(object_element *obj)
+{
+  // MESXX: this will soon insert 'obj' uniquely into a hash table,
+  // and return the resulting object.
+  return obj;
+}
+
 Monomial    object_element::cast_to_Monomial()  { return Monomial(0,caster); }
 MonomialIdeal   object_element::cast_to_MonomialIdeal()  { return MonomialIdeal(0,caster); }
 RingElement object_element::cast_to_RingElement() { return RingElement(0,caster); }

@@ -7,6 +7,7 @@
 #include "ringmap.hpp"
 #include "Z.hpp"
 #include "random.hpp"
+#include "serial.hpp"
 
 extern Z *ZZ;
 
@@ -43,6 +44,40 @@ Z_mod::Z_mod(int p, const Monoid *D)
   log_table[0]    = ZERO;
 
   P1 = P-1;
+}
+
+Z_mod *Z_mod::create(int p, const Monoid *D)
+{
+  Z_mod *obj = new Z_mod(p,D);
+  return (Z_mod *) intern(obj);
+}
+
+bool Z_mod::equals(const object_element *o) const
+{
+  if (o->class_id() != class_id())
+    return false;
+
+  const Z_mod *R = (Z_mod *)o;
+  if (R->P != P) return false;
+  return true;
+}
+
+int Z_mod::hash() const
+{
+  return 0;
+}
+
+void Z_mod::write_object(object_writer &o) const
+{
+  o << class_id() << P << D;
+}
+
+Z_mod *Z_mod::read_object(object_reader &i)
+{
+  int p;
+  object_element *obj;
+  i >> p >> obj;
+  return new Z_mod(p, obj->cast_to_Monoid());
 }
 
 void Z_mod::text_out(buffer &o) const
@@ -97,6 +132,15 @@ void Z_mod::elem_bin_out(buffer &o, ring_elem a) const
 {
   int n = to_int(a);
   bin_int_out(o, n);
+}
+
+void Z_mod::write_element(object_writer &o, const ring_elem f) const
+{
+  o << f.int_val;
+}
+void Z_mod::read_element(object_reader &i, ring_elem &result) const
+{
+  i >> result.int_val;
 }
 
 ring_elem Z_mod::from_int(int n) const

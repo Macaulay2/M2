@@ -10,7 +10,7 @@ stash *mon_term::mystash;
 
 TermIdeal::TermIdeal(const FreeModule *FF, const FreeModule *FFsyz)
 {
-  R = FF->Ring_of()->cast_to_poly_ring();
+  R = FF->Ring_of()->cast_to_PolynomialRing();
   assert(R != NULL);
   M = R->Nmonoms();
   K = R->Ncoeffs();

@@ -6,6 +6,7 @@
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "random.hpp"
+#include "serial.hpp"
 #if 0
 #include "gmp.h"
 #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
@@ -17,6 +18,12 @@ Z::Z(const Monoid *D) : Ring(0,0,0,this /* Visual C WARNING */,trivial_monoid,D)
   mpz_stash = new stash("ZZ", sizeof(mpz_t));
   zero_elem = new_elem();
   mpz_init_set_si(zero_elem, 0);
+}
+
+Z *Z::create(const Monoid *D)
+{
+  Z *obj = new Z(D);
+  return (Z *) intern(obj);
 }
 
 bool Z::equals(const object_element *o) const
@@ -34,10 +41,17 @@ int Z::hash() const
   return 0;
 }
 
-void Z::binary_out(buffer &o) const
+void Z::write_object(object_writer &o) const
 {
-  bin_int_out(o, class_id());
-  D->binary_out(o);
+  o << class_id() << D;
+}
+
+Z *Z::read_object(object_reader &i)
+{
+  object_element *obj;
+  i >> obj;
+  Monoid *D = obj->cast_to_Monoid();
+  return new Z(D);
 }
 
 void Z::text_out(buffer &o) const
@@ -124,6 +138,17 @@ void Z::elem_text_out(buffer &o, const ring_elem ap) const
 void Z::elem_bin_out(buffer &o, const ring_elem a) const
 {
   bin_mpz_out(o, MPZ_VAL(a));
+}
+
+void Z::write_element(object_writer &o, const ring_elem f) const
+{
+  o << MPZ_VAL(f);
+}
+void Z::read_element(object_reader &i, ring_elem &result) const
+{
+  mpz_ptr m = new_elem();
+  i >> m;
+  result = MPZ_RINGELEM(m);
 }
 
 ring_elem Z::from_int(int n) const

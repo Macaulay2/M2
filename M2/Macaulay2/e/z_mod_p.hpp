@@ -16,11 +16,22 @@ class Z_mod : public Ring
   int *log_table;
 
   int int_to_exp(int a) const;
-public:
+
   Z_mod(int p, const Monoid *D);
-  ~Z_mod() { delete [] exp_table; delete [] log_table; }
+protected:
+  virtual ~Z_mod() { delete [] exp_table; delete [] log_table; }
+public:
+  static Z_mod * create(int p, const Monoid *D);
 
   class_identifier class_id() const { return CLASS_Z_mod; }
+
+  // Equality check, hash function, serialize
+  bool equals(const object_element *o) const;
+  int hash() const;
+  virtual void write_object(object_writer &o) const;
+  static Z_mod *read_object(object_reader &i);
+  void write_element(object_writer &o, const ring_elem f) const;
+  void read_element(object_reader &i, ring_elem &result) const;
 
   Z_mod * cast_to_Z_mod() { return this; }
   const Z_mod * cast_to_Z_mod() const { return this; }

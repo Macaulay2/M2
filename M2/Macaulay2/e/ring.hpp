@@ -26,11 +26,13 @@ protected:
 				// Otherwise, this will be NULL.
   stash *vecstash;		// Stash used to allocate vectors over this ring.
   stash *resstash;		// For resolutions
-public:
+
   Ring(int charac, int nvars, int totalvars, const Ring *K, 
 	const Monoid *M, const Monoid *D);
   Ring(const Ring &R);
+private:
   virtual ~Ring();
+public:
 
   int charac() const { return P; }
   int n_vars() const { return nvars; }
@@ -49,8 +51,8 @@ public:
   virtual       Z * cast_to_Z()               { return 0; }
   virtual const Z_mod * cast_to_Z_mod() const         { return 0; }
   virtual       Z_mod * cast_to_Z_mod()               { return 0; }
-  virtual const PolynomialRing * cast_to_poly_ring()  const      { return 0; }
-  virtual       PolynomialRing * cast_to_poly_ring()             { return 0; }
+  virtual const PolynomialRing * cast_to_PolynomialRing()  const      { return 0; }
+  virtual       PolynomialRing * cast_to_PolynomialRing()             { return 0; }
   virtual const FractionField * cast_to_FractionField() const    { return 0; }
   virtual       FractionField * cast_to_FractionField()          { return 0; }
   virtual const SchurRing * cast_to_SchurRing() const { return 0; }
@@ -141,6 +143,9 @@ public:
   // Routines special to fields (anything else?)
   
   // Infrastructure here
+  virtual void write_element(object_writer &o, const ring_elem f) const = 0;
+  virtual void read_element(object_reader &i, ring_elem &result) const = 0;
+
   int          length_of() const      { return n_vars(); }
   const Ring * cast_to_Ring() const { return this; }
   Ring *       cast_to_Ring()       { return this; }

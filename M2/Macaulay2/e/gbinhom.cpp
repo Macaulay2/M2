@@ -13,7 +13,7 @@ stash *GBinhom_comp::mystash;
 void GBinhom_comp::set_up0(const Matrix &m, int csyz, int nsyz)
 {
   int i;
-  R = m.Ring_of()->cast_to_poly_ring();
+  R = m.Ring_of()->cast_to_PolynomialRing();
   if (R == NULL)
     {
       gError << "ring is not a polynomial ring";

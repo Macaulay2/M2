@@ -41,7 +41,8 @@ public:
   // Equality check, hash function, serialize
   bool equals(const object_element *o) const;
   int hash() const;
-  void binary_out(buffer &o) const;
+  virtual void write_object(object_writer &o) const;
+  static DetComputation *read_object(object_reader &i);
 
   int step();
   int calc(int nsteps);

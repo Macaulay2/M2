@@ -199,7 +199,7 @@ resolution Module := (M,options) -> (
 	  then M.resolution = (
 	       if not isField coefficientRing R
 	       then error "expected coefficient ring to be a field";
-	       if (monoid R).Options.SkewCommutative then (
+	       if options.Algorithm =!= 2 and (monoid R).Options.SkewCommutative then (
 		    C := new ChainComplex;
 		    C.ring = R;
 		    f := presentation M;

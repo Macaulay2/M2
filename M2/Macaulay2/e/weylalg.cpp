@@ -35,6 +35,33 @@ WeylAlgebra::~WeylAlgebra()
   delete [] _commutative;
 }
 
+WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF, const intarray &a)
+{
+  WeylAlgebra *obj = new WeylAlgebra(K,MF,a);
+  return (WeylAlgebra *) intern(obj);
+}
+
+bool WeylAlgebra::equals(const object_element *o) const
+{
+  // MESXX
+  return false;
+}
+int WeylAlgebra::hash() const
+{
+  // MESXX
+  return 0;
+}
+void WeylAlgebra::write_object(object_writer &o) const
+{
+  // MESXX
+}
+
+WeylAlgebra *WeylAlgebra::read_object(object_reader &i)
+{
+  // MESXX
+  return 0;
+}
+
 void WeylAlgebra::text_out(buffer &o) const
 {
   o << "WeylAlgebra(";

@@ -268,12 +268,13 @@ vec res_poly::to_vector(const resterm *f, const FreeModule *F,
 //    int x = (to_minimal ? tm->comp->minimal_me : tm->comp->me);
       int x = tm->comp->minimal_me; // MES: Currently used for non-minimal as well...
       M->divide(tm->monom, tm->comp->base_monom, mon);
-      vecterm *tmp = F->term(x, K->copy(tm->coeff), mon);
+      vecterm *tmp = F->new_term(x, K->copy(tm->coeff), mon);
       M->mult(tmp->monom, F->base_monom(x), tmp->monom);
       tmp->next = result;
       result = tmp;
     }
   F->sort(result);
+  if (F->is_quotient_ring) F->normal_form(result);
   M->remove(mon);
   return result;
 }

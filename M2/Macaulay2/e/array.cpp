@@ -27,6 +27,8 @@ template class ARRAY(char *);
 
 #include "object.hpp"
 template class ARRAY(object);
+template class ARRAY(object_element *);
+template class ARRAY(const object_element *);
 
 #include "queue.hpp"
 #include "int_bag.hpp"
