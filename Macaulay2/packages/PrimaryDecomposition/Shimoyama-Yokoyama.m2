@@ -81,6 +81,9 @@ time minSatPPD(I1,{b,t})
 
 removeScalarMultipleColumns = m -> map(target m,,rawRemoveScalarMultiples raw m)
 
+-- This version of newdecompose can be truly awful: the ideal I2 which is
+--  passed to 'decompose' can have a huge number of generators.  Even cleaning the
+--  gb by taking squarefree parts doesn't help
 newdecompose = method()
 newdecompose(Ideal) := List => (I) -> (
      squarefree := (f) -> (
@@ -91,6 +94,8 @@ newdecompose(Ideal) := List => (I) -> (
        I1 := ideal apply(numgens I, i -> squarefree(I_i));
        I2 := trim ideal generators gb I1;
        if numgens I2 > 0 then decompose I2 else {}))
+
+newdecompose(Ideal) := List => (I) -> decompose I
 
 -- Find the independent sets of the ideal I
 -- This doesn't necessarily find them all
@@ -459,7 +464,7 @@ PDdonode = (PDC) -> (
 		    PDC.W = {}));
 	  if not done then (
 		    -- check whether ret#1 is redundant
-		    if not radicalContainment(node#3, ret#1)
+		    if not time radicalContainment(node#3, ret#1)
 		    then (
 			 -- build a new vertex
 			 vertex := {ret#1, REMAIN, node#2 + 1, 
