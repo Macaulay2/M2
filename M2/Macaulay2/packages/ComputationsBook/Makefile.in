@@ -26,7 +26,7 @@ $(CHAPTERS):; mkdir "$@"
 endif
 
 check :: $(patsubst %, %/Makefile, $(CHAPTERS))
-$(patsubst %, %/Makefile, $(CHAPTERS)): Makefile.chapter; cp $< $@
+$(patsubst %, %/Makefile, $(CHAPTERS)): @srcdir@/Makefile.chapter; cp $< $@
 
 check ::
 	for d in $(CHAPTERS) ; \
