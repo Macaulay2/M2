@@ -25,6 +25,9 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 -- (250 MHz Macintosh Powerbook G3)
 -- 1.67 seconds, Macaulay 2 version 0.8.52
 
+-- Linux rhenium 2.3.26 #4 Tue Nov 9 22:34:26 CST 1999 i686 unknown, Thinkpad 770Z laptop on battery power
+-- 1.9 seconds, Macaulay2 0.8.55, compiled with gcc 2.95
+
 -- SunOS orion.math.uiuc.edu 5.5.1 Generic_103640-26 sun4u sparc SUNW,Ultra-4
 -- 2.14 seconds, Macaulay2 0.8.53, compiled with gcc 2.8
 

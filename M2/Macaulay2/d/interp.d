@@ -244,6 +244,10 @@ usageMessage():void := (
 	  + "    -x              examples-prompt mode" + newline
 	  ));
 
+export process2():void := (
+     when loadprint("-") is Error do exit(2) else nothing;
+     );
+
 export process():void := (
      laststmtno = -1;			  -- might have done dumpdata()
      localFrame = globalFrame;
@@ -295,7 +299,7 @@ export process():void := (
 			 exit(1);
 			 )
 		    )));
-     when loadprint("-") is Error do exit(2) else nothing;
+     process2();
      exit(0);
      );
 value(e:Expr):Expr := (

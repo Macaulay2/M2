@@ -611,6 +611,8 @@ char **argv;
      if (reserve == NULL) {
 	  reserve = GC_MALLOC_ATOMIC(102400);
 	  }
+     sigsetjmp(abort_jump,TRUE);
+     abort_jump_set = TRUE;
      if (sigsetjmp(out_of_memory_jump,TRUE)) {
 	  if (reserve != NULL) {
 	       GC_FREE(reserve);
@@ -623,11 +625,12 @@ char **argv;
 #endif
 	  fprintf(stderr,"\n");
 	  fflush(stderr);
+          interp_process2();
 	  }
-     out_of_memory_jump_set = TRUE;
-     sigsetjmp(abort_jump,TRUE);
-     abort_jump_set = TRUE;
-     interp_process();
+     else {
+          out_of_memory_jump_set = TRUE;
+          interp_process();
+     }
      clean_up();
 #if 0
      fprintf(stderr,"heap size = %d, divisor = %ld, collections = %ld\n", 
