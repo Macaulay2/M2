@@ -182,14 +182,6 @@ export setupconst(name:string,value:Expr):Symbol := (
      s);
 setup(commaW,dummyBinaryFun);
 
-export returnMessage := "return message";
-export continueMessage := "continue message";
-export breakMessage := "break message";
-export unwindMessage := "unwind message";
-
-export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,dummyCodeClosureList,nullE));
-export buildErrorPacket(message:string,report:CodeClosureList):Expr := Expr(Error(dummyPosition,message,report,nullE));
-
 export quoteit(name:string):string := "'" + name + "'";
 export NotYet(desc:string):Expr := buildErrorPacket(desc + " not implemented yet");
 export WrongArg(desc:string):Expr := buildErrorPacket("expected " + desc);
@@ -246,7 +238,7 @@ export printErrorMessage(c:Code,message:string):Expr := (
      if int(p.loadDepth) >= errorDepth
      then (
      	  printErrorMessage(p,message);
-     	  Expr(Error(p,message,CodeClosureList(CodeClosure(noRecycle(localFrame),c),self),nullE)))
+     	  Expr(Error(p,message,CodeClosureList(CodeClosure(noRecycle(localFrame),c),self),nullE,false)))
      else buildErrorPacket(message));
 
 export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;

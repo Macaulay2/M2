@@ -116,7 +116,7 @@ while more do (
      )
 reach2 = oldreach2
 --------------- fill in Appendix
-docDatabase = openDatabase "../cache/Macaulay2-doc"
+-- docDatabase = openDatabase "../cache/Macaulay2-doc"
 document { "Miscellaneous documentation",
      "We present various additional documentation in this chapter.",
      MENU apply(sort unique join(

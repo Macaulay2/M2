@@ -32,7 +32,7 @@ phase4: $(DOCFILES)
 	touch "$@"
 TARGETDIR = cache/doc
 phase5 : $(TARGETDIR)/index.html
-$(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../bin/M2
+$(TARGETDIR)/index.html : ../cache/Macaulay2-made ../bin/M2
 	 #------ phase 5: making html documentation
 	../bin/M2 -q --silent \
 		-e 'phase = 5' \
@@ -55,7 +55,7 @@ Dtests = $(wildcard D-modules/TST/*.tst.m2)
 Dtestresults = $(Dtests:.m2=.okay)
 check:: test-D-modules
 test-D-modules : $(Dtestresults)
-$(Dtestresults) : ../bin/M2$(EXE) ../cache/Macaulay2-doc ../cache/Macaulay2-made
+$(Dtestresults) : ../bin/M2$(EXE) ../cache/Macaulay2-made
 %.okay : %.m2
 	@ echo running test file $<
 	../bin/M2 -q -e 'path = prepend( "D-modules/", path )' -e 'input "$<"' -e 'exit 0'
