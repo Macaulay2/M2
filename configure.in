@@ -26,9 +26,9 @@ REL="`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `"
 AC_SUBST(REL)
 AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
 
-ARCH="`  uname -m | sed s=/=-=g  `"
-AC_SUBST(ARCH)
-AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type, obtained with uname -m])
+# ARCH="`  uname -m | sed s=/=-=g  `"
+# AC_SUBST(ARCH)
+# AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type, obtained with uname -m])
 
 OS="`  uname -s | sed s=/=-=g  `"
 AC_SUBST(OS)
@@ -37,6 +37,10 @@ AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s])
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_HOST()
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
+
+ARCH=$host_cpu
+AC_SUBST(ARCH)
+AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
