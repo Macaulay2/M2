@@ -231,8 +231,8 @@ y = rawRingVar(R2,1,1)
 z = rawRingVar(R2,2,1)
 algorithm = 0
 G = mat {{3*x-y^20, 4*y-z^20, x*y-x-1}}
-Gcomp = rawGB(G,false,0,{},false,0,algorithm,0) -- GC_debug_free warnings
-rawStartComputation Gcomp
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0) 
+rawStartComputation Gcomp -- GC_debug_free warnings
 m = rawGBGetMatrix Gcomp
 -----------------------------
 needs "raw-util.m2"
@@ -466,7 +466,7 @@ R = polyring(rawZZ(), (symbol i, symbol x))
 A = rawQuotientRing(R, mat{{i^2+1}})
 i = rawPromote(A,i)
 x = rawPromote(A,x)
-rawsyz mat{{x^2+1}} -- CRASH
+rawsyz mat{{x^2+1}}
 assert(i^2 == -1)
 S = polyring(A,(symbol x, symbol y, symbol z))
   -- BUG: quotient element not re-introduced.

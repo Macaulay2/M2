@@ -385,7 +385,7 @@ int Monoid::num_parts() const
 int Monoid::n_slots(int nparts) const
 {
   if (nparts < 0) return monomial_size();
-  if (nparts > num_parts()) nparts = num_parts();
+  if (nparts >= num_parts()) nparts = num_parts()-1;
   return nslots_[nparts];
 }
 
@@ -407,6 +407,47 @@ int Monoid::compare(int nslots, const_monomial m, const_monomial n) const
       if (--i == 0) return EQ;
       m++, n++;
     }
+}
+
+int Monoid::compare(const_monomial m, const_monomial n) const
+{
+  int i = monomial_size_;
+  if (i == 0) return EQ;
+  while (1)
+    {
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      if (--i == 0) return EQ;
+      m++, n++;
+    }
+}
+
+int Monoid::compare(const_monomial m, int mcomp, const_monomial n, int ncomp) const
+{
+  for (int i= n_before_component_; i>0; --i)
+    {
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      m++, n++;
+    }
+  bool up = component_up_;
+  if (up)
+    {
+      if (mcomp < ncomp) return LT;
+      if (mcomp > ncomp) return GT;
+    }
+  else
+    {
+      if (mcomp < ncomp) return GT;
+      if (mcomp > ncomp) return LT;
+    }
+  for (int i= n_after_component_; i>0; --i)
+    {
+      if (*m > *n) return GT;
+      if (*m < *n) return LT;
+      m++, n++;
+    }
+  return EQ;
 }
 
 monomial Monoid::make_new(const_monomial d) const
