@@ -202,7 +202,7 @@ Issues remaining:
 
 Each user needs to do the following after installation:
   add to .emacs file
-    (load "/sw/lib/Macaulay2-0.9.1/emacs/M2-init.el")
+    (load "/sw/lib/Macaulay2-0.9.2/emacs/M2-init.el")
 
 These are done by the fink macaulay2 package, but if you compile on your own,
 you may need to do the following:
