@@ -204,6 +204,7 @@ static void pseudo_remainder(object &ff, object &gg) {
 }
 
 static void factor_ring_elem(object &gg) {
+     factoryseed(23984729);
      const RingElement &g = gg -> cast_to_RingElement();
      const Ring *R = g.get_ring();
      CanonicalForm h = convert(g);
@@ -216,6 +217,7 @@ static void factor_ring_elem(object &gg) {
 }
 
 static void ideal_reorder(object &mm) {
+     factoryseed(23984729);
      const Matrix &m = mm -> cast_to_Matrix();
      const Ring *R = m.get_ring();
      const int N = R->n_vars();
@@ -260,6 +262,7 @@ static void ideal_reorder(object &mm) {
 }    
 
 static void ideal_charset(object &mm) {
+     factoryseed(23984729);
      const Matrix &m = mm -> cast_to_Matrix();
      const Ring *R = m.get_ring();
      const Ring *F = R->Ncoeffs();
