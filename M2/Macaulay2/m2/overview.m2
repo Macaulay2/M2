@@ -1123,23 +1123,75 @@ document { "manipulating matrices",
      }
 
 document { "Groebner bases",
+     "Computations in a quotient ring R/I of a polynomial ring R can be done with
+     the aid of a Groebner basis for the ideal I.  One must begin by choosing
+     a way to order the monomials of R, so that each polynomial has a designated
+     leading term.  A Groebner basis is then a generating set for I whose leading
+     terms generate the ideal of leading terms of all the elements of I.  See
+     ", TO "polynomial rings with other monomial orderings", " for information about
+     setting up the ordering of the monomials.",
+     PARA,
+     "Many routines in Macaulay 2 will compute and use Groebner bases silently, so
+     ordinarily the user will not have to explicitly compute them.  Occasionally,
+     the user will need to exercise closer control over the computations, and
+     may need to compute the Groebner bases directly.",
+     PARA,
+     "To demonstrate, we set up a polynomial ring.  (The default ordering used here
+     of the monomials is the graded reverse lexicographic ordering.)",
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
-      	  "f = matrix {{a^2*b-c^2, a*b^2-d^3, c^5-d}}",
+      	  "I = ideal (a^2*b-c^2, a*b^2-d^3, c^5-d)",
 	  },
-     "The Groebner basis of the columns of a matrix can be obtained with
-     ", TO "gb", ", and its generators can assembled into a matrix with ", TO "generators", ", 
-     or its abbreviation, ", TO "gens", ".",
+     "The Groebner basis can be obtained with ", TO "gb", ".",
      EXAMPLE {
-	  "gb f",
-      	  "generators gb f",
+	  "gb I",
 	  },
-     NOINDENT, "We intend to change the behavior of ", TO "gb", " so that it
-     will return a matrix immediately rather than a special Groebner basis object.
-     For now, beware that a Groebner basis object prints out just like a matrix, but
-     can't be used as one.",
+     "The result obtained above is an object of class ", TO "GroebnerBasis", "
+     that encapsulates the basis, the state of the computation, in case
+     it's incomplete, and several associated matrices.",
      PARA,
-     "For more information see ", TO "GroebnerBasis", "."
+     "The basis can be assembled into a matrix with ", TO "generators", ", or its
+     abbreviation, ", TO "gens", ".",
+     EXAMPLE {
+      	  "transpose generators gb I",
+	  },
+     "We transposed the matrix above, simply because column vectors of polynomials 
+     tend to fit on the page more easily than row vectors.",
+     PARA,
+     "Here is another example, which illustrates the use of another monomial
+     ordering convenient for the elimination of variables.",
+     EXAMPLE {
+	  "A = QQ[t];",
+	  "f = t^3 + t^2 + 1;",
+	  "g = t^4 - t;"
+	  },
+     "We wish to find a polynomial relation among ", TT "f", " and ", TT "g", ",
+     so we set up a new ring with a monomial ordering tailored for the
+     elimination of its first variable.  (See ", TO "Eliminate", ").",
+     EXAMPLE {
+	  "compactMatrixForm = false;",
+	  "B = QQ[t,F,G,MonomialOrder => Eliminate 1];",
+	  "I = ideal(F - (t^3 + t^2 + 1), G - (t^4 - t))",
+	  "transpose gens gb I",
+	  },
+     "The entry in the matrix above not involving ", TT "t", " is the desired relation.",
+     PARA,
+     "Computations in a quotient module M/N can be done with the aid of a
+     Groebner basis for the submodule N.",
+     EXAMPLE {
+	  "clearAll",
+	  "R = QQ[a..f];"
+	  "N = image matrix {{a,b,c},{d,e,f}}",
+	  "gb N",
+	  },
+     "Notice the appearance of the 2 by 2 minors.",
+     PARA,
+     "Groebner bases can be computed in various types of rings: polynomial rings 
+     over fields, skew-commutative-polynomial rings, Weyl algebras, and quotient rings of
+     any such rings.  Groebner bases in rings over the integers can be computed
+     for homogeneous ideals.  In the future Groebner bases will be provided
+     for nonhomogeneous ideals in rings over the integers, in polynomial rings
+     over polynomial rings, and in general noncommutative algebras."
      }
 
      

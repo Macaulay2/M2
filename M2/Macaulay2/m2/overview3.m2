@@ -180,7 +180,7 @@ document { "Acknowledgements",
      geometry and the predecessor of this program."
      }
 
--- load "tutorials.m2"
+load "tutorials.m2"
 
 document { "Miscellaneous Topics",
      "Some of these topics will have to be merged with sections above.",

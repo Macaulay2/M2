@@ -252,6 +252,9 @@ char QuotientRing := (S) -> (
 
 singularLocus(Ring) := QuotientRing => (R) -> (
      if not isAffineRing(R) then error "expected an affine ring";
-     R / minors(codim R, jacobian presentation R))
+     f := presentation R;
+     A := ring f;
+     A / (ideal f + minors(codim R, jacobian presentation R))
+     )
 
 singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)

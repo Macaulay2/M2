@@ -201,6 +201,7 @@ getchange GroebnerBasis := Matrix => (g) -> (
      getMatrix ring g)
 
 forceGB = method(
+     TypicalValue => GroebnerBasis,
      Options => {
           MinimalMatrix => null,
 	  SyzygyMatrix => null,
