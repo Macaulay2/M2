@@ -207,7 +207,7 @@ test3:
 	touch $@
 clean::; rm -f test3
 
-ifeq ($(OS),linux-gnu)
+ifeq ($(OS),Linux)
 tests:: test4
 test4: ../util/screen
 	echo 2+3 | ../util/screen M2

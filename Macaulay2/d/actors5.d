@@ -896,6 +896,7 @@ import DATE:string;
 import TIME:string;
 import LIBFACVERSION:string;
 import GCVERSION:string;
+import GMPVERSION:string;
 import FACTORYVERSION:string;
 import DUMPDATA:bool;
 import FACTORY:bool;
@@ -914,6 +915,7 @@ storeInHashTable(x,Expr("dumpdata"),Expr(if DUMPDATA then True else False));
 storeInHashTable(x,Expr("factory"),Expr(if FACTORY then True else False));
 storeInHashTable(x,Expr("mp"),Expr(if MP then True else False));
 storeInHashTable(x,Expr("gc version"),Expr(GCVERSION));
+storeInHashTable(x,Expr("gmp version"),Expr(GMPVERSION));
 if FACTORY then (
      storeInHashTable(x,Expr("libfac version"),Expr(LIBFACVERSION));
      storeInHashTable(x,Expr("factory version"),Expr(FACTORYVERSION));

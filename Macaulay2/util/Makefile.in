@@ -12,7 +12,7 @@ INSTALL_DATA = $(INSTALL)
 
 CPPFLAGS += -I../include
 EXES := echoout timestmp restart update 
-ifeq ($(OS),linux-gnu)
+ifeq ($(OS),Linux)
 EXES += screen
 endif
 

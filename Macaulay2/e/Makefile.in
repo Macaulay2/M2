@@ -322,7 +322,7 @@ dups-okay: dups-tmp
 
 tests::
 
-ifeq ($(OS),linux-gnu)
+ifeq ($(OS),Linux)
 # don't run it elsewhere because we may not have gnu sort and gnu uniq there
 tests:: dups-okay
 else
