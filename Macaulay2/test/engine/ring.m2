@@ -89,10 +89,14 @@ assert( u0 == 0 )
 
 v = vars R
 
+assert try (rawMatrixEntry(raw v, 0, 11); false) else true
+
 v
 v_(0,0)
 v_(0,1)
 v_(0,2)
+assert try (v_(0,22); false) else true
+
 entries v
 v' = transpose v
 w = v || v
@@ -145,8 +149,25 @@ S = ZZ[X,Y,WeylAlgebra => {X=>Y}]
 
 X*Y
 Y*X
-matrix {{X}} * matrix {{Y}} -- oops
+b = matrix {{X}} * matrix {{Y}}
+c = matrix {{Y*X}}
+assert( matrix {{X}} * matrix {{Y}} - matrix {{Y*X}} == 0 )
+
+degrees target b
+degrees target c
+
+degrees source b
+degrees source c
+
+degree b
+degree c
+
+-- what to do about this?
 -- assert( matrix {{X}} * matrix {{Y}} == matrix {{Y*X}} )
+
+-- Groebner bases
+I = ideal vars R
+gb I
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay"

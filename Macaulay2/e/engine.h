@@ -1204,7 +1204,7 @@ extern "C" {
 		    int * complete_up_through_this_degree,
 		    int * stopping_reason); /* number from IM2_Computation_set_stop,
 					       interrupted is -1. None is 0. */
-  /* connected rawGBStatus */
+  /* drg: connected rawGBStatus */
   /* -1: error condition, and the error message is set. 
      1: not started,
      2: started, but still running in another thread (not implemented yet)
@@ -1212,12 +1212,9 @@ extern "C" {
      4: finished the computation completely
   */
 
-
-
-
   int IM2_Resolution_status(Computation *G,
 		    int * complete_up_through_this_degree,
-		    int * complete_up_through_this_level); /* drg: connected rawGBStatus */
+		    int * complete_up_through_this_level); /* drg: TODO */
   /* -1: error condition, and the error message is set.
      0: not made, and in fact it won't ever be done...
      1: not started,
@@ -1229,7 +1226,7 @@ extern "C" {
   int IM2_Resolution_status_level(Computation *G, 
 			  int level, 
 			  M2_bool minimize,
-			  int * complete_up_through_this_degree); /* drg: connected rawGBStatusLevel */
+			  int * complete_up_through_this_degree); /* drg: connected rawResolutionStatusLevel */
   /* Same return values */
 
   const MatrixOrNull *IM2_GB_get_change(Computation *G, int level);/* drg: connected rawGBGetChange */

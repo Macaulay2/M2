@@ -95,7 +95,7 @@ export (x:RawRingElement) * (y:RawMatrix) : RawMatrixOrNull := (
 export (x:RawMatrix) * (y:RawRingElement) : RawMatrixOrNull := RawMatrixOrNull(
      Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_scalar_mult(", "(RingElement *)", y, ",(Matrix *)", x, ",", true, ")" ) );
 export (x:RawMatrix) * (y:RawMatrix) : RawMatrixOrNull := (
-     Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_mult(", "(Matrix *)", x, ",(Matrix *)", y, ",", false, ")" ));
+     Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_mult(", "(Matrix *)", x, ",(Matrix *)", y, ",", true, ")" ));
 export (x:RawMonomialIdeal) + (y:RawMonomialIdeal) : RawMonomialIdealOrNull := (
      Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)", "IM2_MonomialIdeal_add((MonomialIdeal *)", x, ",(MonomialIdeal *)", y, ")" ) );
 export (x:RawMonomialIdeal) * (y:RawMonomialIdeal) : RawMonomialIdealOrNull := (
