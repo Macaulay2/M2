@@ -704,8 +704,7 @@ method123(e:Expr,env:Sequence):Expr := (
 	  else if length(args) == 0 then (
 	       f := lookup(env.0);
 	       if f == nullE then f = env.1;
-	       Expr(Sequence(f, e))			    -- debugging
-	       )
+	       apply(f, emptySequence))
 	  else apply(env.1, args))
      else (
 	  f := lookup(Class(e),env.0);

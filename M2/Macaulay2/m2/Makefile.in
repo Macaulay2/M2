@@ -49,13 +49,6 @@ Macaulay2-doc.m2 : loads.awk docseq
 	@awk -f $^ >$@
 clean::; rm -f Macaulay2-doc.m2
 
-################################# cache
-cache cache/doc ../tutorial/final/cache/doc :; mkdir -p $@
-clean ::; rm -rf cache
-initialize :: cache cache/doc ../tutorial/final/cache/doc
-################################# temporary directories for examples
-initialize :: cache/doc/cache/doc cache/doc/tmp
-cache/doc/cache/doc cache/doc/tmp :; mkdir -p $@
 #################################
 
 default:: TAGS.doc
@@ -111,10 +104,6 @@ profile : gmon.out
 	gprof ../bin/M2 >profile
 clean ::; rm -f profile
 
-INPUTS := cache/doc/sample cache/doc/expression
-cache/doc/sample: sample; cp $< $@
-cache/doc/expression: expression; cp $< $@
-
 ifeq "$(DEBUG)" "yes"
 EGFLAGS = -k
 EGMORE = || true
@@ -128,9 +117,9 @@ test1 : test.m2 phase1
 	../bin/M2 -e 'errorDepth = 0' -q test.m2 -e '<< "--test succeeded" << endl' -e 'exit 0'
 	touch $@
 
-check:: test2
+check:: tmp test2
 test2: phase1 ../bin/M2$(EXE)
-	$(MAKE) -k -C cache/tests -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
+	$(MAKE) -k -C tmp -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
 	touch $@
 clean::; rm -f test2
 
@@ -172,6 +161,7 @@ statuscodes.m2 : ../e/statuscodes
 
 all:: tmp tmp/$(package)
 tmp :; mkdir "$@"
+#	see startup.m2, too, for setting "prefixDirectory" to ./tmp while building, so it can find example output files
 tmp/$(package) : $(DOCSEQUENCE)
 	@ echo making the Main package, including the documentation
 	cd tmp && ../../bin/M2 -q --stop -e 'errorDepth = 0' \

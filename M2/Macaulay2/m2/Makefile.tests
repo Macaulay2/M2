@@ -1,22 +1,22 @@
 # -*- Mode: Makefile -*-
 # @configure_input@
 
-include ../../../../include/config.Makefile
+include ../../../include/config.Makefile
 
 .PHONY : all
 
-ARGS := -q -e 'path=join(path,{"../../","$(srcdir)/"})' -e 'errorDepth = 0' --silent
+ARGS := -q -e 'path=join(path,{"../","$(srcdir)/"})' -e 'errorDepth = 0' --silent
 
-all :: ../../../$(DUMPDATAFILE)
+all :: ../../$(DUMPDATAFILE)
 
 else
 ifeq "$(CC)" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
 ## and does strange things to quotation marks.
-ARGS := -q --silent -e 'path=join(path,{\"../../\",\"$(srcdir)/\"})' -e 'errorDepth = 0'
+ARGS := -q --silent -e 'path=join(path,{\"../\",\"$(srcdir)/\"})' -e 'errorDepth = 0'
 else
 ARGS := -q --silent \
-		-e 'path=join({"../../../m2/","$(srcdir)/../m2/","$(srcdir)/../packages/"})' \
+		-e 'path=join({"../../m2/","$(srcdir)/../m2/","$(srcdir)/../packages/"})' \
 		-e 'errorDepth = 0'
 endif
 endif
@@ -24,7 +24,7 @@ endif
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../../../bin/M2 $(ARGS) $< -e 'exit(0)'
+	@ ../../bin/M2 $(ARGS) $< -e 'exit(0)'
 	@ touch $@
 
 TESTFILES := $(wildcard *.m2)
@@ -33,7 +33,7 @@ TESTRESULTS := $(patsubst %.m2, %.okay, $(TESTFILES))
 all:: $(TESTRESULTS)
 
 ifneq "$(DUMPDATA)" "no"
-$(TESTRESULTS) : ../../../$(DUMPDATAFILE)
+$(TESTRESULTS) : ../../$(DUMPDATAFILE)
 endif
 
 # Local Variables:

@@ -52,23 +52,29 @@ record      := f -> x -> (
      if val =!= x then unformatTag#val = x; 
      val)
 -----------------------------------------------------------------------------
+-- loading the main documentation upon demand
+-----------------------------------------------------------------------------
+needDoc := () -> (
+     op := currentPackage;
+     currentPackage = Main;				    -- there must be a better way
+     on := notify;
+     notify = false;
+     load "Macaulay2-doc.m2";
+     currentPackage = op;
+     notify = on;
+     needDoc = identity;
+     )
+-----------------------------------------------------------------------------
 -- getting database records
 -----------------------------------------------------------------------------
-
 thePackage := null
-
-getRecord = key -> scan(packages, 			    -- later, we make this function local to this file
+getRecord := key -> scan(packages,
      pkg -> (
-	  d := pkg#"documentation";	-- later on, we will use the processed documentation
+     	  needDoc();
+	  d := pkg#"documentation";
 	  if d#?key then (
 	       thePackage = pkg;
-	       break d#key;
-	       )
-	  )
-     )
-
--- getRecord = on (getRecord, Name => "getRecord") -- useful for debugging
-
+	       break d#key)))
 -----------------------------------------------------------------------------
 -- normalizing document tags
 -----------------------------------------------------------------------------
@@ -287,12 +293,15 @@ checkForExampleOutputFile := () -> (
      exampleResults = {};
      exampleResultsFound = false;
      exampleOutputFilename = null;
+     stderr << "exampleBaseFilename = " << exampleBaseFilename << endl; -- debugging:
      if exampleBaseFilename =!= null then (
 	  exampleOutputFilename = exampleBaseFilename | ".out";
+	  -- debugging:
+	  stderr << "checking for example output in file '" << exampleOutputFilename << "' : " << (if fileExists exampleOutputFilename then "it exists" else "it doesn't exist") << endl;
 	  if fileExists exampleOutputFilename then (
 	       -- read, separate, and store example output
 	       exampleResults = currentPackage#"example outputs"#currentNodeName = drop(separateM2output get exampleOutputFilename,-1);
-	       -- stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl; -- debugging
+	       stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl; -- debugging
 	       exampleResultsFound = true)))
 processExample := x -> (
      a :=
@@ -700,20 +709,23 @@ op := s -> if operatorSet#?s then (
 
 optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f -> class f === Function and (options f)#?s) -- this is slow!
 
-documentation Symbol := s -> (
-     a := apply(select(optionFor s,f -> not unDocumentable f), f -> f => s);
-     b := documentableMethods s;
-     SEQ {
-	  title s, 
-	  usage s,
-	  op s,
-     	  type s,
-	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, SHIELD smenu a, PARA{}},
-	  if #b > 0 then SEQ {"Methods for ", toString s, " :", PARA{}, SHIELD smenu b, PARA{}} 
-     	  }
+ret := k -> (
+     t := typicalValue k;
+     if t =!= Thing then SEQ {"Class of returned value: ", TO t, headline t, PARA{}}
+     )
+seecode := x -> (
+     f := lookup x;
+     n := code f;
+     if n =!= null 
+     and height n + depth n <= 10 and width n <= maximumCodeWidth
+     then SEQ { "Code:", PRE concatenate between(newline,unstack n) }
      )
 
-documentation Type := X -> (
+documentationValue := method()
+documentationValue(Symbol,Function) := (s,f) -> SEQ { 
+     title f, synopsis f, usage f, type s, ret f, fmeth f, optargs f, seecode f 
+     }
+documentationValue(Symbol,Type) := (s,X) -> (
      syms := flatten(values \ globalDictionaries);
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and not unDocumentable key), (key,Y) -> key);
      b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
@@ -722,7 +734,7 @@ documentation Type := X -> (
      SEQ {
 	  title X, 
 	  synopsis X,
-     	  type X,
+     	  type s,
 	  if #b > 0 then SEQ {
 	       "Types of ", if X.?synonym then X.synonym else toString X, " :", PARA{},
 	       smenu b, PARA{}},
@@ -737,39 +749,32 @@ documentation Type := X -> (
 	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, 
 	       SHIELD smenu e, PARA{}},
 	  })
-
-documentation HashTable := x -> (
+documentationValue(Symbol,HashTable) := (s,x) -> (
      c := documentableMethods x;
      SEQ {
 	  title x,
 	  synopsis x,
 	  usage x,
-     	  type x,
+     	  type s,
 	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, 
 	       SHIELD smenu c, PARA{}},
 	  })
+documentationValue(Symbol,Symbol) := (s,x) -> null
+documentationValue(Symbol,Thing) := (s,x) -> null
 
-ret := k -> (
-     t := typicalValue k;
-     if t =!= Thing then SEQ {"Class of returned value: ", TO t, headline t, PARA{}}
+documentation Symbol := S -> (
+     a := apply(select(optionFor S,f -> not unDocumentable f), f -> f => S);
+     b := documentableMethods S;
+     SEQ {
+	  title S, 
+	  usage S,
+	  op S,
+     	  type S,
+	  if #a > 0 then SEQ {"Functions with optional argument named ", toString S, " :", PARA{}, SHIELD smenu a, PARA{}},
+	  if #b > 0 then SEQ {"Methods for ", toString S, " :", PARA{}, SHIELD smenu b, PARA{}},
+     	  documentationValue(S,value S)
+     	  }
      )
-seecode := x -> (
-     f := lookup x;
-     n := code f;
-     if n =!= null 
-     and height n + depth n <= 10 and width n <= maximumCodeWidth
-     then SEQ { "Code:", PRE concatenate between(newline,unstack n) }
-     )
-
-hasDocumentation = x -> (
-     fkey := formatDocumentTag x;
-     pkgs := select(packages, P -> P =!= User and P =!= Output); -- see also packages.m2
-     p := select(pkgs, P -> P#"documentation"#?fkey);
-     0 < #p)
-
-documentation Function := f -> SEQ { 
-     title f, synopsis f, usage f, type f, ret f, fmeth f, optargs f, seecode f 
-     }
 
 documentation Option := v -> (
      (fn, opt) -> (
@@ -799,11 +804,20 @@ documentation Sequence := s -> (
 	  }
      )
 
-    hr1 := newline | "-----------------------------------------------------------------------------" | newline
- -- hr1 := "-----------------------------------------------------------------------------"
+documentation Thing := x -> (
+     s := reverseDictionary x;
+     if s =!= null then documentation s else SEQ{ " -- undocumented -- "}
+     )
 
-    hr := v -> concatenate mingle(#v + 1 : hr1 , v)
- -- hr := v -> stack       mingle(#v + 1 : hr1 , v)
+hasDocumentation = x -> (
+     needDoc();
+     fkey := formatDocumentTag x;
+     pkgs := select(packages, P -> P =!= User and P =!= Output); -- see also packages.m2
+     p := select(pkgs, P -> P#"documentation"#?fkey);
+     0 < #p)
+
+hr1 := newline | "-----------------------------------------------------------------------------" | newline
+hr := v -> concatenate mingle(#v + 1 : hr1 , v)
 
 help = method(SingleArgumentDispatch => true)
 help List := v -> hr apply(v, help)

@@ -75,6 +75,8 @@ newPackage(String) := opts -> (title) -> (
      packages = prepend(p,packages);
      p)
 
+addStartFunction( () -> if prefixDirectory =!= null then Main#"package prefix" = prefixDirectory )
+
 newPackage("Main",
      DebuggingMode => debuggingMode,
      Version => version#"VERSION",
@@ -141,22 +143,29 @@ popDictionary = d -> (
      globalDictionaries = drop(globalDictionaries,1);
      d)
 
-dictionary := s -> (
+dictionary = method()
+dictionary Symbol := s -> (				    -- eventually every symbol will know what dictionary it's in, perhaps
      n := toString s;
      r := select(globalDictionaries, d -> d#?n and d#n === s);
-     if #r === 0 then null else first r
+     if #r === 0 then null else first r			    -- could return null, if we don't find it
+     )
+dictionary Thing := x -> (
+     s := reverseDictionary x;
+     if s === null then null else dictionary s
      )
 
 package = method ()
+package Dictionary := d -> scan(packages, pkg -> if pkg.Dictionary === d then break pkg)
 package Symbol := s -> (
      d := dictionary s;
-     if d === null then return(null);
-     r := select(packages,p -> p.Dictionary === d);
-     if #r > 0 then first r)
+     if d === null then return null;
+     package d)
 package HashTable := package Function := x -> (
      X := reverseDictionary x;
-     if X =!= null then package X
-     )
+     if X =!= null then package X)
+package Thing := x -> (
+     d := dictionary x;
+     if d =!= null then package d)
 
 warned := new MutableHashTable
 

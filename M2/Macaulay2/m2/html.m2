@@ -371,7 +371,7 @@ installPackage Package := o -> pkg -> (
 	       else (
 		    stderr << "--making example output file for " << nodename << endl;
 		    loadargs := if pkg === Main then "" else "-e 'load \""|fn|"\"'";
-		    cmd := "ulimit -t 20 -v 60000 && " | commandLine#0 | " --silent --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf;
+		    cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf;
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
