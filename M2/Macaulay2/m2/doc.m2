@@ -19,12 +19,12 @@ document { (length, GradedModule),
 document { (parent,Thing),
      Headline => "parent type of an object",
      Synopsis => {
-	  Usage => "parent x",
+	  Usage => "X = parent x",
 	  Inputs => {
 	       "x" => ""
 	       },
 	  Outputs => {
-	       { ", the parent class of ", TT "x" }
+	       "X" => { ", the parent class of ", TT "x" }
 	       }
 	  },
      PARA,
