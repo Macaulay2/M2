@@ -213,13 +213,11 @@ verifyTag := method(SingleArgumentDispatch => true)
 verifyTag Thing    := s -> null
 verifyTag Sequence := s -> (
      if class lookup s =!= Function then error(
-	  "documentation provided for '", formatDocumentTag s, "' but no method installed")
-     )
+	  "documentation provided for '", formatDocumentTag s, "' but no method installed"))
 verifyTag Option   := s -> (
      fn := s#0;
      opt := s#1;
-     if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn)
-     )
+     if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
 -----------------------------------------------------------------------------
 -- html input
 -----------------------------------------------------------------------------
@@ -1570,3 +1568,5 @@ addEndFunction( () -> if writingFinalDocDatabase() then (
 			      else x,
 			      Headline => "undocumented symbol", "No documentation provided yet."};
 			 )))))
+
+new TO from List := (TO,x) -> (verifyTag first x; x)
