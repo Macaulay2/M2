@@ -7,12 +7,14 @@ statementNumber := 0
 
 String.TeXmacsEvaluate = s -> (
      statementNumber = statementNumber + 1;
-     v := value s;
+     v := try value s else "Evaluation failed";
+     tv := try texMath v else "\\text{Display failed}";
+     tc := try texMath class v else "\\text{Class display failed}";
      << BEGIN << "verbatim:" 
 	<< BEGIN << "latex:" << endl
 	   << "\\begin{eqnarray*}" << endl
-	      << "\\text{o" << statementNumber << "} = &" << tex v << "\\\\" << endl
-	      << "\\text{o" << statementNumber << "} : &" << tex class v << endl
+	      << "\\text{o" << statementNumber << "} = &" << tv << "\\\\" << endl
+	      << "\\text{o" << statementNumber << "} : &" << tc << endl
 	   << "\\end{eqnarray*}" << endl
 	<< END << endl << endl
      << END << flush;
