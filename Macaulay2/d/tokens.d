@@ -490,7 +490,7 @@ export buildErrorPacket(message:string,report:CodeClosureList):Expr := Expr(Erro
 dummyBreakLoop(f:Frame,c:Code):Expr := nullE;
 export breakLoopFun := dummyBreakLoop;
 export stopIfError := false;
-export debuggingMode := false;
+export debuggingMode := true;
 export printError(err:Error):void := (
      printErrorMessage(err.position, if err.printed then "--back trace--" else err.message);
      err.printed = true;
