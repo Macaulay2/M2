@@ -399,7 +399,9 @@ if not noinitfile then (
      )
 if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"m2/",sourceHomeDirectory|"packages/"})
 if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
-if prefixDirectory      =!= null then path = append(path, prefixDirectory | LAYOUT#"m2")
+if prefixDirectory      =!= null then (
+     path = join(path, {prefixDirectory | LAYOUT#"m2", prefixDirectory | LAYOUT#"datam2"});
+     )
 if sourceHomeDirectory  =!= null then path = join(path, {sourceHomeDirectory|"test/", sourceHomeDirectory|"test/engine/"})
 path = select(path, fileExists)
 normalPrompts()
