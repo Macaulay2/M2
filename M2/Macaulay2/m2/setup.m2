@@ -5,14 +5,16 @@ if class path =!= List then path = { "." }
 
 pathSeparator = (
 	if version#"OS" === "MACOS"	then ":" 
-	else if version#"OS" === "Windows NT" then "\\"
+	else
+	if version#"OS" === "Windows NT"
+	or version#"OS" === "MS-DOS"
+	then "\\"
 	else "/"
 	)
 
---newline = if version#"OS" === "MACOS" then "\r"   else
---          if version#"OS" === "MS-DOS"
---          or version#"OS" === "Windows NT" then "\r\n" else
---          "\n"
+dir:= lines(commandLine#0, pathSeparator)
+if #dir > 2 
+then path = join({concatenate (apply(#dir-2, i -> (dir#i,pathSeparator)), "m2")}, path);
 
 isAbsolutePath := filename -> pathSeparator === substring(filename,0,#pathSeparator)
 

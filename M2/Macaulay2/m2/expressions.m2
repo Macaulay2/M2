@@ -743,7 +743,9 @@ net Product := v -> (
 			 seps#i = seps#(i+1) = "";
 			 nterm = ("(", nterm, ")");
 			 );
-		    if class term === Power or class term === Subscript then (
+		    if class term === Power
+		    and not (term#1 === 1 or term#1 === ONE)
+		    or class term === Subscript then (
 			 seps#(i+1) = "";
 			 );
 	       	    nterm));
