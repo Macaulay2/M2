@@ -83,11 +83,6 @@ Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*id_(target f)
      symbol cache => new CacheTable
      }
 
-setdegree := (R,deg,f) -> (
-     
-     
-     )
-
 Matrix * Matrix := Matrix => (m,n) -> (
      if source m == target n then (
 	  if ring target m =!= ring target n then (
@@ -328,7 +323,13 @@ listZ := v -> ( if not all(v,i -> class i === ZZ) then error "expected list of i
 Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
 Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
 
-Matrix _ ZZ := Vector => (m,i) -> new Vector from m_{i}
+Matrix _ ZZ := Vector => (m,i) -> (
+     R := ring m;
+     M := target m;
+     h := m_{i};
+     h = map(M, R^1, h, Degree => first degrees source h);
+     new Vector from h
+     )
 
 submatrix(Matrix,VisibleList,VisibleList) := Matrix => (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
 submatrix(Matrix,VisibleList            ) := Matrix => (m,cols     ) -> map(target m,,rawSubmatrix(raw m, listZ toList splice cols))
