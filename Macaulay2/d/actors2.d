@@ -177,6 +177,21 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
+     is v:Sequence do (
+     	  if basicType == basicListClass then (
+	       if parent != nothingClass
+	       then buildErrorPacket("expected Nothing as parent for list")
+	       else (
+	       	    mutable := ancestor(class,mutableListClass);
+		    Expr(
+			 sethash(
+			      List(class,
+			      	   if mutable then copy(v) else v,
+			      	   0,false),
+			      mutable))))
+	  else if basicType == hashTableClass 
+	  then expected("a hash table",returned)
+	  else wrongTarget())
      else expected(
 	  if basicType == basicListClass
 	  then "a list"
@@ -219,6 +234,14 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
 			      	   if mutable || o.mutable then copy(o.v) else o.v,
 			      	   0,false),
 			      mutable))))
+	  else if basicType == hashTableClass 
+	  then expected("a hash table",returned)
+	  else wrongTarget())
+     is v:Sequence do (
+     	  basicType := basictype(class);
+     	  if basicType == basicListClass then (
+	       mutable := ancestor(class,mutableListClass);
+	       Expr( sethash( List(class, if mutable then copy(v) else v, 0,false), mutable)))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
