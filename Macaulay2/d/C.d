@@ -53,7 +53,6 @@ import GrSizeY():int;
 import GrAllocColor(r:int,g:int,b:int):int;
 import kbhit():bool;
 import kill(pid:int,sig:int):int;
-import errno:int;
 export string := array(char);
 export Cstring := {Cstring:void} or null ;
 import tostring(s:Cstring):string;
