@@ -49,6 +49,11 @@ RingElement * Matrix := (r,m) -> (
      if R =!= ring m then error "scalar not in ring of matrix";
      newMatrix(target m, source m, reduce(target m, r.RawRingElement * m.RawMatrix)))
 
+Matrix * RingElement := (m,r) -> (
+     R := ring r;
+     if R =!= ring m then error "scalar not in ring of matrix";
+     newMatrix(target m, source m, reduce(target m, m.RawMatrix * r.RawRingElement)))
+
 sameRing := (m,n) -> (
      if ring m =!= ring n then (
 	  try (promote(m,ring n) , n) else
@@ -56,25 +61,6 @@ sameRing := (m,n) -> (
 	  else error "expected matrices over compatible rings"
 	  )
      else (m,n))
-
-BinaryMatrixOperation := (operation) -> (m,n) -> (
-     if ring m =!= ring n then (
-	  try m = promote(m,ring n)
-	  else try n = promote(n,ring m)
-	  else error "expected matrices over compatible rings");
-     sendgg (ggPush m, ggPush n, operation);
-     getMatrix ring m)
-
-BinaryMatrixOperationSame := (operation) -> (m,n) -> (
-     -- same source and target
-     if ring m =!= ring n then (
-	  try m = promote(m,ring n)
-	  else try n = promote(n,ring m)
-	  else error "expected matrices over compatible rings");
-     sendgg (ggPush m, ggPush n, operation);
-     T := target m;
-     reduce T;
-     newMatrix(T, source m))
 
 Matrix _ Sequence := RingElement => (m,ind) -> (
      if # ind === 2
