@@ -495,7 +495,7 @@ char **argv;
 	       sprintf(buf,"--MP %s, copyright 1993-1997, S. Gray, N. Kajler, P. Wang",MP_VERSION);
                putstderr(buf);
 #     	       endif
-	       putstderr("--GC, copyright 1996, Hans-J. Boehm, Alan J. Demers, Xerox, Silicon Graphics");
+	       putstderr("--GC, copyright 1999, Hans-J. Boehm, Alan J. Demers, Xerox, Silicon Graphics");
 	       putstderr("--GNU libc and libg++, copyright 1996, Free Software Foundation");
 	       putstderr("--GNU MP, copyright 1996, Free Software Foundation");
 	       break;

@@ -6,7 +6,7 @@ nodeTable = new MutableHashTable
 nodeTable2 = new MutableHashTable
 fileNumberTable = new MutableHashTable
 sectionNumberTable = new MutableHashTable
-sectionNumber = {}
+sectionNumber = {0}
 descend = () -> sectionNumber = append(sectionNumber,0)
 ascend = () -> sectionNumber = drop(sectionNumber,-1)
 String + ZZ := (s,i) -> s
@@ -14,11 +14,8 @@ record = (
      counter := 0;
      node -> (
 	  counter = counter + 1;
-	  if # sectionNumber > 0 then (
-	       sectionNumber = append( 
-		    drop(sectionNumber, -1), 
-		    sectionNumber#-1 + 1 );
-	       );
+	  if # sectionNumber === 0 then error "oops: empty section number";
+	  sectionNumber = append( drop(sectionNumber, -1), sectionNumber#-1 + 1 );
 	  fileNumberTable#node = counter;
 	  nodeTable#counter = node;
 	  sectionNumberTable#counter = concatenate between(".",apply(sectionNumber,toString));
@@ -51,17 +48,15 @@ reach3 Thing := reach1
 reach3 MENU := x -> scan(x,reach1)
 --------------- body of book
 reach2 TO "Macaulay 2"
---------------- appendix
+scan(sort keys nodeTable2, i -> reach2 TO i)
+--------------- unreached nodes
 docDatabase = openDatabase "../cache/Macaulay2-doc"
 unreachedNodes = new MutableHashTable
 scanKeys(docDatabase, 
      node -> (
 	  if not fileNumberTable#?node 
 	  then unreachedNodes#node = true))
-scan(keys nodeTable2, 
-     node -> (
-	  if not fileNumberTable#?node 
-	  then unreachedNodes#node = true))
+--------------- appendix
 sectionNumber = {"A"}
 document { "Appendix",
      "We present various footnotes in this appendix.",
@@ -129,7 +124,7 @@ crossReference := (key,text) -> (
      )
 
 booktex = method(SingleArgumentDispatch=>true)
-booktex TO := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0) 
+booktex TO := booktex TOH := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0) 
 
 menuLevel := 2
 

@@ -177,9 +177,13 @@ document { ignore,
      }
 
 done = stateTable { }
+protect symbol done
 document { done,
      TT "done", " -- an empty state table that can be used to indicate that a finite
      state machine has reached a terminal state, and can stop scanning its input.",
+     PARA,
+     "We should replace this by a general way of specifying that a state is a
+     terminal state.",
      PARA,
      SEEALSO "StateTable"
      }

@@ -20,7 +20,8 @@ bookFile << ///
         pdftitle=Macaulay 2,
         pdfsubject=symbolic algebra,
         pdfkeywords=syzygy Groebner resolution polynomials,
-        pdfauthor=Daniel R. Grayson and Michael E. Stillman
+        pdfauthor=Daniel R. Grayson and Michael E. Stillman,
+    	colorlinks=true
         }
 
 \renewcommand{\thepart}{\Roman{part}}

@@ -34,7 +34,7 @@ all:: M2book.tex
 M2book.bbl : papers.bib
 
 ifndef CYGWIN32
-all:: M2book.dvi M2book.pdf
+all:: M2book.dvi M2book.ps M2book.pdf
 endif
 
 M2book.tex : ../cache/Macaulay2-doc book.m2 booktex.m2
