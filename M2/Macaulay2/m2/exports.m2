@@ -336,6 +336,7 @@ export (
 	symbol Examples,
 	symbol examples,
 	symbol ExampleTABLE,
+	symbol ButtonTABLE,
 	symbol Exclude,
 	symbol exec,
 	symbol exit,

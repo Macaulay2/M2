@@ -62,6 +62,7 @@ PARA1      = new MarkUpType of MarkUpListParagraph	    -- single spacing inside
 EXAMPLE    = new MarkUpType of MarkUpListParagraph
 TABLE      = new MarkUpType of MarkUpListParagraph
 ExampleTABLE = new MarkUpType of MarkUpListParagraph
+ButtonTABLE  = new MarkUpType of MarkUpListParagraph
 PRE        = new MarkUpType of MarkUpListParagraph
 TITLE      = new MarkUpType of MarkUpListParagraph
 HEAD       = new MarkUpType of MarkUpListParagraph
