@@ -216,9 +216,9 @@ ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS)
 all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H)) $(OFILES)
 
 ifdef SHAREDLIBS
-all:: ../lib/engine1.so ../lib/engine2.so
-../lib/engine1.so : $(LOFILES1); $(CC) -shared $^ $(OUTPUT_OPTION)
-../lib/engine2.so : $(LOFILES2); $(CC) -shared $^ $(OUTPUT_OPTION)
+all:: ../lib/libengine1.so ../lib/libengine2.so
+../lib/libengine1.so : $(LOFILES1); $(CC) -shared $^ $(OUTPUT_OPTION)
+../lib/libengine2.so : $(LOFILES2); $(CC) -shared $^ $(OUTPUT_OPTION)
 endif
 
 %.ii: %.cpp

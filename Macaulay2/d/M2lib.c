@@ -2,6 +2,10 @@
 
 #include "types.h"
 
+#ifdef __linux__
+#include "../dumpdata/dumpdata.h"
+#endif
+
 #ifdef MP
 #include "mpversion.h"
 #endif
@@ -707,11 +711,15 @@ static int probe() __attribute__ ((unused));
 int system_dumpdata(datafilename)
 M2_string datafilename;
 {
+     /* this routine should keep its data on the stack */
+     bool haderror = FALSE;
 #ifndef DUMPDATA
      return ERROR;
 #else
-     /* this routine should keep its data on the stack */
      char *datafilename_s = tocharstar(datafilename);
+#ifdef __linux__
+     if (ERROR == dumpdata(datafilename_s)) haderror = TRUE;
+#else
      int datafile = open(datafilename_s, O_BINARY | O_WRONLY | O_CREAT, 0666);
      if (datafile == ERROR) {
 	  char buf[200];
@@ -745,8 +753,9 @@ M2_string datafilename;
 	  perror(buf);
 	  return ERROR;
 	  }
+#endif
      GC_FREE(datafilename_s);
-     return 0;
+     return haderror ? ERROR : OKAY;
 #endif
      }
 
@@ -831,28 +840,22 @@ static int probe() {
      }
 #endif
 
-int system_loaddata(M2_string datafilename){
-#ifndef DUMPDATA
-     return ERROR;
-#else
-     char *datafilename_s = tocharstar(datafilename);
+#ifndef __linux__
+static int loaddata(const char *filename) {
      char savetimestamp[60];
      struct stat statbuf;
-     sigjmp_buf save_loaddata_jump;
      int filelen;
-     int reloaded = system_reloaded;
-     int datafile = open(datafilename_s, O_BINARY | O_RDONLY);
-     memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
+     int datafile = open(filename, O_BINARY | O_RDONLY);
      strcpy(savetimestamp,timestamp);
      if (datafile == ERROR) {
 	  char buf[200];
 	  sprintf(buf,"%s: couldn't open file %s for reading",
-	       progname,datafilename_s);
+	       progname,filename);
 	  putstderr(buf);
-     	  GC_FREE(datafilename_s);
+     	  GC_FREE(filename);
 	  return ERROR;
 	  }
-     GC_FREE(datafilename_s);
+     GC_FREE(filename);
      fstat(datafile,&statbuf);
      filelen = statbuf.st_size;
 #if defined(STARTGAP) || defined(ENDGAP)
@@ -905,6 +908,18 @@ x)",
 	  putstderr("data file not created by this executable");
 	  _exit(1);
 	  }
+}
+#endif
+
+int system_loaddata(M2_string datafilename){
+#ifndef DUMPDATA
+     return ERROR;
+#else
+     char *datafilename_s = tocharstar(datafilename);
+     sigjmp_buf save_loaddata_jump;
+     int reloaded = system_reloaded;
+     memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
+     if (ERROR == loaddata(datafilename_s)) return ERROR;
      memcpy(loaddata_jump,save_loaddata_jump,sizeof(loaddata_jump));
      system_reloaded = reloaded + 1;
      siglongjmp(loaddata_jump,1);

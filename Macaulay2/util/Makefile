@@ -16,3 +16,5 @@ all:: ../setup.exe
 ../setup.exe : setup
 	cp setup.exe ..
 endif
+
+wc:; wc -l *.c *.h

@@ -17,6 +17,8 @@ DUMPSEQUENCE = $(shell cat dumpseq)
 
 MADEGFILES := gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 cmdnames.m2
 
+export LD_LIBRARY_PATH=../lib
+
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
 	sed -f mpcodes.sed $< > $@

@@ -14,6 +14,8 @@ extern char errfmtnc[];
 #define FALSE 0
 #endif
 
+#define OKAY 0
+
 #define ERROR (-1)
 
 #define GRAIN 8
