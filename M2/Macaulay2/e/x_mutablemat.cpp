@@ -7,6 +7,7 @@
 #include "fractionfreeLU.hpp"
 #include "ring.hpp"
 #include "densematRR.hpp"
+#include "sparsemat.hpp"
 
 typedef MutableMatrix MutableMatrixOrNull;
 
@@ -374,6 +375,27 @@ M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M,
   return M->set_values(rows,cols,values);
 }
 
+M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M)
+/* Using row and column operations, use unit pivots to reduce the matrix */
+{
+  SparseMutableMatrix *N = M->cast_to_SparseMutableMatrix();
+  if (N == 0)
+    {
+      ERROR("expected sparse mutable matrix");
+      return false;
+    }
+  N->reduce_pivots();
+  return true;
+}
+
+MutableMatrixOrNull * IM2_kernel_of_GB(const MutableMatrix *G)
+  /* Assuming that the columns of G form a GB, this computes
+     a Groebner basis of the kernel of these elements, using an appropriate Schreyer order on the
+     source of G. */
+{
+#warning "put the Eschreyer call here"
+  return const_cast<MutableMatrix *>(G);
+}
 
 MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N)
 /* If the sizes do not match, then NULL is returned.  If they do match,

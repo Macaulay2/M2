@@ -502,7 +502,7 @@ void SparseMutableMatrix::setSizes(int c_lo, int c_hi, int *rowSize, int *colSiz
 // clears out other columns by the pivot, and then sticks the
 //  pivot into the "current" last column and last row of the matrix.
 
-void SparseMutableMatrix::reducePivots()
+void SparseMutableMatrix::reduce_pivots()
 {
   const Ring *K = get_ring();
   ring_elem one = K->one();
