@@ -54,3 +54,7 @@ install install-strip :: ; $(MAKE) -C encap install
 $(DIRS) :; $(INSTALL) -d $@
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 install install-strip all clean distclean::; @echo "-------- done making '$@' --------"
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR"
+# End:
