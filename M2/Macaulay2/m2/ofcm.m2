@@ -38,7 +38,7 @@ parts := (M) -> (
      o := M.Options;
      join(
 	  if M.?generatorExpressions then M.generatorExpressions else {},
-	  if any(M.degrees, i -> i =!= {1}) then {Degrees => M.degrees} else {},
+	  if any(o.Degrees, i -> i =!= {1}) then {Degrees => o.Degrees} else {},
 	  select(
 	       { MonomialOrder, MonomialSize, WeylAlgebra, SkewCommutative, Inverses }
 	       / (key -> if o#key =!= O#key then key => o#key),
@@ -165,12 +165,12 @@ makeit1 := (options) -> (
      M.Options = options;
      varlist := options.Variables;
      n := # varlist;
-     degs := apply(options.Degrees,options.Adjust);
-     M.degrees = degs;
-     M.degreeLength = if degs#?0 then # degs#0 else 0;
-     order := transpose degs;
-     firstdeg := transpose degs;
-     firstdeg = if #firstdeg === 0 then toList(n:1) else firstdeg#0;
+     externalDegrees := options.Degrees;
+     M.degrees = externalDegrees;
+     M.degreeLength = if externalDegrees#?0 then # externalDegrees#0 else 0;
+     internalDegrees := apply(externalDegrees,options.Adjust);
+     order := transpose internalDegrees;
+     firstdeg := if #order === 0 then toList(n:1) else order#0;
      variableOrder := toList (0 .. n-1);
      wts := flatten options.Weights;
      if not all(wts,i -> class i === ZZ)
@@ -304,7 +304,7 @@ makeit1 := (options) -> (
      degree M := x -> (
 	  if # x === 0
 	  then apply(M.degreeLength,i->0)
-	  else sum(select(toList x, (v,e)->v<n), (v,e) -> e * degs#v)
+	  else sum(select(toList x, (v,e)->v<n), (v,e) -> e * externalDegrees#v)
 	  );
      baseName M := x -> (
 	  if 1 === number(x, (v,e) -> v<n) and x#0#1 === 1
@@ -338,7 +338,7 @@ makeit1 := (options) -> (
 	  ggPush betwNames(" ",M.generators),		    -- or "" to omit them
 	  if not M.?newEngine then (
 	       if degreeLength M === 0 then ggzeromonoid else ggPush degreesMonoid degreeLength M,
-	       ggPush flatten M.degrees,
+	       ggPush flatten internalDegrees,
 	       ggPush {if options.Inverses then 1 else 0, 
 		       options.MonomialSize,
 		       if options.SkewCommutative then 1 else 0}
@@ -380,6 +380,9 @@ makeMonoid := (options) -> (
         else if instance(degs#0,ZZ)
             then degs = apply(degs,i -> {i});
      options.Degrees = degs;
+
+     if class options.Adjust =!= Function then error("expected 'Adjust' option to be a function");
+     if class options.Repair =!= Function then error("expected 'Repair' option to be a function");
 
      options = new OptionTable from options;
      makeit1 options)

@@ -3,13 +3,13 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
-The routine that prints out a matrix in compact form, will now use the
-repaired degrees, if the matrix is over a ring R with a grading repair
-function R.repair.
-
-The total Ext function, H = Ext(M,N), now puts the adjustment function in the
-ring R and in the module.  The inverse function is stored in R.repair and in
-H.repair.
+The total Ext function H = Ext(M,N) formerly stored its adjustment function
+(for adjusting the bidegrees to make the first component positive) in 
+H.adjust.  This has been superceded by a general method for creating
+rings together with adjustment functions.  The new method involves
+creating a polynomial ring with the options Adjust and Repair, whose values
+are the adjustment function and its inverse, respectively.  All functions
+that pass degrees between the user and the engine now take this into account.
 
 The procedure for compiling is different now, as we use "configure".
 Try "make -f Makefile-configure".  We don't yet have a "make install" target.

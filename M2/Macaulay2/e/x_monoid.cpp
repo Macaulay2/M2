@@ -54,6 +54,13 @@ void cmd_Monoid(object &omo, object &ostr,
       gError << "Degree list should be of length " << mo->n_vars()*D->n_vars();
       return;
     }
+  // Check that the first degree for each variable is positive
+  for (int i=0; i<mo->n_vars(); i++)
+    if ((*degs)[i * D->n_vars()] <= 0)
+      {
+	gError << "All primary (first) degrees should be positive";
+	return;
+      }
   monoid_info *moninf = new monoid_info(mo, varnames, len_varnames, 
 					D, *degs, is_group, is_skew);
   Monoid *M = new Monoid(moninf, nbits);
