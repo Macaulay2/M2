@@ -1,5 +1,7 @@
 // copyright Daniel R. Grayson, 1995
 
+#if 1
+#include <assert.h>
 #include "interp.hpp"
 #include "matrix.hpp"
 #include "z_mod_p.hpp"
@@ -220,8 +222,9 @@ static void ideal_reorder(object &mm) {
 	  return;
      }
      CFList I;
-     for (int i = 0; i < m.n_rows(); i++) {
-	  for (int j=0; j < m.n_cols(); j++) {
+	 int i,j;
+     for (i = 0; i < m.n_rows(); i++) {
+	  for (j=0; j < m.n_cols(); j++) {
 	       RingElement g(R, m.elem(i,j));
 	       I.append(convert(g));
 	  }
@@ -230,7 +233,6 @@ static void ideal_reorder(object &mm) {
      int n = t.length();
      intarray u(N);
      ListIterator<int> ii(t);
-     int i;
      for (i=0; ii.hasItem(); ii++, i++) u.append(
 					      (n-1)-(ii.getItem()-1) // REVERSE!
 					      );
@@ -289,6 +291,13 @@ void i_factor_cmds() {
      install(ggfactor1, ideal_reorder, TY_MATRIX);
      install(ggfactor2, ideal_charset, TY_MATRIX);
 }
+
+#else
+
+void i_factor_cmds() {
+}
+
+#endif
 
 //template int tmax(int const &, int const &);
 //template int tmin(int const &, int const &);

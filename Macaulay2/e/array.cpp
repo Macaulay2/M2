@@ -17,17 +17,14 @@ void array<T>::expand(int newtop)
   len = newlen;
 }
 
-#define ARRAY(T) array<T>
+#define ARRAY(T) array< T >
 
 #include "intarray.hpp"
 template class ARRAY(int);
-template class array< array<int> >;
-#if 0
-  // MES removed for Mac: template class ARRAY(ARRAY(int));
-#endif
+template class ARRAY(ARRAY(int));
 template class ARRAY(intarray);
-
 template class ARRAY(char *);
+
 #include "object.hpp"
 template class ARRAY(object);
 
@@ -41,7 +38,6 @@ template class ARRAY(Bag *);
 template class ARRAY(res_pair *);
 template class ARRAY(res_level *);
 template class ARRAY(res_degree *);
-
 template class ARRAY(int *);
 
 #include "ringelem.hpp"

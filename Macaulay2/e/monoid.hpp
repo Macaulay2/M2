@@ -43,8 +43,8 @@ public:
 	      int len, 
 	      Monoid *deg_monoid,
 	      const intarray &degs,
-	      int isgrp,
-	      int isskew);
+	      bool isgrp,
+	      bool isskew);
 };
 
 class Monoid : public type
@@ -108,7 +108,7 @@ public:
   void gcd(const int *m, const int *n, int *result) const;
   void monsyz(const int *m, const int *n, int *sm, int *sn) const;
 
-  int is_skew() const;
+  bool is_skew() const;
   int is_skew_var(int v) const;
   int skew_mult_sign(const int *m, const int *n) const;
   int skew_mult(const int *m, const int *n, int *result) const;

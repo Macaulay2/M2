@@ -2,7 +2,9 @@
 #ifndef _intarray_hh_
 #define _intarray_hh_
 
+#include <assert.h>
 #include "style.hpp"
+
 
 const int init_intarray_size = 16;
 

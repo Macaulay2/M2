@@ -10,7 +10,7 @@
 
 FractionField::FractionField(const Ring *RR) 
 : Ring(RR->charac(),RR->total_n_vars(), RR->total_n_vars(),
-	this, trivial_monoid, RR->degree_monoid()),
+	this /* Visual C WARNING */, trivial_monoid, RR->degree_monoid()),
   R(RR)
 {
   MINUS_ONE = R->from_int(-1);
@@ -232,7 +232,7 @@ bool FractionField::is_equal(const ring_elem a, const ring_elem b) const
   else
     {
       ring_elem h = subtract(a,b);
-      int result = is_zero(h);
+      bool result = is_zero(h);
       remove(h);
       return result;
     }
@@ -434,13 +434,13 @@ ring_elem FractionField::divide(const ring_elem a, const ring_elem b, ring_elem 
   rem = from_int(0);
   return FRAC_RINGELEM(make_elem(top, bottom));
 }
-ring_elem FractionField::gcd(ring_elem a, ring_elem b) const
+ring_elem FractionField::gcd(const ring_elem a, const ring_elem b) const
 {
   if (is_zero(a) || is_zero(b)) return from_int(0);
   return from_int(1);
 }
 
-ring_elem FractionField::gcd_extended(ring_elem f, ring_elem, 
+ring_elem FractionField::gcd_extended(const ring_elem f, const ring_elem, 
 				ring_elem &u, ring_elem &v) const
 {
   v = from_int(0);

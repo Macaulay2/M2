@@ -94,5 +94,3 @@ void RingMap::text_out(ostream &o) const
 {
   obj->text_out(o);
 }
-
-

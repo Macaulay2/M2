@@ -335,7 +335,8 @@ void cmd_res(object &om, object &oalg, object &olength, object &odegree, object 
   int maxlev = olength->int_of();
   int strategy = ostrategy->int_of();
   intarray *deg = odegree->intarray_of();
-  int usedeg, maxdeg, origsyz;
+  bool usedeg;
+  int maxdeg, origsyz;
   res2_comp *p0;
   res_comp *p1;
   gbres_comp *p2;

@@ -14,6 +14,8 @@
 //
 // Finally, the error flag is cleared upon giving control back to the front end.
 
+#include <stdio.h>
+
 static const int MAXERROR = 100;
 static bool iserror = false;
 static char errmsg[MAXERROR] = {'\0'};

@@ -303,7 +303,7 @@ static int compare_type = 0;
 static int EXP1[1000], EXP2[1000];
 int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
 {
-  int cmp, df, dg;
+  int cmp, df, dg, i;
 //  if (f->compare_num < g->compare_num) return 1;
 //  if (f->compare_num > g->compare_num) return -1;
   // MES: what to do if we obtain equality? Here is one way:
@@ -313,7 +313,7 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
     // on the usual set of variables
     M->to_expvector(f->base_monom, EXP1);
     M->to_expvector(g->base_monom, EXP2);
-    for (int i=0; i<M->n_vars(); i++)
+    for (i=0; i<M->n_vars(); i++)
       {
 	if (EXP1[i] < EXP2[i]) return -1;
 	if (EXP1[i] > EXP2[i]) return 1;
@@ -324,7 +324,7 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
     // on the usual set of variables
     M->to_expvector(f->base_monom, EXP1);
     M->to_expvector(g->base_monom, EXP2);
-    for (int i=0; i<M->n_vars(); i++)
+    for (i=0; i<M->n_vars(); i++)
       {
 	if (EXP1[i] < EXP2[i]) return 1;
 	if (EXP1[i] > EXP2[i]) return -1;
@@ -335,7 +335,7 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
     // on the reversed set of variables
     M->to_expvector(f->base_monom, EXP1);
     M->to_expvector(g->base_monom, EXP2);
-    for (int i=M->n_vars()-1; i>=0; i--)
+    for (i=M->n_vars()-1; i>=0; i--)
       {
 	if (EXP1[i] < EXP2[i]) return -1;
 	if (EXP1[i] > EXP2[i]) return 1;
@@ -346,7 +346,7 @@ int res_comp::compare_res_pairs(res_pair *f, res_pair *g) const
     // on the reversed set of variables
     M->to_expvector(f->base_monom, EXP1);
     M->to_expvector(g->base_monom, EXP2);
-    for (int i=M->n_vars()-1; i>=0; i--)
+    for (i=M->n_vars()-1; i>=0; i--)
       {
 	if (EXP1[i] < EXP2[i]) return 1;
 	if (EXP1[i] > EXP2[i]) return -1;

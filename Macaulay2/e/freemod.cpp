@@ -1439,10 +1439,10 @@ void FreeModule::degree(const vec f, int *degf) const
   degree_monoid()->remove(e);
 }
 
-int FreeModule::is_homogeneous(const vec f) const
+bool FreeModule::is_homogeneous(const vec f) const
 {
   if (f == NULL) return 1;
-  int result = 1;
+  bool result = 1;
   int *d = degree_monoid()->make_one();
   int *e = degree_monoid()->make_one();
   degree(f, d);

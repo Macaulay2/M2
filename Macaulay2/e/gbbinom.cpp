@@ -813,10 +813,10 @@ void binomialGB_comp::enlarge(const Ring *newR, int *wts)
   // We need to change all of the monomials in sight.
   Gmin->enlarge(R);
   Pairs->enlarge(R);
-
-  for (int i=0; i<Gens.length(); i++)
+  int i;
+  for (i=0; i<Gens.length(); i++)
     R->translate_binomial(old_ring, Gens[i]->f);
-  for (int i=0; i<G.length(); i++)
+  for (i=0; i<G.length(); i++)
     R->translate_binomial(old_ring, G[i]->f);
 
   delete old_ring;
@@ -970,7 +970,7 @@ int binomialGB_comp::contains(const Matrix &/*m*/)
   return 0;
 }
 
-bool binomialGB_comp::is_equal(const gb_comp */*q*/)
+bool binomialGB_comp::is_equal(const gb_comp * /*q*/)
 {
   *gError << "MES: not implemented yet";
   return false;

@@ -2,15 +2,10 @@
 #ifndef _style_hh_
 #define _style_hh_
 
-#ifdef VISUALC
-#include <iostream>
-#include <iomanip>
-#include <strstream>
-#else
+
 #include <iostream.h>
 #include <iomanip.h>
 #include <strstream.h>
-#endif
 
 #include <stddef.h>
 #include <stdlib.h>

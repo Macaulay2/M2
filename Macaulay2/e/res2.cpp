@@ -366,7 +366,7 @@ int res2_comp::calc(const int *DegreeLimit,
 
 void res2_comp::initialize(Matrix mat, 
 			   int LengthLimit,
-			   int UseDegreeLimit,
+			   bool UseDegreeLimit,
 			   int SlantedDegreeLimit,
 			   int SortStrategy)
 {
@@ -506,7 +506,7 @@ void res2_comp::display_order(int sortval) const
 
 res2_comp::res2_comp(Matrix m, 
 		     int LengthLimit, 
-		     int UseDegreeLimit,
+		     bool UseDegreeLimit,
 		     int SlantedDegreeLimit,
 		     int SortStrategy)
 {

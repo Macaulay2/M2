@@ -295,7 +295,7 @@ public:
   void    degree         (const vec f, int *d)         const;
   void    degree_weights (const vec f, const int *wts, int &lo, int &hi) const;
   int     primary_degree (const vec f)                 const;
-  int     is_homogeneous (const vec f)                 const;
+  bool    is_homogeneous (const vec f)                 const;
   vec homogenize     (const vec f, int v, int deg, const int *wts) const;
   vec homogenize     (const vec f, int v, const int *wts)          const;
 

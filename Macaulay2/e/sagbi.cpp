@@ -71,43 +71,53 @@ void sagbi_comp::add_generators(const Matrix &m)
 
 int sagbi_comp::calc(const int *deg, const intarray &stop_conditions)
 {
+return 0;
 }
 
 Matrix sagbi_comp::reduce(const Matrix &m, Matrix &lift)
 {
+return 0;
 }
 
 Vector sagbi_comp::reduce(const Vector &v, Vector &lift)
 {
+return 0;
 }
 
 int sagbi_comp::contains(const Matrix &m)
 {
+return 0;
 }
 
 bool sagbi_comp::is_equal(const gb_comp *q)
 {
+return 0;
 }
 
 // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
 Matrix sagbi_comp::min_gens_matrix()
 {
+return 0;
 }
 
 Matrix sagbi_comp::initial_matrix(int n)
 {
+return 0;
 }
 
 Matrix sagbi_comp::gb_matrix()
 {
+return 0;
 }
 
 Matrix sagbi_comp::change_matrix()
 {
+return 0;
 }
 
 Matrix sagbi_comp::syz_matrix()
 {
+return 0;
 }
 
 void sagbi_comp::stats() const

@@ -12,7 +12,7 @@
 #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-Z::Z(const Monoid *D) : Ring(0,0,0,this,trivial_monoid,D)
+Z::Z(const Monoid *D) : Ring(0,0,0,this /* Visual C WARNING */,trivial_monoid,D)
 {
   mpz_stash = new stash("Z", sizeof(mpz_t));
   zero_elem = new_elem();
@@ -257,14 +257,14 @@ ring_elem Z::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
   rem = MPZ_RINGELEM(resultmod);
   return MPZ_RINGELEM(result);
 }
-ring_elem Z::gcd(ring_elem f, ring_elem g) const
+ring_elem Z::gcd(const ring_elem f, const ring_elem g) const
 {
   mpz_ptr result = new_elem();
   mpz_gcd(result, MPZ_VAL(f), MPZ_VAL(g));
   return MPZ_RINGELEM(result);
 }
 
-ring_elem Z::gcd_extended(ring_elem f, ring_elem g, 
+ring_elem Z::gcd_extended(const ring_elem f, const ring_elem g, 
 			    ring_elem &u, ring_elem &v) const
 {
   mpz_ptr result = new_elem();

@@ -71,8 +71,8 @@ public:
   virtual ring_elem invert(const ring_elem f) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const;
-  virtual ring_elem gcd(ring_elem f, ring_elem g) const;
-  virtual ring_elem gcd_extended(ring_elem f, ring_elem g, 
+  virtual ring_elem gcd(const ring_elem f, const ring_elem g) const;
+  virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
 				  ring_elem &u, ring_elem &v) const;
 
   virtual ring_elem random() const;
