@@ -2023,7 +2023,7 @@ document {
      "The method installed by the code above is automatically inherited by 
      subclasses of ", TT "X", " and ", TT "Y", ".  Here is a brief
      description of the way this works.  Suppose ", TT "X", " is the 
-     ", TO "parent", " of ", TT "P", " and ", TT "Y", " is the parent of X.  When 
+     ", TO "parent", " of ", TT "P", " and ", TT "Y", " is the parent of ", TT "X", ".  When 
      a sum ", TT "p+q", " is evaluated where the class of ", TT "p", " is 
      ", TT "P", " and the class of ", TT "q", " is ", TT "Q", ", then the binary
      method for ", TT "P+Q", " is applied, unless there isn't one, in which
