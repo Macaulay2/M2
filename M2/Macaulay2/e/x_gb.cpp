@@ -118,7 +118,7 @@ enum ComputationStatusCode rawStatus1(Computation *C)
   return C->status();
 }
 
-const MatrixOrNull *rawGBMatrix(Computation *C)
+const MatrixOrNull *rawGBGetMatrix(Computation *C)
   /* Get the minimal, auto-reduced GB of a GB computation.
      Each call to this will produce a different raw matrix */
 {

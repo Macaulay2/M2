@@ -1151,22 +1151,7 @@ extern "C" {
 
 enum ComputationStatusCode
 {
-  COMP_NEED_RESIZE = -3,
-  COMP_ERROR = -2,
-  COMP_INTERRUPTED = -1,
-  COMP_DONE = 0,
-  COMP_DONE_DEGREE_LIMIT = 1,
-  COMP_DONE_LENGTH_LIMIT = 2,
-  COMP_DONE_SYZYGY_LIMIT = 3,
-  COMP_DONE_PAIR_LIMIT   = 4,
-  COMP_DONE_GB_LIMIT     = 5,
-  COMP_DONE_SYZ_LIMIT    = 6,
-  COMP_DONE_CODIM        = 7,
-  COMP_DONE_MIN_GENS     = 8,
-  COMP_DONE_STEPS        = 9,  // Possible Hilbert function return value
-  COMP_DONE_SUBRING_LIMIT= 10,
-  COMP_NOT_STARTED = 11,
-  COMP_COMPUTING = 100
+#include "statuscodes.h"
 };
 
 enum StrategyValues
@@ -1235,7 +1220,7 @@ enum gbTraceValues
 						 const RingElement *h); /* drg: connected rawGBSetHilbertFunction */
 
 
-  const MatrixOrNull *rawGBMatrix(Computation *C);
+  const MatrixOrNull *rawGBGetMatrix(Computation *C);
   /* Get the minimal, auto-reduced GB of a GB computation.
      Each call to this will produce a different raw matrix */
 

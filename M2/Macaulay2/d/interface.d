@@ -2070,6 +2070,12 @@ export rawGBSetStop(e:Expr):Expr := (
      );
 setupfun("rawGBSetStop", rawGBSetStop);
 
+export rawGBGetMatrix(e:Expr):Expr := (
+     when e is G:RawComputation do 
+     toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBGetMatrix(", "(Computation *)", G, ")" ))
+     else WrongArg(1,"a raw Groebner basis computation"));
+setupfun("rawGBGetMatrix", rawGBGetMatrix);
+
 export rawResolutionGetMatrix(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 

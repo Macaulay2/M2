@@ -42,6 +42,7 @@ stoppingOptionDefaults := new OptionTable from {
      SubringLimit => infinity,			    -- stopping condition (subring_limit) (not for res computations)
      StopWithMinimalGenerators => false		    -- stopping condition (just_min_gens) (not for res computations)
      -- LengthLimit => null -- is only for res computations
+     -- StepLimit, maybe
      }
 
 
