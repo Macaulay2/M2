@@ -353,13 +353,41 @@ void M2_init_gmp() {
 #endif
      }
 
+/* we test gc to whether it properly marks pointers found in registers */
+static void uniq(void *p, ...) {
+  va_list a;
+  void *q[100];
+  int n = 0, i, j;
+  q[n++] = p;
+  va_start(a,p);
+  for (;(q[n] = va_arg(a,void *));n++) ;
+  va_end(a);
+  for (i=0; i<n; i++) for (j=0; j<i; j++) if (q[i] == q[j]) {
+    fprintf(stderr,
+	    "%s: error: gc library doesn't find all the active pointers!\n"
+	    "           Perhaps GC_push_regs was configured incorrectly.\n",
+	    progname
+	    );
+    exit(1);
+  }
+}
+static void testgc () {
+  uniq(
+       GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
+       GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
+       GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
+       GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
+       GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
+       (void *)0);
+}
+
 int main(argc,argv)
 int argc; 
 char **argv;
 {
      char dummy;
      extern char *GC_stackbottom;
-     char *p, **x;
+     char **x;
      char **saveenvp = NULL;
      int envc = 0;
      static int old_collections = 0;
@@ -537,7 +565,8 @@ char **argv;
 
      trap();
      progname = saveargv[0];
-     for (p=progname; *p; p++) if (*p=='/') progname = p+1;
+     /* for (p=progname; *p; p++) if (*p=='/') progname = p+1; */
+     testgc();
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
      M2_init_gmp();
