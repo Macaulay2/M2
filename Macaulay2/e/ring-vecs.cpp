@@ -1037,7 +1037,7 @@ vec Ring::vec_remove_monomial_factors(vec f, bool make_squarefree_only) const
   if (PR == 0) return copy_vec(f);
   if (f == 0) return 0;
 
-  int *exp = newarray(int,n_vars());
+  int *exp = newarray(int,PR->n_vars());
 
   Nterm *t = f->coeff;
   PR->getMonoid()->to_expvector(t->monom, exp); // Get the process started
@@ -1047,7 +1047,7 @@ vec Ring::vec_remove_monomial_factors(vec f, bool make_squarefree_only) const
 
   if (make_squarefree_only)
     // Now divide each term by exp[i]-1, if exp[i] >= 2
-    for (int i=0; i<n_vars(); i++)
+    for (int i=0; i<PR->n_vars(); i++)
       if (exp[i] >= 1) exp[i]--;
 
   vec result = vec_divide_by_expvector(exp, f);

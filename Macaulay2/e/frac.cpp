@@ -29,13 +29,10 @@ Ring::CoefficientType FractionField::coefficient_type() const
 
 int FractionField::n_fraction_vars() const
 {
-  const PolynomialRing *A = R_->cast_to_PolynomialRing();
-  assert(A != 0);
-  const Ring *K = A->Ncoeffs();
-  return A->n_vars();
+  return R_->n_vars();
 }
 
-bool FractionField::initialize_frac(const Ring *R) 
+bool FractionField::initialize_frac(const PolyRing *R) 
 {
   initialize_ring(R->charac(),
 		  R->n_vars(),
@@ -52,7 +49,7 @@ bool FractionField::initialize_frac(const Ring *R)
   return true;
 }
 
-FractionField *FractionField::create(const Ring *R)
+FractionField *FractionField::create(const PolyRing *R)
 {
   FractionField *result = new FractionField;
   result->initialize_frac(R);

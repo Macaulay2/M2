@@ -59,7 +59,6 @@ public:
   ////////////////////////
 
   int charac() const { return P; }
-  int n_vars() const { return _nvars; } // This will be 0 except for frac fields and poly rings.
 
   const Monoid * degree_monoid() const;
   const PolynomialRing *get_degree_ring() const { return degree_ring; }

@@ -3,6 +3,7 @@
 #define _frac_hh_
 
 #include "ring.hpp"
+#include "polyring.hpp"
 
 struct frac_elem
 {
@@ -12,7 +13,7 @@ struct frac_elem
 
 class FractionField : public Ring
 {
-  const Ring *R_;		// Base ring.  Assumed to be a domain.
+  const PolyRing *R_;		// Base ring.  Assumed to be a domain.
   ring_elem _MINUS_ONE;		// this is -1 in the ring R.
 
   frac_elem *new_frac_elem() const;
@@ -22,9 +23,9 @@ class FractionField : public Ring
 protected:
   FractionField() {}
   virtual ~FractionField() {}
-  bool initialize_frac(const Ring *R);
+  bool initialize_frac(const PolyRing *R);
 public:
-  static FractionField * create(const Ring *R);
+  static FractionField * create(const PolyRing *R);
 
   FractionField * cast_to_FractionField() { return this; }
   const FractionField * cast_to_FractionField() const { return this; }

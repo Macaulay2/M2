@@ -300,17 +300,23 @@ intarray RingElement::degree() const
 void RingElement::degree_weights(M2_arrayint wts, int &lo, int &hi) const
 {
   // Check that wts has same length as nvars
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (is_zero())
     {
       ERROR("zero element has no degree");
       return;
     }
-  if (wts->len != static_cast<unsigned int>(R->n_vars()))
+  if (P != 0)
+    {
+      ERROR("expected polynomial ring");
+      return;
+    }
+  if (wts->len != static_cast<unsigned int>(P->n_vars()))
     {
       ERROR("weight vector has incorrect length");
       return;
     }
-  R->degree_weights(val, wts, lo, hi);
+  P->degree_weights(val, wts, lo, hi);
 }
 
 M2_arrayint RingElement::multi_degree() const
@@ -331,12 +337,18 @@ M2_arrayint RingElement::multi_degree() const
 
 RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
 {
-  if (v < 0 || v >= R->n_vars())
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P != 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  if (v < 0 || v >= P->n_vars())
     {
       ERROR("homogenization: improper ring variable");
       return 0;
     }
-  if (wts == NULL || wts->len != static_cast<unsigned int>(R->n_vars()))
+  if (wts == NULL || wts->len != static_cast<unsigned int>(P->n_vars()))
     {
       ERROR("homogenization: improper weight function");
       return 0;
@@ -347,19 +359,25 @@ RingElement *RingElement::homogenize(int v, M2_arrayint wts) const
       return 0;
     }
   
-  RingElement *result = new RingElement(R, R->homogenize(val, v, wts));
+  RingElement *result = new RingElement(P, P->homogenize(val, v, wts));
   if (error()) return 0;
   return result;
 }
 
 RingElement *RingElement::homogenize(int v, int deg, M2_arrayint wts) const
 {
-  if (v < 0 || v >= R->n_vars())
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P != 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  if (v < 0 || v >= P->n_vars())
     {
       ERROR("homogenization: improper ring variable");
       return 0;
     }
-  if (wts == NULL || wts->len != static_cast<unsigned int>(R->n_vars()))
+  if (wts == NULL || wts->len != static_cast<unsigned int>(P->n_vars()))
     {
       ERROR("homogenization: improper weight function");
       return 0;
@@ -370,7 +388,7 @@ RingElement *RingElement::homogenize(int v, int deg, M2_arrayint wts) const
       return 0;
     }
   
-  RingElement *result = new RingElement(R, R->homogenize(val, v, deg, wts));
+  RingElement *result = new RingElement(R, P->homogenize(val, v, deg, wts));
   if (error()) return 0;
   return result;
 }

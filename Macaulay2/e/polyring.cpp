@@ -268,7 +268,10 @@ bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) con
   // case 1:  Rf = A[x]/J ---> A[x]/I  is one of the 'base_ring's of 'this'.
   // case 2:  Rf = A      ---> A[x]/I  is the ring of scalars
 
-  int nvars0 = n_vars() - Rf->n_vars();
+  const PolynomialRing *Rf1 = Rf->cast_to_PolynomialRing();
+  int nvars0 = n_vars();
+  if (Rf1 != 0)
+    nvars0 -= Rf1->n_vars();
   if (nvars0 == 0) 
     {
       result = copy(f);
@@ -286,7 +289,10 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 
   // We assume that Rg is one of the coefficient rings of 'this'
 
-  int nvars0 = n_vars() - Rg->n_vars();
+  const PolynomialRing *Rg1 = Rg->cast_to_PolynomialRing();
+  int nvars0 = n_vars();
+  if (Rg1 != 0)
+    nvars0 -= Rg1->n_vars();
   int *exp = newarray(int,nvars0);
   lead_logical_exponents(nvars0,f,exp);
   if (!ntuple::is_one(nvars0,exp))
@@ -1435,7 +1441,10 @@ int PolyRing::n_logical_terms(int nvars0, const ring_elem f) const
 
 ArrayPairOrNull PolyRing::list_form(const Ring *coeffR, const ring_elem f) const
 {
-  int nvars0 = n_vars() - coeffR->n_vars();
+  const PolynomialRing *coeffR1 = coeffR->cast_to_PolynomialRing();
+  int nvars0 = n_vars();
+  if (coeffR1 != 0)
+    nvars0 -= coeffR1->n_vars();
   int n = n_logical_terms(nvars0,f);
   Monomial_array *monoms = GETMEM(Monomial_array *, sizeofarray(monoms,n));
   RingElement_array *coeffs = GETMEM(RingElement_array *, sizeofarray(coeffs,n));
@@ -1466,18 +1475,18 @@ ArrayPairOrNull PolyRing::list_form(const Ring *coeffR, const ring_elem f) const
 
 ring_elem PolyRing::make_logical_term(const Ring *coeffR, const ring_elem a, const int *exp0) const
 {
-  int nvars0 = n_vars() - coeffR->n_vars();
+  const PolynomialRing *logicalK = coeffR->cast_to_PolyRing();
 
-  if (coeffR->n_vars() == 0) 
+  int nvars0 = n_vars();
+  if (logicalK == 0)
     {
       int *m = M_->make_one();
       M_->from_expvector(exp0,m);
       return make_flat_term(a,m);
     }
+  
+  nvars0 -= logicalK->n_vars();
 
-  // Otherwise coeffR is a polynomial ring
-  const PolynomialRing *logicalK = coeffR->cast_to_PolyRing();
-  assert(logicalK);
   Nterm head;
   Nterm *inresult = &head;
   int *exp = newarray(int,M_->n_vars());
@@ -1567,8 +1576,11 @@ ring_elem PolyRing::get_coeff(const Ring *coeffR, const ring_elem f, const int *
   // note: vp is a varpower monomial.
 {
 #warning "uses flat monomials"
+  const PolynomialRing *coeffR1 = coeffR->cast_to_PolynomialRing();
+  int nvars0 = n_vars();
+  if (coeffR1 != 0)
+    nvars0 -= coeffR1->n_vars();
 
-  int nvars0 = n_vars() - coeffR->n_vars();
   int *exp = newarray(int, nvars0);
   int *exp2 = newarray(int, n_vars()); // FLAT number of variables
   varpower::to_ntuple(nvars0, vp, exp);
@@ -1582,7 +1594,7 @@ ring_elem PolyRing::get_coeff(const Ring *coeffR, const ring_elem f, const int *
 	break;
     }
 
-  ring_elem result = get_logical_coeff(coeffR, t);
+  ring_elem result = get_logical_coeff(coeffR1, t);
   deletearray(exp2);
   deletearray(exp);
   return result;
