@@ -40,6 +40,11 @@ endif
 EXESUFFIX =
 
 ifdef CYGWIN32
+export OS   := Windows-95-98-NT
+export DESC := $(VERSION)-$(ARCH)-$(OS)
+endif
+
+ifdef CYGWIN32
 EXESUFFIX = .exe
 endif
 
@@ -108,6 +113,10 @@ ifdef CYGWIN32
 #	eval $ac_compile
 # to be replaced by expressions like
 #	eval `eval "echo $ac_compile"`
+endif
+
+ifeq "$(OS) $(ARCH)" "Linux alpha"
+AS = gcc -c -x assembler-with-cpp
 endif
 
 ifeq "$(CC)" "cl"

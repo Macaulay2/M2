@@ -244,7 +244,3 @@ allfiles: Makefile.secondary
 
 install:
 
-ifeq "$(CC)" "cl"
-x_relem.o : x_relem.cpp
-	$(CXX) -c `echo $(CXXFLAGS) | sed 's/-O[0-9] //'` $(CPPFLAGS) $< $(OUTPUT_OPTION)
-endif

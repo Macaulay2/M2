@@ -44,12 +44,8 @@ ifeq "$(OS)" "MS-DOS"
 SCRIPTS = ../bin/M2.bat ../bin/M2.arg
 endif
 
-ifeq "$(OS)" "CYGWIN32_95"
-SCRIPTS = ../bin/M2.bat
-endif
-
-ifeq "$(OS)" "CYGWIN32_NT"
-SCRIPTS = ../bin/M2.bat
+ifeq "$(OS)" "Windows-95-98-NT"
+SCRIPTS = ../bin/M2.bat ../bin/M2
 endif
 
 wc:; wc -l $(GFILES)
@@ -114,9 +110,14 @@ phase1 :: ../cache/Macaulay2-made
 	touch $@
 
 all:: $(SCRIPTS)
+ifeq "$(CC)" "cl"
+$(SCRIPTS) : ../util/setup.exe
+	cd ..; util/setup
+else
 $(SCRIPTS) : makeM2.m2
 	rm -f $(SCRIPTS)
 	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
+endif
 
 ../cache/Macaulay2-pre : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
 	rm -f ../cache/Macaulay2-tmp

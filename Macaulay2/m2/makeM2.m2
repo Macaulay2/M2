@@ -2,12 +2,12 @@
 
 split := s -> flatten apply(lines(s,"/"), i -> lines(i,"\\")) -- sigh...
 
+enquote := s -> "'" | s | "'"
+
 M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentDirectory()),-1)), 1)
 
 (
-  if version#"operating system" === "MS-DOS"
-  or version#"operating system" === "CYGWIN32_NT"
-  or version#"operating system" === "CYGWIN32_95"
+  if version#"operating system" === "Windows-95-98-NT"
   then (
        dossify := s -> concatenate between("\\",lines(s,"/"));
        "../bin/M2.arg"
@@ -25,7 +25,8 @@ M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentD
        << " @" << concatenate (M2HOME, "/bin/M2.arg") 
        << " %1 %2 %3 %4 %5 %6 %7 %8 %9" << endl
        << close;
-  ) else (
+       );
+  (
        args := new Manipulator from (
 	    if version#"dumpdata" then (
 		 o -> o
@@ -38,9 +39,9 @@ M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentD
 		 << " --"
 		 -- << " $TTY"
 		 << " "
-		 -- << format ( "-e path = {" | format "." | ", " | format "$M2HOME/m2" | "}" )
+		 -- << enquote ( "-epath={" | format "." | "," | format (M2HOME | "/m2") | "}" )
 		 << " "
-		 << format "-e runStartFunctions()" 
+		 << enquote "-e runStartFunctions()" 
 		 )
 	    else (
 		 o -> o
@@ -53,9 +54,9 @@ M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentD
 		 << " "
 		 << "-ephase=0"
 		 << " "
-		 -- << format ( "-e path = {" | format "." | ", " | format "$M2HOME/m2" | "}" )
+		 -- << enquote ( "-epath={" | format "." | "," | format (M2HOME | "/m2") | "}" )
 		 << " "
-		 << format "-e runStartFunctions()" 
+		 << enquote "-e runStartFunctions()" 
 		 )
 	    );
        FILENAME := "../bin/M2";

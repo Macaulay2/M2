@@ -1,3 +1,10 @@
+The way I compile Macaulay 2 under Windows NT is with the gnu tools package
+from Cygnus, and the Microsoft C compiler.
+
+-----------------------------------------------------------------------------
+The notes below are obsolete.
+-----------------------------------------------------------------------------
+
 Use Microsoft Visual C++ 5.0 with the workspace M2.dsw and set the active
 configuration to be "WindowsDistribution - Win32 Release".  It will produce the
 executable:

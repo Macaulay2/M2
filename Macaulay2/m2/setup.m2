@@ -7,13 +7,7 @@ if class path =!= List then path = { "." }
 OS := "operating system"
 
 pathSeparator = (
-	if version#OS === "MACOS"	then "" 
-	else
-	if version#OS === "Windows NT"
-	or version#OS === "MS-DOS"
-	-- or version#OS === "CYGWIN32_NT"
-	-- or version#OS === "CYGWIN32_95"
-	then "\\"
+	if version#OS === "MACOS"	    then ":" 
 	else "/"
 	)
 
@@ -173,7 +167,10 @@ load = (filename) -> (
 oldinput := input
 erase quote input
 input = (filename) -> (
-     if not tryload(filename,oldinput) then error ("can't open file ", filename)
+     oldnotify := notify;
+     notify = false;
+     if not tryload(filename,oldinput) then error ("can't open file ", filename);
+     notify = oldnotify;
      )
 
 needs = s -> if not loaded#?s then load s
