@@ -997,11 +997,8 @@ tex PARA := x -> concatenate(///
 
 text PARA := x -> concatenate(newline, newline, apply(x,text))
 
-text EXAMPLE := x -> concatenate apply(x,i -> text PRE i)
-html EXAMPLE := x -> (
-     x = toList x;
-     concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," = ",x#i)})
-     )
+text EXAMPLE := x -> concatenate apply(#x, i -> text PRE concatenate("i",toString (i+1)," : ",x#i))
+html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
 text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y#1, newline)))
