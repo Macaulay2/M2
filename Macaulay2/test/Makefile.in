@@ -18,14 +18,14 @@ dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3
 	@ echo testing dumpdata
 	@ env M2HOME=.. ../libexec/Macaulay2 -q \
 		   '-eloaddata("../libexec/Macaulay2-$(ARCH)-data")' \
-		-- '-epath=append(path,"../m2")' '-erunStartFunctions()' \
+		-- '-epath=append(path,"@srcdir@/../packages/")' '-erunStartFunctions()' \
 		   '-eerrorDepth(0)' \
 		   -silent @srcdir@/dumpdata.1 \
 		   '-eexit(0)'
 	@ echo exit 0 \
 	  | env M2HOME=.. ../libexec/Macaulay2 -q \
 		   '-eloaddata("../libexec/Macaulay2-$(ARCH)-data")' \
-		-- '-epath=append(path,"../m2")' \
+		-- '-epath=append(path,"@srcdir@/../packages/")' \
 		   '-erunStartFunctions()' '-eerrorDepth(0)' \
 		   -silent @srcdir@/dumpdata.2 \
 		-- @srcdir@/dumpdata.3
@@ -33,9 +33,13 @@ dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3
 endif
 
 ifneq "$(DUMPDATA)" "no"
-ARGS := -q '-eloaddata("../$(DUMPDATAFILE)")' -- '-epath=append(path,"../m2")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
+ARGS := -q '-eloaddata("../$(DUMPDATAFILE)")' -- \
+	'-epath=append(path,"@srcdir@/../packages/")' \
+	'-erunStartFunctions()' '-eerrorDepth(0)' -silent
 else
-ARGS := -q -ephase=1 ../m2/setup.m2 -ephase=0 '-erunStartFunctions()' '-eerrorDepth(0)' -silent
+ARGS := -q -ephase=1 @srcdir@/../m2/setup.m2 -ephase=0 \
+	'-epath=append(path,"@srcdir@/../packages/")' \
+	'-erunStartFunctions()' '-eerrorDepth(0)' -silent
 endif
 
 %.okay : %.m2
