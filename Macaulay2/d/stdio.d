@@ -407,24 +407,7 @@ export filbuf(o:file):int := (
 	  );
      n := length(o.inbuffer)-o.insize;
      if n == 0 then return(0);
-     r := read(o.infd,o.inbuffer,n,o.insize);
-     if r == ERROR then (fileErrorMessage(o,"read");)
-     else if r == 0 then (o.eof = true;)
-     else o.insize = o.insize + r;
-     r);
-
-export filbufPrompt(o:file,prompt:string):int := (
-     -- returns number of bytes added to buffer, or ERROR if a system call had an error
-     if ! o.input then return(0);
-     if o.inindex > 0
-     then (
-	  o.insize = o.insize - o.inindex;
-	  for i from 0 to o.insize - 1 do o.inbuffer.i = o.inbuffer.(i+o.inindex);
-	  o.inindex = 0;
-	  );
-     n := length(o.inbuffer)-o.insize;
-     if n == 0 then return(0);
-     r := readPrompt(o.infd,o.inbuffer,n,o.insize,prompt);
+     r := readPrompt(o.infd,o.inbuffer,n,o.insize,o.prompt());
      if r == ERROR then (fileErrorMessage(o,"read");)
      else if r == 0 then (o.eof = true;)
      else o.insize = o.insize + r;
@@ -479,24 +462,11 @@ echoLine(o:file):void := (
 	  i = i+1;
 	  ));
 
-prepare(o:file):int := (			   -- we are at the beginning of a input line, so a prompt is needed; may return ERROR
-     e := if o.output then o else stdout;
+prepare(o:file):int := (
      o.bol = false;
-     if haveLine(o) then (				    -- in this case, we've been reading ahead, but we want to issue the prompt anyway
-	  s := o.prompt();
-	  e << s;
-	  flush(e);
-	  )
-     else (
-	  if ERROR == filbufPrompt(o,o.prompt()) then return(ERROR);
-	  );
+     if ERROR == filbuf(o) then return(ERROR);
      if o.echo then echoLine(o);
      0);
-
-export filbuf2(o:file):int := (
-     if !o.input then return(EOF);
-     if o.bol then if ERROR == prepare(o) then return(ERROR);
-     filbuf(o));
 
 putdigit(o:file,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putdigit(o:varstring,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;

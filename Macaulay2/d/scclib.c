@@ -391,7 +391,10 @@ static int readPrompt(int fd,char *buf,int len,char *prompt) {
   static int plen;		/* number of chars in p */
   static int i;			/* number of chars in p already returned */
   int r;			/* number of chars to return this time */
-  if (fd != STDIN) {
+  if (fd != STDIN) {		/* readline() works only with stdin */
+    if (*prompt) {
+      write(STDOUT,prompt,strlen(prompt)); /* ignoring error return, sigh! */
+    }
     return read(fd,buf,len);
   }
   if (p == NULL) {
