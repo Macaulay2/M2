@@ -193,7 +193,7 @@ stderr << "warning: flattening not rewritten yet" << endl
 -- rawDirectSum, rawTensor
 -- rawDual, rawSymmetricPower, rawExteriorPower, rawSubmodule
 -- toString
--- TO BE TESTED: rawFreeModule mat, rawGetSchreyer, 
+-- TO BE TESTED: rawFreeModule mat, rawGetSchreyer
 -- TO BE WRITTEN: hash 
 R = polyring(rawZZ(), (symbol a .. symbol f))
 F = rawFreeModule(R,5)
@@ -257,6 +257,7 @@ b = rawRingVar(R2,1,1)
 F = rawFreeModule(R2,4)
 elems = toList apply(0..3, j -> toList apply(0..3, i -> rawRingVar(R2,i+j,1)))
 m = rawMatrix1(F,4,toSequence flatten elems,false)
+
 
 
   --------------------------

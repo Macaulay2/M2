@@ -218,6 +218,18 @@ int Ring::primary_degree(const ring_elem) const
   return 0;
 }
 
+int Ring::index_of_var(const ring_elem a) const
+{
+  return -1;
+}
+
+M2_arrayint Ring::support(const ring_elem a) const
+{
+  M2_arrayint result = makearrayint(0);
+  return result;
+}
+
+
 ////////////////////////////////////////////
 // Translation gbvector <--> ringelem/vec //
 ////////////////////////////////////////////

@@ -361,6 +361,43 @@ ring_elem PolynomialRing::var(int v, int n) const
   return result;
 }
 
+int PolynomialRing::index_of_var(const ring_elem a) const
+{
+  Nterm *f = a;
+  if (f->next != 0) return -1;
+  if (!K_->is_equal(f->coeff, K_->from_int(1))) return -1;
+  M_->to_expvector(f->monom, _EXP1);
+  int result = -1;
+  for (int i=0; i<n_vars(); i++)
+    if (_EXP1[i] > 1) return -1;
+    else if (_EXP1[i] == 1)
+      {
+	if (result > 0) return -1;
+	result = i;
+      }
+  return result;
+}
+
+M2_arrayint PolynomialRing::support(const ring_elem a) const
+{
+  for (int i=0; i<n_vars(); i++) _EXP1[i] = 0;
+  for (const Nterm *f = a; f != 0; f = f->next)
+    {
+      M_->to_expvector(f->monom, _EXP2);
+      for (int j=0; j<n_vars(); j++)
+	if (_EXP2[j] != 0) _EXP1[j] = 1;
+    }
+  int nelems = 0;
+  for (int i=0; i<n_vars(); i++)
+    if (_EXP1[i] > 0) nelems++;
+  M2_arrayint result = makearrayint(nelems);
+  int next = 0;
+  for (int i=0; i<n_vars(); i++)
+    if (_EXP1[i] > 0)
+	result->array[next++] = i;
+  return result;
+}
+
 bool PolynomialRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   // case 1:  Rf = A[x]/J ---> A[x]/I  is one of the 'base_ring's of 'this'.

@@ -468,6 +468,21 @@ int IM2_RingElement_n_terms(const RingElement *a)
   return a->n_terms();
 }
 
+int IM2_RingElement_index_if_var(const RingElement *f)
+  /* if f is a variable of its ring, then the index of that variable is returned.
+     If f isnot a variable, then -1 is returned. */
+{
+  const Ring *R = f->get_ring();
+  return R->index_of_var(f->get_value());
+}
+
+M2_arrayint IM2_RingElement_indices(const RingElement *f)
+  /* The list of indices of variables which occur in f is returned. */
+{
+  const Ring *R = f->get_ring();
+  return R->support(f->get_value());
+}
+
 ArrayPairOrNull IM2_RingElement_list_form(const RingElement *f)
 {
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
