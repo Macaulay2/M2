@@ -269,7 +269,7 @@ fixup ANCHOR     := identity
 fixup List       := z -> fixup SEQ z
 fixup Sequence   := z -> fixup SEQ z
 fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
-fixup UL         := z -> splice apply(z, i -> fixup if class i === TO then TOH i#0 else i)
+fixup UL         := z -> splice apply(z, i -> fixup if class i === TO then TOH {i#0} else i)
 fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 fixup TO2        := x -> TO2{ makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 fixup TOH        := x -> TOH{ makeDocumentTag x#0 }
@@ -435,7 +435,7 @@ fixupTable := new HashTable from {
      SeeAlso => (key,v) -> if v =!= {} and v =!= null then fixup SEQ { HEADER3 "See also", UL (TO \ enlist v) },
      Subnodes => (key,v) -> MENU apply(nonNull enlist v, x -> fixup (
 	       if class x === TO then x
-	       else if class x === TOH then TO x#0
+	       else if class x === TOH then TO {x#0}
 	       else if class x === String then x
 	       else error ("unrecognizable Subnode list item: ",x)))
      }
@@ -581,12 +581,12 @@ moreGeneral := s -> (
 
 -----------------------------------------------------------------------------
 
-optTO := i -> if getDoc i =!= null then fixup SEQ{ TOH i } else formatDocumentTagTO i
+optTO := i -> if getDoc i =!= null then fixup SEQ{ TOH {i} } else formatDocumentTagTO i
 optTOCLASS := i -> (if getDoc i =!= null then (
 	  -- we might want a new type of TO so that in info mode this would look like this:
 	  --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)
 	  -- fixup SEQ { TO i, " (", OFCLASS class value i, ")", commentize headline i }
-	  fixup SEQ{ TOH i }
+	  fixup SEQ{ TOH {i} }
 	  )
      else formatDocumentTagTO i)
 
@@ -943,9 +943,9 @@ documentation Sequence := key -> (
 	  Hypertext fixuptop ( title key, synopsis key, makeDocBody key, caveat key,
 	       PARA BOLD "Further information", 
 	       fixup UL {
-		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT toString default },
-		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
-		    SEQ{ "Option name: ", TOH opt }
+		    SEQ{ "Default value: ", if hasDocumentation default then TOH {default} else TT toString default },
+		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
+		    SEQ{ "Option name: ", TOH {opt} }
 		    },
 	       seealso key, theMenu key ))
      else (						    -- method key
