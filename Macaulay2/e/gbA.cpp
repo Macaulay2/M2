@@ -1076,11 +1076,10 @@ int gbA::contains(const Matrix *m)
   return G->contains(m);
 }
 
-enum ComputationStatusCode gbA::gb_status(int *degree)
+int gbA::gb_complete_thru_degree()
   // The computation is complete up through this degree.
 {
-  *degree = _complete_thru_this_degree;
-  return status();
+  return _complete_thru_this_degree;
 }
 
 void gbA::text_out(buffer &o)

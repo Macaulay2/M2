@@ -455,6 +455,7 @@ bool Matrix::get_entry(int r, int c, ring_elem &a) const
 
 int Matrix::is_homogeneous() const
 {
+#warning "check the ring too!"
   int *d = degree_monoid()->make_one();
   for (int i=0; i<n_cols(); i++)
     {

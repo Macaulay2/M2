@@ -118,6 +118,15 @@ enum ComputationStatusCode rawStatus1(Computation *C)
   return C->status();
 }
 
+int rawStatus2(Computation *C)
+{
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    return G->complete_up_through_this_degree();
+  ERROR("computation type unknown or not implemented");
+  return 0;
+}
+
 const MatrixOrNull *rawGBGetMatrix(Computation *C)
   /* Get the minimal, auto-reduced GB of a GB computation.
      Each call to this will produce a different raw matrix */

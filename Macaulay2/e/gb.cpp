@@ -1274,12 +1274,11 @@ int GB_comp::contains(const Matrix *m)
   return -1;
 }
 
-enum ComputationStatusCode GB_comp::gb_status(int *degree)
+int GB_comp::gb_complete_thru_degree()
   // The computation is complete up through this degree.
 {
-  *degree = _this_degree - 1;
+  return _this_degree - 1;
 #warning "set *degree correctly"
-  return status();
 }
 
 void GB_comp::text_out(buffer &o)

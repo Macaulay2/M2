@@ -1193,6 +1193,10 @@ enum gbTraceValues
 
   enum ComputationStatusCode rawStatus1(Computation *C);
 
+  int rawStatus2(Computation *C);
+  /* The computation is complete up to and including this degree.
+     The exact meaning of 'degree' is computation specific */
+
   const M2_string IM2_GB_to_string(Computation *C); /* drg: connected, in actors4.d */
 
   int IM2_GB_hash(const Computation *C); /* drg: connected, in basic.d */

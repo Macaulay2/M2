@@ -18,33 +18,43 @@ rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp -- Groebner basis
 assert(m == mat{{z,y,x}})
 
-Gcomp = rawGB(G,true,3,false,0,0,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) 
+Gcomp = rawGB(G,true,3,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp -- Groebner basis
 assert(m == mat{{z,y,x}})
 
-msyz = rawResolutionGetMatrix(Gcomp,2,false)
+msyz = rawGBSyzygies Gcomp
 zeroelem = rawFromNumber(R1,0)
 assert(msyz == mat{{zeroelem,z,y},{z,zeroelem,-x},{-y,-x,zeroelem}})
 
+-- Test 1Z.
+G = mat {{x,y^2,z^3}}
+Gcomp = rawGB(G,false,0,{},false,0,2,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp -- Groebner basis
+
+
 -- Test 1A.
 G = mat {{x,y,z^2, x*z+z^2}}
-Gcomp = rawGB(G,false,0,false,0,0,0)
-
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp -- Groebner basis
 assert(m == mat{{y,x,z^2}})
-m = rawResolutionGetMatrix(Gcomp,1,true) -- mingens
-assert(m == mat{{y,x,z^2}})
+m1 = rawGBMinimalGenerators Gcomp -- mingens
+assert(m1 == mat{{y,x,z^2}})
 
 -- Test 2. 
 G = mat {{x*y-y^2, x^2}}
-Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp -- Groebner basis
 assert(m == mat{{x*y-y^2, x^2, y^3}})
 
-Gcomp = rawGB(G,true,-1,false,0,0,0)
-m = rawResolutionGetMatrix(Gcomp,2,false) -- syz
-m = rawResolutionGetMatrix(Gcomp,1,false) -- gb
-
+Gcomp = rawGB(G,true,-1,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBSyzygies Gcomp
+m = rawGBGetMatrix Gcomp
+rawStatus1 Gcomp
 -- Test 3. 
 
 G = mat{{(3*x+y+z)^2, (7*x+2*y+3*z)^2}}
