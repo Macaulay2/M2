@@ -23,6 +23,7 @@ record = (
 	  )
      )
 
+
  -- ignore TO; find MENU, switch, descend
 reach1 = method(SingleArgumentDispatch=>true) 
 
@@ -32,6 +33,7 @@ reach2 = method(SingleArgumentDispatch=>true)
 reach1(Thing   ) := identity
 reach1(Sequence) :=
 reach1(HtmlList) := x -> scan(x,reach1)
+reach1(List    ) := x -> scan(x,reach1)
 reach1(MENU    ) := reach2
 reach1(TO      ) := (x) -> (
      node := x#0;
@@ -41,9 +43,10 @@ reach1(TO      ) := (x) -> (
 reach2(Thing   ) := identity
 reach2(Sequence) :=
 reach2(HtmlList) := x -> scan(x,reach2)
-reach2(SHIELD)   := reach1
+reach2(List    ) := x -> scan(x,reach2)
+reach2(SHIELD  ) := reach1
 reach2(TO      ) := (x) -> (
-     node := x#0;
+     node := getDocumentationTag x#0;
      if not fileNumberTable#?node
      then (
 	  record node;
@@ -117,7 +120,8 @@ crossReference := (key,text) -> (
 	  if fileNumberTable#?key
 	  then sectionNumberTable#(fileNumberTable#key)
 	  else (
-	       stderr << "warning: documentation for key '" << key << "' not found" << endl;
+	       error("warning: documentation for key '", key, "' not found");
+	       -- stderr << "warning: documentation for key '" << key << "' not found" << endl;
 	       "???"
 	       )
 	  );
@@ -127,15 +131,11 @@ crossReference := (key,text) -> (
      )
 
 booktex = method(SingleArgumentDispatch=>true)
-booktex TO  := x -> (
-     if class x#0 === String
-     then crossReference(x#0, concatenate x)
-     else crossReference(formatDocumentTag x#0, name x#0)
-     )
+booktex TO  := x -> crossReference(getDocumentationTag x#0, formatDocumentTag x#0)
 
 menuLevel := 2
 
-booktex MENU := x -> (
+booktex MENU := x -> concatenate(
      ///
 \begingroup
 \parskip=0pt
@@ -166,10 +166,14 @@ booktex HREF := s -> (
 	  "\\special{html:<A href=\"",
 	  ttLiteral s#0,
 	  "\">}",
-	  booktex s#1,
+	  booktex s#-1,
 	  "\\special{html:</A>}"
 	  )
-     else booktex {s#1, " (the URL is ", TT s#0, ")"}
+     else (
+	  if #s === 2
+	  then booktex {s#1, " (the URL is ", TT s#0, ")"}
+	  else booktex TT s#0
+	  )
      )
 
 booktex TEX := identity
@@ -186,10 +190,10 @@ booktex TEX := identity
 booktex IMG := x -> ""
 booktex Nothing := x -> ""
 booktex Boolean := booktex Symbol := string
-booktex BasicList := booktex Sequence := x -> apply(x,booktex)
+booktex BasicList := booktex Sequence := x -> concatenate apply(x,booktex)
 booktex String := cmrLiteral
-booktex ITALIC := x -> ("{\\sl ",booktex toList x,"}")
-verbatim = x -> (
+booktex ITALIC := x -> concatenate("{\\sl ",booktex toList x,"}")
+verbatim = x -> concatenate (
      "\\beginverbatim%", newline,
      ttLiteral concatenate x,
      "\\endverbatim{}"
