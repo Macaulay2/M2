@@ -142,15 +142,23 @@ loadprint(s:string):Expr := (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,prompt);
 	  r := readevalprint(file);
-	  close(file);
-	  when r is Error do r else True));
+	  t := close(file);
+	  when r is Error do r 
+	  else (
+	       if t == ERROR
+	       then errorExpr("error closing file") 
+	       else True)));
 load(s:string):Expr := (
      when openTokenFile(s)
      is errmsg do False
      is file:TokenFile do (
 	  r := readeval(file);
-	  close(file);
-	  when r is Error do r else True));
+	  t := close(file);
+	  when r is Error do r
+	  else (
+	       if t == ERROR
+	       then errorExpr("error closing file") 
+ 	       else True)));
 
 load(e:Expr):Expr := (
      when e
