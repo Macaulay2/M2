@@ -5,6 +5,8 @@ CONFIGURE_ENVIRON = \
 	CFLAGS="-O3 -fexpensive-optimizations" \
 	CXXFLAGS="-O3 -fexpensive-optimizations"
 
+-include Makefile-configure.overrides
+
 # for CC=cl we want CXXFLAGS and CFLAGS = -O2 -Zi -nologo -G5 -W3 -GR -GX
 
 ## to build:
