@@ -12,7 +12,7 @@ all::
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
-M2_PACKAGE_NAME = undefined
+
 package = Macaulay2-$(PACKAGE_VERSION)
 ARCH    = @ARCH@
 OS      = @OS@
@@ -70,39 +70,112 @@ endif
 
 # common layout
 
-bindir = $(target)/bin
-libdir = $(target)/lib
-datadir = $(target)/share
-mandir = $(datadir)/man
-man1dir = $(mandir)/man1
-man3dir = $(mandir)/man3
-emacsdir = $(datadir)/emacs/site-lisp
-docdir = $(datadir)/doc
-docm2dir = $(docdir)/Macaulay2
+binRelDir = bin
+libRelDir = lib
+dataRelDir = share
+manRelDir = $(dataRelDir)/man
+man1RelDir = $(manRelDir)/man1
+man3RelDir = $(manRelDir)/man3
+emacsRelDir = $(dataRelDir)/emacs/site-lisp
+docRelDir = $(dataRelDir)/doc
+docm2RelDir = $(docRelDir)/Macaulay2
+packagesRelDir = $(dataRelDir)/Macaulay2/packages
+docpackagesRelDir = $(docm2RelDir)/packages
+packagesrcRelDir = $(packagesRelDir)/PackageName
+packagedocRelDir = $(docpackagesRelDir)/PackageName
+packageimagesRelDir = $(packagedocRelDir)/images
+packagehtmlRelDir = $(packagedocRelDir)/html
+libm2RelDir = $(libRelDir)/Macaulay2/$(PACKAGE_VERSION)
+cacheRelDir = $(libm2RelDir)/cache
+libexecRelDir = $(libm2RelDir)/libexec
+datam2RelDir = $(dataRelDir)/Macaulay2
+shareRelDir = $(datam2RelDir)/$(PACKAGE_VERSION)
+m2RelDir = $(shareRelDir)/m2
+docm2relRelDir = $(docm2RelDir)/$(PACKAGE_VERSION)
+emacsdocRelDir = $(docm2relRelDir)/emacs
+htmldocRelDir = $(docm2relRelDir)/html
+imagesRelDir = $(docm2relRelDir)/images
 
-# packages layout
+LAYOUT := {
 
-packagesdir = $(datadir)/Macaulay2/packages
-docpackagesdir = $(docm2dir)/packages
-packagesrcdir = $(packagesdir)/$(M2_PACKAGE_NAME)
-packagedocdir = $(docpackagesdir)/$(M2_PACKAGE_NAME)
-packageimagesdir = $(packagedocdir)/images
-packagehtmldir = $(packagedocdir)/html
+bindir = $(target)/$(binRelDir)
+LAYOUT += "bin"=>"$(binRelDir)/",
 
-# M2 layout
+libdir = $(target)/$(libRelDir)
+LAYOUT += "lib"=>"$(libRelDir)/",
 
-libm2dir = $(libdir)/Macaulay2/$(PACKAGE_VERSION)
-cachedir = $(libm2dir)/cache
-libexecdir = $(libm2dir)/libexec
+datadir = $(target)/$(dataRelDir)
+LAYOUT += "data"=>"$(dataRelDir)/",
 
-datam2dir = $(datadir)/Macaulay2/
-sharedir = $(datam2dir)/$(PACKAGE_VERSION)
-m2dir = $(sharedir)/m2
+mandir = $(target)/$(manRelDir)
+LAYOUT += "man"=>"$(manRelDir)/",
 
-docm2reldir = $(docm2dir)/$(PACKAGE_VERSION)
-emacsdocdir = $(docm2reldir)/emacs
-htmldocdir = $(docm2reldir)/html
-imagesdir = $(docm2reldir)/images
+man1dir = $(target)/$(man1RelDir)
+LAYOUT += "man1"=>"$(man1RelDir)/",
+
+man3dir = $(target)/$(man3RelDir)
+LAYOUT += "man3"=>"$(man3RelDir)/",
+
+emacsdir = $(target)/$(emacsRelDir)
+LAYOUT += "emacs"=>"$(emacsRelDir)/",
+
+docdir = $(target)/$(docRelDir)
+LAYOUT += "doc"=>"$(docRelDir)/",
+
+docm2dir = $(target)/$(docm2RelDir)
+LAYOUT += "docm2"=>"$(docm2RelDir)/",
+
+packagesdir = $(target)/$(packagesRelDir)
+LAYOUT += "packages" => "$(packagesRelDir)/",
+
+docpackagesdir = $(target)/$(docpackagesRelDir)
+LAYOUT += "docpackages"=>"$(docpackagesRelDir)/",
+
+MAKEFUN = "$(1)" => PackageName -> "$(subst PackageName,"|PackageName|",$($(1)RelDir))/"
+
+packagesrcdir = $(target)/$(packagesrcRelDir)
+LAYOUT += $(call MAKEFUN,packagesrc),
+
+packagedocdir = $(target)/$(packagedocRelDir)
+LAYOUT += $(call MAKEFUN,packagedoc),
+
+packageimagesdir = $(target)/$(packageimagesRelDir)
+LAYOUT += $(call MAKEFUN,packageimages),
+
+packagehtmldir = $(target)/$(packagehtmlRelDir)
+LAYOUT += $(call MAKEFUN,packagehtml),
+
+libm2dir = $(target)/$(libm2RelDir)
+LAYOUT += "libm2"=>"$(libm2RelDir)/",
+
+cachedir = $(target)/$(cacheRelDir)
+LAYOUT += "cache"=>"$(cacheRelDir)/",
+
+libexecdir = $(target)/$(libexecRelDir)
+LAYOUT += "libexec"=>"$(libexecRelDir)/",
+
+datam2dir = $(target)/$(datam2RelDir)
+LAYOUT += "datam2"=>"$(datam2RelDir)/",
+
+sharedir = $(target)/$(shareRelDir)
+LAYOUT += "share"=>"$(shareRelDir)/",
+
+m2dir = $(target)/$(m2RelDir)
+LAYOUT += "m2"=>"$(m2RelDir)/",
+
+docm2reldir = $(target)/$(docm2relRelDir)
+LAYOUT += "docm2rel"=>"$(docm2relRelDir)/",
+
+emacsdocdir = $(target)/$(emacsdocRelDir)
+LAYOUT += "emacsdoc"=>"$(emacsdocRelDir)/",
+
+htmldocdir = $(target)/$(htmldocRelDir)
+LAYOUT += "htmldoc"=>"$(htmldocRelDir)/",
+
+imagesdir = $(target)/$(imagesRelDir)
+LAYOUT += "images"=>"$(imagesRelDir)/"
+
+LAYOUT += }
 
 # end file system layout
 
