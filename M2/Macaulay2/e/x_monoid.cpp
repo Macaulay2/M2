@@ -34,9 +34,9 @@ void cmd_Monoid(object &omo, object &ostr,
       *gError << "Monoid: expected three options";
       return;
     }
-  int is_group = (*opts)[0];
+  bool is_group = (*opts)[0] != 0;
   int nbits = (*opts)[1];
-  int is_skew = (*opts)[2];
+  bool is_skew = (*opts)[2] != 0;
 
   // Time to check the consistency of all of these options
   if (nbits <= 0 || nbits > 16)

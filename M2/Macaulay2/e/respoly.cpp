@@ -315,3 +315,4 @@ const resterm *res_poly::component_occurs_in(const res_pair *x,
     if (tm->comp == x) return tm;
   return NULL;
 }
+

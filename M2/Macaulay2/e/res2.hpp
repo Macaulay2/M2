@@ -12,7 +12,7 @@
 #include "polyring.hpp"
 #include "comp.hpp"
 
-class res2_pair;
+struct res2_pair;
 class res2_comp;
 class res2_poly;
 
@@ -197,14 +197,14 @@ private:
 
   void initialize(Matrix mat, 
 		  int LengthLimit,
-		  int UseDegreeLimit,
+		  bool UseDegreeLimit,
 		  int SlantedDegreeLimit,
 		  int SortStrategy);
 
 public:
   res2_comp(Matrix m, 
 	    int LengthLimit, 
-	    int UseDegreeLimit,
+	    bool UseDegreeLimit,
 	    int SlantedDegreeLimit,
 	    int SortStrategy);
 

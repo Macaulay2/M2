@@ -24,8 +24,8 @@ monoid_info::monoid_info(const mon_order *mmo,
 			 int len, 
 			 Monoid *deg_monoid,
 			 const intarray &degs,
-			 int isgrp,
-			 int isskew)
+			 bool isgrp,
+			 bool isskew)
 : nvars(mmo->n_vars()), degvals(degs),
   degree_monoid(deg_monoid), mo(mmo), isgroup(isgrp)
 { 
@@ -516,7 +516,7 @@ void Monoid::to_varpower(const int *m, intarray &result_vp) const
   varpower::from_ntuple(nvars, EXP1, result_vp);
 }
 
-int Monoid::is_skew() const
+bool Monoid::is_skew() const
 {
   return (moninfo->n_skew > 0);
 }

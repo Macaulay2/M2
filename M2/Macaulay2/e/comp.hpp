@@ -5,7 +5,7 @@
 
 #include "object.hpp"
 
-extern char system_interrupted;
+extern "C" char system_interrupted;
 extern int comp_printlevel;
 
 enum comp_return_value

@@ -11,7 +11,7 @@
 extern Z *ZZ;
 
 Z_mod::Z_mod(int p, const Monoid *D) 
-: Ring(p,0,0,this, trivial_monoid, D)
+: Ring(p,0,0,this /* Visual C WARNING */, trivial_monoid, D)
 {
   int i,j,q,n;
 
@@ -274,13 +274,13 @@ ring_elem Z_mod::divide(const ring_elem f, const ring_elem g, ring_elem &rem) co
   rem = ZERO;
   return modulus_sub(f, g, P1);
 }
-ring_elem Z_mod::gcd(ring_elem f, ring_elem g) const
+ring_elem Z_mod::gcd(const ring_elem f, const ring_elem g) const
 {
   if (f == ZERO || g == ZERO) return ZERO;
   return from_int(1);
 }
 
-ring_elem Z_mod::gcd_extended(ring_elem f, ring_elem, 
+ring_elem Z_mod::gcd_extended(const ring_elem f, const ring_elem, 
 				ring_elem &u, ring_elem &v) const
 {
   v = ZERO;

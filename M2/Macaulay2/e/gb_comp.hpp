@@ -8,7 +8,7 @@
 class binomialGB_comp;
 class sagbi_comp;
 
-extern char system_interrupted;
+extern "C" char system_interrupted;
 extern int comp_printlevel;
 
 // The various kinds of GB computations

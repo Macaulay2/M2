@@ -11,7 +11,7 @@
 
 GF::GF(const RingElement prim)
 : Ring(prim.Ring_of()->charac(),
-	1,1,this,trivial_monoid, 
+	1,1,this /* Visual C WARNING */,trivial_monoid, 
 	prim.Ring_of()->degree_monoid()),
   K(prim.Ring_of()->cast_to_poly_ring()),
   primitive_element(prim)
@@ -360,13 +360,13 @@ ring_elem GF::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
   rem = ZERO;
   return modulus_sub(f, g, Q1);
 }
-ring_elem GF::gcd(ring_elem f, ring_elem g) const
+ring_elem GF::gcd(const ring_elem f, const ring_elem g) const
 {
   if (f == ZERO || g == ZERO) return ZERO;
   return ONE;
 }
 
-ring_elem GF::gcd_extended(ring_elem f, ring_elem, 
+ring_elem GF::gcd_extended(const ring_elem f, const ring_elem, 
 				ring_elem &u, ring_elem &v) const
 {
   v = ZERO;
