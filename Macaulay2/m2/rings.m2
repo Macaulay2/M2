@@ -8,11 +8,6 @@ ZZ _ Ring := (i,R) -> (
      else i * R#1
      )
 
-use Ring := R -> (
-     if not R.?use then error("no 'use' method for ", name R);
-     R.use R; 
-     R)
-
 poincare Ring := R -> poincare R^1
 
 dim Ring := R -> (

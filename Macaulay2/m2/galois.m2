@@ -115,7 +115,6 @@ document { quote isPrimitive,
 
 TEST "
 R = ZZ/5[t]/(t^2+t+1)
-use R
 assert (not isPrimitive t)
 assert isPrimitive (t-1)
 assert (not isPrimitive 0_R)
@@ -198,7 +197,6 @@ GF(Ring) := (S,options) -> unpack(S, (R,p,n,f) -> (
      F.order = p^n;
      F.baseRings = append(S.baseRings,S);
      F / F := (f,g) -> f // g;		  -- it is a field
-     use F;
      F))
 
 document { quote order,
@@ -216,7 +214,6 @@ random GaloisField := F -> (
 TEST "
 L = ZZ/5[t]
 M = L/(t^2+t+1)
-use M
 G = GF(M,Variable => v,PrimitiveElement => t-1)
 assert( lift(v,M) + 1 == lift (v+1,M) )
 assert( lift(v^6,M) == (lift(v,M))^6 )

@@ -39,7 +39,6 @@ test2 = () -> (
 test3 = () -> (
     -- The middle monomial ribbon of genus 5
     R = ZZ/101[quote s, quote t, quote y]/(y^2);
-    use R;
     S = ZZ/101[vars(0..4)];
     f = map(R,S,matrix{{t^4, t^3*s, t^2*s^2, t*s^3-t^3*y, s^4-2*s*t^2*y}});
     time J0 = generators kernel f;

@@ -110,7 +110,8 @@ degreesRing2 := memoize(
 --			      ggPush ZZ, ggPush c, ggfromint, 
 --			      ggPush m, ggterm)),
 --		    #x-1:ggadd));
-     	  use ZZn))
+     	  use ZZn			  -- this doesn't actually set any global variables
+	  ))
 
 degreesRing ZZ := n -> degreesRing2 n
 
@@ -343,10 +344,7 @@ samering := (f,g) -> (
      if ring f =!= ring g then error "expected elements from the same ring";
      )
 
-Ring Array := (R,args) -> (
-     RM := R monoid args;
-     use RM;
-     RM)
+Ring Array := (R,variables) -> use R monoid variables
 
 document { "f_m",
      TT "f_m", " -- provide the coefficient of the monomial m in the polynomial f.",

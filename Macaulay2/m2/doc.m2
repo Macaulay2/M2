@@ -1674,13 +1674,21 @@ document { quote use,
      TT "use S", " -- installs certain defaults associated with S.",
      PARA,
      "This will install functions or methods which make the use 
-     of S the default in certain contexts.  For example, if S is a 
-     monoid ring, then the product of an element of the base ring
-     of S and an element of the base monoid of S will be taken
-     to be an element of S, provided ", PRE "          use S", 
-     " has been executed.",
+     of S the default in certain contexts.  For example, if ", TT "S", " is
+     a polynomial ring on the variable ", TT "x", ", then it will set the
+     value of the symbol ", TT "x", " to be the corresponding element of
+     the ring ", TT "S", ".",
      PARA,
-     "The return value is S."
+     "Here is another example.  If S is a monoid ring, then the product of an
+     element of the base ring of S and an element of the base monoid of S
+     will be taken to be an element of S, provided ", TT "use S", " has been
+     executed.",
+     PARA,
+     "The return value is S.",
+     PARA,
+     "When a ring is assigned to a global variable, this function is
+     automatically called for it.",
+     SEEALSO "GlobalAssignHook"
      }
 
 document { "reading the documentation",

@@ -185,6 +185,8 @@ shorten := s -> (
      while #s > 0 and s#-1 == "" do s = drop(s,-1);
      while #s > 0 and s#0 == "" do s = drop(s,1);
      s)
+
+booktex CODE :=
 booktex PRE := x -> concatenate (
      ///\par
 \vskip 4 pt

@@ -323,12 +323,15 @@ dumpdatafun(e:Expr):Expr := (
 	  stdin.insize = 0;
 	  stdin.eof = false;
 	  stdin.inindex = 0;
+	  oldErrorDepth := ErrorDepth;
+	  ErrorDepth = reloaded + 1;
 	  r := dumpdata(s);
+	  ErrorDepth = oldErrorDepth;
 	  stdin.insize = o;
 	  stdin.eof = p;
 	  stdin.inindex = q;
 	  if 0 == r then nullE
-	  else errorExpr("failed to create or write '" + s + "'"))
+	  else errorExpr("failed to dump data to '" + s + "'"))
      else WrongArg(0+1,"a string")
      );
 setupfun("dumpdata",dumpdatafun);
@@ -337,7 +340,7 @@ loaddatafun(e:Expr):Expr := (
      when e
      is s:string do (
 	  loaddata(s);			  -- should not return
-	  errorExpr("failed to load '" + s + "'")
+	  errorExpr("failed to load data from '" + s + "'")
 	  )
      else WrongArg(0+1,"a string")
      );

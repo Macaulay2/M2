@@ -4,7 +4,7 @@
 all ::				# everything needed for the distribution
 tests ::
 doc : html book Vasconcelos-appendix
-################################# setup
+################################# prologue
 all :: initialize config
 TOPDIR = ..
 include $(TOPDIR)/Makeconf
@@ -73,6 +73,15 @@ clean ::; $(MAKE) -C m2 clean
 wc ::;  $(MAKE) -C m2 wc
 ################################# schubert
 tests ::; $(MAKE) -C schubert tests
+################################# setup
+all :: setup
+ifdef DUMPDATA
+setup : setup.dumpdata ../Makeconf.lcl
+	cp $< $@
+else
+setup : setup.nodumpdata ../Makeconf.lcl
+	cp $< $@
+endif
 ################################# slides
 clean ::; -$(MAKE) -k -C slides clean
 tests ::; $(MAKE) -k -C slides

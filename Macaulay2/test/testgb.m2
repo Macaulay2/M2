@@ -126,7 +126,6 @@ testquot2 = () -> (
     -- second test over quotient ring
     A = ZZ/32003[quote x, quote y, quote z, quote t, Degrees => {2,1,1,1}];
     B = A/(x*y+z^3+z*t^2);
-    use B;
     I = symmetricPower(3,matrix{{y,z}});
     -- now compute E = Ext^1(I,B) 'by hand'
     m1 = syz(I,Strategy=>strat);
@@ -144,7 +143,6 @@ testquot3 = () -> (
     -- second test over quotient ring
     A = ZZ/32003[quote x, quote y, quote z, quote t];
     B = A/(x*y+z^3+z*t^2);
-    use B;
     I = symmetricPower(3,matrix{{y,z}});
     -- now compute E = Ext^1(I,B) 'by hand'
     m1 = syz(I,Strategy=>strat);

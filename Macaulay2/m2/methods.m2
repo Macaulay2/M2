@@ -377,7 +377,11 @@ scan({
 	  )
      )
 
-use Thing := x -> null
+use Thing := identity
+
+use HashTable := x -> (
+     if x.?use then x.use x; 
+     x)
 
 radical = method( Options=>{
 	  Unmixed=>false,
