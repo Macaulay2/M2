@@ -88,7 +88,7 @@ UNDERLINE  = new MarkUpType of MarkUpList
 TEX	   = new MarkUpType of MarkUpList
 SEQ	   = new MarkUpType of MarkUpList
 
-new SEQ from List := (SEQ,z) -> (
+new SEQ from List := (seq,z) -> (
      z = select(toList z, i -> i =!= null);
      z = apply(z, i -> if class i === SEQ then toList i else i);
      flatten splice z)

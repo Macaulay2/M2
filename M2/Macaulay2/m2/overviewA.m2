@@ -11,7 +11,7 @@ document { "Mathematical Overview",
 	  TO "ideals",
 	  TO "matrices",
 	  TO "substitution and maps between rings",
-	  BODY ("modules",
+	  SEQ ("modules",
 	       UL {
 		    SEQ (TO "modules: part I", " -- getting started"),
 		    SEQ (TO "modules: part II", " -- homological and multilinear algebra")
@@ -21,7 +21,7 @@ document { "Mathematical Overview",
 	  TO "chain complexes",
 	  TO "varieties",
 	  TO "using external libraries",
-	  BODY ("specialized routines",
+	  SEQ ("specialized routines",
 	       UL {
 		    TO "commutative algebra",
 		    TO "algebraic geometry"
