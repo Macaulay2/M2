@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #define true 1
 #define false 0
