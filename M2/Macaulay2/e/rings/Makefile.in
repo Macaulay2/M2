@@ -7,8 +7,16 @@ include @srcdir@/../make.include
 .PHONY : all place_into_lib
 
 RING_FILES := coeff-ZZp ring-poly ring-poly-ops
-
 RING_OBJECT_FILES :=  $(addsuffix .o, $(RING_FILES))
 
-all :: $(RING_OBJECT_FILES) place_into_lib
-place_into_lib : $(RING_OBJECT_FILES); $(AR) rcs ../$(LIBGB) $^
+all :: ../$(LIBGB)
+../$(LIBGB) : $(RING_OBJECT_FILES); $(AR) rcs ../$(LIBGB) $?
+
+Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/rings/Makefile
+clean :; rm -f *.o
+distclean: clean; rm -f Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/rings "
+# End:
+
