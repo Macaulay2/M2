@@ -3,6 +3,14 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+The multi-degrees used in total Ext modules computed by "Ext" are slightly
+different now - the homological degree is now the first component instead of
+the second.
+
+polynomials now behave as expected with respect to hashing and strict
+equality (===), so they can be used as keys in hash tables, and work
+with "set", "tally", and "unique".
+
 monomialIdeal(i,f) will create a monomial ideal from the i-th row of a 
 matrix f, representing the lead terms of the subquotient module of coker f
 coming from the filtration on it by the rows of f.
