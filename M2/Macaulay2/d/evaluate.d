@@ -1104,7 +1104,7 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
      is Error do left
      else printErrorMessage(lhs,"'<-' expected symbol or hash table on left")
      );
-setup(LeftArrowW,assigntofun);
+setup(LeftArrowS,assigntofun);
 
 idfun(e:Expr):Expr := e;
 setupfun("identity",idfun);

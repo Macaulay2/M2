@@ -180,7 +180,7 @@ export setupconst(name:string,value:Expr):Symbol := (
      s := setupvar(name,value);
      s.protected = true;
      s);
-setup(commaW,dummyBinaryFun);
+setup(commaS,dummyBinaryFun);
 
 export quoteit(name:string):string := "'" + name + "'";
 export NotYet(desc:string):Expr := buildErrorPacket(desc + " not implemented yet");

@@ -37,8 +37,8 @@ export makeUniqueWord(s:string,p:parseinfo):Word := (
      hashTable.hashCode = WordListCell(newWord,hashTable.hashCode);
      newWord);
 
-export semicolonW := dummyWord;	    	  -- filled in by keywords.d
-export newlineW := dummyWord;	    	  -- filled in by keywords.d
+export SemicolonW := dummyWord;	    	  -- filled in by keywords.d
+export NewlineW := dummyWord;	    	  -- filled in by keywords.d
 export equal(t:ParseTree,w:Word):bool := (
      when t is u:Token do u.word == w else false
      );
@@ -214,7 +214,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
      	  else if iserror(ch) then return errorToken
 	  else if isnewline(ch) then (
 	       getc(file);
-	       return Token(newlineW,
+	       return Token(NewlineW,
 	       	    file.pos.filename, line, column, file.pos.loadDepth,
 		    globalDictionary,dummySymbol,sawNewline))
 	  else if isalpha(ch) && ch != int('\'') then (
@@ -277,7 +277,7 @@ export gettoken(file:PosFile,obeylines:bool):Token := (
      sawNewline := false;
      while true do (
 	  w := gettoken1(file,sawNewline);
-	  if w.word == newlineW
+	  if w.word == NewlineW
 	  then (
 	       sawNewline = true;
 	       if obeylines then return w;
