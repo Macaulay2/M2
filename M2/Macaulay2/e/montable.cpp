@@ -93,7 +93,7 @@ MonomialTable::~MonomialTable()
 int MonomialTable::find_divisors(int max,
 				 exponents exp,
 				 int comp,
-				 vector< mon_term * > *result)
+				 vector< mon_term * > *result) const
 {
   assert(comp >= 1);
   if (comp >= (int)_head.size()) return 0;
@@ -124,7 +124,7 @@ int MonomialTable::find_divisors(int max,
   return nmatches;
 }
 
-MonomialTable::mon_term *MonomialTable::find_exact(exponents exp, int comp)
+MonomialTable::mon_term *MonomialTable::find_exact(exponents exp, int comp) const
 {
   if (comp >= (int)_head.size()) return 0;
   mon_term *head = _head[comp];
