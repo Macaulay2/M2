@@ -115,23 +115,20 @@ tt := new MutableHashTable from toList apply(0 .. 255, i -> (
 	  c => c
 	  ));
 
-tt#" " = "_sp_"           -- can't occur in a URL and has a meaning for xargs
-tt#"#" = "_sh_"					     -- has a meaning in URLs
-tt#"$" = "_do_"					-- has a meaning for gnu make
-tt#"%" = "_pc_"					     -- has a meaning in URLs
-tt#"'" = "_sq_"					   -- has a meaning for xargs
-tt#"/" = "_sl_"				  -- can't occur in a file name: unix
-tt#":" = "_co_"					-- has a meaning for gnu make
-tt#";" = "_se_"					-- has a meaning for gnu make
-tt#"?" = "_qu_"					     -- has a meaning in URLs
-tt#"\""= "_dq_"					 -- " has a meaning for xargs
-tt#"\\"= "_bs_"				 -- can't occur in a file name: MSDOS
-tt#"_" = "_us_"					      -- our escape character
-for i from 1 to 26 do (			    -- some OSes are case insensitive
-     cap := ascii (64 + i);
-     low := ascii (96 + i);
-     tt#cap = concatenate("_", low, "_");
-     )
+tt#" " = "_sp"            -- can't occur in a URL and has a meaning for xargs
+tt#"#" = "_sh"					     -- has a meaning in URLs
+tt#"$" = "_do"					-- has a meaning for gnu make
+tt#"%" = "_pc"					     -- has a meaning in URLs
+tt#"'" = "_sq"					   -- has a meaning for xargs
+tt#"/" = "_sl"				  -- can't occur in a file name: unix
+tt#":" = "_co"			    -- has a meaning for gnu make and in URLs
+tt#";" = "_se"					-- has a meaning for gnu make
+tt#"?" = "_qu"					     -- has a meaning in URLs
+tt#"\""= "_dq"					 -- " has a meaning for xargs
+tt#"\\"= "_bs"				 -- can't occur in a file name: MSDOS
+tt#"_" = "_us"					      -- our escape character
+apply(characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ",   -- some OSes are case insensitive
+     cap -> tt#cap = concatenate("__", cap))
 
 toFilename = method()
 toFilename String := s -> (
@@ -141,8 +138,22 @@ toFilename String := s -> (
      -- Notice that the prefix character _ prevents the "!" character
      -- from occuring in the first position, where it would have a special
      -- meaning to Macaulay 2.
+     -- We should check which characters are allowed in URLs.
      s = concatenate("_",apply(characters s, c -> tt#c));
      s)
+
+ttr := new MutableHashTable from pairs tt / ((k,v) -> (v,k))
+fromFilename = method()
+fromFilename String := s -> concatenate (
+     s = substring(s,1);
+     g := 0;
+     for i from 0 to #s - 1 list (
+	  if g > 0 then (g = g-1;"")
+	  else (
+	       b := substring(s,i,3);
+	       if ttr#?b then (g = 2; ttr#b)
+	       else s#i)))
+
 -----------------------------------------------------------------------------
 queryFun := symbol queryFun
 getFun := symbol getFun

@@ -12,9 +12,11 @@ emacs html: all; $(MAKE) -C ../$@
 .SUFFIXES: .m2
 .PHONY: clean all install html distclean check default initialize prep always
 
-LOADSEQUENCE = $(shell cat @srcdir@/loadsequence)
-DOCSEQUENCE  = $(shell cat @srcdir@/docseq)
-TUTORIALS = Fano canEmbed divisors elementary
+LOADSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/loadsequence))
+DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq ))
+
+# there is a parallel list of tutorials in overview3.m2
+TUTORIALS = $(patsubst %, @srcdir@/../tutorial/final/%, Fano.out canEmbed.out divisors.out elementary.out)
 
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE above
 MADEM2FILES := loads.m2 Macaulay2-doc.m2
@@ -104,24 +106,6 @@ phase1 :: ../cache/Macaulay2-made
 ../cache/Macaulay2-made : $(DUMPEDM2FILES) ../bin/M2$(EXE)
 	touch $@
 
-phase2 :: initialize
-phase2 :: phase1
-phase2 :: ../cache/Macaulay2-pre cache/doc/.made 
-	touch $@
-
-../cache/Macaulay2-pre cache/doc/.made : $(DUMPEDM2FILES) ../bin/M2 $(DOCSEQUENCE) $(TUTORIALS:=.out) docseq Macaulay2-doc.m2
-	 #------ phase 2: making cache/doc/*.example, cache/tests/*.m2, and $@
-	rm -rf ../cache/Macaulay2-tmp
-	rm -rf cache/tests
-	mkdir  cache/tests
-	../bin/M2 -q --silent --stop \
-		-e 'phase = 2' \
-		-e 'errorDepth = 0' \
-		-e 'DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
-		Macaulay2-doc.m2 -e 'exit(0)'
-	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
-	touch cache/doc/.made cache/tests/.made
-
 ## .gdbinit
 justM2 all:: .gdbinit .gdb-files .gdb-run-it
 gdb: .gdbinit .gdb-files; gdb ../bin/M2$(EXE)
@@ -150,14 +134,14 @@ EGFLAGS = -k
 EGMORE = || true
 endif
 
-phase3 : initialize phase2 cache/doc/sample cache/doc/expression
+phase3 : initialize phase1 cache/doc/sample cache/doc/expression
 	 #------ phase 3: running new example input files: cache/doc/*.example
 	$(MAKE) -C cache/doc -f ../../Makefile.egs srcdir=$(srcdir)
 	touch $@
 
 all :: phase4
 phase4 : phase3 ../cache/Macaulay2-doc
-../cache/Macaulay2-doc : ../cache/Macaulay2-pre $(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS:=.out)
+../cache/Macaulay2-doc : ../cache/Macaulay2-pre $(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	 #------ phase 4: making $@
 	rm -f ../cache/Macaulay2-tmp
 	../bin/M2 -q --silent --stop \
@@ -168,7 +152,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 	mv ../cache/Macaulay2-tmp $@
 	touch $@
 
-install :: phase5
+install:: phase1
 
 $(htmldocdir) : ; install -d $@
 
@@ -179,7 +163,7 @@ $(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../bin
 		-e 'phase = 5; errorDepth = 0' \
 		-e 'makeHTML("$(prefix)/","@prefix@")' \
 		-e 'exit 0'
-install :: "$(docm2dir)" "$(htmldocdir)" install-html
+install:: "$(docm2dir)" "$(htmldocdir)" install-html
 "$(htmldocdir)" "$(docm2dir)" :; $(INSTALL) -d "$@"
 install-html :
 	 # cd SOMEWHERE && tar cf - *.html | tar xf - -C "$(htmldocdir)"
@@ -223,7 +207,7 @@ install:: $(datam2dir)
 $(datam2dir) :
 	$(INSTALL) -d $(datam2dir)
 
-install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) $(TUTORIALS:=.out)
+install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) $(TUTORIALS)
 	$(INSTALL) -d "$(m2dir)"
 	$(INSTALL_DATA) $^ "$(m2dir)"
 

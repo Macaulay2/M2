@@ -361,19 +361,6 @@ makeMasterIndex := keylist -> (
 	  } << endl << close
      )
 
-separateRegexp = method()
-separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
-separateRegexp(String,ZZ,String) := (re,n,s) -> (
-     m := matches(re,s);
-     if m#?n then prepend(substring(s,0,m#n#0), separateRegexp(re,n,substring(m#n#0+m#n#1,s))) else {s})
-
-M2outputRE = "(\n\n)i+[1-9][0-9]* : "
-separateM2output = method()
-separateM2output String := r -> (
-     while r#0 == "\n" do r = substring(1,r);
-     while r#-1 == "\n" do r = substring(0,#r-1,r);
-     separateRegexp(M2outputRE,1,r))
-
 assemble = method(Options => { 
 	  TemporaryDirectory => "tmp/", 
 	  FinalDirectory => "tmp/",
@@ -440,6 +427,7 @@ assemble Package := o -> pkg -> (
 			 stderr << "--error return code: " << r << endl;
 			 haderror = true;
 			 ));
+	       -- read, separate, and store example output
 	       pkg#"example outputs"#nodename = drop(separateM2output get outf,-1);
 	       stderr << "node " << nodename << " : " << peek \ net \ pkg#"example outputs"#nodename << endl;
 	       ));

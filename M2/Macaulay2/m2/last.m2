@@ -21,5 +21,5 @@ Sequence.BeforePrint = x -> if width stdio == 0 then x else wrap(- width stack l
 closePackage Macaulay2
 -- we load the documentation afterwards, because closing the package records the reverse dictionary entries
 currentPackage = Macaulay2
-load "Macaulay2-doc.m2"
+-- load "Macaulay2-doc.m2"
 currentPackage = null
