@@ -988,27 +988,46 @@ extern "C" {
   /**************************************************/
   /**** Matrix routines which modify a Matrix *******/
   /**************************************************/
+  /* Each of these routines returns false if the matrix is immutable, or if
+   * one of the rows or columns is out of range.
+   */
 
   M2_bool IM2_MutableMatrix_set_entry(Matrix *M, int r, int c, const RingElement *a); /* drg: connected rawMatrixEntry*/
 
-  M2_bool IM2_MutableMatrix_row_swap(Matrix *M, int r1, int r2); /* drg: connected rawMatrixRowSwap*/
+  M2_bool IM2_MutableMatrix_row_swap(Matrix *M, int i, int j); /* drg: connected rawMatrixRowSwap*/
 
-  M2_bool IM2_MutableMatrix_column_swap(Matrix *M, int c1, int c2); /* drg: connected rawMatrixColSwap*/
+  M2_bool IM2_MutableMatrix_column_swap(Matrix *M, int i, int j); /* drg: connected rawMatrixColSwap*/
 
-  M2_bool IM2_MutableMatrix_row_operation(Matrix *M, int row_to_change, const RingElement *a, int r); /* drg: connected rawMatrixRowChange*/
-  /* Add a times row r to row 'row_to_change' */
+  M2_bool IM2_MutableMatrix_row_operation(Matrix *M, int i, const RingElement *r, int j); /* drg: connected rawMatrixRowChange*/
+  /* row(i) <- row(i) + r * row(j), returns false if matrix is 
+     immutable, or rows are out of bounds */
 
-  M2_bool IM2_MutableMatrix_column_operation(Matrix *M, int col_to_change, const RingElement *a, int c); /* drg: connected rawMatrixColChange*/
-  /* Add a times column c to column 'col_to_change' */
+  M2_bool IM2_MutableMatrix_column_operation(Matrix *M, int i, const RingElement *r, int j); /* drg: connected rawMatrixColChange*/
+  /* column(i) <- column(i) + r * column(j), returns false if matrix is 
+     immutable, or columns are out of bounds */
 
-  M2_bool IM2_MutableMatrix_row_scale(Matrix *M, int row_to_change, const RingElement *a); /* drg: connected rawMatrixRowScale*/
-  /* Multiply row 'row_to_change' by a, on the left */
+  M2_bool IM2_MutableMatrix_row_scale(Matrix *M, int i, const RingElement *r); /* drg: connected rawMatrixRowScale*/
+  /* row(i) <- r * row(i), returns false if matrix is immutable
+     or row is out of bounds */
 
-  M2_bool IM2_MutableMatrix_column_scale(Matrix *M, int col_to_change, const RingElement *a); /* drg: connected rawMatrixColumnScale*/
-  /* Multiply column 'col_to_change' by a, on the left */
+  M2_bool IM2_MutableMatrix_column_scale(Matrix *M, int i, const RingElement *r); /* drg: connected rawMatrixColumnScale*/
+  /* column(i) <- r * column(i), returns false if matrix is immutable
+     or row is out of bounds */
 
-  /* There are more mutable matrix routines: delete row/column, insert rows/columns,
-     find good pivots... What else? */
+#if 0
+  M2_bool IM2_MutableMatrix_insert_columns(Matrix *M, int i, int n_to_add); /* TO BE CONNECTED */
+  /* Insert n_to_add columns directly BEFORE column i. */
+
+  M2_bool IM2_MutableMatrix_insert_rows(Matrix *M, int i, int n_to_add); /* TO BE CONNECTED */
+  /* Insert n_to_add rows directly BEFORE row i. */
+
+  M2_bool IM2_MutableMatrix_delete_columns(Matrix *M, int i, int j); /* TO BE CONNECTED */
+  /* Delete columns i .. j from M */
+
+  M2_bool IM2_MutableMatrix_delete_rows(Matrix *M, int i, int j); /* TO BE CONNECTED */
+  /* Delete rows i .. j from M */
+#endif
+  /* There are more mutable matrix routines:  find good pivots... What else? */
 
   /**************************************************/
   /**** RingMap routines ****************************/

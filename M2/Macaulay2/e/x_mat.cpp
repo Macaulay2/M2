@@ -257,6 +257,30 @@ M2_bool IM2_MutableMatrix_column_scale(Matrix *M, const RingElement *r, int i)
   return 1;
 }
 
+M2_bool IM2_MutableMatrix_insert_columns(Matrix *M, int i, int n_to_add)
+  /* Insert n_to_add columns directly BEFORE column i. */
+{
+  return false;
+}
+
+M2_bool IM2_MutableMatrix_insert_rows(Matrix *M, int i, int n_to_add)
+  /* Insert n_to_add rows directly BEFORE row i. */
+{
+  return false;
+}
+
+M2_bool IM2_MutableMatrix_delete_columns(Matrix *M, int i, int j)
+  /* Delete columns i .. j from M */
+{
+  return false;
+}
+
+
+M2_bool IM2_MutableMatrix_delete_rows(Matrix *M, int i, int j)
+  /* Delete rows i .. j from M */
+{
+  return false;
+}
 
 const M2_bool IM2_Matrix_is_zero(const Matrix *M)
 {
