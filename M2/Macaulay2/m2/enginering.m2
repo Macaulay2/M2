@@ -172,14 +172,9 @@ someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> (
      )
 
 baseName RingElement := x -> (
-     if size x === 1 and leadCoefficient x == 1
-     then (
-     	  R := ring x;
- 	  baseName leadMonomial x
-	  )
-     else if size x === 1 and leadMonomial x == 1
-     then baseName leadCoefficient x
-     else error "expected a generator"
+     R := class x;
+     i := rawIndexIfVariable raw x;
+     if i === null then error "expected a generator" else R.generatorSymbols#i
      )
 
 leadCoefficient RingElement := RingElement => (f) -> (

@@ -226,10 +226,8 @@ makeit1 := (options) -> (
      M#1 = new M from rawMonomialMake{};
      degree M := x -> notImplemented();
      baseName M := x -> (
-	  m := x.RawMonomial;
-	  if 1 === degree x
-	  then (M.generatorSymbols) # ( first first rawMonomialSparseListForm m )
-	  else error "expected a generator"
+	  s := rawMonomialSparseListForm raw x;
+	  if #s == 1 and s#0#1 == 1 then M.generatorSymbols#(s#0#0) else error "expected a generator"
 	  );
      M / M := (x,y) -> new M from somethingElse();		    -- there will be no remainder, and it will depend on the monoid, too!
      M : M := (x,y) -> new M from x.RawMonomial : y.RawMonomial;
