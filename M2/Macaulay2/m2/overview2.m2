@@ -532,12 +532,12 @@ document { "coherent sheaves",
 	  "R = QQ[a,b,c,d]/(a^4+b^4+c^4+d^4);",
 	  "X = Proj R",
 	  "F = cotangentSheaf X",
-	  "HH^1(F)",
+	  "HH^1(F(>=0))",
 	  },
-     "The result returned by ", TO "HH", " is actually the graded module
-     whose degree ", TT "i", " part is the sheaf cohomology group usually
-     denoted by ", TT "H^1(X,F(i))", ", so we must use ", TO "hilbertFunction", "
-     to compute the dimension of the degree 0 part.",
+     "The result returned is the graded module whose degree ", TT "i", " part 
+     is the sheaf cohomology group usually denoted by ", TT "H^1(X,F(i))", ".
+     We may use ", TO "hilbertFunction", " to compute the dimension of the 
+     degree 0 part.",
      EXAMPLE {     
 	  "hilbertFunction(0,oo)"
 	  },
