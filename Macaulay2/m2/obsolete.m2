@@ -16,7 +16,7 @@ Numeric = X -> error "'Numeric' has been replaced by 'numeric'"
 submodule = X -> error "'submodule' has been removed"
 stats = X -> error "'stats' has been replaced by 'summary'"
 monomialCurve = X -> error "'monomialCurve' has been replaced by 'monomialCurveIdeal'"
-
+assign = X -> error "assign' has been replaced by <-'"
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

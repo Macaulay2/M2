@@ -16,6 +16,14 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+indexed variables are now done a much better way.  In particular,
+after doing something like ZZ[t_5 .. t_10] the symbol t is itself
+completely unaffected.  If you then do ZZ[t], the ring element t_5 will
+still be available as (symbol t)_5.
+
+the function 'assign(x,y)' has been replace by x<-y, for which methods
+are now installable
+
 changed SEEALSO to SeeAlso, and now it's an option to "document" instead
 of a function.
 

@@ -319,6 +319,7 @@ export GlobalReleaseS := makeProtectedSymbolClosure("GlobalReleaseHook");
 export GlobalReleaseE := Expr(GlobalReleaseS);
 
 export EqualE := Expr(EqualS);
+export LeftArrowE := Expr(LeftArrowS);
 
 export EqualEqualE := Expr(EqualEqualS);
 export LessE := Expr(LessS);

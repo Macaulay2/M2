@@ -107,7 +107,7 @@ degreeLength RingElement := f -> degreeLength ring f
 use Ring := R -> (
      if R.?ring then use R.ring;
      generators R;
-     if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,assign);
+     if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,(sym,val) -> sym <- val);
      if R.?use then R.use R;
      R)
 

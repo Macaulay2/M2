@@ -232,7 +232,7 @@ makeit1 := (options) -> (
      M / M := (x,y) -> new M from somethingElse();		    -- there will be no remainder, and it will depend on the monoid, too!
      M : M := (x,y) -> new M from x.RawMonomial : y.RawMonomial;
      M ^ ZZ := (x,n) -> new M from x.RawMonomial ^ n;
-     M.use = x -> scan(M.generatorSymbols,M.vars,assign);
+     M.use = x -> scan(M.generatorSymbols,M.vars,(sym,val) -> sym <- val);
      M)
 
 makeMonoid := (options) -> (
