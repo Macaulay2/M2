@@ -14,6 +14,14 @@ Changes made, most recent ones first:
 
 -----------------------------------------------------------------------------
 
+New in 0.9.5:
+
+The emacs key bindings have now been made local only to buffers in
+M2-mode.  Previously we were taking over function keys that the user
+might have preferred to define globally.
+
+-----------------------------------------------------------------------------
+
 New in 0.9.4:
 
 New basic types Complex and LMatrixRR introduced to support internal matrices

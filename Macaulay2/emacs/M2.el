@@ -1,11 +1,23 @@
-;;; M2.el -- run Macaulay 2 as a command interpreter in an Emacs buffer
+;;; M2.el 
+;;;    -1- run Macaulay 2 as a command interpreter in an Emacs buffer
+;;;    -2- provide a major mode used for editing Macaulay 2 source files
 
 ;; Macaulay 2 makes no attempt to wrap long output lines, so we provide
 ;; functions which make horizontal scrolling easier.
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; M2 command interpreter
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (require 'comint)
-(require 'M2-mode)
-(defvar M2-demo-buffer "ann.m2"
+
+(make-variable-buffer-local 'transient-mark-mode)
+(add-hook 'M2-mode-hook #'(lambda () (setq transient-mark-mode t)))
+(add-hook 'comint-M2-hook #'(lambda () (setq transient-mark-mode t)))
+
+(setq process-coding-system-alist (cons '("M2" . raw-text) process-coding-system-alist))
+
+(defvar M2-demo-buffer "*M2-demo-buffer*"
   "The buffer from which lines are obtained by M2-send-to-program when the
 cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
   )
@@ -16,7 +28,11 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
 (defun M2-comint-run (command)
   "Run COMMAND under shell control in a comint buffer and switch to it."
   (let* ((program (or (getenv "SHELL") "/bin/sh")))
-    (switch-to-buffer (apply 'make-comint (append (list "Macaulay2" program nil) (list "-c" command))))
+    (switch-to-buffer 
+     (apply 'make-comint
+	    (append
+	     (list "M2" program nil)	; specifying "M2" here means the buffer will be named *M2*
+	     (list "-c" command))))
     (run-hooks (intern-soft (concat "comint-M2-hook")))))
 
 (defvar M2-history nil "The history of recent Macaulay2 command lines.")
@@ -143,6 +159,7 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
 	     (local-set-key [ f8 ] 'switch-to-completions)
 	     (local-set-key [ (control C) c ] 'switch-to-completions)
 	     (local-set-key [ (control C) d ] 'M2-find-documentation)
+	     (M2-keys)
 	     (set-syntax-table M2-mode-syntax-table)
 	     (if (fboundp 'turn-on-font-lock)
 		 (progn
@@ -180,7 +197,6 @@ can be executed with \\[M2-send-to-program]."
        (re-search-forward "<<<")
      (re-search-forward ">>>")
      (set-mark (match-beginning 0)))))
-(global-set-key [ f10 ] 'M2-match-next-bracketed-input)
 
 (defun M2-match-previous-bracketed-input()
   "Move backward to the previous region bracketed by <<< and >>>, marking
@@ -193,7 +209,6 @@ can be executed with \\[M2-send-to-program]."
      (set-mark (match-beginning 0))
      (re-search-backward "<<<")
      (match-end 0))))
-(global-set-key [ (meta f10) ] 'M2-match-previous-bracketed-input)
 
 (defun M2-send-to-program() 
      "Send the current line except for a possible prompt, or the region,
@@ -302,14 +317,160 @@ M2-send-to-prorgram can obtain lines from this buffer."
     (M2)
     (setq comint-scroll-show-maximum-output t)))
 
-(global-set-key [ f11 ] 'M2-send-to-program)
-(global-set-key [ SunF36 ] 'M2-send-to-program)
-(global-set-key [ (control f11) ] 'M2-switch-to-demo-buffer)
-(global-set-key [ (control SunF36) ] 'M2-switch-to-demo-buffer)
-(global-set-key [ (meta f11) ] 'M2-set-demo-buffer)
-(global-set-key [ (meta SunF36) ] 'M2-set-demo-buffer)
-(global-set-key [ (meta f12) ] 'M2-demo)
-(global-set-key [ (meta SunF37) ] 'M2-demo)
-(global-set-key [ kp-enter ] 'M2-send-to-program)
-(global-set-key [ (control c) s ] 'M2-send-to-program)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; M2-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defvar M2-mode-hook nil "*Hook evaluated when first loading M2-mode.")
+
+(require 'font-lock)
+(if (not (boundp 'font-lock-constant-face))
+    (setq font-lock-constant-face font-lock-function-name-face))
+(require 'M2-symbols)
+
+(defun M2-mode()
+  "Major mode used for editing contents of a Macaulay 2 source file.
+
+\\{M2-mode-map}"
+  (interactive)
+  (kill-all-local-variables)
+  (use-local-map M2-mode-map)
+  (setq major-mode 'M2-mode)
+  (setq mode-name "Macaulay 2")
+  (setq local-abbrev-table M2-mode-abbrev-table)
+  (set-syntax-table M2-mode-syntax-table)
+  (set-buffer-modified-p (buffer-modified-p))
+  (set (make-local-variable 'comment-start) "-- ")
+  (set (make-local-variable 'comment-end) "")
+  (set (make-local-variable 'comment-column) 60)
+  (set (make-local-variable 'comment-start-skip) "-- *")
+  (if (fboundp 'turn-on-font-lock)
+      (progn
+	(turn-on-font-lock)			; shouldn't have to do this!
+	(put 'M2-mode 'font-lock-defaults '(M2-mode-font-lock-keywords nil t))
+	(set (make-local-variable 'font-lock-defaults) '( M2-mode-font-lock-keywords ))))
+  (run-hooks 'M2-mode-hook)
+  )
+
+(defun m2-mode() (M2-mode))		;setting file variables lowers the case
+
+(defvar M2-mode-abbrev-table nil "Abbrev table in use in M2-mode buffers.")
+(define-abbrev-table 'M2-mode-abbrev-table ())
+
+(defvar M2-mode-map 
+  (let ((m (make-sparse-keymap)))
+    (define-key m "\177" 'backward-delete-char-untabify)
+    (define-key m "\^M" 'M2-newline-and-indent)
+    (define-key m "\m" 'M2-electric-tab)
+    (define-key m "}" 'M2-electric-right-brace)
+    (define-key m ";" 'M2-electric-semi)
+    (define-key m "\^Cd" 'M2-find-documentation)
+    m)
+  "Keymap containing M2-mode commands.")
+
+(defvar M2-mode-syntax-table (copy-syntax-table) "Syntax table in use in M2-mode buffers.")
+(modify-syntax-entry ?\\ "\\"   M2-mode-syntax-table)
+(modify-syntax-entry ?-  ". 12" M2-mode-syntax-table)
+(modify-syntax-entry ?*  "."    M2-mode-syntax-table)
+(modify-syntax-entry ?_  "."    M2-mode-syntax-table)
+(modify-syntax-entry ?+  "."    M2-mode-syntax-table)
+(modify-syntax-entry ?=  "."    M2-mode-syntax-table)
+(modify-syntax-entry ?%  "."    M2-mode-syntax-table)
+(modify-syntax-entry ?<  "."    M2-mode-syntax-table)
+(modify-syntax-entry ?>  "."    M2-mode-syntax-table)
+(modify-syntax-entry ?'  "w"    M2-mode-syntax-table)
+(modify-syntax-entry ?&  "."    M2-mode-syntax-table)
+(modify-syntax-entry ?|  "."    M2-mode-syntax-table)
+(modify-syntax-entry ?\n ">"    M2-mode-syntax-table)
+(modify-syntax-entry ?\^m ">"   M2-mode-syntax-table)
+
+(defconst M2-indent-level 5 "*Indentation increment in Macaulay 2 mode")
+
+(defun parse-line ()
+     (save-excursion
+       (let (eol)
+	 (end-of-line)
+	 (setq eol (point))
+	 (beginning-of-line)
+	 (parse-partial-sexp (point) eol))))
+
+(defun paren-change ()
+     (car (parse-line)))
+
+(defun M2-electric-semi ()
+     (interactive)
+     (insert ?;)
+     (and (eolp) (next-line-blank) (= 0 (paren-change))
+	 (M2-newline-and-indent))
+     )
+
+(defun next-line-indent-amount ()
+     (+ (current-indentation) (* (paren-change) M2-indent-level)))
+
+(defun this-line-indent-amount ()
+     (save-excursion
+	  (beginning-of-line)
+	  (if (bobp)
+	      0
+	      (previous-line 1)
+	      (next-line-indent-amount))))
+
+(defun in-front ()
+     (save-excursion (skip-chars-backward " \t") (bolp)))
+
+(defun blank-line ()
+     (save-excursion (beginning-of-line) (skip-chars-forward " \t") (eolp)))
+     		   
+(defun next-line-blank()
+     (save-excursion
+	  (end-of-line)
+	  (or (eobp)
+	      (progn (forward-char) (blank-line))
+	      )))
+
+(defun M2-newline-and-indent ()
+     "Start a new line and indent it properly for Macaulay 2 code."
+     (interactive)
+     (newline)
+     (indent-to (this-line-indent-amount))
+     )
+
+(defun M2-electric-right-brace()
+     (interactive)
+     (self-insert-command 1)
+     (and (eolp) (next-line-blank) (< (paren-change) 0) (M2-newline-and-indent))
+     )
+
+(defun M2-electric-tab ()
+     (interactive)
+     (if (or (not (in-front)) (blank-line))
+	 (indent-to (+ (current-column) M2-indent-level))
+	 (let ((i (this-line-indent-amount))
+	       (j (current-indentation)))
+	      (if (not (= i j))
+		  (progn
+		       (if (< i j)
+			    (delete-region (progn (beginning-of-line) (point))
+					   (progn (back-to-indentation) (point)))
+			    (back-to-indentation))
+		       (indent-to i))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; code common to both
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun M2-keys()
+  "Binds various M2 commands to key sequences locally.  Useful in buffers containing M2 code."
+  (local-set-key [ f12 ] 'M2)
+  (local-set-key [ (meta f12) ] 'M2-demo)
+  (local-set-key [ (control f11) ] 'M2-switch-to-demo-buffer)
+  (local-set-key [ f11 ] 'M2-send-to-program)
+  (local-set-key [ (meta f11) ] 'M2-set-demo-buffer)
+  (local-set-key "\^C\t" 'M2-dynamic-complete-symbol)
+  (local-set-key [ f10 ] 'M2-match-next-bracketed-input)
+  (local-set-key [ (meta f10) ] 'M2-match-previous-bracketed-input)
+)
+(add-hook 'M2-mode-hook 'M2-keys)
+
+(provide 'M2)				;last thing to do
 

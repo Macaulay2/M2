@@ -1,4 +1,5 @@
 (
+load "Macaulay2-doc.m2";
 "emacs.m2"
 << "            Editing Macaulay 2 code with emacs" << endl
 << endl
