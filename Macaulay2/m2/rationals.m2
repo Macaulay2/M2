@@ -42,3 +42,5 @@ promote(QQ,QQ) := (r,QQ) -> r
 lift(QQ,QQ) := (r,QQ) -> r
 QQ.degreeLength = 0
 isUnit QQ := x -> x != 0
+
+isConstant QQ := i -> true

@@ -1,4 +1,4 @@
-if getenv "USER" == "dan" then exit 0
+-- if getenv "USER" == "dan" then exit 0
 
 
 temp = z -> (

@@ -16,3 +16,4 @@ ZZ == RR := (y,x) -> x === y+0.
 RR == QQ := (x,r) -> x === r+0.
 QQ == RR := (r,x) -> x === r+0.
 
+isConstant RR := i -> true

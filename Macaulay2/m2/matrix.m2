@@ -643,3 +643,5 @@ relations Module := Matrix => M -> (
      )
 
 degrees Matrix := f -> {degrees target f, degrees source f}
+
+coverMap(Module) := Matrix => (M) -> map(M, cover M, gens M)

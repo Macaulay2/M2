@@ -682,3 +682,5 @@ ZZ _ Ring := RingElement => (i,R) -> (
      else if i === 0 then R#0
      else i * R#1
      )
+
+isConstant RingElement := r -> r == 0 or all(degree r, i -> i === 0)

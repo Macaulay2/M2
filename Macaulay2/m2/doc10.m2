@@ -414,7 +414,7 @@ TEST ///
 R = ZZ[x,y,z]
 f = (x - 2^32 * y) * (x + 2^33 * z - 77 * y)
 d = factor f
-assert( #d == 3 and value d == f )
+assert( #d == 2 and value d == f )
 ///
 
 TEST ///
@@ -519,7 +519,7 @@ TEST "
 TEST "
 R = ZZ/31991[x,y]
 assert( (x^2-10748*y*x+y^2)*(y^2+x^2)*(x^2+10748*y*x+y^2) == x^6 + y^6 )
-assert ( # factor (x^6 + y^6) == 4 )
+assert ( # factor (x^6 + y^6) == 3 )
 "
 
 document { integrate,

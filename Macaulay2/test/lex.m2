@@ -3,7 +3,7 @@
 -- To: Macaulay2@math.uiuc.edu
 -- Date: Fri, 18 Feb 2000 11:26:46 -0500 (EST)
 
-if getenv "USER" == "dan" then exit 0
+-- if getenv "USER" == "dan" then exit 0
 
 gbTrace 3
 R = QQ[u,v,x,y,z,MonomialOrder=>Lex]

@@ -300,8 +300,10 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       )
 	  else fac;
 	  isPrime RM := f -> (
-	       v := factor f;		  -- constant term always last
-	       #v === 2 and v#1#1 === 1 and v#0#1 === 1
+	       v := factor f;				    -- constant term last
+	       #v === 1 and last v#0 === 1 and not isConstant first v#0
+	       or
+	       #v === 2 and v#0#1 === 1 and isConstant first v#1
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generatorExpressions = M.generatorExpressions;

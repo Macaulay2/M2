@@ -3,6 +3,11 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+new function 'isConstant' for telling whether a polynomial is constant
+
+'factor' for polynomials changed so the last constant factor is now only given
+if it is not equal to 1.
+
 Assignment can now be done in parallel with a statement like
 	(a,b,c) = (4,5,6)
 If the right hand side has too few elements, then the trailing symbols
