@@ -143,7 +143,15 @@ fetchRawDocumentation(Package,String) := (pkg,fkey) -> (		    -- returns null if
 	  if pkg#?rawKeyDB then (
 	       d = pkg#rawKeyDB;
 	       if isOpen d and d#?fkey then value d#fkey)))
-fetchRawDocumentation DocumentTag := tag -> fetchRawDocumentation(DocumentTag.Package tag, DocumentTag.FormattedKey tag)
+fetchRawDocumentation(String,String) := (pkgtitle,fkey) -> (
+     notImplemented()
+     )
+fetchRawDocumentation DocumentTag := tag -> (
+     fetchRawDocumentation(DocumentTag.Package tag, DocumentTag.FormattedKey tag)
+     )
+fetchRawDocumentation FinalDocumentTag := tag -> (
+     fetchRawDocumentation(FinalDocumentTag.Title tag, FinalDocumentTag.FormattedKey tag)
+     )
 fetchAnyRawDocumentation := (fkey) -> scan(value \ values PackageDictionary, 
      pkg -> (
 	  r := fetchRawDocumentation(pkg,fkey);
@@ -467,7 +475,7 @@ enlist := x -> if class x === List then x else {x}
 chkIsString := key -> val -> if class val === String then val else error("expected ",toString key," option to be a string")
 fixupTable := new HashTable from {
      Key => identity,
-     symbol DocumentTag => identity,
+     symbol DocumentTag => toFinalDocumentTag,
      Usage => val -> fixup val,
      Function => val -> fixup val,
      FormattedKey => chkIsString FormattedKey,
@@ -551,10 +559,8 @@ apropos = (pattern) -> sort unique (toString \ getGlobalSymbol \ select(flatten 
 -----------------------------------------------------------------------------
 headline = method(SingleArgumentDispatch => true)
 headline Thing := key -> getOption(key,Headline)	    -- old method
-headline DocumentTag := tag -> (
-     pkg := DocumentTag.Package tag;
-     fkey := DocumentTag.FormattedKey tag;
-     d := fetchRawDocumentation(pkg,fkey);
+headline FinalDocumentTag := headline DocumentTag := tag -> (
+     d := fetchRawDocumentation tag;
      if d === null then return "missing documentation";
      if d#?Headline then d#Headline
      else headline DocumentTag.Key tag			    -- revert to old method, eliminate?

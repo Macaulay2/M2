@@ -170,8 +170,7 @@ toString RingElement := x -> toString expression x
 
 net RingElement := x -> net expression x
 
-someTerms(ZZ,RingElement,ZZ,ZZ) := RingElement => (nvars,f,i,n) -> new ring f from someTerms(nvars,raw f,i,n)
-someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from someTerms(numgens ring f,raw f,i,n)
+someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from rawGetTerms(numgens ring f,raw f,i,n+i-1)
 
 baseName RingElement := x -> (
      R := class x;

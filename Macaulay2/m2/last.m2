@@ -4,10 +4,6 @@
 
 recursionLimit = 300
 
-f := rawPromote
-erase symbol rawPromote
-rawPromote = on(f, Name => "rawPromote")
-
 addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> (
 	  scan(openFiles(), f -> if isOutputFile f then flush f);
