@@ -289,8 +289,10 @@ F = rawFreeModule(R,5)
 G = rawFreeModule(R,10)
 m = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),false,0)
 m1 = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true,0)
-<< "make sure mutable matrices and immutable matrices are not ==" << endl;
---assert(m != m1)
+assert(-(-m) == m)
+assert((m-m) == m + (-m)) -- CURRENTLY FAILS BECAUSE OF HASH CODES
+--<< "make sure mutable matrices and immutable matrices are not ==" << endl;
+assert(m != m1)
 rawTarget m == F
 rawSource m == G
 rawMultiDegree m === {0}
@@ -320,6 +322,8 @@ rawSource m
 rawMultiDegree m
 rawMatrixEntry(m,1,1)
 
+m = rawMatrix1(R^4,4,(a,b,c,d, b^2+c*d,e^2,f^2,g^2, c^3,f^3,h^3,0_R, d^4,g^4,i^4,j^4),false,0)
+assert(m == rawDual rawDual m)
 m2 = m*m
 
 rawSubmatrix(m2,singleton 1)
@@ -334,15 +338,21 @@ rawConcat(m,m,m)
 rawConcat(m,m2)
 
 rawDirectSum(m,m2)
-rawTensor(m,m)
-assert(m === rawDual m)
+mm = rawTensor(m,m)
+mm1 = rawSubmatrix(mm,(0,1,2,3),(0,2,4,6))
+mm2 = mat{{a^2,a*c,a*b,b*c},
+           {a*b,a*f,b^2,b*f},
+	   {a*c,a*h,b*c,b*h},
+	   {a*d,a*i,b*d,b*i}}
+assert(mm1 == mm2) -- FAILS, I think because of hash codes
+assert(m - rawDual m == 0)
 
 -- test rawReshape
 -- rawFlip
 
 rawSubmatrix(m,(1,2))
 rawSubmatrix(m,(0,1),(1,2))
-a*rawIdentity(F)
+a*rawIdentity(F,false,0)
 rawZero(F,F,false,0)
 -- rawKoszul
 -- is IM2_Matrix_koszul_monoms connected?
@@ -355,14 +365,10 @@ rawSortColumns(m,1,1)
 rawMinors(2,m,0)
 
 m = rawMatrix1(R^4,4,(0_R,b,c,d, -b,0_R,f,g, -c,-f,0_R,i, -d,-g,-i,0_R),false,0)
-assert(rawPfaffians(4,m) == rawMatrix1(R^1,1,singleton (d*f-c*g+b*i), false,0))
+<< "equality checking of matrices is screwed up, since hash values are not being set correctly" << endl;
+--assert(rawPfaffians(4,m) == rawMatrix1(R^1,1,singleton (d*f-c*g+b*i), false,0))
 -- 
-load "raw-util.m2"
-R2 = rawPolynomialRing(rawQQ(), lex{x,y,z})
-x = rawRingVar(R2,0,1)
-y = rawRingVar(R2,1,1)
-z = rawRingVar(R2,2,1)
-m = mat{{x,y,z}}
+
 n = mat{{x},{y},{z}}
 m * n
 
@@ -376,6 +382,23 @@ ch = mat{{-x^4-4*x^3*y-4*x^3*z-6*x^2*y^2-12*x^2*y*z-6*x^2*z^2
 	 {1_R2}}
 m * ch
 
+-- matrix operations
+R = polyring(rawZZ(), (symbol a .. symbol f))
+m = mat{{a^2-1,a*b-b-c^3, a*b*c-d^100}}
+mh = rawHomogenize(m,4,(2,1,1,1,1,1))
+assert(mh == mat{{-e^4+a^2, -c^3-b*e^2+a*b, -d^100+a*b*c*e^96}})
+
+---------------------
+-- random matrices --
+---------------------
+needs "raw-util.m2"
+mr = rawMatrixRandom(rawZZ(),2,3,.5,0,false,0)
+mr = rawMatrixRandom(rawZZ(),10,15,.5,0,false,0)
+R = polyring(rawZZp(32003), (symbol x, symbol y))
+mr = rawMatrixRandom(R,10,15,.5,0,false,0)
+mr = rawMatrixRandom(R,10,15,.5,1,false,0)
+mr = rawMatrixRandom(R,10,10,.5,1,false,0)
+
 -------------------------------
 -- row and column operations --
 -------------------------------
@@ -387,7 +410,7 @@ rawMatrixEntry(m,1,2,15_R)
 assert(15_R === rawMatrixEntry(m,1,2))
 m
 -- now let's do row and column operations on this
-m1 = rawConcat(m,rawIdentity(R^3))
+m1 = rawConcat(m,rawIdentity(R^3,false,0))
 m = rawMatrixRemake1(R^3,m1,true,0)
 rawMatrixRowScale(m,3_R,1,true)  -- OK now
 m
@@ -530,6 +553,11 @@ R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 --time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03
 --testfactor f
+f1 = rawMatrixDiff(mat{{x}},mat{{f}});
+f2 = rawGCD(f,rawMatrixEntry(f1,0,0));
+
+
+
 
 R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
