@@ -64,7 +64,6 @@ record = (
 reach1 = method(SingleArgumentDispatch=>true) 
 reach2 = method(SingleArgumentDispatch=>true)
 reach3 = method(SingleArgumentDispatch=>true)
-reach4 = method(SingleArgumentDispatch=>true)
 
 reach1 Thing := identity
 reach1 Sequence := reach1 BasicList := x -> scan(x,reach1)
@@ -93,7 +92,6 @@ reach2 TO := reach2 TOH := (x) -> (
 	  ))
 reach3 Thing := reach1
 reach3 MENU := x -> scan(x,reach1)
-
 --------------- body of book
 reach1 documentationMemo "Macaulay 2"
 --------------- appendix
@@ -121,18 +119,22 @@ while more do (
 reach2 = oldreach2
 --------------- fill in Appendix
 docDatabase = openDatabase "../cache/Macaulay2-doc"
-appendixItems = scan(sort join(
-	  formatDocumentTag \ value \ keys docDatabase,
-	  keys otherNodes
-	  ),
-     node -> if not getNumberFromName#?node then TO node )
-document { "Appendix",
-     "We present various footnotes in this appendix.",
-     MENU appendixItems
+document { "Miscellaneous documentation",
+     "We present various additional documentation in this chapter.",
+     MENU apply(sort unique join(
+	       formatDocumentTag \ value \ keys docDatabase,
+	       keys otherNodes
+	       ),
+	  node -> if not getNumberFromName#?node then TO node )
      }
-reach2 TO "Appendix";
-
---------------- index
+document { "Appendix",
+     "This appendix contains additional information about the following topics.",
+     MENU {
+	  TO "Miscellaneous documentation"
+	  }
+     }
+reach2 TO "Appendix"
+ ------------- index
  -- sectionNumber = {"B"}
  -- document { "Combined Index",
  -- --     TEX ///\begintwocolumn

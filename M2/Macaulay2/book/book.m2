@@ -136,8 +136,8 @@ bookFile << ///
 	      << "\\hypertarget{" << n << "}{}" << endl
 	      << sectionType n << "{" << cmrLiteral formatDocumentTag node << "}"
 	      << "\\label{" << n << "}" << endl;
-	      if getenv "DEBUG" != "" then << " (label: " << n << ") " << endl;
-	      << concatenate booktex d << endl;
+	      if getenv "DEBUG" != "" then bookFile << " (label: " << n << ") " << endl;
+	      bookFile << concatenate booktex d << endl;
 	      )
 	 )
 -----------------------------------------------------------------------------

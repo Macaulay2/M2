@@ -1016,7 +1016,7 @@ document { (symbol #?, BasicList, ZZ),
      }
 document { (symbol #?, Sequence, ZZ),
      HEADLINE "check for element in sequence",
-     TT "x#?i", " --tells whether ther is an ", TT "i", "-th element in
+     TT "x#?i", " --tells whether there is an ", TT "i", "-th element in
      the sequence ", TT "x", ".",
      SEEALSO {(symbol #, Sequence, ZZ)}
      }

@@ -404,9 +404,9 @@ ifdef CYGWIN32
 DOCFILES += Macaulay2/book/M2book.tex
 else
 DOCFILES += Macaulay2/Vasconcelos-appendix/appendix.dvi
-DOCFILES += Macaulay2/book/M2book.dvi
-DOCFILES += Macaulay2/book/M2book.pdf
-DOCFILES += Macaulay2/book/M2book.ps
+DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.dvi
+DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.pdf
+DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.ps
 endif
 
 Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) rmcores

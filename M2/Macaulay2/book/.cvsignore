@@ -3,13 +3,12 @@ gmon.out
 *.dvi.gz
 *.dvi
 *.log
-M2book.tex
+Macaulay2-*-book.tex
 *.tmp
 *.pdf
 *.out
 *.bbl
 *.blg
-M2book-prelim.dvi
 *.ilg
 *.ind
 *.toc
