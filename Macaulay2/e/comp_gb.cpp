@@ -11,6 +11,7 @@
 #include "hermite.hpp"
 #include "gbA.hpp"
 #include "gbweight.hpp"
+#include "comp_gb_proxy.hpp"
 
 GBComputation::~GBComputation()
 {
@@ -50,13 +51,14 @@ ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
   // bool base_is_field = !R->Ncoeffs()->is_ZZ();
 
   //  if (algorithm == 2)
-  return gbA::create(m, 
-		     collect_syz, 
-		     n_rows_to_keep,
-		     gb_weights,
-		     strategy,
-		     use_max_degree,
-		     max_degree);
+  GBComputation *result = gbA::create(m, 
+				      collect_syz, 
+				      n_rows_to_keep,
+				      gb_weights,
+				      strategy,
+				      use_max_degree,
+				      max_degree);
+  return new GBProxy(result);
 #if 0
   if (is_graded)
     return GB_comp::create(m, 

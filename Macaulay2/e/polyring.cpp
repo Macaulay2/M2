@@ -1974,7 +1974,10 @@ vec PolyRing::translate_gbvector_to_vec_denom(const FreeModule *F,
 					  const gbvector *v,
 					  const ring_elem denom) const
 {
-  return translate_gbvector_to_vec(F,v);
+  GBRing *GR = get_gb_ring();
+  const ring_elem c = K_->invert(denom);
+  gbvector *w = GR->gbvector_mult_by_coeff(v, c);
+  return translate_gbvector_to_vec(F,w);
 }
 
 // Local Variables:
