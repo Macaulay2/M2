@@ -43,7 +43,7 @@ getPackage := key -> scan(value \ values PackageDictionary,
 	  d := pkg#"documentation";
 	  if d#?key then break pkg))
 
-getRecord := (pkg,key) -> pkg#"documentation"#key
+getRecord := (pkg,key) -> pkg#"documentation"#key	    -- for Databases, insert 'value' here
 
 -----------------------------------------------------------------------------
 -- normalizing document tags
@@ -98,19 +98,6 @@ alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 
 formatDocumentTag Thing    := toString
 formatDocumentTag String   := s -> s
-
---after := (w,s) -> mingle(w,#w:s)
---formatDocumentTag Option   := record(
---     s -> concatenate (
---	  if class s#0 === Sequence 
---	  then (
---	       if class s#0#0 === Symbol
---	       then ( "(", formatDocumentTag s#0, ", ", toString s#1, " => ...)" )
---	       else ( toString s#0#0, "(", after(toString \ drop(s#0,1), ", "), " ", toString s#1, " => ...)" )
---	       )
---	  else ( toString s#0, "(..., ", toString s#1, " => ...)" )
---	  )
---     )
 
 fSeqInitialize := (toString,toStr) -> new HashTable from {
      (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toStr s#3),
@@ -222,18 +209,6 @@ documentableValue := key -> (
 ---- how could this have worked (so soon)?
 -- scan(flatten(pairs \ globalDictionaries), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
 
---fixup := method(SingleArgumentDispatch => true)
---fixup Nothing    := z -> z				    -- null
---fixup String     := z -> z				    -- "..."
---fixup List       := z -> SEQ apply(z, fixup)		    -- {...} becomes SEQ{...}
---fixup Sequence   := z -> SEQ toList apply(z, fixup)	    -- (...) becomes SEQ{...}
---fixup MarkUpList := z -> apply(z,fixup)			    -- recursion
---fixup Option     := z -> z#0 => fixup z#1		    -- Headline => "...", ...
---fixup TO         := z -> z				    -- TO{x}
---fixup TOH        := z -> z				    -- TOH{x}
---fixup MarkUpType := z -> z{}				    -- convert PARA to PARA{}
---fixup Function   := z -> z     				    -- allow Function => f in Synopsis
---fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
 
 file := null
 
@@ -259,7 +234,7 @@ getOptionList := (s,tag) -> (
 getDoc := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
-     if pkg =!= null then value getRecord(pkg,fkey)
+     if pkg =!= null then getRecord(pkg,fkey)
      )
 if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
  
@@ -362,10 +337,7 @@ document List := z -> (
      if currentPackage === null then error "documentation encountered outside a package";
      d := currentPackage#"documentation";
      if d#?currentNodeName then duplicateDocWarning();
-     d#currentNodeName = toExternalString extractExamples (
-     	  -- fixup body
-     	  SEQ body
-	  );
+     d#currentNodeName = extractExamples hypertext body;
      currentNodeName = null;
      )
 
@@ -485,7 +457,7 @@ getDocBody Thing := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
      if pkg =!= null then (
-	  docBody := value getRecord(pkg,fkey);
+	  docBody := getRecord(pkg,fkey);
 	  docBody = select(docBody, s -> class s =!= Option);
 	  if #docBody > 0 then (
 	       if doExamples then docBody = processExamples(pkg, fkey, docBody);
@@ -625,8 +597,8 @@ synopsis Thing := f -> (
      ino = new HashTable from toList ino;
      ino = apply(sort pairs opt, (tag,dft) -> (
 	       if ino#?tag 
-	       then SEQ { TO toString tag, " => ", alter1 ino#tag, " [", dft, "]" }
-	       else SEQ { TO toString tag, " => ... [", dft, "]" }
+	       then SEQ { TO toString tag, " => ", alter1 ino#tag, " [", net dft, "]" }
+	       else SEQ { TO toString tag, " => ... [", net dft, "]" }
 	       ));	       
      inp = select(inp, x -> not iso x);
      (inp',out') := types f;
@@ -648,7 +620,7 @@ synopsis Thing := f -> (
 	  );
      inp = alter \ inp;
      out = alter \ out;
-     if #SYN > 0 then (
+     if #SYN > 0 or #inp > 0 or #ino > 0 or #out > 0 then (
 	  SEQ {						    -- to be implemented
      	       PARA BOLD "Synopsis",
 	       UL {
@@ -666,7 +638,6 @@ synopsis Thing := f -> (
 		    }
 	       }
 	  ))
-
 
 documentableMethods := s -> select(methods s, isDocumentableTag)
 
@@ -702,14 +673,11 @@ documentation String := s -> (
      if unformatTag#?s then documentation unformatTag#s 
      else if isGlobalSymbol s then (
 	  t := getGlobalSymbol s;
-	  documentation(t)
-	  )
+	  documentation t)
      else (
 	  b := getDocBody(s);
 	  if b === null then null
-	  else join( SEQ { title s, PARA{" "} }, b )
-	  )
-     )
+	  else join( Hypertext { title s, PARA{" "} }, b )))
 
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
@@ -756,7 +724,8 @@ seecode := x -> (
      f := lookup x;
      n := code f;
      if n =!= null 
-     and height n + depth n <= 10 and width n <= maximumCodeWidth
+     -- and height n + depth n <= 10 
+     and width n <= maximumCodeWidth
      then PARA { BOLD "Code", PRE demark(newline,unstack n) }
      )
 
@@ -816,7 +785,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 documentation Symbol := S -> (
      a := apply(select(optionFor S,f -> isDocumentableTag f), f -> f => S);
      b := documentableMethods S;
-     SEQ {
+     Hypertext {
 	  title S, 
 	  synopsis S,
 	  getDocBody(S),
@@ -834,7 +803,7 @@ documentation Sequence := s -> (
 	  opt := s#-1;
 	  if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
 	  default := (options fn)#opt;
-	  SEQ { 
+	  Hypertext { 
 	       title s,
 	       synopsis s,
 	       getDocBody(s),
@@ -848,10 +817,10 @@ documentation Sequence := s -> (
 	  )
      else (						    -- method key
 	  if null === lookup s then error("expected ", toString s, " to be a method");
-	  SEQ {
+	  Hypertext {
 	       title s, 
 	       synopsis s,
-	       getDocBody(s),
+	       getDocBody s,
 	       -- seecode s
 	       }
 	  ))
@@ -864,10 +833,16 @@ hasDocumentation = x -> (
      0 < #p)
 
 help = method(SingleArgumentDispatch => true)
-help List := v -> SEQ { between(HR{}, apply(v, help)) }
-help Thing := s -> (
+help List := v -> (
+     printWidth = printWidth - 2;
+     r := boxNets apply(v, help);
+     printWidth = printWidth + 2;
+     r)
+help Thing := s -> net (
      r := documentation s;
-     if r === null then PARA { "No documentation found for '", formatDocumentTag s, "'"} else r)
+     if r === null
+     then Hypertext { "No documentation found for '", formatDocumentTag s, "'"}
+     else r)
 
 -----------------------------------------------------------------------------
 -- helper functions useable in documentation
@@ -973,7 +948,8 @@ net MarkUpList := x -> horizontalJoin apply(x,net)
 texMath MarkUpList := x -> concatenate apply(x,texMath)
 mathML MarkUpList := x -> concatenate apply(x,mathML)
 
-net SEQ := net PARA := x -> (					    -- we have to be prepared for a mixture of vertical and horizontal items
+net SEQ := net PARA :=
+net Hypertext := x -> (					    -- we have to be prepared for a mixture of vertical and horizontal items
      x = toList x;
      p := positions(x, i -> instance(i,MarkUpListParagraph)); -- these ones have to stand as independent paragraphs, the ones in between can be joined horizontally
      x = select(
