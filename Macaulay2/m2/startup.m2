@@ -119,9 +119,6 @@ if firstTime then (
 	  else "^/"
 	  );
      isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);
-     sourceHomeDirectory = null; -- home directory of Macaulay 2
-     buildHomeDirectory  = null; -- parent of the directory of the executable described in command line argument 0
-
      copyright = (
 	  "Macaulay 2, version " | version#"VERSION" | newline
 	  | "--Copyright 1993-2003, D. R. Grayson and M. E. Stillman" | newline
@@ -131,6 +128,10 @@ if firstTime then (
      	  | "--GNU MP Library " | version#"gmp version"
 	  );
      )
+
+sourceHomeDirectory = null				    -- home directory of Macaulay 2
+buildHomeDirectory  = null -- parent of the directory of the executable described in command line argument 0
+prefixDirectory = null			      -- prefix directory, after installation, e.g., "/usr/"
 
 fullCopyright := false
 matchpart := (regex,i,s) -> substring_((matches(regex, s))#i) s
@@ -167,11 +168,25 @@ exe := (
 	       scan(PATH, p -> if fileExists (p|"/"|e) then (e = p|"/"|e; break));
 	       );
 	  getRealPath e))
+bindir := dir exe
+bindirsuffix := LAYOUT#"bin";
+if fileExists (bindir | "../c/scc1") then (
+     -- we're running from the build directory
+     buildHomeDirectory = minimizeFilename(bindir|"../");
+     sourceHomeDirectory = (
+	  if fileExists (buildHomeDirectory|"m2/setup.m2"       ) then buildHomeDirectory 
+	  else if fileExists (buildHomeDirectory|"srcdir/m2/setup.m2") then getRealPath(buildHomeDirectory|"srcdir")|"/" 
+	  else null);
+     ) else
+if bindirsuffix === substring(bindir,-#bindirsuffix) then (
+     prefixdir := substring(bindir,0,#bindir-#bindirsuffix);
+     if fileExists(prefixdir | LAYOUT#"share") then (
+     	  -- we've been installed and are running from the directory tree described by LAYOUT, see startupString1
+	  prefixDirectory = prefixdir;
+     	  )
+     )
 
-buildHomeDirectory = minimizeFilename(dir exe|"../")
-
-if fileExists (buildHomeDirectory|"m2/setup.m2"       ) then sourceHomeDirectory = buildHomeDirectory else
-if fileExists (buildHomeDirectory|"srcdir/m2/setup.m2") then sourceHomeDirectory = getRealPath(buildHomeDirectory|"srcdir")|"/"
+if prefixDirectory === null and sourceHomeDirectory === null then stderr << "warning: can't determine prefixDirectory or sourceHomeDirectory" << endl
 
 silence := arg -> null
 notyeterr := arg -> error("command line option ", arg, " not re-implemented yet")
@@ -187,6 +202,7 @@ usage := arg -> (
      << "    --help             print brief help message and exit" << newline
      << "    --copyright        display full copyright messasge" << newline
      << "    --debug            enter command interpreter upon error" << newline
+     << "    --dumpdata         dump data and exit after parsing source code" << newline
      << "    --example-prompts  examples prompt mode" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --no-prompts       print no input prompts" << newline;
@@ -209,8 +225,26 @@ usage := arg -> (
 
 loadSetup := () -> (
      -- try to load setup.m2
-     if sourceHomeDirectory === null then error ("can't find file setup.m2; exe = ",exe,"; commandLine#0 = ",commandLine#0);
-     load minimizeFilename(sourceHomeDirectory | "/m2/setup.m2")
+     if sourceHomeDirectory =!= null then load minimizeFilename(sourceHomeDirectory | "/m2/setup.m2")
+     else if prefixDirectory =!= null then load minimizeFilename(prefixDirectory | LAYOUT#"m2" | "setup.m2")
+     else error ("can't find file setup.m2; exe = ",exe,"; commandLine#0 = ",commandLine#0)
+     )
+
+dump := () -> (
+     -- load dumpdata.m2 and then execute dump(), so dumpdata.m2 is closed when the dump occurs
+     if not version#"dumpdata" then error "can't dump data with this version of Macaulay 2";
+     arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
+     fn := (
+	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory , "Macaulay2-", arch, "-data") else 
+	  if prefixDirectory =!= null then concatenate(prefixDirectory, LAYOUT#"cache", "Macaulay2-", arch, "-data")	  
+	  );
+     if fn === null then error "can't find cache directory for dumpdata file";
+     runEndFunctions();
+     collectGarbage();
+     << "--dumping to " << fn << endl << flush;
+     dumpdata fn;
+     << "--dumped to " << fn << endl << flush;
+     exit 0;
      )
 
 action := hashTable {
@@ -221,6 +255,7 @@ action := hashTable {
      "-q" => silence,					    -- implemented in setup.m2
      "--silent" => arg -> nobanner = true,
      "--debug" => arg -> debuggingMode = true,
+     "--dumpdata" => arg -> dump(),
      "-silent" => obsolete,
      "-tty" => notyet,
      "-n" => obsolete,
@@ -259,7 +294,11 @@ processCommandLineOptions := () -> (			    -- two passes, based on value of 'pre
 	       else error("command line option ", arg, " missing argument")
 	       )
 	  else if match("^-e",arg) and not preload then value substring(2,arg) -- to become obsolete
-	  else if arg#0 == "-" then error("unrecognized command line option: ", arg)
+	  else if arg#0 == "-" then (
+	       stderr << "error: unrecognized command line option: " << arg << endl;
+	       usage();
+	       exit 1;
+	       )
 	  else if not preload then load arg;
 	  argno = argno+1;
 	  );
@@ -277,7 +316,11 @@ if firstTime and not nobanner then (
 if firstTime and not noloaddata and version#"dumpdata" then (
      -- try to load dumped data
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
-     datafile := minimizeFilename concatenate(buildHomeDirectory, "/cache/Macaulay2-",arch, "-data");
+     datafile := minimizeFilename (
+	  if buildHomeDirectory =!= null then concatenate(buildHomeDirectory, "/cache/Macaulay2-", arch, "-data")
+	  else if prefixDirectory =!= null then concatenate(prefixDirectory, LAYOUT#"cache", "Macaulay2-", arch, "-data")
+	  else concatenate("Macaulay2-", arch, "-data")
+	  );
      if fileExists datafile then
      try (
 	  stderr << "--loading cached memory data from " << datafile << newline << flush;
@@ -288,9 +331,10 @@ if firstTime and not noloaddata and version#"dumpdata" then (
      )
 
 path = {}
-if sourceHomeDirectory  =!= null                then path = append(path, sourceHomeDirectory|"m2/");
-if buildHomeDirectory   =!= sourceHomeDirectory then path = append(path, buildHomeDirectory |"m2/");
-path = select(path, fileExists);
+if sourceHomeDirectory  =!= null then path = append(path, sourceHomeDirectory|"m2/")
+if buildHomeDirectory   =!= sourceHomeDirectory and buildHomeDirectory =!= null then path = join(path, {buildHomeDirectory|"m2/", buildHomeDirectory|"tutorial/final/"})
+if prefixDirectory      =!= null then path = append(path, prefixDirectory | LAYOUT#"m2")
+path = select(path, fileExists)
 
 normalPrompts()
 if firstTime and not nosetup then loadSetup()

@@ -7,11 +7,11 @@ cd bin
 
     EDIT="s:^PREFIX=.*:PREFIX=\"$ENCAP_TARGET\":"
 
-    <M2 >$TMP sed "$EDIT"
-    mv $TMP M2
-    chmod 0755 M2
+    # <M2 >$TMP sed "$EDIT"
+    # mv $TMP M2
+    # chmod 0755 M2
 
 cd "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"
 cd lib/@PACKAGE_TARNAME@/@PACKAGE_VERSION@
 
-    ./setup
+    # ./setup

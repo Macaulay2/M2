@@ -26,18 +26,17 @@ local exampleResultsFound
 local exampleResults
 local currentNodeName
 
-docFilename := () -> buildHomeDirectory | "cache/Macaulay2-doc"
+docFilename := () -> (
+     if buildHomeDirectory =!= null then buildHomeDirectory | "cache/Macaulay2-doc"
+     else if prefixDirectory =!= null then prefixDirectory | LAYOUT#"cache" | "Macaulay2-doc"
+     )
 
 addStartFunction( 
      () -> (
-	  DocDatabase = (
-	       fn := docFilename() ;
-	       try openDatabase fn else (
-		    if phase != 3 then stderr << "--warning: couldn't open help file " << docFilename() << endl;
-		    new HashTable)
-	       );
-     	  )
-     )
+	  fn := docFilename();
+	  if fn =!= null then DocDatabase = try openDatabase fn else (
+	       if phase != 3 then stderr << "--warning: couldn't open help file " << docFilename() << endl;
+	       new HashTable)))
 
 -- Documentation = new MutableHashTable
 
@@ -715,7 +714,6 @@ optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f
 documentation Symbol := s -> (
      a := apply(select(optionFor s,f -> not unDocumentable f), f -> f => s);
      b := documentableMethods s;
-     if value s =!= s then stderr << "warning: symbol " << s << " has a value" << endl;	-- might have to do something different
      SEQ {
 	  title s, 
 	  usage s,
