@@ -87,7 +87,7 @@ select(e:Expr,f:Expr):Expr := (
 	  u := newHashTable(obj.class,obj.parent);
 	  foreach bucket in obj.table do (
 	       p := bucket;
-	       while p != bucketEnd do (
+	       while p != p.next do (
 		    newvalue := apply(f,p.value);
 		    when newvalue 
 		    is Error do return newvalue
@@ -131,7 +131,7 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
 	  if nval > 0 then
 	  foreach bucket in obj.table do (
 	       p := bucket;
-	       while nval > 0 && p != bucketEnd do (
+	       while nval > 0 && p != p.next do (
 		    newvalue := apply(f,p.value);
 		    when newvalue 
 		    is Error do return newvalue
@@ -169,7 +169,7 @@ any(f:Expr,obj:HashTable):Expr := (
      foreach bucket in obj.table do (
 	  p := bucket;
 	  while true do (
-	       if p == bucketEnd then break;
+	       if p == p.next then break;
 	       v := apply(f,p.key,p.value);
 	       when v is Error do return v else nothing;
 	       if v == True then return True;

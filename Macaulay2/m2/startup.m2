@@ -225,7 +225,6 @@ usage := arg -> (
      << "    --no-backtrace     print no backtrace after error" << newline
      << "    --copyright        display full copyright messasge" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
-     << "    --debug-M2         debug Macaulay2 itself" << newline
      << "    --dumpdata         read source code, dump data, exit (no init.m2)" << newline
      << "    --example-prompts  examples prompt mode" << newline
      << "    --fullbacktrace    print full backtrace after error" << newline

@@ -108,7 +108,7 @@ export hash(x:HashTable):int := (
      h := x.parent.hash + x.class.hash * 231 + 32455;
      foreach bucket in x.table do (
 	  p := bucket;
-	  while p != bucketEnd do (
+	  while p != p.next do (
 	       j := 48892373 + p.hash;
 	       h = h + j * j * hash(p.value);
 	       p = p.next;

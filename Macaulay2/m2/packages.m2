@@ -94,7 +94,7 @@ reverseDictionary = x -> scan(packages, pkg -> (
 reverseDictionaryRecord = (X,x) -> if X =!= x then (
      s := toString X;
      scan(packages, 
-     	  pkg -> if pkg.Dictionary#?s and pkg.Dictionary#s === X then (	-- too bad a symbol doesn't know what dictionary it's in...
+     	  pkg -> if pkg.Dictionary#?s and pkg.Dictionary#s === X and not pkg#"reverse dictionary"#?x then (	-- too bad a symbol doesn't know what dictionary it's in...
 	       pkg#"reverse dictionary"#x = X; 
 	       break)))
 reverseDictionaryRemove = (X,x) -> (
@@ -122,7 +122,7 @@ closePackage = p -> (
      scan(values p.Dictionary,
 	  s -> (
 	       if not ws#?s then protect s;
-	       if value s =!= s then p#"reverse dictionary"#(value s) = s;
+	       if value s =!= s and not p#"reverse dictionary"#?(value s) then p#"reverse dictionary"#(value s) = s;
 	       ));
      if p =!= Main then (			    -- protect it later, after package User is open
 	  protect p.Dictionary;

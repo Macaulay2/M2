@@ -93,7 +93,7 @@ values(e:Expr):Expr := (
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
-	       while p != bucketEnd do (
+	       while p != p.next do (
 		    provide Expr(p.value);
 		    p = p.next; )))
      else WrongArg("a hash table or dictionary"));
@@ -117,7 +117,7 @@ pairs(e:Expr):Expr := (
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
-	       while p != bucketEnd do (
+	       while p != p.next do (
 		    provide Expr(Sequence(p.key,p.value));
 		    p = p.next; )))
      else WrongArg("a hash table or a raw polynomial"));
