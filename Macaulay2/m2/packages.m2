@@ -3,7 +3,7 @@
 PREFIX := ""
 addStartFunction(
      () -> (
-          PREFIX = getenv "M2PREFIX";
+          PREFIX = getenv "M2PREFIX";			    -- usually /usr or /sw or /usr/local
 	  if PREFIX =!= "" then path = append( path, 
 	       minimizeFilename ( PREFIX | "/share/Macaulay2/packages/" )
 	       )))

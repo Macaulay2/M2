@@ -1523,7 +1523,7 @@ undocumentedSymbols = () -> select(
      values symbolTable(), 
      x -> (
 	  if (
-	       x =!= value x and        -- ignore symbols with no value assigned
+	       -- x =!= value x and        -- ignore symbols with no value assigned
 	       not DocDatabase#?(toString x) and not Documentation#?(toString x) 
 	       ) 
      	  then (
