@@ -33,17 +33,12 @@ isDocumentableThing  Sequence := key -> false 		    -- we're not looking for doc
 isDocumentableThing   Nothing := key -> true
 
 isDocumentableMethod := method(SingleArgumentDispatch => true)
-isDocumentableMethod Sequence := key -> (
-     if methodDispatchFunctions#?fn then return false;
-     all(key,isDocumentableMethod)
-     )
+isDocumentableMethod Sequence := key -> all(key,isDocumentableMethod) and not methodDispatchFunctions#?(lookup key)
 isDocumentableMethod    Thing := key -> false
 isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
 isDocumentableMethod     Type := 
-isDocumentableMethod Function := 
-isDocumentableThing     Thing := key -> (
-     if ReverseDictionary#?key then return true;
-     false)
+isDocumentableThing     Thing := key -> ReverseDictionary#?key
+isDocumentableMethod Function := fn -> ReverseDictionary#?fn
 
 undocumented = key -> (
      if currentPackage === null then error "no package open";
