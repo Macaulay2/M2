@@ -1101,6 +1101,7 @@ mathML RR := i -> concatenate("<mn>",toString i, "</mn>")
 mathML QQ := i -> concatenate(
      "<mfrac>",mathML numerator i, mathML denominator i, "</mfrac>"
      )
+mathML Type := X -> if X.?mathML then X.mathML else mathML expression X
 mathML Thing := x -> mathML expression x
 
 File << Thing := File => (o,x) -> printString(o,net x)

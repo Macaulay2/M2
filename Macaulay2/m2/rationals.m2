@@ -10,6 +10,7 @@ QQ.ConversionFormat = ConvertApply((x,y) -> x/y, ConvertInteger, ConvertInteger)
 QQ.ConvertToExpression = ConvertApply((x,y)->expression(x/y),ConvertInteger,ConvertInteger)
 QQ.pop = () -> eePop QQ.ConversionFormat
 QQ.baseRings = {ZZ}
+QQ.mathML = "<mi>&Qopf;</mi>"
 QQ.frac = QQ
 QQ.random = () -> (random 21 - 10) / (random 9 + 1)
 degree QQ := i -> {}

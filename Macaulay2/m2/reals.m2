@@ -14,6 +14,7 @@ RR.char = 0
 RR.Engine = true
 RR.pop = () -> eePop ConvertReal
 RR.ConversionFormat = ConvertReal
+RR.mathML = "<mi>&Ropf;</mi>"
 RR.handle = newHandle ggRR
 RR.ConvertToExpression = ConvertReal
 new RR := RR -> RR.pop()
