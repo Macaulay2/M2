@@ -34,8 +34,9 @@ ERingTable *EGB1::create_ring_table() const
     {
       ering_elem *r = new ering_elem;
       r->f = I.get_quotient_element(i);
-      r->lcm = new_exponent_vector();
-      I.to_exponents(I.lead_monomial_of_polynomial(r->f), r->lcm);
+      exponent_vector *t = new_exponent_vector();
+      I.to_exponents(I.lead_monomial_of_polynomial(r->f), t);
+      r->lcm = t;
       r->degree = ntuple::weight(nvars,r->lcm,heuristicWeightVector);
       ring_table->insert(r, junk);  // We are guaranteed that all the 'r' s are minimal.
     }
@@ -596,7 +597,7 @@ void EGB1::choose_nice_pair(es_pair *&p)
   p->next = 0;
   remove_pairs(rest);
 }
-void EGB1::choose_unique_pairs(es_pair *&p) const
+void EGB1::choose_unique_pairs(es_pair *&p)
 {
   if (p == 0) return;
   es_pair head;
@@ -653,7 +654,7 @@ bool EGB1::pair_not_needed(es_pair *p, egb_elem *m) const
   return false;
 }
 
-void EGB1::minimalize_pairs(es_pair *&p) const
+void EGB1::minimalize_pairs(es_pair *&p)
 {
   int d;
   if (p == 0) return;
@@ -819,7 +820,7 @@ int EGB1::gb_reduce(vector_heap &fh, vector_heap &fsyzh, EVector &f, EVector &fs
   ringelement hcoefficient;
   int *hexponents = const_cast<int *&>(mReduceExp);
   int hcomponent = 0;
-  monomial *hmonomial;
+  const monomial *hmonomial;
 
   ering_elem *r = 0;
   egb_elem *g = 0;

@@ -250,7 +250,7 @@ static void cmd_EPolynomialRing(object &o1, object &o2)
   ERing *K = o1->cast_to_ERing();
   EMonoid * M = o2->cast_to_EMonoid();
   EPolynomialRing *R;
-  EPolynomialRing *ZD;
+  const EPolynomialRing *ZD;
   int * degrees;
   
   if (!grabDegreeInfo(M->n_vars(),ZD,degrees)) return;
@@ -274,7 +274,7 @@ static void cmd_EWeylAlgebra(object &o1, object &o2, object &o3, object &o4, obj
       return;
     }
   int homog_var = o5->int_of();
-  EPolynomialRing *ZD;
+  const EPolynomialRing *ZD;
   int * degrees;
   
   if (!grabDegreeInfo(M->n_vars(), ZD,degrees)) return;
@@ -304,7 +304,7 @@ static void cmd_ESkewCommPolynomialRing(object &o1, object &o2, object &o3)
   EMonoid * M = o2->cast_to_EMonoid();
   intarray *skew = o3->intarray_of();
 
-  EPolynomialRing *ZD;
+  const EPolynomialRing *ZD;
   int * degrees;
   
   if (!grabDegreeInfo(M->n_vars(),ZD,degrees)) return;
@@ -747,7 +747,7 @@ static void cmd_EVector_rightMultiply(object &o1, object &o2)
 static void cmd_EVector_isgraded(object &o1)
 {
   EVector *v = o1->cast_to_EVector();
-  monomial *d;  // NOT USED
+  const monomial *d;  // NOT USED
   gStack.insert(make_object_int(v->isGraded(d)));
 }
 static void cmd_EVector_degree(object &o1)
@@ -1023,7 +1023,7 @@ static void cmd_ERingElement_isgraded(object &o1)
       gError << "expected polynomial ring";
       return;
     }
-  monomial *d;  // NOT USED
+  const monomial *d;  // NOT USED
   gStack.insert(make_object_int(R->isGraded(*r,d)));
 }
 static void cmd_ERingElement_degree(object &o1)
