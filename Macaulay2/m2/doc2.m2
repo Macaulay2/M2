@@ -109,7 +109,7 @@ document { quote stdio,
      PARA,
      "Use this file to get input from the terminal, or to display information
      on the user's screen.  This is the file always used by ", TO "print", "
-     and used ", TO "<<", " if it is not explicitly given a file."
+     and used ", TO "<<", " if it is not explicitly given a file.",
      PARA,
      SEEALSO { "File" }
      }
@@ -122,58 +122,69 @@ document { quote stderr,
      SEEALSO { "File" }
      }
 
+document { quote openListener,
+     TT "f = openListener \"$:service\"", "  -- opens a listener on the local
+     host at the specified service port.",
+     BR,NOINDENT,
+     TT "f = openListener \"$\"", "  -- opens a listener on the local
+     host at the Macaulay2 port (2500).",
+     PARA,
+     "Use ", TT "openInOut f", " to accept an incoming connection on the listener,
+     returning a new input output file which serves as the connection.",
+     RETURNS "File"
+     }
+
 document { quote openIn,
      TT "openIn \"fff\"", "  -- opens an input file whose filename is ", TT "fff", ".",
-     BR,NOINDENT,
-     TT "openIn \"!cmd\"", " -- opens an input file which corresponds to a pipe 
-     receiving the output from the shell command ", TT "cmd", ".",
-     BR,NOINDENT,
-     TT "openInOut \"$hostname:service\"", " -- opens an input file
-     by connecting to the specified service port at the specified host.",
-     EXAMPLE {
-	  ///"junk" << "abcdefghijk" << endl << close///,
-	  ///f = openIn "junk"///,
-	  ///read f///,
-	  ///close f///,
-	  },
      PARA,
-     "In order to open a socket successfully, there must be a process
-     accepting connections for the desired service on the specified host.
-     This feature is not available on Sun computers, because Sun doesn't
-     provide static versions of crucial libraries dealing with network
-     communications, or the static version doesn't provide network name
-     service for looking up hostnames.",
+     "Other options are available.  For details, see ", TO "openInOut", ".",
+     RETURNS "File"
+     }
+
+document { quote openOut,
+     TT "openOut \"fff\"", "  -- opens an output file whose filename is fff.",
      PARA,
-     "Other commands which open files will open sockets or pipes if the
-     file name starts with dollar sign or exclamation point.",
-     SEEALSO {"File",  "openOut",  "openInOut"}
+     "Other options are available.  For details, see ", TO "openInOut", ".",
+     RETURNS "File"
      }
 
 document { quote openInOut,
-     TT "openInOut \"fff\"", "  -- opens an input output file whose filename is ", TT "fff", ".",
+     TT "openInOut \"fff\"", "  -- opens an input output file whose 
+     filename is ", TT "fff", ".",
      BR,NOINDENT,
      TT "openInOut \"!cmd\"", " -- opens an input file which corresponds to a pipe 
      receiving the output from the shell command ", TT "cmd", ".",
      BR,NOINDENT,
      TT "openInOut \"$hostname:service\"", " -- opens an input output file
      by connecting to the specified service port at the specified host.",
+     BR,NOINDENT,
+     TT "openInOut \"$:service\"", " -- opens an input output file by
+     listening to the specified service port on the local host, and 
+     waiting for an incoming connection.",
+     BR,NOINDENT,
+     TT "openInOut \"$hostname\"", " -- opens an input output file
+     by connecting to the Macaulay2 service port (2500) at the specified host.",
+     BR,NOINDENT,
+     TT "openInOut \"$\"", " -- opens an input output file by listening to the
+     Macaulay2 service port (2500) on the local host, and waiting for an
+     incoming connection.",
+     BR,NOINDENT,
+     TT "openInOut f", " -- opens an input output file by accepting a
+     connection to the listener ", TT "f", ", previously created with
+     ", TO "openListener", ".",
      PARA,
      "In order to open a socket successfully, there must be a process
-     accepting connections for the desired service on the specified host.
-     This feature is not available on Sun computers, because Sun doesn't
-     provide static versions of crucial libraries dealing with network
-     communications, or the static version doesn't provide network name
-     service for looking up hostnames.",
-     SEEALSO {"File", "openIn",  "openOut"}
-     }
-
-document { quote openOut,
-     TT "openOut \"fff\"", "  -- opens an output file whose filename is fff.",
+     accepting connections for the desired service on the specified host.",
      PARA,
-     TT "openOut \"!cmd\"", " -- opens an output file which corresponds to a pipe 
-     providing the output to the shell command ", TT "cmd", ".",
+     "Socket connections are not available on Sun computers, because Sun 
+     doesn't provide static versions of crucial libraries dealing with 
+     network communications, or the static version doesn't provide network 
+     name service for looking up hostnames.",
      PARA,
-     SEEALSO {"File", "openIn",  "openInOut"}
+     "The various forms listed above can be used also with ", TO "openIn", "
+     and ", TO "openOut", ", with data transfer possible only in the
+     direction specified.",
+     RETURNS "File"
      }
 
 document { quote protect,
@@ -184,6 +195,33 @@ document { quote protect,
      PARA,
      "The documentation function ", TO "document", " protects the symbols
      it documents."
+     }
+
+document { quote isInputFile,
+     TT "isInputFile f", " -- whether ", TT "f", " is an input file.",
+     PARA,
+     "The return value is ", TO "true", " or ", TO "false", "."
+     }
+
+document { quote isOutputFile,
+     TT "isOutputFile f", " -- whether ", TT "f", " is an output file.",
+     PARA,
+     "The return value is ", TO "true", " or ", TO "false", "."
+     }
+
+document { quote isOpenFile,
+     TT "isOpenFile f", " -- whether ", TT "f", " is an open file.",
+     PARA,
+     "An open file is either an input file, an output file, an
+     input output file, or a listener.",
+     PARA,
+     "The return value is ", TO "true", " or ", TO "false", "."
+     }
+
+document { quote isListener,
+     TT "isListener f", " -- whether ", TT "f", " is a listener.",
+     PARA,
+     "The return value is ", TO "true", " or ", TO "false", "."
      }
 
 document { quote <<,

@@ -4,6 +4,16 @@
 
 BUTTON = (s,alt) -> LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center alt=\"", alt, "\">")
 
+html BODY := x -> concatenate(
+     "<BODY BACKGROUND='recbg.jpg'>",
+     newline,
+     apply(x, html),
+     newline,
+     "</BODY>",
+     newline
+     )
+
+
 masterIndex = new MutableHashTable
 masterFileName = "master.html"
 masterNodeName = "master index"

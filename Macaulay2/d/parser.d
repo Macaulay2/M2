@@ -14,7 +14,7 @@ use tokens;
 export parseInt(s:string):Integer := (
      i := toInteger(0);
      foreach c in s do (
-	  if c == '"'
+	  if c == '\"'
 	  then nothing
 	  else i = 10 * i + (c - '0')
 	  );
@@ -24,7 +24,7 @@ export parseDouble(s:string):double := (
      x := 0.0;
      y := 1.0;
      foreach c in s do (
-	  if c == '"'
+	  if c == '\"'
 	  then nothing
 	  else if c == '.'
 	  then point = true
@@ -40,7 +40,7 @@ export parseString(s:string):string := (
      v := newvarstring(length(s)-2);
      i := 1;
      while true do (
-	  if s.i == '"' then break;
+	  if s.i == '\"' then break;
 	  if s.i == '\\' then (
 	       i = i+1;
 	       c := s.i;
@@ -104,7 +104,7 @@ export fromW := dummyWord;		  -- filled in by keywords.d
 export debug := false;
 export tracefile := dummyfile;
 export openTokenFile(filename:string):(TokenFile or errmsg) := (
-     when fopeninp(filename)
+     when openPosIn(filename)
      is f:PosFile do (TokenFile or errmsg)(TokenFile(f,NULL))
      is s:errmsg  do (TokenFile or errmsg)(s)
      );

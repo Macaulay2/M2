@@ -26,7 +26,7 @@ export hash(e:Expr):int := (
 	  h := n.height * 3457 + n.width * 7753;
 	  foreach s in n.body do h = h * 77 + hash(s);
 	  h)
-     is x:file do 234876+hash(x.filename)
+     is x:file do x.hash
      is x:FunctionClosure do int(8820938+1299721*x.model.desc.scopenum)
      is x:Error do (
 	  929+hash(x.message)+12963*(

@@ -86,8 +86,8 @@ export close(o:PosFile):void := close(o.file);
 export setprompt(o:PosFile,prompt:function():void):void := (
      setprompt(o.file,prompt)
      );
-export fopeninp(filename:string):(PosFile or errmsg) := (
-     when fopenin(filename)
+export openPosIn(filename:string):(PosFile or errmsg) := (
+     when openIn(filename)
      is f:file do (PosFile or errmsg)(
 	  PosFile(f,Position(
 		    if isAbsolutePath(f.filename)

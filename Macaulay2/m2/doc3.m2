@@ -953,9 +953,10 @@ document { quote File,
 	  },
      "Ways to create new files:",
      MENU {
-          (TO "openIn", "     -- open an input file"),
-          (TO "openOut", "    -- open an output file"),
-          (TO "openInOut", "  -- open an input output file"),
+          (TO "openIn", "        -- open an input file"),
+          (TO "openOut", "       -- open an output file"),
+          (TO "openInOut", "     -- open an input output file"),
+          (TO "openListener", "  -- open a listener"),
 	  },
      "Input operations:",
      MENU {
@@ -993,12 +994,18 @@ document { quote File,
 	  },
      "Destroying files:",
      MENU {
-          {TO "close", "    -- close a file"}
+          {TO "close", "    -- close a file"},
+          {TO "closeIn", "  -- close a file for input"},
+          {TO "closeOut", " -- close a file for output"}
 	  },
      "Information about files",
      MENU { 
-	  {TO "width", "    -- width of a terminal"},
-          {TO "openFiles", "-- list open files"}
+	  {TO "width", "        -- width of a terminal"},
+          {TO "openFiles", "    -- list open files"},
+	  {TO "isOpenFile", "   -- whether it's an open file"},
+	  {TO "isInputFile", "  -- whether it's an input file"},
+	  {TO "isOutputFile", " -- whether it's an output file"},
+	  {TO "isListener", "   -- whether it's a listener"},
 	  },
      }
 

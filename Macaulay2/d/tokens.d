@@ -243,13 +243,6 @@ export HashTable := {
      mutable:bool
      };
 
--- sequence counter for enclosed hash tables
-
-export HashCounter := 1000000;
-export nextHash():int := (
-     HashCounter = HashCounter + 1;
-     HashCounter);
-
 -- dummies
 
 dummyunary(w:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree := (

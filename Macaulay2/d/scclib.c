@@ -460,33 +460,62 @@ char *name;
 #endif
      }
 
+int system_acceptBlocking(int so) {
+#if HAVE_SOCKETS
+  struct sockaddr_in addr;
+  int addrlen = sizeof addr;
+  fcntl(so,F_SETFL,0);
+  return accept(so,(struct sockaddr*)&addr,&addrlen);
+#else
+  return ERROR;
+#endif
+}
+
+int system_acceptNonblocking(int so) {
+#if HAVE_SOCKETS
+  struct sockaddr_in addr;
+  int addrlen = sizeof addr;
+  int sd;
+  fcntl(so,F_SETFL,O_NONBLOCK);
+  sd = accept(so,(struct sockaddr*)&addr,&addrlen);
+  return sd;
+#else
+  return ERROR;
+#endif
+}
+
+int openlistener(char *serv) {
+#if HAVE_SOCKETS
+  int sa = serv_address(serv);
+  int so = socket(AF_INET,SOCK_STREAM,0);
+  struct sockaddr_in addr;
+  addr.sin_family = PF_INET;
+  addr.sin_port = sa;
+  addr.sin_addr.s_addr = INADDR_ANY;
+  if (ERROR == so ||
+      ERROR == sa ||
+      ERROR == bind(so,(struct sockaddr*)&addr,sizeof addr) ||
+      ERROR == listen(so,
+		      10	/* length of queue of pending connections */
+		      )) { close(so); return ERROR; }
+  return so;
+#else
+  return ERROR;
+#endif
+}
+
 int opensocket(char *host, char *serv) {
 #if HAVE_SOCKETS
   int sd = socket(AF_INET,SOCK_STREAM,0);
   struct sockaddr_in addr;
-  int addrlen = sizeof addr;
+  int sa = serv_address(serv);
   addr.sin_family = PF_INET;
-  addr.sin_port = serv_address(serv);
-  if (host[0] == 0) {
-    int so;
-    addr.sin_addr.s_addr = INADDR_ANY;
-    if (ERROR == bind(sd,(struct sockaddr*)&addr,sizeof addr) ||
-	ERROR == listen(sd,1) ||
-	ERROR == (so = accept(sd,(struct sockaddr*)&addr,&addrlen)) ||
-	ERROR == close(sd)
-	) { close(sd); return ERROR; }
-    return so;
-  }
-  else {
-    int ha = host_address(host);
-    if (ha == ERROR) { close(sd); return ERROR; }
-    addr.sin_addr.s_addr = ha;
-    if (ERROR == connect(sd,(struct sockaddr *)&addr,sizeof(addr))) {
-      close(sd);
-      return ERROR;
-    }
-    return sd;
-  }
+  addr.sin_port = sa;
+  addr.sin_addr.s_addr = host_address(host);
+  if (ERROR == addr.sin_addr.s_addr ||
+      ERROR == sa ||
+      ERROR == connect(sd,(struct sockaddr *)&addr,sizeof(addr))) { close(sd); return ERROR; }
+  return sd;
 #else
   return ERROR;
 #endif
@@ -499,6 +528,15 @@ M2_string host,serv;
      char *Serv = tocharstar(serv);
      int sd = opensocket(Host,Serv);
      GC_free(Host);
+     GC_free(Serv);
+     return sd;
+     }
+
+int system_openlistener(serv)
+M2_string serv;
+{
+     char *Serv = tocharstar(serv);
+     int sd = openlistener(Serv);
      GC_free(Serv);
      return sd;
      }

@@ -23,7 +23,7 @@ foreach c in " \t\r\n\f"                   do setchartype(c,WHITE);
 
 for c from 128 to 255	       	    	   do setchartype(char(c),ALPHA);
 					      setchartype('\'',ALPHA);
-					      setchartype('"',QUOTE);
+					      setchartype('\"',QUOTE);
 
 if length(newline) > 0
 then setchartype(newline.(length(newline)-1),NEWLINE);

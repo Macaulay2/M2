@@ -687,8 +687,12 @@ openfilesfun(e:Expr):Expr := (
 setupfun("openFiles",openfilesfun);
 openIn(filename:Expr):Expr := (
      when filename
+     is f:file do (
+	  when openIn(f)
+	  is g:file do Expr(g)
+	  is m:errmsg do errorExpr(m.message))
      is f:string do (
-	  when fopenin(f)
+	  when openIn(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do errorExpr(m.message))
      is Error do filename
@@ -696,8 +700,12 @@ openIn(filename:Expr):Expr := (
 setupfun("openIn",openIn);
 openOut(filename:Expr):Expr := (
      when filename
+     is f:file do (
+	  when openOut(f)
+	  is g:file do Expr(g)
+	  is m:errmsg do errorExpr(m.message))
      is f:string do (
-	  when fopenout(f)
+	  when openOut(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do errorExpr(m.message))
      is Error do filename
@@ -705,17 +713,50 @@ openOut(filename:Expr):Expr := (
 setupfun("openOut",openOut);
 openInOut(filename:Expr):Expr := (
      when filename
+     is f:file do (
+	  when openInOut(f)
+	  is g:file do Expr(g)
+	  is m:errmsg do errorExpr(m.message))
      is f:string do (
-	  when fopeninout(f)
+	  when openInOut(f)
 	  is g:file do Expr(g)
 	  is m:errmsg do errorExpr(m.message))
      is Error do filename
      else WrongArg("a string"));
 setupfun("openInOut",openInOut);
+openListener(filename:Expr):Expr := (
+     when filename
+     is f:string do (
+	  when openListener(f)
+	  is g:file do Expr(g)
+	  is m:errmsg do errorExpr(m.message))
+     is Error do filename
+     else WrongArg("a string"));
+setupfun("openListener",openListener);
+isOpenFile(e:Expr):Expr := (
+     when e
+     is f:file do toBoolean(f.listener || f.input || f.output)
+     else False);
+setupfun("isOpenFile",isOpenFile);
+isInputFile(e:Expr):Expr := (
+     when e
+     is f:file do toBoolean(f.input)
+     else False);
+setupfun("isInputFile",isInputFile);
+isOutputFile(e:Expr):Expr := (
+     when e
+     is f:file do toBoolean(f.output)
+     else False);
+setupfun("isOutputFile",isOutputFile);
+isListener(e:Expr):Expr := (
+     when e
+     is f:file do toBoolean(f.listener)
+     else False);
+setupfun("isListener",isListener);
 close(g:Expr):Expr := (
      when g
      is f:file do ( 
-	  if f.infd == -1 && f.outfd == -1 then return(errorExpr("file already closed"));
+	  if !f.input && !f.output && !f.listener then return(errorExpr("file already closed"));
 	  if close(f) == 0 then g
 	  else errorExpr(if f.pid != 0 then "error closing pipe" else "error closing file"))
      is x:Database do dbmclose(x)
