@@ -168,7 +168,7 @@ scan({
 	  degree, degreeLength, coefficients, isHomogeneous, size,
 	  isIsomorphism, exponents, 
 	  height, depth, width, regularity, nullhomotopy,
-	  hilbertFunction, content, isUnit,
+	  hilbertFunction, content, isUnit, monoid,
 	  isPrime, leadTerm, leadCoefficient, leadMonomial, isField,
 	  leadComponent, degreesRing, degrees, annihilator,
 	  chainComplex, assign, numgens,
