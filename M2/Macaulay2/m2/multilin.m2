@@ -151,8 +151,15 @@ minors(ZZ,Matrix) := Ideal => options -> (j,m) -> (
 	  ideal getMatrix ring m
 	)))
 
+pfaffians = method()
+pfaffians(ZZ,Matrix) := Ideal => (j,m) -> (
+     ideal(map(ring m, rawPfaffians(j,raw m))))
+
+///     
 pfaffians = method(Options => { Limit => infinity })
 pfaffians(ZZ,Matrix) := Ideal => options -> (j,m) -> (
+     ideal(map(ring m, rawPfaffians(j,raw m))))
+
      error "IM2_Matrix_pfaffians not re-implemented yet";
      if j === 0 then ideal 1_(ring m)
      else if j < 0 then ideal 0_(ring m)
@@ -180,7 +187,7 @@ pfaffians(ZZ,Matrix) := Ideal => options -> (j,m) -> (
 		 ggindex);
 	  ideal getMatrix ring m
 	  ))
-
+///
 -----------------------------------------------------------------------------
 trace Matrix := RingElement => f -> (
      if rank source f != rank target f

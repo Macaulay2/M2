@@ -83,13 +83,15 @@ INTERFACE = \
 	weylalg \
 	z_mod_p
 
+
+
 STILLTOCOMPILE = \
+	respoly \
+	res \
 	respoly2 \
 	res2 \
 	newspair \
 	weylfree \
-	res \
-	respoly \
 	Eschreyer \
 	gauss \
 	termideal \

@@ -12,6 +12,7 @@ class ntuple
 {
 public:
   static void one(int nvars, int *result);
+  static bool is_one(int nvars, int *a);
   static void mult(int nvars, const int *a, const int *b, int *result);
   static void power(int nvars, const int *a, int n, int *result);
   static void divide(int nvars, const int *a, const int *b, int *result);
@@ -39,6 +40,14 @@ inline
 void ntuple::one(int nvars, int *result)
 {
   for (int i=0; i<nvars; i++) *result++ = 0;
+}
+
+inline 
+bool ntuple::is_one(int nvars, int *a)
+{
+  for (int i=0; i<nvars; i++) 
+    if (*a++ != 0) return false;
+  return true;
 }
 
 inline

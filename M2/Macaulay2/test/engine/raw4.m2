@@ -104,10 +104,9 @@ rawStartComputation Gcomp
 mgb = rawGBGetMatrix Gcomp ;
 Gcomp = rawGB(M,false,0,{0},false,0,1,0)
 rawStartComputation Gcomp
-mgb = rawGBGetMatrix Gcomp -- I get warnings from gc here...
+mgb = rawGBGetMatrix Gcomp; -- I get warnings from gc here...
 
 rawGBGetLeadTerms(Gcomp,6)
-
 -- Test 6. -- same in char 101
 R2 = polyring(rawZZp(101), symbol a .. symbol f)
 M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
@@ -116,7 +115,8 @@ rawStartComputation Gcomp  -- crashes due to bad access in spair_sorter
 mgb = rawGBGetMatrix Gcomp;
 Gcomp = rawGB(M,false,0,{0},false,0,1,0)
 rawStartComputation Gcomp
-mgb = rawGBGetMatrix Gcomp
+mgb = rawGBGetMatrix Gcomp;
+
 
 rawGBGetLeadTerms(Gcomp,6)
 
@@ -268,7 +268,7 @@ y = rawRingVar(R2,3,1)
 z = rawRingVar(R2,4,1)
 G = mat{{x - 3*u-3*u*v^2+u^3, y-3*v-3*u^2*v+v^3, z-3*u^2+3*v^2}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
-gbTrace = 4
+--gbTrace = 4
 rawStartComputation Gcomp  -- Groebner basis -- infinite loop BUG!!
 time m = rawGBGetMatrix Gcomp
 rawGBGetLeadTerms(Gcomp,6)
@@ -340,10 +340,30 @@ needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol x, symbol y))
 G = mat{{2*y+1, 3*x^2+2*x, y^2 + y - (x^3 - x^2)}}
 Gcomp = rawGB(G,false,0,{},false,0,0,0)
-gbTrace = 10
 rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp
+assert(m == mat{{53_R, y-26, x-17}})
 
+Gcomp = rawGB(G,true,-1,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBSyzygies Gcomp
+Gcomp2 = rawGB(m,true,-1,{},false,0,0,0)
+rawStartComputation Gcomp2
+mgb = rawGBGetMatrix Gcomp2
+rawGBGetLeadTerms(Gcomp2,10)
+m2 = rawGBSyzygies Gcomp2
+Gcomp3 = rawGB(mgb,true,-1,{},false,0,0,0)
+rawStartComputation Gcomp3
+m2 = rawGBSyzygies Gcomp3
+
+
+needs "raw-util.m2"
+R = polyring(rawZZ(), (symbol x, symbol y))
+G = mat{{2*y+1, 3*x^2-2*x, y^2 + y - (x^3 - x^2)}}
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
+assert(m == mat{{11_R, y-5, x+3}})
 
 needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol x, symbol y))
@@ -352,43 +372,27 @@ Gcomp = rawGB(G,false,0,{},false,0,0,0)
 gbTrace = 10
 rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp
+assert(m == mat{{24336_R, 2*y, 4*x-7800, y^2+2*x-3900, x^2+2*x-3900}})
+     
+needs "raw-util.m2"
+R = rawPolynomialRing(rawZZ(), lex{symbol y, symbol x})
+y = rawRingVar(R,0,1)
+x = rawRingVar(R,1,1)
+G = mat{{-3*x^2+50*x-156,  2*y, -x^3+25*x^2+y^2-156*x}}
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
+assert(m == mat{{24336_R, 4*x-7800, x^2+2*x-3900, 2*y, y^2+2*x-3900}})
 
-
-
-f0 = 2*y
-f1 = 3*x^2-50*x+156                --gone(g1)
-f2 = x^3-x^2-y^2-244*x+1248        --gone(g2)
-f3 = -(3*f2-x*f1 - 16*f1 + 2*y*f0) --gone(g3)
-  -- x2-y2+88x-1248
-g2 = f2 - x*f3 + 89*f3 + 45*y*f0   --gone(g4)
-  -- xy2+8836x-109824
-g1 = -(f1 - 3*f3 - 2*y*f0)
-  -- y2+314x-3900
-g3 = f3 + g1
-  -- x2+402x-5148
-g4 = g2 - x*g1 + 314*g3           --gone(g6,g7)
-  -- 138964x-1726296             
-
-g5 = 2*g1-y*f0                    --gone(g6,g7)
-  -- 628x-7800
-g6 = 25*g4 - 5532*g5
-  -- 4x-7800
-g7 = 157*g4 - 34741*g5
-  -- -48672
-
--- reduce g3:
-g8 = g3 - 100*g6
-  -- x2+2x+774852
--- reduce g1:
-g9 = g1 - 78*g6
-  -- y2+2x+604500
-
-g10 = 2*g9-y*f0 - g6 + 25*g7  -- 0
-
-g7
-g8
-g9
-
+needs "raw-util.m2"
+R = rawPolynomialRing(rawZZ(), lex{symbol x, symbol y})
+y = rawRingVar(R,1,1)
+x = rawRingVar(R,0,1)
+G = mat{{-3*x^2+50*x-156,  2*y, -x^3+25*x^2+y^2-156*x}}
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
+assert(m == mat{{24336_R, 2*y, y^3, 2*x+y^2-3900, x*y^2+12168, x^2+y^2}})
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw4.okay "

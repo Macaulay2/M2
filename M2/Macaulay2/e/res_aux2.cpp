@@ -1,5 +1,6 @@
 // Copyright 1996 Michael E. Stillman
 // Included from 'res2.cc'
+#include "matrixcon.hpp"
 
 void res2_comp::betti_init(int lo, int hi, int len, int *&bettis) const
 {
@@ -309,13 +310,16 @@ FreeModule *res2_comp::minimal_free_of(int i) const
 
 Matrix *res2_comp::make(int level) const
 {
-  Matrix *result = new Matrix(free_of(level-1), free_of(level));
+  const FreeModule *F = free_of(level-1);
+  const FreeModule *G = free_of(level);
+  MatrixConstructor result(F, G, false /* not mutable */, NULL);
+  //  Matrix *result = new Matrix(free_of(level-1), free_of(level));
 
   int n = 0;
-  if (result->n_cols() == 0) return result;
+  if (G->rank() == 0) return result.to_matrix();
   for (res2_pair *p = resn[level]->pairs; p != NULL; p = p->next)
-    (*result)[n++] = R->to_vector(p->syz, result->rows());
-  return result;
+    result.set_column(n++, R->to_vector(p->syz, F));
+  return result.to_matrix();
 }
 
 //////////////////////////////////////////////
@@ -350,8 +354,10 @@ void res2_comp::reduce_minimal(int x, res2term *&f,
 
 Matrix *res2_comp::make_minimal(int i) const
 {
-  Matrix *m = new Matrix(minimal_free_of(i-1), minimal_free_of(i));
-  if (i <= 0 || i >= resn.length()-1) return m;
+  const FreeModule *F = minimal_free_of(i-1);
+  const FreeModule *G = minimal_free_of(i);
+  MatrixConstructor result(F, G, false /* not mutable */, NULL);
+  if (i <= 0 || i >= resn.length()-1) return result.to_matrix();
 
   array<res2_pair *> elems;
   array<res2term *> stripped;
@@ -361,7 +367,7 @@ Matrix *res2_comp::make_minimal(int i) const
     {
       p->me = n++;
       elems.append(p);
-      stripped.append((res2term *)NULL);
+      stripped.append(static_cast<res2term *>(NULL));
     }
 
   int thisx = 0;
@@ -375,11 +381,11 @@ Matrix *res2_comp::make_minimal(int i) const
 	      stripped[p->me] = R->strip(p->syz);
 	      reduce_minimal(x,stripped[p->me], elems, stripped);
 	    }
-	  (*m)[thisx++] = R->to_vector(stripped[p->me], m->rows(), 1);
+	  result.set_column(thisx++, R->to_vector(stripped[p->me], F, 1));
 	}
     }
 
-  return m;
+  return result.to_matrix();
 }
 
 /////////////////////////////

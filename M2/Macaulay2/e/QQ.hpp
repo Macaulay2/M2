@@ -35,6 +35,10 @@ public:
   virtual bool is_QQ() const         { return true; }
   virtual bool is_basic_ring() const { return false; } 
 
+  virtual const Ring *get_ambient_ring() const { return globalZZ; }
+  virtual const Ring *get_denominator_ring() const { return globalZZ; }
+
+
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
 

@@ -8,7 +8,9 @@
 res2_poly::res2_poly(PolynomialRing *RR)
 : R(RR), M(R->Nmonoms()), K(R->Ncoeffs())
 {
-  pstash = R->resstash;
+  respoly_size = sizeof(res2term *) + sizeof(res2_pair *)
+    + sizeof(ring_elem)
+    + sizeof(int) * M->monomial_size();
 }
 
 res2_poly::~res2_poly()
@@ -27,7 +29,7 @@ int res2_poly::compare(const res2term *a, const res2term *b) const
 
 res2term *res2_poly::new_term() const
 {
-  res2term *result = (res2term *) pstash->new_elem();
+  res2term *result = GETMEM(res2term*, respoly_size);
   result->next = NULL;
   return result;
 }
@@ -95,7 +97,7 @@ void res2_poly::remove(res2term *&f) const
       res2term *tmp = f;
       f = f->next;
       K->remove(tmp->coeff);
-      pstash->delete_elem(tmp);
+      deleteitem(tmp);
     }
 }
 
@@ -182,13 +184,13 @@ void res2_poly::add_to(res2term * &f, res2term * &g) const
 	g = g->next;
 	K->add_to(tmf->coeff, tmg->coeff);
 	if (K->is_zero(tmf->coeff))
-	  pstash->delete_elem(tmf);
+	  deleteitem(tmf);
 	else
 	  {
 	    result->next = tmf;
 	    result = result->next;
 	  }
-	pstash->delete_elem(tmg);
+	deleteitem(tmg);
 	if (g == NULL) 
 	  {
 	    result->next = f; 
