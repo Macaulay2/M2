@@ -111,7 +111,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
       _first_gb_element = originalR->n_quotients();
       for (int i=0; i<_first_gb_element; i++)
 	{
-	  const gbvector *f = originalR->quotient_gbvector(i);
+	  gbvector *f = const_cast<gbvector *>(originalR->quotient_gbvector(i));
 	  int deg = weightInfo_->gbvector_term_weight(f);
 	  gbelem *g = gbelem_make(f, 0, ELEM_IN_RING, deg);
 	  gb.push_back(g);

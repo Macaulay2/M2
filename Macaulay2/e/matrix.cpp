@@ -1955,7 +1955,6 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
 	  ERROR("expected non-zero column");
 	  return 0;
 	}
-      int x = v->comp;
       ring_elem f = v->coeff;
       const int *m = P->lead_flat_monomial(f);
       P->getMonoid()->to_expvector(m, EXP);

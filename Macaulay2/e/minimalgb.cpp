@@ -321,7 +321,7 @@ void MinimalGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
       enum divisor_type typ = find_divisor(_EXP,x,w);
       switch (typ) {
       case DIVISOR_RING:
-	r = originalR->quotient_gbvector(w);
+	r = const_cast<gbvector *>(originalR->quotient_gbvector(w));
 	if (R->gbvector_reduce_lead_term_ZZ(F, Fsyz,
 					    h.f, zero,
 					    r, zero))
@@ -367,7 +367,7 @@ void MinimalGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
       enum divisor_type typ = find_divisor(_EXP,x,w);
       switch (typ) {
       case DIVISOR_RING:
-	r = originalR->quotient_gbvector(w);
+	r = const_cast<gbvector *>(originalR->quotient_gbvector(w));
 	if (R->gbvector_reduce_lead_term_ZZ(F, Fsyz,
 					    h, zero,
 					    r, zero))
