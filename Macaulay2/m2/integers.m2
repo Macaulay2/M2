@@ -73,13 +73,14 @@ random ZZ := ZZ => x -> (
      if x <= 0 then error "expected a positive number";
      rawRandomInteger x)
 
-d := 2^31 - 1.
+d := 2^31 - 1
+df := d + 0.
 
 random RR := RR => x -> (
      if x <= 0. then (
 	  error "expected a positive number"
 	  );
-     x * (rawRandomInteger d / d))
+     x * (rawRandomInteger d / df))
 
 ceiling = x -> - floor(-x)
 
