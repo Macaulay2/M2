@@ -36,92 +36,89 @@ extern "C" void outofmem();
 
 #if !defined(__MWERKS__)
 
-extern "C" {
-#include "memdebug.h"
-}
-
-#if 0
-
-void* operator new( size_t size ) {
-    void *p;
-    p = GC_MALLOC_UNCOLLECTABLE( size );
-    if (p == NULL) outofmem();
-    return p;
-}
-  
-void operator delete( void* p ) {
-    if (p != NULL) GC_FREE(p) ;
-     }
-
-void* operator new[]( size_t size ) {
-    void *p;
-    p = GC_MALLOC_UNCOLLECTABLE( size );
-    if (p == NULL) outofmem();
-    return p;
+    extern "C" {
+#   include "memdebug.h"
     }
-  
-void operator delete[]( void* p ) {
-    if (p != NULL) GC_FREE(p) ;
-    }
+
+#   if 0
+
+	void* __builtin_new( unsigned int size ) {
+	    void *p = GC_MALLOC_UNCOLLECTABLE( size );
+	    if (p == NULL) outofmem();
+	    return p;
+	}
+
+	void __builtin_delete( void* obj ) {
+	    if (obj != NULL) GC_FREE( obj );
+	    }
+
+	void* __builtin_vec_new( unsigned int size ) {
+	    void *p = GC_MALLOC_UNCOLLECTABLE( size );
+	    if (p == NULL) outofmem();
+	    return p;
+	}
+
+	void __builtin_vec_delete( void* obj ) {
+	    if (obj != NULL) GC_FREE( obj );
+	    }
+
+#   endif
+
+#   ifndef NDEBUG
+
+	static void set_to_garbage(void *p, size_t size) {
+	  char *q = (char *)p;
+	  for (; size>0; size--, q++) *q = 0xe5;
+	}
+
+	void* operator new( size_t size ) {
+	    void *p;
+	    p = malloc( size );
+	    if (p == NULL) outofmem();
+	    set_to_garbage(p,size);
+	    return p;
+	}
+
+	void operator delete( void* p ) {
+	    if (p != NULL) free(p) ;
+	     }
+
+	void* operator new[]( size_t size ) {
+	    void *p;
+	    p = malloc( size );
+	    if (p == NULL) outofmem();
+	    set_to_garbage(p,size);
+	    return p;
+	    }
+
+	void operator delete[]( void* p ) {
+	    if (p != NULL) free(p) ;
+	    }
+
+#   else
+
+	void* operator new( size_t size ) {
+	    void *p;
+	    p = GC_MALLOC_UNCOLLECTABLE( size );
+	    if (p == NULL) outofmem();
+	    return p;
+	}
+
+	void operator delete( void* p ) {
+	    if (p != NULL) GC_FREE(p) ;
+	     }
+
+	void* operator new[]( size_t size ) {
+	    void *p;
+	    p = GC_MALLOC_UNCOLLECTABLE( size );
+	    if (p == NULL) outofmem();
+	    return p;
+	    }
+
+	void operator delete[]( void* p ) {
+	    if (p != NULL) GC_FREE(p) ;
+	    }
+
+#    endif
 
 #endif
-
-#else
-
-void* __builtin_new( unsigned int size ) {
-    void *p = GC_MALLOC_UNCOLLECTABLE( size );
-    if (p == NULL) outofmem();
-    return p;
-}
-  
-void __builtin_delete( void* obj ) {
-    if (obj != NULL) GC_FREE( obj );
-    }
-
-void* __builtin_vec_new( unsigned int size ) {
-    void *p = GC_MALLOC_UNCOLLECTABLE( size );
-    if (p == NULL) outofmem();
-    return p;
-}
-  
-void __builtin_vec_delete( void* obj ) {
-    if (obj != NULL) GC_FREE( obj );
-    }
-
-#endif
-
-#else
-
-#ifndef NDEBUG
-
-static void set_to_garbage(void *p, size_t size) {
-  char *q = (char *)p;
-  for (; size>0; size--, q++) *q = 0xe5;
-}
-
-void* operator new( size_t size ) {
-    void *p;
-    p = malloc( size );
-    if (p == NULL) outofmem();
-    set_to_garbage(p,size);
-    return p;
-}
-  
-void operator delete( void* p ) {
-    if (p != NULL) free(p) ;
-     }
-
-void* operator new[]( size_t size ) {
-    void *p;
-    p = malloc( size );
-    if (p == NULL) outofmem();
-    set_to_garbage(p,size);
-    return p;
-    }
-  
-void operator delete[]( void* p ) {
-    if (p != NULL) free(p) ;
-    }
-
-#endif
-

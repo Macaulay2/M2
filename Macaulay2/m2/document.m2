@@ -1286,12 +1286,8 @@ text DL   := x -> concatenate(
 			 newline)
 		    else error "expected a list of length 1 or 2"
 		    )
-	       else ("    ", 
-		    text p#0, 
-		    newline, 
-		    newline)
+	       else ("    ", text p, newline)
 	       )),
-     newline,
      newline)
 
 texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )

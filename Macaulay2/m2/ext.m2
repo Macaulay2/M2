@@ -111,16 +111,16 @@ Ext(Module,Module) := Module => (N,M) -> (
     k := coefficientRing Q;
     -- compute the fudge factor for the adjustment of bidegrees
     fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
-    T := k[X_0 .. X_(c-1), toSequence Q.generatorSymbols,
+    T := k(monoid [X_0 .. X_(c-1), toSequence Q.generatorSymbols,
       Degrees => splice {
         apply(0 .. c-1,i -> {-2, - first degree f_i}), 
         n : {0,1}
         },
       Adjust => v -> {- fudge * v#0 + v#1, - v#0},
       Repair => w -> {- w#1, - fudge * w#1 + w#0}
-      ];
+      ]);
     toT := map(T,Q,apply(toList(c .. c+n-1), i -> T_i));
-    S := k[X_0 .. X_(c-1),Degrees=>{c:{2}}];
+    S := k(monoid [X_0 .. X_(c-1),Degrees=>{c:{2}}]);
     mS := monoid S;
     use S;
     spots := E -> sort select(keys E, i -> class i === ZZ);

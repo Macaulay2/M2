@@ -63,7 +63,7 @@ GMP=provided
 GMPLIB=../../gmp/.libs/libgmp.a
 AC_SUBST(GMP)
 AC_SUBST(GMPLIB)
-AC_ARG_WITH(gmp,[  --with-gmp              use system gmp library],GMP="$withval")
+AC_ARG_WITH(gmp,[  --with-gmp              use system-installed gmp library],GMP="$withval")
 case "$GMP" in
    provided) ;;
    yes) if test -f /usr/lib/libgmp.a
@@ -80,7 +80,7 @@ esac
 
 GC=provided
 AC_SUBST(GC)
-AC_ARG_WITH(gc,[  --with-gc               use system gc library],GC="$withval")
+AC_ARG_WITH(gc,[  --with-gc               use system-installed gc library],GC="$withval")
 case "$GC" in
    provided|yes) ;;
    *) echo configure: error: unrecognized value --with-gc="$withval" >&2; exit 1 ;;
@@ -139,7 +139,11 @@ AC_ARG_ENABLE(optimize,[  --disable-optimize      disable optimization],OPTIMIZE
 
 STRIP=yes
 AC_SUBST(STRIP)
-AC_ARG_ENABLE(strip,[  --disable-strip         do not strip the Macaulay 2 binary],STRIP="$enableval")
+AC_ARG_ENABLE(strip,   [  --disable-strip         do not strip the Macaulay 2 binary],STRIP="$enableval")
+
+GC_FOR_NEW=yes
+AC_SUBST(GC_FOR_NEW)
+AC_ARG_ENABLE(gc_for_new,[  --disable-gc-for-new     use builtin_new instead of gc],GC_FOR_NEW="$enableval")
 
 AC_CHECK_FUNC(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing))
 AC_CHECK_FUNC(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing))

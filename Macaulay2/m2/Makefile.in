@@ -121,6 +121,7 @@ ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent '-eloaddata("../$(DUMPDATAFILE)")' -- '-erunStartFunctions()' 
 phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
+	 # phase 1: read *.m2 and dump data
 	rm -f ../$(DUMPDATAFILE)
 	time ../libexec/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
 else
@@ -146,7 +147,7 @@ phase2 :: phase1
 phase2 :: ../cache/Macaulay2-pre
 
 ../cache/Macaulay2-pre : $(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS)
-	 # phase 2 makes the example and test files
+	 # phase 2: make the example files, the test files, and $@
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
 	mkdir  cache/tests
@@ -177,6 +178,7 @@ cache/doc/sample: sample; cp $< $@
 cache/doc/expression: expression; cp $< $@
 
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
+	 # phase 3: running the example input files
 	$(MAKE) -k -C ../m2/cache/doc       -f ../../../m2/Makefile.egs
 	$(MAKE) TOPDIR=../../../../.. -k -C ../tutorial/final/cache/doc -f ../../../../m2/Makefile.egs
 
@@ -185,6 +187,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 ../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
 		$(MADEM2FILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	rm -f ../cache/Macaulay2-tmp
+	 # phase 4: make $@
 	../libexec/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
 

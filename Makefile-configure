@@ -17,6 +17,7 @@ Makefile-configure.overrides :
 	echo "# CONFIGURE_OPTIONS += --enable-static" >>$@
 	echo "# CONFIGURE_OPTIONS += --enable-memdebug" >>$@
 	echo "# CONFIGURE_OPTIONS += --enable-verbose" >>$@
+	echo "# CONFIGURE_OPTIONS += --disable-gc-for-new" >>$@
 	echo "# CONFIGURE_OPTIONS += --without-factory" >>$@
 	echo "# CONFIGURE_OPTIONS += --with-gmp" >>$@
 	echo "# CONFIGURE_OPTIONS += --with-gc" >>$@
