@@ -545,6 +545,16 @@ readpromptfun():void := (
      stdout << readprompt;
      flush(stdout));
 
+import isReady(fd:int):bool;
+isReadyFun(e:Expr):Expr := (
+     when e
+     is f:file do (
+	  if f.input then Expr(isReady(f.infd))
+	  else WrongArg("an input file")
+	  )
+     else WrongArg("an input file"));
+setupfun("isReady",isReadyFun);
+
 tokenbuf := newvarstring(100);
 getline(o:file):string := (
      ch := 0;
