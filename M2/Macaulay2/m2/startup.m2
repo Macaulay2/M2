@@ -6,7 +6,9 @@
 
 errorDepth = 0						    -- without this, we may see no error messages the second time through
 debuggingMode = true
-earlyCommandLineOptions()
+stopIfError = false
+gotarg := arg -> any(commandLine, s -> s == arg)
+if gotarg "--stop" then stopIfError = true
 
 firstTime := not Array.?name
 
