@@ -88,7 +88,7 @@ MultipleArgsWithOptions := opts -> (
 
 MultipleArgsNoOptions := () -> (
      methodFunction := newmethod123c(,noMethod, {});
-     methodFunction(Sequence) := newmethod123c( methodFunction, noMethod, {} );
+     methodFunction Sequence := newmethod123c( methodFunction, noMethod, {} );
      methodFunction)     
 
 method = methodDefaults ==> options -> () -> (

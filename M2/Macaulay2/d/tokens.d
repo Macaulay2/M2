@@ -222,7 +222,6 @@ export notfoundE := Expr(Nothing());			    -- internal use only, not visible to 
 
 -- Code
 
-export exprCode := {v:Expr,position:Position};
 export localSymbolClosureCode := {
      nestingDepth:int,
      symbol:Symbol,
@@ -271,6 +270,8 @@ export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position}
 
 export CodeSequence := array(Code);
 export sequenceCode := {x:CodeSequence, position:Position};
+export listCode     := {y:CodeSequence, position:Position};
+export arrayCode    := {z:CodeSequence, position:Position};
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
 export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code,
      dictionary:Dictionary, position:Position} ;
@@ -296,8 +297,7 @@ export functionCode := {
      desc:functionDescription
      };
 export Code := (
-     exprCode					      -- soon obsolete
-     or nullCode
+     nullCode
      or realCode
      or stringCode
      or integerCode
@@ -310,7 +310,11 @@ export Code := (
      or localSymbolClosureCode
      or unaryCode or binaryCode 
      or ternaryCode or multaryCode or forCode
-     or sequenceCode or openDictionaryCode or functionCode
+     or sequenceCode
+     or listCode
+     or arrayCode
+     or openDictionaryCode				    -- soon obsolete
+     or functionCode
      );
 
 -- scopes
