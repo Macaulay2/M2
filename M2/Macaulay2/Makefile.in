@@ -53,7 +53,7 @@ distclean clean ::; rm -rf lib
 ################################# tmp
 distclean clean ::; rm -rf tmp
 ################################# util
-initialize ::; $(MAKE) -C util all
+initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) NODEPENDS=1 -C util $@
 wc ::; $(MAKE) NODEPENDS=1 -C util wc
 ################################# c
@@ -61,8 +61,7 @@ distclean clean ::; $(MAKE) NODEPENDS=1 -C c $@
 all justM2 ::; $(MAKE) -C c all
 wc ::;  $(MAKE) -C c NODEPENDS=1 wc
 ################################# c2
-all justM2 ::; $(MAKE) NODEPENDS=1 -C c2 targettypes.h
-distclean clean ::; $(MAKE) NODEPENDS=1 -C c2 $@
+distclean clean ::; [ -d c2 ] && $(MAKE) NODEPENDS=1 -C c2 $@
 ################################# e
 justM2 ::; $(MAKE) -C e all
 all check ::; $(MAKE) -C e $@
@@ -127,8 +126,6 @@ distclean clean ::; $(MAKE) -C emacs $@
 ################################# appendix to Vasconcelos' book
 Vasconcelos-appendix ::; if [ -d Vasconcelos-appendix ] ; then $(MAKE) -C Vasconcelos-appendix all; fi
 distclean clean ::; if [ -d Vasconcelos-appendix ] ; then $(MAKE) -C Vasconcelos-appendix clean; fi
-################################# socket
-distclean clean ::; if [ -d socket ]; then $(MAKE) -C socket clean; fi
 ################################# Mathematica
 distclean clean ::; if [ -d Mathematica ]; then $(MAKE) -C Mathematica clean; fi
 ################################# backup

@@ -93,7 +93,7 @@ endif
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
 
-CPPFLAGS += -I../../include -I@srcdir@ -I. -I../c2
+CPPFLAGS += -I../../include -I@srcdir@ -I. -I../util
 CFLAGS += $(DEBUGFLAGS)
 
 # we can't do this because our manufactured c files have lots of unused labels

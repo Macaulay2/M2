@@ -102,7 +102,6 @@ TAGS: Makefile dumpseq
 				../packages/*.m2 \
 				../packages/*/*.m2 \
 				../*/Makefile* \
-			        ../experiments/*.m2 \
 			        ../slides/*.m2 \
 			        ../slides/lib/*.m2 \
 				../Vasconcelos-appendix/eg.m2 \
@@ -166,7 +165,7 @@ clean::; rm -f .gdbinit
 	echo 'set environment M2HOME ..' >>$@
 .gdb-run-it:
 	echo 'echo \n' >$@
-	echo 'run -ephase=1 @srcdir@/setup.m2 "-e path = join({\"@srcdir@/../packages/\",\"@srcdir@/../experiments/\"},path)" -ephase=0 "-e runStartFunctions()"' >>$@
+	echo 'run -ephase=1 @srcdir@/setup.m2 "-e path = join({\"@srcdir@/../packages/\"},path)" -ephase=0 "-e runStartFunctions()"' >>$@
 
 ##
 backup : CVS/Entries

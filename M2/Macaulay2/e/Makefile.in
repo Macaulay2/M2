@@ -22,7 +22,7 @@ else
 endif
 
 CPPFLAGS += -I../../include
-CPPFLAGS += -I../c2
+CPPFLAGS += -I../util
 CPPFLAGS += -I.
 
 ifdef ARING
@@ -281,7 +281,7 @@ clean::
 	rm -f TAGS
 
 Makefile : Makefile.in
-	cd ../..; config.status Macaulay2/e/Makefile
+	cd ../..; ./config.status Macaulay2/e/Makefile
 
 Makefile-o.depends: $(CFILES) $(CCFILES) cmdnames.hpp cmdinst.hpp
 	$(CC) -M $(CPPFLAGS) $(patsubst %, @srcdir@/%, $(CFILES) $(CCFILES)) >"$@"
