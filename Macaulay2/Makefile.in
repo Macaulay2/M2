@@ -9,9 +9,9 @@ justM2 all :: initialize config
 include ../include/config.Makefile
 VPATH = @srcdir@
 install :: $(packagedir)/COPYING $(packagedir)/CHANGES $(packagedir)/README
-$(packagedir)/COPYING : COPYING $(packagedir) ; cp $< "$@"
-$(packagedir)/CHANGES : CHANGES $(packagedir) ; cp $< "$@"
-$(packagedir)/README  : README  $(packagedir) ; cp $< "$@"
+$(packagedir)/COPYING : COPYING $(packagedir) ; $(INSTALL_DATA) $< "$@"
+$(packagedir)/CHANGES : CHANGES $(packagedir) ; $(INSTALL_DATA) $< "$@"
+$(packagedir)/README  : README  $(packagedir) ; $(INSTALL_DATA) $< "$@"
 $(packagedir):; $(INSTALL) -d "$@"
 ################################# libexec
 libexec :; mkdir $@
@@ -61,6 +61,7 @@ distclean clean ::; $(MAKE) -C test $@
 all :: setup
 	[ -x $< ] || chmod a+x $<
 install ::; $(INSTALL_PROGRAM) setup $(packagedir)
+clean ::; rm -f setup
 ################################# packages
 install check clean distclean ::; $(MAKE) -C packages $@
 ################################# html

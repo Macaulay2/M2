@@ -24,7 +24,7 @@ install :: $(DIRS)
 install :: ; $(MAKE) -C encap $@
 $(DIRS) :; $(INSTALL) -d $@
 distribution :
-	tar cf -C $(encapdir) $(package) | gzip > Macaulay2-$(DESC).tar.gz
+	tar cf - -C $(encapdir) $(package) | gzip > Macaulay2-$(DESC).tar.gz
 
 ################################# tar manufactured files
 manufactured.tgz : Makefile
