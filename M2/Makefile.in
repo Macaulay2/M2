@@ -6,7 +6,7 @@ ifdef XYZZY
   the 'gnu' version of the 'make' program.  The source code for it is
   available at ftp://ftp.gnu.org/pub/gnu/make.
 endif
-include config.Makefile
+include include/config.Makefile
 VPATH = @srcdir@
 install all clean distclean::
 	@echo '-------- making '$@', $(PACKAGE_VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) --------'
@@ -45,5 +45,5 @@ manufactured.tgz : Makefile
 		Macaulay2/m2/cache-tmp/Examples/*.m2 \
 		Macaulay2/m2/cache-tmp/Tests/*.m2 \
 		Macaulay2/html
-distclean ::; rm -f @CONFIGURED_FILES@ include/config.h config.Makefile
+distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 install all clean distclean::; @echo "-------- done making '$@' --------"

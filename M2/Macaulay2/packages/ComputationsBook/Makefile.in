@@ -1,5 +1,5 @@
 TOPDIR = ../../..
-include $(TOPDIR)/config.Makefile
+include $(TOPDIR)/include/config.Makefile
 srcdir = @srcdir@
 VPATH = $(srcdir)
 INSTALL = @INSTALL@

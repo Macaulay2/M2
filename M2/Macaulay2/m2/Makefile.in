@@ -1,6 +1,6 @@
 # @configure_input@
 justM2 default :: initialize phase1
-include ../../config.Makefile
+include ../../include/config.Makefile
 VPATH = @srcdir@
 all:: initialize
 emacs html: all; $(MAKE) -C ../$@

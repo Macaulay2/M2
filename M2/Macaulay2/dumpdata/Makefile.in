@@ -1,7 +1,7 @@
 # @configure_input@
 .PHONY : all clean distclean install check default
 default: all check
-include ../../config.Makefile
+include ../../include/config.Makefile
 VPATH = @srcdir@
 all::
 check::

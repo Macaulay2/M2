@@ -1,5 +1,5 @@
 # @configure_input@
-include ../../config.Makefile
+include ../../include/config.Makefile
 VPATH = @srcdir@
 RESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2)))
 ifneq "$(DUMPDATA)" "no"

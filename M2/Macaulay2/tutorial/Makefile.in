@@ -1,5 +1,5 @@
 # @configure_input@
-include ../../config.Makefile
+include ../../include/config.Makefile
 VPATH = @srcdir@
 FILES := Makefile tutbook.m2 titlepage.tex \
 	final/--INDEX final/*.m2 prelim/*.m2 translate.c

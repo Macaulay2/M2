@@ -1,5 +1,5 @@
 # @configure_input@
-include ../../config.Makefile
+include ../../include/config.Makefile
 VPATH = @srcdir@
 ELFILES = M2-mode.el M2.el
 ALLFILES = makesyms.m2 Makefile $(ELFILES) emacs-hlp.txt emacs.m2

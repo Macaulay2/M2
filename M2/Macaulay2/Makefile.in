@@ -6,7 +6,7 @@ all ::
 install ::
 justM2 all :: initialize config
 
-include ../config.Makefile
+include ../include/config.Makefile
 VPATH = @srcdir@
 install :: $(packagedir)/COPYING $(packagedir)/CHANGES $(packagedir)/README
 $(packagedir)/COPYING : COPYING  ; cp $< "$@"

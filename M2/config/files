@@ -1,4 +1,4 @@
-config.Makefile
+include/config.Makefile
 Makefile
 Macaulay2/Makefile
 Macaulay2/m2/Makefile
