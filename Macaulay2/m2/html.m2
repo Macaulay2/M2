@@ -103,6 +103,15 @@ style := () -> LITERAL {///
 </style>
 /// }
 
+links := () ->
+LITERAL ///
+    <LINK REL="HOME" TITLE="Advanced Bash-Scripting Guide" HREF="index.html">
+    <LINK REL="UP" TITLE="Advanced Topics" HREF="part4.html">
+    <LINK REL="PREVIOUS" TITLE="Advanced Topics" HREF="part4.html">
+    <LINK REL="NEXT" TITLE="Globbing" HREF="globbingref.html">
+    <LINK REL="stylesheet" HREF="common/kde-common.css" TYPE="text/css">
+///
+
 -- validate := LITERAL ///
 -- <a href="http://validator.w3.org/check/referer">Validate</a> the html on this page, or <a href="http://jigsaw.w3.org/css-validator/check/referer">validate</a> the css on this page.
 -- ///
@@ -195,15 +204,8 @@ scope2 TO := scope2 TOH := x -> (
      follow key;
      )
 
-buttonBar := (key) -> TABLE {
-     { 
-	  SEQ {
-	       LITERAL ///<p class="buttonbar">///,
-	       next key, prev key, up key,
-     	       if key =!= topNodeName then topNodeButton else nullButton,
-     	       masterIndexButton,
-     	       LITERAL ///</p>///
-	       },
+buttonBar := (key) -> TABLE { { 
+
 	  LITERAL concatenate (///
 	       <form class="search" action="///,					    -- "
 	       if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
@@ -218,9 +220,17 @@ buttonBar := (key) -> TABLE {
 	       <input type="hidden" name="config"   value="htdig-M2">
 	       </p>
 	       </form>
-	       ///)						    -- "
-	  }
-     }
+	       ///),						    -- "
+
+	  SEQ {
+	       LITERAL ///<p class="buttonbar">///,
+	       next key, prev key, up key,
+     	       if key =!= topNodeName then topNodeButton else nullButton,
+     	       masterIndexButton,
+     	       LITERAL ///</p>///
+	       },
+
+	  } }
 
 pass1 := () -> (
      << "pass 1, finding undocumented symbols" << endl;
@@ -267,7 +277,6 @@ makeHtmlNode = key -> (
 		    },
 	       HR{}, 
 	       documentationMemo key,
-	       -- HR{}, PARA {validate}
 	       }
 	  }
      << endl << close)
@@ -330,7 +339,6 @@ makeMasterIndex := keylist -> (
 	       topNodeButton, 
 	       PARA between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
 	       UL apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey }),
-	       -- HR{}, PARA {validate}
 	       }
 	  } << endl << close
      )
@@ -462,11 +470,17 @@ installPackage Package := o -> pkg -> (
 check = method()
 check Package := pkg -> (
      logfile := "Macaulay2-test.log";
-     scan(values pkg#"test inputs", t -> (
-	       cmd := commandLine#0 | " --silent -q -e 'load \""|pkg#"title"|".m2\"' >/dev/null";
-	       stderr << "--   " << cmd << endl << "     " << net t << endl;
-	       "!" | cmd << t << endl << close;
-	       )))
+     scan(pairs pkg#"test inputs", 
+	  (i,t) -> (
+	       stderr << "--------------------------------------------" << endl;
+	       if class t === String then (
+	       	    cmd := commandLine#0 | " --silent -q -e 'load \""|pkg#"title"|".m2\"'";
+	       	    stderr << "-- test " << i << ": " << cmd << endl;
+	       	    "!" | cmd << t << endl << "exit" << endl << close;
+		    )
+	       else if class t === Function then (
+		    stderr << "-- test " << i << ": " << code t << endl;
+		    t()))))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

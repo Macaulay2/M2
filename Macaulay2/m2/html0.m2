@@ -102,6 +102,7 @@ ANCHOR     = new MarkUpType
 SHIELD     = new MarkUpType
 UL         = new MarkUpType; new UL from List := (UL,x) -> select(x,i -> i =!= null)
 OL         = new MarkUpType
+DIV        = new MarkUpType
 NL         = new MarkUpType
 DL 	   = new MarkUpType
 TO         = new MarkUpType
