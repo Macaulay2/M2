@@ -413,8 +413,14 @@ rawDivideByVariable(m-m,1,-1)
 ---------------------
 needs "raw-util.m2"
 R = polyring(rawZZp 101, (symbol a .. symbol c))
-
 m = mat{{0_R}}
+b1 = rawBasis(m, {1}, {1}, {1}, {0,1,2}, false, -1)
+
+R = ZZ/101[symbol a .. symbol c]
+m = mat{{0_(raw R)}}
+rawBasis(m,{1},{1},{1},{0,1,2},false,-1)
+
+
 b1 = rawBasis(m, {2}, {2}, {1}, {0,1,2}, false, -1)
 assert(b1 == mat{{a^2, a*b, a*c, b^2, b*c, c^2}})
 
@@ -442,8 +448,19 @@ rawBasis(mat{{0_R}}, {-1}, {-1}, {1}, {0,1,2}, false, -1)
 rawBasis(mat{{0_R}}, {1}, {1}, {1}, {0,1,2}, false, -1)
 
 R = ZZ/101[symbol a .. symbol c]
-basis(-1,coker matrix{{0_R}})
-
+m = coker matrix{{0_R}}
+basis(1,coker matrix{{0_R}})
+m = raw presentation m
+rawBasis(m,{1},{1},{1},(0,1,2),false,-1)
+rawTarget m
+rawSource m
+m = mat{{0_(raw R)}}
+rawBasis(m,{1},{1},{1},(0,1,2),false,-1)
+rawBasis(m,{2},{2},{1},(0,1,2),false,-1)
+rawBasis(m,{2},{2},{1},{0,1,2},false,-1)
+m
+rawTarget m
+rawSource m
 -- A truncation example
 m = rawMatrix1(R^{-1,-3,-6}, 3, (a^3,0_R,0_R,
 	                         0_R,b^3,0_R,

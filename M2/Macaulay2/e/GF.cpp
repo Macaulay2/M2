@@ -19,19 +19,17 @@ bool GF::initialize_GF(const RingElement *prim)
 		  1,
 		  _originalR->get_degree_ring());
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
 
   declare_field();
 
   int i,j;
 
-  ring_elem f;
-#warning "removed get_quotient_elem"
-#if 0
-  f = _originalR->get_quotient_elem(0);
-#endif
+  if (_originalR->n_quotients() != 1)
+    {
+      ERROR("rawGaloisField expected an element of a quotient ring of the form ZZ/p[x]/(f)");
+      return false;
+    }
+  ring_elem f = _originalR->quotient_element(0);
 
   int n = _originalR->primary_degree(f);
 
@@ -94,6 +92,11 @@ bool GF::initialize_GF(const RingElement *prim)
       _from_int_table[i] = a;
       a = _one_table[a];
     }
+
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
   return true;
 }
 

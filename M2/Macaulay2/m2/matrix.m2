@@ -81,7 +81,7 @@ Matrix - ZZ := (f,i) -> if i === 0 then f else f - i*id_(target f)
      symbol ring => ring f,
      symbol source => source f,
      symbol target => target f,
-     symbol handle => newHandle (ggPush f, ggnegate),
+     symbol RawMatrix => - f.RawMatrix,
      symbol cache => new CacheTable
      }
 
