@@ -86,17 +86,6 @@ class EMonomialTable
     return true;
   }
 
-public:
-  EMonomialTable(EMonoid *M, int nbins) : len(nbins), M(M) {
-    MO = M->getMonomialOrder();
-    bins = new monomial * [len];
-    for (int i=0; i<len; i++) bins[i] = 0;
-  }
-  ~EMonomialTable() {
-  }
-  void enlarge(int newsize) {
-    // A somewhat time consuming process...
-  }
   bool search_exponents(const int *exponents, uint32 hashval, monomial * & found) const {
     int h = hashval % len;
     for (monomial *v = bins[h]; v != 0; v=v->next) {
@@ -120,6 +109,18 @@ public:
     }
     return false;
   }
+
+public:
+  EMonomialTable(EMonoid *M, int nbins) : len(nbins), M(M) {
+    MO = M->getMonomialOrder();
+    bins = new monomial * [len];
+    for (int i=0; i<len; i++) bins[i] = 0;
+  }
+  ~EMonomialTable() {
+  }
+  void enlarge(int newsize) {
+    // A somewhat time consuming process...
+  }
   void insert(monomial *elem) {
     // Assumption: 'elem' is not in the hash table,
     // and the hashval and other fields of the monomial are all set.
@@ -128,7 +129,7 @@ public:
     bins[h] = elem;
   }
 
-  monomial *lookup_and_insert_exponents(const int *exponents) {
+  monomial *lookup_and_insert_commutative(const int *exponents) {
     // ONLY VALID IN COMMUTATIVE CASE...!!
     uint32 hashval = M->hash_exponents(exponents);
     monomial *result;
@@ -147,7 +148,7 @@ public:
     return result;
   }
 
-  monomial * lookup_and_insert_encoded(const int *encoded) {
+  monomial * lookup_and_insert_noncomm_encoded(const int *encoded) {
     // This is the Non-commutative case!!
     uint32 hashval = M->hash_encoded(encoded);
     int len = M->encoded_length(encoded);

@@ -50,25 +50,6 @@ char ** EMonoid::setNames(int nvars, const char *s, int slength)
   return result;
 }
 
-// Implementation 1 of monomials: Each monomial is a pointer to
-// a unique location in memory: that is, two monomials are equal 
-// iff they have the same pointer.
-
-// Monomials occur in several flavors:
-// a. those appearing as lead terms in the GB
-// b. those appearing in polynomials in the GB
-// c. those which are used in reduction, but don't appear in the GB
-// d. those which occur as l.c.m's of monomial lead terms.
-// e. those which are elements of the syzygy module. [These will appear
-//    in a different table, I think...]
-//
-// Elements which are divisible by a lead term are flagged with the lead term elem
-// which divides it.
-//
-// Special routines:
-// monomial *intern(int *exp); -- Inserts it into structure if not already there.
-// int *get_monomial(monomial *m);
-// 
 EMonoid::EMonoid(EMonomialOrder *mo, 
 		 const int *print, 
 		 const char **names)
@@ -166,9 +147,15 @@ const int * ECommMonoid::to_exponents(const monomial *m) const
   return m->exponents;
 }
 
+void ECommMonoid::copy_exponents(const monomial *m, int *&result) const
+{
+  for (int i=0; i<nvars; i++)
+    result[i] = m->exponents[i];
+}
+
 monomial *ECommMonoid::unchecked_monomial_from_exponents(const int *exp) const
 {
-  return T->lookup_and_insert_exponents(exp);
+  return T->lookup_and_insert_commutative(exp);
 }
 monomial *ECommMonoid::monomial_from_exponents(const int *exp) const
 {
@@ -182,12 +169,7 @@ monomial *ECommMonoid::monomial_from_exponents(const int *exp) const
   return unchecked_monomial_from_exponents(exp);
 }
 
-monomial *ECommMonoid::monomial_from_encoded(const int *encoded) const
-{
-  return T->lookup_and_insert_encoded(encoded);
-}
-
-void ECommMonoid::get_variable_exponent_pairs(const monomial *m, intarray &result) const
+void ECommMonoid::to_variable_exponent_pairs(const monomial *m, intarray &result) const
 {
   const int *exp = m->exponents;
   for (int i=0; i<nvars; i++)
@@ -399,15 +381,15 @@ monomial *ENCMonoid::monomial_from_exponents(const int *exp) const
 {
   
   monorder->encode(exp,MULT_exp);
-  return T->lookup_and_insert_encoded(MULT_exp);
+  return T->lookup_and_insert_noncomm_encoded(MULT_exp);
 }
 
 monomial *ENCMonoid::monomial_from_encoded(const int *encoded) const
 {
-  return T->lookup_and_insert_encoded(encoded);
+  return T->lookup_and_insert_noncomm_encoded(encoded);
 }
 
-void ENCMonoid::get_variable_exponent_pairs(const monomial *m, intarray &result) const
+void ENCMonoid::to_variable_exponent_pairs(const monomial *m, intarray &result) const
 {
   // WRITE THIS!!
 }
@@ -439,6 +421,12 @@ monomial *ENCMonoid::monomial_from_variable_exponent_pairs(const intarray &term)
     }
   delete [] exp;
   return result;
+}
+
+void ENCMonoid::copy_exponents(const monomial *m, int *&result) const
+{
+  for (int i=0; i<nvars; i++)
+    result[i] = m->exponents[i];
 }
 
 const int * ENCMonoid::to_exponents(const monomial *m) const
