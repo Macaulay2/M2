@@ -485,11 +485,11 @@ tex PARA := x -> concatenate(///
 text PARA := x -> concatenate(newline, newline, apply(x,text))
 
 text EXAMPLE := x -> concatenate apply(x,i -> text PRE i)
-html EXAMPLE := x -> concatenate html ExampleTABLE apply(toList x, x -> CODE x)
+html EXAMPLE := x -> concatenate html ExampleTABLE apply(toList x, x -> {x, CODE concatenate("in = ",x)})
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
-text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y, newline)))
-net ExampleTABLE := x -> stack between("",apply(toList x, net))
+text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y#1, newline)))
+net ExampleTABLE := x -> stack between("",apply(toList x#1, net))
 
 net TABLE := x -> net MatrixExpression toList x
 tex TABLE := x -> concatenate applyTable(x,tex)
@@ -508,7 +508,7 @@ texMath TABLE := x -> concatenate (
 ///
      )
 
-tex ExampleTABLE := x -> concatenate apply(x,tex)
+tex ExampleTABLE := x -> concatenate apply(x,y -> tex y#1)
 
 html TABLE := x -> concatenate(
      newline,
@@ -533,7 +533,7 @@ html ExampleTABLE := x -> concatenate(
      apply(x, 
 	  item -> (
 	       "  <TR>", newline,
-	       "    <TD NOWRAP>", html item, "</TD>", newline,
+	       "    <TD NOWRAP>", html item#1, "</TD>", newline,
 	       "  </TR>", newline
 	       )
 	  ),

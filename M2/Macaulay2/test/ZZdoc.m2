@@ -2,6 +2,16 @@
 
 -- this file has an unusual name so it will be done last.
 
+if class doc "Macaulay 2" =!= SEQ then (
+     stderr
+     << ///Can't get started on checking documentation, top node missing, key Macaulay 2.///
+     << endl;
+     if class doc "\"Macaulay 2\"" === SEQ then (
+     	  stderr << ///Hmm, the quoted key "Macaulay 2" is there!/// << endl;
+	  );
+     exit 1;
+     )
+
 setrecursionlimit 1000
 
 path = {"."}
@@ -56,8 +66,6 @@ scan(keys DocumentationProvided,
 	  verify d;
 	  ))
 reachable#(getDocumentationTag "Macaulay 2") = true
-
-assert( class doc "Macaulay 2" === SEQ )
 
 topName = "Macaulay 2"
 reach doc topName

@@ -660,6 +660,18 @@ export bind(e:ParseTree,scope:Scope):void := (
 	       else makeErrorTree(binary.operator, "expected a symbol to right of '.?'" );
 	       )
 	  else (
+	       if binary.operator.word == semicolonW then (
+		    when binary.lhs 
+		    is blhs:Binary do (
+		    	 if blhs.operator.word == commaW
+		    	 then errorpos(blhs.operator.position, "warning: comma separated sequence discarded by semicolon on right"))
+		    else nothing;
+		    when binary.rhs 
+		    is brhs:Binary do (
+		    	 if brhs.operator.word == commaW
+		    	 then errorpos(brhs.operator.position, "warning: comma separated sequence discarded by semicolon on left"))
+		    else nothing;
+		    );
 	       bind(binary.lhs,scope);
 	       bindop(binary.operator,scope);
 	       bind(binary.rhs,scope);
