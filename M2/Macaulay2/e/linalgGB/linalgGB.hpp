@@ -9,20 +9,19 @@
 #include "MonomialTable.h"
 #include <map>
 
-enum gbelem_type { 
-  ELEM_IN_RING,  // These are ring elements
-  ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might also be min gens
-  // In the graded case, they ARE minimal generators
-  ELEM_MIN_GB,    // These are elements which are minimal GB elements
-  ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
+
+struct sparse_row : public our_new_delete {
+  int len;
+  COEFF_TYPE *coeffs;
+  int *comps; // points into either S, or into a set Sd
+  
+  // One must be careful about adding two polynomials, since we
+  // need to have an order on the monomials in this case
 };
 
-struct gbelem : public our_new_delete {
-  poly f;
-  int deg;
-  int alpha; // the homogenizing degree
-  unsigned char is_minimal;
-  gbelem_type minlevel;
+class CoefficientRing : public our_new_delete {
+public:
+  void init_set(COEFF_TYPE *result, COEFF_TYPE *a) const { } 
 };
 
 class LinearAlgebraGB : public GBComputation {
@@ -31,7 +30,7 @@ public:
   struct row_elem : public our_new_delete {
     monomial monom;
     int elem;
-    poly row;
+    sparse_row row;
   };
 
   struct column_elem : public our_new_delete {
@@ -42,17 +41,18 @@ public:
   };
 
 private:
+  typedef std::map<monomial, int> monomial_map;
+
   const PolynomialRing *originalR;
   const FreeModule *F; // determines whether the monomial order is a Schreyer order
                        // Also determines degrees of elements in F.
-  
+
+  const CoefficientRing *coeffK;
   int n_subring; // number of GB elements in the first subring
   int n_pairs_computed;
   int n_gens_left;
 
   MonomialSet H; // Hash table of monomials in the ring
-  //  HashTable<int,int,int> thisH; // Hash table (monom,int) --> int
-  typedef std::map<monomial, int> monomial_map;
   monomial_map H0; // Hash table (well...  sort of) of
                          // monomial --> int
   SPairSet S;
@@ -70,7 +70,8 @@ private:
   // Need: allocator for vectors in the matrix
   // Need: GB itself.
 
-  std::vector<gbelem *, gc_allocator<gbelem *> > gb;
+  gb_array gens;
+  gb_array gb;
 
   // The matrix
   std::vector<row_elem, gc_allocator<row_elem> > rows;
@@ -80,7 +81,8 @@ private:
   int next_row_to_process;
 
   void allocate_poly(poly &result, size_t len);
-  monomial mult_monomials(monomial m, monomial n);
+  void allocate_sparse_row(sparse_row &result, size_t len);
+  int mult_monomials(monomial m, monomial n);
   int column(monomial m);
 
   void append_row(monomial m, int gbelem);

@@ -4,6 +4,7 @@
 #define _monoms_h_
 
 #include <stdio.h>
+#include "../engine.h"
 typedef int * uninterned_monomial;
 
 #define MONOMIAL_LENGTH(m) ((*(m))*2+1)
@@ -14,6 +15,8 @@ extern "C" {
 #endif
 
   int monomial_simple_degree(uninterned_monomial m);
+
+  int monomial_weight(uninterned_monomial, M2_arrayint wts);
 
   int monomial_equal(uninterned_monomial m1,
 		     uninterned_monomial m2);

@@ -2,12 +2,20 @@
 #include <vector>
 #include "../text_io.hpp"
 #include "monoms.h"
+#include "../matrix.hpp"
 
 void LinearAlgebraGB::allocate_poly(poly &result, size_t len)
 {
   result.len = len;
   result.coeffs = newarray(COEFF_TYPE, len);
   result.monoms = newarray(monomial, len);
+}
+
+void LinearAlgebraGB::allocate_sparse_row(sparse_row &result, size_t len)
+{
+  result.len = len;
+  result.coeffs = newarray(COEFF_TYPE, len);
+  result.comps = newarray(int, len);
 }
 
 void LinearAlgebraGB::append_row(monomial m, int elem)
@@ -43,7 +51,7 @@ int LinearAlgebraGB::column(monomial m)
   return next_column;
 }
 
-monomial LinearAlgebraGB::mult_monomials(monomial m, monomial n)
+int LinearAlgebraGB::mult_monomials(monomial m, monomial n)
 {
   // Multiply the two monomials m and n, using the monomial set H.
   // Then, look in thisH to see if it exists already.
@@ -56,7 +64,7 @@ monomial LinearAlgebraGB::mult_monomials(monomial m, monomial n)
   H.reserve(MONOMIAL_LENGTH(m) + MONOMIAL_LENGTH(n));
   monomial_mult(m,n,mn);
   H.find_or_insert(mn,result);
-  return result;
+  return column(result);
 }
 
 void LinearAlgebraGB::process_row(int r)
@@ -70,30 +78,48 @@ void LinearAlgebraGB::process_row(int r)
          special multiplication routine?  since newelem uses diff monomial encoding.
  */
 
+  // There are 2 cases: the monomial of row r is NULL.
+  // This means that we use a generator instead of a GB element
   row_elem &re = rows[r];
-  poly &g = gb[re.elem]->f;
-  
-  // step 1: find size of the polynomial, allocate a new polynomial
-  poly mg;
-  allocate_poly(mg, g.len);
-
-  // step 2: do the multiplication.  Note that this does not need
-  // multiplication in the base field/ring.
-  // This will also insert monomials into the column hash table,
-  // and also append columns to 'columns'.
-  // Weyl: this will be more complicated
-  // Skew: just need to modify signs, don't put elements in that
-  //   have squares.  mg.len will decrease.
-  
-  // It would be interesting to see if using iterators changes speed at all
-#if 0
-  for (int i=0; i<g.len; i++)
-    coeffK->init_set(mg.coeffs[i], g.coeffs[i]);
-#endif
-  for (int i=0; i<g.len; i++)
+  monomial m = re.monom;
+  if (m == NULL)
     {
-      mg.monoms[i] = mult_monomials(re.monom, g.monoms[i]);
-      // the above routine creates a new column if it is not there yet
+      poly &g = gens[re.elem]->f;
+      sparse_row mg;
+      allocate_sparse_row(mg, g.len);
+      for (int i=0; i<g.len; i++)
+	coeffK->init_set(mg.coeffs+i, g.coeffs+i);
+
+      for (int i=0; i<g.len; i++)
+	{
+	  mg.comps[i] = column(g.monoms[i]);
+	  // the above routine creates a new column if it is not there yet
+	}
+    }
+  else
+    {
+      poly &g = gb[re.elem]->f;
+      
+      // step 1: find size of the polynomial, allocate a new polynomial
+      sparse_row mg;
+      allocate_sparse_row(mg, g.len);
+      
+      // step 2: do the multiplication.  Note that this does not need
+      // multiplication in the base field/ring.
+      // This will also insert monomials into the column hash table,
+      // and also append columns to 'columns'.
+      // Weyl: this will be more complicated
+      // Skew: just need to modify signs, don't put elements in that
+      //   have squares.  mg.len will decrease.
+      
+      // It would be interesting to see if using iterators changes speed at all
+      for (int i=0; i<g.len; i++)
+	coeffK->init_set(mg.coeffs+i, g.coeffs+i);
+      for (int i=0; i<g.len; i++)
+	{
+	  mg.comps[i] = mult_monomials(m, g.monoms[i]);
+	  // the above routine creates a new column if it is not there yet
+	}
     }
 }
 
@@ -102,6 +128,7 @@ void LinearAlgebraGB::import_vector(vec f)
   /* Creates a sparse_matrix row, and appends it to the current
      matrix being made */
 
+  
 }
 
 void LinearAlgebraGB::process_column(int c)
@@ -138,6 +165,7 @@ void LinearAlgebraGB::process_s_pair(SPairSet::spair *p)
     append_row(p->s.spair.second_monom, p->s.spair.second_gb_num);
     break;
   case SPairSet::SPAIR_GEN:
+    append_row(NULL, p->s.poly.column);
     break;
   default:
     break;
@@ -283,6 +311,8 @@ LinearAlgebraGB::LinearAlgebraGB(const Matrix *m,
 				  int max_degree)
   : S(&H)
 {
+  // Set the gens array
+  from_M2_matrix(m, &H, gens);
 }
 
 LinearAlgebraGB::~LinearAlgebraGB()

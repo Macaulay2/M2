@@ -1,5 +1,4 @@
 #include "monoms.h"
-
 /* The following are also in ../style.hpp */
 #define LT (-1)
 #define EQ 0
@@ -17,6 +16,20 @@ int monomial_simple_degree(uninterned_monomial m)
   m += 2;
   for (i=npairs; i>0; i--, m += 2)
     sum += *m;
+  return sum;
+}
+
+int monomial_weight(uninterned_monomial m, M2_arrayint wts)
+{
+  int i;
+  int sum = 0;
+  int npairs = *m;
+  m += 1;
+  for (i=npairs; i>0; i--, m += 2)
+    if (*m >= wts->len)
+      sum += m[1];
+    else
+      sum += m[1] * wts->array[*m];
   return sum;
 }
 
