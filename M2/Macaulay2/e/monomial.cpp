@@ -10,6 +10,11 @@ Monomial::Monomial(char *&s, int &len)
   get_intarray().shrink(0);
   varpower::from_binary(s, len, get_intarray());
 }
+bool monomial_rec::equals(const object_element *o) const
+{
+  const monomial_rec *b = dynamic_cast<const monomial_rec *>(o);
+  return (val == b->val);
+}
 
 int Monomial::compare(const Monomial &b) const
 {

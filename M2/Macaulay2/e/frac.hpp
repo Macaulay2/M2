@@ -29,9 +29,7 @@ public:
 
   class_identifier class_id() const { return CLASS_FractionField; }
 
-  // Equality check, hash function, serialize
-  bool equals(const object_element *o) const;
-  int hash() const;
+  // serialize
   virtual void write_object(object_writer &o) const;
   static FractionField *read_object(object_reader &i);
   void write_element(object_writer &o, const ring_elem f) const;

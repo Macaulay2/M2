@@ -115,16 +115,6 @@ WeylAlgebra *WeylAlgebra::create(const Ring *K, const Monoid *MF,
   return R;
 }
 
-bool WeylAlgebra::equals(const object_element *o) const
-{
-  // MESXX
-  return false;
-}
-int WeylAlgebra::hash() const
-{
-  // MESXX
-  return 0;
-}
 void WeylAlgebra::write_object(object_writer &o) const
 {
   // MESXX

@@ -19,7 +19,8 @@ public:
   intarray(int i_size) 
     : max(0)
     {
-      int n = ::max(init_intarray_size, i_size);
+      int n = init_intarray_size;
+      if (i_size > n) n = i_size;
       entries = (int *) doubles->new_elem(sizeof(int)*n);
       len = doubles->allocated_size(entries)/sizeof(int);
     }
@@ -42,7 +43,7 @@ public:
 
   int  length() const { return max; }
 
-  void shrink(int newmax) { max = ::min(max, newmax); }
+  void shrink(int newmax) { if (newmax < max) max = newmax; }
 
   int operator[](int i) const
     {
@@ -103,7 +104,8 @@ public:
     {
       if (&a == this) return *this;
       doubles->delete_elem(entries);
-      int n = ::max(init_intarray_size, a.max);
+      int n = init_intarray_size;
+      if (a.max > n) n = a.max;
       max = a.max;
       entries = (int *) doubles->new_elem(sizeof(int)*n);
       len = doubles->allocated_size(entries)/sizeof(int);

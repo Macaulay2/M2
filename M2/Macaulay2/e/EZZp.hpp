@@ -608,7 +608,7 @@ public:
   virtual bool vec_lift(const EVector &v, const EFreeModule *resultF, EVector &result) const;
 };
 
-class object_ERingElement : public object_element
+class object_ERingElement : public immutable_object
 {
   const ERing *R;
   ERingElement val;
@@ -617,7 +617,7 @@ public:
     : R(R), val(a) {
     bump_up(R);
   }
-  ~object_ERingElement() { 
+  virtual ~object_ERingElement() { 
     R->remove(val);
     bump_down(R);
   }
@@ -627,6 +627,9 @@ public:
   int length_of() const;
   
   operator ERingElement() { return val; }
+
+  virtual bool equals(const object_element *o) const
+    { return this == o; }// How best to handle this??
   
   class_identifier class_id() const { return CLASS_ERingElement; }
   type_identifier  type_id () const { return TY_ERingElement; }

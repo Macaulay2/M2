@@ -27,21 +27,6 @@ Z *Z::create(const Monoid *D)
   return (Z *) intern(obj);
 }
 
-bool Z::equals(const object_element *o) const
-{
-  if (o->class_id() != class_id())
-    return false;
-
-  const Z *R = (Z *)o;
-  if (R->D != D) return false;
-  return true;
-}
-
-int Z::hash() const 
-{ 
-  return 0;
-}
-
 void Z::write_object(object_writer &o) const
 {
   o << class_id() << D;

@@ -106,23 +106,6 @@ GF *GF::create(const RingElement prim)
   return (GF *) intern(obj);
 }
 
-bool GF::equals(const object_element *o) const
-{
-  if (o->class_id() != class_id())
-    return false;
-
-  const GF *R = (GF *)o;
-  if (R->K != K) return false;
-  if (R->primitive_element != primitive_element)
-    return false;
-  return true;
-}
-
-int GF::hash() const 
-{ 
-  return 0;
-}
-
 void GF::write_object(object_writer &o) const
 {
   o << class_id() << *primitive_element;

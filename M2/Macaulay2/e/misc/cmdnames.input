@@ -412,6 +412,10 @@ remote
 matrix mach:string user:string s:string cmd:string >> remote_gb_comp
 Create a remote Groebner basis computation.  In development.
 
+gghash
+f:object >> int
+Returns an integer hash(f) (usually 32 bit, signed) such that given two objects f and g, f==g implies that hash(f) == hash(g).
+
 ggheap
 heap
 . >> string
@@ -476,6 +480,11 @@ ggisequal
 isequal
 f g >> bool [type of f,g is ringelem, vector, freemodule, matrix, gbcomp, monideal, monomial, ring]
 Yields true(1) or false(0) depending on whether f and g are equal.
+
+ggisequal0
+isequal0
+f:object g:object >> bool
+Return whether f and g are equal.  For this function, equality is defined as follows: f and g can only be equal if they have exactly the same type in the engine, and if so, they must point to the exact same object, except in the cases when the common type is: RingElement, Monomial, and Vector.  In these cases, equality is checked as in ggisequal: they must be the same element in the same (as defined above) ring or free module.  This routine exists to allow ring elements and vectors to be used as keys in hashtables.
 
 ggishomogeneous
 ishomogeneous

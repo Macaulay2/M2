@@ -4,6 +4,13 @@
 
 stash *Vector_rec::mystash;
 
+bool Vector_rec::equals(const object_element *o) const
+{
+  const Vector_rec *b = dynamic_cast<const Vector_rec *>(o);
+  if (F != b->F) return false;
+  return F->is_equal(val,b->val);
+}
+
 void Vector_rec::text_out(buffer &o) const
 {
   F->elem_text_out(o, val);

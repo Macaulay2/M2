@@ -26,6 +26,7 @@ typedef unsigned int unsigned_int;
 typedef int *ptr_to_int;
 typedef unsigned int *ptr_to_unsigned_int;
 
+#if 0
 template <class T>
 inline const T &min(const T &a, const T &b)
 { return (a<b ? a : b); }
@@ -43,6 +44,7 @@ inline void swap(T &t1, T &t2)
   t2 = tmp;
 }
 //#endif
+#endif
 
 typedef unsigned long int uint32;
 

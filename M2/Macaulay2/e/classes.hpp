@@ -87,7 +87,6 @@ enum class_identifier {
   CLASS_EMatrix,
   CLASS_ERingMap,
   CLASS_EGroebnerComputation,
-
 #if defined(ARING)
   CLASS_APolynomialRing,
   CLASS_APolynomial,
@@ -107,6 +106,7 @@ enum class_identifier {
   CLASS_MatrixComputation,
   CLASS_hilb_comp,
   CLASS_gb_comp,
+  CLASS_GBKernelComputation,
   CLASS_res_comp,
   CLASS_res2_comp,
   CLASS_gbres_comp,
@@ -146,7 +146,8 @@ enum type_identifier {
     TY_GB_COMP,
     TY_RES_COMP, 
     TY_RES2_COMP,
-    TY_GBRES_COMP
+    TY_GBRES_COMP,
+    TY_GBKernelComputation
 };
 const type_identifier TY_INT = TY_RING_ELEM;
 
@@ -235,6 +236,7 @@ class gb2_comp;
 class gbres_comp;
 class res2_comp;
 class gb_emitter;
+class GBKernelComputation;
 
 class object_writer;
 class object_reader;

@@ -27,16 +27,22 @@
 
 caster_oil caster;
 
+int linear_hashed_object::next_hash_sequence_number = 100000;
+
 void object_element::debug_out(buffer &o) const
 {
   o << type_name() 
     << '(' << refcount  << ')';
 }
 
-bool object_element::equals(const object_element * /* o */ ) const
+bool object_element::check_equality(const object_element *o) const
 {
-  ERROR("internal error: object_element::equals called");
-  return false;
+  const immutable_object *me = cast_to_immutable_object();
+  if (!me)
+    return (this == o);
+  if (class_id() != o->class_id())
+    return false;
+  return me->equals(o);
 }
 
 object_element *object_element::intern(object_element *obj)

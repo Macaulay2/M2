@@ -101,6 +101,7 @@ ESTUFF = \
 	Ecommands \
 	Espairs \
 	EGB1 \
+	Eschreyer \
 	Einterface \
 	Elookup
 
