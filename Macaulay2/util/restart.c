@@ -1,6 +1,4 @@
-#if 0
 #include <unistd.h>
-#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -8,10 +6,10 @@
 #include <sys/stat.h>
 #include "restart.h"
 
-char *argv0;
+char *progname;
 
 void usage() {
-     fprintf(stderr,"usage: %s filename command\n",argv0);
+     fprintf(stderr,"usage: %s filename command\n",progname);
      fprintf(stderr,"       Executes command repeatedly as long as its return\n"
 	            "       code is %d, or a file with the given name has been\n"
 		    "       created.\n", RESTART);
@@ -22,9 +20,10 @@ int main(int argc,char **argv) {
      int i,n;
      char *filename, *command;
      struct stat buf;
-     argv0 = argv[0], argc--, argv++;
+     progname = argv[0], argc--, argv++;
      if (argc == 0) usage();
      filename = argv[0], argc--, argv++;
+     // fprintf(stderr,"%s: trigger file name : %s\n",progname,filename);
      if (argc == 0) usage();
      for (i=0, n=0; i<argc; i++) n += strlen(argv[i]) + 1;
      command = (char *)malloc(n+1);
@@ -36,17 +35,22 @@ int main(int argc,char **argv) {
 	  }
      while (1) {
 	  int ret;
-	  puts(command);
+	  fprintf(stderr,"%s: running: %s\n",progname,command);
+	  fflush(stderr);
 	  ret = system(command);
 	  if (ret >= 256) ret >>= 8;
 	  if (0 == stat(filename,&buf)) {
-	       unlink(filename);
-	       continue;
-	       }
-	  if (ret == RESTART) {
-	    puts("restart: restarting");
+	    fprintf(stderr,"%s: file '%s' found, removing it and restarting\n",progname,filename);
+	    if (-1 == unlink(filename)) {
+	      fprintf(stderr,"%s: error: failed to remove file '%s'\n",progname,filename);
+	      exit(1);
+	    }
+	    continue;
 	  }
-	  puts("restart: done");
+	  if (ret == RESTART) {
+	    fprintf(stderr,"%s: returning with code %d to signal a restart\n",progname, RESTART);
+	  }
+	  fprintf(stderr,"restart: done\n");
 	  return ret;
 	  }
      }

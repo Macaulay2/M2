@@ -373,16 +373,16 @@ document { collectGarbage,
      SEEALSO "GC garbage collector"
      }
 
-document { gcDump,
-     Headline => "the status of the memory allocator",
-     TT "gcDump()", " -- produces a dump of the status of the garbage collector.",
-     PARA,
-     "Users will normally not want to use this function.  It calls the 
-     function ", TT "GC_dump", " in the garbage collector, and the output can
-     be used to debug problems with memory allocation.",
-     PARA,
-     SEEALSO "GC garbage collector"
-     }
+--document { gcDump,
+--     Headline => "the status of the memory allocator",
+--     TT "gcDump()", " -- produces a dump of the status of the garbage collector.",
+--     PARA,
+--     "Users will normally not want to use this function.  It calls the 
+--     function ", TT "GC_dump", " in the garbage collector, and the output can
+--     be used to debug problems with memory allocation.",
+--     PARA,
+--     SEEALSO "GC garbage collector"
+--     }
 
 document { lookupCount,
      Headline => "reference count for a symbol",

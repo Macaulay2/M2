@@ -72,7 +72,9 @@ document { "GC garbage collector",
      and Alan J. Demers and generously provided to the publinc.  The copyright is 
      contained in its README file which we provide in the 
      file ", TT "Macaulay2/licenses/gc.lic", ".",
-     SEEALSO {"collectGarbage", "gcDump"}
+     SEEALSO {"collectGarbage" 
+	  -- , "gcDump"
+	  }
      }
 
 document { "Factory library",
@@ -575,7 +577,7 @@ document { "system",
      "Dealing with the garbage collector:",
      SHIELD MENU {
 	  TO "collectGarbage",
-	  TO "gcDump"
+	  -- TO "gcDump"
 	  }
      }
 

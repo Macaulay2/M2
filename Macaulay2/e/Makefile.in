@@ -33,7 +33,7 @@ WARNINGS = -Wno-import -Wchar-subscripts -Wcomment -Wformat -Wimplicit \
 WARNINGS = -Wall #-Wno-non-template-friend
 endif
 
-CPPFLAGS += -I$(INCDIR) #-DNDEBUG  #MES
+CPPFLAGS += -I../../include #-DNDEBUG  #MES
 
 ifdef ARING
 CPPFLAGS += -DARING
@@ -55,7 +55,7 @@ else
 CXXFLAGS += -g $(WARNINGS)
 endif
 
-ifeq "$(SHAREDLIBS)" "yes"
+ifeq "$(SHARED)" "yes"
 CXXFLAGS += -fPIC
 endif
 
@@ -230,7 +230,7 @@ CCFILES := $(addsuffix .cpp,$(CC_FILES))
 CFILES := $(addsuffix .c,$(C_FILES))
 OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES))
 
-ifeq "$(SHAREDLIBS)" "yes"
+ifeq "$(SHARED)" "yes"
 OBJFILES := $(LOFILES)
 else
 OBJFILES := $(OFILES)
@@ -251,7 +251,7 @@ ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) $(ESTUFF)
 #############
 all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H))
 
-ifeq "$(SHAREDLIBS)" "yes"
+ifeq "$(SHARED)" "yes"
 all:: ../lib/libengine1.so ../lib/libengine2.so
 else
 all:: $(OFILES)
@@ -304,7 +304,7 @@ Makefile-lo.depends: Makefile $(HFILES) $(CCFILES) $(CFILES)
 
 ifndef NODEPENDS
 include Makefile-o.depends
-ifeq "$(SHAREDLIBS)" "yes"
+ifeq "$(SHARED)" "yes"
 include Makefile-lo.depends
 endif
 endif
@@ -364,7 +364,7 @@ endif
 
 %.dd: %.cpp
 	@echo remaking $@
-	g++ -I$(INCDIR) -MM $(CPPFLAGS) $< | sed 's|$*\.o|& $@|g' > tmp.dd
+	g++ -I../../include -MM $(CPPFLAGS) $< | sed 's|$*\.o|& $@|g' > tmp.dd
 	mv tmp.dd $@
 # we say g++ above instead of $(CXX) because -MM is understood only by g++, or at
 # not by cl

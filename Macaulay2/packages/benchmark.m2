@@ -32,25 +32,13 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 -- OSF1 despina.ks.uiuc.edu V4.0 1229 alpha
 -- 0.75152 seconds, Macaulay2 0.8.52
 
--- Linux rhenium 2.3.26 #4 Tue Nov 9 22:34:26 CST 1999 i686 unknown, Thinkpad 770Z laptop on AC power
--- 1.18 seconds, Macaulay2 0.8.55, compiled with gcc 2.95
+-- Linux rhenium 2.2.16 #24 Sat Jun 10 15:07:27 CDT 2000 i686 unknown
+-- Macaulay2 0.8.61, compiled with gcc 2.95
+-- res39: 1.12 seconds
+-- resG25: 18.45 seconds
 
 -- Linux noether.matematik.su.se 2.1.121 #3 Wed Sep 16 10:05:16 CEST 1998 alpha unknown (600 mHz)
 -- 1.20106 seconds, 0.8.46
-
--- Linux rhenium 2.2.14 #21 Mon Jan 31 17:41:33 CST 2000 i686 unknown
--- Macaulay2 0.8.57, compiled with gcc 2.95
--- res39: 1.29 seconds
--- resG25: 19.97 seconds
-
--- Linux rhenium 2.3.99-pre5 #5 Thu Apr 20 19:14:08 CDT 2000 i686 unknown
--- Macaulay2 0.8.61, compiled with gcc 2.95
--- res39: 1.28 seconds
--- resG25: 20.51 seconds
--- res39: 1.41 seconds
--- resG25: 22.3 seconds
--- res39: 1.4 seconds
--- resG25: 21.67 seconds
 
 -- SunOS sg0.math.cornell.edu 5.7 Generic_106541-08 sun4u sparc SUNW,Ultra-Enterprise
 -- Macaulay2 0.8.60, compiled with gcc 2.95

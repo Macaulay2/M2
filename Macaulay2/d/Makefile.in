@@ -169,7 +169,7 @@ endif
 # __underflow
 # LDLIBS+= -lc
 
-ifeq "$(SHAREDLIBS)" "no"
+ifeq "$(SHARED)" "no"
 ifeq "$(STATIC)" "yes"
 LDFLAGS += -static
 ifeq ($(OS),linux-gnu)
@@ -185,7 +185,7 @@ ifeq ($(OS),solaris2.7)
 LDLIBS += -lsocket -lnsl
 endif
 
-ifeq "$(SHAREDLIBS)" "yes"
+ifeq "$(SHARED)" "yes"
 # This next bit is really needed only for gnu libc6 (glibc-2.0.7)
 # Without it, it does dynamic linking at run time and breaks our dumpdata scheme
 # Don't link statically, so that these libraries actually get loaded at run time.
@@ -265,7 +265,7 @@ ifeq ($(OS),linux-gnu)
 # LDFLAGS += -rdynamic
 endif
 
-ifeq "$(SHAREDLIBS)" "yes"
+ifeq "$(SHARED)" "yes"
 LOADLIBES += -L../lib
 LIBRARYFILES += ../lib/libengine1.so
 LIBRARYOPTIONS += -lengine1
@@ -342,11 +342,13 @@ probe : probe.c probe.h
 	$(CC) -g -static -I../../include probe.c $(OUTPUT_OPTION)
 probe.h :
 	echo "/* insert temporary fixes here */" >$@
-test-probe : probe
+test-probe : addresses
+addresses : probe
 	nm probe |grep -v "gcc2_compiled\|gnu_compiled\0| \." >syms
 	./probe abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz b c d >> syms
 	sort syms > addresses
 	rm syms
+clean ::; rm -f addresses
 ############################## miscellaneous
 
 ifdef MP
@@ -376,7 +378,7 @@ ifdef MP
 LIBRARYFILES += ../../lib/libMP.a
 LIBRARYOPTIONS += ../../lib/libMP.a
 endif
-ifeq "$(SHAREDLIBS)" "yes"
+ifeq "$(SHARED)" "yes"
 LIBRARYFILES += ../lib/libfac.so
 LIBRARYOPTIONS += -lfac
 LIBRARYFILES += ../lib/libcf.so
@@ -435,7 +437,7 @@ CVS/Entries : $(ALLFILES)
 
 wc:
 	wc -l $(WC1FILES)
-clean :
+clean ::
 	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep *.loo *.lo \
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
 		$(DNAMES:.d=.c) allfiles TAGS \

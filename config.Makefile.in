@@ -15,7 +15,7 @@ DESC    = @VERSION@-@ARCH@-@OS@-@REL@
 DUMPDATA = @DUMPDATA@
 SOCKS = @SOCKS@
 NODENAME = @NODENAME@
-SHAREDLIBS = @SHAREDLIBS@
+SHARED = @SHARED@
 FACTORY = @FACTORY@
 FACTORYVERSION = @FACTORYVERSION@
 PROFILE = @PROFILE@
@@ -114,8 +114,9 @@ ifeq "$(STRIP)" "no"
 STRIPCMD := :
 else
 ifneq "$(CC)" "cl"
-CFLAGS   += -fomit-frame-pointer
-CXXFLAGS += -fomit-frame-pointer
+# -fomit-frame-pointer causes strange bugs!
+# CFLAGS   += -fomit-frame-pointer
+# CXXFLAGS += -fomit-frame-pointer
 LDFLAGS  += -s
 STRIPCMD := strip
 endif
@@ -127,7 +128,7 @@ endif
 
 export M2HOME := $(shell cd $(TOPDIR)/Macaulay2; pwd)
 
-ifeq "$(SHAREDLIBS)" "yes"
+ifeq "$(SHARED)" "yes"
 ifdef LD_LIBRARY_PATH
 export LD_LIBRARY_PATH:=$(M2HOME)/lib:$(LD_LIBRARY_PATH)
 else
