@@ -1,3 +1,4 @@
+#define NOSTREAMIO
 #include <factory.h>
 #include <templates/ftmpl_array.cc>
 #include <templates/ftmpl_factor.cc>

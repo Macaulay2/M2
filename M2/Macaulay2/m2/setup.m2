@@ -58,7 +58,7 @@ if notify then stderr << "--loading setup.m2" << endl
 
 if class path =!= List then path = { }
 savepath := path
-path = join({ currentFileDirectory }, path)
+path = join({ "./", currentFileDirectory }, path)
 
 pathSeparator = "/"
 
@@ -142,8 +142,9 @@ unique := x -> (
 tryload := (filename,load) -> (
      if notify then stderr << "--loading " << filename << endl;
      if isAbsolutePath filename or isSpecial filename then (
+	  -- stderr << "checking for existence of " << filename << endl; -- debugging
 	  if not fileExists filename then return false;
-	  -- stderr << "trying to load " << filename << endl;		    -- debugging
+	  -- stderr << "it exists, trying to load " << filename << endl; -- debugging
 	  load filename;
 	  markLoaded(filename,filename);
 	  true)
@@ -155,8 +156,9 @@ tryload := (filename,load) -> (
 		    if class dir =!= String 
 		    then error "member of 'path' not a string";
 		    fullfilename := dir | filename;
+	  	    -- stderr << "checking for existence of " << fullfilename << endl; -- debugging
 		    if not fileExists fullfilename then return false;
-		    -- stderr << "trying to load " << fullfilename << endl;		    -- debugging
+		    -- stderr << "it exists, trying to load " << fullfilename << endl; -- debugging
 		    load fullfilename;
      	       	    -- stderr << "done loading " << fullfilename << endl;		    -- debugging
 		    markLoaded(fullfilename,filename);
