@@ -10,18 +10,16 @@
 # The default is 'all' and 'doc'.
 
 #############################################################################
-TOPDIR = .
-include $(TOPDIR)/config.Makefile
-srcdir = @srcdir@
+include config.Makefile
 top_srcdir = @top_srcdir@
-VPATH = $(srcdir)
+VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
 #############################################################################
 .PHONY : all always dirs clean announce MACAULAY2 MACAULAY2.doc doc port default
 ################################# default
-default: all # doc
+default: all
 ################################# all
 all::
 #################################
@@ -57,7 +55,7 @@ announce.doc ::
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
 all :: $(TARGET)
-check : ; $(MAKE) -C Macaulay2 tests
+check : ; $(MAKE) -C Macaulay2 check
 MACAULAY2:; $(MAKE) -C Macaulay2 all
 justM2 distclean::; $(MAKE) -C Macaulay2 $@
 DISTFILES_MADE:= \
@@ -72,8 +70,12 @@ DISTFILES_SRC := \
 		Macaulay2/emacs \
 		Macaulay2/CHANGES \
 	 	Macaulay2/README.txt
+DISTFILES := $(DISTFILES_SRC) $(DISTFILES_MADE)
 distributions :; mkdir $@
 clean ::; rm -rf distributions
+install :
+	@echo no install method yet >&2
+	@exit 1
 distributions/Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) distributions
 	tar cf - $(DISTFILES_MADE) -C @srcdir@ $(DISTFILES_SRC) |gzip >"$@"
 	@echo "-----------------------------------------------------------------------------"
@@ -84,7 +86,7 @@ distributions/Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) distributions
 # 	@echo "-----------------------------------------------------------------------------"
 # 	@echo "  $@ contains everything but the documentation"
 # 	@echo "-----------------------------------------------------------------------------"
-install clean ::; $(MAKE) -C Macaulay2 $@
+clean ::; $(MAKE) -C Macaulay2 $@
 ###################### Macaulay 2 porting source distribution
 PORTING := CVS \
 	Macaulay2/CVS \
@@ -199,7 +201,7 @@ lsm:
 
 ################################# configure
 # make this one last
-distclean ::; rm -f $(CONFIGURED_FILES) include/config.h
+distclean ::; rm -f $(CONFIGURED_FILES) include/config.h config.Makefile
 
 # Local Variables:
 # mode: Makefile

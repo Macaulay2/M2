@@ -65,7 +65,7 @@ ALLFILES := $(WC1FILES) $(PROJECT:.d=.dep) $(PROJECT:.d=.sig)
 ############################## rules
 SCC1 := ../c/scc1
 .SUFFIXES: .d .oo .sig .dep .res .test .m2
-.PHONY : clean all tests
+.PHONY : clean all check
 
 SCCFLAGS =
 

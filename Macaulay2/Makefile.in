@@ -1,7 +1,7 @@
 ############################### targets to use
 all ::
 justM2 ::
-tests ::
+check ::
 install ::
 doc::
 distclean::
@@ -15,10 +15,11 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
 
-.PHONY: default tests all clean dirs misc config \
+.PHONY: default check all clean dirs misc config \
 		initialize doc html book exe zip
 ROOT := $(shell basename `pwd`)
 clean::; rm -f core
+distclean::; rm -f Makefile
 ################################# bin
 libexec bin :; mkdir $@
 clean ::; rm -rf bin libexec
@@ -65,17 +66,17 @@ all justM2 ::; $(MAKE) NODEPENDS=1 -C c2 targettypes.h
 distclean clean ::; $(MAKE) NODEPENDS=1 -C c2 $@
 ################################# e
 justM2 ::; $(MAKE) -C e all
-all tests ::; $(MAKE) -C e $@
+all check ::; $(MAKE) -C e $@
 wc distclean clean ::; $(MAKE) NODEPENDS=1 -C e $@
 ################################# dbm
 justM2 ::; $(MAKE) -C dbm all
-all tests ::; $(MAKE) -C dbm $@
+all check ::; $(MAKE) -C dbm $@
 distclean clean ::; $(MAKE) NODEPENDS=1 -C dbm $@
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# dumpdata
 ifeq "$(DUMPDATA)" "yes"
 justM2 ::; $(MAKE) -C dumpdata all
-all tests ::; $(MAKE) -C dumpdata $@
+all check ::; $(MAKE) -C dumpdata $@
 endif
 wc distclean clean ::; $(MAKE) NODEPENDS=1 -C dumpdata $@
 ################################# d
@@ -92,23 +93,23 @@ distclean clean ::; if [ -d thread ]; then $(MAKE) -C thread clean; fi
 justM2::; $(MAKE) -C tutorial all
 all distclean clean::; $(MAKE) -C tutorial $@
 ################################# m2
-wc distclean clean tests justM2 all ::; $(MAKE) -C m2 $@
+wc distclean clean check justM2 all ::; $(MAKE) -C m2 $@
 ################################# test
-tests ::; $(MAKE) -C test -k
+check ::; $(MAKE) -C test -k
 distclean clean ::; $(MAKE) -C test $@
 ################################# schubert
-tests ::
-	if [ -d schubert ]; then $(MAKE) -C schubert tests; fi
+check ::
+	if [ -d schubert ]; then $(MAKE) -C schubert check; fi
 ################################# setup
 all :: setup
 	[ -x $< ] || chmod a+x $<
 ################################# packages
-tests clean distclean ::; $(MAKE) -C packages $@
+check clean distclean ::; $(MAKE) -C packages $@
 ################################# experiments
 all distclean clean ::; if [ -d experiments ]; then $(MAKE) -C experiments $@; fi
 ################################# slides
 distclean clean ::; if [ -d slides ]; then $(MAKE) -k -C slides $@; fi
-tests ::; if [ -d slides ]; then $(MAKE) -k -C slides; fi
+check ::; if [ -d slides ]; then $(MAKE) -k -C slides; fi
 ################################# html
 doc :: html
 html ::; $(MAKE) -C html all

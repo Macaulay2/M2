@@ -13,7 +13,7 @@ emacs html: all; $(MAKE) -C ../$@
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install phase1 tests html clean distclean wc tests \
+.PHONY: clean all install phase1 check html clean distclean wc check \
 		default initialize phase2 phase3 phase4
 
 # CFLAGS =
@@ -194,26 +194,26 @@ phase4 : phase3 ../cache/Macaulay2-doc
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
 
 ifdef NEWENGINE
-tests:: test1
+check:: test1
 test1 : test.m2 phase1 $(SCRIPTS)
 	M2 '-e errorDepth 0' -q test.m2 '-e << "--test succeeded" << endl' '-e exit 0'
 	touch $@
 endif
 
-tests:: test2
+check:: test2
 test2: $(SCRIPTS) phase1 ../libexec/Macaulay2
 	$(MAKE) -k -C cache/tests -f ../../@srcdir@/Makefile.tests
 	touch $@
 clean::; rm -f test2
 
-tests:: test3
+check:: test3
 test3:
 	echo 2+3 | ../bin/M2
 	touch $@
 clean::; rm -f test3
 
 ifeq ($(OS),Linux)
-tests:: test4
+check:: test4
 test4: ../util/screen
 	echo 2+3 | ../util/screen M2
 	touch $@

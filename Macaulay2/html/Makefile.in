@@ -1,5 +1,4 @@
-TOPDIR = ../..
-include $(TOPDIR)/config.Makefile
+include ../../config.Makefile
 VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
@@ -11,16 +10,23 @@ all :: up.gif next.gif previous.gif top.gif index.gif null.gif index.html
 # (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts:/home/geometry/dan/src/M2/Macaulay2/html")
 # into ~/.gimp/gimprc
 
-up.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Up\" \"up.gif\")"  -b '(gimp-quit 0)'
-next.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Next\" \"next.gif\")"  -b '(gimp-quit 0)'
-previous.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Previous\" \"previous.gif\")"  -b '(gimp-quit 0)'
-index.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Index\" \"index.gif\")"  -b '(gimp-quit 0)'
-top.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Top\" \"top.gif\")"  -b '(gimp-quit 0)'
-null.gif : Macaulay2-empty-button.scm; gimp -b "(Macaulay2-empty-button \"null.gif\")"  -b '(gimp-quit 0)'
+# we include the .gif files below, so you don't need gimp
+up.gif : Macaulay2-button.scm
+	gimp -b "(Macaulay2-button \"Up\" \"up.gif\")"  -b '(gimp-quit 0)'
+next.gif : Macaulay2-button.scm
+	gimp -b "(Macaulay2-button \"Next\" \"next.gif\")"  -b '(gimp-quit 0)'
+previous.gif : Macaulay2-button.scm
+	gimp -b "(Macaulay2-button \"Previous\" \"previous.gif\")"  -b '(gimp-quit 0)'
+index.gif : Macaulay2-button.scm
+	gimp -b "(Macaulay2-button \"Index\" \"index.gif\")"  -b '(gimp-quit 0)'
+top.gif : Macaulay2-button.scm
+	gimp -b "(Macaulay2-button \"Top\" \"top.gif\")"  -b '(gimp-quit 0)'
+null.gif : Macaulay2-empty-button.scm
+	gimp -b "(Macaulay2-empty-button \"null.gif\")"  -b '(gimp-quit 0)'
 
 index.html : html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
 	rm -f ./*.html
-	../bin/M2 -q html.m2 '-eexit(0)'
+	../bin/M2 -q $< '-eexit(0)'
 view :
 	netscape index.html &
 clean ::

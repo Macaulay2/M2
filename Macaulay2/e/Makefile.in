@@ -246,11 +246,11 @@ HHFILES := $(addsuffix .hpp, \
 
 OTHERS := Makefile \
 	res_aux.cpp res_aux2.cpp geoT.hpp \
-	tests misc keep newmonoid.hpp newmonoid.cpp
+	check misc keep newmonoid.hpp newmonoid.cpp
 
 ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) $(ESTUFF)
 
-.PHONY : all clean distclean wc install tar tests
+.PHONY : all clean distclean wc install tar check
 
 ###################################################################
 ## Targets ##
@@ -323,13 +323,13 @@ dups-okay: dups-tmp
 	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
 	 else touch $@; fi
 
-tests::
+check::
 
 ifeq ($(OS),Linux)
 # don't run it elsewhere because we may not have gnu sort and gnu uniq there
-# tests:: dups-okay
+# check:: dups-okay
 else
-tests::
+check::
 endif
 
 install:

@@ -10,7 +10,13 @@ VERSION = @VERSION@
 ARCH    = @ARCH@
 OS      = @OS@
 REL     = @REL@
-DESC    = @VERSION@-@ARCH@-@OS@-@REL@
+
+DESC    = @VERSION@-@host_cpu@-@OS@-@REL@
+# we used to use @ARCH@ instead of @host_cpu@ here, but for DEC alphas,
+# and perhaps other machines, it gives more information.  The script
+# config.guess assembles host_cpu from /proc/cpuinfo, and can be something
+# like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
+# by the 'configure' script, will be simply "alpha".
 
 DUMPDATA = @DUMPDATA@
 SOCKS = @SOCKS@
@@ -118,16 +124,6 @@ endif
 
 ifeq "$(MEMDEBUG)" "yes"
 DEBUGFLAGS += -DMEM_DEBUG
-endif
-
-export M2HOME := $(shell cd $(TOPDIR)/Macaulay2; pwd)
-
-ifeq "$(SHARED)" "yes"
-ifdef LD_LIBRARY_PATH
-export LD_LIBRARY_PATH:=$(M2HOME)/lib:$(LD_LIBRARY_PATH)
-else
-export LD_LIBRARY_PATH:=$(M2HOME)/lib
-endif
 endif
 
 ifneq "$(DUMPDATA)" "no"

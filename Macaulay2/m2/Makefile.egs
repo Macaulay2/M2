@@ -1,36 +1,21 @@
 # -*- Mode: Makefile -*-
-TOPDIR = ../../../..
-include $(TOPDIR)/config.Makefile
+include ../../../../config.Makefile
 
 ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent \
-	'-e loaddata "$(M2HOME)/$(DUMPDATAFILE)"' \
+	'-e loaddata "../../../$(DUMPDATAFILE)"' \
 	-- -x -s $(srcdir)/../m2/eg.m2
 else
-ARGS := -q -silent -x -s -ephase=1 $(M2HOME)/m2/setup.m2 -ephase=0 $(M2HOME)/m2/eg.m2
+ARGS := -q -silent -x -s -ephase=1 ../../../m2/setup.m2 -ephase=0 ../../../m2/eg.m2
 endif
 
 ARGS += '-e path = prepend("$(srcdir)/",path)'
 
-# ifdef CYGWIN32
-# # Sigh, some bug under Windows with bash.exe and pipes makes redirection of
-# # input files unreliable, so we use our 'input' command instead.
-# %.out : %.m2
-# 	@ if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
-# 	 then touch $*.out ; \
-# 	 else \
-# 	   echo "running example $*"; \
-# 	   echo $(M2HOME)/bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' ">$*.tmp" ; \
-# 	   $(M2HOME)/bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' >$*.tmp && \
-# 	   mv $*.tmp $*.out && \
-# 	   cp $*.m2 $*.old ; \
-# 	 fi
-# else
 %.out : %.example
 	@if [ -f ./"$*.out" ] && cmp -s ./"$*.example" ./"$*.example.old" ; \
 	then touch ./"$*.out" ; \
 	else echo "running example $*"; \
-	     if $(M2HOME)/libexec/Macaulay2 $(ARGS) <./"$*.example" >./"$*.tmp" ; \
+	     if ../../../libexec/Macaulay2 $(ARGS) <./"$*.example" >./"$*.tmp" ; \
 	     then mv ./"$*.tmp" ./"$*.out" ; \
 		  cp ./"$*.example" ./"$*.example.old" ; \
 	     else echo "contents of $*.example:" ; \
@@ -38,7 +23,6 @@ ARGS += '-e path = prepend("$(srcdir)/",path)'
 		  exit 1; \
 	     fi ; \
 	fi
-# endif
 
 INFILES  := $(wildcard *.example)
 OUTFILES := $(INFILES:.example=.out)

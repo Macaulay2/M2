@@ -26,7 +26,8 @@ docFilename := () -> (
      progname := commandLine#0;
      if substring(progname,0,1) === "\"" then progname = substring(progname,1);
      if version#"operating system" === "MACOS" then "::cache:Macaulay2-doc"
-     else concatenate( getenv "M2HOME", pathSeparator, "cache", pathSeparator, "Macaulay2", docExtension()))
+     else concatenate(homeDirectory, "cache", pathSeparator, "Macaulay2", docExtension())
+     )
 if phase === 1 then addStartFunction( 
      () -> DocDatabase = (
 	  try openDatabase docFilename()

@@ -21,10 +21,11 @@ CHAPTERS = completeIntersections \
 
 Makefile : Makefile.in
 	cd $(TOPDIR); config.status Macaulay2/packages/ComputationsBook/Makefile
+distclean:; rm -f Makefile
 
-tests : $(CHAPTERS:=.test)
+check : $(CHAPTERS:=.test)
 
-.PHONY: clean changes distclean all tests run-1-test
+.PHONY: clean changes distclean all check run-1-test
 
 %.test :
 	mkdir -p $*
