@@ -17,6 +17,7 @@ if firstTime then (
      Array.name = "Array";
      BasicList.name = "BasicList";
      BigReal.name = "BigReal";
+     BigComplex.name = "BigComplex";
      Boolean.name = "Boolean";
      CacheTable.name = "CacheTable";
      Pseudocode.name = "Pseudocode";
@@ -34,7 +35,7 @@ if firstTime then (
      QQ.name = "QQ";
      RR.name = "RR";
      RR.name = "RR";
-     CCC.name = "CCC";					    -- new internal complex number class, to replace CC later
+     CC.name = "CC";					    -- new internal complex number class, to replace CC later
      Ring.name = "Ring";
      Sequence.name = "Sequence";
      String.name = "String";
