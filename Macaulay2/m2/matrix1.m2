@@ -27,12 +27,8 @@ makeRawTable := (R,p) -> (					    -- this is messy
 	  applyTable(p,x -> (
 		    if class x === ZZ then rawFromNumber(QQ.RawRing, x)
 		    else if class x === QQ then raw x
-		    else error "can't promote ring element to QQ"
-		    )
-	       )
-	  )
-     else applyTable(p,x -> (promote(x,R)).RawRingElement)
-     )
+		    else error "can't promote ring element to QQ")))
+     else applyTable(p,x -> raw promote(x,R)))
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
      if o.Degree =!= null then error "Degree option given with indeterminate source module";

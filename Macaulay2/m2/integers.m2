@@ -91,6 +91,8 @@ ZZ & ZZ := ZZ => lookup(symbol &, ZZ, ZZ)
 
 isConstant ZZ := i -> true
 
+promote(ZZ,ZZ) := (i,o) -> i
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -52,6 +52,11 @@ isUnit QQ := x -> x != 0
 
 isConstant QQ := i -> true
 
+promote(QQ,QQ) := (i,o) -> i
+promote(ZZ,QQ) := (i,o) -> i/1
+promote(QQ,Ring) := (r,S) -> promote(r,S#0)
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -509,13 +509,8 @@ promote(RingElement, RingElement) := RingElement => (r,o) -> (
 
 promote(ZZ,RingElement) := (i,o) -> promote(i, ring o)
 
-promote(RingElement,Ring) := RingElement => 
-promote(ZZ,Ring) := 
-promote(QQ,Ring) := (r,S) -> promote(r,S#0)
-
-promote(ZZ,QQ) := (i,o) -> i/1
-promote(ZZ,ZZ) := (i,o) -> i
-promote(QQ,QQ) := (i,o) -> i
+promote(RingElement,Ring) := RingElement => (r,S) -> promote(r,S#0)
+promote(ZZ,Ring) := (r,S) -> promote(r,S#0)
 
 liftable(RingElement,Ring) := Boolean => 
 liftable(ZZ,Ring) := 
