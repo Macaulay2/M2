@@ -19,11 +19,13 @@ all:: emacs.m2
 emacs.m2: ../cache/Macaulay2-doc makem2.m2
 	../bin/M2 -q -silent @srcdir@/makem2.m2 '-e exit 0'
 
-allfiles : Makefile; 
-	echo $(ALLFILES) | tr ' ' '\012' >allfiles
-
 clean:
-	rm -f M2-symbols.el emacs-hlp.txt emacs.m2
+	rm -f M2-symbols.el emacs-hlp.txt emacs.m2 M2-symbols
 
 distclean : clean
 	rm -f Makefile
+
+$(packagedir)/emacs :; $(INSTALL) -d "$@"
+install:: $(packagedir)/emacs
+install:: M2-mode.el M2.el M2-symbols.el emacs-hlp.txt emacs.m2 README
+	$(INSTALL_DATA) $^ $(packagedir)/emacs

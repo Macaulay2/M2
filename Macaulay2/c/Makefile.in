@@ -62,6 +62,6 @@ TAGS: $(SRCFILES);		etags $(SRCFILES)
 # we purposely don't delete grammar.c so it can be used for porting
 clean :
 	rm -f *.o scc1 scc.a grammar.output grammar.tab.h \
-		allfiles scc.install TAGS scc core y.tab.h y.output
+		scc.install TAGS scc core y.tab.h y.output
 distclean : clean
 	rm -f Makefile

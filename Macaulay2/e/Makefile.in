@@ -274,7 +274,7 @@ TAGS: $(HHFILES) $(CCFILES)
 	etags $^
 
 clean::
-	rm -f *.lo *.o *.dd *.ii $(LIB) allfiles cmdinst.hpp cmdnames.hpp cmdnames.m2
+	rm -f *.lo *.o *.dd *.ii $(LIB) cmdinst.hpp cmdnames.hpp cmdnames.m2
 	rm -f TAGS
 
 Makefile : Makefile.in
@@ -287,10 +287,6 @@ clean::; rm -f Makefile-o.depends
 ifndef NODEPENDS
 include Makefile-o.depends
 endif
-
-allfiles: Makefile
-	@echo making allfiles
-	@echoout '>allfiles' $(ALLFILES)
 
 # this requires gnu sort and gnu uniq commands
 dups-tmp: $(OBJFILES)
@@ -309,12 +305,6 @@ check::
 endif
 
 install:
-
-tar : allfiles
-	tar cf e.tar `cat allfiles`
-
-e.tgz : allfiles
-	tar zcf e.tgz `cat allfiles`
 
 ifeq "$(CC)" "cl"
 x_relem.o : x_relem.cpp
