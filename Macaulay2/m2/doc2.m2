@@ -125,11 +125,15 @@ document { "while",
 
 document { "break",
      Headline => "break from a loop",
-     TT "break x", " -- interrupts execution of a loop, returning
-     ", TT "x", " as the value of the loop currently being evaluated.",BR,
-     TT "break;", " -- interrupts execution of a loop, returning
+     TT "break x", " -- interrupts execution of a loop controled by ",
+     TO "for", ", ", TO "while", ", or ", TO "scan", ", returning ",
+     TT "x", " as the value of the loop currently being
+     evaluated.",BR,
+     TT "break", " -- interrupts execution of a loop, returning
      ", TO "null", " as the value of the function currently being evaluated.",
-     SEEALSO { "mapping over lists", "scan", "apply", "while", "for" }
+     PARA,
+     "Warning: it doesn't break out of loops controled by ", TO "apply", ".",
+     SEEALSO { "scan", "while", "for" }
      }
 
 document { "return",
