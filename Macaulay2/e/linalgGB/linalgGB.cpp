@@ -2,13 +2,14 @@
 #include <vector>
 #include "../text_io.hpp"
 #include "monoms.h"
+#include "MonomialOps.h"
 #include "../matrix.hpp"
 #include "../mutablemat.hpp"
 #include "../matrixcon.hpp"
 
 // Problems still to consider
 // (a) finish implementation
-// (b) set_comparisons
+// (b) set_comparisons DONE
 // (c) choosing an alpha value not too high.
 //     Also, can we do Mora algorithm this way?
 // (d) field arithmetic in the matrix and polys.  Use templates?
@@ -131,7 +132,8 @@ void LinearAlgebraGB::process_row(int r)
 	coeffK->init_set(mg.coeffs+i, g.coeffs+i);
       for (int i=0; i<g.len; i++)
 	{
-	  mg.comps[i] = mult_monomials(m, g.monoms[i]);
+	  monomial n = MonomialOps::mult(&H, m, g.monoms[i]);
+	  mg.comps[i] = column(n);
 	  // the above routine creates a new column if it is not there yet
 	}
     }
@@ -192,11 +194,56 @@ void LinearAlgebraGB::process_s_pair(SPairSet::spair *p)
      
 }
 
+static int ncomparisons = 0;
+struct monomial_sorter : public binary_function<int,int,bool> {
+  typedef std::vector<LinearAlgebraGB::column_elem, 
+                               gc_allocator<LinearAlgebraGB::column_elem> >
+            col_array ;
+
+  col_array columns;
+  monomial_sorter(col_array &columns0)
+    : columns(columns0) {}
+
+  bool operator()(int a, int b)
+    {
+      ncomparisons++;
+      /* return the boolean value a < b */
+      LinearAlgebraGB::column_elem &m = columns[a];
+      LinearAlgebraGB::column_elem &n = columns[b];
+      // First compare degrees, then weights, then do revlex lt routine
+      int cmp = m.ord - n.ord;
+      if (cmp > 0) return false;
+      if (cmp < 0) return true;
+      // Now compare via revlex
+      cmp = monomial_compare(m.monom, n.monom); // This is lex compare
+      if (cmp == GT) return true;
+      return false;
+    }
+};
+
 void LinearAlgebraGB::set_comparisons()
 {
   /* Sort the monomials */
   /* set the comparison values in the current matrix */
   /* Should we also go thru the matrix and set the values? */
+
+  std::vector<int, gc_allocator<int> > a;
+  a.reserve(columns.size());
+  for (int i=0; i<columns.size(); i++)
+    {
+      // Set the degree, weight
+      columns[i].ord = monomial_weight(columns[i].monom, weights);
+      a.push_back(i);
+    }
+
+  ncomparisons = 0;
+  sort(a.begin(), a.end(), monomial_sorter(columns));
+  fprintf(stderr, "ncomparisons = %d\n", ncomparisons);
+
+  for (int i=0; i<a.size(); i++)
+    {
+      columns[a[i]].ord = i;
+    }
 }
 
 void LinearAlgebraGB::make_matrix()
@@ -230,6 +277,9 @@ void LinearAlgebraGB::make_matrix()
   H.dump();
   /* Now sort the monomials */
   set_comparisons();
+
+  // change all of the components?  This depends on our LU algorithm
+  show_column_info();
 }
 
 void LinearAlgebraGB::LU_decompose()
