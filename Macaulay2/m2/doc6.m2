@@ -1051,7 +1051,7 @@ document {
      Usage => "degrees R",
      Inputs => {"R" => null},
      Outputs => {},
-     Results => {{ "the list of multi-degrees for the generators (variables) of the ring ", TT "R"}},
+     Consequences => {{ "the list of multi-degrees for the generators (variables) of the ring ", TT "R"}},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
       	  "degrees R",

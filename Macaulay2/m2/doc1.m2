@@ -18,7 +18,7 @@ document {						    -- rewrite this!
 	  TOH "Usage",
 	  TOH "Inputs",
 	  TOH "Outputs",
-	  TOH "Results",
+	  TOH "Consequences",
 	  TOH "FileName",
 	  TOH "Description",
 	  TOH "Caveat",
@@ -29,7 +29,7 @@ document {						    -- rewrite this!
      Inputs => {
 	  "opts" => List => "a list of options",
 	  },
-     Results => {
+     Consequences => {
 	  "provides the synopsis section of a documentation node"
 	  },
      PARA {
@@ -39,7 +39,7 @@ document {						    -- rewrite this!
 	  { TO "Usage", " => ", TT "\"USAGESTRING\""},
 	  { TO "Inputs", " => ", TT "INPUTLIST"},
 	  { TO "Outputs", " => ", TT "OUTPUTLIST"},
-	  { TO "Results", " => ", TT "RESULTLIST"}
+	  { TO "Consequences", " => ", TT "RESULTLIST"}
 	  },
      PARA {
 	  "The only entry that is mandatory is USAGESTRING, which should show a typical usage of
@@ -71,7 +71,7 @@ document {						    -- rewrite this!
 	  },
      Outputs => {
 	  },
-     Results => {
+     Consequences => {
 	  },
      Examples => EXAMPLE { },
      Caveat => { },
@@ -87,7 +87,7 @@ document {
      Inputs => {
 	  "HEADLINE" => String => "a brief headline"
 	  },
-     Results => {
+     Consequences => {
 	  { "the headline string will be used to annotate itemized lists of cross references to ", TT "x", " in the documentation" }
 	  },
      SeeAlso => "hypertext"
@@ -95,7 +95,7 @@ document {
 document {
      Key => Usage, "See ", TO "document", "." }
 document {
-     Key => Results, "See ", TO "document", "." }
+     Key => Consequences, "See ", TO "document", "." }
 document {
      Key => Inputs, "See ", TO "document", "." }
 document {
@@ -198,7 +198,7 @@ document {
      Key => topics,
      Headline => "display available help topics",
      Usage => "topics",
-     Results => {
+     Consequences => {
 	  "This command displays a list of topics on which help is available, in columnated form."
 	  },
      SeeAlso => {"help"}
@@ -960,7 +960,7 @@ document {
 	  "X" => Type => "",
 	  "f" => Function => " of two variables: the symbol to which a value is about to be assigned, and the value being assigned",
 	  },
-     Results => {
+     Consequences => {
 	  {TT "f", " will be called just before an assignment to a global variable of an instance of class ", TT "X", " occurs"}
 	  },
      PARA {

@@ -11,7 +11,7 @@ document {
      Outputs => {
 	  {}
 	  },
-     Results => {
+     Consequences => {
 	  {}
 	  },
      Examples => {
