@@ -144,7 +144,8 @@ GMPconfigure : gmp/config.status
 gmp/config.status: gmp/configure
 	cd gmp; \
 	rm -f config.status; \
-	./configure --silent --cache-file=../config.cache
+	unset CC; ./configure --silent --cache-file=../config.cache
+#	gmp 3.1 configure has a bug -- can't accept CC=gcc hint.
 endif
 
 GMPclean clean::
