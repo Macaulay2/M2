@@ -793,9 +793,9 @@ document { Entity,
 	  }
      }
 
-document { netRows,
+document { unstacn,
      Headline => "list the rows of a net",
-     TT "netRows x", " -- produces a list of strings, each containing the
+     TT "unstack x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",
      PARA,
      "The orginal net, adjusted so its height is 1, may be recovered

@@ -40,7 +40,7 @@ toString Thing := string
 -----------------------------------------------------------------------------
 toExternalString String := format
 
-toString Net := x -> concatenate between("\n",netRows x)
+toString Net := x -> concatenate between("\n",unstack x)
 toExternalString Net := x -> concatenate(format toString x, "^", toString(height x - 1))
 
 toExternalString MutableHashTable := s -> if s.?name and class s.name === String then s.name else concatenate (
@@ -101,7 +101,7 @@ net Option := z -> net expression z
 
 Net == Net := (x,y) -> x === y
 Net == String := (n,s) -> (
-     height n === 1 and depth n === 0 and width n === length s and first netRows n === s
+     height n === 1 and depth n === 0 and width n === length s and n#0 === s
      )
 String == Net := (s,n) -> n == s
 
@@ -182,7 +182,7 @@ texMath Net := n -> concatenate (
 \begin{matrix}
 ///,
      between(///\\
-///, netRows n / characters / (i -> apply(i,c -> (///\tt ///,c))) / (s -> between("&",s))),
+///, unstack n / characters / (i -> apply(i,c -> (///\tt ///,c))) / (s -> between("&",s))),
      ///
 \end{matrix}}
 ///)

@@ -163,12 +163,14 @@ usage := arg -> (
      << "    --texmacs          TeXmacs session mode" << newline
      << "    --version          print version number and exit" << newline
      << "    -q                 don't load user's init.m2 file" << newline
-     << "    -e...              evaluate expression '...'" << newline
-     << "    -E...              evaluate expression '...' before initialization" << newline
+     << "    -E '...'           evaluate expression '...' before initialization" << newline
+     << "    -e '...'           evaluate expression '...' after initialization" << newline
      << "environment:"       << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
-     << "                       bin/../libexec/Macaulay2-$M2ARCH-data, where bin is the" << newline
+     << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
      << "                       directory containing the Macaulay2 executable" << newline
+     << "    EDITOR             default text editor" << newline
+     << "    LOADDATA_IGNORE_CHECKSUMS	   ignore checksums (for debugging)" << newline
      ;exit 0)
 
 setDefaultValues := () -> (
@@ -226,6 +228,7 @@ processCommandLineOptions := () -> (			    -- two passes, based on value of 'pre
 		    )
 	       else error("command line option ", arg, " missing argument")
 	       )
+	  else if match("^-e",arg) and not preload then value substring(2,arg) -- to become obsolete
 	  else if arg#0 == "-" then error("unrecognized command line option: ", arg)
 	  else if not preload then loadFile arg;
 	  argno = argno+1;

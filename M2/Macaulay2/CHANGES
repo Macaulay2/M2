@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+'netRows' is now called 'unstack'
+
 New features for nets: if n is a Net, then #n is the number of rows,
 n#i gives the i-th row (well, actually, i=0 gives the first row), and
 n#-i gives the i-th row from the end.  This will make it more
