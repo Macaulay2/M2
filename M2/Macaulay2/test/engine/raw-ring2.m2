@@ -5,8 +5,8 @@ needs "raw-util.m2"
 mo = rawMonomialOrdering { GRevLex => {1,2,3,4} }
 M = rawMonoid(mo, (a,b,c,d)/toString, degring 2, (0,1, 0,1, 1,0, 1,0))
 R = rawPolynomialRing(rawZZ(), M)
-a = rawRingVar(R,0,1)
-c = rawRingVar(R,2,1)
+a = rawRingVar(R,0)
+c = rawRingVar(R,2)
 rawMultiDegree (a*c^2)
 
 -----------------------------
@@ -41,8 +41,7 @@ B = rawGaloisField raw x
 x = B_0
 apply(1..24, i -> x^i)
 
-errorDepth = 0
-GF 25 -- FAILS
+GF 25
 -----------------------------
 -- Test of SchurRing --------
 -----------------------------
