@@ -309,11 +309,7 @@ file := null
 
 extractBody := x -> if x.?Description then x.Description
 getRecord := (pkg,key) -> pkg#"documentation"#key	    -- for Databases, insert 'value' here
-getPackage := key -> scan(
-     value \ values PackageDictionary,
-     pkg -> (
-	  d := pkg#"documentation";
-	  if d#?key then break pkg))
+getPackage := key -> scan(value \ values PackageDictionary, pkg -> if pkg#?"documentation" and pkg#"documentation"#?key then break pkg)
 getDoc := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
@@ -570,8 +566,14 @@ moreGeneral := s -> (
 
 -----------------------------------------------------------------------------
 
-optTO := i -> if getDoc i =!= null then fixup SEQ{ TO i, commentize headline i } else formatDocumentTagTO i
-optTOCLASS := i -> if getDoc i =!= null then fixup SEQ { TO i, " (", OFCLASS class value i, ")", commentize headline i } else formatDocumentTagTO i
+optTO := i -> if getDoc i =!= null then fixup SEQ{ TOH i } else formatDocumentTagTO i
+optTOCLASS := i -> (if getDoc i =!= null then (
+	  -- we might want a new type of TO so that in info mode this would look like this:
+	  --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)
+	  -- fixup SEQ { TO i, " (", OFCLASS class value i, ")", commentize headline i }
+	  fixup SEQ{ TOH i }
+	  )
+     else formatDocumentTagTO i)
 
 smenu := s -> UL (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
 smenuCLASS := s -> UL (optTOCLASS \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
@@ -902,11 +904,11 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 	  if #pkg#"exported symbols" > 0 then (
 	       HEADER3 "Exports",
 	       UL {
-		    if #b > 0 then SEQ {"Types", smenu b},
-		    if #a > 0 then SEQ {"Functions", smenu a},
-		    if #m > 0 then SEQ {"Methods", smenu m},
-		    if #c > 0 then SEQ {"Symbols", smenu c},
-		    if #d > 0 then SEQ {"Other things", smenuCLASS d}})))
+		    if #b > 0 then SEQ1 {"Types", smenu b},
+		    if #a > 0 then SEQ1 {"Functions", smenu a},
+		    if #m > 0 then SEQ1 {"Methods", smenu m},
+		    if #c > 0 then SEQ1 {"Symbols", smenu c},
+		    if #d > 0 then SEQ1 {"Other things", smenuCLASS d}})))
 
 documentation Symbol := S -> (
      a := apply(select(optionFor S,f -> isDocumentableMethod f), f -> f => S);

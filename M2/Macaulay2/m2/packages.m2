@@ -33,7 +33,7 @@ removePackage Package := p -> (
      )
 removePackage String := title -> if PackageDictionary#?title and class value PackageDictionary#title === Package then removePackage value PackageDictionary#title
 
-currentPackageS := getGlobalSymbol(PackageDictionary,"currentPackage")
+currentPackageSymbol := getGlobalSymbol(PackageDictionary,"currentPackage")
 
 substituteOptions := new MutableHashTable
 loadPackage = method(
@@ -104,7 +104,7 @@ newPackage(String) := opts -> (title) -> (
       	  PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
      	  newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
 	  );
-     currentPackageS <- newpkg;
+     currentPackageSymbol <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
      packages = join(
@@ -209,7 +209,7 @@ closePackage String := title -> (
      hook := pkg#"close hook";
      remove(pkg,"close hook");
      fileExitHooks = select(fileExitHooks, f -> f =!= hook);
-     currentPackage = pkg#"previous currentPackage";
+     currentPackageSymbol <- pkg#"previous currentPackage";
      remove(pkg,"previous currentPackage");
      debuggingMode = pkg#"old debuggingMode";
      remove(pkg,"old debuggingMode");
@@ -239,21 +239,14 @@ package Symbol := s -> (
      d := dictionary s;
      if d === PackageDictionary then value s
      else if d =!= null then package d )
-     
 package HashTable := package Function := x -> if ReverseDictionary#?x then package ReverseDictionary#x
 
-warned := new MutableHashTable
-
-Package.GlobalAssignHook = (X,x) -> (
-     if not ReverseDictionary#?x then ReverseDictionary#x = X;
-     -- use x;
-     )
+Package.GlobalAssignHook = (X,x) -> if not ReverseDictionary#?x then ReverseDictionary#x = X;     -- not 'use x';
 Package.GlobalReleaseHook = globalReleaseFunction
-
-use Package := pkg -> (
-     if not member(pkg.Dictionary,globalDictionaries) then globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);
+use Package := pkg -> if not member(pkg,packages) then (
+     packages = prepend(pkg,packages);
+     globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);
      )
-
 
 needsPackage = method()
 needsPackage String := s -> (

@@ -55,13 +55,23 @@ texExtraLiteral := s -> demark(ENDLINE,
      )
 -----------------------------------------------------------------------------
 -- the default case
-defop := (joiner,op) -> x -> joiner apply(x,op)
-info MarkUpList := defop(horizontalJoin,info)
-net MarkUpList := defop(horizontalJoin,net)
-html MarkUpList := defop(concatenate,html)
-tex MarkUpList := defop(concatenate,tex)
-texMath MarkUpList := defop(concatenate,texMath)
-mathML MarkUpList := defop(concatenate,mathML)
+scan((
+	  (info,horizontalJoin),
+	  (net,horizontalJoin),
+	  (html,concatenate),
+	  (tex,concatenate),
+	  (texMath,concatenate),
+	  (mathML,concatenate)
+	  ),
+     (op,joiner) -> op MarkUpList := x -> joiner apply(x,op))
+
+-- defop := (joiner,op) -> x -> joiner apply(x,op)
+-- info MarkUpList := defop(horizontalJoin,info)
+-- net MarkUpList := defop(horizontalJoin,net)
+-- html MarkUpList := defop(concatenate,html)
+-- tex MarkUpList := defop(concatenate,tex)
+-- texMath MarkUpList := defop(concatenate,texMath)
+-- mathML MarkUpList := defop(concatenate,mathML)
 
 info TITLE := net TITLE := x -> ""
 
@@ -397,23 +407,24 @@ infoLiteral#"_" = "_us"
 infoLiteral#")" = "_rp"
 infoLiteral#"," = "_cm"
 infoLiteral#"*" = "_st"
-infoTagConvert = memoize(n -> if n === " " then "_sp" else concatenate apply(characters n, c -> infoLiteral#c));
+infoLiteral#":" = "_co"
+infoLit := n -> concatenate apply(characters n, c -> infoLiteral#c);
+infoTagConvert = memoize(n -> infoLit if n#0 === " " or n#-1 === " " then concatenate("\"",n,"\"") else n);
 
 info TO := x -> (
      fkey := DocumentTag.FormattedKey x#0;
-     concatenate(fkey, if x#?1 then x#1, " (*Note ", infoTagConvert fkey, "::)"))
+     concatenate(fkey, if x#?1 then x#1, "  (*note ", infoTagConvert fkey, "::)"))
 info TO2:= x -> (
      fkey := DocumentTag.FormattedKey x#0;
-     concatenate( x#1, " (*Note ", infoTagConvert fkey, "::)"))
+     concatenate( x#1, "  (*note ", x#1, ":", infoTagConvert fkey, ".)"))
+info TOH :=  x -> (
+     fkey := DocumentTag.FormattedKey x#0;
+     concatenate( fkey, if x#?1 then x#1, commentize headline x#0,, "  (*note ", infoTagConvert fkey, "::)" ))
 
 info IMG := net IMG := tex IMG  := x -> ""
 info HREF := net HREF := x -> net last x
 
-toh := op -> x -> op SEQ{ new TO from x, commentize headline x#0 }
-net TOH :=  toh net
-html TOH :=  toh html
-tex TOH :=  toh tex
-info TOH :=  toh info
+scan( (net,html,tex), op -> op TOH := x -> op SEQ{ new TO from x, commentize headline x#0 } )
 
 tex LITERAL := html LITERAL := x -> concatenate x
 html EmptyMarkUpType := html MarkUpType := X -> html X{}

@@ -124,7 +124,7 @@ if firstTime then (
 	  if not ReverseDictionary#?x then ReverseDictionary#x = X;
 	  use x;
 	  );
-     globalReleaseFunction = (X,x) -> remove(ReverseDictionary,x);
+     globalReleaseFunction = (X,x) -> if ReverseDictionary#?x and ReverseDictionary#x === X then remove(ReverseDictionary,x);
      globalAssignment = X -> (
 	  if instance(X, VisibleList) then apply(X,globalAssignment)
 	  else if instance(X,Type) then (

@@ -5,9 +5,9 @@ getSourceLines Nothing := null -> null
 getSourceLines Sequence := (filename,start,startcol,stop,stopcol) -> if filename =!= "stdio" then (
      wp := set characters " \t);";
      file := (
-	  if filename === "--startupString1--/layout.m2"
+	  if filename === "layout.m2"
 	  then startupString1
-	  else if filename === "--startupString2--/startup.m2"
+	  else if filename === "startup.m2"
 	  then startupString2
 	  else (
 	       if not fileExists filename then error ("couldn't find file ", filename);
@@ -39,7 +39,7 @@ isMemoizedFunction := f -> sameFunctionBody(f,memoizedFunction)
 
 codeFunction := (f,depth) -> (
      if depth <= limit and locate f =!= null then stack(
-	  try getSourceLines locate f else "source code file not available",
+	  try getSourceLines locate f else concatenate("source code file '",first locate f,"' not available"),
 	  if isOptionedFunction f then (
 	       "-- original function f:", codeFunction(last frame f,depth+1)
 	       )
