@@ -117,23 +117,18 @@ void PolyRingQuotient::makeQuotientIdealZZ(const vector<Nterm *, gc_alloc> &quot
   deletearray(exp);
 }
 
+
 PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
-					 const Matrix *M)
+					   std::vector<Nterm *, gc_alloc> &elems)
+  // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
+  // They should also form a GB.
 {
   PolyRingQuotient *result = new PolyRingQuotient;
-  if (M->get_ring() != R)
-    {
-      ERROR("quotient elements not in the expected polynomial ring");
-      return 0;
-    }
-  vector<Nterm *, gc_alloc> elems;
   result->initialize_ring(R->charac(),
 			  R->n_vars(),
 			  R->total_n_vars(),
 			  R->get_degree_ring());
   result->R_ = R;
-  for (int i=0; i<M->n_cols(); i++)
-    elems.push_back(M->elem(0,i));
 
   result->overZZ_ = R->getCoefficients()->is_ZZ();
   if (result->overZZ_)
@@ -145,6 +140,40 @@ PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
   result->EXP2_ = newarray(int, R->n_vars());
   result->MONOM1_ = R->getMonoid()->make_one();
   return result;
+}
+
+
+PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
+					   const Matrix *M)
+{
+  if (M->get_ring() != R)
+    {
+      ERROR("quotient elements not in the expected polynomial ring");
+      return 0;
+    }
+  std::vector<Nterm *, gc_alloc> elems;
+  for (int i=0; i<M->n_cols(); i++)
+    elems.push_back(M->elem(0,i));
+
+  return create(R,elems);
+}
+
+PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
+					   const PolynomialRing *B)
+  // R should be an ambient poly ring
+  // B should have: ambient of B is the logical coeff ring of R
+  //   i.e. R = A[x], B = A/I
+  // return A[x]/I.
+{
+  std::vector<Nterm *, gc_alloc> elems;
+
+  for (int i=0; i<B->n_quotients(); i++)
+    {
+      ring_elem f;
+      R->promote(B->getAmbientRing(), B->quotient_element(i), f);
+      elems.push_back(f);
+    }
+  return create(R,elems);
 }
 
 Matrix * PolyRingQuotient::getPresentation() const
