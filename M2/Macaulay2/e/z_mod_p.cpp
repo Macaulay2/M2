@@ -288,10 +288,10 @@ ring_elem Z_mod::gcd_extended(const ring_elem f, const ring_elem,
   return from_int(1);
 }
 
-ring_elem Z_mod::eval(const RingMap &map, const ring_elem f) const
+ring_elem Z_mod::eval(const RingMap *map, const ring_elem f) const
 {
   int a = to_int(f);
-  return map.Ring_of()->from_int(a);
+  return map->Ring_of()->from_int(a);
 }
 
 ring_elem Z_mod::random() const

@@ -19,20 +19,19 @@ class geobucket
 {
   const FREEMODULETYPE *F;		// Our elements will be vectors in here
   const Ring *K;		// The coefficient ring
-  VECTYPE *heap[GEOHEAP_SIZE];
+  VECTYPE heap[GEOHEAP_SIZE];
   int top_of_heap;
 
-  int vec_length(VECTYPE *v) const;
 public:
   geobucket(const FREEMODULETYPE *F);
   ~geobucket();
 
-  void add(VECTYPE *p);
-  VECTYPE *remove_lead_term();	// Returns NULL if none.
+  void add(VECTYPE p);
+  VECTYPE remove_lead_term();	// Returns NULL if none.
 
-  VECTYPE *value();		// Returns the linearized value, and resets the geobucket.
+  VECTYPE value();		// Returns the linearized value, and resets the geobucket.
 
-  VECTYPE *debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
+  VECTYPE debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
 };
 
 static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
@@ -58,37 +57,26 @@ inline geobucket::~geobucket()
   // do anything here.
 }
 
-inline int geobucket::vec_length(VECTYPE *p) const
+inline void geobucket::add(VECTYPE p)
 {
-  int result = 0;
-  while (p != NULL)
-    {
-      p = p->next;
-      result++;
-    }
-  return result;
-}
-
-inline void geobucket::add(VECTYPE *p)
-{
-  int len = vec_length(p);
+  int len = F->n_terms(p);
   int i= 0;
   while (len >= heap_size[i]) i++;
   F->add_to(heap[i], p);
-  len = vec_length(heap[i]);
+  len = F->n_terms(heap[i]);
   p = NULL;
   while (len >= heap_size[i])
     {
       i++;
       F->add_to(heap[i], heap[i-1]);
-      len = vec_length(heap[i]);
+      len = F->n_terms(heap[i]);
       heap[i-1] = NULL;
     }
   if (i > top_of_heap)
     top_of_heap = i;
 }
 
-inline VECTYPE *geobucket::remove_lead_term()
+inline VECTYPE geobucket::remove_lead_term()
 {
   int lead_so_far = -1;
   for (int i=0; i <= top_of_heap; i++)
@@ -108,7 +96,7 @@ inline VECTYPE *geobucket::remove_lead_term()
 	}
       // At this point we have equality
       K->add_to(heap[lead_so_far]->coeff, heap[i]->coeff);
-      VECTYPE *tmp = heap[i];
+      VECTYPE tmp = heap[i];
       heap[i] = tmp->next;
       tmp->next = NULL;
       F->remove(tmp);
@@ -125,15 +113,15 @@ inline VECTYPE *geobucket::remove_lead_term()
 	}
     }
   if (lead_so_far < 0) return NULL;
-  VECTYPE *result = heap[lead_so_far];
+  VECTYPE result = heap[lead_so_far];
   heap[lead_so_far] = result->next;
   result->next = NULL;
   return result;
 }
 
-inline VECTYPE *geobucket::value()
+inline VECTYPE geobucket::value()
 {
-  VECTYPE *result = NULL;
+  VECTYPE result = NULL;
   for (int i=0; i<=top_of_heap; i++)
     {
       if (heap[i] == NULL) continue;

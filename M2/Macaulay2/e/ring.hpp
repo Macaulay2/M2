@@ -34,6 +34,7 @@ public:
   int n_vars() const { return nvars; }
   int total_n_vars() const { return totalvars; }
 
+  const Ring * Ring_of() const { return this; }
   const Ring *  Ncoeffs()       const { return K; }
   const Monoid * Nmonoms()       const { return M; }
   const Monoid * degree_monoid() const { return D; }
@@ -110,7 +111,7 @@ public:
   virtual void elem_text_out(buffer &o, const ring_elem f) const = 0;
   virtual void elem_bin_out(buffer &o, const ring_elem f) const = 0;
 
-  virtual ring_elem eval(const RingMap &map, const ring_elem f) const = 0;
+  virtual ring_elem eval(const RingMap *map, const ring_elem f) const = 0;
 
   // Polynomial routines
   virtual int n_terms(const ring_elem f) const = 0;

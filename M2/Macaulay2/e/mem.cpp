@@ -82,6 +82,7 @@ void *stash::new_elem()
 void stash::delete_elem(void *p)
      // Delete the object 'p', placing it on the free list for this stash.
 {
+  if (p == NULL) return;
   if (trace_bad_deletes)
     {
       for (void *q = free_list; q != NULL; q = *((void **) q))

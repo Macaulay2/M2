@@ -663,28 +663,27 @@ void cmd_Matrix_coeffs(object &om, object &op)
 void cmd_RingMap(object &om)
 {
   Matrix m = om->cast_to_Matrix();
-  RingMap f = m;
-  gStack.insert(f);
+  gStack.insert(new RingMap(m));
 }
 void cmd_RingMap_eval_ringelem(object &omap, object &oelem)
 {
-  RingMap map = omap->cast_to_RingMap();
+  const RingMap *map = omap->cast_to_RingMap();
   RingElement r = oelem->cast_to_RingElement();
-  gStack.insert(map.eval(r));
+  gStack.insert(map->eval(r));
 }
 void cmd_RingMap_eval_vector(object &omap, object &oF, object &ov)
 {
-  RingMap map = omap->cast_to_RingMap();
+  const RingMap *map = omap->cast_to_RingMap();
   Vector v = ov->cast_to_Vector();
   const FreeModule *F = oF->cast_to_FreeModule();
-  gStack.insert(map.eval(F,v));
+  gStack.insert(map->eval(F,v));
 }
 void cmd_RingMap_eval_matrix(object &omap, object &oF, object &om)
 {
-  RingMap map = omap->cast_to_RingMap();
+  const RingMap *map = omap->cast_to_RingMap();
   Matrix m = om->cast_to_Matrix();
   const FreeModule *F = oF->cast_to_FreeModule();
-  gStack.insert(map.eval(F,m));
+  gStack.insert(map->eval(F,m));
 }
 void cmd_RingElement_promote(object &oR, object &of)
 {
@@ -961,6 +960,13 @@ void cmd_random_elem(object &oR)
   Ring *R = oR->cast_to_Ring();
   gStack.insert(RingElement::random(R));
 }
+void cmd_random_mat(object &oR, object &onrows, object &oncols)
+{
+  Ring *R = oR->cast_to_Ring();
+  int r = onrows->int_of();
+  int c = oncols->int_of();
+  gStack.insert(Matrix::random(R,r,c));
+}
 void cmd_random(object & /*oF*/, object & /*oG*/,
 		object & /*otopdeg*/, object & /*odeg*/)
 {
@@ -1021,6 +1027,7 @@ void i_Matrix_cmds(void)
   install(ggrandommax, cmd_random_maxint, TY_INT);
   install(ggrandomint, cmd_random_int);
   install(ggrandom, cmd_random_elem, TY_RING);
+  install(ggrandom, cmd_random_mat, TY_RING, TY_INT, TY_INT);
   install(ggrandom, cmd_random, TY_FREEMODULE, TY_FREEMODULE, 
 	  TY_INT, TY_INTARRAY);
 

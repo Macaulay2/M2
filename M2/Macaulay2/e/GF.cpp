@@ -144,9 +144,9 @@ void GF::elem_bin_out(buffer &o, const ring_elem a) const
   bin_int_out(o, a.int_val);
 }
 
-ring_elem GF::eval(const RingMap &map, const ring_elem f) const
+ring_elem GF::eval(const RingMap *map, const ring_elem f) const
 {
-  return map.Ring_of()->power(map.elem(0), f.int_val);
+  return map->Ring_of()->power(map->elem(0), f.int_val);
 }
 
 ring_elem GF::from_int(int n) const

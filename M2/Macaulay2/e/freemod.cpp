@@ -9,6 +9,8 @@
 #include "ringmap.hpp"
 #include "ntuple.hpp"
 
+#include "geovec.hpp"
+
 stash *FreeModule::mystash;
 
 vec FreeModule::new_term() const
@@ -1607,6 +1609,25 @@ vec FreeModule::homogenize(const vec f, int v, const int *wts) const
   return homogenize(f, v, d, wts);
 }
 
+vec FreeModule::random() const
+{
+  vec result = NULL;
+  int *m = NULL;
+  if (M != NULL)
+    m = M->make_one();
+  for (int i=0; i<rank(); i++)
+    {
+      vec v = term(i,K->random(),m);
+      if (v != NULL)
+	{
+	  v->next = result;
+	  result = v;
+	}
+    }
+  if (M != NULL)
+    M->remove(m);
+  return result;
+}
 //////////////////////////////////////////////
 //  Translation and sorting routines /////////
 //////////////////////////////////////////////
@@ -1770,7 +1791,36 @@ void FreeModule::elem_bin_out(buffer &o, const vec v) const
   }
 }
 
-vec FreeModule::eval(const RingMap &map, const FreeModule *F,
+vec FreeModule::eval(const RingMap *map, const FreeModule *F,
+			  const vec v) const
+{
+  ring_elem r;
+  vec g;
+  intarray vp;
+  geobucket H(F);
+
+  for (vecterm *t = v; t != NULL; t = t->next)
+    {
+      if (M != NULL)
+	{
+	  vp.shrink(0);
+	  M->divide(t->monom, base_monom(t->comp), t->monom);
+	  M->to_varpower(t->monom, vp);
+	  M->mult(t->monom, base_monom(t->comp), t->monom);
+	  r = map->eval_term(K, t->coeff, vp.raw());
+	}
+      else
+	{
+	  r = K->eval(map, t->coeff);
+	}
+      g = F->term(t->comp, r);
+      F->Ring_of()->remove(r);
+      H.add(g);
+    }
+  return H.value();
+}
+#if 0
+vec FreeModule::eval(const RingMap *map, const FreeModule *F,
 			  const vec v) const
 {
   ring_elem r;
@@ -1786,7 +1836,7 @@ vec FreeModule::eval(const RingMap &map, const FreeModule *F,
 	  M->divide(t->monom, base_monom(t->comp), t->monom);
 	  M->to_varpower(t->monom, vp);
 	  M->mult(t->monom, base_monom(t->comp), t->monom);
-	  r = map.eval_term(K, t->coeff, vp.raw());
+	  r = map->eval_term(K, t->coeff, vp.raw());
 	}
       else
 	{
@@ -1799,3 +1849,4 @@ vec FreeModule::eval(const RingMap &map, const FreeModule *F,
   return result;
 }
 
+#endif

@@ -29,7 +29,9 @@ class object_element;
       class exp_vector;
 
   class mon_order;
+  class new_mon_order;
   class object_mon_order;
+  class object_new_mon_order;
   class ring_elem_rec;
   class monomial_rec;
   class freemodule_rec;

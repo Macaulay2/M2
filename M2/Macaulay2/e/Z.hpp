@@ -87,7 +87,7 @@ public:
   virtual void elem_text_out(buffer &o, const ring_elem f) const;
   virtual void elem_bin_out(buffer &o, const ring_elem f) const;
 
-  virtual ring_elem eval(const RingMap &map, const ring_elem f) const;
+  virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
 
   virtual int n_terms(const ring_elem f) const;
   virtual ring_elem term(const ring_elem a, const int *m) const;

@@ -8,6 +8,8 @@
 #include "matrix.hpp"
 #include "Z.hpp"
 
+#include "geopoly.hpp"
+
 #define POLY(q) ((q).poly_val)
 
 PolynomialRing::PolynomialRing(const Ring *K, const Monoid *MF)
@@ -636,6 +638,7 @@ void PolynomialRing::mult_coeff_to(ring_elem a, ring_elem &f) const
       K->remove(tmp);
     }
 }
+#if 0
 ring_elem PolynomialRing::mult(const ring_elem f, const ring_elem g) const
 {
   ring_elem result = NULL;
@@ -645,6 +648,17 @@ ring_elem PolynomialRing::mult(const ring_elem f, const ring_elem g) const
       add_to(result, h);
     }
   return result;
+}
+#endif
+ring_elem PolynomialRing::mult(const ring_elem f, const ring_elem g) const
+{
+  geobucket H(this);
+  for (Nterm *a = f; a != NULL; a = a->next)
+    {
+      ring_elem h = mult_by_term(g, a->coeff, a->monom);
+      H.add(h);
+    }
+  return H.value();
 }
 
 ring_elem PolynomialRing::power2(const ring_elem ff, mpz_t m) const
@@ -1146,21 +1160,41 @@ void PolynomialRing::elem_bin_out(buffer &o, const ring_elem f) const
     }
 }
 
-ring_elem PolynomialRing::eval(const RingMap &map, const ring_elem f) const
+ring_elem PolynomialRing::eval(const RingMap *map, const ring_elem f) const
 {
-  ring_elem result = map.Ring_of()->from_int(0);
-  intarray vp;
+  // The way we collect the result depends on whether the target ring
+  // is a polynomial ring: if so, use a heap structure.  If not, just add to the result.
 
-  for (Nterm *t = f; t != NULL; t = t->next)
+  const Ring *target = map->Ring_of();
+  if (target->is_poly_ring())
     {
-      vp.shrink(0);
-      M->to_varpower(t->monom, vp);
-      ring_elem g = map.eval_term(K, t->coeff, vp.raw());
-      map.Ring_of()->add_to(result, g);
+      intarray vp;
+      geobucket H(target);
+      
+      for (Nterm *t = f; t != NULL; t = t->next)
+	{
+	  vp.shrink(0);
+	  M->to_varpower(t->monom, vp);
+	  ring_elem g = map->eval_term(K, t->coeff, vp.raw());
+	  H.add(g);
+	}
+      return H.value();
     }
-  return result;
+  else 
+    {
+      ring_elem result = target->from_int(0);
+      intarray vp;
+      
+      for (Nterm *t = f; t != NULL; t = t->next)
+	{
+	  vp.shrink(0);
+	  M->to_varpower(t->monom, vp);
+	  ring_elem g = map->eval_term(K, t->coeff, vp.raw());
+	  target->add_to(result, g);
+	}
+      return result;
+    }
 }
-
 
 
 int PolynomialRing::n_terms(const ring_elem f) const

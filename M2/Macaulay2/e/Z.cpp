@@ -276,9 +276,9 @@ ring_elem Z::gcd_extended(const ring_elem f, const ring_elem g,
   return MPZ_RINGELEM(result);
 }
 
-ring_elem Z::eval(const RingMap &map, const ring_elem f) const
+ring_elem Z::eval(const RingMap *map, const ring_elem f) const
 {
-  return map.Ring_of()->from_int(MPZ_VAL(f));
+  return map->Ring_of()->from_int(MPZ_VAL(f));
 }
 
 bool Z::is_homogeneous(const ring_elem) const

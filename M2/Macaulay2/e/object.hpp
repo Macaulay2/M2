@@ -49,7 +49,7 @@ enum object_types {
     TY_NONE, TY_STRING, TY_INTARRAY, TY_INTARRAY2, TY_PRIMITIVE,
     TY_RING, TY_FREEMODULE, TY_RING_ELEM, TY_VECTOR, TY_MATRIX,
     TY_RING_MAP, TY_MONIDEAL, TY_TERMIDEAL,
-    TY_MON_ORDER,
+    TY_MON_ORDER, TY_NEW_MON_ORDER,
     TY_MONOID, TY_MONOMIAL,
     TY_COMP, 
     TY_HILB_COMP,
@@ -89,6 +89,7 @@ public:
   virtual computation      * cast_to_computation(){ return 0; }
 
   virtual object_mon_order   * cast_to_mon_order()      { return 0; }
+  virtual object_new_mon_order   * cast_to_new_mon_order()      { return 0; }
   virtual Monoid      * cast_to_Monoid()      { return 0; }
   virtual TermIdeal   * cast_to_TermIdeal()  { return 0; }
   virtual gb_comp     * cast_to_gb_comp()     { return 0; }
@@ -98,8 +99,10 @@ public:
   virtual gbres_comp  * cast_to_gbres_comp()    { return 0; }
   virtual Ring        * cast_to_Ring()       { return 0; }
   virtual FreeModule  * cast_to_FreeModule() { return 0; }
+  virtual RingMap     * cast_to_RingMap()    { return 0; }
 
   virtual const object_mon_order   * cast_to_mon_order()      const { return 0; }
+  virtual const object_new_mon_order   * cast_to_new_mon_order()      const { return 0; }
   virtual const Monoid      * cast_to_Monoid()      const { return 0; }
   virtual const TermIdeal   * cast_to_TermIdeal()  const { return 0; }
   virtual const gb_comp     * cast_to_gb_comp()     const { return 0; }
@@ -109,12 +112,11 @@ public:
   virtual const gbres_comp  * cast_to_gbres_comp()   const { return 0; }
   virtual const Ring        * cast_to_Ring()       const { return 0; }
   virtual const FreeModule  * cast_to_FreeModule() const { return 0; }
+  virtual const RingMap     * cast_to_RingMap()    const { return 0; }
 
   virtual RingElement   cast_to_RingElement();
   virtual Matrix        cast_to_Matrix();
   virtual MonomialIdeal cast_to_MonomialIdeal();
-  virtual RingMap       cast_to_RingMap();
-
   virtual Vector        cast_to_Vector();
   virtual Monomial      cast_to_Monomial();
 

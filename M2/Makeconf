@@ -45,8 +45,6 @@ DEBUGFLAGS :=
 ifdef PROFILE
 DEBUGFLAGS += -pg
 NOSTRIP := TRUE
-else
-DEBUGFLAGS += -fomit-frame-pointer
 endif
 
 ifdef NOSTRIP
@@ -55,12 +53,12 @@ STRIPCMD := :
 else
 STRIPFLAG := -s
 STRIPCMD := strip
+DEBUGFLAGS += -fomit-frame-pointer
 endif
 
 ifdef MEMDEBUG
 DEBUGFLAGS += -DMEM_DEBUG
 endif
 
-export DEBUGFLAGS
-
+export DEBUGFLAGS STRIPFLAG STRIPCMD 
 endif

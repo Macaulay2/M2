@@ -72,6 +72,7 @@ COMMANDS = \
 	gbnod
 
 NAMES = \
+	newmonorder \
 	error \
 	ntuple \
 	res \
@@ -146,7 +147,7 @@ HHFILES := $(addsuffix .hpp, \
 
 OTHERS := Makefile Makefile.secondary \
 	res_aux.cpp res_aux2.cpp geoT.hpp \
-	tests misc keep gbbinom.hpp gbbinom.cpp
+	tests misc keep newmonoid.hpp newmonoid.cpp
 
 
 ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) 
@@ -170,10 +171,13 @@ $(LIB): $(LIB)($(OFILES))
 # but we can't use that under MSDOS, and besides, it looks weird
 
 geovec.hpp: geoT.hpp
-	awk '{sub(/FREEMODULETYPE/, "FreeModule"); sub(/VECTYPE/, "vecterm"); print }' geoT.hpp >$@
+	awk '{sub(/FREEMODULETYPE/, "FreeModule"); sub(/VECTYPE/, "vecterm *"); print }' geoT.hpp >$@
 
 geores.hpp: geoT.hpp
-	awk '{sub(/FREEMODULETYPE/, "res2_poly"); sub(/VECTYPE/, "res2term"); print }' geoT.hpp >$@
+	awk '{sub(/FREEMODULETYPE/, "res2_poly"); sub(/VECTYPE/, "res2term *"); print }' geoT.hpp >$@
+
+#geopoly.hpp: geoT.hpp
+#	awk '{sub(/FREEMODULETYPE/, "Ring"); sub(/VECTYPE/, "Nterm *"); print }' geoT.hpp >$@
 
 cmdnames.m2 : misc/cmdnames.input misc/cmdg.awk
 	$(AWK) -f misc/cmdg.awk misc/cmdnames.input >cmdnames.m2

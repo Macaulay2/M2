@@ -66,6 +66,14 @@ monomial binomial_ring::new_monomial() const
   return (monomial)((binomial_ring *) this)->monstash->new_elem();
 }
 
+monomial binomial_ring::copy_monomial(monomial m) const
+{
+  monomial result = new_monomial();
+  for (int i=0; i<nslots; i++)
+    result[i] = m[i];
+  return result;
+}
+
 void binomial_ring::set_weights(monomial m) const
 {
   int i;
@@ -100,6 +108,10 @@ binomial binomial_ring::make_binomial() const
   // allocates the monomials
 {
   return binomial(new_monomial(), new_monomial());
+}
+binomial binomial_ring::copy_binomial(const binomial &f) const
+{
+  return binomial(copy_monomial(f.lead), copy_monomial(f.tail));
 }
 
 int binomial_ring::weight(monomial m) const
@@ -293,7 +305,7 @@ void binomial_ring::translate_monomial(const binomial_ring *old_ring, monomial &
   for (i=old_ring->nvars; i<nvars; i++)
     result[i] = 0;
   old_ring->remove_monomial(m);
-  set_weights(m);
+  set_weights(result);
   m = result;
 }
 
@@ -453,7 +465,7 @@ void binomial_s_pair_set::enlarge(const binomial_ring *newR)
   const binomial_ring *old_ring = R;
   R = newR;
 
-  R->remove_monomial(_prev_lcm);
+  old_ring->remove_monomial(_prev_lcm);
   _prev_lcm = NULL;
   for (s_pair_degree_list *thisdeg = _pairs->next; thisdeg != NULL; thisdeg = thisdeg->next)
     for (s_pair_lcm_list *thislcm = thisdeg->pairs; thislcm != NULL; thislcm = thislcm->next)
@@ -468,7 +480,7 @@ void binomial_s_pair_set::remove_lcm_list(s_pair_lcm_list *p)
       p->pairs = thispair->next;
       delete thispair;
     }
-  delete [] p->lcm;
+  R->remove_monomial(p->lcm);
   delete p;
 }
 void binomial_s_pair_set::remove_pair_list(s_pair_degree_list *p)
@@ -1084,7 +1096,7 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
       // A generator
       ismin = true;
       subringmin = true;
-      f = s.f1->f;
+      f = R->copy_binomial(s.f1->f);  // This is probably being left for garbage...
     }
   else
     {
@@ -1132,6 +1144,8 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
       if (subringmin) mingens_subring.append(p);
       G.append(p);
     }
+  else
+    R->remove_binomial(f);
 }
 
 int binomialGB_comp::gb_done(const intarray &/*stop_condtions*/) const
@@ -1222,11 +1236,6 @@ Matrix binomialGB_comp::initial_matrix(int n)
 
 Matrix binomialGB_comp::gb_matrix()
 {
-  buffer o;
-  o << "nfind = " << nfind << newline << "loop1 = " << loop1 
-    << newline << "loop2 = " << loop2 << newline;
-  o << Gmin->n_masks() << newline;
-  emit(o.str());
   Matrix result = Matrix(R->F);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
       result.append(R->binomial_to_vector((*p)->f));
@@ -1255,4 +1264,13 @@ void binomialGB_comp::stats() const
   o << "--- pairs ----" << newline;
   emit(o.str());
   Pairs->stats();
+
+  o.reset();
+  o << "nfind = " << nfind << newline << "loop1 = " << loop1 
+    << newline << "loop2 = " << loop2 << newline;
+  o << Gmin->n_masks() << newline;
+  emit(o.str());
+
+  if (comp_printlevel >= 3)
+    Gmin->debug_display();
 }

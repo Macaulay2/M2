@@ -43,7 +43,6 @@ MonomialIdeal   object_element::cast_to_MonomialIdeal()  { return MonomialIdeal(
 RingElement object_element::cast_to_RingElement() { return RingElement(0,caster); }
 Vector     object_element::cast_to_Vector()     { return Vector(0,caster); }
 Matrix     object_element::cast_to_Matrix()     { return Matrix(0,caster); }
-RingMap   object_element::cast_to_RingMap()   { return RingMap(0,caster); }
 
 object      object_element::index_of(int) { return 0; }
 
@@ -72,7 +71,7 @@ void i_stashes()
   Vector_rec::mystash     = new stash("Vector", sizeof(Vector_rec));
   FreeModule::mystash     = new stash("FreeModule", sizeof(FreeModule));
   Matrix_rec::mystash     = new stash("Matrix", sizeof(Matrix_rec));
-  RingMap_rec::mystash   = new stash("Ringmap", sizeof(RingMap_rec));
+  RingMap::mystash        = new stash("Ringmap", sizeof(RingMap));
 
   TermIdeal::mystash       = new stash("TermIdeal", sizeof(TermIdeal));
   mon_term::mystash        = new stash("monterm", sizeof(mon_term));
