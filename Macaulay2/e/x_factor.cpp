@@ -150,8 +150,9 @@ CanonicalForm convert(const RingElement &g) {
      return f;
 }
 
-const RingElementOrNull *rawGCD(const RingElement *f, const RingElement *g)
+const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g)
 {
+#
   CanonicalForm p = convert(*f);
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl
