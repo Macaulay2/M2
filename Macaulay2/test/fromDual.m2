@@ -19,14 +19,11 @@
 
 kk = ZZ/101
 S=kk[vars(0..6)]
---these are correct
 i=ideal fromDual matrix{{a^4}}
-print betti i
+<< "this is correct:  " << betti i << endl << endl
 assert( 6 == (tally degrees source gens i)_{1} )
---these should be the same (F is just a power of a linear form)
---but are not!!
-F=(random(S^1,S^{-1}))^4
---power of a linear form.
+--these should be the same (F is just a power of a linear form), but are not!!
+F=(random(S^1,S^{-1}))^4 --power of a linear form.
 j=ideal fromDual F
-print betti j
+<< "this is not    :  " << betti j << endl << endl
 assert( 6 == (tally degrees source gens j)_{1} )
