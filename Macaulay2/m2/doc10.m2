@@ -227,7 +227,7 @@ document {
      Usage => "resolution f",
      Inputs => { "f" => {"a module homomorphism ", TT "N <--- M"} },
      Outputs => { {"a chain map from a projective resolution of the source of ", TT "f", " to a resolution of the target of ", TT "f" } },
-     Examples => EXAMPLE {
+     EXAMPLE {
 	  "R = ZZ[x,y,z]",
 	  "N = R^1/(x,y,z)",
 	  "M = R^1/(x^2,y^2,x*y*z,z^2)",
