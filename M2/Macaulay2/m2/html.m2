@@ -106,15 +106,15 @@ style := () -> LITERAL {///
 </style>
 /// }
 
-links := () ->
-LITERAL ///
-    <link rel="Home" title="Advanced Bash-Scripting Guide" href="index.html">
-    <link rel="Up" title="Advanced Topics" href="part4.html">
-    <link rel="Previous" title="Advanced Topics" href="part4.html">
-    <link rel="Next" title="Globbing" href="globbingref.html">
-    <link rel="Index" title="Globbing" href="index.html">
-    <link rel="stylesheet" href="common/kde-common.css" type="text/css">
-///
+links := () -> ""
+-- LITERAL ///
+--     <link rel="Home" title="Advanced Bash-Scripting Guide" href="index.html">
+--     <link rel="Up" title="Advanced Topics" href="part4.html">
+--     <link rel="Previous" title="Advanced Topics" href="part4.html">
+--     <link rel="Next" title="Globbing" href="globbingref.html">
+--     <link rel="Index" title="Globbing" href="index.html">
+--     <link rel="stylesheet" href="common/kde-common.css" type="text/css">
+-- ///
 
 -- validate := LITERAL ///
 -- <a href="http://validator.w3.org/check/referer">Validate</a> the html on this page, or <a href="http://jigsaw.w3.org/css-validator/check/referer">validate</a> the css on this page.

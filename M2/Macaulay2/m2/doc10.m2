@@ -21,34 +21,7 @@ document { Resolution,
      store the resolution it comes from."
      }
 
-document { resolution,
-     Headline => "make a projective resolution",
-     Usage => { 
-	  TT "resolution M", " -- make a projective resolution of M.", BR,
-	  TT "res M", " -- 'res' is a synonym for 'resolution'."
-	  },
-     "Warning: the resolution can have free modules with unexpected ranks
-     when the module ", TT "M", " is not homogeneous.  Here is an example
-     where even the lengths of the resolutions differ.  We compute
-     a resolution of the kernel of a ring map in two ways.
-     The ring ", TT "R", " is constructed naively, but the ring
-     ", TT "S", " is constructed with variables of the right degrees
-     so the ring map ", TT "g", " will turn out to be homogeneous.",
-     EXAMPLE {
-	  "k = ZZ/101; T = k[v..z];",
-	  "m = matrix {{x,y,z,x^2*v,x*y*v,y^2*v,z*v,x*w,y^3*w,z*w}}",
-	  "n = rank source m",
-	  "R = k[u_1 .. u_n]",
-	  "S = k[u_1 .. u_n,Degrees => degrees source m]",
-	  "f = map(T,R,m)",
-	  "g = map(T,S,m)",
-	  "res ker f",
-	  "res ker g",
-	  "isHomogeneous f",
-	  "isHomogeneous g"
-	  }
-     }
-
+document { resolution, Headline => "make a projective resolution" }
 document { (resolution,DegreeLimit),
      Headline => "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
@@ -187,15 +160,35 @@ assert (HH_3 C == 0)
 assert (HH_4 C == 0)
 "
 
-document { (resolution, Module),
+document { (resolution,Module),
      Synopsis => {
-	  Usage => "resolution M",
+	  Usage => {TT "resolution M", " or ", TT "res M"},
 	  Inputs => {
 	       "M" => "",
 	       },
 	  Outputs => {
 	       {"a free resolution of ", TT "M"}
 	       }
+	  },
+     "Warning: the resolution can have free modules with unexpected ranks
+     when the module ", TT "M", " is not homogeneous.  Here is an example
+     where even the lengths of the resolutions differ.  We compute
+     a resolution of the kernel of a ring map in two ways.
+     The ring ", TT "R", " is constructed naively, but the ring
+     ", TT "S", " is constructed with variables of the right degrees
+     so the ring map ", TT "g", " will turn out to be homogeneous.",
+     EXAMPLE {
+	  "k = ZZ/101; T = k[v..z];",
+	  "m = matrix {{x,y,z,x^2*v,x*y*v,y^2*v,z*v,x*w,y^3*w,z*w}}",
+	  "n = rank source m",
+	  "R = k[u_1 .. u_n]",
+	  "S = k[u_1 .. u_n,Degrees => degrees source m]",
+	  "f = map(T,R,m)",
+	  "g = map(T,S,m)",
+	  "res ker f",
+	  "res ker g",
+	  "isHomogeneous f",
+	  "isHomogeneous g"
 	  },
      EXAMPLE {
 	  "R = ZZ/32003[a..d]/(a^2+b^2+c^2+d^2);",

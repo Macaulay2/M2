@@ -261,7 +261,7 @@ normal0 := (C) -> (
      C#"pending" = null;
      )
 
-integralClosure = method(Options=>{Variable => symbol w})
+integralClosure = method(Options=>{Variable => symbol w})   -- yikes, this misappropriation of a global symbol is very bad (drg)
 integralClosure Ring := Ring => o -> (R) -> (
      if not R#"IC" then newICnode R;
      C := R#"IC";
