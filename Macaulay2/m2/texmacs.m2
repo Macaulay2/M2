@@ -11,11 +11,7 @@ String.TeXmacsEvaluate = s -> (
      << BEGIN << "verbatim:" 
 	<< BEGIN << "latex:" << endl
 	   << "\\begin{eqnarray*}" << endl
-	      << "\\text{o" << statementNumber << "} = &" << tex v << endl
-	   << "\\end{eqnarray*}" << endl
-	<< END << endl << endl
-	<< BEGIN << "latex:" << endl
-	   << "\\begin{eqnarray*}" << endl
+	      << "\\text{o" << statementNumber << "} = &" << tex v << "\\\\" << endl
 	      << "\\text{o" << statementNumber << "} : &" << tex class v << endl
 	   << "\\end{eqnarray*}" << endl
 	<< END << endl << endl
