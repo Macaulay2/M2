@@ -234,7 +234,6 @@ quotientRemainder(Matrix,GroebnerBasis) := Matrix => (n,g) -> (
      (rem,quo) := rawGBMatrixLift(raw g, raw n);
      (map(R, quo),map(R, rem)))
 
-
 RingElement // GroebnerBasis := Matrix => (r,g) -> (r * id_(target g)) // g
 
 Matrix % GroebnerBasis := Matrix => (n,g) -> (
