@@ -634,7 +634,7 @@ document { (makeCyclic,Matrix),
 	  }
      }  
 
-document { symbol DHom,
+document { DHom,
      TT "DHom (M, N)", " -- computes a basis of
      D-homomorphisms between holonomic D-modules M and N.",
      BR, NOINDENT,
@@ -688,7 +688,7 @@ document { symbol DHom,
 --	  HREF{"/HOME/Drestriction.html","Drestriction"}}
      },
 
-document { symbol DExt,
+document { DExt,
      --BIG "Drestriction",
      TT "DExt (M, N)", " -- 
      computes the dimensions of the Ext groups between
@@ -744,7 +744,7 @@ document { symbol DExt,
 --	  HREF{"/HOME/Drestriction.html","Drestriction"}}
      }
 
-document { symbol PolySols,
+document { PolySols,
      TT "PolySols I", " -- computes a basis of the polynomial solutions
      of a holonomic ideal I",
      BR, NOINDENT,
@@ -802,7 +802,7 @@ document { symbol PolySols,
 --	  HREF{"/HOME/DHom.html","DHom"}}     
      },
 
-document { symbol PolyExt,
+document { PolyExt,
      TT "PolyExt M", " -- 
      computes the dimensions of the Ext groups between
      holonomic M and the polynomial ring.",
@@ -853,7 +853,7 @@ document { symbol PolyExt,
 --	  HREF{"/HOME/Drestriction.html","Drestriction"}}     
      }
 
-document { symbol RatSols,
+document { RatSols,
      TT "RatSols I", " -- computes a basis of the rational solutions
      of a holonomic ideal I",
      BR, NOINDENT,
@@ -898,7 +898,7 @@ document { symbol RatSols,
      SEEALSO {"PolySols", "RatExt", "DHom"} 
      },
 
-document { symbol RatExt,
+document { RatExt,
      --BIG "Drestriction",
      TT "RatExt M", "-- 
      computes the dimensions of the Ext groups between
@@ -967,7 +967,7 @@ document { symbol RatExt,
 --	  HREF{"/HOME/Drestriction.html","Drestriction"}}
      }
 
---document { symbol WeylAlgebra,
+--document { WeylAlgebra,
 --     TT "WeylAlgebra", " --
 --     name for an optional argument for a monoid that
 --     specifies that a PolynomialRing created from it will
@@ -994,7 +994,7 @@ document { symbol RatExt,
 
 
 
-document { symbol createDpairs,
+document { createDpairs,
      TT "createDpairs W", " -- 
      attaches to a Weyl algebra W a pair of keys to help distinguish the
      coordinate variables from the derivation variables.",
@@ -1028,7 +1028,7 @@ document { symbol createDpairs,
 --     MENU{HREF{"/HOME/WeylAlgebra.html","WeylAlgebra"}}
      },
 
-document { symbol Fourier,
+document { Fourier,
      TT "Fourier L", " -- computes the Fourier transform of a ring element L",
      BR, NOINDENT,
      TT "Fourier I", " -- computes the Fourier transform of an ideal I",
@@ -1061,7 +1061,7 @@ document { symbol Fourier,
 --     MENU{HREF{"/HOME/WeylAlgebra.html","WeylAlgebra"}}     
      },
 
-document { symbol Dtransposition,
+document { Dtransposition,
      --BIG "Drestriction",
      TT "Dtransposition L", " -- computes the standard transposition of a ring element L",
      BR, NOINDENT,
@@ -1105,7 +1105,7 @@ document { symbol Dtransposition,
 --     MENU{HREF{"/HOME/WeylAlgebra.html","WeylAlgebra"}}
      },
 
-document { symbol singLocus,
+document { singLocus,
      TT "singLocus M", " -- 
      computes the singular locus of a D-module M",
      BR, NOINDENT,
@@ -1150,7 +1150,7 @@ document { symbol singLocus,
 --	  HREF{"/HOME/Drank.html","Drank"}}
      },
 
-document { symbol charIdeal,
+document { charIdeal,
      TT "charIdeal M", " -- 
      computes the characteristic ideal of a D-module M",
      BR, NOINDENT,
@@ -1202,7 +1202,7 @@ document { symbol charIdeal,
 --	  HREF{"/HOME/Drank.html","Drank"}}
      },
 
-document { symbol Drank,
+document { Drank,
      --BIG "Drestriction",
      TT "Drank M", "-- calculates the rank of a D-module M",
      BR, NOINDENT,
@@ -1257,7 +1257,7 @@ document { symbol Drank,
 --	  HREF{"/HOME/singLocus.html","singLocus"}}	  
      },
 
-document { symbol Ddim,
+document { Ddim,
      TT "Ddim M", "-- calculate the dimension of a D-module M ",
      BR, NOINDENT, 
      TT "Ddim I", "-- calculate the dimension of the quotient D/I",
@@ -1289,7 +1289,7 @@ document { symbol Ddim,
      --MENU{HREF{"/HOME/inw.html","inw"}}
      },
 
-document { symbol makeWeylAlgebra,
+document { makeWeylAlgebra,
      TT "makeWeylAlgebra R", " -- 
      makes the Weyl algebra corresponding to a commutative polynomial
      ring R.",
@@ -1318,7 +1318,7 @@ document { symbol makeWeylAlgebra,
      SEEALSO {"WeylAlgebra"}
 
      }
-document { symbol Ddual,
+document { Ddual,
      TT "Ddual M", " -- 
      computes the holonomic dual of a D-module M",
      BR, NOINDENT,
@@ -1346,7 +1346,7 @@ document { symbol Ddual,
      
      SEEALSO {"Ddim", "Dtransposition"}
      }
-document { symbol Dlocalize,
+document { Dlocalize,
      TT "Dlocalize (M, f)", " -- 
      compute the localization of the D-module M with respect to the
      polynomial f",
@@ -1421,7 +1421,7 @@ document { symbol Dlocalize,
 --     "See also:",     
 --     MENU{HREF{"/HOME/Drestriction.html","Drestriction"}}
      }
-document { symbol Dresolution,
+document { Dresolution,
      TT "Dresolution (M)", " -- 
      computes a Schreyer resolution of the D-module M",
      BR, NOINDENT, TT "Dresolution (I, w)", " -- 
@@ -1494,7 +1494,7 @@ document { symbol Dresolution,
 --     "See also :",     
 --     MENU{HREF{"/HOME/Drestriction.html","Drestriction"}}
      }
-document { symbol Drestriction,
+document { Drestriction,
      TT "Drestriction (M, w)", " -- 
      computes derived restriction modules of M with respect
      to the weight vector w",
@@ -1614,7 +1614,7 @@ document { symbol Drestriction,
 --	  HREF{"/HOME/Dintegration.html","Dintegration"}}
      }
 
-document { symbol Dintegration,
+document { Dintegration,
      TT "Dintegration (M, w)", " -- 
      computes derived integration modules of M with respect
      to the weight vector w",
@@ -1730,7 +1730,7 @@ document { symbol Dintegration,
 --     MENU{HREF{"/HOME/Drestriction.html","Drestriction"},
 --	  HREF{"/HOME/Dresolution.html","Dresolution"}}
      }
-document { symbol gkz,
+document { gkz,
      TT "gkz (A,b)", " -- 
      computes the Gel'fand-Kapranov-Zelevinsky hypergeometric ideal
      associated to the matrix A and parameter b",
@@ -1774,7 +1774,7 @@ document { symbol gkz,
 --     MENU{HREF{"/HOME/AppellF1.html","AppellF1"}}
      },
 
-document { symbol AppellF1,
+document { AppellF1,
      TT "AppellF1 {a0,a1,a2,a3}", " -- 
      compute the Appell F1 system of PDE's associated to the
      parameters a0, a1, a2, and a3.",
@@ -1803,7 +1803,7 @@ document { symbol AppellF1,
 --     MENU{HREF{"/HOME/gkz.html","gkz"}}
      }
 
-document { symbol PolyAnn,
+document { PolyAnn,
      TT "PolyAnn f", " -- 
      compute the annihilator ideal in the Weyl algebra of the polynomial f",
 
@@ -1833,7 +1833,7 @@ document { symbol PolyAnn,
 --     MENU{HREF{"/HOME/RatAnn.html","RatAnn"}}
      }
 
-document { symbol RatAnn,
+document { RatAnn,
      TT "RatAnn f", " -- 
      compute the annihilator ideal in the Weyl algebra of the rational
      function 1/f",
@@ -1871,7 +1871,7 @@ document { symbol RatAnn,
 --     "See also:",     
 --     MENU{HREF{"/HOME/PolyAnn.html","PolyAnn"}}
      }
-document { symbol WeylClosure,
+document { WeylClosure,
      TT "WeylClosure I", " -- computes the Weyl closure of a finite rank
      ideal I",
      BR, NOINDENT,
@@ -1912,7 +1912,7 @@ document { symbol WeylClosure,
 	  
      SEEALSO {"Dlocalize", "singLocus", "Drank"}
      }
-document { symbol deRham,
+document { deRham,
      TT "deRham f", "-- 
      computes the deRham cohomology groups of the complement of the
      hypersurface {f = 0} ",
@@ -1965,7 +1965,7 @@ document { symbol deRham,
 --     MENU{HREF{"/HOME/Dintegration.html","Dintegration"}}
 
      }
-document { symbol diffOps,
+document { diffOps,
      TT "diffOps (I, k)", " -- 
      compute differential operators of order less than or equal to k 
      of the quotient ring R/I",
@@ -2003,7 +2003,7 @@ document { symbol diffOps,
 
      },
 
-document { symbol putWeylAlgebra,
+document { putWeylAlgebra,
      TT "putWeylAlgebra m", " -- 
      given the output m of diffOps, represents
      the differential operators as elements of a Weyl algebra.",
@@ -2027,7 +2027,7 @@ document { symbol putWeylAlgebra,
      SEEALSO {"diffOps"}
 
      }
-document { symbol inw,
+document { inw,
      TT "inw (L, w)", " -- 
      computes the initial form of an element L
      with respect to a weight vector w.",
@@ -2084,7 +2084,7 @@ document { symbol inw,
 --     MENU{HREF{"/HOME/gbw.html","gbw"}}
      },
 
-document { symbol gbw,
+document { gbw,
      TT "gbw (I, w)", " -- 
      computes a Grobner basis of an ideal with respect
      to a weight vector w.",

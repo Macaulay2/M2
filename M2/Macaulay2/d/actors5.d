@@ -1451,3 +1451,12 @@ relativizeFilename(e:Expr):Expr := (
      else WrongArg("a string or a pair of strings")
      );
 setupfun("relativizeFilename",relativizeFilename);
+
+isGlobalSymbol(e:Expr):Expr := (
+     when e is s:string do (
+	  when lookup(makeUniqueWord(s,parseWORD),globalScope)
+	  is x:Symbol do True
+	  is null do False
+	  )
+     else WrongArg("a string"));
+setupfun("isGlobalSymbol",isGlobalSymbol);

@@ -37,9 +37,8 @@ tt#">" = "%gt"				    -- has a meaning for shells: unix
 tt#"!" = "%ep"				    -- has a meaning for shells: unix
 
 uu := new HashTable from {
-     "." => ".%",
-     ".." => "..%",
-     "index" => "index%"
+     "index" => "index%",
+     "" => "%"
      }
 
 toFilename = method()
@@ -48,12 +47,13 @@ toFilename String := s -> (
      -- avoid ".", "..", and any string with "/" in it.
      s = concatenate(apply(characters s, c -> tt#c));
      if uu#?s then s = uu#s;
+     if s#0 == "." then s = concatenate("%",s);
      s)
 -----------------------------------------------------------------------------
 queryFun := symbol queryFun
 getFun := symbol getFun
 setFun := symbol setFun
-sizeFun := symbol sizeFun
+keysFun := symbol keysFun
 
 LAST := "-- last key assigned --"
 
@@ -61,21 +61,17 @@ indexTable := memoize(
      prefix -> (
 	  fn := prefix | "Macaulay2-index-cache.db";
 	  local tb;
-	  local val;
      	  next := 0;
 	  try (
 	       tb = openDatabaseOut fn;
-	       addEndFunction( () -> (
-			 if val =!= null then tb#LAST = val;
-			 close tb;
-			 ));
 	       ) 
 	  else try (
 	       tb = openDatabase fn;
 	       )
-	  else new HashTable;
-	  if tb#?LAST then next = value tb#LAST + 1;
+	  else tb = new HashTable;
+	  next = #(keys tb);
 	  store := (key,val) -> (
+	       if #key > 300 then error "suspiciously long key";
 	       if not mutable tb then error (
 		    if class tb === HashTable 
 	       	    then ("failed to create database file ", fn)
@@ -84,7 +80,7 @@ indexTable := memoize(
 	       tb#key = val
 	       );
 	  makeName := key -> (
-	       if true			    -- I don't know how to decide yet
+	       if false
 	       then (
 	       	    toFilename key	    -- for OSes with long file names
 	       	    )
@@ -97,6 +93,7 @@ indexTable := memoize(
 	  new HashTable from {
 	       queryFun => key -> tb#?key,
 	       getFun => key -> prefix | if tb#?key then tb#key else store(key,makeName key),
+     	       keysFun => () -> keys tb,
 	       setFun => (key,val) -> prefix | (
 		    if tb#?key then error("key ",key," already has a value");
 		    store(key,val)
@@ -106,14 +103,17 @@ indexTable := memoize(
      )
 
 cacheFileName = method()
+cacheFileName(String) := (prefix) -> (
+     (indexTable prefix)#keysFun ()
+     )
 cacheFileName(String,Thing) := (prefix,key) -> (
-     (indexTable prefix)#getFun toString key
+     (indexTable prefix)#getFun toExternalString key
      )
 cacheFileName(String,Thing,String) := (prefix,key,val) -> (
-     (indexTable prefix)#setFun(toString key,val)
+     (indexTable prefix)#setFun(toExternalString key,val)
      )
 cacheFileName(List,Thing) := (path,key) -> (
-     key = toString key;
+     key = toExternalString key;
      apply(
 	  select(path, prefix -> (indexTable prefix)#queryFun key),
 	  prefix -> (indexTable prefix)#getFun key
