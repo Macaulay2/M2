@@ -165,14 +165,9 @@ makeit1 := (options) -> (
 	       if Symbol =!= basictype sym 
 	       and IndexedVariable =!= class sym
 	       then error "expected variable or symbol"));
-     M.standardForm = ConvertApply(
-	  v -> new HashTable from toList v,
-	  ConvertRepeat( 
-	       ConvertApply(
-	       	    (i,e) -> i => e,
-	       	    ConvertJoin(ConvertInteger, ConvertInteger))));
+     M.standardForm = something;
      expression M := x -> new Product from apply( 
-	  rawMonomialExponents x.RawMonomial,
+	  rawMonomialSparseListForm x.RawMonomial,
 	  (k,v) -> Power{M.generatorExpressions#k, v} );
      M.Options = options;
      w := reverse applyTable(order, minus);
@@ -250,7 +245,7 @@ makeit1 := (options) -> (
      baseName M := x -> (
 	  m := x.RawMonomial;
 	  if 1 === degree x
-	  then (M.generatorSymbols) # ( first first rawMonomialExponents m )
+	  then (M.generatorSymbols) # ( first first rawMonomialSparseListForm m )
 	  else error "expected a generator"
 	  );
      M / M := (x,y) -> new M from x.RawMonomial / y.RawMonomial;
