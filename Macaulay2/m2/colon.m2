@@ -210,10 +210,12 @@ document { quote quotient,
      the quotient is the set of elements m of M such that Jm is contained in
      I.  Finally, if I and J are submodules of the same module M, then the
      result is the set of ring elements r such that rJ is contained in I.",
-     EXAMPLE "R = ZZ/32003[a..d];",
-     EXAMPLE "J = monomialCurve(R,{1,4,7})",
-     EXAMPLE "I = ideal(J_1-a^2*J_0,J_2-d*c*J_0)",
-     EXAMPLE "I : J",
+     EXAMPLE {
+	  "R = ZZ/32003[a..d];",
+      	  "J = monomialCurve(R,{1,4,7})",
+      	  "I = ideal(J_1-a^2*J_0,J_2-d*c*J_0)",
+      	  "I : J",
+	  },
      PARA,
      "Allowable options :",
      MENU {

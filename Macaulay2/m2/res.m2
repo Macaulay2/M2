@@ -55,10 +55,12 @@ document { resolution => DegreeLimit,
      "This option is relevant only for homogeneous modules.",
      PARA,
      "One might get some matrix entries of slightly higher degree than requested.",
-     EXAMPLE "R = ZZ/101[x,y,z,w]",
-     EXAMPLE "M = cokernel matrix {{x*y-z^2,y^2-w^2}}",
-     EXAMPLE "res(M,DegreeLimit => 1)",
-     EXAMPLE "res(M,DegreeLimit => 2)"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z,w];",
+      	  "M = cokernel matrix {{x*y-z^2,y^2-w^2}}",
+      	  "res(M,DegreeLimit => 1)",
+      	  "res(M,DegreeLimit => 2)"
+	  },
      }
 
 document { resolution => SyzygyLimit,
@@ -66,22 +68,26 @@ document { resolution => SyzygyLimit,
      ", TO "resolution", ", which specifies that the computation should
      stop after a certain number of syzygies have computed.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z,w]",
-     EXAMPLE "M = cokernel matrix {{x*y-z^2,y^2-w^2,w^4}}",
-     EXAMPLE "res(M,SyzygyLimit => 1)",
-     EXAMPLE "res(M,SyzygyLimit => 2)",
-     EXAMPLE "res(M,SyzygyLimit => infinity)"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z,w];",
+      	  "M = cokernel matrix {{x*y-z^2,y^2-w^2,w^4}}",
+      	  "res(M,SyzygyLimit => 1)",
+      	  "res(M,SyzygyLimit => 2)",
+      	  "res(M,SyzygyLimit => infinity)"
+	  }
      }
 
 document { resolution => PairLimit,
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
      be stopped after a certain number of S-pairs have been reduced.",
-     EXAMPLE "R = QQ[x,y,z,w]",
-     EXAMPLE "M = cokernel matrix {{x*y-z,y^2-w-1,w^4-3}}",
-     EXAMPLE "res(M, PairLimit => 1)",
-     EXAMPLE "res(M, PairLimit => 10)",
-     EXAMPLE "res(M, PairLimit => 20)"
+     EXAMPLE {
+	  "R = QQ[x,y,z,w]",
+      	  "M = cokernel matrix {{x*y-z,y^2-w-1,w^4-3}}",
+      	  "res(M, PairLimit => 1)",
+      	  "res(M, PairLimit => 10)",
+      	  "res(M, PairLimit => 20)"
+	  }
      }
 
 document { resolution => StopBeforeComputation,
@@ -371,9 +377,11 @@ document { (resolution, Matrix),
      TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
      chain map from a resolution of the source of ", TT "f", " to a resolution of the
      target of ", TT "f", ".",
-     EXAMPLE "R = ZZ/101[x,y];",
-     EXAMPLE "m = ideal vars R",
-     EXAMPLE "resolution map(m/m^3, m^2/m^4)"
+     EXAMPLE {
+	  "R = ZZ/101[x,y];",
+      	  "m = ideal vars R",
+      	  "resolution map(m/m^3, m^2/m^4)"
+	  }
      }
 
 

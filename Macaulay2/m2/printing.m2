@@ -33,6 +33,11 @@ columnate = (s,w) -> (
 document { quote columnate,
      TT "columnate(s,w)", " -- arranges the strings in the list s in columns, returning
      a ", TO "Net", " suitable for output to a terminal with a linewidth of w.",
+     PARA,
+     EXAMPLE {
+	  "columnate(characters ascii (65 .. 90) , 12)",
+	  "<<oo;"
+	  }
      }
 
 net Time := v -> (

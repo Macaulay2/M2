@@ -15,19 +15,21 @@ TEX "Let's start with a simple example: the rational quartic curve in $P^3$.  Th
 is the ideal defining the image of the polynomial map $(s,t) |-> (s^4, s^3 t,
 s t^3, t^4).$",
 
-EXAMPLE "R = ZZ/32003[s,t]",
-EXAMPLE "S = ZZ/32003[a..d]",
-EXAMPLE "Sm = ZZ/32003[a..d,Degrees=>{{1,4,0},{1,3,1},{1,1,3},{1,0,4}}]",
-EXAMPLE "use S",
-EXAMPLE "f = map(R,S,matrix{{s^4, s^3*t, s*t^3, t^4}})",
-EXAMPLE "I = generators kernel f",
-EXAMPLE "J = substitute(I, Sm)",
-EXAMPLE "poincare cokernel J",
-EXAMPLE "C = resolution cokernel J",
-EXAMPLE "degrees C_0",
-EXAMPLE "degrees C_1",
-EXAMPLE "degrees C_2",
-EXAMPLE "degrees C_3"
+EXAMPLE {
+     "R = ZZ/32003[s,t];",
+     "S = ZZ/32003[a..d];",
+     "Sm = ZZ/32003[a..d,Degrees=>{{1,4,0},{1,3,1},{1,1,3},{1,0,4}}];",
+     "use S",
+     "f = map(R,S,matrix{{s^4, s^3*t, s*t^3, t^4}})",
+     "I = generators kernel f",
+     "J = substitute(I, Sm)",
+     "poincare cokernel J",
+     "C = resolution cokernel J",
+     "degrees C_0",
+     "degrees C_1",
+     "degrees C_2",
+     "degrees C_3"
+     }
 }
 
 document { "Example:Enriques surface",
@@ -41,13 +43,15 @@ PARA,
 TEX "Let's first take a look at the ideal of 3 by 3 minors of a generic symmetric
 matrix.",
 
-EXAMPLE "R = ZZ/32003[a .. j]",
-EXAMPLE "m = genericSymmetricMatrix(R,a,4)",
-EXAMPLE "I = image minors(3,m)",
-EXAMPLE "N = R^1/I",
-EXAMPLE "codim N",
-EXAMPLE "degree N",
-EXAMPLE "C = resolution N",
+EXAMPLE {
+     "R = ZZ/32003[a .. j];",
+     "m = genericSymmetricMatrix(R,a,4)",
+     "I = image minors(3,m)",
+     "N = R^1/I",
+     "codim N",
+     "degree N",
+     "C = resolution N",
+     },
 
 TEX "Thus $Y = V(I) \\subset P^9$ is codimension three, degree 10, and arithmetically
 Cohen-Macaulay.  We may view the resolution using C.dd",
@@ -71,8 +75,10 @@ lengthy display of this matrix",
 EXAMPLE "J = F I;",
 TEX "Since the original variety is Cohen-Macaulay, $X = V(J) \\subset {\\bf P}^5$
 should be a degree 10 surface.",
-EXAMPLE "codim J",
-EXAMPLE "degree J",
+EXAMPLE {
+     "codim J",
+     "degree J",
+     },
 TEX "In fact, let's display the Hilbert polynomial of (the cokernel of the matrix) $J$.",
 EXAMPLE "hilbertPolynomial(J, Projective=>true)",
 TEX "This output needs some explanation."

@@ -236,14 +236,16 @@ document { "component example",
      "The following simple example illustrates the use of ", 
      TO "removeLowestDimension", ",", TO "top", ",", TO "radical",
      ", and ", TO "decompose", ".",
-     EXAMPLE "R = ZZ/32003[a..d]",
-     EXAMPLE "I = monomialCurve(R,{1,3,4})",
-     EXAMPLE "J = ideal(a^3,b^3,c^3-d^3)",
-     EXAMPLE "I = intersect(I,J)",
-     EXAMPLE "removeLowestDimension I",
-     EXAMPLE "top I",
-     EXAMPLE "radical I",
-     EXAMPLE "decompose I"
+     EXAMPLE {
+	  "R = ZZ/32003[a..d];",
+      	  "I = monomialCurve(R,{1,3,4})",
+      	  "J = ideal(a^3,b^3,c^3-d^3)",
+      	  "I = intersect(I,J)",
+      	  "removeLowestDimension I",
+      	  "top I",
+      	  "radical I",
+      	  "decompose I"
+	  },
      }
 
 document { "top-method",

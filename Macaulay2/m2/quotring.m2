@@ -136,9 +136,11 @@ document { (quote /, Ring, Ideal),
      be a brand new ring, and its elements will be incompatible with the
      elements of previously created quotient rings for the same ideal.",
      PARA,
-     EXAMPLE "ZZ/2 === ZZ/(4,6)",
-     EXAMPLE "R = ZZ/101[t]",
-     EXAMPLE "R/t === R/t",
+     EXAMPLE {
+	  "ZZ/2 === ZZ/(4,6)",
+      	  "R = ZZ/101[t]",
+      	  "R/t === R/t",
+	  },
      PARA,
      SEEALSO {"QuotientRing", "use"}
      }

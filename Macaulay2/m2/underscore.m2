@@ -25,9 +25,11 @@ document { quote #,
      as high as ", TT ".", ", but the precedence when used as a unary operator
      lower, as low as adjacency or function application.",
      PARA,
-     EXAMPLE "x = new MutableHashTable",
-     EXAMPLE "x#i = p",
-     EXAMPLE "x#i",
+     EXAMPLE {
+	  "x = new MutableHashTable",
+	  "x#i = p",
+	  "x#i",
+	  },
      SEEALSO{ "#?", "#" }
      }
 
@@ -86,10 +88,12 @@ document { quote .,
      PARA,
      "May also be used in an assignment.",
      PARA,
-     EXAMPLE "x = new MutableHashTable;",
-     EXAMPLE "x.k = 444",
-     EXAMPLE "x.k",
-     EXAMPLE "peek x",
+     EXAMPLE {
+	  "x = new MutableHashTable;",
+      	  "x.k = 444",
+      	  "x.k",
+      	  "peek x",
+	  },
      SEEALSO {"#", ".?", "global"}
      }
 

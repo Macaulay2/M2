@@ -12,10 +12,12 @@ document { quote IndexedVariableTable,
      are used to hold the values of those indexed variables sharing a given
      base name.",
      PARA,
-     EXAMPLE "t_0",
-     EXAMPLE "scan(3, i -> t#i = i^2)",
-     EXAMPLE "t",
-     EXAMPLE "peek t",
+     EXAMPLE {
+	  "t_0",
+      	  "scan(3, i -> t#i = i^2)",
+      	  "t",
+      	  "peek t",
+	  },
      SEEALSO "IndexedVariable"
      }
 
@@ -120,8 +122,10 @@ document { quote IndexedVariable,
      length n assigned to the symbol ", TT "x", " can be produced with ",
      TT "x_1 .. x_n", " and that sequence can be used in constructing
      a polynomial ring.",
-     EXAMPLE "ZZ/101[t_0 .. t_4]",
-     EXAMPLE "(t_0 -  2*t_1)^3",
+     EXAMPLE {
+	  "ZZ/101[t_0 .. t_4]",
+      	  "(t_0 -  2*t_1)^3",
+	  },
      SEEALSO "IndexedVariableTable"
      }
 

@@ -53,17 +53,19 @@ TEX "Let's start with a simple example: the rational quartic curve in $P^3$.  Th
 is the ideal defining the image of the polynomial map $(s,t) |-> (s^4, s^3 t,
 s t^3, t^4).$",
 
-EXAMPLE "R = ZZ/32003[s,t]",
-EXAMPLE "S = ZZ/32003[a..d]",
-EXAMPLE "Sm = ZZ/32003[a..d,Degrees=>{{1,4,0},{1,3,1},{1,1,3},{1,0,4}}]",
-EXAMPLE "use S",
-EXAMPLE "f = map(R,S,matrix{{s^4, s^3*t, s*t^3, t^4}})",
-EXAMPLE "I = generators kernel f",
-EXAMPLE "J = substitute(I, Sm)",
-EXAMPLE "poincare cokernel J",
-EXAMPLE "C = resolution cokernel J",
-EXAMPLE "degrees C_0",
-EXAMPLE "degrees C_1",
-EXAMPLE "degrees C_2",
-EXAMPLE "degrees C_3"
+EXAMPLE {
+     "R = ZZ/32003[s,t];",
+     "S = ZZ/32003[a..d];",
+     "Sm = ZZ/32003[a..d,Degrees=>{{1,4,0},{1,3,1},{1,1,3},{1,0,4}}]",
+     "use S",
+     "f = map(R,S,matrix{{s^4, s^3*t, s*t^3, t^4}})",
+     "I = generators kernel f",
+     "J = substitute(I, Sm)",
+     "poincare cokernel J",
+     "C = resolution cokernel J",
+     "degrees C_0",
+     "degrees C_1",
+     "degrees C_2",
+     "degrees C_3"
+     }
 }

@@ -337,10 +337,12 @@ document { gb => DegreeLimit,
      with degree n.",
      PARA,
      "This option is relevant only for homogeneous matrices.",
-     EXAMPLE "R = ZZ/101[x,y,z,w]",
-     EXAMPLE "I = ideal(x*y-z^2,y^2-w^2)",
-     EXAMPLE "gb(I,DegreeLimit => 2)",
-     EXAMPLE "gb(I,DegreeLimit => 3)"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z,w];",
+      	  "I = ideal(x*y-z^2,y^2-w^2)",
+      	  "gb(I,DegreeLimit => 2)",
+      	  "gb(I,DegreeLimit => 3)"
+	  }
      }
 
 document { quote BasisElementLimit,
@@ -348,12 +350,14 @@ document { quote BasisElementLimit,
      ", TO "gb", ", ", TO "pushForward", ", ", TO "pushForward1", ", 
      and ", TO "syz", ", which can be used to specify that the computation should
      stop after a certain number of Groebner basis elements have been discovered.",
-     EXAMPLE "R = ZZ/101[x,y,z,w]",
-     EXAMPLE "I = ideal(x*y-z^2,y^2-w^2,w^4)",
-     EXAMPLE "gb(I,BasisElementLimit => 2)",
-     EXAMPLE "gb(I,BasisElementLimit => 3)",
-     EXAMPLE "gb(I,BasisElementLimit => 4)",
-     EXAMPLE "gb(I,BasisElementLimit => 5)"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z,w];",
+      	  "I = ideal(x*y-z^2,y^2-w^2,w^4)",
+      	  "gb(I,BasisElementLimit => 2)",
+      	  "gb(I,BasisElementLimit => 3)",
+      	  "gb(I,BasisElementLimit => 4)",
+      	  "gb(I,BasisElementLimit => 5)"
+	  }
      }
 
 document { quote SyzygyLimit,
@@ -375,14 +379,16 @@ document { gb => SyzygyLimit,
      "This option is relevant only if ", TT "Syzygies => true", " has
      been specified.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z,w]",
-     EXAMPLE "I = ideal(x*y-z^2,y^2-w^2,w^4)",
-     EXAMPLE "gb(I,SyzygyLimit => 1, Syzygies => true)",
-     EXAMPLE "syz oo",
-     EXAMPLE "gb(I,SyzygyLimit => 2, Syzygies => true)",
-     EXAMPLE "syz oo",
-     EXAMPLE "gb(I,SyzygyLimit => infinity, Syzygies => true)",
-     EXAMPLE "syz oo"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z,w]",
+      	  "I = ideal(x*y-z^2,y^2-w^2,w^4)",
+      	  "gb(I,SyzygyLimit => 1, Syzygies => true)",
+      	  "syz oo",
+      	  "gb(I,SyzygyLimit => 2, Syzygies => true)",
+      	  "syz oo",
+      	  "gb(I,SyzygyLimit => infinity, Syzygies => true)",
+      	  "syz oo"
+	  },
      }
 
 document { PairLimit,
@@ -401,11 +407,13 @@ document { gb => PairLimit,
      ", TO "gb", " which specifies that the
      computation should be stopped after a certain number of S-pairs
      have been reduced.",
-     EXAMPLE "R = QQ[x,y,z,w]",
-     EXAMPLE "I = ideal(x*y-z,y^2-w-1,w^4-3)",
-     EXAMPLE "gb(I, PairLimit => 1)",
-     EXAMPLE "gb(I, PairLimit => 2)",
-     EXAMPLE "gb(I, PairLimit => 3)"
+     EXAMPLE {
+	  "R = QQ[x,y,z,w]",
+      	  "I = ideal(x*y-z,y^2-w-1,w^4-3)",
+      	  "gb(I, PairLimit => 1)",
+      	  "gb(I, PairLimit => 2)",
+      	  "gb(I, PairLimit => 3)"
+	  }
      }
 
 document { quote CodimensionLimit,

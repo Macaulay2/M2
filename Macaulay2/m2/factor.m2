@@ -6,9 +6,11 @@ document { quote factor,
      "The result is a ", TO "Product", " each of whose factors is a 
      ", TO "Power", " whose base is one of the factors found and whose
      exponent is an integer.",
-     EXAMPLE "y = (2^15-4)/(2^15-5)",
-     EXAMPLE "x = factor y",
-     EXAMPLE "expand x",
+     EXAMPLE {
+	  "y = (2^15-4)/(2^15-5)",
+      	  "x = factor y",
+      	  "expand x",
+	  },
      "We may ", TO "peek", " inside ", TT "x", " to a high depth to see
      its true structure as ", TO "Expression", ".",
      EXAMPLE "peek(x,100)",
@@ -19,11 +21,15 @@ document { quote factor,
      ", TO "Factorization and characteristic sets library", ").  For univariate
      polynomials the factorization is in turn done with code of 
      Gert-Martin Greuel and Ruediger Stobbe (see ", TO "Factory library", ").",
-     EXAMPLE "R = ZZ/101[u]",
-     EXAMPLE "factor (u^3-1)",
+     EXAMPLE {
+	  "R = ZZ/101[u]",
+      	  "factor (u^3-1)",
+	  },
      "The constant term is provided as the last factor.",
-     EXAMPLE "F = frac(ZZ/101[t])",
-     EXAMPLE "factor ((t^3-1)/(t^3+1))",
+     EXAMPLE {
+	  "F = frac(ZZ/101[t])",
+      	  "factor ((t^3-1)/(t^3+1))",
+	  },
      "The code for factoring in a fraction field is easy to read:",
      EXAMPLE "code(factor,F)"
      }

@@ -27,8 +27,10 @@ document{quote monomialCurve,
     which must have at least n+1 variables, preferably all of equal 
     degree.  The first n+1 variables in the ring are used",
     "For example, the following defines a plane quintic curve of genus 6:",
-    EXAMPLE "R = ZZ/101[a..f]",
-    EXAMPLE "monomialCurve(R,{3,5})",
+    EXAMPLE {
+	 "R = ZZ/101[a..f]",
+     	 "monomialCurve(R,{3,5})",
+	 },
     "And a genus 2 curve with one singular point:",
     EXAMPLE "monomialCurve(R,{3,4,5})",
     "Two singular points, genus = 7:",

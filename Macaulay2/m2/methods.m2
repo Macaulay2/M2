@@ -246,9 +246,11 @@ document { quote SingleArgumentDispatch,
      PARA,
      "This allows the user to install a method for handling sequences, whereas
      normally, the types of up to the three arguments are considered.",
-     EXAMPLE "f = method ( SingleArgumentDispatch => true )",
-     EXAMPLE "f Sequence := print",
-     EXAMPLE "f (1,2,3)"
+     EXAMPLE {
+	  "f = method ( SingleArgumentDispatch => true )",
+      	  "f Sequence := print",
+	  "f (1,2,3)"
+	  }
      }
 
 document { quote method,
@@ -326,9 +328,11 @@ document { quote Associative,
      PARA,
      "In the following example we install a method which isn't associative
      to illustrate the order of evaluation.",
-     EXAMPLE "f = method(Associative => true)",
-     EXAMPLE "f(String,String) := (i,j) -> \"(\" | i | \"),\" | j;",
-     EXAMPLE "f(\"a\",\"b\",\"c\",\"d\")",
+     EXAMPLE {
+	  "f = method(Associative => true)",
+	  ///f(String,String) := (i,j) -> "(" | i | ")," | j;///,
+      	  ///f("a","b","c","d")///,
+	  },
      SEEALSO "method"
      }
 
@@ -418,11 +422,13 @@ document { quote degree,
      of that vector is referred to as the 'number of degrees', and is
      provided by ", TO "degreeLength", ".",
      PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "degree (x^2+y^2)^5",
-     EXAMPLE "F = R^{2,3,4}",
-     EXAMPLE "v = F_2",
-     EXAMPLE "degree v",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "degree (x^2+y^2)^5",
+      	  "F = R^{2,3,4}",
+      	  "v = F_2",
+      	  "degree v",
+	  },
      "The degree of a module of finite length is the same as its length.",
      EXAMPLE "degree cokernel symmetricPower ( 2, vars R )",
      PARA,
@@ -462,10 +468,12 @@ document { quote vars,
      TT "vars(i .. j)", " -- provides a list of ", TO "indeterminates", ", the i-th
      one through the j-th one.",
      PARA,
-     EXAMPLE "vars(3 .. 9)",
-     EXAMPLE "R = ZZ/101[vars(3 .. 5)]",
-     EXAMPLE "vars R",
-     EXAMPLE "symmetricPower(2,vars R)"
+     EXAMPLE {
+	  "vars(3 .. 9)",
+      	  "R = ZZ/101[vars(3 .. 5)]",
+      	  "vars R",
+      	  "symmetricPower(2,vars R)"
+	  }
      }
 
 document { quote leadCoefficient,
@@ -620,11 +628,13 @@ document { quote GlobalAssignHook,
      ", TO "globalAssignFunction", " and ", TO "globalReleaseFunction", " may installed
      as methods for this purpose.",
      PARA,
-     EXAMPLE "GlobalAssignHook RR := (sym,val) -> << concatenate (
-     	  \"assigning \", name val, \" to \", name sym
-	  ) << endl",
-     EXAMPLE "a=4.5",
-     EXAMPLE "a=5.4",
+     EXAMPLE {
+	  ///GlobalAssignHook RR := (sym,val) -> << concatenate (
+     "assigning ", name val, " to ", name sym
+     ) << endl///,
+          "a=4.5",
+      	  "a=5.4",
+	  },
      SEEALSO "GlobalReleaseHook"
      }
 
@@ -638,11 +648,13 @@ document { quote GlobalReleaseHook,
      class of the old value.  It is executed before the assignment occurs,
      and before the execution of ", TO "GlobalAssignHook", ".",
      PARA,
-     EXAMPLE "GlobalReleaseHook RR := (sym,val) -> << concatenate (
-     	  \"assigning \", name val, \" to \", name sym
-	  ) << endl",
-     EXAMPLE "a=4.5",
-     EXAMPLE "a=5.4",
+     EXAMPLE {
+	  ///GlobalReleaseHook RR := (sym,val) -> << concatenate (
+     "assigning ", name val, " to ", name sym
+     ) << endl///,
+          "a=4.5",
+      	  "a=5.4",
+	  },
      SEEALSO "GlobalAssignHook"
      }
 
@@ -650,8 +662,10 @@ document { quote stats,
      TT "stats g", " -- describe the status of a Groebner basis computation
      or of a resolution computation.",
      PARA,
-     EXAMPLE "ZZ/101[a..f]",
-     EXAMPLE "stats gb matrix {{a*b, b*c},{a^3*f, b^3*e}}",
+     EXAMPLE {
+	  "ZZ/101[a..f]",
+      	  "stats gb matrix {{a*b, b*c},{a^3*f, b^3*e}}",
+	  },
      SEEALSO { "GroebnerBasis", "Resolution" }
      }
 
@@ -725,6 +739,16 @@ computeAndCache := (M,options,name,goodEnough,computeIt) -> (
 BeforePrint Symbol := lookup(name,Symbol)
 net Symbol := lookup(name,Symbol)
 
+-----------------------------------------------------------------------------
+    -- see html.m2 for these
+net BrHead := x -> "BR"
+net NoindentHead := x -> "NOINDENT"
+net HrHead := x -> "HR"
+net ParaHead := x -> "PARA"
+erase quote BrHead
+erase quote NoindentHead
+erase quote HrHead
+erase quote ParaHead
 -----------------------------------------------------------------------------
 document { (quote <<, Nothing, Thing),
      "null << x", " -- does nothing and returns ", TT "null", ".",

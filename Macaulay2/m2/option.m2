@@ -18,9 +18,11 @@ document { quote Option,
      is also a way to make new hash tables with ", TO "new", " by
      providing a list of option pairs.",
      PARA,
-     EXAMPLE "a => 5",
-     EXAMPLE "peek (a => 5)",
-     EXAMPLE "new HashTable from {a => 5, b => 7}",
+     EXAMPLE {
+	  "a => 5",
+      	  "peek (a => 5)",
+	  "new HashTable from {a => 5, b => 7}",
+	  },
      PARA,
      "These pairs are implemented as lists, so that if ", TT "z", " is ", TT "x => y", ", then 
      ", TT "x", " is ", TT "z#0", " and ", TT "y", " is ", TT "z#1", ".",

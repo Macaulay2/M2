@@ -77,8 +77,10 @@ document { quote exponents,
      of exponents.",
      TT "exponents f", " -- for a polynomial ", TT "f", " provides a list
      whose elements are the lists of exponents of the terms of ", TT "f", ".",
-     EXAMPLE "R = ZZ/101[x,y,z];",
-     EXAMPLE "exponents (x^2 - 7 + x*y*z^11 + y)"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z];",
+      	  "exponents (x^2 - 7 + x*y*z^11 + y)"
+	  },
      }
 
 name PolynomialRing := R -> name R.baseRings#-1 | name monoid R
@@ -158,8 +160,10 @@ document { quote standardForm,
      "The monomials themselves are represented by hash tables 
      in which the keys are the variables and the values are the 
      corresponding exponents.",
-     EXAMPLE "R = ZZ/101[x,y,z];",
-     EXAMPLE "standardForm (x^2 - 7 + x*y*z^11 + y)"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z];",
+      	  "standardForm (x^2 - 7 + x*y*z^11 + y)"
+	  },
      }
 
 listForm = method()
@@ -182,8 +186,10 @@ document { quote listForm,
      "A polynomial is represented by lists of pairs (m,c), one for each
      term, where m is a list of exponents for monomial, and c is the
      coefficient.",
-     EXAMPLE "R = ZZ/101[x,y,z];",
-     EXAMPLE "listForm (x^2 - 7 + x*y*z^11 + y)"
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z];",
+      	  "listForm (x^2 - 7 + x*y*z^11 + y)"
+	  },
      }
 
 lcm2 := (x,y) -> x*y//gcd(x,y)
@@ -358,9 +364,11 @@ document { quote WeylAlgebra,
      is to play the role of the derivative with respect to ", TT "x", ", and
      that ", TT "y", " is to play the role of the derivative with respect
      to ", TT "y", ".",
-     EXAMPLE "dx*x",
-     EXAMPLE "dx*x^10",
-     EXAMPLE "dx*y^10"
+     EXAMPLE {
+	  "dx*x",
+      	  "dx*x^10",
+      	  "dx*y^10"
+	  }
      }
 
 samering := (f,g) -> (
@@ -372,8 +380,10 @@ Ring Array := (R,variables) -> use R monoid variables
 document { (quote _, RingElement, RingElement),
      TT "f_m", " -- provide the coefficient of the monomial m in the polynomial f.",
      PARA,
-     EXAMPLE "ZZ[y]",
-     EXAMPLE "((1+y)^5) _ (y^2)",
+     EXAMPLE {
+	  "ZZ[y];",
+      	  "((1+y)^5) _ (y^2)",
+	  },
      SEEALSO {"_"}
      }
 
@@ -381,8 +391,10 @@ document { (quote _, Ring, String),
      TT "R_\"x\"", " -- produce the indeterminate of the polynomial ring R 
      whose name is x.",
      PARA,
-     EXAMPLE "R = ZZ[x,y,z]",
-     EXAMPLE "R_\"x\"",
+     EXAMPLE {
+	  "R = ZZ[x,y,z];",
+      	  ///R_"x"///,
+	  },
      PARA,
      "Eventually we will implement this for monoids, too."
      }
@@ -396,8 +408,10 @@ PolynomialRing _ List := (RM,v) -> (
 document { (quote _, Ring, ZZ),
      TT "R_i", " -- produce the ", TT "i", "-th generator of a ring ", TT "R", ".",
      PARA,
-     EXAMPLE "R = ZZ[a..d]",
-     EXAMPLE "R_2"
+     EXAMPLE {
+	  "R = ZZ[a..d]",
+      	  "R_2"
+	  }
      }
 
 Ring _ List := (R,w) -> product(#w, i -> (R_i)^(w_i))
@@ -406,8 +420,10 @@ document { (quote _, Ring, List),
      TT "R_w", " -- produce the monomial of the ring ", TT "R", " by using the 
      integers in the list ", TT "w", " as exponents of the variables.",
      PARA,
-     EXAMPLE "R = ZZ[a..d]",
-     EXAMPLE "R_{1,2,3,4}"
+     EXAMPLE {
+	  "R = ZZ[a..d]",
+      	  "R_{1,2,3,4}"
+	  }
      }
 
 dim PolynomialRing := R -> dim R.baseRings#-1 + # generators R

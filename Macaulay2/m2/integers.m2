@@ -20,8 +20,10 @@ new ZZ := ZZ -> ZZ.pop()		  -- new integers all come from the engine stack
 document { quote ZZ,
      TT "ZZ", " -- denotes the class of all integers.",
      PARA,
-     EXAMPLE "1234 + 4",
-     EXAMPLE "basictype 1234",
+     EXAMPLE {
+	  "1234 + 4",
+      	  "basictype 1234",
+	  },
      "Operations on integers:",
      MENU {
 	  TO "gcdCoefficients",

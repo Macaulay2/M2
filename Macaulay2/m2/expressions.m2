@@ -375,8 +375,10 @@ document { quote expand,
      TT "expand x", " -- expand the ", TO "Expression", " x, hopefully recovering
      something semantically equivalent.",
      PARA,
-     EXAMPLE "p = (expression 2)^5 * (expression 3)^3",
-     EXAMPLE "expand p"
+     EXAMPLE {
+	  "p = (expression 2)^5 * (expression 3)^3",
+      	  "expand p"
+	  },
      } 
 
 expand Expression := v -> (class v)#expandFunction apply(toSequence v,expand)
@@ -866,9 +868,11 @@ net MatrixExpression := x -> (
 document { quote tex,
      TT "tex x", " -- convert x to TeX format.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..f]",
-     EXAMPLE "p = matrix {{a^2+2,b,c},{d,e,f^3-a}}",
-     EXAMPLE "tex p",
+     EXAMPLE {
+	  "R = ZZ/101[a..f]",
+      	  "p = matrix {{a^2+2,b,c},{d,e,f^3-a}}",
+      	  "tex p",
+	  },
      SEEALSO {"TeX", "hypertex"}
      }
 tex Expression := v -> (
@@ -1071,25 +1075,25 @@ document { quote TeX,
 -----------------------------------------------------------------------------
 -- netscape stuff
 
-netscape = x -> (
-     fn := tmpname "netscape" | ".html";
-     f := openOut fn;
-     f << "<TITLE>Macaulay 2 Output</TITLE>" << endl;
-     r := lookup(html,class x);
-     if r =!= null
-     then f << html x
-     else f << "<PRE>" << endl << net x << "<PRE>" << endl;
-     f << close;
-     run ( "netscape -remote 'openFile(" | fn | ")'; rm " | fn );
-     )
-
-document { quote netscape,
-     TT "netscape x", " -- convert x to html format, contact a netscape
-     process currently running on the same host, and have it display
-     it.",
-     PARA,
-     "Try this example: ", TT "netscape doc netscape", "."
-     }
+--netscape = x -> (
+--     fn := tmpname "netscape" | ".html";
+--     f := openOut fn;
+--     f << "<TITLE>Macaulay 2 Output</TITLE>" << endl;
+--     r := lookup(html,class x);
+--     if r =!= null
+--     then f << html x
+--     else f << "<PRE>" << endl << net x << "<PRE>" << endl;
+--     f << close;
+--     run ( "netscape -remote 'openFile(" | fn | ")'; rm " | fn );
+--     )
+--
+--document { quote netscape,
+--     TT "netscape x", " -- convert x to html format, contact a netscape
+--     process currently running on the same host, and have it display
+--     it.",
+--     PARA,
+--     "Try this example: ", TT "netscape doc netscape", "."
+--     }
 
 -----------------------------------------------------------------------------
 print = x -> (<< net x << endl; null)
@@ -1114,8 +1118,10 @@ document { (quote <<, File, Thing),
      If f is a string, then a new file with name f is created,
      the expression x is printed into f, and the file f is closed.",
      PARA,
-     EXAMPLE "x = 5",
-     EXAMPLE "stdout << \"the value of x is \" << x << endl",
+     EXAMPLE {
+	  "x = 5",
+      	  ///stdout << "the value of x is " << x << endl///,
+	  },
      SEEALSO {"<<"}
      }     
 
@@ -1168,7 +1174,7 @@ net Function := name
 net Boolean := net File := net ZZ :=
      net Handle := net Database := string
 
-net Nothing := null -> "" -- we need a way to put blank spots in matrix expressions
+net Nothing := null -> "null" -- but we need a way to put blank spots in matrix expressions
 -----------------------------------------------------------------------------
 hold = x -> new Held from {x}
 

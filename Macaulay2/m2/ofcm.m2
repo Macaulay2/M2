@@ -22,9 +22,11 @@ document { quote SkewCommutative,
      that specifies that monoid rings created from them will be skewcommutative.",
      PARA,
      "The default value is false.",
-     EXAMPLE "R = ZZ[x,y,SkewCommutative=>true]",
-     EXAMPLE "x*y",
-     EXAMPLE "y*x"
+     EXAMPLE {
+	  "R = ZZ[x,y,SkewCommutative=>true]",
+      	  "x*y",
+      	  "y*x"
+	  }
      }
 
 document { quote MonomialSize,
@@ -685,12 +687,14 @@ document { quote tensor,
   base ring.",
   PARA,
   "Here is an example with monoids.",
-  EXAMPLE "M = monoid[a..d, MonomialOrder => Eliminate 1]",
-  EXAMPLE "N = monoid[e,f,g, Degrees => {1,2,3}]",
-  EXAMPLE "P = tensor(M,N,MonomialOrder => GRevLex)",
-  EXAMPLE "describe P",
-  EXAMPLE "tensor(M,M,Variables => {t_0 .. t_7}, MonomialOrder => ProductOrder{4,4})",
-  EXAMPLE "describe oo",
+  EXAMPLE {
+       "M = monoid[a..d, MonomialOrder => Eliminate 1]",
+       "N = monoid[e,f,g, Degrees => {1,2,3}]",
+       "P = tensor(M,N,MonomialOrder => GRevLex)",
+       "describe P",
+       "tensor(M,M,Variables => {t_0 .. t_7}, MonomialOrder => ProductOrder{4,4})",
+       "describe oo",
+       },
   "Here is a similar example with rings.",
   EXAMPLE "tensor(ZZ/101[x,y], ZZ/101[r,s], MonomialOrder => Eliminate 2)",
   SEEALSO "**"

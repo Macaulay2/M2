@@ -2,11 +2,11 @@
 
 document { "getting started",
      "The best way to run Macaulay 2 is with emacs - for details on getting
-     that set up, see ", TO "running Macaulay 2 in emacs", ".  Learning emacs
-     is worth the effort.  Alternatively, you may start Macaulay 2 with the
-     command ", TT "M2", " in a shell window.  On most Unix systems Macaulay
-     2 will start very quickly, but other parts of the program may have to be
-     loaded from the disk later, causing a slight delay.",
+     that set up, see ", TO "emacs", ".  Learning emacs is worth the effort!
+     Alternatively, you may start Macaulay 2 with the command ", TT "M2", "
+     in a shell window.  On most Unix systems Macaulay 2 will start very
+     quickly, but other parts of the program may have to be loaded from the
+     disk later, causing a slight delay.",
      PARA,
      "Your first input prompt will be ", TT "i1 = ", " in response to the prompt,
      type ", TT "2+2", " and press return.  The expression you entered will be
@@ -16,10 +16,11 @@ document { "getting started",
      PARA,
      "Here is some arithmetic with fractions.",
      EXAMPLE "3/5 + 7/11",
-     "Notice the additional output labelled with ", TT "o2 :", ".  Output lines
-     labelled with colons provide information about the type of output.  In this
-     case, the symbol ", TO "QQ", " is our notation for the class of all rational
-     numbers, and indicates that the answer on the previous line is a rational number.",
+     "Notice the additional line of output labelled with ", TT "o2 :", ".  Output 
+     lines labelled with colons provide information about the type of output.  In 
+     this case, the symbol ", TO "QQ", " is our notation for the class of all 
+     rational numbers, and indicates that the answer on the previous line is a 
+     rational number.",
      PARA,
      "Multiplication is indicated with *.",
      EXAMPLE "1*2*3*4",
@@ -32,7 +33,7 @@ document { "getting started",
      user to scroll left horizontally to see the rest of the output.  (See
      ", TO "emacs", ".)",
      EXAMPLE "100!",
-     "Multiple expressions may be separated by semicolons.  (See ", TO ";", ".)",
+     "Multiple expressions may be separated by semicolons.",
      EXAMPLE "1;2;3*4",
      "A semicolon at the end of the line suppresses the printing of the value.",
      EXAMPLE "4*5;",
@@ -47,9 +48,10 @@ document { "getting started",
      EXAMPLE "\"hi there\"",
      "A value can be assigned to a variable with ", TO "=", ".",
      EXAMPLE "s = \"hi there\"",
-     "Strings may be concatenated horizontally with ", TO (quote |, String, String),
+     "Strings may be concatenated horizontally with ", TT "|", ", (see 
+     ", TO (quote |, String, String), ").",
      EXAMPLE "s | \" - \" | s",
-     "or vertically with ", TO (quote ||, Net, Net), ":",
+     "or vertically with ", TT "||", ", (see ", TO (quote ||, Net, Net), ").",
      EXAMPLE "s || \" - \" || s",
      "A list of expressions can be formed with braces.
      (See ", TO "lists, arrays, and sequences", ".)",
@@ -63,12 +65,16 @@ document { "getting started",
      EXAMPLE "f 5",
      "Functions of more than one variable take a parenthesized sequence of
      arguments.",
-     EXAMPLE "g = (x,y) -> x * y",
-     EXAMPLE "g(6,9)",
+     EXAMPLE {
+	  "g = (x,y) -> x * y",
+      	  "g(6,9)",
+	  },
      "The function ", TO "apply", " can be used to apply a function to each 
      element of a list.",
-     EXAMPLE "apply({1,2,3,4}, i -> i^2)",
-     EXAMPLE "apply({1,2,3,4}, f)",
+     EXAMPLE {
+	  "apply({1,2,3,4}, i -> i^2)",
+      	  "apply({1,2,3,4}, f)",
+	  },
      "The operator ", TO "..", " may be used to generate sequences of
      consecutive numbers.",
      EXAMPLE "apply(1 .. 4, f)",
@@ -83,11 +89,10 @@ document { "getting started",
      "Most computations with polynomials take place in rings that may be
      specified in usual mathematical notation.",
      EXAMPLE "R = ZZ/5[x,y,z];",
-     "(We reserve single letter symbols such as Z for use as variables in rings.
-     Hence we must use something like ZZ to stand for the ring of integers;
-     it may remind you of the \"blackboard bold\" font of AMSTeX.  If you prefer
-     Z to ZZ, you may put ", TT "Z=ZZ; protect quote Z", " in your
-     ", TO "initialization file", ".)",
+     "(We reserve single letter symbols such as ", TT "Z", " for use as variables in rings,
+     hence we must use something like ", TT "ZZ", " to stand for the ring of integers.
+     It may remind you of the \"blackboard bold\" font of AMSTeX.  If you prefer
+     ", TT "Z", " to ", TT "ZZ", ", you may put ", TT "Z=ZZ", " in your ", TO "initialization file", ".)",
      EXAMPLE "(x+y)^5",
      "Rings and certain other types of things acquire the name of the global
      variable they are assigned to.",
@@ -133,13 +138,15 @@ document { "getting started",
      produces subquotient modules.  Each subquotient module is accompanied
      by its matrix of generators and its matrix of relations.  These matrices
      can be recovered with ", TO "generators", " and ", TO "relations", ".",
-     EXAMPLE "generators N",
-     EXAMPLE "relations N",
+     EXAMPLE {
+	  "generators N",
+      	  "relations N",
+	  },
      "The function ", TO "prune", " can be used to convert a subquotient
      module to a quotient module.",
      EXAMPLE "prune N",
      "We can use ", TO "resolution", " to compute a projective resolution of the 
-     cokernel of f.",
+     cokernel of ", TT "f", ".",
      EXAMPLE "C = resolution cokernel f",
      "To see the differentials we examine 'C.dd'.",
      EXAMPLE "C.dd",
@@ -151,7 +158,7 @@ document { "getting started",
      of variables.",
      EXAMPLE "R = ZZ/101[a .. r]",
      "We use ", TO "genericMatrix", " to make a 3 by 6 generic matrix whose
-     entries are drawn from the variables of the ring R.",
+     entries are drawn from the variables of the ring ", TT "R", ".",
      EXAMPLE "g = genericMatrix(R,a,3,6)",
      "Then we construct its cokernel with ", TO "cokernel", ".",
      EXAMPLE "M = cokernel g",
@@ -164,14 +171,16 @@ document { "getting started",
      EXAMPLE "S = ZZ/101[t_1 .. t_9, u_1 .. u_9]",
      "We can use ", TO "genericMatrix", " to pack the variables into 
      3-by-3 matrices.",
-     EXAMPLE "m = genericMatrix(S, t_1, 3, 3)",
-     EXAMPLE "n = genericMatrix(S, u_1, 3, 3)",
+     EXAMPLE {
+	  "m = genericMatrix(S, t_1, 3, 3)",
+      	  "n = genericMatrix(S, u_1, 3, 3)",
+	  },
      "We may look at the matrix product.",
      EXAMPLE "m*n",
      "Let's produce the equations generated by the equations which assert
      that m and n commute with each other.  (See ", TO "flatten", ".)",
      EXAMPLE "j = flatten(m*n - n*m)",
-     "Let's compute a Groebner basis for the image of j with ", TO "gb", ".",
+     "Let's compute a Groebner basis for the image of ", TT "j", " with ", TO "gb", ".",
      EXAMPLE "gb j",
      "The resulting Groebner basis contains a lot of information.
      We can get the generators of the basis, and even though we call upon
@@ -183,14 +192,7 @@ document { "getting started",
      PARA,
      "We can use ", TO "betti", " to see the degrees involved in the Groebner
      basis.",
-     EXAMPLE "betti gb j",
-     PARA,
-     "We can use the ", TO "Degrees", " option to make a graded polynomial
-     ring with a nonstandard grading.",
-     EXAMPLE "ZZ/103[x,y,z, Degrees=>{1,2,3}]",
-     "We can use ", TO "isHomogeneous", " to tell whether a polynomial is
-     homogeneous with respect to this grading.",
-     EXAMPLE "isHomogeneous(x*y^2 - y*z)"
+     EXAMPLE "betti gb j"
      }
 
 document { "executing other programs",
@@ -517,14 +519,15 @@ document { quote BLOCKQUOTE,
      }
 
 document { quote EXAMPLE,
-     TT "EXAMPLE x", " -- evaluates the string x as Macaulay 2 code, inserting the
-     result in a hypertext preformatted PRE item.",
+     TT "EXAMPLE x", " -- evaluates the string or list of strings
+     ", TT "x", " as Macaulay 2 code, inserting the results in
+     hypertext preformatted ", TO "PRE", " items.",
      PARA,
      "The evaluation is done by the Makefile at a separate time, and the
      results are left where they can be found the next time the same
      EXAMPLE is encountered.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote TABLE,
@@ -532,9 +535,9 @@ document { quote TABLE,
      }
 
 document { quote VAR,
-     TT "VAR x", " -- encloses x in a hypertext VAR item.",
+     TT "VAR x", " -- encloses ", TT "x", " in a hypertext VAR item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",

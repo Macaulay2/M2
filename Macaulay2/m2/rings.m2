@@ -73,8 +73,10 @@ document { quote coefficientRing,
      constructed from a polynomial ring as a quotient ring or a fraction ring
      or a sequence of such operatinos, then the original coefficient ring
      is returned.",
-     EXAMPLE "coefficientRing(ZZ/101[a][b])",
-     EXAMPLE "ultimate(coefficientRing,ZZ/101[a][b])"
+     EXAMPLE {
+	  "coefficientRing(ZZ/101[a][b])",
+      	  "ultimate(coefficientRing,ZZ/101[a][b])"
+	  },
      }
 
 isCommutative = method()
