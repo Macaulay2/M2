@@ -17,19 +17,22 @@ $(TESTRESULTS) : ../../../cache/Macaulay2-doc
 endif
 
 ifneq "$(DUMPDATA)" "no"
-ARGS := -q '-eloaddata("../../../$(DUMPDATAFILE)")' -- '-epath=append(path,"../../")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
+ARGS := -q '-eloaddata("../../../$(DUMPDATAFILE)")' -- \
+		'-epath=join(path,{"../../","$(srcdir)/"})' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
 else
 ifeq "$(CC)" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
 ## and does strange things to quotation marks.
-ARGS := -q -silent -ephase=1 ../../../m2/setup.m2 -ephase=0 '-epath=append(path,\"../../\")' '-erunStartFunctions()' '-eerrorDepth(0)'
+ARGS := -q -silent -ephase=1 ../../../m2/setup.m2 -ephase=0 \
+		'-epath=join(path,{\"../../\",\"$(srcdir)/\"})' '-erunStartFunctions()' '-eerrorDepth(0)'
 else
-ARGS := -q -silent -ephase=1 ../../../m2/setup.m2 -ephase=0 '-epath=append(path,"../../")' '-erunStartFunctions()' '-eerrorDepth(0)'
+ARGS := -q -silent -ephase=1 ../../../m2/setup.m2 -ephase=0 \
+		'-epath=join(path,{"../../","$(srcdir)/"})' '-erunStartFunctions()' '-eerrorDepth(0)'
 endif
 endif
 
 
 %.okay : %.m2
 	@ echo testing $<
-	@  ../../../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
+	@ ../../../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@

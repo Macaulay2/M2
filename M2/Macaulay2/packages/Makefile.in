@@ -8,7 +8,7 @@ INSTALL_DATA = $(INSTALL)
 DOC=cache/doc
 TEST=cache/tests
 
-.PHONY : all test-D-modules doc tests initialize clean distclean install
+.PHONY : all test-D-modules doc check initialize clean distclean install
 
 all :: initialize
 
@@ -17,16 +17,17 @@ Makefile : Makefile.in
 
 #############################################################################
 all :: doc
-doc : $(DOC) $(TEST)
-	../bin/M2 -q '-e phase=2' @srcdir@/StateTable.m2 '-e exit 0'
-	../bin/M2 -q '-e phase=2' @srcdir@/eliminate.m2  '-e exit 0'
+doc : $(DOC) $(TEST) phase2
 	$(MAKE) -C $(DOC) -f ../../@srcdir@/../m2/Makefile.egs srcdir=../../@srcdir@
-tests :: doc
-	$(MAKE) -C $(TEST) -f ../../@srcdir@/../m2/Makefile.tests
+phase2 : StateTable.m2 eliminate.m2
+	for i in $^ ; do ../bin/M2 -q '-e phase=2' $$i '-e exit 0'; done
+	touch "$@"
+check:: doc
+	$(MAKE) -C $(TEST) -f ../../@srcdir@/../m2/Makefile.tests srcdir=../../@srcdir@
 #############################################################################
 Dtests = $(wildcard D-modules/TST/*.tst.m2)
 Dtestresults = $(Dtests:.m2=.okay)
-tests :: test-D-modules
+check:: test-D-modules
 test-D-modules : $(Dtestresults)
 $(Dtestresults) : ../libexec/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 %.okay : %.m2
@@ -34,8 +35,8 @@ $(Dtestresults) : ../libexec/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2
 	../bin/M2 -q '-e path = prepend( "D-modules/", path )' '-e input "$<"' '-e exit 0'
 	touch $@
 #############################################################################
-tests ::
-	$(MAKE) -C ComputationsBook tests
+check ::
+	$(MAKE) -C ComputationsBook $@
 #############################################################################
 initialize :: cache $(DOC) $(TEST)
 clean :; rm -rf cache

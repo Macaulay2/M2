@@ -1,9 +1,8 @@
 
-.PHONY : all clean distclean wc install tests default all2 tests2
+.PHONY : all clean distclean wc install check default all2 tests2
 
 default: all2 tests2
-TOPDIR = ../..
-include $(TOPDIR)/config.Makefile
+include ../../config.Makefile
 VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
@@ -32,12 +31,13 @@ libdump.a: libdump.a(file.o warning.o map.o dumpdata.o $(LIBS))
 tests2: check
 	./check dump "hi there"
 	./check load "look!"
+	touch "$@"
 ifeq "$(DUMPDATA)" "no"
 all::
-tests:
+check:
 else
 all:: all2
-tests: tests2
+check: tests2
 endif
 distclean : clean
 	rm -f Makefile

@@ -39,7 +39,7 @@ fix := s -> format concatenate s
        M2 := FILENAME
        << "#! /bin/sh" << endl
        << "M2HOME='" << M2HOME << "'" << endl
-       << "export M2HOME" << endl
+       -- << "export M2HOME" << endl
        << "EXE=" << fix "$M2HOME/libexec/Macaulay2" << endl
        << "DATA=" << fix "$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data" << endl
        << "SETUP=" << fix "$M2HOME/m2/setup.m2" << endl;

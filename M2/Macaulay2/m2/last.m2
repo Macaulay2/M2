@@ -5,14 +5,19 @@
 if phase > 1 then load "docloads.m2"
 
 addStartFunction(
-     () -> path = append(path, getenv "M2HOME" | pathSeparator | "packages" | pathSeparator)
+     () -> path = append(path, homeDirectory | "packages" | pathSeparator)
      )
 
 addStartFunction(
      () -> documentationPath = (
-     	  if getenv "M2HOME" === "" 
-     	  then { "", "cache/doc/" }
-     	  else { "", "cache/doc/" , getenv "M2HOME" | "/packages/cache/doc/", getenv "M2HOME" | "/m2/cache/doc/" } ))
+     	  { 
+	       "", 
+	       "cache/doc/" , 
+	       homeDirectory | "packages/cache/doc/",
+	       homeDirectory | "m2/cache/doc/"
+	       }
+	  )
+     )
 
 setrecursionlimit 300
 

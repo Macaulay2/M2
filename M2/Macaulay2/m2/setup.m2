@@ -72,10 +72,15 @@ if substring(progname,0,1) === "\"" then progname = substring(progname,1)
 
 path = { currentFileDirectory, "" }
 
-dir := splice(apply(separate("/",progname), i -> toSequence separate("\\", i)))-- ???
+homeDirectory = null
+
+dir := splice(apply(separate("/",progname), i -> toSequence separate("\\", i)))
 if #dir > 1
 then (
-     packagedir := concatenate ( apply(#dir-2, i -> (dir#i,pathSeparator)), "packages", pathSeparator);
+     homeDirectory = concatenate apply(#dir-2, i -> (dir#i,pathSeparator));
+     packagedir := concatenate(homeDirectory, "packages", pathSeparator);
+     ) else (
+     error "no way to set homeDirectory";
      )
 
 isAbsolutePath := (
