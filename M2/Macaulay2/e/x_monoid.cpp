@@ -21,20 +21,22 @@
 #endif
 
 #include "interp.hpp"
-
-#ifdef MIKE_OLD_MONOID
-void cmd_zero_monoid()
-{
-  gStack.insert(trivial_monoid);
-}
+//Monoid *trivial_monoid;
 
 void cmd_Monoid(object &omo, object &ostr, 
 		object &odegmonoid, object &odegs, 
-		object &ooptions) // opts[0] = isgroup, 
-				  // opts[1] = MonomialSize, 
-				  // opts[2] = isskew
+		object &ooptions)  // opts[0] = isgroup, opts[1] = MonomialSize
+				// opts[2] = isskew:0 none. 1:all odd degree variables, 2:
+				// opts[3]..opts[length-1]: the list of the skew comm vars,
+				// sorted in ascending order.
 {
+#ifdef MIKE_OLD_MONOID
   const mon_order *mo = omo->cast_to_mon_order()->mon_order_of();
+#else
+#ifdef MIKE_EMONOID
+  const EMonomialOrder *mo = omo->cast_to_EMonomialOrder();
+#endif
+#endif
   char *varnames = ostr->string_of();
   int len_varnames;
   if (varnames == NULL) 
@@ -47,14 +49,14 @@ void cmd_Monoid(object &omo, object &ostr,
   Monoid *D = odegmonoid->cast_to_Monoid();
   intarray *degs = odegs->intarray_of();
   intarray *opts = ooptions->intarray_of();
-  if (opts->length() != 3)
+
+  if (opts->length() <= 2)
     {
       gError << "Monoid: expected three options";
       return;
     }
   bool is_group = (*opts)[0] != 0;
   int nbits = (*opts)[1];
-  bool is_skew = (*opts)[2] != 0;
 
   // Time to check the consistency of all of these options
   if (nbits <= 0 || nbits > 16)
@@ -78,11 +80,53 @@ void cmd_Monoid(object &omo, object &ostr,
 	return;
       }
 
+  // Set the skew variable information needed.
+  intarray skewvars;
+  int is_skew = (*opts)[2]; // hopefully 0, 1 or 2.
+  if (is_skew == 1)
+    {
+      // Put the variables which have first degree odd into skewvars.
+      if (D->n_vars() != 0)
+	for (int i=0; i<mo->n_vars(); i++)
+	  if (((*degs)[i * D->n_vars()] % 2) != 0)
+	    skewvars.append(i);
+      
+    }
+  else if (is_skew >= 2)
+    {
+      // The variables appear in 'opts'
+      for (int i=3; i<opts->length(); i++)
+	skewvars.append((*opts)[i]);
+    }
+
+#ifdef MIKE_OLD_MONOID
   monoid_info *moninf = new monoid_info(mo, varnames, len_varnames, 
-					D, *degs, is_group, is_skew);
+					D, *degs, is_group, skewvars);
   Monoid *M = new Monoid(moninf, nbits);
+#else
+#ifdef MIKE_EMONOID
+  // is_group: what should be done with that?  MES
+  const char **var_names = Monoid::make_name_array(mo->n_vars(), varnames, len_varnames);
+  intarray print_order;
+  for (int i=0; i<mo->n_vars(); i++)
+    print_order.append(i);
+
+  Monoid *M = Monoid::create(mo, print_order.raw(), var_names, D, *degs, skewvars, is_group);
+
+  // Remove var_names:
+  for (int i=0; i<mo->n_vars(); i++)
+    delete [] var_names[i];
+  delete [] var_names;
+#endif
+#endif
   bump_up(M);
   gStack.insert(M);
+}
+
+#ifdef MIKE_OLD_MONOID
+void cmd_zero_monoid()
+{
+  gStack.insert(trivial_monoid);
 }
 
 int check_all_positive(const intarray &degs)
@@ -223,65 +267,6 @@ void cmd_zero_monoid()
   gStack.insert(Monoid::trivial_monoid());
 }
 
-// Not rewritten yet: 9/27/00 MES:
-void cmd_Monoid(object &omo, object &ostr, 
-		object &odegmonoid, object &odegs, 
-		object &ooptions) // opts[0] = isgroup, 
-				  // opts[1] = MonomialSize, 
-				  // opts[2] = isskew
-{
-  // Plan: have "variable print order", maybe no skew, no degree info.
-  // Also, no extra MonomialSize, isgroup would be needed.
-
-  // For now, though: take mo, varnames, degrees, degree monoid.
-  // Thus, maybe ignore "isgroup".  INTERFACE MISMATCH with old and new.
-
-  const EMonomialOrder *mo = omo->cast_to_EMonomialOrder();
-  char *varnames = ostr->string_of();
-  int len_varnames;
-  if (varnames == NULL) 
-    {
-      varnames = "";
-      len_varnames = 0;
-    }
-  else
-    len_varnames = ostr->length_of();
-  Monoid *D = odegmonoid->cast_to_Monoid();
-  intarray *degs = odegs->intarray_of();
-  intarray *opts = ooptions->intarray_of();
-  if (opts->length() != 3)
-    {
-      gError << "Monoid: expected three options";
-      return;
-    }
-  bool is_group = (*opts)[0] != 0; // We must change the monomial order in this case.  HACK
-  int nbits = (*opts)[1];  // ignored HACK
-  bool is_skew = (*opts)[2] != 0; // not yet ignored.  HACK
-  
-  int n = degs->length();
-  if (n != mo->n_vars() * D->n_vars())
-    {
-      gError << "Degree list should be of length " << mo->n_vars()*D->n_vars();
-      return;
-    }
-  // Check that the first degree for each variable is positive
-  //   Only check if there are degree vectors.
-  if (n > 0)
-    for (int i=0; i<mo->n_vars(); i++)
-      if ((*degs)[i * D->n_vars()] <= 0)
-	{
-	  gError << "All primary (first) degrees should be positive";
-	  return;
-	}
-  if (is_group)
-    {
-      // Change the monomial order
-    }
-  const Monoid *result = Monoid::create(mo, varnames, len_varnames, D, *degs, is_skew);
-  bump_up(result);  // What??
-  gStack.insert(result);
-}
-
 /////////////////////////////
 // Monomial Order Routines //
 /////////////////////////////
@@ -377,12 +362,13 @@ void i_monoid_cmds(void)
 {
   // Construction of new monoid objects
   install(ggzeromonoid, cmd_zero_monoid);
-  install(ggmonoid, cmd_Monoid,
-	  TY_MON_ORDER, TY_STRING, TY_MONOID, TY_INTARRAY, TY_INTARRAY);
 
 #ifdef MIKE_OLD_MONOID
   trivial_monoid = new Monoid(new monoid_info, sizeof(int)*8);
   bump_up((Monoid *)trivial_monoid);
+
+  install(ggmonoid, cmd_Monoid,
+	  TY_MON_ORDER, TY_STRING, TY_MONOID, TY_INTARRAY, TY_INTARRAY);
 
   // Construction of monomial orders
   install(ggMOgrevlex, cmd_mo_grevlex, TY_INTARRAY, TY_INTARRAY);
@@ -403,6 +389,11 @@ void i_monoid_cmds(void)
 #endif // MIKE_OLD_MONOID
 
 #ifdef MIKE_EMONOID
+  trivial_monoid = Monoid::trivial_monoid();
+
+  install(ggmonoid, cmd_Monoid,
+	  TY_EMonomialOrder, TY_STRING, TY_MONOID, TY_INTARRAY, TY_INTARRAY);
+
   //////////////////////////
   // New Monomial Orders ///
   //////////////////////////

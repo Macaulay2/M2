@@ -1193,6 +1193,106 @@ ring_elem PolynomialRing::gcd_extended(const ring_elem f, const ring_elem g,
   return result;
 }
 
+ring_elem PolynomialRing::remainder(const ring_elem f, const ring_elem g) const
+{
+  ring_elem quot;
+  ring_elem rem;
+  rem = remainderAndQuotient(f,g,quot);
+  remove(quot);
+  return rem;
+}
+
+ring_elem PolynomialRing::quotient(const ring_elem f, const ring_elem g) const
+{
+  ring_elem quot;
+  ring_elem rem;
+  rem = remainderAndQuotient(f,g,quot);
+  remove(rem);
+  return quot;
+}
+
+ring_elem PolynomialRing::remainderAndQuotient(const ring_elem f, const ring_elem g, 
+					       ring_elem &quot) const
+{
+  if (is_zero(g))
+    {
+      quot = from_int(0);
+      return copy(f);
+    }
+  else
+    {
+      if (false) //(!is_quotient_poly_ring())
+	// There are several cases here.
+	// Case 1: We are in a polynomial ring, with no quotient.
+	//         The base ring in this case should be ZZ, or a field.
+	//         This may include skew comm case, Laurent polynomials,
+	//         or the Weyl algebra.
+	{
+	  if (K->is_field())
+	    {
+	    }
+	  else if (K->is_Z())
+	    {
+	    }
+	  else
+	    {
+	      gError << "not implemented yet";
+	    }
+	}
+      else if (false) //(n_vars() == 1 && K->is_field())
+	{
+	  // Case 2: There is a quotient ideal, but we have one variable, over
+	  //         a field.  In this case, we can use gcd in k[x].
+	  //         The ring must be commutative here: skew in one variable isn't
+	  //         handled here.
+	}
+      else if (K->is_field() || K->is_Z())
+	{
+	  // Case 3: There is a quotient ideal.  Here we do a GB computation
+	  //         of the ideal (g), and reduce f wrt this ideal.
+
+	  // Create a GB of (g).
+	  intarray syzygy_stop_conditions;
+	  syzygy_stop_conditions.append(0); // ngb
+	  syzygy_stop_conditions.append(0); // nsyz
+	  syzygy_stop_conditions.append(0); // npairs
+	  syzygy_stop_conditions.append(0);
+	  syzygy_stop_conditions.append(0); 
+	  syzygy_stop_conditions.append(0); // subring limit
+	  syzygy_stop_conditions.append(0);
+	  
+	  const FreeModule *F = make_FreeModule(1);
+	  Matrix m(F);
+	  m.append(F->term(0,g));
+	  gb_comp *g = gb_comp::make(m,false,-1,0);
+	  bump_up(g);
+	  g->calc(0, syzygy_stop_conditions);
+
+	  // Reduce f wrt this GB.
+	  Vector v(F,F->term(0,f));
+	  Vector lifted;
+	  Vector red = g->reduce(v,lifted);
+	  // Now grab the two polynomials of interest:
+	  ring_elem result = F->get_coefficient(red.get_value(),0); // Rermainder
+	  quot = lifted.free_of()->get_coefficient(lifted.get_value(),0); // Quotient
+
+	  // Remove the GB.
+	  delete g;
+	  return result;
+	}
+      else
+	{
+	  // Case 4: The coefficients are not ZZ, or a field.  Currently we say:
+	  //         not implemented.
+
+	  gError << "remainder not defined and/or implemented for this ring";
+	}
+    }
+  quot = from_int(0);
+  return from_int(0);
+}
+
+
 void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
 			    ring_elem &x, ring_elem &y) const
 {

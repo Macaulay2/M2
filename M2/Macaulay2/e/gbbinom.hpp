@@ -12,14 +12,14 @@
 /////////////////////
 
 class binomialGB_comp;
-typedef int *monomial;
+typedef int *monomial0;
   
 struct binomial {
-  monomial lead;
-  monomial tail;
+  monomial0 lead;
+  monomial0 tail;
 
   binomial() : lead(NULL), tail(NULL) {}
-  binomial(monomial lead, monomial tail) : lead(lead), tail(tail) {}
+  binomial(monomial0 lead, monomial0 tail) : lead(lead), tail(tail) {}
 };
 
 struct binomial_gb_elem {
@@ -35,9 +35,9 @@ struct binomial_gb_elem {
 struct binomial_s_pair {
   binomial_gb_elem *f1;
   binomial_gb_elem *f2;		// f2 is NULL for generators...
-  monomial lcm;
+  monomial0 lcm;
   binomial_s_pair() {}
-  binomial_s_pair(binomial_gb_elem *f1, binomial_gb_elem *f2, monomial lcm)
+  binomial_s_pair(binomial_gb_elem *f1, binomial_gb_elem *f2, monomial0 lcm)
     : f1(f1), f2(f2), lcm(lcm) {}
 };
 
@@ -63,8 +63,8 @@ class binomial_ring
 
   stash *monstash;
 
-  monomial new_monomial() const;
-  void set_weights(monomial m) const;
+  monomial0 new_monomial() const;
+  void set_weights(monomial0 m) const;
   
 public:
   binomial_ring(const Ring *RR);
@@ -74,38 +74,38 @@ public:
   ~binomial_ring();
 
   // monomial operations
-  void remove_monomial(monomial &m) const;
-  monomial make_monomial(int *exp) const; // Make a monomial from an exponent vector
-  monomial copy_monomial(monomial m) const;
+  void remove_monomial(monomial0 &m) const;
+  monomial0 make_monomial(int *exp) const; // Make a monomial from an exponent vector
+  monomial0 copy_monomial(monomial0 m) const;
 
-  int weight(monomial m) const;
-  int degree(monomial m) const;
-  unsigned int mask(monomial m) const;
-  bool divides(monomial m, monomial n) const;
+  int weight(monomial0 m) const;
+  int degree(monomial0 m) const;
+  unsigned int mask(monomial0 m) const;
+  bool divides(monomial0 m, monomial0 n) const;
 
-  monomial quotient(monomial m, monomial n) const;
-  monomial divide(monomial m, monomial n) const;
-  monomial mult(monomial m, monomial n) const;
-  monomial lcm(monomial m, monomial n) const;
-  monomial spair(monomial lcm, monomial m, monomial n) const; // returns lcm - m + n.
-  void spair_to(monomial a, monomial b, monomial c) const;
+  monomial0 quotient(monomial0 m, monomial0 n) const;
+  monomial0 divide(monomial0 m, monomial0 n) const;
+  monomial0 mult(monomial0 m, monomial0 n) const;
+  monomial0 lcm(monomial0 m, monomial0 n) const;
+  monomial0 spair(monomial0 lcm, monomial0 m, monomial0 n) const; // returns lcm - m + n.
+  void spair_to(monomial0 a, monomial0 b, monomial0 c) const;
   // spair_to: a = a - b + c
 
-  int compare(monomial m, monomial n) const; // returns LT, EQ, or GT.
-  int graded_compare(monomial m, monomial n) const; // returns LT, EQ, or GT.
+  int compare(monomial0 m, monomial0 n) const; // returns LT, EQ, or GT.
+  int graded_compare(monomial0 m, monomial0 n) const; // returns LT, EQ, or GT.
 
-  void translate_monomial(const binomial_ring *old_ring, monomial &m) const;
-  vec monomial_to_vector(monomial m) const;
+  void translate_monomial(const binomial_ring *old_ring, monomial0 &m) const;
+  vec monomial_to_vector(monomial0 m) const;
 
   // binomial operations
   void remove_binomial(binomial &f) const;
   binomial make_binomial() const; // allocates the monomials
   binomial copy_binomial(const binomial &f) const;
 
-  const monomial lead_monomial(binomial f) const { return f.lead; }
+  const monomial0 lead_monomial(binomial f) const { return f.lead; }
   void translate_binomial(const binomial_ring *old_ring, binomial &f) const;
 
-  bool gcd_is_one(monomial m, monomial n) const;
+  bool gcd_is_one(monomial0 m, monomial0 n) const;
   bool gcd_is_one(binomial f) const;
   bool remove_content(binomial &f) const;
 
@@ -119,7 +119,7 @@ public:
   bool one_reduction_step(binomial &f, binomial g) const;
   bool calc_s_pair(binomial_s_pair &s, binomial &result) const;
 
-  void monomial_out(buffer &o, const monomial m) const;
+  void monomial_out(buffer &o, const monomial0 m) const;
   void elem_text_out(buffer &o, const binomial &f) const;
 };
 
@@ -137,7 +137,7 @@ class binomial_s_pair_set
 
   struct s_pair_lcm_list {
     s_pair_lcm_list *next;
-    monomial lcm;
+    monomial0 lcm;
     s_pair_elem *pairs;		// List of pairs with this lcm.
   };
 
@@ -149,7 +149,7 @@ class binomial_s_pair_set
   };
 
   const binomial_ring *R;
-  monomial _prev_lcm;		// This class is responsible for deleting lcm's.
+  monomial0 _prev_lcm;		// This class is responsible for deleting lcm's.
   s_pair_degree_list *_pairs;
   int _n_elems;
   
@@ -191,10 +191,10 @@ class binomialGB
 
   struct monomial_list {
     monomial_list *next;
-    monomial m;
+    monomial0 m;
     int mask;
     gbmin_elem *tag;  // This is a list
-    monomial_list(monomial m, int mask, gbmin_elem *val) : m(m), mask(mask), tag(val) {}
+    monomial_list(monomial0 m, int mask, gbmin_elem *val) : m(m), mask(mask), tag(val) {}
   };
 
   const binomial_ring *R;
@@ -209,13 +209,13 @@ public:
   void enlarge(const binomial_ring *newR);
 
   void minimalize_and_insert(binomial_gb_elem *f);
-  monomial_list *find_divisor(monomial_list *I, monomial m) const;
-  monomial_list *ideal_quotient(monomial m) const;
+  monomial_list *find_divisor(monomial_list *I, monomial0 m) const;
+  monomial_list *ideal_quotient(monomial0 m) const;
   void remove_monomial_list(monomial_list *mm) const;
   
-  binomial_gb_elem *find_divisor(monomial m) const;
+  binomial_gb_elem *find_divisor(monomial0 m) const;
   void make_new_pairs(binomial_s_pair_set *Pairs, binomial_gb_elem *f) const;
-  void reduce_monomial(monomial m) const;
+  void reduce_monomial(monomial0 m) const;
   bool reduce(binomial &f) const; // returns false if reduction is to zero.
 
   class iterator {

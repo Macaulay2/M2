@@ -60,6 +60,13 @@ Monoid _ List := MonoidElement => (M,v) -> (
 numgens GeneralOrderedMonoid := M -> # M.generators
 degreeLength GeneralOrderedMonoid := M -> M.degreeLength
 
+-- MES: I grabbed this from orderedmonoidrings.m2, to handle skew variables
+-- in the monoid/ring.
+indices := (M,vars) -> apply(vars, x -> (
+	  x = baseName x;
+	  if M.index#?x then M.index#x
+	  else error "expected a variable of the ring"))
+
 -- check #wts is divisible by #vars
 -- Weights => {{2,3},{4,5}}
 MOgrlex := (wts,degs) -> (sendgg(ggPush wts, ggPush degs, ggMOgrevlex); newHandle())
@@ -342,6 +349,9 @@ makeit1 := (options) -> (
      betwNames := (m,v) -> concatenate between(m,
 	  apply(v, x -> concatenate lines(toString x, " "))
 	  );
+     skewvariables := if options.SkewCommutative === false then {0}
+          else if options.SkewCommutative === true then {1}
+	  else prepend(2, indices(M, options.SkewCommutative));
      M.handle = newHandle (
 	  ggPush M.MonomialOrder,
 	  if M.?newEngine then ggPush variableOrder,
@@ -349,9 +359,9 @@ makeit1 := (options) -> (
 	  if not M.?newEngine then (
 	       if degreeLength M === 0 then ggzeromonoid else ggPush degreesMonoid degreeLength M,
 	       ggPush flatten internalDegrees,
-	       ggPush {if options.Inverses then 1 else 0, 
-		       options.MonomialSize,
-		       if options.SkewCommutative then 1 else 0}
+	       ggPush join({if options.Inverses then 1 else 0}, 
+		       {options.MonomialSize},
+		       skewvariables)
 	       ),
 	  ggmonoid) ;
      M.use = x -> scan(M.generatorSymbols,M.vars,assign);

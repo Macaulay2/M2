@@ -329,6 +329,32 @@ ring_elem Z::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
   rem = MPZ_RINGELEM(resultmod);
   return MPZ_RINGELEM(result);
 }
+
+ring_elem Z::remainder(const ring_elem f, const ring_elem g) const
+{
+  ring_elem rem;
+  ring_elem quot = Z::divide(f,g,rem);
+  remove(quot);
+  return rem;
+}
+
+ring_elem Z::quotient(const ring_elem f, const ring_elem g) const
+{
+  ring_elem rem;
+  ring_elem quot = Z::divide(f,g,rem);
+  remove(rem);
+  return quot;
+}
+
+ring_elem Z::remainderAndQuotient(const ring_elem f, const ring_elem g, 
+				  ring_elem &quot) const
+{
+  ring_elem result;
+  quot = Z::divide(f,g,result);
+  return result;
+}
+
+
 ring_elem Z::gcd(const ring_elem f, const ring_elem g) const
 {
   mpz_ptr result = new_elem();

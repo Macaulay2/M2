@@ -150,7 +150,6 @@ NAMES = \
 	monorder \
 	monomial \
 	varpower \
-	monoid \
 	gb_comp \
 	gb \
 	spair \
@@ -162,9 +161,17 @@ NAMES = \
 	gb2 \
 	res2 \
 	respoly2 \
-	Emonorder \
+	monoid \
+	EEhilbtrack \
+	EEGB1 \
+	EEspairs \
+	EEbasics \
+	EElookup \
+	EEGB \
 
 NOT_USED_YET = \
+	Emonorder \
+	Emonoid \
 	EEhilbtrack \
 	EEGB1 \
 	EEspairs \

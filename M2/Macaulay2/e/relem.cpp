@@ -110,7 +110,7 @@ RingElement RingElement::operator/(const RingElement &b) const
   else if (b.is_zero())
     gError << "ring division: attempt to divide by zero";
   else
-    result.set_value( R->divide(get_value(), b.get_value()) );
+    result.set_value( R->quotient(get_value(), b.get_value()) );
 
   return result;
 }
@@ -125,10 +125,8 @@ RingElement RingElement::operator%(const RingElement &b) const
     gError << "ring division: attempt to divide by zero";
   else
     {
-      ring_elem frem;
-      ring_elem fdiv = R->divide(get_value(), b.get_value(), frem);
+      ring_elem frem = R->remainder(get_value(), b.get_value());
       result.set_value(frem);
-      R->remove(fdiv);
     }
 
   return result;
@@ -144,9 +142,9 @@ RingElement RingElement::divide(const RingElement &b, RingElement &rem) const
     gError << "ring division: attempt to divide by zero";
   else
     {
-      ring_elem frem;
-      ring_elem fdiv = R->divide(get_value(), b.get_value(), frem);
-      result.set_value(fdiv);
+      ring_elem fquot;
+      ring_elem frem = R->remainderAndQuotient(get_value(), b.get_value(), fquot);
+      result.set_value(fquot);
       rem = RingElement(R, frem);
     }
 
