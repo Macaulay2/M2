@@ -1,3 +1,4 @@
+# @configure_input@
 TOPDIR = ../../..
 include $(TOPDIR)/include/config.Makefile
 srcdir = @srcdir@

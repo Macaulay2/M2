@@ -1,4 +1,5 @@
 # -*- Mode: Makefile -*-
+# @configure_input@
 include ../../../../include/config.Makefile
 
 ifneq "$(DUMPDATA)" "no"

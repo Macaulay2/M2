@@ -1,3 +1,4 @@
+# @configure_input@
 include ../include/config.Makefile
 VPATH = @srcdir@
 ifeq "$(encap)" "yes"
