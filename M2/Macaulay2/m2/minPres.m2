@@ -84,7 +84,7 @@ minPresIdeal(Ideal) := o -> (I) -> (
      	  FmatS := substitute(F.matrix,S);
 	  vv := map(S,S);)
      else (
-	  R2 := (coefficientRing R)[varsR2];
+	  R2 := (coefficientRing R)[varsR];
 	  y := o.Variable;
      	  var := splice{y_0..y_(#l-1)};
      	  S = (coefficientRing R)[var,Degrees => degreesS];
