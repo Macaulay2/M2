@@ -451,11 +451,16 @@ packfun(e:Expr):Expr := (
 		    if isInt(n)
 		    then (
 			 nn := toInt(n);
-			 if nn > 0
-			 then (
+			 if nn > 0 then (
 			      when a.1
 			      is x:Sequence do packlist(x,nn)
 			      is x:List do packlist(x.v,nn)
+			      else WrongArg(1,"a list or sequence")
+			      )
+			 else if nn == 0 then (
+			      when a.1
+			      is x:Sequence do if length(x) == 0 then emptyList else WrongArg(1,"a positive integer")
+			      is x:List do if length(x.v) == 0 then emptyList else WrongArg(1,"a positive integer")
 			      else WrongArg(1,"a list or sequence")
 			      )
 			 else WrongArg(1,"a positive integer")

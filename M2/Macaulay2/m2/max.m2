@@ -31,6 +31,8 @@ ZZ - InfiniteNumber := (i,j) -> -j
 InfiniteNumber * ZZ := (i,j) -> if j > 0 then i else if j < 0 then -i else indeterminate
 ZZ * InfiniteNumber := (j,i) -> if j > 0 then i else if j < 0 then -i else indeterminate
 InfiniteNumber == ZZ := (x,y) -> false
+ZZ // InfiniteNumber := ZZ / InfiniteNumber := (x,y) -> 0
+InfiniteNumber // ZZ := InfiniteNumber / ZZ := (x,y) -> if y > 0 then x else if y < 0 then -x else indeterminate
 ZZ == InfiniteNumber := (x,y) -> false
 ZZ ? InfiniteNumber := (x,y) -> if y === infinity then symbol < else symbol >
 InfiniteNumber ? ZZ := (x,y) -> if x === infinity then symbol > else symbol <

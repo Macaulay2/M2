@@ -340,9 +340,7 @@ document List := z -> (
 -- getting help from the documentation
 -----------------------------------------------------------------------------
 
-topicList = () -> sort join(
-     if DocDatabase === null then {} else value \ keys DocDatabase
-     )
+topicList = () -> sort flatten apply(values PackageDictionary, p -> keys (value p)#"documentation")
 
 getExampleInputs := method(SingleArgumentDispatch => true)
 getExampleInputs Thing        := t -> {}
@@ -354,10 +352,8 @@ printExamples = f -> scan(examples f, i -> << i << endl)
 
 topics = Command (
      () -> (
-	  wid := if width stdio == 0 then 79 else width stdio - 1;
-	  << columnate( topicList(), wid) << endl;
-	  )
-     )
+	  wid := if printWidth != 0 then printWidth else if width stdio != 0 then width stdio else 80;
+	  columnate( format \ topicList(), wid)))
 
 apropos = (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(toString pattern,i))
 -----------------------------------------------------------------------------
