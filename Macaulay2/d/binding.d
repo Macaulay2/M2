@@ -33,11 +33,11 @@ nunaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec     ,pre
 binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree):Word := (
                                  install(s,unique(s,parseinfo(prec,prec-step,prec,parsefuns(errorunary,binary)))));
 binaryright(s:string)   :Word := binaryright(s,binaryop);
+token(s:string)         :Word :=           unique(s,parseinfo(prec,prec,prec,parsefuns(errorunary,errorbinary)));
 
 specialprec := -1;			  -- filled in below
 export special(s:string,f:function(Token,TokenFile,int,bool):ParseTree):Word := (
      unique(s, parseinfo(precObject,specialprec,specialprec, parsefuns(f, defaultbinary))));
-token(s:string)         :Word :=           unique(s,parseinfo(prec,prec,prec,parsefuns(errorunary,errorbinary)));
 
 export parens(binaryleft:string,binaryright:string,prec:int,scope:int,strength:int):Word := (
      l := unique(binaryleft, parseinfo(prec,scope,strength,leftparen));
@@ -71,6 +71,7 @@ export treePosition(e:ParseTree):Position := (
 	  is i:TryElse do return(i.trytoken.position)
 	  is i:Try do return(i.trytoken.position)
      	  is i:IfThenElse do return(i.iftoken.position)
+     	  is w:For do return(w.whiletoken.position)
      	  is w:WhileDo do return(w.whiletoken.position)
      	  is w:WhileList do return(w.whiletoken.position)
      	  is w:WhileListDo do return(w.whiletoken.position)
@@ -181,11 +182,10 @@ bump(2);
 bump();
      export commaW := nunaryleft(",");
 bump(2);
-     specialprec = prec;
-     doW = token("do");
-     listW = token("list");
      elseW = token("else");
      thenW = token("then");
+     doW = token("do");
+     listW = token("list");
 bump();
      export ColonEqualW := binaryright(":=");
      export EqualW := binaryright("=");
@@ -195,9 +195,10 @@ bump();
      export DoubleArrowS := makeProtectedSymbolClosure(binaryright("=>"));
      export LongDoubleArrowS := makeProtectedSymbolClosure(binaryright("==>"));
 bump();
-     newscope := prec;
+     specialprec = prec;
      ofW = token("of");
      fromW = token("from");
+     toW = token("to");
 bump();
      export LessLessS := makeProtectedSymbolClosure(unaryleft("<<"));
 bump();
@@ -267,11 +268,10 @@ bump();
 
      special("if",unaryif);
      special("try", unarytry);
+     special("new", unarynew);
+     special("for",unaryfor);
 
-     unique("new", parseinfo(precObject,newscope,newscope, 
-	       parsefuns(unarynew, defaultbinary)));
-
-     special("while",unarywhile);
+     whileW = special("while",unarywhile);
 
      special("symbol",unaryquote);
      special("global",unaryglobal);
@@ -431,8 +431,9 @@ bindop(token:Token,scope:Scope):void := (
 export bind(e:ParseTree,scope:Scope):void;
 bindFormalParm(e:ParseTree,scope:Scope,desc:functionDescription):void := (
      when e
-     is Token do (
-	  makeSymbol(e,scope);
+     is t:Token do (
+	  if t.word.typecode == TCid then makeSymbol(e,scope)
+	  else makeErrorTree(t,"expected symbol");
 	  desc.numparms = desc.numparms + 1;
 	  )
      else makeErrorTree(e,"syntax error"));
@@ -446,6 +447,13 @@ bindFormalParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
 	       bindFormalParm(binary.rhs,scope,desc);)
 	  else bindFormalParm(e,scope,desc))
      else bindFormalParm(e,scope,desc));
+bindSingleParm(e:ParseTree,scope:Scope):void := (
+     when e 
+     is t:Token do (
+	  if t.word.typecode == TCid then makeSymbol(e,scope)
+	  else makeErrorTree(t,"expected symbol")
+	  )
+     else makeErrorTree(e,"expected symbol"));
 bindParenParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
      when e 
      is t:Token do (
@@ -679,6 +687,16 @@ export bind(e:ParseTree,scope:Scope):void := (
 	  bind(w.predicate,scope);
 	  -- w.body = bindnewscope(w.body,scope);
 	  bind(w.doclause,scope);
+	  )
+     is w:For do (
+	  newscop := newScope(scope);
+	  bindSingleParm(w.variable,newscop);
+	  bind(w.fromclause,scope);
+	  bind(w.toclause,scope);
+	  bind(w.whileclause,newscop);
+	  bind(w.listclause,newscop);
+	  bind(w.doclause,newscop);
+	  w.scope = newscop;
 	  )
      is w:WhileList do (
 	  bind(w.predicate,scope);

@@ -74,6 +74,15 @@ export Token := {		-- a word, as encountered in the input
 -- ParseTree
 
 export Adjacent := {lhs:ParseTree, rhs:ParseTree};
+export For := {
+     fortoken:Token, variable:ParseTree,
+     fromtoken:Token, fromclause:ParseTree,		    -- optional
+     totoken:Token, toclause:ParseTree,			    -- optional
+     whiletoken:Token, whileclause:ParseTree,		    -- optional
+     listtoken:Token, listclause:ParseTree,		    -- optional
+     dotoken:Token, doclause:ParseTree,			    -- optional
+     scope:Scope					    -- filled in later
+     };
 export WhileDo := {
      whiletoken:Token, predicate:ParseTree,
      dotoken:Token, doclause:ParseTree};
@@ -117,7 +126,7 @@ export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or parenthesized 
      or parentheses or IfThen or IfThenElse or startScope 
      or Quote or GlobalQuote or LocalQuote
-     or TryElse or Try or WhileDo or WhileList or WhileListDo or Arrow or New or dummy );
+     or TryElse or Try or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
 -- misc
 
@@ -193,6 +202,8 @@ export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
 export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
+export forCode := {fromclause:Code,toclause:Code, whileclause:Code,listclause:Code,doclause:Code,
+     scope:Scope, position:Position} ;
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
 export ternop := function(Code,Code,Code):Expr;
@@ -213,7 +224,7 @@ export functionCode := {
      };
 export Code := (exprCode or variableCode 
      or unaryCode or binaryCode 
-     or ternaryCode or multaryCode
+     or ternaryCode or multaryCode or forCode
      or CodeSequence or openScopeCode or functionCode
      );
 
@@ -264,8 +275,14 @@ makedummy():parseinfo := parseinfo(0,0,0,
      parsefuns(dummyunary,dummybinary));
 export dummyWord    := Word("--dummy word--",TCnone,0,makedummy());
 export dummyDictionary := newDictionary();
+
+export dummyScope := (
+     s := Scope(dummyDictionary,self,numScopes,0,false);
+     numScopes = numScopes + 1;
+     s);
+
 export dummyTree    := ParseTree(dummy(dummyPosition));
-export dummyCode := Code(CodeSequence());
+export dummyCode := Code(exprCode(nullE,dummyPosition)); -- was Code(CodeSequence());
 export emptySequence := Sequence();
 export dummyUnaryFun(c:Code):Expr := (
      error("dummy unary function called");
@@ -278,9 +295,6 @@ export dummyBinaryFun(c:Code,d:Code):Expr := (
      nullE);
 export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
      error("dummy ternary function called");
-     nullE);
-export dummyMultaryFun(c:CodeSequence):Expr := (
-     error("dummy multary function called");
      nullE);
 export emptynullE := Expr(Sequence());
 export bucketEnd := KeyValuePair(emptynullE,0,emptynullE, self);

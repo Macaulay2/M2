@@ -341,11 +341,6 @@ document { "of",
      TT "of", " -- a keyword used with ", TO "new", "."
      }
 
-document { "from",
-     Headline => "a keyword",
-     TT "from", " -- a keyword used with ", TO "new", "."
-     }
-
 document { NewMethod,
      TT "NewMethod", " -- a symbol used as a method name in conjuction with
      the ", TO "new", " operator.",
@@ -907,33 +902,31 @@ document { complete,
      }
 
 document { (drop, BasicList, List),
-     Headline => "drop some elements",
-     TT "drop(v,{m,n})", " -- yields the list obtained from the list 
-     ", TT "v", " by dropping the elements at positions ", TT "m", " through ", TT "n", ".",
-     EXAMPLE {
-	  "drop({a,b,c,d,e},{2,3})",
+     Synopsis => {
+	  "w = drop(v,{m,n})",
+	  "v" => null,
+	  "{m,n}" => "a pair of natural numbers",
+	  "w" => {"a list by omitting those elements of the list
+	       ", TT "v", " in positions ", TT "m", " through ", TT "n", "." }
 	  },
-     SEEALSO{ "take"}
+     EXAMPLE "drop({a,b,c,d,e},{2,4})"
      }
 
 document { (drop, BasicList, ZZ),
-     Headline => "drop some elements",
-     TT "drop(v,n) ", " -- yields the list obtained from the list ", TT "v", " by
-     dropping the first ", TT "n", " elements.",
-     PARA,
-     "If ", TT "n", " is negative, then the last ", TT "-n", " elements are 
-     dropped.",
-     EXAMPLE {
-	  "drop({a,b,c,d,e},2)",
-	  "drop({a,b,c,d,e},-2)",
+     Synopsis => {
+	  "w = drop(v,n)",
+	  "v" => null,
+	  "n" => null,
+	  "w" => {"a list obtained by omitting the first ", TT "n", " elements of 
+	       the list ", TT "v", " if ", TT "n", " is positive, or
+	       the last ", TT "-n", " elements if ", TT "n", " is negative."}
 	  },
-     SEEALSO{ "take"}
+     EXAMPLE { "drop({a,b,c,d,e},2)", "drop({a,b,c,d,e},-2)", }
      }
 
 document { drop,
-     Headline => "drop some elements",
-     SEEALSO{ "take"}
-     }
+     Headline => "drop some elements", 
+     SEEALSO "take" }
 
 document { (options, Function),
      Headline => "get optional arguments and defaults",

@@ -14,6 +14,12 @@ use varstrin;
 use strings;
 use basic;
 
+dummyMultaryFun(c:CodeSequence):Expr := (
+     error("dummy multary function called");
+     nullE);
+dummyForFun(c:forCode):Expr := (
+     error("dummy for function called");
+     nullE);
 
 export AdjacentFun := dummyBinaryFun;	-- filled in later in actors.d
 export GlobalAssignFun := dummyBinaryFun;	-- filled in later in actors.d
@@ -24,6 +30,7 @@ export TryElseFun := dummyBinaryFun; 	-- filled in later in actors.d
 export TryFun := dummyUnaryFun; 	-- filled in later in actors.d
 export IfThenFun := dummyBinaryFun;	-- filled in later in actors.d
 export IfThenElseFun := dummyTernaryFun;-- filled in later in actors.d
+export ForFun := dummyForFun;      -- filled in later in actors.d
 export WhileDoFun := dummyBinaryFun;      -- filled in later in actors.d
 export WhileListFun := dummyBinaryFun;      -- filled in later in actors.d
 export WhileListDoFun := dummyTernaryFun;      -- filled in later in actors.d
@@ -155,6 +162,13 @@ export convert(e:ParseTree):Code := (
 	  then Code(openScopeCode(s.scope,convert(s.body)))
 	  else convert(s.body)
 	  )
+     is w:For do Code(
+	  forCode(
+	       convert(w.fromclause), convert(w.toclause),
+	       convert(w.whileclause), convert(w.listclause), 
+	       convert(w.doclause),
+	       w.scope,
+	       treePosition(e)))
      is w:WhileDo do Code(
 	  binaryCode(WhileDoFun,convert(w.predicate),convert(w.doclause),
 	       treePosition(e)))
@@ -459,8 +473,10 @@ export convert(e:ParseTree):Code := (
 	       treePosition(e)))
      is u:Postfix do Code(
 	  unaryCode(u.operator.entry.postfix,convert(u.lhs),treePosition(e)))
-     is d:dummy do Code(exprCode(nullE,d.position))
-     );
+     is d:dummy do (
+     	  -- was: Code(exprCode(nullE,d.position))
+	  dummyCode
+	  ));
 export codePosition(e:Code):Position := (
      when e
      is f:exprCode do f.position
@@ -469,6 +485,7 @@ export codePosition(e:Code):Position := (
      is f:binaryCode do f.position
      is f:ternaryCode do f.position
      is f:multaryCode do f.position
+     is f:forCode do f.position
      is f:openScopeCode do codePosition(f.body)
      is f:functionCode do codePosition(f.parms)
      is v:CodeSequence do codePosition(v.0)-- it would be better to get the surrounding parens...
@@ -609,6 +626,12 @@ export eval(c:Code):Expr := (
      is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
      is b:multaryCode do b.f(b.args)
      is m:functionCode do Expr(FunctionClosure(localFrame, m))
+     is n:forCode do (
+	  localFrame = Frame(localFrame,n.scope.seqno,
+	       new Sequence len n.scope.framesize do provide nullE);
+	  x := ForFun(n);
+	  localFrame = localFrame.next;
+	  x)
      is n:openScopeCode do (
 	  localFrame = Frame(localFrame,n.scope.seqno,
 	       new Sequence len n.scope.framesize do provide nullE);

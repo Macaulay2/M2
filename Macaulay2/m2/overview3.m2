@@ -530,7 +530,7 @@ document { "syntax",
      function application when used as a prefix operator.",
      PARA,
      "To handle expressions like ", TT "b c d", ", where there are no tokens present
-     which can serve as a binary multiplication operator, after parsing b,
+     which can serve as a binary multiplication operator, after parsing ", TT "b", ",
      the level will be set to 1 less than the precedence of an identifier,
      so that ", TT "b c d", " will be parsed as ", TT "b (c d)", ".",
      PARA,

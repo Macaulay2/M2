@@ -14,8 +14,7 @@ Thing * List := List => (a,v) -> apply(v,x->a * x)
 
 List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with List / Function!
 
-Sequence _ List := Sequence => (x,y) -> apply(splice y, i -> x#i)
-    List _ List := List     => (x,y) -> apply(splice y, i -> x#i)
+VisibleList _ List := VisibleList => (x,y) -> apply(splice y, i -> x#i)
 
 maxPosition = x -> (
      if # x === 0 then error "expected a nonempty list" 
@@ -37,7 +36,8 @@ minPosition = x -> (
 
 number = x -> # select x
 
-all = (x,p) -> not any(x, i -> not p i)
+all = method()
+all(HashTable,Function) := all(BasicList,Function) := Boolean => (x,p) -> not any(x, i -> not p i)
 
 same = v -> (
      -- this could be compiled for speed

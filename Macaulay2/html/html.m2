@@ -65,9 +65,11 @@ lastKey := null
 thisKey := null
 
 linkFollowedTable := new MutableHashTable
+masterIndex = new MutableHashTable
 follow := key -> (
      fkey := formatDocumentTag key;
      if not linkFollowedTable#?fkey then (
+	  if class key =!= Option and class key =!= Sequence then masterIndex#fkey = true;
 	  linkFollowedTable#fkey = true;
 	  linkFilename fkey;
 	  saveThisKey := thisKey;
@@ -155,9 +157,7 @@ time scanKeys(docFile,
 close docFile
 
 << "pass 3, writing " << linkFilenameCounter << " html files" << endl
-masterIndex = new MutableHashTable
 time scan(keys linkFollowedTable, fkey -> (
-     	  masterIndex#fkey = true;
 	  linkFilename fkey
 	  << html HTML { 
 	       HEAD TITLE {fkey, headline fkey},

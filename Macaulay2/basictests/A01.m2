@@ -58,7 +58,7 @@ assert( not  false === true )
 -- test try
 assert( try error "" else true )
 --i = 5
---try i :=6 else i :=7
+--try (i :=6) else i :=7
 --assert(i === 5)
 
 -- test or

@@ -53,8 +53,8 @@ getMatrix = (R) -> newMatrix(
 
 BinaryMatrixOperation := (operation) -> (m,n) -> (
      if ring m =!= ring n then (
-	  try m = promote(m,ring n)
-	  else try n = promote(n,ring m)
+	  try (m = promote(m,ring n))
+	  else try (n = promote(n,ring m))
 	  else error "expected matrices over compatible rings");
      sendgg (ggPush m, ggPush n, operation);
      getMatrix ring m)
@@ -62,8 +62,8 @@ BinaryMatrixOperation := (operation) -> (m,n) -> (
 BinaryMatrixOperationSame := (operation) -> (m,n) -> (
      -- same source and target
      if ring m =!= ring n then (
-	  try m = promote(m,ring n)
-	  else try n = promote(n,ring m)
+	  try (m = promote(m,ring n))
+	  else try (n = promote(n,ring m))
 	  else error "expected matrices over compatible rings");
      sendgg (ggPush m, ggPush n, operation);
      T := target m;
@@ -158,8 +158,8 @@ Matrix * Matrix := Matrix => (m,n) -> (
      	  R := ring m;
 	  S := ring n;
 	  if R =!= S then (
-	       try m = m ** S else
-	       try n = n ** R else
+	       try (m = m ** S) else
+	       try (n = n ** R) else
 	       error "maps over incompatible rings";
 	       );
 	  M = target m;
@@ -530,7 +530,7 @@ map(Module,Module,ZZ) := Matrix => options -> (M,N,i) -> (
 
 map(Module,RingElement) := Matrix => options -> (M,r) -> (
      R := ring M;
-     try r = r + R#0
+     try (r = r + R#0)
      else error "encountered scalar of unrelated ring";
      if r == 0 then map(M,M,0)
      else if r == 1 then map(M,1)

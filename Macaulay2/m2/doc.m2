@@ -77,7 +77,42 @@ document { singleton,
      }
 
 document { List,
-     Headline => "class of all lists -- {...}", SEEALSO "lists" }
+     Headline => "class of all lists -- {...}",
+     SEEALSO "lists",
+     PARA,
+     "Common operations on lists:",
+     MENU {
+	  TO "append",
+	  TO "join",
+	  TO "prepend",
+	  },
+     "Common ways to apply functions to elements of lists:",
+     MENU {
+	  TO (apply,BasicList,Function),
+	  TO (scan,BasicList,Function),
+	  },
+     "Common ways to test elements of lists:",
+     MENU {
+	  TO (all,BasicList,Function),
+	  TO (any,BasicList,Function),
+	  },
+     "Common ways to find things in lists:",
+     MENU {
+	  TO (position,VisibleList,Function),
+	  TO (positions,VisibleList,Function),
+	  TO (select,BasicList,Function),
+	  TO (select,ZZ,BasicList,Function),
+	  },
+     "Common ways to extract elements from lists:",
+     MENU {
+	  TO "drop",
+	  TO "take",
+	  TO (symbol #, List, ZZ),
+	  TO (symbol #?, List, ZZ),
+	  TO (symbol _, List, ZZ),
+	  TO (symbol _, VisibleList, List)
+	  },
+     }
 
 document { VisibleList,
      Headline => "class of all visible lists",
@@ -612,14 +647,27 @@ document { "--",
 	  }
      }
 
-document { ascii,
-     Headline => "ASCII character conversion",
-     TT "ascii s", " -- convert a string to a list of ascii codes.", BR,
-     NOINDENT,
-     TT "ascii v", " -- convert a list of ascii codes to a string.",
-     PARA,
-     EXAMPLE {///ascii "abcdef"///, ///ascii oo///},
-     SEEALSO{ "String" }
+document { ascii, Headline => "ASCII character conversion" }
+
+document { (ascii, List),
+     Synopsis => {
+	  "s = ascii v",
+	  "v" => "a list of small integers",
+	  "s" => {"the string whose characters have the ASCII codes listed in ", TT "v"}
+	  },
+     EXAMPLE {///ascii {65,66,67}///, ///ascii oo///},
+     SEEALSO { (ascii, String) }
+     }
+
+document { (ascii, String),
+     Synopsis => {
+	  "v = ascii s",
+	  "s" => "a string",
+	  "v" => {"the list of (small integer) ASCII codes
+	       of the characters of ", TT "s"}
+	  },
+     EXAMPLE {///ascii "abcdef"///, ///ascii oo///, ///first ascii "A"///},
+     SEEALSO { (ascii, List) }
      }
 
 document { transnet,

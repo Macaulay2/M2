@@ -86,7 +86,7 @@ edit = Command editMethod
 
 -----------------------------------------------------------------------------
 methods = method(SingleArgumentDispatch => true)
-methods HashTable := F -> (
+methods Type := F -> (
      seen := new MutableHashTable;
      found := new MutableHashTable;
      seen#F = true;
