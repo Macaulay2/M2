@@ -8,7 +8,12 @@ addStartFunction(
      () -> (
 	  if getenv "M2HOME" === "" 
 	  then error "environment variable M2HOME not set";
-	  path = append(path, getenv "M2HOME" | pathSeparator | "packages" | pathSeparator);
+	  path = join(path,
+	       {
+	       	    getenv "M2HOME" | pathSeparator | "m2" | pathSeparator,
+	       	    getenv "M2HOME" | pathSeparator | "packages" | pathSeparator
+		    }
+	       );
 	  documentationPath = { 
 	       "", 
 	       "cache/doc/" , 

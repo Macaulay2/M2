@@ -8,6 +8,9 @@ justM2 all :: initialize config
 
 include ../config.Makefile
 VPATH = @srcdir@
+################################# this directory's files
+install :: $(packagedir)/COPYING
+$(packagedir)/COPYING : COPYING ; cp $< "$@"
 ################################# bin
 libexec bin :; mkdir $@
 clean ::; rm -rf bin libexec
@@ -42,9 +45,9 @@ distclean clean ::; $(MAKE) -C basictests $@
 ################################# tutorial
 #### keep this before 'm2' so the final/*.out files get made
 justM2::; $(MAKE) -C tutorial all
-all distclean clean::; $(MAKE) -C tutorial $@
+install all distclean clean::; $(MAKE) -C tutorial $@
 ################################# m2
-distclean clean check justM2 all ::; $(MAKE) -C m2 $@
+install distclean clean check justM2 all ::; $(MAKE) -C m2 $@
 ################################# test
 check ::; $(MAKE) -C test -k
 distclean clean ::; $(MAKE) -C test $@
@@ -66,5 +69,12 @@ distclean clean ::; $(MAKE) -C book $@
 ################################# emacs
 all ::;  $(MAKE) -C emacs all
 distclean clean ::; $(MAKE) -C emacs $@
+################################# libexec
+install :: $(packagedir)/libexec
+$(packagedir)/libexec:; $(INSTALL) -d "$@"
+install ::; $(INSTALL_PROGRAM) libexec/Macaulay2 $(packagedir)/libexec
+ifeq "$(DUMPDATA)" "yes"
+# install ::; $(INSTALL) $(DUMPDATAFILE) $(packagedir)/$(DUMPDATAFILE)
+endif
 #################################
 distclean::; rm -f Makefile

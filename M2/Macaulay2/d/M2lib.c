@@ -483,7 +483,7 @@ char **argv;
      for (n=1; ; n++) {
 	  if (n >= argc) {
 	       char buf[100];
-	       if (-1 == sprintf(buf,"Macaulay 2, version %s",VERSION)) {
+	       if (-1 == sprintf(buf,"Macaulay 2, version %s",PACKAGE_VERSION)) {
 		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
 	       }
 	       putstderr(buf);
@@ -574,7 +574,7 @@ char **argv;
      initrandom();
      system_newline = tostring(newline);
      actors5_CCVERSION = tostring(CCVERSION);
-     actors5_VERSION = tostring(VERSION);
+     actors5_VERSION = tostring(PACKAGE_VERSION);
      actors5_OS = tostring(OS);
      actors5_ARCH = tostring(ARCH);
      actors5_NODENAME = tostring(NODENAME);
