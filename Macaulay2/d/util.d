@@ -56,8 +56,15 @@ export getSequenceOfPairsOfSmallIntegers(v:Sequence) : array(int) := (
 	       do foreach j in pair do when j is a:Integer do provide toInt(a) else nothing
 	       else nothing
 	       );
-	  provide -333;
+	  provide -333;					    -- shouldn't happen
 	  ));
+
+export getReverseSequenceOfPairsOfSmallIntegers(v:Sequence) : array(int) := (
+     new array(int) len 2*length(v) do 
+     for k from length(v)-1 to 0 by -1 do 
+     when v.k is pair:Sequence do foreach j in pair do when j is a:Integer do provide toInt(a) else provide(0)
+     else provide(0)
+     );
 
 export isSequenceOfSmallIntegers(s:Sequence) : bool := (
      foreach i in s do (

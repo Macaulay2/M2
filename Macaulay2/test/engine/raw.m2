@@ -11,10 +11,10 @@ a2 = rawVar(0,2)
 b2 = rawVar(1,2)
 x = rawVar(3,4)
 x' = rawVar(3,4)
-t = {(3,4),(2,3)}
+t = {(2,3),(3,4)}
 y = rawMonomialMake t
 o = rawMonomialMake{}
-ab = rawMonomialMake{(1,1),(0,1)}
+ab = rawMonomialMake{(0,1),(1,1)}
 
 assert( hash a2 === hash a^2 )
 
@@ -451,5 +451,5 @@ assert(x*x == 0)
 assert(x^2 == 0)
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw.okay"
+-- compile-command: "M2 --debug-M2 --stop -e 'input \"raw.m2\"' -e 'exit 0'"
 -- End:
