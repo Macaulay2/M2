@@ -72,6 +72,7 @@ M2PKGNAME = PackageName
 
 binRelDir = bin
 libRelDir = lib
+infoRelDir = info
 dataRelDir = share
 manRelDir = $(dataRelDir)/man
 man1RelDir = $(manRelDir)/man1
@@ -107,6 +108,7 @@ endif
 
 bindir = $(encapdir)/$(binRelDir)
 libdir = $(encapdir)/$(libRelDir)
+infodir = $(encapdir)/$(infoRelDir)
 datadir = $(encapdir)/$(dataRelDir)
 mandir = $(encapdir)/$(manRelDir)
 man1dir = $(encapdir)/$(man1RelDir)
@@ -137,6 +139,7 @@ MAKEFUN = "$(1)" => $(M2PKGNAME) -> "$(subst $(M2PKGNAME),"|$(M2PKGNAME)|",$($(1
 LAYOUT := {
 LAYOUT += "bin"=>"$(binRelDir)/",
 LAYOUT += "lib"=>"$(libRelDir)/",
+LAYOUT += "info"=>"$(infoRelDir)/",
 LAYOUT += "data"=>"$(dataRelDir)/",
 LAYOUT += "man"=>"$(manRelDir)/",
 LAYOUT += "man1"=>"$(man1RelDir)/",
