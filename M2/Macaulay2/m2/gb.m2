@@ -134,16 +134,16 @@ makeGB := (f,type,strategy) -> (
      then f#gbWithSyzygy
      else (
 	  g := new GroebnerBasis;
+	  withSyz := type#0;
 	  g.GBtype = type;
 	  g.matrix = f;
 	  g.ring = ring f;
 	  g.target = target f;
 	  g.handle = newHandle (
 	       ggPush f,		  -- the matrix
-	       ggPush bool type#0,	  -- whether to collect syzygies
+	       ggPush bool withSyz, 	  -- whether to collect syzygies
 	       ggPush type#1,		  -- how many rows of them to keep
-	       -- MES: commented out until engine can handle this
-	       if f.?cokernel and f.cokernel.?poincare then (
+	       if not withSyz and f.?cokernel and f.cokernel.?poincare then (
 	           ggPush f.cokernel.poincare 
 	           ),			  -- the Poincare polynomial
 	       ggPush strategy, 	  -- which strategy to use (0=default)
