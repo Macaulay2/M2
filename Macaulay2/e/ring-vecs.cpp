@@ -10,14 +10,13 @@
 
 vec Ring::new_vec() const
 {
-  vec result = (vec) getmem(sizeof(vecterm));
-  return result;
+  return new vecterm;
 }
 
 void Ring::remove_vec_node(vec n) const
 {
   // Should we just let them go, or free them?
-  GC_FREE(n);
+  delete n;
 }
 
 vec Ring::make_vec(int r, ring_elem a) const

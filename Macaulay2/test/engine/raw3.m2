@@ -356,7 +356,26 @@ rawMinors(2,m,0)
 
 m = rawMatrix1(R^4,4,(0_R,b,c,d, -b,0_R,f,g, -c,-f,0_R,i, -d,-g,-i,0_R),false)
 rawPfaffians(4,m)
+<< "raw pfaffians is INCORRECT" << endl;
+-- 
+load "raw-util.m2"
+R2 = rawPolynomialRing(rawQQ(), lex{x,y,z})
+x = rawRingVar(R2,0,1)
+y = rawRingVar(R2,1,1)
+z = rawRingVar(R2,2,1)
+m = mat{{x,y,z}}
+n = mat{{x},{y},{z}}
+m * n
 
+
+m = mat {{x+y+z, x*y+y*z+z*x, x*y*z-1, (x+y+z)^5+x*(x*y*z-1) + 13}}
+ch = mat{{-x^4-4*x^3*y-4*x^3*z-6*x^2*y^2-12*x^2*y*z-6*x^2*z^2
+	    -4*x*y^3-12*x*y^2*z-12*x*y*z^2-x*y*z-4*x*z^3
+	    -y^4-4*y^3*z-6*y^2*z^2-4*y*z^3-z^4+1},
+         {0_R2},
+	 {y+z},
+	 {1_R2}}
+m * ch
 -- TODO: 
 --  compress
 --  uniquify

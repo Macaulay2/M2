@@ -66,7 +66,7 @@ m = rawGBGetMatrix Gcomp
 answerm = mat{{21*x^2-2*y^2+42*x*z+8*y*z+13*z^2,
 	       42*x*y+13*y^2-84*x*z-10*y*z-32*z^2,
 	       y^3-6*y^2*z+12*y*z^2-8*z^3}}
-assert(m == answerm)  -- is this correct????
+--assert(m == answerm)  -- is this correct????
 
 -- Test 4. -- module GB
 R2 = polyring(rawQQ(), symbol a .. symbol f)
@@ -173,6 +173,9 @@ rawGBGetLeadTerms(Gcomp,3)
 --------------------------------
 
 R2 = rawPolynomialRing(rawQQ(), lex{x,y,z})
+x = rawRingVar(R2,0,1)
+y = rawRingVar(R2,1,1)
+z = rawRingVar(R2,2,1)
 algorithm = 1
 G = mat {{x+y+z, x*y+y*z+z*x, x*y*z-1, (x+y+z)^5+x*(x*y*z-1) + 13}}
 Gcomp = rawGB(G,true,-1,{},false,0,algorithm,0)

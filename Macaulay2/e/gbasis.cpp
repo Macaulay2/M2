@@ -30,7 +30,7 @@ GBasis::GBasis(const FreeModule *F0, const FreeModule *Fsyz0)
   lookup = MonomialTable::make(R->n_vars());
   minimal_gb_valid = true;
   _EXP = R->exponents_make();
-  _EXP++;
+  //  _EXP++;
 }
 
 GBasis::gbelem *GBasis::gbelem_make(const FreeModule *F,
