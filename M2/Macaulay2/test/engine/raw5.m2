@@ -42,7 +42,24 @@ assert rawIsStronglyStable B
 -- +, *, rawIntersect, rawColon, rawSaturate, rawStronglyStableClosure, 
 -- rawIsStronglyStable, rawMaximalIndependentSets, rawCodimension
 
-     
+R = ZZ[symbol a..symbol f]
+I = monomialIdeal(a^3,b^2*c,a*c*d)     
+assert(I === monomialIdeal matrix{{a^3,b^2*c, a*c*d}})
+assert(I === monomialIdeal matrix{{a^3,b^2*c, a^7, b^2*c, b^2*c^2, a*c*d}})
+assert(numgens I == 3)
+minprimes I
+primaryDecomposition I  -- FAILS: attempted to modify immutable hash table
+saturate(I,a) -- an ideal expects I.generators to be there, but it is not!
+I : a -- also fails, same problem.
+
+borel I
+isBorel I -- returns a function??
+poincare I
+poincare borel I
+res I
+intersect(I,monomialIdeal(a^3,b^3,c^3,d^3))
+topPrimes I  -- should this be the name, instead of minprimes??
+
 --------------------------
 -- Hilbert functions -----
 --------------------------
@@ -57,6 +74,13 @@ f1 = f // (1-t)
 f1 % (1-t)
 f2 = f1 // (1-t)
 f2 % (1-t)
+
+R = ZZ[symbol a..symbol g]
+M = matrix{{a^2, a*b, b^2}}
+poincare coker M
+poincare coker M
+Mi = monomialIdeal M
+assert(poincare Mi == poincare coker M)
 
 needs "raw-util.m2"
 R = polyring(rawZZp 32003, (symbol a .. symbol h))

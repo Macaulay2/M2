@@ -89,16 +89,16 @@ decompose(Ideal) := (I) -> if I.cache.?decompose then I.cache.decompose else I.c
      if I == 0 then return {if A === R then I else ideal 0_R};
      ics := irreducibleCharacteristicSeries I;
      Psi := apply(ics#0, CS -> (
-	       CS = matrix {CS};
 	       chk := topCoefficients CS;
 	       chk = chk#1;		  -- just keep the coefficients
 	       chk = first entries chk;
 	       iniCS := select(chk, i -> degree i =!= {0});
 	       CS = ideal CS;
-	       -- << "saturating " << CS << " with respect to " << iniCS << endl;
+	       --<< "saturating " << CS << " with respect to " << iniCS << endl;
 	       -- warning: over ZZ saturate does unexpected things.
-	       scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
-	       -- << "result is " << CS << endl;
+--	       scan(iniCS, a -> CS = saturate(CS, a, Strategy=>Eliminate));
+	       scan(iniCS, a -> CS = saturate(CS, a));
+	       --<< "result is " << CS << endl;
 	       CS));
      Psi = new MutableList from Psi;
      p := #Psi;
