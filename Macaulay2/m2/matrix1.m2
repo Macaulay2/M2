@@ -132,10 +132,16 @@ map(Module,Nothing,List) := map(Module,Module,List) := options -> (M,N,p) -> (
 	       if options.Degree =!= null
 	       then error "Degree option given with indeterminate source module";
 	       ggPush rankN,
-	       if R.?newEngine then ggPush toList (degreeLength R:0)
+	       if R.?newEngine then (
+		    ggPush 3,				    -- 1=left 2=right 3=both
+		    ggPush toList (degreeLength R:0)
+		    )
 	       )
 	  else (
 	       ggPush cover N,
+	       if R.?newEngine then (
+		    ggPush 3				    -- 1=left 2=right 3=both
+		    ),
 	       ggPush (
 		    if options.Degree === null
 	       	    then toList (degreeLength R:0)

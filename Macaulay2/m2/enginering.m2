@@ -718,12 +718,7 @@ lift(RingElement, RingElement) := (r,o) -> (
 	  );
      lift(r,o))
 
-lift(ZZZ,ZZ) := (r,o) -> (
-     convert(
-	  ConvertApply((r,a,b,c)->c, ConvertInteger,ConvertInteger,ConvertInteger,ConvertInteger),
-	  callgg(ggtonet, r)
-	  )
-     )
+lift(ZZZ,ZZ) := (r,o) -> convert(ConvertInteger, callgg(ggtonet, r))
 
 lift(ZZ,Ring) :=
 lift(QQ,Ring) :=
