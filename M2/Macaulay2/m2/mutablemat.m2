@@ -14,7 +14,7 @@ net MutableMatrix := m -> (
      if m == 0 then return "0";
      stack toSequence apply(lines toString m, x -> concatenate("| ",x,"|")))
 map(Ring,RawMutableMatrix) := opts -> (R,m) -> (
-     new HashTable from {
+     new MutableMatrix from {
 	  symbol Ring => R,
 	  symbol RawMutableMatrix => m
 	  }
@@ -26,7 +26,7 @@ mutableMatrix = method()
 mutableMatrix Matrix := m -> new MutableMatrix from m
 mutableMatrix List := m -> new MutableMatrix from matrix m
 
-MutableMatrix _ Sequence := (m,rc) -> (raw m)_rc
+MutableMatrix _ Sequence := (m,rc) -> new ring m from (raw m)_rc
 MutableMatrix == MutableMatrix := (m,n) -> raw m == raw n
 
 setRowChange = method()
@@ -39,6 +39,8 @@ setColumnChange(MutableMatrix,Matrix) := (m,c) -> rawColumnChange(raw m, rawMuta
 
 assgn := method()
 assgn(RawMutableMatrix,ZZ,ZZ,RingElement) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
+assgn(RawMutableMatrix,ZZ,ZZ,ZZ) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
+assgn(RawMutableMatrix,ZZ,ZZ,QQ) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
 installAssignmentMethod(symbol _, MutableMatrix, Sequence, (m,rc,x) -> ((r,c) -> assgn(raw m,r,c,x)) rc)
 
 rowSwap = method()

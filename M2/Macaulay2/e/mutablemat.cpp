@@ -127,6 +127,7 @@ DenseMutableMatrixCC *
 DenseMutableMatrixCC::zero_matrix(int nrows, 
 				  int ncols)
 {
+#warning "implement this"
   return 0;
 }
 
