@@ -173,12 +173,12 @@ rawColon(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
      when a.0 is x:RawMonomial do 
-     when a.1 is y:RawMonomial do toExpr( Ccode(RawMonomialOrNull, "(engine_RawMonomialOrNull)IM2_Monomial_quotient(", "(Monomial *)", x, ",", "(Monomial *)", y, ")" ))
+     when a.1 is y:RawMonomial do toExpr( Ccode(RawMonomialOrNull, "(engine_RawMonomialOrNull)IM2_Monomial_colon(", "(Monomial *)", x, ",", "(Monomial *)", y, ")" ))
      else WrongArg(2,"a raw monomial")
      else when a.0 is I:RawMonomialIdeal do 
      when a.1
-     is y:RawMonomial do Expr( Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)IM2_MonomialIdeal_quotient1(", "(MonomialIdeal *)", I, ",", "(Monomial *)", y, ")" ))
-     is J:RawMonomialIdeal do toExpr( Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)IM2_MonomialIdeal_quotient(", "(MonomialIdeal *)", I, ",", "(MonomialIdeal *)", J, ")" ))
+     is y:RawMonomial do Expr( Ccode(RawMonomialIdeal, "(engine_RawMonomialIdeal)IM2_MonomialIdeal_colon1(", "(MonomialIdeal *)", I, ",", "(Monomial *)", y, ")" ))
+     is J:RawMonomialIdeal do toExpr( Ccode(RawMonomialIdealOrNull, "(engine_RawMonomialIdealOrNull)IM2_MonomialIdeal_colon(", "(MonomialIdeal *)", I, ",", "(MonomialIdeal *)", J, ")" ))
      else WrongArg(2,"a raw monomial or monomial ideal")
      else WrongArg(1,"a raw monomial or monomial ideal")
      else WrongNumArgs(2)
@@ -647,7 +647,7 @@ setupfun("rawMultiDegree",rawMultiDegree);
 
 rawDegree(e:Expr):Expr := (
      when e
-     is x:RawMonomial do Expr(toInteger(Ccode(int, "IM2_Monomial_degree((Monomial*)",x,")")))
+     -- is x:RawMonomial do Expr(toInteger(Ccode(int, "IM2_Monomial_degree((Monomial*)",x,")")))
      is s:Sequence do 
      if length(s) != 2 then buildErrorPacket("expected 1 or 2 arguments") else
      when s.0 is x:RawRingElement do 
