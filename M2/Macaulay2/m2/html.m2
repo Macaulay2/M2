@@ -462,22 +462,27 @@ uninstallPackage Package := o -> pkg -> (
 	  );
      )
 
+reloadPackage := (pkg,opts) -> (
+     stderr << "--reloading package \"" << pkg << "\"" << endl;
+     fl := forceLoadDocumentation;
+     forceLoadDocumentation = true;
+     loadPackage(pkg, DebuggingMode => opts.DebuggingMode);
+     forceLoadDocumentation = fl;
+     )
+
 installPackage String := opts -> pkg -> (
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then (
 	  PKG := value PackageDictionary#pkg;
 	  if PKG#?"processed documentation database" and isOpen PKG#"processed documentation database"
      	  then return installPackage(value PackageDictionary#pkg, opts);
 	  );
-     fl := forceLoadDocumentation;
-     forceLoadDocumentation = true;
-     loadPackage(pkg, DebuggingMode => opts.DebuggingMode);
-     forceLoadDocumentation = fl;
+     reloadPackage(pkg,opts);
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then return installPackage(value PackageDictionary#pkg, opts);
      error ("can't load or locate package '",pkg,"', unknown problem");
      )
 
-installPackage Package := o -> pkg -> (
-     absoluteLinks = o.AbsoluteLinks;
+installPackage Package := opts -> pkg -> (
+     absoluteLinks = opts.AbsoluteLinks;
      if class absoluteLinks =!= Boolean then error "expected true or false for option AbsoluteLinks"; 
      oldpkg := currentPackage;
      currentPackage = pkg;
@@ -493,7 +498,7 @@ installPackage Package := o -> pkg -> (
 	       load "Macaulay2-doc.m2";
      	       currentPackage = null;
 	       )
-	  else error "raw documentation not loaded";
+	  else reloadPackage(pkg#"title",opts)
 	  );
 
      -- here's where we get the list of nodes from the raw documentation
@@ -502,10 +507,10 @@ installPackage Package := o -> pkg -> (
      buildPackage = if pkg === Macaulay2 then "Macaulay2" else pkg#"title";
      buildPackage = minimizeFilename buildPackage;
 
-     buildDirectory = minimizeFilename(runfun o.PackagePrefix | "/");
-     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
+     buildDirectory = minimizeFilename(runfun opts.PackagePrefix | "/");
+     if opts.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
 
-     installDirectory := minimizeFilename(runfun o.InstallPrefix | "/");
+     installDirectory := minimizeFilename(runfun opts.InstallPrefix | "/");
 
      stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
 
@@ -641,14 +646,14 @@ installPackage Package := o -> pkg -> (
 	       tmpf := tmpfn fkey;
 	       desc := "example results for " | fkey;
 	       changefun := () -> remove(rawDocUnchanged,fkey);
-	       runFile(inf,outf,tmpf,desc,pkg,changefun,o.RunDirectory);
+	       runFile(inf,outf,tmpf,desc,pkg,changefun,opts.RunDirectory);
 	       -- read, separate, and store example output
 	       if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
 	       else (
 		    if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
 		    )
 	       ));
-     if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
+     if haderror and not opts.IgnoreExampleErrors then error "error(s) occurred running example files";
 
      -- make test output files
      stderr << "--making test result files in " << testsDir << endl;
@@ -668,7 +673,7 @@ installPackage Package := o -> pkg -> (
      stderr << "--processing documentation nodes..." << endl;
      scan(nodes, tag -> (
 	       fkey := DocumentTag.FormattedKey tag;
-	       if not o.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
+	       if not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
 	       	    -- stderr << "--skipping   " << tag << endl;
 		    )
 	       else (
@@ -712,7 +717,7 @@ installPackage Package := o -> pkg -> (
 	       ));
 
      -- make info file
-     if o.MakeInfo then (
+     if opts.MakeInfo then (
 	  savePW := printWidth;
 	  printWidth = 79;
 	  infodir := buildDirectory|LAYOUT#"info";
@@ -755,7 +760,7 @@ installPackage Package := o -> pkg -> (
 	  );
 
      -- make postinstall and preremove files, if encap
-     if o.Encapsulate then (
+     if opts.Encapsulate then (
 	  octal := s -> (n := 0 ; z := first ascii "0"; scan(ascii s, i -> n = 8*n + i - z); n);
 	  stderr << "--making postinstall, preremove, and encapinfo files in " << buildDirectory << endl;
 	  f := buildDirectory | "postinstall" 
@@ -796,7 +801,7 @@ installPackage Package := o -> pkg -> (
 	  -- key := DocumentTag.Key tag;
 	  fkey := DocumentTag.FormattedKey tag;
 	  fn := buildDirectory | htmlFilename tag;
-	  if fileExists fn and not o.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
+	  if fileExists fn and not opts.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
 	  stderr << "--making html page for " << tag << endl;
 	  fn
 	  << html HTML { 
@@ -820,7 +825,7 @@ installPackage Package := o -> pkg -> (
      makeTableOfContents();
 
      -- make symbolic links
-     if o.Encapsulate and o.MakeLinks then (
+     if opts.Encapsulate and opts.MakeLinks then (
 	  symlinkDirectory(buildDirectory, installDirectory, Verbose => true)
 	  );
 
