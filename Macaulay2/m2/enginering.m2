@@ -462,7 +462,7 @@ promoteChain := (A,R) -> (
 	  R))
 
 lift(RingElement, RingElement) := RingElement =>
-lift(RingElement, ZZ) :=
+lift(RingElement, ZZ) := (r,o) -> rawToInteger raw r
 lift(RingElement, QQ) := (r,o) -> (
      R := class r;
      A := class o;

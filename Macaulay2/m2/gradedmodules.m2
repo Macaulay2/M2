@@ -413,13 +413,6 @@ map(GradedModule,GradedModule,Function) := GradedModuleMap => options -> (C,D,f)
      h
      )
 
-ggConcatBlocks := (R,mats) -> (
-     sendgg (
-	  apply(mats, row -> ( apply(row, m -> ggPush m), 
-		    ggPush(#row), ggconcat, ggtranspose )),
-	  ggPush(#mats), ggconcat, ggtranspose );
-     getMatrix R)
-     
 tensorAssociativity = method()
 tensorAssociativity(GradedModule,GradedModule,GradedModule) := GradedModuleMap => (A,B,C) -> (
      R := ring A;

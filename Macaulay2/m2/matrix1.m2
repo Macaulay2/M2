@@ -676,7 +676,6 @@ erase symbol reduce
 erase symbol concatRows
 erase symbol concatCols
 erase symbol samering
-erase symbol ggConcatBlocks
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
