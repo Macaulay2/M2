@@ -2057,7 +2057,7 @@ document { "GC garbage collector",
      "Macaulay 2 uses the garbage collector 'GC' written by Hans-J. Boehm
      and Alan J. Demers.  The copyright is contained in its README file
      which we provide in the file ", TT "Macaulay2/licenses/gc.lic", ".",
-     SEEALSO "collectGarbage"
+     SEEALSO {"collectGarbage", "gcDump"}
      }
 
 document { "Factory library",
@@ -2610,7 +2610,8 @@ document { "system",
 	  },
      "Dealing with the garbage collector:",
      MENU {
-	  TO "collectGarbage"
+	  TO "collectGarbage",
+	  TO "gcDump"
 	  }
      }
 
@@ -3908,6 +3909,16 @@ document { quote linkFilenameKeys,
 
 document { quote collectGarbage,
      TT "collectGarbage()", " -- attempt a garbage collection.",
+     PARA,
+     SEEALSO "GC garbage collector"
+     }
+
+document { quote gcDump,
+     TT "gcDump()", " -- produces a dump of the status of the garbage collector.",
+     PARA,
+     "Users will normally not want to use this function.  It calls the 
+     function ", TT "GC_dump", " in the garbage collector, and the output can
+     be used to debug problems with memory allocation.",
      PARA,
      SEEALSO "GC garbage collector"
      }

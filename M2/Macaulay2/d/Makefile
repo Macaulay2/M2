@@ -97,7 +97,14 @@ LDLIBS   :=
 LDFLAGS  := -L${LIBDIR} $(STRIPFLAG) $(DEBUGFLAGS)
 
 ifeq ($(OS),Linux)
+## - use this to get a memory map listing from the gnu linker
 LDFLAGS  += -Wl,-Map,mapfile
+endif
+
+ifeq ($(OS),SunOS)
+## - use this to get a memory map listing from the linker
+##   if using Sun's ld.  Sigh, it comes to stdout.
+# LDFLAGS  += -Wl,-m
 endif
 
 #################################
@@ -232,7 +239,7 @@ endif
 		../../lib/libgmp.a \
 		$(LIBMP) \
 		../../lib/libfac.a \
-		../../lib/libcf.a ../../lib/libcfmem.a \
+		../../lib/libcf.a \
 		../../lib/libmpf.a \
 		../../lib/libmpz.a \
 		../../lib/libmpn.a \

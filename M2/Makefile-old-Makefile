@@ -49,7 +49,8 @@ endif
 ifdef DEBUG
 # GC_TARGETS += test
 else
-GC_CFLAGS += -DNO_DEBUGGING
+# we want to use GC_dump(), so don't define NO_DEBUGGING
+# GC_CFLAGS += -DNO_DEBUGGING
 endif
 
 lib/libgc.a: 	  gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
