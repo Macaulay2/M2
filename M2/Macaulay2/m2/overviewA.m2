@@ -367,10 +367,9 @@ document { "modules: part II",
 		    TO "Hom module",
 		    TO "Tor and Ext"
 		    },
-	       "For more operations in homological algebra, see ", TO "chain complexes", "."
 	       )
 	  },
-      "For additional common operations and a comprehensive list of all routines
+     "For more operations in homological algebra, see ", TO "chain complexes", ".  For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use modules, see ", TO "Module", "."
      }
 
