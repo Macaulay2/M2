@@ -120,8 +120,10 @@ buttonBar = (key) -> CENTER {
      up key,
      if key =!= topNodeName then topNodeButton else nullButton,
      masterIndexButton,
-     LITERAL ///
-     <form action="/cgi-bin/htsearch">
+     LITERAL concatenate (///
+     <form action="///,
+     if getenv "SEARCHENGINE" === "" then "/cgi-bin/htsearch" else getenv "SEARCHENGINE",
+     ///">
 	search for:
 	<input type="text"   name="words">
 	<input type="hidden" name="method"   value="boolean">
@@ -131,7 +133,7 @@ buttonBar = (key) -> CENTER {
 	<input type="hidden" name="restrict" value="">
 	<input type="hidden" name="exclude"  value="">
      </form>
-     ///
+     ///)
      }
 	  
 haderror = false
