@@ -506,14 +506,26 @@ tex  HR := x -> ///
 \line{\leaders\hrule\hfill}
 ///
 
-html PARA := x -> concatenate(///
+html PARA := x -> (
+     if #x === 0 
+     then ///
+<P>
+///
+     else concatenate(///
 <P>
 ///,
-     apply(x,html),
-     ///
+          apply(x,html),
+          ///
 </P>
-///)
-tex PARA := x -> concatenate(newline, newline, apply(x,tex))
+///
+          )
+     )
+
+tex PARA := x -> concatenate(///
+\par
+///,
+     apply(x,tex))
+
 text PARA := x -> concatenate(newline, newline, apply(x,text))
 
 text EXAMPLE := x -> concatenate apply(x,i -> text PRE i)
