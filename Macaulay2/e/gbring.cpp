@@ -37,6 +37,20 @@ gbvector * GBRing::new_raw_term()
   return (gbvector *) _mem.new_elem();
 }
 
+/*************************
+ * Exponent handling *****
+ *************************/
+
+exponents GBRing::exponents_make()
+{
+  int *e = new int[_nvars]; // length is nvars
+}
+
+void GBRing::exponents_delete(exponents e)
+{
+  delete [] e;
+}
+
 /////////////
 // GRType ///
 /////////////
@@ -854,6 +868,53 @@ void GBRing::gbvector_reduce_lead_term(const FreeModule *F,
       gbvector_mult_by_coeff_to(f,u); // modifies f
       gbvector_mult_by_coeff_to(flead,u);
       gbvector_mult_by_coeff_to(fsyz,u);
+    }
+  // mult f,flead by u (if u != 1)
+  // now mult g to cancel
+  if (is_skew_commutative())
+    {
+      if (_skew.mult_sign(_EXP3, _EXP2) < 0)
+	K->negate_to(v);
+    }
+  M->from_expvector(_EXP3, _MONOM1);
+  gbvector *result1 = mult_by_term(F,g, v,_MONOM1,comp);
+  gbvector_add_to(F,f,result1);
+  if (fsyz != 0 || gsyz != 0) 
+    {
+      gbvector *result_syz1 = mult_by_term(Fsyz,gsyz, v,_MONOM1, comp);
+      gbvector_add_to(Fsyz,fsyz,result_syz1);
+    }
+}
+
+void GBRing::gbvector_reduce_lead_term_coeff(const FreeModule *F,
+				       const FreeModule *Fsyz,
+				       gbvector * flead,
+				       gbvector * &f,
+				       gbvector * &fsyz,
+				       const gbvector *g,
+				       const gbvector *gsyz,
+				       ring_elem &denom)
+  // This routine varies from  gbvector_reduce_lead_term in just ONE LINE:
+  // where denom gets multiplied by the multiplier to f (if not 1).
+{
+  int comp;
+  const ring_elem a = f->coeff;
+  const ring_elem b = g->coeff;
+  ring_elem u,v;
+  K->syzygy(a,b,u,v); // If possible, u==1, anyway, u>0
+  gbvector_get_lead_exponents(F,f,_EXP1); // Removes the Schreyer part
+  gbvector_get_lead_exponents(F,g,_EXP2); // Removes the Schreyer part
+  divide_exponents(_EXP1,_EXP2,_EXP3);
+  if (g->comp == 0)
+    comp = f->comp;
+  else
+    comp = 0;
+  if (!K->is_equal(u,_one))
+    {
+      gbvector_mult_by_coeff_to(f,u); // modifies f
+      gbvector_mult_by_coeff_to(flead,u);
+      gbvector_mult_by_coeff_to(fsyz,u);
+      K->mult_to(denom, u);
     }
   // mult f,flead by u (if u != 1)
   // now mult g to cancel

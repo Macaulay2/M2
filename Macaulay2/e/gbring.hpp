@@ -19,6 +19,7 @@
 //   quotient ideal
 #include "ring.hpp"
 #include "skew.hpp"
+#include "ntuple.hpp"
 
 struct gbvector {
   gbvector * next;
@@ -165,6 +166,7 @@ public:
   const PolynomialRing * get_flattened_ring() const { return R; }
   const Monoid * get_flattened_monoid() const { return M; }
   const Ring * get_flattened_coefficients() const { return K; }
+  int n_vars() const { return _nvars; }
 
   //////////////////////
   // Ring information //
@@ -200,6 +202,15 @@ public:
 			    const ring_elem denom) const;
   // Translate v/denom to a vector in F.  denom does not need to be positive,
   // although it had better be non-zero.
+
+
+  //////////////////////
+  // exponents support //
+  //////////////////////
+
+  exponents exponents_make();
+
+  void exponents_delete(exponents e);
 
   //////////////////////
   // gbvector support //
@@ -288,6 +299,18 @@ public:
   // then: flead := u * flead
   //       f := u*f - v*x^A*g
   //       fsyz := u*fsyz - v*x^A*gsyz
+
+  void gbvector_reduce_lead_term_coeff(const FreeModule *F,
+				       const FreeModule *Fsyz,
+				       gbvector * flead,
+				       gbvector * &f,
+				       gbvector * &fsyz,
+				       const gbvector *g,
+				       const gbvector *gsyz,
+				       ring_elem &denom);
+  // Same as gbvector_reduce_lead_term, except that 
+  // denom is set to u*denom.
+
 
   void gbvector_cancel_lead_terms(
 				  const FreeModule *F,

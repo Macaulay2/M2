@@ -6,28 +6,17 @@
 #include "gbring.hpp"
 #include "montable.hpp"
 #include "gb_comp.hpp"
+#include "gbasis.hpp"
 
 class gbA : public Computation {
 private:
   /* Types of minimality */
-  enum { 
-    ELEM_IN_STONE = -1,  /* These are ring elements, or do not count towards mingens */
-    ELEM_TRIMMED = 0,
-    ELEM_MIN_GB = 1,
-    ELEM_NON_MIN_GB = 2
-  };
-
   enum {
     SPAIR_SPAIR,
     SPAIR_RING,
     SPAIR_SKEW,
     SPAIR_GEN,
     SPAIR_ELEM
-  };
-
-  struct POLY {
-    gbvector *f;
-    gbvector *fsyz;
   };
 
 public:
@@ -46,15 +35,6 @@ public:
     } x;
     gbvector *&f() { return x.f.f; }
     gbvector *&fsyz() { return x.f.fsyz; }
-  };
-
-  struct gbelem {
-    POLY g;
-    int deg;
-    int alpha; // the homogenizing degree
-    int me;
-    exponents lead; // -1..nvars-1, the -1 part is the component
-    int minlevel;
   };
 
 private:
@@ -80,14 +60,10 @@ private:
   const FreeModule *_F;
   const FreeModule *_Fsyz;
   int _nvars;
+  GBasis *G;
 
-  vector< gbelem * > gb;	/* array of gbelem's */
-  MonomialTable *lookup;		/* points into gb */
-  MonomialTable *ringtable; // Coming from R, soon....
   SPairSet S;
   vector <gbvector *> _syz;
-  bool _minimal_gb_valid; // true iff _minimal_gb has been computed and is valid
-  vector <POLY> _minimal_gb;
 
   int _strategy;
   int _this_degree;
@@ -113,23 +89,20 @@ private:
   
   /* initialization */
   void initialize(const Matrix *m, int csyz, int nsyz, int strat);
-  void initialize0(const Matrix *m, int csyz, int nsyz);
   spair *new_gen(int i, gbvector *f, ring_elem denom);
-
-  /* exponent handling */
-  exponents exponents_make();
-  void exponents_delete(exponents e);
 
   void lead_exponents(gbvector *f, exponents e);
   void lead_exponents_deg(gbvector *f, exponents e, int deg);
 
-  int exponents_COMPONENT(exponents e) { return e[-1]; }
-  int gbelem_COMPONENT(gbelem *g) { return g->lead[-1]; }
-  int spair_COMPONENT(spair *s) { return s->lcm[-1]; }
+  int gbelem_COMPONENT(GBasis::gbelem *g) { return g->g.f->comp; }
+  int spair_COMPONENT(spair *s) { 
+    // Only valid if this is an SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW.
+    // Probably better is to put it into spair structure.
+    return G->gb[s->x.pair.i]->g.f->comp;
+  }
 
   /* spair creation */
   /* negative indices index quotient ring elements */
-  gbelem *gbelem_make(POLY f, int minlevel, int deg, int me);
   spair *spair_node();
   spair *spair_make(int i, int j);
   spair *spair_make_gen(POLY f);
@@ -139,7 +112,7 @@ private:
   void spair_delete(spair *&p);
 
   /* spair handling */
-  bool pair_not_needed(spair *p, gbelem *m);
+  bool pair_not_needed(spair *p, GBasis::gbelem *m);
   void remove_unneeded_pairs(int id);
   bool is_gcd_one_pair(spair *p);
   spairs::iterator choose_pair(spairs::iterator first, spairs::iterator next);
@@ -164,8 +137,6 @@ private:
   void auto_reduce_by(int id);
   void compute_s_pair(spair *p);
   bool reduce(spair *p);
-  void remainder(POLY &f, int degf);
-  bool find_good_divisor(POLY f, int degf, int &result_alpha, POLY &result_g);
   void collect_syzygy(gbvector *fsyz);
 
   void insert(POLY f, int minlevel);
@@ -175,7 +146,6 @@ private:
 
   /* Making the minimal GB */
   void poly_auto_reduce(vector<POLY> &mat);
-  void make_minimal_gb();
 
 public:
 
