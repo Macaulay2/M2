@@ -3,7 +3,7 @@
 #   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000
 #   Free Software Foundation, Inc.
 
-version='2000-10-07'
+version='2000-10-23'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -859,6 +859,20 @@ EOF
 	  echo s390-ibm-linux && exit 0
 	elif test "${UNAME_MACHINE}" = "x86_64"; then
 	  echo x86_64-unknown-linux-gnu && exit 0
+	elif test "${UNAME_MACHINE}" = "parisc" -o "${UNAME_MACHINE}" = "hppa"; then
+	  # Look for CPU level
+	  case `grep '^cpu[^a-z]*:' /proc/cpuinfo 2>/dev/null | cut -d' ' -f2` in
+	    PA7*)
+		echo hppa1.1-unknown-linux-gnu
+		;;
+	    PA8*)
+		echo hppa2.0-unknown-linux-gnu
+		;;
+	    *)
+		echo hppa-unknown-linux-gnu
+		;;
+	  esac
+	  exit 0
 	else
 	  # Either a pre-BFD a.out linker (linux-gnuoldld)
 	  # or one that does not give us useful --help.
@@ -1085,6 +1099,9 @@ EOF
 	exit 0 ;;
     NSR-[KW]:NONSTOP_KERNEL:*:*)
 	echo nsr-tandem-nsk${UNAME_RELEASE}
+	exit 0 ;;
+    *:NonStop-UX:*:*)
+	echo mips-compaq-nonstopux
 	exit 0 ;;
     BS2000:POSIX*:*:*)
 	echo bs2000-siemens-sysv

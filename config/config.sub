@@ -3,7 +3,7 @@
 #   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000
 #   Free Software Foundation, Inc.
 
-version='2000-10-09'
+version='2000-10-25'
 
 # This file is (in principle) common to ALL GNU software.
 # The presence of a machine in this file suggests that SOME GNU software
@@ -640,6 +640,10 @@ case $basic_machine in
 		basic_machine=i960-intel
 		os=-mon960
 		;;
+	nonstopux)
+		basic_machine=mips-compaq
+		os=-nonstopux
+		;;
 	np1)
 		basic_machine=np1-gould
 		;;
@@ -675,7 +679,7 @@ case $basic_machine in
         pc532 | pc532-*)
 		basic_machine=ns32k-pc532
 		;;
-	pentium | p5 | k5 | k6 | nexen)
+	pentium | p5 | k5 | k6 | nexgen)
 		basic_machine=i586-pc
 		;;
 	pentiumpro | p6 | 6x86 | athlon)
@@ -684,7 +688,7 @@ case $basic_machine in
 	pentiumii | pentium2)
 		basic_machine=i786-pc
 		;;
-	pentium-* | p5-* | k5-* | k6-* | nexen-*)
+	pentium-* | p5-* | k5-* | k6-* | nexgen-*)
 		basic_machine=i586-`echo $basic_machine | sed 's/^[^-]*-//'`
 		;;
 	pentiumpro-* | p6-* | 6x86-* | athlon-*)
@@ -991,7 +995,7 @@ case $os in
 	      | -cygwin* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
 	      | -mingw32* | -linux-gnu* | -uxpv* | -beos* | -mpeix* | -udk* \
 	      | -interix* | -uwin* | -rhapsody* | -darwin* | -opened* \
-	      | -openstep* | -oskit* | -conix* | -pw32*)
+	      | -openstep* | -oskit* | -conix* | -pw32* | -nonstopux*)
 	# Remember, each alternative MUST END IN *, to match a version number.
 		;;
 	-qnx*)
