@@ -1,0 +1,21 @@
+# -*- mode: Makefile -*-
+# this makefile is run from a subdirectory, hence various insertions of ..
+
+VPATH = $(srcdir)
+
+check: test.out.expected.trim test.out.trim
+	diff -u $^
+
+test.out.trim : test.out $(srcdir)/../patterns $(srcdir)/patterns
+	sed -f $(srcdir)/../patterns -f $(srcdir)/patterns <$< >$@
+
+test.out.expected.trim : test.out.expected $(srcdir)/../patterns $(srcdir)/patterns
+	sed -f $(srcdir)/../patterns -f $(srcdir)/patterns <$< >$@
+
+test.out : test.m2 ../../../libexec/Macaulay2 \
+		../../../cache/Macaulay2-doc ../../../cache/Macaulay2-made
+	ulimit -v 320000 && \
+	time nice -18 ../../../../bin/M2 -x -s -q \
+		"-e path = join({\"$(srcdir)/\",\"$(srcdir)/../../\"},path)" \
+		<$(srcdir)/test.m2 >test.out.tmp && \
+	mv test.out.tmp test.out

@@ -19,11 +19,11 @@ ARGS := -q -silent -ephase=1 ../../../m2/setup.m2 -ephase=0 \
 		'-epath=join(path,{\"../../\",\"$(srcdir)/\"})' '-erunStartFunctions()' '-eerrorDepth(0)'
 else
 ARGS := -q -silent \
-		'-epath=join({"../../","$(srcdir)/"})' \
-		-ephase=1 $(srcdir)/setup.m2 -ephase=0 \
-		'-erunStartFunctions()' '-eerrorDepth(0)'
+		'-e path=join({"../../../m2/","$(srcdir)/../m2/","$(srcdir)/../packages/"})' \
+		-ephase=1 $(srcdir)/../m2/setup.m2 -ephase=0 \
+		'-e runStartFunctions()' '-e errorDepth(0)'
 
-all :: $(srcdir)/setup.m2
+all :: $(srcdir)/../m2/setup.m2
 
 endif
 endif

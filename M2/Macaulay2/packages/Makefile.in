@@ -1,6 +1,7 @@
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@
+srcdir = $(shell cd @srcdir@; pwd)
 DOC=cache/doc
 TEST=cache/tests
 
@@ -15,12 +16,12 @@ Makefile : Makefile.in
 all :: doc
 distclean :: clean
 doc : $(DOC) $(TEST) phase2
-	$(MAKE) -C $(DOC) -f ../../@srcdir@/../m2/Makefile.egs srcdir=../../@srcdir@
+	$(MAKE) -C $(DOC) -f $(srcdir)/../m2/Makefile.egs srcdir=$(srcdir)
 phase2 : StateTable.m2 eliminate.m2
 	for i in $^ ; do ../../bin/M2 -q '-e phase=2' $$i '-e exit 0'; done
 	touch "$@"
 check:: doc
-	$(MAKE) -C $(TEST) -f ../../@srcdir@/../m2/Makefile.tests srcdir=../../@srcdir@
+	$(MAKE) -C $(TEST) -f $(srcdir)/../m2/Makefile.tests srcdir=$(srcdir)
 #############################################################################
 Dtests = $(wildcard D-modules/TST/*.tst.m2)
 Dtestresults = $(Dtests:.m2=.okay)
@@ -38,11 +39,6 @@ clean check distclean ::
 initialize :: cache $(DOC) $(TEST)
 clean ::; rm -rf cache
 cache $(DOC) $(TEST) :; mkdir -p $@
-
-initialize :: $(DOC)/up.gif $(DOC)/next.gif $(DOC)/previous.gif $(DOC)/top.gif \
-		$(DOC)/index.gif $(DOC)/null.gif 
-$(DOC)/up.gif $(DOC)/next.gif $(DOC)/previous.gif $(DOC)/top.gif $(DOC)/index.gif $(DOC)/null.gif :
-	ln -s ../../../html/$(shell basename $@) $(DOC)
 
 $(packagedir)/packages :; $(INSTALL) -d "$@"
 install :: $(packagedir)/packages

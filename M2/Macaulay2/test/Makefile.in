@@ -29,13 +29,14 @@ dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3
 	@ touch dumpdata.okay
 endif
 
-ifneq "$(DUMPDATA)" "no"
+ifeq "$(DUMPDATA)" "yes"
 ARGS := -q '-eloaddata("../$(DUMPDATAFILE)")' -- \
 	'-epath=append(path,"@srcdir@/../packages/")' \
 	'-erunStartFunctions()' '-eerrorDepth(0)' -silent
 else
-ARGS := -q -ephase=1 @srcdir@/../m2/setup.m2 -ephase=0 \
-	'-epath=append(path,"@srcdir@/../packages/")' \
+ARGS := -q \
+	'-epath={"@srcdir@/../m2/","../m2/","@srcdir@/../packages/"}' \
+	-ephase=1 @srcdir@/../m2/setup.m2 -ephase=0 \
 	'-erunStartFunctions()' '-eerrorDepth(0)' -silent
 endif
 
