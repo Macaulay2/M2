@@ -12,15 +12,15 @@ int main(int argc, char **argv) {
   jmp_buf j;
   char *filename = "check-data";
   static char *p[6];
-  if (sizeof(intP) < sizeof(void *)) {
-    fprintf(stderr,"error: intP not the same size as void *, see std.h\n");
+  if (sizeof(uintP) < sizeof(void *)) {
+    fprintf(stderr,"error: uintP not the same size as void *, see std.h\n");
     exit(1);
   }
-  else if (sizeof(intP) > sizeof(void *)) {
-    fprintf(stderr,"warning: intP bigger than void *, see std.h\n");
+  else if (sizeof(uintP) > sizeof(void *)) {
+    fprintf(stderr,"warning: uintP bigger than void *, see std.h\n");
   }
-  if ((intP)(-1) < 0) {
-    fprintf(stderr,"error: intP should be an unsigned integer type, see std.h\n");
+  if ((uintP)(-1) < 0) {
+    fprintf(stderr,"error: uintP should be an unsigned integer type, see std.h\n");
     exit(1);
   }
   if (!setjmp(j)) {

@@ -74,7 +74,7 @@ static void trim(char *s) {
 
 static int extend_memory(void *newbreak) {
   if (ERROR == brk(newbreak)) {
-    warning("loaddata: out of memory (extending break from 0x%p to 0x%p)", sbrk(0), newbreak);
+    warning("loaddata: out of memory (extending break to 0x%p)", newbreak);
     return ERROR;
   }
   else return OKAY;
@@ -92,14 +92,20 @@ static int install(int fd, map m, long *pos) {
 	 start,start+len,len,prot,flags,fd,offset);
   return OKAY;
 #else
-  if (finish - sbrk(0) > 0 && sbrk(0) - start >= 0 && ERROR == extend_memory(finish)) 
-    return ERROR;
   return MAP_FAILED == mmap(start, len, prot, flags, fd, offset) ? ERROR : OKAY;
 #endif
 }
 
 static int dumpmap(int fd, map m) {
   return write(fd, m->from, m->to-m->from);
+}
+
+static char brkfmt[] = "sbrk(0)=%p\n";
+
+static int fdprintbrk(int fd) {
+  char buf[80];
+  sprintf(buf,brkfmt,sbrk(0));
+  return write(fd,buf,strlen(buf));
 }
 
 int dumpdata(char const *dumpfilename) {
@@ -112,6 +118,7 @@ int dumpdata(char const *dumpfilename) {
     warning("can't open dump data file '%s'\n", dumpfilename);
     return ERROR;
   }
+  if (ERROR == fdprintbrk(fd)) return ERROR;
   if (ERROR == getmaps(nmaps,dumpmaps)) return ERROR;
   checkmaps(nmaps,dumpmaps);
   for (i=0; i<nmaps; i++) fdprintmap(fd,&dumpmaps[i]);
@@ -135,6 +142,8 @@ int dumpdata(char const *dumpfilename) {
 }
 
 int loaddata(char const *filename) {
+  void *newbreak;
+  int got_newbreak = 0;
   int nmaps = nummaps();
   struct MAP dumpedmap, currmap[nmaps], dumpmaps[40];
   int i, ndumps=0, j=0;
@@ -150,27 +159,39 @@ int loaddata(char const *filename) {
     char r, w;
     fbuf[0]=0;
     f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
+    if (!got_newbreak) {
+      if (0 == sscanf(fbuf,brkfmt,&newbreak)) {
+	warning("loaddata: in data file %s: expected sbrk(0) line: \n", filename, fbuf);
+	fclose(f);
+	return ERROR;
+      }
+      got_newbreak = TRUE;
+      continue;
+    }
     if (f_end) break;
     trim(fbuf);
     ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &dumpedmap.checksum);
     if (5 != ret) {
       warning("loaddata: in data file %s: invalid map: %s\n", filename, fbuf, n);
+      fclose(f);
       return ERROR;
     }
     dumpedmap.r = r == 'r';
     dumpedmap.w = w == 'w';
     for (; j<nmaps; j++) {
-      if ((intP)dumpedmap.from <= (intP)currmap[j].from) break;
+      if ((uintP)dumpedmap.from <= (uintP)currmap[j].from) break;
       if (isCheckable(&currmap[j])) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
 	warning("loaddata: map has appeared or changed its location: %s\n",buf);
+	fclose(f);
 	return ERROR;
       }
     };
 
-    if (!f_end && !dumpedmap.w && (intP)dumpedmap.from < (intP)currmap[j].from) {
+    if (!f_end && !dumpedmap.w && (uintP)dumpedmap.from < (uintP)currmap[j].from) {
       warning("loaddata: map has disappeared or changed its location:\n  %s\n", fbuf);
+      fclose(f);
       return ERROR;
     }
 
@@ -179,11 +200,13 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
 	warning("loaddata: map protection has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
+	fclose(f);
 	return ERROR;
       }
       if (dumpedmap.checksum != currmap[j].checksum) { 
 	warning("loaddata: checksum for map has changed from %u to %u\n",
 		dumpedmap.checksum, currmap[j].checksum);
+	fclose(f);
 	return ERROR;
       }
       j++;
@@ -192,6 +215,7 @@ int loaddata(char const *filename) {
     if (!isDumpable(&dumpedmap)) continue;
     if (ndumps == numberof(dumpmaps)) {
       warning("too many maps dumped, recompile\n");
+      fclose(f);
       return ERROR;
     }
     else dumpmaps[ndumps++] = dumpedmap;
@@ -202,9 +226,11 @@ int loaddata(char const *filename) {
   {
     long pos = ftell(f);
     pos = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE;
+    if (ERROR == extend_memory(newbreak)) return ERROR;
     for (i=0; i<ndumps; i++) {
       if (ERROR == install(fd,&dumpmaps[i],&pos)) {
-	if (installed_one) fatal("loaddata: failed to map memory completely\n");
+	if (installed_one)
+	  fatal("loaddata: failed to map memory completely\n");
 	else {
 	  warning("loaddata: failed to map any memory\n");
 	  fclose(f);
