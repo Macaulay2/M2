@@ -78,6 +78,8 @@ ChainComplexMap = new Type of MutableHashTable
 ChainComplexMap.synonym = "chain complex map"
 ring ChainComplexMap := C -> ring source C
 complete ChainComplexMap := f -> (
+     complete source f;
+     if target f =!= source f then complete target f;
      if f.?Resolution then ( i := 1; while f_i != 0 do i = i+1; );
      f)
 
@@ -122,20 +124,17 @@ net ChainComplexMap := f -> (
      if # v === 0 then "0"
      else stack v)
 ring ChainComplexMap := (f) -> ring source f
-ChainComplexMap _ ZZ := Matrix => (f,i) -> (
-     if f#?i 
-     then f#i
-     else if f.?Resolution then (
+ChainComplexMap _ ZZ := Matrix => (f,i) -> if f#?i then f#i else (
+     de := if f.?degree then f.degree else 0;
+     so := (source f)_i;
+     ta := (target f)_(i+de);
+     if f.?Resolution then (
 	  gr := f.Resolution;
 	  sendgg(ggPush gr, ggPush i, ggresmap);
 	  p := getMatrix ring gr;
 	  if p != 0 then f#i = p;
 	  p)
-     else (
-	  if f.?degree
-	  then map((target f)_(i+f.degree),(source f)_i,0,Degree=>f.degree)
-	  else map((target f)_(i+f.degree),(source f)_i,0)
-	  ))
+     else map(ta,so,0,Degree=>de))
 
 ChainComplex#id = (C) -> (
      complete C;
