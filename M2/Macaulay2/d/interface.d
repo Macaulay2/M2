@@ -787,8 +787,15 @@ setupfun("rawDegree",rawDegree);
 
 export rawTermCount(e:Expr):Expr := (
      when e
-     is x:RawRingElement do toExpr( Ccode( int, "IM2_RingElement_n_terms(", "(RingElement*)",x, ")" ))
-     else WrongArg("a raw ring element")
+     is args:Sequence do
+     if length(args) == 2 then
+     when args.0 is nvars:Integer do
+     if !isInt(nvars) then WrongArgSmallInteger(1) else
+     when args.1 is x:RawRingElement do toExpr( Ccode( int, "IM2_RingElement_n_terms(", toInt(nvars), ",", "(RingElement*)",x, ")" ))
+     else WrongArg(2,"a raw ring element")
+     else WrongArgInteger(1)
+     else WrongNumArgs(2)
+     else WrongNumArgs(2)
      );
 setupfun("rawTermCount",rawTermCount);
 
@@ -849,31 +856,51 @@ setupfun("rawToComplex",rawToComplex);
 
 export rawLeadCoefficient(e:Expr):Expr := (
      when e
-     is x:RawRingElement do toExpr( 
+     is args:Sequence do
+     if length(args) == 2 then
+     when args.0 is coeffRing:RawRing do
+     when args.1 is a:RawRingElement do toExpr( 
 	  Ccode( RawRingElementOrNull, 
-	       "(engine_RawRingElementOrNull)IM2_RingElement_lead_coeff(", "(RingElement *)",x, ")" ))
-     else WrongArg("a raw ring element")
+	       "(engine_RawRingElementOrNull)IM2_RingElement_lead_coeff(", "(Ring *)", coeffRing, ",", "(RingElement *)",a, ")" ))
+     else WrongArg(2,"a raw ring element")
+     else WrongArg(1,"a raw ring")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2)
      );
 setupfun("rawLeadCoefficient",rawLeadCoefficient);
 
 export rawLeadMonomial(e:Expr):Expr := (
      when e
-     is x:RawRingElement do toExpr( 
+     is args:Sequence do
+     if length(args) == 2 then
+     when args.0 is nvars:Integer do if !isInt(nvars) then WrongArgSmallInteger(1) else
+     when args.1 is x:RawRingElement do toExpr( 
 	  Ccode( RawMonomialOrNull, 
 	       "(engine_RawMonomialOrNull)IM2_RingElement_lead_monomial(",
+	       toInt(nvars), ",",
 	       "(RingElement*)",x, 
 	       ")" ))
-     else WrongArg("a raw ring element")
+     else WrongArg(2,"a raw ring element")
+     else WrongArg(1,"a raw ring")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2)
      );
 setupfun("rawLeadMonomial",rawLeadMonomial);
 
 export rawPairs(e:Expr):Expr := (
      when e
-     is x:RawRingElement do toExpr( 
+     is args:Sequence do
+     if length(args) == 2 then 
+     when args.0 is coeffRing:RawRing do 
+     when args.1 is x:RawRingElement do toExpr( 
 	  Ccode( RawArrayPairOrNull, "(engine_RawArrayPairOrNull)IM2_RingElement_list_form(",
-	       "(RingElement*)",x, 
+	       "(Ring *)", coeffRing, ",",
+	       "(RingElement*)", x, 
 	       ")" ))
-     else WrongArg("a raw ring element")
+     else WrongArg(2,"a raw ring element")
+     else WrongArg(1,"a raw ring element")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2)
      );
 setupfun("rawPairs",rawPairs);
 
@@ -1018,34 +1045,39 @@ setupfun("rawTerm",rawTerm);
 
 export rawGetTerms(e:Expr):Expr := (
      when e is s:Sequence do 
-     if length(s) == 3 then 
-     when s.0 is f:RawRingElement do (
-	  when s.1 is lo:Integer do if !isInt(lo) then WrongArgSmallInteger(2) else
-	  when s.2 is hi:Integer do if !isInt(hi) then WrongArgSmallInteger(3) else
+     if length(s) == 4 then 
+     when s.0 is nvars:Integer do if !isInt(nvars) then WrongArgSmallInteger(1) else
+     when s.1 is f:RawRingElement do (
+	  when s.2 is lo:Integer do if !isInt(lo) then WrongArgSmallInteger(3) else
+	  when s.3 is hi:Integer do if !isInt(hi) then WrongArgSmallInteger(4) else
 	  Expr(Ccode(RawRingElement,
 		    "(engine_RawRingElement)IM2_RingElement_get_terms(",
-		    "(RingElement *)", f, ",", toInt(lo), ",", toInt(hi), ")" ))
-	  else WrongArgInteger(3)
-	  else WrongArgInteger(2))
-     else WrongArg(1,"a ring element")
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
+		    toInt(nvars), ",", "(RingElement *)", f, ",", toInt(lo), ",", toInt(hi), ")" ))
+	  else WrongArgInteger(4)
+	  else WrongArgInteger(3))
+     else WrongArg(2,"a ring element")
+     else WrongArgInteger(1)
+     else WrongNumArgs(4)
+     else WrongNumArgs(4));
 setupfun("rawGetTerms",rawGetTerms);
 
 export rawCoefficient(e:Expr):Expr := (
      when e is a:Sequence do 
-     if length(a) == 2 then 
-     when a.0 is x:RawRingElement do 
-     when a.1 is m:RawMonomial do toExpr(
+     if length(a) == 3 then 
+     when a.0 is coeffRing:RawRing do
+     when a.1 is x:RawRingElement do 
+     when a.2 is m:RawMonomial do toExpr(
 	  Ccode(RawRingElementOrNull,"(engine_RawRingElementOrNull)",
 	       "IM2_RingElement_get_coeff(",
+	       "(Ring *)", coeffRing, ",",
 	       "(RingElement *)", x, ",",
 	       "(Monomial *)", m,
 	       ")"))
-     else WrongArg(2,"a raw monomial")
-     else WrongArg(1,"a raw ring element")
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
+     else WrongArg(3,"a raw monomial")
+     else WrongArg(2,"a raw ring element")
+     else WrongArg(1,"a raw ring")
+     else WrongNumArgs(3)
+     else WrongNumArgs(3));
 setupfun("rawCoefficient",rawCoefficient);
 
 export rawNumerator(e:Expr):Expr := (

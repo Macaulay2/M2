@@ -215,7 +215,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    then expression 0
 		    else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else new R from a) * expression (if m == 1 then 1 else new M from m))
 		    )
-	       ) rawPairs f.RawRingElement;
+	       ) rawPairs(raw R, raw f);
 	  toString RM := toExternalString RM := x -> toString expression x;
 	  fac := options -> f -> (
 	       facs := rawFactor raw f;
@@ -249,8 +249,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.generatorsTable = (
 	       if R.?generatorsTable 
 	       then hashTable join(
-		    apply(pairs M.generatorsTable,
-			 (v,x) -> v => new RM from rawTerm(RM.RawRing, (0_R).RawRingElement, x.RawMonomial)),
+		    apply(pairs M.generatorsTable, (v,x) -> v => new RM from rawTerm(RM.RawRing, (1_R).RawRingElement, x.RawMonomial)),
 		    gt)
 	       else hashTable gt
 	       );
