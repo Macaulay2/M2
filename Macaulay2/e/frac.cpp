@@ -5,6 +5,7 @@
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "gbring.hpp"
+#include "../d/M2mem.h"
 
 #define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
 #define FRAC_RINGELEM(a) ((ring_elem) (Nterm *) (a))

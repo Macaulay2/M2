@@ -1,14 +1,18 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
 #include <factoryconf.h>
+extern int libfac_interruptflag; /* extracted from libfac's factor.h */
 #include <NTL/version.h>
-
-extern int haveDumpdata();	/* in dumpdata/map.o */
-#include "types.h"
-
 /* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
 #define GDBM_STATIC
 #include <gdbm.h>
+
+#include "M2mem.h"
+#include "M2mem2.h"
+#include "M2inits.h"
+#include "../dumpdata/map.h"
+#include "types.h"
+#include "debug.h"
 
 const char *get_libfac_version();	/* in version.cc */
 static const char *get_cc_version(void) {
@@ -53,17 +57,15 @@ static void alarm_handler(int sig)
      if (system_interruptShield) system_interruptPending = TRUE;
      else {
 	  system_interrupted = TRUE;
-#     	  ifdef FACTORY
      	  libfac_interruptflag = TRUE;
-#     	  endif
 	  }
 #ifdef SIGALRM
      signal(SIGALRM,alarm_handler);
 #endif
      }
 
-static sigjmp_buf loaddata_jump, out_of_memory_jump, abort_jump;
-static bool out_of_memory_jump_set = FALSE, abort_jump_set = FALSE;
+static sigjmp_buf loaddata_jump, abort_jump;
+static bool abort_jump_set = FALSE;
 
 static void interrupt_handler(int sig)
 {
@@ -77,14 +79,14 @@ static void interrupt_handler(int sig)
 		    exit(1);
 	            }
 	       if (buf[0]=='y' || buf[0]=='Y') {
-     		    trap();
+#                   ifdef DEBUG
+     		      trap();
+#                   endif
 		    if (!tokens_stopIfError && abort_jump_set) {
      	  		 fprintf(stderr,"returning to top level\n");
      	  		 fflush(stderr);
 			 system_interrupted = FALSE;
-#     	   	     	 ifdef FACTORY
 			 libfac_interruptflag = FALSE;
-#     	   	     	 endif
 			 system_interruptPending = FALSE;
 			 system_interruptShield = FALSE;
 			 system_alarmed = FALSE;
@@ -113,25 +115,10 @@ static void interrupt_handler(int sig)
 		    exit(interruptExit);
 	       }
 	       system_interrupted = TRUE;
-#     	       ifdef FACTORY
 	       libfac_interruptflag = TRUE;
-#     	       endif
 	       }
 	  }
      signal(SIGINT,interrupt_handler);
-     }
-
-void outofmem(void) {
-     static int count = 0;
-     if (!tokens_stopIfError && out_of_memory_jump_set && count++ < 5) {
-     	  fprintf(stderr,"out of memory, returning to top level");
-     	  fflush(stderr);
-     	  siglongjmp(out_of_memory_jump,1);
-	  }
-     else {
-     	  fprintf(stderr,"out of memory, exiting\n");
-	  exit(1);
-	  }
      }
 
 static struct COUNTER { 
@@ -260,7 +247,6 @@ char CCVERSION[] = "unknown" ;
 
 extern void init_readline_variables();
 extern char *GC_stackbottom;
-extern void M2inits();
 extern void arginits(int, char **);
 
 static bool gotArg(char *arg, char **argv) {

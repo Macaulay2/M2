@@ -9,6 +9,7 @@
 #include "ringmap.hpp"
 #include "random.hpp"
 #include "gbring.hpp"
+#include "../d/M2mem.h"
 
 #define RRELEM_VAL(f) (RRelem ((f).poly_val))
 #define RR_VAL(f) ((RRELEM_VAL(f))->val)

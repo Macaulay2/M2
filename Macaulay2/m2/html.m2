@@ -19,8 +19,8 @@ local docdatabase
 
 buildPackage := null					    -- name of the package currently being built
 topNodeName := null					    -- name of the top node of this package
-topFileName := "index.html"				    -- top node file name
-masterFileName := "master.html";			    -- master index file of all topics
+topFileName := "index.html"				    -- top node's file name, constant
+indexFileName := "master.html"  			    -- file name for master index of topics in a package
 buildDirectory := "/tmp/"				    -- the root of the relative paths:
 htmlDirectory := ""					    -- relative path to the html directory
 
@@ -33,15 +33,8 @@ rel := url -> (
      )
 
 htmlFilename = (nodename) -> (	-- returns the relative path from the PREFIX to the file
-     if buildPackage === null then buildPackage = currentPackage.name;
-     if nodename === topNodeName then (
-	  LAYOUT#"packagehtml" buildPackage | topFileName
-	  )
-     else (
-	  basename := toFilename nodename | ".html";
-	  LAYOUT#"packagehtml" buildPackage | basename	    -- not right yet!
-	  )
-     )
+     pkg := package TO nodename;
+     LAYOUT#"packagehtml" pkg.name | if nodename === pkg.name then topFileName else toFilename nodename|".html" )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
 text IMG  := x -> ""
@@ -255,7 +248,7 @@ anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
      )
 
 pass5 := () -> (
-     fn := buildDirectory | htmlDirectory | masterFileName;
+     fn := buildDirectory | htmlDirectory | indexFileName;
      << "pass 5, creating the master index in " << fn << endl;
      masterNodeName := topNodeName | " Index";
      fn << html HTML {
@@ -277,7 +270,7 @@ setupButtons := () -> (
      gifpath := LAYOUT#"images";
      topNodeButton = HREF { htmlDirectory|topFileName, BUTTON (gifpath|"top.gif","top") };
      nullButton = BUTTON(gifpath|"null.gif",null);
-     masterIndexButton = HREF { htmlDirectory|masterFileName, BUTTON(gifpath|"index.gif","index") };
+     masterIndexButton = HREF { htmlDirectory|indexFileName, BUTTON(gifpath|"index.gif","index") };
      nextButton = BUTTON(gifpath|"next.gif","next");
      prevButton = BUTTON(gifpath|"previous.gif","previous");
      upButton = BUTTON(gifpath|"up.gif","up");
@@ -300,7 +293,7 @@ separateExampleOutput = s -> (
 -----------------------------------------------------------------------------
 
 makeMasterIndex := keylist -> (
-     fn := buildDirectory | htmlDirectory | masterFileName;
+     fn := buildDirectory | htmlDirectory | indexFileName;
      title := topNodeName | " Index";
      << "--making  '" << title << "' in " << fn << endl;
      fn << html HTML {
@@ -384,11 +377,11 @@ installPackage Package := o -> pkg -> (
 	       else (
 		    stderr << "--making example output file for " << nodename << endl;
 		    loadargs := if pkg === Main then "" else "-e 'load \""|fn|"\"'";
-		    cmd := commandLine#0 | " --silent --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf;
+		    cmd := "ulimit -t 20 -v 60000 && " | commandLine#0 | " --silent --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf;
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
-			 unlinkFile(tmpf);
+			 unlink tmpf;
 			 stderr << "--error return code: " << r << endl;
 			 if r == 131 then (
 			      stderr << "subprocess terminated abnormally, exiting" << endl;
@@ -405,8 +398,8 @@ installPackage Package := o -> pkg -> (
 			 unlink(tmpf);
 			 ));
 	       -- read, separate, and store example output
-	       pkg#"example outputs"#nodename = drop(separateM2output get outf,-1);
-	       -- stderr << "node " << nodename << " : " << peek \ net \ pkg#"example outputs"#nodename << endl;
+	       if fileExists outf then pkg#"example outputs"#nodename = drop(separateM2output get outf,-1)
+	       else stderr << "warning: missing file " << outf << endl;
 	       ));
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 

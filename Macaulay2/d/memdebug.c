@@ -8,7 +8,6 @@
 
 #ifdef MEM_DEBUG
 
-extern void outofmem(void);
 extern void trap(void);
 
 int trapset = 0;

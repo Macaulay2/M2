@@ -8,6 +8,7 @@
 #include "ringmap.hpp"
 #include "random.hpp"
 #include "gbring.hpp"
+#include "../d/M2mem.h"
 
 mpf_ptr bigCC::_epsilon = NULL;
 

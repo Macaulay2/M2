@@ -2,6 +2,7 @@
 #include "error.h"
 #include "monordering.h"
 #include <stdio.h>
+#include "../d/M2mem.h"
 
 static struct mon_part_rec_ *mo_make(int type, int nvars, int *wts)
 {

@@ -9,6 +9,7 @@
 #include "ringmap.hpp"
 #include "random.hpp"
 #include "gbring.hpp"
+#include "../d/M2mem.h"
 
 #define CCELEM_VAL(f) (M2_CC ((f).poly_val))
 #define CC_IM(f) ((CCELEM_VAL(f))->im)

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "matrixRR.hpp"
 #include "matrixCC.hpp"
+#include "../d/M2mem.h"
 
 M2_CC LP_make_M2_Comp(double* w)
 {

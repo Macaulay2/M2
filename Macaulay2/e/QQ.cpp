@@ -8,6 +8,7 @@
 #include "ringmap.hpp"
 #include "random.hpp"
 #include "gbring.hpp"
+#include "../d/M2mem.h"
 
 bool QQ::initialize_QQ(const Monoid *D) 
 {

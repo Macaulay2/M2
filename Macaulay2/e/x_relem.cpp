@@ -21,6 +21,7 @@
 #include "solvable.hpp"
 
 #include "matrix.hpp"
+#include "../d/M2mem.h"
 
 unsigned long IM2_Ring_hash(const Ring *R)
 {

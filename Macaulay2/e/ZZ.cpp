@@ -7,6 +7,7 @@
 #include "ringmap.hpp"
 #include "random.hpp"
 #include "gbring.hpp"
+#include "../d/M2mem.h"
 
 #if 0
 #include "gmp.h"

@@ -14,6 +14,7 @@
 
 #include "gb_comp.hpp"
 #include "vector.hpp"
+#include "../d/M2mem.h"
 
 #define POLY(q) ((q).poly_val)
 
