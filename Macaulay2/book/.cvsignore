@@ -1,4 +1,5 @@
 gmon.out
+*.ps
 *.dvi.gz
 *.dvi
 *.log

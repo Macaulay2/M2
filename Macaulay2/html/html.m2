@@ -111,7 +111,13 @@ buttonBar = (key) -> CENTER {
      prev key, 
      up key,
      if key =!= topNodeName then topNodeButton else nullButton,
-     masterIndexButton
+     masterIndexButton,
+     LITERAL ///
+     <form action="/SFgate/cgi-bin/SFgate">
+	<input type="hidden" name="database" value="localhost:2200/Macaulay2">
+	search for: <input name="text">
+     </form>
+     ///
      }
 	  
 haderror = false

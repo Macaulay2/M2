@@ -20,7 +20,24 @@ index.html : html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
 	../bin/M2 -q html.m2 '-eexit(0)'
 view :
 	netscape index.html &
-clean :
+clean ::
 	rm -f ./*.html make-html
 allfiles : *.jpg *.gif html.m2 Makefile
 	echo $^ |tr ' ' \\012 >allfiles
+
+## wais - index the files for searching
+## install freeWAIS-sf-2.2.13 and SFgate-5.111 first
+wais:
+	waisindex \
+		-t URL "$(shell pwd)" "http://localhost/~dan/Macaulay2/html" \
+		-t fields \
+		-export \
+		-l 1 \
+		-d Macaulay2 \
+		-r "$(shell pwd)"
+	waisserver -p 2200 -l 1
+wais-service:
+	waisserver -p 2200 -l 1
+clean::
+	rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct
+
