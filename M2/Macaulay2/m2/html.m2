@@ -280,16 +280,6 @@ pass5 := () -> (
 -- making the html pages
 -----------------------------------------------------------------------------
 
-checkDirectory := path -> (
-     path = minimizeFilename (path | "/");
-     if not directoryExists path then error ("directory ", path, " doesn't exist");
-     path
-     )
-
-checkFile := filename -> (
-     -- if not fileExists filename then error ("file ", filename, " doesn't exist");
-     filename)
-
 cacheVars := varlist -> (
      valuelist := apply(varlist, x -> value x);
      () -> apply(varlist, valuelist, (x,n) -> x <- n))
@@ -357,7 +347,7 @@ makeHTMLPages Package := o -> pkg -> (
      htmlDirectory = LAYOUT#"packagehtml" pkg.name;
      keys := unique join(pkg#"symbols",pkg#"docs");
      stderr << "making html pages in " << buildDirectory << htmlDirectory << endl;
-     checkDirectory (buildDirectory|htmlDirectory);
+     makeDirectory (buildDirectory|htmlDirectory);
      ret := makeHtmlNode \ keys;
      "pages " | stack keys | " in " | htmlDirectory
      )

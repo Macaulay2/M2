@@ -1438,13 +1438,13 @@ fileTime(e:Expr):Expr := (
      else WrongArgString());
 setupfun("fileTime",fileTime);
 
-makeDirectory(e:Expr):Expr := (
+mkdir(e:Expr):Expr := (
      when e is name:string do (
 	  r := mkdir(name);
 	  if r == -1 then buildErrorPacket("can't make directory : " + syserrmsg())
 	  else nullE)
      else WrongArgString());
-setupfun("makeDirectory",makeDirectory);
+setupfun("mkdir",mkdir);
 
 --import setFactorySeed(s:int):void;
 --setFactorySeed(e:Expr):Expr := (

@@ -1,5 +1,13 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+makeDirectory = name -> (
+     name = minimizeFilename name;
+     parts := separate("/", name);
+     if last parts === "" then parts = drop(parts,-1);
+     if first parts === "" then parts = prepend("/"|first parts, drop(parts,1));
+     mkdir fold((a,b) -> ( if not fileExists a then mkdir a; a|"/"|b ), parts))
+
+-----------------------------------------------------------------------------
 
 String << Thing := File => (filename,x) -> openOut filename << x
 
