@@ -272,6 +272,7 @@ CITE       = new MarkUpType
 BOLD       = new MarkUpType
 CODE       = new MarkUpType
 HREF       = new MarkUpType
+ANCHOR     = new MarkUpType
 SHIELD     = new MarkUpType
 MENU       = new MarkUpType
 UL         = new MarkUpType
@@ -1154,17 +1155,23 @@ html HREF := x -> (
      )
 text HREF := x -> "\"" | x#-1 | "\""
 tex HREF := x -> (
---   if hypertex then 
      concatenate(
 	  ///\special{html:<A href="///, ttLiteral x#0, ///">}///,
 	  tex x#-1,
 	  ///\special{html:</A>}///
 	  )
---     else (
---	  if #x == 2
---	  then concatenate(tex x#1, " (the URL is ", tex TT x#0, ")")
---	  else tex TT x#0
---	  )
+     )
+
+html ANCHOR := x -> (
+     "<A name=\"" | x#0 | "\">" | html x#-1 | "</A>"
+     )
+text ANCHOR := x -> "\"" | x#-1 | "\""
+tex ANCHOR := x -> (
+     concatenate(
+	  ///\special{html:<A name="///, ttLiteral x#0, ///">}///,
+	  tex x#-1,
+	  ///\special{html:</A>}///
+	  )
      )
 
 html SHIELD := x -> concatenate apply(x,html)

@@ -10,13 +10,20 @@
   "A list of the symbols available in D-mode, for use with dynamic completion."
   )
 
-(defvar D-mode-font-lock-keywords '(
-    ("\\<\\(do\\|new\\|len\\|until\\|while\\|is\\|or\\|when\\|foreach\\|function\\|for\\)\\>" . font-lock-keyword-face)
-    ("\\<\\(at\\|in\\|by\\|from\\|to\\|if\\|op\\|package\\|signature\\|use\\)\\>" . font-lock-keyword-face)
-    ("\\<\\(export\\|import\\|then\\|else\\|break\\|provide\\)\\>" . font-lock-keyword-face)
-   )
-  )
-(font-lock-add-keywords 'D-mode D-mode-font-lock-keywords)
+
+(if (fboundp 'font-lock-add-keywords)
+    (progn
+      (defvar D-mode-font-lock-keywords 
+	'(("\\<\\(do\\|new\\|len\\|until\\|while\\|is\\|or\\|when\\|foreach\\|function\\|for\\)\\>"
+	   . font-lock-keyword-face)
+	  ("\\<\\(at\\|in\\|by\\|from\\|to\\|if\\|op\\|package\\|signature\\|use\\)\\>"
+	   . font-lock-keyword-face)
+	  ("\\<\\(export\\|import\\|then\\|else\\|break\\|provide\\)\\>"
+	   . font-lock-keyword-face)
+	  )
+	)      
+      (font-lock-add-keywords 'D-mode D-mode-font-lock-keywords)
+      ))
 
 (defun D-dynamic-complete-symbol()
   "Dynamic completion function for D-mode symbols."
@@ -47,7 +54,8 @@
   (make-local-variable 'comment-start-skip)
   (setq comment-start-skip "-- *")
   (local-set-key "\^C\t" 'D-dynamic-complete-symbol)
-  (turn-on-font-lock)
+  (if (fboundp 'turn-on-font-lock)
+      (turn-on-font-lock))
   (run-hooks 'D-mode-hook)
   )
 
