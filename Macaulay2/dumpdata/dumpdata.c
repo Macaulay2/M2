@@ -11,10 +11,13 @@
 #include "warning.h"
 #include "std.h"
 
-#define TRUE 1
-#define FALSE 0
-#define OKAY 0
-#define STDERR 2
+#if !defined(PAGESIZE)
+#if defined(EXEC_PAGESIZE)
+#define PAGESIZE EXEC_PAGESIZE
+#else
+#define PAGESIZE 4096
+#endif
+#endif
 
 /* start configuration section */
 #define DRYRUN 0
@@ -114,7 +117,7 @@ int dumpdata(char const *dumpfilename) {
   for (i=0; i<nmaps; i++) fdprintmap(fd,&dumpmaps[i]);
   write(fd,"\n",1);
   pos = lseek(fd,0,SEEK_END);
-  n = ((pos + EXEC_PAGESIZE - 1)/EXEC_PAGESIZE) * EXEC_PAGESIZE - pos;
+  n = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE - pos;
   {
     char buf[n];
     int i;
@@ -142,7 +145,7 @@ int loaddata(char const *filename) {
   checkmaps(nmaps,currmap);
   if (fd == ERROR || f == NULL) { warning("loaddata: can't open file '%s'\n", filename); return ERROR; }
   while (TRUE) {
-    char fbuf[200], buf[200];
+    char fbuf[200];
     int n, f_end, ret;
     char r, w;
     fbuf[0]=0;
@@ -151,7 +154,7 @@ int loaddata(char const *filename) {
     trim(fbuf);
     ret = sscanf(fbuf, mapfmt, &dumpedmap.from, &dumpedmap.to, &r, &w, &dumpedmap.checksum);
     if (5 != ret) {
-      warning("loaddata: in data file %s: invalid map: %s  [sscanf=%d]\n", filename, buf, n);
+      warning("loaddata: in data file %s: invalid map: %s\n", filename, fbuf, n);
       return ERROR;
     }
     dumpedmap.r = r == 'r';
@@ -159,7 +162,9 @@ int loaddata(char const *filename) {
     for (; j<nmaps; j++) {
       if ((intP)dumpedmap.from <= (intP)currmap[j].from) break;
       if (isCheckable(&currmap[j])) {
-	warning("loaddata: map has appeared or changed its location:\n  %s\n", buf);
+	char buf[100];
+	sprintmap(buf,&currmap[j]);
+	warning("loaddata: map has appeared or changed its location: %s\n",buf);
 	return ERROR;
       }
     };
@@ -171,6 +176,8 @@ int loaddata(char const *filename) {
 
     if (!f_end && dumpedmap.from == currmap[j].from) {
       if (dumpedmap.r != currmap[j].r || dumpedmap.w != currmap[j].w) {
+	char buf[100];
+	sprintmap(buf,&currmap[j]);
 	warning("loaddata: map protection has changed.\n  from: %s\n    to: %s\n",fbuf,buf);
 	return ERROR;
       }
@@ -194,7 +201,7 @@ int loaddata(char const *filename) {
   }
   {
     long pos = ftell(f);
-    pos = ((pos + EXEC_PAGESIZE - 1)/EXEC_PAGESIZE) * EXEC_PAGESIZE;
+    pos = ((pos + PAGESIZE - 1)/PAGESIZE) * PAGESIZE;
     for (i=0; i<ndumps; i++) {
       if (ERROR == install(fd,&dumpmaps[i],&pos)) {
 	if (installed_one) fatal("loaddata: failed to map memory completely\n");

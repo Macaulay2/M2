@@ -15,10 +15,11 @@
 #include <sys/syscall.h>
 #include <sys/procfs.h>
 #include "map.h"
+#include "std.h"
 
 static int openproc() {
   char buf[30];
-  sprintf(buf,"/proc/%d",getpid());
+  sprintf(buf,"/proc/%d",(int)getpid());
   return open(buf,O_RDONLY);
 }
 
@@ -31,6 +32,7 @@ extern int nummaps() {
 }
 
 extern int getmaps(int nmaps, struct MAP maps[nmaps]) {
+  int i;
   prmap_t buf[nmaps];
   int fd = openproc();
   if (fd == ERROR) return ERROR;
