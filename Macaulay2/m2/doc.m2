@@ -937,7 +937,7 @@ document { quote random,
      TT "random x", " -- for real x, yields a random real number in the range 0 .. x.",
      BR,
      NOINDENT, 
-     TT "random F", " -- yields a random element of the finite field F.",     
+     TT "random R", " -- yields a random element of the ring R.",
      BR,
      NOINDENT, 
      TT "random(n,R)", " -- yields a random homogeneous element of degree n 

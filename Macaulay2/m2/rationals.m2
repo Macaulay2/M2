@@ -10,6 +10,7 @@ QQ.ConvertToExpression = ConvertApply((x,y)->expression(x/y),ConvertInteger,Conv
 QQ.pop = () -> eePop QQ.ConversionFormat
 QQ.baseRings = {ZZ}
 QQ.frac = QQ
+QQ.random = () -> (random 21 - 10) / (random 9 + 1)
 ggPush QQ := i -> (
      ggPush QQ, ggINT, gg numerator i, ggfromint, 
      ggPush QQ, ggINT, gg denominator i, ggfromint, 

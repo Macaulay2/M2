@@ -908,10 +908,12 @@ basis(List,Module) := (deg,M) -> (
      if not (
 	  isAffineRing A 
 	  or
-	  isPolynomialRing A 
-	  and isField coefficientRing A 
-	  and (options A).SkewCommutative
-	  ) then error "expected an affine ring";
+	  isPolynomialRing A and isField coefficientRing A and (options A).SkewCommutative
+	  or
+	  isPolynomialRing A and ZZ === coefficientRing A
+	  or
+	  ZZ === A
+	  ) then error "'basis' can't handle this type of ring";
      k := coefficientRing A;
      bottom := generators gb presentation M;
      top := id_(target bottom);
@@ -960,14 +962,17 @@ basis Ring := R -> basis(R^1)
 basis Ideal := I -> basis module I
 
 document { quote basis,
-     TT "basis", "(i,M) -- produce a map (of degree i) from a free k-module to M 
-     whose image is the degree i part of the module (or ring) M.",
+     TT "basis(i,M)", " -- produce a map (of degree ", TT "i", ") from a free ", TT "k", "-module 
+     to ", TT "M", " whose image is the degree ", TT "i", " part of the module (or ring) ", TT "M", ".",
      BR, NOINDENT,
-     TT "basis", " M -- produce a map from a free k-module to M whose image
-     is the finite dimensional module (or ring) M.",
+     TT "basis M", " -- produce a map from a free ", TT "k", "-module to ", TT "M", " whose image
+     is the finite dimensional module (or ring) ", TT "M", ".",
      PARA,
-     "The field k is the coefficient ring of the ring of M.  The degree
-     i may be a multi-degree, represented as a list of integers.",
+     "The field ", TT "k", " is the coefficient ring of the ring of ", TT "M", ".  The degree
+     ", TT "i", " may be a multi-degree, represented as a list of integers.",
+     PARA,
+     "Alternatively, if the coefficient ring of the ring of ", TT "M", " is ", TT "ZZ", ", then the
+     basis returned is a basis only modulo torsion.",
      EXAMPLE "R = ZZ/101[a..c]",
      EXAMPLE "f = basis(2,R)",
      "A map of R-modules can be obtained by tensoring.",

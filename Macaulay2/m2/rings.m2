@@ -2,6 +2,11 @@
 
 Ring _ String := (x,s) -> x#s		  -- gets variable from its name
 
+random Ring := (R) -> (
+     if R.?random then R.random()
+     else error "no method found for item of class Ring"
+     )
+
 ZZ _ Ring := (i,R) -> (
      if i === 1 then R#1
      else if i === 0 then R#0

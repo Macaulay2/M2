@@ -1,7 +1,5 @@
 --		Copyright 1994 by Daniel R. Grayson
 
--- most of this stuff is just provisional!!!!
-
 use err;
 use system;
 use stdio;
@@ -59,6 +57,12 @@ export Integer := {
      -- The body is always normalized so that the high order bigit is
      -- nonzero
      };
+
+dump(o:file, x:Integer):file := (
+     stderr << (if x.negative then "-" else "+") << "(";
+     foreach b at i in x.body by -1 do stderr << "+" << x.body.i << "*2^" << i*16 ;
+     stderr << ")";
+     o);
 
 zerobody := array(ushort)();
 
@@ -189,32 +193,34 @@ normalize(i:Integer):void := (
 	       )));
 mantissa(x:Integer):double := (
      n := length(x.body);
-     if n == 0 then 0.
-     else if n == 1 then double(x.body.0) / 65536.
-     else if n == 2 then (
-	  double(x.body.0) / 65536. 
-	  + double(x.body.1)) / 65536.
-     else if n == 3 then (
-	  (
+     m := (if n == 0 then 0.
+	  else if n == 1 then double(x.body.0) / 65536.
+	  else if n == 2 then (
 	       double(x.body.0) / 65536. 
 	       + double(x.body.1)) / 65536.
-	  + double(x.body.2)) / 65536.
-     else if n == 4 then (
-	  (
+	  else if n == 3 then (
 	       (
 		    double(x.body.0) / 65536. 
 		    + double(x.body.1)) / 65536.
 	       + double(x.body.2)) / 65536.
-	  + double(x.body.3)) / 65536.
-     else (
-	  (
+	  else if n == 4 then (
 	       (
 		    (
-			 double(x.body.(n-5)) / 65536. 
-			 + double(x.body.(n-4))) / 65536.
-		    + double(x.body.(n-3))) / 65536.
-	       + double(x.body.(n-2))) / 65536.
-	  + double(x.body.(n-1))) / 65536.);
+			 double(x.body.0) / 65536. 
+			 + double(x.body.1)) / 65536.
+		    + double(x.body.2)) / 65536.
+	       + double(x.body.3)) / 65536.
+	  else (
+	       (
+		    (
+			 (
+			      double(x.body.(n-5)) / 65536. 
+			      + double(x.body.(n-4))) / 65536.
+			 + double(x.body.(n-3))) / 65536.
+		    + double(x.body.(n-2))) / 65536.
+	       + double(x.body.(n-1))) / 65536.);
+     if x.negative then m = -m;
+     m);
 leftshift(x:Integer,n:int):Integer := (
      if n < 0 then fatal("negative argument to leftshift");
      if n == 0 then return(x);
@@ -397,7 +403,12 @@ times(x:array(ushort),y:array(ushort)):array(ushort) := (
 export (x:Integer) % (y:ushort) : ushort := (
      if y == ushort(0) then fatal("division by zero");
      if length(x.body) == 0 then ushort(0)
-     else if (int(y) & (int(y)-1)) == 0 then x.body.0 % y
+     else if (int(y) & (int(y)-1)) == 0 
+     then (
+	  z := x.body.0 % y;
+     	  if x.negative && z != ushort(0) then z = ushort(uint(y)-uint(z));
+	  z
+	  )
      else (
      	  m := uint(y);
      	  z := uint(0);
@@ -462,12 +473,10 @@ twopower64 := expt(2.,64);
 twopower(n:int):Integer := toInteger(1) << n;
 roundshift(x:Integer,n:int):Integer := (
      if n==0 then return(x);
-     if n > 16 * length(x.body) 
-     then zeroInteger
-     else (
-	  if getbit(x,n-1) 
-     	  then bumpone(x >> n) 
-     	  else x >> n));
+     m := numbits(x);
+     if m < n then zeroInteger
+     else if m == n then if x.negative then toInteger(-1) else toInteger(1)
+     else if getbit(x,n-1) then bumpone(x >> n) else x >> n);
 export (x:Integer) === (y:Integer) : bool := (
      x == y || (
      	  x.negative == y.negative
@@ -555,28 +564,66 @@ export (x:Integer) >= (y:int) : bool := !(x < y);
 export (x:Integer) <= (y:int) : bool := !(x > y);
 export (x:int) <= (y:Integer) : bool := !(y < x);
 export (x:int) >= (y:Integer) : bool := !(y > x);
+export (x:int) + (y:Integer) : Integer := toInteger(x) + y;
+export (x:Integer) + (y:int) : Integer := (
+     if y == 1 && !x.negative 
+     then bumpone(x)
+     else x + toInteger(y)
+     );
+export (x:ushort) + (y:Integer) : Integer := toInteger(x) + y;
+export (x:Integer) + (y:ushort) : Integer := (
+     if y == ushort(1) && !x.negative 
+     then bumpone(x)
+     else x + toInteger(y)
+     );
+export (x:int) - (y:Integer) : Integer := toInteger(x) - y;
+export (x:Integer) - (y:int) : Integer := x - toInteger(y);
+export (x:ushort) - (y:Integer) : Integer := toInteger(x) - y;
+export (x:Integer) - (y:ushort) : Integer := x - toInteger(y);
+export (x:int) * (y:Integer) : Integer := toInteger(x) * y;
+export (x:Integer) * (y:int) : Integer := x * toInteger(y);
+export (x:double) + (y:Integer) : double := x + toDouble(y);
+export (x:Integer) + (y:double) : double := toDouble(x) + y;
+export (x:double) - (y:Integer) : double := x - toDouble(y);
+export (x:Integer) - (y:double) : double := toDouble(x) - y;
+export (x:double) * (y:Integer) : double := x * toDouble(y);
+export (x:Integer) * (y:double) : double := toDouble(x) * y;
+export (x:double) / (y:Integer) : double := x / toDouble(y);
+export (x:Integer) / (y:double) : double := toDouble(x) / y;
+export abs(x:Integer) : Integer := if x<0 then -x else x;
 export (x:Integer) // (y:Integer) : Integer := (
      if length(y.body) == 0 then fatal("division by zero");
-     if length(y.body) == 1
-     then x // y.body.0
+     if length(x.body) == 0 
+     then zeroInteger
+     else if length(y.body) == 1
+     then if y.negative then (-x + (y.body.0 - 1)) // y.body.0 else x // y.body.0
      else (
 	  nx := numbits(x);
 	  ny := numbits(y);
 	  if ny > nx+1 then return(
-	       if x.negative ^^ y.negative then toInteger(-1) else zeroInteger
+	       if x.negative then (
+		    if y.negative then toInteger(1) else toInteger(-1)
+		    )
+	       else zeroInteger
 	       );
-	  n := nx + 5;
-	  z := Floor(twopower64/mantissa(y)) << (n - 64 - 16*length(y.body));
-	  p := twopower(n);
+	  n := nx + 8;			  -- a few extra bits of precision
+	  p := twopower(n);		  -- p = 2^n;
+	  z := Floor(twopower64/mantissa(y) + 0.5) << (n - 64 - 16*length(y.body));
+					  -- warning: that 16 is the number of bits in a short!
+					  -- z is now an approximation of 2^n/y
+          -- stderr << "z = "; dump(stderr,z); stderr << endl;
 	  while true do (
 	       oz := z;
 	       z = z + roundshift(z * (p - z * y), n);
+					  -- this is Newton's method for improving z
 	       if z === oz then break;
+	       -- stderr << "z = "; dump(stderr,z); stderr << endl;
 	       );
-     	  if length(z.body) == 0 then fatal("internal error in '//'");
-	  q := roundshift(x * z, n);
+     	  if length(z.body) == 0 then fatal("internal error in '//' - zero reciprocal");
+	  q := roundshift(x * z, n);	  -- q is now an approximation of x/y
+	  -- stderr << "q = "; dump(stderr,q); stderr << endl;
 	  if compare(q * y, x) == 1 
-	  then q - toInteger(1)		  -- speed this up
+	  then if y.negative then q + toInteger(1) else q - toInteger(1) -- speed this up
 	  else q
 	  ));
 export (x:Integer) % (y:Integer) : Integer := (
@@ -719,25 +766,6 @@ export tostring(x:Integer):string := (
 	  if neg then s << '-';
 	  takereversestring(s)));
 export (o:file) << (x:Integer) : file := o << tostring(x);
-export (x:int) + (y:Integer) : Integer := toInteger(x) + y;
-export (x:Integer) + (y:int) : Integer := (
-     if y == 1 && !x.negative 
-     then bumpone(x)
-     else x + toInteger(y)
-     );
-export (x:int) - (y:Integer) : Integer := toInteger(x) - y;
-export (x:Integer) - (y:int) : Integer := x - toInteger(y);
-export (x:int) * (y:Integer) : Integer := toInteger(x) * y;
-export (x:Integer) * (y:int) : Integer := x * toInteger(y);
-export (x:double) + (y:Integer) : double := x + toDouble(y);
-export (x:Integer) + (y:double) : double := toDouble(x) + y;
-export (x:double) - (y:Integer) : double := x - toDouble(y);
-export (x:Integer) - (y:double) : double := toDouble(x) - y;
-export (x:double) * (y:Integer) : double := x * toDouble(y);
-export (x:Integer) * (y:double) : double := toDouble(x) * y;
-export (x:double) / (y:Integer) : double := x / toDouble(y);
-export (x:Integer) / (y:double) : double := toDouble(x) / y;
-export abs(x:Integer) : Integer := if x<0 then -x else x;
 
 export gcd(x:Integer,y:Integer):Integer := (
      if isInt(x) && isInt(y) then return(toInteger(gcd(toInt(x),toInt(y))));

@@ -14,6 +14,7 @@ ZZ.degreeLength = 0
 ZZ.frac = QQ
 promote(ZZ,ZZ) := (i,ZZ) -> i
 lift(ZZ,ZZ) := (i,ZZ) -> i
+ZZ.random = () -> random 21 - 10
 
 document { quote ZZ,
      TT "ZZ", " -- denotes the class of all integers.",

@@ -168,21 +168,33 @@ resolutionByHomogenization := (M,options) -> (
 
 resolutionBySyzygies := (M,options) -> (
      R := ring M;
-     maxlength := (
-	  if options.LengthLimit === infinity 
-	  then numgens R + 1
-	  else options.LengthLimit
+     if M.?resolution 
+     then C := M.resolution
+     else (
+	  maxlength := (
+	       if options.LengthLimit === infinity 
+	       then numgens R + 1
+	       else options.LengthLimit
+	       );
+	  C = new ChainComplex;
+	  C.ring = R;
+	  f := presentation M;
+	  C#0 = target f;
+	  C#1 = source f;
+	  C.dd#1 = f;
+	  M.resolution = C;
+	  C.length = 1;
 	  );
-     C := new ChainComplex;
-     C.ring = R;
-     f := presentation M;
-     i := 0;
-     C#i = target f;
-     while (
-	  i = i+1;
-	  C#i = source f;
-	  C.dd#i = f;
-	  i < maxlength and f != 0 ) do f = syz f;
+     i := C.length;
+     while i < maxlength and C.dd#i != 0 do (
+	  g := syz C.dd#i;
+	  shield (
+	       i = i+1;
+	       C.dd#i = g;
+	       C#i = source g;
+	       C.length = i;
+	       );
+	  );
      C)
 
 resolutionInEngine := (M,options) -> (
@@ -258,11 +270,12 @@ resolutionInEngine := (M,options) -> (
 
 resolution Module := (M,o) -> (
      R := ring M;
+     k := ultimate(coefficientRing, R);
      oR := options R;
-     if oR.SkewCommutative and isHomogeneous M then (
+     if oR.?SkewCommutative and oR.SkewCommutative and isHomogeneous M then (
 	  processArgs((M, Algorithm => 2), o, (args,o) -> resolutionInEngine(M,o))
 	  )
-     else if not isCommutative R then resolutionBySyzygies(M,o)
+     else if k === ZZ or not isCommutative R then resolutionBySyzygies(M,o)
      else if not isHomogeneous M then resolutionByHomogenization(M,o)
      else resolutionInEngine(M,o)
      )
@@ -271,9 +284,11 @@ resolution Matrix := (f,o) -> (
      extend(resolution(target f, o), resolution(source f, o), matrix f)
      )
 
-resolution Ideal := (I,options) -> (
-     R := ring I;
-     resolution(R^1/I, options))
+resolution Ideal := (I,options) -> resolution(
+     if I.?quotient 
+     then I.quotient
+     else I.quotient = (ring I)^1/I,
+     options)
 
 TEST "
 S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
