@@ -31,22 +31,39 @@ removePackage Package := p -> (
      hide p;
      stderr << "--previous definitions removed for package " << p << endl;
      )
-removePackage String := n -> if PackageDictionary#?n and class value PackageDictionary#n === Package then removePackage value PackageDictionary#n
+removePackage String := title -> if PackageDictionary#?title and class value PackageDictionary#title === Package then removePackage value PackageDictionary#title
 
 currentPackageS := getGlobalSymbol(PackageDictionary,"currentPackage")
+
+substituteOptions := new MutableHashTable
+loadPackage = method(
+     Options => {
+	  Title => null, 
+	  DebuggingMode => null } )
+loadPackage String := opts -> filename -> (
+     filename = baseFilename filename;
+     substituteOptions#filename = opts;
+     load filename;
+     remove(substituteOptions,filename);
+     )
 
 newPackage = method( 
      Options => { 
 	  Using => {}, 
 	  Version => "0.0", 
 	  DebuggingMode => false,
-	  TopNodeName => null
-	  }
-     )
-newPackage(Package) := opts -> p -> (
-     hide p;		    -- hide the old package and its dictionary
-     newPackage(p#"title",opts))
+	  TopNodeName => null } )
+-- newPackage(Package) := opts -> p -> (
+--      hide p;		    -- hide the old package and its dictionary
+--      newPackage(p#"title",opts))
 newPackage(String) := opts -> (title) -> (
+     originalTitle := title;
+     filename := baseFilename currentFileName;
+     if substituteOptions#?filename and substituteOptions#filename#Title =!= null then title = substituteOptions#filename#Title
+     else (
+	  stderr << peek substituteOptions << endl
+	  << peek filename << endl
+	  );
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      if class opts.Using =!= List or not all(opts.Using, pkg -> class pkg === Package) then error "expected 'Using' option to be a list of loaded packages";
      stderr << "--package " << title << " loading" << endl;
@@ -86,9 +103,11 @@ newPackage(String) := opts -> (title) -> (
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       ),
 	  };
-     if title =!= "Main" then newpkg#"private dictionary" = new Dictionary; -- this is the local one
-     -- now change the global environment
-     if title =!= "Main" then PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
+     if title =!= "Main" then (
+	  newpkg#"private dictionary" = new Dictionary; -- this is the local one
+      	  PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
+     	  newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
+	  );
      currentPackageS <- newpkg;
      pkgsym := getGlobalSymbol(PackageDictionary,title);
      ReverseDictionary#newpkg = pkgsym;
@@ -104,7 +123,7 @@ newPackage(String) := opts -> (title) -> (
 	  apply(opts.Using,pkg->pkg.Dictionary)
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
-     debuggingMode = opts.DebuggingMode;
+     debuggingMode = if substituteOptions#?filename and substituteOptions#filename#DebuggingMode =!= null then substituteOptions#filename#DebuggingMode else opts.DebuggingMode;
      newpkg)
 
 export = method(SingleArgumentDispatch => true)
@@ -156,7 +175,7 @@ checkShadow = () -> (
 	       sym := d#j#nam;
 	       w := findSynonyms sym;
 	       w = select(w, s -> s != nam);
-	       if #w > 0 then stderr << "--   synonym(s) for " << nam << ": " << demark(", ",w) << endl
+	       if #w > 0 then stderr << "--   synonym" << (if #w > 1 then "s") << " for " << nam << ": " << demark(", ",w) << endl
 	       else if member(UserDictionary,globalDictionaries) then for i from 0 do (
 		    newsyn := nam | "$" | toString i;
 		    if not isGlobalSymbol newsyn then (
