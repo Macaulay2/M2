@@ -343,7 +343,7 @@ length VisibleList := s -> #s
 match(String,String) := X -> 0 < length matches X
 
 -- installationg of assignment methods
-installAssignmentMethod := method()
+installAssignmentMethod = method()
 installAssignmentMethod(Symbol,HashTable,HashTable,Option) := 
 installAssignmentMethod(Symbol,HashTable,HashTable,Function) := (op,X,Y,f) -> installMethod((op,symbol =),X,Y,f)
 installAssignmentMethod(Symbol,HashTable,Option) := 

@@ -27,6 +27,33 @@ use objects;
 use actors4;
 use engine;
 
+--let's see whether this is obsolete, so we can lookup up a method for assignment instead!
+
+replaceContents(e:Expr):Expr := (
+     when e is s:Sequence do
+     when s.0 is o:HashTable do (
+	  if o.mutable then (
+	       when s.1 is p:HashTable do (
+		    o.table = copy(p.table);
+		    o.numEntries = p.numEntries;
+		    s.0)
+	       else WrongArg(2,"a hash table"))
+	  else WrongArg(1,"a mutable hash table"))
+     is l:List do (
+	  if l.mutable then (
+	       when s.1
+	       is p:List do (
+		    l.v = copy(p.v);
+		    s.0)
+	       is t:Sequence do (
+		    l.v = copy(t);
+		    s.0)
+	       else WrongArg(2,"a list or sequence"))
+	  else WrongArg(1,"a mutable list"))
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("replaceContents",replaceContents);
+
 getParsing(e:Expr):Expr := (
      when e
      is s:SymbolClosure
