@@ -7,7 +7,7 @@ toString SchurRing := S -> if S.?name then S.name else "Schur(" | toString (# (m
 
 coefficientRing SchurRing := Ring => R -> last R.baseRings
 
-newSchur := (R,M) -> (
+newSchur := (R,M,p) -> (
      if not (M.?Engine and M.Engine) 
      then error "expected ordered monoid handled by the engine";
      if not (R.?Engine and R.Engine) 
@@ -45,10 +45,15 @@ newSchur := (R,M) -> (
      M - R := (m,r) -> R#1 * m - r * M#1;
      SR - M := (p,m) -> p - R#1 * m;
      M - SR := (m,p) -> R#1 * m - p;
+     toExternalString SR := 
      expression SR := f -> (
 	  (coeffs,monoms) -> sum(
 	       coeffs,monoms,
-	       (a,m) -> expression (new R from a) * expression (new M from m))
+	       (a,m) -> new Subscript from {p, (
+		    t := new MutableHashTable;
+		    apply(rawSparseListFormMonomial m, (x,e) -> scan(0 .. x, i -> if t#?i then t#i = t#i + e else t#i = e)); 
+		    toSequence values t
+		    )})
 	  ) rawPairs(raw R, raw f);
      SR.generators = apply(M.generators, m -> SR#(toString m) = SR#0 + m);
      scan(keys R,k -> if class k === String then SR#k = promote(R#k,SR));
@@ -75,28 +80,26 @@ newSchur := (R,M) -> (
 
 ck := i -> if i < 0 then error "expected decreasing row lengths" else i
 
-SchurRing _ List := (S,a) -> (
-     M := (monoid S).generators;
-     m := (
-	  if # a === 0 
-	  then 1_M
-	  else product(# a, i -> (M#i) ^ (
-		    ck if i+1 < # a 
-	       	    then a#i - a#(i+1)
-	       	    else a#i)));
-     new S from rawTerm(S.RawRing, rawFromNumber(rawZZ(),1), m.RawMonomial))
-
 Schur = method ( Options => { } )
 
-Schur(ZZ) := SchurRing => options -> n -> (
+Schur(Symbol,ZZ) := SchurRing => options -> (p,n) -> (
      R := ZZ;
      x := symbol x;
      prune := v -> drop(v, - # select(v,i -> i === 0));
      M := monoid[x_1 .. x_n];
      vec := apply(n, i -> apply(n, j -> if j<=i then 1 else 0));
      -- toString M := net M := x -> first lines toString x;
-     S := newSchur(R,M);
+     S := newSchur(R,M,p);
      dim S := s -> rawSchurDimension raw s;
+     Mgens := M.generators;
+     methodTable#p = (p,a) -> (
+	  m := (
+	       if # a === 0 then 1_M
+	       else product(# a, i -> (Mgens#i) ^ (
+			 ck if i+1 < # a 
+			 then a#i - a#(i+1)
+			 else a#i)));
+	  new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
      S)
 
 -- Local Variables:
