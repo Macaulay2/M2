@@ -89,10 +89,14 @@ pR = (f,g) -> rawPseudoRemainder(raw f, raw g)
 assert( pR(x^2+y+11,x) == y+11 )
 assert( pR(f*d,d) == 0 )
 
--- rawFactor raw (f*g)
+f
+g
+rawFactor raw (f*g)
 -- factor(f*g)
 
 -- rawCharSeries raw vars R
+
+end
 
 -- modules
 M'= raw monoid R
@@ -246,5 +250,5 @@ assert ( i == -1 )
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "
--- compile-command: "M2 --debug-M2 --stop -e 'input \"ring.m2\"' -e 'exit 0' "
+-- compile-command: "echo 'input \"ring.m2\"' | M2 --debug-M2 --stop"
 -- End:

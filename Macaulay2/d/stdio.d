@@ -445,8 +445,7 @@ export filbuf(o:file):int := (
 	  );
      n := length(o.inbuffer) - o.insize;
      r := (
-	  if o.infd == STDIN && o.inisatty
-	  then (
+	  if o.readline then (
 	       flush(stdout);
 	       readline(o.inbuffer,n,o.insize,o.prompt()))
 	  else (
@@ -619,7 +618,7 @@ export getc(o:file):int := (
 	  if r == 0 then return EOF
 	  else if r == ERROR then return ERROR;
 	  )
-     else if o.bol then maybeprompt(o);
+     else if o.bol && !o.readline then maybeprompt(o);
      c := o.inbuffer.(o.inindex);
      o.inindex = o.inindex + 1;
      if o.echo then stdout << c;
@@ -633,7 +632,7 @@ export read(o:file):(string or errmsg) := (
 	  r := filbuf(o);
 	  if r == ERROR then return (string or errmsg)(errmsg(fileErrorMessage(o)));
 	  )
-     else if o.bol then maybeprompt(o);
+     else if o.bol && !o.readline then maybeprompt(o);
      s := substr(o.inbuffer,o.inindex,o.insize);
      o.insize = 0;
      o.inindex = 0;

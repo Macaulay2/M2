@@ -15,11 +15,14 @@
 
 #include "relem.hpp"
 
+#if 1
 // debugging display routines to be called from gdb
-// void showvar(Variable &t) { cout << t << endl; }
-// void showcf(CanonicalForm &t) { cout << t << endl; }
-// void showcfl(CFList &t) { cout << t << endl; }
-// void showcffl(CFFList &t) { cout << t << endl; }
+// needs factory to be configured without option --disable-streamio 
+void showvar(Variable &t) { cout << t << endl; }
+void showcf(CanonicalForm &t) { cout << t << endl; }
+void showcfl(CFList &t) { cout << t << endl; }
+void showcffl(CFFList &t) { cout << t << endl; }
+#endif
 
 static const RingElement * convert(const Ring *R, CanonicalForm h) {
      const int n = R->n_vars();
