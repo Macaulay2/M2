@@ -587,6 +587,17 @@ const Matrix * rawMatrixCompress(const Matrix *M)
   //return M->compress();
 }
 
+#if 0
+
+// Code for doing ESchreyer
+  GBMatrix *n = new GBMatrix(m);
+  GBKernelComputation G(n);
+  G.calc();
+  GBMatrix *syz = G.get_syzygies();
+  return syz->to_matrix();
+
+#endif
+
 const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree_only)
 {
   return m->remove_monomial_factors(make_squarefree_only);
@@ -596,14 +607,6 @@ const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree
 
 const Matrix * rawRemoveScalarMultiples(const Matrix *m)
 {
-#warning "placed code here for debugging"
-  GBMatrix *n = new GBMatrix(m);
-  GBKernelComputation G(n);
-  G.calc();
-  GBMatrix *syz = G.get_syzygies();
-  return syz->to_matrix();
-
-
   return m->remove_scalar_multiples();
 }
 

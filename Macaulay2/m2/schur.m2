@@ -5,6 +5,8 @@ SchurRing.synonym = "Schur ring"
 
 toString SchurRing := S -> if S.?name then S.name else "Schur(" | toString (# (monoid S).generatorSymbols) | ")"
 
+coefficientRing SchurRing := Ring => R -> last R.baseRings
+
 newSchur := (R,M) -> (
      if not (M.?Engine and M.Engine) 
      then error "expected ordered monoid handled by the engine";
