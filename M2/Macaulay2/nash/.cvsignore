@@ -2,5 +2,9 @@ nash
 env.nonash
 env.nash
 env.gdb
+args
+args.nonash
+args.nash
+args.gdb
 printenv
 unsetenv
