@@ -29,8 +29,8 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
   "Usual distance scrolled by M2-jog-left and M2-jog-right")
 (defvar M2-comint-prompt-regexp
   (concat "^"
-	  "[ \t]*"
 	  "\\("
+	  "[ \t]*"
 	  "[io][0-9]+ [:=] "
 	  "\\)"
 	  "?"
