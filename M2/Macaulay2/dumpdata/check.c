@@ -3,7 +3,6 @@
 #include "dumpdata.h"
 
 int main() {
-  map *m = getmaps();
-  printmaps(m);
+  dumpdata("check-data");
   return 0;
 }

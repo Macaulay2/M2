@@ -9,5 +9,4 @@ typedef struct MAP {
   char *filename;
 } * map;
 
-map *getmaps();
-void printmaps(map *);
+void dumpdata(const char *);
