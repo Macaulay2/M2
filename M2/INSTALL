@@ -304,7 +304,11 @@ Here is the configure line I have used that works:
     # my current configure method
     mkdir tmp
     cd tmp
-    CPPFLAGS=-I/sw/include CFLAGS="-g -faltivec" LDFLAGS="-faltivec -framework VecLib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize --enable-lapack
+    CPPFLAGS=-I/sw/include CFLAGS="-g -faltivec" LDFLAGS="-faltivec -framework VecLib -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize --enable-lapack --with-libgmp=/sw/lib/libgmp.a
+
+    CPPFLAGS=-I/sw/include CFLAGS="-g -faltivec" LDFLAGS="-faltivec  -L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize --with-veclib  --with-libgmp=/sw/lib/libgmp.a
+
+    CPPFLAGS=-I/sw/include CFLAGS="-g" LDFLAGS="-L/sw/lib" ../configure --disable-strip --disable-dumpdata --prefix=/sw --enable-debug --disable-optimize --with-veclib  --with-libgmp=/sw/lib/libgmp.a --enable-altivec
 
 
 Further notes:
