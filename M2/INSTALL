@@ -189,22 +189,30 @@ Linux notes
 ----------------------
 MacOS X notes
 ----------------------
-This port was done with the help of Dave Morrison, Dennis Keeler and John Dalbec.
-The source is most conveniently compiled using the fink system at
-http://fink.sourceforge.net.  Soon there will be a macaulay2 fink package: this
-will automatically download, unpack, configure, compile and install all of the above
-libraries and macaulay2 itself.  The resulting compiled version can be used without
-fink, suitably modified.
+The easiest way to install Macaulay2 under Mac OS X is to use the Fink system
+<http://fink.sourceforge.net>.  Follow the instructions at the Fink website
+to install Fink itself, add unstable/main to the appropriate line in
+/sw/etc/fink.conf, and then install Fink's "macaulay2" package.  You can
+choose the binary installation method or the source installation method
+(which will download the source files and compile them on your machine).  You
+may also wish to install emacs or xemacs using Fink, for the best interface
+to Macaulay2.
 
-There are (1/10/02) several small issues still to be smoothed over, but M2 compiles
-fine on my titanium G4, running mac os 10.1, dev tools 10.1, and all of the tests
-pass.
+Fink can also be used to install other software of interest to
+mathematicians.  In most cases, you simply install the relevant Fink package.
+In two special cases -- the X11 windowing system, and TeX -- it is possible
+to install the software using another method, and then tell Fink about it (by
+installing Fink's packages "system-xfree86" and "system-tetex",
+respectively).
+
+Note, June 1, 2003: The bug, which caused Macaulay2 for Mac OS X as compiled
+by fink as version 0.9.2-6 to crash occasionally, has been fixed!  The
+problem was that the garbage collector library, gc, was configured
+incorrectly.  It passes all the tests, so look forward to a version that fink
+will call "stable".
 
 Issues remaining:
   the fink ".info" file needs to be improved
-  gc: redefines _read, so that the linker complains about multiply defined symbols.
-      For now, I ignore the message, and it seems to work.  Boehm said that this 
-      wrapper is gone in the latest version, so I am not going to worry about this.
   post install:
       the M2, M2-help, and emacs/M2-init.el files need to be patched
 
