@@ -480,9 +480,11 @@ applythem(obj:HashTable,fn:FunctionClosure):void := (
      apply(fn,Expr(obj));
      );
 
+-- use this version without MEM_DEBUG
 RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::= 
      Ccode( void, "GC_REGISTER_FINALIZER(", h, ",(GC_finalization_proc)", fn, ",(void *)0,(void *)0,(void *)0)" );
 
+-- use this version with MEM_DEBUG
 -- RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::= 
 --      Ccode( void,
 --      	  "GC_REGISTER_FINALIZER(__subfront__(",
@@ -493,10 +495,6 @@ RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::=
 -- 	  0,
 -- 	  "),0,0)" 
 -- 	  );
-
- -- see memdebug.h
- -- old : FixUp( obj:Handle ):void ::= Ccode( void, "((void *) ", obj, ") += sizeof(front)" );
---    FixUp( obj:Handle ):void ::= Ccode( void, "(", obj, " = __addfront__(", obj, "))" );
 
 --RegisterFinalizerFun(e:Expr):Expr := (
 --     when e
@@ -518,8 +516,12 @@ RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::=
 --     else WrongNumArgs(2));
 --setupfun("register",RegisterFinalizerFun);
 
+-- see memdebug.h
+-- use this with MEM_DEBUG
+-- FixUp( obj:Handle ):void ::= Ccode( void, "(", obj, " = __addfront__(", obj, "))" );
+
 freeHandle(obj:Handle,i:int):void := (
-     -- FixUp(obj);
+     -- FixUp(obj);					    -- uncomment this with MEM_DEBUG
      -- stdout << "finalizing " << obj.handle << endl;
      gbforget(obj.handle);
      obj.handle = -1;			  -- mainly for debugging

@@ -487,8 +487,11 @@ char **argv;
 #if !defined(__MWERKS__)
      ONSTACK(envc);
 #endif
-     GC_free_space_divisor = 14;
-     GC_free_space_divisor = 3;
+
+#ifdef MEM_DEBUG
+     GC_all_interior_pointers = TRUE; /* set this before using gc routines!  (see gc.h) */
+#endif
+     GC_free_space_divisor = 3;	/* this was intended to be used only when we are about to dump data */
 
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  char **environ0;
@@ -669,54 +672,6 @@ extern int etext, end;
 
 #ifndef PAGESIZE
 #define PAGESIZE 4096
-#endif
-
-#ifdef DUMPDATA
-static sigjmp_buf jumpbuffer;
-static int sig = -1;
-
-static void handler(int k) 
-{
-     sig = 1;
-     siglongjmp(jumpbuffer,1);
-     }
-
-static void handler2(int k) 
-{
-     sig = 2;
-     siglongjmp(jumpbuffer,2);
-     }
-#endif
-
-#if !defined(__MWERKS__) && !defined(__CYGWIN32__) && defined(DUMPDATA) && !defined(NEWDUMPDATA)
-static void *first_rw_page_after_etext() {
-     void (*oldhandler)(int) = signal(SIGSEGV,handler);
-     char *p = (char *)RUP((intp)&etext);
-     /* "intp" is determined to be the same size as a pointer
-	in ../c2/targettypes.h */
-     for (;; p+=PAGESIZE) {
-	  if (0 != sigsetjmp(jumpbuffer,TRUE))  {
-	       signal(SIGSEGV,handler);	/* reset the handler */
-	       }
-	  else {
-	       char *t = (char *)p;
-	       char c;
-#if defined(__alpha__) && defined(__linux__)
-               { /* for some reason we need this on alpha linux, sigh */
-                 static sigset_t newset;
-                 sigaddset(&newset,SIGSEGV);
-                 sigprocmask(SIG_UNBLOCK, &newset, NULL);
-               }
-#endif
-	       c = *t;
-	       ONSTACK(p);	/* fool the optimizer */
-	       *t = c;		/* try to write to page */
-	       break;		/* break if writable */
-	       }
-	  }
-     signal(SIGSEGV,oldhandler);
-     return p;
-     }
 #endif
 
 int system_dumpdata(datafilename)
