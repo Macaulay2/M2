@@ -964,6 +964,7 @@ document { (symbol _, Sequence, ZZ), HEADLINE "get element from list",
      }
 
 document { ".",
+     HEADLINE "access to elements whose key is a symbol",
      TT "x.k", " -- the same as ", TT "x#(global k)", ", i.e., treat ", TT "k", " as
      a global symbol and provide the value stored in the hash table ", TT "x", " 
      under the key ", TT "k", ".",
@@ -980,6 +981,7 @@ document { ".",
      }
 
 document { ".?",
+     HEADLINE "check for presence of elements whose key is a symbol",
      TT "x.?k", " -- the same as ", TT "x#?(global k)", ", tells whether a value is
      available with ", TT "x.k", ".",
      PARA,
@@ -987,6 +989,7 @@ document { ".?",
      }
 
 document { autoload,
+     HEADLINE "arrange for a function to be loaded automatically",
      TT "autoload(f,\"x\")", " -- arranges for a function ", TT "f", " to be 
      automatically loaded from the file named ", TT "x", " the first
      time it is used."

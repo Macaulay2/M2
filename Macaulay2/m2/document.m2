@@ -646,15 +646,15 @@ documentation Sequence := s -> (
 	  "See also:",
 	  if #s==2 and not instance(s#1,Type)
 	  then MENU {
-	       SEQ {"Hash table: ", TOH formatDocumentTag s#1 },
-	       SEQ {"Key: ", TOH formatDocumentTag s#0 },
+	       SEQ {"Hash table: ", TO formatDocumentTag s#1 },
+	       SEQ {"Key: ", TO formatDocumentTag s#0 },
 	       }
 	  else MENU {
-	       SEQ {"Operator: ", TOH formatDocumentTag s#0 },
-	       SEQ {"Class of argument 1: ", TOH formatDocumentTag s#1 }, if #s > 2 then 
-	       SEQ {"Class of argument 2: ", TOH formatDocumentTag s#2 }, if #s > 3 then
-	       SEQ {"Class of argument 3: ", TOH formatDocumentTag s#3 }, if t =!= Thing then
-	       SEQ {"Class of typical returned value: ", TOH formatDocumentTag t, PARA{}},
+	       SEQ {"Operator: ", TO formatDocumentTag s#0 },
+	       SEQ {"Class of argument 1: ", TO formatDocumentTag s#1 }, if #s > 2 then 
+	       SEQ {"Class of argument 2: ", TO formatDocumentTag s#2 }, if #s > 3 then
+	       SEQ {"Class of argument 3: ", TO formatDocumentTag s#3 }, if t =!= Thing then
+	       SEQ {"Class of typical returned value: ", TO formatDocumentTag t, PARA{}},
 	       optargs s,
 	       moreGeneral s
      	       },
@@ -1118,8 +1118,8 @@ net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop
 html TO := x -> concatenate ( "<A HREF=\"", "\">", html formatDocumentTag x#0, "</A>", drop(toList x,1) )
 tex  TO := x -> tex TT formatDocumentTag x#0
 
-             toh := op -> x -> op SEQ{          new TO from x, headline x#0 }
-            htoh := op -> x -> op SEQ{ "help ", new TO from x, headline x#0 }
+             toh := op -> x -> op SEQ{ new TO from x, headline x#0 }
+            htoh := op -> x -> op SEQ{ new TO from x, headline x#0 }
 net  TOH :=  toh net
 text TOH := htoh text
 html TOH :=  toh html
