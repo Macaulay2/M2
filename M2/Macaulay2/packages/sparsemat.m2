@@ -46,7 +46,7 @@ net SparseMutableMatrix := f -> (
 	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"));
 	  m)
 
-AfterPrint SparseMutableMatrix := AfterNoPrint SparseMutableMatrix := f -> (
+SparseMutableMatrix.AfterPrint = AfterNoPrint SparseMutableMatrix := f -> (
      R := ring f;
      << endl;				  -- double space
      << "o" << lineNumber() << " : Matrix";

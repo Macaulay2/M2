@@ -1,8 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-html Option := x -> toString x
-text Option := x -> toString x
-
 new HashTable from List := HashTable => (O,v) -> hashTable v
 -- erase symbol hashTable
 

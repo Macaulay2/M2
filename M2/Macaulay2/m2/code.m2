@@ -94,7 +94,10 @@ methods HashTable := F -> (
 	       if class meth === Function 
 	       then if class key === Sequence and member(F,key)
 	       then found#key = true
-	       else found#(key,F) = true));
+	       else if class key === Function 
+	       then found#(key,F) = true
+	       )
+	  );
      scanPairs(symbolTable(),
 	  (Name,sym) -> (
 	       x := value sym;

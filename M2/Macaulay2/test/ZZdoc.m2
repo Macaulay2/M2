@@ -12,7 +12,7 @@ if class documentation "Macaulay 2" =!= SEQ then (
      error "top documentation node missing"
      )
 
-setrecursionlimit 1000
+setrecursionlimit 4000
 
 path = {"."}
 

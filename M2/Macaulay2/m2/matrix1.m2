@@ -387,7 +387,8 @@ Matrix ** RingElement := (f,r) -> f ** matrix {{r}}
 RingElement ** Matrix := (r,f) -> matrix {{r}} ** f
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
-AfterPrint Matrix := AfterNoPrint Matrix := f -> (
+Matrix.AfterPrint = 
+Matrix.AfterNoPrint = f -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : Matrix";
      if isFreeModule target f and isFreeModule source f
@@ -454,7 +455,7 @@ mingens Ideal := Matrix => options -> (I) -> mingens(module I,options)
 Ideal / Ideal := Module => (I,J) -> module I / module J
 Module / Ideal := Module => (M,J) -> M / (J * M)
 
-AfterPrint Ideal := AfterNoPrint Ideal := (I) -> (
+Ideal.AfterPrint = Ideal.AfterNoPrint = (I) -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : Ideal of " << ring I << endl;
      )
@@ -586,7 +587,7 @@ dual(Matrix) := Matrix => f -> (
      Hom(f,R^1)
      )
 
-InverseMethod Matrix := m -> if m#?-1 then m#-1 else m#-1 = (
+Matrix.InverseMethod = m -> if m#?-1 then m#-1 else m#-1 = (
      id_(target m) // m
      )
 

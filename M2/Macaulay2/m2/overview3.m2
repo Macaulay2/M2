@@ -51,12 +51,12 @@ document { "copyright and license",
      license above, we would like to hear about it.",
      PARA,
      "Various libraries have been compiled into Macaulay 2.",
-     MENU {
-	  SHIELD TO "Factory library",
-	  SHIELD TO "Factorization and characteristic sets library",
+     SHIELD MENU {
+	  TO "Factory library",
+	  TO "Factorization and characteristic sets library",
 	  -- SHIELD TO "MP: Multi Protocol",
-	  SHIELD TO "GNU MP",
-	  SHIELD TO "GC garbage collector"
+	  TO "GNU MP",
+	  TO "GC garbage collector"
 	  }
      }
 
@@ -258,7 +258,7 @@ document { "Macaulay 2",
 	       are relatively independent of each other, and each one introduces the use
 	       of some features of Macaulay 2 in a slow and leisurely way, assuming the
 	       reader is already familiar with the mathematical concepts involved.  
-	       ", SHIELD TO "David Eisenbud", " joins us as a co-author of these tutorials.",
+	       ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
 	       MENU {
 		    TO "Elementary uses of Groebner bases",
 		    TO "Canonical Embeddings of Plane Curves and Gonality",
@@ -554,16 +554,16 @@ document { "classes",
      Please see ", TO "binary method", " now for a brief discussion.",
      PARA,
      "For more details, see one of the topics below.",
-     MENU {
+     SHIELD MENU {
 	  TOH "newClass",
 	  TOH "new",
 	  TOH "ancestor",
 	  TOH "instance"
 	  },
      "For related topics, see one of the following.",
-     MENU {
+     SHIELD MENU {
 	  TOH "uniform",
-	  SHIELD TOH "Thing",
+	  TOH "Thing",
 	  TOH "Nothing",
 	  TOH "Type",
 	  TOH "MutableList",

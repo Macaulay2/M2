@@ -33,9 +33,9 @@ document { pushForward => Strategy,
      which can be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     MENU {
-	  SHIELD TOH "NonLinear",
-     	  SHIELD TOH "Linear"
+     SHIELD MENU {
+	  TOH "NonLinear",
+     	  TOH "Linear"
 	  }
      }
 
@@ -506,9 +506,9 @@ document { quotient => Strategy,
      be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     MENU {
-	  SHIELD TOH "Iterate",
-          SHIELD TOH "Linear"
+     SHIELD MENU {
+	  TOH "Iterate",
+          TOH "Linear"
           }
      }
 

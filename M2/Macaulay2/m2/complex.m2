@@ -40,7 +40,7 @@ CC + CC := (x,y) -> new CC from {x#0+y#0,x#1+y#1}
    - CC := x -> new CC from {-x#0,-x#1}
 CC - CC := (x,y) -> new CC from {x#0-y#0,x#1-y#1}
 CC ^ ZZ := BinaryPowerMethod
-InverseMethod CC := y -> (
+CC.InverseMethod = y -> (
      m := y#0^2 + y#1^2;
      new CC from {y#0/m,-y#1/m})	  
 CC * CC := (x,y) -> new CC from { x#0*y#0 - x#1*y#1 , x#0*y#1 + x#1*y#0 }

@@ -25,31 +25,20 @@ record = (
 	  )
      )
 
-
- -- ignore TO; find MENU, switch, descend
 reach1 = method(SingleArgumentDispatch=>true) 
-
- -- record TO items, switch, descend
 reach2 = method(SingleArgumentDispatch=>true)
+reach3 = method(SingleArgumentDispatch=>true)
 
-reach1(Thing   ) := identity
-reach1(Sequence) :=
-reach1(MarkUpList) := x -> scan(x,reach1)
-reach1(List    ) := x -> scan(x,reach1)
-reach1(MENU    ) := reach2
-reach1(TO      ) := 
-reach1(TOH     ) := (x) -> (
+reach1 Thing := identity
+reach1 Sequence := reach1 BasicList := x -> scan(x,reach1)
+reach1 SHIELD := x -> scan(x,reach3)
+reach1 MENU := x -> scan(x,reach2)
+reach1 TO := reach1 TOH := (x) -> (
      node := x#0;
      nodeTable2#node = true;
      )
-
-reach2(Thing   ) := identity
-reach2(Sequence) :=
-reach2(MarkUpList) := x -> scan(x,reach2)
-reach2(List    ) := x -> scan(x,reach2)
-reach2(SHIELD  ) := reach1
-reach2(TO      ) := 
-reach2(TOH     ) := (x) -> (
+reach2 Thing := reach1
+reach2 TO := reach2 TOH := (x) -> (
      node := formatDocumentTag x#0;
      if not fileNumberTable#?node
      then (
@@ -58,6 +47,8 @@ reach2(TOH     ) := (x) -> (
 	  reach1 documentation node;
      	  ascend();
 	  ))
+reach3 Thing := reach1
+reach3 MENU := x -> scan(x,reach1)
 --------------- body of book
 reach2 TO "Macaulay 2"
 --------------- appendix

@@ -727,7 +727,7 @@ document { GlobalAssignHook,
      as methods for this purpose.",
      PARA,
      EXAMPLE {
-	  ///GlobalAssignHook RR := (sym,val) -> <<"assigning " <<val <<" to " <<sym <<endl;///,
+	  ///RR.GlobalAssignHook = (sym,val) -> <<"assigning " <<val <<" to " <<sym <<endl;///,
           "a=4.5",
 	  },
      SEEALSO "GlobalReleaseHook"
@@ -744,7 +744,7 @@ document { GlobalReleaseHook,
      and before the execution of ", TO "GlobalAssignHook", ".",
      PARA,
      EXAMPLE {
-	  ///GlobalReleaseHook RR := (sym,val) -> << concatenate (
+	  ///RR.GlobalReleaseHook = (sym,val) -> << concatenate (
      "assigning ", toString val, " to ", toString sym
      ) << endl///,
           "a=4.5",

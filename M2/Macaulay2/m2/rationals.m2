@@ -23,7 +23,7 @@ expression QQ := r -> (
      else (expression n)/(expression d)
      )
 net QQ := r -> net expression r
-InverseMethod QQ := x -> 1/x
+QQ.InverseMethod = x -> 1/x
 QQ.dim = 0
 QQ == ZZ := (r,i) -> r == i/1
 ZZ == QQ := (i,r) -> r == i/1

@@ -415,6 +415,7 @@ ggConcatBlocks := (R,mats) -> (
 	  ggPush(#mats), ggconcat, ggtranspose );
      getMatrix R)
      
+tensorAssociativity = method()
 tensorAssociativity(GradedModule,GradedModule,GradedModule) := GradedModuleMap => (A,B,C) -> (
      R := ring A;
      map(

@@ -71,6 +71,12 @@ net ZZZ := toString ZZZ := see
 expression ZZZ := n -> expression lift(n,ZZ)
 
 -----------------------------------------------------------------------------
+frac = method(TypicalValue => FractionField)
+frac Ring := R -> (
+     if R.?frac then R.frac 
+     else error "no method found"
+     )
+
                 FractionField = new Type of EngineRing
            frac FractionField := identity
 coefficientRing FractionField := F -> coefficientRing last F.baseRings
@@ -82,12 +88,6 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 		 if F.?name then F.name
 		 else net new FunctionApplication from { frac, last F.baseRings }
 		 )
-
-frac = method(TypicalValue => FractionField)
-frac Ring := R -> (
-     if R.?frac then R.frac 
-     else error "no method found"
-     )
 
 freduce := (f) -> (numerator f)/(denominator f)
 

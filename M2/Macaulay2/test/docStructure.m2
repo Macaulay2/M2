@@ -23,18 +23,20 @@ reachable = new MutableHashTable
 
 reach1 = method(SingleArgumentDispatch=>true)
 reach2 = method(SingleArgumentDispatch=>true)
+reach3 = method(SingleArgumentDispatch=>true)
 
 reach1 Thing := identity
 reach1 Sequence :=
 reach1 MarkUpList := x -> scan(x,reach1)
 reach1 TO := identity
 reach1 TOH := identity
-reach1 MENU := reach2
+reach1 MENU := x -> scan(x,reach2)
+reach1 SHIELD := x -> scan(x,reach3)
 
-reach2 Thing := identity
-reach2 Sequence :=
-reach2 MarkUpList := x -> scan(x,reach2)
-reach2 SHIELD := x -> null
+reach3 Thing := reach
+reach3 MENU := x -> scan(x,reach1)
+
+reach2 Thing := reach
 reach2 TO  := 
 reach2 TOH := x -> (
      s := toString x#0;
@@ -50,10 +52,10 @@ scan(keys DocumentationProvided, s -> reachable#s = false)
 reach2 TO "Macaulay 2"
 
 o = "docStructure.out" << world << endl
-unreachable = applyPairs(new HashTable from reachable, (k,v) -> if not v then (k,true))
-scan(
-     sort keys unreachable, 
-     s -> o << "documentation for '" << s << "' not reachable through main menus" << endl
-     )
+-- unreachable = applyPairs(new HashTable from reachable, (k,v) -> if not v then (k,true))
+-- scan(
+--      sort keys unreachable, 
+--      s -> o << "documentation for '" << s << "' not reachable through main menus" << endl
+--      )
 o << close
 << "Documentation structure written to file " << o << endl

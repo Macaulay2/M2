@@ -1,6 +1,15 @@
 Changes made, most recent ones first:
 -----------------------------------------------------------------------------
+New in 0.8.56:
+
+Operation of html item 'SHIELD' changed - it now is used to protect a whole
+MENU rather than its items.
+
+-----------------------------------------------------------------------------
 New in 0.8.55:
+
+Fixed a memory management bug in Groebner basis computations that caused memory
+usage to grow without bound.
 
 Fixed a bug in front-end rational number arithmetic where denominator could
 be zero after dividing an integer by a rational number.

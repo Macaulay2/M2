@@ -49,7 +49,7 @@ same = v -> (
 	  )
      )
 
-member(Thing,Sequence) := member(Thing,List) := Boolean => (c,x) -> any(x, i -> c===i)
+member(Thing,VisibleList) := Boolean => (c,x) -> any(x, i -> c===i)
 
 sum(List) := x -> plus toSequence x
 

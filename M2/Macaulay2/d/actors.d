@@ -616,7 +616,7 @@ installMethodFun(args:CodeSequence):Expr := (
      a := eval(args.1);
      when a 
      is Error do a
-     is SymbolClosure do installFun2(a,args)
+     -- is SymbolClosure do installFun2(a,args)
      is CompiledFunction do installFun2(a,args)
      is CompiledFunctionClosure do installFun2(a,args)
      is FunctionClosure do installFun2(a,args)
@@ -635,7 +635,7 @@ installMethodFun(args:CodeSequence):Expr := (
 			 else installMethod(opr,aa,bb,eval(args.3)))
 		    else errorExpr("expected right hand parameter to be a type"))
 	       else errorExpr("expected right hand parameter to be a hash table")))
-     else errorExpr("expected a hash table"));
+     else errorExpr("expected left hand parameter to be a function, type, or a hash table"));
 InstallMethodFun = installMethodFun;
 
 mess1 := "objects on left hand side of assignment are not types (use ':=' instead?)";

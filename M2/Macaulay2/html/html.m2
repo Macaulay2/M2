@@ -65,21 +65,24 @@ up   = key -> if   UP#?key then HREF { linkFilename   UP#key,   upButton }
 
 scope := method(SingleArgumentDispatch => true)
 scope2 := method(SingleArgumentDispatch => true)
+scope3 := method(SingleArgumentDispatch => true)
 
 lastKey = null
 thisKey = null
 
 scope Thing := x -> null
 scope Sequence := scope BasicList := x -> scan(x,scope)
+scope SHIELD := x -> scan(x,scope3)
 scope MENU := x -> scan(x,scope2)
 scope TO := scope TOH := x -> (
      key := formatDocumentTag x#0;
      linkFilename key;
      )
 
-scope2 Thing := x -> null
-scope2 Sequence := scope2 BasicList := x -> scan(x,scope2)
-scope2 SHIELD := x -> scan(x,scope)
+scope3 Thing := scope
+scope3 MENU := x -> scan(x,scope)
+
+scope2 Thing := scope
 scope2 TO := scope2 TOH := x -> (
      key := formatDocumentTag x#0;
      linkFilename key;

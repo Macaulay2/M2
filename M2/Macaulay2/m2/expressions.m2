@@ -1028,29 +1028,29 @@ mathML Thing := x -> mathML expression x
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (o,x) -> (x = net x; scan(o, o -> printString(o,x)); o)
 
-AfterPrint Thing := x -> (
+Thing.AfterPrint = x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x;
      << endl;
      briefDocumentation x;
      )
 
-AfterPrint Expression := x -> (
+Expression.AfterPrint = x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x
      << endl;
      briefDocumentation x;
      )
 
-AfterPrint Holder := x -> (
+Holder.AfterPrint = x -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : " << class x << " " << class x#0
      << endl;
      briefDocumentation x;
      )
 
-AfterPrint ZZ := identity
-AfterPrint Boolean := identity
+ZZ.AfterPrint = identity
+Boolean.AfterPrint = identity
 -- AfterPrint String := identity
 -----------------------------------
 expression Array :=

@@ -231,14 +231,14 @@ document { HashTable,
      which consists of those hash tables whose entries can be changed.",
      PARA,
      "Access functions:",
-     MENU {
- 	  SHIELD TOH "#",
- 	  SHIELD TOH "."
+     SHIELD MENU {
+ 	  TOH "#",
+ 	  TOH "."
  	  },
      "Query functions:",
-     MENU {
- 	  SHIELD TOH "#?",
- 	  SHIELD TOH ".?"
+     SHIELD MENU {
+ 	  TOH "#?",
+ 	  TOH ".?"
  	  }
      }
 

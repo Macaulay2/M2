@@ -11,8 +11,8 @@ List/SelfInitializingType := (z,T) -> z / (i -> T i)
 
 Command = new SelfInitializingType of BasicList
 Command.name = "Command"
-GlobalAssignHook Command := (X,x) -> if not Symbols#?x then Symbols#x = X
-GlobalReleaseHook Command := (X,x) -> (
+Command.GlobalAssignHook = (X,x) -> if not Symbols#?x then Symbols#x = X
+Command.GlobalReleaseHook = (X,x) -> (
      stderr << "warning: " << string X << " redefined" << endl;
      if Symbols#x === X then remove(Symbols,x);
      )
@@ -22,6 +22,6 @@ new Command from String   := Command => (command,cmdname) -> command {
 	  if x === ()
 	  then run cmdname
 	  else run (cmdname | " " | string x))}
-AfterEval Command := x -> x#0 ()
+Command.AfterEval = x -> x#0 ()
 Command Thing := (x,y) -> x#0 y
 

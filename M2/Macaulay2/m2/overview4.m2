@@ -10,63 +10,6 @@ document {
      a world-wide web server such as netscape.  The function ", TO "text", "
      can be used to convert it to straight ascii text, suitable for
      viewing on an ascii terminal.",
-     PARA,
-     "Here are the functions for creating hypertext.",
-     MENU {
-	  TOH "BIG",
-	  TOH "BLOCKQUOTE",
-	  TOH "BODY",
-	  TOH "BOLD",
-	  TOH "BR",
-	  TOH "CENTER",
-	  TOH "CITE",
-	  TOH "CODE",
-	  TOH "DFN",
-	  TOH "DL",
-	  TOH "EM",
-	  TOH "EXAMPLE",
-	  TOH "ExampleTABLE",
-	  TOH "H1",
-	  TOH "H2",
-	  TOH "H3",
-	  TOH "H4",
-	  TOH "H5",
-	  TOH "H6",
-	  TOH "HEAD",
-	  TOH "HEADLINE",
-	  TOH "HR",
-	  TOH "HREF",
-	  TOH "HTML",
-	  TOH "IMG",
-	  TOH "ITALIC",
-	  TOH "KBD",
-	  TOH "LISTING",
-	  TOH "LITERAL",
-	  TOH "MENU",
-	  TOH "NL",
-	  TOH "NOINDENT",
-	  TOH "OL",
-	  TOH "PARA",
-	  TOH "PRE",
-	  TOH "SAMP",
-	  TOH "SEEALSO",
-	  TOH "SEQ",
-	  TOH "SHIELD",
-	  TOH "SMALL",
-	  TOH "STRONG",
-	  TOH "SUB",
-	  TOH "SUP",
-	  TOH "TABLE",
-	  TOH "TEST",
-	  TOH "TEX",
-	  TOH "TITLE",
-	  TOH "TO",
-	  TOH "TT",
-	  TOH "UL",
-	  TOH "UNDERLINE",
-	  TOH "VAR",
-	  TOH "XMP"
-	  },
      SEEALSO {"MarkUpList", "MarkUpType", "Entity"}
      }
 
@@ -76,15 +19,7 @@ document { "functions",
      the user has no way of distinguishing the two types.  The user
      creates new functions with the ", TO "->", " operator.",
      PARA,
-     "Operations on functions:",
-     MENU {
- 	  (SHIELD TO "@@", " -- composition"),
-	  (TO "ultimate", " -- ultimate value for an iteration")
- 	  },
-     "Particular functions:",
-     MENU {
-	  TO "identity"
-	  }
+     SEEALSO {"Function"}
      }
 
 document { "emacs",
@@ -535,7 +470,7 @@ document { "high level gb engine commands",
 	  TO "sendgg"
 	  },
      "This class provides an interface to rings implemented by the engine.",
-     MENU {
+     SHIELD MENU {
 	  TO "EngineRing"
 	  },
      "These routines take an element off the stack.",
