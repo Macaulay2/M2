@@ -27,26 +27,27 @@ methodDefaults := new OptionTable from {
      }
 
 methodFunctionOptions = new MutableHashTable
+methodOptions = new MutableHashTable
 
 AssociativeNoOptions := () -> (
      methodFunction := newmethod1 noMethod;
      binaryLookup := (x,y) -> (
 	  -- Common code for every associative method without options
 	  f := lookup(methodFunction,class x,class y);
-	  if f === null then noMethod(x,y)
-	  else f(x,y)
-	  )
-     ;
+	  if f === null then noMethod(x,y) else f(x,y)
+	  );
      methodFunction(Sequence) := self := 
      args -> (
 	  -- Common code for every associative method without options
 	  if #args === 2 then binaryLookup args
 	  else if #args >= 3 then self prepend(self(args#0,args#1),drop(args,2))
 	  else if #args === 1 then args#0
-	  else if #args === 0 then noMethod args
+	  else if #args === 0 then (
+	       f := lookup singleton methodFunction;
+	       if f === null then noMethod args else f args
+	       )
 	  else error "wrong number of arguments"
-	  )
-     ;
+	  );
      methodFunction)
 
 SingleArgWithOptions := opts -> (
@@ -56,10 +57,9 @@ SingleArgWithOptions := opts -> (
          arg -> (
 	  -- Common code for every method with options, single argument
 	  f := lookup(methodFunction, class arg);
-	  if f === null then noMethod arg
-	  else (f options) arg
-	  )
-     ;
+	  if f === null then noMethod arg else (f options) arg
+	  );
+     methodOptions#methodFunction = opts;
      methodFunction)
 
 AssociativeWithOptions := opts -> error "associative methods with options not implemented yet"
@@ -73,8 +73,8 @@ MultipleArgsWithOptions := opts -> (
 	  -- Dispatches on type of argument.
 	  f := lookup(methodFunction, class arg);
 	  if f === null then noMethod arg else (f options) arg
-	  )
-     ;
+	  );
+     methodOptions#methodFunction = opts;
      methodFunction(Sequence) := 
      options ->
         args -> (
@@ -82,8 +82,7 @@ MultipleArgsWithOptions := opts -> (
 	  -- Dispatches on type of arguments ('args' is a sequence).
 	  f := lookup prepend(methodFunction,apply(args,class));
 	  if f === null then noMethod args else (f options) args
-	  )
-     ;
+	  );
      methodFunction)
 
 MultipleArgsNoOptions := () -> (
@@ -104,8 +103,10 @@ method = methodDefaults ==> options -> () -> (
 	       )
 	  );
      if options.TypicalValue =!= Thing then typicalValues#methodFunction = options.TypicalValue;
-     methodFunctionOptions#methodFunction = options;
+     methodFunctionOptions#methodFunction = options;	    -- not the options to the method itself!
      methodFunction)
+
+methodOptions#method = methodDefaults 			    -- hack in the first one
 
 setup := (args, symbols) -> (
      scan(symbols, n -> (
@@ -248,6 +249,8 @@ emptyOptionTable := new OptionTable
 options     Ring := x -> null
 options Sequence := s -> if lookup s =!= null then options lookup s
   optionFunction := {} ==> () -> ()
+
+-- this works for any function created with "==>", not just with "method"!
 options Function := OptionTable => function -> (
      if sameFunctionBody(function, optionFunction) then first frame function
      else null)
