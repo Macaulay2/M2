@@ -176,17 +176,114 @@ export dummyNetList := NetList(self,dummyNet);
 
 min(x:int,y:int):int := if x<y then x else y;
 
-export (s:Net) < (t:Net) : bool := (
-     if s.height != t.height then return s.height < t.height;
-     n := min(length(s.body),length(t.body));
-     for i from 0 to n-1 do (
-	  if !(s.body.i === t.body.i) then return s.body.i < t.body.i;
+-- export (s:Net) < (t:Net) : bool := (
+--      if s.height != t.height then return s.height < t.height;
+--      n := min(length(s.body),length(t.body));
+--      for i from 0 to n-1 do (
+-- 	  if !(s.body.i === t.body.i) then return s.body.i < t.body.i;
+-- 	  );
+--      return length(s.body) < length(t.body);
+--      );
+-- export (s:Net) >= (t:Net) : bool := !(s<t);
+-- export (s:Net) > (t:Net) : bool := t<s;
+-- export (s:Net) <= (t:Net) : bool := !(t<s);
+
+export netcmp(s:Net, t:Net):int := (
+     sbody := s.body;
+     tbody := t.body;
+     slen := length(sbody);
+     tlen := length(tbody);
+     si := 0;
+     ti := 0;
+     sj := 0;
+     tj := 0;
+     c := 0;
+     d := 0;
+     while c != -1 || d != -1 do (
+	  if si < slen then (
+	       if sj < length(sbody.si) then (
+	       	    c = int(uchar(sbody.si.sj));
+		    sj = sj + 1)
+	       else (
+	       	    si = si+1;
+	       	    sj = 0;
+	       	    c = if si == slen then -1 else int('\n');
+		    ))
+	  else c = -1;
+	  if ti < tlen then (
+	       if tj < length(tbody.ti) then (
+	       	    d = int(uchar(tbody.ti.tj));
+		    tj = tj + 1)
+	       else (
+	       	    ti = ti+1;
+	       	    tj = 0;
+	       	    d = if ti == tlen then -1 else int('\n');
+		    ))
+	  else d = -1;
+	  if c > d then return 1;
+	  if c < d then return -1;
 	  );
-     return length(s.body) < length(t.body);
-     );
-export (s:Net) >= (t:Net) : bool := !(s<t);
-export (s:Net) > (t:Net) : bool := t<s;
-export (s:Net) <= (t:Net) : bool := !(t<s);
+     0);
+export netcmp(s:Net, t:string):int := (
+     sbody := s.body;
+     slen := length(sbody);
+     si := 0;
+     srow := sbody.si;
+     swid := length(srow);
+     twid := length(t);
+     sj := 0;
+     tj := 0;
+     c := 0;
+     d := 0;
+     while c != -1 || d != -1 do (
+	  if si < slen then (
+	       if sj < length(sbody.si) then (
+	       	    c = int(uchar(sbody.si.sj));
+		    sj = sj + 1)
+	       else (
+	       	    si = si+1;
+	       	    sj = 0;
+	       	    c = if si == slen then -1 else int('\n');
+		    ))
+	  else c = -1;
+	  if tj < twid then (
+	       d = int(uchar(t.tj));
+	       tj = tj + 1)
+	  else d = -1;
+	  if c > d then return 1;
+	  if c < d then return -1;
+	  );
+     0);
+export netcmp(s:string, t:Net):int := (
+     tbody := t.body;
+     tlen := length(tbody);
+     ti := 0;
+     trow := tbody.ti;
+     swid := length(s);
+     twid := length(trow);
+     sj := 0;
+     tj := 0;
+     c := 0;
+     d := 0;
+     while c != -1 || d != -1 do (
+	  if sj < swid then (
+	       c = int(uchar(s.sj));
+	       sj = sj + 1)
+	  else c = -1;
+	  if ti < tlen then (
+	       if tj < length(tbody.ti) then (
+	       	    d = int(uchar(tbody.ti.tj));
+		    tj = tj + 1)
+	       else (
+	       	    ti = ti+1;
+	       	    tj = 0;
+	       	    d = if ti == tlen then -1 else int('\n');
+		    ))
+	  else d = -1;
+	  if c > d then return 1;
+	  if c < d then return -1;
+	  );
+     0);
 
 use vararray;
 

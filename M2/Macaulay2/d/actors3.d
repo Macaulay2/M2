@@ -245,11 +245,28 @@ compare(left:Expr,right:Expr):Expr := (
 	       else if c == -1 then LessE
      	       else EqualEqualE
 	       )
+	  is y:Net do (
+	       c := netcmp(x,y);
+	       if c == 1 then GreaterE
+	       else if c == -1 then LessE
+     	       else EqualEqualE
+	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is x:Net do (
 	  when right
-	  is y:Net do if x < y then LessE else if x > y then GreaterE else EqualEqualE
+	  is y:Net do (
+	       c := netcmp(x,y);
+	       if c == 1 then GreaterE
+	       else if c == -1 then LessE
+     	       else EqualEqualE
+	       )
+	  is y:string do (
+	       c := netcmp(x,y);
+	       if c == 1 then GreaterE
+	       else if c == -1 then LessE
+     	       else EqualEqualE
+	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is s:Sequence do (

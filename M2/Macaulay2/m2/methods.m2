@@ -23,6 +23,7 @@ methodDefaults := new OptionTable from {
 
 methodFunctionOptions = new MutableHashTable
 methodOptions = new MutableHashTable
+methodDispatchFunctions = new MutableHashTable
 
 AssociativeNoOptions := () -> (
      methodFunction := newmethod1 (args -> noMethod(methodFunction,args));
@@ -43,6 +44,7 @@ AssociativeNoOptions := () -> (
 	       )
 	  else error "wrong number of arguments"
 	  );
+     methodDispatchFunctions#self = true;
      methodFunction)
 
 chkopt0 := k -> if not ( instance(k, Symbol) ) then error "expected SYMBOL => VALUE"
@@ -79,7 +81,7 @@ MultipleArgsWithOptions := opts -> (
 	  if f === null then noMethod(methodFunction,arg) else (f options) arg
 	  );
      methodOptions#methodFunction = opts;
-     methodFunction(Sequence) := 
+     self := methodFunction(Sequence) := 
      options ->
         args -> (
 	  -- Common code for every method with options, multiple arguments
@@ -87,11 +89,13 @@ MultipleArgsWithOptions := opts -> (
 	  f := lookup prepend(methodFunction,apply(args,class));
 	  if f === null then noMethod(methodFunction,args) else (f options) args
 	  );
+     methodDispatchFunctions#self = true;
      methodFunction)
 
 MultipleArgsNoOptions := () -> (
      methodFunction := newmethod123c(,args -> noMethod(methodFunction,args), {});
-     methodFunction Sequence := newmethod123c( methodFunction, args -> noMethod(methodFunction,args), {} );
+     self := methodFunction Sequence := newmethod123c( methodFunction, args -> noMethod(methodFunction,args), {} );
+     methodDispatchFunctions#self = true;
      methodFunction)     
 
 method = methodDefaults >>> options -> args -> (
