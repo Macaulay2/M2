@@ -4,7 +4,7 @@ include $(TOPDIR)/Makeconf
 export LD_LIBRARY_PATH=../lib
 
 RESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2)) 
-ifdef DUMPDATA
+ifndef NODUMPDATA
 RESULTS := $(RESULTS) dumpdata.okay
 endif
 
@@ -12,7 +12,7 @@ all :: $(RESULTS)
 
 $(RESULTS) : ../bin/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 
-ifdef DUMPDATA
+ifndef NODUMPDATA
 dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3
 	@ echo testing dumpdata
 	@ ../bin/Macaulay2 -q '-eloaddata("../cache/Macaulay2-$(ARCH)-data")' -- '-epath=append(path,"../m2")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent dumpdata.1 '-eexit(0)'
@@ -20,7 +20,7 @@ dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3
 	@ touch dumpdata.okay
 endif
 
-ifdef DUMPDATA
+ifndef NODUMPDATA
 ARGS := -q '-eloaddata("../cache/Macaulay2-$(ARCH)-data")' -- '-epath=append(path,"../m2")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
 else
 ARGS := -q -ephase=1 ../m2/setup.m2 -ephase=0 '-erunStartFunctions()' '-eerrorDepth(0)' -silent

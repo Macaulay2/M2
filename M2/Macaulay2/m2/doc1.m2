@@ -970,7 +970,7 @@ document { quote mathML,
      }
 
 document { quote #,
-     TT "#x", " -- provides the length of a list, sequence, array or 
+     TT "#x", " -- provides the length of a list, sequence, array, file, or 
      string, or the number of elements in a hash table or set.",
      BR,NOINDENT,
      TT "x#i", " -- provides the value associated to the key ", TT "i", " in the hash table

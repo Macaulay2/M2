@@ -284,8 +284,16 @@ lengthFun(rhs:Code):Expr := (
      is x:HashTable do Expr(toInteger(x.numEntries))
      is x:Sequence do Expr(toInteger(length(x)))
      is x:List do Expr(toInteger(length(x.v)))
+     is f:file do (
+	  if f.input || f.output then (
+	       r := fileLength(f);
+	       if r == ERROR then errorExpr("couldn't determine length of file")
+	       else Expr(toInteger(r))
+	       )
+	  else errorExpr("file not open")
+	  )
      is s:string do Expr(toInteger(length(s)))
-     else errorExpr("expected a list, sequence, hash table, or string"));
+     else errorExpr("expected a list, sequence, hash table, file, or string"));
 setup(SharpS,lengthFun,subvalue);
 subvalueQ(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);

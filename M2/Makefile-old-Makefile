@@ -33,7 +33,13 @@ rmcores :; find . '(' -name core -o -name gmon.out -o -name profile ')' -exec rm
 ################################ SETUP
 ifeq "$(CC)" "cl"
 all::;	$(MAKE) -C WindowsNT
+TARGET := Macaulay2-$(DESC).zip
+else
+TARGET := Macaulay2-$(DESC).tar.gz
 endif
+all:: announce
+announce ::
+	@echo '## making $(TARGET)'
 ################################ GC
 all:: GC
 clean::; rm -f gc/*.obj gc/*.lib
@@ -314,12 +320,11 @@ all :: MACAULAY2
 
 ifeq "$(CC)" "cl"
 all ::; $(MAKE) -C Macaulay2 html
-all :: Macaulay2-$(DESC).zip
 else
 all :: rmcores 
-all :: Macaulay2-$(DESC).tar.gz
 endif
 
+all :: $(TARGET)
 
 MACAULAY2: Macaulay2
 	$(MAKE) -C Macaulay2 all tests
@@ -342,7 +347,7 @@ Macaulay2-$(DESC).zip : Makefile $(DISTFILES)
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
 	@echo "-----------------------------------------------------------------------------"
-clean ::; rm -f Macaulay2-$(DESC).tar.gz
+clean ::; rm -f Macaulay2-$(DESC).tar.gz Macaulay2-$(DESC).zip
 clean ::; $(MAKE) -C Macaulay2 clean
 ###################### Macaulay 2 porting source distribution
 PORTING := CVS \

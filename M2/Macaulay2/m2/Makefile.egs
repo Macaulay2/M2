@@ -3,12 +3,12 @@ include $(TOPDIR)/Makeconf
 
 export LD_LIBRARY_PATH=../../lib
 
-ifdef DUMPDATA
+ifndef NODUMPDATA
 ARGS := -q -silent \
 	'-e loaddata "../../cache/Macaulay2-$(ARCH)-data"' \
 	-- -x -s ../../m2/eg.m2
 else
-ARGS := -silent -x -s -ephase=1 ../../m2/setup.m2 ../../m2/eg.m2
+ARGS := -silent -x -s -ephase=1 ../../m2/setup.m2 -ephase=0 ../../m2/eg.m2
 endif
 
 ifdef CYGWIN32

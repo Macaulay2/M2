@@ -1,5 +1,30 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+
+linkFilenameTable := new MutableHashTable
+linkFilenameCounter := 0
+linkFilenameKeys = () -> keys linkFilenameTable
+
+fourDigits := i -> (
+     s := string i;
+     concatenate(4-#s:"0", s)
+     )
+
+linkFilename = s -> (
+     if linkFilenameTable#?s 
+     then linkFilenameTable#s
+     else (
+	  n := fourDigits linkFilenameCounter;
+	  linkFilenameTable#s = n;
+	  linkFilenameCounter = linkFilenameCounter + 1;
+	  n)
+     ) | ".html"
+
+html TO   := x -> concatenate (
+     "<A HREF=\"", linkFilename getDocumentationTag x#0, "\">", html formatDocumentTag x#0, "</A>", 
+     drop(toList x,1)
+     )
+
 -- make an html file for each documentation node
 
 BUTTON = (s,alt) -> LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center alt=\"[", alt, "]\">")
@@ -139,10 +164,8 @@ masterFileName << html HTML {
 	  }
      } << endl << close
 
-OS := "operating system"
-
 run concatenate ( 
-     if version#OS === "Windows-95-98-NT" then "copy" else "ln -f",
+     if version#"operating system" === "Windows-95-98-NT" then "copy" else "ln -f",
      " ",
      masterIndex#(format "Macaulay 2"),
      " index.html")
@@ -150,3 +173,24 @@ run concatenate (
 if missing then error "missing some nodes"
 
 
+-- 
+-- document { quote linkFilename,
+--      TT "linkFilename s", " -- convert a string ", TT "s", " into a string 
+--      which can be used as a file name to contain HTML about the topic 
+--      referred to by ", TT "s", ".",
+--      PARA,
+--      "The value returned is a sequence number, and hence may not be
+--      the same in subsequent sessions.  Hence this is mainly useful
+--      for creating html for all the online documentation, and the general 
+--      user will not find it useful.",
+--      PARA,
+--      SEEALSO "linkFilenameKeys"
+--      }
+-- 
+-- document { quote linkFilenameKeys,
+--      TT "linkFilenameKeys()", " -- returns a list of the strings which
+--      have been given to ", TO "linkFilename", ".",
+--      PARA,
+--      "This function is intended mainly for internal use in generating
+--      the documentation for Macaulay 2."
+--      }

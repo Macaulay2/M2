@@ -712,5 +712,9 @@ shieldfun(a:Code):Expr := (
      	  ret := eval(a);
      	  interruptShield = false;
      	  interrupted = interruptPending;
+	  if interrupted && !stdIO.inisatty then (
+	       stderr << "interrupted" << endl;
+	       exit(1);
+	       );
      	  ret));
 setupop("shield",shieldfun);     

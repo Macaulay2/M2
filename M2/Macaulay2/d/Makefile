@@ -60,7 +60,11 @@ SCC1 := ../c/scc1
 .SUFFIXES: .d .oo .sig .dep .res .test .m2
 .PHONY : clean all tests
 
-SCCFLAGS = -O
+SCCFLAGS =
+
+ifndef NOOPTIM
+SCCFLAGS += -O
+endif
 
 # SCCFLAGS += -spincursor
 

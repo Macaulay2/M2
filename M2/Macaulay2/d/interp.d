@@ -63,10 +63,17 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
      lastvalue := nullE;
      while true do (
      	  if printout then stmtno = stmtno + 1;
+	  interrupted = false;
+	  interruptPending = false;
 	  while peektoken(file,true).word == newlineW do (
-	       -- laststmtno = -1;				    -- so there will be a prompt
+	       -- laststmtno = -1; -- so there will be a new prompt after a blank line
+	       -- but now we don't like so many extra prompts
+	       interrupted = false;
+	       interruptPending = false;
 	       gettoken(file,true);
 	       );
+	  interrupted = false;
+	  interruptPending = false;
 	  parsed := parse(file,semicolonW.parse.precedence,true);
 	  if equal(parsed,wordEOF) then break;
 	  returnvalue = nullE;
@@ -216,7 +223,8 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       0,			  -- outindex
 	       0,     	   	     	  -- outbol
 	       false,	       	    	  -- hadNet
-	       dummyNetList    	      	  -- nets
+	       dummyNetList,   	      	  -- nets
+	       0		          -- bytesWritten
 	       )),
 	  NULL));
 

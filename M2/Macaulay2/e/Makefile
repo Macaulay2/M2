@@ -41,7 +41,9 @@ CXXFLAGS += $(DEBUGFLAGS)
 
 ifeq "$(CC)" "cl"
 # cl doesn't know about -O3
+ifndef NOOPTIM
 CXXFLAGS += -O2
+endif
 else
 #CXXFLAGS += -O3 #MES
 CXXFLAGS += -g $(WARNINGS)

@@ -1351,15 +1351,6 @@ document { "communicating with programs",
      EXAMPLE {
 	  ///peek get "!uname -a"///,
 	  },
-     "We can even use this method to call upon Macaulay 2 itself for a 
-     computation, putting the computational request into the command line.
-     We could then use ", TO "value", " to convert the string returned to 
-     a number.",
-     EXAMPLE {
-	  ///g = get "!M2 -q -silent -e'<< 2^100' -e'exit 0'"///,
-	  ///peek g///,
-	  ///value g///,
-	  },
      "Bidirectional communication with a program is also possible.  We use
      ", TO "openInOut", " to create a file that serves as a bidirectional
      connection to a program.  That file is called an input output file.  In
