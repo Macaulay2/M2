@@ -34,7 +34,6 @@ createAssCommRing(PolynomialRing) := (W) -> (
      if (W.monoid.Options.WeylAlgebra === {}) then
      error "Expected a Weyl algebra" ;
      
-     if (W.?dpairVars == false) then
      createDpairs W;
      dpI := W.dpairInds;
      
@@ -69,7 +68,7 @@ createAssCommRing(PolynomialRing) := (W) -> (
 -- ( isGeneric(f) == true should hold. )
 createThetaRing = method()
 createThetaRing(PolynomialRing) := W -> (
-     if (W.?dpairVars == false) then createDpairs (W);
+     createDpairs (W);
      dpV := W.dpairVars;
      dpI := W.dpairInds;
      

@@ -5,19 +5,18 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 Ddual = method()
-Ddual(Ideal) := (I) -> (
-     if (I.cache.?quotient == false) then I.cache.quotient = (ring I)^1/I;
-     Ddual(I.cache.quotient)
+Ddual Ideal := I -> (
+     Ddual ((ring I)^1/I)
      )
 
-Ddual(Module) := (M) -> (
+Ddual Module := M -> (
      pInfo(1, "ENTERING Ddual ... ");
      W := ring M;
-     if (W.monoid.Options.WeylAlgebra === {}) then
+     if W.monoid.Options.WeylAlgebra === {} then
      error "expected an element of a Weyl algebra";
      -- if (not(isHolonomic I)) then
      -- error "expected a holonomic module";
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0; 
      outputList := {};
      

@@ -8,7 +8,7 @@
 WeylClosure = method()
 WeylClosure(Ideal, RingElement) := (I, f) -> (
      W := ring I;
-     if (W.monoid.Options.WeylAlgebra === {}) then
+     if W.monoid.Options.WeylAlgebra === {} then
      error "Expected a Weyl algebra" ;
 
      M := cokernel gens I;
@@ -23,14 +23,14 @@ WeylClosure(Ideal, RingElement) := (I, f) -> (
 WeylClosure(Ideal) := (I) -> (
      W := ring I;
      outputList :={};
-     if (W.monoid.Options.WeylAlgebra === {}) then
+     if W.monoid.Options.WeylAlgebra === {} then
      error "Expected a Weyl algebra" ;
 
-     if (Drank(I) === infinity) then
+     if Drank(I) === infinity then
      error "Weyl closure only currently implemented for finite rank ideals.";
      
      --<< "Computing singular locus" << endl;
-     SL := singLocus(I);
+     SL := singLocus I;
      f := (gens SL)_(0,0);
      --<< f << endl;
      

@@ -6,13 +6,13 @@
 --------------------------------------------------------------------------------
 shifts := (m, w, oldshifts) -> (
      tempmat := compress leadTerm m;
-     if (numgens source tempmat == 0) then (newshifts := {})
+     if numgens source tempmat == 0 then newshifts := {}
      else (
      	  expmat := matrix(apply(toList(0..numgens source tempmat - 1), 
 		    i -> (k := leadComponent tempmat_i;
 	       	    	 append((exponents tempmat_(k,i))#0, oldshifts#k))));
      	  newshifts = (entries transpose (
-	       expmat*(transpose matrix{ append(w, 1) })) )#0;
+	     	    expmat*(transpose matrix{ append(w, 1) })) )#0;
      	  );
      newshifts)
      
@@ -28,18 +28,18 @@ Ring ^ Matrix := (R,m) -> (
     new Module from R)
 
 
-kerGB := (m) -> (
+kerGB := m -> (
      -- m should be a matrix which is a GB, and
      -- whose source has the Schreyer order.
      sendgg(ggPush m, ggker);
-     m.cache.kerGB = newHandle();
-     sendgg(ggPush m.cache.kerGB, ggcalc);
-     m.cache.kerGBstatus = eePopInt();
-     sendgg(ggPush m.cache.kerGB, gggetsyz);
+     m.kerGB = newHandle();
+     sendgg(ggPush m.kerGB, ggcalc);
+     m.kerGBstatus = eePopInt();
+     sendgg(ggPush m.kerGB, gggetsyz);
      fix getMatrix ring m)
 
 fix = method()
-fix Matrix := (m) -> map(target m, (ring m)^m, m)
+fix Matrix := m -> map(target m, (ring m)^m, m)
 
 
 --------------------------------------------------------------------------------
@@ -70,19 +70,18 @@ fix Matrix := (m) -> map(target m, (ring m)^m, m)
 --------------------------------------------------------------------------------
 
 Dres = method( Options => {Strategy => Schreyer, LengthLimit => infinity} )
-Dres(Ideal)  := options -> (I) -> ( Dresolution(I) )
-Dres(Module) := options -> (M) -> ( Dresolution(M) )
+Dres Ideal  := options -> I -> ( Dresolution I )
+Dres Module := options -> M -> ( Dresolution M )
 Dres(Ideal,List)  := options -> (I,w) -> ( Dresolution(I,w,options) )
 Dres(Module,List) := options -> (M,w) -> ( Dresolution(M,w,options) )
 
 
 Dresolution = method( Options => {Strategy => Schreyer, LengthLimit => infinity} )
-Dresolution(Ideal) := options -> (I) -> (
-     if (not I.cache.?quotient) then I.cache.quotient = (ring I)^1/I;
-     Dresolution(I.cache.quotient, options)
+Dresolution Ideal := options -> I -> (
+     Dresolution((ring I)^1/I, options)
      )
 
-Dresolution(Module) := options -> (M) -> (
+Dresolution Module := options -> M -> (
 
      pInfo (1, "ENTERING Dresolution ... ");
      
@@ -105,7 +104,7 @@ Dresolution(Module) := options -> (M) -> (
      M.resolution.dd#1 = m;
 
      i := 2;
-     while (source m != 0 and i <= options.LengthLimit) do (
+     while source m != 0 and i <= options.LengthLimit do (
 	  pInfo (2, "\t Degree " | i | "...");
 	  tInfo = toString first timing (m = kerGB m);
      	  M.resolution#i = source m;
@@ -119,8 +118,7 @@ Dresolution(Module) := options -> (M) -> (
      )
 
 Dresolution (Ideal, List) := options -> (I, w) -> (
-     if (I.cache.?quotient == false) then I.cache.quotient = (ring I)^1/I;
-     Dresolution (I.cache.quotient, w, options)
+     Dresolution ((ring I)^1/I, w, options)
      )
 
 Dresolution (Module, List) := options -> (M, w) -> (
@@ -132,12 +130,12 @@ Dresolution (Module, List) := options -> (M, w) -> (
      k := options.LengthLimit;
 
      -- check that W is a Weyl algebra
-     if (W.monoid.Options.WeylAlgebra == {}) 
-     then error "expected a Weyl algebra";     
+     if W.monoid.Options.WeylAlgebra == {}
+     then error "expected a Weyl algebra";
      if any(W.monoid.Options.WeylAlgebra, v -> class v =!= Option)
      then error "expected non-homogenized Weyl algebra";
      -- check that w is of the form (-u,u)
-     if (W.?dpairVars == false) then createDpairs(W);
+     createDpairs W;
      if #w =!= numgens W
      then error ("expected weight vector of length " | numgens W);
      if any( toList(0..#W.dpairInds#0 - 1),
@@ -145,18 +143,18 @@ Dresolution (Module, List) := options -> (M, w) -> (
      then error "expected weight vector of the form (-u,u)";
 
      -- PREPROCESSING
-     if (k == infinity) then (
+     if k == infinity then (
 	  pInfo (1, "Computing adapted free resolution of length infinity using " 
 	       | toString options.Strategy | " method...");
 	  if (options.Strategy == Vhomogenize) then
-     	  pInfo(0, "Warning: resolution via Vhomogenize might not terminate");
+     	  pInfo(2, "Warning: resolution via Vhomogenize might not terminate");
 	  )
      else pInfo (1, "Computing adapted free resolution of length " | k | 
 	  " using " | toString options.Strategy | " method...");
 
      homVar := symbol homVar;
      hvw := symbol hvw;
-     if (options.Strategy == Schreyer) then (
+     if options.Strategy == Schreyer then (
     	  -- Make the homogenizing weight vector in HW
 	  Hwt := toList(numgens W + 1:1);
      	  -- Make the V-filtration weight vector in HW
@@ -178,7 +176,7 @@ Dresolution (Module, List) := options -> (M, w) -> (
 	  HVWwt := prepend(-1,w);
 	  VWwt := prepend(0,w);
 	  )
-     else if (options.Strategy == Vhomogenize) then (
+     else if options.Strategy == Vhomogenize then (
      	  Hwt = prepend(-1,w);
      	  Vwt = prepend(0,w);
 	  -- make the homogenizing Weyl algebra
@@ -194,15 +192,15 @@ Dresolution (Module, List) := options -> (M, w) -> (
      N := presentation M;
      --if (isSubmodule M) then N := presentation ((ambient M)/M);
      -- get the degree shifts right (need to check this against OT paper)
-     if (M.?resolution === false) 
+     if not M.?resolution 
      then M.resolution = new MutableHashTable;
      M.resolution#w = new ChainComplex;
      M.resolution#w.ring = W;
      s := rank source N;
      t := rank target N;
-     M.resolution#w#0 = target N ;
+     M.resolution#w#0 = target N;
      M.resolution#w.dd#0 = map(W^0, M.resolution#w#0, transpose (
-	  compress matrix toList(t:{0_W})));
+	  compress matrix toList(t:{0_W})) );
 
      -- MAKE THE FIRST STEP OF THE RESOLUTION
      shiftvec := apply(degrees target N, i -> i#0); 
@@ -212,10 +210,10 @@ Dresolution (Module, List) := options -> (M, w) -> (
      pInfo (3, "\t Degree 1...");
      tInfo = toString first timing (
 	  Jgb := gens gb homogenize(tempMap, homVar, Hwt);
-	  if (options.Strategy == Schreyer) then (Jgb = fix Jgb)
-	  else if (options.Strategy == Vhomogenize) 
-	  then (Jgb = autoReduce Jgb);
-	  if (options.Strategy == Schreyer) then (
+	  if options.Strategy == Schreyer then Jgb = fix Jgb
+	  else if options.Strategy == Vhomogenize
+	  then Jgb = autoReduce Jgb;
+	  if options.Strategy == Schreyer then (
 	       tempMat = map(VW^(-shiftvec), VW^(numgens source Jgb), HWtoVW(Jgb));
 	       shiftvec = shifts(homogenize(HWtoVW Jgb, hvwVar, HVWwt),
 		    VWwt, shiftvec);
@@ -231,11 +229,11 @@ Dresolution (Module, List) := options -> (M, w) -> (
 	  
      -- COMPUTE REST OF THE RESOLUTION
      i := startDeg;
-     while ((i < k+1) and (numgens source Jgb != 0)) do (
+     while i < k+1 and numgens source Jgb != 0 do (
 	  pInfo (2, "\t Degree " | i | "...");
 	  tInfo = toString first timing (
-	       if (options.Strategy == Schreyer) then (Jgb = kerGB Jgb)
-     	       else if (options.Strategy == Vhomogenize) then (
+	       if options.Strategy == Schreyer then Jgb = kerGB Jgb
+     	       else if options.Strategy == Vhomogenize then (
 	     	    -- compute the kernel / syzygies
      	     	    Jsyz := syz Jgb;
 	     	    -- put syzygies in the free module with the correct degree shifts
@@ -243,7 +241,7 @@ Dresolution (Module, List) := options -> (M, w) -> (
 	     	    -- compute an adapted (-w,w)-GB of the syzygies module
      	     	    Jgb = autoReduce gens gb homogenize(Jsyzmap, homVar, Hwt);
 	     	    );
-	       if (options.Strategy == Schreyer) then (
+	       if options.Strategy == Schreyer then (
 	       	    tempMat := map(VW^(-shiftvec), VW^(numgens source Jgb), HWtoVW(Jgb));
 	       	    shiftvec = shifts(homogenize(tempMat, hvwVar, HVWwt), 
 		       	 VWwt, shiftvec);
