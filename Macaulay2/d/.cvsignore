@@ -20,3 +20,4 @@ strings.c
 actors3.c
 t
 mapfile
+restart.tmp
