@@ -826,9 +826,9 @@ static void cmd_ERingElement_fromInteger(object &o1, object &o2)
 
 static void cmd_ERingElement_var(object &o1, object &o2, object &o3)
 {
-  const EPolynomialRing *R = o1->cast_to_EPolynomialRing();
-  int v = o2->int_of();
-  int e = o3->int_of();
+  int v = o1->int_of();
+  int e = o2->int_of();
+  const EPolynomialRing *R = o3->cast_to_EPolynomialRing();
   ERingElement *result = R->makeRingVariable(v,e);
   if (result == 0) return;
   gStack.insert(make_object_EVector(result));
@@ -1308,7 +1308,7 @@ void i_Ecommands(void)
     // Currently, ring elements are merely elements of R^1
 
   install(ggfromint, cmd_ERingElement_fromInteger, TY_ERing, TY_INT);
-  install(ggvar, cmd_ERingElement_var, TY_ERing, TY_INT, TY_INT);
+  install(ggvar, cmd_ERingElement_var, TY_INT, TY_INT, TY_ERing);
   install(ggterm, cmd_ERingElement_term, TY_ERing, TY_EVector, TY_INTARRAY);
 
   //////////////////////
