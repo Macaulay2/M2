@@ -39,6 +39,7 @@ exportMutable (
 	)
 
 export (
+        symbol simpleLoad,
         symbol filesLoaded,
         symbol loadedFiles,
         symbol viewDocumentation,
