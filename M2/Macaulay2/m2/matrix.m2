@@ -196,6 +196,7 @@ samering = mats -> (					    -- we erase this later
      then error "expected matrices over the same ring";
      R)
 
+directSum Matrix := f -> Matrix.directSum (1 : f)
 Matrix.directSum = args -> (
      R := ring args#0;
      if not all(args, f -> ring f === R) then error "expected matrices all over the same ring";
@@ -213,6 +214,7 @@ isDirectSum Module := (M) -> M.cache.?components
 components Module := M -> if M.cache.?components then M.cache.components else {M}
 components Matrix := f -> if f.cache.?components then f.cache.components else {f}
 
+directSum Module := M -> Module.directSum (1 : M)
 Module.directSum = args -> (
 	  R := ring args#0;
 	  if not all(args, f -> ring f === R) 
@@ -256,6 +258,7 @@ directSum Sequence := args -> (
 	  if y =!= null then y#key = S;
 	  S))
 Option ++ Option := directSum
+directSum Option := o -> directSum(1 : o)
 Option.directSum = args -> (
      if #args === 0 then error "expected more than 0 arguments";
      modules := apply(args,last);

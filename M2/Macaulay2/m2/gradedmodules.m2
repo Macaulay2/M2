@@ -178,6 +178,8 @@ GradedModuleMap == ZZ := (f,i) -> (
 ZZ == GradedModuleMap := (i,f) -> f == i
 
 degree GradedModuleMap := G -> G.degree
+
+directSum GradedModule := M -> directSum(1 : M)
 GradedModule.directSum = v -> (
      E := new GradedModule;
      rings := apply(v, ring);
