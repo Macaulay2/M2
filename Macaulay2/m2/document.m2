@@ -454,7 +454,6 @@ fixupTable := new HashTable from {
      Headline => chkIsString Headline,
      Description => val -> extractExamples hypertext val,
      Caveat => v -> if v =!= null then fixup PARA { SUBSECTION "Caveat", SEQ v },
-     ProgrammingHint => v -> if v =!= null then fixup PARA { SUBSECTION "Programming Hint", SEQ v },
      SeeAlso => v -> if v =!= {} and v =!= null then fixup PARA { SUBSECTION "See also", UL (TO \ enlist v) },
      Subnodes => v -> MENU apply(nonNull enlist v, x -> fixup (
 	       if class x === TO then x
@@ -463,7 +462,6 @@ fixupTable := new HashTable from {
 	       else error ("unrecognizable Subnode list item: ",x)))
      }
 caveat := key -> getOption(key,Caveat)
-programmingHint := key -> getOption(key,ProgrammingHint)
 seealso := key -> getOption(key,SeeAlso)
 theMenu := key -> getOption(key,Subnodes)
 theExamples := key -> getOption(key,Examples)
@@ -480,7 +478,6 @@ documentOptions := new HashTable from {
      Headline => true,
      SeeAlso => true,
      Caveat => true,
-     ProgrammingHint => true,
      Subnodes => true }
 reservedNodeNames := set apply( {"Top", "Table of Contents", "Combined Index"}, toLower )
 
@@ -801,7 +798,7 @@ documentation String := key -> (
      else (
 	  b := makeDocBody key;
 	  if b === null then b = ();
-	  Hypertext fixuptop (title key, b, theExamples key, caveat key, programmingHint key, seealso key, theMenu key)))
+	  Hypertext fixuptop (title key, b, theExamples key, caveat key, seealso key, theMenu key)))
 
 binary := set binaryOperators
 prefix := set prefixOperators
@@ -905,7 +902,7 @@ documentation Symbol := S -> (
 	  if #a > 0 then (PARA {"Functions with optional argument named ", toExternalString S, " :"}, smenu a),
 	  if #b > 0 then (PARA {"Methods for ", toExternalString S, " :"}, smenu b),
      	  documentationValue(S,value S),
-	  type S, theExamples S, caveat S, programmingHint S, seealso S, theMenu S ))
+	  type S, theExamples S, caveat S, seealso S, theMenu S ))
 
 documentation DocumentTag := tag -> documentation DocumentTag.Key tag
 
@@ -921,11 +918,11 @@ documentation Array := key -> (		    -- optional argument
 	       SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
 	       SEQ{ "Option name: ", TOH {opt} }
 	       },
-	  theExamples key, programmingHint key, caveat key, seealso key, theMenu key ))
+	  theExamples key, caveat key, seealso key, theMenu key ))
 
 documentation Sequence := key -> (						    -- method key
      if null === lookup key then error("expected ", toString key, " to be a method");
-     Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, programmingHint key, caveat key, seealso key, theMenu key ))
+     Hypertext fixuptop ( title key, synopsis key, makeDocBody key, theExamples key, caveat key, seealso key, theMenu key ))
 
 documentation Thing := x -> if ReverseDictionary#?x then return documentation ReverseDictionary#x else SEQ{ " -- undocumented -- "}
 

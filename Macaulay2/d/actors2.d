@@ -190,6 +190,16 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 			      	   if mutable then copy(v) else v,
 			      	   0,false),
 			      mutable))))
+	  else if basicType == complexClass then (
+	       if parent != nothingClass
+	       then buildErrorPacket("expected Nothing as parent for complex number")
+	       else (
+		    if length(v) != 2 then WrongNumArgs(2)
+		    else (
+			 when v.0 is x:Real do
+			 when v.1 is y:Real do Expr(Complex(x.v,y.v))
+			 else WrongArg(2,"a real number")
+			 else WrongArg(1,"a real number"))))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
@@ -243,6 +253,13 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
      	  if basicType == basicListClass then (
 	       mutable := ancestor(class,mutableListClass);
 	       Expr( sethash( List(class, if mutable then copy(v) else v, 0,false), mutable)))
+	  else if basicType == complexClass then (
+	       if length(v) != 2 then WrongNumArgs(2)
+	       else (
+		    when v.0 is x:Real do
+		    when v.1 is y:Real do Expr(Complex(x.v,y.v))
+		    else WrongArg(2,"a real number")
+		    else WrongArg(1,"a real number")))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
@@ -661,6 +678,25 @@ showtimefun(a:Code):Expr := (
      stdout << "     -- used " << (x-v)-(y-x) << " seconds" << endl;
      ret);
 setupop(timeS,showtimefun);
+
+realPart(e:Expr):Expr := (
+     when e
+     is Integer do e
+     is Real do e
+     is z:Complex do Expr(Real(z.re))
+     is z:BigComplex do Expr(realPart(z))
+     is Rational do e
+     else WrongArg("a number"));
+setupfun("realPart",realPart);
+imaginaryPart(e:Expr):Expr := (
+     when e
+     is Integer do Expr(toInteger(0))
+     is Real do Expr(Real(0.))
+     is z:Complex do Expr(Real(z.im))
+     is z:BigComplex do Expr(imaginaryPart(z))
+     is Rational do Expr(newRational(toInteger(0),toInteger(1)))
+     else WrongArg("a number"));
+setupfun("imaginaryPart",imaginaryPart);
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

@@ -184,7 +184,7 @@ tex PARA := x -> concatenate(///
 
 html ExampleTABLE := x -> concatenate(
      newline,
-     "<p><table class=\"examples\" cellspacing='0' cellpadding='12' border='4' width='100%'>",
+     "<p><table class=\"examples\" cellspacing='0' cellpadding='12' border='4'>",
      newline,
      apply(x, 
 	  item -> (

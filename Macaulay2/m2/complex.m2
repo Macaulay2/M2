@@ -1,4 +1,4 @@
---		Copyright 1993-1999 by Daniel R. Grayson
+--		Copyright 1993-1999,2004 by Daniel R. Grayson
 
 CC.synonym = "complex number"
 CC.isCommutative = true
@@ -6,11 +6,11 @@ CC.texMath = ///{\mathbb C}///
 CC.isField = true
 CC.mathML = "<mi>&Copf;</mi>"
 
--- ii = new CC from {0,1}
+ii = new CC from (0.,1.)
 
 CC.char = 0
--- CC#0 = new CC from {0,0}
--- CC#1 = new CC from {1,0}
+CC#0 = new CC from (0.,0.)
+CC#1 = new CC from (1.,0.)
 
 CC.degreeLength = 0
 
@@ -18,70 +18,62 @@ degree CC := i -> {}
 
 conjugate = method(TypicalValue => CC)
 conjugate ZZ := identity
-realPart ZZ := identity
-imaginaryPart ZZ := z -> 0
 conjugate QQ := identity
-realPart QQ := identity
-imaginaryPart QQ := z -> 0
 conjugate RR := identity
-realPart RR := identity
-imaginaryPart RR := z -> 0
-conjugate CC := CC => z -> new CC from {z#0,-z#1}
-realPart CC := RR => z -> z#0
-imaginaryPart CC := RR => z -> z#1
+conjugate CC := CC => z -> new CC from (realPart z,-imaginaryPart z)
 exprI := symbol ii
-expression CC := z -> z#0 + z#1 * hold exprI
+expression CC := z -> realPart z + imaginaryPart z * hold exprI
 toExternalString CC := toString CC := z -> toString expression z
 net CC := z -> net expression z
 
-CC + CC := (x,y) -> new CC from {x#0+y#0,x#1+y#1}
+CC + CC := (x,y) -> new CC from (realPart x+realPart y,(imaginaryPart x)+(imaginaryPart y))
 
-   - CC := x -> new CC from {-x#0,-x#1}
-CC - CC := (x,y) -> new CC from {x#0-y#0,x#1-y#1}
+   - CC := x -> new CC from (-realPart x,-(imaginaryPart x))
+CC - CC := (x,y) -> new CC from (realPart x-realPart y,(imaginaryPart x)-(imaginaryPart y))
 CC ^ ZZ := BinaryPowerMethod
 CC.InverseMethod = y -> (
-     m := y#0^2 + y#1^2;
-     new CC from {y#0/m,-y#1/m})	  
-CC * CC := (x,y) -> new CC from { x#0*y#0 - x#1*y#1 , x#0*y#1 + x#1*y#0 }
+     m := (realPart y)^2 + (imaginaryPart y)^2;
+     new CC from (realPart y/m,-(imaginaryPart y)/m))	  
+CC * CC := (x,y) -> new CC from ( (realPart x)*(realPart y) - (imaginaryPart x)*(imaginaryPart y) , (realPart x)*(imaginaryPart y) + (imaginaryPart x)*(realPart y) )
 CC / CC := (x,y) -> (
-	  m := y#0^2 + y#1^2;
-	  new CC from { (x#0*y#0 + x#1*y#1)/m , (x#1*y#0 - x#0*y#1)/m })
-CC + RR := (z,x) -> new CC from {z#0+x,z#1}
-CC - RR := (z,x) -> new CC from {z#0-x,z#1}
-CC * RR := (z,x) -> new CC from {z#0*x,z#1*x}
-CC / RR := (z,x) -> new CC from {z#0/x,z#1/x}
-RR + CC := (x,z) -> new CC from {x+z#0, z#1}
-RR - CC := (x,z) -> new CC from {x-z#0,-z#1}
-RR * CC := (x,z) -> new CC from {x*z#0,x*z#1}
+	  m := (realPart y)^2 + (imaginaryPart y)^2;
+	  new CC from ( ((realPart x)*(realPart y) + (imaginaryPart x)*(imaginaryPart y))/m , ((imaginaryPart x)*(realPart y) - (realPart x)*(imaginaryPart y))/m ))
+CC + RR := (z,x) -> new CC from ((realPart z)+x,(imaginaryPart z))
+CC - RR := (z,x) -> new CC from ((realPart z)-x,(imaginaryPart z))
+CC * RR := (z,x) -> new CC from ((realPart z)*x,(imaginaryPart z)*x)
+CC / RR := (z,x) -> new CC from ((realPart z)/x,(imaginaryPart z)/x)
+RR + CC := (x,z) -> new CC from (x+(realPart z), (imaginaryPart z))
+RR - CC := (x,z) -> new CC from (x-(realPart z),-(imaginaryPart z))
+RR * CC := (x,z) -> new CC from (x*(realPart z),x*(imaginaryPart z))
 RR / CC := (x,y) -> (
-	  m := y#0^2 + y#1^2;
-	  new CC from { x*y#0/m , - x*y#1/m })
-CC + QQ := (z,x) -> new CC from {z#0+x,z#1}
-CC - QQ := (z,x) -> new CC from {z#0-x,z#1}
-CC * QQ := (z,x) -> new CC from {z#0*x,z#1*x}
-CC / QQ := (z,x) -> new CC from {z#0/x,z#1/x}
-QQ + CC := (x,z) -> new CC from {x+z#0, z#1}
-QQ - CC := (x,z) -> new CC from {x-z#0,-z#1}
-QQ * CC := (x,z) -> new CC from {x*z#0,x*z#1}
+	  m := (realPart y)^2 + (imaginaryPart y)^2;
+	  new CC from ( x*(realPart y)/m , - x*(imaginaryPart y)/m ))
+CC + QQ := (z,x) -> new CC from ((realPart z)+x,(imaginaryPart z))
+CC - QQ := (z,x) -> new CC from ((realPart z)-x,(imaginaryPart z))
+CC * QQ := (z,x) -> new CC from ((realPart z)*x,(imaginaryPart z)*x)
+CC / QQ := (z,x) -> new CC from ((realPart z)/x,(imaginaryPart z)/x)
+QQ + CC := (x,z) -> new CC from (x+(realPart z), (imaginaryPart z))
+QQ - CC := (x,z) -> new CC from (x-(realPart z),-(imaginaryPart z))
+QQ * CC := (x,z) -> new CC from (x*(realPart z),x*(imaginaryPart z))
 QQ / CC := (x,y) -> (
-	  m := y#0^2 + y#1^2;
-	  new CC from {x*y#0/m , - x*y#1/m })
-CC + ZZ := (z,x) -> new CC from {z#0+x,z#1}
-CC - ZZ := (z,x) -> new CC from {z#0-x,z#1}
-CC * ZZ := (z,x) -> new CC from {z#0*x,z#1*x}
-CC / ZZ := (z,x) -> new CC from {z#0/x,z#1/x}
-ZZ + CC := (x,z) -> new CC from {x+z#0, z#1}
-ZZ - CC := (x,z) -> new CC from {x-z#0,-z#1}
-ZZ * CC := (x,z) -> new CC from {x*z#0,x*z#1}
+	  m := (realPart y)^2 + (imaginaryPart y)^2;
+	  new CC from (x*(realPart y)/m , - x*(imaginaryPart y)/m ))
+CC + ZZ := (z,x) -> new CC from ((realPart z)+x,(imaginaryPart z))
+CC - ZZ := (z,x) -> new CC from ((realPart z)-x,(imaginaryPart z))
+CC * ZZ := (z,x) -> new CC from ((realPart z)*x,(imaginaryPart z)*x)
+CC / ZZ := (z,x) -> new CC from ((realPart z)/x,(imaginaryPart z)/x)
+ZZ + CC := (x,z) -> new CC from (x+(realPart z), (imaginaryPart z))
+ZZ - CC := (x,z) -> new CC from (x-(realPart z),-(imaginaryPart z))
+ZZ * CC := (x,z) -> new CC from (x*(realPart z),x*(imaginaryPart z))
 ZZ / CC := (x,y) -> (
-	  m := y#0^2 + y#1^2;
-	  new CC from { x*y#0/m , - x*y#1/m })
-CC == ZZ := (z,i) -> z#0 == i and z#1 == 0
-ZZ == CC := (i,z) -> z#0 == i and z#1 == 0
-CC == QQ := (z,i) -> z#0 == i and z#1 == 0
-QQ == CC := (i,z) -> z#0 == i and z#1 == 0
-CC == RR := (z,i) -> z#0 == i and z#1 == 0
-RR == CC := (i,z) -> z#0 == i and z#1 == 0
+	  m := (realPart y)^2 + (imaginaryPart y)^2;
+	  new CC from ( x*(realPart y)/m , - x*(imaginaryPart y)/m ))
+CC == ZZ := (z,i) -> (realPart z) == i and (imaginaryPart z) == 0
+ZZ == CC := (i,z) -> (realPart z) == i and (imaginaryPart z) == 0
+CC == QQ := (z,i) -> (realPart z) == i and (imaginaryPart z) == 0
+QQ == CC := (i,z) -> (realPart z) == i and (imaginaryPart z) == 0
+CC == RR := (z,i) -> (realPart z) == i and (imaginaryPart z) == 0
+RR == CC := (i,z) -> (realPart z) == i and (imaginaryPart z) == 0
 isConstant CC := i -> true
 
 -- Local Variables:

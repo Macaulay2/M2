@@ -157,7 +157,6 @@ matrix = method mopts
 map = method mopts
 
 setup(SingleArgumentDispatch => true, {transpose} )
-setup(TypicalValue => RR, {realPart, imaginaryPart})
 setup(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit, match,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField, isConstant

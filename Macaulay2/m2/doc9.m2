@@ -595,12 +595,11 @@ document {
 	  "rank C_2",
 	  "degrees C_2"
 	  },
-     ProgrammingHint => {
+     SUBSECTION "Programming hint",
 	  "The chain complex ", TT "C", " is implemented as a hash table, but since the computation of a projective resolution can be stopped prematurely, Macaulay 2 doesn't bother
 	  populating the hash table with the relevant free modules until explicitly requested by the user, for example, in response to the
 	  command ", TT "C_i", " described above.  The hash table ", TT "C", " can be examined directly with code like ", TT "C#i", ", but in order to populate 
-	  the hash table completely, use ", TO (complete, ChainComplex), "."
-	  },
+	  the hash table completely, use ", TO (complete, ChainComplex), ".",
      SeeAlso => {res, coker, vars, rank, degrees}
      }
 

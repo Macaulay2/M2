@@ -322,11 +322,16 @@ document {
 
 document {
      Key => (subsets,ZZ,ZZ),
-     TT "subsets(n,j)", " -- for an integer ", TT "n", ", yields a list of those
-     subsets of ", TT "{0, ..., n-1}", " which have ", TT "j", " elements.",
-     PARA,
-     EXAMPLE "subsets(3,2)",
-     SeeAlso => "subsets"
+     Usage => "subsets(n,j)",
+     Inputs => {
+	  "n" => "",
+	  "j" => ""
+	  },
+     Outputs => {
+	  {"a list of the subsets of ", TT "{0, ..., n-1}", " that have ", TT "j", " elements; each
+	       subset is provided as a list"}
+	  },
+     EXAMPLE "subsets(7,3)",
      }
 
 document {

@@ -751,6 +751,10 @@ export BigComplex := { 					    -- must agree with M2_BigComplex in M2types.h
      IMprec:int, IMsize:int, IMexp:int, IMlimbs:limbPointer
      };
 
+export realPart(z:BigComplex):BigReal := BigReal(z.REprec, z.REsize, z.REexp, z.RElimbs);
+export imaginaryPart(z:BigComplex):BigReal := BigReal(z.IMprec, z.IMsize, z.IMexp, z.IMlimbs);
+export bigComplex(x:BigReal,y:BigReal):BigComplex := BigComplex(x.prec, x.size, x.exp, x.limbs, y.prec, y.size, y.exp, y.limbs);
+
 isPositive(x:BigReal):bool ::=  1 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
 isZero    (x:BigReal):bool ::=  0 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
 isNegative(x:BigReal):bool ::= -1 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
