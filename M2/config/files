@@ -19,5 +19,6 @@ Macaulay2/setup
 Macaulay2/util/Makefile
 bin/Makefile
 bin/M2-help
+bin/M2.bat
 encap/Makefile
 encap/postinstall

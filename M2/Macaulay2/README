@@ -53,6 +53,8 @@ There are two ways to install the package:
 
     1. Automatically, with 'epkg'.
 
+	This way works especially will under Unix.
+
 	Put the entire Macaulay2-0.9 directory tree in the source directory
 	for epkg, which is /usr/local/encap by default.  Then run
 
@@ -66,13 +68,27 @@ There are two ways to install the package:
 
 	There are four steps.
 
-	a.  Edit the shell script bin/M2 to record the location of Macaulay2's files.
-	    The line starting with 'M2HOME=' should be made to look like
+	a.  
+	    
+	    Edit the shell script bin/M2 to record the location of
+	    Macaulay2's files.  The line starting with 'M2HOME=' should be
+	    made to look like
+	    
 		M2HOME=/.../Macaulay2-*.*/lib/Macaulay2-*.*
-	    where you replace ... by the path to the directory created
-	    by untarring, and *.* is the version number provided.
+	    
+	    where you replace ... by the path to the directory created by
+	    untarring, and *.* is the version number provided.
 
 	    Then put a link to it from a directory on your path.
+
+	    Under Windows, you will see the shell script bin/M2, but it will
+	    be useful to you only if you install cygwin, in which case you
+	    can imagine, more or less, that you have a unix system.  For an
+	    ordinary Windows system, you will have to edit the file M2.bat,
+	    inserting the path to the files on two lines, one with forward
+	    slashes (/) and one with backward slashes (\).	    
+	    
+	    Then put a copy of M2.bat in a directory on your path.
 
 	b.  Edit the shell script bin/M2-help (relative to the top of the distribution
 	    directory tree) to record the location of Macaulay2's files, as above.
@@ -93,6 +109,8 @@ There are two ways to install the package:
 		./setup
 
 	    if it's unix and '.' is not first on your path.
+
+	    Skip this step under Windows.
 
 		NOTE (for system administrators): On some types of computers
 		Macaulay 2 will take extra time to start up: it will print
