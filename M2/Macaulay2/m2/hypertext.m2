@@ -409,17 +409,18 @@ infoLiteral#"," = "_cm"
 infoLiteral#"*" = "_st"
 infoLiteral#":" = "_co"
 infoLit := n -> concatenate apply(characters n, c -> infoLiteral#c);
-infoTagConvert = memoize(n -> infoLit if n#0 === " " or n#-1 === " " then concatenate("\"",n,"\"") else n);
-
-info TO := x -> (
-     fkey := DocumentTag.FormattedKey x#0;
-     concatenate(fkey, if x#?1 then x#1, "  (*note ", infoTagConvert fkey, "::)"))
-info TO2:= x -> (
-     fkey := DocumentTag.FormattedKey x#0;
-     concatenate( x#1, "  (*note ", x#1, ":", infoTagConvert fkey, ".)"))
-info TOH :=  x -> (
-     fkey := DocumentTag.FormattedKey x#0;
-     concatenate( fkey, if x#?1 then x#1, commentize headline x#0,, "  (*note ", infoTagConvert fkey, "::)" ))
+infoTagConvert = method()
+tagConvert := n -> infoLit if n#0 === " " or n#-1 === " " then concatenate("\"",n,"\"") else n
+infoTagConvert String := tagConvert
+infoTagConvert DocumentTag := tag -> (
+     pkg := DocumentTag.Package tag;
+     fkey := DocumentTag.FormattedKey tag;
+     if currentPackage === pkg 
+     then tagConvert fkey
+     else concatenate("(",pkg#"title",")",tagConvert fkey))
+info TO  := x -> concatenate(fkey, if x#?1 then x#1, "  (*note ", infoTagConvert x#0, "::)")
+info TO2 := x -> concatenate(x#1, "  (*note ", x#1, ":", infoTagConvert x#0, ".)")
+info TOH := x -> concatenate(fkey, if x#?1 then x#1, commentize headline x#0,, "  (*note ", infoTagConvert x#0, "::)" )
 
 info IMG := net IMG := tex IMG  := x -> ""
 info HREF := net HREF := x -> net last x
