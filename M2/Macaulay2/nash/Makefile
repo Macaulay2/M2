@@ -1,6 +1,8 @@
 
 # transparent gdb string
-TGDB = env OLDSHELL=$(SHELL) SHELL=$(NASH) gdb -batch -nx -x gdb.commands --args
+TGDB = env OLDSHELL=$(SHELL) SHELL=$(NASH) gdb
+GDBARGS = -batch -nx -x gdb.commands --args
+GDBSED = sed -e '/^$$/d' -e '/Program exited normally./d'
 
 NASH = ./nash
 
@@ -18,7 +20,9 @@ test1 : nash;			$(NASH) -c "exec echo hi there"
 clean :;			rm -f env.nonash env.nash nash printenv unsetenv
 ci :;				cvs ci -m ''
 
+# bash always sets "_" to argv[0], so we simulate that when bash is out of the picture
 ENV = env _=./printenv
+
 env.nonash : $(PROGS);		./printenv >$@
 env.nash : $(PROGS);		$(ENV) $(NASH) -c "exec ./printenv" >$@
-env.gdb : $(PROGS);		$(ENV) $(TGDB) ./printenv |sed -e '/^$$/d' -e '/Program exited normally./d' >$@
+env.gdb : $(PROGS);		$(ENV) $(TGDB) $(GDBARGS) ./printenv |$(GDBSED) >$@
