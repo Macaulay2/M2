@@ -19,6 +19,7 @@ public:
   static DenseMutableMatrixRing *zero_matrix(const Ring *R, int nrows, int ncols);
 
   virtual DenseMutableMatrixRing * cast_to_DenseMutableMatrixRing() { return this; }
+  virtual const DenseMutableMatrixRing * cast_to_DenseMutableMatrixRing() const { return this; }
 
 public:
   virtual Matrix *to_matrix() const;

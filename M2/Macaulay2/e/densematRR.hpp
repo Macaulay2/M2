@@ -19,6 +19,7 @@ public:
   static DenseMutableMatrixRR *zero_matrix(int nrows, int ncols);
 
   virtual DenseMutableMatrixRR * cast_to_DenseMutableMatrixRR() { return this; }
+  virtual const DenseMutableMatrixRR * cast_to_DenseMutableMatrixRR() const { return this; }
 
 public:
   virtual Matrix *to_matrix() const;
