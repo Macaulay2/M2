@@ -788,10 +788,34 @@ document { unique,
 
 document { Ring,
      HEADLINE => "the class of all rings",
-     "A ring is a set together with operations +, -, * and elements 0, 1 
-     satisfying the usual rules.  In this system, it is also understood to 
-     be a ZZ-algebra, which means that the operations where one argument is 
-     an integer are also provided."
+     "See ", TO "basic rings", " or ", TO "polynomial rings", " for an
+     introduction to making and using rings.",
+     PARA,
+     "Common ways to make a ring:",
+     MENU {
+	  TO (symbol /, Ring, Ideal),
+	  TO (Ring, Array),
+	  TO "GF",
+	  },
+     "Common functions for accessing the variables or elemenets in a ring:",
+     MENU {
+	  TO (use, Ring),
+	  TO (generators, Ring),
+	  TO (numgens, Ring),
+	  TO (symbol _, Ring, ZZ),
+	  TO (symbol _, ZZ, Ring)
+	  },
+     "Common ways to get information about a ring:",
+     MENU {
+	  TO (char, Ring),
+	  TO (coefficientRing, Ring),
+	  TO (dim, Ring),
+	  },
+     "Common ways to use a ring:",
+     MENU {
+	  TO (symbol ^, Ring, ZZ),
+	  TO (vars, Ring),
+	  },
      }
 
 document { (symbol _, ZZ, Ring),

@@ -683,10 +683,44 @@ assert( 2 == codim I )
 
 document { Ideal,
      HEADLINE => "the class of all ideals",
-     "The justification for considering an ideal ", TT "I", " as different from a
-     submodule ", TT "M", " of ", TT "R^1", " is that some methods are different.
-     For example, ", TT "M^3", " is a direct sum, whereas ", TT "I^3", " is still 
-     an ideal."
+     "In Macaulay 2, an ideal ", TT "I", " is represented by its generators,
+     which are stored inside it in a one-rowed matrix.  See ", TO "ideals", "
+     for an introduction.",
+     PARA,
+     "Common ways to make an ideal:",
+     MENU {
+	  TO "ideal",
+	  TO "annihilator",
+	  TO "content",
+	  TO "fittingIdeal",
+	  TO (kernel, RingMap),
+	  },
+     "Common ways to get information about an ideal:",
+     MENU {
+	  TO (codim, Ideal),
+	  TO (dim, Ideal),
+	  TO (generators, Ideal),
+	  TO (isSubset, Ideal, Ideal),
+	  },
+     "Common operations on ideals:",
+     MENU {
+	  TO (symbol +,Ideal,Ideal),
+	  TO (symbol *,Ideal,Ideal),
+	  TO (symbol ==,Ideal,Ideal),
+	  TO (symbol ==,Ideal,ZZ),
+	  TO (symbol :,Ideal,Ideal),
+	  TO (symbol ^,Ideal,ZZ),
+	  TO (decompose, Ideal),
+	  TO (gb, Ideal),
+	  TO (radical, Ideal),
+	  TO "saturate",
+	  TO "top",
+	  TO (trim, Ideal),
+	  },
+     "Common ways to use an ideal:",
+     MENU {
+	  TO (symbol /, Ring, Ideal),
+	  },
      }
 
 document { (symbol *,Ideal,Ideal),
