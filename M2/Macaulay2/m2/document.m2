@@ -27,6 +27,18 @@ duplicateDocWarning := () -> (
      )
 
 -----------------------------------------------------------------------------
+-- sublists, might be worthy making public
+-----------------------------------------------------------------------------
+sublists := (x,f,g,h) -> (
+     -- x is a list with elements i
+     -- apply g to those i for which f i is true
+     -- apply h to the sublists, possibly empty, including those at the beginning and end, of elements between the ones for which f i is true
+     -- return the results in the same order
+     p := positions(x, f);
+     mingle(
+	  apply( prepend(-1,p), append(p,#x), (i,j) -> h take(x,{i+1,j-1})),
+	  apply( p, i -> g x#i)))
+-----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
 
@@ -358,7 +370,12 @@ caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
 theMenu := key -> (
      r := getOption(key,Menu);
-     if r =!= null then SEQ prepend(PARA BOLD "Menu", apply(r, x -> if class x === TO then UL{x} else PARA{x})))
+     if r =!= null then SEQ prepend(
+	  PARA BOLD "Menu", 				    -- for info mode, we need to put out "* Menu:" here.
+	  sublists(r, 
+	       x -> not ( class x === TO or class x === TOH ),
+	       x -> PARA{x},
+	       v -> UL apply(v, i -> TOH i#0 ))))
 documentOptions := new HashTable from {
      Key => true,
      FormattedKey => true,
@@ -500,9 +517,6 @@ smenu := s -> UL (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
 smenuCLASS := s -> UL (optTOCLASS \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
  menu := s -> UL (optTO \ s)
 
-ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
-ancestors := X -> if X === Thing then {} else ancestors1(parent X)
-
 vowels := set characters "aeiouAEIOU"
 indefiniteArticle := s -> if vowels#?(s#0) and not match("^one ",s) then "an " else "a "
 indefinite := s -> concatenate(indefiniteArticle s, s)
@@ -544,7 +558,7 @@ type := S -> (
      	  if parent s =!= Nothing then (
      	       f := (T -> while T =!= Thing list parent T do T = parent T) s;
 	       SEQ splice {
-		    if #f>1 then ", with ancestor classes " else ", with ancestor class ", 
+		    if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
 		    toSequence between(" < ", f / (T -> TO T)) 
 		    }
 	       ),
@@ -1011,30 +1025,10 @@ net MarkUpList := x -> horizontalJoin apply(x,net)
 texMath MarkUpList := x -> concatenate apply(x,texMath)
 mathML MarkUpList := x -> concatenate apply(x,mathML)
 
-sublists = (x,f) -> (
-     p := positions(x, f);			    -- these ones have to stand as independent paragraphs, the ones in between can be joined horizontally
-     x = select(
-	  apply(
-	       mingle(
-		    apply( prepend(-1,p), append(p,#x), (i,j) -> {i+1,j-1}),
-		    apply( p, i -> {i,i} )),
-	       i -> take(x,i)),
-	  s -> #s>0);
-     x = apply(x, i -> horizontalJoin \\ net \ i);
-     net new ParagraphList from between("",x))
-
 net SEQ := net PARA := net Hypertext := x -> (					    -- we have to be prepared for a mixture of vertical and horizontal items
-     x = toList x;
-     p := positions(x, i -> instance(i,MarkUpListParagraph)); -- these ones have to stand as independent paragraphs, the ones in between can be joined horizontally
-     x = select(
-	  apply(
-	       mingle(
-		    apply( prepend(-1,p), append(p,#x), (i,j) -> {i+1,j-1}),
-		    apply( p, i -> {i,i} )),
-	       i -> take(x,i)),
-	  s -> #s>0);
-     x = apply(x, i -> horizontalJoin \\ net \ i);
-     net new ParagraphList from between("",x))
+     net new ParagraphList from select(
+     	       sublists(toList x, i -> instance(i,MarkUpListParagraph), net, i -> horizontalJoin(net \ i)),
+	       n -> width n > 0))
 
 html BR := x -> ///
 <BR>
@@ -1452,7 +1446,7 @@ undocumentedSymbols = () -> select(
 
 -----------------------------------------------------------------------------
 
-new TO from Sequence := (TO,x) -> new TO from {x}
+new TO from Sequence := new TOH from Sequence := (TO,x) -> new TO from {x}
 new TO from List := (TO,x) -> (
      verifyTag first x;
      x)

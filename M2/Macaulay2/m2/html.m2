@@ -295,8 +295,8 @@ assembleTree Package := pkg -> (
      nodes := packageNodes(pkg,topNodeName);
      linkTable = new HashTable from apply(
 	  pairs pkg#"documentation", (fkey,doc) -> fkey => (
-	       if doc.?Menu
-	       then formatDocumentTag \ normalizeDocumentTag \ first \ select(doc.Menu, x -> class x === TO)
+	       if doc.?Subnodes
+	       then formatDocumentTag \ normalizeDocumentTag \ first \ select(doc.Subnodes, x -> class x === TO)
 	       else {}
 	       ));
      CONT = getTrees();
