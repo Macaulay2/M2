@@ -8,3 +8,5 @@ args.nash
 args.gdb
 printenv
 unsetenv
+*.o
+*.a
