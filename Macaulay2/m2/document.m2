@@ -228,7 +228,7 @@ DocumentTag.Title Thing := err
 DocumentTag ? DocumentTag := (x,y) -> x#1 ? y#1
 DocumentTag ? String := (x,y) -> x#1 ? y
 String ? DocumentTag := (x,y) -> x ? y#1
-net DocumentTag := x -> concatenate ( DocumentTag.FormattedKey x, " [", DocumentTag.Title x, "]" )
+net DocumentTag := x -> concatenate ( DocumentTag.Title x, " :: ", DocumentTag.FormattedKey x )
 toString DocumentTag := x -> error "who wants a string?"
 package DocumentTag := DocumentTag.Package
 packageTag DocumentTag := DocumentTag.Package
@@ -676,15 +676,16 @@ optargs Sequence := s -> (
      if o =!= null then PARA { "Optional arguments :", smenu apply(keys o, t -> s => t)}
      else optargs s#0)
 
-optin0 := new OptionTable from {}
-optin := method(SingleArgumentDispatch => true)
-optin Thing := x -> optin0
-optin Function := f -> (
+emptyOptionTable := new OptionTable from {}
+getOptionDefaultValues := method(SingleArgumentDispatch => true)
+getOptionDefaultValues Symbol := x -> if value x =!= x then getOptionDefaultValues value x else emptyOptionTable
+getOptionDefaultValues Thing := x -> emptyOptionTable
+getOptionDefaultValues Function := f -> (
      o := options f;
-     if o =!= null then o else optin0)
-optin Sequence := s -> (
+     if o =!= null then o else emptyOptionTable)
+getOptionDefaultValues Sequence := s -> (
      o := options s;
-     if o =!= null then o else optin s#0)
+     if o =!= null then o else if class s#0 === Function then getOptionDefaultValues s#0 else emptyOptionTable)
 
 synopsisOpts := new OptionTable from {			    -- old
      Usage => null,
@@ -706,16 +707,23 @@ synopsis Thing := key -> (
      usa := if o.?Usage then o.Usage;
      fun := if o#?Function then o#Function;
      iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
-     if class inp === SEQ then inp = toList inp;
-     ino := select(inp, x -> iso x);
-     opt := optin key;
-     ino = new HashTable from toList ino;
-     ino = apply(sort pairs opt, (tag,dft) -> fixup (
-	       if ino#?tag 
-	       then SEQ { TO toString tag, " => ", alter1 ino#tag, " [", toString dft, "]" }
-	       else SEQ { TO toString tag, " => ... [", toString dft, "]" }
-	       ));	       
+     ino := new HashTable from select(inp, x -> iso x);
      inp = select(inp, x -> not iso x);
+     opt := getOptionDefaultValues key;
+     ino = apply(sort unique join(keys opt,keys ino),
+	  optionName -> (
+	       fixup (
+		    if opt#?optionName
+	       	    then (
+			 defaultValue := opt#optionName;
+			 if ino#?optionName 
+			 then SEQ { TO optionName, " => ", alter1 ino#optionName, " [", toString defaultValue, "]" }
+			 else SEQ { TO optionName, " => [", toString defaultValue, "]" }
+			 )
+	       	    else (
+			 stderr << "--warning: " << optionName << " not an option for documentation key " << key << endl;
+			 SEQ { TO optionName, " => ", alter1 ino#optionName }
+			 ))));
      (inp',out') := types key;
      if out' === {Thing} then out' = {};		    -- not informative enough
      if #inp === 0 then (

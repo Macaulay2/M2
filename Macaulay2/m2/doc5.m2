@@ -443,6 +443,19 @@ document {
 	  }
      }
 	  
+document {
+     Key => loadPackage,
+     Usage => "loadPackage FILENAME",
+     Inputs => {
+	  "FILENAME" => String => "the name of the file containing the package",
+	  Title => String => "a substitute title for the package, in case you want to load two versions of the same package",
+	  DebuggingMode => Boolean => "the debugging mode to use during the loading of the package"
+	  },
+     Results => {
+	  "The file, which will typically start with a 'newPackage' command, is loaded."
+	  },
+     SeeAlso => { "newPackage", "Package", "load" }
+     }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
