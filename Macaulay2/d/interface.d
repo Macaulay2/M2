@@ -222,6 +222,9 @@ RevLexMO(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMo
 GroupLexS := makeProtectedSymbolClosure("GroupLex");
 GroupLexMO(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawGroupLexMonomialOrdering(",n,")");
 
+GroupRevLexS := makeProtectedSymbolClosure("GroupRevLex");
+GroupRevLexMO(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawGroupRevLexMonomialOrdering(",n,")");
+
 NCLexS := makeProtectedSymbolClosure("NCLex");
 NCLexMO(n:int):RawMonomialOrdering := Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)rawNClexMonomialOrdering(",n,")");
 
@@ -254,6 +257,7 @@ makers := array(Maker)(
      Maker(LexTinyS,LexTinySMO),
      Maker(RevLexS,RevLexMO),
      Maker(GroupLexS,GroupLexMO),
+     Maker(GroupRevLexS,GroupRevLexMO),
      Maker(NCLexS,NCLexMO),
      Maker(GRevLexS,GRevLexMO),
      Maker(GRevLexSmallS,GRevLexSmallMO),

@@ -953,7 +953,7 @@ extern "C" {
   /* Routines when considering matrices as modules of some sort */
 
   const MatrixOrNull * rawModuleTensor(const Matrix *M,
-				       const Matrix *N); /* Dan TODO: please connect this one too */
+				       const Matrix *N); /* connected rawModuleTensor */
 
   const MatrixOrNull * rawBasis(const Matrix *M,
 				M2_arrayint lo_degree, /* possibly length 0 */
@@ -961,7 +961,7 @@ extern "C" {
 				M2_arrayint wt,
 				M2_arrayint vars,
 				M2_bool do_truncation,
-				int limit); /* TODO: Dan: please connect to interface.d */
+				int limit); /* connect to rawBasis */
   /* Yields a monomial basis of part of the graded R-module cokernel(M).
    * Returns a matrix of monomials which maps to the target of M, such that
    *  (i) The image spans the sum of M_i, for lo_degree <= i <= hi_degree 
