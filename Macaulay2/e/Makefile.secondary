@@ -1,4 +1,4 @@
-include ../Makefile.develop
+include ../../Makeconf
 
 %.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
@@ -106,6 +106,8 @@ NAMES = \
 	gb \
 	spair \
 	gbinhom \
+	gbbinom \
+	sagbi \
 	random \
 	gb2 \
 	res2 \

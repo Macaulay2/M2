@@ -1,4 +1,4 @@
-include ../Makefile.develop
+include ../../Makeconf
 
 install : index.html
 index.html : ../bin/Macaulay2-$(ARCH).data html.m2

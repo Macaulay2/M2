@@ -15,7 +15,7 @@ class monomial_rec : public object_element
 
   intarray val;
 
-  friend class monomial;
+  friend class Monomial;
 
   monomial_rec() : val() { varpower::one(val); }
   ~monomial_rec() {}
@@ -23,7 +23,7 @@ class monomial_rec : public object_element
   // Infrastructure
   object_types type_of    () const { return TY_MONOMIAL; }
   const char * type_name  () const { return "monomial"; }
-  monomial cast_to_monomial();
+  Monomial cast_to_Monomial();
 
   intarray *intarray_of() { return &val; }
 
@@ -31,74 +31,74 @@ class monomial_rec : public object_element
   void bin_out(ostream &o) const { varpower::elem_bin_out(o, val.raw()); }
 };
 
-class monomial
+class Monomial
 {
-  POINTER(monomial, monomial_rec)
+  POINTER(Monomial, monomial_rec)
 public:
-  monomial(int v);
-  monomial(int v, int e);
-  monomial(const int *vp);
-  monomial(char *&s, int &len);
+  Monomial(int v);
+  Monomial(int v, int e);
+  Monomial(const int *vp);
+  Monomial(char *&s, int &len);
 
   intarray &get_intarray() { return obj->val; }
   const intarray &get_intarray() const { return obj->val; }
   int * ints() { return obj->val.raw(); }
   const int * ints() const { return obj->val.raw(); }
 
-  monomial operator*(const monomial &b) const;
-  monomial operator/(const monomial &b) const;
-  monomial power(int n) const;
-  void monsyz(const monomial &b, monomial &sa, monomial &sb) const;
-  monomial lcm(const monomial &b) const;
-  monomial gcd(const monomial &b) const;
+  Monomial operator*(const Monomial &b) const;
+  Monomial operator/(const Monomial &b) const;
+  Monomial power(int n) const;
+  void monsyz(const Monomial &b, Monomial &sa, Monomial &sb) const;
+  Monomial lcm(const Monomial &b) const;
+  Monomial gcd(const Monomial &b) const;
 
-  monomial radical() const;
-  monomial erase(const monomial &b) const;
+  Monomial radical() const;
+  Monomial erase(const Monomial &b) const;
 
   bool is_one() const;
-  bool is_equal(const monomial &b) const;
-  int divides(const monomial &b) const;
-  int compare(const monomial &b) const;
+  bool is_equal(const Monomial &b) const;
+  int divides(const Monomial &b) const;
+  int compare(const Monomial &b) const;
   int simple_degree() const;
 };
 
-inline monomial monomial_rec::cast_to_monomial() 
-{ return monomial(this,caster); }
+inline Monomial monomial_rec::cast_to_Monomial() 
+{ return Monomial(this,caster); }
 
 #if 0
-inline monomial::monomial() : 
+inline Monomial::Monomial() : 
   obj(new monomial_rec())
 {  
 }
 #endif
 
-inline monomial::monomial(int v, int e) : 
+inline Monomial::Monomial(int v, int e) : 
   obj(new monomial_rec())
 {
   get_intarray().shrink(0);
   varpower::var(v, e, get_intarray());
 }
 
-inline monomial::monomial(const int *vp) : 
+inline Monomial::Monomial(const int *vp) : 
   obj(new monomial_rec())
 {
   get_intarray().shrink(0);
   varpower::copy(vp, get_intarray());
 }
 
-inline monomial::monomial(int v) : 
+inline Monomial::Monomial(int v) : 
   obj(new monomial_rec())
 {
   get_intarray().shrink(0);
   varpower::var(v, 1, get_intarray());
 }
 
-inline bool monomial::is_one() const
+inline bool Monomial::is_one() const
 {
   return varpower::is_one(ints());
 }
 
-inline bool monomial::is_equal(const monomial &b) const
+inline bool Monomial::is_equal(const Monomial &b) const
 {
   if (this == &b) return true;
   return varpower::is_equal(ints(), b.ints());

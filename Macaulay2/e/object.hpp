@@ -115,8 +115,8 @@ public:
   virtual MonomialIdeal cast_to_MonomialIdeal();
   virtual RingMap       cast_to_RingMap();
 
-  virtual Vector      cast_to_Vector();
-  virtual monomial     cast_to_monomial();
+  virtual Vector        cast_to_Vector();
+  virtual Monomial      cast_to_Monomial();
 
   // Equality checks, hash function
   virtual bool is_equal(const object_element *o) const;

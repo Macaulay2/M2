@@ -1,4 +1,4 @@
-include ../Makefile.develop
+include ../../Makeconf
 
 FILES := Makefile tutbook.m2 titlepage.tex \
 	final/--INDEX final/*.m2 prelim/*.m2 translate.c

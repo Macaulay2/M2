@@ -11,25 +11,34 @@
 // Data structures //
 /////////////////////
 
+class binomialGB_comp;
 typedef int *monomial;
   
 struct binomial {
-  monomial a;
-  monomial b;
+  monomial lead;
+  monomial tail;
+
+  binomial() : lead(NULL), tail(NULL) {}
+  binomial(monomial lead, monomial tail) : lead(lead), tail(tail) {}
 };
 
-struct gb_elem {
-  gb_elem *next;
-  gb_elem *smaller;		// NULL if this is a minimal GB element, otherwise
+struct binomial_gb_elem {
+  binomial_gb_elem *next;
+  binomial_gb_elem *smaller;		// NULL if this is a minimal GB element, otherwise
 				// points to a GB element whose lead term divides 
 				// this lead term.
   binomial f;
+
+  binomial_gb_elem(binomial ff) : next(NULL), smaller(NULL), f(ff) {}
 };
 
-struct s_pair {
-  s_pair *next;
-  gb_elem *f1;
-  gb_elem *f2;		// f2 is NULL for generators...
+struct binomial_s_pair {
+  binomial_gb_elem *f1;
+  binomial_gb_elem *f2;		// f2 is NULL for generators...
+  monomial lcm;
+  binomial_s_pair() {}
+  binomial_s_pair(binomial_gb_elem *f1, binomial_gb_elem *f2, monomial lcm)
+    : f1(f1), f2(f2), lcm(lcm) {}
 };
 
 /////////////////////////////
@@ -39,13 +48,14 @@ struct s_pair {
 class binomial_ring
 // First implementation: exponent vectors
 {
+  friend class binomialGB_comp;
   const Ring *R;
   const FreeModule *F;		// rank 1 free R-module
 
   // exponent vector: [e0, ..., e(nvars-1), -deg, -wt] (the last slot is only there, if there
   // is a weight function.
   int nvars;
-  bool have_wtfcn;
+  bool have_weights;
   int nslots;			// nvars+1 or nvars+2
   int *degrees;			// (Negative of) Degree vector.
   int *weights;			// (Negative of) Weight function, if any
@@ -57,18 +67,28 @@ class binomial_ring
   void set_weights(monomial m) const;
   
 public:
-  binomial_ring(Ring *RR, int nvars, int nwts, int *wts);
+  binomial_ring(const Ring *RR);
+  binomial_ring(const Ring *RR, 
+		int *wts,
+		bool revlex);
   ~binomial_ring();
 
   // monomial operations
   void remove_monomial(monomial &m) const;
   monomial make_monomial(int *exp) const; // Make a monomial from an exponent vector
 
+  int weight(monomial m) const;
+  int degree(monomial m) const;
+  unsigned int mask(monomial m) const;
+  bool divides(monomial m, monomial n) const;
+
   monomial quotient(monomial m, monomial n) const;
   monomial divide(monomial m, monomial n) const;
   monomial mult(monomial m, monomial n) const;
   monomial lcm(monomial m, monomial n) const;
   monomial spair(monomial lcm, monomial m, monomial n) const; // returns lcm - m + n.
+  void spair_to(monomial a, monomial b, monomial c) const;
+  // spair_to: a = a - b + c
 
   bool gcd_is_one(monomial m, monomial n) const;
   bool remove_content(monomial &m, monomial &n) const;
@@ -78,39 +98,68 @@ public:
   void translate_monomial(const binomial_ring *old_ring, monomial &m) const;
   vec monomial_to_vector(monomial m) const;
 
-  bool in_subring(monomial m) const;
-  int mask(monomial m) const;
-
   // binomial operations
+  void remove_binomial(binomial &f) const;
+  binomial make_binomial() const; // allocates the monomials
+
   void translate_binomial(const binomial_ring *old_ring, binomial &f) const;
 
   vec binomial_to_vector(binomial f) const;
-  binomial vector_to_binomial(vec f) const;
-  binomial intvector_to_binomial(vec f) const;
+  vec binomial_to_vector(binomial f, int n) const;
+  bool vector_to_binomial(vec f, binomial &result) const;
+  void intvector_to_binomial(vec f, binomial &result) const;
 
-  void one_reduction_step(binomial &f, binomial g) const;
-  binomial calc_s_pair(binomial f, binomial g) const;
+  bool normalize(binomial &f) const;
+
+  bool one_reduction_step(binomial &f, binomial g) const;
+  bool calc_s_pair(binomial_s_pair &s, binomial &result) const;
 };
 
-class s_pair_set
+class binomial_s_pair_set
 {
-  struct s_pair_list {
-    s_pair_list *next;
-    monomial lcm;
-    s_pair *pairs;		// List of pairs with this lcm.
+  struct s_pair_lcm_list;
+  struct s_pair_elem;
+
+  struct s_pair_degree_list {
+    s_pair_degree_list *next;
+    int deg;
+    s_pair_lcm_list *pairs;
     int n_elems;
   };
+
+  struct s_pair_lcm_list {
+    s_pair_lcm_list *next;
+    monomial lcm;
+    s_pair_elem *pairs;		// List of pairs with this lcm.
+  };
+
+  struct s_pair_elem {
+    s_pair_elem *next;
+    binomial_gb_elem *f1;
+    binomial_gb_elem *f2;
+    s_pair_elem(binomial_gb_elem *f1, binomial_gb_elem *f2) : next(NULL), f1(f1), f2(f2) {}
+  };
+
+  const binomial_ring *R;
+  monomial _prev_lcm;		// This class is responsible for deleting lcm's.
+  s_pair_degree_list *_pairs;
+  int _n_elems;
   
-  array<s_pair_list *> spairs;
-  
+  void remove_lcm_list(s_pair_lcm_list *p);
+  void remove_pair_list(s_pair_degree_list *p);
+  void insert_pair(s_pair_degree_list *q, binomial_s_pair &s);
 public:
-  s_pair_set();
-  ~s_pair_set();
+  binomial_s_pair_set(const binomial_ring *R);
+  ~binomial_s_pair_set();
 
-  void insert(s_pair *p, monomial *lcm);
+  void enlarge(const binomial_ring *R);
 
-  s_pair *next();  // returns NULL if none left
-  s_pair *next(int d); // returns next pair in degrees <= d, if any.
+  void insert(binomial_gb_elem *p);  // Insert a generator
+  void insert(binomial_s_pair p);   // Insert an s-pair.
+
+  bool next(const int *d, binomial_s_pair &result);
+  // returns false if no more pairs in degrees <= *d. (NULL represents
+  // infinity).  
 
   int lowest_degree() const;
   int n_elems(int d) const;
@@ -119,43 +168,63 @@ public:
 
 class binomialGB
 {
-  binomial_ring *R;
-  
   struct gbmin_elem {
     gbmin_elem *next;
-    gb_elem *elem;
+    binomial_gb_elem *elem;
     int mask;
+    gbmin_elem(binomial_gb_elem *f, int mask) : elem(f), mask(mask) {}
   };
+
+  struct monomial_list {
+    monomial_list *next;
+    monomial m;
+    int mask;
+    gbmin_elem *tag;  // This is a list
+    monomial_list(monomial m, int mask, gbmin_elem *val) : m(m), mask(mask), tag(val) {}
+  };
+
+  const binomial_ring *R;
+  gbmin_elem *first;
+  int _max_degree;  // The highest degree of a GB generator found so far.
 
 public:
-  void minimalize(gb_elem *f);  // remove elements which have lead term divisible by in(f).
-  void insert(gb_elem *f);	// optionally auto-reduces the other elements as well.
+  binomialGB(const binomial_ring *R);
+  ~binomialGB();
+  void enlarge(const binomial_ring *newR);
+
+  void minimalize_and_insert(binomial_gb_elem *f);
+  monomial_list *find_divisor(monomial_list *I, monomial m) const;
+  monomial_list *ideal_quotient(monomial m) const;
   
-  gb_elem *find_divisor(monomial *m);
-  void make_new_pairs(s_pair_set &Pairs, gb_elem *f);
-  void reduce(binomial *&f) const;
+  binomial_gb_elem *find_divisor(monomial m) const;
+  void make_new_pairs(binomial_s_pair_set *Pairs, binomial_gb_elem *f) const;
+  void reduce_monomial(monomial m) const;
+  bool reduce(binomial &f) const; // returns false if reduction is to zero.
 
   class iterator {
+    friend class binomialGB;
     gbmin_elem *elem;
     iterator(gbmin_elem *p) : elem(p) {}
-    friend class binomialGB;
+    gbmin_elem *this_elem() { return elem; }
   public:
     iterator &operator++() { elem = elem->next; return *this; }
-    gb_elem *operator*() { return elem->elem; }
+    iterator &operator++(int) { elem = elem->next; return *this; }
+    binomial_gb_elem *operator*() { return elem->elem; }
     bool operator==(const iterator &p) { return p.elem == elem; }
+    bool operator!=(const iterator &p) { return p.elem != elem; }
   };
 
-  iterator begin() { return iterator(first); }
-  iterator end() { return iterator(NULL); }
+  iterator begin() const { return iterator(first); }
+  iterator end() const { return iterator(NULL); }
 };
 
 class binomialGB_comp : public gb_comp
 {
   binomial_ring *R;
-
-  s_pair_list Pairs;		// Pairs and Generators
-  binomialGB Gmin;
-  array <gb_elem *> G;		// All of the gb_elem's in one place.
+  binomial_s_pair_set *Pairs;		// Pairs and Generators
+  binomialGB *Gmin;
+  array <binomial_gb_elem *> Gens;       // All of the generators
+  array <binomial_gb_elem *> G;		// All of the binomial_gb_elem's in one place.
 
   ///////////////////////
   // Flags and options //
@@ -170,22 +239,24 @@ class binomialGB_comp : public gb_comp
 				// otherwise, divisibility is done using a linked list, and 
 				// monomial masks.
 
-  array<binomial *> mingens;	// Only valid for homogeneous case.  These point to G elements
+  array<binomial_gb_elem *> mingens;	// Only valid for homogeneous case.  These point to G elements
 				// so don't free them by accident!
 
-  array<binomial *> mingens_subring;  // Same comment applies here!
+  array<binomial_gb_elem *> mingens_subring;  // Same comment applies here!
 
+  void process_pair(binomial_s_pair p);
+  int gb_done(const intarray &stop_condtions) const;
 public:
   // creation
-  binomialGB_comp(const Ring *R);
+  binomialGB_comp(const Ring *R, int *wts, bool revlex);
   ~binomialGB_comp();
 
-  void enlarge(const Ring *R);
+  void enlarge(const Ring *R, int *wts);
   void add_generators(const Matrix &m);
   int calc(const int *deg, const intarray &stop_conditions);
 
-  Matrix subring(int n);
-  Matrix subringGB(int n);
+  Matrix subring();
+  Matrix subringGB();
 
   // reduction: these elements do not need to be binomials?
   Matrix reduce(const Matrix &m, Matrix &lift);
@@ -219,5 +290,5 @@ public:
   int length_of() const { return 0; }
   
 };
-
 #endif
+
