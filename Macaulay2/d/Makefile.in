@@ -4,7 +4,7 @@ VPATH = @srcdir@
 DEPENDS = yes
 ############################## main target
 all :: compat.h
-all :: ../libexec/Macaulay2$(EXE)
+all :: ../bin/Macaulay2$(EXE)
 ############################## useful targets
 all-c-files ::
 remove-c-files ::
@@ -14,45 +14,51 @@ remove-c-files ::
 # the names on these lines should be in sequence from most dependent to
 # least dependent so that "make" can remake the *.dep makefiles
 
+ALLOBJ :=
+MADEFILES :=
+MADECFILES :=
 PROJECT := 
 PROJECT += interp.d
 PROJECT += texmacs.d
 # PROJECT += mp.d
 # PROJECT += actorsX.d
+PROJECT += interface.d
 PROJECT += actors5.d actors4.d actors3.d actors2.d actors.d
 PROJECT += objects.d
 PROJECT += struct.d
 PROJECT += GC.d
+PROJECT += util.d
 PROJECT += convertr.d basic.d binding.d
 PROJECT += parser.d lex.d tokens.d
-PROJECT += arith.d
-# PROJECT += gmp.d
+PROJECT += engine.d
+PROJECT += gmp.d
 PROJECT += err.d
 PROJECT += stdiop.d
 PROJECT += getline.d
 PROJECT += ctype.d
 PROJECT += stdio.d
 PROJECT += nets.d
+PROJECT += vararray.d
 PROJECT += varstrin.d
 PROJECT += strings.d 
-PROJECT += GB.d
 PROJECT += system.d
 PROJECT += C.d
-##############################
+ALLOBJ += $(PROJECT:.d=.oo) 
+
+DNAMES := $(PROJECT)
+DNAMES += t.d u.d optim.d actorsX.d gr.d grx.d testall.d pp.d redblk.d
+CFILES := M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c initgmp2.c gdbm_interface.c
+MADECFILES := tmp_init.c startup.c
+CCFILES := version.cc initgmp.cc tmpl_inst.cc
+SRCFILES := getpagesize.h gc_cpp.cc memdebug.c memdebug.h gmp_aux.c types.h $(PROJECT) $(CFILES)
+MADEFILES += $(DNAMES:.d=.c)
+ALLOBJ += $(CFILES:.c=.o) $(MADECFILES:.c=.o) $(CCFILES:.cc=.o)
+
+############################## dependencies
+
 ifeq "$(DEPENDS)" "yes"
 include $(PROJECT:.d=.dep)
 endif
-##############################
-DNAMES := $(PROJECT)
-############################## more files
-WRAPPERS := scclib.c getpagesize.h gc_cpp.cc memdebug.c memdebug.h
-#############################################################################
-SRCFILES := $(WRAPPERS) $(DNAMES)
-SCRIPTS := reverse
-WC1FILES := $(SCRIPTS) $(SRCFILES) \
-	scc.gdb COPYRIGHT \
-	bignum.h bignum.c alloca.h \
-	configure remake probe.c sizes.c
 ############################## rules
 SCC1 := ../c/scc1
 .SUFFIXES: .d .sig .dep .res .test .m2
@@ -103,6 +109,7 @@ CXXFLAGS += $(WARNINGS)
 
 ifeq ($(OS),Linux)
 ## - use this to get a memory map listing from the gnu linker
+MADEFILES += mapfile
 LDFLAGS  += -Wl,-Map,mapfile
 endif
 
@@ -140,8 +147,6 @@ ifeq ($(OS),Linux)
 LDFLAGS += -Wl,-defsym,_DYNAMIC=0
 endif
 endif
-
-ALLOBJ :=
 
 ifeq ($(OS),SunOS)
 LDLIBS += -lsocket -lnsl
@@ -184,6 +189,7 @@ endif
 
 ############################## compiling
 
+MADEFILES += compat.c compat.h
 ifeq "$(CC)" "cl"
 compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
@@ -192,31 +198,33 @@ compat.c compat.h : configure ../../include/config.h
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
 endif
 
+M2types.o : M2types.h
 M2lib.o scclib.o : compat.h cxx-wrappers.h
-M2lib.o scclib.o : \
-	../c/compat.h ../c/compat.c types.h memdebug.h ../../include/config.h
+M2lib.o scclib.o : ../c/compat.h ../c/compat.c types.h memdebug.h ../../include/config.h
 memdebug.o scclib.o actors5.o gc_cpp.o  : memdebug.h
 gc_cpp.o : ../../include/config.h
 
 allc : $(PROJECT:.d=.c) tmp_init.c
 
-
-MISCO := M2lib.o scclib.o tmp_init.o memdebug.o initgmp.o tmpl_inst.o version.o
-MISCO += cxx-wrappers.o
+ALLOBJ += cxx-wrappers.o
 
 ifeq ($(GC_FOR_NEW),yes)
 # replace the builtin c++ memory allocation routines by calls to gc.
-MISCO += gc_cpp.o
+ALLOBJ += gc_cpp.o
 endif
 
-ifeq ($(OS),Linux)
-# MISCO += readline.o
-# LIBRARYOPTIONS += -ldl -lncurses
-# LDFLAGS += -rdynamic
-endif
+MADEFILES += startup.c
+startup.c : ../m2/startup.m2
+	(echo 'char startupStringFilename[] ='; \
+	 r=`/bin/pwd`; cd `dirname $^`; dir=`/bin/pwd`; cd "$$r"; \
+	 echo "    \"$$dir/startup.m2\";"; \
+	 echo ; \
+	 echo 'char startupString[] ='; \
+	 sed -e 's/\\/\\\\/' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'  ; \
+	 echo ';' \
+        ) <$^ >$@ 
 
 ALLOBJ += $(PROJECT:.d=.oo) 
-ALLOBJ += $(MISCO)
 ALLOBJ += ../e/libgb.a
 
 ifeq "$(DUMPDATA)" "yes"
@@ -246,6 +254,7 @@ endif
 ALLC := $(PROJECT:.d=.c)
 all-c-files :: $(ALLC)
 remove-c-files ::; rm -rf $(ALLC)
+MADEFILES += c-files.tar
 c-files.tar :: $(ALLC)
 	tar cf $@ $(ALLC)
 ##############################
@@ -253,6 +262,7 @@ c-files.tar :: $(ALLC)
 UTIL := ../util/
 
 tmp_init.o : tmp_init.c
+MADEFILES += tmp_init.c
 tmp_init.c : $(PROJECT)
 	 $(UTIL)timestmp >tmp
 	@ echo "echoout '>>tmp' ..."
@@ -268,25 +278,13 @@ tmp_init.c : $(PROJECT)
 .._c_compat.c: ../c/compat.c; cp $^ $@
 .._c_compat.h: ../c/compat.h; cp $^ $@
 
-c-port: $(ALLC) tmp_init.c gc_cpp.cc scclib.c memdebug.c memdebug.h \
+c-port: $(ALLC) tmp_init.c gc_cpp.cc gmp_aux.c M2types.c scclib.c memdebug.c memdebug.h \
 		compat.c compat.h \
 		.._c_compat.c .._c_compat.h
 	tar cfz /tmp/c-port.tgz $^
 
 interpret.a : $(ALLOBJ)
 	ar rcs $@ $^ tmp_init.o
-############################## probe memory for dumpdata
-probe : probe.c probe.h
-	$(CC) -g -static -I../../include probe.c $(OUTPUT_OPTION)
-probe.h :
-	echo "/* insert temporary fixes here */" >$@
-test-probe : addresses
-addresses : probe
-	nm probe |grep -v "gcc2_compiled\|gnu_compiled\0| \." >syms
-	./probe abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz b c d >> syms
-	sort syms > addresses
-	rm syms
-clean ::; rm -f addresses
 ###################### libraries
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
@@ -294,16 +292,18 @@ LIBRARYOPTIONS += -lntl
 LIBRARYOPTIONS += -lgmp
 LIBRARYOPTIONS += -lgc
 LIBRARYOPTIONS += -lgdbm
-
 # we avoid successfully using streamio, but we need the personality function
 LIBRARYOPTIONS += -lstdc++
+
+ifeq "$(LAPACK)" "yes"
+LIBRARYOPTIONS += -llapack -lcblas -lf77blas -lg2c
+# LIBRARYOPTIONS += -latlas
+endif
 
 # ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
 # 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $(OUTPUT_OPTION) $<
 
 LDLIBS := $(LIBRARYOPTIONS) $(LDLIBS)
-
-######################
 
 ifeq "$(CC)" "cl"
 LINK_OUTPUT_OPTION = -link -out:$@.exe
@@ -315,26 +315,28 @@ ifneq "$(CC)" "cl"
 LDLIBS += -lm
 endif
 
-../libexec/Macaulay2$(EXE) : $(ALLOBJ) $(LIBRARYFILES)
+LDLIBS += -lc ../compat/compat.a
+
+MADEFILES += ../bin/Macaulay2$(EXE)
+../bin/Macaulay2$(EXE) : $(ALLOBJ) $(LIBRARYFILES)
 	rm -f $@
 	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 	$(STRIPCMD) $@
 
 t_main.o : types.h
-t : t_main.o gmp.o stdio.o strings.o system.o varstrin.o nets.o scclib.o C.o t.o
+t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o
 	$(CC) $(LDFLAGS) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
 all:: TAGS
 
+MADEFILES += TAGS 
 TAGS: Makefile
 	@ echo making TAGS
-	@ $(UTIL)echoout -r2 '>TAGS' $(foreach i, $(SRCFILES) M2lib.c types.h,  $(i),0)
+	@ $(UTIL)echoout -r2 '>TAGS' \
+		$(foreach i, $(patsubst %, @srcdir@/%, $(SRCFILES)),  $(i),0)
 
 clean ::
-	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep mapfile \
-		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
-		$(DNAMES:.d=.c) TAGS \
-		core core.* compat.c compat.h c-files.tar tmp_init.c ../libexec/Macaulay2$(EXE)
+	rm -f $(MADEFILES) *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep core 
 distclean : clean
 	rm -f Makefile
 
