@@ -38,6 +38,7 @@ exportMutable (
 	)
 
 export (
+        symbol RunDirectory,
         symbol monomials,
         symbol MakeLinks,
         symbol Undo,

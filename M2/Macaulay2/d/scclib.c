@@ -329,6 +329,13 @@ M2_string system_readlink(M2_string filename) {
   return s;
 }
 
+int system_chdir(M2_string filename) {
+  char *fn = tocharstar(filename);
+  int ret = chdir(fn);
+  GC_FREE(fn);
+  return ret;
+}
+
 M2_string system_realpath(M2_string filename) {
   char *fn = tocharstar(filename);
   char buf[PATH_MAX];

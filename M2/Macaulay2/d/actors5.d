@@ -1113,6 +1113,11 @@ readlinkfun(e:Expr):Expr := (
      else WrongArgString());
 setupfun("readlink",readlinkfun);
 
+changeDirectory(e:Expr):Expr := (
+     when e is filename:string do if chdir(filename) == -1 then buildErrorPacket(syscallErrorMessage("changing directory")) else nullE
+     else WrongArgString());
+setupfun("changeDirectory",changeDirectory);
+
 realpathfun(e:Expr):Expr := when e is filename:string do Expr(realpath(filename)) else WrongArgString();
 setupfun("realpath",realpathfun);
 
