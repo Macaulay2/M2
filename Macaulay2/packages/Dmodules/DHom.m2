@@ -526,7 +526,7 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      error "expected holonomic ideals/modules";     
      
      outputList := {};
-     if (ring N != W) then error "expected modules over the same Weyl algebra";
+     if (ring N =!= W) then error "expected modules over the same Weyl algebra";
      if (W.monoid.Options.WeylAlgebra === {}) then
      error "expected an element of a Weyl algebra";
      createDpairs W;
@@ -647,7 +647,7 @@ DExt(Module, Module, List) := options -> (M, N, w) -> (
      if not (isHolonomic M and isHolonomic N) then
      error "expected holonomic ideals/modules";     
 
-     if ring M != ring N then
+     if ring M =!= ring N then
      error "Expected modules over the same rings";
      if W.monoid.Options.WeylAlgebra === {} then
      error "expected an element of a Weyl algebra";

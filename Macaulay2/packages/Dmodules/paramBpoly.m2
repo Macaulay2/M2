@@ -879,7 +879,7 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
      else error "algorithm is implemented over finite field so far"; 
      R := ring f;
      K := coefficientRing R;
-     if coefficientRing K != QQ then 
+     if coefficientRing K =!= QQ then 
      error "base ring = QQ expected";
 	  
      Z := (ZZ/DBIGPRIME)[(entries vars K)#0][
