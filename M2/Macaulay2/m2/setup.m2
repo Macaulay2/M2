@@ -135,9 +135,19 @@ ZZ | String := String => (i,s) -> concatenate(string i,s)
 notify := false						    -- can change this for debugging
 loaded := new MutableHashTable
 
+canonicalFilename := f -> (
+     f = separate(pathSeparator,f);
+     while (
+     	  i := position(f,s -> s === "..");
+     	  i =!= null and i > 0
+	  )
+     do f = drop(f,{i-1,i});
+     concatenate mingle(f, apply(#f-1,i -> pathSeparator)))
+
 markLoaded := (filename,origfilename) -> ( 
      loaded#origfilename = true; 
      if notify then (
+	  filename = canonicalFilename filename;
 	  if filename === origfilename
 	  then stderr << "--loaded " << filename << endl
 	  else stderr << "--loaded " << origfilename << " from " << filename << endl

@@ -63,6 +63,7 @@
 (modify-syntax-entry ?\\ "\\"   M2-mode-syntax-table)
 (modify-syntax-entry ?-  ". 12" M2-mode-syntax-table)
 (modify-syntax-entry ?*  "."    M2-mode-syntax-table)
+(modify-syntax-entry ?_  "."    M2-mode-syntax-table)
 (modify-syntax-entry ?+  "."    M2-mode-syntax-table)
 (modify-syntax-entry ?=  "."    M2-mode-syntax-table)
 (modify-syntax-entry ?%  "."    M2-mode-syntax-table)
