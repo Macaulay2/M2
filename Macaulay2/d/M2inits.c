@@ -6,8 +6,14 @@
 #include <gmp.h>
 #include <gc.h>
 #include "config.h"
-extern char *progname;
+
 extern void outofmem();
+extern void IM2_initialize();
+
+char *progname;
+void arginits(int argc, char **argv) {
+  progname = argv[0];
+}
 
 static void init_gc() {
 #ifdef MEM_DEBUG
@@ -98,6 +104,7 @@ void M2inits() {
   init_gc();
   test_gc();
   init_gmp();
+  IM2_initialize();
 }
 
 /*

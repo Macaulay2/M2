@@ -37,7 +37,6 @@ void WarnS(char *m) {
   putstderr(m);
 }
 
-char *progname;
 #ifdef includeX11
 Display *display;
 Font font;
@@ -258,10 +257,10 @@ char CCVERSION[] = "gcc " stringize(__GNUC__) "." stringize(__GNUC_MINOR__) ;
 char CCVERSION[] = "unknown" ;
 #endif
 
-
 extern void init_readline_variables();
 extern char *GC_stackbottom;
 extern void M2inits();
+extern void arginits(int, char **);
 
 int Macaulay2_main(argc,argv)
 int argc; 
@@ -375,7 +374,7 @@ char **argv;
 #endif
 
      trap();
-     progname = saveargv[0];
+     arginits(argc,saveargv);
      M2inits();
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
