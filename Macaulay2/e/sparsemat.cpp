@@ -319,6 +319,27 @@ bool SparseMutableMatrix::dot_product(int i, int j, ring_elem &result) const
   return result;
 }
 
+bool SparseMutableMatrix::row_permute(int start_row, const M2_arrayint perm)
+{
+#warning "write this"
+  return false;
+}
+
+bool SparseMutableMatrix::column_permute(int start_col, const M2_arrayint perm)
+{
+#warning "write this"
+  return false;
+}
+
+bool SparseMutableMatrix::set_submatrix(const M2_arrayint rows,
+					const M2_arrayint cols, 
+					const MutableMatrix *N)
+  // returns false iff there is an error
+{
+#warning "write this"
+  return false;
+}
+
 ///////////////////////////////
 // Matrix operations //////////
 ///////////////////////////////

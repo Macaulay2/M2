@@ -156,6 +156,19 @@ normalizeColumn
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
 
+  virtual bool row_permute(int start_row, const M2_arrayint perm) = 0;
+
+  virtual bool column_permute(int start_col, const M2_arrayint perm) = 0;
+
+  virtual MutableMatrix * submatrix(const M2_arrayint rows, const M2_arrayint cols) const = 0;
+
+  virtual MutableMatrix * submatrix(const M2_arrayint cols) const = 0;
+
+  virtual bool set_submatrix(const M2_arrayint rows,
+			     const M2_arrayint cols, 
+			     const MutableMatrix *N) = 0;
+  // returns false iff there is an error
+
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////
@@ -190,9 +203,6 @@ normalizeColumn
 
   virtual MutableMatrix * negate() const = 0;
 
-  virtual MutableMatrix * submatrix(const M2_arrayint rows, const M2_arrayint cols) const = 0;
-
-  virtual MutableMatrix * submatrix(const M2_arrayint cols) const = 0;
 };
 
 inline bool MutableMatrix::error_column_bound(int c) const

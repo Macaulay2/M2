@@ -331,8 +331,7 @@ M2_bool IM2_MutableMatrix_row_permute(MutableMatrix *M,
   /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 {
-  ERROR("not re-implemented yet");
-  return false;
+  return M->row_permute(start,perm);
 }
 
 M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
@@ -341,8 +340,7 @@ M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 {
-  ERROR("not re-implemented yet");
-  return false;
+  return M->column_permute(start,perm);
 }
 
 
@@ -445,6 +443,14 @@ MutableMatrixOrNull * IM2_MutableMatrix_submatrix(const MutableMatrix *M,
 						  const M2_arrayint cols)
 {
   return M->submatrix(rows,cols);
+}
+
+bool IM2_MutableMatrix_set_submatrix(MutableMatrix *M,
+				     const M2_arrayint rows,
+				     const M2_arrayint cols,
+				     const MutableMatrix *N)
+{
+  return M->set_submatrix(rows,cols,N);
 }
 
 MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
