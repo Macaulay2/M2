@@ -477,7 +477,7 @@ computeLocalCohomOT = (I, M, n0, n1) -> (
      -- stash the homology groups
 
      locOut := hashTable apply(toList(0..d), i -> (-i+d) => 
-	  LCWtoW restrictOut#ResToOrigRing restrictOut#HomologyModules#i);
+	  LCWtoW ** (restrictOut#ResToOrigRing ** restrictOut#HomologyModules#i));
      
      use W;
      locOut

@@ -651,7 +651,7 @@ DExt(Module, Module, List) := options -> (M, N, w) -> (
 
      MdualN := ExternalProduct(Mdual,N, TwistMap => true);
 
-     restrictTable := computeRestriction((ring MdualN).twistMap MdualN, 
+     restrictTable := computeRestriction((ring MdualN).twistMap ** MdualN, 
 	  w, -1, n+1, {HomologyModules}, options);
      ExtTable := hashTable apply(toList(0..n), 
 	  i -> i => restrictTable#HomologyModules#(n-i));
@@ -741,8 +741,8 @@ ExternalProduct(Module, Module) := options -> (M, N) -> (
 	  );
 
 -- MAKE M (external tensor) N
-     incM := incMap1 M;
-     incN := incMap2 N;
+     incM := incMap1 ** M;
+     incN := incMap2 ** N;
      incM**incN    
      )
 
