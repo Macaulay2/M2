@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "dumpdata.h"
-
+#include "std.h"
 
 static char *x = "initial value";
 static char message[100];
