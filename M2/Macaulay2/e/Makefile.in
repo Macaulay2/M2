@@ -434,7 +434,7 @@ dups-okay: dups-tmp
 	 else touch $@; fi
 
 check::
-	$(MAKE) -C tests check
+	$(MAKE) -C check check
 
 ifeq ($(OS),Linux)
 # don't run it elsewhere because we may not have gnu sort and gnu uniq there

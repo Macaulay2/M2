@@ -49,7 +49,7 @@ ALLOBJ += $(PROJECT:.d=.oo)
 
 DNAMES := $(PROJECT)
 DNAMES += t.d u.d optim.d actorsX.d gr.d grx.d testall.d pp.d redblk.d
-CFILES := M2types.c scclib.c gmp_aux.c memdebug.c initgmp2.c gdbm_interface.c M2lib.c 
+CFILES := M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c initgmp2.c gdbm_interface.c
 MADECFILES := tmp_init.c startup.c
 CCFILES := version.cc initgmp.cc tmpl_inst.cc
 SRCFILES := getpagesize.h gc_cpp.cc memdebug.c memdebug.h gmp_aux.c types.h $(PROJECT) $(CFILES)
@@ -297,7 +297,7 @@ LIBRARYOPTIONS += -lntl
 LIBRARYOPTIONS += $(LIBGMP)
 LIBRARYOPTIONS += -lgc
 LIBRARYOPTIONS += -lgdbm
-LIBRARYOPTIONS +=  -lreadline -lhistory -lcurses
+LIBRARYOPTIONS += -lreadline -lhistory -lcurses
   # we successfully avoid using streamio, but we need the personality function in libstc++
 LIBRARYOPTIONS += -lstdc++
 

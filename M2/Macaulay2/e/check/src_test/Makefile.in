@@ -1,4 +1,6 @@
+# @configure_input@
 include ../../../../include/config.Makefile
+VPATH = @srcdir@
 
 all :: test_suite
 

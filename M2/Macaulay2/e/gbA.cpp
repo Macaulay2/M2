@@ -799,7 +799,7 @@ void gbA::insert(POLY f, int minlevel)
 
   _stats_ngb++;
 
-  int me = G->insert(f.f, f.fsyz, minlevel, _this_degree);
+  int me = G->insert(f.f, f.fsyz, (gbelem_type)minlevel, _this_degree);
 
   if (comp_printlevel >= 5)
     {

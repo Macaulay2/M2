@@ -1,6 +1,6 @@
 /* ctest.c: Implements the CTest Framework */
 
-#include "ctest.h"
+#include "Ctest.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

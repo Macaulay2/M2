@@ -6,7 +6,7 @@
 #define CTEST_H
 
 #include <stdio.h>
-#include "bool.h"
+#include "Bool.h"
 
 #define ct_test(test, cond) \
         ct_do_test(test, #cond, cond, __FILE__, __LINE__)
