@@ -917,7 +917,7 @@ makePackageIndex Sequence := () -> makePackageIndex packagePath
 makePackageIndex List := packagePath -> (
      absoluteLinks = true;
      key := "package index";
-     htmlDirectory = userMacaulay2Directory();
+     htmlDirectory = userMacaulay2Directory();		    -- links are relative to this directory
      fn := htmlDirectory | "index.html";
      stderr << "--making index of installed packages in " << fn << endl;
      fn << html HTML { 
