@@ -79,6 +79,47 @@ solve(MutableMatrix,MutableMatrix) := (A,b) -> (
 solve(Matrix,Matrix) := (A,b) -> (
      matrix solve(mutableMatrix(A,Dense=>true),
                   mutableMatrix(b,Dense=>true)))
+
+eigenvalues = method(Options => {Hermitian => false})
+eigenvalues(MutableMatrix) := o -> (A) -> (
+     if ring A =!= RR and ring A =!= CC then
+       error "eigenvalues requires matrices over RR or CC";
+     e := if o.Hermitian 
+          then mutableZero(RR,0,0)
+          else mutableZero(CC,0,0);
+     rawEigenvalues(raw A,raw e,o.Hermitian);
+     e)
+eigenvalues(Matrix) := o -> (A) -> (
+     matrix eigenvalues(mutableMatrix(A,Dense=>true),o))
+
+eigenvectors = method(Options => {Hermitian => false})
+eigenvectors(MutableMatrix) := o -> (A) -> (
+     if ring A =!= RR and ring A =!= CC then
+       error "eigenvalues requires matrices over RR or CC";
+     e := if o.Hermitian 
+          then mutableZero(RR,0,0)
+          else mutableZero(CC,0,0);
+     v := mutableZero(CC,0,0);
+     rawEigenvectors(raw A,raw e,raw v,o.Hermitian);
+     (e,v))
+eigenvectors(Matrix) := o -> (A) -> (
+     (e,v) := eigenvectors(mutableMatrix(A,Dense=>true),o);
+     (matrix e, matrix v))
+
+SVD = method(Options=>{DivideConquer=>false})
+SVD MutableMatrix := o -> A -> (
+     if ring A =!= RR and ring A =!= CC then
+       error "eigenvalues requires matrices over RR or CC";
+     Sigma := mutableZero(RR,0,0);
+     U := if ring A === RR then mutableZero(RR,0,0) else mutableZero(CC,0,0);
+     VT := if ring A === RR then mutableZero(RR,0,0) else mutableZero(CC,0,0);
+     rawSVD(raw A, raw Sigma, raw U, raw VT, o.DivideConquer);
+     (Sigma,U,VT))
+SVD Matrix := o -> A -> (
+     A = mutableMatrix(A,Dense=>true);
+     (Sigma,U,VT) := SVD(A,o);
+     (matrix Sigma,matrix U,matrix VT))
+     
      
 
 testLU = (f) -> (
