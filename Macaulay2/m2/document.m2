@@ -232,6 +232,7 @@ help = s -> (
      if pager === "" then pager = "more";
      if getenv "TERM" === "emacs" 
      or version#"OS" === "Windows NT" 
+     or version#"OS" === "MS-DOS" 
      then pager = null;
      o := if pager === null then stdout else openOut concatenate("!", pager );
      if class s === List

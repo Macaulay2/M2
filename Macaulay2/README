@@ -20,7 +20,7 @@ or
 	./setup
 
 if it's unix and '.' is not first on your path.  Then copy the shell script
-bin/M2 (or bin/M2.bat if it's MSDOS or MS Windows) somewhere on your path 
+bin/M2 (or bin/M2.bat if it's MSDOS or MS Windows) somewhere on your path
 -- it contains the absolute path of the current directory -- and issue
 the command
 

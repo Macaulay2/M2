@@ -87,6 +87,10 @@ extern char *libfac_version;
 #include <libc/dosio.h>
 #endif
 
+#ifdef _WIN32
+#include <io.h>
+#endif
+
 #ifdef includeX11
 #include <X11/Xlib.h>
 #endif
@@ -614,10 +618,16 @@ char **argv;
      out_of_memory_jump_set = FALSE;
      abort_jump_set = FALSE;
 
+#ifdef _WIN32
+     _setmode(STDIN ,_O_BINARY);
+     _setmode(STDOUT,_O_BINARY);
+     _setmode(STDERR,_O_BINARY);
+#endif
+
 #ifdef __DJGPP__
-     __file_handle_modes[0] = O_BINARY;
-     __file_handle_modes[1] = O_BINARY;
-     __file_handle_modes[2] = O_BINARY;
+     __file_handle_modes[STDIN ] = O_BINARY;
+     __file_handle_modes[STDOUT] = O_BINARY;
+     __file_handle_modes[STDERR] = O_BINARY;
 #endif
 
 #ifdef __MWERKS__

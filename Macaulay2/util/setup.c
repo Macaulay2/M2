@@ -24,6 +24,6 @@ main(int argc, char **argv) {
 	for (i=0; i<sizeof dir; i++) {
 		if (dir[i] == '\\') dir[i] = '/';
 	}
-	fprintf(M2bat,"%s\\bin\\Macaulay2 %s/m2/setup.m2 %%1 %%2 %%3 %%4 %%5 %%6 %%7 %%8 %%9\n",buf,dir);
+	fprintf(M2bat,"%s\\bin\\Macaulay2 -ephase=1 %s/m2/setup.m2 -ephase=0 -erunStartFunctions() %%1 %%2 %%3 %%4 %%5 %%6 %%7 %%8 %%9\n",buf,dir);
 	return 0;
 }

@@ -41,7 +41,7 @@ CFG=WindowsDistribution - Win32 Debug
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
-# PROP Cmd_Line "NMAKE /f WindowsNT/WindowsDistribution.mak"
+# PROP Cmd_Line "nmake -f WindowsNT/WindowsDistribution.mak"
 # PROP Rebuild_Opt ""
 # PROP Target_File "NoFile"
 # PROP Bsc_Name ""
@@ -60,7 +60,7 @@ CFG=WindowsDistribution - Win32 Debug
 # PROP Use_Debug_Libraries 1
 # PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
-# PROP Cmd_Line "NMAKE /f WindowsNT/WindowsDistribution.mak"
+# PROP Cmd_Line "nmake -f WindowsNT/WindowsDistribution.mak"
 # PROP Rebuild_Opt ""
 # PROP Target_File "NoFile"
 # PROP Bsc_Name ""
