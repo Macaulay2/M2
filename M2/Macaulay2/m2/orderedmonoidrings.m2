@@ -42,7 +42,10 @@ texMath PolynomialRing := R -> (
 net PolynomialRing := R -> (
      if ReverseDictionary#?R then toString ReverseDictionary#R
      else net expression R)
-toString PolynomialRing := toExternalString PolynomialRing := R -> toString expression R
+toString PolynomialRing := R -> (
+     if ReverseDictionary#?R then toString ReverseDictionary#R
+     else toString expression R)
+toExternalString PolynomialRing := R -> toString expression R
 
 degreeLength PolynomialRing := (RM) -> degreeLength monoid RM
 

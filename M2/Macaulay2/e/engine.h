@@ -1679,6 +1679,7 @@ enum gbTraceValues
   /**************************************************/
 
   const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g); /* connected to rawGCD */
+  const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B); /* connect to rawExtendedGCD */
   const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g); /* connected to rawPseudoRemainder */
   void rawFactor(const RingElement *f, 
 		 RingElement_array_OrNull **result_factors, 

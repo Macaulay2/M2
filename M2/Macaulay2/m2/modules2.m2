@@ -141,12 +141,8 @@ hilbertFunction(List,Module) := (d,M) -> (
 geometricSeries := (x,n) -> sum(n, i -> x^i)
 
 trimm := (f,n) -> (
-     ff := coefficients(toList(0 .. numgens ring f - 1), f);
-     fm := ff#0;			  -- the monomials
-     fc := ff#1;			  -- the coefficients
-     p := positions(first entries fm, m -> max first exponents m < n);
-     (fm_p * fc^p)_(0,0)
-     )
+     R := ring f;
+     sum(select(listForm f, (deg,coe) -> first deg < n), (deg,coe) -> coe * R_deg))
 
 hilbertSeries PolynomialRing := options -> (R) -> hilbertSeries(R^1, options)
 hilbertSeries Module := options -> (M) -> (

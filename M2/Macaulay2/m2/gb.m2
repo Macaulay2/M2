@@ -242,17 +242,9 @@ Matrix % GroebnerBasis := Matrix => (n,g) -> (
 RingElement % GroebnerBasis := RingElement =>
 ZZ % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)
 
-GroebnerBasis == GroebnerBasis := (g,h) -> (
-     ring g === ring h
-     and (
-     	  sendgg(ggPush g, ggPush h, ggisequal);
-     	  eePopBool()))
-
 -- Auto-reduction
 autoReduce = method()
-autoReduce Matrix := (m) -> (
-     sendgg(ggPush m, ggautoreduce);
-     getMatrix ring m)
+autoReduce Matrix := (m) -> notImplemented "IM2_Matrix_auto_reduce"
 
 ///
 TEST

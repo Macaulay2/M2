@@ -64,7 +64,7 @@ flattener = (I, m) -> (
      J := substitute(I,RU);
      -- Collect lead coefficients of GB
      leads := leadTerm(n-d,generators gb J);
-     ret := coefficients(toList(0..n-d-1),transpose leads);
+     ret := coefficients(0..n-d-1,transpose leads);
      -- coefficients returns two things.  The first is the
      -- list of coefficients.  The second is the 
      -- corresponding list of monomials.

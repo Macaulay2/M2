@@ -62,46 +62,8 @@ wedgeProduct(ZZ,ZZ,Module) := Matrix => (p,q,M) -> (
      if isFreeModule M then map(ring M, rawWedgeProduct(p,q,raw M))
      else map(exteriorPower(p+q,M),exteriorPower(p,M)**exteriorPower(q,M),wedgeProduct(p,q,cover M)))
 
--- someMinors := (j,m,options) -> (
---      strat := getMinorsStrategy(ring m,options);
---      -- setup computation in the engine
---      sendgg(
--- 	  ggPush m,			  -- m
--- 	  ggPush j,
--- 	  ggPush strat,          -- 0: bareiss, 1: cofactor.
--- 	  ggdets);			  -- create computation
---      h := newHandle();
---      nsteps := if options.Limit === infinity then -1 else options.Limit;
---      if options.?First then (
---      	  if not(class options.First === List and #(options.First) === 2
---        	    and class options.First#0 === List and class options.First#1 === List
---        	    and all(options.First#0, i -> class i === ZZ)
---        	    and all(options.First#1, i -> class i === ZZ) 
--- 	    and #(options.First#0) === j
--- 	    and #(options.First#1) === j)
--- 	    then
--- 	    error "expected 'First' value to be a list of 2 lists of integers";
---          sendgg(
--- 	   ggPush h,
--- 	   ggPush nsteps,
--- 	   ggPush 0,  -- don't discard previous (there are none...)
--- 	   ggPush options.First#0,
--- 	   ggPush options.First#1,
--- 	   ggcalc))
---      else
---        sendgg(
--- 	  ggPush h,
--- 	  ggPush nsteps,
--- 	  ggcalc);
---      eePopInt();
---      sendgg(ggPush h,
--- 	  ggPush 0,
--- 	  ggindex);
---      ideal getMatrix ring m
---      )
-
 minors(ZZ,Matrix) := Ideal => opts -> (j,m) -> (
-     if opts.First =!= null then error "optional argument 'First' not re-implemented yet";
+     if opts.First =!= null then error "optional argument 'First' not re-implemented yet"; -- minors used to do more in version 0.9.2
      if opts.Limit =!= infinity then error "optional argument 'Limit' not re-implemented yet";
      ideal map(ring m, rawMinors(j,raw m, getMinorsStrategy(ring m,opts))))
 

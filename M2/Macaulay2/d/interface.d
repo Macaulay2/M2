@@ -159,6 +159,29 @@ export rawGCD(e:Expr):Expr := (
      );
 setupfun("rawGCD",rawGCD);
 
+export rawExtendedGCD(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is x:RawRingElement do (
+     	  when s.1 is y:RawRingElement do (
+	       a := x;
+	       b := y;
+	       ret := Ccode(RawRingElementOrNull, 
+		    "(engine_RawRingElementOrNull)rawExtendedGCDRingElement(",
+		    "(RingElement *)", x,",",
+		    "(RingElement *)", y,",",
+		    "(RingElement **)&", a,",",
+		    "(RingElement **)&", b,
+		    ")");
+	       when ret is h:RawRingElement do Expr(Sequence(Expr(h),Expr(a),Expr(b)))
+	       else engineErrorMessage()
+	       )
+     	  else WrongArg(2,"a raw ring element"))
+     else WrongArg(1,"a raw ring element")
+     else WrongNumArgs(2)
+     );
+setupfun("rawExtendedGCD",rawExtendedGCD);
+
 export rawLCM(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else

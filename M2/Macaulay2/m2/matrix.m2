@@ -137,7 +137,10 @@ Matrix * Vector := Vector => (m,v) -> new Vector from (m * new Matrix from v)
 expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
 
 toExternalString Matrix := m -> concatenate (
-     "map(", toExternalString target m, ", ", toExternalString source m, ", ", toString entries m,
+     "map(", 
+     toExternalString target m, ", ", 
+     toExternalString source m, ", ", 
+     toString entries m,
      if not all(degree m, i -> i === 0) then (", Degree => ", toString degree m),
      ")"
      )
