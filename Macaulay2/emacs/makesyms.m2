@@ -1,4 +1,4 @@
-symbols := values Macaulay2.Dictionary;
+symbols := values Main.Dictionary;
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 isKeyword := s -> not mutable s and s =!= symbol null and value s === null
 isAlpha := s -> alphabet#?((toString s)#0)

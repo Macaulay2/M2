@@ -4,6 +4,8 @@ VPATH = @srcdir@
 
 install ::
 
+Makefile : Makefile.in; cd ..; ./config.status encap/Makefile
+
 ifeq "$(encap)" "yes"
 
 install ::
@@ -17,6 +19,7 @@ $(prefix)/encapinfo: encapinfo
 install :: $(prefix)/postinstall
 $(prefix)/postinstall: postinstall
 	$(INSTALL_PROGRAM) $< "$@"
+postinstall : @srcdir@ ; cd .. && ./config.status encap/$@
 
 install :: $(prefix)/INSTALL
 
@@ -25,5 +28,3 @@ $(prefix)/INSTALL : INSTALL
 
 endif
 
-Makefile : Makefile.in
-	cd ..; ./config.status encap/Makefile
