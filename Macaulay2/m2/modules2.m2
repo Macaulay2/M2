@@ -202,7 +202,9 @@ hilbertSeries Module := options -> (M) -> (
 			      	   if e == 0 then break {};
 				   )
 			      else (
-				   if #i > 0 and same i and first i > 1 then (
+				   if #i > 0 and same i and first i > 1 
+				   and false		    -- bypass
+				   then (
 					-- we factor f as f1 * f2
 					i0 := first i;
 					t := product gens T;
