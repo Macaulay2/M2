@@ -165,27 +165,23 @@ name Equation := v -> (
 	  p := precedence v;
 	  concatenate between(" == ", 
 	       apply(v, e -> if precedence e <= p then ("(", name e, ")") else name e))))
-
-ZeroExpression = new Type of Expression
+-----------------------------------------------------------------------------
+ZeroExpression = new Type of Holder
 ZeroExpression.name = "ZeroExpression"
-ZERO := new ZeroExpression
-name ZeroExpression := net ZeroExpression := x -> "0"
-
+ZERO := new ZeroExpression from {0}
 document { quote ZeroExpression,
      TT "ZeroExpression", " -- a type of ", TO "Expression", " of which
-     there is just one instance, the expression zero."
+     there is just one instance, an expression representing the number 0."
      }
-
-OneExpression = new Type of Expression
+-----------------------------------------------------------------------------
+OneExpression = new Type of Holder
 OneExpression.name = "OneExpression"
-ONE := new OneExpression
-name OneExpression := net OneExpression := x -> "1"
-
+ONE := new OneExpression from {1}
 document { quote OneExpression,
      TT "OneExpression", " -- a type of ", TO "Expression", " of which
-     there is just one instance, the expression one."
+     there is just one instance, an expression representing the number 1."
      }
-
+-----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 
 Sum#unit = ZERO
@@ -329,15 +325,6 @@ name Power := name Subscript := name Superscript := v -> (
 	  concatenate(x,(class v)#operator,y)))
 
 -----------------------------------------------------------------------------
-Unquote = new WrapperType of Expression
--- expects a list of length 1 whose first entry is a symbol
-mathML Unquote := v -> mathML v#0
-texMath Unquote := 
-html Unquote := 
-net Unquote := 
-name Unquote := x -> string x#0
-value Unquote := x -> value x#0
------------------------------------------------------------------------------
 RowExpression = new HeaderType of Expression
 net RowExpression := w -> horizontalJoin apply(toList w,net)
 html RowExpression := w -> concatenate apply(w,html)
@@ -347,23 +334,32 @@ name RowExpression := w -> concatenate apply(w,name)
 Adjacent = new HeaderType of Expression
 value Adjacent := x -> (value x#0) (value x#1)
 -----------------------------------------------------------------------------
+prepend0 := (e,x) -> prepend(e#0, x)
+append0 := (x,e) -> append(x, e#0)
 Equation == Equation        := join
 Equation == Expression      := append
+Equation == Holder          := append0
 Expression == Equation      := prepend
+Holder     == Equation      := prepend0
 Expression == Expression    := (x,y) -> new Equation from {x,y}
+Holder     == Holder        := (x,y) -> new Equation from {x#0,y#0}
 Expression == Thing         := (x,y) -> x == expression y
 Thing == Expression         := (x,y) -> expression x == y
 ZeroExpression + Expression := (x,y) -> y
 Expression + ZeroExpression := (x,y) -> x
 Sum + Sum                   := join
 Sum + Expression            := append
+Sum + Holder                := append0
 Expression + Sum            := prepend
+Holder     + Sum            := prepend0
 Expression + Expression     := (x,y) -> new Sum from {x,y}
+Holder     + Holder         := (x,y) -> new Sum from {x#0,y#0}
 Expression + Thing          := (x,y) -> x + expression y
      Thing + Expression     := (x,y) -> expression x + y
        - ZeroExpression     := identity
-	   - Minus          := x -> x#0
+	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
+           - Holder         := x -> new Minus from {x#0}
 Expression - Expression     := (x,y) -> x + -y
 Expression - Thing          := (x,y) -> x - expression y
      Thing - Expression     := (x,y) -> expression x - y
@@ -373,28 +369,45 @@ Expression * ZeroExpression := (x,y) -> y
 ZeroExpression * Expression := (x,y) -> x
 Product * Product           := join
 Product * Expression        := append
+Product * Holder            := append0
 Expression * Product        := prepend
+Holder     * Product        := prepend0
 Expression * Expression := (x,y) -> new Product from {x,y}
+Holder     * Expression := (x,y) -> new Product from {x#0,y}
+Expression * Holder     := (x,y) -> new Product from {x,y#0}
+Holder     * Holder     := (x,y) -> new Product from {x#0,y#0}
 Expression * Minus := (x,y) -> -(x * y#0)
 Minus * Expression := (x,y) -> -(x#0 * y)
-Minus * Minus := (x,y) -> x#0 * y#0
+Minus * Minus := (x,y) -> expression x#0 * expression y#0
 Expression * Thing      := (x,y) -> x * (expression y)
      Thing * Expression := (x,y) -> (expression x) * y
 Expression ** OneExpression := (x,y) -> x
 OneExpression ** Expression := (x,y) -> y
 NonAssociativeProduct ** NonAssociativeProduct := join
 NonAssociativeProduct ** Expression := append
+NonAssociativeProduct ** Holder     := append0
 Expression Expression := (x,y) -> new Adjacent from {x,y}
+Holder     Expression := (x,y) -> new Adjacent from {x#0,y}
+Expression Holder     := (x,y) -> new Adjacent from {x,y#0}
+Holder     Holder     := (x,y) -> new Adjacent from {x#0,y#0}
 Expression Array      := (x,y) -> new Adjacent from {x,y}
+Holder     Array      := (x,y) -> new Adjacent from {x#0,y}
      -- are lists expressions, too???
 Expression Thing      := (x,y) -> x (expression y)
      Thing Expression := (x,y) -> (expression x) y
 Expression ** NonAssociativeProduct := prepend
+Holder     ** NonAssociativeProduct := prepend0
 Expression ** Expression := (x,y) -> new NonAssociativeProduct from {x,y}
+Holder     ** Expression := (x,y) -> new NonAssociativeProduct from {x#0,y}
+Expression ** Holder     := (x,y) -> new NonAssociativeProduct from {x,y#0}
+Holder     ** Holder     := (x,y) -> new NonAssociativeProduct from {x#0,y#0}
 Expression ** Thing      := (x,y) -> x ** (expression y)
      Thing ** Expression := (x,y) -> (expression x) ** y
 Expression / OneExpression := (x,y) -> x
 Expression / Expression := (x,y) -> new Divide from {x,y}
+Holder     / Expression := (x,y) -> new Divide from {x#0,y}
+Expression / Holder     := (x,y) -> new Divide from {x,y#0}
+Holder     / Holder     := (x,y) -> new Divide from {x#0,y#0}
 Expression / Thing      := (x,y) -> x / (expression y)
      Thing / Expression := (x,y) -> (expression x) / y
 expression ZZ := i -> (
@@ -409,16 +422,16 @@ Expression ^ ZeroExpression := (x,y) -> ONE
 ZeroExpression ^ Expression := (x,y) -> ZERO
 ZeroExpression ^ ZeroExpression := (x,y) -> ONE
 Expression ^ Expression := (x,y) -> Power{x,y}
+Holder     ^ Expression := (x,y) -> Power{x#0,y}
+Expression ^ Holder     := (x,y) -> Power{x,y#0}
+Holder     ^ Holder     := (x,y) -> Power{x#0,y#0}
 Expression ^ Thing      := (x,y) -> x ^ (expression y)
      Thing ^ Expression := (x,y) -> (expression x) ^ y
-
-value Thing := identity
-
+-----------------------------------------------------------------------------
 value Expression := first
 value OneExpression := v -> 1
 value ZeroExpression := v -> 0
 value Thing := identity
-
 -----------------------------------------------------------------------------
 SparseVectorExpression = new HeaderType of Expression
 value SparseVectorExpression := x -> notImplemented()
@@ -589,7 +602,6 @@ document { quote Expression,
 	  TO "Superscript",
 	  TO "Sum",
 	  TO "Table",
-	  TO "Unquote",
 	  TO "ZeroExpression",
 	  },
      "Functions which create expressions:",
@@ -628,27 +640,6 @@ document { quote MatrixExpression,
 document { quote RowExpression,
      TT "RowExpression", " -- a type of ", TO "Expression", " representing
      a horizontal sequence of expressions."
-     }
-document { quote Unquote,
-     TT "Unquote", " -- a type of ", TO "Expression", " containing a single
-     symbol or string whose value is portrayed by this expression.",
-     PARA,
-     TT "Unquote", " is a ", TO "WrapperType", ", which means that
-     an expression of this type may be created by typing ", TT "Unquote x", ".",
-     PARA,
-     "In a symbolic algebra system, there is always a question of how to
-     display a symbol ", TT "x", " which differs from its value.  Do you
-     want to display ", TT "quote x", ", to make it clear that the
-     symbol itself is represented, or do you want to display ", TT "x", "?
-     The purpose of ", TT "Unquote", " is to allow a symbol to portray its
-     value rather than itself.",
-     EXAMPLE {
-	  ///x = 3;///,
-	  ///name Unquote quote x///,
-	  ///value Unquote quote x///,
-	  ///name Unquote "x"///,
-	  ///value Unquote "x"///,
-	  }
      }
 document { quote Minus,
      TT "Minus", " -- a type of ", TO "Expression", " representing negation.",

@@ -164,7 +164,7 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else (
      if R.?generatorExpressions then (
 	  S.generatorExpressions = R.generatorExpressions;
 	  scan(R.generatorExpressions, x -> (
-		    a := name x;
+		    a := if class x === Symbol then string x else name x;
 		    S#a = promote(R#a,S);
 		    ));
 	  );
