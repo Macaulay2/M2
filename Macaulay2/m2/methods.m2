@@ -343,6 +343,7 @@ H4         = new MarkUpType
 H5         = new MarkUpType
 H6         = new MarkUpType
 LISTING    = new MarkUpType
+LITERAL    = new MarkUpType; html LITERAL := x -> x#0	    -- our own invention
 XMP        = new MarkUpType
 BLOCKQUOTE = new MarkUpType
 VAR        = new MarkUpType
@@ -356,7 +357,8 @@ SUB        = new MarkUpType
 SUP        = new MarkUpType
 ITALIC     = new MarkUpType; html ITALIC := htmlMarkUpType "I"
 UNDERLINE  = new MarkUpType; html UNDERLINE := htmlMarkUpType "U"
-TEX	   = new MarkUpType
+TEX	   = new MarkUpType; html TEX := x -> x#0	    -- should do something else!
+
 SEQ	   = new MarkUpType
 TT         = new MarkUpType
 EM         = new MarkUpType
@@ -691,7 +693,7 @@ html CODE   := x -> concatenate(
      )
 
 html HREF := x -> (
-     "<A HREF=\"" | x#0 | "\">" | x#-1 | "</A>"
+     "<A HREF=\"" | x#0 | "\">" | html x#-1 | "</A>"
      )
 text HREF := x -> "\"" | x#-1 | "\""
 tex HREF := x -> (

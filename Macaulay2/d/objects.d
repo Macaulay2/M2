@@ -692,7 +692,7 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
      is FunctionClosure do storeInHashTable(s,meth,value)
      is CompiledFunction do storeInHashTable(s,meth,value)
      is CompiledFunctionClosure do storeInHashTable(s,meth,value)
-     else errorExpr("expected a method function"));
+     else errorExpr("expected a function"));
 key1 := Sequence(nullE,nullE);
 key1E := Expr(key1);
 export lookupUnaryValue(s:HashTable,meth:Expr,methhash:int):Expr := (

@@ -423,7 +423,7 @@ setupfun("basictype",basictypefun);
 
 expected(type:string,returned:bool):Expr := errorExpr(
      if returned 
-     then "'new' expected method function to return " + type
+     then "'new' expected method to return " + type
      else "expected " + type
      );
 

@@ -1260,7 +1260,7 @@ nodocs := new MutableHashTable from {
      }
 
 briefDoc := x -> (
-     if not nodocs#?x then (
+     if class x =!= String and not nodocs#?x then (
 	 d := doc x;
 	 if d =!= null then (
 	      i := 0;
