@@ -45,7 +45,7 @@ export lines(s:string):array(string) := (
 	       break;
 	       );
 	  i = j + if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n' then 2 else 1;
-	  if i < length(s) then nlines = nlines + 1;	    -- don't count the bit after the last newline if it's empty
+	  nlines = nlines + 1;	    -- count the bit after the last newline even if it's empty
 	  );
      i = 0;
      new array(string) len nlines do (
