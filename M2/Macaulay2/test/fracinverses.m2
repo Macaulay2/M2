@@ -1,3 +1,3 @@
 -- Local Variables:
--- compile-command: "make fracinverses.okay"
+-- compile-command: "make fracinverses.okay "
 -- End:

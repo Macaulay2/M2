@@ -17,5 +17,5 @@ pi=3.1415926535897932384626433832795028841971693993
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -72,5 +72,5 @@ export index(s:string,offset:int,c:char,d:char):int := (
      -1);     
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

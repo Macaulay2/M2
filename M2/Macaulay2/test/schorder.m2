@@ -16,5 +16,5 @@ gens gb M2 -- is zero right now...
 leadTerm M
 M
 -- Local Variables:
--- compile-command: "make schorder.okay"
+-- compile-command: "make schorder.okay "
 -- End:

@@ -4,35 +4,35 @@
 
 errorDepth = 0
 
-a = rawVar 0
-b = rawVar 1
-c = rawVar 2
-a2 = rawVar(0,2)
-b2 = rawVar(1,2)
-x = rawVar(3,4)
-x' = rawVar(3,4)
+a = rawVarMonomial 0
+b = rawVarMonomial 1
+c = rawVarMonomial 2
+a2 = rawVarMonomial(0,2)
+b2 = rawVarMonomial(1,2)
+x = rawVarMonomial(3,4)
+x' = rawVarMonomial(3,4)
 t = {(2,3),(3,4)}
-y = rawMonomialMake t
-o = rawMonomialMake{}
-ab = rawMonomialMake{(0,1),(1,1)}
+y = rawMakeMonomial t
+o = rawMakeMonomial{}
+ab = rawMakeMonomial{(0,1),(1,1)}
 
 assert( hash a2 === hash a^2 )
 
 assert( rawColon(ab,a) == b )
 assert( rawColon(ab,a^2) == b )
 
-a32766 = rawVar(0,32766)
-assert(a32766 * a == rawVar(0,32767))
+a32766 = rawVarMonomial(0,32766)
+assert(a32766 * a == rawVarMonomial(0,32767))
 assert(try (a32766 * a2; false) else true)
-a'32768 = rawVar(0,-32768)
-a' = rawVar(0,-1)
+a'32768 = rawVarMonomial(0,-32768)
+a' = rawVarMonomial(0,-1)
 assert(try (a'32768 * a';false) else true)
-assert(a'32768 * a == rawVar(0,-32767))
+assert(a'32768 * a == rawVarMonomial(0,-32767))
 assert(try (a^32768; false) else true)
 a'^32768
 assert(try (a'^32769; false) else true)
-assert(try (rawVar(-1,4); false) else true)
-assert(try (rawVar(3,32768); false) else true)
+assert(try (rawVarMonomial(-1,4); false) else true)
+assert(try (rawVarMonomial(3,32768); false) else true)
 
 a^(-1)
 rawColon(a^10, a^5)
@@ -44,24 +44,11 @@ assert not mutable x
 assert( toString y === "c3d4" )
 assert( x =!= y )
 assert( not (x === y) )
-assert( rawMonomialSparseListForm y ===  t )
+assert( rawSparseListFormMonomial y ===  t )
 assert ( x == x' )
 assert ( not (x == y))
 assert not ( x == 1 )
 assert ( o == 1 )
-
-assert( a < b )
-assert( a > o )
-assert( b > o )
-assert( a2 > a )
-assert( ab > a )
-assert( ab > b )
-assert( a2 < ab )
-assert( ab < b2 )
-
-assert( degree ab == 2 )
-assert( degree b == 1 )
-assert( degree o == 0 )
 
 assert( a * b == ab )
 assert( ab * o == ab )
@@ -167,9 +154,9 @@ m' = makeMonomialOrdering( null, false, 3, degs / first, {}, {} )
 n' = rawMonoid(m',{"x","y","z"},singlyGraded,flatten degs)
 
 
-rawMonomialOrderingProduct (m',m',m')
-rawMonomialOrderingProduct m'
-rawMonomialOrderingProduct ()
+rawProductMonomialOrdering (m',m',m')
+rawProductMonomialOrdering m'
+rawProductMonomialOrdering ()
 
 
 R = rawPolynomialRing(rawZZ(),n')
@@ -177,7 +164,7 @@ x = R_0
 y = R_1
 z = R_2
 
-assert( rawTerm(R, 3_Z, rawVar(1,4)) === 3*y^4 )
+assert( rawTerm(R, 3_Z, rawVarMonomial(1,4)) === 3*y^4 )
 
 rawRing x
 ring x
@@ -215,7 +202,7 @@ leadCoefficient f
 leadMonomial f
 rawPairs f
 assert( 1_Z === leadCoefficient f )
-assert( rawVar(0,5) === leadMonomial f )
+assert( rawVarMonomial(0,5) === leadMonomial f )
 
 assert( ((),()) == rawPairs 0_R )
 assert( try ( leadCoefficient 0_R ; false ) else true )
@@ -451,5 +438,5 @@ assert(x*x == 0)
 assert(x^2 == 0)
 
 -- Local Variables:
--- compile-command: "M2 --debug-M2 --stop -e 'input \"raw.m2\"' -e 'exit 0'"
+-- compile-command: "M2 --debug-M2 --stop -e 'input \"raw.m2\"' -e 'exit 0' "
 -- End:

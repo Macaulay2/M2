@@ -20,5 +20,5 @@ g' = matrix {{1, -1, 0, 0, 0, -x, -y, -u, 0, 0, -v, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0
 
 assert(f-g==0 or f-g'==0)
 -- Local Variables:
--- compile-command: "make tensor.okay"
+-- compile-command: "make tensor.okay "
 -- End:

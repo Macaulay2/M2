@@ -373,5 +373,5 @@ stderr << "error: can't interpret return value as an exit code" << endl
 exit 1
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d && make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d && make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

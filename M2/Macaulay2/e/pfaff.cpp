@@ -97,5 +97,5 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
 
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

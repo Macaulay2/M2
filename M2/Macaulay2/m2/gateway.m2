@@ -77,5 +77,5 @@ cohomology(ZZ,Sequence) := opts -> (i,X) -> cohomology(prepend(i,X), opts)
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

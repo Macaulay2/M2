@@ -9,5 +9,5 @@
  assert( degree h == {1} )
  assert isHomogeneous h
 -- Local Variables:
--- compile-command: "make lift.okay"
+-- compile-command: "make lift.okay "
 -- End:

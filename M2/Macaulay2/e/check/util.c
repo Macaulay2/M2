@@ -42,7 +42,7 @@ const Monomial *monom(int len, ...)
   for (i=0; i<len; i++)
     result->array[i] = va_arg(ap, int);
   va_end(ap);
-  return IM2_Monomial_make(result);
+  return rawMakeMonomial(result);
 }
 
 static MonomialOrdering_array make_mon_order_array(int n)
@@ -62,7 +62,7 @@ MonomialOrdering * monorder(int len, ...)
   for (i=0; i<len; i++)
     result->array[i] = va_arg(ap, MonomialOrdering *);
   va_end(ap);
-  return IM2_MonomialOrdering_join(result);
+  return rawJoinMonomialOrdering(result);
 }
 
 M2_stringarray make_names(char *s, int n)
@@ -87,7 +87,7 @@ Monoid *make_degree_monoid(int ndegs)
   if (ndegs == 0) 
     return IM2_Monoid_trivial();
 
-  return IM2_Monoid_make(IM2_MonomialOrdering_laurent(ndegs),
+  return IM2_Monoid_make(rawGroupLexMonomialOrdering(ndegs),
 			 make_names("t",ndegs),
 			 IM2_Monoid_trivial(),
 			 arrayint(0));
@@ -109,7 +109,7 @@ const Ring *make_poly_ring(int charac, int nvars)
     degs->array[i] = 1;
 
   return IM2_Ring_polyring(K,
-			   IM2_Monoid_make(IM2_MonomialOrdering_grevlex(degs,1),
+			   IM2_Monoid_make(rawGRevLexMonomialOrdering(degs,1),
 					   make_names("x",nvars),
 					   make_degree_monoid(1),
 					   degs));
@@ -266,7 +266,7 @@ int arrayint_is_eq(M2_arrayint a, int len, ...)
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check "
 // End:
 */
 

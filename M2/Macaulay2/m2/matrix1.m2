@@ -675,5 +675,5 @@ erase symbol concatCols
 erase symbol samering
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

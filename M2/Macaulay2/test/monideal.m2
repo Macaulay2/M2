@@ -41,5 +41,5 @@ I4 = monomialIdeal matrix{{a^3,b^3,c^3,d^3}}
 I = intersect(intersect(I1,I2),intersect(I3,I4))
 top MonomialIdeal := m -> saturate(m, minprimes m)
 -- Local Variables:
--- compile-command: "make monideal.okay"
+-- compile-command: "make monideal.okay "
 -- End:

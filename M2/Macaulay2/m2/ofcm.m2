@@ -168,14 +168,14 @@ makeit1 := (options) -> (
 	       then error "expected variable or symbol"));
      M.standardForm = somethingElse;
      expression M := x -> new Product from apply( 
-	  rawMonomialSparseListForm x.RawMonomial,
+	  rawSparseListFormMonomial x.RawMonomial,
 	  (k,v) -> Power{M.generatorExpressions#k, v} );
      M.Options = options;
      w := reverse applyTable(order, minus);
      w = if # w === 0 then apply(n,i -> {}) else transpose w;
      w = apply(w, x -> apply(makeSparse x, (k,v) -> (k + n, v)));
      if #w =!= #varlist then error "expected same number of degrees as variables";
-     M.vars = M.generators = apply(# varlist, i -> new M from rawVar(i,1));
+     M.vars = M.generators = apply(# varlist, i -> new M from rawVarMonomial(i,1));
      M.generatorsTable = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
@@ -198,7 +198,7 @@ makeit1 := (options) -> (
 	       flatten internalDegrees));
      raw M := x -> x.RawMonomial;
      net M := x -> net expression x;
-     M ? M := (x,y) -> rawCompare(raw M, raw x, raw y);
+     M ? M := (x,y) -> rawCompareMonomial(raw M, raw x, raw y);
      M Array := (m,x) -> (
 	  if # x != n then error (
 	       "expected a list of length ", toString n
@@ -223,10 +223,10 @@ makeit1 := (options) -> (
 	  else error "no method for multiplying available"
 	  );
      M * M := (x,y) -> new M from x.RawMonomial * y.RawMonomial;
-     M#1 = new M from rawMonomialMake{};
+     M#1 = new M from rawMakeMonomial{};
      degree M := x -> notImplemented();
      baseName M := x -> (
-	  s := rawMonomialSparseListForm raw x;
+	  s := rawSparseListFormMonomial raw x;
 	  if #s == 1 and s#0#1 == 1 then M.generatorSymbols#(s#0#0) else error "expected a generator"
 	  );
      M / M := (x,y) -> new M from somethingElse();		    -- there will be no remainder, and it will depend on the monoid, too!
@@ -347,5 +347,5 @@ RingElement _ MonoidElement := RingElement => (f,m) -> (
      f _ m)
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

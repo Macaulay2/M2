@@ -51,5 +51,5 @@ export syserr(t:errmsg):void := syserr(t.message);
 export (o:file) << (t:errmsg) : void := o << t.message;
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

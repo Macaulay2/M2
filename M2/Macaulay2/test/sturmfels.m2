@@ -16,5 +16,5 @@ I = ideal(
 time assert( 638 == degree( saturate( ideal(leadTerm gens gb I),ideal(t))) )
      -- used 232.26 seconds
 -- Local Variables:
--- compile-command: "make sturmfels.okay"
+-- compile-command: "make sturmfels.okay "
 -- End:

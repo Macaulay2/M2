@@ -17,5 +17,5 @@ position(VisibleList,Function) := (v,f) -> (
 delete = (x,v) -> select(v, i -> i != x)
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

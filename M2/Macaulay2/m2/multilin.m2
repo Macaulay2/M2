@@ -213,5 +213,5 @@ fittingIdeal(ZZ,Module) := Ideal => (i,M) -> (
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -6,5 +6,5 @@ assert( prune homology (f,g) == 0 )
 assert( source g == QQ^3 )
 assert( target g == QQ^6 )
 -- Local Variables:
--- compile-command: "make linalg.okay"
+-- compile-command: "make linalg.okay "
 -- End:

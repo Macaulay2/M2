@@ -11,5 +11,5 @@ assert equal(2,2_R)
 assert equal(3,3_R)
 assert equal(3_R,3)
 -- Local Variables:
--- compile-command: "make ggisequal.okay"
+-- compile-command: "make ggisequal.okay "
 -- End:

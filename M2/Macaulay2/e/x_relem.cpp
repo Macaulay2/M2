@@ -1010,5 +1010,5 @@ void i_ring_elem_cmds(void)
 #endif
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

@@ -8,5 +8,5 @@ assert( class f == R )
 assert( class g == R )
 assert( class h == S )
 -- Local Variables:
--- compile-command: "make rings.okay"
+-- compile-command: "make rings.okay "
 -- End:

@@ -719,5 +719,5 @@ export localBind(e:ParseTree,dictionary:Dictionary):bool := (
      );
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

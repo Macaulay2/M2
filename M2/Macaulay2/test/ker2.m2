@@ -12,5 +12,5 @@ use A
 phi = map(A,S,{x,y,s,t})
 ker phi
 -- Local Variables:
--- compile-command: "make ker2.okay"
+-- compile-command: "make ker2.okay "
 -- End:

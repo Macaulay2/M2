@@ -32,7 +32,7 @@ M2_bool IM2_MonomialIdeal_is_equal(const MonomialIdeal *I1, const MonomialIdeal 
   return I1->is_equal(*I2);
 }
 
-const MonomialIdeal *IM2_MonomialIdeal_radical(const MonomialIdeal *I)
+const MonomialIdeal *rawRadicalMonomialIdeal(const MonomialIdeal *I)
 {
   return I->radical();
 }
@@ -55,25 +55,25 @@ const MonomialIdeal *IM2_MonomialIdeal_intersect(const MonomialIdeal *I,
   return I->intersect(*J);
 }
 
-const MonomialIdeal *IM2_MonomialIdeal_colon1(const MonomialIdeal *I, 
+const MonomialIdeal *rawColonMonomialIdeal1(const MonomialIdeal *I, 
 						 const Monomial *a)
 {
   return I->quotient(a->ints());
 }
 
-const MonomialIdeal *IM2_MonomialIdeal_colon(const MonomialIdeal *I, 
+const MonomialIdeal *rawColonMonomialIdeal2(const MonomialIdeal *I, 
 						const MonomialIdeal *J)
 {
   return I->quotient(*J);
 }
 
-const MonomialIdeal *IM2_MonomialIdeal_sat1(const MonomialIdeal *I, 
+const MonomialIdeal *rawSaturateMonomialIdeal1(const MonomialIdeal *I, 
 					    const Monomial *a)
 {
   return I->erase(a->ints());
 }
 
-const MonomialIdeal *IM2_MonomialIdeal_sat(const MonomialIdeal *I, 
+const MonomialIdeal *rawSaturateMonomialIdeal2(const MonomialIdeal *I, 
 					   const MonomialIdeal *J)
 {
   return I->sat(*J);
@@ -101,5 +101,5 @@ const MonomialIdeal *IM2_MonomialIdeal_assprimes(const MonomialIdeal *I)
 
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

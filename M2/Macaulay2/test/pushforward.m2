@@ -12,5 +12,5 @@ try (
      )
 
 -- Local Variables:
--- compile-command: "make pushforward.okay"
+-- compile-command: "make pushforward.okay "
 -- End:

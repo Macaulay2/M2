@@ -4,5 +4,5 @@ f = (3*x^3-x*y+y^2) * d
 g = (3*x^3+x*y+y^2) * d
 assert( degree ( gcd(f,g) // d ) == {0} )
 -- Local Variables:
--- compile-command: "make gcd.okay"
+-- compile-command: "make gcd.okay "
 -- End:

@@ -19,5 +19,5 @@ transpose List := List => m -> (
 	  else error ("expected ", toString m, " to be a table"))
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

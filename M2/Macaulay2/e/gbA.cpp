@@ -1198,5 +1198,5 @@ void gbA::debug_spair_array(spairs &spairlist)
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

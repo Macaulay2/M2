@@ -46,5 +46,5 @@ poincare (S/a)
 poincare (S/b)
 poincare (S/(a^2))
 -- Local Variables:
--- compile-command: "make repair.okay"
+-- compile-command: "make repair.okay "
 -- End:

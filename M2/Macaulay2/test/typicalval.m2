@@ -6,5 +6,5 @@ if #a > 0 then (
      )
 
      -- Local Variables:
--- compile-command: "make typicalval.okay"
+-- compile-command: "make typicalval.okay "
 -- End:

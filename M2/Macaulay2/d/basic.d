@@ -229,5 +229,5 @@ export Array(e:Expr,f:Expr,g:Expr):Expr := Array(Sequence(e,f,g));
 export Array(e:Expr,f:Expr,g:Expr,h:Expr):Expr := Array(Sequence(e,f,g,h));
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

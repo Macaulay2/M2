@@ -7,5 +7,5 @@ C = resolution cokernel substitute(
      )
 try transpose C.dd_2 % C.dd_1
 -- Local Variables:
--- compile-command: "make crash.okay"
+-- compile-command: "make crash.okay "
 -- End:

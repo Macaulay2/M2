@@ -332,6 +332,6 @@ void LP_LMatrixCC_resize(LMatrixCC *M, int nrows, int ncols);
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:
 */

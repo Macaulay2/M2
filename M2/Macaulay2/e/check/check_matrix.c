@@ -16,10 +16,10 @@ void test_coeffs(Test *pTest)
   const Matrix *M, *N;
 
   a1 = IM2_RingElement_from_Integer(ZZ, make_integer(1));
-  m1 = IM2_Monomial_make(arrayint(4,1,1,0,1));
+  m1 = rawMakeMonomial(arrayint(4,1,1,0,1));
   f1 = IM2_RingElement_term(R,a1,m1);
 
-  m2 = IM2_Monomial_make(arrayint(4,3,1,0,2));
+  m2 = rawMakeMonomial(arrayint(4,3,1,0,2));
   f2 = IM2_RingElement_term(R,a1,m2);
 
   f = IM2_RingElement_add(f1,f2);
@@ -145,6 +145,6 @@ Test * matrix_test(void)
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check "
 // End:
 */

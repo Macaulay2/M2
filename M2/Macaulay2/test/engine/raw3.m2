@@ -103,16 +103,16 @@ pf = x^4-y*z-3*x-6
 assert(z^2 * rawHomogenize(f, 2, 4, {1,1,1}) 
      === rawHomogenize(f, 2, 6, {1,1,1}))
 rawHomogenize(f,2,{1,7,1})
-rawMonomialMake{(1,3),(0,2)}
-assert try (rawMonomialMake{(0,3),(1,2)};false) else true
-assert(rawTerm(R1,rawFromNumber(rawZZ(),-23),rawMonomialMake{(1,3),(0,2)})
+rawMakeMonomial{(1,3),(0,2)}
+assert try (rawMakeMonomial{(0,3),(1,2)};false) else true
+assert(rawTerm(R1,rawFromNumber(rawZZ(),-23),rawMakeMonomial{(1,3),(0,2)})
  === -23*x^2*y^3)
 f = (x+y^2+z^3)^9
 rawTermCount f
 rawGetTerms(f,2,4)
 rawGetTerms(f,-2,-1)
--- rawCoefficients(f, rawMonomialMake{(2,21),(0,2)}) -- expects 3 arguments
-<< "rawCoefficients(f, rawMonomialMake{(2,21),(0,2)}) -- expects 3 arguments" << endl;
+-- rawCoefficients(f, rawMakeMonomial{(2,21),(0,2)}) -- expects 3 arguments
+<< "rawCoefficients(f, rawMakeMonomial{(2,21),(0,2)}) -- expects 3 arguments" << endl;
 assert(1231212 == rawLeadCoefficient(1231212*f))
 rawLeadMonomial(y*z*f) -- strange: comes out with indets a,b,c.
 (cs,ms) = rawPairs(f)
@@ -371,5 +371,5 @@ rawPfaffians(4,m)
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw3.okay"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw3.okay "
 -- End:

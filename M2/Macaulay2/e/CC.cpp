@@ -491,5 +491,5 @@ ring_elem CC::get_terms(const ring_elem f, int, int) const
 
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

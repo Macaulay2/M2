@@ -40,5 +40,5 @@ M2_string IM2_Monoid_to_string(const Monoid *M)
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

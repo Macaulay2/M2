@@ -5,5 +5,5 @@ I = ideal f
 S = R/I
 gb f
 -- Local Variables:
--- compile-command: "make gb2.okay"
+-- compile-command: "make gb2.okay "
 -- End:

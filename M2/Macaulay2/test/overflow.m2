@@ -13,5 +13,5 @@ x^7							    -- monomial overflow
 
 
 -- Local Variables:
--- compile-command: "make overflow.okay"
+-- compile-command: "make overflow.okay "
 -- End:

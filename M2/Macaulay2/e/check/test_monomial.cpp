@@ -29,7 +29,7 @@ Test *monomial_test() { return new MonomialTest; }
 
 /*
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/check "
 // End:
 */
 

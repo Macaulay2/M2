@@ -51,5 +51,5 @@ assert(
      )
 
 -- Local Variables:
--- compile-command: "make extmap.okay"
+-- compile-command: "make extmap.okay "
 -- End:

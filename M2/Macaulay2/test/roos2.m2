@@ -11,5 +11,5 @@ betti C
 gbTrace = 3
 time C = res(coker matrix entries vars A, LengthLimit=>5, Strategy=>1)
 -- Local Variables:
--- compile-command: "make roos2.okay"
+-- compile-command: "make roos2.okay "
 -- End:

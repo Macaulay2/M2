@@ -608,5 +608,5 @@ mon_order * IM2_mon_order::grab_mon_order()
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

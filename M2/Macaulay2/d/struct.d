@@ -130,5 +130,5 @@ export basictype(o:HashTable):HashTable := (
 
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:

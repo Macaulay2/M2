@@ -125,5 +125,5 @@ decompose(Ideal) := (I) -> if I.cache.?decompose then I.cache.decompose else I.c
      )
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -706,5 +706,5 @@ isSubset(Module,Ideal) := (M,J) -> isSubset(M, module J)
 isSubset(Ideal,Module) := (I,N) -> isSubset(module I, N)
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

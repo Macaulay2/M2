@@ -186,5 +186,5 @@ clearAll = Command (() -> (
 erase symbol unmarkAllLoadedFiles			    -- symbol was created in setup.m2
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

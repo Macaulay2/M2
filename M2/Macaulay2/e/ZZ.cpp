@@ -424,5 +424,5 @@ ring_elem ZZ::eval(const RingMap *map, const ring_elem f) const
 
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

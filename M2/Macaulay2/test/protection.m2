@@ -4,5 +4,5 @@ try (
      )
 
      -- Local Variables:
--- compile-command: "make protection.okay"
+-- compile-command: "make protection.okay "
 -- End:

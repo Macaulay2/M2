@@ -93,5 +93,5 @@ rotate(VisibleList,ZZ) := (s,n) -> (
 	  join(drop(s,n),take(s,n))))
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -28,5 +28,5 @@ assert( try (
 	  false ) else true )
 
 -- Local Variables:
--- compile-command: "make euclid.okay"
+-- compile-command: "make euclid.okay "
 -- End:

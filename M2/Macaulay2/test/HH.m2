@@ -13,5 +13,5 @@ assert(
      )
 
 -- Local Variables:
--- compile-command: "make HH.okay"
+-- compile-command: "make HH.okay "
 -- End:

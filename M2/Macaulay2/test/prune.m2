@@ -38,5 +38,5 @@ assert ( M' == F )
 
 -----------------------------------------------------------------------------
 -- Local Variables:
--- compile-command: "make prune.okay"
+-- compile-command: "make prune.okay "
 -- End:

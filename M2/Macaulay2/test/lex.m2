@@ -25,6 +25,6 @@ time doGB(gens I,0,{Lex=>5,Position})
 
 ///
 -- Local Variables:
--- compile-command: "make lex.okay"
+-- compile-command: "make lex.okay "
 -- End:
 
