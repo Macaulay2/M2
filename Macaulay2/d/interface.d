@@ -127,7 +127,7 @@ export rawGCD(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do (
-     	  when s.1 is y:RawMonomial do Expr(Ccode(RawMonomial, "rawGCD((Monomial*)",x,",","(Monomial*)",y,")"))
+     	  when s.1 is y:RawMonomial do Expr(Ccode(RawMonomial, "(engine_RawMonomial)rawGCD((Monomial*)",x,",","(Monomial*)",y,")"))
      	  else WrongArg(2,"a raw monomial"))
      is x:RawRingElement do (
      	  when s.1 is y:RawRingElement do toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawGCDRingElement((RingElement *)",x,",","(RingElement *)",y,")"))
@@ -142,7 +142,7 @@ export rawLCM(e:Expr):Expr := (
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
      when s.1 is y:RawMonomial do Expr(
-	       Ccode(RawMonomial, "rawLCM((Monomial*)",x,",","(Monomial*)",y,")"))
+	       Ccode(RawMonomial, "(engine_RawMonomial)rawLCM((Monomial*)",x,",","(Monomial*)",y,")"))
      else WrongArg(2,"a raw monomial")
      else WrongArg(1,"a raw monomial")
      else WrongArg("a pair of raw monomials")
@@ -154,7 +154,7 @@ export rawSaturate(e:Expr):Expr := (
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is x:RawMonomial do
      when s.1 is y:RawMonomial do Expr(
-	       Ccode(RawMonomial, "rawSaturateMonomial((Monomial*)",x,",","(Monomial*)",y,")"))
+	       Ccode(RawMonomial, "(engine_RawMonomial)rawSaturateMonomial((Monomial*)",x,",","(Monomial*)",y,")"))
      else WrongArg(2,"a raw monomial")
      else when s.0 is I:RawMonomialIdeal do 
      when s.1
@@ -367,14 +367,13 @@ setupfun("rawNumberOfInvertibleVariables",rawNumberOfInvertibleVariables);
 -- monoids
 
 export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesRing:RawRing,degs:array(int)):Expr := (
-     M := Ccode(RawMonoidOrNull, 
+     when Ccode(RawMonoidOrNull, 
 	  "(engine_RawMonoidOrNull)IM2_Monoid_make(",
 	      "(MonomialOrdering *)", mo, ",",
 	      "(M2_stringarray)", names, ",",
 	      "(Ring *)", degreesRing, ",",
 	      "(M2_arrayint)", degs,
-	  ")");
-     when M
+	  ")")
      is m:RawMonoid do Expr(m)
      is null do buildErrorPacket(EngineError("internal error: unexplained failure to make raw monoid"))
      );
@@ -650,21 +649,18 @@ export rawFromNumber(e:Expr):Expr := (
      when s.0
      is R:RawRing do
      when s.1
-     is n:Integer do Expr(Ccode( RawRingElement, "IM2_RingElement_from_Integer(", "(Ring*)",R,",", "(M2_Integer)",n, ")"))
-     is x:Rational do Expr(Ccode( RawRingElement, "IM2_RingElement_from_rational(", "(Ring*)",R,",", "(M2_Rational)",x, ")"))
+     is n:Integer do Expr(Ccode( RawRingElement, "(engine_RawRingElement)IM2_RingElement_from_Integer(", "(Ring*)",R,",", "(M2_Integer)",n, ")"))
+     is x:Rational do Expr(Ccode( RawRingElement, "(engine_RawRingElement)IM2_RingElement_from_rational(", "(Ring*)",R,",", "(M2_Rational)",x, ")"))
      is x:Real do (
-	  f := Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_double((Ring*)",R,",",x.v,")");
-	  when f
+	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_double((Ring*)",R,",",x.v,")")
 	  is r:RawRingElement do Expr(r)
 	  is null do buildErrorPacket(EngineError("promoting real number to ring element: not implemented yet")))
      is x:Complex do (
-	  f := Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_complex((Ring*)",R,",(M2_CC)", x,")");
-	  when f
+	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_complex((Ring*)",R,",(M2_CC)", x,")")
 	  is r:RawRingElement do Expr(r)
 	  is null do buildErrorPacket(EngineError("promoting real number to ring element: not implemented yet")))
      is x:BigReal do (
-	  f := Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_BigReal((Ring*)",R,",(M2_BigReal)",x,")");
-	  when f
+	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_BigReal((Ring*)",R,",(M2_BigReal)",x,")")
 	  is r:RawRingElement do Expr(r)
 	  is null do
 	  buildErrorPacket(EngineError("can't promote big real number to ring element")))
@@ -846,9 +842,9 @@ setupfun("rawLift", rawLift);
 export rawRing(e:Expr):Expr := (
      when e
      is x:RawRingElement do Expr(
-	  Ccode(RawRing, "IM2_RingElement_ring(", "(RingElement *)",x, ")" ))
+	  Ccode(RawRing, "(engine_RawRing)IM2_RingElement_ring(", "(RingElement *)",x, ")" ))
      is x:RawFreeModule do Expr(
-	  Ccode(RawRing, "IM2_FreeModule_ring(", "(FreeModule *)",x, ")" ))
+	  Ccode(RawRing, "(engine_RawRing)IM2_FreeModule_ring(", "(FreeModule *)",x, ")" ))
      else WrongArg("a raw ring element or free module")
      );
 setupfun("rawRing", rawRing);
@@ -1200,15 +1196,15 @@ setupfun("rawIsEqual",rawIsEqual);
 
 export rawSource(e:Expr):Expr := (
      when e
-     is M:RawMatrix do Expr( Ccode( RawFreeModule, "IM2_Matrix_get_source(", "(Matrix*)",M, ")" ))
+     is M:RawMatrix do Expr( Ccode( RawFreeModule, "(engine_RawFreeModule)IM2_Matrix_get_source(", "(Matrix*)",M, ")" ))
      else WrongArg("a raw matrix")
      );
 setupfun("rawSource",rawSource);
 
 export rawTarget(e:Expr):Expr := (
      when e
-     is M:RawMatrix do Expr( Ccode( RawFreeModule, "IM2_Matrix_get_target(", "(Matrix*)",M, ")" ))
-     is F:RawRingMap do Expr( Ccode( RawRing, "IM2_RingMap_target(", "(RingMap *)",F, ")" ))
+     is M:RawMatrix do Expr( Ccode( RawFreeModule, "(engine_RawFreeModule)IM2_Matrix_get_target(", "(Matrix*)",M, ")" ))
+     is F:RawRingMap do Expr( Ccode( RawRing, "(engine_RawRing)IM2_RingMap_target(", "(RingMap *)",F, ")" ))
      else WrongArg("a raw matrix")
      );
 setupfun("rawTarget",rawTarget);
@@ -2047,7 +2043,7 @@ setupfun("rawAssociatedPrimes",rawAssociatedPrimes);
 
 export rawRingMap(e:Expr):Expr := (
      when e
-     is M:RawMatrix do Expr( Ccode( RawRingMap, "IM2_RingMap_make1(", "(Matrix*)",M, ")" ))
+     is M:RawMatrix do Expr( Ccode( RawRingMap, "(engine_RawRingMap)IM2_RingMap_make1(", "(Matrix*)",M, ")" ))
      else WrongArg("a raw matrix")
      );
 setupfun("rawRingMap",rawRingMap);
@@ -2594,7 +2590,7 @@ M2CC(e:Expr):Expr := (
      when s.0 is re:Real do 
      when s.1 is im:Real do (
 	  Expr(
-	       Ccode(Complex, "(M2_CC *)LP_make_M2_Complex(", re.v, ",", 
+	       Ccode(Complex, "(tokens_Complex)LP_make_M2_Complex(", re.v, ",", 
 		                     	         	      im.v, ")"))
 	  )
      else WrongArg(2, "a double")
@@ -2610,7 +2606,7 @@ export rawMatrixRR(e:Expr):Expr := (
      if length(s) == 2 then
      when s.0 is nrows:Integer do if !isInt(nrows) then WrongArgSmallInteger(1) else
      when s.1 is ncols:Integer do if !isInt(ncols) then WrongArgSmallInteger(2) else
-     Expr( Ccode(LMatrixRR, "(LMatrixRR *)LP_LMatrixRR_make(", toInt(nrows), ",", toInt(ncols), ")"))
+     Expr( Ccode(LMatrixRR, "(engine_LMatrixRR)LP_LMatrixRR_make(", toInt(nrows), ",", toInt(ncols), ")"))
      else WrongArgInteger(2)
      else WrongArgInteger(1)
      else WrongNumArgs(2)
@@ -2623,7 +2619,7 @@ export rawMatrixCC(e:Expr):Expr := (
      when s.0 is nrows:Integer do if !isInt(nrows) then WrongArgSmallInteger(1) else
      when s.1 is ncols:Integer do if !isInt(ncols) then WrongArgSmallInteger(2) else (
 	  Expr(
-	       Ccode(LMatrixCC, "(LMatrixCC *)LP_LMatrixCC_make(", toInt(nrows), ",", 
+	       Ccode(LMatrixCC, "(engine_LMatrixCC)LP_LMatrixCC_make(", toInt(nrows), ",", 
 		                                                   toInt(ncols), ")"))
 	  )
      else WrongArgInteger(2)
@@ -2634,7 +2630,7 @@ setupfun("rawMatrixCC", rawMatrixCC);
 
 export rawGetEpsilonMatrixRR(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0
-     then Expr(Ccode(Real,"LP_LMatrixRR_get_epsilon()"))
+     then Expr(Ccode(Real,"(tokens_Real)LP_LMatrixRR_get_epsilon()"))
      else WrongNumArgs(0)
      else WrongNumArgs(0)
      );
@@ -2642,7 +2638,7 @@ setupfun("rawGetEpsilonMatrixRR", rawGetEpsilonMatrixRR);
 
 export rawGetEpsilonMatrixCC(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0
-     then Expr(Ccode(Real,"LP_LMatrixCC_get_epsilon()"))
+     then Expr(Ccode(Real,"(tokens_Real)LP_LMatrixCC_get_epsilon()"))
      else WrongNumArgs(0)
      else WrongNumArgs(0)
      );
