@@ -33,16 +33,15 @@ MonomialIdeal::MonomialIdeal(const PolynomialRing *R0, queue<Bag *> &elems, queu
       bins[d]->insert(b);
     }
   int n = get_ring()->n_vars();
-  intarray exp;
+  int *exp = newarray(int,n);
   for (int i=0; i < bins.length(); i++)
     if (bins[i] != NULL)
       {
 	while (bins[i]->remove(b))
 	  {
 	    const int *mon = b->monom().raw();
-	    exp.shrink(0);
 	    varpower::to_ntuple(n, mon, exp);
-	    if (search_expvector(exp.raw(), b1))
+	    if (search_expvector(exp, b1))
 	      rejects.insert(b);
 	    else
 	      insert_minimal(b);
@@ -176,10 +175,11 @@ void MonomialIdeal::find_all_divisors(const int *exp, array<Bag *> &b) const
 
 int MonomialIdeal::search(const int *m, Bag *&b) const
 {
-  static intarray exp;
-  exp.shrink(0);
+  int *exp = newarray(int, get_ring()->n_vars());
   varpower::to_ntuple(get_ring()->n_vars(), m, exp);
-  return search_expvector(exp.raw(), b);
+  int result = search_expvector(exp, b);
+  deletearray(exp);
+  return result;
 }
 
 Nmi_node *MonomialIdeal::next(Nmi_node *p) const
@@ -680,37 +680,39 @@ MonomialIdeal *MonomialIdeal::borel() const
     // Return the smallest borel monomial ideal containing 'this'.
 {
   queue<Bag *> new_elems;
+  int *bexp = newarray(int,get_ring()->n_vars());
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
       Bag *b = operator[](i);
-      intarray bexp;
       varpower::to_ntuple(get_ring()->n_vars(), b->monom().raw(), bexp);
-      borel1(new_elems, bexp.raw(),
+      borel1(new_elems, bexp,
 	     get_ring()->n_vars()-1, get_ring()->n_vars());
     }
   MonomialIdeal *result = new MonomialIdeal(get_ring(), new_elems);
+  deletearray(bexp);
   return result;
 }
 
 int MonomialIdeal::is_borel() const
 {
+  int *bexp = newarray(int,get_ring()->n_vars());
   for (Index<MonomialIdeal> i = first(); i.valid(); i++)
     {
       Bag *b = operator[](i);
       Bag *c;
-      intarray bexp;
       varpower::to_ntuple(get_ring()->n_vars(), b->monom().raw(), bexp);
       for (int j=get_ring()->n_vars()-1; j>=1; j--)
 	if (bexp[j] > 0)
 	  {
 	    bexp[j]--;
 	    bexp[j-1]++;
-	    int isthere = search_expvector(bexp.raw(), c);
+	    int isthere = search_expvector(bexp, c);
 	    bexp[j]++;
 	    bexp[j-1]--;
 	    if (!isthere) return 0;
 	  }
     }
+  deletearray(bexp);
   return 1;
 }
 

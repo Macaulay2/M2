@@ -6,6 +6,17 @@
 #include "intarray.hpp"
 #include "engine.h"
 
+struct varpower_monomial
+{
+  int len;
+  struct vp {
+    int var;
+    int exponent;
+  } pairs[1];
+
+  varpower_monomial() : len(0) {}
+};
+
 class varpower
 {
   friend class index_varpower;
@@ -13,11 +24,16 @@ class varpower
   static int exponent(int n);
   static int pair(int v, int e);
 
+  static int degree_of(int n, const int *a);
+  static bool is_nonneg(const int *a);
+  static int max_mon_size(int n);
+  static int compare(const int *a, const int *b);
+    // return EQ, LT, or GT for a == b, a < b, or a > b.
+
+  // [len, v1, e1, ..., vn, en], where len=n or 2*n (which??)
 public:
   varpower() {}
   ~varpower() {}
-
-  //  static int max_mon_size(int n);
 
   static void elem_text_out(buffer &o, const int *a);
   static void elem_text_out(buffer &o, const int *a, 
@@ -25,26 +41,20 @@ public:
 
   static bool is_one(const int *a);
   static bool is_equal(const int *a, const int *b);
-  static bool is_nonneg(const int *a);
   static int topvar(const int *a);
 
   static void one(intarray &result);
   static void var(int v, int e, intarray &result);
   static int * copy(const int *vp, intarray &result);
 
-  static void to_varpower(const int *a, intarray &result);
-  static void from_varpower(const int *a, intarray &result);
-  static void to_ntuple(int n, const int *a, intarray &result);
+  static void to_ntuple(int n, const int *a, int *result_exponents);
   static void from_ntuple(int n, const int *a, intarray &result);
-  static void from_arrayint(M2_arrayint m, intarray &result);
+
   static M2_arrayint to_arrayint(const int *vp);
+  static void from_arrayint(M2_arrayint m, intarray &result);
 
-
-  //static int degree_of(int n, const int *a);
   static int simple_degree(const int *a);
 
-  //static int compare(const int *a, const int *b);
-    // return EQ, LT, or GT for a == b, a < b, or a > b.
   static void mult(const int *a, const int *b, intarray &result);
   static void quotient(const int *a, const int *b, intarray &result);
     // compute the quotient a:b
@@ -63,21 +73,23 @@ public:
 class index_varpower
 {
   const int *loc;
-  const int *lo;
   const int *hi;
 public:
-  index_varpower() : loc(0), lo(0), hi(0) {}
-  index_varpower(const int *m) : lo(m+1), hi(m+*m-1) { loc = lo; }
-  index_varpower(const int *m, int) 
-    : lo(m+1), hi(m+*m-1) { loc = hi; }
-  index_varpower(const index_varpower &i) : loc(i.loc), lo(i.lo), hi(i.hi) {}
+  index_varpower() : loc(0), hi(0) {}
+  index_varpower(const int *m) : loc(m+1), hi(m+*m) {}
 
-  int valid() { return loc >= lo && loc <= hi; }
-  index_varpower &operator++() { loc++; return *this; }
-  index_varpower &operator--() { loc--; return *this; }
+				     //  index_varpower(const int *m, int) 
+				     //    : lo(m+1), hi(m+*m-2) { loc = hi; }
 
-  int var() { return varpower::var(*loc); }
-  int exponent() { return varpower::exponent(*loc); }
+  index_varpower(const index_varpower &i) : loc(i.loc), hi(i.hi) {}
+
+  int valid() { return loc < hi; }
+  index_varpower &operator++() { loc += 2; return *this; }
+
+  //  index_varpower &operator--() { loc -= 2; return *this; }
+
+  int var() { return *loc; }
+  int exponent() { return loc[1]; }
 };
 
 #endif

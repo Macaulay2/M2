@@ -3,9 +3,50 @@
 #include "varpower.hpp"
 #include "text_io.hpp"
 
-#define MAX_VAR 32767
-#define MIN_EXP -32768
-#define MAX_EXP 32767
+#define MAX_VAR 2147483647
+#define MIN_EXP -2147483647
+#define MAX_EXP 2147483647
+
+static varpower_monomial staticFirst_;
+static varpower_monomial *staticVP = &staticFirst_;
+
+static varpower_monomial static2_;
+static varpower_monomial *staticVP2 = &static2_;
+
+static void insure_space(int len)
+{
+  if (len > staticVP->len)
+    {
+      staticVP = GETMEM_ATOMIC(varpower_monomial *, 
+			       sizeof(int) + 2*len*sizeof(varpower_monomial::vp));
+      staticVP->len = 2*len;
+    }
+}
+
+static void insure_space2(int len)
+{
+  if (len > staticVP2->len)
+    {
+      staticVP2 = GETMEM_ATOMIC(varpower_monomial *, 
+			       sizeof(int) + 2*len*sizeof(varpower_monomial::vp));
+      staticVP2->len = 2*len;
+    }
+}
+
+static void copy_to(varpower_monomial *m, int len, intarray &result)
+{
+  // the resulting size will be 2*len+1
+  int newlen = 2*len+1;
+  int *t = result.alloc(newlen);
+  *t++ = newlen;
+  varpower_monomial::vp *pairs = m->pairs;
+  for (int i=0; i<len; i++)
+    {
+      *t++ = pairs->var;
+      *t++ = pairs->exponent;
+      pairs++;
+    }
+}
 
 static bool check_var(int v, int e)
 {
@@ -22,59 +63,13 @@ static bool check_var(int v, int e)
   return true;
 }
 
-#if 0
-int varpower::max_mon_size(int n)
-{
-  return n+1;
-}
-#endif
-
-void varpower::elem_text_out(buffer &o, const int *a)
-{
-  int len = *a++ - 1;
-  if (len == 0)
-    o << "1";
-  else
-    for (int i=len-1; i>=0; i--)
-      {
-	int v = var(a[i]);
-	int e = exponent(a[i]);
-	if (v < 26) o << char('a' + v);
-	else if (v < 52) o << char('A' + v - 26);
-	else o << "x[" << v << "]";
-	if (e > 1) o << e;
-	else if (e < 0) o << "^(" << e << ")";
-      }
-}
-
-void varpower::elem_text_out(buffer &o, const int *a, 
-			     const M2_stringarray varnames)
-{
-  int len = *a++ - 1;
-  if (len == 0)
-    { if (p_one) o << "1"; }
-  else
-    for (int i=len-1; i>=0; i--)
-      {
-	unsigned int v = var(a[i]);
-	int e = exponent(a[i]);
-	if (varnames->len < v)
-	  o << ".";
-	else
-	  o << varnames->array[v];
-	int single = (varnames->array[v]->len == 1);
-	if (e > 1 && single) o << e;
-	else if (e > 1) o << "^" << e;
-	else if (e < 0) o << "^(" << e << ")";
-//	if (i > 0) o << "*";
-      }
-}
-
+// TO REMOVE
 int varpower::var(int n)
 {
   return n >> 16;
 }
 
+// TO REMOVE
 int varpower::exponent(int n)
 {
   int e = 0x0000ffff & n;
@@ -84,11 +79,7 @@ int varpower::exponent(int n)
 //  return (res > (1 << 15) ? -(res - (1 << 15)) : res);
 }
 
-int varpower::pair(int v, int e)
-{
-  return (v << 16) | (0x0000ffff & e);
-}
-
+// TO REMOVE
 int check_exponent_pair(int v, int e)
 {
   if (e > MAX_EXP || e < MIN_EXP)
@@ -96,6 +87,7 @@ int check_exponent_pair(int v, int e)
   return (v << 16) | (0x0000ffff & e);
 }
 
+// TO REMOVE
 int checked_pair(int v, int e)
 {
   if (e > MAX_EXP || e < MIN_EXP)
@@ -103,114 +95,11 @@ int checked_pair(int v, int e)
   return (v << 16) | (0x0000ffff & e);
 }
 
-bool varpower::is_one(const int *a) { return *a == 1; }
-
-bool varpower::is_equal(const int *a, const int *b)
+// TO REMOVE
+int varpower::pair(int v, int e)
 {
-  if (*a != *b++) return false;
-  int len = *a++;
-  for (int i=1; i<len; i++)
-    if (*a++ != *b++) return false;
-  return true;
+  return (v << 16) | (0x0000ffff & e);
 }
-
-bool varpower::is_nonneg(const int *) { return true; }
-
-int varpower::topvar(const int *a)
-{
-  assert(*a > 1);
-  return var(a[1]);
-}
-
-void varpower::one(intarray &result) { result.append(1); }
-
-void varpower::var(int v, int e, intarray &result)
-{
-  if (e == 0)
-    result.append(1);
-  else
-    {
-      check_var(v,e); // Sets ERROR if a problem...
-      result.append(2);
-      result.append(pair(v,e));
-    }
-}
-
-void varpower::from_arrayint(M2_arrayint m, intarray &result)
-{
-  int len = m->len;
-  result.append(len/2+1);
-  for (int i=0; i<len; i+=2)
-    {
-      int v = m->array[i];
-      int e = m->array[i+1];
-      check_var(v,e);
-      result.append(pair(v,e));
-    }
-}
-
-M2_arrayint varpower::to_arrayint(const int *vp)
-{
-  int len = 2*((*vp)-1);
-  M2_arrayint result = makearrayint(len);
-  for (int i=0; i<len; i += 2)
-    {
-      vp++;
-      result->array[i] = var(*vp);
-      result->array[i+1] = exponent(*vp);
-    }
-  return result;
-}
-int * varpower::copy(const int *vp, intarray &result)
-{
-  return result.copy(*vp, vp);
-}
-
-void varpower::to_varpower(const int *a, intarray &result)
-{
-  int len = *a;
-  int *t = result.alloc(len);
-  for (int i=0; i<len; i++)
-    *t++ = *a++;
-}
-
-void varpower::from_varpower(const int *a, intarray &result)
-{
-  to_varpower(a,result);
-}
-
-void varpower::to_ntuple(int n, const int *a, intarray &result)
-{
-  int i;
-  int *t = result.alloc(n);
-  for (i=0; i<n; i++) t[i] = 0;
-  int len = *a++ - 1;
-  for (i=0; i<len; i++)
-    {
-      int v = var(*a);
-      if (v < n) t[v] = exponent(*a);
-      a++;
-    }
-}
-
-void varpower::from_ntuple(int n, const int *a, intarray &result)
-{
-  int csize = result.start();
-  for (int i=n-1; i>=0; i--)
-    if (a[i] != 0)
-      result.append(checked_pair(i,a[i]));
-  result[csize] = result.length() - csize;
-}
-
-int varpower::simple_degree(const int *a)
-{
-  int deg = 0;
-  int len = *a++;
-  for (int i=1; i<len; i++)
-    deg += exponent(*a++);
-  return deg;
-}
-
 #if 0
 int varpower::degree_of(int n, const int *a)
 {
@@ -249,75 +138,244 @@ int varpower::compare(const int *a, const int *b)
 }  
 #endif
 
+
+
+
+
+void varpower::elem_text_out(buffer &o, const int *a)
+{
+  index_varpower i = a;
+  if (!i.valid())
+    o << "1";
+  else
+    for ( ; i.valid(); ++i)
+      {
+	int v = i.var();
+	int e = i.exponent();
+	if (v < 26) o << char('a' + v);
+	else if (v < 52) o << char('A' + v - 26);
+	else o << "x[" << v << "]";
+	if (e > 1) o << e;
+	else if (e < 0) o << "^(" << e << ")";
+      }
+}
+
+void varpower::elem_text_out(buffer &o, const int *a, 
+			     const M2_stringarray varnames)
+{
+  index_varpower i = a;
+  if (!i.valid())
+    {
+      if (p_one) o << "1";
+    }
+  else
+    for ( ; i.valid(); ++i)
+      {
+	int v = i.var();
+	int e = i.exponent();
+	if (varnames->len < v)
+	  o << ".";
+	else
+	  o << varnames->array[v];
+	int single = (varnames->array[v]->len == 1);
+	if (e > 1 && single) o << e;
+	else if (e > 1) o << "^" << e;
+	else if (e < 0) o << "^(" << e << ")";
+//	if (i > 0) o << "*";
+      }
+}
+
+
+bool varpower::is_one(const int *a) { return *a == 1; }
+
+bool varpower::is_equal(const int *a, const int *b)
+{
+  if (*a != *b++) return false;
+  int len = *a++;
+  for (int i=1; i<len; i++)
+    if (*a++ != *b++) return false;
+  return true;
+}
+
+int varpower::topvar(const int *a)
+{
+  assert(*a > 1);
+  return a[1];
+}
+
+// Used in 2 places
+void varpower::one(intarray &result) { result.append(1); }
+
+// Mostly used to make skew vars...
+void varpower::var(int v, int e, intarray &result)
+{
+  if (e == 0)
+    result.append(1);
+  else
+    {
+      check_var(v,e); // Sets ERROR if a problem...
+      result.append(3);
+      result.append(v);
+      result.append(e);
+    }
+}
+
+void varpower::from_arrayint(M2_arrayint m, intarray &result)
+{
+  int len = m->len/2;
+  insure_space(len);
+  int *melems = m->array;
+  varpower_monomial::vp *pairs = staticVP->pairs;
+  for (int i=0; i<len; i++)
+    {
+      int v = *melems++;
+      int e = *melems++;
+      check_var(v,e);
+      pairs->var = v;
+      pairs->exponent = e;
+      pairs++;
+    }
+  copy_to(staticVP, len, result);
+}
+
+M2_arrayint varpower::to_arrayint(const int *vp)
+{
+  int len = *vp;
+  M2_arrayint result = makearrayint(len);
+  for (int i=0; i<len; i++)
+    result->array[i] = *vp++;
+  return result;
+}
+
+int * varpower::copy(const int *vp, intarray &result)
+{
+  return result.copy(*vp, vp);
+}
+
+void varpower::to_ntuple(int n, const int *a, int *result_exponents)
+{
+  int *t = result_exponents;
+  for (int j=0; j<n; j++) t[j] = 0;
+  for (index_varpower i = a; i.valid(); ++i)
+    {
+      int v = i.var();
+      int e = i.exponent();
+      if (v < n) t[v] = e;
+    }
+}
+
+void varpower::from_ntuple(int n, const int *a, intarray &result)
+{
+  insure_space(n);
+  varpower_monomial::vp *pairs = staticVP->pairs;
+  for (int i=n-1; i>=0; i--)
+    if (a[i] != 0)
+      {
+	pairs->var = i;
+	pairs->exponent = a[i];
+	pairs++;
+      }
+  int len = pairs - staticVP->pairs;
+  copy_to(staticVP, len, result);
+}
+
+int varpower::simple_degree(const int *a)
+{
+  int deg = 0;
+  for (index_varpower i = a; i.valid(); ++i)
+    deg += i.exponent();
+  return deg;
+}
+
 void varpower::mult(const int *a, const int *b, intarray &result)
 {
-  int csize = result.start();
-  int alen = *a++;
-  int blen = *b++;
-  int va = (--alen > 0 ? var(*a) : -1);
-  int vb = (--blen > 0 ? var(*b) : -1);
+  insure_space(*a + *b);
+  varpower_monomial::vp *pairs = staticVP->pairs;
+  index_varpower i = a;
+  index_varpower j = b;
+
+  // merge the two varpowers to staticVP
+  int va = (i.valid() ? i.var() : -1);
+  int vb = (j.valid() ? j.var() : -1);
   for (;;)
     {
       if (va > vb)
 	{
-	  result.append(*a++);
-	  va = (--alen > 0 ? var(*a) : -1);
+	  pairs->var = va;
+	  pairs->exponent = i.exponent();
+	  ++pairs;
+	  ++i;
+	  va = (i.valid() ? i.var() : -1);
 	}
-      else if (va < vb)
+      else if (vb > va)
 	{
-	  result.append(*b++);
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  pairs->var = vb;
+	  pairs->exponent = j.exponent();
+	  ++pairs;
+	  ++j;
+	  vb = (j.valid() ? j.var() : -1);
 	}
-      else
+      else 
 	{
 	  if (va == -1) break;
-	  int e = exponent(*a) + exponent(*b);
+#warning "check for overflow here"
+	  int e = i.exponent() + j.exponent();  
 	  if (e != 0)
-	    result.append(checked_pair(va, e));
-	  a++; b++;
-	  va = (--alen > 0 ? var(*a) : -1);
-	  vb = (--blen > 0 ? var(*b) : -1);
+	    {
+	      pairs->var = va;
+	      pairs->exponent = e;
+	      pairs++;
+	    }
+	  ++i; ++j;
+	  va = (i.valid() ? i.var() : -1);
+	  vb = (j.valid() ? j.var() : -1);
 	}
     }
-  result[csize] = result.length() - csize;
+  copy_to(staticVP, pairs - staticVP->pairs, result);
 }
 
 void varpower::quotient(const int *a, const int *b, intarray &result)
     // return a:b
 {
-  int csize = result.start();
-  int alen = *a++;
-  int blen = *b++;
-  int va = (--alen > 0 ? var(*a) : -1);
-  int vb = (--blen > 0 ? var(*b) : -1);
+  insure_space(*a + *b);
+  varpower_monomial::vp *pairs = staticVP->pairs;
+  index_varpower i = a;
+  index_varpower j = b;
+
+  int va = (i.valid() ? i.var() : -1);
+  int vb = (j.valid() ? j.var() : -1);
   for (;;)
     {
       if (va > vb)
 	{
-	  result.append(*a++);
-	  va = (--alen > 0 ? var(*a) : -1);
+	  pairs->var = va;
+	  pairs->exponent = i.exponent();
+	  ++pairs;
+	  ++i;
+	  va = (i.valid() ? i.var() : -1);
 	}
-      else if (va < vb)
+      else if (vb > va)
 	{
-	  b++;
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  ++j;
+	  vb = (j.valid() ? j.var() : -1);
 	}
-      else
+      else 
 	{
 	  if (va == -1) break;
-	  int ea = exponent(*a);
-	  int eb = exponent(*b);
+	  int ea = i.exponent();
+	  int eb = j.exponent();  
 	  if (ea > eb)
 	    {
-	      int e = ea-eb;
-	      result.append(pair(va, e)); // overflow cannot occur
+	      pairs->var = va;
+	      pairs->exponent = ea-eb; // overflow cannot occur
+	      pairs++;
 	    }
-	  a++; b++;
-	  va = (--alen > 0 ? var(*a) : -1);
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  ++i; ++j;
+	  va = (i.valid() ? i.var() : -1);
+	  vb = (j.valid() ? j.var() : -1);
 	}
     }
-  result[csize] = result.length() - csize;
+  copy_to(staticVP, pairs - staticVP->pairs, result);
 }
 
 void varpower::power(const int *a, int n, intarray &result)
@@ -327,44 +385,49 @@ void varpower::power(const int *a, int n, intarray &result)
       result.append(1); 
       return;
     }
-  int len = *a;
-  int *t = result.alloc(len);
-  *t++ = *a++;
-  for (int i=0; i<len; i++)
+  insure_space(*a);
+  varpower_monomial::vp *pairs = staticVP->pairs;
+  for (index_varpower i = a; i.valid(); ++i)
     {
-      *t++ = checked_pair(var(*a), n * exponent(*a));
-      a++;
+      pairs->var = i.var();
+#warning "check overflow"
+      pairs->exponent = n * i.exponent();
+      pairs++;
     }
+  copy_to(staticVP, pairs - staticVP->pairs, result);
 }
 
 bool varpower::divides(const int *b, const int *a)
     // (Note the switch in order of paramters.  Does b divide a?
 {
-  int alen = *a++;
-  int blen = *b++;
-  if (alen < blen) return false;
-  int va = (--alen > 0 ? var(*a) : -1);
-  int vb = (--blen > 0 ? var(*b) : -1);
+  index_varpower i = a;
+  index_varpower j = b;
+  int va = (i.valid() ? i.var() : -1);
+  int vb = (j.valid() ? j.var() : -1);
   for (;;)
     {
       if (va > vb)
 	{
-	  a++;
-	  va = (--alen > 0 ? var(*a) : -1);
+	  ++i;
+	  va = (i.valid() ? i.var() : -1);
 	}
       else if (va < vb)
 	return false;
-      else
+      else 
 	{
 	  if (va == -1) return true;
-	  if (exponent(*a) < exponent(*b)) return false;
-	  a++; b++;
-	  va = (--alen > 0 ? var(*a) : -1);
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  int ea = i.exponent();
+	  int eb = j.exponent();  
+	  if (ea < eb)
+	    return false;
+	  ++i; ++j;
+	  va = (i.valid() ? i.var() : -1);
+	  vb = (j.valid() ? j.var() : -1);
 	}
     }
 }
 
+// TO REWRITE
 void varpower::monsyz(const int *a, const int *b, 
 		      intarray &sa, intarray &sb)
 {
@@ -405,110 +468,141 @@ void varpower::monsyz(const int *a, const int *b,
 
 void varpower::lcm(const int *a, const int *b, intarray &result)
 {
-  int csize = result.start();
-  int alen = *a++;
-  int blen = *b++;
-  int va = (--alen > 0 ? var(*a) : -1);
-  int vb = (--blen > 0 ? var(*b) : -1);
+  insure_space(*a + *b);
+  varpower_monomial::vp *pairs = staticVP->pairs;
+  index_varpower i = a;
+  index_varpower j = b;
+
+  // merge the two varpowers to staticVP
+  int va = (i.valid() ? i.var() : -1);
+  int vb = (j.valid() ? j.var() : -1);
   for (;;)
     {
       if (va > vb)
 	{
-	  result.append(*a++);
-	  va = (--alen > 0 ? var(*a) : -1);
+	  pairs->var = va;
+	  pairs->exponent = i.exponent();
+	  ++pairs;
+	  ++i;
+	  va = (i.valid() ? i.var() : -1);
 	}
-      else if (va < vb)
+      else if (vb > va)
 	{
-	  result.append(*b++);
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  pairs->var = vb;
+	  pairs->exponent = j.exponent();
+	  ++pairs;
+	  ++j;
+	  vb = (j.valid() ? j.var() : -1);
 	}
-      else
+      else 
 	{
 	  if (va == -1) break;
-	  int ae = exponent(*a);
-	  int be = exponent(*b);
-	  if (be > ae) ae = be;
-	  result.append(pair(va, ae));
-	  a++; b++;
-	  va = (--alen > 0 ? var(*a) : -1);
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  int ea = i.exponent();
+	  int eb = j.exponent();  
+	  if (ea < eb) ea = eb;
+	  pairs->var = va;
+	  pairs->exponent = ea;
+	  pairs++;
+	  ++i; ++j;
+	  va = (i.valid() ? i.var() : -1);
+	  vb = (j.valid() ? j.var() : -1);
 	}
     }
-  result[csize] = result.length() - csize;
+  copy_to(staticVP, pairs - staticVP->pairs, result);
 }
 
 void varpower::gcd(const int *a, const int *b, intarray &result)
 {
-  int csize = result.start();
-  int alen = *a++;
-  int blen = *b++;
-  int va = (--alen > 0 ? var(*a) : -1);
-  int vb = (--blen > 0 ? var(*b) : -1);
+  insure_space(*a + *b);
+  varpower_monomial::vp *pairs = staticVP->pairs;
+  index_varpower i = a;
+  index_varpower j = b;
+
+  // merge the two varpowers to staticVP
+  int va = (i.valid() ? i.var() : -1);
+  int vb = (j.valid() ? j.var() : -1);
   for (;;)
     {
       if (va > vb)
 	{
-	  a++;
-	  va = (--alen > 0 ? var(*a) : -1);
+	  pairs->var = va;
+	  pairs->exponent = i.exponent();
+	  ++pairs;
+	  ++i;
+	  va = (i.valid() ? i.var() : -1);
 	}
-      else if (va < vb)
+      else if (vb > va)
 	{
-	  b++;
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  pairs->var = vb;
+	  pairs->exponent = j.exponent();
+	  ++pairs;
+	  ++j;
+	  vb = (j.valid() ? j.var() : -1);
 	}
-      else
+      else 
 	{
 	  if (va == -1) break;
-	  int ae = exponent(*a);
-	  int be = exponent(*b);
-	  if (be < ae) ae = be;
-	  result.append(pair(va, ae));
-	  a++; b++;
-	  va = (--alen > 0 ? var(*a) : -1);
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  int ea = i.exponent();
+	  int eb = j.exponent();  
+	  if (ea > eb) ea = eb;
+	  pairs->var = va;
+	  pairs->exponent = ea;
+	  pairs++;
+	  ++i; ++j;
+	  va = (i.valid() ? i.var() : -1);
+	  vb = (j.valid() ? j.var() : -1);
 	}
     }
-  result[csize] = result.length() - csize;
+  copy_to(staticVP, pairs - staticVP->pairs, result);
 }
 
 void varpower::erase(const int *a, const int *b, intarray &result)
     // divide a by b^infinity
 {
-  int csize = result.start();
-  int alen = *a++;
-  int blen = *b++;
-  int va = (--alen > 0 ? var(*a) : -1);
-  int vb = (--blen > 0 ? var(*b) : -1);
+  insure_space(*a + *b);
+  varpower_monomial::vp *pairs = staticVP->pairs;
+  index_varpower i = a;
+  index_varpower j = b;
+
+  int va = (i.valid() ? i.var() : -1);
+  int vb = (j.valid() ? j.var() : -1);
   for (;;)
     {
       if (va > vb)
 	{
-	  result.append(*a++);
-	  va = (--alen > 0 ? var(*a) : -1);
+	  pairs->var = va;
+	  pairs->exponent = i.exponent();
+	  ++pairs;
+	  ++i;
+	  va = (i.valid() ? i.var() : -1);
 	}
-      else if (va < vb)
+      else if (vb > va)
 	{
-	  b++;
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  ++j;
+	  vb = (j.valid() ? j.var() : -1);
 	}
-      else
+      else 
 	{
 	  if (va == -1) break;
-	  a++; b++;
-	  va = (--alen > 0 ? var(*a) : -1);
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  ++i; ++j;
+	  va = (i.valid() ? i.var() : -1);
+	  vb = (j.valid() ? j.var() : -1);
 	}
     }
-  result[csize] = result.length() - csize;
+  copy_to(staticVP, pairs - staticVP->pairs, result);
 }
 
 void varpower::radical(const int *a, intarray &result)
 {
-  int len = *a;
-  int *t = result.alloc(len);
-  *t++ = *a++;
-  for (int i=1; i<len; i++)
-    *t++ = pair(var(*a++), 1);
+  insure_space(*a);
+  varpower_monomial::vp *pairs = staticVP->pairs;
+  for (index_varpower i = a; i.valid(); ++i)
+    {
+      pairs->var = i.var();
+      pairs->exponent = 1;
+      pairs++;
+    }
+  copy_to(staticVP, pairs - staticVP->pairs, result);
 }
 
 

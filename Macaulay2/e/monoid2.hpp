@@ -17,7 +17,6 @@ typedef int * exponents;
 typedef int * graded_exponents;
 typedef int * partial_sums;
 typedef int * monomial;
-typedef int * varpower_monomial;
 
 typedef const int * const_exponents;
 typedef const int * const_graded_exponents;

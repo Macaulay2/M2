@@ -269,8 +269,8 @@ void Monoid::decode(const_monomial m, exponents result) const
 
 void Monoid::from_expvector(const_exponents exp, monomial result) const
 {
-  monomialOrderFromActualExponents(monorder_, exp, EXP1_);
-  encode(EXP1_, result);
+  monomialOrderFromActualExponents(monorder_, exp, MONlocal_);
+  encode(MONlocal_, result);
 }
 
 M2_arrayint Monoid::to_arrayint(const_monomial monom) const
@@ -616,9 +616,8 @@ bool Monoid::is_invertible(const_monomial m) const
 
 void Monoid::from_varpower(const_varpower vp, monomial result) const
 {
-  intarray a;
-  varpower::to_ntuple(nvars_, vp, a);
-  from_expvector(a.raw(), result);
+  varpower::to_ntuple(nvars_, vp, EXP1_);
+  from_expvector(EXP1_, result);
 }
 
 void Monoid::to_varpower(const_monomial m, intarray &result_vp) const

@@ -1587,10 +1587,9 @@ ring_elem PolyRing::get_coeff(const ring_elem f, const int *vp) const
 #warning "uses flat monomials"
 
   int nvars = logicalM_->n_vars();
-  intarray ea;
-  int *exp2 = newarray(int, n_vars());
-  varpower::to_ntuple(nvars, vp, ea);
-  int *exp = ea.raw();
+  int *exp = newarray(int, nvars);
+  int *exp2 = newarray(int, n_vars()); // FLAT number of variables
+  varpower::to_ntuple(nvars, vp, exp);
 
   // Now loop thru f until exponents match up.
   const Nterm *t = f;
@@ -1603,6 +1602,7 @@ ring_elem PolyRing::get_coeff(const ring_elem f, const int *vp) const
 
   ring_elem result = get_logical_coeff(logicalK_, t);
   deletearray(exp2);
+  deletearray(exp);
   return result;
 }
 

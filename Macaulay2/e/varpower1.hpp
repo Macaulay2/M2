@@ -13,11 +13,15 @@ class varpower
   static int exponent(int n);
   static int pair(int v, int e);
 
+  static bool is_nonneg(const int *a);
+  static int max_mon_size(int n);
+  static int compare(const int *a, const int *b);
+    // return EQ, LT, or GT for a == b, a < b, or a > b.
+
 public:
   varpower() {}
   ~varpower() {}
 
-  static int max_mon_size(int n);
 
   static void elem_text_out(buffer &o, const int *a);
   static void elem_text_out(buffer &o, const int *a, 
@@ -25,26 +29,21 @@ public:
 
   static bool is_one(const int *a);
   static bool is_equal(const int *a, const int *b);
-  static bool is_nonneg(const int *a);
   static int topvar(const int *a);
 
   static void one(intarray &result);
   static void var(int v, int e, intarray &result);
   static int * copy(const int *vp, intarray &result);
 
-  static void to_varpower(const int *a, intarray &result);
-  static void from_varpower(const int *a, intarray &result);
-  static void to_ntuple(int n, const int *a, intarray &result);
+  static void to_ntuple(int n, const int *a, int *result_exponents);
   static void from_ntuple(int n, const int *a, intarray &result);
-  static void from_arrayint(M2_arrayint m, intarray &result);
-  static M2_arrayint to_arrayint(const int *vp);
 
+  static M2_arrayint to_arrayint(const int *vp);
+  static void from_arrayint(M2_arrayint m, intarray &result);
 
   static int degree_of(int n, const int *a);
   static int simple_degree(const int *a);
 
-  static int compare(const int *a, const int *b);
-    // return EQ, LT, or GT for a == b, a < b, or a > b.
   static void mult(const int *a, const int *b, intarray &result);
   static void quotient(const int *a, const int *b, intarray &result);
     // compute the quotient a:b
