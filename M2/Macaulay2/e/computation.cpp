@@ -54,7 +54,7 @@ Computation::~Computation()
 {
 }
 
-void Computation::text_out(buffer &o)
+void Computation::text_out(buffer &o) const
 {
   o << "-- computation --";
 }

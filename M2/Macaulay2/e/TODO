@@ -1,5 +1,17 @@
 -- Mike's to do list, new version, started 3/29/04
 
+random aspects of resolutions and GB's:
+       matrices returned should NEVER be able to be changed by the computation.
+       text_out, stats should maybe function for all these computations.
+       quotients, skew commutative, Weyl: all needs to be done or checked.
+       Schreyer order for GB's
+       HF code
+       HF use in resolutions: this I think was not correct
+       MAYBE: Frank Schreyer's suggestions
+       AT SOME POINT: minimalization routine for resolutions (over fraction rings, ZZ, 
+         inhomog, etc).
+       gb2: computation completion conditions are not used, except for degree...
+
 Groebner bases todo: HF use, mingens, subring elements, elements sorted in 
 decreasing monomial order?
 

@@ -177,14 +177,14 @@ void res2_comp::text_out(buffer &o, const res2_pair *p) const
   o << newline;
 }
 
-void res2_comp::stats()
+void res2_comp::stats() const
 {
   buffer o;
   text_out(o);
   emit(o.str());
 }
 
-void res2_comp::text_out(buffer &o)
+void res2_comp::text_out(buffer &o) const
 {
   o << "--- The total number of pairs in each level/slanted degree -----" << newline;
   M2_arrayint a = betti_skeleton();

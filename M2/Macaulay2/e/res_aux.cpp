@@ -182,10 +182,10 @@ void res_comp::text_out(const res_pair *p) const
 void res_comp::stats() const
 {
   buffer o;
-  stats(o);
+  text_out(o);
   emit(o.str());
 }
-void res_comp::stats(buffer &o) const
+void res_comp::text_out(buffer &o) const
 {
   o << "level/degree = " << n_level << '/' << n_degree << newline;
   o << "--- The total number of pairs in each level/slanted degree -----" << newline;
@@ -222,11 +222,6 @@ void res_comp::stats(buffer &o) const
 	  }
       }
 
-}
-
-void res_comp::text_out(buffer &o)
-{
-  stats(o);
 }
 
 FreeModule *res_comp::free_of(int i) const

@@ -708,9 +708,9 @@ void gb2_comp::end_degree()
   state = STATE_NEW_DEGREE;
 }
 
-int gb2_comp::calc_gb(int deg, const intarray &stop)
+enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
 {
-  int ret = COMP_DONE;
+  enum ComputationStatusCode ret = COMP_DONE;
   if (this_degree > deg) return COMP_DONE;
   if (state == STATE_DONE) return COMP_DONE; // This includes knowledge
 				// that there will be no new generators.
@@ -809,9 +809,9 @@ int gb2_comp::calc_gb(int deg, const intarray &stop)
   return ret;
 }
 
-int gb2_comp::calc_gens(int deg, const intarray &stop)
+enum ComputationStatusCode gb2_comp::calc_gens(int deg, const intarray &stop)
 {
-  int ret;
+  enum ComputationStatusCode ret;
   // First check whether we have done this:
   if (this_degree > deg) return COMP_DONE;
 
@@ -836,7 +836,7 @@ bool gb2_comp::is_done()
 // Hilbert function computing //
 ////////////////////////////////
 
-int gb2_comp::hilbertNumerator(RingElement *&result)
+enum ComputationStatusCode gb2_comp::hilbertNumerator(RingElement *&result)
 {
   // It is possible that the computation was not completed before.
   if (n_hf == n_gb)
@@ -852,7 +852,7 @@ int gb2_comp::hilbertNumerator(RingElement *&result)
     hf_comp = new hilb_comp(R->get_degree_ring(), gbmatrix);
 #endif
 
-  int retval = hf_comp->calc(-1);
+  enum ComputationStatusCode retval = hf_comp->calc(-1);
   if (retval != COMP_DONE) return retval;
   hf = hf_comp->value();
   result = hf;
@@ -862,10 +862,10 @@ int gb2_comp::hilbertNumerator(RingElement *&result)
   return COMP_DONE;
 }
 
-int gb2_comp::hilbertNumeratorCoefficient(int deg, int &result)
+enum ComputationStatusCode gb2_comp::hilbertNumeratorCoefficient(int deg, int &result)
 {
   RingElement *f;
-  int ret = hilbertNumerator(f);
+  enum ComputationStatusCode ret = hilbertNumerator(f);
   if (ret != COMP_DONE) return ret;
   result = hilb_comp::coeff_of(f, deg);
   return COMP_DONE;
@@ -933,6 +933,42 @@ void gb2_comp::debug_out(buffer &o, s_pair *q) const
   o << " ";
   M->elem_text_out(o, q->lcm);
   o << ") ";
+}
+
+// text_out and stats are the same routine, except that text_out returns
+// a string, essentially, and stats displays its result directly.
+void gb2_comp::text_out(buffer &o) const
+{
+  if (gbTrace >= 4 && n_gb > 0)
+    {
+      int nmonoms = 0;
+      int nchange = 0;
+      for (int i=0; i<gb.length(); i++)
+	{
+	  nmonoms += GR->gbvector_n_terms(gb[i]->f);
+	  nchange += GR->gbvector_n_terms(gb[i]->fsyz);
+	}
+      o.put(n_gb, 5);              o.put(" ");
+      o.put(n_pairs, 5);           o.put(" ");
+      o.put(n_pairs_computed, 5);  o.put(" ");
+      o.put(n_pairs_gb, 5);        o.put(" ");
+      o.put(n_pairs_syz, 5);       o.put(" ");
+      o.put(n_pairs_zero, 5);      o.put(" ");
+      o.put(n_pairs_usyz, 5);      o.put(" ");
+      o.put(n_pairs_hilb, 5);      o.put(" ");
+      o.put(n_pairs_gcd, 5);       o.put(" ");
+      o.put(nmonoms, 5);           o.put(" ");
+      o.put(nchange, 5);           o.put(newline);
+    }
+
+  spairs->text_out(o);
+  if (gbTrace >= 5 && gbTrace % 2 == 1)
+    for (int i=0; i<gb.length(); i++)
+      {
+	o << i << '\t';
+	GR->gbvector_text_out(o, F, gb[i]->f);
+	o << newline;
+      }
 }
 
 void gb2_comp::stats() const

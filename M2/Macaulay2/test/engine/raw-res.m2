@@ -2,7 +2,10 @@
 
 needs "raw-util.m2"
 
--- Koszul complex on 3 elements
+----------------------------------
+-- Koszul complex on 3 elements --
+-- Algorithm 1                  --
+----------------------------------
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 m = mat{{a,b,c}}
 gbTrace=3
@@ -16,11 +19,52 @@ m1 = rawResolutionGetMatrix(C,1)
 m2 = rawResolutionGetMatrix(C,2)
 m3 = rawResolutionGetMatrix(C,3)
 m4 = rawResolutionGetMatrix(C,4)
-m2*m1
-m1*m2
-m2*m3
-m3*m4
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+----------------------------------
+-- Koszul complex on 3 elements --
+-- Algorithm 0                  --
+----------------------------------
+-- NOT FUNCTIONAL YET
+R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
+m = mat{{a,b,c}}
+gbTrace=3
+C = rawResolution(m,true,5,false,0,0,0)
 
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+
+rawStartComputation C
+rawGBBetti(C,0)
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+m4 = rawResolutionGetMatrix(C,4)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+----------------------------------
+-- Koszul complex on 3 elements --
+-- Algorithm 2                  --
+----------------------------------
+-- NOT FUNCTIONAL YET
+R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
+m = mat{{a,b,c}}
+gbTrace=3
+C = rawResolution(m,true,5,false,0,2,0)
+
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+
+rawStartComputation C
+rawGBBetti(C,0)
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+m4 = rawResolutionGetMatrix(C,4)
+assert(m1*m2 == 0)
+assert(m2*m3 == 0)
+assert(m3*m4 == 0)
+----------------------------------
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c, symbol d))
 m = mat{{b^2-a*c,a*d-b*c,c^2-b*d}}
 C = rawResolution(m,true,5,false,0,1,0)

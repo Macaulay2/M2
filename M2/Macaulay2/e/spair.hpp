@@ -66,7 +66,8 @@ public:
   void sort_list(s_pair *&p) const;
 
   int n_elems() { return nelems; }
-  void stats();
+  void stats() const;
+  void text_out(buffer &o) const;
 
   s_pair *debug_list(int i) { return heap[i]; }	// DO NOT USE, except for debugging purposes!
 };

@@ -234,8 +234,13 @@ void s_pair_heap::put_back(s_pair *&p)
   p = NULL;
 }
 
-void s_pair_heap::stats()
+void s_pair_heap::stats() const
 {
+}
+
+void s_pair_heap::text_out(buffer &o) const
+{
+#warning "should we display anything in spair text_out, stats?"
 }
 
 // Local Variables:
