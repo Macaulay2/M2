@@ -1,12 +1,11 @@
 ifndef MAKECONF
-MAKECONF = TRUE
+MAKECONF := TRUE
 
 ifndef TOPDIR
 TOPDIR		      := UNDEFINED_TOPDIR
 endif
 
 export VERSION	      := 0.8.37
-export FACTORYVERSION := 1.2c
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
 export REL            := $(shell uname -r | sed s=/=-=g )
@@ -17,28 +16,53 @@ export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)
 export LIBDIR	      := ../../lib
 export INCDIR	      := ../../include
 
-NULL :=
+PATHSEP    := /
+PATHDELIM  := :
+PATHPARENT := ../
+
 ifeq "$(OS)" "MS-DOS"
-PATHSEP := \$(NULL)
-export PATH           := ..\util;$(PATH)
-else
-PATHSEP := /
-export PATH           := ../util:$(PATH)
+NULL :=
+PATHSEP    := \$(NULL)
+PATHDELIM  := ;
+PATHPARENT := ..$(PATHSEP)
 endif
+
+export PATH := $(PATHPARENT)util$(PATHDELIM)$(PATH)
 
 all::				# do this first
 
 ################################# Makeconf.lcl
 
 $(TOPDIR)/Makeconf.lcl :
-	echo '# turn on local options by uncommenting some of the following lines' >$@
+	echo '# This file generated automatically, but may be edited.' >$@
+	echo '# Turn on local options by uncommenting some of the following lines.' >$@
 	echo '#	PROFILE     := TRUE' >>$@
 	echo '#	NOSTRIP     := TRUE' >>$@
 	echo '#	MEMDEBUG    := TRUE' >>$@
-
+	echo '#	NODUMPDATA  := TRUE' >>$@
+	echo '#	NOMP        := TRUE' >>$@
+	echo '#	NOFACTORY   := TRUE' >>$@
 include $(TOPDIR)/Makeconf.lcl
 
 #################################
+
+MP := TRUE
+ifdef NOMP
+MP :=
+endif
+
+FACTORY := TRUE
+ifdef NOFACTORY
+FACTORY :=
+endif
+
+DUMPDATA := TRUE
+ifeq "$(OS)" "CYGWIN32-95"
+DUMPDATA :=
+endif
+ifdef NODUMPDATA
+DUMPDATA :=
+endif
 
 DEBUGFLAGS :=
 
@@ -60,5 +84,19 @@ ifdef MEMDEBUG
 DEBUGFLAGS += -DMEM_DEBUG
 endif
 
-export DEBUGFLAGS STRIPFLAG STRIPCMD 
+################################# Makeconf.ver
+ifdef FACTORY
+$(TOPDIR)/Makeconf.ver :
+	egrep '^version ' factory/GNUmakefile > $@
+
+include $(TOPDIR)/Makeconf.ver
+
+FACTORYVERSION := $(version)
+version :=
+
+endif
+
+#################################
+
+export DEBUGFLAGS STRIPFLAG STRIPCMD DUMPDATA MP FACTORY
 endif

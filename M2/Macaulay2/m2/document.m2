@@ -227,12 +227,14 @@ help2 := (o,s) -> (
 	  );
      )
 
+OS := "operating system"
+
 help = s -> (
      pager := getenv "PAGER";
      if pager === "" then pager = "more";
      if getenv "TERM" === "emacs" 
-     or version#"OS" === "Windows NT" 
-     or version#"OS" === "MS-DOS" 
+     or version#OS === "Windows NT" 
+     or version#OS === "MS-DOS" 
      then pager = null;
      o := if pager === null then stdout else openOut concatenate("!", pager );
      if class s === List

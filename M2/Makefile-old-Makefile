@@ -128,8 +128,24 @@ clean::; -$(MAKE) -C mp distclean
 clean::; rm -f 'mp/&'
 ################################# Makeconf.h
 all:: Makeconf.h
-Makeconf.h : Makeconf envh.awk Makeconf.var
-	awk -f envh.awk <Makeconf.var >tmp.tmp
+Makeconf.h : Makeconf Makeconf.var Makeconf.lcl
+	echo "/* This file created automatically, don't edit. */" >tmp.tmp
+	echo '#define VERSION "$(VERSION)"' >>tmp.tmp
+	echo '#define OS "$(OS)"' >>tmp.tmp
+	echo '#define ARCH "$(ARCH)"' >>tmp.tmp
+	echo '#define REL "$(REL)"' >>tmp.tmp
+ifdef FACTORYVERSION
+	echo '#define FACTORYVERSION "$(FACTORYVERSION)"' >>tmp.tmp
+endif
+ifdef DUMPDATA
+	echo '#define DUMPDATA' >>tmp.tmp
+endif
+ifdef MP
+	echo '#define MP' >>tmp.tmp
+endif
+ifdef FACTORY
+	echo '#define FACTORY' >>tmp.tmp
+endif
 	mv tmp.tmp $@
 clean::; rm -f Makeconf.h
 ###################### Macaulay 2 binary distribution

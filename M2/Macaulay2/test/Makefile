@@ -1,22 +1,35 @@
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
+RESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2)) 
+ifdef DUMPDATA
+RESULTS := $(RESULTS) dumpdata.okay
+endif
 
-TESTRESULTS2 := $(patsubst %.m2, %.okay, $(wildcard *.m2)) dumpdata.okay
+all :: $(RESULTS)
 
-all:: $(TESTRESULTS2)
+$(RESULTS) : ../bin/Macaulay2 ../cache/Macaulay2.doc
+ifdef DUMPDATA
+$(RESULTS) : ../cache/Macaulay2-$(ARCH).data
+endif
 
-$(TESTRESULTS2) : ../bin/Macaulay2 ../cache/Macaulay2-$(ARCH).data ../cache/Macaulay2.doc
-
+ifdef DUMPDATA
 dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3
 	@ echo testing dumpdata
 	@ ../bin/Macaulay2 '-eloaddata("../cache/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"../m2")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent dumpdata.1 '-eexit(0)'
 	@ echo exit 0 | ../bin/Macaulay2 '-eloaddata("../cache/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"../m2")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent dumpdata.2 -- dumpdata.3
 	@ touch dumpdata.okay
+endif
+
+ifdef DUMPDATA
+ARGS := '-eloaddata("../cache/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"../m2")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
+else
+ARGS := -ephase=1 ../m2/setup.m2 -ephase=0 '-erunStartFunctions()' '-eerrorDepth(0)' -silent
+endif
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../bin/Macaulay2 '-eloaddata("../cache/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"../m2")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent $< '-eexit(0)'
+	@ ../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@
 
 clean  :	

@@ -4,9 +4,20 @@ include $(TOPDIR)/Makeconf
 TESTFILES := $(wildcard *.m2)
 TESTRESULTS := $(patsubst %.m2, %.okay, $(TESTFILES))
 all:: $(TESTRESULTS)
+
+ifdef DUMPDATA
 $(TESTRESULTS) : ../../cache/Macaulay2-$(ARCH).data
+else
+$(TESTRESULTS) : ../../cache/Macaulay2.doc
+endif
+
+ifdef DUMPDATA
+ARGS := '-eloaddata("../../cache/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
+else
+ARGS := -silent -ephase=1 ../../m2/setup.m2 -ephase=0 '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)'
+endif
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../../bin/Macaulay2 '-eloaddata("../../cache/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent $< '-eexit(0)'
+	@ ../../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@

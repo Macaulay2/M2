@@ -3,7 +3,7 @@
 M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
 
 (
-  if version#"OS" === "MS-DOS"
+  if version#"operating system" === "MS-DOS"
   then (
        dossify := s -> concatenate between("\\",lines(s,"/"));
        "../bin/M2.arg"
@@ -24,17 +24,34 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
   ) else (
        FILENAME := "../bin/M2";
        args := new Manipulator from (
-	    o -> o
-	    << "exec $M2HOME/bin/Macaulay2 "
-	    << format concatenate( 
-		 "-e loaddata ", format concatenate(
-		      "$M2HOME/cache/Macaulay2-`uname -m | sed s=/=-=g `.data" 
+	    if version#"dumpdata" then (
+		 o -> o
+		 << "exec $M2HOME/bin/Macaulay2 "
+		 << format concatenate( 
+		      "-e loaddata ", format concatenate(
+			   "$M2HOME/cache/Macaulay2-`uname -m | sed s=/=-=g `.data" 
+			   )
 		      )
+		 << " -- "
+		 << format ( "-e path = prepend("| format "$M2HOME/m2" | ", path)" )
+		 << " "
+		 << format "-e runStartFunctions()" 
 		 )
-	    << " -- "
-	    << format concatenate( "-e path = prepend(", format "$M2HOME/m2", ", path)" )
-	    << " "
-	    << format "-e runStartFunctions()" 
+	    else (
+		 o -> o
+		 << "exec "
+		 << format "$M2HOME/bin/Macaulay2"
+		 << " "
+		 << "-ephase=1"
+		 << " "
+		 << format "$M2HOME/m2/setup.m2"
+		 << " "
+		 << "-ephase=0"
+		 << " "
+		 << format ( "-e path = prepend(" | format "$M2HOME/m2" | ", path)" )
+		 << " "
+		 << format "-e runStartFunctions()" 
+		 )
 	    );
        FILENAME
        << "#! /bin/sh" << endl

@@ -765,7 +765,7 @@ document { quote get,
      EXAMPLE "\"/tmp/foooooo\" << \"hi there\" << endl << close",
      EXAMPLE "get \"/tmp/foooooo\"",
      EXAMPLE "get \"!date\"",
-     if version#"OS" =!= "SunOS"
+     if version#"operating system" =!= "SunOS"
      then EXAMPLE "get \"$localhost:daytime\"",
      SEEALSO( "File", "String", "read" )
      }
@@ -1094,7 +1094,7 @@ document { quote openIn,
      PARA,
      "The class of all files is ", TO "File", ".",
      PARA,
-     if version#"OS" =!= "SunOS"
+     if version#"operating system" =!= "SunOS"
      then EXAMPLE ///get "$localhost:daytime"///,
      SEEALSO "File"
      }

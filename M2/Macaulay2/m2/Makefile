@@ -5,7 +5,7 @@ all::
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install
+.PHONY: clean all install it phase1
 CFLAGS =
 LDFLAGS = -s
 LOADLIBES =
@@ -24,19 +24,27 @@ cmdnames.m2 : ../e/cmdnames.m2; cp $< $@
 
 TUTORIALS := $(wildcard ../tutorial/final/*.out)
 
-DUMPEDGFILES := $(DUMPSEQUENCE) setup.m2 dumpdata.m2 $(MADEGFILES) $(TUTORIALS)
+DUMPEDGFILES := $(DUMPSEQUENCE) setup.m2 $(MADEGFILES) $(TUTORIALS)
+
+ifdef DUMPDATA
+DUMPEDGFILES := $(DUMPEDGFILES) dumpdata.m2
+endif
 
 GFILES = $(DUMPSEQUENCE) setup.m2 dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2
 
 ##############################
 
+SCRIPTS = ../bin/M2
+
 ifeq "$(OS)" "MS-DOS"
 SCRIPTS = ../bin/M2.bat ../bin/M2.arg
-else
-SCRIPTS = ../bin/M2
 endif
 
-wc:		;			wc -l $(GFILES)
+ifeq "$(OS)" "CYGWIN32-95"
+SCRIPTS = ../bin/M2.bat
+endif
+
+wc:; wc -l $(GFILES)
 
 loads.m2 : dumpseq loads.awk
 	@echo making loads.m2
@@ -74,19 +82,28 @@ TAGS: Makefile
 				../Vasconcelos-appendix/introduction.tex \
 				../examples/*.m2 ../schubert/*.m2), \
 			       $(i),0)
-all:: $(SCRIPTS)
-$(SCRIPTS) : makeM2.m2 ../cache/Macaulay2-$(ARCH).data
-	rm -f $(SCRIPTS)
-	../bin/Macaulay2 -silent '-eloaddata("../cache/Macaulay2-$(ARCH).data")' \
-			-- '-erunStartFunctions()' makeM2.m2 '-eexit(0)'
 
-it all:: ../cache/Macaulay2-$(ARCH).data
+all :: phase1
+
+phase1 :: $(DUMPEDGFILES)
+
+ifdef DUMPDATA
+ARGS := -silent '-eloaddata("../cache/Macaulay2-$(ARCH).data")' -- '-erunStartFunctions()' 
+phase1 :: ../cache/Macaulay2-$(ARCH).data
 ../cache/Macaulay2-$(ARCH).data : $(DUMPEDGFILES) ../bin/Macaulay2
 	rm -f ../cache/Macaulay2-$(ARCH).data
 	../bin/Macaulay2 -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-eexit(0)'
+else
+ARGS := -silent setup.m2
+phase1 it ::
+endif
 
+all:: $(SCRIPTS)
+$(SCRIPTS) : makeM2.m2
+	rm -f $(SCRIPTS)
+	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
 
-../cache/Macaulay2.pre : ../cache/Macaulay2-$(ARCH).data $(MADEGFILES)
+../cache/Macaulay2.pre : $(MADEGFILES)
 	rm -f ../cache/Macaulay2.tmp
 	../bin/Macaulay2 -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.pre
@@ -94,16 +111,13 @@ it all:: ../cache/Macaulay2-$(ARCH).data
 all :: bare
 
 all :: ../cache/Macaulay2.doc
-../cache/Macaulay2.doc : ../cache/Macaulay2.pre \
-			../cache/Macaulay2-$(ARCH).data $(MADEGFILES)
+../cache/Macaulay2.doc : ../cache/Macaulay2.pre $(MADEGFILES)
 	$(MAKE) -k -C ../tmp/Examples -f ../../m2/Makefile.egs
 	rm -f ../cache/Macaulay2.tmp
 	../bin/Macaulay2 -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.doc
 
-scriptde.tests: scriptde/test.okay scriptde/testsubring.okay
-
-tests: ../cache/Macaulay2-$(ARCH).data $(SCRIPTS)
+tests: $(SCRIPTS)
 	 $(MAKE) -k -C ../tmp/Tests -f ../../m2/Makefile.tests
 
 clean:

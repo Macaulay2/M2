@@ -44,9 +44,11 @@ concepts << html {
      PARA, "Go to ", HREF {"index.html", "main index"}, "."
      } << endl << close
 
+OS := "operating system"
+
 run concatenate ( 
-     if version#"OS" === "MS-DOS" then "copy" else 
-     if version#"OS" === "Windows NT" then "copy" else 
+     if version#OS === "MS-DOS" then "copy" else 
+     if version#OS === "Windows NT" then "copy" else 
 	 "ln -s",
      " ",
      conceptTable#"Macaulay 2", 

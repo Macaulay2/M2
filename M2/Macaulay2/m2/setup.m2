@@ -3,11 +3,13 @@
 
 if class path =!= List then path = { "." }
 
+OS := "operating system"
+
 pathSeparator = (
-	if version#"OS" === "MACOS"	then ":" 
+	if version#OS === "MACOS"	then ":" 
 	else
-	if version#"OS" === "Windows NT"
-	or version#"OS" === "MS-DOS"
+	if version#OS === "Windows NT"
+	or version#OS === "MS-DOS"
 	then "\\"
 	else "/"
 	)
