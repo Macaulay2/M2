@@ -12,41 +12,25 @@ extern "C" M2_CC LP_make_M2_Complex(double re, double im)
   return z;
 }
 
-bool Lapack::LU(LMatrixRR *M, LMatrixRR *P)
+M2_arrayint_OrNull Lapack::LU(LMatrixRR *M)
 {
   int rows = M->n_rows();
   int cols = M->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
-  int *permutation = newarray_atomic(int, min);
-
-  P->resize(rows, rows);
+  M2_arrayint result = makearrayint(rows);
+  int *permutation = result->array;
 
   dgetrf_(&rows, &cols, M->get_lapack_array(),
 	  &rows, permutation, &info);
 
-  /* set the permutation matrix P */
-  for (int row=1; row<=min; row++) {
-    int targ = row;
-    for (int i=1; i<=min; i++) {
-      if (i == targ)
-	targ = permutation[i-1];
-      else if (permutation[i-1] == targ)
-	targ = i;
-    }
-    P->set_entry(row-1, targ-1, 1.0);
-  }
-
   if (info < 0)       
     {
       ERROR("argument passed to dgetrf had an illegal value");
-      return false;
+      return 0;
     }
-  else if (info > 0) {
-    ERROR("Warning: matrix is singular according to dgetrf");
-  }
 
-  return true;
+  return result;
 }
 
 bool Lapack::solve(LMatrixRR *A, /* read only */
@@ -488,41 +472,24 @@ bool Lapack::least_squares_deficient(LMatrixRR *A, LMatrixRR *b, LMatrixRR *x)
 }
 
 
-bool Lapack::LU(LMatrixCC *M, LMatrixRR *P)
+M2_arrayint_OrNull Lapack::LU(LMatrixCC *M)
 {
   int rows = M->n_rows();
   int cols = M->n_cols();
   int info;
   int min = (rows <= cols) ? rows : cols;
-  int *permutation = newarray_atomic(int, min);
-
-  P->resize(rows, rows);
+  M2_arrayint result = makearrayint(rows);
+  int *permutation = result->array;
 
   zgetrf_(&rows, &cols, M->get_lapack_array(), 
 	  &rows, permutation, &info);
 
-  // set the permutation matrix P
-  for (int row=1; row<=min; row++) {
-    int targ = row;
-    for (int i=1; i<=min; i++) {
-      if (i == targ)
-	targ = permutation[i-1];
-      else if (permutation[i-1] == targ)
-	targ = i;
-    }
-    P->get_array()[(targ-1)*min + row - 1] = 1;
-  }
-
   if (info < 0)       
     {
       ERROR("argument passed to zgetrf had an illegal value");
-      return false;
+      return 0;
     }
-  else if (info > 0) {
-    ERROR("Warning: matrix is singular according to zgetrf");
-  }
-
-  return true;
+  return result;
 }
 
 bool Lapack::solve(LMatrixCC *A, LMatrixCC *b, LMatrixCC *x)

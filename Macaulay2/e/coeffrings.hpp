@@ -44,9 +44,19 @@ public:
   }
 
   void init_set(elem &result, elem a) const { result = a; }
+
   void set_zero(elem &result) const { result = zero; }
+
   bool is_zero(elem result) const { return result == zero; }
-  void invert(elem &result, elem a) const;
+
+  void invert(elem &result, elem a) const
+  {
+    if (a == 0) 
+      result = 0; // this is the case a == ONE
+    else
+      result = p - 1 - a;
+  }
+
   void subtract_multiple(elem &result, elem a, elem b);
     // result -= a*b
 
@@ -57,6 +67,17 @@ public:
     else
       {
 	int n = modulus_add(exp_table[a], exp_table[b], p);
+	result = log_table[n];
+      }
+  }
+
+  void subtract(elem &result, elem a, elem b) const
+  {
+    if (a == zero) result = b;
+    else if (b == zero) result = a;
+    else
+      {
+	int n = modulus_sub(exp_table[a], exp_table[b], p);
 	result = log_table[n];
       }
   }
@@ -98,10 +119,15 @@ public:
   CoefficientRingRR() {}
 
   void init_set(elem &result, elem a) const { result = a; }
+
   void set_zero(elem &result) const { result = 0.0; }
+
   bool is_zero(elem result) const { return result == 0.0; }
 
-  void invert(elem &result, elem a) const;
+  void invert(elem &result, elem a) const
+  {
+    result = 1/a;
+  }
 
   void subtract_multiple(elem &result, elem a, elem b);
     // result -= a*b
@@ -109,6 +135,11 @@ public:
   void add(elem &result, elem a, elem b) const
   {
     result = a + b;
+  }
+
+  void subtract(elem &result, elem a, elem b) const
+  {
+    result = a - b;
   }
 
   void mult(elem &result, elem a, elem b) const
@@ -142,10 +173,17 @@ public:
   CoefficientRingCC() {}
 
   void init_set(elem &result, elem a) const { result = a; }
+
   void set_zero(elem &result) const { result.re = 0.0; result.im = 0.0; }
+
   bool is_zero(elem result) const { return result.re == 0.0 && result.im == 0.0; }
 
-  void invert(elem &result, elem a) const;
+  void invert(elem &result, elem a) const
+  {
+    double c = a.re*a.re + a.im*a.im;
+    result.re = a.re/c;
+    result.im = -a.im/c;
+  }
 
   void subtract_multiple(elem &result, elem a, elem b);
     // result -= a*b
@@ -154,6 +192,12 @@ public:
   {
     result.re = a.re + b.re;
     result.im = a.im + b.im;
+  }
+
+  void subtract(elem &result, elem a, elem b) const
+  {
+    result.re = a.re - b.re;
+    result.im = a.im - b.im;
   }
 
   void mult(elem &result, elem a, elem b) const
