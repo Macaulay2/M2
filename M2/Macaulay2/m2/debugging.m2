@@ -96,7 +96,7 @@ select2 := (type,syms) -> apply(
 
 userSymbols = type -> (
      if type === () then type = Thing;
-     select2(type,values UserDictionary))
+     select2(type,values User.Dictionary))
 
 list2 := syms -> stack apply(syms, s ->  toString s | ": " | toString class value s)
 
@@ -142,27 +142,28 @@ abbreviate := x -> (
      if class x === Function and match("^--Function.*--$", toString x) then "..."
      else x)
 
-ll := f -> (
-     lv := reverse \\ flatten \\ sortByHash \ values \ localDictionaries f;
-     if #lv == 0 then "--no local variables"
-     else net Table (
-	  prepend(
-	       {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
-	       apply (lv, s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s}))))
+localSymbols = f -> reverse \\ flatten \\ sortByHash \ values \ localDictionaries f
 
-localVariables = Command(
-     x -> if x === () then (
+listLocalSymbols = Command(
+     f -> (
+	  if f === () then (
 	       if errorCode === null then error "no debugger active";
-	       ll errorCode
-	       )
-	  else ll x)
+	       f = errorCode
+	       );
+	  lv := localSymbols f;
+	  if #lv == 0 then "--no local variables"
+	  else net Table (
+	       prepend(
+		    {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
+		    apply (lv, s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s})))))
 
 usage := () -> (
      << endl
      << "useful debugger commands:" << endl
      << "    break                   leave the debugger" << endl
      << "    end                     restart debugger one step earlier" << endl
-     << "    localVariables          display local variables" << endl
+     << "    listLocalSymbols        display local symbols and their values" << endl
+     << "    listUserSymbols         display user symbols and their values" << endl
      << "    continue                execute the same code again" << endl
      << "    return                  return 'null' as the value of the code" << endl
      << "    return x                return 'x' as the value of the code" << endl
@@ -171,7 +172,7 @@ usage := () -> (
 firstTime := true
 
 interpreterHook = () -> if interpreterDepth > 1 then (
-     << localVariables errorCode << endl;
+     << localSymbols errorCode << endl;
      if firstTime then ( usage(); firstTime = false; ))
 
 -- Local Variables:

@@ -1026,7 +1026,7 @@ export eval(c:Code):Expr := (
 			      if z.message == continueMessage then return eval(c);
 			      )
 			 else nothing)
-		    else printError(err)));
+		    else (printError(err);)));
 	  e)
      else e);
 

@@ -491,10 +491,10 @@ dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
 export debuggerFun := dummyDebuggerFun;
 export stopIfError := false;
 export debuggingMode := true;
-export printError(err:Error):void := (
+export printError(err:Error):Error := (
      printErrorMessage(err.position, if err.printed then "--back trace--" else err.message);
      err.printed = true;
-     );
+     err);
 
 -----------------------------------------------------------------------------
 export newHashTable(class:HashTable,parent:HashTable):HashTable := (

@@ -236,9 +236,7 @@ export errorDepth := 0;
 export printErrorMessage(c:Code,message:string):Expr := (
      p := codePosition(c);
      if int(p.loadDepth) >= errorDepth
-     then (
-     	  printErrorMessage(p,message);
-     	  Expr(Error(p,message,CodeClosureList(CodeClosure(noRecycle(localFrame),c),self),nullE,false)))
+     then Expr(printError(Error(p,message,CodeClosureList(CodeClosure(noRecycle(localFrame),c),self),nullE,false)))
      else buildErrorPacket(message));
 
 export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
