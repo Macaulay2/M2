@@ -84,7 +84,7 @@ void cmd_Ring_isunit(object &oa)
   gStack.insert(make_object_int(a.is_unit()));
 }
 
-void cmd_Ring_var(object &oF, object &ov, object &oe)
+void cmd_Ring_var(object &ov, object &oe, object &oF)
 {
   const Ring *F = oF->cast_to_Ring();
   int v = ov->int_of();
@@ -488,7 +488,7 @@ void i_ring_elem_cmds(void)
 
   // ring element commands
   install(ggfromint, cmd_Ring_from_int, TY_RING, TY_INT);
-  install(ggvar, cmd_Ring_var, TY_RING, TY_INT, TY_INT);
+  install(ggvar, cmd_Ring_var, TY_INT, TY_INT, TY_RING);
 
   install(ggnegate, cmd_Ring_negate, TY_RING_ELEM);
   install(ggadd, cmd_Ring_add, TY_RING_ELEM, TY_RING_ELEM);
