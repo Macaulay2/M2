@@ -48,7 +48,7 @@ docExtension := () -> (
 docFilename := () -> (
      v := lines(commandLine#0,"/");
      v = apply(#v-2, i -> v#i);		  -- drop isn't defined yet
-     concatenate(between("/",v),"/bin/Macaulay2", docExtension()))
+     concatenate(between("/",v),"/cache/Macaulay2", docExtension()))
 
 if phase === 1 then addStartFunction( 
      () -> DocDatabase = (
@@ -230,10 +230,30 @@ help2 := (o,s) -> (
 	  if #m > 0 then (
 	       scan(m, meth -> (
 			 hr o; 
-			 if briefHelp(o,meth)
-			 then o << endl << "Type 'help " << saveMethod meth << "' for more help." << endl;
+			 if briefHelp(o,meth) then (
+			      o << endl
+			      << "Type 'help "
+			      << saveMethod meth 
+			      << "' for more help." << endl;
+			      );
 			 ));
 	       hr o;
+	       );
+	  );
+     if # options value s > 0 then (
+	  o << "Options and default values:" << endl;
+	  hr o;
+	  scan(rsort pairs options value s, (option,default) -> (
+		    o << s << "( ... , " << option << " => " << default << ") :" << endl;
+		    if Documentation#?(value s,option)
+		    then (
+			 o << endl << text repl Documentation#(value s,option) << endl;
+			 )
+		    else (
+			 o << endl << "No documentation available." << endl;
+			 );
+		    hr o;
+		    )
 	       );
 	  );
      )
@@ -342,6 +362,18 @@ err1 := () -> (
      stderr << "warning : input file " 
      << filename 
      << ".out terminates prematurely" << endl;
+     )
+
+documentOption = z -> (
+     if class z != List then error "expected a list";
+     if #z < 2 then error "expected a list of length at least 2";
+     fn := z#0;
+     opt := z#1;
+     doc := drop(z,2);
+     if not (options fn)#?opt then (
+	  error ("expected ", name opt, " to be an option of ", name fn);
+	  );
+     Documentation#(fn,opt) = doc;
      )
 
 document = z -> (

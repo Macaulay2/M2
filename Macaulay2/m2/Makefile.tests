@@ -3,9 +3,9 @@ include ../../../Makeconf
 TESTFILES := $(wildcard *.m2)
 TESTRESULTS := $(patsubst %.m2, %.okay, $(TESTFILES))
 all : $(TESTRESULTS)
-$(TESTRESULTS) : ../../bin/Macaulay2-$(ARCH).data
+$(TESTRESULTS) : ../../cache/Macaulay2-$(ARCH).data
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../../bin/Macaulay2 '-eloaddata("../../bin/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent $< '-eexit(0)'
+	@ ../../bin/Macaulay2 '-eloaddata("../../cache/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent $< '-eexit(0)'
 	@ touch $@

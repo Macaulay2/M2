@@ -6,7 +6,7 @@
 -- with the garbage collector, the engine will be told to release the object
 -- with the corresponding handle.
 
-load "../e/cmdnames.m2"
+load "cmdnames.m2"
 
 document { quote Handle,
      TT "Handle", " -- the class of all Handles.",

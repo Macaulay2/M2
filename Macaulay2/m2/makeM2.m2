@@ -7,7 +7,7 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
   then (
        dossify := s -> concatenate between("\\",lines(s,"/"));
        "../bin/M2.arg"
-       << "'-e loaddata \"" << M2HOME << "/bin/Macaulay2-"
+       << "'-e loaddata \"" << M2HOME << "/cache/Macaulay2-"
        << version # "ARCH"
        << ".data\"'" << endl
        << "--" << endl
@@ -28,7 +28,7 @@ M2HOME := concatenate between("/",drop(lines(currentDirectory(),"/"),-1))
 	    << "exec $M2HOME/bin/Macaulay2 "
 	    << format concatenate( 
 		 "-e loaddata ", format concatenate(
-		      "$M2HOME/bin/Macaulay2-`uname -m | sed s=/=-=g `.data" 
+		      "$M2HOME/cache/Macaulay2-`uname -m | sed s=/=-=g `.data" 
 		      )
 		 )
 	    << " -- "

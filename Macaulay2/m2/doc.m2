@@ -3955,7 +3955,7 @@ document { quote examples,
 
 TEST ///
      assert( class examples MutableList === List )
-     assert( examples MutableList > 0 )
+     assert( # examples MutableList > 0 )
 ///
 
 
