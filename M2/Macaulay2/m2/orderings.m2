@@ -86,13 +86,13 @@ monomialOrdering = args -> (
      mo = null;
      m)
 
-clone MonomialOrdering := (mo) -> (
+clone MonomialOrdering := MonomialOrdering => (mo) -> (
      o := new MonomialOrdering;
      o.handle = newHandle (ggPush mo, ggMOclone);
      o
      )
 
-MonomialOrdering ** MonomialOrdering := (mo,mo2) -> (
+MonomialOrdering ** MonomialOrdering := MonomialOrdering => (mo,mo2) -> (
      result := clone mo;
      sendgg(ggPush result,ggPush mo2,ggMOproduct);
      result)

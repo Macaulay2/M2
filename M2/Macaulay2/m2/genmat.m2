@@ -37,7 +37,7 @@ genericSymmetricMatrix = (R,first,n) -> (
 
 randommat := (R,r,c) -> (sendgg(ggPush R, ggPush r, ggPush c, ggrandom); getMatrix R)
 
-random(List,Ring) := (deg,R) -> (
+random(List,Ring) := RingElement => (deg,R) -> (
      if #deg =!= degreeLength R
      then error ("expected length of degree vector to be ", degreeLength R);
      if deg === {} then random R
@@ -48,9 +48,9 @@ random(List,Ring) := (deg,R) -> (
 	  --n := matrix table(numgens source m,1, x -> promote(random p,R));
 	  (m*n)_(0,0)))
 
-random(ZZ,Ring) := (n,R) -> random({n},R)
+random(ZZ,Ring) := RingElement => (n,R) -> random({n},R)
 
-random(Module, Module) := (F,G) -> (
+random(Module, Module) := Matrix => (F,G) -> (
      R := ring F;
      p := char R;
      if p === 0 then p = ZZ;

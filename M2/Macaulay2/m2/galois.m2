@@ -2,8 +2,8 @@
 
 GaloisField = new Type of EngineRing
 
-ambient GaloisField := R -> R.baseRings#-1
-coefficientRing GaloisField := R -> coefficientRing R.baseRings#-1
+ambient GaloisField := Ring => R -> R.baseRings#-1
+coefficientRing GaloisField := Ring => R -> coefficientRing R.baseRings#-1
 
 GF = method (
      Options => { 
@@ -49,7 +49,7 @@ isPrimitive = (g) -> (
      	       all(factor (q-1), v -> 1 != g ^ ((q-1)//v#0))
      	       )))
 
-GF(ZZ,ZZ) := options -> (p,n) -> (
+GF(ZZ,ZZ) := GaloisField => options -> (p,n) -> (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
      if n === 1 then ZZ/p
@@ -60,13 +60,13 @@ GF(ZZ,ZZ) := options -> (p,n) -> (
 	  while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
 	  GF(R/f,options,Variable => x)))
 
-GF(ZZ) := options -> (q) -> (
+GF(ZZ) := GaloisField => options -> (q) -> (
      factors := factor q;
      if #factors =!= 1 or factors#0#0 === -1
      then error "expected a power of a prime";
      GF(factors#0#0,factors#0#1,options))
 
-GF(Ring) := options -> (S) -> unpack(S, (R,p,n,f) -> (
+GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      if not isPrime f
      then error("expected ",toString S," to be a quotient ring by an irreducible polynomial");
      g := options.PrimitiveElement;
@@ -147,7 +147,7 @@ isField QuotientRing := R -> (
      )
 isField Ring := R -> R === QQ
 
-isAffineRing = method()
+isAffineRing = method(TypicalValue => Boolean)
 isAffineRing Ring := R -> isField R
 isAffineRing PolynomialRing := R -> (
      not (options R).SkewCommutative and not (options R).Inverses and

@@ -1,10 +1,10 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
-koszul(ZZ, Matrix) := (i,m) -> (
+koszul(ZZ, Matrix) := Matrix => (i,m) -> (
      sendgg(ggPush m, ggINT, gg i, ggkoszul);
      getMatrix ring m)
 
-symmetricPower(ZZ, Matrix) := (i,m) -> (
+symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> (
      sendgg(ggPush m, ggINT, gg i, ggsymm);
      getMatrix ring m)
 
@@ -12,7 +12,7 @@ MinorsComputation = new SelfInitializingType of BasicList
 
 PfaffiansComputation = new SelfInitializingType of BasicList
 
-exteriorPower(ZZ,Module) := (p,M) -> (
+exteriorPower(ZZ,Module) := Module => (p,M) -> (
      R := ring M;
      if p < 0 then R^0
      else if p === 0 then R^1
@@ -31,7 +31,7 @@ exteriorPower(ZZ,Module) := (p,M) -> (
 	       h2 := wedgeProduct(1,p-1,F);
 	       coker (h2*h1))))
 
-exteriorPower(ZZ, Matrix) := (p,m) -> (
+exteriorPower(ZZ, Matrix) := Matrix => (p,m) -> (
      R := ring m;
      if p < 0 then map(R^0,R^0,0)
      else if p === 0 then map(R^1,R^1,1)
@@ -48,7 +48,7 @@ exteriorPower(ZZ, Matrix) := (p,m) -> (
     )
 
 wedgeProduct = method()
-wedgeProduct(ZZ,ZZ,Module) := (p,q,M) -> (
+wedgeProduct(ZZ,ZZ,Module) := Matrix => (p,q,M) -> (
      if isFreeModule M then (
 	  R := ring M;
 	  sendgg(ggPush p, ggPush q, ggPush M, ggexteriorproduct);
@@ -57,7 +57,7 @@ wedgeProduct(ZZ,ZZ,Module) := (p,q,M) -> (
 
 minors = method(Options => { Limit => infinity })
 
-minors(ZZ,Matrix) := options -> (j,m) -> (
+minors(ZZ,Matrix) := Matrix => options -> (j,m) -> (
      if j === 0 then ideal 1_(ring m)
      else if j < 0 then ideal 0_(ring m)
      else (
@@ -84,7 +84,7 @@ minors(ZZ,Matrix) := options -> (j,m) -> (
 	  ))
 
 pfaffians = method(Options => { Limit => infinity })
-pfaffians(ZZ,Matrix) := options -> (j,m) -> (
+pfaffians(ZZ,Matrix) := Matrix => options -> (j,m) -> (
      if j === 0 then ideal 1_(ring m)
      else if j < 0 then ideal 0_(ring m)
      else (
@@ -113,14 +113,14 @@ pfaffians(ZZ,Matrix) := options -> (j,m) -> (
 	  ))
 
 -----------------------------------------------------------------------------
-trace Matrix := f -> (
+trace Matrix := RingElement => f -> (
      if rank source f != rank target f
      or not isFreeModule source f
      or not isFreeModule target f
      then error "expected a square matrix";
      sum(rank source f, i -> f_(i,i)))
 -----------------------------------------------------------------------------
-det Matrix := f -> (
+det Matrix := RingElement => f -> (
      if rank source f != rank target f
      or not isFreeModule source f
      or not isFreeModule target f
@@ -128,7 +128,7 @@ det Matrix := f -> (
      (exteriorPower(numgens source f, f))_(0,0))
 
 fittingIdeal = method()
-fittingIdeal(ZZ,Module) := (i,M) -> (
+fittingIdeal(ZZ,Module) := Ideal => (i,M) -> (
      p := presentation M;
      n := rank target p;
      if n <= i

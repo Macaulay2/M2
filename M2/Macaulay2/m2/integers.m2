@@ -16,13 +16,13 @@ lift(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = () -> random 21 - 10
 new ZZ := ZZ -> ZZ.pop()		  -- new integers all come from the engine stack
 
-ZZ >> ZZ := (i,j) -> i << -j
+ZZ >> ZZ := ZZ => (i,j) -> i << -j
 
 oldgcd := gcd
 erase quote gcd
 gcd = method()
 
-gcd(ZZ,ZZ) := oldgcd
+gcd(ZZ,ZZ) := ZZ => oldgcd
 
 -- powermod := (m,e,p) -> m^e % p;
 
@@ -48,7 +48,7 @@ isPrime2 := n -> (			  -- assume n > 2
 
 biggest := 2^31-1
 
-isPrime ZZ := n -> (
+isPrime ZZ := Boolean => n -> (
      n = abs n;
      n > 1 and
      if n <= biggest 
@@ -59,13 +59,13 @@ isPrime ZZ := n -> (
      else isPrime1 n and (n == 2 or isPrime2 n)
      )
 
-random ZZ := x -> (
+random ZZ := ZZ => x -> (
      if x <= 0 then error "expected a positive number";
      randomint() % x)
 
 d := 2^31 - 1.
 
-random RR := x -> (
+random RR := RR => x -> (
      if x <= 0. then (
 	  error "expected a positive number"
 	  );
@@ -77,4 +77,4 @@ ceiling = x -> - floor(-x)
 
 isUnit ZZ := x -> x == 1 or x == -1
 
-ZZ & ZZ := lookup(quote &, ZZ, ZZ)
+ZZ & ZZ := ZZ => lookup(quote &, ZZ, ZZ)

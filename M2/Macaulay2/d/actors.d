@@ -655,13 +655,17 @@ installValueFun(args:CodeSequence):Expr := (
 InstallValueFun = installValueFun;
 
 unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
-     Argtype := eval(argtype);
-     when Argtype is Error 
-     do Argtype 
-     else when Argtype is
-     o:HashTable do storeInHashTable(o,meth,body)
-     else errorpos(argtype,"expected a hash table")
-     );
+     f := eval(meth);
+     when f is Error do f
+     else (
+	  t := eval(argtype);
+	  when t is Error do t 
+	  else when t is T:HashTable do (
+	       b := eval(body);
+	       when b is Error do b
+	       else installMethod(f,T,b)
+	       )
+	  else errorpos(argtype,"expected a hash table")));
 UnaryInstallMethodFun = unaryInstallMethodFun;
 
 unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (

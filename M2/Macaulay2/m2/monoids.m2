@@ -2,7 +2,7 @@
 
 Monoid = new Type of Type
 
-ZZ _ Monoid := (i,M) -> (
+ZZ _ Monoid := MonoidElement => (i,M) -> (
      if i === 1 then M#1
      else error "expected integer to be 1"
      )

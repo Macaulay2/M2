@@ -321,6 +321,7 @@ export basicListClass := newbasictype();
 export mutableListClass := newtypeof(basicListClass);
 export listClass := newtypeof(basicListClass);
 export timeClass := newtypeof(basicListClass);
+export optionClass := newtypeof(basicListClass);
 export fileClass := newbasictype();
 export functionClass := newbasictype();
 export symbolClass := newbasictype();

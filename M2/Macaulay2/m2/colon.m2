@@ -166,26 +166,15 @@ quotient = method(
 	  }
      )
 
-quotient(Ideal,Ideal) := options -> (I,J) ->
-    (quotientIdeal options)(I,J)
+quotient(Ideal ,Ideal      ) := Ideal  => options -> (I,J) -> (quotientIdeal options)(I,J)
+quotient(Ideal ,RingElement) := Ideal  => options -> (I,f) -> (quotientIdeal options)(I,ideal(f))
+quotient(Module,Ideal      ) := Module => options -> (M,I) -> (quotientModule options)(M,I)
+quotient(Module,RingElement) := Module => options -> (M,f) -> (quotientModule options)(M,ideal(f))
+quotient(Module,Module     ) := Ideal  => options -> (M,I) -> (quotientAnn options)(M,I)
 
-quotient(Ideal,RingElement) := options -> (I,f) ->
-    (quotientIdeal options)(I,ideal(f))
-
-quotient(Module,Ideal) := options -> (M,I) ->
-    (quotientModule options)(M,I)
-
-quotient(Module,RingElement) := options -> (M,f) -> 
-    (quotientModule options)(M,ideal(f))
-
-quotient(Module,Module) := options -> (M,I) ->
-    (quotientAnn options)(M,I)
-
-Ideal : Ideal :=
-Ideal : RingElement :=
-Module : Ideal :=
-Module : RingElement :=
-Module : Module := (I,J) -> quotient(I,J)
+Ideal : Ideal := Ideal : RingElement := Ideal => quotient
+Module : Ideal := Module : RingElement := Module => quotient
+Module : Module := Ideal => quotient
     
 ----------------
 -- saturation --
@@ -293,7 +282,7 @@ removeOptions := (options, badopts) -> (
     scan(badopts, k -> remove(options, k));
     new OptionTable from options)
 
-saturate(Ideal,Ideal) := options -> (J,I) -> (
+saturate(Ideal,Ideal) := Ideal => options -> (J,I) -> (
     -- various cases here
     n := numgens I;
     R := ring I;
@@ -339,11 +328,11 @@ saturate(Ideal,Ideal) := options -> (J,I) -> (
     if domins then trim g else g
     )
 
-saturate(Ideal, RingElement) := options -> (I,f) -> saturate(I,ideal f,options)
+saturate(Ideal, RingElement) := Ideal => options -> (I,f) -> saturate(I,ideal f,options)
 
-saturate Ideal := options -> (I) -> saturate(I,ideal vars ring I, options)
+saturate Ideal := Ideal => options -> (I) -> saturate(I,ideal vars ring I, options)
 
-saturate(Module,Ideal) := options -> (M,I) -> (
+saturate(Module,Ideal) := Module => options -> (M,I) -> (
     -- various cases here
     M1 := M : I;
     while M1 != M do (
@@ -351,7 +340,7 @@ saturate(Module,Ideal) := options -> (M,I) -> (
 	 M1 = M : I;
 	 );
     M)
-saturate(Module,RingElement) := options -> (M,f) -> saturate(M,ideal(f),options)
-saturate(Module) := options -> (M) -> saturate(M,ideal vars ring M, options)
-saturate(Vector) := options -> (v) -> saturate(submodule v, options)
+saturate(Module,RingElement) := Module => options -> (M,f) -> saturate(M,ideal(f),options)
+saturate(Module) := Module => options -> (M) -> saturate(M,ideal vars ring M, options)
+saturate(Vector) := Module => options -> (v) -> saturate(submodule v, options)
 

@@ -1,5 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+Option.name = "Option"
 Net.name = "Net"
 Time.name = "Time"
 Handle.name = "Handle"

@@ -21,13 +21,13 @@ toString EngineRing := R -> if R.?name then R.name else sendgg(ggPush R, ggsee, 
 
 net EngineRing := toString
 
-new EngineRing from Handle := (EngineRing, h) -> new EngineRing from ggPush h
+new EngineRing from Handle := EngineRing => (EngineRing, h) -> new EngineRing from ggPush h
 
-new EngineRing from Ring := (EngineRing, R) -> new EngineRing from handle R
+new EngineRing from Ring := EngineRing => (EngineRing, R) -> new EngineRing from handle R
 
 new EngineRing from List :=
 new EngineRing from Sequence :=
-new EngineRing from String := (EngineRing, ggcmds) -> (
+new EngineRing from String := EngineRing => (EngineRing, ggcmds) -> (
      R := new EngineRing of RingElement;
      R.Engine = true;
      R.handle = newHandle ggcmds;
@@ -42,7 +42,7 @@ new EngineRing from String := (EngineRing, ggcmds) -> (
      R)
 
 ZZ _ EngineRing := 
-promote(ZZ,EngineRing) := (i,R) -> (
+promote(ZZ,EngineRing) := RingElement => (i,R) -> (
      new R from {( quote handle, newHandle (ggPush R, ggINT, gg i, ggfromint) )}
      )
 
@@ -161,7 +161,7 @@ numgens EngineRing := R -> #R.generators
 
 generators EngineRing := R -> R.generators
 
-RingElement _ RingElement := (f,m) -> (
+RingElement _ RingElement := RingElement => (f,m) -> (
      R := ring f;
      if R =!= ring m then error "expected monomial in the same ring";
      R _ R := (f,m) -> (
@@ -172,7 +172,7 @@ RingElement _ RingElement := (f,m) -> (
 	  );
      f _ m)
 
-RingElement _ ZZ := (f,m) -> (
+RingElement _ ZZ := RingElement => (f,m) -> (
      R := ring f;
      R _ ZZ := (f,m) -> (
      	  if m =!= 1 then error "expected index to be 1 or a monomial";
@@ -180,7 +180,7 @@ RingElement _ ZZ := (f,m) -> (
 	  );
      f _ m)
 
-Ring _ ZZ := (R,i) -> (
+Ring _ ZZ := RingElement => (R,i) -> (
      if R.?generators 
      then R.generators#i
      else error "ring has no generators"
@@ -202,7 +202,7 @@ isHomogeneous RingElement := f -> (
      sendgg(ggPush f, ggishomogeneous);
      eePopBool())
 
-- RingElement := x -> (
+- RingElement := RingElement => x -> (
      sendgg(ggPush x, ggnegate); 
      new ring x)
 
@@ -212,7 +212,7 @@ RingElement ? RingElement := (x,y) -> (
 
 net RingElement := x -> stack lines sendgg(ggPush x, ggsee, ggpop);
 
-RingElement ^ ZZ := (x,i) -> (
+RingElement ^ ZZ := RingElement => (x,i) -> (
      R := ring x;
      if i === 0
      then R#1
@@ -224,7 +224,7 @@ toString RingElement := x -> toString expression x
 
 net RingElement := x -> net expression x
 
-someTerms(RingElement,ZZ,ZZ) := (f,i,n) -> (
+someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> (
      S := ring f;
      if n <= 0
      then 0_S
@@ -247,7 +247,7 @@ baseName RingElement := x -> (
      else error "expected a generator"
      )
 
-leadCoefficient RingElement := (f) -> (
+leadCoefficient RingElement := RingElement => (f) -> (
      if f == 0 then error "lead coefficient of 0 requested";
      R := ring f;
      k := coefficientRing R;
@@ -256,7 +256,7 @@ leadCoefficient RingElement := (f) -> (
      	  k.pop());
      leadCoefficient f)
 
-leadMonomial RingElement := (f) -> (
+leadMonomial RingElement := MonoidElement => (f) -> (
      R := ring f;
      leadMonomial R := if R.?newEngine then (
 	  f -> (
@@ -295,13 +295,13 @@ leadTermSetup := (R) -> (
      	  new R);
      )
 
-leadTerm RingElement := (f) -> (
+leadTerm RingElement := RingElement => (f) -> (
      leadTermSetup ring f;
      leadTerm f)
 
+RingElement % RingElement := RingElement => 
 QQ % RingElement := RingElement % QQ :=
-ZZ % RingElement := RingElement % ZZ :=
-RingElement % RingElement := (f,g) -> (
+ZZ % RingElement := RingElement % ZZ := (f,g) -> (
      R := class f;
      S := class g;
      R % S := (
@@ -321,10 +321,9 @@ RingElement % RingElement := (f,g) -> (
      f % g
      )
 
+RingElement // RingElement := RingElement => 
 QQ // RingElement := RingElement // QQ :=
-ZZ // RingElement := RingElement // ZZ :=
-
-RingElement // RingElement := (f,g) -> (
+ZZ // RingElement := RingElement // ZZ := (f,g) -> (
      R := class f;
      S := class g;
      R // S := (
@@ -358,8 +357,9 @@ RingElement - QQ := (f,g) -> (
 	  );
      f - g)
 
-ZZ - RingElement := RingElement - ZZ :=
-RingElement - RingElement := (f,g) -> (
+RingElement - RingElement := RingElement =>
+ZZ - RingElement := 
+RingElement - ZZ := (f,g) -> (
      R := class f;
      S := class g;
      R - S := (
@@ -393,8 +393,8 @@ RingElement * QQ := (f,g) -> (
 	  );
      f * g)
 
-ZZ * RingElement := RingElement * ZZ :=
-RingElement * RingElement := (f,g) -> (
+RingElement * RingElement := RingElement =>
+ZZ * RingElement := RingElement * ZZ := (f,g) -> (
      R := class f;
      S := class g;
      R * S := (
@@ -428,7 +428,8 @@ RingElement + QQ := (f,g) -> (
 	  );
      f + g)
 
-ZZ + RingElement := RingElement + ZZ := RingElement + RingElement := (f,g) -> (
+RingElement + RingElement := RingElement =>
+ZZ + RingElement := RingElement + ZZ := (f,g) -> (
      R := class f;
      S := class g;
      R + S := (
@@ -506,8 +507,8 @@ RingElement / QQ := (f,g) -> (
 	  );
      f / g)
 
-ZZ / RingElement := RingElement / ZZ :=
-RingElement / RingElement := (f,g) -> (
+RingElement / RingElement := RingElement =>
+ZZ / RingElement := RingElement / ZZ := (f,g) -> (
      R := class f;
      S := class g;
      R / S := (
@@ -565,9 +566,9 @@ promoteChain := (A,R) -> (
 		    else promoteChain(A, S))),
 	  R))
 
+lift(RingElement, RingElement) := RingElement =>
 lift(RingElement, ZZ) :=
-lift(RingElement, QQ) :=
-lift(RingElement, RingElement) := (r,o) -> (
+lift(RingElement, QQ) := (r,o) -> (
      R := class r;
      A := class o;
      if R === A then (
@@ -582,11 +583,12 @@ lift(RingElement, RingElement) := (r,o) -> (
      lift(r,o))
 
 lift(ZZZ,ZZ) := (r,o) -> convert(ConvertInteger, callgg(ggtonet, r))
-lift(ZZ,Ring) :=
-lift(QQ,Ring) :=
-lift(RingElement,Ring) := (r,A) -> lift(r,A#0)
 
-promote(QQ, RingElement) := (r,o) -> (
+lift(RingElement,Ring) := RingElement => 
+lift(ZZ,Ring) :=
+lift(QQ,Ring) := (r,A) -> lift(r,A#0)
+
+promote(QQ, RingElement) := RingElement => (r,o) -> (
      S := class o;
      if member(QQ,S.baseRings) then (
 	  c := promoteChain(QQ,S);
@@ -604,7 +606,7 @@ promote(QQ, RingElement) := (r,o) -> (
 	  );
      promote(r,S))
 
-promote(RingElement, RingElement) := (r,o) -> (
+promote(RingElement, RingElement) := RingElement => (r,o) -> (
      R := class r;
      S := class o;
      if R === S then (
@@ -629,16 +631,16 @@ promote(RingElement, RingElement) := (r,o) -> (
 
 promote(ZZ,RingElement) := (i,o) -> promote(i, ring o)
 
+promote(RingElement,Ring) := RingElement => 
 promote(ZZ,Ring) := 
-promote(QQ,Ring) := 
-promote(RingElement,Ring) := (r,S) -> promote(r,S#0)
+promote(QQ,Ring) := (r,S) -> promote(r,S#0)
 
 promote(ZZ,QQ) := (i,o) -> i/1
 promote(ZZ,ZZ) := (i,o) -> i
 promote(QQ,QQ) := (i,o) -> i
 
+liftable(RingElement,Ring) := Boolean => 
 liftable(ZZ,Ring) := 
-liftable(QQ,Ring) := 
-liftable(RingElement,Ring) := (f,R) -> try (lift(f,R);true) else false
+liftable(QQ,Ring) := (f,R) -> try (lift(f,R);true) else false
 
 isUnit(RingElement) := (f) -> 1 % ideal f == 0

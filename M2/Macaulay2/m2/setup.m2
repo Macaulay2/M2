@@ -3,8 +3,8 @@
 -- flag quote sequence
 
 << Thing := x -> stdio << x
-File << Net := printString
-File << String := printString
+File << Net := 
+File << String := 
 File << Symbol := printString	   		      -- provisional
 File << Thing := (x,y) -> printString(x,string y)     -- provisional
 
@@ -18,7 +18,7 @@ GlobalReleaseHook Function := (X,x) -> (
      )
 
 Manipulator = new Type of BasicList
-new Manipulator from Function := (Manipulator,f) -> new Manipulator from {f}
+new Manipulator from Function := Manipulator => (Manipulator,f) -> new Manipulator from {f}
 Manipulator.name = "Manipulator"
 Manipulator Database := Manipulator File := (m,o) -> m#0 o
 

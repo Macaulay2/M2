@@ -1,14 +1,14 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-matrix(Ring,List) := options -> (R,m) -> (
+matrix(Ring,List) := Matrix => options -> (R,m) -> (
      if not isTable m then error "expected a table";
      map(R^#m,,m,options))
 
-map(Module,Module,Function) := options -> (M,N,f) -> (
+map(Module,Module,Function) := Matrix => options -> (M,N,f) -> (
      map(M,N,table(numgens M, numgens N, f))
      )
 
-map(Matrix) := options -> (f) -> (
+map(Matrix) := Matrix => options -> (f) -> (
      if options.Degree === null then f
      else (
      	  R := ring source f;
@@ -16,8 +16,8 @@ map(Matrix) := options -> (f) -> (
 	  if class d === ZZ then d = {d};
      	  map(target f, source f ** R^{d - degree f}, f, options)))
 
-map(Module,ZZ,Function) := options -> (M,n,f) -> map(M,n,table(numgens M,n,f),options)
-map(Module,ZZ,List) := options -> (M,rankN,p) -> (
+map(Module,ZZ,Function) := Matrix => options -> (M,n,f) -> map(M,n,table(numgens M,n,f),options)
+map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
      if options.Degree =!= null
      then error "Degree option given with indeterminate source module";
      R := ring M;
@@ -41,7 +41,7 @@ map(Module,ZZ,List) := options -> (M,rankN,p) -> (
      m.source = ( sendgg(ggPush m,gggetcols); new Module from R );
      m)
 
-map(Module,Nothing,Matrix) := options -> (M,nothing,p) -> (
+map(Module,Nothing,Matrix) := Matrix => options -> (M,nothing,p) -> (
      R := ring M;
      coverM := cover M;
      n := numgens cover source p;
@@ -71,7 +71,7 @@ degreeCheck := (d,R) -> (
 	  )
      )
 
-map(Module,Module,Matrix) := options -> (M,N,f) -> (
+map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
      if M === f.target and N === f.source
      and (options.Degree === null or options.Degree === degree f)
      then f
@@ -87,7 +87,8 @@ map(Module,Module,Matrix) := options -> (M,N,f) -> (
 	  reduce M;
 	  newMatrix(M,N)))
 
-map(Module,Nothing,List) := map(Module,Module,List) := options -> (M,N,p) -> (
+map(Module,Nothing,List) := 
+map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
      R := ring M;
      if N === null
      then (
@@ -266,14 +267,14 @@ matrixTable := options -> (f) -> (
 	  )
      else error "expected ring elements or matrices")
 
-matrix(Matrix) := options -> (m) -> (
+matrix(Matrix) := Matrix => options -> (m) -> (
      if isFreeModule target m and isFreeModule source m
      and ring source m === ring target m
      then m
      else map(cover target m, cover source m ** ring target m, m, Degree => degree m)
      )
 
-matrix(List) := options -> (m) -> (
+matrix(List) := Matrix => options -> (m) -> (
      if #m === 0 then error "expected nonempty list";
      m = apply(splice m,splice);
      types := unique apply(m,class);
@@ -304,7 +305,7 @@ adjoint1 = (m,G,H) -> reshape(H, (source m) ** (dual G), m)
 
 adjoint =  (m,F,G) -> reshape((dual G) ** (target m), F, m)
 
-flatten Matrix := m -> (
+flatten Matrix := Matrix => m -> (
      R := ring m;
      F := target m;
      G := source m;
@@ -322,7 +323,7 @@ align := f -> (
      if isHomogeneous f and any(degree f, i -> i =!= 0) then map(target f,,f) else f
      )
 
-subquotient(Nothing,Matrix) := (null,relns) -> (
+subquotient(Nothing,Matrix) := Module => (null,relns) -> (
      M := new Module of Vector;
      M.ring = ring relns;
      E := target relns;
@@ -337,7 +338,7 @@ subquotient(Nothing,Matrix) := (null,relns) -> (
      M.numgens = (sendgg (ggPush M.handle, gglength); eePopInt());
      M#0 = (sendgg(ggPush M, ggzero); new M);
      M)
-subquotient(Matrix,Nothing) := (subgens,null) -> (
+subquotient(Matrix,Nothing) := Module => (subgens,null) -> (
      M := new Module of Vector;
      E := target subgens;
      subgens = align matrix subgens;
@@ -349,7 +350,7 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
      M.numgens = (sendgg (ggPush M.handle, gglength); eePopInt());
      M#0 = (sendgg(ggPush M, ggzero); new M);
      M)
-subquotient(Matrix,Matrix) := (subgens,relns) -> (
+subquotient(Matrix,Matrix) := Module => (subgens,relns) -> (
      E := target subgens;
      if E != target relns then error "expected maps with the same target";
      M := new Module of Vector;
@@ -370,7 +371,7 @@ subquotient(Matrix,Matrix) := (subgens,relns) -> (
 	  if relns != 0 then M.relations = relns;
 	  M))
 
-Matrix ** Matrix := (f,g) -> (
+Matrix ** Matrix := Matrix => (f,g) -> (
      R := ring target f;
      if ring target g =!= R 
      or ring source g =!= ring source f
@@ -408,18 +409,18 @@ net Matrix := f -> (
      else net expression f				    -- add row labels somehow
      )
 
-image Matrix := f -> (
+image Matrix := Module => f -> (
      if f.?image then f.image else f.image = subquotient(f,)
      )
-coimage Matrix := f -> (
+coimage Matrix := Module => f -> (
      if f.?coimage then f.coimage else f.coimage = cokernel map(source f, kernel f)
      )
-cokernel Matrix := m -> (
+cokernel Matrix := Module => m -> (
      if m.?cokernel then m.cokernel else m.cokernel = subquotient(,m)
      )
 
-cokernel RingElement := f -> cokernel matrix {{f}}
-image RingElement := f -> image matrix {{f}}
+cokernel RingElement := Module => f -> cokernel matrix {{f}}
+image RingElement := Module => f -> image matrix {{f}}
 
 Ideal = new Type of MutableHashTable
 expression Ideal := (I) -> new FunctionApplication from { 
@@ -439,35 +440,35 @@ isHomogeneous Ideal := (I) -> isHomogeneous I.generators
 genera(Ideal) := (I) -> genera module I
 euler(Ideal) := (I) -> euler module I
 
-RingElement * Ideal := (r,I) -> ideal (r ** generators I)
+RingElement * Ideal := Ideal => (r,I) -> ideal (r ** generators I)
 ZZ * Ideal := (r,I) -> ideal (r * generators I)
 
-generators Ideal := (I) -> I.generators
-mingens Ideal := options -> (I) -> mingens(module I,options)
-Ideal / Ideal := (I,J) -> module I / module J
-Module / Ideal := (M,J) -> M / (J * M)
+generators Ideal := Matrix => (I) -> I.generators
+mingens Ideal := Matrix => options -> (I) -> mingens(module I,options)
+Ideal / Ideal := Module => (I,J) -> module I / module J
+Module / Ideal := Module => (M,J) -> M / (J * M)
 
 AfterPrint Ideal := AfterNoPrint Ideal := (I) -> (
      << endl;				  -- double space
      << "o" << lineNumber() << " : Ideal of " << ring I << endl;
      )
 
-Ideal ^ ZZ := (I,n) -> ideal symmetricPower(n,generators I)
-Ideal * Ideal := (I,J) -> ideal flatten (generators I ** generators J)
-Ideal * Module := (I,M) -> subquotient (generators I ** generators M, relations M)
+Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
+Ideal * Ideal := Ideal => (I,J) -> ideal flatten (generators I ** generators J)
+Ideal * Module := Module => (I,M) -> subquotient (generators I ** generators M, relations M)
 dim Ideal := I -> dim cokernel generators I
 codim Ideal := I -> codim cokernel generators I
-Ideal + Ideal := (I,J) -> ideal (generators I | generators J)
+Ideal + Ideal := Ideal => (I,J) -> ideal (generators I | generators J)
 degree Ideal := I -> degree cokernel generators I
-trim Ideal := options -> (I) -> ideal trim(module I, options)
-map(Ideal) := options -> (I) -> map(module I,options)
-map(Ideal,Ideal) := options -> (I,J) -> map(module I,module J,options)
-Ideal _ ZZ := (I,n) -> (generators I)_(0,n)
-Matrix % Ideal := (f,I) -> f % gb I
+trim Ideal := Ideal => options -> (I) -> ideal trim(module I, options)
+map(Ideal) := Matrix => options -> (I) -> map(module I,options)
+map(Ideal,Ideal) := Matrix => options -> (I,J) -> map(module I,module J,options)
+Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
+Matrix % Ideal := Matrix => (f,I) -> f % gb I
 numgens Ideal := (I) -> numgens source generators I
-leadTerm Ideal := (I) -> leadTerm generators gb I
-leadTerm(ZZ,Ideal) := (n,I) -> leadTerm(n,generators gb I)
-jacobian Ideal := (I) -> jacobian generators I
+leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
+leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
+jacobian Ideal := Matrix => (I) -> jacobian generators I
 poincare Ideal := (I) -> poincare module I
 hilbertPolynomial Ideal := options -> (I) -> hilbertPolynomial(module I,options)
 
@@ -503,9 +504,9 @@ Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
 module = method()
-module Ideal := submodule Ideal := I -> image I.generators
+module Ideal := submodule Ideal := Module => I -> image I.generators
 
-ideal Matrix := (f) -> (
+ideal Matrix := Ideal => (f) -> (
      R := ring f;
      if not isFreeModule target f or not isFreeModule source f 
      then error "expected map between free modules";
@@ -519,15 +520,15 @@ ideal Matrix := (f) -> (
 	  );
      new Ideal from { quote generators => f, quote ring => R } )
 
-ideal Module := (M) -> (
+ideal Module := Ideal => (M) -> (
      F := ambient M;
      if isSubmodule M and rank F === 1 then ideal generators M
      else error "expected a submodule of a free module of rank 1"
      )
-ideal List := ideal Sequence := v -> ideal matrix {toList v}
-submodule List := submodule Sequence := v -> image matrix toList v
-ideal RingElement := v -> ideal {v}
-submodule(Vector) := (v) -> image matrix {v}
+ideal List := ideal Sequence := Ideal => v -> ideal matrix {toList v}
+submodule List := submodule Sequence := Module => v -> image matrix toList v
+ideal RingElement := Ideal => v -> ideal {v}
+submodule(Vector) := Module => (v) -> image matrix {v}
 ideal ZZ := v -> ideal {v}
 ideal QQ := v -> ideal {v}
 
@@ -537,7 +538,7 @@ kernel = method(Options => {
 
 ker = kernel
 
-kernel Matrix := options -> (g) -> if g.?kernel then g.kernel else g.kernel = (
+kernel Matrix := Module => options -> (g) -> if g.?kernel then g.kernel else g.kernel = (
      N := source g;
      P := target g;
      g = matrix g;
@@ -546,9 +547,9 @@ kernel Matrix := options -> (g) -> if g.?kernel then g.kernel else g.kernel = (
      if N.?generators then h = N.generators * h;
      subquotient( h, if N.?relations then N.relations))
 
-kernel RingElement := options -> (g) -> kernel (matrix {{g}},options)
+kernel RingElement := Module => options -> (g) -> kernel (matrix {{g}},options)
 
-homology(Matrix,Matrix) := opts -> (g,f) -> (
+homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
      R := ring f;
      M := source f;
      N := target f;
@@ -565,17 +566,17 @@ homology(Matrix,Matrix) := opts -> (g,f) -> (
 	  );
      subquotient(h, if N.?relations then f | N.relations else f))
 
-Hom(Matrix, Module) := (f,N) -> (
+Hom(Matrix, Module) := Matrix => (f,N) -> (
      if isFreeModule source f and isFreeModule target f
      then transpose f ** N
      else notImplemented())
 
-Hom(Module, Matrix) := (N,f) -> (
+Hom(Module, Matrix) := Matrix => (N,f) -> (
      if isFreeModule N 
      then dual N ** f
      else notImplemented())
 
-dual(Matrix) := f -> (
+dual(Matrix) := Matrix => f -> (
      R := ring f;
      Hom(f,R^1)
      )
@@ -584,14 +585,14 @@ InverseMethod Matrix := m -> if m#?-1 then m#-1 else m#-1 = (
      id_(target m) // m
      )
 
-singularLocus(Ring) := (R) -> (
+singularLocus(Ring) := QuotientRing => (R) -> (
      if not isAffineRing(R) then error "expected an affine ring";
      R / minors(codim R, jacobian presentation R))
 
-singularLocus(Ideal) := (I) -> singularLocus(ring I / I)
+singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
 
-Matrix _ Array := (f,v) -> f * (source f)_v
-Matrix ^ Array := (f,v) -> (target f)^v * f
+Matrix _ Array := Matrix => (f,v) -> f * (source f)_v
+Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f
 
 entries = method()
 entries Matrix := (m) -> (
@@ -626,7 +627,7 @@ promote(Matrix,QQ) := (f,QQ) -> (
      if ring f === QQ then f
      else matrix applyTable(entries f, r -> promote(r,QQ)));
 
-super(Matrix) := (f) -> (
+super(Matrix) := Matrix => (f) -> (
      M := target f;
      if M.?generators then map(super M, M, M.generators) * f
      else f
@@ -654,13 +655,13 @@ scan({ZZ}, S -> (
 		   ideal (presentation ring I ** S));
 	  ));
 
-content(RingElement) := content(Matrix) := (f) -> (
+content(RingElement) := content(Matrix) := Ideal => (f) -> (
      R := ring f;
      n := numgens R;
      k := coefficientRing R;
      trim ideal lift((coefficients(splice {0..n-1},f))#1, k))
 
-cover(Matrix) := (f) -> matrix f
+cover(Matrix) := Matrix => (f) -> matrix f
 
 rank Matrix := (f) -> rank image f
 

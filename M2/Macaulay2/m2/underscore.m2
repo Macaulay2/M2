@@ -2,8 +2,8 @@
 
 Sequence _ ZZ := List _ ZZ := (s,i) -> s#i
 
-String _ ZZ := (s,i) -> s#i
-String _ Sequence := (s,i) -> ((j,k) -> substring(s,j,k)) i
+String _ ZZ := String => (s,i) -> s#i
+String _ Sequence := String => (s,i) -> ((j,k) -> substring(s,j,k)) i
 
 
 

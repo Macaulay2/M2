@@ -2,6 +2,12 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+Changed the operator '=>' so methods for it cannot be installed by the user.
+
+Fixed a bug in 'stack' which incorrectly converted lines with tab characters in
+them, inserting too many spaces and truncating the rest of the line, affecting
+other functions such as 'code'.
+
 The parsing precedence of => is now a bit lower: lower than 'of' and 'from', and
 the same as other assignments and arrows (:= = <- ->).
 

@@ -10,7 +10,7 @@ net RingMap := f -> horizontalJoin(
 expression RingMap := f -> new FunctionApplication from {
      map, expression (target f, source f, f.matrix)}
 
-map(Ring,Ring,Matrix) := options -> (R,S,m) -> (
+map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
      if isFreeModule target m
      and isFreeModule source m
      and 1 == numgens target m 
@@ -46,9 +46,9 @@ map(Ring,Ring,Matrix) := options -> (R,S,m) -> (
 	  " or a square matrix over the coefficient ring"
 	  ))
 
-map(Ring,Matrix) := options -> (S,m) -> map(ring m,S,m)
+map(Ring,Matrix) := RingMap => options -> (S,m) -> map(ring m,S,m)
 
-map(Ring,Ring) := options -> (S,R) -> (
+map(Ring,Ring) := RingMap => options -> (S,R) -> (
      A := R; v := {}; while (
 	  if A.?generators then (
 	       v = join(apply(A.generators, x -> (
@@ -58,7 +58,7 @@ map(Ring,Ring) := options -> (S,R) -> (
 	  A.?ring) do A = A.ring;
      map(S,R,matrix (S,{v})))
 
-map(Ring,Ring,List) := options -> (R,S,m) -> map(R,S,matrix(R,{m}),options)
+map(Ring,Ring,List) := RingMap => options -> (R,S,m) -> map(R,S,matrix(R,{m}),options)
 
 AfterPrint RingMap := AfterNoPrint RingMap := f -> (
      << endl;				  -- double space
@@ -66,7 +66,7 @@ AfterPrint RingMap := AfterNoPrint RingMap := f -> (
      << " " << target f << " <--- " << source f << endl;
      )
 
-RingMap RingElement := fff := (p,m) -> (
+RingMap RingElement := RingElement => fff := (p,m) -> (
      R := source p;
      S := target p;
      if R =!= ring m then (
@@ -77,7 +77,7 @@ RingMap RingElement := fff := (p,m) -> (
 
 RingMap QQ := RingMap ZZ := (p,m) -> fff(p, promote(m,source p))
 
-RingMap Vector := (p,m) -> (
+RingMap Vector := Vector => (p,m) -> (
      R := source p;
      S := target p;
      if R =!= ring m 
@@ -86,7 +86,7 @@ RingMap Vector := (p,m) -> (
      sendgg(ggPush p, ggPush F, ggPush m, ggev);
      new F)
 
-RingMap Matrix := (p,m) -> (
+RingMap Matrix := Matrix => (p,m) -> (
      R := source p;
      S := target p;
      if R =!= ring m 
@@ -104,7 +104,7 @@ RingMap Matrix := (p,m) -> (
      else map(F,E,f)
      )
 
-kernel RingMap := options -> (f) -> if f.?kernel then f.kernel else f.kernel = (
+kernel RingMap := Ideal => options -> (f) -> if f.?kernel then f.kernel else f.kernel = (
      R := source f;
      n2 := numgens R;
      F := target f;
@@ -178,9 +178,9 @@ kernel RingMap := options -> (f) -> if f.?kernel then f.kernel else f.kernel = (
      else error "not implemented yet"
      )
 
-image RingMap := f -> f.source / kernel f
+image RingMap := QuotientRing => f -> f.source / kernel f
 
-RingMap * RingMap := (g,f) -> (
+RingMap * RingMap := RingMap => (g,f) -> (
      if source g != target f then error "ring maps not composable";
      m := g f.matrix;
      new RingMap from {
@@ -196,19 +196,19 @@ isHomogeneous RingMap := (f) -> (
      isHomogeneous f.matrix)
 
 
-substitute(RingElement,Matrix) := (r,f) -> (map(ring f,ring r,f)) r
-substitute(Vector,Matrix) := (v,f) -> (map(ring f,ring v,f)) v
-substitute(Matrix,Matrix) := (m,f) -> (map(ring f,ring m,f)) m
-substitute(Module,Matrix) := (M,f) -> (map(ring f,ring M,f)) M
-substitute(Ideal,Matrix) := (I,f) -> (map(ring f,ring I,f)) I
+substitute(RingElement,Matrix) := RingElement => (r,f) -> (map(ring f,ring r,f)) r
+substitute(Vector,Matrix) := Vector => (v,f) -> (map(ring f,ring v,f)) v
+substitute(Matrix,Matrix) := Matrix => (m,f) -> (map(ring f,ring m,f)) m
+substitute(Module,Matrix) := Module => (M,f) -> (map(ring f,ring M,f)) M
+substitute(Ideal,Matrix) := Ideal => (I,f) -> (map(ring f,ring I,f)) I
 
-substitute(Matrix,Ring) := (m,S) -> (map(S,ring m)) m
-substitute(Module,Ring) := (M,S) -> (map(S,ring M)) M
-substitute(Ideal,Ring) := (I,S) -> (map(S,ring I)) I
-substitute(Vector,Ring) := (v,S) -> (map(S,ring v)) v
-substitute(RingElement,Ring) := (r,S) -> (map(S,ring r)) r
+substitute(Matrix,Ring) := Matrix => (m,S) -> (map(S,ring m)) m
+substitute(Module,Ring) := Module => (M,S) -> (map(S,ring M)) M
+substitute(Ideal,Ring) := Ideal => (I,S) -> (map(S,ring I)) I
+substitute(Vector,Ring) := Vector => (v,S) -> (map(S,ring v)) v
+substitute(RingElement,Ring) := RingElement => (r,S) -> (map(S,ring r)) r
 
-substitute(Matrix,ZZ) := (m,i) -> (
+substitute(Matrix,ZZ) := Matrix => (m,i) -> (
      R := ring m;
      if i === 0 then (
      	  if isPolynomialRing R 
@@ -235,11 +235,11 @@ sub2 := (R,v) -> (
      S := ring f;
      map(S,R,f))
 
-substitute(Matrix,List) := (f,v) -> (sub2(ring f,v)) f
-substitute(Module,List) := (M,v) -> (sub2(ring M,v)) M
-substitute(Ideal,List) := (I,v) -> (sub2(ring I,v)) I
-substitute(Vector,List) := (f,v) -> (sub2(ring f,v)) f
-substitute(RingElement,List) := (f,v) -> (sub2(ring f,v)) f
+substitute(Matrix,List) := Matrix => (f,v) -> (sub2(ring f,v)) f
+substitute(Module,List) := Module => (M,v) -> (sub2(ring M,v)) M
+substitute(Ideal,List) := Ideal => (I,v) -> (sub2(ring I,v)) I
+substitute(Vector,List) := Vector => (f,v) -> (sub2(ring f,v)) f
+substitute(RingElement,List) := RingElement => (f,v) -> (sub2(ring f,v)) f
 
 substitute(Matrix,Option) := (f,v) -> (sub2(ring f,{v})) f
 substitute(Module,Option) := (M,v) -> (sub2(ring M,{v})) M
@@ -247,11 +247,11 @@ substitute(Ideal,Option) := (I,v) -> (sub2(ring I,{v})) I
 substitute(Vector,Option) := (f,v) -> (sub2(ring f,{v})) f
 substitute(RingElement,Option) := (f,v) -> (sub2(ring f,{v})) f
 
-RingMap Ideal := (f,I) -> ideal f module I
+RingMap Ideal := Ideal => (f,I) -> ideal f module I
 
 fixup := (f) -> if isHomogeneous f then f else map(target f,,f)
 
-RingMap Module := (f,M) -> (
+RingMap Module := Module => (f,M) -> (
      R := source f;
      S := target f;
      if R =!= ring M then error "expected module over source ring";

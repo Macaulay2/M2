@@ -27,9 +27,9 @@ net GeneralOrderedMonoid := M -> net expression M
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
 
-Monoid _ ZZ := (M,i) -> M.generators#i
+Monoid _ ZZ := MonoidElement => (M,i) -> M.generators#i
 
-Monoid _ List := (M,v) -> (
+Monoid _ List := MonoidElement => (M,v) -> (
      if #v === 0 then 1_M
      else product(take(M.generators,#v),v,(x,i)->x^i)
      )
@@ -65,7 +65,7 @@ degreesMonoid2 := memoize(
 	  Zn.name = "ZZ^" | toString n;
 	  Zn))
 
-degreesMonoid ZZ := n -> use degreesMonoid2 n
+degreesMonoid ZZ := Monoid => n -> use degreesMonoid2 n
 
 newDegreesMonoid2 := memoize(
      (n) -> (
@@ -115,7 +115,7 @@ monoidDefaults := if OLDENGINE then (
 
 generators GeneralOrderedMonoid := M -> M.generators
 vars GeneralOrderedMonoid := M -> M.generators
-degreesMonoid GeneralOrderedMonoid := M -> degreesMonoid degreeLength M
+degreesMonoid GeneralOrderedMonoid := Monoid => M -> degreesMonoid degreeLength M
 
 standardForm(MonoidElement) := (m) -> (
      M := class m;
@@ -132,7 +132,6 @@ makeit1 := (options) -> (
 	  ) of MonoidElement;
      M.Engine = true;
      M.Options = options;
-
      varlist := options.Variables;
      n := # varlist;
      degs := options.Degrees;
@@ -363,11 +362,11 @@ makeit2 := options -> args -> (
 	  );
      makeMonoid options)
 
-monoid Array := (args) -> processArgs(
-     toSequence args, -- e.g., changes [x,Inverses=>true] to (x,Inverses=>true)
+monoid Array := Monoid => (args) -> processArgs(
+     toSequence args,					    -- e.g., changes [x,Inverses=>true] to (x,Inverses=>true)
      monoidDefaults,makeit2)
 OptionsRegistry#monoid = monoidDefaults
-monoid Ring := R -> R.monoid
+monoid Ring := Monoid => R -> R.monoid
 
 GeneralOrderedGroup = new Type of GeneralOrderedMonoid
 GeneralOrderedGroup.Engine = true
@@ -382,7 +381,7 @@ toString GeneralOrderedGroup := M -> if M.?name then M.name else (
 	  ))
 
 group = method()
-group Ring := G -> G.group
+group Ring := R -> R.group
 
 generators GeneralOrderedGroup := G -> G.generators
 vars GeneralOrderedGroup := G -> G.generators
@@ -391,9 +390,9 @@ group Array := X -> monoid append(X,Inverses=>true)
 
 tensor = method( Options => options monoid )
 
-Monoid ** Monoid := (M,N) -> tensor(M,N)
+Monoid ** Monoid := Monoid => (M,N) -> tensor(M,N)
 
-tensor(Monoid, Monoid) := options -> (M,N) -> (
+tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      M = M.Options;
      N = N.Options;
      opts := new MutableHashTable from options;
@@ -430,8 +429,8 @@ tensor(Monoid, Monoid) := options -> (M,N) -> (
 
 -- delayed installation of methods for monoid elements
 
-promote(MonoidElement, Ring) := (m,R) -> promote(m,R#0)
-promote(MonoidElement, RingElement) := (m,o) -> (
+promote(MonoidElement, Ring) := RingElement => (m,R) -> promote(m,R#0)
+promote(MonoidElement, RingElement) := RingElement => (m,o) -> (
      R := class o;
      M := monoid R;
      k := coefficientRing R;
@@ -442,7 +441,7 @@ promote(MonoidElement, RingElement) := (m,o) -> (
 	  new R);
      promote(m,o))
 
-RingElement _ MonoidElement := (f,m) -> (
+RingElement _ MonoidElement := RingElement => (f,m) -> (
      RM := ring f;
      R := coefficientRing RM;
      M := monoid RM;

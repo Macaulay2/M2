@@ -2,8 +2,8 @@
 
 pad = method()
 
-pad(String,ZZ) := (s,n) -> concatenate(s,n-# s)
-pad(ZZ,String) := (n,s) -> concatenate(n-# s,s)
+pad(String,ZZ) := String => (s,n) -> concatenate(s,n-# s)
+pad(ZZ,String) := String => (n,s) -> concatenate(n-# s,s)
 
 columnate = (s,w) -> (
      lens := apply(s,i -> #i);

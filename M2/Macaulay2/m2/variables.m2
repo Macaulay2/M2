@@ -28,11 +28,11 @@ Symbol ? IndexedVariable := (x,y) -> (
      if x === (y#0).name then quote > else x ? (y#0).name
      )
 
-IndexedVariableTable _ Thing := (x,i) -> (
+IndexedVariableTable _ Thing := IndexedVariable => (x,i) -> (
      if x#?i then x#i
      else new IndexedVariable from {x,i}
      )
-Symbol _ Thing := (v,i) -> (
+Symbol _ Thing := IndexedVariable => (v,i) -> (
      if class value v === IndexedVariableTable
      then new IndexedVariable from {value v,i}
      else (
@@ -43,7 +43,7 @@ Symbol _ Thing := (v,i) -> (
 	  )
      )
 
-Sequence .. Sequence := (v,w) -> (
+Sequence .. Sequence := Sequence => (v,w) -> (
      n := #v;
      if n =!= #w then error "expected sequences of equal length";
      if n === 0 
@@ -52,9 +52,9 @@ Sequence .. Sequence := (v,w) -> (
      then apply(first v .. first w, singleton)
      else splice table(first v .. first w, drop(v,1) .. drop(w,1), prepend))
 
-List .. List := (v,w) -> apply(toSequence v .. toSequence w, toList)
+List .. List := Sequence => (v,w) -> apply(toSequence v .. toSequence w, toList)
 
-IndexedVariable .. IndexedVariable := (v,w) -> (
+IndexedVariable .. IndexedVariable := Sequence => (v,w) -> (
      x := v#0;
      if x =!= w#0 
      then error ("unmatching base names in ",

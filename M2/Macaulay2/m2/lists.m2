@@ -4,14 +4,17 @@ singleton = x -> toSequence {x}
 
 List _ ZZ     := (x,i) -> x#i
 ggPush List  := v -> (ggINTARRAY, gg v)
-List | List  := join
+List | List  := List => join
 
-List + List  := (v,w) -> apply(v,w,plus)
-     - List  := v -> apply(v,minus)
-List - List  := (v,w) -> apply(v,w,difference)
-Thing * List := (a,v) -> apply(v,x->a * x)
-List / Thing := (v,b) -> apply(v,x->x / b)
-Sequence _ List := List _ List := (x,y) -> apply(splice y, i -> x#i)
+List + List  := List => (v,w) -> apply(v,w,plus)
+     - List  := List => v -> apply(v,minus)
+List - List  := List => (v,w) -> apply(v,w,difference)
+Thing * List := List => (a,v) -> apply(v,x->a * x)
+
+List / Thing := List => (v,b) -> apply(v,x->x / b)	    -- slight conflict with List / Function!
+
+Sequence _ List := Sequence => (x,y) -> apply(splice y, i -> x#i)
+    List _ List := List     => (x,y) -> apply(splice y, i -> x#i)
 
 maxPosition = x -> (
      if # x === 0 then error "expected a nonempty list" 
@@ -45,7 +48,7 @@ same = v -> (
 	  )
      )
 
-member(Thing,Sequence) := member(Thing,List) := (c,x) -> any(x, i -> c===i)
+member(Thing,Sequence) := member(Thing,List) := Boolean => (c,x) -> any(x, i -> c===i)
 
 sum(List) := x -> plus toSequence x
 

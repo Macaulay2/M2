@@ -23,26 +23,25 @@ vector = (v) -> (
 -- BasicModule = new Type of Type
 Module = new Type of Type
 
-isModule = method()
+isModule = method(TypicalValue => Boolean)
 isModule Thing := M -> false
 isModule Module := M -> true
 
-isFreeModule = method()
+isFreeModule = method(TypicalValue => Boolean)
 isFreeModule Thing := x -> false
 isFreeModule Module := M -> not M.?relations and not M.?generators
 
-isSubmodule = method()
+isSubmodule = method(TypicalValue => Boolean)
 isSubmodule Thing := x -> false
 isSubmodule Module := M -> not M.?relations
 
-isQuotientModule = method()
+isQuotientModule = method(TypicalValue => Boolean)
 isQuotientModule Thing := x -> false
 isQuotientModule Module := M -> not M.?generators
 
-isIdeal = method()
+isIdeal = method(TypicalValue => Boolean)
 isIdeal Thing := x -> false
 isIdeal Module := M -> isSubmodule M and rank ambient M === 1
-
 
 numgens Module := M -> (
      if M.?generators then numgens M.generators.source
@@ -50,9 +49,9 @@ numgens Module := M -> (
      else M.numgens
      )
 
-generators Module := M -> if M.?generators then M.generators else id_(ambient M)
+generators Module := Matrix => M -> if M.?generators then M.generators else id_(ambient M)
 
-relations Module := M -> (
+relations Module := Matrix => M -> (
      if M.?relations then M.relations 
      else (
 	  R := ring M;
@@ -189,43 +188,43 @@ expression Vector := v -> (
 		    callgg(ggtonet, v))}))
 toString Vector := x -> if (ring x).?newEngine then see x else toString expression x
 net Vector := x -> if (ring x).?newEngine then see x else net expression x
-Vector + Vector := (x,y) -> (
+Vector + Vector := Vector => (x,y) -> (
      M := class x;
      if M != class y then error "no method for '+'";
      sendgg(ggPush x, ggPush y, ggadd);
      new M)
-Vector - Vector := (x,y) -> (
+Vector - Vector := Vector => (x,y) -> (
      M := class x;
      if M != class y then error "no method for '-'";
      sendgg(ggPush x, ggPush y, ggsubtract);
      new M)
-- Vector := x -> (
+- Vector := Vector => x -> (
      sendgg(ggPush x, ggnegate);
      new class x)
 
-ZZ * Vector := (r,x) -> (
+ZZ * Vector := Vector => (r,x) -> (
      R := ring x;
      F := class x;
      sendgg(ggPush R, ggPush r, ggfromint, ggPush x, ggmult);
      new F)
 
-leadTerm Vector := x -> (
+leadTerm Vector := RingElement => x -> (
      R := ring x;
      F := class x;
      sendgg(ggPush x, ggleadterm);
      new F);
 
-leadComponent Vector := x -> (
+leadComponent Vector := RingElement => x -> (
      R := ring x;
      sendgg(ggPush x, ggleadcomp);
      eePopInt());
 
-leadCoefficient Vector := x -> (
+leadCoefficient Vector := RingElement => x -> (
      k := coefficientRing ring x;
      sendgg(ggPush x, ggleadcoeff);
      k.pop())
 
-leadMonomial Vector := x -> (
+leadMonomial Vector := MonoidElement => x -> (
      R := ring x;
      M := monoid R;
      sendgg(ggPush x, ggleadmonom);
@@ -264,7 +263,7 @@ reduceit := M -> (
 	       ggINT, gg 1, ggpick,  -- swap
 	       ggreduce)))
 
-RingElement * Vector := (r,x) -> (
+RingElement * Vector := Vector => (r,x) -> (
      R := class r;
      M := class x;
      if R =!= ring M then error "ring element and vector involve different rings";
@@ -314,9 +313,9 @@ degrees Module := M -> (
 	  	    sendgg ggPush M;
 		    pack(eePopIntarray(), nd)))))
 
-Module ^ ZZ := (M,i) -> directSum (i:M)
+Module ^ ZZ := Module => (M,i) -> directSum (i:M)
 
-Ring ^ List := (
+Ring ^ List := Module => (
      (R,degs) -> (
 	  degs = - splice degs;
 	  if R.?Engine and R.Engine then (
@@ -360,7 +359,7 @@ components(Vector) := (x) -> apply(numgens class x,i->x_i)
 
 SparseDisplayThreshhold := 15
 
-Ring ^ ZZ := (
+Ring ^ ZZ := Module => (
      (R,n) -> (
 	  if R.?Engine and R.Engine
 	  then (
@@ -413,17 +412,17 @@ rank Module := M -> (
 	  )
      )
 
-ambient Module := M -> (
+ambient Module := Module => M -> (
      if M.?generators then M.generators.target
      else if M.?relations then M.relations.target
      else M)
 
-cover(Module) := (M) -> (
+cover(Module) := Module => (M) -> (
      if M.?generators then M.generators.source
      else if M.?relations then M.relations.target
      else M)
 
-super(Module) := (M) -> (
+super(Module) := Module => (M) -> (
      if M.?generators then (
      	  if M.?relations then cokernel M.relations
 	  else M.generators.target
@@ -447,10 +446,9 @@ AfterPrint Module := M -> (
      << endl;
      )
 
-ZZ * Module := 
-RingElement * Module := (r,M) -> subquotient (r ** generators M, relations M)
+RingElement * Module := Module => ZZ * Module := (r,M) -> subquotient (r ** generators M, relations M)
 
-isHomogeneous Module := (M) -> ring M === ZZ or (
+isHomogeneous Module := Boolean => (M) -> ring M === ZZ or (
      isHomogeneous ring M and (
      if M.?isHomogeneous 
      then M.isHomogeneous 

@@ -1,6 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-peek2 = method()
+peek2 = method(TypicalValue => Net)
 
 peek2(Nothing,ZZ) := (s,depth) -> "null"
 peek2(Symbol,ZZ) := (s,depth) -> if depth === 0 then toString s else toExternalString s
@@ -64,4 +64,5 @@ peek2(HashTable,ZZ) := (s,depth) -> (
 	  ))
 
 peek = s -> peek2(s,1)
+typicalValues#peek = Net
 

@@ -593,14 +593,14 @@ net Sum := v -> (
 		    then ("(", net v#i, ")")
 		    else net v#i))))
 
-isNumber := method()
+isNumber := method(TypicalValue => Boolean)
 isNumber Thing := i -> false
 isNumber RR :=
 isNumber QQ :=
 isNumber ZZ := i -> true
 isNumber Holder := i -> isNumber i#0
 
-startsWithVariable := method()
+startsWithVariable := method(TypicalValue => Boolean)
 startsWithVariable Thing := i -> false
 startsWithVariable Symbol := i -> true
 startsWithVariable Product := 

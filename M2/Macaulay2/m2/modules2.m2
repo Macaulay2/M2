@@ -1,6 +1,6 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
-Module + Module := (M,N) -> (
+Module + Module := Module => (M,N) -> (
      if ring M =!= ring N
      then error "expected modules over the same ring";
      R := ring M;
@@ -15,7 +15,7 @@ Module + Module := (M,N) -> (
 	  )
      )
 
-Module ** Module := (M,N) -> (
+Module ** Module := Module => (M,N) -> (
      P := youngest(M,N);
      key := (M,N,quote **);
      if P#?key then P#key
@@ -49,7 +49,7 @@ Module ** Module := (M,N) -> (
 		    sendgg(ggPush M.relations, ggPush N.relations, ggmodtensor);
 		    cokernel getMatrix R))))
 
-Matrix ** Module := (f,M) -> (
+Matrix ** Module := Matrix => (f,M) -> (
      P := youngest(f,M);
      key := (f,M,quote **);
      if P#?key then P#key
@@ -57,7 +57,7 @@ Matrix ** Module := (f,M) -> (
      	  f ** id_M
 	  )
      )
-Module ** Matrix := (M,f) -> (
+Module ** Matrix := Matrix => (M,f) -> (
      P := youngest(M,f);
      key := (M,f,quote **);
      if P#?key then P#key
@@ -69,7 +69,7 @@ Module ** Matrix := (M,f) -> (
 -----------------------------------------------------------------------------
 -- base change
 -----------------------------------------------------------------------------
-Module ** Ring := (M,R) -> (
+Module ** Ring := Module => (M,R) -> (
      P := youngest(M,R);
      key := (M,R,quote **);
      if P#?key then P#key
@@ -85,7 +85,7 @@ Module ** Ring := (M,R) -> (
 	       )
 	  ))
 
-Matrix ** Ring := (f,R) -> (
+Matrix ** Ring := Matrix => (f,R) -> (
      P := youngest(f,R);
      key := (f,R,quote **);
      if P#?key then P#key
@@ -225,21 +225,21 @@ ProjectiveHilbertPolynomial = new Type of HashTable
 ProjectiveHilbertPolynomial ZZ := (P,i) -> sum(pairs P, (n,c) -> c * binomial(n+i,n))
 
 euler ProjectiveHilbertPolynomial := (P) -> P(0)
-diff(ProjectiveHilbertPolynomial,ZZ) := (P,i) -> (
+diff(ProjectiveHilbertPolynomial,ZZ) := ProjectiveHilbertPolynomial => (P,i) -> (
      new ProjectiveHilbertPolynomial from select(
      	  apply(pairs P, (n,c) -> (n-i,c)),
 	  (n,c) -> n >= 0
 	  ))
-diff ProjectiveHilbertPolynomial := (P) -> diff(P,1)
-ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := (h,k) -> (
+diff ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (P) -> diff(P,1)
+ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h,k) -> (
      select( merge(h,k,plus), c -> c =!= 0 )
      )
-- ProjectiveHilbertPolynomial := h -> applyValues(h,minus)
-ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := (h,k) -> h + -k
+- ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => h -> applyValues(h,minus)
+ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h,k) -> h + -k
 ProjectiveHilbertPolynomial == ProjectiveHilbertPolynomial := (h,k) -> h === k
 dim ProjectiveHilbertPolynomial := (P) -> if #P === 0 then -1 else max keys P
 degree ProjectiveHilbertPolynomial := (P) -> if #P === 0 then 0 else P#(dim P)
-ZZ * ProjectiveHilbertPolynomial := (b,h) -> (
+ZZ * ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (b,h) -> (
      if b === 1 then h 
      else if b === 0 then new ProjectiveHilbertPolynomial from {}
      else applyValues(h,c -> b*c)
@@ -252,10 +252,10 @@ expression ProjectiveHilbertPolynomial := (h) -> (
 net ProjectiveHilbertPolynomial := (h) -> net expression h
 
 projectiveHilbertPolynomial = method()
-projectiveHilbertPolynomial ZZ := (n) -> (
+projectiveHilbertPolynomial ZZ := ProjectiveHilbertPolynomial => (n) -> (
      new ProjectiveHilbertPolynomial from { n => 1 }
      )
-projectiveHilbertPolynomial(ZZ,ZZ) := memoize(
+projectiveHilbertPolynomial(ZZ,ZZ) := ProjectiveHilbertPolynomial => memoize(
      (n,d) -> new ProjectiveHilbertPolynomial from (
      	  if d <= 0 
 	  then apply(min(-d+1,n+1), j -> n-j => (-1)^j * binomial(-d,j))
@@ -273,7 +273,7 @@ hilbertFunctionQ(ZZ,ZZ) := memoize(
      	  if d === 0 then hilbertFunctionQ(n)
      	  else substitute(hilbertFunctionQ(n), {i => i+d})))
 
-hilbertPolynomial Module := options -> (M) -> (
+hilbertPolynomial Module := ProjectiveHilbertPolynomial => options -> (M) -> (
     if degreeLength ring M != 1 
     then error "expected a singly graded ring";
     n := numgens ring M - 1;
@@ -294,10 +294,10 @@ hilbertPolynomial Module := options -> (M) -> (
 	      	   if #d === 0 then d = 0 else d = d#0;
 	      	   c * hilbertFunctionQ(n,-d)))))
 
-hilbertPolynomial Ring := options -> (R) -> hilbertPolynomial(R^1, options)
+hilbertPolynomial Ring := ProjectiveHilbertPolynomial => options -> (R) -> hilbertPolynomial(R^1, options)
 
-Ideal * Ring := (I,S) -> if ring I === S then I else ideal(I.generators ** S)
-Ring * Ideal := (S,I) -> if ring I === S then I else ideal(I.generators ** S)
+Ideal * Ring := Ideal => (I,S) -> if ring I === S then I else ideal(I.generators ** S)
+Ring * Ideal := Ideal => (S,I) -> if ring I === S then I else ideal(I.generators ** S)
 
 ZZ == Ideal := (n,I) -> I == n
 Ideal == ZZ := (I,n) -> (
@@ -346,7 +346,7 @@ degree Module := M -> (
 
 -----------------------------------------------------------------------------
 
-presentation(Module) := M -> (
+presentation(Module) := Matrix => M -> (
      if M.?presentation then M.presentation else M.presentation = (
 	  if M.?generators then (
 	       modulo( M.generators, if M.?relations then M.relations)
@@ -354,7 +354,7 @@ presentation(Module) := M -> (
 	  else relations M))
 -----------------------------------------------------------------------------  
 
-prune(Module) := M -> (
+prune(Module) := Module => M -> (
      if M.?pruningMap then M
      else if M.?prune then M.prune else M.prune = (
 	  R := ring M;
@@ -378,7 +378,7 @@ prune(Module) := M -> (
 	  )
      )
 
-prune(Matrix) := (m) -> (
+prune(Matrix) := Matrix => (m) -> (
      M := source m;
      if not M.?pruningMap then m = m * (prune M).pruningMap;
      N := target m;
@@ -387,29 +387,29 @@ prune(Matrix) := (m) -> (
 
 -----------------------------------------------------------------------------
 
-dual Module := F -> if F.?dual then F.dual else F.dual = (
+dual Module := Module => F -> if F.?dual then F.dual else F.dual = (
      if not isFreeModule F then kernel transpose presentation F
      else (
 	  sendgg (ggPush F, ggtranspose); 
 	  new Module from ring F))
 
 -----------------------------------------------------------------------------
-Hom(Ideal, Ideal) := (I,J) -> Hom(module I, module J)
-Hom(Ideal, Module) := (I,M) -> Hom(module I, M)
-Hom(Module, Ideal) := (M,I) -> Hom(M, module I)
+Hom(Ideal, Ideal) := Module => (I,J) -> Hom(module I, module J)
+Hom(Ideal, Module) := Module => (I,M) -> Hom(module I, M)
+Hom(Module, Ideal) := Module => (M,I) -> Hom(M, module I)
 
-Hom(Module, Ring) := (M,R) -> Hom(M, R^1)
-Hom(Ring, Module) := (R,M) -> Hom(R^1, M)
-Hom(Ideal, Ring) := (I,R) -> Hom(module I, R^1)
-Hom(Ring, Ideal) := (R,I) -> Hom(R^1, module I)
+Hom(Module, Ring) := Module => (M,R) -> Hom(M, R^1)
+Hom(Ring, Module) := Module => (R,M) -> Hom(R^1, M)
+Hom(Ideal, Ring) := Module => (I,R) -> Hom(module I, R^1)
+Hom(Ring, Ideal) := Module => (R,I) -> Hom(R^1, module I)
 
-Hom(Module, Module) := (M,N) -> (
+Hom(Module, Module) := Module => (M,N) -> (
      if isFreeModule M 
      then dual M ** N
      else kernel Hom(presentation M, N)
      )
 -- An alternate Hom routine:
-Hom(Module, Module) := (M,N) -> (
+Hom(Module, Module) := Module => (M,N) -> (
      -- This version is perhaps less transparent, but is
      -- easier to determine the link with homomorphisms.
      m := presentation M;
@@ -424,7 +424,7 @@ Hom(Module, Module) := (M,N) -> (
      MN)
 
 homomorphism = method()
-homomorphism Matrix := (f) -> (
+homomorphism Matrix := Matrix => (f) -> (
      if not isFreeModule(source f) or 
         numgens source f =!= 1 or
         not (target f).?Hom
@@ -439,7 +439,7 @@ homomorphism Matrix := (f) -> (
 -----------------------------------------------------------------------------
 pdim Module := M -> max select(keys complete resolution M, i -> class i === ZZ)
 
-Module / Module := (M,N) -> (
+Module / Module := Module => (M,N) -> (
      L := ambient M;
      if L != ambient N then error "expected modules with the same ambient module";
      R := ring M;
@@ -455,8 +455,8 @@ Module / Module := (M,N) -> (
 	       p))
      else image id_L)
 
-Module / RingElement := (M,x) -> M / (x * M)
-Module / Sequence := Module / List := (M,v) -> (
+Module / RingElement := Module => (M,x) -> M / (x * M)
+Module / Sequence := Module / List := Module => (M,v) -> (
      R := ring M;
      v = toList v;
      if all(v, w -> class w === M)
@@ -465,7 +465,7 @@ Module / Sequence := Module / List := (M,v) -> (
      then M / (ideal v * M)
      else error("expected a list of elements of ", toString M, " or of ", toString R)
      )
-Module / Vector := (M,v) -> (
+Module / Vector := Module => (M,v) -> (
      if class v =!= M 
      then error("expected ", toString v, " to be an element of ", toString M);
      M / image matrix {v})
@@ -482,20 +482,20 @@ Module / Vector := (M,v) -> (
 
 ann = annihilator
 
-annihilator Module := M -> (
+annihilator Module := Ideal => M -> (
      f := presentation M;
      image f : target f )
-annihilator Ideal := I -> annihilator module I
-annihilator RingElement := f -> annihilator ideal f
+annihilator Ideal := Ideal => I -> annihilator module I
+annihilator RingElement := Ideal => f -> annihilator ideal f
 
 -----------------------------------------------------------------------------
 
-ZZ _ Module := (i,M) -> (
+ZZ _ Module := Vector => (i,M) -> (
      if i === 0 then M#0
      else error "expected integer to be zero"
      )
 
-Module _ ZZ := (M,i) -> (
+Module _ ZZ := Vector => (M,i) -> (
      if M.?generators then (
 	  if i < 0 or i >= rank source M.generators
 	  then error ("subscript '", toString i, "' out of range");
@@ -509,7 +509,7 @@ Module _ ZZ := (M,i) -> (
      )
 
 -----------------------------------------------------------------------------
-Module ^ Array := (M,w) -> if M#?(quote ^,w) then M#(quote ^,w) else M#(quote ^,w) = (
+Module ^ Array := Matrix => (M,w) -> if M#?(quote ^,w) then M#(quote ^,w) else M#(quote ^,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.?components then error "expected a direct sum module";
@@ -524,7 +524,7 @@ Module ^ Array := (M,w) -> if M#?(quote ^,w) then M#(quote ^,w) else M#(quote ^,
      v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
      map(directSum M.components_w, M, (cover M)^(splice apply(w, i -> v#i))))
 
-Module _ Array := (M,w) -> if M#?(quote _,w) then M#(quote _,w) else M#(quote _,w) = (
+Module _ Array := Matrix => (M,w) -> if M#?(quote _,w) then M#(quote _,w) else M#(quote _,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.?components then error "expected a direct sum module";
@@ -540,14 +540,14 @@ Module _ Array := (M,w) -> if M#?(quote _,w) then M#(quote _,w) else M#(quote _,
      map(M, directSum M.components_w, (cover M)_(splice apply(w, i -> v#i))))
 
 -----------------------------------------------------------------------------
-Module ^ List := (M,rows) -> submatrix(id_M,rows,)
+Module ^ List := Matrix => (M,rows) -> submatrix(id_M,rows,)
 -----------------------------------------------------------------------------
-Module _ List := (M,v) -> (
+Module _ List := Matrix => (M,v) -> (
      N := cover M;
      f := id_N_v;
      map(M, source f, f))
 -----------------------------------------------------------------------------
-basis(List,Module) := (deg,M) -> (
+basis(List,Module) := Matrix => (deg,M) -> (
      if #deg =!= degreeLength ring M then error "expected degree length to match that of ring";
      R := ring M;
      A := ultimate(ambient,R);
@@ -566,13 +566,13 @@ basis(List,Module) := (deg,M) -> (
      sendgg(ggPush top, ggPush bottom, ggPush deg, ggkbasis);
      map(M,,getMatrix R))
 
-basis(ZZ,Module) := (deg,M) -> basis({deg},M)
-basis(List,Ideal) := basis(ZZ,Ideal) := (n,I) -> basis(n,module I)
-basis(List,Ring) := (deg,R) -> basis(deg, R^1)
+basis(ZZ,Module) := Matrix => (deg,M) -> basis({deg},M)
+basis(List,Ideal) := basis(ZZ,Ideal) := Matrix => (n,I) -> basis(n,module I)
+basis(List,Ring) := Matrix => (deg,R) -> basis(deg, R^1)
 
-basis(ZZ,Ring) := (deg,R) -> basis({deg}, R^1)
+basis(ZZ,Ring) := Matrix => (deg,R) -> basis({deg}, R^1)
 
-basis Module := M -> (
+basis Module := Matrix => M -> (
      -- check the following:
      --     R = ring m is a polynomial ring
      --     
@@ -585,13 +585,13 @@ basis Module := M -> (
      sendgg(ggPush top, ggPush bottom, ggkbasis);
      map(M,,getMatrix R))
 
-basis Ring := R -> basis(R^1)
-basis Ideal := I -> basis module I
+basis Ring := Matrix => R -> basis(R^1)
+basis Ideal := Matrix => I -> basis module I
 -----------------------------------------------------------------------------
 
-truncate(List,Ideal) := (deg,I) -> ideal truncate(deg,module I)
+truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)
 
-truncate(List,Module) := (deg,M) -> (
+truncate(List,Module) := Module => (deg,M) -> (
      -- check the following:
      --     R = ring m is a polynomial ring
      --     
@@ -611,7 +611,8 @@ truncate(List,Module) := (deg,M) -> (
      sendgg(ggPush top, ggPush bottom, ggPush deg, ggtruncate);
      subquotient(getMatrix R, if M.?relations then M.relations))
 
-truncate(ZZ,Module) := truncate(ZZ,Ideal) := (deg,M) -> truncate({deg},M)
+truncate(ZZ,Module) := Module => (deg,M) -> truncate({deg},M)
+truncate(ZZ,Ideal) := Ideal => (deg,M) -> truncate({deg},M)
 
 issub := (f,g) -> (
      g = gb g;

@@ -127,9 +127,9 @@ processStrategy := (v) -> (
 	       then error("unknown strategy ", toString s, " encountered");
 	       strategyCodes#s)))     
 
-gb Ideal := options -> (I) -> gb ( module I, options )
+gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )
 
-gb Module := options -> (M) -> (
+gb Module := GroebnerBasis => options -> (M) -> (
      if M.?relations 
      then (
 	  notImplemented();
@@ -143,7 +143,7 @@ gb Module := options -> (M) -> (
 	       SyzygyRows => numgens source m))
      else gb(generators M, options))
 
-gb Matrix := options -> (f) -> (
+gb Matrix := GroebnerBasis => options -> (f) -> (
      R := ring target f;
      if ring source f =!= R
      then error "expected module map with source and target over the same ring";
@@ -180,22 +180,22 @@ gb Matrix := options -> (f) -> (
 			 }));
 	  G))
 
-mingens GroebnerBasis := options -> (g) -> (
+mingens GroebnerBasis := Matrix => options -> (g) -> (
      sendgg(ggPush g, gggetmingens);
      getMatrix ring g			  -- we're losing information here! MES
      )
 
 syz = method(Options => options gb)
 
-syz GroebnerBasis := options -> (g) -> (
+syz GroebnerBasis := Matrix => options -> (g) -> (
      sendgg(ggPush g, gggetsyz);
      getMatrix ring g )
 
-generators GroebnerBasis := (g) -> (
+generators GroebnerBasis := Matrix => (g) -> (
      sendgg(ggPush g, gggetgb);
      getMatrix ring g)
 
-getchange GroebnerBasis := (g) -> (
+getchange GroebnerBasis := Matrix => (g) -> (
      sendgg(ggPush g, gggetchange);
      getMatrix ring g)
 
@@ -207,7 +207,7 @@ forceGB = method(
 	  }
      )
 
-forceGB Matrix := options -> (f) -> (
+forceGB Matrix := GroebnerBasis => options -> (f) -> (
      if not isFreeModule source f then error "expected a free module";
      minmat := if options.MinimalMatrix === null
                then f
@@ -239,23 +239,23 @@ forceGB Matrix := options -> (f) -> (
      f#type = g;
      g)
 
-Matrix // GroebnerBasis := (n,g) -> (
+Matrix // GroebnerBasis := Matrix => (n,g) -> (
      -- this gb might not be one with change of basis matrix attached...
      -- so it is best for the user not to use it
      R := ring g;
      if R =!= ring n then error "expected matrix over the same ring";
      sendgg(ggPush g, ggPush n, ggreduce, ggPush 1, ggpick, ggpop);
      getMatrix R)
-RingElement // GroebnerBasis := (r,g) -> (r * id_(target g)) // g
+RingElement // GroebnerBasis := Matrix => (r,g) -> (r * id_(target g)) // g
 
-Matrix % GroebnerBasis := (n,g) -> (
+Matrix % GroebnerBasis := Matrix => (n,g) -> (
      R := ring n;
      if R =!= ring g then error "expected matrix over the same ring";
      sendgg(ggPush g, ggPush n, ggreduce, ggpop);
      getMatrix R)
 
-ZZ % GroebnerBasis :=
-RingElement % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)
+RingElement % GroebnerBasis := RingElement =>
+ZZ % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)
 
 GroebnerBasis == GroebnerBasis := (g,h) -> (
      ring g === ring h

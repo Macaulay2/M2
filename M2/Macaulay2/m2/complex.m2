@@ -24,9 +24,9 @@ imaginaryPart QQ := z -> 0
 conjugate RR := identity
 realPart RR := identity
 imaginaryPart RR := z -> 0
-conjugate CC := z -> new CC from {z#0,-z#1}
-realPart CC := z -> z#0
-imaginaryPart CC := z -> z#1
+conjugate CC := CC => z -> new CC from {z#0,-z#1}
+realPart CC := RR => z -> z#0
+imaginaryPart CC := RR => z -> z#1
 exprI := quote ii
 expression CC := z -> z#0 + z#1 * hold exprI
 toString CC := z -> toString expression z

@@ -117,11 +117,11 @@ net String := identity
 net RR := net Boolean := net File := net ZZ := net Handle := net Database := string
 net Nothing := null -> ""
 
-Net | Net := horizontalJoin
-Net || Net := stack
-String ^ ZZ := (s,i) -> raise(horizontalJoin s,i)
-Net ^ ZZ := raise; erase quote raise
-String ^ Sequence := (s,p) -> ((height,depth) -> (stack apply(height+depth,i->s))^(height-1))(p)
+Net | Net := Net => horizontalJoin
+Net || Net := Net => stack
+String ^ ZZ := Net => (s,i) -> raise(horizontalJoin s,i)
+Net ^ ZZ := Net => raise; erase quote raise
+String ^ Sequence := Net => (s,p) -> ((height,depth) -> (stack apply(height+depth,i->s))^(height-1))(p)
 
 net Net := identity
 ---- this old routine draws a box around a net
