@@ -52,10 +52,9 @@ newPackage = method(
 	  Using => {}, 
 	  Version => "0.0", 
 	  DebuggingMode => false,
+	  BriefTitle => null,
+	  Headline => null,
 	  TopNodeName => null } )
--- newPackage(Package) := opts -> p -> (
---      hide p;		    -- hide the old package and its dictionary
---      newPackage(p#"title",opts))
 newPackage(String) := opts -> (title) -> (
      originalTitle := title;
      filename := baseFilename currentFileName;
@@ -144,7 +143,12 @@ exportMutable List := v -> (
 
 addStartFunction( () -> if prefixDirectory =!= null then Main#"package prefix" = prefixDirectory )
 
-newPackage("Main", DebuggingMode => debuggingMode, Version => version#"VERSION", TopNodeName => "Macaulay 2" )
+newPackage("Main", 
+     DebuggingMode => debuggingMode, 
+     Version => version#"VERSION", 
+     TopNodeName => "Macaulay 2",
+     BriefTitle => "Macaulay2",				    -- for info file name, for example
+     Headline => "A computer algebra system designed to support algebraic geometry")
 
 exportMutable {
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol fullBacktrace, symbol backtrace, symbol packages,

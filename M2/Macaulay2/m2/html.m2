@@ -494,14 +494,17 @@ installPackage Package := o -> pkg -> (
      printWidth = 79;
      infodir := buildDirectory|LAYOUT#"info";
      makeDirectory infodir;
-     infobasename := (if pkg === Main then "Macaulay2" else pkg#"title")|".info";
+     infotitle := if pkg.Options.BriefTitle =!= null then pkg.Options.BriefTitle else pkg#"title";
+     infobasename := infotitle|".info";
      infofile := openOut (infodir|infobasename);
      stderr << "--making info file in " << infofile << endl;
-     infofile << "This is " << infofile << " produced by Macaulay 2, version " << version#"VERSION" << endl << endl
-     << "INFO-DIR-SECTION Math" << endl
-     << "START-INFO-DIR-ENTRY" << endl
-     << "* Macaulay2: (Macaulay2).	A computer algebra system designed to support algebraic geometry" << endl
-     << "END-INFO-DIR-ENTRY" << endl << endl;
+     upto30 := t -> concatenate(t,30-#t:" ");
+     infofile << "This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
+     infofile << "INFO-DIR-SECTION Math" << endl;
+     infofile << "START-INFO-DIR-ENTRY" << endl;
+     infofile << upto30 concatenate( "* ", infotitle, ": (", infotitle, ").") << "  ";
+     infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay 2 package") << endl;
+     infofile << "END-INFO-DIR-ENTRY" << endl << endl;
      traverse(unbag pkg#"table of contents", tag -> (
 	       checkIsTag tag;
 	       key := DocumentTag.Key tag;

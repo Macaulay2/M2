@@ -409,8 +409,8 @@ fixupTable := new HashTable from {
      FileName => identity,
      Headline => identity,
      Description => extractExamples @@ hypertext,
-     Caveat => v -> if v =!= null then fixup SEQ { PARA BOLD "Caveat", SEQ v },
-     SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ enlist v) },
+     Caveat => v -> if v =!= null then fixup SEQ { HEADER2 "Caveat", SEQ v },
+     SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { HEADER2 "See also", UL (TO \ enlist v) },
      Subnodes => v -> MENU apply(nonNull enlist v, x -> fixup (
 	       if class x === TO then x
 	       else if class x === TOH then TO x#0
@@ -592,9 +592,9 @@ makeDocBody Thing := key -> (
 	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
 	       then PARA {docBody}
-	       else SEQ { PARA BOLD "Description", PARA {docBody} })))
+	       else SEQ { HEADER2 "Description", PARA {docBody} })))
 
-title := s -> TITLE { STRONG formatDocumentTag s, commentize headline s }
+title := s -> ( HEADER1 formatDocumentTag s, PARA headline s )
 
 type := S -> fixup (
      s := value S;
@@ -745,7 +745,7 @@ synopsis Thing := key -> (
      out = alter \ out;
      if #inp > 0 or #ino > 0 or #out > 0 then (
 	  fixup SEQ {				  -- to be implemented
-     	       PARA BOLD "Synopsis",
+     	       HEADER2 "Synopsis",
 	       UL {
      	       	    if usa =!= null then SEQ { "Usage: ", if class usa === String then TT usa else usa},
 		    if fun =!= null then SEQ { "Function: ", TO fun }
@@ -799,8 +799,8 @@ documentation String := key -> (
 	  documentation t)
      else (
 	  b := makeDocBody key;
-	  if b === null then b = {};
-	  Hypertext join({title key}, b, {caveat key, seealso key, theMenu key})))
+	  if b === null then b = ();
+	  Hypertext splice(title key, b, caveat key, seealso key, theMenu key)))
 
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
@@ -849,31 +849,26 @@ seecode := x -> (
      if n =!= null 
      -- and height n + depth n <= 10 
      and width n <= maximumCodeWidth
-     then PARA { BOLD "Code", PRE demark(newline,unstack n) }
+     then ( HEADER2 "Code", PRE demark(newline,unstack n) )
      )
 
 documentationValue := method()
-documentationValue(Symbol,Function) := (s,f) -> SEQ { 
-     ret f, 
-     fmeth f,
-     -- seecode f 
-     }
+documentationValue(Symbol,Function) := (s,f) -> splice ( ret f, fmeth f )
 documentationValue(Symbol,Type) := (s,X) -> (
      syms := unique flatten(values \ globalDictionaries);
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableMethod key), (key,Y) -> key);
      b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
-     SEQ {
-	  if #b > 0 then SEQ { PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b},
-	  if #a > 0 then PARA {"Functions and methods returning ", indefinite synonym X, " :", smenu a },
-	  if #c > 0 then PARA {"Methods for using ", indefinite synonym X, " :", smenu c},
-	  if #e > 0 then PARA {"Fixed objects of class ", toString X, " :", smenu e},
-	  })
-documentationValue(Symbol,HashTable) := (s,x) -> (
+     splice (
+	  if #b > 0 then ( PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b),
+	  if #a > 0 then ( PARA {"Functions and methods returning ", indefinite synonym X, " :"}, smenu a ),
+	  if #c > 0 then ( PARA {"Methods for using ", indefinite synonym X, " :"}, smenu c),
+	  if #e > 0 then ( PARA {"Fixed objects of class ", toString X, " :"}, smenu e)))
+documentationValue(Symbol,HashTable) := (s,x) -> splice (
      c := documentableMethods x;
-     SEQ { if #c > 0 then PARA {"Functions installed in ", toString x, " :", smenu c}})
-documentationValue(Symbol,Thing) := (s,x) -> SEQ { }
+     if #c > 0 then (PARA {"Functions installed in ", toString x, " :"}, smenu c))
+documentationValue(Symbol,Thing) := (s,x) -> ()
 documentationValue(Symbol,Package) := (s,pkg) -> (
      e := pkg#"exported symbols";
      a := select(e,x -> instance(value x,Function));	    -- functions
@@ -887,39 +882,26 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
      c := select(e,x -> instance(value x,Symbol));	    -- symbols
      d := toList(set e - set a - set b - set c);	    -- other things
      fn := pkg#"title" | ".m2";
-     SEQ {
-	  PARA BOLD "Version", PARA { "This documentation describes version ", pkg.Options.Version, " of the package." },
-	  PARA BOLD "Source code", PARA { "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "." },
-	  if #pkg#"exported symbols" > 0 then PARA {
-	       BOLD "Exports",
+     splice (
+	  HEADER2 "Version", "This documentation describes version ", pkg.Options.Version, " of the package.",
+	  HEADER2 "Source code", "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, ".",
+	  if #pkg#"exported symbols" > 0 then (
+	       HEADER2 "Exports",
 	       UL {
 		    if #b > 0 then SEQ {"Types", smenu b},
 		    if #a > 0 then SEQ {"Functions", smenu a},
 		    if #m > 0 then SEQ {"Methods", smenu m},
 		    if #c > 0 then SEQ {"Symbols", smenu c},
-		    if #d > 0 then SEQ {"Other things", smenuCLASS d},
-		    }
-	       },
-	  }
-     )
+		    if #d > 0 then SEQ {"Other things", smenuCLASS d}})))
 
 documentation Symbol := S -> (
      a := apply(select(optionFor S,f -> isDocumentableMethod f), f -> f => S);
      b := documentableMethods S;
-     Hypertext {
-	  title S, 
-	  synopsis S,
-	  makeDocBody S,
-	  op S,
+     Hypertext splice ( title S, synopsis S, makeDocBody S, op S,
 	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", smenu a},
 	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", smenu b},
      	  documentationValue(S,value S),
-	  type S,
-	  caveat S,
-	  seealso S,
-	  theMenu S
-     	  }
-     )
+	  type S, caveat S, seealso S, theMenu S ))
 
 documentation Sequence := key -> (
      if key#?-1 and instance(key#-1,Symbol) then (		    -- optional argument
@@ -927,32 +909,17 @@ documentation Sequence := key -> (
 	  opt := key#-1;
 	  if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
 	  default := (options fn)#opt;
-	  Hypertext { 
-	       title key,
-	       synopsis key,
-	       makeDocBody key,
-	       caveat key,
+	  Hypertext splice ( title key, synopsis key, makeDocBody key, caveat key,
 	       PARA BOLD "Further information", 
 	       fixup UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT toString default },
 		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
 		    SEQ{ "Option name: ", TOH opt }
 		    },
-	       seealso key,
-	       theMenu key
-	       }
-	  )
+	       seealso key, theMenu key ))
      else (						    -- method key
 	  if null === lookup key then error("expected ", toString key, " to be a method");
-	  Hypertext {
-	       title key, 
-	       synopsis key,
-	       makeDocBody key,
-	       caveat key,
-	       seealso key,
-	       theMenu key
-	       }
-	  ))
+	  Hypertext splice ( title key, synopsis key, makeDocBody key, caveat key, seealso key, theMenu key )))
 
 documentation Thing := x -> if ReverseDictionary#?x then return documentation ReverseDictionary#x else SEQ{ " -- undocumented -- "}
 
