@@ -490,6 +490,7 @@ installPackage Package := o -> pkg -> (
 	  then (
 	       stderr << "--copying auxiliary source files from " << dn << endl;
 	       makeDirectory (buildDirectory|srcDirectory);
+	       buildDirectory|srcDirectory|".linkdir" << close;
 	       copyDirectory(dn, buildDirectory|srcDirectory, Verbose => debugLevel > 0, Exclude => {"CVS"});
 	       );
 
@@ -507,6 +508,7 @@ installPackage Package := o -> pkg -> (
      tmpfn := fkey -> exampleDir|toFilename fkey|".errors";
      stderr << "--making example input files in " << exampleDir << endl;
      makeDirectory exampleDir;
+     exampleDir|".linkdir" << close;
      scan(pairs pkg#"example inputs", (fkey,inputs) -> (
 	       inf := infn fkey;
 	       val := concatenate apply(inputs, s -> s|"\n");
@@ -526,6 +528,7 @@ installPackage Package := o -> pkg -> (
      rawdbnametmp := rawdbname | ".tmp";
      stderr << "--storing raw documentation in " << rawdbname << endl;
      makeDirectory docDir;
+     docDir|".linkdir" << close;
      if fileExists rawdbnametmp then unlink rawdbnametmp;
      if fileExists rawdbname then (
 	  tmp := openDatabase rawdbname;   -- just to make sure the database file isn't open for writing
@@ -704,7 +707,8 @@ installPackage Package := o -> pkg -> (
      -- make html files
      htmlDirectory = LAYOUT#"packagehtml" pkg#"title";
      setupButtons();
-     makeDirectory (buildDirectory|htmlDirectory);     
+     makeDirectory (buildDirectory|htmlDirectory);
+     buildDirectory|htmlDirectory|".linkdir" << close;
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      scan(nodes, tag -> (
 	  key := DocumentTag.Key tag;

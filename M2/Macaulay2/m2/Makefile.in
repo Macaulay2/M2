@@ -172,16 +172,16 @@ tmp :; mkdir "$@"
 #	see startup.m2, too, for setting "prefixDirectory" to ./tmp while building, so it can find example output files
 
 MAKEINFO = true
-EXAMPLEOPTIONS := -q
+M2OPTIONS := -q
 ifndef INTERACTIVE
-EXAMPLEOPTIONS += --stop
-EXAMPLEOPTIONS += --no-debug
+M2OPTIONS += --stop
+M2OPTIONS += --no-debug
 endif
-EXAMPLEOPTIONS += -e errorDepth=0
-EXAMPLEOPTIONS += -e debugLevel=0
-EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => ".") '
+M2OPTIONS += -e errorDepth=0
+M2OPTIONS += -e debugLevel=0
+M2OPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => ".", MakeLinks => false) '
 ifndef INTERACTIVE
-EXAMPLEOPTIONS += -e 'exit 0 '
+M2OPTIONS += -e 'exit 0 '
 endif
 
 tmp/.documentation-made : $(DOCSEQUENCE)
@@ -189,7 +189,7 @@ tmp/.documentation-made : $(DOCSEQUENCE)
 	@ cd tmp && \
 	        echo "make: Entering directory \`tmp'" >&2 \
 		&& \
-		(set -x ; time ../../bin/M2 $(EXAMPLEOPTIONS)) \
+		(set -x ; time ../../bin/M2 $(M2OPTIONS)) \
 		|| \
 		(echo "make: Leaving directory \`tmp'" >&2 ; false )
 	@ echo "make: Leaving directory \`tmp'"

@@ -38,6 +38,7 @@ exportMutable (
 	)
 
 export (
+        symbol MakeLinks,
         symbol Undo,
         symbol symlinkDirectory,
         symbol symlink,
