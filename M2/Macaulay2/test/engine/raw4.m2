@@ -16,12 +16,12 @@ G = mat {{x,y,z}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
 rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp -- Groebner basis
-assert(m == mat{{z,y,x}})
+assert(m === mat{{z,y,x}})
 
 Gcomp = rawGB(G,true,3,{},false,0,0,0)
 rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp -- Groebner basis
-assert(m == mat{{z,y,x}})
+assert(m === mat{{z,y,x}})
 
 msyz = rawGBSyzygies Gcomp
 zeroelem = rawFromNumber(R1,0)
@@ -32,7 +32,7 @@ G = mat {{x,y^2,z^3}}
 Gcomp = rawGB(G,false,0,{},false,0,2,0)
 rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp -- Groebner basis
-
+assert(m === G)
 
 -- Test 1A.
 G = mat {{x,y,z^2, x*z+z^2}}
@@ -54,56 +54,68 @@ Gcomp = rawGB(G,true,-1,{},false,0,0,0)
 rawStartComputation Gcomp
 m = rawGBSyzygies Gcomp
 m = rawGBGetMatrix Gcomp
-rawStatus1 Gcomp
-rawStatus2 Gcomp
+RawStatusCodes#(rawStatus1 Gcomp)
+rawStatus2 Gcomp -- last degree something was computed in
 
 -- Test 3. 
 
 G = mat{{(3*x+y+z)^2, (7*x+2*y+3*z)^2}}
-Gcomp = rawGB(G,false,0,false,0,0,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) -- gb
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
 answerm = mat{{21*x^2-2*y^2+42*x*z+8*y*z+13*z^2,
 	       42*x*y+13*y^2-84*x*z-10*y*z-32*z^2,
 	       y^3-6*y^2*z+12*y*z^2-8*z^3}}
-assert(m == answerm)
+assert(m == answerm)  -- is this correct????
 
 -- Test 4. -- module GB
 R2 = polyring(rawQQ(), symbol a .. symbol f)
 
 m = mat {{a,b,c},{d,e,f}}
-Gcomp = rawGB(m,false,0,false,0,0,0)
-mgb = rawResolutionGetMatrix(Gcomp,1,false) -- gb
+Gcomp = rawGB(m,false,0,{},false,0,0,0)
+rawStartComputation Gcomp
+mgb = rawGBGetMatrix Gcomp
 
-Gcomp = rawGB(m,true,-1,false,0,0,0)
-mgb = rawResolutionGetMatrix(Gcomp,1,false) -- gb
-msyz = rawResolutionGetMatrix(Gcomp,2,false) -- gb
-mchange = rawGBChangeOfBasis(Gcomp,1)
-m
+
+Gcomp = rawGB(m,true,-1,{},false,0,0,0)
+rawStartComputation Gcomp
+mgb = rawGBGetMatrix Gcomp
+msyz = rawGBSyzygies Gcomp
+mchange = rawGBChangeOfBasis Gcomp
 assert(mgb == m * mchange)
+mgb
+m * mchange
+m
+
 m * mchange
 -- Test 5. -- Semi-random cubics
 M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
-Gcomp = rawGB(M,false,0,false,0,0,0)
-time mgb = rawResolutionGetMatrix(Gcomp,1,false); -- gb
-Gcomp = rawGB(M,false,0,false,0,1,0)
-time mgb = rawResolutionGetMatrix(Gcomp,1,false); -- gb -- -- crashes due to bad access in spair_sorter
-rawGBGetLeadTerms(Gcomp,6,1)
+Gcomp = rawGB(M,false,0,{0},false,0,0,0)
+rawStartComputation Gcomp
+mgb = rawGBGetMatrix Gcomp
+Gcomp = rawGB(M,false,0,{0},false,0,1,0)
+rawStartComputation Gcomp
+mgb = rawGBGetMatrix Gcomp
+
+rawGBGetLeadTerms(Gcomp,6)
 
 -- Test 6. -- same in char 101
-R2 = polyring(rawZZp(101,rawMonoid()), symbol a .. symbol f)
+R2 = polyring(rawZZp(101), symbol a .. symbol f)
 M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
-Gcomp = rawGB(M,false,0,false,0,0,0)
-time mgb = rawResolutionGetMatrix(Gcomp,1,false); -- gb
+Gcomp = rawGB(M,false,0,{0},false,0,0,0)
+rawStartComputation Gcomp  -- crashes due to bad access in spair_sorter
+mgb = rawGBGetMatrix Gcomp
+Gcomp = rawGB(M,false,0,{0},false,0,1,0)
+rawStartComputation Gcomp
+mgb = rawGBGetMatrix Gcomp
 
-Gcomp = rawGB(M,false,0,false,0,1,0)
-time mgb = rawResolutionGetMatrix(Gcomp,1,false); -- crashes due to bad access in spair_sorter
-
+rawGBGetLeadTerms(Gcomp,6)
 
 rawGBSetStop(Gcomp, ...) -- MES: make sure the default is set correctly
 -- Actual computation is done in, eg:
 
-rawResolutionGetMatrix(Gcomp,1,true) -- mingens
-rawResolutionGetMatrix(Gcomp,2,false) -- syz matrix
+mmin = rawGBMinimalGenerators Gcomp
+msyz = rawGBSyzygies Gcomp
 
 --- Tests for gbA: inhomogeneous and local
 load "raw-util.m2"
@@ -111,8 +123,10 @@ R1 = polyring(rawQQ(), (x,y,z))
 algorithm = 1
 
 G = mat {{x*y-1, x^2-x, x^3-z-1}}
-Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+mgb = rawGBGetMatrix Gcomp
+assert(mgb === mat{{z,y-1,x-1}})
 
 R2 = rawPolynomialRing(rawQQ(), lex{x,y,z})
 x = rawRingVar(R2,0,1)
@@ -120,58 +134,67 @@ y = rawRingVar(R2,1,1)
 z = rawRingVar(R2,2,1)
 algorithm = 1
 G = mat {{x*y-1, x^2-x, x^3-z-1}}
-Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
+Gcomp = rawGB(G,false,0,{0},false,0,algorithm,0)
+rawStartComputation Gcomp
+mgb = rawGBGetMatrix Gcomp
 
 
 G = mat {{x^2*y-y^3-1, x*y^2-x-1}}
-Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
--- check: this is correct.  ACTUALLY: it is NOT CORRECT: the first element is not 
--- monic!!  Also, I haven't checked the actual polynomials yet.
-assert(m == mat{{y^7-2*y^5+y^4+y^3-2*y^2-y+1, x-y^6+y^4-y^3+y+1}})
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+mgb = rawGBGetMatrix Gcomp
+assert(mgb === mat{{y^7-2*y^5+y^4+y^3-2*y^2-y+1, x-y^6+y^4-y^3+y+1}})
+-- I haven't checked the actual polynomials yet. !!
 
 G = mat {{x^2*y-17*y^3-23, 3*x*y^2-x-6}}
-Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+mgb = rawGBGetMatrix Gcomp
 
 -- fixed: BUG -- actually 2 separate bugs here: depending in the ring
 --        used (now works with both R1,R2).
 f1 = mat {{x+y+z, x*y+y*z+z*x, x*y*z-1, (x+y+z)^5+x*(x*y*z-1) + 13}}
-G1 = rawGB(f1,true,-1,false,0,algorithm,0)
-gb1 = rawResolutionGetMatrix(G1,1,false) -- Groebner basis
-ch1 = rawGBChangeOfBasis(G1,1)
-f2 = rawResolutionGetMatrix(G1,2,false)
-assert(f1 * ch1 - gb1 == 0)
+G1 = rawGB(f1,true,-1,{},false,0,algorithm,0)
+rawStartComputation G1
+gb1 = rawGBGetMatrix G1
+ch1 = rawGBChangeOfBasis G1
+f2 = rawGBSyzygies G1
+assert(f1 * ch1 - gb1 == 0) -- bad memory access CRASH
 assert(f1 * f2 == 0)
 
-G2 = rawGB(f2,true,-1,false,0,algorithm,0)
-gb2 = rawResolutionGetMatrix(G2,1,false) -- Groebner basis
-ch2 = rawGBChangeOfBasis(G2,1)
-f3 = rawResolutionGetMatrix(G2,2,false)
+G2 = rawGB(f2,true,-1,{},false,0,algorithm,0)
+rawStartComputation G2
+gb2 = rawGBGetMatrix G2
+ch2 = rawGBChangeOfBasis G2
+f3 = rawGBSyzygies G2
 assert(f2 * ch2 - gb2 == 0) 
 assert(f2 * f3 == 0) 
+rawGBGetLeadTerms(Gcomp,3)
 --------------------------------
 
-
+R2 = rawPolynomialRing(rawQQ(), lex{x,y,z})
+algorithm = 1
 G = mat {{x+y+z, x*y+y*z+z*x, x*y*z-1, (x+y+z)^5+x*(x*y*z-1) + 13}}
-Gcomp = rawGB(G,true,-1,false,0,algorithm,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
-ch = rawGBChangeOfBasis(Gcomp,1)
+Gcomp = rawGB(G,true,-1,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
+ch = rawGBChangeOfBasis Gcomp
 G * ch
-syzm = rawResolutionGetMatrix(Gcomp,2,false) -- syz matrix
+syzm = rawGBSyzygies Gcomp
 assert(G * syzm == 0)
-Gcomp = rawGB(syzm,true,-1,false,0,algorithm,0)
-ch = rawGBChangeOfBasis(Gcomp,1)
-g2 = rawResolutionGetMatrix(Gcomp,1,false)
-syzm * ch - g2  -- 8..10 elements are NOT zero: BUG
-syz2m = rawResolutionGetMatrix(Gcomp,2,false) -- syz matrix
 
+Gcomp = rawGB(syzm,true,-1,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+ch = rawGBChangeOfBasis(Gcomp)
+g2 = rawGBGetMatrix Gcomp
+syzm * ch - g2  -- 8..10 elements are NOT zero: BUG
+syz2m = rawGBSyzygies Gcomp
 assert(syzm * syz2m == 0)
 
 G = mat {{3*x-y^20, 4*y-z^20, x*y-x-1}}
-Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
 
 -- Koszul syzygies
 load "raw-util.m2"
@@ -183,15 +206,19 @@ w = R1_3
 t = R1_4
 algorithm = 1
 G = mat {{x-1,y-t^3-2,2*z-t^7-3,5*w-t-7}}
-Gcomp = rawGB(G,true,-1,false,0,algorithm,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
-m1 = rawResolutionGetMatrix(Gcomp,2,false)
+Gcomp = rawGB(G,true,-1,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
+m1 = rawGBSyzygies Gcomp
 assert(G * m1 == 0)
-Gcomp = rawGB(m1,true,-1,false,0,algorithm,0)
-m2 = rawResolutionGetMatrix(Gcomp,2,false) -- syz
+Gcomp = rawGB(m1,true,-1,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+m2 = rawGBSyzygies Gcomp
 assert(m1 * m2 == 0)
-Gcomp = rawGB(m2,true,-1,false,0,algorithm,0)
-m3 = rawResolutionGetMatrix(Gcomp,2,false) -- syz
+
+Gcomp = rawGB(m2,true,-1,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+m3 = rawGBSyzygies Gcomp
 assert(m2 * m3 == 0)
 
 -- M2 code:
@@ -208,16 +235,18 @@ ooo * oo
 ///
 
 load "raw-util.m2"
+algorithm = 1
+
 R1 = rawPolynomialRing(rawQQ(), elim({t},{a,b,c,d}))
 t = rawRingVar(R1,0,1)
 a = rawRingVar(R1,1,1)
 b = rawRingVar(R1,2,1)
 c = rawRingVar(R1,3,1)
 d = rawRingVar(R1,4,1)
-algorithm = 1
 G = mat{{b^4-13*a*c, 12*b*c^2-7*a*d^3, t*a-1}}
-Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis -- infinite loop BUG!!
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp -- Groebner basis -- infinite loop BUG!!
+m = rawGBGetMatrix Gcomp
 
 R2 = rawPolynomialRing(rawQQ(), lex{u,v,x,y,z})
 u = rawRingVar(R2,0,1)
@@ -226,11 +255,15 @@ x = rawRingVar(R2,2,1)
 y = rawRingVar(R2,3,1)
 z = rawRingVar(R2,4,1)
 G = mat{{x - 3*u-3*u*v^2+u^3, y-3*v-3*u^2*v+v^3, z-3*u^2+3*v^2}}
-Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-time m = rawResolutionGetMatrix(Gcomp,1,false); -- Groebner basis. infinite loop BUG
-rawGBGetLeadTerms(Gcomp,6,1)
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp  -- Groebner basis -- infinite loop BUG!!
+time m = rawGBGetMatrix Gcomp
+rawGBGetLeadTerms(Gcomp,6)
 
-time rawResolutionGetMatrix(rawGB(oo,false,0,false,0,algorithm,0), 1,true)
+rawGB(oo,false,0,{},false,0,algorithm,0)
+rawStartComputation oo
+rawGBGetMatrix oo
+
 -- Is this correct?
 
 -- Try the other routines:
@@ -248,15 +281,17 @@ c = rawRingVar(R1,2,1)
 d = rawRingVar(R1,3,1)
 algorithm = 1
 G = mat{{b^4-13*a*c, 12*b*c^2-7*a*b*d^3-1}}
-Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-time m = rawResolutionGetMatrix(Gcomp,1,false); -- Groebner basis
-m
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
+
 f = (7*a^2+a+1)*(a^20+a^17+4*a^13+1)^7
 g = (7*a^2+a+1)*(6*a^20-123*a^17+4*a^13+1)^6
 G = mat{{f,g}}
-Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-time m = rawResolutionGetMatrix(Gcomp,1,false); -- Groebner basis
-m
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+time rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
+assert(m === mat{{7*a^2+a+1}})
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw4.okay "
