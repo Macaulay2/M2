@@ -366,7 +366,7 @@ makeTableOfContents := () -> (
 
 packageSuffix = ".Macaulay2/"
 installPackage = method(Options => { 
-	  Prefix => () -> getenv "HOME" | "/" | packageSuffix,
+	  Prefix => () -> getenv "HOME" | "/" | packageSuffix | "encap/",
 	  Encapsulate => true,
 	  IgnoreExampleErrors => true,
 	  MakeInfo => true,
