@@ -71,7 +71,7 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# MEMDEBUG    := TRUE' >>$@
 	echo '# DEBUG       := TRUE' >>$@
 	echo '# VERBOSE     := TRUE' >>$@
-	echo '# GCMALLOC    := TRUE' >>$@
+	echo 'GCMALLOC    := TRUE' >>$@
 	echo '# NODUMPDATA  := TRUE' >>$@
 	echo '# NOMP        := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
