@@ -47,18 +47,11 @@ DocumentationProvided = set apply(topicList(), toString)
 scan(keys DocumentationProvided, s -> reachable#s = false)
 reach2 TO "Macaulay 2"
 
-fn = "docStructure.out"
-o = openOut fn
-o << world << endl
-
+o = "docStructure.out" << world << endl
 unreachable = applyPairs(new HashTable from reachable, (k,v) -> if not v then (k,true))
-scan(sort keys unreachable, s -> (
-	  o << "documentation for '" << s << "' not reachable through main menus" << endl
-	  )
+scan(
+     sort keys unreachable, 
+     s -> o << "documentation for '" << s << "' not reachable through main menus" << endl
      )
-
 o << close
-
-<< "Documentation structure written to file " << fn << endl
-
-
+<< "Documentation structure written to file " << o << endl

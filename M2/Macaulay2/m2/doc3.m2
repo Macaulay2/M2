@@ -1033,13 +1033,21 @@ document { File,
 	  },
      "Information about files",
      MENU { 
-	  {TO "width", "        -- width of a terminal"},
-          {TO "openFiles", "    -- list open files"},
-	  {TO "isOpenFile", "   -- whether it's an open file"},
-	  {TO "isInputFile", "  -- whether it's an input file"},
-	  {TO "isOutputFile", " -- whether it's an output file"},
-	  {TO "isListener", "   -- whether it's a listener"},
+	  {TO "width", "           -- width of a terminal"},
+          {TO "openFiles", "       -- list open files"},
+	  {TO "isOpenFile", "      -- whether it's an open file"},
+	  {TO "isInputFile", "     -- whether it's an input file"},
+	  {TO "isOutputFile", "    -- whether it's an output file"},
+	  {TO "isListener", "      -- whether it's a listener"},
+	  {TO "connectionCount", " -- number of connections accepted by a listener"},
 	  },
+     }
+
+document { connectionCount,
+     TT "connectionCount f", " -- returns the number of connections accepted by 
+     a listener so far.",
+     PARA,
+     SEEALSO "File"
      }
 
 ccc := echoOn

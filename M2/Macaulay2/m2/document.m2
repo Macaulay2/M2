@@ -58,21 +58,19 @@ docFilename := () -> (
      progname := commandLine#0;
      if substring(progname,0,1) === "\"" then progname = substring(progname,1);
      if version#"operating system" === "MACOS" then "::cache:Macaulay2-doc"
-     else (
-     	  v := lines(progname,pathSeparator);
-     	  v = apply(#v-2, i -> v#i);		  -- drop isn't defined yet
-     	  concatenate(between(pathSeparator,v),
-	       pathSeparator, "cache",
-	       pathSeparator, "Macaulay2", docExtension())))
+     else concatenate(
+	  between(pathSeparator,drop(lines(progname,pathSeparator),-2)),
+	  pathSeparator, "cache", pathSeparator, "Macaulay2", docExtension()))
 
 if phase === 1 then addStartFunction( 
      () -> (
+	  filename := docFilename();
 	  try (
-	       DocDatabase = openDatabase docFilename();
-	       -- << "--using help file " << docFilename() << endl;
+	       DocDatabase = openDatabase filename;
+	       -- << "--using help file " << filename << endl;
 	       )
 	  else (
-	       stderr << "--warning: couldn't open help file " << docFilename() << endl;
+	       stderr << "--warning: couldn't open help file " << filename << endl;
 	       DocDatabase = new MutableHashTable;
 	       )))
 
@@ -381,7 +379,7 @@ processExamples := (docBody) -> (
      examples := extractExamples docBody;
      if phase > 1 and #examples > 0 then (
 	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".m2");
-	  -- exampleOutputFile << "-- " << formatDocumentTag nodeName << endl;
+	  -- exampleOutputFile << "-- " << nodeName << endl;
 	  exampleResults = try get (nodeBaseFilename | ".out") else (
 	       if phase === 4 or phase === 5 then (
 		    stderr << "warning : can't open input file '" 
