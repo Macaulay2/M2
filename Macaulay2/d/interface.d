@@ -2898,15 +2898,15 @@ setupfun("rawSolve", rawSolve);
 export rawLLL(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is M:RawMutableMatrix do
-     when s.1 is threshold:RawRingElement do (
+     when s.1 is threshold:Rational do (
 	  if Ccode(bool, 
 	       "(M2_bool)IM2_LLL(", 
 	       "(MutableMatrix *)", M, ",", 
-	       "(RingElement *)", threshold,
+	       "(M2_Rational)", threshold,
 	       ")")
 	  then nullE
 	  else buildErrorPacket(EngineError("error calling engine LLL routine")))
-     else WrongArg(1,"a raw ring element")
+     else WrongArg(1,"a rational number")
      else WrongArg(0,"a mutable raw matrix")
      else WrongNumArgs(2));
 setupfun("rawLLL",rawLLL);
