@@ -1037,7 +1037,7 @@ html ExampleTABLE := x -> concatenate(
 	       "  </tr>", newline
 	       )
 	  ),
-     "</table></p>"
+     "</table></p><p>"
      )			 
 
 net PRE := x -> net concatenate x
