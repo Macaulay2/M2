@@ -37,7 +37,7 @@ randomColumns = (M,n) -> (
 
 -- Random permutation
 randomPermutation = (n) -> (
-     m := new MutableList from elements(0..n-1);
+     m := new MutableList from toList (0..n-1);
      scan(1..n-1, i -> (
 	       j := random i;
 	       x := m#i;
