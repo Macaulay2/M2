@@ -3,6 +3,19 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+The operation of 'path' with 'load' has changed slightly -- no matter what
+the path is, we first look in the directory containing the file in which the
+call to 'load' is.  The makes it easy to load a set of related files stored
+in a directory - the first one can load the others without knowing the name
+of the directory, and without the directory being on the path.
+
+'path' changed (!) -- we now try to load a file by simply concatenating
+each member of 'path' with the requested file name.  That means you may
+have to end each directory name on the path with your directory separator
+character (which is '/' under unix).  If you want compatibility between
+old and new versions of M2, just add both strings to your path, one with
+and one without the separator.
+
 new function 'isConstant' for telling whether a polynomial is constant
 
 'factor' for polynomials changed so the last constant factor is now only given

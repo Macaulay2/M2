@@ -298,6 +298,7 @@ export process():void := (
      stdout.outisatty =   0 != isatty(1) ;
      stderr.outisatty =   0 != isatty(2) ;
      phase := 0;
+     setvalue(currentFileDirectory,Expr(getcwd()));
      foreach arg at i in args do (
 	  if arg === "--" then phase = phase + 1
 	  else if reloaded == phase then (
