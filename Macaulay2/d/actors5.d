@@ -658,7 +658,7 @@ stack(s:Sequence):Expr := (
 	  when f 
 	  is n:Net do nothing
 	  is s:string do nothing
-	  else return(WrongArg(i+1,"a net")));
+	  else return(WrongArg("a list of nets or strings")));
      v := new array(Net) len length(s) do (
 	  foreach f in s do (
 	       when f 
@@ -1230,3 +1230,35 @@ take(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("take",take);
+
+anyhex(s:string):bool := (
+     foreach c in s do if c == '+' || c == '%' then return(true);
+     false);
+lengthUnhexed(s:string):int := (
+     n := 0;
+     foreach c in s do if c == '%' then n=n-1 else n=n+1;
+     if n < 0 then 0 else n);
+hex(c:char):int := (
+     i := int(c);
+     if i >= int('0') && i <= int('9') then i - int('0')
+     else if i >= int('A') && i <= int('F') then i + (10 - int('A'))
+     else if i >= int('a') && i <= int('f') then i + (10 - int('a'))
+     else 0);
+unhex(s:string):string := (
+     if !anyhex(s) then s
+     else new string len lengthUnhexed(s) do (
+	  hexing := 0;
+	  hexval := 0;
+	  foreach c in s 
+	  do   if hexing == 2 then (hexing = 1; hexval = hex(c); ) 
+	  else if hexing == 1 then (hexing = 0; provide char(hexval * 16 + hex(c))) 
+	  else if c == '%'    then (hexing = 2;)
+	  else if c == '+'    then (provide ' ';)
+	  else (provide c;);
+	  while true do provide ' '			    -- shouldn't happen
+	  ));
+unhex(e:Expr):Expr := (
+     when e
+     is s:string do Expr(unhex(s))
+     else WrongArg("a string"));
+setupfun("unhex",unhex);

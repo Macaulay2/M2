@@ -614,9 +614,28 @@ document { quote String,
  	  (TO "substring", " -- substring extraction"),
  	  (TO "concatenate", " -- concatenation"),
  	  (TO "characters", " -- extraction of characters"),
+	  (TO "unhex", "      -- translate key strings from web browsers"),
  	  (TO "transnet", "   -- convert integers into network order"),
 	  (TO "match", "      -- match patterns")
  	  }
+     }
+
+document { quote unhex,
+     TT "unhex s", " -- translates a string provided as the trailing part
+     of a URL by a web browser.",
+     PARA,
+     "A web browser sometimes has to put special characters into a URL.  So
+     such characters do not interfere with other things, they are translated
+     into a special form.  For example, each space is replaced by ", TT "+", "
+     and various other characters (including ", TT "/", " and ", TT "%", ")
+     are replaced by ", TT "%", " followed by two hex digits giving the numerical
+     code of the character in hexadecimal notation.",
+     PARA,
+     "The purpose of ", TO "unhex", " is to undo such translations, providing
+     the original string.",
+     EXAMPLE {
+	  ///unhex "abcd+efgh%2B"///
+	  }
      }
 
 document { "///",
@@ -713,13 +732,16 @@ document { quote horizontalJoin,
 
 document { quote stack,
      TT "stack(m,n,...)", " -- joins nets or strings by concatenating
-     them vertically.  The baseline in the result is the baseline of the
-     first one.",
+     them vertically.  The baseline of the result is the baseline of the
+     first argument.",
      PARA,
      "Nested sequences among the arguments are first spliced together.",
      PARA,
      "If there are no arguments, then the net returned has zero height and
      zero depth.  This might be unexpected.",
+     PARA,
+     "Tab characters in any of the strings are first expanded into spaces,
+     assuming tab stops at every eighth column.",
      SEEALSO {"Net", (quote ||, Net, Net)}
      }
 

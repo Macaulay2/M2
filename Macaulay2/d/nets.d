@@ -12,7 +12,25 @@ export Net := {
      body:array(string)			  -- one string for each row, read-only
      };
 
-export toNet(s:string):Net := Net(1,length(s),array(string)(s));
+anytabs(s:string):bool := (
+     foreach c in s do if c == '\t' then return(true);
+     false);
+lengthUntabified(s:string):int := (
+     n := 0;
+     foreach c in s do n = if c == '\t' then ((n+8)/8)*8 else n+1;
+     n);
+untabify(s:string):string := (
+     if anytabs(s) then (
+	  new string len lengthUntabified(s) do
+	  foreach c at n in s do if c == '\t' 
+	  then for ((n+8)/8)*8-n do provide ' '
+	  else provide c
+	  )
+     else s);
+export toNet(s:string):Net := (
+     s = untabify(s);
+     Net(1,length(s),array(string)(s))
+     );
 export toNet(c:char):Net := toNet(string(c));
 export RaiseNet(n:Net,i:int):Net := Net(n.height+i,n.width,n.body);
 export HorizontalJoin(v:array(Net)):Net := (

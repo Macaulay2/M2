@@ -758,17 +758,17 @@ tostringfun(e:Expr):Expr := (
 	  else if f == stdin then "stdin"
 	  else if f == stdout then "stdout"
 	  else if f == stderr then "stderr"
-	  else if f.listener then "--open listener "+f.filename+" [" + tostring(f.numconns) + "]--"
+	  else if f.listener then "--listener "+f.filename+" [" + tostring(f.numconns) + "]--"
 	  else if f.numconns == 0 then (
-	       if f.input && f.output then "--open input output file "+f.filename+"--"
-	       else if f.input then "--open input file "+f.filename+"--"
-	       else if f.output then "--open output file "+f.filename+"--"
+	       if f.input && f.output then "--input output file "+f.filename+"--"
+	       else if f.input then "--input file "+f.filename+"--"
+	       else if f.output then "--output file "+f.filename+"--"
 	       else "--closed file--"
 	       )
 	  else (
-	       if f.input && f.output then "--open input output file "+f.filename+" [" + tostring(f.numconns) + "]--"
-	       else if f.input then "--open input file "+f.filename+" [" + tostring(f.numconns) + "]--"
-	       else if f.output then "--open output file "+f.filename+" [" + tostring(f.numconns) + "]--"
+	       if f.input && f.output then "--input output file "+f.filename+" [" + tostring(f.numconns) + "]--"
+	       else if f.input then "--input file "+f.filename+" [" + tostring(f.numconns) + "]--"
+	       else if f.output then "--output file "+f.filename+" [" + tostring(f.numconns) + "]--"
 	       else "--closed file--"
 	       )
 	  )

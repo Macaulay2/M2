@@ -613,6 +613,8 @@ export eval(c:Code):Expr := (
      	  if err.position == dummyPosition
 	  && int(p.reloaded) >= ErrorDepth 
 	  && !SuppressErrors then (
+	       interrupted = false;
+	       alarmed = false;
 	       if shown < 8 || recursiondepth < 8 then (
 		    -- print the error message
 		    if recursiondepth < 8

@@ -382,7 +382,7 @@ int fd;
 	    int n = read(fd,text+size,bufsize-size);
 	    if (ERROR == n) {
 #ifdef EINTR
-		 if (errno == EINTR) continue;
+		 if (errno == EINTR) break;
 #endif
 		 fatal("can't read file descriptor %d", fd);
 		 }
@@ -437,8 +437,14 @@ char *name;
 	  }
      else {
 	  struct hostent *t = gethostbyname(name);
-	  return t == NULL ? ERROR : *(int *)t->h_addr;
+	  if (t == NULL) {
+	    /* errno = ENXIO; */
+	    return ERROR;
 	  }
+	  else {
+	    return *(int *)t->h_addr;
+	  }
+     }
 #else
      return ERROR;
 #endif
@@ -453,8 +459,14 @@ char *name;
 	  }
      else {
 	  struct servent *t = getservbyname(name,"tcp");
-	  return t == NULL ? ERROR : t->s_port;
+	  if (t == NULL) {
+	    errno = ENXIO;
+	    return ERROR;
 	  }
+	  else {
+	    return t->s_port;
+	  }
+     }
 #else
      return ERROR;
 #endif
@@ -543,15 +555,20 @@ M2_string serv;
 
 M2_string system_syserrmsg()
 {
-     extern int errno, sys_nerr;
+     extern int errno, sys_nerr, h_nerr;
+     extern char * h_errlist[];
 #if 0
      extern char * sys_errlist[];
 #endif
-     return (
-	  errno == 0 && errno < sys_nerr 
-	  ? tostring("") 
-	  : tostring(sys_errlist[errno])
+     M2_string s = (
+	  h_errno > 0 && h_errno < h_nerr
+	  ? tostring(h_errlist[h_errno])
+	  : errno > 0 && errno < sys_nerr 
+	  ? tostring(sys_errlist[errno])
+	  : tostring("") 
 	  );
+     errno = h_errno = 0;
+     return s;
      }
 
 int system_run(M2_string command){
