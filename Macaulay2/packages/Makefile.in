@@ -29,7 +29,7 @@ phase3: $(DOC) $(TEST)
 	touch "$@"
 
 phase4: $(DOCFILES)
-	@ set -x; for i in $^ ; do ../bin/M2 -q -e 'phase=4; errorDepth 0' $$i -e 'exit 0' || exit 1; done
+	@ set -x; for i in $^ ; do ../bin/M2 -q -e 'phase=4; errorDepth = 0' $$i -e 'exit 0' || exit 1; done
 	touch "$@"
 TARGETDIR = cache/doc
 phase5 : $(TARGETDIR)/index.html

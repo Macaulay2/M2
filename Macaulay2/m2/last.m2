@@ -7,7 +7,7 @@
 -- if phase === 2 or phase === 4 or phase == 5 then load "Macaulay2-doc.m2"
 load "Macaulay2-doc.m2"
 
-setrecursionlimit 300
+recursionLimit = 300
 
 addStartFunction(() -> path = unique apply( path, minimizeFilename))
 addEndFunction(() -> (
@@ -18,11 +18,14 @@ addEndFunction(() -> (
 
 erase symbol outputSymbols
 
+testErrorDepth = () -> error "testing..."
+
 writableGlobals := set (
      symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory,
      symbol documentationPath, symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm,
      symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol currentPrompts, symbol currentPackage,
-     symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify
+     symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify, symbol loadDepth, 
+     symbol errorDepth, symbol recursionLimit
      )
 
 scan(pairs Macaulay2.Dictionary, (name,sym) -> if not writableGlobals#?sym then protect sym)

@@ -173,7 +173,7 @@ net HashTable := x -> (
      	  )
      )
 
-net Dictionary := d -> if Symbols#?d then toString Symbols#d else "Dictionary{..." | toString length d | "...}"
+net Dictionary := d -> if Symbols#?d then toString Symbols#d else if length d == 0 then "Dictionary{}" else "Dictionary{..." | toString length d | "...}"
 
 net MutableHashTable := x -> (
      if x.?name then x.name 

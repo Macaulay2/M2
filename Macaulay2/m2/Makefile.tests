@@ -5,7 +5,7 @@ include ../../../../include/config.Makefile
 
 .PHONY : all
 
-ARGS := -q -e 'path=join(path,{"../../","$(srcdir)/"})' -e 'errorDepth(0)' --silent
+ARGS := -q -e 'path=join(path,{"../../","$(srcdir)/"})' -e 'errorDepth = 0' --silent
 
 all :: ../../../$(DUMPDATAFILE)
 
@@ -13,11 +13,11 @@ else
 ifeq "$(CC)" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
 ## and does strange things to quotation marks.
-ARGS := -q --silent -e 'path=join(path,{\"../../\",\"$(srcdir)/\"})' -e 'errorDepth(0)'
+ARGS := -q --silent -e 'path=join(path,{\"../../\",\"$(srcdir)/\"})' -e 'errorDepth = 0'
 else
 ARGS := -q --silent \
 		-e 'path=join({"../../../m2/","$(srcdir)/../m2/","$(srcdir)/../packages/"})' \
-		-e 'errorDepth(0)'
+		-e 'errorDepth = 0'
 endif
 endif
 

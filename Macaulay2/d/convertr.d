@@ -217,7 +217,10 @@ export convert(e:ParseTree):Code := (
 	  else if wrd.typecode == TCint
 	  then Code(integerCode(parseInt(wrd.name),pos))
  	  else if wrd.typecode == TCstring
-	  then Code(stringCode(parseString(wrd.name), pos))
+	  then (
+	       s := parseString(wrd.name);
+	       Code(stringCode(s, hash(s), pos))
+	       )
 	  else (
 	       if var.frameID == 0
 	       then Code(globalMemoryReferenceCode(var.frameindex,pos))

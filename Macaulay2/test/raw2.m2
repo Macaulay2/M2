@@ -1,7 +1,7 @@
 -- here we start testing the incorporation of the new raw engine 
 -- types into the top level, one by one
 
-errorDepth 0
+errorDepth = 0
 
 -- monoids
 

@@ -439,8 +439,7 @@ examine(e:Expr):Expr := (
 	  << " frameID : " << s.frameID << endl
 	  << " frameindex : " << s.frameindex << endl
 	  << " lookupCount : " << s.lookupCount << endl
-	  << " protected : " << s.protected << endl
-	  << " transient : " << s.transient << endl;
+	  << " protected : " << s.protected << endl;
      	  showFrames(f);
           if s.frameID != f.frameID then stdout << " -- warning: incorrect frameID on first frame" << endl;
 	  nullE)
@@ -1302,9 +1301,10 @@ localDictionaries(f:Frame):Expr := Expr(
 
 localDictionaries(e:Expr):Expr := (
      when e
+     is x:Sequence do if length(x) != 0 then WrongNumArgs(0,1) else localDictionaries(noRecycle(localFrame))
      is sc:SymbolClosure do localDictionaries(sc.frame)
      is fc:FunctionClosure do localDictionaries(fc.frame)
      is cfc:CompiledFunctionClosure do localDictionaries(emptyFrame)	    -- some values are there, but no symbols
      is CompiledFunction do localDictionaries(emptyFrame)			    -- no values or symbols are there
-     else WrongArg("a function or symbol"));
+     else WrongArg("a function, a symbol, or ()"));
 setupfun("localDictionaries", localDictionaries);

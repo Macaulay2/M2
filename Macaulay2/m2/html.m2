@@ -314,8 +314,9 @@ makeHTML = (builddir,finaldir) -> (
      PREV = new MutableHashTable;
      UP   = new MutableHashTable;
      haderror = false;
-     setrecursionlimit first (
-	  setrecursionlimit 4000,
+     recursionLimit = first (
+	  recursionLimit,
+	  recursionLimit = 4000,
      	  time pass1(),
      	  time pass2(),
      	  time pass3(),

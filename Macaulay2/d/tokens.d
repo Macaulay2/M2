@@ -43,7 +43,6 @@ export Symbol := {		    -- symbol table entry for a symbol
      frameindex:int,		    -- index within the frame of its value
      lookupCount:int,		    -- number of times looked up
      protected:bool,	            -- whether protected against assignment by the user
-     transient:bool,                -- whether its value could ever change, even if protected, e.g., commandLine, or by rebinding in a transient dictionary
      flagLookup:bool		    -- whether to warn when symbol is used
      };
 export SymbolListCell := {entry:Symbol, next:SymbolList};
@@ -273,7 +272,7 @@ export parallelAssignmentCode := {
 export nullCode := {};
 export realCode := {x:double,position:Position};
 export integerCode := {x:Integer,position:Position};
-export stringCode := {x:string,position:Position};
+export stringCode := {x:string,hash:int,position:Position};
 export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
 export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
@@ -456,7 +455,7 @@ export dummySymbol := Symbol(
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
      false,						    -- not protected, so we can use it in parallelAssignmentFun
-     true,false
+     false
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
