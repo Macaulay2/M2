@@ -3,7 +3,6 @@
 #warning "sagbi code commented out"
 #if 0
 #include "sagbi.hpp"
-#include "vector.hpp"
 
 vec sagbi::subduct(const FreeModule *F,
 		   vec f,

@@ -99,8 +99,10 @@ public:
   vec e_sub_i(int i) const;
   vec raw_term(ring_elem a, int r) const;
 
+#if 0
   bool is_equal(vec v, vec w) const;
   bool is_zero(vec v) const  { return v == NULL; }
+#endif
 
   vec copy_term(vec v) const;
 
@@ -120,7 +122,9 @@ public:
   vec get_terms(vec v, int lo, int hi) const; // ??
 
   // These four require some (small) computation
+#if 0
   int lead_component(vec v) const;
+#endif
 #if 0
   vec lead_term(vec v) const;
   vec lead_term(int n, vec v) const;

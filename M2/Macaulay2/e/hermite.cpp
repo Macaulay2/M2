@@ -3,7 +3,6 @@
 #include "style.hpp"
 #include "hermite.hpp"
 #include "text_io.hpp"
-#include "vector.hpp"
 #include "matrixcon.hpp"
 
 extern ZZ *globalZZ;

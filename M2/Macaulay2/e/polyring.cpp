@@ -13,7 +13,6 @@
 #include "geopoly.hpp"
 
 #include "gb_comp.hpp"
-#include "vector.hpp"
 #include "../d/M2mem.h"
 
 #include "QQ.hpp"
