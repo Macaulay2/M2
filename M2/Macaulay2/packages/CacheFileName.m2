@@ -136,8 +136,6 @@ document {
      search path."
      }
 
-closePackage CacheFileName
-
 -- Local Variables:
 -- compile-command: "M2 -q --stop -e 'load \"CacheFileName.m2\" ' -e 'installPackage CacheFileName' -e 'exit 0'"
 -- End:
