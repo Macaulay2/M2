@@ -616,12 +616,12 @@ erase(s:Symbol,table:SymbolHashTable):bool := (
 erase(s:Symbol):bool := (
      d := globalDictionary;
      while (
-	  if erase(s,d.symboltable) then return(true);
+	  if !d.protected && erase(s,d.symboltable) then return(true);
 	  d != d.outerDictionary ) do d = d.outerDictionary;
      false);
 erase(e:Expr):Expr := (
      when e is s:SymbolClosure do if erase(s.symbol) then e
-     else WrongArg("a global symbol")
+     else WrongArg("a global symbol in an unprotected dictionary")
      else WrongArg("a symbol")
      );
 setupfun("erase", erase);
