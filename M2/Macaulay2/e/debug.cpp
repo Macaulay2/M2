@@ -2,6 +2,8 @@
 #include "matrix.hpp"
 #include "relem.hpp"
 #include "gbring.hpp"
+#include "respoly.hpp"
+#include "respoly2.hpp"
 
 void dmatrix(const Matrix *M)
 {
@@ -36,6 +38,20 @@ void dvec(const GBRing *R, gbvector *v)
   buffer o;
   const FreeModule *F = 0;
   R->gbvector_text_out(o, F, v);
+  emit(o.str());
+}
+
+void drespoly(const res_poly *R, const resterm *f)
+{
+  buffer o;
+  R->elem_text_out(o,f);
+  emit(o.str());
+}
+
+void drespoly2(const res2_poly *R, const res2term *f)
+{
+  buffer o;
+  R->elem_text_out(o,f);
   emit(o.str());
 }
 

@@ -48,7 +48,7 @@ int res2_comp::complete_thru_degree() const
 	  if (d < lo) lo = d;
 	}
     }
-  return lo-1;
+  return lodegree+lo-1;
 }
 
 enum ComputationStatusCode res2_comp::skeleton(int level)

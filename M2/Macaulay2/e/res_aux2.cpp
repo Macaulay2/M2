@@ -5,7 +5,7 @@
 M2_arrayint res2_comp::betti_skeleton() const
 {
   int lo = lodegree;
-  int hi = hidegree;
+  int hi = lo+hidegree;
   int len = resn.length()-1;
   int *bettis;
   betti_init(lo,hi,len,bettis);
@@ -25,7 +25,7 @@ M2_arrayint res2_comp::betti_skeleton() const
 M2_arrayint res2_comp::betti_remaining() const
 {
   int lo = lodegree;
-  int hi = hidegree;
+  int hi = lo+hidegree;
   int len = resn.length()-1;
   int *bettis;
   betti_init(lo,hi,len,bettis);
@@ -47,7 +47,7 @@ M2_arrayint res2_comp::betti_minimal() const
     // Negative numbers represent upper bounds
 {
   int lo = lodegree;
-  int hi = hidegree;
+  int hi = lo+hidegree;
   int len = resn.length()-1;
   int *bettis;
   betti_init(lo,hi,len,bettis);
@@ -68,7 +68,7 @@ M2_arrayint res2_comp::betti_minimal() const
 M2_arrayint res2_comp::betti_nmonoms() const
 {
   int lo = lodegree;
-  int hi = hidegree;
+  int hi = lo+hidegree;
   int len = resn.length()-1;
   int *bettis;
   betti_init(lo,hi,len,bettis);

@@ -409,13 +409,13 @@ M2_arrayint gbres_comp::betti_minimal() const
   int *bettis;
   betti_init(lo,hi,len,bettis);
   
-  for (lev=0; lev<len; lev++)
+  for (lev=0; lev<=len; lev++)
     {
       const FreeModule *F = free_module(lev);
 
       for (i=0; i<F->rank(); i++)
 	{
-	  d = F->primary_degree(i) - lev;
+	  d = F->primary_degree(i) - lev - lo;
 	  bettis[lev+(len+1)*d]++;
 	}
     }

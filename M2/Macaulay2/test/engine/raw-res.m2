@@ -170,6 +170,24 @@ C = res M
 X = C.Resolution
 rawGBBetti(X.RawComputation, 0)
 
+m = raw syz gens I
+m = raw gens gb syz gens I
+rawTarget m
+rawSource m
+
+C = rawResolution(m,true,10,false,0,0,0) -- CORRECT
+C = rawResolution(m,true,10,false,0,1,0) -- CORRECT
+C = rawResolution(m,true,5,false,0,2,0) -- CORRECT
+C = rawResolution(m,true,5,false,0,3,0) -- CORRECT
+
+rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
+rawStartComputation C
+rawGBBetti(C,0)
+m1 = rawResolutionGetMatrix(C,1)
+m2 = rawResolutionGetMatrix(C,2)
+m3 = rawResolutionGetMatrix(C,3)
+m4 = rawResolutionGetMatrix(C,4)
+
 ----------------------------------
 
 
