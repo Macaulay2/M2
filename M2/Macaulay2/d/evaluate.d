@@ -911,7 +911,6 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
 
 -----------------------------------------------------------------------------
 
-export fullBacktrace := false;
 export backtrace := true;
 export steppingFlag := false;
 export determineExceptionFlag():void := (
@@ -1028,9 +1027,14 @@ export eval(c:Code):Expr := (
 	       else (
 		    SuppressErrors = oldSuppressErrors;
 		    when p is err:Error do (
-			 if err.message == breakMessage || err.message == returnMessage || err.message == continueMessage || err.message == unwindMessage then p
+			 if err.message == breakMessage || err.message == returnMessage || err.message == continueMessage || err.message == unwindMessage || err.message == throwMessage
+			 then p
 			 else eval(c.elseClause))
 		    else if c.thenClause == NullCode then p else eval(c.thenClause)))
+	  is c:catchCode do (
+	       p := eval(c.code);
+	       when p is err:Error do if err.message == throwMessage then err.value else p
+	       else p)
 	  is c:ifCode do (
 	       p := eval(c.predicate);
 	       when p is Error do p
@@ -1085,7 +1089,7 @@ export eval(c:Code):Expr := (
      when e is err:Error do (
      	  clearAllFlags();
 	  if SuppressErrors then return e;
-	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage
+	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage || err.message == throwMessage
 	  then (
 	       if err.position == dummyPosition then err.position = codePosition(c); -- there will be no way to enter the debugger to figure out an unhandled break
 	       return e;
@@ -1095,7 +1099,7 @@ export eval(c:Code):Expr := (
 	       oldReportFrame := err.frame;
 	       err.frame = noRecycle(localFrame);
 	       err.position = p;
-	       if !err.printed || backtrace && localFrame != oldReportFrame || fullBacktrace then (
+	       if !err.printed || backtrace && localFrame != oldReportFrame then (
 		    if debuggingMode && (! (p.filename === "stdio")) then (
 			 if !err.printed then printError(err);
 			 printErrorMessage(err.position,"--entering debugger--");
@@ -1148,6 +1152,11 @@ returnFun(a:Code):Expr := (
      when e is Error do e else Expr(Error(dummyPosition,returnMessage,e,false,dummyFrame)));
 setupop(returnS,returnFun);
 
+throwFun(a:Code):Expr := (
+     e := eval(a);
+     when e is Error do e else Expr(Error(dummyPosition,throwMessage,e,false,dummyFrame)));
+setupop(throwS,throwFun);
+
 continueFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,continueMessage,e,false,dummyFrame)));
@@ -1157,10 +1166,6 @@ breakFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
-
--- export toExpr(p:Position):Expr := list(Sequence(Expr(p.filename),Expr(toInteger(int(p.line))),Expr(toInteger(int(p.column))),Expr(toInteger(int(p.loadDepth)))));
--- codePositionFun(a:Code):Expr := toExpr(codePosition(a));
--- setupop(codePositionS,codePositionFun);
 
 assigntofun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);

@@ -56,7 +56,7 @@ peek'(ZZ,Sequence) := (depth,s) -> (
 	  if #s === 0
 	  then "()"
 	  else if #s === 1 
-	  then ("singleton (", peek'(depth,s#0), ")")
+	  then ("1 : (", peek'(depth,s#0), ")")
 	  else ("(", horizontalJoin between (",", apply(s, value -> peek'(depth,value))), ")" )))
 
 precOption := precedence ( 1 => 2 )

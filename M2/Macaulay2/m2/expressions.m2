@@ -463,7 +463,7 @@ binary := new HashTable from {
      symbol : => ((x,y) -> x:y),
      symbol ++ => ((x,y) -> x++y),
      symbol ** => ((x,y) -> x**y),
-     symbol /^ => ((x,y) -> x/^y),
+     -- symbol /^ => ((x,y) -> x/^y),
      symbol _ => ((x,y) -> x_y),
      symbol " " => ((x,y) -> x y)
      }
@@ -574,7 +574,7 @@ nopar := x -> (
      -- this is like net Sequence except we omit the parentheses.
      horizontalJoin deepSplice (
 	  if #x === 0 then "()"
-	  else if #x === 1 then ("singleton ", net x#0)
+	  else if #x === 1 then ("1 : (", net x#0, ")")
 	  else (toSequence between(",",apply(x,net)))))
 
 nopars := x -> if class x === Sequence then nopar x else net x

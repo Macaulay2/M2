@@ -24,7 +24,7 @@ Thing ^ QQ := (x,r) -> (
      else error "expected pair to have a method for '^'"
      )
 
-Thing /^ ZZ := (x,n) -> x^n/n!
+-- Thing /^ ZZ := (x,n) -> x^n/n!
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

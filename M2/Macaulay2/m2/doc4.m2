@@ -195,7 +195,7 @@ document {
       	  "sequence (4,5)",
 	  },
      PARA,
-     SeeAlso => { "singleton", "sequences" }
+     SeeAlso => { "sequences" }
      }
 
 document {
@@ -811,18 +811,18 @@ document {
      }
 
 document {
-     Key => symbol ##,
+     Key => uncurry,
      Headline => "uncurry a function",
-     TT "f ## (a,b)", "     -- computes ", TT "((f a) b)", ".",
+     TT "uncurry(f, (a,b))", "     -- computes ", TT "((f a) b)", ".",
      BR, NOINDENT,
-     TT "f ## (a,b,c)", "   -- computes ", TT "(((f a) b) c)", ".",
+     TT "uncurry(f, (a,b,c))", "   -- computes ", TT "(((f a) b) c)", ".",
      BR, NOINDENT,
-     TT "f ## (a,b,c,d)", " -- computes ", TT "((((f a) b) c) d)", ".",
+     TT "uncurry(f, (a,b,c,d))", " -- computes ", TT "((((f a) b) c) d)", ".",
      BR, NOINDENT,
      "... and so on.",
      EXAMPLE {
 	  "f = a -> b -> c -> [a,b,c]",
-	  "f ## (1,2,3)"
+	  "uncurry(f, (1,2,3))"
 	  }
      }
 

@@ -30,6 +30,7 @@ export codePosition(c:Code):Position := (
      is f:whileListCode do f.position
      is f:whileDoCode do f.position
      is f:tryCode do f.position
+     is f:catchCode do f.position
      is f:functionCode do position(f.arrow)
      is f:globalAssignmentCode do f.position
      is f:globalMemoryReferenceCode do f.position
@@ -109,6 +110,7 @@ export tostring(c:Code):string := (
      is x:ternaryCode do concatenate(array(string)("(3-OP ",getTernopName(x.f)," ",tostring(x.arg1)," ",tostring(x.arg2)," ",tostring(x.arg3),")"))
      is x:ifCode do concatenate(array(string)("(if ",tostring(x.predicate)," then: ",tostring(x.thenClause)," else: ",tostring(x.elseClause),")"))
      is x:tryCode do concatenate(array(string)("(try ",tostring(x.code)," ",tostring(x.thenClause)," ",tostring(x.elseClause),")"))
+     is x:catchCode do concatenate(array(string)("(catch ",tostring(x.code),")"))
      is x:unaryCode do concatenate(array(string)("(1-OP ",getUnopName(x.f)," ",tostring(x.rhs),")"))
      );
 

@@ -35,7 +35,7 @@ assert(rawCodimension I === 2)
 L = rawSaturate(I,m)
 rawCodimension L -- is 8??
 rawMonomialIdealToMatrix rawAssociatedPrimes L
-B = rawStronglyStableClosure rawMonomialIdeal(rawMatrix1(R^1, 1, singleton(a*b^2*c),false,0), 0)
+B = rawStronglyStableClosure rawMonomialIdeal(rawMatrix1(R^1, 1, 1:(a*b^2*c),false,0), 0)
 rawMonomialIdealToMatrix B
 assert rawIsStronglyStable B
 

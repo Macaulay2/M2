@@ -698,10 +698,6 @@ logorfun(lhs:Code,rhs:Code):Expr := (
 setup(orS,logorfun);
 BarBarF(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarBarS);
 setup(BarBarS,BarBarF);
-AmpersandAmpersandF(lhs:Code,rhs:Code):Expr := (
-     binarymethod(lhs,rhs,AmpersandAmpersandS)
-     );
-setup(AmpersandAmpersandS,AmpersandAmpersandF);
 logandfun(lhs:Code,rhs:Code):Expr := (
      a := eval(lhs);
      when a

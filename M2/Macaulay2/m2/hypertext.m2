@@ -170,31 +170,28 @@ tex PARA := x -> concatenate(///
 
 html ExampleTABLE := x -> concatenate(
      newline,
-     "<table class=\"examples\">",
-     newline,
+     "<table class=\"examples\">", newline,
      apply(x, 
 	  item -> (
 	       " <tr>", newline,
-	       "  <td>", html item#1, "</td>", newline,
+	       "  <td>", html item#1, newline,
+	       "  </td>", newline,
 	       " </tr>", newline
 	       )
 	  ),
-     "</table>"
-     )			 
+     "</table>", newline)			 
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 html ButtonTABLE := x -> concatenate(
      newline,
-     "<table class=\"buttons\">",
-     newline,
+     "<table class=\"buttons\">", newline,
      apply(x, row -> ( 
-	       "  <tr>",
-	       newline,
-	       apply(row, item -> ("    <td>", html item, "</td>",newline)),
-	       "  </tr>",
-	       newline)),
-     "</table>",
-     newline
-     )			 
+	       "  <tr>", newline,
+	       apply(row, item -> (
+			 "    <td>", html item, newline,
+			 "    </td>", newline
+			 )),
+	       "  </tr>", newline)),
+     "</table>", newline )			 
 
 truncateString := s -> if printWidth == 0 or width s <= printWidth then s else concatenate(substring(s,0,printWidth-1),"$")
 truncateNet    := n -> if printWidth == 0 or width n <= printWidth then n else stack(apply(unstack n,truncateString))
@@ -229,18 +226,15 @@ info TABLE := x -> boxTable applyTable(toList x,info)
 net TABLE := x -> boxTable applyTable(toList x,net)
 html TABLE := x -> concatenate(
      newline,
-     "<table>",
-     newline,
+     "<table>", newline,
      apply(x, row -> ( 
-	       "  <tr>",
-	       newline,
-	       apply(row, item -> ("    <td>", html item, "</td>",newline)),
-	       "  </tr>",
-	       newline)),
-     "</table>",
-     newline
-     )			 
-
+	       "  <tr>", newline,
+	       apply(row, item -> (
+			 "    <td>", html item, newline,
+			 "    </td>",newline
+			 )),
+	       "  </tr>", newline)),
+     "</table>", newline )			 
 
 info PRE := net PRE := x -> net concatenate x
 html PRE   := x -> concatenate( 

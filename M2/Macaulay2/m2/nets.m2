@@ -39,7 +39,7 @@ toString BasicList := s -> concatenate(
      )
 toString Array := s -> concatenate ( "[", between(", ",toString \ toList s), "]" )
 toString Sequence := s -> (
-     if # s === 1 then concatenate("singleton ",toString s#0)
+     if # s === 1 then concatenate("1 : (",toString s#0,")")
      else concatenate("(",between(",",toString \ s),")")
      )
 net Command := toString Command := toExternalString Command := f -> (
@@ -91,7 +91,7 @@ toExternalString BasicList := s -> concatenate(
      "}" )
 toExternalString Array := s -> concatenate ( "[", between(", ",toExternalString \ toList s), "]" )
 toExternalString Sequence := s -> (
-     if # s === 1 then concatenate("singleton ",toExternalString s#0)
+     if # s === 1 then concatenate("1 : (",toExternalString s#0,")")
      else concatenate("(",between(",",toExternalString \ s),")")
      )
 toExternalString Thing := toString
@@ -149,7 +149,7 @@ comma := ", "
 
 net Sequence := x -> horizontalJoin deepSplice (
      if #x === 0 then "()"
-     else if #x === 1 then ("singleton ", net x#0)
+     else if #x === 1 then ("1 : (", net x#0, ")")
      else ("(", toSequence between(comma,apply(x,net)), ")"))
 
 net List := x -> horizontalJoin deepSplice (

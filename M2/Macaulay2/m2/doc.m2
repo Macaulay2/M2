@@ -75,24 +75,6 @@ document {
      }
 
 document {
-     Key => singleton,
-     Headline => "make a sequence of length one",
-     Usage => "singleton x",
-     Inputs => {
-	  "x" => "",
-	  },
-     Outputs => {
-	  Sequence => {" of length one whose single element is ", TT "x", "."},
-	  },
-     SUBSECTION "Examples",
-     EXAMPLE {
-	  "singleton 3",
-	  "#oo",
-	  },
-     SeeAlso => {"unSingleton"}
-     }
-
-document {
      Key => List,
      Headline => "the class of all lists -- {...}",
      SeeAlso => "lists",
@@ -840,11 +822,6 @@ document {
      }
 
 document {
-     Key => symbol "&&",
-     Headline => "a binary operator",
-     }
-
-document {
      Key => symbol "^^",
      Headline => "a binary operator",
      }
@@ -917,22 +894,22 @@ document {
      named ", TO "InverseMethod", " will be called."
      }
 
-document {
-     Key => symbol "/^",
-     Headline => "a binary operator",
-     }
+-- document {
+--      Key => symbol "/^",
+--      Headline => "a binary operator",
+--      }
 
-document {
-     Key => (symbol /^, Thing, ZZ),
-     Headline => "divided power",
-     TT "x /^ n", " -- computes the n-th divided power of x.",
-     PARA,
-     "This is implemented naively as ", TT "x^n/n!", ".",
-     EXAMPLE {
-	  "ZZ/101[x];",
-      	  "x/^3"
-	  },
-     }
+-- document {
+--      Key => (symbol /^, Thing, ZZ),
+--      Headline => "divided power",
+--      TT "x /^ n", " -- computes the n-th divided power of x.",
+--      PARA,
+--      "This is implemented naively as ", TT "x^n/n!", ".",
+--      EXAMPLE {
+-- 	  "ZZ/101[x];",
+--       	  "x/^3"
+-- 	  },
+--      }
 
 document {
      Key => substring,

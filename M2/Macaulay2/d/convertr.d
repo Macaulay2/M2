@@ -411,6 +411,7 @@ export convert(e:ParseTree):Code := (
      is i:TryThenElse do Code(tryCode(convert(i.primary),convert(i.sequel),convert(i.alternate),treePosition(e)))
      is i:TryElse do Code(tryCode(convert(i.primary),NullCode,convert(i.alternate),treePosition(e)))
      is i:Try do Code(tryCode(convert(i.primary),NullCode,NullCode,treePosition(e)))
+     is i:Catch do Code(catchCode(convert(i.primary),treePosition(e)))
      is u:Postfix do Code(unaryCode(u.operator.entry.postfix,convert(u.lhs),treePosition(e)))
      is d:dummy do dummyCode
      );

@@ -471,6 +471,23 @@ document {
      SeeAlso => { "moveFile", "copyFile" }
      }
 
+document {
+     Key => debugPackage,
+     Headline => "open private dictionary of a package"
+     }
+
+document {
+     Key => (debugPackage,Package),
+     Headline => "open private dictionary of a package",
+     Usage => "debugPackage p",
+     Inputs => {
+	  "p" => "",
+	  },
+     Consequences => {
+	  {"the private dictionary of the package ", TT "p", " is added to ", TO "globalDictionaries", " so its non-exported symbols are visible" }
+	  }
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -16,6 +16,14 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+Function "singleton x" removed -- use 1:x instead.
+
+Operator ## replaced by function 'uncurry'.
+
+Operator /^ removed, for lack of use.
+
+Operator && removed, for lack of use.
+
 Method for vars(Symbol) removed.
 
 The symbol 'errorReport' has been removed.  It is no longer needed,

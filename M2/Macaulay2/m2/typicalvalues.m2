@@ -6,7 +6,6 @@
 typicalValues#basictype = Type
 typicalValues#class = Type
 typicalValues#parent = Type
-typicalValues#singleton = Sequence
 typicalValues#(symbol timing) = Time
 typicalValues#(symbol local) = Symbol
 typicalValues#(symbol global) = Symbol
@@ -15,7 +14,7 @@ typicalValues#(symbol ?) = Boolean
 
 dummy := method(SingleArgumentDispatch=>true)	    -- a compiled function closure is pretty anonymous
 installMethod(symbol !, ZZ, ZZ => dummy)
-installMethod(symbol ##, Function, Sequence, Thing => dummy)
+-- installMethod(symbol ##, Function, Sequence, Thing => dummy)
 installMethod(symbol #?, HashTable, Thing, Boolean => dummy)
 installMethod(symbol #?, Set, Thing, Boolean => dummy)
 installMethod(symbol #?, Database, String, Boolean => dummy)

@@ -441,6 +441,10 @@ export unarytry(tryToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	       printErrorMessage(tryToken,"syntax error : expected 'else' to match this 'try'");
 	       return errorTree))
      else accumulate(ParseTree(Try(tryToken,primary)),file,prec,obeylines));
+export unarycatch(catchToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
+     primary := parse(file,catchToken.word.parse.unaryStrength,obeylines);
+     if primary == errorTree then return primary;
+     accumulate(ParseTree(Catch(catchToken,primary)),file,prec,obeylines));
 export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      newclass := parse(file,newtoken.word.parse.unaryStrength,obeylines);
      if newclass == errorTree then return errorTree;
@@ -479,6 +483,7 @@ export treePosition(e:ParseTree):Position := (
 	  is i:TryThenElse do return position(i.tryToken)
 	  is i:TryElse do return position(i.tryToken)
 	  is i:Try do return position(i.tryToken)
+	  is i:Catch do return position(i.catchToken)
      	  is i:IfThenElse do return position(i.ifToken)
      	  is w:For do return position(w.forToken)
      	  is w:WhileDo do return position(w.whileToken)
