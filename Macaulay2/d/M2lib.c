@@ -198,7 +198,8 @@ static void interrupt_handler(int sig)
      }
 
 void outofmem(){
-     if (!interp_StopIfError && out_of_memory_jump_set) {
+     static count = 0;
+     if (!interp_StopIfError && out_of_memory_jump_set && count++ < 5) {
      	  fprintf(stderr,"out of memory, returning to top level");
      	  fflush(stderr);
      	  siglongjmp(out_of_memory_jump,1);
