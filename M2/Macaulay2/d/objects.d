@@ -426,8 +426,8 @@ export storeInHashTableMustClobber(x:HashTable,key:Expr,value:Expr):Expr := (
      );
 export assignquotedobject(x:HashTable,i:Code,rhs:Code):Expr := (
      when i
-     is var:variableCode do (
-	  ival := Expr(makeSymbolClosure(var.v));
+     is c:globalSymbolClosureCode do (
+	  ival := Expr(SymbolClosure(globalFrame,c.symbol));
 	  val := eval(rhs);
 	  when val is Error do val else storeInHashTable(x,ival,val))
      else printErrorMessage(i,"'.' expected right hand argument to be a symbol")

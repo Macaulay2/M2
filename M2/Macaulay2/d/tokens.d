@@ -223,13 +223,21 @@ export notfoundE := Expr(Nothing());			    -- internal use only, not visible to 
 -- Code
 
 export exprCode := {v:Expr,position:Position};
-export variableCode := {v:Symbol,position:Position};
+export localSymbolClosureCode := {
+     nestingDepth:int,
+     symbol:Symbol,
+     position:Position
+     };
+export globalSymbolClosureCode := {
+     symbol:Symbol,
+     position:Position
+     };
 export localMemoryReferenceCode := {
      nestingDepth:int,
      frameindex:int,
      position:Position
      };
-export staticMemoryReferenceCode := {
+export globalMemoryReferenceCode := {
      frameindex:int,
      position:Position
      };
@@ -281,12 +289,16 @@ export functionCode := {
      };
 export Code := (
      exprCode					      -- soon obsolete
-     or variableCode				      -- soon obsolete
-     or localMemoryReferenceCode or staticMemoryReferenceCode
+     or globalMemoryReferenceCode
+     or localMemoryReferenceCode
+     or globalAssignmentCode
+     or localAssignmentCode
+     or parallelAssignmentCode
+     or globalSymbolClosureCode 
+     or localSymbolClosureCode
      or unaryCode or binaryCode 
      or ternaryCode or multaryCode or forCode
      or CodeSequence or openDictionaryCode or functionCode
-     or localAssignmentCode or globalAssignmentCode or parallelAssignmentCode
      );
 
 -- scopes
