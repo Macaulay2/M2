@@ -131,7 +131,7 @@ extern "C" {
   /**** Random numbers ******************************/
   /**************************************************/
 
-  void rawSetRandomSeed(M2_Integer seed);
+  int rawSetRandomSeed(M2_Integer seed);
 
   void rawSetRandomMax(M2_Integer maxN);
 

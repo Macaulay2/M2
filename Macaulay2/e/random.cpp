@@ -12,7 +12,7 @@
 #include "gmp.h"
 
 extern ZZ *globalZZ;
-int32 Random::seed;
+int32 RandomSeed;
 int32 Random::maxint32;
 RingElement *Random::maxint;
 
@@ -21,7 +21,7 @@ gmp_randstate_t Random::_st;
 
 void Random::i_random()
 {
-  seed = MASK;
+  RandomSeed = MASK;
   maxint = RingElement::make_raw(globalZZ, globalZZ->from_int(10));
   maxint32 = 100;
 
@@ -29,24 +29,26 @@ void Random::i_random()
   gmp_randinit_default(_st);
 }
 
-void Random::set_seed(M2_Integer newseed)
+int32 Random::set_seed(M2_Integer newseed)
 {
+  int32 old = RandomSeed;
   int32 s = mpz_get_si(newseed);
   s = s & 0x7fffffff; // Used to be dome in cmd_random_seed
   if (s == MASK) s = 0;
-  seed = s ^ MASK;
+  RandomSeed = s ^ MASK;
 
   gmp_randseed(_st, newseed);
+  return old;
 }
 
 int32 Random::random0()
 {
-  int32 k = seed/IQ;
-  seed = IA * (seed - k*IQ) - IR*k; /* Schrage algorithm to compute 
+  int32 k = RandomSeed/IQ;
+  RandomSeed = IA * (RandomSeed - k*IQ) - IR*k; /* Schrage algorithm to compute 
 				       idum = (IA*idum) mod IM */
-  if (seed < 0) seed += IM;
+  if (RandomSeed < 0) RandomSeed += IM;
 
-  return seed;
+  return RandomSeed;
 }
 
 int32 Random::random0(int32 r)

@@ -349,6 +349,8 @@ basicsort(s:Sequence,ww:Expr):Expr := (
      sortlist = savesortlist;
      ret);
 basicsort2(e:Expr,ww:Expr):Expr := (
+     save := RandomSeed;				    -- for backward compatibility with 0.9.2
+     answer :=
      when e is s:Sequence do (
 	  if length(s) <= 1 then e else basicsort(s,ww))
      is t:List do (
@@ -357,7 +359,9 @@ basicsort2(e:Expr,ww:Expr):Expr := (
 		     r := basicsort(t.v,ww);
 		     when r is b:Sequence do list(b) else r))
       	   else WrongArg("a list or sequence"))
-     else WrongArg("a list or sequence"));
+     else WrongArg("a list or sequence");
+     RandomSeed = save;
+     answer);
 sortfun(e:Expr):Expr := basicsort2(e,GreaterE);
 rsortfun(e:Expr):Expr := basicsort2(e,LessE);
 setupfun("internalsort",sortfun);

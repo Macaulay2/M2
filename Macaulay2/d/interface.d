@@ -35,6 +35,29 @@ export rawGetErrorMessage(e:Expr):Expr := (
 setupfun("rawGetErrorMessage",rawGetErrorMessage);
 
 -----------------------------------------------------------------------------
+-- random numbes
+
+export rawSetRandomSeed(e:Expr):Expr := (
+     when e is n:Integer do Expr(toInteger(Ccode(int, "rawSetRandomSeed(", "(M2_Integer)", n, ")")))
+     else WrongArgInteger());
+setupfun("rawSetRandomSeed",rawSetRandomSeed);
+
+export rawSetRandomMax(e:Expr):Expr := (
+     when e is n:Integer do (
+	  Ccode(void,
+	       "rawSetRandomMax(", 
+	       "(M2_Integer)", n,
+	       ")");
+	  nullE)
+     else WrongArgInteger());
+setupfun("rawSetRandomMax",rawSetRandomMax);
+
+export rawRandomInteger(e:Expr):Expr := (
+     when e is n:Integer do Expr(Ccode(Integer, "(gmp_Integer)rawRandomInteger(", "(M2_Integer)", n, ")"))
+     else WrongArgInteger());
+setupfun("rawRandomInteger",rawRandomInteger);
+
+-----------------------------------------------------------------------------
 -- monomials
 
 export rawVarMonomial(a:Expr):Expr := (
