@@ -183,6 +183,7 @@ document { FractionField,
      }
 
 document { frac,
+     HEADLINE "constructing a fraction field",
      TT "frac R", " -- construct the fraction field of the ring ", TT "R", ".",
      PARA,
      "If ", TT "R", " has no name yet, then the names for its symbols will
@@ -196,18 +197,8 @@ document { frac,
      }
 
 document { ZZ,
+     HEADLINE "the class of all integers",
      TT "ZZ", " -- denotes the class of all integers.",
-     PARA,
-     EXAMPLE {
-	  "1234 + 4",
-      	  "basictype 1234",
-	  },
-     "Operations on integers:",
-     MENU {
-	  TO "gcdCoefficients",
-	  TO (symbol <<, ZZ, ZZ),
-	  TO (symbol >>, ZZ, ZZ)
-	  }
      }
 
 TEST "
@@ -249,6 +240,7 @@ document { denominator,
      }
 
 document { QQ,
+     HEADLINE "the class of all real numbers",
      TT "QQ", " -- denotes the class of all rational numbers.",
      PARA,
      EXAMPLE "1/2 + 3/5",
@@ -268,6 +260,7 @@ TEST ///
 ///
 
 document { RR,
+     HEADLINE "the class of all real numbers",
      TT "RR", " -- the class of all real numbers.  It is a field.",
      PARA,
      "A real number is entered as a sequence of decimal digits with a point.",
@@ -277,6 +270,7 @@ document { RR,
      }
 
 document { CC,
+     HEADLINE "the class of all complex numbers",
      TT "CC", " -- the class of all complex numbers.",
      PARA,
      "The symbol ", TO "ii", " represents the square root of -1.",
@@ -298,6 +292,7 @@ document { CC,
      }
 
 document { ii,
+     HEADLINE "square root of -1",
      TT "ii", " -- the square root of -1.",
      PARA,
      SEEALSO{ "CC"}

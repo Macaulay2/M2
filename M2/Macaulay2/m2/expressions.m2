@@ -1,6 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-precedence = method(SingleArgumentDispatch=>true)
+precedence = method(SingleArgumentDispatch=>true, TypicalValue=>ZZ)
 
 -- local variables
 local PowerPrecedence
@@ -32,6 +32,7 @@ WrapperType Thing := (T,z) -> new T from {z}
 -----------------------------------------------------------------------------
 
 Expression = new Type of BasicList
+expression = method(SingleArgumentDispatch=>true, TypicalValue => Expression)
 expression Expression := identity
 Expression#operator = ""
 
@@ -421,6 +422,7 @@ binary := new HashTable from {
      symbol .. => ((x,y) -> x..y),	  -- 
      symbol % => ((x,y) -> x%y),
      symbol @ => ((x,y) -> x@y),
+     symbol ==> => ((x,y) -> x==>y),
      symbol \ => ((x,y) -> x\y),
      symbol @@ => ((x,y) -> x@@y),
      symbol & => ((x,y) -> x&y),
@@ -431,7 +433,6 @@ binary := new HashTable from {
      symbol << => ((x,y) -> x<<y),
      symbol >> => ((x,y) -> x>>y),
      symbol : => ((x,y) -> x:y),
-     -- symbol :: => ((x,y) -> x::y),
      symbol ++ => ((x,y) -> x++y),
      symbol ** => ((x,y) -> x**y),
      symbol /^ => ((x,y) -> x/^y),
@@ -716,7 +717,7 @@ net MatrixExpression := x -> (
 	  m := net Table toList x;
 	  side := "|" ^ (height m, depth m);
 	  horizontalJoin(side,m,side)))
-
+net TABLE := x -> net MatrixExpression toList x
 html MatrixExpression := x -> html TABLE toList x
 
 mathML MatrixExpression := x -> concatenate(
@@ -1080,6 +1081,7 @@ expression RR := x -> (
      )
 -----------------------------------------------------------------------------
 hold = x -> new Holder from {x}
+typicalValues#hold = Holder
 
 expression Boolean := expression Symbol := expression File := 
      expression Handle := expression Nothing := expression Database := 

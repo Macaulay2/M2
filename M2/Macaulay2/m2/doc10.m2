@@ -40,6 +40,7 @@ document { resolution,
      }
 
 document { resolution => DegreeLimit,
+     HEADLINE "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "resolution", " which specifies that the computation should halt
      after dealing with degree n.",
@@ -56,6 +57,7 @@ document { resolution => DegreeLimit,
      }
 
 document { resolution => SyzygyLimit,
+     HEADLINE "stop when this number of syzygies are obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
      stop after a certain number of syzygies have computed.",
@@ -70,6 +72,7 @@ document { resolution => SyzygyLimit,
      }
 
 document { resolution => PairLimit,
+     HEADLINE "stop when this number of pairs are handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
      be stopped after a certain number of S-pairs have been reduced.",
@@ -83,6 +86,7 @@ document { resolution => PairLimit,
      }
 
 document { resolution => StopBeforeComputation,
+     HEADLINE "whether to stop the computation immediately",
      TT "StopBeforeComputation", " -- keyword for an optional argument used with
      ", TO "resolution", ".",
      PARA,
@@ -92,24 +96,15 @@ document { resolution => StopBeforeComputation,
      }
 
 document { LengthLimit,
-     TT "LengthLimit", " -- a keyword for an optional argument used with
-     ", TO "resolution", ".",
-     PARA,
-     MENU {
-	  TO (resolution => LengthLimit),
-	  }
+     HEADLINE "stop when the resolution reaches this length",
      }
 
 document { Algorithm,
-     TT "Algorithm", " -- a keyword for an optional argument used with
-     ", TO "resolution", ".",
-     PARA,
-     MENU {
-	  TO (resolution => Algorithm),
-	  }
+     HEADLINE "which algorithm to use"
      }
 
 document { resolution => LengthLimit,
+     HEADLINE "stop when the resolution reaches this length",
      TT "LengthLimit", " -- keyword for an optional argument used with
      ", TO "resolution", " which indicates how long a resolution to make.",
      PARA,
@@ -128,15 +123,11 @@ document { resolution => LengthLimit,
 
 document { HardDegreeLimit,
      TT "HardDegreeLimit", " -- keyword for an optional argument which specifies
-     that information above a specified degree is to be discarded.",
-     PARA,
-     "See:",
-     MENU {
-	  TO (resolution => HardDegreeLimit)
-	  }
+     that information above a specified degree is to be discarded."
      }
 
 document { resolution => HardDegreeLimit,
+     HEADLINE "always compute only up to this degree",
      TT "HardDegreeLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ".",
      PARA,
@@ -146,6 +137,7 @@ document { resolution => HardDegreeLimit,
      }
 
 document { resolution => Algorithm,
+     HEADLINE "which algorithm to use",
      TT "Algorithm => n", " -- an option for ", TO "resolution", " which specifies
      which algorithm to use.  Algorithms are specified by number and the
      algorithms available are",
@@ -167,14 +159,11 @@ document { resolution => Algorithm,
 
 document { SortStrategy,
      TT "SortStrategy", " -- an keyword for an optional argument which 
-     specifies the strategy to be used for sorting S-pairs.",
-     PARA,
-     MENU {
-	  TO (resolution => SortStrategy),
-	  }
+     specifies the strategy to be used for sorting S-pairs."
      }
 
 document { resolution => SortStrategy,
+     HEADLINE "specify strategy for sorting S-pairs",
      TT "SortStrategy => n", " -- an option for ", TO "resolution", " which 
      specifies the strategy to be used for sorting S-pairs.",
      PARA,
@@ -205,18 +194,6 @@ document { (resolution, Module),
      "If the user has a chain complex in hand which is known to be a
      projective resolution of ", TT "M", ", then it can be installed
      with ", TT "M.resolution = C", ".",
-     PARA,
-     "Optional arguments and flags:",
-     MENU {
-	  (TO (resolution => Algorithm), "             -- which algorithm to use"),
-	  (TO (resolution => StopBeforeComputation), " -- whether to stop the computation immediately"),
-	  (TO (resolution => DegreeLimit), "           -- compute only up to this degree"),
-	  (TO (resolution => HardDegreeLimit), "       -- always compute only up to this degree"),
-	  (TO (resolution => SyzygyLimit), "           -- stop when this number of syzygies are obtained"),
-	  (TO (resolution => PairLimit), "             -- stop when this number of pairs are handled"),
-	  (TO (resolution => LengthLimit), "           -- stop when the resolution reaches this length"),
-	  (TO (resolution => SortStrategy), "          -- specify strategy for sorting S-pairs")
-	  },
      PARA,
      "For an abbreviation, use ", TO "res", ".",
      SEEALSO {"ChainComplex", "resolution"}

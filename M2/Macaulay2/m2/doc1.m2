@@ -339,6 +339,7 @@ document { NewOfFromMethod,
      }
 
 document { Thing,
+     HEADLINE "the class of all things",
      TT "Thing", " -- the class of all things.",
      PARA,
      "Everything in Macaulay 2 is a ", ITALIC "thing", ".  This 
@@ -346,33 +347,14 @@ document { Thing,
      polynomials, groups, rings, and chain complexes are implemented
      as ", ITALIC "hash tables", ".  The class of all things is ", TO "Thing", ".",
      PARA,
-     "The basic types of things are:", 
-     MENU {
-          TO "BasicList",
-          TO "Boolean",
-          SHIELD TO "Database",
-          TO "File",
-          TO "Function",
-          SHIELD TO "Handle",
-          TO "HashTable",
-          TO "Net",
-          TO "Nothing",
-          TO "QQ",
-          TO "RR",
-          TO "Sequence",
-          TO "String",
-          TO "Symbol",
-          TO "Thing",
-          TO "ZZ"
-	  },
      "Operations on things:",
      MENU {
-	  TO "comparison",
 	  TO "assignment"
 	  }
      }
 
 document { Nothing,
+     HEADLINE "the empty class",
      TT "Nothing", " -- the empty class.",
      PARA,
      "This class is useful for representing the class of an argument
@@ -412,34 +394,34 @@ document { (NewFromMethod, HashTable, List),
 document { OptionTable,
      TT "OptionTable", " -- the class of those hash tables which are used
      to store optional named parameters to functions.",
-     SEEALSO "processArgs"
+     SEEALSO "==>"
      }
 
-document { processArgs,
-     TT "processArgs(args,defs,fun)", " -- a helper function which processes
-     optional arguments.  Intended for internal use only.",
+document { (symbol "==>", OptionTable, Function),
+     TT "g = defs ==> fun", " -- produces a new function ", TT "g", " from 
+     the function ", TT "fun", " that processes optional arguments.",
      PARA,
-     "Here ", TT "args", " is the sequence of arguments previously passed to 
-     some function intended to accept optional arguments, ", TT "defs", " is a
-     hash table whose keys are the names of the optional arguments, and 
-     whose values are the corresponding default values.
-     The return value is obtained by evaluation of ", TT "(fun opts)(args')", ",
-     where ", TT "args'", " is obtained from ", TT "args", " by removing the
-     options of the form ", TT "X=>A", " (where ", TT "X", " is a
-     name of an optional argument), and ", TT "opts", " is a hash table
-     of the same form as ", TT "defs", " in which the default
+     "Here ", TT "defs", " is a hash table of class ", TO "OptionTable", " whose 
+     keys are the names of the optional arguments, and whose values are the
+     corresponding default values.
+     The value of ", TT "g args", ", say, is obtained by evaluation of 
+     ", TT "(fun opts)(args')", ", where ", TT "args'", " is obtained from
+     ", TT "args", " by removing the options of the form ", TT "X=>A", " 
+     (where ", TT "X", " is a name of an optional argument), and ", TT "opts", " 
+     is a hash table of the same form as ", TT "defs", " in which the default
      values have been replaced by the user-supplied values, e.g., the
      value stored under the key ", TT "X", " has been replaced by
      ", TT "A", ".",
      PARA,
+     "Remark: ", TT "defs", " can also be simply a list of options.",
+     PARA,
      "In the following example we use a simple definition for ", TT "fun", "
      so we can see everything that ", TT "fun", " receives from ", TT "processArgs", ".",
      EXAMPLE {
-	  "defs = new OptionTable from {a=>1, b=>2}",
-	  "fun = opts -> args -> {opts, args}",
-	  "processArgs(x,defs,fun)",
-	  "processArgs((x,y,b=>66),defs,fun)",
-	  "processArgs((t,u,a=>44,b=>77),defs,fun)",
+	  "g = {a=>1, b=>2} ==> opts -> args -> {args, opts}",
+	  "g x",
+	  "g(x,y,b=>66)",
+	  "g(t,u,a=>44,b=>77)",
 	  },
      SEEALSO {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
      }
@@ -615,8 +597,8 @@ document { "typicalValues",
      SEEALSO { "specifying typical values" }
      }
 
-document { TypicalValues,
-     TT "TypicalValues => X", " -- an option to ", TO "method", "
+document { TypicalValue,
+     TT "TypicalValue => X", " -- an option to ", TO "method", "
      which specifies that values returned by the method function will
      typically be of type ", TT "X", ".",
      PARA,
@@ -627,15 +609,6 @@ document { TypicalValues,
 
 document { method,
      TT "f = method()", " -- creates a method function",
-     PARA,
-     "Optional arguments:",
-     MENU {
-	  TO "Associative",
-	  -- TO "ClassArgument",
-	  TO "Options",
-	  TO "SingleArgumentDispatch",
-	  TO "TypicalValues"
-	  },
      PARA,
      "The code above creates a method function which takes up to three 
      arguments, looking up the appropriate method according to the classes of 

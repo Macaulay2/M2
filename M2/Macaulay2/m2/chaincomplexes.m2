@@ -469,6 +469,8 @@ chainComplex Sequence := chainComplex List := ChainComplex => maps -> (
 	       ));
      C)
 
+betti = method(TypicalValue => Net)
+
 betti Matrix := f -> (
      R := ring target f;
      f = matrix ( f ** R );
@@ -832,7 +834,7 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := ChainComplexMap =
      -- 			      * (A_a ** BC_bc^[(b,c)])
      -- 			      )) * E_k^[(a,bc)]))
 
-Module Array := ChaniComplex => (M,v) -> (
+Module Array := ChainComplex => (M,v) -> (
      if #v =!= 1 then error "expected array of length 1";
      n := v#0;
      if class n =!= ZZ then error "expected [n] with n an integer";

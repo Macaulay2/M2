@@ -88,7 +88,8 @@ map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
 	  newMatrix(M,N)))
 
 map(Module,Nothing,List) := 
-map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
+map(Module,Module,List) := Matrix => 
+options -> (M,N,p) -> (
      R := ring M;
      if N === null
      then (
@@ -324,6 +325,7 @@ align := f -> (
      if isHomogeneous f and any(degree f, i -> i =!= 0) then map(target f,,f) else f
      )
 
+subquotient = method(TypicalValue => Module)
 subquotient(Nothing,Matrix) := Module => (null,relns) -> (
      M := new Module of Vector;
      M.ring = ring relns;
@@ -424,6 +426,9 @@ cokernel RingElement := Module => f -> cokernel matrix {{f}}
 image RingElement := Module => f -> image matrix {{f}}
 
 Ideal = new Type of MutableHashTable
+
+ideal = method(SingleArgumentDispatch=>true, TypicalValue => Ideal)
+
 expression Ideal := (I) -> new FunctionApplication from { 
      ideal,
      (
@@ -471,6 +476,11 @@ leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
 poincare Ideal := (I) -> poincare module I
+
+hilbertPolynomial = method(
+     Options => { Projective => true }, 
+     TypicalValue => ProjectiveHilbertPolynomial )
+
 hilbertPolynomial Ideal := options -> (I) -> hilbertPolynomial(module I,options)
 
 protect symbol Order

@@ -11,7 +11,9 @@ File << Thing := (x,y) -> printString(x,string y)     -- provisional
 if class Manipulator =!= Symbol then error ///attempted to load "setup.m2" a second time///
 
 Symbols = new MutableHashTable
-GlobalAssignHook Function := (X,x) -> if not Symbols#?x then Symbols#x = X
+GlobalAssignHook Function := (X,x) -> (
+     if not Symbols#?x then Symbols#x = X;
+     )
 GlobalReleaseHook Function := (X,x) -> (
      error concatenate("warning: ", X, " redefined");	    -- provisional, see definition below
      remove(Symbols,x);
@@ -269,7 +271,7 @@ if phase === 1 then scanPairs(symbolTable(),
      )
 
 GlobalReleaseHook Function := (X,x) -> (
-     stderr << "warning: " << toString X << " redefined" << endl;
+     stderr << "warning: " << string X << " redefined" << endl;
      remove(Symbols,x);
      )
 

@@ -465,7 +465,7 @@ bucketsfun(e:Expr):Expr := (
 setupfun("buckets",bucketsfun);
 merge(e:Expr):Expr := (
      when e is v:Sequence do (
-	  if length(v) != 3 then return(WrongNumArgs(2));
+	  if length(v) != 3 then return(WrongNumArgs(3));
 	  g := v.2;
 	  when v.0 is x:HashTable do
 	  if x.mutable then WrongArg("an immutable hash table") else
@@ -720,7 +720,7 @@ export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
      else apply(method,right));
 -----------------------------------------------------------------------------
 export typicalValues := newHashTable(mutableHashTableClass,nothingClass);
-messx := "expected a function or option as method";
+messx := "method should be 'function' or 'returntype => function'";
 installIt(h:HashTable,key:Expr,value:Expr):Expr := (
      when value
      is Error do value
@@ -747,7 +747,7 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
 	       installMethod(meth,s,x.v.1);
 	       value)
 	  else errorExpr(messx))
-     else errorExpr("expected a function"));
+     else errorExpr(messx));
 key1 := Sequence(nullE,nullE);
 key1E := Expr(key1);
 export lookupUnaryValue(s:HashTable,meth:Expr,methhash:int):Expr := (
@@ -961,8 +961,8 @@ lookupfun(e:Expr):Expr := (
      else nullE
      else nullE
      else nullE
-     else WrongNumArgs(2,4)
-     else WrongNumArgs(2,4));
+     else nullE
+     else nullE);
 setupfun("lookup",lookupfun);	  
 
 toHashTableError(i:int):Expr := errorExpr(

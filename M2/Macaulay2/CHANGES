@@ -2,6 +2,18 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+'browse' has been changed so it also displays the values local variables had
+when a function was created.  This can be a useful debugging tool.  Unfortunately,
+the names of the local variables are not available, but the values appear in
+the same sequence as the declarations of the variables.
+
+'processArgs' has been removed, and a new operator '==>' added to replace
+using 'o @ f' where o is an OptionTable or List and f is a Function for
+processing optional arguments to functions.  Its parsing precendence is as
+low as the other arrows and assignment statements, and available for use by
+the user (but methods have to be installed with 'installMethod').  Previous
+uses of '@' have to be changed.
+
 'document' has been reworked:
 	You should use
 		document { symbol X, ... }

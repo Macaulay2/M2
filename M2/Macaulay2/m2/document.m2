@@ -59,9 +59,12 @@ getDoc := x -> (
 Strings := hashTable { Sequence => "(...)", List => "{...}", Array => "[...]" }
 toStr := s -> if Strings#?s then Strings#s else toString s
 formatDocumentTag           = method(SingleArgumentDispatch => true)
+unformatTag                := new MutableHashTable
+record                     := f -> x -> (val := f x; unformatTag#val = x; val)
+	  
 formatDocumentTag Thing    := s -> toString s
-formatDocumentTag Symbol   := s -> toExternalString s
-formatDocumentTag Option   := s -> concatenate(toString s#0, "(", toString s#1, " => ...)")
+formatDocumentTag Symbol   := record(s -> if value s =!= s then toExternalString s else toString s)
+formatDocumentTag Option   := record(s -> concatenate(toString s#0, "(", toString s#1, " => ...)"))
 fSeq := new HashTable from {
      (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toStr s#3),
      (4,cohomology     ) => s -> ("HH_", toStr s#1, "^", toStr s#2, " ", toStr s#3),
@@ -91,12 +94,13 @@ fSeq := new HashTable from {
      3 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ")"),
      2 => s -> (toString s#0, " ", toStr s#1)
      }
-formatDocumentTag Sequence := s -> concatenate (
-     if #s == 0                           then toString
-     else if fSeq#?(#s,s#0)               then fSeq#(#s,s#0)
-     else if fSeq#?(#s, class, class s#0) then fSeq#(#s,class, class s#0)
-     else if fSeq#?#s                     then fSeq##s
-					  else toString) s
+formatDocumentTag Sequence := record(
+     s -> concatenate (
+	  if #s == 0                           then toString
+	  else if fSeq#?(#s,s#0)               then fSeq#(#s,s#0)
+	  else if fSeq#?(#s, class, class s#0) then fSeq#(#s,class, class s#0)
+	  else if fSeq#?#s                     then fSeq##s
+					       else toString) s)
 
 -----------------------------------------------------------------------------
 -- verifying the keys
@@ -362,7 +366,7 @@ briefDocumentation = x -> (
 headline := memoize (
      key -> (
 	  d := getDoc formatDocumentTag key;
-	  if d =!= null and class first d === HEADLINE 
+	  if d =!= null and #d > 0 and class first d === HEADLINE 
 	  then SEQ join( {"  --  "}, toList first d ) ) )
 
 smenu := s -> MENU ((i -> SEQ{ TO i, headline i }) \ sort (formatDocumentTag \ s))
@@ -379,14 +383,17 @@ synonym := X -> if X.?synonym then X.synonym else "object of class " | toString 
 usage := s -> (
      o := getDoc toExternalString s;
      if o === null and class s === Symbol then o = getDoc toExternalString toString s;
-     SEQ {"Usage :", PARA{}, if o === null then "No other documentation found." else o}
+     if o =!= null then SEQ {o, PARA{}}
      )
 
-
 documentation = method(SingleArgumentDispatch => true)
-documentation String := s -> getDoc toExternalString s
-type := s -> SEQ {"The object ", toString s, " is a :", PARA{}, menu ancestors1 class s, PARA{}}
-documentation Thing := s -> SEQ { type s, usage s }
+documentation String := s -> (
+     if unformatTag#?s
+     then documentation unformatTag#s
+     else getDoc toExternalString s
+     )
+type := s -> SEQ {"The object ", TT toString s, " is a :", PARA{}, menu ancestors1 class s, PARA{}}
+documentation Thing := s -> SEQ { usage s, type s }
 binary := set binaryOperators
 prefix := set prefixOperators
 postfix := set postfixOperators
@@ -418,22 +425,30 @@ op := s -> if operator#?s then (
      )
 documentation Symbol := s -> (
      a := apply(options s, f -> f => s);
+     b := methods s;
      SEQ {
+	  usage s,
      	  type s,
 	  op s,
 	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, smenu a, PARA{}},
-	  usage s
+	  if #b > 0 then SEQ {"Internal methods for ", toString s, " :", PARA{}, smenu b, PARA{}} 
      	  }
      )
+
+anon := string (() -> ())
+
 documentation Type := X -> (
+     syms := values symbolTable();
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X), (key,Y) -> key);
-     b := toString \ select(values symbolTable(), 
+     b := toString \ select(syms, 
 	  y -> not mutable y and value y =!= X and instance(value y, Type) and parent value y === X);
      c := apply(
-	  select(methods X, key -> not typicalValues#?key or typicalValues#key =!= X),
+	  select(methods X, key -> not typicalValues#?key or typicalValues#key =!= X and toString key#0 =!= anon),
 	  formatDocumentTag);
      d := ancestors X;
+     e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
+	  usage X,
      	  type X,
 	  if X.?synonym then SEQ {
 	       "Each object of class ", toString X, 
@@ -442,7 +457,7 @@ documentation Type := X -> (
 	  if #d > 0 then SEQ {"Each ", synonym X, " is also a :", PARA{}, menu d, PARA{}},
 	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, smenu a, PARA{}},
 	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, smenu c, PARA{}},
-	  usage X
+	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, smenu e, PARA{}},
 	  })
 
 fmeth := f -> (
@@ -457,24 +472,45 @@ optargs Function := f -> (
      a := apply(keys options f, s -> f => s);
      if #a > 0 then SEQ {"Optional arguments :", PARA{}, smenu a, PARA{}})
 
-ret := k -> (
-     t := (
-	  if typicalValues#?k then typicalValues#k 
-	  else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
-	  else Thing
-	  );
-     if t =!= Thing then SEQ {"Value returned is typically of type ", TO toString t, ".", PARA{}}
+typicalValue := k -> (
+     if typicalValues#?k then typicalValues#k 
+     else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
+     else Thing
      )
 
-seecode := x -> (
-     n := try code x;
-     if n =!= null then SEQ { "Code:", PRE concatenate between(newline,netRows n) })
+ret := k -> (
+     t := typicalValue k;
+     if t =!= Thing then SEQ {"Class of typical returned value: ", TO formatDocumentTag t, headline t, PARA{}}
+     )
 
-documentation Function :=  f -> SEQ { type f, ret f, fmeth f, optargs f, seecode f, usage f }
+seecode := x -> if (try locate x) =!= locate method then (
+     n := try code x;
+     if n =!= null then SEQ { "Code:", PRE concatenate between(newline,netRows n) }
+     )
+
+documentation Function :=  f -> SEQ { usage f, type f, ret f, fmeth f, optargs f, seecode f }
 documentation Option := v -> (
-     (fn, opt) -> SEQ { PARA{}, "default: ", toString opt, " => ", toString (options fn)#opt, PARA{}, usage fn }
+     (fn, opt) -> SEQ { 
+	  "Default value is : ", toString opt, " => ", toString (options fn)#opt,
+	  "See also: ", TO formatDocumentTag fn
+	  }
      ) toSequence v
-documentation Sequence := s -> if #s == 0 then null else SEQ { ret s, optargs s#0, seecode s, usage s }
+documentation Sequence := s -> if #s == 0 then null else (
+     t := typicalValue k;
+     SEQ {
+	  usage s,
+	  "See also:",
+	  MENU {
+	       SEQ {"Operator: ", TO formatDocumentTag s#0, headline s#0 },
+	       SEQ {"Class of argument 1: ", TO formatDocumentTag s#1, headline s#1 }, if #s > 2 then 
+	       SEQ {"Class of argument 2: ", TO formatDocumentTag s#2, headline s#2 }, if #s > 3 then
+	       SEQ {"Class of argument 3: ", TO formatDocumentTag s#3, headline s#3 }, if t =!= Thing then
+	       SEQ {"Class of typical returned value: ", TO formatDocumentTag t, headline t, PARA{}}
+     	       },
+	  optargs s#0,
+	  seecode s
+	  }
+     )
 
 help2 := s -> (
      d := documentation s;
@@ -667,7 +703,6 @@ text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newl
 text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y#1, newline)))
 net ExampleTABLE := x -> "    " | stack between("",apply(x, y -> "" | net y#1 || ""))
 
-net TABLE := x -> net MatrixExpression toList x
 tex TABLE := x -> concatenate applyTable(x,tex)
 texMath TABLE := x -> concatenate (
      ///

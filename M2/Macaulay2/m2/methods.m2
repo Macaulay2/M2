@@ -26,87 +26,52 @@ methodDefaults := new OptionTable from {
 
 methodFunctionOptions = new MutableHashTable
 
-method = args -> processArgs(
-  args,
-  methodDefaults,
-  options -> () -> (
-      if options.Options === null then (
-	if options.Associative then (
-	  methodFunction := newmethod1 noMethod;
-	  sequenceMethod := methodFunction(Sequence) :=
-	  args -> (
-	    -- Common code for every associative method without options
-	    if #args === 2 
-	    then ((x,y) -> (
-		f := lookup(methodFunction,class x,class y);
-		if f === null then noMethod args
-		else f(x,y))
-	      ) args
-	    else if #args >= 3 
-	    then sequenceMethod prepend(sequenceMethod(args#0,args#1),drop(args,2))
-	    else if #args === 1 then args#0
-	    else if #args === 0 then noMethod args
-	    else error "wrong number of arguments"
-	    ))
-	else if options.SingleArgumentDispatch
-	then methodFunction = newmethod1 noMethod
-	else (
-	  if false -- options.FirstArgumentDispatch
-	  then (
-	    methodFunction = newmethod1 noMethod;
-	    methodFunction(Sequence) :=
-	    args -> (
-	      -- Common code for methods that dispatch on first argument
-	      -- and receive a sequence of arguments.
-	      -- Using 'code f'?  Try 'code methods f'.
-	      -- Using 'browse'?  Try looking at the METHODS.
-	      f := lookup(methodFunction, class args#0);
-	      if f === null then noMethod args else f args
-	      )
-	    )
-	  else (
-	    methodFunction = newmethod123c(,noMethod, {});
-	    methodFunction(Sequence) := newmethod123c( methodFunction, noMethod, {} ))))
-      else (
-	opts := new OptionTable from options.Options;
-	methodFunction = 
-	args -> processArgs(args,opts,
-	  -- Common code for every method with options.
-	  -- Using 'code f'?  Try 'code methods f'.
-	  -- Using 'browse'?  Try looking at the METHODS.
-	  options -> args -> (
-	    f := lookup(methodFunction, class args);
-	    if f === null then noMethod args
-	    else (f options)(args)));
-	OptionsRegistry#methodFunction = opts;
-	methodFunction(Sequence) := options -> args -> (
-	  -- Common code for every method with options
-	  if #args === 2 
-	  then ((x,y) -> (
-	      f := lookup(methodFunction,class x,class y);
-	      if f === null then noMethod args
-	      else (f options)(x,y))
-	    ) args
-	  else if #args === 3 
-	  then ((x,y,z) -> (
-	      f := lookup(methodFunction,class x,class y,class z);
-	      if f === null then noMethod args else (f options)(x,y,z))
-	    ) args
-	  else if #args === 1 
-	  then ((x) -> (
-	      f := lookup(methodFunction,class x);
-	      if f === null then noMethod args else (f options)(x))
-	    ) args
-	  else if #args === 0
-	  then noMethod args
+AssociativeNoOptions := () -> (
+     methodFunction := newmethod1 noMethod;
+     methodFunction(Sequence) := self := 
+     binaryLookup := (x,y) -> (
+	  -- Common code for every associative method without options
+	  f := lookup(methodFunction,class x,class y);
+	  if f === null then noMethod(x,y)
+	  else f(x,y));
+     args -> (
+	  -- Common code for every associative method without options
+	  if #args === 2 then binaryLookup args
+	  else if #args >= 3 then self prepend(self(args#0,args#1),drop(args,2))
+	  else if #args === 1 then args#0
+	  else if #args === 0 then noMethod args
 	  else error "wrong number of arguments"
-	  )
-	);
-      if options.TypicalValue =!= Thing then typicalValues#methodFunction = options.TypicalValue;
-      methodFunctionOptions#methodFunction = options;
-      methodFunction
-      )
-  )
+	  );
+     methodFunction)
+
+WithOptions := opts -> (
+     if class opts =!= OptionTable then opts = new OptionTable from opts;
+     methodFunction := opts ==> options -> args -> (
+	  -- Common code for every method with options
+	  f := lookup(methodFunction, class args);
+	  if f === null then noMethod args
+	  else (f options) args );
+     OptionsRegistry#methodFunction = opts;
+     methodFunction(Sequence) := options -> args -> (
+	  -- Common code for every method with options
+	  f := lookup prepend(methodFunction,apply(args,class));
+	  if f === null then noMethod args else (f options) args);
+     methodFunction)
+
+MultipleArgsNoOptions := () -> (
+     methodFunction := newmethod123c(,noMethod, {});
+     methodFunction(Sequence) := newmethod123c( methodFunction, noMethod, {} );
+     methodFunction)     
+
+method = methodDefaults ==> options -> () -> (
+     methodFunction := if options.Options === null then (
+       	  if options.Associative then AssociativeNoOptions()
+       	  else if options.SingleArgumentDispatch then newmethod1 noMethod
+       	  else MultipleArgsNoOptions())
+     else WithOptions options.Options;
+     if options.TypicalValue =!= Thing then typicalValues#methodFunction = options.TypicalValue;
+     methodFunctionOptions#methodFunction = options;
+     methodFunction)
 
 OptionsRegistry#method = methodDefaults
 
@@ -135,16 +100,12 @@ setup((), {
 	  det, presentation, symbol use, degreesMonoid, newDegreesMonoid, submatrix,
 	  truncate, fraction
 	  })
-setup(TypicalValue => Module, {subquotient})
 setup(TypicalValue => RR, {realPart, imaginaryPart})
 setup(TypicalValue => CC, {conjugate})
 setup(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField
 	  })
-setup(TypicalValue => FractionField, {frac})
-setup(TypicalValue => Ring, {ring})
-setup(TypicalValue => Net, {betti})
 
 use Thing := identity
 
@@ -155,15 +116,9 @@ use HashTable := x -> (
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
 toString = method(SingleArgumentDispatch => true, TypicalValue => String)
 toExternalString = method(SingleArgumentDispatch => true, TypicalValue => String)
-ideal = method(SingleArgumentDispatch=>true, TypicalValue => Ideal)
 options = method(SingleArgumentDispatch=>true, TypicalValue => OptionTable)
-submodule = method(SingleArgumentDispatch=>true, TypicalValue => Module)
 setup(SingleArgumentDispatch=>true, {max,min,directSum,intersect,vars})
 net = method(SingleArgumentDispatch=>true, TypicalValue => Net)
-expression = method(SingleArgumentDispatch=>true, TypicalValue => Expression)
-hilbertPolynomial = method(
-     Options => { Projective => true }, 
-     TypicalValue => ProjectiveHilbertPolynomial )
 factor = method( Options => { } )
 
 cohomology = method( Options => { 

@@ -1387,15 +1387,6 @@ document { WrapperType,
      }
 
 document { AssociativeExpression,
-     TT "AssociativeExpression", " -- a type of ", TO "Expression", ".",
-     PARA,
-     "Types of associative expression:",
-     MENU {
-	  TO "Equation",
-	  TO "Product",
-	  TO "Sum"
-	  },
-     SEEALSO "Expression"
      }
 
 document { Holder,
@@ -1438,40 +1429,13 @@ document { Expression,
      PARA,
      EXAMPLE "(expression 2)^5 * (expression 3)^3 / ((expression 5) * (expression 11)^2)^6",
      PARA,
-     "Types of expressions:",
-     MENU {
-	  TO "Adjacent",
-	  TO "AssociativeExpression",
-	  TO "BinaryOperation",
-	  TO "Divide",
-	  TO "DoubleArrow",
-     	  TO "FunctionApplication",
-	  TO "Holder",
-	  TO "MatrixExpression",
-	  TO "Minus",
-	  TO "NonAssociativeProduct",
-	  TO "OneExpression",
-	  TO "Power",
-	  TO "Product",
-	  TO "RowExpression",
-	  TO "SparseMonomialVectorExpression",
-	  TO "SparseVectorExpression",
-	  TO "Subscript",
-	  TO "Superscript",
-	  TO "Sum",
-	  TO "Table",
-	  TO "ZeroExpression",
-	  },
-     "Functions which create expressions:",
-     MENU {
-	  TO "hold",
-	  },
      "Functions which act on expressions:",
      MENU {
 	  TO "value",
 	  TO "precedence"
 	  }
      }
+
 document { expression,
      TT "expression x", " -- make an ", TO "Expression", " from x."
      }

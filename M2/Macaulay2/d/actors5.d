@@ -346,6 +346,9 @@ loaddatafun(e:Expr):Expr := (
      );
 setupfun("loaddata",loaddatafun);
 
+LongDoubleArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleArrowS);
+setup(LongDoubleArrowS,LongDoubleArrowFun);
+
 -- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
 optionFun(lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);

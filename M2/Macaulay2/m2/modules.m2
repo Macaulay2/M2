@@ -22,6 +22,7 @@ vector = (v) -> (
 -----------------------------------------------------------------------------
 -- BasicModule = new Type of Type
 Module = new Type of Type
+submodule = method(SingleArgumentDispatch=>true, TypicalValue => Module)
 
 isModule = method(TypicalValue => Boolean)
 isModule Thing := M -> false

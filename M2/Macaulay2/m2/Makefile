@@ -87,9 +87,11 @@ TAGS: Makefile dumpseq
 	@../util/echoout '>TAGS' $(foreach i, \
 			      $(GFILES) $(MADEGFILES) \
 			      $(wildcard ../html/*.m2 ../test/*.m2 ../book/*.m2 \
-				../basictests/*.m2 ../emacs/*.m2 \
+				../basictests/*.m2 \
+				../emacs/makehlp.m2 \
+				../emacs/makem2.m2 \
+				../emacs/makesyms.m2 \
 				../tutorial/prelim/*.m2 ../tutorial/final/*.m2 \
-				../emacs/emacs.hlp \
 				../packages/*.m2 \
 				../*/Makefile* \
 			        ../experiments/*.m2 \

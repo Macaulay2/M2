@@ -61,8 +61,8 @@ next = key -> if NEXT#?key then HREF { linkFilename NEXT#key, nextButton }
 prev = key -> if PREV#?key then HREF { linkFilename PREV#key, prevButton }
 up   = key -> if   UP#?key then HREF { linkFilename   UP#key,   upButton }
 
-scope = method(SingleArgumentDispatch => true)
-scope2 = method(SingleArgumentDispatch => true)
+scope := method(SingleArgumentDispatch => true)
+scope2 := method(SingleArgumentDispatch => true)
 
 lastKey = null
 thisKey = null
@@ -75,6 +75,7 @@ scope2 Sequence := scope2 BasicList := x -> scan(x,scope2)
 scope2 SHIELD := x -> null
 scope2 TO := x -> (
      key := formatDocumentTag x#0;
+     linkFilename key;
      if not UP#?key then (
 	  UP#key = thisKey;
 	  if lastKey =!= null then (
@@ -118,10 +119,9 @@ close docFile
 time scan(allDocPairs, (key,doc) -> (
      	  thisKey = key;
      	  lastKey = null;
-     	  scope doc)) 
+     	  scope documentation key)) 
 << "pass 2" << endl
-time scan(allDocPairs, (key,doc) -> (
-	  filename := linkFilename key;
+time scan(pairs linkFilenameTable, (key,filename) -> (
      	  masterIndex#key = filename;
      	  filename << html HTML { 
 	       HEAD TITLE key,
