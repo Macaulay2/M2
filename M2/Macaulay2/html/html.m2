@@ -21,7 +21,9 @@ missing = false
 missed = memoize(
      key -> (
 	  missing = true;
-	  stderr << "Documentation for " << toExternalString key << " missing." << endl))
+	  stderr << "Documentation for '" << toExternalString key << "' missing, needed by '" << thisKey << "'." << endl;
+	  )
+     )
 
 fourDigits = i -> (
      s := toString i;
@@ -67,12 +69,17 @@ scope2 := method(SingleArgumentDispatch => true)
 lastKey = null
 thisKey = null
 
-scope Sequence := scope BasicList := x -> scan(x,scope)
 scope Thing := x -> null
+scope Sequence := scope BasicList := x -> scan(x,scope)
 scope MENU := x -> scan(x,scope2)
+scope TO := scope TOH := x -> (
+     key := formatDocumentTag x#0;
+     linkFilename key;
+     )
+
 scope2 Thing := x -> null
 scope2 Sequence := scope2 BasicList := x -> scan(x,scope2)
-scope2 SHIELD := x -> null
+scope2 SHIELD := x -> scan(x,scope)
 scope2 TO := scope2 TOH := x -> (
      key := formatDocumentTag x#0;
      linkFilename key;
@@ -83,6 +90,9 @@ scope2 TO := scope2 TOH := x -> (
 	       NEXT#lastKey = key;
 	       );
 	  lastKey = key;
+	  )
+     else (
+	  << "links to '" << key << "' from two nodes: '" << UP#key << "' and '" << thisKey << "'" << endl;
 	  )
      )
 
@@ -122,6 +132,7 @@ time scan(allDocPairs, (key,doc) -> (
      	  scope documentation key)) 
 << "pass 2" << endl
 time scan(pairs linkFilenameTable, (key,filename) -> (
+     	  thisKey = key;
      	  masterIndex#key = filename;
      	  filename << html HTML { 
 	       HEAD TITLE key,

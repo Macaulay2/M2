@@ -687,8 +687,8 @@ assert( monoidOptions #? MonomialOrder )
 document { (monoid, Array), HEADLINE "make a polynomial ring or monoid ring",
      TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
      PARA,
-     "Optional arguments (placed inside the array):",
-     MENU (TOH \ keys monoidOptions),
+     "Optional arguments (placed between the brackets):",
+     MENU (SHIELD \ TOH \ keys monoidOptions),
      SEEALSO {(symbol " ", Ring, Array)}
      }
 
@@ -1130,8 +1130,8 @@ document { (symbol ++,Module,Module),
 	  },
      "Projection and inclusion maps for direct sums:",
      MENU {
-	  TOH (symbol ^,Module,Array),
-	  TOH (symbol _,Module,Array)
+	  SHIELD TOH (symbol ^,Module,Array),
+	  SHIELD TOH (symbol _,Module,Array)
 	  },
      SEEALSO directSum
      }
@@ -1149,8 +1149,8 @@ document { (symbol ++,Matrix,Matrix),
 	  },
      "Selecting rows or columns of blocks:",
      MENU {
-	  TOH (symbol ^,Matrix,Array),
-	  TOH (symbol _,Matrix,Array)
+	  SHIELD TOH (symbol ^,Matrix,Array),
+	  SHIELD TOH (symbol _,Matrix,Array)
 	  },
      SEEALSO {directSum, (symbol |, Matrix, Matrix), (symbol ||, Matrix, Matrix)}
      }
@@ -1162,10 +1162,10 @@ document { directSum,
      PARA,
      "Projection and inclusion maps for direct sums:",
      MENU {
-	  TOH (symbol ^,Module,Array),
-	  TOH (symbol _,Module,Array),
-	  TOH (symbol ^,Matrix,Array),
-	  TOH (symbol _,Matrix,Array)
+	  SHIELD TOH (symbol ^,Module,Array),
+	  SHIELD TOH (symbol _,Module,Array),
+	  SHIELD TOH (symbol ^,Matrix,Array),
+	  SHIELD TOH (symbol _,Matrix,Array)
 	  },
      PARA,
      "It sometimes happens that the user has indices for the components of

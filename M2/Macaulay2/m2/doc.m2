@@ -232,13 +232,13 @@ document { HashTable,
      PARA,
      "Access functions:",
      MENU {
- 	  TOH "#",
- 	  TOH "."
+ 	  SHIELD TOH "#",
+ 	  SHIELD TOH "."
  	  },
      "Query functions:",
      MENU {
- 	  TOH "#?",
- 	  TOH ".?"
+ 	  SHIELD TOH "#?",
+ 	  SHIELD TOH ".?"
  	  }
      }
 

@@ -165,10 +165,6 @@ profile : gmon.out
 	gprof ../bin/Macaulay2 >profile
 clean ::; rm -f profile
 
-ifneq "$(CC)" "cl"
-all :: bare
-endif
-
 INPUTS := cache-tmp/Examples/sample cache-tmp/Examples/expression
 cache-tmp/Examples/sample: sample; cp $< $@
 cache-tmp/Examples/expression: expression; cp $< $@
@@ -208,7 +204,7 @@ gdb :; gdb ../bin/Macaulay2
 
 clean::
 	rm -rf ../cache/Macaulay2-$(ARCH)-data ../cache/Macaulay2-doc \
-		cache-tmp *.obj *.exe bare TAGS ../bin/M2 runexample \
+		cache-tmp *.obj *.exe TAGS ../bin/M2 runexample \
 		temp.data allfiles distfiles \
 		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core

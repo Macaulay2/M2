@@ -103,6 +103,9 @@ setup : setup.template ../Makeconf.lcl
 	sed -e 's/%DUMPDATA%/false/' <$< >$@
 	chmod a+x $@
 endif
+################################# experiments
+clean ::; if [ -d experiments ]; then $(MAKE) -C experiments clean; fi
+all::; $(MAKE) -C experiments all
 ################################# slides
 clean ::; if [ -d slides ]; then $(MAKE) -k -C slides clean; fi
 tests ::; if [ -d slides ]; then $(MAKE) -k -C slides; fi

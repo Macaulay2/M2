@@ -13,6 +13,7 @@ next.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Next\" \"next.gif\
 previous.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Previous\" \"previous.gif\")"  -b '(gimp-quit 0)'
 index.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Index\" \"index.gif\")"  -b '(gimp-quit 0)'
 top.gif : Macaulay2-button.scm; gimp -b "(Macaulay2-button \"Top\" \"top.gif\")"  -b '(gimp-quit 0)'
+null.gif : Macaulay2-empty-button.scm; gimp -b "(Macaulay2-empty-button \"null.gif\")"  -b '(gimp-quit 0)'
 
 index.html : html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
 	rm -f ./*.html
