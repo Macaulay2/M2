@@ -253,7 +253,7 @@ scan(1 .. 22, i -> fib = fib())
 "
 
 document { ultimate,
-     Headline => " -- ultimate value for an iteration",
+     Headline => "ultimate value for an iteration",
      TT "ultimate(f,x)", " -- yields the value ultimately obtained by
      applying the function ", TT "f", " to ", TT "x", ".",
      PARA,

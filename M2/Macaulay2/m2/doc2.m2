@@ -901,41 +901,73 @@ document { mergePairs,
 
 document { merge,
      Headline => "merge hash tables",
-     TT "merge(x,y,g)", " -- merges hash tables x and y using the function
-     g to combine the values when the keys collide.",
+     Synopsis => {
+	  "z = merge(x,y,g)",
+	  "x" => {"a hash table"},
+	  "y" => {"a hash table"},
+	  "g" => {"a function of two variables to be used to combine a value
+	       of ", TT "x", " with a value of ", TT "y", " when the 
+	       corresponding keys coincide"
+	       },
+	  "z" => {
+	       "a new hash table whose keys are the keys occuring in ", TT "x", "
+	       or in ", TT "y", "; the same values are used, except that if
+	       if a key ", TT "k", " occurs in both arguments, then
+	       ", TT "g(x#k,y#k)", " is used instead."
+	       }
+	  },
      PARA,
      "If ", TT "x", " and ", TT "y", " have the same class and parent, then 
-     so will the result.  The merged hash table has as its keys the keys 
-     occuring in the arguments.  When a key occurs in both arguments, the 
-     corresponding values are combined using the function ", TT "g", ", which 
-     should be a function of two arguments.",
+     the ", TT "z", " will, too.",
      PARA,
      "This function is useful for multiplying monomials or adding polynomials.",
-     PARA,
-     "See also ", TO "combine", ", which is useful for multiplying polynomials."
+     SEEALSO {"combine"}
      }
 
 document { combine,
      Headline => "combine hash tables",
-     TT "combine(x,y,f,g,h)", " -- yields the result of combining hash tables
-     ", TT "x", " and ", TT "y", ", using ", TT "f", " to combine keys, ", TT "g", "
-     for values, and ", TT "h", " for collisions.",
+     Synopsis => {
+	  "z = combine(x,y,f,g,h)",
+	  "x" => "a hash table",
+	  "y" => {"a hash table of the same class as ", TT "x"},
+	  "f" => { "a function of two variables to be used for combining a key
+	       of ", TT "x", " with a key of ", TT "y", " to make a new key
+	       for ", TT "z", "." },
+	  "g" => { "a function of two variables to be used for combining a value
+	       of ", TT "x", " with a value of ", TT "y", " to make a new value
+	       for ", TT "z", "." },
+	  "h" => { "a function of two variables to be used for combining two
+	       values returned by ", TT "g", " when the corresponding keys
+	       returned by ", TT "f", " turn out to be equal.  Its first argument
+	       will be the value accumulated so far, and its second argument will
+	       be a value just provided by ", TT "g", "."
+	       },
+	  "z" => {
+	       "a new hash table, of the same class as ", TT "x", " and ", TT "y", ",
+	       containing the pair ", TT "f(p,q) => g(b,c)", "
+	       whenever ", TT "x", " contains the pair ", TT "p => b", "
+	       and ", TT "y", " contains the pair ", TT "q => c", ",
+	       except that ", TT "h", " is used to combine values when two keys
+	       coincide."
+	       }
+	  },
      PARA,
-     "The objects are assumed to have the same class, and the result will
-     have the class of one of them.  The combined object will contain 
-     ", TT "f(p,q) => g(b,c)", " when ", TT "x", " contains ", TT "p => b", "
-     and ", TT "y", " contains ", TT "q => c", ".  The function ", TT "h", " is 
-     used to combine values when key collisions occur in the result, as with
-     ", TO "merge", ".  The function ", TT "h", " should be a function of two 
-     arguments; it may assume that its first argument will be the value accumulated 
-     so far, and its second argument will be the result ", TT "g(b,c)", " from a 
-     single pair of values.  Normally ", TT "h", " will be an associative and
-     commutative function.",
+     "The function ", TT "f", " is applied to every pair ", TT "(p,q)", "
+     where ", TT "p", " is a key of ", TT "x", " and ", TT "q", " is a
+     key of ", TT "y", ".  The number of times ", TT "f", " is evaluated is thus 
+     the product of the number of keys in ", TT "x", " and the number of 
+     keys in ", TT "y", ".",
+     PARA,
+     "The function ", TT "h", " should be an associative function, for otherwise 
+     the result may depend on internal details about the implementation of hash 
+     tables that affect the order in which entries are encountered.  If ", TT "f", ",
+     ", TT "g", ", and ", TT "h", " are commutative functions as well, then the 
+     result ", TT "z", " is a commutative function of ", TT "x", " and ", TT "y", ".",
      PARA,
      "The result is mutable if and only if ", TT "x", " or ", TT "y", " is.",
      PARA,
-     "This function can be used for multiplying polynomials,
-     where it will be used in code like this.", 
+     "This function can be used for multiplying polynomials, where it
+     can be used in code something like this:", 
      PRE "     combine(x, y, monomialTimes, coeffTimes, coeffPlus)"
      }
 

@@ -405,7 +405,10 @@ tryelsefun(primary:Code,alternate:Code):Expr := (
      if !SuppressErrors then p		  -- eval could have turned it off
      else (
      	  SuppressErrors = oldSuppressErrors;
-	  when p is Error do eval(alternate)
+	  when p is err:Error do (
+	       if err.message == breakMessage || err.message == returnMessage then p
+	       else eval(alternate)
+	       )
 	  else p));
 TryElseFun = tryelsefun;
 tryfun(primary:Code):Expr := (
@@ -415,7 +418,11 @@ tryfun(primary:Code):Expr := (
      if !SuppressErrors then p		  -- eval could have turned it off
      else (
      	  SuppressErrors = oldSuppressErrors;
-	  when p is Error do nullE else p));
+	  when p 
+	  is err:Error do (
+	       if err.message == breakMessage || err.message == returnMessage then p
+	       else nullE)
+	  else p));
 TryFun = tryfun;
 ifthenelsefun(predicate:Code,thenclause:Code,elseClause:Code):Expr := (
      p := eval(predicate);

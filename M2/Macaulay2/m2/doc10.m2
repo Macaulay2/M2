@@ -180,19 +180,13 @@ assert (HH_4 C == 0)
 "
 
 document { (resolution, Module),
-     TT "resolution M", " -- produces a projective resolution of the 
-     module ", TT "M", ".",
-     PARA,
-     "If the computation is interrupted after the skeleton has been
-     successfully computed, then the partially completed
-     resolution is available as ", TT "M.resolution", ".  The computation 
-     can be continued with ", TT "resolution M", ".",
-     PARA,
-     "If the user has a chain complex in hand which is known to be a
-     projective resolution of ", TT "M", ", then it can be installed
-     with ", TT "M.resolution = C", ".",
-     PARA,
-     "For an abbreviation, use ", TO "res", "."
+     Synopsis => {
+	  "C = resolution M",
+	  "M" => "a module",
+	  "C" => {"a free resolution of ", TT "M"}
+	  },
+     "For an abbreviation, use ", TO "res", ".",
+     SEEALSO {"computing resolutions"}
      }
 
 document { (resolution, Matrix),

@@ -209,21 +209,17 @@ document { GroebnerBasis,
      }
 
 document { (stats, GroebnerBasis),
-     Headline => " -- display some statistics about the computation"
+     Headline => "display some statistics about the computation"
      }
 
 document { (generators, GroebnerBasis),
-     Headline => " -- the Groebner basis matrix",
+     Headline => "the Groebner basis matrix",
      TT "generators g", " -- returns a matrix whose columns are the
      generators of the Groebner basis."
      }
 
 document { (mingens, GroebnerBasis),
-     Headline => " -- a matrix whose columns are minimal generators of the submodule",
-     }
-
-document { (syz, GroebnerBasis),
-     Headline => " -- a matrix whose columns are the syzygies on the columns of the original matrix",
+     Headline => "a matrix whose columns are minimal generators of the submodule",
      }
 
 document { returnCode,
@@ -492,10 +488,11 @@ document { LongPolynomial,
 document { Syzygies, 
      Headline => "whether to collect syzygies",
      TT "Syzygies", " -- keyword for an optional argument used with
-     ", TO "gb", " and ", TO "syz", ", which indicates whether the 
-     syzygies should be computed.",
+     ", TO "gb", " which indicates whether the syzygies should be
+     computed.",
      PARA,
-     "This option is for internal use only."
+     "It's also an option for ", TO "syz", ", but ", TO "syz", " overrides 
+     any value provided by the user with the value ", TT "true", "."
      }
 
 document { ChangeMatrix,
@@ -662,16 +659,29 @@ document { syz => CodimensionLimit,
      }
 
 document { syz,
+     Headline => "the syzygy matrix"
+     }
+
+document { (syz, GroebnerBasis),
+     Headline => "retrieve the syzygy matrix",
+     Synopsis => {
+	  "f = syz G",
+	  "G" => {"the Groebner basis of a matrix ", TT "h"},
+	  "f" => {"the matrix of syzygies among the columns of ", TT "h"}
+	  },
+     "Warning: the result may be zero if syzygies were not to be retained 
+     during the calculation, or if the computation was not continued to a
+     high enough degree.",
+     }
+
+document { (syz, Matrix),
      Headline => "compute the syzygy matrix",
-     TT "syz f", " -- compute minimal generators for the module of syzygies for the 
-     ", TO "Matrix", " ", TT "f", ".",
-     PARA,
-     "syz G -- retrieve the ", TO "Matrix", " of syzygies from the Groebner
-     basis ", TT "G", ".  The result may be empty if syzygies were not to be retained during the
-     calculation, or if the computation was not continued to a high enough degree.",
-     PARA,
-     "This function takes the same optional arguments as ", TT "gb", ".",
-     SEEALSO "GroebnerBasis"
+     Synopsis => {
+	  "f = syz h",
+	  "h" => {"a matrix"},
+	  "f" => {"the matrix of minimal generators for the syzygies among
+	       the columns of ", TT "h"}
+	  }
      }
 
 document { syz => StopBeforeComputation,

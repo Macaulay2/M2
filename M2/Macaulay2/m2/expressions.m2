@@ -560,7 +560,7 @@ padto := (s,n) -> (
      if k === 0 then s else (s, k))
 
 -- document { stringlen,
---      TT "stringlen s", " -- returns the length of the string s.  The argument
+--      TT "stringlen s", "returns the length of the string s.  The argument
 --      may also be a sequence or list of strings and symbols, and so
 --      on, recursively, in which case the lengths of the various elements
 --      are summed.  Additionally, an integer may be used to represent a
@@ -1053,7 +1053,7 @@ TeX = x -> (
 --     )
 --
 --document { netscape,
---     TT "netscape x", " -- convert x to html format, contact a netscape
+--     TT "netscape x", "convert x to html format, contact a netscape
 --     process currently running on the same host, and have it display
 --     it.",
 --     PARA,
