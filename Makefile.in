@@ -113,7 +113,9 @@ clean::; rm -f gc/base_lib
 
 ###################### GMP
 
+ifeq "$(GMP)" "provided"
 justM2 all:: GMP
+endif
 
 ifeq "$(OS)" "FreeBSD"
 GMP : 	lib/libgmp.a
