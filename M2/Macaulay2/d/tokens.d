@@ -315,11 +315,6 @@ export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      d := Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false);
      allLocalDictionaries = LocalDictionaryList(d,allLocalDictionaries);
      d);
-export newStaticLocalDictionary(dictionary:Dictionary):Dictionary := ( -- obsolete and bad!!!
-     numLocalDictionaries = numLocalDictionaries + 1;
-     d := Dictionary(nextHash(),newSymbolHashTable(),dictionary,0,0,false,false);
-     allLocalDictionaries = LocalDictionaryList(d,allLocalDictionaries);
-     d);
 export newStaticLocalDictionary():Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      d := Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,
@@ -344,6 +339,7 @@ export newStaticLocalDictionaryClosure(dc:DictionaryClosure):DictionaryClosure :
      DictionaryClosure(f,d));
 
 export emptyFrame := newLocalFrame(emptyLocalDictionary);
+export emptyDictionaryClosure := DictionaryClosure(emptyFrame,emptyLocalDictionary);
 
 -- hash tables for exprs
 
