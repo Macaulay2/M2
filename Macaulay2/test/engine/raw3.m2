@@ -396,6 +396,57 @@ g = (9*x-2*y+3*z)^2*(13*x^2+y-5)
 assert(rawGCD(f,g) == 13*x^2+y-5)
 rawGCD(f,g)
 f1 = (7*x+2*y+3*z)^2*(13*x^2+y-5)
+
+------------------------
+-- rawPseudoRemainder --
+------------------------
+R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
+f = (x+1)*y-3
+g = y^2+y+1
+rawPseudoRemainder(g,f)
+rawPseudoRemainder(f,g)
+
+f = 13*x^2+x+1
+g = x^7
+rawPseudoRemainder(g,f)
+
+R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
+f = (x+1)*y-3
+g = y^2+y+1
+rawPseudoRemainder(g,f)
+rawPseudoRemainder(f,g)
+
+R = polyring(rawQQ(), (symbol x,symbol y,symbol z))
+f = (x+1)*y-3
+g = y^2+y+1
+rawPseudoRemainder(g,f)
+
+f = x^2*y^2+x-2
+g = x-3
+rawPseudoRemainder(g,f)
+rawPseudoRemainder(f,g)
+
+---------------
+-- rawFactor --
+---------------
+load "raw-util.m2"
+R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
+f = (x+y)*(x-y)
+rawFactor f
+
+R = polyring(rawQQ(), (symbol x,symbol y,symbol z))
+f = (x+y)*(x-y)
+rawFactor f
+
+R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
+f = (x+y)*(x-y)
+rawFactor f
+
+load "raw-util.m2"
+R = polyring(rawQQ(), (symbol x,symbol y,symbol z))
+f = (x+3*y-14)^3*(x^2+y^4+z^7-x*y-13*x*z^2+12)
+rawFactor f
+
 -- TODO: 
 --  compress
 --  uniquify
