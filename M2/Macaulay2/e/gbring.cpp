@@ -24,7 +24,7 @@ gbvector * GBRing::new_raw_term()
 
 exponents GBRing::exponents_make()
 {
-  int *e = new int[_nvars]; // length is nvars
+  int *e = new int[_nvars+2]; // length is nvars
   return e;
 }
 
