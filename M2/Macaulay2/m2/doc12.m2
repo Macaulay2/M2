@@ -885,18 +885,26 @@ document { peek,
      SEEALSO "peek2"
      }
 
-document { peek2,
+document { (peek2,ZZ,Thing),
      Headline => "examine contents of an object",
-     TT "peek2(s,n)", " -- displays contents of ", TT "s", " to depth ", TT "n", ", 
-     bypassing installed methods.",
-     PARA,
-     "It applies the default output method to the object ", TT "s", ",
-     bypassing the installed method for objects of its class.",
+     Synopsis => {
+	  Usage => {TT "peek2(n,s)", " or ", TT "peek2_n s"},
+	  Inputs => {
+	       "n" => "",
+	       "s" => ""
+	       },
+	  Outputs => { "a net that displays the contents of ", TT "s", ", bypassing installed formatting and printing methods to depth ", TT "n" }
+	  },
      EXAMPLE {
 	  "s = factor 112",
       	  "peek s",
-      	  "peek2(s,2)"
+      	  "peek2_2 s"
 	  },
+     PARA {
+	  "Some types of things have the notion of depth modified slightly to make the entire structure visible at depth 1, as in the following example, which
+	  also shows how to use ", TT "wrap", " with the output from ", TT "peek", "."
+	  },
+     EXAMPLE "wrap_80 peek documentation resolution",
      SEEALSO "peek"
      }
 

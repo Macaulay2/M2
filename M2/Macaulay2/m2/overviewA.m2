@@ -6,23 +6,22 @@ document { "Mathematical Overview",
      "In this section we give a comprehensive overview of the main 
      mathematical types of Macaulay 2, their construction and most common
      operations. WARNING: this overview is currently under construction.",
-     PARA,
      UL {
 	  TO "rings",
 	  TO "ideals",
 	  TO "matrices",
 	  TO "substitution and maps between rings",
-	  ("modules",
+	  BODY ("modules",
 	       UL {
-		    (TO "modules: part I", " -- getting started"),
-		    (TO "modules: part II", " -- homological and multilinear algebra")
+		    SEQ (TO "modules: part I", " -- getting started"),
+		    SEQ (TO "modules: part II", " -- homological and multilinear algebra")
 		    }
 	       ),
 	  TO "Groebner bases and related computations",
 	  TO "chain complexes",
 	  TO "varieties",
 	  TO "using external libraries",
-	  ("specialized routines",
+	  BODY ("specialized routines",
 	       UL {
 		    TO "commutative algebra",
 		    TO "algebraic geometry"
