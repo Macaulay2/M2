@@ -332,6 +332,99 @@ const RingElement * IM2_Matrix_dot_product(const MutableMatrix *M, int c1, int c
   return RingElement::make_raw(M->get_ring(), a);
 }
 
+const M2_bool IM2_MutableMatrix_is_zero(const MutableMatrix *M)
+{
+  
+  return false;
+}
+
+const M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M, 
+					 const MutableMatrix *N); /* drg: connected === and to rawIsEqual for use with == */
+/* This checks that the entries of M,N are the same */
+
+MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M);
+
+MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N); /* drg: connected + */
+/* If the sizes do not match, then NULL is returned.  If they do match,
+   the addition is performed.  If the targets are not equal, the target 
+   of the result is set to have each degree zero.  Similarly with the
+   source, and also with the degree of the matrix. */
+
+MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const MutableMatrix *N); /* drg: connected - */
+/* If the sizes do not match, then NULL is returned.  If they do match,
+   the addition is performed.  If the targets are not equal, the target 
+   of the result is set to have each degree zero.  Similarly with the
+   source, and also with the degree of the matrix. */
+
+MutableMatrix * IM2_MutableMatrix_negate(const MutableMatrix *M); /* drg: connected - */
+
+MutableMatrixOrNull * IM2_MutableMatrix_mult(const MutableMatrix *M, 
+					     const MutableMatrix *N, 
+					     M2_bool opposite_mult); /* drg: connected * */
+/* If the sizes do not match, then NULL is returned.  If they do match,
+   the multiplication is performed, and the source and target are taken from N,M
+   respectively.  The degree of the result is the sum of the two degrees */
+
+MutableMatrixOrNull * IM2_MutableMatrix_scalar_mult(const RingElement *f,
+						    const MutableMatrix *M, 
+						    M2_bool opposite_mult); /* drg: connected * */
+
+MutableMatrixOrNull * IM2_MutableMatrix_submatrix(const MutableMatrix *M,
+						  const M2_arrayint rows,
+						  const M2_arrayint cols); /* drg: connected rawSubmatrix*/
+
+MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
+						   const M2_arrayint cols); /* drg: connected rawSubmatrix*/
+
+
+  /***************************************************
+   ***** Lapack routines for dense mutable matrices **
+   ***************************************************/
+
+  /* Each of the following routines accepts honest MutableMatrix arguments,
+     and returns false if there is an error.  The return values are placed into
+     some of the (already existing) parameters of the routine */
+
+M2_bool rawSolve(MutableMatrix *A,
+		 MutableMatrix *b,
+		 MutableMatrix *x);
+
+M2_bool rawLU(MutableMatrix *A,
+	      MutableMatrix *L,
+	      MutableMatrix *U,
+	      MutableMatrix *P);
+/*
+ */
+
+M2_bool rawEigenvalues(MutableMatrix *A,
+		       MutableMatrix *eigenvalues,
+		       M2_bool is_symm_or_hermitian);
+/*
+ */
+
+M2_bool rawEigenvectors(MutableMatrix *A,
+			MutableMatrix *eigenvalues,
+			MutableMatrix *eigenvectors,
+			M2_bool is_symm_or_hermitian);
+/*
+ */
+
+M2_bool rawSVD(MutableMatrix *A,
+	       MutableMatrix *Sigma,
+	       MutableMatrix *U,
+	       MutableMatrix *VT,
+	       M2_bool use_divide_and_conquer);
+/* 
+ */
+
+M2_bool rawLeastSquares(MutableMatrix *A, 
+			MutableMatrix *b, 
+			MutableMatrix *x, /* return value: argument modified */
+			M2_bool assume_full_rank);
+/* Case 1: A is a dense matrix over RR.  Then so are b,x.
+   Case 2: A is a dense matrix over CC.  Then so are b,x. */
+
+
 #if 0
 const MutableMatrixOrNull * 
 IM2_MutableMatrixSolve(MutableMatrix *A,
