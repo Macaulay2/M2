@@ -53,7 +53,7 @@ export getSequenceOfPairsOfSmallIntegers(v:Sequence) : array(int) := (
 	  foreach i in v do (
 	       when i
 	       is pair:Sequence 
-	       do foreach j in pair do when j is a:Integer do provide(toInt(a)) else nothing
+	       do foreach j in pair do when j is a:Integer do provide toInt(a) else nothing
 	       else nothing
 	       );
 	  provide -333;
@@ -71,7 +71,7 @@ export isListOfSmallIntegers(e:Expr) : bool := (
 export getListOfSmallIntegers(e:Expr) : array(int) := (
      when e is l:List do 
      new array(int) len length(l.v) do (
-	  foreach i in l.v do when i is a:Integer do provide(toInt(a)) else nothing;
+	  foreach i in l.v do when i is a:Integer do provide toInt(a) else nothing;
 	  provide 0;
 	  )
      else array(int)(-333)
@@ -88,7 +88,7 @@ export getSequenceOfSmallIntegers(s:Sequence) : array(int) := (
      new array(int) len length(s) do (
 	  foreach i in s do 
 	  when i 
-	  is a:Integer do provide(toInt(a)) 
+	  is a:Integer do provide toInt(a) 
 	  else abort("internal error: getSequenceOfSmallIntegers");
 	  abort("internal error: getSequenceOfSmallIntegers");
 	  )
@@ -111,7 +111,7 @@ export getSequenceOfSmallIntegers(e:Expr) : array(int) := (
 	  new array(int) len length(s) do (
 	       foreach i in s do 
 	       when i 
-	       is a:Integer do provide(toInt(a)) 
+	       is a:Integer do provide toInt(a) 
 	       else abort("internal error: getSequenceOfSmallIntegers");
 	       abort("internal error: getSequenceOfSmallIntegers");
 	       )
@@ -127,7 +127,7 @@ export isListOfStrings(e:Expr) : bool := (
 export getListOfStrings(e:Expr) : array(string) := (
      when e is l:List do 
      new array(string) len length(l.v) do (
-	  foreach i in l.v do when i is a:string do provide(a) else nothing;
+	  foreach i in l.v do when i is a:string do provide a else nothing;
 	  provide "";
 	  )
      else array(string)()
@@ -140,7 +140,7 @@ export getSequenceOfMonomialOrderings(s:Sequence) : RawMonomialOrderingArray := 
      new RawMonomialOrderingArray len length(s) do (
 	  foreach i in s do 
 	  when i 
-	  is a:RawMonomialOrdering do provide(a) 
+	  is a:RawMonomialOrdering do provide a 
 	  else abort("internal error : getSequenceOfMonomialOrderings")));
 
 export isSequenceOfVectors(e:Expr) : bool := (
@@ -155,7 +155,7 @@ export getSequenceOfVectors(e:Expr) : RawVectorArray := (
 	  new RawVectorArray len length(s) do (
 	       foreach i in s do 
 	       when i 
-	       is a:RawVector do provide(a) 
+	       is a:RawVector do provide a 
 	       else abort("internal error : getSequenceOfVectors")))
      is a:RawVector do RawVectorArray(a)
      else RawVectorArray());
@@ -172,7 +172,7 @@ export getSequenceOfRingElements(e:Expr) : RawRingElementArray := (
 	  new RawRingElementArray len length(s) do (
 	       foreach i in s do 
 	       when i 
-	       is a:RawRingElement do provide(a) 
+	       is a:RawRingElement do provide a 
 	       else abort("internal error : getSequenceOfRingElements")))
      is a:RawRingElement do RawRingElementArray(a)
      else RawRingElementArray());
@@ -190,7 +190,7 @@ export getSequenceOfMatrices(e:Expr) : RawMatrixArray := (
 	  new RawMatrixArray len length(s) do (
 	       foreach i in s do 
 	       when i 
-	       is a:RawMatrix do provide(a) 
+	       is a:RawMatrix do provide a 
 	       else abort("internal error : getSequenceOfMatrices")))
      is a:RawMatrix do RawMatrixArray(a)
      else RawMatrixArray());
@@ -309,7 +309,7 @@ export getSequenceOfReals(e:Expr) : array(double) := (
 	  new array(double) len length(s) do (
 	       foreach i in s do 
 	       when i 
-	       is a:Real do provide(a.v) 
+	       is a:Real do provide a.v
 	       else abort("internal error: getSequenceOfReals");
 	       abort("internal error: getSequenceOfReals");
 	       )
@@ -326,7 +326,7 @@ export isListOfReals(e:Expr) : bool := (
 export getListOfReals(e:Expr) : array(double) := (
      when e is l:List do 
      new array(double) len length(l.v) do (
-	  foreach i in l.v do when i is a:Real do provide(a.v) else nothing;
+	  foreach i in l.v do when i is a:Real do provide a.v else nothing;
 	  )
      else array(double)()
      );
@@ -340,7 +340,7 @@ export isListOfComplex(e:Expr) : bool := (
 export getListOfComplex(e:Expr) : array(Complex) := (
      when e is l:List do 
      new array(Complex) len length(l.v) do (
-	  foreach i in l.v do when i is a:Complex do provide(a) else nothing;
+	  foreach i in l.v do when i is a:Complex do provide a else nothing;
 	  )
      else array(Complex)()
      );

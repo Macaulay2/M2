@@ -1037,13 +1037,12 @@ setupfun("apply",map);
 
 scan(n:int,f:Expr):Expr := (
      if n <= 0 then return(emptySequenceE);
-     recursiondepth = recursiondepth + 1;
-     saveLocalFrame := localFrame;
      if recursiondepth > recursionlimit then (
      	  recursiondepth = recursiondepth - 1;
-	  return(backtr(RecursionLimit()));
-	  )
+	  backtr(RecursionLimit()))
      else when f is fc:FunctionClosure do (
+     	  recursiondepth = recursiondepth + 1;
+     	  saveLocalFrame := localFrame;
 	  previousFrame := fc.frame;
 	  model := fc.model;
 	  desc := model.desc;
@@ -1054,52 +1053,55 @@ scan(n:int,f:Expr):Expr := (
 	  if numparms != 1 then (
      	       recursiondepth = recursiondepth - 1;
 	       return(backtr(WrongNumArgs(model.parms,numparms,1)));
-	       )
+	       );
+	  if framesize == 1 then (
+	       values := new Sequence len framesize do provide nullE;
+	       localFrame = Frame(previousFrame,frameID,framesize,false,values);
+	       for i from 0 to n-1 do (
+		    values.0 = toInteger(i);
+		    tmp := eval(body);
+		    when tmp is err:Error do (
+			 if err.message != returnMessage then (
+			      recursiondepth = recursiondepth - 1;
+			      localFrame = saveLocalFrame;
+			      return(backtrLoop(tmp)); 
+			      )
+			 )
+		    else nothing;
+		    if localFrame.notrecyclable then (
+			 values = new Sequence len framesize do provide nullE;
+			 localFrame = Frame(previousFrame,frameID,framesize,false,values);
+			 );
+		    );
+	       localFrame = saveLocalFrame;
+	       recursiondepth = recursiondepth - 1;
+	       nullE)
 	  else (
 	       values := new Sequence len framesize do provide nullE;
 	       localFrame = Frame(previousFrame,frameID,framesize,false,values);
-	       if framesize == 1 then (
-		    for i from 0 to n-1 do (
-			 values.0 = toInteger(i);
-			 tmp := eval(body);
-			 when tmp is err:Error do (
-			      if err.message != returnMessage then (
-     			      	   recursiondepth = recursiondepth - 1;
-     			      	   localFrame = saveLocalFrame;
-			      	   return(backtrLoop(tmp)); 
-				   )
+	       for i from 0 to n-1 do (
+		    values.0 = toInteger(i);
+		    tmp := eval(body);
+		    when tmp is err:Error do (
+			 if err.message != returnMessage then (
+			      recursiondepth = recursiondepth - 1;
+			      localFrame = saveLocalFrame;
+			      return(backtrLoop(tmp)); 
 			      )
-			 else nothing;
-		    	 -- if debugLevel > 0 then stdout << "localFrame.notrecyclable = " << localFrame.notrecyclable << endl;
-		    	 if localFrame.notrecyclable then (
-			      values = new Sequence len framesize do provide nullE;
-			      localFrame = Frame(previousFrame,frameID,framesize,false,values);
-			      )
-			 else for i from 1 to framesize - 1 do values.i = nullE;
 			 )
-		    )
-	       else (
-		    for i from 0 to n-1 do (
-			 values.0 = toInteger(i);
-			 tmp := eval(body);
-			 when tmp is err:Error do (
-			      if err.message != returnMessage then (
-     			      	   recursiondepth = recursiondepth - 1;
-     			      	   localFrame = saveLocalFrame;
-			      	   return(backtrLoop(tmp)); 
-				   )
-			      )
-			 else nothing;
-		    	 if localFrame.notrecyclable then (
-			      values = new Sequence len framesize do provide nullE;
-			      localFrame = Frame(previousFrame,frameID,framesize,false,values);
-			      )
-			 else for i from 1 to framesize - 1 do values.i = nullE;
+		    else nothing;
+		    if localFrame.notrecyclable then (
+			 values = new Sequence len framesize do provide nullE;
+			 localFrame = Frame(previousFrame,frameID,framesize,false,values);
 			 )
-		    )
-	       )
-	  )
+		    else for i from 1 to framesize - 1 do values.i = nullE;
+		    );
+	       localFrame = saveLocalFrame;
+	       recursiondepth = recursiondepth - 1;
+	       nullE))
      is cf:CompiledFunction do (	  -- compiled code
+     	  recursiondepth = recursiondepth + 1;
+     	  saveLocalFrame := localFrame;
 	  fn := cf.fn;
 	  for i from 0 to n-1 do (
 	       tmp := fn(Expr(toInteger(i)));
@@ -1109,9 +1111,13 @@ scan(n:int,f:Expr):Expr := (
 		    return(backtr(tmp)); 
 		    )
 	       else nothing; 
-	       )
-	  )
+	       );
+	  localFrame = saveLocalFrame;
+	  recursiondepth = recursiondepth - 1;
+	  nullE)
      is cf:CompiledFunctionClosure do (	  -- compiled code closure
+     	  recursiondepth = recursiondepth + 1;
+     	  saveLocalFrame := localFrame;
 	  fn := cf.fn;
 	  env := cf.env;
 	  for i from 0 to n-1 do (
@@ -1122,17 +1128,11 @@ scan(n:int,f:Expr):Expr := (
 		    return(backtr(tmp)); 
 		    )
 	       else nothing; 
-	       )
-	  )
-     else (
-	  recursiondepth = recursiondepth - 1;
+	       );
 	  localFrame = saveLocalFrame;
-	  return(backtr(WrongArg(2,"a function"))); 
-	  );
-     localFrame = saveLocalFrame;
-     recursiondepth = recursiondepth - 1;
-     nullE
-     );
+	  recursiondepth = recursiondepth - 1;
+	  nullE)
+     else backtr(WrongArg(2,"a function")));
 
 scan(a:Sequence,f:Expr):Expr := (
      oldlen := length(a);

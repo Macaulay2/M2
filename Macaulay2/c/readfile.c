@@ -300,6 +300,10 @@ xor(x:uint, y:uint):uint ::= Ccode(uint,\"(\",x,\" ^ \",y,\")\");","\n\
 (x:char) <= (y:char):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
 (x:char) >  (y:char):bool ::= Ccode(bool,\"(\",x,\" > \" ,y,\")\");","\n\
 (x:char) >= (y:char):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
+(x:ulong) <  (y:ulong):bool ::= Ccode(bool,\"(\",x,\" < \" ,y,\")\");","\n\
+(x:ulong) <= (y:ulong):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
+(x:ulong) >  (y:ulong):bool ::= Ccode(bool,\"(\",x,\" > \" ,y,\")\");","\n\
+(x:ulong) >= (y:ulong):bool ::= Ccode(bool,\"(\",x,\" >= \",y,\")\");","\n\
 (x:double) <  (y:double):bool ::= Ccode(bool,\"(\",x,\" <  \" ,y,\")\");","\n\
 (x:double) <= (y:double):bool ::= Ccode(bool,\"(\",x,\" <= \",y,\")\");","\n\
 (x:double) >  (y:double):bool ::= Ccode(bool,\"(\",x,\" >  \" ,y,\")\");","\n\

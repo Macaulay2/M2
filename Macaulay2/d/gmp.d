@@ -65,11 +65,26 @@ set(x:Integer, n:int):void ::= Ccode( void,
      ")" 
      );
 
-export toInteger(i:int):Integer := (
+negsmall := -100;
+possmall := 300;
+smallints := new array(Integer) len possmall - negsmall + 1 do for i from negsmall to possmall do (
      x := Integer(0,0,null());
      init(x);
      set(x,i);
-     x);
+     provide x
+     );
+
+isSmall(x:Integer):bool := isInt(x) && (
+     i := toInt(x);
+     negsmall <= i && i <= possmall);
+
+export toInteger(i:int):Integer := (
+     if i >= negsmall && i <= possmall then smallints.(i-negsmall)
+     else (
+	  x := Integer(0,0,null());
+	  init(x);
+	  set(x,i);
+	  x));
 
 set(x:Integer, n:ulong):void ::= Ccode( void,
      "mpz_set_ui(",
@@ -77,11 +92,15 @@ set(x:Integer, n:ulong):void ::= Ccode( void,
 	 n,
      ")" 
      );
+
 export toInteger(i:ulong):Integer := (
-     x := Integer(0,0,null());
-     init(x);
-     set(x,i);
-     x);
+     if i <= ulong(possmall)
+     then smallints.(int(i)-negsmall)
+     else (
+	  x := Integer(0,0,null());
+	  init(x);
+	  set(x,i);
+	  x));
 
 neg(x:Integer, y:Integer):void ::= Ccode( void,
      "mpz_neg(",

@@ -492,8 +492,8 @@ octal(c:char):string := (
      i := int(c) & 0xff;
      if i < 8
      then new string len 1 do provide ('0'+i)
-     else if i < 64 then new string len 2 do (provide('0'+i/8); provide('0'+i%8))
-     else new string len 3 do (provide('0'+i/64); provide('0'+(i/8)%8); provide('0'+i%8))
+     else if i < 64 then new string len 2 do (provide '0'+i/8; provide '0'+i%8)
+     else new string len 3 do (provide '0'+i/64; provide '0'+(i/8)%8; provide '0'+i%8)
      );
 export present(c:char):string := (
      c = c & 0xff;
@@ -656,8 +656,8 @@ export peek(o:file,offset:int):int := (
 	  );
      int(uchar(o.inbuffer.(o.inindex+offset))));
 export peek(o:file):int := peek(o,0);
-someblanks := new array(string) len 20 at n do provide new string len n do provide(' ');
-export blanks(n:int):string := if n < length(someblanks) then someblanks.n else new string len n do provide(' ');
+someblanks := new array(string) len 20 at n do provide new string len n do provide ' ';
+export blanks(n:int):string := if n < length(someblanks) then someblanks.n else new string len n do provide ' ';
 padto(s:string,n:int):string := (
      if n<0
      then (
