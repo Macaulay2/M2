@@ -1086,6 +1086,8 @@ static void *first_rw_page_after_etext() {
      }
 #endif
 
+int probe();
+
 int system_dumpdata(datafilename)
 M2_string datafilename;
 {
@@ -1182,7 +1184,7 @@ int probe() {
 	       }
 	  if (oldsig != sig || oldreadable != readable || oldwritable != writable) {
 	       char buf[80];
-	       sprintf(buf,"%16lx . %s%s%s\n",
+	       sprintf(buf,"%16lx . %s%s%s",
 	       	    (long)p,
 	       	    readable ? "r" : "-", 
 	       	    writable ? "w" : "-",
@@ -1191,6 +1193,13 @@ int probe() {
 	       putstderr(buf);
 	       }
 	  }
+     {
+	  char buf[80];
+	  sprintf(buf,"%16lx .",
+	       (long)p
+	       );
+	  putstderr(buf);
+	       }
 #endif
      signal(SIGSEGV,oldhandler);
 #ifdef SIGBUS

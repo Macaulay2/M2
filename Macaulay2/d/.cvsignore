@@ -7,3 +7,5 @@ allfiles
 compat.c
 compat.h
 tmp_init.c
+addresses
+probe
