@@ -10,7 +10,7 @@ emacs html: all; $(MAKE) -C ../$@
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install html distclean check default initialize prep always tags
+.PHONY: clean all install html distclean check default initialize prep always tags install-tmp
 
 LOADSEQUENCE = $(shell cat @srcdir@/loadsequence)
 DOCSEQUENCE  = $(shell cat @srcdir@/docseq)
@@ -170,12 +170,18 @@ statuscodes.m2 : ../e/statuscodes
 		echo '}' ; \
 	) <$< >$@
 
+all:: tmp tmp/$(package)
+tmp :; mkdir "$@"
+tmp/$(package) : $(DOCSEQUENCE)
+	@ echo making the Main package, including the documentation
+	cd tmp && ../../bin/M2 -q --stop -e 'errorDepth = 0' \
+	   -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") ' \
+	   -e 'exit 0 '
+	touch "$@"
+
 install::install-main
 install-main: all
-	M2 -q --stop \
-	   -e 'errorDepth = 0' \
-	   -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => "$(prefix)") ' \
-	   -e 'exit 0 '
+	tar cf - -C tmp $(package) | tar xf - -C $(prefix)
 
 clean::
 	rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample \
