@@ -15,6 +15,8 @@ RR.Engine = true
 -- new RR := RR -> RR.pop()
 degree RR := i -> {}
 
+new RR from RawRingElement := (RR,x) -> rawToReal x
+
 RR == ZZ := (x,y) -> x === y+0.
 ZZ == RR := (y,x) -> x === y+0.
 

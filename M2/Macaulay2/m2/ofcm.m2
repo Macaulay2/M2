@@ -193,7 +193,7 @@ makeit1 := (options) -> (
 	  then rawMonoid()
 	  else rawMonoid(
 	       M.RawMonomialOrdering,
-	       M.generators / toString,
+	       toSequence M.generators / toString,
 	       raw degreesRing degreeLength M,
 	       flatten internalDegrees));
      raw M := x -> x.RawMonomial;

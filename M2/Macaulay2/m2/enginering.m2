@@ -26,6 +26,7 @@ reduce := (r,s) -> (
 toString EngineRing := R -> if R.?name then R.name else toString R.RawRing
 
 ZZ _ EngineRing := 
+RR _ EngineRing := 
 promote(ZZ,EngineRing) := RingElement => (i,R) -> new R from i_(R.RawRing)
 
 new RingElement from RawRingElement := (R, f) -> new R from { symbol RawRingElement => f };
@@ -37,7 +38,6 @@ new EngineRing from RawRing := (EngineRing,R) -> (
      S#0 = 0_S;
      S)
 
-RR _ EngineRing := 
 promote(RR,EngineRing) := RingElement => (i,R) -> i_R
 
 -----------------------------------------------------------------------------

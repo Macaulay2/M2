@@ -17,7 +17,7 @@ reduce = (tar,f) -> (					    -- we erase this later
      if isFreeModule tar then f
      else f % raw gb presentation tar)
 
-QQ * Matrix := (r,m) -> (r * 1_(ring m)) * m
+QQ * Matrix := (r,m) -> (r * 1_(ring m)) * m		    -- this is wrong when the ring of m is QQ!
 Matrix * QQ := (m,r) -> (r * 1_(ring m)) * m
 
 ZZ * Matrix := (i,m) -> map(target m, source m, reduce(target m, i * m.RawMatrix))
