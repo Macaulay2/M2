@@ -69,6 +69,8 @@ initialize :: cache $(DOC) $(TEST)
 clean ::; rm -rf cache
 cache $(DOC) $(TEST) :; mkdir -p $@
 
+packagedir =? UNASSIGNED
+
 $(packagedir)/packages :; $(INSTALL) -d "$@"
 install :: $(packagedir)/packages
 	$(INSTALL_DATA) @srcdir@/*.m2 $<
