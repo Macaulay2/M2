@@ -1160,6 +1160,17 @@ export rawSchurDimension(e:Expr):Expr := (
      else WrongArg("a raw ring element"));
 setupfun("rawSchurDimension",rawSchurDimension);
 
+export rawCompare(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 2 then 
+     when a.0 is x:RawRingElement do 
+     when a.1 is y:RawRingElement do if Ccode(bool, "rawRingElementCompare(", "(RingElement *)", x, ",", "(RingElement *)", y, ")" ) then True else False
+     else WrongArg(2,"a raw ring element")
+     else WrongArg(1,"a raw ring element")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("rawCompare",rawCompare);
+
 -----------------------------------------------------------------------------
 -- free modules
 

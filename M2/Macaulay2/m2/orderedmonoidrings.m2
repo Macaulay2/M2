@@ -78,7 +78,7 @@ isHomogeneous PolynomialRing := R -> (
 standardForm RingElement := (f) -> (
      R := ring f;
      k := coefficientRing R;
-     (cc,mm) := rawPairs raw f;
+     (cc,mm) := rawPairs(raw k, raw f);
      new HashTable from toList apply(cc, mm, (c,m) -> (standardForm m, new k from c)))
 
 -- this way turns out to be much slower by a factor of 10
@@ -96,7 +96,7 @@ listForm RingElement := (f) -> (
      R := ring f;
      n := numgens R;
      k := coefficientRing R;
-     (cc,mm) := rawPairs raw f;
+     (cc,mm) := rawPairs(raw k, raw f);
      toList apply(cc, mm, (c,m) -> (exponents(n,m), new k from c)))
 
 -- this way turns out to be much slower by a factor of 10
@@ -128,6 +128,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      (R,M) -> (
 	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";
 	  if not R.?RawRing then error "expected coefficient ring handled by the engine";
+     	  num := numgens M;
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  Skew := M.Options.SkewCommutative;
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
@@ -167,7 +168,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  else if Skew then (
 	       skews := (
 		    if M.Options.SkewCommutative === true
-		    then toList (0 .. numgens M - 1)
+		    then toList (0 .. num - 1)
 		    else if class M.Options.SkewCommutative === List
 		    then indices(M,M.Options.SkewCommutative)
 		    else error "expected SkewCommutative option to be 'true' or a list of variables"
@@ -187,7 +188,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.isCommutative = not Weyl and M.Options.SkewCommutative === false;
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
-	  RM ? RM := (f,g) -> rawCompareMonomial(raw M, rawLeadMonomial raw f, rawLeadMonomial raw g); -- this is wrong, as the monoid doesn't know the ordering in the ring!  Mike.
+	  RM ? RM := (f,g) -> raw f ? raw g;
 	  R * M := (r,m) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
 	  M * R := (m,r) -> new RM from rawTerm(RM.RawRing,raw r,m.RawMonomial);
 	  RM * M := (p,m) -> p * (R#1 * m);
@@ -208,7 +209,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  M - R := (m,r) -> R#1 * m - r * M#1;
 	  RM - M := (p,m) -> p - R#1 * m;
 	  M - RM := (m,p) -> R#1 * m - p;
-	  RM _ M := (f,m) -> new R from rawCoefficient(f.RawRingElement, m.RawMonomial);
+	  RM _ M := (f,m) -> new R from rawCoefficient(R.RawRing, f.RawRingElement, m.RawMonomial);
 	  expression RM := f -> (
 	       (coeffs,monoms) -> (
 		    if #coeffs === 0

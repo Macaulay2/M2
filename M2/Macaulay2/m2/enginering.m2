@@ -153,7 +153,7 @@ Ring _ ZZ := RingElement => (R,i) -> (generators R)#i
 
 EngineRing _ ZZ := (R,i) -> new R from R.RawRing_i
 
-size RingElement := f -> rawTermCount f.RawRingElement
+size RingElement := f -> rawTermCount(numgens ring f, f.RawRingElement)
 
 isHomogeneous RingElement := f -> rawIsHomogeneous f.RawRingElement
 
@@ -170,9 +170,8 @@ toString RingElement := x -> toString expression x
 
 net RingElement := x -> net expression x
 
-someTerms(ZZ,RingElement,ZZ,ZZ) := RingElement => (nvars,f,i,n) -> (
-     new ring f from rawGetTerms(nvars,f.RawRingElement,i,i + n - 1)
-     )
+someTerms(ZZ,RingElement,ZZ,ZZ) := RingElement => (nvars,f,i,n) -> new ring f from someTerms(nvars,raw f,i,n)
+someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from someTerms(numgens ring f,raw f,i,n)
 
 baseName RingElement := x -> (
      R := class x;
@@ -181,15 +180,8 @@ baseName RingElement := x -> (
      )
 
 leadCoefficient RingElement := RingElement => (f) -> (
-     R := ring f;
-     k := coefficientRing R;
-     leadCoefficient R := (
-	  -- if      k === ZZ then  (f) -> rawToInteger rawLeadCoefficient f.RawRingElement
-	  -- else if k === QQ then  (f) -> rawToRational rawLeadCoefficient f.RawRingElement
-	  -- else                   
-				 (f) -> new k from rawLeadCoefficient f.RawRingElement
-	  );
-     leadCoefficient f)
+     k := coefficientRing ring f;
+     new k from rawLeadCoefficient(k.RawRing, f.RawRingElement))
 
 degree RingElement := f -> if f == 0 then -infinity else (
      d := rawMultiDegree f.RawRingElement;

@@ -198,10 +198,9 @@ RawRingElement == RawRingElement := (x,y) -> x === y
 
 ring RawRingElement := rawRing
 degree RawRingElement := rawMultiDegree
-size RawRingElement := rawTermCount
+
 someTerms(ZZ,RawRingElement,ZZ,ZZ) := (nvars,f,i,n) -> rawGetTerms(nvars,f,i,i+n-1)
-leadCoefficient RawRingElement := rawLeadCoefficient
-leadMonomial RawRingElement := rawLeadMonomial
+
 denominator RawRingElement := rawDenominator
 numerator RawRingElement := rawNumerator
 isHomogeneous RawRingElement := rawIsHomogeneous
@@ -218,6 +217,10 @@ ZZ == RawRingElement := (y,x) -> if y === 0 then rawIsZero x else y_(rawRing x) 
 
 RawRingElement // ZZ := (x,y) -> x // y_(rawRing x)
 ZZ // RawRingElement := (y,x) -> y_(rawRing x) // x
+
+compvals := hashTable { 0 => symbol == , 1 => symbol > , -1 => symbol < }
+comparison := n -> compvals#n
+RawRingElement ? RawRingElement := (f,g) -> comparison rawRingElementCompare(f,g)
 
 -- monomial ideals
 
