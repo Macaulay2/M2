@@ -1199,6 +1199,16 @@ expandWord(e:Expr):Expr := (
      else WrongArgString());
 setupfun("expandWord",expandWord);
 
+history(e:Expr):Expr := (
+     when e
+     is s:Sequence do (
+	  if length(s) == 0 then (
+	       r := history();
+	       Expr(list(new Sequence len length(r) do foreach s in r do provide Expr(s))))
+     	  else WrongNumArgs(0))
+     else WrongNumArgs(0));
+setupfun("history",history);
+
 toPairs(r:array(int)):Expr := Expr( 
      list (
 	  new Sequence len length(r)/2 at i do 
