@@ -22,6 +22,13 @@ Sequence.BeforePrint = x -> (
      	  i := - width stack lines ZZ.InputPrompt lineNumber + w;
      	  if i > 20 then wrap(i, net x) else net x))
 
+String.BeforePrint = x -> (
+     w := if printWidth != 0 then printWidth else if width stdio != 0 then width stdio else 80;
+     if w == 0 then x else (
+     	  i := - width stack lines ZZ.InputPrompt lineNumber + w;
+     	  if i > 20 then wrap(i, "", net x) else net x))
+
+
 -- make sure this is after all global symbols are defined or erased
 Main#"reverse dictionary"#null = symbol null
 closePackage Main
