@@ -7,6 +7,7 @@ document { (accumulate, Function, Thing, VisibleList),
 	  "accumulate (times, 1, 1 .. 10)"
 	  }
      }
+
 document { (accumulate, Function, VisibleList),
      TT "accumulate(f,{x0,x1,...,xn})", " -- computes the list ", TT "{f(x0,x1),f(f(x0,x1),x2),...}", ".",
      EXAMPLE {
@@ -14,14 +15,17 @@ document { (accumulate, Function, VisibleList),
 	  "accumulate(plus, 0 .. 10)"
 	  }
      }
+
 document { (accumulate, VisibleList, Thing, Function),
      TT "accumulate({xn,...,x1},x0,f)", " -- computes the list ", TT "{...,f(x2,f(x1,x0)),f(x1,x0)}", ".",
      EXAMPLE "accumulate({a,b,c,d}, e, identity)"
      }
+
 document { (accumulate, VisibleList, Function),
      TT "accumulate({xn,...,x1,x0},f)", " -- computes the list ", TT "{...,f(x2,f(x1,x0)),f(x1,x0)}", ".",
      EXAMPLE "accumulate({a,b,c,d,e}, identity)"
      }
+
 document { accumulate,
      HEADLINE "apply binary operator repeatedly",
      SEEALSO {"fold"}
@@ -63,6 +67,7 @@ TEST ///
 ///
 
 document { demark,
+     HEADLINE "insert a string between elements of a list of strings",
      TT "demark(s,x)", " -- given a list of strings ", TT "x", " and
      a string ", TT "s", " provides the string obtained by concatenating
      the elements of ", TT "x", " with a copy of ", TT "x", " inserted
@@ -71,9 +76,13 @@ document { demark,
      EXAMPLE "demark(\"+\",{\"a\",\"b\",\"c\"})"
      }
 
-document { InfiniteNumber, HEADLINE "the class of all infinite numbers" }
+document { InfiniteNumber,
+     HEADLINE "the class of all infinite numbers"
+     }
 
-document { infinity, HEADLINE "infinity" }
+document { infinity,
+     HEADLINE "infinity"
+     }
 
 document { IndeterminateNumber,
      HEADLINE "the class of all indeterminate numbers",
@@ -82,15 +91,18 @@ document { IndeterminateNumber,
      }
 
 document { indeterminate,
+     HEADLINE "an indeterminate number",
      TT "indeterminate", " -- a representation of an indeterminate number,
      such as might result from multiplying 0 by infinity.",
      }
 
 document { max,
+     HEADLINE "maximum of elements of a list",
      TT "max x", " -- yields the maximum of the elements in the list or sequence x."
      }
 
 document { min,
+     HEADLINE "minimum of elements of a list",
      TT "min x", " -- yields the minimum of the elements in the list or sequence x."
      }
 
@@ -102,6 +114,7 @@ assert(min(4,5,6) === 4)
 ///
 
 document { sort,
+     HEADLINE "sort a list",
      TT "sort v", " -- produces a sorted version of the list v.",
      PARA,
      "The sort function uses ", TO "<=", " to compare elements of the
@@ -114,6 +127,7 @@ document { sort,
      }
 
 document { rsort,
+     HEADLINE "sort a list in reverse order",
      TT "rsort v", " -- produces a reverse sorted version of the list v.",
      PARA,
      "The rsort function uses ", TO "<=", " to compare elements of the
@@ -127,6 +141,7 @@ document { rsort,
 
 
 document { pack,
+     HEADLINE "pack elements of a list into shorter ones",
      TT "pack(n,v)", " -- packs the elements of the list or sequence
      ", TT "v", " into a table ", TT "n", " at a time.",
      PARA,
@@ -138,6 +153,7 @@ document { pack,
      }
 
 document { join,
+     HEADLINE "join lists",
      TT "join(u,v,...)", " -- joins the elements of the lists or
      sequences u, v, ... into a single list.",
      PARA,
@@ -149,6 +165,7 @@ document { join,
      }
 
 document { take,
+     HEADLINE "take some elements from a list",
      TT "take(v,n)    ", " -- yields a list containing the first n elements of the list v.",
      BR,NOINDENT,
      TT "take(v,-n)", "    -- yields a list containing the last n elements of the list v.",
@@ -165,21 +182,24 @@ document { take,
      }
 
 document { first,
+     HEADLINE "first element of a list",
      TT "first v", " -- yields the first element of the list v.",
      PARA,
      "See also ", TO "last", "."
      }
 
 document { last,
+     HEADLINE "last element of a list",
      TT "last v", " -- yields the last element of the list v.",
      PARA,
      "See also ", TO "first", "."
      }
 
 document { positions,
+     HEADLINE "which elements of a list satisfy a condition",
      TT "positions(v,f)", " -- yields a list of integers giving the positions of the
-     elements of the list v which yield the value true when
-     the function f is applied."
+     elements of the list ", TT "v", " which yield the value ", TT "true", " when
+     the function ", TT "f", " is applied."
      }
 
 TEST "
@@ -187,11 +207,13 @@ assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
 "
 
 document { position,
-     TT "position(v,f)", " -- returns the index of the first element of v satisfying 
-     the condition f, or null if there is none."
+     HEADLINE "find first element of a list satisfying a condition",
+     TT "position(v,f)", " -- returns the index of the first element of ", TT "v", " satisfying 
+     the condition ", TT "f", ", or ", TT "null", " if there is none."
      }
 
 document { delete,
+     HEADLINE "delete elements of a list",
      TT "delete(x,v)", " -- removes any occurrences of the expression ", TT "x", "
      from the list ", TT "v", ".",
      PARA,
@@ -222,6 +244,7 @@ document { ultimate,
      }
 
 document { tmpname,
+     HEADLINE "make a temporary file name",
      TT "tmpname x", " -- create a temporary file name based on the string x
      unique to this process.",
      PARA,
@@ -231,15 +254,9 @@ document { tmpname,
      }
 
 document { subsets,
+     HEADLINE "produce all the subsets",
      TT "subsets", " -- a function for computing a list of subsets
-     of a set or list.",
-     PARA,
-     MENU {
-	  TO (subsets,ZZ,ZZ),
-	  TO (subsets,Set,ZZ),
-	  TO (subsets,List),
-	  TO (subsets,Set)
-	  }
+     of a set or list."
      }
 
 document { (subsets,ZZ,ZZ),
@@ -249,6 +266,7 @@ document { (subsets,ZZ,ZZ),
      EXAMPLE "subsets(3,2)",
      SEEALSO "subsets"
      }
+
 document { (subsets,Set,ZZ),
      TT "subsets(s,j)", " -- yields a list of those subsets of the list or 
      set ", TT "s", " which have ", TT "j", " elements.",
@@ -256,6 +274,7 @@ document { (subsets,Set,ZZ),
      EXAMPLE "subsets(set {a,b,c},2)",
      SEEALSO "subsets"
      }
+
 document { (subsets,List),
      TT "subsets s", " -- yields a list of the subsets of the list ", TT "s", ".",
      PARA,
@@ -263,6 +282,7 @@ document { (subsets,List),
      EXAMPLE "subsets {1,2,3}",
      SEEALSO "subsets"
      }
+
 document { (subsets,Set),
      TT "subsets s", " -- yields a list of the subsets of the set ", TT "s", ".",
      PARA,
@@ -280,8 +300,8 @@ assert( partitions 4 === {{4},{3,1},{2,2},{2,1,1},{1,1,1,1}} )
 assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} )
 "
 
-
 document { partitions,
+     HEADLINE "list the partitions of an integer",
      TT "partitions n", " -- returns a list of the partitions of the integer n.",
      BR, NOINDENT,
      TT "partitions(n,k)", " -- returns a list of the partitions of the integer n
@@ -294,6 +314,7 @@ document { partitions,
      }
 
 document { examples,
+     HEADLINE "list the examples in documentation",
      -- this should come after the documentation for partitions, because of the example
      TT "examples f", " -- returns a list of strings containing examples
      of code using the function ", TT "f", " provided in the documentation
@@ -307,11 +328,12 @@ TEST ///
 ///
 
 document { (symbol +, List, List),
+     HEADLINE "sum of two vectors",
      TT "v + w", " -- the sum of two vectors represented as lists."
      }
 
 document { (symbol _, List, List),
-     HEADLINE "get a list of entries",
+     HEADLINE "get some entries of a list",
      TT "w_{i,j,...}", " -- selects entries from a list or sequence ", TT "w", ".",
      PARA,
      EXAMPLE {
@@ -324,14 +346,17 @@ document { (symbol _, List, List),
      }
 
 document { number,
-     TT "number(x,f)", " -- the number of elements e of the list x for which f(e) is true.",
+     HEADLINE "count how many elements of a list satisfy a condition",
+     TT "number(x,f)", " -- the number of elements ", TT "e", " of the list ", TT "x", " 
+     for which ", TT "f(e)", " is true.",
      PARA,
      SEEALSO { "positions", "select" }
      }
 
 document { all,
-     TT "all(v,f)", " -- whether each element x of a list or hash table
-     v has f(x) true.",
+     HEADLINE "whether all elements satisfy a condition",
+     TT "all(v,f)", " -- whether each element ", TT "x", " of a list or hash table
+     ", TT "v", " has ", TT "f(x)", " true.",
      PARA,
      "Returns the value true if all elements v#i of the list v yield 
      the value true when the function f is applied, otherwise returns 
@@ -342,11 +367,13 @@ document { all,
      }
 
 document { same,
-     TT "same v", " -- whether every element of the list v is the same.
+     HEADLINE "whether everything in a list is the same",
+     TT "same v", " -- whether every element of the list ", TT "v", " is the same.
      The comparison is done with ", TO "==", "."
      }
 
-document { member, HEADLINE "whether something is a member",
+document { member,
+     HEADLINE "test membership in a list",
      TT "member(e,x)", " -- whether ", TT "e", " is an element of the list, set, or 
      sequence ", TT "x", ".",
      PARA,
@@ -359,9 +386,11 @@ document { member, HEADLINE "whether something is a member",
      }
 
 document { sum,
+     HEADLINE "compute the sum",
      TT "sum", " -- provides the sum of the members of a list, set, 
      or chain complex, optionally with a function applied to each one."
      }
+
 document { (sum, List),
      HEADLINE "sum the elements of a list",
      TT "sum v", " -- yields the sum of the elements in the list ", TT "v", ".",
@@ -476,6 +505,7 @@ document { (product, Set),
      }
 
 document { toString,
+     HEADLINE "convert to a string",
      TT "toString x", " -- converts ", TT "x", " to a string.",
      PARA,
      "See also ", TO "toExternalString", " which will try to convert ", TT "x", "
@@ -483,6 +513,7 @@ document { toString,
      }
 
 document { toExternalString,
+     HEADLINE "convert to a readable string",
      TT "toExternalString x", " -- converts ", TT "x", " to a string, in such a way
      that it can be read back into the program later.",
      PARA,
@@ -522,9 +553,12 @@ document { WrapperType,
      SEEALSO {"HeaderType", "SelfInitializingType"}
      }
 
-document { AssociativeExpression }
+document { AssociativeExpression
+     HEADLINE "the class of associative expressions"
+     }
 
 document { Holder,
+     HEADLINE "the class of all holder expressions",
      TT "Holder", " -- a type of ", TO "Expression", ".",
      PARA,
      "This type of expresssion is a container for a single, arbitrary, thing which
@@ -535,10 +569,13 @@ document { Holder,
      }
 
 document { ZeroExpression,
+     HEADLINE "the class of all zero expressions",
      TT "ZeroExpression", " -- a type of ", TO "Expression", " of which
      there is just one instance, an expression representing the number 0."
      }
+
 document { OneExpression,
+     HEADLINE "the class all one expressions",
      TT "OneExpression", " -- a type of ", TO "Expression", " of which
      there is just one instance, an expression representing the number 1."
      }
@@ -550,7 +587,8 @@ document { DoubleArrow,
      "This is experimental, and intended for internal use only."
      }
 
-document { Expression, HEADLINE "the class of all expressions",
+document { Expression,
+     HEADLINE "the class of all expressions",
      "These expressions are symbolic representations of algebraic
      expressions, mainly useful in printing.  The method for 
      producing them is ", TO "expression", ".  The usual algebraic
@@ -570,13 +608,17 @@ document { Expression, HEADLINE "the class of all expressions",
      }
 
 document { expression,
+     HEADLINE "convert to an expression",
      TT "expression x", " -- make an ", TO "Expression", " from x."
      }
 
 document { Divide,
+     HEADLINE "the class of all divide expressions",
      TT "Divide", " -- a type of ", TO "Expression", " representing a quotient."
      }
+
 document { Table,
+     HEADLINE "the class of all table expressions",
      TT "Table", " -- a type of ", TO "Expression", " representing
      a table, i.e., a list of lists of the same length.",
      PARA,
@@ -586,27 +628,37 @@ document { Table,
 	  },
      SEEALSO {"MatrixExpression"}
      }
+
 document { MatrixExpression,
+     HEADLINE "the class of all matrix expressions",
      TT "MatrixExpression", " -- a type of ", TO "Expression", " representing
      a matrix.",
      PARA,
      EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
      SEEALSO {"Table"}
      }
+
 document { RowExpression,
+     HEADLINE "the class of all matrix expressions",
      TT "RowExpression", " -- a type of ", TO "Expression", " representing
      a horizontal sequence of expressions."
      }
+
 document { Minus,
+     HEADLINE "the class of all minus expressions",
      TT "Minus", " -- a type of ", TO "Expression", " representing negation.",
      PARA,
      "This is a unary operator."
      }
+
 document { NonAssociativeProduct,
+     HEADLINE "the class of all nonassociative product expressions",
      TT "NonAssociativeProduct", " -- a type of ", TO "Expression", " representing
      a nonassociative product."
      }
+
 document { Power,
+     HEADLINE "the class of all power expressions",
      TT "Power", " -- a type of ", TO "Expression", " representing a power.",
      PARA,
      "Normally power expressions with an exponent equal to 1 will not be
@@ -616,49 +668,70 @@ document { Power,
      suppress exponents equal to 1, and arrange for parenthesization
      correctly."
      }
+
 document { Product,
+     HEADLINE "the class of all product expressions",
      TT "Product", " -- a type of ", TO "Expression", " representing a product."
      }
+
 document { SparseVectorExpression,
+     HEADLINE "the class of all sparse vector expressions",
      TT "SparseVectorExpression", " -- a type of ", TO "Expression", "
      representing a sparse vector."
      }
+
 document { SparseMonomialVectorExpression,
+     HEADLINE "the class of all sparse monomial vector expressions",
      TT "SparseMonomialVectorExpression", " -- a type of ", TO "Expression", "
      representing a sparse monomial vector.",
      PARA,
      "The difference between this and ", TO "SparseVectorExpression", " is that
      the basis vectors are treated like variables for printing purposes."
      }
+
 document { BinaryOperation,
+     HEADLINE "the class of all binary operation expressions",
      TT "BinaryOperation", " -- a type of ", TO "Expression", " representing
      the result of a binary operation."
      }
+
 document { Subscript,
+     HEADLINE "the class of all subscript expressions",
      TT "Subscript", " -- a type of ", TO "Expression", " representing a
      subscripted expression."
      }
+
 document { Adjacent,
+     HEADLINE "the class of all adjacent expression pairs",
      TT "Adjacent", " -- a type of ", TO "Expression", " representing a pair
      of adjacent expressions, separated only by white space."
      }
+
 document { FunctionApplication,
+     HEADLINE "the class of all function application expressions",
      TT "FunctionApplication", " -- a type of ", TO "Expression", " representing an
      application of a function."
      }
+
 document { Superscript,
+     HEADLINE "the class of all superscript expressions",
      TT "Superscript", " -- a type of ", TO "Expression", " representing a
      superscripted expression."
      }
+
 document { Equation,
+     HEADLINE "the class of all equation expressions",
      TT "Equation", " -- a type of ", TO "Expression", " representing an
      equation."
      }
+
 document { Sum,
+     HEADLINE "the class of all sum expressions",
      TT "Sum", " -- a type of ", TO "Expression", " representing a sum."
      }
 
 document { tex,
+     HEADLINE "convert to TeX",
      TT "tex x", " -- convert ", TT "x", " to TeX format.",
      PARA,
      EXAMPLE {
@@ -669,6 +742,7 @@ document { tex,
      }
 
 document { texMath,
+     HEADLINE "convert to TeX math",
      TT "texMath x", " -- convert ", TT "x", " to TeX format
      for use in TeX math mode.",
      PARA,
@@ -683,6 +757,7 @@ document { texMath,
      }
 
 document { TeX,
+     HEADLINE "convert to TeX and display on screen",
      TT "TeX x", " -- convert ", TT "x", " to TeX format, and display it on the screen.",
      PARA,
      "The code for this function is Unix dependent at the moment.",
@@ -691,11 +766,15 @@ document { TeX,
      }
 
 document { print,
-     TT "print x", " -- prints ", TT "x", " on the standard output followed by a new line",
+     HEADLINE "print something",
+     TT "print x", " -- prints ", TT "x", " on the standard output followed by a 
+     new line",
      PARA,
      "The return value is ", TO "null", "."
      }
+
 document { (symbol <<, File, Thing),
+     HEADLINE "pirnt something to a file",
      TT "f << x", " -- prints the expression x on the output file f.",
      PARA,
      "Returns f as its value.  Parsing associates leftward, so that 
@@ -711,7 +790,8 @@ document { (symbol <<, File, Thing),
      }     
 
 document { hold,
-     TT "hold x", " -- embeds it argument x in a list of class ", TO "Holder", ".",
+     HEADLINE "hold something in a holder expression",
+     TT "hold x", " -- embeds it argument ", TT "x", " in a list of class ", TO "Holder", ".",
      PARA,
      "It might be useful for displaying an integer in factored form,
      for example, because the usual algebraic operations are available
@@ -744,6 +824,7 @@ document { DownArrow,
      }
 
 document { peek,
+     HEADLINE "examine contents of an object",
      TT "peek s", " -- displays contents of ", TT "s", " to depth 1, bypassing
      installed methods.",
      PARA,
@@ -757,6 +838,7 @@ document { peek,
      }
 
 document { peek2,
+     HEADLINE "examine contents of an object",
      TT "peek2(s,n)", " -- displays contents of ", TT "s", " to depth ", TT "n", ", 
      bypassing installed methods.",
      PARA,
@@ -771,34 +853,42 @@ document { peek2,
      }
 
 document { pad,
-     TT "pad(s,n)", " -- pads the string s to length n with spaces on the right.",
+     HEADLINE "pad a string with spaces",
+     TT "pad(s,n)", " -- pads the string ", TT "s", " to length ", TT "n", " with
+     spaces on the right.",
      BR,
      NOINDENT, 
-     TT "pad(n,s)", " -- pads the string s to length n with spaces on the left."
+     TT "pad(n,s)", " -- pads the string ", TT "s", " to length ", TT "n", " with
+     spaces on the left."
      }
 
 document { columnate,
-     TT "columnate(s,w)", " -- arranges the strings in the list s in columns, returning
-     a ", TO "Net", " suitable for output to a terminal with a linewidth of w.",
+     HEADLINE "arrange strings in columns",
+     TT "columnate(s,w)", " -- arranges the strings in the list ", TT "s", " in
+     columns, returning a ", TO "Net", " suitable for output to a terminal 
+     with a linewidth of ", TT "w", ".",
      PARA,
      EXAMPLE {
 	  "columnate(characters ascii (65 .. 90) , 12)",
 	  }
      }
 
-document { ScriptedFunctor, HEADLINE "the class of all scripted functors",
+document { ScriptedFunctor,
+     HEADLINE "the class of all scripted functors",
      "A scripted functor accepts a subscript or a superscript:
      the primary example is ", TO "HH", ".",
      SEEALSO {"subscript", "superscript", "argument"}
      }
 
 document { argument,
+     HEADLINE "specify the function in a scripted functor for an argument",
      TT "argument", " -- a key used in scripted functors under which is
      stored the function that accepts the arguments.",
      SEEALSO "ScriptedFunctor"
      }
 
 document { subscript,
+     HEADLINE "specify the function in a scripted functor for a subscript",
      TT "subscript", " -- a key used in scripted functors under which is
      stored the function of one variable that accepts the subscript and
      returns a scripted functor that accepts the arguments.",
@@ -806,13 +896,15 @@ document { subscript,
      }
 
 document { superscript,
+     HEADLINE "specify the function in a scripted functor for a superscript",
      TT "superscript", " -- a key used in scripted functors under which is
      stored the function of one variable that accepts the superscript and
      returns a scripted functor that accepts the arguments.",
      SEEALSO "ScriptedFunctor"
      }
 
-document { HH, HEADLINE "general homology and cohomology functor",
+document { HH,
+     HEADLINE "general homology and cohomology functor",
      TT "HH", " is a ", TO "ScriptedFunctor", " which serves as an interface
      to the methods for ",  TO "homology", " and ", TO "cohomology", ", in
      the sense that, ", TT "HH_i(M)", " is an abbreviation for ", TT "homology(i,M)", "
@@ -832,6 +924,7 @@ TEST ("
      ")
 
 document { cohomology,
+     HEADLINE "general cohomology functor",
      TT "cohomology", " -- a method name available for computing expressions
      of the forms ", TT "HH^i(X)", " and ", TT "HH^i(M,N)", ".",
      PARA,
@@ -843,6 +936,7 @@ document { cohomology,
      }
 
 document { homology,
+     HEADLINE "general homology functor",
      TT "homology(f,g)", " -- computes the homology module ", TT "(kernel f)/(image g)", ".",
      BR, NOINDENT,
      TT "homology", " -- a method name available for computing expressions
