@@ -3,9 +3,20 @@
 << "--loading documentation files..." << endl
 
 document { length,
-     Headline => "length" }
+     Headline => "length"
+     }
+
 document { (length, GradedModule),
-     Headline => "length of a graded module" }
+     Headline => "length of a graded module",
+     "The length of a graded module is the difference between the largest and
+     smallest indices of occupied spots.  Chain complexes are graded modules,
+     so this function applies to them, too.",
+     EXAMPLE {
+	  "R = QQ[x..z];",
+	  "C = res coker vars R",
+	  "length C"
+	  }
+     }
 
 document { sendgg,
      Headline => "send commands to engine",
@@ -1196,21 +1207,37 @@ document { (random, RR),
 
 document { (random, Ring),
      Headline => "random element of a ring",
-     TT "random R", " -- yields a random element of the ring ", TT "R", ".",
-     PARA,
-     "Currently implemented only for rings of the form ", TT "ZZ/n", "."
+     Synopsis => {
+	  "r = random R",
+	  "R" => null,
+	  "r" => { "a random element of the ring ", TT "R" }
+	  },
+     "Note: not implemented yet for ", TO "RR", ", ", TO "CC", ", and polynomial rings."
      }
 
 document { (random, ZZ, Ring),
      Headline => "a random ring element of a given degree",
-     TT "random(n,R)", " -- yields a random homogeneous element of degree ", TT "n", " 
-     in the ring ", TT "R", "."
+     Synopsis => {
+	  "r = random(n,R)",
+	  "n" => null,
+	  "R" => null,
+	  "r" => {"a random homogeneous element of degree ", TT "n"}
+	  },
+     EXAMPLE {
+	  "R = GF(9,Variable=>a)[x,y];",
+	  "random(3,R)"
+	  }
      }
 
 document { (random, List, Ring),
      Headline => "a random ring element of a given degree",
-     TT "random(n,R)", " -- yields a random homogeneous element of degree ", TT "n", " 
-     in the ring ", TT "R", ", where ", TT "n", " is a list of integers."
+     Synopsis => {
+	  "r = random(n,R)",
+	  "n" => "a list of integers",
+	  "R" => null,
+	  "r" => {"a random homogeneous element of degree ", TT "n"}
+	  },
+     "The length of ", TT "n", " should be the same as ", TT "degreeLength R", "."
      }
 
 document { (random, Module, Module),
