@@ -145,6 +145,13 @@ export Sequence := v -> export toList v
 export List := v -> (
      if not all(v, x -> instance(x, Symbol)) then error "expected a list of symbols";
      if currentPackage === null then error "no current package";
+     scan(v, sym -> 
+	  if currentPackage =!= Macaulay2 and (
+	       not currentPackage#"private dictionary"#?(toString sym)
+	       or currentPackage#"private dictionary"#(toString sym) =!= sym
+	       )
+	  then error ("symbol ",sym," not defined in current package ", toString currentPackage)
+	  );
      currentPackage#"exported symbols" = join(currentPackage#"exported symbols",v);
      if currentPackage =!= Macaulay2 then scan(v, s -> (
 	       currentPackage.Dictionary#(toString s) = s;
@@ -179,8 +186,8 @@ exportMutable {
 findSynonyms = method()
 findSynonyms Symbol := x -> (
      r := {};
-     scan(globalDictionaries, d -> scan(pairs d, (nam,sym) -> if x === sym then r = append(r,nam)));
-     sort r)
+     scan(globalDictionaries, d -> scan(pairs d, (nam,sym) -> if x === sym and getGlobalSymbol nam === sym then r = append(r,nam)));
+     sort unique r)
 
 checkShadow = () -> (
      d := globalDictionaries;
