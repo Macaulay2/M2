@@ -4,6 +4,7 @@
 #include "monideal.hpp"
 #include "montable.hpp"
 #include "montableZZ.hpp"
+#include "gbring.hpp"
 
 void QRingInfo::appendQuotientElement(Nterm *f, gbvector *g)
 {
@@ -118,6 +119,34 @@ void QRingInfo_field::normal_form(ring_elem& f) const
   f = head.next;
 }
 
+void QRingInfo_field::normal_form(const FreeModule *F, gbvector *&f) const
+{
+  GBRing *GR = R->get_gb_ring();
+  const Monoid *M = R->getMonoid();
+  gbvector head;
+  gbvector *result = &head;
+  gbvector *t = f;
+  while (t != NULL)
+    {
+      M->to_expvector(t->monom, EXP1_);
+      int x = ringtable->find_divisor(EXP1_, 1);
+      if (x >= 0)
+	{
+	  const gbvector *r = quotient_gbvector(x);
+	  gbvector *zero = 0;
+	  GR->gbvector_reduce_lead_term(F,F,zero,t,zero,r,zero);
+	}
+      else
+	{
+	  result->next = t;
+	  t = t->next;
+	  result = result->next;
+	}
+    }
+  result->next = NULL;
+  f = head.next;
+}
+
 QRingInfo_ZZ::~QRingInfo_ZZ()
 {
 }
@@ -206,6 +235,37 @@ void QRingInfo_ZZ::normal_form(ring_elem& f) const
 	  //   else tack the monomial onto the result
 	  Nterm *g = quotient_element(w);
 	  if (reduce_lead_term_ZZ(t,g))
+	    continue;
+	}
+      result->next = t;
+      t = t->next;
+      result = result->next;
+    }
+  result->next = NULL;
+  f = head.next;
+}
+
+void QRingInfo_ZZ::normal_form(const FreeModule *F, gbvector * &f) const
+// This handles the case of monic GB over a small field
+// It must handle skew multiplication too
+{
+  GBRing *GR = R->get_gb_ring();
+  const Monoid *M = R->getMonoid();
+  gbvector head;
+  gbvector *result = &head;
+  gbvector *t = f;
+  while (t != NULL)
+    {
+      M->to_expvector(t->monom, EXP1_);
+      int w = ringtableZZ->find_smallest_coeff_divisor(EXP1_, 1);
+      if (w >= 0)
+	{
+	  // reduce lead term as much as possible
+	  // If the lead monomial reduces away, continue,
+	  //   else tack the monomial onto the result
+	  const gbvector *g = quotient_gbvector(w);
+	  gbvector *zero = 0;
+	  if (GR->gbvector_reduce_lead_term_ZZ(F,F,t,zero,g,zero))
 	    continue;
 	}
       result->next = t;

@@ -1661,7 +1661,12 @@ const MatrixOrNull *gbA::get_syzygies()
   // The (non-minimal) syzygy matrix
   MatrixConstructor mat(_Fsyz, 0);
   for (vector<gbvector *,gc_alloc>::iterator i = _syz.begin(); i != _syz.end(); i++)
-    mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
+    {
+      gbvector *z = *i;
+      originalR->get_quotient_info()->normal_form(_Fsyz, z);
+      if (z != 0)
+	mat.append(originalR->translate_gbvector_to_vec(_Fsyz, z));
+    }
   return mat.to_matrix();
 }
 

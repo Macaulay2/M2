@@ -40,12 +40,14 @@ protected:
   void setQuotientInfo(QRingInfo *qinfo0) { qinfo_ = qinfo0; }
 
   virtual ~PolynomialRing();
-  PolynomialRing() {}
+  PolynomialRing() : qinfo_(new QRingInfo) {}
 
 public:
   static PolynomialRing *create(const Ring *K, const Monoid *MF);
 
   static PolynomialRing *create_quotient_ring(const Matrix *M);
+
+  QRingInfo *get_quotient_info() { return qinfo_; }
 
   const Ring *  Ncoeffs() const { return getCoefficients(); }
   const Monoid * Nmonoms() const { return getMonoid(); }
