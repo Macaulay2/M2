@@ -16,10 +16,6 @@ CC.degreeLength = 0
 
 degree CC := i -> {}
 
-mathML CC := z -> concatenate(
-     "<cn type='complex'>",toString realPart z, "<sep/>", toString imaginaryPart z, "</cn>"
-     )     
-
 conjugate = method(TypicalValue => CC)
 conjugate ZZ := identity
 realPart ZZ := identity

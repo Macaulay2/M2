@@ -899,7 +899,7 @@ texExtraLiteral := s -> concatenate between(ENDLINE,
 -----------------------------------------------------------------------------
 
 html String := htmlLiteral
-mathML String := htmlLiteral
+mathML String := x -> concatenate("<mtext>",htmlLiteral x,"</mtext>")
 tex String := texLiteral
 texMath String := s -> (
      if #s === 1 then s
@@ -923,7 +923,7 @@ tex HashTable := x -> (
      )
 
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := text Nothing := x -> ""
-mathML Symbol := x -> concatenate("<ci>",string x,"</ci>")
+mathML Symbol := x -> concatenate("<mi>",toString x,"</mi>")
 
 tex Function := x -> "--Function--"
 

@@ -40,6 +40,7 @@ rel := url -> (
      )
 
 htmlFilename = (nodename) -> (	-- returns the relative path from the PREFIX to the file
+     if buildPackage === null then buildPackage = currentPackage.name;
      if nodename === topNodeName then (
 	  if buildPackage === "Macaulay2"
 	  then LAYOUT#"htmldoc" | topFileName
