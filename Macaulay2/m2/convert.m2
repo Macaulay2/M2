@@ -1,5 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+ConvertReal
 ConvertInteger
 ConvertMissing
 ConvertApply = x -> x			  -- (f,T1,...,Tm)

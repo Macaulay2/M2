@@ -226,6 +226,22 @@ M2_string tostring(char const *s)
      return p;
      }
 
+int actors5_sizeofDouble() { return sizeof(double); }
+
+double actors5_convertnettodouble(M2_string p,int pos) {
+  double x;
+  memcpy((char *)&x,p->array+pos,sizeof(double));
+  return x;
+}
+
+M2_string actors5_convertdoubletonet(double x) {
+  int n = sizeof (double);
+  M2_string p = (M2_string)getmem_atomic(n);
+  p->len = n;
+  memcpy(p->array,(char *)&x,n);
+  return p;
+}
+
 M2_string tostringn(s,n)
 char *s;
 int n;
