@@ -47,6 +47,10 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 -- Macaulay2 0.8.61, compiled with gcc 2.95
 -- res39: 1.28 seconds
 -- resG25: 20.51 seconds
+-- res39: 1.41 seconds
+-- resG25: 22.3 seconds
+-- res39: 1.4 seconds
+-- resG25: 21.67 seconds
 
 -- SunOS sg0.math.cornell.edu 5.7 Generic_106541-08 sun4u sparc SUNW,Ultra-Enterprise
 -- Macaulay2 0.8.60, compiled with gcc 2.95
