@@ -56,7 +56,12 @@ duplicateDocError := nodeName -> (
      stderr << concatenate ("warning: documentation already provided for '", nodeName, "'") 
      << newline << flush; )
 storeDoc := (nodeName,docBody) -> (
-     if mutable DocDatabase then (
+     if currentPackage =!= null then (
+	  d := currentPackage#"raw documentation";
+	  if d#?nodeName then duplicateDocError nodeName;
+	  d#nodeName = docBody;
+	  )
+     else if mutable DocDatabase then (
 	  if DocDatabase#?nodeName then duplicateDocError nodeName;
 	  DocDatabase#nodeName = docBody;
 	  )
@@ -475,7 +480,8 @@ document List := z -> (
 
 topicList = () -> sort join(
      if DocDatabase === null then {} else value \ keys DocDatabase,
-     keys Documentation)
+     keys Documentation
+     )
 
 getExampleInputs := method(SingleArgumentDispatch => true)
 getExampleInputs Thing        := t -> {}

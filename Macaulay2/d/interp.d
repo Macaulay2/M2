@@ -194,7 +194,7 @@ loadprint(s:string,StopIfError:bool):Expr := (
 	       else True)));
 load(s:string):Expr := (
      when openTokenFile(s)
-     is errmsg do False
+     is e:errmsg do buildErrorPacket(e.message)
      is file:TokenFile do (
 	  r := readeval(file);
 	  t := if !(s==="-") then close(file) else 0;
@@ -202,7 +202,7 @@ load(s:string):Expr := (
 	  else (
 	       if t == ERROR
 	       then buildErrorPacket("error closing file") 
- 	       else True)));
+ 	       else nullE)));
 
 load(e:Expr):Expr := (
      when e

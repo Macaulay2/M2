@@ -372,9 +372,9 @@ export (o:file) << (c:char) : file := (
 	  );
      o
      );
-export filbuf(o:file):bool := (
-     -- returns true if it managed to get some more characters
-     if ! o.input then return(false);
+export filbuf(o:file):int := (
+     -- returns number of bytes added to buffer, or ERROR if a system call had an error
+     if ! o.input then return(0);
      if o.inindex > 0
      then (
 	  o.insize = o.insize - o.inindex;
@@ -382,13 +382,11 @@ export filbuf(o:file):bool := (
 	  o.inindex = 0;
 	  );
      n := length(o.inbuffer)-o.insize;
-     if n == 0 then return(false);
+     if n == 0 then return(0);
      r := read(o.infd,o.inbuffer,n,o.insize);
-     if r > 0 then (
-	  o.insize = o.insize + r;
-	  true)
-     else if r == 0 then ( o.eof = true; false )
-     else false
+     if r > 0 then ( o.insize = o.insize + r; r)
+     else if r == 0 then ( o.eof = true; 0 )
+     else ERROR
      );
 putdigit(o:file,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putdigit(o:varstring,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
@@ -584,36 +582,44 @@ echoLine(o:file):void := (
 	  i = i+1;
 	  ));
 
-prepare(o:file):void := (
+prepare(o:file):int := (				    -- may return ERROR
      e := if o.output then o else stdout;
      o.bol = false;
      o.prompt(e);
      flush(e);
-     if !haveLine(o) then filbuf(o);			    -- an EOF here might be ignored by getc!!
+     if !haveLine(o) then if ERROR == filbuf(o) then return(ERROR);
      if o.echo then echoLine(o);
-     );
+     0);
 export getc(o:file):int := (
      if !o.input then return(EOF);
-     if o.bol then prepare(o);
-     if o.inindex == o.insize && !filbuf(o) then return(EOF); -- but it might have been interrupted, too
+     if o.bol then if ERROR == prepare(o) then return(ERROR);
+     if o.inindex == o.insize then (
+	  r := filbuf(o);
+	  if r == 0 then return(EOF);
+	  if r == ERROR then return(ERROR);
+	  );
      c := o.inbuffer.(o.inindex);
      o.inindex = o.inindex + 1;
      o.bol = c == nl;
      int(uchar(c)));
-export read(o:file):string := (
-     if o.inindex == o.insize then filbuf(o);
+export read(o:file):(string or errmsg) := (
+     if o.inindex == o.insize then (
+	  r := filbuf(o);
+	  if r == ERROR then return((string or errmsg)(errmsg("failed to read file : "+syserrmsg())));
+	  );
      s := substr(o.inbuffer,o.inindex,o.insize);
      o.insize = 0;
      o.inindex = 0;
      s);
 export peek(o:file,offset:int):int := (
      if !o.input then return(EOF);
-     if offset >= bufsize then return(EOF);		    -- tried to peek too far
+     if offset >= bufsize then return(ERROR);		    -- tried to peek too far
      if o.bol then prepare(o);
      if o.inindex+offset >= o.insize then (
 	  if o.eof then return(EOF);
      	  while (
-	       filbuf(o);
+	       r := filbuf(o);
+	       if r == ERROR then return(ERROR);
 	       o.inindex+offset >= o.insize
 	       )
 	  do (
