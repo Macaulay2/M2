@@ -542,7 +542,7 @@ document { "fraction fields",
      EXAMPLE "x",
      "Fractions are reduced to the extent possible.  This is done by computing the
      syzygies between the numerator and denominator, and picking one of low degree.",
-     EXAMPLE "f = (x-y)*(x+y)/(x^6-y^6)",
+     EXAMPLE "f = (x-y)/(x^6-y^6)",
      EXAMPLE "(x^3 - y^3) * f",
      "The parts of a fraction may be extracted.",
      EXAMPLE "numerator f",
