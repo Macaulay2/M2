@@ -1480,7 +1480,7 @@ void gbA::start_computation()
 
   for (;;)
     {
-      if (system_interrupted) 
+      if (system_interruptedFlag) 
 	{
 	  is_done = COMP_INTERRUPTED;
 	  break;

@@ -4,7 +4,7 @@
 #include "res.hpp"
 #include "text_io.hpp"
 
-extern char system_interrupted;
+extern char system_interruptedFlag;
 extern int comp_printlevel;
 
 //////////////////////////////////////////////
@@ -926,7 +926,7 @@ int res_comp::gens(int deg)
 	    return COMP_DONE_PAIR_LIMIT;
 	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	    return COMP_DONE_SYZYGY_LIMIT;
-	  if (system_interrupted) return COMP_INTERRUPTED;
+	  if (system_interruptedFlag) return COMP_INTERRUPTED;
 	}
       
       sort_pairs(1, deg); // Sort the level 1 GB elements
@@ -955,7 +955,7 @@ int res_comp::pairs(int level, int deg)
 	{
 	  pairs->next_new_pair = p->next;
 	  new_pairs(p);
-	  if (system_interrupted) return COMP_INTERRUPTED;
+	  if (system_interruptedFlag) return COMP_INTERRUPTED;
 	}
     }
   return COMP_COMPUTING;
@@ -985,7 +985,7 @@ int res_comp::reductions(int level, int deg)
 	  return COMP_DONE_PAIR_LIMIT;
 	if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	  return COMP_DONE_SYZYGY_LIMIT;
-	if (system_interrupted) return COMP_INTERRUPTED;
+	if (system_interruptedFlag) return COMP_INTERRUPTED;
       }
   return COMP_COMPUTING;
 }

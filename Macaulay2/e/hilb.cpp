@@ -3,7 +3,7 @@
 #include "hilb.hpp"
 #include "relem.hpp"
 
-extern char system_interrupted;
+extern char system_interruptedFlag;
 extern int gbTrace;
 
 int partition_table::representative(int x)
@@ -338,7 +338,7 @@ int hilb_comp::calc(int n_steps)
 	  int result = step();
 	  if (result == COMP_DONE)
 	    return COMP_DONE;
-	  if (system_interrupted)
+	  if (system_interruptedFlag)
 	    return COMP_INTERRUPTED;
 	}
       return COMP_DONE_STEPS;
@@ -348,7 +348,7 @@ int hilb_comp::calc(int n_steps)
       int result = step();
       if (result == COMP_DONE)
 	return COMP_DONE;
-      if (system_interrupted)
+      if (system_interruptedFlag)
 	return COMP_INTERRUPTED;
     }
 }

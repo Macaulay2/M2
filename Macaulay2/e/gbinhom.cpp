@@ -6,7 +6,7 @@
 #include "vector.hpp"
 #include "matrixcon.hpp"
 
-extern char system_interrupted;
+extern char system_interruptedFlag;
 extern int gbTrace;
 
 void GBinhom_comp::set_up0(const Matrix *m, int csyz, int nsyz)
@@ -780,7 +780,7 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
   
   for (;;)
     {
-      if (system_interrupted) 
+      if (system_interruptedFlag) 
 	{
 	  is_done = COMP_INTERRUPTED;
 	  break;

@@ -189,7 +189,7 @@ int GaussElimComputation::calc(const int *, const intarray &stop)
 	      emit_wrapped("r");
 	  insert(p);
 	  n_pairs++;
-	  if (system_interrupted)
+	  if (system_interruptedFlag)
 	    return COMP_INTERRUPTED;
 	  if (n_pairs == stop[2])
 	    return COMP_DONE_PAIR_LIMIT;

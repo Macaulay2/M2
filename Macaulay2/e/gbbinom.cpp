@@ -1156,7 +1156,7 @@ int binomialGB_comp::calc(const int *deg, const intarray &stop_conditions)
       int ret = gb_done(stop_conditions);
       if (ret != COMP_COMPUTING) return ret;
       process_pair(s);		// consumes 's'.
-      if (system_interrupted) return COMP_INTERRUPTED;
+      if (system_interruptedFlag) return COMP_INTERRUPTED;
     }
   if (Pairs->n_elems() == 0)
     return COMP_DONE;

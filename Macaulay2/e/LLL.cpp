@@ -304,7 +304,7 @@ int LLLoperations::doLLL(SparseMutableMatrix *A,
   LLLstate->getEntry(0,n+2,alphaTop);  // Don't free alphaTop!
   LLLstate->getEntry(0,n+3,alphaBottom);
 
-  while (k < n && nsteps != 0 && !system_interrupted)
+  while (k < n && nsteps != 0 && !system_interruptedFlag)
     {
       if (gbTrace >= 1)
 	{
