@@ -370,8 +370,6 @@ char **argv;
 
      system_stime();
 
-     if (gotArg("--stop", saveargv)) tokens_stopIfError = TRUE;
-
      if (!gotArg("--int", saveargv)) {
        signal(SIGINT,interrupt_handler);
 #      ifdef SIGALRM

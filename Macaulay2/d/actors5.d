@@ -1435,6 +1435,14 @@ export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (
      storeInHashTable(fileDictionaries,Expr(filename),Expr(d));
      d);
 
+gotArg(arg:string):bool := ( foreach s in argv do if s === arg then return true; false );
+
+export earlyCommandLineOptions(e:Expr):Expr := (
+     if gotArg("--stop") then setstopIfError(true);
+     nullE
+     );
+setupfun("earlyCommandLineOptions", earlyCommandLineOptions);
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
 -- End:
