@@ -36,7 +36,7 @@ currentFileDirectory := setupvar("currentFileDirectory", Expr("./"));
 update(err:Error,prefix:string,f:Code):Expr := (
      if err.position == dummyPosition
      then printErrorMessage(f,prefix + ": " + err.message)
-     else printErrorMessage(f,prefix + ": --backtrace-- ")
+     else printErrorMessage(f,prefix + ": --backtrace update-- ")
      );
 stmtno := 0;
 linefun(e:Expr):Expr := (
@@ -109,7 +109,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 	  if equal(parsed,wordEOF) then return if returnLastvalue then lastvalue else nullE;
 	  if parsed == errorTree then (
 	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
-	       if AbortIfError then return buildErrorPacket("--backtrace--");
+	       if AbortIfError then return buildErrorPacket("--backtrace: parse error--");
 	       )
 	  else (
 	       s := gettoken(file,true);  -- get the semicolon
@@ -324,11 +324,7 @@ value(e:Expr):Expr := (
 	  when r 
 	  is err:Error do (
 	       if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then err.value 
-	       else (
-		    if err.position == dummyPosition
-		    || int(err.position.loadDepth) < errorDepth
-		    then r
-		    else buildErrorPacket("--backtrace--")))
+	       else r)
 	  else r)
      else WrongArg(1,"a string, a symbol, or pseudocode"));
 setupfun("value",value).protected = false;

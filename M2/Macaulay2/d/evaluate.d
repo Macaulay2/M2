@@ -339,7 +339,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    f.frameID = -2;				    -- just to be tidy, not really needed
 		    recycleBin.framesize = f;
 		    );
-	       when ret is err:Error do backtrFunction(ret) else ret
+	       when ret is err:Error do returnFromFunction(ret) else ret
 	       )
 	  else (
 	       recursiondepth = recursiondepth + 1;
@@ -352,7 +352,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       ret := eval(model.body);
 	       localFrame = saveLocalFrame;
 	       recursiondepth = recursiondepth - 1;
-	       when ret is err:Error do backtrFunction(ret) else ret
+	       when ret is err:Error do returnFromFunction(ret) else ret
 	       )
 	  )
      else if desc.numparms != length(v)
@@ -365,7 +365,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       ret := eval(model.body);
 	       localFrame = saveLocalFrame;
 	       recursiondepth = recursiondepth - 1;
-	       when ret is err:Error do backtrFunction(ret) else ret
+	       when ret is err:Error do returnFromFunction(ret) else ret
 	       )
 	  else (
      	       if framesize < length(recycleBin) then (
@@ -396,7 +396,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 			 f.frameID = -2;				    -- just to be tidy, not really needed
 			 recycleBin.framesize = f;
 			 );
-		    when ret is err:Error do backtrFunction(ret) else ret
+		    when ret is err:Error do returnFromFunction(ret) else ret
 		    )
 	       else (
 		    recursiondepth = recursiondepth + 1;
@@ -409,7 +409,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 		    ret := eval(model.body);
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
-		    when ret is err:Error do backtrFunction(ret) else ret
+		    when ret is err:Error do returnFromFunction(ret) else ret
 		    )
 	       )
 	  )
@@ -454,7 +454,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	       recycleBin.framesize = f;
 	       );
 	  recursiondepth = recursiondepth - 1;
-	  when ret is err:Error do backtrFunction(ret) else ret
+	  when ret is err:Error do returnFromFunction(ret) else ret
 	  	     -- this check takes time, too!
 	  )
      else (
@@ -467,7 +467,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 	  ret := eval(model.body);
 	  localFrame = saveLocalFrame;
 	  recursiondepth = recursiondepth - 1;
-	  when ret is err:Error do backtrFunction(ret) else ret
+	  when ret is err:Error do returnFromFunction(ret) else ret
 	      -- this check takes time, too!
 	  )
      );
@@ -494,7 +494,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 	       saveLocalFrame := localFrame;
 	       localFrame = previousFrame;
 	       ret := eval(model.body);
-	       when ret is err:Error do ret = backtrFunction(ret)
+	       when ret is err:Error do ret = returnFromFunction(ret)
 	       else nothing;
 	       localFrame = saveLocalFrame;
 	       recursiondepth = recursiondepth - 1;
@@ -536,7 +536,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    saveLocalFrame := localFrame;
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do ret = backtrFunction(ret)
+		    when ret is err:Error do ret = returnFromFunction(ret)
 		    else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
@@ -568,7 +568,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 		    if haderror then return errorreturn;
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do ret = backtrFunction(ret)
+		    when ret is err:Error do ret = returnFromFunction(ret)
 		    else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
@@ -635,7 +635,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    saveLocalFrame := localFrame;
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do ret = backtrFunction(ret) else nothing;
+		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
 		    if !f.notrecyclable then (
@@ -658,7 +658,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    if haderror then return errorreturn;
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do ret = backtrFunction(ret) 
+		    when ret is err:Error do ret = returnFromFunction(ret) 
 		    else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
@@ -708,7 +708,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    saveLocalFrame := localFrame;
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do ret = backtrFunction(ret) else nothing;
+		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
 		    if !f.notrecyclable then (
@@ -732,8 +732,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    if haderror then return errorreturn;
 		    localFrame = f;
 		    ret := eval(model.body);
-		    when ret is err:Error do ret = backtrFunction(ret) 
-		    else nothing;
+		    when ret is err:Error do ret = returnFromFunction(ret) else nothing;
 		    localFrame = saveLocalFrame;
 		    recursiondepth = recursiondepth - 1;
 		    ret
@@ -1016,14 +1015,16 @@ export eval(c:Code):Expr := (
 	  p := codePosition(c);
      	  if int(p.loadDepth) >= errorDepth then (
 	       if err.position == dummyPosition then (err.position = p; printErrorMessage(err); );
-	       err.report = report(c,err.report);
-	       if debuggingMode then 
-	       when breakLoopFun(localFrame,c) is z:Error do (
-		    if z.message == breakMessage then return buildErrorPacket(unwindMessage);
-		    if z.message == returnMessage then return z.value;
-		    if z.message == continueMessage then return eval(c);
-		    )
-	       else nothing;
+	       if localFrame != err.report.code.frame then (
+		    err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c),err.report);
+		    if debuggingMode && stdIO.inisatty && stdIO.outisatty then (
+			 printErrorMessage(p,"--break loop--");
+			 when breakLoopFun(localFrame,c) is z:Error do (
+			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
+			      if z.message == returnMessage then return z.value;
+			      if z.message == continueMessage then return eval(c);
+			      )
+			 else nothing));
 	       );
 	  e)
      else e);

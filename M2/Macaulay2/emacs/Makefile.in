@@ -17,10 +17,10 @@ all:: emacs.m2
 emacs.m2: ../cache/Macaulay2-doc makem2.m2
 	../bin/M2 -q --silent @srcdir@/makem2.m2 -e 'exit 0' </dev/null
 
-clean:
+clean::
 	rm -f M2-symbols.el emacs-hlp.txt emacs.m2 M2-symbols
 
-distclean : clean
+distclean:: clean
 	rm -f Makefile
 
 $(emacsdocdir) $(emacsdir) :
@@ -40,3 +40,4 @@ Makefile : Makefile.in
 all:: M2-init.el
 M2-init.el : M2-init.el.in
 	cd ../..; ./config.status Macaulay2/emacs/M2-init.el
+clean::; rm -rf M2-init.el
