@@ -108,8 +108,31 @@ not(z:Expr):Expr := (
      else if z == True then False 
      else if z == False then True
      else buildErrorPacket("expected true or false"));
-notequalfun(lhs:Code,rhs:Code):Expr := notFun(EqualEqualfun(lhs,rhs));
-setup(NotEqualS,notequalfun);
+
+notequalmethod(x:Expr,y:Expr):Expr := (
+     method := lookupBinaryMethod(Class(x),Class(y),NotEqualS);
+     if method == nullE then (
+	  eqmeth := lookupBinaryMethod(Class(x),Class(y),EqualEqualS);
+	  if eqmeth == nullE then MissingMethodPair(NotEqualS,x,y) else notFun(apply(eqmeth,x,y))
+	  )
+     else apply(method,x,y));
+NotEqualfun(lhs:Code,rhs:Code):Expr := (
+     x := eval(lhs);
+     when x is Error do x
+     else (
+     	  y := eval(rhs);
+     	  when y 
+	  is Error do y
+	  is Integer do when x is Integer do not(equal(x,y)) else notequalmethod(x,y)
+	  is SymbolClosure do when x is SymbolClosure do not(equal(x,y)) else notequalmethod(x,y)
+	  is Rational do when x is Rational do not(equal(x,y)) else notequalmethod(x,y)
+	  is Real do when x is Real do not(equal(x,y)) else notequalmethod(x,y)
+	  is BigReal do when x is BigReal do not(equal(x,y)) else notequalmethod(x,y)
+	  is Boolean do when x is Boolean do not(equal(x,y)) else notequalmethod(x,y)
+	  is Net do when x is Net do not(equal(x,y)) else notequalmethod(x,y)
+	  is string do when x is string do not(equal(x,y)) else notequalmethod(x,y)
+	  else notequalmethod(x,y)));
+setup(NotEqualS,NotEqualfun);
 
 compare(left:Expr,right:Expr):Expr := (
      if left == right then EqualE else
