@@ -5,7 +5,7 @@
 PfaffianComputation::PfaffianComputation(const Matrix &M, int p)
   : R(M.Ring_of()),
     M(M),
-    pfaffs(new FreeModule(R,1)),
+    pfaffs(R->make_FreeModule(1)),
     p(p),
     I(0),
     row_set(p)

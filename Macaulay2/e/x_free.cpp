@@ -21,7 +21,7 @@ void cmd_FreeModule(object &oR, object &oa)
       return;
     }
 
-  FreeModule *F = new FreeModule(R);
+  FreeModule *F = R->make_FreeModule();
   for (int i=0; i<rk; i++)
     {
       R->degree_monoid()->from_expvector(a->raw() + i * n, deg);
@@ -37,7 +37,7 @@ void cmd_FreeModule1(object &oR, object &on)
 {
   const Ring *R = oR->cast_to_Ring();
   int n = on->int_of();
-  gStack.insert(new FreeModule(R, n));
+  gStack.insert(R->make_FreeModule(n));
 }
 
 void cmd_FreeModule2(object &oR, object &oa, object &om, object &onums)
@@ -73,7 +73,7 @@ void cmd_FreeModule2(object &oR, object &oa, object &om, object &onums)
   int *deg = R->degree_monoid()->make_one();
   int *base = M->make_one();
 
-  FreeModule *F = new FreeModule(R);
+  FreeModule *F = R->make_FreeModule();
   for (int i=0; i<rk; i++)
     {
       R->degree_monoid()->from_expvector(a->raw() + i * n, deg);
@@ -166,7 +166,7 @@ static int check_elems(int num, int typ)
      // Return whether the top 'num' elements on the stack have type 'typ'.
 {
   for (int i=num-1; i >= 0 ; i--) 
-    if (!gStack.in_bounds(i) || gStack[i]->type_of() != typ)
+    if (!gStack.in_bounds(i) || gStack[i]->type_id() != typ)
       return 0;
   return 1;
 }

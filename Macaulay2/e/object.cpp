@@ -23,7 +23,6 @@
 #include "respoly2.hpp"
 #include "res2.hpp"
 
-int refcount_check = 0;
 caster_oil caster;
 
 void object_element::debug_out(buffer &o) const
@@ -32,9 +31,9 @@ void object_element::debug_out(buffer &o) const
     << '(' << refcount  << ')';
 }
 
-bool object_element::is_equal(const object_element * /* o */ ) const
+bool object_element::equals(const object_element * /* o */ ) const
 {
-  ERROR("internal error: object_element::is_equal called");
+  ERROR("internal error: object_element::equals called");
   return false;
 }
 

@@ -20,12 +20,14 @@ public:
   Z_mod(int p, const Monoid *D);
   ~Z_mod() { delete [] exp_table; delete [] log_table; }
 
-  virtual int coerce_to_int(ring_elem a) const;
-
-  int to_int(int a) const;
+  class_identifier class_id() const { return CLASS_Z_mod; }
 
   Z_mod * cast_to_Z_mod() { return this; }
   const Z_mod * cast_to_Z_mod() const { return this; }
+
+  virtual int coerce_to_int(ring_elem a) const;
+
+  int to_int(int a) const;
 
 // The following are all the routines required by 'ring'
   virtual bool is_field() const     { return 1; }

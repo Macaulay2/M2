@@ -2,6 +2,7 @@
 
 #include "frac.hpp"
 #include "text_io.hpp"
+#include "bin_io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
 
@@ -22,6 +23,27 @@ FractionField::~FractionField()
 {
   bump_down((Ring *) R);
   delete frac_stash;
+}
+
+bool FractionField::equals(const object_element *o) const
+{
+  if (o->class_id() != class_id())
+    return false;
+
+  const FractionField *R2 = (FractionField *)o;
+  if (!R->equals(R2->R)) return false;
+  return true;
+}
+
+int FractionField::hash() const 
+{ 
+  return 0;
+}
+
+void FractionField::binary_out(buffer &o) const
+{
+  bin_int_out(o, class_id());
+  R->binary_out(o);
 }
 
 void FractionField::text_out(buffer &o) const

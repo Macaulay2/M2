@@ -8,6 +8,8 @@
 
 ///// Ring Hierarchy ///////////////////////////////////
 
+class WeylAlgebra;
+
 class Ring : public type
 {
   friend class FreeModule;
@@ -40,6 +42,9 @@ public:
   const Monoid * degree_monoid() const { return D; }
   const PolynomialRing *HilbertRing() const { return HRing; }
 
+  virtual FreeModule *make_FreeModule() const;
+  virtual FreeModule *make_FreeModule(int n) const;
+
   virtual const Z * cast_to_Z() const         { return 0; }
   virtual       Z * cast_to_Z()               { return 0; }
   virtual const Z_mod * cast_to_Z_mod() const         { return 0; }
@@ -50,12 +55,14 @@ public:
   virtual       FractionField * cast_to_FractionField()          { return 0; }
   virtual const SchurRing * cast_to_SchurRing() const { return 0; }
   virtual       SchurRing * cast_to_SchurRing()       { return 0; }
+  virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return 0; }
 
   virtual bool is_field() const = 0;
   virtual bool is_pid() const = 0;
   virtual bool has_gcd() const = 0;
   virtual bool is_Z() const = 0;
   virtual bool is_poly_ring() const = 0;
+  virtual bool is_weyl_algebra() const { return false; }
   virtual bool is_graded() const = 0;
   virtual bool is_expensive() const = 0;
   virtual bool is_quotient_poly_ring() const = 0;
@@ -137,8 +144,10 @@ public:
   int          length_of() const      { return n_vars(); }
   const Ring * cast_to_Ring() const { return this; }
   Ring *       cast_to_Ring()       { return this; }
-  object_types type_of()   const    { return TY_RING; }
-  const char * type_name() const    { return "Ring"; }
+
+  class_identifier class_id() const { return CLASS_Ring; }
+  type_identifier  type_id () const { return TY_RING; }
+  const char * type_name   () const { return "Ring"; }
 };
 
 #include "Z.hpp"

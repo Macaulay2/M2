@@ -14,14 +14,35 @@
 
 Z::Z(const Monoid *D) : Ring(0,0,0,this /* Visual C WARNING */,trivial_monoid,D)
 {
-  mpz_stash = new stash("Z", sizeof(mpz_t));
+  mpz_stash = new stash("ZZ", sizeof(mpz_t));
   zero_elem = new_elem();
   mpz_init_set_si(zero_elem, 0);
 }
 
+bool Z::equals(const object_element *o) const
+{
+  if (o->class_id() != class_id())
+    return false;
+
+  const Z *R = (Z *)o;
+  if (R->D != D) return false;
+  return true;
+}
+
+int Z::hash() const 
+{ 
+  return 0;
+}
+
+void Z::binary_out(buffer &o) const
+{
+  bin_int_out(o, class_id());
+  D->binary_out(o);
+}
+
 void Z::text_out(buffer &o) const
 {
-  o << "Z";
+  o << "ZZ";
 }
 
 mpz_ptr Z::new_elem() const

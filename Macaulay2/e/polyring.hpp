@@ -39,6 +39,8 @@ public:
 
   virtual ~PolynomialRing();
 
+  class_identifier class_id() const { return CLASS_PolynomialRing; }
+
   virtual const PolynomialRing * cast_to_poly_ring()  const { return this; }
   virtual       PolynomialRing * cast_to_poly_ring()        { return this; }
 
@@ -133,6 +135,9 @@ public:
 			    ring_elem a, const int *m, const ring_elem g) const;
   ring_elem coeff_of(const ring_elem f, const int *m) const;
 
+  ring_elem diff_by_term(const int *exp, const ring_elem f,
+			 int use_coeff) const;
+
   // Routines special to polynomial rings
   // in_subring, div_degree, divide_by_var
   // possibly others?
@@ -160,7 +165,7 @@ protected:
   void term_degree(const Nterm *t, int *degt) const;
   ring_elem imp_skew_mult_by_term(const ring_elem f, 
 				  const ring_elem c, const int *m) const;
-  ring_elem imp_mult_by_term(const ring_elem f, 
+  virtual ring_elem imp_mult_by_term(const ring_elem f, 
 			      const ring_elem c, const int *m) const;
   void imp_subtract_multiple_to(ring_elem &f, 
 				ring_elem a, const int *m, const ring_elem g) const;

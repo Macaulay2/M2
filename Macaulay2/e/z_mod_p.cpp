@@ -47,7 +47,7 @@ Z_mod::Z_mod(int p, const Monoid *D)
 
 void Z_mod::text_out(buffer &o) const
 {
-  o << "Z/" << P;
+  o << "ZZ/" << P;
 }
 
 int Z_mod::to_int(int f) const

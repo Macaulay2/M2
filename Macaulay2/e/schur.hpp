@@ -56,6 +56,8 @@ public:
   SchurRing(const Ring *KK, const Monoid *MMF);
   ~SchurRing();
 
+  class_identifier class_id() const { return CLASS_SchurRing; }
+
   virtual const SchurRing * cast_to_SchurRing() const { return this; }
   virtual       SchurRing * cast_to_SchurRing()       { return this; }
 

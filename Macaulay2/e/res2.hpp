@@ -288,8 +288,10 @@ public:
   void *operator new(size_t) { return mystash->new_elem(); }
   void operator delete(void *p) { mystash->delete_elem(p); }
 
-  object_types type_of           () const { return TY_RES2_COMP; }
-  const char * type_name         () const { return "res2 computation"; }
+  class_identifier class_id() const { return CLASS_res2_comp; }
+  type_identifier  type_id () const { return TY_RES2_COMP; }
+  const char * type_name   () const { return "ResolutionComputation2"; }
+
   res2_comp   * cast_to_res2_comp  ()       { return this; }
 
   void bin_out(buffer &) const {}

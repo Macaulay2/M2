@@ -7,6 +7,7 @@
 #include "ringmap.hpp"
 #include "matrix.hpp"
 #include "Z.hpp"
+#include "ntuple.hpp"
 
 #include "geopoly.hpp"
 
@@ -76,7 +77,7 @@ Matrix PolynomialRing::get_ideal() const
 {
   const PolynomialRing *R = this;
   while (R->base_ring != NULL) R = R->base_ring;
-  Matrix result(new FreeModule(R,1));
+  Matrix result(R->make_FreeModule(1));
   for (int i=0; i<quotient_ideal.length(); i++)
     result.append(result.rows()->term(0, quotient_ideal[i]));
   return result;
@@ -1294,6 +1295,52 @@ ring_elem PolynomialRing::get_coeff(const ring_elem f, const int *vp) const
   int *m = ma.alloc(M->monomial_size());
   M->from_varpower(vp, m);
   return coeff_of(f, m);
+}
+
+ring_elem PolynomialRing::diff_by_term(const int *exp, const ring_elem f,
+				       int use_coeff) const
+{
+  // The result terms will be in the same order as those of f.
+  // NOT valid for skew commutative rings, although currently
+  // this routine is only used by Weyl algebra stuff.
+  Nterm head;
+  Nterm *result = &head;
+  int *exp2 = new int[nvars];
+  for (Nterm *t = f; t != NULL; t = t->next)
+    {
+      M->to_expvector(t->monom, exp2);
+      if (ntuple::divides(nvars,exp,exp2))
+	{
+	  // Now determine the coefficient.
+	  ring_elem c = K->copy(t->coeff);
+	  if (use_coeff)
+	    {
+	      for (int i=0; i<nvars; i++)
+		for (int j=exp[i]-1; j>=0; j--)
+		  {
+		    ring_elem g = K->from_int(exp2[i]-j);
+		    K->mult_to(c,g);
+		    K->remove(g);
+		    if (K->is_zero(c))
+		      {
+			K->remove(c);
+			c = g;
+			// break out of these two loops
+			j = -1;
+			i = nvars;
+		      }
+		  }
+	    }
+	  ntuple::divide(nvars,exp2,exp,exp2);
+	  result->next = new_term();
+	  result = result->next;
+	  result->coeff = c;
+	  M->from_expvector(exp2, result->monom);
+	}
+    }
+  delete [] exp2;
+  result->next = NULL;
+  return head.next;
 }
 
 Nterm *PolynomialRing::resize(const PolynomialRing *R, Nterm *f) const

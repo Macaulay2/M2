@@ -108,8 +108,10 @@ public:
   void *operator new(size_t) { return mystash->new_elem(); }
   void operator delete(void *p) { mystash->delete_elem(p); }
 
-  object_types type_of           () const { return TY_HILB_COMP; }
-  const char * type_name         () const { return "hilbert_comp"; }
+  class_identifier class_id() const { return CLASS_hilb_comp; }
+  type_identifier  type_id () const { return TY_HILB_COMP; }
+  const char * type_name   () const { return "hilb_comp"; }
+
   hilb_comp  * cast_to_hilb_comp ()       { return this; }
 
   void bin_out(buffer &) const {}

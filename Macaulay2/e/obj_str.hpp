@@ -37,8 +37,11 @@ public:
 
   int          length_of     () const { return len; }
   char *       string_of     () { return val; }
-  object_types type_of       () const { return TY_STRING; }
-  const char * type_name     () const { return "string"; }
+
+  class_identifier class_id() const { return CLASS_string; }
+  type_identifier  type_id () const { return TY_STRING; }
+  const char * type_name   () const { return "String"; }
+
   object_string *cast_to_string() { return this; }
 
   void bin_out(buffer &o) const 

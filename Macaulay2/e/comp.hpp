@@ -85,8 +85,10 @@ public:
   virtual void set_next_minor(const int * /*rows*/, const int * /*cols*/) {}
 
   // Infrastructure
-  object_types type_of        () const { return TY_COMP; }
-  const char * type_name      () const { return "computation"; }
+  class_identifier class_id() const { return CLASS_computation; }
+  type_identifier  type_id () const { return TY_COMP; }
+  const char * type_name   () const { return "computation"; }
+
   computation *       cast_to_computation   () { return this; }
 
   void text_out(buffer &o) const { o << "computation"; }

@@ -143,8 +143,9 @@ public:
   void operator delete(void *p) { mystash->delete_elem(p); }
 
   void bin_out(buffer &) const {}
-  const char * type_name         () const { return "groebner computation"; }
   void text_out(buffer &o) const { o << "groebner computation"; }
+
+  class_identifier class_id() const { return CLASS_GB_comp; }
 
   int length_of() const { return n_gb; }
 };  

@@ -51,8 +51,10 @@ class RingElement_rec : public object_element
   ~RingElement_rec () { R->remove(val); bump_down((Ring *)R); }
 
   // Infrastructure
-  object_types type_of          () const { return TY_RING_ELEM; }
-  const char * type_name        () const { return "Ring element"; }
+  class_identifier class_id() const { return CLASS_RingElement; }
+  type_identifier  type_id () const { return TY_RING_ELEM; }
+  const char * type_name   () const { return "RingElement"; }
+
   RingElement    cast_to_RingElement();
 
   int          int_of() const { return R->coerce_to_int(val); }

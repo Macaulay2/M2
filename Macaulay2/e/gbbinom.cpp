@@ -14,7 +14,7 @@ binomial_ring::binomial_ring(const Ring *RR,
 			     int *wts,
 			     bool revlex)
   : R(RR),
-    F(new FreeModule(RR,1)),
+    F(RR->make_FreeModule(1)),
     nvars(RR->n_vars()),
     have_weights(wts != NULL),
     weights(NULL),

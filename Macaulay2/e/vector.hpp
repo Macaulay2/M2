@@ -23,8 +23,10 @@ class Vector_rec : public object_element
   ~Vector_rec () { F->remove(val); bump_down((FreeModule *) F); }
 
   // Infrastructure
-  object_types type_of          () const { return TY_VECTOR; }
-  const char * type_name        () const { return "Vector"; }
+  class_identifier class_id() const { return CLASS_Vector; }
+  type_identifier  type_id () const { return TY_VECTOR; }
+  const char * type_name   () const { return "Vector"; }
+
   Vector       cast_to_Vector   ();
 
   int          length_of        () const;

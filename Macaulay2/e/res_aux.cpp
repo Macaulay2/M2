@@ -263,7 +263,7 @@ void res_comp::stats(buffer &o) const
 FreeModule *res_comp::free_of(int i) const
 {
   FreeModule *result;
-  result = new FreeModule(P);
+  result = P->make_FreeModule();
   if (i < 0 || i >= resn.length())
     return result;
   int *deg = degree_monoid()->make_one();
@@ -286,7 +286,7 @@ FreeModule *res_comp::free_of(int i) const
 FreeModule *res_comp::minimal_free_of(int i) const
 {
   FreeModule *result;
-  result = new FreeModule(P);
+  result = P->make_FreeModule();
   if (i < 0 || i > length_limit)
     return result;
   int *deg = degree_monoid()->make_one();

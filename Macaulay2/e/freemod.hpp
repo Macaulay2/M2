@@ -57,7 +57,7 @@ public:
   FreeModule(const Ring *R);
   FreeModule(const Ring *R, int n);
   FreeModule(const Ring *RR, const FreeModule *F);
-  ~FreeModule();
+  virtual ~FreeModule();
 
   virtual FreeModule *new_free() const;
 
@@ -172,7 +172,7 @@ protected:
   // These routines do straight multiplication with no normal forms.
 
   vec imp_mult_by_coeff       (const ring_elem c, vec v) const;
-  vec imp_mult_by_term        (const ring_elem c, const int *m, const vec v) const;
+  virtual vec imp_mult_by_term        (const ring_elem c, const int *m, const vec v) const;
   void    imp_subtract_multiple_to(vec &v, ring_elem c, const int *m, 
 				   const vec w) const;
 
@@ -261,7 +261,7 @@ public:
   void auto_reduce(array<vec> &vecs) const;
 
   vec random() const;  // Produces a random vector of coefficients (no monomials)
-private:
+protected:
   int sort_compare(int i, int j) const;
   int sort_partition(int lo, int hi) const;
   void sort_range(int lo, int hi) const;
@@ -277,10 +277,12 @@ public:
   vec monomial_squarefree(vec f) const;
   vec remove_monomial_divisors(vec f) const;
 
-private:  // Used as local routine to 'diff'
+protected:  // Used as local routine to 'diff'
   ring_elem diff_term(const int *m, const int *n, 
 		       int *resultmon,
 		       int use_coeff) const;
+
+  vec diff_by_term(const int *exp, vec v, bool use_coeff) const;
 public:
   vec diff(const FreeModule *F, vec v, 
 	       const FreeModule *G, vec w,
@@ -327,8 +329,15 @@ public:
   int                 length_of()           const { return rank(); }
   FreeModule *       cast_to_FreeModule()       { return this; }
   const FreeModule * cast_to_FreeModule() const { return this; }
-  object_types        type_of()             const { return TY_FREEMODULE; }
-  const char *        type_name()           const { return "FreeModule"; }
+
+  class_identifier class_id() const { return CLASS_FreeModule; }
+  type_identifier  type_id () const { return TY_FREEMODULE; }
+  const char * type_name   () const { return "FreeModule"; }
+
+  // Equality check, hash function, serialize
+  bool equals(const object_element *o) const;
+  int hash() const;
+  void binary_out(buffer &o) const;
 
   friend void i_stashes();
   static stash *mystash;

@@ -287,9 +287,12 @@ public:
   void operator delete(void *p) { mystash->delete_elem(p); }
 
   gbres_comp *cast_to_gbres_comp() { return this; }
-  object_types type_of        () const { return TY_GBRES_COMP; }
+
+  class_identifier class_id() const { return CLASS_gbres_comp; }
+  type_identifier  type_id () const { return TY_GBRES_COMP; }
+  const char * type_name   () const { return "gbres_comp"; }
+
   void bin_out(buffer &) const {}
-  const char * type_name         () const { return "gbres"; }
   void text_out(buffer &o) const { o << "gbres"; }
 
   int length_of() const { return nodes[1]->n_gb_elems(); }

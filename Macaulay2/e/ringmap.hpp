@@ -28,8 +28,10 @@ public:
   void *operator new(size_t) { return mystash->new_elem(); }
   void operator delete(void *p) { mystash->delete_elem(p); }
 
-  object_types type_of         () const { return TY_RING_MAP; }
-  const char * type_name       () const { return "ring map"; }
+  class_identifier class_id() const { return CLASS_RingMap; }
+  type_identifier  type_id () const { return TY_RING_MAP; }
+  const char * type_name   () const { return "RingMap"; }
+
   RingMap *cast_to_RingMap() { return this; }
   const RingMap *cast_to_RingMap() const{ return this; }
   
@@ -93,8 +95,10 @@ public:
   void *operator new(size_t) { return mystash->new_elem(); }
   void operator delete(void *p) { mystash->delete_elem(p); }
 
-  object_types type_of         () const { return TY_RING_MAP; }
-  const char * type_name       () const { return "ring map"; }
+  class_identifier class_id() const { return CLASS_RingMap; }
+  type_identifier  type_id () const { return TY_RING_MAP; }
+  const char * type_name   () const { return "RingMap"; }
+
   RingMap *cast_to_RingMap() { return this; }
   const RingMap *cast_to_RingMap() const{ return this; }
   

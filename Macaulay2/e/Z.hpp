@@ -21,6 +21,13 @@ public:
   Z(const Monoid *D);
   ~Z() {}
 
+  class_identifier class_id() const { return CLASS_Z; }
+
+  // Equality check, hash function, serialize
+  bool equals(const object_element *o) const;
+  int hash() const;
+  void binary_out(buffer &o) const;
+
   Z * cast_to_Z() { return this; }
   const Z * cast_to_Z() const { return this; }
 

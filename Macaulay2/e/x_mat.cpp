@@ -26,7 +26,7 @@ void cmd_Matrix1(object &orows, object &ocols)
   Matrix result(F);
   for (int i=ncols-1; i >= 0 ; i--) 
     {
-      if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_VECTOR)
+      if (!gStack.in_bounds(i) || gStack[i]->type_id() != TY_VECTOR)
 	{
 	  gError << "matrix: expected vector on the stack";
 	  break;
@@ -54,7 +54,7 @@ void cmd_Matrix2(object &orows, object &ocols)
   Matrix result(F, G);
   for (int i=ncols-1; i >= 0 ; i--) 
     {
-      if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_VECTOR)
+      if (!gStack.in_bounds(i) || gStack[i]->type_id() != TY_VECTOR)
 	{
 	  gError << "matrix: expected vector on the stack";
 	  break;
@@ -85,7 +85,7 @@ void cmd_Matrix2a(object &orows, object &ocols, object &odeg)
 
   for (int i=ncols-1; i >= 0 ; i--) 
     {
-      if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_VECTOR)
+      if (!gStack.in_bounds(i) || gStack[i]->type_id() != TY_VECTOR)
 	{
 	  gError << "matrix: expected vector on the stack";
 	  break;
@@ -242,7 +242,7 @@ void cmd_Matrix_concat(object &on)
       return;
     }
   for (i=0; i<n; i++)
-    if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_MATRIX)
+    if (!gStack.in_bounds(i) || gStack[i]->type_id() != TY_MATRIX)
       {
 	gError << "concat: expected " << n << " matrices";
 	return;
@@ -418,7 +418,7 @@ void cmd_Matrix_dsum_several(object &on)
       return;
     }
   for (i=0; i<n; i++)
-    if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_MATRIX)
+    if (!gStack.in_bounds(i) || gStack[i]->type_id() != TY_MATRIX)
       {
 	gError << "direct sum: expected " << n << " matrices";
 	return;

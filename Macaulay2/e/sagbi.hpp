@@ -97,8 +97,9 @@ public:
   const sagbi_comp * cast_to_sagbi_comp() const { return this; }
 
   void bin_out(buffer &) const {}
-  const char * type_name         () const { return "sagbi_comp"; }
   void text_out(buffer &o) const { o << "sagbi_comp"; }
+
+  class_identifier class_id() const { return CLASS_SagbiComputation; }
 
   int length_of() const { return 0; }
 };

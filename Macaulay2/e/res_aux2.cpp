@@ -274,7 +274,7 @@ void res2_comp::stats() const
 FreeModule *res2_comp::free_of(int i) const
 {
   FreeModule *result;
-  result = new FreeModule(P);
+  result = P->make_FreeModule();
   if (i < 0 || i >= resn.length())
     return result;
 
@@ -292,7 +292,7 @@ FreeModule *res2_comp::free_of(int i) const
 FreeModule *res2_comp::minimal_free_of(int i) const
 {
   FreeModule *result;
-  result = new FreeModule(P);
+  result = P->make_FreeModule();
   if (i < 0 || i >= resn.length()-1)
     return result;
 
@@ -402,8 +402,8 @@ Matrix res2_comp::reduce_mod_vars(int level) const
 
   // Set 'me' values for level 'level' and 'level-1'.
   
-  FreeModule *rows = new FreeModule(K);
-  FreeModule *cols = new FreeModule(K);
+  FreeModule *rows = K->make_FreeModule();
+  FreeModule *cols = K->make_FreeModule();
   Matrix result(rows, cols);
   for (res_pair *p = resn[level]->pairs; p != NULL; p = p->next)
     {

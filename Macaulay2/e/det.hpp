@@ -36,6 +36,13 @@ public:
   DetComputation(const Matrix &M, int p, bool do_exterior);
   ~DetComputation();
 
+  class_identifier class_id() const { return CLASS_DetComputation; }
+
+  // Equality check, hash function, serialize
+  bool equals(const object_element *o) const;
+  int hash() const;
+  void binary_out(buffer &o) const;
+
   int step();
   int calc(int nsteps);
 

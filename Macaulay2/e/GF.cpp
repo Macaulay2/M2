@@ -99,6 +99,29 @@ GF::~GF()
   bump_down((Ring *) K);
 }
 
+bool GF::equals(const object_element *o) const
+{
+  if (o->class_id() != class_id())
+    return false;
+
+  const GF *R = (GF *)o;
+  if (R->K != K) return false;
+  if (R->primitive_element != primitive_element)
+    return false;
+  return true;
+}
+
+int GF::hash() const 
+{ 
+  return 0;
+}
+
+void GF::binary_out(buffer &o) const
+{
+  bin_int_out(o, class_id());
+  primitive_element->binary_out(o);
+}
+
 void GF::text_out(buffer &o) const
 {
   o << "GF(" << Q << ")";

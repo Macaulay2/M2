@@ -104,7 +104,31 @@ FreeModule::~FreeModule()
 
 FreeModule *FreeModule::new_free() const
 {
-  return new FreeModule(R);
+  return R->make_FreeModule();
+}
+
+bool FreeModule::equals(const object_element *o) const
+{
+  if (o->class_id() != class_id())
+    return false;
+
+  const FreeModule *FF = (FreeModule *)o;
+  if (ty != FF->ty) return false;
+  if (!R->equals(FF->R)) return false;
+  // MESXX: test rank, then for each element, test degree, base, compare_num.
+  return true;
+}
+
+int FreeModule::hash() const 
+{ 
+  return 0;
+}
+
+void FreeModule::binary_out(buffer &o) const
+{
+  bin_int_out(o, class_id());
+  R->binary_out(o);
+  // MESXX: not done yet!!
 }
 
 //////////////////////////////////////////////
@@ -279,7 +303,7 @@ FreeModule *FreeModule::exterior(int p) const
   FreeModule *result;
 
   if (p == 0) 
-    result = new FreeModule(Ring_of(), 1);
+    result = Ring_of()->make_FreeModule(1);
   result = new_free();
   if (p > rank() || p < 0) return result;
 

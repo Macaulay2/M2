@@ -22,8 +22,11 @@ public:
   ~object_intarray() {}
 
   intarray *   intarray_of     ()       { return &val; }
-  object_types type_of         () const { return TY_INTARRAY; }
-  const char * type_name       () const { return "intarray"; }
+
+  class_identifier class_id() const { return CLASS_intarray; }
+  type_identifier  type_id () const { return TY_INTARRAY; }
+  const char * type_name   () const { return "IntegerArray"; }
+
   object_intarray *cast_to_intarray()   { return this; }
   
   int length_of() const { return val.length(); }

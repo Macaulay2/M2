@@ -84,7 +84,7 @@ void cmdIntarray1(void)
       gError << "Intarray: unexpected empty stack";
       return;
     }
-  if (gStack[0]->type_of() != TY_INT)
+  if (gStack[0]->type_id() != TY_INT)
     {
       gError << "Intarray: expected integer count on stack";
       return;
@@ -93,7 +93,7 @@ void cmdIntarray1(void)
   object_intarray *a = new object_intarray;
   for (int i=count-1; i >= 0 ; i--) 
     {
-      if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_INT)
+      if (!gStack.in_bounds(i) || gStack[i]->type_id() != TY_INT)
 	{
 	  gError << "Intarray: expected integer on the stack";
 	  return;

@@ -12,6 +12,7 @@
 #include "matrix.hpp"
 #include "schur.hpp"
 #include "frac.hpp"
+#include "weylalg.hpp"
 
 Z *ZZ;			// set in the init routine below
 
@@ -343,6 +344,13 @@ void cmd_PolynomialRing(object &oK, object &oMF)
   const Monoid *MF = oMF->cast_to_Monoid();
   gStack.insert(new PolynomialRing(K, MF));
 }
+void cmd_WeylAlgebra(object &oK, object &oMF, object &oa)
+{
+  const Ring *K = oK->cast_to_Ring();
+  const Monoid *MF = oMF->cast_to_Monoid();
+  const intarray *a = oa->intarray_of();
+  gStack.insert(new WeylAlgebra(K, MF, *a));
+}
 void cmd_fraction_field(object &oR)
 {
   const Ring *R = oR->cast_to_Ring();
@@ -384,7 +392,7 @@ void cmd_qring2(object &on, object &oR)
 
   for (int i=n-1; i >= 0 ; i--) 
     {
-      if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_RING_ELEM)
+      if (!gStack.in_bounds(i) || gStack[i]->type_id() != TY_RING_ELEM)
 	{
 	  gError << "qring: expected ring element on the stack";
 	  break;
@@ -442,6 +450,9 @@ void i_ring_elem_cmds(void)
   install(ggGF, cmd_GF, TY_RING_ELEM);
   //  install(ggGF, cmd_GF2, TY_RING);
   install(ggpolyring, cmd_PolynomialRing, TY_RING, TY_MONOID);
+  install(ggweylalgebra, cmd_WeylAlgebra, TY_RING, TY_MONOID, 
+	  TY_INTARRAY);
+
   install(ggschur, cmd_schur, TY_RING, TY_MONOID);
   install(ggqring, cmd_qring, TY_MATRIX);
   install(ggqring, cmd_qring2, TY_INT, TY_RING);
