@@ -703,8 +703,17 @@ padto := (s,n) -> (
 
 erase quote stringlen
 
+nopar := x -> (
+     -- this is like net Sequence except we omit the parentheses.
+     horizontalJoin deepSplice (
+	  if #x === 0 then "()"
+	  else if #x === 1 then ("singleton ", net x#0)
+	  else (toSequence between(",",apply(x,net)))))
+
+nopars := x -> if class x === Sequence then nopar x else net x
+
 net Subscript := x -> (
-     n := net x#1;
+     n := nopars x#1;
      if precedence x#0 < PowerPrecedence
      then horizontalJoin( "(", net x#0, ")", n^-(height n) )
      else net x#0 | n^-(height n)
@@ -724,7 +733,7 @@ net Power := v -> (
      	  nety := net y;
 	  nety = nety ^ (1 + depth nety);
 	  if class x === Subscript then (
-	       t := verticalJoin(nety,"",net x#1);
+	       t := verticalJoin(nety,"",nopars x#1);
 	       horizontalJoin (
 		    if precedence x < PowerPrecedence
 		    then ( "(" , net x#0 , ")" , t)

@@ -160,7 +160,7 @@ document { quote cohomology,
      PARA,
      "If it is intended that i be of class ZZ, M be of class A, and N be of 
      class B, then the method can be installed with ",
-     PRE "   cohomology(ZZ, A, B) := (i,M,N,opts) -> ...",
+     PRE "   cohomology(ZZ, A, B) := opts -> (i,M,N) -> ...",
      SEEALSO {"homology", "ScriptedFunctor"}
      }
 
@@ -172,6 +172,6 @@ document { quote homology,
      PARA,
      "If it is intended that i be of class ZZ, M be of class A, and N be of
      class B, then the method can be installed with ",
-     PRE "   homology(ZZ, A, B) := (i,M,N,opts) -> ...",
+     PRE "   homology(ZZ, A, B) := opts -> (i,M,N) -> ...",
      SEEALSO {"cohomology", "ScriptedFunctor"}
      }

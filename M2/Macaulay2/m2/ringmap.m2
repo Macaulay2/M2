@@ -25,7 +25,7 @@ document { quote RingMap,
 	  }
      }
 
-map(Ring,Ring,Matrix) := (R,S,m,options) -> (
+map(Ring,Ring,Matrix) := options -> (R,S,m) -> (
      if isFreeModule target m
      and isFreeModule source m
      and 1 == numgens target m 
@@ -68,9 +68,9 @@ assert( f(a) == a + 4*b + 7*c )
 assert( kernel f == ideal ( a-2*b+c ) )
 "
 
-map(Ring,Matrix) := (S,m,options) -> map(ring m,S,m)
+map(Ring,Matrix) := options -> (S,m) -> map(ring m,S,m)
 
-map(Ring,Ring) := (S,R,options) -> (
+map(Ring,Ring) := options -> (S,R) -> (
      A := R; v := {}; while (
 	  if A.?generators then (
 	       v = join(apply(A.generators, x -> (
@@ -80,7 +80,7 @@ map(Ring,Ring) := (S,R,options) -> (
 	  A.?ring) do A = A.ring;
      map(S,R,matrix (S,{v})))
 
-map(Ring,Ring,List) := (R,S,m,options) -> map(R,S,matrix(R,{m}),options)
+map(Ring,Ring,List) := options -> (R,S,m) -> map(R,S,matrix(R,{m}),options)
 
 document { "making ring maps",
      TT "map(R,S,m)", " -- sets up a ring homomorphism from ", TT "S", "
@@ -155,7 +155,7 @@ RingMap Matrix := (p,m) -> (
      else map(F,E,f)
      )
 
-kernel RingMap := (f,options) -> if f.?kernel then f.kernel else f.kernel = (
+kernel RingMap := options -> (f) -> if f.?kernel then f.kernel else f.kernel = (
      R := source f;
      n2 := numgens R;
      F := target f;

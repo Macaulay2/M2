@@ -357,7 +357,7 @@ single := (v) -> (
      then error "incompatible sources or targets in graded module maps in matrix";
      v#0)
 
-GradedModuleMap.matrix = (e,options) -> (
+GradedModuleMap.matrix = options -> (e) -> (
      nrows := #e;
      ncols := #(e#0);
      tars := apply(          e, row -> single apply(row,source));
@@ -376,7 +376,7 @@ GradedModuleMap.matrix = (e,options) -> (
      f
      )
 
-kernel GradedModuleMap := (f,options) -> (
+kernel GradedModuleMap := options -> (f) -> (
      E := new GradedModule;
      E.ring = f.ring;
      scan(spots f, i -> E#i = kernel f#i);
@@ -444,7 +444,7 @@ prune GradedModuleMap := f -> map(prune(f.target), prune(f.source), k -> prune f
 complete GradedModule := (M) -> null
 rank GradedModule := (M) -> sum(spots M, i -> rank M#i)
 
-map(GradedModule,GradedModule,Function) := (C,D,f,options) -> (
+map(GradedModule,GradedModule,Function) := options -> (C,D,f) -> (
      h := new GradedModuleMap;
      h.source = D;
      h.target = C;

@@ -170,7 +170,7 @@ LLLoptions := Options => {
 
 LLL = method LLLoptions
 
-LLL Matrix := (M,options) -> (
+LLL Matrix := options -> (M) -> (
      -- Possible options: Threshold=>QQ, ChangeOfBasisMatrix,
      -- and for the specific computation: 
      if not M.?LLL then (
@@ -340,7 +340,7 @@ LLLKernelOptions := Options => {
 
 kernelLLL = method LLLKernelOptions
 
-kernelLLL Matrix := (M,options) -> (
+kernelLLL Matrix := options -> (M) -> (
      if not M.?kernelLLL then (
 	  M.kernelLLL = newLLLKernelComputation(M);
 	  );
@@ -492,7 +492,7 @@ HermiteLLLoptions := Options => {
 
 hermiteLLL = method HermiteLLLoptions
 
-hermiteLLL Matrix := (M,options) -> (
+hermiteLLL Matrix := options -> (M) -> (
      -- Possible options: Threshold=>QQ, ChangeOfBasisMatrix,
      -- and for the specific computation: 
      if not M.?hermiteLLL then (
@@ -513,7 +513,7 @@ gcdLLLoptions := Options => {
 
 gcdLLL = method gcdLLLoptions
 
-gcdLLL Matrix := (M,options) -> (
+gcdLLL Matrix := options -> (M) -> (
      -- Possible options: Threshold=>QQ, ChangeOfBasisMatrix,
      -- and for the specific computation: 
      hermiteLLL(M,options);
@@ -521,7 +521,7 @@ gcdLLL Matrix := (M,options) -> (
      {getEntry(m,0,numcols m-1), matrix getColumnChange m}
      )
 
-gcdLLL List := (s,options) -> (
+gcdLLL List := options -> (s) -> (
      m := matrix{s};
      gcdLLL(m,options))
 ----------------------------------------------------------------

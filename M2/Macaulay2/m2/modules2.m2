@@ -236,8 +236,8 @@ trimm := (f,n) -> (
      (fm_p * transpose fc_p)_(0,0)
      )
 
-hilbertSeries PolynomialRing := (R,options) -> hilbertSeries(R^1, options)
-hilbertSeries Module := (M,options) -> (
+hilbertSeries PolynomialRing := options -> (R) -> hilbertSeries(R^1, options)
+hilbertSeries Module := options -> (M) -> (
      if M#?{hilbertSeries} and options.Order == infinity
      then M#{hilbertSeries}
      else 
@@ -448,7 +448,7 @@ hilbertFunctionQ(ZZ,ZZ) := memoize(
      	  if d === 0 then hilbertFunctionQ(n)
      	  else substitute(hilbertFunctionQ(n), {i => i+d})))
 
-hilbertPolynomial Module := (M,options) -> (
+hilbertPolynomial Module := options -> (M) -> (
     if degreeLength ring M != 1 
     then error "expected a singly graded ring";
     n := numgens ring M - 1;
@@ -469,7 +469,7 @@ hilbertPolynomial Module := (M,options) -> (
 	      	   if #d === 0 then d = 0 else d = d#0;
 	      	   c * hilbertFunctionQ(n,-d)))))
 
-hilbertPolynomial Ring := (R,options) -> hilbertPolynomial(R^1, options)
+hilbertPolynomial Ring := options -> (R) -> hilbertPolynomial(R^1, options)
 
 TEST "
 scan(3, n -> scan(-3 .. 3, d -> (

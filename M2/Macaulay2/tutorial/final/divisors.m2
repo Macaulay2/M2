@@ -187,6 +187,7 @@ Q1 = divisor ideal(y-6*z, x-3*z)
 -- because Macaulay2 counts everything starting from 0.)
 
 --$
+normalForm = method()
 normalForm Divisor := (D) -> 
    new Divisor from {D#0 : D#1, D#1 : D#0}
 
@@ -336,6 +337,7 @@ degree imI
 -- followed by the denominator.
 
 --$
+globalSections = method()
 globalSections Divisor := (D) -> (
     -- First let's grab the parts (I,J) of D.
     I := D#0;

@@ -131,7 +131,7 @@ document { quote wedgeProduct,
 
 minors = method(Options => { Limit => infinity })
 
-minors(ZZ,Matrix) := (j,m,options) -> (
+minors(ZZ,Matrix) := options -> (j,m) -> (
      if j === 0 then ideal 1_(ring m)
      else if j < 0 then ideal 0_(ring m)
      else (
@@ -213,7 +213,7 @@ assert( minors(2,h) == image matrix {{a * d - b * c}} )
 "
 
 pfaffians = method(Options => { Limit => infinity })
-pfaffians(ZZ,Matrix) := (j,m,options) -> (
+pfaffians(ZZ,Matrix) := options -> (j,m) -> (
      if j === 0 then ideal 1_(ring m)
      else if j < 0 then ideal 0_(ring m)
      else (

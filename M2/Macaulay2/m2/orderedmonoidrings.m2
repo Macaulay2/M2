@@ -308,7 +308,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	       );
 	  name RM := x -> name expression x;
 	  net RM := x -> net expression x;
-	  fac := (f,options) -> (
+	  fac := options -> f -> (
 	       sendgg(ggPush f, ggfactor);
 	       new Product from 
 	       apply(eePopInt(), i -> (
@@ -316,11 +316,11 @@ Ring OrderedMonoid := (			  -- no memoize
 			 fact := RM.pop();
 			 Power{fact,exp})));
 	  factor RM := if R === QQ then (
-	       (f,options) -> (
+	       options -> f -> (
 		    error "factorization over QQ not implemented yet";
 	       	    d := commden f;
 		    f = d * f;
-		    new Divide from { fac(f,options), d }
+		    new Divide from { (fac options)(f), d }
 		    )
 	       )
 	  else fac;

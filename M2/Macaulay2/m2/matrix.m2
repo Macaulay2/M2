@@ -951,7 +951,7 @@ mopts := Options => {
 matrix = method mopts
 map = method mopts
 
-map(Module,Module) := (M,N,options) -> (
+map(Module,Module) := options -> (M,N) -> (
      F := ambient N;
      if F == ambient M
      then map(M,N,
@@ -974,7 +974,7 @@ assert( isSurjective f )
 assert( not isInjective f )
 "
 
-map(Module,Module,RingElement) := (M,N,r,options) -> (
+map(Module,Module,RingElement) := options -> (M,N,r) -> (
      R := ring M;
      if r == 0 then (
 	  f := new Matrix;
@@ -986,7 +986,7 @@ map(Module,Module,RingElement) := (M,N,r,options) -> (
      else if numgens cover M == numgens cover N then map(M,N,r * id_(cover M)) 
      else error "expected 0, or source and target with same number of generators")
 
-map(Module,Module,ZZ) := (M,N,i,options) -> (
+map(Module,Module,ZZ) := options -> (M,N,i) -> (
      if i === 0 then (
 	  R := ring M;
 	  f := new Matrix;
@@ -999,7 +999,7 @@ map(Module,Module,ZZ) := (M,N,i,options) -> (
      else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M)) 
      else error "expected 0, or source and target with same number of generators")
 
-map(Module,RingElement) := (M,r,options) -> (
+map(Module,RingElement) := options -> (M,r) -> (
      R := ring M;
      try r = r + R#0
      else error "encountered scalar of unrelated ring";
@@ -1007,7 +1007,7 @@ map(Module,RingElement) := (M,r,options) -> (
      else if r == 1 then map(M,1)
      else r * (map(M,1)))
 
-map(Module) := (M,options) -> (
+map(Module) := options -> (M) -> (
      R := ring M;
      f := new Matrix;
      sendgg(ggPush cover M, ggiden);
@@ -1018,12 +1018,12 @@ map(Module) := (M,options) -> (
      f.source = f.target = M;
      f)
 
-map(Module,ZZ) := (M,i,options) -> (
+map(Module,ZZ) := options -> (M,i) -> (
      if i === 0 then map(M,M,0)
      else if i === 1 then map(M,options)
      else i * map M)
 
-map(Module,Matrix) := (M,f,options) -> (
+map(Module,Matrix) := options -> (M,f) -> (
      R := ring M;
      if R =!= ring f then error "expected the same ring";
      if # degrees M =!= # degrees target f then (
@@ -1052,7 +1052,7 @@ degreeCheck := (d,R) -> (
 	  )
      )
 
-map(Module,Module,Matrix) := (M,N,f,options) -> (
+map(Module,Module,Matrix) := options -> (M,N,f) -> (
      if M === f.target and N === f.source
      and (options.Degree === null or options.Degree === degree f)
      then f
@@ -1073,7 +1073,7 @@ inducedMap = method (
 	  Verify => true,
 	  Degree => null 
 	  })
-inducedMap(Module,Module,Matrix) := (M,N,f,options) -> (
+inducedMap(Module,Module,Matrix) := options -> (M,N,f) -> (
      sM := target f;
      sN := source f;
      if ambient M != sM
@@ -1090,11 +1090,11 @@ inducedMap(Module,Module,Matrix) := (M,N,f,options) -> (
 	  then error "'inducedMap' expected matrix to induce a well-defined map";
 	  );
      p)
-inducedMap(Module,Nothing,Matrix) := (M,N,f,o) -> inducedMap(M,source f, f,o)
-inducedMap(Nothing,Module,Matrix) := (M,N,f,o) -> inducedMap(target f,N, f,o)
-inducedMap(Nothing,Nothing,Matrix) := (M,N,f,o) -> inducedMap(target f,source f, f,o)
+inducedMap(Module,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(M,source f, f,o)
+inducedMap(Nothing,Module,Matrix) := o -> (M,N,f) -> inducedMap(target f,N, f,o)
+inducedMap(Nothing,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(target f,source f, f,o)
 
-inducedMap(Module,Module) := (M,N,o) -> (
+inducedMap(Module,Module) := o -> (M,N) -> (
      if ambient M != ambient N 
      then error "'inducedMap' expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
@@ -1155,11 +1155,11 @@ document { quote inducesWellDefinedMap,
      SEEALSO "inducedMap"
      }
 
-matrix(Ring,List) := (R,m,options) -> (
+matrix(Ring,List) := options -> (R,m) -> (
      if not isTable m then error "expected a table";
      map(R^#m,,m,options))
 
-map(Module,Module,Function) := (M,N,f,options) -> (
+map(Module,Module,Function) := options -> (M,N,f) -> (
      map(M,N,table(numgens M, numgens N, f))
      )
 
@@ -1168,7 +1168,7 @@ document { (map,Module,Module,Function),
      matrix entries are obtained from the function f by evaluating f(i,j)"
      }
 
-map(Matrix) := (f,options) -> (
+map(Matrix) := options -> (f) -> (
      if options.Degree === null then f
      else (
      	  R := ring source f;
@@ -1176,8 +1176,8 @@ map(Matrix) := (f,options) -> (
 	  if class d === ZZ then d = {d};
      	  map(target f, source f ** R^{d - degree f}, f, options)))
 
-map(Module,ZZ,Function) := (M,n,f,options) -> map(M,n,table(numgens M,n,f),options)
-map(Module,ZZ,List) := (M,rankN,p,options) -> (
+map(Module,ZZ,Function) := options -> (M,n,f) -> map(M,n,table(numgens M,n,f),options)
+map(Module,ZZ,List) := options -> (M,rankN,p) -> (
      if options.Degree =!= null
      then error "Degree option given with indeterminate source module";
      R := ring M;
@@ -1207,7 +1207,7 @@ assert isHomogeneous map(R^2,2,(i,j)->R_j)
 assert isHomogeneous map(R^2,5,{{x,y,z,x^2,y^2},{x,0,z,z^2,0}})
 "
 
-map(Module,Nothing,Matrix) := (M,nothing,p,options) -> (
+map(Module,Nothing,Matrix) := options -> (M,nothing,p) -> (
      R := ring M;
      coverM := cover M;
      n := numgens cover source p;
@@ -1221,7 +1221,7 @@ map(Module,Nothing,Matrix) := (M,nothing,p,options) -> (
      m
      )
 
-map(Module,Nothing,List) := map(Module,Module,List) := (M,N,p,options) -> (
+map(Module,Nothing,List) := map(Module,Module,List) := options -> (M,N,p) -> (
      R := ring M;
      if N === null
      then (
@@ -1284,16 +1284,16 @@ fixDegree := (m,d) -> (
      newMatrix(M,N)
      )
 
-Matrix.matrix = (f,options) -> concatBlocks f
+Matrix.matrix = options -> (f) -> concatBlocks f
 
-matrixTable := (f,options) -> (
+matrixTable := options -> (f) -> (
      types := unique apply(flatten f, class);
      if # types === 1 then (
 	  type := types#0;
 	  if instance(type,Ring) then (
 	       R := type;
 	       map(R^#f,, f, options))
-	  else if type.?matrix then type.matrix(f,options)
+	  else if type.?matrix then (type.matrix options)(f)
 	  else error "no method for forming a matrix from elements of this type")
      else if all(types, T -> instance(T,Ring)) then (
 	  R = ring (
@@ -1421,7 +1421,7 @@ document { "making module maps",
      SEEALSO {"map", "matrix"}
      }
 
-matrix(Matrix) := (m,options) -> (
+matrix(Matrix) := options -> (m) -> (
      if isFreeModule target m and isFreeModule source m
      and ring source m === ring target m
      then m
@@ -1621,7 +1621,7 @@ document { (map,Module,Nothing,List),
      SEEALSO {"map", "matrix"}
      }
 
-matrix(List) := (m,options) -> (
+matrix(List) := options -> (m) -> (
      if #m === 0 then error "expected nonempty list";
      m = apply(splice m,splice);
      types := unique apply(m,class);
@@ -1630,7 +1630,7 @@ matrix(List) := (m,options) -> (
 	  if instance(type,Module) 
 	  then map(type,,table(numgens type, #m, (i,j) -> m_j_i))
 	  else if type === List then (
-	       if isTable m then matrixTable(m,options)
+	       if isTable m then (matrixTable options)(m)
 	       else error "expected rows all to be the same length"
 	       )
 	  else error "expected a table of ring elements or matrices")
@@ -1912,7 +1912,7 @@ RingElement * Ideal := (r,I) -> ideal (r ** generators I)
 ZZ * Ideal := (r,I) -> ideal (r * generators I)
 
 generators Ideal := (I) -> I.generators
-mingens Ideal := (I,options) -> mingens(module I,options)
+mingens Ideal := options -> (I) -> mingens(module I,options)
 Ideal / Ideal := (I,J) -> module I / module J
 Module / Ideal := (M,J) -> M / (J * M)
 
@@ -1931,9 +1931,9 @@ document { (quote +, Ideal, Ideal),
      TT "I + J", " -- the sum of two ideals."
      }
 degree Ideal := I -> degree cokernel generators I
-trim Ideal := (I,options) -> ideal trim(module I, options)
-map(Ideal) := (I,options) -> map(module I,options)
-map(Ideal,Ideal) := (I,J,options) -> map(module I,module J,options)
+trim Ideal := options -> (I) -> ideal trim(module I, options)
+map(Ideal) := options -> (I) -> map(module I,options)
+map(Ideal,Ideal) := options -> (I,J) -> map(module I,module J,options)
 Ideal _ ZZ := (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := (f,I) -> f % gb I
 numgens Ideal := (I) -> numgens source generators I
@@ -1941,7 +1941,7 @@ leadTerm Ideal := (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := (I) -> jacobian generators I
 poincare Ideal := (I) -> poincare module I
-hilbertPolynomial Ideal := (I,options) -> hilbertPolynomial(module I,options)
+hilbertPolynomial Ideal := options -> (I) -> hilbertPolynomial(module I,options)
 
 protect quote Order
 assert( class infinity === InfiniteNumber )
@@ -1950,7 +1950,7 @@ hilbertSeries = method(Options => {
 	  }
      )
 
-hilbertSeries Ideal := (I,options) -> hilbertSeries(module I,options)
+hilbertSeries Ideal := options -> (I) -> hilbertSeries(module I,options)
 
 TEST "
 R = ZZ/101[x,y,z]
@@ -2101,7 +2101,7 @@ document { quote SubringLimit,
      elements have been discovered."
      }
 
-kernel Matrix := (g,options) -> if g.?kernel then g.kernel else g.kernel = (
+kernel Matrix := options -> (g) -> if g.?kernel then g.kernel else g.kernel = (
      N := source g;
      P := target g;
      g = matrix g;
@@ -2110,9 +2110,9 @@ kernel Matrix := (g,options) -> if g.?kernel then g.kernel else g.kernel = (
      if N.?generators then h = N.generators * h;
      subquotient( h, if N.?relations then N.relations))
 
-kernel RingElement := (g,options) -> kernel (matrix {{g}},options)
+kernel RingElement := options -> (g) -> kernel (matrix {{g}},options)
 
-homology(Matrix,Matrix) := (g,f,opts) -> (
+homology(Matrix,Matrix) := opts -> (g,f) -> (
      R := ring f;
      M := source f;
      N := target f;

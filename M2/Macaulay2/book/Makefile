@@ -1,6 +1,13 @@
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
+DVIPSFLAGS = -z
+%.ps : %.dvi
+	dvips $(DVIPSFLAGS) $< $(OUTPUT_OPTION)
+	rm -f body.tmp head.tmp
+%.pdf : %.ps
+	ps2pdf $<
+
 all:: M2book.dvi
 M2book.tex : ../cache/Macaulay2.doc book.m2 booktex.m2
 	../bin/M2 -q book.m2 '-e exit 0'

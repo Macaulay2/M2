@@ -12,7 +12,7 @@ modifyRing = method(
      Options => apply(options monoid, x -> nothing)
      )
 
-modifyRing Ring := (R,options) -> (
+modifyRing Ring := options -> (R) -> (
      -- First check the type of ring of R
      -- The following is for the case when R is a polynomial ring,
      -- or a quotient of a polynomial ring
@@ -71,7 +71,7 @@ document { (quote **, Ring, Ring),
 tensor(PolynomialRing, PolynomialRing) :=
 tensor(QuotientRing, PolynomialRing) :=
 tensor(PolynomialRing, QuotientRing) :=
-tensor(QuotientRing, QuotientRing) := (R,S,optns) -> (
+tensor(QuotientRing, QuotientRing) := optns -> (R,S) -> (
      k := coefficientRing R;
      if k =!= coefficientRing S 
      then error "expected rings to have the same coefficient ring";
@@ -93,7 +93,7 @@ graphIdeal = method( Options => options monoid )
 
 graphRing = method( Options => options monoid )
 
-graphIdeal RingMap := (f,options) -> (
+graphIdeal RingMap := options -> (f) -> (
      -- return the ideal in the tensor product of the graph of f.
      -- if f is graded, then set the degrees correctly in the tensor ring.
      -- return the ideal (y_i - f_i : all i) in this ring.
@@ -123,7 +123,7 @@ graphIdeal RingMap := (f,options) -> (
      xvars := (vars RS)_{0..numgens R - 1};
      ideal(yvars - substitute(I, xvars)))
 
-graphRing RingMap := (f,options) -> if f.?graphRing then f.graphRing else f.graphRing = (
+graphRing RingMap := options -> (f) -> if f.?graphRing then f.graphRing else f.graphRing = (
      I := graphIdeal(f,options);
      R := ring I;
      R/I)
@@ -156,7 +156,7 @@ document { quote symmetricAlgebra,
      the new ring; makes a quotient ring when it doesn't have to."
      }
 
-symmetricAlgebraIdeal Module := (M,opts) -> (
+symmetricAlgebraIdeal Module := opts -> (M) -> (
      R := ring M;
      K := coefficientRing ultimate(ambient, R);
      m := presentation M;
@@ -169,7 +169,7 @@ symmetricAlgebraIdeal Module := (M,opts) -> (
      m = substitute(m,xvars);
      I := yvars*m)
 
-symmetricAlgebra Module := (M,options) -> (
+symmetricAlgebra Module := options -> (M) -> (
      I := symmetricAlgebraIdeal(M,options);
      (ring I)/(image I))
 

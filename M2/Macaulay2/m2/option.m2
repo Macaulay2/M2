@@ -15,7 +15,10 @@ Thing => Thing := (x,y) -> new Option from {x,y}
 new HashTable from List := (O,v) -> hashTable v
 -- erase quote hashTable
 
+OptionsRegistry = new MutableHashTable
 OptionTable = new Type of HashTable
+Function @ OptionTable := (f,o) -> x -> processArgs(x,o,f);
+Function @ List := (f,o) -> f @ new OptionTable from o
 
 processArgs = (args,defaults,function) -> (
      defaults = new MutableHashTable from defaults;
@@ -31,6 +34,7 @@ processArgs = (args,defaults,function) -> (
 	       else true
 	       )
 	  );
+     if #args === 1 then args = args#0;
      defaults = new OptionTable from defaults;
-     function(args, defaults))
+     (function defaults) args)
 

@@ -140,7 +140,7 @@ MonomialIdeal +  MonomialIdeal := BinaryMonomialIdealOperation ggadd
 MonomialIdeal *  MonomialIdeal := BinaryMonomialIdealOperation ggmult
 
 
-radical MonomialIdeal := (I,options) -> (UnaryMonomialIdealOperation ggradical) I
+radical MonomialIdeal := options -> (I) -> (UnaryMonomialIdealOperation ggradical) I
 --document { quote radical,
 --     TT "radical I", " -- compute the radical of a ", TO "MonomialIdeal", " I.",
 --     PARA,
@@ -153,7 +153,7 @@ radical MonomialIdeal := (I,options) -> (UnaryMonomialIdealOperation ggradical) 
 --MonomialIdeal : Monomial := BinaryMonomialIdealOperation ggdiv
 MonomialIdeal : MonomialIdeal := BinaryMonomialIdealOperation ggdiv
 
-saturate(MonomialIdeal, MonomialIdeal) := (I,J,options) -> (
+saturate(MonomialIdeal, MonomialIdeal) := options -> (I,J) -> (
      (BinaryMonomialIdealOperation ggsat) (I,J)
      )
 
