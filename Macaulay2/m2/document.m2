@@ -192,7 +192,7 @@ formatDocumentTagTO := method(SingleArgumentDispatch => true)
 formatDocumentTagTO Thing := x -> TT formatDocumentTag x
 formatDocumentTagTO Option := x -> (
      if #x === 2 and getDoc x#1 =!= null 
-     then SEQ { toString x#0, "(..., ", TO x#1, ")", headline x#1 }
+     then SEQ { toString x#0, "(..., ", TO x#1, " => ...)", headline x#1 }
      else TT formatDocumentTag x
      )
 formatDocumentTagTO Sequence := (
@@ -799,7 +799,7 @@ op := s -> if operatorSet#?s then (
 	  if binary#?s then SEQ {
 	       NOINDENT{}, 
 	       "This operator may be used as a binary operator in an expression \n",
-	       "like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary method", "s"}, " \n",
+	       "like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary methods"}, " \n",
 	       "for handling such expressions with code such as ",
 	       if ss == " "
 	       then PRE ("         X Y := (x,y) -> ...")
