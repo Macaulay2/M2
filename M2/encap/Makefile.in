@@ -10,11 +10,9 @@ install :: $(target)/encapinfo
 $(target)/encapinfo: encapinfo
 	$(INSTALL_DATA) $< "$@"
 
-ifeq "$(DUMPDATA)" "yes"
 install :: $(target)/postinstall
 $(target)/postinstall: postinstall
 	$(INSTALL_PROGRAM) $< "$@"
-endif
 
 install :: $(target)/INSTALL
 
