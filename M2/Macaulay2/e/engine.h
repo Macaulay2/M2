@@ -226,6 +226,9 @@ extern "C" {
   MonomialOrdering *rawGroupLexMonomialOrdering(int nvars); /* drg: connected rawMonomialOrdering*/
     /* GroupLex => n */
 
+  MonomialOrdering *rawGroupRevLexMonomialOrdering(int nvars);
+    /* GroupRevLex => n */
+
   MonomialOrdering *rawNClexMonomialOrdering(int nvars); /* drg: connected rawMonomialOrdering*/
     /* NCLex => n */
 
