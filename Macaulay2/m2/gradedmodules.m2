@@ -261,6 +261,11 @@ BasicModule ** GradedModule := (M,C) -> (
      D)
 
 gradedModule = method(SingleArgumentDispatch=>true)
+
+document { quote gradedModule,
+     TT "gradedModule", " -- a method for creating graded modules."
+     }
+
 gradedModule Sequence := gradedModule List := modules -> (
      C := new GradedModule;
      R := C.ring = ring modules#0;
@@ -318,6 +323,11 @@ GradedModule ** GradedModule := (C,D) -> (
 
 
 gradedModuleMap = method(SingleArgumentDispatch=>true)
+
+document { quote gradedModuleMap,
+     TT "gradedModuleMap", " -- a method for creating maps of graded modules."
+     }
+
 gradedModuleMap Sequence := gradedModuleMap List := maps -> (
      if #maps === 0 then error "expected at least one argument";
      f := new GradedModuleMap;

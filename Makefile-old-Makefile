@@ -1,4 +1,10 @@
+#############################################################################
+# targets to use:
+#	all:	make a binary distribution
+#	doc:	make the documentation
+#############################################################################
 # warning: if you move the directory tree, then factory needs to be reconfigured
+#############################################################################
 
 include Makeconf
 
@@ -6,7 +12,18 @@ FILES := Makefile Makeconf README patches
 
 SUBDIRS := gc gmp factory libfac Macaulay2
 
-.PHONY : all always dirs clean port FACTORYmade FACTORYconfigured
+.PHONY : all always dirs clean port FACTORYmade FACTORYconfigured \
+	announce MACAULAY2 MACAULAY2.doc doc
+
+all:: announce
+
+announce ::
+	@echo "######################################################"
+	@echo 'making Macaulay 2 version $(VERSION) for $(SYSTEM)'
+	@echo "######################################################"
+all:: Makeconf.h
+Makeconf.h : Makeconf Makeconf-h
+	Makeconf-h > $@
 
 all:: GC GMP FACTORY LIBFAC
 ifdef MP
@@ -158,13 +175,27 @@ lib/libMP.a: mp/MP/libMP.a lib/.exists; cp $< $@; ranlib $@
 include/MP.h: mp/MP/MP.h include/.exists; cp $< $@
 include/MP_Config.h: mp/MP/MP_Config.h include/.exists; cp $< $@
 
-###################### Macaulay 2
+###################### Macaulay 2 binary distribution
 MACAULAY2: Macaulay2
-	$(MAKE) -C Macaulay2 all install tests dist
-MACAULAY2.all: Macaulay2
-	$(MAKE) -C Macaulay2 all
-Macaulay2/tgz/Macaulay2-${VERSION}-src-limited.tgz:
-	$(MAKE) -C Macaulay2 srcdist
-Macaulay2/tgz/Macaulay2-${VERSION}-src-dev.tgz:
-	$(MAKE) -C Macaulay2 devdist
+	$(MAKE) -C Macaulay2 all tests
 
+DISTFILES := 	Macaulay2/README \
+		Macaulay2/CHANGES \
+		Macaulay2/setup \
+		Macaulay2/bin Macaulay2/m2 Macaulay2/emacs
+Macaulay2-$(DESC).tar.gz : $(DISTFILES); tar cf $@ $(DISTFILES)
+
+all :: MACAULAY2 Macaulay2-$(DESC).tar.gz
+
+###################### Macaulay 2 documentation
+
+DOCFILES := 	Macaulay2/html \
+		Macaulay2/book/M2book.dvi \
+		Macaulay2/book/M2hbook.dvi \
+		Macaulay2/Vasconcelos-appendix/appendix.dvi
+Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES); tar cf $@ $(DOCFILES)
+
+MACAULAY2.doc: MACAULAY2
+	$(MAKE) -C Macaulay2 doc
+
+doc :: MACAULAY2.doc Macaulay2-$(VERSION)-doc.tar.gz

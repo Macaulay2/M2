@@ -1,0 +1,11 @@
+#! /bin/sh
+
+cat <<EOF
+version = hashTable {
+       ("ARCH" , "$ARCH"),
+       ("OS" , "$OS"),
+       ("REL" , "$REL"),
+       ("VERSION" , "$VERSION"),
+       ("COMPILETIME" , "`date`")
+       }
+EOF

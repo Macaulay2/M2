@@ -1,42 +1,54 @@
-############################## main target
-all :: misc compat.h ../bin/Macaulay2
 ############################## includes
 include ../../Makeconf
-.PHONY : misc
-misc :
-	@echo 'making Macaulay2 for ARCH=$(ARCH), OS=$(OS), REL=$(REL)'
+############################## main target
+all :: compat.h ../bin/Macaulay2
+############################## useful targets
+all-c-files ::
+remove-c-files ::
+##############################
+.PHONY : all-c-files remove-c-files
 ############################## files
 # the names on these lines should be in sequence from most dependent to
 # least dependent so that "make" can remake the *.dep makefiles
-MISC  := t.d u.d optim.d actorsX.d
-GRAPHICS := gr.d grx.d
-DTESTS := testall.d pp.d redblk.d
-INTERPRETER := interpret.d
 
-OPTIONS := 
+PROJECT := 
+PROJECT += interpret.d
 ifdef MP
-OPTIONS += mp.d
+PROJECT += mp.d
 endif
 ifdef includeX11
-OPTIONS += actorsX.d
+PROJECT += actorsX.d
 endif
-
-ACTORS := actors5.d actors4.d actors3.d actors2.d actors.d \
-		objects.d structure.d GC.d
-COMPILER := converter.d basic.d binding.d
-PARSER := parser.d lex.d tokens.d 
-MOSTPACKAGES := arithmetic.d err.d stdiop.d ctype.d stdio.d \
-		nets.d varstrings.d strings.d 
-SYSTEM := X.d GB.d system.d C.d
+PROJECT += actors5.d actors4.d actors3.d actors2.d actors.d
+PROJECT += objects.d
+PROJECT += structure.d
+PROJECT += GC.d
+PROJECT += converter.d basic.d binding.d
+PROJECT += parser.d lex.d tokens.d
+PROJECT += arithmetic.d
+PROJECT += err.d
+PROJECT += stdiop.d
+PROJECT += ctype.d
+PROJECT += stdio.d
+PROJECT += nets.d
+PROJECT += varstrings.d
+PROJECT += strings.d 
+PROJECT += X.d
+PROJECT += GB.d
+PROJECT += system.d
+PROJECT += C.d
+##############################
+ifndef NODEPENDS
+include $(PROJECT:.d=.dep)
+endif
+##############################
+DNAMES := $(PROJECT)
+############################## old files
+DNAMES += t.d u.d optim.d actorsX.d
+DNAMES += gr.d grx.d
+DNAMES += testall.d pp.d redblk.d
 ############################## more files
 WRAPPERS := scclib.c getpagesize.h gc_cpp.cc memdebug.c memdebug.h
-############################## file collections
-PACKAGES := $(MOSTPACKAGES) $(SYSTEM)
-PROJECT := $(INTERPRETER) $(OPTIONS) $(ACTORS) \
-	$(COMPILER) $(PARSER) $(MOSTPACKAGES) $(SYSTEM)
-MOSTPROJECT := $(INTERPRETER) $(OPTIONS) $(ACTORS) \
-	$(COMPILER) $(PARSER) $(MOSTPACKAGES)
-DNAMES := $(MISC) $(GRAPHICS) $(DTESTS) $(PROJECT)
 #############################################################################
 SRCFILES := $(WRAPPERS) $(DNAMES)
 SCRIPTS := reverse
@@ -45,10 +57,6 @@ WC1FILES := $(SCRIPTS) $(SRCFILES) \
 	bench sets.m bignum.h bignum.c alloca.h \
 	configure remake probe.c sizes.c mp.d
 ALLFILES := $(WC1FILES) $(PROJECT:.d=.dep) $(PROJECT:.d=.sig)
-##############################
-ifndef NODEPENDS
-include $(PROJECT:.d=.dep)
-endif
 ############################## rules
 SCC1 := ../c/scc1
 .SUFFIXES: .d .oo .sig .dep .res .test .m2
@@ -56,7 +64,7 @@ SCC1 := ../c/scc1
 %.dep : %.d
 	$(SCC1) -nogcc -dep -J. $*.d
 	mv $*.dp $*.dep
-	../bin/update $*.sg $*.sig
+	../util/update $*.sg $*.sig
 interpret.dep : interpret.d
 structure.dep : structure.d
 varstrings.dep : varstrings.d
@@ -89,8 +97,6 @@ CPPFLAGS := -I$(INCDIR) -I. -DGaCo=1 $(DEBUGFLAGS)
 # the purpose of the -I. is so scclib.c can find ./alloca.h if it's missing
 # from the gcc installation, as it often is
 
-CPPFLAGS += '-DVERSION="$(VERSION)"'
-
 WARNINGS := -Wall -Wshadow -Wcast-qual
 CCFLAGS  := -O3 -g
 CFLAGS   := $(CCFLAGS) $(WARNINGS)
@@ -106,7 +112,6 @@ endif
 
 ifdef MP
 CPPFLAGS += -DMP
-LOADLIBES += -lMP
 endif
 
 ## we use one of these in scclib.c
@@ -115,16 +120,9 @@ endif
 # libndbm.a is the new database manager
 LOADLIBES += ../dbm/libdbm2.a
 
-# these next two must hang together
-# LOADLIBES += -lX11
-# CFLAGS += -DincludeX11
-
 # hopefully, this will prevent us from getting the buggy version of 
 # __underflow
 # LOADLIBES += -lc
-
-# -s leaves out the symbol table when linking
-# LDFLAGS += -s
 
 # ifneq ($(OS),Linux)
 LDFLAGS += -static
@@ -167,14 +165,17 @@ else
 compat.c compat.h : configure; ./configure
 endif
 
-scclib.o : ../c/compat.h ../c/compat.c ../../Makeconf
+scclib.o : ../c/compat.h ../c/compat.c ../../Makeconf.h
 memdebug.o scclib.o actors5.oo gc_cpp.o : memdebug.h
 allc : $(PROJECT:.d=.c) tmp_init.c
 ALLOBJ := $(PROJECT:.d=.oo) scclib.o compat.o gc_cpp.o tmp_init.o memdebug.o
-ALLC := $(PROJECT:.d=.c)
-RMC :; rm -rf $(ALLC)
 
-tmp_init.c : Makefile ../bin/timestmp
+################################# c file production for porting
+ALLC := $(PROJECT:.d=.c)
+all-c-files :: $(ALLC)
+remove-c-files ::; rm -rf $(ALLC)
+##############################
+tmp_init.c : Makefile ../util/timestmp
 	timestmp >>tmp
 	@echo "echoout '>>tmp' ..."
 	@echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
@@ -221,6 +222,7 @@ endif
 	@ echo 'linking $@ with $(LDFLAGS) $(LOADLIBES)'
 	@ time $(PURIFYCMD) $(CC) -o $@ $(LDFLAGS) $^ $(LOADLIBES)
 	$(STRIPCMD) $@
+all:: TAGS
 TAGS: Makefile
 	@echo making TAGS
 	@echoout -r2 '>TAGS' $(foreach i, $(SRCFILES),  $(i),0)

@@ -187,3 +187,7 @@ assert ( x - y === set {2, 1} )
 assert ( x + y === set {1, 2, 3, 4, 5} )
 assert ( name x === \"set {1, 2, 3}\" )
 "
+
+document { quote isSubset,
+     TT "isSubset(x,y)", " -- whether ", TT "x", " is a subset of ", TT "y", "."
+     }

@@ -4,7 +4,7 @@ ifeq "$(OS)" "MS-DOS"
 #	under MS-DOS, gnu make is confused about continuation lines, so there is
 # 	a long line below
 %.out : %.m2
-	@ echo run example $*
+	@ echo run example $*.m2
 	@ sed 1d <$*.m2 >tmp.m2
 	@ ../../bin/Macaulay2 -silent '-eloaddata("../../bin/Macaulay2-$(ARCH).data")' -- -x -s ../eg.m2 -- -x -s ../eg.m2 <tmp.m2 >tmp.out
 	@ mv tmp.out $*.out

@@ -1,6 +1,6 @@
 include ../../Makeconf
 FILES = Makefile booktex.m2 book.m2 hypertex.m2 README
-install: ../tgz/M2hbook.dvi.gz ../tgz/M2book.dvi.gz
+all: ../tgz/M2hbook.dvi.gz ../tgz/M2book.dvi.gz
 ../tgz/M2hbook.dvi.gz : M2hbook.dvi.gz ; gzip <$< >$@
 ../tgz/M2book.dvi.gz : M2book.dvi.gz ; gzip <$< >$@
 M2book.tex : ../bin/Macaulay2.doc book.m2 booktex.m2
