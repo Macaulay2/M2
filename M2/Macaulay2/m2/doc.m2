@@ -322,18 +322,21 @@ document { ",",
      }
 
 document { quote apply,
-     TT "apply(v,f)", " -- applies the function f to each element of the 
-     list v, returning the list of results. If v is a sequence, then
-     a sequence is returned.",
+     TT "apply(v,f)", " -- applies the function ", TT "f", " to each element of the 
+     list ", TT "v", ", returning the list of results. If ", TT "v", " is 
+     a sequence, then a sequence is returned.",
      PARA,
      EXAMPLE "apply(1 .. 5, i->i^2)",
      EXAMPLE "apply({1,3,5,7}, i->i^2)",
      PARA,
      NOINDENT,
-     TT "apply(v,w,f)", " -- produces, from lists or sequences v and w,
-     a list z in which the i-th element w_i is obtained by evaluating f(v_i,w_i).
-     If v and w are lists of the same class, then the result is also of
-     that class.  If v and w are sequences, then so is the result.",
+     TT "apply(v,w,f)", " -- produces, from lists or 
+     sequences ", TT "v", " and ", TT "w", ",
+     a list ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
+     by evaluating ", TT "f(v_i,w_i)", ".  If ", TT "v", " and ", TT "w", " are
+     lists of the same class, then the result is also of
+     that class.  If ", TT "v", " and ", TT "w", " are sequences, then so
+     is the result.",
      PARA,
      EXAMPLE "apply(1 .. 5, a .. e, identity)",
      EXAMPLE "apply({1,3,5,7}, i->i^2)",
@@ -344,15 +347,16 @@ document { quote apply,
      SEEALSO( "scan", "select",  "any",  "all", "member"),
      PARA,
      NOINDENT,
-     TT "apply(x,f)", " -- produces a new hash table y from an hash table x by 
-     applying the function f to each of the values of x.  This means that
-     if x#k === v then y#k === f(v).",
+     TT "apply(x,f)", " -- produces a new hash table ", TT "y", " from
+     an hash table ", TT "x", " by applying the function
+     ", TT "f", " to each of the values of ", TT "x", ".  This means that
+     if ", TT "x#k === v", " then ", TT "y#k === f(v)", ".",
      SEEALSO ("List / Function", ///Function \ List///)
      }
 
 document { quote scan,
-     TT "scan(v,f)", " -- applies the function f to each element of the 
-     list v.  The function values are discarded.",
+     TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
+     list ", TT "v", ".  The function values are discarded.",
      PARA,
      EXAMPLE "scan({a,4,\"George\",2^100}, print)",
      NOINDENT,
@@ -362,9 +366,10 @@ document { quote scan,
      }
 
 document { quote scanPairs,
-     TT "scanPairs(x,f)", " -- applies the function f to each pair (k,v) where
-     k is a key in the hash table x and v is the corresponding
-     value x#k.",
+     TT "scanPairs(x,f)", " -- applies the function ", TT "f", " to each
+     pair ", TT "(k,v)", " where ", TT "k", " is a key in the hash 
+     table ", TT "x", " and ", TT "v", " is the corresponding 
+     value ", TT "x#k", ".",
      PARA,
      "This function requires an immutable hash table.  To scan the pairs in
      a mutable hash table, use ", TT "scan(pairs x, f)", ".",
@@ -403,8 +408,8 @@ document { quote select,
 
 document { quote any,
      TT "any(v,f)", " -- yields the value true or false depending on 
-     whether any element v#i of v yields the value true when the predicate 
-     f is applied.",
+     whether any element ", TT "v#i", " of ", TT "v", " yields the value true 
+     when the predicate ", TT "f", " is applied.",
      PARA,
      "Works when v is a list, sequence, or hash table, but when v is an
      hash table, f is applied to each pair (k,x) consisting of a key k
@@ -414,8 +419,8 @@ document { quote any,
      }
 
 document { quote describe,
-     TT "describe x", " -- prints the real name of x, ignoring the possible presence
-     of a value for x.name.",
+     TT "describe x", " -- prints the real name of ", TT "x", ", ignoring the
+     possible presence of a value for ", TT "x.name", ".",
      PARA,
      EXAMPLE "R = ZZ/101[a,b,c,d]",
      EXAMPLE "R",
@@ -1690,7 +1695,7 @@ document { "reading the documentation",
      "and with needed WWW library routines at",
      PRE "http://publish.aps.org/eprint/reports/hypertex/WWWLibrary.tar.Z",
      PARA,
-     "Finally, all the documentation can be viewed withing the program in
+     "Finally, all the documentation can be viewed within the program in
      text form using ", TO "help", "."
      }
 
@@ -2407,9 +2412,8 @@ document { "initialization file",
      "The file ", TT "init.m2", " is loaded automatically when the
      program is started.",
      PARA,
-     "The file is sought under each of the directories of the path,
-     and also in the home directory of the user.",
-     SEEALSO "path"
+     "The file is sought in each of the directories of the ", TO "path", ",
+     and also in the home directory of the user."
      }
 
 document { "Field",
@@ -3572,12 +3576,21 @@ document { quote endl,
 document { quote newline,
      TT "newline", " -- a string containing the character or sequence of
      characters which represents the end of a line.  To end an output line,
-     you should use ", TO "endl", " instead.",
+     you should use ", TO "endl", " instead, because there is more to 
+     ending an output line than emitting the characters in ", TT "newline", ",
+     especially when nets are being used.",
      PARA,
      "This string depends on what your operating system is: on Unix systems
      it is the ascii character 10; on Macintoshes it is the ascii character
      13, and under MS-DOS and Windows 95 it is a string of length 2 containing
-     ascii characters 13 and 10."
+     ascii characters 13 and 10.",
+     PARA,
+     "Try to avoid confusing the newline string described here with the
+     ASCII character called ", TT "newline", ".  That character can be
+     incorporated into a string with the escape sequence ", TT "\\n", ",
+     and it always has ASCII code 10.",
+     EXAMPLE ///ascii "\n"///,
+     SEEALSO "Net"
      }
 
 document { quote linkFilename,

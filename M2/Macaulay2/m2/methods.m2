@@ -25,7 +25,7 @@ document { "using methods",
      -X is applied, and so on, all the way up the chain of parents to the
      topmost ancestor of everything, which is called ", TO "Thing", ".",
      PARA,
-     "As an extreme example of inheritance, the code ", 
+     "As an extreme example of inheritance, code like", 
      PRE "          - Thing := x -> ...",
      "will install a method for negating anything, which will take
      effect as a last resort whenever more a specifically defined method
@@ -42,14 +42,14 @@ document { "using methods",
      PARA,
      "Installing a method named C for the class X is done with code such
      as ",
-     PRE "          X#C = (x) -> ...",
+     PRE "          C X := (x) -> ...",
      "where '...' represents suitable code for the operation at hand.",
      PARA,
      "Here is the routine for making new methods.",
      MENU {
 	  TO "method"
 	  },
-     SEEALSO( ".", "binary method", "classes")
+     SEEALSO( ".", "binary method", "classes", "lookup")
      }
 
 document { "binary method",
@@ -90,9 +90,12 @@ document { "binary method",
      find the initialization function for the new thing, and should
      be thought of as a ternary operator.  The initialization function
      for a new expression created by",
-     PRE "         new Z of x from y", "is",
+     PRE "         new Z of x from y",
+     "is obtained as",
      PRE "         lookup(NewMethod,Z,X,Y)",
-     "and can be installed with ",
+     "Here ", TT "X", " is ", TT "class x", ", and ", TT "Y", " is
+     ", TT "class y", ".  The initialization function can be installed 
+     with",
      PRE "         new Z of X from Y := (z,y) -> ...",
      "where z denotes the new hash table of class Z and parent x provided
      to the routine by the system."

@@ -155,10 +155,9 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else (
      S.baseRings = append(R.baseRings,R);
      if R.?syms then (
 	  S.syms = R.syms;
-	  -- want to get rid of this
 	  scan(R.syms, x -> (
-		    s := name x;
-		    S#s = promote(R#s,S);
+		    a := name x;
+		    S#a = promote(R#a,S);
 		    ));
 	  );
      S.use = x -> (

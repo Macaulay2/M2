@@ -104,7 +104,12 @@ Matrix ** Ring := {
      Matrix,
      (f,R) -> (
 	  k := ring source f;
-	  if k === R then f
+	  S := ring target f;
+	  if k === R and S === R then f
+	  else if S === R then (
+	       -- map(target f, (source f ** R) ** R^(-degree f), f)
+	       map(target f, source f ** R, f, Degree => degree f)
+	       )
 	  else map(
 	       -- this will be pretty slow
 	       target f ** R, source f ** R, applyTable(entries f, r -> promote(r,R)),

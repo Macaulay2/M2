@@ -6,4 +6,6 @@ function to each element of a list.
 ///
 
 unlist = X -> error "'unlist' has been replaced by toSequence"
+unlist
 elements = X -> error "'elements' has been replace by toList"
+elements
