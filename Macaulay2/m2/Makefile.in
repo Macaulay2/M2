@@ -172,10 +172,12 @@ all:: tmp tmp/.documentation-made
 tmp :; mkdir "$@"
 #	see startup.m2, too, for setting "prefixDirectory" to ./tmp while building, so it can find example output files
 
-EXAMPLEOPTIONS := -q --stop
-EXAMPLEOPTIONS += -e 'errorDepth = 0'
-EXAMPLEOPTIONS += -e 'debugLevel = 0'
 MAKEINFO = true
+EXAMPLEOPTIONS := -q
+EXAMPLEOPTIONS += --stop
+EXAMPLEOPTIONS += --no-debug
+EXAMPLEOPTIONS += -e errorDepth=0
+EXAMPLEOPTIONS += -e debugLevel=2
 EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
 EXAMPLEOPTIONS += -e 'exit 0 '
 

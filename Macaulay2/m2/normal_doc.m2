@@ -73,7 +73,7 @@ document {
      }
     
 document {
-     Key => (integralClosure,Variable),
+     Key => [integralClosure,Variable],
      Headline=> "Sets the name of the indexed variables introduced in computing 
      the integral closure of a reduced ring."
      }

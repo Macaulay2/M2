@@ -445,13 +445,18 @@ installPackage Package := o -> pkg -> (
 			 then rawDocUnchanged#fkey = true
 			 else rawdocDatabase#fkey = v
 			 )
-		    else rawdocDatabase#fkey = v
+		    else (
+			 if debugLevel > 0 then stderr << "--new raw documentation, not already in database, for " << fkey << endl;
+			 rawdocDatabase#fkey = v;
+			 )
 		    )
 	       else (
 		    if rawdocDatabase#?fkey then (
-			 stderr << "--warning: documentation for " << fkey << " is no longer present" << endl;
+			 stderr << "--warning: raw documentation for " << fkey << ", in database, is no longer present" << endl;
 			 )
-		    else rawDocUnchanged#fkey = true
+		    else (
+			 rawDocUnchanged#fkey = true;
+			 )
 		    )));
      close rawdocDatabase;
      moveFile(rawdbnametmp,rawdbname);

@@ -38,7 +38,7 @@ document {
      }
 
 document {
-     Key => (ass,Strategy),
+     Key => [ass,Strategy],
      "The strategy option value should be one of the following.",
      UL{
 	  SEQ ("1", " -- The assasinator is found using Ext modules."),
@@ -59,7 +59,7 @@ document {
      }
 
 document {
-     Key => (ass,PrintLevel),
+     Key => [ass,PrintLevel],
      "The PrintLevel should be one of the following.",
      UL {
 	  SEQ ("0", " -- (default) Returns the list of associated primes."),
@@ -114,7 +114,7 @@ document {
      }
 ///
 document {
-     Key => (localize,Strategy),
+     Key => [localize,Strategy],
 	  "The strategy option value should be one of the following.",
 	  UL{
 	       SEQ ("0" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
@@ -142,7 +142,7 @@ document {
 	   }
 ///
 document {
-     Key => (localize,PrintLevel),
+     Key => [localize,PrintLevel],
 	  "The PrintLevel option value should be one of the following.",
 	  UL{
 	       SEQ ("0", " -- default"),
@@ -183,7 +183,7 @@ document {
     }
 
 document {
-     Key => (primaryComponent,Strategy),
+     Key => [primaryComponent,Strategy],
      "The Strategy option value sets the localize strategy 
      option, and should be one of the following.",
      UL{
@@ -193,7 +193,7 @@ document {
      }
 
 document {
-     Key => (primaryComponent,Increment),
+     Key => [primaryComponent,Increment],
       "The Increment option value should be an integer.  As explained in ",
       TO (primaryComponent,Ideal,Ideal), " the algorithm, given in 
       Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992),
@@ -204,7 +204,7 @@ document {
      }
 
 document {
-     Key => (primaryComponent,PrintLevel),     
+     Key => [primaryComponent,PrintLevel],     
       "The Strategy option value should be one of the following.",
      UL{
 	  SEQ ("0", " -- default"),
@@ -245,7 +245,7 @@ document {
      }
 
 document {
-     Key => (primaryDecomposition,Strategy),
+     Key => [primaryDecomposition,Strategy],
      "The strategy option value should be one of the following.",
      UL {
           SEQ ("Monomial", " -- uses Alexander duality of a monomial ideal"),

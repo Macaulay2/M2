@@ -4,7 +4,7 @@ olderror := error
 erase symbol error
 error = args -> olderror (
      -- this is the body of the "error" function, which prints out error messages
-     apply(sequence args, x -> if class x === String then x else silentRobustString(20,3,x) )
+     apply(sequence args, x -> if class x === String then x else silentRobustString(40,3,x) )
      )
 protect symbol error
 

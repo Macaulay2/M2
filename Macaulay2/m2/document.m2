@@ -18,6 +18,7 @@ maximumCodeWidth := 120
    -- and have them all get recorded the same way
 normalizeDocumentKey := method(SingleArgumentDispatch => true)
 normalizeDocumentKey   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
+normalizeDocumentKey    Array := identity
 normalizeDocumentKey   Symbol := identity
 normalizeDocumentKey Sequence := identity
 normalizeDocumentKey  Nothing := key -> symbol null
@@ -49,24 +50,15 @@ undocumented = key -> (
 -- verifying the tags
 -----------------------------------------------------------------------------
 -- here we check that the method a putative document tag documents is actually installed
-verifyTag := method(SingleArgumentDispatch => true)
-verifyTag Thing    := s -> null
-verifyTag Sequence := s -> (
-     if s#?-1 and instance(s#-1, Symbol) then (		    -- e.g., (res,Strategy) or (res,Module,Strategy)
-	  fn := drop(s,-1);
-	  opt := s#-1;
-	  if #fn === 1 then (
-	       fn = fn#0;
-	       if not instance(fn, Function) then error "expected first element of document tag for optional argument to be a function";
-	       )
-	  else (
-	       if not instance(lookup fn, Function) then error("no method installed for document tag '", formatDocumentTag fn, "'");
-	       fn = fn#0;
-	       );
-	  if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
-     else (						    -- e.g., (res,Module) or (symbol **, Module, Module)
-	  if class lookup s =!= Function then error("documentation provided for '", formatDocumentTag s, "' but no method installed")))
-verifyTag Option   := s -> error "old style option documentation tag"
+verifyKey := method(SingleArgumentDispatch => true)
+verifyKey Thing    := s -> null
+verifyKey Sequence := s -> (				    -- e.g., (res,Module) or (symbol **, Module, Module)
+     if class lookup s =!= Function then error("documentation key for '", formatDocumentTag s, "' encountered, but no method installed"))
+verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
+     fn := s#0;
+     opt := s#1;
+     if not instance(fn, Function) then error "expected first element of document key for optional argument to be a function";
+     if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
 
 -----------------------------------------------------------------------------
 -- making document tags
@@ -86,7 +78,7 @@ makeDocumentTag = method(SingleArgumentDispatch => true, Options => {
 makeDocumentTag DocumentTag := opts -> tag -> tag
 makeDocumentTag Thing := opts -> key -> (
      key = normalizeDocumentKey key;
-     verifyTag key;
+     verifyKey key;
      fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag key;
      pkg := if opts#Package =!= null then opts#Package else packageTag key;
      if pkg === null then error ("can't determine correct package for document tag '",key,"'");
@@ -247,11 +239,7 @@ fSeqInitialize := (toString,toStr) -> new HashTable from {
      5 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toStr s#3, ",", toStr s#4, ")"),
      4 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toStr s#3, ")"),
      3 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ")"),
-     2 => s -> (toString s#0, " ", toStr s#1),
-     (Symbol,5)=>s -> ( toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toStr s#3, ",", toString s#-1, "=>...)" ),
-     (Symbol,4)=>s -> ( toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toString s#-1, "=>...)" ),
-     (Symbol,3)=>s -> ( toString s#0, "(", toStr s#1, ",", toString s#-1, "=>...)" ),
-     (Symbol,2)=>s -> ( toString s#0, "(..., ", toString s#-1, "=>...)" )
+     2 => s -> (toString s#0, " ", toStr s#1)
      }
 
 fSeq := fSeqInitialize(toString,toStr)
@@ -265,6 +253,7 @@ formatDocumentTag Sequence := record(
 	  else if             fSeq#?(class s#-1,#s)             then fSeq#(class s#-1,#s)
 	  else if             fSeq#?#s                          then fSeq#(#s)
 								else toString) s)
+formatDocumentTag Array := s -> concatenate( toString s#0, "(..., ", toString s#1, " => ...)" )
 
 fSeqTO := fSeqInitialize(i -> fixup TO i, i -> fixup TO i)
 formatDocumentTagTO := method(SingleArgumentDispatch => true)
@@ -278,7 +267,7 @@ formatDocumentTagTO Sequence := (
 	  else if             fSeqTO#?(#s, class, class s#0)      then fSeqTO#(#s, class, class s#0)
 	  else if             fSeqTO#?#s                          then fSeqTO#(#s)
 	                                                          else (s -> error("unknown document tag: ", toString s))) s)
-
+formatDocumentTagTO Array := s -> SEQ{ fixup TO s#0, "(..., ", fixup TO s#1, " => ...)" }
 
 -----------------------------------------------------------------------------
 -- fixing up hypertext

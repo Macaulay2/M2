@@ -340,7 +340,7 @@ document {
      }
 
 document {
-     Key => (gb,StopBeforeComputation),
+     Key => [gb,StopBeforeComputation],
      Headline => "whether to stop the computation immediately",
      TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
      PARA,
@@ -359,7 +359,7 @@ document {
      }
 
 document {
-     Key => (gb,DegreeLimit), 
+     Key => [gb,DegreeLimit], 
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should halt after 
      dealing S-polynomials up to degree ", TT "n", ".",
@@ -388,7 +388,7 @@ document {
      }
 
 document {
-     Key => (gb,SyzygyLimit), 
+     Key => [gb,SyzygyLimit], 
      Headline => "stop when this number of syzygies is obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should stop
@@ -419,7 +419,7 @@ document {
      }
 
 document {
-     Key => (gb,PairLimit), 
+     Key => [gb,PairLimit], 
      Headline => "stop when this number of pairs is handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the
@@ -448,13 +448,13 @@ document {
      "Eventually the codimension of the ideal of leading terms is the
      codimension of the original ideal.",
      UL {
-	  TO (gb,CodimensionLimit),
-	  TO (syz,CodimensionLimit),
+	  TO [gb,CodimensionLimit],
+	  TO [syz,CodimensionLimit],
 	  }
      }
 
 document {
-     Key => (gb,CodimensionLimit), 
+     Key => [gb,CodimensionLimit], 
      Headline => "stop when this codimension is reached",
      TT "CodimensionLimit => n", " -- keyword for an optional argument used with
      ", TO "gb", " which specifies that the computation should stop when
@@ -477,15 +477,15 @@ document {
      determined.",
      PARA,
      UL {
-	  TO (gb,StopWithMinimalGenerators),
-	  TO (pushForward,StopWithMinimalGenerators),
-	  TO (pushForward1,StopWithMinimalGenerators),
-	  TO (syz,StopWithMinimalGenerators),
+	  TO [gb,StopWithMinimalGenerators],
+	  TO [pushForward,StopWithMinimalGenerators],
+	  TO [pushForward1,StopWithMinimalGenerators],
+	  TO [syz,StopWithMinimalGenerators],
 	  }
      }
 
 document {
-     Key => (gb,StopWithMinimalGenerators), 
+     Key => [gb,StopWithMinimalGenerators], 
      Headline => "stop when minimal generators have been determined",
      TT "StopWithMinimalGenerators", " -- keyword for an optional argument used 
      with ", TO "gb", ", which, if the value provided is ", TT "true", "
@@ -510,7 +510,7 @@ document {
      }
 
 document {
-     Key => (gb,Strategy), 
+     Key => [gb,Strategy], 
      Headline => "specify the strategy used to compute Groebner bases",
      TT "gb(f,Strategy => v)", " -- an option for ", TO "gb", " which can
      be used to specify the strategy to be used in the computation.",
@@ -589,7 +589,7 @@ document {
      }
 
 document {
-     Key => (gb,ChangeMatrix), 
+     Key => [gb,ChangeMatrix], 
      Headline => "whether to produce the change of basis matrix",
      TT "ChangeMatrix => true", " -- an optional argument for ", TO "gb", " which
      specifies whether to compute the change of basis matrix from the basis to
@@ -631,7 +631,7 @@ document {
      }
 
 document {
-     Key => (forceGB,ChangeMatrix),
+     Key => [forceGB,ChangeMatrix],
      Headline => "set the change of basis matrix",
      TT "ChangeMatrix => p", " -- an optional argument for ", TO "forceGB", " which
      which specifies that the change of basis matrix is ", TT "p", "."
@@ -721,7 +721,7 @@ assert( generators trim M == matrix (R, {{1},{0}}))
 "
 
 document {
-     Key => (syz,StopWithMinimalGenerators),
+     Key => [syz,StopWithMinimalGenerators],
      Headline => "stop when minimal generators have been determined",
      TT "StopWithMinimalGenerators => true", " -- an optional argument used 
      with ", TO "syz", " that specifies that the computation should stop as soon as a
@@ -729,11 +729,11 @@ document {
      determined.",
      PARA,
      "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO (gb,StopWithMinimalGenerators), " for details."
+     ", TO [gb,StopWithMinimalGenerators], " for details."
      }
 
 document {
-     Key => (syz,Strategy),
+     Key => [syz,Strategy],
      Headline => "specify the strategy used to compute the Groebner basis",
      TT "syz(f,Strategy => v)", " -- an option for ", TO "syz", " which can
      be used to specify the strategy to be used in the computation.",
@@ -743,7 +743,7 @@ document {
      }
 
 document {
-     Key => (syz,CodimensionLimit),
+     Key => [syz,CodimensionLimit],
      Headline => "stop when this codimension is reached",
      TT "CodimensionLimit => n", " -- keyword for an optional argument used with
      ", TO "syz", " which specifies that the computation should stop when
@@ -787,7 +787,7 @@ document {
      }
 
 document {
-     Key => (syz,StopBeforeComputation),
+     Key => [syz,StopBeforeComputation],
      Headline => "whether to stop the computation immediately",
      TT "StopBeforeComputation => true", " -- an optional argument used with ", TO "gb", ".",
      PARA,
@@ -798,7 +798,7 @@ document {
      }
 
 document {
-     Key => (syz,ChangeMatrix),
+     Key => [syz,ChangeMatrix],
      Headline => "whether to produce the change of basis matrix",
      TT "ChangeMatrix => true", " -- an optional argument for ", TO "syz", " which
      specifies whether to compute the change of basis matrix."
@@ -1013,7 +1013,7 @@ document {
      }
 
 document {
-     Key => (sortColumns,DegreeOrder),
+     Key => [sortColumns,DegreeOrder],
      Headline => "sort primarily by degree",
      TT "DegreeOrder => x", " -- an optional argument for use with the function
      ", TO "sortColumns", ".",
@@ -1023,7 +1023,7 @@ document {
      }
 
 document {
-     Key => (sortColumns,MonomialOrder),
+     Key => [sortColumns,MonomialOrder],
      Headline => "specify Ascending or Descending sort order",
      TT "MonomialOrder => x", " -- an optional argument for use with the function
      ", TO "sortColumns", ".",
@@ -1346,11 +1346,11 @@ document {
      Key => DegreeMap,
      "A name for an optional argument used with ", TT "map", " when
      creating a ring map.",
-     SeeAlso => { (map, DegreeMap) }
+     SeeAlso => { [map, DegreeMap] }
      }
 
 document {
-     Key => (map,DegreeMap),
+     Key => [map,DegreeMap],
      "A name for an optional argument used with ", TT "map", " when
      creating a ring map, to specify a function that transforms degrees
      of elements in the source ring to degrees of elements in the
@@ -1531,7 +1531,7 @@ document {
      }
 
 document {
-     Key => (pushForward1,StopBeforeComputation),
+     Key => [pushForward1,StopBeforeComputation],
      Headline => "initialize but do not begin the computation",
      TT "StopBeforeComputation", " -- keyword for an optional argument used with
      ", TO "pushForward1", ".",
@@ -1541,7 +1541,7 @@ document {
      }
 
 document {
-     Key => (pushForward1,DegreeLimit),
+     Key => [pushForward1,DegreeLimit],
      Headline => "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "pushForward1", " which specifies that the computation should halt after dealing 
@@ -1600,7 +1600,7 @@ document {
      }
 
 document {
-     Key => (pushForward1,StopWithMinimalGenerators),
+     Key => [pushForward1,StopWithMinimalGenerators],
      Headline => "stop when minimal generators have been determined",
      TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward1", "
      that specifies that the computation should stop as soon as a
@@ -1608,11 +1608,11 @@ document {
      determined.",
      PARA,
      "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO (gb,StopWithMinimalGenerators), " for details."
+     ", TO [gb,StopWithMinimalGenerators], " for details."
      }
 
 document {
-     Key => (pushForward1,PairLimit),
+     Key => [pushForward1,PairLimit],
      Headline => "stop when this number of pairs is handled",
      TT "PairLimit => n", " -- keyword for an optional argument used with
      ", TO "pushForward1", ", which specifies that the computation should
@@ -1620,7 +1620,7 @@ document {
      }
 
 document {
-     Key => (pushForward1,MonomialOrder),
+     Key => [pushForward1,MonomialOrder],
      Headline => "specify the elimination order to use in pushForward1",
      TT "MonomialOrder => x", " -- a keyword for an optional argument to ", TO "pushForward1", "
      which tells which monomial order to use for the Groebner basis computation
@@ -1636,7 +1636,7 @@ document {
      }
 
 document {
-     Key => (pushForward1,UseHilbertFunction),
+     Key => [pushForward1,UseHilbertFunction],
      Headline => "whether to use knowledge of the Hilbert function",
      TT "UseHilbertFunction => true", " -- a keyword for an optional argument to
      ", TO "pushForward1", " which specifies whether to use the Hilbert function,
@@ -1646,7 +1646,7 @@ document {
      }
 
 document {
-     Key => (pushForward1,Strategy),
+     Key => [pushForward1,Strategy],
      Headline => "specify which algorithm to use in the computation",
      TT "pushForward1(f,M,Strategy => v)", " -- an option for ", TO pushForward1, " 
      which can be used to specify the strategy to be used in the computation.",

@@ -25,7 +25,7 @@ document {
 document {
      Key => resolution, Headline => "make a projective resolution" }
 document {
-     Key => (resolution,DegreeLimit),
+     Key => [resolution,DegreeLimit],
      Headline => "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "resolution", " which specifies that the computation should halt
@@ -43,7 +43,7 @@ document {
      }
 
 document {
-     Key => (resolution,SyzygyLimit),
+     Key => [resolution,SyzygyLimit],
      Headline => "stop when this number of syzygies are obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
@@ -59,7 +59,7 @@ document {
      }
 
 document {
-     Key => (resolution,PairLimit),
+     Key => [resolution,PairLimit],
      Headline => "stop when this number of pairs are handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
@@ -74,7 +74,7 @@ document {
      }
 
 document {
-     Key => (resolution,StopBeforeComputation),
+     Key => [resolution,StopBeforeComputation],
      Headline => "whether to stop the computation immediately",
      TT "StopBeforeComputation", " -- keyword for an optional argument used with
      ", TO "resolution", ".",
@@ -90,7 +90,7 @@ document {
      }
 
 document {
-     Key => (resolution,LengthLimit),
+     Key => [resolution,LengthLimit],
      Headline => "stop when the resolution reaches this length",
      TT "LengthLimit", " -- keyword for an optional argument used with
      ", TO "resolution", " which indicates how long a resolution to make.",
@@ -116,7 +116,7 @@ document {
      }
 
 document {
-     Key => (resolution,HardDegreeLimit),
+     Key => [resolution,HardDegreeLimit],
      TT "HardDegreeLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ".",
      PARA,
@@ -126,7 +126,7 @@ document {
      }
 
 document {
-     Key => (resolution,Strategy),
+     Key => [resolution,Strategy],
      TT "Strategy => n", " -- an option for ", TO "resolution", " which specifies
      which algorithm to use.  Strategies are specified by number and the
      algorithms available are",
@@ -154,7 +154,7 @@ document {
      }
 
 document {
-     Key => (resolution,SortStrategy),
+     Key => [resolution,SortStrategy],
      TT "SortStrategy => n", " -- an option for ", TO "resolution", " which 
      specifies the strategy to be used for sorting S-pairs.",
      PARA,
