@@ -641,7 +641,6 @@ Matrix.InverseMethod = m -> if m.cache#?-1 then m.cache#-1 else m.cache#-1 = (
      i // m
      )
 
-
 Matrix _ Array := Matrix => (f,v) -> f * (source f)_v
 Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f
 

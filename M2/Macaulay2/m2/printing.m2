@@ -32,13 +32,15 @@ net Time := v -> (
 
 truncateOutput = method()
 truncateOutput ZZ := maxwidth -> (
+     Nothing.BeforePrint = identity;
      Thing.BeforePrint = x -> (
 	  x = net x;
 	  if width x <= maxwidth then return x;
 	  stack apply( unstack x, row -> (
 		    if #row <= maxwidth then return row;
-		    concatenate(substring(0,maxwidth - 4,row), " ...")))))
-truncateOutput InfiniteNumber := maxwidth -> remove(Thing,BeforePrint)
+		    concatenate(substring(0,maxwidth - 4,row), " ..."))));
+     )
+truncateOutput InfiniteNumber := maxwidth -> Thing.BeforePrint = identity
 
 ParagraphList = new Type of BasicList
 net ParagraphList := x -> (

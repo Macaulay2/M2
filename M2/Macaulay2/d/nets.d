@@ -196,7 +196,7 @@ export netcmp(s:Net, t:Net):int := (
      slen := length(sbody);
      tlen := length(tbody);
      i := 0;
-     while i<slen do (
+     while i<slen && i<tlen do (
 	  r := strnumcmp(sbody.i,tbody.i);
 	  if r != 0 then return r;
 	  i = i+1;
