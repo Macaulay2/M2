@@ -224,8 +224,7 @@ D == R2
 -- (the products are saturated in the {\tt divisor} routine):
 
 --$
-Divisor + Divisor := (D,E) ->
-    divisor(D#0 * E#0, D#1 * E#1)
+Divisor + Divisor := (D,E) -> divisor(D#0 * E#0, D#1 * E#1);
 
 -- Negation is even simpler, since all we need do
 -- is exchange the two ideals.  We don't use the
@@ -237,11 +236,10 @@ Divisor + Divisor := (D,E) ->
 -- Let's also include functions to compute differences
 -- and to multiply by integers.
 
-Divisor - Divisor := (D,E) -> D + (-E)
+Divisor - Divisor := (D,E) -> D + (-E);
 
 --$
-ZZ Divisor := ZZ * Divisor := (n,D) ->
-    divisor((D#0)^n, (D#1)^n)
+ZZ Divisor := ZZ * Divisor := (n,D) -> divisor((D#0)^n, (D#1)^n);
 
 -- Some arithmetic of divisors on our elliptic curve
 
@@ -350,7 +348,7 @@ globalSections Divisor := (D) -> (
     LD := basis(degree f, purify1S2((f*J) : I));
     LD = super (LD ** (ring target LD));
     -- Return both this vector space and the denominator
-    {LD, f})
+    {LD, f});
 
 -- Another important task is to
 -- find the ideal of zeros of a section $s = f/g$
@@ -361,7 +359,7 @@ sectionIdeal = (f,g,D) -> (
     I := D#0;
     J := D#1;
     purify1S2((f*I):g) : J
-    )
+    );
 
 -- Let's find the image of the elliptic curve $E$
 -- under the linear system $4P$. To do this we
@@ -450,7 +448,7 @@ linearlyEquivalent = (D,E) -> (
         if V == ideal(1_R) 
           then (L_(0,0))/(LB#1) 
           else false)
-    )
+    );
 
 -- We get the same answers as before:
 linearlyEquivalent(P,R)
@@ -477,12 +475,12 @@ effective = (D) -> (
     L := LB#0;  -- the matrix of numerators
     if numgens source L == 0 
     then error(name D + " is not effective")
-    else divisor sectionIdeal(L_(0,0), LB#1, D))
+    else divisor sectionIdeal(L_(0,0), LB#1, D));
 
 --
 effective(2R-P)
 
-addition = (R,S) -> effective(R + S - P)
+addition = (R,S) -> effective(R + S - P);
 
 addition(R1,R2)
 
@@ -510,7 +508,7 @@ Q4a = addition(Q2,Q2)
 -- twisted cubic curve whose ideal is the
 -- ideal of $2\times2$ minors of the ``catalecticant''
 -- matrix 
-S = ZZ/31991[a,b,c,d]
+S = ZZ/31991[a,b,c,d];
 catalect = map(S^2, 3, (i,j)->S_(i+j))
 IC = minors(2, catalect)
 SX = S/IC
@@ -575,7 +573,7 @@ divisorFromModule = M -> (
                   ideal( 
                    var1^(-d)**I1**dual target I1
                   ))
-)
+);
 -- We start from a module over the ring {\tt SX}:
 M = coker canpres
 divisorFromModule(M)
@@ -597,7 +595,7 @@ canonicalDivisor= SX ->(
   M := Ext^embcodim(coker gens I,S^{-numgens S});
   M = coker substitute(presentation M, SX);
   divisorFromModule(M)
-  )
+  );
 
 --
 canonicalDivisor SX

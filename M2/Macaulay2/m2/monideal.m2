@@ -144,7 +144,7 @@ radical MonomialIdeal := (I,options) -> (UnaryMonomialIdealOperation ggradical) 
 --document { quote radical,
 --     TT "radical I", " -- compute the radical of a ", TO "MonomialIdeal", " I.",
 --     PARA,
---     EXAMPLE "R = ZZ/101[a,b,c]",
+--     EXAMPLE "R = ZZ/101[a,b,c];",
 --     EXAMPLE "I = monomialIdeal vars R",
 --     EXAMPLE "J = I^3",
 --     EXAMPLE "radical J"

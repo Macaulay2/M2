@@ -166,7 +166,7 @@ document { "transmitting a matrix",
      PARA,
      "A matrix is transmitted by sending the columns as a sequence of
      vectors.",
-     EXAMPLE "R = ZZ/101[x,y,z]",
+     EXAMPLE "R = ZZ/101[x,y,z];",
      EXAMPLE "f = matrix ( R, {{11,0,33},{0,22,34}} )",
      EXAMPLE "ascii sendgg(ggPush f, ggtonet)",
      SEEALSO "transmitting a vector"
@@ -175,7 +175,7 @@ document { "transmitting a matrix",
 document { "transmitting an integer mod n",
      "An integer mod n is sent as an integer.",
      PARA,
-     EXAMPLE "ZZ/101[x]",
+     EXAMPLE "ZZ/101[x];",
      EXAMPLE "s = 44 + x - x",
      EXAMPLE "ascii sendgg( ggPush s, ggleadcoeff, ggtonet)"
      }
@@ -184,7 +184,7 @@ document { "transmitting a polynomial",
      "A polynomial is transmitted as a sequence of pairs (m,c), where
      m is a monomial and c is a coefficient.",
      PARA,
-     EXAMPLE "ZZ/101[x,y,z]",
+     EXAMPLE "ZZ/101[x,y,z];",
      EXAMPLE "ascii callgg(ggtonet, 22*x^66+11*y^77)"
      }
 
@@ -192,7 +192,7 @@ document { "transmitting a monomial",
      "A monomial is transmitted as a sequence of pairs (i,e) of integers,
      where i refers to the i-th variable in the ring, and e is the exponent.",
      PARA,
-     EXAMPLE "ZZ/3[t,u,x,y,z]",
+     EXAMPLE "ZZ/3[t,u,x,y,z];",
      EXAMPLE "ascii sendgg(ggPush (t^22 * y^33 * z^55), ggleadmonom, ggtonet)"
      }
 

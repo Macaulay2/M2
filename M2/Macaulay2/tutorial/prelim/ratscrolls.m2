@@ -110,8 +110,8 @@ intersectDivisor = (D,C) -> (
     -- and return this number!
     )
 
-Divisor + Divisor := (D,E) -> doubleDual(D ** E)
-Divisor - Divisor := (D,E) -> Hom(D,E)
+Divisor + Divisor := (D,E) -> doubleDual(D ** E);
+Divisor - Divisor := (D,E) -> Hom(D,E);
 - Divisor := (D) -> Hom(D, ring D)
 
 Z Divisor := (n,D) -> ...
