@@ -507,11 +507,11 @@ export rawCC(e:Expr):Expr := (
      else WrongArg("a real number"));
 setupfun("rawCC",rawCC);
 
-export rawBigRR(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RRR()" )) else WrongNumArgs(0);
-setupfun("rawBigRR",rawBigRR);
+export rawRRR(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_RRR()" )) else WrongNumArgs(0);
+setupfun("rawRRR",rawRRR);
 
-export rawBigCC(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CCC()" )) else WrongNumArgs(0);
-setupfun("rawBigCC",rawBigCC);
+export rawCCC(e:Expr):Expr := when e is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else toExpr(Ccode(RawRingOrNull, "(engine_RawRingOrNull)IM2_Ring_CCC()" )) else WrongNumArgs(0);
+setupfun("rawCCC",rawCCC);
 
 export rawIndexIfVariable(e:Expr):Expr := (
      when e is f:RawRingElement do (
@@ -740,8 +740,8 @@ export rawFromNumber(e:Expr):Expr := (
 	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_complex((Ring*)",R,",(M2_CC)", x,")")
 	  is r:RawRingElement do Expr(r)
 	  is null do buildErrorPacket(EngineError("promoting real number to ring element: not implemented yet")))
-     is x:BigReal do (
-	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_BigReal((Ring*)",R,",(M2_BigReal)",x,")")
+     is x:RRR do (
+	  when Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_BigReal((Ring*)",R,",(M2_RRR)",x,")")
 	  is r:RawRingElement do Expr(r)
 	  is null do
 	  buildErrorPacket(EngineError("can't promote big real number to ring element")))

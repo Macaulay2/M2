@@ -34,7 +34,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do Expr(x + y)
      	  is y:Rational do Expr(x + y)
-     	  is y:BigReal do Expr(toBigReal(x) + y)
+     	  is y:RRR do Expr(toBigReal(x) + y)
      	  is y:Real do Expr(Real(x + y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
@@ -42,7 +42,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do Expr(x + y)
      	  is y:Rational do Expr(x + y)
-     	  is y:BigReal do Expr(toBigReal(x) + y)
+     	  is y:RRR do Expr(toBigReal(x) + y)
 	  is y:Real do Expr(Real(x + y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
@@ -55,11 +55,11 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
-     is x:BigReal do (
+     is x:RRR do (
 	  when rhs
 	  is y:Integer do Expr(x + toBigReal(y))
      	  is y:Rational do Expr(x + toBigReal(y))
-     	  is y:BigReal do Expr(x + y)
+     	  is y:RRR do Expr(x + y)
 	  is y:Real do Expr(x + toBigReal(y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
@@ -67,7 +67,7 @@ export (lhs:Expr) + (rhs:Expr) : Expr := (
 	  when rhs
      	  is y:Integer do Expr(Real(x.v+y))
      	  is y:Rational do Expr(Real(x.v+y))
-     	  is y:BigReal do Expr(toBigReal(x.v)+y)
+     	  is y:RRR do Expr(toBigReal(x.v)+y)
 	  is y:Real do Expr(Real(x.v+y.v))
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PlusS))
@@ -137,7 +137,7 @@ plusfun1(rhs:Code):Expr := (
      is Error do r
      is Real do r
      is Integer do r
-     is BigReal do r
+     is RRR do r
      is Rational do r
      is RawRingElement do r
      is RawMatrix do r
@@ -157,7 +157,7 @@ export - (rhs:Expr) : Expr := (
      when rhs
      is x:Real do Expr(Real(-x.v))
      is x:Integer do Expr(-x)
-     is x:BigReal do Expr(-x)
+     is x:RRR do Expr(-x)
      is x:Rational do Expr(-x)
      is x:RawRingElement do Expr(-x)
      is x:RawMatrix do Expr(-x)
@@ -177,7 +177,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
      is x:Real do (
 	  when rhs
 	  is y:Real do Expr(Real(x.v-y.v))
-	  is y:BigReal do Expr(toBigReal(x.v) - y)
+	  is y:RRR do Expr(toBigReal(x.v) - y)
 	  is y:Integer do Expr(Real(x.v-y))
 	  is y:Rational do Expr(Real(x.v-y))
      	  is Error do rhs
@@ -187,7 +187,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:Integer do Expr(x - y)
      	  is y:Rational do Expr(x - y)
 	  is y:Real do Expr(Real(x - y.v))
-	  is y:BigReal do Expr(toBigReal(x) - y)
+	  is y:RRR do Expr(toBigReal(x) - y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:Rational do (
@@ -195,7 +195,7 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	  is y:Integer do Expr(x - y)
      	  is y:Rational do Expr(x - y)
 	  is y:Real do Expr(Real(x - y.v))
-	  is y:BigReal do Expr(toBigReal(x) - y)
+	  is y:RRR do Expr(toBigReal(x) - y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:RawRingElement do (
@@ -207,12 +207,12 @@ export (lhs:Expr) - (rhs:Expr) : Expr := (
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
-     is x:BigReal do (
+     is x:RRR do (
 	  when rhs
 	  is y:Integer do Expr(x - toBigReal(y))
      	  is y:Rational do Expr(x - toBigReal(y))
 	  is y:Real do Expr(x - toBigReal(y.v))
-	  is y:BigReal do Expr(x - y)
+	  is y:RRR do Expr(x - y)
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,MinusS))
      is x:RawMatrix do (
@@ -295,14 +295,14 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  is y:Real do Expr(Real(x.v*y.v))
 	  is y:Integer do Expr(Real(x.v*y))
 	  is y:Rational do Expr(Real(x.v*y))
-	  is y:BigReal do Expr(toBigReal(x.v)*y)
+	  is y:RRR do Expr(toBigReal(x.v)*y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
      is x:Integer do (
 	  when rhs
 	  is y:Integer do Expr(x * y)
      	  is y:Rational do Expr(x * y)
-     	  is y:BigReal do Expr(toBigReal(x) * y)
+     	  is y:RRR do Expr(toBigReal(x) * y)
 	  is y:Real do Expr(Real(x * y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
@@ -310,7 +310,7 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do Expr(x * y)
      	  is y:Rational do Expr(x * y)
-     	  is y:BigReal do Expr(toBigReal(x) * y)
+     	  is y:RRR do Expr(toBigReal(x) * y)
 	  is y:Real do Expr(Real(x * y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
@@ -333,11 +333,11 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	       )
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
-     is x:BigReal do (
+     is x:RRR do (
 	  when rhs
 	  is y:Integer do Expr(x * toBigReal(y))
      	  is y:Rational do Expr(x * toBigReal(y))
-     	  is y:BigReal do Expr(x * y)
+     	  is y:RRR do Expr(x * y)
 	  is y:Real do Expr(x * toBigReal(y.v))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,StarS))
@@ -432,7 +432,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:BigReal do (
+     	  is y:RRR do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(toBigReal(x) / y))
@@ -455,7 +455,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       --then buildErrorPacket("division by zero")
 	       --else 
 	       Expr(Real(x.v/y)))
-     	  is y:BigReal do (
+     	  is y:RRR do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(toBigReal(x.v) / y))
@@ -476,7 +476,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
-     	  is y:BigReal do (
+     	  is y:RRR do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(toBigReal(x) / y))
@@ -487,7 +487,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       Expr(Real(x / y.v)))
 	  is Error do rhs
 	  else binarymethod(lhs,rhs,DivideS))
-     is x:BigReal do (
+     is x:RRR do (
 	  when rhs
 	  is y:Integer do (
 	       if y === 0
@@ -497,7 +497,7 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / toBigReal(y)))
-     	  is y:BigReal do (
+     	  is y:RRR do (
 	       if y === 0
 	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
@@ -669,7 +669,7 @@ export (lhs:Expr) ^ (rhs:Expr) : Expr := (
 	  is y:Integer do Expr(x^y)
      	  is Error do rhs
 	  else binarymethod(lhs,rhs,PowerS))
-     is x:BigReal do (
+     is x:RRR do (
 	  when rhs
 	  is y:Integer do (
 	       if isInt(y)

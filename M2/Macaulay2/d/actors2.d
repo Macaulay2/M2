@@ -701,7 +701,7 @@ realPart(e:Expr):Expr := (
      is Integer do e
      is Real do e
      is z:Complex do Expr(Real(z.re))
-     is z:BigComplex do Expr(realPart(z))
+     is z:CCC do Expr(realPart(z))
      is Rational do e
      else WrongArg("a number"));
 setupfun("realPart",realPart);
@@ -710,7 +710,7 @@ imaginaryPart(e:Expr):Expr := (
      is Integer do Expr(toInteger(0))
      is Real do Expr(Real(0.))
      is z:Complex do Expr(Real(z.im))
-     is z:BigComplex do Expr(imaginaryPart(z))
+     is z:CCC do Expr(imaginaryPart(z))
      is Rational do Expr(newRational(toInteger(0),toInteger(1)))
      else WrongArg("a number"));
 setupfun("imaginaryPart",imaginaryPart);

@@ -305,9 +305,9 @@ extern "C" {
 
   const RingOrNull *IM2_Ring_CC(double precision); /* drg: connected rawCC */
 
-  const RingOrNull *IM2_Ring_RRR(void); /* drg: connected rawBigRR */
+  const RingOrNull *IM2_Ring_RRR(void); /* drg: connected rawRR */
 
-  const RingOrNull *IM2_Ring_CCC(void); /* drg: connected rawBigCC */
+  const RingOrNull *IM2_Ring_CCC(void); /* drg: connected rawCCC */
 
   const RingOrNull *IM2_Ring_polyring(const Ring *K, 
 				      const Monoid *M); /* drg: connected rawPolynomialRing(,) */
@@ -428,11 +428,11 @@ extern "C" {
   const RingElement *rawRRRFromString(const M2_string *s);
 
   const RingElementOrNull *IM2_RingElement_from_BigReal(const Ring *R, 
-							const M2_BigReal d); /* drg: waiting, rawFromNumber*/
+							const M2_RRR d); /* drg: waiting, rawFromNumber*/
     /* TODO */
 
-  M2_BigReal IM2_RingElement_to_BigReal(const RingElement *a); /* TODO */
-    /* If the ring of a is BigRR, this returns the underlying representation of 'a'.
+  M2_RRR IM2_RingElement_to_BigReal(const RingElement *a); /* TODO */
+    /* If the ring of a is RR, this returns the underlying representation of 'a'.
        Otherwise NULL is returned. */
 
 

@@ -788,7 +788,7 @@ tostringfun(e:Expr):Expr := (
      is CompiledFunctionClosure do Expr("<<a compiled function closure>>")
      is FunctionClosure do Expr("<<a function closure>>")
      is d:DictionaryClosure do Expr("<<a dictionary>>")
-     is x:BigReal do Expr(tostring(x))
+     is x:RRR do Expr(tostring(x))
      is Error do Expr("<<an error message>>")
      is Sequence do Expr("<<a sequence>>")
      is HashTable do Expr("<<a hash table>>")
@@ -808,7 +808,7 @@ tostringfun(e:Expr):Expr := (
 	  "<<raw monomial ideal>>"
 	  -- Ccode(string, "IM2_MonomialIdeal_to_string((MonomialIdeal*)",x,")" )
 	  )
-     is BigComplex do Expr("<<big complex number>>")
+     is CCC do Expr("<<big complex number>>")
      is c:RawComputation do Expr(Ccode(string, "(string)IM2_GB_to_string((Computation*)",c,")" ))
      );
 setupfun("toString",tostringfun).protected = false;
@@ -984,11 +984,11 @@ toBigReal(e:Expr):Expr := (
      is x:Real do Expr(toBigReal(x.v))
      else WrongArg("a number")
      );
-setupfun("toBigReal",toBigReal);
+setupfun("toRRR",toBigReal);
 
 precision(e:Expr):Expr := (
      when e 
-     is x:BigReal do Expr(toInteger(precision(x)))
+     is x:RRR do Expr(toInteger(precision(x)))
      else WrongArg("a big real number")
      );
 setupfun("precision",precision);

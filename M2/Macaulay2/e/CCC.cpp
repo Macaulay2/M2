@@ -15,7 +15,7 @@ mpf_ptr CCC::_epsilon = NULL;
 bool CCC::initialize_CCC() 
 {
   initialize_ring(0,0);
-  _elem_size = sizeof(M2_BigComplex_struct);
+  _elem_size = sizeof(M2_CCC_struct);
   _zero_elem = new_elem();
   if (_epsilon == NULL) {
     _epsilon = reinterpret_cast<mpf_ptr>(getmem(sizeof(mpf_t)));
@@ -48,14 +48,14 @@ mpf_ptr CCC::new_mpf() const
   return result;
 }
 
-M2_BigComplex CCC::new_elem() const
+M2_CCC CCC::new_elem() const
 {
-  M2_BigComplex result = reinterpret_cast<M2_BigComplex>(getmem(_elem_size));
+  M2_CCC result = reinterpret_cast<M2_CCC>(getmem(_elem_size));
   mpf_init(&result->re);
   mpf_init(&result->im);
   return result;
 }
-void CCC::remove_elem(M2_BigComplex f) const
+void CCC::remove_elem(M2_CCC f) const
 {
   // mpf_clear(f);
 }
@@ -124,7 +124,7 @@ mpf_ptr CCC::get_epsilon()
 
 ring_elem CCC::from_int(int n) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_set_si(&result->re, n);
 
   return BIGCC_RINGELEM(result);
@@ -132,7 +132,7 @@ ring_elem CCC::from_int(int n) const
 
 ring_elem CCC::from_int(mpz_ptr n) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_set_z(&result->re, n);
 
   return BIGCC_RINGELEM(result);
@@ -140,7 +140,7 @@ ring_elem CCC::from_int(mpz_ptr n) const
 
 ring_elem CCC::from_double(double r) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_set_d(&result->re, r);
 
   return BIGCC_RINGELEM(result);
@@ -148,7 +148,7 @@ ring_elem CCC::from_double(double r) const
 
 ring_elem CCC::from_doubles(double r, double s) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_set_d(&result->re, r);
   mpf_set_d(&result->im, s);
 
@@ -157,7 +157,7 @@ ring_elem CCC::from_doubles(double r, double s) const
 
 ring_elem CCC::from_rational(mpq_ptr r) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_set_q(&result->re, r);
 
   return BIGCC_RINGELEM(result);
@@ -165,7 +165,7 @@ ring_elem CCC::from_rational(mpq_ptr r) const
 
 ring_elem CCC::from_complex(M2_CC z) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_set_d(&result->re, z->re);
   mpf_set_d(&result->im, z->im);
 
@@ -174,7 +174,7 @@ ring_elem CCC::from_complex(M2_CC z) const
 
 ring_elem CCC::from_BigReal(mpf_ptr r) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_set(&result->re, r);
 
   return BIGCC_RINGELEM(result);
@@ -182,16 +182,16 @@ ring_elem CCC::from_BigReal(mpf_ptr r) const
 
 ring_elem CCC::from_BigReals(mpf_ptr a, mpf_ptr b) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_set(&result->re, a);
   mpf_set(&result->im, b);
 
   return BIGCC_RINGELEM(result);
 }
 
-ring_elem CCC::from_BigComplex(M2_BigComplex z) const
+ring_elem CCC::from_BigComplex(M2_CCC z) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_set(&result->re, &z->re);
   mpf_set(&result->im, &z->im);
 
@@ -258,8 +258,8 @@ bool CCC::is_equal(const ring_elem f, const ring_elem g) const
 }
 bool CCC::is_greater(const ring_elem f, const ring_elem g) const
 {
-  M2_BigComplex a = new_elem();
-  M2_BigComplex b = new_elem();
+  M2_CCC a = new_elem();
+  M2_CCC b = new_elem();
 
   mpf_pow_ui(&a->re, BIGCC_RE(f), 2);
   mpf_pow_ui(&a->im, BIGCC_IM(f), 2);
@@ -291,7 +291,7 @@ void CCC::zeroize_tiny_lead_components(vec &v, mpf_ptr epsilon) const
 
 ring_elem CCC::absolute(const ring_elem f) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
 
   mpf_pow_ui(&result->re, BIGCC_RE(f), 2);
   mpf_pow_ui(&result->im, BIGCC_IM(f), 2);
@@ -307,7 +307,7 @@ ring_elem CCC::copy(const ring_elem f) const
   mpf_ptr a = BIGCC_RE(f);
   mpf_ptr b = BIGCC_IM(f);
 
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_set(&result->re, a);
   mpf_set(&result->im, b);
   return BIGCC_RINGELEM(result);
@@ -316,7 +316,7 @@ ring_elem CCC::copy(const ring_elem f) const
 void CCC::remove(ring_elem &f) const
 {
 #if 0
-  M2_BigComplex z = BIGCC_VAL(f);
+  M2_CCC z = BIGCC_VAL(f);
   remove_elem(z); // does nothing... get rid of this code?
   f = BIGCC_RINGELEM(NULL);
 #endif
@@ -350,7 +350,7 @@ void CCC::internal_subtract_to(ring_elem &f, ring_elem &g) const
 
 ring_elem CCC::negate(const ring_elem f) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_neg(&result->re, BIGCC_RE(f));
   mpf_neg(&result->im, BIGCC_IM(f));
   return BIGCC_RINGELEM(result);
@@ -358,7 +358,7 @@ ring_elem CCC::negate(const ring_elem f) const
 
 ring_elem CCC::add(const ring_elem f, const ring_elem g) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_add(&result->re, BIGCC_RE(f), BIGCC_RE(g));
   mpf_add(&result->im, BIGCC_IM(f), BIGCC_IM(g));
   return BIGCC_RINGELEM(result);
@@ -366,7 +366,7 @@ ring_elem CCC::add(const ring_elem f, const ring_elem g) const
 
 ring_elem CCC::subtract(const ring_elem f, const ring_elem g) const
 {
-  M2_BigComplex result = new_elem();
+  M2_CCC result = new_elem();
   mpf_sub(&result->re, BIGCC_RE(f), BIGCC_RE(g));
   mpf_sub(&result->im, BIGCC_IM(f), BIGCC_IM(g));
   return BIGCC_RINGELEM(result);
@@ -374,8 +374,8 @@ ring_elem CCC::subtract(const ring_elem f, const ring_elem g) const
 
 ring_elem CCC::mult(const ring_elem f, const ring_elem g) const
 {
-  M2_BigComplex result = new_elem();
-  M2_BigComplex tmp = new_elem();
+  M2_CCC result = new_elem();
+  M2_CCC tmp = new_elem();
   mpf_mul(&result->re, BIGCC_RE(f), BIGCC_RE(g));
   mpf_mul(&tmp->re, BIGCC_IM(f), BIGCC_IM(g));
   mpf_sub(&result->re, &result->re, &tmp->re);
@@ -430,8 +430,8 @@ ring_elem CCC::invert(const ring_elem f) const
   if (is_zero(f))
     return from_int(0);
   else {
-    M2_BigComplex result = new_elem();
-    M2_BigComplex tmp = new_elem();
+    M2_CCC result = new_elem();
+    M2_CCC tmp = new_elem();
     mpf_mul(&tmp->re, BIGCC_RE(f), BIGCC_RE(f));
     mpf_mul(&tmp->im, BIGCC_IM(f), BIGCC_IM(f));
     mpf_add(&tmp->re, &tmp->re, &tmp->im);

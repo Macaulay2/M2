@@ -233,15 +233,15 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       then True else False)
 	  else False
 	  )
-     is x:BigReal do (
+     is x:RRR do (
 	  when rhs
-	  is y:BigReal do (
+	  is y:RRR do (
 	       if x === y then True else False
 	       )
 	  else False)
-     is x:BigComplex do (
+     is x:CCC do (
 	  when rhs
-	  is y:BigComplex do (
+	  is y:CCC do (
 	       if x === y then True else False
 	       )
 	  else False)
@@ -462,8 +462,8 @@ export Class(e:Expr):HashTable := (
      is CompiledFunction do functionClass
      is CompiledFunctionClosure do functionClass
      is s:SymbolClosure do if s.symbol.word.parse == parseWORD then symbolClass else keywordClass
-     is BigReal do bigRealClass
-     is BigComplex do bigComplexClass
+     is RRR do bigRealClass
+     is CCC do bigComplexClass
      is RawComputation do rawComputationClass
      is Nothing do nothingClass
      is Database do dbClass
@@ -506,8 +506,8 @@ setupconst("ZZ",Expr(integerClass));
 setupconst("QQ",Expr(rationalClass));
 setupconst("RR",Expr(doubleClass));
 setupconst("CC",Expr(complexClass));
-setupconst("BigRR",Expr(bigRealClass));
-setupconst("BigCC",Expr(bigComplexClass));
+setupconst("RRR",Expr(bigRealClass));
+setupconst("CCC",Expr(bigComplexClass));
 setupconst("RawObject",Expr(rawObjectClass));
 setupconst("RawMonomial",Expr(rawMonomialClass));
 setupconst("RawMonomialOrdering",Expr(rawMonomialOrderingClass));

@@ -1,6 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 ZZ.RawRing = rawZZ()
+ZZ.isBasic = true
 new ZZ from RawRingElement := (ZZ,n) -> rawToInteger n
 raw ZZ := x -> rawFromNumber(rawZZ(), x)
 

@@ -191,7 +191,7 @@ RawRing _ ZZ := (R,n) -> rawRingVar(R,n)
 ZZ _ RawRing := (n,R) -> rawFromNumber(R,n)
 raw RR := x -> x _ (RR.RawRing)
 RR _ RawRing := (n,R) -> rawFromNumber(R,n)
-BigRR _ RawRing := (n,R) -> rawFromNumber(R,n)
+RRR _ RawRing := (n,R) -> rawFromNumber(R,n)
 RawRingElement _ RawRing := (x,R) -> rawPromote(R,x)
 
 RawRingElement == RawRingElement := (x,y) -> x === y

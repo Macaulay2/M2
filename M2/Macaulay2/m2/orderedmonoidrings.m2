@@ -119,12 +119,10 @@ commden := (f) -> (
 	  first entries lift((coefficients f)#1, QQ),
 	  denominator))
 
-indices := (M,vars) -> apply(vars, x -> (
+indices := (M,vars) -> apply(vars, x -> if class x === ZZ then x else (
 	  x = baseName x;
 	  if M.index#?x then M.index#x
 	  else error "expected a variable of the ring"))
-
-isBasic := R -> R === ZZ or R === QQ or class R === GaloisField or R.?rawZZp
 
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      (R,M) -> (
@@ -172,7 +170,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       skewoption = (
 		    if skewoption === true
 		    then toList (0 .. num - 1)
-		    else if class skewoption === List
+		    else if class skewoption === List and all(skewoption, i -> class i === ZZ)
 		    then indices(M,skewoption)
 		    else error "expected SkewCommutative option to be 'true' or a list of variables"
 		    );
@@ -180,7 +178,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else notImplemented()
 	       )
 	  else (
-	       (basering,flatmonoid) := if isBasic R then (R,M) else (R.basering, M ** R.flatmonoid);
+	       (basering,flatmonoid) := if R.?isBasic then (R,M) else (R.basering, M ** R.flatmonoid);
 	       rawRM := rawPolynomialRing(raw basering, raw flatmonoid);
 	       if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawRM = rawQuotientRing(rawRM, raw R);
 	       new PolynomialRing from rawRM

@@ -328,7 +328,7 @@ const RingElement *IM2_RingElement_from_complex(const Ring *R, M2_CC z)
   return RingElement::make_raw(R, R->from_complex(z));
 }
 
-const RingElement *IM2_RingElement_from_BigReal(const Ring *R, const M2_BigReal z)
+const RingElement *IM2_RingElement_from_BigReal(const Ring *R, const M2_RRR z)
 {
   return RingElement::make_raw(R, R->from_BigReal(z));
 }

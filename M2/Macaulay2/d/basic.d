@@ -24,8 +24,8 @@ export hash(e:Expr):int := (
      is CodeClosure do 73889				    -- improve this later!
      is x:DictionaryClosure do x.dictionary.hash	    -- there may be many dictionary closures with the same dictionary and different frames, too bad
      is x:Rational do hash(x)
-     is x:BigReal do hash(x)
-     is x:BigComplex do hash(x)
+     is x:RRR do hash(x)
+     is x:CCC do hash(x)
      is x:Sequence do (
 	  -- the numbers here are the same as in binary lookup() in objects.d!!
 	  h := 27449;
