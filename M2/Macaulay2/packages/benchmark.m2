@@ -32,6 +32,11 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 -- OSF1 despina.ks.uiuc.edu V4.0 1229 alpha
 -- 0.75152 seconds, Macaulay2 0.8.52
 
+-- CYGWIN_NT-5.0 NIOBIUM 1.3.2(0.39/3/2) 2001-05-20 23:28 i686 unknown (1 Ghz pentium III)
+-- Macaulay2 0.9, compiled with gcc 2.95
+-- res39: 0.802 seconds
+-- resG25: 10.936 seconds
+
 -- Linux rhenium 2.2.16 #24 Sat Jun 10 15:07:27 CDT 2000 i686 unknown
 -- Macaulay2 0.8.61, compiled with gcc 2.95
 -- res39: 1.12 seconds
