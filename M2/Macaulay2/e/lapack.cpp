@@ -1,6 +1,6 @@
 #include "coeffrings.hpp"
 #include "dmat.hpp"
-#include "lapack.h"
+#include "lapack.hpp"
 
 typedef DMat<CoefficientRingRR> LMatrixRR;
 

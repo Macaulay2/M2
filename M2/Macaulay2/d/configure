@@ -13,7 +13,6 @@ cat <<EOF >compat.h
 #define  DCODE 1
 #define const
 #include "../e/engine.h"
-#include "../e/lapack.h"
 #undef const
 #include "gmp_aux.h"
 #include "memdebug.h"
