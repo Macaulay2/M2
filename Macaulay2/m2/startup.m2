@@ -137,8 +137,9 @@ if firstTime then (
      )
 
 sourceHomeDirectory = null				    -- home directory of Macaulay 2
-buildHomeDirectory  = null -- parent of the directory of the executable described in command line argument 0
-prefixDirectory = null			      -- prefix directory, after installation, e.g., "/usr/"
+buildHomeDirectory  = null	       -- parent of the directory of the executable described in command line argument 0
+prefixDirectory = null					    -- prefix directory, after installation, e.g., "/usr/local/"
+encapDirectory = null	   -- encap directory, after installation, if present, e.g., "/usr/local/encap/Macaulay2-0.9.5/"
 
 fullCopyright := false
 matchpart := (regex,i,s) -> substring_((matches(regex, s))#i) s
@@ -176,6 +177,11 @@ exe := (
 bindir := dir exe
 bindirsuffix := LAYOUT#"bin";
 
+setPrefixFromBindir := bindir -> if bindir =!= null then (
+     if bindirsuffix === substring(bindir,-#bindirsuffix) then (
+	  prefixdir := substring(bindir,0,#bindir-#bindirsuffix);
+	  if fileExists(prefixdir | LAYOUT#"share") then prefixDirectory = prefixdir))
+
 if fileExists (bindir | "../c/scc1") then (
      -- we're running from the build directory
      buildHomeDirectory = minimizeFilename(bindir|"../");
@@ -184,18 +190,9 @@ if fileExists (bindir | "../c/scc1") then (
 	  else if fileExists(buildHomeDirectory|"srcdir") and fileExists(buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir")) | "/m2/setup.m2")
 	  then buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir"))|"/" 
 	  else null);
-     ) else
-if bindirsuffix === substring(bindir,-#bindirsuffix) then (
-     prefixdir := substring(bindir,0,#bindir-#bindirsuffix);
-     if fileExists(prefixdir | LAYOUT#"share") then (
-     	  -- we've been installed and are running from the directory tree described by LAYOUT, see startupString1
-	  prefixDirectory = prefixdir;
-     	  )
-     )
+     ) else setPrefixFromBindir bindir
 
 if prefixDirectory === null and sourceHomeDirectory === null then stderr << "warning: can't determine prefixDirectory or sourceHomeDirectory" << endl
-
-encapDirectory = null
 
 if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then (
      -- now get the second to last entry in the chain of symbolic links, which will be in the final prefix directory
@@ -203,12 +200,7 @@ if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then 
      prev := null;
      fn := pathsearch commandLine#0;
      while ( s = readlink fn; s =!= null ) do (prev = fn; fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s););
-     if prev =!= null then (
-	  bindir = dir prev;
-	  if bindirsuffix === substring(bindir,-#bindirsuffix) then (
-	       prefixdir = substring(bindir,0,#bindir-#bindirsuffix);
-	       if fileExists(prefixdir | LAYOUT#"share") then (
-		    prefixDirectory = prefixdir))))
+     if prev =!= null then setPrefixFromBindir dir prev)
 
 silence := arg -> null
 notyeterr := arg -> error("command line option ", arg, " not re-implemented yet")
