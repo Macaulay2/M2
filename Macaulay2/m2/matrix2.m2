@@ -294,13 +294,10 @@ divideByVariable(Matrix, RingElement, ZZ) := Matrix => (m,v,d) -> (
      (map(ring m, m1), topdegree))
 
 compress = method()
---compress Matrix := (m) -> (
---     R := ring m;
---     sendgg( ggPush m, ggcompress );
---     getMatrix R)
+
 compress Matrix := Matrix => (m) -> (
      R := ring m;
-     submatrix(m, select(toList(0..numgens source m-1), i -> m_i != 0)))
+     map(R, rawMatrixCompress m.Rawmatrix))
 
 newCoordinateSystem = method()
 

@@ -335,9 +335,9 @@ promote(MonoidElement, RingElement) := RingElement => (m,o) -> (
      k := coefficientRing R;
      if M =!= class m then error "expected monomial from same ring";
      one := 1_k;
-     promote(M,R) := (m,o) -> (
-	  sendgg(ggPush R, ggPush one, ggPush m, ggterm);
-	  new R);
+     promote(M,R) := (m,o) -> new R from rawTerm(R.RawRing, 
+	                                         one.RawRingElement, 
+						 m.RawMonomial);
      promote(m,o))
 
 RingElement _ MonoidElement := RingElement => (f,m) -> (

@@ -51,6 +51,14 @@ W2 = rawWeylAlgebra(WP2, {0,1}, {2,3}, 4)
 
 rawSchurRing R1
 
+-- tests rawTerm, since that is called from promote
+M = monoid [a..d]
+f = M_0
+g = M_0 * M_3^4
+R = ZZ M
+assert(promote(f,R) == a)
+assert(promote(g,R) == a*d^4)
+
 -----------------
 -- RingElement --
 -----------------
