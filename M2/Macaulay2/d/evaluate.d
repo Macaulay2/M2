@@ -1092,14 +1092,14 @@ export eval(c:Code):Expr := (
 	       );
 	  p := codePosition(c);
      	  if int(p.loadDepth) >= errorDepth && !err.position === p then (
-	       oldReportFrame := err.report.code.frame;
-	       err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c),err.report);
+	       oldReportFrame := err.frame;
+	       err.frame = noRecycle(localFrame);
 	       err.position = p;
 	       if !err.printed || backtrace && localFrame != oldReportFrame || fullBacktrace then (
 		    if debuggingMode && (! (p.filename === "stdio")) then (
 			 if !err.printed then printError(err);
 			 printErrorMessage(err.position,"--entering debugger--");
-			 z := debuggerFun(err.report.code.frame,err.report.code.code);
+			 z := debuggerFun(localFrame,c);
 			 stderr << "--leaving debugger--" << endl;
 			 when z is z:Error do (
 			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
@@ -1145,17 +1145,17 @@ setupop(shieldS,shieldfun);
 
 returnFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
-     when e is Error do e else Expr(Error(dummyPosition,returnMessage,dummyCodeClosureList,e,false)));
+     when e is Error do e else Expr(Error(dummyPosition,returnMessage,e,false,dummyFrame)));
 setupop(returnS,returnFun);
 
 continueFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
-     when e is Error do e else Expr(Error(dummyPosition,continueMessage,dummyCodeClosureList,e,false)));
+     when e is Error do e else Expr(Error(dummyPosition,continueMessage,e,false,dummyFrame)));
 setupop(continueS,continueFun);
 
 breakFun(a:Code):Expr := (
      e := if a == dummyCode then nullE else eval(a);
-     when e is Error do e else Expr(Error(dummyPosition,breakMessage,dummyCodeClosureList,e,false)));
+     when e is Error do e else Expr(Error(dummyPosition,breakMessage,e,false,dummyFrame)));
 setupop(breakS,breakFun);
 
 -- export toExpr(p:Position):Expr := list(Sequence(Expr(p.filename),Expr(toInteger(int(p.line))),Expr(toInteger(int(p.column))),Expr(toInteger(int(p.loadDepth)))));
