@@ -236,7 +236,7 @@ document { "User's Guide",
 	  }
      }
 
-document { "Mathematical Vignettes",
+document { "Mathematical Tutorials",
      "In this section we present some tutorials which aim to introduce
      the user to some mathematical ways of using Macaulay 2.  The tutorials
      are relatively independent of each other, and each one introduces the use
@@ -244,10 +244,10 @@ document { "Mathematical Vignettes",
      reader is already familiar with the mathematical concepts involved.  
      ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
      MENU {
-	  TO "Elementary uses of Groebner bases",
-	  TO "Canonical Embeddings of Plane Curves and Gonality",
-	  TO "Fano varieties",
-	  TO "Divisors",
+	  TO "Tutorial: Elementary uses of Groebner bases",
+	  TO "Tutorial: Canonical Embeddings of Plane Curves and Gonality",
+	  TO "Tutorial: Fano varieties",
+	  TO "Tutorial: Divisors",
 	  }
      }
 

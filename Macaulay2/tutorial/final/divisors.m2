@@ -1,4 +1,4 @@
--- Divisors
+-- Tutorial: Divisors
 --
 -- \def\P{\bf P}
 -- In this tutorial we describe one way to represent
