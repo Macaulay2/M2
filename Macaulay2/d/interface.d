@@ -693,8 +693,17 @@ export rawIsHomogeneous(e:Expr):Expr := (
      );
 setupfun("rawIsHomogeneous",rawIsHomogeneous);
 
-rawIsMutable(e:Expr):Expr := when e is x:RawMatrix do toExpr(isMutable(x)) else WrongArg("a raw ring element");
+rawIsMutable(e:Expr):Expr := (
+     when e is x:RawMatrix do
+     toExpr(isMutable(x))
+     else WrongArg("a raw matrix"));
 setupfun("rawIsMutable",rawIsMutable);
+
+rawIsDense(e:Expr):Expr := (
+     when e is x:RawMatrix do
+     toExpr(Ccode( bool, "IM2_Matrix_is_implemented_as_dense(", "(Matrix*)",x, ")" ))
+     else WrongArg("a raw matrix"));
+setupfun("rawIsDense",rawIsDense);
 
 export rawIsZero(e:Expr):Expr := (
      when e
@@ -1035,18 +1044,23 @@ export rawGetSchreyer(e:Expr):Expr := (
 setupfun("rawGetSchreyer",rawGetSchreyer);
 
 export rawZero(e:Expr):Expr := (
-     when e
-     is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(1,2) else
+     when e is s:Sequence do if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is F:RawFreeModule do
-     when s.1 is G:RawFreeModule do toExpr(Ccode(RawMatrixOrNull,"(engine_RawMatrixOrNull)",
+     when s.1 is G:RawFreeModule do
+     when s.2 is mutable:Boolean do
+     when s.3 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(4) else
+     toExpr(Ccode(RawMatrixOrNull,"(engine_RawMatrixOrNull)",
 		    "IM2_Matrix_zero(",
 		    "(FreeModule *)", F, ",",
-		    "(FreeModule *)", G,
+		    "(FreeModule *)", G, ",",
+		    mutable == True, ",",
+		    toInt(preference),
 		    ")" ) )
+     else WrongArgInteger(4)
+     else WrongArgBoolean(3)
      else WrongArg(2,"a raw free module")
      else WrongArg(1,"a raw free module")
-     else WrongArg("a raw free module"));
+     else WrongNumArgs(4));
 setupfun("rawZero",rawZero);
 
 export rawExteriorPower(e:Expr):Expr := (
@@ -1171,86 +1185,109 @@ setupfun("rawTarget",rawTarget);
 
 export rawMatrix1(e:Expr):Expr := (
      when e is s:Sequence do 
-     if length(s) != 4 then WrongNumArgs(4) else
+     if length(s) != 5 then WrongNumArgs(5) else
      when s.0 is target:RawFreeModule do 
      when s.1 is ncols:Integer do if !isInt(ncols) then WrongArgSmallInteger(2) else 
      if isSequenceOfRingElements(s.2) then 
      when s.3 is mutable:Boolean do 
+     when s.4 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(5) else
      toExpr(Ccode(RawMatrixOrNull, 
 	       "(engine_RawMatrixOrNull)IM2_Matrix_make1(",
 	       "(FreeModule*)", target, ",",
 	       toInt(ncols), ",",
 	       "(RingElement_array *)", getSequenceOfRingElements(s.2), ",", -- entries
-	       mutable == True, ")"))
+	       mutable == True, ",",
+	       toInt(preference),
+	       ")"))
+     else WrongArgInteger(5)
      else WrongArgBoolean(4)
      else WrongArg(3,"a sequence of ring elements")
      else WrongArgInteger(2)
      else WrongArg(1,"a raw free module")
-     else WrongNumArgs(4));
+     else WrongNumArgs(5));
 setupfun("rawMatrix1",rawMatrix1);
 
 export rawMatrix2(e:Expr):Expr := (
      when e is s:Sequence do 
-     if length(s) != 5 then WrongNumArgs(5) else
+     if length(s) != 6 then WrongNumArgs(6) else
      when s.0 is target:RawFreeModule do 
      when s.1 is source:RawFreeModule do
      if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else
      if !isSequenceOfRingElements(s.3) then WrongArg(4,"a sequence of ring elements") else
-     when s.4 is mutable:Boolean do toExpr(Ccode(RawMatrixOrNull, 
+     when s.4 is mutable:Boolean do
+     when s.5 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(6) else
+     toExpr(Ccode(RawMatrixOrNull, 
 	       "(engine_RawMatrixOrNull)IM2_Matrix_make2(",
 	       "(FreeModule*)", target, ",",
 	       "(FreeModule*)", source, ",",
 	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.2), ",", -- deg
 	       "(RingElement_array *)", getSequenceOfRingElements(s.3), ",", -- entries
-	       mutable == True, ")"))
+	       mutable == True, ",",
+	       toInt(preference),
+	       ")"))
+     else WrongArgInteger(6)
      else WrongArgBoolean(5)
      else WrongArg(2,"a raw free module")
      else WrongArg(1,"a raw free module")
-     else WrongNumArgs(5));
+     else WrongNumArgs(6));
 setupfun("rawMatrix2",rawMatrix2);
 
 export rawMatrixRemake1(e:Expr):Expr := (
      when e is s:Sequence do 
-     if length(s) != 3 then WrongNumArgs(3) else
+     if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is target:RawFreeModule do 
      when s.1 is M:RawMatrix do
-     when s.2 is mutable:Boolean do toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_remake1(", "(FreeModule*)", target, ",", "(Matrix*)", M, ",", mutable == True, ")"))
+     when s.2 is mutable:Boolean do
+     when s.3 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(4) else
+     toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)IM2_Matrix_remake1(",
+	       "(FreeModule*)", target, ",",
+	       "(Matrix*)", M, ",",
+	       mutable == True, ",",
+	       toInt(preference),
+	       ")"))
+     else WrongArgInteger(4)
      else WrongArgBoolean(3)
      else WrongArg(2,"a raw matrix")
      else WrongArg(1,"a raw free module")
-     else WrongNumArgs(3));
+     else WrongNumArgs(4));
 setupfun("rawMatrixRemake1",rawMatrixRemake1);
 
 export rawMatrixRemake2(e:Expr):Expr := (
      when e is s:Sequence do 
-     if length(s) != 5 then WrongNumArgs(5) else
+     if length(s) != 6 then WrongNumArgs(6) else
      when s.0 is target:RawFreeModule do 
      when s.1 is source:RawFreeModule do
      if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else
      when s.3 is M:RawMatrix do
-     when s.4 is mutable:Boolean do toExpr(Ccode(RawMatrixOrNull, 
+     when s.4 is mutable:Boolean do 
+     when s.5 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(6) else
+     toExpr(Ccode(RawMatrixOrNull, 
 	       "(engine_RawMatrixOrNull)IM2_Matrix_remake2(",
 	       "(FreeModule*)", target, ",",
 	       "(FreeModule*)", source, ",",
 	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.2), ",", -- deg
-	       "(Matrix*)", M, ",",
-	       mutable == True, ")"))
+     	       "(Matrix *)", M, ",",
+	       mutable == True, ",",
+	       toInt(preference),
+	       ")"))
+     else WrongArgInteger(6)
      else WrongArgBoolean(5)
      else WrongArg(4,"a raw matrix")
      else WrongArg(2,"a raw free module")
      else WrongArg(1,"a raw free module")
-     else WrongNumArgs(5));
+     else WrongNumArgs(6));
 setupfun("rawMatrixRemake2",rawMatrixRemake2);
 
 export rawSparseMatrix1(e:Expr):Expr := (
      when e is s:Sequence do 
-     if length(s) != 6 then WrongNumArgs(6) else
+     if length(s) != 7 then WrongNumArgs(7) else
      when s.0 is target:RawFreeModule do 
      when s.1 is ncols:Integer do if !isInt(ncols) then WrongArgSmallInteger(2) else 
      if isSequenceOfSmallIntegers(s.2) then
      if isSequenceOfSmallIntegers(s.3) then
      if isSequenceOfRingElements(s.4) then 
      when s.5 is mutable:Boolean do 
+     when s.6 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(7) else
      toExpr(Ccode(RawMatrixOrNull, 
 	       "(engine_RawMatrixOrNull)IM2_Matrix_make_sparse1(",
 	       "(FreeModule*)", target, ",",
@@ -1258,19 +1295,50 @@ export rawSparseMatrix1(e:Expr):Expr := (
 	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.2), ",", -- rows
 	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.3), ",", -- cols
 	       "(RingElement_array *)", getSequenceOfRingElements(s.4), ",", -- entries
-	       mutable == True, ")"))
+	       mutable == True, ",",
+	       toInt(preference),
+	       ")"))
+     else WrongArgInteger(7)
      else WrongArgBoolean(6)
      else WrongArg(5,"a sequence of ring elements")
      else WrongArg(4,"a sequence of small integers")
      else WrongArg(3,"a sequence of small integers")
      else WrongArgInteger(2)
      else WrongArg(1,"a raw free module")
-     else WrongNumArgs(6));
+     else WrongNumArgs(7));
 setupfun("rawSparseMatrix1",rawSparseMatrix1);
+
+export rawMatrixRandom(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 7 then WrongNumArgs(7) else
+     when s.0 is R:RawRing do 
+     when s.1 is r:Integer do if !isInt(r) then WrongArgSmallInteger(2) else
+     when s.2 is c:Integer do if !isInt(c) then WrongArgSmallInteger(3) else
+     when s.3 is fractionNonZero:Real do
+     when s.4 is specialType:Integer do if !isInt(specialType) then WrongArgSmallInteger(5) else
+     when s.5 is mutable:Boolean do      
+     when s.6 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(7) else
+     toExpr(Ccode(RawMatrixOrNull, 
+	       "(engine_RawMatrixOrNull)IM2_Matrix_random(",
+     	       "(Ring *)", R, ",",
+	       toInt(r), ",",
+	       toInt(c), ",",
+	       fractionNonZero.v, ",",
+     	       toInt(specialType), ",",
+	       mutable == True, ",",
+	       toInt(preference),
+	       ")"))
+     else WrongArgInteger(7)
+     else WrongArgBoolean(6)
+     else WrongArgInteger(5)
+     else WrongArg(4,"a real number")
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw ring")
+     else WrongNumArgs(7));
 
 export rawSparseMatrix2(e:Expr):Expr := (
      when e is s:Sequence do 
-     if length(s) != 7 then WrongNumArgs(7) else
+     if length(s) != 8 then WrongNumArgs(8) else
      when s.0 is target:RawFreeModule do 
      when s.1 is source:RawFreeModule do
      if isSequenceOfSmallIntegers(s.2) then
@@ -1278,6 +1346,7 @@ export rawSparseMatrix2(e:Expr):Expr := (
      if isSequenceOfSmallIntegers(s.4) then
      if isSequenceOfRingElements(s.5) then 
      when s.6 is mutable:Boolean do 
+     when s.7 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(7) else
      toExpr(Ccode(RawMatrixOrNull, 
 	       "(engine_RawMatrixOrNull)IM2_Matrix_make_sparse2(",
 	       "(FreeModule*)", target, ",",
@@ -1286,7 +1355,10 @@ export rawSparseMatrix2(e:Expr):Expr := (
 	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.3), ",", -- rows
 	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.4), ",", -- cols
 	       "(RingElement_array *)", getSequenceOfRingElements(s.5), ",", -- entries
-	       mutable == True, ")"))
+	       mutable == True, ",",
+	       toInt(preference),
+	       ")"))
+     else WrongArgInteger(8)
      else WrongArgBoolean(7)
      else WrongArg(6,"a sequence of ring elements")
      else WrongArg(5,"a sequence of small integers")
@@ -1294,7 +1366,7 @@ export rawSparseMatrix2(e:Expr):Expr := (
      else WrongArg(3,"a sequence of small integers")
      else WrongArg(2,"a raw free module")
      else WrongArg(1,"a raw free module")
-     else WrongNumArgs(7));
+     else WrongNumArgs(8));
 setupfun("rawSparseMatrix2",rawSparseMatrix2);
 
 export rawConcat(e:Expr):Expr := (
@@ -1546,10 +1618,20 @@ export rawMatrixContract(e:Expr):Expr := (
 setupfun("rawMatrixContract",rawMatrixContract);
 
 export rawIdentity(e:Expr):Expr := (
-     when e
-     is F:RawFreeModule do Expr(Ccode(RawMatrix, "(engine_RawMatrix)",
-	       "IM2_Matrix_identity(", "(FreeModule *)", F, ")" ))
-     else WrongArg("a raw free module"));
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is F:RawFreeModule do
+     when s.1 is mutable:Boolean do
+     when s.2 is preference:Integer do if !isInt(preference) then WrongArgSmallInteger(3) else
+     Expr(Ccode(RawMatrix, "(engine_RawMatrix)",
+	       "IM2_Matrix_identity(", 
+	       "(FreeModule *)", F, ",",
+	       mutable == True, ",",
+	       toInt(preference),
+	       ")" ))
+     else WrongArgInteger(3)
+     else WrongArgBoolean(2)
+     else WrongArg(1,"a raw free module")
+     else WrongNumArgs(3));
 setupfun("rawIdentity",rawIdentity);
 
 export rawMonomials(e:Expr):Expr := (
@@ -1677,6 +1759,73 @@ export rawHilbert(e:Expr):Expr := (
      );
 setupfun("rawHilbert",rawHilbert);
 
+export rawInsertRows(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is M:RawMatrix do
+     when s.1 is position:Integer do if !isInt(position) then WrongArgSmallInteger(2) else
+     when s.2 is number:Integer do if !isInt(number) then WrongArgSmallInteger(3) else
+     toExpr(Ccode(bool, "IM2_MutableMatrix_insert_rows(",
+	       "(Matrix *)", M, ",",
+	       toInt(position), ",",
+	       toInt(number),
+	       ")" ) )
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw matrix")
+     else WrongNumArgs(3)
+     );
+setupfun("rawInsertRows",rawInsertRows);
+
+export rawDeleteRows(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is M:RawMatrix do
+     when s.1 is position:Integer do if !isInt(position) then WrongArgSmallInteger(2) else
+     when s.2 is number:Integer do if !isInt(number) then WrongArgSmallInteger(3) else
+     toExpr(Ccode(bool, "IM2_MutableMatrix_delete_rows(",
+	       "(Matrix *)", M, ",",
+	       toInt(position), ",",
+	       toInt(number),
+	       ")" ) )
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw matrix")
+     else WrongNumArgs(3)
+     );
+setupfun("rawDeleteRows",rawDeleteRows);
+
+export rawInsertColumns(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is M:RawMatrix do
+     when s.1 is position:Integer do if !isInt(position) then WrongArgSmallInteger(2) else
+     when s.2 is number:Integer do if !isInt(number) then WrongArgSmallInteger(3) else
+     toExpr(Ccode(bool, "IM2_MutableMatrix_insert_columns(",
+	       "(Matrix *)", M, ",",
+	       toInt(position), ",",
+	       toInt(number),
+	       ")" ) )
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw matrix")
+     else WrongNumArgs(3)
+     );
+setupfun("rawInsertColumns",rawInsertColumns);
+
+export rawDeleteColumns(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is M:RawMatrix do
+     when s.1 is position:Integer do if !isInt(position) then WrongArgSmallInteger(2) else
+     when s.2 is number:Integer do if !isInt(number) then WrongArgSmallInteger(3) else
+     toExpr(Ccode(bool, "IM2_MutableMatrix_delete_columns(",
+	       "(Matrix *)", M, ",",
+	       toInt(position), ",",
+	       toInt(number),
+	       ")" ) )
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw matrix")
+     else WrongNumArgs(3)
+     );
+setupfun("rawDeleteColumns",rawDeleteColumns);
 
 -----------------------------------------------------------------------------
 -- monomial ideals

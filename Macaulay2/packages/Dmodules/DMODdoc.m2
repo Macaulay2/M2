@@ -29,7 +29,7 @@ document { (functionName, Type, Type),
 INSERTUSAGE := l->{ --!!! until "Usage =>" doesn't work
      {BOLD "Usage: ", PARA, l, PARA} 
      }
-needs "D-modules/Dloadfile.m2";
+needs "Dmodules/Dloadfile.m2";
 document { "D-modules Package",
      Headline => "algorithms for D-modules",
      INSERTUSAGE {

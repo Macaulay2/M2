@@ -6,9 +6,9 @@ DEPENDS = yes
 all :: tags
 all :: compat.h
 all :: ../bin/M2$(EXE)
-############################## files
-# the names on these lines should be in sequence from most dependent to
-# least dependent so that "make" can remake the *.dep makefiles
+
+## files
+
 ALLOBJ :=
 CFILES :=
 OPTCFILES := 
@@ -48,6 +48,7 @@ HFILES := M2types.h getpagesize.h memdebug.h types.h
 SRCFILES += $(HFILES)
 
 ## *.d files
+## the names on these lines should be in sequence from most dependent to least dependent so that "make" can remake the *.dep makefiles
 
 DFILES := 
 DFILES += interp.d

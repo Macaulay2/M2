@@ -1,5 +1,5 @@
 # @configure_input@
-PACKAGES = CacheFileName
+PACKAGES = CacheFileName Dmodules
 include ../../include/config.Makefile
 VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; pwd)

@@ -690,14 +690,14 @@ extern "C" {
   /*******************************************************************************/
   const Matrix * IM2_Matrix_identity(const FreeModule *F,
 				     M2_bool is_mutable,
-				     M2_bool prefer_dense
+				     int preference
 				     ); /* drg: connected rawIdentity*/
   /* NEWLY CHANGED */
 
   const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
 				       const FreeModule *G,
 				       M2_bool is_mutable,
-				       M2_bool prefer_dense
+				       int preference
 				       ); /* drg: connected rawZero*/
   /* NEWLY CHANGED */
 
@@ -705,7 +705,7 @@ extern "C" {
 					int ncols,
 					const RingElement_array *M,
 					M2_bool is_mutable,
-					M2_bool prefer_dense); /* drg: connected rawMatrix1 */
+					int preference); /* drg: connected rawMatrix1 */
   /* NEWLY CHANGED */
 
   const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
@@ -713,7 +713,7 @@ extern "C" {
 					const M2_arrayint deg,
 					const RingElement_array *M,
 					M2_bool is_mutable,
-					M2_bool prefer_dense); /* drg: connected rawMatrix2 */
+					int preference); /* drg: connected rawMatrix2 */
   /* NEWLY CHANGED */
 
   const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
@@ -722,7 +722,7 @@ extern "C" {
 					       const M2_arrayint cols,
 					       const RingElement_array *entries,
 					       M2_bool is_mutable,
-					       M2_bool prefer_dense); /* drg: connected rawSparseMatrix1 */
+					       int preference); /* drg: connected rawSparseMatrix1 */
   /* NEWLY CHANGED */
   
   const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
@@ -732,7 +732,7 @@ extern "C" {
 					       const M2_arrayint cols,
 					       const RingElement_array *entries,
 					       M2_bool is_mutable,
-					       M2_bool prefer_dense); /* drg: connected rawSparseMatrix2 */
+					       int preference); /* drg: connected rawSparseMatrix2 */
   /* NEWLY CHANGED */
 
   M2_bool IM2_Matrix_is_mutable(const Matrix *M);
@@ -745,7 +745,7 @@ extern "C" {
   const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
 					 const Matrix *M,
 					  M2_bool is_mutable,
-					  M2_bool prefer_dense
+					  int preference
 					 ); /* drg: connected rawMatrixRemake1  */
   /* NEWLY CHANGED */
   /* Create a new matrix (mutable or immutable), from M, with new target,
@@ -759,7 +759,7 @@ extern "C" {
 					  const M2_arrayint deg,
 					  const Matrix *M,
 					  M2_bool is_mutable,
-					  M2_bool prefer_dense
+					  int preference
 					  ); /* drg: connected rawMatrixRemake2 */
   /* NEWLY CHANGED */
   /* Create a new matrix (mutable or immutable), from M, with new target,
@@ -772,7 +772,7 @@ extern "C" {
 				  double fraction_non_zero, 
 				  int special_type, // 0: general, 1:upper triangular, others?
 				  M2_bool is_mutable,
-				  M2_bool prefer_dense);
+				  int preference); /* connected to rawMatrixRandom */
   /* NEWLY CHANGED */
 
   /**********************************************************************************/
@@ -989,19 +989,19 @@ extern "C" {
   /* column(i) <- r * column(i), returns false if matrix is immutable
      or row is out of bounds */
 
-  M2_bool IM2_MutableMatrix_insert_columns(Matrix *M, int i, int n_to_add); /* TO BE CONNECTED */
+  M2_bool IM2_MutableMatrix_insert_columns(Matrix *M, int i, int n_to_add); /* connected to rawInsertColumns */
   /* NEWLY CHANGED */
   /* Insert n_to_add columns directly BEFORE column i. */
 
-  M2_bool IM2_MutableMatrix_insert_rows(Matrix *M, int i, int n_to_add); /* TO BE CONNECTED */
+  M2_bool IM2_MutableMatrix_insert_rows(Matrix *M, int i, int n_to_add); /* connected to rawInsertRows */
   /* NEWLY CHANGED */
   /* Insert n_to_add rows directly BEFORE row i. */
 
-  M2_bool IM2_MutableMatrix_delete_columns(Matrix *M, int i, int j); /* TO BE CONNECTED */
+  M2_bool IM2_MutableMatrix_delete_columns(Matrix *M, int i, int j); /* connected to rawDeleteColumns  */
   /* NEWLY CHANGED */
   /* Delete columns i .. j from M */
 
-  M2_bool IM2_MutableMatrix_delete_rows(Matrix *M, int i, int j); /* TO BE CONNECTED */
+  M2_bool IM2_MutableMatrix_delete_rows(Matrix *M, int i, int j); /* connected to rawDeleteRows  */
   /* NEWLY CHANGED */
   /* Delete rows i .. j from M */
 

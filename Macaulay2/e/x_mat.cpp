@@ -57,7 +57,7 @@ const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c)
 
 const Matrix * IM2_Matrix_identity(const FreeModule *F,
 				   M2_bool is_mutable,
-				   M2_bool prefer_dense)
+				   int preference)
 {
 #warning is_mutable and prefer_dense not yet used
   return Matrix::identity(F);
@@ -66,7 +66,7 @@ const Matrix * IM2_Matrix_identity(const FreeModule *F,
 const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
 				     const FreeModule *G,
 				     M2_bool is_mutable,
-				     M2_bool prefer_dense)
+				     int preference)
 {
 #warning is_mutable and prefer_dense not yet used
   return Matrix::zero(F,G);
@@ -77,7 +77,7 @@ const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 				      int ncols,
 				      const RingElement_array *M,
 				      M2_bool is_mutable,
-				      M2_bool prefer_dense)
+				      int preference)
 {
 #warning prefer_dense not yet used
   return Matrix::make(target, ncols, M, is_mutable);
@@ -88,7 +88,7 @@ const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
 				      const M2_arrayint deg,
 				      const RingElement_array *M,
 				      M2_bool is_mutable,
-				      M2_bool prefer_dense)
+				      int preference)
 {
 #warning prefer_dense not yet used
   return Matrix::make(target, source, deg, M, is_mutable);
@@ -100,7 +100,7 @@ const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
 					     const M2_arrayint cols,
 					     const RingElement_array *entries,
 					     M2_bool is_mutable,
-					     M2_bool prefer_dense)
+					     int preference)
 {
 #warning prefer_dense not yet used
   return Matrix::make_sparse(target, ncols, rows, cols, entries, is_mutable);
@@ -113,7 +113,7 @@ const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
 					     const M2_arrayint cols,
 					     const RingElement_array *entries,
 					     M2_bool is_mutable,
-					     M2_bool prefer_dense)
+					     int preference)
 {
 #warning prefer_dense not yet used
   return Matrix::make_sparse(target, source, deg, rows, cols, entries, is_mutable);
@@ -124,15 +124,20 @@ M2_bool IM2_Matrix_is_mutable(const Matrix *M)
 {
   return M->is_mutable();
 }
- 
+
+M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M)
+  /* Is the matrix M implemented as dense? */
+{
+#warning not implemented yet
+  return 0;
+}
 
 const MatrixOrNull * IM2_Matrix_remake2(const FreeModule *target,
 					const FreeModule *source,
 					const M2_arrayint deg,
 					const Matrix *M,
 					M2_bool is_mutable,
-					M2_bool prefer_dense
-					)
+					int preference)
   /* Create a new matrix (mutable or immutable), from M, with new target,
      source, deg and/or mutable-ness. The new free modules must have 
      the expected rank. 
@@ -145,8 +150,7 @@ const MatrixOrNull * IM2_Matrix_remake2(const FreeModule *target,
 const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
 					const Matrix *M,
 					M2_bool is_mutable,
-					M2_bool prefer_dense
-					)
+					int preference)
   /* Create a new matrix (mutable or immutable), from M, with new target,
      and/or mutable-ness. The target free module must have the expected rank.
      The source free module is computed heuristically from the the target and the
@@ -162,7 +166,7 @@ MatrixOrNull *IM2_Matrix_random(const Ring *R,
 				double fraction_non_zero, 
 				int special_type, // 0: general, 1:upper triangular, others?
 				M2_bool is_mutable,
-				M2_bool prefer_dense)
+				int preference)
 {
   ERROR("not re-implemented yet");
   return 0;
