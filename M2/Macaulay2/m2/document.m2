@@ -584,15 +584,21 @@ protect Inputs
 protect Outputs
 protect Results
 istype := X -> parent X =!= Nothing
+alter1 := x -> (
+     if class x === Option and #x === 2 then (
+	  if istype x#0 then SEQ { justSynonym x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
+	  else error "expected type to left of '=>' in synopsis"
+	  )
+     else x)
 alter := x -> (
      if class x === Option and #x === 2 then (
-	  if istype x#0 then SEQ { justSynonym x#0, x#1 }
+	  if istype x#0 then SEQ { justSynonym x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
 	  else if class x#0 === String then (
 	       if class x#1 === Option and #x#1 === 2 then (
-		    if istype x#1#0 then SEQ { TT x#0, ", ", justSynonym x#1#0, x#1#1 }
+		    if istype x#1#0 then SEQ { TT x#0, ", ", justSynonym x#1#0, if x#1#1 =!= "" then SEQ { ", ", x#1#1 } }
 		    else error "expected type to left of '=>' in synopsis"
 		    )
-	       else SEQ { TT x#0, x#1 }
+	       else SEQ { TT x#0, if x#1 =!= "" then SEQ { ", ", x#1 } }
 	       )
 	  else error "expected string or type to left of '=>' in synopsis"
 	  )
@@ -638,6 +644,16 @@ optargs Sequence := s -> (
      if o =!= null then PARA { "Optional arguments :", SHIELD smenu apply(keys o, t -> s => t)}
      else optargs s#0)
 
+optin0 := new OptionTable from {}
+optin := method(SingleArgumentDispatch => true)
+optin Thing := x -> optin0
+optin Function := f -> (
+     o := options f;
+     if o =!= null then o else optin0)
+optin Sequence := s -> (
+     o := options s;
+     if o =!= null then o else optin s#0)
+
 newSynopsis := method(SingleArgumentDispatch => true)
 newSynopsis Thing := f -> (
      SYN := getNewSynopsis f;
@@ -645,6 +661,14 @@ newSynopsis Thing := f -> (
      inp := getOptionList(SYN,Inputs);
      iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
      ino := select(inp, x -> iso x);
+     opt := optin f;
+     scan(ino, tag -> if not opt#?tag then error(tag," is not an optional argument for this function"));
+     ino = new HashTable from ino;
+     ino = apply(sort pairs opt, (tag,dft) -> (
+	       if ino#?tag 
+	       then SEQ { toString tag, " => ", alter1 ino#tag, " [", dft, "]" }
+	       else SEQ { toString tag, " => ... [", dft, "]" }
+	       ));	       
      inp = select(inp, x -> not iso x);
      out := getOptionList(SYN,Outputs);
      res := getOptionList(SYN,Results);
@@ -673,7 +697,7 @@ newSynopsis Thing := f -> (
      	       	    if usa#?0 then PARA { "Usage: ", TT usa },
 		    if class f === Sequence and f#?0 then (
 	       		 if class f#0 === Function 
-			 then SEQ { "Function: ", TO f#0, headline f#0 }
+			 then SEQ { "Function: ", TO f#0 }
 			 else SEQ { "Operator: ", TO f#0 }
 			 ),
 		    if inp#?0 then PARA { "Inputs:", SHIELD UL inp },
