@@ -7,7 +7,7 @@ int mpz_hash(mpz_t x) {
   int n = x->_mp_size;
   int i;
   if (n < 0) n = -n;
-  for (i = 0; i<n; i++) h = 3737 * h + x->_mp_d[i];
+  for (i = 0; i<n; i++, h*=3737) h += x->_mp_d[i];
   if (x->_mp_size < 0) h = -h;
   return h;
 }
@@ -17,7 +17,8 @@ int mpf_hash(mpf_t x) {
   int n = x->_mp_size;
   int i;
   if (n < 0) n = -n;
-  for (i = x->_mp_exp; i<n; i++) h = 3737 * h + x->_mp_d[i];
+  for (i = 0; i<n; i++, h*=3737) h += x->_mp_d[i];
+  h = h * 3737 + x->_mp_exp;
   if (x->_mp_size < 0) h = -h;
   return h;
 }
