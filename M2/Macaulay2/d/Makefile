@@ -157,7 +157,7 @@ else
 compat.c compat.h : configure; ./configure
 endif
 
-scclib.o : ../c/compat.h ../c/compat.c $(TOPDIR)/Makeconf.h types.h
+M2lib.o scclib.o : ../c/compat.h ../c/compat.c types.h ../../Makeconf.h compat.h memdebug.h
 memdebug.o scclib.o actors5.oo gc_cpp.o : memdebug.h
 allc : $(PROJECT:.d=.c) tmp_init.c
 ALLOBJ := $(PROJECT:.d=.oo) M2lib.o scclib.o compat.o gc_cpp.o tmp_init.o memdebug.o

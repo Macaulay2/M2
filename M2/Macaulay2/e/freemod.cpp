@@ -664,7 +664,7 @@ vec FreeModule::imp_skew_ring_mult_by_term(
   M->divide(m, base_monom(x), (int *) m);
   for (Nterm *a = f; a != NULL; a = a->next)
     {
-      int sign = M->skew_mult(m, nextterm->monom, nextterm->monom);
+      int sign = M->skew_mult(m, a->monom, nextterm->monom);
       M->mult(nextterm->monom, base_monom(x), nextterm->monom);
       if (sign == 0) 
 	continue;
