@@ -795,8 +795,7 @@ documentation Thing := x -> (
 hasDocumentation = x -> (
      needDoc();
      fkey := formatDocumentTag x;
-     pkgs := select(packages, P -> P =!= User); -- see also packages.m2
-     p := select(pkgs, P -> P#"documentation"#?fkey);
+     p := select(packages, P -> P#"documentation"#?fkey);
      0 < #p)
 
 hr1 := newline | "-----------------------------------------------------------------------------" | newline

@@ -20,6 +20,8 @@ match := X -> 0 < #(matches X)				    -- defined as a method later
 
 somethingElse = () -> error "something else needs to be implemented here"
 
+oo <- ooo <- oooo <- null
+
 rot := x -> (
      global oooo <- ooo;			  -- avoid GlobalAssignHook with <-
      global ooo <- oo;

@@ -151,7 +151,7 @@ listLocalSymbols = Command(f -> listSymbols localSymbols f)
 
 userSymbols = type -> (
      if type === () then type = Thing;
-     select2(type,values User.Dictionary))
+     select2(type,values UserDictionary))
 
 listUserSymbols = Command ( type -> listSymbols userSymbols type )
 
