@@ -47,7 +47,7 @@ toString PolynomialRing := toExternalString PolynomialRing := R -> toString expr
 
 degreeLength PolynomialRing := (RM) -> degreeLength monoid RM
 
-degreesRing2 := memoize(
+degreesRing ZZ := PolynomialRing => memoize(
      (n) -> (
 	  Zn := degreesMonoid n;
 	  ZZn := ZZ Zn;
@@ -55,9 +55,7 @@ degreesRing2 := memoize(
      	  use ZZn
 	  ))
 
-degreesRing ZZ := PolynomialRing => n -> degreesRing2 n
-
-newDegreesRing2 := memoize(
+newDegreesRing ZZ := memoize(
      (n) -> (
 	  Zn := newDegreesMonoid n;
 	  ZZn := ZZZ Zn;
@@ -65,8 +63,6 @@ newDegreesRing2 := memoize(
 	  use ZZn
 	  )
      )
-
-newDegreesRing ZZ := n -> newDegreesRing2 n
 
 degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
