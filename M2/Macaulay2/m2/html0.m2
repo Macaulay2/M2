@@ -28,7 +28,6 @@ EmptyMarkUpType.synonym = "empty mark-up type"
      MarkUpType Sequence := 
      MarkUpType List := (h,y) -> new h from y
 EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expected empty list"
-     MarkUpType Nothing := (h,y) -> null
      MarkUpType Thing := (h,y) -> new h from {y}
      MarkUpType\List := (h,y) -> (i -> h i) \ y
 DistributedMarkUpType MarkUpListParagraph := (h,y) -> apply(y, i -> h i)
