@@ -2,8 +2,8 @@
 
 GaloisField = new Type of EngineRing
 
-ambient GaloisField := Ring => R -> R.baseRings#-1
-coefficientRing GaloisField := Ring => R -> coefficientRing R.baseRings#-1
+ambient GaloisField := Ring => R -> last R.baseRings
+coefficientRing GaloisField := Ring => R -> coefficientRing last R.baseRings
 
 GF = method (
      Options => { 

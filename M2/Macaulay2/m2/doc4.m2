@@ -373,8 +373,8 @@ document { "version",
 
 document { Database,
      HEADLINE "the class of all database files",
-     TT "Database", " -- the class of all database files.",
-     PARA,
+     "A database file is just like a hash table, except both the keys and
+     values have to be strings.",
      EXAMPLE {
 	  ///filename = tmpname "test.dbm"///,
       	  ///x = openDatabaseOut filename///,
@@ -385,43 +385,26 @@ document { Database,
       	  ///close x///,
       	  ///run ("rm -f " | filename)///,
 	  },
-     "Functions:",
-     MENU {
-	  {TOH "openDatabase"},
-	  {TOH "openDatabaseOut"},
-	  {TOH "close"},
-	  {TOH "#"},
-	  {TOH "#?"},
-	  {TOH "firstkey"},
-	  {TOH "mutable"},
-	  {TOH "nextkey"},
-	  {TOH "reorganize"},
-	  {TOH "scanKeys"}
-	  }
+     SEEALSO {"HashTable", "String"}
      }
 
-document { reorganize,
+document { reorganize, HEADLINE "reorganize a database file",
      TT "reorganize x", " -- reorganize the database ", TT "file", " x, compactifying it.",
      PARA,
      SEEALSO "Database"
      }
 
-document { openDatabase,
-     TT "openDatabase s", " -- open a database file corresponding to the file
-     whose name is contained in the string ", TT "s", ".",
-     PARA,
-     SEEALSO "Database"
+document { openDatabase, HEADLINE "open a database file",
+     TT "openDatabase \"filename\"", " -- open a database file with the given
+     file name."
      }
 
-document { openDatabaseOut,
-     TT "openDatabaseOut s", " -- open a database file corresponding to the file
-     whose name is contained in the string ", TT "s", ", and allow changes to be made
-     to it.",
-     PARA,
-     SEEALSO "Database"
+document { openDatabaseOut, HEADLINE "open a database file for writing",
+     TT "openDatabaseOut \"filename\"", " -- open a database file with the given
+     file name, and allow changes to be made to it."
      }
 
-document { firstkey,
+document { firstkey, HEADLINE "get the first key",
      TT "firstkey f", " -- return the first key available in the database
      file ", TT "f", ".",
      PARA,

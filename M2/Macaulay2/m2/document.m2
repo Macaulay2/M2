@@ -48,11 +48,26 @@ storeDoc := (nodeName,docBody) -> (
      	  Documentation#nodeName = docBody;
 	  )
      )
-docDatabase := memoize (x -> if DocDatabase#?x then value DocDatabase#x)
-getDoc := x -> (
-     d := docDatabase x;
-     if d =!= null then d else if Documentation#?x then value Documentation#x
+
+-----------------------------------------------------------------------------
+-- getting database records
+-----------------------------------------------------------------------------
+
+getRecord := key -> (
+     if Documentation#?key then Documentation#key else if DocDatabase#?key then DocDatabase#key
      )
+
+betterStringKey := key -> (
+     if class key === String and (
+     	  d := getRecord key;
+	  d =!= null and substring(d,0,5) === "goto "
+	  )
+     then substring(d,5)
+     else key)
+
+getUsage  := key -> value getRecord betterStringKey toExternalString key
+betterKey := key -> value           betterStringKey toExternalString key
+
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
@@ -64,7 +79,14 @@ record                     := f -> x -> (val := f x; unformatTag#val = x; val)
 	  
 formatDocumentTag Thing    := s -> toString s
 formatDocumentTag Symbol   := record(s -> if value s =!= s then toExternalString s else toString s)
-formatDocumentTag Option   := record(s -> concatenate(toString s#0, "(", toString s#1, " => ...)"))
+after := (w,s) -> mingle(w,#w:s)
+formatDocumentTag Option   := record(
+     s -> concatenate (
+	  if class s#0 === Sequence 
+	  then ( toString s#0#0, "(", after(toString \ drop(s#0,1), ", "), " ", toString s#1, " => ...)" )
+	  else ( toString s#0, "(..., ", toString s#1, " => ...)" )
+	  )
+     )
 fSeq := new HashTable from {
      (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toStr s#3),
      (4,cohomology     ) => s -> ("HH_", toStr s#1, "^", toStr s#2, " ", toStr s#3),
@@ -174,6 +196,7 @@ HTML       = new MarkUpType
 CENTER     = new MarkUpType
 H1         = new MarkUpType
 H2         = new MarkUpType
+BIG        = new MarkUpType
 H3         = new MarkUpType
 H4         = new MarkUpType
 H5         = new MarkUpType
@@ -326,7 +349,7 @@ document List := z -> (
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
      nodeBaseFilename = makeBaseFilename nodeName;
-     if nodeName != key then storeDoc(toExternalString nodeName,"documentation("|skey|")");
+     if nodeName != key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
      )
 
@@ -398,11 +421,22 @@ nextMoreGeneral := s -> if class s === Sequence then (
      if #s === 2 then nextMoreGeneral2 s else
      if #s === 3 then nextMoreGeneral3 s else
      if #s === 4 then nextMoreGeneral4 s)
+getHeadline := key -> (
+     d := getUsage key;
+     if d =!= null and #d > 0 and class first d === HEADLINE then SEQ join( {"  --  "}, toList first d )
+     )
 headline := memoize (
      key -> (
-	  d := getDoc formatDocumentTag key;
-	  if d =!= null and #d > 0 and class first d === HEADLINE 
-	  then SEQ join( {"  --  "}, toList first d ) ) )
+	  while (
+	       d := getHeadline key;
+	       d === null )
+	  and (
+	       key = nextMoreGeneral key;
+	       if key === null and class key === Sequence and #key > 0 then key = key#0;
+	       key =!= null )
+	  do ();
+	  d))
+
 moreGeneral := s -> (
      n := nextMoreGeneral s;
      if n =!= null then SEQ { "Next more general method: ", TO formatDocumentTag n, headline n, PARA{} }
@@ -427,28 +461,28 @@ indefinite := s -> concatenate(if vowels#?(s#0) then "an " else "a ", s)
 
 synonym := X -> if X.?synonym then X.synonym else "object of class " | toString X
 
-usage := s -> (
-     o := getDoc toExternalString s;
-     if o === null and class s === Symbol then o = getDoc toExternalString toString s;
+usage = s -> (
+     o := getUsage s;
+     if o === null and class s === Symbol then o = getUsage toString s;
      if o =!= null then SEQ {o, PARA{}}
      )
 
-helpOptions := new OptionTable from {UsageOnly => false}
-
-documentation = method(SingleArgumentDispatch => true, Options => helpOptions)
-documentation String := opts -> s -> if opts.UsageOnly then usage s else (
-     if unformatTag#?s
-     then documentation unformatTag#s
-     else getDoc toExternalString s
+documentation = method(SingleArgumentDispatch => true)
+documentation String := s -> (
+     if unformatTag#?s then documentation unformatTag#s
+     else (
+	  key := betterKey s;
+	  if key =!= s then documentation key else getUsage s
+	  )
      )
 
-title := s -> if headline s =!= null then SEQ { headline s, PARA{}}
+title := s -> SEQ { CENTER { BIG formatDocumentTag s, headline s }, PARA{} }
 type := s -> SEQ {
      "The object ", TT toExternalString s, " is a member of each of the
      following classes, most specific first:", PARA{}, 
      menu ancestors1 class s, PARA{}
      }
-documentation Thing := opts -> s -> if opts.UsageOnly then usage s else SEQ { title s, usage s, type s }
+documentation Thing := s -> SEQ { title s, usage s, type s }
 binary := set binaryOperators
 prefix := set prefixOperators
 postfix := set postfixOperators
@@ -461,8 +495,9 @@ op := s -> if operator#?s then (
 	       "This operator may be used as a binary operator in an expression
 	       like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary method", "s"}, "
 	       for handling such expressions with code such as ",
-	       PRE ("         X "|ss|" Y := (x,y) -> ..."), "
-	       where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
+	       PRE ("         X "|ss|" Y := (x,y) -> ..."), 
+	       NOINDENT,
+	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
 	       class of ", TT "y", ".", PARA{}
 	       },
 	  if prefix#?s then SEQ {
@@ -470,26 +505,31 @@ op := s -> if operator#?s then (
 	       "This operator may be used as a prefix unary operator in an expression
 	       like ", TT (ss|" y"), ".  The user may install a method for handling
 	       such expressions with code such as ",
-	       PRE ("           "|ss|" Y := (y) -> ..."), "
-	       where ", TT "Y", " is the class of ", TT "y", ".", PARA{}
+	       PRE ("           "|ss|" Y := (y) -> ..."),
+	       NOINDENT, "where ", TT "Y", " is the class of ", TT "y", ".", PARA{}
 	       },
 	  if postfix#?s then SEQ {
 	       NOINDENT{}, 
 	       "This operator may be used as a postfix unary operator in an expression
 	       like ", TT ("x "|ss), ".  The user may install a method for handling
 	       such expressions with code such as ",
-	       PRE ("         X "|ss|"   := (x,y) -> ..."), "
-	       where ", TT "X", " is the class of ", TT "x", ".", PARA{}
+	       PRE ("         X "|ss|"   := (x,y) -> ..."),
+	       NOINDENT, "where ", TT "X", " is the class of ", TT "x", ".", PARA{}
 	       },
 	  }
      )
 
-documentableMethods := s -> select(methods s, i -> not (
-	  class i === Sequence and #i > 0 and class i#0 === Function and toString i#0 === "--Function--"
-	  ))
+unDocumentable := method(SingleArgumentDispatch => true)
+unDocumentable Thing := x ->false
+unDocumentable Function := f -> class f === Function and toString f === "--Function--"
+unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
 
-documentation Symbol := opts -> s -> if opts.UsageOnly then usage s else (
-     a := apply(options s, f -> f => s);
+documentableMethods := s -> select(methods s, i -> not unDocumentable i)
+
+optionFor := s -> unique select( value \ values symbolTable(), f -> class f === Function and (options f)#?s )
+
+documentation Symbol := s -> (
+     a := apply(select(optionFor s,f -> not unDocumentableFunction f), f -> f => s);
      b := documentableMethods s;
      SEQ {
 	  title s, 
@@ -501,7 +541,7 @@ documentation Symbol := opts -> s -> if opts.UsageOnly then usage s else (
      	  }
      )
 
-documentation Type := opts -> X -> if opts.UsageOnly then usage X else (
+documentation Type := X -> (
      syms := values symbolTable();
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X), (key,Y) -> key);
      b := toString \ select(syms, 
@@ -525,7 +565,7 @@ documentation Type := opts -> X -> if opts.UsageOnly then usage X else (
 	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, smenu e, PARA{}},
 	  })
 
-documentation HashTable := opts -> x -> if opts.UsageOnly then usage x else (
+documentation HashTable := x -> (
      c := documentableMethods x;
      SEQ {
 	  title x, 
@@ -541,10 +581,21 @@ fmeth := f -> (
      if #b > 0 then SEQ {"Ways to use ", TO toString f," :", PARA{}, smenu b, PARA{}} )     
 
 optargs := method(SingleArgumentDispatch => true)
+
 optargs Thing := x -> null
+     
 optargs Function := f -> (
-     a := apply(keys options f, s -> f => s);
-     if #a > 0 then SEQ {"Optional arguments :", PARA{}, smenu a, PARA{}})
+     o := options f;
+     if o =!= null then SEQ {
+	  "Optional arguments :", PARA{},
+	  smenu apply(keys o, t -> f => t), PARA{}})
+
+optargs Sequence := s -> (
+     o := options s;
+     if o =!= null then SEQ {
+	  "Optional arguments :", PARA{}, 
+	  smenu apply(keys o, t -> s => t), PARA{}}
+     else optargs s#0)
 
 typicalValue := k -> (
      if typicalValues#?k then typicalValues#k 
@@ -560,12 +611,12 @@ ret := k -> (
 co := f -> (
      n := try code f;
      if n =!= null then PRE concatenate between(newline,netRows n)
-     else if toString f =!= "--Function--" 
-     then MENU { SEQ { "code for ", toString f, " not available" } }
-     else MENU { SEQ { "code for function not available" } }
+     else if unDocumentableFunction f
+     then MENU { SEQ { "code for function not available" } }
+     else MENU { SEQ { "code for ", TO toString f, " not available" } }
      )
 
-seecode := x -> if (try locate x) =!= locate method then (
+seecode := x -> if sameFunctionBody(x, method) then (
      -- this could be improved a bit to handle f@@g, f==>g, etc, and put into 'code'
      f := lookup x;
      g := try original f;
@@ -575,24 +626,25 @@ seecode := x -> if (try locate x) =!= locate method then (
 	  }
      )
 
-documentation Function := opts -> f -> (
-     if opts.UsageOnly then usage f
-     else SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
-     )
-documentation Option := opts -> v -> if opts.UsageOnly then usage v else (
-     (fn, opt) -> SEQ { 
-	  title v, 
-	  usage v,
-	  "See also:",
-	  MENU {
-	       SEQ{ "Default value: ", toString (options fn)#opt},
-	       SEQ{ "Function: ", TO formatDocumentTag fn},
-	       SEQ{ "Option name: ", TO formatDocumentTag opt}
-	       }
-	  }
-     ) toSequence v
+documentation Function := f -> SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
 
-documentation Sequence := opts -> s -> if opts.UsageOnly then usage s else if #s == 0 then null else (
+documentation Option := (
+     (fn, opt) -> (
+	  SEQ { 
+	       title v, 
+	       usage v,
+	       "See also:",
+	       MENU {
+		    SEQ{ "Default value: ", toString (options fn)#opt},
+		    SEQ{ if class fn === Sequence then "Method: " else "Function: ",
+			 TO formatDocumentTag fn},
+		    SEQ{ "Option name: ", TO formatDocumentTag opt}
+		    }
+	       }
+	  )
+     ) @@ toSequence
+
+documentation Sequence := s -> if #s === 0 then null else (
      t := typicalValue s;
      SEQ {
 	  title s, 
@@ -609,7 +661,7 @@ documentation Sequence := opts -> s -> if opts.UsageOnly then usage s else if #s
 	       SEQ {"Class of argument 2: ", TOH formatDocumentTag s#2 }, if #s > 3 then
 	       SEQ {"Class of argument 3: ", TOH formatDocumentTag s#3 }, if t =!= Thing then
 	       SEQ {"Class of typical returned value: ", TOH formatDocumentTag t, PARA{}},
-	       optargs s#0,
+	       optargs s,
 	       moreGeneral s
      	       },
 	  seecode s
@@ -622,11 +674,10 @@ documentation Sequence := opts -> s -> if opts.UsageOnly then usage s else if #s
     hr := v -> concatenate mingle(#v + 1 : hr1 , v)
  -- hr := v -> stack       mingle(#v + 1 : hr1 , v)
 
-help = method(SingleArgumentDispatch => true, Options => helpOptions)
-help List := opts -> v -> hr apply(v, i -> help(i, opts))
-help Sequence :=					    -- this bit shouldn't be needed!
-help Thing := opts -> s -> (
-     d := documentation(s,opts);
+help = method(SingleArgumentDispatch => true)
+help List := v -> hr apply(v, help)
+help Thing := s -> (
+     d := documentation s;
      if d === null 
      then "No documentation available for '" |formatDocumentTag s | "'."
      else "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| text d
@@ -765,6 +816,20 @@ text NOINDENT := x -> ""
 tex  NOINDENT := x -> ///
 \noindent\ignorespaces
 ///
+
+html BIG := x -> concatenate( "<B><FONT SIZE=18>", apply(x, html), "</FONT></B>" )
+
+html HEAD := html CENTER := 
+x -> concatenate(newline, 
+     "<", toString class x, ">", newline,
+     apply(x, html), newline,
+     "</", toString class x, ">", newline
+     )
+
+html TITLE := 
+x -> concatenate(newline, 
+     "<", toString class x, ">", apply(x, html), "</", toString class x, ">", newline
+     )
 
 html HR := x -> ///
 <HR>

@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 RR#0 = 0.
 RR#1 = 1.

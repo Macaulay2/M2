@@ -39,10 +39,17 @@ document { null,
      "It is the only member of the class ", TO "Nothing", ", which strictly
      speaking, ought to have no members at all.",
      PARA,
+     "An ", TO "if", " expression with no ", TO "else", " clause returns
+     ", TO "null", " when the predicate is false.",
+     PARA,
+     "Various routines that prepare data for printing convert ", TO "null", "
+     to an empty string.",
+     PARA,
      EXAMPLE {
 	  "x = {2,3,,4}",
-      	  "x#2",
+	  "net x",
       	  "toString x#2",
+      	  "peek x",
 	  }
      }
 
@@ -426,44 +433,44 @@ document { ":=",
      variable is never globally known."
      }
 
-document { abs,
+document { abs, HEADLINE "absolute value function", 
      TT "abs x", " -- computes the absolute value of ", TT "x", "." }
-document { sin,
+document { sin, HEADLINE "sine function", 
      TT "sin x", " -- computes the sine of ", TT "x", "." }
-document { cos,
+document { cos, HEADLINE "cosine function", 
      TT "cos x", " -- computes the cosine of ", TT "x", "." }
-document { tan,
+document { tan, HEADLINE "tangent function",
      TT "tan x", " -- computes the tangent of ", TT "x", "." }
-document { asin,
+document { asin, HEADLINE "arcsine function", 
      TT "asin x", " -- computes the arcsine of ", TT "x", "."}
-document { acos,
+document { acos, HEADLINE "arccosine function", 
      TT "acos x", " -- computes the arccosine of ", TT "x", "."}
-document { atan,
+document { atan, HEADLINE "arctangent function", 
      TT "atan x", " -- computes the arctangent of ", TT "x", ".",
      BR,NOINDENT,
      TT "atan(x,y)", " -- computes the angle formed with the 
      x-axis by the ray from the origin ", TT "{0,0}", " to the point ", TT "{x,y}", "."
      }
-document { sinh,
+document { sinh, HEADLINE "hyperbolic sine function",
      TT "sinh x", " -- computes the hyperbolic sine of ", TT "x", "."}
-document { cosh,
+document { cosh, HEADLINE "hyperbolic cosine function",
      TT "cosh x", " -- computes the hyperbolic cosine of ", TT "x", "."}
-document { tanh,
+document { tanh, HEADLINE "hyperbolic tangent function",
      TT "tanh x", " -- computes the hyperbolic tangent of ", TT "x", "."}
-document { exp,
+document { exp, HEADLINE "exponential function",
      TT "exp x", " -- computes the exponential of ", TT "x", "."}
-document { log,
+document { log, HEADLINE "logarithm function",
      TT "log x", " -- computes the logarithm of ", TT "x", "."}
-document { sqrt,
+document { sqrt, HEADLINE "square root function",
      TT "sqrt x", " -- provides the square root of the number ", TT "x", "."}
-document { floor,
+document { floor, HEADLINE "floor function",
      TT "floor x", " -- provides the largest integer less than or equal to the number ", TT "x", "."
      }
-document { ceiling,
+document { ceiling, HEADLINE "ceiling function",
      TT "ceiling x", " -- provides the largest integer greater than or equal to the number ", TT "x", "."
      }
 
-document { run,
+document { run, HEADLINE "run an external command", 
      TT "run s", " -- runs the command string ", TT "s", "
      by passing it to the operating system.",
      PARA,
@@ -471,7 +478,7 @@ document { run,
      integer which is usually zero."
      }
 
-document { wait,
+document { wait, HEADLINE "wait for child process", 
      TT "wait i", " -- wait for the completion of child process with process id
      ", TT "i", ".",
      BR,NOINDENT,
@@ -482,7 +489,7 @@ document { wait,
      corresponding to ready files."
      }
 
-document { value,
+document { value, HEADLINE "evaluate", 
      TT "value s", " -- provides the value of ", TT "s", ", which may be a
      symbol, string, or an expression.",
      PARA,
@@ -508,7 +515,7 @@ document { value,
 	  }
      }
 
-document { "global",
+document { "global", HEADLINE "get a global symbol", 
      TT "global s", " -- provides the global symbol s, even if s currently has 
      a value.",
      PARA,
@@ -521,12 +528,12 @@ document { "global",
      SEEALSO {"local", "symbol"}
      }
 
-document { erase,
+document { erase, HEADLINE "remove a global symbol",
      TT "erase s", " -- removes the global symbol ", TT "s", " from the
      symbol table."
      }
 
-document { "local",
+document { "local", HEADLINE "get a local symbol",
      TT "local s", " -- provides the local symbol ", TT "s", ", creating
      a new symbol if necessary.  The initial value of a local
      symbol is ", TT "null", ".",
@@ -538,7 +545,7 @@ document { "local",
      SEEALSO {"global", "symbol"}
      }
 
-document { "symbol",
+document { "symbol", HEADLINE "get a symbol",
      TT "symbol s", " -- provides the symbol ", TT "s", ", even if ", TT "s", " currently has a value.",
      PARA,
      EXAMPLE {
@@ -555,12 +562,12 @@ document { "symbol",
      SEEALSO {"local", "global", "value"}
      }
 
-document { gcd,
+document { gcd, HEADLINE "greatest common divisor",
      TT "gcd(x,y)", " -- yields the greatest common divisor of x and y.",
      SEEALSO "gcdCoefficients"
      }
 
-document { concatenate,
+document { concatenate, HEADLINE "join strings",
      TT "concatenate(s,t,...,u)", " -- yields the concatenation of the strings s,t,...,u.",
      PARA,
      "The arguments may also be lists or sequences of strings and symbols, in
@@ -571,7 +578,7 @@ document { concatenate,
      SEEALSO { "String"} 
      }
 
-document { error,
+document { error, HEADLINE "deliver error message",
      TT "error s", " -- causes an error message s to be displayed.",
      PARA,
      "The error message s (which should be a string or a sequence of
@@ -585,7 +592,7 @@ document { error,
      the error expression itself."
      }
 
-document { characters,
+document { characters, HEADLINE "get characters from a string",
      TT "characters s", " -- produces a list of the characters in the string s.",
      PARA,
      "The characters are represented by strings of length 1.",
@@ -595,7 +602,7 @@ document { characters,
      SEEALSO "String"
      }
 
-document { getenv,
+document { getenv, HEADLINE "get value of environment variable",
      TT "getenv s", " -- yields the value associated with the string s in the 
      environment.",
      PARA,
@@ -604,22 +611,11 @@ document { getenv,
 	  }
      }
 
-document { currentDirectory,
+document { currentDirectory, HEADLINE "current working directory",
      TT "currentDirectory()", " -- returns the name of the current directory."
      }
 
-document { "~",
-     TT "x ~", " -- a postfix unary operator available to the user.  A method may
-     be installed with code such as ", 
-     PRE "           X ~ := x -> ... ",
-     PARA,
-     NOINDENT,
-     "Here are the methods associated with this operator:",
-     MENU {
-	  TO (symbol ~, Module),
-	  TO (symbol ~, Ring),
-     	  }
-     }
+document { "~" }
 
 document { copy,
      TT "copy x", " -- yields a copy of x.",
@@ -716,59 +712,7 @@ document { Ring,
      "A ring is a set together with operations +, -, * and elements 0, 1 
      satisfying the usual rules.  In this system, it is also understood to 
      be a ZZ-algebra, which means that the operations where one argument is 
-     an integer are also provided.",
-     PARA,
-     "Here are some classes of rings.",
-     MENU {
-	  TO "Field",
-	  TO "FractionField",
-	  TO "GaloisField",
-	  TO "PolynomialRing",
-	  TO "ProductRing",
-	  TO "QuotientRing",
-	  TO "SchurRing"
-	  },
-     "Here are some particular rings:",
-     MENU {
-	  TO "ZZ",
-	  TO "QQ"
-	  },
-     "Tests:",
-     MENU {
-	  TO "isAffineRing",
-	  TO "isCommutative",
-	  TO "isField",
-	  TO "isPolynomialRing",
-	  TO "isQuotientOf",
-	  TO "isQuotientRing",
-	  TO "isRing"
-	  },
-     "Here are some functions:",
-     MENU {
-	  {TO (symbol _, ZZ, Ring), " -- get integer elements of a ring."},
-	  (TO (symbol _,Ring,ZZ), " -- get a generator of a ring."),
-	  (TO (symbol _,Ring,String), " -- getting generators by name"),
-	  (TO (symbol _,Ring,List), " -- getting monomials with given exponents"),
-	  TO "char",
-	  TO "coefficientRing",
-	  TO "lift",
-	  TO "map",
-	  TO "promote",
-	  TO "ring",
-	  TO "singularLocus"
-	  },
-     "Ways to create new rings:",
-     MENU {
-	  (TO (symbol **,Ring,Ring), " -- tensor product of rings"),
-	  (TO (symbol " ", Ring, OrderedMonoid), " -- monoid ring"),
-	  (TO "symmetricAlgebra", " -- symmetric algebra")
-	  },
-     "Here are some keys used in rings:",
-     MENU {
-	  TO "baseRings",
-	  TO "Engine",
-	  TO "modulus"
-	  }
+     an integer are also provided."
      }
 
 document { (symbol _, ZZ, Ring),
@@ -809,6 +753,9 @@ document { applyPairs,
      placed into ", TT "y", ", or it returns ", TT "null", ", which 
      signifies that no action be performed.",
      PARA,
+     "It is an error for the function ", TT "f", " to return two pairs with the 
+     same key.",
+     PARA,
      "In this example, we show how to produce the hash table corresponding
      to the inverse of a function.",
      EXAMPLE {
@@ -826,6 +773,8 @@ document { applyKeys,
      PARA,
      "Thus ", TT "f", " should be a function of one variable ", TT "k", " which 
      returns a new key ", TT "k'", " for the value ", TT "v", " in ", TT "y", ".",
+     PARA,
+     "It is an error for the function ", TT "f", " to return the same key twice.",
      EXAMPLE {
 	  "x = new HashTable from {1 => a, 2 => b, 3 => c}",
 	  "applyKeys(x, k -> k + 100)",
@@ -942,7 +891,6 @@ document { "Macaulay 2",
 	       every aspect of the system of interest to users.",
 	       MENU {
 		    TOH "Thing",
-		    TO "index by class",
 		    },
      	       },
 	  {
@@ -955,36 +903,35 @@ document { "Macaulay 2",
 	  }
      }
 
-
-types := new MutableHashTable
-itemize := (sym) -> (
-     thing := value sym;
-     type := class thing;
-     if not types#?type then types#type = new MutableHashTable;
-     types#type#sym = true;
-     )
-itemize \ values symbolTable()
-sortByName := v -> (i -> i#1) \ sort ((i -> (toString i, i)) \ v)
-nm := type -> "index for class " | toString type
-document { "index by class", MENU apply(sortByName keys types, type -> TO nm type) }
-scan(sortByName keys types, type -> (
-	  if type === Symbol then (
-	       op := sym -> value sym === sym and toExternalString sym =!= toString sym;
-	       ops := v -> select(v,op);
-	       nonops := v -> select(v,i -> not op i);
-	       document { nm type,
-		    "Operators:",
-		    MENU ((i -> TOH i) \ toString \ sortByName    ops keys types#type),
-		    "Nonoperators:",
-		    MENU ((i -> TOH i) \ toString \ sortByName nonops keys types#type),
-		    }
-	       )
-	  else document { nm type,
-	       MENU ((i -> TOH i) \ toString \ sortByName keys types#type),
-	       }
-	  )
-     )
-types = null
+  --  types := new MutableHashTable
+  --  itemize := (sym) -> (
+  --       thing := value sym;
+  --       type := class thing;
+  --       if not types#?type then types#type = new MutableHashTable;
+  --       types#type#sym = true;
+  --       )
+  --  itemize \ values symbolTable()
+  --  sortByName := v -> (i -> i#1) \ sort ((i -> (toString i, i)) \ v)
+  --  nm := type -> "index for class " | toString type
+  --  document { "index of existing objects by class", MENU apply(sortByName keys types, type -> TO nm type) }
+  --  scan(sortByName keys types, type -> (
+  --  	  if type === Symbol then (
+  --  	       op := sym -> value sym === sym and toExternalString sym =!= toString sym;
+  --  	       ops := v -> select(v,op);
+  --  	       nonops := v -> select(v,i -> not op i);
+  --  	       document { nm type,
+  --  		    "Operators:",
+  --  		    MENU ((i -> TOH i) \ toString \ sortByName    ops keys types#type),
+  --  		    "Nonoperators:",
+  --  		    MENU ((i -> TOH i) \ toString \ sortByName nonops keys types#type),
+  --  		    }
+  --  	       )
+  --  	  else document { nm type,
+  --  	       MENU ((i -> TOH i) \ toString \ sortByName keys types#type),
+  --  	       }
+  --  	  )
+  --       )
+  --  types = null
 
 document { "miscellaneous topics",
      "Some of these topics will have to be merged with sections above.",

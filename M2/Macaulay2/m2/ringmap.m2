@@ -110,7 +110,7 @@ kernel RingMap := Ideal => options -> (f) -> if f.?kernel then f.kernel else f.k
      F := target f;
      n1 := numgens F;
      if class F === FractionField then (
-	  C := F.baseRings#-1;
+	  C := last F.baseRings;
 	  if not isHomogeneous f.matrix then error "not implemented yet";
 	  images := apply(generators R, x -> (
 		    w := f x;

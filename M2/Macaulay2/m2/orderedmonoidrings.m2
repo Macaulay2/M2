@@ -1,8 +1,25 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
+
+-----------------------------------------------------------------------------
+
+Monoid = new Type of Type
+
+options Monoid := x -> null
+
+ZZ _ Monoid := MonoidElement => (i,M) -> (
+     if i === 1 then M#1
+     else error "expected integer to be 1"
+     )
+
+baseName Symbol := identity
+
+OrderedMonoid = new Type of Monoid
+degreeLength OrderedMonoid := M -> M.degreeLength
+
+-----------------------------------------------------------------------------
 
 terms := symbol terms
 PolynomialRing = new Type of EngineRing
-options PolynomialRing := R -> options monoid R
 
 isPolynomialRing = method(TypicalValue => Boolean)
 isPolynomialRing Thing := x -> false
@@ -10,7 +27,7 @@ isPolynomialRing PolynomialRing := (R) -> true
 
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
-expression PolynomialRing := R -> if R.?name then hold R.name else (expression R.baseRings#-1) (expression monoid R)
+expression PolynomialRing := R -> if R.?name then hold R.name else (expression last R.baseRings) (expression monoid R)
 net PolynomialRing := R -> net expression R
 toString PolynomialRing := toExternalString PolynomialRing := R -> toString expression R
 
@@ -43,7 +60,7 @@ degreesRing PolynomialRing := PolynomialRing => R -> (
 
 generators PolynomialRing := R -> R.generators
 isHomogeneous PolynomialRing := R -> true
-coefficientRing PolynomialRing := Ring => R -> R.baseRings#-1
+coefficientRing PolynomialRing := Ring => R -> last R.baseRings
 
 standardForm = method()
 standardForm RingElement := (f) -> (
@@ -304,7 +321,7 @@ PolynomialRing _ List := (RM,v) -> (
 
 Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
 
-dim PolynomialRing := R -> dim R.baseRings#-1 + # generators R
+dim PolynomialRing := R -> dim last R.baseRings + # generators R
 
 char PolynomialRing := (R) -> char coefficientRing R
 

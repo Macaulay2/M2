@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 noapp := (f,x) -> error(
      "no method for applying item of class ", toString class f, 
@@ -44,16 +44,26 @@ AssociativeNoOptions := () -> (
 	  );
      methodFunction)
 
-WithOptions := opts -> (
+SingleArgWithOptions := () -> (
      if class opts =!= OptionTable then opts = new OptionTable from opts;
      methodFunction := opts ==> options -> args -> (
-	  -- Common code for every method with options
+	  -- Common code for every method with options, single argument
 	  f := lookup(methodFunction, class args);
 	  if f === null then noMethod args
 	  else (f options) args );
-     OptionsRegistry#methodFunction = opts;
+     methodFunction)
+
+AssociativeWithOptions := opts -> error "associative methods with options not implemented yet"
+
+MultipleArgsWithOptions := opts -> (
+     if class opts =!= OptionTable then opts = new OptionTable from opts;
+     methodFunction := opts ==> options -> args -> (
+	  -- Common code for every method with options, multiple arguments
+	  f := lookup(methodFunction, class args);
+	  if f === null then noMethod args
+	  else (f options) args);
      methodFunction(Sequence) := options -> args -> (
-	  -- Common code for every method with options
+	  -- Common code for every method with options, multiple arguments
 	  f := lookup prepend(methodFunction,apply(args,class));
 	  if f === null then noMethod args else (f options) args);
      methodFunction)
@@ -64,16 +74,20 @@ MultipleArgsNoOptions := () -> (
      methodFunction)     
 
 method = methodDefaults ==> options -> () -> (
-     methodFunction := if options.Options === null then (
-       	  if options.Associative then AssociativeNoOptions()
-       	  else if options.SingleArgumentDispatch then newmethod1 noMethod
-       	  else MultipleArgsNoOptions())
-     else WithOptions options.Options;
+     methodFunction := (
+	  if options.Options === null then (
+       	       if options.Associative then AssociativeNoOptions()
+       	       else if options.SingleArgumentDispatch then newmethod1 noMethod
+       	       else MultipleArgsNoOptions())
+	  else (
+       	       if options.Associative then AssociativeWithOptions options.Options
+       	       else if options.SingleArgumentDispatch then SingleArgWithOptions options.Options
+       	       else MultipleArgsWithOptions options.Options
+	       )
+	  );
      if options.TypicalValue =!= Thing then typicalValues#methodFunction = options.TypicalValue;
      methodFunctionOptions#methodFunction = options;
      methodFunction)
-
-OptionsRegistry#method = methodDefaults
 
 setup := (args, symbols) -> (
      scan(symbols, n -> (
@@ -94,7 +108,7 @@ setup((), {
 	  substitute, rank, complete, ambient, top, transpose, length, baseName,
 	  degree, degreeLength, coefficients, size, sum, product,
 	  exponents, height, depth, width, regularity, nullhomotopy,
-	  hilbertFunction, content, monoid, leadTerm, leadCoefficient, leadMonomial, 
+	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, 
 	  leadComponent, degreesRing, newDegreesRing, degrees, annihilator, assign, numgens,
 	  autoload, ggPush, char, minprimes, relations, cone, pdim, random,
 	  det, presentation, symbol use, degreesMonoid, newDegreesMonoid, submatrix,
@@ -193,12 +207,12 @@ erase symbol newmethod1
 erase symbol newmethod123c
 
 emptyOptionTable := new OptionTable
-options Thing := X -> emptyOptionTable
+options     Ring := x -> null
+options Sequence := s -> if lookup s =!= null then options lookup s
+  optionFunction := {} ==> () -> ()
 options Function := OptionTable => function -> (
-     if OptionsRegistry#?function then OptionsRegistry#function
-     else emptyOptionTable
-     )
-options Symbol := s -> select(apply(pairs OptionsRegistry, (f,o) -> if o#?s then f), i -> i =!= null)
+     if sameFunctionBody(function, optionFunction) then first frame function
+     else null)
 
 computeAndCache := (M,options,Name,goodEnough,computeIt) -> (
      if not M#?Name or not goodEnough(M#Name#0,options) 
@@ -227,4 +241,7 @@ toString Option := z -> concatenate splice (
      if precedence z > precedence z#1 then ("(",toString z#1,")") else toString z#1
      )
 
-
+ultimate = method()
+ultimate(Function,Thing) := (f,x) -> (
+     while try (ox := x; x = f x; ox =!= x) else false do ();
+     x)

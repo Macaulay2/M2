@@ -958,9 +958,8 @@ document { Options,
      "The methods installed for this method function should be written in
      the form ", TT "opts -> args -> (...)", ".  The argument ", TT "args", "
      will be assigned a hash table of type ", TO "OptionTable", " containing 
-     the optional argument names and their values.  The default table will
-     be stored in the ", TO "OptionsRegistry", " and can be recovered with the 
-     function ", TO "options", ".",
+     the optional argument names and their values.  The default table can
+     be recovered with the function ", TO "options", ".",
      EXAMPLE {
 	  "f = method(Options => {Slope => 1, Intercept => 1})",
       	  "f RR := o -> x -> o.Slope * x + o.Intercept",

@@ -346,7 +346,8 @@ document { Thing,
      "Everything in Macaulay 2 is a ", ITALIC "thing", ".  This 
      includes numbers, strings, and lists.  More complicated things such as 
      polynomials, groups, rings, and chain complexes are implemented
-     as ", ITALIC "hash tables", ".  The class of all things is ", TO "Thing", "."
+     as ", ITALIC "hash tables", ".  See ", TO "Type", " for information 
+     about what types of things there are."
      }
 
 document { Nothing,
@@ -386,6 +387,10 @@ document { (NewFromMethod, HashTable, List),
 
 document { OptionTable, HEADLINE "the class of hash tables for optional arguments", SEEALSO "==>" }
 
+document { (symbol "==>", List, Function),
+     "See ", TO (symbol "==>", OptionTable, Function), " for details."
+     }
+
 document { (symbol "==>", OptionTable, Function),
      TT "g = defs ==> fun", " -- produces a new function ", TT "g", " from 
      the function ", TT "fun", " that processes optional arguments.",
@@ -405,7 +410,7 @@ document { (symbol "==>", OptionTable, Function),
      "Remark: ", TT "defs", " can also be simply a list of options.",
      PARA,
      "In the following example we use a simple definition for ", TT "fun", "
-     so we can see everything that ", TT "fun", " receives from ", TT "processArgs", ".",
+     so we can see everything that ", TT "fun", " receives.",
      EXAMPLE {
 	  "g = {a=>1, b=>2} ==> opts -> args -> {args, opts}",
 	  "g x",
@@ -519,19 +524,6 @@ document { "binary method",
      ", TT "x", " provided to the routine by the system."
      }
 
-document { "OptionsRegistry",
-     HEADLINE "default values of optional arguments",
-     "A hash table used for recording the tables of option names and
-     their default values for those functions which accept optional arguments.",
-     PARA,
-     "If ", TT "f", " is a function which accepts optional arguments, then
-     the ", TO "OptionTable", " for ", TT "f", " is stored as ", 
-     TT "OptionsRegistry#f", ".",
-     PARA,
-     "The function ", TO "method", ", when given a table of options, will
-     record them here."
-     }
-
 document { SingleArgumentDispatch,
      TT "SingleArgumentDispatch=>true", " -- an option to ", TO "method", "
      which specifies whether the method function should treat several
@@ -615,7 +607,7 @@ document { method,
      "the effect of which happens to be the same as that of",
      PRE "     X#f := (x) -> ...",
      PARA,
-     SEEALSO {"Options", "methods", "OptionsRegistry"}
+     SEEALSO {"Options", "methods" }
      }
 
 document { method => Associative,
@@ -926,23 +918,26 @@ document { drop,
      SEEALSO{ "take"}
      }
 
-document { options,
+document { (options, Function), HEADLINE "get optional arguments and defaults",
      TT "options f", " -- returns the table of option names and default values
-     provided for the function ", TT "f", ", if one has been registered.",
-     BR,NOINDENT,
-     TT "options X", " -- returns the options used when the monoid or polynomial
-     ring X was created.",
-     BR,NOINDENT,
-     TT "options S", " -- returns a list of those functions which have an
-     optional argument named ", TT "S", ".  Here ", TT "S", " is a symbol.",
-     PARA,
-     SEEALSO {"method", "OptionsRegistry"}
+     provided for the function ", TT "f", "."
      }
-document { (symbol <<, Nothing, Thing),
+document { (options, Ring), HEADLINE "get values used for optional arguments",
+     TT "options R", " -- returns the options used when the polynomial
+     ring ", TT "R", " was created."
+     }
+document { (options, Monoid), HEADLINE "get values used for optional arguments",
+     TT "options M", " -- returns the options used when the monoid ", TT "M", " 
+     was created."
+     }
+document { options, HEADLINE "get options" }
+
+document { (symbol <<, Nothing, Thing), HEADLINE "dummy file output",
      "null << x", " -- does nothing and returns ", TT "null", ".",
      PARA,
      "The intention here is that you can use ", TT "null", " as a dummy
-     output file."
+     output file, but a bit of time is wasted converting ", TT "x", " to
+     a net."
      }
 
 document { mathML,
@@ -955,41 +950,109 @@ document { mathML,
      SEEALSO "hypertext"
      }
 
-document { "#",
-     TT "#x", " -- provides the length of a list, sequence, array, file, or 
-     string, or the number of elements in a hash table or set.",
-     BR,NOINDENT,
-     TT "x#i", " -- provides the value associated to the key ", TT "i", " in the hash table
-     ", TT "x", "; or else the i-th element of ", TT "x", " if ", TT "x", " is a list, array, or 
-     sequence; or the i-th character of ", TT "x", " if ", TT "x", " is a string; or the value stored 
-     in the database ", TT "x", " under the key ", TT "i", ", which must be a string.",
-     PARA,
-     "If ", TT "x", " is a string, then ", TT "i", " must be an integer, and ", TT "x#i", " is the i-th
-     character in the string, presented as a string of length one, or if 
-     ", TT "i", " is out of range, a string of length zero is returned.  If ", TT "i", " is
-     negative, then the i-th character from the end is provided.",
-     PARA,
-     "Assignment to ", TT "x#i", " can change the value if x is mutable.",
-     PARA,
+
+document { "#", HEADLINE "length, or access to elements",
      "The precedence of ", TT "#", " when used as a binary operator is high,
      as high as ", TT ".", ", but the precedence when used as a unary operator
      lower, as low as adjacency or function application.",
+     SEEALSO{ "#?" }
+     }
+document { (symbol #, BasicList), HEADLINE "length",
+     TT "#x", " -- provides the length of a list.",
+     }
+document { (symbol #, Sequence), HEADLINE "length",
+     TT "#x", " -- provides the length of a sequence.",
+     }
+document { (symbol #, HashTable), HEADLINE "length",
+     TT "#x", " -- provides the number of key-value pairs recorded
+     in a hash table.",
+     }
+document { (symbol #, Set), HEADLINE "cardinality",
+     TT "#x", " -- provides the number of elements in the set ", TT "x", "."
+     }
+document { (symbol #, String), HEADLINE "length",
+     TT "#x", " -- provides the length of a string.",
+     }
+document { (symbol #, File), HEADLINE "length",
+     TT "#x", " -- provides the length of a file.",
+     }
+document { (symbol #, HashTable, Thing), HEADLINE "get value from hash table",
+     TT "x#i", " -- provides the value associated to the key ", TT "i", " in the hash table
+     ", TT "x", ".",
      PARA,
+     "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is mutable.",
      EXAMPLE {
 	  "x = new MutableHashTable",
 	  "x#i = p",
 	  "x#i",
 	  },
-     SEEALSO{ "#?", "#" }
+     SEEALSO {(symbol #?, HashTable, Thing), "hashing"}
+     }
+document { (symbol #, Database, String), HEADLINE "get value from database",
+     TT "x#i", " -- provides the value associated to the key ", TT "i", " in the database
+     ", TT "x", ".",
+     SEEALSO {(symbol #?, Database, String)}
+     }
+document { (symbol #, String, ZZ), HEADLINE "get character from string",
+     TT "x#i", " -- provides the ", TT "i", "-th character of the string ", TT "x", ",
+     as a string of length 1, if there is one.",
+     PARA,
+     "If ", TT "i", " is out of range, a string of length 0 is returned.
+     If  ", TT "i", " is negative, then the ", TT "i", "-th character
+     from the end is provided.",
+     SEEALSO {(symbol #?, String, ZZ)}
+     }
+document { (symbol #, BasicList, ZZ), HEADLINE "get element from list",
+     TT "x#i", " -- provides the ", TT "i", "-th element of the list ", TT "x", ".",
+     PARA,
+     "If ", TT "i", " is out of range, an error is signalled. If  ", TT "i", " 
+     is negative, then the ", TT "i", "-th entry counting from the end is provided.",
+     PARA,
+     "Assignment to ", TT "x#i", " can change the value if ", TT "x", " is mutable.",
+     SEEALSO {(symbol #?, BasicList, ZZ)}
+     }
+document { (symbol #, Sequence, ZZ), HEADLINE "get element from sequence",
+     TT "x#i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
+     PARA,
+     "If ", TT "i", " is out of range, an error is signalled. If  ", TT "i", " 
+     is negative, then the ", TT "i", "-th entry counting from the end is provided.",
+     SEEALSO {(symbol #, Sequence, ZZ)}
+     }
+document { (symbol #?, HashTable, Thing), HEADLINE "check for value in hash table",
+     TT "x#?i", " -- tells whether there is a value associated to the
+     key ", TT "i", " stored in the hash table ", TT "x", ".",
+     SEEALSO {(symbol #, HashTable, Thing), "hashing"}
+     }
+document { (symbol #?, Database, String), HEADLINE "check for value in database",
+     TT "x#?i", " -- tells whether there is a value associated to the string
+     ", TT "i", " in the database ", TT "x", ".",
+     SEEALSO {(symbol #, Database, String)}
+     }
+document { (symbol #?, String, ZZ), HEADLINE "check for character in string",
+     TT "x#?i", " -- tells whether there is an ", TT "i", "-th character in
+     the string ", TT "x", ".",
+     EXAMPLE {
+	  ///"asdf" #? 2///,
+	  ///"asdf" #? 22///
+	  },
+     SEEALSO {(symbol #, String, ZZ)}
+     }
+document { (symbol #?, BasicList, ZZ), HEADLINE "check for element in list",
+     TT "x#?i", " --  tells whether there is an ", TT "i", "-th element in
+     the list ", TT "x", ".",
+     EXAMPLE {
+	  ///{a,b,c} #? 2///,
+	  ///{a,b,c} #? 22///
+	  },
+     SEEALSO {(symbol #, BasicList, ZZ)}
+     }
+document { (symbol #?, Sequence, ZZ), HEADLINE "check for element in sequence",
+     TT "x#?i", " --tells whether ther is an ", TT "i", "-th element in
+     the sequence ", TT "x", ".",
+     SEEALSO {(symbol #, Sequence, ZZ)}
      }
 
-document { "#?",
-     TT "x#?i", " -- tells whether there is a value associated to the key ", TT "i", " in 
-     the hash table ", TT "x", "; or else whether the i-th element of ", TT "x", " exists if ", TT "x", " is a list, 
-     array, or sequence; or else whether the i-th character of ", TT "x", " exists if ", TT "x", "
-     is a string; or the value stored in the database ", TT "x", " under the key ", TT "i", ", which
-     must be a string.",
-     PARA,
+document { "#?", HEADLINE "check for presence of elements",
      SEEALSO{ "#" }
      }
 
@@ -998,14 +1061,19 @@ document { "_",
      that are customarily written with subscripts."
      }
 
-document { (symbol _, List, ZZ),
-     HEADLINE "get an entry from a list",
-     TT "w_i", " -- selects an entry from a list."
+document { (symbol _, List, ZZ), HEADLINE "get element from list",
+     TT "x_i", " -- provides the ", TT "i", "-th element of the list ", TT "x", ".",
+     PARA,
+     "This is merely a convenient synonym for ", TT "x#i", ".",
+     PARA,
+     SEEALSO {(symbol #, BasicList, ZZ)}
      }
 
-document { (symbol _, Sequence, ZZ),
-     HEADLINE "get an entry from a sequence",
-     TT "w_i", " -- selects an entry from a sequence."
+document { (symbol _, Sequence, ZZ), HEADLINE "get element from list",
+     TT "x_i", " -- provides the ", TT "i", "-th element of the sequence ", TT "x", ".",
+     PARA,
+     "This is merely a convenient synonym for ", TT "x#i", ".",
+     SEEALSO {(symbol #, BasicList, ZZ)}
      }
 
 document { ".",

@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 table = (rows,cols,f) -> apply(rows,i->apply(cols,j->f(i,j)))
 

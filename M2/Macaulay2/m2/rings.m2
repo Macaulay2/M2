@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 Ring _ String := RingElement => (x,s) -> x#s		  -- gets variable from its name
 

@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 olderror := error
 erase symbol error
@@ -7,25 +7,26 @@ error = args -> olderror apply(
      )
 protect symbol error
 
-on = f -> (
+on = { CallLimit => 100000 } ==> opts -> f -> (
      n := try toString f else string f;
      depth := 0;
      totaltime := 0.;
-     i := 0;
+     callCount := 0;
+     limit := opts.CallLimit;
      if class f =!= Function then error("expected a function");
      x -> (
-	  j := i;
-	  i = i+1;
-     	  << n << " (" << j << ")";
+	  saveCallCount := callCount = callCount+1;
+     	  << n << " (" << saveCallCount << ")";
 	  if depth > 0 then << " [" << depth << "]";
 	  << "  called with " << class x << " : " << x << endl;
+	  if callCount > limit then error "call limit exceeded";
 	  depth = depth + 1;
      	  r := timing f x;
 	  timeused := r#0;
 	  value := r#1;
 	  depth = depth - 1;
 	  if depth === 0 then totaltime = totaltime + timeused;
-     	  << n << " (" << j << ")";
+     	  << n << " (" << saveCallCount << ")";
 	  if depth > 0 then << " [" << depth << "]";
 	  << " " << timeused << " seconds";
 	  if depth === 0 then << ", used " << totaltime << " seconds";

@@ -479,10 +479,10 @@ bindParenParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
 
 export opsWithBinaryMethod := array(SymbolClosure)(
      LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS,
-     AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, TildeS, DotDotS, MinusS, PlusS, PlusPlusS,
+     AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS);
-export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, TildeS, LessLessS );
+export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, LessLessS );
 export opsWithPostfixMethod := array(SymbolClosure)( TildeS );
 
 opHasBinaryMethod(o:Symbol):bool := (

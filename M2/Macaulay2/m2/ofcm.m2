@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 MonoidElement = new Type of BasicList
 
@@ -10,7 +10,7 @@ vars GeneralOrderedMonoid := M -> M.vars
 options GeneralOrderedMonoid := M -> M.Options
 
 parts := (M) -> (
-     O := options monoid;
+     O := monoidDefaults;
      o := M.Options;
      join(
 	  if M.?generatorExpressions then M.generatorExpressions else {},
@@ -84,7 +84,7 @@ expression Eliminate := v -> (
      else new FunctionApplication from {Eliminate, toList v})
 ProductOrder = new SelfInitializingType of BasicList
 
-monoidDefaults := if OLDENGINE then (
+monoidDefaults = if OLDENGINE then (
      new OptionTable from {
 	  VariableBaseName => null,
 	  Variables => null,
@@ -112,6 +112,9 @@ monoidDefaults := if OLDENGINE then (
 	  WeylAlgebra => {}
 	  }
      )
+
+monoid = method(SingleArgumentDispatch => true)
+options PolynomialRing := options @@ monoid
 
 generators GeneralOrderedMonoid := M -> M.generators
 vars GeneralOrderedMonoid := M -> M.generators
@@ -356,12 +359,11 @@ makeMonoid := (options) -> (
 
 monoid Array := Monoid => (
      monoidDefaults ==> options -> args -> (
-	  if options.Variables === null
-	  then options = merge(options, new OptionTable from {Variables => splice sequence args}, last);
-	  makeMonoid options)
-     ) @@ toSequence 
+     	  if options.Variables === null
+     	  then options = merge(options, new OptionTable from {Variables => splice sequence args}, last);
+     	  makeMonoid options)
+     ) @@ toSequence
 
-OptionsRegistry#monoid = monoidDefaults
 monoid Ring := Monoid => R -> R.monoid
 
 GeneralOrderedGroup = new Type of GeneralOrderedMonoid
@@ -384,7 +386,7 @@ vars GeneralOrderedGroup := G -> G.generators
 
 group Array := X -> monoid append(X,Inverses=>true)
 
-tensor = method( Options => options monoid )
+tensor = method( Options => monoidDefaults)
 
 Monoid ** Monoid := Monoid => (M,N) -> tensor(M,N)
 

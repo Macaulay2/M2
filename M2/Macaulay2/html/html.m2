@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 databaseFileName = "../cache/Macaulay2-doc"
 errorDepth 0
@@ -101,7 +101,7 @@ docFile = openDatabase databaseFileName
 time scanKeys(docFile,
      key -> (
 	  doc := docFile#key;
-	  if not match(doc,"documentation(*)") then (
+	  if not match(doc,"goto *") then (
      	       fkey := formatDocumentTag value key;
 	       nkey := toExternalString fkey;
 	       if not allDoc#?fkey then(
@@ -125,7 +125,7 @@ time scan(pairs linkFilenameTable, (key,filename) -> (
      	  masterIndex#key = filename;
      	  filename << html HTML { 
 	       HEAD TITLE key,
-	       BODY { buttonBar key, HR, H2 key, documentation key, HR, buttonBar key }
+	       BODY { buttonBar key, HR, documentation key, HR, buttonBar key }
 	       } << endl << close)) 
 
 -- create the master index

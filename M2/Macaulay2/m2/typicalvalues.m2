@@ -3,9 +3,6 @@
 -- These installations are not really methods: we install them just for documentation
 -- None of this code will ever get called, because the functions are built-in.
 
-installMethod(symbol ->, Thing, Thing, Function =>
-     (x,y) -> x -> y			    -- this code wouldn't really work
-     )
 installMethod(symbol !, ZZ, ZZ => 
      n -> n!		    -- this code is never used
      )
@@ -15,8 +12,44 @@ installMethod(symbol !=, Thing, Thing, Boolean =>
 installMethod(symbol #?, HashTable, Thing, Boolean =>
      (x,y) -> x #? y		    -- this code is never used
      )
-installMethod(symbol .?, HashTable, Symbol, Boolean =>
-     (x,y) -> x .? y		   -- this code wouldn't really work
+installMethod(symbol #?, Database, String, Boolean =>
+     (x,y) -> x #? y		    -- this code is never used
+     )
+installMethod(symbol #?, BasicList, ZZ, Boolean =>
+     (x,n) -> x #? n		    -- this code is never used
+     )
+installMethod(symbol #?, Sequence, ZZ, Boolean =>
+     (x,n) -> x #? n		    -- this code is never used
+     )
+installMethod(symbol #?, String, ZZ, Boolean =>
+     (x,n) -> x #? n		    -- this code is never used
+     )
+installMethod(symbol #, HashTable, Thing, Thing =>
+     (x,y) -> x # y		    -- this code is never used
+     )
+installMethod(symbol #, Database, String, String =>
+     (x,y) -> x # y		    -- this code is never used
+     )
+installMethod(symbol #, String, ZZ, Thing =>
+     (x,i) -> x # i		    -- this code is never used
+     )
+installMethod(symbol #, BasicList, ZZ, Thing =>
+     (x,i) -> x # i		    -- this code is never used
+     )
+installMethod(symbol #, Sequence, ZZ, Thing =>
+     (x,i) -> x # i		    -- this code is never used
+     )
+installMethod(symbol #, HashTable, ZZ =>
+     x -> #x	   		    -- this code is never used
+     )
+installMethod(symbol #, BasicList, ZZ =>
+     x -> #x	   		    -- this code is never used
+     )
+installMethod(symbol #, Sequence, ZZ =>
+     x -> #x	   		    -- this code is never used
+     )
+installMethod(symbol #, String, ZZ =>
+     x -> #x	   		    -- this code is never used
      )
 installMethod(symbol <, Thing, Thing, Boolean =>
      (x,y) -> x < y		    -- this code is never used
@@ -36,37 +69,38 @@ installMethod(symbol =>, Thing, Thing, Option =>
 installMethod(symbol >, Thing, Thing, Boolean =>
      (x,y) -> x > y		    -- this code is never used
      )
+
 f := 
 (x,y) -> x >= y		    -- this code is never used
 installMethod(symbol >=, Thing, Thing, Boolean => f)
 
 acos RR := acos ZZ := RR => 
-     x -> acos x
-asin RR := asin ZZ := RR => 
-     x -> asin x
+     x -> acos x		    -- this code is never used
+asin RR := asin ZZ := RR =>
+     x -> asin x		    -- this code is never used
 atan RR := atan ZZ := RR => 
-     x -> atan x
+     x -> atan x		    -- this code is never used
 cos RR := cos ZZ := RR => 
-     x -> cos x
+     x -> cos x		    -- this code is never used
 sin RR := sin ZZ := RR => 
-     x -> sin x
+     x -> sin x		    -- this code is never used
 tan RR := tan ZZ := RR => 
-     x -> tan x
+     x -> tan x		    -- this code is never used
 cosh RR := cosh ZZ := RR => 
-     x -> cosh x
+     x -> cosh x		    -- this code is never used
 sinh RR := sinh ZZ := RR => 
-     x -> sinh x
+     x -> sinh x		    -- this code is never used
 tanh RR := tanh ZZ := RR => 
-     x -> tanh x
+     x -> tanh x		    -- this code is never used
 exp RR := exp ZZ := RR => 
-     x -> exp x
+     x -> exp x		    -- this code is never used
 log RR := log ZZ := RR => 
-     x -> log x
+     x -> log x		    -- this code is never used
 sqrt RR := sqrt ZZ := RR => 
-     x -> sqrt x
+     x -> sqrt x		    -- this code is never used
 
 ancestor(Type,Type) := Boolean =>
-(x,y) -> ancestor(x,y)
+(x,y) -> ancestor(x,y)		    -- this code is never used
 
 any(BasicList,Function) := 
 any(List,Function) := 
@@ -164,13 +198,13 @@ floor RR := ZZ =>
      x -> floor x		    -- this code is never used
 
 get File := get String := String =>
-     file -> get file
+     file -> get file		    -- this code is never used
 
 getc File := String =>
-     file -> getc file
+     file -> getc file		    -- this code is never used
 
 getenv String := String =>
-     name -> getenv name
+     name -> getenv name		    -- this code is never used
 
 hashTable List := HashTable =>
      w -> hashTable w		    -- this code is never used
@@ -182,19 +216,19 @@ join(List,List) := List =>
      (v,w) -> join(v,w)		    -- this code is never used
 
 keys HashTable := List =>
-     x -> keys x
+     x -> keys x		    -- this code is never used
 pairs HashTable := List =>
-     x -> pairs x
+     x -> pairs x		    -- this code is never used
 values HashTable := List =>
-     x -> values x
+     x -> values x		    -- this code is never used
 
 merge(HashTable,HashTable,Function) := HashTable =>
-     (x,y,f) -> merge(x,y,f)
+     (x,y,f) -> merge(x,y,f)		    -- this code is never used
 mergePairs(List,List,Function) := List =>
-     (x,y,f) -> mergePairs(x,y,f)
+     (x,y,f) -> mergePairs(x,y,f)		    -- this code is never used
 
 mingle List := mingle Sequence := List =>
-     x -> mingle x
+     x -> mingle x		    -- this code is never used
 
 openDatabase String := Database =>
      filename -> openDatabase filename		    -- this code is never used
@@ -276,3 +310,27 @@ ascii String := List =>
      s -> ascii s		    -- this code is never used
 ascii List := String =>
      v -> ascii v		    -- this code is never used
+
+remove(HashTable,Thing) := Nothing =>
+     (x,k) -> remove(x,k)		    -- this code is never used
+
+echoOff File := Nothing =>
+     f -> echoOff f		    -- this code is never used
+echoOn File := Nothing =>
+     f -> echoOn f		    -- this code is never used
+close File := File =>
+     f -> close f		    -- this code is never used
+closeIn File := File =>
+     f -> closeIn f		    -- this code is never used
+closeOut File := File =>
+     f -> closeOut f		    -- this code is never used
+
+kill File := Nothing =>
+     f -> kill f     	  	    -- this code is never used
+
+read File := String =>
+     f -> read f		    -- this code is never used
+read Sequence := String =>
+     f -> read f		    -- this code is never used
+read String := String =>
+     f -> read f		    -- this code is never used

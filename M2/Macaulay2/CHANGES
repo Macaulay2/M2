@@ -2,6 +2,15 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+new function 'sameFunctionBody', tells whether two functions are perhaps different
+closures of the same function body.
+
+'OptionsRegistry' removed, and 'options' now returns 'null' instead of an empty
+OptionTable if function has no options.
+
+'options' applied to a symbol now does nothing.  Use 'help' to see what functions 
+a symbol is an option for.
+
 'browse' has been changed so it also displays the values local variables had
 when a function was created.  This can be a useful debugging tool.  Unfortunately,
 the names of the local variables are not available, but the values appear in

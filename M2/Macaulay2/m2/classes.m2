@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 Option.name = "Option"
 Net.name = "Net"
@@ -77,5 +77,9 @@ exit = exit1
 erase symbol [
 
 between = (m,v) -> mingle(v,#v-1:m)
+
+-- miscellaneous stuff:
+
+Function @@ Function := Function => (f,g) -> x -> f g x
 
 -----------------------------------------------------------------------------

@@ -5,12 +5,8 @@
 ----------------------------------
 
 nothing := symbol nothing
-
 mergeOptions := (x,y) -> merge(x, y, (a,b) -> if b === nothing then a else b)
-
-modifyRing = method(
-     Options => applyValues(options monoid, x -> nothing)
-     )
+modifyRing = method( Options => applyValues(monoidDefaults, x -> nothing) )
 
 modifyRing Ring := Ring => options -> (R) -> (
      -- First check the type of ring of R
@@ -67,9 +63,9 @@ tensor(QuotientRing, QuotientRing) := optns -> (R,S) -> (
 -- Graph of a ring map --
 -------------------------
 
-graphIdeal = method( Options => options monoid )
+graphIdeal = method( Options => monoidDefaults )
 
-graphRing = method( Options => options monoid )
+graphRing = method( Options => monoidDefaults )
 
 graphIdeal RingMap := Ideal => options -> (f) -> (
      -- return the ideal in the tensor product of the graph of f.
@@ -110,19 +106,19 @@ graphRing RingMap := QuotientRing => options -> (f) -> if f.?graphRing then f.gr
 -- Symmetric Algebra --
 -----------------------
 
-symmetricAlgebraIdeal := method( Options => options monoid )
+symmetricAlgebraIdeal := method( Options => monoidDefaults )
 
-symmetricAlgebra = method( Options => options monoid )
+symmetricAlgebra = method( Options => monoidDefaults )
 
 
 symmetricAlgebraIdeal Module := Ideal => opts -> (M) -> (
      R := ring M;
      K := coefficientRing ultimate(ambient, R);
      m := presentation M;
-     N := if opts.Variables === (options monoid).Variables
+     N := if opts.Variables === monoidDefaults.Variables
           then monoid[Variables => numgens M]
           else monoid[Variables => opts.Variables];
-     SM := tensor(K N, R, opts, Variables => (options monoid).Variables);
+     SM := tensor(K N, R, opts, Variables => monoidDefaults.Variables);
      xvars := submatrix(vars SM, {numgens target m .. numgens SM - 1});
      yvars := submatrix(vars SM, {0 .. numgens target m - 1});
      m = substitute(m,xvars);
@@ -131,3 +127,5 @@ symmetricAlgebraIdeal Module := Ideal => opts -> (M) -> (
 symmetricAlgebra Module := QuotientRing => options -> (M) -> (
      I := symmetricAlgebraIdeal(M,options);
      (ring I)/(image I))
+
+erase symbol monoidDefaults

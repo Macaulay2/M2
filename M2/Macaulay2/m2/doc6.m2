@@ -302,21 +302,9 @@ document { isPolynomialRing,
      TT "isPolynomialRing R", " -- tells whether R is a polynomial ring."
      }
 
-document { PolynomialRing,
-     TT "PolynomialRing", " -- denotes the class of all ordered monoid rings.",
-     PARA,
-     "If R is a ring and M is an ordered monoid, then R M denotes
-     the ordered monoid ring constructed from them.",
-     PARA,
-     "If r is an element of R and m is an element of M
-     then r m denotes the corresponding element of R M,
-     provided R M has already been constructed.",
-     PARA,
-     "Elements of these rings are displayed with the monoid
-     elements appearing in decreasing order from left to right.",
-     PARA,
-     "Elements of polynomial rings are also ", TO "RingElement", "s.",
-     SEEALSO {"OrderedMonoid"}
+document { PolynomialRing, HEADLINE "the class of all ordered monoid rings",
+     "Every element of a polynomial ring is also a ", TO "RingElement", ".",
+     SEEALSO "polynomial rings"
      }
 
 document { isUnit,
@@ -699,7 +687,7 @@ document { Variables,
      "This option is useful for those situations when one doesn't care about the
      names of the variables in a ring or monoid, or when one is creating a 
      tensor product ring, symmetric algebra, or other ring, and one wants control
-     over the names of the ring variables. See also ", TO "tensor", "."
+     over the names of the ring variables."
      }
 
 document { VariableOrder,
@@ -709,14 +697,26 @@ document { VariableOrder,
      SEEALSO "monoid"
      }
 
+document { (monoid, Array), HEADLINE "make a polynomial ring or monoid ring",
+     TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
+     "Optional arguments placed inside the array are treated just
+     as optional arguments to ", TO (monoid,Sequence), "."
+     }
+
+document { (monoid, Sequence), HEADLINE "make a polynomial ring or monoid ring", 
+     TT "monoid (a,b,c,...)", " -- makes a free ordered commutative monoid on the variables listed."
+     }
+
+document { (monoid, Ring), HEADLINE "get the monoid from a monoid ring",
+     TT "monoid R", " -- yields the underlying monoid of polynomial ring
+     or monoid ring.",
+     EXAMPLE {
+	  "R = QQ[x,y]",
+	  "monoid R"
+	  }
+     }
+
 document { monoid,
-     TT "monoid R      ", " -- yields the underlying monoid of polynomial ring, 
-                        group ring, or monoid ring.",
-     PARA,
-     NOINDENT,
-     TT "monoid [a,b,c]", " -- makes a free ordered commutative monoid on the variables listed.",
-     PARA,
-     NOINDENT,
      TT "monoid [a,b,c,Degrees=>{2,3,4}]", " -- makes a free ordered commutative monoid on the
 	     variables listed, with degrees 2, 3, and 4, respectively.",
      PARA,
@@ -778,7 +778,7 @@ document { (symbol **, Monoid, Monoid),
      "For complete documentation, see ", TO "tensor", "."
      }
 
-document { tensor,
+document { tensor, HEADLINE "tensor product",
   TT "tensor(M,N)", " -- tensor product of rings or monoids.",
   PARA,
   "This method allows all of the options available for monoids, see
@@ -843,28 +843,26 @@ document { vector,
      convertible to elements of the same ring."
      }
 
-document { Module,
-     TT "Module", " -- the class of all modules which are handled
-     by the ", TO "engine", ".",
+document { Module, "the class of all modules",
+     "These modules are handled by the ", TO "engine", ".",
      PARA,
-     "The most general module M is represented as a submodule of a 
-     quotient module of a free module F.  The matrix of relations used to
+     "The most general module ", TT "M", " is represented as a submodule of a 
+     quotient module of a free module ", TT "F", ".  The matrix of relations used to
      produce the quotient module is stored as ", TT "M.relations", " and 
      the matrix of generators is stored as ", TT "M.generators", ".",
      PARA,
-     "Elements of modules are also instances of the class ", TO "Vector", "."
+     "Elements of modules implemented as instances of the class ", TO "Vector", "."
      }
 
-document { isModule,
-     TT "isModule M", " -- tells whether its argument is a module."
-     }
+document { isModule, HEADLINE "whether something is a module." }
 
-document { isFreeModule,
-     TT "isFreeModule M", " -- determine whether M is evidently a free module.  No
-     computation is done.",
+document { isFreeModule, "whether something a free module",
+     TT "isFreeModule M", " -- determine whether ", TT "M", " is evidently a 
+     free module.",
      PARA,
-     "To determine whether M is isomorphic to a free module, one may prune
-     M first.",
+     "No computation is done, so the module may be free but we don't
+     detect it.  To try to determine whether ", TT "M", " is isomorphic to a free 
+     module, one may prune ", TT "M", " first.",
      EXAMPLE {
 	  "R = ZZ/101[x,y]",
       	  "M = kernel vars R",
@@ -1051,16 +1049,14 @@ document { super,
      }
 
 document { End,
-     TT "End M", " -- constructs the module of endomorphisms of M."
+     TT "End M", " -- constructs the module of endomorphisms of ", TT "M", "."
      }
-document { ModuleMap,
-     TT "ModuleMap", " -- the class of all maps between modules.",
-     PARA,
+document { ModuleMap, HEADLINE "the class of all maps between modules",
      "This class is experimental, designed to support graded modules.",
      SEEALSO {"Matrix"}
      }
-document { Matrix,
-     TT "Matrix", " -- the class of all matrices for which Groebner basis operations
+document { Matrix, HEADLINE "the class of all matrices",
+     "These are the matrices for which Groebner basis operations
      are available from the ", TO "engine", ".",
      PARA,
      "A matrix is a map from a graded module to a graded module, see ",
@@ -1122,12 +1118,12 @@ document { (symbol _, Matrix, ZZ),
      SEEALSO "_"
      }
 
-document { isWellDefined,
-     TT "isWellDefined m", " -- tells whether a map m of modules is 
+document { isWellDefined, HEADLINE "whether a map is well defined",
+     TT "isWellDefined m", " -- tells whether a map ", TT "m", " of modules is 
      well-defined."
      }
 
-document { isDirectSum,
+document { isDirectSum, HEADLINE "whether something is a direct sum",
      TT "isDirectSum M", " -- returns ", TT "true", " if ", TT "M", " was
      formed as a direct sum.",
      PARA,

@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 precedence = method(SingleArgumentDispatch=>true, TypicalValue=>ZZ)
 
@@ -1014,8 +1014,7 @@ texMath String := identity
 tex Expression := x -> concatenate("$",texMath x,"$")
 tex Thing := x -> tex expression x
 
-html ZZ := html RR := toString
-html Thing := x -> html expression x
+html Thing := toString
 
 mathML Boolean := i -> if i then "<ci type='constant'>&true;</ci>" else "<ci type='constant'>&false;</ci>"
 

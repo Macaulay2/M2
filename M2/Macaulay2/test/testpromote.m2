@@ -62,7 +62,7 @@ assert(mylift(((ab-1)*(ab^2-3))//(ab-1), B) == a^2-3)
 
 -- 3. ZZ/p[x]/f ---> GF(p,n)
 C = GF(5,3,Variable=>x)
-L = C.baseRings#-1
+L = last C.baseRings
 D = class lift(x,L)
 
 f = mypromote(D_0, C)

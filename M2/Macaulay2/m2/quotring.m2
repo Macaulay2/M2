@@ -6,22 +6,22 @@ QuotientRing = new Type of EngineRing
 isQuotientRing = method(TypicalValue => Boolean)
 isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
-coefficientRing QuotientRing := R -> coefficientRing R.baseRings#-1
-options QuotientRing := R -> options R.baseRings#-1
+coefficientRing QuotientRing := R -> coefficientRing last R.baseRings
+options QuotientRing := R -> options last R.baseRings
 
 isQuotientOf = method(TypicalValue => Boolean)
 isQuotientOf(Ring,Ring) := (S,R) -> S === R
 isQuotientOf(QuotientRing,Ring) := (S,R) -> (
-     S === R or isQuotientOf(S.baseRings#-1,R)
+     S === R or isQuotientOf(last S.baseRings,R)
      )
 
-degreeLength QuotientRing := S -> degreeLength S.baseRings#-1
+degreeLength QuotientRing := S -> degreeLength last S.baseRings
 vars QuotientRing := S -> (
      if S.?vars 
      then S.vars 
      else S.vars = matrix table (1, numgens S, (i,j) -> S_j)
      )
-numgens QuotientRing := S -> numgens S.baseRings#-1
+numgens QuotientRing := S -> numgens last S.baseRings
 
 pretty := relns -> (
      s := toSequence flatten entries relns;
@@ -47,7 +47,7 @@ net QuotientRing := S -> net expression S
 dim QuotientRing := S -> if S.?dim then S.dim else S.dim = dim S^1
 
 ambient PolynomialRing := R -> R
-ambient QuotientRing := Ring => R -> R.baseRings#-1
+ambient QuotientRing := Ring => R -> last R.baseRings
 
 isHomogeneous QuotientRing := R -> (
      if R.?isHomogeneous then R.isHomogeneous 
@@ -143,7 +143,7 @@ predecessors QuotientRing := R -> append(predecessors last R.baseRings, R)
 EngineRing / Ideal := (R,I) -> if I == 0 then R else if R === ZZZ then ZZZquotient(R,I) else (
      -- recall that ZZ is NOT an engine ring.
      A := R;
-     while class A === QuotientRing do A = A.baseRings#-1;
+     while class A === QuotientRing do A = last A.baseRings;
      gensI := I.generators ** R;
      gensgbI := generators gb gensI;
      sendgg(ggPush gensgbI, ggqring);
@@ -201,7 +201,7 @@ presentation(PolynomialRing,PolynomialRing) := (R,S) -> (
      v := map(R^1,R^0,0);
      while S =!= R do (
 	  v = v | lift(S.relations,R);
-	  S = S.baseRings#-1;
+	  S = last S.baseRings;
 	  );
      v)
 

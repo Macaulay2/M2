@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 accumulate = method()
 accumulate(Function,Thing,List) := List => (f,x,v) -> apply(v, y -> x = f(x,y))

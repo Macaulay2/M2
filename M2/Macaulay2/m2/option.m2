@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 html Option := x -> toString x
 text Option := x -> toString x
@@ -26,6 +26,7 @@ installMethod(symbol ==>, OptionTable, Function, Function => (defaults,f) ->
 	       );
 	  (f (new OptionTable from options)) unSingleton args)
      )
-installMethod(symbol ==>, List, Function, Function => (o,f) -> (new OptionTable from o) ==> f)
 
-OptionsRegistry = new MutableHashTable
+installMethod(symbol ==>, List, Function, Function => 
+     (o,f) -> (new OptionTable from o) ==> f
+     )
