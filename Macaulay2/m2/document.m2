@@ -853,12 +853,14 @@ documentation Type := X -> (
 	       smenu b, PARA{}},
 	  usage X,
 	  if #a > 0 then SEQ {
-	       "Functions and methods returning a ",
+	       "Functions and methods returning ",
 	       indefinite synonym X, " :", PARA{},
-	       smenu a, PARA{}
+	       SHIELD smenu a, PARA{}
 	       },
-	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, smenu c, PARA{}},
-	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, SHIELD smenu e, PARA{}},
+	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, 
+	       SHIELD smenu c, PARA{}},
+	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, 
+	       SHIELD smenu e, PARA{}},
 	  })
 
 documentation HashTable := x -> (
@@ -868,7 +870,8 @@ documentation HashTable := x -> (
 	  synopsis x,
 	  usage x,
      	  type x,
-	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, SHIELD smenu c, PARA{}},
+	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, 
+	       SHIELD smenu c, PARA{}},
 	  })
 
 ret := k -> (

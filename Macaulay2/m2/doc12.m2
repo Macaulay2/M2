@@ -825,7 +825,7 @@ document { print,
      }
 
 document { (symbol <<, File, Thing),
-     Headline => "pirnt something to a file",
+     Headline => "print something to a file",
      TT "f << x", " -- prints the expression x on the output file f.",
      PARA,
      "Returns f as its value.  Parsing associates leftward, so that 
