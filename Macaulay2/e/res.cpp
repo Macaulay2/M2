@@ -22,7 +22,7 @@ void res_comp::initialize(Matrix mat,
 {
   int i;
 
-  P = mat.Ring_of()->cast_to_poly_ring();
+  P = mat.Ring_of()->cast_to_PolynomialRing();
   assert(P != NULL);
   R = new res_poly((PolynomialRing *)P);
   M = P->Nmonoms();

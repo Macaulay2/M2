@@ -84,7 +84,7 @@ void gbres_comp::setup(const Matrix &m,
 		     int strategy)
 {
   int i;
-  const Ring *R = m.Ring_of()->cast_to_poly_ring();
+  const Ring *R = m.Ring_of()->cast_to_PolynomialRing();
   if (R == NULL) assert(0);
 
   FreeModule *Fsyz = R->make_FreeModule();

@@ -17,16 +17,21 @@ class Z : public Ring
   mpz_ptr new_elem() const;
   void remove_elem(mpz_ptr f) const;
 
-public:
   Z(const Monoid *D);
-  ~Z() {}
+protected:
+  virtual ~Z() {}
+public:
+  static Z * create(const Monoid *D);
 
   class_identifier class_id() const { return CLASS_Z; }
 
   // Equality check, hash function, serialize
   bool equals(const object_element *o) const;
   int hash() const;
-  void binary_out(buffer &o) const;
+  virtual void write_object(object_writer &o) const;
+  static Z *read_object(object_reader &i);
+  void write_element(object_writer &o, const ring_elem f) const;
+  void read_element(object_reader &i, ring_elem &result) const;
 
   Z * cast_to_Z() { return this; }
   const Z * cast_to_Z() const { return this; }

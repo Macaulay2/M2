@@ -73,6 +73,7 @@ COMMANDS = \
 
 NAMES = \
 	newmonorder \
+	serial \
 	error \
 	ntuple \
 	res \

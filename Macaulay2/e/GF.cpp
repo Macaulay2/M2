@@ -8,12 +8,13 @@
 #include "ringmap.hpp"
 #include "polyring.hpp"
 #include "random.hpp"
+#include "serial.hpp"
 
 GF::GF(const RingElement prim)
 : Ring(prim.Ring_of()->charac(),
 	1,1,this /* Visual C WARNING */,trivial_monoid, 
 	prim.Ring_of()->degree_monoid()),
-  K(prim.Ring_of()->cast_to_poly_ring()),
+  K(prim.Ring_of()->cast_to_PolynomialRing()),
   primitive_element(prim)
 {
   int i,j;
@@ -99,6 +100,12 @@ GF::~GF()
   bump_down((Ring *) K);
 }
 
+GF *GF::create(const RingElement prim)
+{
+  GF *obj = new GF(prim);
+  return (GF *) intern(obj);
+}
+
 bool GF::equals(const object_element *o) const
 {
   if (o->class_id() != class_id())
@@ -116,10 +123,28 @@ int GF::hash() const
   return 0;
 }
 
-void GF::binary_out(buffer &o) const
+void GF::write_object(object_writer &o) const
 {
-  bin_int_out(o, class_id());
-  primitive_element->binary_out(o);
+  o << class_id() << *primitive_element;
+}
+
+GF *GF::read_object(object_reader &i)
+{
+  // The class id has already been consumed.
+  object_element *obj;
+  i >> obj;
+  RingElement f = obj->cast_to_RingElement();
+  return new GF(f);
+}
+
+void GF::write_element(object_writer &o, const ring_elem f) const
+{
+  o << f.int_val;
+}
+
+void GF::read_element(object_reader &i, ring_elem &result) const
+{
+  i >> result.int_val ;
 }
 
 void GF::text_out(buffer &o) const

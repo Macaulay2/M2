@@ -176,5 +176,7 @@ class gbres_comp;
 class res2_comp;
 class gb_emitter;
 
+class object_writer;
+class object_reader;
 #endif
 

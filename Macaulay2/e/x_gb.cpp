@@ -271,7 +271,7 @@ void cmd_comp_calc2(object &ocomp,
 void cmd_hilb_make(object &oR, object &oM)
 {
   Ring *R = oR->cast_to_Ring();
-  PolynomialRing *P = R->cast_to_poly_ring();
+  PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == NULL)
     {
       gError << "Hilbert function: result ring must be a polynomial ring";
@@ -289,7 +289,7 @@ void cmd_hilb_make(object &oR, object &oM)
 void cmd_hilb1_make(object &oR, object &omi)
 {
   Ring *R = oR->cast_to_Ring();
-  PolynomialRing *P = R->cast_to_poly_ring();
+  PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == NULL)
     {
       gError << "Hilbert function: result ring must be a polynomial ring";

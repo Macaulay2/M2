@@ -13,6 +13,12 @@
 
 stash *FreeModule::mystash;
 
+void debugout(const FreeModule *F, const vec v)
+{
+  buffer o;
+  F->elem_text_out(o,v);
+  emit_line(o.str());
+}
 vec FreeModule::new_term() const
 {
   return (vec) R->vecstash->new_elem();
@@ -217,7 +223,7 @@ ring_elem FreeModule::get_coefficient(vec v, int e) const
       return K->from_int(0);
     case FREE_POLY:
     case FREE_SCHREYER:
-      const PolynomialRing *P = R->cast_to_poly_ring();
+      const PolynomialRing *P = R->cast_to_PolynomialRing();
       assert(P != NULL);
       Nterm head;
       Nterm *result = &head;
@@ -637,6 +643,7 @@ void FreeModule::imp_ring_cancel_lead_term(vec &f,
       M->divide(f->monom, base_monom(f->comp), f->monom);
       int sign = M->skew_divide(f->monom, g->monom, monom);
       M->mult(f->monom, base_monom(f->comp), f->monom);
+      M->mult(monom, base_monom(f->comp), monom);
       if (sign < 0) K->negate_to(coeff);
       imp_subtract_ring_multiple_to(f, coeff, monom, g);
     }
@@ -724,13 +731,19 @@ void FreeModule::normal_form(vec &v) const
   assert(M != NULL);		// This routine should only be called
 				// if is_quotient_ring is set, which should
 				// only be set if M != NULL.
-  const PolynomialRing *P = R->cast_to_poly_ring();
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
   vecterm head;
   vecterm *result = &head;
 
   vecterm *t = v;
+
+  //buffer o;
+  //emit_line("---in normal form---");
   while (t != NULL)
     {
+      //  elem_text_out(o,t);
+      //  emit_line(o.str());
+      //  o.reset();
       if (ty == FREE_POLY)
 	M->to_expvector(t->monom, nf_exp);
       else
@@ -764,7 +777,7 @@ void FreeModule::normal_form(vec &v,
 			     const array<MonomialIdeal> &mis, 
 			     const array<vec> &vecs) const
 {
-  const PolynomialRing *P = R->cast_to_poly_ring();
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
   vecterm head;
   vecterm *result = &head;
   int_bag *b;

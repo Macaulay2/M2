@@ -280,7 +280,7 @@ void hilb_comp::reset()
   current->h1 = R->from_int(1);
 }
 hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix &m)
-: S(m.Ring_of()->cast_to_poly_ring()),
+: S(m.Ring_of()->cast_to_PolynomialRing()),
   R(RR),
   M(S->Nmonoms()),
   D(S->degree_monoid()),
@@ -310,7 +310,7 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix &m)
 
 #if 0
 hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal &I)
-: S(I.Ring_of()->cast_to_poly_ring()),
+: S(I.Ring_of()->cast_to_PolynomialRing()),
   R(RR),
   M(S->Nmonoms()),
   D(S->degree_monoid()),
@@ -599,7 +599,7 @@ int hilb_comp::coeff_of(const RingElement &h, int deg)
   // This is a bit of a kludge of a routine.  The idea is to loop through
   // all the terms of the polynomial h, expand out the exponent, and to add
   // up the small integer values of the coefficients of those that have exp[0]=deg.
-  const PolynomialRing *P = h.Ring_of()->cast_to_poly_ring();
+  const PolynomialRing *P = h.Ring_of()->cast_to_PolynomialRing();
 
   int *exp = new int[P->n_vars()];
   int result = 0;

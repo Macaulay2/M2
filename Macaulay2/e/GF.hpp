@@ -22,16 +22,21 @@ class GF : public Ring
   int *one_table;   // Indexed from 0..Q1
   int *from_int_table;
 
-public:
   GF(const RingElement prim);
-  ~GF();
+protected:
+  virtual ~GF();
+public:
+  static GF * create(const RingElement prim);
 
   class_identifier class_id() const { return CLASS_GF; }
 
   // Equality check, hash function, serialize
   bool equals(const object_element *o) const;
   int hash() const;
-  void binary_out(buffer &o) const;
+  virtual void write_object(object_writer &o) const;
+  static GF *read_object(object_reader &i);
+  void write_element(object_writer &o, const ring_elem f) const;
+  void read_element(object_reader &i, ring_elem &result) const;
 
   int to_int(int a) const;
 

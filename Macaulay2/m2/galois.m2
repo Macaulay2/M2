@@ -167,7 +167,7 @@ GF(Ring) := (S,options) -> unpack(S, (R,p,n,f) -> (
 	  )
      else (
 	  d := p^n-1;
-	  if ring g != S
+	  if ring g =!= S
 	  then error "expected primitive element in the right ring";
 	  if not isPrimitive g
 	  then error "expected ring element to be primitive";

@@ -3,6 +3,7 @@
 #include "det.hpp"
 #include "text_io.hpp"
 #include "bin_io.hpp"
+#include "serial.hpp"
 
 extern int comp_printlevel;
 
@@ -76,20 +77,17 @@ int DetComputation::hash() const
   return 0;
 }
 
-void DetComputation::binary_out(buffer &o) const
+void DetComputation::write_object(object_writer &o) const
 {
-  bin_int_out(o, class_id());
-  bin_int_out(o, p);
-  bin_int_out(o, do_exterior);	// Is this automatic conversion a BAD THING?
-  bin_int_out(o, done);
+  o << class_id()
+    << p
+    << do_exterior
+    << done;
   for (int i=0; i<p; i++)
-    bin_int_out(o, row_set[i]);
+    o << row_set[i];
   for (int i=0; i<p; i++)
-    bin_int_out(o, col_set[i]);
-  bin_int_out(o, this_row);
-  bin_int_out(o, this_col);
-  M->binary_out(o);
-  result->binary_out(o);
+    o << col_set[i];
+  o << this_row << this_col << *M << *result;
 }
 
 int DetComputation::step()

@@ -21,16 +21,21 @@ class FractionField : public Ring
   void simplify(frac_elem *f) const;
   frac_elem *make_elem(ring_elem a, ring_elem b) const;
   
-public:
   FractionField(const Ring *R);
-  ~FractionField();
+protected:
+  virtual ~FractionField();
+public:
+  static FractionField *create(const Ring *R);
 
   class_identifier class_id() const { return CLASS_FractionField; }
 
   // Equality check, hash function, serialize
   bool equals(const object_element *o) const;
   int hash() const;
-  void binary_out(buffer &o) const;
+  virtual void write_object(object_writer &o) const;
+  static FractionField *read_object(object_reader &i);
+  void write_element(object_writer &o, const ring_elem f) const;
+  void read_element(object_reader &i, ring_elem &result) const;
 
   FractionField * cast_to_FractionField() { return this; }
   const FractionField * cast_to_FractionField() const { return this; }

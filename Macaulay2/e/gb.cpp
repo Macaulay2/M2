@@ -16,7 +16,7 @@ stash *GB_comp::mystash;
 void GB_comp::set_up0(const Matrix &m, int csyz, int nsyz)
 {
   int i;
-  R = m.Ring_of()->cast_to_poly_ring();
+  R = m.Ring_of()->cast_to_PolynomialRing();
   if (R == NULL)
     {
       gError << "ring is not a polynomial ring";
@@ -748,7 +748,7 @@ int GB_comp::coeff_of(const RingElement &h, int deg) const
   // This is a bit of a kludge of a routine.  The idea is to loop through
   // all the terms of the polynomial h, expand out the exponent, and to add
   // up the small integer values of the coefficients of those that have exp[0]=deg.
-  const PolynomialRing *P = h.Ring_of()->cast_to_poly_ring();
+  const PolynomialRing *P = h.Ring_of()->cast_to_PolynomialRing();
 
   int *exp = new int[P->n_vars()];
   int result = 0;
@@ -878,7 +878,7 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 		    {
 		      // Set up the Hilbert function computation
 		      delete hf_comp;
-		      hf_comp = new hilb_comp(hf_orig.Ring_of()->cast_to_poly_ring(), 
+		      hf_comp = new hilb_comp(hf_orig.Ring_of()->cast_to_PolynomialRing(), 
 					      gbmatrix);
 		      hilb_step = 2;
 		    }

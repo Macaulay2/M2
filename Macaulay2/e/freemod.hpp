@@ -21,6 +21,8 @@ class FreeModule : public type
   friend class GB_comp;
   friend class GBinhom_comp;
   friend class gb2_comp;
+  friend class res_poly;
+  friend class res2_poly;
 protected:
 
   // free module part
@@ -337,7 +339,8 @@ public:
   // Equality check, hash function, serialize
   bool equals(const object_element *o) const;
   int hash() const;
-  void binary_out(buffer &o) const;
+  void write_object(object_writer &o) const;
+  static FreeModule *read_object(object_reader &i);
 
   friend void i_stashes();
   static stash *mystash;

@@ -20,7 +20,7 @@ HRing(NULL)
   if (K != NULL) bump_up((Ring *) K);
 
   if (D->n_vars() > 0)
-    HRing = new PolynomialRing(ZZ, D);
+    HRing = PolynomialRing::create(ZZ, D);
 
   int msize = M->monomial_size();
   vecstash = new stash("vectors",

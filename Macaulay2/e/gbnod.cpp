@@ -15,7 +15,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
 {
   level = lev;
   int i;
-  R = FFsyz->Ring_of()->cast_to_poly_ring();
+  R = FFsyz->Ring_of()->cast_to_PolynomialRing();
   if (R == NULL)
     {
       gError << "internal error - ring is not a polynomial ring";
@@ -874,9 +874,10 @@ int gb2_comp::hilbertNumeratorCoefficient(int deg, int &result)
 Matrix gb2_comp::min_gens_matrix()
 {
   Matrix result(F,Fsyz);
+  int j = 0;
   for (int i=0; i<gb.length(); i++)
     if (gb[i]->is_min)
-      result[i] = F->copy(gb[i]->f);
+      result[j++] = F->copy(gb[i]->f);
   return result;
 }
 Matrix gb2_comp::get_matrix()

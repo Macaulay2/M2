@@ -27,6 +27,8 @@ class object_element
   friend void bump_down(const object_element *p);
 protected:
   int refcount;
+
+  static object_element *intern(object_element *obj);
 public:
   object_element(int ref=1) : refcount(ref) {}
   // Types needing ref count set to 0 instead of 1:
@@ -54,27 +56,29 @@ public:
   virtual object_new_mon_order   * cast_to_new_mon_order()      { return 0; }
   virtual Monoid      * cast_to_Monoid()      { return 0; }
   virtual TermIdeal   * cast_to_TermIdeal()  { return 0; }
+  virtual Ring        * cast_to_Ring()       { return 0; }
+  virtual FreeModule  * cast_to_FreeModule() { return 0; }
+  virtual RingMap     * cast_to_RingMap()    { return 0; }
+
   virtual gb_comp     * cast_to_gb_comp()     { return 0; }
   virtual hilb_comp   * cast_to_hilb_comp()   { return 0; }
   virtual res_comp    * cast_to_res_comp()    { return 0; }
   virtual res2_comp   * cast_to_res2_comp()    { return 0; }
   virtual gbres_comp  * cast_to_gbres_comp()    { return 0; }
-  virtual Ring        * cast_to_Ring()       { return 0; }
-  virtual FreeModule  * cast_to_FreeModule() { return 0; }
-  virtual RingMap     * cast_to_RingMap()    { return 0; }
 
   virtual const object_mon_order   * cast_to_mon_order()      const { return 0; }
   virtual const object_new_mon_order   * cast_to_new_mon_order()      const { return 0; }
   virtual const Monoid      * cast_to_Monoid()      const { return 0; }
   virtual const TermIdeal   * cast_to_TermIdeal()  const { return 0; }
+  virtual const Ring        * cast_to_Ring()       const { return 0; }
+  virtual const FreeModule  * cast_to_FreeModule() const { return 0; }
+  virtual const RingMap     * cast_to_RingMap()    const { return 0; }
+
   virtual const gb_comp     * cast_to_gb_comp()     const { return 0; }
   virtual const hilb_comp   * cast_to_hilb_comp()   const { return 0; }
   virtual const res_comp    * cast_to_res_comp()    const { return 0; }
   virtual const res2_comp   * cast_to_res2_comp()   const { return 0; }
   virtual const gbres_comp  * cast_to_gbres_comp()   const { return 0; }
-  virtual const Ring        * cast_to_Ring()       const { return 0; }
-  virtual const FreeModule  * cast_to_FreeModule() const { return 0; }
-  virtual const RingMap     * cast_to_RingMap()    const { return 0; }
 
   virtual RingElement   cast_to_RingElement();
   virtual Matrix        cast_to_Matrix();
@@ -86,9 +90,10 @@ public:
   virtual bool equals(const object_element *o) const;
   virtual int hash() const { return 0; }
 
+  // Serialization (see serial.hpp for use)
+  virtual void write_object(object_writer &) const { }
+
   // Display
-  virtual void binary_out(buffer &) const { } ;// This one contains enough information
-				              // to reconstruct the object.
   virtual void bin_out(buffer &) const { }
   virtual void text_out(buffer &o) const { o << "<" << type_name() << ">"; }
   virtual void debug_out(buffer &o) const;

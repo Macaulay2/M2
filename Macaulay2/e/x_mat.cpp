@@ -632,7 +632,7 @@ void cmd_Matrix_coeffs(object &om, object &op)
 {
   Matrix M = om->cast_to_Matrix();
   intarray *vars = op->intarray_of();
-  const PolynomialRing *R = M.Ring_of()->cast_to_poly_ring();
+  const PolynomialRing *R = M.Ring_of()->cast_to_PolynomialRing();
   if (R == NULL)
     {
       gError << "coeffs: need a polynomial ring";

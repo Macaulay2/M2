@@ -146,6 +146,14 @@ public:
   class_identifier class_id() const { return CLASS_Monoid; }
   type_identifier  type_id () const { return TY_MONOID; }
   const char * type_name   () const { return "Monoid"; }
+
+  // Equality check, hash function, serialize
+  bool equals(const object_element *o) const;
+  int hash() const;
+  virtual void write_object(object_writer &o) const;
+  static Monoid *read_object(object_reader &i);
+  void write_element(object_writer &o, const int *m) const;
+  void read_element(object_reader &i, int * &result) const;
 };
 
 extern Monoid *trivial_monoid;		// set in x_monoid.cpp

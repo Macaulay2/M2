@@ -298,9 +298,9 @@ void cmd_Z_mod(object &r, object &oM)
   int p = r->int_of();
   const Monoid *M = oM->cast_to_Monoid()->cast_to_Monoid();
   if (p > 0)
-    gStack.insert(new Z_mod(p,M));
+    gStack.insert(Z_mod::create(p,M));
   else if (p == 0)
-    gStack.insert(new Z(M));
+    gStack.insert(Z::create(M));
   else
     gError << "Z/pZ: p must be non-negative";
 }
@@ -318,12 +318,12 @@ void cmd_GF(object &oprim)
   // MES: check that f is a monic polynomial of degree >= 2
   // MES: later, check that f is irreducible
 
-  gStack.insert(new GF(prim));
+  gStack.insert(GF::create(prim));
 }
 #if 0
 void cmd_GF2(object &oR)
 {
-  PolynomialRing *R = oR->cast_to_Ring()->cast_to_poly_ring();
+  PolynomialRing *R = oR->cast_to_Ring()->cast_to_PolynomialRing();
   if (R == NULL)
     {
       gError << "GF: Polynomial ring expected";
@@ -342,19 +342,19 @@ void cmd_PolynomialRing(object &oK, object &oMF)
 {
   const Ring *K = oK->cast_to_Ring();
   const Monoid *MF = oMF->cast_to_Monoid();
-  gStack.insert(new PolynomialRing(K, MF));
+  gStack.insert(PolynomialRing::create(K,MF));
 }
 void cmd_WeylAlgebra(object &oK, object &oMF, object &oa)
 {
   const Ring *K = oK->cast_to_Ring();
   const Monoid *MF = oMF->cast_to_Monoid();
   const intarray *a = oa->intarray_of();
-  gStack.insert(new WeylAlgebra(K, MF, *a));
+  gStack.insert(WeylAlgebra::create(K, MF, *a));
 }
 void cmd_fraction_field(object &oR)
 {
   const Ring *R = oR->cast_to_Ring();
-  gStack.insert(new FractionField(R));
+  gStack.insert(FractionField::create(R));
 }
 void cmd_qring(object &om)
 {
@@ -365,7 +365,7 @@ void cmd_qring(object &om)
       gError << "quotient ring expects matrix with one row";
       return;
     }
-  const PolynomialRing *P = m.Ring_of()->cast_to_poly_ring();
+  const PolynomialRing *P = m.Ring_of()->cast_to_PolynomialRing();
   if (P == NULL)
     {
       gError << "qring: expected polynomial ring";
@@ -373,14 +373,14 @@ void cmd_qring(object &om)
     }
   for (int i=0; i<m.n_cols(); i++)
     I.append(m.elem(0,i));
-  gStack.insert(new PolynomialRing(P, I));
+  gStack.insert(PolynomialRing::create(P, I));
 }
 void cmd_qring2(object &on, object &oR)
 {
   array<ring_elem> I;
   int n = on->int_of();
   const Ring *R = oR->cast_to_Ring();
-  const PolynomialRing *P = R->cast_to_poly_ring();
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == NULL)
     {
       gError << "qring: expected polynomial ring";
@@ -407,7 +407,7 @@ void cmd_qring2(object &on, object &oR)
     }
   gStack.poppem(n);
 
-  gStack.insert(new PolynomialRing(P, I));
+  gStack.insert(PolynomialRing::create(P, I));
 }
 void cmd_schur(object &oK, object &oMF)
 {
@@ -431,7 +431,7 @@ void cmd_schur_dim(object &of)
 
 void cmd_qring_ideal(object &oR)
 {
-  const PolynomialRing *R = oR->cast_to_Ring()->cast_to_poly_ring();
+  const PolynomialRing *R = oR->cast_to_Ring()->cast_to_PolynomialRing();
   if (R == NULL)
     {
       gError << "polynomial ring expected";
@@ -442,7 +442,7 @@ void cmd_qring_ideal(object &oR)
 void i_ring_elem_cmds(void)
 {
   assert(trivial_monoid != NULL);
-  ZZ = new Z(trivial_monoid);
+  ZZ = Z::create(trivial_monoid);
 
   // Ring Creation
   install(ggZ, cmd_Z);
