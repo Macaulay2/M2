@@ -158,4 +158,12 @@ gcc $TMP $LDFLAGS >/dev/null 2>&1 ||
 	echo 'short htons(short x) { return x; }' \
 	>>compat.c
 
+cat <<'EOF' >$TMP
+#include <netdb.h>
+main(){ herror((char *)0); }
+EOF
+gcc $TMP $LDFLAGS >/dev/null 2>&1 || 
+	echo '#define NO_HERROR 1' \
+	>>compat.h
+
 rm $TMP

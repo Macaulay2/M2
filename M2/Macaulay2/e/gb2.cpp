@@ -323,10 +323,10 @@ void gbres_comp::betti_minimal(intarray &result)
 	  if (d > hi) hi = d;
 	  if (d-lo >= degs[lev].length())
 	    {
-	      for (k=degs[lev].length(); k<=d; k++)
+	      for (k=degs[lev].length(); k<=d-lo; k++)
 		degs[lev].append(0);
 	    }
-	  degs[lev][d] += 1;
+	  degs[lev][d-lo] += 1;
 	}
     }
   for (lev=0; lev<=len; lev++)
@@ -338,7 +338,7 @@ void gbres_comp::betti_minimal(intarray &result)
   result.append(len);
   for (d=lo; d<=hi; d++)
     for (lev=0; lev<=len; lev++)
-      result.append(degs[lev][d]);
+      result.append(degs[lev][d-lo]);
 
   delete [] degs;
 }
