@@ -1,7 +1,6 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 exportMutable (
-        symbol AbsoluteLinks,
 	symbol backtrace,
 	symbol backupFileRegexp,
 	symbol buildHomeDirectory,
@@ -37,6 +36,10 @@ exportMutable (
 	)
 
 export (
+	symbol Date,
+	symbol HomePage,
+	symbol Author,
+	symbol AbsoluteLinks,
         symbol Truncate,
         symbol ExampleTABLE,
         symbol MissingMethod,
