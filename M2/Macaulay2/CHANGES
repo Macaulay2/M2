@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The definition of a "Type" is not enlarged slightly: anything
+
 'run' now returns the entire return code of the program, rather than
 just the exit status.  For a normal exit, this will be 256 times the
 value passed to exit().  For exits provoked by signals, the return

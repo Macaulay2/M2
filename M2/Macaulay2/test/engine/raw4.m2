@@ -65,7 +65,7 @@ mgb = rawResolutionGetMatrix(Gcomp,1,false) -- gb
 Gcomp = rawGB(m,true,-1,false,0,0,0)
 mgb = rawResolutionGetMatrix(Gcomp,1,false) -- gb
 msyz = rawResolutionGetMatrix(Gcomp,2,false) -- gb
-mchange = rawGBGetChange(Gcomp,1)
+mchange = rawGBChangeOfBasis(Gcomp,1)
 m
 assert(mgb == m * mchange)
 m * mchange
@@ -128,14 +128,14 @@ m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
 f1 = mat {{x+y+z, x*y+y*z+z*x, x*y*z-1, (x+y+z)^5+x*(x*y*z-1) + 13}}
 G1 = rawGB(f1,true,-1,false,0,algorithm,0)
 gb1 = rawResolutionGetMatrix(G1,1,false) -- Groebner basis
-ch1 = rawGBGetChange(G1,1)
+ch1 = rawGBChangeOfBasis(G1,1)
 f2 = rawResolutionGetMatrix(G1,2,false)
 assert(f1 * ch1 - gb1 == 0)
 assert(f1 * f2 == 0)
 
 G2 = rawGB(f2,true,-1,false,0,algorithm,0)
 gb2 = rawResolutionGetMatrix(G2,1,false) -- Groebner basis
-ch2 = rawGBGetChange(G2,1)
+ch2 = rawGBChangeOfBasis(G2,1)
 f3 = rawResolutionGetMatrix(G2,2,false)
 assert(f2 * ch2 - gb2 == 0) 
 assert(f2 * f3 == 0) 
@@ -145,12 +145,12 @@ assert(f2 * f3 == 0)
 G = mat {{x+y+z, x*y+y*z+z*x, x*y*z-1, (x+y+z)^5+x*(x*y*z-1) + 13}}
 Gcomp = rawGB(G,true,-1,false,0,algorithm,0)
 m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
-ch = rawGBGetChange(Gcomp,1)
+ch = rawGBChangeOfBasis(Gcomp,1)
 G * ch
 syzm = rawResolutionGetMatrix(Gcomp,2,false) -- syz matrix
 assert(G * syzm == 0)
 Gcomp = rawGB(syzm,true,-1,false,0,algorithm,0)
-ch = rawGBGetChange(Gcomp,1)
+ch = rawGBChangeOfBasis(Gcomp,1)
 g2 = rawResolutionGetMatrix(Gcomp,1,false)
 syzm * ch - g2  -- 8..10 elements are NOT zero: BUG
 syz2m = rawResolutionGetMatrix(Gcomp,2,false) -- syz matrix
@@ -224,7 +224,7 @@ time rawResolutionGetMatrix(rawGB(oo,false,0,false,0,algorithm,0), 1,true)
 -- Try the other routines:
 -- rawGB, rawGBSetHilbertFunction, rawGBForce
 -- rawGBSetStop
--- rawResolutionGetMatrix, rawGBGetChange, rawGBGetLeadTerms, rawResolutionGetFree
+-- rawResolutionGetMatrix, rawGBChangeOfBasis, rawGBGetLeadTerms, rawResolutionGetFree
 -- rawStatus, rawStatusLevel, rawGBBetti
 -- rawGBMatrixRemainder, rawGBMatrixLift, rawGBContains
 
