@@ -176,10 +176,8 @@ static void gcd_ring_elem(object &ff, object &gg) {
      const Ring *R = f.get_ring();
      CanonicalForm p = convert(f);
      CanonicalForm q = convert(g);
-#ifndef NDEBUG
-     cerr << "p = " << p << endl
-          << "q = " << q << endl;
-#endif
+     //     cerr << "p = " << p << endl
+     //          << "q = " << q << endl;
      CanonicalForm h = gcd(p,q);
      gStack.insert(convert(R,h));
 }
