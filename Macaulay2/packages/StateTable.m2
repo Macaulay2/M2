@@ -1,7 +1,7 @@
 StateTable = new Type of HashTable
 StateTable.synonym = "state table"
 
-document { StateTable, HEADLINE "the class of all state tables",
+document { StateTable, HEADLINE => "the class of all state tables",
      "State tables are hash tables designed to be used in the implementation
      of finite state machines.  The state of such a machine can be mostly
      encapsulated in a state table whose keys are the possible inputs and whose
@@ -69,7 +69,7 @@ StateTableAlternative = new Type of BasicList
 StateTableAlternative.synonym = "state table alternative list"
 fixStateTableEntry(StateTableAlternative,Thing) := (a,s) -> apply(toSequence a, i -> {i,s})
 document { StateTableAlternative,
-     HEADLINE "the class of all state table alternative lists",
+     HEADLINE => "the class of all state table alternative lists",
      "These are lists of keys, which when encountered by ", TO "stateTable", " to
      make a state table, will create an entry for each of the keys in the list.",
      EXAMPLE {

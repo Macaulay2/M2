@@ -3,12 +3,12 @@
 << "--loading documentation files..." << endl
 
 document { length,
-     HEADLINE "length" }
+     HEADLINE => "length" }
 document { (length, GradedModule),
-     HEADLINE "length of a graded module" }
+     HEADLINE => "length of a graded module" }
 
 document { sendgg,
-     HEADLINE "send commands to engine",
+     HEADLINE => "send commands to engine",
      TT "sendgg s", " -- uses ", TO "sendToEngine", " to send the  string ", TT "s", " 
      of data and commands to the engine.  The first byte of the result is examined 
      for an error indication, and then an error is raised or the remainder of the 
@@ -18,7 +18,7 @@ document { sendgg,
      }
 
 document { parent,
-     HEADLINE "parent type of an object",
+     HEADLINE => "parent type of an object",
      TT "parent X", " -- yields the parent ", TT "P", " of ", TT "X", ".",
      PARA,
      "Methods for the ", TO {"instance", "s"}, " of ", TT "X", " which are not found
@@ -36,7 +36,7 @@ document { parent,
      }
 
 document { Array,
-     HEADLINE "class of all arrays -- [...]",
+     HEADLINE => "class of all arrays -- [...]",
      "An array is like a list, except that brackets are used instead of
      braces when entering or displaying an array, and arrays can't be used
      as vectors.  Their main use is notational: for example, they appear
@@ -50,7 +50,7 @@ document { Array,
      }
 
 document { Sequence,
-     HEADLINE "class of all sequences -- (...)",
+     HEADLINE => "class of all sequences -- (...)",
      "A sequence is an ordered collection of things enclosed by parentheses
      and separated by commas.  Use ", TO "#", " to get the length of a
      sequence of to get one of the elements.",
@@ -63,7 +63,7 @@ document { Sequence,
      }
 
 document { singleton,
-     HEADLINE "make a sequence of length one",
+     HEADLINE => "make a sequence of length one",
      TT "singleton x", " -- returns a sequence of length one whose single 
      element is ", TT "x", ".",
      PARA,
@@ -75,10 +75,10 @@ document { singleton,
      }
 
 document { List,
-     HEADLINE "class of all lists -- {...}", SEEALSO "lists" }
+     HEADLINE => "class of all lists -- {...}", SEEALSO "lists" }
 
 document { VisibleList,
-     HEADLINE "class of all visible lists",
+     HEADLINE => "class of all visible lists",
      "There are three types of lists that can be entered directly from
      the keyboard, as follows.",
      EXAMPLE {
@@ -91,7 +91,7 @@ document { VisibleList,
      }
 
 document { Type,
-     HEADLINE "class of all types",
+     HEADLINE => "class of all types",
      "Everything in the system is classified, and the class that a thing
      belongs to is a type.  A type is implemented as a hash table containing
      method functions for its instances.",
@@ -100,7 +100,7 @@ document { Type,
      }
 
 document { Print,
-     HEADLINE "top level method for printing results",
+     HEADLINE => "top level method for printing results",
      "Applied at top level to print the result, ", TT "r", ", of an evaluation.
      The code for the default Print method will apply the ", TO "AfterEval", "
      method to ", TT "r", " if there one, and replace ", TT "r", " by the result.  
@@ -113,7 +113,7 @@ document { Print,
      }
 
 document { NoPrint,
-     HEADLINE "top level method for non-printing results",
+     HEADLINE => "top level method for non-printing results",
      "Applied at top level to a result suppression of whose printing has
      been indicated by a semicolon.  The code for the default ", TT "NoPrint", "
      method will apply the ", TO "AfterEval", " method to ", TT "r", " if
@@ -125,14 +125,14 @@ document { NoPrint,
      }
 
 document { BeforePrint,
-     HEADLINE "top level method applied before printing results",
+     HEADLINE => "top level method applied before printing results",
      TT "Applied at top level to the result of an evaluation,
      whose result supplants the original for printing.",
      SEEALSO "Print"
      }
 
 document { AfterEval,
-     HEADLINE "top level method applied before printing results",
+     HEADLINE => "top level method applied before printing results",
      TT "Applied at top level to the result of an evaluation, whose
      result replaces the original for storing in the output variable and 
      for printing.",
@@ -140,20 +140,20 @@ document { AfterEval,
      }
 
 document { AfterPrint,
-     HEADLINE "top level method applied after printing",
+     HEADLINE => "top level method applied after printing",
      TT "Applied at top level to the result of an evaluation after printing.",
      SEEALSO "Print"
      }
 
 document { AfterNoPrint,
-     HEADLINE "top level method applied after not printing",
+     HEADLINE => "top level method applied after not printing",
      "Applied at top level to the result of an evalution when printing of the
      result has been suppressed by a semicolon.",
      SEEALSO "Print"
      }
 
 document { setrecursionlimit,
-     HEADLINE "set the limit on recursion",
+     HEADLINE => "set the limit on recursion",
      TT "setrecursionlimit n", " -- sets the recursion limit to ", TT "n", ".",
      PARA,
      "It returns the old value.  The recursion limit governs the nesting level
@@ -161,22 +161,22 @@ document { setrecursionlimit,
      }
 
 document { toString symbol commandLine,
-     HEADLINE "the command line arguments",
+     HEADLINE => "the command line arguments",
      "A constant whose value is the list of arguments passed to the interpreter,
      including argument 0, the name of the program."
      }
 
 document { toString symbol environment,
-     HEADLINE "the environment variables",
+     HEADLINE => "the environment variables",
      "A constant whose value is the list containing the
      environment strings for the process."
      }
 
 document { Function,
-     HEADLINE "the class of all functions", SEEALSO "functions" }
+     HEADLINE => "the class of all functions", SEEALSO "functions" }
 
 document { "->",
-     HEADLINE "make a function",
+     HEADLINE => "make a function",
      TT "x -> e", " -- denotes a function.  When the function is called, the initial 
      	      value of the variable x is the argument if there is just one, or
 	      else is the sequence of arguments.",
@@ -210,7 +210,7 @@ document { "->",
      }
 
 document { "path",
-     HEADLINE "list of directories to look in",
+     HEADLINE => "list of directories to look in",
      "A list of strings containing names of directories in
      which ", TO "load", " and ", TO "input", " should seek files.",
      PARA,
@@ -221,7 +221,7 @@ document { "path",
      }
 
 document { HashTable,
-     HEADLINE "the class of all hash tables",
+     HEADLINE => "the class of all hash tables",
      "A hash table consists of: a class type, a parent type, and a
      set of key-value pairs.  The keys and values can be anything.
      The access functions below accept a key and return the
@@ -248,7 +248,7 @@ document { HashTable,
      }
 
 document { maxPosition,
-     HEADLINE "position of largest element",
+     HEADLINE => "position of largest element",
      TT "maxPosition x", " -- yields the position of the largest element in the list.",
      PARA,
      "If it occurs more than once, then the first occurrence
@@ -256,7 +256,7 @@ document { maxPosition,
      }
 
 document { minPosition,
-     HEADLINE "position of smallest element",
+     HEADLINE => "position of smallest element",
      TT "minPosition x", " -- yields the position of the smallest element in the list.",
      PARA,
      "If it occurs more than once, then the first occurrence
@@ -264,7 +264,7 @@ document { minPosition,
      }
 
 document { keys,
-     HEADLINE "keys used in a hash table",
+     HEADLINE => "keys used in a hash table",
      TT "keys t", " -- yields a list of the keys occurring in the hash table t.",
      PARA,
      EXAMPLE {
@@ -274,7 +274,7 @@ document { keys,
      }
 
 document { values,
-     HEADLINE "values in a hash table",
+     HEADLINE => "values in a hash table",
      TT "values t", " -- yields a list of the values occurring in the hash table t.",
      PARA,
      EXAMPLE {
@@ -284,7 +284,7 @@ document { values,
      }
 
 document { splice,
-     HEADLINE "remove subsequences",
+     HEADLINE => "remove subsequences",
      TT "splice v", " -- yields a new list v where any members of v which are sequences
      are replaced by their elements.",
      PARA,
@@ -300,7 +300,7 @@ document { splice,
      }
 
 document { deepSplice,
-     HEADLINE "remove subsequences",
+     HEADLINE => "remove subsequences",
      TT "deepSplice v", " -- yields a new list v where any members of v 
      which are sequences are replaced by their elements, and so on.",
      PARA,
@@ -311,7 +311,7 @@ document { deepSplice,
      }
 
 document { ",",
-     HEADLINE "separator",
+     HEADLINE => "separator",
      TT "x,y,...,z", " -- the comma is used to separate elements of a list or
      sequence.",
      PARA,
@@ -322,7 +322,7 @@ document { ",",
      }
 
 document { (apply,BasicList,BasicList,Function),
-     HEADLINE "apply function to elements in pairs",
+     HEADLINE => "apply function to elements in pairs",
      TT "apply(v,w,f)", " -- produces, from lists ", TT "v", " and ", TT "w", ",
      a list ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
      by evaluating ", TT "f(v_i,w_i)", ".  If ", TT "v", " and ", TT "w", " are
@@ -330,7 +330,7 @@ document { (apply,BasicList,BasicList,Function),
      EXAMPLE "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)"
      }
 document { (apply,BasicList,Function),
-     HEADLINE "apply function to each element",
+     HEADLINE => "apply function to each element",
      TT "apply(v,f)", " -- applies the function ", TT "f", " to each element of the 
      list ", TT "v", ", returning the list of results.  The result is of the same
      class, for example, ", TO "Array", ".",
@@ -338,38 +338,38 @@ document { (apply,BasicList,Function),
      SEEALSO {(symbol /,VisibleList, Function), (symbol \, Function, VisibleList)}
      }
 document { (apply,HashTable,Function),
-     HEADLINE "apply function to each value",
+     HEADLINE => "apply function to each value",
      TT "apply(x,f)", " -- produces a new hash table ", TT "y", " from
      an hash table ", TT "x", " by applying the function
      ", TT "f", " to each of the values of ", TT "x", ".  This means that
      if ", TT "x#k === v", " then ", TT "y#k === f(v)", "."
      }
 document { (apply,ZZ,Function),
-     HEADLINE "apply function to 0 .. n-1",
+     HEADLINE => "apply function to 0 .. n-1",
      TT "apply(n,f)", " -- applies the function ", TT "f", " to each integer
      in the range ", TT "0 .. n-1", " returning the sequence of results.
      This is equivalent to ", TT "apply( toList(0 .. n-1),f)", ".",
      EXAMPLE "apply(10, i -> i^2)"
      }
 document { apply,
-     HEADLINE "apply a function to each element",
+     HEADLINE => "apply a function to each element",
      SEEALSO{ "scan", "select",  "any",  "all", "member"}
      }
 
 document { scan,
-     HEADLINE "apply a function to each element",
+     HEADLINE => "apply a function to each element",
      SEEALSO { "select", "any", "all", "member"}
      }
 
 document { (scan,BasicList,Function),
-     HEADLINE "apply a function to each element of a list",
+     HEADLINE => "apply a function to each element of a list",
      TT "scan(v,f)", " -- applies the function ", TT "f", " to each element of the 
      list ", TT "v", ".  The function values are discarded.",
      EXAMPLE "scan({a,4,\"George\",2^100}, print)"
      }
 
 document { (scan,ZZ,Function),
-     HEADLINE "apply a function to 0 .. n-1",
+     HEADLINE => "apply a function to 0 .. n-1",
      TT "scan(n,f)", " -- applies the function ", TT "f", " to each integer
      in the range ", TT "0 .. n-1", " discarding the results.",
      PARA,
@@ -382,10 +382,10 @@ document { (scan,ZZ,Function),
      }
 
 document { scanPairs,
-     HEADLINE "apply a function to pairs in a hash table" }
+     HEADLINE => "apply a function to pairs in a hash table" }
 
 document { (scanPairs,HashTable,Function),
-     HEADLINE "apply a function to pairs in a hash table",
+     HEADLINE => "apply a function to pairs in a hash table",
      TT "scanPairs(x,f)", " -- applies the function ", TT "f", " to each
      pair ", TT "(k,v)", " where ", TT "k", " is a key in the hash 
      table ", TT "x", " and ", TT "v", " is the corresponding 
@@ -398,11 +398,11 @@ document { (scanPairs,HashTable,Function),
      }
 
 document { select,
-     HEADLINE "select elements from a list or hash table",
+     HEADLINE => "select elements from a list or hash table",
      SEEALSO{ "scan", "apply", "any", "all", "member", "mutable"}
      }
 document { (select,BasicList,Function),
-     HEADLINE "select elements from a list",
+     HEADLINE => "select elements from a list",
      TT "select(v,f)", " -- select elements of the list
      ", TT "v", " that yield ", TT "true", " when the function 
      ", TT "f", " is applied.",
@@ -416,7 +416,7 @@ document { (select,BasicList,Function),
 	  }
      }
 document { (select,HashTable,Function),
-     HEADLINE "select from a hash table",
+     HEADLINE => "select pairs from a hash table",
      TT "select(v,f)", " -- select pairs of the hash table ", TT "v", "
      that yield ", TT "true", " when the function ", TT "f", " is applied to
      the value.",
@@ -425,7 +425,7 @@ document { (select,HashTable,Function),
      table, use ", TT "scan(values x, f)", "."
      }
 document { (select,ZZ,BasicList,Function),
-     HEADLINE "select elements from a list",
+     HEADLINE => "select a limited number of elements from a list",
      TT "select(n,v,f)", " -- select at most ", TT "n", " elements of the list
      ", TT "v", " that yield ", TT "true", " when the function 
      ", TT "f", " is applied.",
@@ -435,7 +435,7 @@ document { (select,ZZ,BasicList,Function),
      EXAMPLE "select(2,[1,2,3,4,5], odd)"
      }
 document { (select,ZZ,HashTable,Function),
-     HEADLINE "select from a hash table",
+     HEADLINE => "select a limited number of pairs from a hash table",
      TT "select(n,v,f)", " -- select at most ", TT "n", " pairs of the hash 
      table ", TT "v", " that yield ", TT "true", " when the function ", TT "f", " 
      is applied to the value.",
@@ -451,7 +451,7 @@ document { (select,ZZ,HashTable,Function),
 --     }
 
 document { any,
-     HEADLINE "whether an element satisfies a condition",
+     HEADLINE => "whether an element satisfies a condition",
      TT "any(v,f)", " -- yields the value true or false depending on
      whether any element ", TT "v#i", " of ", TT "v", " yields the value
      ", TT "true", " when the predicate ", TT "f", " is applied.",
@@ -464,7 +464,7 @@ document { any,
      }
 
 document { describe,
-     HEADLINE "real description",
+     HEADLINE => "real description",
      TT "describe x", " -- returns an ", TO "Expression", " containing the 
      real description of ", TT "x", ", bypassing the feature which causes
      certain types of things to acquire the names of global variables to which
@@ -485,7 +485,7 @@ document { describe,
      }
 
 document { input,
-     HEADLINE "read Macaulay 2 commands and echo",
+     HEADLINE => "read Macaulay 2 commands and echo",
      TT "input \"f\"", " -- reads and executes the commands found in the 
      file named f, echoing the input, printing the values, and incrementing
      the line number.",
@@ -500,14 +500,14 @@ document { input,
      }
 
 document { end,
-     HEADLINE "stop loading a file",
+     HEADLINE => "stop loading a file",
      TT "end", " -- a symbol which causes loading of a file to be stopped.",
      PARA,
      SEEALSO{ "needs", "load", "input" }
      }
 
 document { load,
-     HEADLINE "read Macaulay 2 commands",
+     HEADLINE => "read Macaulay 2 commands",
      TT "load \"f\"", " -- reads and executes Macaulay 2 expressions found
      in the file named ", TT "f", ".",
      PARA,
@@ -520,7 +520,7 @@ document { load,
      }
 
 document { needs,
-     HEADLINE "read Macaulay 2 commands if necessary",
+     HEADLINE => "read Macaulay 2 commands if necessary",
      TT "needs \"f\"", " -- loads the file named ", TT "f", " if it hasn't 
      been loaded yet.",
      PARA,
@@ -528,7 +528,7 @@ document { needs,
      }
 
 document { plus,
-     HEADLINE "addition",
+     HEADLINE => "addition",
      TT "plus(x,y,...)", " -- yields the sum of its arguments.",
      PARA,
      "If the arguments are strings, they are concatenated.  If there
@@ -536,33 +536,33 @@ document { plus,
      }
 
 document { times,
-     HEADLINE "multiplication",
+     HEADLINE => "multiplication",
      TT "times(x,y,...)", " -- yields the product of its arguments.",
      PARA,
      "If there are no arguments, the value is the integer 1."
      }
 
 document { power,
-     HEADLINE "power",
+     HEADLINE => "power",
      TT "power(x,n)", " -- yields the ", TT "n", "-th power of ", TT "x", ".",
      PARA,
      SEEALSO "^"
      }
 
 document { difference, 
-     HEADLINE "difference",
+     HEADLINE => "difference",
      TT "difference(x,y)", " -- returns ", TT "x-y", "." 
      }
 
 document { minus,
-     HEADLINE "additive inverse",
+     HEADLINE => "additive inverse",
      TT "minus(x)   ", " -- yields ", TT "-x", ".",
      PARA,
      "minus(x,y)  -- yields x-y, but see also ", TO "difference", "."
      }
 
 document { append,
-     HEADLINE "add to the end of a list",
+     HEADLINE => "add to the end of a list",
      TT "append(v,x)", " -- yields the list obtained by appending ", TT "x", " to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      PARA,
@@ -572,7 +572,7 @@ document { append,
      }
 
 document { prepend,
-     HEADLINE "add to the beginning of a list",
+     HEADLINE => "add to the beginning of a list",
      TT "prepend(x,v)", " -- yields the list obtained by prepending x to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      PARA,
@@ -582,7 +582,7 @@ document { prepend,
      }
 
 document { "--",
-     HEADLINE "comment",
+     HEADLINE => "comment",
      "Use a double hyphen (", TT "--", ") to introduce a comment in the text
      of a program.  The comment runs from to the end of the line.",
      PARA,
@@ -594,7 +594,7 @@ document { "--",
      }
 
 document { ascii,
-     HEADLINE "ASCII character conversion",
+     HEADLINE => "ASCII character conversion",
      TT "ascii s", " -- convert a string to a list of ascii codes.", BR,
      NOINDENT,
      TT "ascii v", " -- convert a list of ascii codes to a string.",
@@ -604,7 +604,7 @@ document { ascii,
      }
 
 document { transnet,
-     HEADLINE "assemble bytes into 4-byte integers",
+     HEADLINE => "assemble bytes into 4-byte integers",
      TT "transnet v", " -- takes a list ", TT "v", " of integers, and assembles the bytes of the
      integers, four at a time, in network order (high order byte
      first), into a string.",
@@ -620,42 +620,42 @@ document { transnet,
      }
 
 document { symbol " ", 
-     HEADLINE "blank operator for adjacent expressions",
+     HEADLINE => "blank operator for adjacent expressions",
      SEEALSO(symbol " ", Function, Thing)		    -- not really a method
      }
 
 document { (symbol " ", Function, Thing),
-     HEADLINE "function application",
+     HEADLINE => "function application",
      TT "f x", " -- yields the result of applying the function ", TT "f", " to ", TT "x", ".",
      }
 
 document { symbol "*",
-     HEADLINE "a binary operator, usually used for multiplication",
+     HEADLINE => "a binary operator, usually used for multiplication",
      TT "x * y", " -- usually yields the product of x and y.",
      PARA,
      SEEALSO{ "times", "product" }
      }
 
 document { symbol "&",
-     HEADLINE "a binary operator",
+     HEADLINE => "a binary operator",
      }
 
 document { (symbol &, ZZ, ZZ),
-     HEADLINE "logical and",
+     HEADLINE => "logical and",
      TT "m & n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'and'."
      }
 
 document { symbol "&&",
-     HEADLINE "a binary operator",
+     HEADLINE => "a binary operator",
      }
 
 document { symbol "^^",
-     HEADLINE "a binary operator",
+     HEADLINE => "a binary operator",
      }
 
 document { symbol "+",
-     HEADLINE "a bina operator",
+     HEADLINE => "a bina operator",
      TT "x + y", " -- a binary operator used for addition in many situations
      and union of sets.",
      PARA,
@@ -663,11 +663,11 @@ document { symbol "+",
      }
 
 document { (symbol +, Set, Set),
-     HEADLINE "union",
+     HEADLINE => "union",
      TT "s + t", " -- union of two sets" }
 
 document { symbol "-",
-     HEADLINE "a binary operator, usually used for subtraction",
+     HEADLINE => "a binary operator, usually used for subtraction",
      TT "x - y", " -- a binary operator used for subtraction in many situations
      and set difference.",
      BR,NOINDENT,
@@ -677,7 +677,7 @@ document { symbol "-",
      }
 
 document { symbol "/",
-     HEADLINE "a binary operator, usually used for division",
+     HEADLINE => "a binary operator, usually used for division",
      TT "x / y", " -- a binary operator usually used for division, yielding a
      fraction, or for quotients (ring by ideal, etc.).",
      PARA,
@@ -685,11 +685,11 @@ document { symbol "/",
      }
 
 document { symbol "%",
-     HEADLINE "a binary operator, usually used for remainder",
+     HEADLINE => "a binary operator, usually used for remainder",
      TT "x % y", " -- a binary operator used for remainder and reduction." }
 
 document { symbol "//",
-     HEADLINE "a binary operator, usually used for quotient",
+     HEADLINE => "a binary operator, usually used for quotient",
      TT "x // y", " -- a binary operator used for quotients in the same
      ring (with a possible remainder).",
      PARA,
@@ -697,11 +697,11 @@ document { symbol "//",
      }
 
 document { symbol "\\\\",
-     HEADLINE "a binary operator",
+     HEADLINE => "a binary operator",
      }
 
 document { symbol "^",
-     HEADLINE "a binary operator, usually used for exponents",
+     HEADLINE => "a binary operator, usually used for exponents",
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
      PARA,
      "When computing powers, one of the following methods is used.",
@@ -715,11 +715,11 @@ document { symbol "^",
      }
 
 document { symbol "/^",
-     HEADLINE "a binary operator",
+     HEADLINE => "a binary operator",
      }
 
 document { (symbol /^, Thing, ZZ),
-     HEADLINE "divided power",
+     HEADLINE => "divided power",
      TT "x /^ n", " -- computes the n-th divided power of x.",
      PARA,
      "This is implemented naively as ", TT "x^n/n!", ".",
@@ -731,7 +731,7 @@ document { (symbol /^, Thing, ZZ),
      }
 
 document { substring,
-     HEADLINE "extract part of a string",
+     HEADLINE => "extract part of a string",
      TT "substring(s,i,n)", " -- yields the substring of the string s starting at 
      position i with length n.",
      PARA,
@@ -745,7 +745,7 @@ document { substring,
      }
 
 document { reverse,
-     HEADLINE "reverse a list",
+     HEADLINE => "reverse a list",
      TT "reverse v", " -- yields a list containing the elements of the 
      list ", TT "v", " in reverse order.",
      PARA,
@@ -753,7 +753,7 @@ document { reverse,
      }
 
 document { read,
-     HEADLINE "read from a file",
+     HEADLINE => "read from a file",
      TT "read f", "  -- yields a string obtained by reading bytes from the input file
      ", TT "f", ".",BR,
      NOINDENT, 
@@ -777,7 +777,7 @@ document { read,
      }
 
 document { get,
-     HEADLINE "get an entire file",
+     HEADLINE => "get an entire file",
      TT "get \"f\"", " -- yields a string containing the contents of the file whose name
      is f.",
      PARA,
@@ -809,7 +809,7 @@ document { get,
      }
 
 document { lines,
-     HEADLINE "split a string into lines",
+     HEADLINE => "split a string into lines",
      TT "lines s", " -- yields an array of strings obtained from the
      string ", TT "s", " by breaking it at newline or return characters.",
      BR,NOINDENT,
@@ -827,29 +827,29 @@ document { lines,
      }
 
 document { symbol "!",
-     HEADLINE "factorial",
+     HEADLINE => "factorial",
      TT "n !", " -- computes n factorial, 1*2*3*...*n."
      }
 
 document { "not",
-     HEADLINE "negation",
+     HEADLINE => "negation",
      TT "not x", " -- yields the negation of x, which must be true or false.",
      SEEALSO{ "and", "or" }
      }
 
 document { symbol "|", 
-     HEADLINE "a binary operator",
+     HEADLINE => "a binary operator",
      SEEALSO "||" }
 
 document { (symbol |, List, List),
-     HEADLINE "join lists",
+     HEADLINE => "join lists",
      TT "v|w", " -- join two lists.", 
      PARA,
      EXAMPLE "{1,2,3}|{4,5,6}"
      }
 
 document { (symbol |, Net, Net),
-     HEADLINE "join strings or nets",
+     HEADLINE => "join strings or nets",
      TT "s|t", " -- concatenates strings or nets horizontally.", 
      PARA,
      "The result is a string if the arguments are all strings, otherwise it
@@ -865,7 +865,7 @@ document { (symbol |, Net, Net),
      }
 
 document { (symbol |, ZZ, ZZ),
-     HEADLINE "logical or",
+     HEADLINE => "logical or",
      TT "m|n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'or'.",
      PARA,
@@ -873,7 +873,7 @@ document { (symbol |, ZZ, ZZ),
      }
 
 document { (symbol |, Matrix, Matrix),
-     HEADLINE "join matrices horizontally",
+     HEADLINE => "join matrices horizontally",
      TT "f|g", " -- concatenate matrices horizontally.",
      PARA,
      "It is assumed that ", TT "f", " and ", TT "g", " both have the same target.",
@@ -890,11 +890,11 @@ document { (symbol |, Matrix, Matrix),
      }
 
 document { symbol ||,
-     HEADLINE "a binary operator"
+     HEADLINE => "a binary operator"
      }
 
 document { (symbol ||, Net, Net),
-     HEADLINE "join nets or strings vertically",
+     HEADLINE => "join nets or strings vertically",
      TT "m||n", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the
      first one.",
@@ -909,7 +909,7 @@ document { (symbol ||, Net, Net),
      }
 
 document { (symbol ||, Matrix, Matrix),
-     HEADLINE "join matrices vertically",
+     HEADLINE => "join matrices vertically",
      TT "f||g", " -- yields the matrix obtained from matrices ", TT "f", " and ", TT "g", " by
      concatenating the columns.",
      PARA,
@@ -927,13 +927,13 @@ document { (symbol ||, Matrix, Matrix),
      }
 
 document { symbol "===",
-     HEADLINE "strict equality",
+     HEADLINE => "strict equality",
      TT "x === y", " -- returns true or false depending on whether the 
      expressions x and y are strictly equal.",
      PARA,
      "Strictly equal expressions have the same type, so ", TT "0===0.", " and
-     ", TT "0===0/1", " are false; the three types involved here are ", TO
-     "ZZ", ", ", TO "RR", ", and ", TO "QQ", ".",
+     ", TT "0===0/1", " are false; the three types involved here are ", 
+     TO "ZZ", ", ", TO "RR", ", and ", TO "QQ", ".",
      PARA,
      "If x and y are ", TO "mutable", " then they are strictly equal only
      if they are identical (i.e., at the same address in memory).  For
@@ -954,7 +954,7 @@ document { symbol "===",
      }
 
 document { symbol "=!=",
-     HEADLINE "strict inequality",
+     HEADLINE => "strict inequality",
      TT "x =!= y", " -- returns true or false depending on whether the expressions
      x and y are strictly unequal.",
      PARA,
@@ -962,7 +962,7 @@ document { symbol "=!=",
      }
 
 document { symbol "==",
-     HEADLINE "equality",
+     HEADLINE => "equality",
      TT "x == y", " -- a binary operator for testing mathematical equality.",
      PARA,
      "A test for mathematical equality will typically involve doing a computation
@@ -987,18 +987,18 @@ document { symbol "==",
      }
 
 document { symbol "!=",
-     HEADLINE "inequality",
+     HEADLINE => "inequality",
      TT "x != y", " -- the negation of ", TT "x == y", ".",
      PARA,
      SEEALSO{ "==" }
      }
 
 document { symbol "**",
-     HEADLINE "a binary operator, usually used for tensor product",
+     HEADLINE => "a binary operator, usually used for tensor product",
      }
 
 document { (symbol **, Set, Set),
-     HEADLINE "Cartesian product",
+     HEADLINE => "Cartesian product",
      TT "X ** Y", " -- form the Cartesian product of two sets.",
      PARA,
      "Its elements are the sequences (x,y), where x is an element
@@ -1010,18 +1010,18 @@ document { (symbol **, Set, Set),
      }
 
 document { set,
-     HEADLINE "make a set",
+     HEADLINE => "make a set",
      TT "set v", " -- yields the set whose elements are the members of the list v.",
      PARA,
      SEEALSO { "Set" }
      }
 
 document { random,
-     HEADLINE "get a random element",
+     HEADLINE => "get a random element",
      "This function can be used to get random elements of various sorts."
      }
 document { (random, ZZ), 
-     HEADLINE "random integer",
+     HEADLINE => "random integer",
      TT "random n", " -- yields a random integer in the range 0 .. n-1.",
      PARA,
      "Warning: doesn't correctly handle the case when n an integer is larger
@@ -1030,30 +1030,30 @@ document { (random, ZZ),
      }
 
 document { (random, RR), 
-     HEADLINE "random real number",
+     HEADLINE => "random real number",
      TT "random x", " -- yields a random real number in the range 0 .. x." }
 
 document { (random, Ring),
-     HEADLINE "random element of a ring",
+     HEADLINE => "random element of a ring",
      TT "random R", " -- yields a random element of the ring ", TT "R", ".",
      PARA,
      "Currently implemented only for rings of the form ", TT "ZZ/n", "."
      }
 
 document { (random, ZZ, Ring),
-     HEADLINE "a random ring element of a given degree",
+     HEADLINE => "a random ring element of a given degree",
      TT "random(n,R)", " -- yields a random homogeneous element of degree ", TT "n", " 
      in the ring ", TT "R", "."
      }
 
 document { (random, List, Ring),
-     HEADLINE "a random ring element of a given degree",
+     HEADLINE => "a random ring element of a given degree",
      TT "random(n,R)", " -- yields a random homogeneous element of degree ", TT "n", " 
      in the ring ", TT "R", ", where ", TT "n", " is a list of integers."
      }
 
 document { (random, Module, Module),
-     HEADLINE "make a random module map",
+     HEADLINE => "make a random module map",
      TT "random(F,G)", " -- yields a random graded, degree 0, map from the free
      module G to the free module F.",
      EXAMPLE {
@@ -1063,11 +1063,11 @@ document { (random, Module, Module),
      }
 
 document { true,
-     HEADLINE "Boolean value true",
+     HEADLINE => "Boolean value true",
      TT "true", " -- a value indicating truth."
      }
 
 document { false,
-     HEADLINE "Boolean value false",
+     HEADLINE => "Boolean value false",
      TT "false", " -- a value indicating falsity."
      }

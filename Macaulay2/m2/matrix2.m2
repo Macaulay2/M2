@@ -49,17 +49,21 @@ syz Matrix := Matrix => options -> (f) -> (
      )
 
 
-modulo = method()
-modulo(Matrix,Nothing) := (m,null) -> syz m
-modulo(Nothing,Matrix) := (null,n) -> n
-modulo(Matrix,Matrix) := Matrix => (m,n) -> (
+modulo = method(
+     Options => {
+     	  -- DegreeLimit => {}
+	  }
+     )
+modulo(Matrix,Nothing) := Matrix => options -> (m,null) -> syz(m,options)
+modulo(Nothing,Matrix) := Matrix => options -> (null,n) -> n
+modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      P := target m;
      Q := target n;
      if P != Q then error "expected maps with the same target";
      if not isFreeModule P or not isFreeModule Q
      or not isFreeModule source m or not isFreeModule source n
      then error "expected maps between free modules";
-     syz(m|n, SyzygyRows => numgens source m)
+     syz(m|n, options, SyzygyRows => numgens source m)
      )
 
 Matrix // Matrix := Matrix => (f,g) -> (

@@ -12,28 +12,32 @@ TEST ///
 ///
 
 document { symbol Resolution,
-     HEADLINE "a key for storing resolutions",
+     HEADLINE => "a key for storing resolutions",
      "A key used in a ", TO "ChainComplex", " to store the resolution it comes from."
      }
 
 document { Resolution,
-     HEADLINE "the class of all resolution computations",
+     HEADLINE => "the class of all resolution computations",
      PARA,
      "These resolutions are internal engine objects not meant to be examined
      by the user.",
      }
 
 document { symbol "res",
-     HEADLINE "make a projective resolution",
+     HEADLINE => "make a projective resolution",
      "See ", TO "resolution", ", of which ", TT "res", " is a synonym."
      }
 
 document { resolution,
-     HEADLINE "make a projective resolution"
+     HEADLINE => "make a projective resolution",
+     USAGE => { 
+	  TT "resolution M", " -- make a projective resolution of M.", BR,
+	  TT "res M", " -- 'res' is a synonym for 'resolution'."
+	  }
      }
 
 document { resolution => DegreeLimit,
-     HEADLINE "compute only up to this degree",
+     HEADLINE => "compute only up to this degree",
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "resolution", " which specifies that the computation should halt
      after dealing with degree n.",
@@ -50,7 +54,7 @@ document { resolution => DegreeLimit,
      }
 
 document { resolution => SyzygyLimit,
-     HEADLINE "stop when this number of syzygies are obtained",
+     HEADLINE => "stop when this number of syzygies are obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
      stop after a certain number of syzygies have computed.",
@@ -65,7 +69,7 @@ document { resolution => SyzygyLimit,
      }
 
 document { resolution => PairLimit,
-     HEADLINE "stop when this number of pairs are handled",
+     HEADLINE => "stop when this number of pairs are handled",
      TT "PairLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ", which specifies that the computation should
      be stopped after a certain number of S-pairs have been reduced.",
@@ -79,7 +83,7 @@ document { resolution => PairLimit,
      }
 
 document { resolution => StopBeforeComputation,
-     HEADLINE "whether to stop the computation immediately",
+     HEADLINE => "whether to stop the computation immediately",
      TT "StopBeforeComputation", " -- keyword for an optional argument used with
      ", TO "resolution", ".",
      PARA,
@@ -89,16 +93,16 @@ document { resolution => StopBeforeComputation,
      }
 
 document { LengthLimit,
-     HEADLINE "stop when the resolution reaches this length",
+     HEADLINE => "stop when the resolution reaches this length",
      }
 
 document { "Algorithm",
-     HEADLINE "an obsolete synonym for Strategy",
+     HEADLINE => "an obsolete synonym for Strategy",
      SEEALSO "Strategy"
      }
 
 document { resolution => LengthLimit,
-     HEADLINE "stop when the resolution reaches this length",
+     HEADLINE => "stop when the resolution reaches this length",
      TT "LengthLimit", " -- keyword for an optional argument used with
      ", TO "resolution", " which indicates how long a resolution to make.",
      PARA,
@@ -116,7 +120,7 @@ document { resolution => LengthLimit,
      }
 
 document { HardDegreeLimit,
-     HEADLINE "compute only up to this degree",
+     HEADLINE => "compute only up to this degree",
      TT "HardDegreeLimit", " -- keyword for an optional argument which specifies
      that information above a specified degree is to be discarded."
      }
@@ -151,7 +155,7 @@ document { resolution => Strategy,
      }
 
 document { SortStrategy,
-     HEADLINE "specify a strategy for sorting S-pairs",
+     HEADLINE => "specify a strategy for sorting S-pairs",
      TT "SortStrategy", " -- an keyword for an optional argument which 
      specifies the strategy to be used for sorting S-pairs."
      }
@@ -224,7 +228,7 @@ C = res(M, LengthLimit => 2, DegreeLimit => 4)
 "
 
 document { status,
-     HEADLINE "status of a resolution computation",
+     HEADLINE => "status of a resolution computation",
      TT "status C", " -- displays the status of the computation of a
      chain complex C constructed by ", TO "resolution", ".  The display has
      the same shape as the display produced by ", TO "betti", ", but
@@ -242,25 +246,25 @@ document { status,
      }
 
 document { TotalPairs,
-     HEADLINE "whether to display the total number of S-pairs",
+     HEADLINE => "whether to display the total number of S-pairs",
      TT "TotalPairs", " -- an option for ", TO "status", " which specifies
      whether to display the total number of S-pairs."
      }
 
 document { PairsRemaining,
-     HEADLINE "whether to display the number of S-pairs remaining",
+     HEADLINE => "whether to display the number of S-pairs remaining",
      TT "PairsRemaining", " -- an option for ", TO "status", " which specifies
      whether to display number of S-pairs remaining."
      }
 
 document { Monomials,
-     HEADLINE "whether to display the number of monomial",
+     HEADLINE => "whether to display the number of monomial",
      TT "Monomials", " -- an option for ", TO "status", " which specifies
      whether to display the number of monomials."
      }
 
 document { radical, 
-     HEADLINE "compute the radical of an ideal",
+     HEADLINE => "compute the radical of an ideal",
      TT "radical I", " -- the radical of the ideal I",
      PARA,
      "If I is an ideal in an affine ring (i.e. a quotient of a polynomial 
@@ -284,7 +288,7 @@ document { radical,
      }
 
 document { CompleteIntersection,
-     HEADLINE "provide a hint when computing a radical",
+     HEADLINE => "provide a hint when computing a radical",
      TT "CompleteIntersection => J", " -- an option to ", TO "radical", " 
      which indicates that the ideal ", TT "I", " provided by the user is unmixed,
      and that ", TT "J", " is an ideal in ", TT "I", " which is a complete intersection of
@@ -299,7 +303,7 @@ document { CompleteIntersection,
      }
 
 document { Unmixed,
-     HEADLINE "provide a hint when computing a radical",
+     HEADLINE => "provide a hint when computing a radical",
      TT "Unmixed => true", " -- an option to ", TO "radical", " which asserts
      that the ideal provided by the user is known to be unmixed.",
      PARA,
@@ -308,7 +312,7 @@ document { Unmixed,
      }
 
 document { top,
-     HEADLINE "compute the top dimensional components",
+     HEADLINE => "compute the top dimensional components",
      TT "top I", " -- yields the intersection of top dimensional primary
      components of the module or ideal ", TT "I", ".",
      PARA,
@@ -317,13 +321,13 @@ document { top,
      "If ", TT "I", " is a submodule of (a quotient module) ", TT "M", ", then a possibly larger
      submodule of ", TT "M", " is returned.  The method used is that of
      Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae
-     paper.  For a very brief description of the method used, see ", TO
-     "top-method", ".",
+     paper.  For a very brief description of the method used, see ", 
+     TO "top-method", ".",
      SEEALSO {"removeLowestDimension", "saturate", "quotient", "radical"}
      }
 
 document { removeLowestDimension,
-     HEADLINE "remove components of lower dimension",
+     HEADLINE => "remove components of lower dimension",
      TT "removeLowestDimension I", " -- removes the components of ", TT "I", " of lower dimension",
      PARA,
      "Yields the intersection of the primary components of ", TT "I", ",
@@ -340,7 +344,7 @@ document { removeLowestDimension,
      }
 
 document { factor,
-     HEADLINE "factor a ring element",
+     HEADLINE => "factor a ring element",
      TT "factor x", " -- factors x.",
      PARA,
      "The result is a ", TO "Product", " each of whose factors is a 
@@ -375,7 +379,7 @@ document { factor,
      }
 
 document { pseudoRemainder,
-     HEADLINE "compute the pseudo-remainder",
+     HEADLINE => "compute the pseudo-remainder",
      TT "pseudoRemainder(f,g)", " -- computes the pseudo-remainder for
      f divided by g.",
      PARA,
@@ -383,7 +387,7 @@ document { pseudoRemainder,
      }
 
 document { irreducibleCharacteristicSeries,
-     HEADLINE "compute the irreducible characteristic series",
+     HEADLINE => "compute the irreducible characteristic series",
      TT "irreducibleCharacteristicSeries I", " -- computes the irreducible
      characteristic series of the ideal ", TT "I", ".",
      PARA,
@@ -391,7 +395,7 @@ document { irreducibleCharacteristicSeries,
      }
 
 document { topCoefficients,
-     HEADLINE "list of top coefficients of a matrix",
+     HEADLINE => "list of top coefficients of a matrix",
      TT "topCoefficients m", " -- for a matrix ", TT "m", ", for each column, returns
      the coefficients of the highest power of the variable with the lowest
      index.",
@@ -407,7 +411,7 @@ document { topCoefficients,
      }
 
 document { decompose,
-     HEADLINE "irreducible components of an ideal",
+     HEADLINE => "irreducible components of an ideal",
      TT "decompose I", " -- compute the ideals of the irreducible
      components of the subvariety defined by the ideal ", TT "I", ".",
      PARA,
@@ -534,14 +538,14 @@ assert ( # factor (x^6 + y^6) == 4 )
 "
 
 document { integrate,
-     HEADLINE "numerical integration",
+     HEADLINE => "numerical integration",
      TT "integrate(f,a,b)", " -- integrate f from a to b numerically, using
      Gaussian quadrature.",
      EXAMPLE "integrate(sin,0,pi)"
      }
 
 document { getWWW,
-     HEADLINE "get a web page",
+     HEADLINE => "get a web page",
      TT "getWWW URL", " -- obtain the contents of the web page addressed
      by ", TT "URL", " from an http server.",
      BR,NOINDENT,
@@ -557,7 +561,7 @@ document { getWWW,
      }
 
 document { browse,
-     HEADLINE "browse the contents of an object",
+     HEADLINE => "browse the contents of an object",
      TT "browse x", " -- provides an interactive mechanism which allows the user
      to explore the hash table or list ", TT "x", ".",
      PARA,
@@ -570,7 +574,7 @@ document { browse,
      }
 
 document { showUserStructure,
-     HEADLINE "show relationship between types defined by user",
+     HEADLINE => "show relationship between types defined by user",
      TT "showUserStructure", " -- a command which displays the structure of 
      types defined by the user and assigned to global variables.",
      PARA,
@@ -588,7 +592,7 @@ document { showUserStructure,
 
 
 document { showStructure,
-     HEADLINE "show relationship between types",
+     HEADLINE => "show relationship between types",
      TT "showStructure", " -- a command which displays the structure of types
      assigned to global variables.",
      BR, NOINDENT,
@@ -605,7 +609,7 @@ document { showStructure,
      }
 
 document { symbol "..",
-     HEADLINE "sequence of consecutive items",
+     HEADLINE => "sequence of consecutive items",
      TT "m .. n", " -- produces a sequence of integers in the range from m to 
      n inclusive. If n is less than m then the result is an empty sequence.",
      PARA,
@@ -649,7 +653,7 @@ document { symbol "..",
      }
 
 document { (cohomology, ZZ, Module),
-     HEADLINE "local cohomology",
+     HEADLINE => "local cohomology",
      TT "HH^i(M)", " -- computes the i-th local cohomology of ", TT "M", " with
      respect to the maximal ideal generated by the variables of the ring.",
      PARA,
@@ -661,43 +665,43 @@ document { (cohomology, ZZ, Module),
      }
 
 document { Variety,
-     HEADLINE "the class of all algebraic varieties", 
+     HEADLINE => "the class of all algebraic varieties", 
      SEEALSO "CoherentSheaf" }
 
 document { AffineVariety,
-     HEADLINE "the class of all affine varieties",
+     HEADLINE => "the class of all affine varieties",
      "To create an affine variety, use ", TO "Spec", ".",
      EXAMPLE { "Spec(QQ[x,y])" }
      }
 
 document { ProjectiveVariety,
-     HEADLINE "the class of all projective varieties",
+     HEADLINE => "the class of all projective varieties",
      "To create a projective variety, use ", TO "Proj", ".",
      EXAMPLE { "Proj(QQ[x,y])" }
      }
 
 document { Spec,
-     HEADLINE "make an affine variety",
+     HEADLINE => "make an affine variety",
      TT "Spec R", " -- create an affine variety or scheme from the ring ", TT "R", ".",
      EXAMPLE { "R = QQ[x,y];", "Spec R" }
      }
 
 document { Proj,
-     HEADLINE "make a projective variety",
+     HEADLINE => "make a projective variety",
      TT "Proj R", " -- create a projective variety or scheme from the graded ring ", TT "R", ".",
      EXAMPLE { "R = QQ[x,y];", "Proj R" }
      }
 
 document { CoherentSheaf,
-     HEADLINE "the class of all coherent sheaves"
+     HEADLINE => "the class of all coherent sheaves"
      }
 
 document { sheaf,
-     HEADLINE "make a coherent sheaf"
+     HEADLINE => "make a coherent sheaf"
      }
 
 document { (sheaf, Module, Variety),
-     HEADLINE "make a coherent sheaf",
+     HEADLINE => "make a coherent sheaf",
      TT "sheaf(M,X)", " -- produce the coherent sheaf on the variety ", TT "X", " corresponding
      to the module ", TT "M", ".",
      PARA,
@@ -706,13 +710,13 @@ document { (sheaf, Module, Variety),
      }
 
 document { (sheaf, Module),
-     HEADLINE "make a coherent sheaf",
+     HEADLINE => "make a coherent sheaf",
      TT "sheaf M", " -- produce the coherent sheaf on a projective variety ", TT "X", "
      corresponding to a homegeneous module ", TT "M", "."
      }
 
 document { (symbol ~, Module),
-     HEADLINE "make a coherent sheaf",
+     HEADLINE => "make a coherent sheaf",
      TT "M~", " -- produce the coherent sheaf on a projective variety ", TT "X", "
      corresponding to a homegeneous module ", TT "M", ".",
      PARA,
@@ -720,18 +724,18 @@ document { (symbol ~, Module),
      }
 
 document { (sheaf, Ring), 
-     HEADLINE "make the structure sheaf",
+     HEADLINE => "make the structure sheaf",
      TT "sheaf R", " -- produce the structure sheaf on the projective variety ", TT "Proj R", "."
      }
 
 document { (symbol ~, Ring),
-     HEADLINE "make the structure sheaf",
+     HEADLINE => "make the structure sheaf",
      TT "R~", " -- produce the structure sheaf on the projective variety ", TT "Proj R", ".",
      EXAMPLE { "R = QQ[x,y,z];", "R~", "variety oo" }
      }
 
 document { (variety, CoherentSheaf),
-     HEADLINE "get the variety under a sheaf",
+     HEADLINE => "get the variety under a sheaf",
      TT "variety F", " -- produce the variety over which a coherent sheaf is defined.",
      PARA,
      EXAMPLE {
@@ -742,17 +746,17 @@ document { (variety, CoherentSheaf),
      }
 
 document { variety,
-     HEADLINE "get the variety"
+     HEADLINE => "get the variety"
      }
 
 document { (ring, CoherentSheaf),
-     HEADLINE "get the coordinate ring under a sheaf",
+     HEADLINE => "get the coordinate ring under a sheaf",
      TT "ring F", " -- produce the coordinate ring of the variety on which a coherent sheaf
      ", TT "F", " is defined."
      }
 
 document { (module, CoherentSheaf),
-     HEADLINE "get the module defining a coherent sheaf",
+     HEADLINE => "get the module defining a coherent sheaf",
      TT "module F", " -- produce the module from which the coherent sheaf ", TT "F", " was defined.",
      PARA,
      EXAMPLE {
@@ -764,17 +768,17 @@ document { (module, CoherentSheaf),
      }
 
 document { (symbol ++, CoherentSheaf, CoherentSheaf),
-     HEADLINE "direct sum of coherent sheaves",
+     HEADLINE => "direct sum of coherent sheaves",
      TT "F ++ G", " -- direct sum of coherent sheaves."
      }
 
 document { (symbol **, CoherentSheaf, CoherentSheaf),
-     HEADLINE "tensor product of coherent sheaves",
+     HEADLINE => "tensor product of coherent sheaves",
      TT "F ** G", " -- tensor product of coherent sheaves."
      }
 
 document { (symbol " ", CoherentSheaf, ZZ),
-     HEADLINE "canonical twist of a coherent sheaf",
+     HEADLINE => "canonical twist of a coherent sheaf",
      TT "F(n)", " -- twist a coherent sheaf F on a projective variety by
      the n-th power of the hyperplane line bundle.",
      PARA,
@@ -788,7 +792,7 @@ document { (symbol " ", CoherentSheaf, ZZ),
      }
 
 document { (symbol /, CoherentSheaf, CoherentSheaf),
-     HEADLINE "quotient of coherent sheaves",
+     HEADLINE => "quotient of coherent sheaves",
      TT "F / G", " -- quotient of coherent sheaves.",
      PARA,
      SEEALSO "CoherentSheaf"
@@ -796,11 +800,11 @@ document { (symbol /, CoherentSheaf, CoherentSheaf),
 
 
 document { (codim, CoherentSheaf),
-     HEADLINE "codimension of support"
+     HEADLINE => "codimension of support"
      }
 
 document { (rank, CoherentSheaf),
-     HEADLINE "the rank of a coherent sheaf",
+     HEADLINE => "the rank of a coherent sheaf",
      }
 
 document { (exteriorPower, ZZ, CoherentSheaf),
@@ -814,7 +818,7 @@ document { (degrees, CoherentSheaf),
      }
 
 document { (cohomology, ZZ, CoherentSheaf),
-     HEADLINE "coherent sheaf cohomology",
+     HEADLINE => "coherent sheaf cohomology",
      TT "HH^i(F)", " -- for a coherent sheaf F on a projective variety X, computes
      the direct sum over at least the natural numbers ", TT "n", ", of the
      ", TT "i", "-th cohomology groups of F(n).",
@@ -832,7 +836,7 @@ document { (cohomology, ZZ, CoherentSheaf),
      }
 
 document { OO,
-     HEADLINE "the structure sheaf",
+     HEADLINE => "the structure sheaf",
      TT "OO_X", " -- produce the structure sheaf on a variety ", TT "X", "."
      }
 
@@ -841,17 +845,17 @@ document { (cotangentSheaf, ProjectiveVariety),
      }
 
 document { cotangentSheaf,
-     HEADLINE "make the cotangent sheaf"
+     HEADLINE => "make the cotangent sheaf"
      }
 
 document { (cotangentSheaf, ZZ, ProjectiveVariety),
-     HEADLINE "make an exterior power of the cotangent sheaf",
+     HEADLINE => "make an exterior power of the cotangent sheaf",
      TT "cotangentSheaf(p,X)", " -- calculate the ", TT "p", "-th exterior power of
      the cotangent sheaf of a variety ", TT "X", "."
      }
 
 document { Options,
-     HEADLINE "specify optional arguments for a method",
+     HEADLINE => "specify optional arguments for a method",
      TT "Options", " -- an option used with ", TO "method", " to specify
      names of optional arguments and their default values.",
      PARA,

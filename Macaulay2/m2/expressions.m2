@@ -812,7 +812,8 @@ html Minus := v -> (
      else "-" | html term
      )
 
-texMath Divide := x -> "{" | texMath x#0 | " \\over " | texMath x#1 | "}"
+texMath Divide := x -> "\\frac{" | texMath x#0 | "}{" | texMath x#1 | "}"
+
 html Divide := x -> (
      p := precedence x;
      a := html x#0;
@@ -969,7 +970,7 @@ texMath SparseVectorExpression := v -> (
      n := v#0;
      w := newClass(MutableList, apply(n,i->"0"));
      scan(v#1,(i,x)->w#i=texMath x);
-     concatenate("\\pmatrix{", between("\\cr ",w),"\\cr}")
+     concatenate("\\begin{pmatrix}", between("\\\\ ",w),"\\end{pmatrix}")
      )
 
 texMath SparseMonomialVectorExpression := v -> (
@@ -980,12 +981,12 @@ texMath SparseMonomialVectorExpression := v -> (
      )
 
 texMath MatrixExpression := m -> concatenate(
-     "\\pmatrix{",
+     "\\begin{pmatrix}",
      apply(m,
 	  row->(
 	       between("&"|newline,apply(row,texMath)),
- 	       "\\cr"|newline)),
-     "}"
+ 	       "\\\\"|newline)),
+     "\\end{pmatrix}"
      )
 
 ctr := 0
