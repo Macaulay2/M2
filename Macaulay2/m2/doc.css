@@ -12,6 +12,8 @@ a:visited { background-color: transparent; color: #52188b; }
 a:hover { background-color: transparent; color: #009999; }
 a:active { background-color: transparent; color: #ee0000; }
 
+a.symbol:link { background-color: transparent; color: #00ee00; }
+
 p.buttonbar { text-align: center; }
 pre.examples {
      margin: 0pt;
