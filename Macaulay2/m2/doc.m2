@@ -750,7 +750,7 @@ document { get,
      file f.",
      PARA,
      EXAMPLE {
-	  ///"junk" << "hi there" << endl << close///,
+	  ///"junk" << "hi there" << close///,
       	  ///get "junk"///,
      	  if version#"operating system" =!= "SunOS"
      	  and version#"operating system" =!= "Windows-95-98-NT"
