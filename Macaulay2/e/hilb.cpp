@@ -244,7 +244,7 @@ static void iquotient_and_sum(MonomialIdeal &I,
     if (bins[j] != NULL)
       {
 	while (bins[j]->remove(b)) quot->insert(b);
-	delete bins[j];
+	deleteitem(bins[j]);
       }
 }
 
@@ -315,7 +315,7 @@ hilb_comp::~hilb_comp()
       
       R->remove(p->h0);
       R->remove(p->h1);
-      delete p;			// This will wipe out the monomial ideals
+      deleteitem(p);			// This will wipe out the monomial ideals
     }
 
   R->remove(result_poincare);
@@ -557,7 +557,7 @@ int hilb_comp::hilbertSeries(const Matrix *M, RingElement *&result)
   int retval = hf->calc(-1);
   if (retval != COMP_DONE) return 1;
   result = hf->value();
-  delete hf;
+  deleteitem(hf);
   return 0;
 }
 #endif
@@ -573,7 +573,7 @@ RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
   int retval = hf->calc(-1);
   if (retval != COMP_DONE) return 0;
   RingElement *result = hf->value();
-  delete hf;
+  deleteitem(hf);
   return result;
 }
 
@@ -595,7 +595,7 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
   // up the small integer values of the coefficients of those that have exp[0]=deg.
   const PolynomialRing *P = h->get_ring()->cast_to_PolynomialRing();
 
-  int *exp = new int[P->n_vars()];
+  int *exp = newarray(int,P->n_vars());
   int result = 0;
   for (Nterm *f = h->get_value(); f!=NULL; f=f->next)
     {
@@ -611,7 +611,7 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
 	}
 	
     }
-  delete [] exp;
+  deletearray(exp);
   return result;
 }
 

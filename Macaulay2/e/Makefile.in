@@ -128,6 +128,7 @@ COMMANDS_REDO = \
 NAMES_H = comp \
 	ringelem \
 	style \
+	newdelete \
 	hash \
 	index \
 	respair2
@@ -176,8 +177,9 @@ all:: $(OFILES)
 all:: $(LIBGB)
 endif
 
-%.ii: %.cpp; $(PRE.cc) $< -o $@
-%.s: %.cpp; $(CXX) $(CXXFLAGS) -S $< -o $@
+%.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
+%.s : %.cpp; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+%-demangled.s : %.s; demangle <$< >$@
 
 %.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
@@ -213,6 +215,9 @@ doxygen : ; cd @srcdir@ && doxygen
 $(LIBGB): $(OFILES); $(AR) rcs $@ $^
 distclean: clean; rm -f Makefile
 
+all:: check-global-new-delete
+check-global-new-delete : $(OBJFILES) ; nm -o --demangle $^ | egrep 'U operator (new|delete)' || true
+
 initialize :: statuscodes.h
 statuscodes.h : statuscodes
 	sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' <$< >$@
@@ -221,3 +226,4 @@ statuscodes.h : statuscodes
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 # End:
+

@@ -35,7 +35,7 @@ typedef int * monomial;
 
 class gbvectorHeap;
 
-class GBRing
+class GBRing : public our_new_delete
 {
   friend class WeylAlgebra;
   friend class SkewPolynomialRing;

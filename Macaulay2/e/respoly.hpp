@@ -25,7 +25,7 @@ enum
   SYZ_NOT_NEEDED		// S-pair computation for this pair cancelled
 };
 
-class res_pair
+class res_pair : public our_new_delete
 {
 public:
   // The schreyer order part:

@@ -103,7 +103,7 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
     }
   unsigned int next = 0;
 
-  vec *newcols = new vec[ncols];
+  vec *newcols = newarray(vec,ncols);
   for (int i=0; i<ncols; i++) newcols[i] = 0;
 
   for (int r=0; r <target->rank(); r++)
@@ -208,7 +208,7 @@ vec * Matrix::make_sparse_vecs(const FreeModule *target,
 	}
     }
 
-  vec *newcols = new vec[ncols];
+  vec *newcols = newarray(vec,ncols);
   for (int i=0; i<ncols; i++) newcols[i] = 0;
   for (int x=0; x<entries->len; x++)
     {
@@ -235,7 +235,7 @@ const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
     result->append(newcols[i]);
   result->freeze(is_mutable_flag);
 
-  delete [] newcols;
+  deletearray(newcols);
   return result;
 }
 
@@ -254,7 +254,7 @@ const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
   for (int i=0; i<source->rank(); i++)
     (*result)[i] = newcols[i];
 
-  delete [] newcols;
+  deletearray(newcols);
   return result;
 }
 
@@ -818,7 +818,7 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
   FreeModule *G = rows()->tensor(m->cols());
   FreeModule *G1 = m->rows()->tensor(cols());
   G->direct_sum_to(G1);
-  delete G1;
+  deleteitem(G1);
   Matrix *result = new Matrix(F, G);
 
   int i, j, next=0;
@@ -918,8 +918,8 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
   const FreeModule *G = G1->tensor(m->cols());
   int *deg = degree_monoid()->make_one();
   degree_monoid()->divide(m->degree_shift(), degree_shift(), deg);
-  delete F1;
-  delete G1;
+  deleteitem(F1);
+  deleteitem(G1);
   Matrix *result = new Matrix(F, G, deg);
   degree_monoid()->remove(deg);
   int i, j, next=0;
@@ -981,7 +981,7 @@ void Matrix::minimal_lead_terms_ZZ(intarray &result) const
       if (rsyz != NULL) Rsyz->remove(rsyz);
     }
   for (x=0; x<n_cols(); x++)
-    delete mis[x];
+    deleteitem(mis[x]);
 }
 #endif
 #if 0
@@ -1019,7 +1019,7 @@ Matrix Matrix::minimal_lead_terms_ZZ() const
 	      rows()->negate_to(v);
 	      result.append(v);
 	    }
-	  delete ti;
+	  deleteitem(ti);
 	}
     }
   bump_down(Gsyz);
@@ -1204,9 +1204,9 @@ Matrix *Matrix::koszul(const Matrix *r, const Matrix *c)
   int nvars = F->get_ring()->n_vars();
   int nrows = r->n_cols();
   int ncols = c->n_cols();
-  int *aexp = new int[nvars];
-  int *bexp = new int[nvars];
-  int *result_exp = new int[nvars];
+  int *aexp = newarray(int,nvars);
+  int *bexp = newarray(int,nvars);
+  int *result_exp = newarray(int,nvars);
   for (int i=0; i<ncols; i++)
     {
       if ((*c)[i] == NULL) continue;
@@ -1231,9 +1231,9 @@ Matrix *Matrix::koszul(const Matrix *r, const Matrix *c)
       F->sort(v);
       (*result)[i] = v;
     }
-  delete [] aexp;
-  delete [] bexp;
-  delete [] result_exp;
+  deletearray(aexp);
+  deletearray(bexp);
+  deletearray(result_exp);
   return result;
 }
 
@@ -1242,7 +1242,7 @@ Matrix *Matrix::exterior(int p,int strategy) const
   DetComputation *d = new DetComputation(this,p,1,strategy);
   d->calc(-1);
   Matrix *result = d->determinants();
-  delete d;
+  deleteitem(d);
   return result;
 }
 
@@ -1251,7 +1251,7 @@ Matrix *Matrix::minors(int p,int strategy) const
   DetComputation *d = new DetComputation(this,p,0,strategy);
   d->calc(-1);
   Matrix *result = d->determinants();
-  delete d;
+  deleteitem(d);
   return result;
 }
 
@@ -1260,7 +1260,7 @@ Matrix *Matrix::pfaffians(int p) const
   PfaffianComputation *d = new PfaffianComputation(this,p);
   d->calc(-1);
   Matrix *result = d->pfaffians();
-  delete d;
+  deleteitem(d);
   return result;
 }
 
@@ -1283,9 +1283,9 @@ Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
       return result;
     }
 
-  int *a = new int[p];
-  int *b = new int[q];
-  int *c = new int[p+q];
+  int *a = newarray(int,p);
+  int *b = newarray(int,q);
+  int *c = newarray(int,p+q);
   int col = 0;
 
   for (int i=0; i<Fp->rank(); i++)
@@ -1306,9 +1306,9 @@ Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
 	}
     }
 
-  delete [] a;
-  delete [] b;
-  delete [] c;
+  deletearray(a);
+  deletearray(b);
+  deletearray(c);
   return result;
 }
 
@@ -1346,7 +1346,7 @@ void Matrix::text_out(buffer &o) const
       char *s = p[r].str();
       o << s << newline;
     }
-  delete [] p;
+  deletearray(p);
 }
 
 #if 0
@@ -1386,8 +1386,8 @@ vec Matrix::strip_vector(vec &f, const int *vars,
     }
   // At this point, we know that we have a polynomial ring
   int nvars = get_ring()->n_vars();
-  int *exp = new int[nvars];
-  int *scratch_exp = new int[nvars];
+  int *exp = newarray(int,nvars);
+  int *scratch_exp = newarray(int,nvars);
   const Monoid *M = get_ring()->Nmonoms();
 
   M->to_expvector(f->monom, exp);
@@ -1425,8 +1425,8 @@ vec Matrix::strip_vector(vec &f, const int *vars,
   newf->next = NULL;
   f = head.next;
 
-  delete [] exp;
-  delete [] scratch_exp;
+  deletearray(exp);
+  deletearray(scratch_exp);
   return result;
 }
 #endif
@@ -1581,7 +1581,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
 
   // Now collect all of the monomials
   int *mon = M->make_one();
-  int *exp = new int[M->n_vars()];
+  int *exp = newarray(int,M->n_vars());
   ring_elem one = P->Ncoeffs()->from_int(1);
   exponent_table *E = exponent_table_new(50000, vars->len);
 
@@ -1592,7 +1592,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
 	{
 	  for (Nterm *t = v->coeff; t != 0; t = t->next)
 	    {
-	      int *exp1 = new int[vars->len];
+	      int *exp1 = newarray(int,vars->len);
 	      M->to_expvector(t->monom, exp);
 	      for (unsigned int i=0; i<vars->len; i++)
 		exp1[i] = exp[vars->array[i]];
@@ -1616,7 +1616,7 @@ MatrixOrNull *Matrix::monomials(M2_arrayint vars) const
     }
   
   // Remove the garbage memory
-  delete [] exp;
+  deletearray(exp);
   M->remove(mon);
   exponent_table_free(&E);
 
@@ -1638,8 +1638,8 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
 
   // At this point, we know that we have a polynomial ring
   int nvars = M->n_vars();
-  int *exp = new int[nvars];
-  int *scratch_exp = new int[nvars];
+  int *exp = newarray(int,nvars);
+  int *scratch_exp = newarray(int,nvars);
 
   vec result = 0;
   for (vec g = f ; g != 0; g = g->next)
@@ -1664,8 +1664,8 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
 	    }
 	}
     }
-  delete [] exp;
-  delete [] scratch_exp;
+  deletearray(exp);
+  deletearray(scratch_exp);
   M->remove(mon);
   F->sort(result);
   return result;
@@ -1817,7 +1817,7 @@ int Matrix::dimension() const
     {
       // This handles the case when the coefficients are a field, or ZZ
       int i,j;
-      int *dims = new int[n_rows()];
+      int *dims = newarray(int,n_rows());
       for (i=0; i<n_rows(); i++)
 	dims[i] = base;
       for (j=0; j<n_cols(); j++)
@@ -1832,7 +1832,7 @@ int Matrix::dimension() const
 	}
       for (i=0; i<n_rows(); i++)
 	if (dims[i] > result) result = dims[i];
-      delete [] dims;
+      deletearray(dims);
       return result;
     }
 }
@@ -2008,7 +2008,7 @@ Matrix *Matrix::k_basis(Matrix &bot, const int *d, int do_trunc) const
 	      else if (cmp < 0)
 		k_basis0(0);
 	      
-	      delete b;
+	      deleteitem(b);
 	    }
 	  //	}
 	  //      else if (do_trunc)
@@ -2097,7 +2097,7 @@ Matrix *Matrix::k_basis(Matrix &bot) const
 	      if (!kb_monideal->search(b->monom().raw(), c))
 		k_basis1(0);
 	      
-	      delete b;
+	      deleteitem(b);
 	    }
 	}
     }

@@ -114,8 +114,8 @@ bool LLLoperations::initializeLLL(const Matrix *m,
   bool ret = initializeLLL(A,threshold,LLLstate);
   if (!ret)
     {
-      delete A->getColumnChangeMatrix();
-      delete A;
+      deleteitem(A->getColumnChangeMatrix());
+      deleteitem(A);
     }
   return ret;
 }
@@ -394,8 +394,8 @@ bool LLLoperations::LLL(const Matrix *m, const RingElement *threshold, Matrix *&
   int ret = doLLL(A,LLLstate);
   if (ret != COMP_DONE)
     {
-      delete A;
-      delete LLLstate;
+      deleteitem(A);
+      deleteitem(LLLstate);
       return false;
     }
   LLLbasis = A->toMatrix();
@@ -411,8 +411,8 @@ bool LLLoperations::LLL(const Matrix *m, const RingElement *threshold, Matrix *&
   int ret = doLLL(A,LLLstate);
   if (ret != COMP_DONE)
     {
-      delete A;
-      delete LLLstate;
+      deleteitem(A);
+      deleteitem(LLLstate);
       return false;
     }
   LLLbasis = A->toMatrix();

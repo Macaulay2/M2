@@ -1,4 +1,5 @@
 #include "skew.hpp"
+#include "newdelete.hpp"
 
 SkewMultiplication::SkewMultiplication()
   : _n_vars(0),
@@ -18,14 +19,14 @@ SkewMultiplication::SkewMultiplication(int nvars, int nskew, int * skew_list)
     _SKEW1(0),
     _SKEW2(0)
 {
-  _skew_exp = new bool[nvars];
+  _skew_exp = newarray(bool,nvars);
   for (int i=0; i<nvars; i++)
     _skew_exp[i] = false;
   for (int v=0; v<nskew; v++)
     _skew_exp[skew_list[v]] = true;
 
-  _SKEW1 = new int[nskew];
-  _SKEW2 = new int[nskew];
+  _SKEW1 = newarray(int,nskew);
+  _SKEW2 = newarray(int,nskew);
 }
 
 static int sort_sign(int a, int *v1, int b, int *v2)

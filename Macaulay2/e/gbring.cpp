@@ -24,13 +24,13 @@ gbvector * GBRing::new_raw_term()
 
 exponents GBRing::exponents_make()
 {
-  int *e = new int[_nvars+2]; // length is nvars
+  int *e = newarray(int,_nvars+2); // length is nvars
   return e;
 }
 
 void GBRing::exponents_delete(exponents e)
 {
-  delete [] e;
+  deletearray(e);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -68,12 +68,12 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
     solvable(0),
     _one(K->from_int(1))
 {
-  _EXP1 = new int[_nvars+2];
-  _EXP2 = new int[_nvars+2];
-  _EXP3 = new int[_nvars+2];
-  _EXP4 = new int[_nvars+2];
-  _SKEW1 = new int[_nvars];
-  _SKEW2 = new int[_nvars];
+  _EXP1 = newarray(int,_nvars+2);
+  _EXP2 = newarray(int,_nvars+2);
+  _EXP3 = newarray(int,_nvars+2);
+  _EXP4 = newarray(int,_nvars+2);
+  _SKEW1 = newarray(int,_nvars);
+  _SKEW2 = newarray(int,_nvars);
   _MONOM1 = M->make_one();
   _MONOM2 = M->make_one();
 
@@ -84,7 +84,7 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
     _coeffs_ZZ = true;
 
   // How to get the degree vector?
-  _degrees = new int[_nvars];
+  _degrees = newarray(int,_nvars);
   for (int i=0; i<_nvars; i++)
     _degrees[i] = M->primary_degree_of_var(i);
 }

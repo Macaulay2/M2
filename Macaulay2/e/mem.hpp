@@ -3,6 +3,7 @@
 #define _mem_hh_
 
 #include "style.hpp"
+#include "newdelete.hpp"
 
 const int NDOUBLES = 25;
 const int slab_size = 2040;
@@ -25,7 +26,7 @@ stash *matrix_rec::mystash;
 matrix_rec::mystash = new stash("matrix", sizeof(matrix_rec));
 #endif
 
-class slab
+class slab : public our_new_delete
 {
   friend class stash;
   static int n_slabs;
@@ -36,7 +37,7 @@ class slab
   ~slab() { n_slabs--; }
 };
 
-class stash
+class stash : public our_new_delete
 {
 public:
   stash(char *s, size_t len);
@@ -72,7 +73,7 @@ private:
   void chop_slab();
 };
 
-class doubling_stash
+class doubling_stash : public our_new_delete
 {
 public:
   doubling_stash();

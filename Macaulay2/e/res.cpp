@@ -99,7 +99,7 @@ void res_comp::initialize(const Matrix *mat,
       p->compare_num = i;
     }
 
-  REDUCE_exp = new int[P->n_vars()];
+  REDUCE_exp = newarray(int,P->n_vars());
   REDUCE_mon = M->make_one();
   PAIRS_mon = M->make_one();
   MINIMAL_mon = M->make_one();
@@ -118,7 +118,7 @@ void res_comp::remove_res_pair(res_pair *p)
   R->remove(p->syz);
   R->remove(p->stripped_syz);
   M->remove(p->base_monom);
-  delete p;
+  deleteitem(p);
 }
 
 void res_comp::remove_res_degree(res_degree *p)
@@ -130,7 +130,7 @@ void res_comp::remove_res_degree(res_degree *p)
       p->first = tmp->next;
       remove_res_pair(tmp);
     }
-  delete p;
+  deleteitem(p);
 }
 
 void res_comp::remove_res_level(res_level *lev)
@@ -142,7 +142,7 @@ void res_comp::remove_res_level(res_level *lev)
       res_degree *pairs = lev->bin[i];
       remove_res_degree(pairs);
     }
-  delete lev;
+  deleteitem(lev);
 }
 
 res_comp::~res_comp()
@@ -151,7 +151,7 @@ res_comp::~res_comp()
   for (i=0; i<resn.length(); i++)
     remove_res_level(resn[i]);
 
-  delete [] REDUCE_exp;
+  deletearray(REDUCE_exp);
   M->remove(REDUCE_mon);
   M->remove(PAIRS_mon);
   M->remove(MINIMAL_mon);
@@ -159,7 +159,7 @@ res_comp::~res_comp()
   // base_components have all been removed by this point
   // Since they appear in resn[0].
 
-  delete R;
+  deleteitem(R);
 }
 //////////////////////////////////////////////
 //  Data structure insertion and access  /////
@@ -606,7 +606,7 @@ void res_comp::new_pairs(res_pair *p)
       intarray vplcm;
       intarray find_pairs_vp;
 
-      int *skewvars = new int[M->n_vars()];
+      int *skewvars = newarray(int,M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_vp);
       int nskew = M->exp_skew_vars(find_pairs_vp.raw(), skewvars);
       
@@ -621,7 +621,7 @@ void res_comp::new_pairs(res_pair *p)
 	  elems.insert(b);
 	}
       // Remove the local variables
-      delete [] skewvars;
+      deletearray(skewvars);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -663,7 +663,7 @@ void res_comp::new_pairs(res_pair *p)
   Bag *b;
   MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects);
   while (rejects.remove(b))
-    delete b;
+    deleteitem(b);
 
   if (comp_printlevel>= 11) mi->debug_out(1);
 
@@ -1129,7 +1129,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
       intarray vplcm;
       intarray find_pairs_vp;
 
-      int *skewvars = new int[M->n_vars()];
+      int *skewvars = newarray(int,M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_vp);
       int nskew = M->exp_skew_vars(find_pairs_vp.raw(), skewvars);
       
@@ -1144,7 +1144,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 	  elems.insert(b);
 	}
       // Remove the local variables
-      delete [] skewvars;
+      deletearray(skewvars);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -1187,7 +1187,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   Bag *b;
   MonomialIdeal *mi = new MonomialIdeal(P, elems, rejects);
   while (rejects.remove(b))
-    delete b;
+    deleteitem(b);
 
   if (comp_printlevel>= 11) mi->debug_out(1);
 
@@ -1224,7 +1224,7 @@ void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
   int level, i, d;
   int maxlevel = reslevel.length()-1;
   int maxdegree = skeleton_maxdegree(reslevel); // max slanted degree
-  int *bettis = new int[(maxlevel+1)*(maxdegree+1)];
+  int *bettis = newarray(int,(maxlevel+1)*(maxdegree+1));
   for (i=(maxlevel+1)*(maxdegree+1)-1; i>=0; i--)
     bettis[i] = 0;
 
@@ -1249,7 +1249,7 @@ void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
       betti.append(bettis[level + (maxlevel+1)*d]);
 
   betti_display(o, betti);
-  delete [] bettis;
+  deletearray(bettis);
 
   for (level=0; level <= maxlevel; level++)
     {

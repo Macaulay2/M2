@@ -21,16 +21,16 @@ public:
     : max(0)
     {
       len = (init_array_size > i_size ? init_array_size : i_size);
-      entries = new T[len];
+      entries = newarray(T,len);
       engine_alloc(len * sizeof(T));
     }
   array(const array<T> &a) : len(a.len), max(a.max)
     {
-      entries = new T [len];
+      entries = newarray(T,len);
       engine_alloc(len * sizeof(T));
       for (int i=0; i<max; i++) entries[i] = a.entries[i];
     }
-  ~array() {/* engine_dealloc(len * sizeof(T)); delete [] entries;*/ }
+  ~array() {/* engine_dealloc(len * sizeof(T)); deletearray(entries);*/ }
 
   int  length() const { return max; }
 
@@ -67,11 +67,11 @@ public:
     {
       if (&a == this) return *this;
       engine_dealloc(len * sizeof(T));
-      delete [] entries;
+      deletearray(entries);
       int n = (init_array_size > a.max ? init_array_size : a.max);
       max = a.max;
       len = n;
-      entries = new T [len];
+      entries = newarray(T,len);
       engine_alloc(len * sizeof(T));
 
       for (int i=0; i<max; i++) entries[i] = a.entries[i];
@@ -84,12 +84,12 @@ void array<T>::expand(int newtop)
 {
   int newlen = (len > 1 ? len : 1);
   for (; newtop>=newlen; newlen *= 2);
-  T *tmp = new T [newlen];
+  T *tmp = newarray(T ,newlen);
   engine_alloc(newlen * sizeof(T));
 
   for (int j = 0; j<max; j++) tmp[j] = entries[j];
   engine_dealloc(len * sizeof(T));
-  delete [] entries;
+  deletearray(entries);
   entries = tmp;
   len = newlen;
 }

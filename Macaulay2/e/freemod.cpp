@@ -645,7 +645,7 @@ void FreeModule::monomial_divisor(vec f, int *exp) const
 {
   if (f == NULL || M == NULL) return;
   int *m = M->make_one();
-  int *exp1 = new int[M->n_vars()];
+  int *exp1 = newarray(int,M->n_vars());
   M->divide(f->monom, base_monom(f->comp), m);
   M->to_expvector(m, exp);
 
@@ -656,14 +656,14 @@ void FreeModule::monomial_divisor(vec f, int *exp) const
       ntuple::gcd(M->n_vars(), exp, exp1, exp);
     }
 
-  delete [] exp1;
+  deletearray(exp1);
   M->remove(m);
 }
 
 vec FreeModule::monomial_squarefree(vec f) const
 {
   if (M == NULL) return copy(f);
-  int *exp = new int[R->n_vars()];
+  int *exp = newarray(int,R->n_vars());
   monomial_divisor(f, exp);
   // Now divide each term by exp[i]-1, if exp[i] >= 2
   for (int i=0; i<M->n_vars(); i++)
@@ -672,20 +672,20 @@ vec FreeModule::monomial_squarefree(vec f) const
   // Divide f by exp:
   vec result = divide_by_expvector(exp, f);
 
-  delete [] exp;
+  deletearray(exp);
   return result;
 }
 
 vec FreeModule::remove_monomial_divisors(vec f) const
 {
   if (M == NULL) return copy(f);
-  int *exp = new int[R->n_vars()];
+  int *exp = newarray(int,R->n_vars());
   monomial_divisor(f, exp);
 
   // Divide f by exp:
   vec result = divide_by_expvector(exp, f);
 
-  delete [] exp;
+  deletearray(exp);
   return result;
 }
 #endif

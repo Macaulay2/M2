@@ -5,6 +5,7 @@
 
 #include "hash.hpp"
 #include "intarray.hpp"
+#include "newdelete.hpp"
 
 enum mon_order_types
 {
@@ -19,7 +20,7 @@ enum mon_order_types
   MO1_TRIVIAL = 8
 };
 
-class mon_order
+class mon_order : public our_new_delete
 {
 protected:
   mon_order_types ty;

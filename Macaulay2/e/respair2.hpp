@@ -19,7 +19,7 @@ enum
   SYZ2_NOT_NEEDED		// S-pair computation for this pair cancelled
 };
 
-struct res2_pair
+struct res2_pair : public our_new_delete
 {
   res2_pair *next;		// Next pair in the list
   unsigned int me;		// Used for making the matrices, either minimal or not.

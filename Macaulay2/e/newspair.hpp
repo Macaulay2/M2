@@ -27,7 +27,7 @@ struct S_pair
   S_pair(gbvector *gsyz);
 };
 
-struct s_pair_bunch
+struct s_pair_bunch : public our_new_delete
 {
   s_pair_bunch *next;
   int mydeg;
@@ -46,7 +46,7 @@ struct s_pair_bunch
     nelems(0), ngens(0) {}
 };
 
-class s_pair_set
+class s_pair_set : public our_new_delete
 {
   GBRing *GR;
   const FreeModule *F, *Gsyz;

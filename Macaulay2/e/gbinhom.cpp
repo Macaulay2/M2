@@ -129,7 +129,7 @@ void GBinhom_comp::remove_pair(s_pair *& p)
   p->second = NULL;
   p->next = NULL;
   M->remove(p->lcm);
-  delete p;
+  deleteitem(p);
   p = NULL;
 }
 
@@ -273,12 +273,12 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   int nvars = M->n_vars();
   int *f_m = M->make_one();
   int *f_m2 = M->make_one();
-  int *find_pairs_exp = new int[nvars];
-  int *find_pairs_lcm = new int[nvars];
+  int *find_pairs_exp = newarray(int,nvars);
+  int *find_pairs_lcm = newarray(int,nvars);
   int *find_pairs_mon = M->make_one();
-  int *pi = new int [nvars];
-  int *pj = new int [nvars];
-  int *pij = new int [nvars];
+  int *pi = newarray(int ,nvars);
+  int *pj = newarray(int ,nvars);
+  int *pij = newarray(int ,nvars);
 
   GR->gbvector_get_lead_monomial(F, p->f, f_m);
   if (GR->is_skew_commutative())
@@ -341,7 +341,7 @@ void GBinhom_comp::find_pairs(gb_elem *p)
     {
       s_pair *q2 = (s_pair *) b->basis_ptr();
       remove_pair(q2);
-      delete b;
+      deleteitem(b);
     }
 
   s_pair head;
@@ -421,11 +421,11 @@ void GBinhom_comp::find_pairs(gb_elem *p)
     }
 
   // Remove the local variables
-  delete [] find_pairs_exp;
-  delete [] find_pairs_lcm;
-  delete [] pi;
-  delete [] pj;
-  delete [] pij;
+  deletearray(find_pairs_exp);
+  deletearray(find_pairs_lcm);
+  deletearray(pi);
+  deletearray(pj);
+  deletearray(pij);
   M->remove(find_pairs_mon);
   M->remove(f_m);
   M->remove(f_m2);
@@ -460,8 +460,8 @@ int GBinhom_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
   result->next = 0;
   gb_elem *q;
 
-  int *div_totalexp = new int[M->n_vars()];
-  int *reduce_ndiv = new int[M->n_vars()];
+  int *div_totalexp = newarray(int,M->n_vars());
+  int *reduce_ndiv = newarray(int,M->n_vars());
   int count = 0;
   if (gbTrace == 10)
     {
@@ -506,8 +506,8 @@ if (search(div_totalexp, f->comp, q))
     }
 
   f = head.next;
-  delete [] div_totalexp;
-  delete [] reduce_ndiv;
+  deletearray(div_totalexp);
+  deletearray(reduce_ndiv);
   return 1;
 }
 
@@ -518,8 +518,8 @@ int GBinhom_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
   gbvector head;
   gbvector *result = &head;
   result->next = 0;
-  int *div_totalexp = new int[M->n_vars()];
-  int *reduce_ndiv = new int[M->n_vars()];
+  int *div_totalexp = newarray(int,M->n_vars());
+  int *reduce_ndiv = newarray(int,M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(GR,F);
@@ -571,8 +571,8 @@ if (search(div_totalexp, lead->comp, q))
   f = head.next;
 
   fsyz = fsyzb.value();
-  delete [] div_totalexp;
-  delete [] reduce_ndiv;
+  deletearray(div_totalexp);
+  deletearray(reduce_ndiv);
   return 1;
 }
 
@@ -614,7 +614,7 @@ void GBinhom_comp::gb_insert(gbvector * f, gbvector * fsyz, int forced)
   int *f_m = M->make_one();
   gb_elem *p = new gb_elem(f, fsyz, 1);
   p->me = last_gb_num++;
-  p->lead_exp = new int[M->n_vars()];
+  p->lead_exp = newarray(int,M->n_vars());
 
   GR->gbvector_get_lead_monomial(F,p->f,f_m);
   GR->gbvector_remove_content(p->f, p->fsyz);
@@ -1045,7 +1045,7 @@ void step()
 	else if (p->fsyz != NULL)
 	  {
 	    syz.insert(p->fsyz);
-	    delete p;
+	    deleteitem(p);
 	  }
     }
   S.inter_reduce();		// Reduce tails

@@ -8,13 +8,13 @@ extern int gbTrace;
 
 Nmi_node::~Nmi_node()
 {
-  if (right != header) delete right;
+  if (right != header) deleteitem(right);
   if (tag == node)
     {
-      if (header != this) delete down();
+      if (header != this) deleteitem(down());
     }
   else
-    delete baggage();
+    deleteitem(baggage());
 }
 
 MonomialIdeal::MonomialIdeal(const Ring *R0, queue<Bag *> &elems, queue<Bag *> &rejects)
@@ -47,7 +47,7 @@ MonomialIdeal::MonomialIdeal(const Ring *R0, queue<Bag *> &elems, queue<Bag *> &
 	    else
 	      insert_minimal(b);
 	  }
-	delete bins[i];
+	deleteitem(bins[i]);
       }
 }
 
@@ -70,7 +70,7 @@ MonomialIdeal::MonomialIdeal(const Ring *R0, queue<Bag *> &elems)
     if (bins[i] != NULL)
       {
 	while (bins[i]->remove(b)) insert(b);
-	delete bins[i];
+	deleteitem(bins[i]);
       }
 }
 
@@ -303,14 +303,14 @@ void MonomialIdeal::remove1(Nmi_node *p)
       p->right->left = p->left;
       Nmi_node *q = p->header;
       p->left = p->right = NULL;
-      delete p;
+      deleteitem(p);
 
       if (q->right == q->header)  // only the header is left, so delete it
 	{
 	  p = q->down();
 	  q->down() = NULL;
 	  if (p != NULL) p->down() = NULL;
-	  delete q;
+	  deleteitem(q);
 	  continue;
 	}
 
@@ -338,7 +338,7 @@ void MonomialIdeal::remove1(Nmi_node *p)
 	  q->left->down() = NULL;
 	}
       q->down() = NULL;
-      delete q;		// Deletes both nodes q, q->left.
+      deleteitem(q);		// Deletes both nodes q, q->left.
       return;
     }
   if (p == NULL) mi = NULL;
@@ -483,7 +483,7 @@ int MonomialIdeal::insert(Bag *b)
 
   if (search(m, old_b)) 
     {
-      delete b;
+      deleteitem(b);
       return 0;
     }
   insert_minimal(b);

@@ -31,7 +31,7 @@ void Suite::free()
     // don't have to be on the heap.
     for (size_t i = 0; i < m_tests.size(); ++i)
     {
-        delete m_tests[i];
+        deleteitem(m_tests[i]);
         m_tests[i] = 0;
     }
 }

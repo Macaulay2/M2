@@ -9,7 +9,7 @@ class Matrix;
 
 class RingMap : public immutable_object
 {
-  struct var {
+  struct var : public our_new_delete {
     bool is_zero;		// Does this variable map to 0?
 
     bool coeff_is_one;

@@ -16,12 +16,12 @@ gb_emitter::gb_emitter(const Matrix *m)
   GR = originalR->get_gb_ring();
   this_degree = m->cols()->lowest_primary_degree() - 1;
   n_gens = 0;			// Also needs to be set at that time.
-  these = new int[m->n_cols()];
+  these = newarray(int,m->n_cols());
 }
 
 gb_emitter::~gb_emitter()
 {
-  delete [] these;
+  deletearray(these);
 }
 
 int gb_emitter::calc_gb(int degree, const intarray & /*stop*/)
@@ -128,7 +128,7 @@ void gbres_comp::setup(const Matrix *m,
   lo_degree = m->cols()->lowest_primary_degree();
 
   n_nodes = length + 1;
-  nodes = new gb_node_ptr[n_nodes];
+  nodes = newarray(gb_node_ptr,n_nodes);
 
   nodes[0] = new gb_emitter(m);
   nodes[1] = new gb2_comp(Fsyz,nodes[0],lo_degree,origsyz,1,strategy);
@@ -175,7 +175,7 @@ gbres_comp::~gbres_comp()
   for (int i=0; i<n_nodes; i++)
     {
       nodes[i]->set_output(NULL);
-      delete nodes[i];
+      deleteitem(nodes[i]);
     }
 }
 
@@ -322,7 +322,7 @@ void gbres_comp::betti_minimal(intarray &result)
   int hi = lo;
   int len = 1;
   
-  intarray *degs = new intarray[n_nodes];
+  intarray *degs = newarray(intarray,n_nodes);
   
   for (lev=0; lev<n_nodes; lev++)
     {
@@ -353,7 +353,7 @@ void gbres_comp::betti_minimal(intarray &result)
     for (lev=0; lev<=len; lev++)
       result.append(degs[lev][d-lo]);
 
-  delete [] degs;
+  deletearray(degs);
 }
 
 

@@ -33,7 +33,7 @@ void HermiteComputation::insert(hm_elem *p)
       if (p->fsyz != NULL && collect_syz)
 	syz->append(p->fsyz);
       mpz_clear(p->lead);
-      delete p;
+      deleteitem(p);
     }
   else
     {
@@ -73,7 +73,7 @@ void HermiteComputation::remove_hm_elem(hm_elem *&p)
   mpz_clear(p->lead);
   gens->rows()->remove(p->f);
   syz->rows()->remove(p->fsyz);
-  delete p;
+  deleteitem(p);
   p = NULL;
 }
 

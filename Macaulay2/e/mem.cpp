@@ -32,7 +32,7 @@ stash::~stash()
     {
       slab *p = slabs;
       slabs = slabs->next;
-      delete p;
+      deleteitem(p);
     }
   assert(stash_list != NULL);
   if (stash_list == this)
@@ -60,7 +60,7 @@ void *stash::new_elem()
     {
       if (n_per_slab == 0) 
 	{
-	  void *result = new char[element_size];
+	  void *result = newarray(char,element_size);
 	  allocated_amount += element_size;
 	  return result;
 	}
@@ -89,7 +89,7 @@ void stash::delete_elem(void *p)
     {
       deleted_amount += element_size;
       char *q = (char *)p;
-      delete [] q;
+      deletearray(q);
       return;
     }
   *((void **) p) = free_list;
@@ -184,7 +184,7 @@ doubling_stash::~doubling_stash()
     {
       if (doubles[i] != NULL)
 	emit("internal warning -- deleting a double stash");
-      delete doubles[i];
+      deleteitem(doubles[i]);
     }
 }
 
@@ -218,67 +218,6 @@ size_t doubling_stash::allocated_size(void *p)
   assert(q[-1] <= NDOUBLES);
   return double_size[q[-1]];
 }
-
-//--------- Use GC routines ----------------------------
-
-#include <gc.h>
-
-extern "C" void outofmem();
-
-#ifndef DEBUG
-
-    void* operator new( size_t size ) {
-      void *p = GC_MALLOC( size );
-      if (p == NULL) outofmem();
-      return p;
-    }
-
-    void operator delete( void* obj ) {
-      if (obj != NULL) GC_FREE( obj );
-    }
-
-    void* operator new []( size_t size ) {
-      void *p = GC_MALLOC( size );
-      if (p == NULL) outofmem();
-      return p;
-    }
-
-    void operator delete []( void* obj ) {
-      if (obj != NULL) GC_FREE( obj );
-    }
-
-#else
-
-#include "../d/debug.h"
-
-    void* operator new( size_t size ) {
-      void *p = GC_MALLOC( size );
-      if (p == NULL) outofmem();
-      trapchk(p);
-      return p;
-    }
-
-    void operator delete( void* p ) {
-      trapchk(p);
-      if (p != NULL) GC_FREE(p);
-    }
-
-    void* operator new []( size_t n ) {
-      void *p = GC_MALLOC( n );
-      if (p == NULL) outofmem();
-      trapchk(p);
-      return p;
-    }
-
-    void operator delete []( void* p ) {
-      trapchk(p);
-      if (p != NULL) GC_FREE( p );
-    }
-
-    static void debug_warning() __attribute__ ((constructor));
-    static void debug_warning() { fprintf(stderr,"warning: debugging version of operators new/delete included\n"); }
-
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

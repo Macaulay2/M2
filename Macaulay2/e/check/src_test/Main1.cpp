@@ -21,9 +21,9 @@ public:
     }
     ~ComplexTest()
     {
-        delete m_c1;
-        delete m_c2;
-        delete m_c3;
+        deleteitem(m_c1);
+        deleteitem(m_c2);
+        deleteitem(m_c3);
     }
     void run()
     {

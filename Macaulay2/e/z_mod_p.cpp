@@ -38,8 +38,8 @@ bool Z_mod::initialize_Z_mod(int p)
     }
 
   // cerr << "z_mod_p: creating table for P = " << P << endl;
-  _log_table = new int[P];
-  _exp_table = new int[P];
+  _log_table = newarray(int,P);
+  _exp_table = newarray(int,P);
   for (i=0, n=1; i<P-1; i++, n=(n*_prim_root)%P)
     {
       _log_table[n] = i;  // i = log_(base _prim_root)(n)

@@ -72,7 +72,7 @@ bool GF::initialize_GF(const RingElement *prim)
   assert(_x_exponent >= 0);
 
   // Set 'one_table'.
-  _one_table = new int[Q_];
+  _one_table = newarray(int,Q_);
   _one_table[0] = Q_-1;
   for (i=1; i<=Q_-1; i++)
     {
@@ -84,7 +84,7 @@ bool GF::initialize_GF(const RingElement *prim)
     }
 
   // Create the Z/P ---> GF(Q) inclusion map
-  _from_int_table = new int[P];
+  _from_int_table = newarray(int,P);
   int a = _ONE;
   _from_int_table[0] = _ZERO;
   for (i=1; i<P; i++)

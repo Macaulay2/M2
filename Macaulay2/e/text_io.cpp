@@ -25,12 +25,12 @@ void bignum_text_out(buffer &o, mpz_t a)
   char *str;
 
   int size = mpz_sizeinbase(a, 10) + 2;
-  char *allocstr = (size > 1000 ? new char[size] : s);
+  char *allocstr = (size > 1000 ? newarray(char,size) : s);
 
   str = mpz_get_str(allocstr, 10, a);
   o << str;
 
-  if (size > 1000) delete [] allocstr;
+  if (size > 1000) deletearray(allocstr);
 }
 
 void clear_emit_size()

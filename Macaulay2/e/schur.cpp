@@ -12,19 +12,19 @@ void tableau::initialize(int nvars)
   wt = 0;
   lambda = 0;
   p = 0;
-  xloc = new int[SCHUR_MAX_WT+1];
-  yloc = new int[SCHUR_MAX_WT+1];
+  xloc = newarray(int,SCHUR_MAX_WT+1);
+  yloc = newarray(int,SCHUR_MAX_WT+1);
 }
 
 void tableau::resize(int max_wt)
 {
   if (max_wt <= SCHUR_MAX_WT) return;
-  delete [] xloc;
-  delete [] yloc;
+  deletearray(xloc);
+  deletearray(yloc);
   maxwt = max_wt;
   wt = max_wt;
-  xloc = new int[maxwt+1];
-  yloc = new int[maxwt+1];
+  xloc = newarray(int,maxwt+1);
+  yloc = newarray(int,maxwt+1);
 }
 
 int tableau::elem(int x, int y) const
@@ -83,8 +83,8 @@ bool SchurRing::initialize_schur()
   _SMfinalwt = 0;
   _SMresult = 0;
   
-  _EXP1 = new int[_nvars];
-  _SMtab.p = new int[_nvars+1];
+  _EXP1 = newarray(int,_nvars);
+  _SMtab.p = newarray(int,_nvars+1);
   for (int i=0; i<_nvars+1; i++) _SMtab.p[i] = 0;
   return true;
 }

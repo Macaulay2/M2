@@ -1269,7 +1269,7 @@ void cmd_Matrix_coeffs(object &om, object &op)
       return;
     }
   int nvars = M.get_ring()->n_vars();
-  int *v = new int[nvars];
+  int *v = newarray(int,nvars);
   int i;
   for (i=0; i<nvars; i++) v[i] = 0;
   for (i=0; i<vars->length(); i++)
@@ -1278,14 +1278,14 @@ void cmd_Matrix_coeffs(object &om, object &op)
       if (w < 0 || w >= nvars)
 	{
 	  gError << "'coeffs': variable index out of range";
-	  delete [] v;
+	  deletearray(v);
 	  return;
 	}
       v[w] = 1;
     }
   Matrix result_monoms;
   Matrix result_coeffs = M.coeffs(v, result_monoms);
-  delete [] v;
+  deletearray(v);
   gStack.insert(result_coeffs);
   gStack.insert(result_monoms);
 }
@@ -1523,7 +1523,7 @@ void cmd_Nmi_remove(object &oa)
   if (!mi.remove(b)) return;
   gStack.insert(make_object_int(b->basis_elem()));
   gStack.insert(Monomial(b->monom().raw()));
-  delete b;
+  deleteitem(b);
 }
 
 void cmd_Nmi_borel(object &oa)
@@ -2045,14 +2045,14 @@ static void cmd_ALP_eigenvals(object &om)
       gError << "expected square matrix";
       return;
     }
-  double *data = new double[n*n];
+  double *data = newarray(double,n*n);
   for (int i=0; i<n; i++)
     for (int j=0; j<n; j++)
       {
 	ring_elem a = R->lead_coeff(m.elem(i,j));
 	data[i*n+j] = globalRR->to_double(a);
       }
-  double *result = new double[2*n];
+  double *result = newarray(double,2*n);
   eigenvalues(n,data,result);
   const FreeModule *F = globalRR->make_FreeModule(1);
   Matrix eigs(F);

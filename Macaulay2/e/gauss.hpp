@@ -8,7 +8,7 @@
 #include "comp.hpp"
 #include "gb_comp.hpp"
 
-struct gm_elem
+struct gm_elem : public our_new_delete
 {
   gm_elem *next;
   int nterms;

@@ -38,7 +38,7 @@ public:
   void partition(MonomialIdeal * &I, array<MonomialIdeal *> &result);	// Consumes I.
 };
 
-struct hilb_step
+struct hilb_step : public our_new_delete
 {
   hilb_step *up;
   hilb_step *down;

@@ -66,7 +66,7 @@ void bigRR::elem_text_out(buffer &o, const ring_elem ap) const
   mp_exp_t expptr;
 
   // size_t size = 1000;
-  char *s = new char[1000];
+  char *s = newarray(char,1000);
   char *str;
 
   bool is_neg = (mpf_cmp_si(a, 0) == -1);
@@ -74,7 +74,7 @@ void bigRR::elem_text_out(buffer &o, const ring_elem ap) const
 
   // int size = mpf_sizeinbase(a, 10) + 2;
 
-  // char *allocstr = (size > 1000 ? new char[size] : s);
+  // char *allocstr = (size > 1000 ? newarray(char,size) : s);
 
   if (!is_neg && p_plus) o << '+';
   if (is_one) 
@@ -87,7 +87,7 @@ void bigRR::elem_text_out(buffer &o, const ring_elem ap) const
       str = mpf_get_str(s, &expptr, 10, 0, a);
       o << "." << str << "*10^" << expptr;
     }
-  // if (size > 1000) delete [] allocstr;
+  // if (size > 1000) deletearray(allocstr);
 }
 
 void bigRR::set_epsilon(mpf_ptr epsilon)

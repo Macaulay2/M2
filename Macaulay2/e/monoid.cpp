@@ -104,20 +104,20 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
   if (moninfo->degree_monoid == NULL)
     moninfo->degree_monoid = (Monoid *) this;
 
-  EXP1 = new int[nvars];
-  EXP2 = new int[nvars];
-  EXP3 = new int[nvars];
-  MONlocal = new int[nvars + nwords]; // MES: should be total number of words of result...
+  EXP1 = newarray(int,nvars);
+  EXP2 = newarray(int,nvars);
+  EXP3 = newarray(int,nvars);
+  MONlocal = newarray(int,nvars + nwords); // MES: should be total number of words of result...
 }
 
 Monoid::~Monoid()
 {
-  delete [] EXP1;
-  delete [] EXP2;
-  delete [] EXP3;
-  delete [] MONlocal;
-  delete monom_stash;
-  delete moninfo;  // This takes care of bump_down of degree monoid.
+  deletearray(EXP1);
+  deletearray(EXP2);
+  deletearray(EXP3);
+  deletearray(MONlocal);
+  deleteitem(monom_stash);
+  deleteitem(moninfo);  // This takes care of bump_down of degree monoid.
 }
 
 Monoid *Monoid::get_trivial_monoid()

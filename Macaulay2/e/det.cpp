@@ -41,8 +41,8 @@ DetComputation::DetComputation(const Matrix *M0, int p0,
       return;
     }
 
-  row_set = new int[p];
-  col_set = new int[p];
+  row_set = newarray(int,p);
+  col_set = newarray(int,p);
 
   for (int i=0; i<p; i++) 
     {
@@ -50,24 +50,24 @@ DetComputation::DetComputation(const Matrix *M0, int p0,
       col_set[i] = i;
     }
 
-  D = new ring_elem *[p];
+  D = newarray(ring_elem *,p);
   for (int i=0; i<p; i++)
     {
-      D[i] = new ring_elem[p];
+      D[i] = newarray(ring_elem,p);
       for (int j=0; j<p;j++) D[i][j] = (Nterm *)0;
     }
 }
 
 DetComputation::~DetComputation()
 {
-  delete [] row_set;
-  delete [] col_set;
+  deletearray(row_set);
+  deletearray(col_set);
 
   if (D)
     {
       for (int i=0; i<p; i++)
-	delete [] D[i];
-      delete [] D;
+	deletearray(D[i]);
+      deletearray(D);
     }
 }
 

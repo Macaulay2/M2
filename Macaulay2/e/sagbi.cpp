@@ -158,7 +158,7 @@ void sagbi_comp::append_to_basis(Matrix *m)
 
   // Extend the binomial ring
 
-  delete oldRS;
+  deleteitem(oldRS);
 
   // Add the (xi - in(fi)) into this binomial comp.
 }

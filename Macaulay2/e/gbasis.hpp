@@ -3,6 +3,7 @@
 
 #include "gbring.hpp"
 #include "montable.hpp"
+#include "newdelete.hpp"
 
 /* Types of minimality */
 #if 0
@@ -27,13 +28,13 @@ struct POLY {
 
 class RingGBasis;
 
-class GBasis
+class GBasis : public our_new_delete
 // This handles a GB (or "declared" GB), where the base ring
 // is a field (i.e. the ring contains a field).
 // The case where the base is globalZZ is handled in GBasisZZ
 {
 public:
-  struct gbelem {
+  struct gbelem : public our_new_delete {
     POLY g;
     int deg;
     int alpha; // the homogenizing degree
@@ -56,7 +57,7 @@ public:
   int insert(gbvector *f, gbvector *fsyz, gbelem_type minlevel, int deg);
     // returns integer index of this inserted element
 
-  void poly_auto_reduce(vector<POLY> &mat);
+  void poly_auto_reduce(vector<POLY,gc_alloc> &mat);
 
   void minimalize_gb();
 
@@ -125,27 +126,27 @@ private:
   const MonomialTable *ringtable; // Set from originalR.
   MonomialTable *lookup;
 public:
-  vector<gbelem *> gb; // Contains any quotient ring elements
+  vector<gbelem *,gc_alloc> gb; // Contains any quotient ring elements
 private:
   int first_gb_element; // indices 0..first_gb_element-1 in 'gb'
 			// refer to quotient ring elements
-  vector<POLY> minimal_gb; // Contains NO quotient ring elements
+  vector<POLY,gc_alloc> minimal_gb; // Contains NO quotient ring elements
   bool minimal_gb_valid;
 
   exponents _EXP; // Used in 'remainder'
 };
 
-class RingGBasis
+class RingGBasis : public our_new_delete
 {
   GBRing *R;
   FreeModule *R1; // Should be rank 1, degree 0 generator.
   MonomialTable *ringtable;
-  vector<GBasis::gbelem *> gb;
+  vector<GBasis::gbelem *,gc_alloc> gb;
   RingGBasis() {}
 
   GBasis::gbelem *gbelem_make(gbvector *f);
 public:
-  static RingGBasis *make(GBRing *R, vector<gbvector *> &elems);
+  static RingGBasis *make(GBRing *R, vector<gbvector *,gc_alloc> &elems);
 
   static RingGBasis *make_RingGBasis(const GBasis *G);
   // G should be a GB with _F having rank 1.
@@ -158,7 +159,7 @@ public:
 
   vec normal_form(FreeModule *F, vec v);
 
-  void set_quotient(vector <GBasis::gbelem *> &gb);
+  void set_quotient(vector<GBasis::gbelem *,gc_alloc> &gb);
 };
 #endif
 

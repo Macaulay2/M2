@@ -95,7 +95,7 @@ void ZZ::elem_text_out(buffer &o, const ring_elem ap) const
 
   int size = mpz_sizeinbase(a, 10) + 2;
 
-  char *allocstr = (size > 1000 ? new char[size] : s);
+  char *allocstr = (size > 1000 ? newarray(char,size) : s);
 
   if (!is_neg && p_plus) o << '+';
   if (is_one) 
@@ -108,7 +108,7 @@ void ZZ::elem_text_out(buffer &o, const ring_elem ap) const
       str = mpz_get_str(allocstr, 10, a);
       o << str;
     }
-  if (size > 1000) delete [] allocstr;
+  if (size > 1000) deletearray(allocstr);
 }
 
 ring_elem ZZ::from_int(int n) const

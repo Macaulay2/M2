@@ -128,7 +128,7 @@ class binomial_s_pair_set
   struct s_pair_lcm_list;
   struct s_pair_elem;
 
-  struct s_pair_degree_list {
+  struct s_pair_degree_list : public our_new_delete {
     s_pair_degree_list *next;
     int deg;
     s_pair_lcm_list *pairs;
