@@ -1,5 +1,5 @@
 # -*- Mode: Makefile -*-
-include ../../../../config.Makefile
+include ../../../../include/config.Makefile
 
 ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent \

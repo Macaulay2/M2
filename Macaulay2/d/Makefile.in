@@ -1,5 +1,5 @@
 # @configure_input@
-include ../../config.Makefile
+include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
 ############################## main target
