@@ -261,7 +261,7 @@ document { (globalBFunction => Strategy),
 	       EM "J(s)=Ann(f", SUP "s", EM ")", " and then intersects ", 
 	       EM "J(s)+D[s]f}", " with ", EM "K[s]"},
 	  {BOLD "ReducedB", " -- computes ", EM "b(s)/(s+1)", 
-	       " by taking the intersection of "
+	       " by taking the intersection of ",
 	       EM "J(s)+D[s](f,df/dx1,...,df/dxn)", " with ", EM "K[s]"}
 	  }
      }
