@@ -43,9 +43,19 @@ assert rawIsStronglyStable B
 -- rawIsStronglyStable, rawMaximalIndependentSets, rawCodimension
 
      
-     
+--------------------------
+-- Hilbert functions -----
+--------------------------
+needs "raw-util.m2"
 
-
-
-
-
+R = polyring(rawQQ(), (symbol a .. symbol g))
+M = rawMatrix1(R^1, 3, (a^2, a*b, b^2), true)
+f = rawHilbert M
+rawFactor f
+t = (rawRing f)_0
+f1 = f // (1-t)
+f1 % (1-t)
+f2 = f1 // (1-t)
+f2 % (1-t)
+f 
+f * (1-t)^3
