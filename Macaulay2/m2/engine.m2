@@ -14,7 +14,7 @@ RawMonomial == RawMonomial := (x,y) -> x === y
 ZZ == RawMonomial := (i,x) -> x == i
 
 expression RawMonomial := x -> (
-     v := rawMonomialExponents x;
+     v := rawMonomialSparseListForm x;
      if #v === 0 then expression 1
      else new Product from apply(v, (i,e) -> new Power from {vars i, e})
      )

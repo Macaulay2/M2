@@ -226,7 +226,7 @@ usage := arg -> (
      << "    --notify           notify when loading source files during initialization" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
-     << "    --print-width n    occasionaly wrap output to this width" << newline
+     << "    --print-width n    occasionally wrap output to this width" << newline
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
      << "    --texmacs          TeXmacs session mode" << newline

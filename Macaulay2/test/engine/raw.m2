@@ -44,7 +44,7 @@ assert not mutable x
 assert( toString y === "c3d4" )
 assert( x =!= y )
 assert( not (x === y) )
-assert( rawMonomialExponents y ===  t )
+assert( rawMonomialSparseListForm y ===  t )
 assert ( x == x' )
 assert ( not (x == y))
 assert not ( x == 1 )

@@ -57,19 +57,19 @@ rawVar(a:Expr):Expr := (
      );
 setupfun("rawVar",rawVar);
 
-rawMonomialExponents(e:Expr):Expr := (
+rawMonomialSparseListForm(e:Expr):Expr := (
      when e 
      is x:RawMonomial do (
 	  y := Ccode(RawArrayInt, "(engine_RawArrayInt)IM2_Monomial_to_arrayint((Monomial*)",x,")" );
 	  n := length(y)/2;
 	  list(new Sequence len n do (
-		    for i from 0 to length(y) by 2 do (
+		    for i from length(y)-2 to 0 by -2 do (
 			 provide new Sequence len 2 do (
 			      provide Expr(toInteger(y.i));
 			      provide Expr(toInteger(y.(i+1))))))))
      else WrongArg("a raw monomial")
      );
-setupfun("rawMonomialExponents",rawMonomialExponents);
+setupfun("rawMonomialSparseListForm",rawMonomialSparseListForm);
 
 rawMonomialMake(e:Expr):Expr := (
      -- accepts a list of pairs : {(5,4),(3,7),(2,1)}

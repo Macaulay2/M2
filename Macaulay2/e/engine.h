@@ -184,7 +184,7 @@ extern "C" {
 
   unsigned long IM2_Monomial_hash(const Monomial *a); /* drg: connected hash */
 
-  const M2_arrayint IM2_Monomial_to_arrayint(const Monomial *a); /* drg: connected rawMonomialExponents */
+  const M2_arrayint IM2_Monomial_to_arrayint(const Monomial *a); /* drg: connected rawMonomialSparseListForm */
 
   const M2_string IM2_Monomial_to_string(const Monomial *a); /* drg: connected intrinsic */
 
