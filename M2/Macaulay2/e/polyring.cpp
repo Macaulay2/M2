@@ -1243,9 +1243,12 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
       o << "found " << s.n_cols() << " syzygies";
       emit_line(o.str());
     }
+#endif
+
   x = s.elem(0,0);
   y = s.elem(1,0);
 
+#if 0
   o << "result: x = ";
   elem_text_out(o,x);
   o << " and y = ";
