@@ -335,6 +335,8 @@ addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, comm
 
 info HR := net HR := x -> "-----------------------------------------------------------------------------"
 
+info Nothing := net
+
 ULop := op -> x -> (
      s := "  * ";
      printWidth = printWidth - #s;
