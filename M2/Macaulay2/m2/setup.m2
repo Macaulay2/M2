@@ -118,7 +118,7 @@ notify = true
 newPackage(Output, DebuggingMode => debuggingMode)
 protect symbol Output
 newPackage(User, DebuggingMode => debuggingMode)
-User#"file directory" = null
+User#"source directory" = null
 protect Main.Dictionary
 
 -- Local Variables:

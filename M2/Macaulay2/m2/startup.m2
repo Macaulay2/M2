@@ -5,6 +5,7 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
 errorDepth = 0						    -- without this, we may see no error messages the second time through
+debuggingMode = true
 
 firstTime := not Array.?name
 
@@ -216,6 +217,7 @@ usage := arg -> (
      << "    --no-backtrace     print no backtrace after error" << newline
      << "    --copyright        display full copyright messasge" << newline
      << "    --no-debug         do not enter debugger upon error" << newline
+     << "    --debug-M2         debug Macaulay2 itself" << newline
      << "    --dumpdata         read source code, dump data, exit (no init.m2)" << newline
      << "    --example-prompts  examples prompt mode" << newline
      << "    --fullbacktrace    print full backtrace after error" << newline
@@ -270,6 +272,7 @@ action := hashTable {
      "--silent" => arg -> nobanner = true,
      "--no-debug" => arg -> debuggingMode = false,
      "--dumpdata" => arg -> (noinitfile = noloaddata = true; if not preload then dump()),
+     "--debug-M2" => arg -> (debuggingMode = true; errorDepth = 0),
      "-silent" => obsolete,
      "-tty" => notyet,
      "-n" => obsolete,
@@ -281,7 +284,7 @@ action := hashTable {
      "-s" => obsolete,
      "--fullbacktrace" => arg -> fullBacktrace = true,
      "--no-backtrace" => arg -> fullBacktrace = backtrace = false,
-     "--stop" => arg -> stopIfError = true,
+     "--stop" => arg -> (stopIfError = true; debuggingMode = false),
      "--no-loaddata" => arg -> noloaddata = true,
      "--no-setup" => arg -> nosetup = true,
      "--texmacs" => arg -> (
@@ -347,17 +350,17 @@ if prefixDirectory      =!= null then path = append(path, prefixDirectory | LAYO
 path = select(path, fileExists)
 normalPrompts()
 if firstTime and not nosetup then loadSetup()
-processCommandLineOptions false
 errorDepth = loadDepth = loadDepth + 1
+processCommandLineOptions false
 runStartFunctions()
 tryLoad := fn -> if fileExists fn then (load fn; true) else false
 noinitfile or tryLoad "init.m2" or tryLoad (getenv "HOME" | "/init.m2") or tryLoad (getenv "HOME" | "/.init.m2")
-errorDepth = loadDepth
-stopIfError = false					    -- this is also set in interp.d
 n := interpreter()
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
-stderr << "can't interpret return value as an exit code" << endl
+debuggingMode = false
+stopIfError = true
+stderr << "error: can't interpret return value as an exit code" << endl
 exit 1
 
 -- Local Variables:

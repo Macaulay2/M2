@@ -1,5 +1,8 @@
 --		Copyright 1994-2002 by Daniel R. Grayson
 
+local foo
+debugDoc = () -> commandInterpreter symbol foo
+
 maximumCodeWidth := 120
 
 DocDatabase = null
@@ -236,8 +239,8 @@ M2outputRE := "(\n\n)i+[1-9][0-9]* : "
 M2outputREindex := 1
 separateM2output = method()
 separateM2output String := r -> (
-     while r#0 == "\n" do r = substring(1,r);
-     while r#-1 == "\n" do r = substring(0,#r-1,r);
+     while r#?0 and r#0 == "\n" do r = substring(1,r);
+     while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
      separateRegexp(M2outputRE,M2outputREindex,r))
 
 getFileName := body -> (
@@ -617,15 +620,18 @@ briefDocumentation = x -> (
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
      if unformatTag#?s then documentation unformatTag#s 
-     else if isGlobalSymbol s then documentation getGlobalSymbol s
+     else if isGlobalSymbol s then (
+	  t := getGlobalSymbol s;
+	  documentation t
+	  )
      else SEQ { title s, getDocBody s }
      )
 
-documentation Thing := s -> (
-     scan(packages, pkg -> (
-	       d := pkg#"reverse dictionary";
-	       if d#?s then break documentation d#s;
-	       )))
+-- documentation Thing := s -> (
+--      scan(packages, pkg -> (
+-- 	       d := pkg#"reverse dictionary";
+-- 	       if d#?s then break documentation d#s;
+-- 	       )))
 
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators

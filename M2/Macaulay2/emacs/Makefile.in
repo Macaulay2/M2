@@ -19,3 +19,7 @@ Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/emacs/Makefile
 all:: M2-init.el
 M2-init.el : M2-init.el.in; cd ../..; ./config.status Macaulay2/emacs/M2-init.el
 clean::; rm -rf M2-init.el
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs"
+# End:

@@ -116,6 +116,13 @@ tt := new MutableHashTable from toList apply(0 .. 255, i -> (
 	  ));
 
 tt#" " = "_sp"            -- can't occur in a URL and has a meaning for xargs
+tt#"*" = "_st"					       -- has a meaning in sh
+tt#"|" = "_vb"					       -- has a meaning in sh
+tt#"(" = "_lp"					       -- has a meaning in sh
+tt#")" = "_rp"					       -- has a meaning in sh
+tt#"<" = "_lt"					       -- has a meaning in sh
+tt#">" = "_gt"					       -- has a meaning in sh
+tt#"&" = "_am"					       -- has a meaning in sh
 tt#"#" = "_sh"					     -- has a meaning in URLs
 tt#"$" = "_do"					-- has a meaning for gnu make
 tt#"%" = "_pc"					     -- has a meaning in URLs
@@ -123,12 +130,13 @@ tt#"'" = "_sq"					   -- has a meaning for xargs
 tt#"/" = "_sl"				  -- can't occur in a file name: unix
 tt#":" = "_co"			    -- has a meaning for gnu make and in URLs
 tt#";" = "_se"					-- has a meaning for gnu make
-tt#"?" = "_qu"					     -- has a meaning in URLs
+tt#"?" = "_qu"				      -- has a meaning in URLs and sh
 tt#"\""= "_dq"					 -- " has a meaning for xargs
-tt#"\\"= "_bs"				 -- can't occur in a file name: MSDOS
+tt#"\\"= "_bs"			  -- can't occur in a file name: MSDOS and sh
 tt#"_" = "_us"					      -- our escape character
-apply(characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ",   -- some OSes are case insensitive
-     cap -> tt#cap = concatenate("__", cap))
+
+-- some OSes are case insensitive:
+apply(characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ", cap -> tt#cap = concatenate("__", cap))
 
 toFilename = method()
 toFilename String := s -> (

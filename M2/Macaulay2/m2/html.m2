@@ -336,7 +336,7 @@ separateExampleOutput = s -> (
      separateRegexp("(\n\n)i+[1-9][0-9]* : ",1,r))
 
 -----------------------------------------------------------------------------
--- assembling packages -- eventually to be merged with 
+-- installing packages -- eventually to be merged with 
 -- the code above for making html for Macaulay 2 itself
 -----------------------------------------------------------------------------
 
@@ -356,19 +356,20 @@ makeMasterIndex := keylist -> (
      )
 
 installPackage = method(Options => { 
-	  Prefix => "tmp/", 
-	  Encapsulate => true
+	  Prefix => "/tmp/", 
+	  Encapsulate => true,
+	  IgnoreExampleErrors => true
 	  })
 
 installPackage Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = pkg.name;
-     buildDirectory = o.Prefix | "/";
+     buildDirectory = minimizeFilename(o.Prefix | "/");
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Version|"/";
      buildPackage = minimizeFilename buildPackage;
-     stderr << "--assembling package " << pkg << " in " << buildDirectory << endl;
+     stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
 
-     currentSourceDir := pkg#"file directory";
+     currentSourceDir := pkg#"source directory";
      stderr << "--using package sources found in " << currentSourceDir << endl;
 
      -- copy source file
@@ -382,7 +383,7 @@ installPackage Package := o -> pkg -> (
      -- copy source subdirectory
      srcDirectory := LAYOUT#"packagesrc" buildPackage;
      makeDirectory (buildDirectory|srcDirectory);
-     dn := currentSourceDir|buildPackage;
+     dn := realpath(currentSourceDir|buildPackage);
      stderr << "--copying auxiliary source files from " << dn << endl;
      if fileExists dn
      then copyDirectory(dn, buildDirectory|srcDirectory, Verbose=>true, Exclude => {"CVS"});
@@ -417,7 +418,8 @@ installPackage Package := o -> pkg -> (
 	       then stderr << "--leaving example output file for " << nodename << endl
 	       else (
 		    stderr << "--making example output file for " << nodename << endl;
-		    cmd := commandLine#0 | " --silent -q -e 'load \""|buildPackage|".m2\"' <"|inf|" >"|outf;
+		    loadargs := if pkg === Main then "" else "-e 'load \""|fn|"\"'";
+		    cmd := commandLine#0 | " --silent --stop -q " | loadargs | " <" | inf | " >" | outf;
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
@@ -428,7 +430,7 @@ installPackage Package := o -> pkg -> (
 	       pkg#"example outputs"#nodename = drop(separateM2output get outf,-1);
 	       -- stderr << "node " << nodename << " : " << peek \ net \ pkg#"example outputs"#nodename << endl;
 	       ));
-     if haderror then error "error occurred running example files";
+     if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
      -- make html files
      htmlDirectory = LAYOUT#"packagehtml" buildPackage;
