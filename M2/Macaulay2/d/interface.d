@@ -77,10 +77,11 @@ export rawMakeMonomial(e:Expr):Expr := (
      when e
      is l:List do (
 	  when isSequenceOfPairsOfSmallIntegers(l.v) is s:string do return WrongArg(s) else nothing;
-	  when Ccode(RawMonomialOrNull, 
+	  m := Ccode(RawMonomialOrNull, 
 	       "(engine_RawMonomialOrNull)rawMakeMonomial(",
 	          "(M2_arrayint)", getReverseSequenceOfPairsOfSmallIntegers(l.v), 
-	       ")" )
+	       ")" );
+	  when m
 	  is x:RawMonomial do Expr(x)
 	  is null do buildErrorPacket(EngineError("raw monomial overflow"))
 	  )
@@ -366,13 +367,14 @@ setupfun("rawNumberOfInvertibleVariables",rawNumberOfInvertibleVariables);
 -- monoids
 
 export rawMonoid(mo:RawMonomialOrdering,names:array(string),degreesRing:RawRing,degs:array(int)):Expr := (
-     when Ccode(RawMonoidOrNull, 
+     M := Ccode(RawMonoidOrNull, 
 	  "(engine_RawMonoidOrNull)IM2_Monoid_make(",
 	      "(MonomialOrdering *)", mo, ",",
 	      "(M2_stringarray)", names, ",",
 	      "(Ring *)", degreesRing, ",",
 	      "(M2_arrayint)", degs,
-	  ")")
+	  ")");
+     when M
      is m:RawMonoid do Expr(m)
      is null do buildErrorPacket(EngineError("internal error: unexplained failure to make raw monoid"))
      );
@@ -651,15 +653,18 @@ export rawFromNumber(e:Expr):Expr := (
      is n:Integer do Expr(Ccode( RawRingElement, "IM2_RingElement_from_Integer(", "(Ring*)",R,",", "(M2_Integer)",n, ")"))
      is x:Rational do Expr(Ccode( RawRingElement, "IM2_RingElement_from_rational(", "(Ring*)",R,",", "(M2_Rational)",x, ")"))
      is x:Real do (
-	  when Ccode(RawRingElementOrNull, "IM2_RingElement_from_double((Ring*)",R,",",x.v,")")
+	  f := Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_double((Ring*)",R,",",x.v,")");
+	  when f
 	  is r:RawRingElement do Expr(r)
 	  is null do buildErrorPacket(EngineError("promoting real number to ring element: not implemented yet")))
      is x:Complex do (
-	  when Ccode(RawRingElementOrNull, "IM2_RingElement_from_complex((Ring*)",R,",(M2_CC)", x,")")
+	  f := Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_complex((Ring*)",R,",(M2_CC)", x,")");
+	  when f
 	  is r:RawRingElement do Expr(r)
 	  is null do buildErrorPacket(EngineError("promoting real number to ring element: not implemented yet")))
      is x:BigReal do (
-	  when Ccode(RawRingElementOrNull, "IM2_RingElement_from_BigReal((Ring*)",R,",(M2_BigReal)",x,")")
+	  f := Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)IM2_RingElement_from_BigReal((Ring*)",R,",(M2_BigReal)",x,")");
+	  when f
 	  is r:RawRingElement do Expr(r)
 	  is null do
 	  buildErrorPacket(EngineError("can't promote big real number to ring element")))
