@@ -606,11 +606,8 @@ basis(List,Module) := Matrix => (deg,M) -> (
 	  ZZ === A
 	  ) then error "'basis' can't handle this type of ring";
      k := coefficientRing A;
-     bottom := generators gb presentation M;
-     top := id_(target bottom);
-     error "kbasis has not been re-implemented yet";
-     sendgg(ggPush top, ggPush bottom, ggPush deg, ggkbasis);
-     map(M,,getMatrix R))
+     pres := generators gb presentation M;
+     map(M,,rawBasis(raw pres, deg, deg, splice(1, #deg-1 : 0), 0 .. numgens R - 1, false, -1)))
 
 basis(ZZ,Module) := Matrix => (deg,M) -> basis({deg},M)
 basis(List,Ideal) := basis(ZZ,Ideal) := Matrix => (n,I) -> basis(n,module I)
@@ -618,7 +615,7 @@ basis(List,Ring) := Matrix => (deg,R) -> basis(deg, R^1)
 
 basis(ZZ,Ring) := Matrix => (deg,R) -> basis({deg}, R^1)
 
-basis Module := Matrix => M -> if M.?basis then M.basis else M.basis = (
+basis Module := Matrix => M -> if M.cache.?basis then M.cache.basis else M.cache.basis = (
      -- check the following:
      --     R = ring m is a polynomial ring
      --     
@@ -627,12 +624,10 @@ basis Module := Matrix => M -> if M.?basis then M.basis else M.basis = (
      if not isField coefficientRing A then error "expected ring to be an algebra over a field";
      if dim M != 0 then error "expected module to be a finite dimensional module";
      k := coefficientRing A;
-     bottom := generators gb presentation M;
-     top := id_(target bottom);
-     sendgg(ggPush top, ggPush bottom, ggkbasis);
-     map(M,,getMatrix R))
+     pres := generators gb presentation M;
+     map(M,,rawBasis(raw pres, {}, {}, splice(1, degreeLength R - 1 : 0), 0 .. numgens R - 1, false, -1)))
 
-basis Ring := Matrix => R -> if R.?basis then R.basis else R.basis = basis(R^1)
+basis Ring := Matrix => R -> if R.?basis then R.cache.basis else R.cache.basis = basis(R^1)
 basis Ideal := Matrix => I -> if I.cache.?basis then I.cache.basis else I.cache.basis = basis module I
 -----------------------------------------------------------------------------
 
