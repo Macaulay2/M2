@@ -220,7 +220,6 @@ packageNodes := (pkg,topNodeName) -> unique join(
 
 -- make this first:
 linkTable := new MutableHashTable			    -- keys are fkeys for a node, values are ordinary lists of descendents
-ROOT := "ROOT"
 
 -- assemble this next
 ForestNode = new Type of BasicList			    -- list of formatted keys for descendents
@@ -235,14 +234,14 @@ local visitCount
 local externalReferences
 local duplicateReferences
 
-makeNode := x -> (
+makeTree := x -> (
      visits := if visitCount#?x then visitCount#x else 0;
      visitCount#x = visits + 1;
      if linkTable#?x 
      then (
 	  if visits > 0
      	  then new TreeNode from { x | " -- repeated reference" , new ForestNode from { }  }
-     	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeNode) }
+     	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeTree) }
 	  )
      else (
 	  if externalReferences#?x
@@ -251,13 +250,14 @@ makeNode := x -> (
 	  )
      )
 
+makeForest := x -> new ForestNode from makeTree \ x
+
 leaves := () -> keys set flatten values linkTable
 roots := () -> sort keys ( set keys linkTable - set leaves() )
-makeTree := topNode -> (
+getTrees := topNode -> (
      -- error "debug this";
      visitCount = new MutableHashTable;
-     linkTable#ROOT = roots();
-     makeNode ROOT)
+     return makeForest roots())
 
 --
 
@@ -333,7 +333,7 @@ assembleTree Package := pkg -> (
 		    scope(fkey,documentationMemo key)));
 	  nodesToScope = new MutableHashTable from (set keys nodesToScope - set m);
 	  );
-     t := makeTree();
+     t := getTrees();
      doExamples = true;
      t)
 
