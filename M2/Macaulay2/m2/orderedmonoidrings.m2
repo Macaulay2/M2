@@ -33,9 +33,9 @@ document { quote PolynomialRing,
 	  },
      "Operations on ring elements:",
      MENU {
-	  TO "+",
-	  TO "-",
-	  TO "*",
+	  TO quote +,
+	  TO quote -,
+	  TO quote *,
 	  TO "coefficients",
 	  TO "content",
 	  TO "exponents",
@@ -67,7 +67,7 @@ document { quote PolynomialRing,
   	  TO "ring",
 	  TO "degreesRing"
 	  },
-     SEEALSO ("OrderedMonoid", "RingElement"),
+     SEEALSO {"OrderedMonoid", "RingElement"},
      }
 
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
@@ -344,17 +344,22 @@ samering := (f,g) -> (
      if ring f =!= ring g then error "expected elements from the same ring";
      )
 
+document { (quote " ", Ring, OrderedMonoid),
+     TT "R M", " -- makes a monoid ring from a ring and a monoid.",
+     SEEALSO {"Ring", "OrderedMonoid"}
+     }
+
 Ring Array := (R,variables) -> use R monoid variables
 
-document { "f_m",
+document { (quote _, RingElement, RingElement),
      TT "f_m", " -- provide the coefficient of the monomial m in the polynomial f.",
      PARA,
      EXAMPLE "ZZ[y]",
      EXAMPLE "((1+y)^5) _ (y^2)",
-     SEEALSO ("_")
+     SEEALSO {"_"}
      }
 
-document { "R_\"x\"",
+document { (quote _, Ring, String),
      TT "R_\"x\"", " -- produce the indeterminate of the polynomial ring R 
      whose name is x.",
      PARA,
@@ -370,16 +375,21 @@ PolynomialRing _ List := (RM,v) -> (
      1_k * M_v
      )
 
-document { "R_i",
-     TT "R_i", " -- produce the i-th generator of a ring R.",
+document { (quote _, Ring, ZZ),
+     TT "R_i", " -- produce the ", TT "i", "-th generator of a ring ", TT "R", ".",
      PARA,
      EXAMPLE "R = ZZ[a..d]",
-     EXAMPLE "R_2",
+     EXAMPLE "R_2"
+     }
+
+Ring _ List := (R,w) -> product(#w, i -> (R_i)^(w_i))
+
+document { (quote _, Ring, List),
+     TT "R_w", " -- produce the monomial of the ring ", TT "R", " by using the 
+     integers in the list ", TT "w", " as exponents of the variables.",
      PARA,
-     "If ", TT "i", " is a list, then it is a list of exponents to be
-     applied to the variables, returning a monomial.",
-     EXAMPLE "R_{1,2,3,4}",
-     SEEALSO ("_", "R_\"x\"")
+     EXAMPLE "R = ZZ[a..d]",
+     EXAMPLE "R_{1,2,3,4}"
      }
 
 dim PolynomialRing := R -> dim R.baseRings#-1 + # generators R

@@ -43,7 +43,7 @@ document { quote newClass,
      "If m is mutable, and instances of class N are also mutable, then
      copying is not required, and is not done.",
      PARA,
-     SEEALSO ( "copy", "toList" )
+     SEEALSO { "copy", "toList" }
      }
 
 document { quote MutableList,
@@ -57,7 +57,7 @@ document { quote MutableList,
      EXAMPLE "s#2 = 1234;",
      EXAMPLE "s",
      EXAMPLE "peek s",
-     SEEALSO ("lists, arrays, and sequences", "BasicList")
+     SEEALSO {"lists, arrays, and sequences", "BasicList"}
      }
 
 document { quote lookup,
@@ -75,7 +75,7 @@ document { quote lookup,
      PARA,
      "If no method is found, then ", TT "null", " is returned.",
      PARA,
-     SEEALSO ("classes", "installMethod")
+     SEEALSO {"classes", "installMethod"}
      }
 
 document { quote installMethod,
@@ -100,20 +100,20 @@ document { quote installMethod,
      PARA,
      "In all case, ", TT "f", " may also be a list ", TT "{D,f,doc...}", ", where ", TT "D", " is the class of the value
      returned by the function ", TT "f", ", and ", TT "{doc...}", " is documentation.",
-     SEEALSO( "lookup",  "new", "classes")
+     SEEALSO{ "lookup",  "new", "classes"}
      }
  
-document { quote "new",
+document { quote new,
      TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
      parent ", TT "b", " initialized from ", TT "c", ".", BR,
      NOINDENT,
-     TT "new A of b", "        -- make a hash table of class ", TT "A", " 
+     TT "new A of b", " -- make a hash table of class ", TT "A", " 
      and parent ", TT "b", ".", BR,
      NOINDENT,
-     TT "new A from c", "      -- make a hash table or list of class ", TT "A", " 
+     TT "new A from c", " -- make a new instance of class ", TT "A", " 
      initialized from ", TT "c", ".", BR,
      NOINDENT,
-     TT "new A", "             -- makes a hash table or list ", TT "n", " 
+     TT "new A", " -- makes a new instance ", TT "n", " 
      of class ", TT "A", ".", BR,
      PARA,
      HR,
@@ -137,7 +137,7 @@ document { quote "new",
      a hash table or a list, and it will be converted directly.",
      HR,
      NOINDENT,
-     TT "new A of b", "        -- make a hash table of class ", TT "A", "
+     TT "new A of b", " -- make a hash table of class ", TT "A", "
      and parent ", TT "b", ".",
      PARA,
      "Same as above, except ", TT "c", " is missing.  Use ",
@@ -145,7 +145,7 @@ document { quote "new",
      "to install the initialization routine.",
      HR,
      NOINDENT,
-     TT "new A from c", "      -- make a hash table or list ", TT "n", " of 
+     TT "new A from c", " -- make a hash table or list ", TT "n", " of 
      class ", TT "A", " initialized from ", TT "c", ".",
      PARA,
      "The same as above except ", TT "b", " is missing.  Use ",
@@ -157,7 +157,7 @@ document { quote "new",
      is no initialization routine the parent will be set to Nothing.",
      HR,
      NOINDENT,
-     TT "new A", "             -- make a hash table or list ", TT "n", " of 
+     TT "new A", " -- make a new instance ", TT "n", " of 
      class ", TT "A", ".",
      PARA,
      "Same as above, except ", TT "b", " and ", TT "c", " are missing.
@@ -167,10 +167,15 @@ document { quote "new",
      initialization routine will not have its parent reset.  If there
      is no initialization routine the parent will be set to Nothing.",
      PARA,
+     "Note that if the ", TT "of", " option is not used, then the class ", TT "A", "
+     need not consist of hash tables or lists.  We are using this feature by
+     installing a method so that ", TT "new ZZ", " returns an integer popped
+     from the top of the engine's stack.",
+     PARA,
      "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", 
      TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used for 
      installation of the initialization routines.",
-     SEEALSO ("classes", "of", "from")
+     SEEALSO {"classes", "of", "from"}
      }
 
 document { quote "of",

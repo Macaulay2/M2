@@ -15,6 +15,7 @@ ZZ.frac = QQ
 promote(ZZ,ZZ) := (i,ZZ) -> i
 lift(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = () -> random 21 - 10
+new ZZ := ZZ -> ZZ.pop()		  -- new integers all come from the engine stack
 
 document { quote ZZ,
      TT "ZZ", " -- denotes the class of all integers.",
@@ -24,8 +25,8 @@ document { quote ZZ,
      "Operations on integers:",
      MENU {
 	  TO "gcdCoefficients",
-	  TO "ZZ << ZZ",
-	  TO "ZZ >> ZZ"
+	  TO (quote <<, ZZ, ZZ),
+	  TO (quote >>, ZZ, ZZ)
 	  }
      }
 

@@ -127,7 +127,7 @@ document { quote Schur,
      "This is the representation ring for the general linear group of n by n
      matrices.",
      PARA,
-     SEEALSO ("SchurRing")
+     SEEALSO {"SchurRing"}
      }
 
 document { quote SchurRing,
@@ -144,10 +144,10 @@ document { quote SchurRing,
      EXAMPLE "dim R_{3,2,1}",
      "Multiplication in the ring comes from tensor product of representations.",
      EXAMPLE "R_{3,2,1} * R_{1,1}",
-     SEEALSO "S_v"
+     SEEALSO {quote _, SchurRing, List}
      }
 
-document { "S_v",
+document { (quote _, SchurRing, List),
      TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
      to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
      PARA,

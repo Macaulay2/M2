@@ -81,9 +81,17 @@ syz Matrix := (f,options) -> (
      else mingens image syz gb (f, options, Syzygies=>true)
      )
 
+document { syz => Strategy,
+     TT "syz(f,Strategy => v)", " -- an option for ", TO "syz", " which can
+     be used to specify the strategy to be used in the computation.",
+     PARA,
+     "The value of the option is simply passed to ", TO "gb", ", so see the
+     documentation there for details."
+     }
+
 document { quote syz,
      TT "syz f", " -- compute minimal generators for the module of syzygies for the 
-     ", TO "Matrix", " f.",
+     ", TO "Matrix", " ", TT "f", ".",
      PARA,
      "syz G -- retrieve the ", TO "Matrix", " of syzygies from the Groebner
      basis G.  The result may be empty if syzygies were not to be retained during the
@@ -192,11 +200,12 @@ complement Matrix := (m) -> (
      if not isHomogeneous m then error "expected homogeneous matrix";
      n := transpose syz transpose substitute(m,0);
      id_(target n) // n)
+
 document { quote complement,
-     TT "complement f", " -- for a matrix f, return a map g with the same 
-     target whose columns are minimal generators for the cokernel of f.",
+     TT "complement f", " -- for a matrix ", TT "f", ", return a map ", TT "g", " with the same
+     target whose columns are minimal generators for the cokernel of ", TT "f", ".",
      PARA,
-     "The map f must be homogeneous."
+     "The map ", TT "f", " must be homogeneous."
      }
 
 -----------------------------------------------------------------------------

@@ -79,9 +79,9 @@ document { "getting started",
      EXAMPLE "\"hi there\"",
      "A value can be assigned to a variable with ", TO "=", ".",
      EXAMPLE "s = \"hi there\"",
-     "Strings may be concatenated horizontally with ", TO "|",
+     "Strings may be concatenated horizontally with ", TO (quote |, String, String),
      EXAMPLE "s | \" - \" | s",
-     "or vertically with ", TO "||", ":",
+     "or vertically with ", TO (quote ||, Net, Net), ":",
      EXAMPLE "s || \" - \" || s",
      "A list of expressions can be formed with braces.
      (See ", TO "lists, arrays, and sequences", ".)",
@@ -160,7 +160,7 @@ document { "getting started",
      "We can produce the cokernel with ", TO "cokernel", "; no computation is
      performed.",
      EXAMPLE "cokernel f",
-     "The direct sum is formed with ", TO "++", ".",
+     "The direct sum is formed with ", TO (quote ++,Module,Module), ".",
      EXAMPLE "N = kernel f ++ cokernel f",
      "The answer is expressed in terms of the ", TO "subquotient", " function, which
      produces subquotient modules.  Each subquotient module is accompanied
@@ -301,7 +301,7 @@ document {
 	  TO "VAR",
 	  TO "XMP"
 	  },
-     SEEALSO ("HtmlList", "ListHead")
+     SEEALSO {"HtmlList", "ListHead"}
      }
 
 document { quote HtmlList,

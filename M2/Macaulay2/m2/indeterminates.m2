@@ -73,7 +73,7 @@ document { quote "..",
      EXAMPLE "(0,0)..(1,3)",
      EXAMPLE "p_(0,a) .. p_(1,c)",
      PARA,
-     SEEALSO( "lists, arrays, and sequences")
+     SEEALSO{ "lists, arrays, and sequences"}
      }
 
 document { "indeterminates",
@@ -89,5 +89,5 @@ document { "indeterminates",
 	  ),
      ".",
      PARA,
-     SEEALSO ("vars", "..")     
+     SEEALSO {"vars", ".."}     
      }

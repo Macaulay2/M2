@@ -21,7 +21,7 @@ assert( name Tor == \"Tor\" )
 
 document { quote Tor,
      TT "Tor_i(M,N)", " -- compute the Tor module of two modules M, N.",
-     SEEALSO("ScriptedFunctor")
+     SEEALSO{"ScriptedFunctor"}
      }
 
 Tor(ZZ, Module, Module) := (i,M,N) -> (

@@ -52,7 +52,7 @@ net GradedModuleMap := f -> (
 		    ),
 	       i -> horizontalJoin (
 		    net (i+d), ": ", net target f_i, " <--",
-		    net f_i, "-- ", net source f_i, ": ", net i
+		    net f_i, "-- ", net source f_i, " :", net i
 		    )
 	       )
 	  );

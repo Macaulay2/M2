@@ -26,9 +26,9 @@ document { quote Monoid,
      MENU {
 	  (TO (quote **,Monoid,Monoid), " -- product of monoids."),
 	  (TO "generators", "        -- get the generators of the monoid"),
-	  (TO "1_G", "         -- get the unit element"),
-	  (TO "G_i", "         -- get a generator from a monoid"),
-	  (TO "Ring Monoid", " -- make a monoid ring")
+	  (TO (quote _, ZZ, Monoid), "         -- get the unit element"),
+	  (TO (quote _, Monoid, ZZ), "         -- get a generator from a monoid"),
+	  (TO (quote " ",Ring, Monoid), " -- make a monoid ring")
 	  },
      PARA,
      "Keys:",
@@ -38,19 +38,9 @@ document { quote Monoid,
 	  }
      }
 
-document { "Ring Monoid",
-     TT "R M", " -- makes a monoid ring from a ring and a monoid.",
-     SEEALSO ("Ring", "Monoid")
-     }
-
-document { "1_G",
-     TT "1_G", " -- provides the unit element of a group or monoid"
-     }
-
-document { "G_i",
-     TT "G_i", " -- yields the i-th generator, if present, of the monoid G",
-     PARA,
-     SEEALSO( "_", "Monoid")
+document { (quote _, ZZ, Monoid),
+     TT "1_M", " -- provides the unit element of a group or monoid
+     ", TT "M", "."
      }
 
 baseName Symbol := identity
@@ -80,5 +70,5 @@ document { quote OrderedMonoid,
 	  TO ">=",
 	  TO "?"
 	  },
-     SEEALSO  ("Monoid", "group")
+     SEEALSO  {"Monoid", "group"}
      }     

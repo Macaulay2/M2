@@ -93,53 +93,14 @@ document { resolution => StopBeforeComputation,
      the partially computed resolution contained in an interrupted computation."
      }
 
-document { (resolution, Ideal),
-     TT "resolution I", " -- produces a projective resolution of the 
-     module ", TT "R/I", " if ", TT "I", " is an ideal in the ring ", TT "R", ".",
-     SEEALSO "resolution"
-     }
-
-document { (resolution, Matrix),
-     TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
-     chain map from a resolution of the source of ", TT "f", " to a resolution of the
-     target of ", TT "f", ".",
-     EXAMPLE "R = ZZ/101[x,y];",
-     EXAMPLE "m = ideal vars R",
-     EXAMPLE "resolution map(m/m^3, m^2/m^4)"
-     }
-
-document { (resolution, Module),
-     TT "resolution M", " -- produces a projective resolution of the 
-     module ", TT "M", ".",
-     PARA,
-     "If the computation is interrupted after the skeleton has been
-     successfully computed, then the partially completed
-     resolution is available as ", TT "M.resolution", ".  The computation 
-     can be continued with ", TT "resolution M", ".",
-     PARA,
-     "If the user has a chain complex in hand which is known to be a
-     projective resolution of ", TT "M", ", then it can be installed
-     with ", TT "M.resolution = C", ".",
-     PARA,
-     "Optional arguments and flags:",
-     MENU {
-	  (TO (resolution => Algorithm), "             -- which algorithm to use"),
-	  (TO (resolution => StopBeforeComputation), " -- whether to stop the computation immediately"),
-	  (TO (resolution => DegreeLimit), "           -- compute only up to this degree"),
-	  (TO (resolution => HardDegreeLimit), "       -- always compute only up to this degree"),
-	  (TO (resolution => SyzygyLimit), "           -- stop when this number of syzygies are obtained"),
-	  (TO (resolution => PairLimit), "             -- stop when this number of pairs are handled"),
-	  (TO (resolution => LengthLimit), "           -- stop when the resolution reaches this length"),
-	  (TO (resolution => SortStrategy), "          -- specify strategy for sorting S-pairs")
-	  },
-     PARA,
-     "For an abbreviation, use ", TO "res", ".",
-     SEEALSO ("ChainComplex", "resolution")
-     }
-
 document { resolution => LengthLimit,
      TT "LengthLimit", " -- keyword for an optional argument used with
      ", TO "resolution", " which indicates how long a resolution to make.",
+     PARA,
+     "For polynomial rings over a field or over the integers, the length
+     is taken to be the dimension of the ring, so the complete resolution will
+     be obtained.  For quotient rings of such rings, the same number is used,
+     so the complete resolution may not be obtained.",
      PARA,
      "In the current version, asking for a second and longer resolution of the
      same module involves recomputing the resolution from scratch.  Eventually
@@ -211,6 +172,14 @@ inf := t -> if t === infinity then -1 else t
 
 spots := C -> select(keys C, i -> class i === ZZ)
 
+defaultResolutionLength := (R) -> (
+     numgens R + 1 + if ZZ === ultimate(coefficientRing, R) then 1 else 0
+     )
+
+resolutionLength := (R,options) -> (
+     if options.LengthLimit == infinity then defaultResolutionLength R else options.LengthLimit
+     )
+
 resolutionByHomogenization := (M,options) -> (
      R    := ring M;
      f    := presentation M;
@@ -229,19 +198,13 @@ resolutionByHomogenization := (M,options) -> (
      toRH := map(RH, R', vars RH);
      fH   := homogenize(toRH generators gb f',RH_n); 	  forceGB fH;
      MH   := cokernel fH;
-     C    := resolution(MH, options, 
-	  LengthLimit => if options.LengthLimit == infinity then n+1 else options.LengthLimit
-	  );
+     C    := resolution(MH, options, LengthLimit => resolutionLength(R,options));
      toR  := map(R, RH, vars R | 1);
      toR C)
 
 resolutionBySyzygies := (M,options) -> (
      R := ring M;
-     maxlength := (
-	  if options.LengthLimit === infinity 
-	  then numgens R + 1
-	  else options.LengthLimit
-	  );
+     maxlength := resolutionLength(R,options);
      if M.?resolution 
      then C := M.resolution
      else (
@@ -273,11 +236,7 @@ resolutionInEngine := (M,options) -> (
 	  if class options.DegreeLimit === ZZ then {options.DegreeLimit}
 	  else if degreelimit === null then degreelimit = {}
 	  else error "expected DegreeLimit to be an integer or null");
-     maxlength := (
-	  if options.LengthLimit === infinity 
-	  then numgens R + 1
-	  else options.LengthLimit
-	  );
+     maxlength := resolutionLength(R,options);
      if not M.?resolution 
      or M.resolution.Resolution.length < maxlength
      then M.resolution = (
@@ -349,16 +308,59 @@ resolution Module := (M,o) -> (
      else if isQuotientRing R then resolutionInEngine(M,default(o,Algorithm2))
      else resolutionInEngine(M,default(o,Algorithm1))
      )
+document { (resolution, Module),
+     TT "resolution M", " -- produces a projective resolution of the 
+     module ", TT "M", ".",
+     PARA,
+     "If the computation is interrupted after the skeleton has been
+     successfully computed, then the partially completed
+     resolution is available as ", TT "M.resolution", ".  The computation 
+     can be continued with ", TT "resolution M", ".",
+     PARA,
+     "If the user has a chain complex in hand which is known to be a
+     projective resolution of ", TT "M", ", then it can be installed
+     with ", TT "M.resolution = C", ".",
+     PARA,
+     "Optional arguments and flags:",
+     MENU {
+	  (TO (resolution => Algorithm), "             -- which algorithm to use"),
+	  (TO (resolution => StopBeforeComputation), " -- whether to stop the computation immediately"),
+	  (TO (resolution => DegreeLimit), "           -- compute only up to this degree"),
+	  (TO (resolution => HardDegreeLimit), "       -- always compute only up to this degree"),
+	  (TO (resolution => SyzygyLimit), "           -- stop when this number of syzygies are obtained"),
+	  (TO (resolution => PairLimit), "             -- stop when this number of pairs are handled"),
+	  (TO (resolution => LengthLimit), "           -- stop when the resolution reaches this length"),
+	  (TO (resolution => SortStrategy), "          -- specify strategy for sorting S-pairs")
+	  },
+     PARA,
+     "For an abbreviation, use ", TO "res", ".",
+     SEEALSO {"ChainComplex", "resolution"}
+     }
 
 resolution Matrix := (f,o) -> (
      extend(resolution(target f, o), resolution(source f, o), matrix f)
      )
+document { (resolution, Matrix),
+     TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
+     chain map from a resolution of the source of ", TT "f", " to a resolution of the
+     target of ", TT "f", ".",
+     EXAMPLE "R = ZZ/101[x,y];",
+     EXAMPLE "m = ideal vars R",
+     EXAMPLE "resolution map(m/m^3, m^2/m^4)"
+     }
+
 
 resolution Ideal := (I,options) -> resolution(
      if I.?quotient 
      then I.quotient
      else I.quotient = (ring I)^1/I,
      options)
+
+document { (resolution, Ideal),
+     TT "resolution I", " -- produces a projective resolution of the 
+     module ", TT "R/I", " if ", TT "I", " is an ideal in the ring ", TT "R", ".",
+     SEEALSO "resolution"
+     }
 
 TEST "
 S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
@@ -477,15 +479,12 @@ document { quote status,
      PARA,
      "Options:",
      MENU {
-	  {TO "TotalPairs", "     -- display the total number of S-pairs"},
-	  {TO "PairsRemaining", " -- display the number of S-pairs remaining"},
-	  {TO "Monomials", "      -- display the number of monomials"}
-	  },
-     "Default values:",
-          MENU {
-	  {TO "TotalPairs", "     => ", statusDefaults.TotalPairs},
-	  {TO "PairsRemaining", " => ", statusDefaults.PairsRemaining},
-	  {TO "Monomials", "      => ", statusDefaults.Monomials}
+	  {TO TotalPairs, " -- display the total number of S-pairs, default value ",
+	       statusDefaults.TotalPairs },
+	  {TO PairsRemaining, " -- display the number of S-pairs remaining, default value ",
+	       statusDefaults.PairsRemaining},
+	  {TO Monomials, " -- display the number of monomials, default value ",
+	       statusDefaults.Monomials}
 	  }
      }
 document { quote TotalPairs,

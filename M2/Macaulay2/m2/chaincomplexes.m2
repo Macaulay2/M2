@@ -7,21 +7,6 @@ new ChainComplex := (cl) -> (
      b.degree = -1;
      b.source = b.target = C;
      C)
-document { (NewMethod, ChainComplexMap),  -- ????
-     TT "C = new ChainComplexMap", " -- make a new chain complex.",
-     PARA,
-     "The new chain complex is initialized with a differential of
-     degree ", TT "-1", " accessible as ", TT "C.dd", " and of type
-     ", TO "ChainComplexMap", ".  You can take the new chain complex and
-     fill in the ring, the modules, and the differentials.",
-     EXAMPLE "C = new ChainComplex;",
-     EXAMPLE "C.ring = ZZ;",
-     EXAMPLE "C#2 = ZZ^1;",
-     EXAMPLE "C#3 = ZZ^2;",
-     EXAMPLE "C.dd#3 = matrix {{3,-11}};",
-     EXAMPLE "C",
-     EXAMPLE "C.dd"
-     }
 
 -- a useful hack
 Documentation#(quote ., ChainComplex, dd) = { ChainComplexMap, 
@@ -51,10 +36,10 @@ document { quote ChainComplex,
      PARA,
      "Here are some functions for producing or manipulating chain complexes.",
      MENU {
-	  (TO "++", "           -- direct sum"),
+	  (TO (quote ++, ChainComplex, ChainComplex), " -- direct sum"),
 	  (TO (quote .,ChainComplex,dd), " -- obtain the differentials."),
-	  (TO (ChainComplex, Array), " -- shift a chain complex"),
-	  (TO "C.dd_i", "       -- select a differential"),
+	  (TO "C.dd_i", " -- obtain a single differential."),
+	  (TO (quote " ", ChainComplex, Array), " -- shift a chain complex"),
 	  (TO "betti", "        -- display degrees in a free resolution"),
 	  (TO "chainComplex", " -- make a chain complex"),
 	  (TO "complete", "     -- complete the internal parts of a chain complex"),
@@ -63,6 +48,7 @@ document { quote ChainComplex,
 	  (TO "length", "       -- length of a chain complex"),
 	  (TO "poincare", "     -- assemble degrees into polynomial"),
 	  TO "poincareN",
+	  (TO (NewMethod,ChainComplex), " -- make a new chain complex from scratch"),
 	  (TO "nullhomotopy", " -- produce a null homotopy"),
 	  (TO "regularity", "   -- compute the regularity"),
 	  (TO "resolution", "   -- make a projective resolution"),
@@ -76,7 +62,7 @@ document { quote ChainComplex,
      EXAMPLE "C = resolution cokernel matrix {{x,y,z}}",
      "In order to see the matrices of the differentials, examine 'C.dd'.",
      EXAMPLE "C.dd",
-     SEEALSO ("Resolution", "dd")
+     SEEALSO {"Resolution", "dd"}
      }
 
 complete ChainComplex := C -> (
@@ -191,13 +177,8 @@ document { quote ChainComplexMap,
 	  (TO "extend", "        -- produce a map by lifting"),
 	  (TO "ring", "          -- get the base ring"),
 	  (TO "nullhomotopy", "  -- produce a null homotopy"),
-	  (TO "p_i", "           -- get a component from a map of chain complexes")
+	  (TO (quote _, ChainComplexMap, ZZ), " -- get a component from a map of chain complexes")
 	  }
-     }
-document { "p_i",
-     TT "p_i", " -- for a map p : C -> D of chain complexes of degree d, provides
-     the component p_i : C_i -> D_(i+d).",
-     SEEALSO "ChainComplexMap"
      }
 ring ChainComplexMap := C -> ring source C
 complete ChainComplexMap := f -> (
@@ -259,6 +240,12 @@ ChainComplexMap _ ZZ := (f,i) -> (
 	  then map((target f)_(i+f.degree),(source f)_i,0,Degree=>f.degree)
 	  else map((target f)_(i+f.degree),(source f)_i,0)
 	  ))
+document { (quote _, ChainComplexMap, ZZ),
+     TT "p_i", " -- for a map p : C -> D of chain complexes of degree d, provides
+     the component p_i : C_i -> D_(i+d).",
+     SEEALSO "ChainComplexMap"
+     }
+
 ChainComplex#id = (C) -> (
      complete C;
      f := new ChainComplexMap;
@@ -668,19 +655,22 @@ document { (cohomology,ZZ,ChainComplex),
      "By definition, this is the same as HH_(-i) C."
      }
 
-  homology(ZZ,ChainComplexMap) := (i,f) -> inducedMap(homology(i,target f), homology(i,source f),f_i)
+  homology(ZZ,ChainComplexMap) := (i,f) -> (
+       inducedMap(homology(i+degree f,target f), homology(i,source f),f_i)
+       )
+
 cohomology(ZZ,ChainComplexMap) := (i,f) -> homology(-i,f)
 document { (homology,ZZ,ChainComplexMap),
      TT "HH_i f", " -- provides the map on the ", TT "i", "-th homology module
      by a map ", TT "f", " of chain complexes.",
      PARA,
-     SEEALSO ("homology", "HH")
+     SEEALSO {"homology", "HH"}
      }
 document { (cohomology,ZZ,ChainComplexMap),
      TT "HH^i f", " -- provides the map on the ", TT "i", "-th cohomology module
      by a map ", TT "f", " of chain complexes.",
      PARA,
-     SEEALSO ("cohomology", "HH")
+     SEEALSO {"cohomology", "HH"}
      }
 
 homology(ChainComplex) := (C) -> (
@@ -693,11 +683,21 @@ document { (homology,ChainComplex),
      TT "HH C", " -- produces the direct sum of the homology modules of the
      chain complex ", TT "C", " as a graded module.",
      PARA,
-     SEEALSO ("GradedModule", "HH")
+     SEEALSO {"GradedModule", "HH"}
      }
+
+gradedModule(ChainComplex) := (C) -> (
+     H := new GradedModule;
+     H.ring = ring C;
+     complete C;
+     scan(spots C, i -> H#i = C#i);
+     H)
 
 homology(ChainComplexMap) := (f) -> (
      g := new GradedModuleMap;
+     g.degree = f.degree;
+     g.source = HH f.source;
+     g.target = HH f.target;
      scan(spots f, i -> g#i = homology(i,f));
      g)
 
@@ -792,6 +792,13 @@ ChainComplex ++ ChainComplex := (C,D) -> (
      E.components = {C,D};
      E)
 
+document { (quote ++,ChainComplex,ChainComplex),
+     TT "C++D", " -- direct sum of chain complexes.",
+     PARA,
+     EXAMPLE "C = resolution cokernel matrix {{4,5}}",
+     EXAMPLE "C ++ C[-2]"
+     }
+
 components ChainComplex := C -> if C.?components then C.components else {C}
 document { (components, ChainComplex),
      TT "components C", " -- returns from which C was formed, if C
@@ -813,7 +820,8 @@ ChainComplex Array := (C,A) -> (
      then scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = f)
      else scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = -f);
      D)
-document { (ChainComplex, Array),
+
+document { (quote " ", ChainComplex, Array),
      TT "C[i]", " -- shifts the chain complex C, producing a new chain complex
      D in which D_j is C_(i+j).  The signs of the differentials are reversed
      if i is odd."
@@ -1061,4 +1069,41 @@ syzygyScheme = (C,i,v) -> (
 document { quote syzygyScheme,
      TT "syzygyScheme(C,i,v)", " -- produce the syzygy scheme from a map
      v : R^j ---> C_i which selects some syzygies from a resolution C."
+     }
+
+document { (sum, ChainComplex),
+     TT "sum C", " -- yields the sum of the modules in a chain complex.",
+     PARA,
+     "The degrees of the components are preserved.",
+     EXAMPLE "R = ZZ/101[a..d]",
+     EXAMPLE "C = res coker vars R",
+     EXAMPLE "sum C",
+     EXAMPLE "degrees oo",
+     SEEALSO {"sum",(sum, ChainComplexMap)}
+     }
+document { (sum, ChainComplexMap),
+     TT "sum C", " -- yields the sum of the modules in a chain complex map.",
+     PARA,
+     "The degrees of the components are preserved.",
+     EXAMPLE "R = ZZ/101[a..c]",
+     EXAMPLE "C = res coker vars R",
+     EXAMPLE "sum C.dd",
+     EXAMPLE "betti oo",
+     SEEALSO {"sum", (sum, ChainComplex)}
+     }
+
+document { (NewMethod, ChainComplex),
+     TT "C = new ChainComplex", " -- make a new chain complex.",
+     PARA,
+     "The new chain complex is initialized with a differential of
+     degree ", TT "-1", " accessible as ", TT "C.dd", " and of type
+     ", TO "ChainComplexMap", ".  You can take the new chain complex and
+     fill in the ring, the modules, and the differentials.",
+     EXAMPLE "C = new ChainComplex;",
+     EXAMPLE "C.ring = ZZ;",
+     EXAMPLE "C#2 = ZZ^1;",
+     EXAMPLE "C#3 = ZZ^2;",
+     EXAMPLE "C.dd#3 = matrix {{3,-11}};",
+     EXAMPLE "C",
+     EXAMPLE "C.dd"
      }

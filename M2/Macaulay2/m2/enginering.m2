@@ -278,6 +278,12 @@ RingElement _ ZZ := (f,m) -> (
 	  );
      f _ m)
 
+Ring _ ZZ := (R,i) -> (
+     if R.?generators 
+     then R.generators#i
+     else error "ring has no generators"
+     )
+
 EngineRing _ ZZ := (R,i) -> (
      if R.?generators 
      then R.generators#i

@@ -31,11 +31,11 @@ document { quote GroebnerBasis,
 	   TO "getchange",
 	   TO "target"
 	   },
-      "Operations which use Groebner bases to produce matrices:",
+      "Operations on matrices which use Groebner bases to produce matrices:",
       MENU {
-	   (TO "mingens", " m"),
-	   (TO "kernel", " m"),
-	   (TO "modulo", "(m,n)")
+	   (TO "mingens"),
+	   (TO "kernel"),
+	   (TO "modulo")
        	   },
       "Each of these operations may be
       interrupted or stopped (by typing CNTRL-C).  The computation
@@ -47,17 +47,16 @@ document { quote GroebnerBasis,
       basis will ", EM "not", " change matrices previously obtained from
       these routines.",
       MENU {
-       	   (TO "generators", " G      -- the Groebner basis matrix"),
-       	   (TO "mingens", " G   -- a matrix whose columns are minimal generators
+       	   (TO {"generators", " G"}, " -- the Groebner basis matrix"),
+       	   (TO {"mingens", " G", }, " -- a matrix whose columns are minimal generators
          	of the corresponding submodule"
 		),
-	   (TO "syz", "G        -- the syzygy matrix: the columns are the syzygies on
-		'original G'")
+	   (TO {"syz", " G"}, " -- the syzygy matrix: the columns are the syzygies on 'original G'")
        	   },
       "Status of the computation can be determined by the following
       routines",
       MENU {
-       	   (TO "stats", " G -- display some statistics about the computation"),
+       	   (TO {"stats", " G"}, " -- display some statistics about the computation"),
        	   (TO "gbTrace", " -- provide tracing output during Groebner basis computations")
        	   },
       PARA,
@@ -267,7 +266,7 @@ gb Matrix := (f,options) -> (
 	  G))
      
 document { quote gb,
-     TT "gb f", " -- compute the Groebner basis for the image of a ", TO "Matrix", " f.",
+     TT "gb f", " -- compute the Groebner basis for the image of a ", TO "Matrix", " ", TT "f", ".",
      PARA,
      "If the computation is interrupted, then the partially completed
      Groebner basis is available as ", TT "f#{t,i}", ", where ", TT "t", " is true or
@@ -279,19 +278,19 @@ document { quote gb,
      "Optional arguments and flags:",
      MENU {
 	  (TO (gb => DegreeLimit), "   -- compute only up to this degree"),
-	  (TO "BasisElementLimit", "   -- stop when this number of minimal generators is obtained"),
+	  (TO (gb => BasisElementLimit), "   -- stop when this number of minimal generators is obtained"),
 	  (TO (gb => SyzygyLimit), "   -- stop when this number of syzygies is obtained"),
-	  (TO "PairLimit", "           -- stop when this number of pairs is handled"),
-	  (TO "CodimensionLimit", "    -- stop when this codimension is reached"),
-	  (TO "Strategy", "            -- specify the strategy used to compute Groebner bases")
+	  (TO (gb => PairLimit), " -- stop when this number of pairs is handled"),
+	  (TO (gb => CodimensionLimit), "    -- stop when this codimension is reached"),
+	  (TO (gb => Strategy), " -- specify the strategy used to compute Groebner bases")
 	  },
      "Optional arguments and flags for internal use only:",
      MENU {
-	  (TO "ChangeMatrix", "                -- whether to produce the change of basis matrix"),
+	  (TO (gb => ChangeMatrix), " -- whether to produce the change of basis matrix"),
 	  (TO (gb => StopBeforeComputation), " -- whether to stop the computation immediately"),
-	  (TO "StopWithMinimalGenerators", "   -- whether to produce a set of minimal generators"),
-	  (TO "Syzygies", "                    -- whether to collect syzygies"),
-	  (TO "SyzygyRows", "                  -- if syzygies are to be collected, the number
+	  (TO (gb => StopWithMinimalGenerators), "   -- whether to produce a set of minimal generators"),
+	  (TO Syzygies, " -- whether to collect syzygies"),
+	  (TO SyzygyRows, " -- if syzygies are to be collected, the number
 	       rows of the syzygy matrix to collect")
 	  },
      SEEALSO "GroebnerBasis"
@@ -408,7 +407,7 @@ document { quote CodimensionLimit,
      "Eventually the codimension of the ideal of leading terms is the
      codimension of the original ideal."
      }
-document { quote StopWithMinimalGenerators,
+document { gb => StopWithMinimalGenerators,
      TT "StopWithMinimalGenerators", " -- keyword for an optional argument used 
      with ", TO "gb", ", which, if the value provided is ", TT "true", "
      indicates that the computation should stop as
@@ -427,22 +426,27 @@ document { quote Strategy,
      TT "Strategy => v", " -- an optional argument used with various routines 
      to suggest a strategy for efficient computation.",
      PARA,
-     "When used with ", TO "gb", " or ", TO "resolution", ", the value v should
-     be a suggested strategy or list of strategies drawn from the following
-     possibilities.",
+     MENU {
+	  TO (quotient => Strategy),
+	  TO (gb => Strategy),
+	  TO (pushForward => Strategy),
+	  TO (pushForward1 => Strategy),
+	  TO (saturate => Strategy),
+	  TO (syz => Strategy)
+	  }
+     }
+
+document { gb => Strategy,
+     TT "gb(f,Strategy => v)", " -- an option for ", TO "gb", " which can
+     be used to specify the strategy to be used in the computation.",
      PARA,
+     "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
 	  TO "LongPolynomial",
 	  TO "Sort"
-	  },
-     PARA,
-     "When used with ", TO "pushForward1", ", the value v should be one
-     of the following.",
-     MENU {
-	  TO "NonLinear",
-     	  TO "Linear"
 	  }
      }
+
 document { quote Sort,
      TT "Sort", " -- a strategy used with the keyword ", TO "Strategy", ".",
      PARA,
@@ -463,8 +467,8 @@ document { quote LongPolynomial,
 
 document { quote Syzygies,
      TT "Syzygies", " -- keyword for an optional argument used with
-     ", TO "gb", ", which indicates whether the syzygies should be
-     computed.",
+     ", TO "gb", " and ", TO "syz", ", which indicates whether the 
+     syzygies should be computed.",
      PARA,
      "This option is for internal use only."
      }
@@ -479,8 +483,8 @@ document { quote ChangeMatrix,
 
 document { quote SyzygyRows,
      TT "SyzygyRows", " -- keyword for an optional argument used with
-     ", TO "gb", ", which specifies how many rows of the syzygy matrix
-     to retain.",
+     ", TO "gb", " and ", TO "syz", ", which specifies how many rows of 
+     the syzygy matrix to retain.",
      PARA,
      "This option is for internal use only."
      }

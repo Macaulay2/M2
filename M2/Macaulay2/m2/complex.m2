@@ -27,7 +27,7 @@ ii = new CC from {0,1}
 document { quote ii,
      TT "ii", " -- the square root of -1.",
      PARA,
-     SEEALSO( "CC")
+     SEEALSO{ "CC"}
      }
 
 CC.char = 0

@@ -57,7 +57,9 @@ scan(keys DocumentationProvided,
 	  ))
 reachable#(getDocumentationTag "Macaulay 2") = true
 assert( class doc "Macaulay 2" === SEQ )
-reach doc "Macaulay 2"
+
+topName = "Macaulay 2"
+reach doc topName
 scan(sort pairs DocumentationMissing,
      (s,w) -> warning(
 	  if tab#?s then tab#s,

@@ -30,7 +30,7 @@ document { "engine communication protocol",
 document { quote ConversionFormat,
      TT "ConversionFormat", " -- a method consulted to provide an engine conversion
      format.",
-     SEEALSO ("convert", "pop")
+     SEEALSO {"convert", "pop"}
      }
 
 document { quote convert,
@@ -74,7 +74,7 @@ document { quote convert,
      "A format is usually stored under the key ", TO "ConvertToExpression", "
      in the apprpriate class.",
      PARA,
-     SEEALSO ("pop")
+     SEEALSO {"pop"}
      }
 
 document { quote ConvertToExpression,
@@ -157,7 +157,7 @@ document { "transmitting a vector",
      number of the row, and ", TT "r", " is the entry.",
      PARA,
      "The columns of a matrix are transmitted as vectors.",
-     SEEALSO ("transmitting a monomial", "transmitting a matrix")
+     SEEALSO {"transmitting a monomial", "transmitting a matrix"}
      }
 
 document { "transmitting a matrix",

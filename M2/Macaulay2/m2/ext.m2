@@ -48,7 +48,7 @@ document { quote Ext,
      EXAMPLE "E = Ext(N,N)",
      EXAMPLE "rank source basis( E.adjust {-3,-2}, E)",
      EXAMPLE "rank source basis( {-3}, Ext^2(N,N) )",
-     SEEALSO("ScriptedFunctor")
+     SEEALSO{"ScriptedFunctor"}
      }
 
 document { quote dd,

@@ -621,6 +621,7 @@ fileWidth(e:Expr):Expr := (
 setupfun("fileWidth",fileWidth);
 
 horizontalJoin(s:Sequence):Expr := (
+     s = deepsplice(s);
      foreach f at i in s do (
 	  when f 
 	  is n:Net do nothing
@@ -643,11 +644,12 @@ horizontalJoin(e:Expr):Expr := (
 setupfun("horizontalJoin",horizontalJoin);
 
 verticalJoin(s:Sequence):Expr := (
+     s = deepsplice(s);
      foreach f at i in s do (
 	  when f 
 	  is n:Net do nothing
 	  is s:string do nothing
-	  else return(WrongArg(i,"a net")));
+	  else return(WrongArg(i+1,"a net")));
      v := new array(Net) len length(s) do (
 	  foreach f in s do (
 	       when f 

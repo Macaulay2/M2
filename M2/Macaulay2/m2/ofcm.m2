@@ -113,7 +113,7 @@ document { quote GeneralOrderedMonoid,
 	  TO "index"
 	  },
      PARA,
-     SEEALSO ( "monoid", "Degrees", "MonoidElement")
+     SEEALSO { "monoid", "Degrees", "MonoidElement"}
      }     
 
 -- this implementation is for sparse monomials, but it might
@@ -235,8 +235,8 @@ document { quote MonomialOrder,
 	  {TO "GLex", " -- graded lexicographic order"},
 	  {TO "Lex", " -- lexicographic order"},
 	  {TO "RevLex", " -- reverse lexicographic order"},
-	  {TO "Eliminate", " n -- elimination order, eliminating first n variables"},
-	  {TO "ProductOrder", "{n1, n2, ..., nv} -- product order"}
+	  {TO "Eliminate", " -- elimination order"},
+	  {TO "ProductOrder", " -- product order"}
           },
      "Eventually, more general monomial orders will be allowed." -- MES
      }
@@ -309,7 +309,7 @@ document { quote monoid,
      PARA,
      "The class of all monoids created this way is ", TO "GeneralOrderedMonoid", ".",
      PARA,
-     SEEALSO ("OrderedMonoid","IndexedVariable","Symbol")
+     SEEALSO {"OrderedMonoid","IndexedVariable","Symbol"}
      }
 
 generators GeneralOrderedMonoid := M -> M.generators
@@ -588,7 +588,7 @@ document { quote GeneralOrderedGroup,
 	  TO "index"
 	  },
      PARA,
-     SEEALSO ( "group", "Degrees" )
+     SEEALSO { "group", "Degrees" }
      }     
 
 group = method()
@@ -615,7 +615,7 @@ document { quote group,
      "The class of all groups created this way is ",
      TO "GeneralOrderedMonoid", ".",
      PARA,
-     SEEALSO ( "Degrees", "OrderedMonoid", "monoid" )
+     SEEALSO { "Degrees", "OrderedMonoid", "monoid" }
      }
 
 generators GeneralOrderedGroup := G -> G.generators

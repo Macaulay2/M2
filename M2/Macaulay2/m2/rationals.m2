@@ -63,6 +63,6 @@ document { quote QQ,
 	  TO "numerator"
 	  },
      PARA,
-     SEEALSO("numbers", "arithmetic functions")
+     SEEALSO{"numbers", "arithmetic functions"}
      }
 

@@ -5,7 +5,14 @@ GaloisField = new Type of EngineRing
 ambient GaloisField := R -> R.baseRings#-1
 coefficientRing GaloisField := R -> coefficientRing R.baseRings#-1
 
-document { quote PrimitiveElement,
+GF = method (
+     Options => { 
+	  PrimitiveElement => FindOne,
+	  Variable => null
+	  }
+     )
+
+document { PrimitiveElement,
      TT "PrimitiveElement => g", " -- an option used with ", TO "GF", ".",
      PARA,
      "The value can be a ring element providing a primitive element, or the
@@ -20,7 +27,8 @@ document { quote FindOne,
      }
 
 document { quote Variable,
-     TT "Variable => x", " -- an option used with ", TO "GF", "."
+     TT "Variable => x", " -- an option used with ", TO "GF", ", to specify
+     a symbol to be used as a name for the generator of the Galois field."
      }
 
 document { quote GaloisField,
@@ -35,13 +43,6 @@ document { quote GaloisField,
      }
 
 
-GF = method (
-     Options => { 
-	  PrimitiveElement => FindOne,
-	  Variable => null
-	  }
-     )
-
 document { quote GF,
      TT "GF R", " -- make a Galois field from a quotient ring R which happens
      to be isomorphic to a finite field.",
@@ -54,11 +55,11 @@ document { quote GF,
      PARA,
      "Options:",
      MENU {
-	  (TO "PrimitiveElement", " => g -- provide a primitive element"),
-     	  (TO "Variable", " => x -- provide a variable name")
+	  (TO PrimitiveElement, " -- provide a primitive element"),
+     	  (TO Variable, " -- provide a variable name")
 	  },
      PARA,
-     SEEALSO ("GaloisField")
+     SEEALSO {"GaloisField"}
      }
 
 lastp := 2

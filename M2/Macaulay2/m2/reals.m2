@@ -20,5 +20,5 @@ document { quote RR,
      "A real number is entered as a sequence of decimal digits with a point.",
      EXAMPLE "3.14159",
      PARA,
-     SEEALSO ("basictype", "numbers")
+     SEEALSO {"basictype", "numbers"}
      }

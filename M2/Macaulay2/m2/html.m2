@@ -127,10 +127,16 @@ lookupi := x -> (
      r)
 
 ListHead = new Type of Type
+
 ListHead List := (h,y) -> new h from y
+
+ListHead String := 
+ListHead Symbol := 
+ListHead Function := 
+ListHead Type := 
+ListHead Sequence := 
 ListHead HtmlList := (h,y) -> new h from {y}
-ListHead String := (h,s) -> h {s}
-ListHead Sequence := (h,s) -> h {s}
+
 GlobalAssignHook ListHead := globalAssignFunction
 
 newListHead := (x) -> (
@@ -428,7 +434,7 @@ TO         = newListHead "TO"
 ff := {"\"","\""}
 
 text TO   := x -> concatenate ( 
-     "\"", getDocumentationTag x#0, "\"",
+     "'", formatDocumentTag x#0, "'",
      drop(toList x, 1)
      )
 

@@ -37,20 +37,43 @@ partitions(ZZ,ZZ) := memoize (
 partitions ZZ := (n) -> partitions(n,n)
 
 document { quote subsets,
-     TT "subsets(n,j)", " -- for an integer n, yields a list of those
-     subsets of {0, ..., n-1} which have j elements.",
-     BR, NOINDENT,
-     TT "subsets(s,j)", " -- yields a list of those subsets of the list or 
-     set s which have j elements.",
-     BR, NOINDENT,
-     TT "subsets s", " -- yields a list of the subsets of the list or set s.",
+     TT "subsets", " -- a function for computing a list of subsets
+     of a set or list.",
      PARA,
-     "In the case where s is a list, the subsets are returned as lists whose
-     elements are in the same order.",
+     MENU {
+	  TO (subsets,ZZ,ZZ),
+	  TO (subsets,Set,ZZ),
+	  TO (subsets,List),
+	  TO (subsets,Set)
+	  }
+     }
+
+document { (subsets,ZZ,ZZ),
+     TT "subsets(n,j)", " -- for an integer ", TT "n", ", yields a list of those
+     subsets of ", TT "{0, ..., n-1}", " which have ", TT "j", " elements.",
+     PARA,
+     EXAMPLE "subsets(3,2)",
+     SEEALSO "subsets"
+     }
+document { (subsets,Set,ZZ),
+     TT "subsets(s,j)", " -- yields a list of those subsets of the list or 
+     set ", TT "s", " which have ", TT "j", " elements.",
      PARA,
      EXAMPLE "subsets(set {a,b,c},2)",
-     EXAMPLE "subsets(3,2)",
-     EXAMPLE "subsets {1,2,3}"
+     SEEALSO "subsets"
+     }
+document { (subsets,List),
+     TT "subsets s", " -- yields a list of the subsets of the list ", TT "s", ".",
+     PARA,
+     "The subsets are returned as lists whose elements are in the same order.",
+     EXAMPLE "subsets {1,2,3}",
+     SEEALSO "subsets"
+     }
+document { (subsets,Set),
+     TT "subsets s", " -- yields a list of the subsets of the set ", TT "s", ".",
+     PARA,
+     EXAMPLE "subsets set {a,b,c}",
+     SEEALSO "subsets"
      }
 
 TEST "

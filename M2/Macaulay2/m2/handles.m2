@@ -35,7 +35,7 @@ document { quote newHandle,
      TT "newHandle x", " -- passes the commands ", TT "x", " to the engine 
      with ", TO "sendgg", ", pops an object off the engine's stack and 
      produces the handle.",
-     SEEALSO ("toHandle", "Handle" )
+     SEEALSO {"toHandle", "Handle" }
      }
 
 document { quote toHandle,

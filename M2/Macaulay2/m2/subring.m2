@@ -137,7 +137,7 @@ document { pushForward1 => DegreeLimit,
      consists of cubics, then to find a quadratic relation, this option
      should be set to at least 6, by specifying, for example, ", TT
      "DegreeLimit => 6", ".  The default is ", TT "infinity", ".",
-     SEEALSO ("pushForward1", "DegreeLimit")
+     SEEALSO {"pushForward1", "DegreeLimit"}
      }
 
 document { quote pushForward1,
@@ -207,6 +207,17 @@ document { quote pushForward1,
 	 }
     }
 
+document { pushForward1 => Strategy,
+     TT "pushForward1(f,M,Strategy => v)", " -- an option for ", TO pushForward1, " 
+     which can be used to specify the strategy to be used in the computation.",
+     PARA,
+     "The strategy option value ", TT "v", " should be one of the following.",
+     MENU {
+	  TO "NonLinear",
+     	  TO "Linear"
+	  }
+     }
+
 document { quote PushforwardComputation,
      TT "PushforwardComputation", " -- a type of list used internally by
      ", TO "pushForward1", "."
@@ -246,6 +257,17 @@ document { quote pushForward,
      "If M is not finitely generated over R, then an error is raised.",
      PARA,
      "Currently, R and S must both be polynomial rings over the same base field."
+     }
+
+document { pushForward => Strategy,
+     TT "pushForward(f,M,Strategy => v)", " -- an option for ", TO pushForward, " 
+     which can be used to specify the strategy to be used in the computation.",
+     PARA,
+     "The strategy option value ", TT "v", " should be one of the following.",
+     MENU {
+	  TO "NonLinear",
+     	  TO "Linear"
+	  }
      }
 
 TEST "

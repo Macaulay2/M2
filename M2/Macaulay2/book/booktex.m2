@@ -31,7 +31,7 @@ reach2 = method(SingleArgumentDispatch=>true)
 
 reach1(Thing   ) := identity
 reach1(Sequence) :=
-reach1(BasicList):= x -> scan(x,reach1)
+reach1(HtmlList) := x -> scan(x,reach1)
 reach1(MENU    ) := reach2
 reach1(TO      ) := (x) -> (
      node := x#0;
@@ -40,7 +40,7 @@ reach1(TO      ) := (x) -> (
 
 reach2(Thing   ) := identity
 reach2(Sequence) :=
-reach2(BasicList):= x -> scan(x,reach2)
+reach2(HtmlList) := x -> scan(x,reach2)
 reach2(SHIELD)   := reach1
 reach2(TO      ) := (x) -> (
      node := x#0;

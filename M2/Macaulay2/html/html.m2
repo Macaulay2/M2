@@ -13,7 +13,7 @@ process := (key,doc) -> (
      filename := linkFilename key;
      conceptTable#key = filename;
      key = evaluate key;
-     title := if class key === String then key else formatDocumentTag key;
+     title := formatDocumentTag key;
      filename << html HTML { 
 	  HEAD TITLE title,
 	  BODY {
@@ -32,16 +32,15 @@ scandb(openDatabase "../cache/Macaulay2.doc", process)
 
 scan(linkFilenameKeys(),
      key -> if not conceptTable#?key then (
+	  title := formatDocumentTag key;
 	  stderr << "Documentation for '" << key << "' missing." << endl;
 	  linkFilename key << html HTML { 
-	       HEAD {
-		    TITLE key
-		    },
+	       HEAD TITLE title,
 	       BODY {
-		    H2 key,
+		    H2 title,
 		    PARA,
 		    "The text for this node has not been written yet.",
-		    if key != "index" then SEQ {
+		    if key =!= "index" then SEQ {
 			 PARA,
 			 "Go to ", HREF {"index.html", "main index"}, "."
 			 },
