@@ -10,6 +10,8 @@ GDBSED = sed -e '/^$$/d' -e '/Program exited normally./d'
 #  export i=foo
 
 CFLAGS = -g -Wall
+LDFLAGS = -L.
+LDLIBS = -lenv
 PROGS = nash printenv unsetenv args
 all : nash
 all : nash printenv unsetenv
@@ -17,8 +19,12 @@ check : diff1 diff2 diff3 diff4 test1
 test1 : nash;			$(NASH) -c "exec echo hi there"
 clean :;			rm -f nash printenv unsetenv \
 				  args.nash args.nonash args.gdb \
-				  env.nash env.nonash env.gdb
+				  env.nash env.nonash env.gdb setenv3.o \
+				  unsetenv3.o libenv.a
 ci :;				cvs ci -m ''
+
+# libenv
+libenv.a : unsetenv3.o setenv3.o ; ar ru $@ $?
 
 # bash always sets "_" to argv[0], so we simulate that when bash is out of the picture
 ENV = env _=./printenv
