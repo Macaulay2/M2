@@ -235,6 +235,26 @@ makeit1 := (options) -> (
      M.use = x -> scan(M.generatorSymbols,M.vars,(sym,val) -> sym <- val);
      M)
 
+processDegrees := (degs,degrk,nvars) -> (
+     degs = splice degs;
+     if degs === null then degs = (
+	  if degrk === null then (
+	       degrk = 1;
+	       apply(nvars,i->{1})
+	       )
+	  else apply(nvars, i -> apply(degrk, j -> if j === i or i >= degrk and j === degrk-1  then 1 else 0))
+	  )
+     else (
+     	  degs = apply(degs, d -> if class d === ZZ then {d} else d);
+     	  scan(degs, d -> if not (class d === List and all(d, i -> class i === ZZ)) then error "expected degree to be an integer or list of integers");
+     	  if degrk === null then (
+	       if not same(length \ degs) then error "expected degrees all of the same rank";
+ 	       degrk = if #degs > 0 then #degs#0 else 0;
+	       )
+	  else scan(degs, d -> if #d =!= degrk then error("expected degree of rank ",degrk));
+	  );
+     (degs,degrk));
+
 makeMonoid := (options) -> (
      -- check the options for consistency, and set everything to the correct defaults
      options = new MutableHashTable from options;
@@ -263,23 +283,7 @@ makeMonoid := (options) -> (
 			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
      -- if length unique options.Variables < length options.Variables then error "at least one variable listed twice";
 
-     -- process the degree list
-     degrk := options.DegreeRank;
-     n := # options.Variables;
-     degs := splice options.Degrees;
-     if degs === null then degs = (
-	  if degrk === null then apply(n,i->{1})
-	  else apply(n, i -> apply(degrk, j -> if j === i or i >= degrk and j === degrk-1  then 1 else 0))
-	  )
-     else (
-     	  degs = apply(degs, d -> if class d === ZZ then {d} else d);
-     	  scan(degs, d -> if not (class d === List and all(class \ d, i -> class i === ZZ)) then error "expected degree to be an integer or list of integers");
-     	  if degrk === null then (
-	       if not same(length \ degs) then error "expected degrees all of the same rank";
- 	       degrk = if #degs > 0 then #degs#0 else 0;
-	       )
-	  else scan(degs, d -> if #d =!= degrk then error("expected degree of rank ",degrk));
-	  );
+     (degs,degrk) := processDegrees(options.Degrees,options.DegreeRank,length options.Variables);
      options.Degrees = degs;
      options.DegreeRank = degrk;
 
@@ -306,32 +310,20 @@ tensor(Monoid, Monoid) := Monoid => options -> (M,N) -> (
      M = M.Options;
      N = N.Options;
      opts := new MutableHashTable from options;
-     if opts.Variables === null then
-         opts.Variables = join(M.Variables, N.Variables)
-	 else opts.Variables = splice opts.Variables;
+     if opts.Variables === null 
+     then opts.Variables = join(M.Variables, N.Variables)
+     else opts.Variables = splice opts.Variables;
      if opts.VariableBaseName =!= null then (
 	  x := opts.VariableBaseName;
 	  opts.Variables = apply(#opts.Variables, i -> x_i);
 	  );
-     if opts.MonomialOrder === null then
-          -- use the product order
-          opts.MonomialOrder = GRevLex;
+     if opts.MonomialOrder === null 
+     then opts.MonomialOrder = join(M.MonomialOrder,N.MonomialOrder); -- product order
+     processDegrees(opts.Degrees, M.DegreeRank, length opts.Variables);	-- just for the error messages
      if opts.Degrees === null then (
-	  ndegs := (
-	       if # M.Degrees > 0
-	       then if # N.Degrees > 0
-	       then min(# M.Degrees#0, # N.Degrees#0)
-	       else # M.Degrees#0
-	       else if #N.Degrees > 0
-	       then #N.Degrees#0
-	       else 0
-	       );
-          opts.Degrees =
-              join(apply(M.Degrees, v -> take(v,ndegs)),
-                   apply(N.Degrees, v -> take(v,ndegs))));
-     if opts.Inverses === null 
-         then opts.Inverses = M.Inverses or N.Inverses
-         else opts.Inverses = false;
+	  nil := apply(M.DegreeRank, i -> 0);
+          opts.Degrees = join(M.Degrees, apply(N.Degrees, v -> nil)));
+     opts.Inverses = if opts.Inverses === null then M.Inverses or N.Inverses else opts.Inverses;
      makeMonoid new OptionTable from opts)
 
 -- delayed installation of methods for monoid elements
