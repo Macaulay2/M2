@@ -241,6 +241,9 @@ setup(PercentS,modC);
 AtAtfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AtAtS);
 setup(AtAtS,AtAtfun);
 
+infun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,inS);
+setup(inS,infun);
+
 StarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,StarStarS);
 setup(StarStarS,StarStarfun);
 
