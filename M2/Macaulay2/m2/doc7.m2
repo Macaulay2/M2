@@ -274,7 +274,7 @@ document { Verify,
      that a map is well defined.",
      PARA,
      MENU {
-	  TOH (inducedMap => Verify)
+	  TO (inducedMap => Verify)
 	  }
      }
 
@@ -593,9 +593,9 @@ document { subquotient,
      PARA,
      "Functions:",
      MENU {
-	  {TOH "generators"},
-	  {TOH "relations"},
-	  {TOH "prune"}
+	  TO "generators",
+	  TO "relations",
+	  TO "prune"
 	  },
      "This is the general form in which modules are represented, and
      subquotient modules are often returned as values of computations.",
@@ -1377,9 +1377,9 @@ document { dual,
      PARA,
      "For details, see one of the following.",
      MENU {
-	  TOH (dual,ChainComplex),
-	  TOH (dual,Matrix),
-	  TOH (dual,Module)
+	  TO (dual,ChainComplex),
+	  TO (dual,Matrix),
+	  TO (dual,Module)
 	  }
      }
 

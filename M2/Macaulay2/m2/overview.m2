@@ -64,7 +64,12 @@ document { "mathematical overview",
 document { "basic rings",
      "The following rings are initially present in every session with
      Macaulay 2.",
-     SHIELD MENU { TOH "ZZ", TOH "QQ", TOH "RR", TOH "CC" },
+     SHIELD MENU { 
+	  TO "ZZ", 
+	  TO "QQ", 
+	  TO "RR", 
+	  TO "CC" 
+	  },
      NOINDENT,
      "(The names of these rings are double letters so the corresponding symbols
      with single letters can be used as variables in rings.)  Entries of these

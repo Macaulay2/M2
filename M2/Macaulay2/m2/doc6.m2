@@ -646,12 +646,12 @@ document { MonomialOrder,
      PARA,
      "Permissible values:",
      MENU {
-	  {TOH "GRevLex", " -- graded reverse lexicographic order (the default)"},
-	  {TOH "GLex", " -- graded lexicographic order"},
-	  {TOH "Lex", " -- lexicographic order"},
-	  {TOH "RevLex", " -- reverse lexicographic order"},
-	  {TOH "Eliminate", " -- elimination order"},
-	  {TOH "ProductOrder", " -- product order"}
+	  {TO "GRevLex", " -- graded reverse lexicographic order (the default)"},
+	  {TO "GLex", " -- graded lexicographic order"},
+	  {TO "Lex", " -- lexicographic order"},
+	  {TO "RevLex", " -- reverse lexicographic order"},
+	  {TO "Eliminate", " -- elimination order"},
+	  {TO "ProductOrder", " -- product order"}
           },
      "Eventually, more general monomial orders will be allowed.", -- MES
      SEEALSO {"polynomial rings with other monomial orderings", "Weights"}
@@ -688,7 +688,7 @@ document { (monoid, Array), HEADLINE "make a polynomial ring or monoid ring",
      TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
      PARA,
      "Optional arguments (placed between the brackets):",
-     SHIELD MENU (TOH \ keys monoidOptions),
+     SHIELD MENU (TO \ keys monoidOptions),
      SEEALSO {(symbol " ", Ring, Array)}
      }
 
@@ -698,7 +698,7 @@ document { (symbol " ", Ring, Array),
      ordered monoid specified by ", TT "[...]", ".",
      PARA,
      "Optional arguments (placed inside the array):",
-     MENU (TOH \ keys monoidOptions),
+     MENU (TO \ keys monoidOptions),
      SEEALSO "polynomial rings"
      }
 
@@ -971,7 +971,7 @@ document { components,
      direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
      PARA,
      MENU {
-	  TOH (components,ChainComplex)
+	  TO (components,ChainComplex)
 	  },
      SEEALSO {"vector", "directSum", "++"}
      }
@@ -1130,8 +1130,8 @@ document { (symbol ++,Module,Module),
 	  },
      "Projection and inclusion maps for direct sums:",
      SHIELD MENU {
-	  TOH (symbol ^,Module,Array),
-	  TOH (symbol _,Module,Array)
+	  TO (symbol ^,Module,Array),
+	  TO (symbol _,Module,Array)
 	  },
      SEEALSO directSum
      }
@@ -1149,8 +1149,8 @@ document { (symbol ++,Matrix,Matrix),
 	  },
      "Selecting rows or columns of blocks:",
      SHIELD MENU {
-	  TOH (symbol ^,Matrix,Array),
-	  TOH (symbol _,Matrix,Array)
+	  TO (symbol ^,Matrix,Array),
+	  TO (symbol _,Matrix,Array)
 	  },
      SEEALSO {directSum, (symbol |, Matrix, Matrix), (symbol ||, Matrix, Matrix)}
      }
@@ -1162,10 +1162,10 @@ document { directSum,
      PARA,
      "Projection and inclusion maps for direct sums:",
      SHIELD MENU {
-	  TOH (symbol ^,Module,Array),
-	  TOH (symbol _,Module,Array),
-	  TOH (symbol ^,Matrix,Array),
-	  TOH (symbol _,Matrix,Array)
+	  TO (symbol ^,Module,Array),
+	  TO (symbol _,Module,Array),
+	  TO (symbol ^,Matrix,Array),
+	  TO (symbol _,Matrix,Array)
 	  },
      PARA,
      "It sometimes happens that the user has indices for the components of

@@ -453,8 +453,8 @@ briefDocumentation = x -> (
      else if headline x =!= null then << endl << headline x << endl
      )
 
-smenu := s -> MENU (TOH \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
- menu := s -> MENU (TOH \ s)
+smenu := s -> MENU (TO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
+ menu := s -> MENU (TO \ s)
 
 ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
@@ -696,7 +696,7 @@ TEST = (e) -> if phase === 2 then (
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
-     if #v > 0 then SEQ { PARA{}, "See also:", SHIELD MENU (TOH \ v) })
+     if #v > 0 then SEQ { PARA{}, "See also:", SHIELD MENU (TO \ v) })
 
 -----------------------------------------------------------------------------
 -- html output
@@ -1039,9 +1039,11 @@ html MENU := x -> concatenate (
      "</MENU>", newline, 
      "<P>", newline)
 
+addHeadlines1 := x -> apply(x, i -> if class i === TO then SEQ{ "help ", new TO from i, headline i#0 } else i)
+
 text MENU := x -> concatenate(
      newline,
-     apply(addHeadlines x, s -> if s =!= null then ("    ", text s, newline))
+     apply(addHeadlines1 x, s -> if s =!= null then ("    ", text s, newline))
      )
 
 net MENU := x -> "    " | stack apply(toList addHeadlines x, net)
@@ -1143,3 +1145,6 @@ html BOLD := htmlMarkUpType "B"
 
 html Option := x -> toString x
 text Option := x -> toString x
+
+net BIG := x -> net x#0
+net CENTER := x -> net x#0

@@ -190,22 +190,22 @@ document { GroebnerBasis,
       basis will ", EM "not", " change matrices previously obtained from
       these routines.",
       SHIELD MENU {
-       	   TOH (generators, GroebnerBasis),
-       	   TOH (mingens, GroebnerBasis),
-	   TOH (syz, GroebnerBasis),
+       	   TO (generators, GroebnerBasis),
+       	   TO (mingens, GroebnerBasis),
+	   TO (syz, GroebnerBasis),
        	   },
       "Status of the computation can be determined by the following
       routines",
       SHIELD MENU {
-       	   TOH (stats, GroebnerBasis),
-       	   TOH "gbTrace"
+       	   TO (stats, GroebnerBasis),
+       	   TO "gbTrace"
        	   },
       PARA,
       "Keys used:",
       SHIELD MENU {
-	   TOH "GBtype",
-	   TOH "ring",
-	   TOH "returnCode"
+	   TO "GBtype",
+	   TO "ring",
+	   TO "returnCode"
 	   },
       }
 
@@ -379,8 +379,8 @@ document { CodimensionLimit,
      "Eventually the codimension of the ideal of leading terms is the
      codimension of the original ideal.",
      MENU {
-	  TOH (gb => CodimensionLimit),
-	  TOH (syz => CodimensionLimit),
+	  TO (gb => CodimensionLimit),
+	  TO (syz => CodimensionLimit),
 	  }
      }
 
@@ -405,10 +405,10 @@ document { StopWithMinimalGenerators,
      determined.",
      PARA,
      MENU {
-	  TOH (gb => StopWithMinimalGenerators),
-	  TOH (pushForward => StopWithMinimalGenerators),
-	  TOH (pushForward1 => StopWithMinimalGenerators),
-	  TOH (syz => StopWithMinimalGenerators),
+	  TO (gb => StopWithMinimalGenerators),
+	  TO (pushForward => StopWithMinimalGenerators),
+	  TO (pushForward1 => StopWithMinimalGenerators),
+	  TO (syz => StopWithMinimalGenerators),
 	  }
      }
 
@@ -441,10 +441,10 @@ document { gb => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      SHIELD MENU {
-	  TOH "EGB",
-	  TOH "GBinhom",
-	  TOH "LongPolynomial",
-	  TOH "Sort"
+	  TO "EGB",
+	  TO "GBinhom",
+	  TO "LongPolynomial",
+	  TO "Sort"
 	  }
      }
 
@@ -1228,8 +1228,8 @@ document { pushForward1 => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      SHIELD MENU {
-	  TOH "NonLinear",
-     	  TOH "Linear"
+	  TO "NonLinear",
+     	  TO "Linear"
 	  },
      PARA,
      "The default is for the code to select the best strategy heuristically."
