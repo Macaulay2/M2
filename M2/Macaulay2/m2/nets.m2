@@ -99,7 +99,9 @@ toExternalString MutableList := s -> (
      -- concatenate("new ",toExternalString class s, " from {...", toString(#s), "...}" )
      )
 toExternalString BasicList := s -> concatenate(
-     (if class s === List then "{" else ("new ", toExternalString class s," from {")),
+     (if class s === List then "{" else ("new ", 
+	       toString class s,			    -- was toExternalString !
+	       " from {")),
      between(", ",apply(toList s,toExternalString)),
      "}" )
 toExternalString Array := s -> concatenate ( "[", between(", ",toExternalString \ toList s), "]" )
