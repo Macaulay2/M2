@@ -29,7 +29,8 @@ raw GeneralOrderedMonoid := M -> M.RawMonoid
 
 parts := (M) -> (
      O := monoidDefaults;
-     o := M.Options;
+     -- o := M.Options;
+     o := M#"original options";
      join(
 	  if M.?generatorExpressions then M.generatorExpressions else {},
 	  if any(o.Degrees, i -> i =!= {1}) then {Degrees => o.Degrees} else {},
@@ -38,20 +39,14 @@ parts := (M) -> (
 	       / (key -> if o#key =!= O#key then key => o#key),
 	       i -> i =!= null)))
 
-toExternalString GeneralOrderedMonoid := M -> toString new Array from apply(parts M,expression)
-
-expression GeneralOrderedMonoid := M -> (
-     if ReverseDictionary#?M then return toString ReverseDictionary#M;
-     if M.?generatorExpressions then new Array from M.generatorExpressions else []
-     )
+expression GeneralOrderedMonoid := M -> new Array from apply(parts M,expression)
+toExternalString GeneralOrderedMonoid := M -> toString expression M
 toString GeneralOrderedMonoid := M -> (
      if ReverseDictionary#?M then return toString ReverseDictionary#M;
-     toString if M.?generatorExpressions then new Array from M.generatorExpressions else []
-     )
+     toExternalString M)
 net GeneralOrderedMonoid := M -> (
      if ReverseDictionary#?M then return toString ReverseDictionary#M;
-     net if M.?generatorExpressions then new Array from M.generatorExpressions else []
-     )
+     net expression M)
 
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
@@ -161,6 +156,7 @@ RingElement _ Ring := RingElement => (x,R) -> (
 
 makeit1 := (opts) -> (
      M := new GeneralOrderedMonoid of MonoidElement;
+     M#"original options" = opts;
      M.Engine = true;
      varlist := baseName \ opts.Variables;
      n := # varlist;
