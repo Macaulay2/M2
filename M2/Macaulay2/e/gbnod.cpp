@@ -474,12 +474,11 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
   int *f_m = M->make_one();
   gbvector * bull = NULL;
   gb_elem *p = new gb_elem(f, fsyz, ismin);
-  ring_elem denom;
 
   if (orig_syz < 0 && ismin)
-    GR->gbvector_remove_content(p->f, bull, denom);
+    GR->gbvector_remove_content(p->f, bull);
   else
-    GR->gbvector_remove_content(p->f, p->fsyz, denom);
+    GR->gbvector_remove_content(p->f, p->fsyz);
 
   if (ismin) n_mingens++;
   GR->gbvector_get_lead_monomial(F,p->f,f_m);
@@ -652,10 +651,9 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
     }
   else
     {
-      ring_elem denom2;
       gb_reduce(f,fsyz);
       GR->gbvector_remove(fsyz);
-      GR->gbvector_remove_content(f,NULL,denom2);
+      GR->gbvector_remove_content(f,NULL);
       if (f != NULL)
 	{
 	  //schreyer_append(f);

@@ -569,8 +569,11 @@ void GBRing::gbvector_weight(const FreeModule *F, const gbvector *f,
 int GBRing::gbvector_term_weight(const FreeModule *F, 
 			   const gbvector *f)
 {
-#warning "gbvector_term_weight not implemented"
-  return 0;
+  if (f == 0) return 0;
+  gbvector_get_lead_exponents(F,f,_EXP1);
+  int fdeg = F->primary_degree(f->comp-1);
+  fdeg += exponents_weight(_EXP1);
+  return fdeg;
 }
 
 int GBRing::gbvector_degree(const FreeModule *F, 
@@ -1057,6 +1060,7 @@ void GBRing::lower_content_ZZ(gbvector *f, M2_Integer content) const
 	return;
     }
 }  
+
 void GBRing::gbvector_remove_content_ZZ(gbvector *f, 
 					gbvector *fsyz,
 					mpz_t denom) const
@@ -1131,6 +1135,15 @@ void GBRing::gbvector_remove_content(gbvector *f,
   // Don't change the denom...?
 }
 
+void GBRing::gbvector_remove_content(gbvector *f, 
+				     gbvector *fsyz)
+  // let c = gcd(content(f),content(fsyz)).
+  // set f := f/c,  fsyz := fsyz/c.
+{
+  ring_elem denom = K->from_int(0);
+  gbvector_remove_content(f,fsyz,denom);
+}
+
 ////////////////////
 // Auto-reduction //
 ////////////////////
@@ -1177,9 +1190,7 @@ void GBRing::gbvector_auto_reduce(const FreeModule *F,
       gbvector *gsyz1 = gbvector_mult_by_coeff(gsyz,v);
       gbvector_add_to(F,f,g1);
       gbvector_add_to(Fsyz,fsyz,gsyz1);
-      mpz_t MIKE_FIX_ME; mpz_init(MIKE_FIX_ME);
-      ring_elem MIKE_FIX_ME_2 = MPZ_RINGELEM(MIKE_FIX_ME);
-      gbvector_remove_content(f,fsyz,MIKE_FIX_ME_2);
+      gbvector_remove_content(f,fsyz);
     }
 }
 
