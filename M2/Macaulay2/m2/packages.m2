@@ -59,11 +59,7 @@ newPackage = method(
 newPackage(String) := opts -> (title) -> (
      originalTitle := title;
      filename := baseFilename currentFileName;
-     if substituteOptions#?filename and substituteOptions#filename#Title =!= null then title = substituteOptions#filename#Title
-     else (
-	  stderr << peek substituteOptions << endl
-	  << peek filename << endl
-	  );
+     if substituteOptions#?filename and substituteOptions#filename#Title =!= null then title = substituteOptions#filename#Title;
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      if class opts.Using =!= List or not all(opts.Using, pkg -> class pkg === Package) then error "expected 'Using' option to be a list of loaded packages";
      stderr << "--package " << title << " loading" << endl;
