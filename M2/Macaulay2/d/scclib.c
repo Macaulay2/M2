@@ -446,10 +446,9 @@ int system_fileTime(M2_string name) {
   char *cname = tocharstar(name);
   struct stat buf;
   int r;
-  errno = 0;
   r = lstat(cname,&buf);
   GC_FREE(cname);
-  if (r == ERROR) return 0;	/* check errno! */
+  if (r == ERROR) return -1;
   return buf.st_mtime;
 }
 
