@@ -123,20 +123,18 @@ export StopIfError := false;
 readevalprint(file:TokenFile):Expr := readeval3(file,true,StopIfError,globalScope);
 nprompt := false;
 xprompt := false;
-prompt():void := (
+prompt(o:file):void := (
      if stmtno == laststmtno 
      then (
-	  if !nprompt then stdout << " " << blanks(length(tostring(stmtno))) << "   ";
+	  if !nprompt then o << " " << blanks(length(tostring(stmtno))) << "   ";
      	  )
      else (
      	  laststmtno = stmtno;
      	  if xprompt 
-	  then (stdout << "\1";)
-	  else if !nprompt then stdout << endl;		  -- double space
-	  if !nprompt then stdout << "i" << stmtno << " : ";
-	  );
-     flush(stdout);
-     );
+	  then (o << "\1";)
+	  else if !nprompt then o << endl;		  -- double space
+	  if !nprompt then o << "i" << stmtno << " : ";
+	  ));
 loadprint(s:string):Expr := (
      when openTokenFile(s)
      is errmsg do False

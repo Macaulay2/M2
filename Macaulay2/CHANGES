@@ -2,6 +2,9 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.47:
 
+'openFiles()' now returns a list of all the open files, even the files open
+only for input.
+
 'code' now returns a net containing the source code, rather than printing it
 out.
 

@@ -1344,7 +1344,7 @@ document { "communicating with programs",
      computation, putting the computational request into the command line.  We
      then use ", TO "value", " to convert the string returned to a number.",
      EXAMPLE {
-	  ///g = get "!M2 -q -silent -e'<< 2^100'"///,
+	  ///g = get "!M2 -q -silent -e'<< 2^100' -e'exit 0'"///,
 	  ///peek g///,
 	  ///value g///,
 	  },
@@ -1384,21 +1384,8 @@ document { "communicating with programs",
 	  ///close f///
 	  },
      "We also allow for bidirectional communication
-     through sockets over the internet.  We illustrate
-     this by getting a web page.  We open a socket to port 80
-     of ", TT "www.math.uiuc.edu", " by handing a file name beginning with a
-     dollar sign to ", TO "openInOut", ".  Then we write to it the same
-     way a web browser would, close the file for output with ", TO "closeOut", ",
-     (thereby flushing the output buffers), read the web page from
-     it, and finally close it.",
-     EXAMPLE {
-	  ///f = openInOut "$www.math.uiuc.edu:80"///,
-	  ///(f << "GET /~dan/test.html HTTP/1.0" << endl
-   << "User-Agent: Macaulay2" << endl
-   << endl << closeOut)///,
-       	  ///stack lines get f///,
-	  ///close f///,
-	  }
+     through sockets over the internet.  See ", TO "openInOut", "
+     and ", TO "openListener", "."
      }
 
 document { "making new types",

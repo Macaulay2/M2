@@ -35,10 +35,10 @@ export file := {
 	inindex:int,		-- inbuffer.inindex is the first available char
         insize:int,		-- inbuffer.(insize-1) is the last char
 				-- we always have inindex <= insize
-	eof:bool,		-- last read got 0 characters
-	prompt:function():void, -- function to call to prompt for input
-        bol:bool,     	   	-- at the beginning of a line
-	echo:bool,     	   	-- whether to echo characters read to stdout
+	eof:bool,		-- last read got 0 characters (still might have some chars in inbuffer)
+	prompt:function(file):void, -- function to call to prompt for input
+        bol:bool,     	   	-- at the beginning of a line, and prompt not yet given
+	echo:bool,     	   	-- whether to echo characters read to corresponding output file
      	-- output file stuff
      	output:bool,	        -- is output file
 	outfd:int,		-- file descriptor or -1
@@ -53,7 +53,7 @@ export file := {
 	     	       	        -- buffer will be empty
 	nets:NetList	        -- list of nets, to be printed after the outbuffer
 	};
-export noprompt():void := nothing;
+export noprompt(o:file):void := nothing;
 newbuffer():string := new string len bufsize do provide ' ';
 export dummyfile := file(nextHash(), "dummy",0, 
      false,NOFD,NOFD,0,
@@ -363,20 +363,13 @@ export filbuf(o:file):bool := (
 	  for i from 0 to o.insize - 1 do o.inbuffer.i = o.inbuffer.(i+o.inindex);
 	  o.inindex = 0;
 	  );
-     if o.inisatty then (
-	  flush(stdout);
-	  if o.bol then o.prompt();	  -- ?????? changed 8/12/98
-	       -- under Windows and emacs we receive incomplete lines!
-	  );
-     r := read(o.infd,o.inbuffer,length(o.inbuffer)-o.insize,o.insize);
-     if r <= 0 then (
-	  -- r is -1 when the read was interrupted
-	  -- r is 0 when we are at end of file (if we asked for >0 bytes)
-     	  if r == 0 && o.insize < length(o.inbuffer) then o.eof = true;
-	  false)
-     else (
-     	  o.insize = o.insize + r;
-	  true));
+     n := length(o.inbuffer)-o.insize;
+     if n == 0 then return(false);
+     r := read(o.infd,o.inbuffer,n,o.insize);
+     if r > 0 then ( o.insize = o.insize + r; true)
+     else if r == 0 then ( o.eof = true; false )
+     else false
+     );
 putdigit(o:file,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putdigit(o:varstring,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putneg(o:file,x:int):void := (
@@ -547,29 +540,24 @@ endlfun(o:file):int := (
 
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';
 
-export getc(o:file):int := (
-     if ! o.input then return(EOF);
-     if o.inindex == o.insize then (
+prepare(o:file):void := (
+     o.bol = false;
+     o.prompt(o);
+     flush(o);
+     if o.echo then (
 	  filbuf(o);
-	  if o.insize == 0 then (
-	       return(EOF);		  -- but it might have been interrupted, too
-	       ));
-     if o.bol then (
-	  o.bol = false;
-	  if o.echo then (
-	       flush(stdout);
-	       o.prompt();
-	       filbuf(o);
-	       i := o.inindex;
-	       c := ' ';
-	       while i < o.insize && (c = o.inbuffer.i; c != '\n' && c != '\r') 
-	       do (stdout << c; i = i+1);
-	       if ERROR == endlfun(stdout) then return(ERROR);
-	       );
-	  );
+	  i := o.inindex;
+	  c := ' ';
+	  while i < o.insize && (c = o.inbuffer.i; c != '\n' && c != '\r') do (o << c; i = i+1);
+	  endlfun(o);
+	  flush(o);););
+export getc(o:file):int := (
+     if !o.input then return(EOF);
+     if o.bol then prepare(o);
+     if o.inindex == o.insize && !filbuf(o) then return(EOF); -- but it might have been interrupted, too
      c := o.inbuffer.(o.inindex);
      o.inindex = o.inindex + 1;
-     if c == nl then o.bol = true;
+     o.bol = c == nl;
      int(uchar(c)));
 export read(o:file):string := (
      if o.inindex == o.insize then filbuf(o);
@@ -578,18 +566,20 @@ export read(o:file):string := (
      o.inindex = 0;
      s);
 export peek(o:file,offset:int):int := (
-     if o.input then (
-	  if offset >= bufsize 
-	  then EOF     			  -- tried to peek too far
-	  else (
-	       while o.inindex+offset >= o.insize do (
-	       	    if o.eof || !filbuf(o) then return(EOF);
-	       	    );
-	       int(uchar(o.inbuffer.(o.inindex+offset)))
+     if !o.input then return(EOF);
+     if offset >= bufsize then return(EOF);		    -- tried to peek too far
+     if o.inindex+offset >= o.insize then (
+	  if o.eof then return(EOF);
+	  if o.bol then prepare(o);
+     	  while (
+	       filbuf(o);
+	       o.inindex+offset >= o.insize
 	       )
-	  )
-     else EOF
-     );
+	  do (
+	       if o.eof then return(EOF);
+	       );
+	  );
+     int(uchar(o.inbuffer.(o.inindex+offset))));
 export peek(o:file):int := peek(o,0);
 export blanks(n:int):string := new string len n do provide(' ');
 padto(s:string,n:int):string := (
@@ -609,9 +599,7 @@ padto(s:string,n:int):string := (
 export (v:varstring) << (i:int) : varstring := v << tostring(i);
 export (o:file) << (s:string, n:int) : file := o << padto(s,n);
 export (o:file) << (i:int, n:int) : file := o << (tostring(i),n);
-export setprompt(o:file,prompt:function():void):void := (
-     o.prompt = prompt;
-     );
+export setprompt(o:file,prompt:function(file):void):void := ( o.prompt = prompt; );
 export clean(o:file):void := flush(o);
 
 import readfile(fd:int):string;
