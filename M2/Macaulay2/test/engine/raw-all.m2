@@ -19,10 +19,10 @@ runM2 "raw-ring2.m2"
 runM2 "raw-monideal.m2"
 runM2 "raw-hilb.m2"
 
-runM2 "raw-decompose.m2"
+runM2 "raw-decompose.m2" -- almost all runs
 runM2 "raw-gb.m2" -- this file needs to be split into smaller files
-runM2 "raw-res.m2"
-runM2 "raw-mutable.m2"
+runM2 "raw-res.m2" -- currently this all runs except algorithm 3
+runM2 "raw-mutable.m2" -- works pretty well, not quite error free
 runM2 "raw-numerics.m2"
 runM2 "raw-localgb.m2"
 

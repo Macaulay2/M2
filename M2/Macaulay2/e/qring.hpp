@@ -59,6 +59,12 @@ public:
   QRingInfo_field(const PolyRing *ambientR,
 		  const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
   ~QRingInfo_field();
+
+  virtual const MonomialIdeal *  get_quotient_monomials() const { return Rideal; }
+  // Each bag value is an "Nterm *".
+
+  virtual const MonomialTable * get_quotient_MonomialTable() const { return ringtable; }
+  // Each id is an index into quotient_ideal_
 };
 
 class QRingInfo_field_basic : public QRingInfo_field

@@ -22,6 +22,7 @@ new RR from RawRingElement := (R, f) -> rawToReal f
 b = new RR from rawFromNumber(raw RR, .234)  -- now it works
 
 new QQ from 2/3
+print "The following line is WRONG"
 rawFromNumber(raw QQ, 2/3) -- incorrect
 m = matrix{{2/3}}
 m_(0,0)

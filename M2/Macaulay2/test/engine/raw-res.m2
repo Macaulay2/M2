@@ -462,7 +462,7 @@ C = rawResolution(m,true,5,false,0,algorithm,0)
 
 rawGBSetStop(C,false,false,{},0,0,0,0,0,false,{})
 
-rawStartComputation C -- IGNORES QUOTIENT ELEMENTS
+rawStartComputation C
 rawGBBetti(C,0)
 m1 = rawResolutionGetMatrix(C,1)
 m2 = rawResolutionGetMatrix(C,2)

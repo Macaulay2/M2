@@ -21,7 +21,7 @@ assert(rawNumgens rawRadical I === 2)
 
 I = rawMonomialIdeal(rawMatrix1(R^1,3,(a^2*b,a*b*c,e*d),0),0)
 J = rawMonomialIdeal(rawMatrix1(R^1,3,(a,b*c,c*d),0),0)
-m = rawLeadMonomial(a*b-b^2)
+m = rawLeadMonomial(7,a*b-b^2)
 rawMonomialIdealToMatrix (I + J)
 rawMonomialIdealToMatrix (I * J)
 rawMonomialIdealToMatrix rawColon(I,J)

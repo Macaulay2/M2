@@ -28,9 +28,11 @@ int IM2_MonomialIdeal_n_gens(const MonomialIdeal *I)
   return I->length();
 }
 
-M2_bool IM2_MonomialIdeal_is_equal(const MonomialIdeal *I1, const MonomialIdeal *I2)
+M2_bool IM2_MonomialIdeal_is_equal(const MonomialIdeal *I, const MonomialIdeal *J)
 {
-  return I1->is_equal(*I2);
+  if (I->get_ring() != J->get_ring())
+    return false;
+  return I->is_equal(*J);
 }
 
 const MonomialIdeal *rawRadicalMonomialIdeal(const MonomialIdeal *I)
@@ -41,18 +43,33 @@ const MonomialIdeal *rawRadicalMonomialIdeal(const MonomialIdeal *I)
 const MonomialIdeal *IM2_MonomialIdeal_add(const MonomialIdeal *I, 
 					   const MonomialIdeal *J)
 {
+  if (I->get_ring() != J->get_ring())
+    {
+      ERROR("expected ideals in the same ring");
+      return 0;
+    }
   return (*I) + (*J);
 }
 
 const MonomialIdeal *IM2_MonomialIdeal_product(const MonomialIdeal *I, 
 					       const MonomialIdeal *J)
 {
+  if (I->get_ring() != J->get_ring())
+    {
+      ERROR("expected ideals in the same ring");
+      return 0;
+    }
   return (*I) * (*J);
 }
 
 const MonomialIdeal *IM2_MonomialIdeal_intersect(const MonomialIdeal *I, 
 						 const MonomialIdeal *J)
 {
+  if (I->get_ring() != J->get_ring())
+    {
+      ERROR("expected ideals in the same ring");
+      return 0;
+    }
   return I->intersect(*J);
 }
 
@@ -65,6 +82,11 @@ const MonomialIdeal *rawColonMonomialIdeal1(const MonomialIdeal *I,
 const MonomialIdeal *rawColonMonomialIdeal2(const MonomialIdeal *I, 
 						const MonomialIdeal *J)
 {
+  if (I->get_ring() != J->get_ring())
+    {
+      ERROR("expected ideals in the same ring");
+      return 0;
+    }
   return I->quotient(*J);
 }
 
@@ -77,6 +99,11 @@ const MonomialIdeal *rawSaturateMonomialIdeal1(const MonomialIdeal *I,
 const MonomialIdeal *rawSaturateMonomialIdeal2(const MonomialIdeal *I, 
 					   const MonomialIdeal *J)
 {
+  if (I->get_ring() != J->get_ring())
+    {
+      ERROR("expected ideals in the same ring");
+      return 0;
+    }
   return I->sat(*J);
 }
 
