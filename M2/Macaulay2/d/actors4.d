@@ -118,14 +118,19 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
      is obj:Object do (
 	  if obj.mutable then return(WrongArg(1+1,"an immutable hash table"));
 	  u := newobject(obj.class,obj.parent);
+	  nval := toInt(n);
+	  if nval > 0 then
 	  foreach bucket in obj.table do (
 	       p := bucket;
-	       while p != bucketEnd do (
+	       while nval > 0 && p != bucketEnd do (
 		    newvalue := apply(f,p.value);
 		    when newvalue 
 		    is Error do return(newvalue)
 		    else if newvalue == True 
-		    then assignobject(u,p.key,p.hash,p.value);
+		    then (
+			 assignobject(u,p.key,p.hash,p.value);
+			 nval = nval-1;
+			 );
 		    p = p.next;
 		    ));
 	  sethash(u,obj.mutable);

@@ -1,6 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-ChainComplex = new Type of MutableHashTable
+ChainComplex = new Type of GradedModule
 new ChainComplex := (cl) -> (
      C := newClass(ChainComplex,new MutableHashTable); -- sigh
      b := C.dd = new ChainComplexMap;
@@ -23,10 +23,10 @@ document { quote ChainComplex,
 	  (TO "++", "           -- direct sum"),
 	  (TO "ChainComplex ** Module", " -- tensor product"),
 	  (TO "C_i", "          -- select a module"),
-	  (TO "C.dd_i", "        -- select a differential"),
+	  (TO "C.dd_i", "       -- select a differential"),
 	  (TO "C[i]", "         -- shift a chain complex"),
-	  (TO "HH_i C", "        -- homology of a chain complex"),
-	  (TO "HH^i C", "        -- cohomology of a chain complex"),
+	  (TO "HH_i C", "       -- homology of a chain complex"),
+	  (TO "HH^i C", "       -- cohomology of a chain complex"),
 	  (TO "Hom(C,M)", "     -- Hom complex"),
 	  (TO "betti", "        -- display degrees in a free resolution"),
 	  (TO "chainComplex", " -- make a chain complex"),
@@ -37,7 +37,7 @@ document { quote ChainComplex,
 	  (TO "poincareN", "    -- assemble degrees into polynomial"),
 	  (TO "nullhomotopy", " -- produce a null homotopy"),
 	  (TO "regularity", "   -- compute the regularity"),
-	  (TO "resolution", "          -- make a projective resolution"),
+	  (TO "resolution", "   -- make a projective resolution"),
 	  (TO "status", "       -- display the status of a resolution computation"),
 	  (TO "syzygyScheme", " -- construct the syzygy scheme from some syzygies")
 	  },
@@ -154,7 +154,7 @@ net ChainComplexMap := f -> (
 	  );
      if # v === 0 then "0"
      else verticalJoin v)
-ChainComplexMap.ring = (f) -> ring source f
+ring ChainComplexMap := (f) -> ring source f
 ChainComplexMap _ ZZ := (f,i) -> (
      if f#?i 
      then f#i
@@ -229,20 +229,20 @@ ChainComplexMap ^ ZZ := (f,n) -> (
 	  g := new ChainComplexMap;
 	  C := g.source = f.source;
 	  g.target = f.target;
-	  g.degree = n * f.degree;
-	  scan(spots f, i -> (
+	  d := g.degree = n * f.degree;
+	  scan(spots f, i ->
+	       if C#?(i+d) and C#(i+d) != 0 then (
 		    s := f_i;
 		    j := 1;
 		    while (
-			 if j < n then (
-			      if s == 0 then (
-				   g#i = map(C_(i+g.degree),C_i,0);
-				   false)
-			      else true)
+			 if j < n then s != 0
 			 else (
 			      g#i = s;
 			      false)
-			 ) do s = f_(i + j * f.degree) * s;
+			 ) do (
+			 s = f_(i + j * f.degree) * s;
+			 j = j+1;
+			 )
 		    ));
 	  g))
 ChainComplexMap + ChainComplexMap := (f,g) -> (
@@ -301,6 +301,7 @@ ChainComplexMap ++ ChainComplexMap := (f,g) -> (
      h.components = {f,g};
      h)
 
+isDirectSum ChainComplex := (C) -> C.?components
 components ChainComplexMap := f -> if f.?components then f.components else {f}
 ChainComplexMap _ Array := (f,v) -> f * (source f)_v
 ChainComplexMap ^ Array := (f,v) -> (target f)^v * f

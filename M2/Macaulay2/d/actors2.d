@@ -545,7 +545,7 @@ makenew(class:Object,parent:Object):Expr := (
 	  sethash(
 	       List(class,emptySequence,0,false),
 	       ancestor(class,mutableObjectClass)))
-     else errorExpr("basic type for 'new' method should have been BasicList or Object"));
+     else errorExpr("basic type for 'new' method should have been BasicList or HashTable"));
 makenew(class:Object):Expr := makenew(class,emptyClass);
 -----------------------------------------------------------------------------
 newfun(newClassCode:Code):Expr := (
