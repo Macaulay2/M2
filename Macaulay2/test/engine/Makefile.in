@@ -11,7 +11,7 @@ ARGS := --silent --stop -q
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ulimit -t 600; time ../../bin/M2 $(ARGS) $< -e 'exit(0)'
+	@ ulimit -t 600; ../../bin/M2 $(ARGS) $< -e 'exit(0)'
 	@ touch $@
 
 clean :; rm -f *.okay
