@@ -13,8 +13,8 @@ infinity = new InfiniteNumber from {
 
 mathML InfiniteNumber := i -> (
      if i#sign === -1 
-     then "<apply><minus/><ci type='constant'>&infty;</ci></apply>"
-     else "<ci type='constant'>&infty;</ci>"
+     then "<mrow><mo>-</mo><mi>&infin;</mi></mrow>"
+     else "<mi>&infin;</mi>"
      )
 
 IndeterminateNumber = new Type of HashTable

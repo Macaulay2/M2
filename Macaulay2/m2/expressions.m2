@@ -765,16 +765,18 @@ net TABLE := x -> net MatrixExpression toList x
 html MatrixExpression := x -> html TABLE toList x
 
 mathML MatrixExpression := x -> concatenate(
-     "<matrix>",
+     "<mrow><mo>(</mo>",
+     "<mtable>",
      newline,
      apply(x, row -> (
-	       "<matrixrow>",
-	       apply(row, mathML),
-	       "</matrixrow>",
+	       "<mtr>",
+	       apply(row, e -> ("<mtd>",mathML e,"</mtd>",newline)),
+	       "</mtr>",
      	       newline
 	       )
 	  ),
-     "</matrix>",
+     "</mtable>",
+     "<mo>)</mo></mrow>",
      newline
      )
 
@@ -823,7 +825,7 @@ texMath Minus := v -> (
      else "{-" | texMath term | "}"
      )
 
-mathML Minus := v -> concatenate( "<apply><minus/>", mathML v#0, "</apply>" )
+mathML Minus := v -> concatenate( "<mo>-</mo>", mathML v#0)
 
 html Minus := v -> (
      term := v#0;
@@ -852,10 +854,10 @@ html Divide := x -> (
      if precedence x#1 <= p then b = "(" | b | ")";
      a | " / " | b)
 
-mathML Divide := x -> concatenate("<apply><divide/>", mathML x#0, mathML x#1, "</apply>")
+mathML Divide := x -> concatenate("<mfrac>", mathML x#0, mathML x#1, "</mfrac>")
 
-mathML OneExpression := x -> "<cn>1</cn>"
-mathML ZeroExpression := x -> "<cn>0</cn>"
+mathML OneExpression := x -> "<mn>1</mn>"
+mathML ZeroExpression := x -> "<mn>0</mn>"
 
 html OneExpression := html ZeroExpression :=
 texMath OneExpression := texMath ZeroExpression := toString
@@ -892,27 +894,56 @@ html Sum := v -> (
 		    if precedence v#i <= p 
 		    then "(" | html v#i | ")"
 		    else html v#i ));
-	  concatenate mingle ( seps, names )))
+	  concatenate (
+	       mingle(seps, names)
+	       )))
 
 mathML Sum := v -> (
      n := # v;
-     if n === 0 then "<ci>0</ci>"
-     else concatenate (
-	  "<apply><plus/>",
-	  apply( v, mathML ),
-	  "</apply>",
-	  newline
-	  )
-     )
+     if n === 0 then "<mn>0</mn>"
+     else (
+	  p := precedence v;
+	  seps := newClass(MutableList, apply(n+1, i->"<mo>+</mo>"));
+	  seps#0 = "";
+	  seps#n = "";
+	  v = apply(n, i -> (
+		    if class v#i === Minus 
+		    then (
+			 seps#i = "<mo>-</mo>"; 
+			 v#i#0)
+		    else v#i));
+	  concatenate (
+	       "<mrow>", 
+	       mingle(seps, 
+	       	    apply(n, i -> 
+		    	 if precedence v#i <= p 
+		    	 then ("<mrow><mo>(</mo>", mathML v#i, "<mo>)</mo></mrow>")
+		    	 else mathML v#i),
+		    n:newline),
+	       "</mrow>",newline)))
 
 mathML Product := v -> (
      n := # v;
-     if n === 0 then "<ci>0</ci>"
-     else concatenate (
-	  "<apply><times/>",
-	  apply( v, mathML ),
-	  "</apply>",
-	  newline
+     if n === 0 then "<mn>1</mn>"
+     else (
+     	  p := precedence v;
+	  seps := newClass(MutableList, splice {"", n-1 : "<mo>*</mo>", ""});
+	  if n>1 and isNumber v#0 and startsWithVariable v#1 then seps#1 = "<mo>&InvisibleTimes;</mo>";
+     	  boxes := apply(#v,
+	       i -> (
+		    term := v#i;
+		    nterm := mathML term;
+	       	    if precedence term <= p then (
+			 seps#i = seps#(i+1) = "<mo>&InvisibleTimes;</mo>";
+			 nterm = ("<mrow><mo>(</mo>", nterm, "<mo>)</mo></mrow>");
+			 );
+		    if class term === Power
+		    and not (term#1 === 1 or term#1 === ONE)
+		    or class term === Subscript then (
+			 seps#(i+1) = "<mo>&InvisibleTimes;</mo>";
+			 );
+	       	    nterm));
+	  concatenate ("<mrow>", mingle (seps, boxes), "</mrow>")
 	  )
      )
 
@@ -933,6 +964,7 @@ texMath Product := v -> (
 	       )
 	  )
      )
+
 html Product := v -> (
      n := # v;
      if n === 0 then "1"
@@ -950,11 +982,10 @@ html Product := v -> (
      )
 
 mathML Power := v -> if v#1 === 1 then mathML v#0 else concatenate (
-     "<apply><power/>",
+     "<msup>",
      mathML v#0,
      mathML v#1,
-     "</apply>",
-     newline
+     "</msup>"
      )     
 
 texMath Power := v -> (
@@ -1063,12 +1094,12 @@ tex Thing := x -> tex expression x
 
 html Thing := toString
 
-mathML Boolean := i -> if i then "<ci type='constant'>&true;</ci>" else "<ci type='constant'>&false;</ci>"
+mathML Boolean := i -> if i then "<mi>&true;</mi>" else "<mi>&false;</mi>"
 
-mathML ZZ := i -> concatenate("<cn type='integer'>",toString i, "</cn>")
-mathML RR := i -> concatenate("<cn>",toString i, "</cn>")
+mathML ZZ := i -> concatenate("<mn>",toString i, "</mn>")
+mathML RR := i -> concatenate("<mn>",toString i, "</mn>")
 mathML QQ := i -> concatenate(
-     "<cn type='rational'>",toString numerator i, "<sep/>", toString denominator i, "</cn>"
+     "<mfrac>",mathML numerator i, mathML denominator i, "</mfrac>"
      )
 mathML Thing := x -> mathML expression x
 
