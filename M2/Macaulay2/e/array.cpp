@@ -61,6 +61,7 @@ template class ARRAY(monideal_pair *);
 
 #include "gbZZ.hpp"
 template class ARRAY(GB_elem *);
+template class ARRAY(TermIdeal *);
 
 #include "respoly2.hpp"
 #include "res2.hpp"

@@ -254,8 +254,16 @@ Matrix == Matrix := (m,n) -> (
 Matrix == RingElement := (m,f) -> m - f == 0
 RingElement == Matrix := (f,m) -> m - f == 0
 Matrix == ZZ := (m,i) -> (
-     if i === 0 then ( sendgg(ggPush m, ggiszero); eePopBool())
-     else m == i_R)
+     if i === 0
+     then (
+	  sendgg(ggPush m, ggiszero); 
+	  eePopBool()
+	  )
+     else (
+	  R := ring m;
+	  m == i_R
+	  )
+     )
 ZZ == Matrix := (i,m) -> m == i
 
 Matrix + Matrix := {Matrix, BinaryMatrixOperationSame ggadd}
@@ -806,16 +814,16 @@ assert( not isInjective f )
 "
 
 map(Module,Module,RingElement) := (M,N,r,options) -> (
+     R := ring M;
      if r == 0 then (
-	  R := ring M;
 	  f := new Matrix;
 	  f.handle = newHandle(ggPush cover M, ggPush cover N, ggzeromat);
 	  f.source = N;
 	  f.target = M;
 	  f.ring = ring M;
 	  f)
-     else if M == N then map(M,r) 
-     else error "expected 0, or same source and target")
+     else if rank cover M == rank cover N then map(M,N,r * id_(R^(rank cover M))) 
+     else error "expected 0, or source and target with same number of generators")
 
 map(Module,Module,ZZ) := (M,N,i,options) -> (
      if i === 0 then (
@@ -1099,7 +1107,7 @@ matrixTable := (f,options) -> (
 	  tars := new MutableHashTable;
 	  srcs := new MutableHashTable;
 	  scan(m, i->scan(n, j-> (
-			 r := f_i_j;
+			 r := f#i#j;
 			 if class r === Matrix then (
 			      if tars#?i and tars#i != target r
 			      then error "matrices not compatible";
@@ -1109,7 +1117,7 @@ matrixTable := (f,options) -> (
 			      srcs#j = source r;
 			      ))));
 	  scan(m, i->scan(n, j-> (
-			 r := f_i_j;
+			 r := f#i#j;
 			 if instance(class r,Ring) and r != 0 then (
 			      r = R#0 + r;
 			      d := degree r;
@@ -1133,7 +1141,7 @@ matrixTable := (f,options) -> (
 					srcs#j = N = R^{-d};
 					f#i#j = map(M,N,r)))))));
 	  scan(m, i->scan(n, j-> (
-			 r := f_i_j;
+			 r := f#i#j;
 			 if r == 0 then (
 			      if tars#?i then (
 				   M := tars#i;
@@ -1580,9 +1588,11 @@ net Matrix := f -> (
      if f == 0 
      then "0"
      else (
+	  R := ring target f;
 	  m := verticalJoin toSequence apply(
 	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate(" | ",x,"|"));
-	  if isHomogeneous f then m = verticalJoin (degrees target f / name) | m;
+	  if degreeLength R > 0 and isHomogeneous f
+	  then m = verticalJoin (degrees target f / name) | m;
 	  m))
 
 image Matrix := f -> (
