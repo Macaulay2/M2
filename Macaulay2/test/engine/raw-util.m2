@@ -30,6 +30,13 @@ singlemonoid = vars -> (
      degs := apply(vars, i -> 1);
      rawMonoid(mo, varnames, degring 1, degs))
 
+doublemonoid = (vars, degs) -> (
+     -- vars should be a sequence or list of variable names
+     -- degs should be a single or double nested array of degrees.
+     --  the degree vector for the first variable comes first, etc.
+     -- 
+     )
+
 lex = vars -> (
      mo := rawMonomialOrdering { Lex => #vars };
      varnames := apply(vars, toString);
@@ -56,6 +63,16 @@ polyring2 = (K, vars, mo) -> (
      vars = toList vars;
      M := rawMonoid(mo, apply(vars, toString), 
 	       degring 1, (#vars):1);
+     R := rawPolynomialRing(K, M);
+     scan(#vars, i -> vars#i <- rawRingVar(R,i,1));
+     R)
+
+polyring3 = (K, vars, mo, degs) -> (
+     vars = toList vars;
+     degs = toList flatten splice degs;
+     ndegs := (#degs)//(#vars);
+     M := rawMonoid(mo, apply(vars, toString), 
+	       degring ndegs, degs);
      R := rawPolynomialRing(K, M);
      scan(#vars, i -> vars#i <- rawRingVar(R,i,1));
      R)
