@@ -8,16 +8,19 @@
 extern int comp_printlevel;
 
 DetComputation::DetComputation(const Matrix &M, int p,
-			       bool do_exterior)
+			       bool do_exterior,
+			       int strategy)
   : R(M.get_ring()),
     M(M),
     done(false),
     p(p),
     do_exterior(do_exterior),
+    strategy(strategy),
     row_set(NULL),
     col_set(NULL),
     this_row(0),
-    this_col(0)
+    this_col(0),
+    D(0)
 {
   bump_up(R);
 
@@ -51,6 +54,13 @@ DetComputation::DetComputation(const Matrix &M, int p,
       row_set[i] = i;
       col_set[i] = i;
     }
+
+  D = new ring_elem *[p];
+  for (int i=0; i<p; i++)
+    {
+      D[i] = new ring_elem[p];
+      for (int j=0; j<p;j++) D[i][j] = (Nterm *)0;
+    }
 }
 
 DetComputation::~DetComputation()
@@ -58,6 +68,13 @@ DetComputation::~DetComputation()
   bump_down((Ring *)R);
   delete [] row_set;
   delete [] col_set;
+
+  if (D)
+    {
+      for (int i=0; i<p; i++)
+	delete [] D[i];
+      delete [] D;
+    }
 }
 
 void DetComputation::write_object(object_writer &o) const
@@ -80,7 +97,15 @@ int DetComputation::step()
 {
   if (done) return COMP_DONE;
 
-  ring_elem r = calc_det(row_set, col_set, p);
+  ring_elem r;
+
+  if (strategy == DET_BAREISS)
+    {
+      get_minor(row_set,col_set,p,D);
+      r = bareiss_det();
+    }
+  else
+    r = calc_det(row_set, col_set, p);
 
   if (!R->is_zero(r))
     {
@@ -169,6 +194,102 @@ int DetComputation::calc(int nsteps)
     }
 }
 
+void DetComputation::get_minor(int *r, int *c, int p, ring_elem **D)
+{
+  for (int i=0; i<p; i++)
+    for (int j=0; j<p; j++)
+      D[i][j] = M.elem(r[i],c[j]);
+}
+
+bool DetComputation::get_pivot(ring_elem **D, int r, ring_elem &pivot, int &pivot_col)
+  // Get a non-zero column 0..r in the r th row.
+{
+  // MES: it would be worthwhile to find a good pivot.
+  for (int c=0; c<=r; c++)
+    if (!R->is_zero(D[r][c]))
+    {
+      pivot_col = c;
+      pivot = D[r][c];
+      return true;
+    }
+  return false;
+}
+
+ring_elem DetComputation::detmult(ring_elem f1, ring_elem g1,
+				  ring_elem f2, ring_elem g2,
+				  ring_elem d)
+{
+  ring_elem a = R->mult(f1,g1);
+  ring_elem b = R->mult(f2,g2);
+  R->subtract_to(a,b);
+  if (!R->is_zero(d))
+    {
+      ring_elem tmp = R->divide(a,d);
+      R->remove(a);
+      a = tmp;
+    }
+  R->remove(g1);
+  return a;
+}
+
+void DetComputation::gauss(ring_elem **D, int i, int r, int pivot_col, ring_elem lastpivot)
+{
+  ring_elem f = D[i][pivot_col];
+  ring_elem pivot = D[r][pivot_col];
+
+  for (int c=0; c<pivot_col; c++)
+    D[i][c] = detmult(pivot,D[i][c],f,D[r][c],lastpivot);
+
+  for (int c=pivot_col+1; c<=r; c++)
+    D[i][c-1] = detmult(pivot,D[i][c],f,D[r][c],lastpivot);
+
+  R->remove(f);
+}
+
+ring_elem DetComputation::bareiss_det()
+{
+  // Computes the determinant of the p by p matrix D. (dense form).
+  int sign = 1;
+  int pivot_col;
+
+  ring_elem pivot = R->from_int(0);
+  ring_elem lastpivot = R->from_int(0);
+
+  for (int r=p-1; r>=1; --r)
+    {
+      R->remove(lastpivot);
+      lastpivot = pivot;
+      if (!get_pivot(D, r, pivot, pivot_col)) // sets pivot_col and pivot
+	{
+	  // Remove the rest of D.
+	  for (int i=0; i<=r; i++)
+	    for (int j=0; j<=r; j++)
+	      R->remove(D[i][j]);
+	  R->remove(lastpivot);
+	  return R->from_int(0);
+	}
+      for (int i=0; i<r; i++)
+	gauss(D,i,r,pivot_col,lastpivot);
+
+      if (((r + pivot_col) % 2) == 1)
+	sign = -sign;  // MES: do I need to rethink this logic?
+
+      for (int c=0; c<=r; c++)
+	if (c != pivot_col)
+	  R->remove(D[r][c]);
+	else
+	  D[r][c] = (Nterm *)0;
+    }
+
+  R->remove(pivot);
+  R->remove(lastpivot);
+  ring_elem result = D[0][0];
+  D[0][0] = (Nterm*)0;
+
+  if (sign < 0) R->negate_to(result);
+
+  return result;
+}
 ring_elem DetComputation::calc_det(int *r, int *c, int p)
      // Compute the determinant of the minor with rows r[0]..r[p-1]
      // and columns c[0]..c[p-1].

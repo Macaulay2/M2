@@ -35,6 +35,7 @@ public:
 
   object_writer &operator<<(const object_element *obj);
   object_writer &operator<<(int a); // Place 'a' onto the output.
+  object_writer &operator<<(double a); // Place 'a' onto the output.
   object_writer &operator<<(mpz_ptr a); // Place 'a' onto the output.
 
   // Each object_element class needs to have the following routine defined:
@@ -54,6 +55,7 @@ public:
 
   object_reader &operator>>(object_element *& obj);
   object_reader &operator>>(int &a);
+  object_reader &operator>>(double &a);
   object_reader &operator>>(mpz_ptr &a);
 
   // Each type needs a static routine:

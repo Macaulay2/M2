@@ -67,6 +67,12 @@ void cmdInt(void)
   gStack.insert(make_object_int(val));
   mpz_clear(val);
 }
+void cmdDouble(void)
+{
+  double val;
+  val = bin_double_in(gInput,gInputLen);
+  gStack.insert(make_object_double(val));
+}
 void cmdString(void)
 {
   gStack.insert(new object_string(gInput,gInputLen));
@@ -199,6 +205,7 @@ int i_sys_cmds(void)
   
   // bringing information to the engine
   install(ggINT, cmdInt);
+  install(ggDOUBLE, cmdDouble);
   install(ggSTRING, cmdString);
   install(ggINTARRAY, cmdIntarray);
   

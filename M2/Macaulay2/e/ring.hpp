@@ -60,6 +60,8 @@ public:
 
   virtual const Z * cast_to_Z() const         { return 0; }
   virtual       Z * cast_to_Z()               { return 0; }
+  virtual const RR * cast_to_RR() const         { return 0; }
+  virtual       RR * cast_to_RR()               { return 0; }
   virtual const Z_mod * cast_to_Z_mod() const         { return 0; }
   virtual       Z_mod * cast_to_Z_mod()               { return 0; }
   virtual const GF * cast_to_GF() const         { return 0; }
@@ -92,6 +94,8 @@ public:
 
   virtual ring_elem from_int(int n) const = 0;
   virtual ring_elem from_int(mpz_ptr n) const = 0;
+  virtual ring_elem from_double(double a) const;  // The default version converts to a mpz_ptr,
+				// then uses from_int.
   virtual ring_elem var(int v, int n) const = 0;
 
   virtual ring_elem preferred_associate(ring_elem f) const;

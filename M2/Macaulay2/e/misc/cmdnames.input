@@ -173,6 +173,11 @@ divmod
 a:ringelem b:ringelem >> d:ringelem m:ringelem
 Find d = a/b and m = (a mod b) in the ring of a, b, if division is defined over this ring.
 
+ggDOUBLE
+double
+>> RingElement
+Read a double precision floating point number from the binary input stream, put it into the ring RR.
+
 ggdrop
 drop
 vn .. v0 (n:int) >> v(n-1) .. v0
@@ -875,6 +880,11 @@ ggRowScale
 RowScale
 m:SparseMutableMatrix r:int a:RingElement >> .
 Destructively set m[row r] = a * m[row r]. Note: this is less efficient than the corresponding column operation.
+
+ggRR
+RR
+. >> Ring
+Place the ring of real numbers (implemented as arithmetic on double precision floating point numbers) onto the stack.
 
 ggsagbi
 sagbi

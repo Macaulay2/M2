@@ -129,6 +129,16 @@ int Ring::coerce_to_int(ring_elem) const
   return 0;
 }
 
+ring_elem Ring::from_double(double a) const
+{
+  mpz_t f;
+  mpz_init(f);
+  mpz_set_d(f,a);
+  ring_elem result = from_int(f);
+  mpz_clear(f);
+  return result;
+}
+
 ring_elem Ring::random() const
 {
   gError << "random scalar elements for this ring are not implemented";

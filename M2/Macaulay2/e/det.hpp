@@ -7,6 +7,9 @@
 #include "matrix.hpp"
 #include "comb.hpp"
 
+const int DET_BAREISS = 0;
+const int DET_COFACTOR = 1;
+
 class DetComputation : public computation
 {
   const Ring *R;
@@ -22,18 +25,40 @@ class DetComputation : public computation
   bool do_exterior;		// true = construct exterior
 				// power of matrix, false =
 				// collect non-zero minors
+  int strategy;		        // 0: use Bareiss (fraction free, DOMAINS only)
+				// 1: use cofactor method.
   int * row_set;
   int * col_set;
   int this_row;
   int this_col;
 
+  ring_elem **D;		// size p by p, dense representation.
+
   bool do_trivial_case();
+
+  void get_minor(int *r, int *c, int p, ring_elem **D);
+  // Sets D[0..p-1,0..p-1] with the given minor of M.
+
+  // Used in Bareiss:
+  bool get_pivot(ring_elem **D, int p, ring_elem &pivot, int &pivot_col);
+  ring_elem detmult(ring_elem f1, ring_elem g1,
+		    ring_elem f2, ring_elem g2,
+		    ring_elem d);
+  void gauss(ring_elem **D, int i, int r, int pivot_col, ring_elem lastpivot);
+
 
   ring_elem calc_det(int *r, int *c, int p);
      // Compute the determinant of the minor with rows r[0]..r[p-1]
      // and columns c[0]..c[p-1].
+
+  ring_elem bareiss_det();
+     // Compute the determinant of the minor with rows r[0]..r[p-1]
+     // and columns c[0]..c[p-1].
+
+  // Subroutines for use in Bareiss algorithm:
+
 public:
-  DetComputation(const Matrix &M, int p, bool do_exterior);
+  DetComputation(const Matrix &M, int p, bool do_exterior, int strategy);
   ~DetComputation();
 
   class_identifier class_id() const { return CLASS_DetComputation; }

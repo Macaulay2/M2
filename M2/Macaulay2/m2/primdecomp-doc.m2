@@ -73,6 +73,86 @@ document { ass => PrintLevel,
 	  }
      }     
 
+document { (localize,Ideal,Ideal),
+     Headline => "localize an ideal at a prime ideal",
+     Synopsis => {
+	  "J = localize(I,P)",
+	  "I" => {"an ideal in a (quotient of a) polynomial ring ", 
+	          TT "R", "."},
+	  "P" => {"a prime ideal in the same ring."},
+	  "J" => {"the extension contraction ideal I R_P intersect R."}
+	  },
+     PARA,
+     "The result is the ideal obtained by first extending to
+     the localized ring and then contracting back to the original
+     ring.",
+      EXAMPLE {
+	  "R = ZZ/(101)[x,y];",
+	  "I = ideal (x^2,x*y);",
+	  "P1 = ideal (x);",
+	  "localize(I,P1)",
+	  "P2 = ideal (x,y);",
+	  "localize(I,P2)",
+	  },
+     EXAMPLE {
+	  "R = ZZ/31991[x,y,z];",
+	  "I = ideal(x^2,x*z,y*z);",
+	  "P1 = ideal(x,y);",
+	  "localize(I,P1)",
+	  "P2 = ideal(x,z);",
+	  "localize(I,P2)",
+	  },
+     CAVEAT "The ideal P is not checked to be prime.",
+     BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
+     Last modified June 2000.",
+     SEEALSO {(primaryDecomposition,Ideal), radical, decompose, top, 
+	  removeLowestDimension}
+     }
+///
+document { localize => Strategy,
+	  "The strategy option value should be one of the following.",
+	  SHIELD MENU{
+	       ("0" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
+	       ("1" , " -- Uses a separator to find the localization")
+	       },
+	  PARA,
+	  "The default strategy is 1.",
+	  H3 "Strategy => 0",
+	  "This strategy does not require the calculation of the assasinator, 
+	  but can require the computation of high powers of ideals. The 
+	  method appears in 
+	  Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
+          H3 "Strategy => 1",
+	  "This strategy uses a separator polynomial - a polynomial in all of 
+	  the associated primes of ", TT "I", " but ", TT "P", " and those 
+	  contained in ", TT "P", ".  In this strategy, the assasinator of the 
+	  ideal will be recalled, or recomputed using ", TO (ass => Strategy) ,
+	  " = 1, if unknown.  The separator 
+	  polynomial method is described in  
+	  Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996).",
+	  H3 "Strategy => 2",
+	  "This is the same as ", TT "Strategy => 1", " except that, if 
+	  unknown, the assasinator is computer using ", TO ass => Strategy ,
+	  " = 2."
+	   }
+///
+document { localize => PrintLevel,
+	  "The PrintLevel option value should be one of the following.",
+	  SHIELD MENU{
+	       ("0", " -- default"),
+	       ("1" , " -- Informs the user of the current operation"),
+	       ("2" , " -- Prints the current operation and its result")},
+	  EXAMPLE{
+	       "R = ZZ/(101)[x,y];",
+	       "I = ideal (x^2,x*y);",
+	       "P1 = ideal (x);",
+	       "localize(I,P1,PrintLevel => 1)",
+	       "P2 = ideal (x,y);",
+	       "localize(I,P2,PrintLevel => 2)",
+	       }
+	  }
+
+
 document { (primaryComponent, Ideal, Ideal),
     Headline => "find a primary component corresponding to an associated prime",
     Synopsis => {
@@ -99,6 +179,37 @@ document { (primaryComponent, Ideal, Ideal),
 	 removeLowestDimension}
     }
 
+document{ primaryComponent => Strategy,
+     "The Strategy option value sets the localize strategy 
+     option, and should be one of the following.",
+     SHIELD MENU{
+	  ("0", " -- Uses ", TT "localize", " Strategy 0"),
+	  ("1", " -- Uses ", TT "localize", " Strategy 1"),
+	  ("2", " -- Uses ", TT "localize", " Strategy 2")}
+     }
+
+document{ primaryComponent => Increment,
+      "The Increment option value should be an integer.  As explained in ",
+      TO (primaryComponent,Ideal,Ideal), " the algorithm, given in 
+      Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992),
+      relies on ", TT  "top(I + P^m)", " for ", TT "m", " sufficiently large.
+      The algoritm begins with ", TT "m = 1", ", and increases m by the 
+      value of the ", TT "Increment", "option until ", TT "m", " is 
+      sufficiently large.  The default value is 1." 
+     }
+
+document{ primaryComponent => PrintLevel,     
+      "The Strategy option value should be one of the following.",
+     SHIELD MENU{
+	  ("0", " -- default"),
+	  ("1", " -- informs user of the current power being checked."),
+	  ("2", " -- gives output of time-consuming processes.")
+     	  },
+     PARA,
+     "See ", TO (primaryComponent,Ideal,Ideal) , " for more information."}
+
+     
+     
 document { (primaryDecomposition, Ideal),
      Headline => "find a primary decomposition of an ideal",
      Synopsis => {
@@ -156,67 +267,8 @@ document { primaryDecomposition => Strategy,
      "Description, example, reference", TO (localize,Ideal,Ideal)
      }
 
-document { (localize,Ideal,Ideal),
-     Headline => "localize an ideal at a prime ideal",
-     Synopsis => {
-	  "J = localize(I,P)",
-	  "I" => {"an ideal in a (quotient of a) polynomial ring ", 
-	          TT "R", "."},
-	  "P" => {"a prime ideal in the same ring."},
-	  "J" => {"the extension contraction ideal I R_P intersect R."}
-	  },
-     PARA,
-     "What else to say here?",
-      EXAMPLE {
-	  "R = ZZ/(101)[x,y];",
-	  "I = ideal (x^2,x*y);",
-	  "P1 = ideal (x);",
-	  "localize(I,P1)",
-	  "P2 = ideal (x,y);",
-	  "localize(I,P2)",
-	  },
-     EXAMPLE {
-	  "R = ZZ/31991[x,y,z];",
-	  "I = ideal(x^2,x*z,y*z);",
-	  "P1 = ideal(x,y);",
-	  "localize(I,P1)",
-	  "P2 = ideal(x,z);",
-	  "localize(I,P2)",
-	  },
-     CAVEAT "The ideal P is not checked to be prime.",
-     BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
-     Last modified June 2000.",
-     SEEALSO {(primaryDecomposition,Ideal), radical, decompose, top, 
-	  removeLowestDimension}
-     }
 
-document { localize => Strategy,
-	  "The strategy option value should be one of the following.",
-	  SHIELD MENU{
-	       ("1" , " -- Uses a separator to find the localization"),
-	       ("2" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos")
-	       },
-	  PARA,
-	  "The default strategy is 1.",
-	  H3 "Strategy => 1",
-	  "This strategy uses a separator polynomial - a polynomial in all of 
-	  the associated primes of ", TT "I", " but ", TT "P", " and those 
-	  contained in ", TT "P", ".  In this strategy, the assasinator of the 
-	  ideal will be recalled, or recomputed, if unknown.  The method is 
-	  described in  
-	  Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996).",
-	  H3 "Strategy => 2",
-	  "This strategy does not require the calculation of the assasinator, 
-	  but can require the computation of high powers of ideals. The 
-	  method appears in 
-	  Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992)."
-          }
 
-document { localize => PrintLevel,
-	  "The PrintLevel option value should be one of the following.",
-	  SHIELD MENU{
-	       ("1" , " -- Informs the user of the current operation"),
-	       ("2" , " -- Prints the current operation and its result")},
-	  EXAMPLE{}
-	  }
+
+
 

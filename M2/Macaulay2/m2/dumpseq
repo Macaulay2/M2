@@ -68,6 +68,10 @@ factor.m2
 integrate.m2
 http.m2
 browse.m2
+primdecomp-fastgb.m2
+primdecomp-SY.m2
+primdecomp-EHV.m2
+primdecomp.m2
 monomcurve.m2
 fano.m2
 code.m2

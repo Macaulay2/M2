@@ -321,6 +321,29 @@ int bin_int_in(char *&s, int &len)
   return result;
 }
 
+//// translation of 'double'.
+union to_double {
+  unsigned char s[sizeof(double)/8];
+  double a;
+};
+
+void bin_double_out(buffer &o, double n)
+{
+  union to_double D;
+  D.a = n;
+  for (unsigned int i=0; i<sizeof(double)/8; i++)
+    o << D.s[i];
+}
+
+double bin_double_in(char *&s, int &len)
+{
+  union to_double D;
+  for (unsigned int i=0; i<sizeof(double)/8; i++)
+    D.s[i] = *s++;
+  len += sizeof(double)/8;
+  return D.a;
+}
+
 #if 0
 void test_bin_io1(int i)
 {

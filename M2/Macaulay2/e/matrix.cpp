@@ -802,9 +802,9 @@ Matrix Matrix::koszul(const Matrix &r, const Matrix &c)
 Matrix Matrix::symm(int p) const;
 #endif
 
-Matrix Matrix::exterior(int p) const
+Matrix Matrix::exterior(int p,int strategy) const
 {
-  DetComputation *d = new DetComputation(*this,p,1);
+  DetComputation *d = new DetComputation(*this,p,1,strategy);
   d->calc(-1);
   Matrix result = d->determinants();
   delete d;
