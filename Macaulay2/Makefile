@@ -99,11 +99,13 @@ tests ::; if [ -d schubert ]; then $(MAKE) -C schubert tests; fi
 ################################# setup
 all :: setup
 ifdef DUMPDATA
-setup : setup.dumpdata ../Makeconf.lcl
-	cp $< $@
+setup : setup.template ../Makeconf.lcl
+	sed -e 's/%DUMPDATA%/true/' <$< >$@
+	chmod a+x $@
 else
-setup : setup.nodumpdata ../Makeconf.lcl
-	cp $< $@
+setup : setup.template ../Makeconf.lcl
+	sed -e 's/%DUMPDATA%/false/' <$< >$@
+	chmod a+x $@
 endif
 ################################# slides
 clean ::; if [ -d slides ]; then $(MAKE) -k -C slides clean; fi

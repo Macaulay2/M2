@@ -157,11 +157,12 @@ all :: ../cache/Macaulay2-doc
 	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
 
+ifndef OLDENGINE
 tests:: test1
 test1 : test.m2 phase1 $(SCRIPTS)
 	M2 '-e errorDepth 0' -q test.m2 '-e << "--test succeeded" << endl' '-e exit 0'
 	touch $@
-
+endif
 tests:: test2
 test2: $(SCRIPTS)
 	 $(MAKE) -k -C ../tmp/Tests -f ../../m2/Makefile.tests

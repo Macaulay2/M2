@@ -47,7 +47,7 @@ if phase === 1 then addStartFunction(
      () -> (
 	  try (
 	       DocDatabase = openDatabase docFilename();
-	       << "--using help file " << docFilename() << endl;
+	       -- << "--using help file " << docFilename() << endl;
 	       )
 	  else (
 	       stderr << "--warning: couldn't open help file " << docFilename() << endl;
@@ -353,17 +353,17 @@ makeBaseFilename := () -> (
 	  )
      );
 
-processExample := x -> CODE (
+processExample := x -> (
      exampleCounter = exampleCounter + 1;
      exampleOutputFile << x << endl;
      if exampleResults#?exampleCounter
-     then exampleResults#exampleCounter
+     then CODE exampleResults#exampleCounter
      else (
 	  if #exampleResults === exampleCounter then (
 	       stderr << "warning : input file " << nodeBaseFilename 
 	       << ".out terminates prematurely" << endl;
 	       );
-	  concatenate("in = ",x)
+	  CODE concatenate("in = ",x)
 	  ))
 
 processExamplesLoop := s -> (
