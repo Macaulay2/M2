@@ -325,7 +325,7 @@ ZZ // RingElement := RingElement // ZZ :=
 	       try (
 	       	    sendgg ( ggPush x, ggPush y, ggdiv);
 	       	    new R)
-	       else first first entries (matrix {{f}} // g))
+	       else first first entries (matrix {{x}} // y))
 	  else if member(R,S.baseRings) then (
 	       (x,y) -> promote(x,S) // y
 	       )
