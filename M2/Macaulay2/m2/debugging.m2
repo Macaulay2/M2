@@ -2,7 +2,10 @@
 
 olderror := error
 erase symbol error
-error = args -> olderror apply(sequence args, x -> if class x === String then x else silentRobustString(20,3,x))
+error = args -> olderror (
+     -- this is the body of the "error" function, which prints out error messages
+     apply(sequence args, x -> if class x === String then x else silentRobustString(20,3,x) )
+     )
 protect symbol error
 
 on = { CallLimit => 100000, Name => null } >>> opts -> f -> (
@@ -119,26 +122,24 @@ localSymbols(Type,Pseudocode) := (X,f) -> select2(X,localSymbols f)
 
 localSymbols Type := X -> select2(X,localSymbols ())
 
-abbreviate := x -> (
-     if class x === Function and match("^--Function.*--$", toString x) then "..."
-     else x)
-
-vbar := (ht,dp) -> " "^(ht-1)
+vbar := (ht,dp) -> " "^(ht-1)				    -- sigh
 upWidth := (wid,n) -> n | horizontalJoin(wid - width n : " "^(height n - 1))
 joinRow := x -> horizontalJoin mingle(x,#x-1:vbar(max\\height\x,max\\depth\x))
-robustNetTable := x -> (
+netTable := x -> (
      if not isTable x then error "expected a table";
      if #x == 0 or #x#0 == 0 then return stack();
-     x = applyTable(x,y -> silentRobustNet(25,4,3,y)); -- fix
      colwids := max \ transpose applyTable(x,width);
      x = joinRow \ apply(x, row -> apply(colwids,row,upWidth));
-     (stack mingle(x,#x-1:""))^(height x#0))
-
+     (stack mingle(x,#x-1:""))^(height x#0 -1))
+robust := y -> silentRobustNet(25,4,3,y)
+abbreviate := x -> (
+     if class x === Function and match("^--Function.*--$", toString x) then "..."
+     else robust x)
 listSymbols = x -> (
      if #x == 0 then "--no local variables"
-     else robustNetTable prepend(
-	  {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
-	  apply (x, s -> {s,":", class value s, "--", abbreviate value s, pos s})))
+     else netTable prepend(
+	  {"symbol"||"------","", "type"||"----","", "value"||"-----", "location"||"--------"},
+	  apply (x, s -> {toString s,":", robust class value s, "--", abbreviate value s, pos s})))
 
 listLocalSymbols = Command(f -> listSymbols localSymbols f)
 
