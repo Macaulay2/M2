@@ -301,6 +301,7 @@ ring_elem Z::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
   rem = MPZ_RINGELEM(resultmod);
   return MPZ_RINGELEM(result);
 #endif
+#if 0
   mpz_ptr result = new_elem();
   mpz_ptr resultmod = new_elem();
 
@@ -328,6 +329,32 @@ ring_elem Z::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
   mpz_clear(ghalf);
   rem = MPZ_RINGELEM(resultmod);
   return MPZ_RINGELEM(result);
+#endif
+  // Divide f by |g|, to get q, r, where r is non-negative.
+  // If r is > |g|/2 then: r -= |g|, q++.
+  // If g<0 then: q = -q.
+
+  mpz_ptr q = new_elem();
+  mpz_ptr r = new_elem();
+  int gsign = mpz_sgn(MPZ_VAL(g));
+  mpz_t gg, ghalf;
+  mpz_init(gg);
+  mpz_init(ghalf);
+  mpz_abs(gg,MPZ_VAL(g));
+  mpz_fdiv_qr(q, r, MPZ_VAL(f), gg);
+  mpz_tdiv_q_2exp(ghalf, gg, 1);
+  if (mpz_cmp(r,ghalf) > 0)  // r > ghalf
+    {
+      mpz_sub(r,r,gg);
+      mpz_add_ui(q,q,1);
+    }
+  if (gsign < 0)
+    mpz_neg(q,q);
+
+  mpz_clear(gg);
+  mpz_clear(ghalf);
+  rem = MPZ_RINGELEM(r);
+  return MPZ_RINGELEM(q);
 }
 
 ring_elem Z::remainder(const ring_elem f, const ring_elem g) const

@@ -31,6 +31,9 @@ checkremquot(-3,5)
 checkremquot(0,124321412421412)
 checkremquot(247412471271237214721847124714712741477,124321412421412)
 
+checkremquot(-2,-2)
+remquot(-2,-2)
+remquot(3,-5)
 R = ZZ/13
 checkremquot(1_R,3_R)
 checkremquot(0_R,1_R)
@@ -55,7 +58,7 @@ checkremquot(f,g)
 
 f = (x-3)*(2*x-5)*(13*x^2-x-1)^2
 g = (x-3)*(2*x-5)
-assert(div(f,g) == (13*x^2-x-1)^2)
+assert(quot(f,g) == (13*x^2-x-1)^2)
 assert(rem(f,g) == 0)
 checkremquot(f,g)
 
@@ -90,7 +93,7 @@ checkremquot(f,g)
 
 f = (x-3)*(2*x-5)*(13*x^2-x-1)^2
 g = (x-3)*(2*x-5)
-assert(div(f,g) == (13*x^2-x-1)^2)
+assert(quot(f,g) == (13*x^2-x-1)^2)
 assert(rem(f,g) == 0)
 checkremquot(f,g)
 
@@ -112,7 +115,7 @@ checkremquot(f,g)
 
 f = (x-a)*(2*x-5)*(13*x^2-x-a^2)^2
 g = (x-a)*(2*x-5)
-assert(div(f,g) == (13*x^2-x-a^2)^2)
+assert(quot(f,g) == (13*x^2-x-a^2)^2)
 assert(rem(f,g) == 0)
 checkremquot(f,g)
 

@@ -1061,6 +1061,33 @@ void PolynomialRing::imp_cancel_lead_term(ring_elem &f,
       imp_subtract_multiple_to(f, coeff, monom, g);
     }
 }
+bool PolynomialRing::imp_attempt_to_cancel_lead_term(ring_elem &f, 
+						     ring_elem g, 
+						     ring_elem &coeff, 
+						     int *monom) const
+{
+  Nterm *t = f;
+  Nterm *s = g;
+  if (t == NULL || s == NULL) return true;
+  ring_elem r = K->remainderAndQuotient(t->coeff, s->coeff, coeff);
+  bool result = (K->is_zero(r));  // true means lead term will be cancelled.
+  K->remove(r);
+  if (!K->is_zero(coeff))
+    {
+      if (M->is_skew())
+	{
+	  int sign = M->skew_divide(t->monom, s->monom, monom);
+	  if (sign < 0) K->negate_to(coeff);
+	  imp_subtract_multiple_to(f, coeff, monom, g);
+	}
+      else
+	{
+	  M->divide(t->monom, s->monom, monom);
+	  imp_subtract_multiple_to(f, coeff, monom, g);
+	}
+    }
+  return result;
+}
 void PolynomialRing::cancel_lead_term(ring_elem &f, 
 				       ring_elem g, 
 				       ring_elem &coeff, 
@@ -1085,6 +1112,13 @@ void PolynomialRing::cancel_lead_term(ring_elem &f,
 
 ring_elem PolynomialRing::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
 {
+  Nterm *quot;
+  Nterm *r;
+  r = division_algorithm(f,g,quot);
+  rem = r;
+  return quot;
+
+#if 0
   ring_elem a = copy(f);
   Nterm *t = a;
   Nterm *b = g;
@@ -1113,6 +1147,7 @@ ring_elem PolynomialRing::divide(const ring_elem f, const ring_elem g, ring_elem
   divt->next = NULL;
   rem = remhead.next;
   return divhead.next;
+#endif
 }
 
 ring_elem PolynomialRing::gcd(const ring_elem ff, const ring_elem gg) const
@@ -1193,6 +1228,18 @@ ring_elem PolynomialRing::gcd_extended(const ring_elem f, const ring_elem g,
   return result;
 }
 
+void PolynomialRing::minimal_monomial(ring_elem f, int * &monom) const
+{
+  // Determines the minimal monomial which divides each term of f.
+  // This monomial is placed into 'monom'.
+  
+  Nterm *t = f;
+  if (t == NULL) return;
+  M->copy(t->monom, monom);
+  for (t = t->next; t!=NULL; t=t->next)
+    M->gcd(t->monom,monom,monom);
+}
+
 ring_elem PolynomialRing::remainder(const ring_elem f, const ring_elem g) const
 {
   ring_elem quot;
@@ -1214,6 +1261,8 @@ ring_elem PolynomialRing::quotient(const ring_elem f, const ring_elem g) const
 ring_elem PolynomialRing::remainderAndQuotient(const ring_elem f, const ring_elem g, 
 					       ring_elem &quot) const
 {
+  Nterm *q, *r;
+  ring_elem rem;
   if (is_zero(g))
     {
       quot = from_int(0);
@@ -1221,23 +1270,53 @@ ring_elem PolynomialRing::remainderAndQuotient(const ring_elem f, const ring_ele
     }
   else
     {
-      if (false) //(!is_quotient_poly_ring())
-	// There are several cases here.
-	// Case 1: We are in a polynomial ring, with no quotient.
-	//         The base ring in this case should be ZZ, or a field.
-	//         This may include skew comm case, Laurent polynomials,
-	//         or the Weyl algebra.
+      if (M->is_group())
 	{
-	  if (K->is_field())
-	    {
-	    }
-	  else if (K->is_Z())
-	    {
-	    }
-	  else
-	    {
-	      gError << "not implemented yet";
-	    }
+	  // First factor out powers of minimal monomial from f, g.
+	  ring_elem one_kk = K->from_int(1);
+	  int *one = M->make_one();
+	  int *mf1 = M->make_one();
+	  int *mg1 = M->make_one();
+	  int *mf = M->make_one();
+	  int *mg = M->make_one();
+	  PolynomialRing::minimal_monomial(f,mf);
+	  PolynomialRing::minimal_monomial(g,mg);
+#if 0
+	  buffer o;
+	  o << "Minimal monomial of ";
+	  elem_text_out(o,f);
+	  o << " is ";
+	  M->elem_text_out(o,mf);
+	  o << newline;
+
+	  o << "Minimal monomial of ";
+	  elem_text_out(o,g);
+	  o << " is ";
+	  M->elem_text_out(o,mg);
+	  o << newline;
+	  emit(o.str());
+#endif
+	  M->divide(one,mf,mf1);
+	  M->divide(one,mg,mg1);
+	  ring_elem f1 = mult_by_term(f,one_kk,mf1);
+	  ring_elem g1 = mult_by_term(g,one_kk,mg1);
+	  r = division_algorithm(f1,g1,q);
+	  M->mult(mf,mg1,mg);
+	  rem = mult_by_term(r,one_kk,mf);
+	  quot = mult_by_term(q,one_kk,mg);
+	  M->remove(mf);
+	  M->remove(mg);
+	  M->remove(mf1);
+	  M->remove(mg1);
+	  M->remove(one);
+	  K->remove(one_kk);
+	  return rem;
+	}
+      else if (!is_quotient_poly_ring())
+	{
+	  rem = division_algorithm(f,g,q);
+	  quot = q;
+	  return rem;
 	}
       else if (false) //(n_vars() == 1 && K->is_field())
 	{
@@ -1392,7 +1471,7 @@ void PolynomialRing::debug_out(const ring_elem f) const
   emit_line(o.str());
 }
 
-void PolynomialRing::debug_out(const Nterm *f) const
+void PolynomialRing::debug_outt(const Nterm *f) const
 {
   buffer o;
   ring_elem g = (Nterm *) f;
@@ -1632,6 +1711,109 @@ void PolynomialRing::normal_form(Nterm *&f) const
     }
   result->next = NULL;
   f = head.next;
+}
+
+/////////////////////////////////////////
+// Useful division algorithm routines ///
+/////////////////////////////////////////
+// These are private routines, called from remainder
+// or remainderAndQuotient or quotient.
+/////////////////////////////////////////
+Nterm * PolynomialRing::division_algorithm(Nterm *f, Nterm *g, Nterm *&quot) const
+{
+  // This returns the remainder, and sets quot to be the quotient.
+
+  // This does standard division by one polynomial.
+  // However, it does work for Weyl algebra, skew commutative algebra,
+  // This works if the coefficient ring is a field, or ZZ.
+
+  ring_elem a = copy(f);
+  Nterm *t = a;
+  Nterm *b = g;
+  Nterm divhead;
+  Nterm remhead;
+  Nterm *divt = &divhead;
+  Nterm *remt = &remhead;
+  Nterm *nextterm = new_term();
+
+  //  buffer o;
+  while (t != NULL)
+    if (M->divides(b->monom, t->monom))
+      {
+	//o << "t = "; elem_text_out(o,t); o << newline;
+	a = t;
+	bool cancelled = imp_attempt_to_cancel_lead_term(a, g, nextterm->coeff, nextterm->monom);
+	t = a;
+	//	o << "  new t = "; elem_text_out(o,t); o << newline;
+	//      o << "  cancelled = " << (cancelled ? "true" : "false") << newline;
+	//	o << "  coeff = "; K->elem_text_out(o,nextterm->coeff); o << newline;
+	//	emit(o.str());
+	if (!K->is_zero(nextterm->coeff))
+	  {
+	    divt->next = nextterm;
+	    divt = divt->next;
+	    nextterm = new_term();
+	  }
+	if (!cancelled)
+	  {
+	    remt->next = t;
+	    remt = remt->next;
+	    t = t->next;
+	  }
+      }
+    else
+      {
+	remt->next = t;
+	remt = remt->next;
+	t = t->next;
+      }
+
+  nextterm = NULL;
+  ring_elem nt = nextterm;
+  remove(nt);
+  remt->next = NULL;
+  divt->next = NULL;
+  quot = divhead.next;
+  return remhead.next;
+}
+
+Nterm * PolynomialRing::division_algorithm(Nterm *f, Nterm *g) const
+{
+  // This does standard division by one polynomial, returning the remainder.
+  // However, it does work for Weyl algebra, skew commutative algebra,
+  // as long as the coefficient ring is a field.
+
+  ring_elem a = copy(f);
+  Nterm *t = a;
+  Nterm *b = g;
+  Nterm remhead;
+  Nterm *remt = &remhead;
+  ring_elem c;
+  int *m = M->make_one();
+  while (t != NULL)
+    if (M->divides(b->monom, t->monom))
+      {
+	a = t;
+	bool cancelled = imp_attempt_to_cancel_lead_term(a, g, c, m);
+	t = a;
+	if (!cancelled)
+	  {
+	    remt->next = t;
+	    remt = remt->next;
+	    t = t->next;
+	  }
+	K->remove(c);
+      }
+    else
+      {
+	remt->next = t;
+	remt = remt->next;
+	t = t->next;
+      }
+
+  M->remove(m);
+  remt->next = NULL;
+  return remhead.next;
 }
 
 ring_elem PolynomialRing::term(const ring_elem a, const int *m) const
