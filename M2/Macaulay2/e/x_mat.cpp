@@ -120,7 +120,7 @@ const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
 }
 
 M2_bool IM2_Matrix_is_mutable(const Matrix *M)
-  /* Is the matrix M mutable? */ /* TO BE CONNECTED */
+  /* Is the matrix M mutable? */
 {
   return M->is_mutable();
 }
@@ -155,6 +155,17 @@ const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
 {
 #warning prefer_dense not yet used
   return M->remake(target, is_mutable);
+}
+
+MatrixOrNull *IM2_Matrix_random(const Ring *R, 
+				int r, int c, 
+				double fraction_non_zero, 
+				int special_type, // 0: general, 1:upper triangular, others?
+				M2_bool is_mutable,
+				M2_bool prefer_dense)
+{
+  ERROR("not re-implemented yet");
+  return 0;
 }
 
 M2_bool IM2_MutableMatrix_set_entry(Matrix *M, 

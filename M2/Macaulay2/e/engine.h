@@ -767,6 +767,14 @@ extern "C" {
      the expected rank. 
   */
 
+  MatrixOrNull *IM2_Matrix_random(const Ring *R, 
+				  int r, int c, 
+				  double fraction_non_zero, 
+				  int special_type, // 0: general, 1:upper triangular, others?
+				  M2_bool is_mutable,
+				  M2_bool prefer_dense);
+  /* NEWLY CHANGED */
+
   /**********************************************************************************/
 
   const M2_bool IM2_Matrix_is_zero(const Matrix *M); /* drg: connected rawIsZero*/
