@@ -96,7 +96,7 @@ initialize :: bin
 install :: $(bindir)/M2$(EXE)
 $(bindir) :; $(INSTALL) -d "$@"
 $(bindir)/M2 : bin/M2$(EXE) $(bindir)
-	$(INSTALL_PROGRAM) $< $(bindir)/M2$(EXE)
+	$(INSTALL_PROGRAM) -s $< $(bindir)/M2$(EXE)
 ################################# cache
 ifeq "$(DUMPDATA)" "yes"
 ifeq "$(encap)" "no"
