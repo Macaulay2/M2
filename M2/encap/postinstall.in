@@ -5,7 +5,7 @@ TMP=/tmp/M2.tmp.$$
 cd "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"
 cd bin
 
-    EDIT="s:^M2HOME=.*:M2HOME=$ENCAP_SOURCE/$ENCAP_PKGNAME/share/Macaulay2/@PACKAGE_VERSION@:"
+    EDIT="s:^PREFIX=.*:PREFIX=\"$ENCAP_TARGET\":"
 
     <M2 >$TMP sed "$EDIT"
     mv $TMP M2
