@@ -110,16 +110,27 @@ methods = F -> (
 		    then found#key = true
 		    else found#(key,F) = true
 		    )));
-     scanPairs(symbolTable(),
-	  (Name,symbol) -> (
-	       x := value symbol;
-	       if instance(x,Type) and not seen#?x then (
-		    seen#x = true;
-		    scan(pairs x, (key,meth) -> (
-			      if class meth === Function then
-			      if key === F then found#(F,x) = true
-			      else if class key === Sequence and member(F,key)
-			      then found#key = true)))));
+     if class F === Sequence then (
+	  scanPairs(symbolTable(),
+	       (Name,symbol) -> (
+		    x := value symbol;
+		    if instance(x,Type) and not seen#?x then (
+			 seen#x = true;
+			 scan(pairs x, (key,meth) -> (
+				   if class meth === Function 
+				   and class key === Sequence and isSubset(F,key)
+				   then found#key = true))))))
+     else (
+	  scanPairs(symbolTable(),
+	       (Name,symbol) -> (
+		    x := value symbol;
+		    if instance(x,Type) and not seen#?x then (
+			 seen#x = true;
+			 scan(pairs x, (key,meth) -> (
+				   if class meth === Function then
+				   if key === F then found#(F,x) = true
+				   else if class key === Sequence and member(F,key)
+				   then found#key = true))))));
      sort keys found)
 
 document { quote methods,

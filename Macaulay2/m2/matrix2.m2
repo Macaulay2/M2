@@ -151,20 +151,30 @@ ZZ           // Matrix := (r,f) -> promote(r,ring f) // f
 Matrix // RingElement := (f,r) -> f // (r * id_(target f))
 Matrix // ZZ           := (f,r) -> f // promote(r,ring f)
 
-Matrix % Matrix := (n,m) -> (
-     R := ring n;
-     if R =!= ring m then error "expected matrices over the same ring";
-     if not isFreeModule source n or not isFreeModule source m
-     or not isFreeModule target n or not isFreeModule target m
-     then error "expected maps between free modules";
-     n % gb m)
+Matrix % Matrix := {
+     Matrix,
+     (n,m) -> (
+	  R := ring n;
+	  if R =!= ring m then error "expected matrices over the same ring";
+	  if not isFreeModule source n or not isFreeModule source m
+	  or not isFreeModule target n or not isFreeModule target m
+	  then error "expected maps between free modules";
+	  n % gb m),
+     TT "f % g", " -- yields the reduction of the columns of the matrix
+     ", TT "f", " modulo a Groebner basis of the matrix ", TT "g", "."
+     }
 
 Matrix % Module := (f,M) -> f % gb M
 
 RingElement % Matrix := (r,f) -> ((r * id_(target f)) % f)_(0,0)
 RingElement % Ideal := (r,I) -> r % gb I
 
-Matrix % RingElement := (f,r) -> f % (r * id_(target f))
+Matrix % RingElement := {
+     Matrix,
+     (f,r) -> f % (r * id_(target f)),
+     TT "f % r", " -- yields the reduction of the columns of the matrix
+     ", TT "f", " modulo the ring element ", TT "r", "."
+     }
 
 complement Matrix := (m) -> (
      if not isHomogeneous m then error "expected homogeneous matrix";

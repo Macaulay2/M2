@@ -1,25 +1,22 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
-Module + Module := (M,N) -> (
-     if ring M =!= ring N
-     then error "expected modules over the same ring";
-     R := ring M;
-     if ambient M != ambient N
-     or M.?relations and N.?relations and M.relations != N.relations
-     or M.?relations and not N.?relations
-     or not M.?relations and N.?relations
-     then error "expected submodules of the same module";
-     subquotient(
-	  if not M.?generators or not N.?generators then null else M.generators | N.generators,
-	  if M.?relations then M.relations else null
-	  )
-     )
-
-document { "Module + Module",
+Module + Module := {Module, (M,N) -> (
+	  if ring M =!= ring N
+	  then error "expected modules over the same ring";
+	  R := ring M;
+	  if ambient M != ambient N
+	  or M.?relations and N.?relations and M.relations != N.relations
+	  or M.?relations and not N.?relations
+	  or not M.?relations and N.?relations
+	  then error "expected submodules of the same module";
+	  subquotient(
+	       if not M.?generators or not N.?generators then null else M.generators | N.generators,
+	       if M.?relations then M.relations else null
+	       )
+	  ),
      TT "M + N", " -- the sum of two submodules.",
      PARA,
-     "The two modules should be submodules of the same module.",
-     SEEALSO ("Module", "+")
+     "The two modules should be submodules of the same module."
      }
 
 Module ** Module := (M,N) -> (
@@ -330,9 +327,12 @@ diff(ProjectiveHilbertPolynomial,ZZ) := (P,i) -> (
 	  (n,c) -> n >= 0
 	  ))
 diff ProjectiveHilbertPolynomial := (P) -> diff(P,1)
-ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := (h,k) -> (
-     select( merge(h,k,plus), c -> c =!= 0 )
-     )
+ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := {
+     ProjectiveHilbertPolynomial,
+     (h,k) -> (
+     	  select( merge(h,k,plus), c -> c =!= 0 )
+     	  )
+     }
 - ProjectiveHilbertPolynomial := h -> apply(h,minus)
 ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := (h,k) -> h + -k
 ProjectiveHilbertPolynomial == ProjectiveHilbertPolynomial := (h,k) -> h === k

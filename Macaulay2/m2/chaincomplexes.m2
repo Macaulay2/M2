@@ -180,14 +180,16 @@ ChainComplex#id = (C) -> (
      g.degree = f.degree;
      scan(spots f, i -> g#i = -f_i);
      g)
-RingElement + ChainComplexMap := (r,f) -> (
-     if source f == target f and f.degree === 0 
-     then r*id_(source f) + f
-     else error "expected map to have same source and target and to have degree 0")
-ChainComplexMap + RingElement := (f,r) -> (
-     if source f == target f and f.degree === 0 
-     then r*id_(source f) + f
-     else error "expected map to have same source and target and to have degree 0")
+RingElement + ChainComplexMap := {ChainComplexMap,
+     (r,f) -> (
+	  if source f == target f and f.degree === 0 
+	  then r*id_(source f) + f
+	  else error "expected map to have same source and target and to have degree 0")}
+ChainComplexMap + RingElement := {ChainComplexMap,
+     (f,r) -> (
+	  if source f == target f and f.degree === 0 
+	  then r*id_(source f) + f
+	  else error "expected map to have same source and target and to have degree 0")}
 RingElement - ChainComplexMap := (r,f) -> (
      if source f == target f and f.degree === 0 
      then r*id_(source f) - f
@@ -245,20 +247,21 @@ ChainComplexMap ^ ZZ := (f,n) -> (
 			 )
 		    ));
 	  g))
-ChainComplexMap + ChainComplexMap := (f,g) -> (
-     if source f != source g
-     or target f != target g
-     or f.degree != g.degree then (
-	  error "expected maps of the same degree with the same source and target";
-	  );
-     h := new ChainComplexMap;
-     h.source = f.source;
-     h.target = f.target;
-     h.degree = f.degree;
-     complete f;
-     complete g;
-     scan(union(spots f, spots g), i -> h#i = f_i + g_i);
-     h)
+ChainComplexMap + ChainComplexMap := {ChainComplexMap,
+     (f,g) -> (
+	  if source f != source g
+	  or target f != target g
+	  or f.degree != g.degree then (
+	       error "expected maps of the same degree with the same source and target";
+	       );
+	  h := new ChainComplexMap;
+	  h.source = f.source;
+	  h.target = f.target;
+	  h.degree = f.degree;
+	  complete f;
+	  complete g;
+	  scan(union(spots f, spots g), i -> h#i = f_i + g_i);
+	  h)}
 ChainComplexMap - ChainComplexMap := (f,g) -> (
      if source f != source g
      or target f != target g

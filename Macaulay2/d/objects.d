@@ -631,7 +631,7 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
      is Error do left
      else errorpos(lhs,"'<-' expected symbol or hash table on left")
      );
-setup(assigntoW,assigntofun);
+setup(LeftArrowW,assigntofun);
 
 symbols(e:Expr):Expr := (
      o := newHashTable(symboltableClass,nothingClass);
@@ -689,21 +689,21 @@ installIt(h:HashTable,key:Expr,value:Expr):Expr := (
      is CompiledFunctionClosure do storeInHashTable(h,key,value)
      is x:List do (
 	  if x.class == listClass then (
-	       if length(x.v) >= 3 then (
+	       if length(x.v) >= 2 then (
 		    f := x.v.1;
 		    when f
 		    is FunctionClosure do (
-		    	 storeInHashTable(Documentation, key, value);
-			 storeInHashTable(h,key,f))
+			 storeInHashTable(h,key,f);
+		    	 storeInHashTable(Documentation, key, value))
 		    is CompiledFunction do (
-		    	 storeInHashTable(Documentation, key, value);
-			 storeInHashTable(h,key,f))
+			 storeInHashTable(h,key,f);
+		    	 storeInHashTable(Documentation, key, value))
 		    is CompiledFunctionClosure do (
-		    	 storeInHashTable(Documentation, key, value);
-			 storeInHashTable(h,key,f))
+			 storeInHashTable(h,key,f);
+		    	 storeInHashTable(Documentation, key, value))
      		    else errorExpr("expected second entry in list to be a function")
 		    )
-	       else errorExpr("expected a list of length at least 3")
+	       else errorExpr("expected a list of length at least 2")
 	       )
 	  else errorExpr("expected a list of class List")
 	  )
@@ -721,14 +721,14 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
 		    f := x.v.1;
 		    when f
 		    is FunctionClosure do (
-		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value);
-			 storeInHashTable(s,meth,f))
+			 storeInHashTable(s,meth,f);
+		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
 		    is CompiledFunction do (
-		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value);
-			 storeInHashTable(s,meth,f))
+			 storeInHashTable(s,meth,f);
+		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
 		    is CompiledFunctionClosure do (
-		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value);
-			 storeInHashTable(s,meth,f))
+			 storeInHashTable(s,meth,f);
+		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
      		    else errorExpr("expected second entry in list to be a function"))
 	       else errorExpr("expected a list of length at least 3"))
 	  else errorExpr("expected a list of class List"))
@@ -859,47 +859,44 @@ export binarymethod(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
      if method == nullE then MissingMethodPair(methodkey,left,right)
      else apply(method,left,right));
 -----------------------------------------------------------------------------
--- installfun(e:Expr):Expr := (
---      when e
---      is a:Sequence do
--- 
---      if length(a) == 3 then
---      when a.1 is s:HashTable do
---      if s.mutable then install(a.0,s,a.2)
---      else WrongArg(1+1,"a mutable hash table")
---      else WrongArg(1+1,"a hash table")
--- 
---      else if length(a) == 4 then
---      when a.1
---      is lhs:HashTable do
---      if lhs.mutable then
---      when a.2
---      is rhs:HashTable do
---      if rhs.mutable then install(a.0,lhs,rhs,a.3)
---      else WrongArg(2+1,"a mutable hash table")
---      else WrongArg(2+1,"a hash table")
---      else WrongArg(1+1,"a mutable hash table")
---      else WrongArg(1+1,"a hash table")
--- 
---      else if length(a) == 5 then
---      when a.1
---      is s1:HashTable do
---      if s1.mutable then
---      when a.2
---      is s2:HashTable do
---      if s2.mutable then 
---      when a.3
---      is s3:HashTable do
---      if s3.mutable then install(a.0,s1,s2,s3,a.4)
---      else WrongArg(3+1,"a mutable hash table")
---      else WrongArg(3+1,"a hash table")
---      else WrongArg(2+1,"a mutable hash table")
---      else WrongArg(2+1,"a hash table")
---      else WrongArg(1+1,"a mutable hash table")
---      else WrongArg(1+1,"a hash table")
---      else WrongNumArgs(4,5)
---      else WrongNumArgs(4,5));
--- setupfun("install",installfun);
+installfun(e:Expr):Expr := (
+     when e
+     is a:Sequence do (
+	  if length(a) == 3 then (
+	       when a.1 is s:HashTable do
+	       if s.mutable then installMethod(a.0,s,a.2)
+	       else WrongArg(1+1,"a mutable hash table")
+	       else WrongArg(1+1,"a hash table"))
+	  else if length(a) == 4 then (
+	       when a.1
+	       is lhs:HashTable do
+	       if lhs.mutable then
+	       when a.2
+	       is rhs:HashTable do
+	       if rhs.mutable then installMethod(a.0,lhs,rhs,a.3)
+	       else WrongArg(2+1,"a mutable hash table")
+	       else WrongArg(2+1,"a hash table")
+	       else WrongArg(1+1,"a mutable hash table")
+	       else WrongArg(1+1,"a hash table"))
+	  else if length(a) == 5 then (
+	       when a.1
+	       is s1:HashTable do
+	       if s1.mutable then
+	       when a.2
+	       is s2:HashTable do
+	       if s2.mutable then 
+	       when a.3
+	       is s3:HashTable do
+	       if s3.mutable then installMethod(a.0,s1,s2,s3,a.4)
+	       else WrongArg(3+1,"a mutable hash table")
+	       else WrongArg(3+1,"a hash table")
+	       else WrongArg(2+1,"a mutable hash table")
+	       else WrongArg(2+1,"a hash table")
+	       else WrongArg(1+1,"a mutable hash table")
+	       else WrongArg(1+1,"a hash table"))
+	  else WrongNumArgs(3,5))
+     else WrongNumArgs(3,5));
+setupfun("installMethod",installfun);
 -----------------------------------------------------------------------------
 lookupfun(e:Expr):Expr := (
      when e is a:Sequence do

@@ -329,11 +329,11 @@ expression Vector := v -> (
 		    callgg(ggtonet, v))}))
 name Vector := x -> name expression x
 net Vector := x -> net expression x
-Vector + Vector := (x,y) -> (
+Vector + Vector := {Vector, (x,y) -> (
      M := class x;
      if M != class y then error "no method for '+'";
      sendgg(ggPush x, ggPush y, ggadd);
-     new M)
+     new M)}
 Vector - Vector := (x,y) -> (
      M := class x;
      if M != class y then error "no method for '-'";

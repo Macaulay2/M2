@@ -142,7 +142,11 @@ document { "Set ++ Set",
 
 net Set := x -> "set " | name keys x
 name Set := x -> "set " | name keys x
-Set + Set := (x,y) -> merge(x,y,(i,j)->i)
+Set + Set := {
+     Set,
+     (x,y) -> merge(x,y,(i,j)->i),
+     TT "x + y", " -- the union of two sets."
+     }
 Set ++ Set := (x,y) -> apply(x,i->(0,i)) + apply(y,j->(1,j))
 Set ** Set := (x,y) -> combine(x,y,identity,(i,j)->i,)
 special := quote special
@@ -158,12 +162,15 @@ unique = (x) -> keys set x
 
 member(Thing,Set) := (a,s) -> s#?a
 
-isSubset(Set,Set) := (S,T) -> all(S, (k,v) -> T#?k)
-document { quote isSubset,
-     TT "isSubset(X,Y)", " -- tells whether X is a subset of Y.",
-     PARA,
-     "Works for sets, modules, and ideals."
+isSubset(Set,Set) := { Boolean,
+     (S,T) -> all(S, (k,v) -> T#?k),
+     TT "isSubset(X,Y)", " -- tells whether X is a subset of Y."
      }
+
+isSubset(Sequence,Set) := isSubset(List,Set) := { Boolean, (S,T) -> all(S, x -> T#?x) }
+isSubset(Sequence,List) := isSubset(List,List) := 
+isSubset(Sequence,Sequence) := isSubset(List,Sequence) := (S,T) -> isSubset(S,set T)
+isSubset(Set,List) := isSubset(Set,Sequence) := (S,T) -> isSubset(S,set T)
 
 TEST "
 x = set {1,2,3}

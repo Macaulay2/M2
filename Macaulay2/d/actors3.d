@@ -1582,7 +1582,7 @@ gcd(x:Expr,y:Expr):Expr := (
 gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
 setupfun("gcd",gcdfun);
 
-setup(assignW);
+setup(EqualW);
 setup(ColonEqualW);
 
 toSequence(e:Expr):Expr := (

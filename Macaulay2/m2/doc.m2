@@ -526,8 +526,10 @@ document { "adjacency operator",
      class of ", TT "y", "."
      }
 
-document { "*",
+document { quote *,
      TT "x * y", " -- yields the product of x and y.",
+     BR,NOINDENT,
+     TT "* x", " -- unary operator available to the user.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator with code
      such as ",
@@ -535,34 +537,29 @@ document { "*",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
      PARA,
-     TT "* x", " -- unary operator available to the user.  A method may
-     be installed with code such as ", 
+     "A unary method for this operator may be installed with code such as ", 
      PRE "          * X := x -> ... ",
-     PARA,
      SEEALSO( "times", "product" )
      }
 
-document { "&",
+document { quote &,
      TT "x & y", " -- a binary operator.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
      with code such as ",
      PRE "         X & Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "Examples:",
-     MENU {
-     	  TT "ZZ & ZZ", " -- logical 'and'."
-	  }
+     class of ", TT "y", "."
      }
 
-document { "ZZ & ZZ",
+ZZ & ZZ := {
+     ZZ,
+     lookup(quote &, ZZ, ZZ),
      TT "m & n", " -- produce an integer obtained from the bits of the 
      integers ", TT "m", " and ", TT "n", " by logical 'and'."
      }
 
-document { "&&",
+document { quote &&,
      TT "x && y", " -- a binary operator.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
@@ -572,7 +569,7 @@ document { "&&",
      class of ", TT "y", "."
      }
 
--- document { "::",
+-- document { quote ::,
 --      TT "x :: y", " -- a binary operator.",
 --      PARA,
 --      "The user may install ", TO ("binary method", "s"), " for this operator 
@@ -582,7 +579,7 @@ document { "&&",
 --      class of ", TT "y", "."
 --      }
 
-document { "^^",
+document { quote ^^,
      TT "x ^^ y", " -- a binary operator.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
@@ -592,7 +589,7 @@ document { "^^",
      class of ", TT "y", "."
      }
 
-document { "+",
+document { quote +,
      TT "x + y", " -- a binary operator used for sums and union.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
@@ -600,13 +597,6 @@ document { "+",
      PRE "         X + Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
-     PARA,
-     "Examples:",
-     MENU {
-	  (TO "List + List", " -- vector addition"),
-	  (TO "Module + Module", " -- sum of submodules"),
-	  (TO "Set + Set", " -- union")
-	  },
      SEEALSO( "plus", "sum" )
      }
 
@@ -623,7 +613,7 @@ document { "Set + Set",
      SEEALSO "+"
      }
 
-document { "-",
+document { quote -,
      TT "x - y", " -- a binary operator used for subtraction and set difference.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
@@ -631,12 +621,6 @@ document { "-",
      PRE "         X - Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
-     PARA,
-     "Examples:",
-     MENU {
-	  TO "Set - Set", " -- difference of two sets."
-	  },
-     PARA,
      SEEALSO( "minus" )
      }
 
@@ -656,44 +640,20 @@ document { quote /,
      with code such as ",
      PRE "         X / Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "Examples:",
-     MENU {
-	  (TO "List / Function", " -- apply a function to each element of a list"),
-	  (TO "Ring / Ideal", " -- quotient ring")
-	  },
-     PARA,
-     SEEALSO("%", "//" )
+     class of ", TT "y", "."
      }
 
-document { "%",
+document { quote %,
      TT "x % y", " -- a binary operator used for remainder and reduction.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
      with code such as ",
      PRE "         X % Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "Examples:",
-     MENU {
-	  (TT "x % y", " -- remainder obtained upon dividing x by y"),
-	  (TO "Matrix % Matrix", " -- reduction")
-	  },
-     PARA,
-     SEEALSO ("/", "//")
+     class of ", TT "y", "."
      }
 
-document { (quote %, Matrix, Matrix),
-     "f % g", " -- yields the reduction of the columns of the matrix
-     f modulo a Groebnerbasis of the matrix g.",
-     PARA,
-     "Also works when one of the arguments is a ring element, in which case
-     it is mutltiplied by an appropriate identity matrix."
-     }
-
-document { "//",
+document { quote //,
      TT "x // y", " -- a binary operator used for quotients (with a possible
      remainder).",
      PARA,
@@ -701,15 +661,7 @@ document { "//",
      with code such as ",
      PRE "         X // Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "Examples:",
-     MENU {
-     	  (TT "x//y", " -- quotient of x by y, ignoring a possible remainder"),
-	  (TO "Matrix // Matrix", " -- generalized quotient"),
-	  (TO "Matrix // RingElement", " -- generalized quotient")
-	  },
-     SEEALSO ("%","/")
+     class of ", TT "y", "."
      }
 
 document { "Matrix // Matrix",
@@ -725,7 +677,7 @@ document { "Matrix // RingElement",
      SEEALSO "%"
      } 
 
-document { "^",
+document { quote ^,
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
@@ -742,32 +694,18 @@ document { "^",
      PARA,
      "If n is 0, then the unit element ", TT "(class x)#1", " is returned.
      If n is negative, then the method named ", TO "InverseMethod", "
-     will be called.",
-     PARA,
-     "Examples:",
-     MENU {
-	  (TO "Net ^ ZZ", "  -- raising a net or string"),
-	  (TO "Ring ^ ZZ", " -- making a free module over a ring"),
-	  (TO "Ring ^ List", "    -- making a graded free module over a graded ring"),
-	  (TO "Ext", "^i          -- Ext functor")
-	  },
-     SEEALSO "power"
+     will be called."
      }
 
 Thing /^ ZZ := (x,n) -> x^n/n!
-document { "/^",
+document { quote /^,
      TT "x/^  y", " -- a binary operator, used for divided powers.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
      with code such as ",
      PRE "         X /^ Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "Examples:",
-     MENU {
-	  (TO "Thing /^ ZZ", " -- divided power")
-	  }
+     class of ", TT "y", "."
      }
 
 document { "Thing /^ ZZ",
@@ -858,7 +796,7 @@ document { quote lines,
      SEEALSO "newline"
      }
 
-document { "!",
+document { quote !,
      "n ! -- computes n factorial, 1*2*3*...*n."
      }
 
@@ -867,7 +805,7 @@ document { "not",
      SEEALSO( "and", "or" )
      }
 
-document { "|",
+document { quote |,
      TT "x | y", " -- a binary operator.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
@@ -894,7 +832,7 @@ document { "|",
      SEEALSO ("||", "Net")
      }
 
-document { "||",
+document { quote ||,
      TT "x || y", " -- a binary operator.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
@@ -944,7 +882,7 @@ document { "=!=",
      "See ", TO "===", " for details."
      }
 
-document { "==",
+document { quote ==,
      TT "x == y", " -- a binary operator for testing mathematical equality.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
@@ -967,13 +905,13 @@ document { "==",
      SEEALSO( "!=" )
      }
 
-document { "!=",
+document { quote !=,
      TT "x != y", " -- the negation of ", TT "x == y", ".",
      PARA,
      SEEALSO( "==" )
      }
 
-document { "**", 
+document { quote **, 
      TT "x ** y", " -- a binary operator used for tensor product and
      cartesian product.",
      PARA,
@@ -981,19 +919,7 @@ document { "**",
      with code such as ",
      PRE "         X ** Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     "Examples:",
-     MENU {
-	  (TO "Set ** Set", " -- cartesian product of sets"),
-	  (TO "Matrix ** Matrix", " -- tensor product of matrices"),
-	  (TO "Module ** Module", " -- tensor product of modules"),
-	  (TO "Matrix ** Module", " -- tensor product, degree shifting"),
-	  (TO "ChainComplex ** Module", " -- tensor product"),
-	  (TO "Module ** Ring", " -- tensor product"),
-	  (TO "Matrix ** Ring", " -- tensor product"),
-	  (TO "Monoid ** Monoid", " -- tensor product"),
-	  (TO "Ring ** Ring", " -- tensor product")
-	  }
+     class of ", TT "y", "."
      }
 
 document { "Monoid ** Monoid",
@@ -1219,17 +1145,7 @@ document { quote <<,
      with code such as ",
      PRE "         X << Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "Examples:",
-     MENU {
-	  (TO "<< Thing", " -- file output to stdout"),
-	  (TO "String << Thing", " -- file output"),
-	  (TO "File << Thing", " -- file output"),
-	  (TO "Nothing << Thing", " -- fake output to nowhere"),
-     	  (TO "ZZ << ZZ", " -- bit shifting"),
-     	  (TO "ZZ >> ZZ", " -- bit shifting")
-	  }
+     class of ", TT "y", "."
      }
 
 document { "Nothing << Thing",
@@ -1284,11 +1200,11 @@ document { "<< Thing",
      SEEALSO ("<<")
      }
 
-document { ">>",
+document { quote >>,
      TT "i >> j", " -- shifts the bits in the integer i rightward j places."
      }
 
-document { ":",
+document { quote :,
      TT "x : y", " -- a binary operator.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
@@ -1318,28 +1234,28 @@ document { quote getc,
      "Bug: the name is cryptic and should be changed."
      }
 
-document { "<",
+document { quote <,
      TT "x < y", " -- yields ", TO "true", " or ", TO "false", 
      " depending on whether x < y.",
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { "<=",
+document { quote <=,
      TT "x <= y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x <= y.",
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { ">",
+document { quote >,
      TT "x > y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x > y.",
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { ">=",
+document { quote >=,
      TT "x >= y", " -- yields ", 
      TO "true", " or ", 
      TO "false", " depending on whether x >= y.",
@@ -1373,7 +1289,7 @@ document { quote incomparable,
      when the two things being compared are incomparable."
      }
 
-document { "?",
+document { quote ?,
      TT "x ? y", " -- compares x and y, returning ", TT "quote <", ", ",
      TT "quote >", ", ", TT "quote ==", ", or ", TO "incomparable", ".",
      PARA,
@@ -1394,7 +1310,7 @@ document { "?",
      often amount to simply comparing hash codes."  
      }
 
-document { ";",
+document { quote ;,
      TT "(e;f;...;g;h)", " -- the semicolon can be used for evaluating a sequence of 
      expressions.  The value of the sequence is the value of its
      last expression, unless it is omitted, in which case the value
@@ -1403,7 +1319,7 @@ document { ";",
      EXAMPLE "(3;4;5;)"
      }
 
-document { "<-",
+document { quote <-,
      TT "x <- y    ", " -- assigns the value of y to x, but x is evaluated, too.",
      PARA,
      "If the value of x is a symbol, then the value of y is assigned as the
@@ -1423,7 +1339,7 @@ document { "<-",
      "See also ", TO "=", "."
      }
 
-document { "=",
+document { quote =,
      TT "x = e", "      -- assigns the value e to the variable x.",
      PARA,
      NOINDENT,
@@ -1437,7 +1353,7 @@ document { "=",
      }
 
 
-document { ":=",
+document { quote :=,
      TT "x := e", " -- assign the value e to the new local variable x",
      BR,NOINDENT,
      TT "f X := (x) -> (...) ", " -- install a method for the method function
@@ -1600,7 +1516,7 @@ document { quote currentDirectory,
      TT "currentDirectory()", " -- returns the name of the current directory."
      }
 
-document { "~",
+document { quote ~,
      TT "~ x", " -- unary operator available to the user.  A method may
      be installed with code such as ", 
      PRE "          ~ X := x -> ... ",
@@ -2040,19 +1956,14 @@ document { "operators",
      	  }
      }
 
-document { "=>",
+document { quote =>,
      TT "x => y", " -- a binary operator.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator 
      with code such as ",
      PRE "         X => Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "Examples:",
-     MENU {
-	  (TO "Thing => Thing", " -- optional arguments for functions")
-	  }
+     class of ", TT "y", "."
      }
 
 document { "invoking the program",
@@ -2577,7 +2488,7 @@ document { quote basictype,
      SEEALSO "Thing"
      }
 
-document { "++",
+document { quote ++,
      TT "M ++ N", " -- direct sum for modules, matrices, or chain complexes.",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator with code
@@ -2589,7 +2500,7 @@ document { "++",
      SEEALSO ("classes", "directSum")
      }
 
-document { "@@",
+document { quote @@,
      TT "f @@ g", " -- a binary operator used for composition of functions.",
      PARA,
      "If f and g are homomorphisms of modules, then f @@ g yields their
@@ -2623,12 +2534,7 @@ document { quote \,
      with code such as ",
      PRE ///         X \ Y := (x,y) -> ...///,
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     "Examples:",
-     MENU {
-	  (TO ///Function \ List///, " -- apply function to each member of list")
-	  }
+     class of ", TT "y", "."
      }
 
 document { "List / Function",

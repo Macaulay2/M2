@@ -3,7 +3,13 @@
 List _ ZZ     := (x,i) -> x#i
 ggPush List  := v -> (ggINTARRAY, gg v)
 List | List  := join
-List + List  := (v,w) -> apply(v,w,plus)
+
+List + List  := {
+     List,
+     (v,w) -> apply(v,w,plus),
+     TT "v + w", " -- the sum of two vectors represented as lists."
+     }
+
      - List  := v -> apply(v,minus)
 List - List  := (v,w) -> apply(v,w,difference)
 Thing * List := (a,v) -> apply(v,x->a * x)

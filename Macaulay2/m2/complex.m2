@@ -57,47 +57,48 @@ document { quote realPart,
 document { quote imaginaryPart,
      TT "imaginaryPart z", " -- return the imaginary part of a complex number z."
      }
+
 document { quote conjugate,
      TT "conjugate z", " -- the complex conjugate of the complex number z."
      }
-CC + CC := (x,y) -> new CC from {x#0+y#0,x#1+y#1}
-              - CC := x -> new CC from {-x#0,-x#1}
+
+CC + CC := { CC, (x,y) -> new CC from {x#0+y#0,x#1+y#1} }
+
+   - CC := x -> new CC from {-x#0,-x#1}
 CC - CC := (x,y) -> new CC from {x#0-y#0,x#1-y#1}
 CC ^ ZZ := BinaryPowerMethod
 InverseMethod CC := y -> (
      m := y#0^2 + y#1^2;
      new CC from {y#0/m,-y#1/m})	  
-CC * CC := (x,y) -> 
-     new CC from { x#0*y#0 - x#1*y#1 , x#0*y#1 + x#1*y#0 }
+CC * CC := (x,y) -> new CC from { x#0*y#0 - x#1*y#1 , x#0*y#1 + x#1*y#0 }
 CC / CC := (x,y) -> (
 	  m := y#0^2 + y#1^2;
-	  new CC 
-	  from { (x#0*y#0 + x#1*y#1)/m , (x#1*y#0 - x#0*y#1)/m })
-CC + RR := (z,x) -> new CC from {z#0+x,z#1}
-CC - RR := (z,x) -> new CC from {z#0-x,z#1}
+	  new CC from { (x#0*y#0 + x#1*y#1)/m , (x#1*y#0 - x#0*y#1)/m })
+CC + RR := { CC, (z,x) -> new CC from {z#0+x,z#1} }
+CC - RR := { CC, (z,x) -> new CC from {z#0-x,z#1} }
 CC * RR := (z,x) -> new CC from {z#0*x,z#1*x}
 CC / RR := (z,x) -> new CC from {z#0/x,z#1/x}
-RR + CC := (x,z) -> new CC from {x+z#0, z#1}
+RR + CC := { CC, (x,z) -> new CC from {x+z#0, z#1} }
 RR - CC := (x,z) -> new CC from {x-z#0,-z#1}
 RR * CC := (x,z) -> new CC from {x*z#0,x*z#1}
 RR / CC := (x,y) -> (
 	  m := y#0^2 + y#1^2;
 	  new CC from { x*y#0/m , - x*y#1/m })
-CC + QQ := (z,x) -> new CC from {z#0+x,z#1}
+CC + QQ := {CC, (z,x) -> new CC from {z#0+x,z#1}}
 CC - QQ := (z,x) -> new CC from {z#0-x,z#1}
 CC * QQ := (z,x) -> new CC from {z#0*x,z#1*x}
 CC / QQ := (z,x) -> new CC from {z#0/x,z#1/x}
-QQ + CC := (x,z) -> new CC from {x+z#0, z#1}
+QQ + CC := {CC, (x,z) -> new CC from {x+z#0, z#1}}
 QQ - CC := (x,z) -> new CC from {x-z#0,-z#1}
 QQ * CC := (x,z) -> new CC from {x*z#0,x*z#1}
 QQ / CC := (x,y) -> (
 	  m := y#0^2 + y#1^2;
 	  new CC from {x*y#0/m , - x*y#1/m })
-CC + ZZ := (z,x) -> new CC from {z#0+x,z#1}
+CC + ZZ := {CC, (z,x) -> new CC from {z#0+x,z#1}}
 CC - ZZ := (z,x) -> new CC from {z#0-x,z#1}
 CC * ZZ := (z,x) -> new CC from {z#0*x,z#1*x}
 CC / ZZ := (z,x) -> new CC from {z#0/x,z#1/x}
-ZZ + CC := (x,z) -> new CC from {x+z#0, z#1}
+ZZ + CC := {CC, (x,z) -> new CC from {x+z#0, z#1}}
 ZZ - CC := (x,z) -> new CC from {x-z#0,-z#1}
 ZZ * CC := (x,z) -> new CC from {x*z#0,x*z#1}
 ZZ / CC := (x,y) -> (

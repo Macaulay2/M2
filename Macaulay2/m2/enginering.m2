@@ -475,40 +475,45 @@ RingElement * RingElement := (f,g) -> (
      f * g
      )
 
-QQ + RingElement := (f,g) -> (
-     R := class g;
-     QQ + R := (
-	  (r,f) -> promote(r,R) + f
-	  );
-     f + g)
+QQ + RingElement := { RingElement,
+     (f,g) -> (
+     	  R := class g;
+     	  QQ + R := (
+	       (r,f) -> promote(r,R) + f
+	       );
+     	  f + g)
+     }
 
-RingElement + QQ := (f,g) -> (
-     R := class f;
-     R + QQ := (
-	  (f,r) -> f + promote(r,R)
-	  );
-     f + g)
+RingElement + QQ := { RingElement,
+     (f,g) -> (
+	  R := class f;
+	  R + QQ := (
+	       (f,r) -> f + promote(r,R)
+	       );
+	  f + g)
+     }
 
-ZZ + RingElement := RingElement + ZZ :=
-RingElement + RingElement := (f,g) -> (
-     R := class f;
-     S := class g;
-     R + S := (
-	  if R === S then (
-	       (x,y) -> (
-	       	    sendgg ( ggPush x, ggPush y, ggadd);
-	       	    new R)
-	       )
-	  else if member(R,S.baseRings) then (
-	       (x,y) -> promote(x,S) + y
-	       )
-	  else if member(S,R.baseRings) then (
-	       (x,y) -> x + promote(y,R)
-	       )
-	  else error "expected pair to have a method for '+'"
-	  );
-     f + g
-     )
+ZZ + RingElement := RingElement + ZZ := RingElement + RingElement := { RingElement,
+     (f,g) -> (
+	  R := class f;
+	  S := class g;
+	  R + S := (
+	       if R === S then (
+		    (x,y) -> (
+			 sendgg ( ggPush x, ggPush y, ggadd);
+			 new R)
+		    )
+	       else if member(R,S.baseRings) then (
+		    (x,y) -> promote(x,S) + y
+		    )
+	       else if member(S,R.baseRings) then (
+		    (x,y) -> x + promote(y,R)
+		    )
+	       else error "expected pair to have a method for '+'"
+	       );
+	  f + g
+	  )
+     }
 
 ZZ == RingElement := (i,x) -> (
      R := class x;

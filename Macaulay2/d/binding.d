@@ -205,9 +205,9 @@ bump(2);
      thenW = token("then");
 bump();
      export ColonEqualW := binaryright(":=");
-     export assignW := binaryright("=");
-     export assigntoW := binaryright("<-");
-     export arrowW := binaryright("->",arrowop);
+     export EqualW := binaryright("=");
+     export LeftArrowW := binaryright("<-");
+     export RightArrowW := binaryright("->",arrowop);
 bump();
      newscope := prec;
      ofW = token("of");
@@ -600,7 +600,7 @@ export bind(e:ParseTree,scope:Scope):void := (
 	  bind(adjacent.lhs,scope); 
 	  bind(adjacent.rhs,scope))
      is binary:Binary do (
-	  if binary.operator.word == assignW
+	  if binary.operator.word == EqualW
 	  then bindassignment(binary,scope,false)
 	  else if binary.operator.word == ColonEqualW
 	  then bindassignment(binary,scope,true)
