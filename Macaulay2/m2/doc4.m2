@@ -792,10 +792,6 @@ document {
      ", TO "globalReleaseFunction", " is used to release the name when the
      global variable gets reassigned.",
      PARA,
-     "The current way this function works is by storing the string used for
-     printing under ", TT "X.name", " and storing the global variable under
-     ", TT "X.Symbol", ".",
-     PARA,
      "Another thing done by this function is to apply ", TO use, " to the thing.
      This is used for polynomial rings to assign values to the symbols representing
      the variables (indeterminates) in the ring.",

@@ -12,8 +12,9 @@ Package.synonym = "package"
 net Package := toString Package := p -> if p#?"title" then p#"title" else "--package--"
 packages = {}
 
-hide := d -> (
-     globalDictionaries = select(globalDictionaries, x -> x =!= d);
+hide := pkg -> (
+     globalDictionaries = select(globalDictionaries, x -> x =!= pkg.Dictionary);
+     packages = select(packages, x -> x =!= pkg);
      )
 
 toString Dictionary := d -> (
@@ -27,7 +28,7 @@ installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 
 removePackage = method()
 removePackage Package := p -> (
-     hide p.Dictionary;
+     hide p;
      stderr << "--previous definitions removed for package " << p << endl;
      )
 removePackage String := n -> if PackageDictionary#?n and class value PackageDictionary#n === Package then removePackage value PackageDictionary#n
@@ -43,7 +44,7 @@ newPackage = method(
 	  }
      )
 newPackage(Package) := opts -> p -> (
-     hide p.Dictionary;		    -- hide the old dictionary
+     hide p;		    -- hide the old package and its dictionary
      newPackage(p#"title",opts))
 newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
