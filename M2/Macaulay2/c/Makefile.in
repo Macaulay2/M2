@@ -11,53 +11,20 @@ VPATH = @srcdir@
 	rm -f y.tab.h y.output
 ############################################################
 .PHONY : clean all install
-# YACC := yacc
-YACC := bison -o y.tab.c
 YFLAGS := -vdlt
-
-ifeq "$(CC)" "cl"
-LOADLIBES := ../../lib/gc.lib
-scc1 : ../../lib/gc.lib
-else
-LOADLIBES := -lm -L../../lib -L$(prefix)/lib -lgc
-endif
-
-##############################
-CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c \
-	  type.c chk.c compat.c
+LOADLIBES := -lm -lgc
+CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o
 SRCFILES := $(HFILES) $(CNAMES) grammar.y
-OTHERS := makefile.dos scc.template Makefile COPYRIGHT
-ALLFILES := $(SRCFILES) $(OTHERS) grammar.c
-OPTIMIZE := -Winline -finline-functions -O2
-INCLUDES := -I../../include -I$(prefix)/include
-GCFLAGS  := $(INCLUDES)
-
-ifeq "$(CC)" "cl"
-  GCFLAGS += -Zi -Za
-  WARNINGS := -W3
-else
-  GCFLAGS += -g
-  WARNINGS := -Wall -Wshadow -Wcast-qual -Wtraditional -ansi
-endif
-
-CFLAGS   := $(GCFLAGS) $(WARNINGS)
+CPPFLAGS += -I../../include
 ############################## compiling
 scc1 : $(OFILES)
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 $(OFILES) : $(HFILES)
-grammar.o : grammar.c;	 	$(CC) $(GCFLAGS) -c $< $(OUTPUT_OPTION)
-############################## installation 
-#scc : scc.template Makefile
-#	rm -f $@
-#	sed -e s@--LIBDIR--@.@g \
-#	    -e s@--SCC1--@../c/scc1@g \
-#	    -e s@--MMGR--@.@g \
-#	    <$< >$@
-#	chmod a+x $@
+grammar.o : grammar.c; $(CC) $(CPPFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## miscellaneous
-TAGS: $(SRCFILES);		etags $(SRCFILES)
+TAGS: $(SRCFILES); etags $(SRCFILES)
 ############################## cleaning
 # we purposely don't delete grammar.c so it can be used for porting
 clean :

@@ -58,7 +58,6 @@ WC1FILES := $(SCRIPTS) $(SRCFILES) \
 	Makefile abc grxwrap.c g scc.gdb COPYRIGHT \
 	bench sets.m bignum.h bignum.c alloca.h \
 	configure remake probe.c sizes.c mp.d
-ALLFILES := $(WC1FILES) $(PROJECT:.d=.dep) $(PROJECT:.d=.sig)
 ############################## rules
 SCC1 := ../c/scc1
 .SUFFIXES: .d .sig .dep .res .test .m2
@@ -106,11 +105,6 @@ CFLAGS += -Za -W0
 endif
 
 CXXFLAGS += $(WARNINGS)
-
-ifneq "$(CC)" "cl"
-LDLIBS  += -L../../lib
-LDLIBS  += -L$(prefix)/lib
-endif
 
 ifeq ($(OS),Linux)
 ## - use this to get a memory map listing from the gnu linker
@@ -300,22 +294,6 @@ addresses : probe
 clean ::; rm -f addresses
 ###################### libraries
 
-ifeq "$(CC)" "cl"
-# LIBRARYFILES += ../dbm/dbm2.lib
-# LIBRARYOPTIONS += ../dbm/dbm2.lib
-LIBRARYFILES += ../../lib/gc.lib
-LIBRARYOPTIONS += ../../lib/gc.lib
-LIBRARYFILES += ../../lib/gmp.lib
-LIBRARYOPTIONS += ../../lib/gmp.lib
-LIBRARYFILES += ../../lib/libfac.lib
-LIBRARYOPTIONS += ../../lib/libfac.lib
-LIBRARYFILES += ../../lib/cf.lib
-LIBRARYOPTIONS += ../../lib/cf.lib
-else
-# LOADLIBES += -L../dbm
-# LIBRARYFILES += ../dbm/libdbm2.a
-# LIBRARYOPTIONS += -ldbm2
-
 ifeq "$(GCC) $(STATIC)" "yes no"
 LIBRARYOPTIONS += -Wl,-Bstatic
 endif
@@ -332,8 +310,6 @@ LIBRARYOPTIONS += -lstdc++
 
 ifeq "$(GCC) $(STATIC)" "yes no"
 LIBRARYOPTIONS += -Wl,-Bdynamic
-endif
-
 endif
 
 ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
@@ -367,12 +343,6 @@ all:: TAGS
 TAGS: Makefile
 	@ echo making TAGS
 	@ $(UTIL)echoout -r2 '>TAGS' $(foreach i, $(SRCFILES) M2lib.c types.h,  $(i),0)
-
-backup : CVS/Entries
-CVS/Entries : $(ALLFILES)
-	mount /a.ext2
-	tar cfv - $? | (cd /a.ext2; mkdir -p d; cd d; tar xf -)
-	umount /a.ext2
 
 clean ::
 	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep mapfile \
