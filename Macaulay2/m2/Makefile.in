@@ -102,6 +102,7 @@ TAGS: Makefile dumpseq
 				../emacs/makesyms.m2 \
 				../tutorial/prelim/*.m2 ../tutorial/final/*.m2 \
 				../packages/*.m2 \
+				../packages/*/*.m2 \
 				../*/Makefile* \
 			        ../experiments/*.m2 \
 			        ../slides/*.m2 \

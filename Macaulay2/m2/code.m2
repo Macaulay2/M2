@@ -31,7 +31,7 @@ isMemoizedFunction := f -> sameFunctionBody(f,memoizedFunction)
 
 codeFunction := (f,depth) -> (
      if depth <= limit and locate f =!= null then stack(
-	  if not match(toString f, "--Function*") then ( "-- code for " | toString f | ":" ),
+	  -- if not match(toString f, "--Function*") then ( "-- code for " | toString f | ":" ),
 	  getSourceLines locate f,
 	  if isOptionedFunction f then (
 	       "-- original function f:", codeFunction(last frame f,depth+1)

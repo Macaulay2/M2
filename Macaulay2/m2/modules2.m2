@@ -392,7 +392,10 @@ Module == ZZ := (M,n) -> (
 --      else 1 + dim hilbertPolynomial M + dim coefficientRing ring M
 --      )
 
-dim Module := M -> dim ring M - codim M
+dim Module := M -> (
+     c := codim M;
+     if c === infinity then -1 else dim ring M - c
+     )
 
 degree Ring := R -> degree R^1
 degree Module := M -> (
