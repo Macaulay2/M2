@@ -56,14 +56,6 @@ static void alarm_handler(int sig)
 {
      extern void evaluate_setAlarmedFlag();
      evaluate_setAlarmedFlag();
-     if (system_interruptShield) system_interruptPending = TRUE;
-     else {
-	  extern void evaluate_setInterruptFlag();
-	  evaluate_setInterruptFlag();
-#         ifdef FACTORY
-     	  libfac_interruptflag = TRUE;
-#         endif
-	  }
 #ifdef SIGALRM
      signal(SIGALRM,alarm_handler);
 #endif

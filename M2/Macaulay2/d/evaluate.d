@@ -1126,15 +1126,18 @@ export eval(c:Code):Expr := (
      e := (
 	  if exceptionFlag && !steppingFurther(c) then (
 	       if steppingFlag then (
-		    steppingFlag = false;
+		    clearSteppingFlag();
 		    buildErrorPacket(steppingMessage))
 	       else if alarmedFlag then (
+		    clearAlarmedFlag();
 		    buildErrorPacket(alarmMessage))
 	       else if interruptedFlag then (
 		    SuppressErrors = false;
+		    clearInterruptFlag();
 		    buildErrorPacket(interruptMessage))
 	       else (
 		    SuppressErrors = false;
+		    clearAllFlags();
 		    buildErrorPacket("unknown exception")
 		    ))
 	  else when c
