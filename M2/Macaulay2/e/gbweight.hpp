@@ -25,6 +25,8 @@ public:
 
   ~GBWeight() {}
 
+  const M2_arrayint get_weights() const { return wts_; }
+
   int exponents_weight(const int * exponent_vector) const;
 
   int gbvector_term_weight(const gbvector *f) const;

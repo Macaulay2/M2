@@ -34,7 +34,7 @@ gbA * gbA::create(const Matrix *m,
   return result;
 }
 
-void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strat)
+void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights0, int strat)
 {
   const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
   if (origR == NULL)
@@ -45,7 +45,8 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
     }
   originalR = origR;
   R = origR->get_gb_ring();
-  weightInfo_ = new GBWeight(m->rows(), gb_weights);
+  weightInfo_ = new GBWeight(m->rows(), gb_weights0);
+  gb_weights = weightInfo_->get_weights();
 
   _nvars = R->get_flattened_monoid()->n_vars();
   _coeff_type = origR->coefficient_type();
@@ -113,7 +114,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
       for (int i=0; i<_first_gb_element; i++)
 	{
 	  gbvector *f = const_cast<gbvector *>(originalR->quotient_gbvector(i));
-	  int deg = weightInfo_->gbvector_term_weight(f);
+	  int deg = weightInfo_->gbvector_weight(f);
 	  gbelem *g = gbelem_make(f, 0, ELEM_IN_RING, deg);
 	  gb.push_back(g);
 	}
@@ -177,6 +178,7 @@ static void exponents_lcm(int nvars,
 			  exponents a, 
 			  exponents b, 
 			  exponents result, 
+			  M2_arrayint weights,
 			  int &result_degree)
 {
   int i;
@@ -189,7 +191,7 @@ static void exponents_lcm(int nvars,
       else
 	{
 	  result[i] = b[i];
-	  deg += diff;
+	  deg += diff * weights->array[i];
 	}
     }
   result_degree = deg;
@@ -260,7 +262,7 @@ gbA::spair *gbA::spair_make(int i, int j)
   result->next = 0;
   result->type = SPAIR_SPAIR;
   result->lcm = R->exponents_make();
-    exponents_lcm(_nvars, g1->deg, exp1, exp2, result->lcm, result->deg);
+    exponents_lcm(_nvars, g1->deg, exp1, exp2, result->lcm, gb_weights, result->deg);
   result->x.pair.i = i;
   result->x.pair.j = j;
 
@@ -304,7 +306,7 @@ gbA::spair *gbA::spair_make_skew(int i, int v)
   result->next = 0;
   result->type = SPAIR_SKEW;
   result->lcm = exp2;
-    exponents_lcm(_nvars, g1->deg, exp1, exp2, exp2, result->deg);
+    exponents_lcm(_nvars, g1->deg, exp1, exp2, exp2, gb_weights, result->deg);
     // note: result is being placed into exp2, from the input exp2.
     // This is OK, I hope.
   result->x.pair.i = i;

@@ -80,6 +80,7 @@ private:
   const PolynomialRing *originalR;
   GBRing *R;
   const GBWeight *weightInfo_;
+  M2_arrayint gb_weights;
 
   // Ring information
 
