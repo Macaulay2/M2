@@ -21,13 +21,13 @@ toString EngineRing := R -> if R.?name then R.name else sendgg(ggPush R, ggsee, 
 
 net EngineRing := toString
 
-new EngineRing from Handle := EngineRing => (EngineRing, h) -> new EngineRing from ggPush h
+new EngineRing from Handle := (EngineRing, h) -> new EngineRing from ggPush h
 
-new EngineRing from Ring := EngineRing => (EngineRing, R) -> new EngineRing from handle R
+new EngineRing from Ring := (EngineRing, R) -> new EngineRing from handle R
 
 new EngineRing from List :=
 new EngineRing from Sequence :=
-new EngineRing from String := EngineRing => (EngineRing, ggcmds) -> (
+new EngineRing from String := (EngineRing, ggcmds) -> (
      R := new EngineRing of RingElement;
      R.Engine = true;
      R.handle = newHandle ggcmds;

@@ -547,7 +547,7 @@ document { id,
      PARA,
      "M may be a ", TO "Module", " or a ", TO "ChainComplex", ".",
      PARA,
-     SEEALSO{"Matrix", "ChainComplexMap", "ScriptedFunction"}
+     SEEALSO{"Matrix", "ChainComplexMap", "ScriptedFunctor"}
      }
 document { reshape,
      TT "reshape(F,G,m)", " -- reshapes the matrix m to give a map from G to F.",

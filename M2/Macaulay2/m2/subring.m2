@@ -103,7 +103,7 @@ pushlinear := options -> (f,M) -> (
     mapback g
     )
 
-pushForward1(RingMap, Module) := options -> (f,M) -> (
+pushForward1(RingMap, Module) := Module => options -> (f,M) -> (
     if options.Strategy === Linear then
         (pushlinear options)(f,M)
     else if options.Strategy === NonLinear then
@@ -113,7 +113,7 @@ pushForward1(RingMap, Module) := options -> (f,M) -> (
 
 pushForward = method (Options => options pushForward1)
 
-pushForward(RingMap, Module) := options -> (f,M) -> (
+pushForward(RingMap, Module) := Module => options -> (f,M) -> (
      if isHomogeneous f and isHomogeneous M then (
 	  -- given f:R-->S, and M an S-module, finite over R, find R-presentation for M
 	  S := target f;

@@ -14,7 +14,7 @@
 ---------------------------
 
 removeLowestDimension = method()
-removeLowestDimension Module := (M) -> (
+removeLowestDimension Module := Module => (M) -> (
      -- only works for polynomial rings...
     local E;
     R := ring M;
@@ -32,7 +32,7 @@ removeLowestDimension Module := (M) -> (
         I := ann E;
         coker gens saturate(image presentation M,I))
     )
-removeLowestDimension Ideal := (I) -> (
+removeLowestDimension Ideal := Ideal => (I) -> (
      -- only works for polynomial rings...
     local E;
     M := coker gens I;
@@ -56,12 +56,12 @@ removeLowestDimension Ideal := (I) -> (
 -- top dimensional part ---
 ---------------------------
 
-top Ideal := (I) -> (
+top Ideal := Ideal => (I) -> (
      R := ring I;
      c := codim I;
      ann Ext^c(coker gens I, R))
      
-top Module := (M) -> (
+top Module := Module => (M) -> (
     R := ring M;
     if not isPolynomialRing R or not isAffineRing R
     then error "expected a polynomial ring";
@@ -143,7 +143,7 @@ radical1 := (I) -> (
         then J 
         else intersect(J, radical1 I1))
 
-radical Ideal := options -> (I) -> (
+radical Ideal := Ideal => options -> (I) -> (
      if class options.CompleteIntersection === Ideal then
           unmixedradical2(I,options.CompleteIntersection)
      else if options.Unmixed then 

@@ -15,7 +15,7 @@ Tor = new ScriptedFunctor from {
 	  )
      }
 
-Tor(ZZ, Module, Module) := (i,M,N) -> (
+Tor(ZZ, Module, Module) := Module => (i,M,N) -> (
      if ring M =!= ring N then error "expected the same ring";
      R := ring M;
      if not isCommutative R then error "'Tor' not implemented yet for noncommutative rings.";

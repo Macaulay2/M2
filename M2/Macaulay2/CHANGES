@@ -2,6 +2,8 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+'ScriptedFunction' has been merged into 'ScriptedFunctor'.
+
 Changed the operator '=>' so methods for it cannot be installed by the user.
 
 Fixed a bug in 'stack' which incorrectly converted lines with tab characters in

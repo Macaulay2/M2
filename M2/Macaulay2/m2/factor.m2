@@ -1,12 +1,12 @@
 --		Copyright 1995 by Daniel R. Grayson
 
-gcd(RingElement,RingElement) := (f,g) -> (
-     R := ring f;
-     if R =!= ring g then error "expected elements of the same ring";
-     sendgg(ggPush f, ggPush g, ggfactor1);		    -- bug in factory?? see next routine.
-     R.pop())
+-- gcd(RingElement,RingElement) := (f,g) -> (
+--      R := ring f;
+--      if R =!= ring g then error "expected elements of the same ring";
+--      sendgg(ggPush f, ggPush g, ggfactor1);		    -- bug in factory?? see next routine.
+--      R.pop())
 
-gcd(RingElement,RingElement) := (r,s) -> (
+gcd(RingElement,RingElement) := RingElement => (r,s) -> (
      if r == 0 then s
      else if s == 0 then r
      else (
@@ -35,7 +35,7 @@ gcdCoefficients(RingElement,RingElement) := (f,g) -> (
 
 pseudoRemainder = method()
 
-pseudoRemainder(RingElement,RingElement) := (f,g) -> (
+pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
      sendgg(ggPush f, ggPush g, ggfactor2);

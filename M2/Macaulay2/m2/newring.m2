@@ -12,7 +12,7 @@ modifyRing = method(
      Options => applyValues(options monoid, x -> nothing)
      )
 
-modifyRing Ring := options -> (R) -> (
+modifyRing Ring := Ring => options -> (R) -> (
      -- First check the type of ring of R
      -- The following is for the case when R is a polynomial ring,
      -- or a quotient of a polynomial ring
@@ -39,12 +39,12 @@ modifyRing Ring := options -> (R) -> (
 
 -- made a method and documented elsewhere.
 
+tensor(Ring,Ring) := Ring ** Ring := Ring => (R,S) -> error "tensor product not implemented for these rings"
+
 PolynomialRing ** PolynomialRing :=
 QuotientRing ** PolynomialRing :=
 PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
-
-Ring ** Ring := (R,S) -> error "tensor product not implemented for these rings"
 
 tensor(PolynomialRing, PolynomialRing) :=
 tensor(QuotientRing, PolynomialRing) :=
@@ -71,7 +71,7 @@ graphIdeal = method( Options => options monoid )
 
 graphRing = method( Options => options monoid )
 
-graphIdeal RingMap := options -> (f) -> (
+graphIdeal RingMap := Ideal => options -> (f) -> (
      -- return the ideal in the tensor product of the graph of f.
      -- if f is graded, then set the degrees correctly in the tensor ring.
      -- return the ideal (y_i - f_i : all i) in this ring.
@@ -101,7 +101,7 @@ graphIdeal RingMap := options -> (f) -> (
      xvars := (vars RS)_{0..numgens R - 1};
      ideal(yvars - substitute(I, xvars)))
 
-graphRing RingMap := options -> (f) -> if f.?graphRing then f.graphRing else f.graphRing = (
+graphRing RingMap := QuotientRing => options -> (f) -> if f.?graphRing then f.graphRing else f.graphRing = (
      I := graphIdeal(f,options);
      R := ring I;
      R/I)
@@ -115,7 +115,7 @@ symmetricAlgebraIdeal := method( Options => options monoid )
 symmetricAlgebra = method( Options => options monoid )
 
 
-symmetricAlgebraIdeal Module := opts -> (M) -> (
+symmetricAlgebraIdeal Module := Ideal => opts -> (M) -> (
      R := ring M;
      K := coefficientRing ultimate(ambient, R);
      m := presentation M;
@@ -128,6 +128,6 @@ symmetricAlgebraIdeal Module := opts -> (M) -> (
      m = substitute(m,xvars);
      I := yvars*m)
 
-symmetricAlgebra Module := options -> (M) -> (
+symmetricAlgebra Module := QuotientRing => options -> (M) -> (
      I := symmetricAlgebraIdeal(M,options);
      (ring I)/(image I))

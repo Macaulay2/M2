@@ -43,7 +43,7 @@ ring Variety := (X) -> X.ring		  -- documented in "ring"
 Spec = method()
 expression AffineVariety := (X) -> new FunctionApplication from { Spec, X.ring }
 net AffineVariety := (X) -> net expression X
-Spec Ring := (R) -> if R.?Spec then R.Spec else R.Spec = (
+Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
      new AffineVariety from {
      	  quote ring => R
      	  }
@@ -61,7 +61,7 @@ document { Spec,
 Proj = method()
 expression ProjectiveVariety := (X) -> new FunctionApplication from { Proj, X.ring }
 net ProjectiveVariety := (X) -> net expression X
-Proj Ring := (R) -> if R.?Proj then R.Proj else R.Proj = (
+Proj Ring := ProjectiveVariety => (R) -> if R.?Proj then R.Proj else R.Proj = (
      if not isHomogeneous R then error "expected a homgeneous ring";
      new ProjectiveVariety from {
      	  quote ring => R
@@ -112,7 +112,7 @@ document { CoherentSheaf,
 
 expression CoherentSheaf := F -> new FunctionApplication from { sheaf, F.module }
 net CoherentSheaf := (F) -> net expression F
-sheaf = method()
+sheaf = method(TypicalValue => CoherentSheaf)
 document { sheaf,
      TT "sheaf", " -- a function used for creating sheaves on varieties.",
      PARA,
@@ -145,7 +145,7 @@ document { (sheaf, Module, Variety),
      SEEALSO "CoherentSheaf"
      }
 
-Module ~ := sheaf Module := (M) -> sheaf(M,Proj ring M)
+Module ~ := sheaf Module := CoherentSheaf => (M) -> sheaf(M,Proj ring M)
 document { (sheaf, Module),
      TT "sheaf M", " -- produce the coherent sheaf on a projective variety ", TT "X", "
      corresponding to a homegeneous module ", TT "M", ".",
@@ -160,7 +160,7 @@ document { (quote ~, Module),
      SEEALSO "CoherentSheaf"
      }
 
-Ring ~ := sheaf Ring := (R) -> sheaf R^1
+Ring ~ := sheaf Ring := CoherentSheaf => (R) -> sheaf R^1
 document { (sheaf, Ring),
      TT "sheaf R", " -- produce the structure sheaf on the projective variety ", TT "Proj R", ".",
      PARA,
@@ -174,7 +174,7 @@ document { (quote ~, Ring),
      }
 
 variety = method()
-variety CoherentSheaf := (F) -> F.variety
+variety CoherentSheaf := Variety => (F) -> F.variety
 document { (variety, CoherentSheaf),
      TT "variety F", " -- produce the variety over which a coherent sheaf is defined.",
      PARA,
@@ -202,7 +202,7 @@ document { (ring, CoherentSheaf),
      SEEALSO "CoherentSheaf"
      }
 
-module CoherentSheaf := (F) -> F.module
+module CoherentSheaf := Module => (F) -> F.module
 document { (module, CoherentSheaf),
      TT "module F", " -- produce the module from which the coherent sheaf ", TT "F", " was defined.",
      PARA,
@@ -215,21 +215,21 @@ document { (module, CoherentSheaf),
      SEEALSO "CoherentSheaf"
      }
 
-CoherentSheaf ++ CoherentSheaf := (F,G) -> sheaf(F.module ++ G.module)
+CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.module ++ G.module)
 document { (quote ++, CoherentSheaf, CoherentSheaf),
      TT "F ++ G", " -- direct sum of coherent sheaves.",
      PARA,
      SEEALSO "CoherentSheaf"
      }
 
-CoherentSheaf ** CoherentSheaf := (F,G) -> sheaf(F.module ** G.module)
+CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.module ** G.module)
 document { (quote **, CoherentSheaf, CoherentSheaf),
      TT "F ** G", " -- tensor product of coherent sheaves.",
      PARA,
      SEEALSO "CoherentSheaf"
      }
 
-CoherentSheaf ZZ := (F,n) -> sheaf(F.module ** (ring F)^{n})
+CoherentSheaf ZZ := CoherentSheaf => (F,n) -> sheaf(F.module ** (ring F)^{n})
 document { (quote " ", CoherentSheaf, ZZ),
      TT "F(n)", " -- twist a coherent sheaf F on a projective variety by
      the n-th power of the hyperplane line bundle.",
@@ -244,14 +244,14 @@ document { (quote " ", CoherentSheaf, ZZ),
      SEEALSO "CoherentSheaf"
      }
 
-CoherentSheaf / CoherentSheaf := (F,G) -> sheaf(F.module / G.module)
+CoherentSheaf / CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.module / G.module)
 document { (quote /, CoherentSheaf, CoherentSheaf),
      TT "F / G", " -- quotient of coherent sheaves.",
      PARA,
      SEEALSO "CoherentSheaf"
      }
 
-annihilator CoherentSheaf := (F) -> annihilator F.module
+annihilator CoherentSheaf := Ideal => (F) -> annihilator F.module
 
 codim CoherentSheaf := (F) -> codim F.module
 document { (codim, CoherentSheaf),
@@ -267,7 +267,7 @@ document { (rank, CoherentSheaf),
      SEEALSO "CoherentSheaf"
      }
 
-exteriorPower(ZZ,CoherentSheaf) := (i,F) -> sheaf(exteriorPower(i,F.module))
+exteriorPower(ZZ,CoherentSheaf) := CoherentSheaf => (i,F) -> sheaf(exteriorPower(i,F.module))
 document { (exteriorPower, ZZ, CoherentSheaf),
      TT "exteriorPower(i,F)", " -- calculate the ", TT "i", "-th exterior power of a coherent sheaf
      ", TT "F", ".",
@@ -290,7 +290,7 @@ degreeList := (M) -> (
      H = H // (1-T)^(numgens ring M);
      exponents H / first)
 
-cohomology(ZZ,CoherentSheaf) := opts -> (i,G) -> (
+cohomology(ZZ,CoherentSheaf) :=  Module => opts -> (i,G) -> (
      M := module G;
      if i =!= 0 
      then HH^(i+1)(M,opts)
@@ -356,7 +356,7 @@ document { OO,
 --     }
 
 cotangentSheaf = method()
-cotangentSheaf ProjectiveVariety := (X) -> (
+cotangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> (
      if X.?cotangentSheaf
      then X.cotangentSheaf
      else X.cotangentSheaf = (
@@ -381,7 +381,7 @@ document { cotangentSheaf,
      SEEALSO "CoherentSheaf"
      }
 
-cotangentSheaf(ZZ,ProjectiveVariety) := (i,X) -> (
+cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => (i,X) -> (
      if X#?(cotangentSheaf,i)
      then X#(cotangentSheaf,i) 
      else X#(cotangentSheaf,i) = exteriorPower(i,cotangentSheaf X))
@@ -402,6 +402,6 @@ TEST ///
 
 dim AffineVariety := X -> dim ring X
 dim ProjectiveVariety := X -> dim ring X - 1
-AffineVariety * AffineVariety := (X,Y) -> Spec(ring X ** ring Y)
-AffineVariety ** Ring := (X,R) -> Spec(ring X ** R)
-ProjectiveVariety ** Ring := (X,R) -> Proj(ring X ** R)
+AffineVariety * AffineVariety := AffineVariety => (X,Y) -> Spec(ring X ** ring Y)
+AffineVariety ** Ring := AffineVariety => (X,R) -> Spec(ring X ** R)
+ProjectiveVariety ** Ring := ProjectiveVariety => (X,R) -> Proj(ring X ** R)

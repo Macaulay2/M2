@@ -33,7 +33,7 @@ vars Ring := Matrix => R -> (
 
 numgens Ring := R -> #generators R
 
-ring Thing := Ring => x -> (
+ring Thing := x -> (
      if x.?ring then x.ring 
      else if instance(class x,Ring) then class x
      else error "no ring")
