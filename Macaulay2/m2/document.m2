@@ -840,11 +840,16 @@ documentation String := key -> (
 	  if b === null then b = ();
 	  Hypertext fixuptop (title key, b, theExamples key, caveat key, programmingHint key, seealso key, theMenu key)))
 
-binary := set binaryOperators; erase symbol binaryOperators
-prefix := set prefixOperators; erase symbol prefixOperators
-postfix := set postfixOperators; erase symbol postfixOperators
-other := set otherOperators; erase symbol otherOperators
-operatorSet = binary + prefix + postfix + other
+binary := set binaryOperators
+prefix := set prefixOperators
+postfix := set postfixOperators
+other := set otherOperators
+operatorSet = set join(binaryOperators, prefixOperators, postfixOperators, otherOperators)
+erase symbol binaryOperators
+erase symbol prefixOperators
+erase symbol postfixOperators
+erase symbol otherOperators
+
 op := s -> if operatorSet#?s then (
      ss := toString s;
      fixup SEQ {

@@ -55,42 +55,20 @@ commonProcessing := x -> (
      x
      )
 
-trunc := s -> (
-     maxWid := max(25,printWidth - 25);
-     maxHt := 8;
-     narrowed := false;
-     if width s > maxWid then (
-	  s = stack ( apply( unstack s, l -> substring(l,0,maxWid)));
-	  s = s | (stack ( height s + depth s : "|" ))^(height s - 1);
-     	  narrowed = true;
-	  );
-     if height s + depth s  > maxHt then (
-	  s = stack take(unstack s,maxHt);
-	  if narrowed
-	  then s = s || concatenate(width s - 1 : "-", "+")
-	  else s = s || concatenate(width s : "-");
-	  );
-     s)
 simpleToString := toString
-symbol debugError <- identity
-timelimit := f -> (alarm 3; r := f(); alarm 0; r)
+
+timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
+
+printingTimeLimit = 20
+errorPrintingTimeLimit := 3
+symbol debugError <- identity				    -- use '<-' to bypass global assignment method
 robustNet := y -> (
-     try timelimit (() -> net y) else (
+     try timelimit(printingTimeLimit, () -> net y) else (
 	  global debugError <- x -> net y;
 	  stderr << "--error in conversion of output to net: type 'debugError()' to see it; will try conversion to string" << endl << endl ;
-	  try timelimit (() -> toString y) else (
+	  try timelimit(errorPrintingTimeLimit, () -> toString y) else (
 	       stderr << "--error in conversion of output to string" << endl << endl;
 	       simpleToString y)))
-silentRobustNet2 := y -> trunc try timelimit (() -> net y) else try timelimit (() -> toString y) else simpleToString y
-silentRobustNet := y -> trunc silentRobustNet2 y | " (of class " | trunc silentRobustNet2 class y | ")"
-hush := false
-Thing Thing := (x,y) -> (
-     if hush then error "no method for adjacent object";
-     hush = true;
-     msg := toString stack ("no method for adjacent objects:", "            "|silentRobustNet x,"       and  "|silentRobustNet y);
-     hush = false;
-     error msg)
-
 Thing.Print = x -> (
      x = commonProcessing x;
      y := applyMethod(BeforePrint,x);
@@ -101,6 +79,69 @@ Thing.Print = x -> (
 	  );
      applyMethod(AfterPrint,x);
      )
+
+trunc := (wid,ht,s) -> (
+     if wid > 0 and width s > wid then (
+	  s = stack apply( unstack s, l -> if width l > wid then substring(l,0,wid-1) else l);
+	  s = s | (stack ( height s + depth s : "$" ))^(height s - 1));
+     if ht > 0 and height s + depth s  > ht then (
+	  s = stack take(unstack s,ht-1);
+	  s = s || concatenate(width s : "$"));
+     s)
+checkNet := n -> if class n === Net or class n === String then n else error "didn't format correctly"
+checkString := n -> if class n === String then n else error "didn't format correctly"
+silentRobustNet2 := (wid,ht,sec,y) -> (
+     trunc(wid,ht,
+	  try timelimit (sec, () -> checkNet net y)
+	  else 
+	  try timelimit (sec, () -> checkString toString y)
+	  else
+	  simpleToString y))
+silentRobustNet := (wid,ht,sec,y) -> (			    -- we know wid is at least 80
+     part2 := horizontalJoin(" (of class ", silentRobustNet2(wid//2,           ht,sec,class y), ")");
+     part1 :=                               silentRobustNet2(wid - width part2,ht,sec,      y);
+     horizontalJoin(part1, part2));
+
+operatorNames := new HashTable from join(
+     { symbol " " => "adjacent objects" },
+     apply(binaryOperators, op -> op => concatenate("binary operator ", op)),
+     apply(prefixOperators, op -> op => concatenate("prefix unary operator ", op)),
+     apply(postfixOperators, op -> op => concatenate("postfix unary operator ", op)),
+     apply(otherOperators, op -> op => concatenate("operator ", op)))
+opName := op -> if operatorNames#?op then operatorNames#op else concatenate("operator ",op)
+
+hush := false
+scan(binaryOperators, op -> 
+     if not Thing#?(op,Thing,Thing) then installMethod(op, Thing, Thing, 
+	  (x,y) -> (
+	       line1 := concatenate("no method for ",
+		    if op === symbol " " then "adjacent objects" else concatenate("binary operator ",op)
+		    );
+	       if hush then error line1;
+	       ht := 8;
+	       wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
+	       preX := "            ";
+	       preY := "       and  ";
+	       wid = wid - width preX;
+	       hush = true;					    -- prevent error message recursion
+	       line2 := preX | silentRobustNet(wid,ht,errorPrintingTimeLimit,x);
+	       line3 := preY | silentRobustNet(wid,ht,errorPrintingTimeLimit,y);
+	       hush = false;
+	       error toString stack(line1,line2,line3))))
+scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) -> (
+	  scan(ops, op -> 
+	       if not Thing#?op then installMethod(op, Thing,
+	  	    (x) -> (
+			 line1 := concatenate("no method for ", concatenate(type," operator ",op));
+			 if hush then error line1;
+			 ht := 8;
+			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
+			 preX := "            ";
+			 wid = wid - width preX;
+			 hush = true;					    -- prevent error message recursion
+			 line2 := preX | silentRobustNet(wid,ht,errorPrintingTimeLimit,x);
+			 hush = false;
+			 error toString stack(line1,line2))))))
 
 Thing.NoPrint = x -> (
      x = commonProcessing x;
