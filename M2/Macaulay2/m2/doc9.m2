@@ -347,7 +347,7 @@ document { (standardPairs, MonomialIdeal),
      "Implemented by Greg Smith."
      }
 
-document { (monomialSubideal, MonomialIdeal),
+document { (monomialSubideal, Ideal),
      Headline => {"find the largest monomial ideal in an ideal"},
      Usage => {
 	  TT "monomialSubideal I", " -- finds the largest 
