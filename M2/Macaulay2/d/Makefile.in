@@ -104,7 +104,7 @@ endif
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
 
-CPPFLAGS := -I../../include -I.
+CPPFLAGS := -I../../include -I. -I$(prefix)/include
 # the purpose of the -I. is so scclib.c can find ./alloca.h if it's missing
 # from the gcc installation, as it often is
 
@@ -389,7 +389,7 @@ LIBRARYOPTIONS += -lgmp
 LIBRARYOPTIONS += -lgc
 endif
 
-ftmpl_inst.o: /usr/include/templates/ftmpl_inst.cc
+ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $(OUTPUT_OPTION) $<
 
 LDLIBS := $(LIBRARYOPTIONS) $(LDLIBS)
