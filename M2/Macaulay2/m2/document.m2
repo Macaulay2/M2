@@ -25,12 +25,15 @@ docExtension := () -> (
      else if phase == 4 then ".tmp"	  -- writing, to be renamed .doc
      else ".doc"			  -- reading
      )
+
 docFilename := () -> (
+	 if version#"operating system" === "MACOS" then ":cache:Macaulay2.doc"
+	 else (
      v := lines(commandLine#0,pathSeparator);
      v = apply(#v-2, i -> v#i);		  -- drop isn't defined yet
      concatenate(between(pathSeparator,v),
 		pathSeparator, "cache",
-		pathSeparator, "Macaulay2", docExtension()))
+		pathSeparator, "Macaulay2", docExtension())))
 
 if phase === 1 then addStartFunction( 
      () -> DocDatabase = (

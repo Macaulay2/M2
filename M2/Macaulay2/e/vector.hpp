@@ -40,7 +40,6 @@ class Vector
   POINTER(Vector, Vector_rec)
 public:
   Vector(const FreeModule *F);
-  Vector(const FreeModule *F, int n);
   Vector(const FreeModule *F, const RingElement r, int n);
   Vector(const FreeModule *F, const vec v);
 
@@ -96,12 +95,6 @@ inline Vector Vector_rec :: cast_to_Vector()
 inline Vector::Vector(const FreeModule *F) : 
   obj(new Vector_rec(F, NULL))
 {  
-}
-
-inline Vector::Vector(const FreeModule *F, int n) : 
-  obj(new Vector_rec(F, 
-		      F->term(n, F->Ring_of()->from_int(1))))
-{
 }
 
 inline Vector::Vector(const FreeModule *F, const RingElement r, int n) : 

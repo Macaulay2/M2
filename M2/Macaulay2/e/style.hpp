@@ -34,6 +34,7 @@ template <class T>
 inline const T &max(const T &a, const T &b)
 { return (a>b ? a : b); }
 
+//#if !(defined(__MWERKS__))
 template <class T> 
 inline void swap(T &t1, T &t2)
 {
@@ -41,6 +42,7 @@ inline void swap(T &t1, T &t2)
   t1 = t2;
   t2 = tmp;
 }
+//#endif
 
 const int LT = -1;
 const int EQ = 0;

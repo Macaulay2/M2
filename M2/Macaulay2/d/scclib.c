@@ -2,11 +2,7 @@
 
 #include "types.h"
 
-#ifdef __MWERKS__
-#include ".._c_compat.c"
-#else
 #include "../c/compat.c"
-#endif
 
 char newline[] = NEWLINE;
 

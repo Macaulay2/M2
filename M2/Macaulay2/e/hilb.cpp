@@ -268,15 +268,15 @@ void hilb_comp::reset()
     {
       current = new hilb_step;
       current->up = current->down = NULL;
-      current->h0 = NULL;
-      current->h1 = NULL;
+      current->h0 = R->from_int(0);
+      current->h1 = R->from_int(0);
     }
   else
     while (current->up != NULL) current = current->up;
 
   R->remove(current->h0);	// This line should not be needed...
   R->remove(current->h1);
-  current->h0 = NULL;		// This top level h0 is not used
+  current->h0 = R->from_int(0);		// This top level h0 is not used
   current->h1 = R->from_int(1);
 }
 hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix &m)
@@ -285,7 +285,6 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix &m)
   M(S->Nmonoms()),
   D(S->degree_monoid()),
   input_mat(m),
-  result_poincare(NULL),
   this_comp(0),
   current(NULL),
   part_table(S->n_vars())
@@ -298,6 +297,7 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix &m)
   bump_up(S);
   bump_up(R);
 
+  result_poincare = R->from_int(0);
   nsteps = 0;
   maxdepth = 0;
   nideal = 0;
@@ -400,8 +400,8 @@ int hilb_comp::step()
       // computed, so add the values, and place one step up
       R->add_to(current->h0, current->h1);
       ring_elem f = current->h0;
-      current->h0 = NULL;
-      current->h1 = NULL;
+      current->h0 = R->from_int(0);
+      current->h1 = R->from_int(0);
       current->monids.shrink(0);
       if (current->up == NULL) 
 	{
@@ -440,7 +440,7 @@ void hilb_comp::recurse(MonomialIdeal &I, const int *pivot_vp)
       current->down->down = NULL;
     }
   current = current->down;
-  current->h0 = NULL;
+  current->h0 = R->from_int(0);
   M->degree_of_varpower(pivot_vp, LOCAL_deg1);
   current->h1 = R->term(one, LOCAL_deg1); // t^(deg vp)
   MonomialIdeal quot(S), sum(S);

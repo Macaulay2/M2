@@ -191,7 +191,7 @@ Nterm *PolynomialRing::new_term() const
 {
   Nterm *result = (Nterm *)((PolynomialRing *) this)->pstash->new_elem();
   result->next = NULL;
-  result->coeff = NULL;
+  result->coeff = 0;  // This value is never used, one hopes...
   return result;
 }
 
@@ -256,7 +256,7 @@ void PolynomialRing::make_Rideal(const array<ring_elem> &polys)
 ring_elem PolynomialRing::from_int(int n) const
 {
   ring_elem a = K->from_int(n);
-  if (K->is_zero(a)) return NULL;
+  if (K->is_zero(a)) return (Nterm *)NULL;
   Nterm *result = new_term();
   result->coeff = a;
   M->one(result->monom);
@@ -269,7 +269,7 @@ ring_elem PolynomialRing::from_int(mpz_t n) const
   if (K->is_zero(a)) 
     {
       K->remove(a);
-      return NULL;
+      return (Nterm *)NULL;
     }
   Nterm *result = new_term();
   result->coeff = a;
@@ -532,7 +532,7 @@ void PolynomialRing::add_to(ring_elem &ff, ring_elem &gg) const
 {
   Nterm *f = ff;
   Nterm *g = gg;
-  gg = NULL;
+  gg = (Nterm *)NULL;
   if (g == NULL) return;
   if (f == NULL) { ff = g; return; }
   Nterm head;
@@ -896,7 +896,7 @@ ring_elem PolynomialRing::power(const ring_elem f0, int n) const
   ring_elem coef1, coef2, coef3;
 
   Nterm *lead = ff;
-  if (lead == NULL) return NULL;
+  if (lead == NULL) return (Nterm *)NULL;
   if (base_ring != NULL)
       return power2(ff,n);
 
@@ -1138,7 +1138,7 @@ ring_elem PolynomialRing::gcd_extended(const ring_elem f, const ring_elem g,
       v = from_int(0);
       return result;
     }
-  ring_elem v1 = NULL;
+  ring_elem v1 = (Nterm *)NULL;
   ring_elem v3 = copy(g);
   ring_elem t1, t3;
   ring_elem temp1, temp2, temp3;
@@ -1439,7 +1439,7 @@ void PolynomialRing::normal_form(Nterm *&f) const
 
 ring_elem PolynomialRing::term(const ring_elem a, const int *m) const
 {
-  if (K->is_zero(a)) return NULL;
+  if (K->is_zero(a)) return (Nterm *)NULL;
   Nterm *t = new_term();
   t->coeff = K->copy(a);
   M->copy(m, t->monom);
