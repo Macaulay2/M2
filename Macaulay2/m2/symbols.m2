@@ -24,8 +24,4 @@ clearOutput = new Command from (() -> (
 		    s <- clearedSymbol;
 	       	    erase s))))
 
-clearAll = new Command from (() -> (
-     	  clearOutput();
-     	  scan(userSymbols(), i -> (
-		    i <- clearedSymbol;
-		    erase i))))
+clearAll = new Command from (() -> ( clearOutput(); scan(userSymbols(), i -> i <- i)))
