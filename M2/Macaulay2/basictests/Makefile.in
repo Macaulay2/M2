@@ -9,6 +9,8 @@ INSTALL_DATA = $(INSTALL)
 
 TESTRESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2))
 
+.PHONY : all clean distclean wc install tests default
+
 all:: $(TESTRESULTS)
 
 $(TESTRESULTS) : ../libexec/Macaulay2

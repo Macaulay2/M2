@@ -1,4 +1,12 @@
+# eliminate the CTRL-A characters separating output lines
 s///
+
+# wipe out execution timing results
 s/-- used [0-9.][0-9.]* seconds/-- used XXX seconds/g
 s/-- [0-9.][0-9.]* seconds/-- XXX seconds/g
-s=\(-- .*:\)[1-9][0-9]*-[1-9][0-9]*=\1xxx-xxx=
+
+# Wipe out source code line numbers, which may change
+# Also wipe out the initial part of the path to the file involving ../../../Macaulay2/
+#   because some files are found using the VPATH mechanism in the srcdir.
+s=-- \(\(\.\./\)*Macaulay2/\)\(.*:\)[1-9][0-9]*-[1-9][0-9]*=-- \3xxx-xxx=
+s=-- \(\.\./\)*\(.*:\)[1-9][0-9]*-[1-9][0-9]*=-- \2xxx-xxx=

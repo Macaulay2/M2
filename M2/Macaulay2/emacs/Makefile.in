@@ -8,6 +8,8 @@ INSTALL_DATA = $(INSTALL)
 ELFILES = M2-mode.el M2.el
 ALLFILES = makesyms.m2 Makefile $(ELFILES) emacs-hlp.txt emacs.m2
 
+.PHONY : all clean distclean wc install tests default
+
 all:: M2-symbols.el M2-symbols
 
 M2-symbols M2-symbols.el : ../cache/Macaulay2-doc makesyms.m2

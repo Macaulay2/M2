@@ -24,6 +24,8 @@ TMPIN := aaa
 	[ -s $*.out ]
 	rm $(TMPIN)
 
+.PHONY : all clean distclean wc install tests default
+
 all:: final/cache/doc
 final/cache/doc :; mkdir -p $@
 

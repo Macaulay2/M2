@@ -41,4 +41,6 @@ endif
 INFILES  := $(wildcard *.example)
 OUTFILES := $(INFILES:.example=.out)
 
+.PHONY : all
+
 all:: $(OUTFILES)

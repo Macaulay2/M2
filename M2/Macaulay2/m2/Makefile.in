@@ -16,7 +16,9 @@ emacs html: all; $(MAKE) -C ../$@
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install phase1 tests html
+.PHONY: clean all install phase1 tests html clean distclean wc tests \
+		default initialize phase2 phase3 phase4
+
 # CFLAGS =
 # LDFLAGS = -s
 # LOADLIBES =
@@ -203,7 +205,7 @@ endif
 
 tests:: test2
 test2: $(SCRIPTS) phase1 ../libexec/Macaulay2
-	$(MAKE) -k -C cache/tests -f ../../Makefile.tests
+	$(MAKE) -k -C cache/tests -f ../../@srcdir@/Makefile.tests
 	touch $@
 clean::; rm -f test2
 

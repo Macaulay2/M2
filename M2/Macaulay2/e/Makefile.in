@@ -250,6 +250,8 @@ OTHERS := Makefile \
 
 ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) $(ESTUFF)
 
+.PHONY : all clean distclean wc install tar tests
+
 ###################################################################
 ## Targets ##
 #############
