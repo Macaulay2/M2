@@ -16,8 +16,10 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+error messages for missing methods much improved and more bullet proof
+
 indexed variables are now done a much better way.  In particular,
-after doing something like ZZ[t_5 .. t_10] the symbol t is itself
+after doing something like bZZ[t_5 .. t_10] the symbol t is itself
 completely unaffected.  If you then do ZZ[t], the ring element t_5 will
 still be available as (symbol t)_5.
 

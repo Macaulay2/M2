@@ -73,7 +73,7 @@ document {						    -- rewrite this!
 	  },
      Results => {
 	  },
-     EXAMPLE { },
+     Examples => EXAMPLE { },
      Caveat => { },
      SeeAlso => { }
      }///

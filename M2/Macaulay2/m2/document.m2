@@ -114,10 +114,12 @@ fSeqInitialize := (toString,toStr) -> new HashTable from {
      (2,homology       ) => s -> ("HH ", toStr s#1),
      (2,cohomology     ) => s -> ("HH ", toStr s#1),
      (2,NewMethod      ) => s -> ("new ", toString s#1),
+     (3,class,Symbol   ) => s -> (toStr s#1, " ", toString s#0, " ", toStr s#2),-- infix operator
+     (3,class,Sequence ) => s -> (toStr s#1, " ", toString s#0#0, " ", toStr s#2, " ", toString s#0#1, " ... "),-- infix assignment operator (really a ternary operator!)
+     (2,class,Symbol   ) => s -> (toString s#0, " ", toStr s#1),-- prefix operator
+     (2,class,Sequence ) => s -> (toString s#0#0, " ", toStr s#1, " ", toString s#0#1, " ... "),-- prefix assignment operator (need to handle the postfix assignment operators still!)
      (2,symbol ~       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
      (2,symbol !       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
-     (3,class,Symbol   ) => s -> (toStr s#1, " ", toString s#0, " ", toStr s#2),-- infix operator
-     (2,class,Symbol   ) => s -> (toString s#0, " ", toStr s#1),-- prefix operator
      (2,class,ScriptedFunctor,ZZ) => s -> (
 	  hh := s#0;
 	  if hh.?subscript and hh.?superscript then toString s
@@ -132,6 +134,7 @@ fSeqInitialize := (toString,toStr) -> new HashTable from {
 	  if s#0 .? subscript
 	  then (toString s#0, "_", toStr s#1, "(", toStr s#2, ",", toStr s#3, ")")
 	  else (toString s#0, "^", toStr s#1, "(", toStr s#2, ",", toStr s#3, ")")),
+     5 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toStr s#3, ",", toStr s#4, ")"),
      4 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toStr s#3, ")"),
      3 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ")"),
      2 => s -> (toString s#0, " ", toStr s#1),
@@ -158,13 +161,13 @@ formatDocumentTagTO := method(SingleArgumentDispatch => true)
 formatDocumentTagTO Thing := x -> TT formatDocumentTag x
 formatDocumentTagTO Sequence := (
      s -> SEQ toList (
-	  if #s == 0                                              then toString
+	  if #s == 0                                              then (s -> error("unknown document tag: ", toString s))
 	  else if             fSeqTO#?(#s,s#0)                    then fSeqTO#(#s,s#0)
 	  else if #s >= 1 and fSeqTO#?(#s,s#0,s#1)                then fSeqTO#(#s,s#0,s#1)
 	  else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) then fSeqTO#(#s, class, class s#0, s#1)
 	  else if             fSeqTO#?(#s, class, class s#0)      then fSeqTO#(#s, class, class s#0)
 	  else if             fSeqTO#?#s                          then fSeqTO#(#s)
-	                                                          else toString) s)
+	                                                          else (s -> error("unknown document tag: ", toString s))) s)
 
 -----------------------------------------------------------------------------
 -- verifying the tags

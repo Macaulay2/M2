@@ -14,12 +14,12 @@ t := c -> (
      if #n > 200 then n = substring(n,0,200) | "...";
      n)
 
-noMethod := args -> (
+noMethod := (meth,args) -> (
      if class args === Sequence 
      then if 0 < #args and #args <= 3 
-     then error("no method found for ", t args, ", items of classes ",t apply(args, class))
-     else error("no method found for ", t args, ", item of class Sequence and length ",t(#args))
-     else error("no method found for ", t args, ", item of class ", t class args)
+     then error("no method found for applying ", t meth, " to ", t args, ", items of classes ",t apply(args, class))
+     else error("no method found for applying ", t meth, " to ", t args, ", item of class Sequence and length ",t(#args))
+     else error("no method found for applying ", t meth, " to ", t args, ", item of class ", t class args)
      )
 
 methodDefaults := new OptionTable from {
@@ -33,11 +33,11 @@ methodFunctionOptions = new MutableHashTable
 methodOptions = new MutableHashTable
 
 AssociativeNoOptions := () -> (
-     methodFunction := newmethod1 noMethod;
+     methodFunction := newmethod1 (args -> noMethod(methodFunction,args));
      binaryLookup := (x,y) -> (
 	  -- Common code for every associative method without options
 	  f := lookup(methodFunction,class x,class y);
-	  if f === null then noMethod(x,y) else f(x,y)
+	  if f === null then noMethod(methodFunction,(x,y)) else f(x,y)
 	  );
      methodFunction(Sequence) := self := 
      args -> (
@@ -47,7 +47,7 @@ AssociativeNoOptions := () -> (
 	  else if #args === 1 then args#0
 	  else if #args === 0 then (
 	       f := lookup singleton methodFunction;
-	       if f === null then noMethod args else f args
+	       if f === null then noMethod(methodFunction,args) else f args
 	       )
 	  else error "wrong number of arguments"
 	  );
@@ -65,7 +65,7 @@ SingleArgWithOptions := opts -> (
          arg -> (
 	  -- Common code for every method with options, single argument
 	  f := lookup(methodFunction, class arg);
-	  if f === null then noMethod arg else (f options) arg
+	  if f === null then noMethod(methodFunction,arg) else (f options) arg
 	  );
      methodOptions#methodFunction = opts;
      methodFunction)
@@ -84,7 +84,7 @@ MultipleArgsWithOptions := opts -> (
 	  -- Common code for methods with options, multiple arguments.
 	  -- Dispatches on type of argument.
 	  f := lookup(methodFunction, class arg);
-	  if f === null then noMethod arg else (f options) arg
+	  if f === null then noMethod(methodFunction,arg) else (f options) arg
 	  );
      methodOptions#methodFunction = opts;
      methodFunction(Sequence) := 
@@ -93,13 +93,13 @@ MultipleArgsWithOptions := opts -> (
 	  -- Common code for every method with options, multiple arguments
 	  -- Dispatches on type of arguments ('args' is a sequence).
 	  f := lookup prepend(methodFunction,apply(args,class));
-	  if f === null then noMethod args else (f options) args
+	  if f === null then noMethod(methodFunction,args) else (f options) args
 	  );
      methodFunction)
 
 MultipleArgsNoOptions := () -> (
-     methodFunction := newmethod123c(,noMethod, {});
-     methodFunction Sequence := newmethod123c( methodFunction, noMethod, {} );
+     methodFunction := newmethod123c(,args -> noMethod(methodFunction,args), {});
+     methodFunction Sequence := newmethod123c( methodFunction, args -> noMethod(methodFunction,args), {} );
      methodFunction)     
 
 method = methodDefaults >>> options -> args -> (
@@ -107,7 +107,7 @@ method = methodDefaults >>> options -> args -> (
      methodFunction := (
 	  if options.Options === null then (
        	       if options.Associative then AssociativeNoOptions()
-       	       else if options.SingleArgumentDispatch then newmethod1 noMethod
+       	       else if options.SingleArgumentDispatch then newmethod1 (args -> noMethod(methodFunction,args))
        	       else MultipleArgsNoOptions())
 	  else (
        	       if options.Associative then AssociativeWithOptions options.Options
@@ -342,7 +342,7 @@ length VisibleList := s -> #s
 
 match(String,String) := X -> 0 < length matches X
 
--- installationg of assignment methods
+-- installation of assignment methods
 installAssignmentMethod = method()
 installAssignmentMethod(Symbol,HashTable,HashTable,Option) := 
 installAssignmentMethod(Symbol,HashTable,HashTable,Function) := (op,X,Y,f) -> installMethod((op,symbol =),X,Y,f)

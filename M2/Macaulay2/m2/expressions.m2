@@ -741,7 +741,7 @@ net SparseMonomialVectorExpression := v -> (
 	  )
      )
 
-center := (s,wid) -> (
+centerString := (wid,s) -> (
      n := width s;
      if n === wid then s
      else (
@@ -752,7 +752,7 @@ net Table := x -> (
      x = applyTable(toList x, net);
      w := apply(transpose x, col -> 2 + max apply(col, i -> width i));
      stack between("",
-	  apply(x, row -> horizontalJoin apply(#row, j -> center(row#j,w#j)))))
+	  apply(x, row -> horizontalJoin apply(#row, j -> center(w#j,row#j)))))
 
 net MatrixExpression := x -> (
      if # x === 0 or # (x#0) === 0 then "|  |"

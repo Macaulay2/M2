@@ -9,7 +9,7 @@ document {
      PARA,
      "The default method for printing such timing results is to display the
      timing separately in a comment below the computed value.",
-     EXAMPLE {
+     Examples => EXAMPLE {
 	  "timing 3^30",
       	  "peek oo",
 	  },
@@ -21,8 +21,7 @@ document {
      Headline => "time a computation",
      TT "time e", " -- evaluates ", TT "e", ", prints the amount of cpu time
      used, and returns the value of ", TT "e", ".",
-     PARA,
-     EXAMPLE "time 3^30",
+     Examples => EXAMPLE "time 3^30",
      SeeAlso => "timing"
      }
 
@@ -51,8 +50,7 @@ document {
      PARA,
      "Various routines that prepare data for printing convert ", TO "null", "
      to an empty string.",
-     PARA,
-     EXAMPLE {
+     Examples => EXAMPLE {
 	  "x = {2,3,,4}",
 	  "net x",
       	  "toString x#2",
@@ -106,7 +104,7 @@ document {
      PARA,
      "The variable ", TT "i", " is a new local variable whose scope includes 
      only the expressions ", TT "c", ", ", TT "x", ", and ", TT "y", ".",
-     EXAMPLE {
+     Examples => EXAMPLE {
 	  "for i from 3 to 6 do print i",
 	  "for i when i^2 < 90 list i",
 	  },
@@ -156,7 +154,7 @@ document {
      TT "return;", " -- returns ", TO "null", " as the value of the function currently
      being evaluated.",
      PARA,
-     EXAMPLE {
+     Examples => EXAMPLE {
 	  "f = x -> (
      if x == 3 then return;
      if x > 3 then return x^2;
@@ -206,9 +204,8 @@ document {
      returns ", TO "null", ".",
      PARA,
      "The behavior of interrupts (other than alarms) is unaffected.",
-     EXAMPLE "apply(-3..3,i->try 1/i else infinity)",
-     PARA,
-     "We will change the behavior of this function soon so that it will be
+     Examples => EXAMPLE "apply(-3..3,i->try 1/i else infinity)",
+     Caveat => "We will change the behavior of this function soon so that it will be
      possible to catch errors of a particular type.  Meanwhile, users are
      recommended to use this function sparingly, if at all."
      }
@@ -372,7 +369,7 @@ document {
      Usage => "i >> j",
      Inputs => { "i" => null, "j" => null },
      Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation rightward ", TT "j", " places" }},
-     EXAMPLE "256 >> 5",
+     Examples => EXAMPLE "256 >> 5",
      SeeAlso => {(symbol <<,ZZ, ZZ)}
      }
 document {
@@ -381,7 +378,7 @@ document {
      Usage => "i << j",
      Inputs => { "i" => null, "j" => null },
      Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation leftward ", TT "j", " places" }},
-     EXAMPLE "256 << 5",
+     Examples => EXAMPLE "256 << 5",
      SeeAlso => {(symbol >>,ZZ, ZZ)}
      }
 
@@ -395,8 +392,7 @@ document {
      Parsing associates leftward, so that several expressions may be displayed 
      with something like ", TT "\"name\"<<x<<y<<z", ".  It will often be convenient 
      to let the last output operation close the file, as illustrated below.",
-     PARA,
-     EXAMPLE {
+     Examples => EXAMPLE {
 	  "\"foo\" << 2^30 << endl << close",
       	  "get \"foo\"",
 	  "unlink \"foo\""
@@ -407,8 +403,7 @@ document {
      Key => (symbol <<, Thing),
      Headline => "print to a file",
      TT "<< x", " -- prints the expression x on the standard output file ", TO "stdio", ".",
-     PARA,
-     EXAMPLE "<< \"abcdefghij\" << endl",
+     Examples => EXAMPLE "<< \"abcdefghij\" << endl",
      SeeAlso => {"<<"}
      }
 
@@ -429,8 +424,7 @@ document {
      "Warning: such sequences do not get automatically spliced into lists
      containing them.",
      PARA,
-     EXAMPLE "{5:a,10:b}",
-     EXAMPLE "splice {5:a,10:b}"
+     Examples => EXAMPLE { "{5:a,10:b}", "splice {5:a,10:b}" }
      }
 
 document {
@@ -504,11 +498,7 @@ document {
 	  "3 ? 4",
       	  "\"book\" ? \"boolean\"",
       	  "3 ? 3.",
-	  },
-     "It would be nice to implement an operator like this one for everything
-     in such a way that the set of all things in the language would be
-     totally ordered, so that it could be used in the implementation of
-     efficient hash tables, but we haven't done this."  
+	  }
      }
 
 document {
@@ -518,7 +508,7 @@ document {
      expressions.  The value of the sequence is the value of its
      last expression, unless it is omitted, in which case the value
      is ", TO "null", ".",
-     EXAMPLE {
+     Examples => EXAMPLE {
 	  "(3;4;5)",
       	  "(3;4;5;)"
 	  }
@@ -724,7 +714,7 @@ document {
      Usage => "value s",
      Inputs => { "s" => null },
      Outputs => { {"the value of ", TT "s" } },
-     EXAMPLE {
+     Examples => EXAMPLE {
 	  "x = s",
 	  "s = 11111111111",
       	  "x",
@@ -741,14 +731,16 @@ document {
      "The contents of ", TT "s", " are treated as code in the
      Macaulay 2 language, parsed it in its own scope (the same way a file is)
      and evaluated.  The string may contain multiple lines.",
-     EXAMPLE {
-	  ///value "2 + 2"///,
-      	  ///value "a := 33
+     Examples => {
+	  EXAMPLE {
+	       ///value "2 + 2"///,
+      	       ///value "a := 33
 a+a"///,
-     	  ///a///
-	  },
-     "Since the local assignment to ", TT "a", " above occurred in a new scope,
-     the value of the global variable ", TT "a", " is unaffected."
+     	       ///a///
+	       },
+     	  "Since the local assignment to ", TT "a", " above occurred in a new scope,
+     	  the value of the global variable ", TT "a", " is unaffected."
+	  }
      }
 
 document (
@@ -757,7 +749,7 @@ document (
      Usage => "value s",
      Inputs => { "s" => null },
      Outputs => { "x" => {"the value of ", TT "s" } },
-     EXAMPLE {
+     Examples => EXAMPLE {
 	  "p = (expression 2)^3 * (expression 3)^2",
       	  "value p"
 	  }
@@ -768,7 +760,7 @@ document {
      Headline => "get a global symbol", 
      TT "global s", " -- provides the global symbol s, even if s currently has 
      a value.",
-     EXAMPLE {
+     Examples => EXAMPLE {
 	  "num",
       	  "num = 5",
       	  "num",
@@ -790,7 +782,7 @@ document {
      TT "local s", " -- provides the local symbol ", TT "s", ", creating
      a new symbol if necessary.  The initial value of a local
      symbol is ", TO "null", ".",
-     EXAMPLE {
+     Examples => EXAMPLE {
 	  "f = () -> ZZ[local t]",
       	  "f()",
       	  "t",
@@ -804,20 +796,21 @@ document {
      Headline => "get a symbol",
      TT "symbol s", " -- provides the symbol ", TT "s", ", even if ", TT "s", " currently has a value.",
      PARA,
-     EXAMPLE {
-	  "num",
-      	  "num = 5",
-      	  "num",
-      	  "symbol num",
+     Examples => {EXAMPLE {
+	       "num",
+	       "num = 5",
+	       "num",
+	       "symbol num",
+	       },
+	  PARA,
+	  "If ", TT "s", " is an operator, then the corresponding symbol is provided.  This
+	  symbol is used by the interpreter in constructing keys for methods
+	  associated to the symbol.",
+	  EXAMPLE "symbol +"
 	  },
-     PARA,
-     "If ", TT "s", " is an operator, then the corresponding symbol is provided.  This
-     symbol is used by the interpreter in constructing keys for methods
-     associated to the symbol.",
-     EXAMPLE "symbol +",
-     SeeAlso => {"local", "global", "value"
+     SeeAlso => {"local", "global", "value" }
      }
-     }
+
 
 document {
      Key => gcd,
@@ -834,8 +827,7 @@ document {
      "The arguments may also be lists or sequences of strings and symbols, in
      which case they are concatenated recursively.  Additionally,
      an integer may be used to represent a number of spaces.",
-     PARA,
-     EXAMPLE "concatenate {\"a\",(\"s\",3,\"d\"),\"f\"}",
+     Examples => EXAMPLE "concatenate {\"a\",(\"s\",3,\"d\"),\"f\"}",
      SeeAlso => { "String"} 
      }
 
