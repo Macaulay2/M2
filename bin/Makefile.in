@@ -1,13 +1,15 @@
 # @configure_input@
+VPATH = @srcdir@
 include ../include/config.Makefile
 all:: M2
+M2 : M2-build.in
+	../config.status --file=$@:$<
+	rm -f config.log
+	chmod 0755 $@
 install : $(bindir)/M2
-$(bindir)/M2 : @srcdir@/M2
+$(bindir)/M2 : M2-final.in
 	$(INSTALL) -d $(bindir)
 	sed -e 's,^M2HOME=.*,M2HOME=$(prefix)/lib/Macaulay2-@PACKAGE_VERSION@,' $< >"$@".tmp
 	mv "$@".tmp "$@"
 	chmod 0755 "$@"
-M2 : M2-build.in
-	../config.status --file=$@:$<
-	chmod 0755 "$@"
-clean :; rm -f M2 M2-build
+clean :; rm -f M2
