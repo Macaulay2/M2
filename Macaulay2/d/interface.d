@@ -197,9 +197,12 @@ setupfun("rawQuotient",rawQuotient);
 -----------------------------------------------------------------------------
 -- monomial orderings
 
-Component := makeProtectedSymbolClosure("Component");
-ComponentFun():RawMonomialOrdering := Ccode(RawMonomialOrdering,
-     "(engine_RawMonomialOrdering)IM2_MonomialOrdering_component()");
+PositionS := makeProtectedSymbolClosure("Position");
+UpS := makeProtectedSymbolClosure("Up");
+DownS := makeProtectedSymbolClosure("Down");
+PositionFun(b:bool):RawMonomialOrdering := (		    -- b is true for Up, false for Down
+     Ccode(RawMonomialOrdering, "(engine_RawMonomialOrdering)IM2_MonomialOrdering_position(",b,")")
+     );
 
 Lex      := makeProtectedSymbolClosure("Lex");
 LexSmall := makeProtectedSymbolClosure("LexSmall");
@@ -237,16 +240,17 @@ join(s:RawMonomialOrderingArray):RawMonomialOrdering := (
      );
 
 arrayint := array(int);
-funtype := fun1 or fun2 or fun3;
-funtypeornull := fun1 or fun2 or fun3 or null;
+funtype := fun1 or fun2 or fun3 or fun4;
+funtypeornull := fun1 or fun2 or fun3 or fun4 or null;
 fun1 := function():RawMonomialOrdering;
 fun2 := function(int):RawMonomialOrdering;
 fun3 := function(arrayint):RawMonomialOrdering;;
+fun4 := function(bool):RawMonomialOrdering;;
 
 Maker := { sym:SymbolClosure, fun:funtype };
 
 makers := array(Maker)(
-     Maker(Component,ComponentFun),
+     Maker(PositionS,PositionFun),
      Maker(Lex,LexFun),
      Maker(LexSmall,LexSmallFun),
      Maker(LexTiny,LexTinyFun),
@@ -265,6 +269,7 @@ getmaker(sym:SymbolClosure):funtypeornull := (
 	  is f:fun1 do return f
 	  is f:fun2 do return f
 	  is f:fun3 do return f
+     	  is f:fun4 do return f
 	  );
      null());
 
@@ -274,7 +279,7 @@ getmaker(sym:SymbolClosure):funtypeornull := (
 
 rawMonomialOrdering(e:Expr):Expr := (
      -- This routine gets an expression like this:
-     -- { GRevLexSmall => {1,2,3}, Component, LexTiny => 4, Lex => 5, Weights => {1,2,3} }
+     -- { GRevLexSmall => {1,2,3}, PositionS, LexTiny => 4, Lex => 5, Weights => {1,2,3} }
      -- For GRevLex, the weights are already provided by top level code.
      -- Each member of the sequence results in one monomial ordering, and they sequence
      -- is then "joined".
@@ -297,9 +302,18 @@ rawMonomialOrdering(e:Expr):Expr := (
 			 then return buildErrorPacket("expected option value to be a small integer");
 			 )
 		    is g:fun3 do (
-			 if !isListOfSmallIntegers(sp.v.1) then return 
-			      buildErrorPacket("expected option value to be list of small integers");
+			 if !isListOfSmallIntegers(sp.v.1)
+			 then return buildErrorPacket("expected option value to be list of small integers");
 			 )
+		    is g:fun4 do (
+			 if g == PositionFun then (
+			      if !(sp.v.1 == UpS && sp.v.1 == DownS)
+			      then return buildErrorPacket("expected option value to be Up or Down");
+			      )
+			 else (
+			      if !(sp.v.1 == True && sp.v.1 == False)
+			      then return buildErrorPacket("expected option value to be true or false");
+			      ))
 		    is null do return buildErrorPacket("expected option key to be a monomial ordering key")
 		    )
 	       else return buildErrorPacket("expected option key to be a symbol")
@@ -314,11 +328,12 @@ rawMonomialOrdering(e:Expr):Expr := (
 		    is g:fun1 do provide g()
 		    is g:fun2 do provide g(getSmallInt(sp.v.1))
 		    is g:fun3 do provide g(getListOfSmallIntegers(sp.v.1))
+		    is g:fun4 do provide g(if g == PositionFun then sp.v.1 == UpS else sp.v.1 == True)
 		    is null do nothing
 		    )
 	       else nothing
 	       else nothing;
-	       provide ComponentFun();		    -- just in case, to prevent a loop
+	       provide PositionFun(true);		    -- just in case, to prevent a loop
 	       ))))
      else WrongArg("a list of options"));
 setupfun("rawMonomialOrdering",rawMonomialOrdering);

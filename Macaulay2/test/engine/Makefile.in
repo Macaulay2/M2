@@ -17,3 +17,7 @@ ARGS := --silent --stop -q
 clean::; rm -f *.okay core
 distclean: clean; rm -f Makefile
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/test/engine/Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine"
+# End:

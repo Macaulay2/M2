@@ -10,51 +10,58 @@ all :: ../bin/M2$(EXE)
 # the names on these lines should be in sequence from most dependent to
 # least dependent so that "make" can remake the *.dep makefiles
 ALLOBJ :=
+CFILES :=
+EXTRACFILES :=
 MADECFILES :=
-PROJECT := 
-PROJECT += interp.d
-PROJECT += texmacs.d
-# PROJECT += mp.d
-# PROJECT += actorsX.d
-PROJECT += interface.d
-PROJECT += actors5.d actors4.d actors3.d actors2.d actors.d
-PROJECT += evaluate.d
-PROJECT += objects.d
-PROJECT += struct.d
-PROJECT += GC.d
-PROJECT += util.d
-PROJECT += common.d
-PROJECT += convertr.d basic.d binding.d
-PROJECT += parser.d lex.d tokens.d
-PROJECT += engine.d
-PROJECT += gmp.d
-PROJECT += err.d
-PROJECT += stdiop.d
-PROJECT += getline.d
-PROJECT += ctype.d
-PROJECT += stdio.d
-PROJECT += nets.d
-PROJECT += vararray.d
-PROJECT += varstrin.d
-PROJECT += strings.d 
-PROJECT += system.d
-PROJECT += C.d
-ALLOBJ += $(PROJECT:.d=.oo) 
+SRCFILES := 
+DFILES := 
 
-DNAMES := $(PROJECT)
-DNAMES += t.d u.d optim.d actorsX.d gr.d grx.d testall.d pp.d redblk.d
-HFILES := M2types.h getpagesize.h memdebug.h types.h
+DFILES += interp.d
+DFILES += texmacs.d
+DFILES += interface.d
+DFILES += actors5.d actors4.d actors3.d actors2.d actors.d
+DFILES += evaluate.d
+DFILES += objects.d
+DFILES += struct.d
+DFILES += GC.d
+DFILES += util.d
+DFILES += common.d
+DFILES += convertr.d basic.d binding.d
+DFILES += parser.d lex.d tokens.d
+DFILES += engine.d
+DFILES += gmp.d
+DFILES += err.d
+DFILES += stdiop.d
+DFILES += getline.d
+DFILES += ctype.d
+DFILES += stdio.d
+DFILES += nets.d
+DFILES += vararray.d
+DFILES += varstrin.d
+DFILES += strings.d 
+DFILES += system.d
+DFILES += C.d
+ALLOBJ += $(DFILES:.d=.oo) 
+SRCFILES += $(DFILES)
+clean::; rm -f $(DFILES:.d=.c)
+
 CFILES := M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c M2inits.c gdbm_interface.c
-MADECFILES := tmp_init.c startup.c
-CCFILES := version.cc initgmp.cc
-SRCFILES := $(PROJECT) $(CFILES) memdebug.c gmp_aux.c $(HFILES)
-ALLOBJ += $(CFILES:.c=.o) $(MADECFILES:.c=.o) $(CCFILES:.cc=.o)
+SRCFILES += $(CFILES)
+ALLOBJ += $(CFILES:.c=.o)
 
-clean::; rm -f $(DNAMES:.d=.c)
+MADECFILES := tmp_init.c startup.c
+ALLOBJ += $(MADECFILES:.c=.o)
+
+CCFILES := version.cc initgmp.cc
+ALLOBJ += $(CCFILES:.cc=.o)
+SRCFILES += $(CCFILES)
+
+HFILES := M2types.h getpagesize.h memdebug.h types.h
+SRCFILES += $(HFILES)
 
 ############################## dependencies
 ifeq "$(DEPENDS)" "yes"
-include $(PROJECT:.d=.dep)
+include $(DFILES:.d=.dep)
 endif
 ############################## rules
 SCC1 := ../c/scc1
@@ -153,16 +160,15 @@ endif
 
 tmp_init.o : tmp_init.c
 clean::; rm -f tmp_init.c
-tmp_init.c : $(PROJECT)
+tmp_init.c : $(DFILES)
 	../util/timestmp >tmp
-	for i in $(PROJECT:.d=) ; do echo "void $${i}__prepare();" ; done >>tmp
+	for i in $(DFILES:.d=) ; do echo "void $${i}__prepare();" ; done >>tmp
 	echo 'char current_date[] = __DATE__;' >>tmp
 	echo 'char current_time[] = __TIME__;' >>tmp
 	echo 'int main_inits() {' >>tmp
-	for i in $(PROJECT:.d=) ; do echo "   $${i}__prepare();" ; done >>tmp
+	for i in $(DFILES:.d=) ; do echo "   $${i}__prepare();" ; done >>tmp
 	echo '   return 0;}' >>tmp
 	mv tmp tmp_init.c
-
 
 ###################### libraries
 LIBRARYOPTIONS += -lfac
@@ -189,7 +195,6 @@ clean::; rm -f ../bin/M2$(EXE)
 	$(STRIPCMD) $@
 
 interpret.a : $(ALLOBJ); $(AR) rcs $@ $^
-
 ifeq "$(XCODE)" "yes"
 # Mike uses Xcode, an IDE, under MacOS 10 to link against
 all :: interpret.a
@@ -197,16 +202,12 @@ endif
 
 # just for testing scc stuff
 t_main.o : types.h
-t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o
-	$(CC) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
-###
+t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o; $(CC) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
 tags: @srcdir@/TAGS
 clean::; rm -f TAGS @srcdir@/TAGS
 @srcdir@/TAGS: Makefile $(SRCFILES)
-	@ echo making TAGS
 	cd @srcdir@ && etags $(shell ../util/echoout -r $(SRCFILES))
-#	../util/echoout -r2 $(foreach i, $(SRCFILES),  $(i),0) >"$@"
 
 clean ::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep core gmon.out mapfile restart.tmp
 distclean : clean; rm -f Makefile
