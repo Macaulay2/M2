@@ -6,9 +6,9 @@
 #include "frac.hpp"
 #include "QQ.hpp"
 
-Z *ZZ;
+Z *globalZZ;
 QQ *globalQQ;
-RR *RRR;
+RR *globalRR;
 
 RingElement * RingElement::make_raw(const Ring *R, ring_elem f)
 {
@@ -360,7 +360,7 @@ bool RingElement::lift(const Ring *S, const RingElement * &result) const
 RingElement *RingElement::numerator() const
 {
   if (R == globalQQ)
-    return new RingElement(ZZ, globalQQ->numerator(val));      
+    return new RingElement(globalZZ, globalQQ->numerator(val));      
   const FractionField *K = R->cast_to_FractionField();
   if (K == NULL) 
     {
@@ -373,7 +373,7 @@ RingElement *RingElement::numerator() const
 RingElement *RingElement::denominator() const
 {
   if (R == globalQQ)
-    return new RingElement(ZZ, globalQQ->denominator(val));      
+    return new RingElement(globalZZ, globalQQ->denominator(val));      
   const FractionField *K = R->cast_to_FractionField();
   if (K == NULL) 
     {

@@ -98,7 +98,7 @@ public:
   // Used in gbvector <--> vector/ringelem translation //
   ///////////////////////////////////////////////////////
 protected:
-  ring_elem trans_one; // 1 as an element of ZZ.
+  ring_elem trans_one; // 1 as an element of globalZZ.
 
   virtual ring_elem trans_to_ringelem(ring_elem coeff, 
 				      const int *exp) const;

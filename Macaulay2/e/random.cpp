@@ -11,7 +11,7 @@
 #include "relem.hpp"
 #include "gmp.h"
 
-extern Z *ZZ;
+extern Z *globalZZ;
 int32 Random::seed;
 int32 Random::maxint32;
 RingElement *Random::maxint;
@@ -22,7 +22,7 @@ gmp_randstate_t Random::_st;
 void Random::i_random()
 {
   seed = MASK;
-  maxint = RingElement::make_raw(ZZ, ZZ->from_int(10));
+  maxint = RingElement::make_raw(globalZZ, globalZZ->from_int(10));
   maxint32 = 10;
 
   mpz_init_set_si(_maxN, 10);
@@ -80,7 +80,7 @@ RingElement *Random::random()
 {
   int result = random0(2*maxint32);
   result -= maxint32;
-  return RingElement::make_raw(ZZ, ZZ->from_int(result));
+  return RingElement::make_raw(globalZZ, globalZZ->from_int(result));
 }
 
 void Random::set_max_int(M2_Integer N)

@@ -30,7 +30,7 @@ class RingGBasis;
 class GBasis
 // This handles a GB (or "declared" GB), where the base ring
 // is a field (i.e. the ring contains a field).
-// The case where the base is ZZ is handled in GBasisZZ
+// The case where the base is globalZZ is handled in GBasisZZ
 {
 public:
   struct gbelem {

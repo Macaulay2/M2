@@ -27,20 +27,20 @@ bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 bool LLLoperations::setThreshold(const RingElement *threshold, ring_elem& num, ring_elem &den)
 {
   const Ring *R = threshold->get_ring();
-  if (R == ZZ)
+  if (R == globalZZ)
     {
-      num = ZZ->copy(threshold->get_value());
-      den = ZZ->from_int(1);
+      num = globalZZ->copy(threshold->get_value());
+      den = globalZZ->from_int(1);
       return true;
     }
   const FractionField *KK = R->cast_to_FractionField();
   if (KK != 0)
     {
       const Ring *K = KK->get_ring();
-      if (K == ZZ)
+      if (K == globalZZ)
 	{
-	  num = ZZ->copy(KK->numerator(threshold->get_value()));
-	  den = ZZ->copy(KK->denominator(threshold->get_value()));
+	  num = globalZZ->copy(KK->numerator(threshold->get_value()));
+	  den = globalZZ->copy(KK->denominator(threshold->get_value()));
 	  return true;
 	}
     }
@@ -51,8 +51,8 @@ bool LLLoperations::initializeLLL(const SparseMutableMatrix *A,
 			    const RingElement *threshold,
 			    SparseMutableMatrix *& LLLstate)
 {
-  // First check m: should be a matrix over ZZ.
-  if (A == 0 || A->getRing() != ZZ)
+  // First check m: should be a matrix over globalZZ.
+  if (A == 0 || A->getRing() != globalZZ)
     {
       ERROR("LLL only defined for matrices over ZZ");
       return false;
@@ -65,8 +65,8 @@ bool LLLoperations::initializeLLL(const SparseMutableMatrix *A,
     return false;
   if (!checkThreshold(num,den))
     {
-      ZZ->remove(num);
-      ZZ->remove(den);
+      globalZZ->remove(num);
+      globalZZ->remove(den);
       return false;
     }
 
@@ -77,11 +77,11 @@ bool LLLoperations::initializeLLL(const SparseMutableMatrix *A,
   // The entries are: k, kmax, alphaTop, alphaBottom: all are ZZ values.
 
   int n = A->n_cols();
-  LLLstate = SparseMutableMatrix::make(ZZ,n,n+4);
+  LLLstate = SparseMutableMatrix::make(globalZZ,n,n+4);
   if (n > 0)
     {
-      LLLstate->setEntry(0,n,ZZ->from_int(1));  // k := 2
-      //LLLstate->setEntry(0,n+1,ZZ->from_int(0)); // kmax := 1
+      LLLstate->setEntry(0,n,globalZZ->from_int(1));  // k := 2
+      //LLLstate->setEntry(0,n+1,globalZZ->from_int(0)); // kmax := 1
       LLLstate->setEntry(0,n+2,num); // Set threshold numerator, denominator
       LLLstate->setEntry(0,n+3,den);
       LLLstate->setEntry(0,0,A->dotProduct(0,0));  // D#1 := dot(A,0,0)
@@ -95,8 +95,8 @@ bool LLLoperations::initializeLLL(const Matrix *m,
 				  SparseMutableMatrix *& A,
 				  SparseMutableMatrix *& LLLstate)
 {
-  // First check m: should be a matrix over ZZ.
-  if (m->get_ring() != ZZ)
+  // First check m: should be a matrix over globalZZ.
+  if (m->get_ring() != globalZZ)
     {
       ERROR("LLL only defined for matrices over ZZ");
       return false;
@@ -107,7 +107,7 @@ bool LLLoperations::initializeLLL(const Matrix *m,
   int n = m->n_cols();
   if (useChangeOfBasisMatrix)
     {
-      SparseMutableMatrix *B = SparseMutableMatrix::identity(ZZ,n);
+      SparseMutableMatrix *B = SparseMutableMatrix::identity(globalZZ,n);
       A->setColumnChangeMatrix(B);
     }
 
@@ -215,9 +215,9 @@ void LLLoperations::SWAPI(int k, int kmax,
   if (k >= 2)
     {
       lambda->interchangeColumns(k,k-1);
-      lambda->setEntry(k-1,k,ZZ->from_int(lam));
-      lambda->setEntry(k,k,ZZ->from_int(D));
-      lambda->setEntry(k,k-1,ZZ->from_int(0));
+      lambda->setEntry(k-1,k,globalZZ->from_int(lam));
+      lambda->setEntry(k,k,globalZZ->from_int(D));
+      lambda->setEntry(k,k-1,globalZZ->from_int(0));
       // (k-1,k-1) is set below.
     }
   
@@ -233,7 +233,7 @@ void LLLoperations::SWAPI(int k, int kmax,
   mpz_mul(b,lam,lam);
   mpz_add(a,a,b);
   mpz_fdiv_q(B,a,D1);
-  lambda->setEntry(k-1,k-1,ZZ->from_int(B));
+  lambda->setEntry(k-1,k-1,globalZZ->from_int(B));
   
   // scan(k+1..C.kmax, i-> (
   //	 t := lambda#(i,k);
@@ -266,8 +266,8 @@ void LLLoperations::SWAPI(int k, int kmax,
       mpz_add(a,a,b);
       mpz_fdiv_q(C2,a,D);
 
-      lambda->setEntry(k,i,ZZ->from_int(C1));  // These two lines will remove t,s.
-      lambda->setEntry(k-1,i,ZZ->from_int(C2));
+      lambda->setEntry(k,i,globalZZ->from_int(C1));  // These two lines will remove t,s.
+      lambda->setEntry(k-1,i,globalZZ->from_int(C2));
     }
   mpz_clear(a);
   mpz_clear(b);
@@ -292,12 +292,12 @@ int LLLoperations::doLLL(SparseMutableMatrix *A,
   buffer o;
 
   if (LLLstate->getEntry(0,n,a))
-    k = ZZ->coerce_to_int(a);
+    k = globalZZ->coerce_to_int(a);
   else
     k = 0;
 
   if (LLLstate->getEntry(0,n+1,a))
-    kmax = ZZ->coerce_to_int(a);
+    kmax = globalZZ->coerce_to_int(a);
   else
     kmax = 0;
 
@@ -338,23 +338,23 @@ int LLLoperations::doLLL(SparseMutableMatrix *A,
 		  // u = (D#i * u - lambda#(k,i) * lambda#(j,i)) // D#(i-1)
 		  ring_elem Di, mki, mji, Di1;
 		  LLLstate->getEntry(i,i,Di);
-		  ZZ->mult_to(u, Di);
+		  globalZZ->mult_to(u, Di);
 		  if (LLLstate->getEntry(i,k,mki) &&  LLLstate->getEntry(i,j,mji))
 		    {
-		      ring_elem t1 = ZZ->mult(mki,mji);
-		      ZZ->subtract_to(u,t1);
+		      ring_elem t1 = globalZZ->mult(mki,mji);
+		      globalZZ->subtract_to(u,t1);
 		    }
 		  if (i > 0)
 		    {
 		      LLLstate->getEntry(i-1,i-1,Di1);  // Cannot be zero!!
-		      ring_elem t1 = ZZ->divide(u,Di1);
-		      ZZ->remove(u);
+		      ring_elem t1 = globalZZ->divide(u,Di1);
+		      globalZZ->remove(u);
 		      u = t1;
 		    }
 		}
 	      // At this point we have our element:
 	      LLLstate->setEntry(j,k,u);
-	      if (j == k && ZZ->is_zero(u))
+	      if (j == k && globalZZ->is_zero(u))
 		{
 		  ERROR("LLL vectors not independent");
 		  return COMP_ERROR;
@@ -377,8 +377,8 @@ int LLLoperations::doLLL(SparseMutableMatrix *A,
     }
 
   // Before returning, reset k,kmax:
-  LLLstate->setEntry(0,n,ZZ->from_int(k));
-  LLLstate->setEntry(0,n+1,ZZ->from_int(kmax));
+  LLLstate->setEntry(0,n,globalZZ->from_int(k));
+  LLLstate->setEntry(0,n+1,globalZZ->from_int(kmax));
 
   if (k > n) return COMP_DONE;
   if (nsteps == 0) return COMP_DONE_STEPS;

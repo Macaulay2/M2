@@ -31,7 +31,7 @@ class Ring : public mutable_object
 protected:
   int P;
   int _nvars;
-  int _totalvars;		// The total number of variables, inclduing all base rings
+  int _totalvars;		// The total number of variables, including all base rings
   const Ring *K_;		// For a base ring, this will point to self
   const Monoid *M_;
   const Monoid *D_;
@@ -248,9 +248,9 @@ public:
 };
 
 #include "Z.hpp"
-extern Z *ZZ;
+extern Z *globalZZ;
 extern QQ *globalQQ;
-extern RR *RRR;
+extern RR *globalRR;
 #endif
 
 // Local Variables:

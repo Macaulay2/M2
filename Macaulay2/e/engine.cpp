@@ -40,7 +40,7 @@ void IM2_initialize()
   initialized = true;
   doubles                  = new doubling_stash;
 
-  ZZ = Z::create(Monoid::get_trivial_monoid());
+  globalZZ = Z::create(Monoid::get_trivial_monoid());
   globalQQ = QQ::create(Monoid::get_trivial_monoid());
   Random::i_random();
   factory_setup();

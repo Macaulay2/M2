@@ -27,7 +27,7 @@ void Ring::initialize_ring(int P0,
 
   if (D_->n_vars() > 0)
     {
-      _HRing = PolynomialRing::create(ZZ, D_);
+      _HRing = PolynomialRing::create(globalZZ, D_);
     }
   else
     _HRing = 0;

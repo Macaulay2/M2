@@ -1703,7 +1703,7 @@ void cmd_sparse_reducePivots(object &om)
 #if 0
 extern void eigenvalues(int n, double *data, double *result);
 #include "RR.hpp"
-extern RR *RRR;
+extern RR *globalRR;
 static void cmd_ALP_eigenvals(object &om)
 {
   Matrix m = om->cast_to_Matrix();
@@ -1719,11 +1719,11 @@ static void cmd_ALP_eigenvals(object &om)
     for (int j=0; j<n; j++)
       {
 	ring_elem a = R->lead_coeff(m.elem(i,j));
-	data[i*n+j] = RRR->to_double(a);
+	data[i*n+j] = globalRR->to_double(a);
       }
   double *result = new double[2*n];
   eigenvalues(n,data,result);
-  const FreeModule *F = RRR->make_FreeModule(1);
+  const FreeModule *F = globalRR->make_FreeModule(1);
   Matrix eigs(F);
   printf("data\n");
   for (int i=0; i<n; i++)
@@ -1737,7 +1737,7 @@ static void cmd_ALP_eigenvals(object &om)
     printf("%f ",result[i]);
   printf("\n");
   for (int i=0; i<2*n; i++)
-    eigs.append(F->term(i,RRR->from_double(result[i])),0);
+    eigs.append(F->term(i,globalRR->from_double(result[i])),0);
   gStack.insert(eigs);
 }
 #endif
