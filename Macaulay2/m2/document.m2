@@ -516,7 +516,9 @@ headline = method(SingleArgumentDispatch => true)
 headline DocumentTag := tag -> (
      pkg := DocumentTag.Package tag;
      fkey := DocumentTag.FormattedKey tag;
-     if pkg =!= null and pkg#"documentation"#fkey#?Headline then pkg#"documentation"#fkey#Headline)
+     if pkg =!= null and pkg#"documentation"#?fkey and pkg#"documentation"#fkey#?Headline then pkg#"documentation"#fkey#Headline
+     else headline DocumentTag.Key tag			    -- revert to old method
+     )
 headline Thing := memoize (				    -- save this stuff, too!
      key -> (
 	  while (
@@ -911,10 +913,11 @@ documentation Sequence := key -> (
 	       synopsis key,
 	       makeDocBody key,
 	       caveat key,
-	       PARA BOLD "Further information", UL {
-		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
-		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
-		    SEQ{ "Option name: ", TOH opt }
+	       PARA BOLD "Further information", 
+	       UL {
+		    SEQ{ "Default value: ", if hasDocumentation default then TOH makeDocumentTag default else TT default },
+		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH makeDocumentTag fn },
+		    SEQ{ "Option name: ", TOH makeDocumentTag opt }
 		    },
 	       seealso key,
 	       theMenu key

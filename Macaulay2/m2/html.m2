@@ -41,13 +41,6 @@ htmlFilename DocumentTag := tag -> (
      if pkg === null then toFilename fkey|".html"
      else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
 
-htmlFilename Thing := key -> (				   -- returns the relative path from the PREFIX to the file
-     error "do we still need this?";
-     fkey := formatDocumentTag key;
-     pkg := package TO key;
-     if pkg === null then toFilename fkey|".html"
-     else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
-
 html IMG  := x -> concatenate("<IMG src=\"", rel first x, "\">")
 html HREF := x -> concatenate("<A HREF=\"", rel first x, "\">", html last x, "</A>")
 tex  HREF := x -> concatenate("\special{html:<A href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</A>}")
@@ -167,15 +160,17 @@ makeHtmlNode DocumentTag := tag -> (
 
 -----------------------------------------------------------------------------
 
+checkIsTag := tag -> ( assert(class tag === DocumentTag); tag )
+
 alpha := characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 anchorPoint := 0
-anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
-     s := select(drop(alpha,anchorPoint), c -> entry >= c);
-     anchorPoint = anchorPoint + #s;
-     SEQ apply(s, c -> ANCHOR {c, ""})
-     )
-
-checkIsTag := tag -> ( assert(class tag === DocumentTag); tag )
+anchor := entry -> (
+     checkIsTag entry;
+     if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
+     	  s := select(drop(alpha,anchorPoint), c -> entry >= c);
+     	  anchorPoint = anchorPoint + #s;
+     	  SEQ apply(s, c -> ANCHOR {c, ""})
+     	  ))
 
 packageNodes := (pkg,topDocumentTag) -> checkIsTag \ unique join(
      apply(
@@ -205,7 +200,7 @@ net TreeNode := x -> (
 
 toDoc := method()
 toDoc ForestNode := x -> if #x>0 then UL apply(toList x, y -> toDoc y)
-toDoc TreeNode := x -> SEQ { TOH x#0, toDoc x#1 }
+toDoc TreeNode := x -> SEQ { TOH checkIsTag x#0, toDoc x#1 }
 
 local visitCount
 local duplicateReferences
@@ -329,7 +324,10 @@ makeMasterIndex := keylist -> (
 	       HEADER2 title, PARA,
 	       topNodeButton, tocButton, homeButton,
 	       PARA between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
-	       UL apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey }),
+	       UL apply(sort keylist, (tag) -> (
+			 checkIsTag tag;
+			 SEQ { anchor tag, TOH tag }
+			 )),
 	       }
 	  } << endl << close
      )
