@@ -65,6 +65,7 @@ protected:
 	  int comp, // adds this component to each component of g.
 	  const int *expf,  // The exponent vector of f
 	  const int *derivatives, 
+	  const FreeModule *Fg, // Free module of g, unless g is a ring element
 	  const gbvector *g) const;  // An entire polynomial
 public:
   static WeylAlgebra *create(const PolynomialRing *R,

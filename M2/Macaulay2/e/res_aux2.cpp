@@ -2,14 +2,6 @@
 // Included from 'res2.cc'
 #include "matrixcon.hpp"
 
-void res2_comp::betti_init(int lo, int hi, int len, int *&bettis) const
-{
-  int z = (hi-lo+1) * (len+1);
-  bettis = newarray(int,z);
-  for (int i=0; i<z; i++)
-    bettis[i] = 0;
-}
-
 M2_arrayint res2_comp::betti_skeleton() const
 {
   int lo = lodegree;

@@ -383,9 +383,8 @@ M2_arrayint gbres_comp::betti_minimal() const
     }
   int hi = lo;
   int len = 1;
-  
-  intarray *degs = newarray(intarray,n_nodes);
-  
+
+  // Set the hi degree, and len
   for (lev=0; lev<n_nodes; lev++)
     {
       const FreeModule *F = free_module(lev);
@@ -396,30 +395,24 @@ M2_arrayint gbres_comp::betti_minimal() const
 	{
 	  d = F->primary_degree(i) - lev;
 	  if (d > hi) hi = d;
-	  if (d-lo >= degs[lev].length())
-	    {
-	      for (k=degs[lev].length(); k<=d-lo; k++)
-		degs[lev].append(0);
-	    }
-	  degs[lev][d-lo] += 1;
 	}
     }
-  for (lev=0; lev<=len; lev++)
-    for (j=degs[lev].length(); j<=hi-lo; j++)
-      degs[lev].append(0);
 
-  M2_arrayint result = makearrayint(3 + (hi-lo+1)*(len+1));
+  int *bettis;
+  betti_init(lo,hi,len,bettis);
+  
+  for (lev=0; lev<len; lev++)
+    {
+      const FreeModule *F = free_module(lev);
 
-  result->array[0] = lo;
-  result->array[1] = hi;
-  result->array[2] = len;
-
-  int next = 3;
-  for (d=lo; d<=hi; d++)
-    for (lev=0; lev<=len; lev++)
-      result->array[next++] = degs[lev][d-lo];
-
-  deletearray(degs);
+      for (i=0; i<F->rank(); i++)
+	{
+	  d = F->primary_degree(i) - lev;
+	  bettis[lev+(len+1)*d]++;
+	}
+    }
+  M2_arrayint result = betti_make(lo,hi,len,bettis);
+  deletearray(bettis);
   return result;
 }
 

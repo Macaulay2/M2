@@ -263,8 +263,6 @@ public:
 // given first, then the second, etc     /////
 //////////////////////////////////////////////
 
-  void betti_init(int lo, int hi, int len, int *&bettis) const;
-
   M2_arrayint betti_skeleton() const;
   M2_arrayint betti_remaining() const;
   M2_arrayint betti_minimal() const;

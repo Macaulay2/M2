@@ -225,6 +225,24 @@ void SchreyerOrder::text_out(buffer &o) const
     }
 }
 
+int SchreyerOrder::schreyer_compare(const int *m,
+				    int m_comp,
+				    const int *n,
+				    int n_comp) const
+{
+  const int *ms = base_monom(m_comp-1);
+  const int *ns = base_monom(n_comp-1);
+  for (int i=M->monomial_size(); i>0; --i)
+    {
+      int cmp = *ms++ + *m++ - *ns++ - *n++;
+      if (cmp < 0) return LT;
+      if (cmp > 0) return GT;
+    }
+  int cmp = compare_num(m_comp-1) - compare_num(n_comp-1);
+  if (cmp < 0) return LT;
+  if (cmp > 0) return GT;
+  return EQ;
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

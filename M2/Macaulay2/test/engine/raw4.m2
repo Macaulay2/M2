@@ -324,8 +324,13 @@ Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
 time rawStartComputation Gcomp -- seems to be in an INFINITE LOOP!!
 m = rawGBGetMatrix Gcomp
 assert(m === mat{{7*a^2+a+1}})
-
-
+-------------------------------------------
+-- Groebner bases with Schreyer orders ----
+-------------------------------------------
+needs "raw-util.m2"
+R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
+m = mat{{a^2,b^2,a*c}}
+F = rawFreeModule(R,m)
 ------------------------------
 -- Groebner bases over ZZ ----
 ------------------------------
