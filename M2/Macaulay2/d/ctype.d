@@ -19,8 +19,8 @@ ALNUM := ALPHA | DIGIT;
 foreach c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  do setchartype(c,UPPER);
 foreach c in "abcdefghijklmnopqrstuvwxyz"  do setchartype(c,LOWER);
 foreach c in "0123456789"      	           do setchartype(c,DIGIT);
-foreach c in " \t\r\n\f"                   do setchartype(c,WHITE);
-foreach c in "\r\n\f"                      do setchartype(c,GRAY);
+foreach c in " \t"	                   do setchartype(c,WHITE);
+foreach c in "\r\n\f"                      do setchartype(c,GRAY | WHITE);
 -- was: for c from 160 to 255	       	    	   do setchartype(char(c),ALPHA);
 
 for c from 128 to 255	       	    	   do setchartype(char(c),ALPHA);
