@@ -41,3 +41,21 @@ gens gb J
 subduction(m, F, J)
 ///
 
+///
+sagbi m
+sendgg(ggPush m.SagbiComputation, gggetgb)
+getMatrix ring m
+
+subduction = method()
+subduction(Matrix, Matrix) := (f,m) -> (
+     R := ring f;
+     if R =!= ring m then error "expected same rings";
+     -- possibly other error checks
+     -- m.SagbiComputation needs to exist?
+     g := sagbi m;
+     sendgg(ggPush g, ggPush f, ggsubduction);
+     getMatrix R)
+
+subduction(RingElement, Matrix) := (f,m) -> (subduction(matrix{{f}},m))_(0,0)
+///
+

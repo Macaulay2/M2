@@ -96,6 +96,7 @@ NAMES = \
 	pfaff \
 	ringmap \
 	hermite \
+	lattice \
 	gauss \
 	comb \
 	mem \

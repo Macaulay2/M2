@@ -271,7 +271,11 @@ public:
 	    int degorder, // -1=descending, 0=don't use, 1=ascending
 	    int monorder, // -1=descending, 1=ascending.
 	    intarray &result) const;
-  
+
+  void monomial_divisor(vec f, int *exp) const;
+  vec monomial_squarefree(vec f) const;
+  vec remove_monomial_divisors(vec f) const;
+
 private:  // Used as local routine to 'diff'
   ring_elem diff_term(const int *m, const int *n, 
 		       int *resultmon,
@@ -284,6 +288,7 @@ public:
   int in_subring(int n, const vec v) const;
   int degree_of_var(int n, const vec v) const;
   vec divide_by_var(int n, int d, const vec v) const;
+  vec divide_by_expvector(const int *exp, const vec v) const;
   
 //////////////////////////////////////////////
 //  Homogeniety and the grading //////////////

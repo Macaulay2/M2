@@ -7,6 +7,7 @@
 #include "matrix.hpp"
 #include "polyring.hpp"
 #include "ringmap.hpp"
+#include "ntuple.hpp"
 
 stash *FreeModule::mystash;
 
@@ -1200,6 +1201,54 @@ void FreeModule::sort(const array<vec> &vecs,
   sort_degs = NULL;
 }
 
+void FreeModule::monomial_divisor(vec f, int *exp) const
+{
+  if (f == NULL || M == NULL) return;
+  int *m = M->make_one();
+  int *exp1 = new int[M->n_vars()];
+  M->divide(f->monom, base_monom(f->comp), m);
+  M->to_expvector(m, exp);
+
+  for (vec a = f->next; a != NULL; a = a->next)
+    {
+      M->divide(a->monom, base_monom(a->comp), m);
+      M->to_expvector(m, exp1);
+      ntuple::gcd(M->n_vars(), exp, exp1, exp);
+    }
+
+  delete [] exp1;
+  M->remove(m);
+}
+
+vec FreeModule::monomial_squarefree(vec f) const
+{
+  if (M == NULL) return copy(f);
+  int *exp = new int[R->n_vars()];
+  monomial_divisor(f, exp);
+  // Now divide each term by exp[i]-1, if exp[i] >= 2
+  for (int i=0; i<M->n_vars(); i++)
+    if (exp[i] >= 1) exp[i]--;
+
+  // Divide f by exp:
+  vec result = divide_by_expvector(exp, f);
+
+  delete [] exp;
+  return result;
+}
+
+vec FreeModule::remove_monomial_divisors(vec f) const
+{
+  if (M == NULL) return copy(f);
+  int *exp = new int[R->n_vars()];
+  monomial_divisor(f, exp);
+
+  // Divide f by exp:
+  vec result = divide_by_expvector(exp, f);
+
+  delete [] exp;
+  return result;
+}
+
 ring_elem FreeModule::diff_term(const int *m, const int *n, 
 				  int *resultmon,
 				  int use_coeff) const
@@ -1388,6 +1437,25 @@ vec FreeModule::divide_by_var(int n, int d, const vec v) const
 	nf_exp[n] -= d;
       else 
 	nf_exp[n] = 0;
+      result->comp = t->comp;
+      result->coeff = K->copy(t->coeff);
+      M->from_expvector(nf_exp, result->monom);
+    }
+  result->next = NULL;
+  return head.next;
+}
+
+vec FreeModule::divide_by_expvector(const int *exp, const vec v) const
+{
+  if (M == NULL) return copy(v);
+  vecterm head;
+  vecterm *result = &head;
+  for (vecterm *t = v; t != NULL; t = t->next)
+    {
+      result->next = new_term();
+      result = result->next;
+      M->to_expvector(t->monom, nf_exp);
+      ntuple::quotient(R->n_vars(), nf_exp, exp, nf_exp);
       result->comp = t->comp;
       result->coeff = K->copy(t->coeff);
       M->from_expvector(nf_exp, result->monom);

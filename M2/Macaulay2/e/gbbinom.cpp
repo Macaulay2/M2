@@ -842,6 +842,7 @@ void binomialGB::remove_monomial_list(monomial_list *mm) const
     }
 }
 
+#if 0
 binomial_gb_elem *binomialGB::find_divisor(monomial m) const
 {
   unsigned int mask = ~(R->mask(m));
@@ -853,6 +854,28 @@ binomial_gb_elem *binomialGB::find_divisor(monomial m) const
       if (mask & p.this_elem()->mask) continue;
       if (R->divides(g->f.lead, m))
 	return g;
+    }
+  return NULL;
+}
+#endif
+
+static int nfind = 0;
+static int loop1 = 0;
+static int loop2 = 0;
+binomial_gb_elem *binomialGB::find_divisor(monomial m) const
+{
+  nfind++;
+  unsigned int mask = ~(R->mask(m));
+  int d = R->degree(m);
+  for (gbmin_elem *p = first; p != NULL; p = p->next)
+    {
+      loop1++;
+      if (loop1 % 1000000 == 0) emit("m");
+      if (R->degree(p->elem->f.lead) > d) return NULL;
+      if (mask & p->mask) continue;
+      loop2++;
+      if (R->divides(p->elem->f.lead, m))
+	return p->elem;
     }
   return NULL;
 }
@@ -915,6 +938,28 @@ bool binomialGB::reduce(binomial &f) const
     }
 }
 #endif
+int binomialGB::n_masks() const
+{
+  unsigned int masks[100000];
+  buffer o;
+  int nmasks = 1;
+  masks[0] = first->mask;
+  for (gbmin_elem *p = first; p != NULL; p = p->next)
+    {
+      o << " " << p->mask;
+      bool found = false;
+      for (int i=0; i<nmasks && !found; i++)
+	if (masks[i] == p->mask)
+	  {
+	    found = true;
+	    break;
+	  }
+      if (!found)
+	masks[nmasks++] = p->mask;
+    }
+  emit(o.str());
+  return nmasks;
+}
 void binomialGB::debug_display() const
 {
   buffer o;
@@ -1177,6 +1222,11 @@ Matrix binomialGB_comp::initial_matrix(int n)
 
 Matrix binomialGB_comp::gb_matrix()
 {
+  buffer o;
+  o << "nfind = " << nfind << newline << "loop1 = " << loop1 
+    << newline << "loop2 = " << loop2 << newline;
+  o << Gmin->n_masks() << newline;
+  emit(o.str());
   Matrix result = Matrix(R->F);
   for (binomialGB::iterator p = Gmin->begin(); p != Gmin->end(); p++)
       result.append(R->binomial_to_vector((*p)->f));

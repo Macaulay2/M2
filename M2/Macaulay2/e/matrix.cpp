@@ -901,6 +901,24 @@ Matrix Matrix::simplify(int n) const
 	if (keep) result.append(rows()->copy(f));
       }
     break;
+  case 3:
+    // Remove multiple monomial divisors (i.e. x^2*f --> x*f)
+    for (i=0; i<n_cols(); i++)
+      {
+	vec f = elem(i);
+	if (f == NULL) continue;
+	result.append(rows()->monomial_squarefree(f));
+      }
+    break;
+  case 4:
+    // Remove monomial divisors (i.e. x*f --> f)
+    for (i=0; i<n_cols(); i++)
+      {
+	vec f = elem(i);
+	if (f == NULL) continue;
+	result.append(rows()->remove_monomial_divisors(f));
+      }
+    break;
 #if 0
   case SIMP_ZEROS:
     break;

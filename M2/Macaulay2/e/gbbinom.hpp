@@ -232,6 +232,7 @@ public:
   iterator begin() const { return iterator(first); }
   iterator end() const { return iterator(NULL); }
 
+  int n_masks() const;
   void debug_display() const;
 };
 
