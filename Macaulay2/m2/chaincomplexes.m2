@@ -551,7 +551,7 @@ Hom(ChainComplex, Module) := ChainComplex => (C,N) -> (
      b := D.dd;
      scan(spots c, i -> (
 	       j := - i + 1;
-	       f := b#j = Hom(c_i,N);
+	       f := b#j = (-1)^i * Hom(c_i,N);		    -- this is the right sign!
 	       D#j = source f;
 	       D#(j-1) = target f;
 	       ));

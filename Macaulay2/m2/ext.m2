@@ -80,38 +80,38 @@ Ext(ZZ, Ideal, Module) := (i,I,N) -> Ext^i(module I,N)
 -- total ext over complete intersections
 
 Ext(Module,Module) := Module => (N,M) -> (
-  R := ring N;
-  if R =!= ring M
+  B := ring N;
+  if B =!= ring M
   then error "expected modules over the same ring";
-  if not isCommutative R
+  if not isCommutative B
   then error "'Ext' not implemented yet for noncommutative rings.";
-  if not isHomogeneous R
+  if not isHomogeneous B
   then error "'Ext' received modules over an inhomogeneous ring";
   if not isHomogeneous M or not isHomogeneous N
   then error "'Ext' received an inhomogeneous module";
-  if M == 0 then R^0
-  else if N == 0 then R^0
+  if M == 0 then B^0
+  else if N == 0 then B^0
   else (
-    p := presentation R;
-    Q := ring p;
+    p := presentation B;
+    A := ring p;
     I := ideal mingens ideal p;
-    n := numgens Q;
+    n := numgens A;
     c := numgens I;
-    if c =!= codim R 
+    if c =!= codim B 
     then error "total Ext available only for complete intersections";
     f := apply(c, i -> I_i);
-    toR := map(R,Q);
-    pN := lift(presentation N,Q);
-    pM := lift(presentation M,Q);
+    toR := map(B,A);
+    pN := lift(presentation N,A);
+    pM := lift(presentation M,A);
     N' := cokernel ( pN | p ** id_(target pN) );
     M' := cokernel ( pM | p ** id_(target pM) );
     C := resolution N';
     s := f / (g -> nullhomotopy (g*id_C));
     X := local X;
-    k := coefficientRing Q;
+    k := coefficientRing A;
     -- compute the fudge factor for the adjustment of bidegrees
     fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
-    T := k(monoid [X_0 .. X_(c-1), toSequence Q.generatorSymbols,
+    T := k(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
       Degrees => splice {
         apply(0 .. c-1,i -> {-2, - first degree f_i}), 
         n : {0,1}
@@ -119,8 +119,8 @@ Ext(Module,Module) := Module => (N,M) -> (
       Adjust => v -> {- fudge * v#0 + v#1, - v#0},
       Repair => w -> {- w#1, - fudge * w#1 + w#0}
       ]);
-    toT := map(T,Q,apply(toList(c .. c+n-1), i -> T_i));
-    S := k(monoid [X_0 .. X_(c-1),Degrees=>{c:{2}}]);
+    toT := map(T,A,apply(toList(c .. c+n-1), i -> T_i));
+    S := k(monoid [X_1 .. X_c,Degrees=>{c:{2}}]);
     mS := monoid S;
     use S;
     spots := C -> sort select(keys C, i -> class i === ZZ);
@@ -132,7 +132,7 @@ Ext(Module,Module) := Module => (N,M) -> (
     factorizations := (m) -> (
       -- input: m is the list of exponents for a monomial
       -- Return a list of pairs of lists showing the factorizations.
-      -- C.g., if m is {1,1} we return
+      -- E.g., if m is {1,1} we return
       -- {({1,0},{0,1}),({0,1},{1,0}),({1,1},{0,0}),({0,0},{1,1})}
       if m === {} then { ({}, {}) }
       else (
