@@ -1,5 +1,5 @@
  -*- Mode: sh -*-
-AC_INIT(Makeconf)
+AC_INIT(Macaulay2.LSM)
 
 VERSION="`cat $srcdir/version`"
 AC_SUBST(VERSION)
@@ -30,16 +30,6 @@ AC_PROG_INSTALL()
 AC_PROG_AWK()
 AC_PROG_CC()
 AC_PROG_CXX()
-
-case "$CC" in
-    cl)  CFLAGS="$CFLAGS -Zi -nologo -G5 -W3 -GR -GX"
-         CXXFLAGS="$CXXFLAGS -Zi -nologo -G5 -W3 -GR -GX" 
-	 export CFLAGS CXXFLAGS ;;
-    gcc) CFLAGS="$CFLAGS -fexpensive-optimizations -O3"
-         CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -O3"
-	 export CFLAGS CXXFLAGS ;;
-esac
-
 AC_PROG_YACC()
 
 M2_ENABLE_DUMPDATA()

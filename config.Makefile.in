@@ -1,13 +1,19 @@
 
+# every makefile that includes this one should use 'all' as the
+# default (first) target
+all::
+
 # cygwin 'make' might get confused by setting SHELL
 SHELL = @SHELL@
 
-ARCH = @ARCH@
-OS   = @OS@
 VERSION = @VERSION@
+ARCH    = @ARCH@
+OS      = @OS@
+REL     = @REL@
+DESC    = @VERSION@-@ARCH@-@OS@-@REL@
+
 DUMPDATA = @DUMPDATA@
 SOCKS = @SOCKS@
-REL = @REL@
 NODENAME = @NODENAME@
 SHAREDLIBS = @SHAREDLIBS@
 FACTORY = @FACTORY@
@@ -48,3 +54,83 @@ infodir = @infodir@
 mandir = @mandir@
 RANLIB = @RANLIB@
 AR = ar
+
+MAKEFLAGS += -w
+
+#################################
+
+# all:: announce
+announce ::
+	@echo '## making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) ##'
+
+#################################
+
+ifdef CYGWIN32
+# CFLAGS += '-Dabort()=exit(1)'
+# CXXFLAGS += '-Dabort()=exit(1)'
+# this approach to fixing "abort" doesn't work because of a slight
+# bug in configure/makeconf - strings here get evaluated by the
+# shell a different number of times between now and
+#   (1) the evaluation of the test compilations in factory/configure
+#   (2) the evaluation of the compilations in factory/GNUmakefile
+# and thus it is impossible to shield the parentheses from the shell.
+# A fix is for all expressions in factory/configure like 
+#	eval $ac_compile
+# to be replaced by expressions like
+#	eval `eval "echo $ac_compile"`
+endif
+
+ifeq "$(OS) $(ARCH)" "Linux alpha"
+AS = gcc -c -x assembler-with-cpp
+endif
+
+ifeq "$(CC)" "cl"
+include config.Microsoft
+endif
+
+DEBUGFLAGS :=
+
+ifeq "$(DEBUG)" "yes"
+DEBUGFLAGS += -g -DDEBUG
+else
+DEBUGFLAGS += -DNDEBUG
+endif
+
+ifeq "$(PROFILE)" "yes"
+CFLAGS   += -pg
+CXXFLAGS += -pg
+LDFLAGS  += -pg
+STRIP := no
+endif
+
+ifeq "$(OPTIMIZE)" "yes"
+ifeq "$(CC)" "gcc"
+CFLAGS="$CFLAGS -fexpensive-optimizations -O3"
+CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -O3"
+endif
+endif
+
+ifeq "$(STRIP)" "no"
+STRIPCMD := :
+else
+ifneq "$(CC)" "cl"
+CFLAGS   += -fomit-frame-pointer
+CXXFLAGS += -fomit-frame-pointer
+LDFLAGS  += -s
+STRIPCMD := strip
+endif
+endif
+
+ifeq "$(MEMDEBUG)" "yes"
+DEBUGFLAGS += -DMEM_DEBUG
+endif
+
+export M2HOME := $(shell cd $(TOPDIR)/Macaulay2; pwd)
+
+ifeq "$(SHAREDLIBS)" "yes"
+ifdef LD_LIBRARY_PATH
+export LD_LIBRARY_PATH:=$(M2HOME)/lib:$(LD_LIBRARY_PATH)
+else
+export LD_LIBRARY_PATH:=$(M2HOME)/lib
+endif
+endif

@@ -6,7 +6,6 @@ VPATH = $(srcdir)
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
-include $(TOPDIR)/Makeconf
 
 BOOKNAME = Macaulay2-$(VERSION)-book
 
@@ -43,9 +42,7 @@ all:: $(BOOKNAME).tex
 
 $(BOOKNAME).bbl : papers.bib
 
-ifndef CYGWIN32
 all:: $(BOOKNAME).dvi $(BOOKNAME).ps $(BOOKNAME).pdf
-endif
 
 ## for M2book.pdf put these lines in texmf.cnf
 # main_memory = 1263000

@@ -6,8 +6,6 @@ VPATH = $(srcdir)
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
-include $(TOPDIR)/Makeconf
-
 
 all :: up.gif next.gif previous.gif top.gif index.gif null.gif index.html
 

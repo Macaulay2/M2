@@ -19,5 +19,3 @@ addStartFunction(
 setrecursionlimit 300
 
 addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
-
-

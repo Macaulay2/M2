@@ -6,7 +6,6 @@ VPATH = $(srcdir)
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
-include $(TOPDIR)/Makeconf
 
 ############################## main target
 all :: compat.h
@@ -313,11 +312,10 @@ c-files.tar :: $(ALLC)
 	tar cf $@ $(ALLC)
 ##############################
 
-# UTIL := $(PATHPARENT)util$(PATHSEP)
 UTIL := ../util/
 
 tmp_init.o : tmp_init.c
-tmp_init.c : $(TOPDIR)/Makeconf $(PROJECT)
+tmp_init.c : $(PROJECT)
 	 $(UTIL)timestmp >tmp
 	@ echo "echoout '>>tmp' ..."
 	@ $(UTIL)echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
@@ -412,9 +410,7 @@ endif
 ../bin/Macaulay2 : $(ALLOBJ) $(LIBRARYFILES)
 	rm -f $@
 	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
-ifndef CYGWIN32
 	$(STRIPCMD) $@
-endif
 
 t_main.o : types.h
 t : t_main.o gmp.oo stdio.oo strings.oo system.oo varstrin.oo nets.oo scclib.o C.oo t.oo

@@ -6,7 +6,6 @@ VPATH = $(srcdir)
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
-include $(TOPDIR)/Makeconf
 
 RESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2)) 
 ifneq "$(DUMPDATA)" "no"

@@ -3,12 +3,13 @@
 
 Macaulay 2 preliminary porting instructions and notes
 
-    We use gcc/g++ version 2.8.1, gnu make version 3.77, and gawk 3.0.2; you
-should install these yourself.  We use various other libraries, whose sources
-are included in this distribution for your convenience, although you may
-prefer to pick up more recent versions of these libraries.  These libraries
-have their own copying licenses, as described below.  The copying license for
-Macaulay 2 is in ./Macaulay2/licenses/README.
+    We use gcc/g++ version 2.95.2, gnu make version 3.79.1, and gawk 3.0.3;
+you should install these yourself.  Be sure to install the latest version.
+We use various other libraries, whose sources are included in this
+distribution for your convenience, although you may prefer to pick up more
+recent versions of these libraries.  These libraries have their own copying
+licenses, as described below.  The copying license for Macaulay 2 is in
+./Macaulay2/licenses/README.
 
 library: Macaulay2
  author: Daniel R. Grayson <dan@math.uiuc.edu>
@@ -63,9 +64,8 @@ or run 'configure' yourself.  See what options are available with
 'configure --help'.
 
 To compile Macaulay 2 type 'make' in this directory.  The resulting shell
-script, ./Macaulay2/bin/M2, can then be installed in /usr/local/bin.  Local
-options (governing profiling, stripping, etc) can be set in the file
-Makefile.lcl.
+script, ./Macaulay2/bin/M2, can then be installed in /usr/local/bin.  The
+resulting distributions/Macaulay2-*-tar.gz file can be distributed.
 	
 -----------------------
 Windows 95, 98 and NT notes

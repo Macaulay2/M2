@@ -8,7 +8,6 @@ VPATH = $(srcdir)
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
-include $(top_srcdir)/Makeconf
 
 all:: initialize
 emacs html: all; $(MAKE) -C ../$@
@@ -126,7 +125,7 @@ ARGS := -silent setup.m2
 endif
 
 phase1 :: ../cache/Macaulay2-made
-../cache/Macaulay2-made : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
+../cache/Macaulay2-made : $(DUMPEDGFILES) ../bin/Macaulay2
 	touch $@
 
 phase1 :: $(SCRIPTS)
@@ -143,9 +142,7 @@ phase2 :: initialize
 phase2 :: phase1
 phase2 :: ../cache/Macaulay2-pre
 
-../cache/Macaulay2-pre : $(DUMPEDGFILES) \
-		../bin/Macaulay2$(EXESUFFIX) \
-		 $(DOCSEQUENCE) $(TUTORIALS)
+../cache/Macaulay2-pre : $(DUMPEDGFILES) ../bin/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS)
 	 # phase 2 makes the example and test files
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
