@@ -44,10 +44,7 @@ lcm := args -> (
      n := 1;
      scan(args, i -> n = lcm2(n,i));
      n)
-commden := (f) -> (
-     lcm apply(
-	  first entries lift((coefficients f)#1, QQ),
-	  denominator))
+commden := (f) -> lcm apply( last \ listForm f, denominator)
 
 irreducibleCharacteristicSeries = method()
 irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries

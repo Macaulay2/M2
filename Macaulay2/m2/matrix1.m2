@@ -662,11 +662,7 @@ scan({ZZ}, S -> (
 		   ideal (presentation ring I ** S));
 	  ));
 
-content(RingElement) := content(Matrix) := Ideal => (f) -> (
-     R := ring f;
-     n := numgens R;
-     k := coefficientRing R;
-     trim ideal lift((coefficients(splice {0..n-1},f))#1, k))
+content(RingElement) := Ideal => (f) -> ideal \\ last \ listForm f
 
 cover(Matrix) := Matrix => (f) -> matrix f
 

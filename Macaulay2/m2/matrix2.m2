@@ -209,36 +209,16 @@ homogenize(Vector, RingElement) := Vector => (f,n) -> (
     homogenize(f,n,wts)
     )
 
-oldCoefficients(List, Matrix) := (v,m) -> (
-    sendgg(ggPush m, ggPush v, ggcoeffs); 
-    m1 := getMatrix ring m; 
-    {m1, getMatrix ring m})
-
-oldCoefficients(List, RingElement) := (v,m) -> (
-     f := matrix{{m}};
-     sendgg(ggPush f, ggPush v, ggcoeffs); 
-     m1 := getMatrix ring m; 
-     {m1, getMatrix ring m})
-
-oldCoefficients(Matrix) := 
-oldCoefficients(RingElement) := (m) -> (
-     R := ring m;
-     n := numgens R;
-     coefficients(splice {0 .. n-1}, m))
-
 coefficients(ZZ, Matrix) := coefficients(ZZ, RingElement) := (v,m) -> coefficients({v},m)
 
 coefficients(List, Matrix) := (vrs,f) -> (
-     R := ring f;
      m := raw f;
-     monoms := rawMonomials(splice vrs, m);
-     monoms = rawTensor(rawIdentity(raw target f,0),monoms);
-     c := rawCoefficients(vrs,monoms,m);
-     monoms = map(target f,,monoms);
-     c = map(source monoms,source f,c);
-     (monoms,c))
+     monoms := map(target f,,rawTensor(rawIdentity(raw target f,0),rawMonomials(splice vrs, m)));
+     (monoms,map(source monoms,source f,rawCoefficients(vrs,monoms,m))))
+coefficients(Sequence, Matrix) := (vrs,f) -> coefficients(toList vrs,f)
 
 coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
+coefficients(Sequence, RingElement) := (v,m) -> coefficients(toList v,matrix{{m}})
 
 coefficients(Matrix) := coefficients(RingElement) := (m) -> coefficients(toList (0 .. numgens ring m - 1), m)
 

@@ -272,6 +272,37 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
 #endif
 }
 
+const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B)
+{
+#warning "check that the rings of f and g both polynomial rings"
+#ifdef FACTORY
+  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
+  const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  if (P != P2)
+    {
+      ERROR("encountered different rings");
+      return 0;
+    }
+  CanonicalForm p = convert(*f), q = convert(*g), a, b;
+  //     cerr << "p = " << p << endl
+  //          << "q = " << q << endl;
+  enter_factory here;
+  CanonicalForm h = extgcd(p,q,a,b);
+  const RingElement *r = convert(P,h);
+  *A = convert(P,a);
+  *B = convert(P,b);
+  return r;
+#else
+  ERROR("'factory' library not installed");
+  return NULL;
+#endif
+}
+
 const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g)
 {
 #warning "check that the rings of f and g both polynomial rings"

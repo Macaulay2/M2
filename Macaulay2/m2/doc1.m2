@@ -784,9 +784,7 @@ document {
      Headline => "the coefficients",
      TT "coefficients({i,j,...},p)", " -- yields the coefficients and
      monomials of the polynomial or matrix p with respect to variables 
-     numbered i, j, ... .  This has to
-     be completely redone, so I don't document it further, but it is used in
-     the factoring code.",
+     numbered i, j, ... .",
      BR,NOINDENT,
      TT "coefficients(p)", " -- yields the coefficients and monomials of
      the polynomial or matrix p with respect to all of the variables."
