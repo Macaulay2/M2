@@ -981,7 +981,12 @@ map(n:int,f:Expr):Expr := (
 
 map(e:Expr,f:Expr):Expr := (
      when e
-     is a:Sequence do Expr(map(a,f))
+     is a:Sequence do (
+	  b := map(a,f);
+	  when b
+	  is err:Error do if err.message == breakMessage then err.value else b
+	  else b
+	  )
 --     is obj:HashTable do (
 --	  if obj.mutable then return WrongArg("an immutable hash table");
 --	  if ancestor(obj.class,Tally) then mapkeys(f,obj) else mapvalues(f,obj))
@@ -1000,7 +1005,12 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
      when e1
      is a1:Sequence do (
 	  when e2
-	  is a2:Sequence do map(a1,a2,f)
+	  is a2:Sequence do (
+	       c := map(a1,a2,f);
+	       when c
+	       is err:Error do if err.message == breakMessage then err.value else c
+	       else c
+	       )
 	  is b2:List do (
 	       c := map(a1,b2.v,f);
 	       when c is err:Error do if err.message == breakMessage then err.value else c
