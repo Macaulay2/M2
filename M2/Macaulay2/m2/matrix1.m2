@@ -639,12 +639,7 @@ document { quote flip,
      }
 
 align := f -> (
-     if any(degree f, i -> i =!= 0) 
-     then (
-	  g := map(target f,,f);
-	  if isHomogeneous g then g else f
-	  )
-     else f
+     if isHomogeneous f and any(degree f, i -> i =!= 0) then map(target f,,f) else f
      )
 
 subquotient(Nothing,Matrix) := (null,relns) -> (
