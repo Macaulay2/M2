@@ -15,7 +15,7 @@ Makefile : Makefile.in
 #############################################################################
 all :: doc
 distclean :: clean
-DOCFILES := StateTable.m2 eliminate.m2 D-modules/DMODdoc.m2
+DOCFILES := eliminate.m2 D-modules/DMODdoc.m2
 ## DOCFILES += $(wildcard @srcdir@/D-modules/DOC/*.m2)
 
 phase2: $(DOCFILES)
