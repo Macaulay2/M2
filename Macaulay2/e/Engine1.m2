@@ -1,10 +1,25 @@
 -- Test set A for low level engine functionality
 needs "Engine.m2"
 
+seeit = (engine) -> sendgg(ggPush engine, ggsee)
+
+-- Test of trivial rings
+R1 = ZmodP 5
+assert(seeit R1 == "ZZ/5[EMonomialOrder[]]")
+R2 = ZmodP 32003
+assert(seeit R2 == "ZZ/32003[EMonomialOrder[]]")
+assert(seeit EZ == "ZZ[EMonomialOrder[]]")
+assert(seeit (ZZ/5) == "ZZ/5")
+assert(seeit ZZ == "ZZ")
+
+-- Test of trivial monoid
 motrivial = monomialOrder()
 M = emonoid(motrivial,{},"")
-R = polyring(ZmodP 5, M)
-R1 = R^1  -- crashes the mac right now
+R = polyring(ZmodP 5, M, EZ, {})
+R1 = R^1
+one = R1_({},0)
+assert(4*one == -one)
+assert(5*one == 0)  -- BUG
 
 
 mo = monomialOrder(RevLex=>3,Weights=>{1,2,3,4},Lex=>2,Component,NCLex=>3)

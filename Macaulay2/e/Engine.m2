@@ -81,8 +81,8 @@ newERingMap = () -> (
      v.handle = newHandle();
      v)
 ------------------------------------------------------------
-ZmodP = (p) -> (sendgg(ggPush p, ggcharp); newHandle())
-EZ = (sendgg(ggsagbi); newERing())
+ZmodP = (p) -> (sendgg(ggPush p, ggEcharp); newHandle())
+EZ = (sendgg(ggEZZ); newERing())
 
 degreeRing = (ndegs) -> (
     local names;

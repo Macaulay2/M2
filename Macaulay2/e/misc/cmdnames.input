@@ -1,5 +1,15 @@
 ggnone
 
+ggEZZ
+EZZ
+. >> EPolynomialRing
+Yields the ring ZZ, using the new arithmetic.
+
+ggEcharp
+Echarp
+p:int >> EPolynomialRing
+Yields the ring ZZ/p, using the new arithmetic.  p must be a positive integer, possibly not prime.  Currently, it is restricted to be less than 2^16-1.
+
 ggadd
 +
 f g >> f+g

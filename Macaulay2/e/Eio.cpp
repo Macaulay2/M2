@@ -821,18 +821,24 @@ void EVector::text_out(buffer &o) const
 
   const EMonoid *M = F->getRing()->getMonoid();
   const ECoefficientRing *K = F->getRing()->getCoefficientRing();
+  bool isring = F->getRing()->getRingFreeModule() == F;
   int old_one = p_one;
   int old_parens = p_parens;
   int old_plus = p_plus;
 
-  p_one = 0;
+  if (isring) 
+    p_one = 1;
+  else
+    p_one = 0;
+
   for (poly *t = elems; t != 0; t = t->next)
     {
       int isone = M->is_one(t->monom);
       K->elem_text_out(o,t->coeff);
       if (!isone)
 	M->elem_text_out(o, t->monom);
-      o << "<" << t->component << ">";
+      if (!isring)
+	o << "<" << t->component << ">";
       p_plus = 1;
     }
 
