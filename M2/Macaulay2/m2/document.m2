@@ -364,14 +364,14 @@ fixupTable := new HashTable from {
      Description => extractExamples @@ hypertext,
      Caveat => v -> if v =!= null then fixup SEQ { PARA BOLD "Caveat", SEQ v },
      SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ enlist v) },
-     Menu => identity
+     Subnodes => identity
      }
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
 theMenu := key -> (
-     r := getOption(key,Menu);
+     r := getOption(key,Subnodes);
      if r =!= null then SEQ prepend(
-	  PARA BOLD "Menu", 				    -- for info mode, we need to put out "* Menu:" here.
+	  PARA BOLD "Subnodes", 				    -- for info mode, we need to put out "* Menu:" here.
 	  sublists(r, 
 	       x -> not ( class x === TO or class x === TOH ),
 	       x -> PARA{x},
@@ -390,7 +390,7 @@ documentOptions := new HashTable from {
      Description => true,				    -- the "body"
      SeeAlso => true,
      Caveat => true,
-     Menu => true }
+     Subnodes => true }
 document = method( SingleArgumentDispatch => true )
 
 document List := z -> document toSequence z
