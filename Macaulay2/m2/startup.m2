@@ -19,6 +19,7 @@ if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again
      -- with all these already done and global variables set to read-only
      ReverseDictionary = new MutableHashTable;
+     PrintNames = new MutableHashTable;
      scan(
 	  {symbol Array, symbol BasicList, symbol BigReal, symbol BigComplex,
 		symbol Boolean, symbol CacheTable, symbol Pseudocode, symbol Database,
