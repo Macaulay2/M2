@@ -4,7 +4,13 @@ VPATH = @srcdir@
 CCTESTS = test_monomial.o
 CTESTS = check_monomial.o \
 	check_monordering.o \
-	check_monoid.o
+	check_monoid.o \
+	check_ring.o \
+	check_freemodule.o \
+	check_matrix.o \
+	check_vector.o \
+	check_sparsemat.o \
+	check_lapack.o
 
 #test_monordering test_monoid test_ring test_freemodule test_vector \
 #	test_matrix test_sparsemat test_lapack
