@@ -116,41 +116,6 @@ M2_arrayint res_comp::betti_nmonoms() const
   return get_betti(3);
 }
 
-static void betti_display(buffer &o, const M2_arrayint ar)
-{
-  const int *a = ar->array;
-  int total_sum = 0;
-  int lo = a[0];
-  int hi = a[1];
-  int len = a[2]+1;
-  o << "total  ";
-  for (int lev=0; lev<len; lev++)
-    {
-      int sum = 0;
-      for (int d=lo; d<=hi; d++)
-	sum += a[len*(d-lo)+lev+3];
-      total_sum += sum;
-      o.put(sum, 6);
-      o << ' ';
-    }
-  o << " [" << total_sum << "]" << newline;
-  for (int d=lo; d<=hi; d++)
-    {
-      o.put(d, 5);
-      o << ": ";
-      for (int lev=0; lev<len; lev++)
-	{
-	  int c = a[len*(d-lo) + lev + 3];
-	  if (c != 0)
-	    o.put(c, 6);
-	  else
-	    o << "     -";
-	  o << " ";
-	}
-      o << newline;
-    }
-}
-
 void res_comp::text_out(buffer &o, const res_pair *p) const
 {
   res_pair *a = p->first;

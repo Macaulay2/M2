@@ -1279,11 +1279,10 @@ int GB_comp::contains(const Matrix *m)
   return -1;
 }
 
-int GB_comp::gb_complete_thru_degree()
+int GB_comp::complete_thru_degree() const
   // The computation is complete up through this degree.
 {
   return _this_degree - 1;
-#warning "set *degree correctly"
 }
 
 void GB_comp::text_out(buffer &o)

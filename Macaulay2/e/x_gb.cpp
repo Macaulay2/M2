@@ -114,11 +114,7 @@ enum ComputationStatusCode rawStatus1(Computation *C)
 
 int rawStatus2(Computation *C)
 {
-  GBComputation *G = C->cast_to_GBComputation();
-  if (G != 0)
-    return G->gb_complete_thru_degree();
-  ERROR("computation type unknown or not implemented");
-  return 0;
+  return C->complete_thru_degree();
 }
 
 const MatrixOrNull *rawGBGetMatrix(Computation *C)
@@ -249,31 +245,28 @@ int IM2_Resolution_status(Computation *C,
 }
 
 
-int 
+enum ComputationStatusCode
 IM2_Resolution_status_level(Computation *C, 
 		    int level, 
 		    M2_bool minimize,
 		    int * complete_up_through_this_degree)
-  /* Same return values */
 {
-#warning write this routine
+#warning "IM2_Resolution_status to be written"
+  ERROR("not re-implemented yet");
+  return COMP_ERROR;
 #if 0
-  return G->status_level(level, 
-			 minimize,
-			 complete_up_through_this_degree);
-#endif
-  ERROR("resolutions need to be re-implemented");
+  ResolutionComputation *G = C->cast_to_ResolutionComputation();
+  if (G != 0)
+    return G->status_level(level, complete_up_through_this_degree);
+  ERROR("expected resolution computation type");
   return 0;
+#endif
 }
 
 const M2_arrayint_OrNull
 rawResolutionBetti(Computation *C,
 	     int type)
-  /* 0: minimal betti numbers,
-     1:
-     2:
-     3:
-  */
+  /* see engine.h for description of what 'type' should be */
 {
   ResolutionComputation *G = C->cast_to_ResolutionComputation();
   if (G != 0)

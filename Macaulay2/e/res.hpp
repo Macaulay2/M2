@@ -176,7 +176,7 @@ public:
 
   void start_computation();
 
-  int res_complete_thru_degree();
+  int complete_thru_degree() const;
 
 //////////////////////////////////////////////
 //  Result matrices of the resolution ////////

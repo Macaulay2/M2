@@ -7,7 +7,7 @@
 #include "text_io.hpp"
 
 extern char system_interruptedFlag;
-extern int comp_printlevel;
+extern int gbTrace;
 
 static int n_ones = 0;
 static int n_unique = 0;
@@ -15,12 +15,48 @@ static int n_others = 0;
 
 #include "res_aux2.cpp"
 
-int res2_comp::skeleton(int level)
+bool res2_comp::stop_conditions_ok()
+{
+  if (stop_.length_limit <= 0)
+    {
+      ERROR("length limit out of range");
+      return false;
+    }
+
+  if (stop_.length_limit != 0 && stop_.length_limit->len > 0)
+    {
+    }
+
+  if (stop_.stop_after_degree && stop_.degree_limit != 0)
+    {
+      ERROR("expected resolution stop degree");
+      return false;
+    }
+  return true;
+}
+
+int res2_comp::complete_thru_degree() const
+{
+  int lo = hidegree+1;
+  int len = resn.length()-1;
+  for (int lev=0; lev<=len; lev++)
+    {
+      for (res2_pair *p = resn[lev]->pairs; p != NULL; p = p->next)
+	{
+	  if (p->syz_type != SYZ2_S_PAIR) continue;
+	  int d = p->degree;
+	  if (d < lo) lo = d;
+	}
+    }
+  return lo-1;
+}
+
+enum ComputationStatusCode res2_comp::skeleton(int level)
   // Compute the skeleton of the resolution
-  // returns COMP_DONE or COMP_INTERRUPTED
+  // returns COMP_COMPUTING or COMP_INTERRUPTED
 {
   res2_pair *p;
-  if (resn[level]->state != RES_SKELETON) return COMP_DONE;
+  if (resn[level]->state != RES_SKELETON) return COMP_COMPUTING;
   // If we are new here, next_pairs will be null, so we should sort
   if (resn[level]->next_pair == NULL)
     {
@@ -48,7 +84,7 @@ int res2_comp::skeleton(int level)
       if (system_interruptedFlag) return COMP_INTERRUPTED;	  
     }
   resn[level]->state = RES_MONORDER;
-  return COMP_DONE;
+  return COMP_COMPUTING;
 }
 
 void res2_comp::increase_level(int newmax)
@@ -68,10 +104,7 @@ void res2_comp::increase_level(int newmax)
   length_limit = newmax;
 }
 
-static int PairLimit;
-static int SyzygyLimit;
-
-int res2_comp::do_all_pairs(int level, int degree)
+enum ComputationStatusCode res2_comp::do_all_pairs(int level, int degree)
 {
   // First compute all pairs necessary for doing this (level,degree)
   // and then actually compute the ones in that degree.
@@ -81,7 +114,7 @@ int res2_comp::do_all_pairs(int level, int degree)
       (resn[level]->next_pair == NULL ||
        degree < resn[level]->next_pair->degree))
     return COMP_COMPUTING;
-  int ret = do_all_pairs(level, degree-1);
+  enum ComputationStatusCode ret = do_all_pairs(level, degree-1);
   if (ret != COMP_COMPUTING) return ret;
   ret = do_all_pairs(level+1, degree-1);
   if (ret != COMP_COMPUTING) return ret;
@@ -89,14 +122,14 @@ int res2_comp::do_all_pairs(int level, int degree)
   return ret;
 }
 
-int res2_comp::do_pairs(int level, int degree)
+enum ComputationStatusCode res2_comp::do_pairs(int level, int degree)
 {
   // Find the first pair in this degree, and count the number of
   // pairs to compute in this degree.
   // If this number is 0, continue
   res2_pair *p;
 
-  if (comp_printlevel >= 2)
+  if (gbTrace >= 2)
     {
       p = resn[level]->next_pair;
       int nelems = 0;
@@ -122,22 +155,24 @@ int res2_comp::do_pairs(int level, int degree)
 	  || p->syz_type == SYZ2_MAYBE_MINIMAL)
 	{
 	  handle_pair(p);
-	  if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
-	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
-	    return COMP_DONE_SYZ_LIMIT;
+	  if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
+	    return COMP_DONE_PAIR_LIMIT;
+	  //if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
+	  if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
+	    return COMP_DONE_SYZYGY_LIMIT;
 	}
       if (system_interruptedFlag) return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
 }
 
-int res2_comp::do_pairs_by_level(int level)
+enum ComputationStatusCode res2_comp::do_pairs_by_level(int level)
 {
   // The pairs should be sorted in ascending monomial order
   
   res2_pair *p;
 
-  if (comp_printlevel >= 2)
+  if (gbTrace >= 2)
     {
       int nelems = resn[level]->nleft;
       if (nelems > 0)
@@ -151,7 +186,9 @@ int res2_comp::do_pairs_by_level(int level)
     {
       resn[level]->next_pair = p->next;
       handle_pair_by_level(p);
-      if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
+      if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
+	return COMP_DONE_PAIR_LIMIT;
+      //      if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
       if (system_interruptedFlag) return COMP_INTERRUPTED;
     }
 
@@ -184,24 +221,24 @@ int res2_comp::do_pairs_by_level(int level)
 	  g->next = NULL;
 	  p->pivot_term = head.next;
 	}
-      if (comp_printlevel >= 3)
+      if (gbTrace >= 3)
 	{
 	  buffer o;
 	  o << "[kept " << nmonoms << " killed " << nkilled << "]";
 	  emit(o.str());
 	}
     }
-  return COMP_DONE;
+  return COMP_COMPUTING;
 }
 
-int res2_comp::do_pairs_by_degree(int level, int degree)
+enum ComputationStatusCode res2_comp::do_pairs_by_degree(int level, int degree)
 {
   // Find the first pair in this degree, and count the number of
   // pairs to compute in this degree.
   // If this number is 0, continue
   res2_pair *p;
 
-  if (comp_printlevel >= 2 && level > 1)
+  if (gbTrace >= 2 && level > 1)
     {
       p = resn[level]->next_pair;
       int nelems = 0;
@@ -225,15 +262,22 @@ int res2_comp::do_pairs_by_degree(int level, int degree)
 	  || (p->syz_type == SYZ2_MAYBE_MINIMAL && level < length_limit+1))
 	{
 	  handle_pair_by_degree(p);
-	  if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
-	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
-	    return COMP_DONE_SYZ_LIMIT;
+	  if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
+	    return COMP_DONE_PAIR_LIMIT;
+	  //if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
+	  if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
+	    return COMP_DONE_SYZYGY_LIMIT;
 	}
       if (system_interruptedFlag) return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
 }
 
+#define DO(CALL) {enum ComputationStatusCode result = CALL; \
+                  if (result != COMP_COMPUTING) \
+		     {set_status(result); return;}}
+
+#if 0
 int res2_comp::calc(const int *DegreeLimit, 
 		   int LengthLimit, 
 		   int ArgSyzygyLimit,
@@ -241,43 +285,31 @@ int res2_comp::calc(const int *DegreeLimit,
 		   int /*SyzLimitValue*/,
 		   int /*SyzLimitLevel*/,
 		   int /*SyzLimitDegree*/)
+#endif
+void res2_comp::start_computation()
 {
   int n, level;
   res2_pair *p;
 
-  if (ArgPairLimit == 0)
-    return COMP_DONE_PAIR_LIMIT;
-  if (ArgSyzygyLimit == 0)
-    return COMP_DONE_SYZ_LIMIT;
+  if (status() == COMP_DONE) return;
+  set_status(COMP_COMPUTING);
+ 
+ if (length_limit < stop_.length_limit->array[0])
+    // this also sets length_limit
+    increase_level(stop_.length_limit->array[0]);
+  else
+    length_limit = stop_.length_limit->array[0];
 
-  PairLimit = ArgPairLimit;
-  SyzygyLimit = ArgSyzygyLimit;
-
-  if (LengthLimit <= 0)
-    {
-      ERROR("length limit out of range");
-      return COMP_ERROR;
-    }
-  if (LengthLimit > length_limit)
-    {
-      increase_level(LengthLimit);
-      
-    }
-  length_limit = LengthLimit;
   int compute_level = COMPUTE_RES;
 
   for (level=1; level<=length_limit+1; level++)
-    {
-      int ret = skeleton(level);
-      if (ret != COMP_DONE) return ret;
-    }      
+    DO(skeleton(level));
 
-  if (comp_printlevel >= 3)
+  if (gbTrace >= 3)
     {
       buffer o;
       o << "--- The total number of pairs in each level/slanted degree -----" << newline;
-      intarray a;
-      betti_skeleton(a);
+      M2_arrayint a = betti_skeleton();
       betti_display(o, a);
       emit(o.str());
     }
@@ -288,7 +320,11 @@ int res2_comp::calc(const int *DegreeLimit,
     //    since the last time the pairs were sorted for reduction
 
 
-  if (compute_level <= COMPUTE_SKELETON) return COMP_DONE;
+  if (compute_level <= COMPUTE_SKELETON) 
+    {
+      set_status(COMP_DONE);
+      return;
+    }
 
   // Set the monomial order for each level, and then prepare for
   // reductions
@@ -314,45 +350,53 @@ int res2_comp::calc(const int *DegreeLimit,
 
   // Here: possibly compute the resolution of the monomial ideal first.
 
-  if (compute_level <= COMPUTE_MONOMIAL_RES) return COMP_DONE;
+  if (compute_level <= COMPUTE_MONOMIAL_RES) 
+    {
+      set_status(COMP_DONE);
+      return;
+    }
 
   if (do_by_level != 0)
     {
       for (level=1; level<=length_limit; level++)
-	{
-	  int ret = do_pairs_by_level(level);
-	  if (ret != COMP_DONE) return ret;
-	}
-      return COMP_DONE;
+	DO(do_pairs_by_level(level));
+      set_status(COMP_DONE);
+      return;
     }
   
   if (do_by_degree)
     {
       for (int deg=0; deg<=hidegree; deg++)
 	{
-	  if (DegreeLimit != NULL && deg > *DegreeLimit - lodegree)
-	    return COMP_DONE_DEGREE_LIMIT;
-	  if (comp_printlevel >= 1)
+	  if (stop_.stop_after_degree && stop_.degree_limit->array[0] - lodegree < deg)
+	    //	  if (DegreeLimit != NULL && deg > *DegreeLimit - lodegree)
+	    {
+	      set_status(COMP_DONE_DEGREE_LIMIT);
+	      return;
+	    }
+	  if (gbTrace >= 1)
 	    {
 	      buffer o;
 	      o << '{' << deg+lodegree << '}';
 	      emit(o.str());
 	    }
 	  for (level=1; level<=length_limit; level++)
-	    {
-	      int ret = do_pairs_by_degree(level, deg);
-	      if (ret != COMP_COMPUTING) return ret;
-	    }
+	    DO(do_pairs_by_degree(level,deg));
 	}
-      return COMP_DONE;
+      set_status(COMP_DONE);
+      return;
     }
 
   // Now do all of the reductions
   for (int deg=0; deg<=hidegree; deg++)
     {
-      if (DegreeLimit != NULL && deg > *DegreeLimit - lodegree)
-	return COMP_DONE_DEGREE_LIMIT;
-      if (comp_printlevel >= 1)
+      if (stop_.stop_after_degree && stop_.degree_limit->array[0] - lodegree < deg)
+	//if (DegreeLimit != NULL && deg > *DegreeLimit - lodegree)
+	{
+	  set_status(COMP_DONE_DEGREE_LIMIT);
+	  return;
+	}
+      if (gbTrace >= 1)
 	{
 	  buffer o;
 	  o << '{' << deg+lodegree << '}';
@@ -360,8 +404,7 @@ int res2_comp::calc(const int *DegreeLimit,
 	}
       for (level=1; level<=length_limit+1; level++)
 	{
-	  int ret = do_all_pairs(level, deg);
-	  if (ret != COMP_COMPUTING) return ret;
+	  DO(do_all_pairs(level,deg));
 	  if (level > projdim) break;
 	}
     }
@@ -371,8 +414,11 @@ int res2_comp::calc(const int *DegreeLimit,
   for (int deg=0; deg<=hidegree; deg++)
     {
       if (DegreeLimit != NULL && deg > *DegreeLimit - lodegree)
-	return COMP_DONE_DEGREE_LIMIT;
-      if (comp_printlevel >= 1)
+	{
+	  set_status(COMP_DONE_DEGREE_LIMIT);
+	  return;
+	}
+      if (gbTrace >= 1)
 	{
 	  buffer o;
 	  o << '{' << deg+lodegree << '}';
@@ -380,12 +426,11 @@ int res2_comp::calc(const int *DegreeLimit,
 	}
       for (level=1; level<=length_limit+1; level++)
 	{
-	  int ret = do_pairs(level, deg);
-	  if (ret != COMP_COMPUTING) return ret;
+	  DO(do_pairs(level,deg));
 	}
     }
 #endif
-  return COMP_DONE;
+  set_status(COMP_DONE);
 }
 
 //////////////////////////////////////////////
@@ -479,7 +524,7 @@ void res2_comp::initialize(const Matrix *mat,
   use_respolyHeaps = (SortStrategy & FLAGS_GEO ? 1 : 0);
 
   if (do_by_degree) do_by_level = 0;
-  if (comp_printlevel >= 3)
+  if (gbTrace >= 3)
     {
       buffer o;
       o << "auto-reduce level = " << auto_reduce << newline;
@@ -929,7 +974,7 @@ void res2_comp::new_pairs(res2_pair *p)
   intarray vp;			// This is 'p'.
   intarray thisvp;
 
-  if (comp_printlevel >= 10)
+  if (gbTrace >= 10)
     {
       buffer o;
       o << "Computing pairs with first = " << p->pair_num << newline;
@@ -941,27 +986,24 @@ void res2_comp::new_pairs(res2_pair *p)
   // First add in syzygies arising from exterior variables
   // At the moment, there are none of this sort.
 
-  if (M->is_skew())
+  if (P->is_skew_commutative())
     {
-      intarray vplcm;
       intarray find_pairs_vp;
-
-      int *skewvars = newarray(int,M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_vp);
-      int nskew = M->exp_skew_vars(find_pairs_vp.raw(), skewvars);
-      
-      // Add in syzygies arising from exterior variables
-      for (int v=0; v < nskew; v++)
-	{
-	  int w = skewvars[v];
+      int *exp = find_pairs_vp.raw();
 
-	  thisvp.shrink(0);
-	  varpower::var(w,1,thisvp);
-	  Bag *b = new Bag(static_cast<void *>(0), thisvp);
-	  elems.insert(b);
+      int nskew = P->n_skew_commutative_vars();
+      for (int v=0; v<nskew; v++)
+	{
+	  int w = P->skew_variable(v);
+	  if (exp[w] > 0)
+	    {
+	      thisvp.shrink(0);
+	      varpower::var(w,1,thisvp);
+	      Bag *b = new Bag(static_cast<void *>(0), thisvp);
+	      elems.insert(b);
+	    }
 	}
-      // Remove the local variables
-      deletearray(skewvars);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -1006,7 +1048,7 @@ void res2_comp::new_pairs(res2_pair *p)
   while (rejects.remove(b))
     deleteitem(b);
 
-  if (comp_printlevel>= 11) mi.debug_out(1);
+  if (gbTrace>= 11) mi.debug_out(1);
 
   int *m = M->make_one();
   for (j = mi.first(); j.valid(); j++)
@@ -1047,7 +1089,7 @@ int res2_comp::find_divisor(const MonomialIdeal *mi,
   if (bb.length() == 0) return 0;
   result = reinterpret_cast<res2_pair *>((bb[0]->basis_ptr()));
   // Now search through, and find the best one.  If only one, just return it.
-  if (comp_printlevel >= 5)
+  if (gbTrace >= 5)
     if (mi->length() > 1)
       {
 	buffer o;
@@ -1116,7 +1158,7 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
   //  Bag *b;
 
   int count = 0;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     emit_wrapped(",");
   
   while (f != NULL)
@@ -1141,7 +1183,7 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
 	  pivot = lastterm;
 	  if (q->syz_type == SYZ2_S_PAIR || q->syz_type == SYZ2_MAYBE_MINIMAL) 
 	    {
-	      if (comp_printlevel >= 4)
+	      if (gbTrace >= 4)
 		{
 		  buffer o;
 		  o << count;
@@ -1162,7 +1204,7 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
 	  R->remove(tmp);
 	}
     }
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -1187,7 +1229,7 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
   ring_elem rg;
 
   int count = 0;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     emit_wrapped(",");
 
   while (f != NULL)
@@ -1261,7 +1303,7 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
     }
   red->next = NULL;
   f = head.next;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -1293,7 +1335,7 @@ res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot
   //  Bag *b;
 
   int count = 0;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     emit_wrapped(",");
 
   while ((lead = fb.remove_lead_term()) != NULL)
@@ -1350,7 +1392,7 @@ res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot
     }
   red->next = NULL;
   f = head.next;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -1378,7 +1420,7 @@ res2_pair *res2_comp::reduce4(res2term * &f, res2term * &fsyz, res2term * &pivot
   ring_elem rg;
 
   int count = total_reduce_count;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     emit_wrapped(",");
 
   while (f != NULL)
@@ -1438,7 +1480,7 @@ res2_pair *res2_comp::reduce4(res2term * &f, res2term * &fsyz, res2term * &pivot
     }
   red->next = NULL;
   f = head.next;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     {
       buffer o;
       o << (total_reduce_count - count);
@@ -1460,7 +1502,7 @@ res2_pair *res2_comp::reduce_by_level(res2term * &f, res2term * &fsyz)
   ring_elem rg;
 
   int count = 0;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     emit_wrapped(",");
   
   while (f != NULL)
@@ -1493,7 +1535,7 @@ res2_pair *res2_comp::reduce_by_level(res2term * &f, res2term * &fsyz)
 	  R->remove(tmp);
 	}
     }
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -1515,7 +1557,7 @@ res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
   res2term *lead;
 
   int count = 0;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     emit_wrapped(",");
 
   while ((lead = fb.remove_lead_term()) != NULL)
@@ -1553,7 +1595,7 @@ res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
 	}
     }
   f = NULL;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     {
       buffer o;
       o << count;
@@ -1602,7 +1644,7 @@ void res2_comp::handle_pair(res2_pair *p)
   if (p->level == 1)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (comp_printlevel >= 2) emit_wrapped("z");
+      if (gbTrace >= 2) emit_wrapped("z");
       if (projdim == 0) projdim = 1;
       nminimal++;
       return;
@@ -1645,7 +1687,7 @@ void res2_comp::handle_pair(res2_pair *p)
 	  if (p->level > projdim)
 	    projdim = p->level;
 	}
-      if (comp_printlevel >= 2) emit_wrapped("z");
+      if (gbTrace >= 2) emit_wrapped("z");
     }
   else 
     {
@@ -1668,7 +1710,7 @@ void res2_comp::handle_pair(res2_pair *p)
 	{
 	}
 
-      if (comp_printlevel >= 2) emit_wrapped("m");
+      if (gbTrace >= 2) emit_wrapped("m");
     }
 }
 
@@ -1681,7 +1723,7 @@ void res2_comp::handle_pair_by_level(res2_pair *p)
   if (p->level == 1)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (comp_printlevel >= 2) emit_wrapped("z");
+      if (gbTrace >= 2) emit_wrapped("z");
       return;
     }
 
@@ -1699,7 +1741,7 @@ void res2_comp::handle_pair_by_level(res2_pair *p)
   if (f == NULL)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (comp_printlevel >= 2) emit_wrapped("z");
+      if (gbTrace >= 2) emit_wrapped("z");
     }
   else 
     {
@@ -1724,7 +1766,7 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
       if (p->syz_type != SYZ2_NOT_NEEDED)
 	{
 	  p->syz_type = SYZ2_MINIMAL;
-	  if (comp_printlevel >= 2) emit_wrapped("z");
+	  if (gbTrace >= 2) emit_wrapped("z");
 	  nminimal++;
 	}
       return;
@@ -1743,18 +1785,18 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
 	  p->syz_type = SYZ2_MINIMAL;
 	  nminimal++;
 	  resn[p->level]->nminimal++;
-	  if (comp_printlevel >= 2) emit_wrapped("z");
+	  if (gbTrace >= 2) emit_wrapped("z");
 	}
       else
 	{
-	  if (comp_printlevel >= 2) emit_wrapped("o");
+	  if (gbTrace >= 2) emit_wrapped("o");
 	}
     }
   else 
     {
       p->syz_type = SYZ2_NOT_MINIMAL;
       q->syz_type = SYZ2_NOT_NEEDED;
-      if (comp_printlevel >= 2) emit_wrapped("m");
+      if (gbTrace >= 2) emit_wrapped("m");
     }
 }
 

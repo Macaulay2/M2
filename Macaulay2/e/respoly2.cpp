@@ -4,6 +4,7 @@
 #include "text_io.hpp"
 #include "polyring.hpp"
 #include "freemod.hpp"
+#include "geovec.hpp"
 
 res2_poly::res2_poly(PolynomialRing *RR)
 : R(RR), M(R->Nmonoms()), K(R->Ncoeffs())
@@ -274,40 +275,40 @@ void res2_poly::elem_text_out(buffer &o, const res2term *f) const
 vec res2_poly::to_vector(const res2term *f, const FreeModule *F, 
 			    int /*to_minimal*/) const
 {
-  vecterm *result = NULL;
+  vecHeap H(F);
   int *mon = M->make_one();
   for (const res2term *tm = f; tm != NULL; tm = tm->next)
     {
 //    int x = (to_minimal ? tm->comp->minimal_me : tm->comp->me);
       int x = tm->comp->me; // MES: Currently used for non-minimal as well...
       M->divide(tm->monom, tm->comp->syz->monom, mon);
-      vecterm *tmp = F->new_term(x, K->copy(tm->coeff), mon);
-      M->mult(tmp->monom, F->base_monom(x), tmp->monom);
-      tmp->next = result;
-      result = tmp;
+
+      ring_elem a = R->term(tm->coeff, mon);
+      vec tmp = R->make_vec(x,a);
+      H.add(tmp);
     }
-  F->sort(result);
-  if (F->is_quotient_ring) F->normal_form(result);
   M->remove(mon);
-  return result;
+  return H.value();
 }
 
 res2term *res2_poly::from_vector(const array<res2_pair *> &base, const vec v) const
 {
-  // The 'base' and the freemodule of 'v' are assumed to be the same: same monomial order,
-  // same Schreyer monomials, etc.
-
   res2term head;
   res2term *result = &head;
-  for (vecterm *t = v; t != NULL; t = t->next)
-    {
-      result->next = new_term();
-      result = result->next;
-      result->comp = base[t->comp];
-      result->coeff = K->copy(t->coeff);
-      M->copy(t->monom, result->monom);
+
+  for (vecterm *w = v; w != NULL; w = w->next)
+    for (Nterm *t = w->coeff; t != 0; t = t->next)
+      {
+	result->next = new_term();
+	result = result->next;
+	result->comp = base[w->comp];
+	result->coeff = t->coeff;
+	M->copy(t->monom, result->monom);
+	M->mult(result->monom, result->comp->syz->monom, result->monom);
     }
   result->next = NULL;
+  // Now we must sort these
+  sort(result);
   return head.next;
 }
 
@@ -334,6 +335,35 @@ const res2term *res2_poly::component_occurs_in(const res2_pair *x,
   for (const res2term *tm = f; tm != NULL; tm = tm->next)
     if (tm->comp == x) return tm;
   return NULL;
+}
+
+void res2_poly::sort(res2term *&f) const
+{
+  // Divide f into two lists of equal length, sort each,
+  // then add them together.  This allows the same monomial
+  // to appear more than once in 'f'.
+  
+  if (f == NULL || f->next == NULL) return;
+  res2term *f1 = NULL;
+  res2term *f2 = NULL;
+  while (f != NULL)
+    {
+      res2term *t = f;
+      f = f->next;
+      t->next = f1;
+      f1 = t;
+
+      if (f == NULL) break;
+      t = f;
+      f = f->next;
+      t->next = f2;
+      f2 = t;
+    }
+  
+  sort(f1);
+  sort(f2);
+  add_to(f1, f2);
+  f = f1;
 }
 
 // Local Variables:
