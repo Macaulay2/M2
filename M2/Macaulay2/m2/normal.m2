@@ -261,14 +261,15 @@ normal0 := (C) -> (
      C#"pending" = null;
      )
 
-integralClosure = method(Options=>{Variable => symbol w})   -- yikes, this misappropriation of a global symbol is very bad (drg)
+w := local w
+integralClosure = method(Options=>{Variable => null})	    -- changed to local variable, and hid it from the documentation -- drg
 integralClosure Ring := Ring => o -> (R) -> (
      if not R#"IC" then newICnode R;
      C := R#"IC";
      while next C do (
       	  if C#"pending"#1 === null 
      	  then normal0 (C) --Compute J defining the NNL.
-     	  else idealizer0(C,o.Variable));
+     	  else idealizer0(C,if o.Variable =!= null then o.Variable else local w));
      A := apply(C#"answer",i->i_0/i_1);
      if #A == 1 then A#0
      else toSequence A
@@ -386,9 +387,6 @@ conductor(RingMap) := Ideal => (F) -> (
 	       I:=ideal modulo(m,matrix{P_0}|M))))
 	  else (<< " --No conductor for " << F << endl;)
      )
-
-erase global w
-erase global IC
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

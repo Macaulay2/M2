@@ -538,6 +538,12 @@ installPackage Package := o -> pkg -> (
 	  << ///done/// << endl;
 	  fileChangeMode(f,octal "755");
  	  f << close;
+	  f = buildDirectory | "encapinfo"
+	  << ///encap 2.0/// << endl
+	  << ///contact dan@math.uiuc.edu/// << endl;
+	  scan(("libm2","packagedoc","packageexamples","packagehtml","packageimages","packagesrc","packagetests"),
+	       k -> f << "linkdir " << (if class LAYOUT#k === Function then LAYOUT#k "*" else LAYOUT#k) << endl);
+	  f << close;
 	  );
 
      -- make html files

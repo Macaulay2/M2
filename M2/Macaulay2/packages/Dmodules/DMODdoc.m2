@@ -293,8 +293,7 @@ document {
 
 document {
      Key =>  (globalBFunction),
-     Headline => {"global b-function (else known as 
-	  the Bernstein-Sato polynomial)"},
+     Headline => "global b-function (else known as the Bernstein-Sato polynomial)",
      INSERTUSAGE {
 	  TT "globalBFunction f", " -- find the global b-function of ", TT "f"
 	  },

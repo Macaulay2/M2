@@ -28,8 +28,7 @@ use struct;
 use objects;
 
 internalName(s:string):string := (
-     "$" + s
-     -- s
+     s     -- was "$" + s in older versions
      );
 
 sleepfun(e:Expr):Expr := (

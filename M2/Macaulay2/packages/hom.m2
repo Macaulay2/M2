@@ -240,7 +240,7 @@ bidualMap(Module) := Matrix => (M) -> (
 
 document {
      Key => prePrune,
-     Headline => {"a simplified version of the ", TT "prune", " function."}
+     Headline => "a simplified version of the prune function."
      }
 
 document {
@@ -290,12 +290,12 @@ document {
 
 document {
      Key => tensorHomAdjoint,
-     Headline => {"adjunction, ", TT "**", " to ", TT "Hom", "."}
+     Headline => "adjunction, ** to Hom"
      }
 
 document {
      Key => (tensorHomAdjoint, Matrix, Module, Module),
-     Headline => {"adjoint map, ", TT "**", " to ", TT "Hom", "."},
+     Headline => "adjoint map, ** to Hom",
      OldSynopsis => {
           "g = tensorHomAdjoint(f,L,M)",
           "f" => TT "L ** M --> N",
@@ -310,7 +310,7 @@ document {
 
 document {
      Key => (tensorHomAdjoint, Module, Module, Module),
-     Headline => {TT "**", "-", TT "Hom", " adjunction functor."},
+     Headline => "** - Hom adjunction functor.",
      OldSynopsis => {
           "g = tensorHomAdjoint(L,M,N)",
           "L" => null,
@@ -325,12 +325,12 @@ document {
 
 document {
      Key => homTensorAdjoint,
-     Headline => {"adjunction, ", TT "Hom", " to ", TT "**", "."}
+     Headline => "adjunction, Hom to **"
      }
 
 document {
      Key => (homTensorAdjoint, Matrix, Module, Module),
-     Headline => {"adjoint map, ", TT "Hom", " to ", TT "**"},
+     Headline => "adjoint map, Hom to **",
      OldSynopsis => {
           "g = homTensorAdjoint(f,L,M)",
           "f" => TT "L --> Hom(M,N)",
@@ -344,7 +344,7 @@ document {
 
 document {
      Key => (homTensorAdjoint, Module, Module, Module),
-     Headline => {TT "Hom", "-", TT "**", " adjunction functor."},
+     Headline => "Hom - ** adjunction functor",
      OldSynopsis => {
           "g = homTensorAdjoint(L,M,N)",
           "L" => null,

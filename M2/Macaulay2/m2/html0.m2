@@ -26,7 +26,7 @@ DistributedMarkUpType.synonym = "distributed mark-up type"
 EmptyMarkUpType = new Type of MarkUpType
 EmptyMarkUpType.synonym = "empty mark-up type"
      MarkUpType Sequence := 
-     MarkUpType List := (h,y) -> new h from select(y,i -> i =!= null)
+     MarkUpType List := (h,y) -> new h from y
 EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expected empty list"
      MarkUpType Nothing := (h,y) -> null
      MarkUpType Thing := (h,y) -> new h from {y}
@@ -58,8 +58,9 @@ new MarkUpType := x -> error "obsolete 'new' method called"
 BR         = new EmptyMarkUpType of MarkUpListParagraph
 NOINDENT   = new EmptyMarkUpType of MarkUpList
 HR         = new EmptyMarkUpType of MarkUpListParagraph
-PARA       = new MarkUpType of MarkUpListParagraph
-EXAMPLE    = new MarkUpType of MarkUpListParagraph; new EXAMPLE from List := (EXAMPLE,x) -> select(x,i -> i =!= null)
+PARA       = new MarkUpType of MarkUpListParagraph	    -- double spacing inside
+PARA1      = new MarkUpType of MarkUpListParagraph	    -- single spacing inside
+EXAMPLE    = new MarkUpType of MarkUpListParagraph
 TABLE      = new MarkUpType of MarkUpListParagraph
 ExampleTABLE = new MarkUpType of MarkUpListParagraph
 PRE        = new MarkUpType of MarkUpListParagraph
@@ -97,7 +98,6 @@ TT         = new MarkUpType of MarkUpList
 EM         = new MarkUpType of MarkUpList
 CITE       = new MarkUpType of MarkUpList
 LABEL      = new MarkUpType of MarkUpList
-SEQ1       = new MarkUpType of MarkUpListParagraph
 BOLD       = new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
 HREF       = new MarkUpType of MarkUpList
@@ -112,7 +112,7 @@ TO2        = new MarkUpType of MarkUpList
 TO         = new MarkUpType of MarkUpList
 TOH        = new MarkUpType of MarkUpList
 new TO from Sequence := new TOH from Sequence := (TO,x) -> new TO from {x} -- document tags can be sequences, so keep them intact
-MENU       = new MarkUpType of MarkUpListParagraph	    -- like "* Menu:" of "info"
+MENU       = new MarkUpType of MarkUpListParagraph	            -- like "* Menu:" of "info"
 SECTION    = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this
 TOC	   = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this
 

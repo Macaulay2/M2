@@ -19,7 +19,7 @@ sublists := (x,f,g,h) -> (
      -- apply g to those i for which f i is true
      -- apply h to the sublists, possibly empty, including those at the beginning and end, of elements between the ones for which f i is true
      -- return the results in the same order
-     p := positions(x, f);
+     p := positions(toSequence x, f);
      mingle(
 	  apply( prepend(-1,p), append(p,#x), (i,j) -> h take(x,{i+1,j-1})),
 	  apply( p, i -> g x#i)))
@@ -209,6 +209,7 @@ makeDocumentTag Thing := opts -> key -> (
      verifyTag key;
      fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag key;
      pkg := if opts#Package =!= null then opts#Package else packageTag key;
+     if pkg === null then error ("can't determine correct package for document tag '",key,"'");
      title := if pkg === null then "" else pkg#"title";
      new DocumentTag from {key,fkey,pkg,title})
 -- a bit of experimentation...
@@ -251,15 +252,24 @@ flat Thing := identity
 flat SEQ := x -> toSequence x
 flat Nothing := x -> ()
 fixflat := z -> splice apply(z, i -> flat fixup i)
+
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
-fixup Nothing    := identity				       -- null
-fixup Sequence   := z -> SEQ fixflat z
-fixup List       := z -> SEQ fixflat z
-fixup MarkUpList := z -> apply(z,fixup)			       -- recursion
-fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
-fixup UL         := z -> apply(z, i -> fixup if class i === TO then TOH i#0 else i)
+fixup MarkUpListParagraph := z -> splice apply(z,fixup)
+fixup MarkUpList := x -> (
+     x = splice apply(x, fixup);
+     if any(toSequence x, i -> instance(i, MarkUpListParagraph))
+     then PARA sublists( x, i -> instance(i,MarkUpListParagraph), identity, i -> PARA i)
+     else fixflat x)
+fixup Nothing    := x -> ()				       -- so it will get removed by splice later
+fixup BR         := identity
 fixup PRE        := identity
 fixup CODE       := identity
+fixup LITERAL    := identity
+fixup ANCHOR     := identity
+fixup List       := z -> fixup SEQ z
+fixup Sequence   := z -> fixup SEQ z
+fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
+fixup UL         := z -> splice apply(z, i -> fixup if class i === TO then TOH i#0 else i)
 fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 fixup TO2        := x -> TO2{ makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 fixup TOH        := x -> TOH{ makeDocumentTag x#0 }
@@ -619,10 +629,10 @@ title := s -> ( HEADER1 formatDocumentTag s, HEADER2 headline s )
 
 type := S -> fixup (
      s := value S;
-     PARA { "The object ", TO S, " is ", OFCLASS class s,
+     PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
      	  if parent s =!= Nothing then (
      	       f := (T -> while T =!= Thing list parent T do T = parent T) s;
-	       splice (
+	       (
 		    if #f>1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.", 
 		    toSequence between(" < ", f / (T -> TO T)) 
 		    )
@@ -775,10 +785,10 @@ synopsis Thing := key -> (
 			 then SEQ { "Function: ", TO key#0 }
 			 else SEQ { "Operator: ", TO key#0 }
 			 ),
-		    if inp#?0 then SEQ1 { "Inputs:", UL inp },
-		    if ino#?0 then SEQ1 { "Optional inputs:", UL ino },
-		    if out#?0 then SEQ1 { "Outputs:", UL out },
-		    if res#?0 then SEQ1 { "Results:", UL res }
+		    if inp#?0 then PARA1 { "Inputs:", UL inp },
+		    if ino#?0 then PARA1 { "Optional inputs:", UL ino },
+		    if out#?0 then PARA1 { "Outputs:", UL out },
+		    if res#?0 then PARA1 { "Results:", UL res }
 		    }
 	       }
 	  ))
@@ -909,11 +919,11 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 	  if #pkg#"exported symbols" > 0 then (
 	       HEADER3 "Exports",
 	       UL {
-		    if #b > 0 then SEQ1 {"Types", smenu b},
-		    if #a > 0 then SEQ1 {"Functions", smenu a},
-		    if #m > 0 then SEQ1 {"Methods", smenu m},
-		    if #c > 0 then SEQ1 {"Symbols", smenu c},
-		    if #d > 0 then SEQ1 {"Other things", smenuCLASS d}})))
+		    if #b > 0 then PARA1 {"Types", smenu b},
+		    if #a > 0 then PARA1 {"Functions", smenu a},
+		    if #m > 0 then PARA1 {"Methods", smenu m},
+		    if #c > 0 then PARA1 {"Symbols", smenu c},
+		    if #d > 0 then PARA1 {"Other things", smenuCLASS d}})))
 
 documentation Symbol := S -> (
      a := apply(select(optionFor S,f -> isDocumentableMethod f), f -> f => S);

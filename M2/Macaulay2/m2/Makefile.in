@@ -173,7 +173,7 @@ tmp :; mkdir "$@"
 #	see startup.m2, too, for setting "prefixDirectory" to ./tmp while building, so it can find example output files
 
 EXAMPLEOPTIONS := -q --stop
-# EXAMPLEOPTIONS += -e 'errorDepth = 0'
+EXAMPLEOPTIONS += -e 'errorDepth = 0'
 EXAMPLEOPTIONS += -e 'debugLevel = 1'
 EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
 EXAMPLEOPTIONS += -e 'exit 0 '
