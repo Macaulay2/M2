@@ -121,6 +121,7 @@ PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
   PolynomialRing *result = new PolynomialRing;
   result->initialize_poly_ring(K,MF);
   const PolynomialRing *flatR = result->get_flattened_ring();
+  if (flatR == NULL) return NULL;
   result->_gb_ring = GBRing::create_PolynomialRing(flatR->Ncoeffs(), flatR->Nmonoms());
   return result;
 }
@@ -329,6 +330,7 @@ const PolynomialRing *PolynomialRing::make_flattened_ring()
 	// Now we must make the poly ring R1[M], where M is the current monoid.
 	const Monoid *M1 = R1->Nmonoms();
 	const Monoid *newM = Monoid::tensor_product(Nmonoms(), M1);
+	if (newM == NULL) return NULL;
 	const PolynomialRing *P1 = PolynomialRing::create(R1->Ncoeffs(), newM);
 
 	// P1 is the result, unless R1 is not commutative, or this is non-commutative.
