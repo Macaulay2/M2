@@ -576,6 +576,7 @@ export Semicolonfun := dummyBinaryFun;	  -- filled in later
 export recursionlimit := 300;
 export recursiondepth := 0;
 export eval(c:Code):Expr := (
+     spincursor();
      e := 
      if interrupted then
      if alarmed then (

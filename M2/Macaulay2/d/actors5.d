@@ -965,6 +965,13 @@ factorInteger(e:Expr):Expr := (
      else WrongArgSmallInteger());
 setupfun("factorInteger",factorInteger);
 
+setSpin(e:Expr):Expr := (
+     when e is i:Integer do (
+	  if isInt(i) then Expr(toInteger(setspinspan(toInt(i))))
+	  else WrongArgSmallInteger())
+     else WrongArgSmallInteger());
+setupfun("setSpin",setSpin);
+
 --rebind(e:Expr):Expr := (
 --     when e is args:Sequence do (
 --	  if length(args) == 2 then (

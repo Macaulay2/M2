@@ -361,6 +361,8 @@ doc::
 ################################# tar manufactured files
 manufactured.tgz :
 	make -C Macaulay2/d all-c-files
+	make -C Macaulay2/html
+	mv Macaulay2/cache/Macaulay2.doc Macaulay2/cache/Macaulay2.dbmfile
 	tar cfz $@ \
 		Macaulay2/e/geovec.hpp \
 		Macaulay2/e/geores.hpp \
@@ -375,7 +377,9 @@ manufactured.tgz :
 		Macaulay2/d/*.c \
 		Macaulay2/cache/Macaulay2-doc \
 		Macaulay2/tmp/Examples/*.m2 \
-		Macaulay2/tmp/Tests/*.m2
+		Macaulay2/tmp/Tests/*.m2 \
+		Macaulay2/html
+	mv Macaulay2/cache/Macaulay2.dbmfile Macaulay2/cache/Macaulay2.doc
 ################################# automated compilation
 update:
 	cvs update -d
