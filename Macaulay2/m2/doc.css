@@ -13,3 +13,4 @@ img.myface { float: left; margin-right: 1em;  margin-bottom: 1em;}
 table.examples { background-color: #80ffff; }
 img.button { border: 0; }
 form.search { text-align: center; }
+tt { font-size: 1.1em; }

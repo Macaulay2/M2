@@ -487,7 +487,7 @@ usage := s -> (
      if o =!= null then PARA {o}
      )
 
-title := s -> SEQ { STRONG formatDocumentTag s, headline s }
+title := s -> PARA { STRONG formatDocumentTag s, headline s }
 
 inlineMenu := x -> between(", ", TO \ x)
 
@@ -720,9 +720,10 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
      b := select(e,x -> instance(value x,Type));
      c := select(e,x -> instance(value x,Symbol));
      d := toList(set e - set a - set b - set c);
+     fn := pkg#"title" | ".m2";
      SEQ {
-	  PARA BOLD "Version", 
-	  PARA { "This documentation describes version ", pkg.Options.Version, " of the package." },
+	  PARA BOLD "Version", PARA { "This documentation describes version ", pkg.Options.Version, " of the package." },
+	  PARA BOLD "Source code", PARA { "The source code is in the file ", HREF { LAYOUT#"packages" | fn, fn }, "." },
 	  if #pkg#"exported symbols" > 0 then PARA {
 	       BOLD "Exports",
 	       UL {
@@ -731,7 +732,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 		    if #c > 0 then SEQ {"Symbols", smenu c},
 		    if #d > 0 then SEQ {"Other things", smenu d},
 		    }
-	       }
+	       },
 	  }
      )
 
@@ -1027,7 +1028,7 @@ html TABLE := x -> concatenate(
 
 html ExampleTABLE := x -> concatenate(
      newline,
-     "<table class=\"examples\" cellspacing='0' cellpadding='12' border='4' width='100%'>",
+     "<p><table class=\"examples\" cellspacing='0' cellpadding='12' border='4' width='100%'>",
      newline,
      apply(x, 
 	  item -> (
@@ -1036,7 +1037,7 @@ html ExampleTABLE := x -> concatenate(
 	       "  </tr>", newline
 	       )
 	  ),
-     "</table>"
+     "</table></p>"
      )			 
 
 net PRE := x -> net concatenate x
@@ -1134,9 +1135,9 @@ html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 net CODE := x -> stack lines concatenate x
 
 html CODE   := x -> concatenate( 
-     "<code>", 
+     "<tt>", 
      demark( ("<br>",newline), apply(lines concatenate x, htmlExtraLiteral) ),
-     "</code>"
+     "</tt>"
      )
 
 

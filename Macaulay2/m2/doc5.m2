@@ -393,6 +393,16 @@ document { truncateOutput,
      may conflict with other ", TO "BeforePrint", " methods installed by the user.",
      }
 
+document { Package,
+     PARA {
+	  "A package is a body of Macaulay2 source code devoted to a particular topic."
+	  },
+     PARA {
+     	  "The directory containing the packages is ", HREF { LAYOUT#"packages",LAYOUT#"packages" }, "."
+	  }
+     }
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

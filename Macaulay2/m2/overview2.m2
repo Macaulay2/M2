@@ -1349,7 +1349,7 @@ document { "hashing",
      the hash code, and the remainder of the hash code upon division by the
      number of buckets tells which bucket will be used.",
      PARA,
-     "It is ", BOLD "essential", " that the
+     "It is essential that the
      hash code of a key never change, for otherwise the next 
      attempt to find the key in the hash table will have an unpredictable 
      result - the new hash code of the key may or may not lead to 
