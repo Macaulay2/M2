@@ -78,7 +78,6 @@ irreducibleCharacteristicSeries Ideal := I -> (
 
 factor ZZ := options -> (n) -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i} )
 factor QQ := options -> (r) -> factor numerator r / factor denominator r
-erase symbol factorInteger
 -----------------------------------------------------------------------------
 topCoefficients = method()
 topCoefficients Matrix := f -> (

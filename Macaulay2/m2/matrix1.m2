@@ -693,11 +693,6 @@ cover(Matrix) := Matrix => (f) -> matrix f
 
 rank Matrix := (f) -> rank image f
 
-erase symbol reduce
-erase symbol concatRows
-erase symbol concatCols
-erase symbol samering
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

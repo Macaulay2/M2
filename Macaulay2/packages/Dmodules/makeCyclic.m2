@@ -129,6 +129,9 @@ ItimesF(Ideal, RingElement) := (I,f) -> (
 ----------------------------------------------------------------------------
 -- makes a cyclic module out of a module presented as a cokernel of a matrix 
 ----------------------------------------------------------------------------
+
+tempV := local tempV
+
 makeCyclic = method()
 --makeCyclic Module := M -> makeCyclic relations M
 makeCyclic Matrix := HashTable => M -> (
@@ -183,6 +186,5 @@ makeCyclic Matrix := HashTable => M -> (
      new HashTable from {Generator=>g, AnnG=>ideal mingens Ag}
      ) 
 
-erase symbol tempV
 
 

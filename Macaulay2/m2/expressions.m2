@@ -570,8 +570,6 @@ padto := (s,n) -> (
 --      SeeAlso => {"String", "concatenate", "#" }
 --      }
 
-erase symbol stringlen
-
 nopar := x -> (
      -- this is like net Sequence except we omit the parentheses.
      horizontalJoin deepSplice (

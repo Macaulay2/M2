@@ -83,8 +83,6 @@ random RR := RR => x -> (
 	  );
      x * (randomint() / d))
 
-erase symbol randomint
-
 ceiling = x -> - floor(-x)
 
 isUnit ZZ := x -> x == 1 or x == -1

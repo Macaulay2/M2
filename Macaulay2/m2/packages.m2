@@ -167,14 +167,14 @@ export Sequence := v -> (
 	       syn := title | "$" | nam;
 	       d#syn = d#nam = sym;
 	       ));
-     currentPackage#"exported symbols" = join(currentPackage#"exported symbols",v);
+     currentPackage#"exported symbols" = join(currentPackage#"exported symbols",select(v,s -> instance(s,Symbol)));
      v)
 exportMutable = method(SingleArgumentDispatch => true)
 exportMutable Symbol := x -> exportMutable singleton x
 exportMutable List := v -> exportMutable toSequence v
 exportMutable Sequence := v -> (
      export v;
-     currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",v);
+     currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",select(v,s -> instance(s,Symbol)));
      v)
 
 addStartFunction( () -> if prefixDirectory =!= null then Macaulay2#"package prefix" = prefixDirectory )
@@ -184,8 +184,6 @@ newPackage("Macaulay2",
      Version => version#"VERSION", 
      TopNodeName => "Macaulay 2",
      Headline => "A computer algebra system designed to support algebraic geometry")
-
-load "exports.m2"
 
 findSynonyms = method()
 findSynonyms Symbol := x -> (

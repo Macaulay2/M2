@@ -441,8 +441,6 @@ html UNDERLINE := t -> concatenate("<U>", apply(t,html), "</U>")
 html BOLD := t -> concatenate("<B>", apply(t,html), "</B>")
 html TEX := x -> x#0	    -- should do something else!
 
-tex BASE := net BASE := x -> ""
-
 html Option := x -> toString x
 
 info BIG := net BIG := x -> net x#0

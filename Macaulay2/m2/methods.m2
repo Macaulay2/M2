@@ -215,12 +215,12 @@ mingens = method ( Options => {
 	  -- DegreeLimit => {}
 	  } )
 
-width File := fileWidth; erase symbol fileWidth
-height File := fileHeight; erase symbol fileHeight
+width File := fileWidth
+height File := fileHeight
 
-width Net := netWidth; erase symbol netWidth
-height Net := netHeight; erase symbol netHeight
-depth Net := netDepth; erase symbol netDepth
+width Net := netWidth
+height Net := netHeight
+depth Net := netDepth
 
 width String := s -> #s
 height String := s -> 1
@@ -268,9 +268,6 @@ olddenominator := denominator
 erase symbol denominator
 denominator = method()
 denominator QQ := olddenominator
-
-erase symbol newmethod1
-erase symbol newmethod123c
 
 emptyOptionTable := new OptionTable
 options     Ring := x -> null
