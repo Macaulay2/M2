@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------------
 maximumCodeWidth := 120
 TestsPrefix := "cache/tests/"
-documentationPath = { "cache/doc/" }
+documentationPath = {  }
 addStartFunction(
      () -> (
 	  home := getenv "M2HOME";
@@ -44,33 +44,28 @@ docFilename := () -> (
      )
 
 addStartFunction( 
-     () -> DocDatabase = (
-	  fn := docFilename() ;
-	  try openDatabase fn else (
-	       if phase != 3 then stderr << "--warning: couldn't open help file " << docFilename() << endl;
-	       new HashTable)
-	  )
+     () -> (
+	  DocDatabase = (
+	       fn := docFilename() ;
+	       try openDatabase fn else (
+		    if phase != 3 then stderr << "--warning: couldn't open help file " << docFilename() << endl;
+		    new HashTable)
+	       );
+	  documentationPath = append(documentationPath,DocDatabase);
+     	  )
      )
-Documentation = new MutableHashTable
+
+-- Documentation = new MutableHashTable
+
 duplicateDocError := nodeName -> (
      stderr << concatenate ("warning: documentation already provided for '", nodeName, "'") 
      << newline << flush; )
 storeDoc := (nodeName,docBody) -> (
-     if currentPackage =!= null then (
-	  d := currentPackage#"raw documentation";
-	  if d#?nodeName then duplicateDocError nodeName;
-	  d#nodeName = docBody;
-	  )
-     else if mutable DocDatabase then (
-	  if DocDatabase#?nodeName then duplicateDocError nodeName;
-	  DocDatabase#nodeName = docBody;
-	  )
-     else (
-     	  if Documentation#?nodeName then duplicateDocError nodeName;
-     	  Documentation#nodeName = docBody;
-	  )
+     assert( class nodeName === String );
+     d := currentPackage#"raw documentation";
+     if d#?nodeName then duplicateDocError nodeName;
+     d#nodeName = docBody;
      )
-
 
 -----------------------------------------------------------------------------
 -- some things can't be documented
@@ -105,7 +100,8 @@ unformat    := s -> (
 -----------------------------------------------------------------------------
 
 getRecord := key -> (
-     if Documentation#?key then Documentation#key else if DocDatabase#?key then DocDatabase#key
+     t := select(1,documentationPath,d -> d#?key);
+     if t#?0 then t#0#key
      )
 
 -----------------------------------------------------------------------------
@@ -378,18 +374,21 @@ fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 -- process examples
 -----------------------------------------------------------------------------
 makeFileName := (key,filename) -> (			 -- may return 'null'
-     prefix := first documentationPath;
-     if filename =!= null then (
-	  if writing() then cacheFileName(prefix, key, filename)
-	  else prefix | filename
-	  )
-     else (
-     	  t := cacheFileName(if writing() then first documentationPath, documentationPath, key);
-	  if #t > 1 then (
-	       stderr << "warning: documentation node '" << key << "' occurs in multiple locations:" << endl;
-	       apply(t, fn -> stderr << "    " << fn << endl );
-	       );
-	  if #t > 0 then first t))
+null
+-- obsolete?
+--     prefix := "cache/doc/";
+--     if filename =!= null then (
+--	  if writing() then cacheFileName(prefix, key, filename)
+--	  else prefix | filename
+--	  )
+--     else (
+--     	  t := cacheFileName("cache/doc/", key);
+--	  if #t > 1 then (
+--	       stderr << "warning: documentation node '" << key << "' occurs in multiple locations:" << endl;
+--	       apply(t, fn -> stderr << "    " << fn << endl );
+--	       );
+--	  if #t > 0 then first t)
+     )
 
 checkForExampleOutputFile := () -> (
      exampleResultsFound = false;

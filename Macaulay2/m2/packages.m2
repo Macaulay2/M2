@@ -1,5 +1,9 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
+saveValues = varlist -> (
+     valuelist := apply(varlist, x -> value x);
+     () -> apply(varlist, valuelist, (x,n) -> x <- n))
+
 addStartFunction( 
      () -> (
 	  home := getenv "M2HOME";
@@ -24,44 +28,43 @@ writableGlobals.packagesLoaded = true
 Dictionary = new Type of MutableHashTable		    -- temporary fiction
 
 Package = new Type of MutableHashTable
+Package.synonym = "package"
+
+installMethod(GlobalAssignHook,Package,globalAssignFunction)
+installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
+
 newPackage = method( Options => { Using => {} } )
-newPackage(String,String) := opts -> (pkgname,vers) -> (
-     if currentPackage =!= null then error("the package ",currentPackage.name," is already open");
-     erase getGlobalSymbol pkgname;
-     sym := getGlobalSymbol pkgname;
-     sym <- currentPackage = new Package from {
-	  global name => pkgname,
-	  global version => vers,
-	  global symbol => sym,
+newPackage(String,String) := opts -> (title,vers) -> (
+     doctable := new MutableHashTable;
+     documentationPath = append(documentationPath,doctable);
+     restore := saveValues { global currentPackage, global currentDictionary };
+     global currentPackage <- new Package from {
+	  "restore" => restore,
+	  "package title" => title,
+	  "package version" => vers,
      	  "dictionary" => currentDictionary = new Dictionary, -- ! make dictionaries first class objects
 	  "test inputs" => new MutableHashTable,
-	  "raw documentation" => new MutableHashTable,
+	  "raw documentation" => doctable,
 	  "example inputs" => new MutableHashTable,
 	  "example outputs" => new MutableHashTable,
 	  "edited documentation" => new MutableHashTable,
 	  "html documentation" => new MutableHashTable,
 	  "options" => opts,
-	  "initial global symbols" => values symbolTable(),
-	  "file directory" => currentFileDirectory,
-	  "file name" => currentFileName
-	  };
-     protect sym;
-     currentPackage
+	  "initial global symbols" => new MutableList from values symbolTable(),
+	  "file directory" => currentFileDirectory
+	  }
      )
 
-addEndFunction(
-     () -> if currentPackage =!= null then error("the package ",currentPackage.name," is still open")
-     )
-
-endPackage = () -> (
-     p := currentPackage;
-     if p === null then error "no package currently open";
-     if p#"file name" =!= currentFileName then error "'endPackage' after 'newPackage', but in different file";
+end Package := p -> (
+     if p =!= currentPackage then error ("package not open");
      p#"dictionary" = new Dictionary from (
 	  apply(keys (set values symbolTable() - set p#"initial global symbols"), 
 	       s -> toString s => s));
      remove(p,"initial global symbols");
      packagesLoaded = append(packagesLoaded,p);
-     currentPackage = null;
-     currentDictionary = null;
+     p#"restore"();
+     remove(p,"restore");
      p )
+
+Macaulay2 = newPackage("Macaulay 2",version#"VERSION")
+Macaulay2#"initial global symbols" = {}
