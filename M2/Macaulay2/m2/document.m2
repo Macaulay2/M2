@@ -31,8 +31,10 @@ isDocumentableThing    Symbol := key -> true
 isDocumentableThing  Sequence := key -> false 		    -- we're not looking for documentable methods here, just documentable objects
 isDocumentableThing   Nothing := key -> true
 
+errorMethod := key -> typicalValues#?key and typicalValues#key === Error
+
 isDocumentableMethod := method(SingleArgumentDispatch => true)
-isDocumentableMethod Sequence := key -> all(key,isDocumentableMethod) and not methodDispatchFunctions#?(lookup key)
+isDocumentableMethod Sequence := key -> all(key,isDocumentableMethod) and not methodDispatchFunctions#?(lookup key) and not errorMethod key
 isDocumentableMethod    Thing := key -> false
 isDocumentableMethod   Symbol := key -> isGlobalSymbol toString key and getGlobalSymbol toString key === key
 isDocumentableMethod     Type := 
