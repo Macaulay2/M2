@@ -1,3 +1,91 @@
+2004-01-22  Dan Grayson  <dan@math.uiuc.edu>
+
+	* nets.d:
+	Fixed the conversion from strings to nets so that a terminal newline
+	in the string doesn't result in an extra blank line in the list of
+	lines.
+
+	    i1 : peek net "\n\n"
+
+		 ++
+	    o1 = ||
+		 ||
+		 ++
+
+	* basic.d, evaluate.d, objects.d, actors2.d, actors3.d, actors4.d, actors5.d:
+	*** empty log message ***
+
+2004-01-20  Dan Grayson  <dan@math.uiuc.edu>
+
+	* util.d, interface.d, M2initschk.c, Makefile.in:
+	*** empty log message ***
+
+2004-01-19  Dan Grayson  <dan@math.uiuc.edu>
+
+	* M2initschk.c, M2inits.h, M2inits1.c, M2inits2.c, M2mem.c, M2mem.h, M2mem2.h, M2types.c, M2types.h, Makefile.in, memdebug.c, scclib.c, types.h, M2inits.c, M2lib.c, debug.c, debug.h:
+	*** empty log message ***
+
+2004-01-18  Dan Grayson  <dan@math.uiuc.edu>
+
+	* gmp_aux.c: *** empty log message ***
+
+2004-01-17  Dan Grayson  <dan@math.uiuc.edu>
+
+	* actors4.d, stdio.d, interp.d, system.d, M2lib.c, Makefile.in, common.d, engine.d, err.d, evaluate.d, interface.d, stdiop.d, texmacs.d, util.d:
+	*** empty log message ***
+
+2004-01-16  Dan Grayson  <dan@math.uiuc.edu>
+
+	* interface.d, stdio.d: *** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* interface.d, evaluate.d, Makefile.in, actors.d, actors2.d, objects.d:
+	*** empty log message ***
+
+2004-01-14  Dan Grayson  <dan@math.uiuc.edu>
+
+	* interface.d, scclib.c, system.d, actors5.d: *** empty log message ***
+
+	* objects.d:
+	fixed a bug in equal(x:HashTable,y:HashTable):Expr -- it wasn't
+	considering cache tables to be equal
+
+	* interface.d, err.d, evaluate.d, getline.d, gmp.d, interp.d, lex.d, nets.d, objects.d, parser.d, scclib.c, stdio.d, stdiop.d, strings.d, struct.d, system.d, texmacs.d, tokens.d, types.h, util.d, vararray.d, varstrin.d, C.d, GC.d, M2inits.c, M2lib.c, actors.d, actors2.d, actors3.d, actors4.d, actors5.d, basic.d, binding.d, common.d, convertr.d, ctype.d, engine.d:
+	*** empty log message ***
+
+2004-01-13  Dan Grayson  <dan@math.uiuc.edu>
+
+	* actors2.d, interface.d: *** empty log message ***
+
+	* actors2.d:
+	We can now make a new object from a sequence, where as before, we had
+	to make it from a list.  Example:
+
+	    i2 : new MutableList from (0..10)
+
+	    o2 = MutableList{...11...}
+
+	    o2 : MutableList
+
+	    i3 : toList oo
+
+	    o3 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	    o3 : List
+
+	* engine.d, interface.d, actors.d, actors3.d, objects.d, actors5.d, M2lib.c, ChangeLog, evaluate.d, interp.d, tokens.d:
+	*** empty log message ***
+
+2004-01-12  Dan Grayson  <dan@math.uiuc.edu>
+
+	* scclib.c:
+	changed "run" so that it returns the entire exit status, not just the
+	second 8 bits
+
+	* actors.d, actors4.d, basic.d, engine.d, interface.d, objects.d, tokens.d, util.d, ChangeLog, interp.d, actors5.d:
+	*** empty log message ***
+
 2004-01-12  Dan Grayson  <dan@math.uiuc.edu>
 
 	* scclib.c:
