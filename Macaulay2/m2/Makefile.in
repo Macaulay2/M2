@@ -207,7 +207,7 @@ remake3:
 remake4:
 	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir) tmp/*/$(packageexamplesRelDir))
 remake5:;
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir)/*.tmp tmp/*/$(packageexamplesRelDir)/*.tmp)
+	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir)/*.errors tmp/*/$(packageexamplesRelDir)/*.errors)
 
 install::all install-main
 install-main:; tar cf - -C tmp/$(package) . | tar xf - -C $(encapdir)
