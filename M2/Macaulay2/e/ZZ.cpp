@@ -17,9 +17,7 @@
 
 bool ZZ::initialize_ZZ(const Monoid *D) 
 {
-  initialize_ring(0,0,0,this,
-		  Monoid::get_trivial_monoid(),
-		  D);
+  initialize_ring(0,0,0,D);
   _elem_size = sizeof(mpz_t);
   _zero_elem = new_elem();
   mpz_init_set_si(_zero_elem, 0);

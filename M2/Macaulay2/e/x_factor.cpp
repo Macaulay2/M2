@@ -17,6 +17,7 @@
 #include "z_mod_p.hpp"
 #include "ZZ.hpp"
 #include "frac.hpp"
+#include "polyring.hpp"
 
 #include "relem.hpp"
 #include "../d/M2mem.h"
@@ -74,7 +75,7 @@ struct enter_M2 {
   enter_M2::~enter_M2() { exit(); }
 };
 
-static const RingElement * convert(const Ring *R, CanonicalForm h) {
+static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {
 	  if (R->charac() == 0) {
@@ -158,7 +159,9 @@ enum coeff_type { FAC_ZZp, FAC_ZZ, FAC_QQ, FAC_BAD_RING };
 
 static coeff_type get_ring_type(const Ring *R)
 {
-     const Ring *F = R->Ncoeffs();
+     const PolynomialRing *P = R->cast_to_PolynomialRing();
+     if (P == 0) return FAC_BAD_RING;
+     const Ring *F = P->Ncoeffs();
      if (F->cast_to_Z_mod() != 0) return FAC_ZZp;
      if (F->cast_to_ZZ() != 0) return FAC_ZZ;
      if (F->cast_to_QQ() != 0) return FAC_QQ;
@@ -168,8 +171,14 @@ static coeff_type get_ring_type(const Ring *R)
 
 static CanonicalForm convert(const RingElement &g) {
      const Ring *R = g.get_ring();
-     const int n = R->n_vars();
-     const Ring *F = R->Ncoeffs();
+     const PolynomialRing *P = R->cast_to_PolynomialRing();
+     if (P == 0)
+       {
+	 ERROR("expected a polynomial ring");
+	 return 0;
+       }
+     const int n = P->n_vars();
+     const Ring *F = P->Ncoeffs();
      const Z_mod *Zn = F->cast_to_Z_mod();
      const ZZ *Z0 = F->cast_to_ZZ();
      const QQ *Q = F->cast_to_QQ();
@@ -188,7 +197,7 @@ static CanonicalForm convert(const RingElement &g) {
 	  ERROR("expected coefficient ring of the form ZZ/n, ZZ, or QQ");
 	  return 0;
      }
-     const Monoid *M = R->Nmonoms();
+     const Monoid *M = P->Nmonoms();
      intarray vp;
      enter_factory a;
      setCharacteristic(R->charac());
@@ -223,7 +232,7 @@ static CanonicalForm convert(const RingElement &g) {
      return f;
 }
 
-void displayCF(Ring *R, const CanonicalForm &h)
+void displayCF(PolynomialRing *R, const CanonicalForm &h)
 {
   buffer o;
   const RingElement *g = convert(R,h);
@@ -236,13 +245,25 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
 {
 #warning "check that the rings of f and g both polynomial rings"
 #ifdef FACTORY
+  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
+  const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  if (P != P2)
+    {
+      ERROR("encountered different rings");
+      return 0;
+    }
   CanonicalForm p = convert(*f);
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl
   //          << "q = " << q << endl;
   enter_factory a;
   CanonicalForm h = gcd(p,q);
-  const RingElement *r = convert(f->get_ring(),h);
+  const RingElement *r = convert(P,h);
   return r;
 #else
   ERROR("'factory' library not installed");
@@ -254,13 +275,25 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
 {
 #warning "check that the rings of f and g both polynomial rings"
 #ifdef FACTORY
+  const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
+  const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  if (P != P2)
+    {
+      ERROR("encountered different rings");
+      return 0;
+    }
   enter_factory a;
   CanonicalForm p = convert(*f);
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl
   //          << "q = " << q << endl;
   CanonicalForm h = Prem(p,q);
-  const RingElement *r = convert(f->get_ring(),h);
+  const RingElement *r = convert(P,h);
   return r;
 #else
   ERROR("'factory' library not installed");
@@ -273,13 +306,20 @@ void rawFactor(const RingElement *g,
 	       M2_arrayint_OrNull *result_powers)
 {
 #ifdef FACTORY
+  const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      *result_factors = 0;
+      *result_powers = 0;
+      return;
+    }
   enter_factory a;
   factoryseed(23984729);
-  const Ring *R = g->get_ring();
   CanonicalForm h = convert(*g);
-  // displayCF(R,h);
+  // displayCF(P,h);
   CFFList q;
-  if (R->charac() == 0) {
+  if (P->charac() == 0) {
     q = factorize(h);		// suitable for k = QQ, comes from libcf (factory)
   }
   else {
@@ -294,7 +334,7 @@ void rawFactor(const RingElement *g,
 
   int next = 0;
   for (CFFListIterator i = q; i.hasItem(); i++) {
-    (*result_factors)->array[next] = convert(R,i.getItem().factor());
+    (*result_factors)->array[next] = convert(P,i.getItem().factor());
     (*result_powers)->array[next++] = i.getItem().exp();
   }
 #else
@@ -305,17 +345,22 @@ void rawFactor(const RingElement *g,
 M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 {
 #ifdef FACTORY
+  const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
      factoryseed(23984729);
-     const Ring *R = M->get_ring();
-     const int N = R->n_vars();
+     const int N = P->n_vars();
 
-     if (get_ring_type(R) == FAC_BAD_RING) return 0; // error message already issued
+     if (get_ring_type(P) == FAC_BAD_RING) return 0; // error message already issued
 
      CFList I;
      int i;
      for (i = 0; i < M->n_rows(); i++) {
 	  for (int j=0; j < M->n_cols(); j++) {
-	    const RingElement *g = RingElement::make_raw(R, M->elem(i,j));
+	    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
 	    I.append(convert(*g));
 	  }
      }
@@ -350,15 +395,20 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 {
 #ifdef FACTORY
+  const PolynomialRing *P = M->get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
      factoryseed(23984729);
-     const Ring *R = M->get_ring();
 
-     if (get_ring_type(R) == FAC_BAD_RING) return 0; // error message already issued
+     if (get_ring_type(P) == FAC_BAD_RING) return 0; // error message already issued
 
      CFList I;
      for (int i = 0; i < M->n_rows(); i++) {
 	  for (int j=0; j < M->n_cols(); j++) {
-	    const RingElement *g = RingElement::make_raw(R, M->elem(i,j));
+	    const RingElement *g = RingElement::make_raw(P, M->elem(i,j));
 	    I.append(convert(*g));
 	  }
      }
@@ -377,7 +427,7 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 	  result1->len = u.length();
 	  int next1 = 0;
 	  for (ListIterator<CanonicalForm> j = u; j.hasItem(); j++) {
-	    result1->array[next1++] = convert(R,j.getItem());
+	    result1->array[next1++] = convert(P,j.getItem());
 	  }
 	  enter_M2 b;
 	  result->array[next++] = IM2_Matrix_make1(M->rows(), u.length(), result1, false, false);

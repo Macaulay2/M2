@@ -7,6 +7,7 @@
 #include "gbring.hpp"
 #include "../d/M2mem.h"
 #include "relem.hpp"
+#include "polyring.hpp"
 
 #if 0
 #define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
@@ -18,14 +19,20 @@
 
 Ring::CoefficientType FractionField::coefficient_type() const
 {
-  if (Ncoeffs()->coefficient_type() == COEFF_ZZ)
+  const PolynomialRing *A = R_->cast_to_PolynomialRing();
+  assert(A != 0);
+  const Ring *K = A->Ncoeffs();
+  if (K->coefficient_type() == COEFF_ZZ)
     return COEFF_QQ;
-  return Ncoeffs()->coefficient_type();
+  return K->coefficient_type();
 }
 
 int FractionField::n_fraction_vars() const
 {
-  return R_->n_vars() + Ncoeffs()->n_fraction_vars();
+  const PolynomialRing *A = R_->cast_to_PolynomialRing();
+  assert(A != 0);
+  const Ring *K = A->Ncoeffs();
+  return A->n_vars() + K->n_fraction_vars();
 }
 
 bool FractionField::initialize_frac(const Ring *R) 
@@ -33,8 +40,6 @@ bool FractionField::initialize_frac(const Ring *R)
   initialize_ring(R->charac(),
 		  R->total_n_vars(),
 		  R->total_n_vars(),
-		  this,
-		  Monoid::get_trivial_monoid(),
 		  R->degree_monoid());
 
   R_ = R;

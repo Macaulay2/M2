@@ -26,7 +26,9 @@ class RingMap : public immutable_object
   };
 
   const Ring *R;		// This is the target ring.
-  const Ring *K;
+
+  const PolynomialRing *P;	// P is either R (if it is a poly ring) or 0, ifnot
+  const Ring *K;		// K is either coeffs of P, or R (if P==0).
   const Monoid *M;
 
   bool is_monomial;		// True, if each term maps to a term in the

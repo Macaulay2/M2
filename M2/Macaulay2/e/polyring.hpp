@@ -5,7 +5,6 @@
 
 #include "ring.hpp"
 #include "ringelem.hpp"
-#include "monideal.hpp"
 #include "skew.hpp"
 
 ///// Ring Hierarchy ///////////////////////////////////
@@ -58,8 +57,16 @@ public:
   static PolynomialRing *create(const Ring *K, const Monoid *MF);
 
 protected:
+  const Ring *K_;
+  const Monoid *M_;
+
   int _poly_size;
 
+  bool _is_ZZ_quotient;		// true if this is a quotient of a polynomial ring over ZZ, AND
+				// there is an integer in the factored ideal.
+  ring_elem _ZZ_quotient_value;	// This is the integer in the factor ideal, if is_ZZ_quotient is set.
+
+  
   GBRing *_gb_ring;
   const PolynomialRing *flattened_ring;
 
@@ -85,6 +92,11 @@ protected:
 
   int *_EXP1, *_EXP2, *_EXP3;
 public:
+  const Ring * get_ring() const { return this; }
+  const Ring *  Ncoeffs()       const { return K_; }
+  const Monoid * Nmonoms()       const { return M_; }
+
+
   static PolynomialRing *create_quotient_ring(GBComputation *G);
 
   virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
@@ -211,12 +223,15 @@ public:
   ring_elem lead_term(const ring_elem f) const; // copies the lead term
   int compare(const ring_elem f, const ring_elem g) const; // compares the lead terms
 
+#if 0
+  // do we need this here?
   virtual void make_monic(ring_elem &f) const;
-  virtual void mult_coeff_to(ring_elem a, ring_elem &f) const;
-
   void auto_reduce_to(ring_elem &f, ring_elem g) const;
   void subtract_multiple_to(ring_elem &f, 
 			    ring_elem a, const int *m, const ring_elem g) const;
+#endif
+  virtual void mult_coeff_to(ring_elem a, ring_elem &f) const;
+
   ring_elem coeff_of(const ring_elem f, const int *m) const;
 
 protected:
@@ -243,19 +258,23 @@ public:
 protected:
   Nterm *new_term() const;
   Nterm *copy_term(const Nterm *t) const;
-  void imp_cancel_lead_term(ring_elem &f, 
-			ring_elem g, 
-			ring_elem &coeff, 
-			int *monom) const;
+
   bool imp_attempt_to_cancel_lead_term(ring_elem &f, 
 				      ring_elem g, 
 				      ring_elem &coeff, 
 				      int *monom) const;
+
+#if 0
+  // removed 3/18/04
+  void imp_cancel_lead_term(ring_elem &f, 
+			ring_elem g, 
+			ring_elem &coeff, 
+			int *monom) const;
   void cancel_lead_term(ring_elem &f, 
 			ring_elem g, 
 			ring_elem &coeff, 
 			int *monom) const;
-
+#endif
 public:
   void normal_form(Nterm *&f) const;
   void apply_ring_elements(Nterm * &f, vec rsyz, const array<ring_elem> &elems) const;
@@ -267,7 +286,6 @@ protected:
 			      const ring_elem c, const int *m) const;
   void imp_subtract_multiple_to(ring_elem &f, 
 				ring_elem a, const int *m, const ring_elem g) const;
-
 public:
   Nterm *resize(const PolynomialRing *R, Nterm *f) const;
   void sort(Nterm *&f) const;

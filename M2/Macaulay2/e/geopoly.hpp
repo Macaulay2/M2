@@ -16,13 +16,13 @@
 
 class polyheap
 {
-  const Ring *F;		// Our elements will be vectors in here
+  const PolynomialRing *F;	// Our elements will be vectors in here
   const Ring *K;		// The coefficient ring
   Nterm * heap[GEOHEAP_SIZE];
   int top_of_heap;
 
 public:
-  polyheap(const Ring *F);
+  polyheap(const PolynomialRing *F);
   ~polyheap();
 
   void add(Nterm * p);
@@ -33,9 +33,9 @@ public:
   Nterm * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
 };
 
-inline polyheap::polyheap(const Ring *FF)
+inline polyheap::polyheap(const PolynomialRing *FF)
 : F(FF),
-  K(FF->get_ring()->Ncoeffs()),
+  K(FF->Ncoeffs()),
   top_of_heap(-1)
 {
   // set K

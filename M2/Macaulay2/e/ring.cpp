@@ -11,8 +11,6 @@
 void Ring::initialize_ring(int P0,
 			   int nvars,
 			   int totalvars,
-			   const Ring *K,
-			   const Monoid *M,
 			   const Monoid *D)
 {
   // Remember: if this is a poly ring, the ring is K[M].
@@ -21,8 +19,6 @@ void Ring::initialize_ring(int P0,
   P = P0;
   _nvars = nvars;
   _totalvars = totalvars;
-  K_ = K;
-  M_ = M;
   D_ = D;
 
   if (D_->n_vars() > 0)
@@ -34,8 +30,6 @@ void Ring::initialize_ring(int P0,
 
   _zero_divisor = ZERO_RINGELEM;
   _isfield = false;
-  _is_ZZ_quotient = false;
-  _ZZ_quotient_value = ZERO_RINGELEM;
 
   zeroV = ZERO_RINGELEM;
   oneV = ZERO_RINGELEM;

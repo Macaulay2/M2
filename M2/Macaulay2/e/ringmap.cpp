@@ -4,13 +4,20 @@
 #include "matrix.hpp"
 #include "vector.hpp"
 #include "matrixcon.hpp"
+#include "polyring.hpp"
 
 RingMap::RingMap(const Matrix *m)
 : immutable_object(0), R(m->get_ring())
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  M = R->Nmonoms();
-  K = R->Ncoeffs();
+  M = 0;
+  P = R->cast_to_PolynomialRing();
+  if (P != 0)
+    {
+      M = P->Nmonoms();
+      K = P->Ncoeffs();
+    }
+  else 
+    K = R;
 
   nvars = m->n_cols();
   is_monomial = true;
@@ -137,9 +144,15 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
   ring_elem result = sourceK->eval(this, a);
   if (R->is_zero(result)) return result;
 
-  ring_elem result_coeff = R->Ncoeffs()->from_int(1);
-  int *result_monom = R->Nmonoms()->make_one();
-  int *temp_monom = R->Nmonoms()->make_one();
+  int *result_monom;
+  int *temp_monom;
+  ring_elem result_coeff = K->from_int(1);
+
+  if (P != 0)
+    {
+      result_monom = M->make_one();
+      temp_monom = M->make_one();
+    }
 
   if (!R->is_commutative_ring())
     {
@@ -167,14 +180,14 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 	  {
 	    if (!_elem[v].coeff_is_one)
 	      {
-		ring_elem tmp = R->Ncoeffs()->power(_elem[v].coeff, e);
-		R->Ncoeffs()->mult_to(result_coeff, tmp);
-		R->Ncoeffs()->remove(tmp);
+		ring_elem tmp = K->power(_elem[v].coeff, e);
+		K->mult_to(result_coeff, tmp);
+		K->remove(tmp);
 	      }
 	    if (!_elem[v].monom_is_one)
 	      {
-		R->Nmonoms()->power(_elem[v].monom, e, temp_monom);
-		R->Nmonoms()->mult(result_monom, temp_monom, result_monom);
+		M->power(_elem[v].monom, e, temp_monom);
+		M->mult(result_monom, temp_monom, result_monom);
 	      }
 	  }
 	else
@@ -185,12 +198,15 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 	    if (R->is_zero(result)) break;
 	  }
       }
-    ring_elem temp = R->term(result_coeff, result_monom);
-    R->Ncoeffs()->remove(result_coeff);
-    R->Nmonoms()->remove(result_monom);
-    R->Nmonoms()->remove(temp_monom);
-    R->mult_to(result,temp);
-    R->remove(temp);
+    if (P != 0)
+      {
+	ring_elem temp = P->term(result_coeff, result_monom);
+	K->remove(result_coeff);
+	M->remove(result_monom);
+	M->remove(temp_monom);
+	P->mult_to(result,temp);
+	P->remove(temp);
+      }
   }
   return result;
 }
