@@ -4,9 +4,8 @@
 
 document {
      Key => "Mathematical Overview",
-     "In this section we give a comprehensive overview of the main 
-     mathematical types of Macaulay 2, their construction and most common
-     operations. WARNING: this overview is currently under construction.",
+     "In this part of the manual we give an overview of the various types of mathematical objects
+     that Macaulay 2 can handle.",
      Subnodes => {
 	  TO "rings",
 	  TO "ideals",
@@ -17,7 +16,7 @@ document {
 	  TO "modules: part II",
      	  "Other topics",
 	  TO "Groebner bases and related computations",
-	  TO "chain complexes",
+	  TO "free resolutions, chain complexes, and homological algebra",
 	  TO "varieties",
 	  "An unrelated topic",
 	  TO "using external libraries",
@@ -33,24 +32,23 @@ document {
 
 document {
      Key => "rings",
-     HEADER2 "An overview",
-     "Macaulay 2 differs from computer algebra systems such as maple and
-     mathematica, in that rings are first class objects.  This means that
-     before making polynomials or matrices, you must create a ring where
-     you give the variables that you want, and the kinds of coefficients
-     you want (e.g. rational numbers, or integers modulo a prime number).",
+     "Macaulay 2 differs from other computer algebra systems such as Maple and Mathematica, in that before making a polynomial, you must create a ring to contain it, deciding first
+     the complete list of indeterminates and the type of coefficients permitted.  Recall that a ring is a set with addition and multiplication operations 
+     satisfying familiar axioms, such as the distributive rule.  Examples include the ring of integers (", TO "ZZ", "), the
+     ring of rational numbers (", TO "QQ", "), and the most important rings in Macaulay 2, polynomial rings.",
+     PARA,
+     "The sections below describe the types of rings available and how to use them.",
      Subnodes => {
 	  "Rings",
-	  TO "basic rings",
+	  TO "basic rings of numbers",
 	  TO "finite fields",
 	  TO "polynomial rings",
 	  TO "monomial orderings",
-	  TO "quasi- and multi-graded polynomial rings",
+	  TO "graded and multigraded polynomial rings",
 	  TO "quotient rings",
 	  TO "manipulating polynomials",
 	  TO "factoring polynomials",
 	  "Fields",
-	  TO "finite fields, part II",
 	  TO "fraction fields",
 	  TO "finite field extensions",
 	  "Other algebras",
@@ -271,7 +269,7 @@ document {
      }
      
 document {
-     Key => "modules: part I",
+     Key => "modules",
      Headline => "getting started",
      Subnodes => {
 	  "construction of modules",
@@ -281,39 +279,27 @@ document {
 	  TO "Hilbert functions and free resolutions",
 	  TO "operations on modules",
 	  TO "homomorphisms (maps) between modules",
---		    TO "constructing maps between modules",
---		    TO "information about a map of modules",
---		    TO "kernel, cokernel and image of a map of modules",
---	  "graded modules",
---		    TO "degrees of elements and free modules",
---		    TO "degree and multiplicity of a module",
---		    TO "Hilbert functions and polynomials",
---		    TO "homogenization",
---		    TO "truncation and homogeneous components of a graded module",
+	  TO "constructing maps between modules",
+	  TO "information about a map of modules",
+	  TO "kernel, cokernel and image of a map of modules",
+	  "graded modules",
+	  TO "degrees of elements and free modules",
+	  TO "degree and multiplicity of a module",
+	  TO "Hilbert functions and polynomials",
+	  TO "homogenization",
+	  TO "truncation and homogeneous components of a graded module",
 	  TO "subquotient modules",
 	  "Macaulay 2 has handed you a subquotient module.  What now?",
---		    TO "what is a subquotient module?",
---		    TO "extracting parts of a subquotient module",
---		    TO "quotients of modules",
-	  },
-     PARA,
-     "See ", TO "modules: part II", " for more operations on modules."
-     }
-
-document {
-     Key => "modules: part II",
-     Headline => "homological and multilinear algebra",
-     Subnodes => {
+	  TO "what is a subquotient module?",
+	  TO "extracting parts of a subquotient module",
+	  TO "quotients of modules",
 	  "multilinear algebra",
 	  TO "exterior power of a module",
 	  TO "Fitting ideals",
 	  TO "adjoints of maps",
-	  "homological algebra",
-	  TO "Hom module",
-	  TO "Tor and Ext",
 	  },
      PARA,
-     "For more operations in homological algebra, see ", TO "chain complexes", ".  For additional common operations and a comprehensive list of all routines
+     "For more operations in homological algebra, see ", TO "free resolutions, chain complexes, and homological algebra", ".  For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use modules, see ", TO "Module", "."
      }
 
@@ -336,19 +322,20 @@ document {
      }
 
 document {
-     Key => "chain complexes",
-     HEADER2 "An overview",
+     Key => "free resolutions, chain complexes, and homological algebra",
+     "For additional common operations and a comprehensive list of all routines
+     in Macaulay 2 which return or use chain complexes or maps between chain complexes, see ", 
+     TO "ChainComplex", " and ", TO "ChainComplexMap", ".",
      Subnodes => {
 	  TO "free resolutions of modules",
 	  TO "extracting information from chain complexes",
 	  TO "making chain complexes by hand",
 	  TO "manipulating chain complexes",
-	  TO "maps between chain complexes"
+	  TO "maps between chain complexes",
+	  "homological algebra",
+	  TO "Hom module",
+	  TO "Tor and Ext",
 	  },
-     PARA,
-      "For additional common operations and a comprehensive list of all routines
-      in Macaulay 2 which return or use chain complexes or maps between chain complexes, see ", 
-      TO "ChainComplex", " and ", TO "ChainComplexMap", ".",
      }
 
 document {

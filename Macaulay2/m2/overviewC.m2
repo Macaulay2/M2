@@ -1,38 +1,58 @@
 ----------- File Mike is Working on! -------------------------
 
 document {
-     Key => "basic rings",
+     Key => "basic rings of numbers",
      "The following rings are initially present in every session with
      Macaulay 2.",
      UL { 
 	  TO "ZZ", 
+	  TO "ZZ/p", 
 	  TO "QQ", 
-	  TO "RR", 
-	  TO "CC" 
+	  TO "RR",
+	  TO "BigReal",
+	  TO "CC",
+	  TO "BigComplex"
 	  },
-     NOINDENT,
-     "(The names of these rings are double letters so the corresponding symbols
-     with single letters can be used as variables in rings.)  Entries of these
-     rings are constructed as follows, and the usual arithmetic operations apply.",
+     "The names of some of these rings are double letters so the corresponding symbols
+     with single letters are preserved for use as variables.",
+     PARA,
+     "Numbers in these rings are constructed as follows.",
      EXAMPLE {
 	  "1234",
       	  "123/4",
       	  "123.4",
       	  "123+4*ii",
+	  -- need ways to make big real and big complex and implement arith ops
 	  },
      "The usual arithmetic operations are available.",
      EXAMPLE {
 	  "4/5 + 2/3",
       	  "10^20",
       	  "3*5*7",
-      	  "5!",
+      	  "3.1^2.1",
+	  "sqrt 3.",
 	  },
-     "An additional pair of division operations that produce integral quotients
-     and remainders is available.",
+     "An additional pair of division operations that produce integer quotients and remainders is available.",
      EXAMPLE {
 	  "1234//100",
       	  "1234%100"
 	  },
+     SUBSECTION "Integers modulo p",
+     "If p is a prime number, then we can create the ring of integers modulo p as follows.",
+     EXAMPLE {
+	  "R = ZZ/101"
+	  },
+     "We can create elements of the ring as follows.",
+     EXAMPLE {
+	  "9_R",
+	  "103_R"
+	  },
+     "The usual arithmetic operations are available.",
+     EXAMPLE {
+	  "9_R * 11_R",
+	  "9_R ^ 11",
+	  "9_R * 11_R == -2_R"
+	  }
      }
 
 document {
@@ -349,7 +369,7 @@ document {
      }
 
 document {
-     Key => "quasi- and multi-graded polynomial rings",
+     Key => "graded and multigraded polynomial rings",
      "It is possible to set up a polynomial ring so that the degree of an
      element is a vector of integers.  For this, the option
      ", TO "Degrees", " is used, together with a list of degrees for the
@@ -646,11 +666,6 @@ document {
       	  "T#0#0",
       	  "T#0#1",
 	  }
-     }
-
-document {
-     Key => "finite fields, part II",
-     -- options to GF command.  Other forms of the GF command.
      }
 
 document {
@@ -1006,7 +1021,7 @@ document {
 		    "C = resolution M",
 		    "C.dd_3"
 		    },
-	       "For more information about chain complexes and resolutions, see ", TO "chain complexes",
+	       "For more information about chain complexes and resolutions, see ", TO "free resolutions, chain complexes, and homological algebra",
 	       " and ", TO "computing resolutions", "."
 	       ,
 	  SUBSECTION "betti numbers",

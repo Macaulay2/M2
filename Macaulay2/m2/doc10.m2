@@ -333,7 +333,7 @@ document {
      ground field is larger than the degree of each primary component.  In 
      practice, this means that if the characteristic is something like 32003,
      rather than, for example, 5, the methods used will produce the radical of ", TT "I", ".  Of
-     course, you may do the computation over ", TT "QQ", ", but it will often run much
+     course, you may do the computation over ", TO "QQ", ", but it will often run much
      slower.  In general, this routine still needs to be tuned for speed.",
      SeeAlso => {"top", "removeLowestDimension", "saturate", "quotient"}
      }

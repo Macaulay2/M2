@@ -97,7 +97,7 @@ document {
      "The element ", TT "f", " should be an element of some base ring of ", TT "R", ".",
      PARA,
      "A special feature is that if ", TT "f", " is rational, and ", TT "R", " is not
-     an algebra over ", TT "QQ", ", then an element of ", TT "R", " is provided
+     an algebra over ", TO "QQ", ", then an element of ", TT "R", " is provided
      by attempting the evident division.",
      SeeAlso => "baseRings"}
 document {

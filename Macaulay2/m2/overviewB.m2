@@ -638,7 +638,7 @@ document {
 	       caution is advised.  We give an example below to illustrate.  Also, 
 	       note that many other computations will no longer work, because 
 	       Groebner basis computations only work 
-	       over ", TT "ZZ", ", ", TT "ZZ/n", " and ", TT "QQ", " at this time. "
+	       over ", TO "ZZ", ", ", TT "ZZ/n", " and ", TO "QQ", " at this time. "
 	       ,
      	  SUBSECTION "using maps to move between rings",
 	       EXAMPLE {

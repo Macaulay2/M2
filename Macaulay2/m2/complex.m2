@@ -1,20 +1,28 @@
 --		Copyright 1993-1999,2004 by Daniel R. Grayson
 
+
 CC.synonym = "complex number"
 CC.isCommutative = true
 CC.texMath = ///{\mathbb C}///
 CC.isField = true
+CC.RawRing = rawCC 10.^-10
 CC.mathML = "<mi>&Copf;</mi>"
-
 ii = new CC from (0.,1.)
-
 CC.char = 0
 CC#0 = new CC from (0.,0.)
 CC#1 = new CC from (1.,0.)
-
 CC.degreeLength = 0
-
 degree CC := i -> {}
+
+BigComplex.synonym = "big complex number"
+BigComplex.isCommutative = true
+BigComplex.texMath = ///{\mathbb C}///
+BigComplex.isField = true
+BigComplex.RawRing = rawBigCC()
+BigComplex.mathML = "<mi>&Copf;</mi>"
+BigComplex.char = 0
+BigComplex.degreeLength = 0
+degree BigComplex := i -> {}
 
 conjugate = method(TypicalValue => CC)
 conjugate ZZ := identity
