@@ -41,6 +41,9 @@ DFILES += varstrin.d
 DFILES += strings.d 
 DFILES += system.d
 DFILES += C.d
+
+actors4.oo basic.oo engine.oo interface.oo objects.oo : ../e/engine.h
+
 ALLOBJ += $(DFILES:.d=.oo) 
 SRCFILES += $(DFILES)
 clean::; rm -f $(DFILES:.d=.c)

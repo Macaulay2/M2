@@ -1898,21 +1898,21 @@ export rawStartComputation(e:Expr):Expr := (
      else WrongArg("a raw computation"));
 setupfun("rawStartComputation",rawStartComputation);
 
-export rawStatus(e:Expr):Expr := (
+export rawStatusResolution(e:Expr):Expr := (
      when e is G:RawComputation do (
 	  completionDegree := 0;
-	  stoppingReason := 0;
-	  ret := Ccode(int,"rawStatus(",
+	  completionLevel := 0;
+	  ret := Ccode(int,"IM2_Resolution_status(",
 	       "(Computation*)",G,",",
 	       "&",completionDegree,",",
-	       "&",stoppingReason,
+	       "&",completionLevel,
 	       ")" );
 	  if ret == -1 then buildErrorPacket(EngineError("unknown raw gb computation status error")) 
-	  else Expr(Sequence(toInteger(ret),toInteger(completionDegree),toInteger(stoppingReason)))
+	  else Expr(Sequence(toInteger(ret),toInteger(completionDegree),toInteger(completionLevel)))
 	  )
      else WrongArg("a raw computation")
      );
-setupfun("rawStatus", rawStatus);
+setupfun("rawStatusResolution", rawStatusResolution);
 
 export rawGB(e:Expr):Expr := (
      when e is s:Sequence do
@@ -2070,25 +2070,18 @@ export rawGBSetStop(e:Expr):Expr := (
      );
 setupfun("rawGBSetStop", rawGBSetStop);
 
-export rawGBGetMatrix(e:Expr):Expr := (
+export rawResolutionGetMatrix(e:Expr):Expr := (
      when e is a:Sequence do 
-     if length(a) == 3 then 
+     if length(a) == 2 then 
      when a.0 is G:RawComputation do 
      when a.1 is level:Integer do
      if !isInt(level) then WrongArgSmallInteger(2) else
-     when a.2 is minimize:Boolean do toExpr(
-	  Ccode(RawMatrixOrNull, 
-		    "(engine_RawMatrixOrNull)IM2_GB_get_matrix(",
-		    "(Computation *)", G, ",",
-		    toInt(level), ",",
-		    True == minimize,
-		    ")" ))
-     else WrongArgBoolean(3)
+     toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawResolutionGetMatrix(", "(Computation *)", G, ")" ))
      else WrongArgInteger(2)
      else WrongArg(1,"a raw computation")
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
-setupfun("rawGBGetMatrix", rawGBGetMatrix);
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("rawResolutionGetMatrix", rawResolutionGetMatrix);
 
 export rawResolutionStatusLevel(e:Expr):Expr := (
      when e is s:Sequence do
@@ -2133,47 +2126,41 @@ export rawGBGetChange(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawGBGetChange", rawGBGetChange);
 
-export rawGBGetLeadTerms(e:Expr):Expr := (
-     when e is a:Sequence do 
-     if length(a) == 3 then 
-     when a.0 is G:RawComputation do 
-     when a.1 is nparts:Integer do
-     if !isInt(nparts) then WrongArgSmallInteger(2) else
-     when a.2 is level:Integer do
-     if !isInt(level) then WrongArgSmallInteger(3) else
-     toExpr(
-	  Ccode(RawMatrixOrNull, 
-		    "(engine_RawMatrixOrNull)IM2_GB_get_leadterms(",
-		    "(Computation *)", G, ",",
-		    toInt(nparts), ",",
-		    toInt(level),
-		    ")" ))
-     else WrongArgInteger(3)
-     else WrongArgInteger(2)
-     else WrongArg(1,"a raw computation")
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
-setupfun("rawGBGetLeadTerms", rawGBGetLeadTerms);
+-- export rawGBGetLeadTerms(e:Expr):Expr := (
+--      when e is a:Sequence do 
+--      if length(a) == 3 then 
+--      when a.0 is G:RawComputation do 
+--      when a.1 is nparts:Integer do
+--      if !isInt(nparts) then WrongArgSmallInteger(2) else
+--      when a.2 is level:Integer do
+--      if !isInt(level) then WrongArgSmallInteger(3) else
+--      toExpr(
+-- 	  Ccode(RawMatrixOrNull, 
+-- 		    "(engine_RawMatrixOrNull)IM2_GB_get_leadterms(",
+-- 		    "(Computation *)", G, ",",
+-- 		    toInt(nparts), ",",
+-- 		    toInt(level),
+-- 		    ")" ))
+--      else WrongArgInteger(3)
+--      else WrongArgInteger(2)
+--      else WrongArg(1,"a raw computation")
+--      else WrongNumArgs(3)
+--      else WrongNumArgs(3));
+-- setupfun("rawGBGetLeadTerms", rawGBGetLeadTerms);
 
-export rawGBGetFree(e:Expr):Expr := (
+export rawResolutionGetFree(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 3 then 
      when a.0 is G:RawComputation do 
      when a.1 is level:Integer do
      if !isInt(level) then WrongArgSmallInteger(2) else
-     when a.2 is minimal:Boolean do toExpr(
-	  Ccode(RawFreeModuleOrNull, 
-		    "(engine_RawFreeModuleOrNull)IM2_GB_get_free(",
-		    "(Computation *)", G, ",",
-		    toInt(level), ",",
-		    True == minimal,
-		    ")" ))
+     when a.2 is minimal:Boolean do toExpr( Ccode(RawFreeModuleOrNull, "(engine_RawFreeModuleOrNull)rawResolutionGetFree(", "(Computation *)", G, ",", toInt(level), ")" ))
      else WrongArgBoolean(3)
      else WrongArgInteger(2)
      else WrongArg(1,"a raw computation")
      else WrongNumArgs(3)
      else WrongNumArgs(3));
-setupfun("rawGBGetFree", rawGBGetFree);
+setupfun("rawResolutionGetFree", rawResolutionGetFree);
 
 export rawGBMatrixRemainder(e:Expr):Expr := (
      when e is a:Sequence do 
@@ -2181,13 +2168,7 @@ export rawGBMatrixRemainder(e:Expr):Expr := (
      when a.0 is G:RawComputation do 
      when a.1 is level:Integer do
      if !isInt(level) then WrongArgSmallInteger(2) else
-     when a.2 is m:RawMatrix do toExpr(
-	  Ccode(RawMatrixOrNull, 
-		    "(engine_RawMatrixOrNull)rawGBMatrixRemainder(",
-		    "(Computation *)", G, ",",
-		    toInt(level),",",
-		    "(Matrix*)", m,		    
-		    ")" ))
+     when a.2 is m:RawMatrix do toExpr( Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBMatrixRemainder(", "(Computation *)", G, ",", "(Matrix*)", m, ")" ))
      else WrongArgBoolean(3)
      else WrongArgInteger(2)
      else WrongArg(1,"a raw computation")
@@ -2206,54 +2187,46 @@ toSequence(a:RawMatrixOrNull,b:RawMatrixOrNull):Expr := (
 
 export rawGBMatrixLift(e:Expr):Expr := (
      when e is a:Sequence do 
-     if length(a) == 3 then 
+     if length(a) == 2 then 
      when a.0 is G:RawComputation do 
-     when a.1 is level:Integer do
-     if !isInt(level) then WrongArgSmallInteger(2) else
-     when a.2 is m:RawMatrix do (
+     when a.1 is m:RawMatrix do (
 	  resultRemainder := RawMatrixOrNull(NULL);
 	  resultQuotient := RawMatrixOrNull(NULL);
 	  Ccode(void, "IM2_GB_matrix_lift(",
 	       "(Computation *)", G, ",",
-	       toInt(level),",",
 	       "(Matrix*)", m, ",",
 	       "(Matrix**)&", resultRemainder, ",",
 	       "(Matrix**)&", resultQuotient,
      	       -- I'm ignoring these messages for now:
 	       --  ../../../Macaulay2/d/interface.d:2391: warning: dereferencing type-punned pointer will break strict-aliasing rules
 	       --  ../../../Macaulay2/d/interface.d:2391: warning: dereferencing type-punned pointer will break strict-aliasing rules
-	       --  similar error messages come from "gcc -O3 -Wall" on this:
+	       --  similar error messages come from "gcc -c -O3 -Wall" on this:
 	       --  struct A;
 	       --  struct B;
 	       --  extern void h();
 	       --  void f(struct B *p) { h((struct A**)&p); }
 	       ")" );
 	  toSequence(resultQuotient,resultRemainder))
-     else WrongArgBoolean(3)
-     else WrongArgInteger(2)
-     else WrongArg(1,"a raw computation")
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
+     else WrongArg(2,"a raw matrix")
+     else WrongArg(1,"a raw Groebner basis")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
 setupfun("rawGBMatrixLift", rawGBMatrixLift);
 
 export rawGBContains(e:Expr):Expr := (
      when e is a:Sequence do 
-     if length(a) == 3 then 
+     if length(a) == 2 then 
      when a.0 is G:RawComputation do 
-     when a.1 is level:Integer do
-     if !isInt(level) then WrongArgSmallInteger(2) else
-     when a.2 is m:RawMatrix do toExpr(
+     when a.1 is m:RawMatrix do toExpr(
 	  Ccode(int, 
 		    "IM2_GB_contains(",
 		    "(Computation *)", G, ",",
-		    toInt(level),",",
 		    "(Matrix*)", m,		    
 		    ")" ))
-     else WrongArgBoolean(3)
-     else WrongArgInteger(2)
-     else WrongArg(1,"a raw computation")
-     else WrongNumArgs(3)
-     else WrongNumArgs(3));
+     else WrongArg(2,"a raw matrix")
+     else WrongArg(1,"a raw Groebner basis")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
 setupfun("rawGBContains", rawGBContains);
 
 export rawGBBetti(e:Expr):Expr := (
@@ -2262,24 +2235,12 @@ export rawGBBetti(e:Expr):Expr := (
      when a.0 is G:RawComputation do 
      when a.1 is type:Integer do
      if !isInt(type) then WrongArgSmallInteger(2) else
-     toExpr(
-	  Ccode(RawArrayInt, 
-		    "(engine_RawArrayInt)IM2_GB_betti(",
-		    "(Computation *)", G, ",",
-		    toInt(type),
-		    ")" ))
+     toExpr( Ccode(RawArrayInt, "(engine_RawArrayInt)rawResolutionBetti(", "(Computation *)", G, ",", toInt(type), ")" ))
      else WrongArgInteger(2)
      else WrongArg(1,"a raw computation")
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("rawGBBetti", rawGBBetti);
-
-export rawGBverbose(e:Expr):Expr := (
-     when e is level:Integer do
-     if !isInt(level) then WrongArgSmallInteger() 
-     else toExpr(Ccode(int, "IM2_GB_verbose(", toInt(level), ")"))
-     else WrongArgInteger());
-setupfun("rawGBverbose", rawGBverbose);
 
 -----------------------------------------------------------------------------
 -- LAPACK 

@@ -1287,7 +1287,18 @@ enum gbTraceValues
 				  int strategy /* drg: connected rawResolution */
 				  );
 
-  const MatrixOrNull *IM2_res_get_matrix(Computation *G); 
+  const MatrixOrNull *rawResolutionGetMatrix(Computation *G,int level); /* rawResolutionGetMatrix */
+  const FreeModuleOrNull *rawResolutionGetFree(Computation *G, int level);
+  /* minimal should always be set to true */
+    /*drg: connected rawResolutionGetFree*/
+  const M2_arrayint rawResolutionBetti(Computation *G,
+				 int type); /* drg: connected rawGBBetti */
+  /* type:
+	 0: minimal betti numbers,
+	 1: ...
+	 2: ...
+	 3: ...
+  */
 
   int IM2_Resolution_status(Computation *G,
 		    int * complete_up_through_this_degree,
@@ -1306,17 +1317,6 @@ enum gbTraceValues
 			  int * complete_up_through_this_degree); /* drg: connected rawResolutionStatusLevel */
   /* Same return values */
 
-  const FreeModuleOrNull *IM2_GB_get_free(Computation *G, int level);
-  /* minimal should always be set to true */
-    /*drg: connected rawGBGetFree*/
-
-  const M2_arrayint IM2_GB_betti(Computation *G,
-				 int type); /* drg: connected rawGBBetti */
-  /* 0: minimal betti numbers,
-     1:
-     2:
-     3:
-  */
 
   
   /**************************************************/
