@@ -28,10 +28,14 @@ MutableMatrixOrNull * IM2_MutableMatrix_make(const Ring *R,
 
 MutableMatrix * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool is_dense)
 {
+#warning "write this"
+  return 0;
 }
 
 const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrix *M)
 {
+#warning "write this"
+  return 0;
 }
 
 const M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M)
@@ -348,6 +352,83 @@ IM2_MutableMatrixLU(MutableMatrix *M,
   // with 1's on diagonal, 'U' is upper triangular, and 'P is permutation.
   // The matrices 'L', 'U', and 'P' are set to these matrices.
 {
+}
+
+
+M2_bool 
+rawLeastSquares(MutableMatrix *A, 
+		MutableMatrix *b, 
+		MutableMatrix *x, /* return value: argument modified */
+		M2_bool assume_full_rank)
+// Case 1: A is a dense matrix over RR.  Then so are b,x.
+// Case 2: A is a dense matrix over CC.  Then so are b,x.
+{
+}
+
+M2_bool
+rawSVD(MutableMatrix *A,
+       MutableMatrix *Sigma,
+       MutableMatrix *U,
+       MutableMatrix *VT,
+       M2_bool use_divide_and_conquer)
+{
+}
+
+M2_bool
+rawSolve(MutableMatrix *A,
+	 MutableMatrix *b,
+	 MutableMatrix *x)
+{
+}
+
+M2_bool
+rawLU(MutableMatrix *A,
+      MutableMatrix *L,
+      MutableMatrix *U,
+      MutableMatrix *P)
+{
+}
+
+M2_bool
+rawEigenvalues(MutableMatrix *A,
+	       MutableMatrix *eigenvalues,
+	       M2_bool is_symm_or_hermitian)
+{
+}
+
+M2_bool
+rawEigenvectors(MutableMatrix *A,
+		MutableMatrix *eigenvalues,
+		MutableMatrix *eigenvectors,
+		M2_bool is_symm_or_hermitian)
+{
+}
+
+
+M2_bool 
+rawMutableMatrixEigenvalues(MutableMatrix *M, MutableMatrix *result_eigenvalues)
+// M must be a dense mutable matrix over RR or over CC
+// result_eigenvalues must be a dense mutable matrix over CC
+{
+  DenseMutableMatrixCC *eig = result_eigenvalues->cast_to_DenseMutableMatrixCC();
+  if (eig == 0)
+    {
+      ERROR("expected dense MutableMatrix over RR");
+      return false;
+    }
+  DenseMutableMatrixRR *MR = M->cast_to_DenseMutableMatrixRR();
+  if (MR)
+    {
+      DenseMutableMatrixCC *result = MR->eigenvalues(eig);
+      return (result != 0);
+    }
+  DenseMutableMatrixCC *MC = M->cast_to_DenseMutableMatrixCC();
+  if (MC)
+    {
+      DenseMutableMatrixCC *result = MC->eigenvalues(eig);
+      return (result != 0);
+    }
+  return 0;
 }
 
 #endif
