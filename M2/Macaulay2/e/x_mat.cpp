@@ -16,6 +16,16 @@ const FreeModule * IM2_Matrix_get_source(const Matrix *M)
   return M->cols();
 }
 
+int IM2_Matrix_n_rows(const Matrix *M)
+{
+  return M->n_rows();
+}
+
+int IM2_Matrix_n_cols(const Matrix *M)
+{
+  return M->n_cols();
+}
+
 const M2_arrayint IM2_Matrix_get_degree(const Matrix *M)
 {
   return M->degree_monoid()->to_arrayint(M->degree_shift());

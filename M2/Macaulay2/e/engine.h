@@ -751,6 +751,10 @@ extern "C" {
 
   const FreeModule * IM2_Matrix_get_source(const Matrix *M); /* drg: connected rawSource, used in rawMatrixColumns*/
 
+  int IM2_Matrix_n_rows(const Matrix *M); /* drg: connected rawNumberOfRows*/
+
+  int IM2_Matrix_n_cols(const Matrix *M); /* drg: connected rawNumberOfColumns*/
+
   const M2_arrayint IM2_Matrix_get_degree(const Matrix *M); /* drg: connected rawMultiDegree*/
 
   const M2_string IM2_Matrix_to_string(const Matrix *M); /* drg: connected */
@@ -761,21 +765,6 @@ extern "C" {
 
   const Vector * IM2_Matrix_get_column(const Matrix *M, int c); /* drg: connected rawMatrixColumn, used in rawMatrixColumns*/
 
-#if 0
-
-  const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
-					const Vector_array *V); /* drg: connected rawMatrix*/
-  
-  const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
-					const FreeModule *source,
-					const M2_arrayint deg,
-					const Vector_array *V); /* drg: connected rawMatrix*/
-
-  const MatrixOrNull * IM2_Matrix_make3(const FreeModule *target,
-					const FreeModule *source,
-					const M2_arrayint deg,
-					const Matrix *M); /* drg: connected rawMatrix*/
-#endif
   /*******************************************************************************/
   const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 					int ncols,
@@ -1060,10 +1049,6 @@ extern "C" {
 
   unsigned long  IM2_MutableMatrix_hash(const MutableMatrix *M); /* TODO */ /* drg: waiting, returning 0 */
 
-  int IM2_MutableMatrix_n_rows(const MutableMatrix *M); /* drg: connected rawNumberOfRows*/
-
-  int IM2_MutableMatrix_n_cols(const MutableMatrix *M); /* drg: connected rawNumberOfColumns*/
-
   MutableMatrix * IM2_MutableMatrix_get_row_change(MutableMatrix *M); /* drg: connected rawRowChange*/
 
   MutableMatrix * IM2_MutableMatrix_get_col_change(MutableMatrix *M); /* drg: connected rawColumnChange*/
@@ -1073,6 +1058,7 @@ extern "C" {
 
   void IM2_MutableMatrix_set_col_change(MutableMatrix *M,
 					MutableMatrix *colChange); /* drg: connected rawColumnChange*/
+
   
   const RingElement * IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c); /* drg: connected rawMatrixEntry*/
 
