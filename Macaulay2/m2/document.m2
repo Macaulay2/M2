@@ -6,15 +6,16 @@
 maximumCodeWidth := 120
 TestsPrefix := "cache/tests/"
 documentationPath = { "cache/doc/" }
+M2prefix := ""
 addStartFunction(
      () -> (
 	  home := getenv "M2HOME";
 	  if home === "" then error "environment variable M2HOME not set";
 	  home = minimizeFilename home;
 	  path = join( path, { home | "/m2/", home | "/packages/" }),
-          prefix := getenv "PREFIX";
-	  if prefix =!= "" then path = append( path, 
-	       minimizeFilename ( prefix | "/share/Macaulay2/packages/" )
+          M2prefix = getenv "M2PREFIX";
+	  if M2prefix =!= "" then path = append( path, 
+	       minimizeFilename ( M2prefix | "/share/Macaulay2/packages/" )
 	       );
 	  path = unique apply( path, minimizeFilename);
 	  documentationPath = unique apply(
@@ -1248,28 +1249,35 @@ html CODE   := x -> concatenate(
      "</CODE>"
      )
 
-isAbsolute := url -> (
+isAbsolute := url -> (					    -- drg: replace with regexp after merging the branch
      "#" == substring(url,0,1) or
      "http://" == substring(url,0,7) or
      "ftp://" == substring(url,0,6) or
      "mailto:" == substring(url,0,7)
      )
 
-buildDirectory = "./"
-htmlFilename = (pkgname,nodename) -> (
-     if pkgname === ""
-     then concatenate(
-     	  buildDirectory, "/share/doc/Macaulay2/currentVersion/html/", toFilename nodename, ".html"
-     	  )
-     else concatenate(
-     	  buildDirectory, "/share/doc/Macaulay2/packages/", pkgname, "/html/", toFilename nodename, ".html"
-     	  )
-     )
+buildDirectory = "tmp/"					    -- buildDirectory is one possible PREFIX
+     	       	    	      	   	     	       	    -- set, for example, in packages.m2
+
+buildPackage = ""					    -- name of the package currently being built
+
 
 rel := url -> (
+     stderr << "url           = " << url << endl;
+     stderr << "htmlDirectory = " << htmlDirectory << endl;
      if isAbsolute url 
      then url
      else relativizeFilename(htmlDirectory, url)
+     )
+
+
+htmlFilename = method()
+htmlFilename(String) := (nodename) -> (	-- returns the path from the PREFIX to the file
+     basename := toFilename nodename | ".html";
+     fn0 := "share/doc/Macaulay2/currentVersion/html/"|basename;
+     if M2prefix =!= "" and fileExists (M2prefix|"/"|fn0) -- depends on M2 being installed there
+     then fn0
+     else concatenate("share/doc/Macaulay2/packages/", buildPackage, "/html/", basename)
      )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"

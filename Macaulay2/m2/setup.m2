@@ -129,14 +129,14 @@ markLoaded := (filename,origfilename) -> (
      loaded#origfilename = true; 
      if notify then (
 	  filename = minimizeFilename filename;
-	  -- stderr << "--loaded " << filename << endl
+	  -- stderr << "--loaded " << filename << endl	    -- debugging
 	  );
      )
 
 isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
 
 tryload := (filename,load) -> (
-     -- if notify then << "--loading " << filename << endl;
+     if notify then << "--loading " << filename << endl;
      if isAbsolutePath filename or isSpecial filename then (
 	  -- stderr << "trying to load " << filename << endl;		    -- debugging
 	  if load filename then (
@@ -182,6 +182,7 @@ scan((
 	  symbol phase,
 	  symbol currentDirectory,
 	  symbol htmlDirectory,
+	  symbol buildPackage,
 	  symbol buildDirectory,
 	  symbol documentationPath,
 	  symbol DocDatabase,

@@ -230,6 +230,8 @@ size_t doubling_stash::allocated_size(void *p)
 
 extern "C" void outofmem();
 
+#if 0
+
 // the new way:
 
 void* operator new( unsigned int size ) {
@@ -252,3 +254,4 @@ void operator delete []( void* obj ) {
   if (obj != NULL) GC_FREE( obj );
 }
 
+#endif

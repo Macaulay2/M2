@@ -7,8 +7,8 @@ packagesLoaded = {}
 writableGlobals.packagesLoaded = true
 
 Package = new Type of MutableHashTable
-newPackage = method()
-newPackage(String,String) := (pkgname,vers) -> (
+newPackage = method( Options => { Using => {} } )
+newPackage(String,String) := options -> (pkgname,vers) -> (
      if currentPackage =!= null then error("the package ",currentPackage.name," is already open");
      erase getGlobalSymbol pkgname;
      sym := getGlobalSymbol pkgname;
@@ -16,6 +16,7 @@ newPackage(String,String) := (pkgname,vers) -> (
 	  global name => pkgname,
 	  global version => vers,
 	  global symbol => sym,
+	  Using => options.Using,
 	  "initial global symbols" => keys symbolTable(),
 	  "initial docs" => keys Documentation,
 	  "file directory" => currentFileDirectory,
@@ -42,11 +43,12 @@ endPackage = () -> (
      p
      )
 
-makeHTMLPages = method()
-makeHTMLPages Package := p -> (
-     buildDirectory = p.name | "-" | p.version;
-     htmlDirectory = buildDirectory | "/share/doc/Macaulay2/packages/" | p.name | "/html/";
-     keys := unique join(p#"symbols",p#"docs");
+makeHTMLPages = method(Options => { TemporaryDirectory => "tmp/" })
+makeHTMLPages(Package) := o -> pkg -> (
+     buildPackage = pkg.name;
+     buildDirectory = o.TemporaryDirectory | pkg.name | "-" | pkg.version;
+     htmlDirectory = "share/doc/Macaulay2/packages/" | pkg.name | "/html/";
+     keys := unique join(pkg#"symbols",pkg#"docs");
      ret := makeHtmlNode \ keys;
      "pages " | stack keys | " in " | htmlDirectory
      )
