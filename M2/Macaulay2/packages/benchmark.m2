@@ -18,6 +18,9 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 -- OSF1 despina.ks.uiuc.edu V4.0 1229 alpha
 -- 0.75152 seconds, Macaulay2 0.8.52
 
+-- Linux rhenium 2.3.26 #4 Tue Nov 9 22:34:26 CST 1999 i686 unknown, Thinkpad 770Z laptop on AC power
+-- 1.18 seconds, Macaulay2 0.8.55, compiled with gcc 2.95
+
 -- Linux noether.matematik.su.se 2.1.121 #3 Wed Sep 16 10:05:16 CEST 1998 alpha unknown (600 mHz)
 -- 1.20106 seconds, 0.8.46
 
