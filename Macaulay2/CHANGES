@@ -60,8 +60,8 @@ scope of the symbol or closure will be visible to the user.  One more
 entered.  To leave it, type 'end' or the end of file character.
 
 The symbol 'end' entered into the command interpreter, will end the
-current input stream or input file.  It can also be used to exit a
-break loop.
+current input stream or input file.  It can also be used to exit the
+debugger.
 
 There is a new hash table called 'globalAssignmentHooks' which is
 consulted just before an assignment to a global variable is about to

@@ -1,42 +1,21 @@
 # @configure_input@
 include ../../include/config.Makefile
 VPATH = @srcdir@
-
 .PHONY : all clean distclean install check default
-
 all:: M2-symbols.el M2-symbols
-
-M2-symbols M2-symbols.el : makesyms.m2
-	../bin/M2 -q --silent @srcdir@/makesyms.m2 -e 'exit 0' </dev/null
-
+M2-symbols M2-symbols.el : makesyms.m2 ../bin/M2; ../bin/M2 -q --silent @srcdir@/makesyms.m2 -e 'exit 0' </dev/null
 all:: emacs-hlp.txt
-emacs-hlp.txt: makehlp.m2
-	../bin/M2 -q --silent @srcdir@/makehlp.m2 -e 'exit 0' </dev/null
-
+emacs-hlp.txt: makehlp.m2 ../bin/M2; ../bin/M2 -q --silent @srcdir@/makehlp.m2 -e 'exit 0' </dev/null
 all:: emacs.m2
-emacs.m2: makem2.m2
-	../bin/M2 -q --silent @srcdir@/makem2.m2 -e 'exit 0' </dev/null
-
-clean::
-	rm -f M2-symbols.el emacs-hlp.txt emacs.m2 M2-symbols
-
-distclean:: clean
-	rm -f Makefile
-
-$(emacsdocdir) $(emacsdir) :
-	$(INSTALL) -d "$@"
-
+emacs.m2: makem2.m2 ../bin/M2; ../bin/M2 -q --silent @srcdir@/makem2.m2 -e 'exit 0' </dev/null
+clean::; rm -f M2-symbols.el emacs-hlp.txt emacs.m2 M2-symbols
+distclean:: clean; rm -f Makefile
+$(emacsdocdir) $(emacsdir) :; $(INSTALL) -d "$@"
 install:: $(emacsdir)
-install:: M2-mode.el M2.el M2-symbols.el M2-init.el
-	$(INSTALL_DATA) $^ $(emacsdir)
-
+install:: M2-mode.el M2.el M2-symbols.el M2-init.el; $(INSTALL_DATA) $^ $(emacsdir)
 install:: $(emacsdocdir)
-install:: emacs-hlp.txt emacs.m2 README
-	$(INSTALL_DATA) $^ $(emacsdocdir)
-
+install:: emacs-hlp.txt emacs.m2 README; $(INSTALL_DATA) $^ $(emacsdocdir)
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/emacs/Makefile
-
 all:: M2-init.el
-M2-init.el : M2-init.el.in
-	cd ../..; ./config.status Macaulay2/emacs/M2-init.el
+M2-init.el : M2-init.el.in; cd ../..; ./config.status Macaulay2/emacs/M2-init.el
 clean::; rm -rf M2-init.el

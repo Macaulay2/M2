@@ -487,8 +487,8 @@ export unwindMessage := "unwind message";
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,dummyCodeClosureList,nullE,false));
 export buildErrorPacket(message:string,report:CodeClosureList):Expr := Expr(Error(dummyPosition,message,report,nullE,false));
 
-dummyBreakLoop(f:Frame,c:Code):Expr := nullE;
-export breakLoopFun := dummyBreakLoop;
+dummyDebuggerFun(f:Frame,c:Code):Expr := nullE;
+export debuggerFun := dummyDebuggerFun;
 export stopIfError := false;
 export debuggingMode := true;
 export printError(err:Error):void := (

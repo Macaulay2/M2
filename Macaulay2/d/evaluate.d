@@ -1019,8 +1019,8 @@ export eval(c:Code):Expr := (
 	       if !err.printed || backtrace && localFrame != oldReportFrame || fullBacktrace then (
 		    if debuggingMode && !stopIfError && stdIO.inisatty && stdIO.outisatty then (
 			 if !err.printed then printError(err);
-			 printErrorMessage(err.position,"--entering break loop--");
-			 when breakLoopFun(err.report.code.frame,err.report.code.code) is z:Error do (
+			 printErrorMessage(err.position,"--entering debugger--");
+			 when debuggerFun(err.report.code.frame,err.report.code.code) is z:Error do (
 			      if z.message == breakMessage then return buildErrorPacket(unwindMessage);
 			      if z.message == returnMessage then return z.value;
 			      if z.message == continueMessage then return eval(c);
