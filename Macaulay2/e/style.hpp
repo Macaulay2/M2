@@ -12,15 +12,9 @@
 
 #include <gmp.h>
 
-// took this include out because <vector> doesn't seem to provide it
-// #include <vector.h> // just to get swap(), which is included from algobase.h by vector.h, gcc 3.0
-// here's the code instead
-template<typename A> inline void swap(A& a, A& b) {
-  A tmp = a;
-  a = b;
-  b = tmp;
-}
-//
+// 'swap' is defined here, perhaps in namespace std
+#include <algorithm>
+using namespace std;
 
 extern "C" char newline[];
 
