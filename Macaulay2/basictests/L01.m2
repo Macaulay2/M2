@@ -1,4 +1,5 @@
+assert = x -> if not x then error "assertion failed "
 f = x -> true
-not f y
-not f(3,3)
-not f(y,3)
+assert( true === f y )
+assert( true === f (3,3) )
+assert( true === f (y,3) )
