@@ -525,7 +525,7 @@ op := s -> if operator#?s then (
 
 unDocumentable := method(SingleArgumentDispatch => true)
 unDocumentable Thing := x ->false
-unDocumentable Function := f -> class f === Function and toString f === "--Function--"
+unDocumentable Function := f -> class f === Function and match(toString f, "--Function*--")
 unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
 
 documentableMethods := s -> select(methods s, i -> not unDocumentable i)
@@ -611,32 +611,17 @@ ret := k -> (
      t := typicalValue k;
      if t =!= Thing then SEQ {"Class of typical returned value: ", TO formatDocumentTag t, headline t, PARA{}}
      )
-
-co := f -> (
-     n := try code f;
-     if n =!= null then PRE concatenate between(newline,netRows n)
-     else if unDocumentable f
-     then MENU { SEQ { "code for function not available" } }
-     else MENU { SEQ { "code for ", TO toString f, " not available" } }
-     )
-
-optionedFunction := {} ==> () -> ()
-
 seecode := x -> (
-     if sameFunctionBody(x, optionedFunction) then (
-     	  seecode last frame x
-     	  )
-     else (
-	  -- this could be improved a bit to handle f@@g, f==>g, etc, and put into 'code'
-	  f := lookup x;
-	  g := try original f;
-	  SEQ {
-	       SEQ { "Code:", co f },
-	       if g =!= null then SEQ { "Original memoized code:", co g }
+     f := lookup x;
+     n := code f;
+     SEQ { "Code:",
+	  if n =!= null
+	  then PRE concatenate between(newline,netRows n)
+	  else MENU {
+	       SEQ { "code for ", if unDocumentable f then "this function" else TO toString f, " not available" }
 	       }
-	  )
+	  }
      )
-
 documentation Function := f -> SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
 
 documentation Option := v -> (

@@ -479,11 +479,18 @@ document { "and",
      SEEALSO{ "or", "not" }
      }
 
-document { locate,
-     TT "locate f", " -- for an interpreted function ", TT "f", " 
+document { locate, HEADLINE "locate source code",
+     TT "locate f", " -- for a symbol interpreted function ", TT "f", " 
      returns a sequence ", TT "(n,i,j)", " describing the location of
-     the source code.  The name of the source file is ", TT "n", " and
-     the code is occupies lines ", TT "i", " through ", TT "j", "."
+     the definition in the source code.  The name of the source file 
+     is ", TT "n", " and the code is occupies lines ", TT "i", " through
+     ", TT "j", ". If the ", TT "f", " is compiled, then the location 
+     is not available, and ", TO "null", " is returned.",
+     PARA,
+     "If ", TT "f", " is a sequence, then ", TO "lookup", " is applied
+     first, and then the location of the resulting function is provided.",
+     PARA,
+     "If ", TT "f", " is ", TO "null", ", then ", TO "null", " is returned."
      }
 
 document { MutableHashTable,

@@ -1,16 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-location := method(SingleArgumentDispatch=>true)
-location Sequence := args -> (
-     r := lookup args;
-     if r === null then error "no such method found"
-     else locate r
-     )
-location Thing := locate
-
-netLocation := method(SingleArgumentDispatch=>true) 
-netLocation Nothing := null -> (stderr << "source code not available" << endl;)
-netLocation Sequence := (filename,start,stop) -> (
+getSourceLines := method(SingleArgumentDispatch=>true) 
+getSourceLines Nothing := null -> null
+getSourceLines Sequence := (filename,start,stop) -> if filename =!= "stdio" then (
      wp := set characters " \t);";
      file := get filename;
      if file === null then error ("couldn't find file ", filename);
@@ -29,9 +21,36 @@ netLocation Sequence := (filename,start,stop) -> (
 	  )
      )
 
+limit := 4
+optionedFunction := {} ==> sin
+composedFunction := sin @@ sin
+memoizedFunction := memoize sin
+isOptionedFunction := f -> sameFunctionBody(f,optionedFunction)
+isComposedFunction := f -> sameFunctionBody(f,composedFunction)
+isMemoizedFunction := f -> sameFunctionBody(f,memoizedFunction)
+
+codeFunction := (f,depth) -> if depth > limit then "" else stack (
+     if not match(toString f, "--Function*") then ( "-- code for " | toString f | ":" ),
+     getSourceLines locate f,
+     if isOptionedFunction f then (
+	  "-- original function f without options processing:", codeFunction(last frame f,depth+1)
+	  )
+     else if isComposedFunction f then (
+	  "-- left hand function f:" , codeFunction((frame f)#0,depth+1),
+	  "-- right hand function g:", codeFunction((frame f)#1,depth+1)
+	  )
+     else if isMemoizedFunction f then (
+	  "-- original function f before being memoized:", codeFunction(first frame f,depth+1)
+	  )
+     )
 code = method(SingleArgumentDispatch=>true)
-code Symbol := code Sequence := code Function := args -> netLocation location args
-code List := v -> stack apply(v,i -> try code i else "-- source code not available : " | toString i)
+code Nothing := null -> null
+code Symbol := s -> getSourceLines locate s
+code Sequence := s -> code lookup s
+code Function := f -> (
+     n := codeFunction(f,0);
+     if height n + depth n =!= 0 then n)
+code List := v -> stack apply(v,code)
 code Command := cmd -> code cmd#0
 
 EDITOR := () -> if getenv "EDITOR" != "" then getenv "EDITOR" else "vi"
@@ -53,7 +72,7 @@ EDIT Sequence := (filename,start,stop) -> (
 	  filename
 	  -- resolve filename -- the old way
 	  ))
-editMethod Function := args -> EDIT location args
+editMethod Function := args -> EDIT locate args
 editMethod Command := c -> editMethod c#0
 editMethod Sequence := args -> (
      editor := EDITOR();
@@ -61,7 +80,7 @@ editMethod Sequence := args -> (
      then run concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor)
-     else EDIT location args
+     else EDIT locate args
      )
 edit = Command editMethod
 

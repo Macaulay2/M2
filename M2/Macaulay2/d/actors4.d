@@ -1005,14 +1005,14 @@ locate(e:Code):void := (
 
 locate(e:Expr):Expr := (
      when e
-     is CompiledFunction do (
-	  errorExpr("source code not available for compiled function"))
-     is CompiledFunctionClosure do (
-	  errorExpr("source code not available for compiled function closure"))
+     is Nothing do nullE
+     is Sequence do locate(lookupfun(e))
+     is CompiledFunction do nullE
+     is CompiledFunctionClosure do nullE
      is s:SymbolClosure do (
 	  p := s.symbol.position;
 	  if p == dummyPosition
-	  then errorExpr("location of internal symbol not available")
+	  then nullE
 	  else Expr(
 	       Sequence(
 		    minimizeFilename(p.filename),toInteger(int(p.line)),toInteger(int(p.line)))))
@@ -1032,7 +1032,7 @@ locate(e:Expr):Expr := (
 		    Expr(toInteger(code.minline)),
 		    Expr(toInteger(code.maxline))
 		    )))
-     else WrongArg("a function or symbol"));
+     else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate",locate);
 
 youngest(e:Expr):Expr := (

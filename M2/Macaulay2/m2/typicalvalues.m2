@@ -3,7 +3,7 @@
 -- These installations are not really methods: we install them just for documentation
 -- None of this code will ever get called, because the functions are built-in.
 
-dummy := handle						    -- this could be any compiled function
+dummy := method(SingleArgumentDispatch=>true)	    -- a compiled function closure is pretty anonymous
 installMethod(symbol !, ZZ, ZZ => dummy)
 installMethod(symbol !=, Thing, Thing, Boolean => dummy)
 installMethod(symbol #?, HashTable, Thing, Boolean => dummy)
@@ -41,17 +41,12 @@ log RR := log ZZ := RR => log
 sqrt RR := sqrt ZZ := RR => sqrt
 ancestor(Type,Type) := Boolean => ancestor
 any(BasicList,Function) := 
-any(List,Function) := 
 any(HashTable,Function) := Boolean => any
 append(BasicList,Thing) := BasicList => append
-append(List,Thing) := List => append
 prepend(Thing,BasicList) := BasicList => prepend
-prepend(Thing,List) := List => prepend
 apply(BasicList,Function) := BasicList => apply
-apply(List,Function) := List => apply
 apply(HashTable,Function) := HashTable => apply
 apply(BasicList,BasicList,Function) := List => apply
-apply(List,List,Function) := List => apply
 apply(ZZ,Function) := List => apply
 applyKeys(HashTable,Function) := HashTable => applyKeys
 applyPairs(HashTable,Function) := HashTable => applyPairs
@@ -69,12 +64,9 @@ basictype Thing := Type => basictype
 class Thing := Type => class
 parent Thing := Type => parent
 characters String := List => characters
-concatenate List := concatenate BasicList := String => concatenate
-deepSplice List := List => deepSplice
-deepSplice Sequence := Sequence => deepSplice
-drop(List,ZZ) := drop(List,List) := List => drop
-drop(BasicList,ZZ) := drop(BasicList,BasicList) := BasicList => drop
-take(List,ZZ) := take(List,List) := List => take
+concatenate List := String => concatenate
+deepSplice BasicList := BasicList => deepSplice
+drop(BasicList,ZZ) := drop(BasicList,List) := BasicList => drop
 take(BasicList,ZZ) := take(BasicList,List) := BasicList => take
 floor RR := ZZ => floor
 get File := get String := String => get
@@ -83,22 +75,22 @@ getenv String := String => getenv
 hashTable List := HashTable => hashTable
 typicalValues#horizontalJoin = Net
 typicalValues#verticalJoin = Net
-horizontalJoin List := horizontalJoin Sequence := Net => horizontalJoin
+horizontalJoin BasicList := Net => horizontalJoin
 netRows Net := List => netRows
-join(List,List) := List => join
+join(BasicList,BasicList) := BasicList => join
 keys HashTable := List => keys
 pairs HashTable := List => pairs
 values HashTable := List => values
 merge(HashTable,HashTable,Function) := HashTable => merge
-mergePairs(List,List,Function) := List => mergePairs
-mingle List := mingle Sequence := List => mingle
+mergePairs(BasicList,BasicList,Function) := BasicList => mergePairs
+mingle BasicList := List => mingle
 openDatabase String := Database => openDatabase
 openDatabaseOut String := Database => openDatabaseOut
 openIn String := File => openIn
 openOut String := File => openOut
 openInOut String := File => openInOut
 openListener String := File => openListener
-pack(List,ZZ) := List => pack
+pack(BasicList,ZZ) := List => pack
 reverse BasicList := BasicList => reverse
 select(BasicList,Function) := BasicList => select
 select(HashTable,Function) := HashTable => select
@@ -109,7 +101,7 @@ set List := set Sequence := Set => set
 tally List := tally Sequence := Tally => tally
 splice BasicList := BasicList => splice
 typicalValues#stack = Net
-stack List := stack Sequence := Net => stack
+stack BasicList := Net => stack
 substring(String,ZZ) := String => substring
 substring(String,ZZ,ZZ) := String => substring
 toHandle ZZ := Handle => toHandle
@@ -141,3 +133,4 @@ Function Thing := Thing => dummy
 scan(BasicList,Function) := Nothing => scan
 scan(ZZ,Function) := Nothing => scan
 scanPairs(HashTable,Function) := Nothing => scanPairs
+locate Symbol := locate Function := locate Sequence := locate Nothing := Sequence => locate

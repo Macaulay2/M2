@@ -933,7 +933,7 @@ installfun(e:Expr):Expr := (
      else WrongNumArgs(3,5));
 setupfun("installMethod",installfun);
 -----------------------------------------------------------------------------
-lookupfun(e:Expr):Expr := (
+export lookupfun(e:Expr):Expr := (
      when e 
      is a:Sequence do
      if length(a)== 2 then

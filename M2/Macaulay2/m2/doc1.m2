@@ -765,21 +765,31 @@ document { complete,
      spots in a chain complex are actually occupied by modules or maps."
      }
 
-document { drop,
-     TT "drop(v,n) ", " -- yields the list obtained from the list v by
-     dropping the first n elements.  Also works for sequences.",
-     BR, NOINDENT,
-     TT "drop(v,-n)", " -- yields the list obtained from the list v by dropping the 
-     last n elements.",
-     BR, NOINDENT,
-     "drop(v,{m,n})", " -- yields the list obtained from the list v by dropping the
-     elements at positions m through n.",
+document { (drop, BasicList, List),
+     HEADLINE "drop some elements",
+     TT "drop(v,{m,n})", " -- yields the list obtained from the list 
+     ", TT "v", " by dropping the elements at positions ", TT "m", " through ", TT "n", ".",
+     EXAMPLE {
+	  "drop({a,b,c,d,e},{2,3})",
+	  },
+     SEEALSO{ "take"}
+     }
+
+document { (drop, BasicList, ZZ),
+     HEADLINE "drop some elements",
+     TT "drop(v,n) ", " -- yields the list obtained from the list ", TT "v", " by
+     dropping the first ", TT "n", " elements.",
      PARA,
+     "If ", TT "n", " is negative, then the last ", TT "-n", " elements are 
+     dropped.",
      EXAMPLE {
 	  "drop({a,b,c,d,e},2)",
 	  "drop({a,b,c,d,e},-2)",
-	  "drop({a,b,c,d,e},{2,3})",
 	  },
+     SEEALSO{ "take"}
+     }
+
+document { drop, HEADLINE "drop some elements",
      SEEALSO{ "take"}
      }
 
