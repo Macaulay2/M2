@@ -21,7 +21,7 @@
 // void showcfl(CFList &t) { cout << t << endl; }
 // void showcffl(CFFList &t) { cout << t << endl; }
 
-const RingElement * convert(const Ring *R, CanonicalForm h) {
+static const RingElement * convert(const Ring *R, CanonicalForm h) {
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {
 	  if (R->charac() == 0) {
@@ -67,7 +67,7 @@ const RingElement * convert(const Ring *R, CanonicalForm h) {
 static int base_set = 0;
 static CanonicalForm base;
 
-CanonicalForm convert(const mpz_ptr p) {
+static CanonicalForm convert(const mpz_ptr p) {
      int size = p -> _mp_size;
      int sign = size < 0 ? -1 : 1;
      if (size < 0) size = -size;
@@ -95,7 +95,20 @@ CanonicalForm convert(const mpz_ptr p) {
 //#define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
 #define MPQ_VAL(f) (M2_Rational ((f).poly_val))
 
-CanonicalForm convert(const RingElement &g) {
+enum coeff_type { FAC_ZZp, FAC_ZZ, FAC_QQ, FAC_BAD_RING };
+
+
+static coeff_type get_ring_type(const Ring *R)
+{
+     const Ring *F = R->Ncoeffs();
+     if (F->cast_to_Z_mod() != 0) return FAC_ZZp;
+     if (F->cast_to_ZZ() != 0) return FAC_ZZ;
+     if (F->cast_to_QQ() != 0) return FAC_QQ;
+     ERROR("expected coefficient ring of the form ZZ/n, ZZ, or QQ");
+     return FAC_BAD_RING;
+}
+
+static CanonicalForm convert(const RingElement &g) {
      const Ring *R = g.get_ring();
      const int n = R->n_vars();
      const Ring *F = R->Ncoeffs();
@@ -181,33 +194,100 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
   return convert(f->get_ring(),h);
 }
 
-void rawFactor(const RingElement *f, 
+void rawFactor(const RingElement *g, 
 	       RingElement_array_OrNull **result_factors, 
 	       M2_arrayint_OrNull *result_powers)
 {
-#if 0
   factoryseed(23984729);
   const Ring *R = g->get_ring();
-  CanonicalForm h = convert(g);
+  CanonicalForm h = convert(*g);
   CFFList q = Factorize(h);
   int nfactors = q.length();
-  *result_factors = XXX;
-  *result_powers == XXX;
+
+  *result_factors = (RingElement_array *) getmem(sizeofarray((*result_factors),nfactors));
+  (*result_factors)->len = nfactors;
+
+  *result_powers == makearrayint(nfactors);
+
   int next = 0;
   for (CFFListIterator i = q; i.hasItem(); i++) {
     (*result_factors)->array[next] = convert(R,i.getItem().factor());
     (*result_powers)->array[next++] = i.getItem().exp();
   }
-#endif
-  ERROR("not implemented yet");
-  *result_factors = 0;
-  *result_powers = 0;
 }
+
+M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
+{
+     factoryseed(23984729);
+     const Ring *R = M->get_ring();
+     const int N = R->n_vars();
+
+     if (get_ring_type(R) == FAC_BAD_RING) return 0; // error message already issued
+
+     CFList I;
+     int i;
+     for (i = 0; i < M->n_rows(); i++) {
+	  for (int j=0; j < M->n_cols(); j++) {
+	    const RingElement *g = RingElement::make_raw(R, M->elem(i,j));
+	    I.append(convert(*g));
+	  }
+     }
+
+
+     List<int> t = neworderint(I);
+
+     int n = t.length();
+     intarray u(N);
+     ListIterator<int> ii(t);
+     for (i=0; ii.hasItem(); ii++, i++) u.append(
+					      (n-1)-(ii.getItem()-1) // REVERSE!
+					      );
+     if (n>0) for (i=(n-1)/2; i>=0; i--) { // REVERSE!
+	  int tmp = u[n-1-i];
+	  u[n-1-i] = u[i];
+	  u[i] = tmp;
+     }
+     for (i=n; i<N; i++) u.append(i);
+
+     M2_arrayint result = makearrayint(N);
+     for (i=0; i<N; i++)
+       result->array[i] = u[i];
+     return result;
+}    
 
 Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 {
-  ERROR("not implemented yet");
-  return 0;
+     factoryseed(23984729);
+     const Ring *R = M->get_ring();
+
+     if (get_ring_type(R) == FAC_BAD_RING) return 0; // error message already issued
+
+     CFList I;
+     for (int i = 0; i < M->n_rows(); i++) {
+	  for (int j=0; j < M->n_cols(); j++) {
+	    const RingElement *g = RingElement::make_raw(R, M->elem(i,j));
+	    I.append(convert(*g));
+	  }
+     }
+
+     List<CFList> t = IrrCharSeries(I);
+
+     Matrix_array *result = (Matrix_array *) getmem(sizeofarray(result,t.length()));
+     result->len = t.length();
+     
+     int next = 0;
+     for (ListIterator<List<CanonicalForm> > ii = t; ii.hasItem(); ii++) {
+	  CFList u = ii.getItem();
+	  RingElement_array *result1 = (RingElement_array *) getmem(sizeofarray(result1,u.length()));
+	  result1->len = u.length();
+	  int next1 = 0;
+	  for (ListIterator<CanonicalForm> j = u; j.hasItem(); j++) {
+	    result1->array[next1++] = convert(R,j.getItem());
+	  }
+	  result->array[next++] = IM2_Matrix_make1(M->rows(), u.length(), result1, false);
+     }
+     
+     return result;
 }
 
 #if 0
