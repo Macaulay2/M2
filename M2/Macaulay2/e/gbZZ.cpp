@@ -390,22 +390,7 @@ void GBZZ_comp::apply_gb_elements(vec &f, vec &fsyz, vec gsyz) const
     }
   //M->remove(s);
 }
-#if 0
-void GBZZ_comp::apply_ring_elements(vec &f, vec rsyz) const
-{
-  // f in F
-  // rsyz in Rsyz
-  // Modify f using the ring elements in rsyz, applied to component 'x'.
-  if (f == NULL) emit("apply_ring_elements: Oh oh!");
-  int x = f->comp;
-  for (vec t = rsyz; t != NULL; t = t->next)
-    {
-      ring_elem r = quotient_ideal[t->comp];
-      vec f1 = F->imp_ring_mult_by_term(r, t->coeff, t->monom, x);
-      F->add_to(f, f1);
-    }
-}
-#endif
+
 void GBZZ_comp::compute_s_pair(vec gsyz, vec rsyz,
 			       vec &f, vec &fsyz) const
 {
