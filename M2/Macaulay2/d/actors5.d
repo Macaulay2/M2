@@ -1191,6 +1191,16 @@ linkfun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("link",linkfun);
 
+symlinkfun(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is oldfilename:string do
+     when s.1 is newfilename:string do
+     if -1 == symlink(oldfilename,newfilename) then buildErrorPacket("failed to symlink file " + oldfilename + " to " + newfilename + " : " + syserrmsg()) else nullE     
+     else WrongArgString(2)
+     else WrongArgString(1)
+     else WrongNumArgs(2));
+setupfun("symlink",symlinkfun);
+
 fileTime(e:Expr):Expr := (
      when e is name:string do (
 	  r := fileTime(name);

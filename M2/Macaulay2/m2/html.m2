@@ -723,6 +723,7 @@ makePackageIndex = method(SingleArgumentDispatch => true)
 makePackageIndex Sequence := () -> makePackageIndex packagePrefixPath
 makePackageIndex List := packagePrefixPath -> (
      -- this code is still experimental
+     absoluteLinks = true;
      htmlDirectory = LAYOUT#"docm2";
      -- p := prefixDirectory | htmlDirectory;
      -- setupButtons();

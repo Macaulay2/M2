@@ -8,6 +8,11 @@ DEPENDS = yes
 	@ echo " ** compiling $<"
 	@ $(COMPILE.cc) $(OUTPUT_OPTION) $<
 
+%.o : %.c
+	@ echo '$(COMPILE.c) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $<"
+	@ $(COMPILE.c) $(OUTPUT_OPTION) $<
+
 CPPFLAGS += -I../../include
 CPPFLAGS += -I../util
 CPPFLAGS += -I.
