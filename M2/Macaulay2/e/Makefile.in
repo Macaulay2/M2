@@ -34,7 +34,6 @@ ifeq "$(SHARED)" "yes"
 CXXFLAGS += -fPIC
 endif
 
-LIBGB      = libgb.a
 PRE.cc   = $(COMPILE.cc) -E 
 
 ##################
@@ -221,7 +220,6 @@ ifeq "$(SHARED)" "yes"
 all:: ../lib/libengine1.so ../lib/libengine2.so
 else
 all:: $(OFILES)
-all:: $(LIBGB)
 endif
 
 %.ii: %.cpp; $(PRE.cc)        $< $(OUTPUT_OPTION)
@@ -244,7 +242,7 @@ geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
 # The following line has been included to remove old style cast warnings while compiling
 M2-factory.o : M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTION) $<
 
-clean::; rm -f *.lo *.o $(LIBGB) TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
+clean::; rm -f *.lo *.o TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
 clean::; $(MAKE) -C tests $@
 clean::; $(MAKE) -C linalgGB $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
@@ -261,7 +259,6 @@ dups-okay: dups-tmp
 	 else touch $@; fi
 clean check::; $(MAKE) -C check $@
 doxygen : ; cd @srcdir@ && doxygen
-$(LIBGB): $(OFILES); $(AR) rcs $@ $?
 distclean: clean; rm -f Makefile
 
 all:: check-global-new-delete

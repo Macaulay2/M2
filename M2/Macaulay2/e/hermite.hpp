@@ -73,7 +73,10 @@ public:
   // Normal forms and lifting ////
   ////////////////////////////////
 
-  virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
+     virtual const MatrixOrNull *matrix_remainder(const Matrix *m) {
+#warning "HermiteComputation::matrix_remainder(Matrix const*) -- needs to be written"
+	  return NULL;
+     }
 
   virtual void matrix_lift(const Matrix *m,
 			   MatrixOrNull **result_remainder,
