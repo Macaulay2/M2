@@ -607,9 +607,8 @@ void res_comp::new_pairs(res_pair *p)
 
   if (P->is_skew_commutative())
     {
-      intarray find_pairs_vp;
-      varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_vp);
-      int *exp = find_pairs_vp.raw();
+      int *exp = newarray(int, M->n_vars());
+      varpower::to_ntuple(M->n_vars(), vp.raw(), exp);
 
       int nskew = P->n_skew_commutative_vars();
       for (int v=0; v<nskew; v++)
@@ -623,6 +622,7 @@ void res_comp::new_pairs(res_pair *p)
 	      elems.insert(b);
 	    }
 	}
+      deletearray(exp);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -1146,9 +1146,8 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 
   if (P->is_skew_commutative())
     {
-      intarray find_pairs_vp;
-      varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_vp);
-      int *exp = find_pairs_vp.raw();
+      int *exp = newarray(int, M->n_vars());
+      varpower::to_ntuple(M->n_vars(), vp.raw(), exp);
 
       int nskew = P->n_skew_commutative_vars();
       for (int v=0; v<nskew; v++)
@@ -1162,6 +1161,7 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
 	      elems.insert(b);
 	    }
 	}
+      deletearray(exp);
     }
 
   // Second, add in syzygies arising from the base ring, if any

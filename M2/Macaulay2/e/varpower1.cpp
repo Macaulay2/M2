@@ -164,23 +164,10 @@ int * varpower::copy(const int *vp, intarray &result)
   return result.copy(*vp, vp);
 }
 
-void varpower::to_varpower(const int *a, intarray &result)
-{
-  int len = *a;
-  int *t = result.alloc(len);
-  for (int i=0; i<len; i++)
-    *t++ = *a++;
-}
-
-void varpower::from_varpower(const int *a, intarray &result)
-{
-  to_varpower(a,result);
-}
-
-void varpower::to_ntuple(int n, const int *a, intarray &result)
+void varpower::to_ntuple(int n, const int *a, int *result_exponents)
 {
   int i;
-  int *t = result.alloc(n);
+  int *t = result_exponents;
   for (i=0; i<n; i++) t[i] = 0;
   int len = *a++ - 1;
   for (i=0; i<len; i++)

@@ -55,6 +55,7 @@ rawSchurRing R1
 -- RingElement --
 -----------------
 -- Start with a simple ring
+needs "raw-util.m2"
 R1 = polyring(rawZZ(), {symbol x, symbol y, symbol z})
 
 rawFromNumber(R1, 3)
