@@ -117,6 +117,8 @@ methods Type := F -> (
      -- sort -- too slow
      keys found)
 
+methods Symbol := s -> {}
+
 methods Sequence := F -> (
      seen := new MutableHashTable;
      found := new MutableHashTable;

@@ -178,7 +178,7 @@ document {
      Usage => "diff(x,f)",
      Inputs => {
 	  "x" => "a polynomial",
-	  "f" => {"a matrice between free modules over the same ring as ", TT "x",}
+	  "f" => {"a matrix between free modules over the same ring as ", TT "x",}
 	  },
      Outputs => {
 	  Matrix => {"having the same shape as f, whose (i,j) entry is the 
@@ -350,8 +350,8 @@ document {
      "If ", TT "f", " is a 1 by ", TT "m", " matrix over a polynomial ring ",
      TT "R", " with ", TT "n"," indeterminates,
      then the resulting matrix of partial derivatives has dimensions ",TT "n"," by ",TT "m",", 
-     and the ", TT "(i,j)", " entry is the partial derivative of the ", TT "j", "th entry of
-     ", TT "f", " by the ", TT "i", "th indeterminate of the ring.",
+     and the ", TT "(i,j)", " entry is the partial derivative of the ", TT "j", "-th entry of
+     ", TT "f", " by the ", TT "i", "-th indeterminate of the ring.",
      PARA,
      "If the ring of ", TT "f", " is a quotient polynomial ring ", TT "S/J", ",
      	  then only the derivatives of the given entries of ", TT "f", " are
@@ -444,7 +444,7 @@ document {
      "In Macaulay2, each free module over a polynomial ring comes equipped with a ", 
      TO2("monomial orders", "monomial order"),
      " and this routine
-     returns the matrix whose ", TT "i", "th column is the lead term of the ", 
+     returns the matrix whose ", TT "i", "-th column is the lead term of the ", 
      TT "i", " th column of ", TT "f", ".",
      EXAMPLE {
 	  "R = QQ[a..d];",
@@ -513,8 +513,8 @@ document {
 	  "f" => "in a polynomial ring"},
      Outputs => { Matrix => {"the lead term matrix of ", TT "f", " using the first ", 
 	       TT "n", " parts of the monomial order"}},
-     "Returns the matrix whose ", TT "i", "th column is the lead term of the ", 
-     TT "i", "th column of ", TT "f", ", using the first ", TT "n", " parts 
+     "Returns the matrix whose ", TT "i", "-th column is the lead term of the ", 
+     TT "i", "-th column of ", TT "f", ", using the first ", TT "n", " parts 
      of the monomial order.  ",
      "See ", TO "parts of monomial orders", " for an explanation.",
      EXAMPLE {
@@ -723,7 +723,7 @@ document {
 	  "h = matrix{{f,f},{f,0},0}"
 	  }
      }
-document {
+document { -- This node is used as an example in the node: Usage 
      Key => (matrix,List),
      Headline => "create a matrix from a doubly-nested list of ring 
                   elements or matrices",
@@ -1341,7 +1341,8 @@ assert (matrix {{t}} ** matrix {{t}} == matrix{{t^2}})
 document {
      Key => symbol "compactMatrixForm",
      Headline => "global flag for compact printing",
-     TT "compactMatrixForm", " -- a global flag which specifies whether to display
+	Usage => "compactMatrixForm = x",
+     TT "compactMatrixForm", " is a global flag which specifies whether to display
      matrices in compact form.",
      PARA,
      "The default value is ", TT "true", ".  The compact form is the form used by
@@ -1694,18 +1695,26 @@ document {
       	  "R/t === R/t",
 	  }
      }
+
 document {
      Key => koszul, Headline => "a differential in a Koszul complex" }
 document {
      Key => (koszul,ZZ,Matrix),
+	Headline => "a differential in a koszul complex",
      Usage => "g = koszul(i,f)",
      Inputs => {
-	  "i" => "",
-	  "f" => {"a ", TT "1", " by ", TT "n", " matrix."},
-	  },
+          "i" => "",
+          "f" => {"a ", TT "1", " by ", TT "n", " matrix."},
+          },
      Outputs => {
-	  "g" => { "the ", TT "i", "-th differential in the Koszul complex of the matrix ", TT "f"}
-	  },
+          "g" => { "the ", TT "i", "-th differential in the Koszul complex of the matrix ", TT "f"}
+          },
+     EXAMPLE {
+          "R = QQ[x_1..x_4];",
+          "f = matrix{{x_1..x_4}}"
+          },
+     "To see the ", TT "2", "-nd differential in the Koszul complex of the matrix ", TT "f", " look at:",
+     EXAMPLE "koszul(2,f)",
      }
 document {
      Key => symmetricPower, Headline => "symmetric power" }
@@ -1723,13 +1732,14 @@ document {
      }
 document {
      Key => (exteriorPower,ZZ,Matrix),
-     Usage => {TT "exteriorPower(p,f)", " or ", TT "exteriorPower_p f"},
+	Headline => "exterior power of a matrix",
+     Usage => {TT "exteriorPower(i,f)", " or ", TT "exteriorPower_i f"},
      Inputs => {
-	  "p" => null,
+	  "i" => null,
 	  "f" => null,
 	  },
      Outputs => {
-	  { "the ", TT "p", "-th exterior power of ", TT "f", "."}
+	  { "the ", TT "i", "-th exterior power of ", TT "f", "."}
 	  },
      EXAMPLE {
 	  "R = ZZ/2[x,y];",
@@ -1741,7 +1751,30 @@ document {
 	  "g = map(coker matrix {{x^2},{x*y},{y^2}}, R^3, id_(R^3))",
 	  "g2 = exteriorPower(2,g)",
 	  "target g2"
-	  }
+	  },
+	SeeAlso => {(exteriorPower,ZZ,Module)}
+     }
+document {
+     Key => (exteriorPower,ZZ,Module),
+	Headline => "exterior power of a module",
+     Usage => {TT "exteriorPower(i,M)", " or ", TT "exteriorPower_i M"},
+     Inputs => {
+	  "i" => null,
+	  "M" => null
+	  },
+     Outputs => {
+		{"the ", TT "i", "-th exterior power of ", TT "M", "."}
+	  },
+     EXAMPLE {
+	  "M = ZZ^5",
+	  "exteriorPower(3,M)"
+	  },
+	"When ", TT "i", " is ", TT "1", ", then the result is equal to ", TT "M",
+     ".  When ", TT "M", " is not a free module, then the generators used for the result
+     will be wedges of the generators of ", TT "M", ".  In other words, the modules
+     ", TT "cover exteriorPower(i,M)", " and ", TT "exteriorPower(i,cover M)", " 
+     will be equal.",
+     SeeAlso => {(exteriorPower,ZZ,Matrix)}
      }
 document {
      Key => (symbol _,Function,Thing),
@@ -1789,20 +1822,6 @@ document {
 document {
      Key => exteriorPower,
      Headline => "exterior power",
-     TT "exteriorPower(i,M)", " -- the i-th exterior power of a module ", TT "M", ".",
-     BR,NOINDENT,
-     TT "exteriorPower(i,f)", " -- the i-th exterior power of a matrix ", TT "f", ".",
-     PARA,
-     "The rows and columns are indexed in the same order as that used by
-     ", TO "subsets", " when listing the subsets of a set.",
-     PARA,
-     "When ", TT "i", " is ", TT "1", ", then the result is equal to ", TT "M", ".",
-     PARA,
-     "When M is not a free module, then the generators used for the result
-     will be wedges of the generators of M.  In other words, the modules
-     ", TT "cover exteriorPower(i,M)", " and ", TT "exteriorPower(i,cover M)", " 
-     will be equal.",
-     PARA,
      SeeAlso => {"minors", "det", "wedgeProduct"}
      }
 TEST ///
@@ -1933,7 +1952,7 @@ document {
 	  },
      SeeAlso => minors,
      Caveat => {
-	  "The algorithm used is a modifed Gaussian reduction/Bareiss algorithm, 
+	  "The algorithm used is a modified Gaussian reduction/Bareiss algorithm, 
 	  which uses division and therefore we must assume that the ring of ", TT "f", "
 	  is an integral domain.",
 	  PARA,
@@ -2275,7 +2294,7 @@ document {
      graded component.  The series is provided as an ", TO "Expression", "
      representing a rational function with that series.",
      PARA,
-     "If an optional integer argument labelled ", TO "Order", " is used, then
+     "If an optional integer argument labeled ", TO "Order", " is used, then
      the power series is expanded to that order.",
      EXAMPLE {
 	  "R = ZZ/101[x, Degrees => {2}];",

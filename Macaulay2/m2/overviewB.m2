@@ -65,7 +65,7 @@ document {
 	  	    "I = ideal(a^2*b-c^2+c*d, a*b^2-b*d^3, c^5,d+e);",
 	  	    "generators I"
 	  	    },
-     	       "The abbreviation ", TO "gens", " can be used for ", TT "generators", "." 
+     	       "The abbreviation ", TT "gens", " can be used for ", TT "generators", "." 
      	       
 	  
      }
@@ -485,7 +485,7 @@ document {
 	       other arguments for the strategy option are available.  These 
 	       arguments are ", TT "Monomial", " which computes the unique 
 	       irreducible decomposition of a monomial ideal 
-	       and ", TT "Binomial", " which computes a cellular decomposion 
+	       and ", TT "Binomial", " which computes a cellular decomposition 
 	       of a binomial ideal.  For more information on the strategy 
 	       options see ", TO "primaryDecomposition(..., Strategy => ...)", ".",
 		EXAMPLE {
@@ -866,7 +866,7 @@ document {
 
 document {
      Key => "concatenating matrices",
-     
+     "Before Macaulay 2 can concatenate matrices, the matrices in question ", EM "must", " have entries in the same ring.",
 	  SUBSECTION "concatenate horizontally",
 	       "Use ", TO "|", " to concatenate two matrices horizontally.",
 	       EXAMPLE {
@@ -905,24 +905,102 @@ document {
 
 document {
      Key => "extracting information about a matrix",
-     SUBSECTION "number of rows or columns",
-     SUBSECTION "extracting an element from a matrix",
-     SUBSECTION "entries",
-     SUBSECTION "ring",
+		"Consider the ring ", TT "R", " and the matrix ", TT "f", ".",
+		EXAMPLE {
+			"R = QQ[x,y,z];",
+			"f = matrix{{2,x,y,x^2},{z,32,2,x}}"
+			},
      SUBSECTION "target",
-     SUBSECTION "source",
+		"From the above output, one sees that Macaulay 2 considers ", TT "f", " as a linear transformation. Use the ", TO "target", " command to obtain the target of the linear transformation ", TT "f", ".",
+     	EXAMPLE {
+			"target f"
+			},     
+	SUBSECTION "source",
+		"Likewise, to obtain the source of our linear transformation, use the ", TO "source", " command.",
+		     	EXAMPLE {
+			"source f"
+			},
+     SUBSECTION "number of rows or columns",
+		"Use ", TO "numgens", " to obtain the rank of a free module. Combining it with the commands ", TO "target", " or ", TO "source", " gives us a way to determine the number of rows or columns of a matrix ", TT "f", ".",
+		EXAMPLE {
+			"numgens target f",
+			"numgens source f"
+			},
+	SUBSECTION "extracting an element from a matrix",
+		"To extract the ", TT "(i,j)", "-th element of a matrix, type ", TT "f_(i,j)", ".", 
+		EXAMPLE {
+			"f_(1,3)"
+			},
+		"Note that the first number selects the row, starting at ", TT "0", " and the second number selects the column, also starting at ", TT "0", ".",
+	SUBSECTION "entries of a matrix",
+		"To obtain the entries of a matrix in the form of a list of lists, use the ", TO "entries", " command.",
+     	EXAMPLE {
+			"entries f"
+			},
+		"Note that each inner list is a list of elements from a row of ", TT "f", ".",
+     SUBSECTION "ring",
+		"The ", TO "ring", " command can be used to return the ring of the matrix, that is, the ring containing entries of the matrix.",
+		EXAMPLE {
+			"ring f"
+			},
+		"Use the ", TO "describe", " command to recover how the ring of ", TT "f", " was constructed.",
+		EXAMPLE {
+			"describe ring f"
+			}
      }
 
 document {
      Key => "basic arithmetic of matrices",
      SUBSECTION "+",
+		"To add two matrices, use the ", TO "+", " operator.",
+		EXAMPLE {
+			"ff = matrix{{1,2,3},{4,5,6}}",
+			"gg = matrix{{4,5,6},{1,2,3}}",
+			"ff+gg"
+			},
+		"The matrices in question must have the same number of rows and columns and also must have the same ring.",
      SUBSECTION "-",
+		"To subtract two matrices, use the ", TO "-", " operator.",
+		EXAMPLE {
+  			"ff-gg"
+			},
+		"The matrices in question must have the same number of rows and columns and also must have the same ring.",		
      SUBSECTION "*",
+		"To multiply two matrices use the ", TO "*", " operator.",
+		EXAMPLE {
+			"R = ZZ/17[a..l];",
+			"ff = matrix {{a,b,c},{d,e,f}}",
+			"gg = matrix {{g,h},{i,j},{k,l}}",
+			"ff * gg"
+			},
      SUBSECTION "^",
+	     "To raise a square matrix to a power, use the ", TO "^", " operator.",
+		EXAMPLE {
+			"ff = matrix{{1,2,3},{4,5,6},{7,8,9}}",
+			"ff^4"
+			},
      SUBSECTION "inverse of a matrix",
+					-- f^-1 tends to work except no error if not working
      SUBSECTION "==", -- m == n, m-n == 0 are different
+					-- to be specific
+					-- m == n insists that the degress match up
+					-- m - n == 0 does not insist that the degrees match up
      SUBSECTION "!=",
-     SUBSECTION "**"
+					-- Check and see if the degress match up
+     SUBSECTION "**",
+		"Since tensor product is a functor of two variables, we may compute the tensor product of two matrices. 
+		Recalling that a matrix is a map between modules, we may write:",
+		PRE///
+		      ff : K ---> L
+		      gg : M ---> N
+		ff ** gg : K ** M  ---> L ** N
+		///,
+		EXAMPLE {
+			"ff = matrix {{a,b,c},{d,e,f}}",
+			"gg = matrix {{g,h},{i,j},{k,l}}",
+			"ff ** gg"
+			},
+		SeeAlso => {"extracting information about a matrix"}
      }
 
 document {
@@ -938,20 +1016,25 @@ document {
      Key => "rank of a matrix",
      
 	  SUBSECTION "rank",
-	       ,	       
+	  ,
 	  SUBSECTION "random rank of a matrix"
-	       
-	  
-     }
+	  }
 
 document {
      Key => "determinants and minors",
-     
-	  SUBSECTION "det",
-	       ,	       
-	  SUBSECTION "minors"
-	       
-	  
+	  "The command ", TO "det", " can be used to compute the determinant of a square matrix.",
+	  EXAMPLE {
+		  "R = ZZ[a..d];",
+		  "f = matrix{{a,b},{c,d}}",
+		  "det f"
+		  },      
+    	  "The command ", TO "minors", " can be used to construct the ideal generated by the ", TT "n", " by ", TT "n", " minors of a matrix. 
+	  Recall that the ", TT "n", " by ", TT "n", " minors of a matrix are the determinants of the ", TT "n", " by ", TT "n", " submatrices of a matrix.",
+	  EXAMPLE {
+		  "R = QQ[x,y,z];",
+		  "f = matrix{{x,y,z},{y,z,x^2}}",
+		  "I = minors(2,f)"
+		  }
      }
 
 document {
@@ -965,9 +1048,18 @@ document {
 document {
      Key => "exterior power of a matrix",
      
-	  SUBSECTION "exteriorPower"
-	       
-	  
+	  SUBSECTION "exteriorPower",
+	       "Since the ", TT "i", "-th exterior power is a functor, given a matrix,",
+		  EXAMPLE {
+			  "R = ZZ[vars(0..19)]",
+			  "ff = genericMatrix(R,4,5)"
+			  },
+		  "we may then take the exterior power:",
+		  EXAMPLE {
+			  "exteriorPower (2,ff)"
+			  },
+		  "Note that each entry of in the above matrix is a ", TT "2", " by ", TT "2", 
+		  " minor (the determinant of a ", TT "2", " by ", TT "2", " submatrix) of the matrix ", TT "ff", "."
      }
 
 document {

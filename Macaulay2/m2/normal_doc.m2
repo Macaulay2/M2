@@ -39,7 +39,7 @@ document {
 	  },
      Outputs => {
 	  "S" => {
-	       "The integral closure of ", TT "R", "in its total ring of fractions, presented as a quotient ring 
+	       "The integral closure of ", TT "R", " in its total ring of fractions, presented as a quotient ring 
 	       using new indexed variables based on the symbol ", TT "w"}
 	  },
      EXAMPLE {

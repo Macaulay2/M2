@@ -2,7 +2,7 @@
 
 ///
 
-this is an old node, apparently
+--this is an old node, apparently
 
 document {
      Key => "ideals and modules",

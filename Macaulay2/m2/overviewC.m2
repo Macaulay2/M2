@@ -6,7 +6,6 @@ document {
      Macaulay 2.",
      UL { 
 	  TO "ZZ", 
-	  TO "ZZ/p", 
 	  TO "QQ", 
 	  TO "RR",
 	  TO "BigRR",
@@ -36,9 +35,13 @@ document {
      EXAMPLE {
 	  "1234//100",
       	  "1234%100"
-	  },
-     SUBSECTION "Integers modulo p",
-     "If p is a prime number, then we can create the ring of integers modulo p as follows.",
+	  }
+     }
+
+
+document {
+	Key => "integers modulo a prime",
+	"If ", TT, "p", " is a prime number, then we can create the ring of integers modulo ", TT "p", " as follows.",
      EXAMPLE {
 	  "R = ZZ/101"
 	  },
@@ -52,8 +55,24 @@ document {
 	  "9_R * 11_R",
 	  "9_R ^ 11",
 	  "9_R * 11_R == -2_R"
-	  }
-     }
+	  },
+	"Find the inverse of an integer modulo a prime as follows.",
+	EXAMPLE {
+	   "17_R^-1"
+	  },
+	"To view this element as an element of ", TT "ZZ", "use the ", TO "lift", " command",
+	EXAMPLE {
+		"lift (17_R^-1, ZZ)"
+		},
+	"One way to view ", TT "R", " as a ", TT "ZZ", "-module is as follows.",
+	EXAMPLE {
+		"ZZ^1 / ideal(101)"
+		} 
+	}
+
+
+
+
 
 document {
      Key => "finite fields",
@@ -61,9 +80,10 @@ document {
      -- Current restrictions on p, p^n.
      -- example should include: making these, simple arithmetic
      -- Pointer to finite fields II.
+	"Two basic finite fields are:",
      UL {
-	  TO "ZZ/p",
-	  TO "GF(p^n)"
+	  TO2 {"integers modulo a prime", "ZZ/p"},
+	  TT "GF(p^n)"
 	  },
      "Create a finite field with q = p^n elements using",
      EXAMPLE "F = GF(81,Variable=>a)",
@@ -96,8 +116,8 @@ document {
 	  },
      "Groebner bases, and all related computations work in these rings.",
      PARA,
-     "The prime finite fields can be made easily as quotient rings of ", TO "ZZ", ".",
-     EXAMPLE "ZZ/101",
+	"The prime finite fields can be made easily as quotient rings of ", TO "ZZ", ".",
+	EXAMPLE "ZZ/101",
      "In general, to make a finite field with ", TT "q", " elements, we use
      ", TO "GF", ".",
      EXAMPLE "k = GF 81",
@@ -181,10 +201,9 @@ document {
      EXAMPLE {
 	  "numgens R",
       	  "apply(numgens R, i -> R_i^i)",
-      	  "sum(numgens R, i -> R_i^i)",
+      	  "sum(numgens R, i -> R_i^i)"
 	  },
-     "(for more information, see ", TO "apply", " and ", TO "sum", ".",
-
+     "(for more information, see ", TO "apply", " and ", TO "sum", ". ",
      "Use ", TO "generators", " to obtain a list of the variables of the ring.",
      EXAMPLE "gens R",
      "A (one row) matrix containing the variables of the ring can be obtained
@@ -194,7 +213,6 @@ document {
      EXAMPLE {
 	  "index x, index y, index z",
 	  },
-
      "The coefficient ring can be recovered with ", TO "coefficientRing", ".",
      EXAMPLE "coefficientRing R",
 
@@ -278,7 +296,7 @@ document {
      HEADER2 "The default monomial order: GRevLex",
      "Every polynomial ring in Macaulay 2 comes equipped with an ordering on
      the monomials.  The default ordering is GRevLex: the graded reverse lexicographic
-     order. Supose that m = x^A and n = x^B are monomials of a polynomial ring R having 
+     order. Suppose that m = x^A and n = x^B are monomials of a polynomial ring R having 
      r variables,
      where A = (a1, ..., ar) and B = (b1, ..., br) are exponent vectors.  Then 
      the GRevLex order is defined by: x^A > x^B if either x^A has higher degree
@@ -1075,8 +1093,8 @@ document {
 	       "Use ", TO (betti,ChainComplex), " to display the graded betti numbers of ", TT "M", ".",
 	       EXAMPLE "betti C",
 	       "This table should be interpreted as follows: the number in the ", 
-	       TT "i", "th row and ", TT "j", "th column (indices starting at 0),
-	       is the number of ", TT "j", "th syzygies in degree ", TT "i+j", ".
+	       TT "i", "-th row and ", TT "j", "-th column (indices starting at 0),
+	       is the number of ", TT "j", "-th syzygies in degree ", TT "i+j", ".
 	       In the above example, there are 15 second syzygies of degree 4, and the entries
 	       of the maps ",
 	       TT "CC.d_1, CC.d_3, CC.d_4", " are all linear."
@@ -1246,7 +1264,7 @@ document {
      "This section is only valid for Macaulay2, versions 1.0 and higher.",
      PARA,
      "Each ring in Macaulay2 comes equipped with an ordering on the
-monomials.  This orering is used in the display and storing of polynomials.
+monomials.  This ordering is used in the display and storing of polynomials.
 The choice of ordering can make a difference in the time taken in various
 computations.  Groebner bases performed on ideals and modules will use the
 chosen monomial ordering.",
@@ -1268,7 +1286,7 @@ document {
      PARA,
      TEX "Let $R = k[x_1, ..., x_n]$ be a polynomial ring, over a field k,
      and let I \\subset R be an ideal.  A term order on R is, by definition, a total
-     order, >,  on the monomials of R, which satsifies two conditions: (1) 
+     order, >,  on the monomials of R, which satisfies two conditions: (1) 
      m > 1, for every monomial m \\neq 1, and (2) the order is multiplicative:
      m > n implies that mp > np, for all monomials m,n,p.",
      PARA,

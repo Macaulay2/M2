@@ -15,7 +15,7 @@ MarkUpList = new Type of BasicList
 MarkUpList.synonym = "mark-up list"
 
 MarkUpListParagraph = new Type of MarkUpList
-MarkUpList.synonym = "mark-up list paragraph"
+MarkUpListParagraph.synonym = "mark-up list paragraph"
 
      MarkUpType = new Type of Type
 MarkUpType.synonym = "mark-up type"

@@ -1,7 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 -- html.m2 documentation
-
+-- Bart Snapp edited nearly all of these entries.
 document {
      Key => MarkUpList, 
      Headline => "the class of mark-up lists used with hypertext",
@@ -25,35 +25,56 @@ document {
 document {
      Key => PARA,
      Headline => "paragraph separator",
-     TT "PARA x", " -- a ", TO "hypertext", " paragraph.",
+	Usage => "PARA x",
+     TT "PARA x", " makes a ", TO "hypertext", " double-spaced paragraph break."
      }
+
+document {
+     Key => PARA1,
+     Headline => "a single-spaced paragraph separator",
+	Usage => "PARA1 x",
+     TT "PARA1 x", " makes a ", TO "hypertext", " single-spaced paragraph break. This is mostly for the documentation formated in info mode.",
+	SeeAlso => "PARA"
+     }
+
+
+
+
 
 document {
      Key => BR,
      Headline => "line break",
-     TT "BR{}", " -- a ", TO "hypertext", " line break."
+	Usage => "BR",
+     TT "BR{}", " is a ", TO "hypertext", " line break."
      }
 
 document {
      Key => HR,
      Headline => "horizontal rule",
-     TT "HR{}", " -- a ", TO "hypertext", " horiziontal rule."
+	Usage => "HR",
+     TT "HR{}", " a ", TO "hypertext", " horizontal rule."
      }
 
 document {
      Key => html,
      Headline => "convert hypertext to html format",
-     TT "html x", " -- convert ", TO "hypertext", " to html format",
+	Usage => "html x",
+	Inputs => {"x" => {}},
+	Outputs => {String => {}},
+     TT "html x", " converts ", TT "x", " from ", TO "hypertext", " to html format",
      PARA,
      "The return value is a string which is suitable for use in an
-     html file, readable by a world wide web client such as netscape.",
+     html file, readable by a world wide web client such as Netscape.",
      SeeAlso => "mathML"
      }
 
 document {
      Key => PRE,
      Headline => "preformatted text",
-     TT "PRE x", " -- encloses ", TT "x", " in a hypertext PRE item.",
+	Usage => "PRE x",
+	Inputs => {"x" => {}},
+	Outputs => {PRE => {}},
+     TT "PRE x", " encloses ", TT "x", " in a hypertext PRE item.",
      PARA,
      "The argument ", TT "x", " should be a string, possibly containing newlines.",
      PARA,
@@ -69,7 +90,10 @@ document {
 document {
      Key => TITLE,
      Headline => "hypertext title",
-     TT "TITLE x", " -- encloses ", TT "x", " in a hypertext TITLE item.",
+	Usage => "TITLE x",
+	Inputs => {"x" => {}},
+	Outputs => {TITLE => {}},
+     TT "TITLE x", " encloses ", TT "x", " in a hypertext TITLE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
@@ -79,8 +103,11 @@ document {
 
 document {
      Key => HEAD,
-     Headline => "HTML HEAD item",
-     TT "HEAD x", " -- encloses ", TT "x", " in a hypertext HEAD item.",
+     Headline => "hypertext HEAD item",
+	Usage => "HEAD x",
+	Inputs => {"x" => {}},
+	Outputs => {HEAD => {}},
+     TT "HEAD x", " encloses ", TT "x", " in a hypertext HEAD item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
@@ -90,8 +117,11 @@ document {
 
 document {
      Key => BODY,
-     Headline => "HTML BODY item",
-     TT "BODY x", " -- encloses ", TT "x", " in a hypertext BODY item.",
+     Headline => "hypertext BODY item",
+	Usage => "BODY x",
+	Inputs => {"x" => {}},
+	Outputs => {BODY => {}},
+     TT "BODY x", " encloses ", TT "x", " in a hypertext BODY item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
@@ -101,8 +131,11 @@ document {
 
 document {
      Key => IMG,
-     Headline => "HTML IMG item",
-     TT "IMG{x,y}", " -- encloses ", TT "x,y", " in a hypertext IMG item.",
+     Headline => "hypertext IMG item",
+	Usage => "IMG{x,y}",
+	Inputs => {"x" => {}, "y" => {}},
+	Outputs => {IMG => {}},
+     TT "IMG{x,y}", " encloses ", TT "x,y", " in a hypertext IMG item.",
      PARA,
      "The argument ", TT "x", " should be a string containing the URL of the image, and
      ", TT "y", " should be a suitable string for the ALT attribute.",
@@ -113,7 +146,10 @@ document {
 document {
      Key => SEQ,
      Headline => "hypertext sequence",
-     TT "SEQ x", " -- encloses ", TT "x", " in a hypertext SEQ item.",
+	Usage => "SEQ x",
+	Inputs => {"x" => {}},
+	Outputs => {SEQ => {}},
+     TT "SEQ x", " encloses ", TT "x", " in a hypertext SEQ item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.  The result is that the entries in the
@@ -124,115 +160,162 @@ document {
 
 document {
      Key => HTML,
-     Headline => "HTML item",
-     TT "HTML x", " -- encloses ", TT "x", " in a hypertext HTML item.",
+     Headline => "hypertext item",
+     Usage => "HTML x",
+	Function => html,
+	Inputs => {"x" => {}},
+	Outputs => {HTML =>{}},
+	TT "HTML x", " -- encloses ", TT "x", " in a hypertext HTML item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
-     strings or hypertext items.",
-     PARA,
+     strings or hypertext items. Here is an example of the command ", TO "html", " being applied to ", TT "HTML x", ".",
+     EXAMPLE {
+		"html HTML x"
+		},
+	"This is invisible in non-html versions of the documentation",
      SeeAlso => "hypertext"
      }
 
 document {
      Key => HEADER1,
-     Headline => "HTML HEADER1 item",
-     TT "HEADER1 x", " -- encloses ", TT "x", " in a hypertext HEADER1 header item.",
+     Headline => "hypertext HEADER1 item",
+	Usage => "HEADER1 x",
+	Inputs => {"x" => {}},
+	Outputs => {HEADER1 => {}},
+     TT "HEADER1 x", " encloses ", TT "x", " in a hypertext HEADER1 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "HEADER1 \"Interesting thing\"",
+     PRE "HEADER1 \"Interesting thing\", \"Here is an interesting thing.\"",
      " produces ",
-     HEADER1 "Interesting thing",
+     HEADER1 "Interesting thing", "Here is an interesting thing.",
      PARA,
      SeeAlso => "hypertext"
      }
 
 document {
      Key => HEADER2,
-     Headline => "HTML HEADER2 item",
-     TT "HEADER2 x", " -- encloses ", TT "x", " in a hypertext HEADER2 header item.",
+     Headline => "hypertext HEADER2 item",
+	Usage => "HEADER2 x",
+	Inputs => {"x" => {}},
+	Outputs => {HEADER2 => {}},
+     TT "HEADER2 x", " encloses ", TT "x", " in a hypertext HEADER2 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "HEADER2 \"Interesting thing\"",
+     PRE "HEADER2 \"Interesting thing\", \"Here is an interesting thing.\"",
      " produces ",
-     HEADER2 "Interesting thing",
+     HEADER2 "Interesting thing", "Here is an interesting thing.",
      PARA,
      SeeAlso => "hypertext"
      }
 
 document {
-     Key => HEADER3,
-     Headline => "HTML HEADER3 item",
-     TT "HEADER3 x", " -- encloses ", TT "x", " in a hypertext HEADER3 header item.",
+     Key => "SUBSECTION",
+     Headline => "hypertext SUBSECTION item",
+	Usage => "SUBSECTION x", 
+	Inputs => {"x" => {}},
+	Outputs => {HEADER2 => {}},
+     TT "SUBSECTION x", " encloses ", TT "x", " in a hypertext HEADER2 header item. It is often used in the Mathematical Overview section of the documentation.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "HEADER3 \"Interesting thing\"",
+     PRE "SUBSECTION \"Interesting thing\", \"Here is an interesting thing.\"",
      " produces ",
-     HEADER3 "Interesting thing",
+     SUBSECTION "Interesting thing", "Here is an interesting thing.",
+     PARA,
+     SeeAlso => {"HEADER2", "hypertext"}
+     }
+
+document {
+     Key => HEADER3,
+     Headline => "hypertext HEADER3 item",
+	Usage => "HEADER3 x",
+	Inputs => {"x" => {}},
+	Outputs => {HEADER3 => {}},
+     TT "HEADER3 x", " encloses ", TT "x", " in a hypertext HEADER3 header item.",
+     PARA,
+     "The argument ", TT "x", " should be a string, or a list or sequence of
+     strings or hypertext items.",
+     PARA,
+     "Here is an example.  The code ",
+     PRE "HEADER3 \"Interesting thing\", \"Here is an interesting thing.\"",
+     " produces ",
+     HEADER3 "Interesting thing", "Here is an interesting thing.",
      PARA,
      SeeAlso => "hypertext"
      }
 
 document {
      Key => HEADER4,
-     Headline => "HTML HEADER4 item",
-     TT "HEADER4 x", " -- encloses ", TT "x", " in a hypertext HEADER4 header item.",
+     Headline => "hypertext HEADER4 item",
+	Usage => "HEADER4 x",
+	Inputs => {"x" => {}},
+	Outputs => {HEADER4 => {}},
+     TT "HEADER4 x", " encloses ", TT "x", " in a hypertext HEADER4 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "HEADER4 \"Interesting thing\"",
+     PRE "HEADER4 \"Interesting thing\", \"Here is an interesting thing.\"",
      " produces ",
-     HEADER4 "Interesting thing",
+     HEADER4 "Interesting thing", "Here is an interesting thing.",
      PARA,
      SeeAlso => "hypertext"
      }
 
 document {
      Key => HEADER5,
-     Headline => "HTML HEADER5 item",
-     TT "HEADER5 x", " -- encloses ", TT "x", " in a hypertext HEADER5 header item.",
+     Headline => "hypertext HEADER5 item",
+	Usage => "HEADER5 x",
+	Inputs => {"x" => {}},
+	Outputs => {HEADER5 =>{}},
+     TT "HEADER5 x", " encloses ", TT "x", " in a hypertext HEADER5 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "HEADER5 \"Interesting thing\"",
+     PRE "HEADER5 \"Interesting thing\", \"Here is an interesting thing.\"",
      " produces ",
-     HEADER5 "Interesting thing",
+     HEADER5 "Interesting thing", "Here is an interesting thing.",
      PARA,
      SeeAlso => "hypertext"
      }
 
 document {
      Key => HEADER6,
-     Headline => "HTML HEADER6 item",
-     TT "HEADER6 x", " -- encloses ", TT "x", " in a hypertext HEADER6 header item.",
+     Headline => "hypertext HEADER6 item",
+	Usage => "HEADER6 x",
+	Inputs => {"x" => {}},
+	Outputs => {HEADER6 => {}},
+     TT "HEADER6 x", " encloses ", TT "x", " in a hypertext HEADER6 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "HEADER6 \"Interesting thing\"",
+     PRE "HEADER6 \"Interesting thing\", \"Here is an interesting thing.\"",
      " produces ",
-     HEADER6 "Interesting thing",
+     HEADER6 "Interesting thing", "Here is an interesting thing.",
      PARA,
      SeeAlso => "hypertext"
      }
 
 document {
      Key => LISTING,
-     Headline => "HTML LISTING item",
-     TT "LISTING x", " -- encloses ", TT "x", " in a hypertext LISTING item.",
+     Headline => "hypertext LISTING item",
+	Usage => "LISTING x",
+	Inputs => {"x" => {}},
+	Outputs => {LISTING => {}},
+     TT "LISTING x", " encloses ", TT "x", " in a hypertext LISTING item.",
      PARA,
      "The argument ", TT "x", " should be a string.",
      PARA,
@@ -247,8 +330,11 @@ document {
 
 document {
      Key => BLOCKQUOTE,
-     Headline => "HTML BLOCKQUOTE item",
-     TT "BLOCKQUOTE x", " -- encloses ", TT "x", " in a hypertext BLOCKQUOTE item.",
+     Headline => "hypertext BLOCKQUOTE item",
+	Usage => "BLOCKQUOTE x",
+	Inputs => {"x" => {}},
+	Outputs => {BLOCKQUOTE => {}},
+     TT "BLOCKQUOTE x", " encloses ", TT "x", " in a hypertext BLOCKQUOTE item.",
      PARA,
      "The argument ", TT "x", " should be a string.",
      PARA,
@@ -263,8 +349,11 @@ document {
 
 document {
      Key => EXAMPLE,
-     Headline => "HTML EXAMPLE item",
-     TT "EXAMPLE x", " -- evaluates the string or list of strings
+     Headline => "hypertext EXAMPLE item",
+	Usage => "EXAMPLE x",
+	Inputs => {"x" => {}},
+	Outputs => {EXAMPLE => {}},
+     TT "EXAMPLE x", " evaluates the string or list of strings
      ", TT "x", " as Macaulay 2 code, inserting the results in
      hypertext preformatted ", TO "PRE", " items.",
      PARA,
@@ -272,41 +361,57 @@ document {
      results are left where they can be found the next time the same
      EXAMPLE is encountered.",
      PARA,
+	"For example, the code",
+	PRE "EXAMPLE { \"1+1\"}",
+     " produces ",
+     EXAMPLE {"1+1"},
      SeeAlso => "hypertext"
      }
 
 document {
      Key => TABLE,
      Headline => "hypertext table",
-     TT "TABLE x", " -- produces a hypertext TABLE from a list of lists."
+	Usage => "TABLE x",
+	Inputs => {"x" => {}},
+	Outputs => {TABLE => {}},
+     TT "TABLE x", " produces a hypertext TABLE from a list of lists."
      }
 
 document {
      Key => LITERAL,
      Headline => "hypertext literal text",
-     TT "LITERAL x", " -- produces a special hypertext item which contains
+	Usage => "LITERAL x",
+	Inputs => {"x" => {}},
+	Outputs => {LITERAL => {}},
+     TT "LITERAL x", " produces a special hypertext item which contains
      HTML text that should be left unchanged by ", TO "html", "."
      }
 
 document {
      Key => STRONG,
-     Headline => "HTML STRONG item",
-     TT "STRONG x", " -- encloses ", TT "x", " in a hypertext STRONG item.",
+     Headline => "hypertext STRONG item",
+	Usage => "STRONG x",
+	Inputs => {"x" => {}},
+	Outputs => {STRONG => {}},
+     TT "STRONG x", " encloses ", TT "x", " in a hypertext STRONG item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",
      PARA,
-     STRONG "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
+     STRONG "Here is strong text!",
      PARA,
      SeeAlso => "hypertext"
      }
 
 document {
      Key => SMALL,
-     Headline => "HTML SMALL item",
-     TT "SMALL x", " -- encloses ", TT "x", " in a hypertext SMALL item.",
+     Headline => "hypertext SMALL item",
+	Usage => "SMALL x",
+	Inputs => {"x" => {}},
+	Outputs => {SMALL => {}},
+     TT "SMALL x", " encloses ", TT "x", " in a hypertext SMALL item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
@@ -320,8 +425,11 @@ document {
 
 document {
      Key => SUB,
-     Headline => "HTML subscript",
-     TT "SUB x", " -- encloses ", TT "x", " in a hypertext ", TT "SUB", " item,
+     Headline => "hypertext subscript",
+	Usage => "SUB x",
+	Inputs => {"x" => {}},
+	Outputs => {SUB => {}},
+     TT "SUB x", " encloses ", TT "x", " in a hypertext ", TT "SUB", " item,
      thereby making it a subscript.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -332,8 +440,11 @@ document {
 
 document {
      Key => SUP,
-     Headline => "HTML superscript",
-     TT "SUP x", " -- encloses ", TT "x", " in a hypertext ", TT "SUP", " item,
+     Headline => "hypertext superscript",
+	Usage => "SUP x",
+	Inputs => {"x" =>{}},
+	Outputs => {SUP => {}},
+     TT "SUP x", " encloses ", TT "x", " in a hypertext ", TT "SUP", " item,
      thereby making it a superscript.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -344,8 +455,11 @@ document {
 
 document {
      Key => ITALIC,
-     Headline => "HTML italic font",
-     TT "ITALIC x", " -- encloses ", TT "x", " in a hypertext ITALIC item.",
+     Headline => "hypertext italic font",
+     Usage => "ITALIC x",
+	Inputs => {"x" => {}},
+	Outputs => {ITALIC => {}},
+	TT "ITALIC x", " encloses ", TT "x", " in a hypertext ITALIC item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.  The result corresponds to the
@@ -360,8 +474,11 @@ document {
 
 document {
      Key => UNDERLINE,
-     Headline => "HTML underlining",
-     TT "UNDERLINE x", " -- encloses ", TT "x", " in a hypertext UNDERLINE item.",
+     Headline => "hypertext underlining",
+	Usage => "UNDERLINE x",
+	Inputs => {"x" => {}},
+	Outputs => {UNDERLINE => {}},
+     TT "UNDERLINE x", " encloses ", TT "x", " in a hypertext UNDERLINE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
@@ -376,7 +493,10 @@ document {
 document {
      Key => TEX,
      Headline => "hypertext TEX item",
-     TT "TEX s", " -- includes the string ", TT "s", ", presumably
+	Usage => "TEX x",
+	Inputs => {"x" => {}},
+	Outputs => {TEX => {}},
+     TT "TEX s", " includes the string ", TT "s", ", presumably
      containing TeX commands, in the TeX version of the documentation
      containing this ", TO "hypertext", " item.",
      PARA,
@@ -385,8 +505,11 @@ document {
 
 document {
      Key => TT,
-     Headline => "HTML TT item",
-     TT "TT x", " -- encloses ", TT "x", " in a hypertext ", TT "TT", " item.",
+     Headline => "hypertext TT item",
+	Usage => "TT x",
+	Inputs => {"x" => {}},
+	Outputs => {TT => {}}, 
+     TT "TT x", " encloses ", TT "x", " in a hypertext ", TT "TT", " item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
@@ -400,8 +523,11 @@ document {
 
 document {
      Key => EM,
-     Headline => "HTML EM item",
-     TT "EM x", " -- encloses ", TT "x", " in a hypertext EM item.",
+     Headline => "hypertext EM item",
+	Usage => "EM x",
+	Inputs => {"x" => {}},
+	Outputs => {EM => {}},
+     TT "EM x", " encloses ", TT "x", " in a hypertext EM item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
@@ -415,8 +541,11 @@ document {
 
 document {
      Key => BOLD,
-     Headline => "HTML BOLD item",
-     TT "BOLD x", " -- encloses ", TT "x", " in a hypertext BOLD item.",
+     Headline => "hypertext BOLD item",
+	Usage => "BOLD x",
+	Inputs => {"x" => {}},
+	Outputs => {BOLD => {}},
+     TT "BOLD x", " encloses ", TT "x", " in a hypertext BOLD item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.  This corresponds to B in html format.",
@@ -430,8 +559,11 @@ document {
 
 document {
      Key => CODE,
-     Headline => "HTML CODE item",
-     TT "CODE x", " -- encloses ", TT "x", " in a hypertext CODE item.",
+     Headline => "hypertext CODE item",
+	Usage => "CODE x",
+	Inputs => {"x" => {}},
+	Outputs => {CODE => {}},
+     TT "CODE x", " encloses ", TT "x", " in a hypertext CODE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
@@ -445,8 +577,14 @@ document {
 
 document {
      Key => HREF,
-     Headline => "HTML link",
-     TT "HREF{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext HREF link
+     Headline => "hypertext link",
+	Usage => "HREF{u,p}",
+	Inputs => {
+		"u" => {"a url"},
+		"p" => {"a phrase"}
+		},
+	Outputs => {HREF => {}},
+     TT "HREF{u,p}", " encloses the phrase ", TT "p", " in a hypertext HREF link
      pointing to the url ", TT "u", ".",
      PARA,
      SeeAlso => "hypertext"
@@ -454,8 +592,13 @@ document {
 
 document {
      Key => ANCHOR,
-     Headline => "HTML anchor",
-     TT "ANCHOR{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext A anchor
+     Headline => "hypertext anchor",
+	Usage => "ANCHOR{u,p}",
+	Inputs => {
+		"u" => {"the name of the anchor"},
+		"p" => {"a phrase"}
+		},
+     TT "ANCHOR{u,p}", " encloses the phrase ", TT "p", " in a hypertext anchor
      named ", TT "u", ".",
      PARA,
      SeeAlso => "hypertext"
@@ -463,8 +606,11 @@ document {
 
 document {
      Key => UL,
-     Headline => "HTML UL item",
-     TT "UL x", " -- encloses the list x as a hypertext UL itemized list.",
+     Headline => "hypertext UL item",
+	Usage => "UL x",
+	Inputs => {"x" => {}},
+	Outputs => {UL => {}},
+     TT "UL x", " encloses the list x as a hypertext UL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list of strings or hypertext items.",
      PARA,
@@ -478,8 +624,11 @@ document {
 
 document {
      Key => DL,
-     Headline => "HTML DL item",
-     TT "DL x", " -- encloses the list x as a hypertext DL itemized list.",
+     Headline => "hypertext DL item",
+	Usage => "DL x",
+	Inputs => {"x" => {}},
+	Outputs => {DL => {}},
+     TT "DL x", " encloses the list x as a hypertext DL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list, each member of which should be
      a list of length two.",
@@ -501,8 +650,11 @@ document {
 
 document {
      Key => OL,
-     Headline => "HTML OL item",
-     TT "OL x", " -- encloses the list x as a hypertext OL itemized list.",
+     Headline => "hypertext OL item",
+	Usage => "OL x", 
+	Inputs => {"x" => {}},
+	Outputs => {OL => {}},
+     TT "OL x", " encloses the list x as a hypertext OL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list of strings or hypertext items.
      The items are numbered in the display.",
@@ -517,8 +669,11 @@ document {
 
 document {
      Key => NL,
-     Headline => "HTML NL item",
-     TT "NL x", " -- encloses the list x as a hypertext NL itemized list.",
+     Headline => "hypertext NL item",
+	Usage => "NL x",
+	Inputs => {"x" => {}},
+	Outputs => {NL => {}},
+     TT "NL x", " encloses the list x as a hypertext NL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list of strings or hypertext items.",
      PARA,
@@ -533,7 +688,8 @@ document {
 document {
      Key => NOINDENT,
      Headline => "cancel hypertext indentation",
-     TT "NOINDENT{}", " -- specifies that no indentation should be used
+	Usage => "NOINDENT",
+     TT "NOINDENT{}", " specifies that no indentation should be used
      for following hypertext items.",
      PARA,
      "This item is mainly of interest for hypertext that ultimately will
@@ -545,13 +701,16 @@ document {
 document {
      Key => TO,
      Headline => "hypertext documentation link",
-     TT "TO \"x\"", " -- produces a hypertext link to the documentation page labelled ", TT "x", ".",
+	Usage => "TO x",
+	Inputs => {"x" => {"a documentation key"}},
+	Outputs => {TO => {}},
+     TT "TO \"x\"", " produces a hypertext link to the documentation page labeled ", TT "x", ".",
      PARA,
      "See also ", TO "hypertext", ".  The word ", ITALIC "hypertext", " in the previous
      sentence is an example of the use of ", TT "TO", ".",
      PARA,
      "The special form ", TT "TO {\"x\", \"s\"}", " produces a hypertext link to
-     the page labelled ", TT "x", ", but with the string \"s\" appended to the
+     the page labeled ", TT "x", ", but with the string \"s\" appended to the
      string \"x\" at the point where the reference occurs.  This form is needed
      because in some modes of output the link is indicated with a section number
      in brackets.",
@@ -561,13 +720,38 @@ document {
      an argument of class ", TT "X", ".  For more arguments, use ", TT "TO (f,X,Y)", "
      or ", TT "TO (f,X,Y,Z)", ".",
      PARA,
-     "The special form ", TT "TO (f,X)", " produces a hypertext link to the
+     "The special form ", TT "TO [f,X]", " produces a hypertext link to the
      page documenting the optional argument named ", TT "X", " for the 
      function ", TT "f", ".",
      PARA,
      "If ", TT "TO x", " is an entry in a ", TO "UL", ", then it is treated
-     as ", TT "TOH x", ", and headlines are added automatically.  See also ", TO "TOH", "."
+     as ", TT "TOH x", ", and headlines are added automatically.",
+	SeeAlso => {Key, TO2, TOH}
      }
+
+document {
+     Key => TO2,
+     Headline => "labeled hypertext documentation link",
+	Usage => "TO2 {x,p}",
+	Inputs => {
+		"x" => {"a documentation key"},
+		"p" => {"a phrase"}
+		},
+	Outputs => {TO2 => {}},
+     TT "TO2 {x,\"p\"}", " produces a hypertext link labeled \"p\" to the documentation page labeled ", TT "x", "."
+     }
+
+
+document {
+     Key => TOH,
+     Headline => "hypertext documentation link followed by a headline",
+	Usage => "TOH x",
+	Inputs => {"x" => {"a documentation key"}},
+	Outputs => {TOH => {}},
+     TT "TOH \"x\"", " produces a hypertext link to the documentation page labeled ", TT "x", " followed by the ", TO "Headline", " for ", TT "x", ".  If ", TT "TO x", " is an entry in a ", TO "UL", ", then it is treated
+     as ", TT "TOH x", ", and headlines are added automatically."
+ }
+
 
 document {
      Key => Command,
@@ -592,7 +776,13 @@ document {
 document {
      Key => monomialCurveIdeal, 
      Headline => "make the ideal of a monomial curve",
-     TT "monomialCurveIdeal(R,a)", " -- yields the defining ideal of the projective
+	Usage => "I = monomialCurveIdeal(R,a)",
+	Inputs => {
+		"R" => Ring => {},
+		"a" => {}
+		},
+	Outputs => {"I" => Ideal => {}},
+     TT "monomialCurveIdeal(R,a)", " yields the defining ideal of the projective
      curve given parametrically on an affine piece by 
      t |---> (t^a1, ..., t^an).",
      PARA,
@@ -635,11 +825,19 @@ TEST ///
 
 document {
      Key => Fano, 
-     Headline => "Fano scheme",
-     TT "Fano(k,I,GR) or  Fano(k,I)", " -- computes 
-     the ideal of a Fano scheme in the Grassmannian.",
-     PARA,
-     "Given an ideal ", TT "I", " representing a projective variety ", TT "X", "
+     Headline => "Fano scheme"
+     }
+
+document {
+	Key => (Fano,ZZ,Ideal),
+	Headline => "Fano scheme",
+	Usage => "Fano(k,I)",
+	Inputs => {
+		"k" => {"a positive integer less than ", TT "r"},
+		"I" => {"an ideal representing a variety in in projective ", TT "r", "-space"}, 
+		},
+	Outputs => {"the ideal of a Fano scheme in the Grassmannian"},
+	  "Given an ideal ", TT "I", " representing a projective variety ", TT "X", "
      in ", TT "P^r", ", a positive integer k<r, and optionally a 
      ring ", TT "GR", " with (exactly) ", TT "r+1", " choose ", TT "k+1", " variables, 
      representing the ambient space of the Grassmannian of 
@@ -647,8 +845,34 @@ document {
      ", TT "GR", " of the Fano scheme that parametrizes the k-planes 
      lying on ", TT "X", ".  If the optional third argument is not 
      present, the routine fabricates its own ring, 
-     and returns an ideal in it."
-     }
+     and returns an ideal in it.",
+	SeeAlso => (Fano,ZZ,Ideal,Ring)
+	}
+
+document {
+	Key => (Fano,ZZ,Ideal,Ring),
+	Headline => "Fano scheme",
+	Usage => "Fano(k,I,GR)",
+	Inputs => {
+		"k" => {"a positive integer less than ", TT "r"},
+		"I" => {"an ideal representing a variety in in projective ", TT "r", "-space"},
+		"GR" => {} 
+		},
+	Outputs => {"the ideal of a Fano scheme in the Grassmannian"},
+	  "Given an ideal ", TT "I", " representing a projective variety ", TT "X", "
+     in ", TT "P^r", ", a positive integer k<r, and optionally a 
+     ring ", TT "GR", " with (exactly) ", TT "r+1", " choose ", TT "k+1", " variables, 
+     representing the ambient space of the Grassmannian of 
+     k-planes in ", TT "P^r", ", this routine returns the ideal in
+     ", TT "GR", " of the Fano scheme that parametrizes the k-planes 
+     lying on ", TT "X", ".  If the optional third argument is not 
+     present, the routine fabricates its own ring, 
+     and returns an ideal in it.",
+	SeeAlso => (Fano,ZZ,Ideal)
+	}
+
+
+
 
 document {
      Key => Grassmannian,
@@ -662,7 +886,7 @@ document {
      first ", TT "binomial(r+1,k+1)", " variables of ", TT "R", ".  If ", TT "R", "
      is not given, the routine makes and uses ", TT "ZZ/31991[vars(0..binomial(r+1,k+1)-1].",
      PARA,
-     "For example, the Grassmannian of projective lines in P^3:",
+     "For example, the Grassmannian of projective lines in ", TT "P^3", ":",
      EXAMPLE "J = Grassmannian(1,3)",
      EXAMPLE "R = QQ[a..f];",
      EXAMPLE "J = Grassmannian(1,3,R)",

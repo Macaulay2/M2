@@ -22,7 +22,7 @@ document {
      store the resolution it comes from."
      }
 
-document {
+document {  -- This node is used as an example in the node: Key
      Key => resolution, Headline => "make a projective resolution" }
 document {
      Key => [resolution,DegreeLimit],
@@ -42,7 +42,7 @@ document {
 	  },
      }
 
-document {
+document { -- This node is used as an example in the node: Key
      Key => [resolution,SyzygyLimit],
      Headline => "stop when this number of syzygies are obtained",
      TT "SyzygyLimit", " -- keyword for an optional argument used with
@@ -173,7 +173,7 @@ assert (HH_3 C == 0)
 assert (HH_4 C == 0)
 "
 
-document {
+document {   -- This node is used as an example for the documentation node: Key, Usage
      Key => (resolution,Module),
      Headline => "compute a projective resolution of a module",
      Usage => {TT "resolution M", " or ", TT "res M"},
@@ -237,7 +237,7 @@ document {
      SeeAlso => { "free resolutions of modules" }
      }
 
-document {
+document { -- This node is used as an example in the documentation nodes: Inputs, Outputs
      Key => (resolution, Ideal),
      Headline => "compute a projective resolution of (the quotient ring corresponding to) an ideal",
      Usage => "resolution I",
@@ -245,7 +245,7 @@ document {
 	  "I" => { "an ideal in a ring ", TT "R", ", say" }
 	  },
      Outputs => {
-	  { "a resolution of ", TT "R/I", " by projective ", TT "R", "-modules" }
+	  {"a resolution of ", TT "R/I", " by projective ", TT "R", "-modules"}
 	  },
      EXAMPLE {
 	  "R = ZZ[a..d]",

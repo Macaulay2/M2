@@ -10,6 +10,7 @@ document {
      Subnodes => {
 	  "Rings",
 	  TO "basic rings of numbers",
+	  TO "integers modulo a prime",
 	  TO "finite fields",
 	  TO "polynomial rings",
 	  TO "monomial orderings",
@@ -290,7 +291,7 @@ document {
 	  }
      }
 
-document {
+document { -- this node is used as an example in the node: Key
      Key => "free resolutions, chain complexes, and homological algebra",
      "For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use chain complexes or maps between chain complexes, see ", 

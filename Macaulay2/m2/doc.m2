@@ -216,7 +216,7 @@ document {
      Consequences => {
 	  {
 	       "The function ", TT "f", " will be applied at top level to the 
-	       result of an evalution when printing of the result has
+	       result of an evaluation when printing of the result has
 	       been suppressed by a semicolon."
 	       }
 	  }
@@ -691,15 +691,16 @@ document {
 document {
      Key => times,
      Headline => "multiplication",
-     TT "times(x,y,...)", " -- yields the product of its arguments.",
-     PARA,
-     "If there are no arguments, the value is the integer 1."
+	Usage => "times(x,y, ...)",
+     TT "times(x,y, ...)", " yields the product of its arguments. 
+	If there are no arguments, the value is the integer 1."
      }
 
 document {
      Key => power,
      Headline => "power",
-     TT "power(x,n)", " -- yields the ", TT "n", "-th power of ", TT "x", ".",
+	Usage => "(x,n)",
+     TT "power(x,n)", " yields the ", TT "n", "-th power of ", TT "x", ".",
      PARA,
      SeeAlso => "^"
      }
@@ -707,21 +708,24 @@ document {
 document {
      Key => difference, 
      Headline => "difference",
-     TT "difference(x,y)", " -- returns ", TT "x-y", "." 
+	Usage => "difference(x,y)",
+     TT "difference(x,y)", " returns ", TT "x-y", "." 
      }
 
 document {
      Key => minus,
      Headline => "additive inverse",
-     TT "minus(x)   ", " -- yields ", TT "-x", ".",
+	Usage => "minus(x)",
+     TT "minus(x)", " yields ", TT "-x", ".",
      PARA,
-     "minus(x,y)  -- yields x-y, but see also ", TO "difference", "."
+     TT "minus(x,y)", " yields ", TT"x-y", " but see also ", TO "difference", "."
      }
 
 document {
      Key => append,
      Headline => "add to the end of a list",
-     TT "append(v,x)", " -- yields the list obtained by appending ", TT "x", " to the 
+	Usage => "append(v,x)",
+     TT "append(v,x)", " yields the list obtained by appending ", TT "x", " to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      EXAMPLE "append( {a,b,c}, x )",
      SeeAlso =>{ "prepend", "join"}
@@ -730,16 +734,18 @@ document {
 document {
      Key => prepend,
      Headline => "add to the beginning of a list",
-     TT "prepend(x,v)", " -- yields the list obtained by prepending x to the 
+	Usage => "prepend(x,v)",
+     TT "prepend(x,v)", " yields the list obtained by prepending" , TT "x", " to the 
      list ", TT "v", ".  Similarly if ", TT "v", " is a sequence.",
      EXAMPLE "prepend( x, {a,b,c} )",
-     SeeAlso =>{ "append", "join"}
+     SeeAlso =>{append, join}
      }
 
 document {
      Key => "--",
      Headline => "comment",
-     "Use a double hyphen (", TT "--", ") to introduce a comment in the text
+     Consequences => {"Macaulay 2 ignores commented text"},
+     "Use a double hyphen ", TT "--", " to introduce a comment in the text
      of a program.  The comment runs from to the end of the line.",
      PARA,
      "Emacs does a good job displaying the comments in a different color
@@ -1015,7 +1021,7 @@ document {
      delimited by the string ", TT "d", ".",
      PARA,
      "The value is a list of the pieces, the number of which is one
-     more than the number of occurences of d in s, so that the pieces
+     more than the number of occurrences of d in s, so that the pieces
      may be reassembled with ", TO "between", ".",
      EXAMPLE {
 	  ///separate( ".", "a.b.c.d" )///,
@@ -1097,19 +1103,60 @@ document {
 document {
      Key => (symbol |, Matrix, Matrix),
      Headline => "join matrices horizontally",
-     TT "f|g", " -- concatenate matrices horizontally.",
-     PARA,
-     "It is assumed that ", TT "f", " and ", TT "g", " both have the same target.",
+	Usage => "f = g | h",
+	Inputs => {
+		"g" => {"a ", TT "m", " by ", TT "n", " matrix."},
+		"h" => {"a ", TT "m", " by ", TT "r", " matrix."}
+		},
+	Outputs => {
+		"f" => {"a ", TT "m", " by ", TT "n+r", " matrix."}
+		},
+     EXAMPLE {
+		"R = ZZ/101[x,y,z]",
+      	"f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
+      	"f|f|f"
+	  },
+     Caveat => {"It is assumed that ", TT "g", " and ", TT "h", " both have the same target. Moreover, it is assumed that both ", TT "g", " and ", TT "h", " have the same ", TO "Ring", "."},
+     SeeAlso => {(symbol ||, Matrix, Matrix), (ring, Matrix)}
+     }
+
+
+document {
+     Key => (symbol |, ZZ, Matrix),
+     Headline => "join an integer multiple of an identity matrix to a matrix horizontally",
+     Usage => "f = n | g",
+	Inputs => {
+		"n" => null,
+		"g" => {"a ", TT "r", " by ", TT "s", " matrix."}
+		},
+	Outputs => {
+		"f" => {"a ", TT "r", " by ", TT "r+s", " matrix."}
+		},
+    EXAMPLE {
+	    "R = ZZ/101[x,y,z]",
+         "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
+         "2|f|3"
+	  }
+     }
+
+
+
+document {
+     Key => (symbol |, Matrix, ZZ),
+     Headline => "join an integer multiple of an identity matrix to a matrix horizontally",
+     Usage => "f = g | n",
+	Inputs => {
+    		"g" => {"a ", TT "r", " by ", TT "s", " matrix."},
+    		"n" => null
+		},
+	Outputs => {
+		"f" => {"a ", TT "r", " by ", TT "r+s", " matrix."}
+		},
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
-      	  "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
-      	  "f|f|f",
-	  },
-     "If one of the arguments is ring element or an integer, then it
-     will be multiplied by a suitable identity matrix.",
-     PARA,
-     EXAMPLE "2|f|3",
-     SeeAlso => {(symbol ||, Matrix, Matrix)}
+       "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
+      "2|f|3"
+	  }
      }
 
 document {
@@ -1136,21 +1183,64 @@ document {
 document {
      Key => (symbol ||, Matrix, Matrix),
      Headline => "join matrices vertically",
-     TT "f||g", " -- yields the matrix obtained from matrices ", TT "f", " and ", TT "g", " by
+	Usage => "f = g || h",
+	Inputs => {
+		"g" => {"a ", TT "m", " by ", TT "n", " matrix."},
+		"h" => {"a ", TT "r", " by ", TT "n", " matrix."}
+		},
+	Outputs => {
+		"f" => {"a ", TT "m+r", " by ", TT "n", " matrix."}
+		},
+     TT "g||h", " yields the matrix obtained from matrices ", TT "g", " and ", TT "h", " by
      concatenating the columns.",
-     PARA,
      EXAMPLE {
-	  "R = ZZ[a..h];",
-      	  "p = matrix {{a,b},{c,d}}",
-      	  "q = matrix {{e,f},{g,h}}",
-      	  "p || q",
+	  "R = ZZ[i..p];",
+      	  "g = matrix {{i,j},{k,l}}",
+      	  "h = matrix {{m,n},{o,p}}",
+      	  "f= g || h",
 	  },
-     "If one of the arguments is ring element or an integer, then it
-     will be multiplied by a suitable identity matrix.",
-     EXAMPLE "p || 33",
-     PARA,
-     SeeAlso =>{(symbol |, Matrix, Matrix)}
+	Caveat => {"It is assumed that the matrices ", TT "g", " and ", TT "h", " have the same ", TO "Ring", "."},
+     SeeAlso =>{(symbol |, Matrix, Matrix), (ring, Matrix)}
      }
+
+
+document {
+     Key => (symbol ||, ZZ, Matrix),
+     Headline => "join an integer multiple of an identity matrix to a matrix vertically",
+     Usage => "f = n || g",
+	Inputs => {
+		"n" => null,
+		"g" => {"a ", TT "r", " by ", TT "s", " matrix."}
+		},
+	Outputs => {
+		"f" => {"a ", TT "r+s", " by ", TT "s", " matrix."}
+		},
+    EXAMPLE {
+	    "R = ZZ/101[x,y,z]",
+         "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
+         "2||f||3"
+	  }
+     }
+
+
+document {
+     Key => (symbol ||, Matrix, ZZ),
+     Headline => "join an integer multiple of an identity matrix to a matrix vertically",
+     Usage => "f =  g || n",
+	Inputs => {
+		"g" => {"a ", TT "r", " by ", TT "s", " matrix."},
+		"n" => null
+		},
+	Outputs => {
+		"f" => {"a ", TT "r+s", " by ", TT "s", " matrix."}
+		},
+    EXAMPLE {
+	    "R = ZZ/101[x,y,z]",
+         "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
+         "2||f||3"
+	  }
+     }
+
 
 document {
      Key => symbol "===",
@@ -1247,8 +1337,14 @@ document {
 document {
      Key => set,
      Headline => "make a set",
-     TT "set v", " -- yields the set whose elements are the members of the list v.",
-     PARA,
+	Usage => "set v",
+	Inputs => {"v" => List => {}},
+	Outputs => {Set => {}},
+     TT "set v", " yields the set whose elements are the members of the list v.",
+	EXAMPLE {
+		"v = {1,2,3,2,1}",
+		"S = set v"
+		},
      SeeAlso => { "Set" }
      }
 
@@ -1261,10 +1357,14 @@ document {
 document {
      Key => (random, ZZ), 
      Headline => "random integer",
-     TT "random n", " -- yields a random integer in the range 0 .. n-1.",
-     PARA,
-     "Warning: doesn't correctly handle the case when n an integer is larger
+	Usage => "random n",
+	Inputs => {"n"=> {}},
+	Outputs => {ZZ => {"a random integer in the range ", TT "0 .. n-1"}},
+     Caveat => "Warning: doesn't correctly handle the case when n an integer is larger
      than 2^31-1.",
+	"Here is a basic example:",
+	EXAMPLE "random 57",
+	"Here is an example using the ", TO "tally", " command.",
      EXAMPLE "tally apply(100, i -> random 10)",
      SeeAlso => {"setRandomSeed"}
      }
@@ -1272,7 +1372,11 @@ document {
 document {
      Key => (random, RR), 
      Headline => "random real number",
-     TT "random x", " -- yields a random real number in the range 0 .. x.",
+	Usage => "random x",
+	Inputs => {"x" => {}},
+	Outputs => {RR=> {"a random real number in the range ", TT "0 .. x"}},
+     "Here is a basic example:",
+	EXAMPLE "random pi",
      SeeAlso => {"setRandomSeed"}
      }
 
@@ -1286,9 +1390,28 @@ document {
      Outputs => {
 	  { "a random element of the ring ", TT "R" }
 	  },
+	TT "random ZZ", " outputs a random integer from the closed interval bounded by  ", TT "-10", " and ", TT "10", ".",
+	EXAMPLE "random ZZ",
+	TT "random QQ", " outputs a rational number whose numerator is a random integer from the closed interval 
+	bounded by ", TT "-10", " and ", TT "10", " and whose denominator is a random integer from the closed interval bounded
+	by ", TT "0", " and ", TT "10", ".",
+	EXAMPLE "random QQ",
      "Note: not implemented yet for ", TO "RR", ", ", TO "CC", ", and polynomial rings.",
      SeeAlso => {"setRandomSeed"}
      }
+
+document {
+     Key => (random, QuotientRing),
+     Headline => "random element of a quotient ring",
+	"See: ", TO (random, Ring), "."
+	}
+
+document {
+     Key => (random, GaloisField),
+     Headline => "random element of a Galois field",
+	"See: ", TO (random, Ring), "."
+	}
+
 
 document {
      Key => (random, ZZ, Ring),
@@ -1326,8 +1449,12 @@ document {
 document {
      Key => (random, Module, Module),
      Headline => "make a random module map",
-     TT "random(F,G)", " -- yields a random graded, degree 0, map from the free
-     module G to the free module F.",
+	Usage => "f = random(F,G)",
+	Inputs => {
+		"F" => {"a free module"},
+		"G" => {"a free module"}
+		},
+	Outputs => {"f" => {"a random, graded, degree ", TT "0", " map, from ", TT "G", " to ", TT "F"}},
      EXAMPLE {
 	  "R = ZZ/101[x,y];",
       	  "random(R^{1,2,3},R^{1,2,3})"
@@ -1337,12 +1464,12 @@ document {
 
 document {
      Key => true,
-     TT "true", " -- a value indicating truth."
+     TT "true", " is a value indicating truth."
      }
 
 document {
      Key => false,
-     TT "false", " -- a value indicating falsity."
+     TT "false", " is a value indicating falsity."
      }
 
 -- Local Variables:

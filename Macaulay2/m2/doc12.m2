@@ -349,7 +349,7 @@ document {
 
 document {
      Key => (subsets,Set),
-     TT "subsets s", " -- yields a list of the subsets of the set ", TT "s", ".",
+     TT "subsets s", " yields a list of the subsets of the set ", TT "s", ".",
      PARA,
      EXAMPLE "subsets set {a,b,c}",
      SeeAlso => "subsets"
@@ -368,9 +368,9 @@ assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} )
 document {
      Key => partitions,
      Headline => "list the partitions of an integer",
-     TT "partitions n", " -- returns a list of the partitions of the integer n.",
+     TT "partitions n", " returns a list of the partitions of the integer n.",
      BR, NOINDENT,
-     TT "partitions(n,k)", " -- returns a list of the partitions of the integer n
+     TT "partitions(n,k)", " returns a list of the partitions of the integer n
      into terms each of which does not exceed k.",
      PARA,
      EXAMPLE {
@@ -383,7 +383,7 @@ document {
      Key => examples,
      Headline => "list the examples in documentation",
      -- this should come after the documentation for partitions, because of the example
-     TT "examples f", " -- returns a list of strings containing examples
+     TT "examples f", " returns a list of strings containing examples
      of code using the function ", TT "f", " provided in the documentation
      of ", TT "f", ".",
      SeeAlso => {"document", "printExamples"}
@@ -436,7 +436,7 @@ document {
 document {
      Key => number,
      Headline => "count how many elements of a list satisfy a condition",
-     TT "number(x,f)", " -- the number of elements ", TT "e", " of the list ", TT "x", " 
+     TT "number(x,f)", " the number of elements ", TT "e", " of the list ", TT "x", " 
      for which ", TT "f(e)", " is true.",
      PARA,
      SeeAlso => { "positions", "select" }
@@ -445,7 +445,7 @@ document {
 document {
      Key => all,
      Headline => "whether all elements satisfy a condition",
-     TT "all(v,f)", " -- whether each element ", TT "x", " of a list or hash table
+     TT "all(v,f)", " whether each element ", TT "x", " of a list or hash table
      ", TT "v", " has ", TT "f(x)", " true.",
      PARA,
      "Returns the value true if all elements v#i of the list v yield 
@@ -459,14 +459,14 @@ document {
 document {
      Key => same,
      Headline => "whether everything in a list is the same",
-     TT "same v", " -- whether every element of the list ", TT "v", " is the same.
+     TT "same v", " whether every element of the list ", TT "v", " is the same.
      The comparison is done with ", TO "==", "."
      }
 
 document {
      Key => member,
      Headline => "test membership in a list",
-     TT "member(e,x)", " -- whether ", TT "e", " is an element of the list, set, or 
+     TT "member(e,x)", " whether ", TT "e", " is an element of the list, set, or 
      sequence ", TT "x", ".",
      PARA,
      EXAMPLE {
@@ -480,14 +480,14 @@ document {
 document {
      Key => sum,
      Headline => "compute the sum",
-     TT "sum", " -- provides the sum of the members of a list, set, 
+     TT "sum", " provides the sum of the members of a list, set, 
      or chain complex, optionally with a function applied to each one."
      }
 
 document {
      Key => (sum, List),
      Headline => "sum the elements of a list",
-     TT "sum v", " -- yields the sum of the elements in the list ", TT "v", ".",
+     TT "sum v", " yields the sum of the elements in the list ", TT "v", ".",
      PARA,
      EXAMPLE "sum {1,2,3,4,5}",
      SeeAlso => "sum"
@@ -495,7 +495,7 @@ document {
 document {
      Key => (sum, List, List, Function),
      Headline => "sum results of applying a function pairwise",
-     TT "sum(v,w,f)", " -- yields the sum of the results obtained by
+     TT "sum(v,w,f)", " yields the sum of the results obtained by
      applying ", TT "f", " to each of the pairs ", TT "(i,j)", " of elements from 
      the lists or sequences ", TT "v", " and ", TT "w", ", which should be of 
      the same length.",
@@ -509,7 +509,7 @@ document {
 document {
      Key => (sum, List, Function),
      Headline => "sum results of applying a function",
-     TT "sum(v,f)", " -- yields the sum of the expressions obtained by
+     TT "sum(v,f)", " yields the sum of the expressions obtained by
      applying ", TT "f", " to each of the elements of the list or sequence ", TT "v", ".",
      PARA,
      EXAMPLE "sum(1 .. 10, i -> i^2)",
@@ -518,7 +518,7 @@ document {
 document {
      Key => (sum, ZZ, Function),
      Headline => "sum consecutive values of a function",
-     TT "sum(n,f)", " -- compute the sum ", TT "f(0) + f(1) + ... + f(n-1)", ".",
+     TT "sum(n,f)", " computes the sum ", TT "f(0) + f(1) + ... + f(n-1)", ".",
      PARA,
      EXAMPLE "sum(10, i -> i^2)",
      SeeAlso => "sum"
@@ -526,7 +526,7 @@ document {
 document {
      Key => (sum, Tally),
      Headline => "sum of elements",
-     TT "sum v", " -- yields the sum of the elements in the tally ", TT "v", ".",
+     TT "sum v", " yields the sum of the elements in the tally ", TT "v", ".",
      PARA,
      EXAMPLE {
 	  "a = tally{1,1,1,1,1,10,10,10,100,100}",
@@ -537,7 +537,7 @@ document {
 document {
      Key => (sum, Set),
      Headline => "sum of elements",
-     TT "sum v", " -- yields the sum of the elements in the set ", TT "v", ".",
+     TT "sum v", " yields the sum of the elements in the set ", TT "v", ".",
      PARA,
      EXAMPLE {
 	  "a = set{1,100,10000}",
@@ -548,20 +548,20 @@ document {
 
 document {
      Key => product,
-     TT "product", " -- provides the product of the members of a list or set,
+     TT "product", " provides the product of the members of a list or set,
      optionally with a function applied to each one."
      }
 document {
      Key => (product, List),
      Headline => "product of elements",
-     TT "product v", " -- yields the product of the elements in the list v.",
+     TT "product v", " yields the product of the elements in the list v.",
      PARA,
      EXAMPLE "product {1,2,3,4,5}"
      }
 document {
      Key => (product, List, List, Function),
      Headline => "product of results of applying a function pairwise",
-     TT "product(v,w,f)", " -- yields the product of the results obtained by
+     TT "product(v,w,f)", " yields the product of the results obtained by
      applying ", TT "f", " to each of the pairs ", TT "(i,j)", " of elements from 
      the lists ", TT "v", " and ", TT "w", ", which should be of the same length.",
      PARA,
@@ -574,7 +574,7 @@ document {
 document {
      Key => (product, List, Function),
      Headline => "product of values of a function",
-     TT "product(v,f)", " -- yields the product of the expressions obtained by
+     TT "product(v,f)", " yields the product of the expressions obtained by
      applying ", TT "f", " to each of the elements of the list or sequence ", TT "v", ".",
      PARA,
      EXAMPLE "product(1 .. 5, i -> i^2)",
@@ -583,7 +583,7 @@ document {
 document {
      Key => (product, ZZ, Function),
      Headline => "product of consecutive values of a function",
-     TT "product(n,f)", " -- compute the product ", TT "f(0) * f(1) * ... * f(n-1)", ".",
+     TT "product(n,f)", " compute the product ", TT "f(0) * f(1) * ... * f(n-1)", ".",
      PARA,
      EXAMPLE "product(5, i -> 2*i+1)",
      SeeAlso => "product"
@@ -591,7 +591,7 @@ document {
 document {
      Key => (product, Tally),
      Headline => "product of elements",
-     TT "product v", " -- yields the product of the elements in the tally ", TT "v", ".",
+     TT "product v", " yields the product of the elements in the tally ", TT "v", ".",
      PARA,
      EXAMPLE {
 	  "a = tally{2,2,2,2,2,3,3,3,5,5}",
@@ -602,7 +602,7 @@ document {
 document {
      Key => (product, Set),
      Headline => "product of elements",
-     TT "product v", " -- yields the product of the elements in the set ", TT "v", ".",
+     TT "product v", " yields the product of the elements in the set ", TT "v", ".",
      EXAMPLE {
 	  "a = set select(1..50, isPrime)",
       	  "product a",
@@ -613,7 +613,7 @@ document {
 document {
      Key => toString,
      Headline => "convert to a string",
-     TT "toString x", " -- converts ", TT "x", " to a string.",
+     TT "toString x", " converts ", TT "x", " to a string.",
      PARA,
      "See also ", TO "toExternalString", " which will try to convert ", TT "x", "
      to a string which can be read back into the program later."     
@@ -622,7 +622,7 @@ document {
 document {
      Key => toExternalString,
      Headline => "convert to a readable string",
-     TT "toExternalString x", " -- converts ", TT "x", " to a string, in such a way
+     TT "toExternalString x", " converts ", TT "x", " to a string, in such a way
      that it can be read back into the program later.",
      PARA,
      "See also ", TO "toString", " which simply converts ", TT "x", "
@@ -671,7 +671,7 @@ document {
 document {
      Key => Holder,
      Headline => "the class of all holder expressions",
-     TT "Holder", " -- a type of ", TO "Expression", ".",
+     TT "Holder", " a type of ", TO "Expression", ".",
      PARA,
      "This type of expresssion is a container for a single, arbitrary, thing which
      is basic enough that the correct method for printing does not depend
@@ -683,14 +683,14 @@ document {
 document {
      Key => ZeroExpression,
      Headline => "the class of all zero expressions",
-     TT "ZeroExpression", " -- a type of ", TO "Expression", " of which
+     TT "ZeroExpression", " a type of ", TO "Expression", " of which
      there is just one instance, an expression representing the number 0."
      }
 
 document {
      Key => OneExpression,
      Headline => "the class all one expressions",
-     TT "OneExpression", " -- a type of ", TO "Expression", " of which
+     TT "OneExpression", " a type of ", TO "Expression", " of which
      there is just one instance, an expression representing the number 1."
      }
 
@@ -718,13 +718,13 @@ document {
 document {
      Key => expression,
      Headline => "convert to an expression",
-     TT "expression x", " -- make an ", TO "Expression", " from x."
+     TT "expression x", " makes an ", TO "Expression", " from x."
      }
 
 document {
      Key => Divide,
      Headline => "the class of all divide expressions",
-     TT "Divide", " -- a type of ", TO "Expression", " representing a quotient."
+     TT "Divide", " is a type of ", TO "Expression", " representing a quotient."
      }
 
 document {
@@ -743,7 +743,7 @@ document {
 document {
      Key => MatrixExpression,
      Headline => "the class of all matrix expressions",
-     TT "MatrixExpression", " -- a type of ", TO "Expression", " representing
+     TT "MatrixExpression", " is a type of ", TO "Expression", " representing
      a matrix.",
      PARA,
      EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
@@ -753,14 +753,14 @@ document {
 document {
      Key => RowExpression,
      Headline => "the class of all matrix expressions",
-     TT "RowExpression", " -- a type of ", TO "Expression", " representing
+     TT "RowExpression", " is a type of ", TO "Expression", " representing
      a horizontal sequence of expressions."
      }
 
 document {
      Key => Minus,
      Headline => "the class of all minus expressions",
-     TT "Minus", " -- a type of ", TO "Expression", " representing negation.",
+     TT "Minus", " is a type of ", TO "Expression", " representing negation.",
      PARA,
      "This is a unary operator."
      }
@@ -768,14 +768,14 @@ document {
 document {
      Key => NonAssociativeProduct,
      Headline => "the class of all nonassociative product expressions",
-     TT "NonAssociativeProduct", " -- a type of ", TO "Expression", " representing
+     TT "NonAssociativeProduct", " is a type of ", TO "Expression", " representing
      a nonassociative product."
      }
 
 document {
      Key => Power,
      Headline => "the class of all power expressions",
-     TT "Power", " -- a type of ", TO "Expression", " representing a power.",
+     TT "Power", " is a type of ", TO "Expression", " representing a power.",
      PARA,
      "Normally power expressions with an exponent equal to 1 will not be
      produced.  But it is desirable for ", TO "factor", " to return 
@@ -788,20 +788,20 @@ document {
 document {
      Key => Product,
      Headline => "the class of all product expressions",
-     TT "Product", " -- a type of ", TO "Expression", " representing a product."
+     TT "Product", " is a type of ", TO "Expression", " representing a product."
      }
 
 document {
      Key => SparseVectorExpression,
      Headline => "the class of all sparse vector expressions",
-     TT "SparseVectorExpression", " -- a type of ", TO "Expression", "
+     TT "SparseVectorExpression", " is a type of ", TO "Expression", "
      representing a sparse vector."
      }
 
 document {
      Key => SparseMonomialVectorExpression,
      Headline => "the class of all sparse monomial vector expressions",
-     TT "SparseMonomialVectorExpression", " -- a type of ", TO "Expression", "
+     TT "SparseMonomialVectorExpression", " is a type of ", TO "Expression", "
      representing a sparse monomial vector.",
      PARA,
      "The difference between this and ", TO "SparseVectorExpression", " is that
@@ -811,55 +811,55 @@ document {
 document {
      Key => BinaryOperation,
      Headline => "the class of all binary operation expressions",
-     TT "BinaryOperation", " -- a type of ", TO "Expression", " representing
+     TT "BinaryOperation", " is a type of ", TO "Expression", " representing
      the result of a binary operation."
      }
 
 document {
      Key => Subscript,
      Headline => "the class of all subscript expressions",
-     TT "Subscript", " -- a type of ", TO "Expression", " representing a
+     TT "Subscript", " is a type of ", TO "Expression", " representing a
      subscripted expression."
      }
 
 document {
      Key => Adjacent,
      Headline => "the class of all adjacent expression pairs",
-     TT "Adjacent", " -- a type of ", TO "Expression", " representing a pair
+     TT "Adjacent", " is a type of ", TO "Expression", " representing a pair
      of adjacent expressions, separated only by white space."
      }
 
 document {
      Key => FunctionApplication,
      Headline => "the class of all function application expressions",
-     TT "FunctionApplication", " -- a type of ", TO "Expression", " representing an
+     TT "FunctionApplication", " is a type of ", TO "Expression", " representing an
      application of a function."
      }
 
 document {
      Key => Superscript,
      Headline => "the class of all superscript expressions",
-     TT "Superscript", " -- a type of ", TO "Expression", " representing a
+     TT "Superscript", " is a type of ", TO "Expression", " representing a
      superscripted expression."
      }
 
 document {
      Key => Equation,
      Headline => "the class of all equation expressions",
-     TT "Equation", " -- a type of ", TO "Expression", " representing an
+     TT "Equation", " is a type of ", TO "Expression", " representing an
      equation."
      }
 
 document {
      Key => Sum,
      Headline => "the class of all sum expressions",
-     TT "Sum", " -- a type of ", TO "Expression", " representing a sum."
+     TT "Sum", " is a type of ", TO "Expression", " representing a sum."
      }
 
 document {
      Key => tex,
      Headline => "convert to TeX",
-     TT "tex x", " -- convert ", TT "x", " to TeX format.",
+     TT "tex x", " converts ", TT "x", " to TeX format.",
      PARA,
      EXAMPLE {
 	  "R = ZZ[a..f]",
@@ -871,7 +871,7 @@ document {
 document {
      Key => texMath,
      Headline => "convert to TeX math",
-     TT "texMath x", " -- convert ", TT "x", " to TeX format
+     TT "texMath x", " converts ", TT "x", " to TeX format
      for use in TeX math mode.",
      PARA,
      "The main difference between this and ", TO "tex", " is that the
@@ -887,7 +887,7 @@ document {
 document {
      Key => showTex,
      Headline => "convert to TeX and display on screen",
-     TT "showTex x", " -- convert ", TT "x", " to TeX format, and display it on the screen.",
+     TT "showTex x", " converts ", TT "x", " to TeX format, and display it on the screen.",
      PARA,
      "The code for this function is Unix dependent at the moment.",
      PARA,
@@ -897,9 +897,12 @@ document {
 document {
      Key => print,
      Headline => "print something",
-     TT "print x", " -- prints ", TT "x", " on the standard output followed by a 
-     new line",
-     PARA,
+	Usage => "print x",
+     TT "print x", " prints ", TT "x", " on the standard output followed by a 
+     new line.",
+	EXAMPLE {
+		///print "Hello world!"///
+		},
      "The return value is ", TO "null", "."
      }
 

@@ -179,7 +179,7 @@ EXAMPLEOPTIONS += --no-debug
 endif
 EXAMPLEOPTIONS += -e errorDepth=0
 EXAMPLEOPTIONS += -e debugLevel=0
-EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
+EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, Prefix => ".") '
 ifndef INTERACTIVE
 EXAMPLEOPTIONS += -e 'exit 0 '
 endif
@@ -212,7 +212,7 @@ remake5:;
 	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir)/*.tmp tmp/*/$(packageexamplesRelDir)/*.tmp)
 
 install::all install-main
-install-main:; tar cf - -C tmp $(package) | tar xf - -C $(prefix)
+install-main:; tar cf - -C tmp/$(package) . | tar xf - -C $(encapdir)
 clean::; rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 docloads.m2 mpcodes.m2 version.m2 core
 distclean : clean; rm -f Makefile
 always:
