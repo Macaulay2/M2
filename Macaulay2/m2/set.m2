@@ -151,6 +151,8 @@ document { quote Set,
 	  }
      }
 
+new Set from List := (X,x) -> set x
+
 document { (quote -, Set, Set),
      TT "x - y", " -- the difference of two sets.",
      SEEALSO {"Set", "-"}
@@ -158,7 +160,12 @@ document { (quote -, Set, Set),
 
 set Set := x -> x
 net Set := x -> net class x | " " | net keys x
-name Set := x -> name class x | " " | name keys x
+name Set := x -> (
+     -- unpleasant hack
+     if class x === Set
+     then "set " | name keys x
+     else "new " | name class x | " from " | name keys x
+     )
 Set + Set := (x,y) -> merge(x,y,(i,j)->i)
 Set ++ Set := (x,y) -> apply(x,i->(0,i)) + apply(y,j->(1,j))
 Set ** Set := (x,y) -> combine(x,y,identity,(i,j)->i,)
