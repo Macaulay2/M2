@@ -695,23 +695,23 @@ export eval(c:Code):Expr := (
 	  e)
      else e);
 export setup(word:Word):void := (
-     makeSymbol(word,dummyPosition,globalDictionary);
+     makeSymbol(word,dummyPosition,globalDictionaryList.dictionary);
      );
 export setup(word:Word,fn:unop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
+     e := makeSymbol(word,dummyPosition,globalDictionaryList.dictionary);
      e.unary = fn;
      );
 export setup(word:Word,fn:binop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
+     e := makeSymbol(word,dummyPosition,globalDictionaryList.dictionary);
      e.binary = fn;
      );
 export setup(word:Word,fun1:unop,fun2:binop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
+     e := makeSymbol(word,dummyPosition,globalDictionaryList.dictionary);
      e.unary = fun1;
      e.binary = fun2;
      );
 export setup(word:Word,fun1:unop,fun2:unop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
+     e := makeSymbol(word,dummyPosition,globalDictionaryList.dictionary);
      e.unary = fun1;
      e.postfix = fun2;
      );
@@ -736,21 +736,21 @@ export setupop(s:SymbolClosure,fun:unop):void := s.symbol.unary = fun;
 export setupfun(name:string,fun:unop):void := (
      word := makeUniqueWord(name,
 	  parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
-     entry := makeSymbol(word,dummyPosition,globalDictionary);
+     entry := makeSymbol(word,dummyPosition,globalDictionaryList.dictionary);
      entry.unary = fun;
      entry.protected = true;
      );     
 export setupfun(name:string,value:fun):void := (
      word := makeUniqueWord(name,parseWORD);
-     entry := makeSymbol(word,dummyPosition,globalDictionary);
+     entry := makeSymbol(word,dummyPosition,globalDictionaryList.dictionary);
      globalFrame.values.(entry.frameindex) = Expr(CompiledFunction(value,nextHash()));
      entry.protected = true;
      );
 export setupvar(name:string,value:Expr):Symbol := (
      word := makeUniqueWord(name,parseWORD);
-     when lookup(word,globalDictionary)
+     when lookup(word,globalDictionaryList.dictionary)
      is null do (
-     	  entry := makeSymbol(word,dummyPosition,globalDictionary);
+     	  entry := makeSymbol(word,dummyPosition,globalDictionaryList.dictionary);
      	  globalFrame.values.(entry.frameindex) = value;
 	  entry)
      is entry:Symbol do (

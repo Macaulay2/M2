@@ -137,7 +137,7 @@ export Sequence := array(Expr);
 export Frame := {
      outerFrame:Frame, 
      frameID:int,			  -- seqno of corresponding dictionary
-     valuesUsed:int,
+     valuesUsed:int,      -- sigh, we really need this only for static frames
      values:Sequence
      };
 export dummyFrame := Frame(self,-1,0,Sequence());   -- self pointer depended on by structure.d:apply()
@@ -255,17 +255,22 @@ export Code := (exprCode or variableCode
 
 export newSymbolHashTable():SymbolHashTable := SymbolHashTable( new array(SymbolList) len 10 do provide NULL, 0);
 
--- this will be needed later -- a list of dictionaries to search:
-export DictionaryList := null or DictionaryListCell;
-export DictionaryListCell := {dictionary:Dictionary, next:DictionaryList};
---
 
 dummySymbolFrameIndex := 0;
-export globalDictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,dummySymbolFrameIndex+1,false);
+globalDictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,dummySymbolFrameIndex+1,false);
 export globalFrame := Frame(dummyFrame,0,1,Sequence(
 	  nullE						    -- value for dummySymbol, the first symbol
 	  ));
 export newGlobalDictionary(dictionary:Dictionary):Dictionary := Dictionary(nextHash(),newSymbolHashTable(),dictionary,0,0,false);
+export DictionaryList := {
+     dictionary:Dictionary, 
+     next:DictionaryList				    -- pointer to self ends the list
+     };
+export globalDictionaryList := (
+     -- search this list of global dictionaries after searching the local ones
+     -- for each one on the list, also search the links to outerDictionary, which indicate nesting of packages
+     DictionaryList(globalDictionary,self)
+     );
 
 numLocalScopes := 0;
 export localFrame := globalFrame;
