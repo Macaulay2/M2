@@ -35,16 +35,16 @@ minSatPPD = (I, facs) -> (
      R := ring I;
      facs = sortByDegree facs;
      F0 := product facs;
-     ret := quotMin(generators I,facs,F0);
+     ret := quotMin(I,facs,F0);
      facs0 := ret#1;
      F := 1_R;   -- will be s.t. sat(I,F0) = I:F
-     Iprev := generators I;
+     Iprev := I;
      while not ret#0 == Iprev do (
 	  F = F * ret#2;
 	  Iprev = ret#0;
 	  ret = quotMin toSequence ret;
 	  );
-     {ideal ret#0, F0, F, facs0}
+     {ret#0, F0, F, facs0}
      )
 
 TEST ///
@@ -73,7 +73,7 @@ time minSatPPD(I1,{b,t})
 
 ///
 
-removeScalarMultipleColumns := m -> notImplemented()	    -- Mike will implement
+removeScalarMultipleColumns := m -> map(target m,,rawRemoveScalarMultiples raw m)
 
 newdecompose := method()
 newdecompose(Ideal) := List => (I) -> (
@@ -82,9 +82,9 @@ newdecompose(Ideal) := List => (I) -> (
      	  value apply(g, i -> i#0));
      if I.cache.?decompose then I.cache.decompose
      else I.cache.decompose = (
-       time I1 := ideal apply(numgens I, i -> squarefree(I_i));
-       time I2 := trim ideal generators gb I1;
-       time if numgens I2 > 0 then decompose I2 else {}))
+       I1 := ideal apply(numgens I, i -> squarefree(I_i));
+       I2 := trim ideal generators gb I1;
+       if numgens I2 > 0 then decompose I2 else {}))
 
 -- Find the independent sets of the ideal I
 -- This doesn't necessarily find them all

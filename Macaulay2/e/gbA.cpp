@@ -143,7 +143,7 @@ gbA::spair *gbA::new_gen(int i, gbvector *f, ring_elem denom)
 
   if (R->gbvector_is_zero(f))
     {
-      originalR->get_quotient_info()->normal_form(_Fsyz, fsyz);
+      originalR->get_quotient_info()->gbvector_normal_form(_Fsyz, fsyz);
       if (!R->gbvector_is_zero(fsyz))
 	{
 	  //vec fsyzvec = _GR->gbvector_to_vec(_Fsyz,fsyz);
@@ -1441,7 +1441,7 @@ void gbA::handle_elem(POLY f, gbelem_type minlevel)
     }
   else 
     {
-      originalR->get_quotient_info()->normal_form(_Fsyz, f.fsyz);
+      originalR->get_quotient_info()->gbvector_normal_form(_Fsyz, f.fsyz);
       if (!R->gbvector_is_zero(f.fsyz))
 	{
 	  /* This is a syzygy */

@@ -138,6 +138,9 @@ J = ideal(a*b*c-3*a-1, b^3-a*d-a-1)
 L = intersect(I,J);
 L1 = ideal gens gb L
 irreducibleCharacteristicSeries ideal(a,b)
-irreducibleCharacteristicSeries L1
+M = L1^3;
 -- NOW interrupt this
 irreducibleCharacteristicSeries ideal(a,b)
+
+
+--irreducibleCharacteristicSeries L1

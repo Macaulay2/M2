@@ -38,7 +38,7 @@ public:
 
   virtual void normal_form(ring_elem &f) const { }
 
-  virtual void normal_form(const FreeModule *F, gbvector *&f) const { }
+  virtual void gbvector_normal_form(const FreeModule *F, gbvector *&f) const { }
 
   virtual const MonomialIdeal *  get_quotient_monomials() const { return 0; }
   // Each bag value is an "Nterm *".
@@ -77,21 +77,21 @@ public:
 
   void normal_form(ring_elem &f) const;
 
-  void normal_form(const FreeModule *F, gbvector *&f) const;
+  void gbvector_normal_form(const FreeModule *F, gbvector *&f) const;
 };
 
 
 class QRingInfo_field_QQ : public QRingInfo_field
 {
-  void reduce_lead_term_basic_field(Nterm * &f, const Nterm * g) const;
+  void reduce_lead_term_QQ(Nterm * &f, const Nterm * g) const;
 public:
   QRingInfo_field_QQ(const PolyRing *ambientR,
 		     const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
   ~QRingInfo_field_QQ();
 
-  void normal_form(ring_elem &f) const {}
+  void normal_form(ring_elem &f) const;
 
-  void normal_form(const FreeModule *F, gbvector *&f) const {}
+  void gbvector_normal_form(const FreeModule *F, gbvector *&f) const;
 };
 
 class QRingInfo_ZZ : public QRingInfo
@@ -113,7 +113,7 @@ public:
 
   void normal_form(ring_elem &f) const;
   
-  void normal_form(const FreeModule *F, gbvector *&f) const;
+  void gbvector_normal_form(const FreeModule *F, gbvector *&f) const;
 
   virtual const MonomialTableZZ * get_quotient_MonomialTableZZ() const { return ringtableZZ; }
   // Each id is an index into quotient_ideal_
