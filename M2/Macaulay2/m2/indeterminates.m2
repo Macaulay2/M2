@@ -4,19 +4,6 @@ indeterminates :=  new MutableHashTable
 
 indices := new MutableHashTable
 
--- vars Symbol := a -> (
---      if indices#?a 
---      then indices#a
---      else (
--- 	  s := toString a;
--- 	  if #s === 1 and s =!= "'" then (
--- 	       i := first ascii s;
--- 	       if i < 97 then i - 65 + 26 else i - 97
--- 	       )
---      	  else error(s, " is not one of the symbols known to 'vars'")
---      	  )
---      )
-
 vars ZZ := i -> (
      if indeterminates#?i then indeterminates#i else (
 	  x := value (
@@ -32,7 +19,20 @@ vars ZZ := i -> (
 
 vars List := vars Sequence := args -> apply(flatten splice args, j -> vars j)
 
-Symbol .. Symbol := (a,z) -> vars( vars a .. vars z )
+reverseVars := a -> (
+     if indices#?a 
+     then indices#a
+     else (
+	  s := toString a;
+	  if #s === 1 and s =!= "'" then (
+	       i := first ascii s;
+	       if i < 97 then i - 65 + 26 else i - 97
+	       )
+     	  else error(s, " is not one of the symbols known to 'vars'")
+     	  )
+     )
+
+Symbol .. Symbol := (a,z) -> vars( reverseVars a .. reverseVars z )
 
 nometh2 := (n,x,y) -> error (
      "no method '", toString n, "' found for ", toString x,
