@@ -225,7 +225,7 @@ vec Ring::mult_vec_matrix(const Matrix *m,
   for ( ; v != NULL; v = v->next)
     {
       vec w = this->copy(m->elem(v->comp));
-      mult(w, v->coeff, opposite_mult);
+      mult(w, v->coeff, !opposite_mult);
       this->add(result, w);
     }
   return result;

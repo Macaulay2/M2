@@ -41,13 +41,11 @@ polyring = (K, vars) -> (
      R)
 
 mat = (tab) -> (
-     -- tab should be a table of ring elements
+     -- tab should be a non-empty table of ring elements
      R := rawRing tab#0#0;
      nrows := #tab;
      ncols := #tab#0;
      F := rawFreeModule(R,nrows);
-     result := rawMatrix(F,
-	  toSequence apply(ncols, c -> (
-		     sum apply(nrows, r -> rawTerm(F, tab#r#c, r)))));
+     result := rawMatrix1(F,ncols,toSequence flatten tab,false);
      result
      )
