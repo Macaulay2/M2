@@ -112,6 +112,7 @@ optionFixes := hashTable {
 ordOption := o -> fixup ( o => numvars - varcount )
 symbolFixes := hashTable {
      Position => o -> Component => null,
+     GLex => o -> (Weights => numvars:1, fixup Lex),
      RevLex => ordOption,
      GRevLex => ordOption,
      Lex => ordOption,
