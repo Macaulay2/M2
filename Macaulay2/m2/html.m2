@@ -316,6 +316,8 @@ installPackage Symbol := opts -> pkg -> (
      )
 
 installPackage Package := o -> pkg -> (
+     oldpkg := currentPackage;
+     currentPackage = pkg;
      topNodeName = pkg.name;
      buildPackage = if pkg === Main then "Macaulay2" else pkg.name;
      buildDirectory = minimizeFilename(o.Prefix | "/");
@@ -381,7 +383,7 @@ installPackage Package := o -> pkg -> (
 	       else (
 		    stderr << "--making example results file for " << nodename << endl;
 		    loadargs := if pkg === Main then "" else "-e 'load \""|fn|"\"'";
-		    cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf;
+		    cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --print-width 80 --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf;
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
@@ -420,6 +422,7 @@ installPackage Package := o -> pkg -> (
      makeMasterIndex nodes;
 
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
+     currentPackage = oldpkg;
      )
 
 check = method()

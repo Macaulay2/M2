@@ -7,8 +7,6 @@ addStartFunction(
 	  if prefixDirectory =!= null then path = prepend(prefixDirectory|LAYOUT#"packages",path);
 	  ))
 
-currentPackage = null
-
 packages = {}
 
 Package = new Type of MutableHashTable
@@ -158,8 +156,8 @@ closePackage = p -> (
 	  protect p.Dictionary;
 	  );
      if first globalDictionaries =!= p.Dictionary then error ("another dictionary is open");
-     currentPackage = p#"previous package"; remove(p,"previous package");
-     debuggingMode = p#"old debugging mode"; remove(p,"old debugging mode");
+     currentPackage = p#"previous package";
+     debuggingMode = p#"old debugging mode";
      stderr << "--package " << p << " installed" << endl;
      p)
 

@@ -389,7 +389,8 @@ document { "version",
 document { Database,
      Headline => "the class of all database files",
      "A database file is just like a hash table, except both the keys and
-     values have to be strings.",
+     values have to be strings.  In this example we create a database file, store
+     a few entries, and then remove the file with ", TO "unlink", ".",
      EXAMPLE {
 	  ///filename = temporaryFileName () | ".dbm"///,
       	  ///x = openDatabaseOut filename///,
@@ -398,7 +399,7 @@ document { Database,
       	  ///x#"second" = "ho there"///,
       	  ///scanKeys(x,print)///,
       	  ///close x///,
-      	  ///run ("rm -f " | filename)///,
+      	  ///unlink filename///,
 	  },
      SEEALSO {"HashTable", "String"}
      }

@@ -36,24 +36,10 @@ record      := f -> x -> (
      if val =!= x then unformatTag#val = x; 
      val)
 -----------------------------------------------------------------------------
--- loading the main documentation upon demand
------------------------------------------------------------------------------
-needDoc := () -> (
-     op := currentPackage;
-     currentPackage = Main;				    -- there must be a better way
-     on := notify;
-     notify = false;
-     needs "Macaulay2-doc.m2";
-     currentPackage = op;
-     notify = on;
-     needDoc = identity;
-     )
------------------------------------------------------------------------------
 -- getting database records
 -----------------------------------------------------------------------------
 getRecord := key -> scan(packages,
      pkg -> (
-     	  needDoc();
 	  d := pkg#"documentation";
 	  if d#?key then break d#key))
 -----------------------------------------------------------------------------
@@ -295,7 +281,7 @@ checkForExampleOutputFile := (node,pkg) -> (
 	  if fileExists exampleOutputFilename then (
 	       -- read, separate, and store example results
 	       exampleResults = pkg#"example results"#node = drop(separateM2output get exampleOutputFilename,-1);
-	       if debugLevel > 0 then stderr << "node " << node << " : " << peek \ net \ exampleResults << endl;
+	       if debugLevel > 0 then stderr << "node " << node << " : " << boxNets \\ net \ exampleResults << endl;
 	       exampleResultsFound = true)))
 processExample := x -> (
      a :=
@@ -320,6 +306,7 @@ processExamplesLoop := s -> (
 processExamples := (key,docBody) -> (
      currentNodeName = formatDocumentTag key;
      pkg := packageTag key;
+     if pkg === null then error ("can't determine the correct package for documentation key ", currentNodeName);
      exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,pkg);
      checkForExampleOutputFile(currentNodeName,pkg);
      processExamplesLoop docBody)
@@ -794,7 +781,6 @@ documentation Thing := x -> (
      )
 
 hasDocumentation = x -> (
-     needDoc();
      fkey := formatDocumentTag x;
      p := select(packages, P -> P#"documentation"#?fkey);
      0 < #p)

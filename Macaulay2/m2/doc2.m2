@@ -357,7 +357,8 @@ document { (symbol <<, String, Thing),
      PARA,
      EXAMPLE {
 	  "\"foo\" << 2^30 << endl << close",
-      	  "get \"foo\""
+      	  "get \"foo\"",
+	  "unlink \"foo\""
 	  }
      }
 

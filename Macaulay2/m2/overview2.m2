@@ -1714,6 +1714,7 @@ document { "creating and writing files",
 	  ///f << "ho" << endl///,
 	  ///f << close///,
 	  ///get "testfile"///,
+	  ///unlink "testfile"///
 	  }
      }
 

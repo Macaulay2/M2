@@ -108,6 +108,8 @@ simpleInput := input
 input = (filename) -> tryload(filename,simpleInput,false)
 needs = s -> if not loaded#?s then load s
 
+currentPackage = null
+
 load "loads.m2"
 stderr << "--loaded setup.m2" << endl
 

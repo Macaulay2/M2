@@ -201,9 +201,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  M - RM := (m,p) -> R#1 * m - p;
 	  RM _ M := (f,m) -> new R from rawCoefficient(f.RawRingElement, m.RawMonomial);
 	  expression RM := f -> (
-	       (coeffs,monoms) -> sum(
-		    coeffs,monoms,
-		    (a,m) -> expression (new R from a) * expression (new M from m))
+	       (coeffs,monoms) -> sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else new R from a) * expression (if m == 1 then 1 else new M from m))
 	       ) rawPairs f.RawRingElement;
 	  toString RM := toExternalString RM := x -> toString expression x;
 	  fac := options -> f -> new Product from apply_(rawFactor raw f)((p,n) -> new Power from {new RM from p,n});
