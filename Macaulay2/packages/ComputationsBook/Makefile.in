@@ -37,7 +37,7 @@ test.out.expected.trim : test.out.expected patterns ../patterns
 	sed -f ../patterns -f patterns <$< >$@
 
 changes:
-	for i in $(CHAPTERS); \
+	-for i in $(CHAPTERS); \
 	do diff -u $$i/chapter.m2 $$i/test.m2 ;\
 	   diff -u $$i/chapter.out.expected $$i/test.out.expected ;\
 	done

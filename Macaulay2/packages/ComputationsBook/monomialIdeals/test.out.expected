@@ -167,14 +167,14 @@ o27 = -- ../../../m2/monideal.m2:286-295
 i28 : L = primaryDecomposition I;
 i29 : scan(L, J -> << endl << J << endl);
 
+monomialIdeal (a, b)
+
                 3   3   3
 monomialIdeal (a , b , c )
 
-monomialIdeal (b, c)
-
-monomialIdeal (a, b)
-
 monomialIdeal (a, c)
+
+monomialIdeal (b, c)
 i30 : I == intersect L
 
 o30 = true

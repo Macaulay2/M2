@@ -39,7 +39,7 @@ o11 = ideal (x  + x  + 3x  + 3x, y - 2x - 1)
 o11 : Ideal of R
 i12 : factor(J_0)
 
-o12 = (x)(x - 2)(x + 2)(x + 1)
+o12 = (x)(x + 1)(x - 2)(x + 2)
 
 o12 : Product
 i13 : load "realroots.m2"
