@@ -1,4 +1,5 @@
 -- Test set A for low level engine functionality
+needs "Engine.m2"
 
 motrivial = monomialOrder()
 M = emonoid(motrivial,{},"")
