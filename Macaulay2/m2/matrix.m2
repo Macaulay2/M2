@@ -127,7 +127,7 @@ transpose Matrix := Matrix => (m) -> if m.cache.?transpose then m.cache.transpos
 
 ring(Matrix) := m -> m.target.ring
 
-Matrix * Vector := Vector => (m,v) -> new Vector from (m * new Matrix from v)
+Matrix * Vector := Vector => (m,v) -> new class v from m * new Matrix from v
 
 expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
 
@@ -328,8 +328,7 @@ Matrix _ ZZ := Vector => (m,i) -> (
      M := target m;
      h := m_{i};
      h = map(M, R^1, h, Degree => first degrees source h);
-     new Vector from h
-     )
+     new target h from {h})
 
 submatrix(Matrix,VisibleList,VisibleList) := Matrix => (m,rows,cols) -> map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols))
 submatrix(Matrix,VisibleList            ) := Matrix => (m,cols     ) -> map(target m,,rawSubmatrix(raw m, listZ toList splice cols))
@@ -514,7 +513,7 @@ ambient Matrix := Matrix => f -> (
 degrees Ring := R -> degree \ generators R
 
 leadComponent Matrix := m -> apply(entries transpose m, col -> last positions (col, x -> x != 0))
-leadComponent Vector := m -> first apply(entries transpose m, col -> last positions (col, x -> x != 0))
+leadComponent Vector := m -> first apply(entries transpose m#0, col -> last positions (col, x -> x != 0))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -132,7 +132,7 @@ setup((), {
 	  dual, cokernel, coimage, image, generators, allGenerators, someTerms, scanKeys, scanValues,
 	  substitute, rank, complete, ambient, top, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  degree, coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
-	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, 
+	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, annihilator, assign, numgens, conjugate,
 	  autoload, minprimes, relations, cone, random, standardForm, inverse,
 	  det, presentation, use = symbol use, dismiss, degreesMonoid, submatrix,

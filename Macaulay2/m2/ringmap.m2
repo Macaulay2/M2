@@ -99,15 +99,6 @@ RingMap RingElement := RingElement => fff := (p,m) -> (
 
 RingMap QQ := RingMap ZZ := (p,m) -> fff(p, promote(m,source p))
 
-RingMap Vector := Vector => (p,m) -> (
-     M := target m;
-     R := source p;
-     S := target p;
-     if R =!= ring m 
-     then error "expected source of ring map to be the same as ring of matrix";
-     F := p M;
-     new Vector from map(F,,rawRingMapEval(raw p, raw F, raw m), Degree => p.DegreeMap degree m))
-
 RingMap Matrix := Matrix => (p,m) -> (
      R := source p;
      S := target p;
@@ -116,6 +107,10 @@ RingMap Matrix := Matrix => (p,m) -> (
      F := p target m;
      E := p source m;
      map(F,E,map(S,rawRingMapEval(raw p, raw F, raw m)), Degree => p.DegreeMap degree m))
+
+RingMap Vector := Vector => (p,m) -> (
+     f := p new Matrix from m;
+     new target f from f)
 
 kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.kernel else f.cache.kernel = (
      R := source f;
