@@ -1044,3 +1044,9 @@ M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
     }
   }
 }
+
+/*
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+// End:
+*/

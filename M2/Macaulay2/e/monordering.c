@@ -400,8 +400,8 @@ M2_string IM2_MonomialOrdering_to_string(MonomialOrdering *mo)
   return result;
 }
 
-
-
+/*
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
 // End:
+*/

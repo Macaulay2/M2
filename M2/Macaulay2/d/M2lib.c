@@ -261,6 +261,7 @@ char CCVERSION[] = "unknown" ;
 
 extern void init_readline_variables();
 extern char *GC_stackbottom;
+extern void M2inits();
 
 int Macaulay2_main(argc,argv)
 int argc; 
@@ -538,4 +539,8 @@ int actors5_WindowWidth(int fd) {
 #endif
      }
 
-
+/*
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+// End:
+*/

@@ -213,13 +213,13 @@ usage := arg -> (
      << "usage:"             << newline
      << "    " << progname << " [option ...] [file ...]" << newline
      << "options:"  << newline
-     << "    --help             print brief help message and exit" << newline
+     << "    --help             print this brief help message and exit" << newline
      << "    --copyright        display full copyright messasge" << newline
-     << "    --debug            enter command interpreter upon error" << newline
+     << "    --debug            enter break loop upon error" << newline
      << "    --dumpdata         read source code, dump data, exit (no init.m2)" << newline
      << "    --example-prompts  examples prompt mode" << newline
-     << "    --backtrace        print backtrace after error" << newline
-     << "    --fullBacktrace    print full backtrace after error" << newline
+     << "    --fullbacktrace    print full backtrace after error" << newline
+     << "    --no-backtrace     print no backtrace after error" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
@@ -280,7 +280,7 @@ action := hashTable {
      "-x" => obsolete,
      "--example-prompts" => arg -> examplePrompts(),
      "-s" => obsolete,
-     "--fullBacktrace" => arg -> fullBacktrace = true,
+     "--fullbacktrace" => arg -> fullBacktrace = true,
      "--no-backtrace" => arg -> fullBacktrace = backtrace = false,
      "--stop" => arg -> stopIfError = true,
      "--no-loaddata" => arg -> noloaddata = true,
@@ -362,5 +362,5 @@ stderr << "can't interpret return value as an exit code" << endl
 exit 1
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/d && make -C $M2BUILDDIR/Macaulay2/m2"
 -- End:
