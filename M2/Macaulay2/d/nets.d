@@ -90,18 +90,23 @@ export HorizontalJoin(v:array(Net)):Net := (
 	  );
      widths := new array(int) len leng at row do (
 	  j := length(v)-1;
-	  h := 0;
-	  while j>=0 do (
+	  while true do (
 	       n := v.j;
 	       k := row + n.height - height ;
 	       body := n.body;
 	       if 0 <= k && k < length(body) then (
-		    h = length(body.k) + accumwids.j;
-		    if h > 0 then break;
+		    l := length(body.k);
+		    if l > 0 then (
+		    	 provide l + accumwids.j;
+			 break;
+			 );
 		    );
 	       j = j-1;
+	       if j < 0 then (
+	  	    provide 0;
+		    break;
+		    );
 	       );
-	  provide h;
 	  );
      Net(height,width, 
 	  new array(string) len leng at row do
