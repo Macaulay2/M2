@@ -118,7 +118,16 @@ void spair_testing(MonomialSet *H,
     }
 }
 
+#if 0
+Todo:
+  Define the matrix type
+  Create the matrix, row and column info
+    Sort the matrix
+    Polynomial arithmetic
+  Solve the matrix
+  
 
+#endif
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "
 //  End:

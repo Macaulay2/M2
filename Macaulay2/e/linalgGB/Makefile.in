@@ -6,7 +6,7 @@ include @srcdir@/../make.include
 
 .PHONY : all place_into_lib
 
-LINALGGB_FILES := MonomialOps Monomials MonomialSet MonomialTable SPairSet monoms interface 
+LINALGGB_FILES := MonomialOps Monomials MonomialSet MonomialTable SPairSet monoms interface linalgGB
 # MonomialHeap 
 
 LINALGGB_OBJECT_FILES :=  $(addsuffix .o, $(LINALGGB_FILES))
