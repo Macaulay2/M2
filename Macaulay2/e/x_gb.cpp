@@ -76,9 +76,14 @@ void cmd_gb_make1(object &om,
 		  object &ohf,
 		  object &ostrategy)
 {
+  int dosyz = odosyz->int_of();
+  if (dosyz)
+    {
+    cmd_gb_make(om,odosyz,osyz,ostrategy);
+    return;
+    }
   Matrix m = om->cast_to_Matrix();
   const Ring *R = m.Ring_of();
-  int dosyz = odosyz->int_of();
   int nsyz = osyz->int_of();
   int strategy = ostrategy->int_of();
   RingElement hf = ohf->cast_to_RingElement();
