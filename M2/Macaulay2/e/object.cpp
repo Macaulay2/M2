@@ -17,6 +17,9 @@
 #include "respoly.hpp"
 #include "gb.hpp"
 #include "gbinhom.hpp"
+#if 0
+#include "gbbinom.hpp"
+#endif
 #include "gb2.hpp"
 #include "respoly2.hpp"
 #include "res2.hpp"
@@ -30,7 +33,7 @@ void object_element::debug_out(ostream &o) const
     << '(' << refcount  << ')';
 }
 
-bool object_element::is_equal(const object_element *o) const
+bool object_element::is_equal(const object_element * /* o */ ) const
 {
   cerr << "object_element::is_equal called";
   return false;
@@ -104,6 +107,9 @@ void i_stashes()
   GB_elem::mystash         = new stash("GBelem", sizeof(GB_elem));
   s_pair_bunch::mystash    = new stash("spair_bunch", sizeof(s_pair_bunch));
   s_pair_set::mystash      = new stash("spair_set", sizeof(s_pair_set));
+#if 0
+  binomialGB::mystash = new stash("binomialGB", sizeof(binomialGB));
+#endif
 }
 
 

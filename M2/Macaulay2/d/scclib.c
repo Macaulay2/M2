@@ -20,16 +20,9 @@ extern char *libfac_version;
 #include "../c/compat.h"
 #endif
 
-#if GaCo
 #undef malloc
 #undef free
-#define Malloc GC_malloc
-#define Free(x) 
 #include <gmp.h>
-#else
-#define Malloc malloc
-#define Free free
-#endif
 
 #ifdef __MWERKS__
 #include ".._c_compat.c"
@@ -143,14 +136,6 @@ static void putstderr(char *m) {
      write(STDERR,NEWLINE,strlen(NEWLINE));
      }
 
-#if defined(DEBUG) && !GaCo
-struct extra { struct extra *back, *forward; int size, chunknum;};
-#ifndef roundup
-#define roundup(n,q) ((((n)+(q)-1)/(q))*(q))
-#endif
-#define EXTRA roundup(sizeof(struct extra), GRAIN)
-#endif
-
 #if defined(__NeXT__)
 #   define STARTDATA (void *)0x00146000	/* provisional! */
 #   define STARTGAP  (void *)0x00154000
@@ -188,7 +173,7 @@ static char *progname;
 Display *display;
 Font font;
 #endif
-static void trap(){}
+void trap(){}
 
 static void
 #ifdef __STDC__
@@ -348,10 +333,15 @@ static struct COUNTER {
      struct COUNTER *next;
      } *counters = NULL;
 
-static char *getmems(n)
+#ifdef MEM_DEBUG
+#include "memdebug.h"
+#endif
+
+char *getmem(n)
 unsigned int n;
 {
-     char *p = Malloc(n);
+     char *p;
+     p = GC_MALLOC(n);
      if (p == NULL) outofmem();
      return p;
      }
@@ -362,7 +352,7 @@ char *filename;
 int lineno;
 char *funname;
 {
-     struct COUNTER *p = (struct COUNTER *) getmems(sizeof(struct COUNTER));
+     struct COUNTER *p = (struct COUNTER *) getmem(sizeof(struct COUNTER));
      p->count = count;
      p->filename = filename;
      p->lineno = lineno;
@@ -372,196 +362,26 @@ char *funname;
      return 0;
      }
 
-#if 0
-static void count_stats(){
-     struct COUNTER *p = counters, *q;
-     while (p != NULL) {
-	  fprintf(stderr,"%7d %-18s %s:%d\n",
-	       *p->count,p->funname,p->filename,p->lineno);
-	  q = p->next;
-#if !GaCo
-	  Free(p);
-#endif
-	  p = q;
-	  }
-     }
-#endif
-
 bool system_gc = GaCo;
-
-#if !GaCo
-int do_memstats = TRUE;
-int numchunks[3];
-int numbytes[3];
-int maxnumchunks, maxnumbytes;
-#endif
 
 void system_accountfor(n)
 int n;
 {
-#if defined(MEMSTATS) && !GaCo
-     static int count_ = 0;
-     count_++ != 0 ? 0 : register_fun(&count_, __FILE__,__LINE__,"accountfor");
-#endif
-#if !GaCo
-     numchunks[2]++;
-     numbytes[2] += n;
-#endif
      }
-
-#if defined(DEBUG) && !GaCo
-static struct extra extrahead = {&extrahead, &extrahead, 0};
-#endif
 
 #ifdef DEBUG
 static int trapnum=-1;
 static int chunknum=0;
 #endif
 
-char *getmem(n)
-unsigned int n;
-{
-#if defined(DEBUG) && !GaCo
-     char *p = Malloc(n + EXTRA);
-#else
-     char *p = Malloc(n);
-#endif
-#if defined(MEMSTATS) && !GaCo
-     static int count_ = 0;
-     count_++ != 0 ? 0 : register_fun(&count_, __FILE__,__LINE__,"getmem");
-#endif
-     if (p == NULL) outofmem();
-#if defined(DEBUG) && !GaCo
-     {
-	  struct extra *q = (struct extra *)p;
-	  extrahead.forward->back = q;
-	  q->forward = extrahead.forward;
-	  extrahead.forward = q;
-	  q->back = &extrahead;
-	  q->size = n;
-     	  q->chunknum = chunknum;
-	  if (chunknum == trapnum) trap();
-	  chunknum++;
-	  }
-     p += EXTRA;
-#endif
-#if !GaCo
-     numchunks[0] ++;
-     numbytes[0] += n;
-     if (maxnumchunks < numchunks[0] - numchunks[1]) {
-	  maxnumchunks = numchunks[0] - numchunks[1];
-	  }
-     if (maxnumbytes < numbytes[0] - numbytes[1]) {
-	  maxnumbytes = numbytes[0] - numbytes[1];
-	  }
-#endif
-     return p;
-     }
-
-#if defined(DEBUG) && !GaCo
-int numchunkslinked(){
-     int i=0;
-     struct extra *p = extrahead.forward;
-     for ( ; p != &extrahead; p = p->forward ) i++;
-     return i;
-     }
-
-int numbyteslinked(){
-     int i=0;
-     struct extra *p = extrahead.forward;
-     for ( ; p != &extrahead; p = p->forward ) i += p->size;
-     return i;
-     }
-
-void printsomechunks(){
-     int i = 10;
-     int j = numchunkslinked()-10;
-     int k = 0;
-     struct extra *p = extrahead.back;
-     for( ; p != &extrahead; p = p->back, k++) {
-     	  if (k==i && k<=j) fprintf(stderr,"%s: ...\n",progname);
-	  if (k>=i && k<=j) continue;
-	  fprintf(stderr,"%s: %d bytes at 0x%x, %d ref's, trapnum=0x%x\n",
-	       progname,p->size,
-	       (char *)p+EXTRA,
-	       *((int *)((char *)p+EXTRA)),
-	       p->chunknum
-	       );
-	  }
-     }
-#endif     
-
-#if !GaCo
-void destroy(p,n)
-char *p;
-unsigned int n;
-{
-#if defined(MEMSTATS) && !GaCo
-     static int count_ = 0;
-     count_++ != 0 ? 0 : register_fun(&count_, __FILE__,__LINE__,"destroy");
-#endif
-#ifdef DEBUG
-     p -= EXTRA;
-     {
-	  struct extra *q = (struct extra *) p;
-	  if (
-	       q->size != n ||
-	       q->forward->back != q ||
-	       q->back->forward != q
-	       ) {
-	       fatal("memory corrupted %s:%d",__FILE__,__LINE__);
-	       }
-	  q->forward->back = q->back;
-	  q->back->forward = q->forward;
-	  q->back = NULL;
-	  q->forward = NULL;
-	  q->size = 0;
-	  }
-#endif
-     Free(p);
-     numchunks[1]++;
-     numbytes[1] += n;
-     }
-#endif
-
 int system_returncode;
 
-#if !GaCo
-void system_memstats(){
-     int bytes = numbytes[0]-numbytes[1]-numbytes[2];
-     int chunks = numchunks[0]-numchunks[1]-numchunks[2];
-     bool bad = bytes != 0 || chunks != 0;
-     if (system_returncode ==0 && bad) system_returncode = 1;
-     fprintf(stderr,"%s: %10d bytes in %7d chunks unaccounted for\n",
-	  progname,bytes,chunks);
-     if (bad) if (numbytes[2] != 0 || numchunks[2] != 0) {
-	  fprintf(stderr,"%s: %10d bytes in %7d chunks registered in limbo\n",
-	       progname,numbytes[2], numchunks[2]);
-	  }
-#ifdef DEBUG
-     if (bad) fprintf(stderr,"%s: %10d bytes in %7d chunks still out there\n",
-	  progname,numbyteslinked(),numchunkslinked());
-     if (bad) printsomechunks();     
-#endif
-     fprintf(stderr,"%s: %10d bytes in %7d chunks total\n", 
-	  progname, numbytes[0], numchunks[0]);
-     fprintf(stderr,"%s: %10d bytes in %7d chunks maximum\n",
-	  progname, maxnumbytes,maxnumchunks);
-     }
-#endif
-
 typedef struct {
-#if !GaCo
-     unsigned int refs; 
-#endif
      unsigned int len;
      char array[1];
      } *M2_string;
 
 typedef struct {
-#if !GaCo
-     unsigned int refs; 
-#endif
      unsigned int len;
      int array[1];
      } *arrayint;
@@ -601,9 +421,6 @@ int offset;
      + (len)*sizeof(s->array[0]))
 
 typedef struct {
-#if !GaCo
-     unsigned int refs; 
-#endif
      unsigned int len;
      M2_string array[1];
      } *stringarray;
@@ -613,9 +430,6 @@ char *s;
 {
      int n = strlen(s);
      M2_string p = (M2_string)getmem(sizeofarray(p,n));
-#if !GaCo
-     p->refs = 1;
-#endif
      p->len = n;
      memcpy(p->array,s,n);
      return p;
@@ -626,9 +440,6 @@ char *s;
 int n;
 {
      M2_string p = (M2_string)getmem(sizeofarray(p,n));
-#if !GaCo
-     p->refs = 1;
-#endif
      p->len = n;
      memcpy(p->array,s,n);
      return p;
@@ -639,9 +450,6 @@ int n;
 int *p;
 {
      arrayint z = (arrayint)getmem(sizeofarray(z,n));
-#if !GaCo
-     z->refs = 1;
-#endif
      z->len = n;
      memcpy(z->array,p,n * sizeof(int));
      return z;
@@ -654,33 +462,10 @@ char **s;
      int i;
      stringarray a;
      a = (stringarray) getmem (sizeofarray(a,n));
-#if !GaCo
-     a->refs = 1;
-#endif
      a->len = n;
      for (i=0; i<n; i++) a->array[i] = tostring(s[i]);
      return a;
      }
-
-#if !GaCo
-void destroystring(s)
-M2_string s;
-{
-     s->refs--;
-     if (s->refs == 0) destroy((char *)s,sizeofarray(s,s->len));
-     }
-
-void destroystringarray(s)
-stringarray s;
-{
-     s->refs --;
-     if (s->refs == 0){
-	  int i, n = s->len;
-	  for (i=0; i<n; i++) destroystring(s->array[i]);
-	  }
-     destroy((char *)s,sizeofarray(s,s->len));
-     }
-#endif
 
 stringarray system_envp;
 stringarray system_argv;
@@ -693,7 +478,7 @@ struct FINAL {
      } *final_list, *pre_final_list;
 
 void system_atend(void (*f)()){
-     struct FINAL *this_final = (struct FINAL *)getmems(sizeof(struct FINAL));
+     struct FINAL *this_final = (struct FINAL *)getmem(sizeof(struct FINAL));
      this_final -> final = f;
      this_final -> next = pre_final_list;
      pre_final_list = this_final;
@@ -752,59 +537,21 @@ static void clean_up();
 
 void nop(void *x){}		/* used below to keep variables out of registers */
 
-#if 0
-#define INSTALL_BARRIERS
-#define BARRIER 0x5aa53bb3
-#endif
-
-
 void *GC_malloc1 (size_t size_in_bytes) {
-#ifdef INSTALL_BARRIERS
-     int size_in_words = ((size_in_bytes+3)/4)*4 + 2;
-     void *p = GC_malloc_uncollectable(4*size_in_words);
-     if (p == NULL) outofmem();
-     *((int *)p) = BARRIER;
-     *((int *)p + size_in_words - 1) = BARRIER;
-     return p+4;
-#else
-     void *p = GC_malloc_uncollectable(size_in_bytes);
+     void *p;
+     p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
      if (p == NULL) outofmem();
      return p;
-#endif
      }
 
 void *GC_realloc3 (void *s, size_t old, size_t new) {
-#ifdef INSTALL_BARRIERS
-     void *p;
-     int size_in_words = ((old + 3)/4)*4 + 2;
-     int new_size_in_words = ((new + 3)/4)*4 + 2;
-     s -= 4;
-     if (*((int *) s) != BARRIER || *((int *) s + size_in_words - 1) != BARRIER) {
-	  abort();
-	  }
-     p = GC_realloc(s,4*new_size_in_words);
-     if (p == NULL) outofmem();
-     *((int *)p) = BARRIER;
-     *((int *)p + new_size_in_words - 1) = BARRIER;
-     return p+4;
-#else
-     void *p = GC_realloc(s,new);
+     void *p = GC_REALLOC(s,new);
      if (p == NULL) outofmem();
      return p;
-#endif
      }
 
 void GC_free2 (void *s, size_t old) {
-#ifdef INSTALL_BARRIERS
-     int size_in_words = ((old + 3)/4)*4 + 2;
-     s -= 4;
-     if (*((int *) s) != BARRIER || *((int *) s + size_in_words - 1) != BARRIER) {
-	  abort();
-	  }
-     GC_free(s);
-#else
-     GC_free(s);
-#endif
+     GC_FREE(s);
      }
 
 void main(argc,argv)
@@ -915,11 +662,11 @@ char **argv;
      main_inits();
      actors4_setupargv();
      if (reserve == NULL) {
-	  reserve = GC_malloc_atomic(102400);
+	  reserve = GC_MALLOC_ATOMIC(102400);
 	  }
      if (setjmp(out_of_memory_jump)) {
 	  if (reserve != NULL) {
-	       GC_free(reserve);
+	       GC_FREE(reserve);
 	       reserve = NULL;
 	       }
 #if 0
@@ -957,14 +704,6 @@ static void clean_up() {
 	  final_list->final();
 	  final_list = final_list->next;
 	  }
-#if !GaCo
-     destroystringarray(system_argv);
-     destroystringarray(system_args);
-     if (do_memstats) system_memstats();
-#endif
-#if 0
-     count_stats();
-#endif
      trap();
      }
 
@@ -980,7 +719,7 @@ int x;
 char *tocharstar(s)
 M2_string s;
 {
-     char *p = getmems(s->len + 1 + sizeof(int));
+     char *p = getmem(s->len + 1 + sizeof(int));
      memcpy(p,s->array,s->len);
      p[s->len] = 0;
      return p;
@@ -1018,22 +757,13 @@ int fd;
 	       int newbufsize = 2 * bufsize;
 	       p = getmem(newbufsize);
 	       memcpy(p,text,size);
-#if !GaCo
-	       destroy(text,bufsize);
-#endif
 	       bufsize = newbufsize;
 	       text = p;
 	       }
 	  }
      s = (M2_string)getmem(sizeofarray(s,size));
-#if !GaCo
-     s->refs = 1;
-#endif
      s->len = size;
      memcpy(s->array,text,size);
-#if !GaCo
-     destroy(text,bufsize);
-#endif
      return s;
      }
 
@@ -1043,9 +773,6 @@ M2_string y;
 {
      M2_string p;
      p = (M2_string) getmem(sizeofarray(p,x->len+y->len));
-#if !GaCo
-     p->refs = 1;
-#endif
      p->len = x->len + y->len;
      memcpy(p->array,x->array,x->len);
      memcpy(p->array+x->len,y->array,y->len);
@@ -1062,9 +789,6 @@ int len;
      if (start + len > x->len) len = x->len - start;
      if (len < 0) len = 0;
      p = (M2_string) getmem(sizeofarray(p,len));
-#if !GaCo
-     p->refs = 1;
-#endif
      p->len = len;
      memcpy(p->array,x->array+start,len);
      return p;
@@ -1094,7 +818,7 @@ M2_string filename;
      char *fname = tocharstar(filename);
      int fd;
      fd = open(fname, O_BINARY | O_RDONLY);
-     Free(fname);
+     GC_FREE(fname);
      return fd;
      }
 
@@ -1107,7 +831,7 @@ M2_string filename;
 	  , 0644
 #endif
 	  );
-     Free(fname);
+     GC_FREE(fname);
      return fd;
      }
 
@@ -1175,8 +899,8 @@ M2_string host,serv;
      char *Host = tocharstar(host);
      char *Serv = tocharstar(serv);
      int sd = opensocket(Host,Serv);
-     Free(Host);
-     Free(Serv);
+     GC_FREE(Host);
+     GC_FREE(Serv);
      return sd;
      }
 
@@ -1196,7 +920,7 @@ void scclib__prepare(){}
 int system_run(M2_string command){
      char *c = tocharstar(command);
      int r = system(c);
-     Free(c);
+     GC_FREE(c);
      return r >> 8;
      }
 
@@ -1236,9 +960,9 @@ stringarray argv;
      char **av = tocharstarstar(argv);
      execvp(av[0],av);
      for (i=0; i<argv->len; i++) {
-     	  Free(av[i]);
+     	  GC_FREE(av[i]);
 	  }
-     Free(av);
+     GC_FREE(av);
      return ERROR;
      }
 
@@ -1255,7 +979,7 @@ M2_string s;
 {
      char *ss = tocharstar(s);
      char *x = getenv(ss);
-     Free(ss);
+     GC_FREE(ss);
      if (x == NULL) return tostring("");
      else return tostring(x);
      }
@@ -1267,8 +991,8 @@ M2_string s,t;
      char *ss = tocharstar(s);
      char *tt = tocharstar(t);
      int r = strcmp(ss,tt);
-     Free(ss);
-     Free(tt);
+     GC_FREE(ss);
+     GC_FREE(tt);
      return r;
      }
 
@@ -1370,7 +1094,7 @@ M2_string datafilename;
 	  sprintf(buf,"%s: dumpdata: couldn't open or create file %s for writing",
 	       progname,datafilename_s);
 	  perror(buf);
-     	  Free(datafilename_s);
+     	  GC_FREE(datafilename_s);
 	  return ERROR;
 	  }
      {
@@ -1397,7 +1121,7 @@ M2_string datafilename;
 	  perror(buf);
 	  return ERROR;
 	  }
-     Free(datafilename_s);
+     GC_FREE(datafilename_s);
      return 0;
 #endif
      }
@@ -1452,8 +1176,8 @@ int probe() {
 	       }
 	  if (oldsig != sig || oldreadable != readable || oldwritable != writable) {
 	       char buf[80];
-	       sprintf(buf,"%08x . %s%s%s\n",
-	       	    (int)p,
+	       sprintf(buf,"%16lx . %s%s%s\n",
+	       	    (long)p,
 	       	    readable ? "r" : "-", 
 	       	    writable ? "w" : "-",
 	       	    sig == 1 ? "  SEGV" : sig == 2 ? "  BUS" : ""
@@ -1487,10 +1211,10 @@ int system_loaddata(M2_string datafilename){
 	  sprintf(buf,"%s: couldn't open file %s for reading",
 	       progname,datafilename_s);
 	  putstderr(buf);
-     	  Free(datafilename_s);
+     	  GC_FREE(datafilename_s);
 	  return ERROR;
 	  }
-     Free(datafilename_s);
+     GC_FREE(datafilename_s);
      fstat(datafile,&statbuf);
      filelen = statbuf.st_size;
 #if defined(STARTGAP) || defined(ENDGAP)
@@ -1593,7 +1317,7 @@ M2_string name;
 	       XEvent event;
 	       XNextEvent(display, &event);
 	       }
-	  Free(sname);
+	  GC_FREE(sname);
 	  return w;
 	  }
      else return 0;
@@ -1631,7 +1355,7 @@ int system_dbmopen(M2_string filename, bool mutable) {
 #ifdef NDBM
      DBM_FILE f = dbm_open(FileName, flags, mode);
 #endif
-     Free(FileName);
+     GC_FREE(FileName);
      if (f == NULL) return ERROR;
      if (numfiles == 0) {
 	  int i;
@@ -1650,9 +1374,6 @@ int system_dbmopen(M2_string filename, bool mutable) {
 		    for (j=0; j<dbm_handle; j++) p[j] = dbm_files[j];
 		    dbm_files = p;
 	  	    for (j=dbm_handle; j<numfiles; j++) dbm_files[j] = NULL;
-#if !GaCo
-                    Free(p);
-#endif
 		    break;
 		    }
 	       else if (dbm_files[dbm_handle] == NULL) break;
@@ -1782,9 +1503,9 @@ stringarray args;
      argc = args->len;
      f = MP_OpenLink(MP_env,argc,argv);
      for (i=0; i<argc; i++) {
-     	  Free(argv[i]);
+     	  GC_FREE(argv[i]);
 	  }
-     Free(argv);
+     GC_FREE(argv);
      MP_SetLinkOption(f,MP_LINK_LOG_MASK_OPT,MP_LOG_ALL_EVENTS);
      if (f == NULL) return -1;
      if (numlinks == 0) {
@@ -1803,9 +1524,6 @@ stringarray args;
 		    for (j=0; j<link_handle; j++) p[j] = mp_links[j];
 		    mp_links = p;
 	  	    for (j=link_handle; j<numlinks; j++) mp_links[j] = NULL;
-#if !GaCo
-                    Free(p);
-#endif
 		    break;
 		    }
 	       else if (mp_links[link_handle] == NULL) break;
@@ -1853,7 +1571,7 @@ M2_string s;
      if (okay(handle)) {
      	  char *t = tocharstar(s);
 	  int r = MP_PutStringPacket(mp_links[handle],t,0);
-	  Free(t);
+	  GC_FREE(t);
 	  return r;
 	  }
      else return ERROR;
@@ -1867,7 +1585,7 @@ M2_string s;
      if (okay(handle)) {
      	  char *t = tocharstar(s);
 	  int r = MP_PutIdentifierPacket(mp_links[handle],MP_ReceiverDict,t,0);
-	  Free(t);
+	  GC_FREE(t);
 	  return r;
 	  }
      else return ERROR;
@@ -1890,7 +1608,7 @@ M2_string s;
      if (okay(handle)) {
      	  char *t = tocharstar(s);
 	  int r = IMP_PutString(mp_links[handle],t);
-	  Free(t);
+	  GC_FREE(t);
 	  return r;
 	  }
      else return ERROR;
@@ -1904,7 +1622,7 @@ M2_string s;
      if (okay(handle)) {
      	  char *t = tocharstar(s);
 	  int r = IMP_PutIdentifier(mp_links[handle],t);
-	  Free(t);
+	  GC_FREE(t);
 	  return r;
 	  }
      else return ERROR;
@@ -1991,7 +1709,7 @@ M2_string oper1;
 	       len);
 	  }
      else r = ERROR;
-     Free(oper);
+     GC_FREE(oper);
      return r;
      }
 
@@ -2026,12 +1744,12 @@ int actors5_rxmatch(M2_string text, M2_string pattern) {
      if (pattern != last_pattern) {
 	  char *s_pattern = tocharstar(pattern);
 	  ret = regcomp(&regex, s_pattern, REG_NEWLINE|REG_NOSUB);
-	  Free(s_pattern);
+	  GC_FREE(s_pattern);
 	  if (ret != 0) return ERROR;
 	  }
      s_text = tocharstar(text); /* end strings with 0's! */
      ret = regexec(&regex, s_text, 1, &match, REG_NOTEOL);
-     Free(s_text);
+     GC_FREE(s_text);
      if (ret == 0) return match.rm_so;
      else if (ret == REG_NOMATCH) return -2;
      else return ERROR;

@@ -351,6 +351,11 @@ RingMap Module := (f,M) -> (
      then subquotient(
 	  if M.?generators then f M.generators, 
 	  if M.?relations then f M.relations)
-     else S^(numgens M))     
+      else if degreesRing R === degreesRing S then
+          S^(-degrees M)
+      else
+          S^(numgens M))
+-- replaced this line with the 4 above, MES 5/30/97
+--     else S^(numgens M))     
 
 isInjective RingMap := (f) -> kernel f == 0

@@ -831,8 +831,8 @@ document { quote get,
      TT "get f", " -- yields a string containing the rest of the input from the 
      file f.",
      PARA,
-     EXAMPLE "\"/tmp/foo\" << \"hi there\" << endl << close",
-     EXAMPLE "get \"/tmp/foo\"",
+     EXAMPLE "\"/tmp/foooooo\" << \"hi there\" << endl << close",
+     EXAMPLE "get \"/tmp/foooooo\"",
      EXAMPLE "get \"!date\"",
      EXAMPLE "get \"$localhost:daytime\"",
      SEEALSO( "File", "String", "read" )

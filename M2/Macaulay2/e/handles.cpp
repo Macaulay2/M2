@@ -22,6 +22,12 @@ int handles::deref(int h, object &result)
   return found;
 }
 
+#ifndef NDEBUG
+int traphandle = -1;
+#endif
+
+extern "C" void trap(void);
+
 int handles::enlist(const object &o)
      // Given an object, return its handle (i.e. its address).
      // If 'o' is not already in the hashtable, place it there (refount 1)
@@ -29,29 +35,12 @@ int handles::enlist(const object &o)
 {
   handle *hand;
   int h = next_handle++;
+#ifndef NDEBUG
+  if (h == traphandle) trap();
+#endif
   hand = new handle(h,o);
   objs.insert(hand, h);
   return h;
-}
-
-void handles::forget(int h)
-     // Find the handle in the hashtable with key 'h'.  Decrement its
-     // refcount, possibly deleting it if refcount drops to zero.
-{
-  handle *hand;
-  if (!objs.search(hand, h))
-    {
-      //*gError << "attempting to forget an invalid engine handle";
-      cerr << "attempting to remove " << h << endl;
-    }
-  else
-    {
-      //cout << "removing " << h << endl;
-      objs.remove(h);
-      delete hand;
-    }
-  //else
-  //  cout << "decremented " << h << '(' << hand->refcount << ')' << endl;
 }
 
 void handles::text_out(ostream &o) const
@@ -69,7 +58,7 @@ void handles::text_out(ostream &o) const
 	  nnulls++;
 	  continue;
 	}
-      o << i.index() << '\t';
+      o << i.key() << '\t';
       if (!(hand->obj.is_null()))
 	o << ' ' << hand->obj->refcount << '\t' << hand->obj->type_name();
       else nnullobjs++;

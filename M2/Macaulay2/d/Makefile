@@ -29,7 +29,7 @@ MOSTPACKAGES := arithmetic.d err.d stdiop.d ctype.d stdio.d \
 		nets.d varstrings.d strings.d 
 SYSTEM := X.d GB.d system.d C.d
 ############################## more files
-WRAPPERS := scclib.c getpagesize.h gc_cpp.cc
+WRAPPERS := scclib.c getpagesize.h gc_cpp.cc memdebug.c memdebug.h
 ############################## file collections
 PACKAGES := $(MOSTPACKAGES) $(SYSTEM)
 PROJECT := $(INTERPRETER) $(OPTIONS) $(ACTORS) \
@@ -73,6 +73,9 @@ converter.dep : converter.d
 ############################## flags
 CC       := gcc
 
+DEBUGFLAGS := 
+# DEBUGFLAGS := -DMEM_DEBUG
+
 STRIPFLAG :=
 STRIPFLAG := -s
 
@@ -82,15 +85,16 @@ STRIPCMD := strip
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
 
-CPPFLAGS := -I$(INCDIR) -I. -DGaCo=1
+CPPFLAGS := -I$(INCDIR) -I. -DGaCo=1 $(DEBUGFLAGS)
 # the purpose of the -I. is so scclib.c can find ./alloca.h if it's missing
 # from the gcc installation, as it often is
 
 CPPFLAGS += '-DVERSION="$(VERSION)"'
 
-WARNINGS := -Wall -Wshadow -Wcast-qual -Wtraditional
+WARNINGS := -Wall -Wshadow -Wcast-qual
 CCFLAGS  := -O3 -g
 CFLAGS   := $(CCFLAGS) $(WARNINGS)
+CXXFLAGS := $(CFLAGS)
 LOADLIBES:= 
 LDFLAGS  := -L${LIBDIR} $(STRIPFLAG) #-pg
 #################################
@@ -178,9 +182,10 @@ else
 compat.c compat.h : configure; ./configure
 endif
 
-scclib.o : ../c/compat.h ../c/compat.c ../Makefile.develop
+scclib.o : ../c/compat.h ../c/compat.c ../Makefile.develop memdebug.h
+gc_cpp.o : memdebug.h
 allc : $(PROJECT:.d=.c) tmp_init.c
-ALLOBJ := $(PROJECT:.d=.oo) scclib.o compat.o gc_cpp.o tmp_init.o
+ALLOBJ := $(PROJECT:.d=.oo) scclib.o compat.o gc_cpp.o tmp_init.o memdebug.o
 ALLC := $(PROJECT:.d=.c)
 RMC :; rm -rf $(ALLC)
 
@@ -197,7 +202,7 @@ tmp_init.c : Makefile ../bin/timestmp
 .._c_compat.c: ../c/compat.c; cp $^ $@
 .._c_compat.h: ../c/compat.h; cp $^ $@
 
-c-port: $(ALLC) tmp_init.c gc_cpp.cc scclib.c compat.c compat.h \
+c-port: $(ALLC) tmp_init.c gc_cpp.cc scclib.c memdebug.c memdebug.h compat.c compat.h \
 		.._c_compat.c .._c_compat.h
 	tar cfz /tmp/c-port.tgz $^
 

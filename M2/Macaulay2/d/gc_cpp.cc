@@ -26,29 +26,41 @@ Authors: John R. Ellis and Jesse Hull
 
 /* modified by Dan Grayson, 1996, 1997, for use with Macaulay 2 */
 
+/* #define GC_DEBUG */
+
 #include "gc_cpp.h"
 
 extern "C" void outofmem();
 
 #if !defined(__MWERKS__)
 
-void* operator new( unsigned int size ) {
-    void *p = GC_MALLOC_UNCOLLECTABLE( size );
-    if (p == NULL) outofmem();
-    return p;
+#ifdef MEM_DEBUG
+extern "C" {
+#include "memdebug.h"
 }
-  
-void operator delete( void* obj ) {
-    GC_FREE( obj );}
+#endif
 
-void* operator new[]( unsigned int size ) {
-    void *p = GC_MALLOC_UNCOLLECTABLE( size );
+void* operator new( size_t size ) {
+    void *p;
+    p = GC_MALLOC( size );
     if (p == NULL) outofmem();
     return p;
 }
   
-void operator delete[]( void* obj ) {
-    GC_FREE( obj );}
+void operator delete( void* p ) {
+    if (p != NULL) GC_FREE(p) ;
+     }
+
+void* operator new[]( size_t size ) {
+    void *p;
+    p = GC_MALLOC( size );
+    if (p == NULL) outofmem();
+    return p;
+    }
+  
+void operator delete[]( void* p ) {
+    if (p != NULL) GC_FREE(p) ;
+    }
 
 #else
 
@@ -59,7 +71,8 @@ void* __builtin_new( unsigned int size ) {
 }
   
 void __builtin_delete( void* obj ) {
-    GC_FREE( obj );}
+    if (obj != NULL) GC_FREE( obj );
+    }
 
 void* __builtin_vec_new( unsigned int size ) {
     void *p = GC_MALLOC_UNCOLLECTABLE( size );
@@ -68,6 +81,7 @@ void* __builtin_vec_new( unsigned int size ) {
 }
   
 void __builtin_vec_delete( void* obj ) {
-    GC_FREE( obj );}
+    if (obj != NULL) GC_FREE( obj );
+    }
 
 #endif
