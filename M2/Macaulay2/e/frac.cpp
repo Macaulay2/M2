@@ -506,15 +506,6 @@ ring_elem FractionField::divide(const ring_elem a, const ring_elem b) const
   return FRAC_RINGELEM(make_elem(top, bottom));
 }
 
-ring_elem FractionField::divide(const ring_elem a, const ring_elem b, ring_elem &rem) const
-{
-  frac_elem *f = FRAC_VAL(a);
-  frac_elem *g = FRAC_VAL(b);
-  ring_elem top = R_->mult(f->numer, g->denom);
-  ring_elem bottom = R_->mult(f->denom, g->numer);
-  rem = from_int(0);
-  return FRAC_RINGELEM(make_elem(top, bottom));
-}
 ring_elem FractionField::gcd(const ring_elem a, const ring_elem b) const
 {
   if (is_zero(a) || is_zero(b)) return from_int(0);

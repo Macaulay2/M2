@@ -261,23 +261,6 @@ ring_elem RR::divide(const ring_elem f, const ring_elem g) const
 {
   return RR::from_double(RR_VAL(f) / RR_VAL(g));
 }
-ring_elem RR::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
-{
-  // If g == 0.0 then rem = f, return 0.
-  // If g != 0.0 then rem = 0, return f/g
-  double a = RR_VAL(g);
-  double b = RR_VAL(f);
-  if (RR::is_zero_RR(a))
-    {
-      rem = RR::from_double(b);
-      return RR::from_double(0.0);
-    }
-  else
-    {
-      rem = RR::from_double(0.0);
-      return RR::from_double(b/a);
-    }
-}
 
 ring_elem RR::remainder(const ring_elem f, const ring_elem g) const
 {
@@ -305,9 +288,20 @@ ring_elem RR::quotient(const ring_elem f, const ring_elem g) const
 ring_elem RR::remainderAndQuotient(const ring_elem f, const ring_elem g, 
 				  ring_elem &quot) const
 {
-  ring_elem result;
-  quot = RR::divide(f,g,result);
-  return result;
+  // If g == 0.0 then rem = f, quot 0.
+  // If g != 0.0 then rem = 0, quot f/g
+  double a = RR_VAL(g);
+  double b = RR_VAL(f);
+  if (RR::is_zero_RR(a))
+    {
+      quot = RR::from_double(0.0);
+      return RR::from_double(b);
+    }
+  else
+    {
+      quot = RR::from_double(b/a);
+      return RR::from_double(0.0);
+    }
 }
 
 

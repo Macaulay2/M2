@@ -346,22 +346,6 @@ ring_elem CC::divide(const ring_elem f, const ring_elem g) const
   double det = a*a + b*b;
   return CC::from_doubles((a*c+b*d)/det, (-b*c+a*d)/det);
 }
-ring_elem CC::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
-{
-  // If g == 0.0 then rem = f, return 0.
-  // If g != 0.0 then rem = 0, return f/g
-
-  if (CC::is_zero(g))
-    {
-      rem = CC::from_doubles(CC_RE(f), CC_IM(f));
-      return CC::from_double(0.0);
-    }
-  else
-    {
-      rem = CC::from_double(0.0);
-      return CC::divide(f,g);
-    }
-}
 
 ring_elem CC::remainder(const ring_elem f, const ring_elem g) const
 {
@@ -385,10 +369,19 @@ ring_elem CC::quotient(const ring_elem f, const ring_elem g) const
 
 ring_elem CC::remainderAndQuotient(const ring_elem f, const ring_elem g, 
 				  ring_elem &quot) const
+  // If g == 0.0 then rem = f, quot 0.
+  // If g != 0.0 then rem = 0, quot f/g
 {
-  ring_elem result;
-  quot = CC::divide(f,g,result);
-  return result;
+  if (CC::is_zero(g))
+    {
+      quot = CC::from_double(0.0);
+      return CC::from_doubles(CC_RE(f), CC_IM(f));
+    }
+  else
+    {
+      quot = CC::divide(f,g);
+      return CC::from_double(0.0);
+    }
 }
 
 

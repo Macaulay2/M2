@@ -447,45 +447,35 @@ ring_elem bigCC::divide(const ring_elem f, const ring_elem g) const
   ring_elem h = bigCC::invert(g);
   return bigCC::mult(f, h);
 }
-ring_elem bigCC::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
-{
-  // If g == 0.0 then rem = f, return 0.
-  // If g != 0.0 then rem = 0, return f/g
-  if (is_zero(g))
-    {
-      rem = copy(f);
-      return from_int(0);
-    }
-  else
-    {
-      rem = from_int(0);
-      return divide(f,g);
-    }
-}
 
 ring_elem bigCC::remainder(const ring_elem f, const ring_elem g) const
 {
-  ring_elem rem;
-  divide(f,g,rem);
-  return rem;
-  // ring_elem quot = divide(f,g,rem);
-  // remove quot;
+  ring_elem quot;
+  return remainderAndQuotient(f,g,quot);
 }
 
 ring_elem bigCC::quotient(const ring_elem f, const ring_elem g) const
 {
-  ring_elem rem;
-  ring_elem quot = divide(f,g,rem);
-  //remove(rem);
+  ring_elem quot;
+  remainderAndQuotient(f,g,quot);
   return quot;
 }
 
 ring_elem bigCC::remainderAndQuotient(const ring_elem f, const ring_elem g, 
 				      ring_elem &quot) const
 {
-  ring_elem result;
-  quot = divide(f,g,result);
-  return result;
+  // If g == 0.0 then rem = f, quot 0.
+  // If g != 0.0 then rem = 0, quot f/g
+  if (is_zero(g))
+    {
+      quot = from_int(0);
+      return copy(f);
+    }
+  else
+    {
+      quot = divide(f,g);
+      return from_int(0);
+    }
 }
 
 

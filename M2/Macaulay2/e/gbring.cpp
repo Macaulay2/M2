@@ -760,7 +760,7 @@ bool GBRing::gbvector_reduce_lead_term_ZZ(const FreeModule *F,
   const ring_elem b = g->coeff;
   ring_elem u,v,rem;
   assert(globalZZ == K);
-  v = globalZZ->divide(a,b,rem);
+  rem = globalZZ->remainderAndQuotient(a,b,v);
   if (globalZZ->is_zero(v)) return false;
   v = globalZZ->negate(v);
   bool result = globalZZ->is_zero(rem);

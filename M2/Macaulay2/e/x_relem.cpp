@@ -19,6 +19,7 @@
 #include "weylalg.hpp"
 #include "skewpoly.hpp"
 #include "solvable.hpp"
+#include "polyquotient.hpp"
 
 #include "matrix.hpp"
 #include "../d/M2mem.h"
@@ -170,12 +171,22 @@ const RingOrNull * IM2_Ring_quotient(const Ring *R,
       ERROR("expected a polynomial ring");
       return 0;
     }
-#if 0
-  // TODO
-  return R->create_Quotient(I);
-#endif
-  ERROR("not implemented yet");
-  return 0;
+  const PolyRing *P1 = P->cast_to_PolyRing();
+  if (P1 == 0)
+    {
+      ERROR("quotients of fraction polynomial rings, or other polynomial rins is not handled yet");
+      return 0;
+    }
+  if (I->get_ring() != P1)
+    {
+      ERROR("expected matrix to be over the same ring");
+    }
+  if (I->n_rows() != 1)
+    {
+      ERROR("expected a one row matrix of quotient elements");
+      return 0;
+    }
+  return PolyRingQuotient::create(P1,I);
 }
 
 const RingOrNull * IM2_Ring_quotient1(const Ring *R, 

@@ -1345,8 +1345,8 @@ ring_elem PolyRing::invert(const ring_elem f) const
 
 ring_elem PolyRing::divide(const ring_elem f, const ring_elem g) const
 {
-  ring_elem rem;
-  ring_elem d = divide(f,g,rem);
+  ring_elem rem, d;
+  rem = remainderAndQuotient(f,g,d);
   if (is_zero(rem)) return d;
   ring_elem ginv = invert(g);
   ring_elem result = mult(f, ginv);
@@ -1450,45 +1450,6 @@ void PolyRing::cancel_lead_term(ring_elem &f,
     }
 }
 #endif
-ring_elem PolyRing::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
-{
-  Nterm *quot;
-  Nterm *r;
-  r = division_algorithm(f,g,quot);
-  rem = r;
-  return quot;
-
-#if 0
-  ring_elem a = copy(f);
-  Nterm *t = a;
-  Nterm *b = g;
-  Nterm divhead;
-  Nterm remhead;
-  Nterm *divt = &divhead;
-  Nterm *remt = &remhead;
-  while (t != NULL)
-    if (M_->divides(b->monom, t->monom))
-      {
-	divt->next = new_term();
-	divt = divt->next;
-	a = t;
-	cancel_lead_term(a, g, divt->coeff, divt->monom);
-	t = a;
-      }
-    else
-      {
-	a = t;
-	remt->next = copy_term(a);
-	remt = remt->next;
-	t = t->next;
-      }
-
-  remt->next = NULL;
-  divt->next = NULL;
-  rem = remhead.next;
-  return divhead.next;
-#endif
-}
 
 ring_elem PolyRing::gcd(const ring_elem ff, const ring_elem gg) const
 {
@@ -1502,7 +1463,7 @@ ring_elem PolyRing::gcd(const ring_elem ff, const ring_elem gg) const
   ring_elem s, rem;
   while (!is_zero(g))
     {
-      s = divide(f, g, rem);
+      rem = remainderAndQuotient(f, g, s);
       f = g;
       g = rem;
     }
@@ -1536,7 +1497,8 @@ ring_elem PolyRing::gcd_extended(const ring_elem f, const ring_elem g,
   ring_elem temp1, temp2, temp3;
   while (!is_zero(v3))
     {
-      ring_elem q = divide(result, v3, t3);
+      ring_elem q;
+      t3 = remainderAndQuotient(result, v3, q);
 
       // The following is: t1 = u - q*v1
       temp1 = mult(q,v1);
@@ -1561,7 +1523,7 @@ ring_elem PolyRing::gcd_extended(const ring_elem f, const ring_elem g,
   // The following is v = (result - f*u)/g
   temp1 = mult(f,u);
   temp2 = subtract(result, temp1);
-  v = divide(temp2, g, temp3);
+  temp3 = remainderAndQuotient(temp2, g, v);
 
   return result;
 }
@@ -1807,6 +1769,7 @@ ring_elem PolyRing::random(int /*homog*/, const int * /*deg*/) const
 
 void PolyRing::elem_text_out(buffer &o, const ring_elem f) const
 {
+#warning "display using parentheses"
   Nterm *t = f;
   if (t == NULL)
     {
@@ -2424,24 +2387,29 @@ const int * PolyRing::lead_flat_monomial(const ring_elem f) const
   return t->monom;
 }
 
-ring_elem PolyRing::coeff_of(const ring_elem f, const int *m) const
-{
-  // m is a packed monomial
-  for (Nterm *t = f; t != NULL; t = t->next)
-    if (M_->compare(m, t->monom) == 0)
-      return K_->copy(t->coeff);
-
-  return K_->from_int(0);
-}
-
 ring_elem PolyRing::get_coeff(const ring_elem f, const int *vp) const
-{
   // note: vp is a varpower monomial.
+{
+#warning "uses flat monomials"
 
-  intarray ma;
-  int *m = ma.alloc(M_->monomial_size());
-  M_->from_varpower(vp, m);
-  return coeff_of(f, m);
+  int nvars = logicalM_->n_vars();
+  intarray ea;
+  int *exp2 = newarray(int, n_vars());
+  varpower::to_ntuple(nvars, vp, ea);
+  int *exp = ea.raw();
+
+  // Now loop thru f until exponents match up.
+  const Nterm *t = f;
+  for ( ; t != 0; t = t->next)
+    {
+      M_->to_expvector(t->monom, exp2);
+      if (EQ == ntuple::lex_compare(nvars, exp, exp2))
+	break;
+    }
+
+  ring_elem result = get_logical_coeff(logicalK_, t);
+  deletearray(exp2);
+  return result;
 }
 
 ring_elem PolyRing::diff(ring_elem a, ring_elem b, int use_coeff) const

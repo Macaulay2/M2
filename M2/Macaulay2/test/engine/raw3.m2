@@ -207,7 +207,9 @@ rawGetTerms(g,0,0) -- the lead term
 rawGetTerms(g,1,1)
 rawGetTerms(g,2,2)
 rawPairs g
-
+rawLeadMonomial y
+rawCoefficient(g, rawLeadMonomial(y))
+rawCoefficient(g, rawMakeMonomial{(0,1)})
 h1 = rawTerm(B,(x+1)^3,rawMakeMonomial{(0,3)})
 h2 = rawPromote(B, (x+1)^3) * y^3 
 assert(h1 == h2)
@@ -256,6 +258,27 @@ assert(g - s^2 == f^2)
 g = rawFraction(B,x^2+y*z,y)
 h = rawFraction(B, 5*(3*x^2-x-y+1_A)^2*(y+z), 10*(3*x^2-x-y+1_A)^2*(x+y^2-1_A))
 h + 1_B//h
+---------------------------------
+-- quotient rings ---------------
+---------------------------------
+needs "raw-util.m2"
+A = polyring(rawZZp(101), {symbol x, symbol y, symbol z})
+M = mat{{x^2-y*z-1_A}}
+B = rawQuotientRing(A,M)
+x = rawRingVar(B,0,1)
+y = rawRingVar(B,1,1)
+z = rawRingVar(B,2,1)
+x*x
+
+needs "raw-util.m2"
+A = polyring(rawZZ(), {symbol x, symbol y, symbol z})
+M = mat{{3*x^2-y*z-1_A}}
+B = rawQuotientRing(A,M)
+x = rawRingVar(B,0,1)
+y = rawRingVar(B,1,1)
+z = rawRingVar(B,2,1)
+x*x
+5*x*x
 
 --------------------------
 -- free module routines --
