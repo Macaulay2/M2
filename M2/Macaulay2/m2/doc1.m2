@@ -925,7 +925,7 @@ document { GlobalAssignHook,
      as methods for this purpose.",
      PARA,
      EXAMPLE {
-	  ///RR.GlobalAssignHook = (sym,val) -> <<"assigning " <<val <<" to " <<sym <<endl;///,
+	  ///RR.GlobalAssignHook = (sym,val) -> <<"--assigning " <<val <<" to " <<sym <<endl;///,
           "a=4.5",
 	  },
      SEEALSO "GlobalReleaseHook"

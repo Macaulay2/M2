@@ -969,9 +969,8 @@ document { get,
      EXAMPLE {
 	  ///"junk" << "hi there" << close///,
       	  ///get "junk"///,
-     	  if version#"operating system" =!= "SunOS"
-     	  and version#"operating system" =!= "Windows-95-98-NT"
-      	  then ///get "!date"///
+	  ///unlink "junk"///,
+     	  if version#"operating system" =!= "Windows-95-98-NT" then ///get "!date"///
 	  },
      SEEALSO{ "File", "read" }
      }

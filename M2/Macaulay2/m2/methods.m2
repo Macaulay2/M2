@@ -180,9 +180,22 @@ simpleToString := toString
 toString = method(SingleArgumentDispatch => true, TypicalValue => String)
 toString String := identity
 toString Thing := simpleToString			    -- if all else fails...
+-- toString Symbol := s -> (
+--      n := simpleToString s;
+--      if isGlobalSymbol n and getGlobalSymbol n === s then n else concatenate("$",n)     
+--      )
 toString Symbol := simpleToString
 
 toExternalString = method(SingleArgumentDispatch => true, TypicalValue => String)
+
+toExternalString Symbol := s -> (
+     n := simpleToString s;
+     if isGlobalSymbol n and getGlobalSymbol n === s then (
+	  if value s === s then n
+	  else concatenate("symbol ",if n == " " then format n else n)
+	  )
+     else error("can't convert local variable '",n,"' to external string"))
+
 options = method(SingleArgumentDispatch=>true, TypicalValue => OptionTable)
 setup(SingleArgumentDispatch=>true, {max,min,directSum,intersect,vars})
 net = method(SingleArgumentDispatch=>true, TypicalValue => Net)

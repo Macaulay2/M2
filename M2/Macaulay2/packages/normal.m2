@@ -178,22 +178,22 @@ newICnode = (R) -> (
      w = symbol w;
      I := ideal presentation R;
      C := new ICnode;
-     C.todo = {{I,null}};
-     C.pending = null;
-     C.answer = {};
-     C.degrees = degrees source vars ring I;
-     C.blocks = {numgens ring I};
-     C.basefield = coefficientRing ring I;
-     C.vars = toSequence (ring I).generatorSymbols;
-     R.IC = C;
+     C#"todo" = {{I,null}};
+     C#"pending" = null;
+     C#"answer" = {};
+     C#"degrees" = degrees source vars ring I;
+     C#"blocks" = {numgens ring I};
+     C#"basefield" = coefficientRing ring I;
+     C#"vars" = toSequence (ring I).generatorSymbols;
+     R#"IC" = C;
      C)
 
 next = (C) -> (
-     if C.pending =!= null then true
-     else if #C.todo > 0
+     if C#"pending" =!= null then true
+     else if #C#"todo" > 0
      then (
-	  C.pending = C.todo#0;
-	  C.todo = drop(C.todo,1);
+	  C#"pending" = C#"todo"#0;
+	  C#"todo" = drop(C#"todo",1);
 	  true)
      else false)
 
@@ -202,20 +202,20 @@ next = (C) -> (
 -- '(monoid S).options.Degrees'.
 ICring = (C) -> (
      -- C is an ICnode
-     n := #(C.degrees);
-     m := C.blocks#0; -- the number in the first block
+     n := #(C#"degrees");
+     m := C#"blocks"#0; -- the number in the first block
      newvars := w_(n-m) .. w_(n-1);
-     C.vars = splice(newvars, C.vars);
-     C.blocks = select(C.blocks, d -> d =!= 0);
-     if any(C.degrees, d -> d <= 0) then (
+     C#"vars" = splice(newvars, C#"vars");
+     C#"blocks" = select(C#"blocks", d -> d =!= 0);
+     if any(C#"degrees", d -> d <= 0) then (
 	  CCC = C;
-       (C.basefield)[C.vars,
-	  MonomialOrder=>ProductOrder (C.blocks),
+       (C#"basefield")[C#"vars",
+	  MonomialOrder=>ProductOrder (C#"blocks"),
 	  MonomialSize=>16])
      else (
-       (C.basefield)[C.vars,
-	  Degrees => C.degrees, 
-	  MonomialOrder=>ProductOrder (C.blocks),
+       (C#"basefield")[C#"vars",
+	  Degrees => C#"degrees", 
+	  MonomialOrder=>ProductOrder (C#"blocks"),
 	  MonomialSize=>16])
      )
 
@@ -225,8 +225,8 @@ idealizer0 = (C) -> (
      -- This is done using the IC structure, since we wish to be able to
      -- handle interrupts, and the creation of the ring is somewhat
      -- easier.  It also faciliates handling the non prime case.
-     I = C.pending#0;
-     J = C.pending#1;
+     I = C#"pending"#0;
+     J = C#"pending"#1;
      -- Find an element of J, a nzd in S/I.
      f := J_0;  -- MES: check nzd.  If not, split comp into two parts.
      -- Compute Hom_R(J,J), with R = S/I.
@@ -240,8 +240,8 @@ idealizer0 = (C) -> (
      << "idealizer: new numerators = "<< transpose idJ << endl;
      if numgens source idJ === 1 then (
 	  -- We have the answer!
-	  C.answer = append(C.answer, I);
-	  C.pending = null;)
+	  C#"answer" = append(C#"answer", I);
+	  C#"pending" = null;)
      else (
      	  H = compress (idJ % fR);
      	  Ha = (fR // gens JR);  -- MES: what is this Ha all about: the problem is that
@@ -251,8 +251,8 @@ idealizer0 = (C) -> (
      	  -- Make the new polynomial ring.
 	  n := numgens source H;
 	  newdegs = degrees source H - toList(n:degree fR);
-     	  C.degrees = join(newdegs, C.degrees);
-     	  C.blocks = prepend(n, C.blocks);
+     	  C#"degrees" = join(newdegs, C#"degrees");
+     	  C#"blocks" = prepend(n, C#"blocks");
      	  A = ICring C;
      	  newvars = (vars A)_{0..n-1};
      	  RtoA = map(A,R,(vars A)_{n..numgens R + n - 1});
@@ -266,14 +266,14 @@ idealizer0 = (C) -> (
 	  quads = matrix(A, entries (symmetricPower(2,newvars) - XX * tails));
 	  newI = trim ideal matrix entries gens (ideal lins + ideal quads + IA);
 	  newJ = newI + RtoA JR;
-	  C.todo = append(C.todo, {newI, radical0 newJ});
-	  C.pending = null;
+	  C#"todo" = append(C#"todo", {newI, radical0 newJ});
+	  C#"pending" = null;
           )
      )
 
 normal0 = (C) -> (
      -- This handles the first node: finding an ideal that contains the NNL locus.
-     I = C.pending#0;
+     I = C#"pending"#0;
      local J;
      SI = jacobian I;
      R := (ring I)/I;
@@ -292,26 +292,26 @@ normal0 = (C) -> (
 	  det1 = minors(codim I, SI, Limit=>1);
           J = radical0(lift(ideal det1_0,ring I));
 	  );
-     C.todo = append(C.todo, {I,J});
-     C.pending = null;
+     C#"todo" = append(C#"todo", {I,J});
+     C#"pending" = null;
      )
 
 normalization Ring := (R) -> (
-     if not R.?IC then newICnode R;
-     C := R.IC;
+     if not R#"IC" then newICnode R;
+     C := R#"IC";
      while next C do (
-     	  if C.pending#1 === null 
+     	  if C#"pending"#1 === null 
      	  then normal0 C
      	  else idealizer0 C
 	  );
-     C.answer#0
+     C#"answer"#0
      )
 ///
 S = ZZ/101[a..d]
 I = monomialCurveIdeal(S,{1,3,4})
 R = S/I
 normalization R
-peek R.IC
+peek R#"IC"
 
 -- by hand...
 C = newICnode R

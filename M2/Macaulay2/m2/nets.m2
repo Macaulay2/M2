@@ -122,15 +122,6 @@ describe MutableHashTable := x -> (
 net Manipulator := toString
 net Thing := toString
 -----------------------------------------------------------------------------
-toExternalString Symbol := s -> (
-     if not mutable s and value s === s then toString s
-     else (
-	  if s === symbol " "
-	  then ///symbol " "///
-	  else concatenate("symbol ",toString s)
-	  )
-     )
-
 net Symbol := toString
 File << Symbol := File => (o,s) -> o << toString s		    -- provisional
 File << Thing  := File => (o,s) -> o << toString s		    -- provisional

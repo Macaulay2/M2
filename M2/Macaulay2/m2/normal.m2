@@ -77,47 +77,47 @@ isSinglyGraded := (R) -> (
 
 -- ICnode is a mutable hash table that allows us to collect all of the 
 -- necessary information throughout this process.  Most of the elements 
--- in the hash table are clear, however, C.todo, C.pending, C.storing and 
--- C.answer are the key pieces to working through the algorithm.  C.todo is
+-- in the hash table are clear, however, C#"todo", C#"pending", C#"storing" and 
+-- C#"answer" are the key pieces to working through the algorithm.  C#"todo" is
 -- the ideal that we need to work on next before starting the algorithm.  Once
 -- the algorithm is started this ideal, along with its NNL (once computed) are
--- stored in C.pending and C.todo = {}.  After we have passed through the 
--- algorithm once newI and newJ are put into C.todo and we begin again.  If 
+-- stored in C#"pending" and C#"todo" = {}.  After we have passed through the 
+-- algorithm once newI and newJ are put into C#"todo" and we begin again.  If 
 -- a zero divisor is detected (in idealizer0) then the first ideal, I, in 
--- C.pending is split into I:f and I:I:f.  I:f is placed in C.todo so that 
+-- C#"pending" is split into I:f and I:I:f.  I:f is placed in C#"todo" so that 
 -- the algorithm can begin again with that ideal and I:I:f is placed in 
--- C.storing.  Once the integral closure of R_i/I_i for some I_i is obtained, 
--- then the defining ideal of theis integral closure is placed in C.answer.
+-- C#"storing".  Once the integral closure of R_i/I_i for some I_i is obtained, 
+-- then the defining ideal of theis integral closure is placed in C#"answer".
 if ICnode === symbol ICnode then
     ICnode = new Type of MutableHashTable;
 
 newICnode := (R) -> (
      I := ideal presentation R;
      C := new ICnode;
-     C.todo = {{I,null}};
-     C.pending = null;
-     C.storing = {};
-     C.answer = {};
-     C.degrees = degrees source vars ring I;
-     C.blocks = {numgens ring I};
-     C.basefield = coefficientRing ring I;
-     C.vars = toSequence (ring I).generatorSymbols;
-     C.numgens = 0;
-     C.newvars = {};
-     C.fractions = gens R;
-     C.fraclong = {};
-     C.map = null;
-     C.rings = R;
-     R.IC = C;
+     C#"todo" = {{I,null}};
+     C#"pending" = null;
+     C#"storing" = {};
+     C#"answer" = {};
+     C#"degrees" = degrees source vars ring I;
+     C#"blocks" = {numgens ring I};
+     C#"basefield" = coefficientRing ring I;
+     C#"vars" = toSequence (ring I).generatorSymbols;
+     C#"numgens" = 0;
+     C#"newvars" = {};
+     C#"fractions" = gens R;
+     C#"fraclong" = {};
+     C#"map" = null;
+     C#"rings" = R;
+     R#"IC" = C;
      C)
 
--- Tells us when to stop the algorithm.  Moves ideals from C.todo to C.pending.
+-- Tells us when to stop the algorithm.  Moves ideals from C#"todo" to C#"pending".
 next := (C) -> (
-     if C.pending =!= null then true
-     else if #C.todo > 0
+     if C#"pending" =!= null then true
+     else if #C#"todo" > 0
      then (
-	  C.pending = C.todo#0;
-	  C.todo = drop(C.todo,1);
+	  C#"pending" = C#"todo"#0;
+	  C#"todo" = drop(C#"todo",1);
 	  true)
      else false)
 
@@ -127,17 +127,17 @@ idealizer0 := (C,w) -> (
      -- This is done using the IC structure, since we wish to be able to
      -- handle interrupts, and the creation of the ring is somewhat
      -- easier.  It also facilitates handling the non prime case.
-     I := C.pending#0;
-     J := C.pending#1;
+     I := C#"pending"#0;
+     J := C#"pending"#1;
      Jc := ideal compress (gens J % gens I);
      -- Find an element of J, a nzd in S/I.  Need to make sure we donot 
      -- choose an element in I, so first we reduce J mod I.
      J1 := I:Jc_0;
      if J1 != I then(
 	  -- If Jc_0 is a ZD then we split the ring.
-	  C.todo = append(C.todo,{J1,null});
-	  C.pending = null;
-	  C.storing = append(C.storing,I:J1);
+	  C#"todo" = append(C#"todo",{J1,null});
+	  C#"pending" = null;
+	  C#"storing" = append(C#"storing",I:J1);
 	  )
      else(
 	  -- If Jc_0 is a NZD then we continue setting f = Jc_0.
@@ -150,18 +150,18 @@ idealizer0 := (C,w) -> (
      	  idJ := mingens ideal gens gb (fR * JR : JR);
      	  if ideal(idJ) == ideal(fR)  then (
 	       -- We have the answer for this ideal!
-	       C.answer = append(C.answer, {ring I,I});
-	       if #C.storing > 0 then (
-	       	    C.todo = {{C.storing#0,null}};
-	       	    C.storing = drop(C.storing, 1);
-	       	    C.pending = null;
+	       C#"answer" = append(C#"answer", {ring I,I});
+	       if #C#"storing" > 0 then (
+	       	    C#"todo" = {{C#"storing"#0,null}};
+	       	    C#"storing" = drop(C#"storing", 1);
+	       	    C#"pending" = null;
 	       	    )
-	       else(C.pending = null;)
+	       else(C#"pending" = null;)
 	       )
      	  else (
      	       H := compress (idJ % fR);
-	       C.fractions = join((apply(first entries H,i->i/fR)),C.fractions);
-	       C.fraclong = join((apply(first entries H,i->i/fR)),C.fraclong);
+	       C#"fractions" = join((apply(first entries H,i->i/fR)),C#"fractions");
+	       C#"fraclong" = join((apply(first entries H,i->i/fR)),C#"fraclong");
      	       Ha := (fR // gens JR);  
 	       -- MES: what is this Ha all about: the problem is that
 	       -- although f is a minimal generator of (fJ:J) mod I,
@@ -170,24 +170,24 @@ idealizer0 := (C,w) -> (
      	       -- Make the new polynomial ring.
 	       n := numgens source H;
 	       newdegs := degrees source H - toList(n:degree fR);
-	       C.degrees = join(newdegs, C.degrees);
-     	       C.blocks = prepend(n, C.blocks);
-	       C.numgens = C.numgens + n;   	    	      	   	     
-      	       varsA := w_(C.numgens - n) .. w_(C.numgens -1);  
-       	       C.vars = splice(varsA, C.vars);       
-     	       C.blocks = select(C.blocks, d -> d =!= 0);
-     	       A := (if any(C.degrees, d -> d#0 <= 0) then (
-       			 (C.basefield)[C.vars, 
-	  		      MonomialOrder=>ProductOrder (C.blocks),
+	       C#"degrees" = join(newdegs, C#"degrees");
+     	       C#"blocks" = prepend(n, C#"blocks");
+	       C#"numgens" = C#"numgens" + n;   	    	      	   	     
+      	       varsA := w_(C#"numgens" - n) .. w_(C#"numgens" -1);  
+       	       C#"vars" = splice(varsA, C#"vars");       
+     	       C#"blocks" = select(C#"blocks", d -> d =!= 0);
+     	       A := (if any(C#"degrees", d -> d#0 <= 0) then (
+       			 (C#"basefield")[C#"vars", 
+	  		      MonomialOrder=>ProductOrder (C#"blocks"),
 	  		      MonomialSize=>16])
      		    else (
-       			 (C.basefield)[C.vars,
-	  		      Degrees => C.degrees, 
-	  		      MonomialOrder=>ProductOrder (C.blocks),
+       			 (C#"basefield")[C#"vars",
+	  		      Degrees => C#"degrees", 
+	  		      MonomialOrder=>ProductOrder (C#"blocks"),
 	  		      MonomialSize=>16])
      		    );
 	       newvars := (vars A)_{0..n-1};
-	       C.newvars = join(entries newvars,C.newvars);
+	       C#"newvars" = join(entries newvars,C#"newvars");
      	       RtoA := map(A,R,(vars A)_{n..numgens R + n - 1});
 	       IA := ideal ((map(A,ring I,RtoA.matrix)) (gens I));
 	       XX := newvars | matrix{{1_A}};
@@ -207,23 +207,23 @@ idealizer0 := (C,w) -> (
 	       F := map(R2,A,FF);
 	       newJ :=  F newJ1;
 	       --Making the map from S to it's integral closure.
-	       S1 := C.rings;  
+	       S1 := C#"rings";  
 	       --AT8/23: S1 needs to be global.  Appears to be a bug. 
 	       --AT9/13: Not global now - ok?
 	       F1 := map(A,S1); 
-	       if C.map === null then C.map = F * F1
-	       else C.map = F * F1 * C.map;
+	       if C#"map" === null then C#"map" = F * F1
+	       else C#"map" = F * F1 * C#"map";
 	       --Resetting the necessary values of the hash table.
 	       indexvars := apply(first entries substitute(vars R2,A), index);
-      	       C.degrees = apply(indexvars,i->(C.degrees)#i);
-	       C.fractions = apply(indexvars, i->(C.fractions)#i);
-	       C.blocks = {numgens R2};
-	       C.vars = toSequence R2.generatorSymbols;
+      	       C#"degrees" = apply(indexvars,i->(C#"degrees")#i);
+	       C#"fractions" = apply(indexvars, i->(C#"fractions")#i);
+	       C#"blocks" = {numgens R2};
+	       C#"vars" = toSequence R2.generatorSymbols;
 	       -- See the note in "normal0" about the if char R = 0 statement.
 	       newJ = radical0 newJ;
-	       C.todo = append(C.todo, {newI,newJ});
-	       C.pending = null;
-	       C.rings = R2;
+	       C#"todo" = append(C#"todo", {newI,newJ});
+	       C#"pending" = null;
+	       C#"rings" = R2;
 	       )
      	  )
      )
@@ -232,7 +232,7 @@ idealizer0 := (C,w) -> (
 normal0 := (C) -> (
      -- This handles the first node: finding an ideal that contains the NNL 
      -- locus.  
-     I := C.pending#0;
+     I := C#"pending"#0;
      local J;
      SI := jacobian I;
      R := (ring I)/I;
@@ -257,19 +257,19 @@ normal0 := (C) -> (
 	     then (J = ideal vars ring I;)
 	     else (J = radical0(lift(ideal det1_0,ring I)))
 	     );	  
-     C.todo = append(C.todo, {I,J});
-     C.pending = null;
+     C#"todo" = append(C#"todo", {I,J});
+     C#"pending" = null;
      )
 
 integralClosure = method(Options=>{Variable => symbol w})
 integralClosure Ring := Ring => o -> (R) -> (
-     if not R.?IC then newICnode R;
-     C := R.IC;
+     if not R#"IC" then newICnode R;
+     C := R#"IC";
      while next C do (
-      	  if C.pending#1 === null 
+      	  if C#"pending"#1 === null 
      	  then normal0 (C) --Compute J defining the NNL.
      	  else idealizer0(C,o.Variable));
-     A := apply(C.answer,i->i_0/i_1);
+     A := apply(C#"answer",i->i_0/i_1);
      if #A == 1 then A#0
      else toSequence A
      )
@@ -277,19 +277,19 @@ integralClosure Ring := Ring => o -> (R) -> (
 
 --------------------------------------------------------------------
 
--- R.IC.map is needed to find the conductor
+-- R#"IC"#"map" is needed to find the conductor
 ICmap = method()
 ICmap(Ring) := RingMap => (R) -> (
      -- Input:  a quotient ring.
      -- Output:  The natural map from R to its integral closure S.
      -- Note:  This is needed to compute the conductor of R into S.
-     if R.?IC or not isNormal R then (
-	  if not R.?IC then integralClosure(R);
-	  S := (R.IC.answer#0)#0/(R.IC.answer#0)#1;
-	  U := R.IC.map;
-     	  if U === null then R.IC.map = map(S,S)
-     	  else R.IC.map = map(S,R,substitute((U).matrix,S));
-	       R.IC.map
+     if R#"IC" or not isNormal R then (
+	  if not R#"IC" then integralClosure(R);
+	  S := (R#"IC"#"answer"#0)#0/(R#"IC"#"answer"#0)#1;
+	  U := R#"IC"#"map";
+     	  if U === null then R#"IC"#"map" = map(S,S)
+     	  else R#"IC"#"map" = map(S,R,substitute((U).matrix,S));
+	       R#"IC"#"map"
 	       )
      else (map(R,R))
      )
@@ -303,20 +303,20 @@ ICfractions(Ring) := RingMap => (R) -> (
      -- and the matrix is in the fraction field of the original ring.
      --
      -- I haven't figured out how to do the fractions and the maps
-     -- for reduced rings yet.  #C.answer == 1 if and only if a 
+     -- for reduced rings yet.  #C#"answer" == 1 if and only if a 
      -- domain was the input into the function.  
-     if R.?IC or not isNormal R then (
+     if R#"IC" or not isNormal R then (
 	  integralClosure R;
-	  K := (R.IC.basefield)[join(flatten R.IC.newvars,R.generatorSymbols)];
-	  K2 := (R.IC.basefield)[toList R.IC.vars];
+	  K := (R#"IC"#"basefield")[join(flatten R#"IC"#"newvars",R.generatorSymbols)];
+	  K2 := (R#"IC"#"basefield")[toList R#"IC"#"vars"];
 	  -- This constructs the new ring using all of the new variables.
 	  KF := frac(K);
 	  KF2 := frac K2;  
 	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
-	  M2 := apply(R.IC.fraclong, i->matrix{{i}});
+	  M2 := apply(R#"IC"#"fraclong", i->matrix{{i}});
 	  M2' := apply(M2, i->substitute(i,KF));
 	  M3 := flatten apply(M2', j-> first entries j);
-	  L1 := apply(R.IC.fractions, i->matrix{{i}});
+	  L1 := apply(R#"IC"#"fractions", i->matrix{{i}});
 	  L2 := matrix{flatten apply(apply(L1, i->substitute(i,KF)), j-> first entries j)};
 	  G := map(KF,KF,matrix{join(M3,M1)});
 	  done := false;
@@ -341,15 +341,15 @@ ICfractionsLong(Ring) := RingMap => (R) -> (
      -- are extraneous.  
      --
      -- I haven't figured out how to do the fractions and the maps
-     -- for reduced rings yet.  #C.answer == 1 if and only if a 
+     -- for reduced rings yet.  #C#"answer" == 1 if and only if a 
      -- domain was the input into the function.  
-     if R.?IC or not isNormal R then (
+     if R#"IC" or not isNormal R then (
 	  integralClosure(R);
-	  K := (R.IC.basefield)[join(flatten R.IC.newvars,R.generatorSymbols)];
+	  K := (R#"IC"#"basefield")[join(flatten R#"IC"#"newvars",R.generatorSymbols)];
 	  -- This constructs the new ring using all of the new variables.
 	  KF := frac(K);  
      	  M1 := first entries substitute(vars R,KF);  -- puts the vars of R in KF
-	  M2 := apply(R.IC.fraclong, i->matrix{{i}});
+	  M2 := apply(R#"IC"#"fraclong", i->matrix{{i}});
      	  M2' := apply(M2, i->substitute(i,KF));
      	  M3 := flatten apply(M2', j-> first entries j);
 	  G2 := matrix{join(M3,M1)};
@@ -364,9 +364,9 @@ ICfractionsLong(Ring) := RingMap => (R) -> (
      else (
 	  I := ideal(R);
 	  map(frac(ring I),frac(ring I)))
-     --if M3 === {} then R.IC.fractions = {G,G.matrix}
-     --else R.IC.fractions = {G,transpose G (matrix{M3})};
-     --R.IC.fractions
+     --if M3 === {} then R#"IC"#"fractions" = {G,G.matrix}
+     --else R#"IC"#"fractions" = {G,transpose G (matrix{M3})};
+     --R#"IC"#"fractions"
      )
 
 --------------------------------------------------------------------
@@ -376,7 +376,7 @@ conductor(RingMap) := Ideal => (F) -> (
      --module over the source.
      --Output: The conductor of the target into the source.
      --NOTE:  If using this in conjunction with the command normalization,
-     --then the input is R.IC.map where R is the name of the ring used as 
+     --then the input is R#"IC"#"map" where R is the name of the ring used as 
      --input into normalization.  
      if isSinglyGraded (source F) and isHomogeneous (source F)
      	  then(M := presentation pushForward(F, (target F)^1);
