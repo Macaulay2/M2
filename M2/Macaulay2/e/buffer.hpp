@@ -4,10 +4,11 @@
 #define _buffer_hpp_
 
 #include "engine.h"
+#include "newdelete.hpp"
 
 const int BUFFER_INITIAL_CAPACITY = 100;
 
-class buffer
+class buffer : public our_new_delete
 {
   int _size;
   int _capacity;
@@ -16,8 +17,8 @@ class buffer
 public:
   buffer() : _size(0), 
     _capacity(BUFFER_INITIAL_CAPACITY), 
-    _buf(new char[BUFFER_INITIAL_CAPACITY]) {}
-  ~buffer() { delete [] _buf; }
+    _buf(newarray(char,BUFFER_INITIAL_CAPACITY)) {}
+  ~buffer() { deletearray(_buf); }
   
   void reset() { _size = 0; }
 

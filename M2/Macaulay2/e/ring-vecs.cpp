@@ -16,7 +16,7 @@ vec Ring::new_vec() const
 void Ring::remove_vec_node(vec n) const
 {
   // Should we just let them go, or free them?
-  delete n;
+  deleteitem(n);
 }
 
 vec Ring::make_vec(int r, ring_elem a) const
@@ -99,7 +99,7 @@ vec Ring::sub_vector(const vecterm * v, const M2_arrayint r) const
 {
   if (v == 0) return 0;
   // Largest component which occurs in v occurs first.
-  vector<int> trans(v->comp+1);
+  vector<int,gc_alloc> trans(v->comp+1);
   for (int i=0; i<v->comp; i++)
     trans.push_back(-1);
 

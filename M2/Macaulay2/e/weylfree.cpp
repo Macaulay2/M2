@@ -43,9 +43,9 @@ vec WeylFreeModule::weyl_diff(
   int i;
   int nvars = W->nvars;
   const Ring *K = W->Ncoeffs();
-  int *exp = new int[W->nderivatives];
-  int *deriv_exp = new int[nvars];
-  int *result_exp = new int[nvars];
+  int *exp = newarray(int,W->nderivatives);
+  int *deriv_exp = newarray(int,nvars);
+  int *result_exp = newarray(int,nvars);
   for (i=0; i<nvars; i++)
     deriv_exp[i] = 0;
   if (W->homogeneous_weyl_algebra)
@@ -100,8 +100,8 @@ vec WeylFreeModule::weyl_diff(
 	  result = tm;
 	}
     }
-  delete [] exp;
-  delete [] result_exp;
+  deletearray(exp);
+  deletearray(result_exp);
   result->next = 0;
   return head.next;
 }
@@ -111,9 +111,9 @@ vec WeylFreeModule::imp_mult_by_term(const ring_elem c,
 				  vec f) const
   // Computes c*m*f
 {
-  int *top_derivative = new int[W->nderivatives];
-  int *current_derivative = new int[W->nderivatives];
-  int *expf = new int[W->nvars];
+  int *top_derivative = newarray(int,W->nderivatives);
+  int *current_derivative = newarray(int,W->nderivatives);
+  int *expf = newarray(int,W->nvars);
   vecHeap result(this);
 
   M->to_expvector(m, expf);
@@ -127,9 +127,9 @@ vec WeylFreeModule::imp_mult_by_term(const ring_elem c,
       result.add(h);
   } while (W->increment(current_derivative, top_derivative));
 
-  delete [] expf;
-  delete [] top_derivative;
-  delete [] current_derivative;
+  deletearray(expf);
+  deletearray(top_derivative);
+  deletearray(current_derivative);
   return result.value();
 }
 

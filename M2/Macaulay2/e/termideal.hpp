@@ -6,6 +6,7 @@
 #include "queue.hpp"
 #include "polyring.hpp"
 #include "newspair.hpp"
+#Include "newdelete.hpp"
 
 class cursor_TermIdeal;
 
@@ -40,7 +41,7 @@ struct tagged_term
 
 // mon_term
 // 
-struct mon_term
+struct mon_term : public our_new_delete
 {
   mon_term * next;
   mon_term * prev;

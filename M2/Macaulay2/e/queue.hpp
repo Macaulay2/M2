@@ -11,7 +11,7 @@ const int block_size = 128;
 template <class T> class queue;
 
 template<class T>
-class queue_block
+class queue_block : public our_new_delete
 {
   friend class queue<T>;
 
@@ -22,7 +22,7 @@ class queue_block
 };
 
 template<class T>
-class queue
+class queue : public our_new_delete
 {
   int             ephemeral;
   queue_block<T> *head;
@@ -55,7 +55,7 @@ class queue
 	{
 	  queue_block<T> *temp = head;
 	  head = head->next;
-	  delete temp;
+	  deleteitem(temp);
 	}
     }
  public:
@@ -100,7 +100,7 @@ void queue<T>::copy(const queue<T> &q)
 	{
 	  queue_block<T> *tmp = head;
 	  head = head->next;
-	  delete tmp;
+	  deleteitem(tmp);
 	}
       head_i = tail_i = len = 0;
       tail = NULL;
@@ -142,7 +142,7 @@ bool queue<T>::remove(T &elem)
     {
       if (head_i == tail_i)
 	{
-	  delete head;
+	  deleteitem(head);
 	  head = NULL;
 	  len = head_i = tail_i = 0;
 	}
@@ -151,7 +151,7 @@ bool queue<T>::remove(T &elem)
     {
       queue_block<T> *temp = head;
       head = head->next;
-      delete temp;
+      deleteitem(temp);
       head_i = 0;
     }
 

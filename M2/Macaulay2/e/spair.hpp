@@ -8,7 +8,7 @@
 
 struct s_pair;
 
-struct gb_elem
+struct gb_elem : public our_new_delete
 {
   gb_elem *next;
   gb_elem *next_min;
@@ -27,7 +27,7 @@ struct gb_elem
       f(f0), fsyz(fsyz0), lead_exp(NULL), is_min(is_min0), me(0) {}
 };
 
-struct s_pair
+struct s_pair : public our_new_delete
 {
   s_pair *next;
   s_pair *next_same;		// Next one with the same 'first'
@@ -43,7 +43,7 @@ struct s_pair
 
 const int NHEAP = 10;
 
-class s_pair_heap
+class s_pair_heap : public our_new_delete
 {
   const Monoid *M;
 

@@ -162,7 +162,7 @@ void GB_comp::remove_pair(s_pair *& p)
   p->second = NULL;
   p->next = NULL;
   _M->remove(p->lcm);
-  delete p;
+  deleteitem(p);
   p = NULL;
 }
 
@@ -297,8 +297,8 @@ void GB_comp::find_pairs(gb_elem *p)
   intarray vplcm;
   int *find_pairs_m = _M->make_one();
   int *f_m = _M->make_one();
-  int *find_pairs_exp = new int[_M->n_vars()];
-  int *find_pairs_lcm = new int[_M->n_vars()];
+  int *find_pairs_exp = newarray(int,_M->n_vars());
+  int *find_pairs_lcm = newarray(int,_M->n_vars());
 
   _GR->gbvector_get_lead_monomial(_F, p->f, f_m);
   if (_GR->is_skew_commutative())
@@ -365,7 +365,7 @@ void GB_comp::find_pairs(gb_elem *p)
     {
       s_pair *q = (s_pair *) b->basis_ptr();
       remove_pair(q);
-      delete b;
+      deleteitem(b);
     }
   for (j = mi.first(); j.valid(); j++)
     {
@@ -397,8 +397,8 @@ void GB_comp::find_pairs(gb_elem *p)
   // Remove the local variables
   _M->remove(find_pairs_m);
   _M->remove(f_m);
-  delete [] find_pairs_exp;
-  delete [] find_pairs_lcm;
+  deletearray(find_pairs_exp);
+  deletearray(find_pairs_lcm);
 }
 
 void GB_comp::compute_s_pair(s_pair *p)
@@ -433,8 +433,8 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = new int[_M->n_vars()];
-  int *reduce_ndiv = new int[_M->n_vars()];
+  int *div_totalexp = newarray(int,_M->n_vars());
+  int *reduce_ndiv = newarray(int,_M->n_vars());
   int count = 0;
   if (gbTrace == 10)
     {
@@ -493,8 +493,8 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
       emit_wrapped(o.str());
     }
   f = head.next;
-  delete [] div_totalexp;
-  delete [] reduce_ndiv;
+  deletearray(div_totalexp);
+  deletearray(reduce_ndiv);
 }
 
 void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
@@ -504,8 +504,8 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = new int[_M->n_vars()];
-  int *reduce_ndiv = new int[_M->n_vars()];
+  int *div_totalexp = newarray(int,_M->n_vars());
+  int *reduce_ndiv = newarray(int,_M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(_GR,_F);
@@ -557,8 +557,8 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
   f = head.next;
 
   fsyz = fsyzb.value();
-  delete [] div_totalexp;
-  delete [] reduce_ndiv;
+  deletearray(div_totalexp);
+  deletearray(reduce_ndiv);
 }
 
 void GB_comp::flush_pairs(int deg)

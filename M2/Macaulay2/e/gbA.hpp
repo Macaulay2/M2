@@ -22,7 +22,7 @@ private:
 
 public:
   // This is only public to allow spair_sorter to use it!!
-  struct spair {
+  struct spair : public our_new_delete {
     spair *next;
     spair_type type; /* SPAIR_SPAIR, SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
     int deg;
@@ -39,7 +39,7 @@ public:
   };
 
 private:
-  typedef vector<spair *> spairs;
+  typedef vector<spair *,gc_alloc> spairs;
 
 
   struct SPairSet {
@@ -64,7 +64,7 @@ private:
   GBasis *G;
 
   SPairSet S;
-  vector <gbvector *> _syz;
+  vector <gbvector *,gc_alloc> _syz;
 
   int _strategy;
   int _this_degree;
@@ -147,7 +147,7 @@ private:
   enum ComputationStatusCode computation_is_complete();
 
   /* Making the minimal GB */
-  void poly_auto_reduce(vector<POLY> &mat);
+  void poly_auto_reduce(vector<POLY,gc_alloc> &mat);
 
   virtual bool stop_conditions_ok() { return true; }
 

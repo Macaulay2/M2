@@ -439,11 +439,11 @@ void SparseMutableMatrix::initialize(const Ring *KK, int nr, int nc)
   nrows = nr;
   ncols = nc;
   V = new VectorOperations(K);
-  matrix = new sparse_vector *[ncols];
+  matrix = newarray(sparse_vector *,ncols);
   for (int c=0; c<ncols; c++)
     matrix[c] = 0;
-  colSize = new int[ncols];
-  rowSize = new int[nrows];
+  colSize = newarray(int,ncols);
+  rowSize = newarray(int,nrows);
   rowOps = 0;
   colOps = 0;
   for (int i=0; i<ncols; i++)
@@ -495,10 +495,10 @@ SparseMutableMatrix::~SparseMutableMatrix()
 {
   for (int c=0; c<ncols; c++)
     V->remove(matrix[c]);
-  delete [] matrix;
-  delete [] rowSize;
-  delete [] colSize;
-  delete V;
+  deletearray(matrix);
+  deletearray(rowSize);
+  deletearray(colSize);
+  deleteitem(V);
 }
 
 Matrix *SparseMutableMatrix::toMatrix() const
@@ -1266,14 +1266,14 @@ void SparseMutableMatrix::sortColumns(int lo, int hi, bool doRecording)
   if (errorColumnBound(hi)) return;
   // Sort columns.
   if (lo >= hi) return;
-  int *sortvals = new int[ncols];
+  int *sortvals = newarray(int,ncols);
   for (int i=lo; i<=hi; i++)
     sortvals[i] = i;
   sort1(lo,hi,sortvals);
 
   // Now permute the columns of 'matrix', and 'colOps'.
   permuteColumns(lo,hi,sortvals,doRecording);
-  delete [] sortvals;
+  deletearray(sortvals);
 }
 
 void SparseMutableMatrix::permuteColumns(int lo, int hi, int *permutation, bool doRecording)
@@ -1281,12 +1281,12 @@ void SparseMutableMatrix::permuteColumns(int lo, int hi, int *permutation, bool 
   int i;
   if (errorColumnBound(lo)) return;
   if (errorColumnBound(hi)) return;
-  sparse_vector **old = new sparse_vector *[hi-lo+1];
+  sparse_vector **old = newarray(sparse_vector *,hi-lo+1);
   for (i=lo; i<=hi; i++)
     old[i-lo] = matrix[i];
   for (i=lo; i<=hi; i++)
     matrix[i] = old[permutation[i]-lo];
-  delete [] old;
+  deletearray(old);
 
   if (doRecording && colOps != 0)
     colOps->permuteColumns(lo,hi,permutation,false);
@@ -1294,7 +1294,7 @@ void SparseMutableMatrix::permuteColumns(int lo, int hi, int *permutation, bool 
 
 void SparseMutableMatrix::text_out(buffer &o) const
 {
-  buffer *p = new buffer[nrows];
+  buffer *p = newarray(buffer,nrows);
   int r;
   for (int c=0; c<ncols; c++)
     {
@@ -1319,7 +1319,7 @@ void SparseMutableMatrix::text_out(buffer &o) const
       char *s = p[r].str();
       o << s << newline;
     }
-  delete [] p;
+  deletearray(p);
 }
 
 void SparseMutableMatrix::display() const

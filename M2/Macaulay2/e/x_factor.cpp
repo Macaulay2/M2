@@ -1,13 +1,16 @@
 // copyright Daniel R. Grayson, 1995
 
+#include "config.h"
+#include <assert.h>
+#include <iostream>
+
+#ifdef FACTORY
 #define Matrix MaTrIx
 #include <factor.h>		// from Messollen's libfac
 #undef Matrix
-
 #include <templates/ftmpl_list.cc>
+#endif
 
-#include <assert.h>
-#include <iostream>
 #include "matrix.hpp"
 #include "z_mod_p.hpp"
 #include "ZZ.hpp"
@@ -19,7 +22,8 @@
 #include "text_io.hpp"
 #include "buffer.hpp"
 
-#define REVERSE_VARIABLES 0	// did we have a good reason for reversing the variables before?
+#ifdef FACTORY
+#define REVERSE_VARIABLES 1	// did we have a good reason for reversing the variables before?  probably so the ideal reordering of Messollen would work...
 
 #ifdef drg
 // debugging display routines to be called from gdb
@@ -195,33 +199,45 @@ void displayCF(Ring *R, const CanonicalForm &h)
   o << IM2_RingElement_to_string(g);
   emit(o.str());
 }
+#endif
 
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g)
 {
 #warning "check that the rings of f and g both polynomial rings"
+#ifdef FACTORY
   CanonicalForm p = convert(*f);
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl
   //          << "q = " << q << endl;
   CanonicalForm h = gcd(p,q);
   return convert(f->get_ring(),h);
+#else
+  ERROR("'factory' library not installed");
+  return NULL;
+#endif
 }
 
 const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g)
 {
 #warning "check that the rings of f and g both polynomial rings"
+#ifdef FACTORY
   CanonicalForm p = convert(*f);
   CanonicalForm q = convert(*g);
   //     cerr << "p = " << p << endl
   //          << "q = " << q << endl;
   CanonicalForm h = Prem(p,q);
   return convert(f->get_ring(),h);
+#else
+  ERROR("'factory' library not installed");
+  return NULL;
+#endif
 }
 
 void rawFactor(const RingElement *g, 
 	       RingElement_array_OrNull **result_factors, 
 	       M2_arrayint_OrNull *result_powers)
 {
+#ifdef FACTORY
   factoryseed(23984729);
   const Ring *R = g->get_ring();
   CanonicalForm h = convert(*g);
@@ -245,10 +261,14 @@ void rawFactor(const RingElement *g,
     (*result_factors)->array[next] = convert(R,i.getItem().factor());
     (*result_powers)->array[next++] = i.getItem().exp();
   }
+#else
+  ERROR("'factory' library not installed");
+#endif
 }
 
 M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
 {
+#ifdef FACTORY
      factoryseed(23984729);
      const Ring *R = M->get_ring();
      const int N = R->n_vars();
@@ -284,10 +304,15 @@ M2_arrayint_OrNull rawIdealReorder(const Matrix *M)
      for (i=0; i<N; i++)
        result->array[i] = u[i];
      return result;
+#else
+  ERROR("'factory' library not installed");
+  return NULL;
+#endif
 }    
 
 Matrix_array_OrNull * rawCharSeries(const Matrix *M)
 {
+#ifdef FACTORY
      factoryseed(23984729);
      const Ring *R = M->get_ring();
 
@@ -319,6 +344,10 @@ Matrix_array_OrNull * rawCharSeries(const Matrix *M)
      }
      
      return result;
+#else
+  ERROR("'factory' library not installed");
+  return NULL;
+#endif
 }
 
 #if 0

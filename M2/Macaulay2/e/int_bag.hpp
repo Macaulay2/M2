@@ -5,7 +5,7 @@
 #include "style.hpp"
 #include "varpower.hpp"
 
-class int_bag
+class int_bag : public our_new_delete
 {
   union {
     int b_elem;

@@ -28,7 +28,7 @@ void GaussElimComputation::insert(gm_elem *p)
 	  syz->append(p->fsyz);
 	  n_syz++;
 	}
-      delete p;
+      deleteitem(p);
     }
   else
     {
@@ -94,7 +94,7 @@ void GaussElimComputation::remove_gm_elem(gm_elem *&p)
     {
       gens->rows()->remove(p->f);
       syz->rows()->remove(p->fsyz);
-      delete p;
+      deleteitem(p);
       p = NULL;
     }
 }

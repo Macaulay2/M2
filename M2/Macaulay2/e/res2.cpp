@@ -464,7 +464,7 @@ void res2_comp::initialize(const Matrix *mat,
 	insert_pair(p);
       }
 
-  REDUCE_exp = new int[P->n_vars()];
+  REDUCE_exp = newarray(int,P->n_vars());
   REDUCE_mon = M->make_one();
   PAIRS_mon = M->make_one();
   MINIMAL_mon = M->make_one();
@@ -549,7 +549,7 @@ void res2_comp::remove_res2_pair(res2_pair *p)
 {
   if (p == NULL) return;
   R->remove(p->syz);
-  delete p;
+  deleteitem(p);
 }
 
 void res2_comp::remove_res2_level(res2_level *lev)
@@ -561,7 +561,7 @@ void res2_comp::remove_res2_level(res2_level *lev)
       lev->pairs = p->next;
       remove_res2_pair(p);
     }
-  delete lev;
+  deleteitem(lev);
 }
 
 res2_comp::~res2_comp()
@@ -570,11 +570,11 @@ res2_comp::~res2_comp()
   for (i=0; i<resn.length(); i++)
     remove_res2_level(resn[i]);
 
-  delete [] REDUCE_exp;
+  deletearray(REDUCE_exp);
   M->remove(REDUCE_mon);
   M->remove(PAIRS_mon);
   M->remove(MINIMAL_mon);
-  delete R;
+  deleteitem(R);
 }
 //////////////////////////////////////////////
 //  Data structure insertion and access  /////
@@ -946,7 +946,7 @@ void res2_comp::new_pairs(res2_pair *p)
       intarray vplcm;
       intarray find_pairs_vp;
 
-      int *skewvars = new int[M->n_vars()];
+      int *skewvars = newarray(int,M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_vp);
       int nskew = M->exp_skew_vars(find_pairs_vp.raw(), skewvars);
       
@@ -961,7 +961,7 @@ void res2_comp::new_pairs(res2_pair *p)
 	  elems.insert(b);
 	}
       // Remove the local variables
-      delete [] skewvars;
+      deletearray(skewvars);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -1004,7 +1004,7 @@ void res2_comp::new_pairs(res2_pair *p)
   Bag *b;
   MonomialIdeal mi(P, elems, rejects);
   while (rejects.remove(b))
-    delete b;
+    deleteitem(b);
 
   if (comp_printlevel>= 11) mi.debug_out(1);
 
@@ -1587,7 +1587,7 @@ void res2_comp::do_auto_reductions(res2_pair *p, auto_reduce_node *au)
       o << newline << "    result = ";
       R->elem_text_out(a->p->syz);
       o << newline;
-      delete a;
+      deleteitem(a);
     }
   emit(o.str());
 }

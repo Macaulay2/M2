@@ -4,8 +4,11 @@
 using namespace std;
 
 #include <vector>
+#include <memory>
 #include <algorithm>
 #include <stdio.h>
+
+#include "newdelete.hpp"
 
 /* "Tricks" used in this implementation */
 /* 
@@ -20,9 +23,9 @@ using namespace std;
 
 typedef int * exponents;
 
-class MonomialTable {
+class MonomialTable : public our_new_delete {
 public:
-  struct mon_term {
+  struct mon_term : our_new_delete {
     mon_term  *_next;
     mon_term  *_prev;
     exponents _lead;		/* Who owns this? */
@@ -34,10 +37,10 @@ public:
   /* Create a zero element table */
 
   static MonomialTable *make_minimal(int nvars, 
-				     const vector<exponents> &exps,
-				     const vector<int> &comps,
-				     const vector<int> &vals,
-				     vector<int> &rejects);
+				     const vector<exponents,gc_alloc> &exps,
+				     const vector<int,gc_alloc> &comps,
+				     const vector<int,gc_alloc> &vals,
+				     vector<int,gc_alloc> &rejects);
 
   ~MonomialTable();
 
@@ -50,7 +53,7 @@ public:
   int find_divisors(int max,
 		    exponents exp, 
 		    int comp,
-		    vector< mon_term *> *result = 0) const;
+		    vector<mon_term *,gc_alloc> *result = 0) const;
   /* max: the max number of divisors to find. 
      exp: the monomial whose divisors we seek.
      result: an array of mon_term's.
@@ -61,10 +64,10 @@ public:
      All other fields should be considered read only */
 
   static void minimalize(int nvars,
-			 const vector < exponents> &exps, 
-			 const vector<int> &comps,
+			 const vector<exponents,gc_alloc> &exps, 
+			 const vector<int,gc_alloc> &comps,
 			 bool keep_duplicates, 
-			 vector<int> &result_positions
+			 vector<int,gc_alloc> &result_positions
 			 );
 
   /* Need a way of looping through the elements? */
@@ -74,7 +77,7 @@ public:
 private:
   int _nvars;
   int _count;
-  vector<mon_term *> _head; /* One per component */
+  vector<mon_term *,gc_alloc> _head; /* One per component */
 
   static mon_term *make_list_head();
 };

@@ -198,12 +198,12 @@ M2_arrayint Vector::degree() const
 
   M2_arrayint result = makearrayint(D->n_vars());
 
-  int *mon = new int[D->monomial_size()];
+  int *mon = newarray(int,D->monomial_size());
 
   F2->degree(get_value(), mon);
   D->to_expvector(mon, result->array);
 
-  delete [] mon;
+  deletearray(mon);
   return result;
 }
 

@@ -40,11 +40,18 @@ typedef struct Matrix_int_pair Matrix_int_pair;
 typedef struct M2_Integer_pair M2_Integer_pair;
 #endif
 
-struct Monomial_pair { Monomial *a; Monomial *b; };
-struct RingElement_pair { RingElement *a; RingElement *b; };
-struct M2_Integer_pair { M2_Integer a; M2_Integer b; };
-struct Matrix_pair { const Matrix *a; const Matrix *b; };
-struct Matrix_int_pair { const Matrix *a; int b; };
+#ifdef __cplusplus
+#define BASECLASS : public our_new_delete
+#include "newdelete.hpp"
+#else
+#define BASECLASS
+#endif
+
+struct Monomial_pair BASECLASS { Monomial *a; Monomial *b; };
+struct RingElement_pair BASECLASS { RingElement *a; RingElement *b; };
+struct M2_Integer_pair BASECLASS { M2_Integer a; M2_Integer b; };
+struct Matrix_pair BASECLASS { const Matrix *a; const Matrix *b; };
+struct Matrix_int_pair BASECLASS { const Matrix *a; int b; };
 
 typedef struct M2_Integer_array {
   unsigned int len;

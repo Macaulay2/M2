@@ -6,10 +6,10 @@ void buffer::expand(int newcap)
 {
   int n = 2 * _capacity;
   if (newcap > n) n = newcap;
-  char *newbuf = new char[n];
+  char *newbuf = newarray(char,n);
   _capacity = n;
   memcpy(newbuf, _buf, _size);
-  delete [] _buf;
+  deletearray(_buf);
   _buf = newbuf;
 }
 

@@ -23,8 +23,8 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
   int rk = m->n_cols();
   if (rk == 0) return result;
   int *base = M->make_one();
-  int *tiebreaks = new int[rk];
-  int *ties = new int[rk];
+  int *tiebreaks = newarray(int,rk);
+  int *ties = newarray(int,rk);
   for (i=0; i<rk; i++)
     {
       vec v = (*m)[i];
@@ -51,8 +51,8 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
     }
 
   M->remove(base);
-  delete [] tiebreaks;
-  delete [] ties;
+  deletearray(tiebreaks);
+  deletearray(ties);
   return result;
 }
 
@@ -101,7 +101,7 @@ SchreyerOrder *SchreyerOrder::sub_space(const M2_arrayint a) const
     else
       {
 	ERROR("schreyer order subspace: index out of bounds");
-	delete result;
+	deleteitem(result);
 	return NULL;
       }
   return result;
@@ -152,7 +152,7 @@ SchreyerOrder *SchreyerOrder::exterior(int p) const
 
   int rk = rank();
 
-  int *a = new int[p];
+  int *a = newarray(int,p);
   for (int i=0; i<p; i++) a[i] = i;
 
   int *base = M->make_one();
@@ -168,7 +168,7 @@ SchreyerOrder *SchreyerOrder::exterior(int p) const
   while (comb::increment(p, rk, a));
 
   M->remove(base);
-  delete [] a;
+  deletearray(a);
 
   return result;
 }

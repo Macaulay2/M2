@@ -3,8 +3,9 @@
 #define _hash_hh_
 
 #include <assert.h>
+#include "newdelete.hpp"
 
-class immutable_object {
+class immutable_object : public our_new_delete {
 protected:
   unsigned long _hashval;
 public:
@@ -12,7 +13,7 @@ public:
   unsigned long get_hash_value() const { return _hashval; }
 };
 
-class mutable_object {
+class mutable_object : public our_new_delete {
   static unsigned long next_hash_sequence_number;
   unsigned long _hashval;
 public:
@@ -20,7 +21,7 @@ public:
   unsigned long get_hash_value() const { return _hashval; }
 };
 
-class object {
+class object : public our_new_delete {
   // Hashed objects, which are either mutable or immutable.
   static int next_hash_sequence_number;
   int hashval; 

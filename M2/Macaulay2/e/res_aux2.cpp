@@ -4,7 +4,7 @@
 void res2_comp::betti_init(int lo, int hi, int len, int *&bettis) const
 {
   int z = (hi-lo+1) * (len+1);
-  bettis = new int[z];
+  bettis = newarray(int,z);
   for (int i=0; i<z; i++)
     bettis[i] = 0;
 }
@@ -65,7 +65,7 @@ void res2_comp::betti_skeleton(intarray &result) const
 	}
     }
   betti_make(lo,hi,len,bettis,result);
-  delete [] bettis;
+  deletearray(bettis);
 }
 
 void res2_comp::betti_remaining(intarray &result) const
@@ -85,7 +85,7 @@ void res2_comp::betti_remaining(intarray &result) const
 	}
     }
   betti_make(lo,hi,len,bettis,result);
-  delete [] bettis;
+  deletearray(bettis);
 }
 
 void res2_comp::betti_minimal(intarray &result) const
@@ -106,7 +106,7 @@ void res2_comp::betti_minimal(intarray &result) const
 	}
     }
   betti_make(lo,hi,len,bettis,result);
-  delete [] bettis;
+  deletearray(bettis);
 }
 
 void res2_comp::betti_nmonoms(intarray &result) const
@@ -125,7 +125,7 @@ void res2_comp::betti_nmonoms(intarray &result) const
 	}
     }
   betti_make(lo,hi,len,bettis,result);
-  delete [] bettis;
+  deletearray(bettis);
 }
 
 static void betti_display(buffer &o, const intarray &a)

@@ -75,7 +75,7 @@ bool GBasis::find_good_divisor(exponents e,
   int i, alpha, newalpha, ealpha;
   int n = 0;
 
-  vector<MonomialTable::mon_term *> divisors;
+  vector<MonomialTable::mon_term *,gc_alloc> divisors;
   ealpha = degf - R->exponents_weight(e);
 
   /* First search for ring divisors */
@@ -120,7 +120,7 @@ int GBasis::find_good_divisor(exponents e,
   int i, alpha, newalpha, ealpha;
   int n = 0;
 
-  vector<MonomialTable::mon_term *> divisors;
+  vector<MonomialTable::mon_term *,gc_alloc> divisors;
   ealpha = degf - R->exponents_weight(e);
 
   /* First search for ring divisors */
@@ -288,10 +288,10 @@ void GBasis::remainder(POLY &f, int degf, ring_elem &denom)
     }
 }
 
-void GBasis::poly_auto_reduce(vector<POLY> &mat)
+void GBasis::poly_auto_reduce(vector<POLY,gc_alloc> &mat)
 {
-  for (vector<POLY>::iterator i = mat.begin(); i != mat.end(); i++)
-    for (vector<POLY>::iterator j = mat.begin(); j != i; j++)
+  for (vector<POLY,gc_alloc>::iterator i = mat.begin(); i != mat.end(); i++)
+    for (vector<POLY,gc_alloc>::iterator j = mat.begin(); j != i; j++)
       {
 	R->gbvector_auto_reduce(F,Fsyz,
 				(*i).f, (*i).fsyz,
@@ -302,10 +302,10 @@ void GBasis::poly_auto_reduce(vector<POLY> &mat)
 struct gbelem_sorter : public binary_function<int,int,bool> {
   GBRing *R;
   const FreeModule *F;
-  const vector<GBasis::gbelem *> &gb;
+  const vector<GBasis::gbelem *,gc_alloc> &gb;
   gbelem_sorter(GBRing *R0,
 		const FreeModule *F0,
-		const vector<GBasis::gbelem *> &gb0)
+		const vector<GBasis::gbelem *,gc_alloc> &gb0)
     : R(R0), F(F0), gb(gb0) {}
   bool operator()(int xx, int yy) {
     gbvector *x = gb[xx]->g.f;
@@ -319,14 +319,14 @@ void GBasis::minimalize_gb()
   if (minimal_gb_valid) return;
 
   // Place into _minimal_gb a sorted minimal GB
-  vector<exponents> exps;
-  vector<int> comps;
-  vector<int> positions;
+  vector<exponents,gc_alloc> exps;
+  vector<int,gc_alloc> comps;
+  vector<int,gc_alloc> positions;
   exps.reserve(gb.size());
   comps.reserve(gb.size());
   positions.reserve(gb.size());
 
-  for (vector<gbelem *>::iterator i = gb.begin(); i != gb.end(); i++)
+  for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
     {
       if ((*i)->minlevel <= ELEM_MIN_GB)
 	{
@@ -350,7 +350,7 @@ void GBasis::minimalize_gb()
   // Now sort 'positions'.
   sort(positions.begin(), positions.end(), gbelem_sorter(R,F,gb));
 
-  for (vector<int>::iterator i = positions.begin(); i != positions.end(); i++)
+  for (vector<int,gc_alloc>::iterator i = positions.begin(); i != positions.end(); i++)
     {
       // possibly first copy gb[*i]->g...
       minimal_gb.push_back(gb[*i]->g);
@@ -366,7 +366,7 @@ const Matrix *GBasis::get_minimal_gb()
 {
   minimalize_gb();
   Matrix *result = new Matrix(F);
-  for (vector<POLY>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
+  for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
     result->append(originalR->translate_gbvector_to_vec(F, (*i).f));
   return result;
 }
@@ -374,7 +374,7 @@ const Matrix *GBasis::get_minimal_gb()
 const Matrix *GBasis::get_minimal_gens()
 {
   Matrix *result = new Matrix(F);
-  for (vector<gbelem *>::iterator i = gb.begin(); i != gb.end(); i++)
+  for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
     if ((*i)->minlevel <= ELEM_TRIMMED)
       result->append(originalR->translate_gbvector_to_vec(F, (*i)->g.f));
   return result;
@@ -384,7 +384,7 @@ const Matrix *GBasis::get_change()
 {
   minimalize_gb();
   Matrix *result = new Matrix(Fsyz);
-  for (vector<POLY>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
+  for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
     result->append(originalR->translate_gbvector_to_vec(Fsyz, (*i).fsyz));
   return result;
 }
@@ -393,7 +393,7 @@ const Matrix *GBasis::get_leadterms(int nparts)
 {
   minimalize_gb();
   Matrix *result = new Matrix(F);
-  for (vector<POLY>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
+  for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
     {
       gbvector *f = R->gbvector_lead_term(nparts, F, (*i).f);
       result->append(originalR->translate_gbvector_to_vec(F, f));
@@ -503,7 +503,7 @@ GBasis::gbelem *RingGBasis::gbelem_make(gbvector *f)
   return g;
 }
 
-RingGBasis *RingGBasis::make(GBRing *R, vector<gbvector *> &elems)
+RingGBasis *RingGBasis::make(GBRing *R, vector<gbvector *,gc_alloc> &elems)
 {
   RingGBasis *result = new RingGBasis;
   result->R = R;

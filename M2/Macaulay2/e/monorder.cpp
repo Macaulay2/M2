@@ -42,22 +42,22 @@ mon_order::mon_order(mon_order_types t, const M2_arrayint d,const M2_arrayint wt
     INTERNAL_ERROR("mon_order received null pointer");
 
   nweights = wts->len / n;
-  weights = new int[wts->len];
+  weights = newarray(int,wts->len);
   for (unsigned int i=0; i<wts->len; i++)
     weights[i] = wts->array[i];
 
-  degs = new int[n];
-  order = new ptr_to_int[n];
-  inv_order = new ptr_to_int[n];
-  inv_degs = new int[n];
+  degs = newarray(int,n);
+  order = newarray(ptr_to_int,n);
+  inv_order = newarray(ptr_to_int,n);
+  inv_degs = newarray(int,n);
   for (int r=0; r<n; r++)
     {
       degs[r] = d->array[r];
       inv_degs[r] = d->array[r];
       assert(d->array[r] > 0); // MES: this should be checked higher up?
 
-      order[r] = new int[n];
-      inv_order[r] = new int[n];
+      order[r] = newarray(int,n);
+      inv_order[r] = newarray(int,n);
       for (int c=0; c<n; c++)
 	{
 	  order[r][c] = 0;
@@ -68,16 +68,16 @@ mon_order::mon_order(mon_order_types t, const M2_arrayint d,const M2_arrayint wt
 
 mon_order::~mon_order()
 {
-  delete [] degs;
-  delete [] inv_degs;
+  deletearray(degs);
+  deletearray(inv_degs);
   for (int i=0; i<n; i++)
     {
-      delete [] order[i];
-      delete [] inv_order[i];
+      deletearray(order[i]);
+      deletearray(inv_order[i]);
     }
-  delete [] order;
-  delete [] inv_order;
-  delete [] weights;
+  deletearray(order);
+  deletearray(inv_order);
+  deletearray(weights);
 }
 
 void mon_order::text_out(buffer &o) const
@@ -474,14 +474,14 @@ product_mon_order::product_mon_order(const M2_arrayint degs0, const M2_arrayint 
 				     const M2_arrayint weights0)
 : mon_order(MO1_PRODUCT, degs0, weights0),
   nblocks(blk->len),
-  blocks(new int[blk->len])
+  blocks(newarray(int,blk->len))
 {
   for (int i=0; i<nblocks; i++)
     blocks[i] = blk->array[i];
 }
 product_mon_order::~product_mon_order()
 {
-  delete [] blocks;
+  deletearray(blocks);
 }
 
 void product_mon_order::text_out(buffer &o) const

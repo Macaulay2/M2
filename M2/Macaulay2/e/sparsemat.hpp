@@ -13,7 +13,7 @@ struct sparse_vector
   ring_elem coefficient;
 };
 
-class VectorOperations
+class VectorOperations : public our_new_delete
 {
   const Ring *K;
   static stash *vecstash;

@@ -9,7 +9,7 @@
 #include "comp_gb.hpp"
 #include "ZZ.hpp"
 
-struct hm_elem
+struct hm_elem : public our_new_delete
 {
   hm_elem *next;
   mpz_t lead;

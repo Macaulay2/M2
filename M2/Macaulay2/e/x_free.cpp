@@ -66,14 +66,14 @@ const M2_arrayint IM2_FreeModule_get_degrees(const FreeModule *F)
   const Monoid *D = R->degree_monoid();
   M2_arrayint result = makearrayint(F->rank() * D->n_vars());
   int next = 0;
-  int *exp = new int[D->n_vars()];
+  int *exp = newarray(int,D->n_vars());
   for (int i=0; i<F->rank(); i++)
     {
       D->to_expvector(F->degree(i), exp);
       for (int j=0; j<D->n_vars(); j++)
 	result->array[next++] = exp[j];
     }
-  delete [] exp;
+  deletearray(exp);
   return result;
 }
 
@@ -182,8 +182,8 @@ FreeModule *makeSchreyerFreeModule(const Matrix &m)
   int rk = m.n_cols();
   if (rk == 0) return F;
   int *base = M->make_one();
-  int *tiebreaks = new int[rk];
-  int *ties = new int[rk];
+  int *tiebreaks = newarray(int,rk);
+  int *ties = newarray(int,rk);
   for (i=0; i<rk; i++)
     {
       vec v = m[i];
@@ -208,8 +208,8 @@ FreeModule *makeSchreyerFreeModule(const Matrix &m)
     }
 
   M->remove(base);
-  delete [] tiebreaks;
-  delete [] ties;
+  deletearray(tiebreaks);
+  deletearray(ties);
   return F;
 }
 

@@ -7,7 +7,7 @@
 #include "intarray.hpp"
 #include "monoid.hpp"
 
-class SchreyerOrder
+class SchreyerOrder : public our_new_delete
 {
   const Monoid *M;
 

@@ -4,6 +4,7 @@
 #define _ringelem_hh_
 
 #include <gmp.h>
+#include "newdelete.hpp"
 
 struct Nterm;
 
@@ -33,7 +34,7 @@ struct Nterm
 };
 
 typedef struct vecterm *vec;
-struct vecterm
+struct vecterm : public our_new_delete
 {
   vec       next;
   int       comp;

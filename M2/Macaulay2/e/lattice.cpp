@@ -204,8 +204,8 @@ FF_LUComputation::FF_LUComputation(SparseMutableMatrix *M0)
     need_div(0)
 {
   int ncols = M->n_cols();
-  col_perm = new int[ncols];
-  need_div = new bool[ncols];
+  col_perm = newarray(int,ncols);
+  need_div = newarray(bool,ncols);
   pivot_col = ncols;  // Will be decremented before use
   for (int i=0; i<ncols; i++)
     {
@@ -221,8 +221,8 @@ FF_LUComputation::~FF_LUComputation()
 {
   R->remove(pivot);
   R->remove(lastpivot);
-  delete [] col_perm;
-  delete [] need_div;
+  deletearray(col_perm);
+  deletearray(need_div);
 }
 
 bool FF_LUComputation::choose_pivot_column(int lo, int hi, int &result)

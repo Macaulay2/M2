@@ -21,7 +21,7 @@ class QuotientInfo
 {
 public:
   bool is_quotient() const;
-  vector <gbvector *> elements;
+  vector<gbvector *,gc_alloc> elements;
   const PolynomialRing *ambient_ring;
 #if 0
   MonomialIdeal * _Rideal;	// This is used if the coeff ring is not ZZ.

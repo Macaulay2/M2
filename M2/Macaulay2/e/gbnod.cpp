@@ -86,7 +86,7 @@ void gb2_comp::remove_pair(s_pair *& p)
   p->second = NULL;
   p->next = NULL;
   M->remove(p->lcm);
-  delete p;
+  deleteitem(p);
   p = NULL;
 }
 
@@ -186,8 +186,8 @@ void gb2_comp::find_pairs(gb_elem *p)
   intarray vplcm;
   int *find_pairs_m = M->make_one();
   int *f_m = M->make_one();
-  int *find_pairs_exp = new int[M->n_vars()];
-  int *find_pairs_lcm = new int[M->n_vars()];
+  int *find_pairs_exp = newarray(int,M->n_vars());
+  int *find_pairs_lcm = newarray(int,M->n_vars());
 
   GR->gbvector_get_lead_monomial(F, p->f, f_m);
   if (GR->is_skew_commutative())
@@ -255,7 +255,7 @@ void gb2_comp::find_pairs(gb_elem *p)
     {
       s_pair *q = (s_pair *) b->basis_ptr();
       remove_pair(q);
-      delete b;
+      deleteitem(b);
     }
 
   int is_ideal2 = (F->rank() == 1 && orig_syz == 0);
@@ -289,8 +289,8 @@ void gb2_comp::find_pairs(gb_elem *p)
   // Remove the local variables
   M->remove(find_pairs_m);
   M->remove(f_m);
-  delete [] find_pairs_exp;
-  delete [] find_pairs_lcm;
+  deletearray(find_pairs_exp);
+  deletearray(find_pairs_lcm);
 }
 
 void gb2_comp::compute_s_pair(s_pair *p)
@@ -325,8 +325,8 @@ void gb2_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = new int[M->n_vars()];
-  int *reduce_ndiv = new int[M->n_vars()];
+  int *div_totalexp = newarray(int,M->n_vars());
+  int *reduce_ndiv = newarray(int,M->n_vars());
   int count = 0;
   if (gbTrace == 10)
     {
@@ -383,8 +383,8 @@ if (monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
       emit_wrapped(o.str());
     }
   f = head.next;
-  delete [] div_totalexp;
-  delete [] reduce_ndiv;
+  deletearray(div_totalexp);
+  deletearray(reduce_ndiv);
 }
 
 void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
@@ -393,8 +393,8 @@ void gb2_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
   gbvector *result = &head;
   result->next = 0;
 
-  int *div_totalexp = new int[M->n_vars()];
-  int *reduce_ndiv = new int[M->n_vars()];
+  int *div_totalexp = newarray(int,M->n_vars());
+  int *reduce_ndiv = newarray(int,M->n_vars());
   int count = 0;
 
   gbvectorHeap fb(GR,F);
@@ -446,8 +446,8 @@ if (monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
   f = head.next;
 
   fsyz = fsyzb.value();
-  delete [] div_totalexp;
-  delete [] reduce_ndiv;
+  deletearray(div_totalexp);
+  deletearray(reduce_ndiv);
 }
 
 void gb2_comp::reduce(gbvector * &f, gbvector * &fsyz)
@@ -846,7 +846,7 @@ int gb2_comp::hilbertNumerator(RingElement *&result)
   if (retval != COMP_DONE) return retval;
   hf = hf_comp->value();
   result = hf;
-  delete hf_comp;
+  deleteitem(hf_comp);
   hf_comp = NULL;
   n_hf = n_gb;
   return COMP_DONE;

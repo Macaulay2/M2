@@ -9,7 +9,7 @@ AssociatedPrimes::AssociatedPrimes(const MonomialIdeal * const &I)
     mi(I->radical()),
     ass_primes(new MonomialIdeal(I->get_ring()))
 {
-  exps = new int *[nvars+2];
+  exps = newarray(int *,nvars+2);
   for (int i=0; i<=nvars+1; i++)
     exps[i] = 0;
 }
@@ -21,20 +21,20 @@ AssociatedPrimes::AssociatedPrimes(const MonomialIdeal * const &I, int cod)
     mi(I->radical()),
     ass_primes(new MonomialIdeal(I->get_ring()))
 {
-  exps = new int *[nvars+2];
+  exps = newarray(int *,nvars+2);
   for (int i=0; i<=nvars+1; i++)
     exps[i] = 0;
 }
 AssociatedPrimes::~AssociatedPrimes()
 {
   for (int i=0; i<=nvars+1; i++)
-    if (exps[i] != 0) delete [] exps[i];
-  delete [] exps;
+    if (exps[i] != 0) deletearray(exps[i]);
+  deletearray(exps);
 }
 
 int AssociatedPrimes::codimension()
 {
-  exps[0] = new int[nvars];
+  exps[0] = newarray(int,nvars);
   for (int i=0; i<nvars; i++) exps[0][i] = 0;
   ass_prime_generator(mi->first_node(), 0);
   state = do_primes;
@@ -51,7 +51,7 @@ MonomialIdeal * AssociatedPrimes::associated_primes()
       codimension();
       state = do_primes;
     }
-  if (exps[0] == 0) exps[0] = new int[nvars];
+  if (exps[0] == 0) exps[0] = newarray(int,nvars);
   for (int i=0; i<nvars; i++) exps[0][i] = 0;
   ass_prime_generator(mi->first_node(), 0);
   return ass_primes;
@@ -91,7 +91,7 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
 {
   int i=codim+1;
   if (exps[i] == 0)
-    exps[i] = new int[nvars];
+    exps[i] = newarray(int,nvars);
   int *exp = exps[i];
   for (int j=0; j<nvars; j++) exp[j] = exps[codim][j];
   for (;;)

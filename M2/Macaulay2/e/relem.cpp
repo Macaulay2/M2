@@ -231,7 +231,7 @@ intarray RingElement::degree() const
   // This should return an M2_arrayint?
   intarray result;
 
-  int *mon = new int[R->degree_monoid()->monomial_size()];
+  int *mon = newarray(int,R->degree_monoid()->monomial_size());
   int *d = result.alloc(R->degree_monoid()->n_vars());
 
   if (is_zero()) 
@@ -242,7 +242,7 @@ intarray RingElement::degree() const
       R->degree_monoid()->to_expvector(mon, d);
     }
 
-  delete [] mon;
+  deletearray(mon);
   return result;
 }
 #endif
@@ -271,11 +271,11 @@ M2_arrayint RingElement::multi_degree() const
       return 0;
     }
 
-  int *mon = new int[R->degree_monoid()->monomial_size()];
+  int *mon = newarray(int,R->degree_monoid()->monomial_size());
   R->degree(get_value(), mon);
   M2_arrayint result = R->degree_monoid()->to_arrayint(mon);
 
-  delete [] mon;
+  deletearray(mon);
   return result;
 }
 

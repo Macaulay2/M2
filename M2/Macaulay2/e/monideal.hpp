@@ -8,7 +8,7 @@
 #include "int_bag.hpp"
 #include "ring.hpp"
 
-class Nmi_node // monomial ideal internal node ///
+class Nmi_node : public our_new_delete // monomial ideal internal node ///
 {
   friend class MonomialIdeal;
   friend class AssociatedPrimes;
@@ -74,7 +74,7 @@ private:
 
 public:
   MonomialIdeal(const Ring *RR) : mutable_object(), R(RR), mi(0), count(0) {}
-  virtual ~MonomialIdeal() { delete mi; }
+  virtual ~MonomialIdeal() { deleteitem(mi); }
   int length_of() const { return count; }
 
   MonomialIdeal(const Ring *R, queue<Bag *> &elems);
@@ -152,7 +152,7 @@ public:
   MonomialIdeal * operator*(const MonomialIdeal &G) const;
 };
 
-struct monideal_pair
+struct monideal_pair : public our_new_delete
 {
   MonomialIdeal * mi;
   MonomialIdeal * mi_search;

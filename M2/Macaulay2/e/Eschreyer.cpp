@@ -19,7 +19,7 @@ GBKernelComputation::GBKernelComputation(const Matrix *m)
   one = K->from_int(1);
   PAIRS_mon = M->make_one();
   REDUCE_mon = M->make_one();
-  REDUCE_exp = new int[M->n_vars()];
+  REDUCE_exp = newarray(int,M->n_vars());
 
   // Set 'gb'.
   strip_gb(m);
@@ -29,7 +29,7 @@ GBKernelComputation::~GBKernelComputation()
 {
   M->remove(PAIRS_mon);
   M->remove(REDUCE_mon);
-  delete [] REDUCE_exp;
+  deletearray(REDUCE_exp);
   K->remove(one);
   // Remove gb
   // Remove syzygies
@@ -84,7 +84,7 @@ vec GBKernelComputation::make_syz_term(ring_elem c, const int *m, int comp) cons
 void GBKernelComputation::strip_gb(const Matrix *m)
 {
   int i;
-  int *components = new int[F->rank()];
+  int *components = newarray(int,F->rank());
   for (i=0; i<m->n_rows(); i++)
     components[i] = 0;
   for (i=0; i<m->n_cols(); i++)
@@ -113,7 +113,7 @@ void GBKernelComputation::strip_gb(const Matrix *m)
 #endif
   for (i=0; i<F->rank(); i++)
     mi[i] = new MonomialIdeal(R);
-  delete [] components;
+  deletearray(components);
 }
 
 void GBKernelComputation::new_pairs(int i)
@@ -136,7 +136,7 @@ void GBKernelComputation::new_pairs(int i)
       intarray vplcm;
       intarray find_pairs_vp;
 
-      int *skewvars = new int[M->n_vars()];
+      int *skewvars = newarray(int,M->n_vars());
       varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_vp);
       int nskew = M->exp_skew_vars(find_pairs_vp.raw(), skewvars);
       
@@ -151,7 +151,7 @@ void GBKernelComputation::new_pairs(int i)
 	  elems.insert(b);
 	}
       // Remove the local variables
-      delete [] skewvars;
+      deletearray(skewvars);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -194,7 +194,7 @@ void GBKernelComputation::new_pairs(int i)
   Bag *b;
   MonomialIdeal * mi = new MonomialIdeal(R, elems, rejects);
   while (rejects.remove(b))
-    delete b;
+    deleteitem(b);
 
   int *m = M->make_one();
   for (j = mi->first(); j.valid(); j++)

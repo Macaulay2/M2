@@ -77,8 +77,8 @@ public:
     }
   else
     {
-      skew_vars = new int[nvars];
-      skew_list = new int[nvars];
+      skew_vars = newarray(int,nvars);
+      skew_list = newarray(int,nvars);
       n_skew = skewvariables->len;
       for (int j=0; j<nvars; j++)
 	{
@@ -101,11 +101,11 @@ public:
 	}
     }
 
-  skew_mvars = new int[nvars];
-  skew_nvars = new int[nvars];
+  skew_mvars = newarray(int,nvars);
+  skew_nvars = newarray(int,nvars);
 
-  delete [] skew_mvars;
-  delete [] skew_nvars;
+  deletearray(skew_mvars);
+  deletearray(skew_nvars);
 
   // Set the skew variable information needed.
   M2_arrayint skewvars = 0;

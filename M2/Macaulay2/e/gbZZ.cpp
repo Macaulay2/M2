@@ -236,12 +236,12 @@ void GBZZ_comp::find_pairs(int me)
   int j;
   intarray vplcm;
   int *find_pairs_m = M->make_one();
-  int *find_pairs_exp = new int[M->n_vars()];
-  int *find_pairs_lcm = new int[M->n_vars()];
+  int *find_pairs_exp = newarray(int,M->n_vars());
+  int *find_pairs_lcm = newarray(int,M->n_vars());
 
   if (M->is_skew())
     {
-      int *skewvars = new int[M->n_vars()];
+      int *skewvars = newarray(int,M->n_vars());
       M->to_expvector(p->f->monom, find_pairs_exp);
       int nskew = M->exp_skew_vars(find_pairs_exp, skewvars);
       for (int i=0; i<M->n_vars(); i++) 
@@ -261,7 +261,7 @@ void GBZZ_comp::find_pairs(int me)
 				       M->make_new(vsyz->monom), 
 				       vsyz));
 	}
-      delete [] skewvars;
+      deletearray(skewvars);
     }
 
   // Add in syzygies arising from a base ring
@@ -339,11 +339,11 @@ void GBZZ_comp::find_pairs(int me)
       else
 	spairs->insert_s_pair(gsyz, rsyz);
     }
-  delete ti;
+  deleteitem(ti);
   // Remove the local variables
   M->remove(find_pairs_m);
-  delete [] find_pairs_exp;
-  delete [] find_pairs_lcm;
+  deletearray(find_pairs_exp);
+  deletearray(find_pairs_lcm);
 }
 
 //////////////////////////////////////////////
@@ -1173,7 +1173,7 @@ void GBZZ_comp::remove_pair(S_pair *& p)
 {
   Gsyz->remove(p->fsyz);
   p->next = NULL;
-  delete p;
+  deleteitem(p);
   p = NULL;
 }
 
@@ -1182,7 +1182,7 @@ void GBZZ_comp::remove_gen(gen_pair *& p)
   F->remove(p->f);
   Fsyz->remove(p->fsyz);
   p->next = NULL;
-  delete p;
+  deleteitem(p);
   p = NULL;
 }
 

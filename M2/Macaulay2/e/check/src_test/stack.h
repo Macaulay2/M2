@@ -43,7 +43,7 @@ private:
 template<typename T>
 inline Stack<T>::~Stack()
 {
-    delete [] data;
+    deletearray(data);
     max = ptr = 0;
 }
 
@@ -58,7 +58,7 @@ Stack<T>::Stack(size_t siz) throw(StackError, bad_alloc)
 {
     if (siz == 0)
         throw StackError("bad size in Stack(size_t)");
-    data = new T[siz];
+    data = newarray(T,siz);
     max = siz;
     ptr = 0;
 }

@@ -66,7 +66,7 @@ void s_pair_set::remove_pair(S_pair *&s)
 {
   s->next = NULL;
   GR->gbvector_remove(s->gsyz);
-  delete s;
+  deleteitem(s);
   s = NULL;
 }
 
@@ -85,7 +85,7 @@ void s_pair_set::remove_gen(gen_pair *&s)
   s->next = NULL;
   GR->gbvector_remove(s->f);
   GR->gbvector_remove(s->fsyz);
-  delete s;
+  deleteitem(s);
   s = NULL;
 }
 
@@ -96,7 +96,7 @@ void s_pair_set::flush_degree(s_pair_bunch *&p)
   remove_pair_list(p->unsorted_pairs);
   remove_gen_list(p->unsorted_gens);
   p->next = NULL;
-  delete p;
+  deleteitem(p);
   p = NULL;
 }
 
@@ -314,7 +314,7 @@ int s_pair_set::next_degree(int &nextdeg)
       // Remove this set
       s_pair_bunch *s = heap;
       heap = heap->next;
-      delete s;
+      deleteitem(s);
     }
   if (heap == NULL) return 0;
   this_deg = heap;
@@ -351,7 +351,7 @@ bool s_pair_set::next_generator(gbvector *&f, gbvector *&fsyz)
 
   f = result->f;
   fsyz = result->fsyz;
-  delete result;
+  deleteitem(result);
   return true;
 }
 
@@ -370,7 +370,7 @@ bool s_pair_set::next_s_pair(gbvector *&gsyz)
   ncomputed++;
 
   gsyz = result->gsyz;
-  delete result;
+  deleteitem(result);
   return true;
 }
 

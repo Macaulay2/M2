@@ -45,14 +45,14 @@ void TermIdeal::from_list(queue<tagged_term *> &elems)
   tagged_term *p;
   array<tagged_term *> divs;
 
-  int *exp = new int[M->n_vars()];
+  int *exp = newarray(int,M->n_vars());
   // Place these elements into an array
   int n = elems.length();
   if (n == 0) return;
   int i = 0;
   int this_n = 0;
   tagged_term **a;
-  a = new tagged_term_star[n];
+  a = newarray(tagged_term_star,n);
   while (elems.remove(p))
     a[i++] = p;
   sort(a,0,n-1);		// Sort in ascending degree, then monomial order,
@@ -90,8 +90,8 @@ void TermIdeal::from_list(queue<tagged_term *> &elems)
       this_n = last_elem;
       continue;
     }
-  delete [] a;
-  delete [] exp;
+  deletearray(a);
+  deletearray(exp);
 }
 
 void TermIdeal::select_non_divisors(tagged_term **a, 
@@ -146,7 +146,7 @@ void TermIdeal::delete_tagged_term(tagged_term *&t) const
   K->remove(t->_coeff);
   M->remove(t->_monom);
   GR->remove(t->_gsyz);
-  delete t;
+  deleteitem(t);
   t = NULL;
 }
 
@@ -157,8 +157,8 @@ void TermIdeal::delete_mon_term(mon_term *&p) const
   if (p->prev != NULL) p->prev->next = p->next;
 
   delete_tagged_term(p->t);
-  delete [] p->_lead_exp;
-  delete p;
+  deletearray(p->_lead_exp);
+  deleteitem(p);
   p = NULL;
 }
 
@@ -168,7 +168,7 @@ mon_term *TermIdeal::new_mon_term(tagged_term *t) const
   mon_term *result = new mon_term;
   result->t = t;
   result->next = result->prev = NULL;
-  result->_lead_exp = new int[M->n_vars()];
+  result->_lead_exp = newarray(int,M->n_vars());
   M->to_expvector(t->monom(), result->_lead_exp);
 
   result->coeff_is_one = (K->is_equal(result->coeff(), one));
@@ -422,7 +422,7 @@ void TermIdeal::insert_w_deletions(tagged_term *t, queue<tagged_term *> &deletio
   // Since the elements are stored in increasing degree order, we may 
   // insert 't', and then look for deletions from this point on
   mon_term *monterm_t, *s;
-  int *exp = new int[nvars];
+  int *exp = newarray(int,nvars);
   M->to_expvector(t->monom(), exp);
   tagged_term *old_t = insert_minimal(t, monterm_t);
   if (old_t != NULL) deletions.insert(old_t);
@@ -436,7 +436,7 @@ void TermIdeal::insert_w_deletions(tagged_term *t, queue<tagged_term *> &deletio
 	  delete_mon_term(s);
 	}
     }
-  delete [] exp;
+  deletearray(exp);
 }
 
 // MES Aug 2002: this needs to be done too
@@ -615,7 +615,7 @@ int TermIdeal::search(const int *m, ring_elem &result_gcd,
   // undefined, and result_gsyz is a null pointer.  Caveat: there may be more divisors
   // than the ones actually found, if the gcd becomes 1 earlier.
 {
-  int *exp = new int[nvars];
+  int *exp = newarray(int,nvars);
   array<tagged_term *> divs;
   M->to_expvector(m,exp);
   find_all_divisors(exp, divs);

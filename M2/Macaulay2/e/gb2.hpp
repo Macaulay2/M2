@@ -20,7 +20,7 @@
 // Computation node types //
 ////////////////////////////
 
-class gb_node
+class gb_node : public our_new_delete
 {
 public:
   virtual ~gb_node() {}

@@ -6,8 +6,9 @@
 #include "monordering.h"
 #include "monorder.hpp"
 #include "array.hpp"
+#include "newdelete.hpp"
 
-class monoid_info
+class monoid_info : our_new_delete
 {
   friend class Monoid;
 

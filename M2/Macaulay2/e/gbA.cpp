@@ -8,6 +8,7 @@
 
 #include "matrix.hpp"
 #include "polyring.hpp"
+#include "newdelete.hpp"
 
 /*************************
  * Initialization ********
@@ -187,7 +188,7 @@ gbA::spair *gbA::spair_node()
 void gbA::spair_delete(spair *&p)
 {
   // MES: delete the exponent first?
-  delete p;
+  deleteitem(p);
 }
 
 gbA::spair *gbA::spair_make(int i, int j)
@@ -471,7 +472,7 @@ void gbA::minimalize_pairs(spairs &new_set)
 	}
     }
 
-  delete montab;
+  deleteitem(montab);
   for (spairs::iterator i = new_set.begin(); i != new_set.end(); i++)
     spair_delete(*i);
 }
@@ -950,10 +951,10 @@ void gbA::start_computation()
   set_status(is_done);
 }
 
-void gbA::poly_auto_reduce(vector<POLY> &mat)
+void gbA::poly_auto_reduce(vector<POLY,gc_alloc> &mat)
 {
-  for (vector<POLY>::iterator i = mat.begin(); i != mat.end(); i++)
-    for (vector<POLY>::iterator j = mat.begin(); j != i; j++)
+  for (vector<POLY,gc_alloc>::iterator i = mat.begin(); i != mat.end(); i++)
+    for (vector<POLY,gc_alloc>::iterator j = mat.begin(); j != i; j++)
       {
 	R->gbvector_auto_reduce(_F,_Fsyz,
 				(*i).f, (*i).fsyz,
@@ -964,10 +965,10 @@ void gbA::poly_auto_reduce(vector<POLY> &mat)
 struct gbelem_sorter : public binary_function<int,int,bool> {
   GBRing *R;
   const FreeModule *F;
-  const vector<GBasis::gbelem *> &gb;
+  const vector<GBasis::gbelem *,gc_alloc> &gb;
   gbelem_sorter(GBRing *R0,
 		const FreeModule *F0,
-		const vector<GBasis::gbelem *> &g)
+		const vector<GBasis::gbelem *,gc_alloc> &g)
     : R(R0), F(F0), gb(g) {}
   bool operator()(int xx, int yy) {
     gbvector *x = gb[xx]->g.f;
@@ -1018,7 +1019,7 @@ const MatrixOrNull *gbA::get_syzygies()
 {
   // The (non-minimal) syzygy matrix
   Matrix *result = new Matrix(_Fsyz);
-  for (vector<gbvector *>::iterator i = _syz.begin(); i != _syz.end(); i++)
+  for (vector<gbvector *,gc_alloc>::iterator i = _syz.begin(); i != _syz.end(); i++)
     result->append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
   return result;
 }

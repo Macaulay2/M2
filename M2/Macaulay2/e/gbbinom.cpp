@@ -24,14 +24,14 @@ binomial_ring::binomial_ring(const Ring *RR,
   int i;
 
   nslots = nvars + 1;
-  degrees = new int[nvars];
+  degrees = newarray(int,nvars);
   for (i=0; i<nvars; i++) 
     degrees[i] = - R->Nmonoms()->primary_degree_of_var(i);
 
   if (have_weights)
     {
       nslots++;
-      weights = new int[nvars];
+      weights = newarray(int,nvars);
       for (i=0; i<nvars; i++) weights[i] = -wts[i];
     }
 
@@ -45,9 +45,9 @@ binomial_ring::binomial_ring(const Ring * /* RR */)
 
 binomial_ring::~binomial_ring()
 {
-  delete [] degrees;
-  delete [] weights;
-  delete monstash;
+  deletearray(degrees);
+  deletearray(weights);
+  deleteitem(monstash);
 }
 
 void binomial_ring::remove_monomial(monomial &m) const
@@ -474,10 +474,10 @@ void binomial_s_pair_set::remove_lcm_list(s_pair_lcm_list *p)
     {
       s_pair_elem *thispair = p->pairs;
       p->pairs = thispair->next;
-      delete thispair;
+      deleteitem(thispair);
     }
   R->remove_monomial(p->lcm);
-  delete p;
+  deleteitem(p);
 }
 void binomial_s_pair_set::remove_pair_list(s_pair_degree_list *p)
 {
@@ -487,7 +487,7 @@ void binomial_s_pair_set::remove_pair_list(s_pair_degree_list *p)
       p->pairs = thislcm->next;
       remove_lcm_list(thislcm);
     }
-  delete p;
+  deleteitem(p);
 }
 binomial_s_pair_set::~binomial_s_pair_set()
 {
@@ -602,17 +602,17 @@ bool binomial_s_pair_set::next(const int *d, binomial_s_pair &result)
       R->remove_monomial(_prev_lcm);
       _prev_lcm = thislcm->lcm;
       thislcm->lcm = NULL;
-      delete thislcm;
+      deleteitem(thislcm);
       
       if (thisdeg->pairs == NULL)
 	{
 	  // Now we must remove this larger degree list
 	  _pairs->next = thisdeg->next;
-	  delete thisdeg;
+	  deleteitem(thisdeg);
 	}
     }
 
-  delete s;
+  deleteitem(s);
   return true;
 }
 
@@ -741,7 +741,7 @@ binomialGB::monomial_list *binomialGB::find_divisor(binomialGB::monomial_list *I
 binomialGB::monomial_list *binomialGB::ideal_quotient(monomial m) const
 {
   monomial_list *r;
-  monomial_list **deglist = new monomial_list *[_max_degree+1];
+  monomial_list **deglist = newarray(monomial_list *,_max_degree+1);
   for (int i=0; i<=_max_degree; i++)
     deglist[i] = NULL;
 
@@ -768,14 +768,14 @@ binomialGB::monomial_list *binomialGB::ideal_quotient(monomial m) const
 	    if (find_divisor(result, p->m))
 	      {
 		R->remove_monomial(p->m);
-		delete p->tag;	// There is only one element at this point
-		delete p;
+		deleteitem(p->tag);	// There is only one element at this point
+		deleteitem(p);
 	      }
 	    else if ((r = find_divisor(currentresult, p->m)))
 	      {
 		gbmin_elem *p1 = new gbmin_elem(p->tag->elem, p->mask);
 		R->remove_monomial(p->m);
-		delete p;
+		deleteitem(p);
 		p1->next = r->tag;
 		r->tag = p1;
 	      }
@@ -795,7 +795,7 @@ binomialGB::monomial_list *binomialGB::ideal_quotient(monomial m) const
 	  }
 	currentresult = NULL;
       }
-  delete [] deglist;
+  deletearray(deglist);
   return result;
 }
 
@@ -846,7 +846,7 @@ void binomialGB::remove_monomial_list(monomial_list *mm) const
       R->remove_monomial(mm->m);
       monomial_list *tmp = mm;
       mm = mm->next;
-      delete tmp;
+      deleteitem(tmp);
     }
 }
 
@@ -948,7 +948,7 @@ bool binomialGB::reduce(binomial &f) const
 #endif
 int binomialGB::n_masks() const
 {
-  int *masks = new int[100000];
+  int *masks = newarray(int,100000);
   buffer o;
   unsigned int nmasks = 1;
   masks[0] = first->mask;
@@ -966,7 +966,7 @@ int binomialGB::n_masks() const
 	masks[nmasks++] = p->mask;
     }
   emit(o.str());
-  delete masks;
+  deleteitem(masks);
   return nmasks;
 }
 void binomialGB::debug_display() const
@@ -1004,20 +1004,20 @@ binomialGB_comp::binomialGB_comp(const Ring *RR, int *wts, bool revlex,
 binomialGB_comp::~binomialGB_comp()
 {
   int i;
-  delete Gmin;
-  delete Pairs;
+  deleteitem(Gmin);
+  deleteitem(Pairs);
   // remove each element of Gens
   for (i=0; i<Gens.length(); i++)
-    delete Gens[i];
+    deleteitem(Gens[i]);
   // remove each element of G
   for (i=0; i<G.length(); i++)
-    delete G[i];
+    deleteitem(G[i]);
   // The following is just to ease garbage collection
   for (i=0; i<mingens.length(); i++)
     mingens[i] = NULL;
   for (i=0; i<mingens_subring.length(); i++)
     mingens_subring[i] = NULL;
-  delete R;
+  deleteitem(R);
 }
 
 //////////////////////////
@@ -1038,7 +1038,7 @@ void binomialGB_comp::enlarge(const Ring *newR, int *wts)
   for (i=0; i<G.length(); i++)
     R->translate_binomial(old_ring, G[i]->f);
 
-  delete old_ring;
+  deleteitem(old_ring);
 }
 
 void binomialGB_comp::add_generators(const Matrix *m)

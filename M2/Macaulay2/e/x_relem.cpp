@@ -256,7 +256,7 @@ const M2_IntegerOrNull IM2_RingElement_to_Integer(const RingElement *a)
   else if (R->cast_to_Z_mod() != 0)
     {
       // Translate the value to an integer
-      M2_Integer result = new __mpz_struct;
+      M2_Integer result = newitem(__mpz_struct);
       mpz_init_set_si(result, R->coerce_to_int(a->get_value()));
       return result;
     }
@@ -391,8 +391,8 @@ M2_Integer_pair_OrNull *IM2_RingElement_degree(const RingElement *a,
   a->degree_weights(wts,lo,hi);
   if (error()) return 0;
   M2_Integer_pair *p = new M2_Integer_pair;
-  p->a = new __mpz_struct;
-  p->b = new __mpz_struct;
+  p->a = newitem(__mpz_struct);
+  p->b = newitem(__mpz_struct);
   mpz_init_set_si(p->a, (long)lo);
   mpz_init_set_si(p->b, (long)hi);
   return p;

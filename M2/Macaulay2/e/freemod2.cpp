@@ -44,7 +44,7 @@ FreeModule::FreeModule(const Ring *RR, const FreeModule *F)
 
   int rk = F->rank();
 
-  int *exp = new int[R->n_vars()];
+  int *exp = newarray(int,R->n_vars());
   for (int i=0; i<rk; i++) append(F->degree(i));
   if (F->schreyer) 
     schreyer = F->schreyer->copy();
@@ -92,7 +92,7 @@ Matrix * FreeModule::get_induced_order() const
 FreeModule::~FreeModule()
 {
   if (schreyer)
-    delete schreyer;
+    deleteitem(schreyer);
 }
 
 FreeModule *FreeModule::new_free() const
@@ -178,7 +178,7 @@ FreeModule *FreeModule::sub_space(const M2_arrayint a) const
     else
       {
 	ERROR("subfreemodule: index out of bounds");
-	delete result;
+	deleteitem(result);
 	return NULL;
       }
   if (schreyer != NULL)
@@ -269,7 +269,7 @@ FreeModule *FreeModule::exterior(int p) const
     result = new_free();
   if (p > rk || p < 0) return result;
 
-  int *a = new int[p];
+  int *a = newarray(int,p);
   for (int i=0; i<p; i++)
     a[i] = i;
 
@@ -286,7 +286,7 @@ FreeModule *FreeModule::exterior(int p) const
   while (comb::increment(p, rk, a));
 
   degree_monoid()->remove(deg);
-  delete [] a;
+  deletearray(a);
 
   if (schreyer != NULL)
     result->schreyer = schreyer->exterior(p);

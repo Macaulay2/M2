@@ -48,12 +48,12 @@ void PolynomialRing::initialize_poly_ring(const Ring *K, const Monoid *M)
   _coefficients_are_ZZ = (K_->is_ZZ());
   _isgraded = M_->degree_monoid()->n_vars() > 0;
   _is_skew = 0;
-  _EXP1 = new int[_nvars];
-  _EXP2 = new int[_nvars];
-  _EXP3 = new int[_nvars];
+  _EXP1 = newarray(int,_nvars);
+  _EXP2 = newarray(int,_nvars);
+  _EXP3 = newarray(int,_nvars);
 
   trans_MONOM1 = M->make_one(); // Used in gbvector <--> vec translation
-  trans_EXP1 = new int[_nvars];
+  trans_EXP1 = newarray(int,_nvars);
 
   flattened_ring = make_flattened_ring();
 }
@@ -1404,7 +1404,7 @@ ring_elem PolynomialRing::remainderAndQuotient(const ring_elem f, const ring_ele
 	  quot = lifted->free_of()->get_coefficient(lifted->get_value(),0); // Quotient
 
 	  // Remove the GB.
-	  delete g;
+	  deleteitem(g);
 	  return result;
 #endif
 	}
@@ -1501,7 +1501,7 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   elem_text_out(o,y);
   emit_line(o.str());
 #endif
-      delete g;
+      deleteitem(g);
 #endif      
     }
 }
@@ -1703,7 +1703,7 @@ void PolynomialRing::normal_form(Nterm *&f) const
   Nterm *result = &head;
   Nterm *t = f;
   int *normal_m = M_->make_one();
-  int *normal_exp = new int[_nvars];
+  int *normal_exp = newarray(int,_nvars);
   while (t != NULL)
     {
       M_->to_expvector(t->monom, normal_exp);
@@ -1723,7 +1723,7 @@ void PolynomialRing::normal_form(Nterm *&f) const
 	  result = result->next;
 	}
     }
-  delete [] normal_exp;
+  deletearray(normal_exp);
   result->next = NULL;
   f = head.next;
 #endif
@@ -2118,7 +2118,7 @@ void PolynomialRing::degree_of_var(int n, const ring_elem a, int &lo, int &hi) c
       ERROR("attempting to find degree of a zero element");
       return;
     }
-  int *exp = new int[n_vars()];
+  int *exp = newarray(int,n_vars());
   M_->to_expvector(t->monom, exp);
   lo = hi = exp[n];
   for (t = t->next; t!=0; t=t->next)
@@ -2129,7 +2129,7 @@ void PolynomialRing::degree_of_var(int n, const ring_elem a, int &lo, int &hi) c
       else if (exp[n] > hi)
 	hi = exp[n];
     }
-  delete [] exp;
+  deletearray(exp);
 }
 
 ring_elem PolynomialRing::divide_by_var(int n, int d, const ring_elem a) const
@@ -2140,7 +2140,7 @@ ring_elem PolynomialRing::divide_by_var(int n, int d, const ring_elem a) const
   if (d == 0) return a;
   Nterm head;
   Nterm *result = &head;
-  int *exp = new int[n_vars()];
+  int *exp = newarray(int,n_vars());
   for (Nterm *t = a; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp);
@@ -2153,7 +2153,7 @@ ring_elem PolynomialRing::divide_by_var(int n, int d, const ring_elem a) const
       result->coeff = t->coeff;
       M_->from_expvector(exp, result->monom);
     }
-  delete [] exp;
+  deletearray(exp);
   result->next = 0;
   return head.next;
 }
@@ -2161,7 +2161,7 @@ ring_elem PolynomialRing::divide_by_var(int n, int d, const ring_elem a) const
 ring_elem PolynomialRing::divide_by_expvector(const int *exp, const ring_elem a) const
 {
   Nterm * result = 0;
-  int *exp0 = new int[n_vars()];
+  int *exp0 = newarray(int,n_vars());
   for (Nterm *t = a; t != 0; t = t->next)
     {
       M_->to_expvector(t->monom, exp0);
@@ -2172,7 +2172,7 @@ ring_elem PolynomialRing::divide_by_expvector(const int *exp, const ring_elem a)
       u->next = result;
       result = u;
     }
-  delete [] exp0;
+  deletearray(exp0);
   sort(result);
   return result;
 }
