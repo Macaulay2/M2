@@ -352,6 +352,17 @@ MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense)
   return 0;
 }
 
+M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M, 
+				     M2_arrayint rows,
+				     M2_arrayint cols,
+				     RingElement_array *values)
+{
+#warning "remember to chage these values!!"
+  ERROR("not re-implemented yet");
+  return 0;
+}
+
+
 MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const MutableMatrix *N)
 /* If the sizes do not match, then NULL is returned.  If they do match,
    the addition is performed.  If the targets are not equal, the target 
