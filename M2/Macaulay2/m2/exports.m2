@@ -104,7 +104,7 @@ export (
 	symbol addSynonym,
 	symbol Adjacent,
 	symbol adjoint,
-	symbol adjoint1,
+	symbol adjoint1,				    -- adjoint' ?
 	symbol Adjust,
 	symbol AffineVariety,
 	symbol AfterEval,
@@ -134,7 +134,7 @@ export (
 	symbol Ascending,
 	symbol ascii,
 	symbol asin,
-	symbol Assasinator,
+	symbol Assasinator,				    -- spelling?
 	symbol assert,
 	symbol assign,
 	symbol Associative,
@@ -146,7 +146,6 @@ export (
 	symbol autoReduce,
 	symbol Bag,
 	symbol Bareiss,
-	symbol BASE,
 	symbol baseFilename,
 	symbol baseName,
 	symbol baseRings,
@@ -306,14 +305,14 @@ export (
 	symbol echoOff,
 	symbol echoOn,
 	symbol edit,
-	symbol EHV,
-	symbol EHVprimaryDecomposition,
+	symbol EHV,					    -- cryptic
+	symbol EHVprimaryDecomposition,			    -- cryptic
 	symbol elements,
 	symbol Eliminate,
 	symbol Elimination,
 	symbol EliminationOrder,
 	symbol else,
-	symbol EM,
+	symbol EM,					    -- cryptic
 	symbol EmptyMarkUpType,
 	symbol Encapsulate,
 	symbol End,
@@ -703,8 +702,7 @@ export (
 	symbol lookup,
 	symbol lookupCount,
 	symbol LowerBound,
-	symbol ls,
-	symbol M2CC,
+	-- symbol M2CC,					    -- ?
 	symbol makeDirectory,
 	symbol makeDocumentTag,
 	symbol MakeInfo,

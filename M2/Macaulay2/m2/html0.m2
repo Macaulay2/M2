@@ -64,7 +64,6 @@ TABLE      = new MarkUpType of MarkUpListParagraph
 ExampleTABLE = new MarkUpType of MarkUpListParagraph
 PRE        = new MarkUpType of MarkUpListParagraph
 TITLE      = new MarkUpType of MarkUpListParagraph
-BASE	   = new MarkUpType of MarkUpList
 HEAD       = new MarkUpType of MarkUpListParagraph
 BODY       = new MarkUpType of MarkUpListParagraph
 IMG	   = new MarkUpType of MarkUpList

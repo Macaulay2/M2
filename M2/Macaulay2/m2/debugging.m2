@@ -102,7 +102,7 @@ select2 := (type,syms) -> apply(
 	  ),
      (h,s) -> s)
 
-ls = f -> flatten \\ sortByHash \ values \ localDictionaries f
+ls := f -> flatten \\ sortByHash \ values \ localDictionaries f
 localSymbols = method()
 localSymbols Pseudocode :=
 localSymbols Symbol :=
@@ -186,9 +186,6 @@ clearAll = Command (() -> (
 	  scan(values UserDictionary, i -> (i <- i; erase i));
 	  )
      )
-
-erase symbol silentRobustNet				    -- symbol was created in setup.m2
-erase symbol unmarkAllLoadedFiles			    -- symbol was created in setup.m2
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

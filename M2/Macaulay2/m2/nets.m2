@@ -129,7 +129,7 @@ net Nothing := null -> net000
 Net | Net := Net => horizontalJoin
 Net || Net := Net => stack
 String ^ ZZ := Net => (s,i) -> raise(horizontalJoin s,i)
-Net ^ ZZ := Net => raise; erase symbol raise
+Net ^ ZZ := Net => raise
 String ^ Sequence := Net => (s,p) -> (
      (height,depth) -> (
 	  tot := height + depth;

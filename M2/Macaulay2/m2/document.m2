@@ -798,9 +798,6 @@ binary := set binaryOperators
 prefix := set prefixOperators
 postfix := set postfixOperators
 operator := set join(binaryOperators, prefixOperators, postfixOperators)
-erase symbol binaryOperators
-erase symbol prefixOperators
-erase symbol postfixOperators
 
 op := s -> if operator#?s then (
      ss := toString s;
@@ -869,11 +866,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
      a := select(e,x -> instance(value x,Function));	    -- functions
      b := select(e,x -> instance(value x,Type));	    -- types
      m := unique flatten apply(b, T -> select(keys value T, 
-	       i -> class i === Sequence and (
-		    instance(i#0, Symbol)
-		    or
-		    class i#0 === Function and ReverseDictionary#?(i#0) -- some method functions are local to the package, thus not visible
-		    ))); -- methods
+	       i -> class i === Sequence and ( instance(i#0, Symbol) or class i#0 === Function ) and isDocumentableMethod i)); -- methods
      c := select(e,x -> instance(value x,Symbol));	    -- symbols
      d := toList(set e - set a - set b - set c);	    -- other things
      fn := pkg#"title" | ".m2";

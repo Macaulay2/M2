@@ -47,7 +47,6 @@ tex  HREF := x -> concatenate("\special{html:<A href=\"", texLiteral rel first x
 html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
 html TO   := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral DocumentTag.FormattedKey x#0, "</A>", if x#?1 then x#1)
 html TO2  := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral                          x#1, "</A>")
-html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
 
 next := tag -> if NEXT#?tag then LABEL { "Next node",     HREF { htmlFilename NEXT#tag, nextButton } } else nullButton
 prev := tag -> if PREV#?tag then LABEL { "Previous node", HREF { htmlFilename PREV#tag, prevButton } } else nullButton
