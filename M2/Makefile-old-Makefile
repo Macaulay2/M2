@@ -40,7 +40,7 @@ lib/libgc.a: 	  gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
 include/gc.h:	  gc/gc.h include/.exists;	cp $< $@
 include/gc_cpp.h: gc/gc_cpp.h include/.exists;	cp $< $@
 gc/gc.a: 	  always
-	$(MAKE) -C gc CXX=$(CXX) CC=$(CC) AS=$(AS) CFLAGS='$(GC_CFLAGS)' $(GC_TARGETS)
+	$(MAKE) -C gc CXX='$(CXX)' CC='$(CC)' AS='$(AS)' CFLAGS='$(GC_CFLAGS)' $(GC_TARGETS)
 clean::; $(MAKE) -C gc clean
 clean::; rm -f gc/base_lib
 ###################### GMP
