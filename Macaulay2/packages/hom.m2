@@ -31,7 +31,7 @@ Hom(Module,Module) := Module => (M,N) -> (
      n := presentation N;
      h1 := modulo(mdual ** target n, target mdual ** n);
      MN := conditionalTrim subquotient(h1,source mdual ** n);
-     MN.Hom = {M,N,source mdual,target n};
+     MN.cache.Hom = {M,N,source mdual,target n};
      MN);
 
 conditionalTrim = method();
@@ -44,25 +44,25 @@ conditionalTrim(Module) := Module => (M) -> (
 prePrune = method();
 
 prePrune(Module) := Module => M -> ( -- like "prune", but less destructive
-     if M.?pruningMap then M
-     else if M.?prePruningMap then M
-     else if M.?prePrune then M.prePrune
-     else M.prePrune = (
+     if M.cache.?pruningMap then M
+     else if M.cache.?prePruningMap then M
+     else if M.cache.?prePrune then M.cache.prePrune
+     else M.cache.prePrune = (
 	  if isFreeModule M then (
-	       M.prePruningMap = id_M;
+	       M.cache.prePruningMap = id_M;
 	       M)
 	  else (
 	       N = cokernel gens gb presentation M;
-	       N.prePruningMap = map(M,N,id_(cover M));
+	       N.cache.prePruningMap = map(M,N,id_(cover M));
 	       N)
 	  )
      );
 
 prePrune(Matrix) := Matrix => (m) -> (
      M := source m;
-     if not M.?prePruningMap then m = m * (prePrune M).prePruningMap;
+     if not M.cache.?prePruningMap then m = m * (prePrune M).cache.prePruningMap;
      N := target m;
-     if not N.?prePruningMap then m = (prePrune N).prePruningMap^-1 * m;
+     if not N.cache.?prePruningMap then m = (prePrune N).cache.prePruningMap^-1 * m;
      m)
 
 -- The following commented-out functions are the versions before I
@@ -116,9 +116,9 @@ homomorphism Matrix := Matrix => (f) -> (
      -- may have fixed a bug here.
      if not isFreeModule(source f) or
      numgens source f =!= 1 or
-     not (target f).?Hom
+     not (target f).cache.?Hom
      then error "homomorphism may only be determined for maps R --> Hom(M,N)";
-     MN := (target f).Hom;
+     MN := (target f).cache.Hom;
      M := MN#0;
      Mp := prePrune M;  -- added line
      N := MN#1;
@@ -131,7 +131,7 @@ homomorphism Matrix := Matrix => (f) -> (
      -- needed to make sure the resulting map would be well-
      -- defined, and I wasn't sure the existing code would do that;
      a := map(Np,Mp,adjoint1(super f, M0, N0),Degree=>deg);
-     Np.prePruningMap * a * Mp.prePruningMap^-1);
+     Np.cache.prePruningMap * a * Mp.cache.prePruningMap^-1);
 
 homElement = method();
 -- The reverse of "homomorphism".  It takes as input a homomorphism
@@ -163,12 +163,12 @@ tensorHomAdjoint(Matrix,Module,Module) := Matrix => (f,L,M) -> (
 	  Lp := prePrune L;
 	  Mp := prePrune M;
 	  Np := prePrune N; n := coverMap Np;
-	  fpp := Np.prePruningMap^-1 * f *
-	         (Lp.prePruningMap ** Mp.prePruningMap);
+	  fpp := Np.cache.prePruningMap^-1 * f *
+	         (Lp.cache.prePruningMap ** Mp.cache.prePruningMap);
 	  fppl := (fpp * t) // n;
 	  a := adjoint(fppl,L0,M0);
 	  inducedMap(Hom(M,N),Lp,a, 
-	       Verify=>true) * Lp.prePruningMap^-1));
+	       Verify=>true) * Lp.cache.prePruningMap^-1));
 
 tensorHomAdjoint(Module,Module,Module) := Matrix => (L,M,N) -> (
     taInverse := tensorAssociativity(dual cover L, dual cover M, 
@@ -183,17 +183,17 @@ homTensorAdjoint(Matrix,Module,Module) := Matrix => (f,L,M) -> (
      and isFreeModule target f then adjoint1(f,L,dual M)
      else (
 	  H := target f;
-	  if source f != L or not H#?Hom or H.Hom#0 != M then
+	  if source f != L or not H#?Hom or H.cache.Hom#0 != M then
 	  error "expected input (f,L,M), where f is a map L -> Hom(M,N)";
-	  N := H.Hom#1;
+	  N := H.cache.Hom#1;
 	  Lp := prePrune L; l := coverMap Lp; L0 := source l;
 	  Mp := prePrune M; M0 := cover Mp;
 	  Np := prePrune N;
 	  sf := super f;
-	  fl := (sf * Lp.prePruningMap * l) // (coverMap target sf);
+	  fl := (sf * Lp.cache.prePruningMap * l) // (coverMap target sf);
 	  a := adjoint1(fl,L0,dual cover Mp);
-	  Np.prePruningMap * inducedMap(Np, Lp ** Mp, a, Verify =>
-	       true) * (Lp.prePruningMap ** Mp.prePruningMap)^-1));
+	  Np.cache.prePruningMap * inducedMap(Np, Lp ** Mp, a, Verify =>
+	       true) * (Lp.cache.prePruningMap ** Mp.cache.prePruningMap)^-1));
 
 homTensorAdjoint(Module,Module,Module) := Matrix => (L,M,N) -> (
      ta := tensorAssociativity(dual cover L, dual cover M, cover N);
@@ -211,11 +211,11 @@ homEvaluation(Module,Module,Module) := Matrix => (L,M,N) -> (
      ta := tensorAssociativity(L0,dual M0, N0);
      H1 := Hom(L,M); Hp := prePrune H1;
      j := super id_H1;
-     v := (j * Hp.prePruningMap * (coverMap Hp)) // coverMap target j;
+     v := (j * Hp.cache.prePruningMap * (coverMap Hp)) // coverMap target j;
      vsN := (transpose v) ** N0;
      w := inducedMap(Hom(Hp,N), Lp ** target k,
 	       vsN * ta, Verify => true);
-     w * (Lp ** k) * (Lp.prePruningMap^-1 ** source k));
+     w * (Lp ** k) * (Lp.cache.prePruningMap^-1 ** source k));
 
 tensorEvaluation = method();
 
@@ -229,7 +229,7 @@ tensorEvaluation(Module,Module,Module) := Matrix => (L,M,N) -> (
      ta := tensorAssociativity(dual L0, M0,N0)^-1;
      w := inducedMap(Hom(L, M**N), (target j) ** Np, ta,
 	       Verify => true);
-     w * (j ** Np.prePruningMap^-1));
+     w * (j ** Np.cache.prePruningMap^-1));
 
 bidualMap = method();
 
@@ -253,7 +253,7 @@ document{ (prePrune, Module),
 	  generators and relations is not minimized.  However, the 
 	  form obtained is more convenient for certain purposes.", PARA,
 	  "The isomorphism from ", TT "N", " to ", TT "M", "can be obtained
-	  with ", TT "g = N.prePruningMap", ".  This is intentionally similar
+	  with ", TT "g = N.cache.prePruningMap", ".  This is intentionally similar
 	  in form to the case with ", TT "prune", " and ", TT "pruningMap",
 	  "."},
      SEEALSO {
@@ -267,7 +267,7 @@ document { prePruningMap,
      a module ", TT "M", " from the module ", TT "prePrune M", ".",
      PARA,
      "This map exists only after ", TT "N = prePrune M", " has been executed
-     at least once, and then the map can be obtained with ", TT "N.prePruningMap", ".",
+     at least once, and then the map can be obtained with ", TT "N.cache.prePruningMap", ".",
      SEEALSO {(prePrune, Module), "pruningMap"}
      }
 
