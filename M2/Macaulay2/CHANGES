@@ -16,6 +16,10 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+New function: 'reduceHilbert' -- use it to remove common factors from
+numerator and denominator of the rational functions returned by
+hilberSeries.
+
 Warning: the return value of the function divideByVariable has changed.  It now returns a
 pair consisting of a matrix (the old return value), and an integer,
 which is the largest power of the variable which was divided out.
