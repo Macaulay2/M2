@@ -142,17 +142,6 @@ int brk();		/* not really ansi standard, sigh */
 void M2_inits();
 
 extern unsigned GC_version;		/* in libgc.a */
-void *GC_malloc1 (size_t size_in_bytes);
-void *GC_realloc3 (void *s, size_t old, size_t new);
-void GC_free2 (void *s, size_t old);
-
-#if 0
-
-void *malloc1 (size_t size_in_bytes);
-void *realloc3 (void *s, size_t old, size_t new);
-void free2 (void *s, size_t old);
-
-#endif
 
 void trap();
 

@@ -1,6 +1,13 @@
 /* this file contains all initializations needed to get going, even if Macaulay2_main() is not called at all */
 
-#include "types.h"
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <gmp.h>
+#include <gc.h>
+#include "config.h"
+extern char *progname;
+extern void outofmem();
 
 static void init_gc() {
 #ifdef MEM_DEBUG
@@ -56,12 +63,45 @@ static void test_gc () {
        (void *)0);
 }
 
+static void *GC_malloc1 (size_t size_in_bytes) {
+     void *p;
+     p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
+     if (p == NULL) outofmem();
+     return p;
+     }
+
+static void *GC_realloc3 (void *s, size_t old, size_t new) {
+     void *p = GC_REALLOC(s,new);
+     if (p == NULL) outofmem();
+     return p;
+     }
+
+static void GC_free2 (void *s, size_t old) {
+     GC_FREE(s);
+     }
+
 static void init_gmp() {
      mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
      }
+
+/* these next three functions are simply aliases for libcf in case it was configured 
+   with --with-memman-old.  The three functions are declared in libcfmem.a, but we don't
+   want to use their memory manager.  We make our own call to mp_set_memory_functions() 
+   in any case, see M2lib.c.
+   As a side effect, linking with libcfmem.a will cause an error about a duplicate definition,
+   which is good, since we don't want to link with libcfmem.a. */
+void*     getBlock ( size_t size                                  ) { return GC_malloc1(size);                   }
+void* reallocBlock ( void * block, size_t oldsize, size_t newsize ) { return GC_realloc3(block,oldsize,newsize); }
+void     freeBlock ( void * block, size_t size                    ) { return GC_free2(block, size);              }
 
 void M2inits() {
   init_gc();
   test_gc();
   init_gmp();
 }
+
+/*
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/d"
+// End:
+*/
