@@ -230,6 +230,7 @@ hasDocumentation := key -> isDocumentableThing key and (
 trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
 trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
 trimline1 := x -> selectRegexp ( "^ *(.*)$",1, x)
+addspaces0:= x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else concatenate(x," ")
 addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
 
 flat := method()
@@ -254,7 +255,7 @@ fixup Function   := z -> z				       -- allow Function => f
 fixup String     := s -> (				       -- remove clumsy newlines within strings
      ln := lines s;
      if not ln#?1 then return s;
-     concatenate ({addspaces trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
+     concatenate ({addspaces0 trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
 
 new Hypertext from List := (h,x) -> splice apply(x, i -> flat i)
 hypertext = x -> Hypertext fixup x

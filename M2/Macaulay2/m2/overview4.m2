@@ -246,7 +246,7 @@ document {
 -- don't indent
 "In this section we learn how to use emacs to edit Macaulay 2 code.  Assuming you
 have set up your emacs init file as described in ", TO "running Macaulay 2 in emacs", "
-when you visit a file whose name ends with ", TT ".m2", " 
+ when you visit a file whose name ends with ", TT ".m2", " 
 you will see on the mode line the name ", TT "Macaulay 2", " in
 parentheses, indicating that the file is being edited in Macaulay 2 mode.  (Make
 sure that the file ", TT "emacs/M2.el", " is on your ", TT "load-path", ".)",
@@ -268,7 +268,7 @@ again.  Experiment with ", TT "M-C-f", " and ", TT "M-C-b", " to move forward
 and back over complete parenthesized
 expressions.  (In the emacs manual a complete parenthesized expression is
 referred to as an sexp, which is an abbreviation for S-expression.)  Try out
-", TT "C-U 2 M-C-@", " as a way of marking the next two complete parenthesized
+ ", TT "C-U 2 M-C-@", " as a way of marking the next two complete parenthesized
 expression, and see how to use ", TT "C-W", " to kill them and ", TT "C-Y", " to yank 
 them back.  Experiment with ", TT "M-C-K", " to kill the next complete parenthesized 
 expression.",
