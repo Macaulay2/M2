@@ -13,7 +13,13 @@ net Tally := x -> horizontalJoin flatten(
      "}"
      )
 
-Tally _ Thing := (a,b) -> if a#?b then a#b else 0
+Tally _ Thing := {
+     ZZ,
+     (a,b) -> if a#?b then a#b else 0,
+     TT "t_x", " -- returns the number of times ", TT "x", " is counted
+     by ", TT "x", ".",
+     SEEALSO "Tally"
+     }
 
 document { quote Tally,
      TT "Tally", " -- a class designed to hold tally results, i.e., multisets.",
@@ -40,7 +46,8 @@ document { "product(Tally)",
      SEEALSO "Tally"
      }
 
-document { "Tally ** Tally",
+Tally ** Tally := { Tally, 
+     (x,y) -> combine(x,y,identity,times,),
      TT "x ** y", " -- produces the Cartesian product of two tallies.",
      PARA,
      "One of the arguments may be a ", TO "Set", ".",
@@ -51,8 +58,9 @@ document { "Tally ** Tally",
      SEEALSO ("Tally", "tally")
      }
 
-document { "Tally + Tally",
-     TT "x + y", " -- produces union of two tallies.",
+Tally + Tally := { Tally, 
+     (x,y) -> merge(x,y,plus),
+     TT "x + y", " -- produces the union of two tallies.",
      PARA,
      "One of the arguments may be a ", TO "Set", ".",
      PARA,
@@ -73,8 +81,6 @@ document { "apply(Tally,Function)",
 
 singleton := tally {0}
 
-Tally ** Tally := (x,y) -> combine(x,y,identity,times,)
-Tally + Tally := (x,y) -> merge(x,y,plus)
 Tally - Tally := (x,y) -> select(merge(x,apply(y,minus),plus),i -> i =!= 0)
 sum(Tally) := (w) -> sum(pairs w, (k,v) -> v * k)
 product(Tally) := (w) -> product(pairs w, (k,v) -> k^v)

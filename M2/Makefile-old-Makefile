@@ -70,8 +70,8 @@ include/gc.h:	  gc/gc.h include/.exists;	cp $< $@
 include/gc_cpp.h: gc/gc_cpp.h include/.exists;	cp $< $@
 gc/gc.a: 	  always
 	$(MAKE) -C gc CC=gcc AS=$(AS) CFLAGS='$(GC_CFLAGS)' gc.a
-	$(MAKE) -C gc CXX=gcc CFLAGS='$(GC_CFLAGS) -nostdinc++' c++
 
+#	$(MAKE) -C gc CXX=gcc CFLAGS='$(GC_CFLAGS) -nostdinc++' c++
 #	echo '#undef DYNAMIC_LOADING' >> gc/config.h
 #	echo 'int one_more_symbol;' >> gc/checksums.c
 

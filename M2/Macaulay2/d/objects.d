@@ -690,12 +690,17 @@ installIt(h:HashTable,key:Expr,value:Expr):Expr := (
      is x:List do (
 	  if x.class == listClass then (
 	       if length(x.v) >= 3 then (
-		    storeInHashTable(Documentation, key, value);
 		    f := x.v.1;
 		    when f
-		    is FunctionClosure do storeInHashTable(h,key,f)
-		    is CompiledFunction do storeInHashTable(h,key,f)
-		    is CompiledFunctionClosure do storeInHashTable(h,key,f)
+		    is FunctionClosure do (
+		    	 storeInHashTable(Documentation, key, value);
+			 storeInHashTable(h,key,f))
+		    is CompiledFunction do (
+		    	 storeInHashTable(Documentation, key, value);
+			 storeInHashTable(h,key,f))
+		    is CompiledFunctionClosure do (
+		    	 storeInHashTable(Documentation, key, value);
+			 storeInHashTable(h,key,f))
      		    else errorExpr("expected second entry in list to be a function")
 		    )
 	       else errorExpr("expected a list of length at least 3")
@@ -713,13 +718,17 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
      is x:List do (
 	  if x.class == listClass then (
 	       if length(x.v) >= 3 then (
-		    key := Expr(Sequence(Expr(s),meth));
-		    storeInHashTable( Documentation, key, value);
 		    f := x.v.1;
 		    when f
-		    is FunctionClosure do storeInHashTable(s,meth,f)
-		    is CompiledFunction do storeInHashTable(s,meth,f)
-		    is CompiledFunctionClosure do storeInHashTable(s,meth,f)
+		    is FunctionClosure do (
+		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value);
+			 storeInHashTable(s,meth,f))
+		    is CompiledFunction do (
+		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value);
+			 storeInHashTable(s,meth,f))
+		    is CompiledFunctionClosure do (
+		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value);
+			 storeInHashTable(s,meth,f))
      		    else errorExpr("expected second entry in list to be a function"))
 	       else errorExpr("expected a list of length at least 3"))
 	  else errorExpr("expected a list of class List"))
