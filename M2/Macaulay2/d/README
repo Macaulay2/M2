@@ -1,9 +1,0 @@
-Here we keep the source for the d version of the translator.
-
-Here is a bad bug:
-    f(i:int):int := i;
-    map2():int := (
-	 bad := 0;
-	 f(bad));
-If you use the variable 'bad' in certain contexts, it causes some C code to be silently omitted.
-In the example above, the definition of map2 is never put into the C code.

@@ -275,11 +275,15 @@ endif
 clean::; rm -f Makeconf.h
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
+
 ifeq "$(CC)" "cl"
+all ::; $(MAKE) -C Macaulay2 html
 all :: Macaulay2-$(DESC).zip
 else
+all :: rmcores 
 all :: Macaulay2-$(DESC).tar.gz
 endif
+
 
 MACAULAY2: Macaulay2
 	$(MAKE) -C Macaulay2 all tests
@@ -289,7 +293,7 @@ DISTFILES := 	Macaulay2/README \
 		Macaulay2/setup \
 		Macaulay2/cache/Macaulay2-doc \
 		Macaulay2/bin Macaulay2/m2 Macaulay2/emacs Macaulay2/tutorial/final/*.out
-Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) rmcores
+Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
 	tar cf - $(DISTFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
@@ -326,8 +330,8 @@ PORTING := CVS \
 	Macaulay2/util \
 	WindowsNT \
 	bin factory gc gcStatic gmp libfac mp
-port : Macaulay2-$(VERSION)-porting-src.tar.gz
-Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile rmcores
+port : rmcores Macaulay2-$(VERSION)-porting-src.tar.gz
+Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile
 	tar cf - `Export3 $(PORTING)` | gzip >$@
 ###################### Macaulay 2 documentation
 DOCFILES = 	Macaulay2/html \
@@ -383,4 +387,6 @@ manufactured.tgz :
 ################################# automated compilation
 update:
 	cvs update -d
-	$(MAKE) 2>&1 | mail dan@math.uiuc.edu
+	$(MAKE)
+checkin:
+	cvs ci -m "check-in from $(NODENAME) [$(SYSTEM)]"

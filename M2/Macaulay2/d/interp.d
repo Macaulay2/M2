@@ -277,6 +277,7 @@ export process():void := (
 			 )
 		    )));
      when loadprint("-") is Error do exit(2) else nothing;
+     exit(0);
      );
 value(e:Expr):Expr := (
      when e

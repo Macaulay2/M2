@@ -39,24 +39,31 @@ void cmd_Ring_from_int(object &oF, object &on)
   gStack.insert(RingElement(F,MPZ_VAL(n.get_value())));
 }
 
+static int inline isequal2(const RingElement x, const RingElement y) {
+  // Amazingly inserting this little routine fixes a bug in Microsoft CL
+  // which causes cmd_Ring_isequal below to return true when it shouldn't.
+  // And it shouldn't slow us down with gcc because it's inline.
+  return x.is_equal(y);
+}
+
 void cmd_Ring_isequal(object &oa, object &ob)
 {
-  RingElement a = oa->cast_to_RingElement();
-  RingElement b = ob->cast_to_RingElement();
+  const RingElement a = oa->cast_to_RingElement();
   const Ring *Ra = a.Ring_of();
-  const Ring *Rb = b.Ring_of();
   int result;
+  const RingElement b = ob->cast_to_RingElement();
+  const Ring *Rb = b.Ring_of();
   if (Ra == Rb)
     result = a.is_equal(b);
   else if (Ra == ZZ)
     {
-      RingElement c(Rb, MPZ_VAL(a.get_value()));
-      result = b.is_equal(c);
+      const RingElement aa(Rb, MPZ_VAL(a.get_value()));
+      result = isequal2(b,aa);
     }
   else if (Rb == ZZ)
     {
-      RingElement c(Ra, MPZ_VAL(b.get_value()));
-      result = a.is_equal(c);
+      const RingElement bb(Ra, MPZ_VAL(b.get_value()));
+      result = isequal2(a,bb);
     }
   else
     {

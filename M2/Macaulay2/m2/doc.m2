@@ -913,13 +913,11 @@ document { quote get,
 	  ///"junk" << "hi there" << endl << close///,
       	  ///get "junk"///,
      	  if version#"operating system" =!= "SunOS"
-     	  and version#"operating system" =!= "CYGWIN32_NT"
-     	  and version#"operating system" =!= "CYGWIN32_95"
+     	  and version#"operating system" =!= "Windows-95-98-NT"
       	  then ///get "!date"///
 	  },
      if version#"operating system" =!= "SunOS"
-     and version#"operating system" =!= "CYGWIN32_NT"
-     and version#"operating system" =!= "CYGWIN32_95"
+     and version#"operating system" =!= "Windows-95-98-NT"
      then EXAMPLE ///get "$localhost:daytime"///,
      SEEALSO{ "File", "String", "read" }
      }

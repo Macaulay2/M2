@@ -1,16 +1,6 @@
 TOPDIR = ../../..
 include $(TOPDIR)/Makeconf
 
-ifeq "$(OS)" "MS-DOS"
-#	under MS-DOS, gnu make is confused about continuation lines, so there is
-# 	a long line below
-%.out : %.m2
-	@ echo run example $*.m2
-	@ sed 1d <$*.m2 >tmp.m2
-	@ ../../bin/Macaulay2 -silent '-eloaddata("../../cache/Macaulay2-$(ARCH)-data")' -- -x -s ../../m2/eg.m2 -- -x -s ../../m2/eg.m2 <tmp.m2 >tmp.out
-	@ mv tmp.out $*.out
-else
-
 ifdef DUMPDATA
 ARGS := -q -silent \
 	'-e loaddata "../../cache/Macaulay2-$(ARCH)-data"' \
@@ -23,21 +13,20 @@ endif
 	@ if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
 	 then touch $*.out ; \
 	 else \
-	   echo "run example $* `head -1 $*.m2`"; \
-	   sed 1d <$*.m2 >$*.trim; \
-	   ../../bin/Macaulay2 $(ARGS) <$*.trim >$*.tmp \
-		&& \
+	   echo "running example $*"; \
+	   ../../bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' >$*.tmp && \
 	   mv $*.tmp $*.out && \
-	   rm $*.trim && \
 	   cp $*.m2 $*.old ; \
 	 fi
-
-# Sigh, some bug under windows with bash.exe and pipes garbles the first character
-# delivered to Macaulay 2 through a pipe, hence the need for $*.trim above.
-
-endif
 
 INFILES = $(wildcard *.m2)
 OUTFILES = $(INFILES:.m2=.out)
 
 all:: $(OUTFILES)
+
+
+# old stuff:
+#	   echo "run example $* `head -1 $*.m2`"; \
+#	   sed 1d <$*.m2 >$*.trim; \
+#	   ../../bin/Macaulay2 $(ARGS) <$*.trim >$*.tmp \
+#		&& \
