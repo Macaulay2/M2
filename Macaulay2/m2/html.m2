@@ -353,7 +353,7 @@ installPackage Package := o -> pkg -> (
      rawDoc := pkg#"raw documentation";
 
      -- check that we've read the raw documentation
-     if #rawDoc > 0 or pkg#?"raw documentation database" and isOpen pkg#"raw documentation database" then null
+     if #rawDoc > 0 then null
      else (
 	  if pkg === Macaulay2 then (
      	       currentPackage = Macaulay2;
@@ -415,10 +415,10 @@ installPackage Package := o -> pkg -> (
 	       val := concatenate apply(inputs, s -> s|"\n");
 	       if fileExists inf and get inf === val
 	       then (
-		    -- stderr << "--leaving example input file for " << fkey << endl;
+		    if debugLevel > 1 then stderr << "--leaving example input file for " << fkey << endl;
 		    )
 	       else (
-		    stderr << "--making example input file for " << fkey << endl;
+		    if debugLevel > 1 then stderr << "--making example input file for " << fkey << endl;
 		    inf << val << close;
 		    )));
 
@@ -470,6 +470,10 @@ installPackage Package := o -> pkg -> (
 	       then (
 		    -- stderr << "--leaving example results file for " << fkey << endl
 		    )
+	       else if fileExists tmpf and fileTime tmpf >= fileTime inf
+	       then (
+		    if debugLevel > 0 then stderr << "--leaving example error report for " << fkey << " in file " << tmpf << endl
+		    )
 	       else (
 		    remove(rawDocUnchanged,fkey);
 		    stderr << "--making example results file for " << fkey << endl;
@@ -495,7 +499,9 @@ installPackage Package := o -> pkg -> (
 			 ));
 	       -- read, separate, and store example output
 	       if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
-	       else stderr << "--warning: missing file " << outf << endl;
+	       else (
+		    if debugLevel > 1 then stderr << "--warning: missing file " << outf << endl;
+		    )
 	       ));
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
@@ -539,6 +545,13 @@ installPackage Package := o -> pkg -> (
      pkg#"links next" = NEXT;
      pkg#"links prev" = PREV;
 
+     -- helper routine
+     getPDoc := fkey -> (
+	  if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey else
+	  if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey else (
+	       if debugLevel > 0 then stderr << "--warning: missing documentation node: " << fkey << endl;
+	       ));
+
      -- make info file
      if o.MakeInfo then (
 	  savePW := printWidth;
@@ -561,11 +574,6 @@ installPackage Package := o -> pkg -> (
 	  topNodeName := DocumentTag.FormattedKey topDocumentTag;
 	  chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
 	  infoTagConvert' := n -> if n === topNodeName then "Top" else infoTagConvert n;
-	  getPDoc := fkey -> (
-	       if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey else
-	       if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey else (
-		    stderr << "--warning: missing documentation node: " << fkey << endl;
-		    ));
 	  traverse(unbag pkg#"table of contents", tag -> (
 		    key := DocumentTag.Key tag;
 		    fkey := DocumentTag.FormattedKey tag;

@@ -174,7 +174,7 @@ tmp :; mkdir "$@"
 
 EXAMPLEOPTIONS := -q --stop
 EXAMPLEOPTIONS += -e 'errorDepth = 0'
-EXAMPLEOPTIONS += -e 'debugLevel = 1'
+EXAMPLEOPTIONS += -e 'debugLevel = 0'
 MAKEINFO = true
 EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
 EXAMPLEOPTIONS += -e 'exit 0 '
@@ -190,15 +190,18 @@ tmp/.documentation-made : $(DOCSEQUENCE)
 	@ echo "make: Leaving directory \`tmp'"
 	touch "$@"
 
-remake-all: remake1 remake2 remake3 remake4
-remake-nodes: remake1 remake2 remake4
-remake-doc: remake1 remake4
+remake-all: remake1 remake2 remake3 remake0
+remake-nodes: remake1 remake2 remake0
+remake-failed-examples: remake4 remake0
+remake-doc: remake1 remake0
+remake0: all
 remake1:; @ set -x ; rm -f tmp/.documentation-made
 remake2:; @ set -x ; rm -f $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagedocRelDir)/*documentation.db tmp/*/$(packagedocRelDir)/*documentation.db)
 remake3:
 	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagehtmlRelDir) tmp/*/$(packagehtmlRelDir))
 	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir) tmp/*/$(packageexamplesRelDir))
-remake4: all
+remake4:
+	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir)/*.tmp tmp/*/$(packageexamplesRelDir)/*.tmp)
 
 install::all install-main
 install-main:; tar cf - -C tmp $(package) | tar xf - -C $(prefix)

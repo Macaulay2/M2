@@ -457,6 +457,20 @@ document {
      SeeAlso => { "newPackage", "Package", "load" }
      }
 
+document {
+     Headline => "make a new link to a file",
+     Key => link,
+     Usage => "link(o,n)",
+     Inputs => {
+	  "o" => "the path to an existing file",
+	  "n" => "a new path to the file"
+	  },
+     Consequences => {
+	  {"a new link ", TT "n", " is made to the existing file reachable using the path ", TT "o"}
+	  },
+     SeeAlso => { "copyFile", "moveFile" }
+     }
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
