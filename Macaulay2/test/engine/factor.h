@@ -1,22 +1,24 @@
 /* 
-  basic running time, all options below set to 0 : 7.68, 7.69, 7.67
+  basic running time, all options below set to 0 : 7.56, 7.58, 7.57
 */
 
 /* for factor.cc */
-#define NEW_USES_GC 0		/* adds 1.4 seconds to 7.5 sec running time */
+#define NEW_USES_GC 0		/* */
+#define NEW_TESTS_RETURN_VALUE_FROM_GC 0
 
 /* for factor-init.c */
-#define INTERIOR_POINTERS 0	/* would add only 0.04 sec */
-#define GMP_USES_GC 0		/* adds 0.1 sec */
+#define INTERIOR_POINTERS 0	/* */
+#define GMP_USES_GC 0		/* */
 #define GMP_TESTS_RETURN_VALUE_FROM_GC 0
-#define FACTORY_USES_GC 0	/* adds 4.7 sec to 7.5 second running time */
+#define FACTORY_USES_GC 0	/* */
 #define FACTORY_TESTS_RETURN_VALUE_FROM_GC 0
-#define REPLACE_GETBLOCK 0
-#define REPLACE_MALLOC_BY_GC_IN_GETBLOCK 0
+#define REPLACE_GETBLOCK 1	/* no change, our code is identical */
+#define REPLACE_MALLOC_BY_GC_IN_GETBLOCK 1 /* 7.06, 7.11, 7.09, 7.08 -- speeds it up! */
+#define REPLACE_GC_FREE_BY_NOP 1
 
 /* consequences */
 
-#define USE_GC (NEW_USES_GC || GMP_USES_GC || FACTORY_USES_GC || REPLACE_MALLOC_BY_GC_IN_GETBLOCK)
+#define USE_GC (NEW_USES_GC || GMP_USES_GC || FACTORY_USES_GC || REPLACE_MALLOC_BY_GC_IN_GETBLOCK && REPLACE_GETBLOCK)
 
 /*
 // Local Variables:

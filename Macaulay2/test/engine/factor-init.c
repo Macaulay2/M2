@@ -17,7 +17,7 @@ void arginits(int argc, char **argv) {
 
 #if USE_GC
 static void init_gc(void) {
-     GC_all_interior_pointers = INTERIOR_POINTERS;
+     GC_all_interior_pointers = INTERIOR_POINTERS || REPLACE_GETBLOCK && REPLACE_MALLOC_BY_GC_IN_GETBLOCK; /* getBlock uses interior pointers! */
      GC_free_space_divisor = 2;
      GC_init();
      // GC_enable_incremental();
@@ -25,22 +25,22 @@ static void init_gc(void) {
 #endif
 
 #if GMP_USES_GC
-static void GC_free2 (void *s, size_t old) { GC_FREE(s); }
+inline static void GC_free2 (void *s, size_t old) { GC_FREE(s); }
 #if GMP_TESTS_RETURN_VALUE_FROM_GC
-static void *GC_malloc1 (size_t size_in_bytes) {
+inline static void *GC_malloc1 (size_t size_in_bytes) {
      void *p;
      p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
      if (p == NULL) outofmem();
      return p;
      }
-static void *GC_realloc3 (void *s, size_t old, size_t new) {
+inline static void *GC_realloc3 (void *s, size_t old, size_t new) {
      void *p = GC_REALLOC(s,new);
      if (p == NULL) outofmem();
      return p;
      }
 #else
-static void *GC_malloc1 (size_t size_in_bytes) { return GC_MALLOC_UNCOLLECTABLE(size_in_bytes); }
-static void *GC_realloc3(void *s, size_t old, size_t new) { return GC_REALLOC(s,new); }
+inline static void *GC_malloc1 (size_t size_in_bytes) { return GC_MALLOC_UNCOLLECTABLE(size_in_bytes); }
+inline static void *GC_realloc3(void *s, size_t old, size_t new) { return GC_REALLOC(s,new); }
 #endif
 #endif
 
@@ -58,11 +58,11 @@ static void init_gmp(void) {
 #if FACTORY_TESTS_RETURN_VALUE_FROM_GC
 void*     getBlock ( size_t size                                  ) { return GC_malloc1(size); }
 void* reallocBlock ( void * block, size_t oldsize, size_t newsize ) { return GC_realloc3(block,oldsize,newsize); }
-void     freeBlock ( void * block, size_t size                    ) { return GC_free2(block, size); }
+void     freeBlock ( void * block, size_t size                    ) { GC_FREE(block); }
 #else
 void*     getBlock ( size_t size                                  ) { return GC_MALLOC(size); }
 void* reallocBlock ( void * block, size_t oldsize, size_t newsize ) { return GC_REALLOC(block,newsize); }
-void     freeBlock ( void * block, size_t size                    ) { return GC_FREE(block); }
+void     freeBlock ( void * block, size_t size                    ) { GC_FREE(block); }
 #endif
 #else
 #if REPLACE_GETBLOCK
