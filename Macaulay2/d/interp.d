@@ -307,7 +307,7 @@ commandInterpreter(e:Expr):Expr := (
      ret);
 setupfun("commandInterpreter",commandInterpreter);
 
-errorCodeS := setupconst("errorCode",nullE);
+errorCodeS := setupvar("errorCode",nullE);
 debugger(f:Frame,c:Code):Expr := (
      oldrecursionDepth := recursionDepth;
      recursionDepth = 0;
