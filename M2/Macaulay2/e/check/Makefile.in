@@ -2,7 +2,9 @@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
 CCTESTS = test_monomial.o
-CTESTS = check_monomial.o
+CTESTS = check_monomial.o \
+	check_monordering.o \
+	check_monoid.o
 
 #test_monordering test_monoid test_ring test_freemodule test_vector \
 #	test_matrix test_sparsemat test_lapack
@@ -27,6 +29,7 @@ check : check_cc check_c
 	./check_cc
 	./check_c
 
+Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/check/Makefile
 clean::; rm -f *.o check_cc check_c
 clean distclean::; $(MAKE) -C src_test $@
 distclean::; rm -f Makefile
