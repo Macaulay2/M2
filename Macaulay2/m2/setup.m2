@@ -2,30 +2,11 @@
 
 -- flag quote sequence
 
-if class path =!= List then path = { "." }
-
-OS := "operating system"
-
-pathSeparator = (
-	if version#"operating system" === "MACOS" then ":" 
-	else "/"
-	)
-
-dir:= splice(apply(lines(commandLine#0, "/"), i -> toSequence lines(i, "\\")))
-if #dir > 2
-then path = join({concatenate (
-	       if version#"operating system" =!= "MACOS" then pathSeparator,
-	       apply(#dir-2, i -> (dir#i,pathSeparator)), "m2")}, path);
-
-hasColon := s -> # ( lines  ( concatenate(" ",s," "), ":" ) ) =!= 1
-
-isAbsolutePath := (
-     if version#"operating system" === "MACOS" 
-     then filename -> hasColon filename and substring(filename,0,1) =!= ":"     
-     else filename -> pathSeparator === substring(filename,0,#pathSeparator)
-     )
-
-if class phase === Symbol then phase = 0
+<< Thing := x -> stdio << x
+File << Net := printString
+File << String := printString
+File << Symbol := printString	   		      -- provisional
+File << Thing := (x,y) -> printString(x,string y)     -- provisional
 
 Manipulator = new Type of BasicList
 new Manipulator from Function := (Manipulator,f) -> new Manipulator from {f}
@@ -55,13 +36,35 @@ oldendl := endl
 erase quote endl
 endl = new Manipulator from oldendl
 
-erase quote "--newline--"
+if class path =!= List then path = { "." }
 
-<< Thing := x -> stdio << x
-File << Net := printString
-File << String := printString
-File << Symbol := printString	   		      -- provisional
-File << Thing := (x,y) -> printString(x,string y)     -- provisional
+OS := "operating system"
+
+pathSeparator = (
+	if version#"operating system" === "MACOS" then ":" 
+	else "/"
+	)
+
+dir := splice(apply(lines(commandLine#0, "/"), i -> if i === "" then i else toSequence lines(i, "\\")))
+
+if #dir > 1
+then (
+     sourcedir := concatenate ( apply(#dir-2, i -> (dir#i,pathSeparator)), "m2");
+     -- << "source dir = " << sourcedir << endl;
+     path = join({sourcedir}, path);
+     )
+
+hasColon := s -> # ( lines  ( concatenate(" ",s," "), ":" ) ) =!= 1
+
+isAbsolutePath := (
+     if version#"operating system" === "MACOS" 
+     then filename -> hasColon filename and substring(filename,0,1) =!= ":"     
+     else filename -> pathSeparator === substring(filename,0,#pathSeparator)
+     )
+
+if class phase === Symbol then phase = 0
+
+erase quote "--newline--"
 
 protect AfterEval
 protect AfterPrint
@@ -188,7 +191,7 @@ runStartFunctions = () -> scan(startFunctions, f -> f())
 lastSystemSymbol = null
 << "--loading source code..." << endl
 load "loads.m2"
-lastSystemSymbol = last sort apply( values symbolTable(), k -> (hash k, k))
+lastSystemSymbol = local privateSymbol
 erase quote lastSystemSymbol
 
 -- the last function restarted

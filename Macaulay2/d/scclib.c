@@ -383,7 +383,13 @@ int offset;
 #endif
 #endif
 
-M2_string stdio_readfile(fd)
+int system_fileLength(int fd) {
+  struct stat statbuf;
+  if (ERROR == fstat(fd,&statbuf)) return ERROR;
+  return statbuf.st_size;
+}
+
+M2_string system_readfile(fd)
 int fd;
 {
      M2_string s;

@@ -2650,8 +2650,9 @@ node chkuse(node e, env v){
 	       }
 	  assert(pathopened != NULL);
 	  if (dependfile != NULL)
-	  fprintf(dependfile,"%s %s : %s\n",
+	  fprintf(dependfile,"%s %s %s : %s\n",
 	       newsuffixbase(targetname,".oo"),
+	       newsuffixbase(targetname,".loo"),
 	       newsuffixbase(targetname,".sig"), 
 	       newsuffixbase(pathopened,".sig")
 	       );

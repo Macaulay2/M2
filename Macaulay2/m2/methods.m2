@@ -422,19 +422,6 @@ net Symbol := s -> (
 File << Symbol := (o,s) -> o << net s	  -- replaces a method installed in setup.m2
 erase quote operators			  -- created in name.m2
 
-linkFilenameTable := new MutableHashTable
-linkFilenameCounter := 0
-linkFilenameKeys = () -> keys linkFilenameTable
-linkFilename = s -> (
-     if linkFilenameTable#?s 
-     then linkFilenameTable#s
-     else (
-	  n := string linkFilenameCounter;
-	  linkFilenameTable#s = n;
-	  linkFilenameCounter = linkFilenameCounter + 1;
-	  n)
-     ) | ".html"
-
 html MarkUpList := x -> concatenate apply(x,html)
 text MarkUpList := x -> concatenate apply(x,text)
 tex MarkUpList := x -> concatenate apply(x,tex)
@@ -766,7 +753,9 @@ text TO   := x -> concatenate (
      )
 
 html TO   := x -> concatenate (
-     "<A HREF=\"", linkFilename getDocumentationTag x#0, "\">", html formatDocumentTag x#0, "</A>", 
+     "<A HREF=\"", 
+     -- linkFilename getDocumentationTag x#0,
+     "\">", html formatDocumentTag x#0, "</A>", 
      drop(toList x,1)
      )
 

@@ -361,27 +361,6 @@ document { quote newline,
      SEEALSO "Net"
      }
 
-document { quote linkFilename,
-     TT "linkFilename s", " -- convert a string ", TT "s", " into a string 
-     which can be used as a file name to contain HTML about the topic 
-     referred to by ", TT "s", ".",
-     PARA,
-     "The value returned is a sequence number, and hence may not be
-     the same in subsequent sessions.  Hence this is mainly useful
-     for creating html for all the online documentation, and the general 
-     user will not find it useful.",
-     PARA,
-     SEEALSO "linkFilenameKeys"
-     }
-
-document { quote linkFilenameKeys,
-     TT "linkFilenameKeys()", " -- returns a list of the strings which
-     have been given to ", TO "linkFilename", ".",
-     PARA,
-     "This function is intended mainly for internal use in generating
-     the documentation for Macaulay 2."
-     }
-
 document { quote collectGarbage,
      TT "collectGarbage()", " -- attempt a garbage collection.",
      PARA,

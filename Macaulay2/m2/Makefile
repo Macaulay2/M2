@@ -33,7 +33,7 @@ TUTORIALS := $(wildcard ../tutorial/final/*.out)
 
 DUMPEDGFILES := $(DUMPSEQUENCE) $(DOCSEQUENCE) setup.m2 $(MADEGFILES) $(TUTORIALS)
 
-ifdef DUMPDATA
+ifndef NODUMPDATA
 DUMPEDGFILES := $(DUMPEDGFILES) dumpdata.m2
 endif
 
@@ -104,7 +104,7 @@ all :: phase1
 
 phase1 :: $(DUMPEDGFILES)
 
-ifdef DUMPDATA
+ifndef NODUMPDATA
 ARGS := -q -silent '-eloaddata("../cache/Macaulay2-$(ARCH)-data")' -- '-erunStartFunctions()' 
 phase1 :: ../cache/Macaulay2-$(ARCH)-data
 ../cache/Macaulay2-$(ARCH)-data : $(DUMPEDGFILES) ../bin/Macaulay2

@@ -54,4 +54,5 @@ import dbmfirst(handle:int):(null or string);
 import dbmnext(handle:int):(null or string);
 import dbmreorganize(handle:int):int;
 import dbmstrerror():string;
-
+import readfile(fd:int):string;
+import fileLength(fd:int):int;

@@ -290,8 +290,9 @@ int main(int argc, char **argv){
 		    	 n = newsuffixbase(argv[i],".dp");
 		    	 dependfile = fopen(n,"w");
 		    	 if (dependfile == NULL) fatal("can't open file %s",n);
-			 fprintf(dependfile,"%s : %s\n",
+			 fprintf(dependfile,"%s %s : %s\n",
 			      newsuffixbase(targetname,".oo"),
+			      newsuffixbase(targetname,".loo"),
 			      newsuffixbase(targetname,".d")
 			      );
 			 }

@@ -329,9 +329,6 @@ document {
      PARA,
      "The return value is a string which is suitable for use in an
      html file, readable by a world wide web client such as netscape.",
-     PARA,
-     "The function ", TO "linkFilename", " is used internally by the
-     code that generates html files from hypertext.",
      SEEALSO "mathML"
      }
 

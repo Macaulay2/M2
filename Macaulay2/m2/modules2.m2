@@ -563,7 +563,7 @@ basis(List,Module) := (deg,M) -> (
      bottom := generators gb presentation M;
      top := id_(target bottom);
      sendgg(ggPush top, ggPush bottom, ggPush deg, ggkbasis);
-     getMatrix R)
+     map(M,,getMatrix R))
 
 basis(ZZ,Module) := (deg,M) -> basis({deg},M)
 basis(List,Ideal) := basis(ZZ,Ideal) := (n,I) -> basis(n,module I)
@@ -582,7 +582,7 @@ basis Module := M -> (
      bottom := generators gb presentation M;
      top := id_(target bottom);
      sendgg(ggPush top, ggPush bottom, ggkbasis);
-     getMatrix R)
+     map(M,,getMatrix R))
 
 basis Ring := R -> basis(R^1)
 basis Ideal := I -> basis module I

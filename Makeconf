@@ -17,7 +17,6 @@ export OS             := $(shell uname -s | sed s=/=-=g )
 export REL            := $(shell uname -r | sed s=/=-=g )
 
 export SYSTEM         := $(ARCH) $(OS) $(REL)
-export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)
 export LIBDIR	      := ../../lib
 export INCDIR	      := ../../include
 
@@ -92,16 +91,23 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# NOFACTORY   := TRUE' >>$@
 	echo '# SOCKS       := TRUE' >>$@
 	echo '# if you change CC or CXX, then remove config.cache' >>$@
+	echo '# set LIBC manually for Linux' >>$@
+	echo '# LIBC        := -glibc' >>$@
 	echo 'CC            := gcc' >>$@
 	echo 'CXX           := g++' >>$@
 include $(TOPDIR)/Makeconf.lcl
+export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)$(LIBC)
 
 #################################
 
 export CC
 export CXX
-export CFLAGS = -O2 -g
-export CXXFLAGS = -O2 -g
+CFLAGS = -g
+CXXFLAGS = -g
+ifndef NOOPTIM 
+CFLAGS += -O2
+CXXFLAGS += -O2
+endif
 
 ifdef CYGWIN32
 # CFLAGS += '-Dabort()=exit(1)'
@@ -134,7 +140,7 @@ export ARFLAGS = -MACHINE:i386 -nologo -verbose
 
 export RANLIB = true
 
-CFLAGS   =     -O2 -Zi -nologo -G5 -W3
+CFLAGS   = -O2 -Zi -nologo -G5 -W3
 CXXFLAGS = -O2 -Zi -nologo -G5 -W3
 
 LINK.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)

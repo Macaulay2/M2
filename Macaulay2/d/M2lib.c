@@ -173,6 +173,10 @@ static void interrupt_handler(int sig)
      else {
 	  if (system_interruptShield) system_interruptPending = TRUE;
 	  else {
+	       if (!isatty(STDIN)) {
+		    fprintf(stderr,"interrupted%s",NEWLINE);
+		    exit(1);
+	       }
 	       system_interrupted = TRUE;
 #     	       ifdef FACTORY
 	       libfac_interruptflag = TRUE;
