@@ -1,0 +1,30 @@
+
+# cygwin make gets confused by this!
+# SHELL = @SHELL@
+
+CFLAGS = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@
+CXXFLAGS = @CXXFLAGS@
+FFLAGS = @FFLAGS@
+DEFS = @DEFS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+program_transform_name = @program_transform_name@
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+includedir = @includedir@
+oldincludedir = @oldincludedir@
+infodir = @infodir@
+mandir = @mandir@
+RANLIB = @RANLIB@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)

@@ -1,0 +1,35 @@
+# -*- Mode: Makefile -*-
+
+CONFIGURE_OPTIONS = --prefix=/usr/local
+
+## to build:
+##	edit the CONFIGURE_OPTIONS line above
+##	make
+##      make install
+## or
+##      ./configure
+##      make 
+##      make install
+
+## to rebuild configure script without using this makefile:
+##	autoconf
+##	autoheader
+
+TARGETS = all install dist check clean distclean uninstall
+
+$(TARGETS) :: Makefile config.h
+	make $@
+
+stage1 : configure config.h.in
+configure : configure.in
+	autoconf
+config.h.in : configure.in
+	autoheader
+	touch $@
+
+stage2 : Makefile config.h
+config.status : configure
+	./configure $(CONFIGURE_OPTIONS) --no-create
+Makefile config.h : config.status Makefile.in config.h.in
+	./config.status
+	touch config.h
