@@ -44,7 +44,7 @@ commden := (f) -> lcm apply( last \ listForm f, denominator)
 irreducibleCharacteristicSeries = method()
 irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      f := generators I;
-     --f = compress f;					    -- avoid a bug 
+     f = compress f;					    -- avoid a bug in Messollen's code for rawCharSeries when a generator is zero
      R := ring I;
      if not isPolynomialRing R 
      then error "expected ideal in a polynomial ring";
@@ -70,7 +70,7 @@ topCoefficients Matrix := f -> (
      (map(R,monoms), map(R,coeffs)))
 
 decompose = method()
-decompose(Ideal) := (I) -> if I.cache.?decompose then I.cache.decompose else I.cache.decompose = (
+decompose Ideal := (I) -> if I.cache.?decompose then I.cache.decompose else I.cache.decompose = (
      R := ring I;
      if isQuotientRing R then (
 	  A := ultimate(ambient, R);
