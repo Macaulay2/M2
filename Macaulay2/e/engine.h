@@ -1158,7 +1158,7 @@ extern "C" {
 
   /* Each of these routines returns false if there was an error. */
 
-  M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M, int r, int c, const RingElement *a); /* drg: connected rawMatrixEntry, OK */
+  M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M, int r, int c, const RingElement *a); /* drg: connected rawSetMatrixEntry, OK */
 
   M2_bool IM2_MutableMatrix_row_swap(MutableMatrix *M, int i, int j); /* drg: connected rawMatrixRowSwap, OK */
 
