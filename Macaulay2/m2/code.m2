@@ -100,7 +100,7 @@ methods Type := F -> (
 	       if class meth === Function then (
 		    if class key === Sequence and member(F,key) then found#key = true
 	       	    else if class key === Function then found#(key,F) = true
-		    else if instance(key, Symbol) and operatorSet#?key then found#(key,F) = true
+		    else if instance(key, Symbol) and instance(key,Keyword) then found#(key,F) = true
 		    )
 	       )
 	  );
