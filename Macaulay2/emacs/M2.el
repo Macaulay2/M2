@@ -114,7 +114,7 @@
    (make-comint "M2" ; specifying "M2" here means the buffer will be named *M2*
 		(or (getenv "SHELL") "/bin/sh") ; name of program
 		nil			; starting input file
-		"-c" (concat "echo; set -x; " command)		; arguments to the program
+		"-c" (concat "echo; set -x; " command " --print-width " (number-to-string (- (screen-width) 1)) " ")		; arguments to the program
 		)
    )
   (M2-comint-mode)
