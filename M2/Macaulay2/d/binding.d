@@ -14,16 +14,16 @@ use stdiop;
 
 -----------------------------------------------------------------------------
 -- first, the global symbol table and functions for making symbols
-append(buckets:array(SymbolList),entry:Symbol):void := (
-     h := entry.word.hash & (length(buckets)-1);
+append(buckets:array(SymbolList),word:Word, entry:Symbol):void := (
+     h := word.hash & (length(buckets)-1);
      when buckets.h
-     is null do buckets.h = SymbolListCell(entry.word,entry,NULL)
+     is null do buckets.h = SymbolListCell(word,entry,NULL)
      is e:SymbolListCell do (
 	  while true do (
 	       when e.next 
 	       is f:SymbolListCell do e = f
 	       is null do (
-		    e.next = SymbolListCell(entry.word,entry,NULL);
+		    e.next = SymbolListCell(word,entry,NULL);
 		    break))));
 enlarge(table:SymbolHashTable):void := (
      newbuckets := new array(SymbolList) len 2*length(table.buckets) do provide NULL;
@@ -33,7 +33,7 @@ enlarge(table:SymbolHashTable):void := (
 	  when entryList
 	  is null do break
 	  is entryListCell:SymbolListCell do (
-	       append(newbuckets, entryListCell.entry);
+	       append(newbuckets, entryListCell.word, entryListCell.entry);
 	       entryList = entryListCell.next;
 	       )
 	  );

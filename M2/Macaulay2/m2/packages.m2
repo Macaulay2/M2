@@ -86,7 +86,7 @@ newPackage(Package) := opts -> p -> (
      newPackage(p.name,opts))
 newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
-     if not all(opts.Using, pkg -> class pkg === Package) then error "expected 'Using' option to be a list of loaded packages";
+     if class opts.Using =!= List or not all(opts.Using, pkg -> class pkg === Package) then error "expected 'Using' option to be a list of loaded packages";
      stderr << "--package " << title << " loading" << endl;
      removePackage title;
      saveD := globalDictionaries;
@@ -96,14 +96,14 @@ newPackage(String) := opts -> (title) -> (
 	  else (
 	       d := new Dictionary;
 	       fileExitHooks = prepend(hook, fileExitHooks);
-	       globalDictionaries = join({d,PackageDictionary,Main.Dictionary},apply(opts.Using,pkg->pkg.Dictionary));
+	       globalDictionaries = join({d,Main.Dictionary,PackageDictionary},apply(opts.Using,pkg->pkg.Dictionary));
 	       d));
-     if class opts.WritableSymbols =!= List then error "option WritableSymbols: expected a list";
-     if not all(opts.WritableSymbols, s -> class s === Symbol) then error "option WritableSymbols: expected a list of symbols";
+     if class opts.WritableSymbols =!= List or not all(opts.WritableSymbols, s -> class s === Symbol) then error "option WritableSymbols: expected a list of symbols";
      p := currentPackageS <- new Package from {
           symbol name => title,
-     	  symbol Dictionary => newdict,
+     	  "private dictionary" => newdict,			    -- how do I make a synonym in a *different* dictionary (make a synonym dictionary closure, with the same frame?)
 	  symbol Options => opts,
+     	  symbol Dictionary => if title === "Main" then newdict else new Dictionary,
      	  "close hook" => hook,
 	  "previous package" => currentPackage,
 	  "previous dictionaries" => saveD,
@@ -124,11 +124,11 @@ newPackage(String) := opts -> (title) -> (
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       ),
 	  };
-     PrintNames#newdict = title | ".Dictionary";
+     PrintNames#(p.Dictionary) = title | ".Dictionary";
      debuggingMode = opts.DebuggingMode;
      sym := getGlobalSymbol(PackageDictionary,title);
      p.Symbol = sym;
-     globalAssignFunction(sym,p);
+     ReverseDictionary#p = sym;
      sym <- p;
      p)
 
@@ -170,25 +170,34 @@ Command.GlobalReleaseHook = (X,x) -> (
 closePackage = method()
 closePackage String := title -> (
      if currentPackage === null or title =!= currentPackage.name then error ("package not current: ",title);
-     p := currentPackage;
-     scan(p.Options.WritableSymbols, s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
-     ws := set p.Options.WritableSymbols;
-     d := p.Dictionary;
-     scan(values d,
+     pkg := currentPackage;
+     scan(pkg.Options.WritableSymbols, s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
+     ws := set pkg.Options.WritableSymbols;
+     dict := pkg.Dictionary;
+     scan(values dict,
 	  s -> (
 	       if not ws#?s then protect s;
 	       if value s =!= s and not ReverseDictionary#?(value s) then ReverseDictionary#(value s) = s;
 	       ));
-     if p =!= Main then (			    -- protect it later
-	  protect p.Dictionary;
+     exportDict := pkg.Dictionary;
+     if pkg =!= Main then (			    -- protect it later
+	  scan(pkg#"exported symbols", 
+	       s -> (
+		    nam := toString s;
+		    exportDict#nam = s;
+		    newname := title | "$" | nam;
+		    exportDict#newname = s;
+		    ));
+	  protect dict;					    -- maybe don't do this, as it will be private
+	  protect exportDict;
 	  );
-     if p.name =!= "Main" then globalDictionaries = prepend(d,p#"previous dictionaries");
-     hook := p#"close hook";
+     if pkg.name =!= "Main" then globalDictionaries = prepend(exportDict,pkg#"previous dictionaries");
+     hook := pkg#"close hook";
      fileExitHooks = select(fileExitHooks, f -> f =!= hook);
-     currentPackage = p#"previous package";
-     debuggingMode = p#"old debugging mode";
-     stderr << "--package " << p << " installed" << endl;
-     p)
+     currentPackage = pkg#"previous package";
+     debuggingMode = pkg#"old debugging mode";
+     stderr << "--package " << pkg << " installed" << endl;
+     pkg)
 
 pushDictionary = () -> (
      d := new Dictionary;
@@ -208,7 +217,7 @@ dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictiona
 
 package = method ()
 package Dictionary := d -> (
-     if currentPackage =!= null and currentPackage.Dictionary === d then currentPackage else
+     if currentPackage =!= null and currentPackage.Dictionary === d or currentPackage#"private dictionary" === d then currentPackage else
      scan(values PackageDictionary, pkg -> if (value pkg).Dictionary === d then break (value pkg))
      )
 package Thing := x -> (
@@ -238,9 +247,19 @@ package TO := x -> (
 	  warned#key = true;
      	  pkg))
 
+Package.GlobalAssignHook = (X,x) -> (
+     ReverseDictionary#x = X;
+     -- use x;
+     )
+
+Package.GlobalReleaseHook = (X,x) -> (
+     remove(ReverseDictionary,x);
+     )
+
 use Package := pkg -> (
      if not member(pkg.Dictionary,globalDictionaries) then globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);
      )
+
 
 needsPackage = method()
 needsPackage String := s -> (
