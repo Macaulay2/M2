@@ -438,6 +438,12 @@ m = rawMatrix1(R^{-1}, 2, (a^3,b^2), false, 0)
 mb = rawBasis(m, {2}, {2}, {1}, {0,1}, false, -1)
 assert(mb == mat{{a,b}})
 
+rawBasis(mat{{0_R}}, {-1}, {-1}, {1}, {0,1,2}, false, -1)
+rawBasis(mat{{0_R}}, {1}, {1}, {1}, {0,1,2}, false, -1)
+
+R = ZZ/101[symbol a .. symbol c]
+basis(-1,coker matrix{{0_R}})
+
 -- A truncation example
 m = rawMatrix1(R^{-1,-3,-6}, 3, (a^3,0_R,0_R,
 	                         0_R,b^3,0_R,
