@@ -137,7 +137,7 @@ static void alarm_handler(int sig)
 
 extern bool interp_StopIfError;
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(__MWERKS__) || (defined(_WIN32) && !defined(__CYGWIN__))
 #define sigjmp_buf jmp_buf
 #define siglongjmp(j,c) longjmp(j,c)
 #define sigsetjmp(j,m) setjmp(j)
@@ -421,7 +421,7 @@ char **argv;
 	/* Make sure we have lots and lots of stack space. 	*/
 	SetMinimumStack(cMinStackSpace);
 	/* Cheat and let stdio initialize toolbox for us.	*/
-	printf("MacOS Macaulay2...\n");
+	/* printf("Macaulay2 for the MacOS\n"); */
      saveargv = argv;
 #else
      /* save arguments on stack in case they're on the heap */
@@ -1612,7 +1612,7 @@ int pipe(int v[2]) { return ERROR; }
 int wait() { return ERROR; }
 int alarm(int i) { return ERROR ; }
 //unsigned int sleep(unsigned int i) { return ERROR; }
-int getpagesize() { return 4096; }
+unsigned long getpagesize() { return 4096; }
 int brk() { return 0; }
 void *sbrk(int i) { return 0; }
 void *getprotobyname() { errno = ENOSYS; return 0; }
@@ -1628,4 +1628,5 @@ void *xdrmem_create() { errno = ENOSYS; return (void *)0; }
 int connect() { errno = ENOSYS; return -1; }
 int setsockopt() { errno = ENOSYS; return -1; }
 short htons(short x) { return x; }
+int kill(int pid, int signal) { errno = ENOSYS; return -1; }
 #endif

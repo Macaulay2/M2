@@ -309,14 +309,22 @@ M2_string s,t;
 int system_wait(pid)
 int pid;
 {
+#if defined(__MWERKS__)
+     return ERROR;
+#else
      int status;
      int ret = waitpid(pid,&status,0);
      if (ret == ERROR) return ERROR;
      return status>>8;
+#endif
      }
 
 M2_arrayint system_select(M2_arrayint v) {
-#if defined(_WIN32)
+#if defined(__MWERKS__)
+  M2_arrayint z;
+  z = (M2_arrayint)getmem_atomic(sizeofarray(z,0));
+  return z;
+#elif defined(_WIN32)
   return ERROR;
 #else
   static fd_set r, w, e;
@@ -623,7 +631,9 @@ char const *system_strerror() {
 #ifndef NO_HERROR
      h_errno > 0 && h_errno < h_nerr ? h_errlist[h_errno] : 
 #endif
+#ifndef __MWERKS__
      errno > 0 && errno < sys_nerr ? sys_errlist[errno] :
+#endif
      "no system error (scclib.c)";
 #ifndef NO_HERROR
      h_errno = 0;
@@ -737,6 +747,14 @@ int M2close(int fd)
     if (fd >= 0 && fd <= 2) return 0;
     return fclose((FILE *)fd);
 }
+
+int M2lseek(int fd, long offset, int whence)
+{
+    int ret = fseek((FILE *)fd, offset, whence);
+    if (ret == -1) return -1;
+    return ftell((FILE *)fd);
+}
+
 #endif
 
 void *GC_malloc1 (size_t size_in_bytes) {

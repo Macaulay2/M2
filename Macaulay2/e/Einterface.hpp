@@ -23,18 +23,41 @@ typedef vecHeap vector_heap;
 typedef const vecterm * const_vector;
 typedef const FreeModule *freemodule;
 
+#if 0
 class vector_collector
 {
-  const freemodule &F;
+  const freemodule F;
   vecterm head;
   vecterm *last;
 public:
   vector_collector(const freemodule &F) : F(F)
-    { head.next = 0; last = &head; }
+    { head.next = 0; last = &head;
+      printf("&head = %x, last = %x\n",&head,last); }
   void append(term &t)  // eats 't'
-    { last->next = t; last = t; }
+    { last->next = t; last = t;
+      printf("&head = %x, head.next = %x, last = %x\n", &head, head.next, last);
+     }
   vec value()
     { last->next = 0; vec result = head.next; head.next = last = 0; return result; }
+};
+#endif
+class vector_collector
+{
+  const freemodule F;
+  vecterm *first;
+  vecterm *last;
+public:
+  vector_collector(const freemodule &F) : F(F)
+    { first = last = 0; }
+  void append(term &t)  // eats 't'
+    { if (last == 0) { first = t; last = first; }
+      else { last->next = t; last = t; }
+     }
+  vec value()
+    { if (last == 0) return 0;
+       last->next = 0;
+       return first;
+    }
 };
 
 class EInterface

@@ -1,5 +1,38 @@
--- Copyright 1998 by Michael E. Stillman
+-- Copyright 1999 by Michael E. Stillman
 
+-- To do list
+///
+Finish this documentation file.  In particular, the API's:
+     MonomialOrder
+     Ring
+     FreeModule
+     RingElement
+     Vector
+     Matrix
+     RingMap
+     MonomialIdeal
+     GroebnerBasis
+ZZZ: want a integer/pointer approach, I guess...
+     
+Tests for all of the routines in the API
+MonomialIdeal: these should be two distinct types
+     As a type on its own (in a polynomial ring, quotient by monomials, exterior algebra, what else)
+     As a monomial lookup table
+Finish the matrix routines: in particular:
+     kbasis
+     random: don't forget the seed, also how to handle random polynomials of a given degree,
+       or of degree <= d, etc.
+       Put in Dave's random code.
+     what else isn't yet implemented?
+Fraction fields
+     remember that GB's will NOT use this?
+Quotient rings
+     can get this running by using asserted GB's
+GB's:
+     reduction needed, for asserted GB's.
+     Maybe first transfer original one(s) over?
+
+///
 -- Engine documentation
 
 document { quote ggadd,
@@ -124,6 +157,34 @@ document { quote ggweylalg,
       are not yet allowed.  This restriction will be gone soon."
      } 
 
+document { "Engine Monoid API",
+     "EMonoid is a basic type in the engine."
+     }
+
+document { "Engine Ring API",
+     "One of the basic data types which the engine supports is ", TT "ERing", ". Among the
+     engine rings are the basic coefficient rings: ZZZ, ZZZ/p, GF(p^n), QQ, RR.  Polynomial rings
+     over another ring, as well as skew-commutative polynomial rings, Weyl algebras, and
+     non-commutative rings are among the rings handled by the engine.  Finally, quotients of these,
+     and fraction fields of these are included as well.",
+     "The following functions create new rings.",
+     MENU {
+        {TT "ggZZZ():ERing", " -- the ring ZZ"},
+        {TT "ggcharp(p:int):ERing", " -- the ring ZZ/p"},
+        {TT "ggGF(R:ERing):ERing"},
+        {TT "ggpolyring(K:ERing,M:EMonoid,D:ERing,degrees:IntegerList):ERing", " -- a polynomial ring"},
+        {TT "ggweylalgebra(K:ERing,M:EMonoid,diffs:IntegerList,comms:IntegerList,homog:int, 
+             D:Ering,degrees:IntegerList):ERing"},
+        {TT "ggskewpolyring(K:ERing,M:EMonoid,skewvars:IntegerList,D:ERing,degrees:IntegerList):ERing"},
+        {TT "ggquotient(R:ERing,I:EGroebnerBasis):ERing", " -- the quotient ring R/I"},
+        {TT "ggfrac(R:ERing):ERing", " -- the fraction field K(R), if R is a domain"}
+       },
+     "The following routines obtain information about a ring.",
+     MENU {
+        "What should go here???"
+       }
+     }
+     
 document { "Engine FreeModule API",
      "One of the basic engine data types is", TT "EFreeModule", " .  Each such free module
      is defined over a ring, and is graded according to the (multi)grading of this ring.
@@ -179,7 +240,42 @@ document { "Engine RingElement API",
 	
 	}
    
-	     
+document { "Engine Vector API",
+     "EVector is a basic type in the engine."
+     }
+
+document { "Engine Matrix API",
+     "EMatrix is a basic type in the engine."
+     "The following functions are the engine operations on matrices.",
+     MENU {
+        {TT "ggiszero(m:EMatrix):bool", " -- is m == 0?"},
+        {TT "ggisequal(m,n:EMatrix):bool", " -- is m == n?"},
+        {TT "ggelem(m:EMatrix,i:int):EVector", " -- the i th column: m_i"},
+        {TT "ggelem(m:EMatrix,r:int,c:int):ERingElement", " -- the (r,c) th entry: m_(r,c)"},
+        {TT "ggnegate(m:EMatrix):EMatrix", " -- return -m"},
+        {TT "ggadd(m,n:EMatrix):EMatrix", " -- return m+n"},
+        {TT "ggmult(m:EMatrix,v:EVector):EVector", " -- apply the map 'm' to 'v'"},
+        {TT "ggmult(m,n:EMatrix):EMatrix", " -- return m*n"},
+        {TT "ggsubmatrix(m:EMatrix,r:IntegerList,c:IntegerList):EMatrix"},
+        {TT "ggsubmatrix(m:EMatrix,c:IntegerList):EMatrix"},
+        {TT "ggzeromat(target,source:EFreeModule):EMatrix"},
+        {TT "ggiden(F:EFreeModule):EMatrix},
+        {TT "ggrandom(R:ERing,nrows:int,ncols:int):EMatrix"},
+        {TT "ggdirectsum(m,n:EMatrix):EMatrix"}
+     }
+
+document { "Engine Monomial Ideal API",
+     "EMonomialIdeal is a basic type in the engine."
+     }
+
+document { "Engine RingMap API",
+     "ERingMap" is a basic type in the engine."
+     }
+
+document { "Engine Computation API",
+     "Here we document the engine interface for computations, such as Groebner bases, determinants."
+     }
+     	     
 	     
 	
 TEST ///
