@@ -107,7 +107,7 @@ export rawCompareMonomial(e:Expr):Expr := (
      when s.1 is x:RawMonomial do
      when s.2 is y:RawMonomial do (
 	  r := Ccode(int, "rawCompareMonomial((Monoid *)", M,",(Monomial *)", x, ",(Monomial *)", y, ")");
-	  if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	  if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	  )
      else WrongArg(3,"a raw monomial")
      else WrongArg(2,"a raw monomial")

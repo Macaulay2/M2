@@ -660,15 +660,15 @@ export installMethod(s:SymbolClosure,X:HashTable,Y:HashTable,f:fun):Expr := (
      installMethod(Expr(s),X,Y,Expr(CompiledFunction(f,nextHash())))
      );
 
-export installValue(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
-     if ! rhs.mutable && !lhs.mutable
-     then return buildErrorPacket("value installation attempted, but neither hash table is mutable");
-     storeInHashTable(
-	  if !lhs.mutable then rhs
-	  else if rhs.mutable then ( if lhs.hash > rhs.hash then lhs else rhs )
-	  else lhs,
-	  Expr(Sequence(Expr(lhs),Expr(rhs),meth)),
-	  value));
+-- export installValue(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
+--      if ! rhs.mutable && !lhs.mutable
+--      then return buildErrorPacket("value installation attempted, but neither hash table is mutable");
+--      storeInHashTable(
+-- 	  if !lhs.mutable then rhs
+-- 	  else if rhs.mutable then ( if lhs.hash > rhs.hash then lhs else rhs )
+-- 	  else lhs,
+-- 	  Expr(Sequence(Expr(lhs),Expr(rhs),meth)),
+-- 	  value));
 key2 := Sequence(nullE,nullE,nullE);
 key2E := Expr(key2);
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (

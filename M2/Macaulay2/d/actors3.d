@@ -138,19 +138,19 @@ NotEqualfun(lhs:Code,rhs:Code):Expr := (
 setup(NotEqualS,NotEqualfun);
 
 compare(left:Expr,right:Expr):Expr := (
-     if left == right then EqualE else
+     if left == right then EqualEqualE else
      when left
      is x:Integer do (
 	  when right
 	  is y:Real do 
-	  if x < y.v then LessE else if x > y.v then GreaterE else EqualE
+	  if x < y.v then LessE else if x > y.v then GreaterE else EqualEqualE
 	  is y:Integer do
-	  if x < y then LessE else if x > y then GreaterE else EqualE
+	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:Rational do
-	  if x < y then LessE else if x > y then GreaterE else EqualE
+	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:BigReal do (
 	       r := compare(toBigReal(x),y);
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
@@ -166,7 +166,7 @@ compare(left:Expr,right:Expr):Expr := (
 		    else (
 			 -- if we had a Sequence number stored in each fram
 			 -- we could make the rest of the comparison well-defined
-			 EqualE
+			 EqualEqualE
 			 )
 		    )
 	       )
@@ -174,14 +174,14 @@ compare(left:Expr,right:Expr):Expr := (
      is x:Rational do (
 	  when right
 	  is y:Real do
-	  if x < y.v then LessE else if x > y.v then GreaterE else EqualE
+	  if x < y.v then LessE else if x > y.v then GreaterE else EqualEqualE
 	  is y:Integer do 
-	  if x < y then LessE else if x > y then GreaterE else EqualE
+	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:Rational do
-	  if x < y then LessE else if x > y then GreaterE else EqualE
+	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:BigReal do (
 	       r := compare(toBigReal(x),y);
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
@@ -189,44 +189,44 @@ compare(left:Expr,right:Expr):Expr := (
 	  when right
 	  is y:Real do (
 	       r := compare(x,toBigReal(y.v));
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
 	  is y:Integer do (
 	       r := compare(x,toBigReal(y));
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
 	  is y:Rational do (
 	       r := compare(x,toBigReal(y));
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
 	  is y:BigReal do (
 	       r := compare(x,y);
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is x:Real do (
 	  when right
 	  is y:Real do
-	  if x.v < y.v then LessE else if x.v > y.v then GreaterE else EqualE
+	  if x.v < y.v then LessE else if x.v > y.v then GreaterE else EqualEqualE
 	  is y:Integer do
-	  if x.v < y then LessE else if x.v > y then GreaterE else EqualE
+	  if x.v < y then LessE else if x.v > y then GreaterE else EqualEqualE
 	  is y:Rational do
-	  if x.v < y then LessE else if x.v > y then GreaterE else EqualE
+	  if x.v < y then LessE else if x.v > y then GreaterE else EqualEqualE
 	  is y:BigReal do (
 	       r := compare(toBigReal(x.v),y);
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is x:string do (
 	  when right
-	  is y:string do if x < y then LessE else if x > y then GreaterE else EqualE
+	  is y:string do if x < y then LessE else if x > y then GreaterE else EqualEqualE
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is x:Net do (
 	  when right
-	  is y:Net do if x < y then LessE else if x > y then GreaterE else EqualE
+	  is y:Net do if x < y then LessE else if x > y then GreaterE else EqualEqualE
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is Error do left
