@@ -17,8 +17,19 @@ $(RESULTS) : ../libexec/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 ifneq "$(DUMPDATA)" "no"
 dumpdata.okay : dumpdata.1 dumpdata.2 dumpdata.3
 	@ echo testing dumpdata
-	@ ../libexec/Macaulay2 -q '-eloaddata("../libexec/Macaulay2-$(ARCH)-data")' -- '-epath=append(path,"../m2")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent dumpdata.1 '-eexit(0)'
-	@ echo exit 0 | ../libexec/Macaulay2 -q '-eloaddata("../libexec/Macaulay2-$(ARCH)-data")' -- '-epath=append(path,"../m2")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent dumpdata.2 -- dumpdata.3
+	@ ../libexec/Macaulay2 -q \
+		   '-eloaddata("../libexec/Macaulay2-$(ARCH)-data")' \
+		-- '-epath=append(path,"../m2")' '-erunStartFunctions()' \
+		   '-eerrorDepth(0)' \
+		   -silent @srcdir@/dumpdata.1 \
+		   '-eexit(0)'
+	@ echo exit 0 \
+	  | ../libexec/Macaulay2 -q \
+		   '-eloaddata("../libexec/Macaulay2-$(ARCH)-data")' \
+		-- '-epath=append(path,"../m2")' \
+		   '-erunStartFunctions()' '-eerrorDepth(0)' \
+		   -silent @srcdir@/dumpdata.2 \
+		-- @srcdir@/dumpdata.3
 	@ touch dumpdata.okay
 endif
 

@@ -3,9 +3,6 @@ justM2 default :: initialize phase1
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
 
-#  export this to pass it to Makefile.egs
-export srcdir := @srcdir@
-
 VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
@@ -22,8 +19,8 @@ emacs html: all; $(MAKE) -C ../$@
 # CFLAGS =
 # LDFLAGS = -s
 # LOADLIBES =
-DUMPSEQUENCE = $(shell cat dumpseq)
-DOCSEQUENCE = $(shell cat docseq)
+DUMPSEQUENCE = $(shell cat @srcdir@/dumpseq)
+DOCSEQUENCE = $(shell cat @srcdir@/docseq)
 
 MADEM2FILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
 
@@ -185,7 +182,7 @@ cache/doc/expression: expression; cp $< $@
 
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
 	 # phase 3: running the example input files
-	$(MAKE) -C cache/doc -f ../../@srcdir@/Makefile.egs
+	$(MAKE) -C cache/doc -f ../../@srcdir@/Makefile.egs srcdir=../../@srcdir@
 
 all :: phase4
 phase4 : phase3 ../cache/Macaulay2-doc

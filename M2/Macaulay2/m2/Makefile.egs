@@ -5,10 +5,12 @@ include $(TOPDIR)/config.Makefile
 ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent \
 	'-e loaddata "$(M2HOME)/$(DUMPDATAFILE)"' \
-	-- -x -s ../../$(srcdir)/eg.m2
+	-- -x -s $(srcdir)/../m2/eg.m2
 else
 ARGS := -q -silent -x -s -ephase=1 $(M2HOME)/m2/setup.m2 -ephase=0 $(M2HOME)/m2/eg.m2
 endif
+
+ARGS += '-e path = prepend("$(srcdir)/",path)'
 
 # ifdef CYGWIN32
 # # Sigh, some bug under Windows with bash.exe and pipes makes redirection of

@@ -18,11 +18,11 @@ Makefile : Makefile.in
 #############################################################################
 all :: doc
 doc : $(DOC) $(TEST)
-	../bin/M2 -q '-e phase=2' StateTable.m2 '-e exit 0'
-	../bin/M2 -q '-e phase=2' eliminate.m2  '-e exit 0'
-	$(MAKE) -k -C $(DOC) -f ../../@srcdir@/../m2/Makefile.egs
+	../bin/M2 -q '-e phase=2' @srcdir@/StateTable.m2 '-e exit 0'
+	../bin/M2 -q '-e phase=2' @srcdir@/eliminate.m2  '-e exit 0'
+	$(MAKE) -C $(DOC) -f ../../@srcdir@/../m2/Makefile.egs srcdir=../../@srcdir@
 tests :: doc
-	$(MAKE) -k -C $(TEST) -f ../../@srcdir@/../m2/Makefile.tests
+	$(MAKE) -C $(TEST) -f ../../@srcdir@/../m2/Makefile.tests
 #############################################################################
 Dtests = $(wildcard D-modules/TST/*.tst.m2)
 Dtestresults = $(Dtests:.m2=.okay)
