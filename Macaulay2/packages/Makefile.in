@@ -1,39 +1,26 @@
 # @configure_input@
-
-## here is the list of those package files to install with Macaulay2
-PACKAGES =
-PACKAGES += M2doc.m2
-PACKAGES += CacheFileName.m2
-PACKAGES += ConvexHulls.m2
-PACKAGES += Dmodules.m2
-PACKAGES += Elimination.m2
-PACKAGES += FirstPackage.m2
-PACKAGES += GenericInitialIdeal.m2
-PACKAGES += Markov.m2
-PACKAGES += PrimaryDecomposition.m2
-PACKAGES += minimal.m2
-# PACKAGES += SchurRings.m2
-##
-
 include ../../include/config.Makefile
 VPATH = @srcdir@
-srcdir = $(shell cd @srcdir@; pwd)
-DOC=cache/doc
-TEST=cache/tests
-.PHONY : all check initialize clean distclean install
-DOCFILES := eliminate.m2 D-modules/DMODdoc.m2
-clean check distclean ::; $(MAKE) -C ComputationsBook $@
-Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
-distclean::clean
-distclean::; rm -f Makefile
 
-all :: $(PACKAGES:.m2=.installed)
-
-MAKEINFO = true
+## here is the list of those package files to install with Macaulay2
+PACKAGES = M2doc
+PACKAGES += CacheFileName
+PACKAGES += ConvexHulls
+PACKAGES += Dmodules
+PACKAGES += Elimination
+PACKAGES += FirstPackage
+PACKAGES += GenericInitialIdeal
+PACKAGES += Markov
+PACKAGES += PrimaryDecomposition
+PACKAGES += minimal
+# PACKAGES += SchurRings
+##
 
 %.installed : %.m2
-	../bin/M2 -q --stop -e errorDepth=0 -e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => true, MakeInfo => $(MAKEINFO), PackagePrefix => \"./tmp-packages/\")" -e "exit 0"
+	../bin/M2 -q --stop -e errorDepth=0 -e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => true, MakeInfo => true, PackagePrefix => \"./tmp-packages/\")" -e "exit 0"
 	touch "$@"
+
+all :: $(PACKAGES:=.installed)
 
 clean::; rm -rf tmp tmp-packages *.installed
 install: all; tar cf - -C tmp-packages . | tar xfp - -C $(encapdir)
@@ -43,6 +30,11 @@ Dmodules.installed :: @srcdir@/Dmodules/*.m2
 # ./tmp is used by examples in CacheFileName.m2
 CacheFileName.installed : tmp
 tmp : ; mkdir tmp
+
+clean check distclean ::; $(MAKE) -C ComputationsBook $@
+Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
+distclean::clean
+distclean::; rm -f Makefile
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "

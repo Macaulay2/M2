@@ -172,16 +172,16 @@ M2OPTIONS += --no-debug
 endif
 M2OPTIONS += -e errorDepth=0
 M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Macaulay2, Encapsulate => true, PackagePrefix => "$(TMPDIR)/", MakeLinks => false)'
+M2OPTIONS += -e 'installPackage(Macaulay2, Encapsulate => true, PackagePrefix => "$(encapdir)/", MakeLinks => false, MakeDocumentation => false)'
 ifndef INTERACTIVE
 M2OPTIONS += -e 'exit 0 '
 endif
 
-$(TMPDIR) :; mkdir "$@"
-install:: $(TMPDIR)
+# $(TMPDIR) :; mkdir "$@"
+# install :: $(TMPDIR)
+install ::
 	@ echo installing the Macaulay2 package
 	@ set -x ; time ../bin/M2 $(M2OPTIONS)
-	touch "$@"
 
 clean::; rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core
 distclean : clean; rm -f Makefile
