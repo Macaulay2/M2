@@ -80,38 +80,51 @@ struct enter_M2 {
   enter_M2::~enter_M2() { exit(); }
 };
 
+static MP_INT toInteger(CanonicalForm h) {
+     // there has to be a faster way, since factory uses gmp inside
+     enter_M2 b;
+     static const unsigned int base = 1 << 16;
+     intarray v;
+     int sign;
+     assert(h.inZ());
+     {
+       enter_factory a;
+       if (h < 0) { sign = -1; h = -h; } else sign = 1;
+       while ( h != 0 ) {
+	    CanonicalForm k = h % base;
+	    v.append(k.intval());
+	    h /= base;
+       }
+     }
+     mpz_t x;
+     mpz_init(x);
+     for (int i = v.length() - 1; i >= 0; i--) {
+	  mpz_mul_ui(x,x,base); // x = x * base;
+	  mpz_add_ui(x,x,static_cast<unsigned>(v[i]));
+     }
+     if (sign == -1) mpz_neg(x,x); // x = -x;
+     return x[0];
+}
+
 static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
      // this seems not to handle polynomials with rational coefficients at all!!
      enter_M2 b;
      const int n = R->n_vars();
      if (h.inCoeffDomain()) {
 	  if (h.inZ()) {
-	       static const unsigned int base = 1 << 16;
-	       intarray v;
-	       int sign;
-	       {
-		 enter_factory a;
-		 if (h < 0) { sign = -1; h = -h; } else sign = 1;
-		 while ( h != 0 ) {
-		      CanonicalForm k = h % base;
-		      v.append(k.intval());
-		      h /= base;
-		 }
-	       }
-	       mpz_t x;
-	       mpz_init(x);
-	       for (int i = v.length() - 1; i >= 0; i--) {
-		    mpz_mul_ui(x,x,base); // x = x * base;
-		    mpz_add_ui(x,x,static_cast<unsigned>(v[i]));
-	       }
-	       if (sign == -1) mpz_neg(x,x); // x = -x;
+	       mpz_t x = {toInteger(h)};
 	       ring_elem ret = R->from_int(x);
 	       mpz_clear(x);
 	       return RingElement::make_raw(R, ret);
 	  }
 	  else if (h.inQ()) {
-	       ERROR("conversion from factory over QQ not implemented yet");
-	       return RingElement::make_raw(R,R->one());
+	       enter_factory c;
+	       CanonicalForm hnum = h.num(), hden = h.den();
+	       enter_M2 d;
+	       MP_RAT z = {toInteger(h.num()), toInteger(h.den())};
+	       RingElement *ret = RingElement::make_raw(R,R->from_rational(&z));
+	       mpq_clear(&z);
+	       return ret;
 	  }
 	  else if (h.inFF()) {
 	       return RingElement::make_raw(R, R->from_int(h.intval()));
@@ -265,31 +278,30 @@ const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingEleme
 {
 #warning "check that the rings of f and g both polynomial rings"
 #ifdef FACTORY
+  const RingElement *ret;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
+  if (P == 0) {
       ERROR("expected polynomial ring");
       return 0;
     }
-  if (P != P2)
-    {
+  if (P != P2) {
       ERROR("encountered different rings");
       return 0;
     }
-  enter_factory a;
   {
+    enter_factory a;
     CanonicalForm p = convert(*f);
     CanonicalForm q = convert(*g);
     //     cerr << "p = " << p << endl
     //          << "q = " << q << endl;
     CanonicalForm h = gcd(p,q);
-    const RingElement *r = convert(P,h);
-    return r;
+    ret = convert(P,h);
   }
+  return ret;
 #else
-    ERROR("'factory' library not installed");
-    return NULL;
+  ERROR("'factory' library not installed");
+  return NULL;
 #endif
 }
 
@@ -297,6 +309,7 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
 {
 #warning "check that the rings of f and g both polynomial rings"
 #ifdef FACTORY
+  const RingElement *ret;
   const PolynomialRing *P = f->get_ring()->cast_to_PolynomialRing();
   const PolynomialRing *P2 = g->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
@@ -309,15 +322,15 @@ const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const R
       ERROR("encountered different rings");
       return 0;
     }
+  enter_factory here;
   CanonicalForm p = convert(*f), q = convert(*g), a, b;
   //     cerr << "p = " << p << endl
   //          << "q = " << q << endl;
-  enter_factory here;
   CanonicalForm h = extgcd(p,q,a,b);
-  const RingElement *r = convert(P,h);
+  ret = convert(P,h);
   *A = convert(P,a);
   *B = convert(P,b);
-  return r;
+  return ret;
 #else
   ERROR("'factory' library not installed");
   return NULL;
