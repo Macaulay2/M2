@@ -108,7 +108,7 @@ export tostring(c:Code):string := (
      is x:stringCode do concatenate(array(string)("\"",present(x.x),"\""))
      is x:ternaryCode do concatenate(array(string)("(3-OP ",tostring(x.arg1)," ",tostring(x.arg2)," ",tostring(x.arg3),")"))
      is x:ifCode do concatenate(array(string)("(if ",tostring(x.predicate)," then: ",tostring(x.thenClause)," else: ",tostring(x.elseClause),")"))
-     is x:tryCode do concatenate(array(string)("(try ",tostring(x.code)," ",tostring(x.elseClause),")"))
+     is x:tryCode do concatenate(array(string)("(try ",tostring(x.code)," ",tostring(x.thenClause)," ",tostring(x.elseClause),")"))
      is x:unaryCode do concatenate(array(string)("(1-OP ",tostring(x.rhs),")"))
      );
 
