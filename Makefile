@@ -51,14 +51,12 @@ export CONFIGURED_FILES := $(shell cat config.files)
 	./config.status $@
 #############################################################################
 
-stage1 : configure include/config.h.in
 configure : configure.in aclocal.m4
 	autoconf
 include/config.h.in : configure.in aclocal.m4
 	autoheader
 	touch $@
 
-stage2 : include/config.h
 config.status : configure configure.options version
 	unset CONFIG_SITE; \
 	$(CONFIGURE_ENVIRON) ./configure $(CONFIGURE_OPTIONS) --no-create --cache-file=config.cache
@@ -67,5 +65,7 @@ include/config.h : config.status include/config.h.in
 	./config.status $@
 	touch $@
 
-$(TARGETS) :: include/config.h $(CONFIGURED_FILES)
+configuration : include/config.h $(CONFIGURED_FILES)
+
+$(TARGETS) :: configuration
 	$(MAKE) $@ -f Makefile-run
