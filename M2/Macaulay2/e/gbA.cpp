@@ -391,6 +391,7 @@ gbA::spairs::iterator gbA::choose_pair(gbA::spairs::iterator first,
 struct spair_sorter : public binary_function<gbA::spair *,gbA::spair *,bool> {
   int nvars;
   spair_sorter(int nv) : nvars(nv) {}
+#if 0
   bool operator()(gbA::spair *a, gbA::spair *b)
     {
       /* Compare using degree, then type, then lcm */
@@ -402,6 +403,23 @@ struct spair_sorter : public binary_function<gbA::spair *,gbA::spair *,bool> {
       if (cmp > 0) return false;
       return !exponents_greater(nvars,a->lcm, b->lcm);
     }
+#endif
+  bool operator()(gbA::spair *a, gbA::spair *b)
+    {
+      /* Compare using degree, then type, then lcm */
+      bool result;
+      int cmp = a->deg - b->deg;
+      if (cmp < 0) result = true;
+      else if (cmp > 0) result = false;
+      else {
+	cmp = a->type - b->type;
+	if (cmp < 0) result = true;
+	else if (cmp > 0) result = false;
+	else result = !exponents_greater(nvars,a->lcm, b->lcm);
+      }
+      return result;
+    }
+
 };
 
 void gbA::minimalize_pairs(spairs &new_set)
@@ -1156,4 +1174,25 @@ void gbA::text_out(buffer &o)
       }
 }
 
+void gbA::debug_spair(spair *p)
+{
+  buffer o;
+  spair_text_out(o, p);
+  emit(o.str());
+}
 
+void gbA::debug_spairs(spair *spairlist)
+{
+  spair *p = spairlist;
+  while (p != 0)
+    {
+    debug_spair(p);
+    p = p->next;
+  }
+}
+
+void gbA::debug_spair_array(spairs &spairlist)
+{
+  for (int i=0; i<spairlist.size(); i++)
+    debug_spair(spairlist[i]);
+}

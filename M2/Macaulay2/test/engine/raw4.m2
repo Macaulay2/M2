@@ -2,6 +2,7 @@
 -- Test of the rawGB commands
 
 load "raw-util.m2"
+
 R1 = rawPolynomialRing(rawQQ(), singlemonoid{x,y,z})
 x = rawRingVar(R1,0,1)
 y = rawRingVar(R1,1,1)
@@ -55,13 +56,8 @@ answerm = mat{{21*x^2-2*y^2+42*x*z+8*y*z+13*z^2,
 assert(m == answerm)
 
 -- Test 4. -- module GB
-R2 = rawPolynomialRing(rawQQ(), singlemonoid{a,b,c,d,e,f})
-a = rawRingVar(R2,0,1)
-b = rawRingVar(R2,1,1)
-c = rawRingVar(R2,2,1)
-d = rawRingVar(R2,3,1)
-e = rawRingVar(R2,4,1)
-f = rawRingVar(R2,5,1)
+R2 = polyring(rawQQ(), symbol a .. symbol f)
+
 m = mat {{a,b,c},{d,e,f}}
 Gcomp = rawGB(m,false,0,false,0,0,0)
 mgb = rawGBGetMatrix(Gcomp,1,false) -- gb
@@ -76,21 +72,19 @@ assert(mgb == m * mchange)
 -- Test 5. -- Semi-random cubics
 M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
 Gcomp = rawGB(M,false,0,false,0,0,0)
-time mgb = rawGBGetMatrix(Gcomp,1,false); -- gb
+time mgb = rawGBGetMatrix(Gcomp,1,false); -- gb  -- too many heap sections in algorithm 0
+Gcomp = rawGB(M,false,0,false,0,1,0)
+time mgb = rawGBGetMatrix(Gcomp,1,false); -- gb  -- same crash
 rawGBGetLeadTerms(Gcomp,6,1)
 
 -- Test 6. -- same in char 101
-rawMonoid()
-R2 = rawPolynomialRing(rawZZp(101,rawMonoid()), singlemonoid{a,b,c,d,e,f})
-a = rawRingVar(R2,0,1)
-b = rawRingVar(R2,1,1)
-c = rawRingVar(R2,2,1)
-d = rawRingVar(R2,3,1)
-e = rawRingVar(R2,4,1)
-f = rawRingVar(R2,5,1)
-M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}} -- bus error!!
+R2 = polyring(rawZZp(101,rawMonoid()), symbol a .. symbol f)
+M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
 Gcomp = rawGB(M,false,0,false,0,0,0)
 time mgb = rawGBGetMatrix(Gcomp,1,false); -- gb
+
+Gcomp = rawGB(M,false,0,false,0,1,0)
+time mgb = rawGBGetMatrix(Gcomp,1,false); -- crashes due to bad access in spair_sorter
 
 
 rawGBSetStop(Gcomp, ...) -- MES: make sure the default is set correctly
@@ -99,37 +93,9 @@ rawGBSetStop(Gcomp, ...) -- MES: make sure the default is set correctly
 rawGBGetMatrix(Gcomp,1,true) -- mingens
 rawGBGetMatrix(Gcomp,2,false) -- syz matrix
 
--- Test: a bug.
-load "raw-util.m2"
-R2 = rawPolynomialRing(rawQQ(), singlemonoid{a,b,c,d,e,f})
-a = rawRingVar(R2,0,1)
-b = rawRingVar(R2,1,1)
-c = rawRingVar(R2,2,1)
-d = rawRingVar(R2,3,1)
-e = rawRingVar(R2,4,1)
-f = rawRingVar(R2,5,1)
-M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
-  -- BUG BUG: for some reason, toString is being called several times here
---Gcomp = rawGB(M,false,0,false,0,0,0)
-R2 = rawPolynomialRing(rawZZp(101,rawMonoid()), singlemonoid{a,b,c,d,e,f})
-a = rawRingVar(R2,0,1)
-b = rawRingVar(R2,1,1)
-c = rawRingVar(R2,2,1)
-d = rawRingVar(R2,3,1)
-e = rawRingVar(R2,4,1)
-f = rawRingVar(R2,5,1)
-M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}; -- bus error!!
-M
-  -- BUG BUG: for some reason, toString is being called several times here, AND
-  -- also == on RawMatrix is begin called here too.  Why??
-
-
 --- Tests for gbA: inhomogeneous and local
 load "raw-util.m2"
-R1 = rawPolynomialRing(rawQQ(), singlemonoid{x,y,z})
-x = rawRingVar(R1,0,1)
-y = rawRingVar(R1,1,1)
-z = rawRingVar(R1,2,1)
+R1 = polyring(rawQQ(), (x,y,z))
 algorithm = 1
 
 G = mat {{x*y-1, x^2-x, x^3-z-1}}
@@ -189,7 +155,7 @@ g2 = rawGBGetMatrix(Gcomp,1,false)
 syzm * ch - g2  -- 8..10 elements are NOT zero: BUG
 syz2m = rawGBGetMatrix(Gcomp,2,false) -- syz matrix
 
-syzm * syz2m -- not zero!! BUG
+assert(syzm * syz2m == 0)
 
 G = mat {{3*x-y^20, 4*y-z^20, x*y-x-1}}
 Gcomp = rawGB(G,false,0,false,0,algorithm,0)
@@ -249,7 +215,7 @@ y = rawRingVar(R2,3,1)
 z = rawRingVar(R2,4,1)
 G = mat{{x - 3*u-3*u*v^2+u^3, y-3*v-3*u^2*v+v^3, z-3*u^2+3*v^2}}
 Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-time m = rawGBGetMatrix(Gcomp,1,false); -- Groebner basis
+time m = rawGBGetMatrix(Gcomp,1,false); -- Groebner basis. get ABORT
 rawGBGetLeadTerms(Gcomp,6,1)
 
 time rawGBGetMatrix(rawGB(oo,false,0,false,0,algorithm,0), 1,true)

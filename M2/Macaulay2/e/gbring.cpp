@@ -10,10 +10,14 @@
 #include "skewpoly.hpp"
 #include "solvable.hpp"
 
+#define sizeofgbvector(s,len) (sizeof(*s) - sizeof(s->monom) + (len)*sizeof(s->monom[0]))
+
+static int nslabs = 0;
 void MemoryAllocator::new_slab()
 {
   // grab a new slab, and chop it into element_size pieces, placing them
   // onto the free list.
+  nslabs++;
   slab *newSlab = new slab;
   newSlab->next = top_slab;
   top_slab = newSlab;
@@ -271,6 +275,8 @@ GBRingSolvable::~GBRingSolvable()
 {
 }
 
+gbvector *used_to_determine_size = 0;
+
 GBRing::GBRing(const PolynomialRing *origR)
   : _schreyer_encoded(false),
     originalR(origR),
@@ -288,7 +294,7 @@ GBRing::GBRing(const PolynomialRing *origR)
     _skew(),
     _is_weyl_algebra(false),
     _one(K->from_int(1)),
-    _mem(1000)
+    _mem(sizeofgbvector(used_to_determine_size,M->monomial_size()))
 {
   _EXP1 = new int[_nvars+2];
   _EXP2 = new int[_nvars+2];
@@ -1066,6 +1072,7 @@ void GBRing::gbvector_remove_content_ZZ(gbvector *f,
 					mpz_t denom) const
   // let c = gcd(content(f),content(fsyz)).
   // set f := f/c,  fsyz := fsyz/c.
+  // denom *= c
 {
   // This routine assumes that the coeff ring is ZZ (originally QQ).
 
@@ -1118,7 +1125,9 @@ void GBRing::gbvector_remove_content(gbvector *f,
 				     gbvector *fsyz,
 				     ring_elem &denom)
   // let c = gcd(content(f),content(fsyz)).
-  // set f := f/c,  fsyz := fsyz/c.
+  // set f := f/c,  fsyz := fsyz/c, denom *= c.
+  // If K is not ZZ, then c is set to make f monic.
+  // 
 {
   if (_coeffs_ZZ) 
     {
@@ -1129,10 +1138,14 @@ void GBRing::gbvector_remove_content(gbvector *f,
     }
   // At this point, our coefficient ring is a field (What about
   // finite extensions of ZZ?)
-  ring_elem c = K->invert(f->coeff);
-  gbvector_mult_by_coeff_to(f,c);
-  gbvector_mult_by_coeff_to(fsyz,c);
-  // Don't change the denom...?
+  ring_elem c,cinv;
+  if (f != 0) c = f->coeff;
+  else if (fsyz != 0) c = fsyz->coeff;
+  else return;
+  cinv = K->invert(c);
+  gbvector_mult_by_coeff_to(f,cinv);
+  gbvector_mult_by_coeff_to(fsyz,cinv);
+  K->mult_to(denom,c);
 }
 
 void GBRing::gbvector_remove_content(gbvector *f, 

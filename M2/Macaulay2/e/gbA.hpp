@@ -218,6 +218,11 @@ public:
   /* This displays statistical information, and depends on the
      gbTrace value */
 
+  /* Debug display routines */
+  void debug_spair(spair *p);
+  void debug_spairs(spair *spairlist);
+  void debug_spair_array(spairs &spairlist);
+
 };  
 
 #endif

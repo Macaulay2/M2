@@ -356,12 +356,15 @@ public:
   //  denom = denom*c
   // CAUTION: denom needs to be a valid element of the 
   //          coefficient ring.
+  // If coeff ring is not ZZ, but is a field, c is chosen so that
+  // f is monic (if not 0, else fsyz will be monic).
+
 
   void gbvector_remove_content(gbvector *f, 
 			       gbvector *fsyz);
   // let c = gcd(content(f),content(fsyz)).
   // set f := f/c,  fsyz := fsyz/c.
-  
+
   void gbvector_auto_reduce(const FreeModule *F,
 			    const FreeModule *Fsyz,
 			    gbvector * &f, 

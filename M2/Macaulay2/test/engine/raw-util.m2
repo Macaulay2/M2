@@ -12,13 +12,14 @@ degmonoid = (n) -> (
 	  trivmonoid,
 	  {}))
 
-singlemonoid = (vars) -> (
+singlemonoid = vars -> (
+     vars = toList vars;
      mo := rawMonomialOrdering { GRevLex => apply(#vars, i -> 1) };
      varnames := apply(vars, toString);
      degs := apply(vars, i -> 1);
      rawMonoid(mo, varnames, degmonoid 1, degs))
 
-lex = (vars) -> (
+lex = vars -> (
      mo := rawMonomialOrdering { Lex => #vars };
      varnames := apply(vars, toString);
      degs := apply(vars, i -> 1);
@@ -34,6 +35,7 @@ elim = (vars1,vars2) -> (
 
 polyring = (K, vars) -> (
      -- each element of vars should be a symbol!
+     vars = toList vars;
      R := rawPolynomialRing(K, singlemonoid vars);
      scan(#vars, i -> assign(vars#i, rawRingVar(R,i,1)));
      R)
