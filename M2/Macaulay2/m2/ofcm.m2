@@ -4,6 +4,8 @@ MonoidElement = new Type of HashTable
 MonoidElement.synonym = "monoid element"
 new MonoidElement from RawMonomial := (MonoidElement, f) -> hashTable{ symbol RawMonomial => f }
 
+MonoidElement == MonoidElement := (x,y) -> x === y
+
 ZZ _ Monoid := MonoidElement => (i,M) -> (
      if i === 1 then M#1
      else error "expected integer to be 1"
