@@ -78,7 +78,7 @@ document { loaddata,
      PARA,
      "The file should have been created with ", TO "dumpdata", ".  Everything will
      be returned to its former state except:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "environment",
 	  TO "commandLine",
 	  "whether the standard input is echoed and prompts to the 
@@ -663,7 +663,7 @@ document { saturate,
 
 document { saturate => Strategy,
      "The strategy option value should be one of the following:",
-     SHIELD MENU {
+     SHIELD UL {
           TO "Linear",
 	  TO "Iterate",
 	  TO "Bayer",

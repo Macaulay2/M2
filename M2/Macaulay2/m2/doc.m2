@@ -84,30 +84,30 @@ document { List,
      SEEALSO "lists",
      PARA,
      "Common operations on lists:",
-     MENU {
+     UL {
 	  TO "append",
 	  TO "join",
 	  TO "prepend",
 	  },
      "Common ways to apply functions to elements of lists:",
-     MENU {
+     UL {
 	  TO (apply,BasicList,Function),
 	  TO (scan,BasicList,Function),
 	  },
      "Common ways to test elements of lists:",
-     MENU {
+     UL {
 	  TO (all,BasicList,Function),
 	  TO (any,BasicList,Function),
 	  },
      "Common ways to find things in lists:",
-     MENU {
+     UL {
 	  TO (position,VisibleList,Function),
 	  TO (positions,VisibleList,Function),
 	  TO (select,BasicList,Function),
 	  TO (select,ZZ,BasicList,Function),
 	  },
      "Common ways to extract elements from lists:",
-     MENU {
+     UL {
 	  TO "drop",
 	  TO "take",
 	  TO (symbol #, List, ZZ),
@@ -260,11 +260,11 @@ document { toString symbol environment,
 document { Function,
      Headline => "the class of all functions",
      "Common ways to make a function:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "->"
 	  },
      "Returning from functions:",
-     MENU {
+     UL {
 	  TO "return"
 	  },
      SEEALSO "functions"
@@ -335,12 +335,12 @@ document { HashTable,
      which consists of those hash tables whose entries can be changed.",
      PARA,
      "Access functions:",
-     SHIELD MENU {
+     SHIELD UL {
  	  TO "#",
  	  TO "."
  	  },
      "Query functions:",
-     SHIELD MENU {
+     SHIELD UL {
  	  TO "#?",
  	  TO ".?"
  	  }
@@ -841,7 +841,7 @@ document { symbol "^",
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
      PARA,
      "When computing powers, one of the following methods is used.",
-     MENU {
+     UL {
 	  TO "SimplePowerMethod",
 	  TO "BinaryPowerMethod"
 	  },

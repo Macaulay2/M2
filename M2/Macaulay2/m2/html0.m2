@@ -101,7 +101,6 @@ CODE       = new MarkUpType
 HREF       = new MarkUpType
 ANCHOR     = new MarkUpType
 SHIELD     = new MarkUpType
-MENU       = new MarkUpType
 UL         = new MarkUpType
 OL         = new MarkUpType
 NL         = new MarkUpType

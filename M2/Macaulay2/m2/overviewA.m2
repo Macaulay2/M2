@@ -7,13 +7,13 @@ document { "Mathematical Overview",
      mathematical types of Macaulay 2, their construction and most common
      operations. WARNING: this overview is currently under construction.",
      PARA,
-     MENU {
+     UL {
 	  TO "rings",
 	  TO "ideals",
 	  TO "matrices",
 	  TO "substitution and maps between rings",
 	  ("modules",
-	       MENU {
+	       UL {
 		    (TO "modules: part I", " -- getting started"),
 		    (TO "modules: part II", " -- homological and multilinear algebra")
 		    }
@@ -23,7 +23,7 @@ document { "Mathematical Overview",
 	  TO "varieties",
 	  TO "using external libraries",
 	  ("specialized routines",
-	       MENU {
+	       UL {
 		    TO "commutative algebra",
 		    TO "algebraic geometry"
 		    }
@@ -42,14 +42,14 @@ document { "rings",
      before making polynomials or matrices, you must create a ring where
      you give the variables that you want, and the kinds of coefficients
      you want (e.g. rational numbers, or integers modulo a prime number).",
-     MENU {
+     UL {
 	  (TO "basic rings",
-	       MENU {
+	       UL {
 		    TO "finite fields"
 		    }
 	       ),
 	  (TO "polynomial rings",
-	       MENU {
+	       UL {
 		    TO "monomial orderings",
 		    TO "quasi- and multi-graded polynomial rings",
 		    TO "quotient rings",
@@ -58,14 +58,14 @@ document { "rings",
 		    }
 	       ),
 	  ("fields",
-	       MENU {
+	       UL {
 		    TO "finite fields, part II",
 		    TO "fraction fields",
 		    TO "finite field extensions"
 		    }
 	       ),
 	  ("other algebras",
-	       MENU {
+	       UL {
 		    TO "exterior algebras",
 		    TO "symmetric algebras",
 		    TO "tensor products of rings",
@@ -85,16 +85,16 @@ document { "ideals",
      "In Macaulay 2, once a ring (see ",TO "rings", 
      ") is defined, ideals are constructed in the usual way
      by giving a set of generators.",
-     MENU {
+     UL {
 	  TO "creating an ideal",
 	  ("conversions",
-	       MENU {
+	       UL {
 		    TO "ideals to and from matrices",
 		    SHIELD TO "ideals to and from modules"
 		    }
 	       ),
 	  ("basic operations on ideals",
-	       MENU {
+	       UL {
 		    TO "sums, products, and powers of ideals",
 		    TO "equality and containment",
 		    TO "extracting generators of an ideal",
@@ -102,7 +102,7 @@ document { "ideals",
 		    }
 	       ),
 	  ("components of ideals",
-	       MENU {
+	       UL {
 		    TO "intersection of ideals",
 		    TO "ideal quotients and saturation",
 		    TO "radical of an ideal",
@@ -247,16 +247,16 @@ document { "matrices",
      HEADER2 "An overview",     
      "In Macaulay 2, each matrix is defined over a ring, (see ", TO "rings", "). 
      Matrices are perhaps the most common data type in Macaulay 2.",
-     MENU {
+     UL {
 	  ("making matrices", 
-	       MENU {
+	       UL {
 		    TO "input a matrix",
 		    TO "random and generic matrices",
 		    TO "concatenating matrices"
 		    }
 	       ),
 	  ("operations involving matrices",
-	       MENU {
+	       UL {
 		    TO "simple information about a matrix",
 		    TO "basic arithmetic of matrices",
 		    TO "kernel, cokernel and image of a matrix",
@@ -264,7 +264,7 @@ document { "matrices",
 		    }
 	       ),
 	  ("determinants and related computations",
-	       MENU {
+	       UL {
 		    TO "rank of a matrix",
 		    TO "determinants and minors",
 		    TO "Pfaffians",
@@ -272,7 +272,7 @@ document { "matrices",
 		    }
 	       ),
 	  ("display of matrices and saving matrices to a file",
-	       MENU {
+	       UL {
 		    TO "format and display of matrices in Macaulay 2",
 		    TO "importing and exporting matrices"
 		    }
@@ -286,11 +286,11 @@ document { "matrices",
 
 document { "substitution and maps between rings",
      HEADER2 "An overview",
-     MENU {
+     UL {
 	  TO "substitute values for variables",
 	  TO "working with multiple rings",
 	  ("ring maps",
-	       MENU {
+	       UL {
 		    TO "basic construction, source and target of a ring map",
 	       	    TO "evaluation and composition of ring maps",
 		    TO "kernel and image of a ring map"
@@ -303,36 +303,36 @@ document { "substitution and maps between rings",
      
 document { "modules: part I",
      HEADER2 "Getting started",
-     MENU {
+     UL {
 	  ("construction of modules",
-	       MENU {
+	       UL {
 		    TO "free modules",
 		    (TO "matrices to and from modules", " (including kernel, cokernel and image)"),
 		    TO "ideals to and from modules"
 		    }
 	       ),
 	  (TO "Hilbert functions and free resolutions",
-	       MENU {
+	       UL {
 		    "including degree and betti numbers"
 		    }
 	       ),
 	  (TO "operations on modules",
-	       MENU {
+	       UL {
 		    "including direct sum, tensor products, and annihilators"
 		    }
 	       ),
 	  (TO "homomorphisms (maps) between modules",
-	       MENU {
+	       UL {
 		    "including elements of modules"
 		    }
---	       MENU {
+--	       UL {
 --		    TO "constructing maps between modules",
 --		    TO "information about a map of modules",
 --		    TO "kernel, cokernel and image of a map of modules"
 --		    }
 	       ),
 --	  ("graded modules",
---	       MENU {
+--	       UL {
 --		    TO "degrees of elements and free modules",
 --		    TO "degree and multiplicity of a module",
 --		    TO "Hilbert functions and polynomials",
@@ -341,10 +341,10 @@ document { "modules: part I",
 --		    }
 --	       ),
 	  (TO "subquotient modules", " -- the way Macaulay 2 represents modules",
-	       MENU {
+	       UL {
 		    "Macaulay 2 has handed you a subquotient module.  What now?"
 		    }
---	       MENU {
+--	       UL {
 --		    TO "what is a subquotient module?",
 --		    TO "extracting parts of a subquotient module",
 --		    TO "quotients of modules"
@@ -355,16 +355,16 @@ document { "modules: part I",
      }
 
 document { "modules: part II",
-     MENU {
+     UL {
 	  ("multilinear algebra",
-	       MENU {
+	       UL {
 		    TO "exterior power of a module",
 		    TO "Fitting ideals",
 		    TO "adjoints of maps"
 		    }
 	       ),
 	  ("homological algebra",
-	       MENU {
+	       UL {
 		    TO "Hom module",
 		    TO "Tor and Ext"
 		    },
@@ -377,12 +377,12 @@ document { "modules: part II",
 
 document { "Groebner bases and related computations",
      HEADER2 "An overview",
-     MENU {
+     UL {
 	  TO "what is a Groebner basis?",
 	  TO "finding a Groebner basis",
 	  TO "rings that are available for Groebner basis computations",
 	  ("a few applications of Groebner bases",
-	       MENU {
+	       UL {
 		    TO "elimination of variables",
 		    TO "Hilbert functions",
 		    TO "syzygies",
@@ -397,7 +397,7 @@ document { "Groebner bases and related computations",
 
 document { "chain complexes",
      HEADER2 "An overview",
-     MENU {
+     UL {
 	  TO "free resolutions of modules",
 	  TO "extracting information from chain complexes",
 	  TO "making chain complexes by hand",
@@ -411,7 +411,7 @@ document { "chain complexes",
 
 document { "varieties",
      HEADER2 "An overview",
-     MENU {
+     UL {
 	  TO "algebraic varieties",
 	  TO "coherent sheaves",
 	  },
@@ -419,11 +419,11 @@ document { "varieties",
      }
 
 document { "using external libraries",
-     MENU {
+     UL {
      	  TO "loading a library",
      	  TO "how to get documentation on a library",
      	  ("available libraries",
-	       MENU {
+	       UL {
 	       	    (TO "blow ups", ""),
 	       	    (TO "convex hulls and polar cones", " -- polarCone.m2"),
 	       	    (TO "D-modules", " -- D-modules.m2"),
@@ -443,7 +443,7 @@ document { "using external libraries",
 document { "rings that are available for Groebner basis computations",
      "In Macaulay 2, Groebner bases can be computed for ideals and submodules over many
      different rings.",
-     MENU {
+     UL {
 	  TO "over fields",
           TO "over the ring of integers",
           TO "over polynomial rings over a field",

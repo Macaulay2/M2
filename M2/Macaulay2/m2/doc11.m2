@@ -588,20 +588,6 @@ document { ANCHOR,
      SEEALSO "hypertext"
      }
 
-document { MENU,
-     Headline => "HTML MENU item",
-     TT "MENU x", " -- encloses the list x as a hypertext MENU.",
-     PARA,
-     "The argument ", TT "x", " should be a list of hypertext items or strings.",
-     PARA,
-     "Here is an example. The expression ",
-     PRE "MENU {\"first\",\"second\",\"third\"}",
-     "produces",
-     MENU {"first","second","third"},
-     PARA,
-     SEEALSO "hypertext"
-     }
-
 document { UL,
      Headline => "HTML UL item",
      TT "UL x", " -- encloses the list x as a hypertext UL itemized list.",
@@ -700,7 +686,7 @@ document { TO,
      page documenting the optional argument named ", TT "X", " for the 
      function ", TT "f", ".",
      PARA,
-     "If ", TT "TO x", " is an entry in a ", TO "MENU", ", then it is treated
+     "If ", TT "TO x", " is an entry in a ", TO "UL", ", then it is treated
      as ", TT "TOH x", ", and headlines are added automatically.  See also ", TO "TOH", "."
      }
 

@@ -43,12 +43,12 @@ document { "D-modules Package",
      FileName => "index",
      PARA,
      HEADER3 "How to make Weyl algebras:",
-     MENU{TO {"WeylAlgebra", " -- 
+     UL{TO {"WeylAlgebra", " -- 
 	       The class of Weyl algebras"}},
      
      PARA,
      HEADER3 "Basic commands:",
-     MENU{
+     UL{
 	  TO {"gbw", " -- Groebner bases with respect to weight vectors"},
 	  TO {"inw", " -- initial ideals with respect to weight vectors"},
 	  TO {"Fourier", " -- Fourier transform"},
@@ -60,20 +60,20 @@ document { "D-modules Package",
      
      PARA,
      HEADER3 "Some examples of D-modules:",
-     MENU{TO {"gkz", " -- Gelfand-Kapranov-Zelevinsky hypergeometric system"},
+     UL{TO {"gkz", " -- Gelfand-Kapranov-Zelevinsky hypergeometric system"},
 	  TO {"AppellF1", " -- Appell F1 system"},
 	  TO {"PolyAnn", " -- annihilator of a polynomial"},
 	  TO {"RatAnn", " -- annihilator of a rational function"}},
      PARA,
      HEADER3 "Basic invariants of D-modules:",
-     MENU{TO {"Ddim", " -- dimension"}, 
+     UL{TO {"Ddim", " -- dimension"}, 
 	  TO {"Drank"," -- holonomic rank"}, 
 	  TO {"charIdeal", " -- characteristic ideal"},
 	  TO {"singLocus", " -- singular locus"}},
 
      PARA,
      HEADER3 "B-functions:",
-     MENU {
+     UL {
 	  TO {"bFunction", " -- b-function"}, 
 	  TO {"globalBFunction", " -- global b-function"},
 	  TO {"globalB", " -- global b-function and b-operator"},
@@ -88,7 +88,7 @@ document { "D-modules Package",
 	  },
      PARA,
      HEADER3 "Resolutions and Functors:",
-     MENU{TO {"Dresolution", " -- resolutions"}, 
+     UL{TO {"Dresolution", " -- resolutions"}, 
 	  TO {"Dlocalize", " -- localization"}, 
      	  TO {"WeylClosure", " -- Weyl closure"},
 	  TO {"Ddual", " -- holonomic dual"}, 
@@ -103,7 +103,7 @@ document { "D-modules Package",
 	  },     
      PARA,
      HEADER3 "Applications:",
-     MENU{
+     UL{
 	  TO {"localCohom", "-- local cohomology"},
 	  TO {"deRham", " -- deRham cohomology"},
 	  TO {"PolySols", " -- polynomial solutions of finite rank systems"},
@@ -112,7 +112,7 @@ document { "D-modules Package",
 	  },
      PARA,
      HEADER3 "Programming aids:",
-     MENU{TO {"createDpairs", " -- tags coordinate and derivation variables"},
+     UL{TO {"createDpairs", " -- tags coordinate and derivation variables"},
 	  TO {"Dtrace", " -- toggles verbose comments"},
 	  TO {"setHomSwitch", " -- toggles use of homogeneous Weyl algebra"}},
      PARA
@@ -146,7 +146,7 @@ document { (projMap2),
      }
 
 document { (bFunction),
-     MENU {
+     UL {
 	  {TO (bFunction, Ideal,List), " - for an ideal"},
 	  {TO (bFunction, Module,List,List), " - for a module"}  
 	  }
@@ -154,7 +154,7 @@ document { (bFunction),
 
 document { (bFunction => Strategy),
      Headline => "specify strategy for computing b-function",
-     MENU { 
+     UL { 
 	  {BOLD "IntRing", " -- the simplest algorithm available. 
      	       The idea is to compute ", EM "in", SUB "(-w,w)", EM "(I) ", "
      	       intersect it with ", 
@@ -275,7 +275,7 @@ document { (bFunction, Module, List, List),
 
 document { (globalBFunction => Strategy),
      Headline => "specify strategy for computing global b-function",
-     SHIELD MENU { 
+     SHIELD UL { 
 	  {BOLD "IntRing, TryGeneric, NonGeneric", 
 	       " -- passed to ", TO "bFunction",  ", see ", 
 	       TO (bFunction => Strategy) },
@@ -514,7 +514,7 @@ document { (localCohom => Strategy),
      Headline => "specify strategy for local cohomology",
      "This option together with ", TO "LocStrategy", " determines a strategy for ", 
      TT "localCohom(...Ideal...)", " and ", TT "localCohom(...Ideal, Module...)", ".",
-     MENU { 
+     UL { 
 	  {BOLD "Walther", " -- the algorithm of U. Walther that uses Cech complex."},
 	  {BOLD "LocStrategy => null", 
 	       " -- used only for ", TT "localCohom(...Ideal...)", 
@@ -534,7 +534,7 @@ document { (localCohom => Strategy),
 	  --a strategy that considers everyone lucky."
 	  --},
      "For detailed description of the algorithms see",
-     MENU {
+     UL {
 	  {BOLD "[1]", "U. Walther, ", 
 	       EM "Algorithmic computation of local cohomology 
 	       modules and the local cohomological dimension of algebraic 
@@ -565,13 +565,13 @@ document { (OaTaWa),
 document { (localCohom),
      Headline => "local cohomology",
      "Local cohomology of a polynomial ring:",
-     MENU {
+     UL {
 	  {TO (localCohom, Ideal)},
 	  {TO (localCohom, List, Ideal)},
 	  {TO (localCohom, ZZ, Ideal)}
 	  },
      "Local cohomology of a holonomic module:",
-     MENU {
+     UL {
 	  {TO (localCohom, Ideal, Module)},
 	  {TO (localCohom, ZZ, Ideal, Module)},
 	  {TO (localCohom, List, Ideal, Module)}
@@ -872,7 +872,7 @@ document { (DExt),
 
 document { (PolySols=>Alg),
      Headline => "algorithm for finding polynomial solutions",
-     MENU {
+     UL {
 	  {BOLD "GD", " -- uses Groebner deformations"},
 	  {BOLD "Duality", " -- uses homological duality"}
 	  }     
@@ -1077,7 +1077,7 @@ document { WeylAlgebra,
      	"Dx*x"},     
      PARA,
      "Caveats and known problems:",
-     MENU{"The variables can be called by any name, but for each
+     UL{"The variables can be called by any name, but for each
 	  pair such as x => Dx, the commutative variable (in this case x)
 	  must be listed before the derivation variable (in this case Dx)"}
      }
@@ -1331,7 +1331,7 @@ document { (makeWeylAlgebra),
 	},
      PARA,
      "Abbreviations :",
-     MENU{"makeWA"},
+     UL{"makeWA"},
      CAVEAT{"The polynomial ring R must be commutative."},
      SEEALSO {"WeylAlgebra"}
      }
@@ -1369,7 +1369,7 @@ document { (Ddual),
 
 document { (Dlocalize=>Strategy),
      Headline=>"strategy for computing a localization of a D-module",
-     MENU{
+     UL{
 	  {BOLD "Oaku", " -- use the Oaku algorithm"},
 	  {BOLD "OTW", " -- use the Oaku-Takayama-Walther algorithm"}
 	  }
@@ -1433,7 +1433,7 @@ document { (Dlocalize),
 	},
      PARA,
      "Other names :",
-     MENU{"Dlocalization"},
+     UL{"Dlocalization"},
      
      SEEALSO {"AnnFs", "Dintegration"}
      }
@@ -1480,7 +1480,7 @@ document { (DlocalizationMap),
 
 document { (Dresolution=>Strategy),
      Headline => "strategy for computing a resolution of a D-module",
-     MENU { 
+     UL { 
 	  {BOLD "Schreyer", 
 	       " -- uses Schreyer method in homogeneous Weyl algebra"},
 	  {BOLD "Vhomogenize", " -- uses V-homogenization method of Oaku"}
@@ -1541,7 +1541,7 @@ document { (Dresolution),
 	},
      PARA,
      "Abbreviations :",
-     MENU{"Dres"},
+     UL{"Dres"},
 
      SEEALSO {"gbw", "Drestriction"}
      }
@@ -1638,7 +1638,7 @@ document { (Drestriction),
 	  " is a module over the ", EM "n", "th Weyl algebra."},
      PARA,
      "Abbreviations :",
-     MENU{"Drestrict"},
+     UL{"Drestrict"},
      
      SEEALSO {"Dresolution", "Dintegration"}
      }
@@ -1792,7 +1792,7 @@ document { (Dintegration),
 	  is a module over the nth Weyl algebra."},
      PARA,
      "Abbreviations :",
-     MENU{"Dintegrate"},
+     UL{"Dintegrate"},
      
      SEEALSO{"Drestriction"}
      }

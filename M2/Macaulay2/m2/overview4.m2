@@ -27,7 +27,7 @@ document { "emacs",
      details about how to get it, as well as information about how to swap your
      caps lock and control keys.",
      PARA,
-     MENU {
+     UL {
 	  TO "running Macaulay 2 in emacs",
 	  TO "editing Macaulay 2 code with emacs",
 	  },
@@ -323,7 +323,7 @@ document { "top-method",
      "If M is a module in a polynomial ring R, then the implementations of 
      ", TO "top", " and ", TO "removeLowestDimension", " are based on 
      the following observations:",
-     MENU {
+     UL {
 	  "codim Ext^d(M,R) >= d, for all d (if the module is non-zero)",
 	  "If P is an associated prime of M of codimension d := codim P > codim M,
 	  then codim Ext^d(M,R) = d and the annihilator of Ext^d(M,R) is contained

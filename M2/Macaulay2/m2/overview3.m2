@@ -12,7 +12,7 @@ document { "Invoking the program",
      PARA,
      "These are the options that can also be provided on the command
      line.",
-     MENU {
+     UL {
 	  {TT "--", "         -- ignore previous arguments after reloading data"},
 	  {TT "-e x", "       -- evaluates the expression x"},
 	  {TT "-h", "         -- displays the usage message"},
@@ -53,7 +53,7 @@ document { "Copyright and license",
      ", TO "COPYING", ".",
      PARA,
      "Various free libraries have been compiled into Macaulay 2.",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "Singular-Factory",
 	  TO "Singular-Libfac",
 	  TO "GNU MP",
@@ -107,7 +107,7 @@ document { "operators",
      "Here is a list of unary and binary operators in the language.  Many
      of them can have methods installed for handling arguments of specific
      types.",
-     MENU {
+     UL {
           (TO " ", " -- function application"),
           (TO ",", " -- separates elements of lists or sequences"),
           (TO ";", " -- statement separator"),
@@ -177,7 +177,7 @@ document { "Acknowledgements",
 
 document { "Miscellaneous Topics",
      "Some of these topics will have to be merged with sections above.",
-     MENU {
+     UL {
 	  TO "help functions",
 	  TO "replacements for commands and scripts from Macaulay",
 	  TO "obsolete functions and symbols",
@@ -187,7 +187,7 @@ document { "Miscellaneous Topics",
 document { "internals",
      "Here are some functions and classes that are intended for internal use 
      by the developers only.",
-     MENU {
+     UL {
 	  TO "formatDocumentTag",
 	  TO "setSpin",
 	  }
@@ -219,7 +219,7 @@ document { "Reading the Documentation",
      }
 
 document { "Preface",
-     MENU {
+     UL {
 	  TO "How to get this program",
 	  TO "Resources required",
 	  TO "Invoking the program",
@@ -258,7 +258,7 @@ document { "How Macaulay 2 finds its files",
 
 document { "User's Guide",
      "Here are the basic concepts needed to use Macaulay 2 effectively.",
-     MENU {
+     UL {
 	  TO "Preface",
 	  TO "Getting started",
 	  TO "Reading the Documentation",
@@ -275,7 +275,7 @@ document { "Mathematical Tutorials",
      of some features of Macaulay 2 in a slow and leisurely way, assuming the
      reader is already familiar with the mathematical concepts involved.  
      ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
-     MENU {
+     UL {
 	  TO "Tutorial: Elementary uses of Groebner bases",
 	  TO "Tutorial: Canonical Embeddings of Plane Curves and Gonality",
 	  TO "Tutorial: Fano varieties",
@@ -301,7 +301,7 @@ document { "Reference Manual",
      PARA,
      "In line with that advice, we list here some types of things
      with particular mathematical interest.",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "Ring",
 	  TO "Ideal",
 	  TO "Matrix",
@@ -312,13 +312,13 @@ document { "Reference Manual",
 	  TO "Variety",
 	  },
      "Some types of things of interest to the programmer and user:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "Function",
 	  TO "VisibleList",
 	  TO "File"
 	  },
      "A list of the operators:",
-     MENU {
+     UL {
 	  SHIELD TO "operators",
 	  },
      "We've mentioned that our software is organized according to the
@@ -329,13 +329,13 @@ document { "Reference Manual",
      documentation is organized here as a view of the hierarchy from the
      top down, so you can find everything (eventually) in the following
      section, its subsections, or the sections it refers to.",
-     MENU {
+     UL {
      	  TO "Thing"
 	  }
      }
 
 document {  "Developer's Corner",
-     MENU {
+     UL {
 	  TO "engine",
 	  TO "internals",
 	  }
@@ -350,7 +350,7 @@ document { "Macaulay 2",
      ", version#"VERSION", ".  The program is still under development, but
      the main features are working.  We are eager to help new users
      get started with it.",
-     MENU {
+     UL {
 	  (TO "User's Guide", " -- This is the place to get started"),
  	  (TO "Mathematical Tutorials", " -- Several extended examples"),
 	  (TO "Reference Manual", " -- Complete documentation for every type and function in Macaulay 2"),
@@ -393,12 +393,12 @@ document { "specifying typical values",
 
 document { "The authors",
      "The authors of Macaulay 2 and the bulk of this manual:",
-     MENU {
+     UL {
 	  TO "Daniel R. Grayson",
 	  TO "Michael E. Stillman"
 	  },
      "Our co-author for the tutorials:",
-     MENU {
+     UL {
 	  TO "David Eisenbud",
 	  },
      "To communicate with us about the program, use this email address:
@@ -510,7 +510,7 @@ document { "syntax",
 document { "debugging",
      Headline => "an overview",
      "Here are some debugging tools.",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "assert",
 	  TO "benchmark",
 	  TO "browse",
@@ -537,7 +537,7 @@ document { "debugging",
 	  },
      "These functions are for debugging the kernel interpreter itself, and
      are not intended for users.",
-     MENU {
+     UL {
 	  TO "buckets",
 	  TO "seeParsing"
 	  }
@@ -546,7 +546,7 @@ document { "debugging",
 document { "system",
      Headline => "an overview",
      "Loading files:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "autoload",
 	  TO "initialization file",
 	  TO "input",
@@ -554,12 +554,12 @@ document { "system",
 	  TO "needs"
 	  },
      "Echoing characters:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "clearEcho",
 	  TO "setEcho"
 	  },
      "Dumping and restoring the state of the system:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "dumpdata",
 	  TO "loaddata",
 	  TO "restart",
@@ -567,7 +567,7 @@ document { "system",
 	  TO "addEndFunction"
 	  },
      "Interface to the operating system:",
-     SHIELD MENU{
+     SHIELD UL{
 	  TO "top level loop",
 	  TO "alarm",
 	  TO "currentDirectory",
@@ -586,17 +586,17 @@ document { "system",
 	  TO "wait"
 	  },
      "Variables with information about the state of the current process:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "commandLine",
 	  TO "environment",
 	  TO "version"
 	  },
      "Miscellaneous commands:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "getWWW"
 	  },
      "Dealing with the garbage collector:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "collectGarbage",
 	  -- TO "gcDump"
 	  }
@@ -616,7 +616,7 @@ document { "initialization file",
 
 document { "combinatorial functions",
      Headline => "an overview",     
-     MENU {
+     UL {
 	  TO "random",
 	  TO "binomial",
 	  TO "subsets",
@@ -632,7 +632,7 @@ document { "top level loop",
      associated with the symbol ", TO "Print", " is applied to perform the printing,
      unless the printing is to be suppressed, as indicated by a semicolon at the end
      of the statement, in which case the ", TO "NoPrint", " method is applied.",
-     MENU {
+     UL {
 	  TO "AfterEval",
 	  TO "AfterPrint",
 	  TO "AfterNoPrint",
@@ -647,7 +647,7 @@ document { "help functions",
      PARA,
      NOINDENT,
      "Functions for accessing the documentation:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "apropos",
 	  TO "briefDocumentation",
 	  TO "documentation",
@@ -657,19 +657,19 @@ document { "help functions",
 	  TO "topics"
 	  },
      "How to write documentation yourself:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "document",
 	  TO "hypertext",
 	  },
      "Output formatting routines:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "html",
 	  TO "mathML",
 	  TO "tex",
 	  TO "text",
 	  },
      "Some internals:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "Documentation",
 	  },
      SEEALSO "Reading the Documentation"

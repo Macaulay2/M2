@@ -9,9 +9,9 @@ document { "replacements for commands and scripts from Macaulay",
      "Here is a list of old Macaulay functions, together with pointers to
      functions in Macaulay 2 that might be used to replace them.",
      PARA,
-     MENU {
+     UL {
 	  ("Macaulay commands:",
-	  SHIELD MENU {
+	  SHIELD UL {
 	       ("ac -- such destructive changes are not allowed"),
 	       ("add -- ", TO "+"),
 	       ("ar -- ", TO "not documented yet"),
@@ -150,7 +150,7 @@ document { "replacements for commands and scripts from Macaulay",
 	       ("wedge -- ", TO "minors", ",", TO "exteriorPower")
 	       }),
 	  ("Macaulay scripts from 'scriptsde':",
-	  SHIELD MENU {
+	  SHIELD UL {
 	       ("<adj_of_cat -- ", TO "not documented yet"),
 	       ("<adjoin_fractions -- ", TO "not documented yet"),
 	       ("<adjoint -- ", TO "not documented yet"),
@@ -275,7 +275,7 @@ document { "replacements for commands and scripts from Macaulay",
 	       ("<zeromat -- ", TO "not documented yet")
 	       }),
 	  ("Macaulay scripts from 'scriptsmj':",
-	  SHIELD MENU {
+	  SHIELD UL {
 	       ("<2BYN -- ", TO "not documented yet"),
 	       ("<add_matrix_to_array -- ", TO "not documented yet"),
 	       ("<check_complex -- ", TO "not documented yet"),
@@ -295,7 +295,7 @@ document { "replacements for commands and scripts from Macaulay",
 	       ("<splice_resns -- ", TO "not documented yet")
 	       }),
 	  ("Macaulay scripts from 'scriptsms':",
-	  SHIELD MENU {
+	  SHIELD UL {
 	       ("<block_map -- ", TO "not documented yet"),
 	       ("<blowup -- ", TO "not documented yet"),
 	       ("<blowup0 -- ", TO "not documented yet"),

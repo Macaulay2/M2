@@ -32,11 +32,11 @@ reach1 Sequence :=
 reach1 MarkUpList := x -> scan(x,reach1)
 reach1 TO := identity
 reach1 TOH := identity
-reach1 MENU := x -> scan(x,reach2)
+reach1 UL := x -> scan(x,reach2)
 reach1 SHIELD := x -> scan(x,reach3)
 
 reach3 Thing := reach
-reach3 MENU := x -> scan(x,reach1)
+reach3 UL := x -> scan(x,reach1)
 
 reach2 Thing := reach
 reach2 TO  := 

@@ -16,6 +16,9 @@ local nextButton, local prevButton, local upButton
 local lastKey, local thisKey
 local linkFollowedTable, local masterIndex
 
+encoding := ///<?xml version="1.0" encoding="us-ascii"?>///
+doctype := ///<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">///
+
 buildPackage := null					    -- name of the package currently being built
 topNodeName := null					    -- name of the top node of this package
 topFileName := "index.html"				    -- top node's file name, constant
@@ -82,8 +85,8 @@ documentationMemo := memoize documentation		    -- for speed
 BUTTON := (s,alt) -> (
      s = rel s;
      if alt === null
-     then LITERAL concatenate("<IMG src=\"",s,"\" border=0>\n")
-     else LITERAL concatenate("<IMG src=\"",s,"\" border=0 alt=\"[", alt, "]\">\n")
+     then error "required attribute: ALT"
+     else LITERAL concatenate("<IMG src=\"",s,"\" alt=\"[", alt, "]\">\n")
      )
 
 upAncestors := key -> reverse (
@@ -129,7 +132,7 @@ follow := key -> (
 scope Thing := x -> null
 scope Sequence := scope BasicList := x -> scan(x,scope)
 scope SHIELD := x -> scan(x,scope1)
-scope MENU := x -> scan(x,scope2)
+scope UL := x -> scan(x,scope2)
 scope TO := scope TOH := x -> follow x#0
 
 -- scanning inside a SHIELD
@@ -137,7 +140,7 @@ scope1 Thing := x -> null
 scope1 Sequence := scope1 BasicList := x -> scan(x,scope1)
 scope1 TO := scope1 TOH := x -> follow x#0
 
--- scanning inside a MENU not inside a SHIELD
+-- scanning inside a UL not inside a SHIELD
 scope2 Thing := scope
 scope2 SEQ := x -> scan(x,scope2)
 scope2 SHIELD := x -> scan(x,scope1)
@@ -164,22 +167,24 @@ scope2 TO := scope2 TOH := x -> (
      )
 
 buttonBar := (key) -> CENTER {
-     next key,
-     prev key, 
-     up key,
-     if key =!= topNodeName then topNodeButton else nullButton,
-     masterIndexButton,
+     PARA { 
+	  next key, prev key, up key,
+     	  if key =!= topNodeName then topNodeButton else nullButton,
+     	  masterIndexButton
+	  },
      LITERAL concatenate (///
      <form action="///,					    -- "
-     if getenv "SEARCHENGINE" === "" 
-     then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
+     if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
      ///">
-	search:
-	<input type="text"   name="words">
+        <p>
+        <label title="Macaulay2 term to search for">
+	   Search: <input type="text" name="words">
+	</label>
 	<input type="hidden" name="method"   value="boolean">
 	<input type="hidden" name="format"   value="builtin-short">
 	<input type="hidden" name="sort"     value="score">
 	<input type="hidden" name="config"   value="htdig-M2">
+        </p>
      </form>
      ///)						    -- "
      }
@@ -213,7 +218,10 @@ fakeMenu := x -> (
 makeHtmlNode = key -> (
      fn := buildDirectory | htmlFilename key;
      stderr << "--making html page for " << key << endl;
-     fn << html HTML { 
+     fn
+     << encoding << endl
+     << doctype << endl
+     << html HTML { 
 	  HEAD TITLE {key, headline key},
 	  BODY { 
 	       buttonBar key,
@@ -251,7 +259,7 @@ pass5 := () -> (
 	       HEADER2 masterNodeName, PARA,
 	       CENTER topNodeButton, PARA,
 	       CENTER between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), PARA,
-	       MENU apply(sort keys masterIndex, (fkey,key) -> SEQ { anchor fkey, TOH key })
+	       UL apply(sort keys masterIndex, (fkey,key) -> SEQ { anchor fkey, TOH key })
 	       }
 	  } << endl << close
      )
@@ -263,7 +271,7 @@ pass5 := () -> (
 setupButtons := () -> (
      gifpath := LAYOUT#"images";
      topNodeButton = HREF { htmlDirectory|topFileName, BUTTON (gifpath|"top.gif","top") };
-     nullButton = BUTTON(gifpath|"null.gif",null);
+     nullButton = BUTTON(gifpath|"null.gif","null");
      masterIndexButton = HREF { htmlDirectory|indexFileName, BUTTON(gifpath|"index.gif","index") };
      nextButton = BUTTON(gifpath|"next.gif","next");
      prevButton = BUTTON(gifpath|"previous.gif","previous");
@@ -296,7 +304,7 @@ makeMasterIndex := keylist -> (
 	       HEADER2 title, PARA,
 	       CENTER topNodeButton, PARA,
 	       CENTER between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), PARA,
-	       MENU apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey })
+	       UL apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey })
 	       }
 	  } << endl << close
      )

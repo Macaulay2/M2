@@ -652,7 +652,7 @@ document { Expression,
      EXAMPLE "(expression 2)^5 * (expression 3)^3 / ((expression 5) * (expression 11)^2)^6",
      PARA,
      "Functions which act on expressions:",
-     MENU {
+     UL {
 	  TO "value",
 	  TO "precedence"
 	  }

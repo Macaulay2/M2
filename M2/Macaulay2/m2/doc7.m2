@@ -246,7 +246,7 @@ document { Verify,
      TT "Verify", " -- an option that can be used to request verification
      that a map is well defined.",
      PARA,
-     MENU {
+     UL {
 	  TO (inducedMap => Verify)
 	  }
      }
@@ -600,7 +600,7 @@ document { subquotient,
      ", TT "r", " are the relations.",
      PARA,
      "Functions:",
-     MENU {
+     UL {
 	  TO "generators",
 	  TO "relations",
 	  TO "prune"
@@ -661,7 +661,7 @@ document { Ideal,
      Headline => "the class of all ideals",
      SEEALSO "ideals",
      "Common ways to make an ideal:",
-     MENU {
+     UL {
 	  TO "ideal",
 	  TO "annihilator",
 	  TO "content",
@@ -669,14 +669,14 @@ document { Ideal,
 	  SHIELD TO (kernel, RingMap),
 	  },
      "Common ways to get information about an ideal:",
-     MENU {
+     UL {
 	  TO (codim, Ideal),
 	  TO (dim, Ideal),
 	  TO (generators, Ideal),
 	  TO (isSubset, Ideal, Ideal),
 	  },
      "Common operations on ideals:",
-     MENU {
+     UL {
 	  TO (symbol +,Ideal,Ideal),
 	  TO (symbol *,Ideal,Ideal),
 	  TO (symbol ==,Ideal,Ideal),
@@ -691,7 +691,7 @@ document { Ideal,
 	  TO (trim, Ideal),
 	  },
      "Common ways to use an ideal:",
-     MENU {
+     UL {
 	  SHIELD TO (symbol /, Ring, Ideal),
 	  },
      PARA,
@@ -1706,7 +1706,7 @@ document { dual,
      TT "dual M", " -- the dual.",
      PARA,
      "For details, see one of the following.",
-     MENU {
+     UL {
 	  TO (dual,ChainComplex),
 	  TO (dual,Matrix),
 	  TO (dual,Module)
