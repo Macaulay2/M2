@@ -1,0 +1,2 @@
+sample = 2^100
+print sample

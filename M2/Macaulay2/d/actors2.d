@@ -758,7 +758,7 @@ close(g:Expr):Expr := (
      is f:file do ( 
 	  if !f.input && !f.output && !f.listener then return(errorExpr("file already closed"));
 	  if close(f) == 0 then g
-	  else errorExpr(if f.pid != 0 then "error closing pipe" else "error closing file"))
+	  else errorExpr(if f.pid != 0 then "error return from child" else "error closing file"))
      is x:Database do dbmclose(x)
      else errorExpr("expected a file or database"));
 setupfun("close",close);
