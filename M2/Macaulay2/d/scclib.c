@@ -611,10 +611,14 @@ extern const char * const sys_errlist[];
 #endif
 
 int system_errno() {
-  return h_errno > 0 ? h_errno : errno;
+  return 
+#ifndef NO_HERROR
+    h_errno > 0 ? h_errno : 
+#endif
+    errno;
 }
 
-char *system_strerror() {
+char const *system_strerror() {
      char *msg =
 #ifndef NO_HERROR
      h_errno > 0 && h_errno < h_nerr ? h_errlist[h_errno] : 

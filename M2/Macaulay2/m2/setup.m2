@@ -193,6 +193,18 @@ input = (filename) -> (
 
 needs = s -> if not loaded#?s then load s
 
+writableGlobals := new MutableHashTable
+scan((
+	  quote oooo,
+	  quote ooo,
+	  quote oo,
+	  quote path,
+	  -- quote writeExamples,
+	  -- quote readExamples,
+	  quote phase,
+	  quote compactMatrixForm
+	  ), x -> writableGlobals#x = true)
+
 startFunctions := {}
 addStartFunction = g -> (
      startFunctions = append(startFunctions,g);
@@ -222,6 +234,10 @@ if OLDENGINE then (
 erase quote OLDENGINE
 erase quote outputSymbols
 erase quote lastSystemSymbol
+
+if phase === 1 then scanPairs(symbolTable(),
+     (name,symbol) -> if not writableGlobals#?symbol then protect symbol
+     )
 
 -- the last function restarted
 addStartFunction(

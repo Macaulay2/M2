@@ -47,7 +47,7 @@ if phase === 1 then addStartFunction(
      () -> (
 	  try (
 	       DocDatabase = openDatabase docFilename();
-	       -- << "--using help file " << docFilename() << endl;
+	       << "--using help file " << docFilename() << endl;
 	       )
 	  else (
 	       stderr << "--warning: couldn't open help file " << docFilename() << endl;
@@ -108,6 +108,7 @@ repl := z -> (
 
 getDocumentationTag = x -> (
      while Documentation#?x and not class Documentation#x === SEQ do x = Documentation#x;
+     if class x === Symbol then x = string x;
      x)
 
 doc = x -> (
@@ -285,18 +286,6 @@ apropos = (pattern) -> (
      mat := "*" | string pattern | "*";
      sort select( keys symbolTable(), i -> match(i,mat)))
 
-writableGlobals := new MutableHashTable
-scan((
-	  quote oooo,
-	  quote ooo,
-	  quote oo,
-	  quote path,
-	  -- quote writeExamples,
-	  -- quote readExamples,
-	  quote phase,
-	  quote compactMatrixForm
-	  ), x -> writableGlobals#x = true)
-
 testFileCounter := 0
 exprCounter := 0
 file := null
@@ -429,7 +418,6 @@ document = z -> (
      if class key === Sequence and class lookup key =!= Function then (
 	  error("expected a method for ", formatDocumentTag key);
 	  );
-     if phase === 1 and not writableGlobals#?key and class key === Symbol then protect key;
      if documentableValue key then Documentation#(value key) = key;
      nodeName = name key;
      Documentation#key = nodeName;

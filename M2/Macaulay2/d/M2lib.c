@@ -699,13 +699,15 @@ static void handler(int k)
      siglongjmp(jumpbuffer,1);
      }
 
+#ifdef DUMPDATA
 static void handler2(int k) 
 {
      sig = 2;
      siglongjmp(jumpbuffer,2);
      }
+#endif
 
-#if !defined(__MWERKS__) && !defined(__CYGWIN32__)
+#if !defined(__MWERKS__) && !defined(__CYGWIN32__) && defined(DUMPDATA)
 static void *first_rw_page_after_etext() {
      void (*oldhandler)(int) = signal(SIGSEGV,handler);
      char *p = (char *)RUP((intp)&etext);
@@ -736,7 +738,9 @@ static void *first_rw_page_after_etext() {
      }
 #endif
 
+#ifdef DUMPDATA
 static int probe() __attribute__ ((unused));
+#endif
 
 int system_dumpdata(datafilename)
 M2_string datafilename;

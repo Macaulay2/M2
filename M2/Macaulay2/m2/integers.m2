@@ -76,3 +76,5 @@ erase quote randomint
 ceiling = x -> - floor(-x)
 
 isUnit ZZ := x -> x == 1 or x == -1
+
+ZZ & ZZ := lookup(quote &, ZZ, ZZ)

@@ -35,7 +35,7 @@ document { quote Options,
      SEEALSO "method"
      }
 
-if phase > 0 then load "docloads.m2"
+if phase > 1 then load "docloads.m2"
 
 path = (
      if getenv "M2HOME" === "" 
