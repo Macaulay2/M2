@@ -264,7 +264,7 @@ document { "Reference Manual",
      PARA,
      "In line with that advice, we list here some types of things
      with particular mathematical interest.",
-     MENU {
+     SHIELD MENU {
 	  TO "Ring",
 	  TO "Ideal",
 	  TO "Matrix",
@@ -275,7 +275,7 @@ document { "Reference Manual",
 	  TO "Variety",
 	  },
      "Some types of things of interest to the programmer and user:",
-     MENU {
+     SHIELD MENU {
 	  TO "Function",
 	  TO "VisibleList",
 	  TO "File"
