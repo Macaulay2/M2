@@ -119,7 +119,7 @@ fm1 := s -> concatenate (
 		    then ("new ", name s#1, " of ", name s#2)
 		    else if string s#0 === " "
 		    then (name s#1, " ", name s#2)
-		    else (name s#1, " ", name s#0, " ", name s#2)
+		    else (name s#1, " ", string s#0, " ", name s#2)
 		    )
 	       else if s#0 === homology
 	       then ("HH_", name s#1, " ", name s#2)
@@ -138,6 +138,7 @@ fm1 := s -> concatenate (
 		    else (name s#0, " ^ ", name s#1)
 		    )
 	       else if s#0 === NewMethod then ("new ", name s#1)
+	       else if class s#0 === Symbol then (string s#0, " ", name s#1)
 	       else (name s#0, " ", name s#1)
 	       )
 	  else (name s)

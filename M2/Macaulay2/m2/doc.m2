@@ -276,7 +276,7 @@ document { quote minPosition,
 document { quote keys,
      TT "keys t", " -- yields a list of the keys occurring in the hash table t.",
      PARA,
-     EXAMPLE "keys Nothing"
+     EXAMPLE "keys version"
      }
 
 document { quote values,
@@ -2264,15 +2264,10 @@ document { "classes",
      The parent of ", TT "x", " can be obtained with the function ", TO "parent", ".",
      EXAMPLE "parent 2",
      EXAMPLE "parent parent 2",
-     EXAMPLE "parent parent parent 2",
      EXAMPLE "class 2",
      EXAMPLE "parent class 2",
-     EXAMPLE "parent parent class 2",
      EXAMPLE "class class 2",
      EXAMPLE "parent class class 2",
-     EXAMPLE "parent parent class class 2",
-     EXAMPLE "parent parent parent class class 2",
-     EXAMPLE "parent parent parent parent class class 2",
      PARA,
      "The classes and parents provide a uniform way for operations on
      things to locate the appropriate functions needed to perform them.
