@@ -96,7 +96,7 @@ F = marginMap(1,R)
 I = F markovIdeal(R, localMarkovStmts G)
 transpose gens I
 
-codim I -- takes a while to get 14
+time codim I -- takes a while to get 14
 degree I -- 336
 
 debug PrimaryDecomposition
@@ -109,3 +109,34 @@ degree J1
 
 time GTZ0 J1;
 -----------------------------------------------------
+restart
+errorDepth = 0
+debug PrimaryDecomposition
+R = ZZ/32003[a,b,c,d,f,g,h,k,l,s,t,u,v,w,x,y,z, MonomialOrder=>GRevLexTiny]
+I = ideal(
+    -a*b-a*d+2*a*h,
+    a*d-b*d-c*f-2*a*h+2*b*h+2*c*k,
+    a*b-a*d-2*b*h+2*d*h-2*c*k+2*f*k+2*g*l,
+    a*c-2*c*s-a*t+2*b*t,
+    a*c-c*s-2*a*t+b*t,
+    -d-3*s+4*u,
+    -f-3*t+4*v,
+    -g+4*w,
+    -a+2*x,
+    -b^2-c^2+2*b*x+2*c*y,
+    -d^2-f^2-g^2+2*d*x+2*f*y+2*g*z)
+time decompose I -- 7.06 sec, or 5.53 sec
+time primaryDecomposition(I, Strategy=>SY)
+debug PrimaryDecomposition
+time GTZ1 I;
+
+J = minPres I
+time decompose J -- this is much worse than 'decompose I'
+transpose gens J
+time I = trim I 
+L = ideal apply(sort apply(flatten entries gens I, f -> (size f, first degree f, f)), g -> g#2)
+time decompose L
+
+gbTrace = 3
+time (L1, M1) = GTZ0 I;
+
