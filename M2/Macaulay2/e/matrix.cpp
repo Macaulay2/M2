@@ -15,6 +15,7 @@
 #include "monideal.hpp"
 #include "relem.hpp"
 #include "freemod.hpp"
+#include "ntuple.hpp"
 
 #include "exptable.h"
 
@@ -2028,7 +2029,58 @@ MonomialIdeal *Matrix::make_skew_monideal(int n) const
   return result;
 }
 
+MonomialIdeal *Matrix::make_basis_monideal(int n) const
+{
+#warning "make_basis_monideal doesn't handle fractions well"
+#warning "include the squares of the skew communting vars?"
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  const Monoid *M = P->getMonoid();
+  intarray vp;
+  queue <Bag *> new_elems;
+  bool coeffsZZ = (P->coefficient_type() == Ring::COEFF_ZZ);
+  int nlogical = P->getLogicalMonoid()->n_vars();
+  int nothers = P->n_vars() - nlogical;
+  exponents exp = newarray(int,P->n_vars());
+  for (int i=0; i<n_cols(); i++)
+    {
+      vec v = elem(i);
+      if (v == 0) continue;
+      if (v->comp != n) continue;
+      if (coeffsZZ && !globalZZ->is_unit(P->lead_flat_coeff(v->coeff)))
+	continue;
+      M->to_expvector(P->lead_flat_monomial(v->coeff), exp);
+      if (!ntuple::is_one(nothers, exp + nlogical))
+	continue;
+      vp.shrink(0);
+      varpower::from_ntuple(P->getLogicalMonoid()->n_vars(), exp, vp);
+      Bag *b = new Bag(i, vp);
+      new_elems.insert(b);      
+    }
 
+  // If the base ring is a quotient ring, include these lead monomials.
+  for (int i=0; i<P->n_quotients(); i++)
+    {
+      Nterm *f = P->quotient_element(i);
+      if (coeffsZZ && !globalZZ->is_unit(f->coeff))
+	continue;
+      M->to_expvector(f->monom, exp); // flat monomial
+      if (!ntuple::is_one(nothers, exp + nlogical))
+	continue;
+      vp.shrink(0);
+      varpower::from_ntuple(P->getLogicalMonoid()->n_vars(), exp, vp);
+      Bag *b = new Bag(-1, vp);
+      new_elems.insert(b);
+    }
+
+  MonomialIdeal *result = new MonomialIdeal(P, new_elems);
+  deletearray(exp);
+  return result;
+}
 
 int Matrix::dimension() const
 {

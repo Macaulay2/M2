@@ -128,10 +128,6 @@ int KBasis::weight(const int *deg) const
   return sum;
 }
 
-#warning "add limits"
-#warning "be careful about monideals over ZZ or over non-fields"
-#warning "is the initial degree set up correctly?"
-
 void KBasis::insert()
 {
   // We have a new basis element
@@ -218,7 +214,7 @@ void KBasis::compute()
       kb_comp = i;
       // Make the monomial ideal: this should contain only
       // monomials involving 'vars'.
-      kb_monideal = bottom_matrix->make_monideal(i);
+      kb_monideal = bottom_matrix->make_basis_monideal(i);
 
       // Change kb_exp_degree, kb_exp_weight to reflect the degree
       // of this row.
@@ -239,7 +235,6 @@ MatrixOrNull *KBasis::k_basis(const Matrix *bottom,
 			      int limit)
 {
   // Do some checks first, return 0 if not good.
-#warning "do some sanity checks here"
   const PolynomialRing *P = bottom->get_ring()->cast_to_PolynomialRing();
   if (P == 0)
     {
