@@ -534,7 +534,57 @@ void gbA::minimalize_pairs_non_ZZ(spairs &new_set)
 
 void gbA::minimalize_pairs_ZZ(spairs &new_set)
 {
-  // TODO
+  // Prune down the set of spairs to a 'minimal' set.  For each one, we 
+  // need to add in a "gcd" combination spair as well.
+
+  vector<mpz_ptr,gc_alloc> coeffs;
+  vector<mpz_ptr,gc_alloc> coeffs2;
+  vector<exponents,gc_alloc> exps;
+  vector<int,gc_alloc> comps;
+  vector<int,gc_alloc> positions;
+  
+  coeffs.reserve(gb.size());
+  coeffs2.reserve(gb.size());
+  exps.reserve(gb.size());
+  comps.reserve(gb.size());
+
+  for (vector<spair *,gc_alloc>::iterator i = new_set.begin(); i != new_set.end(); i++)
+    {
+      spair *a = *i;
+      exps.push_back(a->lcm);
+      comps.push_back(1); /* This is not needed here, as all of these 
+                             have the same component */
+      /* Now get the coefficient */
+      /* This is the lcm divided by the lead coeff, but it depends on the kind of spair */
+      if (a->type == SPAIR_SKEW)
+	coeffs.push_back(MPZ_VAL(globalZZ->one()));
+      else 
+	{
+	  /* */
+	  gbvector *f1 = gb[a->x.pair.i]->g.f;
+	  gbvector *f2 = gb[a->x.pair.j]->g.f;
+	  ring_elem u,v;
+	  globalZZ->syzygy(f1->coeff, f2->coeff, u, v);
+	  coeffs.push_back(MPZ_VAL(u));
+	  coeffs2.push_back(MPZ_VAL(v));
+	}
+    }  
+
+  MonomialTableZZ::find_weak_generators(_nvars, coeffs, exps, comps, positions);
+
+  for (vector<int,gc_alloc>::iterator i = positions.begin(); i != positions.end(); i++)
+    {
+      // Insert this spair, and also the corresponding gcd one.
+      spair *p = new_set[*i];
+      spair_set_insert(p);
+      mpz_ptr u = coeffs[*i];
+      mpz_ptr v = coeffs2[*i];
+      if (p->type != SPAIR_SKEW && !(mpz_cmp_si(u,1) || mpz_cmp_si(v,1) || mpz_cmp_si(v,-1)))
+	{
+	  spair *p2 = spair_make_gcd_ZZ(p->x.pair.i, p->x.pair.j);
+	  spair_set_insert(p2);
+	}
+    }
 }
 
 void gbA::minimalize_pairs(spairs &new_set)
