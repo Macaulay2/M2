@@ -461,19 +461,6 @@ document {
      "The row lengths should be in decreasing order.",
      SeeAlso => "SchurRing"}
 document {
-     Key => IndexedVariableTable,
-     Headline => "the class of indexed variable tables",
-     "These hash tables are used to hold the values of those indexed variables 
-     sharing a given base name.",
-     PARA,
-     EXAMPLE {
-	  "t_0",
-      	  "scan(3, i -> t#i = i^2)",
-      	  "t",
-      	  "peek t",
-	  },
-     SeeAlso => "IndexedVariable"}
-document {
      Key => assign,
      Headline => "assign a value",
      TT "assign(x,v)", " -- assigns v as the value of x.",
@@ -496,9 +483,7 @@ document {
      polynomial rings ", TT "R[x_0, x_1, ..., x_(n-1)]", " in n variables,
      where n is not known in advance.  If ", TT "x", " is an symbol,
      and i is an integer, then ", TT "x_i", " produces an indexed variable.
-     (What actually happens is a hash table been assigned to the
-     as the value of the symbol ", TT "x", ".
-     After this has been done, an assignment ", TT "x#i=v", " will assign a 
+     After this has been done, an assignment ", TT "x_i=v", " will assign another
      value to it.  A new sequence of indexed variables of
      length n assigned to the symbol ", TT "x", " can be produced with ",
      TT "x_1 .. x_n", " and that sequence can be used in constructing
@@ -506,8 +491,7 @@ document {
      EXAMPLE {
 	  "ZZ/101[t_0 .. t_4]",
       	  "(t_0 -  2*t_1)^3",
-	  },
-     SeeAlso => "IndexedVariableTable"}
+	  }}
 document {
      Key => MonoidElement,
      Headline => "the class of all monoid elements",

@@ -704,7 +704,7 @@ document {
 	  },
      "Be careful not to assign a value to ", TT "x", " itself if you wish to continue
      using it as a subscripted variable.",
-     SeeAlso => {"IndexedVariable","IndexedVariableTable"}
+     SeeAlso => {"IndexedVariable"}
      }
 
 document {

@@ -1184,16 +1184,6 @@ document {
      }
      
 document {
-     Key => (symbol _, IndexedVariable, Ring),
-     Headline => "generator of a ring with a given name",
-     Usage => "x_R",
-     Inputs => {
-	  "x" => null,
-	  "R" => null },
-     Outputs => { { "the generator of the ring ", TT "R", " whose name is the same as that of ", TT "x" } }
-     }
-     
-document {
      Key => (symbol _, RingElement, Ring),
      Headline => "generator of a ring with a given name",
      Usage => "x_R",
