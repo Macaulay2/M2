@@ -17,7 +17,7 @@ Makefile : Makefile.in
 
 #############################################################################
 all :: doc
-doc : $(DOC)
+doc : $(DOC) $(TEST)
 	../bin/M2 -q '-e phase=2' StateTable.m2 '-e exit 0'
 	../bin/M2 -q '-e phase=2' eliminate.m2  '-e exit 0'
 	$(MAKE) -k -C $(DOC) -f ../../../m2/Makefile.egs
