@@ -19,6 +19,14 @@ clean::; rm -f *.okay core
 distclean: clean; rm -f Makefile
 Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/test/engine/Makefile
 
+LDLIBS = 
+.PHONY : benchmark
+# factor.poly was generated with toString (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3
+CFLAGS = -g -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -O3 -fexpensive-optimizations -fomit-frame-pointer -Wno-unused-label
+benchmark : factor factor.poly; time ./factor < @srcdir@/factor.poly
+factor : factor.o factor-init.o factor-init1.o 
+	$(CXX) $(LDFLAGS) factor.o factor-init.o -lcf -lcfmem -lntl -lgmp -lgc -lm factor-init1.o -o "$@"
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine"
 # End:
