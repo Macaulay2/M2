@@ -5,6 +5,8 @@ beginDocumentation()
 -- should rewrite this to load all the m2 files there
 -- perhaps write a "pathFind" routine so we can find files such as M2doc on the path.
 
+stderr << "--loading the Macaulay2 documentation" << endl
+
 load "M2doc/doc.m2"
 load "M2doc/doc1.m2"
 load "M2doc/doc2.m2"
