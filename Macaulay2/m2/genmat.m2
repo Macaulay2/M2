@@ -51,10 +51,13 @@ document { quote genericSymmetricMatrix,
      with the variable x."
      }
 
+randommat := (R,r,c) -> (sendgg(ggPush R, ggPush r, ggPush c, ggrandom); getMatrix R)
+
 random(List,Ring) := random(ZZ,Ring) := (deg,R) -> (
      m := basis(deg, R) ** R;
-     p := char R;
-     n := matrix table(numgens source m,1, x -> promote(random p,R));
+     --p := char R;
+     n := randommat(R,numgens source m,1);
+     --n := matrix table(numgens source m,1, x -> promote(random p,R));
      (m*n)_(0,0))
 
 random(Module, Module) := (F,G) -> (
@@ -69,13 +72,16 @@ random(Module, Module) := (F,G) -> (
      else if #degreesTally === 1 then (
 	  deg := first keys degreesTally;
 	  if all(deg,i->i===0) 
-	  then map(F,G,table(numgens F, numgens G, x -> random p))
+	  then (randmat := randommat(R,numgens F, numgens G);
+	        map(F,G,randmat))
+	       --map(F,G,table(numgens F, numgens G, x -> random p))
 	  else (
 	       m := basis(deg,R) ** R;
 	       s := degreesTally#deg;
 	       reshape(F,G, 
-		    m * map(source m, R^s, 
-			 table(numgens source m, s, x -> random p)))))
+		    m * randommat(R, numgens source m, s))))
+--		    m * map(source m, R^s, 
+--			 table(numgens source m, s, x -> random p)))))
      else (
 	  randomElement := memoize(
 	       deg -> (

@@ -76,6 +76,7 @@ public:
   // monomial operations
   void remove_monomial(monomial &m) const;
   monomial make_monomial(int *exp) const; // Make a monomial from an exponent vector
+  monomial copy_monomial(monomial m) const;
 
   int weight(monomial m) const;
   int degree(monomial m) const;
@@ -99,6 +100,7 @@ public:
   // binomial operations
   void remove_binomial(binomial &f) const;
   binomial make_binomial() const; // allocates the monomials
+  binomial copy_binomial(const binomial &f) const;
 
   const monomial lead_monomial(binomial f) const { return f.lead; }
   void translate_binomial(const binomial_ring *old_ring, binomial &f) const;

@@ -12,26 +12,46 @@ class sagbi
 public:
   static vec subduct(const FreeModule *F,
 		     vec f,
-		     const RingMap &phi,
+		     const RingMap *phi,
 		     gb_comp *J);
 
   static Matrix subduct(const Matrix &m, 
-			const RingMap &phi, 
+			const RingMap *phi, 
 			gb_comp *J);
+};
+
+class pending_list
+{
+  const FreeModule *F;
+  int _n_held;
+  int _base_degree;
+  int _lo_degree;
+  array<Matrix> pending;
+public:
+  pending_list(Matrix &m);
+  ~pending_list();
+
+  void insert(Matrix &m);  // removes m?
+  Matrix take_lowest_matrix();
+  int lo_degree() { return _lo_degree; }
+  int n_left() { return _n_held; }
 };
 
 class sagbi_comp : public gb_comp
 {
+#if 0
   struct sagbi_elem {
     sagbi_elem *next;
     vec elem;
   };
 
-  int _n_left;			// Number elements in pending lists.
   int _n_iterations;
   int _max_degree;
-  array<Matrix> Pending;        // over R
+  int _current_degree;
 
+  pending_list Pending;		// Over R
+
+  FreeModule *F;
   Matrix G;			// Sagbi basis as so far computed, over R.
   PolynomialRing *RS;
   binomialGB_comp *J;
@@ -42,7 +62,7 @@ class sagbi_comp : public gb_comp
   void append_to_basis(Matrix &m);  // Adds to G, also modifies J,RS,...
   Matrix grab_lowest_degree();
   void row_reduce(Matrix &m);  // Modifies m.
-  void insert_to_pending(Matrix &m);
+#endif
 public:
   // creation
   sagbi_comp(const Matrix &m);

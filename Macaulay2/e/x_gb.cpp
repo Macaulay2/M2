@@ -446,7 +446,7 @@ void cmd_sagbi_make(object &om)
 void cmd_sagbi_subduction(object &om, object &oF, object &og)
 {
   Matrix m = om->cast_to_Matrix();
-  RingMap F = oF->cast_to_RingMap();
+  const RingMap *F = oF->cast_to_RingMap();
   gb_comp *g = og->cast_to_gb_comp();
 
   Matrix result = sagbi::subduct(m, F, g);

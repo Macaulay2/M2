@@ -408,7 +408,15 @@ Matrix Matrix::module_tensor(const Matrix &m) const
 
   return result;
 }
-
+Matrix Matrix::random(const Ring *R, int r, int c)
+{
+  FreeModule *F = new FreeModule(R,r);
+  FreeModule *G = new FreeModule(R,c);
+  Matrix result = Matrix(F,G);
+  for (int i=0; i<c; i++)
+    result[i] = F->random();
+  return result;
+}
 #if 0
 Matrix Matrix::random(const FreeModule *F, const FreeModule *G, 
 		      int *mapdeg,	// Degree of the map, not the elements

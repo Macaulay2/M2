@@ -9,7 +9,7 @@
 // FreeModule
 //    routines that should be implemented in this class:
 //    add_to, compare, Ring_of, remove
-// vecterm
+// vecterm *
 //    fields of this structure type should include:
 //    next, coeff
 
@@ -19,20 +19,19 @@ class geobucket
 {
   const FreeModule *F;		// Our elements will be vectors in here
   const Ring *K;		// The coefficient ring
-  vecterm *heap[GEOHEAP_SIZE];
+  vecterm * heap[GEOHEAP_SIZE];
   int top_of_heap;
 
-  int vec_length(vecterm *v) const;
 public:
   geobucket(const FreeModule *F);
   ~geobucket();
 
-  void add(vecterm *p);
-  vecterm *remove_lead_term();	// Returns NULL if none.
+  void add(vecterm * p);
+  vecterm * remove_lead_term();	// Returns NULL if none.
 
-  vecterm *value();		// Returns the linearized value, and resets the geobucket.
+  vecterm * value();		// Returns the linearized value, and resets the geobucket.
 
-  vecterm *debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
+  vecterm * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
 };
 
 static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
@@ -58,37 +57,26 @@ inline geobucket::~geobucket()
   // do anything here.
 }
 
-inline int geobucket::vec_length(vecterm *p) const
+inline void geobucket::add(vecterm * p)
 {
-  int result = 0;
-  while (p != NULL)
-    {
-      p = p->next;
-      result++;
-    }
-  return result;
-}
-
-inline void geobucket::add(vecterm *p)
-{
-  int len = vec_length(p);
+  int len = F->n_terms(p);
   int i= 0;
   while (len >= heap_size[i]) i++;
   F->add_to(heap[i], p);
-  len = vec_length(heap[i]);
+  len = F->n_terms(heap[i]);
   p = NULL;
   while (len >= heap_size[i])
     {
       i++;
       F->add_to(heap[i], heap[i-1]);
-      len = vec_length(heap[i]);
+      len = F->n_terms(heap[i]);
       heap[i-1] = NULL;
     }
   if (i > top_of_heap)
     top_of_heap = i;
 }
 
-inline vecterm *geobucket::remove_lead_term()
+inline vecterm * geobucket::remove_lead_term()
 {
   int lead_so_far = -1;
   for (int i=0; i <= top_of_heap; i++)
@@ -108,7 +96,7 @@ inline vecterm *geobucket::remove_lead_term()
 	}
       // At this point we have equality
       K->add_to(heap[lead_so_far]->coeff, heap[i]->coeff);
-      vecterm *tmp = heap[i];
+      vecterm * tmp = heap[i];
       heap[i] = tmp->next;
       tmp->next = NULL;
       F->remove(tmp);
@@ -125,15 +113,15 @@ inline vecterm *geobucket::remove_lead_term()
 	}
     }
   if (lead_so_far < 0) return NULL;
-  vecterm *result = heap[lead_so_far];
+  vecterm * result = heap[lead_so_far];
   heap[lead_so_far] = result->next;
   result->next = NULL;
   return result;
 }
 
-inline vecterm *geobucket::value()
+inline vecterm * geobucket::value()
 {
-  vecterm *result = NULL;
+  vecterm * result = NULL;
   for (int i=0; i<=top_of_heap; i++)
     {
       if (heap[i] == NULL) continue;

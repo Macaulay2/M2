@@ -167,6 +167,7 @@ public:
   void elim(int n, intarray &result) const;
   Matrix sat(int n, int maxd) const; // maxd<0 means divide by as much as possible
 
+  static Matrix random(const Ring *R, int r, int c);
   void text_out(buffer &o) const;
 };
 

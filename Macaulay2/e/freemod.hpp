@@ -252,7 +252,7 @@ public:
 //  Misc routines  ///////////////////////////
 //////////////////////////////////////////////
 
-  vec eval(const RingMap &map, const FreeModule *F,
+  vec eval(const RingMap *map, const FreeModule *F,
 	       const vec v) const;
 
   vec tensor(const FreeModule *F, vec v, 
@@ -260,6 +260,7 @@ public:
 
   void auto_reduce(array<vec> &vecs) const;
 
+  vec random() const;  // Produces a random vector of coefficients (no monomials)
 private:
   int sort_compare(int i, int j) const;
   int sort_partition(int lo, int hi) const;
