@@ -74,9 +74,17 @@ export Token := {		-- a word, as encountered in the input
 -- ParseTree
 
 export Adjacent := {lhs:ParseTree, rhs:ParseTree};
-export While := {
+export WhileDo := {
      whiletoken:Token, predicate:ParseTree,
-     dotoken:Token, body:ParseTree};
+     dotoken:Token, doclause:ParseTree};
+export WhileList := {
+     whiletoken:Token, predicate:ParseTree,
+     listtoken:Token, listclause:ParseTree};
+export WhileListDo := {
+     whiletoken:Token, predicate:ParseTree,
+     listtoken:Token, listclause:ParseTree,
+     dotoken:Token, doclause:ParseTree
+     };
 export TryElse := {
      trytoken:Token, primary:ParseTree,
      elsetoken:Token, alternate:ParseTree};
@@ -109,7 +117,7 @@ export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or parenthesized 
      or parentheses or IfThen or IfThenElse or startScope 
      or Quote or GlobalQuote or LocalQuote
-     or TryElse or Try or While or Arrow or New or dummy );
+     or TryElse or Try or WhileDo or WhileList or WhileListDo or Arrow or New or dummy );
 
 -- misc
 

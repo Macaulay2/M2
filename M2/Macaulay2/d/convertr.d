@@ -24,7 +24,9 @@ export TryElseFun := dummyBinaryFun; 	-- filled in later in actors.d
 export TryFun := dummyUnaryFun; 	-- filled in later in actors.d
 export IfThenFun := dummyBinaryFun;	-- filled in later in actors.d
 export IfThenElseFun := dummyTernaryFun;-- filled in later in actors.d
-export WhileFun := dummyBinaryFun;      -- filled in later in actors.d
+export WhileDoFun := dummyBinaryFun;      -- filled in later in actors.d
+export WhileListFun := dummyBinaryFun;      -- filled in later in actors.d
+export WhileListDoFun := dummyTernaryFun;      -- filled in later in actors.d
 export QuoteFun := dummyUnaryFun;       -- filled in later in actors.d
 export UntilFun := dummyBinaryFun;      -- filled in later in actors.d
 export NewFun := dummyUnaryFun;	  -- filled in later in actors.d
@@ -153,9 +155,15 @@ export convert(e:ParseTree):Code := (
 	  then Code(openScopeCode(s.scope,convert(s.body)))
 	  else convert(s.body)
 	  )
-     is w:While do Code(
-	  binaryCode(WhileFun,convert(w.predicate),convert(w.body),
-	  treePosition(e)))
+     is w:WhileDo do Code(
+	  binaryCode(WhileDoFun,convert(w.predicate),convert(w.doclause),
+	       treePosition(e)))
+     is w:WhileList do Code(
+	  binaryCode(WhileListFun,convert(w.predicate),convert(w.listclause),
+	       treePosition(e)))
+     is w:WhileListDo do Code(
+	  ternaryCode(WhileListDoFun,convert(w.predicate),convert(w.listclause),convert(w.doclause),
+	       treePosition(e)))
      is n:New do (
 	  if n.newparent == dummyTree
 	  then if n.newinitializer == dummyTree

@@ -47,7 +47,7 @@ append(BasicList,Thing) := BasicList => append
 prepend(Thing,BasicList) := BasicList => prepend
 apply(BasicList,Function) := BasicList => apply
 apply(HashTable,Function) := HashTable => apply
-apply(BasicList,BasicList,Function) := List => apply
+apply(BasicList,BasicList,Function) := BasicList => apply
 apply(ZZ,Function) := List => apply
 applyKeys(HashTable,Function) := HashTable => applyKeys
 applyPairs(HashTable,Function) := HashTable => applyPairs

@@ -71,7 +71,9 @@ export treePosition(e:ParseTree):Position := (
 	  is i:TryElse do return(i.trytoken.position)
 	  is i:Try do return(i.trytoken.position)
      	  is i:IfThenElse do return(i.iftoken.position)
-     	  is w:While do return(w.whiletoken.position)
+     	  is w:WhileDo do return(w.whiletoken.position)
+     	  is w:WhileList do return(w.whiletoken.position)
+     	  is w:WhileListDo do return(w.whiletoken.position)
      	  is s:startScope do e = s.body
 	  is n:New do return(n.newtoken.position)
 	  )
@@ -181,6 +183,7 @@ bump();
 bump(2);
      specialprec = prec;
      doW = token("do");
+     listW = token("list");
      elseW = token("else");
      thenW = token("then");
 bump();
@@ -672,10 +675,19 @@ export bind(e:ParseTree,scope:Scope):void := (
      is ee:parenthesized do bind(ee.contents,scope)
      is parentheses do nothing
      is dummy do nothing
-     is w:While do (
+     is w:WhileDo do (
 	  bind(w.predicate,scope);
 	  -- w.body = bindnewscope(w.body,scope);
-	  bind(w.body,scope);
+	  bind(w.doclause,scope);
+	  )
+     is w:WhileList do (
+	  bind(w.predicate,scope);
+	  bind(w.listclause,scope);
+	  )
+     is w:WhileListDo do (
+	  bind(w.predicate,scope);
+	  bind(w.listclause,scope);
+	  bind(w.doclause,scope);
 	  )
      is n:New do (
      	  bind(n.newclass,scope);

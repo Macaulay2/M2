@@ -200,4 +200,7 @@ masterFileName << html HTML {
 	  }
      } << endl << close
 
-if haderror then exit 1
+if haderror then (
+     stderr << "exiting after having encountered documentation errors" << endl;
+     exit 1
+     )

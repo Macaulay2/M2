@@ -64,9 +64,11 @@ document { Sequence,
 
 document { singleton,
      Headline => "make a sequence of length one",
-     TT "singleton x", " -- returns a sequence of length one whose single 
-     element is ", TT "x", ".",
-     PARA,
+     Synopsis => {
+	  "y = singleton x",
+	  "x" => null,
+	  "y" => {"a sequence of length one whose single element is ", TT "x", "."},
+	  },
      EXAMPLE {
 	  "singleton 3",
 	  "#oo",
@@ -101,26 +103,37 @@ document { Type,
 
 document { Print,
      Headline => "top level method for printing results",
-     "Applied at top level to print the result, ", TT "r", ", of an evaluation.
-     The code for the default Print method will apply the ", TO "AfterEval", "
+     Synopsis => {
+	  "X.Print = f",
+	  "f" => { "a function to be used for printing a top-level evaluation
+	       result ", TT "r", " of type ", TT "X", "."},
+	  null
+	  },
+     "The code for the default ", TT "Print", " method will apply the ", TO "AfterEval", "
      method to ", TT "r", " if there one, and replace ", TT "r", " by the result.  
      Then it applies ", TO "BeforePrint", " method, if there is one,
      to ", TT "r", ", and prints its result instead.  The actual printing
      will be done with ", TO "<<", ".  It will then apply the appropriate
      ", TO "AfterPrint", " method to ", TT "r", ", which is normally used to 
-     provide auxiliary information to the user about the result.",
+     provide auxiliary information to the user about the type of the result.",
      SEEALSO "NoPrint"
      }
 
 document { NoPrint,
      Headline => "top level method for non-printing results",
-     "Applied at top level to a result suppression of whose printing has
-     been indicated by a semicolon.  The code for the default ", TT "NoPrint", "
-     method will apply the ", TO "AfterEval", " method to ", TT "r", " if
-     there one, and replace ", TT "r", " by the result.
-     It will then apply the appropriate ", TO "AfterNoPrint", " method to
-     ", TT "r", ", which is normally used to provide auxiliary information to 
-     the user about the result.",
+     Synopsis => {
+	  "X.NoPrint = f",
+	  "f" => { "a function to be used a top-level evaluation
+	       result ", TT "r", " of type ", TT "X", " is not to
+	       be printed, as indicated by a semicolon."},
+     	  null
+	  },
+     "The code for the default ", TT "NoPrint", " method will apply
+     the ", TO "AfterEval", " method to ", TT "r", " if there is
+     one, and replace ", TT "r", " by the result.  It will then
+     apply the appropriate ", TO "AfterNoPrint", " method to
+     ", TT "r", ", which is normally used to provide auxiliary 
+     information to the user about the type of the result.",
      SEEALSO "Print"
      }
 
@@ -329,14 +342,20 @@ document { (apply,BasicList,BasicList,Function),
      lists of the same class, then the result is also of that class.",
      EXAMPLE "apply({1,2,3}, {100,200,300}, (i,j) -> i+j)"
      }
+
 document { (apply,BasicList,Function),
      Headline => "apply function to each element",
-     TT "apply(v,f)", " -- applies the function ", TT "f", " to each element of the 
-     list ", TT "v", ", returning the list of results.  The result is of the same
-     class, for example, ", TO "Array", ".",
+     Synopsis => {
+	  "r = apply(v,f)",
+	  "v" => null,
+	  "f" => null,
+	  "r" => {"the list obtained by applying ", TT "f", " to each element of ", TT "v", "."}
+	  },
+     "The result ", TT "r", " will have the same class as ", TT "v", ".",
      EXAMPLE "apply([1,3,5,7], i->i^2)",
      SEEALSO {(symbol /,VisibleList, Function), (symbol \, Function, VisibleList)}
      }
+
 document { (apply,HashTable,Function),
      Headline => "apply function to each value",
      TT "apply(x,f)", " -- produces a new hash table ", TT "y", " from
