@@ -130,7 +130,7 @@ void **Table_toArray(T *table, void *end) {
 	array = (void **) ALLOC((2*table->length + 1)*sizeof (*array));
 	for (i = 0; i < table->size; i++)
 		for (p = table->buckets[i]; p; p = p->link) {
-			array[j++] = (void *)p->key;
+			array[j++] = (const void *)p->key;
 			array[j++] = p->value;
 		}
 	array[j] = end;

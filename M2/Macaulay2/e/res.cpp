@@ -926,7 +926,6 @@ int res_comp::gens(int deg)
 	    return COMP_DONE_PAIR_LIMIT;
 	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	    return COMP_DONE_SYZYGY_LIMIT;
-	  system_spincursor();
 	  if (system_interrupted) return COMP_INTERRUPTED;
 	}
       
@@ -956,7 +955,6 @@ int res_comp::pairs(int level, int deg)
 	{
 	  pairs->next_new_pair = p->next;
 	  new_pairs(p);
-	  system_spincursor();
 	  if (system_interrupted) return COMP_INTERRUPTED;
 	}
     }
@@ -987,7 +985,6 @@ int res_comp::reductions(int level, int deg)
 	  return COMP_DONE_PAIR_LIMIT;
 	if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	  return COMP_DONE_SYZYGY_LIMIT;
-	system_spincursor();
 	if (system_interrupted) return COMP_INTERRUPTED;
       }
   return COMP_COMPUTING;

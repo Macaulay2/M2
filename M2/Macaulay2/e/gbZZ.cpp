@@ -960,7 +960,6 @@ int GBZZ_comp::calc(const int *deg, const intarray &stop)
 				     stop_gb, stop_syz, stop_pairs, 
 				     stop_codim, stop_min_gens, stop_subring);
       if (is_done != COMP_COMPUTING) break;
-      system_spincursor();
       if (system_interrupted) 
 	{
 	  is_done = COMP_INTERRUPTED;

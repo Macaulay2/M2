@@ -20,7 +20,7 @@ class SchreyerOrder
 	     int pow) const;   // remaining power to take
 
 public:
-  SchreyerOrder(const Monoid *M) : M(M), _nslots(M->monomial_size() + 1), _rank(0) {}
+  SchreyerOrder(const Monoid *m) : M(m), _nslots(m->monomial_size() + 1), _rank(0) {}
 
   static SchreyerOrder *create(const Matrix *m);
 

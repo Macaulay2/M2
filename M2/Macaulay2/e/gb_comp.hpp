@@ -213,7 +213,7 @@ protected:
   int _kind;  // GB_comp:1, GBinhom_comp:2, EGB1:13
   StopConditions Stop;
 public:
-  gb_comp(int kind) : _kind(kind) {}
+  gb_comp(int k) : _kind(k) {}
   virtual ~gb_comp() {}
 
   int kind() const { return _kind; }

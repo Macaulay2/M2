@@ -767,7 +767,6 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
   
   for (;;)
     {
-      system_spincursor();
       if (system_interrupted) 
 	{
 	  is_done = COMP_INTERRUPTED;

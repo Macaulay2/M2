@@ -34,7 +34,6 @@ int gb_emitter::calc_gb(int degree, const intarray & /*stop*/)
     }
   for (;;)
     {
-      system_spincursor();
       if (system_interrupted)
 	return COMP_INTERRUPTED;
       if (n_i >= n_gens) return COMP_DONE;

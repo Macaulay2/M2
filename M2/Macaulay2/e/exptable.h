@@ -17,13 +17,13 @@ int exponent_table_length(exponent_table *E);
 
 void exponent_table_free(exponent_table **E);
 
-int exponent_table_put(exponent_table *E, const exponent exp, int value);
-/* Puts the element 'exp => value' into the table, and if an element is
+int exponent_table_put(exponent_table *E, const exponent expon, int value);
+/* Puts the element 'expon => value' into the table, and if an element is
    already there, its value is returned, otherwise 0 is returned.
    Thus, it is a good idea to not insert zero values into the table */
 
-int exponent_table_get(exponent_table *E, const exponent exp);
-/* Returns the value associated to 'exp', returning zero, if 'exp'
+int exponent_table_get(exponent_table *E, const exponent expon);
+/* Returns the value associated to 'expon', returning zero, if 'expon'
    is not in the table */
 
 void ** exponent_table_to_array(exponent_table *E);

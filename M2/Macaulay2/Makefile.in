@@ -54,7 +54,11 @@ distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
 all clean distclean ::; $(MAKE) -C compat $@
 ################################# d
 initialize ::; $(MAKE) DEPENDS=no -C d compat.h
-justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
+####
+# let's try it without "restart"
+# justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
+justM2 all ::; $(MAKE) -C d all
+####
 distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# basictests
 check ::; $(MAKE) -C basictests -k
