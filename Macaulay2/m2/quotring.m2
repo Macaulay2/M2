@@ -2,6 +2,7 @@
 
 
 QuotientRing = new Type of EngineRing
+NewQuotientRing = new Type of NewEngineRing
 
 document { quote QuotientRing,
      TT "QuotientRing", " -- the class of all quotient rings.",
@@ -83,10 +84,43 @@ Ring / Module := (R,I) -> (
      R / ideal I)
 
 savedQuotients := new MutableHashTable
+savedEQuotients := new MutableHashTable
 
 Ring / Ideal := (R,I) -> if I == 0 then R else (
-     if R === ZZ then (
-	  gensI := I.generators ** R;
+     if R === ZZZ then (
+	  if ring I.generators =!= ZZ then error "expected an ideal of ZZ";
+	  EgensI := I.generators;
+	  EgensgbI := generators gb EgensI;
+	  En := if EgensgbI == 0 then 0 else EgensgbI_(0,0);
+	  if En < 0 then En = -En;
+	  if En === 0 then ZZ
+	  else if savedEQuotients#?En 
+	  then savedEQuotients#En
+	  else (
+	       if En > 32767 then error "large characteristics not implemented yet";
+	       if En > 1 and not isPrime En
+	       then error "ZZZ/n not implemented yet for composite n";
+	       -- EG := degreesMonoid 0;
+	       sendgg(ggPush En, ggEcharp);
+	       ES := new NewQuotientRing from newHandle();
+	       ES.relations = EgensI;
+	       ES.ConvertToExpression = R.ConvertToExpression;
+	       ES.isCommutative = R.isCommutative;
+	       ES.presentation = EgensgbI;
+	       ES.char = En;
+	       if En === 1 then ES.dim = -1 else if En === 0 then ES.dim = 1 else ES.dim = 0;
+	       ES.ConvertToExpression = ConvertApply(expression, ConvertInteger);
+	       expression ES := x -> convert(
+		    ES.ConvertToExpression, sendgg(ggPush x, ggtonet)
+		    );
+	       ES.frac = ES;		  -- ZZ/n with n PRIME!
+	       ES.baseRings = {ZZ};
+	       savedEQuotients#En = ES;
+	       ES.newEngine = true;
+	       ES))
+     else if R === ZZ then (
+	  if ring I.generators =!= ZZ then error "expected an ideal of ZZ";
+	  gensI := I.generators;
 	  gensgbI := generators gb gensI;
 	  n := if gensgbI == 0 then 0 else gensgbI_(0,0);
 	  if n < 0 then n = -n;

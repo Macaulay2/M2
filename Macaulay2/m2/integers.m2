@@ -3,13 +3,16 @@
 ZZ#1 = 1
 ZZ#0 = 0
 ZZ.char = 0
+ZZZ.char = 0
 ZZ.ConversionFormat = ConvertInteger
+ZZZ.ConversionFormat = ConvertInteger
 InverseMethod ZZ := x -> 1/x
 ggPush ZZ := i -> (ggINT, gg i)
 ZZ.dim = 1
 ZZ.Engine = true
 ZZ.baseRings = {}
 ZZ.ConvertToExpression = ConvertInteger
+ZZZ.ConvertToExpression = ConvertInteger
 ZZ.degreeLength = 0
 ZZ.frac = QQ
 promote(ZZ,ZZ) := (i,ZZ) -> i
