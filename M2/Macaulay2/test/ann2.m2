@@ -18,6 +18,5 @@ J=ideal vars R
 M=R^1/J
 d=3
 N=(R^1)/(J^d)
-Tor_1(M,N)
-assert( annihilator Tor_1(M,N )==  annihilator Tor_1(N,M) )
+assert( annihilator Tor_1(M,N)==  annihilator Tor_1(N,M) )
 
