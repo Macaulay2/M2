@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-/* we test gc to whether it properly marks pointers found in registers */
+/* we test gc to see whether it properly marks pointers found in registers */
 static void uniq(void *p, ...) {
   va_list a;
   void *q[100];
