@@ -4,8 +4,9 @@ Changes made, most recent ones first:
 New in 0.8.41:
 
 Fixed a serious bug.  When computing syzygies of a matrix after the Poincare
-polynomial of its cokernel had already been computed, the computation could
-stop prematurely.  This can cause incorrect results.
+polynomial of its cokernel had already been computed (this is done
+automatically by 'degre'), the computation could stop prematurely.  This can
+cause incorrect results.
 
 Fixed a problem in 'kernel' of a ring map which attached incorrect degrees
 to the generators.  The change was to 'ideal Matrix' so that now it always
