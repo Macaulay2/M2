@@ -21,6 +21,8 @@
 #include "lattice.hpp"
 #include "LLL.hpp"
 
+#include "Eschreyer.hpp"
+
 extern int comp_printlevel;
 extern Z *ZZ;
 
@@ -568,6 +570,30 @@ void cmd_LLL_calc(object &o1, object &o2, object &o3)
   gStack.insert(make_object_int(ret));
 }
 
+static void cmd_kerGB_make(object &om)
+{
+  Matrix m = om->cast_to_Matrix();
+  const PolynomialRing *R = m.Ring_of()->cast_to_PolynomialRing();
+  if (R == 0)
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
+  GBKernelComputation *g = new GBKernelComputation(m);
+  gStack.insert(g);
+}
+static void cmd_kerGB_calc(object &o1)
+{
+  GBKernelComputation *g = o1->cast_to_GBKernelComputation();
+  int ret = g->calc();
+  gStack.insert(make_object_int(ret));
+}
+static void cmd_kerGB_getsyz(object &o1)
+{
+  GBKernelComputation *g = o1->cast_to_GBKernelComputation();
+  gStack.insert(g->get_syzygies());
+}
+
 void i_NGB_cmds(void)
 {
   // New NGB commands
@@ -600,6 +626,11 @@ void i_NGB_cmds(void)
   install(ggbinomialGBenlarge, cmd_binomialGB_enlarge, TY_GB_COMP, TY_RING, TY_INTARRAY);
   install(gggetsubring, cmd_binomialGB_subring, TY_GB_COMP);
   install(gggetsubringGB, cmd_binomialGB_subringGB, TY_GB_COMP);
+
+  // GB of kernels of GB's: requires Schreyer free module as source.
+  install(ggker, cmd_kerGB_make, TY_MATRIX);
+  install(ggcalc, cmd_kerGB_calc, TY_GBKernelComputation);
+  install(gggetsyz, cmd_kerGB_getsyz, TY_GBKernelComputation);
 
   // Performing the computation (for dets/pfaffians)
   install(ggcalc, cmd_comp_calc, TY_COMP, TY_INT);

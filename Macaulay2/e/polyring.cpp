@@ -107,6 +107,7 @@ Matrix PolynomialRing::get_ideal() const
   return result;
 }
 
+#if 0
 bool PolynomialRing::equals(const object_element *o) const
 {
   if (o->class_id() != class_id())
@@ -125,11 +126,7 @@ bool PolynomialRing::equals(const object_element *o) const
       return false;
   return true;
 }
-
-int PolynomialRing::hash() const
-{
-  return 0;
-}
+#endif
 
 void PolynomialRing::write_object(object_writer &o) const
 {

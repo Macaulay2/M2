@@ -9,7 +9,7 @@ VectorOperations::VectorOperations(const Ring *K)
 {
   bump_up((Ring *)K);
   if (vecstash == 0)
-    vecstash = new stash("vectors", sizeof(vector));
+    vecstash = new stash("sparse_vectors", sizeof(sparse_vector));
 }
 
 VectorOperations::~VectorOperations()
@@ -17,32 +17,32 @@ VectorOperations::~VectorOperations()
   bump_down((Ring *)K);
 }
 
-vector *VectorOperations::new_vector() const
+sparse_vector *VectorOperations::new_sparse_vector() const
 {
-  return (vector *)((VectorOperations *)this)->vecstash->new_elem();
+  return (sparse_vector *)((VectorOperations *)this)->vecstash->new_elem();
 }
 
-void VectorOperations::remove_vector_node(vector *n) const
+void VectorOperations::remove_sparse_vector_node(sparse_vector *n) const
 {
   ((VectorOperations *)this)->vecstash->delete_elem(n);
 }
 
-vector *VectorOperations::make_vector(int r, ring_elem a) const
+sparse_vector *VectorOperations::make_sparse_vector(int r, ring_elem a) const
 {
-  vector *result = new_vector();
+  sparse_vector *result = new_sparse_vector();
   result->next = 0;
   result->component = r;
   result->coefficient = a;  // Notice: NO copy is done!
   return result;
 }
 
-vector *VectorOperations::clone(const vector *v) const
+sparse_vector *VectorOperations::clone(const sparse_vector *v) const
 {
-  vector head;
-  vector *result = &head;
-  for (const vector *p = v; p != 0; p=p->next)
+  sparse_vector head;
+  sparse_vector *result = &head;
+  for (const sparse_vector *p = v; p != 0; p=p->next)
     {
-      vector *w = new_vector();
+      sparse_vector *w = new_sparse_vector();
       result->next = w;
       result = w;
       w->component = p->component;
@@ -52,45 +52,45 @@ vector *VectorOperations::clone(const vector *v) const
   return head.next;
 }
 
-void VectorOperations::remove(vector *v) const
+void VectorOperations::remove(sparse_vector *v) const
 {
   while (v != 0)
     {
-      vector *tmp = v;
+      sparse_vector *tmp = v;
       v = v->next;
       K->remove(tmp->coefficient);
-      remove_vector_node(tmp);
+      remove_sparse_vector_node(tmp);
     }
 }
 
-void VectorOperations::scale(vector *&v, const ring_elem a) const
+void VectorOperations::scale(sparse_vector *&v, const ring_elem a) const
 {
   if (K->is_zero(a))
     {
       remove(v);
       v = 0;
     }
-  vector head;
+  sparse_vector head;
   head.next = v;
-  for (vector *p = &head; p->next != 0; p=p->next)
+  for (sparse_vector *p = &head; p->next != 0; p=p->next)
     {
       K->mult_to(p->next->coefficient, a);
       if (K->is_zero(p->next->coefficient))
 	{
-	  vector *tmp = p->next;
+	  sparse_vector *tmp = p->next;
 	  p->next = tmp->next;
 	  K->remove(tmp->coefficient);
-	  remove_vector_node(tmp);
+	  remove_sparse_vector_node(tmp);
 	}
     }
   v = head.next;
 }
 
-void VectorOperations::scaleRow(vector *&v, int r, const ring_elem a) const
+void VectorOperations::scaleRow(sparse_vector *&v, int r, const ring_elem a) const
 {
-  vector head;
+  sparse_vector head;
   head.next = v;
-  for (vector *p = &head; p->next != 0; p = p->next)
+  for (sparse_vector *p = &head; p->next != 0; p = p->next)
     if (p->next->component < r) 
       break;
     else if (p->next->component == r)
@@ -98,18 +98,18 @@ void VectorOperations::scaleRow(vector *&v, int r, const ring_elem a) const
 	K->mult_to(p->next->coefficient, a);
 	if (K->is_zero(p->next->coefficient))
 	  {
-	    vector *tmp = p->next;
+	    sparse_vector *tmp = p->next;
 	    p->next = tmp->next;
 	    K->remove(tmp->coefficient);
-	    remove_vector_node(tmp);
+	    remove_sparse_vector_node(tmp);
 	  }
 	break;
       }
 }
 
-void VectorOperations::interchangeRows(vector *&v, int r1, int r2) const
+void VectorOperations::interchangeRows(sparse_vector *&v, int r1, int r2) const
 {
-  vector *p;
+  sparse_vector *p;
   if (r1 == r2) return;
   if (v == 0) return;
   if (r1 < r2) 
@@ -119,10 +119,10 @@ void VectorOperations::interchangeRows(vector *&v, int r1, int r2) const
       r2 = tmp;
     }
   // So now r1 > r2.
-  vector head;
+  sparse_vector head;
   head.next = v;
-  vector *vec1;
-  vector *vec2;
+  sparse_vector *vec1;
+  sparse_vector *vec2;
   for (p = &head; p->next != 0; p=p->next)
     if (p->next->component <= r1)
       break;
@@ -143,7 +143,7 @@ void VectorOperations::interchangeRows(vector *&v, int r1, int r2) const
     }
   else if (vec2->next != 0 && vec2->next->component == r2)
     {
-      vector *tmp = vec1;
+      sparse_vector *tmp = vec1;
       vec1 = vec2;
       vec2 = tmp;
       r2 = r1;			// Used below.
@@ -151,7 +151,7 @@ void VectorOperations::interchangeRows(vector *&v, int r1, int r2) const
   else
     return;
 
-  vector *tmp = vec1->next;
+  sparse_vector *tmp = vec1->next;
   if (vec2 != tmp)
     {
       vec1->next = tmp->next;
@@ -162,12 +162,12 @@ void VectorOperations::interchangeRows(vector *&v, int r1, int r2) const
   v = head.next;
 }
 
-void VectorOperations::add(vector *&v, vector *&w) const
+void VectorOperations::add(sparse_vector *&v, sparse_vector *&w) const
 {
   if (w == NULL) return;
   if (v == NULL) { v = w; w = NULL; return; }
-  vector head;
-  vector *result = &head;
+  sparse_vector head;
+  sparse_vector *result = &head;
   while (true)
     if (v->component < w->component)
       {
@@ -196,15 +196,15 @@ void VectorOperations::add(vector *&v, vector *&w) const
       }
     else
       {
-	vector *tmv = v;
-	vector *tmw = w;
+	sparse_vector *tmv = v;
+	sparse_vector *tmw = w;
 	v = v->next;
 	w = w->next;
 	K->add_to(tmv->coefficient, tmw->coefficient);
 	if (K->is_zero(tmv->coefficient))
 	  {
 	    K->remove(tmv->coefficient);
-	    remove_vector_node(tmv);
+	    remove_sparse_vector_node(tmv);
 	  }
 	else
 	  {
@@ -212,7 +212,7 @@ void VectorOperations::add(vector *&v, vector *&w) const
 	    result = result->next;
 	  }
 	K->remove(tmw->coefficient);
-	remove_vector_node(tmw);
+	remove_sparse_vector_node(tmw);
 	if (w == NULL) 
 	  {
 	    result->next = v;
@@ -229,7 +229,7 @@ void VectorOperations::add(vector *&v, vector *&w) const
       }
 }
 
-void VectorOperations::row2by2(vector *&v, 
+void VectorOperations::row2by2(sparse_vector *&v, 
 			       int r1, int r2,
 			       ring_elem a1, ring_elem a2,
 			       ring_elem b1, ring_elem b2) const
@@ -268,10 +268,10 @@ void VectorOperations::row2by2(vector *&v,
   setEntry(v,r2,c3);
 }
 
-void VectorOperations::addRowMultiple(vector *&v, int r1, ring_elem a, int r) const
+void VectorOperations::addRowMultiple(sparse_vector *&v, int r1, ring_elem a, int r) const
 {
-  vector *p;
-  vector *vec2 = 0;
+  sparse_vector *p;
+  sparse_vector *vec2 = 0;
   for (p = v; p != 0; p=p->next)
     if (p->component == r1)
       {
@@ -280,7 +280,7 @@ void VectorOperations::addRowMultiple(vector *&v, int r1, ring_elem a, int r) co
       }
   if (vec2 == 0) return;
   ring_elem a1 = K->mult(vec2->coefficient, a);
-  vector head;
+  sparse_vector head;
   head.next = v;
   for (p = &head; p->next != 0; p=p->next)
     if (p->next->component <= r)
@@ -288,7 +288,7 @@ void VectorOperations::addRowMultiple(vector *&v, int r1, ring_elem a, int r) co
   if (p->next == 0 || p->next->component < r)
     {
       // Make a new node
-      vector *w = new_vector();
+      sparse_vector *w = new_sparse_vector();
       w->next = p->next;
       w->component = r;
       w->coefficient = a1;
@@ -299,17 +299,17 @@ void VectorOperations::addRowMultiple(vector *&v, int r1, ring_elem a, int r) co
       K->add_to(p->next->coefficient, a1);
       if (K->is_zero(p->next->coefficient))
 	{
-	  vector *tmp = p->next;
+	  sparse_vector *tmp = p->next;
 	  p->next = tmp->next;
 	  K->remove(tmp->coefficient);
-	  remove_vector_node(tmp);
+	  remove_sparse_vector_node(tmp);
 	}
     }
 
   v = head.next;
 }
 
-ring_elem VectorOperations::dotProduct(const vector *v, const vector *w) const
+ring_elem VectorOperations::dotProduct(const sparse_vector *v, const sparse_vector *w) const
 {
   ring_elem result = K->from_int(0);
   while (true)
@@ -330,9 +330,9 @@ ring_elem VectorOperations::dotProduct(const vector *v, const vector *w) const
     }
 }
 
-bool VectorOperations::getEntry(vector *v, int r, ring_elem &result) const
+bool VectorOperations::getEntry(sparse_vector *v, int r, ring_elem &result) const
 {
-  for (vector *p = v; p != 0; p = p->next)
+  for (sparse_vector *p = v; p != 0; p = p->next)
     if (p->component < r)
       break;
     else if (p->component == r)
@@ -343,10 +343,10 @@ bool VectorOperations::getEntry(vector *v, int r, ring_elem &result) const
   return false;
 }
 
-void VectorOperations::setEntry(vector *&v, int r, ring_elem a) const
+void VectorOperations::setEntry(sparse_vector *&v, int r, ring_elem a) const
 {
   bool iszero = K->is_zero(a);
-  vector head, *p;
+  sparse_vector head, *p;
   head.next = v;
   for (p = &head; p->next != 0; p = p->next)
     if (p->next->component <= r)
@@ -355,7 +355,7 @@ void VectorOperations::setEntry(vector *&v, int r, ring_elem a) const
   if (p->next == 0 || p->next->component < r)
     {
       if (iszero) return;
-      vector *w = new_vector();
+      sparse_vector *w = new_sparse_vector();
       w->next = p->next;
       w->component = r;
       w->coefficient = a;
@@ -367,9 +367,9 @@ void VectorOperations::setEntry(vector *&v, int r, ring_elem a) const
       if (iszero)
 	{
 	  // delete node
-	  vector *tmp = p->next;
+	  sparse_vector *tmp = p->next;
 	  p->next = tmp->next;
-	  remove_vector_node(tmp);
+	  remove_sparse_vector_node(tmp);
 	}
       else
 	p->next->coefficient = a;
@@ -389,7 +389,7 @@ void SparseMutableMatrix::initialize(const Ring *KK, int nr, int nc)
   nrows = nr;
   ncols = nc;
   V = new VectorOperations(K);
-  matrix = new vector *[ncols];
+  matrix = new sparse_vector *[ncols];
   for (int c=0; c<ncols; c++)
     matrix[c] = 0;
   colSize = new int[ncols];
@@ -442,7 +442,7 @@ Matrix SparseMutableMatrix::toMatrix() const
     {
       // Create the vec v.
       vec v = 0;
-      for (vector *w = matrix[c]; w!=0; w=w->next)
+      for (sparse_vector *w = matrix[c]; w!=0; w=w->next)
 	{
 	  vec tmp = F->term(w->component, K->copy(w->coefficient));
 	  F->add_to(v,tmp);
@@ -505,10 +505,10 @@ bool SparseMutableMatrix::errorRowBound(int r) const
   return false;
 }
 
-int SparseMutableMatrix::leadRow(int c) const  // -1 means this vector is zero.
+int SparseMutableMatrix::leadRow(int c) const  // -1 means this sparse_vector is zero.
 {
   if (errorColumnBound(c)) return -1;
-  vector *v = matrix[c];
+  sparse_vector *v = matrix[c];
   if (v == 0) return -1;
   return v->component;
 }
@@ -516,7 +516,7 @@ int SparseMutableMatrix::leadRow(int c) const  // -1 means this vector is zero.
 ring_elem SparseMutableMatrix::leadCoefficient(int c) const // Can be zero.
 {
   if (errorColumnBound(c)) return K->from_int(0);
-  vector *v = matrix[c];
+  sparse_vector *v = matrix[c];
   if (v == 0) return K->from_int(0);
   return K->copy(v->coefficient);
 }
@@ -545,7 +545,7 @@ void SparseMutableMatrix::setEntry(int r, int c, ring_elem a)
   V->setEntry(matrix[c], r, a);
 }
 
-void SparseMutableMatrix::setRow(int r, vector *v)
+void SparseMutableMatrix::setRow(int r, sparse_vector *v)
 {
   if (errorRowBound(r)) return;
   for ( ; v != 0; v=v->next)
@@ -554,31 +554,31 @@ void SparseMutableMatrix::setRow(int r, vector *v)
   // Need to set the components of the others to zero...
 }
 
-void SparseMutableMatrix::setColumn(int c, vector *v)
+void SparseMutableMatrix::setColumn(int c, sparse_vector *v)
 {
   if (errorColumnBound(c)) return;
-  vector *old = matrix[c];
+  sparse_vector *old = matrix[c];
   matrix[c] = v;
   V->remove(old);
 }
 
-vector *SparseMutableMatrix::getRow(int r) const // Copies the row
+sparse_vector *SparseMutableMatrix::getRow(int r) const // Copies the row
 {
   if (errorRowBound(r)) return 0;
-  vector *result = 0;
+  sparse_vector *result = 0;
   for (int c=0; c<ncols; c++)
     {
       ring_elem a;
       if (V->getEntry(matrix[c], r, a))
 	{
-	  vector *v = V->make_vector(r,a);
+	  sparse_vector *v = V->make_sparse_vector(r,a);
 	  v->next = result;
 	  result = v;
 	}
     }
   return result;
 }
-vector *SparseMutableMatrix::getColumn(int c) const // Copies the column
+sparse_vector *SparseMutableMatrix::getColumn(int c) const // Copies the column
 {
   if (errorColumnBound(c)) return 0;
   return V->clone(matrix[c]);
@@ -599,7 +599,7 @@ void SparseMutableMatrix::interchangeColumns(int c1, int c2, bool doRecording)
 {
   if (errorColumnBound(c1)) return;
   if (errorColumnBound(c2)) return;
-  vector *tmp = matrix[c1];
+  sparse_vector *tmp = matrix[c1];
   matrix[c1] = matrix[c2];
   matrix[c2] = tmp;
 
@@ -643,7 +643,7 @@ void SparseMutableMatrix::addColumnMultiple(int c1, ring_elem a, int c, bool doR
   if (errorColumnBound(c1)) return;
   if (errorColumnBound(c)) return;
 
-  vector *tmp = V->clone(matrix[c1]);
+  sparse_vector *tmp = V->clone(matrix[c1]);
   V->scale(tmp, a);
   V->add(matrix[c], tmp);
 
@@ -711,14 +711,14 @@ void SparseMutableMatrix::column2by2(int c1, int c2,
   // new column c1 = a1 * column[c1] + a2 * column[c2]
   // new column c2 = b1 * column[c1] + b2 * column[c2]
   // Make first column: v1 = a1*c1+a2*c2
-  vector *v1 = V->clone(matrix[c1]);
-  vector *v2 = V->clone(matrix[c2]);
+  sparse_vector *v1 = V->clone(matrix[c1]);
+  sparse_vector *v2 = V->clone(matrix[c2]);
   V->scale(v1,a1);
   V->scale(v2,a2);
   V->add(v1,v2);
   // Second column: w1 = b1*c1 + b2*c2
-  vector *w1 = V->clone(matrix[c1]);
-  vector *w2 = V->clone(matrix[c2]);
+  sparse_vector *w1 = V->clone(matrix[c1]);
+  sparse_vector *w2 = V->clone(matrix[c2]);
   V->scale(w1,b1);
   V->scale(w2,b2);
   V->add(w1,w2);
@@ -758,14 +758,14 @@ void SparseMutableMatrix::gcdColumnReduce(int c1, int c2, bool doRecording)
   emit(o.str());
 
   // Make first column: matrix[column c1] = v1 = x*c1+y*c2
-  vector *v1 = V->clone(matrix[c1]);
-  vector *v2 = V->clone(matrix[c2]);
+  sparse_vector *v1 = V->clone(matrix[c1]);
+  sparse_vector *v2 = V->clone(matrix[c2]);
   V->scale(v1,x);
   V->scale(v2,y);
   V->add(v1,v2);
   // Second column: matrix[column c2] = w1 = (a1/d) c2 - (a2/d) c1
-  vector *w1 = V->clone(matrix[c2]);
-  vector *w2 = V->clone(matrix[c1]);
+  sparse_vector *w1 = V->clone(matrix[c2]);
+  sparse_vector *w2 = V->clone(matrix[c1]);
   ring_elem b1 = K->divide(a1,d);
   ring_elem b2 = K->divide(b,d);
   V->scale(w1,b1);
@@ -886,7 +886,7 @@ void SparseMutableMatrix::setSizes(int c_lo, int c_hi)
   for (i=0; i<ncols; i++) colSize[i] = 0;
   for (i=0; i<nrows; i++) rowSize[i] = 0;
   for (i=c_lo; i<=c_hi; i++)
-    for (vector *p=matrix[i]; p != 0; p=p->next)
+    for (sparse_vector *p=matrix[i]; p != 0; p=p->next)
       {
 	colSize[i]++;
 	rowSize[p->component]++;
@@ -918,7 +918,7 @@ bool SparseMutableMatrix::findGoodUnitPivot(int c_lo, int c_hi, int &r, int &c, 
   setSizes(c_lo,c_hi);
   bool found = false;
   for (int i=c_lo; i<=c_hi; i++)
-    for (vector *p=matrix[i]; p != 0; p=p->next)
+    for (sparse_vector *p=matrix[i]; p != 0; p=p->next)
       {
 	if (K->is_equal(one, p->coefficient)
 	    || (K->is_equal(minus_one, p->coefficient)))
@@ -945,12 +945,12 @@ SparseMutableMatrix *SparseMutableMatrix::identity(const Ring *K, int n)
   return result;
 }
 
-int SparseMutableMatrix::compare_vectors(vector *v, vector *w)
+int SparseMutableMatrix::compare_sparse_vectors(sparse_vector *v, sparse_vector *w)
 {
   // First compare: lead component.
   // Second: if ZZ: compare using mpz_cmp
   //         if k[x]: compare using simple_degree
-  // Null vectors go first
+  // Null sparse_vectors go first
   if (v == 0)
     {
       if (w == 0) return EQ;
@@ -992,16 +992,16 @@ int SparseMutableMatrix::compare_vectors(vector *v, vector *w)
 
 int SparseMutableMatrix::sort_partition(int lo, int hi, int *sortvals)
 {
-  vector *pivot = matrix[sortvals[lo]];
+  sparse_vector *pivot = matrix[sortvals[lo]];
   int i = lo-1;
   int j = hi+1;
   for (;;)
     {
       do { j--; }
-      while (compare_vectors(matrix[sortvals[j]], pivot) > 0);
+      while (compare_sparse_vectors(matrix[sortvals[j]], pivot) > 0);
 
       do { i++; }
-      while (compare_vectors(matrix[sortvals[i]], pivot) < 0);
+      while (compare_sparse_vectors(matrix[sortvals[i]], pivot) < 0);
 
       if (i < j)
 	{
@@ -1045,7 +1045,7 @@ void SparseMutableMatrix::permuteColumns(int lo, int hi, int *permutation, bool 
   int i;
   if (errorColumnBound(lo)) return;
   if (errorColumnBound(hi)) return;
-  vector **old = new vector *[hi-lo+1];
+  sparse_vector **old = new sparse_vector *[hi-lo+1];
   for (i=lo; i<=hi; i++)
     old[i-lo] = matrix[i];
   for (i=lo; i<=hi; i++)

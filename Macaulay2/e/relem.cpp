@@ -21,6 +21,12 @@ int RingElement_rec::length_of() const
 {
   return R->n_terms(val);
 }
+bool RingElement_rec::equals(const object_element *o) const
+{
+  const RingElement_rec *b = dynamic_cast<const RingElement_rec *>(o);
+  if (R != b->R) return false;
+  return R->is_equal(val, b->val);
+}
 
 RingElement RingElement::operator-() const
 {

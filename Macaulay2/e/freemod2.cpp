@@ -35,6 +35,8 @@ void FreeModule::initialize(const Ring *RR)
       nf_exp = nf_exp_a.alloc(M->n_vars());
       is_quotient_ring = (P->base_ring != NULL);
       coefficients_are_ZZ = P->coefficients_are_ZZ;
+
+      TO_EXP_monom = M->make_one();
     }
 
   bump_up((Ring *) R);
@@ -99,6 +101,7 @@ FreeModule::~FreeModule()
     {
       M->remove(nf_1);
       M->remove(mon_1);
+      M->remove(TO_EXP_monom);
     }
   bump_down((Ring *) R);
   bump_down((Ring *) K);
@@ -109,6 +112,7 @@ FreeModule *FreeModule::new_free() const
   return R->make_FreeModule();
 }
 
+#if 0
 bool FreeModule::equals(const object_element *o) const
 {
   if (o->class_id() != class_id())
@@ -120,12 +124,7 @@ bool FreeModule::equals(const object_element *o) const
   // MESXX: test rank, then for each element, test degree, base, compare_num.
   return true;
 }
-
-int FreeModule::hash() const 
-{ 
-  return 0;
-}
-
+#endif
 void FreeModule::write_object(object_writer &o) const
 {
   //  o << class_id() << R;

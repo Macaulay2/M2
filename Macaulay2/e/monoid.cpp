@@ -149,17 +149,6 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
   MONlocal = new int[nvars + nwords]; // MES: should be total number of words of result...
 }
 
-bool Monoid::equals(const object_element *o) const
-{
-  // MESXX
-  return false;
-}
-
-int Monoid::hash() const
-{
-  // MESXX
-  return 0;
-}
 void Monoid::write_object(object_writer &o) const
 {
   // MESXX

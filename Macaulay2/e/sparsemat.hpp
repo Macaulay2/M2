@@ -5,9 +5,9 @@
 
 #include "ring.hpp"
 
-struct vector
+struct sparse_vector
 {
-  vector *next;
+  sparse_vector *next;
   int component;
   ring_elem coefficient;
 };
@@ -17,28 +17,28 @@ class VectorOperations
   const Ring *K;
   static stash *vecstash;
 
-  // private vector operations
-  vector *new_vector() const;
-  void remove_vector_node(vector *n) const;
+  // private sparse_vector operations
+  sparse_vector *new_sparse_vector() const;
+  void remove_sparse_vector_node(sparse_vector *n) const;
 public:
   VectorOperations(const Ring *K);
   ~VectorOperations();
 
-  vector *make_vector(int r, ring_elem a) const;
-  vector *clone(const vector *v) const;
-  void remove(vector *v) const;
-  void row2by2(vector *&, int r1, int r2,
+  sparse_vector *make_sparse_vector(int r, ring_elem a) const;
+  sparse_vector *clone(const sparse_vector *v) const;
+  void remove(sparse_vector *v) const;
+  void row2by2(sparse_vector *&, int r1, int r2,
 	       ring_elem a1, ring_elem a2,
 	       ring_elem b1, ring_elem b2) const;
-  void scale(vector *&v, const ring_elem a) const;
-  void scaleRow(vector *&v, int r, const ring_elem a) const;
-  void interchangeRows(vector *&v, int r1, int r2) const;
-  void add(vector *&v, vector *&w) const;
-  void addRowMultiple(vector *&v, int r1, ring_elem a, int r) const;
-  ring_elem dotProduct(const vector *v, const vector *w) const;
+  void scale(sparse_vector *&v, const ring_elem a) const;
+  void scaleRow(sparse_vector *&v, int r, const ring_elem a) const;
+  void interchangeRows(sparse_vector *&v, int r1, int r2) const;
+  void add(sparse_vector *&v, sparse_vector *&w) const;
+  void addRowMultiple(sparse_vector *&v, int r1, ring_elem a, int r) const;
+  ring_elem dotProduct(const sparse_vector *v, const sparse_vector *w) const;
 
-  bool getEntry(vector *v, int r, ring_elem &result) const;
-  void setEntry(vector *&v, int r, ring_elem a) const;
+  bool getEntry(sparse_vector *v, int r, ring_elem &result) const;
+  void setEntry(sparse_vector *&v, int r, ring_elem a) const;
 };
 
 class SparseMutableMatrix : public type
@@ -50,7 +50,7 @@ class SparseMutableMatrix : public type
 
   int nrows;
   int ncols;
-  vector **matrix;
+  sparse_vector **matrix;
   int *colSize;
   int *rowSize;
 
@@ -59,7 +59,7 @@ class SparseMutableMatrix : public type
 
   void initialize(const Ring *KK, int nr, int nc);
 
-  int compare_vectors(vector *v, vector *w);
+  int compare_sparse_vectors(sparse_vector *v, sparse_vector *w);
   int sort_partition(int lo, int hi, int *sortvals);
   void sort1(int lo, int hi, int *sortvals);
 
@@ -88,15 +88,15 @@ public:
   int numNonZeroRow(int r) const;
   int numNonZeroColumn(int c) const;
 
-  int leadRow(int c) const;  // -1 means this vector is zero.
+  int leadRow(int c) const;  // -1 means this sparse_vector is zero.
   ring_elem leadCoefficient(int c) const; // Can be zero.
 
   bool getEntry(int r, int c, ring_elem &result) const;
   void setEntry(int r, int c, ring_elem a);
-  void setRow(int r, vector *v);
-  void setColumn(int c, vector *v);
-  vector *getRow(int r) const;		// Copies the row
-  vector *getColumn(int c) const;	// Copies the column
+  void setRow(int r, sparse_vector *v);
+  void setColumn(int c, sparse_vector *v);
+  sparse_vector *getRow(int r) const;		// Copies the row
+  sparse_vector *getColumn(int c) const;	// Copies the column
 
   void column2by2(int c1, int c2, 
 		  ring_elem a1, ring_elem a2,

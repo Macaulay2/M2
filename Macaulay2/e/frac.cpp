@@ -32,21 +32,6 @@ FractionField *FractionField::create(const Ring *R)
   return (FractionField *) intern(obj);
 }
 
-bool FractionField::equals(const object_element *o) const
-{
-  if (o->class_id() != class_id())
-    return false;
-
-  const FractionField *R2 = (FractionField *)o;
-  if (!R->equals(R2->R)) return false;
-  return true;
-}
-
-int FractionField::hash() const 
-{ 
-  return 0;
-}
-
 void FractionField::write_object(object_writer &o) const
 {
   o << class_id() << R;

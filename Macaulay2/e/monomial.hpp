@@ -6,7 +6,7 @@
 #include "varpower.hpp"
 #include "object.hpp"
 
-class monomial_rec : public object_element
+class monomial_rec : public immutable_object
 {
   friend void i_stashes();
   static stash *mystash;
@@ -18,7 +18,7 @@ class monomial_rec : public object_element
   friend class Monomial;
 
   monomial_rec() : val() { varpower::one(val); }
-  ~monomial_rec() {}
+  virtual ~monomial_rec() {}
 
   // Infrastructure
   class_identifier class_id() const { return CLASS_monomial; }
@@ -28,6 +28,8 @@ class monomial_rec : public object_element
   Monomial cast_to_Monomial();
 
   intarray *intarray_of() { return &val; }
+
+  virtual bool equals(const object_element *o) const;
 
   void text_out(buffer &o) const { varpower::elem_text_out(o, val.raw()); }
   void bin_out(buffer &o) const { varpower::elem_bin_out(o, val.raw()); }

@@ -141,6 +141,22 @@ void cmdLength(void)
   object r = gStack.remove();
   gStack.insert(make_object_int(r->length_of()));
 }
+////////// Hash values and equality //////////////////////////////////
+static void cmdHashValue()
+{
+  if (gStack.is_empty()) return;
+  object r = gStack.remove();
+  gStack.insert(make_object_int(r->hash()));
+}
+static void cmdEquals()
+{
+  if (gStack.is_empty()) return;
+  object r = gStack.remove();
+  if (gStack.is_empty()) return;
+  object s = gStack.remove();
+  object_element *s1 = *s;
+  gStack.insert(make_object_int(r->check_equality(s1)));
+}
 int i_sys_cmds(void) 
 {
 #include "cmdinst.hpp"
@@ -175,6 +191,10 @@ int i_sys_cmds(void)
   // information about objects
   install(ggindex, cmdIndex, TY_INT);
   install(gglength, cmdLength);
+
+  // hash values and equality
+  install(ggisequal0, cmdEquals);
+  install(gghash, cmdHashValue);
 
   return 0;
 }

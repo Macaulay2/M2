@@ -56,7 +56,7 @@ protected:
     }
 };
 
-class MonomialIdeal_rec : public object_element
+class MonomialIdeal_rec : public mutable_object
 {
   friend void i_stashes();
   static stash *mystash;
@@ -68,9 +68,9 @@ class MonomialIdeal_rec : public object_element
   Nmi_node *mi;
   int count;
   
-  MonomialIdeal_rec(const Ring *RR) : object_element(), R(RR), mi(0), count(0)
+  MonomialIdeal_rec(const Ring *RR) : mutable_object(), R(RR), mi(0), count(0)
     { bump_up(R); }
-  ~MonomialIdeal_rec() { delete mi; bump_down(R); }
+  virtual ~MonomialIdeal_rec() { delete mi; bump_down(R); }
 
   // Infrastructure
   class_identifier class_id() const { return CLASS_MonomialIdeal; }

@@ -383,7 +383,10 @@ void varpower::lcm(const int *a, const int *b, intarray &result)
       else
 	{
 	  if (va == -1) break;
-	  result.append(pair(va, ::max(exponent(*a), exponent(*b))));
+	  int ae = exponent(*a);
+	  int be = exponent(*b);
+	  if (be > ae) ae = be;
+	  result.append(pair(va, ae));
 	  a++; b++;
 	  va = (--alen > 0 ? var(*a) : -1);
 	  vb = (--blen > 0 ? var(*b) : -1);
@@ -414,7 +417,10 @@ void varpower::gcd(const int *a, const int *b, intarray &result)
       else
 	{
 	  if (va == -1) break;
-	  result.append(pair(va, ::min(exponent(*a), exponent(*b))));
+	  int ae = exponent(*a);
+	  int be = exponent(*b);
+	  if (be < ae) ae = be;
+	  result.append(pair(va, ae));
 	  a++; b++;
 	  va = (--alen > 0 ? var(*a) : -1);
 	  vb = (--blen > 0 ? var(*b) : -1);

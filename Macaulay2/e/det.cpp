@@ -60,23 +60,6 @@ DetComputation::~DetComputation()
   delete [] col_set;
 }
 
-bool DetComputation::equals(const object_element *o) const
-{
-  if (o->class_id() != class_id())
-    return false;
-
-  const DetComputation *D = (DetComputation *)o;
-  if (p != D->p) return false;
-  if (do_exterior != D->do_exterior) return false;
-  if (!M->equals(*(D->M))) return false;
-  return true;
-}
-
-int DetComputation::hash() const 
-{ 
-  return 0;
-}
-
 void DetComputation::write_object(object_writer &o) const
 {
   int i;

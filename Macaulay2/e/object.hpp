@@ -19,6 +19,12 @@ public:
 };
 extern caster_oil caster;
 
+// The following are the basic types of object_element's.
+class mutable_object;
+class immutable_object;
+class type;
+class linear_hashed_object;
+
 class object_element
 {
   friend class object;
@@ -45,6 +51,10 @@ public:
   virtual const char *     type_name() const = 0;
 
   // Downcasting
+  virtual const mutable_object * cast_to_mutable_object() const { return 0; }
+  virtual const immutable_object * cast_to_immutable_object() const { return 0; }
+  virtual const type * cast_to_type() const { return 0; }
+
   virtual object_int       * cast_to_int()       { return 0; }
   virtual object_string    * cast_to_string()    { return 0; }
   virtual object_intarray  * cast_to_intarray()  { return 0; }
@@ -65,6 +75,7 @@ public:
   virtual res_comp    * cast_to_res_comp()    { return 0; }
   virtual res2_comp   * cast_to_res2_comp()    { return 0; }
   virtual gbres_comp  * cast_to_gbres_comp()    { return 0; }
+  virtual GBKernelComputation * cast_to_GBKernelComputation() { return 0; }
 
   virtual SparseMutableMatrix * cast_to_SparseMutableMatrix() { return 0; }
   virtual MatrixComputation * cast_to_MatrixComputation() { return 0; }
@@ -82,6 +93,7 @@ public:
   virtual const res_comp    * cast_to_res_comp()    const { return 0; }
   virtual const res2_comp   * cast_to_res2_comp()   const { return 0; }
   virtual const gbres_comp  * cast_to_gbres_comp()   const { return 0; }
+  virtual const GBKernelComputation * cast_to_GBKernelComputation() const { return 0; }
 
   virtual ERing * cast_to_ERing() { return 0; }
   virtual EZZp * cast_to_EZZp() { return 0; }
@@ -108,10 +120,6 @@ public:
   virtual const EMatrix * cast_to_EMatrix() const { return 0; }
   virtual const ERingMap * cast_to_ERingMap() const { return 0; }
   virtual const EGroebnerComputation *cast_to_EGroebnerComputation() const { return 0; }
-#if defined(ARING)
-  virtual const PolynomialRing * cast_to_PolynomialRing() const { return 0; }
-  virtual const Polynomial * cast_to_Polynomial() const { return 0; }
-#endif
 
   virtual RingElement   cast_to_RingElement();
   virtual Matrix        cast_to_Matrix();
@@ -120,8 +128,13 @@ public:
   virtual Monomial      cast_to_Monomial();
 
   // Equality checks, hash function
-  virtual bool equals(const object_element *o) const;
+  bool check_equality(const object_element *o) const;
+    // Used to determine if 'this', 'o' are the same for purposes of hash tables
+    // in the main interpreter.  Mutable objects are the same iff they are the same
+    // pointer.  Types, such as rings, monoids, also have this property.  RingElement,
+    // Vector on the other hand check a very strict equality.
   virtual int hash() const { return 0; }
+    // For mutable types, this is a sequence number.
 
   // Serialization (see serial.hpp for use)
   virtual void write_object(object_writer &) const { }
@@ -213,19 +226,70 @@ public:
       assert(obj != NULL); 
       return obj; 
     }
-
+  object_element * operator*()
+    {
+      return obj;
+    }
+  const object_element * operator*() const
+    {
+      return obj;
+    }
+  
 public:
   void bin_out(buffer &o) const { assert(obj != NULL); obj->bin_out(o); }
   void text_out(buffer &o) const { assert(obj != NULL); obj->text_out(o); }
 };
 
-class type : public object_element 
+class linear_hashed_object : public object_element
+{
+protected:
+  static int next_hash_sequence_number;  // defined in object.cpp
+  int hashval;
+public:
+  linear_hashed_object(int refcount=1) : 
+    object_element(refcount), 
+    hashval(next_hash_sequence_number++) {}
+
+  virtual ~linear_hashed_object() {}
+
+  virtual int hash() const { return hashval; }
+};
+class type : public linear_hashed_object
 {
 public:
-  type() : object_element(0) {}
-  ~type() {}
+  type() : linear_hashed_object(0) {}
+
+  virtual ~type() {}
+
+  virtual const type * cast_to_type() const { return this; }
 };
 
+class mutable_object : public linear_hashed_object
+{
+public:
+  mutable_object(int refcount=1) : linear_hashed_object(refcount) {}
+
+  virtual ~mutable_object() {}
+
+  virtual const mutable_object * cast_to_mutable_object() const { return this; }
+};
+
+class immutable_object : public object_element
+{
+  // The types which inherit from this are the ONLY ones for which more specific
+  // equality checking is done than checking equality of pointers.
+public:
+  immutable_object(int refcount=1) : object_element(refcount) {}
+  virtual ~immutable_object() {}
+
+  virtual const immutable_object * cast_to_immutable_object() const { return this; }
+
+  virtual bool equals(const object_element *o) const = 0;
+    // Each immutable_object class needs to write this routine.  The routine may
+    // assume that 'o' has the same class as 'this'.
+  virtual int hash() const { return 0; }
+    // Each class also needs to write a 'hash' function.
+};
 inline void bump_up(const object_element *p)
 {
   object_element *q = (object_element *) p;

@@ -52,6 +52,32 @@ vec FreeModule::new_term(int e, ring_elem a, const int *m) const
   return result;
 }
 
+void FreeModule::to_exponents(const int *m, 
+			      int component, 
+			      int *result_exponents) const
+{
+  if (ty == FREE_SCHREYER)
+    {
+      M->divide(m,base_monom(component),TO_EXP_monom);
+      M->to_expvector(TO_EXP_monom,result_exponents);
+    }
+  else
+      M->to_expvector(m,result_exponents);
+}
+
+void FreeModule::from_exponents(const int *exponents, 
+				int component, 
+				int *result_monomial) const
+{
+  if (ty == FREE_SCHREYER)
+    {
+      M->from_expvector(exponents, TO_EXP_monom);
+      M->mult(TO_EXP_monom,base_monom(component),result_monomial);
+    }
+  else
+    M->from_expvector(exponents, result_monomial);
+}
+
 vec FreeModule::from_varpower(const int *vp, int x) const
 {
   if (M == NULL) return NULL;
@@ -791,13 +817,7 @@ void FreeModule::normal_form(vec &v) const
 
   while (t != NULL)
     {
-      if (ty == FREE_POLY)
-	M->to_expvector(t->monom, nf_exp);
-      else
-	{
-	  M->divide(t->monom, base_monom(t->comp), nf_1);
-	  M->to_expvector(nf_1, nf_exp);
-	}
+      to_exponents(t->monom, t->comp, nf_exp);
 
       int_bag *b;
       if (P->Rideal.search_expvector(nf_exp, b))
@@ -882,7 +902,7 @@ void FreeModule::normal_form(vec &v,
   vecterm *t = v;
   while (t != NULL)
     {
-      M->to_expvector(t->monom, nf_exp);
+      to_exponents(t->monom, t->comp, nf_exp);
       if (is_quotient_ring && P->Rideal.search_expvector(nf_exp, b))
 	{
 	  Nterm *s = (Nterm *) (b->basis_ptr());

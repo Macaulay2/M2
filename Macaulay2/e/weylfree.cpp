@@ -72,7 +72,7 @@ vec WeylFreeModule::weyl_diff(
     {
       // This first part checks whether the x-part of t->monom is divisible by
       // 'derivatives'.  If so, true is returned, and the resulting monomial is set.
-      M->to_expvector(t->monom, result_exp);
+      to_exponents(t->monom, t->comp, result_exp);
       W->extractCommutativePart(result_exp, exp);
       if (W->divides(derivatives,exp))
 	{
@@ -95,7 +95,7 @@ vec WeylFreeModule::weyl_diff(
 	  tm->comp = t->comp;
 	  for (int i=0; i<nvars; i++)
 	    result_exp[i] += expf[i] - deriv_exp[i];
-	  M->from_expvector(result_exp, tm->monom);
+	  from_exponents(result_exp, tm->comp, tm->monom);
 
 	  // Append to the result
 	  result->next = tm;

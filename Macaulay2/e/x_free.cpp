@@ -50,7 +50,7 @@ FreeModule *makeSchreyerFreeModule(Ring *R, int rank,
     F->append(degrees[i],ordering[i],tiebreaks[i]);
   return F;
 }
-
+#include <algorithm>
 FreeModule *makeSchreyerFreeModule(const Matrix &m)
 {
   int i;
@@ -58,23 +58,36 @@ FreeModule *makeSchreyerFreeModule(const Matrix &m)
   const Monoid *M = R->Nmonoms();
   FreeModule *F = R->make_FreeModule();
   int rk = m.n_cols();
+  if (rk == 0) return F;
   int *base = M->make_one();
   int *tiebreaks = new int[rk];
-  for (i=0; i<rk; i++)
-    tiebreaks[i] = i;  // NEED TO FIND REAL TIEBREAKS
+  int *ties = new int[rk];
   for (i=0; i<rk; i++)
     {
       vec v = m[i];
-      if (v == NULL) 
+      if (v == NULL)
+	tiebreaks[i] = i;
+      else
+	tiebreaks[i] = i + rk * m.rows()->compare_num(v->comp);
+    }
+  // Now sort tiebreaks in increasing order.
+  sort<int *>(tiebreaks, tiebreaks+rk);
+  for (i=0; i<rk; i++)
+    ties[tiebreaks[i] % rk] = i;
+  for (i=0; i<rk; i++)
+    {
+      vec v = m[i];
+      if (v == NULL)
 	M->one(base);
-      else 
+      else
 	M->copy(v->monom, base);
 
-      F->append(m.cols()->degree(i), base, tiebreaks[i]);
+      F->append(m.cols()->degree(i), base, ties[i]);
     }
 
   M->remove(base);
   delete [] tiebreaks;
+  delete [] ties;
   return F;
 }
 

@@ -20,7 +20,7 @@ public:
   array(int i_size = init_array_size) 
     : max(0)
     {
-      len = ::max(init_array_size, i_size);
+      len = (init_array_size > i_size ? init_array_size : i_size);
       entries = new T[len];
       engine_alloc(len * sizeof(T));
     }
@@ -34,7 +34,7 @@ public:
 
   int  length() const { return max; }
 
-  void shrink(int newmax) { max = ::min(max, newmax); }
+  void shrink(int newmax) { if (newmax < max) max = newmax; }
 
   T * get_raw_array() { return entries; }
 
@@ -68,7 +68,7 @@ public:
       if (&a == this) return *this;
       engine_dealloc(len * sizeof(T));
       delete [] entries;
-      int n = ::max(init_array_size, a.max);
+      int n = (init_array_size > a.max ? init_array_size : a.max);
       max = a.max;
       len = n;
       entries = new T [len];
@@ -82,7 +82,7 @@ public:
 template <class T> 
 void array<T>::expand(int newtop)
 {
-  int newlen = ::max(len,1);
+  int newlen = (len > 1 ? len : 1);
   for (; newtop>=newlen; newlen *= 2);
   T *tmp = new T [newlen];
   engine_alloc(newlen * sizeof(T));

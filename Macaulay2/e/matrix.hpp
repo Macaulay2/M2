@@ -8,7 +8,7 @@
 #include "vector.hpp"
 #include "monideal.hpp"
 
-class Matrix_rec : public object_element
+class Matrix_rec : public mutable_object
 {
   friend void i_stashes();
   static stash *mystash;
@@ -22,7 +22,7 @@ class Matrix_rec : public object_element
   array<vec> entries;
   
   Matrix_rec(const FreeModule *r, const FreeModule *c, const int *deg) 
-    : object_element(), 
+    : mutable_object(), 
       rows((FreeModule *)r), 
       cols((FreeModule *)c),
       degree_shift(r->Ring_of()->degree_monoid()->make_new(deg))
@@ -30,7 +30,7 @@ class Matrix_rec : public object_element
 	vec zero = NULL;
         for (int i=0; i<c->rank(); i++) 
 	  entries.append(zero); }
-  ~Matrix_rec();
+  virtual ~Matrix_rec();
 
   class_identifier class_id() const { return CLASS_Matrix; }
   type_identifier  type_id () const { return TY_MATRIX; }

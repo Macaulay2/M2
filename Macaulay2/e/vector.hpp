@@ -6,7 +6,7 @@
 #include "relem.hpp"
 #include "freemod.hpp"
 
-class Vector_rec : public object_element
+class Vector_rec : public immutable_object
 {
   friend void i_stashes();
   static stash *mystash;
@@ -20,12 +20,13 @@ class Vector_rec : public object_element
 
   Vector_rec  (const FreeModule *FF, vec val) 
     : F(FF), val(val) { bump_up((FreeModule *) F); }
-  ~Vector_rec () { F->remove(val); bump_down((FreeModule *) F); }
+  virtual ~Vector_rec () { F->remove(val); bump_down((FreeModule *) F); }
 
   // Infrastructure
   class_identifier class_id() const { return CLASS_Vector; }
   type_identifier  type_id () const { return TY_VECTOR; }
   const char * type_name   () const { return "Vector"; }
+  virtual bool equals(const object_element *o) const;
 
   Vector       cast_to_Vector   ();
 

@@ -27,7 +27,7 @@ class FreeModule : public type
   friend class res_poly;
   friend class res2_poly;
   friend class TermIdeal;
-
+  friend class GBKernelComputation;  // only for 
   friend class EInterface;
 protected:
 
@@ -49,10 +49,10 @@ protected:
 
   intarray nf_exp_a;
   int *nf_1, *nf_exp, *mon_1;
+  int *TO_EXP_monom;  // a monomial: only used in to_exponents, from_exponents.
 protected:
   // Do we need all these routines?
   vec new_term() const;
-  vec copy_term(vec v) const;
   vec new_term(int e, ring_elem a, const int *m) const;
 
 //////////////////////////////////////////////
@@ -115,12 +115,17 @@ public:
 //////////////////////////////////////////////
 
 public:
+  void to_exponents(const int *m, int component, int *result_exponents) const;
+  void from_exponents(const int *exponents, int component, int *result_monomial) const;
+
   vec zero() const { return NULL; }
   vec e_sub_i(int i) const;
   vec term(int r, ring_elem a) const;
 
   bool is_equal(vec v, vec w) const;
   bool is_zero(vec v) const  { return v == NULL; }
+
+  vec copy_term(vec v) const;
 
   vec copy(vec v) const;
   void remove(vec &v) const;
@@ -358,9 +363,7 @@ public:
   type_identifier  type_id () const { return TY_FREEMODULE; }
   const char * type_name   () const { return "FreeModule"; }
 
-  // Equality check, hash function, serialize
-  bool equals(const object_element *o) const;
-  int hash() const;
+  // serialize
   void write_object(object_writer &o) const;
   static FreeModule *read_object(object_reader &i);
 

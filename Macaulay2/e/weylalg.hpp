@@ -90,9 +90,7 @@ public:
 
   class_identifier class_id() const { return CLASS_WeylAlgebra; }
 
-  // Equality check, hash function, serialize
-  bool equals(const object_element *o) const;
-  int hash() const;
+  // serialize
   virtual void write_object(object_writer &o) const;
   static WeylAlgebra *read_object(object_reader &i);
 

@@ -52,6 +52,7 @@ Z_mod *Z_mod::create(int p, const Monoid *D)
   return (Z_mod *) intern(obj);
 }
 
+#if 0
 bool Z_mod::equals(const object_element *o) const
 {
   if (o->class_id() != class_id())
@@ -61,11 +62,7 @@ bool Z_mod::equals(const object_element *o) const
   if (R->P != P) return false;
   return true;
 }
-
-int Z_mod::hash() const
-{
-  return 0;
-}
+#endif
 
 void Z_mod::write_object(object_writer &o) const
 {

@@ -29,7 +29,7 @@
 //
 //    f.is_zero()
 //    f.sign()         returns -1,0,or 1 (NOT FUNCTIONAL YET)
-class RingElement_rec : public object_element
+class RingElement_rec : public immutable_object
 {
   friend void i_stashes();
   static stash *mystash;
@@ -48,12 +48,14 @@ class RingElement_rec : public object_element
   RingElement_rec  (const Ring *RR, ring_elem f) 
     : R(RR), val(f) { bump_up((Ring *)R); }
 
-  ~RingElement_rec () { R->remove(val); bump_down((Ring *)R); }
+  virtual ~RingElement_rec () { R->remove(val); bump_down((Ring *)R); }
+
 
   // Infrastructure
   class_identifier class_id() const { return CLASS_RingElement; }
   type_identifier  type_id () const { return TY_RING_ELEM; }
   const char * type_name   () const { return "RingElement"; }
+  virtual bool equals(const object_element *o) const;
 
   RingElement    cast_to_RingElement();
 
