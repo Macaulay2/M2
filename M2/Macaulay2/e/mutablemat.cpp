@@ -1,4 +1,5 @@
 #include "mutablemat.hpp"
+#include "sparsemat.hpp"
 #include "densematRR.hpp"
 #include "RR.hpp"
 #include "CC.hpp"
@@ -121,36 +122,11 @@ void MutableMatrix::text_out(buffer &o) const
   deletearray(p);
 }
 
-SparseMutableMatrix *
-SparseMutableMatrix::zero_matrix(const Ring *R, 
-				 int nrows, 
-				 int ncols)
-{
-#warning "implement this one"
-  return 0;
-}
 
 
 
 
-DenseMutableMatrixRing *
-DenseMutableMatrixRing::zero_matrix(const Ring *R, 
-				    int nrows, 
-				    int ncols)
-{
-  DenseMutableMatrixRing *result = new DenseMutableMatrixRing(R);
-  result->initialize(nrows,ncols,0);
-  return result;
-}
 
-DenseMutableMatrixRR *
-DenseMutableMatrixRR::zero_matrix(int nrows, 
-				  int ncols)
-{
-  DenseMutableMatrixRR *result = new DenseMutableMatrixRR();
-  result->initialize(nrows,ncols,0);
-  return result;
-}
 
 DenseMutableMatrixCC *
 DenseMutableMatrixCC::zero_matrix(int nrows, 

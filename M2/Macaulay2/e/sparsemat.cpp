@@ -1,3 +1,297 @@
+// Copyright 2004  Michael E. Stillman
+
+#include "sparsemat.hpp"
+#include "matrixcon.hpp"
+
+SparseMutableMatrix::SparseMutableMatrix(const Ring *R0)
+  : MutableMatrix(R0),
+    columns_(0)
+{
+}
+
+SparseMutableMatrix *
+SparseMutableMatrix::zero_matrix(const Ring *R, 
+				    int nrows, 
+				    int ncols)
+{
+  SparseMutableMatrix *result = new SparseMutableMatrix(R);
+  result->initialize(nrows,ncols,0);
+  return result;
+}
+
+void SparseMutableMatrix::initialize(int nrows0, int ncols0, vec * columns)
+{
+  nrows = nrows0;
+  ncols = ncols0;
+  columns_ = newarray(vec,ncols);
+  if (columns == 0)
+    for (int i=0; i<ncols; i++)
+      columns_[i] = 0;
+  else
+    for (int i=0; i<ncols; i++)
+      columns_[i] = R->copy_vec(columns[i]);
+}
+
+Matrix *SparseMutableMatrix::to_matrix() const
+{
+  FreeModule *F = R->make_FreeModule(nrows);
+  MatrixConstructor mat(F,ncols);
+  for (int c=0; c<ncols; c++)
+    mat.set_column(c, R->copy_vec(columns_[c]));
+  mat.compute_column_degrees();
+  return mat.to_matrix();
+}
+
+MutableMatrix *SparseMutableMatrix::copy(bool prefer_dense) const
+{
+  SparseMutableMatrix *result = new SparseMutableMatrix(R);
+  result->initialize(nrows,ncols,columns_);
+  return result;
+}
+
+
+
+
+int SparseMutableMatrix::lead_row(int col) const
+  /* returns the largest index row which has a non-zero value in column 'col'.
+     returns -1 if the column is 0 */
+{
+  if (error_column_bound(col)) return -1;
+  vec v = columns_[col];
+  if (v == 0) return -1;
+  return v->comp;
+}
+
+int SparseMutableMatrix::lead_row(int col, ring_elem &result) const
+  /* returns the largest index row which has a non-zero value in column 'col'.
+     Also sets result to be the entry at this index.
+     returns -1 if the column is 0 */
+{
+  if (error_column_bound(col)) return -1;
+  vec v = columns_[col];
+  if (v == 0) return -1;
+  result = v->coeff;
+  return v->comp;
+}
+
+///////////////////////////////
+// Row and column operations //
+///////////////////////////////
+// The following routines return false if one of the row or columns given
+// is out of range.
+
+bool SparseMutableMatrix::get_entry(int r, int c, ring_elem &result) const
+  // Returns false if (r,c) is out of range or if result is 0.  No error
+  // is returned. result <-- this(r,c), and is set to zero if false is returned.
+{
+  bool isnonzero;
+  if (r >= 0 && r < nrows && c >= 0 && c < ncols)
+    isnonzero = R->get_entry(columns_[c],r,result);
+  else
+    isnonzero = false;
+  if (!isnonzero)
+    result = R->zero();
+  return isnonzero;
+}
+
+bool SparseMutableMatrix::set_entry(int r, int c, const ring_elem a)
+  // Returns false if (r,c) is out of range, or the ring of a is wrong.
+{
+  if (error_row_bound(r)) return false;
+  if (error_column_bound(c)) return false;
+  R->set_entry(columns_[c], r, a);
+  return true;
+}
+
+bool SparseMutableMatrix::interchange_rows(int i, int j, bool do_recording)
+  /* swap rows: row(i) <--> row(j) */
+{
+  if (error_row_bound(i)) return false;
+  if (error_row_bound(j)) return false;
+  for (int c=0; c<n_cols(); c++)
+    R->interchange_rows(columns_[c], i, j);
+  if (do_recording && rowOps != 0)
+    rowOps->interchange_columns(i,j,false);
+  return true;
+}
+
+bool SparseMutableMatrix::interchange_columns(int i, int j, bool do_recording)
+  /* swap columns: column(i) <--> column(j) */
+{
+  if (error_column_bound(i)) return false;
+  if (error_column_bound(j)) return false;
+  vec tmp = columns_[i];
+  columns_[i] = columns_[j];
+  columns_[j] = tmp;
+  if (do_recording && colOps != 0)
+    colOps->interchange_columns(i,j,false);
+  return true;
+}
+
+bool SparseMutableMatrix::scale_row(ring_elem r, int i, bool opposite_mult, bool do_recording)
+  /* row(i) <- r * row(i) */
+{
+  if (error_row_bound(i)) return false;
+  for (int c=0; c<n_cols(); c++)
+    R->mult_row(columns_[c], r, i, opposite_mult);
+  if (do_recording && rowOps != 0)
+    rowOps->scale_column(r,i,opposite_mult,false);
+  return true;
+}
+
+bool SparseMutableMatrix::scale_column(ring_elem r, int i, bool opposite_mult, bool do_recording)
+  /* column(i) <- r * column(i) */
+{
+  if (error_column_bound(i)) return false;
+  R->mult_vec_to(columns_[i], r, opposite_mult);
+  if (do_recording && colOps != 0)
+    colOps->scale_column(r,i,opposite_mult,false);
+  return true;
+}
+
+bool SparseMutableMatrix::divide_row(int i, ring_elem r, bool do_recording)
+  /* row(i) <- row(i) / r */
+{
+  if (error_row_bound(i)) return false;
+  for (int c=0; c<n_cols(); c++)
+    R->divide_row(columns_[c], i, r);
+  if (do_recording && rowOps != 0)
+    rowOps->divide_column(r,i,false);
+  return true;
+}
+
+bool SparseMutableMatrix::divide_column(int i, ring_elem r, bool do_recording)
+  /* column(i) <- column(i) / r */
+{
+  if (error_column_bound(i)) return false;
+  R->divide_vec_to(columns_[i], r);
+  if (do_recording && colOps != 0)
+    colOps->divide_column(r,i,false);
+  return true;
+}
+
+bool SparseMutableMatrix::row_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording)
+  /* row(i) <- row(i) + r * row(j) */
+{
+  if (error_row_bound(i)) return false;
+  if (error_row_bound(j)) return false;
+
+  for (int c=0; c<n_cols(); c++)
+    R->vec_row_op(columns_[c], i, r, j, opposite_mult);
+
+  if (do_recording && rowOps != 0)
+    rowOps->column_op(i,r,j,opposite_mult,false);
+
+  return true;
+}
+
+bool SparseMutableMatrix::column_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording)
+  /* column(i) <- column(i) + r * column(j) */
+{
+  if (error_column_bound(i)) return false;
+  if (error_column_bound(j)) return false;
+
+  vec tmp = R->copy_vec(columns_[j]);
+  R->mult_vec_to(tmp, r, opposite_mult); // replaces tmp by r*tmp or tmp*r
+  R->add_vec_to(columns_[i], tmp);
+
+  if (do_recording && colOps != 0)
+    colOps->column_op(i,r,j,opposite_mult,false);
+
+  return true;
+}
+
+bool SparseMutableMatrix::dot_product(int i, int j, ring_elem &result) const
+{
+  if (error_column_bound(i) || error_column_bound(j))
+    result = R->zero();
+  else
+    result = R->dot_product(columns_[i], columns_[j]);
+  return result;
+}
+
+///////////////////////////////
+// Matrix operations //////////
+///////////////////////////////
+
+bool SparseMutableMatrix::is_zero() const
+{
+#warning "to be written"
+  return 0;
+}
+
+bool SparseMutableMatrix::is_equal(const MutableMatrix *B) const
+{
+#warning "to be written"
+  return 0;
+}
+
+bool SparseMutableMatrix::set_values(M2_arrayint rows,
+					M2_arrayint cols,
+					RingElement_array *values)
+{
+#warning "to be written"
+  return 0;
+}
+
+MutableMatrixOrNull * SparseMutableMatrix::add(const MutableMatrix *B) const
+  // return this + B.  return NULL of sizes or types do not match.
+  // note: can add a sparse + dense
+  //       can add a matrix over RR and one over CC and/or one over ZZ.
+{
+#warning "to be written"
+  return 0;
+}
+
+MutableMatrixOrNull * SparseMutableMatrix::subtract(const MutableMatrix *B) const
+  // return this - B.  return NULL of sizes or types do not match.
+  // note: can subtract a sparse + dense
+  //       can subtract a matrix over RR and one over CC and/or one over ZZ.
+{
+#warning "to be written"
+  return 0;
+}
+
+MutableMatrixOrNull * SparseMutableMatrix::mult(const MutableMatrix *B,
+						   M2_bool opposite_mult) const
+  // return this * B.  return NULL of sizes or types do not match.
+  // note: can mult a sparse + dense
+  //       can mult a matrix over RR and one over CC and/or one over ZZ.
+{
+#warning "to be written"
+  return 0;
+}
+
+MutableMatrixOrNull * SparseMutableMatrix::mult(const RingElement *f,
+						   M2_bool opposite_mult) const
+// return f*this.  return NULL of sizes or types do not match.
+{
+#warning "to be written"
+  return 0;
+}
+
+MutableMatrix * SparseMutableMatrix::negate() const
+{
+#warning "to be written"
+  return 0;
+}
+
+MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint rows, 
+						  const M2_arrayint cols) const
+{
+#warning "to be written"
+  return 0;
+}
+
+MutableMatrix * SparseMutableMatrix::submatrix(const M2_arrayint cols) const
+{
+#warning "to be written"
+  return 0;
+}
+
+
+
+#if 0
 #include "sparsemat.hpp"
 #include "matrix.hpp"
 #include "text_io.hpp"
@@ -1332,7 +1626,7 @@ void SparseMutableMatrix::display() const
   o << newline;
   emit(o.str());
 }
-
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

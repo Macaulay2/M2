@@ -33,7 +33,8 @@ public:
   virtual int lead_row(int col, ring_elem &result) const;
   /* returns the largest index row which has a non-zero value in column 'col'.
      Also sets result to be the entry at this index.
-     returns -1 if the column is 0 */
+     returns -1 if the column is 0, or if col is out of range
+     No error is flagged. */
 
   ///////////////////////////////
   // Row and column operations //

@@ -9,6 +9,16 @@ DenseMutableMatrixRing::DenseMutableMatrixRing(const Ring *R0)
 {
 }
 
+DenseMutableMatrixRing *
+DenseMutableMatrixRing::zero_matrix(const Ring *R, 
+				    int nrows, 
+				    int ncols)
+{
+  DenseMutableMatrixRing *result = new DenseMutableMatrixRing(R);
+  result->initialize(nrows,ncols,0);
+  return result;
+}
+
 void DenseMutableMatrixRing::initialize(int nrows0, int ncols0, ring_elem *array)
 {
   nrows = nrows0;
@@ -64,9 +74,9 @@ bool DenseMutableMatrixRing::set_entry(int r, int c, const ring_elem a)
 
 int DenseMutableMatrixRing::lead_row(int col) const
   /* returns the largest index row which has a non-zero value in column 'col'.
-     returns -1 if the column is 0 */
+     returns -1 if the column is 0, or if col is out of range (but: no error is flagged) */
 {
-  if (error_column_bound(col)) return false;
+  if (col < 0 || col >= ncols) return -1;
   ring_elem *loc = array_ + (nrows+1)*col - 1;
 
   for (int i=nrows-1; i>=0; i++, loc--)
@@ -80,9 +90,9 @@ int DenseMutableMatrixRing::lead_row(int col) const
 int DenseMutableMatrixRing::lead_row(int col, ring_elem &result) const
   /* returns the largest index row which has a non-zero value in column 'col'.
      Also sets result to be the entry at this index.
-     returns -1 if the column is 0 */
+     returns -1 if the column is 0, or if col is out of range (but: no error is flagged) */
 {
-  if (error_column_bound(col)) return false;
+  if (col < 0 || col >= ncols) return -1;
   ring_elem *loc = array_ + (nrows+1)*col - 1;
 
   for (int i=nrows-1; i>=0; i++, loc--)
