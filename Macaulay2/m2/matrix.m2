@@ -450,11 +450,6 @@ map(Module,RingElement) := Matrix => options -> (M,r) -> (
      else if r == 1 then map(M,1)
      else r * (map(M,1)))
 
-map(Module) := Matrix => options -> (M) -> (
-     R := ring M;
-     if options.Degree =!= null then error "Degree option encountered with identity matrix";
-     map(M, M, reduce(M, rawIdentity(M.RawFreeModule,false,0))))
-
 map(Module,ZZ) := Matrix => options -> (M,i) -> (
      if i === 0 then map(M,M,0)
      else if i === 1 then map(M,options)

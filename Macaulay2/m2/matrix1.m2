@@ -491,8 +491,6 @@ codim Ideal := I -> codim cokernel generators I
 Ideal + Ideal := Ideal => (I,J) -> ideal (generators I | generators J)
 degree Ideal := I -> degree cokernel generators I
 trim Ideal := Ideal => options -> (I) -> ideal trim(module I, options)
-map(Ideal) := Matrix => options -> (I) -> map(module I,options)
-map(Ideal,Ideal) := Matrix => options -> (I,J) -> map(module I,module J,options)
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
 Matrix % Ideal := Matrix => (f,I) -> f % gb I
 numgens Ideal := (I) -> numgens source generators I

@@ -16,6 +16,11 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+map(Module) has been deprecated.  Use map(M,1) instead of map(M).
+
+PfaffiansComputation has been removed: 'pfaffians' no longer accepts
+optional arguments.
+
 Hypertext format items removed for lack of use: BASE, VAR.
 
 The sort order for symbols has been changed to the normal way, for
