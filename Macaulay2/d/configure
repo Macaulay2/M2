@@ -47,13 +47,44 @@ EOF
 gcc $TMP -lm >/dev/null 2>&1 || echo '#define __isinf isinf' >>compat.h
 
 
+cat >>compat.c <<'EOF'
+#ifndef ENOSYS
+#define ENOSYS 0
+#endif
+EOF
+
+cat <<'EOF' >$TMP
+main(){ getprotobyname(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || (
+	echo 'void *getprotobyname() { errno = ENOSYS; return 0; }'
+	) >>compat.c
+
+cat <<'EOF' >$TMP
+main(){ accept(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || (
+	echo 'int accept() { errno = ENOSYS; return -1; }'
+	) >>compat.c
+
+cat <<'EOF' >$TMP
+main(){ bind(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || (
+	echo 'int bind() { errno = ENOSYS; return -1; }'
+	) >>compat.c
+
+cat <<'EOF' >$TMP
+main(){ listen(); }
+EOF
+gcc $TMP -static >/dev/null 2>&1 || (
+	echo 'int listen() { errno = ENOSYS; return -1; }'
+	) >>compat.c
+
 cat <<'EOF' >$TMP
 main(){ socket(); }
 EOF
 gcc $TMP -static >/dev/null 2>&1 || (
-	echo '#ifndef ENOSYS'
-	echo '#define ENOSYS 0'
-	echo '#endif'
 	echo 'int socket() { errno = ENOSYS; return -1; }'
 	) >>compat.c
 
