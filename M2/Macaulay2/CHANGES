@@ -3,6 +3,10 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+Oops, found a long standing bug : when a quotient module M/N was constructed,
+where M and N are both quotient modules of the same free module F, the
+quotient returned was F, rather than F/F.  Fixed.
+
 WARNING: Syntax for computing sheaf cohomology has been changed.  Now HH^i(F)
 gives the single vector space, as expected.  To get the graded module
 whose n-th component is HH^i(F(n)) write HH^i(F(*)).  You will get an error

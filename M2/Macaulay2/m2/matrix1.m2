@@ -1,6 +1,8 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-module = method()
+module = method(TypicalValue => Module)
+
+module Ring := R -> R^1
 
 matrix(Ring,List) := Matrix => options -> (R,m) -> (
      m = apply(splice m,splice);

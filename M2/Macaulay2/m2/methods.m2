@@ -134,7 +134,7 @@ setup(TypicalValue => Boolean,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField
 	  })
 setup(TypicalValue => ZZ,
-     {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,regularity})
+     {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,regularity,genus})
 setup(TypicalValue => List,
      {euler, genera})
 

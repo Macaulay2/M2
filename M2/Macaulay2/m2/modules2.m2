@@ -392,6 +392,7 @@ Module == ZZ := (M,n) -> (
 
 dim Module := M -> dim ring M - codim M
 
+degree Ring := R -> degree R^1
 degree Module := M -> (
   hf := poincare M;
   T := (ring hf)_0;
@@ -510,7 +511,7 @@ Module / Module := Module => (M,N) -> (
 	       if M.?generators then M.generators,
 	       -- mingens image -- do we need this ???
 	       p))
-     else image id_L)
+     else cokernel id_L)
 
 Module / RingElement := Module => (M,x) -> M / (x * M)
 Module / Sequence := Module / List := Module => (M,v) -> (
