@@ -89,6 +89,9 @@ rotate(VisibleList,ZZ) := (s,n) -> (
 	  n = n % #s;
 	  join(drop(s,n),take(s,n))))
 
+sort List := sort Sequence := opts -> internalsort
+rsort List := rsort Sequence := opts -> internalrsort
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

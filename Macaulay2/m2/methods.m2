@@ -156,6 +156,16 @@ basis = method(
 	  Variables => null
      	  })
 
+sopts := 
+Options => {
+     DegreeOrder => Ascending,
+     MonomialOrder => Ascending
+     }
+
+sortColumns = method sopts
+sort = method sopts
+rsort = method sopts
+
 mopts := Options => {
      Degree => null,					    -- for use with matrices
      DegreeMap => null					    -- for use in ring maps

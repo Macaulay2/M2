@@ -241,23 +241,19 @@ terms RingElement := f -> (
      (m,c) := flatten \ entries \ coefficients f;
      apply(m,c,times))
 
-sortColumns = method ( 
-     Options => {
-	  DegreeOrder => Ascending,
-	  MonomialOrder => Ascending
-	  }
-     )
-
-sortColumns Matrix := options -> (f) -> (
+sortColumns Matrix := o -> (f) -> (
      	  rawSortColumns(
 	       raw f,
-	       if options.DegreeOrder === Ascending then 1 else
-	       if options.DegreeOrder === Descending then -1 else
-	       if options.DegreeOrder === null then 0 else
+	       if o.DegreeOrder === Ascending then 1 else
+	       if o.DegreeOrder === Descending then -1 else
+	       if o.DegreeOrder === null then 0 else
 	       error "expected DegreeOrder option value to be Ascending, Descending, or null",
-	       if options.MonomialOrder === Ascending then 1 else
-	       if options.MonomialOrder === Descending then -1 else
+	       if o.MonomialOrder === Ascending then 1 else
+	       if o.MonomialOrder === Descending then -1 else
 	       error "expected MonomialOrder option value to be Ascending or Descending"))
+
+sort Matrix := o -> (f) -> f_(sortColumns(f,o))
+rsort Matrix := o -> (f) -> f_(reverse sortColumns(f,o))
 
 -----------------------------
 -- Matrix utility routines --
