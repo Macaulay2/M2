@@ -106,39 +106,10 @@ someMinors := (j,m,options) -> (
      ideal getMatrix ring m
      )
 
-minors(ZZ,Matrix) := Ideal => options -> (j,m) -> (
-     error "IM2_Matrix_minors not re-implemented yet";
-     if j === 0 then ideal 1_(ring m)
-     else if j < 0 then trim ideal 0_(ring m)
-     else (
-       --if options.Limit =!= Infinity or options.Start =!= null then
-	--    someMinors(j,m,options)
-       if options.First =!= null then
-	    someMinors(j,m,options)
-       else (
-	  strat := getMinorsStrategy(ring m,options);
-	  comp := MinorsComputation{j};
-	  if not m.cache#?comp then (
-	      sendgg(
-		   ggPush m,			  -- m
-		   ggPush j,
-		   ggPush strat,          -- 0: bareiss, 1: cofactor.
-		   ggdets);			  -- create computation
-	      m.cache#comp = {1, newHandle()};       -- the '1' means: not done yet.
-	     );
-	  if m.cache#comp#0 =!= 0 then (
-	      nsteps := if options.Limit === infinity then -1 else options.Limit;
-	      sendgg(
-		   ggPush m.cache#comp#1,
-		   ggPush nsteps,
-		   ggcalc);
-	      m.cache#comp = {eePopInt(), m.cache#comp#1}   -- return code: 0 means done, != 0 means more left
-	      );
-	  sendgg(ggPush m.cache#comp#1,
-		 ggINT, gg 0,
-		 ggindex);
-	  ideal getMatrix ring m
-	)))
+minors(ZZ,Matrix) := Ideal => opts -> (j,m) -> (
+     if opts.First =!= null then error "optional argument 'First' not re-implemented yet";
+     if opts.Limit =!= infinity then error "optional argument 'Limit' not re-implemented yet";
+     ideal map(ring m, rawMinors(j,raw m, getMinorsStrategy(ring m,opts))))
 
 pfaffians = method(TypicalValue => Ideal)
 pfaffians(ZZ,Matrix) := Ideal => (j,m) -> (
