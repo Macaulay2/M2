@@ -22,14 +22,21 @@ extern char errfmtnc[];
 #define HAS_SYSTYPES_H
 #define VA_START_HAS_TWO_ARGS
 
-#ifdef _MSDOS
-/* This is for Microsoft's C compiler, version 7, with compile time
-   switch -Za to remove the non-ansi extensions */
-#undef HAS_UNISTD_H
-#define O_RDONLY _O_RDONLY
+#ifdef _WIN32
+#define __WIN32__
+/* This is for Microsoft's Visual C/C++ compiler, version 4, /Za */
+#include <direct.h>
+#include <io.h>
+#define getcwd _getcwd
 #define read _read
 #define open _open
 #define close _close
+#undef HAS_UNISTD_H
+#define alloca _alloca
+#define  O_BINARY _O_BINARY
+#define	 O_CREAT _O_CREAT
+#define	 O_WRONLY _O_WRONLY
+#define	 O_TRUNC _O_TRUNC
 #endif
 
 #ifdef MPWC
@@ -88,7 +95,7 @@ int fprintf(FILE *,const char *,...); /* needed  for sunos 4.1 */
 int puts(const char *);		
 int vfprintf(FILE *,const char *,va_list);/* needed  for sunos 4.1 */
 int fflush(FILE *);/* needed  for sunos 4.1 */
-#ifndef __alpha
+#if !defined(__alpha) && !defined(_WIN32)
 int _flsbuf(unsigned int, FILE *);/* needed  for sunos 4.1 */
 #endif
 int printf(const char *,...);

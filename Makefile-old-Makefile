@@ -36,6 +36,7 @@ clean::; rm -rf lib include share
 always:
 
 clean::; for i in $(SUBDIRS); do $(MAKE) -C $$i $@; done
+distclean::; for i in $(SUBDIRS); do $(MAKE) -C $$i $@; done
 
 bigport: Macaulay2-$(VERSION)-src-bigport.tar
 Macaulay2-$(VERSION)-src-bigport.tar: src-dev \

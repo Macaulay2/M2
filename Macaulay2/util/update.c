@@ -1,11 +1,17 @@
 #include <errno.h>
 #include <sys/types.h>
-#include <unistd.h>
+
+#ifdef _WIN32
+#include <io.h>
+#endif
+
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "restart.h"
+
 #define ERROR (-1)
 #define FALSE 0
 #define TRUE 1
@@ -78,7 +84,12 @@ int main(int argc, char **argv) {
 	  }
      out = open(argv[2],O_RDONLY);
      if (out == ERROR) {
-	  rename(argv[1],argv[2]);
+		 close(in);
+		 if (0 != rename(argv[1],argv[2])) {
+	       fprintf(stderr, "%s: can't rename %s to %s\n",
+		       argv[0],argv[1],argv[2]);
+	       exit(1);
+		 }
 	  exit(0);
 	  }
      indata = readfile(in,&insize);
@@ -96,10 +107,17 @@ int main(int argc, char **argv) {
 	       exit(1);
 	  }
 	  fprintf(stderr, "%s: updating %s.  (Restart make.)\n", 
-		  argv[0], argv[2]);
-	  system("touch restart.tmp");
+	       argv[0], argv[2]);
+	  {
+	       FILE *g = fopen("restart.tmp", "w");
+	       if (g == NULL) {
+		    fprintf(stderr, "%s: can't create 'restart.tmp'\n", argv[0]);
+		    exit(1);
+		    }
+	       }
 	  exit(RESTART);
 	  }
      unlink(argv[1]);
      exit(0);
+	 return 0;
      }
