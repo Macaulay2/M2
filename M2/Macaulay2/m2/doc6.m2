@@ -477,38 +477,6 @@ assert( f == value toExternalString f )
 assert( f == value toString f )
 "
 document {
-     Key => Schur,
-     Headline => "make a Schur ring",
-     TT "Schur n", " -- creates a Schur ring of degree n.",
-     PARA,
-     "This is the representation ring for the general linear group of n by n
-     matrices.",
-     PARA,
-     SeeAlso => {"SchurRing"}}
-document {
-     Key => SchurRing,
-     Headline => "the class of all Schur rings",
-     "A Schur ring is the representation ring for the general linear group of 
-     n by n matrices, and one can be constructed with ", TO "Schur", ".",
-     EXAMPLE "R = Schur 4",
-     "The element corresponding to the Young diagram ", TT "{3,2,1}", " is
-     obtained as follows.",
-     EXAMPLE "R_{3,2,1}",
-     "The dimension of the underlying virtual representation can be obtained
-     with ", TO "dim", ".",
-     EXAMPLE "dim R_{3,2,1}",
-     "Multiplication in the ring comes from tensor product of representations.",
-     EXAMPLE "R_{3,2,1} * R_{1,1}",
-     SeeAlso => {"_", SchurRing, List}}
-document {
-     Key => (symbol _, SchurRing, List),
-     Headline => "make an element of a Schur ring",
-     TT "S_v", " -- produce the element of the Schur ring ", TT "S", " corresponding
-     to the Young diagram whose rows have lengths as in the list ", TT "v", ".",
-     PARA,
-     "The row lengths should be in decreasing order.",
-     SeeAlso => "SchurRing"}
-document {
      Key => assign,
      Headline => "assign a value",
      TT "assign(x,v)", " -- assigns v as the value of x.",

@@ -910,36 +910,6 @@ document {
      }
 
 document {
-     Key => "Schur rings",
-     Headline => "monomials representing irreducible representations of GL(n)",
-     "Given a positive integer ", TT "n", ", 
-     we may define a polynomial ring over ", TO "ZZ", " in ", TT "n", " variables, whose
-     monomials correspond to the irreducible representations of GL(n), and where 
-     multiplication is given by the decomposition of the tensor product of representations",
-     PARA,
-     "We create such a ring in Macaulay 2 using the ", TO "Schur", " function:",
-     EXAMPLE "R = Schur 4;",
-     "A monomial represents the irreducible representation with a given highest weight. 
-     The standard 4 dimensional representation is",
-     EXAMPLE "V = R_{1}",
-     "We may see the dimension of the corresponding irreducible representation using ", TO "dim",
-     ":",
-     EXAMPLE "dim V",
-     "The third symmetric power of V is obtained by",
-     EXAMPLE "W = R_{3}",
-     EXAMPLE "dim W",
-     "and the third exterior power of V can be obtained using",
-     EXAMPLE "U = R_{1,1,1}",
-     EXAMPLE "dim U",
-     "Multiplication of elements corresponds to tensor product of representations.  The 
-     value is computed using a variant of the Littlewood-Richardson rule.",
-     EXAMPLE "V * V",
-     EXAMPLE "V^3",
-     "One cannot make quotients of this ring, and Groebner bases and related computations
-     do not work, but I'm not sure what they would mean..."
-     }
-
-document {
      Key => "associative algebras",
      "Eventually we will implement associative algebras, not necessarily
      commutative."

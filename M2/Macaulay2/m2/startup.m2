@@ -204,7 +204,7 @@ if fileExists (bindir | "../c/scc1") then (
      sourceHomeDirectory = (
 	  if fileExists (buildHomeDirectory|"m2/setup.m2") then buildHomeDirectory 
 	  else if fileExists(buildHomeDirectory|"srcdir") and fileExists(buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir")) | "/m2/setup.m2")
-	  then buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir"))|"/" 
+	  then minimizeFilename(buildHomeDirectory|(first lines get (buildHomeDirectory|"srcdir"))|"/")
 	  else null);
      ) else setPrefixFromBindir bindir
 
