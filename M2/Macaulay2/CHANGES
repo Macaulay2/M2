@@ -16,7 +16,14 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
-RawVectors and Vectors have been removed.
+'run' now returns the entire return code of the program, rather than
+just the exit status.  For a normal exit, this will be 256 times the
+value passed to exit().  For exits provoked by signals, the return
+value will be nonzero, so your M2 program will be able to tell that
+the exit was abnormal.  For example, an interrupt (SIGINT) will result
+in a return code of 2.  See the unix man page for wait(2).
+
+RawVectors have been removed.
 
 The 'transnet' function was removed.
 

@@ -35,9 +35,7 @@ rel := url -> (
 htmlFilename = (nodename) -> (	-- returns the relative path from the PREFIX to the file
      if buildPackage === null then buildPackage = currentPackage.name;
      if nodename === topNodeName then (
-	  if buildPackage === "Main"
-	  then LAYOUT#"htmldoc" | topFileName
-	  else LAYOUT#"packagehtml" buildPackage | topFileName
+	  LAYOUT#"packagehtml" buildPackage | topFileName
 	  )
      else (
 	  basename := toFilename nodename | ".html";
@@ -285,45 +283,6 @@ setupButtons := () -> (
      upButton = BUTTON(gifpath|"up.gif","up");
      )
 
-makeHTML = (builddir) -> (
-     gifpath := LAYOUT#"images";
-     buildDirectory = minimizeFilename(builddir | "/");
-     docdatabase = DocDatabase;				    -- used to be an argument
-     topNodeName = "Macaulay 2";			    -- used to be an argument
-     htmlDirectory = LAYOUT#"htmldoc";
-     buildPackage = "Main";
-     prefix = htmlDirectory;
-     setupButtons();
-     sav := if htmlDefaults#?"BODY" then htmlDefaults#"BODY";
-     htmlDefaults#"BODY" = concatenate(
-	  "BACKGROUND=\"",				    -- "
-	  relativizeFilename(htmlDirectory,gifpath|"recbg.jpg"),
-	  "\""						    -- "
-	  );
-     lastKey = null;
-     thisKey = null;
-     linkFollowedTable = new MutableHashTable;
-     masterIndex = new MutableHashTable;
-     NEXT = new MutableHashTable;
-     PREV = new MutableHashTable;
-     UP   = new MutableHashTable;
-     haderror = false;
-     recursionLimit = first (
-	  recursionLimit,
-	  recursionLimit = 4000,
-     	  time pass1(),
-     	  time pass2(),
-     	  time pass3(),
-     	  time pass4(),
-     	  time pass5()
-	  );
-     if sav =!= null then htmlDefaults#"BODY" = sav;
-     if haderror then (
-	  stderr << "error: ignoring documentation errors" << endl;
-	  -- error "documentation errors occurred";
-	  );
-     )     
-
 separateRegexp = method()
 separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
 separateRegexp(String,ZZ,String) := (re,n,s) -> (
@@ -423,11 +382,19 @@ installPackage Package := o -> pkg -> (
 	       else (
 		    stderr << "--making example output file for " << nodename << endl;
 		    loadargs := if pkg === Main then "" else "-e 'load \""|fn|"\"'";
-		    cmd := commandLine#0 | " --silent --stop -q " | loadargs | " <" | inf | " >" | outf;
+		    cmd := commandLine#0 | " --silent --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | outf;
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
 			 stderr << "--error return code: " << r << endl;
+			 if r == 131 then (
+			      stderr << "subprocess terminated abnormally, exiting" << endl;
+			      exit r;
+			      );
+			 if r == 2 then (
+			      stderr << "subprocess interrupted with INT, exiting, too" << endl;
+			      exit r;
+			      );
 			 haderror = true;
 			 ));
 	       -- read, separate, and store example output

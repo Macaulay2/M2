@@ -222,9 +222,11 @@ usage := arg -> (
      << "    --example-prompts  examples prompt mode" << newline
      << "    --fullbacktrace    print full backtrace after error" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
+     << "    --int              accept interrupts" << newline -- handled by M2lib.c
      << "    --notify           notify when loading source files during initialization" << newline
      << "    --no-prompts       print no input prompts" << newline;
      << "    --no-setup         don't try to load setup.m2" << newline
+     << "    --print-width n    occasionaly wrap output to this width" << newline
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
      << "    --texmacs          TeXmacs session mode" << newline
@@ -263,6 +265,8 @@ dump := () -> (
      exit 0;
      )
 
+printWidth = 0
+
 action := hashTable {
      "--help" => usage,
      "-h" => usage,
@@ -276,6 +280,7 @@ action := hashTable {
      "-silent" => obsolete,
      "-tty" => notyet,
      "-n" => obsolete,
+     "--int" => arg -> arg,
      "--copyright" => arg -> fullCopyright = true,
      "--no-prompts" => arg -> noPrompts(),
      "--notify" => arg -> notify = true,
@@ -284,7 +289,7 @@ action := hashTable {
      "-s" => obsolete,
      "--fullbacktrace" => arg -> fullBacktrace = true,
      "--no-backtrace" => arg -> fullBacktrace = backtrace = false,
-     "--stop" => arg -> (stopIfError = true; debuggingMode = false),
+     "--stop" => arg -> (stopIfError = true; debuggingMode = false), -- see also M2lib.c
      "--no-loaddata" => arg -> noloaddata = true,
      "--no-setup" => arg -> nosetup = true,
      "--texmacs" => arg -> (
@@ -296,7 +301,8 @@ action := hashTable {
 
 action2 := hashTable {
      "-E" => arg -> if preload then value arg,
-     "-e" => arg -> if not preload then value arg
+     "-e" => arg -> if not preload then value arg,
+     "--print-width" => arg -> printWidth atoi arg
      }
 
 processCommandLineOptions := pl -> (			    -- two passes, based on value of 'preload'

@@ -479,6 +479,9 @@ export returnMessage := "return message";
 export continueMessage := "continue message";
 export breakMessage := "break message";
 export unwindMessage := "unwind message";
+export interruptMessage := "interrupted";
+export alarmMessage := "alarm occurred";
+
 
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,dummyCodeClosureList,nullE,false));
 export buildErrorPacket(message:string,report:CodeClosureList):Expr := Expr(Error(dummyPosition,message,report,nullE,false));

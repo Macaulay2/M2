@@ -342,6 +342,16 @@ capture(e:Expr):Expr := (
      else WrongArg(1,"a string"));
 setupfun("capture",capture);
 
+normalExit := 0;
+errorExit := 1;
+interruptExit := 2;					    -- see also M2lib.c
+failedExitExit := 3;
+
+Exit(err:Error):void := exit(
+     if err.message === interruptMessage then interruptExit
+     else errorExit
+     );
+
 export process():void := (
      previousLineNumber = -1;			  -- might have done dumpdata()
      localFrame = globalFrame;
@@ -355,17 +365,17 @@ export process():void := (
      when ret is err:Error do (
 	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError
-	  then exit(1)					    -- probably can't happen, because layout.m2 doesn't set stopIfError
+	  then Exit(err)	 -- probably can't happen, because layout.m2 doesn't set stopIfError
 	  else if !topLevel()				    -- give a prompt for debugging
-	  then exit(1))
+	  then Exit(err))
      else nothing;
      ret = readeval(stringTokenFile("startup.m2",startupString2),false); -- startup.m2 calls commandInterpreter and eventually returns -- we don't know the right directory!
      when ret is err:Error do (
 	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError 
-	  then exit(1)
+	  then Exit(err)
 	  else if !topLevel()				    -- give a prompt for debugging
-	  then exit(1))
+	  then Exit(err))
      else nothing;
      when ret is n:Integer do (
 	  if isInt(n) then (
@@ -373,7 +383,7 @@ export process():void := (
      	       ))
      else nothing;
      value(Expr("exit 0"));				    -- try to exit the user's way
-     exit(1);				   -- if that doesn't work, try harder and indicate an error
+     exit(failedExitExit);		   -- if that doesn't work, try harder and indicate an error
      );
 
 -- Local Variables:

@@ -12,9 +12,12 @@ VPATH = @srcdir@
 .PRECIOUS test-configuration install install-strip all clean distclean:: @srcdir@/configure config.status
 
 Makefile : Makefile.in; ./config.status Makefile
+
 include/config.Makefile: include/config.Makefile.in; ./config.status include/config.Makefile
-all :: include/config.h
+all :: include/config.Makefile
+
 include/config.h: include/config.h.in; ./config.status include/config.h
+all :: include/config.h
 
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
 	$(MAKE) -C @srcdir@ -f Makefile-configuration

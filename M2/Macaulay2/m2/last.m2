@@ -15,7 +15,11 @@ addEndFunction(() -> (
 Matrix.BeforePrint =
 RingElement.BeforePrint =
 List.BeforePrint = 
-Sequence.BeforePrint = x -> if width stdio == 0 then x else wrap(- width stack lines ZZ.InputPrompt lineNumber + width stdio, net x)
+Sequence.BeforePrint = x -> (
+     w := if printWidth != 0 then printWidth else if width stdio != 0 then width stdio else 0;
+     if w == 0 then x else (
+     	  i := - width stack lines ZZ.InputPrompt lineNumber + w;
+     	  if i > 20 then wrap(i, net x) else net x))
 
 -- make sure this is after all global symbols are defined or erased
 closePackage Main

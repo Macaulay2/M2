@@ -916,11 +916,11 @@ export eval(c:Code):Expr := (
 	       if alarmed then (
 		    interrupted = false;
 		    alarmed = false;
-		    buildErrorPacket("alarm occurred"))
+		    buildErrorPacket(alarmMessage))
 	       else (
 		    interrupted = false;
 		    SuppressErrors = false;
-		    buildErrorPacket("interrupted")))
+		    buildErrorPacket(interruptMessage)))
 	  else when c
 	  is u:unaryCode do u.f(u.rhs)
 	  is b:binaryCode do b.f(b.lhs,b.rhs)
