@@ -94,7 +94,6 @@ public:
   virtual ring_elem eval(const RingMap *map, const ring_elem f) const;
 
   // The following are all basically dummy routines, and should be in ring.hpp
-  virtual bool is_homogeneous(const ring_elem f) const;
   virtual void degree(const ring_elem f, int *d) const;
   virtual int primary_degree(const ring_elem f) const;
   virtual void degree_weights(const ring_elem f, const M2_arrayint wts, 

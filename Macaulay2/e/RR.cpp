@@ -369,11 +369,6 @@ ring_elem RR::eval(const RingMap *map, const ring_elem f) const
   return map->get_ring()->from_double(RR_VAL(f));
 }
 
-bool RR::is_homogeneous(const ring_elem) const
-{
-  return true;
-}
-
 void RR::degree(const ring_elem, int *d) const
 {
   degree_monoid()->one(d);

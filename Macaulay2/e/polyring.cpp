@@ -631,6 +631,7 @@ bool PolynomialRing::is_equal(const ring_elem f, const ring_elem g) const
 
 bool PolynomialRing::is_homogeneous(const ring_elem f) const
 {
+  if (!is_graded()) return false;
   Nterm *t = f;
   if (t == 0) return true;
   bool result = true;

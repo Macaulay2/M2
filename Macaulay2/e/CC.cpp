@@ -450,11 +450,6 @@ ring_elem CC::eval(const RingMap *map, const ring_elem f) const
   return map->get_ring()->from_complex(CCELEM_VAL(f));
 }
 
-bool CC::is_homogeneous(const ring_elem) const
-{
-  return true;
-}
-
 void CC::degree(const ring_elem, int *d) const
 {
   degree_monoid()->one(d);

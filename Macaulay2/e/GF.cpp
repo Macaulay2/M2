@@ -433,11 +433,6 @@ void GF::syzygy(const ring_elem a, const ring_elem b,
 }
 
 
-bool GF::is_homogeneous(const ring_elem) const
-{
-  return true;
-}
-
 void GF::degree(const ring_elem, int *d) const
 {
   degree_monoid()->one(d);

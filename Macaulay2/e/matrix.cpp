@@ -646,7 +646,7 @@ bool Matrix::is_zero() const
 
 int Matrix::is_homogeneous() const
 {
-#warning "check the ring too!"
+  if (!get_ring()->is_graded()) return 0;
   int *d = degree_monoid()->make_one();
   for (int i=0; i<n_cols(); i++)
     {
