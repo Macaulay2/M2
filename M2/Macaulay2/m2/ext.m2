@@ -156,20 +156,12 @@ Ext(Module,Module) := Module => (M,N) -> (
     -- assemble the matrix from its blocks.
     -- We omit the sign (-1)^(n+1) which would ordinarily be used,
     -- which does not affect the homology.
-    toS := map(S,A,apply(toList(c .. c+n-1), i -> S_i));
+    toS := map(S,A,apply(toList(c .. c+n-1), i -> S_i),
+      DegreeMap => prepend_0);
     Delta := map(Cstar, Cstar, 
       transpose sum(keys blks, m -> S_m * toS sum blks#m),
       Degree => {-1,0});
-    ins1 := deg -> prepend(0,deg);
-    ins  := degs -> apply(degs,ins1);
-    -- we can't use "toS N'" because ring maps don't 
-    -- tell how to set the degrees when tensoring
-    N'' := cokernel map(
-	 S^(- ins degrees target relations N'),
-	 S^(- ins degrees source relations N'),
-	 toS relations N',
-	 Degree => ins1 degree relations N');
-    DeltaBar := Delta ** N'';
+    DeltaBar := Delta ** (toS ** N');
     assert isHomogeneous DeltaBar;
     assert(DeltaBar * DeltaBar == 0);
     -- now compute the total Ext as a single homology module

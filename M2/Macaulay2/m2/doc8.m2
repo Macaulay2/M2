@@ -1144,16 +1144,44 @@ document { RingMap,
      SEEALSO "maps between rings",
      "Common ways to make a ring map:",
      MENU {
+	  TO (map,Ring,Ring),
+	  TO (map,Ring,Ring,List),
+	  TO (map,Ring,Ring,Matrix),
 	  },
      "Common ways to get information about ring maps:",
      MENU {
+	  TO (isHomogeneous, RingMap),
+	  TO (isInjective, RingMap)
 	  },
      "Common operations on ring maps:",
      MENU {
+	  TO (symbol *, RingMap, RingMap),
+	  TO (kernel, RingMap),
+	  TO (coimage, RingMap)
 	  },
      "Common ways to use a ring map:",
      MENU {
+	  TO (symbol " ", RingMap, Matrix),
+	  TO (symbol " ", RingMap, Ideal),
+	  TO (symbol " ", RingMap, Module),
+	  TO (symbol **, RingMap, Module)
 	  },
+     }
+
+document { (symbol **, RingMap, Module),
+     Synopsis => {
+	  "N = f ** M",
+	  "f" => { "a ring map from ", TT "R", " to ", TT "S", "." },
+	  "M" => { "an ", TT "R", "-module" },
+	  "N" => { "the tensor product of ", TT "M", " with ", TT "S", " over ", TT "R", "." }
+	  },
+     EXAMPLE {
+	  "R = QQ[x,y];"
+	  "S = QQ[t];",
+	  "f = map(S,R,{t^2,t^3})",
+	  "f ** coker vars R",
+	  "f ** image vars R"
+	  }
      }
 
 document { (map,Ring,Ring,Matrix),
