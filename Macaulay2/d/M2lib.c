@@ -25,13 +25,6 @@ char *gnu_get_libc_version();
 #define __attribute__(x)
 #endif
 
-
-#if 0
-# ifdef __MWERKS__
-#  include "::dbm:dbm.h"
-# endif
-#endif
-
 /* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
 #define GDBM_STATIC
 
@@ -63,42 +56,6 @@ void WerrorS(char *m) {
 void WarnS(char *m) {
   putstderr(m);
 }
-
-#ifdef DUMPDATA
-#if defined(__NeXT__)
-#   define STARTDATA (void *)0x00146000	/* provisional! */
-#   define STARTGAP  (void *)0x00154000
-#   define ENDGAP    (void *)0x007b6000
-#   define ENDDATA   sbrk(0)
-#   define HAVE_MMAP FALSE
-#elif defined(__hp9000s800)
-#   define STARTDATA (void *)0x40001000
-#   define ENDDATA sbrk(0)
-#   define HAVE_MMAP FALSE
-#elif defined(__hp9000s700)
-#   define STARTDATA (void *)0x40001000
-#   define ENDDATA sbrk(0)
-#   define HAVE_MMAP FALSE
-#elif defined(__R3000) || defined(__sgi__)
-#   define STARTDATA (void *)0x10000000
-#   define ENDDATA sbrk(0)
-#   define HAVE_MMAP FALSE
-#elif defined(__DJGPP__)
-    extern void *__djgpp_stack_limit;
-    extern int _stklen;
-#   define STARTDATA (void *)&etext
-#   define STARTGAP (void *)&end
-#   define ENDGAP (__djgpp_stack_limit + _stklen)
-#   define ENDDATA sbrk(0)
-#   define HAVE_MMAP FALSE
-#elif defined(_WIN32)
-    /* no hope ? */
-#else
-#   define STARTDATA first_rw_page_after_etext()
-#   define ENDDATA sbrk(0)
-#   define HAVE_MMAP TRUE
-#endif
-#endif
 
 static char *progname;
 #ifdef includeX11
@@ -762,10 +719,6 @@ static void *first_rw_page_after_etext() {
      }
 #endif
 
-#ifdef DUMPDATA
-static int probe() __attribute__ ((unused));
-#endif
-
 int system_dumpdata(datafilename)
 M2_string datafilename;
 {
@@ -775,43 +728,7 @@ M2_string datafilename;
 #else
      bool haderror = FALSE;
      char *datafilename_s = tocharstar(datafilename);
-#ifdef NEWDUMPDATA
      if (ERROR == dumpdata(datafilename_s)) haderror = TRUE;
-#else
-     int datafile = open(datafilename_s, O_BINARY | O_WRONLY | O_CREAT, 0666);
-     if (datafile == ERROR) {
-	  char buf[200];
-	  sprintf(buf,"%s: dumpdata: couldn't open or create file %s for writing",
-	       progname,datafilename_s);
-	  perror(buf);
-     	  GC_FREE(datafilename_s);
-	  return ERROR;
-	  }
-     {
-#if defined(STARTGAP) || defined(ENDGAP)
-       	  if (ERROR == write(datafile,STARTDATA,STARTGAP - STARTDATA)
-	       ||
-	       ERROR == write(datafile,ENDGAP,ENDDATA - ENDGAP)
-	       )
-#else
-	  if (ERROR == write(datafile,STARTDATA,ENDDATA-STARTDATA))
-#endif
-     	       {
-	       char buf[200];
-	       sprintf(buf,"%s: dumpdata: error while writing to file %s",
-		    progname,datafilename_s);
-	       perror(buf);
-	       return ERROR;
-     	       }
-	  }
-     if (ERROR == close(datafile)) {
-	  char buf[200];
-	  sprintf(buf,"%s: dumpdata: couldn't close file %s",
-	       progname,datafilename_s);
-	  perror(buf);
-	  return ERROR;
-	  }
-#endif
      GC_FREE(datafilename_s);
      return haderror ? ERROR : OKAY;
 #endif
@@ -835,141 +752,6 @@ static void extend_memory(void *newbreak) {
      }
 #endif
 
-#ifdef DUMPDATA
-
-static int probe() {
-     char c, *p, readable=FALSE, writable=FALSE;
-     void (*oldhandler)(int) = signal(SIGSEGV,handler);
-
-#ifdef SIGBUS
-     void (*oldhandler2)(int) = signal(SIGBUS,handler2);
-#endif
-
-     ONSTACK(p);
-     ONSTACK(readable);
-
-#if !defined(__MWERKS__)
-     for (p=0; p<(char *)ENDDATA; p+=PAGESIZE) {
-	  int oldsig = sig, oldreadable = readable, oldwritable = writable;
-     	  signal(SIGSEGV,handler);
-#ifdef SIGBUS
-     	  signal(SIGBUS,handler2);
-#endif
-	  if (0 == sigsetjmp(jumpbuffer,TRUE))  {
-	       c = *p;		/* try reading a byte */
-	       readable = TRUE;
-     	       signal(SIGSEGV,handler);
-#ifdef SIGBUS
-     	       signal(SIGBUS,handler2);
-#endif
-	       if (0 == sigsetjmp(jumpbuffer,TRUE)) {
-		    *p = c;	/* try writing a byte */
-		    writable = TRUE;
-		    }
-	       else {
-		    writable = FALSE;
-		    }
-	       }
-	  else {
-	       writable = readable = FALSE;
-	       }
-	  if (oldsig != sig || oldreadable != readable || oldwritable != writable) {
-	       char buf[80];
-	       sprintf(buf,"%p . %s%s%s",
-	       	    p,
-	       	    readable ? "r" : "-", 
-	       	    writable ? "w" : "-",
-	       	    sig == 1 ? "  SEGV" : sig == 2 ? "  BUS" : ""
-	       	    );
-	       putstderr(buf);
-	       }
-	  }
-     {
-	  char buf[80];
-	  sprintf(buf,"%p .", p);
-	  putstderr(buf);
-	       }
-#endif
-     signal(SIGSEGV,oldhandler);
-#ifdef SIGBUS
-     signal(SIGBUS,oldhandler2);
-#endif
-     return 0;
-     }
-#endif
-
-#if !defined(NEWDUMPDATA) && defined(DUMPDATA)
-static int loaddata(char *filename) {
-     char savetimestamp[60];
-     struct stat statbuf;
-     int filelen;
-     int datafile = open(filename, O_BINARY | O_RDONLY);
-     strcpy(savetimestamp,timestamp);
-     if (datafile == ERROR) {
-	  char buf[200];
-	  sprintf(buf,"%s: couldn't open file %s for reading",
-	       progname,filename);
-	  putstderr(buf);
-     	  GC_FREE(filename);
-	  return ERROR;
-	  }
-     GC_FREE(filename);
-     fstat(datafile,&statbuf);
-     filelen = statbuf.st_size;
-#if defined(STARTGAP) || defined(ENDGAP)
-     {
-     void *loc1 = STARTDATA;
-     int len1 = STARTGAP - loc1 ;
-     void *loc2 = ENDGAP;
-     int len2 = filelen - len1;
-     extend_memory(loc2 + len2);
-     if ( len1 != read(datafile, loc1, len1) ||
-	  len2 != read(datafile, loc2, len2)
-	  ) {
-          char buf[200];
-          sprintf(buf,"loaddata: can't read file (%08x-%08x %08x-%08x, sbrk %08\
-x)",
-                 loc1, loc1+len1,
-                 loc2, loc2+len2,
-                 sbrk(0));
-          putstderr(buf);
-          probe();
-	  _exit(1);
-	  }
-     }
-#elif HAVE_MMAP
-     {
-     char *loc = STARTDATA, *loc2;
-     extend_memory(loc+filelen); /* Do we really need to do this? */
-     loc2 = mmap(loc, filelen, PROT_READ|PROT_WRITE,MAP_FIXED|MAP_PRIVATE, datafile, 0);
-     if (loc != loc2) {
-	  char buf[200];
-	  sprintf(buf,"loaddata: error while mapping file (length 0x%x at 0x%p)", filelen, loc);
-	  putstderr(buf);
-	  _exit(1);
-	  }
-     }
-#else
-     {
-     char *loc = STARTDATA;
-     extend_memory(loc+filelen);
-     if (filelen != read(datafile,loc,filelen)) {
-	  char buf[200];
-	  sprintf(buf,"loaddata: error while reading file (length 0x%x at 0x%p)", filelen, loc);
-	  putstderr(buf);
-	  _exit(1);
-	  }
-     }
-#endif
-     close(datafile);
-     if (0 != strcmp(savetimestamp,timestamp)) {
-	  putstderr("data file not created by this executable");
-	  _exit(1);
-	  }
-     return OKAY;
-}
-#endif
-
 int system_loaddata(M2_string datafilename){
 #ifndef DUMPDATA
      return ERROR;
@@ -984,60 +766,6 @@ int system_loaddata(M2_string datafilename){
      siglongjmp(loaddata_jump,1);
 #endif
      }
-
-#define FAILURE 0
-
-#ifdef includeX11
-unsigned int X_XCreateWindow(parent,x,y,width,height,borderwidth,name)
-unsigned int parent;
-int x,y,width,height,borderwidth;
-M2_string name;
-{
-     if (display != NULL) {
-	  Colormap colormap = DefaultColormap(display, DefaultScreen(display));
-     	  Window w;
-	  XColor color;
-     	  static XSetWindowAttributes attr;
-	  char *sname = tocharstar(name);
-	  if ( FAILURE != XParseColor(display,colormap,"red",&color)
-	       &&
-	       FAILURE != XAllocColor(display,colormap,&color)) {
-	       attr.border_pixel = color.pixel;
-	       }
-	  w = XCreateWindow(
-	       display,
-	       parent,
-	       x,y,
-	       width,height,
-	       borderwidth,
-	       CopyFromParent,	/* depth */
-	       InputOutput,		/* class */
-	       CopyFromParent,	/* visual */
-	       CWBorderPixel,     	/* attribute mask */
-	       &attr			/* attribute structure */
-	       );
-	  XStoreName(display,w,sname);
-     	  XSetWindowBackground(display,w,
-	       BlackPixel(display,XDefaultScreen(display)));
-	  XMapWindow(display,w);
-	  XFlush(display);
-     	  while (XPending(display) > 0) {
-	       XEvent event;
-	       XNextEvent(display, &event);
-	       }
-	  GC_FREE(sname);
-	  return w;
-	  }
-     else return 0;
-     }
-
-unsigned int X_XDefaultRootWindow(){
-     if (display != NULL) {
-	  return XDefaultRootWindow(display);
-	  }
-     else return 0;
-     }
-#endif
 
 /**********************************************
  *                  dbm stuff                 *

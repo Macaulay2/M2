@@ -37,6 +37,9 @@ toFilename String := s -> (
      -- Convert a string to a new string usable as a file name, and with
      -- at least one special character prefixed, to avoid collisions with
      -- package names and with index.html.
+     -- Notice that the prefix character _ prevents any "!" characters 
+     -- from occuring in the first position, where they would have a special
+     -- meaning.
      s = concatenate("_",apply(characters s, c -> tt#c));
      s)
 -----------------------------------------------------------------------------
