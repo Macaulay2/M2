@@ -5,6 +5,7 @@ load "raw-util.m2"
 -- Example 1
 
 R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
+x^2-y*x-13*z^2*x+y^4+z^7+12
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 time rawFactor f                                 -- used 12.32 seconds, improved to 7.78 seconds, should be able to get to 7.01 sec
 

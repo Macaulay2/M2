@@ -23,17 +23,28 @@ LDLIBS =
 .PHONY : benchmark
 # factor.poly was generated with toString (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3
 CFLAGS := -g -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Wno-unused-label
-CFLAGS += -O3
+CFLAGS += -O2
 CFLAGS += -fomit-frame-pointer
 CXXFLAGS := $(CFLAGS)
 LDFLAGS =  -g -L/capybara/lib
 LDFLAGS += -Wl,-Map,mapfile
 
-# CFLAGS += -pg
-# CXXFLAGS += -pg
-# LDFLAGS += -pg
-# LDLIBS := -lcf-pg -lcfmem-pg -lntl-pg -lgmp-pg -lgc-pg -ldl -lm
-LDLIBS := -lcf -lcfmem -lntl -lgmp -lgc -ldl -lm
+%.s : %.c  ; $(COMPILE.c ) -S $(OUTPUT_OPTION) $<
+%.s : %.cc ; $(COMPILE.cc) -S $(OUTPUT_OPTION) $<
+
+# PROF := -pg
+PROF := 
+CFLAGS += $(PROF)
+CXXFLAGS += $(PROF)
+LDFLAGS += $(PROF)
+LDLIBS := -lcf$(PROF) -lcfmem$(PROF) -lntl$(PROF) -lgmp$(PROF) -lm
+
+ifneq "$(PROF)" ""
+CFLAGS += -fno-omit-frame-pointer
+CXXFLAGS += -fno-omit-frame-pointer
+endif
+
+LDLIBS += -lgc$(PROF) -ldl
 
 benchmark gmon.out : factor factor.poly mapfile.demangled
 	time ./factor < @srcdir@/factor.poly >factor.out
@@ -41,6 +52,8 @@ benchmark gmon.out : factor factor.poly mapfile.demangled
 	fgrep -s '( (x^2-y*x-13*z^2*x+y^4+z^7+12)^3, (x+3*y-14)^15 )' factor.out >/dev/null
 factor.gprof : gmon.out
 	gprof -b ./factor >$@
+factor-demangled.gprof : factor.gprof Makefile
+	<$< sed -e 's/\(_GLOBAL__D_\)/global destructor /' -e 's/\(_GLOBAL__I_\)/global constructor /' | demangle >$@
 factor.o factor-init.o : factor.h
 mapfile factor : factor.o factor-init.o factor-init1.o 
 	$(CXX) $(LDFLAGS) factor.o factor-init.o $(LDLIBS) factor-init1.o -o "$@"
