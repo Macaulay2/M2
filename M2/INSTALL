@@ -25,6 +25,7 @@ here, as some of the later ones depend on some of the earlier ones.
     library: gc
     release: 6.1 (see file gc/version.h)
      author: Hans Boehm <hboehm@exch.hpl.hp.com>
+  home page: http://www.hpl.hp.com/personal/Hans_Boehm/gc/
      get at: http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc6.1.tar.gz
     license: gc/README
     install: -- edit Makefile
@@ -38,6 +39,7 @@ here, as some of the later ones depend on some of the earlier ones.
     library: gdbm
     release: gdbm-1.8.0
      author: phil@cs.wwu.edu
+  home page: 
     bugs to: downsj@downsj.com
      get at: ftp://ftp.gnu.org/pub/gnu/gdbm/
     license: GNU GENERAL PUBLIC LICENSE
@@ -49,6 +51,7 @@ here, as some of the later ones depend on some of the earlier ones.
     library: gmp
     release: gmp-4.1
      author: Torbjorn Granlund <tege@nada.kth.se>
+  home page: 
     bugs to: <bug-gmp@prep.ai.mit.edu>
      get at: ftp://ftp.gnu.org/gnu/gmp
     license: gmp/COPYING.LIB
@@ -59,29 +62,27 @@ here, as some of the later ones depend on some of the earlier ones.
 			patch -p1 < ...../INSTALL.gmp-4.1-patch
 
     library: Singular-factory (libcf libcfmem)
-    release: factory-2.0.4a
+    release: factory-2.0.4b
      author: G-M. Greuel <greuel@mathematik.uni-kl.de>
 	     R. Stobbe <stobbe@mathematik.uni-kl.de>
 	     J. Schmidt
 	     G. Pfister <pfister@mathematik.uni-kl.de>
 	     H. Schoenemann <hannes@mathematik.uni-kl.de>
-     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory/
-	     or
-	     http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/src/
+  home page: http://www.singular.uni-kl.de/
+     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/SOURCES/
     license: GPL
-      notes: ./configure --disable-streamio
+      notes: ./configure --disable-streamio --with-memman=no --enable-NTL
 	     make
 	     make install
 		-- don't bother with 'make gftables'
 
     library: Singular-libfac
-    release: libfac-2.0.4a
+    release: libfac-2.0.4b
      author: Michael Messollen <mmessollen@web.de>
-     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac
-	     or
-	     http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/src/
+  home page: http://www.singular.uni-kl.de/
+     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/SOURCES/
     license: GPL
-      notes: ./configure
+      notes: ./configure --with-NOSTREAMIO
 	     make DEFS=-DHAVE_SINGULAR_ERROR
 	     make install
 
@@ -92,6 +93,15 @@ here, as some of the later ones depend on some of the earlier ones.
 		error messages about duplicate declarations.
 	     Also, ignore the warning message about factory.h being missing, if you think you've put
 		it in $prefix/include.
+
+    library: NTL
+    release: 5.2
+     author: Victor Shoup
+  home page: http://www.shoup.net/
+     get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/src/Singular-NTL-5.2.tar.gz
+    license: GPL
+      notes: The version available through Singular, mentioned above, has had unneeded routines that
+	     use iostreams stripped out.
 
 -----------------------
 Compiling
