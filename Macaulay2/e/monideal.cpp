@@ -639,7 +639,7 @@ MonomialIdeal MonomialIdeal::quotient(const int *m) const
 MonomialIdeal MonomialIdeal::quotient(const MonomialIdeal &J) const
 {
   MonomialIdeal result(get_ring());
-  Bag *b = new Bag(0);
+  Bag *b = new Bag();
   varpower::one(b->monom());
   result.insert(b);
   for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
@@ -687,7 +687,7 @@ MonomialIdeal MonomialIdeal::erase(const int *m) const
 MonomialIdeal MonomialIdeal::sat(const MonomialIdeal &J) const
 {
   MonomialIdeal result(get_ring());
-  Bag *b = new Bag(0);
+  Bag *b = new Bag();
   varpower::one(b->monom());
   result.insert(b);
   for (Index<MonomialIdeal> i = J.first(); i.valid(); i++)
@@ -715,7 +715,7 @@ static void borel1(queue<Bag *> &result, int *m, int loc, int nvars)
 {
   if (loc == 0)
     {
-      Bag *b = new Bag(0);
+      Bag *b = new Bag();
       varpower::from_ntuple(nvars, m, b->monom());
       result.insert(b);
     }

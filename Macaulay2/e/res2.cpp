@@ -968,7 +968,7 @@ void res2_comp::new_pairs(res2_pair *p)
 
 	  thisvp.shrink(0);
 	  varpower::var(w,1,thisvp);
-	  Bag *b = new Bag(0, thisvp);
+	  Bag *b = new Bag((void *)0, thisvp);
 	  elems.insert(b);
 	}
       // Remove the local variables
@@ -989,7 +989,7 @@ void res2_comp::new_pairs(res2_pair *p)
 	  varpower::divide(Rideal[j]->monom().raw(), vp.raw(), thisvp);
 	  if (varpower::is_equal(Rideal[j]->monom().raw(), thisvp.raw()))
 	    continue;
-	  Bag *b = new Bag(0, thisvp);
+	  Bag *b = new Bag((void *)0, thisvp);
 	  elems.insert(b);
 	}
     }

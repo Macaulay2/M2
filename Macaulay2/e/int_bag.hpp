@@ -14,7 +14,7 @@ class int_bag
   intarray mon;			// varpower representation
 
 public:
-  int_bag() : mon() { val.b_elem = 0; }
+  int_bag() : mon() { val.b_ptr = 0; }
   int_bag(int b, const intarray &m) : mon(m) { val.b_elem = b; }
   int_bag(void *b, const intarray &m) : mon(m) { val.b_ptr = b; }
   int_bag(int b): mon() { val.b_elem = b; }
