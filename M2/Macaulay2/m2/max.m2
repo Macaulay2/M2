@@ -1,71 +1,47 @@
---		Copyright 1993-1999 by Daniel R. Grayson
-
-InfiniteNumber = new Type of HashTable
+--		Copyright 1993-1999,2004 by Daniel R. Grayson
+InfiniteNumber = new Type of BasicList
 InfiniteNumber.synonym = "infinite number"
+infinity = new InfiniteNumber from {1}
+neginfinity := new InfiniteNumber from {-1}
+- InfiniteNumber := x -> if x === infinity then neginfinity else infinity
+PrintNames#infinity = "infinity"
+PrintNames#(-infinity) = "-infinity"
+toString InfiniteNumber := net InfiniteNumber := x -> PrintNames#x
 
-sign := symbol sign
-
-infinity = new InfiniteNumber from {
-     symbol name => "infinity", 
-     symbol symbol => infinity,
-     sign => 1
-     }
-
-mathML InfiniteNumber := i -> (
-     if i#sign === -1 
-     then "<mrow><mo>-</mo><mi>&infin;</mi></mrow>"
-     else "<mi>&infin;</mi>"
-     )
-
-IndeterminateNumber = new Type of HashTable
+IndeterminateNumber = new Type of BasicList
 IndeterminateNumber.synonym = "indeterminate number"
-indeterminate = new IndeterminateNumber from {
-     symbol name => "indeterminate",
-     symbol symbol => symbol indeterminate
-     }
+indeterminate = new IndeterminateNumber from {}
+PrintNames#indeterminate = "indeterminate"
+toString IndeterminateNumber := net IndeterminateNumber := x -> "indeterminate"
 
+InfiniteNumber ? InfiniteNumber := (x,y) -> x#0 ? y#0
+InfiniteNumber + InfiniteNumber := (x,y) -> if x === y then x else indeterminate
+InfiniteNumber - InfiniteNumber := (x,y) -> if x =!= y then x else indeterminate
+InfiniteNumber * InfiniteNumber := (x,y) -> if x === y then infinity else neginfinity
+InfiniteNumber / InfiniteNumber := (x,y) -> indeterminate
+InfiniteNumber .. InfiniteNumber := (i,j) -> if i < j then error "infinite range specified" else ()
+InfiniteNumber == InfiniteNumber := (x,y) -> x === y
+
+InfiniteNumber .. ZZ := (i,n) -> if i < n then error "infinite range specified" else ()
+ZZ .. InfiniteNumber := (n,i) -> if n < i then error "infinite range specified" else ()
 InfiniteNumber + ZZ := (i,j) -> i
 ZZ + InfiniteNumber := (i,j) -> j
 InfiniteNumber - ZZ := (i,j) -> i
 ZZ - InfiniteNumber := (i,j) -> -j
 InfiniteNumber * ZZ := (i,j) -> if j > 0 then i else if j < 0 then -i else indeterminate
 ZZ * InfiniteNumber := (j,i) -> if j > 0 then i else if j < 0 then -i else indeterminate
-InfiniteNumber + InfiniteNumber := (x,y) -> if x#sign === y#sign then x else indeterminate
-InfiniteNumber - InfiniteNumber := (x,y) -> if x#sign =!= y#sign then x else indeterminate
-InfiniteNumber * InfiniteNumber := (x,y) -> if x#sign === 1 then y else -y
-InfiniteNumber / InfiniteNumber := (x,y) -> indeterminate
+InfiniteNumber == ZZ := (x,y) -> false
+ZZ == InfiniteNumber := (x,y) -> false
+ZZ ? InfiniteNumber := (x,y) -> if y === infinity then symbol < else symbol >
+InfiniteNumber ? ZZ := (x,y) -> if x === infinity then symbol > else symbol <
 
-neginfinity := new InfiniteNumber from {
-     symbol name => "-infinity", 
-     sign => -1
-     }
-
-InfiniteNumber ? InfiniteNumber := (x,y) -> x#sign ? y#sign
-
-Thing ? InfiniteNumber := (x,y) -> (
-     if x === y then symbol ==
-     else if y === infinity then symbol <
-     else symbol >
-     )
-
-InfiniteNumber == Thing := (x,y) -> x === y
-Thing == InfiniteNumber := (x,y) -> x === y
-
-InfiniteNumber ? Thing := (x,y) -> (
-     if x === y then symbol ==
-     else if x === infinity then symbol >
-     else symbol <
-     )
-
-- InfiniteNumber := x -> (
-     if x === infinity then neginfinity
-     else infinity)
+texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
+mathML InfiniteNumber := i -> if i === infinity then "<mrow><mo>-</mo><mi>&infin;</mi></mrow>" else "<mi>&infin;</mi>"
 
 max Sequence := max List := x -> (
      m := neginfinity;
      scan(x, n -> if n > m then m = n);
      m)
-
 min Sequence := min List := x -> (
      m := infinity;
      scan(x, n -> if m > n then m = n);
