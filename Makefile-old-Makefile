@@ -433,7 +433,7 @@ clean::
 		-o -name '*.pdb' \
 		\) -exec rm -r '{}' ';'
 	rm -f M2.ncb M2.opt
-################################# status messages
+################################# final status messages
 all::
 	@echo "--------------------- done making 'all' --------------------"
 doc::
