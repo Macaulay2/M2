@@ -58,7 +58,7 @@ REL="`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `"
 AC_SUBST(REL)
 AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
 
-ARCH="`  uname -m | sed s=/=-=g  `"
+ARCH="`  uname -m | sed -e s=/=-=g -e 's= ==g' `"
 AC_SUBST(ARCH)
 AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type, obtained with uname -m])
 
