@@ -32,6 +32,9 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 -- e-machine: Cyrix M II - 333 MMX
 -- 2.45 seconds, Macaulay2 0.8.53, compiled with gcc 2.91
 
+-- Linux geometry 2.3.18 #2 Thu Sep 16 17:50:47 CDT 1999 i586 unknown
+-- 3.46 seconds, Macaulay2 0.8.55, compiled with gcc 2.95
+
 -- Linux geometry 2.1.121 #33 SMP Tue Sep 15 21:44:25 CDT 1998 i586
 -- 4.01 seconds, Macaulay 2 version 0.8.47, compiled with gcc
 

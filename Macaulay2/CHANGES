@@ -2,6 +2,9 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+Fixed a bug in front-end rational number arithmetic where denominator could
+be zero after dividing an integer by a rational number.
+
 New function 'override' designed for internal use in collecting optional 
 arguments for funtions that use them.
 
