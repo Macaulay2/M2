@@ -502,7 +502,7 @@ Module _ ZZ := Vector => (M,i) -> (
      p = map(M,R^1,p,Degree => d);
      new Vector from p)
 -----------------------------------------------------------------------------
-Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else M#(symbol ^,w) = (
+Module ^ Array := Matrix => (M,w) -> if M.cache#?(symbol ^,w) then M.cache#(symbol ^,w) else M.cache#(symbol ^,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.cache.?components then error "expected a direct sum module";
@@ -517,7 +517,7 @@ Module ^ Array := Matrix => (M,w) -> if M#?(symbol ^,w) then M#(symbol ^,w) else
      v := apply(M.cache.components, N -> k .. (k = k + numgens N) - 1);
      map(directSum M.cache.components_w, M, (cover M)^(splice apply(w, i -> v#i))))
 
-Module _ Array := Matrix => (M,w) -> if M#?(symbol _,w) then M#(symbol _,w) else M#(symbol _,w) = (
+Module _ Array := Matrix => (M,w) -> if M.cache#?(symbol _,w) then M.cache#(symbol _,w) else M.cache#(symbol _,w) = (
      -- we don't splice any more because natural indices include pairs (i,j).
      w = toList w;
      if not M.cache.?components then error "expected a direct sum module";

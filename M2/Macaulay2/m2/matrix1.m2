@@ -96,10 +96,34 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  rankN = numgens N;
 	  );
      if not instance(N,Module) and options.Degree =!= null then error "Degree option given with indeterminate source module";
+     deg := if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R);
      p = splice p;
-     if all(p, o -> instance(o,Option)) then (		    -- sparse list of entries
-	  notImplemented();
-	  )
+     if all(p, o -> (
+	       instance(o,Option)
+	       and #o == 2
+	       and class o#1 === R
+	       and class o#0 === Sequence
+	       and #o#0 == 2
+	       and class o#0#0 === ZZ
+	       and class o#0#1 === ZZ
+	       )
+	  ) then (		    -- sparse list of entries
+     	  rows := apply(p, o -> o#0#0);
+	  cols := apply(p, o -> o#0#1);
+	  ents := toSequence apply(p, o -> raw o#1);
+	  pref := 0;					    -- ???
+	  m := (
+	       if class N === Module
+	       then rawSparseMatrix2(raw cover M, raw cover N, deg, rows, cols, ents, pref)
+	       else rawSparseMatrix1(raw cover M, rankN, rows, cols, ents, pref)
+	       );
+	  new Matrix from {
+	       symbol target => M,
+	       symbol RawMatrix => m,
+	       symbol source => if class N === Module then N else newModule(R, rawSource m),
+	       symbol ring => R,
+	       symbol cache => new CacheTable
+	       })
      else if all(p, o -> instance(o,List)) then (		    -- dense list of entries or blocks
 	  p = apply(splice p,splice);
 	  if #p != numgens M or #p > 0 and ( not isTable p or # p#0 != rankN )
@@ -107,7 +131,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  p = toSequence makeRawTable(R,p);
 	  h := (
 	       if class N === Module
-	       then rawMatrix2(raw cover M, raw cover N, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,0)
+	       then rawMatrix2(raw cover M, raw cover N, deg, flatten p,0)
 	       else rawMatrix1(raw cover M, rankN, flatten p, 0)
 	       );
 	  new Matrix from {
@@ -117,7 +141,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	       symbol ring => R,
 	       symbol cache => new CacheTable
 	       })
-     else error "expected a list of lists or a list of options")
+     else error "expected a list of lists or a list of options (i,j)=>r")
 
 fixDegree := (m,d) -> (
      M := target m;
