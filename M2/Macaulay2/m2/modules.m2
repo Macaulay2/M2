@@ -178,7 +178,7 @@ newModule(Ring,RawFreeModule) := (R,rM) -> (
      M.RawFreeModule = rM;
      M.ring = R;
      M.numgens = rawRank rM;
-     M#0 = new M from rawZero rM;
+     M#0 = something;					    -- zero vector!
      M)
 
 degrees Module := M -> if M.?degrees then M.degrees else M.degrees = (

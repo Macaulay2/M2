@@ -1001,7 +1001,7 @@ rawZero(e:Expr):Expr := (
 		    ")" ) )
      else WrongArg(2,"a raw free module")
      else WrongArg(1,"a raw free module")
-     else WrongArg("a raw free module or a pair of raw free modules"));
+     else WrongArg("a raw free module"));
 setupfun("rawZero",rawZero);
 
 rawExteriorPower(e:Expr):Expr := (
