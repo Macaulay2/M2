@@ -162,12 +162,6 @@ NAMES = \
 	res2 \
 	respoly2 \
 	monoid \
-	EEhilbtrack \
-	EEGB1 \
-	EEspairs \
-	EEbasics \
-	EElookup \
-	EEGB \
 
 NOT_USED_YET = \
 	Emonorder \
