@@ -356,7 +356,7 @@ scan({
 	  isWellDefined, isInjective, isSurjective, singularLocus, isSubset,
 	  dim, Hom, diff, contract, exteriorPower, subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace, binomial, subquotient,
-	  getchange, poincare, cover, super, poincareN,
+	  getchange, poincare, cover, super, poincareN, terms,
 	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, stats, 
 	  substitute, rank, complete, ambient, top, transpose, length, baseName,
 	  degree, degreeLength, coefficients, isHomogeneous, size,

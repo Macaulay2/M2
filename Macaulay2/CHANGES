@@ -5,6 +5,8 @@ new type : AbstractSet
 -----------------------------------------------------------------------------
 New in 0.8.37:
 
+new routine 'terms' for getting a list of terms of a polynomial
+WeylAlgebra
 'unlist' changed to 'toSequence'
 'elements' changed to 'toList'
 

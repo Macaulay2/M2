@@ -10,8 +10,7 @@ export NODENAME       := $(shell uname -n)
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
 export REL            := $(shell uname -r | sed s=/=-=g )
-export CC             := gcc
-export CXX            := gcc
+
 export SYSTEM         := $(ARCH) $(OS) $(REL)
 export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)
 export LIBDIR	      := ../../lib
@@ -62,15 +61,19 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '#	PROFILE     := TRUE' >>$@
 	echo '#	NOSTRIP     := TRUE' >>$@
 	echo '#	MEMDEBUG    := TRUE' >>$@
+	echo '#	DEBUG       := TRUE' >>$@
+	echo '#	VERBOSE     := TRUE' >>$@
 	echo '#	NODUMPDATA  := TRUE' >>$@
 	echo '#	NOMP        := TRUE' >>$@
 	echo '#	NOFACTORY   := TRUE' >>$@
+	echo 'CC            := gcc' >>$@
+	echo 'CXX           := g++' >>$@
 include $(TOPDIR)/Makeconf.lcl
 
 #################################
 
-export CC = gcc
-export CXX = g++
+export CC
+export CXX
 export CFLAGS = -O2 -g
 export CXXFLAGS = -O2 -g
 
@@ -135,6 +138,10 @@ DUMPDATA :=
 endif
 
 export DEBUGFLAGS :=
+
+ifdef DEBUG
+DEBUGFLAGS += -g
+endif
 
 ifdef PROFILE
 DEBUGFLAGS += -pg

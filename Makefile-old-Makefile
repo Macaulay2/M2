@@ -25,13 +25,22 @@ clean::; rm -f core
 ################################ GC
 all:: GC
 GC: gc lib/libgc.a include/gc.h include/gc_cpp.h
-# GC_CFLAGS = -DNO_SIGNALS -g -O -DALL_INTERIOR_POINTERS -DGC_DEBUG
-GC_CFLAGS = -DNO_SIGNALS -g -O -DNO_DEBUGGING -DSILENT -DALL_INTERIOR_POINTERS $(DEBUGFLAGS)
+GC_TARGETS := gc.a
+GC_CFLAGS := -DLARGE_CONFIG -DNO_SIGNALS -O \
+	 -DALL_INTERIOR_POINTERS $(DEBUGFLAGS)
+ifndef VERBOSE
+GC_CFLAGS += -DSILENT
+endif
+ifdef DEBUG
+# GC_TARGETS += test
+else
+GC_CFLAGS += -DNO_DEBUGGING
+endif
 lib/libgc.a: 	  gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
 include/gc.h:	  gc/gc.h include/.exists;	cp $< $@
 include/gc_cpp.h: gc/gc_cpp.h include/.exists;	cp $< $@
 gc/gc.a: 	  always
-	$(MAKE) -C gc CC=$(CC) AS=$(AS) CFLAGS='$(GC_CFLAGS)' gc.a
+	$(MAKE) -C gc CXX=$(CXX) CC=$(CC) AS=$(AS) CFLAGS='$(GC_CFLAGS)' $(GC_TARGETS)
 clean::; $(MAKE) -C gc clean
 clean::; rm -f gc/base_lib
 ###################### GMP
@@ -54,7 +63,7 @@ gmp/libgmp.a : make-gmp
 make-gmp : gmp/config.status
 	$(MAKE) -C gmp
 gmp/config.status: gmp/configure
-	cd gmp; ./configure --cache-file=../config.cache
+	cd gmp; ./configure --silent --cache-file=../config.cache
 
 clean::; -$(MAKE) -C gmp distclean
 
@@ -108,7 +117,7 @@ LIBFAC:		libfac libfac/OPTOBJ \
 		libfac/config.status libfac/libfac.a include/factor.h lib/libfac.a
 libfac/OPTOBJ :; mkdir $@
 libfac/config.status : libfac/configure
-	cd libfac; ./configure --cache-file=../config.cache --includedir=../include
+	cd libfac; ./configure --silent --cache-file=../config.cache --includedir=../include
 libfac/libfac.a : always
 	$(MAKE) CXX=$(CXX) OPTCXX=$(CXX) -C libfac libfac
 include/factor.h: libfac/factor.h include/.exists; cp $< $@

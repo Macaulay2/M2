@@ -53,7 +53,8 @@ document { quote PolynomialRing,
 	  TO "size",
 	  TO "someTerms",
 	  TO "standardForm",
-	  TO "substitute"
+	  TO "substitute",
+	  TO "terms"
 	  },
      PARA,
      "Producing ring elements:",
