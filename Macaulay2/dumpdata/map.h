@@ -8,5 +8,5 @@ typedef struct MAP {
   unsigned int checksum;
 } *map;
 
-extern int nummaps();
+extern int nummaps(), haveDumpdata();
 extern int getmaps(int nmaps, struct MAP[nmaps]);
