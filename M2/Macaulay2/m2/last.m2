@@ -17,7 +17,7 @@ Matrix.BeforePrint =
 RingElement.BeforePrint =
 List.BeforePrint = 
 Sequence.BeforePrint = x -> (
-     w := if printWidth != 0 then printWidth else if width stdio != 0 then width stdio else 0;
+     w := if printWidth != 0 then printWidth else if width stdio != 0 then width stdio else 80;
      if w == 0 then x else (
      	  i := - width stack lines ZZ.InputPrompt lineNumber + w;
      	  if i > 20 then wrap(i, net x) else net x))

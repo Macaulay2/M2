@@ -692,21 +692,18 @@ extern "C" {
 				     M2_bool is_mutable,
 				     int preference
 				     ); /* drg: connected rawIdentity*/
-  /* NEWLY CHANGED */
 
   const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
 				       const FreeModule *G,
 				       M2_bool is_mutable,
 				       int preference
 				       ); /* drg: connected rawZero*/
-  /* NEWLY CHANGED */
 
   const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 					int ncols,
 					const RingElement_array *M,
 					M2_bool is_mutable,
 					int preference); /* drg: connected rawMatrix1 */
-  /* NEWLY CHANGED */
 
   const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
 					const FreeModule *source,
@@ -714,7 +711,6 @@ extern "C" {
 					const RingElement_array *M,
 					M2_bool is_mutable,
 					int preference); /* drg: connected rawMatrix2 */
-  /* NEWLY CHANGED */
 
   const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
 					       int ncols,
@@ -723,7 +719,6 @@ extern "C" {
 					       const RingElement_array *entries,
 					       M2_bool is_mutable,
 					       int preference); /* drg: connected rawSparseMatrix1 */
-  /* NEWLY CHANGED */
   
   const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
 					       const FreeModule *source,
@@ -733,21 +728,18 @@ extern "C" {
 					       const RingElement_array *entries,
 					       M2_bool is_mutable,
 					       int preference); /* drg: connected rawSparseMatrix2 */
-  /* NEWLY CHANGED */
 
   M2_bool IM2_Matrix_is_mutable(const Matrix *M);
   /* Is the matrix M mutable? */ /* drg : connected rawIsMutable */
 
-  M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M);
+  M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M); /* connected to rawIsDense */
   /* Is the matrix M implemented in the engine as a dense matrix? */ 
-  /* NEWLY CHANGED */
 
   const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
 					 const Matrix *M,
 					  M2_bool is_mutable,
 					  int preference
 					 ); /* drg: connected rawMatrixRemake1  */
-  /* NEWLY CHANGED */
   /* Create a new matrix (mutable or immutable), from M, with new target,
      and/or mutable-ness. The target free module must have the expected rank.
      The source free module is computed heuristically from the the target and the
@@ -761,7 +753,6 @@ extern "C" {
 					  M2_bool is_mutable,
 					  int preference
 					  ); /* drg: connected rawMatrixRemake2 */
-  /* NEWLY CHANGED */
   /* Create a new matrix (mutable or immutable), from M, with new target,
      source, deg and/or mutable-ness. The new free modules must have 
      the expected rank. 
@@ -773,7 +764,6 @@ extern "C" {
 				  int special_type, // 0: general, 1:upper triangular, others?
 				  M2_bool is_mutable,
 				  int preference); /* connected to rawMatrixRandom */
-  /* NEWLY CHANGED */
 
   /**********************************************************************************/
 
@@ -990,19 +980,15 @@ extern "C" {
      or row is out of bounds */
 
   M2_bool IM2_MutableMatrix_insert_columns(Matrix *M, int i, int n_to_add); /* connected to rawInsertColumns */
-  /* NEWLY CHANGED */
   /* Insert n_to_add columns directly BEFORE column i. */
 
   M2_bool IM2_MutableMatrix_insert_rows(Matrix *M, int i, int n_to_add); /* connected to rawInsertRows */
-  /* NEWLY CHANGED */
   /* Insert n_to_add rows directly BEFORE row i. */
 
   M2_bool IM2_MutableMatrix_delete_columns(Matrix *M, int i, int j); /* connected to rawDeleteColumns  */
-  /* NEWLY CHANGED */
   /* Delete columns i .. j from M */
 
   M2_bool IM2_MutableMatrix_delete_rows(Matrix *M, int i, int j); /* connected to rawDeleteRows  */
-  /* NEWLY CHANGED */
   /* Delete rows i .. j from M */
 
 
@@ -1010,8 +996,7 @@ extern "C" {
 					int c1, int c2, 
 					const RingElement *a1, const RingElement *a2,
 					const RingElement *b1, const RingElement *b2,
-					M2_bool opposite_mult);
-  /* NEWLY CHANGED */
+					M2_bool opposite_mult);	/* connected to rawMatrixColumnOperation2 */
   /* column(c1) <- a1 * column(c1) + a2 * column(c2)
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
@@ -1020,8 +1005,7 @@ extern "C" {
 				     int r1, int r2, 
 				     const RingElement *a1, const RingElement *a2,
 				     const RingElement *b1, const RingElement *b2,
-				     M2_bool opposite_mult);
-  /* NEWLY CHANGED */
+				     M2_bool opposite_mult); /* connected to rawMatrixRowOperation2 */
   /* row(r1) <- a1 * row(r1) + a2 * row(r2)
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -1074,39 +1058,32 @@ extern "C" {
   */
 #endif
 
-  M2_bool IM2_MutableMatrix_sort_columns(Matrix *M, int lo, int hi);
-  /* NEWLY CHANGED */
+  M2_bool IM2_MutableMatrix_sort_columns(Matrix *M, int lo, int hi); /* connected to rawSortColumns2 */
   /* Returns false if M is not mutable, or lo, or hi are out of range */
 
   M2_bool IM2_MutableMatrix_row_permute(Matrix *M,
 					int start, 
-					M2_arrayint perm);
-  /* NEWLY CHANGED */
+					M2_arrayint perm); /* connected to rawPermuteRows */
   /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 
   M2_bool IM2_MutableMatrix_column_permute(Matrix *M,
 					   int start, 
-					   M2_arrayint perm);
-  /* NEWLY CHANGED */
+					   M2_arrayint perm); /* connected to rawPermuteColumns */
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 
   MatrixOrNull * IM2_MutableMatrix_get_row_change(Matrix *M); /* drg: connected rawRowChange*/
-  /* NEWLY CHANGED */
 
   MatrixOrNull * IM2_MutableMatrix_get_col_change(Matrix *M); /* drg: connected rawColumnChange*/
-  /* NEWLY CHANGED */
 
   M2_bool IM2_MutableMatrix_set_row_change(Matrix *M,
 					   Matrix *rowChange); /* drg: connected rawRowChange*/
-  /* NEWLY CHANGED */
   /* Returns false, if rowChange is not suitable 
      (i.e. has the wrong ring, or wrong number of columns) */
 
   M2_bool IM2_MutableMatrix_set_col_change(Matrix *M,
 					   Matrix *colChange); /* drg: connected rawColumnChange*/
-  /* NEWLY CHANGED */
   /* Returns false, if rowChange is not suitable 
      (i.e. has the wrong ring, or wrong number of columns) */
 

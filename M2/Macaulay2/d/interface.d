@@ -1827,6 +1827,55 @@ export rawDeleteColumns(e:Expr):Expr := (
      );
 setupfun("rawDeleteColumns",rawDeleteColumns);
 
+export rawSortColumns2(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is M:RawMatrix do
+     when s.1 is position:Integer do if !isInt(position) then WrongArgSmallInteger(2) else
+     when s.2 is number:Integer do if !isInt(number) then WrongArgSmallInteger(3) else
+     toExpr(Ccode(bool, "IM2_MutableMatrix_sort_columns(",
+	       "(Matrix *)", M, ",",
+	       toInt(position), ",",
+	       toInt(number),
+	       ")" ) )
+     else WrongArgInteger(3)
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw matrix")
+     else WrongNumArgs(3)
+     );
+setupfun("rawSortColumns2",rawSortColumns2);
+
+export rawPermuteRows(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is M:RawMatrix do
+     when s.1 is start:Integer do if !isInt(start) then WrongArgSmallInteger(2) else
+     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else 
+     toExpr(Ccode(bool, "IM2_MutableMatrix_row_permute(",
+	       "(Matrix *)", M, ",",
+	       toInt(start), ",",
+	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.2),
+	       ")" ) )
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw matrix")
+     else WrongNumArgs(3)
+     );
+setupfun("rawPermuteRows",rawPermuteRows);
+
+export rawPermuteColumns(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is M:RawMatrix do
+     when s.1 is start:Integer do if !isInt(start) then WrongArgSmallInteger(2) else
+     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else 
+     toExpr(Ccode(bool, "IM2_MutableMatrix_column_permute(",
+	       "(Matrix *)", M, ",",
+	       toInt(start), ",",
+	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.2),
+	       ")" ) )
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw matrix")
+     else WrongNumArgs(3)
+     );
+setupfun("rawPermuteColumns",rawPermuteColumns);
+
 export rawMatrixColumnOperation2(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 8 then WrongNumArgs(8) else
      when s.0 is M:RawMatrix do
@@ -2027,10 +2076,10 @@ setupfun("rawNumberOfColumns",rawNumberOfColumns);
 export rawRowChange(e:Expr):Expr := (
      when e
      is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
-     Expr(Ccode( RawMatrix, "(engine_RawMatrix)", "IM2_MutableMatrix_get_row_change(", "(Matrix *)", M, ")" ))
+     toExpr(Ccode( RawMatrixOrNull, "(engine_RawMatrixOrNull)", "IM2_MutableMatrix_get_row_change(", "(Matrix *)", M, ")" ))
      is s:Sequence do
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
-     when s.1 is rowChange:RawMatrix do ( Ccode( void, "IM2_MutableMatrix_set_row_change(", "(Matrix *)", M, ",", "(Matrix *)", rowChange, ")" ); nullE)
+     when s.1 is rowChange:RawMatrix do toExpr(Ccode( bool, "IM2_MutableMatrix_set_row_change(", "(Matrix *)", M, ",", "(Matrix *)", rowChange, ")" ))
      else WrongArg("a raw matrix")
      else WrongArg("a raw matrix")
      else WrongNumArgs(1,2));
@@ -2039,10 +2088,10 @@ setupfun("rawRowChange",rawRowChange);
 export rawColumnChange(e:Expr):Expr := (
      when e
      is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
-     Expr(Ccode( RawMatrix, "(engine_RawMatrix)", "IM2_MutableMatrix_get_col_change(", "(Matrix *)", M, ")" ))
+     toExpr(Ccode( RawMatrixOrNull, "(engine_RawMatrixOrNull)", "IM2_MutableMatrix_get_col_change(", "(Matrix *)", M, ")" ))
      is s:Sequence do
      when s.0 is M:RawMatrix do if !isMutable(M) then WrongArg("a mutable raw matrix") else
-     when s.1 is colChange:RawMatrix do ( Ccode( void, "IM2_MutableMatrix_set_col_change(", "(Matrix *)", M, ",", "(Matrix *)", colChange, ")" ); nullE)
+     when s.1 is colChange:RawMatrix do toExpr( Ccode( bool, "IM2_MutableMatrix_set_col_change(", "(Matrix *)", M, ",", "(Matrix *)", colChange, ")" ))
      else WrongArg("a raw matrix")
      else WrongArg("a raw matrix")
      else WrongNumArgs(1,2));
