@@ -164,6 +164,30 @@ listForm(MonoidElement) := (m) -> (
      M := class m;
      convert(M.listForm, sendgg(ggPush m, ggtonet)))
 
+MonoidElement _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (baseName x)_M
+
+Symbol _ GeneralOrderedMonoid := 
+IndexedVariable _ GeneralOrderedMonoid := MonoidElement => (x,M) -> (
+     if M.?generatorsTable and M.generatorsTable#?x then M.generatorsTable#x
+     else error "symbol not found in monoid"
+     )
+
+Symbol _ Ring := 
+IndexedVariable _ Ring := RingElement => (x,M) -> (
+     if M.?generatorsTable and M.generatorsTable#?x then M.generatorsTable#x
+     else error "symbol not found in monoid"
+     )
+
+QQ _ Ring :=
+RingElement _ Ring := RingElement => (x,R) -> (
+     if ring x === R then x
+     else try x * 1_R
+     else try (baseName x)_R
+     ---- we might enable the line below if map(R,S) would insist on finding every variable
+     -- else try (map(R,ring x)) x
+     else error "failed to interpret ring element in ring"
+     )
+
 makeit1 := (options) -> (
      M := new (
 	  if options.Inverses then GeneralOrderedGroup else GeneralOrderedMonoid 
@@ -269,6 +293,7 @@ makeit1 := (options) -> (
      w = apply(w, x -> apply(makeSparse x, (k,v) -> (k + n, v)));
      if #w =!= #varlist then error "expected same number of degrees as variables";
      M.vars = M.generators = apply(# varlist, i -> new M from join( {(i,1)}, w#i));
+     M.generatorsTable = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
      toString M := toExternalString M := x -> toString expression x;

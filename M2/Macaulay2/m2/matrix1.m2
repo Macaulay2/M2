@@ -401,8 +401,18 @@ Matrix ** Matrix := Matrix => (f,g) -> (
      h := getMatrix R;
      map(target f ** target g, source f ** source g, h, Degree => degree f + degree g))
 
+Matrix ** ZZ := 
+Matrix ** QQ := 
 Matrix ** RingElement := (f,r) -> f ** matrix {{r}}
+
+ZZ ** Matrix := 
+QQ ** Matrix := 
 RingElement ** Matrix := (r,f) -> matrix {{r}} ** f
+
+QQ ** RingElement := 
+ZZ ** RingElement := 
+RingElement ** QQ := 
+RingElement ** ZZ := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
 Matrix.AfterPrint = 

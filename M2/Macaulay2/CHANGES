@@ -3,6 +3,9 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+x_R will produce the element of R named x, if x is a symbol, or an indexed
+variable, or even a generator of some other ring.
+
 'presentation' of a quotient ring will now give the original generators of
 the ideal, rather than the generators of a Groebner basis of the ideal.
 
