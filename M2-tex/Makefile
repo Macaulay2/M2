@@ -1,10 +1,10 @@
-NAME := TEMPLATE
+NAME := issac2002
 
 EPS  := $(wildcard *.eps *.mps)
 EPSU := $(EPSU:.eps=.epsu)
 EPSU := $(wildcard *.eps)
 
-all : process merge $(NAME)-m2.dvi
+all : process merge $(NAME)-m2.pdf
 dvi : $(NAME)-m2.dvi $(EPSU)
 pdf : $(NAME)-m2.pdf
 ps  : $(NAME)-m2.ps
@@ -57,8 +57,9 @@ bak : $(NAME).tgz
 %.ps : %.dvi
 	dvips $(DVIPSFLAGS) $< $(OUTPUT_OPTION)
 	rm -f body.tmp head.tmp
-%.pdf : %.ps
-	ps2pdf $<
+%.pdf : %.dvi
+	dvipdfm $<
+
 clean :
 	rm -f   *.dvi *.numtex *.log *.xyc *.aux *.nums *.blg *.tmp *.bbl \
 		*.ps *.pdf *.bux *.old *.out *-m2.tex $(NAME).m2 merge process
