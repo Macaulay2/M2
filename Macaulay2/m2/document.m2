@@ -15,28 +15,6 @@ between = (m,v) -> mingle(v,#v-1:m)
 
 -----------------------------------------------------------------------------
 
--- The documentation is stored both in a hash table in memory, and in a 
--- database file.  Combined, the two look like a single hash table, but
--- the 'phase' variable controls whether entries stored in it persist
--- to the next session.
-
--- Here's the way keys are used in the hash table Documentation:
-
---     (method, type, ...)      --> { returntype, function, documentation, ... }
---     thing	      	   	--> "nameofthing" (redirection)
---     thing	      	   	--> a symbol (redirection)
---     "nodename"               --> SEQ { documentation, ... }
---     	    	      	   	      or
---     	    	      	   	    a data base (redirection)
-
--- If the value stored is a string, then it is intended that that
--- string can be used in printing as the name of the thing, and
--- as a key when looking up the documentation further.
-
--- If the value stored is a symbol, then it is intended that that the
--- name of the symbol can be used in printing or as a key, provided
--- the value of the symbol is still equal to the thing.
-
 ExampleHashTable := new MutableHashTable
 DocDatabase := null
 docExtension := () -> (
@@ -570,6 +548,41 @@ document { quote printExamples,
      PARA,
      EXAMPLE "printExamples partition",
      SEEALSO ("examples", "document")
+     }
+
+document { quote Documentation,
+     TT "Documentation", " -- a hash table which is used to store
+     pointers to documentation of functions, symbols, and methods.",
+     PARA,
+     "This hash table is used by the routines that display 
+     documentation, and its format may change.",
+     PARA,
+     "The documentation is stored both in a hash table in memory, and in a 
+     database file.  Combined, the two look like a single hash table, but
+     the ", TO "phase", " variable controls whether entries stored in it 
+     persist to the next session.",
+     PARA,
+     "The key may be anything, and if the value is a string, then
+     that string is taken to be the name of the thing, (which can be used for
+     when printing the thing).  The search for documentation continues 
+     with the name.",
+     PARA,
+     "The key may be anything, and if the value is a symbol, then
+     the symbol is one whose value is the thing, (which can be used for
+     when printing the thing), and the search for 
+     documentation continues with the symbol.",
+     PARA,
+     "The key may be a string.  If the value is a database, then the
+     documentation is to be found there.  If the value is a list of
+     type ", TO "SEQ", " then it's the documentation itself.",
+     PARA,
+     "The key may be a sequence such as ", TT "(quote +,X,Y)", "
+     which is used to access the documentation installed when the method
+     for adding an instance of class X to an instance of class Y was
+     defined.  In this case the value is the list presented at that time,
+     i.e., a list of the form ", TT "{Z, (x,y) -> ... , documentation ... }",
+     ".",
+     SEEALSO ":="
      }
 
 TEST ///

@@ -72,15 +72,6 @@ SCC1 := ../c/scc1
 ############################## flags
 CC       := gcc
 
-DEBUGFLAGS := 
-# DEBUGFLAGS := -DMEM_DEBUG
-
-STRIPFLAG :=
-STRIPFLAG := -s
-
-STRIPCMD := :
-STRIPCMD := strip
-
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
 
@@ -96,7 +87,7 @@ CCFLAGS  := -O3 -g
 CFLAGS   := $(CCFLAGS) $(WARNINGS)
 CXXFLAGS := $(CFLAGS)
 LOADLIBES:= 
-LDFLAGS  := -L${LIBDIR} $(STRIPFLAG) #-pg
+LDFLAGS  := -L${LIBDIR} $(STRIPFLAG) $(DEBUGFLAGS)
 #################################
 
 ifdef includeX11

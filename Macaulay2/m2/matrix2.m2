@@ -115,20 +115,25 @@ document { quote modulo,
      taken to be zero."
      }
 
-Matrix // Matrix := (f,g) -> (
-     -- if ring g =!= ring f then error "expected maps over the same ring";
-     M := target f;
-     if M != target g then error "expected maps with the same target";
-     L := source f;
-     N := source g;
-     f = matrix f;
-     g = matrix g;
-     map(N, L, f //
-     	  if M.?relations 
-     	  then gb(g | presentation M, 
-	       ChangeMatrix => true, SyzygyRows => rank source g)
-     	  else gb(g,
-	       ChangeMatrix => true)))
+Matrix // Matrix := { Matrix, 
+     (f,g) -> (
+	  -- if ring g =!= ring f then error "expected maps over the same ring";
+	  M := target f;
+	  if M != target g then error "expected maps with the same target";
+	  L := source f;
+	  N := source g;
+	  f = matrix f;
+	  g = matrix g;
+	  map(N, L, f //
+	       if M.?relations 
+	       then gb(g | presentation M, 
+		    ChangeMatrix => true, SyzygyRows => rank source g)
+	       else gb(g,
+		    ChangeMatrix => true))),
+     TT "f//g", " -- yields a matrix h from matrices f and g such that f - g*h 
+     is the reduction of f modulo a Groebner basis for the image of g.",
+     SEEALSO "%"
+     } 
 
 TEST "
 R = ZZ/101[a..d]
@@ -148,7 +153,14 @@ assert not isWellDefined map(R^1,cokernel matrix {{a}})
 RingElement // Matrix := (r,f) -> (r * id_(target f)) // f
 ZZ           // Matrix := (r,f) -> promote(r,ring f) // f
 
-Matrix // RingElement := (f,r) -> f // (r * id_(target f))
+Matrix // RingElement := { Matrix,
+     (f,r) -> f // (r * id_(target f)),
+     TT "f//r", " -- yields a matrix h from a matrix f and a ring element r
+     such that f - r*h is the reduction of f modulo a Groebner basis 
+     for the image of r times the identity matrix.",
+     SEEALSO "%"
+     } 
+
 Matrix // ZZ           := (f,r) -> f // promote(r,ring f)
 
 Matrix % Matrix := {

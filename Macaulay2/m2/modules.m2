@@ -27,8 +27,8 @@ document { quote vector,
      }
 
 -----------------------------------------------------------------------------
-BasicModule = new Type of Type
-Module = new Type of BasicModule
+-- BasicModule = new Type of Type
+Module = new Type of Type
 document { quote Module,
      TT "Module", " -- the class of all modules which are handled
      by the ", TO "engine", ".",
@@ -62,7 +62,6 @@ document { quote Module,
      MENU {
 	  TO "==",
 	  TO "M_i",
-	  (TO "Module + Module", " -- the sum of submodules I, J"),
 	  ("M ", TO "++", "N -- direct sum"),
 	  ("M ", TO "**", "N -- tensor product"),
 	  ("M ", TO ":", "N -- the submodule quotient M : N"),

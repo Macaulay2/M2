@@ -66,7 +66,7 @@ document { quote resolution,
      SEEALSO "ChainComplex"
      }
 
--- documentOption { resolution, quote HardLengthLimit,
+-- documentOption { quote HardLengthLimit,
 --      TT "HardLengthLimit", " -- a keyword for an optional argument used
 --      with ", TO "resolution", " which indicates that those parts of the
 --      computation in higher degree than this should be discarded (i.e.
@@ -90,29 +90,39 @@ documentOption { resolution, quote LengthLimit,
      The extra differential is not guaranteed to be minimal."
      }
 
+documentOption { resolution, quote HardDegreeLimit,
+     TT "HardDegreeLimit", " -- keyword for an optional argument used with
+     ", TO "resolution", ".",
+     PARA,
+     "The default value is ", TT "{}", ".",
+     PARA,
+     "Information above the specified degree is discarded."
+     }
+
 documentOption { resolution, quote Algorithm,
      TT "Algorithm => n", " -- an option for ", TO "resolution", " which specifies
      which algorithm to use.  Algorithms are specified by number and the
      algorithms available are",
      MENU {
-	  ("0", " -- The default algorithm, which is to compute syzygies on the Groebner bases 
-	       of each syzygy module.  The algorithm uses important speedups due to
-	       R. Lascala.  This algorithm appears to be on the average the fastest."),
-	  ("1", " -- An older version of algorithm 0, which doesn't allow as much
-	       experimentation, but can sometimes be marginally faster."),
-	  ("2", " -- Compute syzygies on the minimal generators of each matrix in the
-	       resolution."),
-	  ("3", " -- Same as algorithm 2, but compute those Hilbert functions which allow
-	       removal of s-pairs (a la Robbiano et al.  Sometimes this improvement can 
-	       be very dramatic.")
+	  ("0", " -- The default algorithm, which is to compute syzygies on 
+	       the Groebner bases of each syzygy module.  The algorithm uses 
+	       important speedups due to R. Lascala.  This algorithm appears 
+	       to be on the average the fastest."),
+	  ("1", " -- An older version of algorithm 0, which doesn't allow as 
+	       much experimentation, but can sometimes be marginally faster."),
+	  ("2", " -- Compute syzygies on the minimal generators of each 
+	       matrix in the resolution."),
+	  ("3", " -- Same as algorithm 2, but compute those Hilbert functions 
+	       which allow removal of s-pairs (a la Robbiano, et al.).  
+	       Sometimes this improvement can be very dramatic.")
 	  },
-     "All algorithms use induced monomial orders (Schreyer orders), since this makes an
-     enormous improvement to the efficiency of the algorithm."
+     "All algorithms use induced monomial orders (Schreyer orders), since 
+     this makes an enormous improvement to the efficiency of the algorithm."
      }
 
 documentOption { resolution, quote SortStrategy,
-     TT "SortStrategy => n", " -- an option for ", TO "resolution", " which specifies
-     the strategy to be used for sorting S-pairs.",
+     TT "SortStrategy => n", " -- an option for ", TO "resolution", " which 
+     specifies the strategy to be used for sorting S-pairs.",
      PARA,
      "Not implemented yet."
      }

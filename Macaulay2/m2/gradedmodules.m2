@@ -249,12 +249,12 @@ GradedModuleMap * GradedModuleMap := (g,f) -> (
      scan(union(spots f, apply(spots g, i -> i - f.degree)),
 	  i -> h#i = g_(i+f.degree) * f_i);
      h)
-GradedModule ** BasicModule := (C,M) -> (
+GradedModule ** Module := (C,M) -> (
      D := new GradedModule;
      D.ring = C.ring;
      scan(spots C, i -> D#i = C#i ** M);
      D)
-BasicModule ** GradedModule := (M,C) -> (
+Module ** GradedModule := (M,C) -> (
      D := new GradedModule;
      D.ring = C.ring;
      scan(spots C, i -> D#i = M ** C#i);
@@ -276,7 +276,7 @@ gradedModule Sequence := gradedModule List := modules -> (
 	       C#i = M;
 	       ));
      C)
-gradedModule BasicModule := M -> gradedModule seq M
+gradedModule Module := M -> gradedModule seq M
 
 GradedModule ++ GradedModule := (C,D) -> (
      E := new GradedModule;
@@ -286,8 +286,8 @@ GradedModule ++ GradedModule := (C,D) -> (
      E.components = {C,D};
      E)
 
-GradedModule ++ BasicModule := (C,M) -> C ++ gradedModule M
-BasicModule ++ GradedModule := (M,C) -> gradedModule M ++ C
+GradedModule ++ Module := (C,M) -> C ++ gradedModule M
+Module ++ GradedModule := (M,C) -> gradedModule M ++ C
 
 components GradedModule := C -> if C.?components then C.components else {C}
 

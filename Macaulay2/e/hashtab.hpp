@@ -1,6 +1,8 @@
 // (c) 1994  Michael E. Stillman
 
 #include "style.hpp"
+#include <stdio.h>
+
 typedef unsigned long compint;
 
 template<class T> class hashtable;
@@ -17,6 +19,9 @@ class hashtable
        compint key;
        bool occupied;
        } *bin;
+  inline compint hashup(compint i, unsigned int size) {
+       return (i ^ (i >> 8)) & (size - 1);
+       }
   unsigned int size;		// always a power of 2
   void enlarge() {
        unsigned int newsize = 2 * size;
@@ -26,7 +31,7 @@ class hashtable
 	    if (!bin[j].occupied) continue;
 	    compint key = bin[j].key;
 	    unsigned int i;
-	    for (i = key & (newsize - 1); newbin[i].occupied; i>0 ? i-- : i=newsize-1) ;
+	    for (i = hashup(key,newsize); newbin[i].occupied; i>0 ? i-- : i=newsize-1) ;
 	    newbin[i].elem = bin[j].elem;
 	    newbin[i].key = key;
      	    newbin[i].occupied = true;
@@ -50,11 +55,11 @@ public:
   void insert(T &elem, compint key) {
        used ++;
        if (used > maxused) maxused = used;
-       if (used * 5 > size * 4) enlarge();
+       if (used * 4 > size * 3) enlarge();
        unsigned int i;
-       for (i = key & (size - 1); bin[i].occupied; i>0 ? i-- : i=size-1) {
+       for (i = hashup(key,size); bin[i].occupied; i>0 ? i-- : i=size-1) {
 	    if (bin[i].key == key) {
-		 ERROR("duplicate key encountered - internal error");
+		 fprintf(stderr,"duplicate key encountered - internal error\n");
 		 exit(1);
 		 }
 	    }
@@ -64,7 +69,7 @@ public:
        }
   bool search(T &elem, compint key) {
        unsigned int i;
-       for (i = key & (size - 1); bin[i].occupied; i>0 ? i-- : i=size-1) {
+       for (i = hashup(key,size); bin[i].occupied; i>0 ? i-- : i=size-1) {
 	    if (bin[i].key == key) {
 		 elem = bin[i].elem;
 		 return true;
@@ -73,7 +78,7 @@ public:
        return false;
        }
   void remove(T &elem, compint key) {
-       for (unsigned int i = key & (size - 1); bin[i].occupied; i>0 ? i-- : i=size-1) {
+       for (unsigned int i = hashup(key,size); bin[i].occupied; i>0 ? i-- : i=size-1) {
 	    if (bin[i].key == key) {
 		 used --;
 		 bin[i].occupied = false;
@@ -81,21 +86,39 @@ public:
 		 bin[i].elem = trivial_elem;
 		 bin[i].key = 0;
        		 for (unsigned int j = i > 0 ? i-1 : size-1; bin[j].occupied; j>0 ? j-- : j=size-1) {
-		      for (unsigned int k = bin[j].key & (size - 1); k!=j ; k>0 ? k-- : k=size-1) {
-			   if (!bin[k].occupied) {
-				bin[k] = bin[j];
-				bin[j].occupied = false;
-				bin[j].elem = trivial_elem;
-				bin[j].key = 0;
-				}
+		      unsigned int k = hashup(bin[j].key,size);
+		      if ( j<i && (k>=i || k<j) ||
+			   j>i && (k>=i && k<j)) 
+		      {
+			   struct ENTRY tmp = bin[i]; // it's empty!
+			   bin[i] = bin[j];
+			   bin[j] = tmp;
+			   i = j;
 			   }
 		      }
 		 return;
 		 }
 	    }
-       ERROR("key not found in hash table -- internal error");
+       fprintf(stderr,"key not found in hash table -- internal error\n");
        exit(1);
        }
+  void showshape() {
+    fprintf(stderr, "used = %d\n", used);
+    fprintf(stderr, "size = %d\n", size);
+    unsigned int i;
+    for (i=0; i<size; i++) {
+	 unsigned int n = 0;
+	 for(; i<size && n<80; i++, n++) putchar(bin[i].occupied ? '*' : '.');
+	 putchar('\n');
+      }
+    for (i=0; i<size; i++) if (bin[i].occupied) {
+      fprintf(stderr," i=%08x", i);
+      fprintf(stderr," key=%08lx", bin[i].key);
+      fprintf(stderr," hashup=%08lx", hashup(bin[i].key,size));
+      fprintf(stderr," distance=%d", (int)((hashup(bin[i].key,size)-i)&(size-1)));
+      putchar('\n');
+      }
+    }
   };
 
 template<class T>

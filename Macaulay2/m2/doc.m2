@@ -605,13 +605,6 @@ document { quote +,
      SEEALSO( "plus", "sum" )
      }
 
-document { "List + List",
-     TT "v + w", " -- sum of two lists treated as vectors",
-     PARA,
-     "The lists should be the same length.",
-     SEEALSO "+"
-     }
-
 document { "Set + Set",
      TT "s + t", " -- union of two sets",
      PARA,
@@ -668,19 +661,6 @@ document { quote //,
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", "."
      }
-
-document { "Matrix // Matrix",
-     TT "f//g", " -- yields a matrix h from matrices f and g such that f - g*h 
-     is the reduction of f modulo a Groebner basis for the image of g.",
-     SEEALSO "%"
-     } 
-
-document { "Matrix // RingElement",
-     TT "f//r", " -- yields a matrix h from a matrix f and a ring element r
-     such that f - r*h is the reduction of f modulo a Groebner basis 
-     for the image of r times the identity matrix.",
-     SEEALSO "%"
-     } 
 
 document { quote ^,
      TT "x ^ y", " -- a binary operator used for powers and raising nets.",
@@ -928,18 +908,6 @@ document { quote **,
      class of ", TT "y", "."
      }
 
-document { "Monoid ** Monoid",
-     TT "M ** N", " -- tensor product of monoids.",
-     PARA,
-     "For complete documentation, see ", TO "tensor", "."
-     }
-
-document { "Ring ** Ring",
-     TT "R ** S", " -- tensor product of rings.",
-     PARA,
-     "For complete documentation, see ", TO "tensor", "."
-     }
-
 document { "Set ** Set",
      TT "X ** Y", " -- form the Cartesian product of two sets.",
      PARA,
@@ -1155,10 +1123,6 @@ document { quote <<,
      class of ", TT "y", "."
      }
 
-document { "Nothing << Thing",
-     "null << x", " -- does nothing and returns ", TT "null", ".",
-     }
-
 document { "ZZ << ZZ",
      TT "i << j", " -- shifts the bits in the integer i leftward j places.",
      PARA,
@@ -1171,19 +1135,6 @@ document { "ZZ >> ZZ",
      PARA,
      EXAMPLE "256 >> 5",
      SEEALSO "<<"
-     }
-     
-document { "File << Thing",
-     TT "f << x", " -- prints the expression x on the output file f.",
-     PARA,
-     "Returns f as its value.  Parsing associates leftward, so that 
-     several expressions may be displayed with something like f<<x<<y<<z.
-     If f is a string, then a new file with name f is created,
-     the expression x is printed into f, and the file f is closed.",
-     PARA,
-     EXAMPLE "x = 5",
-     EXAMPLE "stdout << \"the value of x is \" << x << endl",
-     SEEALSO ("<<")
      }
 
 document { "String << Thing",
@@ -1782,11 +1733,11 @@ document { "tutorials",
      ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
      MENU {
           TO "Tutorial:Elementary uses of Groebner bases",
-          TO "Tutorial:Binomial Ideals",
+          -- TO "Tutorial:Binomial Ideals",
 	  TO "Tutorial:Canonical Embeddings of Plane Curves and Gonality",
 	  TO "Tutorial:Fano varieties",
 	  TO "Tutorial:Divisors",
-	  TO "Tutorial:Homological Algebra"
+	  TO "Tutorial:Homological Algebra 2"
 --	  TO "Tutorial:Multi-gradings",
 --	  TO "Tutorial:Rational Normal Scrolls",
 --	  TO "Example:Enriques surface"
@@ -2365,7 +2316,7 @@ document { "mathematics",
 	  TO "Ideal",
 	  TO "Module",
 	  TO "Matrix",
-	  TO "AbstractFreeModule",
+	  -- TO "AbstractFreeModule",
 	  TO "GradedModule",
 	  TO "ChainComplex",
 	  TO "GroebnerBasis",
@@ -3953,6 +3904,14 @@ document { quote profile,
 document { quote profileSummary,
      TT "profileSummary", " -- a command which will display the data
      accumulated by running functions produced with ", TO "profile", "."
+     }
+
+Nothing << Thing := { Nothing,
+     (x,y) -> null
+     "null << x", " -- does nothing and returns ", TT "null", ".",
+     PARA,
+     "The intention here is that you can use ", TT "null", " as a dummy
+     output file."
      }
 
 -- these files are made at compile time

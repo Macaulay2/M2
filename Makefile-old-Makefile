@@ -33,7 +33,7 @@ clean::; rm -f core
 ################################ GC
 GC: gc lib/libgc.a include/gc.h include/gc_cpp.h
 # GC_CFLAGS = -DNO_SIGNALS -g -O -DALL_INTERIOR_POINTERS -DGC_DEBUG
-GC_CFLAGS = -DNO_SIGNALS -g -O -DNO_DEBUGGING -DSILENT -DALL_INTERIOR_POINTERS
+GC_CFLAGS = -DNO_SIGNALS -g -O -DNO_DEBUGGING -DSILENT -DALL_INTERIOR_POINTERS $(DEBUGFLAGS)
 lib/libgc.a: 	  gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
 include/gc.h:	  gc/gc.h include/.exists;	cp $< $@
 include/gc_cpp.h: gc/gc_cpp.h include/.exists;	cp $< $@

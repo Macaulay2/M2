@@ -1,5 +1,8 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+#undef _POSIX_THREAD_SAFE_FUNCTIONS
+#undef _REENTRANT
+
 #define FACTORY 1
 #define MP 1
 
@@ -697,10 +700,25 @@ char **argv;
 #endif
 
      trap();
-     mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
-     initrandom();
      progname = saveargv[0];
      for (p=progname; *p; p++) if (*p=='/') progname = p+1;
+     if (getenv("GC_free_space_divisor")) {
+	  GC_free_space_divisor = atoi(getenv("GC_free_space_divisor"));
+	  if (GC_free_space_divisor <= 0) {
+	       fprintf(stderr, "%s: non-positive GC_free_space_divisor value, %ld\n", 
+		    progname, GC_free_space_divisor);
+	       exit (1);
+	       }
+	  }
+     if (getenv("GC_enable_incremental") && atoi(getenv("GC_enable_incremental"))==1) {
+	  GC_enable_incremental();
+	  fprintf(stderr,"GC_enable_incremental()\n");
+	  }
+     if (getenv("GC_expand_hp")) {
+	  GC_expand_hp(atoi(getenv("GC_expand_hp")));
+	  }
+     mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
+     initrandom();
      system_newline = tostring(newline);
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);
@@ -732,6 +750,8 @@ char **argv;
      abort_jump_set = TRUE;
      interp_process();
      clean_up();
+     fprintf(stderr,"heap size = %d, divisor = %ld, collections = %ld\n", 
+	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no);
      exit(system_returncode);
      }
 
@@ -953,7 +973,7 @@ M2_string host,serv;
 M2_string system_syserrmsg()
 {
      extern int errno, sys_nerr;
-     extern char *sys_errlist[];
+     extern char * sys_errlist[];
      return (
 	  errno == 0 && errno < sys_nerr 
 	  ? tostring("") 

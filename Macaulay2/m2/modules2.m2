@@ -19,36 +19,36 @@ Module + Module := {Module, (M,N) -> (
      "The two modules should be submodules of the same module."
      }
 
-Module ** Module := (M,N) -> (
-     if M.?generators and not isFreeModule N
-     or N.?generators and not isFreeModule M then (
-	  if M.?generators then M = cokernel presentation M;
-	  if N.?generators then N = cokernel presentation N;
-	  );
-     R := ring M;
-     if R =!= ring N then error "expected modules over the same ring";
-     if isFreeModule M then (
-	  if M == R^1 then N
-	  else if isFreeModule N then (
-	       if N == R^1 then M
-	       else (
-	       	    sendgg(ggPush M, ggPush N, ggmult);
-	       	    new Module from R
+Module ** Module := { Module, 
+     (M,N) -> (
+	  if M.?generators and not isFreeModule N
+	  or N.?generators and not isFreeModule M then (
+	       if M.?generators then M = cokernel presentation M;
+	       if N.?generators then N = cokernel presentation N;
+	       );
+	  R := ring M;
+	  if R =!= ring N then error "expected modules over the same ring";
+	  if isFreeModule M then (
+	       if M == R^1 then N
+	       else if isFreeModule N then (
+		    if N == R^1 then M
+		    else (
+			 sendgg(ggPush M, ggPush N, ggmult);
+			 new Module from R
+			 )
 		    )
-	       )
-	  else subquotient(
-	       if N.?generators then M ** N.generators,
-	       if N.?relations then M ** N.relations))
-     else (
-	  if isFreeModule N then (
-	       if N == R^1 then M
 	       else subquotient(
-	       	    if M.?generators then M.generators ** N,
-	       	    if M.?relations then M.relations ** N))
+		    if N.?generators then M ** N.generators,
+		    if N.?relations then M ** N.relations))
 	  else (
-     	       sendgg(ggPush M.relations, ggPush N.relations, ggmodtensor);
-	       cokernel getMatrix R)))
-document { "Module ** Module",
+	       if isFreeModule N then (
+		    if N == R^1 then M
+		    else subquotient(
+			 if M.?generators then M.generators ** N,
+			 if M.?relations then M.relations ** N))
+	       else (
+		    sendgg(ggPush M.relations, ggPush N.relations, ggmodtensor);
+		    cokernel getMatrix R))),
      TT "M ** N", " -- produce the tensor product of two modules.",
      PARA,
      "Since M and N may be provided as submodules or subquotient modules, it
@@ -79,18 +79,18 @@ document { "Matrix ** Module",
 -----------------------------------------------------------------------------
 -- base change
 -----------------------------------------------------------------------------
-Module ** Ring := (M,R) -> (
-     k := ring M;
-     if k === R then M
-     else (
-	  try promote(1_k, R) else error "can't tensor by this ring";
-     	  if M.?generators then coker presentation M ** R
-	  else if M.?relations then cokernel (M.relations ** R)
-	  else if isQuotientOf(R,k) then R^(- degrees M)
-	  else R^(rank M)
-	  )
-     )
-document { "Module ** Ring",
+Module ** Ring := { Module,
+     (M,R) -> (
+	  k := ring M;
+	  if k === R then M
+	  else (
+	       try promote(1_k, R) else error "can't tensor by this ring";
+	       if M.?generators then coker presentation M ** R
+	       else if M.?relations then cokernel (M.relations ** R)
+	       else if isQuotientOf(R,k) then R^(- degrees M)
+	       else R^(rank M)
+	       )
+	  ),
      TT "M ** R", " -- form the tensor product of a module M with a ring
      R.",
      PARA,
@@ -100,18 +100,18 @@ document { "Module ** Ring",
      EXAMPLE "M ** R[t]"
      }
 
-Matrix ** Ring := (f,R) -> (
-     k := ring source f;
-     if k === R then f
-     else map(
-     	  -- this will be pretty slow
-     	  target f ** R, source f ** R, applyTable(entries f, r -> promote(r,R)),
-     	  Degree => if isQuotientOf(R,k) then degree f else degree 1_R
-     	  )
-     )
-
-document { "Matrix ** Ring",
-     TT "f ** R", " -- form the tensor product of a module map f with a ring R",
+Matrix ** Ring := {
+     Matrix,
+     (f,R) -> (
+	  k := ring source f;
+	  if k === R then f
+	  else map(
+	       -- this will be pretty slow
+	       target f ** R, source f ** R, applyTable(entries f, r -> promote(r,R)),
+	       Degree => if isQuotientOf(R,k) then degree f else degree 1_R
+	       )
+	  ),
+          TT "f ** R", " -- form the tensor product of a module map f with a ring R",
      PARA,
      "The ring of f should be a base ring of R.  The degree of the map is
      preserved.",

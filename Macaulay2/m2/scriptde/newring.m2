@@ -60,6 +60,13 @@ QuotientRing ** PolynomialRing :=
 PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
+Ring ** Ring := { Ring, 
+     ,					  -- no function, just documentation!
+     TT "R ** S", " -- tensor product of rings.",
+     PARA,
+     "For complete documentation, see ", TO "tensor", "."
+     }
+
 tensor(PolynomialRing, PolynomialRing) :=
 tensor(QuotientRing, PolynomialRing) :=
 tensor(PolynomialRing, QuotientRing) :=

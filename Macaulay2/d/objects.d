@@ -701,6 +701,9 @@ installIt(h:HashTable,key:Expr,value:Expr):Expr := (
 		    is CompiledFunctionClosure do (
 			 storeInHashTable(h,key,f);
 		    	 storeInHashTable(Documentation, key, value))
+		    is Nothing do (
+			 -- documentation only
+			 storeInHashTable(Documentation, key, value))
      		    else errorExpr("expected second entry in list to be a function")
 		    )
 	       else errorExpr("expected a list of length at least 2")
@@ -729,6 +732,8 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
 		    is CompiledFunctionClosure do (
 			 storeInHashTable(s,meth,f);
 		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
+		    is Nothing do (
+			 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
      		    else errorExpr("expected second entry in list to be a function"))
 	       else errorExpr("expected a list of length at least 3"))
 	  else errorExpr("expected a list of class List"))

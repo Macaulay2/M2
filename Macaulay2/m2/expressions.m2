@@ -897,7 +897,19 @@ document { quote print,
 
 tex Thing := x -> "$" | tex expression x | "$"
 
-File << Thing := (o,x) -> printString(o,net x)
+File << Thing := { File,
+     (o,x) -> printString(o,net x),
+     TT "f << x", " -- prints the expression x on the output file f.",
+     PARA,
+     "Returns f as its value.  Parsing associates leftward, so that 
+     several expressions may be displayed with something like f<<x<<y<<z.
+     If f is a string, then a new file with name f is created,
+     the expression x is printed into f, and the file f is closed.",
+     PARA,
+     EXAMPLE "x = 5",
+     EXAMPLE "stdout << \"the value of x is \" << x << endl",
+     SEEALSO ("<<")
+     }     
 
 AfterPrint Thing := x -> (
      << endl;				  -- double space
