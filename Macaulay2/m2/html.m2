@@ -229,25 +229,23 @@ TreeNode = new Type of BasicList			    -- first entry is formatted key for this 
 net ForestNode := x -> stack apply(toList x,net)
 net TreeNode := x -> net x#0 || (stack (#x#1 : " |  ")) | net x#1
 
-local visitedNodes
-local foundLoop
+local visitCount
+local externalReferences
+local duplicateReferences
 
 makeNode := x -> (
-     visited := visitedNodes#?x;
-     if visited then (
-	  if not foundLoop then stderr << "warning: loop found in documentation tree" << endl;
-	  foundLoop = true;
-	  );
+     visits := if visitCount#?x then visitCount#x else 0;
+     visitCount#x = visits + 1;
      if linkTable#?x 
      then (
-	  if visited 
-     	  then new TreeNode from { x, new ForestNode from { "-- node visited already --" }  }
+	  if visits > 0
+     	  then new TreeNode from { x | " [" | toString visits | "]" , new ForestNode from { }  }
      	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeNode) }
 	  )
      else (
 	  if externalReferences#?x
-     	  then new TreeNode from { x, new ForestNode from { "-- external node --" } }
-     	  else new TreeNode from { x, new ForestNode from { "-- internal error --" } }
+     	  then new TreeNode from { x | " -- external reference", new ForestNode from { } }
+	  else new TreeNode from { x | " -- internal error", new ForestNode from { } }
 	  )
      )
 
@@ -255,8 +253,7 @@ leaves := () -> keys set flatten values linkTable
 roots := () -> sort keys ( set keys linkTable - set leaves() )
 makeTree := topNode -> (
      -- error "debug this";
-     visitedNodes = new MutableHashTable;
-     foundLoop = false;
+     visitCount = new MutableHashTable;
      linkTable#ROOT = roots();
      makeNode ROOT)
 
@@ -291,11 +288,9 @@ scope2 (String, TO       ) :=
 scope2 (String, TOH      ) := (f,x) -> (
       key := normalizeDocumentTag x#0;
       fkey := formatDocumentTag key;
-      linkTable#f = append(linkTable#f,fkey);
-      follow(key);
-      )
+      linkTable#f = append(linkTable#f,fkey);		    -- linkTable is a graph, not a tree
+      follow(key))
 
-externalReferences := new MutableHashTable
 showExternalReferences = () -> sort keys externalReferences
 local nodesToScope
 follow = key -> (
@@ -319,6 +314,8 @@ assembleTree Package := pkg -> (
      doExamples = false;
      oldpkg := currentPackage;
      currentPackage = pkg;
+     externalReferences = new MutableHashTable;
+     duplicateReferences = new MutableHashTable;
      topNodeName = pkg#"title";
      key := normalizeDocumentTag topNodeName;
      fkey := formatDocumentTag key;			    -- same as topNodeName
