@@ -647,6 +647,15 @@ installPackage Package := opts -> pkg -> (
 		    str();
 		    ));
 
+     	  -- Make sure the processed documentation database exists, even if empty, so when running the examples,
+	  -- M2 doesn't read in all the documentation sources each time.  For the package M2doc this makes a big
+	  -- difference.
+	  dbname := docDir | "documentation.db";
+     	  if not fileExists dbname then (
+	       stderr << "--creating empty database for processed documentation in " << dbname << endl;
+	       close openDatabaseOut dbname;
+	       );
+
 	  -- make example output files, or else copy them from old package directory tree
 	  exampleDir' := oldPackagePrefix|LAYOUT#"packageexamples" pkg#"title";
 	  infn' := fkey -> exampleDir'|toFilename fkey|".m2";
@@ -717,7 +726,6 @@ installPackage Package := opts -> pkg -> (
 		    ));
 
 	  -- cache processed documentation in database
-	  dbname := docDir | "documentation.db";
 	  dbnametmp := dbname | ".tmp";
 	  if fileExists dbnametmp then unlink dbnametmp;
 	  if fileExists dbname then (
