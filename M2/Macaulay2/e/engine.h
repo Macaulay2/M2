@@ -764,14 +764,14 @@ extern "C" {
 
   const MatrixOrNull * IM2_Matrix_mult(const Matrix *M, 
 				       const Matrix *N, 
-				       M2_bool left_mult); /* drg: connected * */
+				       M2_bool opposite_mult); /* drg: connected * */
     /* If the sizes do not match, then NULL is returned.  If they do match,
        the multiplication is performed, and the source and target are taken from N,M
        respectively.  The degree of the result is the sum of the two degrees */
 
   const MatrixOrNull * IM2_Matrix_scalar_mult(const RingElement *f,
 					      const Matrix *M, 
-					      M2_bool left_mult); /* drg: connected * */
+					      M2_bool opposite_mult); /* drg: connected * */
 
   const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms); /* drg: connected rawConcat*/
 
@@ -927,7 +927,7 @@ extern "C" {
 					  int i, 
 					  const RingElement *r, 
 					  int j,
-					  M2_bool left_mult); /* drg: connected rawMatrixRowChange*/
+					  M2_bool opposite_mult); /* drg: connected rawMatrixRowChange*/
   /* row(i) <- row(i) + r * row(j), returns false if matrix is 
      immutable, or rows are out of bounds */
 
@@ -935,21 +935,21 @@ extern "C" {
 					     int i, 
 					     const RingElement *r, 
 					     int j,
-					     M2_bool left_mult); /* drg: connected rawMatrixColChange*/
+					     M2_bool opposite_mult); /* drg: connected rawMatrixColChange*/
   /* column(i) <- column(i) + r * column(j), returns false if matrix is 
      immutable, or columns are out of bounds */
 
   M2_bool IM2_MutableMatrix_row_scale(Matrix *M, 
 				      const RingElement *r, 
 				      int i, 
-				      M2_bool left_mult); /* drg: connected rawMatrixRowScale*/
+				      M2_bool opposite_mult); /* drg: connected rawMatrixRowScale*/
   /* row(i) <- r * row(i), returns false if matrix is immutable
      or row is out of bounds */
 
   M2_bool IM2_MutableMatrix_column_scale(Matrix *M, 
 					 const RingElement *r, 
 					 int i, 
-					 M2_bool left_mult); /* drg: connected rawMatrixColumnScale*/
+					 M2_bool opposite_mult); /* drg: connected rawMatrixColumnScale*/
   /* column(i) <- r * column(i), returns false if matrix is immutable
      or row is out of bounds */
 

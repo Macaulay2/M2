@@ -372,28 +372,28 @@ bool Matrix::interchange_columns(int i, int j)
   return true;
 }
 
-bool Matrix::scale_row(ring_elem r, int i, bool left_mult)
+bool Matrix::scale_row(ring_elem r, int i, bool opposite_mult)
   /* row(i) <- r * row(i) */
 {
   if (is_immutable()) return false;
   if (error_row_bound(i)) return false;
   const Ring *R = get_ring();
   for (int c=0; c<n_cols(); c++)
-    R->mult_row(_entries[c], r, i, left_mult);
+    R->mult_row(_entries[c], r, i, opposite_mult);
   return true;
 }
 
-bool Matrix::scale_column(ring_elem r, int i, bool left_mult)
+bool Matrix::scale_column(ring_elem r, int i, bool opposite_mult)
   /* column(i) <- r * column(i) */
 {
   if (is_immutable()) return false;
   if (error_column_bound(i)) return false;
   const Ring *R = get_ring();
-  R->mult(_entries[i], r, left_mult);
+  R->mult(_entries[i], r, opposite_mult);
   return true;
 }
 
-bool Matrix::row_op(int i, ring_elem r, int j, bool left_mult)
+bool Matrix::row_op(int i, ring_elem r, int j, bool opposite_mult)
   /* row(i) <- row(i) + r * row(j) */
 {
   if (is_immutable()) return false;
@@ -402,12 +402,12 @@ bool Matrix::row_op(int i, ring_elem r, int j, bool left_mult)
   const Ring *R = get_ring();
 
   for (int c=0; c<n_cols(); c++)
-    R->vec_row_op(_entries[c], i, r, j, left_mult);
+    R->vec_row_op(_entries[c], i, r, j, opposite_mult);
 
   return true;
 }
 
-bool Matrix::column_op(int i, ring_elem r, int j, bool left_mult)
+bool Matrix::column_op(int i, ring_elem r, int j, bool opposite_mult)
   /* column(i) <- column(i) + r * column(j) */
 {
   if (is_immutable()) return false;
@@ -416,7 +416,7 @@ bool Matrix::column_op(int i, ring_elem r, int j, bool left_mult)
   const Ring *R = get_ring();
 
   vec tmp = R->copy(_entries[j]);
-  R->mult(tmp, r, left_mult); // replaces tmp by r*tmp or tmp*r
+  R->mult(tmp, r, opposite_mult); // replaces tmp by r*tmp or tmp*r
   R->add(_entries[i], tmp);
 
   return true;
@@ -676,7 +676,7 @@ Matrix *Matrix::transpose() const
   return result;
 }
 
-Matrix *Matrix::scalar_mult(const ring_elem r, bool left_mult) const
+Matrix *Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
 {
   const Ring *R = get_ring();
   int *deg = degree_monoid()->make_one();
@@ -687,7 +687,7 @@ Matrix *Matrix::scalar_mult(const ring_elem r, bool left_mult) const
   for (int i=0; i<n_cols(); i++)
     {
       vec w = R->copy(elem(i));
-      R->mult(w,r,left_mult);
+      R->mult(w,r,opposite_mult);
       (*result)[i] = w;
     }
   return result;
@@ -758,7 +758,7 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
   return result;
 }
 
-Matrix *Matrix::mult(const Matrix *m, bool left_mult) const
+Matrix *Matrix::mult(const Matrix *m, bool opposite_mult) const
 {
   const Ring *R = get_ring();
   if (R != m->get_ring())
@@ -779,7 +779,7 @@ Matrix *Matrix::mult(const Matrix *m, bool left_mult) const
   degree_monoid()->remove(deg);
 
   for (int i=0; i<m->n_cols(); i++)
-    (*result)[i] = R->mult_vec_matrix(this, elem(i), left_mult);
+    (*result)[i] = R->mult_vec_matrix(this, elem(i), opposite_mult);
   return result;
 }
 

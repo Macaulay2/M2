@@ -133,16 +133,16 @@ public:
   bool interchange_columns(int i, int j);
   /* swap columns: column(i) <--> column(j) */
 
-  bool scale_row(ring_elem r, int i, bool left_mult);
+  bool scale_row(ring_elem r, int i, bool opposite_mult);
   /* row(i) <- r * row(i) */
 
-  bool scale_column(ring_elem r, int i, bool left_mult);
+  bool scale_column(ring_elem r, int i, bool opposite_mult);
   /* column(i) <- r * column(i) */
 
-  bool row_op(int i, ring_elem r, int j, bool left_mult);
+  bool row_op(int i, ring_elem r, int j, bool opposite_mult);
   /* row(i) <- row(i) + r * row(j) */
 
-  bool column_op(int i, ring_elem r, int j, bool left_mult);
+  bool column_op(int i, ring_elem r, int j, bool opposite_mult);
   /* column(i) <- column(i) + r * column(j) */
 
   ///////////////////////////////////////////
@@ -163,8 +163,8 @@ public:
   Matrix *operator+(const Matrix &m) const;
   Matrix *operator-() const;
   Matrix *operator-(const Matrix &m) const;
-  Matrix *scalar_mult(const ring_elem r, bool left_mult) const;
-  Matrix *mult(const Matrix *m, bool left_mult) const;
+  Matrix *scalar_mult(const ring_elem r, bool opposite_mult) const;
+  Matrix *mult(const Matrix *m, bool opposite_mult) const;
   Matrix *operator*(const ring_elem r) const;
   Matrix *operator*(const Matrix &r) const;
   Matrix *concat(const Matrix &m) const;
