@@ -40,12 +40,3 @@ setHomSwitch(Boolean) := Boolean => s -> (
      HOMOGENIZATION = s; 
      t) 
 getHomSwitch = ()->HOMOGENIZATION
-
-
-
-
-
-
-
-
-
