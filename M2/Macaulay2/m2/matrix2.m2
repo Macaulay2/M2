@@ -25,10 +25,10 @@ trim QuotientRing := options -> (R) -> (
      A := ring f;
      A/(trim(ideal f,options)))
 trim Module := Module => options -> (M) -> if M.?trim then M.trim else M.trim = (
-     if isFreeModule M or not isHomogeneous M
+     if isFreeModule M -- or not isHomogeneous M
      then M
      else (
-          -- this used to help sometimes, even if M is *not* homogeneous
+          -- this helps sometimes, even if M is *not* homogeneous : see test/trim.m2 and figure it out
 	  g := mingens(M,options);
 	  relns := if M.?relations then mingens(image M.relations,options);
 	  N := (
