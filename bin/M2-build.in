@@ -1,0 +1,15 @@
+#! /bin/sh
+# This version of the M2 script is useful while the program is being built.
+# In the case where DUMPDATA=no, it's able to find all the *.m2 files 
+# needed, even though they are scattered between locations in the source
+# directory tree and the build directory tree.
+M2HOME="`dirname $0`/../Macaulay2"
+export M2HOME
+EXE="$M2HOME/libexec/Macaulay2"
+DATA="$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
+SETUP="$M2HOME/m2/setup.m2"
+M2PATH="-e path = { \"@srcdir@/../Macaulay2/m2/\", \"$M2HOME/m2/\" }"
+if [ -f "$DATA" ]
+then exec "$EXE" "-e loaddata \"$DATA\"" -- "-e runStartFunctions()" "$@"
+else exec "$EXE" "$M2PATH" -ephase=1 "$SETUP" -ephase=0 "-e runStartFunctions()" "$@"
+fi
