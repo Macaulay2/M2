@@ -147,20 +147,20 @@ endif
 
 ifndef SHAREDLIBS
 LDFLAGS += -static
-endif
-
 ifeq ($(OS),Linux)
-
 # this is for gc somehow, see the end of gc/config.h
 LDFLAGS += -Wl,-defsym,_DYNAMIC=0
+endif
+endif
 
+ifdef SHAREDLIBS
 # This next bit is really needed only for gnu libc6 (glibc-2.0.6)
 # Without it, it does dynamic linking at run time and breaks our dumpdata scheme
 # Don't link statically, so that these libraries actually get loaded at run time.
 # If we must link statically, we should find out how to link all members.
-# LDLIBS += -lnss_compat -lnss_db -lnss_dns -lnss_nis
-
+LDLIBS += -lnss_compat -lnss_db -lnss_dns -lnss_nis
 endif
+
 
 #ifeq ($(OS),Linux)
 #LDLIBS += -lieee
