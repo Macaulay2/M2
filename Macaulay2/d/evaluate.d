@@ -1079,10 +1079,9 @@ breakFun(a:Code):Expr := (
      when e is Error do e else Expr(Error(dummyPosition,breakMessage,dummyCodeClosureList,e,false)));
 setupop(breakS,breakFun);
 
-export toExpr(p:Position):Expr := list(Sequence(Expr(p.filename),Expr(toInteger(int(p.line))),Expr(toInteger(int(p.column))),Expr(toInteger(int(p.loadDepth)))));
-
-codePositionFun(a:Code):Expr := toExpr(codePosition(a));
-setupop(codePositionS,codePositionFun);
+-- export toExpr(p:Position):Expr := list(Sequence(Expr(p.filename),Expr(toInteger(int(p.line))),Expr(toInteger(int(p.column))),Expr(toInteger(int(p.loadDepth)))));
+-- codePositionFun(a:Code):Expr := toExpr(codePosition(a));
+-- setupop(codePositionS,codePositionFun);
 
 assigntofun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
