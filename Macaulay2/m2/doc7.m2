@@ -537,7 +537,7 @@ document {
      }
 document {
      Key => (map,Module,Module,Function),
-     Headline => "create a matrix by specifying each entry",
+     Headline => "create a matrix by specifying a function which gives each entry",
      Usage => "map(M,N,f)",
      Inputs => {
 	  "M" => null,
@@ -550,9 +550,16 @@ document {
 	       function ", TT "f", " by evaluating ", TT "f(i,j)", "."
 	       }
 	  },
+     "Recall that all indices in Macaulay 2 start at 0, so the upper left-most entry 
+     of a matrix ", TT "f", " is ", TT "f_(0,0)", ".",
+     PARA,
+     "This function is often used when you already know the source and target modules, 
+     including their gradings.  If you wish Macaulay 2 to compute the column degrees for
+     you (so the resulting matrix will be homogeneous if possible), use ", 
+     TO (map,Module,ZZ,Function), ".",
      EXAMPLE {
 	  "R = ZZ[a..c];",
-	  "f = map(R^3,R^{0,-1,-2},(i,j) -> R_i^j)",
+	  "f = map(R^3,R^{0,-1,-2,-3},(i,j) -> R_i^j)",
 	  },
      "We specified the degrees of the source basis elements explicitly
      to ensure the matrix would be homogeneous.",
@@ -561,7 +568,7 @@ document {
      "We could have let Macaulay2 take care of that for us, by replacing
      the source module by its desired rank.",
      EXAMPLE {
-	  "g = map(R^3,3,(i,j) -> R_i^j)",
+	  "g = map(R^3,4,(i,j) -> R_i^j)",
 	  "degrees g",
 	  "isHomogeneous g"
 	  },
@@ -569,7 +576,7 @@ document {
      "Another way would be to let ", TO "matrix", " take care of that for
      us.",
      EXAMPLE {
-	  "h = matrix table(3,3,(i,j) -> R_i^j)",
+	  "h = matrix table(3,4,(i,j) -> R_i^j)",
 	  "degrees h",
 	  "isHomogeneous h"
 	  }
@@ -591,13 +598,16 @@ document {
      Headline => "make a matrix with a different degree",
      Usage => "map(f, Degree => d)",
      Inputs => {
-	  "f" => null
+	  "f" => Matrix => null,
 	  },
      Outputs => {
-	  {"a map identical to f, except that it has degree d, and the source
+	  {"a map identical to ", TT "f", ", except that it has degree ", 
+	       TT "d", ", and the source
 	       module has been tensored by a graded free module of rank 1 of 
 	       the appropriate degree."},
 	  },
+      "The input ", TT "d", " should be ", OFCLASS ZZ, ", or a list of integers",
+      PARA,
       "This routine is often used to take a matrix which has a non-zero degree, 
       and make the degree zero.",
       PARA,
@@ -671,16 +681,28 @@ document {
      }
 document {
      Key => (map,Module,Module,List),
-     TT "map(M,N,v)", " -- produces a map (matrix) from the module N
-     to the module M whose entries are obtained from the doubly-nested list
-     v of ring elements.",
-     PARA,
+     Headline => "create a matrix by giving a list of lists of ring elements",
+     Usage => "map(M,N,v)",
+     Inputs => {
+	  "M" => null,
+	  "N" => null,
+	  "v" => "a list of lists of ring elements"
+	  },
+     Outputs => {
+	  {"A matrix ", TT "M <-- N", " whose entries are obtained from the 
+	       doubly-nested list ", TT "v", " of ring elements"}
+	  },
+     "The length of ", TT "v", " should be the number of generators of ", TT "M", 
+     ", and the length of each element of ", TT "v", " (which is itself a 
+     list of ring elements) should be the
+     number of generators of the source module ", TT "N", ".  Each ring element should be in 
+     the common ring R of M and N, or should be in a base ring of R.",
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",
-      	  "p = map(R^2,R^{-2,-2},{{x^2,0},{0,y^2}})",
+      	  "p = map(R^2,R^{-2,-2,0},{{x^2,0,3},{0,y^2,5}})",
       	  "isHomogeneous p",
 	  },
-     SeeAlso => {"map", "matrix"}
+     SeeAlso => {matrix, (map,Module,Nothing,List), "input a matrix"}
      }
 document {
      Key => (map,Module,Module,Matrix),

@@ -10,7 +10,7 @@ a:active { background-color: transparent; color: #ee0000; }
 
 p.buttonbar { text-align: center; }
 img.myface { float: left; margin-right: 1em;  margin-bottom: 1em;}
-table.examples { background-color: #80ffff; cellspacing: 0; cellpadding: 12; border: 4; line-height: 10pt; font-size: 12pt; }
+table.examples { background-color: #80ffff; cellspacing: 0; cellpadding: 12; border: 4; line-height: 10pt; font-size: 9pt; }
 img.button { border: 0; }
 form.search { text-align: center; }
 tt { font-size: 1.1em; }
