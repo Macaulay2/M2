@@ -52,8 +52,7 @@ BR         = new EmptyMarkUpType
 NOINDENT   = new EmptyMarkUpType
 HR         = new EmptyMarkUpType
 PARA       = new FormattedMarkUpType
-EXAMPLE    = new MarkUpType
-new EXAMPLE from List := (EXAMPLE,x) -> select(x,i -> i =!= null)
+EXAMPLE    = new MarkUpType; new EXAMPLE from List := (EXAMPLE,x) -> select(x,i -> i =!= null)
 TABLE      = new MarkUpType
 ExampleTABLE = new FormattedMarkUpType
 PRE        = new FormattedMarkUpType
@@ -100,7 +99,7 @@ CODE       = new MarkUpType
 HREF       = new MarkUpType
 ANCHOR     = new MarkUpType
 SHIELD     = new MarkUpType
-UL         = new MarkUpType
+UL         = new MarkUpType; new UL from List := (UL,x) -> select(x,i -> i =!= null)
 OL         = new MarkUpType
 NL         = new MarkUpType
 DL 	   = new MarkUpType

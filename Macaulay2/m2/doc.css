@@ -1,0 +1,15 @@
+body { color: black; background-image: url("../images/recbg.jpg"); margin : 1.5em; }
+h1   { text-align: center; }
+h2   { text-align: center; }
+ul   { clear: both; } 
+
+a:link { background-color: transparent; color: #0000ee; }
+a:visited { background-color: transparent; color: #52188b; }
+a:hover { background-color: transparent; color: #009999; }
+a:active { background-color: transparent; color: #ee0000; }
+
+p#buttonbar { text-align: center; }
+img#myface { float: left; margin-right: 1em;  margin-bottom: 1em;}
+table#examples { background-color: #80ffff; }
+img#button { border: 0; }
+form#search { text-align: center; }

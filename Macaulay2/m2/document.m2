@@ -499,12 +499,12 @@ type := S -> (
 	  if instance(s,Type) then (
 	       SEQ {
 		    if s.?synonym then SEQ {
-			 "Each object of class ", toString s, " is called ", indefinite s.synonym, "."
+			 "  Each object of class ", toString s, " is called ", indefinite s.synonym, "."
 			 },
 		    if parent s =!= Thing then SEQ {
-			 "Each ", synonym s, " is also a member of class ", TO parent s, ".",
+			 "  Each ", synonym s, " is also a member of class ", TO parent s, ".",
 			 SEQ {
-			      "More general types (whose methods may also apply) :",
+			      "  More general types (whose methods may also apply) :",
 			      SHIELD UL (
 				   Y := parent s;
 				   while Y =!= Thing list TO toString Y do Y = parent Y
@@ -705,13 +705,13 @@ seecode := x -> (
      n := code f;
      if n =!= null 
      and height n + depth n <= 10 and width n <= maximumCodeWidth
-     then SEQ { "Code:", PRE concatenate between(newline,unstack n) }
+     then SEQ { BOLD "Code:", PRE concatenate between(newline,unstack n) }
      )
 
 documentationValue := method()
 documentationValue(Symbol,Function) := (s,f) -> SEQ { ret f, fmeth f, optargs f, seecode f }
 documentationValue(Symbol,Type) := (s,X) -> (
-     syms := flatten(values \ globalDictionaries);
+     syms := unique flatten(values \ globalDictionaries);
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableTag key), (key,Y) -> key);
      b := toString \ select(syms, y -> instance(value y, Type) and parent value y === X);
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
@@ -1021,7 +1021,7 @@ html TABLE := x -> concatenate(
 
 html ExampleTABLE := x -> concatenate(
      newline,
-     "<table cellspacing='0' cellpadding='12' border='4' width='100%'>",
+     "<table id=\"examples\" cellspacing='0' cellpadding='12' border='4' width='100%'>",
      newline,
      apply(x, 
 	  item -> (
@@ -1154,12 +1154,6 @@ html TEX := x -> x#0
 
 addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, headline i#0 } else i)
 
-html UL := x -> concatenate (
-     newline,
-     "<menu>", newline,
-     apply(addHeadlines x, s -> if s =!= null then ("<li>", html s, "</li>", newline)),
-     "</menu>", newline)
-
 addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, headline i#0 } else i)
 
 text UL := x -> concatenate(
@@ -1174,10 +1168,11 @@ tex UL := x -> concatenate(
      apply(addHeadlines x, x -> if x =!= null then ( ///\item ///, tex x, newline)),
      ///\end{itemize}///, newline)
 
-html UL   := x -> concatenate(
-     "<ul>", newline,
-     apply(x, s -> ("<li>", html s, "</li>", newline)),
-     "</ul>", newline)
+html UL := x -> concatenate (
+     newline,
+     "<menu>", newline,
+     apply(addHeadlines x, s -> if s =!= null then ("<li>", html s, "</li>", newline)),
+     "</menu>", newline)
 
 text UL   := x -> concatenate(
      newline,
