@@ -225,9 +225,6 @@ startup.c : ../m2/startup.m2 layout.m2
 	 echo ';' \
         ) >$@
 
-
-#ALLOBJ += ../e/libgb.a
-
 ifeq "$(DUMPDATA)" "yes"
 LOADLIBES += -L../dumpdata
 LIBRARYFILES += ../dumpdata/libdump.a
@@ -297,8 +294,7 @@ LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
   # -- we do not need -lcfmem, because we include replacement routines in d/scclib.c
 LIBRARYOPTIONS += -lntl
-#LIBRARYOPTIONS += -lgmp
-LIBRARYOPTIONS += /sw/lib/libgmp.a #/sw/lib/libreadline.a
+LIBRARYOPTIONS += $(LIBGMP)
 LIBRARYOPTIONS += -lgc
 LIBRARYOPTIONS += -lgdbm
 LIBRARYOPTIONS +=  -lreadline -lhistory -lcurses
