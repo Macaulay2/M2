@@ -15,12 +15,14 @@ void arginits(int argc, char **argv) {
   progname = argv[0];
 }
 
+#if USE_GC
 static void init_gc(void) {
      GC_all_interior_pointers = INTERIOR_POINTERS;
      GC_free_space_divisor = 2;
      GC_init();
      // GC_enable_incremental();
      }
+#endif
 
 #if GMP_USES_GC
 static void GC_free2 (void *s, size_t old) { GC_FREE(s); }
@@ -139,7 +141,9 @@ void M2inits(void) {
   static int M2inits_run;
   extern void M2inits1(void), M2inits2(void);
   if (M2inits_run) return;
+#if USE_GC
   init_gc();
+#endif
   init_gmp();
   // IM2_initialize();
   M2inits_run = 1;
