@@ -381,12 +381,7 @@ leadTerm(ZZ, Matrix) := Matrix => (i,m) -> (
 leadTerm(Matrix) := Matrix => m -> (
      map(target m, source m, rawInitial(-1,m.RawMatrix)))
 
-borel Matrix := Matrix => m -> (
-     sendgg (
-	  ggPush m, ggINT, gg 0, ggmonideal,  -- get monomial lead ideal
-	  ggborel,                            -- monomial borel now on stack
-	  ggmatrix);
-     getMatrix ring m)
+borel Matrix := Matrix => m -> generators borel monomialIdeal m
 
 --------------------------------------------------------------------------
 ------------------------ matrix and map for modules ----------------------
