@@ -139,21 +139,20 @@ poincare Module := M -> (
 
 hilbertFunction(ZZ,Module) :=
 hilbertFunction(ZZ,Ring) :=
-hilbertFunction(ZZ,Ideal) :=
+hilbertFunction(ZZ,Ideal) := (d,M) -> (
+     f := hilbertSeries(M, Order => d+1);
+     U := monoid ring f;
+     u := U_0;
+     f_(u^d))
+
 hilbertFunction(List,Ring) := 
 hilbertFunction(List,Ideal) := 
 hilbertFunction(List,Module) := (d,M) -> (
-     if class d === ZZ then (
-     	  f := hilbertSeries(M, Order => d+1);
-     	  U := monoid ring f;
-     	  u := U_0;
-     	  f_(u^d))
-     else if class d === List and all(d,i->class i === ZZ) then (
-	  -- hilbertSeries to finite order doesn't work yet for multi-degrees
-	  -- we need more flexible power series handling functions
-	  rank source basis(d,M)
-	  )
-     else error "expected degree to be an integer or list of integers")
+     if not all(d,i->class i === ZZ) then error "expected degree to be an integer or list of integers";
+     -- hilbertSeries to finite order doesn't work yet for multi-degrees
+     -- we need more flexible power-series handling functions
+     rank source basis(d,M)
+     )
 
 geometricSeries := (x,n) -> sum(n, i -> x^i)
 

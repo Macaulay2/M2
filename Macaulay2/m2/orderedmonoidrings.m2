@@ -228,11 +228,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
 	  RM ? RM := (f,g) -> (
-	       sendgg(ggPush f, 
-		    ggleadmonom, 
-		    ggPush g, 
-		    ggleadmonom, 
-		    ggcompare);
+	       sendgg(ggPush f, ggleadmonom, ggPush g, ggleadmonom, ggcompare);
 	       ret := ZZ.pop();
 	       if ret === 1 then symbol >
 	       else if ret === 0 then symbol ==
@@ -305,6 +301,12 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generatorExpressions = M.generatorExpressions;
 	  RM.generators = apply(# M.generators, i -> RM#(toString M.generators#i) = RM_i);
+	  gt := apply(RM.generatorSymbols, RM.generators, (v,x) -> v => x);
+	  RM.generatorsTable = (
+	       if R.?generatorsTable 
+	       then hashTable join(apply(pairs R.generatorsTable,(v,x) -> v => x + 0_RM), gt)
+	       else hashTable gt
+	       );
 	  scan(keys R, k -> if class k === String then RM#k = promote(R#k,RM));
 	  RM.use = x -> (
 	       M + M := (m,n) -> R#1 * m + R#1 * n;

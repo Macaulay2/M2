@@ -1248,6 +1248,10 @@ document { substitute,
       	  "S = ZZ/101[z,y,x]",
       	  "substitute(f,S)"
 	  },
+     "Warning: the specified substitution is not checked to see whether
+     the corresponding ring homomorphism is well-defined; this may produce
+     surprising results, especially if rational coefficients are converted
+     to integer coefficients."
      }
 
 document { modifyRing,
