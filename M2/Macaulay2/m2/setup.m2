@@ -70,7 +70,7 @@ progname := commandLine#0
 -- quotation marks are needed because the path may contain spaces
 if substring(progname,0,1) === "\"" then progname = substring(progname,1)
 
-path = { currentFileDirectory }
+path = { currentFileDirectory, "" }
 
 dir := splice(apply(separate("/",progname), i -> toSequence separate("\\", i)))-- ???
 if #dir > 1

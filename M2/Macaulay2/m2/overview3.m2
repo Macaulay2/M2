@@ -35,7 +35,7 @@ document { "Invoking the program",
 document { "Macaulay2/COPYING",
      "This is the text of the license agreement under which Macaulay 2 is distributed.",
      PARA,
-     PRE get "../COPYING"
+     PRE get (currentFileDirectory | "../COPYING")
      }
 
 document { "Copyright and license",

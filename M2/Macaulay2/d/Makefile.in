@@ -1,8 +1,6 @@
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
-srcdir = @srcdir@
-top_srcdir = @top_srcdir@
-VPATH = $(srcdir)
+VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
@@ -82,7 +80,7 @@ SCCFLAGS += -nogcc
 endif
 
 %.dep : %.d
-	$(SCC1) -dep -J. $*.d
+	$(SCC1) -dep -J. $<
 	mv $*.dp $*.dep
 	../util/update $*.sg $*.sig
 %.c   : %.d
@@ -104,7 +102,7 @@ endif
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
 
-CPPFLAGS := -I../../include -I. -I$(prefix)/include
+CPPFLAGS := -I../../include -I. -I$(prefix)/include -I@srcdir@
 # the purpose of the -I. is so scclib.c can find ./alloca.h if it's missing
 # from the gcc installation, as it often is
 
@@ -237,7 +235,7 @@ compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
 else
 compat.c compat.h : configure ../../include/config.h
-	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" ./configure
+	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
 endif
 
 M2lib.o scclib.o M2lib.lo scclib.lo : compat.h
@@ -445,7 +443,7 @@ clean ::
 	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep *.loo *.lo \
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
 		$(DNAMES:.d=.c) allfiles TAGS \
-		core core.* compat.c compat.h c-files.tar tmp_init.c
+		core core.* compat.c compat.h c-files.tar tmp_init.c ../libexec/Macaulay2
 distclean : clean
 	rm -f Makefile
 

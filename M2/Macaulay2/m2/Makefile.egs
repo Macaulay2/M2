@@ -5,7 +5,7 @@ include $(TOPDIR)/config.Makefile
 ifneq "$(DUMPDATA)" "no"
 ARGS := -q -silent \
 	'-e loaddata "$(M2HOME)/$(DUMPDATAFILE)"' \
-	-- -x -s $(M2HOME)/m2/eg.m2
+	-- -x -s ../../$(srcdir)/eg.m2
 else
 ARGS := -q -silent -x -s -ephase=1 $(M2HOME)/m2/setup.m2 -ephase=0 $(M2HOME)/m2/eg.m2
 endif
@@ -33,6 +33,7 @@ endif
 		  cp ./"$*.example" ./"$*.example.old" ; \
 	     else echo "contents of $*.example:" ; \
 		  cat ./"$*.example" ; \
+		  exit 1; \
 	     fi ; \
 	fi
 # endif

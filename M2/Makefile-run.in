@@ -36,7 +36,7 @@ all:: lib/.exists
 lib/.exists:; mkdir lib; touch $@
 clean::; rm -rf lib
 clean::; rm -f core
-distclean::; rm -f config.cache Makefile-configure.overrides config.log config.status configure
+distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
 ################################ SETUP
 ifeq "$(CC)" "cl"

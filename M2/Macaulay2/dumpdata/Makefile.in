@@ -1,9 +1,7 @@
 default: all2 tests2
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
-srcdir = @srcdir@
-top_srcdir = @top_srcdir@
-VPATH = $(srcdir)
+VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)

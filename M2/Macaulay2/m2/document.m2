@@ -394,7 +394,7 @@ document List := z -> (
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
      -- stderr << "documenting " << nodeName << " in " << currentFileName << " in " << currentFileDirectory << endl;
-     nodeBaseFilename = cacheFileName(concatenate(currentFileDirectory,DocumentationPrefix), nodeName);
+     nodeBaseFilename = cacheFileName(concatenate("",DocumentationPrefix), nodeName);
      -- nodeBaseFilename = concatenate(currentFileDirectory, DocumentationPrefix, toFilename nodeName);
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
@@ -865,7 +865,7 @@ help Thing := s -> (
 -----------------------------------------------------------------------------
 
 TEST = (e) -> if phase === 2 then (
-     cacheFileName concatenate(currentFileDirectory,TestsPrefix) | ".m2" << e << endl << close;
+     cacheFileName concatenate("",TestsPrefix) | ".m2" << e << endl << close;
      null
      )
 

@@ -2,9 +2,11 @@ justM2 default :: initialize phase1
 
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
-srcdir = @srcdir@
-top_srcdir = @top_srcdir@
-VPATH = $(srcdir)
+
+#  export this to pass it to Makefile.egs
+export srcdir := @srcdir@
+
+VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
@@ -58,17 +60,17 @@ SCRIPTS = ../bin/M2.bat ../bin/M2
 endif
 
 
-loads.m2 : dumpseq loads.awk
+loads.m2 : loads.awk dumpseq
 	@echo making $@
-	@awk -f loads.awk <$< >$@
+	@awk -f $^ >$@
 
-docloads.m2 : docseq loads.awk
+docloads.m2 : loads.awk docseq 
 	@echo making $@
-	@awk -f loads.awk <$< >$@
+	@awk -f $^ >$@
 
-tutorials.m2 : ../tutorial/final/*.out
+tutorials.m2 : $(TUTORIALS)
 	@ echo making tutorials.m2
-	@ ls ../tutorial/final/*.out |awk '{printf "load \"%s\"\n", $$0}' >$@
+	@ ls $^ |awk '{printf "load \"%s\"\n", $$0}' >$@
 
 ################################# cache
 cache cache/doc cache/tests ../tutorial/final/cache/doc :; mkdir $@
@@ -76,11 +78,11 @@ clean ::; rm -rf cache
 initialize :: cache cache/tests cache/doc ../tutorial/final/cache/doc
 #################################
 
-gbdoc.m2 : ../e/misc/cmdnames.input gbdoc.awk
-	awk -f gbdoc.awk ../e/misc/cmdnames.input >tmp
+gbdoc.m2 : gbdoc.awk ../e/misc/cmdnames.input
+	awk -f $^ >tmp
 	mv tmp $@
-gbfunctions.m2 :  ../e/misc/cmdnames.input gbfuns.awk
-	awk -f gbfuns.awk ../e/misc/cmdnames.input >tmp
+gbfunctions.m2 : gbfuns.awk ../e/misc/cmdnames.input 
+	awk -f $^ >tmp
 	mv tmp $@
 default:: TAGS.doc
 TAGS.doc : Makefile docseq
@@ -124,7 +126,8 @@ phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
 	 # phase 1: read *.m2 and dump data
 	rm -f ../$(DUMPDATAFILE)
-	time ../libexec/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
+	time ../libexec/Macaulay2 -q -silent -tty '-ephase=1' \
+		@srcdir@/setup.m2 @srcdir@/dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2
 endif
@@ -140,7 +143,7 @@ $(SCRIPTS) : ../util/setup.exe
 else
 $(SCRIPTS) : makeM2.m2
 	rm -f $(SCRIPTS)
-	../libexec/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
+	../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
 endif
 
 phase2 :: initialize
@@ -152,7 +155,7 @@ phase2 :: ../cache/Macaulay2-pre
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
 	mkdir  cache/tests
-	../libexec/Macaulay2 -q -silent '-ephase=2' setup.m2 '-eexit(0)'
+	../libexec/Macaulay2 -q -silent '-ephase=2' @srcdir@/setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 
 all:: .gdbinit
@@ -180,8 +183,8 @@ cache/doc/expression: expression; cp $< $@
 
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
 	 # phase 3: running the example input files
-	$(MAKE) -k -C ../m2/cache/doc       -f ../../../m2/Makefile.egs
-	$(MAKE) TOPDIR=../../../../.. -k -C ../tutorial/final/cache/doc -f ../../../../m2/Makefile.egs
+	$(MAKE) -C cache/doc -f ../../@srcdir@/Makefile.egs
+	$(MAKE) TOPDIR=../../../../.. -C ../tutorial/final/cache/doc -f ../../@srcdir@/Makefile.egs
 
 all :: phase4
 phase4 : phase3 ../cache/Macaulay2-doc
