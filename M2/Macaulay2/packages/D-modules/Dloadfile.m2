@@ -1,6 +1,5 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-path = prepend("Dmodules",path)
 -- Harry's basic files
 load "Dbasic.m2" 
 load "Gbw.m2"
