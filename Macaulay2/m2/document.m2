@@ -59,8 +59,7 @@ addStartFunction(
 		    if phase != 3 then stderr << "--warning: couldn't open help file " << docFilename() << endl;
 		    new HashTable)
 	       );
-     	  -- temporarily don't use it...
-	  -- documentationPath = append(documentationPath,DocDatabase);
+	  documentationPath = append(documentationPath,DocDatabase);
      	  )
      )
 
@@ -111,6 +110,8 @@ getRecord := key -> (
      if t#?0 then t#0#key
      )
 
+-- getRecord = on (getRecord, Name => "getRecord") -- debugging
+
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
@@ -120,9 +121,7 @@ formatDocumentTag           = method(SingleArgumentDispatch => true)
 	  
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 
-formatDocumentTag Thing    := s -> toString s
-formatDocumentTag Symbol   := record toString
-formatDocumentTag Function := record toString
+formatDocumentTag Thing    := toString
 formatDocumentTag String   := s -> s
 
 after := (w,s) -> mingle(w,#w:s)
@@ -217,6 +216,8 @@ formatDocumentTagTO Sequence := (
 -----------------------------------------------------------------------------
 
 getDoc := key -> value getRecord formatDocumentTag key
+-- getDoc = on (getDoc, Name => "getDoc")			    -- debugging
+ 
 getDocBody := key -> (
      a := getDoc key;
      if a =!= null then select(a, s -> class s =!= Option))
@@ -233,114 +234,6 @@ verifyTag Option   := s -> (
      fn := s#0;
      opt := s#1;
      if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
------------------------------------------------------------------------------
--- html input
------------------------------------------------------------------------------
-
-html = method(SingleArgumentDispatch=>true, TypicalValue => String)
-text = method(SingleArgumentDispatch=>true, TypicalValue => String)
-tex = method(SingleArgumentDispatch=>true, TypicalValue => String)
-texMath = method(SingleArgumentDispatch=>true, TypicalValue => String)
-mathML = method(SingleArgumentDispatch=>true, TypicalValue => String)
-
-MarkUpList = new Type of BasicList
-MarkUpList.synonym = "mark-up list"
-
-     MarkUpType = new Type of Type
-MarkUpType.synonym = "mark-up type"
-EmptyMarkUpType = new Type of MarkUpType
-EmptyMarkUpType.synonym = "empty mark-up type"
-     MarkUpType List := (h,y) -> new h from y
-EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expected empty list"
-     MarkUpType Thing := (h,y) -> new h from {y}
-     MarkUpType\List := (h,y) -> (i -> h i) \ y
-     List/MarkUpType := (y,h) -> y / (i -> h i)
-EmptyMarkUpType Thing := (h,y) -> error "expected empty list"
-
-makeList := method()
-makeList MarkUpType := X -> toString X
-makeList Type       := X -> concatenate("new ", toString X, " from ")
-toExternalString MarkUpList := s -> concatenate(makeList class s, toExternalString toList s)
-toString         MarkUpList := s -> concatenate(makeList class s, toString         toList s)
-
-htmlMarkUpType := s -> (
-     on := "<" | s | ">";
-     off := "</" | s | ">";
-     t -> concatenate(on, apply(t,html), off))
-
-MarkUpType.GlobalAssignHook = (X,x) -> (
-     if not x.?name then (
-	  x.Symbol = X;
-	  x.name = string X;
-     	  html x := htmlMarkUpType string X;
-	  );
-     )
-
-new MarkUpType := theMarkUpType -> new theMarkUpType of MarkUpList
-
-BR         = new EmptyMarkUpType
-NOINDENT   = new EmptyMarkUpType
-HR         = new EmptyMarkUpType
-PARA       = new MarkUpType
-EXAMPLE    = new MarkUpType
-new EXAMPLE from List := (EXAMPLE,x) -> select(x,i -> i =!= null)
-TABLE      = new MarkUpType
-ExampleTABLE = new MarkUpType
-PRE        = new MarkUpType
-TITLE      = new MarkUpType
-BASE	   = new MarkUpType
-HEAD       = new MarkUpType
-BODY       = new MarkUpType
-IMG	   = new MarkUpType
-HTML       = new MarkUpType
-CENTER     = new MarkUpType
-BIG        = new MarkUpType
-HEADER1    = new MarkUpType
-HEADER2    = new MarkUpType
-HEADER3    = new MarkUpType
-HEADER4    = new MarkUpType
-HEADER5    = new MarkUpType
-HEADER6    = new MarkUpType
-LISTING    = new MarkUpType
-LITERAL    = new MarkUpType
-XMP        = new MarkUpType
-BLOCKQUOTE = new MarkUpType
-VAR        = new MarkUpType
-DFN        = new MarkUpType
-STRONG     = new MarkUpType
-BIG        = new MarkUpType
-SMALL      = new MarkUpType
-SAMP       = new MarkUpType
-KBD        = new MarkUpType
-SUB        = new MarkUpType
-SUP        = new MarkUpType
-ITALIC     = new MarkUpType
-UNDERLINE  = new MarkUpType
-TEX	   = new MarkUpType
-SEQ	   = new MarkUpType
-new SEQ from List := (SEQ,v) -> select (splice apply(v,
-	  i -> if class i === SEQ then toSequence i
-	  else if class i === List then toSequence SEQ i
-	  else i ),
-     j -> j =!= null)
-TT         = new MarkUpType
-EM         = new MarkUpType
-CITE       = new MarkUpType
-BOLD       = new MarkUpType
-CODE       = new MarkUpType
-HREF       = new MarkUpType
-ANCHOR     = new MarkUpType
-SHIELD     = new MarkUpType
-MENU       = new MarkUpType
-UL         = new MarkUpType
-OL         = new MarkUpType
-NL         = new MarkUpType
-DL 	   = new MarkUpType
-TO         = new MarkUpType
-TOH        = new MarkUpType
-
-MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
-MarkUpList _ MarkUpList := (x,y) -> SEQ{x,SUB y}
 
 -----------------------------------------------------------------------------
 -- installing the documentation
@@ -784,6 +677,7 @@ documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
      t := unformat s;
      if t =!= s then documentation t
+     else if isGlobalSymbol s then documentation getGlobalSymbol s
      else SEQ { title s, getDocBody s }
      )
 documentation Thing := s -> SEQ { title s, usage s, type s }
@@ -832,7 +726,14 @@ optionFor := s -> unique select( value \ values symbolTable(), f -> class f === 
 documentation Symbol := s -> (
      a := apply(select(optionFor s,f -> not unDocumentable f), f -> f => s);
      b := documentableMethods s;
-     SEQ {
+     val := value s;
+     if val =!= s and class val =!= String 
+     then SEQ {
+	  documentation val,
+	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, SHIELD smenu a, PARA{}},
+	  if #b > 0 then SEQ {"Methods for ", toString s, " :", PARA{}, SHIELD smenu b, PARA{}} 
+     	  }
+     else SEQ {
 	  title s, 
 	  usage s,
 	  op s,
@@ -957,6 +858,8 @@ CAVEAT = v -> SEQ { PARA{}, BOLD "Caveat:", SHIELD MENU { SEQ v } }
 -----------------------------------------------------------------------------
 -- html output
 -----------------------------------------------------------------------------
+-- move this into another file after the merge
+
 htmlLiteralTable := new MutableHashTable
 scan(characters ascii(0 .. 255), c -> htmlLiteralTable#c = c)
 htmlLiteralTable#"\"" = "&quot;"
@@ -970,9 +873,9 @@ htmlExtraLiteralTable#" " = "&nbsp;"
 htmlExtraLiteral = s -> concatenate apply(characters s, c -> htmlExtraLiteralTable#c)
 -----------------------------------------------------------------------------
 texLiteralTable := new MutableHashTable
-    scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, string c, "}"))
+    scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))
     scan(characters ascii(32 .. 126), c -> texLiteralTable#c = c)
-    scan(characters "\\{}$&#^_%~|<>", c -> texLiteralTable#c = concatenate("{\\char ", string (ascii c)#0, "}"))
+    scan(characters "\\{}$&#^_%~|<>", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))
     texLiteralTable#"\n" = "\n"
     texLiteralTable#"\r" = "\r"
     texLiteralTable#"\t" = "\t"
@@ -1026,7 +929,7 @@ tex Function := x -> "--Function--"
 
 tex Boolean := tex Symbol := 
 text Symbol := text Boolean := 
-html Symbol := html Boolean := string
+html Symbol := html Boolean := toString
 
 texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
@@ -1569,3 +1472,5 @@ new IMG from List := (IMG,x) -> (
      --   then we can't check it.
      -- if not isAbsolute url and not fileExists url then error ("file ", url, " does not exist");
      x)
+
+erase symbol htmlMarkUpType
