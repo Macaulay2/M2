@@ -18,33 +18,43 @@ all :: include/config.Makefile
 include/config.h: include/config.h.in; ./config.status include/config.h
 all :: include/config.h
 
+
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
 	$(MAKE) -C @srcdir@ -f Makefile-configuration
 	@echo '-----------------------------------------------------------------------------'
-	@echo '| $@ has just been remade'
-	@echo '|  exiting so you can run it again the same way you did before'
-	@echo '|  here is the way you ran it before:'
-	@echo '|'
-	@srcdir@/config/config.command
-	@echo '|'
-	@echo '|  type "make reconfigure" to run it that way again'
-	@echo '|'
+	@echo '# $@ has just been remade'
+	@echo '#  exiting so you can run it again the same way you did before'
+	@echo '#  here is the way you ran it before:'
+	@echo '#'
+	@ @srcdir@/config/config.command
+	@echo '#'
+	@echo '#  type "make reconfigure" to run it that way again'
+	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
+status : @srcdir@/configure
+	@echo '-----------------------------------------------------------------------------'
+	@echo '#  here is the way you ran $^ before:'
+	@echo '#'
+	@ @srcdir@/config/config.command
+	@echo '#'
+	@echo '#  type "make reconfigure" to run it that way again'
+	@echo '#'
+	@echo '-----------------------------------------------------------------------------'
 config.status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
-	@echo '| error: $@ not there or older than $^'
-	@echo '|  exiting so you can run $^ the same way you did before'
-	@echo '|  here is the way you ran it before:'
-	@echo '|'
-	@srcdir@/config/config.command
-	@echo '|'
-	@echo '|  type "make reconfigure" to run it that way again'
-	@echo '|'
+	@echo '# error: $@ not there or older than $^'
+	@echo '#  exiting so you can run $^ the same way you did before'
+	@echo '#  here is the way you ran it before:'
+	@echo '#'
+	@ @srcdir@/config/config.command
+	@echo '#'
+	@echo '#  type "make reconfigure" to run it that way again'
+	@echo '#'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
 reconfigure:
-	@srcdir@/config/config.command |sh -x
+	@ @srcdir@/config/config.command |sh -x
 
 # announcement only:
 install all clean distclean install-strip ::
