@@ -151,13 +151,17 @@ To compile in another directory, for example, in a subdirectory:
 	make check
 	make install
 
-To make a distribution tarball:
+To make a distribution tarball suitable for use with epkg:
 
 	../configure --enable-encap --with-encapdir=/tmp
 	make
 	make check
 	make install
 	make distribution
+
+(The effect of the option --enable-encap is to place a few extra files
+in the top level directory of the tree.  The epkg program reads those
+files and uses them to decide what to do at installation time.)
 
 To use a different prefix, say /mnt/local, for finding libraries and include
 files installed in a nonstandard location:
@@ -172,7 +176,7 @@ you have compiled the libraries with fink, then you could use this line:
 To specify other libraries to link against, use the LIBS environment
 variable, as described in documentation for autoconf.  Example:
 
-	LIBS=-lreadline ./configure ...
+	LIBS=-lfoo ./configure ...
 
 -----------------------
 Windows 95, 98 and NT notes
