@@ -393,8 +393,6 @@ CVS/Entries : $(ALLFILES)
 	tar cfv - $? | (cd /a.ext2; mkdir -p d; cd d; tar xf -)
 	umount /a.ext2
 
-wc:
-	wc -l $(WC1FILES)
 clean ::
 	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep mapfile \
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \

@@ -25,20 +25,14 @@ char *gnu_get_libc_version();
 #define __attribute__(x)
 #endif
 
-#if !(defined(GDBM) || defined(NDBM))
-#define GDBM
-#endif
 
-#ifdef GDBM
 #if 0
-#include <gdbm.h>
-#else
 # ifdef __MWERKS__
 #  include "::dbm:dbm.h"
 # else
-#  include "../dbm/dbm.h"
-# endif
 #endif
+
+#include <gdbm.h>
 #define DBM_REPLACE GDBM_REPLACE
 #define DBM_WRCREAT GDBM_WRCREAT
 #define DBM_RD GDBM_READER
@@ -52,17 +46,6 @@ char *gnu_get_libc_version();
 #define dbm_nextkey gdbm_nextkey
 #define DBM_CREAT GDBM_CREAT
 #define DBM_FAST GDBM_FAST
-#endif
-
-#ifdef NDBM
-#include <ndbm.h>
-#define DBM_FAST GDBM_FAST
-#define DBM_CREAT O_CREAT
-typedef DBM *DBM_FILE;
-#define DBM_WRCREAT (O_RDWR | O_CREAT)
-#define DBM_RD O_RDONLY
-#endif
-
 
 static void putstderr(char *m) {
      write(STDERR,m,strlen(m));

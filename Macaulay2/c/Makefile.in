@@ -60,10 +60,7 @@ grammar.o : grammar.c;	 	$(CC) $(GCFLAGS) -c $< $(OUTPUT_OPTION)
 #	    <$< >$@
 #	chmod a+x $@
 ############################## miscellaneous
-allfiles: Makefile;		echo $(ALLFILES) |tr ' ' \\012 >allfiles
 TAGS: $(SRCFILES);		etags $(SRCFILES)
-prn :;				enscript -2r $(SRCFILES)
-wc:;				wc -l $(ALLFILES)
 ############################## cleaning
 # we purposely don't delete grammar.c so it can be used for porting
 clean :

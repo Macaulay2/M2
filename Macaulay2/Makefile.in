@@ -21,30 +21,23 @@ distclean clean ::; rm -rf cache
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) NODEPENDS=1 -C util $@
-wc ::; $(MAKE) NODEPENDS=1 -C util wc
 ################################# c
 distclean clean ::; $(MAKE) NODEPENDS=1 -C c $@
 all justM2 ::; $(MAKE) -C c all
-wc ::;  $(MAKE) -C c NODEPENDS=1 wc
 ################################# e
 justM2 ::; $(MAKE) -C e all
 all check ::; $(MAKE) -C e $@
-wc distclean clean ::; $(MAKE) NODEPENDS=1 -C e $@
-################################# dbm
-justM2 ::; $(MAKE) -C dbm all
-all check ::; $(MAKE) -C dbm $@
-distclean clean ::; $(MAKE) NODEPENDS=1 -C dbm $@
-wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
+distclean clean ::; $(MAKE) NODEPENDS=1 -C e $@
 ################################# dumpdata
 ifeq "$(DUMPDATA)" "yes"
 justM2 ::; $(MAKE) -C dumpdata all
 all check ::; $(MAKE) -C dumpdata $@
 endif
-wc distclean clean ::; $(MAKE) NODEPENDS=1 -C dumpdata $@
+distclean clean ::; $(MAKE) NODEPENDS=1 -C dumpdata $@
 ################################# d
 config ::; $(MAKE) NODEPENDS=1 -C d compat.h
 justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
-wc distclean clean ::; $(MAKE) NODEPENDS=1 -C d $@
+distclean clean ::; $(MAKE) NODEPENDS=1 -C d $@
 ################################# basictests
 all ::; $(MAKE) -C basictests -k
 distclean clean ::; $(MAKE) -C basictests $@
@@ -53,7 +46,7 @@ distclean clean ::; $(MAKE) -C basictests $@
 justM2::; $(MAKE) -C tutorial all
 all distclean clean::; $(MAKE) -C tutorial $@
 ################################# m2
-wc distclean clean check justM2 all ::; $(MAKE) -C m2 $@
+distclean clean check justM2 all ::; $(MAKE) -C m2 $@
 ################################# test
 check ::; $(MAKE) -C test -k
 distclean clean ::; $(MAKE) -C test $@
