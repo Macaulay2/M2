@@ -116,7 +116,8 @@ gb = method(
 strategyCodes := new HashTable from {
      LongPolynomial => 8,
      Sort => 16,
-     EGB => 3
+     EGB => 3,
+     GBinhom => 2
      }
 
 processStrategy := (v) -> (

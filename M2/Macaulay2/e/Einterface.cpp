@@ -137,3 +137,15 @@ void EInterface::add_ring_multiple_to(vector_heap &h,
   h.add(f);
 }
 
+void EInterface::display_exponents(buffer &o, const exponent_vector *exp) const
+{
+  int *m = M->make_one();
+  M->from_expvector(exp, m);
+  M->elem_text_out(o,m);
+  M->remove(m);
+}
+
+void EInterface::display_vector(buffer &o, const freemodule &F, const vec &f) const
+{
+  F->elem_text_out(o,f);
+}

@@ -32,3 +32,4 @@ string GB_gbprocess(string s)
   result = (string) GBgbprocess(s->arry, s->len);
   return result;
 }
+

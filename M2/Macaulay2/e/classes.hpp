@@ -15,7 +15,7 @@ enum {
   TY_String,
   TY_MonomialOrder,
   TY_Monoid,
-  TY_MonomialIdeal,
+  //  TY_MonomialIdeal,
   TY_TermIdeal,
   TY_Ring,
   TY_RingElement,
@@ -45,6 +45,7 @@ enum class_identifier {
   CLASS_Matrix,
   CLASS_SparseMutableMatrix,
   CLASS_MonomialIdeal,
+  CLASS_MonomialIIdeal,
   CLASS_monomial,
 
   CLASS_TermIdeal,
@@ -127,6 +128,7 @@ enum type_identifier {
   TY_ARingElement,
   TY_AVector,
 #endif
+    TY_MonomialIdeal,
     TY_ECoefficientRing,
     TY_EMonomialOrder,
     TY_EMonoid,
@@ -212,6 +214,7 @@ class Ring;
   class FractionField;
   class SchurRing;
 class MonomialIdeal;
+class MonomialIIdeal;
 class TermIdeal;
 class FreeModule;
 class RingElement;

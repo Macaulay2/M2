@@ -151,6 +151,8 @@ NAMES = \
 	GF \
 	schur \
 	monideal \
+	monideal2 \
+	montable \
 	termideal \
 	newspair \
 	assprime \

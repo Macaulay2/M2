@@ -51,10 +51,12 @@ int GBKernelComputation::calc()
   for (int p=0; p<syzygies.length(); p++)
     mm.append(G->copy(syzygies[p]));
 
+#if 0
   buffer o;
   o << "skeleton = " << newline;
   mm.text_out(o);
   emit(o.str());
+#endif
   // Sort the skeleton now?
 
   // Now reduce each one of these elements

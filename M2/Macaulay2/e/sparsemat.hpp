@@ -142,6 +142,9 @@ public:
   void setSizes(int c_lo, int c_hi);
   bool findGoodUnitPivot(int c_lo, int c_hi, int &r, int &c, int &best);
   bool findGoodPivot(int c_lo, int c_hi, int &r, int &c, int &best);
+
+  // Harry's routines
+  void reducePivots();
   
   // Infrastructure
   void text_out(buffer &o) const;

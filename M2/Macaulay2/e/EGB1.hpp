@@ -322,12 +322,12 @@ public:
 #endif
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-  void debug_out(es_pair *q) const;
-  void debug_pairs_out(egb_elem *p) const;
-  void debug_pairs() const;
-  void debug_out(buffer &o, es_pair *q) const;
-  void debug_pairs_out(buffer &o, egb_elem *p) const;
-  void debug_pairs(buffer &o) const;
+  void spair_debug_out(es_pair *q) const;
+  void gb_debug_out(egb_elem *p) const;
+  void debug_pairs(char *heading, es_pair *qlist) const;
+  void spair_debug_out(buffer &o, es_pair *q) const;
+  void gb_debug_out(buffer &o, egb_elem *p) const;
+  void debug_pairs(buffer &o, char *heading, es_pair *qlist) const;
 
   // infrastructure
   friend void i_Ecommands();

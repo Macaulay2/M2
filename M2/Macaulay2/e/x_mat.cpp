@@ -11,6 +11,7 @@
 #include "ringmap.hpp"
 
 #include "monideal.hpp"
+#include "monideal2.hpp"
 #include "termideal.hpp"
 
 #include "monomial.hpp"
@@ -938,6 +939,118 @@ void cmd_Nmi_assprimes(object &oa)
   gStack.insert(ap.associated_primes());
 }
 
+//////////////////////////////////////////
+// New Monomial ideal commands ///////////
+//////////////////////////////////////////
+
+void cmd_MonomialIIdeal(object &oa, object &on, object &/*onotused*/)
+{
+  Matrix m = oa->cast_to_Matrix();
+  int n = on->int_of();
+  gStack.insert(MonomialIIdeal::make(m,n));
+}
+
+void cmd_mi_matrix(object &oa)
+{
+  MonomialIIdeal *mi = oa->cast_to_MonomialIIdeal();
+  gStack.insert(mi->to_matrix());
+}
+
+void cmd_mi_isequal(object &oa, object &ob)
+{
+  MonomialIIdeal *a = oa->cast_to_MonomialIIdeal();
+  MonomialIIdeal *b = ob->cast_to_MonomialIIdeal();
+  gStack.insert(make_object_int(a->is_equal(b)));
+}
+
+void cmd_mi_radical(object &oa)
+{
+  MonomialIIdeal *mi = oa->cast_to_MonomialIIdeal();
+  gStack.insert(mi->radical());
+}
+
+void cmd_mi_add(object &oa, object &ob)
+{
+  MonomialIIdeal *mi1 = oa->cast_to_MonomialIIdeal();
+  MonomialIIdeal *mi2 = ob->cast_to_MonomialIIdeal();
+  gStack.insert(mi1->add(mi2));
+}
+
+void cmd_mi_product(object &oa, object &ob)
+{
+  MonomialIIdeal *mi1 = oa->cast_to_MonomialIIdeal();
+  MonomialIIdeal *mi2 = ob->cast_to_MonomialIIdeal();
+  gStack.insert(mi1->mult(mi2));
+}
+
+void cmd_mi_intersect(object &oa, object &ob)
+{
+  MonomialIIdeal *mi1 = oa->cast_to_MonomialIIdeal();
+  MonomialIIdeal *mi2 = ob->cast_to_MonomialIIdeal();
+  gStack.insert(mi1->intersect(mi2));
+}
+
+void cmd_mi_quotient1(object &oa, object &om)
+{
+  MonomialIIdeal *mi = oa->cast_to_MonomialIIdeal();
+  Monomial m = om->cast_to_Monomial();
+  gStack.insert(mi->quotient(m.ints()));
+}
+
+void cmd_mi_quotient(object &oa, object &ob)
+{
+  MonomialIIdeal *mi = oa->cast_to_MonomialIIdeal();
+  MonomialIIdeal *mi2 = ob->cast_to_MonomialIIdeal();
+  gStack.insert(mi->quotient(mi2));
+}
+
+void cmd_mi_sat1(object &oa, object &om)
+{
+  MonomialIIdeal *mi = oa->cast_to_MonomialIIdeal();
+  Monomial m = om->cast_to_Monomial();
+  gStack.insert(mi->erase(m.ints()));
+}
+
+void cmd_mi_sat(object &oa, object &ob)
+{
+  MonomialIIdeal *mi = oa->cast_to_MonomialIIdeal();
+  MonomialIIdeal *mi2 = ob->cast_to_MonomialIIdeal();
+  gStack.insert(mi->sat(mi2));
+}
+
+void cmd_mi_borel(object &oa)
+{
+  MonomialIIdeal *mi = oa->cast_to_MonomialIIdeal();
+  gStack.insert(mi->borel());
+}
+
+void cmd_mi_isborel(object &oa)
+{
+  MonomialIIdeal *mi = oa->cast_to_MonomialIIdeal();
+  gStack.insert(make_object_int(mi->is_borel()));
+}
+
+void cmd_mi_codim(object &oa)
+{
+  MonomialIIdeal *mi = oa->cast_to_MonomialIIdeal();
+#if 0
+  AssociatedPrimes ap(mi);
+  gStack.insert(make_object_int(ap.codimension()));
+#endif
+}
+
+void cmd_mi_assprimes(object &oa)
+{
+  MonomialIIdeal *mi = oa->cast_to_MonomialIIdeal();
+#if 0
+  AssociatedPrimes ap(mi);
+  gStack.insert(ap.associated_primes());
+#endif
+}
+
+/////////////////////////
+// Term ideal routines //
+/////////////////////////
 void cmd_ti_matrix(object &oti)
 {
   TermIdeal *ti = oti->cast_to_TermIdeal();
@@ -1297,6 +1410,13 @@ void cmd_sparse_numcols(object &om)
   gStack.insert(make_object_int(n));
 }
 
+// Harry's routines
+
+void cmd_sparse_reducePivots(object &om)
+{
+  SparseMutableMatrix *m = om->cast_to_SparseMutableMatrix();
+  m->reducePivots();
+}
 
 void i_Matrix_cmds(void)
 {
@@ -1421,6 +1541,28 @@ void i_Matrix_cmds(void)
   install(ggcodim, cmd_Nmi_codim, TY_MONIDEAL);
   install(ggprimes, cmd_Nmi_assprimes, TY_MONIDEAL);
 
+  // new monideal commands
+  install(ggmonideal, cmd_MonomialIIdeal, TY_MATRIX, TY_INT, TY_INT);
+  //2nd int is in order to distinguish it from other ggmonideal command.
+
+  install(ggmatrix, cmd_mi_matrix, TY_MonomialIdeal);
+
+  install(ggisequal, cmd_mi_isequal, TY_MonomialIdeal, TY_MonomialIdeal);
+  install(ggradical, cmd_mi_radical, TY_MonomialIdeal);
+  install(ggadd, cmd_mi_add, TY_MonomialIdeal, TY_MonomialIdeal);
+  install(ggmult, cmd_mi_product, TY_MonomialIdeal, TY_MonomialIdeal);
+  install(ggintersect, cmd_mi_intersect, TY_MonomialIdeal, TY_MonomialIdeal);
+  install(ggdiv, cmd_mi_quotient1, TY_MonomialIdeal, TY_MONOMIAL);
+  install(ggdiv, cmd_mi_quotient, TY_MonomialIdeal, TY_MonomialIdeal);
+  install(ggsat, cmd_mi_sat1, TY_MonomialIdeal, TY_MONOMIAL);
+  install(ggsat, cmd_mi_sat, TY_MonomialIdeal, TY_MonomialIdeal);
+
+  install(ggborel, cmd_mi_borel, TY_MonomialIdeal);
+  install(ggisborel, cmd_mi_isborel, TY_MonomialIdeal);
+
+  install(ggcodim, cmd_mi_codim, TY_MonomialIdeal);
+  install(ggprimes, cmd_mi_assprimes, TY_MonomialIdeal);
+
   // termideal routines
   install(ggmatrix, cmd_ti_matrix, TY_TERMIDEAL);
   install(ggtermideal, cmd_ti_ti, TY_MATRIX, TY_INT);
@@ -1467,4 +1609,9 @@ void i_Matrix_cmds(void)
   install(ggleadcomp, cmd_sparse_lead_row, TY_SparseMutableMatrix, TY_INT);
   install(ggnumrows, cmd_sparse_numrows, TY_SparseMutableMatrix);
   install(ggnumcols, cmd_sparse_numcols, TY_SparseMutableMatrix);
+
+
+  // Harry's commands
+  install(ggreducepivots, cmd_sparse_reducePivots, TY_SparseMutableMatrix);
+
 }

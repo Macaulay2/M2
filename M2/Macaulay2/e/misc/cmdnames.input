@@ -407,6 +407,11 @@ ggrank
 F:EFreeModule >> int
 Returns the rank of the free module F.
 
+ggreducepivots
+reducePivots
+m:SparseMutableMatrix >> SparseMutableMatrix
+Takes a matrix, reduces all possible pivots, and returns the compressed matrix.
+
 ggremote
 remote
 matrix mach:string user:string s:string cmd:string >> remote_gb_comp
