@@ -760,8 +760,9 @@ document { "Getting started",
      "The function ", TO "scan", " is analogous to ", TO "apply", " except
      that no value is returned.  It may be used to implement loops in
      programs.",
-     EXAMPLE "scan(5, i -> print (i, i^3))",
-     EXAMPLE "j=1; scan(10, i -> j = 2*j); j",
+     EXAMPLE {
+	  "scan(5, i -> print (i, i^3))",
+	  "j=1; scan(10, i -> j = 2*j); j"},
      "Most computations with polynomials take place in rings that may be
      specified in usual mathematical notation.",
      EXAMPLE "R = ZZ/5[x,y,z];",

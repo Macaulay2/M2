@@ -1009,7 +1009,7 @@ text EXAMPLE := x -> concatenate apply(#x, i -> text PRE concatenate("i",toStrin
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
-text ExampleTABLE := x -> "\n" | toString ("        " | boxNets apply(toList x, y -> text y#1)) | "\n"
+text ExampleTABLE := x -> "\n\n" | toString ("        " | boxNets apply(toList x, y -> text y#1)) | "\n\n"
 net ExampleTABLE := x -> "    " | stack between("",apply(toList x, y -> "" | net y#1 || ""))
 
 tex TABLE := x -> concatenate applyTable(x,tex)

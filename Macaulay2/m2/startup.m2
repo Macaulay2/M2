@@ -148,9 +148,7 @@ encapDirectory = null	   -- encap directory, after installation, if present, e.g
 fullCopyright := false
 matchpart := (regex,i,s) -> substring_((matches(regex, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
-dir := s -> (
-     m := matches(".*/",s);
-     if 0 == #m then "./" else substring_(m#0) s)
+dir := s -> ( m := matches(".*/",s); if 0 == #m then "./" else substring_(m#0) s)
 noloaddata := false
 nobanner := false;
 nosetup := false
@@ -310,7 +308,7 @@ action := hashTable {
 action2 := hashTable {
      "-E" => arg -> if phase == 1 then value arg,
      "-e" => arg -> if phase == 3 then value arg,
-     "--print-width" => arg -> if phase == 1 then printWidth atoi arg
+     "--print-width" => arg -> if phase == 3 then printWidth = value arg
      }
 
 processCommandLineOptions := phase0 -> (			    -- 3 passes
