@@ -81,6 +81,7 @@ docm2dir = $(docdir)/$(PACKAGE_TARNAME)
 docm2reldir = $(docm2dir)/$(PACKAGE_VERSION)
 emacsdocdir = $(docm2reldir)/emacs
 htmldocdir = $(docm2reldir)/html
+imagesdir = $(docm2reldir)/images
 
 # end file system layout
 

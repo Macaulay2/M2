@@ -65,8 +65,10 @@ the package "D-modules".
 				COPYING
 				LICENSE
 				README
+				images/			[ imagesdir ]
+				       *.gif
+				       *.jpg
 				html/index.html         [ htmldocdir ]
-				     *.gif
 				     *.html
 				emacs/*                 [ emacsdocdir ]
 			  packages/
