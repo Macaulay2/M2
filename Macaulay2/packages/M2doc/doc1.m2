@@ -378,6 +378,12 @@ document {
      ", TT "(A,B,C)", ".  The first place to look is ", TT "Y#(M,A,B,C)", " where ", TT "Y", " 
      is the youngest of ", TT "A", ", ", TT "B", ", and ", TT "C", ".  The search proceeds with 
      the parent of ", TT "C", ", and so on.",
+     PARA,
+     NOINDENT, TT "lookup(M,A,B,C,D)", " -- provides the quaternary method named ", TT "M", " for
+     ", TT "(A,B,C,D)", ".  The first place to look is ", TT "Y#(M,A,B,C,D)", " where ", TT "Y", " 
+     is the youngest of ", TT "A", ", ", TT "B", ", ", TT "C", ", and ", TT "D", ".  The search proceeds with 
+     the parent of ", TT "D", ", and so on.",
+     PARA,
      NOINDENT, TT "lookup x", " -- where ", TT "x", " is a symbol or function, returns ", TT "x", ".",
      PARA,
      "If no method is found, then ", TO "null", " is returned.",
