@@ -1608,6 +1608,42 @@ export rawTensor(e:Expr):Expr := (
      );
 setupfun("rawTensor",rawTensor);
 
+export rawModuleTensor(e:Expr):Expr := (
+     when e is s:Sequence do
+     when s.0
+     is f:RawMatrix do
+     when s.1 is g:RawMatrix do toExpr(Ccode(RawMatrixOrNull,"(engine_RawMatrixOrNull)", "rawModuleTensor(", "(Matrix *)", f, ",", "(Matrix *)", g, ")" ) )
+     else WrongArg(2,"a raw matrix")
+     else WrongArg(1,"a raw matrix")
+     else WrongNumArgs(2)     
+     );
+setupfun("rawModuleTensor",rawModuleTensor);
+
+export rawBasis(e:Expr):Expr := (
+     when e is s:Sequence do
+     when s.0 is M:RawMatrix do
+     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else
+     if !isSequenceOfSmallIntegers(s.3) then WrongArg(4,"a sequence of small integers") else
+     if !isSequenceOfSmallIntegers(s.4) then WrongArg(5,"a sequence of small integers") else
+     when s.5 is doTruncation:Boolean do
+     if !isSmallInt(s.6) then WrongArgSmallInteger(7)
+     else toExpr(Ccode(RawMatrixOrNull,
+	       "(engine_RawMatrixOrNull)rawBasis(",
+	       "(Matrix*)", M, ",",
+	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.1), ",", -- lo_degree
+	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.2), ",", -- hi_degree
+	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.3), ",", -- wt
+	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.4), ",", -- vars
+	       doTruncation == True, ",",
+	       getSmallInt(s.6),			    -- limit
+	       ")"
+	       ))
+     else WrongArgBoolean(6)
+     else WrongArg(1,"a raw matrix")
+     else WrongNumArgs(7));
+setupfun("rawBasis",rawBasis);
+
 export rawMatrixDiff(e:Expr):Expr := (
      when e is s:Sequence do
      when s.0 is f:RawMatrix do

@@ -157,12 +157,14 @@ document {
 	       TO2("differential operator corresponding to a polynomial", 
 	       "differential operator"), " corresponding to ", TT "x", "."}
 	  },
-     "If x is an indeterminate this is simply the usual differentiation.",
+     "If ", TT "x", " is an indeterminate this is simply the usual differentiation.",
      EXAMPLE {
 	  "R = QQ[x,y,z];",
 	  "diff(x,x^7 + 4*x^3*y - 3*y)",
 	  "diff(x^2+y^2+z^2, y^2*z^2 - x^3 - 1)",
 	  },
+     "Here is a shortcut that can save some typing.",
+     EXAMPLE "diff_x x^6",
      SeeAlso => {
 	  contract,
 	  jacobian,

@@ -15,6 +15,7 @@ $(RESULTS) : ../bin/M2
 $(LATERESULTS) : ../bin/M2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 
 ARGS := --silent --stop -q -e 'path=join(path,{"@srcdir@/","@srcdir@/../packages/"})'
+ARGS += --no-debug
 
 # uncomment this for further debugging:
 ARGS += -e 'errorDepth=0'
