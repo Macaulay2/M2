@@ -117,7 +117,7 @@ private:
 
   void debug_out(s_pair *q) const;
 
-  virtual bool stop_conditions_ok();
+  virtual bool stop_conditions_ok() { return true; }
 
 public:
 

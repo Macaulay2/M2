@@ -206,16 +206,28 @@ IM2_GB_contains(Computation *C,
 
 const MatrixOrNull *
 rawResolutionGetMatrix(Computation *C, 
-		  int level, 
-		  M2_bool minimize)
+		       int level)
 {
 #warning write this routine
 #if 0
-  return G->get_matrix(level, minimize);
+  return G->get_matrix(level);
 #endif
   ERROR("resolutions need to be re-implemented");
   return 0;
 }
+
+const FreeModuleOrNull *
+rawResolutionGetFree(Computation *C, 
+		     int level)
+{
+#warning write this routine
+#if 0
+  return G->get_free(level);
+#endif
+  ERROR("resolutions need to be re-implemented");
+  return 0;
+}
+
 
 enum ComputationStatusCode rawStatus(Computation *C,
 		  int * complete_up_through_this_degree)
@@ -255,20 +267,6 @@ IM2_Resolution_status_level(Computation *C,
   ERROR("resolutions need to be re-implemented");
   return 0;
 }
-
-const FreeModuleOrNull *
-rawResolutionGetFree(Computation *C, 
-		int level, 
-		M2_bool minimal)
-{
-#warning write this routine
-#if 0
-  return G->get_free(level, minimal);
-#endif
-  ERROR("resolutions need to be re-implemented");
-  return 0;
-}
-
 
 const M2_arrayint_OrNull
 rawResolutionBetti(Computation *C,

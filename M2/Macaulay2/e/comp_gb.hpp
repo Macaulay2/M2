@@ -51,21 +51,21 @@ public:
 
   virtual void start_computation() = 0;
 
-  virtual enum ComputationStatusCode gb_status(int *degree); 
+  virtual enum ComputationStatusCode gb_status(int *degree) = 0; 
   // The computation is complete up through this degree.
 
   ////////////////////////////////
   // Results of the computation //
   ////////////////////////////////
-  virtual const MatrixOrNull *get_gb();
+  virtual const MatrixOrNull *get_gb() = 0;
 
-  virtual const MatrixOrNull *get_mingens();
+  virtual const MatrixOrNull *get_mingens() = 0;
 
-  virtual const MatrixOrNull *get_change();
+  virtual const MatrixOrNull *get_change() = 0;
 
-  virtual const MatrixOrNull *get_syzygies();
+  virtual const MatrixOrNull *get_syzygies() = 0;
 
-  virtual const MatrixOrNull *get_initial(int nparts);
+  virtual const MatrixOrNull *get_initial(int nparts) = 0;
 
   ////////////////////////////////
   // Normal forms and lifting ////
@@ -83,7 +83,7 @@ public:
   // Statistics and spair information //
   //////////////////////////////////////
 
-  virtual void text_out(buffer &o);
+  virtual void text_out(buffer &o) = 0;
   // This displays statistical information, and depends on the
   // gbTrace value.
 

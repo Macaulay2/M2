@@ -10,6 +10,11 @@
 #include "hermite.hpp"
 #include "gbA.hpp"
 
+GBComputation::GBComputation()
+{
+}
+
+
 GBComputation::~GBComputation()
 {
 }
@@ -116,6 +121,12 @@ ComputationOrNull * GBComputation::force(const Matrix *m,
   return GB_comp::create_forced(m,gb,change);
 }
 
+ComputationOrNull *GBComputation::set_hilbert_function(const RingElement *h)
+  // The default version returns an error saying that Hilbert functions cannot be used.
+{
+  ERROR("Hilbert function use is not implemented for this GB algorithm");
+  return 0;
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
