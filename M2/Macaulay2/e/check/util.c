@@ -115,7 +115,18 @@ const Ring *make_poly_ring(int charac, int nvars)
 					   degs));
 }
 
-const RingElement_array *make_ringelem_array(int len, ...)
+RingElement_array *alloc_ringelem_array(int len)
+{
+  int i;
+  RingElement_array *result;
+  result = (RingElement_array *) getmem (sizeofarray(result,len));
+  result->len = len;
+
+  for (i=0; i<len; i++)
+    result->array[i] = 0;
+  return result;
+}
+RingElement_array *make_ringelem_array(int len, ...)
 {
   va_list ap;
   int i;

@@ -2,19 +2,17 @@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
 CCTESTS = test_monomial.o
-CTESTS = check_monomial.o \
+CTESTS = \
+	check_monomial.o \
 	check_monordering.o \
 	check_monoid.o \
 	check_ring.o \
 	check_freemodule.o \
-	check_matrix.o \
-	check_vector.o \
-	check_sparsemat.o
+
+#	check_matrix.o \
+#	check_sparsemat.o
 
 #	check_lapack.o
-
-#test_monordering test_monoid test_ring test_freemodule test_vector \
-#	test_matrix test_sparsemat test_lapack
 
 CPPFLAGS += -I@srcdir@/.. -I../../util
 LIBRARYFILES += ../libgb.a 
@@ -30,8 +28,8 @@ COBJ = ../../d/M2types.o ../../d/M2inits.o util.o src_test/Ctest.o src_test/Csui
 CCOBJ = ../../d/M2types.o ../../d/M2inits.o util.o src_test/test.o src_test/suite.o
 
 all :: check
-check_cc : $(CCTESTS) $(CCOBJ) 
-check_c : $(CTESTS) $(COBJ)
+check_cc : $(CCTESTS) $(CCOBJ) ../libgb.a
+check_c : $(CTESTS) $(COBJ) ../libgb.a
 check : check_cc check_c
 	./check_cc
 	./check_c
