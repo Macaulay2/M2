@@ -1,5 +1,7 @@
 --		Copyright 1995-2002 by Daniel R. Grayson
 
+load "statuscodes.m2"
+
 GroebnerBasis = new Type of MutableHashTable
 GroebnerBasis.synonym = "Groebner basis"
 raw GroebnerBasis := G -> G.RawComputation
@@ -177,10 +179,10 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      G)
 
 syz = method(Options => options gb)			    -- we seem to be ignoring these options!!
-generators      GroebnerBasis := Matrix =>            (G) -> map(target unbag G.matrix,,rawResolutionGetMatrix(G.RawComputation,1,false))
-mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawResolutionGetMatrix(G.RawComputation,1,true))
-syz             GroebnerBasis := Matrix => options -> (G) -> map(ring G,rawResolutionGetMatrix(G.RawComputation,2,false))
-getChangeMatrix GroebnerBasis := Matrix =>            (G) -> map(ring G,rawGBGetChange(G.RawComputation,1))
+generators      GroebnerBasis := Matrix =>            (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,false))
+mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,true))
+syz             GroebnerBasis := Matrix => options -> (G) -> notImplemented() -- rawGBSyzygies
+getChangeMatrix GroebnerBasis := Matrix =>            (G) -> notImplemented() -- rawGBChangeOfBasis
 
 forceGB = method(
      TypicalValue => GroebnerBasis,
@@ -233,7 +235,7 @@ RingElement // GroebnerBasis := Matrix => (r,g) -> (r * id_(target g)) // g
 
 Matrix % GroebnerBasis := Matrix => (n,g) -> (
      R := ring n;
-     map(target n,, rawGBMatrixRemainder(raw g, 1, raw n)));
+     map(target n,, rawGBMatrixRemainder(raw g, raw n)));
 
 RingElement % GroebnerBasis := RingElement =>
 ZZ % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)

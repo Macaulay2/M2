@@ -2065,7 +2065,7 @@ export rawGBSetStop(e:Expr):Expr := (
      else WrongArgInteger(5)
      else WrongArgBoolean(3)
      else WrongArgBoolean(2)
-     else WrongArg(1,"a raw computation")
+     else WrongArg("a raw computation")
      else WrongNumArgs(11)
      );
 setupfun("rawGBSetStop", rawGBSetStop);
@@ -2073,7 +2073,7 @@ setupfun("rawGBSetStop", rawGBSetStop);
 export rawGBGetMatrix(e:Expr):Expr := (
      when e is G:RawComputation do 
      toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBGetMatrix(", "(Computation *)", G, ")" ))
-     else WrongArg(1,"a raw Groebner basis computation"));
+     else WrongArg("a raw Groebner basis computation"));
 setupfun("rawGBGetMatrix", rawGBGetMatrix);
 
 export rawResolutionGetMatrix(e:Expr):Expr := (
@@ -2331,7 +2331,7 @@ export rawNumberOfRowsRR(e:Expr):Expr := (
 	  toExpr(
 	       Ccode(int, "LP_LMatrixRR_nrows(", "(LMatrixRR *)", M, ")") 
 	  )
-     else WrongArg(1, "a raw matrixRR"));
+     else WrongArg("a raw matrixRR"));
 setupfun("rawNumberOfRowsRR", rawNumberOfRowsRR);
 
 export rawNumberOfColumnsRR(e:Expr):Expr := (
@@ -2339,7 +2339,7 @@ export rawNumberOfColumnsRR(e:Expr):Expr := (
 	  toExpr(
 	       Ccode(int, "LP_LMatrixRR_ncols(", "(LMatrixRR *)", M, ")") 
 	  )
-     else WrongArg(1, "a raw matrixRR"));
+     else WrongArg("a raw matrixRR"));
 setupfun("rawNumberOfColumnsRR", rawNumberOfColumnsRR);
 
 export rawNumberOfRowsCC(e:Expr):Expr := (
@@ -2347,7 +2347,7 @@ export rawNumberOfRowsCC(e:Expr):Expr := (
 	  toExpr(
 	       Ccode(int, "LP_LMatrixCC_nrows(", "(LMatrixCC *)", M, ")") 
 	  )
-     else WrongArg(1, "a raw matrixCC"));
+     else WrongArg("a raw matrixCC"));
 setupfun("rawNumberOfRowsCC", rawNumberOfRowsCC);
 
 export rawNumberOfColumnsCC(e:Expr):Expr := (
@@ -2355,7 +2355,7 @@ export rawNumberOfColumnsCC(e:Expr):Expr := (
 	  toExpr(
 	       Ccode(int, "LP_LMatrixCC_ncols(", "(LMatrixCC *)", M, ")") 
 	  )
-     else WrongArg(1, "a raw matrixCC"));
+     else WrongArg("a raw matrixCC"));
 setupfun("rawNumberOfColumnsCC", rawNumberOfColumnsCC);
 
 export rawSetMatrixEntryRR(e:Expr):Expr := (

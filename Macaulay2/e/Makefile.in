@@ -163,7 +163,7 @@ HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE)) $(E_H)
 
 all tags:: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c @srcdir@/check/*.c @srcdir@/check/*.cpp @srcdir@/check/*.h \
-		 @srcdir@/check/src_test/*.c @srcdir@/check/src_test/*.h @srcdir@/check/src_test/*.cpp
+		 @srcdir@/check/src_test/*.c @srcdir@/check/src_test/*.h @srcdir@/check/src_test/*.cpp statuscodes
 	cd @srcdir@ && etags $(patsubst @srcdir@/%, %, $^)
 
 # the target 'initialize' is used by the Makefile in the parent directory
