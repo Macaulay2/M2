@@ -64,10 +64,11 @@ else
 target = $(prefix)
 endif
 bindir = $(target)/bin
-# obsolete : packagedir = $(target)/lib/$(package)
 libdir = $(target)/lib
 libm2dir = $(libdir)/$(PACKAGE_NAME)/$(PACKAGE_VERSION)
-packagedir = $(libdir)/packages
+cachedir = $(libm2dir)/cache
+libexecdir = $(libm2dir)/libexec
+packagesdir = $(libdir)/packages
 datadir = $(target)/share
 mandir = $(datadir)/man
 man1dir = $(mandir)/man1

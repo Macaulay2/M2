@@ -8,11 +8,11 @@ justM2 all :: initialize config
 
 include ../include/config.Makefile
 VPATH = @srcdir@
-install :: $(packagedir)/COPYING $(packagedir)/CHANGES $(packagedir)/README
-$(packagedir)/COPYING : COPYING $(packagedir) ; $(INSTALL_DATA) $< "$@"
-$(packagedir)/CHANGES : CHANGES $(packagedir) ; $(INSTALL_DATA) $< "$@"
-$(packagedir)/README  : README  $(packagedir) ; $(INSTALL_DATA) $< "$@"
-$(packagedir):; $(INSTALL) -d "$@"
+install :: $(docm2reldir)/COPYING $(docm2reldir)/CHANGES $(docm2reldir)/README
+$(docm2reldir)/COPYING : COPYING $(docm2reldir) ; $(INSTALL_DATA) $< "$@"
+$(docm2reldir)/CHANGES : CHANGES $(docm2reldir) ; $(INSTALL_DATA) $< "$@"
+$(docm2reldir)/README  : README  $(docm2reldir) ; $(INSTALL_DATA) $< "$@"
+$(docm2reldir):; $(INSTALL) -d "$@"
 ################################# libexec
 libexec :; mkdir $@
 clean ::; rm -rf libexec
@@ -21,10 +21,10 @@ initialize :: libexec
 initialize :: cache
 cache :; mkdir $@
 distclean clean ::; rm -rf cache
-install :: $(packagedir)/cache
-$(packagedir)/cache:; $(INSTALL) -d "$@"
-install :: $(packagedir)/cache/Macaulay2-doc
-$(packagedir)/cache/Macaulay2-doc : cache/Macaulay2-doc; $(INSTALL_DATA) $^ "$(packagedir)/cache"
+install :: $(cachedir)
+$(cachedir):; $(INSTALL) -d "$@"
+install :: $(cachedir)/Macaulay2-doc
+$(cachedir)/Macaulay2-doc : cache/Macaulay2-doc; $(INSTALL_DATA) $^ "$(cachedir)"
 ################################# util
 initialize::; $(MAKE) -C util all
 distclean clean ::; $(MAKE) DEPENDS=no -C util $@
@@ -63,10 +63,11 @@ distclean clean ::; $(MAKE) -C test $@
 ################################# setup
 all :: setup
 	[ -x $< ] || chmod a+x $<
-install ::; $(INSTALL_PROGRAM) setup $(packagedir)
+install ::; $(INSTALL_PROGRAM) setup $(libm2dir)
 distclean ::; rm -f setup
 ################################# packages
-all install check clean distclean ::; $(MAKE) -C packages $@
+# from now on, all packages will be separate entities
+# all install check clean distclean ::; $(MAKE) -C packages $@
 ################################# html
 doc :: html
 html ::; $(MAKE) -C html all
@@ -79,15 +80,15 @@ distclean clean ::; $(MAKE) -C book $@
 all ::;  $(MAKE) -C emacs all
 install distclean clean ::; $(MAKE) -C emacs $@
 ################################# libexec
-install :: $(packagedir)/libexec
-$(packagedir)/libexec:; $(INSTALL) -d "$@"
-install :: $(packagedir)/libexec/Macaulay2
-$(packagedir)/libexec/Macaulay2 : libexec/Macaulay2
-	$(INSTALL_PROGRAM) $^ $(packagedir)/libexec
+install :: $(libexecdir)
+$(libexecdir):; $(INSTALL) -d "$@"
+install :: $(libexecdir)/Macaulay2
+$(libexecdir)/Macaulay2 : libexec/Macaulay2
+	$(INSTALL_PROGRAM) $^ $(libexecdir)
 ifeq "$(DUMPDATA)" "yes"
 ifeq "$(encap)" "no"
-install :: $(packagedir)/$(DUMPDATAFILE)
-$(packagedir)/$(DUMPDATAFILE) : $(DUMPDATAFILE); $(INSTALL) $< "$@"
+install :: $(cachedir)/$(DUMPDATAFILE)
+$(cachedir)/$(DUMPDATAFILE) : $(DUMPDATAFILE); $(INSTALL) $< "$@"
 endif
 endif
 #################################

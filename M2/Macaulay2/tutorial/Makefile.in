@@ -35,10 +35,10 @@ tutbook.tex : ../cache/Macaulay2-doc tutbook.m2 translate $(OUTPUTS)
 	../../bin/M2 -e'readExamples=true' tutbook.m2 '-e exit 0'
 
 #################################
-install:: $(packagedir)/tutorial/final
+install:: $(m2dir)
 install:: $(TUTORIALS) $(OUTPUTS)
-	$(INSTALL_DATA) $^ "$(packagedir)/tutorial/final"
-$(packagedir)/tutorial/final :; $(INSTALL) -d "$@"
+	$(INSTALL_DATA) $^ "$(m2dir)"
+$(m2dir) :; $(INSTALL) -d "$@"
 #################################
 
 clean :

@@ -18,7 +18,7 @@ endif
 all install clean :: ; $(MAKE) -C bin $@
 all distclean check clean install :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
-DIRS := $(target) $(packagedir) $(bindir)
+DIRS := $(target) $(bindir) $(libm2dir) $(man1dir) $(emacsdir) $(m2dir) $(docm2reldir)
 install :: all
 install :: $(DIRS)
 install :: ; $(MAKE) -C encap $@
