@@ -768,7 +768,7 @@ document { Entity,
      "An example of an entity is ", TO "DownArrow", ", a downward pointing arrow.",
      EXAMPLE {
 	  "DownArrow",
-	  "peek2(DownArrow,2)",
+	  "peek2(2,DownArrow)",
 	  "html DownArrow",
 	  }
      }

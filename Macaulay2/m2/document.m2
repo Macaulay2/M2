@@ -222,18 +222,18 @@ documentableValue := key -> (
 ---- how could this have worked (so soon)?
 -- scan(flatten(pairs \ globalDictionaries), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
 
-fixup := method(SingleArgumentDispatch => true)
-fixup Nothing    := z -> z				    -- null
-fixup String     := z -> z				    -- "..."
-fixup List       := z -> SEQ apply(z, fixup)		    -- {...} becomes SEQ{...}
-fixup Sequence   := z -> SEQ toList apply(z, fixup)	    -- (...) becomes SEQ{...}
-fixup MarkUpList := z -> apply(z,fixup)			    -- recursion
-fixup Option     := z -> z#0 => fixup z#1		    -- Headline => "...", ...
-fixup TO         := z -> z				    -- TO{x}
-fixup TOH        := z -> z				    -- TOH{x}
-fixup MarkUpType := z -> z{}				    -- convert PARA to PARA{}
-fixup Function   := z -> z     				    -- allow Function => f in Synopsis
-fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
+--fixup := method(SingleArgumentDispatch => true)
+--fixup Nothing    := z -> z				    -- null
+--fixup String     := z -> z				    -- "..."
+--fixup List       := z -> SEQ apply(z, fixup)		    -- {...} becomes SEQ{...}
+--fixup Sequence   := z -> SEQ toList apply(z, fixup)	    -- (...) becomes SEQ{...}
+--fixup MarkUpList := z -> apply(z,fixup)			    -- recursion
+--fixup Option     := z -> z#0 => fixup z#1		    -- Headline => "...", ...
+--fixup TO         := z -> z				    -- TO{x}
+--fixup TOH        := z -> z				    -- TOH{x}
+--fixup MarkUpType := z -> z{}				    -- convert PARA to PARA{}
+--fixup Function   := z -> z     				    -- allow Function => f in Synopsis
+--fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
 
 file := null
 
@@ -362,7 +362,10 @@ document List := z -> (
      if currentPackage === null then error "documentation encountered outside a package";
      d := currentPackage#"documentation";
      if d#?currentNodeName then duplicateDocWarning();
-     d#currentNodeName = toExternalString extractExamples fixup body;
+     d#currentNodeName = toExternalString extractExamples (
+     	  -- fixup body
+     	  BODY body
+	  );
      currentNodeName = null;
      )
 
@@ -769,9 +772,7 @@ documentation String := s -> (
 	  t := getGlobalSymbol s;
 	  documentation(t)
 	  )
-     else (
-	  SEQ { title s, PARA getDocBody(s) }
-	  )
+     else join( BODY { title s, PARA{" "} }, getDocBody(s) )
      )
 
 binary := set binaryOperators; erase symbol binaryOperators
@@ -1033,6 +1034,20 @@ net MarkUpList := x -> horizontalJoin apply(x,net)
 texMath MarkUpList := x -> concatenate apply(x,texMath)
 mathML MarkUpList := x -> concatenate apply(x,mathML)
 
+net HEAD := x -> ""
+net BODY := x -> (
+     x = toList x;
+     p := positions(x, i -> instance(i,MarkUpListParagraph));
+     x = select(
+	  apply(
+	       mingle(
+		    apply( prepend(-1,p), append(p,#x), (i,j) -> {i+1,j-1}),
+		    apply( p, i -> {i,i} )),
+	       i -> take(x,i)),
+	  s -> #s>0);
+     x = apply(x, i -> horizontalJoin \\ net \ i);
+     net new ParagraphList from between("",x))
+
 html BR := x -> ///
 <BR>
 ///
@@ -1199,18 +1214,6 @@ html ITALIC := x -> concatenate("<I>",apply(x,html),"</I>")
 texMath TEX := tex TEX := x -> concatenate toList x
 
 texMath SEQ := tex SEQ := x -> concatenate(apply(toList x, tex))
-
-net SEQ := x -> (					    -- this needs a lot of work
-     x = toList x;
-     P := PARA{};
-     p := positions(x, i -> i === P);
-     p = apply(prepend(-1,p),append(p,#x),identity);
-     p = select(p, (i,j) -> i+1 < j);
-     x = apply(p, (i,j) -> net \ take(x, {i+1,j-1}));
-     x = flatten between(P,x);
-     horizontalJoin \\ net \ x
-     )
-
 html SEQ := x -> concatenate(apply(toList x, html))
 
 tex Sequence := tex List := tex Array := x -> concatenate("$",texMath x,"$")
@@ -1245,6 +1248,11 @@ html TEX := x -> x#0
 addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, headline i#0 } else i)
 
 addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, headline i#0 } else i)
+
+net UL := 
+net OL := 
+net DL := x -> stack apply(toList x, i -> "* " | wrap(printWidth - 10, net i))
+net NL := x -> stack apply(toList x, i -> toString i | ": " | wrap(printWidth - 10, net i))
 
 tex UL := x -> concatenate(
      ///\begin{itemize}///, newline,
@@ -1405,7 +1413,6 @@ html HEADER6 := x -> concatenate (
 ///
      )
 
-SECTION = new MarkUpType
 html SECTION := x -> html SEQ {
      HEADER2 take(toList x,1),
      SEQ drop(toList x,1)
@@ -1415,7 +1422,6 @@ tex SECTION := x -> tex SEQ {
      SEQ drop(toList x,1)
      }
 
-TOC = new MarkUpType
 html TOC := x -> (
      x = toList x;
      if not all(apply(x,class), i -> i === SECTION)

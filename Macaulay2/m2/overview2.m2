@@ -1789,7 +1789,7 @@ document { "two dimensional formatting",
      level of the structure.  We may use ", TO "peek2", " to display
      the structure of ", TT "e", " to depth 2.",
      EXAMPLE {
-	  "peek2(e,2)",
+	  "peek2(2,e)",
 	  },
      "Other types of ", TO "Expression", " that can be used for formatting
      nested lists as two dimensional arrays are ", TO "MatrixExpression", "
