@@ -80,7 +80,8 @@ CODE ///(setq auto-mode-alist (append auto-mode-alist '(("\\.m2$" . M2-mode))))
 (setq load-path (cons "/usr/local/Macaulay2/emacs" load-path))
 (make-variable-buffer-local 'transient-mark-mode)
 (add-hook 'M2-mode-hook '(lambda () (setq transient-mark-mode t)))
-(add-hook 'comint-M2-hook '(lambda () (setq transient-mark-mode t)))///,
+(add-hook 'comint-M2-hook '(lambda () (setq transient-mark-mode t)))
+(defvar M2HOME "/home/dan/src/M2/Macaulay2")///,
 PARA,
 "The first two lines cause emacs to enter a special mode for editing Macaulay 2
 code whenever a file whose name has the form ", TT "*.m2", " is encountered.  
@@ -99,7 +100,10 @@ unless the mark is active.  The ", TT "set-mark", " function or the
 ", TT "exchange-point-and-mark", " function will activate the mark, and it
 will remain active until some change occurs to the buffer.  The only reason
 we recommend the use of this mode is so the same key can be used to evaluate 
-a line or a region of code, depending on whether the region is active.",
+a line or a region of code, depending on whether the region is active.  The
+tenth line tells emacs where to find the directory in which the Macaulay2
+files have been installed - you should change this to the appropriate
+directory for your installation, so emacs can find the Macaulay 2 documentation.",
 PARA,
 "Exit and restart emacs with your new initialization file.  
 If you are reading this file with emacs, then use the keystrokes
@@ -228,7 +232,7 @@ slightly to change it before pressing return.",
 PARA,
 "Assuming you have installed the ", TO "w3", " emacs web browser,
 you may explore the documentation by positioning the cursor near a documented
-word such as ", TT "List", " and pressing ", TT "C-H d", ".  Alternatively,
+word such as ", TT "List", " and pressing ", TT "C-C d", ".  Alternatively,
 when the prompt appears, you can type the key whose documentation should be
 found."
 }
@@ -276,7 +280,7 @@ the mode in a help window.",
 PARA,
 "Assuming you have installed the ", TO "w3", " emacs web browser,
 you may explore the documentation by positioning the cursor near a documented
-word such as ", TT "List", " and pressing ", TT "C-H d", ".  Alternatively,
+word such as ", TT "List", " and pressing ", TT "C-C d", ".  Alternatively,
 when the prompt appears, you can type the key whose documentation should be
 found."
 }

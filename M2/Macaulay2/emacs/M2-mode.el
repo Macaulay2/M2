@@ -141,9 +141,9 @@
 		       (indent-to i)
 		       ) ) ) ) )
 
-(load "M2HOME.el")
-;(defvar M2HOME "/home/geometry/dan/src/M2/Macaulay2")
-
+; We assume something like 
+;   (defvar M2HOME "/home/dan/src/M2/Macaulay2")
+; has been put into the user's .emacs file.
 (defvar M2-default-html-index (concat M2HOME "/html/master.html"))
 
 (autoload 'find-tag-interactive "etags")
