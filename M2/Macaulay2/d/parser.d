@@ -375,19 +375,19 @@ unstringToken(q:Token):Token := (
      else q);
 export unaryquote(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     arg := gettoken(file,true);
+     arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
      r := ParseTree(Quote(quotetoken,unstringToken(arg)));
      accumulate(r,file,prec,obeylines));
 export unaryglobal(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     arg := gettoken(file,true);
+     arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
      r := ParseTree(GlobalQuote(quotetoken,unstringToken(arg)));
      accumulate(r,file,prec,obeylines));
 export unarylocal(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     arg := gettoken(file,true);
+     arg := gettoken(file,false);
      if arg == errorToken then return errorTree;
      r := ParseTree(LocalQuote(quotetoken,unstringToken(arg)));
      accumulate(r,file,prec,obeylines));

@@ -567,7 +567,7 @@ flagSymbol(e:Expr):Expr := (
 	  nullE
 	  )
      else WrongArg("a symbol"));
-setupfun("flag",flagSymbol);
+setupfun("flagLookup",flagSymbol);
 
 export chars := new array(Expr) len 256 do (
      i := 0;

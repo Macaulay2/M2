@@ -181,17 +181,12 @@ primaryDecomposition = method(
 
 simpleToString := toString
 toString = method(SingleArgumentDispatch => true, TypicalValue => String)
-toString String := identity
 toString Thing := simpleToString			    -- if all else fails...
--- toString Symbol := s -> (
---      n := simpleToString s;
---      if isGlobalSymbol n and getGlobalSymbol n === s then n else concatenate("$",n)     
---      )
+toString String := identity
 toString Symbol := simpleToString
-toString Keyword := s -> concatenate("symbol \"", simpleToString s, "\"")
 
 toExternalString = method(SingleArgumentDispatch => true, TypicalValue => String)
-
+toExternalString Keyword := s -> concatenate("symbol \"", simpleToString s, "\"")
 toExternalString Symbol := s -> (
      n := simpleToString s;
      if isGlobalSymbol n and getGlobalSymbol n === s then (

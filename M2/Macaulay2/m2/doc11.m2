@@ -311,28 +311,6 @@ document {
      }
 
 document {
-     Key => SECTION,
-     Headline => "hypertext section",
-     OldSynopsis => {
-	  ///SECTION { "title of the section", ... contents of the section ... }///
-	  },
-     SeeAlso => { "TOC" }
-     }
-
-document {
-     Key => TOC,
-     Headline => "table of contents for sections",
-     OldSynopsis => {
-	  ///TOC {
-     SECTION { "section title 1", ... },
-     SECTION { "section title 2", ... },
-     SECTION { "section title 3", ... }
-     }///
-     	  },
-     SeeAlso => { "SECTION" }
-     }
-
-document {
      Key => VAR,
      Headline => "HTML VAR item",
      TT "VAR x", " -- encloses ", TT "x", " in a hypertext VAR item.",

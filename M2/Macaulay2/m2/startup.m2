@@ -205,6 +205,8 @@ if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then 
      while ( s = readlink fn; s =!= null ) do (prev = fn; fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s););
      if prev =!= null then setPrefixFromBindir dir prev)
 
+phase := 1
+
 silence := arg -> null
 notyeterr := arg -> error("command line option ", arg, " not re-implemented yet")
 notyet := arg -> if phase == 1 then (
@@ -266,8 +268,6 @@ dump := () -> (
      stderr << "--success" << endl;
      exit 0;
      )
-
-phase := 1
 
 action := hashTable {
      "--help" => usage,

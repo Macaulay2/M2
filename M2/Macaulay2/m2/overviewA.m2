@@ -481,22 +481,14 @@ document {
 
 document {
      Key => "commutative algebra",
-     TOC {
-	  SECTION { "integralClosure",
-	       },
-	  SECTION { "primaryDecomposition",
-	       },
-	  SECTION { "symmetricAlgebra",
-	       }
-	  }
+     SUBSECTION "integralClosure",
+     SUBSECTION "primaryDecomposition",
+     SUBSECTION "symmetricAlgebra"
      }
 
 document {
      Key => "algebraic geometry",
-     TOC {
-	  SECTION { "cotangentSheaf",
-	       }
-	  }
+     SUBSECTION "cotangentSheaf",
      }
 
 -- Local Variables:

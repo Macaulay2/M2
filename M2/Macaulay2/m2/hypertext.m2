@@ -533,29 +533,6 @@ html HEADER6 := x -> concatenate (
 ///
      )
 
-redoSECTION := x -> SEQ { HEADER2 take(toList x,1), SEQ drop(toList x,1) }
-html SECTION := html @@ redoSECTION
-net SECTION := net @@ redoSECTION
-info SECTION := info @@ redoSECTION
-tex SECTION := tex @@ redoSECTION
-
-redoTOC := x -> (
-     x = toList x;
-     if not all(apply(x,class), i -> i === SECTION)
-     then error "expected a list of SECTIONs";
-     title := i -> x#i#0;
-     tag := i -> "sec:" | toString i;
-     SEQ {
-	  SECTION {
-	       "Sections:",
-	       UL for i from 0 to #x-1 list HREF { "#" | tag i, title i }
-	       },
-	  SEQ for i from 0 to #x-1 list SEQ { newline, ANCHOR { tag i, ""} , x#i } } )
-html TOC := html @@ redoTOC
-net TOC := net @@ redoTOC
-info TOC := info @@ redoTOC
-tex TOC := tex @@ redoTOC
-
 redoMENU := r -> SEQ prepend(
      PARA BOLD "Menu",
      sublists(toList r, 
