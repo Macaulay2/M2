@@ -8,8 +8,8 @@ a:visited { background-color: transparent; color: #52188b; }
 a:hover { background-color: transparent; color: #009999; }
 a:active { background-color: transparent; color: #ee0000; }
 
-p#buttonbar { text-align: center; }
-img#myface { float: left; margin-right: 1em;  margin-bottom: 1em;}
-table#examples { background-color: #80ffff; }
-img#button { border: 0; }
-form#search { text-align: center; }
+p.buttonbar { text-align: center; }
+img.myface { float: left; margin-right: 1em;  margin-bottom: 1em;}
+table.examples { background-color: #80ffff; }
+img.button { border: 0; }
+form.search { text-align: center; }

@@ -59,6 +59,12 @@ tex HREF := x -> (
 	  )
      )
 
+html LABEL := x -> LITERAL concatenate(
+     "<label title=\"", x#0, "\">",
+     html x#1,
+     "</label>"
+     )
+
 html TO := x -> (
      key := normalizeDocumentTag x#0;
      formattedKey := formatDocumentTag key;
@@ -71,6 +77,19 @@ html TO := x -> (
      	  drop(toList x,1) 
      	  )
      )
+
+html TO2 := x -> (
+     key := normalizeDocumentTag x#0;
+     formattedKey := formatDocumentTag key;
+     concatenate ( 
+     	  ///<A HREF="///,				    -- "
+	  rel htmlFilename key,
+	  ///">///, 					    -- "
+     	  drop(toList x,1),
+     	  "</A>"
+     	  )
+     )
+
 html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
 
 --
@@ -96,7 +115,7 @@ BUTTON := (s,alt) -> (
      s = rel s;
      if alt === null
      then error "required attribute: ALT"
-     else LITERAL concatenate("<IMG id=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
+     else LITERAL concatenate("<IMG class=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
      )
 
 upAncestors := key -> reverse (
@@ -104,9 +123,9 @@ upAncestors := key -> reverse (
      while UP#?key and n < 20 list (n = n+1; key = UP#key)
      )
 
-next := key -> if NEXT#?key then HREF { htmlFilename NEXT#key, nextButton } else nullButton
-prev := key -> if PREV#?key then HREF { htmlFilename PREV#key, prevButton } else nullButton
-up   := key -> if   UP#?key then HREF { htmlFilename   UP#key,   upButton } else nullButton
+next := key -> if NEXT#?key then LABEL { "Next node",     HREF { htmlFilename NEXT#key, nextButton } } else nullButton
+prev := key -> if PREV#?key then LABEL { "Previous node", HREF { htmlFilename PREV#key, prevButton } } else nullButton
+up   := key -> if   UP#?key then LABEL { "Parent node",   HREF { htmlFilename   UP#key,   upButton } } else nullButton
 
 scope := method(SingleArgumentDispatch => true)
 scope2 := method(SingleArgumentDispatch => true)
@@ -176,29 +195,31 @@ scope2 TO := scope2 TOH := x -> (
      follow key;
      )
 
-buttonBar := (key) -> SEQ {
-     SEQ { 
-	  LITERAL ///<p id="buttonbar">///,
-	  next key, prev key, up key,
-     	  if key =!= topNodeName then topNodeButton else nullButton,
-     	  masterIndexButton,
-     	  LITERAL ///<p>///
-	  },
-     LITERAL concatenate (///
-     <form id="search" action="///,					    -- "
-     if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
-     ///">
-        <p>
-        <label title="Macaulay2 term to search for">
-	   Search: <input type="text" name="words">
-	</label>
-	<input type="hidden" name="method"   value="boolean">
-	<input type="hidden" name="format"   value="builtin-short">
-	<input type="hidden" name="sort"     value="score">
-	<input type="hidden" name="config"   value="htdig-M2">
-        </p>
-     </form>
-     ///)						    -- "
+buttonBar := (key) -> TABLE {
+     { 
+	  SEQ {
+	       LITERAL ///<p class="buttonbar">///,
+	       next key, prev key, up key,
+     	       if key =!= topNodeName then topNodeButton else nullButton,
+     	       masterIndexButton,
+     	       LITERAL ///</p>///
+	       },
+	  LITERAL concatenate (///
+	       <form class="search" action="///,					    -- "
+	       if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
+	       ///">
+	       <p>
+	       <label title="Macaulay2 term to search for">Search: 
+	         <input type="text" name="words">
+	       </label>
+	       <input type="hidden" name="method"   value="boolean">
+	       <input type="hidden" name="format"   value="builtin-short">
+	       <input type="hidden" name="sort"     value="score">
+	       <input type="hidden" name="config"   value="htdig-M2">
+	       </p>
+	       </form>
+	       ///)						    -- "
+	  }
      }
 
 pass1 := () -> (
@@ -271,9 +292,9 @@ anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
 
 setupButtons := () -> (
      gifpath := LAYOUT#"images";
-     topNodeButton = HREF { htmlDirectory|topFileName, BUTTON (gifpath|"top.gif","top") };
+     topNodeButton = LABEL { "top node", HREF { htmlDirectory|topFileName, BUTTON (gifpath|"top.gif","top") } };
      nullButton = BUTTON(gifpath|"null.gif","null");
-     masterIndexButton = HREF { htmlDirectory|indexFileName, BUTTON(gifpath|"index.gif","index") };
+     masterIndexButton = LABEL { "index", HREF { htmlDirectory|indexFileName, BUTTON(gifpath|"index.gif","index") } };
      nextButton = BUTTON(gifpath|"next.gif","next");
      prevButton = BUTTON(gifpath|"previous.gif","previous");
      upButton = BUTTON(gifpath|"up.gif","up");
@@ -306,11 +327,10 @@ makeMasterIndex := keylist -> (
 	  HEAD { TITLE title, style() },
 	  BODY {
 	       HEADER2 title, PARA,
-	       topNodeButton, PARA,
- 	       between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), PARA,
+	       topNodeButton, 
+	       PARA between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
 	       UL apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey }),
-	       HR{},
-	       PARA {validate}
+	       -- HR{}, PARA {validate}
 	       }
 	  } << endl << close
      )
