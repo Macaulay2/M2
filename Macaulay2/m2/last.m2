@@ -5,7 +5,7 @@
 if phase > 1 then load "docloads.m2"
 
 addStartFunction(
-     () -> path = append(path, getenv "M2HOME" | "/packages")
+     () -> path = append(path, getenv "M2HOME" | pathSeparator | "packages" | pathSeparator)
      )
 
 addStartFunction(

@@ -55,7 +55,7 @@ endl = new Manipulator from oldendl
 
 stderr << "--loading setup.m2" << endl
 
-if class path =!= List then path = { "." }
+if class path =!= List then path = { "" }
 savepath := path
 
 OS := "operating system"
@@ -70,12 +70,12 @@ progname := commandLine#0
 -- quotation marks are needed because the path may contain spaces
 if substring(progname,0,1) === "\"" then progname = substring(progname,1)
 
-path = {concatenate(currentFileDirectory,".")}
+path = { currentFileDirectory }
 
 dir := splice(apply(separate(progname, "/"), i -> toSequence separate(i, "\\")))-- ???
 if #dir > 1
 then (
-     packagedir := concatenate ( apply(#dir-2, i -> (dir#i,pathSeparator)), "packages");
+     packagedir := concatenate ( apply(#dir-2, i -> (dir#i,pathSeparator)), "packages", pathSeparator);
      )
 
 isAbsolutePath := (
@@ -159,19 +159,16 @@ tryload := (filename,load) -> (
 	       true)
 	  else false)
      else (
-          if class path =!= List
-	  then error "expected 'path' to be a list of strings";
-          {} =!= select(1,path, 
+          if class path =!= List then error "expected 'path' to be a list (of strings)";
+          {} =!= select(1,
+	       prepend(currentFileDirectory, path),
 	       dir -> (
 		    if class dir =!= String 
 		    then error "member of 'path' not a string";
-		    fn := (
-			 if dir === "." then filename 
-			 else dir | pathSeparator | filename
-			 );
-		    -- << "trying to load " << fn << endl;		    -- debugging
-		    result := load fn;
-		    if result then markLoaded(fn,filename);
+		    fullfilename := dir | filename;
+		    -- << "trying to load " << fullfilename << endl;		    -- debugging
+		    result := load fullfilename;
+		    if result then markLoaded(fullfilename,filename);
 		    result))))
 ///
 if version#"operating system" === "MACOS"
