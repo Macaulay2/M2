@@ -7,7 +7,6 @@
 #include "ringmap.hpp"
 #include "Z.hpp"
 #include "random.hpp"
-#include "serial.hpp"
 
 extern Z *ZZ;
 
@@ -65,19 +64,6 @@ bool Z_mod::equals(const object_element *o) const
 }
 #endif
 
-void Z_mod::write_object(object_writer &o) const
-{
-  o << class_id() << P << D;
-}
-
-Z_mod *Z_mod::read_object(object_reader &i)
-{
-  int p;
-  object_element *obj;
-  i >> p >> obj;
-  return new Z_mod(p, obj->cast_to_Monoid());
-}
-
 void Z_mod::text_out(buffer &o) const
 {
   o << "ZZ/" << P;
@@ -130,15 +116,6 @@ void Z_mod::elem_bin_out(buffer &o, ring_elem a) const
 {
   int n = to_int(a);
   bin_int_out(o, n);
-}
-
-void Z_mod::write_element(object_writer &o, const ring_elem f) const
-{
-  o << f.int_val;
-}
-void Z_mod::read_element(object_reader &i, ring_elem &result) const
-{
-  i >> result.int_val;
 }
 
 ring_elem Z_mod::from_int(int n) const

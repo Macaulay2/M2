@@ -12,6 +12,7 @@
 #include "Z.hpp"
 #include "frac.hpp"
 
+#if 0
 ostream &operator<<(ostream &o,const intarray &w) {
 #if defined(__GNUC__) && __GNUC__ >= 3
      hex(o);
@@ -30,6 +31,7 @@ ostream &operator<<(ostream &o,const intarray &w) {
 #endif
      return o;
 }
+#endif
 
 #define Matrix MaTrIx
 #include <factor.h>		// from Messollen's libfac

@@ -34,12 +34,6 @@ public:
   
   class_identifier class_id() const { return CLASS_PolynomialRing; }
 
-  // serialize
-  virtual void write_object(object_writer &o) const;
-  static PolynomialRing *read_object(object_reader &i);
-  void write_element(object_writer &o, const ring_elem f) const;
-  void read_element(object_reader &i, ring_elem &result) const;
-
   virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
   virtual       PolynomialRing * cast_to_PolynomialRing()        { return this; }
 

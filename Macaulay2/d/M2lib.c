@@ -69,6 +69,15 @@ static void putstderr(char *m) {
      write(STDERR,NEWLINE,strlen(NEWLINE));
      }
 
+void WerrorS(char *m) {
+  putstderr(m);
+  exit(1);
+}
+
+void WarnS(char *m) {
+  putstderr(m);
+}
+
 #ifdef DUMPDATA
 #if defined(__NeXT__)
 #   define STARTDATA (void *)0x00146000	/* provisional! */

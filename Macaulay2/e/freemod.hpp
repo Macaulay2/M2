@@ -363,10 +363,6 @@ public:
   type_identifier  type_id () const { return TY_FREEMODULE; }
   const char * type_name   () const { return "FreeModule"; }
 
-  // serialize
-  void write_object(object_writer &o) const;
-  static FreeModule *read_object(object_reader &i);
-
   friend void i_stashes();
   static stash *mystash;
   void *operator new(size_t) { return mystash->new_elem(); }

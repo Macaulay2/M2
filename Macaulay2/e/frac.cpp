@@ -5,7 +5,6 @@
 #include "bin_io.hpp"
 #include "monoid.hpp"
 #include "ringmap.hpp"
-#include "serial.hpp"
 
 #define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
 #define FRAC_RINGELEM(a) ((ring_elem) (Nterm *) (a))
@@ -31,12 +30,6 @@ FractionField *FractionField::create(const Ring *R)
 {
   FractionField *obj = new FractionField(R);
   return (FractionField *) intern(obj);
-}
-
-void FractionField::write_object(object_writer &o) const
-{
-  o << class_id() << R;
-  // MESXX: read_object needs to be done, as do the read/write_element.
 }
 
 void FractionField::text_out(buffer &o) const
@@ -181,20 +174,6 @@ void FractionField::elem_bin_out(buffer &o, const ring_elem a) const
   frac_elem *f = FRAC_VAL(a);
   R->elem_bin_out(o, f->numer);
   R->elem_bin_out(o, f->denom);
-}
-
-void FractionField::write_element(object_writer &o, const ring_elem a) const
-{
-  frac_elem *f = FRAC_VAL(a);
-  R->write_element(o, f->numer);
-  R->write_element(o, f->denom);
-}
-void FractionField::read_element(object_reader &i, ring_elem &result) const
-{
-  frac_elem *f = new_frac_elem();
-  R->read_element(i, f->numer);
-  R->read_element(i, f->denom);
-  result = FRAC_RINGELEM(f);
 }
 
 ring_elem FractionField::from_int(int n) const

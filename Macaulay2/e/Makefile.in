@@ -113,7 +113,6 @@ COMMANDS = \
 	gbnod
 
 NAMES = \
-	serial \
 	error \
 	ntuple \
 	res \
@@ -301,15 +300,14 @@ clean:
 	rm -f TAGS
 
 Makefile : Makefile.in
-	cd $(TOPDIR); config.status Macaulay2/packages/ComputationsBook/Makefile
+	cd $(TOPDIR); config.status Macaulay2/e/Makefile
 
 # should remake these two manually once in a while -- not all systems have makedepend
 Makefile-o.depends:
-	touch $@
-	-makedepend -o.o -f$@ -Y -I../../include -- $(CFLAGS) -- $(CCFILES) $(CFILES)
+	( $(CC) -M $(CPPFLAGS) $(CFLAGS) $(CFILES); \
+	  $(CC) -M $(CPPFLAGS) $(CXXFLAGS) $(CCFILES) ) > "$@"
 Makefile-lo.depends:
 	touch $@
-	-makedepend -o.lo -f$@ -Y -I../../include -- $(CFLAGS) -- $(CCFILES) $(CFILES)
 
 ifndef NODEPENDS
 include Makefile-o.depends

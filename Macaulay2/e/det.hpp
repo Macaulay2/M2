@@ -63,10 +63,6 @@ public:
 
   class_identifier class_id() const { return CLASS_DetComputation; }
 
-  // serialize
-  virtual void write_object(object_writer &o) const;
-  static DetComputation *read_object(object_reader &i);
-
   int step();
   int calc(int nsteps);
 

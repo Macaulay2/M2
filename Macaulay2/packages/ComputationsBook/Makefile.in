@@ -48,8 +48,8 @@ clean::
 test.out : test.m2 \
 		../../../bin/M2 ../../../libexec/Macaulay2 \
 		../../../cache/Macaulay2-doc ../../../cache/Macaulay2-made
-	ulimit -v 160000 && \
-	time nice -19 ../../../bin/M2 -x -s -q <test.m2 >test.out.tmp && \
+	ulimit -v 320000 && \
+	time nice -18 ../../../bin/M2 -x -s -q <test.m2 >test.out.tmp && \
 	mv test.out.tmp test.out
 
 clean::

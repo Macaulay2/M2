@@ -977,9 +977,11 @@ cat >>confdefs.h <<EOF
 #define REL "$REL"
 EOF
 
-# ARCH="`  uname -m | sed s=/=-=g  `"
-# AC_SUBST(ARCH)
-# AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type, obtained with uname -m])
+ARCH="`  uname -m | sed s=/=-=g  `"
+
+cat >>confdefs.h <<EOF
+#define ARCH "$ARCH"
+EOF
 
 OS="`  uname -s | sed s=/=-=g  `"
 
@@ -1004,7 +1006,7 @@ for ac_dir in config $srcdir/config; do
   fi
 done
 if test -z "$ac_aux_dir"; then
-  { { echo "$as_me:1007: error: cannot find install-sh or install.sh in config $srcdir/config" >&5
+  { { echo "$as_me:1009: error: cannot find install-sh or install.sh in config $srcdir/config" >&5
 echo "$as_me: error: cannot find install-sh or install.sh in config $srcdir/config" >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -1014,11 +1016,11 @@ ac_configure="$SHELL $ac_aux_dir/configure" # This should be Cygnus configure.
 
 # Make sure we can run config.sub.
 $ac_config_sub sun4 >/dev/null 2>&1 ||
-  { { echo "$as_me:1017: error: cannot run $ac_config_sub" >&5
+  { { echo "$as_me:1019: error: cannot run $ac_config_sub" >&5
 echo "$as_me: error: cannot run $ac_config_sub" >&2;}
    { (exit 1); exit 1; }; }
 
-echo "$as_me:1021: checking build system type" >&5
+echo "$as_me:1023: checking build system type" >&5
 echo $ECHO_N "checking build system type... $ECHO_C" >&6
 if test "${ac_cv_build+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1027,23 +1029,23 @@ else
 test -z "$ac_cv_build_alias" &&
   ac_cv_build_alias=`$ac_config_guess`
 test -z "$ac_cv_build_alias" &&
-  { { echo "$as_me:1030: error: cannot guess build type; you must specify one" >&5
+  { { echo "$as_me:1032: error: cannot guess build type; you must specify one" >&5
 echo "$as_me: error: cannot guess build type; you must specify one" >&2;}
    { (exit 1); exit 1; }; }
 ac_cv_build=`$ac_config_sub $ac_cv_build_alias` ||
-  { { echo "$as_me:1034: error: $ac_config_sub $ac_cv_build_alias failed." >&5
+  { { echo "$as_me:1036: error: $ac_config_sub $ac_cv_build_alias failed." >&5
 echo "$as_me: error: $ac_config_sub $ac_cv_build_alias failed." >&2;}
    { (exit 1); exit 1; }; }
 
 fi
-echo "$as_me:1039: result: $ac_cv_build" >&5
+echo "$as_me:1041: result: $ac_cv_build" >&5
 echo "${ECHO_T}$ac_cv_build" >&6
 build=$ac_cv_build
 build_cpu=`echo $ac_cv_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
 build_vendor=`echo $ac_cv_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
 build_os=`echo $ac_cv_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
-echo "$as_me:1046: checking host system type" >&5
+echo "$as_me:1048: checking host system type" >&5
 echo $ECHO_N "checking host system type... $ECHO_C" >&6
 if test "${ac_cv_host+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -1052,23 +1054,21 @@ else
 test -z "$ac_cv_host_alias" &&
   ac_cv_host_alias=$ac_cv_build_alias
 ac_cv_host=`$ac_config_sub $ac_cv_host_alias` ||
-  { { echo "$as_me:1055: error: $ac_config_sub $ac_cv_host_alias failed" >&5
+  { { echo "$as_me:1057: error: $ac_config_sub $ac_cv_host_alias failed" >&5
 echo "$as_me: error: $ac_config_sub $ac_cv_host_alias failed" >&2;}
    { (exit 1); exit 1; }; }
 
 fi
-echo "$as_me:1060: result: $ac_cv_host" >&5
+echo "$as_me:1062: result: $ac_cv_host" >&5
 echo "${ECHO_T}$ac_cv_host" >&6
 host=$ac_cv_host
 host_cpu=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
 host_vendor=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
 host_os=`echo $ac_cv_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 
-ARCH=$host_cpu
-
-cat >>confdefs.h <<EOF
-#define ARCH "$ARCH"
-EOF
+# ARCH=$host_cpu
+# AC_SUBST(ARCH)
+# AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
@@ -3334,6 +3334,7 @@ s,@LIBS@,$LIBS,;t t
 s,@VERSION@,$VERSION,;t t
 s,@NODENAME@,$NODENAME,;t t
 s,@REL@,$REL,;t t
+s,@ARCH@,$ARCH,;t t
 s,@OS@,$OS,;t t
 s,@build@,$build,;t t
 s,@build_cpu@,$build_cpu,;t t
@@ -3343,7 +3344,6 @@ s,@host@,$host,;t t
 s,@host_cpu@,$host_cpu,;t t
 s,@host_vendor@,$host_vendor,;t t
 s,@host_os@,$host_os,;t t
-s,@ARCH@,$ARCH,;t t
 s,@RANLIB@,$RANLIB,;t t
 s,@ac_ct_RANLIB@,$ac_ct_RANLIB,;t t
 s,@INSTALL_PROGRAM@,$INSTALL_PROGRAM,;t t

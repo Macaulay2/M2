@@ -4,7 +4,6 @@
 #include "comb.hpp"
 #include "bin_io.hpp"
 #include "polyring.hpp"
-#include "serial.hpp"
 
 //////////////////////////////////////////////
 //  Construction/Destruction routines ////////
@@ -123,17 +122,6 @@ bool FreeModule::equals(const object_element *o) const
   return true;
 }
 #endif
-void FreeModule::write_object(object_writer &o) const
-{
-  //  o << class_id() << R;
-  // MESXX: not done yet!!
-}
-
-FreeModule *FreeModule::read_object(object_reader &i)
-{
-  // MESXX
-  return 0;
-}
 
 //////////////////////////////////////////////
 //  Manipulations involving components ///////

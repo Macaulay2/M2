@@ -25,12 +25,6 @@ public:
 
   class_identifier class_id() const { return CLASS_Z; }
 
-  // serialize
-  virtual void write_object(object_writer &o) const;
-  static Z *read_object(object_reader &i);
-  void write_element(object_writer &o, const ring_elem f) const;
-  void read_element(object_reader &i, ring_elem &result) const;
-
   Z * cast_to_Z() { return this; }
   const Z * cast_to_Z() const { return this; }
 
