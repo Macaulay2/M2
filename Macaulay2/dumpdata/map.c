@@ -2,4 +2,6 @@
 #include "map-linux.c"
 #elif defined(__sparc__) && defined(__sun__) && defined(__svr4__)
 #include "map-solaris.c"
+#elif
+ ... map functions not implemented yet for this architecture ...
 #endif
