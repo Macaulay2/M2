@@ -150,7 +150,7 @@ FACTORYexports := \
 
 ifeq "$(CC)" "cl"
 FACTORYexports += factory/cf.lib
-clean :: rm -f factory/malloc.h
+clean::; rm -f factory/malloc.h
 FACTORYMAKEFLAGS += -f ../WindowsNT/factory/GNUmakefile
 FACTORYconfigured: factory/config.h factory/factoryconf.h
 FACTORYINC += -I../WindowsNT/factory
