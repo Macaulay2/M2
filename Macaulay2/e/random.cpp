@@ -12,21 +12,23 @@
 #include "gmp.h"
 
 extern ZZ *globalZZ;
-int32 RandomSeed;
-int32 Random::maxint32;
+int32 RandomSeed = MASK;
+
+#define INITIALMAXINT 10
+int32 Random::maxint32 = INITIALMAXINT;
+int32 RandomFoo::maxNint = INITIALMAXINT;
+bool RandomFoo::maxNisSmall = true;
+
 RingElement *Random::maxint;
 
-mpz_t Random::_maxN;
-gmp_randstate_t Random::_st;
+mpz_t Random::maxN;
+gmp_randstate_t Random::state;
 
 void Random::i_random()
 {
-  RandomSeed = MASK;
-  maxint = RingElement::make_raw(globalZZ, globalZZ->from_int(10));
-  maxint32 = 100;
-
-  mpz_init_set_si(_maxN, 100);
-  gmp_randinit_default(_st);
+  maxint = RingElement::make_raw(globalZZ, globalZZ->from_int(maxint32));
+  mpz_init_set_si(maxN, maxint32);
+  gmp_randinit_default(state);
 }
 
 int32 Random::set_seed(M2_Integer newseed)
@@ -37,7 +39,7 @@ int32 Random::set_seed(M2_Integer newseed)
   if (s == MASK) s = 0;
   RandomSeed = s ^ MASK;
 
-  gmp_randseed(_st, newseed);
+  gmp_randseed(state, newseed);
   return old;
 }
 
@@ -59,34 +61,45 @@ int32 Random::random0(int32 r)
 
 void Random::set_max_int(M2_Integer N)
 {
-  mpz_set(_maxN, N);
+  mpz_set(maxN, N);
+  if (mpz_fits_sint_p(maxN)) {
+       maxNisSmall = true;
+       maxNint = mpz_get_si(maxN);
+  }
+  else {
+       maxNisSmall = false;
+       maxNint = 0;
+  }
 }
 
-void Random::random_integer(M2_Integer a)
-  // a should be an mpz_t which has been initialized
-{
-  mpz_urandomm(a, _st, _maxN);
-}
-
-M2_Integer Random::get_random_integer(M2_Integer maxN)
+M2_Integer Random::get_random_integer(M2_Integer mxN)
 {
   M2_Integer result = newitem(__mpz_struct);
-  if (mpz_fits_sint_p(maxN))
+  if (mpz_fits_sint_p(mxN)) {
+       int32 n = mpz_get_si(mxN);
+       mpz_init_set_si(result,Random::random0(n));
+  }
+  else {
+       mpz_init(result);
+       mpz_urandomm(result, state, mxN);
+  }
+  return result;
+}
+
+void Random::random_integer(M2_Integer result)
+  // this is a destructive version of get_random_integer
+  // a should be an mpz_t which has been initialized
+{
+  if (maxNisSmall)
     {
-      int32 maxval = mpz_get_si(maxN);
-      int32 r = Random::random0(maxval);
-      mpz_init_set_si(result,r);
+      mpz_init_set_si(result,Random::random0(maxNint));
     }
   else
     {
       mpz_init(result);
-      mpz_urandomm(result, _st, maxN);
+      mpz_urandomm(result, state, maxN);
     }
-  return result;
 }
-
-
-
 
 extern "C"
 int32 random00() {
