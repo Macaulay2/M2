@@ -335,7 +335,8 @@ makeTableOfContents := () -> (
 installPackage = method(Options => { 
 	  Prefix => "./tmp/",
 	  Encapsulate => true,
-	  IgnoreExampleErrors => true
+	  IgnoreExampleErrors => true,
+	  MakeInfo => true
 	  })
 
 installPackage String := opts -> pkg -> (
@@ -524,50 +525,55 @@ installPackage Package := o -> pkg -> (
      pkg#"links prev" = PREV;
 
      -- make info file
-     savePW := printWidth;
-     printWidth = 79;
-     infodir := buildDirectory|LAYOUT#"info";
-     makeDirectory infodir;
-     infotitle := pkg#"title";
-     infobasename := infotitle|".info";
-     tmpinfobasename := infobasename|".tmp";
-     infofile := openOut (infodir|tmpinfobasename);
-     stderr << "--making info file in " << infofile << endl;
-     upto30 := t -> concatenate(t,30-#t:" ");
-     infofile << "This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
-     infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
-     infofile << "START-INFO-DIR-ENTRY" << endl;
-     infofile << upto30 concatenate( "* ", infotitle, ": (", infotitle, ").") << "  ";
-     infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay 2 package") << endl;
-     infofile << "END-INFO-DIR-ENTRY" << endl << endl;
-     byteOffsets := new MutableHashTable;
-     topNodeName := DocumentTag.FormattedKey topDocumentTag;
-     chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
-     infoTagConvert' := n -> if n === topNodeName then "Top" else infoTagConvert n;
-     getPDoc := fkey -> (
-	  if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey else
-	  if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey else (
-	       stderr << "--warning: missing documentation node: " << fkey << endl;
-	       ));
-     traverse(unbag pkg#"table of contents", tag -> (
-	       key := DocumentTag.Key tag;
-	       fkey := DocumentTag.FormattedKey tag;
-	       chk fkey;
-	       byteOffsets# #byteOffsets = concatenate("Node: ",infoTagConvert' fkey,"\177",toString length infofile);
-	       infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoTagConvert' fkey;
-	       if NEXT#?tag then infofile << ", Next: " << infoTagConvert' DocumentTag.FormattedKey NEXT#tag;
-	       if PREV#?tag then infofile << ", Prev: " << infoTagConvert' DocumentTag.FormattedKey PREV#tag;
-	       if UP#?tag   then infofile << ", Up: " << infoTagConvert' DocumentTag.FormattedKey UP#tag;
-     	       infofile << endl << endl << info getPDoc fkey << endl));
-     infofile << "\037" << endl << "Tag Table:" << endl;
-     scan(values byteOffsets, b -> infofile << b << endl);
-     infofile << "\037" << endl << "End Tag Table" << endl;
-     infofile << close;
-     if fileExists(infodir|infobasename) then unlink(infodir|infobasename);
-     link(infodir|tmpinfobasename,infodir|infobasename);
-     unlink(infodir|tmpinfobasename);
-     stderr << "--completed info file moved to " << infodir|infobasename << endl;
-     printWidth = savePW;
+     if o.MakeInfo then (
+	  savePW := printWidth;
+	  printWidth = 79;
+	  infodir := buildDirectory|LAYOUT#"info";
+	  makeDirectory infodir;
+	  infotitle := pkg#"title";
+	  infobasename := infotitle|".info";
+	  tmpinfobasename := infobasename|".tmp";
+	  infofile := openOut (infodir|tmpinfobasename);
+	  stderr << "--making info file in " << infofile << endl;
+	  upto30 := t -> concatenate(t,30-#t:" ");
+	  infofile << "This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
+	  infofile << "INFO-DIR-SECTION " << pkg.Options.InfoDirSection << endl;
+	  infofile << "START-INFO-DIR-ENTRY" << endl;
+	  infofile << upto30 concatenate( "* ", infotitle, ": (", infotitle, ").") << "  ";
+	  infofile << (if pkg.Options.Headline =!= null then pkg.Options.Headline else infotitle | ", a Macaulay 2 package") << endl;
+	  infofile << "END-INFO-DIR-ENTRY" << endl << endl;
+	  byteOffsets := new MutableHashTable;
+	  topNodeName := DocumentTag.FormattedKey topDocumentTag;
+	  chk := if topNodeName === "Top" then identity else n -> if n === "Top" then error "encountered a documentation node named 'Top'";
+	  infoTagConvert' := n -> if n === topNodeName then "Top" else infoTagConvert n;
+	  getPDoc := fkey -> (
+	       if pkg#"processed documentation"#?fkey then pkg#"processed documentation"#fkey else
+	       if pkg#"processed documentation database"#?fkey then value pkg#"processed documentation database"#fkey else (
+		    stderr << "--warning: missing documentation node: " << fkey << endl;
+		    ));
+	  traverse(unbag pkg#"table of contents", tag -> (
+		    key := DocumentTag.Key tag;
+		    fkey := DocumentTag.FormattedKey tag;
+		    chk fkey;
+		    byteOffsets# #byteOffsets = concatenate("Node: ",infoTagConvert' fkey,"\177",toString length infofile);
+		    infofile << "\037" << endl << "File: " << infobasename << ", Node: " << infoTagConvert' fkey;
+		    if NEXT#?tag then infofile << ", Next: " << infoTagConvert' DocumentTag.FormattedKey NEXT#tag;
+		    if PREV#?tag then infofile << ", Prev: " << infoTagConvert' DocumentTag.FormattedKey PREV#tag;
+		    if UP#?tag   then infofile << ", Up: " << infoTagConvert' DocumentTag.FormattedKey UP#tag;
+		    infofile << endl << endl << info getPDoc fkey << endl));
+	  infofile << "\037" << endl << "Tag Table:" << endl;
+	  scan(values byteOffsets, b -> infofile << b << endl);
+	  infofile << "\037" << endl << "End Tag Table" << endl;
+	  infofile << close;
+	  if fileExists(infodir|infobasename) then unlink(infodir|infobasename);
+	  link(infodir|tmpinfobasename,infodir|infobasename);
+	  unlink(infodir|tmpinfobasename);
+	  stderr << "--completed info file moved to " << infodir|infobasename << endl;
+	  printWidth = savePW;
+	  )
+     else (
+	  stderr << "--not making info file, as instructed" << endl;
+	  );
 
      -- make postinstall and preremove files, if encap
      if o.Encapsulate then (
@@ -607,7 +613,8 @@ installPackage Package := o -> pkg -> (
 	  key := DocumentTag.Key tag;
 	  fkey := DocumentTag.FormattedKey tag;
 	  fn := buildDirectory | htmlFilename tag;
-	  if debugLevel > 1 then stderr << "--making html page for " << tag << endl;
+	  if fileExists fn and rawDocUnchanged#?fkey then return;
+	  stderr << "--making html page for " << tag << endl;
 	  fn
 	  << encoding << endl
 	  << doctype << endl

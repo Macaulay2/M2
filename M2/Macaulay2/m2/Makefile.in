@@ -175,7 +175,8 @@ tmp :; mkdir "$@"
 EXAMPLEOPTIONS := -q --stop
 EXAMPLEOPTIONS += -e 'errorDepth = 0'
 EXAMPLEOPTIONS += -e 'debugLevel = 1'
-EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
+MAKEINFO = true
+EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
 EXAMPLEOPTIONS += -e 'exit 0 '
 
 tmp/.documentation-made : $(DOCSEQUENCE) always
