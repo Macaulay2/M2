@@ -369,7 +369,7 @@ makeTableOfContents := () -> (
      )
 
 test := opt -> if run("2>/dev/null "|opt) == 0 then opt else "";
-utest := opt -> if run("2>/dev/null ulimit "|opt) == 0 then opt else "";
+utest := opt -> if run("2>/dev/null >/dev/null ulimit "|opt) == 0 then opt else "";
 ulimit := null
 
 runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
@@ -546,6 +546,7 @@ installPackage Package := opts -> pkg -> (
      -- This is a bit of a fiction: we've copied the files for our package into the build directory,
      -- so let's pretend we loaded the package from there in the first place, thereby allowing "documentation()"
      -- to find the example output files the same way it would if the package had been loaded from there.
+     oldPackagePrefix := pkg#"package prefix";
      pkg#"package prefix" = buildDirectory;
 
      -- make example input files
@@ -639,17 +640,27 @@ installPackage Package := opts -> pkg -> (
 	       str();
 	       ));
 
-     -- make example output files
+     -- make example output files, or else copy them from old package directory tree
+     exampleDir' := oldPackagePrefix|LAYOUT#"packageexamples" pkg#"title";
+     infn' := fkey -> exampleDir'|toFilename fkey|".m2";
+     outfn' := fkey -> exampleDir'|toFilename fkey|".out";
      stderr << "--making example result files in " << exampleDir << endl;
      haderror := false;
      scan(pairs pkg#"example inputs", (fkey,inputs) -> (
      	       -- args:
 	       inf := infn fkey;
 	       outf := outfn fkey;
+	       inf' := infn' fkey;
+	       outf' := outfn' fkey;
 	       tmpf := tmpfn fkey;
 	       desc := "example results for " | fkey;
 	       changefun := () -> remove(rawDocUnchanged,fkey);
-	       runFile(inf,outf,tmpf,desc,pkg,changefun,opts.RunDirectory);
+     	       if fileExists outf and fileTime outf >= fileTime inf then (
+		    -- do nothing
+		    )
+	       else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
+	       then copyFile(outf',outf)
+	       else runFile(inf,outf,tmpf,desc,pkg,changefun,opts.RunDirectory);
 	       -- read, separate, and store example output
 	       if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
 	       else (
@@ -658,7 +669,10 @@ installPackage Package := opts -> pkg -> (
 	       ));
      if haderror and not opts.IgnoreExampleErrors then error "error(s) occurred running example files";
 
-     -- make test output files
+     -- make test output files, or else copy them from the old package directory tree
+     oldTestsDir := oldPackagePrefix|LAYOUT#"packagetests" pkg#"title";
+     infn2'  := n -> oldTestsDir|toString n|".m2";
+     outfn2' := n -> oldTestsDir|toString n|".out";
      stderr << "--making test result files in " << testsDir << endl;
      haderror = false;
      scan(pairs pkg#"test inputs", (key,inputs) -> (
@@ -667,8 +681,18 @@ installPackage Package := opts -> pkg -> (
 	       inf := infn2 n;
 	       outf := outfn2 n;
 	       tmpf := tmpfn2 n;
+	       inf' := infn2' n;
+	       outf' := outfn2' n;
 	       desc := "test results for " | toString key;
-	       runFile(inf,outf,tmpf,desc,pkg,identity,".");
+     	       if fileExists outf and fileTime outf >= fileTime inf then (
+		    -- do nothing
+		    )
+	       else if inf != inf' and fileExists inf' and fileExists outf' and fileTime outf' >= fileTime inf' and get inf == get inf'
+	       then copyFile(outf',outf)
+	       else (
+		    error "debug me";
+		    runFile(inf,outf,tmpf,desc,pkg,identity,".");
+		    );
 	       ));
      if haderror then error "error(s) occurred running test files";
 
