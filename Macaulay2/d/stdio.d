@@ -638,13 +638,17 @@ export get(filename:string):(string or errmsg) := (
      when openIn(filename)
      is x:errmsg do (string or errmsg)(x)
      is f:file do (
-	  s := readfile(f.infd);
-	  r := close(f);
-	  if r == ERROR
-	  then (string or errmsg)(errmsg("failed to close file : "+syserrmsg()))
-	  else if r != 0 && length(filename) > 0 && filename . 0 == '!'
-	  then (string or errmsg)(errmsg("process exit code " + tostring(r)))
-	  else (string or errmsg)(s)));
+	  when readfile(f.infd)
+	  is s:string do (
+	       r := close(f);
+	       if r == ERROR
+	       then (string or errmsg)(errmsg("failed to close file : "+syserrmsg()))
+	       else if r != 0 && length(filename) > 0 && filename . 0 == '!'
+	       then (string or errmsg)(errmsg("process exit code " + tostring(r)))
+	       else (string or errmsg)(s))
+	  else (string or errmsg)(errmsg("unable to read file: "+syserrmsg()))
+	  )
+     );
 
 export Manipulator := {fun:function(file):int};
 export (o:file) << (m:Manipulator) : file := (

@@ -4,11 +4,11 @@
 
 if phase > 1 then load "docloads.m2"
 
-path = (
-     if getenv "M2HOME" === "" 
-     then { "." }
-     else { "." , getenv "M2HOME" | "/packages" }
-     )
+addStartFunction(
+     () -> path = (
+     	  if getenv "M2HOME" === "" 
+     	  then { "." }
+     	  else { "." , getenv "M2HOME" | "/packages" } ))
 
 setrecursionlimit 300
 

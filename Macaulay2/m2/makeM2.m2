@@ -1,10 +1,8 @@
 --		Copyright 1996 by Daniel R. Grayson
 
-split := s -> flatten apply(lines(s,"/"), i -> lines(i,"\\")) -- sigh...
-
+split := s -> flatten apply(separate(s,"/"), i -> separate(i,"\\")) -- sigh...
 enquote := s -> "'" | s | "'"
-
-M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentDirectory()),-1)), 1)
+M2HOME := concatenate between(pathSeparator, drop(split currentDirectory(),-1))
 
 (
   if version#"operating system" === "Windows-95-98-NT"

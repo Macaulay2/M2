@@ -207,7 +207,12 @@ document { "->",
 document { "path",
      HEADLINE "list of directories to look in",
      "A list of strings containing names of directories in
-     which ", TO "load", " and ", TO "input", " should seek files."
+     which ", TO "load", " and ", TO "input", " should seek files.",
+     PARA,
+     EXAMPLE {
+	  "path",
+	  ///path = append(path, getenv "HOME" | pathSeparator | "resolutions")///
+	  }
      }
 
 document { HashTable,
