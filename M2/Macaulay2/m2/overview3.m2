@@ -218,10 +218,37 @@ document { "Preface",
 	  TO "How to get this program",
 	  TO "Resources required",
 	  TO "Invoking the program",
+	  TO "How Macaulay 2 finds its files",
 	  TO "Copyright and license",
 	  TO "Acknowledgements",
 	  TO "The authors",
 	  }
+     }
+
+document { "How Macaulay 2 finds its files",
+     "When you run Macaulay 2, it has to find and load a sequence of
+     startup files containing code written in the Macaulay 2 language,
+     or it has to find a data file containing a memory dump from a
+     previous session.  Here is the way it does that.",
+     PARA,
+     "It examines the command name you used to run the Macaulay 2
+     program, which is provided to it as the argument in position number
+     0 on the command line.  If it's not an absolute path, it searches
+     along the path of directories mentioned in the environment
+     variable PATH until it finds a file with the same name.  If the
+     result is a symbolic link, the link is followed.  The final
+     result is assumed to be in a directory named \"bin\", and the
+     startup files are located in a sibling directory named \"m2\".
+     It looks there for the file \"m2/setup.m2\".  During compilation,
+     \"m2/srcdir\" may be a symbolic link from the build directory to
+     the corresponding source directory; if so, it is followed, too.",
+     PARA,
+     "A possible memory dump may be located in another sibling
+     directory of \"bin\" and \"m2\" called \"cache\".  The name of
+     the file found there is of the form \"Macaulay2-M2ARCH-data\",
+     where \"M2ARCH\" is replaced by the value of the environment
+     variable name M@ARCH, or a value precomputed at compile time and
+     stored in the hash table called ", TO "version", "."
      }
 
 document { "User's Guide",
