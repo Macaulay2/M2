@@ -43,34 +43,40 @@ RingElement *RingElement::invert() const
   return new RingElement(R,R->invert(val));
 }
 
-RingElement *RingElement::operator+(const RingElement &b) const
+RingElementOrNull *RingElement::operator+(const RingElement &b) const
 {
   if (R != b.get_ring())
     {
       ERROR("ring addition requires both elements to have the same base ring");
       return 0;
     }
-  return new RingElement(R, R->add(get_value(), b.get_value()));
+  ring_elem result = R->add(get_value(), b.get_value());
+  if (error()) return 0;
+  return new RingElement(R, result);
 }
 
-RingElement *RingElement::operator-(const RingElement &b) const
+RingElementOrNull *RingElement::operator-(const RingElement &b) const
 {
   if (R != b.get_ring())
     {
       ERROR("ring subtraction requires both elements to have the same base ring");
       return 0;
     }
-  return new RingElement(R, R->subtract(get_value(), b.get_value()));
+  ring_elem result = R->subtract(get_value(), b.get_value());
+  if (error()) return 0;
+  return new RingElement(R, result);
 }
 
-RingElement *RingElement::operator*(const RingElement &b) const
+RingElementOrNull *RingElement::operator*(const RingElement &b) const
 {
   if (R != b.get_ring())
     {
       ERROR("ring multiplication requires both elements to have the same base ring");
       return 0;
     }
-  return new RingElement(R, R->mult(get_value(), b.get_value()));
+  ring_elem result = R->mult(get_value(), b.get_value());
+  if (error()) return 0;
+  return new RingElement(R, result);
 }
 
 RingElement *RingElement::operator*(int n) const
@@ -82,7 +88,7 @@ RingElement *RingElement::operator*(int n) const
     return new RingElement(R, R->mult(nR,get_value()));
 }
 
-RingElement *RingElement::operator/(const RingElement &b) const
+RingElementOrNull *RingElement::operator/(const RingElement &b) const
 {
   if (R != b.get_ring())
     {
@@ -94,10 +100,12 @@ RingElement *RingElement::operator/(const RingElement &b) const
       ERROR("ring division: attempt to divide by zero");
       return 0;
     }
-  return new RingElement(R, R->quotient(val, b.get_value()));
+  ring_elem result = R->quotient(get_value(), b.get_value());
+  if (error()) return 0;
+  return new RingElement(R, result);
 }
 
-RingElement *RingElement::operator%(const RingElement &b) const
+RingElementOrNull *RingElement::operator%(const RingElement &b) const
 {
   if (R != b.get_ring())
     {
@@ -109,10 +117,13 @@ RingElement *RingElement::operator%(const RingElement &b) const
       ERROR("ring division: attempt to divide by zero");
       return 0;
     }
-  return new RingElement(R, R->remainder(val, b.get_value()));
+  ring_elem result = R->remainder(get_value(), b.get_value());
+  if (error()) return 0;
+  return new RingElement(R, result);
 }
 
-RingElement *RingElement::divide(const RingElement &b, RingElement * &rem) const
+RingElementOrNull *RingElement::divide(const RingElement &b, 
+				       RingElementOrNull * &rem) const
 {
   if (R != b.get_ring())
     {
@@ -126,6 +137,11 @@ RingElement *RingElement::divide(const RingElement &b, RingElement * &rem) const
     }
   ring_elem fquot;
   ring_elem frem = R->remainderAndQuotient(get_value(), b.get_value(), fquot);
+  if (error())
+    {
+      rem = 0;
+      return 0;
+    }
   rem = new RingElement(R, frem);
   return new RingElement(R, fquot);
 }
@@ -137,13 +153,14 @@ RingElement *RingElement::gcd(const RingElement &b) const
       ERROR("gcd requires both elements to have the same base ring");
       return 0;
     }
-  // MES: check that gcd is well-defined for this ring
-  return new RingElement(R, R->gcd(get_value(), b.get_value()));
+  ring_elem result = R->gcd(get_value(), b.get_value());
+  if (error()) return 0;
+  return new RingElement(R, result);
 }
 
-RingElement *RingElement::gcd_extended(const RingElement &b,
-					RingElement * &u,
-					RingElement * &v) const
+RingElementOrNull *RingElement::gcd_extended(const RingElement &b,
+					RingElementOrNull * &u,
+					RingElementOrNull * &v) const
 {
   if (R != b.get_ring())
     {
@@ -154,12 +171,18 @@ RingElement *RingElement::gcd_extended(const RingElement &b,
   ring_elem u1,v1;
   ring_elem g = R->gcd_extended(get_value(), b.get_value(),
 				u1,v1);
+  if (error())
+    {
+      u = 0;
+      v = 0;
+      return 0;
+    }
   u = new RingElement(R,u1);
   v = new RingElement(R,v1);
   return new RingElement(R, g);
 }
 
-RingElement *RingElement::power(int n) const
+RingElementOrNull *RingElement::power(int n) const
 {
   // What if n is negative?  Does R->power handle that correctly?
   ring_elem f = R->power(val,n);
@@ -167,7 +190,7 @@ RingElement *RingElement::power(int n) const
   return new RingElement(R, f);
 }
 
-RingElement *RingElement::power(mpz_t n) const
+RingElementOrNull *RingElement::power(mpz_t n) const
 {
   ring_elem f = R->power(val,n);
   if (error()) return 0;
@@ -196,7 +219,7 @@ RingElement *RingElement::get_terms(int lo, int hi) const
   return new RingElement(R, R->get_terms(val, lo, hi));
 }
 
-RingElement *RingElement::lead_coeff() const
+RingElementOrNull *RingElement::lead_coeff() const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
@@ -213,7 +236,7 @@ RingElement *RingElement::lead_coeff() const
   return new RingElement(K, P->lead_logical_coeff(val));
 }
 
-RingElement *RingElement::get_coeff(const Monomial *m) const
+RingElementOrNull *RingElement::get_coeff(const Monomial *m) const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)

@@ -96,8 +96,7 @@ const RingElementOrNull * IM2_MutableMatrix_get_entry(const MutableMatrix *M, in
       return 0;
     }
   ring_elem result;
-  if (!M->get_entry(r,c,result))
-    return 0;
+  M->get_entry(r,c,result);
   return RingElement::make_raw(M->get_ring(), result);
 }
 
@@ -439,6 +438,20 @@ M2_arrayint_OrNull IM2_FF_LU(MutableMatrix *M)
 M2_bool IM2_LLL(MutableMatrix *M, const RingElement *threshold)
 {
   return LLLoperations::LLL(M,threshold);
+}
+
+M2_bool IM2_SmithNormalForm(MutableMatrix *M)
+{
+#warning "implement smith"
+  ERROR("not implemented yet");
+  return 0;
+}
+
+M2_bool IM2_HermiteNormalForm(MutableMatrix *M)
+{
+#warning "implement hermite"
+  ERROR("not implemented yet");
+  return 0;
 }
 
   /***************************************************

@@ -36,7 +36,7 @@ makeRawTable := (R,p) -> (					    -- this is messy
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
-     f := rawMatrixRemake1(raw target p, raw p,false,0);
+     f := rawMatrixRemake1(raw target p, raw p,0);
      map(M, newModule(ring source p, rawSource f), f)
      )
 
@@ -70,7 +70,7 @@ map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
 	       then (degreeLength R : 0)
 	       else degreeCheck(options.Degree, R)
 	       );
-	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f, false,0)))))
+	  map(M,N,reduce(M,rawMatrixRemake2(raw cover M, raw N', deg, raw f,0)))))
 
 -- combine the one above with the one below
 map(Module,ZZ,List) := 
@@ -107,7 +107,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  h := (
 	       if N === null 
 	       then rawMatrix1(raw cover M, rankN, flatten p, 0)
-	       else rawMatrix2(raw cover M, raw cover N, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,false,0)
+	       else rawMatrix2(raw cover M, raw cover N, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,0)
 	       );
 	  new Matrix from {
 	       symbol target => M,

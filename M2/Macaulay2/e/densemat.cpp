@@ -314,7 +314,7 @@ bool DenseMutableMatrixRing::row2by2(int r1, int r2,
       R->add_to(f1,f2);
       R->add_to(g1,g2);
       *loc1 = f1;
-      *loc2 = f2;
+      *loc2 = g1;
       loc1 += nrows;
       loc2 += nrows;
     }
@@ -355,7 +355,7 @@ bool DenseMutableMatrixRing::column2by2(int c1, int c2,
       R->add_to(f1,f2);
       R->add_to(g1,g2);
       *loc1++ = f1;
-      *loc2++ = f2;
+      *loc2++ = g1;
     }
 
   // Do the recording, if needed:

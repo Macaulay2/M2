@@ -151,7 +151,7 @@ Matrix * PolyRingQuotient::getPresentation() const
 {
   const PolyRing *R = getAmbientRing();
 
-  MatrixConstructor mat(R->make_FreeModule(1), 0, false);
+  MatrixConstructor mat(R->make_FreeModule(1), 0);
   for (int i=0; i<n_quotients(); i++)
     mat.append(R->make_vec(0, quotient_element(i)));
   return mat.to_matrix();

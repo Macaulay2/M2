@@ -169,13 +169,6 @@ extern "C" {
   MonomialOrNull *rawMonomialDivide(const Monoid *M, const Monomial *a, const Monomial *b); /* drg : connected to rawMonomialDivide */
   /* returns a/b if b divides a in the monoid M, and null otherwise. */
 
-#if 0
-  M2_bool rawMonomialDivides(const Monomial *a, const Monomial *b);
-
-
-  int IM2_Monomial_degree(const Monomial *a); /* drg: connected rawDegree*/
-#endif
-
   const MonomialOrNull *IM2_Monomial_mult(const Monomial *a, 
 					  const Monomial *b); /* drg: connected * */
 
@@ -195,10 +188,10 @@ extern "C" {
   /* return the monomial whose i th exponent is min(ai,bi) */
 
   const Monomial *rawSaturateMonomial(const Monomial *a, 
-				   const Monomial *b); /* drg: connected rawSaturateMonomialIdeal */
+				   const Monomial *b); /* drg: connected rawSaturate */
   /* return the monomial whose i th exponent is ai if bi is 0, 0 if bi != 0 */
 
-  const Monomial *rawRadicalMonomial(const Monomial *a); /* drg: connected rawRadicalMonomialIdeal*/
+  const Monomial *rawRadicalMonomial(const Monomial *a); /* drg: connected rawRadical */
   /* return the monomial whose i th exponent is 1 if ai != 0 */
 
   const Monomial_pair *rawSyzygy(const Monomial *a, 
@@ -1632,6 +1625,22 @@ enum gbTraceValues
      If there is any error (interupted, M or threshold not the correct kind), then false
      is returned, and LLL is set to 0.
      If M has a column change of basis matrix attached, it will be modified accordingly. 
+  */
+
+  M2_bool IM2_SmithNormalForm(MutableMatrix *M);
+  /* Given a mutable matrix over ZZ, compute the Smith normal form for M. (replaces
+     M with this normal form.
+     Currently the algorithm used makes computing the change of basis matrices
+     difficult (we use mod D arithmetic, where D is the determinant). 
+     If there is an error, then an error is flagged and false is returned.
+  */
+
+  M2_bool IM2_HermiteNormalForm(MutableMatrix *M);
+  /* Given a mutable matrix over ZZ, compute the Hermite normal form for M. (replaces
+     M with this normal form.
+     Currently the algorithm used makes computing the change of basis matrices
+     difficult (we use mod D arithmetic, where D is the determinant). 
+     If there is an error, then an error is flagged and false is returned.
   */
 
   /**************************************************/

@@ -9,7 +9,7 @@ needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol a .. symbol g))
 
 -- tested in many places: m == 0, rawIsEqual, raw
--- rawNumberOfRows, rawNumberOfColumns, rawIsMutable,
+-- rawNumberOfRows, rawNumberOfColumns, 
 -- rawMultiDegree
 -- rawIsDense
 -- rawIsZero, rawIsEqual, === 
@@ -28,7 +28,7 @@ r5 = rawIdentity(R^5,0) -- mutable r5
 rawMatrixEntry(r5,1,2,a+b)
 r5
 
-m5 = rawMatrixRemake1(rawTarget r5, r5, false, 0)
+m5 = rawMatrixRemake1(rawTarget r5, r5, 0)
 assert try (rawMatrixEntry(m5,3,2,a-b); false) else true
 
 F = R^0
@@ -43,28 +43,24 @@ assert(p == 0)
 assert(rawNumberOfRows p === 0)
 assert(rawNumberOfColumns p === 100)
 assert(rawMultiDegree p === {0})
-assert(rawIsMutable p)
 
 p = rawZero(R^100,R^0,true,0) -- DISPLAY is BAD
 assert(p == 0)
 assert(rawNumberOfRows p === 100)
 assert(rawNumberOfColumns p === 0)
 assert(rawMultiDegree p === {0})
-assert(rawIsMutable p)
 
 p = rawZero(R^0,R^100,0)
 assert(p == 0)
 assert(rawNumberOfRows p === 0)
 assert(rawNumberOfColumns p === 100)
 assert(rawMultiDegree p === {0})
-assert(not rawIsMutable p)
 
 p = rawZero(R^30,R^50,true,0)
 assert(p == 0)
 assert(rawNumberOfRows p === 30)
 assert(rawNumberOfColumns p === 50)
 assert(rawMultiDegree p === {0})
-assert(rawIsMutable p)
 rawMatrixEntry(p,1,3,a)
 rawMatrixEntry(p,4,7,b)
 
@@ -73,7 +69,6 @@ assert(p == 0)
 assert(rawNumberOfRows p === 30)
 assert(rawNumberOfColumns p === 50)
 assert(rawMultiDegree p === {0})
-assert(rawIsMutable p)
 rawMatrixEntry(p,1,3,a)
 rawMatrixEntry(p,4,7,b)
 assert(rawMatrixEntry(p,1,2) == 0)
@@ -91,8 +86,8 @@ assert(try (rawZero(R^4, (rawZZ())^3,true,0); false) else true)
 R = polyring(rawZZ(), (vars 0 .. vars 15))
 F = rawFreeModule(R,5)
 G = rawFreeModule(R,10)
-m = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),false,0)
-m1 = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true,0)
+m = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),0)
+m1 = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),0)
 assert(-(-m) == m)
 assert((m-m) == m + (-m))
 --<< "make sure mutable matrices and immutable matrices are not ==" << endl;
@@ -105,16 +100,16 @@ assert rawIsZero(m - m)
 assert rawIsZero(m - m1)
 assert(not rawIsDense m)
 
-m2 = rawSparseMatrix2(F,G,{7},{1,3,4},{3,3,1},(a^2,b^2+a*c,b-2*a*c),true,0)
+m2 = rawSparseMatrix2(F,G,{7},{1,3,4},{3,3,1},(a^2,b^2+a*c,b-2*a*c),0)
 assert(rawMultiDegree m2  === {7})
-m3 = rawMatrixRemake2(F,G,rawMultiDegree m2, m2, true, 0)
-m4 = rawMatrixRemake2(F,G,{13}, m2, false, 0)
+m3 = rawMatrixRemake2(F,G,rawMultiDegree m2, m2, 0)
+m4 = rawMatrixRemake2(F,G,{13}, m2, 0)
 assert(rawMultiDegree m4 === {13})
 
 elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R,i+j,1)))
 m = rawMatrix1(F,5,elems,0)
 p1 = rawMatrix1(F,5,toSequence flatten entries m,0)
-p2 = rawMatrix2(F,F,{0},toSequence flatten entries m,false,0)
+p2 = rawMatrix2(F,F,{0},toSequence flatten entries m,0)
 p1 == p2
 
 ---------------------------------------
@@ -182,8 +177,8 @@ assert(try (rawConcat(m1,rawDual m3); false) else true)
 M = rawFreeModule(R,(-1,-2))
 N = rawFreeModule(R,(3,4))
 P = rawFreeModule(R,(0,2))
-f = rawMatrix2(M,N,1:0,(0_R,0_R,0_R,0_R),false,0)
-g = rawMatrix2(M,P,1:0,(0_R,0_R,0_R,0_R),false,0)
+f = rawMatrix2(M,N,1:0,(0_R,0_R,0_R,0_R),0)
+g = rawMatrix2(M,P,1:0,(0_R,0_R,0_R,0_R),0)
 assert ( rawTarget f === rawTarget g )
 assert ( rawSource f ++ rawSource g === rawSource rawConcat(f,g) )
 assert ( rawTarget f === rawTarget rawConcat(f,g) )
@@ -247,17 +242,17 @@ for i from 0 to rawNumberOfRows m - 1 do
 -- rawMatrixRandom --
 ---------------------
 needs "raw-util.m2"
-mr = rawMatrixRandom(rawZZ(),2,3,.5,0,false,0)
-mr = rawMatrixRandom(rawZZ(),20,30,.5,0,false,0)
-mr = rawMatrixRandom(rawZZ(),20,30,.98,0,false,0)
-mr = rawMatrixRandom(rawZZ(),30,30,.5,1,false,0)
-mr = rawMatrixRandom(rawZZ(),30,30,1.0,1,false,0)
+mr = rawMatrixRandom(rawZZ(),2,3,.5,0,0)
+mr = rawMatrixRandom(rawZZ(),20,30,.5,0,0)
+mr = rawMatrixRandom(rawZZ(),20,30,.98,0,0)
+mr = rawMatrixRandom(rawZZ(),30,30,.5,1,0)
+mr = rawMatrixRandom(rawZZ(),30,30,1.0,1,0)
 
-mr = rawMatrixRandom(rawZZ(),10,15,.5,0,false,0)
+mr = rawMatrixRandom(rawZZ(),10,15,.5,0,0)
 R = polyring(rawZZp(32003), (symbol x, symbol y))
-mr = rawMatrixRandom(R,10,15,.5,0,false,0)
-mr = rawMatrixRandom(R,10,15,.5,1,false,0)
-mr = rawMatrixRandom(R,10,10,.5,1,false,0)
+mr = rawMatrixRandom(R,10,15,.5,0,0)
+mr = rawMatrixRandom(R,10,15,.5,1,0)
+mr = rawMatrixRandom(R,10,10,.5,1,0)
 
 
 -------------------
@@ -265,9 +260,9 @@ mr = rawMatrixRandom(R,10,10,.5,1,false,0)
 -------------------
 needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol a .. symbol l))
-m = rawMatrix2(R^2, R^6, {0}, (a,b,c,d,e,f,g,h,i,j,k,l), false,0)
-m2 = rawMatrix2(R^3, R^4, {0}, (a,b,c,d,e,f,g,h,i,j,k,l), false,0)
-m3 = rawMatrix2(R^12, R^1, {0}, (a,b,c,d,e,f,g,h,i,j,k,l), false,0)
+m = rawMatrix2(R^2, R^6, {0}, (a,b,c,d,e,f,g,h,i,j,k,l),0)
+m2 = rawMatrix2(R^3, R^4, {0}, (a,b,c,d,e,f,g,h,i,j,k,l),0)
+m3 = rawMatrix2(R^12, R^1, {0}, (a,b,c,d,e,f,g,h,i,j,k,l),0)
 n2 = rawReshape(rawDual m,R^3,R^4)
 n2 == m2
 n2
@@ -336,7 +331,6 @@ m1 = rawPfaffians(4,m)
 m2 = rawMatrix1(R^1,1,1: (d*f-c*g+b*i), 0)
 assert(rawTarget m1 == rawTarget m2)
 assert(rawSource m1 == rawSource m2)
-assert(rawIsMutable m1 == rawIsMutable m2)
 assert(rawMultiDegree m1 == rawMultiDegree m2)
 assert(m1 == m2)
 
@@ -599,7 +593,7 @@ r5 = rawIdentity(R^5,0) -- mutable r5
   rawMatrixRowSwap(m, 0,1)
   m
   rawMatrixRowSwap(m, 0,1)
-  m0 = rawMatrixRemake1(rawTarget m, m, false, 0)
+  m0 = rawMatrixRemake1(rawTarget m, m, 0)
   assert(m0 ==  rawMatrix1(R^3, 4, (a,b,c,d,e,f,g,0_R,a+b,c+d,0_R,e+f), 0))
 
   rawMatrixRowSwap(m, 0,0)

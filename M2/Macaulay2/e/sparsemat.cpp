@@ -971,7 +971,7 @@ Matrix *SparseMutableMatrix::toMatrix() const
 {
   FreeModule *F = K->make_FreeModule(nrows);
   const Ring *R = F->get_ring();
-  MatrixConstructor mat(F,0,false);
+  MatrixConstructor mat(F,0);
   for (int c=0; c<ncols; c++)
     {
       // Create the vec v.

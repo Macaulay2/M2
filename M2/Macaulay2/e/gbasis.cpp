@@ -366,7 +366,7 @@ const Matrix *GBasis::get_minimal_gb()
   // The result contains no quotient ring elements
 {
   minimalize_gb();
-  MatrixConstructor mat(F,0,false/*not mutable*/);
+  MatrixConstructor mat(F,0);
   int j=0;
   for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
     {
@@ -390,7 +390,7 @@ const Matrix *GBasis::get_minimal_gb()
 
 const Matrix *GBasis::get_minimal_gens()
 {
-  MatrixConstructor mat(F,0,false/*not mutable*/);
+  MatrixConstructor mat(F,0);
   for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
     if ((*i)->minlevel <= ELEM_TRIMMED)
       mat.append(originalR->translate_gbvector_to_vec(F, (*i)->g.f));
@@ -400,7 +400,7 @@ const Matrix *GBasis::get_minimal_gens()
 const Matrix *GBasis::get_change()
 {
   minimalize_gb();
-  MatrixConstructor mat(Fsyz,0,false/*not mutable*/);
+  MatrixConstructor mat(Fsyz,0);
   for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); 
        i != minimal_gb.end(); 
        i++)
@@ -411,7 +411,7 @@ const Matrix *GBasis::get_change()
 const Matrix *GBasis::get_leadterms(int nparts)
 {
   minimalize_gb();
-  MatrixConstructor mat(F,0,false/*not mutable*/);
+  MatrixConstructor mat(F,0);
   for (vector<POLY,gc_alloc>::iterator i = minimal_gb.begin(); i != minimal_gb.end(); i++)
     {
       gbvector *f = R->gbvector_lead_term(nparts, F, (*i).f);
@@ -434,7 +434,7 @@ const MatrixOrNull *GBasis::matrix_remainder(const Matrix *m)
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  MatrixConstructor red(m->rows(), m->cols(), false, m->degree_shift());
+  MatrixConstructor red(m->rows(), m->cols(), m->degree_shift());
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -463,8 +463,8 @@ void GBasis::matrix_lift(const Matrix *m,
       *result_remainder = 0;
       *result_quotient = 0;
   }
-  MatrixConstructor mat_remainder(m->rows(), m->cols(), false, m->degree_shift());
-  MatrixConstructor mat_quotient(Fsyz, m->cols(), false);
+  MatrixConstructor mat_remainder(m->rows(), m->cols(), m->degree_shift());
+  MatrixConstructor mat_quotient(Fsyz, m->cols(), 0);
 
   const Ring *K = R->get_flattened_oefficients();
   for (int i=0; i<m->n_cols(); i++)

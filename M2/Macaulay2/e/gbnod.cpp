@@ -948,7 +948,7 @@ RingElementOrNull *gb2_comp::hilbertNumerator()
 //--- Obtaining matrices as output -------
 Matrix *gb2_comp::min_gens_matrix()
 {
-  MatrixConstructor mat(F,Fsyz, false);
+  MatrixConstructor mat(F,Fsyz, 0);
   int j = 0;
   for (int i=0; i<gb.length(); i++)
     if (gb[i]->is_min)
@@ -965,7 +965,7 @@ Matrix *gb2_comp::get_matrix()
 
 Matrix *gb2_comp::initial_matrix(int n)
 {
-  MatrixConstructor mat(F, 0, false);
+  MatrixConstructor mat(F, 0);
   for (int i=0; i<gb.length(); i++)
     {
       gbvector *tmp = GR->gbvector_lead_term(n, F, gb[i]->f);
@@ -977,7 +977,7 @@ Matrix *gb2_comp::initial_matrix(int n)
 
 Matrix *gb2_comp::gb_matrix()
 {
-  MatrixConstructor mat(F, 0, false);
+  MatrixConstructor mat(F, 0);
   for (int i=0; i<gb.length(); i++)
     mat.append(originalR->translate_gbvector_to_vec(F,gb[i]->f));
   return mat.to_matrix();
@@ -985,7 +985,7 @@ Matrix *gb2_comp::gb_matrix()
 
 Matrix *gb2_comp::change_matrix()
 {
-  MatrixConstructor mat(Fsyz, 0, false);
+  MatrixConstructor mat(Fsyz, 0);
   for (int i=0; i<gb.length(); i++)
     mat.append(originalR->translate_gbvector_to_vec(Fsyz,gb[i]->fsyz));
   return mat.to_matrix();

@@ -319,13 +319,21 @@ void varpower::mult(const int *a, const int *b, intarray &result)
       else 
 	{
 	  if (va == -1) break;
-#warning "check for overflow here"
-	  int e = i.exponent() + j.exponent();  
-	  if (e != 0)
+	  long x = i.exponent();
+	  long y = j.exponent();
+	  long z = x+y;
+	  if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
 	    {
-	      pairs->var = va;
-	      pairs->exponent = e;
-	      pairs++;
+	      ERROR("monomial overflow");
+	    }
+	  else
+	    {
+	      if (z != 0)
+		{
+		  pairs->var = va;
+		  pairs->exponent = z;
+		  pairs++;
+		}
 	    }
 	  ++i; ++j;
 	  va = (i.valid() ? i.var() : -1);
