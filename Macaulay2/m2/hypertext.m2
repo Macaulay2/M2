@@ -565,8 +565,7 @@ redoMENU := r -> SEQ prepend(
 net MENU := x -> net redoMENU x
 html MENU := x -> html redoMENU x
 
-info MENU := r -> stack join(
-     {"* Menu:",""},
+info MENU := r -> (
      pre := "* ";
      printWidth = printWidth - #pre;
      ret := sublists(toList r, 
@@ -584,7 +583,7 @@ info MENU := r -> stack join(
 			 );
 		    t)));
      printWidth = printWidth + #pre;
-     ret)
+     stack join({"* Menu:"}, ret))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
