@@ -25,7 +25,7 @@ isPolynomialRing PolynomialRing := (R) -> true
 
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
-expression PolynomialRing := R -> (
+describe PolynomialRing := expression PolynomialRing := R -> (
      if R.?name
      then hold R.name
      else (expression last R.baseRings) (expression monoid R)

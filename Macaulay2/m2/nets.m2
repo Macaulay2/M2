@@ -104,15 +104,6 @@ toExternalString Thing := toString
 -----------------------------------------------------------------------------
 describe = method()
 describe Thing := net
-describe MutableHashTable := x -> (
-     if x.?name then (
-	  n := x.name;
-	  remove(x, symbol name);
-	  d := net x;
-	  x.name = n;
-	  d)
-     else net x
-     )
 
 net Manipulator := toString
 net Thing := toString

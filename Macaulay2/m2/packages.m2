@@ -14,30 +14,6 @@ hide := d -> (
      globalDictionaries = select(globalDictionaries, x -> x =!= d);
      )
 
-reverseDictionary = x -> scan(values PackageDictionary, 
-     p -> (
-	  pkg := value p;
-	  d := pkg#"reverse dictionary";
-	  if d#?x then break d#x))
-reverseDictionaryRecord = (X,x) -> if X =!= x then (
-     s := toString X;
-     scan(values PackageDictionary, 
-     	  p -> (
-	       pkg := value p;
-	       if pkg.Dictionary#?s and pkg.Dictionary#s === X and not pkg#"reverse dictionary"#?x 
-	       then (	-- too bad a symbol doesn't know what dictionary it's in...
-	       	    pkg#"reverse dictionary"#x = X; 
-	       	    break))))
-reverseDictionaryRemove = (X,x) -> (
-     s := toString X;
-     scan(values PackageDictionary, 
-     	  p -> (
-	       pkg := value p;
-	       if pkg.Dictionary#?s and pkg#"reverse dictionary"#?x and pkg#"reverse dictionary"#x === X 
-	       then (
-	       	    remove(pkg#"reverse dictionary",x); 
-	       	    break))))
-
 toString Dictionary := d -> (
      if ReverseDictionary#?d then return toString ReverseDictionary#d;
      if PrintNames#?d then return PrintNames#d;
