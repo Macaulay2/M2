@@ -101,7 +101,6 @@ CFLAGS += -Za -W0
 endif
 
 CXXFLAGS += $(WARNINGS)
-# LDFLAGS  += $(STRIPFLAG)
 
 ifneq "$(CC)" "cl"
 LDFLAGS  += -L${LIBDIR}

@@ -1,5 +1,5 @@
 (
-"emacs.hlp"
+"emacs-hlp.txt"
 << "                 Running Macaulay 2 in Emacs" << endl
 << endl
 << "       -- this file has been automatically generated -- " << endl

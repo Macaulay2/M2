@@ -27,15 +27,12 @@ RANLIB = ranlib
 ifeq "$(OS)" "CYGWIN32_95"
 export CYGWIN32 = TRUE
 endif
-
 ifeq "$(OS)" "CYGWIN32_NT"
 export CYGWIN32 = TRUE
 endif
-
 ifeq "$(OS)" "CYGWIN32-95"
 export CYGWIN32 = TRUE
 endif
-
 ifeq "$(OS)" "CYGWIN32-NT"
 export CYGWIN32 = TRUE
 endif
@@ -176,34 +173,28 @@ DEBUGFLAGS += -DNDEBUG
 endif
 
 ifdef GCMALLOC
-CFLAGS += -DGCMALLOC
+CFLAGS   += -DGCMALLOC
 CXXFLAGS += -DGCMALLOC
 export CFLAGS
 endif
 
 ifdef PROFILE
-export CFLAGS += -pg
+export CFLAGS   += -pg
 export CXXFLAGS += -pg
-export LDFLAGS += -pg
+export LDFLAGS  += -pg
 NOSTRIP := TRUE
 endif
 
 ifdef NOSTRIP
-STRIPFLAG :=
-STRIPCMD := :
+export STRIPCMD := :
 else
 ifneq "$(CC)" "cl"
-export CFLAGS += -fomit-frame-pointer
+export CFLAGS   += -fomit-frame-pointer
 export CXXFLAGS += -fomit-frame-pointer
-export LDFLAGS += -s
+export LDFLAGS  += -s
+export STRIPCMD := strip
 endif
-
-# we should be able to do away with these:
-STRIPFLAG := -s
-STRIPCMD := strip
-# DEBUGFLAGS += -fomit-frame-pointer
 endif
-export STRIPFLAG STRIPCMD 
 
 ifdef MEMDEBUG
 DEBUGFLAGS += -DMEM_DEBUG
