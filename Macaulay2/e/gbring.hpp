@@ -354,6 +354,13 @@ public:
   //  f = f//c
   //  fsyz = fsyz//c
   //  denom = denom*c
+  // CAUTION: denom needs to be a valid element of the 
+  //          coefficient ring.
+
+  void gbvector_remove_content(gbvector *f, 
+			       gbvector *fsyz);
+  // let c = gcd(content(f),content(fsyz)).
+  // set f := f/c,  fsyz := fsyz/c.
   
   void gbvector_auto_reduce(const FreeModule *F,
 			    const FreeModule *Fsyz,

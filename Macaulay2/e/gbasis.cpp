@@ -125,7 +125,10 @@ int GBasis::find_good_divisor(exponents e,
   ealpha = degf - R->exponents_weight(e);
 
   /* First search for ring divisors */
+#if 0
+  /* MES: removed until ringtable is functional */
   n += ringtable->find_divisors(-1, e, 1, &divisors);
+#endif
 
   /* Next search for GB divisors */
   n += lookup->find_divisors(-1, e, x, &divisors);
@@ -197,8 +200,7 @@ void GBasis::remainder(POLY &f, int degf)
     }
   h.f = head.next;
   const Ring *K = R->get_flattened_coefficients();
-  ring_elem denom = K->from_int(0);
-  R->gbvector_remove_content(h.f, h.fsyz,denom);
+  R->gbvector_remove_content(h.f, h.fsyz);
   f.f = h.f;
   f.fsyz = h.fsyz;
   if (gbTrace == 3)
@@ -215,10 +217,12 @@ void GBasis::remainder(POLY &f, int degf, ring_elem &denom)
   // base not ZZ:
   //    h = f - sum(a_i * g_i),  in(f) not in in(G)
   //    hsyz = fsyz - sum(a_i * gsyz_i)
+  //    denom is unchanged
   // base is ZZ:
   //    h = c*f - sum(a_i * g_i), in(f) not in in(G),
   //    hsyz = c*fsyz - sum(a_i * gsyz_i)
   //    but a_i,h are all polynomials with ZZ coefficients (not QQ).
+  //    denom *= c
   // (Here: G = (g_i) is the GB, and a_i are polynomials generated
   // during division).
   // c is an integer, and is returned as 'denom'.

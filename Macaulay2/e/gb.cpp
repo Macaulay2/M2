@@ -580,12 +580,11 @@ void GB_comp::flush_pairs(int deg)
 
 void GB_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
 {
-  ring_elem denom;
   int *f_m = _M->make_one();
   gb_elem *p = new gb_elem(f, fsyz, ismin);
 
   _GR->gbvector_get_lead_monomial(_F,p->f,f_m);
-  _GR->gbvector_remove_content(p->f, p->fsyz,denom);
+  _GR->gbvector_remove_content(p->f, p->fsyz);
 
   if (ismin)
     {
