@@ -143,8 +143,6 @@ equal(x:HashTable,y:HashTable):Expr := (
 		    )));
      True);
 
-export isMutable(x:RawMatrix):bool := Ccode( bool, "IM2_Matrix_is_mutable(", "(Matrix*)",x, ")" );
-
 export equal(lhs:Expr,rhs:Expr):Expr := (
      if lhs == rhs then True else 
      when lhs
@@ -308,11 +306,11 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  else False
 	  )
      is x:RawMatrix do (
-	  if isMutable(x) then False else
 	  when rhs
-	  is y:RawMatrix do if isMutable(y) then False else toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
+	  is y:RawMatrix do toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
 	  else False
 	  )
+     is x:RawMutableMatrix do False			    -- mutable matrices may not stay equal, so they aren't equal
      is x:RawComputation do (
 	  when rhs
 	  is y:RawComputation do (
@@ -479,6 +477,7 @@ export Class(e:Expr):HashTable := (
      is RawRingMap do rawRingMapClass
      is RawFreeModule do rawFreeModuleClass
      is RawMatrix do rawMatrixClass
+     is RawMutableMatrix do rawMutableMatrixClass
      is LMatrixRR do LMatrixRRClass
      is LMatrixCC do LMatrixCCClass
      );
@@ -516,6 +515,7 @@ setupconst("RawMonoid",Expr(rawMonoidClass));
 setupconst("RawRing",Expr(rawRingClass));
 setupconst("RawFreeModule",Expr(rawFreeModuleClass));
 setupconst("RawMatrix",Expr(rawMatrixClass));
+setupconst("RawMutableMatrix",Expr(rawMutableMatrixClass));
 setupconst("RawComputation",Expr(rawComputationClass));
 setupconst("RawRingElement",Expr(rawRingElementClass));
 setupconst("RawRingMap",Expr(rawRingMapClass));

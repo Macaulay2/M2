@@ -314,6 +314,7 @@ export Expr := (
      RawMonomial or
      RawMonomialIdeal or
      RawMonomialOrdering or
+     RawMutableMatrix or
      RawRing or
      RawRingElement or
      RawRingMap or
@@ -571,6 +572,7 @@ export rawRingElementClass := newtypeof(rawObjectClass);    -- RawRingElement
 export rawRingMapClass := newtypeof(rawObjectClass);	    -- RawRingMap
 export rawFreeModuleClass := newtypeof(rawObjectClass);	    -- RawFreeModule
 export rawMatrixClass := newtypeof(rawObjectClass);	    -- RawMatrix
+export rawMutableMatrixClass := newtypeof(rawObjectClass);	    -- RawMutableMatrix
 export rawComputationClass := newtypeof(rawObjectClass);	    -- RawComputation
 export LMatrixRRClass := newtypeof(rawObjectClass);         -- LMatrixRRClass
 export LMatrixCCClass := newtypeof(rawObjectClass);         -- LMatrixCCClass

@@ -183,6 +183,7 @@ export toExpr(x:RawMonomialOrNull):Expr := when x is r:RawMonomial do Expr(r) is
 export toExpr(x:RawRingElementOrNull):Expr := when x is r:RawRingElement do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawFreeModuleOrNull):Expr := when x is r:RawFreeModule do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawMatrixOrNull):Expr := when x is r:RawMatrix do Expr(r) is null do engineErrorMessage();
+export toExpr(x:RawMutableMatrixOrNull):Expr := when x is r:RawMutableMatrix do Expr(r) is null do engineErrorMessage();
 export toExpr(x:IntegerOrNull):Expr := when x is i:Integer do Expr(i) is null do engineErrorMessage();
 export toExpr(x:RawMatrixPairOrNull):Expr := when x is p:RawMatrixPair do seq(Expr(p.a),Expr(p.b)) is null do engineErrorMessage();
 export toExpr(x:RawMatrixArray):Expr := Expr( list( new Sequence len length(x) do foreach m in x do provide Expr(m) ) );
