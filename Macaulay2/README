@@ -20,8 +20,9 @@ or
 	./setup
 
 if it's unix and '.' is not first on your path.  Then copy the shell script
-bin/M2 (or bin/M2.bat if it's MSDOS) somewhere on your path -- it contains
-the absolute path of the current directory -- and issue the command
+bin/M2 (or bin/M2.bat if it's MSDOS or MS Windows) somewhere on your path 
+-- it contains the absolute path of the current directory -- and issue
+the command
 
 	M2
 
@@ -35,7 +36,7 @@ and then make a resolution with
 
 If you move the directory tree, just remove bin/M2 and start over.
 
-One of the things that running 'setup' does is to create a file called
+One of the things that running 'setup' may do is to create a file called
 bin/Macaulay2-XXXX.data, where XXXX is the name of your architecture as
 provided by running 'uname -m'.  This feature is intended solely for Sun 4
 machines, where the differences between certain pairs of architectures (e.g.,

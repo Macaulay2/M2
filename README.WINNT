@@ -2,7 +2,7 @@ Use Microsoft Visual C++ 5.0 with the workspace M2.dsw and set the active
 configuration to be "Macaulay2 - Win32 Release".  It will produce the
 executable:
 
-	Macaulay2/d/Release/Macaulay2.exe
+	Macaulay2/bin/Macaulay2.exe
 
 Test it by running it in the directory
 

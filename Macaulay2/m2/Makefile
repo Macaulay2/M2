@@ -42,9 +42,9 @@ loads.m2 : dumpseq loads.awk
 	@echo making loads.m2
 	@awk -f loads.awk <$< >$@
 
-version.m2 : $(TOPDIR)/Makeconf ../../Makeconf-m2
-	../../Makeconf-m2 >version.tmp
-	mv version.tmp $@
+#version.m2 : $(TOPDIR)/Makeconf ../../Makeconf-m2
+#	../../Makeconf-m2 >version.tmp
+#	mv version.tmp $@
 
 tutorials.m2 :
 	@ echo making tutorials.m2
@@ -81,14 +81,12 @@ $(SCRIPTS) : makeM2.m2 ../cache/Macaulay2-$(ARCH).data
 			-- '-erunStartFunctions()' makeM2.m2 '-eexit(0)'
 
 it all:: ../cache/Macaulay2-$(ARCH).data
-../cache/Macaulay2-$(ARCH).data : $(DUMPEDGFILES) \
-			version.m2 ../bin/Macaulay2
+../cache/Macaulay2-$(ARCH).data : $(DUMPEDGFILES) ../bin/Macaulay2
 	rm -f ../cache/Macaulay2-$(ARCH).data
 	../bin/Macaulay2 -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-eexit(0)'
 
 
-../cache/Macaulay2.pre : ../cache/Macaulay2-$(ARCH).data \
-			$(MADEGFILES) version.m2
+../cache/Macaulay2.pre : ../cache/Macaulay2-$(ARCH).data $(MADEGFILES)
 	rm -f ../cache/Macaulay2.tmp
 	../bin/Macaulay2 -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2.tmp ../cache/Macaulay2.pre

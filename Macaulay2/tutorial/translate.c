@@ -60,7 +60,7 @@ int line_type(char **s)
 {
   int i;
   int isblank = 1;
-  *s = line;
+  *s = (char *)line;
   for (i=0; i<LEN; i++)
     {
       if (line[i] == '\0') break;
@@ -98,10 +98,10 @@ int main(int argc, char **argv)
       return 1;
     }
 
-  fgets(line,LEN,stdin);
+  fgets((char *)line,LEN,stdin);
   line_type(&s);
   fprintf(stdout, "document { \"%s", line+3);
-  while (fgets(line,LEN,stdin))
+  while (fgets((char *)line,LEN,stdin))
     {
       typ = line_type(&s);
       if (typ == BLANK_LINE) continue;
@@ -143,14 +143,14 @@ int main(int argc, char **argv)
 	if (head)
 	  {
 	    fprintf(stdout, "TEX \"\n\\\\beginsection{");
-	    fprintf(stdout, "%s}\\\\par\n\",", present(s));
+	    fprintf(stdout, "%s}\\\\par\n\",", present((unsigned char*)s));
 	  }
 	else
 	  {
 	    if (state != TEX)
 	      fprintf(stdout,"TEX \"");
 	    state = TEX;
-	    fprintf(stdout, "%s", present(s));
+	    fprintf(stdout, "%s", present((unsigned char*)s));
 	  }
 	break;
       case EXAMPLE:
@@ -160,7 +160,7 @@ int main(int argc, char **argv)
 	  fprintf(stdout, "\n");
 	state = EXAMPLE;
 	if (block > 0) block++;
-	fprintf(stdout, "%s", present(s));
+	fprintf(stdout, "%s", present((unsigned char *)s));
 	break;
       }
     }

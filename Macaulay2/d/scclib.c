@@ -7,12 +7,11 @@
 #define MP 1
 
 #ifdef _WIN32
-#undef FACTORY
 #undef MP
 #define alloca _alloca
 #endif
 
-#if defined(__DJGPP__)
+#if defined(__DJGPP__) || defined(_WIN32)
 #define NEWLINE "\r\n"
 #elif defined(__MWERKS__)
 #define NEWLINE "\r"
@@ -430,6 +429,13 @@ int system_write(int fd, M2_string buffer, int len){
 
 M2_string system_newline;
 
+M2_string actors5_VERSION;
+M2_string actors5_OS;
+M2_string actors5_ARCH;
+M2_string actors5_REL;
+M2_string actors5_DATE;
+M2_string actors5_TIME;
+
 int system_read(fd,buffer,len)
 int fd;
 M2_string buffer;
@@ -722,6 +728,12 @@ char **argv;
      mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
      initrandom();
      system_newline = tostring(newline);
+     actors5_VERSION = tostring(VERSION);
+     actors5_OS = tostring(OS);
+     actors5_ARCH = tostring(ARCH);
+     actors5_REL = tostring(REL);
+     actors5_DATE = tostring(__DATE__);
+     actors5_TIME = tostring(__TIME__);
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);
      system_args = tostrings(argc == 0 ? 0 : argc - 1, saveargv + 1);

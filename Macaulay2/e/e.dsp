@@ -421,6 +421,14 @@ SOURCE=.\monorder.hpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\newmonorder.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\newmonorder.hpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\newspair.cpp
 # End Source File
 # Begin Source File

@@ -810,7 +810,22 @@ endlfun(e:Expr):Expr := (
      );
 setupfun("endl",endlfun);
 
--- setupconst("endl", Expr(newline));
+import VERSION:string;
+import OS:string;
+import ARCH:string;
+import REL:string;
+import DATE:string;
+import TIME:string;
+setupconst("newline", Expr(newline));
+
+x := newHashTable(hashTableClass,nothingClass);
+storeInHashTable(x,Expr("VERSION"),Expr(VERSION));
+storeInHashTable(x,Expr("OS"),Expr(OS));
+storeInHashTable(x,Expr("ARCH"),Expr(ARCH));
+storeInHashTable(x,Expr("REL"),Expr(REL));
+storeInHashTable(x,Expr("COMPILETIME"),Expr(DATE+" "+TIME));
+sethash(x,false);
+setupconst("version", Expr(x));
 
 removefun(e:Expr):Expr := (
      when e

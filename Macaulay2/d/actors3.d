@@ -883,7 +883,7 @@ map(a:Sequence,f:Expr):Expr := (
      else WrongArg(2,"a function")
      );
 map(n:int,f:Expr):Expr := (
-     if n == 0 then return(emptylist);
+     if n <= 0 then return(emptylist);
      haderror := false;
      errret := nullE;
      recursiondepth = recursiondepth + 1;
@@ -1062,7 +1062,7 @@ map(e:Expr):Expr := (
 setupfun("apply",map);
 
 scan(n:int,f:Expr):Expr := (
-     if n == 0 then return(ExprEmptySequence);
+     if n <= 0 then return(ExprEmptySequence);
      recursiondepth = recursiondepth + 1;
      saveLocalFrame := localFrame;
      if recursiondepth > recursionlimit then (

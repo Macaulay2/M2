@@ -20,7 +20,7 @@ simplegb1 = () -> (
     R = ZZ/101[a,b,c,d];
     m = matrix{{a*b - c^2, a*c - d^2, b*c - c*d}};
     checkEngine(generators gb(m, Strategy=>strat),
-       "bc-cd ac-d2 ab-c2 bd2-d3 c3-d3 c2d2-ad3 a2d3-cd4 \n");
+       "bc-cd ac-d2 ab-c2 bd2-d3 c3-d3 c2d2-ad3 a2d3-cd4 " | newline);
     assert(image m == image matrix 
        {{b*c-c*d, a*c-d^2, a*b-c^2, b*d^2-d^3, c^3-d^3, c^2*d^2-a*d^3, a^2*d^3-c*d^4}}))
 
@@ -28,7 +28,7 @@ simplegb2 = () -> (
     R = ZZ/101[a,b,c,d, Degrees => {1,2,3,4}];
     m = matrix{{a^4*b - c^2, a*c - b^2, c^3 - a*d^2}};
     checkEngine(generators gb(m, Strategy => strat),
-       "b2-ac a4b-c2 a5c-bc2 c3-ad2 a6d2-abcd2 \n"))
+       "b2-ac a4b-c2 a5c-bc2 c3-ad2 a6d2-abcd2 " | newline))
 
 simplegb3 = () -> (
     R = ZZ/101[quote r,quote s,quote t,quote a..quote f,
@@ -37,7 +37,7 @@ simplegb3 = () -> (
     m = matrix {{r^3, r^2*s, r^2*t, r*t^2, r*s*t, t^3}}
           - matrix {{a,b,c,d,e,f}};
     n = selectInSubring(1,generators gb(m, Strategy=>strat));
-    checkEngine(n, "de-bf d2-cf cd-af bd-ce c2-ad bc-ae ce2-b2f ae3-b3f \n"))
+    checkEngine(n, "de-bf d2-cf cd-af bd-ce c2-ad bc-ae ce2-b2f ae3-b3f " | newline))
 
 simplegb4 = () -> (
     -- Easy first case computing minimal generators

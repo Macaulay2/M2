@@ -1,11 +1,14 @@
 .SUFFIXES : .m2 .okay
+EXE = ..\bin\Macaulay2.exe
 .m2.okay:
-	..\d\Release\Macaulay2.exe -silent $*.m2 -eexit(0)
-	echo okay > $@
+	@ echo testing $(EXE) on $*.m2
+	@ $(EXE) -silent $*.m2 -eexit(0)
+	@ echo okay > $@
 
 !ifdef HAVE_FILES
 !include files.tmp
 tests: $(FILES:.m2=.okay)
+$(FILES:.m2=.okay) : $(EXE)
 !endif
 
 all: files.tmp
