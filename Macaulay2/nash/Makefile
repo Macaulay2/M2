@@ -1,9 +1,9 @@
 CFLAGS = -g -Wall
-ENV = env _=./printenv SHELL=./nash
 PROGS = nash printenv unsetenv
 all : nash
 ENV = env _=`type -p printenv` SHELL=./nash
-ENV = ./unsetenv _
+ENV = env _=./printenv SHELL=./nash
+ENV = ./unsetenv _ env SHELL=./nash
 all : nash printenv unsetenv
 check : diff1 diff2 test1 
 diff1 : env.nonash env.nash;	diff -u $^
