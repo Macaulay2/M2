@@ -40,7 +40,7 @@ applyMethod := (m,x) -> if x === null then x else (
      if method === null then x else method x
      )
 
-OutputDictionary = newDictionary()
+OutputDictionary = new Dictionary
 
 commonProcessing := x -> (
      x = applyMethod(AfterEval,x);

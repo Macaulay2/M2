@@ -1266,12 +1266,6 @@ frames(e:Expr):Expr := (
      else WrongArg("a function, a symbol, or ()"));
 setupfun("frames", frames);
 
-newDictionaryFun(e:Expr):Expr := (
-     when e is a:Sequence do if length(a) == 0 then Expr(DictionaryClosure(globalFrame,newGlobalDictionary()))
-     else WrongNumArgs(0)
-     else WrongNumArgs(0));
-setupfun("newDictionary", newDictionaryFun);
-
 localDictionaries(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do ( while ( provide Expr(localDictionaryClosure(f)); f != f.outerFrame ) do f = f.outerFrame)));
 
 localDictionaries(e:Expr):Expr := (

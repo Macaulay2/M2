@@ -250,8 +250,7 @@ setupfun("newClass",newclassfun);
 
 makenew(class:HashTable,parent:HashTable):Expr := (
      basicType := basictype(class);
-     if basicType == hashTableClass 
-     then (
+     if basicType == hashTableClass then (
 	  o := newHashTable(class,parent);
 	  p := class;
 	  while true do (
@@ -270,14 +269,14 @@ makenew(class:HashTable,parent:HashTable):Expr := (
 	       p = p.parent;
 	       );
      	  Expr(o))
-     else if basicType == basicListClass 
-     then (
+     else if basicType == basicListClass then (
 	  if parent != nothingClass
 	  then buildErrorPacket("expected Nothing as parent for list")
 	  else Expr(
 	       sethash(
 		    List(class,emptySequence,0,false),
 		    ancestor(class,mutableHashTableClass))))
+     else if basicType == dictionaryClass then Expr(DictionaryClosure(globalFrame,newGlobalDictionary()))
      else buildErrorPacket("basic type for 'new' method should have been BasicList or HashTable"));
 makenew(class:HashTable):Expr := makenew(class,nothingClass);
 -----------------------------------------------------------------------------
@@ -291,13 +290,13 @@ newfun(newClassCode:Code):Expr := (
      when classExpr 
      is Error do classExpr
      is class:HashTable do (
-	  if !ancestor(class.class,typeClass)
-	  then errt(newClassCode)
-	  else (
+	  if ancestor(class.class,typeClass)
+	  then (
 	       method := lookup(class,NewS);
 	       if method != nullE
 	       then transform(apply(method,Expr(class)),class,true)
-	       else makenew(class)))
+	       else makenew(class))
+	  else errt(newClassCode))
      else errt(newClassCode));
 NewFun = newfun;
 newoffun(newClassCode:Code,newParentCode:Code):Expr := (

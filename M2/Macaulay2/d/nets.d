@@ -143,9 +143,26 @@ export (x:Net) === (y:Net) : bool := (
      true);
 
 export NetList := {
-     next:NetList,
+     previous:NetList,
      this:Net
      };
+
+export HorizontalJoin(v:NetList):Net := (
+     i := 0;
+     p := v;
+     while p.previous != p do (
+	  i = i+1;
+	  p = p.previous;
+	  );
+     p = v;
+     s := new array(Net) len i do ( provide p.this; p = p.previous; );
+     for j from 0 to (i-1)/2 do (			    -- now reverse the list
+	  k := i-1-j;
+	  t := s.j;
+	  s.j = s.k;
+	  s.k = t;
+	  );
+     HorizontalJoin(s));
 
 export dummyNet := Net(0,0,array(string)());
 export dummyNetList := NetList(self,dummyNet);
