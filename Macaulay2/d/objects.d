@@ -651,7 +651,7 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
      when left
      is q:SymbolClosure do (
 	  if q.symbol.protected then (
-	       errorpos(lhs, "assignment to protected variable " + q.symbol.word.name)
+	       errorpos(lhs, "assignment to protected variable '" + q.symbol.word.name + "'")
 	       )
 	  else (
 	       value := eval(rhs);

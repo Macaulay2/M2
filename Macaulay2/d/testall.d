@@ -547,8 +547,6 @@ op<<(stdout:file,x:cons2):file := (
 	stdout << ']');
 nil2 := cons2(number2(0),self);
 use system; 
-accountfor(sizeof(nil2));
-accountfor(sizeof(nil2.item));
 
 stdout <<  number2 (11111) >>  number2 (22222) >>  number2 (33333) >>
  	   number2 (44444) >> nil2  << endl;
@@ -558,7 +556,6 @@ stdout << 3 + 5 + 6 + 8 + 9 + 10 << endl;
 cons3 := {a:int,next:cons3};
 (a:int) >> (next:cons3):cons3 := cons3(a,next);
 nil3 := cons3( 0, self);  
-accountfor (sizeof (nil3));
 op<<(stdout:file,x:cons3):file := (
 	stdout << '(';
 	if x != nil3 
@@ -663,7 +660,6 @@ stdout << "cccc = " << cccc << endl;
 
 qwert := {next:qwert};
 qnil := qwert(self);
-accountfor(sizeof(qnil));
 x := qwert(qwert(qnil));
 x = x.next;
 

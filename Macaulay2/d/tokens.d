@@ -75,33 +75,33 @@ export Token := {		-- a word, as encountered in the input
 
 export Adjacent := {lhs:ParseTree, rhs:ParseTree};
 export For := {
-     fortoken:Token, variable:ParseTree,
-     fromclause:ParseTree, toclause:ParseTree, whenclause:ParseTree, listclause:ParseTree, doclause:ParseTree,
+     forToken:Token, variable:ParseTree,
+     fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree, listClause:ParseTree, doClause:ParseTree,
      scope:Scope					    -- filled in later
      };
 export WhileDo := {
-     whiletoken:Token, predicate:ParseTree,
-     dotoken:Token, doclause:ParseTree};
+     whileToken:Token, predicate:ParseTree,
+     dotoken:Token, doClause:ParseTree};
 export WhileList := {
-     whiletoken:Token, predicate:ParseTree,
-     listtoken:Token, listclause:ParseTree};
+     whileToken:Token, predicate:ParseTree,
+     listtoken:Token, listClause:ParseTree};
 export WhileListDo := {
-     whiletoken:Token, predicate:ParseTree,
-     listtoken:Token, listclause:ParseTree,
-     dotoken:Token, doclause:ParseTree
+     whileToken:Token, predicate:ParseTree,
+     listtoken:Token, listClause:ParseTree,
+     dotoken:Token, doClause:ParseTree
      };
 export TryElse := {
-     trytoken:Token, primary:ParseTree,
-     elsetoken:Token, alternate:ParseTree};
+     tryToken:Token, primary:ParseTree,
+     elseToken:Token, alternate:ParseTree};
 export Try := {
-     trytoken:Token, primary:ParseTree};
+     tryToken:Token, primary:ParseTree};
 export IfThen := {
-     iftoken:Token, predicate:ParseTree, 
-     thentoken:Token, thenclause:ParseTree};
+     ifToken:Token, predicate:ParseTree, 
+     thenToken:Token, thenclause:ParseTree};
 export IfThenElse := {
-     iftoken:Token, predicate:ParseTree, 
-     thentoken:Token, thenclause:ParseTree, 
-     elsetoken:Token, elseclause:ParseTree};
+     ifToken:Token, predicate:ParseTree, 
+     thenToken:Token, thenclause:ParseTree, 
+     elseToken:Token, elseClause:ParseTree};
 export New := {
      newtoken:Token, newclass:ParseTree,
      oftoken:Token, newparent:ParseTree,
@@ -114,13 +114,13 @@ export Binary := {lhs:ParseTree, operator:Token, rhs:ParseTree};
 export Unary  := {operator:Token, rhs:ParseTree};
 export Postfix:= {lhs:ParseTree, operator:Token};
 export ArrayParseTree := array(ParseTree);
-export parenthesized := { left:Token, contents:ParseTree, right:Token };
-export parentheses := { left:Token, right:Token };
+export Parentheses := { left:Token, contents:ParseTree, right:Token };
+export EmptyParentheses := { left:Token, right:Token };
 export dummy := {position:Position};
-export startScope := {scope:Scope, body:ParseTree};
+export StartScope := {scope:Scope, body:ParseTree};
 export ParseTree := (
-     Token or Adjacent or Binary or Unary or Postfix or parenthesized 
-     or parentheses or IfThen or IfThenElse or startScope 
+     Token or Adjacent or Binary or Unary or Postfix or Parentheses 
+     or EmptyParentheses or IfThen or IfThenElse or StartScope 
      or Quote or GlobalQuote or LocalQuote
      or TryElse or Try or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy );
 
@@ -149,8 +149,6 @@ export Frame := {
      values:Sequence
      };
 export dummyFrame := Frame(self,-1,Sequence());   -- self pointer depended on by structure.d:apply()
-accountfor(sizeof(dummyFrame));
-accountfor(sizeof(dummyFrame.values));
 export FunctionClosure := { frame:Frame, model:functionCode };
 export SymbolClosure := {frame:Frame, symbol:Symbol};
 export List := {
@@ -198,7 +196,7 @@ export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
 export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
-export forCode := {fromclause:Code,toclause:Code, whenclause:Code,listclause:Code,doclause:Code,
+export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code,
      scope:Scope, position:Position} ;
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
@@ -267,9 +265,9 @@ dummyunary(w:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree := (
 dummybinary(w:ParseTree,v:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree := (
      error("binary dummy used"); 
      w);
-makedummy():parseinfo := parseinfo(0,0,0,
-     parsefuns(dummyunary,dummybinary));
-export dummyWord    := Word("--dummy word--",TCnone,0,makedummy());
+export nopr := -1;						    -- represents unused precedence
+export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary,dummybinary));
+export dummyWord    := Word("--dummy word--",TCnone,0,newParseinfo());
 export dummyDictionary := newDictionary();
 
 export dummyScope := (
@@ -292,29 +290,24 @@ export dummyBinaryFun(c:Code,d:Code):Expr := (
 export dummyTernaryFun(c:Code,d:Code,e:Code):Expr := (
      error("dummy ternary function called");
      nullE);
-export emptynullE := Expr(Sequence());
-export bucketEnd := KeyValuePair(emptynullE,0,emptynullE, self);
-accountfor(sizeof(bucketEnd));
-accountfor(sizeof(emptynullE));
+export emptySequenceE := Expr(emptySequence);
+export bucketEnd := KeyValuePair(nullE,0,nullE,self);
 export thingClass := HashTable(
      array(KeyValuePair)(bucketEnd,bucketEnd,bucketEnd,bucketEnd),
+	  -- we start with four empty buckets.  It is important for the 
+	  -- enlarge/shrink code in objects.d that the number of buckets
+	  -- here (four) is a power of two!
      self,self,0,(HashCounter = HashCounter + 1;HashCounter),
      true);
-export dummySymbol   := Symbol(
+export dummySymbol := Symbol(
      dummyWord,nextHash(),dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
      globalScope.seqno,-1,1,true,true,false
      );
 export dummyToken   := Token(dummyWord,dummyPosition,globalScope,dummySymbol,false);
-export parseEOF     := makedummy();
-export parseWORD    := makedummy();
-export parseERRMSG  := makedummy();
+export parseEOF     := newParseinfo();
+export parseWORD    := newParseinfo();
 
-export ExprEmptySequence := Expr(emptySequence);
------------------------------------------------------------------------------
-dummyclean(x:HashTable):void := nothing;
-export cleanfun := dummyclean;			  -- filled in later
---export clean(x:HashTable):void := cleanfun(x);
 -----------------------------------------------------------------------------
 export newHashTable(class:HashTable,parent:HashTable):HashTable := (
      HashCounter = HashCounter + 1;

@@ -310,36 +310,40 @@ formatfun(e:Expr):Expr := (
      else WrongArg(0+1,"an integer, a list of integers, or a handle"));
 setupfun("gg",formatfun);
 
-seeParsing(o:file):void := (
-     o
-     << endl << endl
-     << "word      precedence scope unaryStrength" << endl << endl
-     << ("<WORDS>",12)
-     << (parseWORD.precedence,-7)
-     << (parseWORD.binaryStrength,-7)
-     << (parseWORD.unaryStrength,-7) << endl;
-     foreach hashListX in hashTable do (
-	  hashList := hashListX;
-	  while true do
-	  when hashList
-	  is null do break
-	  is hashCell:WordListCell do (
-	       if hashCell.word.parse != parseWORD 
-	       then (
-		    o << (hashCell.word.name,12)
-		    << (hashCell.word.parse.precedence,-7) 
-		    << (hashCell.word.parse.binaryStrength,-7) 
-		    << (hashCell.word.parse.unaryStrength,-7) 
-		    << endl;
-		    );
-	       hashList = hashCell.next;
-	       );
-	  );
-     );
-seeParsing(e:Expr):Expr := (
-     seeParsing(stdout);
-     nullE);
-setupfun("seeParsing",seeParsing);
+-- getParsing(o:file):void := (
+--      o
+--      << endl << endl
+--      << "word      precedence scope unaryStrength" << endl << endl
+--      << ("<WORDS>",12)
+--      << (parseWORD.precedence,-7)
+--      << (parseWORD.binaryStrength,-7)
+--      << (parseWORD.unaryStrength,-7) << endl;
+--      foreach hashListX in hashTable do (
+-- 	  hashList := hashListX;
+-- 	  while true do
+-- 	  when hashList
+-- 	  is null do break
+-- 	  is hashCell:WordListCell do (
+-- 	       if hashCell.word.parse != parseWORD 
+-- 	       then (
+-- 		    o << (hashCell.word.name,12)
+-- 		    << (hashCell.word.parse.precedence,-7) 
+-- 		    << (hashCell.word.parse.binaryStrength,-7) 
+-- 		    << (hashCell.word.parse.unaryStrength,-7) 
+-- 		    << endl;
+-- 		    );
+-- 	       hashList = hashCell.next;
+-- 	       );
+-- 	  );
+--      );
+getParsing(e:Expr):Expr := (
+     when e
+     is s:SymbolClosure
+     do (
+	  x := s.symbol.word.parse;
+	  list( Expr(toInteger(x.precedence)), Expr(toInteger(x.binaryStrength)), Expr(toInteger(x.unaryStrength))))
+     else nullE);
+setupfun("getParsing",getParsing);
 
 dumpdatafun(e:Expr):Expr := (
      when e

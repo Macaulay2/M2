@@ -68,12 +68,12 @@ seqlen(e:ParseTree):int := (
 	       if u.operator.word == commaW
 	       then ( i = i + 1; e = u.rhs )
 	       else return(i+1))
-	  is p:parentheses do (
+	  is p:EmptyParentheses do (
 	       --if p.left.word == leftparen
 	       --then return(i)
 	       --else 
 	       return(i+1))
-	  is p:parenthesized do (
+	  is p:Parentheses do (
 	       --if p.left.word == leftparen
 	       --then e = p.contents
 	       --else
@@ -96,12 +96,12 @@ fillseq(e:ParseTree,v:CodeSequence,m:int):int := (
 		    m = m + 1; 
 		    e = u.rhs )
 	       else ( v.m = convert(e); return(m+1)))
-	  is p:parentheses do (
+	  is p:EmptyParentheses do (
 	       --if p.left.word == leftparen
 	       --then (return(m))
 	       --else
 	       (v.m = convert(e); return(m+1)))
-	  is p:parenthesized do (
+	  is p:Parentheses do (
 	       --if p.left.word == leftparen
 	       --then e = p.contents
 	       --else 
@@ -157,26 +157,26 @@ tokenAssignment(e:ParseTree,b:Binary,t:Token):Code := (
 
 export convert(e:ParseTree):Code := (
      when e
-     is s:startScope do (
+     is s:StartScope do (
 	  if s.scope.framesize != 0
 	  then Code(openScopeCode(s.scope,convert(s.body)))
 	  else convert(s.body)
 	  )
      is w:For do Code(
 	  forCode(
-	       convert(w.fromclause), convert(w.toclause),
-	       convert(w.whenclause), convert(w.listclause), 
-	       convert(w.doclause),
+	       convert(w.fromClause), convert(w.toClause),
+	       convert(w.whenClause), convert(w.listClause), 
+	       convert(w.doClause),
 	       w.scope,
 	       treePosition(e)))
      is w:WhileDo do Code(
-	  binaryCode(WhileDoFun,convert(w.predicate),convert(w.doclause),
+	  binaryCode(WhileDoFun,convert(w.predicate),convert(w.doClause),
 	       treePosition(e)))
      is w:WhileList do Code(
-	  binaryCode(WhileListFun,convert(w.predicate),convert(w.listclause),
+	  binaryCode(WhileListFun,convert(w.predicate),convert(w.listClause),
 	       treePosition(e)))
      is w:WhileListDo do Code(
-	  ternaryCode(WhileListDoFun,convert(w.predicate),convert(w.listclause),convert(w.doclause),
+	  ternaryCode(WhileListDoFun,convert(w.predicate),convert(w.listClause),convert(w.doClause),
 	       treePosition(e)))
      is n:New do (
 	  if n.newparent == dummyTree
@@ -198,7 +198,7 @@ export convert(e:ParseTree):Code := (
      is i:IfThenElse do Code(
 	  ternaryCode(IfThenElseFun,
 	       convert(i.predicate),
-	       convert(i.thenclause),convert(i.elseclause),
+	       convert(i.thenclause),convert(i.elseClause),
 	       treePosition(e)))
      is token:Token do (
 	  var := token.entry;
@@ -216,13 +216,13 @@ export convert(e:ParseTree):Code := (
      is a:Adjacent do Code(
 	  binaryCode(AdjacentFun, convert(a.lhs),convert(a.rhs),
 	       treePosition(e)))
-     is p:parentheses do (
-	  if p.left.word == leftparen then Code(exprCode(ExprEmptySequence,treePosition(e)))
+     is p:EmptyParentheses do (
+	  if p.left.word == leftparen then Code(exprCode(emptySequenceE,treePosition(e)))
 	  else if p.left.word == leftbrace then Code(exprCode(emptylist,treePosition(e)))
 	  else if p.left.word == leftbracket then Code(exprCode(emptyArray, treePosition(e)))
 	  else dummyCode			  -- should not happen
 	  )
-     is p:parenthesized do (
+     is p:Parentheses do (
 	  if p.left.word == leftparen then convert(p.contents)
 	  else if p.left.word == leftbrace 
 	  then (
@@ -591,7 +591,6 @@ export evalSequence(v:CodeSequence):Expr := (
 	  r));
 export trace := false;
 shown := 0;
-export Semicolonfun := dummyBinaryFun;	  -- filled in later
 export recursionlimit := 300;
 export recursiondepth := 0;
 
@@ -695,17 +694,9 @@ export setup(e:SymbolClosure,fun1:unop,fun2:unop):void := (
      e.symbol.unary = fun1;
      e.symbol.postfix = fun2;
      );
-export setupop(word:Word,fun:unop):void := (
-     entry := makeSymbol(word,dummyPosition,globalScope);
-     entry.unary = fun;
-     entry.protected = true;
-     );     
+export setupop(s:SymbolClosure,fun:unop):void := s.symbol.unary = fun;
 export setupfun(name:string,fun:unop):void := (
-     word := unique(name, parseinfo(
-	       parseWORD.precedence,
-	       parseWORD.binaryStrength,
-	       parseWORD.unaryStrength,
-	       parsefuns(unaryop, defaultbinary)));
+     word := unique(name, parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
      entry := makeSymbol(word,dummyPosition,globalScope);
      entry.unary = fun;
      entry.protected = true;
@@ -747,4 +738,4 @@ shieldfun(a:Code):Expr := (
 	       exit(1);
 	       );
      	  ret));
-setupop(shieldW,shieldfun);     
+setupop(shieldS,shieldfun);     

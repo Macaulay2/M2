@@ -714,8 +714,8 @@ binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
 postfix := set postfixOperators; erase symbol postfixOperators
 other := set otherOperators; erase symbol otherOperators
-operator = binary + prefix + postfix + other			    -- erase later in code.m2
-op := s -> if operator#?s then (
+operatorSet = binary + prefix + postfix + other
+op := s -> if operatorSet#?s then (
      ss := toString s;
      SEQ {
 	  if binary#?s then SEQ {

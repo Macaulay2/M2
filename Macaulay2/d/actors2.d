@@ -180,7 +180,7 @@ timefun(a:Code):Expr := (
      when ret
      is Error do ret
      else list(timeClass,Sequence(Expr(Real((x-v)-(y-x))),ret)));
-setupop(timingW,timefun);
+setupop(timingS,timefun);
 showtimefun(a:Code):Expr := (
      v := etime();
      ret := eval(a);
@@ -188,7 +188,7 @@ showtimefun(a:Code):Expr := (
      y := etime();
      stdout << "     -- used " << (x-v)-(y-x) << " seconds" << endl;
      ret);
-setupop(timeW,showtimefun);
+setupop(timeS,showtimefun);
 getvalue(x:Sequence,i:int):Expr := (
      if i < -length(x) || i >= length(x)
      then errorExpr("array index "
@@ -417,11 +417,11 @@ tryfun(primary:Code):Expr := (
      	  SuppressErrors = oldSuppressErrors;
 	  when p is Error do nullE else p));
 TryFun = tryfun;
-ifthenelsefun(predicate:Code,thenclause:Code,elseclause:Code):Expr := (
+ifthenelsefun(predicate:Code,thenclause:Code,elseClause:Code):Expr := (
      p := eval(predicate);
      when p is Error do p
      else if p == True then eval(thenclause)
-     else if p == False then eval(elseclause)
+     else if p == False then eval(elseClause)
      else errorpos(predicate,"expected true or false"));
 IfThenElseFun = ifthenelsefun;
 
@@ -714,14 +714,14 @@ whilelistfun(predicate:Code,body:Code):Expr := (
 	       else new Sequence len i do foreach x in r do provide x)));
 WhileListFun = whilelistfun;
 
-whilelistdofun(predicate:Code,listclause:Code,doclause:Code):Expr := (
+whilelistdofun(predicate:Code,listClause:Code,doClause:Code):Expr := (
      r := new Sequence len 1 do provide nullE;
      i := 0;
      while true do (
 	  p := eval(predicate);
 	  when p is Error do return(p)
 	  else if p == True then (
-	       b := eval(listclause);
+	       b := eval(listClause);
 	       when b is Error do return(b) else (
 		    if i == length(r) then (
 			 r = new Sequence len 2*length(r) do (
@@ -732,7 +732,7 @@ whilelistdofun(predicate:Code,listclause:Code,doclause:Code):Expr := (
 		    r.i = b;
 		    i = i+1;
 		    );
-     	       c := eval(doclause);
+     	       c := eval(doClause);
 	       when c is Error do return(c) else nothing;
 	       )
 	  else if p == False then break
@@ -745,31 +745,31 @@ whilelistdofun(predicate:Code,listclause:Code,doclause:Code):Expr := (
 WhileListDoFun = whilelistdofun;
 
 forfun(c:forCode):Expr := (
-     fromclause := c.fromclause;
-     toclause := c.toclause;
-     predicate := c.whenclause;
-     listclause := c.listclause;
-     doclause := c.doclause;
-     r := if listclause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
+     fromClause := c.fromClause;
+     toClause := c.toClause;
+     predicate := c.whenClause;
+     listClause := c.listClause;
+     doClause := c.doClause;
+     r := if listClause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
      i := 0;				    -- index in r
      j := 0;				    -- the value of the loop variable
-     n := 0;				    -- the upper bound on j, if there is a toclause.
-     if fromclause != dummyCode then (
-     	  fromvalue := eval(fromclause);
+     n := 0;				    -- the upper bound on j, if there is a toClause.
+     if fromClause != dummyCode then (
+     	  fromvalue := eval(fromClause);
      	  when fromvalue is f:Integer do (
 	       if isInt(f) then j = toInt(f)
-	       else return(errorpos(fromclause,"expected a small integer"));
+	       else return(errorpos(fromClause,"expected a small integer"));
 	       )
-     	  else return(errorpos(fromclause,"expected an integer")));
-     if toclause != dummyCode then (
-	  tovalue := eval(toclause);
+     	  else return(errorpos(fromClause,"expected an integer")));
+     if toClause != dummyCode then (
+	  tovalue := eval(toClause);
 	  when tovalue is f:Integer do (
 	       if isInt(f) then n = toInt(f)
-	       else return(errorpos(toclause,"expected a small integer"));
+	       else return(errorpos(toClause,"expected a small integer"));
 	       )
-	  else return(errorpos(toclause,"expected an integer")));
+	  else return(errorpos(toClause,"expected an integer")));
      while true do (
-	  if toclause != dummyCode && j > n then break;
+	  if toClause != dummyCode && j > n then break;
 	  localFrame.values.0 = toInteger(j);		    -- should be the frame spot for the loop var!
      	  j = j+1;
 	  if predicate != dummyCode then (
@@ -778,8 +778,8 @@ forfun(c:forCode):Expr := (
 	       else if p == False then break
 	       else if p != True then return(errorpos(predicate,"expected true or false"));
 	       );
-	  if listclause != dummyCode then (
-	       b := eval(listclause);
+	  if listClause != dummyCode then (
+	       b := eval(listClause);
 	       when b is Error do return(b) else (
 		    if i == length(r) then (
 			 r = new Sequence len 2*length(r) do (
@@ -791,12 +791,12 @@ forfun(c:forCode):Expr := (
 		    i = i+1;
 		    );
 	       );
-	  if doclause != dummyCode then (
-	       b := eval(doclause);
+	  if doClause != dummyCode then (
+	       b := eval(doClause);
 	       when b is Error do return(b) else nothing;
 	       );
 	  );
-     if listclause == dummyCode then nullE
+     if listClause == dummyCode then nullE
      else Expr(
 	  list(
 	       if i == 0 then emptySequence
