@@ -22,6 +22,7 @@ protected:
   MutableMatrix *rowOps;
   MutableMatrix *colOps;	// Transpose of column matrix
 
+  MutableMatrix() : R(0), nrows(0), ncols(0) {}
   MutableMatrix(const Ring *RR, int r, int c) : R(R), nrows(r), ncols(c) {}
 
   bool errorColumnBound(int c) const; // Sets an error if false is returned.
