@@ -364,7 +364,7 @@ makeTableOfContents := () -> (
 	  } << endl << close
      )
 
-runMacaulay2 = (inf,outf,tmpf,desc,M2args,changefun) -> (
+runFile := (inf,outf,tmpf,desc,pkg,announcechange) -> (
      if fileExists outf and fileTime outf >= fileTime inf
      then (
 	  if debugLevel > 0 then stderr << "--leaving " << desc << " in file " << outf << endl;
@@ -374,9 +374,13 @@ runMacaulay2 = (inf,outf,tmpf,desc,M2args,changefun) -> (
 	  if debugLevel > 0 then stderr << "--leaving error report from " << desc << " in file " << tmpf << endl;
 	  )
      else (
-	  changefun();
+	  announcechange();
 	  stderr << "--making " << desc << " in file " << outf << endl;
-	  cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --print-width 80 --stop --int -e errorDepth=0 -q " | M2args | " <" | inf | " >" | tmpf | " 2>&1";
+	  ldpkg := "-e 'needsPackage \""|toString pkg|"\"'";
+	  ulimit := "ulimit -t 20 -v 60000";
+	  args := "--silent --print-width 80 --stop --int -e errorDepth=0 -q" | " " | ldpkg;
+	  cmdname := commandLine#0;
+	  cmd := ulimit | "; " | cmdname | " " | args | " <" | inf | " >" | tmpf | " 2>&1";
 	  stderr << cmd << endl;
 	  r := run cmd;
 	  if r == 0 then (
@@ -395,7 +399,28 @@ runMacaulay2 = (inf,outf,tmpf,desc,M2args,changefun) -> (
 		    );
 	       haderror = true;
 	       )))
-	  
+
+runString := (x,pkg) -> (
+     inf := temporaryFileName();
+     tmpf := temporaryFileName();
+     outf := temporaryFileName();
+     rm := fn -> if fileExists fn then removeFile fn;
+     rmall := () -> rm \ {inf, tmpf, outf};
+     inf << x << endl << close;
+     runFile(inf,outf,tmpf,"test results",pkg,t->t);
+     result := if fileExists outf then get outf;
+     if result =!= null then (
+	  stderr
+	  << "--test input :" << x << endl
+	  << "--test output:" << result << endl << endl;
+	  );
+     rmall();
+     result)
+
+checkPackage = method();
+checkPackage Package := pkg -> (
+     scan(values pkg#"test inputs", s -> runString(s,pkg))
+     )
 
 runfun := o -> if class o === Function then o() else o
 
@@ -573,9 +598,8 @@ installPackage Package := o -> pkg -> (
 	       outf := outfn fkey;
 	       tmpf := tmpfn fkey;
 	       desc := "example results for " | fkey;
-	       M2args := if pkg === Macaulay2 then "" else "-e 'load \""|fn|"\"'";
 	       changefun := () -> remove(rawDocUnchanged,fkey);
-	       runMacaulay2(inf,outf,tmpf,desc,M2args,changefun);
+	       runFile(inf,outf,tmpf,desc,pkg,changefun);
 	       -- read, separate, and store example output
 	       if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
 	       else (
