@@ -5,3 +5,4 @@ dumpdata.tmp
 gmon.out
 *.orig
 *.rej
+Makefile

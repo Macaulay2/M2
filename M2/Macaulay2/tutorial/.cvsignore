@@ -4,3 +4,4 @@ translate
 *.pdb
 *.obj
 *.exe
+Makefile

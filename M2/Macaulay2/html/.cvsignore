@@ -10,3 +10,4 @@ gmon.out
 *.dct
 *.syn
 *.stop
+Makefile

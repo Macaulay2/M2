@@ -2,3 +2,4 @@
 *.a
 check
 check-data
+Makefile

@@ -15,3 +15,4 @@ Macaulay2-*-book.tex
 *.idx
 *.bux
 *.aux
+Makefile
