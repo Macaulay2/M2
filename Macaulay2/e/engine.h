@@ -384,7 +384,7 @@ extern "C" {
        Otherwise 0.0 is returned. */
 
   const RingElementOrNull *IM2_RingElement_from_rational(const Ring *R, 
-							 const M2_Rational r); /* drg: waiting, rawFromNumber*/
+							 const M2_Rational r); /* rawFromNumber*/
 
   M2_BigReal IM2_RingElement_to_BigReal(const RingElement *a); /* TODO */
     /* If the ring of a is BigRR, this returns the underlying representation of 'a'.
@@ -1328,7 +1328,7 @@ enum gbTraceValues
   const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g);
   /* rawGCD */
 
-  const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g);
+  const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g); /* connected */
 
 
   void rawFactor(const RingElement *f, 
