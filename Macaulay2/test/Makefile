@@ -1,4 +1,5 @@
 TOPDIR = ../..
+include $(TOPDIR)/config.Makefile
 include $(TOPDIR)/Makeconf
 
 RESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2)) 

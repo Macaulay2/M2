@@ -3,6 +3,7 @@
 
 ############################## includes
 TOPDIR = ../..
+include $(TOPDIR)/config.Makefile
 include $(TOPDIR)/Makeconf
 ifndef NODEPENDS
 include compat.mak

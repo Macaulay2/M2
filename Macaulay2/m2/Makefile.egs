@@ -1,4 +1,6 @@
+# -*- Mode: Makefile -*-
 TOPDIR = ../../../..
+include $(TOPDIR)/config.Makefile
 include $(TOPDIR)/Makeconf
 
 ifndef NODUMPDATA

@@ -1,5 +1,6 @@
 #ARING = true
 TOPDIR = ../..
+include $(TOPDIR)/config.Makefile
 include $(TOPDIR)/Makeconf
 # MES:
 # CXXFLAGS = -DGCMALLOC -DDEBUG

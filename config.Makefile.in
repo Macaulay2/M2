@@ -1,7 +1,9 @@
 
-# cygwin make gets confused by this!
-# SHELL = @SHELL@
+# cygwin make might get confused by this!
+SHELL = @SHELL@
 
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
 CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@

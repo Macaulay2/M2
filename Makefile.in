@@ -39,14 +39,12 @@ export PATH := bin:$(PATH)
 always:
 lib/.exists:; mkdir -p lib; touch $@
 clean::; rm -rf lib
-include/.exists:; mkdir -p include; touch $@
-clean::; rm -rf include
 clean::; rm -f config.cache
 clean::; rm -f core
 rmcores :; find . '(' -name core -o -name gmon.out -o -name profile ')' -exec rm '{}' ';'
 ################################ SETUP
 ifeq "$(CC)" "cl"
-justM2 all:: include/.exists;	$(MAKE) -C WindowsNT
+justM2 all:: ;	$(MAKE) -C WindowsNT
 TARGET := Macaulay2-$(DESC).zip
 DOCTARGET := Macaulay2-$(VERSION)-doc.zip
 else
@@ -94,8 +92,8 @@ endif
 
 lib/libgc.a: 		gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
 lib/gc.lib: 		gc/gc.lib lib/.exists;	 	cp $< $@
-include/gc.h:		gc/gc.h include/.exists;	cp $< $@
-include/gc_cpp.h: 	gc/gc_cpp.h include/.exists;	cp $< $@
+include/gc.h:		gc/gc.h ;			cp $< $@
+include/gc_cpp.h: 	gc/gc_cpp.h ;			cp $< $@
 
 ifeq "$(CC)" "cl"
 gc/gc.lib:	  always
@@ -133,7 +131,7 @@ gmp/.libs/libgmp.a : make-gmp
 endif
 endif
 
-include/gmp.h: gmp/gmp.h include/.exists; cp $< $@
+include/gmp.h: gmp/gmp.h ; cp $< $@
 
 make-gmp : GMPconfigure
 	@echo we wanted to use: CFLAGS="$(GMPFLAGS)"
@@ -230,7 +228,7 @@ FACTORYmade:
 	   CXXFLAGS="$(CXXFLAGS) $(FACFLAGS)" \
 	   CPPFLAGS="$(CPPFLAGS) -I../include $(FACTORYINC)"
 
-lib/libcf.a lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
+lib/libcf.a lib/FACTORYinstalled: lib/.exists $(FACTORYexports)
 	$(MAKE) -C factory $(FACTORYMAKEFLAGS) install
 	rm -f lib/libcfmem.a
 	touch $@
@@ -280,7 +278,7 @@ libfac/libfac.a : always
 		-C libfac libfac
 endif
 
-include/factor.h: libfac/factor.h include/.exists; cp $< $@
+include/factor.h: libfac/factor.h ; cp $< $@
 LIBFACclean clean::
 	-$(MAKE) -C libfac distclean
 	rm -f lib/libfac.a lib/libfac.lib
@@ -299,15 +297,14 @@ mp/config.status mp/Makefile : mp/configure
 mp/libMP.a: mp/Makefile
 	$(MAKE) -C mp libMP.a
 lib/libMP.a: mp/MP/libMP.a lib/.exists; cp $< $@; ranlib $@
-include/MP.h: mp/MP/MP.h include/.exists; cp $< $@
-include/MP_Config.h: mp/MP/MP_Config.h include/.exists; cp $< $@
+include/MP.h: mp/MP/MP.h ; cp $< $@
+include/MP_Config.h: mp/MP/MP_Config.h ; cp $< $@
 clean::; -$(MAKE) -C mp distclean
 clean::; rm -f 'mp/&'
 ################################# Makeconf.h
 justM2 all:: Makeconf.h
-Makeconf.h : Makeconf Makeconf.var Makeconf.lcl
+Makeconf.h : Makeconf Makeconf.var Makeconf.lcl config.Makefile
 	echo "/* This file created automatically, don't edit. */" >tmp.tmp
-	echo '#define VERSION "$(VERSION)"' >>tmp.tmp
 	echo '#define NODENAME "$(NODENAME)"' >>tmp.tmp
 	echo '#define OS "$(OS)"' >>tmp.tmp
 	echo '#define ARCH "$(ARCH)"' >>tmp.tmp
@@ -381,7 +378,7 @@ Macaulay2-$(DESC).zip : Makefile $(DISTFILES)
 	@echo "  $@ contains everything but the documentation"
 	@echo "-----------------------------------------------------------------------------"
 clean ::; rm -f Macaulay2-$(DESC).tar.gz Macaulay2-$(DESC).zip
-clean ::; $(MAKE) -C Macaulay2 clean
+install clean ::; $(MAKE) -C Macaulay2 $@
 ###################### Macaulay 2 porting source distribution
 PORTING := CVS \
 	M2.dsw WindowsDistribution.dsp root.dsp \

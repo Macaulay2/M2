@@ -1,4 +1,5 @@
 TOPDIR = ../..
+include $(TOPDIR)/config.Makefile
 include $(TOPDIR)/Makeconf
 
 BOOKNAME = Macaulay2-$(VERSION)-book
