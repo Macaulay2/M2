@@ -455,10 +455,9 @@ map(Module,Module) := Matrix => options -> (M,N) -> (
      )
 
 map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
-     error "IM2_Matrix_zero not re-implemented yet";
      R := ring M;
      if r == 0 then new Matrix from {
-	  symbol handle => newHandle(ggPush cover M, ggPush cover N, ggzeromat),
+     	  symbol RawMatrix => rawZero(raw cover M, raw cover N),
 	  symbol source => N,
 	  symbol target => M,
 	  symbol ring => ring M,
@@ -468,9 +467,8 @@ map(Module,Module,RingElement) := Matrix => options -> (M,N,r) -> (
      else error "expected 0, or source and target with same number of generators")
 
 map(Module,Module,ZZ) := Matrix => options -> (M,N,i) -> (
-     error "IM2_Matrix_zero not re-implemented yet";
      if i === 0 then new Matrix from {
-	  symbol handle => newHandle(ggPush cover M, ggPush cover N, ggzeromat),
+     	  symbol RawMatrix => rawZero(raw cover M, raw cover N),
 	  symbol source => N,
 	  symbol target => M,
 	  symbol ring => ring M,
