@@ -38,10 +38,13 @@ record      := f -> x -> (
 -----------------------------------------------------------------------------
 -- getting database records
 -----------------------------------------------------------------------------
-getRecord := key -> scan(packages,
+getPackage := key -> scan(packages,
      pkg -> (
 	  d := pkg#"documentation";
-	  if d#?key then break d#key))
+	  if d#?key then break pkg)) 
+
+getRecord := (pkg,key) -> pkg#"documentation"#key
+
 -----------------------------------------------------------------------------
 -- normalizing document tags
 -----------------------------------------------------------------------------
@@ -61,18 +64,13 @@ normalizeDocumentTag Sequence := identity
 normalizeDocumentTag   Option := identity
 normalizeDocumentTag  Nothing := x -> symbol null
 normalizeDocumentTag    Thing := x -> (
+     if x.?Symbol and value x.Symbol === x then return x.Symbol;
      t := reverseDictionary x;
-     if t === null then error "encountered unidentifiable document tag";
-     t)
+     if t =!= null then return t;
+     error "encountered unidentifiable document tag";
+     )
 
 isDocumentableThing = x -> null =!= package x		    -- maybe not quite right
-
-isDocumentableTag          = method(SingleArgumentDispatch => true)
-isDocumentableTag   Symbol := s -> null =!= package s
-isDocumentableTag   String := s -> true
-isDocumentableTag Sequence := s -> all(s, isDocumentableThing)
-isDocumentableTag   Option := s -> all(toList s, isDocumentableThing)
-isDocumentableTag    Thing := s -> false
 
 packageTag          = method(SingleArgumentDispatch => true)
 packageTag   Symbol := s -> if class value s === Package and toString value s === toString s then value s else package s
@@ -81,6 +79,13 @@ packageTag  Package := identity
 packageTag Sequence := s -> youngest \\ package \ s
 packageTag   Option := s -> package youngest toSequence s
 packageTag    Thing := s -> error "can't determine package for documentation tag of unknown type"
+
+isDocumentableTag          = method(SingleArgumentDispatch => true)
+isDocumentableTag   Symbol := s -> null =!= packageTag s
+isDocumentableTag   String := s -> true
+isDocumentableTag Sequence := s -> all(s, isDocumentableThing)
+isDocumentableTag   Option := s -> all(toList s, isDocumentableThing)
+isDocumentableTag    Thing := s -> false
 
 -----------------------------------------------------------------------------
 -- formatting document tags
@@ -163,7 +168,11 @@ fSeqTO := null
 formatDocumentTagTO := method(SingleArgumentDispatch => true)
 formatDocumentTagTO Thing := x -> TT formatDocumentTag x
 formatDocumentTagTO Option := x -> (
-     if #x === 2 and getRecord toString x#1 =!= null 
+     if #x === 2 and (
+	  key := toString x#1;				    -- toString?  or maybe formatDocumentTag?
+	  pkg := getPackage key;
+	  pkg =!= null and getRecord(pkg,key) =!= null 
+	  )
      then SEQ { toString x#0, "(..., ", TO x#1, " => ...)", headline x#1 }
      else TT formatDocumentTag x
      )
@@ -302,12 +311,9 @@ processExamplesLoop := s -> (
      else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)
-processExamples := (key,docBody) -> (
-     currentNodeName = formatDocumentTag key;
-     pkg := packageTag key;
-     if pkg === null then error ("can't determine the correct package for documentation key ", format currentNodeName);
-     exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,pkg);
-     checkForExampleOutputFile(currentNodeName,pkg);
+processExamples := (pkg,fkey,docBody) -> (
+     exampleBaseFilename = makeFileName(fkey,getFileName docBody,pkg);
+     checkForExampleOutputFile(fkey,pkg);
      processExamplesLoop docBody)
 
 -----------------------------------------------------------------------------
@@ -412,17 +418,25 @@ getOption := (s,tag) -> (
      else null
      )
 
-getDoc := key -> value getRecord formatDocumentTag key
+getDoc := key -> (
+     fkey := formatDocumentTag key;
+     pkg := getPackage fkey;
+     if pkg =!= null then value getRecord(pkg,fkey)
+     )
 if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
  
 getDocBody := key -> (
-     a := getDoc key;
-     if a =!= null then processExamples(key, select(a, s -> class s =!= Option)))
+     fkey := formatDocumentTag key;
+     pkg := getPackage fkey;
+     if pkg =!= null then (
+	  docBody := value getRecord(pkg,fkey);
+	  docBody = select(docBody, s -> class s =!= Option);
+	  docBody = processExamples(pkg, fkey, docBody);
+	  docBody))
 
 getHeadline := key -> (
      d := getOption(getDoc key, Headline);
-     if d =!= null then SEQ join( {"  --  ", SEQ d} )
-     )
+     if d =!= null then SEQ join( {"  --  ", SEQ d} ))
 
 getUsage := key -> (
      x := getOption(getDoc key, Usage);
@@ -619,6 +633,7 @@ briefDocumentation = method(SingleArgumentDispatch => true)
 briefDocumentation Thing :=
 briefDocumentation VisibleList := x -> null
 
+briefDocumentation File := 
 briefDocumentation BasicList := 
 briefDocumentation Function := 
 briefDocumentation MutableHashTable := 
