@@ -669,10 +669,20 @@ newSynopsis Thing := f -> (
      out := getOptionList(SYN,Outputs);
      res := getOptionList(SYN,Results);
      (inp',out') := types f;
-     if #inp =!= #inp' then error "mismatched number of inputs";
-     if #out =!= #out' then error "mismatched number of outputs";
-     inp = merget(inp,inp');
-     out = merget(out,out');
+     if #inp === 0 then (
+	  inp = apply(inp', T -> T => "");
+	  )
+     else (
+     	  if #inp =!= #inp' then error "mismatched number of inputs";
+     	  inp = merget(inp,inp');
+	  );
+     if #out === 0 then (
+	  out = apply(out', T -> T => "");
+	  )
+     else (
+     	  if #out =!= #out' then error "mismatched number of outputs";
+     	  out = merget(out,out');
+	  );
      inp = alter \ inp;
      ino = alter \ ino;
      out = alter \ out;
