@@ -70,7 +70,7 @@ IM2_GB_force(const Matrix *m,
 }
 
 ComputationOrNull* 
-IM2_GB_set_stop(Computation *G,
+IM2_Computation_set_stop(Computation *G,
 		M2_bool always_stop,
 		M2_bool stop_after_degree,
 		M2_arrayint degree_limit,
