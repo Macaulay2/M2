@@ -474,9 +474,9 @@ reloadPackage := (pkg,opts) -> (
      stderr << "--reloading package \"" << pkg << "\"" << endl;
      fl := forceLoadDocumentation;
      forceLoadDocumentation = true;
-     loadPackage(pkg, DebuggingMode => opts.DebuggingMode);
+     p := loadPackage(pkg, DebuggingMode => opts.DebuggingMode);
      forceLoadDocumentation = fl;
-     )
+     p)
 
 installPackage String := opts -> pkg -> (
      if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then (
@@ -484,10 +484,7 @@ installPackage String := opts -> pkg -> (
 	  if not opts.MakeDocumentation or PKG#?"processed documentation database" and isOpen PKG#"processed documentation database"
      	  then return installPackage(PKG, opts);
 	  );
-     reloadPackage(pkg,opts);
-     if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then return installPackage(value PackageDictionary#pkg, opts);
-     error ("can't load or locate package '",pkg,"', unknown problem");
-     )
+     installPackage(reloadPackage(pkg,opts), opts))
 
 installPackage Package := opts -> pkg -> (
      absoluteLinks = opts.AbsoluteLinks;
@@ -498,7 +495,7 @@ installPackage Package := opts -> pkg -> (
      rawDoc := pkg#"raw documentation";
      
      -- check that we've read the raw documentation
-     if opts.MakeDocumentation and #rawDoc == 0 then reloadPackage(pkg#"title",opts);
+     if opts.MakeDocumentation and #rawDoc == 0 then pkg = reloadPackage(pkg#"title",opts);
      
      -- here's where we get the list of nodes from the raw documentation
      nodes := if opts.MakeDocumentation then packageTagList(pkg,topDocumentTag) else {};
@@ -555,6 +552,7 @@ installPackage Package := opts -> pkg -> (
 	  makeDirectory exampleDir;
 	  exampleDir|".linkdir" << close;
 	  exampleInputFiles := new MutableHashTable;
+     	  if debugLevel > 10 then error "debug me";
 	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
 		    inf := infn fkey;
 		    exampleInputFiles#inf = true;
