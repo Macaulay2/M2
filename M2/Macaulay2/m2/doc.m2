@@ -54,7 +54,10 @@ document { quote singleton,
      TT "singleton x", " -- returns a sequence of length one whose single 
      element is ", TT "x", ".",
      PARA,
-     EXAMPLE "singleton 3",
+     EXAMPLE {
+	  "singleton 3",
+	  "#oo",
+	  },
      SEEALSO "Sequence"
      }
 
@@ -330,15 +333,6 @@ document { quote deepSplice,
      Copying the list v is always done when v is mutable.",
      EXAMPLE "deepSplice { (a,b,(c,d,(e,f))), g, h }",
      SEEALSO "splice"
-     }
-
-document { quote singleton,
-     TT "singleton x", " -- encloses x in a sequence of length 1, even if x is already a 
-     sequence.  This is needed because the convention about commas can
-     produce only sequences of length 2 and greater, and the convention about 
-     empty pairs of parentheses can produce only sequences of length zero.",
-     PARA,
-     SEEALSO{ "sequence", "lists, arrays, and sequences"}
      }
 
 document { quote ",",
@@ -1955,9 +1949,7 @@ document { "Macaulay 2",
 	       MENU {
 		    TO "getting started",
 		    TO "mathematical overview",
-		    TO "general overview",
-		    TO "programming overview",
-		    TO "translating programs from Macaulay",
+		    TO "language programming overview",
 		    },
 	       },
 	  {
@@ -1973,7 +1965,6 @@ document { "Macaulay 2",
 		    TO "Canonical Embeddings of Plane Curves and Gonality",
 		    TO "Fano varieties",
 		    TO "Divisors",
-		    TO "Homological Algebra 2",
 		    }
 	       },
      	  { 
@@ -1992,6 +1983,7 @@ document { "Macaulay 2",
 		    TO "system",
 	       	    TO "help functions",
 		    TO "syntax",
+		    TO "replacements for commands and scripts from Macaulay",
 		    TO "obsolete functions and symbols",
 		    },
      	       },
