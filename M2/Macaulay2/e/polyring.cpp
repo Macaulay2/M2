@@ -192,6 +192,12 @@ Nterm *PolynomialRing::new_term() const
   Nterm *result = (Nterm *)((PolynomialRing *) this)->pstash->new_elem();
   result->next = NULL;
   result->coeff = 0;  // This value is never used, one hopes...
+  // In fact, it gets used in the line below:       K->remove(tmp->coeff);
+  // which is called from the line below:           remove(idiotic);
+  // and it crashes there, because this assignment only sets the integer
+  // part of the union, so on a machine with 4 byte ints and 8 byte pointers, the
+  // pointer part is not NULL!
+  result->coeff.poly_val = NULL;
   return result;
 }
 
