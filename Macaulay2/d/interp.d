@@ -63,7 +63,7 @@ readeval3(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
      while true do (
      	  if printout then stmtno = stmtno + 1;
 	  while peektoken(file,true).word == newlineW do (
-	       laststmtno = -1;
+	       -- laststmtno = -1;				    -- so there will be a prompt
 	       gettoken(file,true);
 	       );
 	  parsed := parse(file,semicolonW.parse.precedence,true);
