@@ -6,7 +6,7 @@
 #include "matrix.hpp"
 #include "geovec.hpp"
 
-class GBKernelComputation : public mutable_object
+class GBKernelComputation : public object
 {
   const PolynomialRing *R;
   const Ring *K;

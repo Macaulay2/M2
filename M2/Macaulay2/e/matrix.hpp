@@ -7,7 +7,7 @@
 #include "freemod.hpp"
 #include "monideal.hpp"
 
-class Matrix : public mutable_object
+class Matrix : public object
 {
   FreeModule *_rows;
   FreeModule *_cols;
@@ -17,6 +17,15 @@ class Matrix : public mutable_object
   friend class FreeModule;
 private:
   void initialize(const FreeModule *r, const FreeModule *c, const int *deg);
+
+  static vec * make_sparse_vecs(const FreeModule *target,
+				int ncols,
+				const M2_arrayint rows,
+				const M2_arrayint cols,
+				const RingElement_array *entries);
+  // returns NULL of an error, otherwise returns
+  // an array of vec's of length ncols.
+  // caller now owns the resulting array
 
   vec &elem(int i) { return _entries[i]; }
   const vec &elem(int i) const { return _entries[i]; }
@@ -35,6 +44,7 @@ private:
 	     int lastn,        // can use lastn..n_cols()-1 in product
 	     int pow) const;   // remaining power to take
 
+  void freeze(bool is_mutable);
 public:
   Matrix(const FreeModule *r, 
 	 const FreeModule *c,
@@ -47,6 +57,7 @@ public:
 
   Matrix(const MonomialIdeal * mi);
 
+#if 0
   static const MatrixOrNull * make(const FreeModule *target,
 				   const Vector_array *V);
 
@@ -59,6 +70,38 @@ public:
 				   const FreeModule *source,
 				   const M2_arrayint deg,
 				   const Matrix *M);
+#endif
+
+  static const MatrixOrNull * make(const FreeModule *target,
+				   int ncols,
+				   const RingElement_array *M,
+				   M2_bool is_mutable);// TO WRITE
+
+  static const MatrixOrNull * make(const FreeModule *target,
+				   const FreeModule *source,
+				   const M2_arrayint deg,
+				   const RingElement_array *M,
+				   M2_bool is_mutable);// TO WRITE
+
+  static const MatrixOrNull * make_sparse(const FreeModule *target,
+					  int ncols,
+					  const M2_arrayint rows,
+					  const M2_arrayint cols,
+					  const RingElement_array *entries,
+					  M2_bool is_mutable);// TO WRITE
+
+  static const MatrixOrNull * make_sparse(const FreeModule *target,
+					  const FreeModule *source,
+					  const M2_arrayint deg,
+					  const M2_arrayint rows,
+					  const M2_arrayint cols,
+					  const RingElement_array *entries,
+					  M2_bool is_mutable);// TO WRITE
+
+  const MatrixOrNull * make_copy(const FreeModule *target,
+				 const FreeModule *source,
+				 const M2_arrayint deg,
+				 M2_bool is_mutable) const;// TO WRITE
 
   static const Matrix * make(const MonomialIdeal * mi);
 
@@ -78,9 +121,19 @@ public:
   int n_rows() const { return rows()->rank(); }
   int n_cols() const { return cols()->rank(); }
 
+  bool get_entry(int r, int c, ring_elem &result) const; // TO WRITE
+  // Returns false if (r,c) is out of range, or the ring of a is wrong.
+
+  // Operations permitted on matrices which are mutable or not decided.
+
   void append(vec v);
   void append(vec v, const int *d);
   void schreyer_append(vec v);
+
+  bool set_entry(int r, int c, const ring_elem a);
+  // Returns false if (r,c) is out of range, or the ring of a is wrong.
+
+  ///////////////////////////////////////////
 
   // The degree shift
   const int *degree_shift() const { return _degree_shift; }

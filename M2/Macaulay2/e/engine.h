@@ -774,6 +774,50 @@ extern "C" {
 					const FreeModule *source,
 					const M2_arrayint deg,
 					const Matrix *M); /* drg: connected rawMatrix*/
+  /*******************************************************************************/
+#if 0
+  const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
+					int ncols,
+					const RingElement_array *M,
+					M2_bool is_mutable); /* drg: connected rawMatrix*/
+  
+  const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
+					const FreeModule *source,
+					const M2_arrayint deg,
+					const RingElement_array *M,
+					M2_bool is_mutable); /* drg: connected rawMatrix*/
+
+  const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
+					       int ncols,
+					       const M2_arrayint rows,
+					       const M2_arrayint cols,
+					       const RingElement_array *entries,
+					       M2_bool is_mutable); /* TO BE CONNECTED */
+  
+  const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
+					       const FreeModule *source,
+					       const M2_arrayint deg,
+					       const M2_arrayint rows,
+					       const M2_arrayint cols,
+					       const RingElement_array *entries,
+					       M2_bool is_mutable); /* TO BE CONNECTED */
+
+  M2_bool IM2_Matrix_is_mutable(const Matrix *M);
+  /* Is the matrix M mutable? */ /* TO BE CONNECTED */
+
+  const MatrixOrNull * IM2_Matrix_make3(const FreeModule *target,
+					const FreeModule *source,
+					const M2_arrayint deg,
+					const Matrix *M,
+					M2_bool is_mutable,
+					); /* drg: connected rawMatrix*/
+  /* Create a new matrix (mutable or immutable), from M, with new target,
+     source, deg and/or mutable-ness. The new free modules must have 
+     the expected rank. 
+  */
+
+#endif
+  /**********************************************************************************/
 
   const M2_bool IM2_Matrix_is_zero(const Matrix *M); /* drg: connected rawIsZero*/
 

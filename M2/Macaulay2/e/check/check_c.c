@@ -24,7 +24,7 @@ int main()
   cs_addTest(s,matrix_test());
   cs_addTest(s,vector_test());
   cs_addTest(s,sparsemat_test());
-  cs_addTest(s,lapack_test());
+  /*  cs_addTest(s,lapack_test());*/
   cs_run(s);
   cs_report(s);
   cs_destroy(s,1);

@@ -44,6 +44,14 @@ void Matrix::initialize(const FreeModule *r,
     _entries.append(Zero); 
 }
 
+void Matrix::freeze(bool is_mutable_flag)
+{
+  if (is_mutable_flag)
+    make_mutable();
+  else 
+    make_immutable(get_ring()->get_hash_value() * (7 * n_rows() + 157 * n_cols()));
+}
+
 Matrix::Matrix(const FreeModule *r, 
 	       const FreeModule *c,
 	       const int *deg)
@@ -75,7 +83,7 @@ Matrix::Matrix(const MonomialIdeal *mi)
   initialize(r, r->new_free(), one);
   append_monideal(mi,0);
 }
-
+#if 0
 const MatrixOrNull * Matrix::make(const FreeModule *target,
 				  const Vector_array *V)
 {
@@ -173,11 +181,215 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
     (*result)[i] = target->copy((*M)[i]);
   return result;
 }
+#endif
+
+const MatrixOrNull * Matrix::make(const FreeModule *target,
+				   int ncols,
+				   const RingElement_array *M,
+				   M2_bool is_mutable_flag)
+{
+  // Checks to make:
+  // each vector in V is over same ring.
+  
+  const Ring *R = target->get_ring();
+  for (unsigned int i=0; i<M->len; i++)
+    {
+      if (R != M->array[i]->get_ring())
+	{
+	  ERROR("expected vectors in the same ring");
+	  return 0;
+	}
+    }
+  Matrix *result = new Matrix(target);
+  unsigned int next = 0;
+  for (int c=0; c < ncols; c++)
+    {
+      vec w = 0;
+      for (int r=0; r <target->rank(); r++)
+	{
+	  R->set_entry(w,r,M->array[next]->get_value());
+	  next++;
+	  if (next >= M->len) break;
+	}
+      result->append(w);
+    }
+
+  result->freeze(is_mutable_flag);
+  return result;
+}
+
+const MatrixOrNull * Matrix::make(const FreeModule *target,
+				   const FreeModule *source,
+				   const M2_arrayint deg,
+				   const RingElement_array *M,
+				   M2_bool is_mutable_flag)
+{
+  // Checks to make:
+  // each vector in V is over same ring.
+  
+  const Ring *R = target->get_ring();
+  if (source->get_ring() != R)
+    {
+      ERROR("expected free modules over the same ring");
+      return 0;
+    }
+  if (R->degree_monoid()->n_vars() != (int)deg->len)
+    {
+      ERROR("expected degree of matrix to have %d entries", 
+	    R->degree_monoid()->n_vars());
+      return 0;
+    }
+  for (unsigned int i=0; i<M->len; i++)
+    {
+      if (R != M->array[i]->get_ring())
+	{
+	  ERROR("expected vectors in the same ring");
+	  return 0;
+	}
+    }
+  Matrix *result = new Matrix(target,source,deg->array);
+  unsigned int next = 0;
+  for (int c=0; c < source->rank(); c++)
+    {
+      for (int r=0; r <target->rank(); r++)
+	{
+	  result->set_entry(r,c,M->array[next]->get_value());
+	  next++;
+	  if (next >= M->len) break;
+	}
+    }
+
+  result->freeze(is_mutable_flag);
+  return result;
+}
+
+vec * Matrix::make_sparse_vecs(const FreeModule *target,
+				      int ncols,
+				      const M2_arrayint rows,
+				      const M2_arrayint cols,
+				      const RingElement_array *entries)
+  // returns NULL of an error, otherwise returns
+  // an array of vec's of length ncols.
+  // caller now owns the resulting array
+{
+  const Ring *R = target->get_ring();
+  for (unsigned int i=0; i<entries->len; i++)
+    {
+      if (R != entries->array[i]->get_ring())
+	{
+	  ERROR("expected vectors in the same ring");
+	  return 0;
+	}
+    }
+  if (rows->len != cols->len || rows->len != entries->len)
+    {
+      ERROR("sparse matrix creation: encountered different length arrays");
+      return 0;
+    }
+  for (int x=0; x < entries->len; x++)
+    {
+      int r = rows->array[x];
+      int c = cols->array[x];
+      if (r < 0 || r >= target->rank())
+	{
+	  ERROR("sparse matrix creation: row index out of range");
+	  return 0;
+	}
+      if (c < 0 || c >=ncols)
+	{
+	  ERROR("sparse matrix creation: column index out of range");
+	  return 0;
+	}
+    }
+
+  vec *newcols = new vec[ncols];
+  for (int i=0; i<ncols; i++) newcols[i] = 0;
+  for (int x=0; x<entries->len; x++)
+    {
+      int r = rows->array[x];
+      int c = cols->array[x];
+      R->set_entry(newcols[c], r, entries->array[x]->get_value());
+    }
+  return newcols;
+}
+
+const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
+					  int ncols,
+					  const M2_arrayint rows,
+					  const M2_arrayint cols,
+					  const RingElement_array *entries,
+					  M2_bool is_mutable_flag)
+{
+  vec * newcols = Matrix::make_sparse_vecs(target, ncols, rows, cols, entries);
+  if (newcols == 0) return 0;
+
+
+  Matrix *result = new Matrix(target);
+  for (int i=0; i<ncols; i++)
+    result->append(newcols[i]);
+  result->freeze(is_mutable_flag);
+
+  delete [] newcols;
+  return result;
+}
+
+const MatrixOrNull * Matrix::make_sparse(const FreeModule *target,
+					  const FreeModule *source,
+					  const M2_arrayint deg,
+					  const M2_arrayint rows,
+					  const M2_arrayint cols,
+					  const RingElement_array *entries,
+					  M2_bool is_mutable_flag)
+{
+  vec * newcols = make_sparse_vecs(target, source->rank(), rows, cols, entries);
+  if (newcols == 0) return 0;
+
+  Matrix *result = new Matrix(target,source,deg->array);
+  for (int i=0; i<source->rank(); i++)
+    (*result)[i] = newcols[i];
+
+  delete [] newcols;
+  return result;
+}
+
+const MatrixOrNull * Matrix::make_copy(const FreeModule *target,
+				 const FreeModule *source,
+				 const M2_arrayint deg,
+				 M2_bool is_mutable_flag) const
+{ 
+  if (n_rows() != target->rank() || n_cols() != source->rank())
+    {
+      ERROR("wrong number of rows or columns");
+      return 0;
+    }
+  if (deg->len != degree_monoid()->n_vars())
+    {
+      ERROR("degree for matrix has the wrong length");
+      return 0;
+    }
+  const Ring *R = get_ring();
+  const Ring *Rtarget = target->get_ring();
+  const Ring *Rsource = source->get_ring();
+  if (R != Rtarget || Rtarget != Rsource)
+    {
+      ERROR("expected same ring");
+      return 0;
+    }
+
+  Matrix *result = new Matrix(target,source,deg->array);
+  for (int i=0; i<source->rank(); i++)
+    (*result)[i] = R->copy(_entries[i]);
+
+  result->freeze(is_mutable_flag);
+  return result;
+}
 
 const Matrix * Matrix::make(const MonomialIdeal * mi)
 {
   return new Matrix(mi);
 }
+
+
 
 bool Matrix::is_equal(const Matrix &m) const
 {
@@ -200,6 +412,23 @@ bool Matrix::is_zero() const
     if (! rows()->is_zero(elem(i))) return false;
   return true;
 }
+
+bool Matrix::set_entry(int r, int c, const ring_elem a)
+{
+  // Check that r and c are in range. Returns false if a problem.
+  _rows->get_ring()->set_entry(_entries[c], r, a);
+  return true;
+}
+
+bool Matrix::get_entry(int r, int c, ring_elem &a) const
+{
+  // Check that r and c are in range. Returns false if a problem.
+  _rows->get_ring()->get_entry(_entries[c], r, a);
+  return true;
+}
+
+
+
 
 int Matrix::is_homogeneous() const
 {
