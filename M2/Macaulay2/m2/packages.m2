@@ -221,6 +221,7 @@ package HashTable := package Function := x -> if ReverseDictionary#?x then packa
 warned := new MutableHashTable
 
 package TO := x -> (
+     error "do we need this anymore?";
      key := x#0;
      pkg := packageTag key;
      fkey := formatDocumentTag key;
