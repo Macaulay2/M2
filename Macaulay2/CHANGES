@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+'changeDirectory' -- new function
+
 'allGenerators' -- for nested polynomial rings like ZZ[a,b][x,y], it
 will now return the toplevel variables first, i.e., it returns {x, y, a, b}.
 

@@ -14,6 +14,7 @@ emacs html: all; $(MAKE) -C ../$@
 
 LOADSEQUENCE = $(shell cat @srcdir@/loadsequence)
 DOCSEQUENCE  = $(shell cat @srcdir@/docseq)
+EXAMPLEDATAFILES = expression sample
 
 # there is a parallel list of tutorials in overview3.m2
 TUTORIALS = $(patsubst %, ../tutorial/final/%, Fano.out canEmbed.out divisors.out elementary.out)
@@ -179,20 +180,17 @@ M2OPTIONS += --no-debug
 endif
 M2OPTIONS += -e errorDepth=0
 M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => ".", MakeLinks => false) '
+M2OPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => "tmp/", MakeLinks => false) '
 ifndef INTERACTIVE
 M2OPTIONS += -e 'exit 0 '
 endif
 
-tmp/.documentation-made : $(DOCSEQUENCE)
-	@ echo making the Macaulay2 package, including the documentation
-	@ cd tmp && \
-	        echo "make: Entering directory \`tmp'" >&2 \
-		&& \
-		(set -x ; time ../../bin/M2 $(M2OPTIONS)) \
-		|| \
-		(echo "make: Leaving directory \`tmp'" >&2 ; false )
-	@ echo "make: Leaving directory \`tmp'"
+% : %.in
+	cp "$<" "$@"
+
+tmp/.documentation-made : $(DOCSEQUENCE) $(EXAMPLEDATAFILES)
+	@ echo making the Macaulay2 package, including the documentation and example output
+	@ set -x ; time ../bin/M2 $(M2OPTIONS)
 	touch "$@"
 
 remake-all: remake-doc remake2 remake3 remake4

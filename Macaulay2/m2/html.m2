@@ -400,14 +400,14 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 	       haderror = true;
 	       )))
 
-runString := (x,pkg) -> (
+runString := (x,pkg,rundir) -> (
      inf := temporaryFileName();
      tmpf := temporaryFileName();
      outf := temporaryFileName();
      rm := fn -> if fileExists fn then removeFile fn;
      rmall := () -> rm \ {inf, tmpf, outf};
      inf << x << endl << close;
-     runFile(inf,outf,tmpf,"test results",pkg,t->t,".");
+     runFile(inf,outf,tmpf,"test results",pkg,t->t,rundir);
      result := if fileExists outf then get outf;
      if result =!= null then (
 	  stderr
@@ -419,7 +419,7 @@ runString := (x,pkg) -> (
 
 check = method()
 check Package := pkg -> (
-     scan(values pkg#"test inputs", s -> runString(s,pkg))
+     scan(values pkg#"test inputs", s -> runString(s,pkg,"."))
      )
 
 runfun := o -> if class o === Function then o() else o
@@ -431,7 +431,8 @@ installPackage = method(Options => {
 	  IgnoreExampleErrors => true,
 	  MakeInfo => true,
 	  AbsoluteLinks => false,
-	  MakeLinks => true
+	  MakeLinks => true,
+	  RunDirectory => "."
 	  })
 
 uninstallPackage = method(Options => options installPackage)
@@ -620,7 +621,7 @@ installPackage Package := o -> pkg -> (
 	       tmpf := tmpfn fkey;
 	       desc := "example results for " | fkey;
 	       changefun := () -> remove(rawDocUnchanged,fkey);
-	       runFile(inf,outf,tmpf,desc,pkg,changefun,".");
+	       runFile(inf,outf,tmpf,desc,pkg,changefun,o.RunDirectory);
 	       -- read, separate, and store example output
 	       if fileExists outf then pkg#"example results"#fkey = drop(separateM2output get outf,-1)
 	       else (

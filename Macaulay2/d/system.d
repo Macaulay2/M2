@@ -75,6 +75,7 @@ import regexmatch(pattern:string, text:string):array(int);
 import readDirectory(name:string):(null or array(string));
 import strncmp(s:string,t:string,n:int):int;
 import history():array(string);
+import chdir(name:string):int;
 
 everytimeCell := { f:function():void, next:everytimeCell };
 dummyfun():void := nothing;
