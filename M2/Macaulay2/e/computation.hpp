@@ -60,7 +60,7 @@ public:
   // returns NULL if there is a general problem with one of the stop 
   // conditions.
 
-  enum ComputationStatusCode status() { return computation_status; }
+  enum ComputationStatusCode status() const { return computation_status; }
 
   virtual int complete_thru_degree() const = 0;
   // This is computation specific information.  However, for homogeneous
