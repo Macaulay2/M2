@@ -1949,7 +1949,7 @@ document { "Macaulay 2",
 	       MENU {
 		    TO "getting started",
 		    TO "mathematical overview",
-		    TO "language programming overview",
+		    TO "language and programming overview",
 		    },
 	       },
 	  {
