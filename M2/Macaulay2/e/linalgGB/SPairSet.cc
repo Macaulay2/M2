@@ -22,6 +22,37 @@ SPairSet::~SPairSet()
   // TO BE WRITTEN
 }
 
+SPairSet::spair *SPairSet::make_spair(int deg, 
+				      monomial lcm, 
+				      monomial first_monom,
+				      int first_gb_num,
+				      monomial second_monom,
+				      int second_gb_num)
+{
+  spair *result = new spair;
+  result->next = 0;
+  result->type = SPAIR_SPAIR;
+  result->deg = deg;
+  result->lcm = lcm;
+  result->s.spair.first_monom = first_monom;
+  result->s.spair.second_monom = second_monom;
+  result->s.spair.first_gb_num = first_gb_num;
+  result->s.spair.second_gb_num = second_gb_num;
+  return result;
+}
+
+SPairSet::spair *SPairSet::make_spair_gen(int deg, poly *f, int col)
+{
+  spair *result = new spair;
+  result->next = 0;
+  result->type = SPAIR_GEN;
+  result->deg = deg;
+  result->lcm = f->monoms[0];
+  result->s.poly.gen = f;
+  result->s.poly.column = col;
+  return result;
+}
+
 int SPairSet::remove_unneeded_pairs()
   // returns the number of pairs removed
 
@@ -116,16 +147,23 @@ int SPairSet::find_new_pairs(const std::vector<gbelem, gc_allocator<gbelem> > &g
 void SPairSet::display_spair(spair *p)
   // A debugging routine which displays an spair
 {
-  fprintf(stderr,"[%d %d deg %d lcm ", 
-	  p->first_gb_num,
-	  p->second_gb_num,
-	  p->deg);
-  monomial_elem_text_out(stderr,p->lcm);
-  fprintf(stderr," first ");
-  monomial_elem_text_out(stderr,p->first_monom);
-  fprintf(stderr," second ");
-  monomial_elem_text_out(stderr,p->second_monom);
-  fprintf(stderr,"\n");
+  if (p->type == SPAIR_SPAIR)
+    {
+      fprintf(stderr,"[%d %d deg %d lcm ", 
+	      p->s.spair.first_gb_num,
+	      p->s.spair.second_gb_num,
+	      p->deg);
+      monomial_elem_text_out(stderr,p->lcm);
+      fprintf(stderr," first ");
+      monomial_elem_text_out(stderr,p->s.spair.first_monom);
+      fprintf(stderr," second ");
+      monomial_elem_text_out(stderr,p->s.spair.second_monom);
+      fprintf(stderr,"\n");
+    }
+  else
+    {
+      fprintf(stderr, "unknown type\n");
+    }
 }
 
 void SPairSet::display()
@@ -206,22 +244,17 @@ struct pre_spair_sorter : public binary_function<SPairConstructor::pre_spair *,
 
 void SPairConstructor::send_spair(pre_spair *p)
 {
-  SPairSet::spair *result = new SPairSet::spair;
   monomial quot1;
   H->find_or_insert(p->quot, quot1);
   int i = gb.size()-1;
   int j = p->first_gb_num;
-
-  // Now fill in the data
-  result->next = 0;
-  result->deg = monomial_simple_degree(quot1) + gb[i].deg;
-  result->lcm = MonomialOps::mult(H,gb[i].f.monoms[0], quot1);
-  result->first_monom = quot1;
-  result->second_monom = MonomialOps::quotient(H,
-					       gb[i].f.monoms[0],
-					       gb[j].f.monoms[0]);
-  result->first_gb_num = i;
-  result->second_gb_num = j;
+  int deg = monomial_simple_degree(quot1) + gb[i].deg;
+  monomial lcm = MonomialOps::mult(H,gb[i].f.monoms[0], quot1);
+  monomial first = quot1;
+  monomial second = MonomialOps::quotient(H,
+					  gb[i].f.monoms[0],
+					  gb[j].f.monoms[0]);
+  SPairSet::spair *result = SPairSet::make_spair(deg, lcm, first, i, second, j);
 
   // Now ship off to the spair set
   S->insert(result);
