@@ -3602,7 +3602,7 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 else
-  LAPACK=no
+  LAPACK=yes
 fi;
 
 

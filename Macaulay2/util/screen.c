@@ -179,7 +179,9 @@ getpty(int *master,char **SlaveName)
 		    }
 	       *SlaveName = name;
 	       p=1;
+#ifdef FIONBIO
 	       ckioctl(*master,FIONBIO,&p);
+#endif
      	       return;
 	       }
 	  }
@@ -213,9 +215,11 @@ volatile void runchild()
 	  error("can't open slave tty");
 	  }
      if (ERROR == setsid()) error("setsid call failed");
+#ifdef TIOCSCTTY
      if (ERROR == ioctl(slave,TIOCSCTTY,0)) {
 	  warning("TIOCSCTTY ioctl fails");
 	  }
+#endif
 #if 0
      if (ERROR == setpgrp( /* 0,0 */ )) error("setpgrp call failed");
      /* setpgrp seems to interact badly with setsid, and causes the process to
