@@ -110,11 +110,13 @@ static const RingElement * convert(const PolynomialRing *R, CanonicalForm h) {
      for (int j = 0; j <= h.degree(); j++) {
        const RingElement *r = convert(R, h[j]);
        ring_elem r1 = r->get_value();
-       ring_elem v = R->var(
+       int var = 
 #                   if REVERSE_VARIABLES
 			    (n-1) - 
 #                   endif
-			    (h.level()-1), j);
+                            (h.level()-1);
+       ring_elem v = R->var(var);
+       v = R->power(v,j);
        r1 = R->mult(r1,v);
        R->add_to(result,r1);
      }

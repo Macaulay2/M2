@@ -137,11 +137,6 @@ ring_elem RR::from_int(mpz_ptr n) const
   return RR::from_double(a);
 }
 
-ring_elem RR::var(int v, int) const
-{
-  if (v >= 0) return RR::from_double(0.0);
-  return RR::from_double(1.0);
-}
 bool RR::promote(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;

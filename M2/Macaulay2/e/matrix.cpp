@@ -953,8 +953,9 @@ Matrix *Matrix::top_coefficients(Matrix *&monoms) const
       vec u = elem(i);
       vec v = R->vec_top_coefficient(u, var, exp);
       result.append(v);
-      ring_elem a = R->var(var,exp);
-      vec w = R->make_vec(0,a);
+      ring_elem a = R->var(var);
+      ring_elem b = R->power(a,exp);
+      vec w = R->make_vec(0,b);
       cons_monoms.append(w);
     }
   monoms = cons_monoms.to_matrix();

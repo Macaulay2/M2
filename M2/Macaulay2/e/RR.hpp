@@ -46,7 +46,6 @@ public:
   virtual ring_elem from_double(double r) const;
   virtual ring_elem from_rational(mpq_ptr r) const;
   virtual ring_elem from_BigReal(mpf_ptr a) const;
-  virtual ring_elem var(int v, int n) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
 

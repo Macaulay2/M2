@@ -194,11 +194,6 @@ ring_elem CC::from_int(mpz_ptr n) const
   return CC::from_double(a);
 }
 
-ring_elem CC::var(int v, int) const
-{
-  if (v >= 0) return CC::from_double(0.0);
-  return CC::from_double(1.0);
-}
 bool CC::promote(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;

@@ -203,12 +203,6 @@ mpf_ptr CCC::to_BigReal(ring_elem f) const
   return BIGCC_RE(f);
 }
 
-
-ring_elem CCC::var(int v, int n) const
-{
-  if (v >= 0) return from_int(0);
-  return from_int(1);
-}
 bool CCC::promote(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;

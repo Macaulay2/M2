@@ -16,7 +16,7 @@ bool GF::initialize_GF(const RingElement *prim)
   _originalR = prim->get_ring()->cast_to_PolynomialRing();
   initialize_ring(_originalR->charac(),
 		  0,
-		  _originalR->get_degree_ring());
+		  PolyRing::get_trivial_poly_ring());
 
 
   declare_field();
@@ -50,7 +50,7 @@ bool GF::initialize_GF(const RingElement *prim)
   ring_elem oneR = _originalR->one();
 
   _x_exponent = -1;
-  ring_elem x = _originalR->var(0,1);
+  ring_elem x = _originalR->var(0);
   if (_originalR->is_equal(primelem, x))
     _x_exponent = 1;
   for (i=2; i<Q_; i++)
@@ -189,16 +189,11 @@ ring_elem GF::from_int(mpz_ptr n) const
   return ring_elem(m);
 }
 
-ring_elem GF::var(int v, int n) const
+ring_elem GF::var(int v) const
 {
-  if (v >= 1) return _ZERO;
   if (v == 0)
-    {
-      int m = n % Q1_;
-      if (m <= 0) m += Q1_;
-      return ring_elem(m);
-    }
-  return _ONE;
+    return _x_exponent;
+  return _ZERO;
 }
 bool GF::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {

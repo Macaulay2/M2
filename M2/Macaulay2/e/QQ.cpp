@@ -126,11 +126,6 @@ ring_elem QQ::from_int(mpz_ptr n) const
   return MPQ_RINGELEM(result);
 }
 
-ring_elem QQ::var(int v, int) const
-{
-  if (v >= 0) return QQ::from_int(0);
-  return QQ::from_int(1);
-}
 bool QQ::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   // Rf = ZZ ---> QQ

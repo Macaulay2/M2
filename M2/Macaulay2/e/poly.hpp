@@ -124,11 +124,12 @@ public:
   ////////////////////////
   // Arithmetic //////////
   ////////////////////////
+  virtual ring_elem var(int v) const = 0;
+
 #if 0
   virtual ring_elem from_double(double n) const = 0;
   virtual ring_elem from_int(int n) const = 0;
   virtual ring_elem from_int(mpz_ptr n) const = 0;
-  virtual ring_elem var(int v, int n) const = 0;
 
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const = 0;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const = 0;

@@ -43,6 +43,7 @@ PRE.cc   = $(COMPILE.cc) -E
 INTERFACE = \
 	gbweight \
 	qring \
+	polyQQ \
 	polyquotient \
 	poly \
 	debug \

@@ -90,8 +90,8 @@ public:
   virtual ring_elem from_int(int n) const { return R_->from_int(n); }
   virtual ring_elem from_int(mpz_ptr n) const { return R_->from_int(n); }
 
-  virtual ring_elem var(int v, int n) const { 
-    ring_elem result = R_->var(v,n);
+  virtual ring_elem var(int v) const { 
+    ring_elem result = R_->var(v);
     normal_form(result);
     return result;
   }

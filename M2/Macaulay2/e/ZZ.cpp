@@ -122,11 +122,6 @@ ring_elem ZZ::from_int(mpz_ptr n) const
   return MPZ_RINGELEM(result);
 }
 
-ring_elem ZZ::var(int v, int) const
-{
-  if (v >= 0) return from_int(0);
-  return from_int(1);
-}
 bool ZZ::promote(const Ring *, const ring_elem, ring_elem &) const
 {
   return false;
