@@ -1,3 +1,5 @@
+#define NEWNEW 1		// adds 1.4 seconds to 7.5 sec running time
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -21,6 +23,30 @@ extern "C" void IM2_initialize()
 {
   factory_setup();
 }
+
+#if NEWNEW
+
+void* operator new( size_t size ) {
+  void *p = GC_MALLOC( size );
+  if (p == NULL) outofmem();
+  return p;
+}
+
+void operator delete( void* obj ) {
+  if (obj != NULL) GC_FREE( obj );
+}
+
+void* operator new []( size_t size ) {
+  void *p = GC_MALLOC( size );
+  if (p == NULL) outofmem();
+  return p;
+}
+
+void operator delete []( void* obj ) {
+  if (obj != NULL) GC_FREE( obj );
+}
+
+#endif
 
 int main() {
   Variable z( 'z' );
