@@ -1,7 +1,7 @@
 
 /* configuration section */
 /* make intP an integer type the size of a pointer */
-#if defined(__i386__) || defined(__sparc__)
+#if defined(__i386__) || defined(__sparc__) || defined(__POWERPC__)
 typedef int intP;
 typedef unsigned int uintP;
 #elif defined(__alpha__)
