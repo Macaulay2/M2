@@ -85,7 +85,7 @@ newGroup List := (FF) -> (
 	  found);
      while n < #G1 do (
 	  scan(FF, f -> (
-	      h := f G1#n;
+	      h := f * G1#n;
 	      if not member(h) then (
 	          G1 = append(G1, h);
 		  << "." << flush;
