@@ -415,15 +415,6 @@ M2_stringarray system_readDirectory(M2_string name) {
   return a;
 }
 
-int system_unlink(M2_string name) { return unlink(tocharstar(name)); }
-
-long system_fileTime(M2_string name) {
-  char *cname = tocharstar(name);
-  struct stat buf;
-  int r = stat(cname,&buf);
-  return r == ERROR ? 0 : (long)buf.st_mtime;
-}
-
 int system_fileLength(int fd) {
   struct stat statbuf;
   if (ERROR == fstat(fd,&statbuf)) return ERROR;
