@@ -19,6 +19,7 @@ use basic;
 use convertr;
 use engine;
 use objects;
+use libfac;
 
 -----------------------------------------------------------------------------
 -- put bindings to variables before the forward references, for safety
@@ -1084,6 +1085,7 @@ export clearAllFlags():void := (
      exceptionFlag = false;
      interruptedFlag = false;
      steppingFlag = false;
+     interruptflag = 0;					    -- libfac
      alarmedFlag = false;
      interruptPending = false;
      );
