@@ -23,11 +23,12 @@ clean:
 distclean : clean
 	rm -f Makefile
 
-$(docm2reldir)/emacs $(emacsdir) :; $(INSTALL) -d "$@"
-install:: $(emacsdir)
-install:: M2-mode.el M2.el M2-symbols.el
-	$(INSTALL_DATA) $^ $(emacsdir)
-install:: $(docm2reldir)/emacs
-install:: emacs-hlp.txt emacs.m2 README
-	$(INSTALL_DATA) $^ $(docm2reldir)/emacs
+$(emacsdocdir) $(emacsdir) :; $(INSTALL) -d "$@"
 
+install:: $(emacsdir)
+install:: M2-mode.el M2.el M2-symbols.el M2-init.el
+	$(INSTALL_DATA) $^ $(emacsdir)
+
+install:: $(emacsdocdir)
+install:: emacs-hlp.txt emacs.m2 README
+	$(INSTALL_DATA) $^ $(emacsdocdir)

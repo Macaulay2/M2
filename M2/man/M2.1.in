@@ -1,6 +1,6 @@
 .\" see groff(7) and groff_man(7)
 
-.TH M2 1 "Macaulay2-0.9.4" "2003-01-04" "Macaulay 2"
+.TH M2 1 "@PACKAGE_TARNAME@-@PACKAGE_VERSION@" "" "@PACKAGE_NAME@"
 
 .SH "NAME"
 M2 - start Macaulay 2, a software system for algebraic geometry research.
@@ -25,11 +25,13 @@ M2  [\fB--\fR]              start here after reloading data
 .\" .SH "FOOTNOTES"
 .SH "SEE ALSO"
 
+See also \fIM2-help\fR(1).
+
 The documentation for Macaulay 2 is available locally starting in
 /usr/share/doc/Macaulay2/index.html, but /usr may have to be replaced by
 /usr/local or by /sw.
 
-The home page for Macaulay 2 is http://www.math.uiuc.edu/Macaulay2/.
+The home page for Macaulay 2 is \fBhttp://www.math.uiuc.edu/Macaulay2/\fR.
 
 .SH "AUTHOR"
 

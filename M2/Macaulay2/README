@@ -27,33 +27,43 @@ You have downloaded an unpacked a file with a name something like
 
 Untarring this file creates a directory called Macaulay2-0.9, where 0.9 may be
 replaced by the current version number, and whose subdirectories and files are
-organized as follows:
+organized as follows, where "." represents the toplevel directory "Macaulay2-0.9":
 
-    Macaulay2-0.9/bin/M2
+    ./bin/M2
 	    - the shell script that starts Macaulay2.
-    Macaulay2-0.9/bin/M2-help
+    ./bin/M2-help
 	    - a shell script that starts your web browser reading the online
 	      documentation in the form of html files
-    Macaulay2-0.9/INSTALL
+    ./INSTALL
 	    - a one line pointer to this file
-    Macaulay2-0.9/lib/Macaulay2-0.9/README
+    ./doc/Macaulay2/0.9/README
 	    - this file
-    Macaulay2-0.9/lib/Macaulay2-0.9/
-	    - the directory containing Macaulay2's files.
-    Macaulay2-0.9/lib/Macaulay2-0.9/setup
+    ./lib/Macaulay2/0.9/
+	    - a directory for architecture dependent Macaulay 2 files
+    ./lib/Macaulay2/0.9/setup
 	    - a shell script that dumps pseudo-compiled Macaulay 2 code.
-    Macaulay2-0.9/encapinfo
-	    - a configuration file used by 'epkg' to install packages.
-    Macaulay2-0.9/postinstall
+    ./share/Macaulay2/0.9/
+	    - a directory for architecture independent Macaulay 2 files
+    ./share/doc/Macaulay2/0.9/
+	    - a directory for Macaulay 2 documentation
+    ./share/emacs/site-lisp/M2*.el
+	    - source files needed with the emacs interface to Macaulay2
+    ./share/man/man1/*.1
+	    - the man pages
+    ./encapinfo
+	    - a configuration file used by 'epkg' to install packages,
+	      not present in all tar files.
+    ./postinstall
 	    - a shell script used by 'epkg' when installing packages.
 	      It runs 'setup' for you (see below) and edits the file bin/M2 to 
-	      record the location of Macaulay2's directory.
+	      record the location of Macaulay2's directory,
+	      not present in all tar files.
 
 There are two ways to install the package:
 
     1. Automatically, with 'epkg'.
 
-	This way works especially will under Unix.
+	This way works especially well under Unix.
 
 	Put the entire Macaulay2-0.9 directory tree in the source directory
 	for epkg, which is /usr/local/encap by default.  Then run
@@ -66,40 +76,43 @@ There are two ways to install the package:
 
     2. Manually
 
-	There are four steps.
+	We describe a method that installs all the Macaulay2 files in one
+	place and makes a minimal number of links to them from other
+	places.
+	       
+	There are four steps.  (Replace 0.9 in the description below by
+	the appropriate version number.)
 
-	a.  
+	a.  Untar the tar file in a permanent location of your choice,
+	    for example, /usr/lib/Macaulay2-0.9:
+		cd /usr/lib
+		tar xzf Macaulay2-0.9-i686-Linux.tar.gz
+		cd Macaulay2-0.9
+
+	b.  Edit the shell scripts bin/M2 and bin/M2-help to record the 
+	    location of Macaulay2's files.  The line starting with 
+	    'PREFIX=' should be made to look like this:
 	    
-	    Edit the shell script bin/M2 to record the location of
-	    Macaulay2's files.  The line starting with 'M2HOME=' should be
-	    made to look like
-	    
-		M2HOME=/.../Macaulay2-*.*/lib/Macaulay2-*.*
-	    
-	    where you replace ... by the path to the directory created by
-	    untarring, and *.* is the version number provided.
+		PREFIX=/usr/lib/Macaulay2-0.9
 
-	    Then put a link to it from a directory on your path.
+	    Then put links to M2 and M2-help from a directory on your path,
+	    for example:
 
-	    Under Windows, you will see the shell script bin/M2, but it will
-	    be useful to you only if you install cygwin, in which case you
-	    can imagine, more or less, that you have a unix system.  For an
-	    ordinary Windows system, you will have to edit the file M2.bat,
-	    inserting the path to the files on two lines, one with forward
-	    slashes (/) and one with backward slashes (\).	    
-	    
-	    Then put a copy of M2.bat in a directory on your path.
+		ln -s /usr/lib/Macaulay2-0.9/M2      /usr/bin
+		ln -s /usr/lib/Macaulay2-0.9/M2-help /usr/bin
 
-	b.  Edit the shell script bin/M2-help (relative to the top of the distribution
-	    directory tree) to record the location of Macaulay2's files, as above.
+	    [ Under Windows, you will see the shell script bin/M2, but it will
+	      be useful to you only if you install cygwin, in which case you
+	      can imagine, more or less, that you have a unix system.  For an
+	      ordinary Windows system, you will have to edit the file M2.bat,
+	      inserting the path to the files on two lines, one with forward
+	      slashes (/) and one with backward slashes (\).
+	      Then put a copy of M2.bat in a directory on your path. ]
 
-	    Then put a link to it from a directory on your path.
+	c.  Put links to the emacs files in your emacs site-lisp directory,
+	    so they will be on the load-path of every emacs user:
 
-	c.  Edit the file emacs/M2-init.el (located relative to the directory
-	    this README file is in) to record the location of Macaulay2's files.
-	    The first line should be
-		(defvar M2HOME "/.../Macaulay2-*.*/lib/Macaulay2-*.*")
-	    where ... is replaced by the same path as in step (a) above.
+		ln -s /usr/lib/Macaulay2-0.9/share/emacs/site-lisp/*.el /usr/share/emacs/site-lisp
 
 	d.  Optionally run this command:
 
@@ -121,14 +134,12 @@ There are two ways to install the package:
 		involves mapping into memory a large file containing an
 		image of the data segment of the program saved with
 		"dumpdata" by the "setup" script mentioned above.  That
-		'dumpdata' file is named libexec/Macaulay2-*-data, where *
-		identifies the type of system you have.  That file and the
-		binary executable file libexec/Macaulay2.exe or
-		libexec/Macaulay2 are the only architecture dependent files:
-		the rest may be shared.  On Sun machines, the differences
-		between architectures sun4d and sun4c are slight enough that
-		the binary file bin/Macaulay2 will work on both, but the
-		libexec/Macaulay2-XXXX.data files will differ.  If you have
+		'dumpdata' file is named something like
+			 lib/Macaulay2/0.9/libexec/Macaulay2-*-data, 
+		where * identifies the architecture.  On Sun machines, the 
+		differences between architectures sun4d and sun4c are slight 
+		enough that the binary file bin/Macaulay2 will work on both, but 
+		the libexec/Macaulay2-XXXX.data files will differ.  If you have
 		both of these types of machines, you can run 'setup' on each
 		of these in the same directory tree.
 
@@ -177,9 +188,11 @@ A. While running Macaulay 2.
 
 B. With a web browser
 
-    The directory 'm2/cache/doc' contains the main documentation in HTML form.
-    Start at the file 'm2/cache/doc/index.html' using your favorite web
-    browser.  Documentation for the packages is located in 'packages/cache/doc'.
+    The directory 'share/doc/Macaulay2/' contains the main documentation in HTML form.
+    Start at the file 'share/doc/Macaulay2/index.html' using your favorite web
+    browser.
+
+    The program 'M2-help' will start your web browser up on that file for you.
 
 ----------------------
 4. Other documentation

@@ -19,9 +19,9 @@ endif
 
 clean::; rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct
 distclean: clean; rm -f Makefile
-install:: $(docm2reldir)
-$(docm2reldir):; $(INSTALL) -d "$@"
-install:: ; $(INSTALL_DATA) Makefile $(IMAGES) $(docm2reldir)
+install:: $(htmldocdir)
+$(htmldocdir):; $(INSTALL) -d "$@"
+install:: ; $(INSTALL_DATA) $(IMAGES) $(htmldocdir)
 
 # for gimp to find this *.scm file, put
 # (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts:/home/geometry/dan/src/M2/Macaulay2/html")

@@ -1,8 +1,9 @@
 #! /bin/sh
-M2HOME="`dirname $0`/../Macaulay2"
+PREFIX=@prefix@
+M2DOC="$PREFIX/share/doc/Macaulay2/index.html"
 if   [ "$WWWBROWSER" ]
-then "$WWWBROWSER" "$M2HOME/html/index.html"
+then "$WWWBROWSER" "$M2DOC"
 elif [ `uname -s` = Darwin ]
-then open "$M2HOME/html/index.html"
-else netscape "$M2HOME/html/index.html"
+then open "$M2DOC"
+else netscape "$M2DOC"
 fi

@@ -4,5 +4,6 @@ include ../include/config.Makefile
 all ::
 install :: $(man1dir)
 $(man1dir):; $(INSTALL) -d $@
-install :: $(man1dir)/M2.1
+install :: $(man1dir)/M2.1 $(man1dir)/M2-help.1
 $(man1dir)/M2.1 : M2.1 ; $(INSTALL_DATA) $^ $@
+$(man1dir)/M2-help.1 : M2-help.1 ; $(INSTALL_DATA) $^ $@
