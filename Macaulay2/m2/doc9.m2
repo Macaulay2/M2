@@ -284,17 +284,23 @@ document { (dual,MonomialIdeal),
 
 document { (isSquareFree,MonomialIdeal),
      Headline => {"whether a monomial ideal is square free"},
-     Usage => {
-	  TT "isSquareFree I", "whether ", TT "I", " is a square free"
+     Synopsis => {
+	  Usage => "isSquareFree I",
+	  Inputs => {
+	       "I" => ""
+	       },
+	  Outputs => {
+	       {"whether ", TT "I", " is a square free"}
+	       }
 	  },
-     PARA,
-     "A square free monomial ideal is an ideal generated 
-     by products of variables; in other words, a radical
-     monomial ideal.",
-     PARA,
-     "Square free monomial ideals correspond both to 
-     simplicial complexes and to unions of coordinate 
-     subspaces.",
+     PARA {
+	  "A square free monomial ideal is an ideal generated 
+	  by products of variables; in other words, a radical
+	  monomial ideal."},
+     PARA {
+	  "Square free monomial ideals correspond both to 
+	  simplicial complexes and to unions of coordinate 
+	  subspaces."},
      EXAMPLE {
 	  "QQ[x,y,z];",
 	  "J = monomialIdeal(x^3*y^5*z, y^5*z^4, y^3*z^5, 
@@ -303,27 +309,26 @@ document { (isSquareFree,MonomialIdeal),
 	  "isSquareFree J",
 	  "isSquareFree radical J"
 	  },
-     PARA,
-     "Implemented by Greg Smith."
+     PARA "Implemented by Greg Smith."
      }
 
 document { (standardPairs, MonomialIdeal),
      Headline => {"finds the standard pairs of a monomial ideal"},
-     Usage => {
-	  TT "standardPairs I", " -- finds the standard 
-	  pairs of a monomial ideal ", TT "I", "."
-	  },
-     OldSynopsis => {
-	  "L = standardPairs I",
-	  "I" => {"a monomial ideal"},
-	  "L" => {"a list of the standard pairs of ", TT "I", ""}
+     Synopsis => {
+	  Usage => "standardPairs I",
+	  Inputs => {
+	       "I" => {"a monomial ideal"},
+	       },
+	  Outputs => {
+	       {"a list of the standard pairs of ", TT "I", ""}
+	       }
 	  },
      PARA,
      "A standard pair of a monomial ideal ", TT "I", " is 
      a pair ", TT {"{x", SUP "a", ",l}"}, " where ", TT "m", " is a 
      monomial and ", TT "l", " is a subset of the variables 
      subject to the following three conditions:",
-     OL {
+     UL {
 	  {TT "m", " is supported on the complement of ", TT "l", "."},
 	  {"for all monomials ", TT "n", " supported 
 	       on ", TT "l", " the monomial ", 
@@ -351,22 +356,21 @@ document { (standardPairs, MonomialIdeal),
 
 document { (monomialSubideal, Ideal),
      Headline => {"find the largest monomial ideal in an ideal"},
-     Usage => {
-	  TT "monomialSubideal I", " -- finds the largest 
-	  monomial subideal of ", TT "I", ""
-	  },
-     OldSynopsis => {
-	  "J = monomialSubideal I",
-	  "I" => {"an ", TT "Ideal", "."},
-	  "J" => {"the largest monomial ideal contained in ", TT "I"},
+     Synopsis => {
+	  Usage => "monomialSubideal I",
+	  Inputs => {
+	       "I" => {"an ", TT "Ideal", "."}
+	       },
+	  Outputs => {
+	       {"the largest monomial ideal contained in ", TT "I"}
+	       }
 	  },
      EXAMPLE {
 	  "QQ[a,b,c,d];",
 	  "I = ideal(b*c, c^2 - b*d, -a*c+b^2)",
 	  "monomialSubideal I"
 	  },
-     PARA,
-     "Implemented by Greg Smith"
+     PARA "Implemented by Greg Smith"
      }
 
 document { monomialIdeal,

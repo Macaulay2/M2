@@ -1,11 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-TEST ///
-assert( null =!= documentation sin)
-assert( null =!= documentation "sin")
-assert( null =!= documentation symbol sin)
-///
-
 document { document,
      Headline => "install documentation",
      TT "document {s, d}", " -- install documentation ", TT "d", " for 
@@ -20,6 +14,7 @@ document { document,
      UL {
 	  TOH "Headline",
 	  TOH "Synopsis",
+	  TOH "CAVEAT",
 	  TOH "EXAMPLE",
 	  TOH "SEEALSO"
 	  }
@@ -40,10 +35,10 @@ document { Synopsis,
 	  "The list ", TT "opts", " should be a list of options, each of which is in one of the
 	  following forms."},
      UL {
-	  TT "Usage => \"USAGESTRING\"",
-	  TT "Inputs => INPUTLIST",
-	  TT "Outputs => OUTPUTLIST",
-	  TT "Results => RESULTLIST"
+	  { TO "Usage", " => \"USAGESTRING\""},
+	  { TO "Inputs", " => INPUTLIST"},
+	  { TO "Outputs", " => OUTPUTLIST"},
+	  { TO "Results", " => RESULTLIST"}
 	  },
      PARA {
 	  "The only entry that is mandatory is USAGESTRING, which should show a typical usage of
@@ -64,7 +59,27 @@ document { Synopsis,
 	  may be a string of a list of ", TO "hypertext", " items."},
      PARA {
 	  "The types of the inputs and outputs are often provided in other ways, see ", TO "typicalValues", "."
-	  }
+	  },
+     PARA {
+	  "Here is an outline or template of a typical documentation node.",
+	  PRE ///document { x,
+     Headline => "",
+     Synopsis => {
+	  Usage => "",
+	  Inputs => {
+	       },
+	  Outputs => {
+	       },
+	  Results => {
+	       }
+	  },
+     PARA {
+	  },
+     EXAMPLE { },
+     CAVEAT { },
+     SEEALSO { }
+     }///
+     	  }
      }
 
 document { Headline,
