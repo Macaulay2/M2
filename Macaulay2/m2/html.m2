@@ -459,7 +459,7 @@ uninstallPackage Package := o -> pkg -> (
 installPackage String := opts -> pkg -> (
      if isGlobalSymbol pkg and class value getGlobalSymbol pkg === Package then return installPackage(value getGlobalSymbol pkg, opts);
      needsPackage pkg;
-     if class value pkg === Package then return installPackage(value pkg, opts);
+     if PackageDictionary#?pkg and class value PackageDictionary#pkg === Package then return installPackage(value PackageDictionary#pkg, opts);
      error ("can't locate package '",pkg,"'");
      )
 

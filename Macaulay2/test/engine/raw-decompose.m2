@@ -50,7 +50,7 @@ restart
 S = ZZ/32003[a..i]
 m = matrix{{a*(b-c)^2, a^3*(b+c^2)^3, a*b*c*d}}
 J = ideal m
-time Ja = saturate(J, a, Strategy=>Elimination);
+time Ja = saturate(J, a, Strategy=>Eliminate);
 assert(Ja == J : a^3)
 saturate(J, a, Strategy=>Iterate) -- quotients not allowed
 -- the quotients below seem to work

@@ -647,13 +647,32 @@ document {
 
 document {
      Key => [saturate,Strategy],
-     "The strategy option value should be one of the following:",
-     UL {
-          TO "Linear",
-	  TO "Iterate",
-	  TO "Bayer",
-	  TO "Elimination"
-          }
+     "There are four strategy values:",
+     SUBSECTION "Iterate",
+         TT "saturate(I,J,Strategy => Iterate)", " -- indicates that successive ideal
+	 or module quotients should be used.",
+	 PARA,
+	 "This value is the default.",
+     SUBSECTION "Linear",
+         TT "saturate(I,J,Strategy => Linear)", 
+	 TT "Strategy => Linear", " -- indicates that the reverse lex order should
+	 be used to compute the saturation.",
+	 PARA,
+	 "This presumes that ", TT "J", " is a single, linear polynomial, and that ", TT "I", " 
+	 is homogeneous.",
+	 PARA,
+	 "This is also an option value for ", TO "pushForward1", ".",
+     SUBSECTION "Bayer",
+     	 TT "saturate(I,f,Strategy => Bayer)", " -- indicates that the method of Bayer's 
+	 thesis should be used.",
+	 PARA,
+	 "The method is to compute ", TT "(I:f)", " for ", TT "I", " and ", TT "f", " homogeneous,
+	 add a new variable ", TT "z", ", compute a Groebner basis of ", TT "(I,f-z)", " in reverse 
+	 lex order, divide by ", TT "z", ", and finally replace ", TT "z", " by ", TT "f", ".",
+     SUBSECTION "Eliminate",
+	 TT "saturate(I,f,Strategy => Eliminate)", " -- indicates that the
+	 saturation ", TT "(I:f)", " should be computed by eliminating
+	 f", TT "z", " from ", TT "(I,f*z-1)", ", where ", TT "z", " is a new variable."
      }
 
 document {
