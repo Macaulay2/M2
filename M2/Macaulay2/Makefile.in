@@ -3,10 +3,8 @@ all ::				# everything needed for the distribution
 tests ::
 doc:: html
 doc:: book
-# doc:: ComputationsBook
-ifndef CYGWIN32
+doc:: ComputationsBook
 doc:: Vasconcelos-appendix
-endif
 ################################# prologue
 justM2 all :: initialize config
 
@@ -18,19 +16,11 @@ VPATH = $(srcdir)
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
-include $(TOPDIR)/Makeconf
 
 .PHONY: default tests all clean dirs misc config \
 		initialize doc html book exe zip
 ROOT := $(shell basename `pwd`)
 clean::; rm -f core
-################################# version
-version : ../config.Makefile
-	bin/echoout '>$@' 'version ${VERSION} for ${SYSTEM}' 
-version.gen : ../config.Makefile
-	bin/echoout '>$@' 'version ${VERSION}'
-misc :: version version.gen
-clean :: ; rm -f version version.gen
 ################################# bin
 bin :; mkdir $@
 clean ::; rm -rf bin

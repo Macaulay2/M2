@@ -496,7 +496,7 @@ echo > confdefs.h
 
 # A filename unique to this package, relative to the directory that
 # configure is in, which we can look for to find out if srcdir is correct.
-ac_unique_file=Makeconf
+ac_unique_file=Macaulay2.LSM
 
 # Find the source files, if location was not specified.
 if test -z "$srcdir"; then
@@ -1250,20 +1250,12 @@ else
   fi
 fi
 
-
-case "$CC" in
-    cl) export CFLAGS="$CFLAGS -Zi -nologo -G5 -W3 -GR -GX"
-        export CXXFLAGS="$CXXFLAGS -Zi -nologo -G5 -W3 -GR -GX" ;;
-    gcc) export CFLAGS="$CFLAGS -fexpensive-optimizations -O3"
-         export CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -O3" ;;
-esac
-
 for ac_prog in 'bison -y' byacc
 do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:1267: checking for $ac_word" >&5
+echo "configure:1259: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_YACC'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -1460,12 +1452,12 @@ esac
 
 
 echo $ac_n "checking for __finite""... $ac_c" 1>&6
-echo "configure:1464: checking for __finite" >&5
+echo "configure:1456: checking for __finite" >&5
 if eval "test \"`echo '$''{'ac_cv_func___finite'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1469 "configure"
+#line 1461 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char __finite(); below.  */
@@ -1488,7 +1480,7 @@ __finite();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1492: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1484: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func___finite=yes"
 else
@@ -1512,12 +1504,12 @@ EOF
 fi
 
 echo $ac_n "checking for __isnan""... $ac_c" 1>&6
-echo "configure:1516: checking for __isnan" >&5
+echo "configure:1508: checking for __isnan" >&5
 if eval "test \"`echo '$''{'ac_cv_func___isnan'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1521 "configure"
+#line 1513 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char __isnan(); below.  */
@@ -1540,7 +1532,7 @@ __isnan();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1544: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1536: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func___isnan=yes"
 else
@@ -1564,12 +1556,12 @@ EOF
 fi
 
 echo $ac_n "checking for __isinf""... $ac_c" 1>&6
-echo "configure:1568: checking for __isinf" >&5
+echo "configure:1560: checking for __isinf" >&5
 if eval "test \"`echo '$''{'ac_cv_func___isinf'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1573 "configure"
+#line 1565 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char __isinf(); below.  */
@@ -1592,7 +1584,7 @@ __isinf();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1596: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1588: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func___isinf=yes"
 else
@@ -1621,12 +1613,12 @@ fi
   
 
   echo $ac_n "checking for sys_errlist""... $ac_c" 1>&6
-echo "configure:1625: checking for sys_errlist" >&5
+echo "configure:1617: checking for sys_errlist" >&5
 if eval "test \"`echo '$''{'ac_cv_func_sys_errlist'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1630 "configure"
+#line 1622 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char sys_errlist(); below.  */
@@ -1649,7 +1641,7 @@ sys_errlist();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1653: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1645: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func_sys_errlist=yes"
 else
@@ -1675,12 +1667,12 @@ fi
 
 
   echo $ac_n "checking for herror""... $ac_c" 1>&6
-echo "configure:1679: checking for herror" >&5
+echo "configure:1671: checking for herror" >&5
 if eval "test \"`echo '$''{'ac_cv_func_herror'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1684 "configure"
+#line 1676 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char herror(); below.  */
@@ -1703,7 +1695,7 @@ herror();
 
 ; return 0; }
 EOF
-if { (eval echo configure:1707: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:1699: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func_herror=yes"
 else
@@ -1729,12 +1721,12 @@ fi
 
 
   echo $ac_n "checking whether sys_errlist is declared""... $ac_c" 1>&6
-echo "configure:1733: checking whether sys_errlist is declared" >&5
+echo "configure:1725: checking whether sys_errlist is declared" >&5
 if eval "test \"`echo '$''{'m2_cv_sys_errlist_is_declared'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1738 "configure"
+#line 1730 "configure"
 #include "confdefs.h"
 
       #include <stdio.h>
@@ -1744,7 +1736,7 @@ int main() {
 char ** x = sys_errlist
 ; return 0; }
 EOF
-if { (eval echo configure:1748: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:1740: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   m2_cv_sys_errlist_is_declared=yes
 else
@@ -1766,12 +1758,12 @@ EOF
 
 
   echo $ac_n "checking whether h_errlist is declared""... $ac_c" 1>&6
-echo "configure:1770: checking whether h_errlist is declared" >&5
+echo "configure:1762: checking whether h_errlist is declared" >&5
 if eval "test \"`echo '$''{'m2_cv_h_errlist_is_declared'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 1775 "configure"
+#line 1767 "configure"
 #include "confdefs.h"
 
       #include <stdio.h>
@@ -1781,7 +1773,7 @@ int main() {
 char ** x = h_errlist
 ; return 0; }
 EOF
-if { (eval echo configure:1785: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:1777: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   m2_cv_h_errlist_is_declared=yes
 else

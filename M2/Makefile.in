@@ -34,8 +34,7 @@ default: all # doc
 ################################# all
 all::
 #################################
-include $(top_srcdir)/Makeconf
-FILES := Makefile Makeconf README patches
+FILES := Makefile README patches
 SUBDIRS := gc gmp factory libfac Macaulay2
 export PATH := bin:$(PATH)
 ################################# preparation
@@ -54,8 +53,8 @@ justM2 all:: ;	$(MAKE) -C WindowsNT
 TARGET := Macaulay2-$(DESC).zip
 DOCTARGET := Macaulay2-$(VERSION)-doc.zip
 else
-TARGET := Macaulay2-$(DESC).tar.gz
-DOCTARGET := Macaulay2-$(VERSION)-doc.tar.gz
+TARGET := distributions/Macaulay2-$(DESC).tar.gz
+DOCTARGET := distributions/Macaulay2-$(VERSION)-doc.tar.gz
 endif
 justM2 all:: announce
 announce ::
@@ -75,25 +74,22 @@ GC:: lib/libgc.a
 endif
 
 GC_TARGETS := gc.a
-
 GC_CFLAGS := $(CFLAGS)
 GC_CFLAGS += -DLARGE_CONFIG -DNO_SIGNALS
+
 ifeq "$(DEBUG)" "yes"
 # Hans Boehm has verified that -DALL_INTERIOR_POINTERS is not needed with -DGC_DEBUG
 GC_CFLAGS += -DGC_DEBUG
+else
+# GC_dump() will not be compiled.
+GC_CFLAGS += -DNO_DEBUGGING
 endif
 
 # The only reason to have ALL_INTERIOR_POINTERS on is if we are using GC_malloc for C++ routines.
-GC_CFLAGS +=  -DALL_INTERIOR_POINTERS
+# GC_CFLAGS +=  -DALL_INTERIOR_POINTERS
 
-ifndef VERBOSE
+ifeq "$(VERBOSE)" "no"
 GC_CFLAGS += -DSILENT
-endif
-
-ifeq "$(DEBUG)" "yes"
-else
-# GC_dump() will not be compiled!
-# GC_CFLAGS += -DNO_DEBUGGING
 endif
 
 lib/libgc.a: 		gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
@@ -387,14 +383,10 @@ testport-go:
 	$(MAKE) -C tmp/M2
 ###################### Macaulay 2 documentation
 DOCFILES = Macaulay2/html
-ifdef CYGWIN32
-DOCFILES += Macaulay2/book/M2book.tex
-else
 DOCFILES += Macaulay2/Vasconcelos-appendix/appendix.dvi
 DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.dvi
 DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.pdf
 DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.ps
-endif
 
 distributions/Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES) rmcores distributions
 	tar cf - $(DOCFILES) | gzip >$@
@@ -447,13 +439,16 @@ manufactured.tgz : Makefile
 		Macaulay2/html
 ################################# automated compilation
 update:
-	cvs update -d
+	cvs update -d -P
 	$(MAKE)
 checkin:
-	cvs ci -m "check-in from $(NODENAME) [$(SYSTEM)]"
+	cvs ci -m "check-in from $(NODENAME) [$(ARCH) $(OS) $(REL)]"
 ################################# TAGS
-TAGS:
-	etags `find . \( -name '*.h' -o -name '*.c' -o -name '*.s' -o -name '*.S' \)`
+TAGS: always
+	etags `find . \( -name '*.h' -o -name '*.c' -o -name '*.s' \
+		-o -name '*.S' \
+		-o -name '*.d' \
+		-o -name '*.in' -o -name '*.m2' \)`
 PATH:
 	printenv $@
 ################################# lsm

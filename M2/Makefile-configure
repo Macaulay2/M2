@@ -11,6 +11,14 @@ Makefile-configure.overrides :
 	echo "# CONFIGURE_OPTIONS += --enable-dumpdata=old" >>$@
 	echo "# CONFIGURE_OPTIONS += --with-socks" >>$@
 	echo "# CONFIGURE_OPTIONS += --enable-shared" >>$@
+	echo "# CONFIGURE_OPTIONS += --disable-strip" >>$@
+	echo "# CONFIGURE_OPTIONS += --enable-profile" >>$@
+	echo "# CONFIGURE_OPTIONS += --disable-optimize" >>$@
+	echo "# CONFIGURE_OPTIONS += --enable-debug" >>$@
+	echo "# CONFIGURE_OPTIONS += --enable-static" >>$@
+	echo "# CONFIGURE_OPTIONS += --enable-memdebug" >>$@
+	echo "# CONFIGURE_OPTIONS += --enable-verbose" >>$@
+	echo "# CONFIGURE_OPTIONS += --without-factory" >>$@
 
 ## to build:
 ##	add overrides to the file Makefile-configure.overrides

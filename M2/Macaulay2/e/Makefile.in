@@ -7,7 +7,6 @@ VPATH = $(srcdir)
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
-include $(TOPDIR)/Makeconf
 
 # MES:
 # CXXFLAGS = -DGCMALLOC -DDEBUG
@@ -43,7 +42,6 @@ endif
 # CXXFLAGS += -fhandle-exceptions
 
 ######################
-# -pg is now handled in ../../Makeconf!
 CXXFLAGS += $(DEBUGFLAGS)
 ######################
 

@@ -56,6 +56,7 @@ endl = new Manipulator from oldendl
 stderr << "--loading setup.m2" << endl
 
 if class path =!= List then path = { "." }
+savepath := path
 
 OS := "operating system"
 
@@ -74,8 +75,9 @@ dir := splice(apply(separate(progname, "/"), i -> toSequence separate(i, "\\")))
 if #dir > 1
 then (
      sourcedir := concatenate ( apply(#dir-2, i -> (dir#i,pathSeparator)), "m2");
+     packagedir := concatenate ( apply(#dir-2, i -> (dir#i,pathSeparator)), "packages");
      -- << "source dir = " << sourcedir << endl;		    -- debugging
-     path = join({sourcedir}, path);
+     path = {sourcedir};
      )
 
 isAbsolutePath := (
@@ -254,6 +256,10 @@ if not version#"mp" then (
      )
 
 load "loads.m2"
+
+path = savepath
+if packagedir =!= null then path = prepend(packagedir,path)
+
 notify = true
 lastSystemSymbol = local privateSymbol
 
