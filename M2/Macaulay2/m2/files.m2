@@ -37,11 +37,11 @@ for i from 1 to 26 do (			    -- some OSes are case insensitive
 toFilename = method()
 toFilename String := s -> (
      -- Convert a string to a new string usable as a file name, and with
-     -- at least one special character prefixed, to avoid collisions with
-     -- package names and with index.html.
-     -- Notice that the prefix character _ prevents any "!" characters 
-     -- from occuring in the first position, where they would have a special
-     -- meaning.
+     -- at least one special character "_" prefixed, to avoid collisions with
+     -- other file names such as "index.html".
+     -- Notice that the prefix character _ prevents the "!" character
+     -- from occuring in the first position, where it would have a special
+     -- meaning to Macaulay 2.
      s = concatenate("_",apply(characters s, c -> tt#c));
      s)
 -----------------------------------------------------------------------------
@@ -68,17 +68,11 @@ indexTable := memoize(
 	       tb#key = val
 	       );
      	  next := null;
-	  makeName := key -> (
-	       if true
-	       then (
-	       	    toFilename key	    -- for long file names, determined just by the key
-	       	    )
-	       else (			    -- for short file names, assigned sequentially
-     	       	    if next === null then next = #(keys tb);
-	       	    val := toString next;
-	       	    next = next+1;
-	       	    val
-	       	    )
+	  makeName := key -> (			    -- for short file names, assigned sequentially
+	       if next === null then next = #(keys tb);
+	       val := toString next;
+	       next = next+1;
+	       val
 	       );
 	  new HashTable from {
 	       queryFun => key -> tb#?key,
@@ -97,9 +91,9 @@ indexTable := memoize(
      )
 
 cacheFileName = method()
--- cacheFileName(String) := (prefix) -> (
---      (indexTable prefix)#keysFun ()
---      )
+cacheFileName(String) := (prefix) -> (
+     (indexTable prefix)#keysFun ()
+     )
 cacheFileName(String,String) := (prefix,key) -> (
      (indexTable prefix)#getFun key
      )

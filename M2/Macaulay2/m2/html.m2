@@ -1,5 +1,7 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+-- we've turned off checking for existence of files...
+
 -- produce html form of documentation, for Macaulay 2 and for packages
 
 local prefix, local topNodeName, local topFileName, local topNodeButton
@@ -10,12 +12,13 @@ local lastKey, local thisKey
 local linkFollowedTable, local masterIndex
 local docdatabase
 
-linkFilename := s -> first cacheFileName(prefix, documentationPath, s) | ".html"
+-- linkFilename := s -> first cacheFileName(prefix, documentationPath, s) | ".html"
+linkFilename := s -> prefix | toFilename s | ".html"
 
 documentationMemo := memoize documentation		    -- for speed
 
 BUTTON := (s,alt) -> (
-     if not fileExists s then error ("file ", s, " doesn't exist");
+     -- if not fileExists s then error ("file ", s, " doesn't exist");
      s = relativizeFilename(prefix,s);
      if alt === null
      then LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center>")
@@ -148,24 +151,25 @@ fakeMenu := x -> (
 	  }
      )
 
+makeHtmlNode = (pfix, fkey) -> (
+     prefix = pfix;
+     linkFilename fkey << html HTML { 
+	  HEAD TITLE {fkey, headline fkey},
+	  BODY { 
+	       buttonBar fkey,
+	       if UP#?fkey then SEQ {
+		    "Parent headings:",
+		    fakeMenu apply(upAncestors fkey, i -> TOH i)
+		    },
+	       HR{}, 
+	       documentationMemo fkey,
+	       }
+	  }
+     << endl << close)
+
 pass4 := () -> (
      << "pass 4, writing html files" << endl;
-     scan(keys linkFollowedTable, fkey -> if linkFollowedTable#fkey then (
-	       fn := linkFilename fkey;
-	       -- stderr << "-- creating " << fn << " for key " << fkey << endl;
-	       fn << html HTML { 
-		    HEAD TITLE {fkey, headline fkey},
-		    BODY { 
-			 buttonBar fkey,
-			 if UP#?fkey then SEQ {
-			      "Parent headings:",
-			      fakeMenu apply(upAncestors fkey, i -> TOH i)
-			      },
-			 HR{}, 
-			 documentationMemo fkey,
-			 }
-		    }
-	       << endl << close ) ) )
+     scan(keys linkFollowedTable, fkey -> if linkFollowedTable#fkey then makeHtmlNode fkey))
 
 -----------------------------------------------------------------------------
 
@@ -196,16 +200,16 @@ pass5 := () -> (
 -----------------------------------------------------------------------------
 
 checkDirectory := path -> (
-     if not fileExists (path | ".")		     -- what about Macintosh?
-     then (
-	  if fileExists path 
-	  then error ("directory ", path, " doesn't end with a path separator")
-	  else error ("directory ", path, " doesn't exist")
-	  )
+     -- if not fileExists (path | ".")		     -- what about Macintosh?
+     -- then (
+     --	  if fileExists path 
+     --	  then error ("directory ", path, " doesn't end with a path separator")
+     --	  else error ("directory ", path, " doesn't exist")
+     --	  )
      )
 
 checkFile := filename -> (
-     if not fileExists filename then error ("file ", filename, " doesn't exist");
+     -- if not fileExists filename then error ("file ", filename, " doesn't exist");
      filename)
 
 cacheVars := varlist -> (

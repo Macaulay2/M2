@@ -56,7 +56,9 @@ the package "D-modules".
 	    emacs/site-lisp/                            [ emacsdir ]
 			    M2.el
 			    M2-*.el
-	    Macaulay2/0.9.4/                            [ sharedir M2HOME= ]
+	    Macaulay2/
+		      currentVersion			( a symbolic link to 0.9.4 )
+		      0.9.4/                            [ sharedir M2HOME= ]
 			    m2/                         [ m2dir ] (on the Macaulay2 load path)
 			       *.m2
 		      packages/                         [ packagesdir ] (on the Macaulay2 load path)
@@ -66,6 +68,7 @@ the package "D-modules".
 	    doc/                                        [ docdir ]
 		Macaulay2/                              [ docm2dir ]
 			  index.html                    (machine generated)
+		          currentVersion		( a symbolic link to 0.9.4 )
 			  0.9.4/                        [ docm2reldir ]
 				COPYING
 				LICENSE

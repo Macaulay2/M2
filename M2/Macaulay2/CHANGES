@@ -12,6 +12,9 @@ Changes made, most recent ones first:
 
 New in 0.9.3:
 
+The symbol "end" which may be used to indicate the end of an input file, has
+been changed to "endInput".
+
 Man pages created for M2 and M2-help.
 
 New file system layout developed, designed to make it easy for independent developers of Macaulay 2

@@ -322,7 +322,9 @@ document { "path",
      "A list of strings containing names of directories in
      which ", TO "load", " and ", TO "input", " should seek files.  These strings
      are simply concatenated with the filename being sought, so should include
-     any necessary terminal slashes.",
+     any necessary terminal slashes.  One further directory is implicitly searched 
+     first: the directory containing the current input file; when input is coming 
+     from the standard input, that directory is the current directory of the process.",
      PARA,
      EXAMPLE {
 	  "path",
@@ -649,9 +651,9 @@ document { input,
      SEEALSO{ "path", "needs", "load"}
      }
 
-document { end,
+document { endInput,
      Headline => "stop loading a file",
-     TT "end", " -- a symbol which causes loading of a file to be stopped.",
+     TT "endInput", " -- a symbol which causes loading of a file to be stopped.",
      PARA,
      SEEALSO{ "needs", "load", "input" }
      }

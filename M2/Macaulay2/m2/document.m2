@@ -78,6 +78,15 @@ storeDoc := (nodeName,docBody) -> (
 	  )
      )
 
+
+-----------------------------------------------------------------------------
+-- some things can't be documented
+-----------------------------------------------------------------------------
+unDocumentable := method(SingleArgumentDispatch => true)
+unDocumentable Thing := x ->false
+unDocumentable Function := f -> class f === Function and match(toString f, "--Function*--")
+unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
+unDocumentable List := x -> true
 -----------------------------------------------------------------------------
 -- unformatting document tags
 -----------------------------------------------------------------------------
@@ -86,9 +95,16 @@ record      := f -> x -> (val := f x; unformatTag#val = x; val)
 unformat    := s -> (
      if isGlobalSymbol s 
      and value getGlobalSymbol s =!= null	  -- keywords have null value
-     then value getGlobalSymbol s
-     else if unformatTag#?s then unformatTag#s
-     else s
+     then (
+	  if unDocumentable value getGlobalSymbol s
+     	  then getGlobalSymbol s
+     	  else value getGlobalSymbol s
+	  )
+     else (
+	  if unformatTag#?s 
+	  then unformatTag#s
+     	  else s
+	  )
      )
 
 -----------------------------------------------------------------------------
@@ -731,11 +747,6 @@ synopsis Sequence := s -> (
      	       }
 	  }
      )
-
-unDocumentable := method(SingleArgumentDispatch => true)
-unDocumentable Thing := x ->false
-unDocumentable Function := f -> class f === Function and match(toString f, "--Function*--")
-unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
 
 documentableMethods := s -> select(methods s, i -> not unDocumentable i)
 
