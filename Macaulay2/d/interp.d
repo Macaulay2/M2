@@ -194,7 +194,7 @@ loadprint(s:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
 		    )
 	       else close(file));
 	  when r is err:Error do (
-	       if err.message == returnMessage then err.value else r
+	       if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -207,7 +207,7 @@ load(s:string):Expr := (
 	  r := readeval(file,false);
 	  t := if !(s==="-") then close(file) else 0;
 	  when r is err:Error do (
-	       if err.message == returnMessage then err.value else r
+	       if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then err.value else r
 	       )
 	  else (
 	       if t == ERROR
@@ -291,7 +291,7 @@ topLevel(e:Expr):Expr := (
        is x:FunctionClosure do topLevel(x.frame)
        is cfc:CompiledFunctionClosure do topLevel(emptyFrame)	    -- some values are there, but no symbols
        is CompiledFunction do topLevel(emptyFrame)		    -- no values or symbols are there
-       else WrongArg("a function, a symbol, or ()");
+       else WrongArg("a function, symbol, dictionary, pseudocode, or ()");
      decrementInterpreterDepth();
      ret);
 setupfun("commandInterpreter",topLevel);
@@ -317,7 +317,7 @@ value(e:Expr):Expr := (
 	  r := readeval(stringTokenFile("a string", s+newline),true);
 	  when r 
 	  is err:Error do (
-	       if err.message == returnMessage then err.value 
+	       if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage then err.value 
 	       else (
 		    if err.position == dummyPosition
 		    || int(err.position.loadDepth) < errorDepth
@@ -336,23 +336,25 @@ export process():void := (
      stderr.outisatty =   0 != isatty(2) ;
      setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
      setloadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
-     ret := (
-	  when readeval(stringTokenFile("--startupString1--/layout.m2",startupString1),false)
-	  is Error do (
-	       if stopIfError
-	       then 1					    -- probably can't happen, because layout.m2 doesn't set stopIfError
-	       else (
-		    if topLevel() 			    -- give a prompt for debugging
-		    then 0 else 1))
-	  else 
-	  when readeval(stringTokenFile("--startupString2--/startup.m2",startupString2),false) -- startup.m2 calls topLevel and eventually returns
-	  is Error do (
-	       if stopIfError 
-	       then 1
-	       else (
-		    if topLevel() 			    -- give a prompt for debugging
-		    then 0 else 1))
-	  else 0);
-     value(Expr("exit " + tostring(ret)));		    -- try to exit the user's way
-     exit(if ret == 0 then 1 else ret);			    -- if that doesn't work, try harder and indicate an error
+     ret := readeval(stringTokenFile("--startupString1--/layout.m2",startupString1),false);
+     when ret is Error do (
+	  if stopIfError
+	  then exit(1)					    -- probably can't happen, because layout.m2 doesn't set stopIfError
+	  else if !topLevel()				    -- give a prompt for debugging
+	  then exit(1))
+     else nothing;
+     ret = readeval(stringTokenFile("--startupString2--/startup.m2",startupString2),false); -- startup.m2 calls commandInterpreter and eventually returns
+     when ret is Error do (
+	  if stopIfError 
+	  then exit(1)
+	  else if !topLevel()				    -- give a prompt for debugging
+	  then exit(1))
+     else nothing;
+     when ret is n:Integer do (
+	  if isInt(n) then (
+     	       value(Expr("exit " + tostring(toInt(n))));   -- try to exit the user's way
+     	       ))
+     else nothing;
+     value(Expr("exit 0"));				    -- try to exit the user's way
+     exit(1);				   -- if that doesn't work, try harder and indicate an error
      );

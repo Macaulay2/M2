@@ -352,3 +352,6 @@ distclean : clean
 
 Makefile : Makefile.in
 	cd ../..; ./config.status Macaulay2/d/Makefile
+
+all :: .gdbinit
+.gdbinit: .gdbinit.$(USER); cp $< $@

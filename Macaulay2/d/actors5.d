@@ -1250,17 +1250,10 @@ setupfun("frame", frame);
 
 numFrames(f:Frame):int := (
      n := 0;
-     while f.frameID > 0
-     && ( n = n+1; f != f.outerFrame )
-     do f = f.outerFrame;
+     while ( n = n+1; f != f.outerFrame ) do f = f.outerFrame;
      n);
 
-listFrames(f:Frame):Expr := Expr(
-     list(
-	  new Sequence len numFrames(f) do (
-	       while f.frameID > 0
-	       && (provide listFrame(f) ; f != f.outerFrame )
-	       do f = f.outerFrame)));     
+listFrames(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do while (provide listFrame(f) ; f != f.outerFrame ) do f = f.outerFrame));     
 
 frames(e:Expr):Expr := (
      when e
@@ -1279,13 +1272,7 @@ newDictionaryFun(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("newDictionary", newDictionaryFun);
 
-
-localDictionaries(f:Frame):Expr := Expr(
-     list(
-	  new Sequence len numFrames(f) do (
-	       while f.frameID > 0
-	       && ( provide Expr(localDictionaryClosure(f)); f != f.outerFrame )
-	       do f = f.outerFrame)));
+localDictionaries(f:Frame):Expr := Expr( list( new Sequence len numFrames(f) do ( while ( provide Expr(localDictionaryClosure(f)); f != f.outerFrame ) do f = f.outerFrame)));
 
 localDictionaries(e:Expr):Expr := (
      when e
