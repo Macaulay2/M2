@@ -108,7 +108,7 @@ document {
      "The isomorphism between them may be found under the key
      ", TT "pruningMap", ".",
      EXAMPLE {
-	  "f = N.pruningMap",
+	  "f = N.cache.pruningMap",
 	  "isIsomorphism f",
 	  "f^-1",
 	  },

@@ -418,34 +418,34 @@ presentation(Module) := Matrix => M -> (
 -----------------------------------------------------------------------------  
 
 prune(Module) := Module => M -> (
-     if M.?pruningMap then M
-     else if M.?prune then M.prune else M.prune = (
+     if M.cache.?pruningMap then M
+     else if M.cache.?prune then M.cache.prune else M.cache.prune = (
 	  R := ring M;
 	  oR := options R;
 	  if isFreeModule M then (
-	       M.pruningMap = id_M;
+	       M.cache.pruningMap = id_M;
 	       M)
 	  else if (isAffineRing R and isHomogeneous M)
 	         or (oR.?SkewCommutative and oR.SkewCommutative and isHomogeneous M) then (
 	       f := presentation M;
 	       g := complement f;
 	       N := cokernel modulo(g, f);
-	       N.pruningMap = map(M,N,g);
+	       N.cache.pruningMap = map(M,N,g);
 	       N)
 	  else (
 	       f = generators gb presentation M;
 	       -- MES: can't it do more here?
 	       N = cokernel f;
-	       N.pruningMap = map(M,N,id_(cover M));
+	       N.cache.pruningMap = map(M,N,id_(cover M));
 	       N)
 	  )
      )
 
 prune(Matrix) := Matrix => (m) -> (
      M := source m;
-     if not M.?pruningMap then m = m * (prune M).pruningMap;
+     if not M.cache.?pruningMap then m = m * (prune M).cache.pruningMap;
      N := target m;
-     if not N.?pruningMap then m = (prune N).pruningMap^-1 * m;
+     if not N.cache.?pruningMap then m = (prune N).cache.pruningMap^-1 * m;
      m)
 
 -----------------------------------------------------------------------------

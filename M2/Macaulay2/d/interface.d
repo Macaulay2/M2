@@ -2542,7 +2542,7 @@ export rawGBMatrixLift(e:Expr):Expr := (
 	       --  extern void h();
 	       --  void f(struct B *p) { h((struct A**)&p); }
 	       ")" );
-	  toSequence(resultQuotient,resultRemainder))
+	  toSequence(resultRemainder,resultQuotient))
      else WrongArg(2,"a raw matrix")
      else WrongArg(1,"a raw Groebner basis")
      else WrongNumArgs(2)

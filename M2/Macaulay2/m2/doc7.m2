@@ -2127,7 +2127,7 @@ document {
 	  },
      PARA,
      "The isomorphism from ", TT "N", " to ", TT "M", " can 
-     be obtained with as ", TT "g = N.pruningMap", " unless ", TT "M.pruningMap", "
+     be obtained with as ", TT "g = N.cache.pruningMap", " unless ", TT "M.cache.pruningMap", "
      already exists, in which case ", TT "N", " is the same as ", TT "M", ".  You may obtain 
      the inverse isomorphism with ", TT "g^-1", ".",
      SeeAlso => { "pruningMap" }
@@ -2139,7 +2139,7 @@ document {
      a module ", TT "M", " from the module ", TT "prune M", ".",
      PARA,
      "This map exists only after ", TT "N = prune M", " has been executed
-     at least once, and then the map can be obtained with ", TT "N.pruningMap", ".",
+     at least once, and then the map can be obtained with ", TT "N.cache.pruningMap", ".",
      SeeAlso => "prune"
      }
 document {
@@ -2168,7 +2168,7 @@ TEST "
 R = ZZ/101[a..f]
 M = cokernel matrix (R, {{1},{-1}})
 N = prune M
-p = N.pruningMap
+p = N.cache.pruningMap
 assert( source p == N )
 assert( target p == M )
 assert( prune kernel p == 0 )
