@@ -3,7 +3,9 @@
 ############################### targets to use
 all ::				# everything needed for the distribution
 tests ::
-doc:: html book ComputationsBook
+doc:: html
+# doc:: book
+# doc:: ComputationsBook
 ifndef CYGWIN32
 doc:: Vasconcelos-appendix
 endif
