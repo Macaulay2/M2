@@ -37,7 +37,7 @@ random QuotientRing := S -> (
      else notImplemented())
 
 expression QuotientRing := S -> (
-     if S.?name then S.name
+     if S.?name then hold S.name
      else new Divide from { 
 	  expression last S.baseRings,  
 	  expression pretty S.relations 

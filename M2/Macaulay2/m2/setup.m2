@@ -138,7 +138,7 @@ loaded := new MutableHashTable
 
 markLoaded := (filename) -> ( 
      loaded#filename = true; 
-     if notify then << "--loaded " << filename << endl;
+     if notify then stderr << "--loaded " << filename << endl;
      )
 
 isSpecial := filename -> filename#0 === "$" or filename#0 === "!"

@@ -20,7 +20,7 @@ parts := (M) -> (
 	       / (key -> if o#key =!= O#key then key => o#key),
 	       i -> i =!= null)))
 
-expression GeneralOrderedMonoid := M -> if M.?name then M.name else new Array from apply(parts M,expression)
+expression GeneralOrderedMonoid := M -> if M.?name then hold M.name else new Array from apply(parts M,expression)
 toString GeneralOrderedMonoid := M -> toString expression M
 net GeneralOrderedMonoid := M -> net expression M
 

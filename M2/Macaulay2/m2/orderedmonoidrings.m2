@@ -10,7 +10,7 @@ isPolynomialRing PolynomialRing := (R) -> true
 
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
-expression PolynomialRing := R -> if R.?name then R.name else (expression R.baseRings#-1) (expression monoid R)
+expression PolynomialRing := R -> if R.?name then hold R.name else (expression R.baseRings#-1) (expression monoid R)
 net PolynomialRing := R -> net expression R
 toString PolynomialRing := toExternalString PolynomialRing := R -> toString expression R
 

@@ -760,3 +760,10 @@ exitMethod Sequence := () -> exit 0
 quit = new Command from (() -> exit 0)
 erase quote exit
 exit = new Command from exitMethod
+
+
+toString Option := z -> concatenate splice (
+     if precedence z > precedence z#0 then ("(",toString z#0,")") else toString z#0,
+     " => ",
+     if precedence z > precedence z#1 then ("(",toString z#1,")") else toString z#1
+     )
