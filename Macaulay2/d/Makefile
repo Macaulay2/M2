@@ -245,7 +245,7 @@ allfiles: Makefile
 wc:
 	wc -l $(WC1FILES)
 clean :
-	rm -f *.log *.sym *.out *.o *.a *.oo \
+	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep \
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
 		$(DNAMES:.d=.c) allfiles TAGS \
 		core core.*

@@ -6,16 +6,19 @@ FILES := Makefile Makeconf README patches
 
 SUBDIRS := gc gmp factory libfac Macaulay2
 
-.PHONY : all always dirs clean port
+.PHONY : all always dirs clean port FACTORYmade FACTORYconfigured
 
 all: GC GMP FACTORY LIBFAC MP MACAULAY2
 
-lib:; mkdir lib
-include:; mkdir include
+lib/.exists:; mkdir -p lib; touch $@
+include/.exists:
+	- mkdir include
+	touch $@
+clean::; rm -rf lib include share
 
 always:
 
-clean:; for i in $(SUBDIRS); do $(MAKE) -C $$i $@; done
+clean::; for i in $(SUBDIRS); do $(MAKE) -C $$i $@; done
 
 bigport: Macaulay2-$(VERSION)-src-bigport.tar
 Macaulay2-$(VERSION)-src-bigport.tar: src-dev \
@@ -60,12 +63,12 @@ portfloppy:
 GC: gc lib/libgc.a include/gc.h include/gc_cpp.h
 # GC_CFLAGS = -DNO_SIGNALS -g -O -DALL_INTERIOR_POINTERS -DGC_DEBUG
 GC_CFLAGS = -DNO_SIGNALS -g -O -DNO_DEBUGGING -DSILENT -DALL_INTERIOR_POINTERS
-lib/libgc.a: 	  gc/gc.a lib;	 	cp $< $@; ranlib $@
-include/gc.h:	  gc/gc.h include;	cp $< $@
-include/gc_cpp.h: gc/gc_cpp.h include;	cp $< $@
+lib/libgc.a: 	  gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
+include/gc.h:	  gc/gc.h include/.exists;	cp $< $@
+include/gc_cpp.h: gc/gc_cpp.h include/.exists;	cp $< $@
 gc/gc.a: 	  always
 	$(MAKE) -C gc CC=gcc AS=$(AS) CFLAGS='$(GC_CFLAGS)' gc.a
-	$(MAKE) -C gc CXX=gcc CFLAGS='$(GC_CFLAGS)' -nostdinc++ c++
+	$(MAKE) -C gc CXX=gcc CFLAGS='$(GC_CFLAGS) -nostdinc++' c++
 
 #	echo '#undef DYNAMIC_LOADING' >> gc/config.h
 #	echo 'int one_more_symbol;' >> gc/checksums.c
@@ -73,12 +76,12 @@ gc/gc.a: 	  always
 ###################### GMP
 GMP : 	gmp include/gmp.h \
 	lib/libmpn.a lib/libmpz.a lib/libmpq.a lib/libmpf.a lib/libgmp.a
-include/gmp.h: gmp/gmp.h include; cp $< $@
-lib/libmpn.a: gmp/mpn/libmpn.a lib; cp $< $@; ranlib $@
-lib/libmpz.a: gmp/mpz/libmpz.a lib; cp $< $@; ranlib $@
-lib/libmpq.a: gmp/mpq/libmpq.a lib; cp $< $@; ranlib $@
-lib/libmpf.a: gmp/mpf/libmpf.a lib; cp $< $@; ranlib $@
-lib/libgmp.a: gmp/libgmp.a lib; cp $< $@; ranlib $@
+include/gmp.h: gmp/gmp.h include/.exists; cp $< $@
+lib/libmpn.a: gmp/mpn/libmpn.a lib/.exists; cp $< $@; ranlib $@
+lib/libmpz.a: gmp/mpz/libmpz.a lib/.exists; cp $< $@; ranlib $@
+lib/libmpq.a: gmp/mpq/libmpq.a lib/.exists; cp $< $@; ranlib $@
+lib/libmpf.a: gmp/mpf/libmpf.a lib/.exists; cp $< $@; ranlib $@
+lib/libgmp.a: gmp/libgmp.a lib/.exists; cp $< $@; ranlib $@
 
 gmp/mpn/libmpn.a : make-gmp
 gmp/mpz/libmpz.a : make-gmp
@@ -96,55 +99,36 @@ gmp/config.status: gmp/configure
 # when importing a new version of factory, make sure the directory is clean,
 # (look to see if factory/config.status is there)
 
-FACTORY: factory factory/config.status \
-		makeFACTORY \
-		lib/factory/$(FACTORYVERSION)/libcf-optimize.a \
-		include/templates \
-		include/templates/factor.h \
-		include/templates/functions.h \
-		include/templates/list.h \
-		include/templates/matrix.h
-include/templates: include ; mkdir $@
-include/templates/factor.h: factory/templates/factor.h; cp $< $@
-include/templates/functions.h: factory/templates/functions.h; cp $< $@
-include/templates/list.h: factory/templates/list.h; cp $< $@
-include/templates/matrix.h: factory/templates/matrix.h; cp $< $@
-makeFACTORY:; $(MAKE) -C factory
-factory/libcf-optimize.a: factory
-	$(MAKE) -C factory
+FACTORY: FACTORYconfigured FACTORYmade lib/FACTORYinstalled
 
-ifeq ($(OS),MS-DOS)
-lib/factory/$(FACTORYVERSION)/libcf-optimize.a: lib
-	- mkdir lib/factory
-	- mkdir lib/factory/$(FACTORYVERSION)
-	- mkdir lib/factory/$(FACTORYVERSION)/templates
-	cp factory-$(FACTORYVERSION)/libcf-optimize.a lib/factory/$(FACTORYVERSION)
-	cp factory-$(FACTORYVERSION)/factory.h lib/factory/$(FACTORYVERSION)
-	cp factory-$(FACTORYVERSION)/tmpl_inst.cc lib/factory/$(FACTORYVERSION)/templates
-	cp templates/array.h \
-			templates/factor.h \
-			templates/list.h \
-			templates/matrix.h \
-			templates/array.cc \
-			templates/factor.cc \
-			templates/list.cc \
-			templates/matrix.cc \
-			templates/functions.h \
-		lib/factory/$(FACTORYVERSION)/templates
-else
-lib/factory/$(FACTORYVERSION)/libcf-optimize.a: lib factory/libcf-optimize.a
-	$(MAKE) -C factory install
-	ranlib lib/libcfmem.a
-endif
+FACTORYexports := \
+		factory/libcf.a \
+		factory/factory.h \
+		factory/factoryconf.h \
+		factory/templates/array.cc     \
+		factory/templates/array.h      \
+		factory/templates/factor.cc    \
+		factory/templates/factor.h     \
+		factory/templates/functions.h  \
+		factory/templates/list.cc      \
+		factory/templates/list.h       \
+		factory/templates/matrix.cc    \
+		factory/templates/matrix.h     \
+		factory/tmpl_inst.cc
 
-factory/config.status :
+FACTORYconfigured: factory/config.status
+factory/config.status factory/GNUmakefile : factory/GNUmakefile.in
 	cd factory;\
 	GMP_INCLUDE_PATH=../include;\
 	export GMP_INCLUDE_PATH;\
-	./configure \
-		--prefix=.. \
-		--with-memman \
-		--with-optimize
+	./configure --prefix=.. --with-memman --with-optimize
+
+FACTORYmade:; $(MAKE) -C factory
+
+lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
+	$(MAKE) -C factory install
+	ranlib lib/libcfmem.a
+	touch $@
 
 ###################### LIBFAC
 LIBFAC:		libfac \
@@ -153,8 +137,8 @@ libfac/config.status :
 	cd libfac; ./configure --includedir=../include
 libfac/libfac.a : always
 	$(MAKE) CXX=g++ OPTCXX=g++ -C libfac libfac
-include/factor.h: libfac/factor.h include; cp $< $@
-lib/libfac.a: libfac/libfac.a lib; cp $< $@; ranlib $@
+include/factor.h: libfac/factor.h include/.exists; cp $< $@
+lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
 
 ###################### MP
 MP:	mp mp/config.status mp/libMP.a \
@@ -163,9 +147,9 @@ mp/config.status:
 	cd mp; ./configure --prefix=$(TOPDIR) # --with-debug
 mp/libMP.a:
 	$(MAKE) -C mp libMP.a
-lib/libMP.a: mp/MP/libMP.a lib; cp $< $@; ranlib $@
-include/MP.h: mp/MP/MP.h include; cp $< $@
-include/MP_Config.h: mp/MP/MP_Config.h include; cp $< $@
+lib/libMP.a: mp/MP/libMP.a lib/.exists; cp $< $@; ranlib $@
+include/MP.h: mp/MP/MP.h include/.exists; cp $< $@
+include/MP_Config.h: mp/MP/MP_Config.h include/.exists; cp $< $@
 
 ###################### Macaulay 2
 MACAULAY2: Macaulay2

@@ -19,5 +19,5 @@ allfiles : Makefile prelim/*.m2 final/*.m2
 	../bin/echoout $(FILES) >allfiles
 
 clean :
-	rm -rf *.dvi *.log allfiles translate
+	rm -rf *.dvi *.log allfiles translate final/*.out
 
