@@ -824,12 +824,7 @@ document { (cohomology, ZZ, CoherentSheaf),
      TT "HH^i(F, Degree=>e)", " -- same as above, but ", TT "n", " ranges over at least
      the integers at least as large as ", TT "e", ".",
      PARA,
-     EXAMPLE {
-	  "R = QQ[a,b,c,d]/(a^4+b^4+c^4+d^4);",
-	  "X = Proj R",
-	  "HH^1(cotangentSheaf X)",
-	  "hilbertFunction(0,oo)"
-	  }
+     SEEALSO "coherent sheaves"
      }
 
 document { OO,

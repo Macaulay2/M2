@@ -238,7 +238,7 @@ document { lookup,
      PARA,
      "If no method is found, then ", TT "null", " is returned.",
      PARA,
-     SEEALSO {"#", "classes", "installMethod", "youngest"}
+     SEEALSO {"#", "classes and types", "installMethod", "youngest"}
      }
 
 document { installMethod,
@@ -268,7 +268,7 @@ document { installMethod,
      ", TT "Y#(M,A,B,C) = f", ", where ", TT "Y", " is the youngest of ", TT "A", ", ", TT "B", ", 
      and ", TT "C", ".",
      PARA,
-     SEEALSO{"#", "lookup",  "new", "classes"}
+     SEEALSO{"#", "lookup",  "new", "classes and types"}
      }
 
 document { "new",
@@ -352,7 +352,7 @@ document { "new",
      "The symbols ", TO "NewMethod", ", ", TO "NewOfMethod", ", ", 
      TO "NewFromMethod", ", and ", TO "NewOfFromMethod", " are used internally
      for installation of the initialization routines.",
-     SEEALSO {"classes"}
+     SEEALSO {"classes and types"}
      }
 
 document { "of",
@@ -420,7 +420,7 @@ document { Option,
      "These pairs are implemented as lists, so that if ", TT "z", " is ", TT "x => y", ", then 
      ", TT "x", " is ", TT "z#0", " and ", TT "y", " is ", TT "z#1", ".",
      PARA,
-     SEEALSO {"classes", "=>"}
+     SEEALSO {"classes and types", "=>"}
      }
 
 document { (NewFromMethod, HashTable, List),
@@ -480,19 +480,13 @@ document { (symbol "==>", OptionTable, Function),
      SEEALSO {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
      }
 
-document { SingleArgumentDispatch,
-     Headline => "make a method for handling sequences individually",
+document { method => SingleArgumentDispatch,
+     Headline => "a method for handling multiple arguments as a sequence",
      TT "SingleArgumentDispatch=>true", " -- an option to ", TO "method", "
      which specifies whether the method function should treat several
      arguments as a single argument, i.e., as a sequence.",
      PARA,
-     "This allows the user to install a method for handling sequences, whereas
-     normally, the types of up to the three arguments are considered.",
-     EXAMPLE {
-	  "f = method ( SingleArgumentDispatch => true )",
-      	  "f Sequence := print",
-	  "f (1,2,3)"
-	  }
+     SEEALSO "method functions with a variable number of arguments"
      }
 
 document { symbol "typicalValues",

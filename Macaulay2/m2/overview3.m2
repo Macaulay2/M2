@@ -111,6 +111,7 @@ document { "GNU MP",
      }
 
 document { "operators",
+     Headline => "an overview",
      "Here is a list of unary and binary operators in the language.  Many
      of them can have methods installed for handling arguments of specific
      types.",
@@ -332,58 +333,6 @@ document { "Macaulay 2",
 	  }
      }
 
-document { "binary method",
-     "The method for computing a sum ", TT "x+y", " depends on the types of ", TT "x", " and ", TT "y", ".
-     For example, the method for adding an integer ", TT "x", " and a polynomial 
-     ", TT "y", " differs from the method for adding two integers modulo 111.  Because
-     both the type of ", TT "x", " and the type of ", TT "y", " must enter into the selection of
-     the method, we refer to these methods as binary methods.  Each binary
-     method is a function of two variables, and is stored either in the class
-     of ", TT "x", " or in the class of ", TT "y", ".  See also ", TO "lookup", ".",
-     PARA,
-     "Let's assume that ", TT "X", " is the class (or type) of ", TT "x", ", 
-     and that ", TT "Y", " is the class of ", TT "y", ".  The way to install a 
-     method for the addition of an instance ", TT "x", " of class ", TT "X", " to 
-     an instance ", TT "y", " of class ", TT "Y", " is with a statement of the form ",
-     PRE "X + Y := (x,y) -> ( ... )",
-     "where ", TT "( ... )", " represents the body of the function, consisting of suitable
-     code for the operation at hand.",
-     PARA,
-     "The method installed by the code above is automatically inherited by 
-     ", TO "subclass", "es of ", TT "X", " and ", TT "Y", ".  Here is a brief
-     description of the way this works.  Suppose ", TT "X", " is the 
-     ", TO "parent", " of ", TT "P", " and ", TT "Y", " is the parent of X.  When 
-     a sum ", TT "p+q", " is evaluated where the class of ", TT "p", " is 
-     ", TT "P", " and the class of ", TT "q", " is ", TT "Q", ", then the binary
-     method for ", TT "P+Q", " is applied, unless there isn't one, in which
-     case the binary method for ", TT "P+Y", " is applied, unless there isn't
-     one, in which case the binary method for ", TT "X+Q", " is applied,
-     unless there isn't one, in which case the binary method for ", TT "P+Q", "
-     is applied.  In general this search for a binary method continues all
-     the way up the chain of parents to the topmost ancestor of everything,
-     which is called ", TO "Thing", ".",
-     PARA,
-     "As an extreme example of inheritance, the code ", 
-     PRE "Thing + Thing := (x,y) -> ( ... )",
-     "will install a binary method for adding any two things, which will take
-     effect as a last resort whenever more a specifically defined method
-     isn't found.",
-     PARA,
-     "The ", TO "new", " function also uses a ternary lookup table to
-     find the initialization function for the new thing, and should
-     be thought of as a ternary operator.  The initialization function
-     for a new expression created by",
-     PRE "new Z of x from y",
-     "is obtained as",
-     PRE "lookup(NewMethod,Z,X,Y)",
-     "Here ", TT "X", " is ", TT "class x", ", and ", TT "Y", " is
-     ", TT "class y", ".  The initialization function can be installed 
-     with",
-     PRE "new Z of X from Y := (z,y) -> ...",
-     "where ", TT "z", " denotes the new hash table of class ", TT "Z", " and parent
-     ", TT "x", " provided to the routine by the system."
-     }
-
 document { "specifying typical values",
      "For the purpose of construction good documentation automatically, it
      is useful to specify the type of value typically returned by a function
@@ -487,6 +436,7 @@ document { "How to get this program",
      }
 
 document { "syntax",
+     Headline => "an overview",
      "A newline ends a statement if it can, otherwise it acts like any
      white space.",
      EXAMPLE "2+\n3+\n4",
@@ -533,6 +483,7 @@ document { "syntax",
      }
 
 document { "debugging",
+     Headline => "an overview",
      "Here are some debugging tools.",
      SHIELD MENU {
 	  TO "assert",
@@ -571,57 +522,11 @@ document { "debugging",
 document { "subclass",
      "We say that a class X is a subclass of a class P if P is X, or
      P is the ", TO "parent", " of X, or P is the parent of the parent
-     of X, and so on.  See also ", TO "classes", "."
-     }
-
-document { "classes",
-     "Every thing ", TT "x", " belongs to a ", ITALIC "class", " ", TT "X", " -- a
-     hash table that indicates in a weak sort of way what type of thing ", TT "x", "
-     is.  We may also say that ", TT "x", " is an ", TO "instance", " 
-     of ", TT "X", ".  The mathematical notion of a set ", TT "X", " and an
-     element ", TT "x", " of ", TT "X", " can be 
-     modeled this way.  The class of ", TT "x", " can be obtained with the function
-     ", TO "class", ".",
-     PARA,
-     "Every thing ", TT "X", " also has a ", ITALIC "parent", " ", TT "P", ", which 
-     indicates a larger class to which every instance ", TT "x", " of ", TT "X", " belongs.  We 
-     also say that
-     ", TT "X", " is a ", TO "subclass", " of P.  For example, the mathematical
-     notion of a module P and a submodule ", TT "X", " may be modelled this way.
-     The parent of ", TT "x", " can be obtained with the function ", TO "parent", ".",
-     EXAMPLE {
-	  "parent 2",
-      	  "parent parent 2",
-      	  "class 2",
-      	  "parent class 2",
-      	  "class class 2",
-      	  "parent class class 2",
-	  },
-     PARA,
-     "The classes and parents provide a uniform way for operations on
-     things to locate the appropriate functions needed to perform them.
-     Please see ", TO "binary method", " now for a brief discussion.",
-     PARA,
-     "For more details, see one of the topics below.",
-     SHIELD MENU {
-	  TO "newClass",
-	  TO "new",
-	  TO "ancestor",
-	  TO "instance"
-	  },
-     "For related topics, see one of the following.",
-     SHIELD MENU {
-	  TO "uniform",
-	  TO "Thing",
-	  TO "Nothing",
-	  TO "Type",
-	  TO "MutableList",
-	  TO "MutableHashTable",
-	  TO "SelfInitializingType"
-	  }
+     of X, and so on.  See also ", TO "classes and types", "."
      }
 
 document { "system",
+     Headline => "an overview",
      "Loading files:",
      SHIELD MENU {
 	  TO "autoload",
@@ -948,6 +853,7 @@ document { "Getting started",
      }
 
 document { "executing other programs",
+     Headline => "an overview",
      "The ", TO "run", " command can be used to execute another program,
      after which control will return to Macaulay 2.",
      PARA,

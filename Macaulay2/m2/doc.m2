@@ -32,7 +32,7 @@ document { parent,
      PARA,
      "The parent of ", TO "Thing", " is ", TO "Thing", " itself (because every thing
      is a thing).",
-     SEEALSO "classes"
+     SEEALSO "classes and types"
      }
 
 document { Array,

@@ -363,10 +363,12 @@ document { "extracting information from chain complexes",
       	  "C.dd",
 	  },
      "If ", TT "C", " is a chain complex, then ", TT "C_i", " will produce 
-     the ", TT "i", "-th module in the complex, and ", TT "C.dd_i", " will 
+     the ", TT "i", "-th module in the complex, ", TT "C^i", " will produce
+     the ", TT "-i", "-th module in it, and ", TT "C.dd_i", " will 
      produce the differential whose source is ", TT "C_i", ".",
      EXAMPLE {
 	  "C_1",
+	  "C^-1",
 	  "C.dd_2"
 	  },
      "The function ", TO "betti", " can be used to display the ranks of the
@@ -458,6 +460,16 @@ document { "manipulating chain complexes",
      EXAMPLE {
 	  "prune Tor_1(M,N)"
 	  },
+     }
+
+document { "maps between chain complexes",
+     "One way to make maps between chain complexes is by lifting maps between
+     modules to resolutions of those modules.  First we make some modules.",
+     EXAMPLE {
+	  "R = QQ[x,y];",
+	  "M = coker vars R",
+	  "N = coker matrix {{x}}",
+	  },
      "Let's construct the natural map from ", TT "N", " to ", TT "M", ".",
      EXAMPLE {
 	  "f = map(M,N)"
@@ -466,7 +478,11 @@ document { "manipulating chain complexes",
      EXAMPLE {
 	  "g = res f"
 	  },
-     "We can form the mapping cone of that map.",
+     "We can check that it's a map of chain complexes this way.",
+     EXAMPLE {
+	  "g * (source g).dd == (target g).dd * g"
+	  },
+     "We can form the mapping cone of ", TT "g", ".",
      EXAMPLE {
 	  "F = cone g"
 	  },
@@ -477,15 +493,60 @@ document { "manipulating chain complexes",
 	  "prune HH_0 F",
 	  "prune HH_1 F",
 	  "prune kernel f",
+	  },
+     "There are more elementary ways to make maps between chain
+     complexes.  The identity map is available from ", TO "id", ".",
+     EXAMPLE {
+	  "C = res M",
+	  "id_C",
+	  "x * id_C",
+	  },
+     "We can use ", TO "map", " or ", TT "**", " to construct natural maps 
+     between chain complexes.",
+     EXAMPLE {
+	  "map(C ** R^1/x,C)",
+	  "g ** R^1/x"
+	  },
+     "There is a way to make a chain complex map by calling a function
+     for each spot that needs a map.",
+     EXAMPLE {
+	  "q = map(C,C,i -> (i+1) * id_(C_i))"
+	  },
+     "Of course, the formula we used doesn't yield a map of chain
+     complexes.",
+     EXAMPLE {
+	  "C.dd * q == q * C.dd"
 	  }
      }
 
-document { "maps between chain complexes",
-     "This node has not been written yet."
-     }
-
 document { "coherent sheaves",
-     "This node has not been written yet."
+     "The main reason to implement algebraic varieties is support the
+     computation of sheaf cohomology of coherent sheaves, which doesn't
+     have an immediate description in terms of graded modules.",
+     PARA,
+     "In this example, we use ", TO "cotangentSheaf", " to produce
+     the cotangent sheaf on a K3 surface and compute its sheaf
+     cohomology.",
+     EXAMPLE {
+	  "R = QQ[a,b,c,d]/(a^4+b^4+c^4+d^4);",
+	  "X = Proj R",
+	  "F = cotangentSheaf X",
+	  "HH^1(F)",
+	  },
+     "The result returned by ", TO "HH", " is actually the graded module
+     whose degree ", TT "i", " part is the sheaf cohomology group usually
+     denoted by ", TT "H^1(X,F(i))", ", so we must use ", TO "hilbertFunction", "
+     to compute the dimension of the degree 0 part.",
+     EXAMPLE {     
+	  "hilbertFunction(0,oo)"
+	  },
+     "Use the function ", TO "sheaf", " to convert a graded module to 
+     a coherent sheaf, and ", TO "module", " to get the graded module
+     back again.",
+     EXAMPLE {
+	  "module F",
+	  "sheaf coker matrix {{a,b}}"
+	  }
      }
 
 document { "Language and Programming Overview",
@@ -502,13 +563,14 @@ document { "Language and Programming Overview",
 	  TO "classes and types",
 	  TO "system",
 	  TO "debugging",
-	  TO "classes",
+	  TO "classes and types",
 	  TO "operators",
 	  TO "executing other programs",
 	  }
      }
 
 document { "variables and symbols",
+     Headline => "an overview",
      MENU {
 	  TO "valid names",
 	  TO "assigning values",
@@ -535,6 +597,7 @@ document { "functions",
      }
 
 document { "basic types",
+     Headline => "an overview",
      MENU {
 	  TO "strings",
 	  TO "nets",
@@ -545,6 +608,7 @@ document { "basic types",
      }
 
 document { "control structures",
+     Headline => "an overview",
      MENU {
 	  TO "loops",
 	  TO "mapping over lists",
@@ -555,6 +619,7 @@ document { "control structures",
      }
 
 document { "input and output",
+     Headline => "an overview",
      MENU {
 	  TO "printing to the screen",
 	  TO "reading files",
@@ -566,18 +631,15 @@ document { "input and output",
 	  }
      }
 
-document { "interfacing with the system",
-     MENU {
-	  }
-     }
-
 document { "classes and types",
+     Headline => "an overview",
      MENU {
 	  TO "what a class is",
+	  TO "binary methods",
 	  TO "installing methods",
 	  TO "inheritance from parents",
-	  TO "making new types",
-	  TO "printing and formatting for new types",
+	  TO "making new classes",
+	  TO "printing and formatting for new classes",
 	  (
 	       "method functions",
 	       MENU {
@@ -1599,7 +1661,7 @@ document { "reading files",
      "The command ", TO "needs", " can be used to load a file only if
      it hasn't already been loaded.",
      EXAMPLE ///needs "sample"///,
-     "For debugging or dipslay purposes, it is sometimes useful to be able 
+     "For debugging or display purposes, it is sometimes useful to be able 
      to simulate entering the lines of a file one by one, so they appear
      on the screen along with prompts and output lines.  We use
      ", TO "input", " for
@@ -1848,7 +1910,7 @@ document { "using sockets",
      SEEALSO { "openInOut", "openListener" }
      }
 
-document { "making new types",
+document { "making new classes",
      "This node has not been written yet."
      }
 
@@ -1857,7 +1919,108 @@ document { "making a new method function",
      }
 
 document { "what a class is",
-     "This node has not been written yet."
+     "In Macaulay 2 the behavior of a function depends heavily on the types
+     of the arguments it's presented with.  For example, the expression ", TT "x+y", "
+     means addition if ", TT "x", " and ", TT "y", " are integers, but it
+     means union if ", TT "x", " and ", TT "y", " are sets.  To implement this
+     in a clean fashion, we decided to store the code for doing things to sets
+     in something called ", TO "Set", " and to store the code for doing things to integers
+     in something called ", TO "ZZ", ".  We say that each integer is an ", TO "instance", "
+     of ", TO "ZZ", ", and ", TO "ZZ", " is the ", TO "class", " (or type) of each integer.",
+     PARA,
+     EXAMPLE {
+	  "class 33",
+	  "instance(33,ZZ)"
+	  },
+     "The corresponding mathematical idea is that ", TT "ZZ", " is the set of
+     all integers.",
+     PARA,
+     "The class of all classes or types is called ", TO "Type", ".",
+     EXAMPLE "instance(ZZ,Type)",
+     "Everything has a class, and every class has a ", TO "parent", ".  The 
+     parent class represents a broader class of objects, and is used to
+     contain code that applies to the broader class.  For example, ", TO "ZZ", "
+     is a ring, and every ring is also a type.",
+     EXAMPLE {
+	  "class ZZ",
+	  "parent class ZZ"
+	  },
+     "Types are implemented as hash tables -- it's a versatile way of storing
+     bits of code that are needed in various situations; the keys for the
+     hash table are constructed in a certain way from the function and the
+     types of its arguments whose details the user doesn't need to know.",
+     PARA,
+     "For more details, see one of the topics below.",
+     SHIELD MENU {
+	  TO "class",
+	  TO "parent",
+	  TO "instance",
+	  TO "ancestor",
+	  TO "newClass",
+	  TO "new",
+	  },
+     "For related topics, see one of the following.",
+     SHIELD MENU {
+	  TO "uniform",
+	  TO "Thing",
+	  TO "Nothing",
+	  TO "Type",
+	  TO "MutableList",
+	  TO "MutableHashTable",
+	  TO "SelfInitializingType"
+	  }
+     }
+
+document { "binary methods",
+     "The method for computing a sum ", TT "x+y", " depends on the types of ", TT "x", " and ", TT "y", ".
+     For example, the method for adding an integer ", TT "x", " and a polynomial 
+     ", TT "y", " differs from the method for adding two integers modulo 111.  Because
+     both the type of ", TT "x", " and the type of ", TT "y", " must enter into the selection of
+     the method, we refer to these methods as binary methods.  Each binary
+     method is a function of two variables, and is stored either in the class
+     of ", TT "x", " or in the class of ", TT "y", ".  See also ", TO "lookup", ".",
+     PARA,
+     "Let's assume that ", TT "X", " is the class (or type) of ", TT "x", ", 
+     and that ", TT "Y", " is the class of ", TT "y", ".  The way to install a 
+     method for the addition of an instance ", TT "x", " of class ", TT "X", " to 
+     an instance ", TT "y", " of class ", TT "Y", " is with a statement of the form ",
+     PRE "X + Y := (x,y) -> ( ... )",
+     "where ", TT "( ... )", " represents the body of the function, consisting of suitable
+     code for the operation at hand.",
+     PARA,
+     "The method installed by the code above is automatically inherited by 
+     ", TO "subclass", "es of ", TT "X", " and ", TT "Y", ".  Here is a brief
+     description of the way this works.  Suppose ", TT "X", " is the 
+     ", TO "parent", " of ", TT "P", " and ", TT "Y", " is the parent of X.  When 
+     a sum ", TT "p+q", " is evaluated where the class of ", TT "p", " is 
+     ", TT "P", " and the class of ", TT "q", " is ", TT "Q", ", then the binary
+     method for ", TT "P+Q", " is applied, unless there isn't one, in which
+     case the binary method for ", TT "P+Y", " is applied, unless there isn't
+     one, in which case the binary method for ", TT "X+Q", " is applied,
+     unless there isn't one, in which case the binary method for ", TT "P+Q", "
+     is applied.  In general this search for a binary method continues all
+     the way up the chain of parents to the topmost ancestor of everything,
+     which is called ", TO "Thing", ".",
+     PARA,
+     "As an extreme example of inheritance, the code ", 
+     PRE "Thing + Thing := (x,y) -> ( ... )",
+     "will install a binary method for adding any two things, which will take
+     effect as a last resort whenever more a specifically defined method
+     isn't found.",
+     PARA,
+     "The ", TO "new", " function also uses a ternary lookup table to
+     find the initialization function for the new thing, and should
+     be thought of as a ternary operator.  The initialization function
+     for a new expression created by",
+     PRE "new Z of x from y",
+     "is obtained as",
+     PRE "lookup(NewMethod,Z,X,Y)",
+     "Here ", TT "X", " is ", TT "class x", ", and ", TT "Y", " is
+     ", TT "class y", ".  The initialization function can be installed 
+     with",
+     PRE "new Z of X from Y := (z,y) -> ...",
+     "where ", TT "z", " denotes the new hash table of class ", TT "Z", " and parent
+     ", TT "x", " provided to the routine by the system."
      }
 
 document { "installing methods",
@@ -1909,21 +2072,118 @@ document { "installing methods",
      MENU {
 	  TO "method"
 	  },
-     SEEALSO{"binary method", "classes", "lookup"}
-     }
-
-document { "method functions with a variable number of arguments",
-     "This node has not been written yet."
+     SEEALSO{"binary methods", "classes and types", "lookup"}
      }
 
 document { "inheritance from parents",
-     "This node has not been written yet."
+     "Each class has a parent class which can be used as a container
+     for bits of code that apply to a more general class of objects.
+     In this section we show how this mechanism works in detail.",
+     PARA,
+     "We begin by creating a new type of basic list.",
+     EXAMPLE {
+	  "X = new Type of BasicList",
+	  "parent X",
+	  },
+     "The parent of ", TT "X", " is ", TO "BasicList", ", as desired,
+     thus methods applicable to basic lists will also apply also
+     to instances of ", TT "X", ".  One such method is the method
+     for creating a net from a basic list; here is its code:",
+     EXAMPLE "code(net,BasicList)",
+     "This code is run automatically to display an instance of ", TT "X", ",
+     so if we make one, we'll be able to see what it is:",
+     EXAMPLE "x = new X from {2,3,4}",
+     "Now let's imagine we wish to treat instances of ", TT "X", " as
+     vectors, and to negate one by negating its entries.  As it
+     happens, no method for this has been installed for basic lists,
+     as we can check with ", TO "lookup", ".",
+     EXAMPLE "lookup(symbol -, X) === null",
+     "We install and test a new method as described in ", TT "installing methods", ".",
+     EXAMPLE {
+	  "- X := t -> apply(t,i -> -i)",
+	  "- x"
+	  },
+     "This method will apply automatically to subclasses of ", TT "X", ",
+     as we see now.",
+     EXAMPLE {
+	  "Y = new Type of X;",
+	  "y = new Y from {4,5,6}",
+	  "- y"
+	  },
+     "For ", TT "binary methods", ", there is an apparent ambiguity in
+     deciding exactly how inheritance will work.  Let's illustrate
+     by making a new subclass ", TT "Z", " of ", TT "X", ".",
+     EXAMPLE {
+	  "Z = new Type of X;",
+	  "z = new Z from {7,8,9}",
+	  },
+     "Now let's install two methods, either of which might conceivably
+     be applied to evaluate the expression ", TT "y+z", ", and see
+     what happens.",
+     EXAMPLE {
+	  "Y + X := (a,b) -> XY",
+	  "X + Z := (a,b) -> ZX",
+	  "y + z"
+	  },
+     "The result is the symbol ", TT "XY", ".  The reason is that
+     after finding that no method applies directly for adding
+     an instance of Y to an instance of Z, we replace Z by its
+     parent X, and look again, and so on.  (After enough unsuccessful 
+     iterations of this, we would replace the first type Y by its 
+     parent, reset the second type to Z, and continue the search.)",
+     PARA,
+     "The same search order applies to method functions defined with
+     ", TO "method", "."
+     }
+
+document { "method functions with a variable number of arguments",
+     "We use the ", TO "SingleArgumentDispatch", " option of ", TO "method", " to
+     create a method function that will receive all of its arguments
+     as a single sequence whenever it is called with more than
+     one argument.  Here is an example.",
+     EXAMPLE {
+	  "f = method(SingleArgumentDispatch=>true);",
+	  "f ZZ := i -> -i;",
+	  "f Sequence := S -> reverse S;",
+	  "f 44",
+	  "f(3,4,5)"
+	  },
+     PARA,
+     "Normally, the types of up to the three arguments would have been
+     considered."
+     }
+
+document { method => Options,
+     Headline => "create a method function that accepts optional arguments",
+     TT "f = method(Options => {a=>x, b=>y, ...})", " -- creates a method
+     function that accepts optional arguments ", TT "a", ", ", TT "b", ", ..., with default
+     values ", TT "x", ", ", TT "y", ", ...",
+     PARA,
+     "The list of options could be replaced by the corresponding
+     ", TT "OptionTable", "."
      }
 
 document { "method functions with optional arguments",
-     "This node has not been written yet."
+     "In the section entitled ", TO "making new functions with optional arguments", "
+     we have seen how to make single functions that handle optional arguments.
+     Method functions created with ", TO "method", " involve a bit of
+     extra handling, so the optional arguments do not participate when
+     deciding which method function will be applied in a given evaluation.",
+     EXAMPLE {
+	  "f = method(Options => {limit => 4000});",
+	  },
+     "We install a method to be used when ", TT "f", " is applied
+     to an integer; the body of the function accepts first the table
+     ", TT "opt", " of optional arguments and second the integer ", TT "i", ".",
+     EXAMPLE {
+	  "f ZZ := opts -> i -> [i, opts#limit];",
+	  },
+     EXAMPLE {
+	  "f 44",
+	  "f(55,limit => 20000)"
+	  }
      }
 
-document { "printing and formatting for new types",
+document { "printing and formatting for new classes",
      "This node has not been written yet."
      }
