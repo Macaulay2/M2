@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+Documentation option "Filename" removed.
+
 The strategy called "Elimination" for "saturate" has been renamed to
 "Eliminate".  This will allow us to have a package called Elimination.
 
@@ -432,7 +434,7 @@ directories m2/cache/doc and packages/cache/doc.  The idea is to make it easy
 for the user to generate documentation.  The documentation for source code in
 a file named foo/bar.html will be located in foo/cache/doc/*.html.  The
 particular file names used are constructed from the name of the documentation
-node in a deterministic way.  Using an documentation option such as
+node in a deterministic way.  Using a documentation option such as
 	FileName => "bar"
 will force the use of the filename foo/cache/doc/bar.html .
 

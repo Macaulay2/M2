@@ -498,14 +498,14 @@ document {
      }
 
 document {
-     Key => debugPackage,
+     Key => debug,
      Headline => "open private dictionary of a package"
      }
 
 document {
-     Key => (debugPackage,Package),
+     Key => (debug,Package),
      Headline => "open private dictionary of a package",
-     Usage => "debugPackage p",
+     Usage => "debug p",
      Inputs => {
 	  "p" => "",
 	  },

@@ -45,7 +45,6 @@ document {
      Caveat => {"warning"},
      SeeAlso => {link},
      Subnodes => {hypertextlist},
-     FileName => "filename" -- this is generally not used
      }///,
      PARA "Special documentation entries:",
      UL {
@@ -59,8 +58,7 @@ document {
     	  TOH Caveat,
 	  TOH EXAMPLE,
 	  TOH SeeAlso,
-       TOH Subnodes,	    
-	  TOH FileName
+          TOH Subnodes
 	  },
 	SeeAlso => {"writing documentation", hypertext}
   }
@@ -186,16 +184,6 @@ document {
 	  { "the headline string will be used to annotate itemized 
 		  lists of cross references to the documentation ", TO "Key" }
 	  },///,
-	SeeAlso => {document}
-	}
-document {
-     Key => FileName, 
-	Headline => "name of the generated documentation file",
-	Usage => "document { ... , FileName => \"filename\", ... }",
-	Function => document,
-   	Caveat => {"This option should ", STRONG "not", " normally be used."},
-	"This seldom used option will force the name of the generated html file to be \"filename.html\". 
-	Note that this option is not a visible part of the documentation.",
 	SeeAlso => {document}
 	}
 document {

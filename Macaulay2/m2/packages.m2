@@ -286,8 +286,8 @@ beginDocumentation = () -> (
 	  );
      )
 
-debugPackage = method()
-debugPackage Package := pkg -> (
+debug = method()
+debug Package := pkg -> (
      d := pkg#"private dictionary";
      if not member(d,globalDictionaries) then (
 	  globalDictionaries = prepend(d,globalDictionaries);

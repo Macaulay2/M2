@@ -304,7 +304,6 @@ document {
 
 document {
      Key => "Macaulay2",
-     FileName => "index",
      PARA IMG (LAYOUT#"images" | "9planets.gif", "image of nine planets"),
      PARA {
 	  "This documentation addresses version ", version#"VERSION", " of Macaulay 2."
