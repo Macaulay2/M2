@@ -14,10 +14,16 @@ endif
 ifdef DUMPDATA
 ARGS := '-eloaddata("../../cache/Macaulay2-$(ARCH).data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
 else
+ifeq "$(CC)" "cl"
+## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
+## and does strange things to quotation marks.
+ARGS := -silent -ephase=1 ../../m2/setup.m2 -ephase=0 '-epath=append(path,\"..\")' '-erunStartFunctions()' '-eerrorDepth(0)'
+else
 ARGS := -silent -ephase=1 ../../m2/setup.m2 -ephase=0 '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)'
+endif
 endif
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
+	  ../../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@

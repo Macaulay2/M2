@@ -12,7 +12,7 @@
 .PHONY : all always dirs clean FACTORYmade FACTORYconfigured FACTORYexports \
 	announce MACAULAY2 MACAULAY2.doc doc port default
 ################################# default
-default: all doc
+default: all # doc
 ################################# all
 all::
 #################################
@@ -269,7 +269,13 @@ endif
 	mv tmp.tmp $@
 clean::; rm -f Makeconf.h
 ###################### Macaulay 2 binary distribution
-all:: MACAULAY2
+all :: MACAULAY2
+ifeq "$(CC)" "cl"
+all :: Macaulay2-$(DESC).zip
+else
+all :: Macaulay2-$(DESC).tar.gz
+endif
+
 MACAULAY2: Macaulay2
 	$(MAKE) -C Macaulay2 all tests
 DISTFILES := 	Macaulay2/README \
@@ -283,8 +289,12 @@ Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) rmcores
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
 	@echo "-----------------------------------------------------------------------------"
+Macaulay2-$(DESC).zip : Makefile $(DISTFILES)
+	winzip32 -u -r -p $@ @WindowsNT/DistributionFiles.lst
+	@echo "-----------------------------------------------------------------------------"
+	@echo "  $@ contains everything but the documentation"
+	@echo "-----------------------------------------------------------------------------"
 clean ::; rm -f Macaulay2-$(DESC).tar.gz
-all :: MACAULAY2 Macaulay2-$(DESC).tar.gz
 clean ::; $(MAKE) -C Macaulay2 clean
 ###################### Macaulay 2 porting source distribution
 PORTING := CVS \

@@ -57,7 +57,7 @@ you have both sun4c machines and sun4d machines, you can run 'setup' on each
 of these in the same directory tree.
 
 ------------------------------------------------------------------
-2.1. Notes on Windows 95 installation
+2.1. Notes on Windows 95/NT installation
 ------------------------------------------------------------------
 
     After unpacking, check to ensure that there are less than a dozen files
