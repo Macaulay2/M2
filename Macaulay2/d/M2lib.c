@@ -584,10 +584,10 @@ char **argv;
      actors5_TIME = tostring(current_time);
 #ifdef DUMPDATA
      actors5_DUMPDATA = TRUE;
+     if (!haveDumpdata()) actors5_DUMPDATA = FALSE; /* even if dumpdata was enabled at configuration time, we may not have implemented it in the C code */
 #else
      actors5_DUMPDATA = FALSE;
 #endif
-     if (!haveDumpdata()) actors5_DUMPDATA = FALSE; /* even if dumpdata was enable at configuration time, we may not have implemented it in the C code */
      {
 	  char buf[100];
 	  unsigned major, minor, alpha;
