@@ -649,6 +649,13 @@ const MatrixOrNull * IM2_Matrix_get_coeffs(const M2_arrayint vars,
   return M->coeffs(vars,monoms);
 }
 
+const MatrixOrNull * rawCoefficients(const M2_arrayint vars,
+				     const Matrix *monoms,
+				     const Matrix *M)
+{
+  return M->coeffs(vars,monoms);
+}
+
 const MatrixOrNull * IM2_Matrix_monomials(const M2_arrayint vars, 
 					  const Matrix *M)
 {

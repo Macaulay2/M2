@@ -31,20 +31,25 @@ protected:
 protected:
   void initialize(const Ring *RR);
   void symm1(int lastn, int pow) const;   // privately called by 'symm'.
+
+  virtual FreeModule *new_free() const;
 public:
   FreeModule(const Ring *R);
   FreeModule(const Ring *R, int n);
+#if 0
   FreeModule(const Ring *RR, const FreeModule *F);
-
+#endif
   static FreeModule *make_schreyer(const Matrix *m);
   Matrix * get_induced_order() const;
 
   virtual ~FreeModule();
 
-  virtual FreeModule *new_free() const;
 
-  void append(const int *d); // append a new row to a FREE or FREE_POLY
+public:
+  void append(const int *d);
+  void append_schreyer(const int *d, const int *monom, int compare_num); // append to a Schreyer order.
 
+public:
   const Ring *  get_ring()      const { return R; }
   const Monoid * degree_monoid() const { return R->degree_monoid(); }
   const SchreyerOrder * get_schreyer_order() const { return schreyer; }

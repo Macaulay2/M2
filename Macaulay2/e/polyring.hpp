@@ -85,9 +85,10 @@ protected:
   QuotientInfo Quotient;
 
   array<ring_elem> _quotient_ideal;
-  MonomialIdeal * _Rideal;	// This is used if the coeff ring is not ZZ.
   TermIdeal *_RidealZZ;		// This is used if the coeff ring is ZZ.
 #endif
+  MonomialIdeal * _Rideal;	// This is used if the coeff ring is not ZZ.
+
 
   bool _coefficients_are_ZZ;
   bool _isgraded;
@@ -114,12 +115,15 @@ public:
   GBRing *get_gb_ring() const { return _gb_ring; }
   const PolynomialRing * get_flattened_ring() const {  return flattened_ring; }
 
-  // Queries for quotient ring
+  // Quotient ring information
   bool        is_quotient_ring() const { return (_base_ring != NULL); }
   const PolynomialRing * get_base_poly_ring() const { return _base_ring; }
+  MonomialIdeal *  get_quotient_monomials() const { return _Rideal; }
   
-
+  // skew commutativity 
   bool is_skew_commutative() const { return _is_skew; }
+  int n_skew_commutative_vars() const { return _skew.n_skew_vars(); }
+  int skew_variable(int i) const { return _skew.skew_variable(i); }
   bool is_skew_var(int v) const { return _skew.is_skew_var(v); }
 
   virtual bool is_pid() const       { return (_nvars == 1 && K_->is_field())
