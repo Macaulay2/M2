@@ -21,7 +21,6 @@ buildPackage := null					    -- name of the package currently being built
 topNodeName := null					    -- name of the top node of this package
 topFileName := "index.html"				    -- top node file name
 masterFileName := "master.html";			    -- master index file of all topics
-finalDirectory := "/usr/local/"
 buildDirectory := "/tmp/"				    -- the root of the relative paths:
 htmlDirectory := ""					    -- relative path to the html directory
 
@@ -42,11 +41,7 @@ htmlFilename = (nodename) -> (	-- returns the relative path from the PREFIX to t
 	  )
      else (
 	  basename := toFilename nodename | ".html";
-	  if buildPackage === "Macaulay2"
-	  or finalDirectory =!= "" 
-	  and fileExists minimizeFilename(finalDirectory | "/" | LAYOUT#"htmldoc" | basename)
-	  then LAYOUT#"htmldoc" | basename
-	  else LAYOUT#"packagehtml" buildPackage | basename
+	  LAYOUT#"packagehtml" buildPackage | basename	    -- not right yet!
 	  )
      )
 
@@ -290,10 +285,9 @@ setupButtons := () -> (
      upButton = BUTTON(gifpath|"up.gif","up");
      )
 
-makeHTML = (builddir,finaldir) -> (
+makeHTML = (builddir) -> (
      gifpath := LAYOUT#"images";
      buildDirectory = minimizeFilename(builddir | "/");
-     finalDirectory = minimizeFilename(finaldir | "/");
      docdatabase = DocDatabase;				    -- used to be an argument
      topNodeName = "Macaulay 2";			    -- used to be an argument
      htmlDirectory = LAYOUT#"htmldoc";
@@ -362,18 +356,16 @@ makeMasterIndex := keylist -> (
      )
 
 assemble = method(Options => { 
-	  TemporaryDirectory => "tmp/", 
-	  FinalDirectory => "tmp/",
+	  Prefix => "tmp/", 
 	  Encapsulate => true
 	  })
 
 assemble Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = pkg.name;
-     buildDirectory = o.TemporaryDirectory | "/";
+     buildDirectory = o.Prefix | "/";
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Version|"/";
      buildPackage = minimizeFilename buildPackage;
-     finalDirectory = minimizeFilename(o.FinalDirectory | "/");
      stderr << "--assembling package " << pkg << " in " << buildDirectory << endl;
 
      currentSourceDir := pkg#"file directory";
@@ -434,7 +426,7 @@ assemble Package := o -> pkg -> (
 			 ));
 	       -- read, separate, and store example output
 	       pkg#"example outputs"#nodename = drop(separateM2output get outf,-1);
-	       stderr << "node " << nodename << " : " << peek \ net \ pkg#"example outputs"#nodename << endl;
+	       -- stderr << "node " << nodename << " : " << peek \ net \ pkg#"example outputs"#nodename << endl;
 	       ));
      if haderror then error "error occurred running example files";
 
