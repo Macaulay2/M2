@@ -107,8 +107,9 @@ cacheFileName(String,String,String) := (prefix,key,val) -> (
      (indexTable prefix)#setFun(key,val)
      )
 cacheFileName(List,String) := (path,key) -> (
-     apply(
+     w := apply(
 	  select(path, prefix -> (indexTable prefix)#queryFun key),
 	  prefix -> (indexTable prefix)#getFun key
-	  )
+	  );
+     if #w === 0 then {cacheFileName(first path, key)} else w
      )

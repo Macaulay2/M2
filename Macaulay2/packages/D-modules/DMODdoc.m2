@@ -1,4 +1,4 @@
-needs "D-modules.m2";
+needs "D-modules/Dloadfile.m2";
 document { "D-modules Package",
      "Welcome to the online documentation for the Macaulay 2 
      D-modules package.",
