@@ -203,7 +203,7 @@ document {
 document {
      Key => "Reading the documentation",
      "The documentation for Macaulay 2 is available in several formats.
-     The directory ", TT (LAYOUT#"packagehtml" "Main"), " 
+     The directory ", TT (LAYOUT#"packagehtml" "Macaulay2"), " 
      contains the documentation in html form, suitable for viewing with a web 
      browser, and this is the best way to view it.  The command ", TT "M2-help", "
      will start your favorite web browser and point direct it to the web 
@@ -299,7 +299,7 @@ document {
 	  the main Macaulay 2 system.  The remaining entries are functions.  These provide paths to various
 	  types of files associated with packages, and accept a string containing the name of the package
 	  as argument.  Finally, for convenience, many Macaulay 2 files are regarded as being associate with a special package
-	  called ", TO "Main", "."
+	  called ", TO "Macaulay2", "."
      	  },
      EXAMPLE "LAYOUT",
      PARA {
@@ -309,9 +309,9 @@ document {
      }
 
 document {
-     Key => "Main",
+     Key => "Macaulay2",
      OldSynopsis => {
-	  "Main"
+	  "Macaulay2"
 	  },
      PARA {
 	  "This package is the main Macaulay 2 package.  Its dictionary contains all the global Macaulay 2 symbols."

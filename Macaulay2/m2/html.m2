@@ -379,13 +379,13 @@ installPackage Package := o -> pkg -> (
      currentPackage = pkg;
      topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg); -- duplicated above
      nodes := packageNodes(pkg,topDocumentTag);
-     buildPackage = if pkg === Main then "Macaulay2" else pkg#"title";
+     buildPackage = if pkg === Macaulay2 then "Macaulay2" else pkg#"title";
      buildDirectory = minimizeFilename(o.Prefix | "/");
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
      buildPackage = minimizeFilename buildPackage;
      stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
 
-     if pkg =!= Main then (				    -- Main sources are handled separately
+     if pkg =!= Macaulay2 then (				    -- Macaulay2 sources are handled separately
 
 	  currentSourceDir := pkg#"source directory";
 	  stderr << "--using package sources found in " << currentSourceDir << endl;
@@ -446,7 +446,7 @@ installPackage Package := o -> pkg -> (
 		    )
 	       else (
 		    stderr << "--making example results file for " << nodename << endl;
-		    loadargs := if pkg === Main then "" else "-e 'load \""|fn|"\"'";
+		    loadargs := if pkg === Macaulay2 then "" else "-e 'load \""|fn|"\"'";
 		    cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --print-width 80 --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf;
 		    stderr << cmd << endl;
 		    r := run cmd;
@@ -494,7 +494,7 @@ installPackage Package := o -> pkg -> (
      printWidth = 79;
      infodir := buildDirectory|LAYOUT#"info";
      makeDirectory infodir;
-     infotitle := if pkg.Options.BriefTitle =!= null then pkg.Options.BriefTitle else pkg#"title";
+     infotitle := pkg#"title";
      infobasename := infotitle|".info";
      infofile := openOut (infodir|infobasename);
      stderr << "--making info file in " << infofile << endl;

@@ -194,8 +194,8 @@ verifyTag Option   := s -> error "old style option documentation tag"
 -- We need three bits of information about a document tag:
 --     the original key	    	    e.g., (operator **,Module,Module)
 --     the formatted key            e.g., "Module ** Module"
---     the package                  e.g., Main, or null if there is none
---     the package title            e.g., "Main", or "" if there is none
+--     the package                  e.g., Macaulay2, or null if there is none
+--     the package title            e.g., "Macaulay2", or "" if there is none
 -- Here we assemble them together, so we don't have to recompute the information later.
 DocumentTag = new Type of BasicList
 DocumentTag.synonym = "document tag"

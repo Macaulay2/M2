@@ -322,13 +322,14 @@ addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, comm
 
 info HR := net HR := x -> "-----------------------------------------------------------------------------"
 
-info UL := info OL := info DL :=
-net UL := net OL := net DL := x -> (
+ULop := op -> x -> (
      s := "  * ";
      printWidth = printWidth - #s;
-     r := stack apply(toList x, i -> s | net i);
+     r := stack apply(toList x, i -> s | op i);
      printWidth = printWidth + #s;
      r)
+info UL := info OL := info DL := ULop info
+net UL := net OL := net DL := ULop net
 
 * String := x -> help x					    -- so the user can cut paste the menu line to get help!
 
@@ -382,11 +383,13 @@ tex TO := x -> (
 	  }
      )
 
-net  TO := x -> concatenate( "\"",     DocumentTag.FormattedKey x#0, "\"", if x#?1 then x#1)
+net TO  := x -> concatenate( "\"",     DocumentTag.FormattedKey x#0, "\"", if x#?1 then x#1)
 net TO2 := x -> x#1
 
-info TO := x -> concatenate( "*Note ", DocumentTag.FormattedKey x#0, "::")
-info TO2:= x -> x#1					    -- link won't be active...
+info TO := x -> (
+     fkey := DocumentTag.FormattedKey x#0;
+     concatenate(fkey, if x#?1 then x#1, " (*Note ", fkey, "::)"))
+info TO2:= x -> concatenate( x#1, " (*Note ", DocumentTag.FormattedKey x#0, "::)")
 
 info IMG := net IMG := tex IMG  := x -> ""
 info HREF := net HREF := x -> net last x

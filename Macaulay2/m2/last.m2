@@ -27,13 +27,13 @@ RawMatrix.BeforePrint = Matrix.BeforePrint = RingElement.BeforePrint = List.Befo
 String.BeforePrint = x -> wr("",x)
 
 -- make sure this is after all global symbols are defined or erased
-closePackage "Main"
+closePackage "Macaulay2"
 
-currentPackage = Main
+currentPackage = Macaulay2
 load "Macaulay2-doc.m2"
 currentPackage = null
 
-addStartFunction( () -> if sourceHomeDirectory =!= null then Main#"source directory" = sourceHomeDirectory )
+addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2#"source directory" = sourceHomeDirectory )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
