@@ -24,8 +24,22 @@ errorDepth = 0
 -----------------
 needs "raw-util.m2"
 errorDepth = 0
+
+
+-- bug here...
+R = polyring(rawZZ(),1:symbol x)
+R = raw (ZZ[symbol x])
+f = mat{{R_0}}
+F = rawFreeModule(R,1)
+G = rawFreeModule(R,1:-2)
+h = rawMatrixRemake2 (show "args to rawMatrixRemake2:") (F,G,1:3,f,0)
+rawMultiDegree h
+--
+
+
 R = polyring(rawZZ(), (symbol a .. symbol g))
 r5 = rawIdentity(R^5,0)
+
 assert try (rawMatrixEntry(r5,1,2,a+b); false) else true
 F = R^0
 rawIdentity(F,0)
