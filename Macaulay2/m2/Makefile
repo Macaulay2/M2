@@ -164,13 +164,14 @@ test : test.m2 phase1 $(SCRIPTS)
 tests:: $(SCRIPTS)
 	 $(MAKE) -k -C ../tmp/Tests -f ../../m2/Makefile.tests
 
-tests:: test1 test2
-test1:
+tests::
 	echo 2+3 | M2
 	touch $@
-test2: ../util/screen
+ifeq ($(OS),Linux)
+tests:: ../util/screen
 	echo 2+3 | ../util/screen M2
 	touch $@
+endif
 
 gdb : ; gdb ../bin/Macaulay2
 
