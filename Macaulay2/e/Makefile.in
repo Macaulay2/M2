@@ -190,7 +190,7 @@ C_FILES = mac2
 
 ifdef ARING
 #NAMES += ARING/polywrap
-NAMES += ARING/poly
+Names += ARING/poly
 endif
 
 

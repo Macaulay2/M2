@@ -25,6 +25,17 @@ doit = (i) -> (
      << newline << flush;
      )
 
+doit = (i) -> (
+     h := hypers_(0,i);
+     J1 := J + ideal(h);
+     << newline << flush;
+     << "--- n = " << i << " ideal = " << hypers_(0,i) << " ---" << flush;
+     << newline << flush;
+     -- Now the hard part
+     A := (ring J1)/J1;
+     )
+
+
 makeHyperplanes = (J) -> (
     I := matrix basis(2,coker gens J);
     c := numgens source I;
@@ -34,10 +45,38 @@ makeHyperplanes = (J) -> (
 
 kk = ZZ/31
 R = kk[x,y,z,u,v,w,SkewCommutative => true]
+R = kk[x,y,z,u,v,w]
 J = ideal(x*y,y*v+x*w+u*w,u*v+y*w)
 time hypers = makeHyperplanes J;
+
+-- Shortened version of the leak
+kk = ZZ/31
+R = kk[x,y,z,u,v,w]
+J = ideal(x)
+K = ideal(0_R)
+doit = (i) -> (
+     h := 0_R;
+     J1 := J + ideal(h);
+     A := R/J1;
+     )
+doit = (i) -> (
+     J1 := J + K;
+     A := R/J1;
+     )
+doit = (i) -> (
+     A := R/x;
+     )
+
+-- Shortened version of the leak
+R = ZZ/31[x]
+doit = (i) -> R/x
+
+doit = (i) -> (R/x;)
+     A := R/x;
+     )
+
 -- time scan(numgens source hypers, i -> doit i);
-n = 6
+n = 1000
 collectGarbage()
 collectGarbage()
 collectGarbage()

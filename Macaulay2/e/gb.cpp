@@ -7,6 +7,7 @@
 #include "text_io.hpp"
 
 int comp_printlevel = 0;
+int nreductions = 0;
 
 extern ring_elem hilb(const Matrix &M, const Ring *RR);
 
@@ -460,6 +461,13 @@ void GB_comp::gb_reduce(vec &f, vec &fsyz)
   int *reduce_ndiv = a_reduce_ndiv.alloc(M->n_vars());
   int count = 0;
   int *s = M->make_one();
+  if (comp_printlevel == 10)
+    {
+      buffer o;
+      o << "reducing ";
+      F->elem_text_out(o,f);
+      emit_line(o.str());
+    }
   while (f != NULL)
     {
       Bag *b;
@@ -472,6 +480,7 @@ void GB_comp::gb_reduce(vec &f, vec &fsyz)
 	  F->imp_ring_cancel_lead_term(f, g, coeff, reduce_ndiv);
 	  R->Ncoeffs()->remove(coeff);
 	  count++;
+	  nreductions++;
 	}
       else if (monideals[f->comp]->mi_search.search_expvector(div_totalexp, b))
 	{
@@ -480,6 +489,18 @@ void GB_comp::gb_reduce(vec &f, vec &fsyz)
 	  Fsyz->subtract_multiple_to(fsyz, coeff, reduce_ndiv, q->fsyz);
 	  R->Ncoeffs()->remove(coeff);
 	  count++;
+	  nreductions++;
+	  if (comp_printlevel == 10)
+	    {
+	      buffer o;
+	      o << "  reduced by ";
+	      F->elem_text_out(o,q->f);
+	      o << newline;
+	      o << "    giving ";
+	      F->elem_text_out(o,f);
+	      o << newline;
+	      emit(o.str());
+	    }
 	}
       else
 	{
@@ -1026,8 +1047,10 @@ int GB_comp::calc(const int *deg, const intarray &stop)
       o << "Number of gb elements       = " << n_gb << newline;
       o << "Number of gcd=1 pairs       = " << n_saved_gcd << newline;
       o << "Number of pairs computed    = " << n_computed << newline;
+      o << "Number of reductions        = " << nreductions << newline;
       emit(o.str());
     }
+  nreductions = 0;
   return is_done;
 }
 

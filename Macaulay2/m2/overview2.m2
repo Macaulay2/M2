@@ -306,19 +306,6 @@ document { "bases of parts of modules",
 	  },
      }
 
-document { "chain complexes",
-     Headline => "an overview",
-     "In this section we present an overview of chain complexes. For
-     details, see ", TO "ChainComplex", " and ", TO "ChainComplexMap", ".",
-     PARA,
-     MENU {
-	  TO "free resolutions of modules",
-	  TO "extracting information from chain complexes",
-	  TO "making chain complexes by hand",
-	  TO "manipulating chain complexes",
-	  TO "maps between chain complexes"
-	  }
-     }
 
 document { "free resolutions of modules",
      "The function ", TO "resolution", " (also called ", TO "res", "),

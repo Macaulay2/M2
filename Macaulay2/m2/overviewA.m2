@@ -21,7 +21,7 @@ document { "Mathematical Overview",
 	  TO "Groebner bases and related computations",
 	  TO "chain complexes",
 	  TO "varieties",
-	  TO "external libraries",
+	  TO "using external libraries",
 	  ("specialized routines",
 	       MENU {
 		    TO "commutative algebra",
@@ -36,13 +36,12 @@ document { "Mathematical Overview",
 ----------------------------
 
 document { "rings",
-     Headline => "an overview",
+     HEADER2 "An overview",
      "Macaulay 2 differs from computer algebra systems such as maple and
      mathematica, in that rings are first class objects.  This means that
      before making polynomials or matrices, you must create a ring where
      you give the variables that you want, and the kinds of coefficients
      you want (e.g. rational numbers, or integers modulo a prime number).",
-     "In this section we present an overview of rings.",
      MENU {
 	  (TO "basic rings",
 	       MENU {
@@ -81,8 +80,9 @@ document { "rings",
      }
 
 document { "ideals",
-     HEADLINE => "an overview",
-     "In this section, blah blah blah.",
+     HEADER2 "An overview",     
+     "In Macaulay 2, once a ring (see ",TO "rings", ") is defined, ideals are constructed in the usual way
+     by giving a set of generators.",
      MENU {
 	  TO "creating an ideal",
 	  ("conversions",
@@ -113,7 +113,7 @@ document { "ideals",
           },
      "For those operations where we consider an ideal as a module, such
      as computing Hilbert functions and polynomials, syzygies, free resolutions, see ",
-     TO "modules", ".",
+     TO "modules I", ".",
      PARA,
       "For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use ideals, see ", TO "Ideal", "."
@@ -121,7 +121,9 @@ document { "ideals",
 
 
 document { "matrices",
-     HEADLINE => "an overview",
+     HEADER2 "An overview",     
+     "In Macaulay 2, each matrix is defined over a ring, (see ", TO "rings", "). 
+     Matrices are perhaps the most common data type in Macaulay 2.",
      MENU {
 	  ("making matrices", 
 	       MENU {
@@ -153,12 +155,14 @@ document { "matrices",
 		    }
 	       )
 	  },
-      "For additional common operations and a comprehensive list of all routines
+     "For an overview of matrices as homomorphisms between modules, 
+     see ", TO "modules I", ".  
+     For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use matrices, see ", TO "Matrix", "."
      }
 
 document { "substitution and maps between rings",
-     HEADLINE => "an overview",
+     HEADER2 "An overview",
      MENU {
 	  TO "substitute values for variables",
 	  TO "working with multiple rings",
@@ -175,45 +179,53 @@ document { "substitution and maps between rings",
      }
      
 document { "modules I",
-     HEADLINE => "getting started",
+     HEADER2 "Getting started",
      MENU {
-	  ("basic construction of modules",
+	  ("construction of modules",
 	       MENU {
-		    TO "construction of free modules",
-		    TO "matrices to and from modules",
+		    TO "free modules",
+		    (TO "matrices to and from modules", " (including kernel, cokernel and image)"),
 		    TO "ideals to and from modules"
 		    }
 	       ),
-	  ("basic operations of modules",
+	  (TO "Hilbert functions and free resolutions",
 	       MENU {
-		    TO "extracting elements",
-		    TO "equality and containment of modules",
-		    TO "minimal presentations and generators",
-		    TO "annihilator of a module",
+		    "including degree and betti numbers"
 		    }
 	       ),
-	  ("homomorphisms (maps) between modules",
+	  (TO "operations on modules",
 	       MENU {
-		    TO "constructing maps between modules",
-		    TO "information about a map of modules",
-		    TO "kernel, cokernel and image of a map of modules"
+		    "including direct sum, tensor products, and annihilators"
 		    }
 	       ),
-	  ("graded modules",
+	  (TO "homomorphisms (maps) between modules",
 	       MENU {
-		    TO "degree and multiplicity of a module",
-		    TO "Hilbert functions and polynomials",
-		    TO "homogenization",
-		    TO "truncation and homogeneous components of a graded module"
+		    "including elements of modules"
 		    }
+--	       MENU {
+--		    TO "constructing maps between modules",
+--		    TO "information about a map of modules",
+--		    TO "kernel, cokernel and image of a map of modules"
+--		    }
 	       ),
-	  ("subquotient modules -- the way Macaulay 2 represents modules",
+--	  ("graded modules",
+--	       MENU {
+--		    TO "degrees of elements and free modules",
+--		    TO "degree and multiplicity of a module",
+--		    TO "Hilbert functions and polynomials",
+--		    TO "homogenization",
+--		    TO "truncation and homogeneous components of a graded module"
+--		    }
+--	       ),
+	  (TO "subquotient modules", " -- the way Macaulay 2 represents modules",
 	       MENU {
-		    TO "what is a subquotient module?",
-		    TO "extracting parts of a subquotient module",
-		    TO "quotients of modules",
-		    TO "direct sums of modules"
+		    "Macaulay 2 has handed you a subquotient module.  What now?"
 		    }
+--	       MENU {
+--		    TO "what is a subquotient module?",
+--		    TO "extracting parts of a subquotient module",
+--		    TO "quotients of modules"
+--		    }
 	       )
 	  },
      "See ", TO "modules II", " for more operations on modules."
@@ -230,12 +242,10 @@ document { "modules II",
 	       ),
 	  ("homological algebra",
 	       MENU {
-		    TO "free resolutions",
 		    TO "Hom module",
-		    TO "tensor products of modules",
 		    TO "Tor and Ext"
 		    },
-	       "For more operations in homological algebra, see ", TO "chaincomplexes", "."
+	       "For more operations in homological algebra, see ", TO "chain complexes", "."
 	       )
 	  },
       "For additional common operations and a comprehensive list of all routines
@@ -243,9 +253,11 @@ document { "modules II",
      }
 
 document { "Groebner bases and related computations",
+     HEADER2 "An overview",
      MENU {
 	  TO "what is a Groebner basis?",
 	  TO "finding a Groebner basis",
+	  TO "rings that are available for Groebner basis computations",
 	  ("a few applications of Groebner bases",
 	       MENU {
 		    TO "elimination of variables",
@@ -260,7 +272,30 @@ document { "Groebner bases and related computations",
 	  }
      }
 
-document { "external libraries",
+document { "chain complexes",
+     HEADER2 "An overview",
+     MENU {
+	  TO "free resolutions of modules",
+	  TO "extracting information from chain complexes",
+	  TO "making chain complexes by hand",
+	  TO "manipulating chain complexes",
+	  TO "maps between chain complexes"
+	  },
+      "For additional common operations and a comprehensive list of all routines
+      in Macaulay 2 which return or use chain complexes or maps between chain complexes, see ", 
+      TO "ChainComplex", " and ", TO "ChainComplexMap", ".",
+     }
+
+document { "varieties",
+     HEADER2 "An overview",
+     MENU {
+	  TO "algebraic varieties",
+	  TO "coherent sheaves",
+	  },
+     "For details, see ", TO "Variety", ".",
+     }
+
+document { "using external libraries",
      MENU {
      	  TO "loading a library",
      	  TO "how to get documentation on a library",
@@ -282,7 +317,7 @@ document { "external libraries",
 -- Lead nodes --------------
 ----------------------------
 
-document { "GB blah blah",
+document { "rings that are available for Groebner basis computations",
      "In Macaulay 2, Groebner bases can be computed for ideals and submodules over many
      different rings.",
      MENU {
@@ -308,199 +343,15 @@ document { "GB blah blah",
 -- Matrix nodes ---
 -------------------
 
-document { "input a matrix",
-     MENU {
-	  TO "matrix",
-	  TO "map",
-	  TO "id"
-	  }
-     }
-
-document { "random and generic matrices",
-     MENU {
-	  TO "random",
-	  TO "genericMatrix",
-	  TO "genericSymmetricMatrix",
-	  TO "genericSkewMatrix"
-	  }
-     }
-
-document { "concatenating matrices",
-     MENU {
-	  TO "|",
-	  TO "||",
-	  TO "making block matrices",
-	  TO "++"
-	  }
-     }
-
-document { "simple information about a matrix",
-     MENU { 
-	  TO "ring",
-	  TO "target",
-	  TO "source",
-	  TO "extracting an element from a matrix",
-	  TO "submatrix",
-	  TO "number of rows or columns",
-	  TO "entries"
-	  }
-     }
-
-document { "basic arithmetic of matrices",
-     MENU {
-	  TO "+",
-	  TO "-",
-	  TO "*",
-	  TO "^",
-	  TO "inverse of a matrix",
-	  TO "==", -- m == n, m-n == 0 are different
-	  TO "!=",
-	  TO "**"
-	  }
-     }
-
-document { "kernel, cokernel and image of a matrix",
-     MENU {
-	  (TO "kernel", " -- (synonym is 'ker')"),
-	  TO "image",
-	  TO "cokernel"
-	  }
-     }
-
-document { "differentiation",
-     MENU {
-	  TO "diff",
-	  TO "diff'",
-	  TO "contract",
-	  TO "contract'",
-	  TO "jacobian"
-	  }
-     }
-
-document { "rank of a matrix",
-     MENU {
-	  TO "rank",
-	  "random rank of a matrix"
-	  }
-     }
-
-document { "determinants and minors",
-     MENU {
-	  TO "det",
-	  TO "minors"
-	  }
-     }
-
-document { "Pfaffians",
-     MENU {
-	  TO "pfaffians"
-	  }
-     }
-
-document { "exterior power of a matrix",
-     MENU {
-	  TO "exteriorPower"
-	  }
-     }
-
-document { "format and display of matrices in Macaulay 2",
-     MENU {
-	  TO "compactMatrixForm",
-	  }
-     }
-
-document { "importing and exporting matrices",
-     MENU {
-	  TO "toString",
-	  TO "toExternalString"
-	  }
-     }
 
 -------------------
 -- ring map nodes -
 -------------------
 
-document { "substitute values for variables",
-     MENU {
-	  TO "substitute",
-	  }
-     }
-
 -------------------
 -- module nodes ---
 -------------------
 
-document { "construction of free modules",
-     }
-
-document { "matrices to and from modules",
-     }
-
-document { "extracting elements",
-     }
-
-document { "equality and containment of modules",
-     }
-
-document { "minimal presentations and generators",
-     }
-
-document { "annihilator of a module",
-     }
-
-document { "constructing maps between modules",
-     }
-
-document { "information about a map of modules",
-     }
-
-document { "kernel, cokernel and image of a map of modules",
-     }
-
-document { "degree and multiplicity of a module",
-     }
-
-document { "Hilbert functions and polynomials",
-     }
-
-document { "homogenization",
-     }
-
-document { "truncation and homogeneous components of a graded module",
-     }
-
-document { "what is a subquotient module?",
-     }
-
-document { "extracting parts of a subquotient module",
-     }
-
-document { "quotients of modules",
-     }
-
-document { "direct sums of modules",
-     }
-
-document { "exterior power of a module",
-     }
-
-document { "Fitting ideals",
-     }
-
-document { "adjoints of maps",
-     }
-
-document { "free resolutions",
-     }
-
-document { "Hom module",
-     }
-
-document { "tensor products of modules",
-     }
-
-document { "Tor and Ext",
-     }
 
 -------------------
 -- GB nodes -------
@@ -572,15 +423,19 @@ document { "SAGBI bases",
 -------------------
 
 document { "commutative algebra",
-     MENU {
-	  "integralClosure",
-	  "primaryDecomposition",
-	  "symmetricAlgebra"
+     TOC {
+	  SECTION { "integralClosure",
+	       },
+	  SECTION { "primaryDecomposition",
+	       },
+	  SECTION { "symmetricAlgebra",
+	       }
 	  }
      }
 
 document { "algebraic geometry",
-     MENU {
-	  TO "cotangentSheaf"
+     TOC {
+	  SECTION { "cotangentSheaf",
+	       }
 	  }
      }

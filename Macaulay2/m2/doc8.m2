@@ -43,6 +43,36 @@ document { annihilator,
      "For an abbreviation, use ", TO "ann", "."
      }
 
+document { (annihilator, Module),
+     Synopsis => {
+	  "I = annihilator M",
+	  "M" => "a module, or an ideal or ring element",
+	  "I" => { "The annihilator, ", TT "ann", "(M) = { f in R | fM = 0 }",
+	       " where ", TT "R", " is the ring of ", TT "M", "."}
+	  },
+     TT "ann", " is a synonym for ", TT "annihilator", ".",
+     EXAMPLE {
+	  "R = QQ[a..d];",
+	  "J = monomialCurveIdeal(R,{1,3,4})",
+	  "M = Ext^2(R^1/J, R)",
+	  "annihilator M"
+	  },
+     "For another example, we compute the annihilator of an element
+     in a quotient ring",
+     EXAMPLE {
+	  "A = R/(a*b,a*c,a*d)",
+	  "ann(a)"
+	  },
+     "Macaulay 2 uses two algorithms to compute annihilators.  The default
+     version is to compute the annihilator of each generator of the module ",
+     TT "M", " and to intersect these two by two.  Each annihilator is
+     done using a submodule quotient.",
+     PARA,
+     "An alternate algorithm is to do one large submodule quotient.  This 
+     version is implemented in the routine ", TO "annihilator'", ".",
+     SEEALSO {(symbol :, Module, Module), (quotient, Module, Module)}
+     }
+
 document { (symbol _,Module,ZZ),
      Headline => "get a generator",
      TT "M_i", " -- get the ", TT "i", "-th generator of a module ", TT "M", "",

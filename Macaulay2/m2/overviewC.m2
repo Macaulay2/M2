@@ -1,3 +1,5 @@
+----------- File Mike is Working on! -------------------------
+
 document { "basic rings",
      "The following rings are initially present in every session with
      Macaulay 2.",
@@ -874,3 +876,236 @@ document { "associative algebras",
 	  },
      SEEALSO { "polynomial rings with other monomial orderings",  "PolynomialRing"}
 ///
+
+
+-------------------
+-- module nodes ---
+-------------------
+
+document { "construction of free modules",
+     "We use ", TO (symbol ^,Ring,ZZ), " to make a new free module.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z];",
+	  "M = R^4"
+	  },
+     "Such modules are often made as a side effect when creating matrices,
+     to serve as the source and target of the corresponding homomorphism.",
+     PARA,
+     "For graded free modules, and finding the degrees of the 
+     generators, see ", TO "graded modules", ".",
+     }
+
+document { "matrices to and from modules",
+     TOC {
+	  SECTION { "matrices to modules (kernel, image, cokernel)",
+     	       "Let's make a matrix.",
+     	       EXAMPLE {
+	  	    "R = ZZ/101[a..c];",
+	  	    "f = vars R",
+	  	    },
+     	       "We can easily compute a ", TO "kernel", ", ", TO "image", "
+     	       or ", TT "cokernel", ".",
+     	       EXAMPLE {
+	  	    "ker f",
+	  	    "coker f",
+	  	    "image f",
+	  	    },
+	       },
+	  SECTION { "modules to matrices",
+	       "gens, mingens, presentation"
+	       }
+     }
+}
+
+document { "Hilbert functions and free resolutions",
+     "In this section, we give examples of common operations
+     involving modules.  Throughout this section, we suppose that the base
+     ring ", TT "R", " is graded, with each variable having degree one, and that  ",
+     TT "M", " is a graded ", TT "R", "-module.  If the ring is not graded, or is multi-graded,
+     or if ", TT "M", " is not graded, some of these functions still work, but
+     care must be taken in interpreting the output.  Here, we just consider the
+     standard grading case.",
+     TOC {
+	  SECTION { "checking homogeniety",
+	       "Let's start by making a module over a ring with 18 variables",
+	       EXAMPLE {
+		    "R = ZZ/32003[vars(0..17)];",
+		    "M = coker genericMatrix(R,a,3,6)"
+		    },
+	       "Use ", TO "isHomogeneous", " to check whether a given module is
+	       graded.",
+	       EXAMPLE "isHomogeneous M"
+	       },
+	  SECTION { "codimension, degree, and sectional arithmetic genera",
+	       "Use ", TO (codim,Module), ", ", TO (degree,Module), ", and ", TO (genera,Module), " for some basic 
+	       numeric information about a module.",
+	       EXAMPLE {
+		    "codim M",
+		    "degree M",
+		    "genera M"
+		    },
+	       "The last number in the list of genera is the degree minus one.  The second to last
+	       number is the genus of the generic linear section curve, ..., and the first
+	       number is the arithmetic genus",
+	       },
+	  SECTION { "the Hilbert series",
+	       "The Hilbert series (", TO (hilbertSeries, Module), ") of ", TT "M", " is by definition the formal power series ",
+	       TT "H(t) = sum(d in ZZ) dim(M_d) t^d", ".  This is a rational function with 
+	       denominator ", TT "(1-t)^n", ", where ", TT "n", " is the number of variables
+	       in the polynomial ring.  The numerator of this rational function is called
+	       the poincare polynomial, and is obtained by the ", TO (poincare,Module), " function.",
+	       EXAMPLE "poincare M",
+	       EXAMPLE "hilbertSeries M",
+	       "Notice that the variable is written as ", TT "$T", ".  This indicates that
+	       the variable cannot be typed in directly.",
+	       PARA,
+	       "It is often useful to divide the poincare polynomial by ", TT "(1-t)", " as many
+	       times as possible.  This can be done by the following function:",
+	       EXAMPLE {
+		    "poincare' = (M) -> (
+	H := poincare M;
+	t := (ring H)_0;  -- The variable t above
+	while H % (1-t) == 0 do H = H // (1-t);
+	H)",
+                    "poincare' M",
+		    }
+	       },
+	  SECTION { "free resolutions",
+	       "The minimal free resolution ", TT "C", " is computed using ", TO (resolution,Module), ".  
+	       The specific matrices are obtained by indexing ", TT "C.dd", ".",
+	       EXAMPLE {
+		    "C = resolution M",
+		    "C.dd_3"
+		    },
+	       "For more information about chain complexes and resolutions, see ", TO "chain complexes",
+	       " and ", TO "computing resolutions", "."
+	       },
+	  SECTION { "betti numbers",
+	       "Use ", TO (betti,ChainComplex), " to display the graded betti numbers of ", TT "M", ".",
+	       EXAMPLE "betti C",
+	       "This table should be interpreted as follows: the number in the ", 
+	       TT "i", "th row and ", TT "j", "th column (indices starting at 0),
+	       is the number of ", TT "j", "th syzygies in degree ", TT "i+j", ".
+	       In the above example, there are 15 second syzygies of degree 4, and the entries
+	       of the maps ",
+	       TT "CC.d_1, CC.d_3, CC.d_4", " are all linear."
+	       }
+	  }
+     }
+
+document { "operations on modules",
+     }
+
+document { "homomorphisms (maps) between modules",
+     }
+
+document { "subquotient modules",
+     }
+
+
+document { "extracting elements",
+     "If M is an R-module, the best way to think of an element v of M
+     in Macaulay 2 is as a map of the ring into M, mapping 1 to v."
+     }
+
+document { "equality and containment of modules",
+     "==, isSubset"
+     }
+
+document { "minimal presentations and generators",
+     "prune, trim"
+     }
+
+document { "annihilator of a module",
+     "The annihilator of a module M over a ring R, ann(M) = { f in R | fM = 0 }, is computed
+     using the ", TO "annihilator", " function.",
+     EXAMPLE {
+	  "R = QQ[a..i];",
+	  "M = cokernel genericMatrix(R,a,3,3)",
+	  "annihilator M"
+	  },
+     "You may also use the abbreviation ", TO "ann",
+     EXAMPLE {
+	  "ann (M/(a*M))"
+	  }
+     }
+
+document { "constructing maps between modules",
+     "The standard way to define a map from an R-module M to an 
+     R-module N is to give a matrix whose columns are the image vectors
+     of the generators of M.",
+     EXAMPLE {
+	  "R = QQ[x,y,z];",
+	  "m = cokernel vars R",
+	  "--F = map(m/m^2, R^1/m, {{x*y*z}})"
+	  }
+     }
+
+document { "information about a map of modules",
+     "usual information: source, target, ring.",
+     TOC {
+     	  }
+     }
+
+
+document { "kernel, cokernel and image of a map of modules",
+     }
+
+document { "degree and multiplicity of a module",
+     }
+
+document { "Hilbert functions and polynomials",
+     }
+
+document { "homogenization",
+     }
+
+document { "truncation and homogeneous components of a graded module",
+     }
+
+document { "what is a subquotient module?",
+     "There are two basic types of modules over a ring R: submodules of R^n
+     and quotients of R^n.  Macaulay 2's notion of a module includes both
+     of these.  Macaulay 2 represents every module as a quotient image(f)/image(g),
+     where f and g are both homomorphisms from free modules to F: 
+     f : F --> G, and g : H --> G.  The columns of f represent the generators of
+     M, and the columns of g represent the relations of the module M.",
+     EXAMPLE {
+	  "R = ZZ/32003[a,b,c,d,e];",
+	  },
+     "Include here: generators, relations."
+
+
+     }
+
+document { "extracting parts of a subquotient module",
+     "Include: "
+     }
+
+document { "quotients of modules",
+     }
+
+document { "direct sums of modules",
+     }
+
+document { "exterior power of a module",
+     }
+
+document { "Fitting ideals",
+     }
+
+document { "adjoints of maps",
+     }
+
+document { "free resolutions",
+     }
+
+document { "Hom module",
+     }
+
+document { "tensor products of modules",
+     }
+
+document { "Tor and Ext",
+     }

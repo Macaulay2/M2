@@ -1432,6 +1432,49 @@ void cmd_sparse_reducePivots(object &om)
   m->reducePivots();
 }
 
+// link to ALP
+#if 0
+extern void eigenvalues(int n, double *data, double *result);
+#include "RR.hpp"
+extern RR *RRR;
+static void cmd_ALP_eigenvals(object &om)
+{
+  Matrix m = om->cast_to_Matrix();
+  const Ring *R = m.get_ring();
+  int n = m.n_rows();
+  if (n != m.n_cols())
+    {
+      gError << "expected square matrix";
+      return;
+    }
+  double *data = new double[n*n];
+  for (int i=0; i<n; i++)
+    for (int j=0; j<n; j++)
+      {
+	ring_elem a = R->lead_coeff(m.elem(i,j));
+	data[i*n+j] = RRR->to_double(a);
+      }
+  double *result = new double[2*n];
+  eigenvalues(n,data,result);
+  const FreeModule *F = RRR->make_FreeModule(1);
+  Matrix eigs(F);
+  printf("data\n");
+  for (int i=0; i<n; i++)
+    {
+      for (int j=0; j<n; j++)
+	printf("%f ", data[i*n+j]);
+      printf("\n");
+    }
+  printf("result\n");
+  for (int i=0; i<2*n; i++)
+    printf("%f ",result[i]);
+  printf("\n");
+  for (int i=0; i<2*n; i++)
+    eigs.append(F->term(i,RRR->from_double(result[i])),0);
+  gStack.insert(eigs);
+}
+#endif
+
 void i_Matrix_cmds(void)
 {
   install(ggmatrix, cmd_Matrix1, TY_FREEMODULE, TY_INT);
@@ -1631,4 +1674,6 @@ void i_Matrix_cmds(void)
   // Harry's commands
   install(ggreducepivots, cmd_sparse_reducePivots, TY_SparseMutableMatrix);
 
+  // Links to ALP (experimental)
+  //  install(ggtest, cmd_ALP_eigenvals, TY_MATRIX);
 }
