@@ -2381,7 +2381,7 @@ if test "${with_encapdir+set}" = set; then
   withval="$with_encapdir"
   encapdir="$withval"
 else
-  encapdir=/usr/local/encap
+  encapdir='$(prefix)/encap'
 fi;
 
 # Check whether --enable-gc_for_new or --disable-gc_for_new was given.

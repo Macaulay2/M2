@@ -9,9 +9,10 @@ justM2 all :: initialize config
 include ../include/config.Makefile
 VPATH = @srcdir@
 install :: $(packagedir)/COPYING $(packagedir)/CHANGES $(packagedir)/README
-$(packagedir)/COPYING : COPYING  ; cp $< "$@"
-$(packagedir)/CHANGES : CHANGES  ; cp $< "$@"
-$(packagedir)/README  : README   ; cp $< "$@"
+$(packagedir)/COPYING : COPYING $(packagedir) ; cp $< "$@"
+$(packagedir)/CHANGES : CHANGES $(packagedir) ; cp $< "$@"
+$(packagedir)/README  : README  $(packagedir) ; cp $< "$@"
+$(packagedir):; $(INSTALL) -d "$@"
 ################################# libexec
 libexec :; mkdir $@
 clean ::; rm -rf libexec

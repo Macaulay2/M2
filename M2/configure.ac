@@ -154,7 +154,7 @@ AC_SUBST(encapdir)
 AC_ARG_WITH(encapdir,
     AC_HELP_STRING(--with-encapdir=...,encap source directory [/usr/local/encap]),
     encapdir="$withval",
-    encapdir=/usr/local/encap)
+    encapdir='$(prefix)/encap')
 
 AC_SUBST(GC_FOR_NEW)
 AC_ARG_ENABLE(gc_for_new,
