@@ -306,4 +306,8 @@ runStartFunctions()
 errorDepth = loadDepth
 stopIfError = false					    -- this is also set in interp.d
 processCommandLineOptions()
-if interpreter() then exit 0 else exit 1
+n := interpreter()
+if class n === ZZ and 0 <= n and n < 128 then exit n
+if n === null then exit 0
+stderr << "can't interpret return value as an exit code" << endl
+exit 1
