@@ -3,7 +3,7 @@
 #ifndef __MonomialOps_h_
 #define __MonomialOps_h_
 
-#include "MonomialSet.h"
+#include "MonomialSet.hpp"
 
 class MonomialOps
 {
