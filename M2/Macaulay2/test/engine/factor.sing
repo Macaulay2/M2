@@ -17,6 +17,7 @@ ring r = 0, (x,y,z), dp;
 poly f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 timer = 1;
 factorize(f);  // .17 sec
+quit;
 
 // Example 2
 
