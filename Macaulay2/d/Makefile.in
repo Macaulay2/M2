@@ -147,7 +147,7 @@ endif
 endif
 
 ifeq "$(STATIC)" "yes"
-M2_LDFLAGS += -static
+M2_LDFLAGS += -Wl,-Bstatic
 ifeq ($(OS),Linux)
 # this is for gc somehow, see the end of gc/config.h
 M2_LDFLAGS += -Wl,-defsym,_DYNAMIC=0
@@ -286,6 +286,13 @@ ifeq ($(OS),Darwin)
 LIBRARYOPTIONS += -lreadline -lhistory
 else
 LIBRARYOPTIONS += -lreadline -lhistory -lcurses
+endif
+
+# why do we need pthreads ??  (we seem to need it when linking statically)
+LIBRARYOPTIONS += -lpthreads
+
+ifeq "$(STATIC)" "yes"
+LIBRARYOPTIONS += -Wl,-Bdynamic
 endif
 
   # we successfully avoid using streamio, but we need the personality function in libstc++
