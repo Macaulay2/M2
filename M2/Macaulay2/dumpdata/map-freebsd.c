@@ -13,6 +13,10 @@
 static char mapfilename[] = "/proc/curproc/map";
 static char mapfmt[] = "%p %p %*d %*d %*d %c%c%c %*d %*d 0x%*x %*s\n";
 
+int haveDumpdata() {
+  return TRUE;
+}
+
 int nummaps() {
   return fnumlines(mapfilename);
 }

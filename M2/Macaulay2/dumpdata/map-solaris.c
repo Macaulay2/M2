@@ -18,6 +18,10 @@
 #include "map.h"
 #include "std.h"
 
+int haveDumpdata() {
+  return TRUE;
+}
+
 static int openproc() {
   char buf[30];
   sprintf(buf,"/proc/%d",(int)getpid());

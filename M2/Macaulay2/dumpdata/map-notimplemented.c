@@ -1,5 +1,9 @@
 #include "std.h"
 
+int haveDumpdata() {
+  return FALSE;
+}
+
 int nummaps() {
   return 0;
 }
