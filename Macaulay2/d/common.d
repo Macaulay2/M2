@@ -241,33 +241,26 @@ export TooManyArgs(name:string,m:int):Expr := (
      else buildErrorPacket(quoteit(name) + " expected at most " 
 	  + tostring(m) + " arguments"));
 export errorDepth := 0;
-export report(c:Code):CodeClosureList := CodeClosureList(CodeClosure(noRecycle(localFrame),c),self);
-export report(c:Code,x:CodeClosureList):CodeClosureList := if localFrame != x.code.frame then CodeClosureList(CodeClosure(noRecycle(localFrame),c),x) else x;
-export printErrorMessage(e:Code,message:string):Expr := (
-     p := codePosition(e);
+export printErrorMessage(c:Code,message:string):Expr := (
+     p := codePosition(c);
      if int(p.loadDepth) >= errorDepth
      then (
      	  printErrorMessage(p,message);
-     	  Expr(Error(p,message,report(e),nullE)))
+     	  Expr(Error(p,message,CodeClosureList(CodeClosure(noRecycle(localFrame),c),self),nullE)))
      else buildErrorPacket(message));
 
-export backtrFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
-export backtrLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then err.value else z else z;
+export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
+export returnFromLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then err.value else z else z;
 
 export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
      printErrorMessage(c, "expected " + tostring(wanted) + " argument"
 	  + (if wanted == 1 then "" else "s") + ", but got "
 	  + tostring(got)));
 
-export MissingMethod(name:string,method:string):Expr := (
-     buildErrorPacket(quoteit(name) + " expected item to have a method for " + method));
-export MissingMethod(method:SymbolClosure):Expr := (
-     buildErrorPacket("expected a method for "+quoteit(method.symbol.word.name)));
-export MissingMethodPair(method:string):Expr := (
-     buildErrorPacket("expected pair to have a method for "+quoteit(method)));
-export MissingMethodPair(method:SymbolClosure):Expr := (
-     buildErrorPacket("expected pair to have a method for "+
-	  quoteit(method.symbol.word.name)));
+export MissingMethod(name:string,method:string):Expr := buildErrorPacket(quoteit(name) + " expected item to have a method for " + method);
+export MissingMethod(method:SymbolClosure):Expr := buildErrorPacket("expected a method for "+quoteit(method.symbol.word.name));
+export MissingMethodPair(method:string):Expr := buildErrorPacket("expected pair to have a method for "+quoteit(method));
+export MissingMethodPair(method:SymbolClosure):Expr := buildErrorPacket("expected pair to have a method for " + quoteit(method.symbol.word.name));
 export MissingMethodPair(method:SymbolClosure,left:Expr,right:Expr):Expr := buildErrorPacket( "expected pair to have a method for " + quoteit(method.symbol.word.name) );
 
 -----------------------------------------------------------------------------

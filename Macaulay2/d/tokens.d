@@ -203,7 +203,7 @@ export functionDescription := {
      };
 export dummyDesc := functionDescription(-1,0,0,false);
 export functionCode := { 
-     parms:Code,			  -- just for display purposes
+     parms:Code,			  -- just for display purposes -- replace with their position?
      body:Code, 
      desc:functionDescription
      };

@@ -1061,7 +1061,7 @@ scan(n:int,f:Expr):Expr := (
 			 if err.message != returnMessage then (
 			      recursiondepth = recursiondepth - 1;
 			      localFrame = saveLocalFrame;
-			      return backtrLoop(tmp); 
+			      return returnFromLoop(tmp); 
 			      )
 			 )
 		    else nothing;
@@ -1083,7 +1083,7 @@ scan(n:int,f:Expr):Expr := (
 			 if err.message != returnMessage then (
 			      recursiondepth = recursiondepth - 1;
 			      localFrame = saveLocalFrame;
-			      return backtrLoop(tmp); 
+			      return returnFromLoop(tmp); 
 			      )
 			 )
 		    else nothing;
@@ -1158,7 +1158,7 @@ scan(a:Sequence,f:Expr):Expr := (
 			 if err.message != returnMessage then (
 			      recursiondepth = recursiondepth - 1;
 			      localFrame = saveLocalFrame;
-			      return backtrLoop(tmp);
+			      return returnFromLoop(tmp);
 			      )
 			 )
 		    else nothing;
@@ -1189,7 +1189,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   if err.message != returnMessage then (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return backtrLoop(tmp);
+					return returnFromLoop(tmp);
 					)
 				   )
 			      else nothing;
@@ -1215,7 +1215,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   if err.message != returnMessage then (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return backtrLoop(tmp);
+					return returnFromLoop(tmp);
 					)
 				   )
 			      else nothing;
@@ -1248,7 +1248,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   if err.message != returnMessage then (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return backtrLoop(tmp);
+					return returnFromLoop(tmp);
 					)
 				   )
 			      else nothing))
@@ -1276,7 +1276,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   if err.message != returnMessage then (
 					recursiondepth = recursiondepth - 1;
 					localFrame = saveLocalFrame;
-					return backtrLoop(tmp);
+					return returnFromLoop(tmp);
 					)
 				   )
 			      else nothing;
@@ -1350,7 +1350,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			      -- stash
 			      localFrame = saveLocalFrame;
 			      recursiondepth = recursiondepth - 1;
-			      return backtrLoop(tmp);
+			      return returnFromLoop(tmp);
 			      )
 			 )
 		    else nothing;
@@ -1379,7 +1379,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 				   -- stash
 				   localFrame = saveLocalFrame;
 				   recursiondepth = recursiondepth - 1;
-				   return backtrLoop(tmp);
+				   return returnFromLoop(tmp);
 				   )
 			      )
 			 else nothing;
