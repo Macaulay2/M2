@@ -64,21 +64,18 @@ peek2(HashTable,ZZ) := (s,depth) -> (
 	  "}"
 	  ))
 
-peek2(Dictionary,ZZ) := (s,depth) -> (
-     if depth === 0 
-     then net s
+peek2(Dictionary,ZZ) := (d,depth) -> (
+     if depth === 0 then net d
      else horizontalJoin(
 	  "Dictionary{",
-	  stack sort apply(
-	       apply(pairs s, (n,s) -> (n,value s)),
-	       (key,value) -> horizontalJoin splice (
-		    key,
-		    " => ",
-		    if precedence value < precOption
-		    then ("(",peek2(value,depth-1),")")
-		    else peek2(value,depth-1))),
-	  "}"
-	  ))
+	  stack (
+	       last \ sort apply(
+		    pairs d, (lhs,s) -> (
+		    	 v := value s;
+		    	 rhs := peek2(v,depth-1);
+		    	 if precedence v < precOption then rhs = ("(",rhs,")");
+		    	 (hash v,horizontalJoin splice (lhs," => ",rhs))))),
+	  "}"))
 
 peek = s -> peek2(s,1)
 typicalValues#peek = Net
@@ -87,7 +84,7 @@ seeParsing = args -> (
      x := new MutableHashTable;
      t := (p,s) -> if x#?p then x#p = append(x#p,s) else x#p = {s};
      q := getParsing symbol seeParsing;
-     scan(values Macaulay2Dictionary, s -> if getParsing s =!= q and s =!= symbol " " then t(getParsing s,s));
+     scan(values Macaulay2.Dictionary, s -> if getParsing s =!= q and s =!= symbol " " then t(getParsing s,s));
      t(getParsing symbol args, "<SYMBOLS>"  );
      t(getParsing symbol " ", "<ADJACENCY>");
      new Table from prepend(

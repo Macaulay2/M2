@@ -1167,13 +1167,27 @@ isGlobalSymbol(e:Expr):Expr := (
      else WrongArgString());
 setupfun("isGlobalSymbol",isGlobalSymbol);
 
+getsym(d:Dictionary,s:string):Expr := (
+     w := makeUniqueWord(s,parseWORD);
+     when globalLookup(w) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
+     is null do (
+	  t := makeSymbol(w,dummyPosition,d);
+	  globalFrame.values.(t.frameindex)));
+
 getGlobalSymbol(e:Expr):Expr := (
-     when e is s:string do (
-	  w := makeUniqueWord(s,parseWORD);
-	  when globalLookup(w) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
-	  is null do (
-	       t := makeSymbol(w,dummyPosition,globalDictionary);
-	       globalFrame.values.(t.frameindex)))
+     when e 
+     is s:string do getsym(globalDictionary,s)
+     is z:Sequence do if length(z) != 2 then WrongNumArgs(2) else (
+	  when z.0
+	  is dc:DictionaryClosure do (
+	       d := dc.dictionary;
+	       if d.transient || d.frameID != 0 then WrongArg(1,"a global dictionary") else
+	       when z.1
+	       is s:string do getsym(d,s)
+	       else WrongArgString(2)
+	       )
+	  else WrongArg(1,"a dictionary")
+	  )
      else WrongArgString());
 setupfun("getGlobalSymbol",getGlobalSymbol);
 
