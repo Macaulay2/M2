@@ -77,7 +77,6 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
 errorReportS := setupconst("report",Expr(emptySequence));
 errorReportS.protected = false;
 readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):Expr := (
-     returnvalue := nullE;
      lastvalue := nullE;
      while true do (
      	  if printout then stmtno = stmtno + 1;
@@ -93,8 +92,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 	  interrupted = false;
 	  interruptPending = false;
 	  parsed := parse(file,semicolonW.parse.precedence,true);
-	  if equal(parsed,wordEOF) then break;
-	  returnvalue = nullE;
+	  if equal(parsed,wordEOF) then return lastvalue;
 	  if parsed == errorTree then (
 	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       if AbortIfError then return buildErrorPacket("--backtrace--");
@@ -104,8 +102,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 	       if !(s.word == semicolonW || s.word == newlineW)
 	       then (
 		    printErrorMessage(s,"syntax error");
-		    if AbortIfError 
-		    then return Expr(Error(position(s),"syntax error",emptySequence,nullE));
+		    if AbortIfError then return Expr(Error(position(s),"syntax error",emptySequence,nullE));
 		    )
 	       else (
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up
@@ -114,18 +111,12 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 			 lastvalue = eval(f);	  -- run it
 			 if lastvalue == endInput then return lastvalue;
 			 when lastvalue is err:Error do (
-			      if err.message == returnMessage
-			      || err.message == breakMessage
-			      then lastvalue = err.value;
-			      )
-			 else nothing;
-			 when lastvalue is err:Error do (
-			      setGlobalVariable(errorReportS, err.report);
-			      if AbortIfError then return lastvalue;
-			      lastvalue = nullE;
-			      )
+			      if err.message == returnMessage then return lastvalue
+			      else if err.message == breakMessage then lastvalue = nullE
+			      else (
+				   setGlobalVariable(errorReportS, err.report);
+				   if AbortIfError then return lastvalue))
 			 else (
-			      if s.word != semicolonW then returnvalue = lastvalue;
 			      if printout then (
 				   g := PrintOut(lastvalue,s.word == semicolonW,f);
 				   when g is err:Error do (
@@ -136,14 +127,10 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 					else nothing;
 					if AbortIfError then return g;
 					)
-				   else nothing; ) ) )
+				   else nothing)))
 		    else if isatty(file) 
 		    then flush(file)
-		    else return buildErrorPacket("error while loading file"); ); );
-	  lastvalue = nullE; );
-     -- now we let filbuf handle all prompting:
-     -- if isatty(file) then stdout << endl;
-     returnvalue);
+		    else return buildErrorPacket("error while loading file")))));
 readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure):Expr := (
      saveLocalFrame := localFrame;
      localFrame = dc.frame;
@@ -168,6 +155,15 @@ topLevelPrompt():string := (
      is n:Integer do if isInt(n) then blanks(toInt(n)) else ""
      else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
      );
+
+loadprintstdin(stopIfError:bool,dc:DictionaryClosure):Expr := (
+     when openTokenFile("-")
+     is e:errmsg do buildErrorPacket(e.message)
+     is file:TokenFile do (
+	  setprompt(file,topLevelPrompt);
+	  r := readeval3(file,true,stopIfError,dc);
+	  file.posFile.file.eof = false; -- erase eof indication so we can try again (e.g., recursive calls to topLevel)
+	  r));
 
 loadprint(s:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
      when openTokenFile(s)
@@ -204,7 +200,7 @@ load(e:Expr):Expr := (
      when e
      is s:string do load(s)
      else buildErrorPacket("expected string as file name"));
-setupfun("simpleLoad",load);
+setupfun("load",load).protected = false;
 
 input(e:Expr):Expr := (
      when e
@@ -214,7 +210,7 @@ input(e:Expr):Expr := (
 	  laststmtno = -1;
 	  ret)
      else buildErrorPacket("expected string as file name"));
-setupfun("simpleInput",input);
+setupfun("input",input).protected = false;
 
 stringTokenFile(name:string,contents:string):TokenFile := (
      TokenFile(
@@ -280,15 +276,19 @@ topLevel(e:Expr):Expr := (
 setupfun("commandInterpreter",topLevel);
 
 breakLoopFrameS := setupconst("breakLoopFrame",nullE);
-breakLoop(f:Frame):bool := (
+breakLoopPseudocodeS := setupconst("breakLoopPseudocode",nullE);
+breakLoop(f:Frame,c:Code):Expr := (
      setDebuggingMode(false);
      dc := localDictionaryClosure(f);
+     oldBreakLoopFrame := getGlobalVariable(breakLoopFrameS);
+     oldBreakLoopPseudocode := getGlobalVariable(breakLoopPseudocodeS);
      setGlobalVariable(breakLoopFrameS,Expr(dc));
+     setGlobalVariable(breakLoopPseudocodeS,Expr(CodeWrapper(c)));
      interpreterDepth = interpreterDepth + 1;
-     ret := when loadprint("-",stopIfError, 
-	  newStaticLocalDictionaryClosure(dc)) is Error do false else true;
+     ret := loadprintstdin(stopIfError, newStaticLocalDictionaryClosure(dc));
      interpreterDepth = interpreterDepth - 1;
-     setGlobalVariable(breakLoopFrameS,nullE);
+     setGlobalVariable(breakLoopFrameS,oldBreakLoopFrame);
+     setGlobalVariable(breakLoopPseudocodeS,oldBreakLoopPseudocode);
      setDebuggingMode(true);
      ret);
 breakLoopFun = breakLoop;

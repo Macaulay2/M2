@@ -55,19 +55,19 @@ export setup(e:SymbolClosure,fun1:unop,fun2:unop):void := (
      e.symbol.postfix = fun2;
      );
 export setupop(s:SymbolClosure,fun:unop):void := s.symbol.unary = fun;
-export setupfun(name:string,fun:unop):void := (
+export setupfun(name:string,fun:unop):Symbol := (
      word := makeUniqueWord(name,
 	  parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
      entry := makeSymbol(word,dummyPosition,globalDictionary);
      entry.unary = fun;
      entry.protected = true;
-     );     
-export setupfun(name:string,value:fun):void := (
+     entry);     
+export setupfun(name:string,value:fun):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      entry := makeSymbol(word,dummyPosition,globalDictionary);
      globalFrame.values.(entry.frameindex) = Expr(CompiledFunction(value,nextHash()));
      entry.protected = true;
-     );
+     entry);
 export setupvar(name:string,value:Expr):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      when lookup(word,globalDictionary)

@@ -24,10 +24,10 @@ toString Sequence := s -> (
      if # s === 1 then concatenate("singleton ",toString s#0)
      else concatenate("(",between(",",toString \ s),")")
      )
-net Command := toString Command := toExternalString Command := f -> if Symbols#?f then string Symbols#f else "--Command--"
+net Command := toString Command := toExternalString Command := f -> if Symbols#?f then toString Symbols#f else "--Command--"
 
 net Function := toString Function := f -> (
-     if Symbols#?f then string Symbols#f 
+     if Symbols#?f then toString Symbols#f 
      else (
 	  l := locate f;
 	  if l === null then "--Function--" 
@@ -35,8 +35,7 @@ net Function := toString Function := f -> (
 	  )
      )
 
-toExternalString Manipulator := toString Manipulator := f -> if Symbols#?f then string Symbols#f else "--Manipulator--"
-toString Thing := string
+toExternalString Manipulator := toString Manipulator := f -> if Symbols#?f then toString Symbols#f else "--Manipulator--"
 -----------------------------------------------------------------------------
 toExternalString String := format
 
@@ -85,16 +84,16 @@ net Manipulator := toString
 net Thing := toString
 -----------------------------------------------------------------------------
 toExternalString Symbol := s -> (
-     if not mutable s and value s === s then string s
+     if not mutable s and value s === s then toString s
      else (
 	  if s === symbol " "
 	  then ///symbol " "///
-	  else concatenate("symbol ",string s)
+	  else concatenate("symbol ",toString s)
 	  )
      )
 
-net Symbol := string
-File << Symbol := File => (o,s) -> o << string s		    -- provisional
+net Symbol := toString
+File << Symbol := File => (o,s) -> o << toString s		    -- provisional
 File << Thing  := File => (o,s) -> o << toString s		    -- provisional
 -----------------------------------------------------------------------------
 net Option := z -> net expression z
@@ -106,7 +105,7 @@ Net == String := (n,s) -> (
 String == Net := (s,n) -> n == s
 
 net String := horizontalJoin
-net RR := net Boolean := net File := net ZZ := net Database := string
+net RR := net Boolean := net File := net ZZ := net Database := toString
 net000 := horizontalJoin ()
 net Nothing := null -> net000
 
@@ -189,6 +188,3 @@ texMath Net := n -> concatenate (
      ///
 \end{matrix}}
 ///)
-
-
-erase symbol string

@@ -498,6 +498,7 @@ forfun(c:forCode):Expr := (
 	       else return printErrorMessage(toClause,"expected a small integer");
 	       )
 	  else return printErrorMessage(toClause,"expected an integer"));
+     localFrame = Frame(localFrame,c.frameID,c.framesize,false,new Sequence len c.framesize do provide nullE);
      while true do (
 	  if toClause != dummyCode && j > n then break;
 	  localFrame.values.0 = toInteger(j);		    -- should be the frame spot for the loop var!
@@ -505,17 +506,20 @@ forfun(c:forCode):Expr := (
 	  if predicate != dummyCode then (
 	       p := eval(predicate);
 	       when p is err:Error do (
-		    if err.message == breakMessage then return err.value
-		    else return p
+		    localFrame = localFrame.outerFrame;
+		    return if err.message == breakMessage then err.value else p
 		    )
 	       else if p == False then break
-	       else if p != True then return printErrorMessage(predicate,"expected true or false");
+	       else if p != True then (
+		    localFrame = localFrame.outerFrame;
+		    return printErrorMessage(predicate,"expected true or false");
+		    )
 	       );
 	  if listClause != dummyCode then (
 	       b := eval(listClause);
 	       when b is err:Error do (
-		    if err.message == breakMessage then return err.value
-		    else return b
+		    localFrame = localFrame.outerFrame;
+		    return if err.message == breakMessage then err.value else b
 		    )
 	       else (
 		    if i == length(r) then (
@@ -531,12 +535,13 @@ forfun(c:forCode):Expr := (
 	  if doClause != dummyCode then (
 	       b := eval(doClause);
 	       when b is err:Error do (
-		    if err.message == breakMessage then return err.value
-		    else return b
+		    localFrame = localFrame.outerFrame;
+		    return if err.message == breakMessage then err.value else b
 		    )
 	       else nothing;
 	       );
 	  );
+     localFrame = localFrame.outerFrame;
      if listClause == dummyCode then nullE
      else Expr(
 	  list(
@@ -639,7 +644,7 @@ close(g:Expr):Expr := (
 	  else buildErrorPacket(if f.pid != 0 then "error return from child" else "error closing file"))
      is x:Database do dbmclose(x)
      else buildErrorPacket("expected a file or database"));
-setupfun("simpleClose",close);
+setupfun("close",close).protected = false;
 closeIn(g:Expr):Expr := (
      when g
      is f:file do ( 
@@ -647,7 +652,7 @@ closeIn(g:Expr):Expr := (
 	  if closeIn(f) == 0 then g
 	  else buildErrorPacket(if f.pid != 0 then "error closing pipe" else "error closing file"))
      else buildErrorPacket("expected an open input file"));
-setupfun("simpleCloseIn",closeIn);
+setupfun("closeIn",closeIn).protected = false;
 closeOut(g:Expr):Expr := (
      when g
      is f:file do ( 
@@ -655,7 +660,7 @@ closeOut(g:Expr):Expr := (
 	  if closeOut(f) == 0 then g
 	  else buildErrorPacket(if f.pid != 0 then "error closing pipe" else "error closing file"))
      else buildErrorPacket("expected an open output file"));
-setupfun("simpleCloseOut",closeOut);
+setupfun("closeOut",closeOut).protected = false;
 flush(g:Expr):Expr := (
      when g
      is f:file do (
@@ -663,7 +668,7 @@ flush(g:Expr):Expr := (
 	  then (flush(f); g)
 	  else WrongArg("an output file"))
      else WrongArg("a file"));
-setupfun("simpleFlush",flush);
+setupfun("flush",flush).protected = false;
 protect(e:Expr):Expr := (
      when e
      is dc:DictionaryClosure do (
@@ -752,7 +757,16 @@ sameFunctionBody(e:Expr):Expr := (
 setupfun("sameFunctionBody", sameFunctionBody);
 
 disassemble(e:Expr):Expr := (
-     when e is f:FunctionClosure do Expr(tostring(Code(f.model)))
+     when e
+     is f:FunctionClosure do Expr(tostring(Code(f.model)))
+     is c:CodeWrapper do Expr(tostring(c.code))
      else WrongArg("a function derived from Macaulay 2 code")
      );
 setupfun("disassemble", disassemble);
+
+pseudocode(e:Expr):Expr := (
+     when e
+     is f:FunctionClosure do Expr(CodeWrapper(f.model))
+     else WrongArg("a function derived from Macaulay 2 code")
+     );
+setupfun("pseudocode", pseudocode);

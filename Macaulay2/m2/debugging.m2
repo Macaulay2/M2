@@ -13,7 +13,7 @@ on = { CallLimit => 100000, Name => null } ==> opts -> f -> (
      callCount := 0;
      limit := opts.CallLimit;
      if class f =!= Function then error("expected a function");
-     fn := if opts.Name =!= null then opts.Name else try toString f else string f;
+     fn := if opts.Name =!= null then opts.Name else try toString f else "--function--";
      x -> (
 	  saveCallCount := callCount = callCount+1;
      	  << fn << " (" << saveCallCount << ")";
@@ -44,8 +44,8 @@ notImplemented = x -> error "not implemented yet"
 benchmark = (s) -> (
      n := 1;
      while (
-	  s1 := concatenate("timing scan(",string n,", i -> (",s,";null;null))");
-	  s2 := concatenate("timing scan(",string n,", i -> (      null;null))");
+	  s1 := concatenate("timing scan(",toString n,", i -> (",s,";null;null))");
+	  s2 := concatenate("timing scan(",toString n,", i -> (      null;null))");
 	  collectGarbage();
 	  value s1;
 	  value s2;
@@ -142,8 +142,11 @@ abbreviate := x -> (
      if class x === Function and match("^--Function.*--$", toString x) then "..."
      else x)
 
-listLocalVariables = Command(
-     x -> (
-	  if breakLoopFrame === null then error "no break loop active";
-	  Table (apply ( reverse flatten (sortByHash \ values \ localDictionaries breakLoopFrame) , s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s}))))
+ll := f -> Table (apply ( reverse flatten (sortByHash \ values \ localDictionaries f) , s -> {s,":",net class value s, "=", truncate net abbreviate value s, pos s}))
 
+listLocalVariables = Command(
+     x -> if x === () then (
+	       if breakLoopFrame === null then error "no break loop active";
+	       ll breakLoopFrame
+	       )
+	  else ll x)

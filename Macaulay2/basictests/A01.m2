@@ -4,8 +4,7 @@
 
 -- this file is for testing built-in functions
 
-printString(stdio, "testing A01.m2\n")
-simpleFlush stdio
+stdio << "testing A01.m2\n" << flush
 
 assert = x -> if not x then error "assertion failed "
 
@@ -144,6 +143,10 @@ assert( 12|5 === 13 )					    -- this is a method, too.
 
 -- test &
 assert( 12&5 === 4 )
+
+-- test value
+
+assert( value "3" === 3 )
 
 -- test if
 if true then okay else assert false

@@ -1,18 +1,12 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
-if class Manipulator =!= Symbol then ( 
-     printString(stderr, "warning: skipping setup.m2, already loaded\n"); flush stderr; 
-     end )
-
-if class Manipulator =!= Symbol then error "setup.m2 already loaded"
-
-Symbols = new MutableHashTable
+if Function.?GlobalAssignHook then error "setup.m2, already loaded"
 Function.GlobalAssignHook = (X,x) -> (
      if not Symbols#?x then Symbols#x = X;
      )
 Function.GlobalReleaseHook = (X,x) -> (
      -- error concatenate("warning: ", X, " redefined");	    -- provisional, see definition below
-     if Symbols#x === X then remove(Symbols,x);
+     if Symbols#?x and Symbols#x === X then remove(Symbols,x);
      )
 addStartFunction(
      () -> (
@@ -23,28 +17,6 @@ addStartFunction(
 	  )
      )
 
--- manipulators
-
-Manipulator = new Type of BasicList
-Manipulator.synonym = "manipulator"
-new Manipulator from Function := Manipulator => (Manipulator,f) -> new Manipulator from {f}
-Manipulator.name = "Manipulator"
-Manipulator Database := Manipulator File := (m,o) -> m#0 o
-
-Manipulator.GlobalAssignHook = (X,x) -> if not Symbols#?x then Symbols#x = X
-Manipulator.GlobalReleaseHook = (X,x) -> if Symbols#x === X then remove(Symbols,x)
-
-Manipulator Nothing := (m,null) -> null
-File << Manipulator := File => (o,m) -> m#0 o
-List << Manipulator := File => (o,m) -> (scan(o, o -> m#0 o); o)
-Nothing << Manipulator := (null,m) -> null
-
-close = new Manipulator from simpleClose; erase symbol simpleClose
-closeIn = new Manipulator from simpleCloseIn; erase symbol simpleCloseIn
-closeOut = new Manipulator from simpleCloseOut; erase symbol simpleCloseOut
-flush = new Manipulator from simpleFlush; erase symbol simpleFlush
-endl = new Manipulator from simpleEndl; erase symbol simpleEndl
-
 ---------------------------------
 
 if notify then stderr << "--loading setup.m2" << endl
@@ -52,8 +24,6 @@ if notify then stderr << "--loading setup.m2" << endl
 match := X -> 0 < #(matches X)				    -- defined as a method later
 
 if class phase === Symbol then phase = 0
-
-erase symbol "--newline--"
 
 protect AfterEval
 protect AfterPrint
@@ -75,7 +45,7 @@ outputLabel := ""
 OutputDictionary = newDictionary()
 
 commonProcessing := x -> (
-     outputLabel = concatenate(interpreterDepth():"o",string lineNumber());
+     outputLabel = concatenate(interpreterDepth():"o",toString lineNumber());
      x = applyMethod(AfterEval,x);
      if x =!= null then (
      	  s := getGlobalSymbol(OutputDictionary,outputLabel);
@@ -85,12 +55,14 @@ commonProcessing := x -> (
      x
      )
 
+simpleToString := toString
+
 Thing.Print = x -> (
      x = commonProcessing x;
      y := applyMethod(BeforePrint,x);
      if y =!= null then (
 	  << endl;			  -- double space
-	  << outputLabel << " = " << (try net y else try string y else "--something--") << endl;
+	  << outputLabel << " = " << (try net y else try toString y else try simpleToString y else "--something--") << endl;
 	  );
      applyMethod(AfterPrint,x);
      )
@@ -132,17 +104,18 @@ tryload := (filename,loadfun) -> (
 		    markLoaded(fullfilename,filename);
 		    true))))
 
+simpleLoad := load
 load = (filename) -> (
      if not tryload(filename,simpleLoad) then error ("can't open file ", filename)
      )
 
+simpleInput := input
 input = (filename) -> (
      savenotify := notify;
      notify = false;
      if not tryload(filename,simpleInput) then error ("can't open file ", filename);
      notify = savenotify;
      )
-erase symbol simpleInput
 
 setnotify := () -> (
      -- notify = true			-- notify after initialization, commented out
@@ -167,7 +140,6 @@ addStartFunction(
 		    tryload(getenv "HOME" | "/init.m2", simpleLoad)
 		    or
 		    tryload(getenv "HOME" | "/.init.m2", simpleLoad)))))
-erase symbol simpleLoad
 newPackage Output
 protect symbol Output
 newPackage User
