@@ -1,0 +1,10 @@
+#! /bin/sh -x
+
+cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0
+for i in *.info
+do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" --delete "$i")
+done
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/encap "
+# End:
