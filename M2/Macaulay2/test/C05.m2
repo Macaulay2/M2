@@ -19,6 +19,7 @@ assert ( {} === select ( pairs tally keys Main.Dictionary , (s,n) -> n>1 ) )
 -- version and printing
 
 assert ( toString version =!= "version" )
+assert ( version#"VERSION" =!= "" )
 
 -- Local Variables:
 -- compile-command: "make C05.okay "
