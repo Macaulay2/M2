@@ -188,13 +188,43 @@ stderr << "warning: flattening not rewritten yet" << endl
 --------------------------
 -- free module routines --
 --------------------------
+-- rawRing, rawRank, rawMultiDegree
+-- rawFreeModule(R,5), rawFreeModule(R,(0,1,2,3))
+-- rawFreeModule mat, rawGetSchreyer, 
+-- +++, rawDirectSum, rawTensor
+-- rawDual, rawSymmetricPower, rawExteriorPower, rawSubmodule
+-- toString
+-- todo: hash 
+R = polyring(rawZZ(), (symbol a .. symbol f))
+F = rawFreeModule(R,5)
+assert(rawRank F === 5)
+assert(rawMultiDegree F === {0,0,0,0,0})
+assert(rawRing F === R)
+G = rawFreeModule(R, (1,2,3,4))
+assert(rawMultiDegree G === {1,2,3,4})
+H = rawFreeModule(R,0)
+assert(rawRank H === 0)
+assert(rawMultiDegree H === {})
+assert try (rawFreeModule(R,-1);false) else true
+rawRank H
+G = rawFreeModule(R,(0,0,1,1,-3))
+assert(toString G === "free(rank 5 degrees = {1, 1, t, t, t^(-3)})")
+
+F = rawFreeModule(R,(0,10,100,1000))
+G = rawFreeModule(R,(1,2,3))
+H = rawTensor(F,G)
+assert(F ** G === H)
+assert(rawRank H === rawRank F * rawRank G)
+assert(rawMultiDegree H === 
+     {1, 2, 3, 11, 12, 13, 101, 102, 103, 1001, 1002, 1003})
+
+
+
 R1 = rawPolynomialRing(rawZZ(), singlemonoid{x,y,z})
 x = rawRingVar(R1,0,1)
 y = rawRingVar(R1,1,1)
 z = rawRingVar(R1,2,1)
 F = rawFreeModule(R1,5)
-G = rawFreeModule(R1,(0,0,1,1,-3))
-toString G
 assert(rank F === 5)
 assert(rawRing F === R1)
 
@@ -224,49 +254,9 @@ rawExteriorPower(2,F)
 assert(rawMultiDegree rawExteriorPower(3,F) === {110,1010,1100,1110})
 assert(rawSubmodule(F, (0,0,1,1,2,2)) === rawFreeModule(R1,(0,0,10,10,100,100)))
 
----------------------
--- Vector routines --
----------------------
-R1 = rawPolynomialRing(rawZZ(), singlemonoid{x,y,z})
-x = rawRingVar(R1,0,1)
-y = rawRingVar(R1,1,1)
-z = rawRingVar(R1,2,1)
-F = rawFreeModule(R1,5)
-v = rawVector(F,(x,x,y,y,z))
-assert(rawZero(F) == v-v)
-assert(rawIsZero(v-v))
-assert(not rawIsZero(v))
-assert((-v) + v == rawZero(F))
-assert(rawModuleEntry(F,0)*x
- + rawModuleEntry(F,1)*x + rawModuleEntry(F,2)*y +
-  rawModuleEntry(F,3)*y + rawModuleEntry(F,4)*z === v)
-
--- r*v missing BUG: IMPLEMENT!!
--- rawDegree BUG: IMPLEMENT!!
--- lead monomial BUG: IMPLEMENT!!
-
-rawTerm(F,(x+y)^3,3) === rawModuleEntry(F,3) * ((x+y)^3)
-G = rawFreeModule(R1,(0,1,2))
-v = rawTerm(G,x^2,2) + rawTerm(G,y+z,1) + rawTerm(G,rawFromNumber(R1,3),0)
-v = rawTerm(G,x^2,0) + rawTerm(G,y+z,1) + rawTerm(G,rawFromNumber(R1,3),2)
-assert rawIsHomogeneous v
-assert(rawMultiDegree v === {2})
-assert(v === rawHomogenize(v,2,2,{1,1,1}))
-rawHomogenize(v,2,3,{1,0,1})
-rawHomogenize(v,2,{1,0,1})
-rawGetTerms(v,0,0)
-rawGetTerms(v,-1,-1)
-rawGetTerms(v,0,-1) === v
-
-v
-assert(rawVectorEntry(v,0) === x^2)
-assert(rawVectorEntry(v,1) === y+z)
-assert(rawVectorEntries(v) === (x^2, y+z, rawFromNumber(R1,3)))
-assert(rawFreeModule v === G)
-assert(rawTermCount v === 3)
-assert(rawLeadComponent v === 2)
-rawLeadCoefficient v -- NOTE: this maybe should be rawLeadVectorEntry(v).
-                     -- or should just not be present in the interface.
+assert(R^4 == rawFreeModule(R,4))
+assert(R^4 === rawFreeModule(R,4))
+R^{-1,-1,2} == rawFreeModule(R,(1,1,-2))
 
 ---------------------
 -- Matrix routines --
@@ -276,12 +266,6 @@ x = rawRingVar(R1,0,1)
 y = rawRingVar(R1,1,1)
 z = rawRingVar(R1,2,1)
 F = rawFreeModule(R1,5)
-v = rawTerm(F,x+y,1) + rawTerm(F,z^3-2,2)
-w = rawTerm(F,x+y^4,0) + rawTerm(F,z^3-2*x*y,1)
-m = rawMatrix(F, (v,w))
-assert rawIsZero(m - m)
-vars 0
-vars 15
 
 R2 = rawPolynomialRing(rawZZ(), singlemonoid toList (vars 0 .. vars 15))
 a = rawRingVar(R2,0,1)
@@ -290,24 +274,30 @@ F = rawFreeModule(R2,4)
 elems = toList apply(0..3, j -> toList apply(0..3, i -> rawRingVar(R2,i+j,1)))
 m = rawMatrix1(F,4,toSequence flatten elems,false)
 
+
   --------------------------
   -- creation of matrices --
   --------------------------
+R = polyring(rawZZ(), (vars 0 .. vars 15))
+F = rawFreeModule(R,5)
+G = rawFreeModule(R,10)
+m = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),false)
+m1 = rawSparseMatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true)
+assert(m != m1)
+rawTarget m == F
+rawSource m == G
+rawMultiDegree m === {0}
 
-R3 = polyring(rawQQ(), (symbol a .. symbol j))
-F = rawFreeModule(R3,5)
-G = rawFreeModule(R3,10)
-m = rawSparseatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),false)
-m = rawSparseatrix1(F,15,{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true)
-rawTarget m
-rawSource m
-m = rawSparseatrix2(F,G,{7},{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true)
+assert rawIsZero(m - m)
+assert rawIsZero(m - m1)
+
+m = rawSparseMatrix2(F,G,{7},{1,3,4},{3,2,1},(a^2,b^2+a*c,b-2*a*c),true)
 assert(rawMultiDegree m  === {7})
 m1 = rawMatrixRemake(F,G,rawMultiDegree m, m, true)
 m2 = rawMatrixRemake(F,G,{13}, m, false)
 assert(rawMultiDegree m2 === {13})
 
-elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R3,i+j,1)))
+elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R,i+j,1)))
 m = rawMatrix1(F,4,elems,false)
 p1 = rawMatrix1(F,5,toSequence flatten entries m,false)
 p2 = rawMatrix2(F,F,{0},toSequence flatten entries m,false)
@@ -315,6 +305,8 @@ p1 == p2
 
 2*m
 a*m
+
+rawMatrix1(R^4
 
 rawDual m
 rawTarget m

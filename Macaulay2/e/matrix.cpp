@@ -101,19 +101,24 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
 	  return 0;
 	}
     }
-  Matrix *result = new Matrix(target);
   unsigned int next = 0;
-  for (int c=0; c < ncols; c++)
+
+  vec *newcols = new vec[ncols];
+  for (int i=0; i<ncols; i++) newcols[i] = 0;
+
+  for (int r=0; r <target->rank(); r++)
     {
-      vec w = 0;
-      for (int r=0; r <target->rank(); r++)
+      for (int c=0; c < ncols; c++)
 	{
-	  R->set_entry(w,r,M->array[next]->get_value());
+	  R->set_entry(newcols[c],r,M->array[next]->get_value());
 	  next++;
 	  if (next >= M->len) break;
 	}
-      result->append(w);
     }
+
+  Matrix *result = new Matrix(target);
+  for (int i=0; i<ncols; i++)
+    result->append(newcols[i]);
 
   result->freeze(is_mutable_flag);
   return result;
@@ -148,11 +153,12 @@ const MatrixOrNull * Matrix::make(const FreeModule *target,
 	  return 0;
 	}
     }
+
   Matrix *result = new Matrix(target,source,deg->array);
   unsigned int next = 0;
-  for (int c=0; c < source->rank(); c++)
+  for (int r=0; r <target->rank(); r++)
     {
-      for (int r=0; r <target->rank(); r++)
+      for (int c=0; c < source->rank(); c++)
 	{
 	  result->set_entry(r,c,M->array[next]->get_value());
 	  next++;
