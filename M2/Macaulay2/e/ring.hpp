@@ -62,7 +62,7 @@ public:
   // Only valid for polynomial rings, and their quotients: otherwise returns the zero ideal
   virtual MonomialIdeal get_quotient_monomials() const;
 
-  virtual void text_out(ostream &o) const = 0;
+  virtual void text_out(buffer &o) const = 0;
 
   virtual int coerce_to_int(ring_elem a) const;
 
@@ -107,8 +107,8 @@ public:
   virtual ring_elem random() const;
   virtual ring_elem random(int homog, const int *deg) const;
 
-  virtual void elem_text_out(ostream &o, const ring_elem f) const = 0;
-  virtual void elem_bin_out(ostream &o, const ring_elem f) const = 0;
+  virtual void elem_text_out(buffer &o, const ring_elem f) const = 0;
+  virtual void elem_bin_out(buffer &o, const ring_elem f) const = 0;
 
   virtual ring_elem eval(const RingMap &map, const ring_elem f) const = 0;
 

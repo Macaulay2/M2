@@ -94,7 +94,7 @@ SchurRing::~SchurRing()
   delete [] SMtab.p;
 }
 
-void SchurRing::text_out(ostream &o) const
+void SchurRing::text_out(buffer &o) const
 {
   o << "Schur(";
   K->text_out(o);
@@ -273,13 +273,13 @@ ring_elem SchurRing::power(const ring_elem f, mpz_t n) const
 {
   if (mpz_sgn(n) < 0)
     {
-      *gError << "element not invertible";
+      gError << "element not invertible";
       return from_int(1);
     }
   unsigned int n1;
   if (!Z::get_ui(n1, n))
     {
-      *gError << "exponent too large";
+      gError << "exponent too large";
       return from_int(1);
     }
   return power(f,n1);
@@ -290,7 +290,7 @@ ring_elem SchurRing::power(const ring_elem f, int n) const
   ring_elem result = from_int(1);
   if (n < 0)
     {
-      *gError << "element not invertible";
+      gError << "element not invertible";
       return result;
     }
   for (int i=0; i<n; i++)
@@ -341,7 +341,7 @@ ring_elem SchurRing::dimension(const ring_elem f) const
   return result;
 }
 
-void SchurRing::elem_text_out(ostream &o, const ring_elem f) const
+void SchurRing::elem_text_out(buffer &o, const ring_elem f) const
 {
   intarray exp_a;
   int *exp = exp_a.alloc(nvars+1);

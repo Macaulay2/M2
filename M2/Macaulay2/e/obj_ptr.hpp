@@ -24,8 +24,7 @@ public:									   \
 									   \
   int operator==(const TYPE &b) const { return obj == b.obj; }		   \
   int operator!=(const TYPE &b) const					   \
-     {  cout << "comparing " << obj << " and " << b.obj << endl;	   \
-        return obj != b.obj; }						   \
+     {  return obj != b.obj; }						   \
   int operator!() const { return obj != NULL; }				   \
   int is_null() const { return obj == NULL; }				   \
   T *operator->() { assert(obj != NULL); return obj; }			   \

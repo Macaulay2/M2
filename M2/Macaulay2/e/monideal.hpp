@@ -77,8 +77,8 @@ class MonomialIdeal_rec : public object_element
   const char * type_name         () const { return "Nmonomial ideal"; }
   MonomialIdeal     cast_to_MonomialIdeal  ();
 
-  void bin_out(ostream &o) const;
-  void text_out(ostream &o) const;
+  void bin_out(buffer &o) const;
+  void text_out(buffer &o) const;
 
   int length_of() const { return count; }
 };
@@ -116,8 +116,8 @@ public:
   // Informational
   int length() const { return obj->count; }
   int topvar() const { return (obj->mi == NULL ? -1 : obj->mi->var); }
-  void text_out(ostream &o) const;
-  void bin_out(ostream &o) const;
+  void text_out(buffer &o) const;
+  void bin_out(buffer &o) const;
 
   const Ring * Ring_of() const { return obj->R; }
   const Monoid* degree_monoid() const { return Ring_of()->degree_monoid(); }

@@ -236,10 +236,11 @@ public:
 //  Debugging ////////////////////////////////
 //////////////////////////////////////////////
 
-  void text_out(const res_degree *p) const;
   void text_out(const res_pair *p) const;
-  void text_out() const;
   void stats() const;
+
+  void text_out(buffer &o, const res_pair *p) const;
+  void stats(buffer &o) const;
 
 //////////////////////////////////////////////
 //  Infrastructure ///////////////////////////
@@ -255,8 +256,8 @@ public:
   const char * type_name         () const { return "res computation"; }
   res_comp   * cast_to_res_comp  ()       { return this; }
 
-  void bin_out(ostream &) const {}
-  void text_out(ostream &o) const { o << "res_computation"; }
+  void bin_out(buffer &) const {}
+  void text_out(buffer &o) const { o << "res_computation"; }
 
   int length_of() const { return nminimal; }
   object index_of(int i) { return make_minimal(i); }

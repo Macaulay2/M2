@@ -29,8 +29,8 @@ class Vector_rec : public object_element
 
   int          length_of        () const;
 
-  void         text_out (ostream &o) const;
-  void         bin_out  (ostream &o) const;
+  void         text_out (buffer &o) const;
+  void         bin_out  (buffer &o) const;
 };
 
 class Vector
@@ -81,8 +81,8 @@ public:
 
   Vector get_terms(int lo, int hi) const;
 
-  void bin_out(ostream &o) const;
-  void text_out(ostream &o) const;
+  void bin_out(buffer &o) const;
+  void text_out(buffer &o) const;
 };
 
 

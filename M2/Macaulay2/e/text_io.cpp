@@ -1,4 +1,6 @@
 // (c) 1994 Michael E. Stillman
+
+#include <stdio.h>
 #include "text_io.hpp"
 
 int p_plus = 0;
@@ -13,7 +15,7 @@ int i_text_io()
   return 1;
 }
 
-void bignum_text_out(ostream &o, mpz_t a)
+void bignum_text_out(buffer &o, mpz_t a)
 {
   char s[1000];
   char *str;
@@ -27,9 +29,13 @@ void bignum_text_out(ostream &o, mpz_t a)
   if (size > 1000) delete [] allocstr;
 }
 
-#if defined(__MWERKS__)
-ostream& endl ( ostream& o ) {
-     extern char newline[];
-     return o << newline;
+void emit(char *s)
+{
+  fprintf(stderr, s);
 }
-#endif
+
+void emit_line(char *s)
+{
+  fprintf(stderr, "%s%s", s, newline);
+}
+

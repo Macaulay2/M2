@@ -16,21 +16,22 @@ T stack<T>::remove(int i)
 }
 
 template <class T>
-void stack<T>::text_out(ostream &o) const
+void stack<T>::text_out(buffer &o) const
 {
+  char s[100];
   if (is_empty())
     {
       o << "<stack is empty>";
       return;
     }
 
-  o << "stack:";
+  o << "stack:" << newline;
   for (int i=0; in_bounds(i); i++) 
     {
-      o << setw(20) << operator[](i)->type_name();
-      o << " ";
+      sprintf(s, "%20s ", operator[](i)->type_name());
+      o.put(s);
       operator[](i).text_out(o);
-      o << endl;
+      o << newline;
     }
 }
 

@@ -6,7 +6,7 @@
 #include "text_io.hpp"
 #include "bin_io.hpp"
 
-void ntuple::elem_text_out(ostream &o, 
+void ntuple::elem_text_out(buffer &o, 
 			   int nvars,
 			   const int *a, 
 			   const array<char *> &varnames)
@@ -25,7 +25,7 @@ void ntuple::elem_text_out(ostream &o,
   if (len == 0 && p_one) o << "1";
 }
 
-void ntuple::elem_bin_out(ostream &o, int nvars, const int *a)
+void ntuple::elem_bin_out(buffer &o, int nvars, const int *a)
 {
   int i;
   int len = 0;

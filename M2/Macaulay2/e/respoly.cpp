@@ -224,9 +224,15 @@ int res_poly::n_terms(const resterm *f) const
 
 void res_poly::elem_text_out(const resterm *f) const
 {
+  buffer o;
+  elem_text_out(o, f);
+  emit(o.str());
+}
+void res_poly::elem_text_out(buffer &o, const resterm *f) const
+{
   if (f == NULL)
     {
-      cerr << "0";
+      o << "0";
       return;
     }
 
@@ -240,10 +246,10 @@ void res_poly::elem_text_out(const resterm *f) const
   for (const resterm *t = f; t != NULL; t = t->next)
     {
       int isone = M->is_one(t->monom);
-      K->elem_text_out(cerr,t->coeff);
+      K->elem_text_out(o,t->coeff);
       if (!isone)
-	M->elem_text_out(cerr, t->monom);
-      cerr << "<" << t->comp->me << ">";
+	M->elem_text_out(o, t->monom);
+      o << "<" << t->comp->me << ">";
       p_plus = 1;
     }
 

@@ -24,7 +24,7 @@ FractionField::~FractionField()
   delete frac_stash;
 }
 
-void FractionField::text_out(ostream &o) const
+void FractionField::text_out(buffer &o) const
 {
   o << "Frac(";
   R->text_out(o);
@@ -113,7 +113,7 @@ ring_elem FractionField::random(int homog, const int *deg) const
   return FRAC_RINGELEM(make_elem(a,b));
 }
 
-void FractionField::elem_text_out(ostream &o, const ring_elem a) const
+void FractionField::elem_text_out(buffer &o, const ring_elem a) const
 {
   int old_one = p_one;
   int old_plus = p_plus;
@@ -139,7 +139,7 @@ void FractionField::elem_text_out(ostream &o, const ring_elem a) const
   p_plus = old_plus;
 }
 
-void FractionField::elem_bin_out(ostream &o, const ring_elem a) const
+void FractionField::elem_bin_out(buffer &o, const ring_elem a) const
 {
   frac_elem *f = FRAC_VAL(a);
   R->elem_bin_out(o, f->numer);
@@ -376,7 +376,7 @@ ring_elem FractionField::power(const ring_elem a, int n) const
       bottom = R->power(f->numer, -n);
       if (R->is_zero(bottom))
 	{
-	  *gError << "attempt to divide by zero";
+	  gError << "attempt to divide by zero";
 	  R->remove(bottom);
 	  bottom = R->from_int(1);
 	}
@@ -400,7 +400,7 @@ ring_elem FractionField::power(const ring_elem a, mpz_t n) const
       mpz_neg(n, n);
       if (R->is_zero(bottom))
 	{
-	  *gError << "attempt to divide by zero";
+	  gError << "attempt to divide by zero";
 	  R->remove(bottom);
 	  bottom = R->from_int(1);
 	}

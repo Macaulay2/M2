@@ -31,7 +31,7 @@ void cmd_Ring_from_int(object &oF, object &on)
 
   if (n.Ring_of() != ZZ)
     {
-      *gError << "from_int requires an integer";
+      gError << "from_int requires an integer";
       return;
     }
 
@@ -59,7 +59,7 @@ void cmd_Ring_isequal(object &oa, object &ob)
     }
   else
     {
-      *gError << "equality check: ring elements have different base rings";
+      gError << "equality check: ring elements have different base rings";
       result = 0;
     }
   gStack.insert(make_object_int(result));
@@ -153,7 +153,7 @@ void cmd_Ring_power(object &oa, object &on)
 
   if (b.Ring_of() != ZZ)
     {
-      *gError << "must use integers for exponentiation";
+      gError << "must use integers for exponentiation";
       return;
     }
   gStack.insert(a.power(MPZ_VAL(b.get_value())));
@@ -168,9 +168,9 @@ void cmd_PolynomialRing_term(object &oR, object &oa, object &om)
   RingElement a = oa->cast_to_RingElement();
   Monomial m = om->cast_to_Monomial();
   if (R->Ncoeffs() != a.Ring_of())
-    { *gError << "term: incorrect arguments"; return; }
+    { gError << "term: incorrect arguments"; return; }
   if (R->n_vars() == 0)
-    { *gError << "term: need a polynomial ring"; return; }
+    { gError << "term: need a polynomial ring"; return; }
 
   gStack.insert(RingElement(R, a, m));
 }
@@ -216,17 +216,17 @@ void cmd_PolynomialRing_homogenize(object &oelem, object &ov, object &owts)
   const Ring *R = r.Ring_of();
   if (v < 0 || v >= R->n_vars())
     {
-      *gError << "homogenization: improper ring variable";
+      gError << "homogenization: improper ring variable";
       return;
     }
   if (wts == NULL || wts->length() != R->n_vars())
     {
-      *gError << "homogenization: improper weight function";
+      gError << "homogenization: improper weight function";
       return;
     }
   if ((*wts)[v] == 0)
     {
-      *gError << "homogenization: variable weight is zero";
+      gError << "homogenization: variable weight is zero";
       return;
     }
 
@@ -244,17 +244,17 @@ void cmd_PolynomialRing_homogenize1(object &oelem, object &ov, object &odeg, obj
   const Ring *R = r.Ring_of();
   if (v < 0 || v >= R->n_vars())
     {
-      *gError << "homogenization: improper ring variable";
+      gError << "homogenization: improper ring variable";
       return;
     }
   if (wts == NULL || wts->length() != R->n_vars())
     {
-      *gError << "homogenization: improper weight function";
+      gError << "homogenization: improper weight function";
       return;
     }
   if ((*wts)[v] == 0)
     {
-      *gError << "homogenization: variable weight is zero";
+      gError << "homogenization: variable weight is zero";
       return;
     }
 
@@ -271,7 +271,7 @@ void cmd_FractionField_numerator(object &of)
   const FractionField *K = R->cast_to_FractionField();
   if (K == NULL)
     {
-      *gError << "fraction field required";
+      gError << "fraction field required";
       return;
     }
   gStack.insert(f.numerator());
@@ -284,7 +284,7 @@ void cmd_FractionField_denominator(object &of)
   const FractionField *K = R->cast_to_FractionField();
   if (K == NULL)
     {
-      *gError << "fraction field required";
+      gError << "fraction field required";
       return;
     }
   gStack.insert(f.denominator());
@@ -301,7 +301,7 @@ void cmd_Z_mod(object &r, object &oM)
   else if (p == 0)
     gStack.insert(new Z(M));
   else
-    *gError << "Z/pZ: p must be non-negative";
+    gError << "Z/pZ: p must be non-negative";
 }
 
 void cmd_Z()
@@ -325,12 +325,12 @@ void cmd_GF2(object &oR)
   PolynomialRing *R = oR->cast_to_Ring()->cast_to_poly_ring();
   if (R == NULL)
     {
-      *gError << "GF: Polynomial ring expected";
+      gError << "GF: Polynomial ring expected";
       return;
     }
   if (R->n_vars() != 1)
     {
-      *gError << "GF: expected a polynomial ring with one variable";
+      gError << "GF: expected a polynomial ring with one variable";
       return;
     }
 
@@ -354,13 +354,13 @@ void cmd_qring(object &om)
   array<ring_elem> I;
   if (m.n_rows() != 1)
     {
-      *gError << "quotient ring expects matrix with one row";
+      gError << "quotient ring expects matrix with one row";
       return;
     }
   const PolynomialRing *P = m.Ring_of()->cast_to_poly_ring();
   if (P == NULL)
     {
-      *gError << "qring: expected polynomial ring";
+      gError << "qring: expected polynomial ring";
       return;
     }
   for (int i=0; i<m.n_cols(); i++)
@@ -375,7 +375,7 @@ void cmd_qring2(object &on, object &oR)
   const PolynomialRing *P = R->cast_to_poly_ring();
   if (P == NULL)
     {
-      *gError << "qring: expected polynomial ring";
+      gError << "qring: expected polynomial ring";
       return;
     }
   // MES: for now, we create an array of ring elems
@@ -386,13 +386,13 @@ void cmd_qring2(object &on, object &oR)
     {
       if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_RING_ELEM)
 	{
-	  *gError << "qring: expected ring element on the stack";
+	  gError << "qring: expected ring element on the stack";
 	  break;
 	}
       RingElement f = gStack[i]->cast_to_RingElement();
       if (f.Ring_of() != P)
 	{
-	  *gError << "qring: ring element has incorrect base ring";
+	  gError << "qring: ring element has incorrect base ring";
 	  break;
 	}
       I.append(P->copy(f.get_value()));
@@ -414,7 +414,7 @@ void cmd_schur_dim(object &of)
   const SchurRing *F = R->cast_to_SchurRing();
   if (F == NULL)
     {
-      *gError << "schur dimension: need an element of a schur ring";
+      gError << "schur dimension: need an element of a schur ring";
       return;
     }
   RingElement result(F->Ncoeffs(), F->dimension(f.get_value()));
@@ -426,7 +426,7 @@ void cmd_qring_ideal(object &oR)
   const PolynomialRing *R = oR->cast_to_Ring()->cast_to_poly_ring();
   if (R == NULL)
     {
-      *gError << "polynomial ring expected";
+      gError << "polynomial ring expected";
       return;
     }
   gStack.insert(R->get_ideal());

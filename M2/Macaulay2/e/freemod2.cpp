@@ -190,7 +190,7 @@ FreeModule *FreeModule::sub_space(int n) const
 {
   if (n < 0 || n > rank())
     {
-      *gError << "subfreemodule: index out of bounds";
+      gError << "subfreemodule: index out of bounds";
       return NULL;
     }
   FreeModule *result = new_free();
@@ -207,7 +207,7 @@ FreeModule *FreeModule::sub_space(const intarray &a) const
       result->append(degree(a[i]), base_monom(a[i]));
     else
       {
-	*gError << "subfreemodule: index out of bounds";
+	gError << "subfreemodule: index out of bounds";
 	delete result;
 	return NULL;
       }
@@ -430,7 +430,7 @@ int FreeModule::highest_primary_degree() const
   return result;
 }
 
-void FreeModule::text_out(ostream &o) const
+void FreeModule::text_out(buffer &o) const
 {
   int i;
   int rk = rank();
@@ -452,7 +452,7 @@ void FreeModule::text_out(ostream &o) const
   o << ')';
 }
 
-void FreeModule::bin_out(ostream &o) const
+void FreeModule::bin_out(buffer &o) const
 {
   int rk = rank();
   int n;

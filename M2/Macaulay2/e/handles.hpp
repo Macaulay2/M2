@@ -50,7 +50,7 @@ public:
       // Find the handle in the hashtable with key 'h'.  Decrement its
       // refcount, possibly deleting it if refcount drops to zero.
 
-  void text_out(ostream &o) const;
+  void text_out(buffer &o) const;
 };
 
 extern handles gHandles;

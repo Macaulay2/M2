@@ -240,6 +240,7 @@ public:
 
   
   void debug_out(s_pair *q) const;
+  void debug_out(buffer &o, s_pair *q) const;
   void stats() const;
 };  
 
@@ -287,9 +288,9 @@ public:
 
   gbres_comp *cast_to_gbres_comp() { return this; }
   object_types type_of        () const { return TY_GBRES_COMP; }
-  void bin_out(ostream &) const {}
+  void bin_out(buffer &) const {}
   const char * type_name         () const { return "gbres"; }
-  void text_out(ostream &o) const { o << "gbres"; }
+  void text_out(buffer &o) const { o << "gbres"; }
 
   int length_of() const { return nodes[1]->n_gb_elems(); }
 };  

@@ -32,14 +32,14 @@ public:
       return(make_object_int(val[i]));
     }
 
-  void bin_out(ostream &o) const 
+  void bin_out(buffer &o) const 
     { 
       bin_int_out(o, val.length());
       for (int i=0; i<val.length(); i++)
 	bin_int_out(o, val[i]);
     }
 
-  void text_out(ostream &o) const 
+  void text_out(buffer &o) const 
     {
       o << '[';
       for (int i=0; i<val.length()-1; i++)

@@ -98,8 +98,8 @@ public:
 public:
   const Ring * Ring_of() const { return R; }
 
-  void text_out(ostream &o) const;
-  void bin_out(ostream &o) const;
+  void text_out(buffer &o) const;
+  void bin_out(buffer &o) const;
 
   int                 length_of()           const { return count; }
   TermIdeal *         cast_to_TermIdeal()         { return this; }

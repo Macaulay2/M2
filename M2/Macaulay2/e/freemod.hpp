@@ -312,11 +312,11 @@ public:
 //  Input, output, infrastructure ////////////
 //////////////////////////////////////////////
 
-  void text_out(ostream &o) const;
-  void bin_out(ostream &o) const;
+  void text_out(buffer &o) const;
+  void bin_out(buffer &o) const;
 
-  void elem_text_out(ostream &o, const vec a) const;
-  void elem_bin_out(ostream &o, const vec a) const;
+  void elem_text_out(buffer &o, const vec a) const;
+  void elem_bin_out(buffer &o, const vec a) const;
 
   int                 length_of()           const { return rank(); }
   FreeModule *       cast_to_FreeModule()       { return this; }

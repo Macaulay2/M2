@@ -18,8 +18,8 @@ public:
   static int exponent(int n);
   static int pair(int v, int e);
 
-  static void elem_text_out(ostream &o, const int *a);
-  static void elem_text_out(ostream &o, const int *a, 
+  static void elem_text_out(buffer &o, const int *a);
+  static void elem_text_out(buffer &o, const int *a, 
 			    const array<char *> &varnames);
 
   static bool is_one(const int *a);
@@ -56,7 +56,7 @@ public:
   static void erase(const int *a, const int *b, intarray &result);
     // divide a by b^infinity
   static void radical(const int *a, intarray &result);
-  static void elem_bin_out(ostream &o, const int *a);
+  static void elem_bin_out(buffer &o, const int *a);
 };
 
 class index_varpower

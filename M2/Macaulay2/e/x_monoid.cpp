@@ -31,7 +31,7 @@ void cmd_Monoid(object &omo, object &ostr,
   intarray *opts = ooptions->intarray_of();
   if (opts->length() != 3)
     {
-      *gError << "Monoid: expected three options";
+      gError << "Monoid: expected three options";
       return;
     }
   bool is_group = (*opts)[0] != 0;
@@ -41,13 +41,13 @@ void cmd_Monoid(object &omo, object &ostr,
   // Time to check the consistency of all of these options
   if (nbits <= 0 || nbits > 16)
     {
-      *gError << "MonomialSize must be in the range 1..16 bits";
+      gError << "MonomialSize must be in the range 1..16 bits";
       return;
     }
   int n = degs->length();
   if (n != mo->n_vars() * D->n_vars())
     {
-      *gError << "Degree list should be of length " << mo->n_vars()*D->n_vars();
+      gError << "Degree list should be of length " << mo->n_vars()*D->n_vars();
       return;
     }
   monoid_info *moninf = new monoid_info(mo, varnames, len_varnames, 
@@ -62,7 +62,7 @@ int check_all_positive(const intarray &degs)
   for (int i=0; i<degs.length(); i++)
     if (degs[i] <= 0)
       {
-	*gError << "all primary(first) degrees must be strictly positive";
+	gError << "all primary(first) degrees must be strictly positive";
 	return 0;
       }
   return 1;
@@ -73,7 +73,7 @@ void cmd_mo_grevlex(object &oa)
   if (!check_all_positive(*a)) return;
   const mon_order *mo = mon_order::grlex(*a);
   if (mo == NULL)
-    *gError << "invalid arguments for constructing monomial order";
+    gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
@@ -83,7 +83,7 @@ void cmd_mo_revlex(object &oa)
   if (!check_all_positive(*a)) return;
   const mon_order *mo = mon_order::rlex(*a);
   if (mo == NULL)
-    *gError << "invalid arguments for constructing monomial order";
+    gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
@@ -93,7 +93,7 @@ void cmd_mo_glex(object &oa)
   if (!check_all_positive(*a)) return;
   const mon_order *mo = mon_order::glex(*a);
   if (mo == NULL)
-    *gError << "invalid arguments for constructing monomial order";
+    gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
@@ -103,7 +103,7 @@ void cmd_mo_lex(object &oa)
   if (!check_all_positive(*a)) return;
   const mon_order *mo = mon_order::lex(*a);
   if (mo == NULL)
-    *gError << "invalid arguments for constructing monomial order";
+    gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
@@ -114,7 +114,7 @@ void cmd_mo_elim(object &oa, object &on)
   int n = on->int_of();
   const mon_order *mo = mon_order::elim(*a, n);
   if (mo == NULL)
-    *gError << "invalid arguments for constructing monomial order";
+    gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
@@ -126,7 +126,7 @@ void cmd_mo_product1(object &oa, object &on)
   if (!check_all_positive(*n)) return;
   const mon_order *mo = mon_order::product(*a, *n);
   if (mo == NULL)
-    *gError << "invalid arguments for constructing monomial order";
+    gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
@@ -137,12 +137,12 @@ void cmd_mo_product(object &om1, object &om2)
   const mon_order *m2 = om2->cast_to_mon_order()->mon_order_of();
   if (m1 == NULL || m2 == NULL)
     {
-      *gError << "monorder product: invalid monomial order";
+      gError << "monorder product: invalid monomial order";
       return;
     }
   const mon_order *mo = mon_order::product(m1,m2);
   if (mo == NULL)
-    *gError << "invalid arguments for constructing monomial order";
+    gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }
@@ -155,7 +155,7 @@ void cmd_mo_general(object &odegs, object &oorder, object &oinv, object &oinvdeg
   if (!check_all_positive(*invdegs)) return;
   const mon_order *mo = mon_order::general_order(*degs, *order, *inv, *invdegs);
   if (mo == NULL)
-    *gError << "invalid arguments for constructing monomial order";
+    gError << "invalid arguments for constructing monomial order";
   else
     gStack.insert(new object_mon_order(mo));
 }

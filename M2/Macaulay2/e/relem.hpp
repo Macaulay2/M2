@@ -58,8 +58,8 @@ class RingElement_rec : public object_element
   int          int_of() const { return R->coerce_to_int(val); }
   int          length_of() const;
 
-  void         text_out (ostream &o) const;
-  void         bin_out  (ostream &o) const;
+  void         text_out (buffer &o) const;
+  void         bin_out  (buffer &o) const;
 };
 
 class RingElement
@@ -103,7 +103,7 @@ public:
   static RingElement random(const Ring *R);
   static RingElement random(const Ring *R, int homog, const intarray &deg);
 
-  void text_out (ostream &o) const;
+  void text_out (buffer &o) const;
 
   // We have several ways of moving from one ring to the next:
   //    R ---> R[x1..xn]
@@ -183,7 +183,7 @@ inline bool RingElement::is_equal(const RingElement &b) const
   if (this == &b) return true;
   if (Ring_of() != b.Ring_of())
     {
-      *gError << "cannot compare ring elements from different rings";
+      gError << "cannot compare ring elements from different rings";
       return false;
     }
   return Ring_of()->is_equal(obj->val, b.obj->val);

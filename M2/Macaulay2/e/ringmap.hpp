@@ -25,8 +25,8 @@ class RingMap_rec : public object_element
   
   int length_of() const { return map.length(); }
 
-  void bin_out(ostream &o) const;
-  void text_out(ostream &o) const;
+  void bin_out(buffer &o) const;
+  void text_out(buffer &o) const;
 };
 
 class RingMap
@@ -49,7 +49,7 @@ public:
   const Ring *Ring_of() const { return obj->R; }
   const Monoid *degree_monoid() const { return Ring_of()->degree_monoid(); }
 
-  void text_out(ostream &o) const;
+  void text_out(buffer &o) const;
 };
 
 inline RingMap RingMap_rec::cast_to_RingMap() 

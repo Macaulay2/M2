@@ -202,7 +202,7 @@ public:
 	    fs->execute();
 	    return;
 	  }
-      *gError << "Incorrect stack arguments for command '" << _name << "' ";
+      gError << "Incorrect stack arguments for command '" << _name << "' ";
     }
 };
 

@@ -31,22 +31,22 @@ static int getlength(char *&s, int &len)
 {
   unsigned char c;
 
-  if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+  if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
   c = *s++;
   if ((c & 0x80) == 0) return c;
 
   unsigned int ln = c & 0x7f;
-  if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+  if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
   c = *s++;
   if ((c & 0x80) == 0) return (ln << 7) + c;
 
   ln = (ln << 7) + (c & 0x7f);
-  if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+  if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
   c = *s++;
   if ((c & 0x80) == 0) return (ln << 7) + c;
 
   ln = (ln << 7) + (c & 0x7f);
-  if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+  if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
   c = *s++;
   return (ln << 7) + (c & 0x7f);
 }
@@ -54,29 +54,29 @@ static int getlength6(char *&s, int &len)
 {
   unsigned char c;
 
-  if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+  if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
   c = *s++;
   if ((c & 0x80) == 0) return c & 0x3f;
 
   unsigned int ln = c & 0x3f;
-  if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+  if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
   c = *s++;
   if ((c & 0x80) == 0) return (ln << 7) + c;
 
   ln = (ln << 7) + (c & 0x7f);
-  if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+  if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
   c = *s++;
   if ((c & 0x80) == 0) return (ln << 7) + c;
 
   ln = (ln << 7) + (c & 0x7f);
-  if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+  if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
   c = *s++;
   return (ln << 7) + (c & 0x7f);
 }
 
 void bin_mpz_in(mpz_t result, char *&s, int &len)
 {
-  if (len <= 0) { *gError << "badly formed binary integer"; return; }
+  if (len <= 0) { ERROR("badly formed binary integer"); return; }
   int sgn = (0 != (0x40 & *s));
   int oldlen = len;
   int x = getlength6(s,len);
@@ -88,7 +88,7 @@ void bin_mpz_in(mpz_t result, char *&s, int &len)
   if (getmore2 && getmore3)
     {
       int ln = getlength(s,len);
-      if (ln > len)  { *gError << "badly formed binary integer"; return; }
+      if (ln > len)  { ERROR("badly formed binary integer"); return; }
       while (ln > 0)
 	{
 	  int c = 0xff & (*s++);
@@ -100,12 +100,9 @@ void bin_mpz_in(mpz_t result, char *&s, int &len)
     }
 
   if (sgn) mpz_neg(result, result);
-//  cout << "read integer ";
-//  bignum_text_out(cout, result);
-//  cout << endl;
 }
 
-void bin_mpz_out(ostream &o, mpz_t N)
+void bin_mpz_out(buffer &o, mpz_t N)
 {
   int nbits = mpz_sizeinbase(N, 2);  // This is suppoed to be exact, and not count negative...
   // If the number fits into the first 27 bits, use bin_int_out
@@ -178,7 +175,7 @@ void bin_mpz_out(ostream &o, mpz_t N)
 }
 
 
-void bin_int_out(ostream &o, int n)
+void bin_int_out(buffer &o, int n)
      /* append n to ds, using the format:
         b0 b1 b2 b3 ...
 	where if b0 has top bit set, there is another byte,
@@ -272,7 +269,7 @@ int bin_int_in(char *&s, int &len)
      // 
      // 
 {
-  if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+  if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
   unsigned char c = *s++; 
   int sign = 0x40 & c;
   int more = 0x80 & c;
@@ -280,7 +277,7 @@ int bin_int_in(char *&s, int &len)
   if (more)
     {
       // get next 7 bits.
-      if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+      if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
       c = *s++;
       result = result << 7;
       more = 0x80 & c;
@@ -290,7 +287,7 @@ int bin_int_in(char *&s, int &len)
     {
       // get next 7 bits.
       // 3rd byte
-      if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+      if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
       c = *s++;
       result = result << 7;
       more = 0x80 & c;
@@ -299,7 +296,7 @@ int bin_int_in(char *&s, int &len)
   if (more)
     {
       // get next 7 bits.
-      if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+      if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
       c = *s++;
       result = result << 7;
       more = 0x80 & c;
@@ -308,14 +305,14 @@ int bin_int_in(char *&s, int &len)
   if (more)
     {
       // The next byte(s) form the length field
-      if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+      if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
       c = *s++;
       if (c != 1) 
 	{ 
-	  *gError << "integer overflow: bignums not yet implemented";
+	  ERROR("integer overflow: bignums not yet implemented");
 	  return 0;
 	}
-      if (len-- == 0) { *gError << "badly formed binary integer"; return 0; }
+      if (len-- == 0) { ERROR("badly formed binary integer"); return 0; }
       c = *s++;
       result = result << 8;
       result += c;
@@ -349,4 +346,4 @@ int test_bin_io()
   return 0;
 }
 #endif
-//static int test_bin_io_int = test_bin_io();
+

@@ -10,8 +10,8 @@
 
 extern int refcount_check;
 
-extern ostrstream *gError;
-extern ostrstream *gOutput;
+extern buffer gError;
+extern buffer gOutput;
 extern char *gInput;
 extern int gInputLen;
 
@@ -123,9 +123,9 @@ public:
   virtual int hash() const { return 0; }
 
   // Display
-  virtual void bin_out(ostream &) const { }
-  virtual void text_out(ostream &o) const { o << type_name(); }
-  virtual void debug_out(ostream &o) const;
+  virtual void bin_out(buffer &) const { }
+  virtual void text_out(buffer &o) const { o << type_name(); }
+  virtual void debug_out(buffer &o) const;
 
   // Getting values.  Shorthands for casting and getting values.
   virtual int int_of() const { return 0; }
@@ -205,8 +205,8 @@ public:
     }
 
 public:
-  void bin_out(ostream &o) const { assert(obj != NULL); obj->bin_out(o); }
-  void text_out(ostream &o) const { assert(obj != NULL); obj->text_out(o); }
+  void bin_out(buffer &o) const { assert(obj != NULL); obj->bin_out(o); }
+  void text_out(buffer &o) const { assert(obj != NULL); obj->text_out(o); }
 };
 
 class type : public object_element 

@@ -44,6 +44,7 @@ CONTAINER = \
 	stack 
 
 INTERFACE = \
+	buffer \
 	bin_io \
 	handles \
 	interp \

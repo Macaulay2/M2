@@ -255,7 +255,7 @@ void s_pair_set::flush_degree()
 {
   if (heap != this_deg)
     {
-      *gError << "attempting to flush wrong pairs!";
+      gError << "attempting to flush wrong pairs!";
       assert(0);
     }
   heap = heap->next;
@@ -267,70 +267,71 @@ void s_pair_set::flush_degree()
 //// Stats ///////////////////////////////////
 //////////////////////////////////////////////
 
-void s_pair_set::debug_out(S_pair *s) const
+void s_pair_set::debug_out(buffer &o, S_pair *s) const
 {
   if (s->is_gen)
     {
-      cerr << "  gen  ";
-      F->elem_text_out(cerr, s->f);
+      o<< "  gen  ";
+      F->elem_text_out(o, s->f);
     }
   else
     {
-      cerr << "  pair ";
-      G->elem_text_out(cerr, s->fsyz);
+      o << "  pair ";
+      G->elem_text_out(o, s->fsyz);
     }
-  cerr << endl;
+  o << newline;
 }
 
 void s_pair_set::stats()
 {
+  buffer o;
   s_pair_bunch *p;
   int totalpairs = 0;
   int totalflushed = 0;
 
-  cerr << "degree  #computed  #flushed" << endl;
-  cerr << "------  ---------  --------" << endl;
+  o << "degree  #computed  #flushed" << newline;
+  o << "------  ---------  --------" << newline;
   for (int i=0; i<pairs_done.length(); i += 3)
     {
-      cerr << pairs_done[i] << "  " << pairs_done[i+2] << "  " << pairs_done[i+1] << endl;
+      o << pairs_done[i] << "  " << pairs_done[i+2] << "  " << pairs_done[i+1] << newline;
       totalpairs += pairs_done[i+2];
       totalflushed += pairs_done[i+1];
     }
-  cerr << "------  ---------  --------" << endl;
-  cerr << "total   " << totalpairs << " " << totalflushed << endl << endl;
+  o << "------  ---------  --------" << newline;
+  o << "total   " << totalpairs << " " << totalflushed << newline << newline;
 
-  cerr << "pairs/gens remaining" << endl;
-  cerr << "degree  #remaining  #gens" << endl;
-  cerr << "------  ----------  -----" << endl;
+  o << "pairs/gens remaining" << newline;
+  o << "degree  #remaining  #gens" << newline;
+  o << "------  ----------  -----" << newline;
   int pairsleft = 0;
   int gensleft = 0;
   for (p = heap; p != NULL; p = p->next)
     {
-      cerr << p->mydeg << "  " << p->nelems << "  " << p->ngens << endl;
+      o << p->mydeg << "  " << p->nelems << "  " << p->ngens << newline;
       pairsleft += p->nelems;
       gensleft += p->ngens;
     }
-  cerr << "------  ----------  -----" << endl;
-  cerr << "total   " << pairsleft << "  " << gensleft << endl;
+  o << "------  ----------  -----" << newline;
+  o << "total   " << pairsleft << "  " << gensleft << newline;
 
   if (comp_printlevel >= 5)
     {
-      cerr << endl;
+      o << newline;
       for (p = heap; p != NULL; p = p->next)
 	{
 	  S_pair *s;
-	  cerr << "-- degree " << p->mydeg << " ---" << endl;
+	  o << "-- degree " << p->mydeg << " ---" << newline;
 	  for (s = heap->pairs; s != NULL; s = s->next)
-	    debug_out(s);
-	  cerr << "-- unsorted -------" << endl;
+	    debug_out(o, s);
+	  o << "-- unsorted -------" << newline;
 	  for (s = heap->unsorted_pairs; s != NULL; s = s->next)
-	    debug_out(s);
-	  cerr << "-- gens -------" << endl;
+	    debug_out(o, s);
+	  o << "-- gens -------" << newline;
 	  for (s = heap->gens; s != NULL; s = s->next)
-	    debug_out(s);
-	  cerr << "-- unsorted -------" << endl;
+	    debug_out(o, s);
+	  o << "-- unsorted -------" << newline;
 	  for (s = heap->unsorted_gens; s != NULL; s = s->next)
-	    debug_out(s);
+	    debug_out(o, s);
 	}
     }
 }

@@ -24,11 +24,11 @@ public:
   static void copy(int nvars, const int *a, int *result);
   static int weight(int nvars, const int *a, const int *wt);
 
-  static void elem_text_out(ostream &o, 
+  static void elem_text_out(buffer &o, 
 			    int nvars,
 			    const int *a, 
 			    const array<char *> &varnames);
-  static void elem_bin_out(ostream &o, int nvars, const int *a);
+  static void elem_bin_out(buffer &o, int nvars, const int *a);
 };
 
 inline 

@@ -2,6 +2,7 @@
 
 #include "gb2.hpp"
 #include "hilb.hpp"
+#include "text_io.hpp"
 
 extern ring_elem hilb(const Matrix &M, const Ring *RR);
 extern int compare_type;
@@ -89,7 +90,7 @@ void gbres_comp::setup(const Matrix &m,
   FreeModule *Fsyz = new FreeModule(R);
   if (length <= 0)
     {
-      *gError << "resolution length must be at least 1";
+      gError << "resolution length must be at least 1";
       length = 1;
     }
   if (length > 1 && origsyz > 0)
@@ -171,7 +172,12 @@ int gbres_comp::calc(const int *stop_degree, const intarray &stop)
   int ret;
   int old_compare_type = compare_type;
   compare_type = (strategy_flags >> 10);
-  if (comp_printlevel >= 4) cerr << "compare=" << compare_type << endl;
+  if (comp_printlevel >= 4) 
+    {
+      buffer o;
+      o << "compare=" << compare_type << newline;
+      emit(o.str());
+    }
   for (int i=lo_degree; !is_done(); i++)
     {
       if (stop_degree != NULL && i > *stop_degree)
@@ -179,7 +185,12 @@ int gbres_comp::calc(const int *stop_degree, const intarray &stop)
 	  ret = COMP_DONE_DEGREE_LIMIT;
 	  break;
 	}
-      if (comp_printlevel >= 1)	cerr << "{" << i << "}";
+      if (comp_printlevel >= 1)	
+	{
+	  buffer o;
+	  o << "{" << i << "}";
+	  emit(o.str());
+	}
       ret = nodes[n_nodes-1]->calc_gens(i+n_nodes-3, stop);
       if (ret != COMP_DONE) break;
     }
@@ -203,7 +214,7 @@ Matrix gbres_comp::reduce(const Matrix &m, Matrix &lift)
   Matrix red(m.rows(), m.cols(), m.degree_shift());
   lift = Matrix(nodes[1]->output_free_module(), m.cols());
   if (m.n_rows() != F->rank()) {
-       *gError << "expected matrices to have same number of rows";
+       gError << "expected matrices to have same number of rows";
        return red;
   }
   for (int i=0; i<m.n_cols(); i++)
@@ -224,7 +235,7 @@ Vector gbres_comp::reduce(const Vector &v, Vector &lift)
   const FreeModule *F = nodes[0]->output_free_module();
   if (!v.free_of()->is_equal(F))
     {
-      *gError << "reduce: vector is in incorrect free module";
+      gError << "reduce: vector is in incorrect free module";
       return Vector(F, NULL);
     }
   vec f = F->copy(v.get_value());
@@ -284,7 +295,7 @@ Matrix gbres_comp::change_matrix(int level)
 
 void gbres_comp::stats() const
 {
-  cerr << "  #gb #pair #comp     m     z     o     u #hilb  #gcd #mons  #chg" << endl;
+  emit_line("  #gb #pair #comp     m     z     o     u #hilb  #gcd #mons  #chg");
   for (int i=1; i<n_nodes; i++)
     nodes[i]->stats();
 }
@@ -345,7 +356,7 @@ void cmd_gbres_calc(object &op, object &odeg, object &oargs)
   intarray *args = oargs->intarray_of();
   if (args->length() != 6)
     {
-      *gError << "res: expected 5 elements in parameter array";
+      gError << "res: expected 5 elements in parameter array";
       return;
     }
   int *d;

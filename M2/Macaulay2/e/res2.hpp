@@ -271,9 +271,11 @@ public:
 //  Debugging ////////////////////////////////
 //////////////////////////////////////////////
 
-  void display_order(int sortval) const;
+  void display_order(buffer &o, int sortval) const;
   void text_out(const res2_pair *p) const;
   void text_out() const;
+
+  void text_out(buffer &o, const res2_pair *p) const;
   void stats() const;
 
 //////////////////////////////////////////////
@@ -290,8 +292,8 @@ public:
   const char * type_name         () const { return "res2 computation"; }
   res2_comp   * cast_to_res2_comp  ()       { return this; }
 
-  void bin_out(ostream &) const {}
-  void text_out(ostream &o) const { o << "res2_computation"; }
+  void bin_out(buffer &) const {}
+  void text_out(buffer &o) const { o << "res2_computation"; }
 
   int length_of() const { return nminimal; }
   object index_of(int i) { return make_minimal(i); }

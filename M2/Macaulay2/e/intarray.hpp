@@ -122,8 +122,8 @@ public:
 
   int operator!=(const intarray &a) const { return !(operator==(a)); }
 
-  void bin_out(ostream &o) const;
-  void text_out(ostream &o) const;
+  void bin_out(buffer &o) const;
+  void text_out(buffer &o) const;
 
   friend void i_stashes();
   static stash *mystash;

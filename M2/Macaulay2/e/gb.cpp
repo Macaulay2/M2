@@ -4,6 +4,7 @@
 #include "gb.hpp"
 #include "hilb.hpp"
 #include "geovec.hpp"
+#include "text_io.hpp"
 
 extern char system_interrupted;
 int comp_printlevel = 0;
@@ -18,7 +19,7 @@ void GB_comp::set_up0(const Matrix &m, int csyz, int nsyz)
   R = m.Ring_of()->cast_to_poly_ring();
   if (R == NULL)
     {
-      *gError << "ring is not a polynomial ring";
+      gError << "ring is not a polynomial ring";
       // MES: throw an error here.
       assert(0);
     }
@@ -390,8 +391,10 @@ void GB_comp::find_pairs(gb_elem *p)
 	      n_saved_gcd++;
 	      if (comp_printlevel >= 8)
 		{
-		  cerr << "removed pair[" << q->first->me << " " 
-		    << q->second->me << "]" << endl;;
+		  buffer o;
+		  o << "removed pair[" << q->first->me << " " 
+		    << q->second->me << "]" << newline;
+		  emit(o.str());
 		}
 	      remove_pair(q);
 	    }
@@ -488,7 +491,11 @@ void GB_comp::gb_reduce(vec &f, vec &fsyz)
     }
 
   if (comp_printlevel >= 4)
-    cerr << "." << count;
+    {
+      buffer o;
+      o << "." << count;
+      emit(o.str());
+    }
   result->next = NULL;
   f = head.next;
 }
@@ -544,7 +551,11 @@ void GB_comp::gb_geo_reduce(vec &f, vec &fsyz)
     }
 
   if (comp_printlevel >= 4)
-    cerr << "." << count;
+    {
+      buffer o;
+      o << "." << count;
+      emit(o.str());
+    }
   result->next = NULL;
   f = head.next;
 
@@ -746,7 +757,7 @@ int GB_comp::coeff_of(const RingElement &h, int deg) const
       P->Nmonoms()->to_expvector(f->monom, exp);
       if (exp[0] < deg) 
 	{
-	  cerr << "oops, exp[0] = " << exp[0] << endl;
+	  ERROR("Incorrect Hilbert function given");
 	}
       else if (exp[0] == deg)
 	{
@@ -817,7 +828,7 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 {
   if (stop.length() != 7) 
     {
-      *gError << "inappropriate stop conditions for GB computation";
+      gError << "inappropriate stop conditions for GB computation";
       return COMP_ERROR;
     }
   const int *stop_degree = deg;
@@ -880,9 +891,6 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 		  
 		  // At this point we have a completed Hilbert polynomial
 		  RingElement h = hf_comp->value();
-		  //cerr << "Hilbert function = ";
-		  //hf_orig.Ring_of()->elem_text_out(cerr, h.get_value());
-		  //cerr << endl;
 		  hf_diff = h - hf_orig;
 		  hilb_step = 0;
 		}
@@ -891,11 +899,13 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 	    }
 	  if (comp_printlevel >= 1)
 	    {
-	      cerr << '{' << this_degree << '}';
-	      cerr << '(';
+	      buffer o;
+	      o << '{' << this_degree << '}';
+	      o << '(';
 	      if (use_hilb) 
-		cerr << n_in_degree << ',';
-	      cerr << spairs->n_elems() << ')';
+		o << n_in_degree << ',';
+	      o << spairs->n_elems() << ')';
+	      emit(o.str());
 	    }
 
 	  // Set state information for auto reduction, new pairs
@@ -914,22 +924,22 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 	  else switch (s_pair_step()) 
 	    {
 	    case SPAIR_MINGEN:
-	      cerr << "g";
+	      emit("g");
 	      break;
 	    case SPAIR_GB:
-	      cerr << "m";
+	      emit("m");
 	      break;
 	    case SPAIR_SYZ:
-	      cerr << "z";
+	      emit("z");
 	      break;
 	    case SPAIR_ZERO:
-	      cerr << "o";
+	      emit("o");
 	      break;
 	    case SPAIR_DONE:
 	      state = GB_COMP_GENS;
 	      break;
 	    default:
-	      cerr << "ERROR";
+	      emit("ERROR");
 	      break;
 	    }
 	  break;
@@ -943,19 +953,19 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 	  else switch (gen_step()) 
 	    {
 	    case SPAIR_MINGEN:
-	      cerr << "g";
+	      emit("g");
 	      break;
 	    case SPAIR_SYZ:
-	      cerr << "z";
+	      emit("z");
 	      break;
 	    case SPAIR_ZERO:
-	      cerr << "o";
+	      emit("o");
 	      break;
 	    case SPAIR_DONE:
 	      state = GB_COMP_AUTO_REDUCE;
 	      break;
 	    default:
-	      cerr << "ERROR";
+	      emit("ERROR");
 	      break;
 	    }
 	  break;
@@ -985,13 +995,15 @@ int GB_comp::calc(const int *deg, const intarray &stop)
 	  break;
 	}
     }
-  if (comp_printlevel >= 1) cerr << endl;
+  if (comp_printlevel >= 1) emit_line("");
   if (comp_printlevel >= 4)
     {
-      cerr << "Number of pairs             = " << n_pairs << endl;
-      cerr << "Number of gb elements       = " << n_gb << endl;
-      cerr << "Number of gcd=1 pairs       = " << n_saved_gcd << endl;
-      cerr << "Number of pairs computed    = " << n_computed << endl;
+      buffer o;
+      o << "Number of pairs             = " << n_pairs << newline;
+      o << "Number of gb elements       = " << n_gb << newline;
+      o << "Number of gcd=1 pairs       = " << n_saved_gcd << newline;
+      o << "Number of pairs computed    = " << n_computed << newline;
+      emit(o.str());
     }
   return is_done;
 }
@@ -1002,7 +1014,7 @@ Matrix GB_comp::reduce(const Matrix &m, Matrix &lift)
   Matrix red(m.rows(), m.cols(), m.degree_shift());
   lift = Matrix(Fsyz, m.cols());
   if (m.n_rows() != F->rank()) {
-       *gError << "expected matrices to have same number of rows";
+       gError << "expected matrices to have same number of rows";
        return red;
   }
   for (int i=0; i<m.n_cols(); i++)
@@ -1066,7 +1078,7 @@ Vector GB_comp::reduce(const Vector &v, Vector &lift)
 {
   if (!v.free_of()->is_equal(F))
     {
-      *gError << "reduce: vector is in incorrect free module";
+      gError << "reduce: vector is in incorrect free module";
       return Vector(F, NULL);
     }
   vec f = F->copy(v.get_value());
@@ -1122,26 +1134,32 @@ Matrix GB_comp::syz_matrix()
 void GB_comp::debug_out(s_pair *q) const
 {
   if (q == NULL) return;
-  cerr << "(" << q->compare_num << " ";
-  if (q->first != NULL) cerr << q->first->me; else cerr << ".";
-  cerr << " ";
-  if (q->second != NULL) cerr << q->second->me; else cerr << ".";
-  cerr << " ";
-  M->elem_text_out(cerr, q->lcm);
-  cerr << ") ";
+  buffer o;
+  o << "(" << q->compare_num << " ";
+  if (q->first != NULL) o << q->first->me; else o << ".";
+  o << " ";
+  if (q->second != NULL) o << q->second->me; else o << ".";
+  o << " ";
+  M->elem_text_out(o, q->lcm);
+  o << ") ";
+  emit(o.str());
 }
 
 void GB_comp::stats() const
 {
-  cerr << "# pairs computed = " << n_computed << endl;
+  buffer o;
+  o << "# pairs computed = " << n_computed << newline;
+  emit(o.str());
+  o.reset();
   spairs->stats();
   if (comp_printlevel >= 5 && comp_printlevel % 2 == 1)
     for (int i=0; i<gb.length(); i++)
       {
-	cerr << i << '\t';
-	F->elem_text_out(cerr, gb[i]->f);
-	cerr << endl;
+	o << i << '\t';
+	F->elem_text_out(o, gb[i]->f);
+	o << newline;
       }
+  emit(o.str());
 }
 
 #if 0

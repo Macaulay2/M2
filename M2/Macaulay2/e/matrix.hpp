@@ -38,8 +38,8 @@ class Matrix_rec : public object_element
   
   int length_of() const { return entries.length(); }
 
-  void bin_out(ostream &o) const;
-  void text_out(ostream &o) const;
+  void bin_out(buffer &o) const;
+  void text_out(buffer &o) const;
 };
 
 class Matrix
@@ -167,7 +167,7 @@ public:
   void elim(int n, intarray &result) const;
   Matrix sat(int n, int maxd) const; // maxd<0 means divide by as much as possible
 
-  void text_out(ostream &o) const;
+  void text_out(buffer &o) const;
 };
 
 inline Matrix Matrix_rec::cast_to_Matrix() 

@@ -45,8 +45,8 @@ public:
   void *new_elem();
   void delete_elem(void *p);
 
-  void text_out(ostream &o) const; // Display statistics about this stash.
-  static void stats(ostream &o);
+  void text_out(buffer &o) const; // Display statistics about this stash.
+  static void stats(buffer &o);
 private:
   stash *next;
 

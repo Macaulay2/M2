@@ -1,7 +1,22 @@
 // Copyright 1997 by Michael E. Stillman
 
 #include "comb.hpp"
+#include "text_io.hpp"
+
 array< array<int> > comb::tab;
+
+typedef unsigned long int ulong;
+
+inline ulong range_safe_add(ulong a, ulong b)
+{
+  ulong c = a + b;
+  if (c < a)
+    {
+      emit_line("ulong integer addition overflow");
+      exit(-1);
+    }
+  return c;
+}
 
 void comb::expand(int nn, int dd)
 {
@@ -27,15 +42,15 @@ void comb::expand(int nn, int dd)
       tab[d][n] = range_safe_add(tab[d][n-1],tab[d-1][n-1]);
 }
 
-void comb::text_out(ostream &o)
+void comb::text_out(buffer &o)
 {
-  o << "length = " << tab.length() << endl;
+  o << "length = " << tab.length() << newline;
   for(int i=0; i<tab.length(); i++)
     {
       o << '[' << tab[i].length() << "] ";
       for(int j=0; j < tab[i].length(); j++)
 	o << tab[i][j] << ' ';
-      o << endl;
+      o << newline;
     }
 }
 

@@ -35,7 +35,7 @@ RingElement RingElement::invert() const
   RingElement result(R);
   if (is_zero())
     {
-      *gError << "ring division: attempt to divide by zero";
+      gError << "ring division: attempt to divide by zero";
       // MES: raise an exception
     }
   else
@@ -49,7 +49,7 @@ RingElement RingElement::operator+(const RingElement &b) const
   const Ring *R = Ring_of();
   RingElement result(R);
   if (R != b.Ring_of())
-    *gError << "ring addition requires both elements to have the same "
+    gError << "ring addition requires both elements to have the same "
       << "base ring";
   else 
     result.set_value( R->add(get_value(), b.get_value()) );
@@ -62,7 +62,7 @@ RingElement RingElement::operator-(const RingElement &b) const
   const Ring *R = Ring_of();
   RingElement result(R);
   if (R != b.Ring_of())
-    *gError << "ring subtraction requires both elements to have the same "
+    gError << "ring subtraction requires both elements to have the same "
       << "base ring";
   else 
     result.set_value( R->subtract(get_value(), b.get_value()) );
@@ -75,7 +75,7 @@ RingElement RingElement::operator*(const RingElement &b) const
   const Ring *R = Ring_of();
   RingElement result(R);
   if (R != b.Ring_of())
-    *gError << "ring multiplication requires both elements to have the same "
+    gError << "ring multiplication requires both elements to have the same "
       << "base ring";
   else 
     result.set_value( R->mult(get_value(), b.get_value()) );
@@ -99,10 +99,10 @@ RingElement RingElement::operator/(const RingElement &b) const
   const Ring *R = Ring_of();
   RingElement result(R);
   if (R != b.Ring_of())
-    *gError << "ring division requires both elements to have the same "
+    gError << "ring division requires both elements to have the same "
       << "base ring";
   else if (b.is_zero())
-    *gError << "ring division: attempt to divide by zero";
+    gError << "ring division: attempt to divide by zero";
   else
     result.set_value( R->divide(get_value(), b.get_value()) );
 
@@ -113,10 +113,10 @@ RingElement RingElement::operator%(const RingElement &b) const
   const Ring *R = Ring_of();
   RingElement result(R);
   if (R != b.Ring_of())
-    *gError << "ring division requires both elements to have the same "
+    gError << "ring division requires both elements to have the same "
       << "base ring";
   else if (b.is_zero())
-    *gError << "ring division: attempt to divide by zero";
+    gError << "ring division: attempt to divide by zero";
   else
     {
       ring_elem frem;
@@ -132,10 +132,10 @@ RingElement RingElement::divide(const RingElement &b, RingElement &rem) const
   const Ring *R = Ring_of();
   RingElement result(R);
   if (R != b.Ring_of())
-    *gError << "ring division requires both elements to have the same "
+    gError << "ring division requires both elements to have the same "
       << "base ring";
   else if (b.is_zero())
-    *gError << "ring division: attempt to divide by zero";
+    gError << "ring division: attempt to divide by zero";
   else
     {
       ring_elem frem;
@@ -152,7 +152,7 @@ RingElement RingElement::gcd(const RingElement &b) const
   const Ring *R = Ring_of();
   if (R != b.Ring_of())
     {
-      *gError << "gcd requires both elements to have the same "
+      gError << "gcd requires both elements to have the same "
 	<< "base ring";
       return NULL;
     }
@@ -167,7 +167,7 @@ RingElement RingElement::gcd_extended(const RingElement &b,
   const Ring *R = Ring_of();
   if (R != b.Ring_of())
     {
-      *gError << "gcd requires both elements to have the same "
+      gError << "gcd requires both elements to have the same "
 	<< "base ring";
       return *this;
     }
@@ -211,17 +211,17 @@ RingElement RingElement::random(const Ring *R,
   return RingElement(R,R->random(homog,deg.raw()));
 }
 
-void RingElement_rec::text_out(ostream &o) const
+void RingElement_rec::text_out(buffer &o) const
 {
   R->elem_text_out(o, val);
 }
 
-void RingElement::text_out(ostream &o) const
+void RingElement::text_out(buffer &o) const
 {
   obj->text_out(o);
 }
 
-void RingElement_rec::bin_out(ostream &o) const
+void RingElement_rec::bin_out(buffer &o) const
 {
   R->elem_bin_out(o, val);
 }
@@ -261,7 +261,7 @@ Monomial RingElement::lead_monom() const
   const Ring *R = Ring_of();
   if (is_zero()) 
     {
-      *gError << "zero polynomial has no lead monomial";
+      gError << "zero polynomial has no lead monomial";
       return Monomial();
     }
   intarray resultvp;
@@ -285,7 +285,7 @@ intarray RingElement::degree() const
   int *d = result.alloc(R->degree_monoid()->n_vars());
 
   if (is_zero()) 
-    *gError << "the zero element has no degree";
+    gError << "the zero element has no degree";
   else
     {
       R->degree(get_value(), mon);
@@ -347,7 +347,7 @@ RingElement RingElement::numerator() const
   const FractionField *K = Ring_of()->cast_to_FractionField();
   if (K == NULL) 
     {
-      *gError << "fraction field required";
+      gError << "fraction field required";
       return *this;
     }
   RingElement g(K->Ring_of(), K->numerator(get_value()));
@@ -359,7 +359,7 @@ RingElement RingElement::denominator() const
   const FractionField *K = Ring_of()->cast_to_FractionField();
   if (K == NULL) 
     {
-      *gError << "fraction field required";
+      gError << "fraction field required";
       return *this;
     }
   RingElement g(K->Ring_of(), K->denominator(get_value()));

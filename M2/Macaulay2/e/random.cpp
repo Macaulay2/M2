@@ -36,7 +36,7 @@ void Random::set_max_int(RingElement a)
   if (cmp <= 0)
     maxlong = mpz_get_ui(MPZ_VAL(maxint.get_value()));
   else
-    *gError << "max random integer is " << IM/2;
+    gError << "max random integer is " << IM/2;
 }
 
 RingElement Random::get_max_int()

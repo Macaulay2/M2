@@ -112,8 +112,8 @@ public:
   const char * type_name         () const { return "hilbert_comp"; }
   hilb_comp  * cast_to_hilb_comp ()       { return this; }
 
-  void bin_out(ostream &) const {}
-  void text_out(ostream &o) const { o << "hilb comp"; }
+  void bin_out(buffer &) const {}
+  void text_out(buffer &o) const { o << "hilb comp"; }
 
   int length_of() const { return nsteps; }
 };

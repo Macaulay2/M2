@@ -3,6 +3,7 @@
 #include "monideal.hpp"
 #include "monoid.hpp"
 #include "bin_io.hpp"
+#include "text_io.hpp"
 
 extern int comp_printlevel;
 
@@ -369,6 +370,7 @@ static int ndepth = 0;
 
 void MonomialIdeal::do_node(Nmi_node *p, int indent, int disp) const
 {
+  buffer o;
   int i;
   assert(p->left != NULL);
   assert(p->right != NULL);
@@ -376,23 +378,23 @@ void MonomialIdeal::do_node(Nmi_node *p, int indent, int disp) const
   assert(p->right->left == p);
   if (disp)
     {
-      for (i=1; i<=indent; i++) cout << ' ';
-      cout << p->var << ' ' <<  p->exp;
+      for (i=1; i<=indent; i++) o << ' ';
+      o << p->var << ' ' <<  p->exp;
     }
   if (p->tag == Nmi_node::leaf)
     {
       nleaves++;
-      if (disp) cout << ' ';
-      varpower::elem_text_out(cout, p->baggage()->monom().raw());
-      cout << '(';
-      cout << p->baggage()->basis_elem();
-      cout << ')';
+      if (disp) o << ' ';
+      varpower::elem_text_out(o, p->baggage()->monom().raw());
+      o << '(';
+      o << p->baggage()->basis_elem();
+      o << ')';
     }
   else if (p == p->header)
     nlists++;
   else
     nnodes++;
-  cout << endl;
+  emit_line(o.str());
 }
 
 void MonomialIdeal::do_tree(Nmi_node *p, int depth, int indent, int disp) const
@@ -416,10 +418,12 @@ void MonomialIdeal::debug_out(int disp) const
   nleaves = 0;
   ndepth = 0;
   if (obj->mi != NULL) do_tree(obj->mi, 0, 0, disp);
-  cout << "list nodes     = " << nlists << endl;
-  cout << "internal nodes = " << nnodes << endl;
-  cout << "monomials      = " << nleaves << endl;
-  cout << "max depth      = " << ndepth << endl;
+  buffer o;
+  o << "list nodes     = " << nlists << newline;
+  o << "internal nodes = " << nnodes << newline;
+  o << "monomials      = " << nleaves << newline;
+  o << "max depth      = " << ndepth << newline;
+  emit(o.str());
 }
 
 int MonomialIdeal::debug_check(Nmi_node *p, Nmi_node *up) const
@@ -496,14 +500,14 @@ int MonomialIdeal::insert(Bag *b)
   return 1;
 }
 
-void MonomialIdeal_rec::text_out(ostream &o) const
+void MonomialIdeal_rec::text_out(buffer &o) const
 {
   MonomialIdeal_rec *I1 = (MonomialIdeal_rec *) this;
   MonomialIdeal I = I1->cast_to_MonomialIdeal();
   I.text_out(o);
 }
 
-void MonomialIdeal::text_out(ostream &o) const
+void MonomialIdeal::text_out(buffer &o) const
 {
   int *m = Ring_of()->Nmonoms()->make_one();
   for (Index<MonomialIdeal> j = last(); j.valid(); j--)
@@ -518,14 +522,14 @@ void MonomialIdeal::text_out(ostream &o) const
   Ring_of()->Nmonoms()->remove(m);
 }
 
-void MonomialIdeal_rec::bin_out(ostream &o) const
+void MonomialIdeal_rec::bin_out(buffer &o) const
 {
   MonomialIdeal_rec *I1 = (MonomialIdeal_rec *) this;
   MonomialIdeal I = I1->cast_to_MonomialIdeal();
   I.bin_out(o);
 }
 
-void MonomialIdeal::bin_out(ostream &o) const
+void MonomialIdeal::bin_out(buffer &o) const
 {
   int *m = Ring_of()->Nmonoms()->make_one();
   bin_int_out(o, obj->count);

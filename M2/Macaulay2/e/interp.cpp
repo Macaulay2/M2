@@ -3,14 +3,6 @@
 #include "interp.hpp"
 #include "text_io.hpp"
 #include "handles.hpp"
-#include "error.hpp"
-
-#if 0
-extern "C" void *make_string(char *,int);
-extern "C" void GB_gbstart(void);
-extern "C" void *GBgbprocess(char *,int);
-extern "C" void GB_gbforget(int);
-#endif
 
 extern "C" {
 void *make_string(char *,int);
@@ -43,15 +35,13 @@ void GB_gbforget(int h)
 
 int error_exists()
 {
-  return (gError->pcount() > 1);
+  return (gError.size() > 1) || error();
 }
 
 void GB_gbstart(void)
      // Must be called before using the engine
 {
   i_stashes();
-  gOutput = new ostrstream;
-  gError = new ostrstream;
   i_text_io();
   i_sys_cmds();
   i_monoid_cmds();
@@ -75,19 +65,10 @@ void *GBgbprocess(char *instream, int inlen)
   gInput = instream;
   gInputLen = inlen;
 
-  if (gOutput->pcount() != 1)
-    {
-      delete gOutput;
-      gOutput = new ostrstream;
-      *gOutput << '\0';
-    }
-
-  if (gError->pcount() != 1)
-    {
-      delete gError;
-      gError = new ostrstream;
-      *gError << '\1';
-    }
+  gOutput.reset();
+  gOutput.put('\0');
+  gError.reset();
+  gError.put('\1');
 
   while (gInputLen > 0)
     {
@@ -96,26 +77,23 @@ void *GBgbprocess(char *instream, int inlen)
 
       if (error())
 	{
-	  *gError << error_message();
+	  gError << error_message();
 	  clear_error();
 	}
-      if (gError->pcount() > 1)
+      if (gError.size() > 1)
 	{
-	  result = make_string(gError->str(), gError->pcount());
-	  gError->freeze(0);
+	  result = make_string(gError.str(), gError.size());
 	  return result;
 	}
     }
 
-  result = make_string(gOutput->str(), gOutput->pcount());
-  gOutput->freeze(0);
-
+  result = make_string(gOutput.str(), gOutput.size());
   return result;
 }
 
 stack<object> gStack;
-ostrstream   *gError;
-ostrstream   *gOutput;
+buffer        gError;
+buffer        gOutput;
 char         *gInput;
 int           gInputLen;
 

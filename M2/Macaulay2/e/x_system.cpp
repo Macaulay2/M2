@@ -14,7 +14,7 @@ void cmdQuit(void)
 
 void cmdMemStats(void)
 {
-  stash::stats(*gOutput);
+  stash::stats(gOutput);
 }
 //////// Stack commands //////////////////////////////////////////////
 void cmdDup(void)
@@ -56,7 +56,7 @@ void cmdDeref(object &r)
   if (gHandles.deref(r->int_of(), s))
     gStack.insert(s);
   else
-    *gError << "bad handle: " << r->int_of();
+    gError << "bad handle: " << r->int_of();
 }
 //////// Input of objects  ///////////////////////////////////////////
 void cmdInt(void)
@@ -81,12 +81,12 @@ void cmdIntarray1(void)
 {
   if (gStack.is_empty())
     {
-      *gError << "Intarray: unexpected empty stack";
+      gError << "Intarray: unexpected empty stack";
       return;
     }
   if (gStack[0]->type_of() != TY_INT)
     {
-      *gError << "Intarray: expected integer count on stack";
+      gError << "Intarray: expected integer count on stack";
       return;
     }
   int count = gStack.remove()->int_of();
@@ -95,7 +95,7 @@ void cmdIntarray1(void)
     {
       if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_INT)
 	{
-	  *gError << "Intarray: expected integer on the stack";
+	  gError << "Intarray: expected integer on the stack";
 	  return;
 	}
       a->val[count-1-i] = gStack[i]->int_of();
@@ -109,24 +109,23 @@ void cmdVToNet()
 {
   if (gStack.is_empty()) return;
   object r = gStack.remove();
-  r.bin_out(*gOutput);
+  r.bin_out(gOutput);
 }  
 void cmdSee()
 {
   if (gStack.is_empty()) return;
   object r = gStack.remove();
-  r.text_out(*gOutput);
-  // *gOutput << endl;
+  r.text_out(gOutput);
 }
 void cmdShowStack()
 {
-  gStack.text_out(*gOutput);
-  *gOutput << endl;
+  gStack.text_out(gOutput);
+  gOutput << newline;
 }
 void cmdShowHeap(void)
 {
-  gHandles.text_out(*gOutput);
-  *gOutput << endl;
+  gHandles.text_out(gOutput);
+  gOutput << newline;
 }
 //////// Informational  //////////////////////////////////////////////
 void cmdIndex(object &r)

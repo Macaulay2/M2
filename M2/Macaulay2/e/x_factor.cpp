@@ -1,7 +1,9 @@
 // copyright Daniel R. Grayson, 1995
 
-#if 1
+#if !defined(__MWERKS__)
+
 #include <assert.h>
+#include <iostream.h>
 #include "interp.hpp"
 #include "matrix.hpp"
 #include "z_mod_p.hpp"
@@ -119,7 +121,7 @@ static CanonicalForm convert(const RingElement &g) {
 			       (FractionField*) NULL
 			       );
      if (Zn == NULL && Z0 == NULL && Q == NULL) {
-	  *gError << "expected coefficient ring of the form ZZ/n, ZZ, or QQ";
+	  gError << "expected coefficient ring of the form ZZ/n, ZZ, or QQ";
 	  return 0;
      }
      const Monoid *M = R->Nmonoms();
@@ -218,7 +220,7 @@ static void ideal_reorder(object &mm) {
 			       (FractionField*) NULL
 			       );
      if (Zn == NULL && Z0 == NULL && Q == NULL) {
-	  *gError << "expected coefficient ring of the form ZZ/n, ZZ, or QQ";
+	  gError << "expected coefficient ring of the form ZZ/n, ZZ, or QQ";
 	  return;
      }
      CFList I;
@@ -261,7 +263,7 @@ static void ideal_charset(object &mm) {
 			       (FractionField*) NULL
 			       );
      if (Zn == NULL && Z0 == NULL && Q == NULL) {
-	  *gError << "expected coefficient ring of the form ZZ/n, ZZ, or QQ";
+	  gError << "expected coefficient ring of the form ZZ/n, ZZ, or QQ";
 	  return;
      }
      CFList I;

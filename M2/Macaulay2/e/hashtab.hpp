@@ -54,7 +54,7 @@ public:
        unsigned int i;
        for (i = key & (size - 1); bin[i].occupied; i>0 ? i-- : i=size-1) {
 	    if (bin[i].key == key) {
-		 cerr << "duplicate key encountered - internal error" << endl;
+		 ERROR("duplicate key encountered - internal error");
 		 exit(1);
 		 }
 	    }
@@ -93,7 +93,7 @@ public:
 		 return;
 		 }
 	    }
-       cerr << "key not found in hash table -- internal error" << endl;
+       ERROR("key not found in hash table -- internal error");
        exit(1);
        }
   };
@@ -114,7 +114,7 @@ public:
   ~cursor_hashtable() {}
   cursor_hashtable &operator++() {
        if (!valid()) {
-	    cerr << "invalid hashtable cursor used - internal error" << endl;
+	    ERROR("invalid hashtable cursor used - internal error");
 	    }
        i++;
        while (i < h->size && !h->bin[i].occupied) i++;

@@ -4,22 +4,22 @@
 
 stash *Vector_rec::mystash;
 
-void Vector_rec::text_out(ostream &o) const
+void Vector_rec::text_out(buffer &o) const
 {
   F->elem_text_out(o, val);
 }
 
-void Vector_rec::bin_out(ostream &o) const
+void Vector_rec::bin_out(buffer &o) const
 {
   F->elem_bin_out(o, val);
 }
 
-void Vector::text_out(ostream &o) const
+void Vector::text_out(buffer &o) const
 {
   obj->text_out(o);
 }
 
-void Vector::bin_out(ostream &o) const
+void Vector::bin_out(buffer &o) const
 {
   obj->bin_out(o);
 }
@@ -45,7 +45,7 @@ Vector Vector::operator+(const Vector &b) const
 {
   Vector result(free_of());
   if (free_of() != b.free_of())
-    *gError << "vector addition requires both elements to have the same "
+    gError << "vector addition requires both elements to have the same "
       << "ambient module";
   else 
     {
@@ -59,7 +59,7 @@ Vector Vector::operator-(const Vector &b) const
 {
   Vector result(free_of());
   if (free_of() != b.free_of())
-    *gError << "vector subtraction requires both elements to have the same "
+    gError << "vector subtraction requires both elements to have the same "
       << "ambient module";
   else 
     {
@@ -74,7 +74,7 @@ Vector Vector::operator*(const RingElement &b) const
 {
   Vector result(free_of());
   if (Ring_of() != b.Ring_of())
-    *gError << "scalar multiplication requires both elements to have the same "
+    gError << "scalar multiplication requires both elements to have the same "
       << "base ring";
   else 
      result.obj->val = free_of()->rightmult(obj->val, b.get_value());
@@ -125,7 +125,7 @@ intarray Vector::degree() const
   int *d = result.alloc(R->degree_monoid()->n_vars());
 
   if (is_zero()) 
-    *gError << "the zero element has no degree";
+    gError << "the zero element has no degree";
   else
     {
       F->degree(get_value(), mon);

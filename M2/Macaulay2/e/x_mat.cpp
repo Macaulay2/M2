@@ -28,13 +28,13 @@ void cmd_Matrix1(object &orows, object &ocols)
     {
       if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_VECTOR)
 	{
-	  *gError << "matrix: expected vector on the stack";
+	  gError << "matrix: expected vector on the stack";
 	  break;
 	}
       Vector v = gStack[i]->cast_to_Vector();
       if (v.Ring_of() != F->Ring_of())
 	{
-	  *gError << "matrix: vector has incorrect base ring";
+	  gError << "matrix: vector has incorrect base ring";
 	  break;
 	}
       result.append(F->translate(v.free_of(), v.get_value()));
@@ -56,13 +56,13 @@ void cmd_Matrix2(object &orows, object &ocols)
     {
       if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_VECTOR)
 	{
-	  *gError << "matrix: expected vector on the stack";
+	  gError << "matrix: expected vector on the stack";
 	  break;
 	}
       Vector v = gStack[i]->cast_to_Vector();
       if (v.Ring_of() != F->Ring_of())
 	{
-	  *gError << "matrix: vector has incorrect base ring";
+	  gError << "matrix: vector has incorrect base ring";
 	  break;
 	}
       result[ncols-1-i] = F->translate(v.free_of(), v.get_value());
@@ -87,13 +87,13 @@ void cmd_Matrix2a(object &orows, object &ocols, object &odeg)
     {
       if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_VECTOR)
 	{
-	  *gError << "matrix: expected vector on the stack";
+	  gError << "matrix: expected vector on the stack";
 	  break;
 	}
       Vector v = gStack[i]->cast_to_Vector();
       if (v.Ring_of() != F->Ring_of())
 	{
-	  *gError << "matrix: vector has incorrect base ring";
+	  gError << "matrix: vector has incorrect base ring";
 	  break;
 	}
       result[ncols-1-i] = F->translate(v.free_of(), v.get_value());
@@ -109,12 +109,12 @@ void cmd_Matrix4(object &orows, object &ocols, object &om)
   Matrix m = om->cast_to_Matrix();
   if (F->Ring_of() != G->Ring_of() || F->Ring_of() != m.Ring_of())
     {
-      *gError << "same base ring expected";
+      gError << "same base ring expected";
       return;
     }
   if (F->rank() != m.n_rows() || G->rank() != m.n_cols())
     {
-      *gError << "'matrix' received free modules of incorrect sizes";
+      gError << "'matrix' received free modules of incorrect sizes";
       return;
     }
   Matrix result(F,G);
@@ -131,12 +131,12 @@ void cmd_Matrix5(object &orows, object &ocols, object &om, object &odeg)
   Matrix m = om->cast_to_Matrix();
   if (F->Ring_of() != G->Ring_of() || F->Ring_of() != m.Ring_of())
     {
-      *gError << "same base ring expected";
+      gError << "same base ring expected";
       return;
     }
   if (F->rank() != m.n_rows() || G->rank() != m.n_cols())
     {
-      *gError << "'matrix' received free modules of incorrect sizes";
+      gError << "'matrix' received free modules of incorrect sizes";
       return;
     }
   Matrix result(F,G);
@@ -182,7 +182,7 @@ void cmd_Matrix_elem(object &oM, object &on)
   Matrix M = oM->cast_to_Matrix();
   int n = on->int_of();
   if ((n < 0) || (n >= M.n_cols()))
-    *gError << "matrix index " << n << " out of range 0 .. " << M.n_cols()-1;
+    gError << "matrix index " << n << " out of range 0 .. " << M.n_cols()-1;
   else
     {
       Vector result(M.rows(), M.rows()->copy(M[n]));
@@ -195,9 +195,9 @@ void cmd_Matrix_elem2(object &oM, object &on, object &om)
   int n = on->int_of();
   int m = om->int_of();
   if ((n < 0) || (n >= M.n_rows()))
-    *gError << "matrix row index " << n << " out of range 0 .. " << M.n_rows()-1;
+    gError << "matrix row index " << n << " out of range 0 .. " << M.n_rows()-1;
   else if ((m < 0) || (m >= M.n_cols()))
-    *gError << "matrix column index " << m << " out of range 0 .. " 
+    gError << "matrix column index " << m << " out of range 0 .. " 
       << M.n_cols()-1;
   else
     {
@@ -238,13 +238,13 @@ void cmd_Matrix_concat(object &on)
   int n = on->int_of();
   if (n <= 0)
     {
-      *gError << "directsum: expected at least one matrix";
+      gError << "directsum: expected at least one matrix";
       return;
     }
   for (i=0; i<n; i++)
     if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_MATRIX)
       {
-	*gError << "concat: expected " << n << " matrices";
+	gError << "concat: expected " << n << " matrices";
 	return;
       }
   Matrix m = gStack[n-1]->cast_to_Matrix();
@@ -253,9 +253,9 @@ void cmd_Matrix_concat(object &on)
     {
       Matrix a = gStack[i]->cast_to_Matrix();
       if (a.Ring_of() != m.Ring_of())
-	*gError << "matrix concat: different base rings";
+	gError << "matrix concat: different base rings";
       else if (a.n_rows() != m.n_rows())
-	*gError << "matrix concat: row sizes are not equal";
+	gError << "matrix concat: row sizes are not equal";
       else 
 	  for (j=0; j<a.n_cols(); j++)
 	    result.append(result.rows()->translate(a.rows(), a[j]),
@@ -290,7 +290,7 @@ void cmd_Matrix_multvec(object &oa, object &ov)
   Matrix a = oa->cast_to_Matrix();
   Vector v = ov->cast_to_Vector();
   if (a.n_cols() != v.free_of()->rank())
-    *gError << 
+    gError << 
       "matrix multiplication: columns of matrix different from vector";
   else
     {
@@ -377,7 +377,7 @@ void cmd_Matrix_koszul(object &oa, object &on)
     gStack.insert(a.koszul(p));
   else {
     //throw Not_Implemented_Exception("'koszul' expects a matrix with one row");
-    *gError << "'koszul' expects a matrix with one row";
+    gError << "'koszul' expects a matrix with one row";
   }
 }
 void cmd_Matrix_koszul2(object &orows, object &ocols)
@@ -414,13 +414,13 @@ void cmd_Matrix_dsum_several(object &on)
   int n = on->int_of();
   if (n <= 0)
     {
-      *gError << "directsum: expected at least one matrix";
+      gError << "directsum: expected at least one matrix";
       return;
     }
   for (i=0; i<n; i++)
     if (!gStack.in_bounds(i) || gStack[i]->type_of() != TY_MATRIX)
       {
-	*gError << "direct sum: expected " << n << " matrices";
+	gError << "direct sum: expected " << n << " matrices";
 	return;
       }
   Matrix result = gStack[n-1]->cast_to_Matrix();
@@ -428,7 +428,7 @@ void cmd_Matrix_dsum_several(object &on)
     {
       Matrix a = gStack[i]->cast_to_Matrix();
       if (a.Ring_of() != result.Ring_of())
-	*gError << "matrix directsum: different base rings";
+	gError << "matrix directsum: different base rings";
       else 
 	result = result.direct_sum(a);
     }
@@ -470,7 +470,7 @@ void cmd_Matrix_symm(object &oa, object &on)
   Matrix a = oa->cast_to_Matrix();
   int n = on->int_of();
   if (a.n_rows() != 1)
-    *gError << "ggsym unimplemented feature: matrix must have exactly one row";
+    gError << "ggsym unimplemented feature: matrix must have exactly one row";
   gStack.insert(a.symm(n));
 }
 
@@ -497,17 +497,17 @@ void cmd_Matrix_homog(object &oa, object &on, object &owts)
   intarray *wts = owts->intarray_of();
   if (v < 0 || v > R->n_vars())
     {
-      *gError << "homogenize: improper ring variable";
+      gError << "homogenize: improper ring variable";
       return;
     }
   if (wts == NULL || wts->length() != R->n_vars())
     {
-      *gError << "homogenization: improper weight function";
+      gError << "homogenization: improper weight function";
       return;
     }
   if ((*wts)[v] == 0)
     {
-      *gError << "homogenization: variable weight is zero";
+      gError << "homogenization: variable weight is zero";
       return;
     }
 
@@ -522,13 +522,13 @@ void cmd_Matrix_kbasis(object &oa, object &ob, object &od)
   Matrix b = ob->cast_to_Matrix();
   if (a.Ring_of() != b.Ring_of())
     {
-      *gError << "'kbasis': different rings";
+      gError << "'kbasis': different rings";
       return;
     }
   intarray *d = od->intarray_of();
   assert(d != NULL);
   if (a.degree_monoid()->n_vars() != d->length())
-    *gError << "badly formed degree for 'ggkbasis'";
+    gError << "badly formed degree for 'ggkbasis'";
   else
     gStack.insert(a.k_basis(b,d->raw(),0));
 }
@@ -538,13 +538,13 @@ void cmd_Matrix_truncate(object &oa, object &ob, object &od)
   Matrix b = ob->cast_to_Matrix();
   if (a.Ring_of() != b.Ring_of())
     {
-      *gError << "'truncate': different rings";
+      gError << "'truncate': different rings";
       return;
     }
   intarray *d = od->intarray_of();
   assert(d != NULL);
   if (a.degree_monoid()->n_vars() != d->length())
-    *gError << "badly formed degree for 'ggtruncate'";
+    gError << "badly formed degree for 'ggtruncate'";
   else
     gStack.insert(a.k_basis(b,d->raw(),1));
 }
@@ -554,7 +554,7 @@ void cmd_Matrix_kbasis(object &oa, object &ob)
   Matrix b = ob->cast_to_Matrix();
   if (a.Ring_of() != b.Ring_of())
     {
-      *gError << "'kbasis': different rings";
+      gError << "'kbasis': different rings";
       return;
     }
   gStack.insert(a.k_basis(b));
@@ -569,7 +569,7 @@ void cmd_Matrix_kbasis_out(object &oa, object &ob)
   if (b->length() == 0)
     gStack.insert(a.k_basis_out(NULL));
   else if (a.degree_monoid()->n_vars() > b->length())
-    *gError << "badly formed degree for 'ggkbasis'";
+    gError << "badly formed degree for 'ggkbasis'";
   else
     gStack.insert(a.k_basis_out(b->raw()));
 }
@@ -580,7 +580,7 @@ void cmd_Matrix_kbasis_in(object &oa, object &ob)
   intarray *b = ob->intarray_of();
   assert(b != NULL);
   if (a.degree_monoid()->n_vars() > b->length())
-    *gError << "badly formed degree for 'ggkbasis'";
+    gError << "badly formed degree for 'ggkbasis'";
   else
     gStack.insert(a.k_basis_in(b->raw()));
 }
@@ -635,7 +635,7 @@ void cmd_Matrix_coeffs(object &om, object &op)
   const PolynomialRing *R = M.Ring_of()->cast_to_poly_ring();
   if (R == NULL)
     {
-      *gError << "coeffs: need a polynomial ring";
+      gError << "coeffs: need a polynomial ring";
       return;
     }
   int nvars = M.Ring_of()->n_vars();
@@ -647,7 +647,7 @@ void cmd_Matrix_coeffs(object &om, object &op)
       int w = (*vars)[i];
       if (w < 0 || w >= nvars)
 	{
-	  *gError << "'coeffs': variable index out of range";
+	  gError << "'coeffs': variable index out of range";
 	  delete [] v;
 	  return;
 	}
@@ -694,7 +694,7 @@ void cmd_RingElement_promote(object &oR, object &of)
   if (f.promote(R, result))
     gStack.insert(result);
   else
-    *gError << "cannot promote given ring element";
+    gError << "cannot promote given ring element";
 }
 void cmd_RingElement_lift(object &oR, object &of)
 {
@@ -704,7 +704,7 @@ void cmd_RingElement_lift(object &oR, object &of)
   if (f.lift(R, result))
     gStack.insert(result);
   else
-    *gError << "cannot lift given ring element";
+    gError << "cannot lift given ring element";
 }
 void cmd_Vector_promote(object & /*oF*/, object & /*ov*/)
 {
@@ -715,7 +715,7 @@ void cmd_Vector_promote(object & /*oF*/, object & /*ov*/)
   if (m.promote(F, result))
     gStack.insert(result);
   else
-    *gError << "cannot promote given vector";
+    gError << "cannot promote given vector";
 #endif
 }
 void cmd_Matrix_promote(object & /*oF*/, object & /*om*/)
@@ -727,7 +727,7 @@ void cmd_Matrix_promote(object & /*oF*/, object & /*om*/)
   if (m.promote(F, result))
     gStack.insert(result);
   else
-    *gError << "cannot promote given matrix";
+    gError << "cannot promote given matrix";
 #endif
 }
 

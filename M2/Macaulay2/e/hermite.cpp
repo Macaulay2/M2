@@ -314,23 +314,25 @@ Matrix HermiteComputation::syz_matrix()
 }
 void HermiteComputation::stats() const
 {
+  buffer o;
   for (int i=0; i<gens.n_rows(); i++)
     if (initial[i] != NULL)
       {
-	cerr << "--- component " << i << " -----" << endl;
+	o << "--- component " << i << " -----" << newline;
 	for (hm_elem *p = initial[i]; p!=NULL; p=p->next)
 	  {
-	    bignum_text_out(cerr, p->lead);
-	    cerr << " ## ";
-	    gens.rows()->elem_text_out(cerr, p->f);
-	    cerr << " ## ";
-	    syz.rows()->elem_text_out(cerr, p->fsyz);
-	    cerr << endl;
+	    bignum_text_out(o, p->lead);
+	    o << " ## ";
+	    gens.rows()->elem_text_out(o, p->f);
+	    o << " ## ";
+	    syz.rows()->elem_text_out(o, p->fsyz);
+	    o << newline;
 	  }
       }
-  cerr << endl;
-  syz.text_out(cerr);
-  cerr << endl;
+  o << newline;
+  syz.text_out(o);
+  o << newline;
+  emit(o.str());
 }
 int HermiteComputation::length_of() const
 {
@@ -343,7 +345,7 @@ void HermiteComputation::gb_reduce(vec &f, vec & /*fsyz*/) const
   // (in absolute value).
   vecterm head;
   vecterm *result = &head;
-  *gError << "not implemented yet";
+  gError << "not implemented yet";
 #if 0
   ring_elem coeff;
   while (f != NULL)
@@ -398,7 +400,7 @@ Matrix HermiteComputation::reduce(const Matrix &m, Matrix &lift)
   Matrix red(m.rows(), m.cols(), m.degree_shift());
   lift = Matrix(syz.rows(), m.cols());
   if (m.n_rows() != gens.rows()->rank()) {
-       *gError << "expected matrices to have same number of rows";
+       gError << "expected matrices to have same number of rows";
        return red;
   }
   for (int i=0; i<m.n_cols(); i++)
@@ -418,7 +420,7 @@ Vector HermiteComputation::reduce(const Vector &v, Vector &lift)
 {
   if (!v.free_of()->is_equal(gens.rows()))
     {
-      *gError << "reduce: vector is in incorrect free module";
+      gError << "reduce: vector is in incorrect free module";
       return Vector(gens.rows(), NULL);
     }
   vec f = gens.rows()->copy(v.get_value());

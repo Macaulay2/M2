@@ -74,8 +74,8 @@ public:
   void operator delete(void *p) { mystash->delete_elem(p); }
 
   const char * type_name         () const { return "Gauss elim computation"; }
-  void bin_out(ostream &) const {}
-  void text_out(ostream &o) const { o << "Gauss elim computation"; }
+  void bin_out(buffer &) const {}
+  void text_out(buffer &o) const { o << "Gauss elim computation"; }
 
   int length_of() const;
 };

@@ -4,14 +4,14 @@
 #include "bin_io.hpp"
 #include "text_io.hpp"
 
-extern ostrstream *gError;
+extern buffer gError;
 
 int varpower::max_mon_size(int n)
 {
   return n+1;
 }
 
-void varpower::elem_text_out(ostream &o, const int *a)
+void varpower::elem_text_out(buffer &o, const int *a)
 {
   int len = *a++ - 1;
   if (len == 0)
@@ -29,7 +29,7 @@ void varpower::elem_text_out(ostream &o, const int *a)
       }
 }
 
-void varpower::elem_text_out(ostream &o, const int *a, 
+void varpower::elem_text_out(buffer &o, const int *a, 
 			     const array<char *> &varnames)
 {
   int len = *a++ - 1;
@@ -158,7 +158,7 @@ void varpower::from_binary(char *&s, int &len, intarray &result)
       e = bin_int_in(s,len);
       if ((v < 0) || (i > 0 && v <= oldv))
 	{
-	  *gError << "badly formed monomial";
+	  gError << "badly formed monomial";
 	  result.shrink(lastlen);
 	  result.append(1);
 	  return;
@@ -463,7 +463,7 @@ void varpower::radical(const int *a, intarray &result)
     *t++ = pair(var(*a++), 1);
 }
 
-void varpower::elem_bin_out(ostream &o, const int *a)
+void varpower::elem_bin_out(buffer &o, const int *a)
 {
   int npowers = *a++ - 1;
   bin_int_out(o, npowers);

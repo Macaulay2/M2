@@ -2,6 +2,7 @@
 
 #include "respoly.hpp"
 #include "res.hpp"
+#include "text_io.hpp"
 
 stash *res_pair::mystash;
 stash *res_degree::mystash;
@@ -598,7 +599,11 @@ void res_comp::new_pairs(res_pair *p)
   intarray thisvp;
 
   if (comp_printlevel >= 10)
-    cerr << "Computing pairs with first = " << p->me << endl;
+    {
+      buffer o;
+      o << "Computing pairs with first = " << p->me << newline;
+      emit(o.str());
+    }
   M->divide(p->base_monom, p->first->base_monom, PAIRS_mon);
   M->to_varpower(PAIRS_mon, vp);
 
@@ -863,7 +868,7 @@ int res_comp::calc(const int *DegreeLimit,
     {
       if (length_limit < LengthLimit)
 	{
-	  *gError << "resolution: cannot increase maximum level";
+	  gError << "resolution: cannot increase maximum level";
 	  return COMP_ERROR;
 	}
       else
@@ -877,7 +882,12 @@ int res_comp::calc(const int *DegreeLimit,
     {
       if (DegreeLimit != NULL && *DegreeLimit < n_degree)
 	return COMP_DONE_DEGREE_LIMIT;
-      if (comp_printlevel >= 1) cerr << '{' << n_degree << '}';
+      if (comp_printlevel >= 1) 
+	{
+	  buffer o;
+	  o << '{' << n_degree << '}';
+	  emit(o.str());
+	}
 
       if (n_level == 2)
 	{
@@ -889,7 +899,7 @@ int res_comp::calc(const int *DegreeLimit,
 
       for ( ; n_level <= length_limit+1; n_level++)
 	{
-	  if (comp_printlevel >= 1) cerr << '.';
+	  if (comp_printlevel >= 1) emit(".");
 
 	  DO(pairs(n_level-1, n_degree));
 	  DO(pairs(n_level-1, n_degree+1));
@@ -900,7 +910,12 @@ int res_comp::calc(const int *DegreeLimit,
 }
 int res_comp::gens(int deg)
 {
-  if (comp_printlevel >= 5) cerr << "gens(" << deg << ")" << endl;
+  if (comp_printlevel >= 5) 
+    {
+      buffer o;
+      o << "gens(" << deg << ")" << newline;
+      emit(o.str());
+    }
   // preconditions: reductions(2,deg), gens(deg-1)
   res_pair *p;
   res_degree *pairs = get_degree_set(1, deg);
@@ -932,7 +947,12 @@ int res_comp::pairs(int level, int deg)
   // Cases: level=1: gens(deg), pairs(1,deg-1)
   //        level=2: pairs(1,deg)
   //        level>2: pairs(level-1,deg), pairs(level-2,deg+1)
-  if (comp_printlevel >= 5) cerr << "pairs(" << level << ", " << deg << ")" << endl;
+  if (comp_printlevel >= 5) 
+    {
+      buffer o;
+      o << "pairs(" << level << ", " << deg << ")" << newline;
+      emit(o.str());
+    }
   res_pair *p;
   sort_pairs(level, deg);
   res_degree *pairs = get_degree_set(level, deg);
@@ -951,7 +971,12 @@ int res_comp::pairs(int level, int deg)
 int res_comp::reductions(int level, int deg)
 {
   res_pair *p;
-  if (comp_printlevel >= 5) cerr << "reductions(" << level << ", " << deg << ")" << endl;
+  if (comp_printlevel >= 5)
+    {
+      buffer o;
+      o << "reductions(" << level << ", " << deg << ")" << newline;
+      emit(o.str());
+    }
   sort_pairs(level, deg);
   res_degree *pairs = get_degree_set(level, deg);
   if (pairs != NULL)
@@ -987,12 +1012,12 @@ void res_comp::handle_gen(res_pair *p)
       insert_res_pair(1, p);
       p->minimal_me = resn[1]->nminimal++;
       nminimal++;
-      if (comp_printlevel >= 2) cerr << 'z';
+      if (comp_printlevel >= 2) emit("z");
     }
   else
     {
       remove_res_pair(p);
-      if (comp_printlevel >= 2) cerr << 'o';
+      if (comp_printlevel >= 2) emit("o");
     }
 }
 void res_comp::handle_pair(res_pair *p)
@@ -1012,7 +1037,7 @@ void res_comp::handle_pair(res_pair *p)
       p->syz_type = SYZ_MINIMAL;
       p->minimal_me = resn[n_level]->nminimal++;
       nminimal++;
-      if (comp_printlevel >= 2) cerr << 'z';
+      if (comp_printlevel >= 2) emit("z");
     }
   else 
     {
@@ -1022,7 +1047,7 @@ void res_comp::handle_pair(res_pair *p)
       // non-minimal syzygy
       q->syz = f;
       q->syz_type = SYZ_NOT_NEEDED;
-      if (comp_printlevel >= 2) cerr << 'm';
+      if (comp_printlevel >= 2) emit("m");
       // MES: need to decrement nleft for 'q'.
     }
 }
@@ -1095,7 +1120,11 @@ void res_comp::skeleton_pairs(res_pair *&result, res_pair *p)
   intarray thisvp;
 
   if (comp_printlevel >= 10)
-    cerr << "Computing pairs with first = " << p->me << endl;
+    {
+      buffer o;
+      o << "Computing pairs with first = " << p->me << newline;
+      emit(o.str());
+    }
   M->divide(p->base_monom, p->first->base_monom, PAIRS_mon);
   M->to_varpower(PAIRS_mon, vp);
 
@@ -1195,6 +1224,7 @@ int res_comp::skeleton_maxdegree(const array<res_pair *> &reslevel)
 
 void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
 {
+  buffer o;
   int level, i, d;
   int maxlevel = reslevel.length()-1;
   int maxdegree = skeleton_maxdegree(reslevel); // max slanted degree
@@ -1222,19 +1252,21 @@ void res_comp::skeleton_stats(const array<res_pair *> &reslevel)
     for (level=0; level<=maxlevel; level++)
       betti.append(bettis[level + (maxlevel+1)*d]);
 
-  betti_display(cerr, betti);
+  betti_display(o, betti);
   delete [] bettis;
 
   for (level=0; level <= maxlevel; level++)
     {
-      cerr << "---- level " << level << " ----" << endl;
+      o << "---- level " << level << " ----" << newline;
       for (res_pair *p = reslevel[level]; p != NULL; p = p->next)
 	{
 	  int d = degree(p);
-	  cerr << setw(4) << d << ' ';
-	  text_out(p);
+	  o.put(d,4);
+	  o << ' ';
+	  text_out(o,p);
 	}
     }
+  emit(o.str());
 }
 
 void res_comp::skeleton(int strategy)

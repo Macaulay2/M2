@@ -26,7 +26,7 @@ class comb
       return i;
     }
 
-  static void text_out(ostream &o);
+  static void text_out(buffer &o);
 public:
   static int fast_binom(int n, int p)
     { return tab.rawelem(p).rawelem(n); }

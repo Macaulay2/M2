@@ -535,7 +535,7 @@ RingElement hilb_comp::value()
 {
   if (!is_done())
     {
-      *gError << "Hilbert function computation not complete";
+      gError << "Hilbert function computation not complete";
       return RingElement(R,0);
     }
   RingElement result(R, R->copy(result_poincare));
@@ -544,29 +544,30 @@ RingElement hilb_comp::value()
 
 void hilb_comp::stats() const
 {
-  cerr << "--- Hilbert Function Statistics---------------------" << endl;
-  cerr << "#steps        = " << nsteps << endl;
-  cerr << "Max depth     = " << maxdepth << endl;
-  cerr << "current depth = " << depth << endl;
-  cerr << "#ideal        = " << nideal << endl;
-  cerr << "#recurse      = " << nrecurse << endl;
+  buffer o;
+  o << "--- Hilbert Function Statistics---------------------" << newline;
+  o << "#steps        = " << nsteps << newline;
+  o << "Max depth     = " << maxdepth << newline;
+  o << "current depth = " << depth << newline;
+  o << "#ideal        = " << nideal << newline;
+  o << "#recurse      = " << nrecurse << newline;
   
   hilb_step *p = current;
   int d = depth;
   while (p != NULL)
     {
-      cerr << "----- depth " << d << " -------------" << endl;
-      cerr << "  " << p->monids.length() << " monomial ideals total" << endl;
-      cerr << "  " << p->i << " = current location" << endl;
-      cerr << "  " << p->first_sum + 1 << " sum monomial ideals" << endl;
-      cerr << "  h0 = ";  R->elem_text_out(cerr, p->h0); cerr << endl;
-      cerr << "  h1 = ";  R->elem_text_out(cerr, p->h1); cerr << endl;
+      o << "----- depth " << d << " -------------" << newline;
+      o << "  " << p->monids.length() << " monomial ideals total" << newline;
+      o << "  " << p->i << " = current location" << newline;
+      o << "  " << p->first_sum + 1 << " sum monomial ideals" << newline;
+      o << "  h0 = ";  R->elem_text_out(o, p->h0); o << newline;
+      o << "  h1 = ";  R->elem_text_out(o, p->h1); o << newline;
       for (int i=0; i<p->monids.length(); i++)
 	{
-	  cerr << "  ---- monomial ideal ---------------" << endl;
-	  cerr << "  ";
-	  p->monids[i].text_out(cerr);
-	  cerr << endl;
+	  o << "  ---- monomial ideal ---------------" << newline;
+	  o << "  ";
+	  p->monids[i].text_out(o);
+	  o << newline;
 	}
       p = p->up;
       d--;

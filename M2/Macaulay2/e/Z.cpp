@@ -19,7 +19,7 @@ Z::Z(const Monoid *D) : Ring(0,0,0,this /* Visual C WARNING */,trivial_monoid,D)
   mpz_init_set_si(zero_elem, 0);
 }
 
-void Z::text_out(ostream &o) const
+void Z::text_out(buffer &o) const
 {
   o << "Z";
 }
@@ -72,7 +72,7 @@ ring_elem Z::random() const
   return copy(f.get_value());
 }
 
-void Z::elem_text_out(ostream &o, const ring_elem ap) const
+void Z::elem_text_out(buffer &o, const ring_elem ap) const
 {
   mpz_ptr a = MPZ_VAL(ap);
 
@@ -100,7 +100,7 @@ void Z::elem_text_out(ostream &o, const ring_elem ap) const
   if (size > 1000) delete [] allocstr;
 }
 
-void Z::elem_bin_out(ostream &o, const ring_elem a) const
+void Z::elem_bin_out(buffer &o, const ring_elem a) const
 {
   bin_mpz_out(o, MPZ_VAL(a));
 }
@@ -229,7 +229,7 @@ ring_elem Z::power(const ring_elem f, mpz_t n) const
   mpz_ptr result = new_elem();
   int n1;
   if (!get_si(n1, n)) 
-    { *gError << "exponent too large"; }
+    { gError << "exponent too large"; }
   else
     mpz_pow_ui(result, MPZ_VAL(f), n1);
   return MPZ_RINGELEM(result);
@@ -302,7 +302,7 @@ int Z::primary_degree(const ring_elem) const
 ring_elem Z::homogenize(const ring_elem f, int, int deg, const int *) const
 {
   if (deg != 0) 
-    *gError << "homogenize: no homogenization exists";
+    gError << "homogenize: no homogenization exists";
   return f;
 }
 

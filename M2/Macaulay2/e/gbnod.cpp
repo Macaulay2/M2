@@ -4,6 +4,7 @@
 #include "gb2.hpp"
 #include "hilb.hpp"
 #include "geovec.hpp"
+#include "text_io.hpp"
 
 void gb2_comp::setup(FreeModule *FFsyz,
 		     gb_node *ggens,
@@ -17,7 +18,7 @@ void gb2_comp::setup(FreeModule *FFsyz,
   R = FFsyz->Ring_of()->cast_to_poly_ring();
   if (R == NULL)
     {
-      *gError << "ring is not a polynomial ring";
+      gError << "internal error - ring is not a polynomial ring";
       // MES: throw an error here.
       assert(0);
     }
@@ -302,8 +303,10 @@ void gb2_comp::find_pairs(gb_elem *p)
 	      n_pairs_gcd++;
 	      if (comp_printlevel >= 8)
 		{
-		  cerr << "removed pair[" << q->first->me << " " 
-		    << q->second->me << "]" << endl;;
+		  buffer o;
+		  o << "removed pair[" << q->first->me << " " 
+		    << q->second->me << "]" << newline;
+		  emit(o.str());
 		}
 	      remove_pair(q);
 	    }
@@ -390,7 +393,11 @@ void gb2_comp::gb_reduce(vec &f, vec &fsyz)
     }
 
   if (comp_printlevel >= 4)
-    cerr << "." << count;
+    {
+      buffer o;
+      o << "." << count;
+      emit(o.str());
+    }
   result->next = NULL;
   f = head.next;
   M->remove(s);
@@ -449,7 +456,11 @@ void gb2_comp::gb_geo_reduce(vec &f, vec &fsyz)
     }
 
   if (comp_printlevel >= 4)
-    cerr << "." << count;
+    {
+      buffer o;
+      o << "." << count;
+      emit(o.str());
+    }
   result->next = NULL;
   f = head.next;
 
@@ -583,7 +594,7 @@ bool gb2_comp::s_pair_step()
       gb_insert(f, fsyz, 0);
       n_gb_syz--;
       n_pairs_gb++;
-      if (comp_printlevel >= 3) cerr << 'm';
+      if (comp_printlevel >= 3) emit("m");
     }
   else if (fsyz != NULL && syz != NULL)
     {
@@ -591,18 +602,18 @@ bool gb2_comp::s_pair_step()
 	{
 	  n_gb_syz--;
 	  n_pairs_syz++;
-	  if (comp_printlevel >= 3) cerr << 'z';
+	  if (comp_printlevel >= 3) emit("z");
 	}
       else
 	{
 	  n_pairs_usyz++;
-	  if (comp_printlevel >= 3) cerr << 'u';
+	  if (comp_printlevel >= 3) emit("u");
 	}
     }
   else 
     {
       n_pairs_zero++;
-      if (comp_printlevel >= 3) cerr << 'o';
+      if (comp_printlevel >= 3) emit("o");
     }
   return true;
 }
@@ -749,11 +760,13 @@ int gb2_comp::calc_gb(int deg, const intarray &stop)
       int npairs = get_pairs();
       if (comp_printlevel >= 1 && npairs > 0)
 	{
+	  buffer o;
 	  // Should only display this if there are some pairs.
-	  cerr << '[' << level << ',' << npairs;
+	  o << '[' << level << ',' << npairs;
 	  if (use_hilb)
-	    cerr << ",e" << n_gb_syz;
-	  cerr << ']';
+	    o << ",e" << n_gb_syz;
+	  o << ']';
+	  emit(o.str());
 	}
     }
 
@@ -897,18 +910,25 @@ Matrix gb2_comp::change_matrix()
 
 void gb2_comp::debug_out(s_pair *q) const
 {
+  buffer o;
+  debug_out(o, q);
+  emit(o.str());
+}
+void gb2_comp::debug_out(buffer &o, s_pair *q) const
+{
   if (q == NULL) return;
-  cerr << "(" << q->compare_num << " ";
-  if (q->first != NULL) cerr << q->first->me; else cerr << ".";
-  cerr << " ";
-  if (q->second != NULL) cerr << q->second->me; else cerr << ".";
-  cerr << " ";
-  M->elem_text_out(cerr, q->lcm);
-  cerr << ") ";
+  o << "(" << q->compare_num << " ";
+  if (q->first != NULL) o << q->first->me; else o << ".";
+  o << " ";
+  if (q->second != NULL) o << q->second->me; else o << ".";
+  o << " ";
+  M->elem_text_out(o, q->lcm);
+  o << ") ";
 }
 
 void gb2_comp::stats() const
 {
+  buffer o;
   if (comp_printlevel >= 4 && n_gb > 0)
     {
       int nmonoms = 0;
@@ -918,27 +938,32 @@ void gb2_comp::stats() const
 	  nmonoms += F->n_terms(gb[i]->f);
 	  nchange += Fsyz->n_terms(gb[i]->fsyz);
 	}
-      cerr << setw(5) << n_gb << ' ' 
-	   << setw(5) << n_pairs << ' ' 
-	   << setw(5) << n_pairs_computed << ' '
-	   << setw(5) << n_pairs_gb << ' '
-	   << setw(5) << n_pairs_syz << ' '
-	   << setw(5) << n_pairs_zero << ' '
-	   << setw(5) << n_pairs_usyz << ' '
-	   << setw(5) << n_pairs_hilb << ' '
-	   << setw(5) << n_pairs_gcd << ' '
-	   << setw(5) << nmonoms << ' ' 
-	   << setw(5) << nchange << endl;
+      o.put(n_gb, 5);              o.put(" ");
+      o.put(n_pairs, 5);           o.put(" ");
+      o.put(n_pairs_computed, 5);  o.put(" ");
+      o.put(n_pairs_gb, 5);        o.put(" ");
+      o.put(n_pairs_syz, 5);       o.put(" ");
+      o.put(n_pairs_zero, 5);      o.put(" ");
+      o.put(n_pairs_usyz, 5);      o.put(" ");
+      o.put(n_pairs_hilb, 5);      o.put(" ");
+      o.put(n_pairs_gcd, 5);       o.put(" ");
+      o.put(nmonoms, 5);           o.put(" ");
+      o.put(nchange, 5);           o.put(newline);
+      emit(o.str());
+      o.reset();
     }
 
   spairs->stats();
   if (comp_printlevel >= 5 && comp_printlevel % 2 == 1)
     for (int i=0; i<gb.length(); i++)
       {
-	cerr << i << '\t';
-	F->elem_text_out(cerr, gb[i]->f);
-	cerr << endl;
+	o.reset();
+	o << i << '\t';
+	F->elem_text_out(o, gb[i]->f);
+	o << newline;
+	emit(o.str());
       }
+
 }
 
 
