@@ -1213,10 +1213,6 @@ html BODY := x -> concatenate(
      "</BODY>", newline
      )
 
-html IMG  := x -> "<IMG src=\"" | x#0 | "\">"
-text IMG  := x -> ""
-tex  IMG  := x -> ""
-
 html LISTING := t -> "<LISTING>" | concatenate toSequence t | "</LISTING>";
 
 texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
@@ -1270,6 +1266,10 @@ rel := url -> (
      then url
      else relativizeFilename(first documentationPath, url)
      )
+
+html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
+text IMG  := x -> ""
+tex  IMG  := x -> ""
 
 html HREF := x -> (
      "<A HREF=\"" 					    -- "
