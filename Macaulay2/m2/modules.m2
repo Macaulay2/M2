@@ -1,24 +1,7 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
-vector = (v) -> (
-     if # v === 0
-     then error "expected a nonempty list";
-     scan(v,
-	  r -> (
-	       if not instance(class r,Ring)
-	       and class r != Symbol
-     	       then error "expected a list of ring elements"));
-     if not uniform(v) 
-     then try (
-	  z := sum unique apply(v,x -> 0_(class x));
-	  v = apply(v, x -> x + z);
-	  )
-     else error "can't promote all elements to the same ring";
-     R := class first v;
-     M := R^(# v);
-     new M from v)
-
+vector = (v) -> new Vector from matrix apply(v, i -> {i})
 -----------------------------------------------------------------------------
 -- BasicModule = new Type of Type
 ImmutableType = new Type of HashTable

@@ -192,7 +192,7 @@ kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.ker
 image RingMap := coimage RingMap := QuotientRing => f -> f.source / kernel f
 
 RingMap * RingMap := RingMap => (g,f) -> (
-     if source g != target f then error "ring maps not composable";
+     if source g =!= target f then error "ring maps not composable";
      m := g f.matrix;
      new RingMap from {
 	  symbol source => source f,

@@ -131,17 +131,15 @@ betti fano
 -- is just as well to write the documentation
 -- at this point .
 --
--- First, Fano and Grassmannian are commands in Macaulay 2, so
--- are a protected symbol.  We remove its current
--- meaning by
-erase symbol Fano
-erase symbol Grassmannian
+
+newPackage "tutorial"
+export (Fano2, Grassmannian2);
 
 -- The documentation has the following form:
 --$
 document {
-     Key => Fano, 
-        TT "Fano(k,X,GR) or  Fano(k,X)", " -- computes 
+     Key => Fano2, 
+        TT "Fano2(k,X,GR) or  Fano2(k,X)", " -- computes 
         the ideal of a Fano scheme in the Grassmannian.",
         PARA,
         "Given an ideal X representing a projective variety 
@@ -169,9 +167,9 @@ document {
 
 --$
 document {
-     Key => symbol Grassmannian, 
-    TT "Grassmannian(k,r,R) or 
-        Grassmannian(k,r)",
+     Key => symbol Grassmannian2, 
+    TT "Grassmannian2(k,r,R) or 
+        Grassmannian2(k,r)",
        "-- Given natural numbers k <= r,
         and optionally a ring R with at least binomial(r+1,k+1)
         variables, the routine defines the ideal of the 
@@ -181,15 +179,15 @@ document {
         ZZ/31991[vars(0..binomial(r+1,k+1)-1]."
         }
 
--- In order to make {\tt Fano} handle an optional
+-- In order to make {\tt Fano2} handle an optional
 -- number of arguments, we make it a method
 -- instead of a function, as follows
-Fano = method()
+Fano2 = method()
 
 -- Here is the code for the first case, with
 -- comments interspersed:
 --$
-Fano(ZZ,Ideal,Ring) := (k,X,GR) -> (
+Fano2(ZZ,Ideal,Ring) := (k,X,GR) -> (
   -- Get info about the base ring of X:
   -- The coefficient ring (to make new rings of
   -- the same characteristic, for example)
@@ -242,35 +240,37 @@ Fano(ZZ,Ideal,Ring) := (k,X,GR) -> (
 
 -- The second case reduces to the first:
 --$
-Fano(ZZ, Ideal) := (k,X) -> (
+Fano2(ZZ, Ideal) := (k,X) -> (
   KK:=coefficientRing ring X;
   r := (numgens ring X) - 1;
   -- We can specify a private ring with binomial(r+1,k+1)
   -- variables as follows
   GR := KK[Variables => binomial(r+1,k+1)];
   -- the work is done by
-  Fano(k,X,GR)
+  Fano2(k,X,GR)
 )
 
 -- With the 0 ideal we get the Grassmannian
 -- of projective $k$-planes in $\P^r$:
 
-Grassmannian = method()
+Grassmannian2 = method()
 --$
-Grassmannian(ZZ,ZZ,Ring) := (k,r,R) ->( 
+Grassmannian2(ZZ,ZZ,Ring) := (k,r,R) ->( 
         KK := coefficientRing R;
         RPr := KK[Variables => r+1];
         Pr := ideal(0_RPr);
-        Fano(k,Pr)
+        Fano2(k,Pr)
      )
 --
 --$
-Grassmannian(ZZ,ZZ) := (r,k) -> (
+Grassmannian2(ZZ,ZZ) := (r,k) -> (
         R := ZZ/31991[
                vars(0..(binomial(r+1,k+1)-1))
                     ];
-        Grassmannian(k,r,R)
+        Grassmannian2(k,r,R)
                      )
+
+closePackage "tutorial"
 
 -- As a first example we can try
 -- the Fano of lines on the nonsingular quadric
@@ -279,7 +279,7 @@ Grassmannian(ZZ,ZZ) := (r,k) -> (
 KK = ZZ/31991
 R = KK[a,b,c,d]
 X = ideal(a*b-c*d)
-I = Fano(1,X)
+I = Fano2(1,X)
 
 -- we investigate by checking its dimension
 -- and degree
@@ -373,13 +373,13 @@ betti S13res
 -- We compute the Fano varieties of lines
 -- on each of our surfaces.
 
-FVero = Fano(1, Vero)
+FVero = Fano2(1, Vero)
 betti gens FVero
 -- The ideal contains all $120$ quadrics,
 -- and represents the empty set:  The
 -- Veronese surface contains no lines!
 
-FS13 = Fano(1, S13)
+FS13 = Fano2(1, S13)
 
 -- It turns out that the dimension (1) and 
 -- degree (4) of these varieties coincide!
@@ -398,7 +398,7 @@ hilbertPolynomial coker gens FS13
 -- minus 2''; that is, the polynomial is 
 -- $H(d) = 4d + 2$; so arithmetic genus is $-1$.
 
-FS22 = Fano(1, S22)
+FS22 = Fano2(1, S22)
 hilbertPolynomial coker gens FS22
 
 -- The output, $4 \P^1 - 3 \P^0$, means $H(d) = 4d + 1$,
