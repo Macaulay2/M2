@@ -973,31 +973,8 @@ int system_run(M2_string command){
 int system_pipe(fildes)
 arrayint fildes;
 {
-#ifdef __MWERKS__
-     return ERROR;
-#else
      return pipe(fildes->array);
-#endif
      }
-
-#ifdef __MWERKS__
-int alarm(int n) {
-     return ERROR;
-     }
-
-#undef getpid
-int getpid(){
-     return ERROR;
-     }
-
-int fork(){
-     return ERROR;
-     }
-
-int wait(int *pid){
-     return ERROR;
-     }
-#endif
 
 int system_exec(argv)
 stringarray argv;
@@ -1915,6 +1892,36 @@ double lgamma(double x) { return -1. ; }	/* sigh, fix later */
 #ifndef ENOSYS
 #define ENOSYS 0
 #endif
+int fork() { return ERROR; }
+int pipe(int v[2]) { return ERROR; }
+int wait() { return ERROR; }
+int alarm(int i) { return ERROR ; }
+int sleep(int i) { return ERROR; }
+int getpagesize() { return 4096; }
+int brk() { return 0; }
+void *sbrk(int i) { return 0; }
+void *getprotobyname() { errno = ENOSYS; return 0; }
+int accept() { errno = ENOSYS; return -1; }
+int bind() { errno = ENOSYS; return -1; }
+int listen() { errno = ENOSYS; return -1; }
+int socket() { errno = ENOSYS; return -1; }
+void *gethostbyname() { errno = ENOSYS; return (void *)0; }
+int inet_addr() { errno = ENOSYS; return -1; }
+void *getservbyname() { errno = ENOSYS; return (void *)0; }
+void *authdes_create() { errno = ENOSYS; return (void *)0; }
+void *xdrmem_create() { errno = ENOSYS; return (void *)0; }
+int connect() { errno = ENOSYS; return -1; }
+int setsockopt() { errno = ENOSYS; return -1; }
+short htons(short x) { return x; }
+#endif
+
+#ifdef __MWERKS__
+#ifndef ENOSYS
+#define ENOSYS 0
+#endif
+#undef getpid
+int getpid(){ return ERROR; }
+int dup2() { return ERROR; }
 int fork() { return ERROR; }
 int pipe(int v[2]) { return ERROR; }
 int wait() { return ERROR; }
