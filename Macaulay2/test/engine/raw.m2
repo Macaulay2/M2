@@ -1,7 +1,8 @@
---		Copyright 1996-2002 by Daniel R. Grayson
+--		Copyright 1996-2004 by Daniel R. Grayson
 
 -- test engine.d, interface.d, and engine.m2
 
+show := s -> << s << " --> " << value s << endl
 errorDepth = 0
 
 a = rawVarMonomial 0
@@ -223,16 +224,17 @@ assert( F =!= P )
 assert( rank F == 4 )
 assert( rank P == 7 )
 
-f = rawMatrix1(F,3,(x,y,z),false)
+f = rawMatrix1(F,2,(x^3,y*z,x,y^2,x^3),false)
+
 show "entries f"
 show "f"
-
 show "rawMonomials((1,2),f)"				    -- I don't know what this does
 show "rawCoefficients((0,0),(3,3),f)"			    -- I don't know what this does
 
 assert( F === target f )
 assert( R^2 === R^2 )
 assert( R^2 =!= R^3 )
+degrees source f
 assert( {3,2} == degrees source f )
 assert( R^{-3,-2} === source f )
 << "f = " << f << endl
@@ -248,9 +250,11 @@ assert( -f == (-1) * f )
 
 -- mutable matrix
 
-h = rawMutableMatrix f
+assert not rawIsMutable f
+h = rawMatrixRemake1 (rawTarget f, f, true)		    -- mutable!
+assert rawIsMutable h
 << "h = " << h << endl
-assert( f == rawMatrix h )
+assert( f == rawMatrixRemake2(rawTarget h,rawSource h, rawMultiDegree h, h, false ) )
 assert( y^2 == rawMatrixEntry(f,1,1) )
 assert( x^3 == rawMatrixEntry(f,2,0) )
 assert( y^2 == rawMatrixEntry(h,1,1) )
@@ -273,8 +277,8 @@ rawMatrixColumnSwap(h,0,1)
 
 -- fraction ring
 
-G = rawFractionRing R
 stderr << "warning: rawFraction not implemented yet" << endl
+-- G = rawFractionRing R
 -- r = rawFraction(G,x,y)
 -- assert( r == rawFraction(G,x*z,y*z) )
 -- assert( toString rawFraction(G,x,y) === "x/y" )
