@@ -272,6 +272,33 @@ bool DMatrix<CoeffRing>::dot_product(int i, int j, ring_elem &result) const
   return true;
 }
 
+template<typename CoeffRing>
+bool DMatrix<CoeffRing>::row_permute(int start_row, const M2_arrayint cols)
+{
+}
+
+template<typename CoeffRing>
+bool DMatrix<CoeffRing>::column_permute(int start_col, const M2_arrayint cols)
+{
+}
+
+template<typename CoeffRing>
+DMatrix<CoeffRing> * DMatrix<CoeffRing>::submatrix(const M2_arrayint rows, const M2_arrayint cols) const
+{
+}
+
+template<typename CoeffRing>
+DMatrix<CoeffRing> * DMatrix<CoeffRing>::submatrix(const M2_arrayint cols) const
+{
+}
+
+template<typename CoeffRing>
+bool DMatrix<CoeffRing>::set_submatrix(const M2_arrayint rows, 
+				       const M2_arrayint cols,
+				       const MutableMatrix *N)
+{
+}
+
 ///////////////////////////////
 // Matrix operations //////////
 ///////////////////////////////
@@ -292,6 +319,8 @@ bool DMatrix<CoeffRing>::is_zero() const
 template<typename CoeffRing>
 bool DMatrix<CoeffRing>::is_equal(const MutableMatrix *B) const
 {
+#warning "write this"
+  return false;
 }
 
 template<typename CoeffRing>
@@ -299,6 +328,8 @@ bool DMatrix<CoeffRing>::set_values(M2_arrayint rows,
 			  M2_arrayint cols,
 			  RingElement_array *values)
 {
+#warning "write this"
+  return false;
 }
 
 template<typename CoeffRing>
@@ -307,6 +338,8 @@ MutableMatrixOrNull * DMatrix<CoeffRing>::add(const MutableMatrix *B) const
   // note: can add a sparse + dense
   //       can add a matrix over RR and one over CC and/or one over ZZ.
 {
+#warning "write this"
+  return 0;
 }
 
 template<typename CoeffRing>
@@ -315,6 +348,8 @@ MutableMatrixOrNull * DMatrix<CoeffRing>::subtract(const MutableMatrix *B) const
   // note: can subtract a sparse + dense
   //       can subtract a matrix over RR and one over CC and/or one over ZZ.
 {
+#warning "write this"
+  return 0;
 }
 
 template<typename CoeffRing>
@@ -324,6 +359,8 @@ MutableMatrixOrNull * DMatrix<CoeffRing>::mult(const MutableMatrix *B,
   // note: can mult a sparse + dense
   //       can mult a matrix over RR and one over CC and/or one over ZZ.
 {
+#warning "write this"
+  return 0;
 }
 
 template<typename CoeffRing>
@@ -331,21 +368,15 @@ MutableMatrixOrNull * DMatrix<CoeffRing>::mult(const RingElement *f,
 				     M2_bool opposite_mult) const
   // return f*this.  return NULL of sizes or types do not match.
 {
+#warning "write this"
+  return 0;
 }
 
 template<typename CoeffRing>
 MutableMatrix * DMatrix<CoeffRing>::negate() const
 {
-}
-
-template<typename CoeffRing>
-DMatrix<CoeffRing> * DMatrix<CoeffRing>::submatrix(const M2_arrayint rows, const M2_arrayint cols) const
-{
-}
-
-template<typename CoeffRing>
-DMatrix<CoeffRing> * DMatrix<CoeffRing>::submatrix(const M2_arrayint cols) const
-{
+#warning "write this"
+  return 0;
 }
 
 template class DMatrix<CoefficientRingZZp>;

@@ -24,6 +24,11 @@ M2_arrayint_OrNull Lapack::LU(LMatrixRR *M)
   dgetrf_(&rows, &cols, M->get_lapack_array(),
 	  &rows, permutation, &info);
 
+  for (int i=0; i<min; i++)
+    permutation[i]--;
+  for (int i=min; i<rows; i++)
+    permutation[i] = i;
+
   if (info < 0)       
     {
       ERROR("argument passed to dgetrf had an illegal value");
@@ -483,6 +488,11 @@ M2_arrayint_OrNull Lapack::LU(LMatrixCC *M)
 
   zgetrf_(&rows, &cols, M->get_lapack_array(), 
 	  &rows, permutation, &info);
+
+  for (int i=0; i<min; i++)
+    permutation[i]--;
+  for (int i=min; i<rows; i++)
+    permutation[i] = i;
 
   if (info < 0)       
     {

@@ -106,6 +106,15 @@ public:
 
   virtual bool dot_product(int i, int j, ring_elem &result) const; // DONE
 
+  virtual bool row_permute(int start_row, const M2_arrayint perm);
+
+  virtual bool column_permute(int start_col, const M2_arrayint perm);
+
+  virtual bool set_submatrix(const M2_arrayint rows,
+			     const M2_arrayint cols, 
+			     const MutableMatrix *N);
+  // returns false iff there is an error
+
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////
