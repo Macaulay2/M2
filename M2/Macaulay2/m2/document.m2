@@ -324,7 +324,7 @@ fixup1 Hypertext := fixup1 SEQ := toSequence
 fixuptop := s -> Hypertext deepSplice apply(toList s, fixup1)
 
 new Hypertext from List := (h,x) -> splice apply(x, i -> flat i)
-hypertext = x -> Hypertext fixup x
+hypertext = x -> Hypertext toList fixup x
 
 -----------------------------------------------------------------------------
 -- installing the documentation

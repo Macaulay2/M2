@@ -158,7 +158,7 @@ export - (rhs:Expr) : Expr := (
 	  method := lookup(Class(rhs),MinusS);
 	  if method == nullE
 	  then buildErrorPacket("no method found")
-	  else apply(method,Expr(rhs))));
+	  else applyEE(method,Expr(rhs))));
 minusfun1(rhs:Code):Expr := - eval(rhs);
 
 export (lhs:Expr) - (rhs:Expr) : Expr := (
@@ -567,7 +567,7 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       w = w*w;
 	       when w is Error do return w else nothing;
 	       );
-	  if wasneg then apply(inverse,z) else z)
+	  if wasneg then applyEE(inverse,z) else z)
      else WrongArgInteger(2));
 BinaryPowerMethodFun(e:Expr):Expr := (
      when e is a:Sequence do
@@ -599,7 +599,7 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       z = x*z;
 	       n = n-1;
 	       );
-	  if wasneg then apply(inverse,z) else z)
+	  if wasneg then applyEE(inverse,z) else z)
      else WrongArgInteger(2));
 SimplePowerMethodFun(e:Expr):Expr := (
      when e is a:Sequence do
@@ -922,7 +922,7 @@ installValueFun(args:CodeSequence):Expr := (
      meth := lookupBinaryMethod(Class(x),Class(y),Expr(Sequence(oper,EqualE))); -- i.e., x*y=z is looked up under ((symbol *,symbol =),class x,class y)
      if meth == nullE then return MissingAssignmentMethodPair(oper,x,y);
      z := eval(args.3);
-     apply(meth,x,y,z));
+     applyEEE(meth,x,y,z));
 -- this old version was used for stashing values somewhere
 -- installValueFun(args:CodeSequence):Expr := (
 --      a := eval(args.1);
@@ -965,7 +965,7 @@ unaryInstallValueFun(meth:Code,lhs:Code,rhs:Code):Expr := (
      method := lookup(Class(y),Expr(Sequence(oper,EqualE))); -- i.e., *y=z is looked up under ((symbol *,symbol =),class y)
      if method == nullE then return MissingAssignmentMethod(oper,y);
      z := eval(rhs);
-     apply(method,y,z));
+     applyEEE(method,y,z));
 -- this old version was used for stashing values somewhere
 -- unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
 --      Argtype := eval(argtype);

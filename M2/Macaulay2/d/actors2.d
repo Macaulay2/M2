@@ -336,7 +336,7 @@ newfun(newClassCode:Code):Expr := (
 	  then (
 	       method := lookup(class,NewS);
 	       if method != nullE
-	       then transform(apply(method,Expr(class)),class,true)
+	       then transform(applyEE(method,Expr(class)),class,true)
 	       else makenew(class))
 	  else errt(newClassCode))
      else errt(newClassCode));
@@ -361,7 +361,7 @@ newoffun(newClassCode:Code,newParentCode:Code):Expr := (
 		    else (
 			 method := lookupBinaryMethod(class,parent.class,NewOfS);
 			 if method != nullE
-			 then transform(apply(method,Expr(class),Expr(parent)),class,parent,true)
+			 then transform(applyEEE(method,Expr(class),Expr(parent)),class,parent,true)
 			 else makenew(class,parent)))
 	       else errp(newParentCode)))
      else errtt(newClassCode));
@@ -381,7 +381,7 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
 	       else (
 		    method := lookupBinaryMethod(class,Class(newInitExpr),NewFromS);
 		    if method != nullE
-		    then transform(apply(method,Expr(class),newInitExpr),class,true)
+		    then transform(applyEEE(method,Expr(class),newInitExpr),class,true)
 		    else (
 			 when newInitExpr
 			 is s:Sequence do transform(newInitExpr,class,false)
@@ -422,7 +422,7 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
 				   class,parent.class,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
 			      if method != nullE 
 			      then transform(
-				   apply(method,Expr(class),Expr(parent),newInitExpr),
+				   applyEEE(method,Expr(class),Expr(parent),newInitExpr),
 				   class,parent,true)
 			      else (when newInitExpr
 				   is p:Sequence do transform(newInitExpr,class,parent,false)

@@ -85,7 +85,7 @@ equalmethod(x:Expr,y:Expr):Expr := (
      method := lookupBinaryMethod(Class(x),Class(y),EqualEqualS);
      if method == nullE 
      then MissingMethodPair(EqualEqualS,x,y)
-     else apply(method,x,y));
+     else applyEEE(method,x,y));
 EqualEqualfun(x:Expr,y:Expr):Expr := (
      -- some cases, where the types are equal, call immediately for strict equality
      -- some cases call for simple recursive routines
@@ -136,7 +136,7 @@ not(z:Expr):Expr := (
 notequalmethod(x:Expr,y:Expr):Expr := (
      method := lookupBinaryMethod(Class(x),Class(y),NotEqualS);
      if method == nullE then notFun(EqualEqualfun(x,y))
-     else apply(method,x,y));
+     else applyEEE(method,x,y));
 NotEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
      when x is Error do x
@@ -440,7 +440,7 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 			 n = n+1;
 			 )
 		    else (
-			 z.n = Sequence(xi.0, apply(f,xi.1,yj.1));
+			 z.n = Sequence(xi.0, applyEEE(f,xi.1,yj.1));
 			 i = i+1;
 			 j = j+1;
 			 n = n+1;
@@ -1643,11 +1643,11 @@ iteratedApply(e:Expr):Expr := (
 	  when arg
 	  is args:Sequence do (
 	       foreach x in args do (
-		    f = apply(f,x);
+		    f = applyEE(f,x);
 		    when f is Error do return f else nothing;
 		    );
 	       f)
-	  else apply(f,arg))
+	  else applyEE(f,arg))
      else WrongNumArgs(2));
 setupfun("uncurry",iteratedApply);
 

@@ -1,7 +1,7 @@
 -- -*- fill-column: 107 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
-Macaulay2HomePage := "http://www.math.uiuc.edu/Macaulay2/"
+Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/index-" | version#"VERSION" | ".html"
 
 -----------------------------------------------------------------------------
 -- html output
@@ -13,7 +13,7 @@ Macaulay2HomePage := "http://www.math.uiuc.edu/Macaulay2/"
 
 local prefix, local topNodeButton
 local haderror, local nullButton, local masterIndexButton, local tocButton, local homeButton
-local NEXT, local PREV, local UP, local CONT
+local NEXT, local PREV, local UP, local CONT, local linkTable
 local nextButton, local prevButton, local upButton
 local masterIndex
 
@@ -66,25 +66,39 @@ up   := tag -> if   UP#?tag then ( HREF { htmlFilename   UP#tag,   upButton }, "
 FIRST := tag -> (while PREV#?tag do tag = PREV#tag; tag)
 LAST  := tag -> (while NEXT#?tag do tag = NEXT#tag; tag)
 
+FORWARD0  := tag -> if NEXT#?tag then NEXT#tag else if UP#?tag then FORWARD0 UP#tag
+FORWARD   := tag -> if linkTable#?tag and length linkTable#tag > 0 then          first linkTable#tag else FORWARD0 tag
+BACKWARD0 := tag -> if linkTable#?tag and length linkTable#tag > 0 then BACKWARD0 last linkTable#tag else tag
+BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP#tag
+
+forward  := tag -> ( f := FORWARD  tag; if f =!= null then ( HREF { htmlFilename f, forwardButton }, " | "))
+backward := tag -> ( b := BACKWARD tag; if b =!= null then ( HREF { htmlFilename b, backwardButton}, " | "))
+
 linkTitle := s -> concatenate( " title=\"", s, "\"" )
 linkTitleTag := tag -> concatenate( " title=\"", DocumentTag.FormattedKey tag, commentize headline tag, "\"" )
-links := tag -> SEQ {
-     LINK { htmlDirectory|topFileName,   " rel=\"Top\"", linkTitleTag topDocumentTag},
-     LINK { htmlDirectory|indexFileName, " rel=\"Index\""},
-     LINK { htmlDirectory|tocFileName,   " rel=\"Table-of-Contents\""},
-     LINK { Macaulay2HomePage, " rel=\"Macaulay-2-Home-Page\""},
-     if NEXT#?tag then SEQ {
-	  LINK { htmlFilename NEXT#tag, " rel=\"Next\"", linkTitleTag NEXT#tag},
-	  LINK { htmlFilename LAST tag, " rel=\"Last\"", linkTitleTag LAST tag}
-	  },
-     if PREV#?tag then SEQ {
-	  LINK { htmlFilename PREV#tag, " rel=\"Previous\"", linkTitleTag PREV#tag},
-	  LINK { htmlFilename FIRST tag, " rel=\"First\"", linkTitleTag FIRST tag},
-	  },
-     if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"", linkTitleTag UP#tag},
-     LINK { LAYOUT#"style" | "doc.css", " rel=\"stylesheet\" type=\"text/css\"" },
-     LINK { LAYOUT#"style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" }
-     }
+links := tag -> (
+     f := FORWARD tag;
+     b := BACKWARD tag;
+     SEQ {
+	  LINK { htmlDirectory|topFileName,   " rel=\"Top\"", linkTitleTag topDocumentTag},
+	  LINK { htmlDirectory|indexFileName, " rel=\"Index\""},
+	  LINK { htmlDirectory|tocFileName,   " rel=\"Table-of-Contents\""},
+	  LINK { Macaulay2HomePage (), " rel=\"Macaulay-2-Home-Page\""},
+	  if f =!= null then LINK { htmlFilename f, " rel=\"Next\"", linkTitleTag f},
+	  if b =!= null then LINK { htmlFilename b, " rel=\"Previous\"", linkTitleTag b},
+	  if NEXT#?tag then SEQ {
+	       LINK { htmlFilename NEXT#tag, " rel=\"Forward\"", linkTitleTag NEXT#tag},
+	       LINK { htmlFilename LAST tag, " rel=\"Last\"", linkTitleTag LAST tag}
+	       },
+	  if PREV#?tag then SEQ {
+	       LINK { htmlFilename PREV#tag, " rel=\"Backward\"", linkTitleTag PREV#tag},
+	       LINK { htmlFilename FIRST tag, " rel=\"First\"", linkTitleTag FIRST tag},
+	       },
+	  if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"", linkTitleTag UP#tag},
+	  LINK { LAYOUT#"style" | "doc.css", " rel=\"stylesheet\" type=\"text/css\"" },
+	  LINK { LAYOUT#"style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" }
+	  }
+     )
 
 BUTTON := (s,alt) -> (
      s = rel s;
@@ -106,20 +120,22 @@ html HTML := t -> concatenate(
 -- produce html form of documentation, for Macaulay 2 and for packages
 
 buttonBar := (tag) -> ButtonTABLE {{ 
-	  LITERAL concatenate (
-	       "<form action=\"",
-	       if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
-	       "\">
-     	         <div>Search:
-		   <input type=\"text\"   name=\"words\"  />
-		   <input type=\"hidden\" name=\"method\" value=\"boolean\" />
-		   <input type=\"hidden\" name=\"format\" value=\"builtin-short\" />
-		   <input type=\"hidden\" name=\"sort\"   value=\"score\" />
-		   <input type=\"hidden\" name=\"config\" value=\"htdig-M2\" />
-     	         </div>
-	       </form>
-	       "),
+--	  LITERAL concatenate (
+--	       "<form action=\"",
+--	       if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
+--	       "\">
+--     	         <div>Search:
+--		   <input type=\"text\"   name=\"words\"  />
+--		   <input type=\"hidden\" name=\"method\" value=\"boolean\" />
+--		   <input type=\"hidden\" name=\"format\" value=\"builtin-short\" />
+--		   <input type=\"hidden\" name=\"sort\"   value=\"score\" />
+--		   <input type=\"hidden\" name=\"config\" value=\"htdig-M2\" />
+--     	         </div>
+--	       </form>
+--	       "),
 	  DIV splice {
+     	       forward tag,
+	       backward tag,
 	       next tag,
 	       prev tag,
 	       up tag,
@@ -164,7 +180,7 @@ packageTagList := (pkg,topDocumentTag) -> checkIsTag \ unique join(
 -----------------------------------------------------------------------------
 
 -- make this first:
-linkTable := new MutableHashTable			    -- keys are DocumentTags for a node, values are lists of DocumentTags of descendents
+linkTable = new MutableHashTable			    -- keys are DocumentTags for a node, values are lists of DocumentTags of descendents
 
 -- assemble this next
 ForestNode = new Type of BasicList			    -- list of tree nodes, the descendent list
@@ -279,11 +295,13 @@ assembleTree := (pkg,nodes) -> (
 setupButtons := () -> (
      topNodeButton = HREF {htmlDirectory|topFileName, "top" };
      tocButton = HREF {htmlDirectory|tocFileName, "toc"};
-     homeButton = HREF {Macaulay2HomePage, "home"};
+     homeButton = HREF {Macaulay2HomePage (), "home"};
      nullButton = "";
      masterIndexButton = HREF {htmlDirectory|indexFileName,"index"};
-     nextButton = "next";
-     prevButton = "previous";
+     forwardButton = "next";
+     backwardButton = "previous";
+     nextButton = "forward";
+     prevButton = "backward";
      upButton = "up";
      )
 

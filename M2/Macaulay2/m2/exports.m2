@@ -36,6 +36,7 @@ exportMutable (
 	)
 
 export (
+        symbol ExampleTABLE,
         symbol MissingMethod,
 	symbol Error,
      	symbol runEndFunctions,
