@@ -949,8 +949,8 @@ extern "C" {
 
   /* Routines when considering matrices as modules of some sort */
 
-  const MatrixOrNull * IM2_Matrix_module_tensor(const Matrix *M,
-						const Matrix *N); /* TODO */
+  const MatrixOrNull * rawModuleTensor(const Matrix *M,
+				       const Matrix *N); /* Dan TODO: please connect this one too */
 
   const MatrixOrNull * rawBasis(const Matrix *M,
 				M2_arrayint lo_degree, /* possibly length 0 */
