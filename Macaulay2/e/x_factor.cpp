@@ -16,6 +16,9 @@
 #include "relem.hpp"
 #include "../d/M2mem.h"
 
+#include "text_io.hpp"
+#include "buffer.hpp"
+
 #ifdef drg
 // debugging display routines to be called from gdb
 // needs factory to be configured without option --disable-streamio 
@@ -176,6 +179,14 @@ static CanonicalForm convert(const RingElement &g) {
      return f;
 }
 
+void displayCF(Ring *R, const CanonicalForm &h)
+{
+  buffer o;
+  RingElement *g = convert(R,h);
+  o << IM2_RingElement_to_string(g);
+  emit(o.str());
+}
+
 const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g)
 {
 #warning "check that the rings of f and g both polynomial rings"
@@ -205,6 +216,7 @@ void rawFactor(const RingElement *g,
   factoryseed(23984729);
   const Ring *R = g->get_ring();
   CanonicalForm h = convert(*g);
+  // displayCF(R,h);
 #ifdef drg
   GC_gcollect();			// debugging
 #endif
