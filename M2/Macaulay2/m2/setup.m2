@@ -83,7 +83,7 @@ Thing.Print = x -> (
      applyMethod(AfterPrint,x);
      )
 
-trunc := (wid,ht,s) -> (
+truncNet := (wid,ht,s) -> (
      if wid > 0 and width s > wid then (
 	  s = stack apply( unstack s, l -> if width l > wid then substring(l,0,wid-1) else l);
 	  s = s | (stack ( height s + depth s : "$" ))^(height s - 1));
@@ -91,15 +91,16 @@ trunc := (wid,ht,s) -> (
 	  s = stack take(unstack s,ht-1);
 	  s = s || concatenate(width s : "$"));
      s)
+truncString := (wid,s) -> if wid > 0 and width s > wid then concatenate(substring(s,0,wid-1),"$") else s
 checkNet := n -> if class n === Net or class n === String then n else error "didn't format correctly"
 checkString := n -> if class n === String then n else error "didn't format correctly"
 Nothing.Format = toString
 String.Format = format
 silentRobustNet = (wid,ht,sec,y) -> (
-     trunc(wid,ht,
+     truncNet(wid,ht,
 	  try timelimit (sec, () -> checkNet if lookup(symbol Format,class y) =!= null then (lookup(symbol Format,class y)) y else net y)
 	  else 
-	  try timelimit (sec, () -> checkString toString y)
+	  try timelimit (sec, () -> checkString toExternalString y)
 	  else
 	  simpleToString y))
 silentRobustNetWithClass = (wid,ht,sec,y) -> (			    -- we know wid is at least 80
@@ -107,49 +108,55 @@ silentRobustNetWithClass = (wid,ht,sec,y) -> (			    -- we know wid is at least 
      part1 :=                               silentRobustNet(wid - width part2,ht,sec,      y);
      horizontalJoin(part1, part2));
 silentRobustString = (wid,sec,y) -> (
-     trunc(wid,1,
-	  try timelimit (sec, () -> checkString toString y)
-	  else
-	  simpleToString y))
+     truncString(wid,
+	  try timelimit (sec, () -> checkString toExternalString y)
+	  else simpleToString y))
 silentRobustStringWithClass = (wid,sec,y) -> (
-     part2 := horizontalJoin(" (of class ", silentRobustString(wid//2,           sec,class y), ")");
-     part1 :=                               silentRobustString(wid - width part2,sec,      y);
+     part2 := concatenate(" (of class ", silentRobustString(wid//2,           sec,class y), ")");
+     part1 :=                            silentRobustString(wid - width part2,sec,      y);
      concatenate(part1, part2));
 
 hush := false
+commentGuardString := "--"
+commentGuardNet := raise(horizontalJoin commentGuardString,-1)
+commentGuardWidth := #commentGuardString
+commentGuard := n -> if class n === String then concatenate(commentGuard,n) else (
+     (stack((height n + depth n):commentGuardNet))^(height n) | n
+     )
 scan(binaryOperators, op -> (
 	  if op === symbol "!=" then return;		    -- this one has an internal binary method
+     	  opstring := if op === symbol " " then format toString op else toString op;
 	  ht := 8;
 	  preX := "            ";
 	  if not Thing#?((op,symbol =),Thing,Thing) then installMethod((op,symbol =), Thing, Thing, (x,y,z) -> (
-	  	    preY := centerString(width preX, toString op);
+	  	    preY := centerString(width preX, opstring);
      	       	    preZ := centerString(width preX, "=");
 		    line1 := concatenate("no method for assignment to ",
 			 if op === symbol " " then "adjacent objects" else concatenate("binary operator ",op," applied to objects")
 			 );
 		    if hush then error line1;
 		    wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
-		    wid = wid - width preX;
+		    wid = wid - commentGuardWidth - width preX;
 		    hush = true;					    -- prevent error message recursion
 		    line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
 		    line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
 		    line4 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
 		    hush = false;
-		    error toString stack(line1,line2,line3,line4)));
+		    error toString stack(line1,commentGuard line2,commentGuard line3,commentGuard line4)));
 	  if not Thing#?(op,Thing,Thing) then installMethod(op, Thing, Thing, 
 	       (x,y) -> (
-	  	    preY := "       and  ";
 		    line1 := concatenate("no method for ",
 			 if op === symbol " " then "adjacent objects:" else concatenate("binary operator ",op," applied to objects:")
 			 );
 		    if hush then error line1;
+	  	    preY := centerString(width preX, opstring);
 		    wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
-		    wid = wid - width preX;
+		    wid = wid - commentGuardWidth - width preX;
 		    hush = true;					    -- prevent error message recursion
 		    line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
 		    line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
 		    hush = false;
-		    error toString stack(line1,line2,line3)))))
+		    error toString stack(line1,commentGuard line2,commentGuard line3)))))
 scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) -> 
      scan(ops, op -> (
 	       ht := 8;
@@ -161,22 +168,22 @@ scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) ->
 			 line1 := concatenate("no method for assignment to ", concatenate(type," operator ",op), " applied to:");
 			 if hush then error line1;
 			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
-			 wid = wid - width preX;
+			 wid = wid - commentGuardWidth - width preX;
 			 hush = true;					    -- prevent error message recursion
 			 line2 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
 			 line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z);
 			 hush = false;
-			 error toString stack(line1,line2,line3)));
+			 error toString stack(line1,commentGuard line2,commentGuard line3)));
 	       if not Thing#?op then installMethod(op, Thing,
 		    (x) -> (
 			 line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to:");
 			 if hush then error line1;
 			 wid := max(printWidth,80);				    -- error might occur while printWidth is narrowed
-			 wid = wid - width preX;
+			 wid = wid - commentGuardWidth - width preX;
 			 hush = true;					    -- prevent error message recursion
 			 line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
 			 hush = false;
-			 error toString stack(line1,line2))))))
+			 error toString stack(line1,commentGuard line2))))))
 
 Thing.NoPrint = x -> (
      x = commonProcessing x;

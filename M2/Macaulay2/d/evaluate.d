@@ -974,15 +974,19 @@ export clearSteppingFlag():void := (
      determineExceptionFlag();
      );
 
+lastCode := dummyCode;
 stepCount := 0;
-steppingFurther():bool := (
+steppingFurther(c:Code):bool := (
      if !steppingFlag then return false;
-     stepCount = stepCount - 1;
+     if stepCount == 0 then return false;
+     if lastCode != c then (
+     	  stepCount = stepCount - 1;
+	  lastCode = c);
      stepCount > 0);
 
 export eval(c:Code):Expr := (
      e := (
-	  if exceptionFlag && !steppingFurther() then (
+	  if exceptionFlag && !steppingFurther(c) then (
 	       if steppingFlag then (
 		    steppingFlag = false;
 		    buildErrorPacket(steppingMessage))
@@ -1108,8 +1112,9 @@ export eval(c:Code):Expr := (
 				   when z.value is step:Integer do (
 					if isInt(step) then (
 					     steppingFlag = true;
+					     lastCode = c;
 					     exceptionFlag = true;
-					     stepCount = toInt(step)+1;
+					     stepCount = toInt(step);
 					     ))
 				   else nothing;
 				   return eval(c)))
