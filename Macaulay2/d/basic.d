@@ -191,9 +191,8 @@ copy(f:Frame):Frame := (
      else Frame(
 	  copy(f.outerFrame),
 	  f.frameID,
-	  new Sequence len length(f.values) do (
-	       foreach e in f.values do provide e
-	       )));
+	  f.valuesUsed,
+	  new Sequence len length(f.values) do foreach e in f.values do provide e));
 export seq():Expr := emptySequenceE;
 export seq(e:Expr,f:Expr):Expr := Expr(Sequence(e,f));
 export seq(e:Expr,f:Expr,g:Expr):Expr := Expr(Sequence(e,f,g));

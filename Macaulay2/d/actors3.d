@@ -609,7 +609,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			 values := new Sequence len framesize do (
 			      provide Sequence(a1.i,a2.i);
 			      while true do provide nullE);
-			 localFrame = Frame(previousFrame,frameID,values);
+			 localFrame = Frame(previousFrame,frameID,framesize,values);
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message == returnMessage
@@ -635,7 +635,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 				   provide a2.i;
 				   while true do provide nullE
 				   );
-			      localFrame = Frame(previousFrame,frameID,values);
+			      localFrame = Frame(previousFrame,frameID,framesize,values);
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage
@@ -659,7 +659,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	       if desc.restargs then (	  -- x -> ...
      		    saveLocalFrame := localFrame;
 		    values := new Sequence len framesize do provide nullE;
-		    localFrame = Frame(previousFrame,frameID,values);
+		    localFrame = Frame(previousFrame,frameID,framesize,values);
 		    ret := new Sequence len newlen at i do (
 			 values.0 = Sequence(a1.i,a2.i);
 			 tmp := eval(body);
@@ -684,7 +684,7 @@ map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 		    else (
 			 saveLocalFrame := localFrame;
 			 values := new Sequence len framesize do provide nullE;
-			 localFrame = Frame(previousFrame,frameID,values);
+			 localFrame = Frame(previousFrame,frameID,framesize,values);
 			 ret := new Sequence len newlen at i do (
 			      values.0 = a1.i;
 			      values.1 = a2.i;
@@ -760,7 +760,7 @@ map(a:Sequence,f:Expr):Expr := (
 			 foreach arg in a do (
 			      values := new Sequence len framesize do (
 				   provide arg; while true do provide nullE);
-			      localFrame = Frame(previousFrame,frameID,values);
+			      localFrame = Frame(previousFrame,frameID,framesize,values);
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 				   if err.message == returnMessage
@@ -787,7 +787,7 @@ map(a:Sequence,f:Expr):Expr := (
 					     values := new Sequence len framesize do (
 						  provide args.0;
 						  while true do provide nullE);
-					     localFrame = Frame(previousFrame,frameID,values);)
+					     localFrame = Frame(previousFrame,frameID,framesize,values);)
 					else (
 					     errret = WrongNumArgs(model.parms,numparms,length(args));
 					     while true do provide nullE;))
@@ -795,7 +795,7 @@ map(a:Sequence,f:Expr):Expr := (
 					values := new Sequence len framesize do (
 					     provide arg; 
 					     while true do provide nullE);
-					localFrame = Frame(previousFrame,frameID,values);
+					localFrame = Frame(previousFrame,frameID,framesize,values);
 					);
 				   tmp := eval(body);
 				   when tmp is err:Error do (
@@ -822,7 +822,7 @@ map(a:Sequence,f:Expr):Expr := (
 					     values := new Sequence len framesize do (
 						  foreach t in args do provide t;
 						  while true do provide nullE);
-					     localFrame = Frame(previousFrame,frameID,values);)
+					     localFrame = Frame(previousFrame,frameID,framesize,values);)
 					else (
 					     errret = WrongNumArgs(model.parms,numparms,length(args));
 					     while true do provide nullE;))
@@ -853,7 +853,7 @@ map(a:Sequence,f:Expr):Expr := (
 	       if desc.restargs then (	  -- x -> ...
      		    saveLocalFrame := localFrame;
 		    values := new Sequence len framesize do provide nullE;
-		    localFrame = Frame(previousFrame,frameID,values);
+		    localFrame = Frame(previousFrame,frameID,framesize,values);
 		    ret := new Sequence len newlen do (
 			 foreach arg in a do (
 			      values.0 = arg;
@@ -879,7 +879,7 @@ map(a:Sequence,f:Expr):Expr := (
 		    if numparms == 1 then (
 			 saveLocalFrame := localFrame;
 			 values := new Sequence len framesize do provide nullE;
-			 localFrame = Frame(previousFrame,frameID,values);
+			 localFrame = Frame(previousFrame,frameID,framesize,values);
 			 ret := new Sequence len newlen do (
 			      if framesize == 1 then (
 				   foreach arg in a do (
@@ -967,7 +967,7 @@ map(a:Sequence,f:Expr):Expr := (
 			 else (	  -- framesize != 0
 			      saveLocalFrame := localFrame;
 			      values := new Sequence len framesize do provide nullE;
-			      localFrame = Frame(previousFrame,frameID,values);
+			      localFrame = Frame(previousFrame,frameID,framesize,values);
 			      ret := new Sequence len newlen do (
 				   foreach arg in a do (
 					when arg is args:Sequence do (
@@ -1060,7 +1060,7 @@ map(n:int,f:Expr):Expr := (
 			 values := new Sequence len framesize do (
 			      provide toInteger(i);
 			      while true do provide nullE);
-			 localFrame = Frame(previousFrame,frameID,values);
+			 localFrame = Frame(previousFrame,frameID,framesize,values);
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message == returnMessage
@@ -1077,7 +1077,7 @@ map(n:int,f:Expr):Expr := (
 		    -- since the function closure has no code inside it that makes a 
 		    -- a closure, we can re-use its frame.
 		    values := new Sequence len framesize do provide nullE;
-		    localFrame = Frame(previousFrame,frameID,values);
+		    localFrame = Frame(previousFrame,frameID,framesize,values);
 		    if framesize == 1 then (
 			 for i from 0 to n-1 do (
 			      values.0 = toInteger(i);
@@ -1225,7 +1225,7 @@ scan(n:int,f:Expr):Expr := (
 			 provide toInteger(i);
 			 while true do provide nullE;
 			 );
-		    localFrame = Frame(previousFrame,frameID,values);
+		    localFrame = Frame(previousFrame,frameID,framesize,values);
 		    tmp := eval(body);
 		    when tmp is err:Error do (
 			 if err.message != returnMessage then (
@@ -1241,7 +1241,7 @@ scan(n:int,f:Expr):Expr := (
 	       -- since the function closure has no code inside it that makes a 
 	       -- a closure, we can re-use its frame.
 	       values := new Sequence len framesize do provide nullE;
-	       localFrame = Frame(previousFrame,frameID,values);
+	       localFrame = Frame(previousFrame,frameID,framesize,values);
 	       if framesize == 1 then (
 		    for i from 0 to n-1 do (
 			 values.0 = toInteger(i);
@@ -1332,7 +1332,7 @@ scan(a:Sequence,f:Expr):Expr := (
 		    foreach arg in a do (
 			 values := new Sequence len framesize do (
 			      provide arg; while true do provide nullE);
-			 localFrame = Frame(previousFrame,frameID,values);
+			 localFrame = Frame(previousFrame,frameID,framesize,values);
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message != returnMessage then (
@@ -1350,7 +1350,7 @@ scan(a:Sequence,f:Expr):Expr := (
 					values := new Sequence len framesize do (
 					     provide args.0;
 					     while true do provide nullE);
-					localFrame = Frame(previousFrame,frameID,values);)
+					localFrame = Frame(previousFrame,frameID,framesize,values);)
 				   else (
 	  				recursiondepth = recursiondepth - 1;
      					localFrame = saveLocalFrame;
@@ -1360,7 +1360,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   values := new Sequence len framesize do (
 					provide arg; 
 					while true do provide nullE);
-				   localFrame = Frame(previousFrame,frameID,values);
+				   localFrame = Frame(previousFrame,frameID,framesize,values);
 				   );
 			      tmp := eval(body);
 			      when tmp is err:Error do (
@@ -1380,7 +1380,7 @@ scan(a:Sequence,f:Expr):Expr := (
 					values := new Sequence len framesize do (
 					     foreach t in args do provide t;
 					     while true do provide nullE);
-					localFrame = Frame(previousFrame,frameID,values);)
+					localFrame = Frame(previousFrame,frameID,framesize,values);)
 				   else (
 	  				recursiondepth = recursiondepth - 1;
      					localFrame = saveLocalFrame;
@@ -1409,7 +1409,7 @@ scan(a:Sequence,f:Expr):Expr := (
 	       -- a closure, we can re-use its frame.
 	       if desc.restargs then (	  -- x -> ...
 		    values := new Sequence len framesize do provide nullE;
-		    localFrame = Frame(previousFrame,frameID,values);
+		    localFrame = Frame(previousFrame,frameID,framesize,values);
 		    foreach arg in a do (
 			 values.0 = arg;
 			 tmp := eval(body);
@@ -1427,7 +1427,7 @@ scan(a:Sequence,f:Expr):Expr := (
 	       else (				  -- (x,y) -> ...
 		    if numparms == 1 then (
 			 values := new Sequence len framesize do provide nullE;
-			 localFrame = Frame(previousFrame,frameID,values);
+			 localFrame = Frame(previousFrame,frameID,framesize,values);
 			 if framesize == 1 then (
 			      foreach arg in a do (
 				   when arg is args:Sequence do (
@@ -1501,7 +1501,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   else nothing))
 			 else (	  -- framesize != 0
 			      values := new Sequence len framesize do provide nullE;
-			      localFrame = Frame(previousFrame,frameID,values);
+			      localFrame = Frame(previousFrame,frameID,framesize,values);
 			      foreach arg in a do (
 				   when arg is args:Sequence do (
 					if numparms == length(args) then (
@@ -1590,7 +1590,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 			 values := new Sequence len framesize do (
 			      provide Sequence(a1.i,a2.i);
 			      while true do provide nullE);
-			 localFrame = Frame(previousFrame,frameID,values);
+			 localFrame = Frame(previousFrame,frameID,framesize,values);
 			 tmp := eval(body);
 			 when tmp is err:Error do (
 			      if err.message != returnMessage then (
@@ -1614,7 +1614,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 				   provide a2.i;
 				   while true do provide nullE
 				   );
-			      localFrame = Frame(previousFrame,frameID,values);
+			      localFrame = Frame(previousFrame,frameID,framesize,values);
 			      tmp := eval(body);
 			      when tmp is err:Error do (
 			 	   if err.message != returnMessage then (
@@ -1634,7 +1634,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 	       if desc.restargs then (	  -- x -> ...
      		    saveLocalFrame := localFrame;
 		    values := new Sequence len framesize do provide nullE;
-		    localFrame = Frame(previousFrame,frameID,values);
+		    localFrame = Frame(previousFrame,frameID,framesize,values);
 		    for i from 0 to newlen - 1 do (
 			 values.0 = Sequence(a1.i,a2.i);
 			 tmp := eval(body);
@@ -1658,7 +1658,7 @@ scan(a1:Sequence,a2:Sequence,f:Expr):Expr := (
 		    else (
 			 saveLocalFrame := localFrame;
 			 values := new Sequence len framesize do provide nullE;
-			 localFrame = Frame(previousFrame,frameID,values);
+			 localFrame = Frame(previousFrame,frameID,framesize,values);
 			 for i from 0 to newlen - 1 do (
 			      values.0 = a1.i;
 			      values.1 = a2.i;
