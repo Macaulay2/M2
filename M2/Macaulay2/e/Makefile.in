@@ -84,12 +84,12 @@ INTERFACE = \
 	z_mod_p
 
 STILLTOCOMPILE = \
+	respoly2 \
+	res2 \
 	newspair \
 	weylfree \
 	res \
-	res2 \
 	respoly \
-	respoly2 \
 	Eschreyer \
 	gauss \
 	termideal \
@@ -143,7 +143,8 @@ C_FILES = error table exptable monordering
 ## end of source code files ##
 ##############################
 
-GENERATED_H = geovec geogbvec geores
+#GENERATED_H = geovec geogbvec geores
+GENERATED_H = geogbvec geores
 
 CC_FILES := $(INTERFACE) $(COMMANDS)
 FILES := $(CC_FILES) $(C_FILES)
@@ -194,7 +195,7 @@ VEC =   -e "s/geobucket/vecHeap/g"      -e "s/FREEMODULETYPE/const FreeModule/g"
 GBVEC = -e "s/geobucket/gbvectorHeap/g" -e "s/FREEMODULETYPE/GBRing/g"     -e "s/VECTYPE/gbvector */g"
 RES =   -e "s/geobucket/respolyHeap/g"  -e "s/FREEMODULETYPE/const res2_poly/g"  -e "s/VECTYPE/res2term */g"
 
-geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
+#geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
 geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
 geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
 

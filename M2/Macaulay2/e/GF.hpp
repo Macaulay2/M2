@@ -38,8 +38,6 @@ public:
 // The following are all the routines required by 'ring'
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
-  virtual bool is_graded() const    { return 1; }
-  virtual bool is_expensive() const { return 0; }
 
   virtual void text_out(buffer &o) const;
 

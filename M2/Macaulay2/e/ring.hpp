@@ -50,17 +50,78 @@ protected:
 public:
   virtual ~Ring();
 
+  ////////////////////////
+  // Ring informational //
+  ////////////////////////
+
   int charac() const { return P; }
   int n_vars() const { return _nvars; } // This will be 0 except for frac fields and poly rings.
   int total_n_vars() const { return _totalvars; }
+  virtual int n_fraction_vars() const { return 0; }
+  // The ultimate number of fraction field variables.
 
   const Monoid * degree_monoid() const { return D_; }
   const PolynomialRing *HilbertRing() const { return _HRing; }
 
+  virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
+  virtual bool is_ZZ() const { return false; }
+  virtual bool is_QQ() const { return false; }
+  virtual bool is_fraction_field() const { return false; }
 
-  virtual FreeModule *make_FreeModule() const;
-  virtual FreeModule *make_FreeModule(int n) const;
+  virtual bool is_fraction_poly_ring() const { return false; }
+  // returns true if this ring has fractions.  This includes
+  // polynomial rings over QQ, polynomial rings over fraction fields,
+  // fraction rings, and localizations.
+  // If this returns true, then 'get_denominator_ring()' returns non-NULL value.
+  // 
 
+  virtual bool is_poly_ring() const { return false; }
+  // Returns true if this is a polynomial ring, possibly with fractions
+  // and possibly with quotient ideal, and possibly with non-commutative
+  // multiplication.  Equivalent to (cast_to_PolynomialRing() != 0).
+
+  virtual bool is_commutative_ring() const { return true; }
+  // Returns true iff this is a commutative ring.
+
+  virtual bool is_quotient_poly_ring() const { return false; }
+  // Returns true if this is a polynomial ring, (possibly with fractions),
+  // with a quotient ideal.  This could be a non-commutative ring
+  // with skew-commutative, Weyl algebra, or other multiplication.
+
+  virtual bool is_weyl_algebra() const { return false; }
+  // Returns true if this is a polynomial ring (possibly with quotient)
+  // (possibly with ZZ fractions, or other commutative fractions)
+  // but with Weyl algebra multiplication on some of the variables.
+
+  virtual bool is_skew_commutative_ring() const { return false; }
+  // Returns true if this is a polynomial ring (possibly with quotient)
+  // (possibly with ZZ fractions, or other commutative fractions)
+  // but with some variables anti-commuting.
+
+  virtual bool is_solvable_algebra() const { return false; }
+
+  virtual bool is_pid() const = 0;
+  virtual bool has_gcd() const = 0;
+
+  virtual bool is_graded() const { return true; }
+  // Is this ring graded, with the given grading?
+  // ZZ, QQ, ZZ/p, GF, RR, ... are all graded.
+  // polynomial rings are graded
+  // Weyl algebras can be graded or not
+  // quotient polynomial rings can be graded or not.
+
+  bool is_field() const;
+  void declare_field();
+  ring_elem get_zero_divisor() const;
+
+  typedef enum {COEFF_ZZ, COEFF_QQ, COEFF_SMALL} CoefficientType;
+  virtual  CoefficientType coefficient_type() const { return COEFF_SMALL; }
+  // What the ultimate coefficient type is.  ZZ, QQ, finite fields return these 
+  // three values.  Fraction fields return their ultimate value, as do poly rings.
+
+  ///////////////////////////////////
+  // Casting up the ring hierarchy //
+  ///////////////////////////////////
   virtual const ZZ * cast_to_ZZ() const         { return 0; }
   virtual       ZZ * cast_to_ZZ()               { return 0; }
   virtual const QQ * cast_to_QQ() const         { return 0; }
@@ -83,36 +144,14 @@ public:
   virtual       SolvableAlgebra * cast_to_SolvableAlgebra()             { return 0; }
   virtual const WeylAlgebra *cast_to_WeylAlgebra() const { return 0; }
 
-  virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
-  virtual bool is_ZZ() const { return false; }
-  virtual bool is_QQ() const { return false; }
-  virtual bool is_fraction_field() const { return false; }
-  virtual bool is_poly_ring() const { return false; }
-  virtual bool is_quotient_poly_ring() const { return false; }
-  virtual bool is_commutative_ring() const { return true; }
-  virtual bool is_weyl_algebra() const { return false; }
-  virtual bool is_skew_commutative_ring() const { return false; }
-  virtual bool is_solvable_algebra() const { return false; }
-
-  virtual bool is_pid() const = 0;
-  virtual bool has_gcd() const = 0;
-  virtual bool is_graded() const = 0;
-  virtual bool is_expensive() const = 0;
-
-  typedef enum {COEFF_ZZ, COEFF_QQ, COEFF_SMALL} CoefficientType;
-  virtual  CoefficientType coefficient_type() const { return COEFF_SMALL; }
-  // What the ultimate coefficient type is.  ZZ, QQ, finite fields return these 
-  // three values.  Fraction fields return their ultimate value, as do poly rings.
-
-  virtual int n_fraction_vars() const { return 0; }
-  // The ultimate number of fraction field variables.
-
-  bool is_field() const;
-  void declare_field();
-  ring_elem get_zero_divisor() const;
+  virtual FreeModule *make_FreeModule() const;
+  virtual FreeModule *make_FreeModule(int n) const;
 
   virtual void text_out(buffer &o) const = 0;
 
+  //////////////////////
+  // Ring arithmetic ///
+  //////////////////////
   virtual int coerce_to_int(ring_elem a) const;
 
   ring_elem one() const { return oneV; }

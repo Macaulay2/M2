@@ -119,7 +119,6 @@ public:
   virtual bool has_gcd() const      { return (_nvars == 1 && K_->is_field())
 				       || (_nvars == 0 && K_->has_gcd()); }
   virtual bool is_graded() const    { return _isgraded; } // MES: change this
-  virtual bool is_expensive() const { return 1; }
 
   virtual bool is_poly_ring() const { return true; }
   virtual bool is_quotient_poly_ring() const { return _base_ring != NULL; }
