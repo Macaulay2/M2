@@ -338,6 +338,11 @@ export globalFrame := Frame(self, 0, globalFramesize,
 	  ));
 
 export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,globalFramesize,false,false);
+
+export LocalDictionaryList := {
+     dictionary:Dictionary,
+     next:LocalDictionaryList				    -- pointer to self indicates end
+     };
      
 allDictionaries := LocalDictionaryList(Macaulay2Dictionary,self);
 
@@ -356,11 +361,6 @@ export dummySymbolHashTable := newSymbolHashTable();
 export dummyDictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      Dictionary(nextHash(),dummySymbolHashTable,self,numLocalDictionaries,0,false,true));
-
-export LocalDictionaryList := {
-     dictionary:Dictionary,
-     next:LocalDictionaryList				    -- pointer to self indicates end
-     };
 
 export getLocalDictionary(frameID:int):Dictionary := (
      p := allDictionaries;
