@@ -301,6 +301,7 @@ saveNameHashTable := null
 nodeBaseFilename := ""
 exampleCounter := 0
 exampleOutputFile := null
+exampleResultsFound := false
 exampleResults := {}
 makeBaseFilename := nodeName -> (
      if (NameHashTable())#?nodeName then (NameHashTable())#nodeName
@@ -313,7 +314,7 @@ processExample := x -> (
      if exampleResults#?exampleCounter
      then {x, CODE exampleResults#exampleCounter}
      else (
-	  if #exampleResults === exampleCounter then (
+	  if exampleResultsFound and #exampleResults === exampleCounter then (
 	       stderr << "warning : input file " << nodeBaseFilename 
 	       << ".out terminates prematurely" << endl;
 	       );
@@ -335,7 +336,11 @@ processExamples := (docBody) -> (
      examples := extractExamples docBody;
      if phase > 1 and #examples > 0 then (
 	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".m2");
-	  exampleResults = try get (nodeBaseFilename | ".out") else (
+	  exampleResults = try (
+	       exampleResultsFound = true;
+	       get (nodeBaseFilename | ".out")
+	       ) else (
+	       exampleResultsFound = false;
 	       if phase === 4 or phase === 5 then (
 		    stderr << "warning : can't open input file '" 
 	       	    << nodeBaseFilename << ".out'" << endl;
