@@ -1,3 +1,13 @@
+-- From: schreyer@msri.org (Frank-Olaf Schreyer)
+-- Subject: bug
+-- To: dan@math.uiuc.edu (Dan Grayson),         mike@math.cornell.edu (Michael E. Stillman)
+-- Date: Fri, 31 Mar 2000 19:14:52 -0800 (PST)
+-- Reply-To: schreyer@msri.org
+-- 
+-- Dear Dan and Mike,
+-- this seams to be a serious bug.
+-- Yours Frank.
+
 n=6
 kk=ZZ/101;
 E=kk[y_0..y_n,SkewCommutative=>true]
