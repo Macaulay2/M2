@@ -11,8 +11,7 @@ scan(openFiles(), f -> (
 collectGarbage()
 fn := concatenate("../cache/Macaulay2-",
      try first lines get "!uname -m | sed s=/=-=g" 
-     else if getenv "ARCHITECTURE" != ""
-     then getenv "ARCHITECTURE"
+     else if getenv "ARCH" != "" then concatenate between("-", lines(getenv "ARCH","/"))
      else version#"architecture", 
      ".data")
 << "dumping to " << fn << endl
