@@ -11,8 +11,7 @@ extern int gbTrace;
 // todo: minimalize_gb, remainder
 
 GBasis::GBasis(const FreeModule *F0, const FreeModule *Fsyz0)
-  : mem(1000),
-    F(F0),
+  : F(F0),
     Fsyz(Fsyz0)
 {
   originalR = F->get_ring()->cast_to_PolynomialRing();

@@ -33,28 +33,6 @@ struct gbvector {
 class TermIdeal;
 typedef int * monomial;
 
-#define NSLAB 4092
-class MemoryAllocator
-{
-  int size; // Size of an element, in bytes
-  char *freelist;
-  struct slab {
-    slab *next;
-    char a[NSLAB];
-  };
-  slab *top_slab;
-  void new_slab(); // Link in a new slab, break it up, and add elements to free list.
-public:
-  MemoryAllocator(int size_in_bytes) 
-    : size(size_in_bytes), freelist(0), top_slab(0) {}
-  ~MemoryAllocator() {}
-  char *new_elem() { 
-    if (!freelist) new_slab();
-    char *result = freelist; freelist = * ((char **)freelist); return result;
-  }
-  void remove_elem(char *p) { *((char **)p) = freelist; freelist = p; }
-};
-
 class gbvectorHeap;
 
 class GBRing
@@ -81,6 +59,8 @@ protected:
   const GRType *_GT;
   bool _coeffs_ZZ; 
 
+  int gbvector_size;
+
   int _nvars;
   int *_degrees;
 
@@ -101,11 +81,6 @@ protected:
   virtual ~GBRing();
 protected:
   ring_elem _one;
-
-  ///////////////////////
-  // memory allocation //
-  ///////////////////////
-  MemoryAllocator _mem; // memory for gbvector's
 
   //////////////////////////
   // Pre-allocated values //

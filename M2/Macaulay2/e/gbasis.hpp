@@ -116,7 +116,6 @@ public:
   //       sort it, auto_reduce it, and then set ringtable.
   //       (care must be taken in local case during auto reduction.)
 private:
-  MemoryAllocator mem;
   const PolynomialRing *originalR; // points to a RingGBasis, in quotient case
   GBRing *R;
   int nvars;
@@ -140,7 +139,6 @@ class RingGBasis
 {
   GBRing *R;
   FreeModule *R1; // Should be rank 1, degree 0 generator.
-  MemoryAllocator *_mem;
   MonomialTable *ringtable;
   vector<GBasis::gbelem *> gb;
   RingGBasis() {}
