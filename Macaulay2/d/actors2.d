@@ -612,3 +612,20 @@ pseudocode(e:Expr):Expr := (
      else WrongArg("a function derived from Macaulay 2 code")
      );
 setupfun("pseudocode", pseudocode);
+timefun(a:Code):Expr := (
+     v := etime();
+     ret := eval(a);
+     x := etime();
+     y := etime();
+     when ret
+     is Error do ret
+     else list(timeClass,Sequence(Expr(Real((x-v)-(y-x))),ret)));
+setupop(timingS,timefun);
+showtimefun(a:Code):Expr := (
+     v := etime();
+     ret := eval(a);
+     x := etime();
+     y := etime();
+     stdout << "     -- used " << (x-v)-(y-x) << " seconds" << endl;
+     ret);
+setupop(timeS,showtimefun);

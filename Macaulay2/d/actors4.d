@@ -1078,86 +1078,37 @@ lookat(p:Position):void := (
 
 locate(e:Code):void := (
      when e
-     is f:localAssignmentCode do (lookat(f.position); locate(f.rhs);)
-     is f:globalAssignmentCode do (lookat(f.position); locate(f.rhs);)
-     is f:parallelAssignmentCode do (lookat(f.position); locate(f.rhs);)
-     is f:localMemoryReferenceCode do lookat(f.position)
-     is f:globalMemoryReferenceCode do lookat(f.position)
-     is f:globalSymbolClosureCode do lookat(f.position)
-     is f:localSymbolClosureCode do lookat(f.position)
-     is f:unaryCode do (lookat(f.position); locate(f.rhs);)
-     is f:binaryCode do (lookat(f.position); locate(f.lhs); locate(f.rhs);)
-     is f:adjacentCode do (lookat(f.position); locate(f.lhs); locate(f.rhs);)
-     is f:ternaryCode do (
-	  lookat(f.position);
-	  locate(f.arg1);
-	  locate(f.arg2);
-	  locate(f.arg3);)
-     is f:multaryCode do ( lookat(f.position); foreach c in f.args do locate(c);)
-     is f:ifCode do (
-	  lookat(f.position);
-	  locate(f.predicate);
-	  locate(f.thenClause);
-	  locate(f.elseClause);
-	  )
-     is f:tryCode do (
-	  lookat(f.position);
-	  locate(f.code);
-	  locate(f.elseClause);
-	  )
-     is f:forCode do (
-	  lookat(f.position);
-	  locate(f.fromClause);
-	  locate(f.toClause);
-	  locate(f.whenClause);
-	  locate(f.listClause);
-	  locate(f.doClause);
-	  )
-     is f:newOfFromCode do (
-	  lookat(f.position);
-	  locate(f.newClause);
-	  locate(f.ofClause);
-	  locate(f.fromClause);
-	  )
-     is f:newFromCode do (
-	  lookat(f.position);
-	  locate(f.newClause);
-	  locate(f.fromClause);
-	  )
-     is f:newOfCode do (
-	  lookat(f.position);
-	  locate(f.newClause);
-	  locate(f.ofClause);
-	  )
-     is f:newCode do (
-	  lookat(f.position);
-	  locate(f.newClause);
-	  )
-     is f:whileListDoCode do (
-	  lookat(f.position);
-	  locate(f.predicate);
-	  locate(f.listClause);
-	  locate(f.doClause);
-	  )
-     is f:whileListCode do (
-	  lookat(f.position);
-	  locate(f.predicate);
-	  locate(f.listClause);
-	  )
-     is f:whileDoCode do (
-	  lookat(f.position);
-	  locate(f.predicate);
-	  locate(f.doClause);
-	  )
-     is f:newLocalFrameCode do locate(f.body)
-     is f:functionCode do (locate(f.parms);locate(f.body);)
-     is v:sequenceCode do foreach c in v.x do locate(c)
-     is v:listCode do foreach c in v.y do locate(c)
-     is v:arrayCode do foreach c in v.z do locate(c)
      is nullCode do nothing
-     is v:realCode do lookat(v.position)
-     is v:stringCode do nothing
+     is v:adjacentCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:arrayCode do foreach c in v.z do locate(c)
+     is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
+     is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
+     is v:functionCode do (locate(v.parms);locate(v.body);)
+     is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)
+     is v:globalMemoryReferenceCode do lookat(v.position)
+     is v:globalSymbolClosureCode do lookat(v.position)
+     is v:ifCode do ( lookat(v.position); locate(v.predicate); locate(v.thenClause); locate(v.elseClause); )
      is v:integerCode do lookat(v.position)
+     is v:listCode do foreach c in v.y do locate(c)
+     is v:localAssignmentCode do (lookat(v.position); locate(v.rhs);)
+     is v:localMemoryReferenceCode do lookat(v.position)
+     is v:localSymbolClosureCode do lookat(v.position)
+     is v:multaryCode do ( lookat(v.position); foreach c in v.args do locate(c);)
+     is v:newCode do ( lookat(v.position); locate(v.newClause); )
+     is v:newFromCode do ( lookat(v.position); locate(v.newClause); locate(v.fromClause); )
+     is v:newLocalFrameCode do locate(v.body)
+     is v:newOfCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); )
+     is v:newOfFromCode do ( lookat(v.position); locate(v.newClause); locate(v.ofClause); locate(v.fromClause); )
+     is v:parallelAssignmentCode do (lookat(v.position); locate(v.rhs);)
+     is v:realCode do lookat(v.position)
+     is v:sequenceCode do foreach c in v.x do locate(c)
+     is v:stringCode do nothing
+     is v:ternaryCode do ( lookat(v.position); locate(v.arg1); locate(v.arg2); locate(v.arg3);)
+     is v:tryCode do ( lookat(v.position); locate(v.code); locate(v.elseClause); )
+     is v:unaryCode do (lookat(v.position); locate(v.rhs);)
+     is v:whileDoCode do ( lookat(v.position); locate(v.predicate); locate(v.doClause); )
+     is v:whileListCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); )
+     is v:whileListDoCode do ( lookat(v.position); locate(v.predicate); locate(v.listClause); locate(v.doClause); )
      );
 
 locate0():void := (

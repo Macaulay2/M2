@@ -115,33 +115,20 @@ bump():void := prec = prec + 1;
 
 -- helper functions for setting up words with various methods for parsing them
 foreach p in array(parseinfo)( parseEOF, parseWORD ) do p.funs = parsefuns(defaultunary, defaultbinary);
-unary(s:string)         :Word := install(s,makeUniqueWord(s,
-	  parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary))));
-unaryword(s:string)     :Word :=           makeUniqueWord(s,
-          parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary)));
-biunary(s:string)       :Word := install(s,makeUniqueWord(s,
-          parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,postfixop))));
-postfix(s:string)       :Word := install(s,makeUniqueWord(s,
-          parseinfo(prec,nopr  ,nopr,parsefuns(errorunary,postfixop))));
-unaryleft(s:string)     :Word := install(s,makeUniqueWord(s,
-          parseinfo(prec,prec  ,prec,parsefuns(unaryop   ,binaryop))));
-unaryright(s:string)    :Word := install(s,makeUniqueWord(s,
-          parseinfo(prec,prec-1,prec,parsefuns(unaryop   ,binaryop))));
-binaryleft(s:string)    :Word := install(s,makeUniqueWord(s,
-          parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop))));
-binaryleftword(s:string):Word :=           makeUniqueWord(s,
-          parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop)));
-nleft(s:string)         :Word := install(s,makeUniqueWord(s,
-          parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop))));
-nleftword(s:string)     :Word :=           makeUniqueWord(s,
-          parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop)));
-nunaryleft(s:string)    :Word := install(s,makeUniqueWord(s,
-          parseinfo(prec,prec  ,prec,parsefuns(nnunaryop ,nbinaryop))));
-token(s:string)         :Word :=           makeUniqueWord(s,
-          parseinfo(prec,nopr  ,prec,parsefuns(errorunary,errorbinary)));
-binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree)
-                        :Word := install(s,makeUniqueWord(s,
-          parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binary))));
+unary(s:string)         :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary))));
+unaryword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,defaultbinary)));
+biunary(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(unaryop   ,postfixop))));
+postfix(s:string)       :Word := install(s,makeUniqueWord(s, parseinfo(prec,nopr  ,nopr,parsefuns(errorunary,postfixop))));
+unaryleft(s:string)     :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(unaryop   ,binaryop))));
+unaryright(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,prec,parsefuns(unaryop   ,binaryop))));
+binaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop))));
+binaryleftword(s:string):Word :=           makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,binaryop)));
+nleft(s:string)         :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop))));
+nleftword(s:string)     :Word :=           makeUniqueWord(s, parseinfo(prec,prec  ,nopr,parsefuns(errorunary,nbinaryop)));
+nunaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec  ,prec,parsefuns(nnunaryop ,nbinaryop))));
+token(s:string)         :Word :=           makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(errorunary,errorbinary)));
+binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree):Word
+                              := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binary))));
 binaryright(s:string)   :Word := binaryright(s,binaryop);
 
 -- Now the symbols and operators:
