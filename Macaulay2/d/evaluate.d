@@ -432,11 +432,11 @@ export eval(c:Code):Expr := (
 		    Expr(toInteger(int(p.column)+1))),
 	       err.report);
      	  if err.position == dummyPosition
-	  && int(p.LoadDepth) >= ErrorDepth 
+	  && int(p.loadDepth) >= errorDepth 
 	  && !SuppressErrors then (
 	       interrupted = false;
 	       alarmed = false;
-	       if NumberErrorMessagesShown < printtop || recursiondepth < printbottom then (
+	       if debuggingMode || NumberErrorMessagesShown < printtop || recursiondepth < printbottom then (
 		    printErrorMessage(p,err.message);
 		    if recursiondepth < printbottom
 		    then NumberErrorMessagesShown = 0 
@@ -446,18 +446,10 @@ export eval(c:Code):Expr := (
 		    flush(stdout);
 		    stderr << "..." << endl;);
 	       err.position = p;
-	       breakLoopFun(localFrame);
+	       if debuggingMode then breakLoopFun(localFrame);
 	       );
 	  e)
      else e);
-
-debugging(e:Expr):Expr := (
-     when e
-     is b:Boolean do (
-	  debuggingMode = b.v;
-	  nullE)
-     else WrongArgBoolean());
-setupfun("debuggingMode",debugging);
 
 recycleBin := new array(Frame) len 20 do provide dummyFrame;
 report(c:FunctionClosure,v:Sequence):Expr := list(Expr(c),Expr(v));

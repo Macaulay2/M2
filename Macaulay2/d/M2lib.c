@@ -86,7 +86,7 @@ static void interrupt_handler(int sig)
 	            }
 	       if (buf[0]=='y' || buf[0]=='Y') {
      		    trap();
-		    if (!interp_StopIfError && abort_jump_set) {
+		    if (!actors5_stopIfError && abort_jump_set) {
      	  		 fprintf(stderr,"returning to top level\n");
      	  		 fflush(stderr);
 			 system_interrupted = FALSE;
@@ -130,7 +130,7 @@ static void interrupt_handler(int sig)
 
 void outofmem(){
      static int count = 0;
-     if (!interp_StopIfError && out_of_memory_jump_set && count++ < 5) {
+     if (!actors5_stopIfError && out_of_memory_jump_set && count++ < 5) {
      	  fprintf(stderr,"out of memory, returning to top level");
      	  fflush(stderr);
      	  siglongjmp(out_of_memory_jump,1);
@@ -184,7 +184,7 @@ M2_bool actors5_MP;
 M2_stringarray system_envp;
 M2_stringarray system_argv;
 M2_stringarray system_args;
-int system_LoadDepth;
+int system_loadDepth;
 
 int system_randomint() {
 #if 0
@@ -611,11 +611,11 @@ int system_loaddata(M2_string datafilename){
 #else
      char *datafilename_s = tocharstar(datafilename);
      sigjmp_buf save_loaddata_jump;
-     int LoadDepth = system_LoadDepth;
+     int loadDepth = system_loadDepth;
      memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
      if (ERROR == loaddata(datafilename_s)) return ERROR;
      memcpy(loaddata_jump,save_loaddata_jump,sizeof(loaddata_jump));
-     system_LoadDepth = LoadDepth + 1;
+     system_loadDepth = loadDepth + 1;
      siglongjmp(loaddata_jump,1);
 #endif
      }

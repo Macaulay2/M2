@@ -186,4 +186,4 @@ extern char *gnu_get_libc_version();
 extern int libfac_interruptflag;
 #endif
 
-extern M2_bool interp_StopIfError;
+extern M2_bool actors5_stopIfError;

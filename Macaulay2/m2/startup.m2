@@ -170,7 +170,7 @@ usage := arg -> (
      << "options:"  << newline
      << "    --help             print brief help message and exit" << newline
      << "    --copyright        display full copyright messasge" << newline
-     << "    --debug            enter a command loop upon error (not implemented yet)" << newline
+     << "    --debug            enter command interpreter upon error" << newline
      << "    --example-prompts  examples prompt mode" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --no-prompts       print no input prompts" << newline;
@@ -204,7 +204,7 @@ action := hashTable {
      "-mpwprompt" => notyeterr,
      "-q" => silence,					    -- implemented in setup.m2
      "--silent" => arg -> nobanner = true,
-     "--debug" => arg -> debuggingMode true,		    -- not implemented yet
+     "--debug" => arg -> debuggingMode = true,
      "-silent" => obsolete,
      "-tty" => notyet,
      "-n" => obsolete,
@@ -214,7 +214,7 @@ action := hashTable {
      "-x" => obsolete,
      "--example-prompts" => arg -> examplePrompts(),
      "-s" => obsolete,
-     "--stop" => arg -> stopIfError true,
+     "--stop" => arg -> stopIfError = true,
      "--no-loaddata" => arg -> noloaddata = true,
      "--no-setup" => arg -> nosetup = true,
      "--texmacs" => arg -> (
@@ -286,6 +286,6 @@ normalPrompts()
 if firstTime and not nosetup then loadSetup()
 runStartFunctions()
 errorDepth = loadDepth
-stopIfError false					    -- this is also set in interp.d!
+stopIfError = false					    -- this is also set in interp.d
 processCommandLineOptions()
 if interpreter() then exit 0 else exit 1

@@ -44,7 +44,7 @@ shrink(object:HashTable):void := (
 	       p = p.next;)));
 hashfun(e:Expr):Expr := Expr(toInteger(int(hash(e))));
 setupfun("hash",hashfun);
-export toExpr(h:int):Expr := Expr(toInteger(int(h)));
+export toExpr(h:int):Expr := Expr(toInteger(h));
 mutablefun(e:Expr):Expr := Expr(toExpr(
      	  when e is o:HashTable do o.mutable
      	  is x:List do x.mutable

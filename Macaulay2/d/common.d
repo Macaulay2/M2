@@ -143,17 +143,17 @@ export TooManyArgs(name:string,m:int):Expr := (
      then buildErrorPacket(quoteit(name) + " expected at most 1 argument")
      else buildErrorPacket(quoteit(name) + " expected at most " 
 	  + tostring(m) + " arguments"));
-export ErrorDepth := 0;
+export errorDepth := 0;
 export printErrorMessage(e:Code,message:string):Expr := (
      p := codePosition(e);
-     if int(p.LoadDepth) >= ErrorDepth
+     if int(p.loadDepth) >= errorDepth
      then (
      	  printErrorMessage(p,message);
      	  Expr(Error(p,message,emptySequence,nullE)))
      else buildErrorPacket(message));
 export printErrorMessage(e:Code,message:string,report:Expr):Expr := (
      p := codePosition(e);
-     if int(p.LoadDepth) >= ErrorDepth
+     if int(p.loadDepth) >= errorDepth
      then (
      	  printErrorMessage(p,message);
      	  Expr(Error(p,message,report,nullE)))
@@ -162,7 +162,7 @@ export printErrorMessage(e:Code,message:string,report:Expr):Expr := (
 export backtr(z:Expr):Expr := (
      when z is err:Error do 
      if err.position == dummyPosition 
-     || int(err.position.LoadDepth) < ErrorDepth
+     || int(err.position.loadDepth) < errorDepth
      || SuppressErrors
      then z
      else buildErrorPacket("--backtrace--",err.report)

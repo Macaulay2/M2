@@ -31,9 +31,6 @@ use texmacs;
 
 import dirname(s:string):string;
 
-setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
-getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
-
 currentFileName := setupvar("currentFileName", nullE);
 currentFileDirectory := setupvar("currentFileDirectory", Expr("./"));
 update(err:Error,prefix:string,f:Code):Expr := (
@@ -160,14 +157,6 @@ readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure):E
      localFrame = saveLocalFrame;
      ret);
 readeval(file:TokenFile):Expr := readeval3(file,false,true,newStaticLocalDictionaryClosure());
-export StopIfError := false;
-stopIfError(e:Expr):Expr := (
-     ret := toExpr(StopIfError);
-     if e == True then (StopIfError = true; ret)
-     else if e == False then (StopIfError = false; ret)
-     else WrongArg("true or false")
-     );
-setupfun("stopIfError",stopIfError);
 
 InputPrompt := makeProtectedSymbolClosure("InputPrompt");
 InputContinuationPrompt := makeProtectedSymbolClosure("InputContinuationPrompt");
@@ -180,13 +169,13 @@ topLevelPrompt():string := (
      else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
      );
 
-loadprint(s:string,StopIfError:bool,dc:DictionaryClosure):Expr := (
+loadprint(s:string,stopIfError:bool,dc:DictionaryClosure):Expr := (
      when openTokenFile(s)
      is errmsg do False
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,topLevelPrompt);
-	  r := readeval3(file,true,StopIfError,dc);
+	  r := readeval3(file,true,stopIfError,dc);
 	  t := (
 	       if s === "-"			 -- whether it's stdin
 	       then (
@@ -269,9 +258,9 @@ interpreterDepthFun(e:Expr):Expr := (
      else WrongArgInteger());
 setupfun("interpreterDepth",interpreterDepthFun);
 
-export topLevel():bool := when loadprint("-",StopIfError,newStaticLocalDictionaryClosure()) is Error do false else true;
+export topLevel():bool := when loadprint("-",stopIfError,newStaticLocalDictionaryClosure()) is Error do false else true;
 
-topLevel(dc:DictionaryClosure):bool := when loadprint("-",StopIfError,dc) is Error do false else true;
+topLevel(dc:DictionaryClosure):bool := when loadprint("-",stopIfError,dc) is Error do false else true;
 topLevel(f:Frame):bool := topLevel(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 topLevel(e:Expr):Expr := (
      interpreterDepth = interpreterDepth + 1;
@@ -292,13 +281,15 @@ setupfun("commandInterpreter",topLevel);
 
 breakLoopFrameS := setupconst("breakLoopFrame",nullE);
 breakLoop(f:Frame):bool := (
+     setDebuggingMode(false);
      dc := localDictionaryClosure(f);
      setGlobalVariable(breakLoopFrameS,Expr(dc));
      interpreterDepth = interpreterDepth + 1;
-     ret := when loadprint("-",StopIfError, 
+     ret := when loadprint("-",stopIfError, 
 	  newStaticLocalDictionaryClosure(dc)) is Error do false else true;
      interpreterDepth = interpreterDepth - 1;
      setGlobalVariable(breakLoopFrameS,nullE);
+     setDebuggingMode(true);
      ret);
 breakLoopFun = breakLoop;
 
@@ -310,7 +301,7 @@ value(e:Expr):Expr := (
 	  when r 
 	  is err:Error do (
 	       if err.position == dummyPosition
-	       || int(err.position.LoadDepth) < ErrorDepth
+	       || int(err.position.loadDepth) < errorDepth
 	       then r
 	       else buildErrorPacket("--backtrace--"))
 	  else r)
@@ -324,19 +315,20 @@ export process():void := (
      stdin.echo       = !(0 != isatty(0));
      stdout.outisatty =   0 != isatty(1) ;
      stderr.outisatty =   0 != isatty(2) ;
-     StopIfError = false;				    -- this is usually true after loaddata()
+     setstopIfError(false);				    -- this is usually true after loaddata(), we want to reset it
+     setloadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      ret := (
 	  when readeval(stringTokenFile("--startupString1--/layout.m2",startupString1))
 	  is Error do (
-	       if StopIfError
-	       then 1					    -- probably can't happen, because layout.m2 doesn't set StopIfError
+	       if stopIfError
+	       then 1					    -- probably can't happen, because layout.m2 doesn't set stopIfError
 	       else (
 		    if topLevel() 			    -- give a prompt for debugging
 		    then 0 else 1))
 	  else 
 	  when readeval(stringTokenFile("--startupString2--/startup.m2",startupString2)) -- startup.m2 calls topLevel and eventually returns
 	  is Error do (
-	       if StopIfError 
+	       if stopIfError 
 	       then 1
 	       else (
 		    if topLevel() 			    -- give a prompt for debugging
