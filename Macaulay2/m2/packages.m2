@@ -99,13 +99,13 @@ newPackage(String) := opts -> (title) -> (
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       ),
 	  };
+     pkgsym := getGlobalSymbol(PackageDictionary,title);
      if title =!= "Main" then (
 	  newpkg#"private dictionary" = new Dictionary; -- this is the local one
       	  PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
      	  newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
 	  );
      currentPackageS <- newpkg;
-     pkgsym := getGlobalSymbol(PackageDictionary,title);
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
      packages = join(

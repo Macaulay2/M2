@@ -270,11 +270,17 @@ assembleTree Package := pkg -> (
      currentPackage = pkg;
      duplicateReferences = new MutableHashTable;
      topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg);
-     linkTable = new HashTable from apply(
+     linkTable = new HashTable from apply(		    -- compare with packageNodes, sigh...
 	  values pkg#"documentation", 
 	  doc -> doc.DocumentTag => checkIsTag \ (
 	       if not doc.?Subnodes then {} else first \ select(toList doc.Subnodes, x -> class x === TO)
 	       ));
+     linkTable = merge(
+	  linkTable, 
+	  new HashTable from apply(			    -- compare with packageNodes, sigh...
+     	       select(pairs pkg.Dictionary,(nam,sym) -> not match ( "\\$" , nam )),
+	       (nam,sym) -> makeDocumentTag(sym, Package => pkg) => {}),
+	  (a,b) -> a);
      CONT = getTrees();
      buildLinks CONT;
      )
