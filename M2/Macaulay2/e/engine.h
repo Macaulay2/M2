@@ -1294,11 +1294,11 @@ extern "C" {
 						     const M2_arrayint cols); /* drg: connected rawSubmatrix, OK */
 
 
-  M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M); /* DAN: please connect */
+  M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M); /* connected rawReduceByPivots */
   /* Using row and column operations, use unit pivots to reduce the matrix */
   /* A return value of false means that the computation was interrupted */
 
-  MutableMatrixOrNull * IM2_kernel_of_GB(const MutableMatrix *G); /* DAN: please connect */
+  MutableMatrixOrNull * IM2_kernel_of_GB(const MutableMatrix *G); /* connected rawKernelOfGB */
   /* Assuming that the columns of G form a GB, this computes
      a Groebner basis of the kernel of these elements, using an appropriate Schreyer order on the
      source of G. */
