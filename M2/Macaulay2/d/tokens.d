@@ -167,7 +167,6 @@ export integerCode := {x:Integer,position:Position};
 export stringCode := {x:string};
 export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
-export binaryCodeEval := {f:binop,lhs:Code,rhs:Code,position:Position};
 export adjacentCode := {lhs:Code,rhs:Code,position:Position};
 export whileDoCode := {predicate:Code,doClause:Code,position:Position};
 export whileListCode := {predicate:Code,listClause:Code,position:Position};
@@ -188,6 +187,7 @@ export multaryCode := {f:multop, args:CodeSequence, position:Position};
 export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code, frameID:int, framesize:int, position:Position} ;
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;
+export binopExpr := function(Expr,Expr):Expr;
 export ternop := function(Code,Code,Code):Expr;
 export multop := function(CodeSequence):Expr;
 export newLocalFrameCode := {
@@ -210,7 +210,7 @@ export functionCode := {
 export Code := (
      nullCode or realCode or stringCode or integerCode or globalMemoryReferenceCode or localMemoryReferenceCode or globalAssignmentCode
      or localAssignmentCode or parallelAssignmentCode or globalSymbolClosureCode or localSymbolClosureCode
-     or unaryCode or binaryCode or binaryCodeEval or ternaryCode or multaryCode or forCode
+     or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
      or sequenceCode or listCode or arrayCode
      or newCode or newFromCode or newOfCode or newOfFromCode
      or whileDoCode or whileListCode or whileListDoCode

@@ -38,34 +38,10 @@ export recursionlimit := 300;
 printtop := 13;						    -- print this many backtrace entries, followed by "...", and
 printbottom := 7;					    -- then print this many more at the end
 ----------------------------------------------------------------------------------------
--- forward references -- we have many mutually recursive functions in this file, too bad!
+-- just one forward reference -- we have many mutually recursive functions in this file, too bad!
 export eval(c:Code):Expr;
--- export apply(c:FunctionClosure,v:Sequence):Expr;
--- export apply(c:FunctionClosure,e:Expr):Expr;
--- export apply(c:FunctionClosure,cs:CodeSequence):Expr;
--- export apply(f:Expr,v:Sequence):Expr;
--- export apply(f:Expr,e:Expr):Expr;
--- export apply(g:Expr,e0:Expr,e1:Expr):Expr;
--- export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr;
 ----------------------------------------------------------------------------------------
 export RecursionLimit():Expr := buildErrorPacket("recursion limit of " + tostring(recursionlimit) + " exceeded");
-timefun(a:Code):Expr := (
-     v := etime();
-     ret := eval(a);
-     x := etime();
-     y := etime();
-     when ret
-     is Error do ret
-     else list(timeClass,Sequence(Expr(Real((x-v)-(y-x))),ret)));
-setupop(timingS,timefun);
-showtimefun(a:Code):Expr := (
-     v := etime();
-     ret := eval(a);
-     x := etime();
-     y := etime();
-     stdout << "     -- used " << (x-v)-(y-x) << " seconds" << endl;
-     ret);
-setupop(timeS,showtimefun);
 
 export storeInHashTable(x:HashTable,i:Code,rhs:Code):Expr := (
      ival := eval(i);
