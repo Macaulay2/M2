@@ -171,28 +171,6 @@ usage := arg -> (
      << "                       directory containing the Macaulay2 executable" << newline
      ;exit 0)
 
-action := hashTable {
-     "--help" => usage,
-     "-h" => usage,
-     "--" => obsolete,
-     "-mpwprompt" => notyeterr,
-     "-q" => silence,					    -- implemented in setup.m2
-     "--silent" => arg -> nobanner = true,
-     "-silent" => obsolete,
-     "-tty" => notyet,
-     "-n" => obsolete, "--no-prompts" => arg -> noPrompts(),
-     "-x" => obsolete, "--example-prompts" => arg -> examplePrompts(),
-     "-s" => obsolete, "--stop" => arg -> stopIfError true,
-     "--no-loaddata" => arg -> noloaddata = true,
-     "--no-setup" => arg -> nosetup = true,
-     "--texmacs" => arg -> (
-	  interpreter = topLevelTexmacs;
-	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd;
-	  simpleFlush stdout;
-	  ),
-     "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )
-     };
-
 setDefaultValues := () -> (
      normalPrompts();
      stopIfError false;
@@ -205,19 +183,51 @@ loadSetup := () -> (
      loadFile minimizeFilename(sourceHomeDirectory | "/m2/setup.m2")
      )
 
-processCommandLineOptions := () -> (			    -- two passes
+action := hashTable {
+     "--help" => usage,
+     "-h" => usage,
+     "--" => obsolete,
+     "-mpwprompt" => notyeterr,
+     "-q" => silence,					    -- implemented in setup.m2
+     "--silent" => arg -> nobanner = true,
+     "-silent" => obsolete,
+     "-tty" => notyet,
+     "-n" => obsolete,
+     "--no-prompts" => arg -> noPrompts(),
+     "-x" => obsolete,
+     "--example-prompts" => arg -> examplePrompts(),
+     "-s" => obsolete,
+     "--stop" => arg -> stopIfError true,
+     "--no-loaddata" => arg -> noloaddata = true,
+     "--no-setup" => arg -> nosetup = true,
+     "--texmacs" => arg -> (
+	  interpreter = topLevelTexmacs;
+	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd;
+	  simpleFlush stdout;
+	  ),
+     "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )
+     };
+
+action2 := hashTable {
+     "-E" => arg -> if preload then value arg,
+     "-e" => arg -> if not preload then value arg
+     }
+
+processCommandLineOptions := () -> (			    -- two passes, based on value of 'preload'
      argno := 1;
      while argno < #commandLine do (
 	  arg := commandLine#argno;
 	  if action#?arg then action#arg arg
-	  else if match("^-E",arg) then value substring(2,arg)
-	  else if match("^-e",arg) then (
-	       if preload then break;
-	       value substring(2,arg))
-	  else if match("^-" ,arg) then error("unrecognized command line option: ", arg)
-	  else (
-	       if preload then break;
-	       loadFile arg);
+	  else if action2#?arg then (
+	       if argno < #commandLine + 1
+	       then (
+		    argno = argno + 1;
+		    action2#arg commandLine#argno
+		    )
+	       else error("command line option ", arg, " missing argument")
+	       )
+	  else if arg#0 == "-" then error("unrecognized command line option: ", arg)
+	  else if not preload then loadFile arg;
 	  argno = argno+1;
 	  );
      )

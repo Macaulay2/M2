@@ -5,7 +5,7 @@ include ../../../../include/config.Makefile
 
 .PHONY : all
 
-ARGS := -q '-epath=join(path,{"../../","$(srcdir)/"})' '-eerrorDepth(0)' --silent
+ARGS := -q -e 'path=join(path,{"../../","$(srcdir)/"})' -e 'errorDepth(0)' --silent
 
 all :: ../../../$(DUMPDATAFILE)
 
@@ -13,18 +13,18 @@ else
 ifeq "$(CC)" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
 ## and does strange things to quotation marks.
-ARGS := -q --silent '-epath=join(path,{\"../../\",\"$(srcdir)/\"})' '-eerrorDepth(0)'
+ARGS := -q --silent -e 'path=join(path,{\"../../\",\"$(srcdir)/\"})' -e 'errorDepth(0)'
 else
 ARGS := -q --silent \
-		'-e path=join({"../../../m2/","$(srcdir)/../m2/","$(srcdir)/../packages/"})' \
-		'-e errorDepth(0)'
+		-e 'path=join({"../../../m2/","$(srcdir)/../m2/","$(srcdir)/../packages/"})' \
+		-e 'errorDepth(0)'
 endif
 endif
 
 
 %.okay : %.m2
 	@ echo testing $<
-	@ env M2HOME=@srcdir@/.. ../../../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
+	@ env M2HOME=@srcdir@/.. ../../../bin/Macaulay2 $(ARGS) $< -e 'exit(0)'
 	@ touch $@
 
 TESTFILES := $(wildcard *.m2)
