@@ -21,6 +21,8 @@ bk << ///
 \parindent=10pt
 \parskip=4pt
 
+\overfullrule=0pt
+
 \def\cite#1#2{{\bf #1} [#2]}
 {\obeyspaces\global\let =\ \tt}
 \def\beginverbatim{%
