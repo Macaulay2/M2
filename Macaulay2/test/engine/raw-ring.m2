@@ -386,8 +386,29 @@ c+g^4
 t+u
 t+u+v
 
+-----------------------------
+-- testing non term orders --
+-----------------------------
+needs "raw-util.m2"
+mo = rawMonomialOrdering {
+     Weights => {0,0,-1,-1,0,3},
+     GRevLex => 3:1,
+     Lex => 2,
+     RevLex => 1
+     }
 
+M = rawMonoid(mo, {"a","b","c","d","e","f"},
+	      degring 1, 6:1)
+R = rawPolynomialRing(rawZZ(), M)
 
+a = rawRingVar(R,0,1)
+b = rawRingVar(R,1,1)
+c = rawRingVar(R,2,1)
+d = rawRingVar(R,3,1)
+e = rawRingVar(R,4,1)
+f = rawRingVar(R,5,1)
+(1+c)*(1+b)
+1+c+d^4
 end
 -----------------------------
 complement(A,P) -- need a GB of P.

@@ -71,6 +71,15 @@ Monoid *Monoid::create(MonomialOrdering *mo,
       return 0;
     }
 
+  M2_arrayint nontermvars = rawNonTermOrderVariables(mo);
+  fprintf(stderr, "%d variables < 1\n", nontermvars->len);
+  if (nontermvars->len > 0)
+    {
+      fprintf(stderr, "they are: ");
+      for (int i=0; i<nontermvars->len; i++)
+	fprintf(stderr, "%d ", nontermvars->array[i]);
+      fprintf(stderr, "\n");
+    }
   return new Monoid(mo,names,deg_ring,degs);
 }
 

@@ -129,10 +129,11 @@ R2 = polyring(rawZZp(101), symbol a .. symbol f)
 M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
 Gcomp = rawGB(M,false,0,{0},false,0,0,0)
 rawStartComputation Gcomp  -- crashes due to bad access in spair_sorter -- NO LONGER CRASHES...
-mgb = rawGBGetMatrix Gcomp;
-rawDual mgb
+mgb = rawGBGetMatrix Gcomp; -- takes TOO LONG (but does finish)
+--rawDual mgb
 rawGBGetLeadTerms(Gcomp,6)
 mmin = rawGBMinimalGenerators Gcomp
+rawDual mmin
 msyz = rawGBSyzygies Gcomp
 -----------------------------
 -- GB's over finite fields --

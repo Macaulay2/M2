@@ -247,6 +247,11 @@ extern "C" {
 
   int rawNumberOfInvertibleVariables(const MonomialOrdering *mo); /* drg: connected rawNumberOfInvertibleVariables*/
 
+  M2_arrayint rawNonTermOrderVariables(const MonomialOrdering *mo); /* Dan: PLEASE CONNECT */
+  /* Returns an array of the indices of those variables which are less than 1 in the
+     monomial ordering.  If this number is > 0, then the monomial ordering is not a term
+     order, and local (tangent cone) algorithms must be used for GB's */
+
   M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo); /* drg: connected */
 
   unsigned long IM2_MonomialOrdering_hash(MonomialOrdering *mo); /* drg: connected hash */
@@ -1309,6 +1314,49 @@ extern "C" {
 #if 0
   Monomial *IM2_MonomialIdeal_remove(MonomialIdeal *I); /* CAN WE REMOVE THIS?? */
   MonomialIdeal *IM2_MonomialIdeal_copy(MonomialIdeal *I); /* and THIS? */
+#endif
+
+  /**************************************************/
+  /**** Groebner basis objects **********************/
+  /**************************************************/
+#if 0
+  GroebnerBasis *rawGBMake(const FreeModule *F, const FreeModule *Fsyz);
+
+  void rawGBAdd(GroebnerBasis *G, const Matrix *M, const Matrix *Msyz);
+  /* Add the columns of (M,Msyz) to the GB. */
+
+  GroebnerBasis *rawGBMinimalize(GroebnerBasis *G);
+  
+
+  rawGBRemainder(const GroebnerBasis *G, const Matrix *M);
+
+
+  const MatrixOrNull *rawGBGetMatrix(GroebnerBasis *G);
+  /* Get the matrix whose columns are the GB elements being used */
+
+  const MatrixOrNull *rawGBGetLeadTerms(GroebnerBasis *G, int nparts);
+  /* Get the matrix of lead terms of rawGBGetMatrix(G) */
+
+  const MatrixOrNull *rawGBChangeOfBasis(GroebnerBasis *G);
+  /* Yields the change of basis matrix from the Groebner basis to
+     the original generators, at least if n_rows_to_keep was set
+     when creating the GB computation.  This matrix, after the 
+     computation has run to completion, should satisfy:
+     (original matrix) = (GB matrix) * (change of basis matrix). */
+
+  const MatrixOrNull *rawGBMatrixRemainder(GroebnerBasis *G, 
+					   const Matrix *m); /* drg: connected rawGBMatrixRemainder */
+
+  void rawGBMatrixLift(GroebnerBasis *G,
+		       const Matrix *m,
+		       MatrixOrNull **result_remainder,
+		       MatrixOrNull **result_quotient
+		       ); /* Dan: please connect */
+
+  int rawGBMatrixContains(GroebnerBasis *G,
+			  const Matrix *m); /* Dan: please connect */
+  /* Returns the index of the first column of m which does not reduce to 0, if any,
+     otherwise -1 is returned. */
 #endif
 
   /**************************************************/

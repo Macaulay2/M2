@@ -370,7 +370,6 @@ void gbA::spair_text_out(buffer &o, spair *p)
     o << "unknown pair";
     break;
   }
-  o << newline;
 }
 
 /*************************
@@ -925,10 +924,12 @@ bool gbA::reduce(spair *p)
 		    buffer o;
 		    o << "swapping GB element\n    ";
 		    R->gbvector_text_out(o, _F, p->f());
-		    o << "\n    and ";
+		    emit_line(o.str()); o.reset();
+		    o << "    and ";
 		    R->gbvector_text_out(o, _F, g->g.f);
-		    o << "\n  giving\n    ";
-		    emit(o.str());
+		    emit_line(o.str()); o.reset();
+		    o << "  giving";
+		    emit_line(o.str());
 		  }
 		R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
 		lookupZZ->change_coefficient(t, MPZ_VAL(g->g.f->coeff));
@@ -936,10 +937,10 @@ bool gbA::reduce(spair *p)
 		  {
 		    buffer o;
 		    R->gbvector_text_out(o, _F, p->f());
-		    o << "\n    and ";
+		    emit_line(o.str()); o.reset();
+		    o << "    and ";
 		    R->gbvector_text_out(o, _F, g->g.f);
-		    o << "\n";
-		    emit(o.str());
+		    emit_line(o.str());
 		  }
 		continue;
 	      }
@@ -988,7 +989,8 @@ bool gbA::reduce(spair *p)
 	  buffer o;
 	  o << "  reducing by ";
 	  R->gbvector_text_out(o, _F, g.f);
-	  o << newline << "    giving ";
+	  emit_line(o.str()); o.reset();
+	  o << "    giving ";
 	  R->gbvector_text_out(o, _F, p->f());
 	  emit_line(o.str());
 	}
@@ -1007,12 +1009,14 @@ bool gbA::reduce(spair *p)
 	  return false;
 	}
     }
+#if 0
   if (gbTrace >= 4) 
     {
       buffer o;
       o << "." << count;
       emit(o.str());
     }
+#endif
   return true;
 }
 
@@ -1219,7 +1223,13 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
     }
   f.f = h.f;
   f.fsyz = h.fsyz;
-  if (gbTrace >= 4)
+  if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
+    {
+      buffer o;
+      o << "number of reduction steps was " << count;
+      emit_line(o.str());
+    }
+  else if (gbTrace >= 4)
     {
       buffer o;
       o << "," << count;
@@ -1298,7 +1308,13 @@ void gbA::remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
   R->gbvector_remove_content(h.f, h.fsyz, use_denom, denom);
   f.f = h.f;
   f.fsyz = h.fsyz;
-  if (gbTrace >= 4)
+  if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
+    {
+      buffer o;
+      o << "number of reduction steps was " << count;
+      emit_line(o.str());
+    }
+  else if (gbTrace >= 4)
     {
       buffer o;
       o << "," << count;
@@ -1366,10 +1382,11 @@ void gbA::insert(POLY f, gbelem_type minlevel)
     {
       char s[100];
       buffer o;
-      sprintf(s, "%sinserting element %d (minimal %d): ",wrapping_prefix,me,minlevel);
+      sprintf(s, "inserting element %d (minimal %d): ",me,minlevel);
       o << s;
       R->gbvector_text_out(o,_F,g->g.f);
-      o << "\n" << wrapping_prefix;
+      emit_line(o.str()); o.reset();
+      o << "                          syzygy : ";
       R->gbvector_text_out(o,_Fsyz,g->g.fsyz);
       emit_line(o.str());
     }
@@ -1829,7 +1846,7 @@ void gbA::debug_spair(spair *p)
 {
   buffer o;
   spair_text_out(o, p);
-  emit(o.str());
+  emit_line(o.str());
 }
 
 void gbA::debug_spairs(spair *spairlist)
@@ -1851,13 +1868,14 @@ void gbA::debug_spair_array(spairs &spairlist)
 void gbA::showgb()
 {
   buffer o;
+  o << "Groebner basis, " << gb.size() << " elements";
+  emit_line(o.str()); o.reset();
   for (unsigned int i=0; i<gb.size(); i++)
     {
-      o << i << '\t';
+      o << "    " << i << '\t';
       R->gbvector_text_out(o, _F, gb[i]->g.f);
-      o << newline;
+      emit_line(o.str()); o.reset();
     }
-  emit(o.str());
 }
 
 // Local Variables:

@@ -50,6 +50,75 @@ int rawNumberOfInvertibleVariables(const MonomialOrdering *mo)
   return sum;
 }
 
+M2_arrayint rawNonTermOrderVariables(const MonomialOrdering *mo)
+// returns a list of the indices of those variables which are less than 1 in
+// the given monomial order.
+{
+  int i,j,sum,nextvar;
+  int nvars = rawNumberOfVariables(mo);
+  int *gt = (int *) getmem_atomic(nvars);
+  for (i=0; i<nvars; i++)
+    gt[i] = 0; // 0 means undecided, -1 means non term order, 1 means term order
+  // Now we loop through the parts of the monomial order
+  nextvar = 0;
+  for (i=0; i<mo->len; i++)
+    {
+      mon_part p = mo->array[i];
+      switch (p->type) {
+      case MO_LEX:
+      case MO_LEX2:
+      case MO_LEX4:
+      case MO_GREVLEX:
+      case MO_GREVLEX2:
+      case MO_GREVLEX4:
+      case MO_GREVLEX_WTS:
+      case MO_GREVLEX2_WTS:
+      case MO_GREVLEX4_WTS:
+      case MO_LAURENT:
+      case MO_NC_LEX:
+	for (j=0; j<p->nvars; j++)
+	  if (gt[nextvar] == 0)
+	    gt[nextvar++] = 1;
+	break;
+      case MO_LAURENT_REVLEX:
+      case MO_REVLEX:
+	for (j=0; j<p->nvars; j++)
+	  if (gt[nextvar] == 0)
+	    gt[nextvar++] = -1;
+	break;
+      case MO_WEIGHTS:
+	for (j=nextvar; j<p->nvars; j++)
+	  if (gt[j] == 0)
+	    {
+	      if (p->wts[j] > 0)
+		gt[j] = 1;
+	      else if (p->wts[j] < 0)
+		gt[j] = -1;
+	    }
+	break;
+      case MO_POSITION_UP:
+      case MO_POSITION_DOWN:
+	break;
+      }
+    }
+  // At this point every variables should be 1 or -1.
+  sum = 0;
+  for (i=0; i<nvars; i++)
+    {
+      if (gt[i] == 0)
+	INTERNAL_ERROR("gt[i] should not be 0");
+      if (gt[i] < 0) sum++;
+    }
+  
+  // Make an array of this length.
+  M2_arrayint result = makearrayint(sum);
+  nextvar = 0;
+  for (i=0; i<nvars; i++)
+    if (gt[i] < 0)
+      result->array[nextvar++] = i;
+  return result;
+}
+
 MonomialOrdering *rawLexMonomialOrdering(int nvars, int packing)
 {
   MonomialOrdering *result;
