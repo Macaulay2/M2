@@ -127,11 +127,11 @@ PolySols(Module, List) := options -> (M, w) -> (
 	       	    testIdeal := ideal SW.dpairVars#1;
 	       	    resultPolys := substitute(testPoly*matI,
 		    	 apply(SW.dpairVars#1, i -> i => 0));
-	       	    linEqns := SWtoS (coefficients resultPolys_(0,0))#1;
+	       	    linEqns := SWtoS transpose (coefficients resultPolys_(0,0))#1;
 	       	    i := 1;
 	       	    while i < numgens source resultPolys do (
 		    	 linEqns = linEqns |
-		    	 SWtoS (coefficients resultPolys_(0,i))#1;
+		    	 SWtoS transpose (coefficients resultPolys_(0,i))#1;
      	       	    	 i = i + 1;
 		    	 );
 		    pInfo(1, "Need to solve " | rank source linEqns |
@@ -140,7 +140,7 @@ PolySols(Module, List) := options -> (M, w) -> (
 	       	    linEqns = (gens gb (linEqns, DegreeLimit 
 			      => 1)) | matrix{{dummyEqn}};
 		    coeffs := substitute(
-			 (coefficients transpose linEqns)#1, QQ);
+			 transpose (coefficients transpose linEqns)#1, QQ);
 		    kerCoeffs := kernel (coeffs^{0..(rank target coeffs - 2)});
 		    answer = (entries (monBasis*(gens kerCoeffs)))#0;
 		    );
