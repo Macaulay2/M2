@@ -43,7 +43,7 @@ monoid_info::monoid_info(MonomialOrdering *mo2,
     varnames(s),
     degvals(degs),
     degree_ring(deg_ring),
-    degree_monoid(deg_ring->degree_monoid()), 
+    degree_monoid(deg_ring->Nmonoms()), 
     _mo(mo2), 
     mo(mmo)
 { 

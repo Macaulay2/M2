@@ -1,5 +1,7 @@
 -- Mike's to do list, new version, started 3/29/04
 
+Monomial orders for free modules should obey what we agreed with Cox
+
 Add GroupRevLex to monomial order creation routines
 
 Get resolutions back up and running
@@ -19,3 +21,61 @@ All mutable operations must be switched back.  Need a routine: map(Module,Module
 statistics routine for Computation
   summary or stats for a computation should be in the toString.
   -- rawSummary(computation)
+
+
+ term over position (TOP) :
+
+       e_1 < e_2 < ... (bottom down, top up)
+
+	    R = ZZ[x,y,z]
+	    R = ZZ[x,y,z, MonomialOrder => GRevLex ]
+	    R = ZZ[x,y,z, MonomialOrder => { GRevLex } ]
+	    R = ZZ[x,y,z, MonomialOrder => { GRevLex, Position } ]
+	    R = ZZ[x,y,z, MonomialOrder => { GRevLex, Position => Up} ]
+
+       e_1 > e_2 > ... (top down, bottom up)
+
+	    R = ZZ[x,y,z, MonomialOrder => { GRevLex, Position => Down } ]
+
+    position over term (POT) :
+
+       e_1 < e_2 < ... (bottom down, top up)
+
+	    R = ZZ[x,y,z, MonomialOrder => Position ]
+	    R = ZZ[x,y,z, MonomialOrder => { Position } ]
+	    R = ZZ[x,y,z, MonomialOrder => { Position, GRevLex } ]
+	    R = ZZ[x,y,z, MonomialOrder => { Position => Up} ]
+	    R = ZZ[x,y,z, MonomialOrder => { Position => Up, GRevLex} ]
+
+       e_1 > e_2 > ... (top down, bottom up)
+
+	    R = ZZ[x,y,z, MonomialOrder => { Position => Down } ]
+	    R = ZZ[x,y,z, MonomialOrder => { Position => Down, GRevLex } ]
+
+    Many other ordering keywords can replace or supplement GRevLex:
+
+	    GRevLex => 3	     (order just 3 variables this way)
+	    Lex
+	    Lex => 3
+	    RevLex
+	    RevLex => 3
+	    Eliminate 3
+	    ProductOrder {...}
+	    GroupLex
+	    NCLex
+	    ...
+
+ Dear Dan: Up and Down are great.  The example we do using Macaulay 2 is 
+   the following very simple computation:
+
+   R = QQ[a..d, MonomialOrder => {Position => Down}]
+
+   M = matrix{{a2+b2, a3 - 2*b*c*d, a - b},{c2 - d2, b3 + a*c*d, c+d}}
+
+   gens gb M
+
+   The answer appears as equation (2.10) on page 205 of Using Algebraic 
+   Geometry.  We also do this example in Singular (and, in the 2nd edition, 
+   also in Maple).  In all three computations, we use TOP downward grevlex. 
+     It would be wonderful if you could check this in Macaulay 2.  
+       Many thanks, David
