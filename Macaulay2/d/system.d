@@ -14,6 +14,8 @@ import returncode:int;
 import write(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int, offset:int):int;
+import readPrompt(fd:int, buffer:string, buffersize:int, prompt:string):int;
+import readPrompt(fd:int, buffer:string, buffersize:int, offset:int, prompt:string):int;
 import unlink(filename:string):int;
 import openin(filename:string):int;
 import openout(filename:string):int;

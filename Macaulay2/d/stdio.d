@@ -40,7 +40,7 @@ export file := {
         insize:int,		-- inbuffer.(insize-1) is the last char
 				-- we always have inindex <= insize
 	eof:bool,		-- last read got 0 characters (still might have some chars in inbuffer)
-	prompt:function(file):void, -- function to call to prompt for input
+	prompt:function():string, -- function to call to get prompt string when input is required
         bol:bool,     	   	-- at the beginning of a line, and prompt not yet given
 	echo:bool,     	   	-- whether to echo characters read to corresponding output file
      	-- output file stuff
@@ -66,7 +66,7 @@ export fileErrorMessage(o:file,msg:string):string := (
      o.errorMessage);
 export fileError(o:file):bool := o.error;
 export fileErrorMessage(o:file):string := o.errorMessage;
-export noprompt(o:file):void := nothing;
+export noprompt():string := "";
 newbuffer():string := new string len bufsize do provide ' ';
 export dummyfile := file(nextHash(), "dummy",0, 
      false, "",
@@ -395,6 +395,7 @@ export (o:file) << (c:char) : file := (
 	  );
      o
      );
+
 export filbuf(o:file):int := (
      -- returns number of bytes added to buffer, or ERROR if a system call had an error
      if ! o.input then return(0);
@@ -411,6 +412,92 @@ export filbuf(o:file):int := (
      else if r == 0 then (o.eof = true;)
      else o.insize = o.insize + r;
      r);
+
+export filbufPrompt(o:file,prompt:string):int := (
+     -- returns number of bytes added to buffer, or ERROR if a system call had an error
+     if ! o.input then return(0);
+     if o.inindex > 0
+     then (
+	  o.insize = o.insize - o.inindex;
+	  for i from 0 to o.insize - 1 do o.inbuffer.i = o.inbuffer.(i+o.inindex);
+	  o.inindex = 0;
+	  );
+     n := length(o.inbuffer)-o.insize;
+     if n == 0 then return(0);
+     r := readPrompt(o.infd,o.inbuffer,n,o.insize,prompt);
+     if r == ERROR then (fileErrorMessage(o,"read");)
+     else if r == 0 then (o.eof = true;)
+     else o.insize = o.insize + r;
+     r);
+
+haveLine(o:file):bool := (
+     i := o.inindex;
+     while i < o.insize do (
+	  c := o.inbuffer.i;
+	  if c == '\n' || c == '\r' then return(true);
+	  i = i+1;
+	  );
+     return(false);
+     );
+
+export (o:file) << (x:string) : file := (
+     if o.output then (
+	  if o.hadNet then (
+	       o << toNet(x);
+	       )
+	  else (
+     	       foreach c in x do o << c;
+	       );
+	  );
+     o );
+
+endlfun(o:file):int := (
+     if o.output then (
+	  if o.hadNet then if ERROR == flushnets(o) then return(ERROR);
+	  o << newline;
+	  if o.outisatty || o == stderr 
+	  then (
+	       if ERROR == simpleflush(o) then return(ERROR);
+	       )
+	  else (
+	       o.outbol = o.outindex;
+	       );
+	  );
+     0);
+
+echoLine(o:file):void := (
+     e := if o.output then o else stdout;
+     i := o.inindex;
+     while i < o.insize do (
+	  c := o.inbuffer.i;
+	  if c == '\n' || c == '\r' then (
+     	       endlfun(e);
+     	       flush(e);
+	       return();
+	       );
+	  e << c;
+	  i = i+1;
+	  ));
+
+prepare(o:file):int := (			   -- we are at the beginning of a input line, so a prompt is needed; may return ERROR
+     e := if o.output then o else stdout;
+     o.bol = false;
+     if haveLine(o) then (				    -- in this case, we've been reading ahead, but we want to issue the prompt anyway
+	  s := o.prompt();
+	  e << s;
+	  flush(e);
+	  )
+     else (
+	  if ERROR == filbufPrompt(o,o.prompt()) then return(ERROR);
+	  );
+     if o.echo then echoLine(o);
+     0);
+
+export filbuf2(o:file):int := (
+     if !o.input then return(EOF);
+     if o.bol then if ERROR == prepare(o) then return(ERROR);
+     filbuf(o));
+
 putdigit(o:file,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putdigit(o:varstring,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putneg(o:file,x:int):void := (
@@ -435,16 +522,6 @@ export (o:file) << (x:int) : file :=  (
 export (o:file) << (x:short) : file := o << int(x);
 export (o:file) << (x:ushort) : file := o << int(x);
 export (o:file) << (x:uchar) : file := o << int(x);
-export (o:file) << (x:string) : file := (
-     if o.output then (
-	  if o.hadNet then (
-	       o << toNet(x);
-	       )
-	  else (
-     	       foreach c in x do o << c;
-	       );
-	  );
-     o );
 export (o:file) << (b:bool) : file := (
      o << if b then "true" else "false");
 octal(c:char):string := (
@@ -565,54 +642,9 @@ export tostring(x:double) : string := (
      else digits(o,x,i+1,s-i-1);
      tostring(o));
 export (o:file) << (x:double) : file := o << tostring(x);
-endlfun(o:file):int := (
-     if o.output then (
-	  if o.hadNet then if ERROR == flushnets(o) then return(ERROR);
-	  o << newline;
-	  if o.outisatty || o == stderr 
-	  then (
-	       if ERROR == simpleflush(o) then return(ERROR);
-	       )
-	  else (
-	       o.outbol = o.outindex;
-	       );
-	  );
-     0);
 
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';
 
-haveLine(o:file):bool := (
-     i := o.inindex;
-     while i < o.insize do (
-	  c := o.inbuffer.i;
-	  if c == '\n' || c == '\r' then return(true);
-	  i = i+1;
-	  );
-     return(false);
-     );
-
-echoLine(o:file):void := (
-     e := if o.output then o else stdout;
-     i := o.inindex;
-     while i < o.insize do (
-	  c := o.inbuffer.i;
-	  if c == '\n' || c == '\r' then (
-     	       endlfun(e);
-     	       flush(e);
-	       return();
-	       );
-	  e << c;
-	  i = i+1;
-	  ));
-
-prepare(o:file):int := (				    -- may return ERROR
-     e := if o.output then o else stdout;
-     o.bol = false;
-     o.prompt(e);
-     flush(e);
-     if !haveLine(o) then if ERROR == filbuf(o) then return(ERROR);
-     if o.echo then echoLine(o);
-     0);
 export getc(o:file):int := (
      if !o.input then return(EOF);
      if o.bol then if ERROR == prepare(o) then return(ERROR);
@@ -651,7 +683,8 @@ export peek(o:file,offset:int):int := (
 	  );
      int(uchar(o.inbuffer.(o.inindex+offset))));
 export peek(o:file):int := peek(o,0);
-export blanks(n:int):string := new string len n do provide(' ');
+someblanks := new array(string) len 20 at n do provide new string len n do provide(' ');
+export blanks(n:int):string := if n < length(someblanks) then someblanks.n else new string len n do provide(' ');
 padto(s:string,n:int):string := (
      if n<0
      then (
@@ -669,7 +702,7 @@ padto(s:string,n:int):string := (
 export (v:varstring) << (i:int) : varstring := v << tostring(i);
 export (o:file) << (s:string, n:int) : file := o << padto(s,n);
 export (o:file) << (i:int, n:int) : file := o << (tostring(i),n);
-export setprompt(o:file,prompt:function(file):void):void := ( o.prompt = prompt; );
+export setprompt(o:file,prompt:function():string):void := ( o.prompt = prompt; );
 export clean(o:file):void := flush(o);
 
 export get(filename:string):(string or errmsg) := (

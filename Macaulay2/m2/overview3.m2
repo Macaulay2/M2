@@ -760,7 +760,10 @@ document { "Getting started",
      hence we must use something like ", TT "ZZ", " to stand for the ring of integers.
      It may remind you of the \"blackboard bold\" font of AMSTeX.  If you prefer
      ", TT "Z", " to ", TT "ZZ", ", you may put ", TT "Z=ZZ", " in your
-     ", TO "initialization file", ".)",
+     ", TO "initialization file", ".  The symbols ", TT "ZZ/5", "
+     represent the quotient ring ", TT "Z/5Z", ", and then ", TT
+     "ZZ/5[x,y,z]", " represents the ring of polynomials in the
+     variables x,y, and z with coefficients in the ring ", TT "Z/5Z", ".)",
      EXAMPLE "(x+y)^5",
      "Rings and certain other types of things acquire the name of the global
      variable they are assigned to.",

@@ -44,21 +44,19 @@ if firstTime then (
      erase symbol Error;
 
      normalPrompts = () -> (
-	  ZZ.InputPrompt = lineno -> simpleFlush ( << newline << "i" << lineno << " : " );
-	  ZZ.InputContinuationPrompt = lineno -> (
-	       scan(4 + #(string lineno), c -> << " ");
-	       simpleFlush stdio;
-	       );
-	  ZZ.OutputPrompt = lineno -> simpleFlush ( << "o" << lineno << " : " << newline );
+	  lastprompt := "";
+	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate("i", string lineno, " : "));
+	  ZZ.InputContinuationPrompt = lineno -> #lastprompt; -- will print that many blanks, see interp.d
 	  currentPrompts = normalPrompts;
 	  );
      examplePrompts = () -> (
 	  normalPrompts();
-	  ZZ.InputPrompt = lineno -> simpleFlush ( << "\1i" << lineno << " : " );
+	  ZZ.InputPrompt = lineno -> concatenate (newline, "\1i", string lineno, " : ");
 	  currentPrompts = examplePrompts;
 	  );
      noPrompts = () -> (
-	  ZZ.InputPrompt = ZZ.InputContinuationPrompt = ZZ.OutputPrompt = lineno -> null;
+	  ZZ.InputPrompt = lineno -> "";
+	  ZZ.InputContinuationPrompt = lineno -> "";
 	  currentPrompts = noPrompts;
 	  );
 

@@ -16,9 +16,19 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+At compile time, you may now set the environment variable LIBS to
+provide additional libraries to link against, and the makefiles will
+use it.
+
 The emacs key bindings have now been made local only to buffers in
 M2-mode.  Previously we were taking over function keys that the user
-might have preferred to define globally.
+might have preferred to define globally.  Thanks to William F Hammond
+for suggesting we do that.
+
+Loaddata stopped working under SunOS 5.8 -- the fix is to link with
+mmap() statically, since it is the only subroutine used while loading
+data, and when linked dynamically, control passes through RAM we are
+rewriting.  At least, I think that was the problem.
 
 -----------------------------------------------------------------------------
 

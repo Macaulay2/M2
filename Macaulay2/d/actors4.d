@@ -554,7 +554,7 @@ getfun(e:Expr):Expr := (
 setupfun("get",getfun);
 
 readprompt := "";
-readpromptfun(o:file):void := ( o << readprompt; );
+readpromptfun():string := readprompt;
 
 import isReady(fd:int):int;
 isReadyFun(e:Expr):Expr := (
