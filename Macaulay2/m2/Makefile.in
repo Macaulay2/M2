@@ -1,0 +1,221 @@
+justM2 default :: initialize phase1
+
+TOPDIR = ../..
+include $(TOPDIR)/Makeconf
+
+all:: initialize
+emacs html: all; $(MAKE) -C ../$@
+
+##############################
+.SUFFIXES: .m2
+.PHONY: clean all install phase1 tests html
+# CFLAGS =
+# LDFLAGS = -s
+# LOADLIBES =
+DUMPSEQUENCE = $(shell cat dumpseq)
+DOCSEQUENCE = $(shell cat docseq)
+
+MADEGFILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
+
+ifdef MP
+mpcodes.m2: ../../include/MP.h mpcodes.sed
+	sed -f mpcodes.sed $< > $@
+all:: mpcodes.m2
+MADEGFILES += mpcodes.m2
+endif
+
+cmdnames.m2 : ../e/cmdnames.m2; cp $< $@
+
+TUTORIALS := $(wildcard ../tutorial/final/*.out)
+
+DUMPEDGFILES := $(DUMPSEQUENCE) setup.m2 $(MADEGFILES)
+
+ifndef NODUMPDATA
+DUMPEDGFILES := $(DUMPEDGFILES) dumpdata.m2
+endif
+
+NONDOCGFILES = setup.m2 $(DUMPSEQUENCE) dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2
+
+wc:
+	wc -l $(DOCSEQUENCE)
+	wc -l $(NONDOCGFILES)
+
+GFILES = $(NONDOCGFILES) $(DOCSEQUENCE)
+SCRIPTS = ../bin/M2
+
+ifeq "$(OS)" "MS-DOS"
+SCRIPTS = ../bin/M2.bat ../bin/M2.arg
+endif
+
+ifeq "$(OS)" "Windows-95-98-NT"
+SCRIPTS = ../bin/M2.bat ../bin/M2
+endif
+
+
+loads.m2 : dumpseq loads.awk
+	@echo making $@
+	@awk -f loads.awk <$< >$@
+
+docloads.m2 : docseq loads.awk
+	@echo making $@
+	@awk -f loads.awk <$< >$@
+
+#version.m2 : $(TOPDIR)/Makeconf ../../Makeconf-m2
+#	../../Makeconf-m2 >version.tmp
+#	mv version.tmp $@
+
+tutorials.m2 : ../tutorial/final/*.out
+	@ echo making tutorials.m2
+	@ ls ../tutorial/final/*.out |awk '{printf "load \"%s\"\n", $$0}' >$@
+
+################################# cache
+cache cache/doc cache/tests ../tutorial/final/cache/doc :; mkdir $@
+clean ::; rm -rf cache
+initialize :: cache cache/tests cache/doc ../tutorial/final/cache/doc
+#################################
+
+gbdoc.m2 : ../e/misc/cmdnames.input gbdoc.awk
+	awk -f gbdoc.awk ../e/misc/cmdnames.input >tmp
+	mv tmp $@
+gbfunctions.m2 :  ../e/misc/cmdnames.input gbfuns.awk
+	awk -f gbfuns.awk ../e/misc/cmdnames.input >tmp
+	mv tmp $@
+default:: TAGS.doc
+TAGS.doc : Makefile docseq
+	@echo making $@
+	@../util/echoout '>$@' $(foreach i, $(DOCSEQUENCE),  $(i),0)
+default:: TAGS
+TAGS: Makefile dumpseq
+	@echo making $@
+	@../util/echoout '>$@' $(foreach i, \
+			      $(GFILES) $(MADEGFILES) \
+			      $(wildcard ../html/*.m2 ../test/*.m2 ../book/*.m2 \
+				../basictests/*.m2 \
+				../emacs/makehlp.m2 \
+				../emacs/makem2.m2 \
+				../*/COPYRIGHT \
+				../emacs/makesyms.m2 \
+				../tutorial/prelim/*.m2 ../tutorial/final/*.m2 \
+				../packages/*.m2 \
+				../*/Makefile* \
+			        ../experiments/*.m2 \
+			        ../slides/*.m2 \
+			        ../slides/lib/*.m2 \
+				../Vasconcelos-appendix/eg.m2 \
+				../Vasconcelos-appendix/appendix.tex \
+				../Vasconcelos-appendix/cohomology.tex \
+				../Vasconcelos-appendix/elementary.tex \
+				../Vasconcelos-appendix/introduction.tex \
+				../examples/*.m2 ../schubert/*.m2 \
+				../CHANGES), \
+			       $(i),0)
+
+all :: phase1
+
+phase1 :: $(DUMPEDGFILES)
+
+ifndef NODUMPDATA
+ARGS := -q -silent '-eloaddata("../cache/Macaulay2-$(ARCH)-data")' -- '-erunStartFunctions()' 
+phase1 :: ../cache/Macaulay2-$(ARCH)-data
+../cache/Macaulay2-$(ARCH)-data : $(DUMPEDGFILES) ../bin/Macaulay2
+	rm -f ../cache/Macaulay2-$(ARCH)-data
+	time ../bin/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
+else
+ARGS := -silent setup.m2
+endif
+
+phase1 :: ../cache/Macaulay2-made
+../cache/Macaulay2-made : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
+	touch $@
+
+phase1 :: $(SCRIPTS)
+ifeq "$(CC)" "cl"
+$(SCRIPTS) : ../util/setup.exe
+	cd ..; util/setup
+else
+$(SCRIPTS) : makeM2.m2 ../../Makeconf.h
+	rm -f $(SCRIPTS)
+	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
+endif
+
+phase2 :: initialize
+phase2 :: phase1
+phase2 :: ../cache/Macaulay2-pre
+
+../cache/Macaulay2-pre : $(DUMPEDGFILES) \
+		../bin/Macaulay2$(EXESUFFIX) \
+		 $(DOCSEQUENCE) $(TUTORIALS)
+	 # phase 2 makes the example and test files
+	rm -rf ../cache/Macaulay2-tmp
+	rm -rf cache/tests
+	mkdir  cache/tests
+	../bin/Macaulay2 -q -silent '-ephase=2' setup.m2 '-eexit(0)'
+	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
+
+all:: .gdbinit
+.gdbinit : .gdbinit.$(USER)
+	if [ -f ".gdbinit.$(USER)" ] ;\
+	then cp ".gdbinit.$(USER)" $@ ;\
+	else cp .gdbinit.dan $@ ;\
+	fi
+.gdbinit.$(USER) :
+	cp .gdbinit.dan $@
+
+backup : CVS/Entries
+CVS/Entries : $(GFILES)
+	mount /a.ext2
+	tar cfv - $? | (cd /a.ext2; mkdir -p m2; cd m2; tar xf -)
+	umount /a.ext2
+
+profile : gmon.out
+	gprof ../bin/Macaulay2 >profile
+clean ::; rm -f profile
+
+INPUTS := cache/doc/sample cache/doc/expression
+cache/doc/sample: sample; cp $< $@
+cache/doc/expression: expression; cp $< $@
+
+all :: ../cache/Macaulay2-doc
+
+phase3 : initialize phase2 cache/doc/sample cache/doc/expression
+	$(MAKE) -k -C ../m2/cache/doc       -f ../../../m2/Makefile.egs
+	$(MAKE) TOPDIR=../../../../.. -k -C ../tutorial/final/cache/doc -f ../../../../m2/Makefile.egs
+
+phase4 : ../cache/Macaulay2-doc
+../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
+		$(MADEGFILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS) phase3
+	rm -f ../cache/Macaulay2-tmp
+	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
+	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
+
+ifndef OLDENGINE
+tests:: test1
+test1 : test.m2 phase1 $(SCRIPTS)
+	M2 '-e errorDepth 0' -q test.m2 '-e << "--test succeeded" << endl' '-e exit 0'
+	touch $@
+endif
+tests:: test2
+test2: $(SCRIPTS)
+	 $(MAKE) -k -C cache/tests -f ../../Makefile.tests
+	touch $@
+
+tests:: test3
+test3:
+	echo 2+3 | ../bin/M2
+	touch $@
+
+ifeq ($(OS),Linux)
+tests:: test4
+test4: ../util/screen
+	echo 2+3 | ../util/screen M2
+	touch $@
+endif
+
+gdb :; gdb ../bin/Macaulay2
+
+clean::
+	rm -rf ../cache/Macaulay2-$(ARCH)-data ../cache/Macaulay2-doc \
+		cache *.obj *.exe TAGS ../bin/M2 runexample \
+		temp.data allfiles distfiles \
+		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
+		mpcodes.m2 tutorials.m2 version.m2 core
