@@ -266,8 +266,14 @@ CPPFLAGS += -DGC_DEBUG
 endif
 
 ifeq "$(OS)" "Darwin"
+
 # we don't know what this does, but some apple documentation writers seem to like it:
 LDFLAGS += -bind_at_load
+
+# this one makes it find and use our readline.a first, even if there is a file readline.dylib in /usr/lib
+# the point is that the system's readline.dylib might be much older and conflict with our newere one
+LDFLAGS += -Wl,-search_paths_first
+
 endif
 
 ALTIVEC = @ALTIVEC@
