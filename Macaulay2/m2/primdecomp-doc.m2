@@ -45,12 +45,12 @@ document { ass => Strategy,
 	  },
      PARA,
      "The default strategy is 2.",
-     H3 "Strategy => 1",
+     HEADER3 "Strategy => 1",
      "The associated primes are found using the Ext modules: The 
      associated primes of codimension ", TT "i", " of ", TT "I", " and ",
      TT "Ext^i(R^1/I,R)", " are identical, as shown in 
      Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
-     H3 "Strategy => 2", 
+     HEADER3 "Strategy => 2", 
      "The associated primes are found by iterating the two steps:  take the 
      minimal primes of", TO(top), " of the ideal, ", TT "I", ", and replace ",
      TT "I", " by ", TT "I:(top I)", "."
@@ -117,12 +117,12 @@ document { localize => Strategy,
 	       },
 	  PARA,
 	  "The default strategy is 1.",
-	  H3 "Strategy => 0",
+	  HEADER3 "Strategy => 0",
 	  "This strategy does not require the calculation of the assasinator, 
 	  but can require the computation of high powers of ideals. The 
 	  method appears in 
 	  Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
-          H3 "Strategy => 1",
+          HEADER3 "Strategy => 1",
 	  "This strategy uses a separator polynomial - a polynomial in all of 
 	  the associated primes of ", TT "I", " but ", TT "P", " and those 
 	  contained in ", TT "P", ".  In this strategy, the assasinator of the 
@@ -130,7 +130,7 @@ document { localize => Strategy,
 	  " = 1, if unknown.  The separator 
 	  polynomial method is described in  
 	  Shimoyama-Yokoyama, J. Symbolic computation, 22(3) 247-277 (1996).",
-	  H3 "Strategy => 2",
+	  HEADER3 "Strategy => 2",
 	  "This is the same as ", TT "Strategy => 1", " except that, if 
 	  unknown, the assasinator is computer using ", TO ass => Strategy ,
 	  " = 2."
@@ -254,16 +254,16 @@ document { primaryDecomposition => Strategy,
      by monomials, then ", TT "Strategy => Monomial", " is implied.  
      In all other cases, the default is ", TT "Strategy => SY", ".",
      PARA,
-     H3 "Strategy => Monomial",
+     HEADER3 "Strategy => Monomial",
      "Description, reference if possible, and then an example.  Also warn
      that ideal must be monomial.",
-     H3 "Strategy => Binomial",
+     HEADER3 "Strategy => Binomial",
      "Description: get cellular resolution.  Give reference, example.",
-     H3 "Strategy => EHV",
+     HEADER3 "Strategy => EHV",
      "Description, example, reference",
-     H3 "Strategy => SY", 
+     HEADER3 "Strategy => SY", 
      "Description, example, reference",
-     H3 "Strategy => Hybrid",
+     HEADER3 "Strategy => Hybrid",
      "Description, example, reference", TO (localize,Ideal,Ideal)
      }
 
