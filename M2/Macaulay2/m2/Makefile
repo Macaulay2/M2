@@ -108,5 +108,5 @@ clean:
 		../tmp/Examples ../tmp/Tests \
 		TAGS ../bin/M2 runexample \
 		temp.data allfiles distfiles \
-		gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 \
-		mpcodes.m2 tutorials.m2 version.m2
+		gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 cmdnames.m2 \
+		mpcodes.m2 tutorials.m2 version.m2 core

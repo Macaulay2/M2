@@ -10,3 +10,6 @@ M2-symbols.el : ../cache/Macaulay2-$(ARCH).data makesyms.m2
 
 allfiles : Makefile; 
 	echo $(ALLFILES) | tr ' ' '\012' >allfiles
+
+clean:
+	rm -f M2-symbols.el
