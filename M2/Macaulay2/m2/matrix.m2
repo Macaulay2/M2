@@ -376,11 +376,10 @@ jacobian Matrix := Matrix => (m) -> diff(transpose vars ring m, m)
 jacobian Ring := Matrix => (R) -> jacobian presentation R ** R
 
 leadTerm(ZZ, Matrix) := Matrix => (i,m) -> (
-     sendgg(ggPush m, ggINT, gg i, gginitial);
-     getMatrix ring m)
+     map(target m, source m, rawInitial(i,m.RawMatrix)))
+
 leadTerm(Matrix) := Matrix => m -> (
-     sendgg(ggPush m, gginitial);
-     getMatrix ring m)
+     map(target m, source m, rawInitial(-1,m.RawMatrix)))
 
 borel Matrix := Matrix => m -> (
      sendgg (

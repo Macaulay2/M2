@@ -394,6 +394,33 @@ needs "raw-util.m2"
 R = polyring(rawZZ(), (symbol a .. symbol g))
 m = mat{{a^2-a^3*b*c, a^4*c*d+a^3*b+1, a*b*c*d}}
 rawInitial(1,m)
+
+R = ZZ[symbol a .. symbol g, MonomialOrder => { Weights => {1,1}, Lex => 7, Position => Up }]
+m = matrix{{a^2-a^3*b*c, a^4*c*d+a^3*b+1, a*b*c*d, a+b^2}}
+assert(leadTerm(m) == matrix{{-a^3*b*c, a^4*c*d, a*b*c*d, b^2}})
+
+R = ZZ[symbol a .. symbol c, MonomialOrder => { Position => Up }]
+m = matrix{{a},{b},{c}}
+assert(leadTerm m == matrix{{0},{0},{c}})
+
+R = ZZ[symbol a .. symbol c, MonomialOrder => { Position => Down }]
+m = matrix{{a},{a},{a}}
+assert(leadTerm m == matrix{{a},{0},{0}})
+
+R = ZZ[symbol a .. symbol c, MonomialOrder => { RevLex => 3, Position => Down }]
+m = matrix{{1+b+c}}
+leadTerm m
+assert(leadTerm m - matrix{{1_R}} == 0)
+
+needs "raw-util.m2"
+R = ZZ[a..d][x,y,z]
+f = matrix{{(a+b+c)*x^3 + x^2*y}}
+leadTerm f
+assert(leadTerm(0,f) == f)
+assert(leadTerm(1,f) == matrix{{(a+b+c)*x^3}})
+assert(leadTerm(2,f) == matrix{{a*x^3}})
+assert(leadTerm(3,f) == leadTerm(2,f))
+
 ---------------------------
 -- rawEliminateVariables --
 ---------------------------

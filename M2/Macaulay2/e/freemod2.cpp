@@ -147,6 +147,7 @@ bool FreeModule::is_equal(const FreeModule *F) const
 
   if (schreyer != NULL)
     return schreyer->is_equal(F->schreyer);
+  if (F->schreyer != NULL) return false;
 
   return true;
 }

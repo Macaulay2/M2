@@ -317,8 +317,8 @@ public:
     return R_->PolyRing::divide_by_expvector(exp,a);
   }
 
-  virtual vec vec_lead_term(int nparts, vec v) const {
-    return R_->PolyRing::vec_lead_term(nparts, v);
+  virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const {
+    return R_->PolyRing::vec_lead_term(nparts, F, v);
   }
 
   virtual gbvector * translate_gbvector_from_ringelem(ring_elem coeff) const {

@@ -71,6 +71,8 @@ Monoid *Monoid::create(MonomialOrdering *mo,
       return 0;
     }
 
+// Debugging only:
+#if 0
   M2_arrayint nontermvars = rawNonTermOrderVariables(mo);
   fprintf(stderr, "%d variables < 1\n", nontermvars->len);
   if (nontermvars->len > 0)
@@ -80,6 +82,7 @@ Monoid *Monoid::create(MonomialOrdering *mo,
 	fprintf(stderr, "%d ", nontermvars->array[i]);
       fprintf(stderr, "\n");
     }
+#endif
   return new Monoid(mo,names,deg_ring,degs);
 }
 
@@ -374,6 +377,8 @@ int Monoid::num_parts() const
 
 int Monoid::n_slots(int nparts) const
 {
+  if (nparts == 0) return 0;
+  nparts--;
   if (nparts < 0) return monomial_size();
   if (nparts >= num_parts()) nparts = num_parts()-1;
   return nslots_[nparts];
