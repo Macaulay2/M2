@@ -674,12 +674,12 @@ document { MonomialOrder,
      PARA,
      "Permissible values:",
      MENU {
-	  {TO "GRevLex", " -- graded reverse lexicographic order (the default)"},
-	  {TO "GLex", " -- graded lexicographic order"},
-	  {TO "Lex", " -- lexicographic order"},
-	  {TO "RevLex", " -- reverse lexicographic order"},
-	  {TO "Eliminate", " -- elimination order"},
-	  {TO "ProductOrder", " -- product order"}
+	  {TOH "GRevLex", " -- graded reverse lexicographic order (the default)"},
+	  {TOH "GLex", " -- graded lexicographic order"},
+	  {TOH "Lex", " -- lexicographic order"},
+	  {TOH "RevLex", " -- reverse lexicographic order"},
+	  {TOH "Eliminate", " -- elimination order"},
+	  {TOH "ProductOrder", " -- product order"}
           },
      "Eventually, more general monomial orders will be allowed.", -- MES
      SEEALSO {"polynomial rings with other monomial orderings", "Weights"}
@@ -987,7 +987,7 @@ document { components,
      direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
      PARA,
      MENU {
-	  TO (components,ChainComplex)
+	  TOH (components,ChainComplex)
 	  },
      SEEALSO {"vector", "directSum", "++"}
      }
@@ -1154,8 +1154,8 @@ document { (symbol ++,Module,Module),
 	  },
      "Projection and inclusion maps for direct sums:",
      MENU {
-	  TO (symbol ^,Module,Array),
-	  TO (symbol _,Module,Array)
+	  TOH (symbol ^,Module,Array),
+	  TOH (symbol _,Module,Array)
 	  },
      SEEALSO directSum
      }
@@ -1173,8 +1173,8 @@ document { (symbol ++,Matrix,Matrix),
 	  },
      "Selecting rows or columns of blocks:",
      MENU {
-	  TO (symbol ^,Matrix,Array),
-	  TO (symbol _,Matrix,Array)
+	  TOH (symbol ^,Matrix,Array),
+	  TOH (symbol _,Matrix,Array)
 	  },
      SEEALSO {directSum, (symbol |, Matrix, Matrix), (symbol ||, Matrix, Matrix)}
      }
@@ -1186,10 +1186,10 @@ document { directSum,
      PARA,
      "Projection and inclusion maps for direct sums:",
      MENU {
-	  TO (symbol ^,Module,Array),
-	  TO (symbol _,Module,Array),
-	  TO (symbol ^,Matrix,Array),
-	  TO (symbol _,Matrix,Array)
+	  TOH (symbol ^,Module,Array),
+	  TOH (symbol _,Module,Array),
+	  TOH (symbol ^,Matrix,Array),
+	  TOH (symbol _,Matrix,Array)
 	  },
      PARA,
      "It sometimes happens that the user has indices for the components of

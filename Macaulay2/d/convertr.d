@@ -575,6 +575,10 @@ shown := 0;
 export Semicolonfun := dummyBinaryFun;	  -- filled in later
 export recursionlimit := 300;
 export recursiondepth := 0;
+
+printtop := 13;
+printbottom := 7;
+
 export eval(c:Code):Expr := (
      spincursor();
      e := 
@@ -616,12 +620,12 @@ export eval(c:Code):Expr := (
 	  && !SuppressErrors then (
 	       interrupted = false;
 	       alarmed = false;
-	       if shown < 8 || recursiondepth < 8 then (
+	       if shown < printtop || recursiondepth < printbottom then (
 		    -- print the error message
-		    if recursiondepth < 8
+		    if recursiondepth < printbottom
 		    then shown = 0 else shown = shown + 1;
 		    errorpos(p,err.message);)
-	       else if recursiondepth == 8 then (
+	       else if recursiondepth == printbottom then (
 		    flush(stdout);
 		    stderr << "..." << endl;);
 	       err.position = p;

@@ -463,7 +463,7 @@ document { "using methods",
      PARA,
      "Here is the routine for making new methods.",
      MENU {
-	  TO "method"
+	  TOH "method"
 	  },
      SEEALSO{"binary method", "classes", "lookup"}
      }

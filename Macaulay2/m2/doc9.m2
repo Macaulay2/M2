@@ -34,8 +34,8 @@ document { pushForward => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
-	  TO "NonLinear",
-     	  TO "Linear"
+	  TOH "NonLinear",
+     	  TOH "Linear"
 	  }
      }
 
@@ -119,35 +119,7 @@ document { Tor,
      }
 document { MonomialIdeal,
      TT "MonomialIdeal", " -- the class of all monomial ideals handled by
-     the ", TO "engine", ".",
-     PARA,
-     "Routine for making monomial ideals:",
-     MENU {
-	  TO "monomialIdeal"
-	  },
-     PARA,
-     "Operations on monomial ideals:",
-     MENU {
-	  TO "==",
-	  TO "+",
-	  TO "*",
-	  TO "^",
-	  TO ":",
-	  TO "borel",
-	  TO "codim",
-	  TO "poincare",
-	  TO "intersect",
-	  TO "isBorel",
-	  TO "generators",
-	  TO "minprimes",
-	  TO "radical",
-	  TO "saturate",
-	  TO "dual",
---	  (TO (symbol -, MonomialIdeal, MonomialIdeal), " -- complementary minimal generators"),
---	  TO (complement, MonomialIdeal),
---	  TO (complement, MonomialIdeal, Monomial),
-	  TO "top"
-	  }
+     the ", TO "engine", "."
      }
 
 --document { (complement, MonomialIdeal),
@@ -265,31 +237,10 @@ document { GradedModule,
      The i-th module can be installed with a statement like ", TT "M#i=N", ",
      and can be retrieved with an expression like ", TT "M_i", ".  The ground
      ring should be installed with a statement like ", TT "M.ring = R", ".",
-     PARA,
-     "Operations on graded modules:",
-     MENU {
-	  (TO "==", "                -- comparison"),
-	  (TO "length", "            -- length")
-	  },
-     "Producing graded modules:",
-     MENU {
-	  TO "coimage",
-	  TO "gradedModule"
-	  },
      SEEALSO "GradedModuleMap"
      }
 
-document { GradedModuleMap,
-     TT "GradedModuleMap", " -- the class of all maps between graded modules.",
-     PARA,
-     "Operations on graded module maps:",
-     MENU {
-	  },
-     "Producing graded module maps:",
-     MENU {
-	  TO "gradedModuleMap"
-	  },
-     PARA,
+document { GradedModuleMap, HEADLINE "the class of all maps between graded modules",
      SEEALSO "GradedModule"
      }
 
@@ -385,26 +336,7 @@ document { ChainComplexMap,
      chain complex to itself can be produced with ", TO "id", ".  An
      attempt to add (subtract, or compare) a ring element to a chain complex
      will result in the ring element being multiplied by the appropriate
-     identity map.",
-     PARA,
-     "Operations on maps of chain complexes:",
-     MENU {
-	  TO "!=",
-	  TO "==",
-	  TO "+",
-	  TO "-",
-	  (TO "*", "             -- composition"),
-	  (TO "^", "             -- power (repeated composition)"),
-	  (TO "++", "            -- direct sum"),
-	  (TO "cone", "          -- mapping cone"),
-	  (TO "extend", "        -- produce a map by lifting"),
-	  (TO "ring", "          -- get the base ring"),
-	  (TO "nullhomotopy", "  -- produce a null homotopy"),
-	  (TO (symbol **, ChainComplexMap, ChainComplex), " -- tensor product"),
-	  (TO (symbol **, ChainComplex, ChainComplexMap), " -- tensor product"),
-	  (TO (symbol **, ChainComplexMap, ChainComplexMap), " -- tensor product"),
-	  (TO (symbol _, ChainComplexMap, ZZ), " -- get a component from a map of chain complexes")
-	  }
+     identity map."
      }
 document { (symbol _, ChainComplexMap, ZZ),
      HEADLINE "get component",
@@ -504,11 +436,7 @@ document { poincare,
       	  "T = (degreesRing R)_0",
       	  "f = genericMatrix(R,t_0,3,6)",
       	  "(cokernel f).poincare = 3-6*T+15*T^2-20*T^3+15*T^4-6*T^5+T^6",
-      	  "gb f",
-	  },
-     "Keys used:",
-     MENU {
-	  TO "poincareComputation"
+      	  "gb f"
 	  }
      }
 
@@ -580,8 +508,8 @@ document { quotient,
      PARA,
      "Allowable options :",
      MENU {
-	  TO (quotient => Strategy),
-	  TO (quotient => MinimalGenerators)
+	  TOH (quotient => Strategy),
+	  TOH (quotient => MinimalGenerators)
 	  },
      "The computation is currently not stored anywhere: this means
      that the computation cannot be continued after an interrupt.
@@ -594,8 +522,8 @@ document { quotient => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
-	  TO "Iterate",
-          TO "Linear"
+	  TOH "Iterate",
+          TOH "Linear"
           }
      }
 
@@ -934,8 +862,8 @@ document { MinimalGenerators,
      which specifies whether to compute minimal generators for the result.",
      PARA,
      MENU {
-	  TO (quotient => MinimalGenerators),
-	  TO (saturate => MinimalGenerators),
+	  TOH (quotient => MinimalGenerators),
+	  TOH (saturate => MinimalGenerators),
 	  },
      PARA,
      "The default value is ", TT "true", "."

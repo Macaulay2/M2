@@ -181,22 +181,7 @@ document { GroebnerBasis,
       situtation when the ring of m is a quotient ring, or is not graded, or is
       a local ring",
       PARA,
-      "Operations which produce Greobner bases:",
-      MENU {
-	   TO "gb"
-	   },
-      "Operations on Groebner bases:",
-      MENU {
-	   TO "getchange",
-	   TO "target"
-	   },
-      "Operations on matrices which use Groebner bases to produce matrices:",
-      MENU {
-	   (TO "mingens"),
-	   (TO "kernel"),
-	   (TO "modulo")
-       	   },
-      "Each of these operations may be
+      "Each of the operations dealing with Groebner bases may be
       interrupted or stopped (by typing CNTRL-C).  The computation
       is continued by re-issuing the same command.",
       PARA,
@@ -221,9 +206,9 @@ document { GroebnerBasis,
       PARA,
       "Keys used:",
       MENU {
-	   TO "GBtype",
-	   TO "ring",
-	   TO "returnCode"
+	   TOH "GBtype",
+	   TOH "ring",
+	   TOH "returnCode"
 	   },
       PARA,
       SEEALSO "gbTrace"
@@ -381,8 +366,8 @@ document { CodimensionLimit,
      "Eventually the codimension of the ideal of leading terms is the
      codimension of the original ideal.",
      MENU {
-	  TO (gb => CodimensionLimit),
-	  TO (syz => CodimensionLimit),
+	  TOH (gb => CodimensionLimit),
+	  TOH (syz => CodimensionLimit),
 	  }
      }
 
@@ -407,10 +392,10 @@ document { StopWithMinimalGenerators,
      determined.",
      PARA,
      MENU {
-	  TO (gb => StopWithMinimalGenerators),
-	  TO (pushForward => StopWithMinimalGenerators),
-	  TO (pushForward1 => StopWithMinimalGenerators),
-	  TO (syz => StopWithMinimalGenerators),
+	  TOH (gb => StopWithMinimalGenerators),
+	  TOH (pushForward => StopWithMinimalGenerators),
+	  TOH (pushForward1 => StopWithMinimalGenerators),
+	  TOH (syz => StopWithMinimalGenerators),
 	  }
      }
 
@@ -433,16 +418,7 @@ document { gb => StopWithMinimalGenerators,
 
 document { Strategy,
      TT "Strategy => v", " -- an optional argument used with various routines 
-     to suggest a strategy for efficient computation.",
-     PARA,
-     MENU {
-	  TO (quotient => Strategy),
-	  TO (gb => Strategy),
-	  TO (pushForward => Strategy),
-	  TO (pushForward1 => Strategy),
-	  TO (saturate => Strategy),
-	  TO (syz => Strategy)
-	  }
+     to suggest a strategy for efficient computation."
      }
 
 document { gb => Strategy, 
@@ -452,10 +428,10 @@ document { gb => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
-	  TO "EGB",
-	  TO "GBinhom",
-	  TO "LongPolynomial",
-	  TO "Sort"
+	  TOH "EGB",
+	  TOH "GBinhom",
+	  TOH "LongPolynomial",
+	  TOH "Sort"
 	  }
      }
 
@@ -501,13 +477,7 @@ document { Syzygies,
 
 document { ChangeMatrix,
      TT "ChangeMatrix", " -- a keyword for optional arguments to certain functions
-     which concern a change of basis matrix.",
-     PARA,
-     MENU {
-	  TO (forceGB => ChangeMatrix),
-	  TO (gb => ChangeMatrix),
-	  TO (syz => ChangeMatrix),
-     	  }
+     which concern a change of basis matrix."
      }
 
 document { gb => ChangeMatrix, 
@@ -860,11 +830,7 @@ document { Descending,
 
 document { DegreeOrder,
      TT "DegreeOrder", " -- an optional argument for use with certain
-     functions, used to specify sort order.",
-     PARA,
-     MENU {
-	  TO (sortColumns => DegreeOrder)
-	  }
+     functions, used to specify sort order."
      }
 
 document { (sortColumns => DegreeOrder),
@@ -985,11 +951,7 @@ document { GaloisField,
      TT "GaloisField", " -- the class of all Galois fields.",
      PARA,
      "A Galois field is a finite field implemented in the ", TO "engine", ",
-     and created with ", TO "GF", ".",
-     "Keys used:",
-     MENU {
-	  TO "order"
-	  }
+     and created with ", TO "GF", "."
      }
 
 
@@ -1002,13 +964,6 @@ document { GF,
      BR,NOINDENT,
      TT "GF(q)", " -- make a Galois field with ", TT "q", " elements, where 
      ", TT "q", " is a power of a prime.",
-     PARA,
-     "Options:",
-     MENU {
-	  (TO "PrimitiveElement", " -- provide a primitive element"),
-     	  (TO "Variable", " -- provide a variable name")
-	  },
-     PARA,
      SEEALSO {"GaloisField"}
      }
 
@@ -1056,24 +1011,9 @@ document { isAffineRing,
      "An affine ring is a quotient of a polynomial ring over a field."
      }
 
-document { RingMap,
-     TT "RingMap", " -- the class of all ring maps.",
-     PARA,
-     "Operations which produce ring maps:",
-     MENU {
-	  TO "maps between rings",
-	  TO "newCoordinateSystem"
-	  },
-     "Operations on ring maps:",
-     MENU {
-	  TO "graphIdeal",
-	  TO "graphRing",
-	  TO "isInjective",
-	  TO "kernel"
-	  }
-     }
+document { RingMap, HEADLINE "the class of all ring maps" }
 
-document { "making ring maps",
+document { (map,Ring,Ring,List),
      TT "map(R,S,m)", " -- sets up a ring homomorphism from ", TT "S", "
      to ", TT "R", " which sends the i-th variable of S to the i-th element
      of the list ", TT "m", ".  Alternatively, ", TT "m", " may be
@@ -1218,15 +1158,6 @@ document { pushForward1,
       	  "pushForward1(f,S^1)",
 	  },
      PARA,
-     "Options:",
-     MENU {
-	  TO (pushForward1 => Strategy),
-	  TO (pushForward1 => UseHilbertFunction),
-	  TO (pushForward1 => MonomialOrder),
-	  TO (pushForward1 => DegreeLimit),
-	  TO (pushForward1 => PairLimit),
-	  },
-     PARA,
      "The following code performs the Groebner computation using a product order 
      rather than the default elimination order.",
      EXAMPLE "pushForward1(f,S^1,MonomialOrder=>ProductOrder)",
@@ -1289,8 +1220,8 @@ document { pushForward1 => Strategy,
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
      MENU {
-	  TO "NonLinear",
-     	  TO "Linear"
+	  TOH "NonLinear",
+     	  TOH "Linear"
 	  },
      PARA,
      "The default is for the code to select the best strategy heuristically."
