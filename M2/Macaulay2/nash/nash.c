@@ -35,6 +35,7 @@ static void parse(char *args) {
     switch (*p) {
     case ' ': case '\t': if (inarg && !dquote && !quote) inarg = FALSE; break;
     case '"': if (!quote) dquote = !dquote; goto x;
+    case '\\': if (p[1] != 0) p++; goto x;
     case '\'': if (!dquote) quote = !quote; goto x;
     default: 
       x: if (!inarg) {inarg = TRUE; xargc++;} break;
@@ -58,6 +59,12 @@ static void parse(char *args) {
 	  goto z;
 	}
 	goto y;
+      case '\\': 
+	if (p[1] != 0) {
+	  strcpy(p,p+1);
+	  goto y;
+	}
+	goto y;
       case '\'': 
 	if (!dquote) {
 	  quote = !quote; 
@@ -75,6 +82,10 @@ static void parse(char *args) {
 	  xargc++;
 	}
     }
+  }
+  if (dquote || quote) {
+    fprintf(stderr,"%s: mismatched quotes\n",argv[0]);
+    exit(1);
   }
 }  
     
