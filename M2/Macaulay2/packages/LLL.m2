@@ -173,19 +173,19 @@ LLL = method LLLoptions
 LLL Matrix := options -> (M) -> (
      -- Possible options: Threshold=>QQ, ChangeOfBasisMatrix,
      -- and for the specific computation: 
-     if not M.?LLL then (
+     if not M.cache.?LLL then (
 	  if options.Engine then
-	    M.LLL = newLLLEngineComputation(M,options.Threshold, options.ChangeOfBasisMatrix)
+	    M.cache.LLL = newLLLEngineComputation(M,options.Threshold, options.ChangeOfBasisMatrix)
 	  else
-	    M.LLL = newLLLComputation(M,options.Threshold, options.ChangeOfBasisMatrix);
+	    M.cache.LLL = newLLLComputation(M,options.Threshold, options.ChangeOfBasisMatrix);
 	  );
-     if M.LLL.Engine then (
-       M.LLL.Status = doEngineLLL(M.LLL.A, M.LLL.LLLstate,options.Steps);
+     if M.cache.LLL.Engine then (
+       M.cache.LLL.Status = doEngineLLL(M.cache.LLL.A, M.cache.LLL.LLLstate,options.Steps);
        -- MES: should we remove the LLL state, if the computation is done?
        )
      else
-       doLLL(M.LLL, options.Steps);
-     M.LLL.A
+       doLLL(M.cache.LLL, options.Steps);
+     M.cache.LLL.A
      )
 
 ----------------------------------------------
@@ -962,24 +962,24 @@ calcLLL = (A,LLLstate,nsteps) -> (
 
 testLLL = (m) -> (
   -- Test 1:
-  remove(m,symbol LLL);
+  remove(m.cache,symbol LLL);
   time m1 = matrix LLL(m,Engine=>true);
   --time assert(isLLL m1);
   -- Test 2:
-  remove(m,symbol LLL);
+  remove(m.cache,symbol LLL);
   time m2 = matrix LLL(m, Engine=>true,ChangeOfBasisMatrix=>true);
   assert(m1 == m2);
-  h = matrix getColumnChange m.LLL.A;
+  h = matrix getColumnChange m.cache.LLL.A;
   assert(m2 == m*h);
   -- Test 3:
-  remove(m,symbol LLL);
+  remove(m.cache,symbol LLL);
   time m3 = matrix LLL(m,Engine=>false);
   --time assert(isLLL m3);
   -- Test 4:
-  remove(m,symbol LLL);
+  remove(m.cache,symbol LLL);
   time m4 = matrix LLL(m, Engine=>false,ChangeOfBasisMatrix=>true);
   assert(m3 == m4);
-  h2 = matrix getColumnChange m.LLL.A;
+  h2 = matrix getColumnChange m.cache.LLL.A;
   assert(m3 == m*h2);
   --assert(h == h2);
   )
@@ -1046,7 +1046,7 @@ assert(m * mz == matrix mh)
 ---------
 m = matrix {{1, 0, 0}, {0, 0, 1}, {0, 1, -1}}
 m1 = matrix LLL(m,ChangeOfBasisMatrix=>true)
-mh = matrix getColumnChange m.LLL.A
+mh = matrix getColumnChange m.cache.LLL.A
 assert(isLLL m1)
 assert(m * mh == m1)
 
@@ -1058,18 +1058,18 @@ gbTrace 2
 assert(m1 * matrix mz == 0)
 assert(isLLL matrix mz)
 
-remove(m,symbol LLL)
+remove(m.cache,symbol LLL)
 mz = LLL(m,ChangeOfBasisMatrix=>true)
-h = getColumnChange m.LLL.A
+h = getColumnChange m.cache.LLL.A
 assert(m * matrix h == matrix mz)
 
 testLLL = (m) -> (
   time m1 = matrix LLL m;
   time assert(isLLL m1);
-  remove(m,symbol LLL);
+  remove(m.cache,symbol LLL);
   time m2 = matrix LLL(m, ChangeOfBasisMatrix=>true);
   assert(m1 == m2);
-  h = matrix getColumnChange m.LLL.A;
+  h = matrix getColumnChange m.cache.LLL.A;
   assert(m2 == m*h);
   )
 
