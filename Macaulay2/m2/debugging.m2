@@ -171,7 +171,7 @@ usage := () -> (
 
 firstTime := true
 debuggerHook = () -> if interpreterDepth > 1 then (
-     << listLocalSymbols errorCode << endl;
+     -- << listLocalSymbols errorCode << endl;
      if firstTime then ( usage(); firstTime = false; ))
 
 clearOutput = Command (() -> scan(values Output.Dictionary, s -> ( s <- null; erase s )))

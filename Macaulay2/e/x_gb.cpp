@@ -167,9 +167,8 @@ const MatrixOrNull *rawGBSyzygies(Computation *C)
   return 0;
 }
 
-#if 0
 const MatrixOrNull *
-IM2_GB_get_matrix(Computation *G, 
+rawResolutionGetMatrix(Computation *G, 
 		  int level, 
 		  M2_bool minimize)
 {
@@ -237,7 +236,7 @@ IM2_GB_get_leadterms(Computation *G,
 }
 
 const FreeModuleOrNull *
-IM2_GB_get_free(Computation *G, 
+rawResolutionGetFree(Computation *G, 
 		int level, 
 		M2_bool minimal)
 {
@@ -271,7 +270,7 @@ IM2_GB_contains(Computation *G,
 }
 
 const M2_arrayint_OrNull
-IM2_GB_betti(Computation *G,
+rawResolutionBetti(Computation *G,
 	     int type)
   /* 0: minimal betti numbers,
      1:
@@ -281,7 +280,6 @@ IM2_GB_betti(Computation *G,
 {
   return G->betti(type);
 }
-#endif
 
 const M2_string
 IM2_GB_to_string(Computation *G)

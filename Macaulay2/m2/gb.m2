@@ -176,9 +176,9 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      G)
 
 syz = method(Options => options gb)			    -- we seem to be ignoring these options!!
-generators      GroebnerBasis := Matrix =>            (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,1,false))
-mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,1,true))
-syz             GroebnerBasis := Matrix => options -> (G) -> map(ring G,rawGBGetMatrix(G.RawComputation,2,false))
+generators      GroebnerBasis := Matrix =>            (G) -> map(target unbag G.matrix,,rawResolutionGetMatrix(G.RawComputation,1,false))
+mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawResolutionGetMatrix(G.RawComputation,1,true))
+syz             GroebnerBasis := Matrix => options -> (G) -> map(ring G,rawResolutionGetMatrix(G.RawComputation,2,false))
 getChangeMatrix GroebnerBasis := Matrix =>            (G) -> map(ring G,rawGBGetChange(G.RawComputation,1))
 
 forceGB = method(
