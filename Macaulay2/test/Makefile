@@ -1,8 +1,10 @@
-include ../../Makeconf
+TOPDIR = ../..
+include $(TOPDIR)/Makeconf
+
 
 TESTRESULTS2 := $(patsubst %.m2, %.okay, $(wildcard *.m2)) dumpdata.okay
 
-all : $(TESTRESULTS2)
+all:: $(TESTRESULTS2)
 
 $(TESTRESULTS2) : ../bin/Macaulay2 ../cache/Macaulay2-$(ARCH).data ../cache/Macaulay2.doc
 

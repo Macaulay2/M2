@@ -1,11 +1,13 @@
-include ../../Makeconf
+TOPDIR = ../..
+include $(TOPDIR)/Makeconf
+
 
 FILES := Makefile tutbook.m2 titlepage.tex \
 	final/--INDEX final/*.m2 prelim/*.m2 translate.c
 TUTORIALS := $(wildcard final/*.m2)
 OUTPUTS := $(TUTORIALS:.m2=.out)
 %.out : %.m2; ./translate <$*.m2 >$*.out
-all : $(OUTPUTS)
+all:: $(OUTPUTS)
 
 tutbook.dvi : tutbook.tex ../book/macros.tex titlepage.tex
 	tex $<

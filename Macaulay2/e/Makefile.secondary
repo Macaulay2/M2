@@ -1,4 +1,5 @@
-include ../../Makeconf
+TOPDIR = ../..
+include $(TOPDIR)/Makeconf
 
 %.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
@@ -149,7 +150,7 @@ OTHERS := Makefile Makefile.secondary \
 
 ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) 
 
-all: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H)) $(OFILES)
+all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H)) $(OFILES)
 
 $(LIB): $(LIB)($(OFILES))
 	$(RANLIB) $(LIB) || true

@@ -1,4 +1,5 @@
-include ../../Makeconf
+TOPDIR = ../..
+include $(TOPDIR)/Makeconf
 
 all::
 
@@ -40,7 +41,7 @@ loads.m2 : dumpseq loads.awk
 	@echo making loads.m2
 	@awk -f loads.awk <$< >$@
 
-version.m2 : ../../Makeconf ../../Makeconf-m2
+version.m2 : $(TOPDIR)/Makeconf ../../Makeconf-m2
 	../../Makeconf-m2 >version.tmp
 	mv version.tmp $@
 

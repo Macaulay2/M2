@@ -598,6 +598,7 @@ char **argv;
      char *p, **x;
      char **saveenvp = NULL;
      int envc = 0;
+     static int old_collections = 0;
      char **saveargv;
      int i, n;
      void main_inits();
@@ -665,6 +666,7 @@ char **argv;
      if (0 != setjmp(loaddata_jump)) {
 	  char **environ0;
      	  GC_free_space_divisor = 4;
+	  old_collections = GC_gc_no;
 #if !defined(__MWERKS__)
      	  environ = saveenvp;	/* environ is a static variable that points
 				   to the heap and has been overwritten by
@@ -751,7 +753,7 @@ char **argv;
      interp_process();
      clean_up();
      fprintf(stderr,"heap size = %d, divisor = %ld, collections = %ld\n", 
-	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no);
+	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
      exit(system_returncode);
      }
 

@@ -1,17 +1,15 @@
 ifndef MAKECONF
 MAKECONF = TRUE
 
-# export PROFILE     := TRUE
-
-export DEBUGFLAGS :=
-# export DEBUGFLAGS += -DMEM_DEBUG
+ifndef TOPDIR
+TOPDIR		      := .
+endif
 
 export VERSION	      := 0.8.35
 export FACTORYVERSION := 1.2c
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
 export REL            := $(shell uname -r | sed s=/=-=g )
-export TOPDIR         := $(shell pwd)
 export CC             := gcc
 export CXX            := gcc
 export SYSTEM         := $(ARCH) $(OS) $(REL)
@@ -28,13 +26,37 @@ PATHSEP := /
 export PATH           := ../util:$(PATH)
 endif
 
+################################# Makeconf.lcl
+all::
+
+$(TOPDIR)/Makeconf.lcl :
+	echo '# turn on local options by uncommenting some of the following lines' >$@
+	echo '#	PROFILE     := TRUE' >>$@
+	echo '#	NOSTRIP     := TRUE' >>$@
+	echo '#	MEMDEBUG    := TRUE' >>$@
+#################################
+
+include $(TOPDIR)/Makeconf.lcl
+
+export DEBUGFLAGS :=
+
 ifdef PROFILE
 DEBUGFLAGS += -pg
+NOSTRIP := TRUE
+else
+DEBUGFLAGS += -fomit-frame-pointer
+endif
+
+ifdef NOSTRIP
 STRIPFLAG :=
 STRIPCMD := :
 else
 STRIPFLAG := -s
 STRIPCMD := strip
+endif
+
+ifdef MEMDEBUG
+DEBUGFLAGS += -DMEM_DEBUG
 endif
 
 endif

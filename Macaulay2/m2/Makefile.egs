@@ -1,4 +1,5 @@
-include ../../../Makeconf
+TOPDIR = ../../..
+include $(TOPDIR)/Makeconf
 
 ifeq "$(OS)" "MS-DOS"
 #	under MS-DOS, gnu make is confused about continuation lines, so there is
@@ -26,4 +27,4 @@ endif
 INFILES = $(wildcard *.m2)
 OUTFILES = $(INFILES:.m2=.out)
 
-all : $(OUTFILES)
+all:: $(OUTFILES)

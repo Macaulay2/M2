@@ -5,23 +5,19 @@
 #############################################################################
 # warning: if you move the directory tree, then factory needs to be reconfigured
 #############################################################################
+.PHONY : all always dirs clean FACTORYmade FACTORYconfigured FACTORYexports \
+	announce MACAULAY2 MACAULAY2.doc doc
+################################# all
+all::
+#################################
 include Makeconf
 FILES := Makefile Makeconf README patches
 SUBDIRS := gc gmp factory libfac Macaulay2
-.PHONY : all always dirs clean FACTORYmade FACTORYconfigured \
-	announce MACAULAY2 MACAULAY2.doc doc
 all:: announce
 announce ::
 	@echo "######################################################"
 	@echo 'making Macaulay 2 version $(VERSION) for $(SYSTEM)'
 	@echo "######################################################"
-################################# all
-all:: GC GMP FACTORY LIBFAC MP Makeconf.h MACAULAY2
-################################# Makeconf.h
-Makeconf.h : Makeconf envh.awk Makeconf.var
-	awk -f envh.awk <Makeconf.var >tmp.tmp
-	mv tmp.tmp $@
-clean::; rm -f Makeconf.h
 ################################# preparation
 always:
 lib/.exists:; mkdir -p lib; touch $@
@@ -31,6 +27,7 @@ clean::; rm -rf include
 clean::; rm -f config.cache
 clean::; rm -f core
 ################################ GC
+all:: GC
 GC: gc lib/libgc.a include/gc.h include/gc_cpp.h
 # GC_CFLAGS = -DNO_SIGNALS -g -O -DALL_INTERIOR_POINTERS -DGC_DEBUG
 GC_CFLAGS = -DNO_SIGNALS -g -O -DNO_DEBUGGING -DSILENT -DALL_INTERIOR_POINTERS $(DEBUGFLAGS)
@@ -42,6 +39,7 @@ gc/gc.a: 	  always
 clean::; $(MAKE) -C gc clean
 clean::; rm -f gc/base_lib
 ###################### GMP
+all:: GMP
 GMP : 	gmp include/gmp.h \
 	lib/libmpn.a lib/libmpz.a lib/libmpq.a lib/libmpf.a lib/libgmp.a
 include/gmp.h: gmp/gmp.h include/.exists; cp $< $@
@@ -68,6 +66,8 @@ clean::; -$(MAKE) -C gmp distclean
 
 # when importing a new version of factory, make sure the directory is clean,
 # (look to see if factory/config.status is there)
+
+all:: FACTORY
 
 FACTORY: FACTORYconfigured FACTORYmade lib/FACTORYinstalled
 
@@ -100,6 +100,7 @@ lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
 clean::; -$(MAKE) -C factory distclean
 clean::; rm -rf share
 ###################### LIBFAC
+all:: LIBFAC
 LIBFAC:		libfac \
 		libfac/config.status libfac/libfac.a include/factor.h lib/libfac.a
 libfac/config.status : libfac/configure
@@ -112,6 +113,7 @@ clean::; -$(MAKE) -C libfac distclean
 ###################### MP
 # warning: perl is needed to recreate mp/MP/MP.h - but this file is
 # provided with the distribution.
+all:: MP
 MP:	mp mp/config.status mp/Makefile mp/libMP.a \
 	lib/libMP.a include/MP.h include/MP_Config.h
 mp/config.status mp/Makefile : mp/configure
@@ -123,7 +125,14 @@ include/MP.h: mp/MP/MP.h include/.exists; cp $< $@
 include/MP_Config.h: mp/MP/MP_Config.h include/.exists; cp $< $@
 clean::; -$(MAKE) -C mp distclean
 clean::; rm -f 'mp/&'
+################################# Makeconf.h
+all:: Makeconf.h
+Makeconf.h : Makeconf envh.awk Makeconf.var
+	awk -f envh.awk <Makeconf.var >tmp.tmp
+	mv tmp.tmp $@
+clean::; rm -f Makeconf.h
 ###################### Macaulay 2 binary distribution
+all:: MACAULAY2
 MACAULAY2: Macaulay2
 	$(MAKE) -C Macaulay2 all tests
 DISTFILES = 	Macaulay2/README \

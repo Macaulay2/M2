@@ -1,8 +1,9 @@
-include ../../Makeconf
+TOPDIR = ../..
+include $(TOPDIR)/Makeconf
 
 TESTRESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2))
 
-all : $(TESTRESULTS)
+all:: $(TESTRESULTS)
 
 $(TESTRESULTS) : ../bin/Macaulay2
 
