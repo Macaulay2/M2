@@ -780,7 +780,7 @@ void SparseMutableMatrix::columnReduce(int c1, int c2, bool doRecording)
   if (!K->is_equal(a1,one))
     {
       ring_elem rem;
-      b = K->divide(a2,a1,rem); // division algorithm...
+      rem = K->remainderAndQuotient(a2,a1,b);
       K->negate_to(b);
       K->remove(rem);
     }

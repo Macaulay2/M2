@@ -41,9 +41,12 @@ protected:
 public:
   static PolynomialRing *create(const Ring *K, const Monoid *MF);
 
-  virtual const Ring *  Ncoeffs() const = 0;  // MY BAD: sometimes means flat coeffs, sometimes
-                                              // logical coeffs
-  virtual const Monoid * Nmonoms() const = 0;
+  static PolynomialRing *create_quotient_ring(const Matrix *M);
+
+  const Ring *  Ncoeffs() const { return getCoefficients(); }
+  const Monoid * Nmonoms() const { return getMonoid(); }
+  // MY BAD: sometimes means flat coeffs, sometimes logical coeffs
+  // Both Ncoeffs and Nmonoms need to be totally removed.
 
   virtual const Ring *getLogicalCoefficients() const = 0;
   // The logical coefficient ring of 'this'.  
@@ -70,7 +73,6 @@ public:
   // implements denominators is returned.  When one asks for a denominator for elements of
   // 'this', the result value is its ring.
 #if 0
-  static PPolynomialRing *create_quotient_ring(GBComputation *G);
 #endif
   virtual GBRing *get_gb_ring() const = 0;
 
@@ -134,7 +136,6 @@ public:
   virtual ring_elem power(const ring_elem f, int n) const = 0;
   virtual ring_elem invert(const ring_elem f) const = 0;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const = 0;
-  virtual ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const = 0;
   virtual ring_elem gcd(const ring_elem f, const ring_elem g) const = 0;
   virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
 				  ring_elem &u, ring_elem &v) const = 0;
@@ -189,8 +190,13 @@ public:
   virtual ring_elem lead_flat_coeff(const ring_elem f) const = 0;
   virtual ring_elem lead_logical_coeff(const ring_elem f) const = 0;
 
-  virtual ring_elem get_coeff(const ring_elem f, const int *m) const = 0;
+  virtual ring_elem get_coeff(const ring_elem f, const int *vp) const = 0;
+  // vp is a varpower monomial, in the logical monoid.
+  // The result will be an element in the logical coefficient ring.
+
   virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const = 0;
+  // get the (logical) terms from lo to hi in f.  A negative value means count from
+  // the end.  get_terms(f,0,0) is the logical lead term of f.
 
   virtual const int * lead_flat_monomial(const ring_elem f) const = 0;
   virtual const int * lead_logical_monomial(const ring_elem f) const = 0;

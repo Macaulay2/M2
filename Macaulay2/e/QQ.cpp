@@ -318,12 +318,6 @@ ring_elem QQ::divide(const ring_elem f, const ring_elem g) const
   mpq_div(result, MPQ_VAL(f), MPQ_VAL(g));
   return MPQ_RINGELEM(result);
 }
-ring_elem QQ::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
-{
-  ring_elem quot;
-  rem = QQ::remainderAndQuotient(f,g,quot);
-  return quot;
-}
 
 ring_elem QQ::remainder(const ring_elem f, const ring_elem g) const
 {

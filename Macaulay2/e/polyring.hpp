@@ -111,9 +111,6 @@ protected:
 
   int *_EXP1, *_EXP2, *_EXP3;
 public:
-  const Ring *  Ncoeffs()       const { return K_; }
-  const Monoid * Nmonoms()       const { return M_; }
-
   virtual const PolyRing * getAmbientRing() const { return this; }
 
   virtual const RingOrNull *getDenominatorRing() const { return 0; }
@@ -154,6 +151,7 @@ public:
   int n_skew_commutative_vars() const { return _skew.n_skew_vars(); }
   int skew_variable(int i) const { return _skew.skew_variable(i); }
   bool is_skew_var(int v) const { return _skew.is_skew_var(v); }
+  const SkewMultiplication & getSkewInfo() const { return _skew; }
 
   virtual bool is_pid() const       { return (_nvars == 1 && K_->is_field())
 				       || (_nvars == 0 && K_->is_pid()); }
@@ -217,7 +215,6 @@ public:
   virtual ring_elem power(const ring_elem f, int n) const;
   virtual ring_elem invert(const ring_elem f) const;
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const;
   virtual ring_elem gcd(const ring_elem f, const ring_elem g) const;
   virtual ring_elem gcd_extended(const ring_elem f, const ring_elem g, 
 				  ring_elem &u, ring_elem &v) const;
@@ -259,7 +256,7 @@ public:
   virtual int n_flat_terms(const ring_elem f) const;
   virtual int n_logical_terms(const ring_elem f) const;
 
-  virtual ring_elem get_coeff(const ring_elem f, const int *m) const;
+  virtual ring_elem get_coeff(const ring_elem f, const int *vp) const;
   virtual ring_elem get_terms(const ring_elem f, int lo, int hi) const;
 
   virtual ring_elem make_flat_term(const ring_elem a, const int *m) const;
@@ -286,7 +283,7 @@ public:
 
 
 protected:
-  ring_elem coeff_of(const ring_elem f, const int *m) const;
+  //ring_elem coeff_of(const ring_elem f, const int *m) const;
   
   ring_elem diff_term(const int *m, const int *n, 
 		      int *resultmon,

@@ -281,13 +281,6 @@ ring_elem Z_mod::divide(const ring_elem f, const ring_elem g) const
   return h;
 }
 
-ring_elem Z_mod::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const
-{
-  if (g == _ZERO) assert(0); // MES: raise an exception
-  if (f == _ZERO) return _ZERO;
-  rem = _ZERO;
-  return modulus_sub(f, g, _P1);
-}
 ring_elem Z_mod::gcd(const ring_elem f, const ring_elem g) const
 {
   if (f == _ZERO && g == _ZERO) return _ZERO;

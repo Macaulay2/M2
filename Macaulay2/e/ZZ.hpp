@@ -26,6 +26,8 @@ class ZZ : public Ring
   mpz_ptr new_elem() const;
   void remove_elem(mpz_ptr f) const;
 
+  ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const;
+
 protected:
   virtual ~ZZ() {}
 
@@ -94,7 +96,6 @@ public:
   virtual ring_elem invert(const ring_elem f) const;
 
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const;
-  virtual ring_elem divide(const ring_elem f, const ring_elem g, ring_elem &rem) const;
 
   virtual ring_elem remainder(const ring_elem f, const ring_elem g) const;
   virtual ring_elem quotient(const ring_elem f, const ring_elem g) const;
