@@ -1387,7 +1387,7 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-ARCH="`  uname -m | sed s=/=-=g  `"
+ARCH="`  uname -m | sed -e s=/=-=g -e 's= ==g' `"
 
 
 cat >>confdefs.h <<_ACEOF
