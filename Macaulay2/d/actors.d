@@ -622,7 +622,7 @@ installFun(args:CodeSequence):Expr := (
      is FunctionClosure do installFun2(a,args)
      is aa:HashTable do (
 	  if !ancestor(aa.class,typeClass)
-	  then installFun2(a,args)
+	  then installFun2(a,args)	  -- handle, e.g., Ext(ZZ, Module, Module) := (i,M,N) -> ...
 	  else (
 	       b := eval(args.2);
 	       when b

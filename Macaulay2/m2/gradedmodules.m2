@@ -426,3 +426,8 @@ prune GradedModule := (M) -> (
      E.ring = M.ring;
      scan(spots M, i -> E#i = prune M#i);
      E)
+
+complete GradedModule := (M) -> null
+rank GradedModule := (M) -> sum(spots M, i -> rank M#i)
+
+     

@@ -1667,6 +1667,10 @@ document { quote copy,
      placed into a new copy. If x is a hash table, the copy is mutable if 
      and only if x is.",
      PARA,
+     "It is not advisable to copy such things as modules and rings,
+     for the operations which have already been installed for them will return
+     values in the original object, rather than in the copy.",
+     PARA,
      "See also ", TO "newClass", "."
      }
 

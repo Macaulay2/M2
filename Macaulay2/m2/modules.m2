@@ -443,7 +443,7 @@ RingElement * Vector := (r,x) -> (
      new M)
 
 new Vector := M -> (
-     if class M =!= Module then error "expected a module";
+     if not instance(M, Module) then error "expected a module";
      x := new MutableHashTable;
      x.handle = newHandle "";
      x)
