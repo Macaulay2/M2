@@ -22,12 +22,27 @@ record := (sym,val) -> (
      Symbols#val = sym;
      )
 
+hide := d -> (
+     dictionaries select(dictionaries(), x -> x =!= d);
+     )
+
+removePackage = method()
+removePackage Package := p -> (
+     hide p#"dictionary";
+     packages = select(packages, q -> q =!= p);
+     stderr << "--previous definitions removed for package " << p << endl;
+     )
+removePackage String := s -> scan(packages, p -> if p.name == s then removePackage p)
+
 newPackage = method( Options => { Using => {}, Version => "0.0" } )
-newPackage(Package) := opts -> p -> newPackage(p.name,opts)
+newPackage(Package) := opts -> p -> (
+     hide p#"dictionary";		    -- hide the old dictionary
+     newPackage(p.name,opts))
 newPackage(Symbol) := opts -> p -> newPackage(toString p,opts)
 newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      sym := value ("symbol " | title);
+     removePackage title;
      newdict := if title === M2title then first dictionaries() else first dictionaries prepend(newDictionary(),dictionaries());
      p := global currentPackage <- new Package from {
           symbol name => title,
