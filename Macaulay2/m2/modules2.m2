@@ -493,7 +493,7 @@ homomorphism Matrix := Matrix => (f) -> (
      deg := (degrees source f)#0;
      map(N,M,adjoint1(super f, M0, N0),Degree=>deg))
 -----------------------------------------------------------------------------
-pdim Module := M -> max select(keys complete resolution M, i -> class i === ZZ)
+pdim Module := M -> length resolution M
 
 Module / Module := Module => (M,N) -> (
      L := ambient M;

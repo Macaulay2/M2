@@ -1166,9 +1166,9 @@ document { (symbol _, Vector, ZZ),
      }
 
 document { degrees,
-     Headline => "get degrees of basis elements",
-     TT "degrees M", " -- provides a list of multi-degrees for the basis
-     elements of a free module M.",
+     Headline => "get degrees of generators",
+     TT "degrees M", " -- provides a list of multi-degrees for the generators
+     of a module or ideal M.",
      PARA,
      EXAMPLE {
 	  "R = ZZ/101[x,y,z]",

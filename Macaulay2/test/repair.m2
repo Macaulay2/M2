@@ -27,16 +27,16 @@ s = QQ[x,Degrees => {{2,1}}, Repair => rep, Adjust => adj]
 f = map(s,r,{x,0})
 assert( isHomogeneous f )
 F = r^{{1,0},{0,1}}
-f F
+f ** F
 degrees F
-degrees f F
+degrees (f ** F)
 G = F/y
 degrees source gens G
-degrees source gens f G
+degrees source gens (f ** G)
 H = coker transpose vars r
 degrees source gens H
-f H
-degrees source gens f H
+f ** H
+degrees source gens (f ** H)
 
 -- here is an example of using it to get negative degrees.
 

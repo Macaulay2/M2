@@ -14,8 +14,8 @@ f = i -> (
      G := gb I;
      S := R/I; -- seems to be leaking 2 fractions (2022) [Dec 7,00]
      f := map(R,R,{y,x});  -- leaking 2 fractions? (4027)[Dec 7,00]
-     M := coker g; 
-     C := res M;  -- leaking one fraction? (5031)[Dec 7,00]
+     M':= coker g; 
+     C := res M';  -- leaking one fraction? (5031)[Dec 7,00]
      N := image g;
      )
 scan(n, f)

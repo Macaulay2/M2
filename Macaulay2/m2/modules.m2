@@ -311,6 +311,7 @@ new Module from Ring := (Module,R) -> (
 
 degrees Module := M -> (
      R := ring M;
+     if not isFreeModule M then M = cover M;
      if M.?degrees then M.degrees
      else (
 	  rk := numgens M;

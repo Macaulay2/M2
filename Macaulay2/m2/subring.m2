@@ -26,7 +26,7 @@ pushForward1 = method(
 
 pushtest := options -> (f,M) -> (
     comp := PushforwardComputation{M,NonLinear};
-    if not f#?comp then (
+    if not f.cache#?comp then (
 	-- create the computation
 	S := source f;
 	n1 := numgens target f;
@@ -54,20 +54,20 @@ pushtest := options -> (f,M) -> (
 
 	cleanupcode := g -> mapback selectInSubring(1,generators g);
 
-	f#comp = {m1, cleanupcode};
+	f.cache#comp = {m1, cleanupcode};
 	);
 
-    if #( f#comp ) === 1 then
-	f#comp#0
+    if #( f.cache#comp ) === 1 then
+	f.cache#comp#0
     else (
 	gboptions := new OptionTable from {
 			StopBeforeComputation => options.StopBeforeComputation,
 			DegreeLimit => options.DegreeLimit,
 			PairLimit => options.PairLimit};
-	m1 = f#comp#0;
+	m1 = f.cache#comp#0;
 	g := gb(m1,gboptions);
-	result := f#comp#1 g;
-	--if isdone g then f#comp = {result};  -- MES: There is NO way to check this yet!!
+	result := f.cache#comp#1 g;
+	--if isdone g then f.cache#comp = {result};  -- MES: There is NO way to check this yet!!
 
 	-- MES: check if the monomial order restricts to S.  If so, then do
         -- forceGB result;

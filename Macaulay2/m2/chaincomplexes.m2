@@ -42,8 +42,7 @@ intersection := (x,y) -> keys(set x * set y)
 rank ChainComplex := C -> sum(spots C, i -> rank C_i)
 
 length ChainComplex := (C) -> (
-     complete C;
-     s := spots C;
+     s := select(spots complete C, i -> C_i != 0);
      if #s === 0 then 0 else max s - min s
      )
 
@@ -503,12 +502,7 @@ chainComplex Sequence := chainComplex List := ChainComplex => maps -> (
 
 betti = method(TypicalValue => Net)
 
-betti Matrix := f -> (
-     R := ring target f;
-     f = matrix ( f ** R );
-     f = map( f , Degree => 0 );
-     betti chainComplex f
-     )
+betti Matrix := f -> betti chainComplex f
 betti GroebnerBasis := G -> betti generators G
 betti Ideal := I -> "generators: " | betti generators I
 betti Module := M -> (
@@ -598,15 +592,10 @@ Hom(Module, ChainComplexMap) := ChainComplexMap => (N,f) -> (
 transpose ChainComplexMap := dual ChainComplexMap := ChainComplexMap => f -> Hom(f, (ring f)^1)
 
 regularity ChainComplex := C -> (
-     maxrow := null;
-     complete C;
-     scan(pairs C, (col,F) -> if class col === ZZ then (
-	       degs := (transpose degrees F)#0;  -- ... fix ...
-	       scanPairs(tally degs, (j,m) -> (
-			 row := j-col;
-			 maxrow = if maxrow === null then row else max(row,maxrow);
-			 ))));
-     if maxrow===null then 0 else maxrow)
+     max flatten apply(
+	  select(pairs complete C, (n,F) -> class n === ZZ),
+	  (n,F) -> apply(degrees F, d -> first d - n)))
+
 regularity Module := (M) -> regularity resolution M
 
 rawbetti := method()
@@ -651,7 +640,8 @@ bettiDisplay := v -> (
      maxcol := max la;
      minrow := min fi;
      maxrow := max fi;
-     v = table(toList (minrow .. maxrow), toList (mincol .. maxcol), (i,j) -> if v#?(i,j) then v#(i,j) else 0);
+     v = table(toList (minrow .. maxrow), toList (mincol .. maxcol),
+	  (i,j) -> if v#?(i,j) then v#(i,j) else 0);
      leftside := apply(
 	  splice {"total:", apply(minrow .. maxrow, i -> toString i | ":")},
 	  s -> (6-# s,s));
@@ -660,8 +650,8 @@ bettiDisplay := v -> (
      v = transpose v;
      v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
      v = apply(v, col -> (
-	       wid := 1 + max apply(col,i -> #i);
-	       apply(col, s -> ( w := (wid - #s + 1)//2; (w, s, wid-w-#s)))));
+	       wid := 1 + max apply(col, i -> #i);
+	       apply(col, s -> (wid-#s, s))));
      v = prepend(leftside,v);
      v = transpose v;
      stack apply(v, concatenate))
