@@ -413,7 +413,7 @@ Matrix.AfterNoPrint = f -> (
      << endl;
      )
 
-precedence Matrix := x -> precedence symbol x
+-- precedence Matrix := x -> precedence symbol x
 
 compactMatrixForm = true
 
