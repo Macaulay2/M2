@@ -726,7 +726,7 @@ Matrix_int_pair * IM2_Matrix_divide_by_var(const Matrix *M, int var, int maxdegr
   return result;
 }
 
-const Matrix * IM2_Matrix_compress(const Matrix *M)
+const Matrix * rawMatrixCompress(const Matrix *M)
 {
   return M->compress();
 }

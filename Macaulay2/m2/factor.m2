@@ -16,7 +16,7 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> new ring r from rawGCD(r
 -- 	       );
 -- 	  t))
 
-gcdCoefficients(RingElement,RingElement) := (f,g) -> (
+gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
      error "gggcdextended not re-implemented";
@@ -32,7 +32,7 @@ pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
      if R =!= ring g then error "expected elements of the same ring";
      new R from rawPseudoRemainder(raw f, raw g));
 
-reorder := I -> (
+reorder := I -> (					    -- rawIdealReorder
      f := generators I;
      R := ring I;
      v := rawIdealReorder raw f;
@@ -50,7 +50,7 @@ commden := (f) -> (
 	  denominator))
 
 irreducibleCharacteristicSeries = method()
-irreducibleCharacteristicSeries Ideal := I -> (
+irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      f := generators I;
      --f = compress f;					    -- avoid a bug 
      R := ring I;
