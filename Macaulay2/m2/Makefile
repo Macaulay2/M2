@@ -79,6 +79,7 @@ TAGS: Makefile
 				../emacs/emacs.hlp \
 			        ../experiments/*.m2 \
 			        ../slides/*.m2 \
+			        ../slides/lib/*.m2 \
 				../Vasconcelos-appendix/eg.m2 \
 				../Vasconcelos-appendix/appendix.tex \
 				../Vasconcelos-appendix/cohomology.tex \

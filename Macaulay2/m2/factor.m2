@@ -41,15 +41,18 @@ gcd(RingElement,RingElement) := (f,g) -> (
      R.pop())
 
 gcd(RingElement,RingElement) := (r,s) -> (
-     z := syz( matrix{{r,s}}, SyzygyLimit => 1 );
-     a := z_(0,0);
-     if s%a != 0 then error "can't find gcd in this ring";
-     t := s // a;
-     if isField coefficientRing ring t then (
-     	  c := leadCoefficient t;
-     	  t = t // c;
-	  );
-     t)
+     if r == 0 then s
+     else if s == 0 then r
+     else (
+	  z := syz( matrix{{r,s}}, SyzygyLimit => 1 );
+	  a := z_(0,0);
+	  if s%a != 0 then error "can't find gcd in this ring";
+	  t := s // a;
+	  if isField coefficientRing ring t then (
+	       c := leadCoefficient t;
+	       t = t // c;
+	       );
+	  t))
 
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (
      R := ring f;
@@ -62,6 +65,7 @@ gcdCoefficients(RingElement,RingElement) := (f,g) -> (
 
 --- this is the way the engine's own gcd routine would get called
 --- pgcd = (f, g) -> (sendgg(ggPush f, ggPush g, gggcd); new ring f)
+--- but it isn't implemented yet when there is more than one variable.
 
 pseudoRemainder = method()
 

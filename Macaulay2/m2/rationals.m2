@@ -66,3 +66,4 @@ document { quote QQ,
      SEEALSO{"numbers", "arithmetic functions"}
      }
 
+isUnit QQ := x -> x != 0

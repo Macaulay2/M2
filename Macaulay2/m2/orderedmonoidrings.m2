@@ -42,6 +42,7 @@ document { quote PolynomialRing,
 	  TO "index",
 	  TO "isPrime",
 	  TO "isPrimitive",
+	  TO "isUnit",
 	  TO "leadComponent",
 	  TO "leadCoefficient",
 	  TO "leadMonomial",
@@ -71,6 +72,15 @@ document { quote PolynomialRing,
      }
 
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
+
+document { quote isUnit,
+     TT "isUnit r", " -- determines whether a ring element is a unit.",
+     PARA,
+     EXAMPLE {
+	  "S = QQ[x,y]/(1-(x-1)*(y-1));",
+	  "isUnit (x^2 - 2*x + 1)"
+	  }
+     }
 
 document { quote exponents,
      TT "exponents m", " -- for a monomial ", TT "m", " provides the list
