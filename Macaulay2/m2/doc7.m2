@@ -653,12 +653,15 @@ document { (flip,Module,Module),
 
 document { subquotient,
      Headline => "make a subquotient module",
-     TT "subquotient(f,g)", " -- given matrices ", TT "f", " and ", TT "g", " with the same target, 
-     produces a new module representing the image of ", TT "f", " in the cokernel
-     of ", TT "g", ".",
+     Usage => {
+	  TT "subquotient(g,r)", " -- the image of ", TT "g", " in the cokernel of ", TT "r", "."
+	  },
+     TT "subquotient(g,r)", " -- given matrices ", TT "g", " and ", TT "r", " with the same target, 
+     produces a new module representing the image of ", TT "g", " in the cokernel
+     of ", TT "r", ".",
      PARA,
-     "The columns of ", TT "f", " are called the generators, and the columns of
-     ", TT "g", " are the relations.",
+     "The columns of ", TT "g", " are called the generators, and the columns of
+     ", TT "r", " are the relations.",
      PARA,
      "Functions:",
      MENU {

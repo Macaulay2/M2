@@ -7,7 +7,7 @@ local PowerPrecedence
 EmptyName := symbol EmptyName
 unit := symbol unit
 operator := symbol operator
-letters := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+letters := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 digits := set characters "0123456789"
 endsWithIdentifier := s -> (
      c := "";

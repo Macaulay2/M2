@@ -199,11 +199,7 @@ document { (resolution, Matrix),
      TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
      chain map from a resolution of the source of ", TT "f", " to a resolution of the
      target of ", TT "f", ".",
-     EXAMPLE {
-	  "R = ZZ/101[x,y];",
-      	  "m = ideal vars R",
-      	  "resolution map(m/m^3, m^2/m^4)"
-	  }
+     SEEALSO "free resolutions of modules"
      }
 
 document { (resolution, Ideal),

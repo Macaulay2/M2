@@ -176,7 +176,7 @@ document { "making modules from matrices",
 	  "R = ZZ/101[a..c];",
 	  "f = vars R",
 	  },
-     "We can easily compute a ", TO "kernel", ",", TO "image", "
+     "We can easily compute a ", TO "kernel", ", ", TO "image", "
      or ", TT "cokernel", ".",
      EXAMPLE {
 	  "ker f",
@@ -191,13 +191,66 @@ document { "making modules from matrices",
 	  "image f ++ coker f"
 	  },
      "We may use ", TO "subquotient", " to make such modules directly,
-     although it's usually more convenient to use other operations."
+     although it's usually more convenient to use other operations.  The
+     first argument is the matrix whose columns are the generators, and
+     the second argument is the matrix whose columns are the relations.",
+     EXAMPLE {
+	  "M = subquotient(f, matrix {{a}})",
+	  "prune M",
+	  }
      }
 
 document { "manipulating modules",
-	  -- document the way to get maps between a module M and its
-	  -- version as a cokernel in the overview
-     "This node has not been written yet."
+     "Suppose we have a module which is represented as an image of a
+     matrix, and we want to represent it as a cokernel of a matrix.
+     This task may be accomplished with ", TO "prune", ".",
+     EXAMPLE {
+	  "R = QQ[x,y];",
+	  "I = ideal vars R",
+	  "M = image vars R",
+	  "N = prune M",
+	  },
+     "The isomorphism between them may be found under the key
+     ", TT "pruningMap", ".",
+     EXAMPLE {
+	  "f = N.pruningMap",
+	  "isIsomorphism f",
+	  "f^-1",
+	  },
+     "The matrix form of ", TT "f", " looks nondescript, but the map
+     knows its source and target",
+     EXAMPLE {
+	  "source f",
+	  "target f",
+	  },
+     "It's a 2 by 2 matrix because ", TT "M", " and ", TT "N", " are
+     both represented as modules with two generators.",
+     PARA,
+     "Functions for finding related modules:",
+     SHIELD MENU {
+	  TO "ambient",
+	  TO "cover",
+	  TO "super",
+	  },
+     EXAMPLE {
+	  "super M",
+	  "cover N",
+	  },
+     "Some simple operations on modules:",
+     SHIELD MENU {
+	  TO (symbol ^, Module, ZZ),
+	  TO (symbol ++, Module, Module),
+	  TO (symbol **, Module, Module),
+	  },
+     EXAMPLE {
+	  "M ++ N",
+	  "M ** N",
+	  },
+     "Ideals and modules behave differently when making powers:",
+     EXAMPLE {
+	  "M^3",
+	  "I^3"
+	  }
      }
 
 document { "maps between modules",			    -- map
@@ -211,74 +264,220 @@ document { "maps between modules",			    -- map
 	  "f = vars R",
 	  "M = R^4",
 	  },
-     "We can use ", TO (symbol ^, Module,List), " to produce projection maps
-     to quotient modules and injection maps from submodules corresponding
-     to specified basis vectors.",
+     "We can use ", TO (symbol ^, Module,List), " and ", TO (symbol _, Module,List), "
+     to produce projection maps to quotient modules and injection maps 
+     from submodules corresponding to specified basis vectors.",
      EXAMPLE {
      	  "M^{0,1}",
      	  "M_{2,3}",
 	  },
      PARA,
-     "Natural maps between modules can be obtained with ", TO "map", ".",
+     "Natural maps between modules can be obtained with ", TO "map", "; the
+     first argument is the desired target, and the second is the source.",
      EXAMPLE {
 	  "map(source f, ker f)",
 	  "map(coker f, target f)",
 	  },
-     "The rest of this node has not been written yet."
      }
 
 document { "bases of parts of modules",
-     "This node has not been written yet."
+     "The function ", TO "basis", " can be used to produce bases (over the
+     ground field) of parts of modules (and rings) of a specified degree.",
+     EXAMPLE {
+	  "R = ZZ/101[a..c];",
+      	  "basis(2, R)",
+	  "M = ideal(a,b,c)/ideal(a^2,b^2,c^2);",
+      	  "f = basis(2,M)",
+	  },
+     "Notice that the matrix of ", TT "f", " is expressed in terms of the
+     generators of ", TT "M", ".  The reason is that ", TT "M", " is the target
+     of ", TT "f", ", and matrices such as ", TT "f", " are always expressed 
+     in terms of the generators of the source and target.",
+     EXAMPLE "target f",
+     "The command ", TO "super", " is useful for getting around this.",
+     EXAMPLE "super f",
+     "When a ring is multi-graded, we specify the degree as a list of
+     integers.",
+     EXAMPLE {
+      	  "S = ZZ/101[x,y,z,Degrees=>{{1,3},{1,4},{1,-1}}];",
+      	  "basis({7,24}, S)",
+	  },
      }
 
 document { "chain complexes",
      Headline => "an overview",
-     "In this section we present an overview of chain complexes.
-     For details, see ", TO "ChainComplex", ".",
+     "In this section we present an overview of chain complexes. For
+     details, see ", TO "ChainComplex", " and ", TO "ChainComplexMap", ".",
      PARA,
-     "If ", TT "C", " is a chain complex, then ", TT "C_i", " will produce 
-     the ", TT "i", "-th module in the complex, and ", TT "C.dd_i", " will 
-     produce the differential whose source is ", TT "C_i", ".",
-     PARA,
-     "A new chain complex can be made with ", TT "C = new ChainComplex", ".  This will
-     automatically initialize ", TT "C.dd", ", in which the differentials are stored.
-     The modules can be installed with statements like ", TT "C#i=M", " and the 
-     differentials can be installed with statements like ", TT "C.dd#i=d", ".",
-     PARA,
-     "See also ", TO "ChainComplexMap", " for a discussion of maps between
-     chain complexes.  (The boundary map C.dd is regarded as one.)",
-     PARA,
-     "The default display for a chain complex shows the modules and
-     the stage at which they appear.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "C = resolution cokernel matrix {{x,y,z}}",
-	  },
-     "In order to see the matrices of the differentials, examine ", TT "C.dd", ".",
-     EXAMPLE "C.dd",
      MENU {
 	  TO "free resolutions of modules",
-	  TO "making chain complexes by hand",
 	  TO "extracting information from chain complexes",
+	  TO "making chain complexes by hand",
 	  TO "manipulating chain complexes",
 	  TO "maps between chain complexes"
 	  }
      }
 
 document { "free resolutions of modules",
-     "This node has not been written yet."
-     }
-
-document { "making chain complexes by hand",
-     "This node has not been written yet."
+     "The function ", TO "resolution", " (also called ", TO "res", "),
+     can be used to produce a free resolution of a module.",
+     EXAMPLE {
+	  "R = ZZ/101[x,y];",
+	  "m = ideal vars R",
+	  "M = m/m^3",
+      	  "C = resolution M",
+	  },
+     "The default display for a chain complex shows the modules and
+     the number of the stage at which they appear.  See the
+     documentation of ", TO "resolution", " for details on
+     the options which can be used to control the computation.",
+     PARA,
+     "The same function, applied to a map ", TT "f", ", will produce a map
+     from a free resolution of the source of ", TT "f", " to a free resolution of
+     the target of ", TT "f", ".",
+     EXAMPLE {
+	  "h = resolution map(M, m^2/m^4)"
+	  }
      }
 
 document { "extracting information from chain complexes",
-     "This node has not been written yet."
+     "Let's make a chain complex.",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z];",
+      	  "C = res coker matrix {{x,y^2,z^3}};",
+	  },
+     "Some simple functions for discovering the shape of ", TT "C", ".",
+     SHIELD MENU {
+	  TO (length, ChainComplex),
+	  TO (max, ChainComplex),
+	  TO (min, ChainComplex),
+	  },
+     EXAMPLE {
+	  "length C",
+	  "max C",
+	  "min C",
+	  },
+     "In order to see the matrices of the differential maps in a
+     chain complex, examine ", TT "C.dd", ".",
+     EXAMPLE {
+      	  "C.dd",
+	  },
+     "If ", TT "C", " is a chain complex, then ", TT "C_i", " will produce 
+     the ", TT "i", "-th module in the complex, and ", TT "C.dd_i", " will 
+     produce the differential whose source is ", TT "C_i", ".",
+     EXAMPLE {
+	  "C_1",
+	  "C.dd_2"
+	  },
+     "The function ", TO "betti", " can be used to display the ranks of the
+     free modules in ", TT "C", ", together with the distribution of the basis 
+     elements by degree, at least for resolutions of homgeneous modules.",
+     EXAMPLE {
+	  "betti C"
+	  },
+     "The ranks are displayed in the top row, and below that
+     in row ", TT "i", " column ", TT "j", " is displayed the number of
+     basis elements of degree ", TT "i+j", " in ", TT "C_j", "."
+     }
+
+document { "making chain complexes by hand",
+     "A new chain complex can be made with ", TT "C = new ChainComplex", ".  This will
+     automatically initialize ", TT "C.dd", ", in which the differentials are stored.
+     The modules can be installed with statements like ", TT "C#i=M", " and the 
+     differentials can be installed with statements like ", TT "C.dd#i=d", ".
+     The ring is installed with ", TT "C.ring = R", ".  It's up to the
+     user to ensure that the composite of consecutive differential maps is zero.",
+     EXAMPLE {
+	  "R = QQ[x,y,z];",
+	  "d1 = matrix {{x,y}};",
+	  },
+     "We take care to use ", TO "map", " to ensure that the target of ", TT "d2", " is
+     exactly the same as the source of ", TT "d1", ".",
+     EXAMPLE {
+	  "d2 = map(source d1, ,{{y*z},{-x*z}});",
+	  "d1 * d2 == 0",
+	  },
+     "Now we make the chain complex, as explained above.",
+     EXAMPLE {
+	  "C = new ChainComplex; C.ring = R;",
+	  "C#0 = target d1; C#1 = source d1; C#2 = source d2;",
+	  "C.dd#1 = d1; C.dd#2 = d2;",
+	  },
+     "Our complex is ready to use.",
+     EXAMPLE {
+	  "C",
+	  "HH_0 C",
+	  "prune HH_1 C",
+	  },
+     "The chain complex we've just made is simple, in the sense that it's a homological
+     chain complex with nonzero modules in degrees 0, 1, ..., n.  Such a chain
+     complex can be made also with ", TO "chainComplex", ".  It goes to a bit
+     of extra trouble to adjust the differentials to match the degrees of the
+     basis elements.",
+     EXAMPLE {
+	  "D = chainComplex(matrix{{x,y}}, matrix {{y*z},{-x*z}})",
+	  "degrees source D.dd_2",
+	  }
      }
 
 document { "manipulating chain complexes",
-     "This node has not been written yet."
+     "There are several natural ways to handle chain complexes; for
+     details, see ", TO "ChainComplex", ".  Let's illustrate by
+     making two chain complexes.",
+     EXAMPLE {
+	  "R = QQ[x,y];",
+	  "M = coker vars R",
+	  "N = coker matrix {{x}}",
+	  "C = res M",
+	  "D = res N",
+	  },
+     "We can form the direct sum as follows.",
+     EXAMPLE {
+	  "C ++ D"
+	  },
+     "We can shift the degree, using the traditional notation.",
+     EXAMPLE {
+	  "E = C[5]",
+	  "E_-4 == C_1"
+	  },
+     "The same syntax can be used to make a chain complex from a
+     single module.",
+     EXAMPLE {
+	  "R^4[1]"
+	  },
+     "We can form various tensor products with ", TO "**", ", and
+     compute ", TO "Tor", " using them.",
+     EXAMPLE {
+	  "M ** D",
+	  "C ** D",
+	  "prune HH_1(C ** D)",
+	  "prune HH_1(M ** D)",
+	  "prune HH_1(C ** N)",	  
+	  },
+     "Of course, we can use ", TO "Tor", " to get the same result.",
+     EXAMPLE {
+	  "prune Tor_1(M,N)"
+	  },
+     "Let's construct the natural map from ", TT "N", " to ", TT "M", ".",
+     EXAMPLE {
+	  "f = map(M,N)"
+	  },
+     "Let's lift the map to a map of free resolutions.",
+     EXAMPLE {
+	  "g = res f"
+	  },
+     "We can form the mapping cone of that map.",
+     EXAMPLE {
+	  "F = cone g"
+	  },
+     "Since ", TT "f", " is surjective, we know that ", TT "F", "
+     is quasi-isomorphic to ", TT "(kernel f)[-1]", ".  Let's
+     check that.",
+     EXAMPLE {
+	  "prune HH_0 F",
+	  "prune HH_1 F",
+	  "prune kernel f",
+	  }
      }
 
 document { "maps between chain complexes",

@@ -28,7 +28,8 @@ ChainComplex _ ZZ := Module => (C,i) -> (
 ChainComplex ^ ZZ := Module => (C,i) -> C_-i
 
 spots := C -> select(keys C, i -> class i === ZZ)
-union := (x,y) -> keys(set x + set y)
+union        := (x,y) -> keys(set x + set y)
+intersection := (x,y) -> keys(set x * set y)
 
 rank ChainComplex := C -> sum(spots C, i -> rank C_i)
 
@@ -103,7 +104,7 @@ degree ChainComplexMap := f -> f.degree
 net ChainComplexMap := f -> (
      complete f;
      v := between("",
-	  apply(sort union(spots f.source, spots f.target),
+	  apply(sort union(spots f.source, spots f.target / (i -> i - f.degree)),
 	       i -> horizontalJoin (
 		    net (i+f.degree), " : ", net target f_i, " <--",
 		    lineOnTop net f_i,
