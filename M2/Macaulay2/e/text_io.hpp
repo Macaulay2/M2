@@ -14,6 +14,9 @@ extern "C" char newline[];
 
 void bignum_text_out(buffer &o, mpz_t a);
 
+void clear_emit_size();
+void emit_wrapped(char *s);
+
 void emit(char *s); // print onto stderr, or cerr.
 void emit_line(char *s); // print onto stderr, or cerr.
 #endif

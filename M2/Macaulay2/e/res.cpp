@@ -899,7 +899,7 @@ int res_comp::calc(const int *DegreeLimit,
 
       for ( ; n_level <= length_limit+1; n_level++)
 	{
-	  if (comp_printlevel >= 1) emit(".");
+	  if (comp_printlevel >= 1) emit_wrapped(".");
 
 	  DO(pairs(n_level-1, n_degree));
 	  DO(pairs(n_level-1, n_degree+1));
@@ -933,6 +933,7 @@ int res_comp::gens(int deg)
 	    return COMP_DONE_PAIR_LIMIT;
 	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	    return COMP_DONE_SYZYGY_LIMIT;
+	  system_spincursor();
 	  if (system_interrupted) return COMP_INTERRUPTED;
 	}
       
@@ -962,6 +963,7 @@ int res_comp::pairs(int level, int deg)
 	{
 	  pairs->next_new_pair = p->next;
 	  new_pairs(p);
+	  system_spincursor();
 	  if (system_interrupted) return COMP_INTERRUPTED;
 	}
     }
@@ -992,6 +994,7 @@ int res_comp::reductions(int level, int deg)
 	  return COMP_DONE_PAIR_LIMIT;
 	if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	  return COMP_DONE_SYZYGY_LIMIT;
+	system_spincursor();
 	if (system_interrupted) return COMP_INTERRUPTED;
       }
   return COMP_COMPUTING;
@@ -1012,12 +1015,12 @@ void res_comp::handle_gen(res_pair *p)
       insert_res_pair(1, p);
       p->minimal_me = resn[1]->nminimal++;
       nminimal++;
-      if (comp_printlevel >= 2) emit("z");
+      if (comp_printlevel >= 2) emit_wrapped("z");
     }
   else
     {
       remove_res_pair(p);
-      if (comp_printlevel >= 2) emit("o");
+      if (comp_printlevel >= 2) emit_wrapped("o");
     }
 }
 void res_comp::handle_pair(res_pair *p)
@@ -1037,7 +1040,7 @@ void res_comp::handle_pair(res_pair *p)
       p->syz_type = SYZ_MINIMAL;
       p->minimal_me = resn[n_level]->nminimal++;
       nminimal++;
-      if (comp_printlevel >= 2) emit("z");
+      if (comp_printlevel >= 2) emit_wrapped("z");
     }
   else 
     {
@@ -1047,7 +1050,7 @@ void res_comp::handle_pair(res_pair *p)
       // non-minimal syzygy
       q->syz = f;
       q->syz_type = SYZ_NOT_NEEDED;
-      if (comp_printlevel >= 2) emit("m");
+      if (comp_printlevel >= 2) emit_wrapped("m");
       // MES: need to decrement nleft for 'q'.
     }
 }

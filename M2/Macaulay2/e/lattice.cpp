@@ -1,5 +1,6 @@
 // Copyright 1997  Michael E. Stillman
 
+#include "comp.hpp"
 #include "lattice.hpp"
 #include "sparsemat.hpp"
 #include "text_io.hpp"
@@ -101,6 +102,7 @@ int MatrixComputation::calc(int nsteps)
   if (last_col < 0) return 0;	// Done
   while (last_col >= 0)
     {
+      system_spincursor();
       if (system_interrupted) return -1;
       if (nsteps-- <= 0) break;
       if (comp_printlevel >= 1)

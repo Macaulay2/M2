@@ -577,6 +577,9 @@ M2_string system_syserrmsg()
 #if 0
      extern char * sys_errlist[];
 #endif
+#if defined(__MWERKS__)
+     return tostring("");
+#else
      M2_string s = (
 	  h_errno > 0 && h_errno < h_nerr
 	  ? tostring(h_errlist[h_errno])
@@ -586,6 +589,7 @@ M2_string system_syserrmsg()
 	  );
      errno = h_errno = 0;
      return s;
+#endif
      }
 
 int system_run(M2_string command){
@@ -624,6 +628,17 @@ int M2open(char *name, int flags)
     return (int)fil;	
 }
 
+static int prev_putc = '\0';
+void M2putc(int c, FILE *fil)
+{
+  if (c == '\r') {
+    if (prev_putc != '\n') 
+      putc('\n',fil);
+  } else 
+    putc(c,fil);
+  prev_putc = c;
+}
+
 int M2read(int fd, char *buffer, int len)
 {
     char * result;
@@ -641,16 +656,29 @@ int M2read(int fd, char *buffer, int len)
 }
 int M2write(int fd, char *buffer, int len)
 {
+    int i, ret;
     switch (fd) {
     case 0:
     	fprintf(stderr, "error: attempt to write to stdin\n");
     	return fwrite(buffer, 1, len, stdin);
     case 1:
 //    	return fprintf(stdout, buffer);
-    	return fwrite(buffer, 1, len, stdout);
+	//for (i=0; i<len; i++) M2putc(buffer[i], stdout);
+	//return len;
+	for (i=0; i<len; i++) 
+	  if (buffer[i] == '\r') 
+	    buffer[i] = '\n';
+    	ret = fwrite(buffer, 1, len, stdout);
+    	return ret;
     case 2:
 //  	return fprintf(stderr, buffer);
-    	return fwrite(buffer, 1, len, stderr);
+	//for (i=0; i<len; i++) M2putc(buffer[i], stderr);
+	//return len;
+	for (i=0; i<len; i++) 
+	  if (buffer[i] == '\r') 
+	    buffer[i] = '\n'; 
+    	ret = fwrite(buffer, 1, len, stderr);
+    	return ret;
     default:
         return fwrite(buffer, 1, len, (FILE *)fd);
     }

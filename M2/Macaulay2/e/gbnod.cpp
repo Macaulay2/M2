@@ -594,7 +594,7 @@ bool gb2_comp::s_pair_step()
       gb_insert(f, fsyz, 0);
       n_gb_syz--;
       n_pairs_gb++;
-      if (comp_printlevel >= 3) emit("m");
+      if (comp_printlevel >= 3) emit_wrapped("m");
     }
   else if (fsyz != NULL && syz != NULL)
     {
@@ -602,19 +602,19 @@ bool gb2_comp::s_pair_step()
 	{
 	  n_gb_syz--;
 	  n_pairs_syz++;
-	  if (comp_printlevel >= 3) emit("z");
+	  if (comp_printlevel >= 3) emit_wrapped("z");
 	}
       else
 	{
 	  n_pairs_usyz++;
-	  if (comp_printlevel >= 3) emit("u");
+	  if (comp_printlevel >= 3) emit_wrapped("u");
 	}
     }
   else
     {
       if (fsyz != NULL) Fsyz->remove(fsyz);
       n_pairs_zero++;
-      if (comp_printlevel >= 3) emit("o");
+      if (comp_printlevel >= 3) emit_wrapped("o");
     }
   return true;
 }
@@ -778,6 +778,7 @@ int gb2_comp::calc_gb(int deg, const intarray &stop)
       for (;;)
 	{
 	  if (ret != COMP_COMPUTING) break;
+	  system_spincursor();
 	  if (system_interrupted) 
 	    {
 	      ret = COMP_INTERRUPTED;

@@ -1060,3 +1060,122 @@ document { "Groebner bases",
      For now, beware that a Groebner basis object prints out just like a matrix, but
      can't be used as one."
      }
+///
+document { "free modules",
+     "This node has not been  written yet."
+     }
+
+document { "making modules from matrices",
+     "This node has not been  written yet."
+     }
+
+document { "manipulating modules",
+	  -- document the way to get maps between a module M and its
+	  -- version as a cokernel in the overview
+     "This node has not been  written yet."
+     }
+
+document { "maps between modules",
+     	  -- (R^5)_{0}
+     "This node has not been  written yet."
+     }
+
+document { "bases of parts of modules",
+     "This node has not been  written yet."
+     }
+
+document { "free resolutions of modules",
+     "This node has not been  written yet."
+     }
+
+document { "making chain complexes by hand",
+     "This node has not been  written yet."
+     }
+
+document { "extracting information from chain complexes",
+     "This node has not been  written yet."
+     }
+
+document { "manipulating chain complexes",
+     "This node has not been  written yet."
+     }
+
+document { "maps between chain complexes",
+     "This node has not been  written yet."
+     }
+
+document { "algebraic varieties",
+     "This node has not been  written yet."
+     }
+
+document { "coherent sheaves",
+     "This node has not been  written yet."
+     }
+
+document { "programming overview",
+     "In this section we give a comprehensive overview of the main 
+     programming features of Macaulay 2.",
+     PARA,
+     MENU {
+     	  (
+	       "variables and symbols",
+	       MENU {
+     	       	    TO "valid names",
+		    TO "assigning values",
+		    TO "local variables in a file",
+		    }
+	       ),
+	  (
+	       "overview of functions",
+	       MENU {
+		    TO "making functions",
+		    TO "parameters",
+		    TO "local variables in a function",
+		    TO "functions with a variable number of arguments",
+		    }
+	       ),
+	  (
+	       "control structures",
+	       MENU {
+		    TO "loops",
+		    TO "mapping over lists",
+		    TO "conditional execution",
+		    TO "error handling",
+		    }
+	       ),
+	  (
+	  	"operators and reserved words",
+	  	MENU {
+	  	    }
+	       ),
+	  }
+     }
+
+document { "valid names",
+     "Valid names for symbols may be constructed using letters, digits, and
+     the apostrophe, and should not begin with a digit.",
+     EXAMPLE {
+	  "x",
+	  "q0r55",
+	  "f'"
+	  }
+     }
+
+document { "reserved words",
+     "The list of reserved words:",
+     TO "new", "do", "else", "then", "of", "from", "or",
+     "and", "not", "quote", "global", "local", "while",
+     "try", "if", "time", "timing", "shield"
+     }
+
+document { "operators",
+     "The list of binary operators",
+     "+", "-",
+     "*", "... This list already exists."}
+
+
+///
+
+     
+     
+     

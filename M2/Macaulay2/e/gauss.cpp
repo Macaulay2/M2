@@ -183,13 +183,14 @@ int GaussElimComputation::calc(const int *, const intarray &stop)
 	  if (comp_printlevel >= 3)
 	    if (p->f == NULL)
 	      if (p->fsyz == NULL)
-		emit("o");
+		emit_wrapped("o");
 	      else
-		emit("z");
+		emit_wrapped("z");
 	    else
-	      emit("r");
+	      emit_wrapped("r");
 	  insert(p);
 	  n_pairs++;
+	  system_spincursor();
 	  if (system_interrupted)
 	    return COMP_INTERRUPTED;
 	  if (n_pairs == stop[2])

@@ -616,10 +616,20 @@ void spincursor(){
 #endif
      }
 
-void system_setspinspan(int n){
-     SPINCOUNT = spincount = n;
-     }
+int system_setspinspan(int n){
+  int result = SPINCOUNT;
+  SPINCOUNT = spincount = n;
+  return result;
+}
 
+void system_spincursor(){
+#ifdef __MWERKS__
+  if (--spincount == 0) {
+    SpinCursor();
+    spincount = SPINCOUNT;
+  }
+#endif
+}
 void scclib__prepare(){}
 
 extern int etext, end;
@@ -1417,6 +1427,9 @@ M2_string oper1;
 void C__prepare() {}
 
 int actors4_isReady(int fd) {
+#if defined(__MWERKS__)
+     return 1;
+#else
   int ret;
   static fd_set r, w, e;
   struct timeval timeout;
@@ -1425,6 +1438,7 @@ int actors4_isReady(int fd) {
   ret = select(fd+1,&r,&w,&e,&timeout);
   FD_CLR(fd,&r);
   return ret;
+#endif
 }
 
 int actors5_WindowWidth(int fd) {

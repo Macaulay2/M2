@@ -76,6 +76,7 @@ void *GBgbprocess(char *instream, int inlen)
 
   while (gInputLen > 0)
     {
+      clear_emit_size();  // Only for verbose output...
       int opcode = bin_int_in(gInput, gInputLen);
       execute(opcode);
 
