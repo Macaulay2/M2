@@ -711,7 +711,7 @@ document {
      "Some examples of monomial orders.  Note that if only one item is in the list, 
      we can dispense with the list.",
      UL {
-	  (TT "MonomialOrder => {GrevLex=>2, GRevLex=>3}", " -- a product order"),
+	  (TT "MonomialOrder => {GRevLex=>2, GRevLex=>3}", " -- a product order"),
 	  (TT "MonomialOrder => {Weights=>{1,13,6,2}}", " -- a weight order"),
 	  (TT "MonomialOrder => Weights=>{1,13,6,2}", " -- same"),
 	  },

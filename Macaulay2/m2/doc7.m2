@@ -519,7 +519,7 @@ document {
      "See ", TO "parts of monomial orders", " for an explanation.",
      EXAMPLE {
 	  "R = QQ[x,y,z,a..d,MonomialOrder=>ProductOrder{3,4}];",
-	  "f = matrix{{0,x^2*(a+b)}, {a*x+2*b*y, y^2*(c+d)}}}",
+	  "f = matrix{{0,x^2*(a+b)}, {a*x+2*b*y, y^2*(c+d)}}",
 	  "leadTerm(1,f)"
 	  },
      SeeAlso => { "selectInSubring" }
@@ -1009,7 +1009,7 @@ document {
      EXAMPLE {
 	  "R = ZZ/101[x,y]",
       	  "p = matrix{{x,y}}",
-      	  "q = map(R^{3},p)",
+      	  "q = map(R^{3},,p)",
       	  "degrees target q",
       	  "degrees source q",
 	  },
