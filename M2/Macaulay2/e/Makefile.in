@@ -272,16 +272,16 @@ tags:: TAGS
 TAGS: $(HHFILES) $(CCFILES)
 	etags *.hpp *.cpp *.c
 
-clean:
+clean::
 	rm -f *.lo *.o *.dd *.ii $(LIB) allfiles cmdinst.hpp cmdnames.hpp cmdnames.m2
 	rm -f TAGS
 
 Makefile : Makefile.in
 	cd ../..; config.status Macaulay2/e/Makefile
 
-# should remake these two manually once in a while -- not all systems have makedepend
-Makefile-o.depends: $(CFILES) $(CCFILES)
-	$(CC) -M $(CPPFLAGS) $^ >"$@"
+Makefile-o.depends: $(CFILES) $(CCFILES) cmdnames.hpp cmdinst.hpp
+	$(CC) -M $(CPPFLAGS) $(patsubst %, @srcdir@/%, $(CFILES) $(CCFILES)) >"$@"
+clean::; rm -f Makefile-o.depends
 
 ifndef NODEPENDS
 include Makefile-o.depends
