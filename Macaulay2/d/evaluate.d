@@ -64,26 +64,29 @@ export storeInDictionary(dc:DictionaryClosure,i:Code,rhs:Code):Expr := (
      is Error do ival
      else printErrorMessageE(i,"expected a string"));
 
-assignvector(x:Sequence,i:Code,rhs:Code):Expr := (
+assignvector(m:List,i:Code,rhs:Code):Expr := (
+     x := m.v;
      ival := eval(i);
      when ival
      is j:Integer do (
 	  if isInt(j)
 	  then (
 	       k := toInt(j);
-	       if k < -length(x) || k >= length(x)
-	       then printErrorMessageE(i,"subscript out of bounds 0 .. "+tostring(length(x)-1))
-	       else (
-		    val := eval(rhs);
-		    when val is Error do val
-		    else (
-			 if k < 0
-			 then x.(length(x) + k) = val
-			 else x.k = val;
-			 val)))
-	  else printErrorMessageE(i,"subscript out of bounds"))
+	       if k < -length(x) then k = k + length(x);
+	       if k < 0 then return printErrorMessageE(i,"negative subscript out of bounds 0 .. "+tostring(length(x)-1));
+	       val := eval(rhs);
+	       when val is Error do return val else (
+		    if k >= length(x) then (
+			 x = new Sequence len k+1 do (
+			      foreach t in x do provide t;
+			      while true do provide nullE;
+			      );
+			 m.v = x; );
+	       	    x.k = val;
+	       	    val))
+	  else printErrorMessageE(i,"expected small integer"))
      is Error do ival
-     else printErrorMessageE(i,"expected integer as subscript")
+     else printErrorMessageE(i,"index not an integer")
      );
 
 dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
@@ -109,7 +112,7 @@ assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      when x
      is Error do x
      is x:List do (
-	  if x.mutable then assignvector(x.v,lhsindex,rhs)
+	  if x.mutable then assignvector(x,lhsindex,rhs)
 	  else buildErrorPacket("assignment attempted to element of immutable list")
 	  )
      is x:Sequence do buildErrorPacket("assignment attempted to element of sequence")

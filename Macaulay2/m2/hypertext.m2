@@ -583,7 +583,7 @@ info MENU := r -> (
 			 );
 		    t)));
      printWidth = printWidth + #pre;
-     stack join({"* Menu:"}, ret))
+     stack join({"* Menu:",""}, ret))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
