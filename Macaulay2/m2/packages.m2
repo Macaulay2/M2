@@ -10,6 +10,7 @@ addStartFunction(
 Package = new Type of MutableHashTable
 Package.synonym = "package"
 net Package := toString Package := p -> if p#?"title" then p#"title" else "--package--"
+packages = {}
 
 hide := d -> (
      globalDictionaries = select(globalDictionaries, x -> x =!= d);
@@ -50,46 +51,60 @@ newPackage(String) := opts -> (title) -> (
      stderr << "--package " << title << " loading" << endl;
      removePackage title;
      saveD := globalDictionaries;
-     hook := haderror -> if haderror then globalDictionaries = saveD else closePackage title;
-     newdict := (
-	  if title === "Main" then first globalDictionaries
-	  else (
-	       d := new Dictionary;
-	       fileExitHooks = prepend(hook, fileExitHooks);
-	       globalDictionaries = join({d,Main.Dictionary,PackageDictionary},apply(opts.Using,pkg->pkg.Dictionary));
-	       d));
-     p := currentPackageS <- new Package from {
+     saveP := packages;
+     local hook;
+     if title =!= "Main" then (
+     	  hook = (
+	       haderror -> if haderror then (
+	       	    globalDictionaries = saveD;
+	       	    packages = saveP;
+		    )
+	       else closePackage title
+	       );
+	  fileExitHooks = prepend(hook, fileExitHooks);
+	  );
+     newpkg := new Package from {
           "title" => title,
-     	  "private dictionary" => newdict,			    -- how do I make a synonym in a *different* dictionary (make a synonym dictionary closure, with the same frame?)
+     	  "private dictionary" => if title === "Main" then first globalDictionaries else new Dictionary, -- this is the local one
 	  symbol Options => opts,
-     	  symbol Dictionary => if title === "Main" then newdict else new Dictionary,
+     	  symbol Dictionary => if title === "Main" then first globalDictionaries else new Dictionary, -- this is the global one
      	  "close hook" => hook,
-	  "previous package" => currentPackage,
+	  "previous currentPackage" => currentPackage,
 	  "previous dictionaries" => saveD,
+	  "previous packages" => saveP,
 	  "mutable symbols" => {},
-	  "old debugging mode" => debuggingMode,
+	  "old debuggingMode" => debuggingMode,
 	  "test inputs" => new MutableHashTable,
-	  "print names" => new MutableHashTable,
-	  "raw documentation" => new MutableHashTable,
 	  "documentation" => new MutableHashTable,
 	  "example inputs" => new MutableHashTable,
 	  "top node name" => if opts.TopNodeName === null then title else opts.TopNodeName,
 	  "exported symbols" => {},
 	  "example results" => new MutableHashTable,
-	  "edited documentation" => new MutableHashTable,
-	  "html documentation" => new MutableHashTable,
 	  "source directory" => currentFileDirectory,
 	  "package prefix" => if title === "Main" then prefixDirectory else (
 	       m := matches("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
 	       ),
 	  };
-     PrintNames#(p.Dictionary) = title | ".Dictionary";
+     -- now change the global environment
+     currentPackageS <- newpkg;
+     pkgsym := getGlobalSymbol(PackageDictionary,title);
+     ReverseDictionary#newpkg = pkgsym;
+     pkgsym <- newpkg;
+     packages = join(
+	  if title === "Main" then {} else {newpkg},
+	  {Main},
+	  opts.Using
+	  );
+     globalDictionaries = join(
+	  if title === "Main" then {} else {newpkg#"private dictionary"},
+	  {Main.Dictionary, PackageDictionary},
+	  apply(opts.Using,pkg->pkg.Dictionary)
+	  );
+     PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
+     PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
      debuggingMode = opts.DebuggingMode;
-     sym := getGlobalSymbol(PackageDictionary,title);
-     ReverseDictionary#p = sym;
-     sym <- p;
-     p)
+     newpkg)
 
 export = method(SingleArgumentDispatch => true)
 export Symbol := x -> export singleton x
@@ -116,7 +131,7 @@ addStartFunction( () -> if prefixDirectory =!= null then Main#"package prefix" =
 newPackage("Main", DebuggingMode => debuggingMode, Version => version#"VERSION", TopNodeName => "Macaulay 2" )
 
 exportMutable {
-	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol fullBacktrace, symbol backtrace,
+	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol fullBacktrace, symbol backtrace, symbol packages,
 	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, 
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
 	  symbol notify, symbol loadDepth, symbol printingPrecision, symbol fileExitHooks,
@@ -166,13 +181,14 @@ closePackage String := title -> (
 	  protect exportDict;
 	  );
      if pkg#"title" =!= "Main" then (
+	  packages = prepend(pkg,pkg#"previous packages");
 	  globalDictionaries = prepend(exportDict,pkg#"previous dictionaries");
      	  checkShadow();
 	  );
      hook := pkg#"close hook";
      fileExitHooks = select(fileExitHooks, f -> f =!= hook);
-     currentPackage = pkg#"previous package";
-     debuggingMode = pkg#"old debugging mode";
+     currentPackage = pkg#"previous currentPackage";
+     debuggingMode = pkg#"old debuggingMode";
      stderr << "--package " << pkg << " installed" << endl;
      pkg)
 
@@ -197,16 +213,17 @@ package Thing := x -> (
      if d =!= null then package d)
 package Symbol := s -> (
      d := dictionary s;
-     if d =!= null then package d)
+     if d === PackageDictionary then value s
+     else if d =!= null then package d )
+     
 package HashTable := package Function := x -> if ReverseDictionary#?x then package ReverseDictionary#x
 
 warned := new MutableHashTable
 
 package TO := x -> (
-     key := normalizeDocumentTag x#0;
+     key := x#0;
      pkg := packageTag key;
      fkey := formatDocumentTag key;
-     assert (fkey =!= "     f(X,Y) := (x,y) -> ...");
      p := select(value \ values PackageDictionary, P -> P#"documentation"#?fkey); -- speed this up by implementing break for scanValues
      if #p == 1 then (
 	  p = p#0;

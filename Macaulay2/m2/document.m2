@@ -24,42 +24,6 @@ sublists := (x,f,g,h) -> (
      mingle(
 	  apply( prepend(-1,p), append(p,#x), (i,j) -> h take(x,{i+1,j-1})),
 	  apply( p, i -> g x#i)))
------------------------------------------------------------------------------
--- fixing up hypertext
------------------------------------------------------------------------------
-
-trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
-trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
-trimline1 := x -> selectRegexp ( "^ *(.*)$",1, x)
-addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
-
-fixup := method(SingleArgumentDispatch => true)
-flat := method()
-flat Thing := identity
-flat SEQ := x -> toSequence x
-flat Nothing := x -> ()
-fixflat := z -> splice apply(z, i -> flat fixup i)
-fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
-fixup Nothing    := identity				       -- null
-fixup Sequence   := z -> SEQ fixflat z
-fixup List       := z -> SEQ fixflat z
-fixup MarkUpList := z -> apply(z,fixup)			       -- recursion
-fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
-fixup UL         := z -> apply(z, i -> fixup if class i === TO then TOH i#0 else i)
-fixup PRE        := identity
-fixup CODE       := identity
-fixup TO         := x -> TO if x#?1 then { normalizeDocumentTag x#0, concatenate drop(toSequence x,1) } else { normalizeDocumentTag x#0 }
-fixup TO2        := x -> TO2{ normalizeDocumentTag x#0, concatenate drop(toSequence x,1) }
-fixup TOH        := x -> TOH{ normalizeDocumentTag x#0 }
-fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
-fixup Function   := z -> z				       -- allow Function => f 
-fixup String     := s -> (				       -- remove clumsy newlines within strings
-     ln := lines s;
-     if not ln#?1 then return s;
-     concatenate ({addspaces trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
-
-new Hypertext from List := (h,x) -> splice apply(x, i -> flat i)
-hypertext = x -> Hypertext fixup x
 
 -----------------------------------------------------------------------------
 -- unformatting document tags
@@ -84,38 +48,39 @@ record      := f -> x -> (
    --	             TO symbol sin
    -- and have them all get recorded the same way
 normalizeDocumentTag           = method(SingleArgumentDispatch => true)
-normalizeDocumentTag   String := s -> if isGlobalSymbol s then getGlobalSymbol s else s
+normalizeDocumentTag   String := key -> if isGlobalSymbol key then getGlobalSymbol key else key
 normalizeDocumentTag   Symbol := identity
 normalizeDocumentTag Sequence := identity
--- normalizeDocumentTag   Option := identity
-normalizeDocumentTag  Nothing := x -> symbol null
-normalizeDocumentTag    Thing := x -> (
-     if x.?Symbol and value x.Symbol === x then return x.Symbol;
-     if ReverseDictionary#?x then return ReverseDictionary#x;
-     error("encountered unidentifiable document tag: ",x);
+normalizeDocumentTag  Nothing := key -> symbol null
+normalizeDocumentTag    Thing := key -> (
+     if key.?Symbol and value key.Symbol === key then return key.Symbol;
+     if ReverseDictionary#?key then return ReverseDictionary#key;
+     error("encountered unidentifiable document tag: ",key);
      )
 
 isDocumentableThing = x -> null =!= package x		    -- maybe not quite right
 
-packageTag          = method(SingleArgumentDispatch => true)
-packageTag   Symbol := s -> if class value s === Package and toString value s === toString s then value s else package s
-packageTag   String := s -> currentPackage
+packageTag = method(SingleArgumentDispatch => true)	    -- assumes the input key has been normalized
+packageTag   Symbol := key -> package key
+packageTag   String := key -> currentPackage
 packageTag  Package := identity
-packageTag Sequence := s -> youngest \\ package \ s
--- packageTag   Option := s -> package youngest toSequence s
-packageTag    Thing := s -> error "can't determine package for documentation tag of unknown type"
+packageTag Sequence := key -> youngest \\ package \ key
+packageTag    Thing := key -> ( p := package key; if p === null then currentPackage else p)
 
-isDocumentableTag          = method(SingleArgumentDispatch => true)
+isDocumentableTag = method(SingleArgumentDispatch => true)  -- assumes the input key has been normalized
 isDocumentableTag   Symbol := s -> null =!= packageTag s
 isDocumentableTag   String := s -> true
 isDocumentableTag Sequence := s -> all(s, isDocumentableThing)
--- isDocumentableTag   Option := s -> all(toList s, isDocumentableThing)
 isDocumentableTag    Thing := s -> false
 
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
    -- The formatted form should be a human-readable string, and different normalized tags should yield different formatted tags.
+   -- The formatted tag is used for two purposes:
+   --    for display in menus and links
+   --    as the key for access in a database, where the key must be a string
+
 Strings := hashTable { Sequence => "(...)", List => "{...}", Array => "[...]" }
 toStr := s -> if Strings#?s then Strings#s else toString s
 formatDocumentTag           = method(SingleArgumentDispatch => true)
@@ -190,8 +155,9 @@ formatDocumentTagTO Sequence := (
 	                                                          else toString) s)
 
 -----------------------------------------------------------------------------
--- verifying the keys
+-- verifying the tags
 -----------------------------------------------------------------------------
+-- here we check that the method a putative document tag documents is actually installed
 verifyTag := method(SingleArgumentDispatch => true)
 verifyTag Thing    := s -> null
 verifyTag Sequence := s -> (
@@ -200,16 +166,69 @@ verifyTag Sequence := s -> (
 	  opt := s#-1;
 	  if #fn === 1 then (
 	       fn = fn#0;
-	       if not instance(fn, Function) then error "expected first element to be a function";
+	       if not instance(fn, Function) then error "expected first element of document tag for optional argument to be a function";
 	       )
 	  else (
-	       if not instance(lookup fn, Function) then error("documentation provided for '", formatDocumentTag fn, "' but no method installed");
+	       if not instance(lookup fn, Function) then error("no method installed for document tag '", formatDocumentTag fn, "'");
 	       fn = fn#0;
 	       );
 	  if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
      else (						    -- e.g., (res,Module) or (symbol **, Module, Module)
 	  if class lookup s =!= Function then error("documentation provided for '", formatDocumentTag s, "' but no method installed")))
 verifyTag Option   := s -> error "old style option documentation tag"
+
+-----------------------------------------------------------------------------
+-- making document tags
+-----------------------------------------------------------------------------
+-- We need three bits of information about a document tag:
+--     the original key	    	    e.g., (operator **,Module,Module)
+--     the formatted key            e.g., "Module ** Module"
+--     the title of the package     e.g., "Main"
+-- Here we assemble them together.
+DocumentTag = new Type of BasicList			    -- {normalized key (symbol or sequence or string), formatted key (string), package title (string)}
+net DocumentTag := x -> x#1
+makeDocumentTag = key -> (
+     verifyTag key;
+     key = normalizeDocumentTag key;
+     fkey := formatDocumentTag key;
+     pkg := packageTag key;
+     new DocumentTag from {key,fkey,pkg})
+-----------------------------------------------------------------------------
+-- fixing up hypertext
+-----------------------------------------------------------------------------
+
+trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
+trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
+trimline1 := x -> selectRegexp ( "^ *(.*)$",1, x)
+addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
+
+fixup := method(SingleArgumentDispatch => true)
+flat := method()
+flat Thing := identity
+flat SEQ := x -> toSequence x
+flat Nothing := x -> ()
+fixflat := z -> splice apply(z, i -> flat fixup i)
+fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
+fixup Nothing    := identity				       -- null
+fixup Sequence   := z -> SEQ fixflat z
+fixup List       := z -> SEQ fixflat z
+fixup MarkUpList := z -> apply(z,fixup)			       -- recursion
+fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
+fixup UL         := z -> apply(z, i -> fixup if class i === TO then TOH i#0 else i)
+fixup PRE        := identity
+fixup CODE       := identity
+fixup TO         := x -> TO if x#?1 then { normalizeDocumentTag x#0, concatenate drop(toSequence x,1) } else { normalizeDocumentTag x#0 }
+fixup TO2        := x -> TO2{ normalizeDocumentTag x#0, concatenate drop(toSequence x,1) }
+fixup TOH        := x -> TOH{ normalizeDocumentTag x#0 }
+fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
+fixup Function   := z -> z				       -- allow Function => f 
+fixup String     := s -> (				       -- remove clumsy newlines within strings
+     ln := lines s;
+     if not ln#?1 then return s;
+     concatenate ({addspaces trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
+
+new Hypertext from List := (h,x) -> splice apply(x, i -> flat i)
+hypertext = x -> Hypertext fixup x
 
 -----------------------------------------------------------------------------
 -- installing the documentation

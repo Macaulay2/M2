@@ -21,7 +21,7 @@ topFileName := "index.html"				    -- top node's file name, constant
 indexFileName := "master.html"  			    -- file name for master index of topics in a package
 tocFileName := "toc.html"       			    -- file name for the table of contents of a package
 buildDirectory := "/tmp/"				    -- the root of the relative paths:
-htmlDirectory := ""					    -- relative path to the html directory
+htmlDirectory := ""					    -- relative path to the html directory, depends on the package
 
 -----------------------------------------------------------------------------
 -- relative URLs and filenames
@@ -47,6 +47,10 @@ html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>
 html TO   := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral formatDocumentTag x#0, "</A>", if x#?1 then x#1)
 html TO2  := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral                   x#1, "</A>")
 html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
+
+next := key -> if NEXT#?key then LABEL { "Next node",     HREF { htmlFilename NEXT#key, nextButton } } else nullButton
+prev := key -> if PREV#?key then LABEL { "Previous node", HREF { htmlFilename PREV#key, prevButton } } else nullButton
+up   := key -> if   UP#?key then LABEL { "Parent node",   HREF { htmlFilename   UP#key,   upButton } } else nullButton
 
 style := () -> LITERAL {///
 <style type="text/css">
@@ -82,10 +86,6 @@ links := () -> ""
 -- ///
 
 -- produce html form of documentation, for Macaulay 2 and for packages
-
-next := key -> if NEXT#?key then LABEL { "Next node",     HREF { htmlFilename NEXT#key, nextButton } } else nullButton
-prev := key -> if PREV#?key then LABEL { "Previous node", HREF { htmlFilename PREV#key, prevButton } } else nullButton
-up   := key -> if   UP#?key then LABEL { "Parent node",   HREF { htmlFilename   UP#key,   upButton } } else nullButton
 
 buttonBar := (key) -> TABLE { { 
 

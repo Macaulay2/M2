@@ -71,13 +71,13 @@ EDIT := method(SingleArgumentDispatch=>true)
 EDIT Nothing := arg -> (stderr << "source code not available" << endl;)
 EDIT Sequence := (filename,start,startcol,stop,stopcol) -> (
      editor := EDITOR();
-     run concatenate(
+     if 0 != run concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor,
 	  " +",toString start,
 	  " ",
 	  filename
-	  ))
+	  ) then error "command returned error code")
 editMethod Function := args -> EDIT locate args
 editMethod Command := c -> editMethod c#0
 editMethod Sequence := args -> (
