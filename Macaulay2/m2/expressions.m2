@@ -953,21 +953,27 @@ net Nothing := null -> "" -- we need a way to put blank spots in matrix expressi
 alphabet := new MutableHashTable
 scan( characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
      c -> alphabet#c = true)
-symbols := new MutableHashTable
-scan(values symbolTable(), s -> if not alphabet#?((string s)#0) then symbols#s=true)
+operators := new MutableHashTable
+scan(values symbolTable(), s -> (
+	  if not alphabet#?((string s)#0) 
+	  then (
+	       operators#s=true;
+	       )
+     	  )
+     )
 alphabet = null
 
--- name Symbol := s -> (
---      if symbols#?s or value s =!= s 
---      then concatenate("quote ", string s)
---      else string s
---      )
--- we could re-install this if we get rid of S.syms in quotring.m2
-
-name Symbol := string
+-- name Symbol := string
+name Symbol := s -> (
+     if operators#?s 
+     -- or value s =!= s 
+     -- must get rid of S.syms in quotring.m2
+     then concatenate("quote ", string s)
+     else string s
+     )
 
 net Symbol := s -> (
-     if symbols#?s
+     if operators#?s
      then concatenate("quote ", string s)
      else string s
      )

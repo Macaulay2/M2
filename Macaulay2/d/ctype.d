@@ -19,7 +19,9 @@ foreach c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  do setchartype(c,UPPER);
 foreach c in "abcdefghijklmnopqrstuvwxyz"  do setchartype(c,LOWER);
 foreach c in "0123456789"      	           do setchartype(c,DIGIT);
 foreach c in " \t\r\n\f"                   do setchartype(c,WHITE);
-for c from 160 to 255	       	    	   do setchartype(char(c),ALPHA);
+-- was: for c from 160 to 255	       	    	   do setchartype(char(c),ALPHA);
+
+for c from 128 to 255	       	    	   do setchartype(char(c),ALPHA);
 					      setchartype('\'',ALPHA);
 					      setchartype('"',QUOTE);
 

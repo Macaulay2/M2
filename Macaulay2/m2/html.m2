@@ -93,7 +93,7 @@ html Symbol := html Boolean := string
 
 linkFilenameTable := new MutableHashTable
 linkFilenameCounter := 0
-linkFilename = (s) -> (
+linkFilename = s -> (
      if linkFilenameTable#?s 
      then linkFilenameTable#s
      else (
@@ -383,3 +383,10 @@ html TO   := x -> concatenate (
      apply(drop(x,1), html)
      )
 tex TO := x -> tex TT x#0
+
+TOMETHOD   = newListHead "TOMETHOD"
+text TOMETHOD   := x -> concatenate ("\"",string x#0,"\"")
+html TOMETHOD   := x -> concatenate (
+     "<A HREF=\"", linkFilename name toSequence x, "\">", html x#0, "</A>"
+     )
+tex TOMETHOD := x -> tex TT string x#0
