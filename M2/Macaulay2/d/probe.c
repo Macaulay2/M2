@@ -103,16 +103,11 @@ int main(int argc, char **argv, char **envp){
 #endif
      printf("%08x   function\n",(int)&main);
      printf("%08x   string\n",(int)a_string);
-#ifdef  __CYGWIN__
-     printf("%08x   __bss_start__\n",(int)&__bss_start__);
-     printf("%08x   __bss_end__\n",(int)&__bss_end__);
-     printf("%08x   __data_start__\n",(int)&__data_start__);
-     printf("%08x   __data_end__\n",(int)&__data_end__);
-#else
+#ifndef __CYGWIN__
      printf("%08x   edata\n",(int)&edata);
-     printf("%08x   end\n",(int)&end);
-#endif
      printf("%08x   etext\n",(int)&etext);
+#endif
+     printf("%08x   end\n",(int)&end);
      printf("%08x   static variable\n",(int) &a_string);
      printf("%08x   static memory, three pages, uninitialized\n",(int) &statmem);
      printf("%08x   static variable, uninitialized\n",(int) &an_int);
@@ -147,12 +142,13 @@ int main(int argc, char **argv, char **envp){
      if (envp[0] != 0) {
 	  int last;
 	  char *x;
-	  int b, *y;
+	  long b;
+	  int *y;
      	  printf("%08x   envp[0]+strlen(envp[0])+1\n",(int)(envp[0]+strlen(envp[0]) + 1));
      	  last = strarrlen(envp)-1;
 	  x = envp[last]+strlen(envp[last]) + 1;
      	  printf("%08x   envp[%d]+strlen(envp[%d])+1 : %s\n",(int)x,last,last,x);
-	  b = x + strlen(x) + 1;
+	  b = (long)x + strlen(x) + 1;
 	  if (b % 8 == 0) {
 	    y = (int *)b;
 	    printf("%08x   %08x\n",(int)y,*y);
