@@ -828,10 +828,14 @@ export NullaryMethods := (
      sethash(x,true);
      x);
 setupconst("nullaryMethods",Expr(NullaryMethods));
+export lookup(e:Expr):Expr := (
+     r := lookup1(NullaryMethods,e);
+     if r == notfoundE then r = nullE;
+     r);
 export lookupfun(e:Expr):Expr := (
      when e 
      is a:Sequence do
-     if length(a) == 1 then lookup1(NullaryMethods,e)
+     if length(a) == 1 then lookup(e)
      else if length(a) == 2 then
      when a.1
      is s:HashTable do lookup(s,a.0)

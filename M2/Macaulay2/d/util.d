@@ -176,6 +176,7 @@ export getSequenceOfRingElements(e:Expr) : RawRingElementArray := (
 	       else abort("internal error : getSequenceOfRingElements")))
      is a:RawRingElement do RawRingElementArray(a)
      else RawRingElementArray());
+
 export isSequenceOfMatrices(e:Expr) : bool := (
      when e is s:Sequence do (
 	  foreach i in s do when i is RawMatrix do nothing else return false;

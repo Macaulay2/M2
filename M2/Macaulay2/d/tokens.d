@@ -405,9 +405,7 @@ export newStaticLocalDictionaryClosure():DictionaryClosure := (
 export newStaticLocalDictionaryClosure(dc:DictionaryClosure):DictionaryClosure := (
      d := record(newLocalDictionary(dc.dictionary));
      d.transient = false;
-     f := newLocalFrame(dc.frame,d);
-     noRecycle(f);
-     DictionaryClosure(f,d));
+     DictionaryClosure(noRecycle(newLocalFrame(dc.frame,d)),d));
 
 export emptyFrame := newLocalFrame(emptyLocalDictionary);
 emptyFrame.notrecyclable = true;
