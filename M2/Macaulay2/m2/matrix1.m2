@@ -278,7 +278,7 @@ matrix(List) := Matrix => options -> (m) -> (
      types := unique apply(m,class);
      if #types === 1 then (
 	  type := types#0;
-	  if type === Vector then matrix { apply(m, v -> new Matrix from v) }
+	  if instance(type,Module) then matrix { apply(m, v -> new Matrix from v) }
 	  else if type === List then (
 	       if isTable m then (matrixTable options)(m)
 	       else error "expected rows all to be the same length"
@@ -414,15 +414,6 @@ Matrix.AfterNoPrint = f -> (
      << concatenate(interpreterDepth:"o") << lineNumber << " : Matrix";
      if isFreeModule target f and isFreeModule source f
      then << " " << target f << " <--- " << source f;
-     << endl;
-     )
-
-Vector.AfterPrint = 
-Vector.AfterNoPrint = f -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : Vector";
-     if isFreeModule target f and isFreeModule source f
-     then << " in " << target f;
      << endl;
      )
 

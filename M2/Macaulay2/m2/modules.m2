@@ -1,7 +1,9 @@
  --		Copyright 1993-2002 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
-vector = (v) -> new Vector from matrix apply(v, i -> {i})
+vector = (v) -> (
+     m := matrix apply(v, i -> {i});
+     new target m from {m})
 -----------------------------------------------------------------------------
 -- BasicModule = new Type of Type
 ImmutableType = new Type of HashTable
@@ -171,14 +173,24 @@ ring Matrix := f -> (
 source Matrix := f -> f.source
 target Matrix := f -> f.target
 
-Vector = new Type of Matrix				    -- used to be MutableHashTable!
+Vector = new Type of List				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
-Vector _ ZZ := (v,i) -> (ambient v)_(i,0)
-net Vector := v -> net ambient v
+Vector _ ZZ := (v,i) -> (v#0)_(i,0)
+net Vector := v -> net first v
+entries Vector := v -> entries v#0 / first
+toExternalString Vector := 				    -- not quite right
+toString Vector := v -> concatenate ( "vector ", toString entries v )
+ring Vector := v -> ring class v
+new Matrix from Vector := (Matrix,v) -> v#0
+new Vector from Matrix := (M,f) -> (
+     if not isFreeModule source f or numgens source f =!= 1 then error "expected source to be free with rank 1";
+     if M === Vector then error "expected a module";
+     new target f from {f})
 
-RingElement * Vector := (r,v) -> new Vector from (lookup(symbol *,RingElement,Matrix))(r,v)
-Vector + Vector := (v,w) -> new Vector from (lookup(symbol +,Matrix,Matrix))(v,w)
-
+RingElement * Vector := (r,v) -> new class v from {r * v#0}
+Vector + Vector := (v,w) -> (
+     m := v#0 + w#0;
+     new target m from {m})
 
 newModule = method(TypicalValue => Module)
 newModule(Ring,RawFreeModule) := (R,rM) -> new Module of Vector from {
@@ -228,9 +240,6 @@ Ring ^ List := Module => (
 	       )
 	  else error "non-engine free modules with degrees not implemented yet"
 	  ))
-
-components = method()
-components(Vector) := (x) -> apply(numgens class x,i->x_i)
 
 SparseDisplayThreshhold := 15
 

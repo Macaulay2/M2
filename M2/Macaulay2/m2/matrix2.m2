@@ -177,12 +177,6 @@ homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      homogCheck(f,v,wts);
      map(target f, source f, rawHomogenize(f.RawMatrix, index v, wts)))
 
-homogenize(Vector, RingElement, List) := Vector => (f,v,wts) -> (
-     R := ring f;
-     wts = flatten wts;
-     homogCheck(f,v,wts);
-     new Vector from map(target f, source f, rawHomogenize(f.RawMatrix, index v, wts)))
-
 homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
      wts := (transpose (monoid ring f).Options.Degrees)#0;
      homogenize(f,n,wts)
@@ -203,14 +197,16 @@ homogenize(Module,RingElement,List) := Module => (M,z,wts) -> (
 	  if M.?relations then homogenize(M.relations,z,wts)))
 
 homogenize(RingElement, RingElement) := RingElement => (f,n) -> (
-    wts := (transpose (monoid ring f).Options.Degrees)#0;
-    homogenize(f,n,wts)
-    )
+     wts := (transpose (monoid ring f).Options.Degrees)#0;
+     homogenize(f,n,wts)
+     )
 
-homogenize(Vector, RingElement) := Vector => (f,n) -> (
-    wts := (transpose (monoid ring f).Options.Degrees)#0;
-    homogenize(f,n,wts)
-    )
+homogenize(Vector, RingElement, List) := Vector => (f,v,wts) -> (
+     p := homogenize(f#0,v,wts);
+     new target p from {p})
+homogenize(Vector, RingElement) := Vector => (f,v) -> (
+     p := homogenize(f#0,v);
+     new target p from {p})
 
 coefficients(Matrix) := coefficients(RingElement) := (m) -> coefficients(toList (0 .. numgens ring m - 1), m)
 coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
