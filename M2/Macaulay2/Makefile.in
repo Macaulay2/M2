@@ -61,7 +61,7 @@ distclean clean ::; $(MAKE) -C test $@
 all :: setup
 	[ -x $< ] || chmod a+x $<
 install ::; $(INSTALL_PROGRAM) setup $(packagedir)
-clean ::; rm -f setup
+distclean ::; rm -f setup
 ################################# packages
 install check clean distclean ::; $(MAKE) -C packages $@
 ################################# html
