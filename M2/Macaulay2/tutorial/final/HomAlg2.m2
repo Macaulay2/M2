@@ -1,5 +1,5 @@
 -- Homological Algebra 2
---
+-- 
 -- \font\xmplbx = cmbx10 scaled \magstephalf
 -- \font\xmplbxti = cmbxti10 scaled \magstephalf
 -- \def\section#1{\bigskip\centerline{\xmplbx #1}\bigskip}

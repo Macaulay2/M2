@@ -6,7 +6,18 @@ FILES := Makefile tutbook.m2 titlepage.tex \
 	final/--INDEX final/*.m2 prelim/*.m2 translate.c
 TUTORIALS := $(wildcard final/*.m2)
 OUTPUTS := $(TUTORIALS:.m2=.out)
-%.out : %.m2; ./translate <$*.m2 >$*.out
+
+# Amazingly, under WINDOWS, whether the output from translate has nonzero length
+# depends in an unpredictable way on the input file name.  So we check for that
+# below and use the same input file name for all.
+# Names that work: tempaaa.m2 aaa
+# Names that don't work: tmpaaa.m2 temp.m2 fooobaaar
+TMPIN := aaa
+%.out : %.m2
+	cp $*.m2 $(TMPIN)
+	./translate <$(TMPIN) >$*.out
+	[ -s $*.out ]
+	rm $(TMPIN)
 all:: $(OUTPUTS)
 
 tutbook.dvi : tutbook.tex ../book/macros.tex titlepage.tex
@@ -21,5 +32,5 @@ allfiles : Makefile prelim/*.m2 final/*.m2
 	../bin/echoout $(FILES) >allfiles
 
 clean :
-	rm -rf *.dvi *.log allfiles translate final/*.out
+	rm -rf *.dvi *.log allfiles translate final/*.out *.exe *.obj *.ilk *.pdb
 

@@ -36,11 +36,17 @@ shorten(s:string):string := (
 	       );
 	  );
      );
+isAbsolutePath(s:string):bool := (
+     -- eventually make this happen only in MSDOS
+     length(s) >= 1 && s.0 == '/' ||
+     length(s) >= 3 && s.1 == ':' && s.2 == '/' ||
+     s == "stdin"
+     );
 export minimizeFilename(filename:string):string := (
      ofilename := shorten(filename);
      s := getcwd();
      if !(s === "/") then s = s + "/";
-     if filename.0 != '/' then filename = s + filename;
+     if !isAbsolutePath(filename) then filename = s + filename;
      filename = shorten(filename);
      i := 0;
      while i < length(s) && i < length(filename) && s.i == filename.i do i = i+1;
@@ -84,7 +90,7 @@ export fopeninp(filename:string):(PosFile or errmsg) := (
      when fopenin(filename)
      is f:file do (PosFile or errmsg)(
 	  PosFile(f,Position(
-		    if f.filename.0 == '/'
+		    if isAbsolutePath(f.filename)
 		    then f.filename
 		    else getcwd() + '/' + f.filename,
 		    ushort(1),uchar(0),uchar(reloaded))))

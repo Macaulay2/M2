@@ -537,7 +537,7 @@ ZZ == RingElement := (i,x) -> (
 	       sendgg(ggPush x, ggiszero);
 	       eePopBool())
 	  else (
-	       sendgg(ggPush i, ggPush x, ggisequal);
+	       sendgg(ggPush x, ggPush i, ggisequal);
 	       eePopBool()));
      i == x)
 
@@ -549,7 +549,7 @@ RingElement == ZZ := (x,i) -> (
 	       sendgg(ggPush x, ggiszero);
 	       eePopBool())
 	  else (
-	       sendgg(ggPush i, ggPush x, ggisequal);
+	       sendgg(ggPush x, ggPush i, ggisequal);
 	       eePopBool()));
      x == i)
 
