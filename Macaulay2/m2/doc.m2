@@ -221,7 +221,17 @@ document { toString symbol environment,
      }
 
 document { Function,
-     Headline => "the class of all functions", SEEALSO "functions" }
+     Headline => "the class of all functions",
+     "Common ways to make a function:",
+     MENU {
+	  TO "->"
+	  },
+     "Returning from functions:",
+     MENU {
+	  TO "return"
+	  },
+     SEEALSO "functions"
+     }
 
 document { "->",
      Headline => "make a function",

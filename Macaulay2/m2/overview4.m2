@@ -13,15 +13,6 @@ document {
      SEEALSO {"MarkUpList", "MarkUpType", "Entity"}
      }
 
-document { "functions",
-     "There are two types of functions, those functions built in
-     to the system, and those created by the user, but in practice
-     the user has no way of distinguishing the two types.  The user
-     creates new functions with the ", TO "->", " operator.",
-     PARA,
-     SEEALSO {"Function"}
-     }
-
 document { "emacs",
      "The best way to edit Macaulay 2 code or to run Macaulay 2 is with GNU 
      emacs, a versatile text editor written by Richard Stallman which

@@ -804,9 +804,11 @@ document { (generators,Module),
      EXAMPLE "f = R_0 ++ R_0^2 ++ R_0^3 ++ R_0^4",
      EXAMPLE "generators(image f)",
      EXAMPLE "generators(cokernel f)",
-     CAVEAT "This function returns a matrix with the given generators.  This set of
-     generators may not be minimal, or sorted in any particular order. Use ", TO (trim,Module),
-     " or ", TO (mingens,Module), " instead.",
+     CAVEAT {
+	  "This function returns a matrix with the given generators.  This 
+	  set of generators may not be minimal, or sorted in any particular 
+	  order. Use ", TO (trim,Module), " or ", TO (mingens,Module), " instead."
+	  },
      SEEALSO {(relations,Module)}
      }
 

@@ -101,7 +101,8 @@ document { "for",
      EXAMPLE {
 	  "for i from 3 to 6 do print i",
 	  "for i when i^2 < 90 list i",
-	  }
+	  },
+     SEEALSO { "while", "return" }
      }     
 
 document { "while",
@@ -122,6 +123,23 @@ document { "while",
 	  ///i = 1; while (i = 2*i; i < 100) list i///,
 	  ///i = 1; while i < 100 list i do i = 2*i///,
 	  ///i = List; while i =!= Thing list i do i = parent i///
+	  },
+     SEEALSO { "for", "return" }
+     }
+
+document { "return",
+     Headline => "return from a function",
+     TT "return x", " -- returns ", TT "x", " as the value of the function currently
+     being evaluated.",BR,
+     TT "return;", " -- returns ", TO "null", " as the value of the function currently
+     being evaluated.",
+     PARA,
+     EXAMPLE {
+	  "f = x -> (3 + 4 * return {x}; 5);",
+	  "f 101",
+	  "g = x -> (3 + 4 * return; 5);",
+	  "g 101",
+	  "g 101 === null"
 	  }
      }
 

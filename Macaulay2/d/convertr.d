@@ -484,12 +484,11 @@ export codePosition(e:Code):Position := (
      is f:functionCode do codePosition(f.parms)
      is v:CodeSequence do codePosition(v.0)-- it would be better to get the surrounding parens...
      );
-export errorExpr(message:string):Expr := (
-     Expr(Error(dummyPosition,message,emptySequence))
-     );
-export errorExpr(message:string,report:Expr):Expr := (
-     Expr(Error(dummyPosition,message,report))
-     );
+
+export returnMessage := "return value";
+
+export errorExpr(message:string):Expr := Expr(Error(dummyPosition,message,emptySequence));
+export errorExpr(message:string,report:Expr):Expr := Expr(Error(dummyPosition,message,report));
 export quoteit(name:string):string := "'" + name + "'";
 export NotYet(desc:string):Expr := errorExpr(desc + " not implemented yet");
 export WrongArg(desc:string):Expr := errorExpr("expected " + desc);
@@ -633,6 +632,9 @@ export eval(c:Code):Expr := (
 	  x)
      is v:CodeSequence do evalSequence(v);
      when e is err:Error do (
+	  if err.message == returnMessage then (
+	       return(e);
+	       );
 	  p := codePosition(c);
 	  err.report = seq(
 	       list(Expr(p.filename),
@@ -739,3 +741,8 @@ shieldfun(a:Code):Expr := (
 	       );
      	  ret));
 setupop(shieldS,shieldfun);     
+
+returnFun(a:Code):Expr := (
+     e := eval(a);
+     when e is Error do e else Expr(Error(dummyPosition,returnMessage,e)));
+setupop(returnS,returnFun);
