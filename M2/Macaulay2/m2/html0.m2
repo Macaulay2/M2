@@ -9,6 +9,7 @@ html = method(SingleArgumentDispatch=>true, TypicalValue => String)
 tex = method(SingleArgumentDispatch=>true, TypicalValue => String)
 texMath = method(SingleArgumentDispatch=>true, TypicalValue => String)
 mathML = method(SingleArgumentDispatch=>true, TypicalValue => String)
+info = method(SingleArgumentDispatch=>true, TypicalValue => String)
 
 MarkUpList = new Type of BasicList
 MarkUpList.synonym = "mark-up list"
@@ -124,38 +125,6 @@ TOC	   = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this
 
 MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
 MarkUpList _ MarkUpList := (x,y) -> SEQ{x,SUB y}
-
-trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
-trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
-trimline1 := x -> selectRegexp ( "^ *(.*)$",1, x)
-addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
-
-fixup := method(SingleArgumentDispatch => true)
-flat := method()
-flat Thing := identity
-flat SEQ := x -> toSequence x
-flat Nothing := x -> ()
-fixflat := z -> splice apply(z, i -> flat fixup i)
-fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
-fixup Nothing    := identity				       -- null
-fixup Sequence   := 
-fixup List       := z -> SEQ fixflat z
-fixup MarkUpList := z -> apply(z,fixup)			       -- recursion
-fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
-fixup PRE        := 
-fixup CODE       := 
-fixup TO         := 
-fixup TO2        := 
-fixup TOH        := identity
-fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
-fixup Function   := z -> z				       -- allow Function => f in Synopsis
-fixup String     := s -> (				       -- remove clumsy newlines within strings
-     ln := lines s;
-     if not ln#?1 then return s;
-     concatenate ({addspaces trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
-
-new Hypertext from List := (h,x) -> splice apply(x, i -> flat i)
-hypertext = x -> Hypertext fixup x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -28,7 +28,6 @@ String.BeforePrint = x -> wr("",x)
 
 -- make sure this is after all global symbols are defined or erased
 closePackage "Main"
-Main#"reverse dictionary"#null = symbol null
 
 currentPackage = Main
 load "Macaulay2-doc.m2"
