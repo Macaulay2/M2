@@ -109,6 +109,8 @@ public:
 		       exponent_vector *result2,
 		       int &sign) const;
 
+  void display_exponents(buffer &o, const exponent_vector *exp) const;
+
   /////////////////
   // polynomials //
   /////////////////
@@ -157,7 +159,7 @@ public:
 		   const vec &g,
 		   const vec &gsyz) const;
 
-  void display_vector(const freemodule &F, const vec &f) const;
+  void display_vector(buffer &o, const freemodule &F, const vec &f) const;
 
   ///////////////////////
   // Vector collecting //

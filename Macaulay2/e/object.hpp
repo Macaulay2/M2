@@ -66,6 +66,7 @@ public:
   virtual object_new_mon_order   * cast_to_new_mon_order()      { return 0; }
   virtual Monoid      * cast_to_Monoid()      { return 0; }
   virtual TermIdeal   * cast_to_TermIdeal()  { return 0; }
+  virtual MonomialIIdeal * cast_to_MonomialIIdeal()  { return 0; }
   virtual Ring        * cast_to_Ring()       { return 0; }
   virtual FreeModule  * cast_to_FreeModule() { return 0; }
   virtual RingMap     * cast_to_RingMap()    { return 0; }
@@ -84,6 +85,7 @@ public:
   virtual const object_new_mon_order   * cast_to_new_mon_order()      const { return 0; }
   virtual const Monoid      * cast_to_Monoid()      const { return 0; }
   virtual const TermIdeal   * cast_to_TermIdeal()  const { return 0; }
+  virtual const MonomialIIdeal * cast_to_MonomialIIdeal()  const { return 0; }
   virtual const Ring        * cast_to_Ring()       const { return 0; }
   virtual const FreeModule  * cast_to_FreeModule() const { return 0; }
   virtual const RingMap     * cast_to_RingMap()    const { return 0; }

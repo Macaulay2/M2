@@ -74,7 +74,10 @@ void VectorOperations::scale(sparse_vector *&v, const ring_elem a) const
   head.next = v;
   for (sparse_vector *p = &head; p->next != 0; p=p->next)
     {
-      K->mult_to(p->next->coefficient, a);
+      //old version: K->mult_to(p->next->coefficient, a);
+      ring_elem c = K->mult(a, p->next->coefficient);
+      K->remove(p->next->coefficient);
+      p->next->coefficient = c;
       if (K->is_zero(p->next->coefficient))
 	{
 	  sparse_vector *tmp = p->next;
@@ -402,6 +405,8 @@ void SparseMutableMatrix::initialize(const Ring *KK, int nr, int nc)
     rowSize[j] = 0;
 }
 
+// Harry: tried to change following to update colSize and rowSize.
+
 SparseMutableMatrix::SparseMutableMatrix(const Matrix &m)
 {
   initialize(m.Ring_of(), m.n_rows(), m.n_cols());
@@ -414,6 +419,11 @@ SparseMutableMatrix::SparseMutableMatrix(const Matrix &m)
 	  {
 	    last_row = v->comp;
 	    ring_elem a = m.elem(last_row,c);
+	    if (K->is_zero(a) == false)
+	      {
+		colSize[c]++;
+		rowSize[last_row]++;
+	      }
 	    setEntry(last_row,c,a);
 	  }
     }
@@ -590,6 +600,9 @@ void SparseMutableMatrix::interchangeRows(int r1, int r2, bool doRecording)
   if (errorRowBound(r2)) return;
   for (int c=0; c<ncols; c++)
     V->interchangeRows(matrix[c], r1, r2);
+  int n = rowSize[r1];
+  rowSize[r1] = rowSize[r2];
+  rowSize[r2] = n;
 
   if (doRecording && rowOps != 0)
     rowOps->interchangeColumns(r1,r2,false);
@@ -602,6 +615,9 @@ void SparseMutableMatrix::interchangeColumns(int c1, int c2, bool doRecording)
   sparse_vector *tmp = matrix[c1];
   matrix[c1] = matrix[c2];
   matrix[c2] = tmp;
+  int n =  colSize[c1];
+  colSize[c1] = colSize[c2];
+  colSize[c2] = n;
 
   if (doRecording && colOps != 0)
     colOps->interchangeColumns(c1,c2,false);
@@ -646,6 +662,11 @@ void SparseMutableMatrix::addColumnMultiple(int c1, ring_elem a, int c, bool doR
   sparse_vector *tmp = V->clone(matrix[c1]);
   V->scale(tmp, a);
   V->add(matrix[c], tmp);
+
+  int n = 0;
+  for (sparse_vector *p = matrix[c]; p != 0; p = p->next) {n++;}
+
+  colSize[c] = n;
 
   if (doRecording && colOps != 0)
     colOps->addColumnMultiple(c1,a,c,false);
@@ -935,6 +956,145 @@ bool SparseMutableMatrix::findGoodUnitPivot(int c_lo, int c_hi, int &r, int &c, 
 	  }
       }
   return found;
+}
+
+// Harry's routines
+
+// this routine finds units (aka pivots) in a sparse matrix, 
+// clears out other columns by the pivot, and then sticks the
+//  pivot into the "current" last column and last row of the matrix.
+
+void SparseMutableMatrix::reducePivots()
+{
+
+  // keeps track of last row and column which are not the output of a pivot
+  int rowPivot = nrows-1;  
+  int columnPivot = ncols-1;
+
+  // first reduce 1's and -1's
+  for (int i = 0; i < ncols; i++) 
+    { 
+      for (sparse_vector *p = matrix[i]; p != 0; p = p->next) 
+	{
+	  bool oneFlag = K->is_equal(one, p->coefficient);
+	  
+	  if ( oneFlag || K->is_equal(minus_one, p->coefficient)) 
+	    {
+
+	      int r = p->component;
+	      
+	      // case 1: pivot is only elt in its column and row
+	      if (colSize[i] == 1 && rowSize[r] == 1) 
+		{
+		  if (oneFlag == false)
+		    {
+		      K->remove(matrix[i]->coefficient);
+		      matrix[i]->coefficient = K->copy(one);
+		    }
+		  if (i == columnPivot && r == rowPivot)
+		    {
+		      columnPivot--;
+		      rowPivot--;
+		    }
+		  else if (i < columnPivot || r < rowPivot)
+		    {
+		      interchangeColumns(i, columnPivot);
+		      interchangeRows(r, rowPivot);
+		      columnPivot--;
+		      rowPivot--;
+		      i = i-1;  //test column i again
+		    }
+		}
+	      
+	      // case 2: other elements exist in pivot's row or column
+	      else
+		{
+		  for (int j = 0; j < ncols; j++) 
+		    {
+		      if (j != i) 
+			{
+			  for (sparse_vector *q = matrix[j]; q != 0 
+				 && q->component >= r; q = q->next) 
+			    {
+			      if (q->component == r)
+				{
+				  if (oneFlag) {
+				    ring_elem f = K->negate(q->coefficient);
+				    addColumnMultiple(i, f, j);
+				    K->remove(f);
+				  }
+				  else {
+				    addColumnMultiple(i, q->coefficient, j);
+				  }
+				  break;
+				}
+			    }
+			}
+		    }
+		  p = matrix[i];
+		  V->remove(matrix[i]->next);
+		  matrix[i]->next = 0;
+		  matrix[i]->component = r;
+		  K->remove(matrix[i]->coefficient);
+		  matrix[i]->coefficient = K->copy(one);
+		  colSize[i] = 1;
+		  rowSize[r] = 1;
+		  interchangeColumns(i, columnPivot);
+		  interchangeRows(r, rowPivot);
+		  columnPivot--;
+		  rowPivot--;
+		  i = -1; //start over at the 1st column
+		}
+	    }
+	}
+    }
+
+  // now reduce other units
+  for (int i = 0; i < ncols; i++) 
+    { 
+      for (sparse_vector *p = matrix[i]; p != 0; p = p->next) 
+	{
+	  if ( K->is_unit(p->coefficient) && 
+	       ( (colSize[i] > 1 || rowSize[p->component] > 1) ||
+		 (K->is_equal(one,p->coefficient) == false) ) ) 
+	    {
+	      ring_elem g = K->invert(p->coefficient);
+	      scaleColumn(i, g);
+	      K->remove(g);
+	      int r = p->component;
+	      for (int j = 0; j < ncols; j++) 
+		{
+		  if (j != i) 
+		    {
+		      for (sparse_vector *q = matrix[j]; q != 0 
+			     && q->component >= r; q = q->next) 
+			{
+			  if (q->component == r)
+			    {
+			      ring_elem f = K->negate(q->coefficient);
+			      addColumnMultiple(i, f, j);
+			      K->remove(f);
+			      break;
+			    }
+			}
+		    }
+		}
+	      p = matrix[i];
+	      V->remove(matrix[i]->next);
+	      matrix[i]->next = 0;
+	      matrix[i]->component = r;
+	      K->remove(matrix[i]->coefficient);
+	      matrix[i]->coefficient = K->copy(one);
+	      colSize[i] = 1;
+	      rowSize[r] = 1;
+	      interchangeColumns(i, columnPivot);
+	      interchangeRows(r, rowPivot);
+	      columnPivot--;
+	      rowPivot--;
+	      i = -1; //start over at the 1st column
+	    }
+	}
+    }
 }
 
 SparseMutableMatrix *SparseMutableMatrix::identity(const Ring *K, int n)

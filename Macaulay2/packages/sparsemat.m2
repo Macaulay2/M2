@@ -148,6 +148,32 @@ findOne = (m,clo,chi) -> (
      c := eePopInt();
      r := eePopInt();
      if c === -1 then false else {r,c,best})
+
+-------------------------------
+-- Harrison Tsai's routines  --
+-------------------------------
+reducePivots = method()
+reducePivots SparseMutableMatrix := (m) -> (
+     sendgg(ggPush m, ggreducepivots);
+     )
+
+reduceCompress = method()
+reduceCompress(Matrix) := (m) -> (
+     msparse := sparseMutableMatrix m;
+     sendgg(ggPush msparse, ggreducepivots);
+     mout := compress matrix msparse;
+     colCounter := numgens source mout - 1;
+     rowCounter := numgens target mout - 1;
+     if (mout == id_(target mout)) then (mout = null)
+     else (
+     	  while (mout_colCounter == (id_(target mout))_rowCounter) do (
+	       colCounter = colCounter - 1;
+	       rowCounter = rowCounter - 1;
+	       );
+     	  mout = cokernel gens gb (mout_{0..colCounter})^{0..rowCounter};
+	  );
+     mout
+     )
      
 ///
 --------------------------

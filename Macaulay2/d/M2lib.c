@@ -356,7 +356,7 @@ char CCVERSION[30] = "gcc" ;
 char CCVERSION[] = "unknown" ;
 #endif
 
-int main(argc,argv)
+int M2main(argc,argv)
 int argc; 
 char **argv;
 {

@@ -172,10 +172,16 @@ void cmd_mo_make(object &oa)
   const new_mon_order *mo = new new_mon_order(a->raw());
   gStack.insert(new object_new_mon_order(mo));
 }
+
+#include "monideal2.hpp"
+
 void i_monoid_cmds(void)
 {
   trivial_monoid = new Monoid(new monoid_info, sizeof(int)*8);
   bump_up((Monoid *)trivial_monoid);
+
+  //  MonomialTable<int> testmi;
+  //MonomialTable<int>::iterator i = testmi.first();
 
   // Construction of monomial orders
   install(ggMOgrevlex, cmd_mo_grevlex, TY_INTARRAY, TY_INTARRAY);

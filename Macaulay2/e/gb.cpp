@@ -521,7 +521,7 @@ void GB_comp::gb_geo_reduce(vec &f, vec &fsyz)
   fb.add(f);
   fsyzb.add(fsyz);
   vecterm *lead;
-  while ((lead = fb.remove_lead_term()) != NULL)
+  while ((lead = fb.get_lead_term()) != NULL)
     {
       Bag *b;
       M->to_expvector(lead->monom, div_totalexp);
@@ -530,8 +530,7 @@ void GB_comp::gb_geo_reduce(vec &f, vec &fsyz)
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  M->divide(lead->monom, g->monom, reduce_ndiv);
 	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
-	  vecterm *h = F->imp_ring_mult_by_term(g->next, c, reduce_ndiv, lead->comp);
-	  F->remove(lead);
+	  vecterm *h = F->imp_ring_mult_by_term(g, c, reduce_ndiv, lead->comp);
 	  R->Ncoeffs()->remove(c);
 	  fb.add(h);
 	  count++;
@@ -541,9 +540,8 @@ void GB_comp::gb_geo_reduce(vec &f, vec &fsyz)
 	  gb_elem *q = (gb_elem *) b->basis_ptr();
 	  ring_elem c = R->Ncoeffs()->negate(lead->coeff);
 	  M->divide(lead->monom, q->f->monom, reduce_ndiv);
-	  vecterm *h = F->imp_mult_by_term(c, reduce_ndiv, q->f->next);
+	  vecterm *h = F->imp_mult_by_term(c, reduce_ndiv, q->f);
 	  vecterm *hsyz = Fsyz->imp_mult_by_term(c, reduce_ndiv, q->fsyz);
-	  F->remove(lead);
 	  R->Ncoeffs()->remove(c);
 	  fb.add(h);		// Eats h
 	  fsyzb.add(hsyz);	// Eats hsyz
@@ -551,7 +549,7 @@ void GB_comp::gb_geo_reduce(vec &f, vec &fsyz)
 	}
       else
 	{
-	  result->next = lead;
+	  result->next = fb.remove_lead_term();
 	  result = result->next;
 	}
     }

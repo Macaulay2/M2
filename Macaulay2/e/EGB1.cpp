@@ -242,7 +242,9 @@ exponent_vector *EGB1::make_lcm(const exponent_vector *exp1,
     {
       int a = exp1[i] - exp2[i];
       if (a == 0)
-	result[i] = 0;
+	{
+	  result[i] = exp1[i];
+	}
       else if (a > 0)
 	{
 	  result[i] = exp1[i];
@@ -542,7 +544,7 @@ void EGB1::sort_pairs(es_pair *&p) const
 
 void EGB1::choose_nice_pair(es_pair *&p) const
 {
-  if (comp_printlevel >= 4)
+  if (comp_printlevel >= 10)
     {
       int len = 0; 
       for (es_pair *a = p; a!=0; a=a->next) len++;
@@ -673,7 +675,7 @@ void EGB1::minimalize_pairs(es_pair *&p) const
       choose_unique_pairs(a);
 
       // Place onto the list of s-pairs (At the end).
-      table.append(a);
+      table.append_list(a);
     }
 
 
@@ -700,7 +702,6 @@ void EGB1::update_pairs(egb_elem *m)
       }
   else
     p = p->next;
-
   spairs->heap = head.next;
 
   // Step 2: find the possible new s-pairs
@@ -742,7 +743,9 @@ void EGB1::update_pairs(egb_elem *m)
 
   // Step 3: minimalize this set.  Choose a minimal generator in an
   //     intelligent way
+  if (comp_printlevel >= 8) debug_pairs("before minimal pairs", new_set);
   minimalize_pairs(new_set);
+  if (comp_printlevel >= 8) debug_pairs("new minimal pairs", new_set);
 
   // Step 4: insert these into the SPairSet, removing gcd=1 pairs if possible
   while (new_set != 0)
@@ -836,6 +839,7 @@ void EGB1::gb_insert(int degree, EVector &f, EVector &fsyz,
 {
   I.make_monic(F,Fsyz,f,fsyz);
   egb_elem *new_elem = make_gb_elem(degree,f,fsyz,minimal);
+  if (comp_printlevel >= 8) gb_debug_out(new_elem);
   update_pairs(new_elem);
 
   array< egb_elem * > nonminimals;
@@ -859,12 +863,14 @@ void EGB1::collect_syzygy(EVector &fsyz)
   if (collect_syz && !I.is_zero_vector(Fsyz,fsyz))
     {
       syz.append(fsyz);
-      emit_wrapped(3,"z");
+      if (comp_printlevel < 8)
+	emit_wrapped(3,"z");
     }
   else
     {
       I.remove_vector(Fsyz,fsyz);
-      emit_wrapped(3,"o");
+      if (comp_printlevel < 8)
+	emit_wrapped(3,"o");
     }
 }
 
@@ -877,6 +883,7 @@ void EGB1::s_pair_step(es_pair *p)
   bool is_gen = (p->type == SP_GEN);
   int degree = p->degree;
   n_computed++;
+  if (comp_printlevel >= 8) spair_debug_out(p);
   compute_s_pair(p, fh, fsyzh);
   remove_pair(p);
   bool ok = gb_reduce(fh,fsyzh,f,fsyz);
@@ -888,7 +895,8 @@ void EGB1::s_pair_step(es_pair *p)
   else if (!I.is_zero_vector(F,f))
     {
       gb_insert(degree,f,fsyz,is_gen);
-      emit_wrapped(3,"m");
+      if (comp_printlevel < 8)
+	emit_wrapped(3,"m");
     }
   else
     collect_syzygy(fsyz);
@@ -968,6 +976,7 @@ int EGB1::new_calc(const EStopConditions &stop)
 	      if (use_hilb_function) 
 		o << n_in_degree << ',';
 	      o << npairs << ',' << spairs->n_elems_left() << ')';
+	      if (comp_printlevel >= 8) o << newline;
 	      emit(o.str());
 	    }
 	}
@@ -1283,35 +1292,66 @@ EMatrix *getSubringGB(int n) const
 ////////////////////
 // Debugging code //
 ////////////////////
-void EGB1::debug_out(es_pair *q) const
+void EGB1::spair_debug_out(es_pair *q) const
 {
   buffer o;
-  debug_out(o,q);
+  spair_debug_out(o,q);
   emit(o.str());
 }
 
-void EGB1::debug_out(buffer &o, es_pair *q) const
+void EGB1::spair_debug_out(buffer &o, es_pair *q) const
 {
+  o << "--- spair ";
+  o << "deg " << q->degree;
+  o << " lcm "; I.display_exponents(o,q->lcm);
+  switch (q->type) {
+  case SP_GEN:
+    o << " gen ";
+    I.display_vector(o,F,q->s.gen.f);
+    break;
+  case SP_SYZ:
+    o << " syz ";
+    o << q->s.syz.i->me << " " << q->s.syz.j->me;
+    break;
+  case SP_SKEW:
+    o << " skew "<< q->s.ringsyz.i->me;
+    break;
+  case SP_RING:
+    o << " ring "<< q->s.ringsyz.i->me;
+    break;
+  }
+  o << newline;
 }
 
-void EGB1::debug_pairs_out(egb_elem *p) const
+void EGB1::gb_debug_out(egb_elem *p) const
 {
   buffer o;
-  debug_pairs_out(o,p);
+  gb_debug_out(o,p);
   emit(o.str());
 }
-void EGB1::debug_pairs_out(buffer &o, egb_elem *p) const
+void EGB1::gb_debug_out(buffer &o, egb_elem *p) const
 {
+  o << "--- gb[" << p->me << "] = " ;
+  o << (p->is_minimal ? "minimal" : "nonminimal");
+  o << " degree " << p->degree;
+  o << " vec "; I.display_vector(o,F,p->f);
+  o << newline;
 }
 
-void EGB1::debug_pairs() const
+void EGB1::debug_pairs(char *heading, es_pair *qlist) const
 {
   buffer o;
-  debug_pairs(o);
+  debug_pairs(o,heading,qlist);
   emit(o.str());
 }
-void EGB1::debug_pairs(buffer &o) const
+void EGB1::debug_pairs(buffer &o, char *heading, es_pair *qlist) const
 {
+  o << heading << newline;
+  while (qlist != 0)
+    {
+      o << "\t"; spair_debug_out(o,qlist);
+      qlist = qlist->next;
+    }
 }
 void EGB1::stats() const
 {
@@ -1319,15 +1359,8 @@ void EGB1::stats() const
   buffer o;
   if (comp_printlevel >= 5 && comp_printlevel % 2 == 1)
     {
-      int i = 0;
       for (iterator p = first(); p.valid(); ++p)
-	{
-	  egb_elem *q = *p;
-	  o << i << '\t';
-	  i++;
-	  F->elem_text_out(o, q->f);
-	  o << newline;
-	}
+	gb_debug_out(o,*p);
     }
   emit(o.str());
 }
