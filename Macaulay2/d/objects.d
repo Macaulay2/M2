@@ -259,9 +259,7 @@ export remove(x:HashTable,key:Expr):Expr := (
 	  p = p.next);
      Expr(x));
 export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
-     if !x.mutable then (
-	  return(errorExpr("attempted to modify an immutable hash table"));
-	  );
+     if !x.mutable then return(errorExpr("attempted to modify an immutable hash table"));
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      while p != bucketEnd do (
@@ -284,6 +282,24 @@ export storeInHashTable(x:HashTable,i:Code,rhs:Code):Expr := (
      when ival is Error do ival else (
 	  val := eval(rhs);
 	  when val is Error do val else storeInHashTable(x,ival,val)));
+export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
+     -- derived from storeInHashTable above!
+     if !x.mutable then return(errorExpr("attempted to modify an immutable hash table"));
+     hmod := int(h & (length(x.table)-1));
+     p := x.table.hmod;
+     while p != bucketEnd do (
+	  if p.key == key || equal(p.key,key)==True 
+	  then return(errorExpr("collision of keys in hash table"));
+	  p = p.next);
+     if 4 * x.numEntries == 3 * length(x.table) -- SEE ABOVE
+     then (
+	  enlarge(x);
+	  hmod = int(h & (length(x.table)-1));
+	  );
+     x.numEntries = x.numEntries + 1;
+     x.table.hmod = KeyValuePair(key,h,value,x.table.hmod);
+     value);
+export storeInHashTableNoClobber(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTableNoClobber(x,key,hash(key),value);
 export assignquotedobject(x:HashTable,i:Code,rhs:Code):Expr := (
      when i
      is var:variableCode do (
@@ -294,29 +310,6 @@ export assignquotedobject(x:HashTable,i:Code,rhs:Code):Expr := (
      );
 idfun(e:Expr):Expr := e;
 setupfun("identity",idfun);
---mappairstolistfun(e:Expr):Expr := (
---     when e is a:Sequence do
---     if length(a) == 2 then
---     when a.0 is o:HashTable do (
---	  if o.mutable then return(WrongArg("an immutable hash table"));
---	  haderror := false;
---	  result := new Sequence len o.numEntries do foreach bucket in o.table do (
---	       p := bucket;
---	       while p != bucketEnd do (
---		    r := apply(a.1,p.key,p.value);
---		    when r is Error do (
---			 haderror = true;
---			 e = r;
---			 while true do provide nullE;
---			 )
---		    else nothing;
---		    provide r;
---		    p = p.next;));
---	  if haderror then e else list(result))
---     else WrongArg(1,"a hash table")
---     else WrongNumArgs(2)
---     else WrongNumArgs(2));
---setupfun("mappairstolist",mappairstolistfun);
 scanpairs(f:Expr,obj:HashTable):Expr := (
      foreach bucket in obj.table do (
 	  p := bucket;
@@ -353,7 +346,8 @@ mappairs(f:Expr,obj:HashTable):Expr := (
 	       is a:Sequence do (
 		    if length(a) == 2
 		    then (
-			 storeInHashTable(newobj,a.0,a.1);
+			 ret := storeInHashTable(newobj,a.0,a.1);
+			 when ret is Error do return(ret) else nothing;
 			 )
 		    else return(
 			 errorExpr(
@@ -388,7 +382,7 @@ export mapkeys(f:Expr,obj:HashTable):Expr := (
 	       newkey := apply(f,p.key);
 	       if newkey == nullE then return(errorExpr("null key encountered")); -- remove soon!!!
 	       when newkey is Error do return(newkey) else nothing;
-	       storeInHashTable(newobj,newkey,p.value);
+	       storeInHashTableNoClobber(newobj,newkey,p.value);
 	       p = p.next;
 	       ));
      sethash(newobj,obj.mutable);

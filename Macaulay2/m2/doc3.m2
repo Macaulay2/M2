@@ -576,20 +576,6 @@ document { String,
      PARA,
      "A net is a two-dimensional array of characters, and strings are regarded
      as a type of net.  See ", TO "Net", ".",
-     PARA,
-     "Operations on strings:",
-     MENU {
-	  (TOH "String # ZZ"),
-	  (TOH "#"),
- 	  (TOH (symbol |, String, String), "        -- concatenation"),
- 	  (TOH "ascii"),
- 	  (TOH "substring"),
- 	  (TOH "concatenate"),
- 	  (TOH "characters"),
-	  (TOH "unhex"),
- 	  (TOH "transnet"),
-	  (TOH "match")
- 	  }
      }
 
 document { unhex,
@@ -754,15 +740,6 @@ document { depth,
      SEEALSO {"Net", "height"}
      }
 
-document { "String # ZZ",
-     TT "s#i", " -- produce the ", TT "i", "-th character from a string ", TT "s", ".",
-     PARA,
-     "If ", TT "i", " is negative and the length of the string is ", TT "n", ", then
-     the (n-i)-th character is provided.",
-     PARA,
-     SEEALSO "String"
-     }
-
 document { class,
      TT "class x", " -- yields the class of x.",
      PARA,
@@ -905,86 +882,14 @@ document { Symbol,
      SEEALSO {"symbolTable", "local", "global", "symbol", ":="}
      }
 
-document { File,
-     HEADLINE "the class of all files",
-     TT "File", " -- the class of all files.",
-     PARA,
+document { File, HEADLINE "the class of all files",
      "Files may be input files, output files, pipes, or sockets.
-     The class of all files is ", TO "File", ".",
-     PARA,
-     "Some standard files, already open:",
-     MENU {
-          (TOH "stdio"),
-          (TOH "stderr")
-	  },
-     "Ways to create new files:",
-     MENU {
-          (TOH "openIn"),
-          (TOH "openOut"),
-          (TOH "openInOut"),
-          (TOH "openListener"),
-	  },
-     "Ways to change the state of files:",
-     MENU {
-	  (TOH "echoOff"),
-	  (TOH "echoOn"),
-	  },
-     "Input operations:",
-     MENU {
-          (TOH "getc"),
-          (TOH "get"),
-	  (TOH "read"),
-	  (TOH "atEndOfFile"),
-	  (TOH "isReady"),
-	  },
-     "Further processing for data obtained from a file:",
-     MENU {
-          (TOH "lines")
-	  },
-     "Output operations:",
-     MENU {
-          (TOH "<<"),
-	  (TOH "endl"),
-          (TOH "flush"),
-	  (TOH "printString"),
-          (TOH "print"),
-	  (TOH "TeX")
-	  },
-     "Preparing expressions for output:",
-     MENU {
-          TOH "columnate",
-	  TOH "expression",
-	  TOH "format",
-          {TOH "null"},
-          TOH "pad",
-	  TOH "tex",
-	  TOH "toExternalString",
-	  TOH "toString"
-	  },
-     "Destroying files:",
-     MENU {
-          {TOH "close"},
-          {TOH "closeIn"},
-          {TOH "closeOut"},
-	  {TOH "kill"},
-	  },
-     "Information about files",
-     MENU { 
-	  {TOH "width"},
-          {TOH "openFiles"},
-	  {TOH "isOpenFile"},
-	  {TOH "isInputFile"},
-	  {TOH "isOutputFile"},
-	  {TOH "isListener"},
-	  {TOH "connectionCount"},
-	  },
+     A list of currently open files may be obtained with ", TO "openFiles", "."
      }
 
-document { connectionCount,
+document { connectionCount, HEADLINE "number of connections",
      TT "connectionCount f", " -- returns the number of connections accepted by 
-     a listener so far.",
-     PARA,
-     SEEALSO "File"
+     the listener ", TT "f", " so far."
      }
 
 ccc := echoOn
@@ -995,16 +900,18 @@ ccc = echoOff
 erase symbol echoOff
 echoOff = new Command from ccc
 
-document { echoOn,
+document { echoOn, HEADLINE "turn on echoing",
      TT "echoOn f", " -- turns on echoing for the file ", TT "f", "."
      }
 
-document { echoOff,
+document { echoOff, HEADLINE "turn off echoing",
      TT "echoOff f", " -- turns off echoing for the file ", TT "f", "."
      }
 
 document { printString,
      TT "printString(o,s)", " -- send the string ", TT "s", " to the output file ", TT "o", ".",
+     PARA,
+     "This function is intended for internal use only.",
      PARA,
      "The argument ", TT "s", " may also be a sequence or list, in which case
      its elements are printed.  If an integer is encountered, then

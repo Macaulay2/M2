@@ -76,6 +76,16 @@ methods HashTable := F -> (
 	       then if class key === Sequence and member(F,key)
 	       then found#key = true
 	       else found#(key,F) = true));
+     scanPairs(symbolTable(),
+	  (Name,sym) -> (
+	       x := value sym;
+	       if instance(x,Type) and not seen#?x then (
+		    seen#x = true;
+		    scan(pairs x, (key,meth) -> (
+			      if class meth === Function then
+			      if key === F then found#(F,x) = true
+			      else if class key === Sequence and member(F,key)
+			      then found#key = true)))));
      sort keys found)
 methods Sequence := F -> (
      seen := new MutableHashTable;

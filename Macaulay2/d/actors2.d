@@ -867,3 +867,23 @@ unSingleton(e:Expr):Expr := (
      is v:Sequence do if length(v) == 1 then v.0 else e
      else e);
 setupfun("unSingleton",unSingleton);
+
+sameFunctionBody(e:Expr):Expr := (
+     when e is v:Sequence do
+     if length(v) == 2 then
+     when v.0 
+     is f:FunctionClosure do (
+	  when v.1
+	  is g:FunctionClosure do toBoolean(f.model == g.model)
+	  else False
+	  )
+     is f:CompiledFunctionClosure do (
+	  when v.1
+	  is g:CompiledFunctionClosure do toBoolean(f.fn == g.fn)
+	  else False
+	  )
+     is f:CompiledFunction do toBoolean(v.0 == v.1)
+     else False
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("sameFunctionBody", sameFunctionBody);

@@ -1,4 +1,4 @@
-default : phase1
+default :: phase1
 
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
@@ -28,7 +28,7 @@ cmdnames.m2 : ../e/cmdnames.m2; cp $< $@
 
 TUTORIALS := $(wildcard ../tutorial/final/*.out)
 
-DUMPEDGFILES := $(DUMPSEQUENCE) $(DOCSEQUENCE) setup.m2 $(MADEGFILES) $(TUTORIALS)
+DUMPEDGFILES := $(DUMPSEQUENCE) setup.m2 $(MADEGFILES)
 
 ifndef NODUMPDATA
 DUMPEDGFILES := $(DUMPEDGFILES) dumpdata.m2
@@ -82,11 +82,11 @@ gbdoc.m2 : ../e/misc/cmdnames.input gbdoc.awk
 gbfunctions.m2 :  ../e/misc/cmdnames.input gbfuns.awk
 	awk -f gbfuns.awk ../e/misc/cmdnames.input >tmp
 	mv tmp $@
-all:: TAGS.doc
+default:: TAGS.doc
 TAGS.doc : Makefile docseq
 	@echo making $@
 	@../util/echoout '>$@' $(foreach i, $(DOCSEQUENCE),  $(i),0)
-all:: TAGS
+default:: TAGS
 TAGS: Makefile dumpseq
 	@echo making $@
 	@../util/echoout '>$@' $(foreach i, \
@@ -95,6 +95,7 @@ TAGS: Makefile dumpseq
 				../basictests/*.m2 \
 				../emacs/makehlp.m2 \
 				../emacs/makem2.m2 \
+				../*/COPYRIGHT \
 				../emacs/makesyms.m2 \
 				../tutorial/prelim/*.m2 ../tutorial/final/*.m2 \
 				../packages/*.m2 \
@@ -164,7 +165,7 @@ cache-tmp/Examples/sample: sample; cp $< $@
 cache-tmp/Examples/expression: expression; cp $< $@
 
 all :: ../cache/Macaulay2-doc
-../cache/Macaulay2-doc : ../cache/Macaulay2-pre $(MADEGFILES) $(INPUTS)
+../cache/Macaulay2-doc : ../cache/Macaulay2-pre $(MADEGFILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	$(MAKE) -k -C cache-tmp/Examples -f ../../Makefile.egs
 	rm -f ../cache/Macaulay2-tmp
 	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'

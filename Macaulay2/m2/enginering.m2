@@ -73,14 +73,14 @@ expression ZZZ := n -> expression lift(n,ZZ)
 -----------------------------------------------------------------------------
                 FractionField = new Type of EngineRing
            frac FractionField := identity
-coefficientRing FractionField := F -> coefficientRing F.baseRings#-1
-   degreeLength FractionField := F -> degreeLength F.baseRings#-1
-       toString FractionField := F -> if F.?name then F.name else "frac(" | toString F.baseRings#-1 | ")"
-        numgens FractionField := F -> numgens F.baseRings#-1
+coefficientRing FractionField := F -> coefficientRing last F.baseRings
+   degreeLength FractionField := F -> degreeLength last F.baseRings
+       toString FractionField := F -> if F.?name then F.name else "frac(" | toString last F.baseRings | ")"
+        numgens FractionField := F -> numgens last F.baseRings
 	isField FractionField := F -> true
             net FractionField := F -> (
 		 if F.?name then F.name
-		 else net new FunctionApplication from { frac, F.baseRings#-1 }
+		 else net new FunctionApplication from { frac, last F.baseRings }
 		 )
 
 frac = method(TypicalValue => FractionField)
@@ -91,7 +91,7 @@ frac Ring := R -> (
 
 freduce := (f) -> (numerator f)/(denominator f)
 
-isHomogeneous FractionField := (F) -> isHomogeneous F.baseRings#-1
+isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings
 
 frac EngineRing := R -> (
      if R.?frac then R.frac
@@ -551,7 +551,7 @@ liftChain := (R,A) -> (
 	       if class S === PolynomialRing 
 	       or class S === GaloisField
 	       or class S === FractionField
-	       then S = S.baseRings#-1;
+	       then S = last S.baseRings;
 	       if S === A then singleton S
 	       else if R === S then error "no lifting possible for these rings"
 	       else prepend(S, liftChain(S, A)))))
@@ -567,7 +567,7 @@ promoteChain := (A,R) -> (
 	       	    if class S === PolynomialRing 
 	       	    or class S === GaloisField
 	       	    or class S === FractionField
-		    then S = S.baseRings#-1;
+		    then S = last S.baseRings;
 		    if S === A then ()
 		    else if R === S then error "no promotion possible for these rings"
 		    else promoteChain(A, S))),

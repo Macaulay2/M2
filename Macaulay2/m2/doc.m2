@@ -76,9 +76,13 @@ document { List, HEADLINE "class of all lists", SEEALSO "lists" }
 
 document { Type,
      HEADLINE "class of all types",
-     "A type is a hash table intended to contain methods for its instances.",
+     "Everything in the system is classified, and the class that a thing
+     belongs to is a type.  A type is implemented as a hash table containing
+     method functions for its instances.",
      PARA,
-     SEEALSO {"parent",  "class", "using methods"}
+     "The list of types known to the system is visible below.",
+     PARA,
+     SEEALSO {"parent", "class", "using methods"}
      }
 
 document { Print,
@@ -214,42 +218,13 @@ document { HashTable,
      "Access functions:",
      MENU {
  	  TOH "#",
- 	  TOH ".",
- 	  TOH "pairs",
- 	  TOH "keys",
- 	  TOH "values"
+ 	  TOH "."
  	  },
      "Query functions:",
      MENU {
  	  TOH "#?",
- 	  TOH ".?",
-	  TOH "mutable"
- 	  },
-     "Structural functions:",
-     MENU {
- 	  TOH "copy",
-	  TOH "remove"
- 	  },
-     "Other functions:",
-     MENU {
- 	  TOH "applyKeys",
- 	  TOH "applyPairs",
- 	  TOH "combine",
-	  TOH "hashTable",
- 	  TOH "merge",
-     	  TOH "new",
-	  TOH (NewFromMethod, HashTable, List),
-	  TOH "scanKeys",
- 	  TOH "scanPairs",
-	  TOH "scanValues",
-	  TOH "select"
- 	  },
-     "Examining hash tables:",
-     MENU {
-	  TOH "browse",
-	  TOH "peek",
-	  TOH "peek2",
-	  }
+ 	  TOH ".?"
+ 	  }
      }
 
 document { maxPosition,

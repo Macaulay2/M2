@@ -1082,9 +1082,7 @@ TEST "
     S1 = modifyRing(R,MonomialOrder=>Eliminate 2,Degrees=>{1,1,1,1})
 "
 
-document { (symbol **, Ring, Ring),
-     TT "R ** S", " -- tensor product of rings.",
-     PARA,
+document { (symbol **, Ring, Ring), HEADLINE "tensor product",
      "For complete documentation, see ", TO "tensor", "."
      }
 

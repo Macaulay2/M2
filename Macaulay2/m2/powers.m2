@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 --binomialRow := memoize ( 
 --     n -> accumulate((x,j) -> (x * (n-j+1))//j, 1, toList (1 .. n)) 

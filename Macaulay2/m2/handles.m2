@@ -1,4 +1,4 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
 
 -- the reason we need Handles to be mutable is so the 'new' command will not
 -- copy the Handle after it's return from the initialization routine.  If it
