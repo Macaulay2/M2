@@ -1156,21 +1156,18 @@ relativizeFilename(e:Expr):Expr := (
      );
 setupfun("relativizeFilename",relativizeFilename);
 
-isGlobalSymbol(e:Expr):Expr := (
-     when e is s:string do (
-	  when globalLookup(makeUniqueWord(s,parseWORD))
-	  is x:Symbol do True
-	  is null do False
-	  )
-     else WrongArgString());
-setupfun("isGlobalSymbol",isGlobalSymbol);
-
 getsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
-     when globalLookup(w) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
+     when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
      is null do (
 	  t := makeSymbol(w,dummyPosition,d);
 	  globalFrame.values.(t.frameindex)));
+
+issym(d:Dictionary,s:string):Expr := (
+     w := makeUniqueWord(s,parseWORD);
+     when globalLookup(w)
+     is x:Symbol do True
+     is null do False);
 
 getGlobalSymbol(e:Expr):Expr := (
      when e 
@@ -1186,8 +1183,28 @@ getGlobalSymbol(e:Expr):Expr := (
 	       )
 	  else WrongArg(1,"a dictionary")
 	  )
-     else WrongArgString());
+     else WrongArg("a string or a dictionary and a string"));
 setupfun("getGlobalSymbol",getGlobalSymbol);
+
+isGlobalSymbol(e:Expr):Expr := (
+     when e is s:string do (
+	  when globalLookup(makeUniqueWord(s,parseWORD))
+	  is x:Symbol do True
+	  is null do False
+	  )
+     is z:Sequence do if length(z) != 2 then WrongNumArgs(2) else (
+	  when z.0
+	  is dc:DictionaryClosure do (
+	       d := dc.dictionary;
+	       if d.transient || d.frameID != 0 then WrongArg(1,"a global dictionary") else
+	       when z.1
+	       is s:string do issym(d,s)
+	       else WrongArgString(2)
+	       )
+	  else WrongArg(1,"a dictionary")
+	  )
+     else WrongArg("a string or a dictionary and a string"));
+setupfun("isGlobalSymbol",isGlobalSymbol);
 
 expandWord(e:Expr):Expr := (
      when e is word:string do (

@@ -22,18 +22,24 @@ protect AfterEval
 protect AfterPrint
 protect BeforePrint
 
+breakLoop = () -> if interpreterDepth == 1 then error "entering break loop for debugging"
+
+OutputDictionary = new Dictionary
+
+oo := getGlobalSymbol(OutputDictionary,"oo");
+ooo := getGlobalSymbol(OutputDictionary,"ooo");
+oooo := getGlobalSymbol(OutputDictionary,"oooo");
+
 rot := x -> (
-     symbol oooo <- ooo;			  -- avoid GlobalAssignHook with <-
-     symbol ooo <- oo;
-     symbol oo <- x;
+     oooo <- value ooo;			  -- avoid GlobalAssignHook with <-
+     ooo <- value oo;
+     oo <- x;
      )
 
 applyMethod := (m,x) -> if x === null then x else (
      method := lookup(m,class x);
      if method === null then x else method x
      )
-
-OutputDictionary = new Dictionary
 
 commonProcessing := x -> (
      x = applyMethod(AfterEval,x);
