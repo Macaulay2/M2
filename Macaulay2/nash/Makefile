@@ -1,3 +1,10 @@
+
+# transparent gdb string
+GDB = gdb -batch -nx -x gdb.commands --args
+
+# strange result with this environment variable:
+export i=foo
+
 CFLAGS = -g -Wall
 PROGS = nash printenv unsetenv
 all : nash
@@ -14,4 +21,4 @@ ci :;				cvs ci -m ''
 
 env.nonash : $(PROGS);		$(ENV) ./printenv >$@
 env.nash : $(PROGS);		$(ENV) ./nash -c "exec ./printenv" >$@
-env.gdb : $(PROGS);		$(ENV) gdb -batch -nx -x gdb.commands --args ./printenv |sed -e '/^$$/d' -e '/Program exited normally./d' >$@
+env.gdb : $(PROGS);		$(ENV) $(GDB) ./printenv |sed -e '/^$$/d' -e '/Program exited normally./d' >$@
