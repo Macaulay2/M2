@@ -18,6 +18,7 @@ match := X -> 0 < #(matches X);
 if firstTime then (
      -- all global definitions go here, because after loaddata is run, we'll come through here again
      -- with all these already done and global variables set to read-only
+     filesLoaded = new MutableHashTable;
      ReverseDictionary = new MutableHashTable;
      PrintNames = new MutableHashTable;
      scan(
@@ -377,16 +378,12 @@ if firstTime and not nosetup then (
      )
 processCommandLineOptions 2
 runStartFunctions()
-tryLoad := fn -> if fileExists fn then (
-     load fn; 
+tryLoad := (ofn,fn) -> if fileExists fn then (
+     load fn;
+     filesLoaded#ofn = fn;
      true) else false
 errorDepth = loadDepth+1
-noinitfile or
-  tryLoad "init.m2" or
-  tryLoad (getenv "HOME" | "/" | packageSuffix | "init.m2") or
-  tryLoad (getenv "HOME" | "/init.m2") or 
-  tryLoad (getenv "HOME" | "/.init.m2") or
-  (if notify then stderr << "--no file 'init.m2' found" << endl; false)
+noinitfile or tryLoad ("init.m2", getenv "HOME" | "/" | packageSuffix | "init.m2")
 processCommandLineOptions 3
 n := interpreter()					    -- loadDepth is incremented by commandInterpreter
 if class n === ZZ and 0 <= n and n < 128 then exit n

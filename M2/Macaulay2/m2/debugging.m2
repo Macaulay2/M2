@@ -157,7 +157,6 @@ clearOutput = Command (() -> (
 	  ))
 
 clearAll = Command (() -> ( 
-     	  unmarkAllLoadedFiles();
 	  clearOutput(); 
 	  scan(values User.Dictionary, i -> (i <- i; erase i));
 	  )
