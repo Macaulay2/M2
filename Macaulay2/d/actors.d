@@ -359,11 +359,11 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,StarS))
      is x:RawMatrix do (
 	  when rhs
--- 	  is y:RawRingElement do (
--- 	       when x*y
--- 	       is t:RawMatrix do Expr(t)
--- 	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
--- 	       )
+	  is y:RawRingElement do (
+	       when x*y
+	       is t:RawMatrix do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
+	       )
 	  is y:RawMatrix do (
 	       when x*y
 	       is t:RawMatrix do Expr(t)
@@ -373,11 +373,11 @@ export (lhs:Expr) * (rhs:Expr) : Expr := (
 	  else binarymethod(lhs,rhs,StarS))
      is x:RawMutableMatrix do (
 	  when rhs
--- 	  is y:RawRingElement do (
--- 	       when x*y
--- 	       is t:RawMutableMatrix do Expr(t)
--- 	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
--- 	       )
+	  is y:RawRingElement do (
+	       when x*y
+	       is t:RawMutableMatrix do Expr(t)
+	       is null do buildErrorPacket(EngineError("matrix scalar multiplication failed"))
+	       )
 	  is y:RawMutableMatrix do (
 	       when x*y
 	       is t:RawMutableMatrix do Expr(t)
