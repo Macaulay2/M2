@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 -----------------------------------------------------------------------
 -- bFunction (I, w) -> bf
 -- I = holonomic ideal in a Weyl algebra with no parameters
@@ -8,7 +10,6 @@
 -- (method: algorithms 5.1.5 and 5.1.6 in Saito-Strumfels-Takayama)
 -----------------------------------------------------------------------
 
- 
 bFunction = method(Options => {Strategy => IntRing})
 
 -- makes polynomial f monic (internal) 

@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- These routines compute the dual of a holonomic D-module M, which is

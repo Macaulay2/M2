@@ -1,6 +1,6 @@
 clearAll()
 path = join(path, {"../"})
-load "Dloadfile.m2";
+load "D-modules.m2";
 
 -- Boundary cases
 W = QQ[x,Dx,WeylAlgebra => {x=>Dx}];
@@ -101,3 +101,4 @@ w2 = {1,-3,108,-1,4,-5};
 I1 = inw(I, w1);
 assert(I1 == substitute(inw(I, w2), ring I1));
 assert(gbw(I, w1) == gbw(I, w2));
+

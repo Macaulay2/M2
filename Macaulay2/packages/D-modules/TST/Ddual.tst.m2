@@ -1,6 +1,6 @@
 clearAll()
 path = join(path, {"../"})
-load "Dloadfile.m2"
+load "D-modules.m2"
 
 -- dual of an Appell F1
 I = AppellF1({2,-3,-2,5}, Vars => Local);

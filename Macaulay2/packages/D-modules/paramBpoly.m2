@@ -1,3 +1,31 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+local factorBFunctionZmodP 
+local children
+local ringOpts
+local tempI
+local tempN
+local tempT
+local tempBF
+local poly
+local loadVTree
+local inv
+local CALLglobalBFunctionParam
+local iList
+local tempV'
+local parentNODE
+local saveVTree
+local paramGB
+local Itype
+local gbWparam
+local tempV''
+local setBSwitch
+local level
+local coeff
+local inWparam
+local takeCareOf
+local cSet
+
 -- attempts to compute the b-polys for a poly with parameters
 -- IN>  f: RingElement (an element in a Weyl algebra)
 -- IN>  fname: String (base name for the .v3 and .tex files)
@@ -94,6 +122,7 @@ lcm := l -> (
 -- END of "ton of small functions"
 ---------------------------------------------------------------------------
 
+
 -------------------------------------------------------------------           
 -- calculateAss : (I) -> (list)
 -------------------------------------------------------------------
@@ -149,7 +178,7 @@ factorPolyDropExponents := f -> (
 -- NODE := (	
 --     	    	I: ideal, 
 --     	    	Itype: integer (COMPUTED, NOTCOMPUTED 
---                     or the reference for a NODE n such that n.tempI <= I),
+--                     or the reference for a NODE n such that n#tempI <= I),
 --     	    	level: integer,
 --     	   	bf: b-polynomial, 
 --     	    	inv: elements inverted when computing bf,
@@ -165,17 +194,17 @@ NOTCOMPUTED := -2;
 createVTree := f -> (
      R := ring f;
      new HashTable from {
-	  symbol coeff => coefficientRing R,
-	  symbol ringOpts => options R,
-	  symbol poly => f,
-	  symbol tempN => {} 
+	  coeff => coefficientRing R,
+	  ringOpts => options R,
+	  poly => f,
+	  tempN => {} 
 	  }  
      ); 
 
 saveVTree = method()
 saveVTree(HashTable, String) := (V, filename) -> ( 
-     filename << toString V.coeff << endl << toString V.ringOpts << endl
-     << toString V.poly << endl << toString V.tempN	<< endl << close )
+     filename << toString V#coeff << endl << toString V#ringOpts << endl
+     << toString V#poly << endl << toString V#tempN	<< endl << close )
 
 loadVTree = method()
 loadVTree(String) := filename -> (
@@ -184,25 +213,25 @@ loadVTree(String) := filename -> (
      opts := value f#1;
      A := K[opts];
      new HashTable from {
-	  symbol coeff => K,
-	  symbol ringOpts => opts,
-	  symbol poly => value f#2,
-	  symbol tempN => value f#3 
+	  coeff => K,
+	  ringOpts => opts,
+	  poly => value f#2,
+	  tempN => value f#3 
 	  }
      )
 
 toString(Option) := o -> (toString o#0 | "=>" | toString o#1);
 
 search4ABigGuy := (V, I, parentNODE) -> (
-     grandpa := (V.tempN#parentNODE).parentNODE;
+     grandpa := (V#tempN#parentNODE)#parentNODE;
      pInfo(3, {"grandpa: ideal =", I, " parent = ", parentNODE});
      if grandpa < 0 then NOTCOMPUTED
      else (
 	  pInfo(3, "grandpa children: " | 
-	       toString ((V.tempN#grandpa).children / (i->
-			 (i, isSubset((V.tempN#i).tempI, I)))));
-	  temp := select(1,  (V.tempN#grandpa).children, 
-	       i-> (i < parentNODE) and isSubset((V.tempN#i).tempI, I) ); 
+	       toString ((V#tempN#grandpa)#children / (i->
+			 (i, isSubset((V#tempN#i)#tempI, I)))));
+	  temp := select(1,  (V#tempN#grandpa)#children, 
+	       i-> (i < parentNODE) and isSubset((V#tempN#i)#tempI, I) ); 
 	  if #temp > 0 then temp#0
 	  else search4ABigGuy(V, I, grandpa)
 	  ) 
@@ -210,17 +239,17 @@ search4ABigGuy := (V, I, parentNODE) -> (
 
 add2VTree := (V, II, p) -> (
      new HashTable from {
-	  symbol coeff => V.coeff,
-	  symbol ringOpts => V.ringOpts,
-	  symbol poly => V.poly,
-	  symbol tempN  => append(V.tempN, new HashTable from {
-	       	    symbol tempI => II,
-		    symbol Itype => (
+	  coeff => V#coeff,
+	  ringOpts => V#ringOpts,
+	  poly => V#poly,
+	  tempN  => append(V#tempN, new HashTable from {
+	       	    tempI => II,
+		    Itype => (
 			 if p < 0 then NOTCOMPUTED 
 		    	 else search4ABigGuy(V, II, p)
 			 ),
-		    symbol level => if p < 0 then 0 else (V.tempN#p).level + 1,
-		    symbol parentNODE => p
+		    level => if p < 0 then 0 else (V#tempN#p)#level + 1,
+		    parentNODE => p
 		    })  
 	  } 
      );
@@ -229,41 +258,41 @@ modifyNODE := (V, num, l) -> (
      ---------(V, num, {bf, inv, children, t})
      kidNumbers := l#2 / (J -> (
 	       V = add2VTree(V, J, num);
-	       #(V.tempN) - 1     -- the number of the last element
+	       #(V#tempN) - 1     -- the number of the last element
 	       )); 
      new HashTable from {
-	  symbol coeff => V.coeff,
-	  symbol ringOpts => V.ringOpts,
-	  symbol poly => V.poly,
-	  symbol tempN => take(V.tempN, num) | {new HashTable from {
-	       	    symbol tempI => (V.tempN#num).tempI,
-		    symbol Itype => COMPUTED,
-		    symbol level => (V.tempN#num).level,
-		    symbol tempBF => l#0,
-		    symbol inv => l#1,
-		    symbol children => kidNumbers,
-		    symbol parentNODE => (V.tempN#num).parentNODE,
-		    symbol tempT => l#3
-	       	    }} | drop(V.tempN, num + 1)   
+	  coeff => V#coeff,
+	  ringOpts => V#ringOpts,
+	  poly => V#poly,
+	  tempN => take(V#tempN, num) | {new HashTable from {
+	       	    tempI => (V#tempN#num)#tempI,
+		    Itype => COMPUTED,
+		    level => (V#tempN#num)#level,
+		    tempBF => l#0,
+		    inv => l#1,
+		    children => kidNumbers,
+		    parentNODE => (V#tempN#num)#parentNODE,
+		    tempT => l#3
+	       	    }} | drop(V#tempN, num + 1)   
 	  } 
      );
 
 modifyCSET := (V, num, l) -> (
-     old := V.tempN#num;
+     old := V#tempN#num;
      new HashTable from {
-	  symbol coeff => V.coeff,
-	  symbol ringOpts => V.ringOpts,
-	  symbol poly => V.poly,
-	  symbol tempN  => take(V.tempN, num) | {new HashTable from {
-	       	    symbol tempI => old.tempI,
-		    symbol Itype => old.Itype,
-		    symbol level => old.level,
-		    symbol tempBF => old.tempBF,
-		    symbol inv => l,
-		    symbol children => old.children,
-		    symbol parentNODE => old.parentNODE,
-		    symbol tempT => old.tempT
-	       	    }} | drop(V.tempN, num + 1)   
+	  coeff => V#coeff,
+	  ringOpts => V#ringOpts,
+	  poly => V#poly,
+	  tempN  => take(V#tempN, num) | {new HashTable from {
+	       	    tempI => old#tempI,
+		    Itype => old#Itype,
+		    level => old#level,
+		    tempBF => old#tempBF,
+		    inv => l,
+		    children => old#children,
+		    parentNODE => old#parentNODE,
+		    tempT => old#tempT
+	       	    }} | drop(V#tempN, num + 1)   
 	  } 
      );
 
@@ -282,20 +311,20 @@ cutCrapOut := l -> (
      );
 
 refineVTree := (V, num) -> (
-     temp := V.tempN#num;
-     if temp.Itype < 0 and #temp.children != 0 then (
-	  scan(temp.children, u -> (
+     temp := V#tempN#num;
+     if temp#Itype < 0 and #temp#children != 0 then (
+	  scan(temp#children, u -> (
 		    V = refineVTree(V, u);
-	       	    temp2 := V.tempN#u;
-		    if temp2.Itype < 0 and temp2.tempBF == temp.tempBF then (
+	       	    temp2 := V#tempN#u;
+		    if temp2#Itype < 0 and temp2#tempBF == temp#tempBF then (
 		    	 << "patching node #" << num << endl;
-			 p := position(temp.inv, v-> v == temp2.tempI);
+			 p := position(temp#inv, v-> v == temp2#tempI);
 			 if p===null then error "VTree is damaged!";
-			 V = modifyCSET(V, num, drop(temp.inv, {p,p}) | temp2.inv);
-			 temp = V.tempN#num;
+			 V = modifyCSET(V, num, drop(temp#inv, {p,p}) | temp2#inv);
+			 temp = V#tempN#num;
 			 );
 	       ));
-     	  V = modifyCSET(V, num, cutCrapOut(temp.inv));   
+     	  V = modifyCSET(V, num, cutCrapOut(temp#inv));   
 	  ); 
      V
      );
@@ -304,13 +333,13 @@ appendCSet := (c, l) -> (
      i := 0;
      isDifferent := true;
      while isDifferent do (
-	  if (c#i).tempV' == l.tempV' then isDifferent = false
+	  if (c#i)#tempV' == l#tempV' then isDifferent = false
 	  else i = i + 1; 
 	  );
      if isDifferent then take(c,i) | {l} | drop(c,i)
      else take(c,i) | {new HashTable from{
-		    symbol tempV'' => cutCrapOut (l.tempV'' | (c#i).tempV''),
-		    symbol tempV' => l.tempV'
+		    tempV'' => cutCrapOut (l#tempV'' | (c#i)#tempV''),
+		    tempV' => l#tempV'
 		    }} | drop(c,i+1)
      );
 
@@ -327,34 +356,39 @@ chooseMinListList := (l1, l2) -> (
      );
  
 VTree2bSet2 := V -> (
-     if any(V.tempN, u -> u.Itype == NOTCOMPUTED) then
+     print V#tempN;
+     Itype = symbol Itype;
+     if any(V#tempN, u -> (
+	       print class Itype; 
+	       print (keys u/class); 
+	       u#Itype == NOTCOMPUTED)) then
      error "VTree is not complete"; 
      
      -- for each b(s) \in B(n,d)
      -- make the list of ideals for which b(s) is a generic b-function 
      r := {};
-     scan(V.tempN, node->( 
-	       if node.Itype == COMPUTED then 
+     scan(V#tempN, node->( 
+	       if node#Itype == COMPUTED then 
 	       (
 		    t := position(r, u ->( 
-			      u.tempBF == node.tempBF ));
+			      u#tempBF == node#tempBF ));
 		    r = (
 			 if t =!= null 
 		    	 then take(r, t) | { 
 			      new HashTable from {
-			      	   symbol tempBF => node.tempBF,
-			      	   symbol iList => (r#t).iList | {
-					if node.tempI == 0 then ideal 0_(V.coeff)
-			      		else node.tempI  
+			      	   tempBF => node#tempBF,
+			      	   iList => (r#t)#iList | {
+					if node#tempI == 0 then ideal 0_(V#coeff)
+			      		else node#tempI  
 			      		}
 				   }
 			      } | drop (r, t+1)
 		    	 else r | { 
 			      new HashTable from {
-				   symbol tempBF => node.tempBF,
-			      	   symbol iList => {
-					if node.tempI == 0 then ideal 0_(V.coeff)
-			      		else node.tempI  
+				   tempBF => node#tempBF,
+			      	   iList => {
+					if node#tempI == 0 then ideal 0_(V#coeff)
+			      		else node#tempI  
 					} 
 				   }
 			      }
@@ -363,25 +397,25 @@ VTree2bSet2 := V -> (
 	       ));      
      i := 0;
      while i < #r do (
-	  l1 := (r#i).iList;
-	  l2 := flatten(drop(r, {i,i}) / ( u -> u.iList));
+	  l1 := (r#i)#iList;
+	  l2 := flatten(drop(r, {i,i}) / ( u -> u#iList));
 	  c := { new HashTable from {
-	       	    symbol tempV' => {"not empty"},
-		    symbol tempV'' => {ideal 0_(V.coeff)} 
+	       	    tempV' => {"not empty"},
+		    tempV'' => {ideal 0_(V#coeff)} 
 		    }};
-	  while #((last c).tempV') > 0 do (
+	  while #((last c)#tempV') > 0 do (
 	       -- choose min ideals in arg1 containing 
 	       -- at least one ideal from arg2 
-	       temp := chooseMinListList(l1, (last c).tempV'');
+	       temp := chooseMinListList(l1, (last c)#tempV'');
 	       c = c | { new HashTable from {
-			 symbol tempV' => temp,
-			 symbol tempV''=> chooseMinListList(l2, temp)
+			 tempV' => temp,
+			 tempV''=> chooseMinListList(l2, temp)
 			 }}; 
 	       );
      	  r = take(r,i) | {  new HashTable from {
-			      	   symbol tempBF => (r#i).tempBF,
-			      	   symbol iList => (r#i).iList,
-				   symbol cSet => take(c,{1,#c-2}) 
+			      	   tempBF => (r#i)#tempBF,
+			      	   iList => (r#i)#iList,
+				   cSet => take(c,{1,#c-2}) 
 				   } 
 			      } | drop(r, i+1); 
      	  i = i + 1; 
@@ -389,7 +423,7 @@ VTree2bSet2 := V -> (
      r
      ); 
 
-isNonEmpty := h -> ( #h.tempV'' == 0 or not isSubset( intersect(h.tempV''), h.tempV') );
+isNonEmpty := h -> ( #h#tempV'' == 0 or not isSubset( intersect(h#tempV''), h#tempV') );
 
 
 ------------------------------------
@@ -427,7 +461,7 @@ factorBFunctionZmodP RingElement := Product => f -> (
 	       ));
      use R;
      result
-     );-- end factorBFunction
+     );-- end factorBFunctionZmodP
 
 BSet2tex := (s, filename) -> (
      TeXfile := filename << "\\documentclass{article}\n\\begin{document}\n"; 
@@ -437,16 +471,16 @@ BSet2tex := (s, filename) -> (
 		    -- b-function
 		    S := symbol S; 
 		    R := (ZZ/DBIGPRIME)[S];
-		    toString factorBFunctionZmodP sum(u.tempBF, 
+		    toString factorBFunctionZmodP sum(u#tempBF, 
 			v->v#1 * R_(v#0))
 	       ) << ",$$";
 	       
 	       i := 0;
-	       while i < #u.cSet do( 
-		    VSet2tex((u.cSet#i).tempV', TeXfile);
-	       	    if #(u.cSet#i).tempV'' > 0 then TeXfile << "$\\setminus$";
-	       	    VSet2tex((u.cSet#i).tempV'', TeXfile);
-	       	    if i < #u.cSet - 1 then TeXfile << "$\\cup$";
+	       while i < #u#cSet do( 
+		    VSet2tex((u#cSet#i)#tempV', TeXfile);
+	       	    if #(u#cSet#i)#tempV'' > 0 then TeXfile << "$\\setminus$";
+	       	    VSet2tex((u#cSet#i)#tempV'', TeXfile);
+	       	    if i < #u#cSet - 1 then TeXfile << "$\\cup$";
 		    i = i + 1;
 		    );	    
 	       ));
@@ -763,7 +797,7 @@ globalBFunctionParam2 = f -> (
      realized as such.  Need better implementation";
      bpoly := bpolys_(0,0);
      
-     Ks = (coefficientRing W)[Ws_(ns-1)];
+     Ks := (coefficientRing W)[Ws_(ns-1)];
      bpoly = substitute(bpoly, Ks);
      use W;
      (bpoly, inv)
@@ -775,25 +809,25 @@ globalBFunctionParam2 = f -> (
 takeCareOf = method()
 takeCareOf(HashTable, ZZ) := (V, num) -> (
      pInfo(1, "computing node #" | toString num | "...");
-     node := V.tempN#num;
-     K := frac(V.coeff / node.tempI);
-     A := K[ V.ringOpts ]; 
+     node := V#tempN#num;
+     K := frac(V#coeff / node#tempI);
+     A := K[ V#ringOpts ]; 
      n := numgens A;
-     f := sum(listForm V.poly / (u->promote(u#1,K) * A_(u#0)));
+     f := sum(listForm V#poly / (u->promote(u#1,K) * A_(u#0)));
      
      timeSpent := timing (bf := CALLglobalBFunctionParam f);
      inv := bf#1;
      bf = bf#0;
           
-     use V.coeff;
+     use V#coeff;
      assocPrimes := select(
      	  if inv != {} 
-     	  then calculateAss liftIdeal(lcm(inv), V.coeff) 
+     	  then calculateAss liftIdeal(lcm(inv), V#coeff) 
      	  else {},
 	  I ->  (
-	       TK := frac(V.coeff / I);
-     	       TA := TK[ V.ringOpts ]; 
-	       sum(listForm V.poly / (u->promote(u#1,TK) * TA_(u#0))) !=0
+	       TK := frac(V#coeff / I);
+     	       TA := TK[ V#ringOpts ]; 
+	       sum(listForm V#poly / (u->promote(u#1,TK) * TA_(u#0))) !=0
 	       )
      	  );
      modifyNODE(V, num, {listForm bf, assocPrimes, assocPrimes, timeSpent#0})
@@ -805,10 +839,10 @@ takeCareOf(HashTable, ZZ) := (V, num) -> (
 
 paramBpoly = method(Options => {GroundField => 32749}) -- 0 stays for QQ
 paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
-     QQflag = (o.GroundField == 0);
+     QQflag = (o#GroundField == 0);
      if not QQflag then (
 	  if isPrime o.GroundField 
-     	  then DBIGPRIME == o.GroundField
+     	  then DBIGPRIME = o.GroundField
      	  else error "need a prime";
 	  )
      else error "algorithm is implemented over finite field so far"; 
@@ -823,21 +857,21 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
      V := createVTree(f);
      V = add2VTree(V, ideal 0_(coefficientRing Z), -1);     
      local num;
-     while (num = position(V.tempN, u -> u.Itype == NOTCOMPUTED)) =!= null 
+     while (num = position(V#tempN, u -> u#Itype == NOTCOMPUTED)) =!= null 
      do ( 
      	  V = takeCareOf(V, num);
      	  saveVTree(V, (fname| ".v3"));
      	  );
      V = loadVTree((fname| ".v3"));
      -- transform into bSet
-     (fname | ".tex")  << toString V.poly << endl; 
+     (fname | ".tex")  << toString V#poly << endl; 
      bs := VTree2bSet2 V;
      BSet2tex(bs, (fname | ".tex"));
      use ring f;
      apply(bs, u->(
 	       s := symbol s;
 	       RZ := (ZZ/DBIGPRIME)[s];
-	       factorBFunctionZmodP(sum(u.tempBF, v->v#1*RZ_(v#0))) 
+	       factorBFunctionZmodP(sum(u#tempBF, v->v#1*RZ_(v#0))) 
 	       ))
      );
 
@@ -973,14 +1007,7 @@ paramGB = I -> (
     {g, inv}
     );
 
-///
-erase symbol tempI
-erase symbol tempN 	--n
-erase symbol tempT 	--t
-erase symbol tempV'
-erase symbol tempV''
-erase symbol tempBF 	--bf
-///
+
 
 
 

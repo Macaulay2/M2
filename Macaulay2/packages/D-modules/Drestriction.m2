@@ -1,3 +1,7 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+local bFunctionM
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- These local routines are needed for Drestriction
@@ -596,7 +600,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      if member(Boundaries, output) then imList := {};
      if member(GenCycles, output) then explicitList := {};
      if member(RestrictComplex,output) then (
-	  restrictComplex = new ChainComplex;
+	  restrictComplex := new ChainComplex;
 	  restrictComplex.ring = resW;
 	  );
      outputList := {};
@@ -824,7 +828,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  
 	  -- MAKE THE NEXT DIFFERENTIAL OF D_m MODULES	       
 	  if sourceSize == 0 and targetSize == 0 then (
-	       newDiff = map(resW^0) )
+	       newDiff := map(resW^0) )
 	  else if sourceSize == 0 then ( newDiff =
 	       compress matrix toList(targetSize:{0_resW}) )
 	  else if targetSize == 0 then ( newDiff =

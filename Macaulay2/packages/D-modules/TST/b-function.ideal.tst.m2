@@ -1,6 +1,6 @@
 -- globalBFunction
 clearAll()
-load "Dloadfile.m2"
+load "D-modules.m2"
 Dtrace 1
 pInfo(1, "testing globalBFunction...")
 

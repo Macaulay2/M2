@@ -1,3 +1,7 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+local GBprune
+local makeWA 
 -- Basic D-routines
 
 ----------------------------------------------------------------
@@ -123,7 +127,7 @@ FourierLocal := M -> (
 	  L#(W.dpairInds#2#i) = W.dpairVars#2#i;
 	  i = i+1;
 	  );	  
-     FMap = map(W, W, matrix {toList L});
+     FMap := map(W, W, matrix {toList L});
      FMap M
      )
 Fourier RingElement := M -> (FourierLocal M)
@@ -148,7 +152,7 @@ FourierInverseLocal := M -> (
 	  L#(W.dpairInds#2#i) = W.dpairVars#2#i;
 	  i = i+1;
 	  );	  
-     FInvMap = map(W, W, matrix {toList L});
+     FInvMap := map(W, W, matrix {toList L});
      FInvMap M
      )
 FourierInverse RingElement := M -> (FourierInverseLocal M)
@@ -370,7 +374,7 @@ singLocus Module := M -> (
      use W;
      -- do the intersection
      gbSatI := gb CAtotempCA SatI;
-     I3 = ideal compress tempCAtoCA selectInSubring(1, gens gbSatI);
+     I3 := ideal compress tempCAtoCA selectInSubring(1, gens gbSatI);
      if I3 == ideal 1_(W.CommAlgebra) then W.CAtoWA I3
      else W.CAtoWA radical I3
      )
@@ -393,8 +397,8 @@ GBprune Matrix := M -> (
 	       columnList = append(columnList, i);
 	  i = i+1;
 	  );
-     if columnList == {} then Mnew = 0
-     else Mnew := transpose compress matrix apply(columnList, 
+     if columnList == {} then Mnew := 0
+     else Mnew = transpose compress matrix apply(columnList, 
      	  i -> ( (entries transpose Mgb_{i})#0 ) );
      Mnew
      )

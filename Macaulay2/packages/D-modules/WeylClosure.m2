@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- This routine computes the Weyl closure of a D-ideal if
@@ -13,7 +15,7 @@ WeylClosure(Ideal, RingElement) := (I, f) -> (
 
      M := cokernel gens I;
      --<< "Computing localization" << endl;
-     locMap := Dlocalize(M, f, Output => Map);
+     locMap := DlocalizeMap(M, f);
      J := I + ideal gens kernel locMap;
      --if (I == J) then << "Ideal is closed with respect to f" << endl
      --else << "Ideal is not closed with respect to f" << endl;

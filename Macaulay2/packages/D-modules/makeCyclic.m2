@@ -1,3 +1,12 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+local  howBig
+local AnnG
+local ItimesF
+local  annV
+local Generator
+local degGen
+ 
 -------------------------------------------------
 -- cancels out the n-th (differential) variable 
 -------------------------------------------------
@@ -90,18 +99,18 @@ getUseful := (pres, I) -> (
 ---------------------------------------------------------------------------
 -- computes ":" ideal
 ---------------------------------------------------------------------------
-semicolonIdealRE := (I,f) -> (
-     R := ring I;
-     semicolonMatrixMatrix(gens I, matrix{{f}})
-     )
 semicolonIdealIdeal := (I,J) -> (
      error "is not implemented yet"
      )
 semicolonMatrixMatrix := (M, v) -> (
      R := ring M; 
      if target M != target v 
-     then error "expexted equal targets";
+     then error "expected equal targets";
      ideal mingens ideal ker map(cokernel M , source v, v) 
+     )
+semicolonIdealRE := (I,f) -> (
+     R := ring I;
+     semicolonMatrixMatrix(gens I, matrix{{f}})
      )
 
 ------------------------------------------------------------------
@@ -135,17 +144,17 @@ makeCyclic Matrix := HashTable => M -> (
 	  );
      
      pInfo(666, {"E=",E});
-     E = select(E, e->e.annV != R);
+     E = select(E, e->e#annV != R);
      pInfo(666, {"E=",E});
           
      g := matrix( toList(n:{0_R}) ); --start with(0,0,...,0)
      Ag := ideal 1_R; -- annihilator of g 
      while #E > 0 do (
 	  -- pick the "nicest" E_i
-	  minDeg := min apply(E,u->u.degGen);
-	  i := position(E, u->u.degGen == minDeg);
-	  h := (E#i).tempV;
-	  Ah := (E#i).annV;
+	  minDeg := min apply(E,u->u#degGen);
+	  i := position(E, u->u#degGen == minDeg);
+	  h := (E#i)#tempV;
+	  Ah := (E#i)#annV;
 	  E = drop(E, {i,i});
 	  flg := true;
 	  while flg

@@ -1,6 +1,6 @@
 clearAll()
 path = join(path, {"../"})
-load "Dloadfile.m2"
+load "D-modules.m2"
 
 ------------------------- TESTS for Drestriction --------------------------------
 

@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- Takes a cyclic holonomic module D_n/I and returns 
@@ -305,9 +307,9 @@ AnnIFs2(Ideal, RingElement) := (I, f) -> (
      twistList := join({u,v,t-f',dt}, apply( toList(4..n+3), 
 	  i -> WTUV_i + (WTUV_i*f' - f'*WTUV_i)*dt));
      twistMap := map(WTUV, WTUV, matrix{twistList});
-     tempKI = twistMap(ideal (t) + WtoWTUV I);
+     tempKI := twistMap(ideal (t) + WtoWTUV I);
      wts := {1,-1,1,-1} | toList(n:0);
-     KI = ideal homogenize(gens tempKI, u, wts);
+     KI := ideal homogenize(gens tempKI, u, wts);
      
      g := (entries gens KI)#0 | { u * v - 1 };
      preGens := flatten entries substitute(

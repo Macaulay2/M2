@@ -1,3 +1,4 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -108,7 +109,7 @@ deRhamAll RingElement := options -> f -> (
 	       pull := intTable#PreCycles#i;
 	       j := 0;
 	       pInfo(2, "\t Degree " | i | "...");
-	       tInfo = toString first timing (
+	       tInfo := toString first timing (
 	       	    while j < n-i do (
 	            	 vertMap := zeroize dbl#(n-i-1)^[(j,-j+n-i-1)]*
 	            	 (dbl.dd#(n-i))*(dbl#(n-i)_[(j,-j+n-i)]);

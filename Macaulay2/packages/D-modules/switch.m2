@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 ---------------------------------------------------------------------------------
 -- InfoLevel switch 
 -- determines how often and of which depth remarks are made by D-routines

@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 -----------------------------------------------------------------------
 -- globalBFunction (f) -> bf
 -- f = polynomial (assumed to be an element of 
