@@ -1132,7 +1132,7 @@ extern "C" {
 
   const M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M); /* drg: connected toString, OK */
 
-  unsigned long  IM2_MutableMatrix_hash(const MutableMatrix *M); /* TODO */ /* drg: connected to "hash", returning 0 */
+  unsigned long  IM2_MutableMatrix_hash(const MutableMatrix *M); /* drg: connected to "hash" */
 
   int IM2_MutableMatrix_n_rows(const MutableMatrix *M);	/* drg: connected rawNumberOfRows, OK */
 

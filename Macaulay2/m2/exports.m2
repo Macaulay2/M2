@@ -40,6 +40,9 @@ exportMutable (
 	)
 
 export (
+     	symbol MutableMatrix,
+	symbol setRowChange,
+	symbol setColumnChange,
         symbol simpleLoad,
         symbol filesLoaded,
         symbol loadedFiles,
