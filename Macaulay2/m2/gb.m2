@@ -240,16 +240,6 @@ ZZ % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)
 
 leadTerm GroebnerBasis := (g) -> map(ring g, rawGBGetLeadTerms(raw g,-1))
 
--- Auto-reduction
-autoReduce = method()
-autoReduce Matrix := (m) -> notImplemented "IM2_Matrix_auto_reduce"
-
-TEST ///
-R = ZZ/101[a..f]
-m = matrix{{a^2-b-c,b^2-c-d,c^4-b^3-2*d}}
-autoReduce m
-///     
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

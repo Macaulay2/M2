@@ -489,7 +489,6 @@ export (
 	symbol assign,
 	symbol atEndOfFile,
 	symbol atan,
-	symbol autoReduce,
 	symbol autoload,
 	symbol baseFilename,
 	symbol baseName,

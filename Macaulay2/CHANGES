@@ -16,6 +16,9 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The routine 'autoReduce' is now obsolete because all gb's are
+auto-reduced now, so it's been removed.
+
 We've made the functions associated with Schur rings into a separate
 package called SchurRings.
 

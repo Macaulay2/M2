@@ -547,6 +547,7 @@ installPackage Package := opts -> pkg -> (
      -- so let's pretend we loaded the package from there in the first place, thereby allowing "documentation()"
      -- to find the example output files the same way it would if the package had been loaded from there.
      oldPackagePrefix := pkg#"package prefix";
+     if oldPackagePrefix === null then oldPackagePrefix = buildDirectory;
      pkg#"package prefix" = buildDirectory;
 
      -- make example input files
