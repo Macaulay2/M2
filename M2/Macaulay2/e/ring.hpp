@@ -37,9 +37,6 @@ protected:
   const Monoid *D_;
   const PolynomialRing *_HRing;	// Hilbert function ring, if D has >= 1 variables.
 				// Otherwise, this will be NULL.
-  const Ring *_flattened_ring;	// Either 'this', or a polynomial ring whose coeff ring is 
-                                // 'basic', eg ZZ, ZZ/p, RR, or some other 
-                                // non fraction, non poly ring.
 
   ring_elem _zero_divisor;
   bool _isfield;		// true means yes, or declared yes.
@@ -70,7 +67,7 @@ public:
   const Monoid * Nmonoms()       const { return M_; }
   const Monoid * degree_monoid() const { return D_; }
   const PolynomialRing *HilbertRing() const { return _HRing; }
-  const Ring * get_flattened_ring() const {  return _flattened_ring; }
+
 
   virtual FreeModule *make_FreeModule() const;
   virtual FreeModule *make_FreeModule(int n) const;

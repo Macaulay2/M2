@@ -14,7 +14,6 @@ bool QQ::initialize_QQ(const Monoid *D)
   initialize_ring(0,0,0,this,
 		  Monoid::get_trivial_monoid(),
 		  D);
-  _flattened_ring = ZZ;
   _elem_size = sizeof(mpq_t);
   _zero_elem = new_elem();// this sets the element to 0.
   return true;

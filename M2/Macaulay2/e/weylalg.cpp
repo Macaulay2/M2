@@ -80,7 +80,7 @@ bool WeylAlgebra::initialize_weyl(
   return true;
 }
 
-WeylAlgebra *WeylAlgebra::create(const Ring *R,
+WeylAlgebra *WeylAlgebra::create(const PolynomialRing *R,
 				 M2_arrayint derivatives,
 				 M2_arrayint commutatives,
 				 int homog_var)

@@ -13,7 +13,7 @@ bool SolvableAlgebra::initialize_solvable(const Matrix *Q)
   return true;
 }
 
-SolvableAlgebra *SolvableAlgebra::create(const Ring *R,
+SolvableAlgebra *SolvableAlgebra::create(const PolynomialRing *R,
 					 const Matrix *Q)
 {
   // CHECK: R is a polynomial ring, and is commutative.
@@ -21,7 +21,7 @@ SolvableAlgebra *SolvableAlgebra::create(const Ring *R,
 
   result->initialize_poly_ring(R->Ncoeffs(), R->Nmonoms());
   if (!result->initialize_solvable(Q)) return 0;
-  const Ring *flatR = result->_flattened_ring;
+  const PolynomialRing *flatR = result->get_flattened_ring();
   result->_gb_ring = GBRing::create_SolvableAlgebra(flatR->Ncoeffs(), flatR->Nmonoms(), result);
   return result;
 }

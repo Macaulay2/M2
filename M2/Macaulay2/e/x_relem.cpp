@@ -112,13 +112,25 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
 					int homog_var)
 {
   /* TODO */
-  return WeylAlgebra::create(R,diff_vars, comm_vars, homog_var);
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+  return WeylAlgebra::create(P,diff_vars, comm_vars, homog_var);
 }
 
 const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
 					    const Matrix *Q)
 {
-  return SolvableAlgebra::create(R,Q);
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+  return SolvableAlgebra::create(P,Q);
 }
 
 const RingOrNull *IM2_Ring_frac(const Ring *R)

@@ -15,7 +15,7 @@ protected:
   virtual ~SolvableAlgebra();
 
 public:
-  static SolvableAlgebra *create(const Ring *R,
+  static SolvableAlgebra *create(const PolynomialRing *R,
 				 const Matrix *Q);
 
   virtual bool is_pid() const       { return false; }

@@ -67,7 +67,7 @@ protected:
 	  const int *derivatives, 
 	  const gbvector *g) const;  // An entire polynomial
 public:
-  static WeylAlgebra *create(const Ring *R,
+  static WeylAlgebra *create(const PolynomialRing *R,
 			     M2_arrayint derivatives,
 			     M2_arrayint commutatives,
 			     int homog_var);

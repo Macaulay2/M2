@@ -56,11 +56,20 @@ ComputationOrNull *Computation::choose_gb(const Matrix *m,
 				 int algorithm,
 				 int strategy)
 {
-  const Ring *R = m->get_ring()->get_flattened_ring();
+  const Ring *R1 = m->get_ring();
+  const PolynomialRing *R2 = R1->cast_to_PolynomialRing();
+
+  if (R2 == 0)
+    {
+      // Look for the correct computation type here.
+#warning "handle non polynomial rings"
+      return 0;
+    }
+  const PolynomialRing *R = R2->get_flattened_ring();
 
   bool is_graded = (R->is_graded() && m->is_homogeneous());
-  bool ring_is_base = R->is_basic_ring();
-  bool base_is_ZZ = R->Ncoeffs()->is_ZZ(); 
+  //bool ring_is_base = R->is_basic_ring();
+  //bool base_is_ZZ = R->Ncoeffs()->is_ZZ(); 
 #warning "NOT QUITE!!  Need to know if it is ZZ or QQ"
 #warning "unused variable commented out"
   // bool base_is_field = !R->Ncoeffs()->is_ZZ();
@@ -82,25 +91,23 @@ ComputationOrNull *Computation::choose_gb(const Matrix *m,
 			   max_degree);
   
   return 0;
+#if 0
   if (base_is_ZZ)
     {
       if (ring_is_base)
 	{
-#if 0
+
 	  return HermiteComputation::create(m, 
 					    collect_syz, 
 					    collect_change, 
 					    n_rows_to_keep);
-#endif
 	  return 0;
 	}
       // Question: should we separate between the graded, nongraded versions?
-#if 0
       return GBZZ::create(m, 
 			  collect_syz, 
 			  collect_change, 
 			  n_rows_to_keep);
-#endif
       return 0;
     }
   else
@@ -108,13 +115,11 @@ ComputationOrNull *Computation::choose_gb(const Matrix *m,
       // Base is a field
       if (ring_is_base)
 	{
-#if 0	      
 	  return GaussElimComputation::create(m, 
 					      collect_syz, 
 					      collect_change, 
 					      n_rows_to_keep); 
 	  // This should be fraction free
-#endif
 	  return 0;
 	}
       // Also allow the user to choose between them.
@@ -125,15 +130,14 @@ ComputationOrNull *Computation::choose_gb(const Matrix *m,
 			       strategy,
 			       use_max_degree,
 			       max_degree);
-#if 0
       return GB_inhom_comp::create(m, 
 				   collect_syz, 
 				   collect_change, 
 				   n_rows_to_keep,
 				   stategy);
-#endif
       return 0;
     }
+#endif
 }
 ComputationOrNull *Computation::choose_res(const Matrix *m,
 					   M2_bool resolve_cokernel,
