@@ -487,37 +487,19 @@ usage := s -> (
      if o =!= null then PARA {o}
      )
 
-title := s -> PARA { BIG formatDocumentTag s, headline s }
+title := s -> SEQ { STRONG formatDocumentTag s, headline s }
 
 inlineMenu := x -> between(", ", TO \ x)
 
 type := S -> (
      s := value S;
-     X := class s;
-     PARA {
-	  SEQ {
-	       "The ",
-	       if X.?synonym then X.synonym else "object",
-	       " \"", toString S, "\" is a member of the class ", TO class s, "."
-	       },
-	  if instance(s,Type) then (
-	       SEQ {
-		    if s.?synonym then SEQ {
-			 "  Each object of class ", toString s, " is called ", indefinite s.synonym, "."
-			 },
-		    if parent s =!= Thing then SEQ {
-			 "  Each ", synonym s, " is also a member of class ", TO parent s, ".",
-			 SEQ {
-			      "  More general types (whose methods may also apply) :",
-			      SHIELD UL (
-				   Y := parent s;
-				   while Y =!= Thing list TO toString Y do Y = parent Y
-				   )
-			      }
-			 }
-		    }
-	       )
-	  }
+     PARA { "The object ", TO S, " is ", justSynonym class s,
+     	  if parent s =!= Nothing then (
+     	       f := (T -> while T =!= Thing list parent T do T = parent T) s;
+	       SEQ splice {", with ancestor classes ", toSequence between( ", ", f / (T -> TO T) ) }
+	       ),
+	  "."
+     	  }
      )
 
 optargs := method(SingleArgumentDispatch => true)
@@ -547,7 +529,7 @@ synopsis Thing := f -> (
 	       else SEQ SYN#i
 	       );
 	  SEQ {
-	       PARA BOLD "Synopsis:",
+	       PARA BOLD "Synopsis",
 	       SHIELD UL {
 		    if SYN#?0 then SEQ { "Usage: ", TT SYN#0},
 		    if SYN#?1 then SEQ { "Input:", UL { t 1, t 2, t 3 } },
@@ -585,7 +567,7 @@ synopsis Sequence := s -> (
 	       );
 	  );
      SEQ {
-	  PARA BOLD "Synopsis:",
+	  PARA BOLD "Synopsis",
 	  SHIELD UL {
 	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
 	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0, headline s#0 },
@@ -709,7 +691,7 @@ seecode := x -> (
      n := code f;
      if n =!= null 
      and height n + depth n <= 10 and width n <= maximumCodeWidth
-     then PARA { BOLD "Code:", PRE concatenate between(newline,unstack n) }
+     then PARA { BOLD "Code", PRE concatenate between(newline,unstack n) }
      )
 
 documentationValue := method()
@@ -724,7 +706,7 @@ documentationValue(Symbol,Type) := (s,X) -> (
 	  if #b > 0 then ( 
 	       PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"},
 	       PARA {smenu b}),
-	  if #a > 0 then PARA { "Functions and methods returning ", indefinite synonym X, " :", SHIELD smenu a },
+	  if #a > 0 then PARA {"Functions and methods returning ", indefinite synonym X, " :", SHIELD smenu a },
 	  if #c > 0 then PARA {"Methods for using ", indefinite synonym X, " :", SHIELD smenu c},
 	  if #e > 0 then PARA {"Fixed objects of class ", toString X, " :", SHIELD smenu e},
 	  })
@@ -732,6 +714,13 @@ documentationValue(Symbol,HashTable) := (s,x) -> (
      c := documentableMethods x;
      SEQ { if #c > 0 then PARA {"Functions installed in ", toString x, " :", SHIELD smenu c}})
 documentationValue(Symbol,Thing) := (s,x) -> SEQ { }
+documentationValue(Symbol,Package) := (s,pkg) -> (
+     SEQ {
+	  PARA BOLD "Version", 
+	  PARA { "This documentation describes version ", pkg.Options.Version, " of the package." },
+	  if #pkg#"exported symbols" > 0 then SEQ { PARA BOLD "Exported symbols", smenu pkg#"exported symbols" },
+	  }
+     )
 
 documentation Symbol := S -> (
      a := apply(select(optionFor S,f -> isDocumentableTag f), f -> f => S);
@@ -801,7 +790,7 @@ help Thing := s -> (
 numtests := 0
 
 TEST = method()
-TEST String := s -> (
+TEST Function := TEST String := s -> (
      x := currentPackage#"test inputs";
      x# #x = s;
      )
@@ -811,7 +800,7 @@ SEEALSO = v -> (
      if class v =!= List then v = {v};
      if #v > 0 then SEQ { PARA BOLD "See also:", SHIELD UL (TO \ v) })
 
-CAVEAT = v -> SEQ { PARA BOLD "Caveat:", SHIELD UL { SEQ v } }
+CAVEAT = v -> SEQ { PARA BOLD "Caveat", SHIELD UL { SEQ v } }
 
 -----------------------------------------------------------------------------
 -- html output

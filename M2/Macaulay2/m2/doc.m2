@@ -136,7 +136,7 @@ document { Type,
      belongs to is a type.  A type is implemented as a hash table containing
      method functions for its instances.",
      PARA,
-     "The list of objects of class Type known to the system is displayed below."
+     "The list of types known to the system is displayed below."
      }
 
 document { Print,
