@@ -46,7 +46,7 @@ Module ** Module := Module => (M,N) -> (
 			 if M.?generators then M.generators ** N,
 			 if M.?relations then M.relations ** N))
 	       else (
-		    sendgg(ggPush M.relations, ggPush N.relations, ggmodtensor);
+		    sendgg(ggPush M.relations, ggPush N.relations, ggmodtensor); -- we could do this at top level
 		    cokernel getMatrix R))))
 
 Matrix ** Module := Matrix => (f,M) -> (

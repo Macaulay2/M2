@@ -38,8 +38,8 @@ resolutionByHomogenization := options -> (M) -> (
 resolutionBySyzygies := options -> (M) -> (
      R := ring M;
      maxlength := resolutionLength(R,options);
-     if M.?resolution 
-     then C := M.resolution
+     if M.cache.?resolution 
+     then C := M.cache.resolution
      else (
 	  C = new ChainComplex;
 	  C.ring = R;
@@ -47,7 +47,7 @@ resolutionBySyzygies := options -> (M) -> (
 	  C#0 = target f;
 	  C#1 = source f;
 	  C.dd#1 = f;
-	  M.resolution = C;
+	  M.cache.resolution = C;
 	  C.length = 1;
 	  );
      i := C.length;
@@ -69,12 +69,10 @@ resolutionInEngine := options -> (M) -> (
 	  if class options.DegreeLimit === ZZ then {options.DegreeLimit}
 	  else if degreelimit === null then degreelimit = {}
 	  else error "expected DegreeLimit to be an integer or null");
-     maxlength := resolutionLength(R,options);
-     if not M.?resolution 
-     or M.resolution.Resolution.length < maxlength
-     then M.resolution = (
-	  if not isField coefficientRing R
-	  then error "expected coefficient ring to be a field";
+     maxlevel := resolutionLength(R,options);
+     if not M.cache.?resolution 
+     or M.cache.resolution.Resolution.length < maxlevel
+     then M.cache.resolution = (
 	  g := presentation M;
 	  if options.Strategy === 0 then
 	      g = generators gb g;  -- this is needed since the (current)
@@ -86,43 +84,55 @@ resolutionInEngine := options -> (M) -> (
 	       else error "expected HardDegreeLimit to be an integer or null");
 	  W := new Resolution;
 	  W.ring = R;
-	  W.length = maxlength;
+	  W.length = maxlevel;
 	  W.DegreeLimit = degreelimit;
-     	  error "resolutions: not re-implemented yet";
-	  W.handle = newHandle(ggPush g, 
-	       ggPush options.Strategy,
-	       ggPush maxlength,
-	       ggPush harddegreelimit,
-	       ggPush options.SortStrategy,
-	       ggres);
+	  W.RawComputation = rawResolution(
+	       raw g,					    -- the matrix
+	       true,					    -- whether to resolve the cokernel of the matrix
+	       maxlevel,				    -- how long a resolution to make
+	       false,					    -- useMaxSlantedDegree
+	       0,					    -- maxSlantedDegree (is this the same as harddegreelimit?)
+	       1,					    -- algorithm
+	       0					    -- strategy (is this the same as options.SortStrategy?)
+	       );
 	  C = new ChainComplex;
 	  C.ring = R;
 	  shield (C.Resolution = C.dd.Resolution = W);
 	  C
 	  );
-     C = M.resolution;
+     C = M.cache.resolution;
      if C.?Resolution then (
 	  W = C.Resolution;
 	  if not W.?returnCode 
 	  or W.returnCode =!= 0 
-	  or W.length < maxlength
+	  or W.length < maxlevel
 	  or W.DegreeLimit < degreelimit
 	  then (
 	       scan(keys C,i -> if class i === ZZ then remove(C,i));
 	       scan(keys C.dd,i -> if class i === ZZ then remove(C.dd,i));
 	       resOptions := {
-		    maxlength,
+		    maxlevel,
 		    inf options.SyzygyLimit,
 		    inf options.PairLimit,
 		    0, 0, 0};                   -- MES: these are three other options,
 						-- to be filled in yet.
 	       if not options.StopBeforeComputation then (
-		    sendgg(ggPush W, 
-			   ggPush degreelimit,
-			   ggPush resOptions,
-			   ggcalc);
-		    W.returnCode = eePopInt();
-		    W.length = maxlength;
+                    rawGBSetStop(W.RawComputation,
+			 -- fill these in eventually:
+			 false,				    -- always_stop
+			 false,				    -- stop_after_degree
+			 {},				    -- degree_limit
+			 0,				    -- basis_element_limit
+			 0,				    -- syzygy_limit
+			 0,				    -- pair_limit
+			 0,				    -- codim_limit
+			 0,				    -- subring_limit
+			 false,				    -- just_min_gens
+			 {}				    -- length_limit
+			 );
+		    rawStartComputation W.RawComputation;
+		    W.returnCode = rawStatus1 W.RawComputation;
+		    W.length = maxlevel;
 		    )));
      C)
 
@@ -154,7 +164,9 @@ resolution Module := ChainComplex => o -> (M) -> (
 	       (resolutionInEngine default(o,Strategy2))(M))
 	  else
 	       (resolutionBySyzygies o)(M))
-     else if k === ZZ or not isCommutative R then (resolutionBySyzygies o)(M)
+     else if
+     -- k === ZZ or
+     not isCommutative R then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M then (resolutionByHomogenization o)(M)
      else if isQuotientRing R then (resolutionInEngine default(o,Strategy2))(M)
      else (resolutionInEngine default(o,Strategy1))(M)
@@ -170,29 +182,6 @@ resolution Ideal := ChainComplex => options -> (I) -> resolution(
      then I.cache.quotient
      else I.cache.quotient = (ring I)^1/I,
      options)
-
--- MES: these need to be documented.  They also only work currently
--- for correct strategy... (non-Schreyer resolution).  In fact, the
--- only way to obtain that is use Strategy => xxx, some xxx.
-
-mingens(ZZ,Resolution) := Matrix => options -> (level,g) -> (
-     sendgg(ggPush g, ggPush level, gggetmingens);
-     getMatrix ring g			  -- we're losing information here! MES
-     )
-
-generators(ZZ,Resolution) := Matrix => (level,g) -> (
-     sendgg(ggPush g, ggPush level, gggetgb);
-     getMatrix ring g)
-
--- this is undocumented debugging junk of Mike's
-
-getChangeMatrix(ZZ,Resolution) := Matrix => (level,g) -> (
-     sendgg(ggPush g, ggPush level, gggetchange);
-     getMatrix ring g)
-
-leadTerm(ZZ, ZZ, Resolution) := Matrix => (n,level,g) -> (
-     sendgg(ggPush g, ggPush n, ggPush level, gginitial);
-     getMatrix ring g)
 
 -----------------------------------------------------------------------------
 getpairs := g -> (
