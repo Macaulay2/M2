@@ -127,16 +127,6 @@ MutableMatrix * IM2_MutableMatrix_iden(const Ring *R, int nrows)
   return MutableMatrix::identity(R,nrows);
 }
 
-int IM2_MutableMatrix_n_rows(const MutableMatrix *M)
-{
-  return M->n_rows();
-}
-
-int IM2_MutableMatrix_n_cols(const MutableMatrix *M)
-{
-  return M->n_cols();
-}
-
 MutableMatrix * IM2_MutableMatrix_get_row_change(MutableMatrix *M)
 {
   return M->getRowChangeMatrix();

@@ -102,7 +102,7 @@ const Ring *make_poly_ring(int charac, int nvars)
   if (charac == 0)
     K = IM2_Ring_ZZ();
   else
-    K = IM2_Ring_ZZp(charac, IM2_Monoid_trivial());
+    K = IM2_Ring_ZZp(charac);
 
   degs = makearrayint(nvars);
   for (i=0; i<nvars; i++)
@@ -114,6 +114,22 @@ const Ring *make_poly_ring(int charac, int nvars)
 					   make_degree_monoid(1),
 					   degs));
 }
+
+const RingElement_array *make_ringelem_array(int len, ...)
+{
+  va_list ap;
+  int i;
+  RingElement_array *result;
+  va_start(ap, len);
+  result = (RingElement_array *) getmem (sizeofarray(result,len));
+  result->len = len;
+
+  for (i=0; i<len; i++)
+    result->array[i] = va_arg(ap, const RingElement *);
+  va_end(ap);
+  return result;
+}
+
 
 const Vector *make_vector(const FreeModule *F, ...)
 {
