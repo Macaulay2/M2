@@ -243,7 +243,7 @@ document{ prePrune,
      }
 
 document{ (prePrune, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "N = prePrune M",
 	  "M" => null,
 	  "N" => {"a module isomorphic to ", TT "M", "
@@ -273,7 +273,7 @@ document { prePruningMap,
 
 document{ homElement,
      Headline => "get the element of Hom from a homomorphism",
-     Synopsis => {
+     OldSynopsis => {
           "h = homElement f",
           "f" => TT "M --> N",
           "h" => {"the corresponding map ", TT "R^1 --> Hom(M,N)", ", 
@@ -290,7 +290,7 @@ document{ tensorHomAdjoint,
 
 document{ (tensorHomAdjoint, Matrix, Module, Module),
      Headline => {"adjoint map, ", TT "**", " to ", TT "Hom", "."},
-     Synopsis => {
+     OldSynopsis => {
           "g = tensorHomAdjoint(f,L,M)",
           "f" => TT "L ** M --> N",
           "L" => null, "M" => null,
@@ -304,7 +304,7 @@ document{ (tensorHomAdjoint, Matrix, Module, Module),
 
 document{ (tensorHomAdjoint, Module, Module, Module),
      Headline => {TT "**", "-", TT "Hom", " adjunction functor."},
-     Synopsis => {
+     OldSynopsis => {
           "g = tensorHomAdjoint(L,M,N)",
           "L" => null,
           "M" => null,
@@ -322,7 +322,7 @@ document{ homTensorAdjoint,
 
 document{ (homTensorAdjoint, Matrix, Module, Module),
      Headline => {"adjoint map, ", TT "Hom", " to ", TT "**"},
-     Synopsis => {
+     OldSynopsis => {
           "g = homTensorAdjoint(f,L,M)",
           "f" => TT "L --> Hom(M,N)",
           "L" => null, "M" => null,
@@ -335,7 +335,7 @@ document{ (homTensorAdjoint, Matrix, Module, Module),
 
 document{ (homTensorAdjoint, Module, Module, Module),
      Headline => {TT "Hom", "-", TT "**", " adjunction functor."},
-     Synopsis => {
+     OldSynopsis => {
           "g = homTensorAdjoint(L,M,N)",
           "L" => null,
           "M" => null,
@@ -352,7 +352,7 @@ document{ homEvaluation,
      }
 
 document{ (homEvaluation,Module,Module,Module),
-     Synopsis => {
+     OldSynopsis => {
           "h = homEvaluation(L,M,N)",
           "L" => null,
           "M" => null,
@@ -371,7 +371,7 @@ document{ tensorEvaluation,
      }
 
 document{ (tensorEvaluation,Module,Module,Module),
-     Synopsis => {
+     OldSynopsis => {
           "h = tensorEvaluation(L,M,N)",
           "L" => null, "M" => null, "N" => null,
           "h" => {TT "Hom(L,M) ** N --> Hom(L, M ** N)", ".", PARA,
@@ -385,7 +385,7 @@ document{ (tensorEvaluation,Module,Module,Module),
 
 document{ bidualMap,
      Headline => "map from a module to its bi-dual",
-     Synopsis => {
+     OldSynopsis => {
           "h = bidualMap M",
           "M" => null,
           "h" => {TT "M --> Hom(Hom(M,R^1),R^1)", ", where ", TT "R",

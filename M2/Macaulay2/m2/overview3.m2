@@ -270,7 +270,7 @@ document { "How Macaulay 2 finds its files",
 
 document { "LAYOUT",
      Headline => "relative locations of Macaulay 2 files",
-     Synopsis => {
+     OldSynopsis => {
 	  "LAYOUT"
 	  },
      PARA {
@@ -291,7 +291,7 @@ document { "LAYOUT",
      }
 
 document { "Main",
-     Synopsis => {
+     OldSynopsis => {
 	  "Main"
 	  },
      PARA {

@@ -188,7 +188,7 @@ assert (HH_4 C == 0)
 "
 
 document { (resolution, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "C = resolution M",
 	  "M" => "a module",
 	  "C" => {"a free resolution of ", TT "M"}
@@ -833,7 +833,7 @@ document { (degrees, CoherentSheaf),
      }
 
 document { (symbol >=, ZZ),
-     Synopsis => {
+     OldSynopsis => {
 	  "b = (>= d)",
 	  "d" => null,
 	  "b" => {
@@ -844,7 +844,7 @@ document { (symbol >=, ZZ),
      }
 
 document { (symbol >, ZZ),
-     Synopsis => {
+     OldSynopsis => {
 	  "b = (> d)",
 	  "d" => null,
 	  "b" => {
@@ -856,7 +856,7 @@ document { (symbol >, ZZ),
 
 document { (cohomology, ZZ, SumOfTwists),
      Headline => "coherent sheaf cohomology",
-     Synopsis => {
+     OldSynopsis => {
 	  "M = HH^i(F(>=d))",
 	  "i" => null,
 	  "F(>=d)" => { "notation representing the sum of the twists ", TT "F(n)", " for
@@ -882,7 +882,7 @@ document { (cohomology, ZZ, SumOfTwists),
 
 document { (cohomology, ZZ, CoherentSheaf),
      Headline => "coherent sheaf cohomology",
-     Synopsis => {
+     OldSynopsis => {
 	  "V = HH^i(F)",
 	  "i" => null,
 	  "F" => { "a coherent sheaf on a variety ", TT "X", "." },
@@ -900,7 +900,7 @@ document { (cohomology, ZZ, CoherentSheaf),
 
 document { OO,
      Headline => "the structure sheaf",
-     Synopsis => {
+     OldSynopsis => {
 	  "O = OO_X",
 	  "X" => "a variety",
 	  "O" => { "the structure sheaf of ", TT "X", "." }
@@ -922,7 +922,7 @@ document { (cotangentSheaf, ZZ, ProjectiveVariety),
      }
 
 document { (symbol _, RingElement, ZZ),
-     Synopsis => {
+     OldSynopsis => {
 	  "g = f_d",
 	  "f" => "a polynomial",
 	  "d" => null,
@@ -934,7 +934,7 @@ document { (symbol _, RingElement, ZZ),
      }
 
 document { (symbol _, RingElement, List),
-     Synopsis => {
+     OldSynopsis => {
 	  "g = f_d",
 	  "f" => "a polynomial",
 	  "d" => "a list of integers",

@@ -19,9 +19,13 @@ document { (length, GradedModule),
 document { (parent,Thing),
      Headline => "parent type of an object",
      Synopsis => {
-	  "P = parent X",
-	  "X" => "anything",
-	  "P" => { "the parent class of ", TT "X" }
+	  Usage => "parent x",
+	  Inputs => {
+	       "x" => "anything"
+	       },
+	  Outputs => {
+	       Type => { ", the parent class of ", TT "x" }
+	       }
 	  },
      PARA,
      "Methods for the instances of ", TT "X", " which are not found
@@ -68,9 +72,13 @@ document { Sequence,
 document { singleton,
      Headline => "make a sequence of length one",
      Synopsis => {
-	  "y = singleton x",
-	  "x" => null,
-	  "y" => {"a sequence of length one whose single element is ", TT "x", "."},
+	  Usage => "singleton x",
+	  Inputs => {
+	       "x" => "",
+	       },
+	  Outputs => {
+	       Sequence => {" of length one whose single element is ", TT "x", "."},
+	       }
 	  },
      EXAMPLE {
 	  "singleton 3",
@@ -142,40 +150,41 @@ document { Type,
 document { Print,
      Headline => "top level method for printing results",
      Synopsis => {
-	  "X.Print = f",
-	  "f" => { "a function to be used for printing a top-level evaluation
-	       result ", TT "r", " of type ", TT "X", "."},
-	  null
+	  Usage => "X.Print = f",
+	  Inputs => {
+	       "X" => Type => "",
+	       "f" => Function => { " that can print something of type ", TT "X"}
+	       },
+	  Results => {
+	       { "at top level, whenever it is time to print an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
+	       }
 	  },
-     "The code for the default ", TT "Print", " method will apply the ", TO "AfterEval", "
-     method to ", TT "r", " if there one, and replace ", TT "r", " by the result.  
-     Then it applies ", TO "BeforePrint", " method, if there is one,
-     to ", TT "r", ", and prints its result instead.  The actual printing
-     will be done with ", TO "<<", ".  It will then apply the appropriate
-     ", TO "AfterPrint", " method to ", TT "r", ", which is normally used to 
-     provide auxiliary information to the user about the type of the result."
+     PARA {
+	  "The function ", TT "f", " is responsible for printing the output prompt and apply the ", TO "BeforePrint", " and ", TO "AfterPrint", " methods, if desired."
+	  },
+     EXAMPLE "code Thing.Print"
      }
 
 document { NoPrint,
      Headline => "top level method for non-printing results",
      Synopsis => {
-	  "X.NoPrint = f",
-	  "f" => { "a function to be applied if a top-level evaluation
-	       result ", TT "r", " of type ", TT "X", " is not to
-	       be printed, as indicated by a semicolon."},
-     	  null
+	  Usage => "X.NoPrint = f",
+	  Inputs => {
+	       "X" => Type => "",
+	       "f" => Function => { " that can accept something of type ", TT "X"}
+	       },
+	  Results => {
+	       {
+		    "at top level, whenever it is time, as indicated by a semicolon at the end of an input line,
+		    to suppress printing of an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
+	       }
 	  },
-     "The code for the default ", TT "NoPrint", " method will apply
-     the ", TO "AfterEval", " method to ", TT "r", " if there is
-     one, and replace ", TT "r", " by the result.  It will then
-     apply the appropriate ", TO "AfterNoPrint", " method to
-     ", TT "r", ", which is normally used to provide auxiliary 
-     information to the user about the type of the result."
+     EXAMPLE "code Thing.NoPrint"
      }
 
 document { BeforePrint,
      Headline => "top level method applied before printing results",
-     Synopsis => {
+     OldSynopsis => {
 	  "X.BeforePrint = f",
 	  "f" => { "a function to be applied before printing a 
 	       top-level evaluation result ", TT "r", " of 
@@ -187,7 +196,7 @@ document { BeforePrint,
 
 document { AfterEval,
      Headline => "top level method applied after evaluation",
-     Synopsis => {
+     OldSynopsis => {
 	  "X.AfterEval = f",
 	  "f" => { "a function to be applied after evaluating a 
 	       top-level evaluation result ", TT "r", " of 
@@ -200,7 +209,7 @@ document { AfterEval,
 
 document { AfterPrint,
      Headline => "top level method applied after printing",
-     Synopsis => {
+     OldSynopsis => {
 	  "X.AfterPrint = f",
 	  "f" => { "a function to be applied after printing a 
 	       top-level evaluation result ", TT "r", " of 
@@ -222,7 +231,7 @@ document { AfterPrint,
 
 document { AfterNoPrint,
      Headline => "top level method applied after not printing",
-     Synopsis => {
+     OldSynopsis => {
 	  "X.AfterNoPrint = f",
 	  "f" => { "a function to be applied after not printing a 
 	       top-level evaluation result ", TT "r", " of 
@@ -236,7 +245,7 @@ document { AfterNoPrint,
 
 document { "recursionLimit",
      Headline => "set the limit on recursion",
-     Synopsis => {
+     OldSynopsis => {
 	  "recursionLimit = n",
 	  "n" => "the desired limit on recursion depth",
 	  },
@@ -351,7 +360,7 @@ document { maxPosition,
      }
 
 document { (maxPosition,BasicList),
-     Synopsis => {
+     OldSynopsis => {
 	  "n = maxPosition x",
 	  "x" => null,
 	  "n" => { "the position of the largest element in the list ", TT "x", "." },
@@ -368,7 +377,7 @@ document { minPosition,
      }
 
 document { (minPosition,BasicList),
-     Synopsis => {
+     OldSynopsis => {
 	  "n = minPosition x",
 	  "x" => null,
 	  "n" => { "the position of the smallest element in the list ", TT "x", "." },
@@ -385,7 +394,7 @@ document { keys,
      }
 
 document { (keys,HashTable),
-     Synopsis => {
+     OldSynopsis => {
 	  "x = keys t",
 	  "t" => null,
 	  "x" => {"a list of the keys occurring in the hash table ", TT "t", "."}
@@ -401,7 +410,7 @@ document { values,
      }
 
 document { (values,HashTable),
-     Synopsis => {
+     OldSynopsis => {
 	  "x = values t",
 	  "t" => null,
 	  "x" => {"a list of the values occurring in the hash table ", TT "t", "."}
@@ -461,7 +470,7 @@ document { (apply,BasicList,BasicList,Function),
 
 document { (apply,BasicList,Function),
      Headline => "apply function to each element",
-     Synopsis => {
+     OldSynopsis => {
 	  "r = apply(v,f)",
 	  "v" => null,
 	  "f" => null,
@@ -735,7 +744,7 @@ document { "--",
 document { ascii, Headline => "ASCII character conversion" }
 
 document { (ascii, List),
-     Synopsis => {
+     OldSynopsis => {
 	  "s = ascii v",
 	  "v" => "a list of small integers",
 	  "s" => {"the string whose characters have the ASCII codes listed in ", TT "v"}
@@ -745,7 +754,7 @@ document { (ascii, List),
      }
 
 document { (ascii, String),
-     Synopsis => {
+     OldSynopsis => {
 	  "v = ascii s",
 	  "s" => "a string",
 	  "v" => {"the list of (small integer) ASCII codes
@@ -893,7 +902,7 @@ document { reverse,
      }
 
 document { (read,Sequence),
-     Synopsis => {
+     OldSynopsis => {
 	  "s = read()",
      	  "()" => null,
 	  "s" => { "a string obtained by reading a line from the standard input file, ", TO "stdio", "." }
@@ -901,7 +910,7 @@ document { (read,Sequence),
      }
 
 document { (read,String),
-     Synopsis => {
+     OldSynopsis => {
 	  "s = read p",
      	  "p" => "a string containing a prompt to be displayed for the user",
 	  "s" => { "a string obtained by reading from the standard
@@ -910,7 +919,7 @@ document { (read,String),
      }
 
 document { (read,File),
-     Synopsis => {
+     OldSynopsis => {
 	  "s = read f",
      	  "f" => "an input file",
 	  "s" => { "a string obtained by reading from ", TT "f", "." }
@@ -928,7 +937,7 @@ document { (read,File),
      }
 
 document { (read,File,ZZ),
-     Synopsis => {
+     OldSynopsis => {
 	  "s = read(f,n)",
      	  "f" => "a file",
 	  "n" => "an integer specifying the maximum number of bytes to read",
@@ -1225,7 +1234,7 @@ document { (random, RR),
 
 document { (random, Ring),
      Headline => "random element of a ring",
-     Synopsis => {
+     OldSynopsis => {
 	  "r = random R",
 	  "R" => null,
 	  "r" => { "a random element of the ring ", TT "R" }
@@ -1236,7 +1245,7 @@ document { (random, Ring),
 
 document { (random, ZZ, Ring),
      Headline => "a random ring element of a given degree",
-     Synopsis => {
+     OldSynopsis => {
 	  "r = random(n,R)",
 	  "n" => null,
 	  "R" => null,
@@ -1251,7 +1260,7 @@ document { (random, ZZ, Ring),
 
 document { (random, List, Ring),
      Headline => "a random ring element of a given degree",
-     Synopsis => {
+     OldSynopsis => {
 	  "r = random(n,R)",
 	  "n" => "a list of integers",
 	  "R" => null,

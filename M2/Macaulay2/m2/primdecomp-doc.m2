@@ -1,6 +1,6 @@
 document { (ass, Ideal),
      Headline => "find the associated primes of an ideal",
-     Synopsis => {
+     OldSynopsis => {
 	  "L = ass(I)",
 	  "I" => {"an ideal in a (quotient of a) polynomial ring ", 
 	          TT "R", "."},
@@ -75,7 +75,7 @@ document { ass => PrintLevel,
 
 document { (localize,Ideal,Ideal),
      Headline => "localize an ideal at a prime ideal",
-     Synopsis => {
+     OldSynopsis => {
 	  "J = localize(I,P)",
 	  "I" => {"an ideal in a (quotient of a) polynomial ring ", 
 	          TT "R", "."},
@@ -155,7 +155,7 @@ document { localize => PrintLevel,
 
 document { (primaryComponent, Ideal, Ideal),
     Headline => "find a primary component corresponding to an associated prime",
-    Synopsis => {
+    OldSynopsis => {
 	 "Q = primaryComponent(I,P)",
    	 "I" => {"an ideal in a (quotient of a) polynomial ring ", 
 	          TT "R", "."},
@@ -212,7 +212,7 @@ document{ primaryComponent => PrintLevel,
      
 document { (primaryDecomposition, Ideal),
      Headline => "find a primary decomposition of an ideal",
-     Synopsis => {
+     OldSynopsis => {
 	  "L = primaryDecomposition I",
 	  "I" => {"an ideal in a (quotient of a) polynomial ring ", 
 	          TT "R", "."},

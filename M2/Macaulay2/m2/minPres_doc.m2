@@ -9,7 +9,7 @@ document{(minPres,Ring),
 	  returns a quotient ring ", TT "S'/J", " such that ", TT "S'/J", " is 
 	  isomorphic to ", TT "S/I", "."
     	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "Q = minPres R",
 	  "R" => {"Any quotient ring S/I."},
 	  "Q" => {"A quotient ring ", TT "S'/J", " that is isomorphic 
@@ -46,7 +46,7 @@ document{(minPresIdeal,Ideal),
 	  returns and ideal ", TT "J", " such that ", TT "R/J", " is 
 	  isomorphic to ", TT "R/I", "."
     	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "J = minPresIdeal I",
 	  "I" => {"Any ideal in a polynomial ring."},
 	  "J" => {"An ideal such that ", TT "R/J", " is isomorphic 

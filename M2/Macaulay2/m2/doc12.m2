@@ -173,7 +173,7 @@ document { join,
      }
 
 document { (take,BasicList,ZZ),
-     Synopsis => {
+     OldSynopsis => {
 	  "w = take(v,n)",
 	  "v" => null,
 	  "n" => null,
@@ -185,7 +185,7 @@ document { (take,BasicList,ZZ),
      }
 
 document { (take,BasicList,List),
-     Synopsis => {
+     OldSynopsis => {
 	  "w = take(v,{m,n})",
 	  "v" => null,
 	  "{m,n}" => "a pair of natural numbers",
@@ -266,7 +266,7 @@ document { ultimate,
 
 document { temporaryFileName,
      Headline => "make a temporary file name",
-     Synopsis => {
+     OldSynopsis => {
 	  "y = temporaryFileName()",
 	  "y" => "a unique temporary file name."
 	  },
@@ -357,20 +357,20 @@ TEST ///
 ///
 
 document { (symbol -, List), Headline => "negation of a vector",
-     Synopsis => {
+     OldSynopsis => {
 	  "w = -v",
 	  "v" => "a list interpreted as a vector",
 	  "w" => {"the negation of ", TT "v"}}}
 
 document { (symbol +, List, List), Headline => "sum of two vectors",
-     Synopsis => {
+     OldSynopsis => {
 	  "x = v+w",
 	  "v" => "a list interpreted as a vector",
 	  "w" => "a list interpreted as a vector",
 	  "x" => "the sum of the two vectors"}}
 
 document { (symbol -, List, List), Headline => "sum of two vectors",
-     Synopsis => {
+     OldSynopsis => {
 	  "x = v-w",
 	  "v" => "a list interpreted as a vector",
 	  "w" => "a list interpreted as a vector",
@@ -378,7 +378,7 @@ document { (symbol -, List, List), Headline => "sum of two vectors",
 
 document { (symbol _, VisibleList, List),
      Headline => "get some entries of a list",
-     Synopsis => {
+     OldSynopsis => {
 	  "v = w_{i,j,...}",
 	  "w" => "a list",
 	  "{i,j,...}" => "the list of subscripts",
@@ -1011,7 +1011,7 @@ document { sheafExt,
      }
 
 document { (sheafExt,ZZ,CoherentSheaf,CoherentSheaf),
-     Synopsis => {
+     OldSynopsis => {
 	  "E = sheafExt^n(F,G)",
 	  "F" => null,
 	  "G" => null,

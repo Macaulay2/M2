@@ -192,7 +192,7 @@ makeHtmlNode = key -> (
 	       },
 	  BODY { 
 	       buttonBar key,
-	       if UP#?key then SEQ { between(" > ", apply(upAncestors key, i -> TO i)) },
+	       if UP#?key then SEQ between(" > ", apply(upAncestors key, i -> TO i)),
 	       HR{}, 
 	       documentation key,
 	       }

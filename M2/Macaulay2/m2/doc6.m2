@@ -969,7 +969,7 @@ document { isFreeModule,
      }
 
 document { (isFreeModule,Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "b = isFreeModule(M)",
 	  "M" => null,
 	  "b" => {"whether ", TT "M", " is evidently a free module."}
@@ -990,7 +990,7 @@ document { isSubmodule,
      Headline => "whether a module is evidently a submodule of a free module"
      }
 document { (isSubmodule, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "b = isSubmodule(M)",
 	  "M" => null,
 	  "b" => {"whether ", TT "M", " is evidently a submodule of a free module."}
@@ -1012,7 +1012,7 @@ document { isQuotientModule,
      }
 
 document { (isQuotientModule, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "b = isQuotientModule(M)",
 	  "M" => null,
 	  "b" => {"whether ", TT "M", " is evidently a quotient of a free module."}
@@ -1040,7 +1040,7 @@ document { isIdeal,
      }
 
 document { (isIdeal, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "b = isIdeal(M)",
 	  "M" => null,
 	  "b" => {"whether ", TT "M", " is evidently an ideal."}
@@ -1092,7 +1092,7 @@ document { (symbol ==, Module, Module),
      }
 
 document { (symbol ==, Ideal, ZZ),
-     Synopsis => {
+     OldSynopsis => {
 	  "I == n",
 	  "I" => null,
 	  "n" => "either 0, or 1."
@@ -1140,7 +1140,7 @@ document { degrees,
      }
 
 document { (degrees, Ideal),
-     Synopsis => {
+     OldSynopsis => {
 	  "s = degrees I",
 	  "I" => null,
 	  "s" => { "the list of multi-degrees for the generators of the
@@ -1150,7 +1150,7 @@ document { (degrees, Ideal),
      }
 
 document { (degrees, Matrix),
-     Synopsis => {
+     OldSynopsis => {
 	  "s = degrees f",
 	  "f" => null,
 	  "s" => { "a list ", TT "{x,y}", " where ", TT "x", " is the list
@@ -1161,7 +1161,7 @@ document { (degrees, Matrix),
      }
 
 document { (degrees, Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "s = degrees M",
 	  "M" => null,
 	  "s" => { "the list of multi-degrees for the generators of the
@@ -1178,7 +1178,7 @@ document { (degrees, Module),
      }
 
 document { (degrees, Ring),
-     Synopsis => {
+     OldSynopsis => {
 	  "s = degrees R",
 	  "R" => null,
 	  "s" => { "the list of multi-degrees for the generators (variables) of the
@@ -1195,7 +1195,7 @@ document { (degrees, Ring),
 
 document { (symbol ^, Ring, List),
      Headline => "make a free module",
-     Synopsis => {
+     OldSynopsis => {
 	  "M = R^{i,j,k,...}",
 	  "R" => null,
 	  "{i,j,k, ...}" => {"a list of integers or lists of integers"},
@@ -1225,7 +1225,7 @@ document { components,
 
 document { (symbol ^,Module,ZZ),
      Headline => "make a direct sum of several copies of a module",
-     Synopsis => {
+     OldSynopsis => {
 	  "Y = M^n",
 	  "M" => {"a module"},
 	  "n" => null,
@@ -1235,7 +1235,7 @@ document { (symbol ^,Module,ZZ),
 
 document { (symbol ^,Ring,ZZ),
      Headline => "make a free module",
-     Synopsis => {
+     OldSynopsis => {
 	  "F = R^n",
 	  "R" => {"a ring"},
 	  "n" => null,
@@ -1286,7 +1286,7 @@ document { rank,
 
 document { coverMap,
      Headline => "get the map to the module given by the generators of a module",
-     Synopsis => {
+     OldSynopsis => {
 	  "g = coverMap M",
 	  "M" => null,
 	  "g" => { "the map from a free module to ", TT "M", " given by the 
@@ -1305,7 +1305,7 @@ document { cover,
      }
 
 document { (cover,Module),
-     Synopsis => {
+     OldSynopsis => {
 	  "F = cover M",
 	  "M" => null,
 	  "F" => {"the free module whose basis elements correspond

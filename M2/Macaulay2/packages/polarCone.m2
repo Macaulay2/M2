@@ -352,7 +352,7 @@ document { polarCone
      Usage => {
 	  TT "polarCone(A, B)", " -- find the polar cone"
 	  },
-     Synopsis => {
+     OldSynopsis => {
 	  "C' = polarCone(A, B)",
 	  "A" => {"a ", TT "d ", "by ", TT "n ", "matrix 
 	       over ", TT "ZZ ", "or ", TT "QQ", "."},

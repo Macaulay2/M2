@@ -318,7 +318,7 @@ document { ExampleTABLE,
 
 document { SECTION,
      Headline => "hypertext section",
-     Synopsis => {
+     OldSynopsis => {
 	  ///SECTION { "title of the section", ... contents of the section ... }///
 	  },
      SEEALSO { "TOC" }
@@ -326,7 +326,7 @@ document { SECTION,
 
 document { TOC,
      Headline => "table of contents for sections",
-     Synopsis => {
+     OldSynopsis => {
 	  ///TOC {
      SECTION { "section title 1", ... },
      SECTION { "section title 2", ... },
@@ -683,7 +683,7 @@ document { TO,
 
 document { Command,
      Headline => "the class of all commands",
-     Synopsis => {
+     OldSynopsis => {
 	  "f = Command g",
 	  "g" => "a function or a string",
 	  "f" => {
