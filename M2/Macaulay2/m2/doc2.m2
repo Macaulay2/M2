@@ -974,10 +974,16 @@ document { "internals",
      by the developers only.",
      MENU {
 	  TO "formatDocumentTag",
+	  TO "setSpin",
 	  }
      }
 
---load "tutorials.m2"
+document { quote setSpin,
+     TT "setSpin n", " -- sets the interval between calls to spin the cursor on
+     the Macintosh."
+     }
+
+load "tutorials.m2"
 
 document { "acknowledgements",
      "We thank the National Science Foundation for generous funding since

@@ -18,7 +18,7 @@ then path = join({concatenate (apply(#dir-2, i -> (dir#i,pathSeparator)), "m2")}
 --isAbsolutePath := filename -> pathSeparator === substring(filename,0,#pathSeparator)
 
 hasColon := s -> # ( lines  ( concatenate(" ",s," "), ":" ) ) =!= 1
-isAbsolutePath = filename -> hasColon filename and substring(filename,0,1) =!= ":"
+isAbsolutePath := filename -> hasColon filename and substring(filename,0,1) =!= ":"
 
 if class phase === Symbol then phase = 0
 
@@ -158,7 +158,7 @@ then tryload = (filename,load) -> (
 		    result))))
 ///
 
-oldLoad = load
+oldLoad := load
 erase quote load
 load = (filename) -> (
      if not tryload(filename,oldLoad) then error ("can't open file ", filename)
