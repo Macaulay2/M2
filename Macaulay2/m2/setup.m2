@@ -57,7 +57,7 @@ commonProcessing := x -> (
 
 simpleToString := toString
 
-debugError = identity
+symbol debugError <- identity
 
 Thing.Print = x -> (
      x = commonProcessing x;
