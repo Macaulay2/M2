@@ -9,7 +9,7 @@ use nets;
 use tokens;
 use err;
 use stdio;
-use arithmetic;
+use arith;
 
 
 export hash(e:Expr):int := (

@@ -46,12 +46,9 @@ typedef struct REAR {
      int trapcount;
      } rear;
 
+#define __addfront__(x) (((void *) x) + sizeof(front))
+#define __subfront__(x) (((void *) x) - sizeof(front))
 #else
-
-typedef struct FRONT {
-     } front;
-
-typedef struct REAR {
-     } rear;
-
+#define __addfront__(x) (x)
+#define __subfront__(x) (x)
 #endif

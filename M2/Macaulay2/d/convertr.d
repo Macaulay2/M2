@@ -3,14 +3,14 @@ use system;
 use binding;
 use parser;
 use lex;
-use arithmetic;
+use arith;
 use nets;
 use tokens;
 use err;
 use stdiop;
 use ctype;
 use stdio;
-use varstrings;
+use varstrin;
 use strings;
 use basic;
 

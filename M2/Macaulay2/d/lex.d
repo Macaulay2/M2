@@ -3,13 +3,13 @@
 use system;
 use C;
 use ctype;
-use arithmetic;
+use arith;
 use nets;
 use tokens;
 use strings;
 use stdio;
 use stdiop;
-use varstrings;
+use varstrin;
 use err;
 
 export wordEOF := Word("-end of file-",TCnone,0,parseEOF);

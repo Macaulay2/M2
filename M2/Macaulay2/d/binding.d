@@ -1,7 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 use system;
 use stdio;
-use arithmetic;
+use arith;
 use nets;
 use tokens;
 use strings;
@@ -413,7 +413,7 @@ lookup(
 lookup(token:Token,forcedef:bool):void := (
      if isdigit(token.word.name.0) 
      || token.word.name.0 == '.' 
-     && length(token.word.name) > 0
+     && length(token.word.name) >= 2
      && isdigit(token.word.name.1)
      then nothing
      else (

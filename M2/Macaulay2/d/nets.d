@@ -4,7 +4,7 @@
 
 use system;
 use strings;
-use varstrings;
+use varstrin;
 
 export Net := {
      height:int,			  -- number of strings above the baseline

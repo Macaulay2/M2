@@ -2,11 +2,11 @@
 use err;
 use system;
 use strings;
-use varstrings;
+use varstrin;
 use lex;
 use stdio;
 use stdiop;
-use arithmetic;
+use arith;
 use nets;
 use tokens;
 export thenW := dummyWord;		  -- filled in by keywords.d

@@ -8,8 +8,8 @@ use stdiop;
 use strings;
 use nets;
 use tokens;
-use arithmetic;
-use converter;
+use arith;
+use convertr;
 
 
 -- X stuff

@@ -1,5 +1,14 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+#define FACTORY 1
+#define MP 1
+
+#ifdef _WIN32
+#undef FACTORY
+#undef MP
+#define alloca _alloca
+#endif
+
 #if defined(__DJGPP__)
 #define NEWLINE "\r\n"
 #elif defined(__MWERKS__)
@@ -10,7 +19,9 @@
 
 char newline[] = NEWLINE;
 
+#ifdef FACTORY
 extern char *libfac_version;
+#endif
 
 #include "../../Makeconf.h"	/* VERSION is defined here */
 
@@ -30,19 +41,18 @@ extern char *libfac_version;
 #include "../c/compat.c"
 #endif
 
+#ifdef HAS_UNISTD_H
 #include <unistd.h>
+#endif
 
 #if !defined(__MWERKS__)
 #include <sys/types.h>
-#include <sys/time.h>
-#include <sys/wait.h>
 #include <sys/stat.h>
 #endif
 
-#if !defined(__DJGPP__) && !defined(__MWERKS__)
-#include <sys/ioctl.h>		/* just for window width */
-#include <termios.h>		/* just for window width */
-#include <sys/mman.h>		/* needed for mmap() */
+#if !defined(__MWERKS__) && !defined(_WIN32)
+#include <sys/time.h>
+#include <sys/wait.h>
 #endif
 
 #include <signal.h>
@@ -50,13 +60,20 @@ extern char *libfac_version;
 #include <errno.h>
 #include <string.h>
 #include <math.h>
+
+#if !defined(_WIN32)
 #include <alloca.h>
+#endif
+
 #include <setjmp.h>
 
-#if defined(__DJGPP__) || defined(__MWERKS__)
+#if defined(__DJGPP__) || defined(__MWERKS__) || defined(_WIN32)
 #define HAVE_SOCKETS FALSE
 #else
 #define HAVE_SOCKETS TRUE
+#include <sys/ioctl.h>		/* just for window width */
+#include <termios.h>		/* just for window width */
+#include <sys/mman.h>		/* needed for mmap() */
 #include <sys/socket.h>		/* needed for args to socket(), bind() */
 #include <netdb.h>     	    	/* needed for gethostbyname() */
 #include <netinet/in.h>	    	/* needed for struct sockaddr_in */
@@ -120,9 +137,11 @@ typedef DBM *DBM_FILE;
 
 void *sbrk();		/* not really ansi standard, sigh */
 
+#ifdef MP
 #define link _link
 #include <MP.h>
 #undef link
+#endif
 
 #if defined(__NeXT__)
  /* on the NeXT Step i386 machine, brk always returns -1, and doesn't work. */
@@ -134,6 +153,9 @@ int brk();		/* not really ansi standard, sigh */
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
+
+#undef ERROR
+#define ERROR (-1)      /* in Windows NT there is a file that sets ERROR to 0 */
 
 static void putstderr(char *m) {
      write(STDERR,m,strlen(m));
@@ -166,6 +188,10 @@ static void putstderr(char *m) {
 #   define ENDGAP (__djgpp_stack_limit + _stklen)
 #   define ENDDATA sbrk(0)
 #   define HAVE_MMAP FALSE
+#elif defined(_WIN32)
+#   define STARTDATA (char *)0
+#   define ENDDATA (char *)0
+#   define HAVE_MMAP FALSE
 #else
 #   define STARTDATA first_rw_page_after_etext()
 #   define ENDDATA sbrk(0)
@@ -180,7 +206,7 @@ Font font;
 void trap(){}
 
 static void
-#ifdef __STDC__
+#if defined(__STDC__) || defined(_WIN32)  
 fatal(char *s,...)   {
      va_list ap;
 #else
@@ -190,7 +216,7 @@ va_dcl
      va_list ap;
      char *s;
 #endif
-#ifdef __STDC__
+#if defined(__STDC__) || defined(_WIN32)  
      va_start(ap,s);
 #else
      va_start(ap);
@@ -209,26 +235,30 @@ bool system_interruptPending = FALSE;
 bool system_interruptShield = FALSE;
 bool system_alarmed = FALSE;
 
+#ifdef FACTORY
 extern int libfac_interruptflag;
+#endif
 
-static void alarm_handler(sig)
-int sig;
+static void alarm_handler(int sig)
 {
      system_alarmed = TRUE;
      if (system_interruptShield) system_interruptPending = TRUE;
      else {
 	  system_interrupted = TRUE;
+#     	  ifdef FACTORY
      	  libfac_interruptflag = TRUE;
+#     	  endif
 	  }
+#ifdef SIGALRM
      signal(SIGALRM,alarm_handler);
+#endif
      }
 
-extern bool interpret_StopIfError;
+extern bool interp_StopIfError;
 static jmp_buf loaddata_jump, out_of_memory_jump, abort_jump;
 static bool out_of_memory_jump_set = FALSE, abort_jump_set = FALSE;
 
-static void interrupt_handler(sig)
-int sig;
+static void interrupt_handler(int sig)
 {
      if (system_interrupted || system_interruptPending) {
 	  if (isatty(STDIN)) while (TRUE) {
@@ -237,11 +267,13 @@ int sig;
 	       fgets(buf,sizeof(buf),stdin);
 	       if (buf[0]=='y' || buf[0]=='Y') {
      		    trap();
-		    if (!interpret_StopIfError && abort_jump_set) {
+		    if (!interp_StopIfError && abort_jump_set) {
      	  		 fprintf(stderr,"returning to top level\n");
      	  		 fflush(stderr);
 			 system_interrupted = FALSE;
+#     	   	     	 ifdef FACTORY
 			 libfac_interruptflag = FALSE;
+#     	   	     	 endif
 			 system_interruptPending = FALSE;
 			 system_interruptShield = FALSE;
 			 system_alarmed = FALSE;
@@ -265,14 +297,16 @@ int sig;
 	  if (system_interruptShield) system_interruptPending = TRUE;
 	  else {
 	       system_interrupted = TRUE;
+#     	       ifdef FACTORY
 	       libfac_interruptflag = TRUE;
+#     	       endif
 	       }
 	  }
      signal(SIGINT,interrupt_handler);
      }
 
 void outofmem(){
-     if (!interpret_StopIfError && out_of_memory_jump_set) {
+     if (!interp_StopIfError && out_of_memory_jump_set) {
      	  fprintf(stderr,"out of memory, returning to top level");
      	  fflush(stderr);
      	  longjmp(out_of_memory_jump,1);
@@ -566,7 +600,7 @@ char **argv;
      void main_inits();
      static void *reserve = NULL;
      extern void actors4_setupargv();
-     extern void interpret_process();
+     extern void interp_process();
      out_of_memory_jump_set = FALSE;
      abort_jump_set = FALSE;
 
@@ -605,14 +639,18 @@ char **argv;
 	       sprintf(buf,"Macaulay 2, version %s",VERSION);
 	       putstderr(buf);
 	       putstderr("  Copyright 1993-1997, all rights reserved, D. R. Grayson and M. E. Stillman");
+#     	       ifdef FACTORY
 	       putstderr("  Factory library from Singular, copyright 1993-1997, G.-M. Greuel, R. Stobbe");
 	       sprintf(buf,"  Factorization and characteristic sets %s, copyright 1996, M. Messollen",
 		    libfac_version);
 	       putstderr(buf);
+#     	       endif
+#     	       ifdef MP
 	       sprintf(buf,"  MP %s, copyright 1993-1997, S. Gray, N. Kajler, P. Wang",MP_VERSION);
+#     	       endif
 	       putstderr("  GC, copyright 1996, Hans-J. Boehm, Alan J. Demers, Xerox, Silicon Graphics");
 	       putstderr("  GNU libc and libg++, copyright 1996, Free Software Foundation");
-	       putstderr("  GNU MP %s, copyright 1996, Free Software Foundation");
+	       putstderr("  GNU MP, copyright 1996, Free Software Foundation");
 	       break;
        	       }
 	  if (0 == strcmp(argv[n],"-silent")) break;
@@ -649,7 +687,10 @@ char **argv;
 	  }
      system_stime();
      signal(SIGINT,interrupt_handler);
+
+#ifdef SIGALRM
      signal(SIGALRM,alarm_handler);
+#endif
 
 #ifdef SIGPIPE
      signal(SIGPIPE, SIG_IGN);
@@ -689,7 +730,7 @@ char **argv;
      out_of_memory_jump_set = TRUE;
      setjmp(abort_jump);
      abort_jump_set = TRUE;
-     interpret_process();
+     interp_process();
      clean_up();
      exit(system_returncode);
      }
@@ -1048,14 +1089,12 @@ extern etext, end;
 
 static jmp_buf jumpbuffer;
 
-static void handler(k) 
-int k;
+static void handler(int k) 
 {
      longjmp(jumpbuffer,1);
      }
 
-static void handler2(k) 
-int k;
+static void handler2(int k) 
 {
      longjmp(jumpbuffer,2);
      }
@@ -1090,7 +1129,7 @@ int probe();
 int system_dumpdata(datafilename)
 M2_string datafilename;
 {
-#if defined(__MWERKS__)
+#if defined(__MWERKS__) || defined(_WIN32)
      return ERROR;
 #else
      /* this routine should keep its data on the stack */
@@ -1132,6 +1171,8 @@ M2_string datafilename;
      return 0;
 #endif
      }
+
+#undef min
 
 int min(int i, int j) {
      return i<j ? i : j;
@@ -1208,7 +1249,7 @@ int probe() {
      }
 
 int system_loaddata(M2_string datafilename){
-#if defined(__MWERKS__)
+#if defined(__MWERKS__) || defined(_WIN32)
      return ERROR;
 #else
      char *datafilename_s = tocharstar(datafilename);
@@ -1479,6 +1520,8 @@ M2_string system_dbmstrerror() {
  *                  MP stuff                  *
  **********************************************/
 
+#ifdef MP
+
 static int numlinks = 0;
 static MP_Link_pt *mp_links = NULL;
 
@@ -1721,14 +1764,116 @@ M2_string oper1;
      return r;
      }
 
-#ifdef __DJGPP__
-double lgamma(double x) { return 0. ; }	/* sigh, fix later */
+#else
+
+static void close_all_links() {
+     }
+
+int mp_OpenLink(args) 
+stringarray args;
+{
+     return ERROR;
+     }
+
+int mp_CloseLink(handle) 
+int handle;
+{
+     return ERROR;
+     }
+
+int mp_EndMsgReset(handle)
+int handle;
+{
+     return ERROR;
+     }
+
+int mp_PutSint32(handle,n) 
+int handle;
+int n;
+{
+     return ERROR;
+     }
+
+int mp_PutString(handle,s)
+int handle;
+M2_string s;
+{
+     return ERROR;
+     }
+
+
+int mp_PutIdentifier(handle,s)
+int handle;
+M2_string s;
+{
+     return ERROR;
+     }
+
+int mp_RawPutSint32(handle,n) 
+int handle;
+int n;
+{
+     return ERROR;
+     }
+
+int mp_RawPutString(handle,s)
+int handle;
+M2_string s;
+{
+     return ERROR;
+     }
+
+
+int mp_RawPutIdentifier(handle,s)
+int handle;
+M2_string s;
+{
+     return ERROR;
+     }
+
+int mp_PutListOperator(handle,len)
+int handle, len;
+{
+	return ERROR;
+     }
+
+int mp_PutCommonOperator(handle,dict,oper,numannot,len)
+int handle, dict, oper, numannot, len;
+{
+     return ERROR;
+     }
+
+int mp_PutAnnotationPacket(handle,dict,atype,aflags)
+int handle, dict, atype, aflags;
+{
+    return ERROR;
+     }
+
+int mp_PutCommonMetaOperatorPacket(handle,dict, oper,numannot,numchildren)
+int handle, dict, oper, numannot, numchildren;
+{
+     return ERROR;
+     }
+
+int mp_PutCommonMetaTypePacket(handle,dict, oper,numannot)
+int handle, dict, oper, numannot;
+{
+	return ERROR;
+     }
+
+int mp_PutOperatorPacket(handle,dict,oper1,numannot,len)
+int handle, dict, numannot, len;
+M2_string oper1;
+{
+     return ERROR;
+     }
+
 #endif
 
 void C__prepare() {}
 
 int actors5_WindowWidth(int fd) {
-#if defined(__DJGPP__) || defined(__alpha) || defined(__MWERKS__)
+#if defined(__DJGPP__) || defined(__alpha) || defined(__MWERKS__) || defined(_WIN32)
      return 0;
 #else
      struct winsize x;
@@ -1760,4 +1905,35 @@ int actors5_rxmatch(M2_string text, M2_string pattern) {
      else if (ret == REG_NOMATCH) return -2;
      else return ERROR;
      }
+#endif
+
+#if defined(__DJGPP__) || defined(_WIN32)
+double lgamma(double x) { return -1. ; }	/* sigh, fix later */
+#endif
+
+#ifdef _WIN32
+#ifndef ENOSYS
+#define ENOSYS 0
+#endif
+int fork() { return ERROR; }
+int pipe(int v[2]) { return ERROR; }
+int wait() { return ERROR; }
+int alarm(int i) { return ERROR ; }
+int sleep(int i) { return ERROR; }
+int getpagesize() { return 4096; }
+int brk() { return 0; }
+void *sbrk(int i) { return 0; }
+void *getprotobyname() { errno = ENOSYS; return 0; }
+int accept() { errno = ENOSYS; return -1; }
+int bind() { errno = ENOSYS; return -1; }
+int listen() { errno = ENOSYS; return -1; }
+int socket() { errno = ENOSYS; return -1; }
+void *gethostbyname() { errno = ENOSYS; return (void *)0; }
+int inet_addr() { errno = ENOSYS; return -1; }
+void *getservbyname() { errno = ENOSYS; return (void *)0; }
+void *authdes_create() { errno = ENOSYS; return (void *)0; }
+void *xdrmem_create() { errno = ENOSYS; return (void *)0; }
+int connect() { errno = ENOSYS; return -1; }
+int setsockopt() { errno = ENOSYS; return -1; }
+short htons(short x) { return x; }
 #endif
