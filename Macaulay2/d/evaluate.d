@@ -33,8 +33,43 @@ NumberErrorMessagesShown := 0;
 export recursionDepth := 0;
 export recursionLimit := 300;
 ----------------------------------------------------------------------------------------
--- just one forward reference -- we have many mutually recursive functions in this file, too bad!
+-- a forward reference: we have many mutually recursive functions in this file, too bad!
 export eval(c:Code):Expr;
+export evalAllButTail(c:Code):Code := while true do c = (
+     when c
+     is i:ifCode do (
+	  p := eval(i.predicate);
+	  when p is e:Error do Code(e)
+	  else if p == True then i.thenClause
+	  else if p == False then i.elseClause
+	  else (
+	       return Code(Error(codePosition(i.predicate),"expected true or false",nullE,false,dummyFrame));
+	       dummyCode))
+     is v:semiCode do (
+	  w := v.w;
+	  n := length(w);				    -- at least 2
+	  r := eval(w.0);
+	  when r is e:Error do return Code(e) else nothing;
+	  if n == 2 then w.1 else (
+	       r = eval(w.1);
+	       when r is e:Error do return Code(e) else nothing;
+	       if n == 3 then w.2 else (
+		    r = eval(w.2);
+		    when r is e:Error do return Code(e) else nothing;
+		    if n == 4 then w.3 else (
+			 r = eval(w.3);
+			 when r is e:Error do return Code(e) else nothing;
+			 if n == 5 then w.4 else (
+			      r = eval(w.4);
+			      when r is e:Error do return Code(e) else nothing;
+			      i := 5;
+			      while i < n-1 do (
+				   r = eval(w.i);
+				   when r is e:Error do return Code(e) else i = i+1);
+			      w.i)))))
+     else (
+	  return c;
+	  dummyCode));
 ----------------------------------------------------------------------------------------
 export RecursionLimit():Expr := buildErrorPacket("recursion limit of " + tostring(recursionLimit) + " exceeded");
 
@@ -327,6 +362,9 @@ export evalSequence(v:CodeSequence):Sequence := (
 	  if evalSequenceHadError then r = emptySequence;
 	  r));
 
+export binarymethod(left:Expr,rhs:Code,methodkey:SymbolClosure):Expr;
+export apply(c:FunctionClosure,cs:CodeSequence):Expr;
+
 export apply(c:FunctionClosure,v:Sequence):Expr := (
      previousFrame := c.frame;
      model := c.model;
@@ -354,7 +392,7 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       recursionDepth = recursionDepth + 1;
 	       saveLocalFrame := localFrame;
 	       localFrame = f;
-	       ret := eval(model.body);
+	       ret := eval(model.body);			    -- do tail recursion here
 	       localFrame = saveLocalFrame;
 	       recursionDepth = recursionDepth - 1;
 	       if !f.notrecyclable then (
@@ -438,61 +476,137 @@ export apply(c:FunctionClosure,v:Sequence):Expr := (
 	       )
 	  )
      );
+
+wrongModel1(model:functionCode):Expr := printErrorMessageE(
+     model.arrow, 
+     "expected " + tostring(model.desc.numparms) + " argument" + (if model.desc.numparms == 1 then "" else "s") + " but got 1"
+     );
+
 export apply(c:FunctionClosure,e:Expr):Expr := (
      -- single argument 'e' provided not a sequence, so framesize > 0
      previousFrame := c.frame;
      model := c.model;
      desc := model.desc;
      framesize := desc.framesize;
-     if desc.numparms != 1
-     then return printErrorMessageE(model.arrow, "expected " +tostring(desc.numparms)
-	  +" argument"
-	  +(if desc.numparms == 1 then "" else "s")
-	  +" but got 1"
-	  );
+     if desc.numparms != 1 then return wrongModel1(model);
      if recursionDepth > recursionLimit then return RecursionLimit();
      recursionDepth = recursionDepth + 1;
+     saveLocalFrame := localFrame;
      if framesize < length(recycleBin) then (
 	  f := recycleBin.framesize;
-	  previousStashedFrame := f.outerFrame;
-	  if f == previousStashedFrame then (
-	       f = Frame(previousFrame,desc.frameID,framesize,false,
-		    new Sequence len framesize do (
-			 provide e;
-			 while true do provide nullE));
+	  if f == f.outerFrame then (		    -- self-pointer distinguishes the last one
+	       f = Frame(previousFrame,desc.frameID,framesize,false, new Sequence len framesize do ( provide e; while true do provide nullE));
 	       )
 	  else (
-	       recycleBin.framesize = previousStashedFrame;
+	       recycleBin.framesize = f.outerFrame;
 	       f.outerFrame = previousFrame;
 	       f.frameID = desc.frameID;
 	       f.values.0 = e;
 	       );
-     	  saveLocalFrame := localFrame;
-	  localFrame = f;
-	  ret := eval(model.body);
+	  ret := nullE;
+     	  while true do (
+	       localFrame = f;
+	       tailCode := evalAllButTail(model.body);
+	       -- formerly, just ret := eval(model.body); now do tail recursion instead
+	       when tailCode
+	       is e:Error do (
+		    ret = Expr(e);
+		    break;)
+	       is b:adjacentCode do (			    -- this bit as in eval below, except for the tail recursion case
+		    left := eval(b.lhs);
+		    when left
+		    is c2:FunctionClosure do (
+			 rhs := b.rhs;
+			 when rhs is cs:sequenceCode do (
+			      ret = apply(c2,cs.x);
+			      break)
+			 else (
+			      e = eval(rhs);
+			      when e is Error do (
+				   ret = e;
+				   break;)
+			      is v:Sequence do (
+				   ret = apply(c2,v);
+				   break)
+			      else (			    -- here is the tail recursion
+				   -- get a new local frame, if necessary -- examine the new FunctionClosure to see
+				   -- this repeats the code at the opening of this function.
+				   previousFrame = c2.frame;
+				   model = c2.model;
+				   desc = model.desc;
+				   framesize2 := desc.framesize;
+				   if desc.numparms != 1 then return wrongModel1(model);
+				   if framesize2 > framesize || f.notrecyclable then (
+					-- get or make a new frame
+					-- we already know that framesize < length(recycleBin)
+					framesize = framesize2;
+					f = recycleBin.framesize;
+					if f == f.outerFrame then (		    -- self-pointer distinguishes the last one, so ignore it and make a new one
+					     f = Frame(previousFrame,desc.frameID,framesize,false, new Sequence len framesize do ( provide e; while true do provide nullE));
+					     )
+					else (
+					     -- use a stashed one
+					     recycleBin.framesize = f.outerFrame;
+					     f.outerFrame = previousFrame;
+					     f.frameID = desc.frameID;
+					     f.values.0 = e;))
+				   else (
+					-- clean up the old one
+					-- leave framesize as is, the actual size of f
+					foreach x in f.values do x = nullE;
+					f.outerFrame = previousFrame;
+					f.frameID = desc.frameID;
+					f.values.0 = e;
+					);
+				   -- was apply(c2,e), before
+				   -- no break, looping
+				   )))
+		    is ff:CompiledFunction do (
+			 z := eval(b.rhs);
+			 when z is Error do (
+			      ret = z;
+			      break)
+			 else (
+			      ret = ff.fn(z);
+			      break))
+		    is ff:CompiledFunctionClosure do (
+			 z := eval(b.rhs);
+			 when z is Error do (
+			      ret = z;
+			      break)
+			 else (
+			      ret = ff.fn(z,ff.env);
+			      break))
+		    is Error do (
+			 ret = left;
+			 break)
+		    else (
+			 ret = binarymethod(left,b.rhs,AdjacentS);
+			 break))
+	       else (
+		    ret = eval(tailCode);
+		    break));
 	  localFrame = saveLocalFrame;
 	  if !f.notrecyclable then (
+	       -- clean it and recycle it
 	       foreach x in f.values do x = nullE;
 	       f.outerFrame = recycleBin.framesize;
 	       f.frameID = -2;				    -- just to be tidy, not really needed
 	       recycleBin.framesize = f;
 	       );
 	  recursionDepth = recursionDepth - 1;
-	  when ret is err:Error do returnFromFunction(ret) else ret
-	  	     -- this check takes time, too!
+	  when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
 	  )
      else (
 	  f := Frame(previousFrame,desc.frameID,framesize,false,
 	       new Sequence len framesize do (
 		    provide e;
 		    while true do provide nullE));
-     	  saveLocalFrame := localFrame;
      	  localFrame = f;
-	  ret := eval(model.body);
+	  ret := eval(model.body);			    -- don't bother with tail recursion here -- 21 arguments hardly ever happen!
 	  localFrame = saveLocalFrame;
 	  recursionDepth = recursionDepth - 1;
-	  when ret is err:Error do returnFromFunction(ret) else ret
-	      -- this check takes time, too!
+	  when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
 	  )
      );
 
@@ -517,7 +631,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 	       recursionDepth = recursionDepth + 1;
 	       saveLocalFrame := localFrame;
 	       localFrame = previousFrame;
-	       ret := eval(model.body);
+	       ret := eval(model.body);			    -- do tail recursion here
 	       when ret is err:Error do ret = returnFromFunction(ret)
 	       else nothing;
 	       localFrame = saveLocalFrame;
@@ -1073,6 +1187,7 @@ export eval(c:Code):Expr := (
 	  is v:realCode do return Expr(Real(v.x))
 	  is v:integerCode do return Expr(v.x)
 	  is v:stringCode do return Expr(v.x)
+     	  is v:Error do Expr(v)
 	  is v:semiCode do (
 	       w := v.w;
 	       n := length(w);				    -- at least 2
