@@ -3,6 +3,7 @@
 #ifndef _ring_hh_
 #define _ring_hh_
 
+#include "hash.hpp"
 #include "ringelem.hpp"
 #include "monoid.hpp"
 
@@ -26,6 +27,7 @@ class RingMap;
 
 class gbvectorHeap;
 class gbvector;
+class buffer;
 
 class Ring : public mutable_object
 {

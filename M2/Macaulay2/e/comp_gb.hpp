@@ -24,7 +24,8 @@ class GBComputation : public Computation
 // This is the base type for all Groebner basis and syzygy computations
 {
 protected:
-  GBComputation();
+
+  GBComputation() {}
   virtual ~GBComputation();
 
   virtual bool stop_conditions_ok() = 0;
@@ -37,7 +38,7 @@ public:
   static ComputationOrNull *choose_gb(const Matrix *m,
 				      M2_bool collect_syz,
 				      int n_rows_to_keep,
-				      M2_arrayint gb_degrees,
+				      M2_arrayint gb_weights,
 				      M2_bool use_max_degree,
 				      int max_degree,
 				      int algorithm,

@@ -1813,7 +1813,7 @@ gbvector * PolyRing::translate_gbvector_from_vec(const FreeModule *F,
       H.add(head.next);
     }
 
-  result_denominator = ZERO_RINGELEM;
+  result_denominator = getCoefficients()->one();
   return H.value();
 }
 

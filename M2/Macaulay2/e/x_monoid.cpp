@@ -4,6 +4,7 @@
 #include "engine.h"
 #include "ring.hpp"
 
+#if 0
 bool check_all_positive(const M2_arrayint degs)
 {
   for (unsigned int i=0; i<degs->len; i++)
@@ -14,6 +15,7 @@ bool check_all_positive(const M2_arrayint degs)
       }
   return true;
 }
+#endif
 
 Monoid *IM2_Monoid_trivial()
 {

@@ -73,13 +73,19 @@ void monoid_info::set_degrees()
 
   primary_degree_of_var = makearrayint(nvars);
 
-  for (int i=0; i<nvars; i++)
+  if (degvars > 0)
+    for (int i=0; i<nvars; i++)
+      {
+	int *m = degree_monoid->make_one();
+	degree_monoid->from_expvector(t, m);
+	degree_of_var.append(m);
+	primary_degree_of_var->array[i] = t[0];
+	t += degvars;
+      }
+  else
     {
-      int *m = degree_monoid->make_one();
-      degree_monoid->from_expvector(t, m);
-      degree_of_var.append(m);
-      primary_degree_of_var->array[i] = t[0];
-      t += degvars;
+      for (int i=0; i<nvars; i++)
+	primary_degree_of_var->array[i] = 1;
     }
   degree_of_var.append(degree_monoid->make_one());
 }
@@ -272,6 +278,7 @@ Monoid *Monoid::create(MonomialOrdering *mo,
       return 0;
     }
 
+#if 0
   // Check that the first degree for each variable is positive
   if (eachdeg > 0)
     for (unsigned int i=0; i<nvars; i++)
@@ -280,6 +287,7 @@ Monoid *Monoid::create(MonomialOrdering *mo,
 	  ERROR("All primary (first) degrees should be positive");
 	  return 0;
 	}
+#endif
 
   // create internal monomial order
   mon_order *mmo = make_mon_order(mo);

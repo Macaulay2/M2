@@ -10,6 +10,8 @@
 #include "montableZZ.hpp"
 #include "minimalgb.hpp"
 
+class GBWeight;
+
 class gbA : public GBComputation {
 public:
   enum gbelem_type { 
@@ -38,7 +40,6 @@ private:
     SPAIR_GEN,
     SPAIR_ELEM
   };
-
 
 public:
   // This is only public to allow spair_sorter to use it!!
@@ -78,6 +79,7 @@ private:
   // Data
   const PolynomialRing *originalR;
   GBRing *R;
+  const GBWeight *weightInfo_;
 
   // Ring information
 
@@ -143,7 +145,7 @@ private:
   bool over_ZZ() const { return _coeff_type == Ring::COEFF_ZZ; }
   
   /* initialization */
-  void initialize(const Matrix *m, int csyz, int nsyz, int strat);
+  void initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strat);
   spair *new_gen(int i, gbvector *f, ring_elem denom);
 
   void lead_exponents(gbvector *f, exponents e);
@@ -264,11 +266,12 @@ public:
   //////////////////////////
 
   static gbA * create(const Matrix *m, 
-			  M2_bool collect_syz, 
-			  int n_rows_to_keep,
-			  int strategy, 
-			  M2_bool use_max_degree,
-			  int max_degree);
+		      M2_bool collect_syz, 
+		      int n_rows_to_keep,
+		      M2_arrayint gb_weights,
+		      int strategy, 
+		      M2_bool use_max_degree,
+		      int max_degree);
 
   static gbA * create_forced(const Matrix *m, 
 				 const Matrix *gb, 

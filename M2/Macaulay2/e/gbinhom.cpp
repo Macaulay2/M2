@@ -4,11 +4,12 @@
 #include "gbinhom.hpp"
 #include "text_io.hpp"
 #include "matrixcon.hpp"
+#include "gbweight.hpp"
 
 extern char system_interruptedFlag;
 extern int gbTrace;
 
-void GBinhom_comp::set_up0(const Matrix *m, int csyz, int nsyz)
+void GBinhom_comp::set_up0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights)
 {
   int i;
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
@@ -20,6 +21,7 @@ void GBinhom_comp::set_up0(const Matrix *m, int csyz, int nsyz)
     }
   originalR = R;
   GR = R->get_gb_ring();
+  weightInfo_ = new GBWeight(m->rows(), gb_weights);
   M = GR->get_flattened_monoid();
   K = GR->get_flattened_coefficients();
 
@@ -51,10 +53,14 @@ void GBinhom_comp::set_up0(const Matrix *m, int csyz, int nsyz)
 
 }
 
-void GBinhom_comp::set_up(const Matrix *m, int csyz, int nsyz, int strat)
+void GBinhom_comp::set_up(const Matrix *m, 
+			  int csyz, 
+			  int nsyz, 
+			  M2_arrayint gb_weights, 
+			  int strat)
 {
   strategy = strat;
-  set_up0(m, csyz, nsyz);
+  set_up0(m, csyz, nsyz, gb_weights);
 
   Fsyz = m->cols()->sub_space(n_comps_per_syz);  
   //  syz = new Matrix(Fsyz);
@@ -92,7 +98,8 @@ void GBinhom_comp::force(const Matrix *m, const Matrix *gb0, const Matrix *mchan
 		    const Matrix *msyz)
 {
   int csyz = (msyz->n_cols() > 0);
-  set_up0(m, csyz, mchange->n_rows());
+  M2_arrayint do_we_need_something_non_null = 0;
+  set_up0(m, csyz, mchange->n_rows(), do_we_need_something_non_null);
 
   Fsyz = mchange->rows();
 #warning "put back syzygy module!"
@@ -112,9 +119,13 @@ void GBinhom_comp::force(const Matrix *m, const Matrix *gb0, const Matrix *mchan
     }
 }
 
-GBinhom_comp::GBinhom_comp(const Matrix *m, int csyz, int nsyz, int strat)
+GBinhom_comp::GBinhom_comp(const Matrix *m, 
+			   int csyz, 
+			   int nsyz, 
+			   M2_arrayint gb_weights, 
+			   int strat)
 {
-  set_up(m, csyz, nsyz, strat);
+  set_up(m, csyz, nsyz, gb_weights, strat);
 }
 
 GBinhom_comp::GBinhom_comp(const Matrix *m, const Matrix *gb0, const Matrix *mchange, 
@@ -211,7 +222,7 @@ s_pair *GBinhom_comp::new_gen(int i, gbvector * f, ring_elem denom)
   s_pair *result = new s_pair;
   result->next = NULL;
   result->syz_type = SPAIR_GEN;
-  result->degree = GR->gbvector_degree(F,f);
+  result->degree = weightInfo_->gbvector_weight(f);
   result->compare_num = 0;
   result->first = NULL;
   result->second = NULL;

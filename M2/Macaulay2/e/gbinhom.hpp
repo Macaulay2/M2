@@ -10,12 +10,14 @@
 
 #include "spair.hpp"
 #include "matrixcon.hpp"
+class GBWeight;
 
 class GBinhom_comp : public GBComputation
 {
 private:
   // Ring information
   GBRing *GR;
+  GBWeight *weightInfo_;
   const PolynomialRing *originalR;
   const Monoid *M; // flattened monomials
   const Ring *K; // flattened coefficients
@@ -54,8 +56,8 @@ private:
 
   int need_resize;
 private:
-  void set_up0(const Matrix *m, int csyz, int nsyz);
-  void set_up(const Matrix *m, int csyz, int nsyz, int strategy);
+  void set_up0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights);
+  void set_up(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strategy);
   void force(const Matrix *m, const Matrix *gb, const Matrix *mchange, 
 	  const Matrix *syz);
 
@@ -89,7 +91,11 @@ public:
 	  const Matrix *syz);
 
   // An honest GB computation
-  GBinhom_comp(const Matrix *m, int collect_syz, int n_syz, int strategy);
+  GBinhom_comp(const Matrix *m, 
+	       int collect_syz, 
+	       int n_syz, 
+	       M2_arrayint gb_weights,
+	       int strategy);
   ~GBinhom_comp();
 
   // Performing the computation
