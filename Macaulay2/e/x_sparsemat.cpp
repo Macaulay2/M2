@@ -2,11 +2,9 @@
 
 #include "relem.hpp"
 #include "matrix.hpp"
-#include "sparsemat.hpp"
-#include "lattice.hpp"
+#include "mutablemat.hpp"
+#include "fractionfreeLU.hpp"
 #include "engine.h"
-
-typedef SparseMutableMatrix MutableMatrix;
 
 MutableMatrix * IM2_MutableMatrix_make(const Ring *R,
 				       int nrows,

@@ -3,6 +3,8 @@
 #include "engine.h"
 #include "mutablemat.hpp"
 #include "relem.hpp"
+#include "LLL.hpp"
+#include "fractionfreeLU.hpp"
 
 typedef MutableMatrix MutableMatrixOrNull;
 
@@ -409,6 +411,19 @@ MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
   return M->submatrix(cols);
 }
 
+/*******************************
+ ** Cmputations ****************
+ *******************************/
+
+M2_arrayint_OrNull IM2_FF_LU(MutableMatrix *M)
+{
+  return FF_LUComputation::DO(M);
+}
+
+M2_bool IM2_LLL(MutableMatrix *M, const RingElement *threshold)
+{
+  return LLLoperations::LLL(M,threshold);
+}
 
   /***************************************************
    ***** Lapack routines for dense mutable matrices **

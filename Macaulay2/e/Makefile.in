@@ -55,6 +55,7 @@ INTERFACE = \
 	comb \
 	det \
 	frac \
+	fractionfreeLU \
 	freemod \
 	gb \
 	gb_comp \
@@ -65,7 +66,6 @@ INTERFACE = \
 	hilb \
 	int_bag \
 	intarray \
-	lattice \
 	matrix \
 	matrixRR \
 	matrixCC \
@@ -75,6 +75,7 @@ INTERFACE = \
 	monomial \
 	mutablemat \
 	densemat \
+	densematRR \
 	ntuple \
 	polyring \
 	pfaff \
@@ -103,7 +104,8 @@ STILLTOCOMPILE = \
 	gauss \
 	termideal \
 	gbZZ \
-	gbbinom
+	gbbinom \
+	lattice # lattice has been replaced with fractionfreeLU, one other?
 
 COMMANDS = \
 	mat-kbasis \

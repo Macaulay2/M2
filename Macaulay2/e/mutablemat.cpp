@@ -1,4 +1,5 @@
 #include "mutablemat.hpp"
+#include "densematRR.hpp"
 #include "RR.hpp"
 #include "CC.hpp"
 #include "text_io.hpp"
@@ -34,6 +35,19 @@ MutableMatrix *MutableMatrix::identity(const Ring *R, int nrows, bool dense)
     result->set_entry(i,i,one);
   return result;
 }
+
+MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
+{
+  MutableMatrix *result = zero_matrix(m->get_ring(), m->n_rows(), m->n_cols(), prefer_dense);
+
+  // Now loop through and get all (non-zero) entries.
+#warning "uses internal vec knowledge"
+  for (int c=0; c<m->n_cols(); c++)
+    for (vec v = m->elem(c); v!=0; v=v->next)
+      result->set_entry(v->comp, c, v->coeff);
+  return result;
+}
+
 
 bool MutableMatrix::setRowChangeMatrix(MutableMatrix *rops)
 {
@@ -107,18 +121,6 @@ void MutableMatrix::text_out(buffer &o) const
   deletearray(p);
 }
 
-MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
-{
-  MutableMatrix *result = zero_matrix(m->get_ring(), m->n_rows(), m->n_cols(), prefer_dense);
-
-  // Now loop through and get all (non-zero) entries.
-#warning "uses internal vec knowledge"
-  for (int c=0; c<m->n_cols(); c++)
-    for (vec v = m->elem(c); v!=0; v=v->next)
-      result->set_entry(v->comp, c, v->coeff);
-  return result;
-}
-
 SparseMutableMatrix *
 SparseMutableMatrix::zero_matrix(const Ring *R, 
 				 int nrows, 
@@ -136,7 +138,8 @@ DenseMutableMatrixRing::zero_matrix(const Ring *R,
 				    int nrows, 
 				    int ncols)
 {
-  DenseMutableMatrixRing *result = new DenseMutableMatrixRing(R,nrows,ncols);
+  DenseMutableMatrixRing *result = new DenseMutableMatrixRing(R);
+  result->initialize(nrows,ncols,0);
   return result;
 }
 
@@ -144,8 +147,9 @@ DenseMutableMatrixRR *
 DenseMutableMatrixRR::zero_matrix(int nrows, 
 				  int ncols)
 {
-#warning "implement this one"
-  return 0;
+  DenseMutableMatrixRR *result = new DenseMutableMatrixRR();
+  result->initialize(nrows,ncols,0);
+  return result;
 }
 
 DenseMutableMatrixCC *

@@ -12,6 +12,8 @@
 #include "queue.hpp"
 #include "ZZ.hpp"
 #include "QQ.hpp"
+#include "RR.hpp"
+#include "CC.hpp"
 
 #include "polyring.hpp"
 
@@ -47,6 +49,8 @@ void IM2_initialize()
   PolyRing::get_trivial_poly_ring();
 
   globalQQ = QQ::create();
+  globalRR = RR::create(0.000000000000001);
+  globalCC = CC::create(0.000000000000001);
 
   Random::i_random();
   factory_setup();

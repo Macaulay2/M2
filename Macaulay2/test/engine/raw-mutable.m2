@@ -49,3 +49,16 @@ rawMatrixEntry(p,0,0)
 rawMatrixEntry(p,0,1)
 
 rawMutableIdentity(raw R, 10, true)
+
+--------------------------------------------
+-- Test of mutable dense matrices over RR --
+--------------------------------------------
+needs "raw-util.m2"
+p = rawMutableIdentity(raw RR, 10, true)
+rawMatrixEntry(p,3,5,rawFromNumber(raw RR, 3.5))
+net p
+
+p = rawMutableMatrix(raw RR, 10, 20, true); net p      
+scan(50, i -> (rawMatrixEntry(p,random 10, random 20, rawFromNumber(raw RR, random 1.0))))
+net p
+map(RR,rawMatrix p)

@@ -3,6 +3,8 @@
 #include "relem.hpp"
 #include "matrix.hpp"
 #include "matrixcon.hpp"
+#include "LLL.hpp"
+#include "fractionfreeLU.hpp"
 
 extern Matrix_int_pair global_Matrix_int_pair;
 
@@ -472,16 +474,36 @@ const Matrix * rawRemoveMonomialFactors(const Matrix *m, bool make_squarefree_on
   /* MES: there are more matrix routines after this... */
 
 
-
+#if 0
+// These routines are available for mutable matrices, so we don't really need them here.
 M2_arrayint_OrNull IM2_FF_LU_decomp(Matrix *M)
 {
-#warning not re-implemented yet
-  ERROR("not reimplemented yet");
-  return 0;
-
-  //  return FF_LUComputation::DO(M);
+  return FF_LUComputation::DO(M);
 }
 
+M2_bool IM2_LLL(Matrix *M, const RingElement *threshold, 
+		MatrixOrNull **LLL /* return value */
+		)
+/* Given a matrix M over ZZ, and a rational number threshold, 1/4 < threshold <= 1,
+     return a matrix LLL with the same target as M, which forms a Lenstra-Lenstra-Lovasz
+     basis of the image of M.  ASSUMPTION: the columns of M are already a a basis for the 
+     lattice.  The algorithm used is that in Cohen's book on computational algebraic number
+     theory, BUT: beware of the typos in the algorithm!
+     If there is any error (interupted, M or threshold not the correct kind), then false
+     is returned, and LLL is set to 0.
+*/
+{
+  return LLLoperations::LLL(M, threshold, LLL);
+}
+
+M2_bool IM2_LLL2(Matrix *M, const RingElement *threshold, 
+		 MatrixOrNull **LLL, /* return value */
+		 MatrixOrNull *change_of_basis /* return value */
+		 )
+{
+  return LLLoperations::LLL(M, threshold, LLL, change_of_basis);
+}
+#endif
 
 
 #if 0

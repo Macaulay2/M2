@@ -3,10 +3,10 @@
 #include "densemat.hpp"
 #include "matrixcon.hpp"
 
-DenseMutableMatrixRing::DenseMutableMatrixRing(const Ring *R0, int nrows0, int ncols0)
-  : DenseMutableMatrix(R0)
+DenseMutableMatrixRing::DenseMutableMatrixRing(const Ring *R0)
+  : DenseMutableMatrix(R0),
+    array_(0)
 {
-  initialize(nrows0, ncols0, 0);
 }
 
 void DenseMutableMatrixRing::initialize(int nrows0, int ncols0, ring_elem *array)
@@ -46,6 +46,9 @@ Matrix *DenseMutableMatrixRing::to_matrix() const
 
 MutableMatrix *DenseMutableMatrixRing::copy(bool prefer_dense) const
 {
+  DenseMutableMatrixRing *result = new DenseMutableMatrixRing(R);
+  result->initialize(nrows,ncols,array_);
+  return result;
 }
 
 bool DenseMutableMatrixRing::set_entry(int r, int c, const ring_elem a)
@@ -57,6 +60,40 @@ bool DenseMutableMatrixRing::set_entry(int r, int c, const ring_elem a)
   int loc = c * nrows + r;
   array_[loc] = a;
   return true;
+}
+
+int DenseMutableMatrixRing::lead_row(int col) const
+  /* returns the largest index row which has a non-zero value in column 'col'.
+     returns -1 if the column is 0 */
+{
+  if (error_column_bound(col)) return false;
+  ring_elem *loc = array_ + (nrows+1)*col - 1;
+
+  for (int i=nrows-1; i>=0; i++, loc--)
+    {
+      if (!R->is_zero(*loc))
+	return i;
+    }
+  return -1;
+}
+
+int DenseMutableMatrixRing::lead_row(int col, ring_elem &result) const
+  /* returns the largest index row which has a non-zero value in column 'col'.
+     Also sets result to be the entry at this index.
+     returns -1 if the column is 0 */
+{
+  if (error_column_bound(col)) return false;
+  ring_elem *loc = array_ + (nrows+1)*col - 1;
+
+  for (int i=nrows-1; i>=0; i++, loc--)
+    {
+      if (!R->is_zero(*loc))
+	{
+	  result = *loc;
+	  return i;
+	}
+    }
+  return -1;
 }
 
 bool DenseMutableMatrixRing::interchange_rows(int i, int j, bool do_recording)
@@ -143,6 +180,36 @@ bool DenseMutableMatrixRing::scale_column(ring_elem r, int i, bool opposite_mult
   return true;
 }
 
+bool DenseMutableMatrixRing::divide_row(int i, ring_elem r, bool do_recording)
+  /* row(i) <- row(i) / r */
+{
+  if (error_row_bound(i)) return false;
+  ring_elem *loc = array_ + i;
+  for (int c=0; c<ncols; c++)
+    {
+      *loc = R->divide(*loc, r);
+      loc += nrows;
+    }
+  if (do_recording && rowOps != 0)
+    rowOps->scale_column(r,i,false,false);
+  return true;
+}
+
+bool DenseMutableMatrixRing::divide_column(int i, ring_elem r, bool do_recording)
+  /* column(i) <- column(i) / r */
+{
+  if (error_column_bound(i)) return false;
+  ring_elem *loc = array_ + nrows*i;
+  for (int a=0; a<nrows; a++)
+    {
+      *loc = R->divide(*loc, r);
+      loc++;
+    }
+  if (do_recording && colOps != 0)
+    colOps->scale_column(r,i,false,false);
+  return true;
+}
+
 bool DenseMutableMatrixRing::row_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording)
   /* row(i) <- row(i) + r * row(j) */
 {
@@ -223,13 +290,18 @@ bool DenseMutableMatrixRing::dot_product(int i, int j, ring_elem &result) const
 }
 
 bool DenseMutableMatrixRing::get_entry(int r, int c, ring_elem &result) const
-// Returns false if (r,c) is out of range.
 {
-  if (error_row_bound(r)) return false;
-  if (error_column_bound(c)) return false;
-  int loc = c * nrows + r;
-  result = array_[loc];
-  return true;
+  if (r >= 0 && r < nrows && c >= 0 && c < ncols)
+    {
+      int loc = c * nrows + r;
+      result = array_[loc];
+      return !R->is_zero(result);
+    }
+  else
+    {
+      result = R->zero();
+      return false;
+    }
 }
 
 ///////////////////////////////
@@ -238,16 +310,22 @@ bool DenseMutableMatrixRing::get_entry(int r, int c, ring_elem &result) const
 
 bool DenseMutableMatrixRing::is_zero() const
 {
+#warning "to be written"
+  return 0;
 }
 
 bool DenseMutableMatrixRing::is_equal(const MutableMatrix *B) const
 {
+#warning "to be written"
+  return 0;
 }
 
 bool DenseMutableMatrixRing::set_values(M2_arrayint rows,
 					M2_arrayint cols,
 					RingElement_array *values)
 {
+#warning "to be written"
+  return 0;
 }
 
 MutableMatrixOrNull * DenseMutableMatrixRing::add(const MutableMatrix *B) const
@@ -255,6 +333,8 @@ MutableMatrixOrNull * DenseMutableMatrixRing::add(const MutableMatrix *B) const
   // note: can add a sparse + dense
   //       can add a matrix over RR and one over CC and/or one over ZZ.
 {
+#warning "to be written"
+  return 0;
 }
 
 MutableMatrixOrNull * DenseMutableMatrixRing::subtract(const MutableMatrix *B) const
@@ -262,6 +342,8 @@ MutableMatrixOrNull * DenseMutableMatrixRing::subtract(const MutableMatrix *B) c
   // note: can subtract a sparse + dense
   //       can subtract a matrix over RR and one over CC and/or one over ZZ.
 {
+#warning "to be written"
+  return 0;
 }
 
 MutableMatrixOrNull * DenseMutableMatrixRing::mult(const MutableMatrix *B,
@@ -270,25 +352,35 @@ MutableMatrixOrNull * DenseMutableMatrixRing::mult(const MutableMatrix *B,
   // note: can mult a sparse + dense
   //       can mult a matrix over RR and one over CC and/or one over ZZ.
 {
+#warning "to be written"
+  return 0;
 }
 
 MutableMatrixOrNull * DenseMutableMatrixRing::mult(const RingElement *f,
 						   M2_bool opposite_mult) const
 // return f*this.  return NULL of sizes or types do not match.
 {
+#warning "to be written"
+  return 0;
 }
 
 MutableMatrix * DenseMutableMatrixRing::negate() const
 {
+#warning "to be written"
+  return 0;
 }
 
 MutableMatrix * DenseMutableMatrixRing::submatrix(const M2_arrayint rows, 
 						  const M2_arrayint cols) const
 {
+#warning "to be written"
+  return 0;
 }
 
 MutableMatrix * DenseMutableMatrixRing::submatrix(const M2_arrayint cols) const
 {
+#warning "to be written"
+  return 0;
 }
 
 

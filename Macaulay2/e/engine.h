@@ -1791,6 +1791,11 @@ enum gbTraceValues
   /**** Fraction free LU decomposition **************/
   /**************************************************/
 
+  M2_arrayint_OrNull IM2_FF_LU(MutableMatrix *M);
+  
+  M2_bool IM2_LLL(MutableMatrix *M, const RingElement *threshold);
+
+#if 0
   M2_arrayint_OrNull IM2_FF_LU_decomp(Matrix *M);
 
   M2_bool IM2_LLL(Matrix *M, const RingElement *threshold, 
@@ -1810,6 +1815,7 @@ enum gbTraceValues
 		   MatrixOrNull *change_of_basis /* return value */
 		   );
   /* Same as IM2_LLL, except also a change of basis matrix is returned. */
+#endif
 
   /**************************************************/
   /**** Factory and libfac routines *****************/
