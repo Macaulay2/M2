@@ -3,19 +3,20 @@
 #include "Monomials.h"
 #include "MonomialSet.h"
 #include "SPairSet.h"
-#include "linalgGB.hpp"
+#include "lingb.hpp"
 #include "monoms.h"
 
-#include "interface.h"
 #include "../matrixcon.hpp"
 #include "../matrix.hpp"
 #include <vector>
 #include "../sparsemat.hpp"
 
-void from_M2_vec(MonomialSet *H,
-		 const FreeModule *F, 
-		 vec v,
-		 poly &result)
+template<typename CoefficientRing>
+void M2Interface<CoefficientRing>::from_M2_vec(CoefficientRing *K,
+					       MonomialSet *H,
+					       const FreeModule *F, 
+					       vec v,
+					       mypoly<typename CoefficientRing::elem> &result)
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   const Monoid *M = R->getMonoid();
@@ -35,7 +36,9 @@ void from_M2_vec(MonomialSet *H,
       for (Nterm *t = w->coeff; t != 0; t = t->next)
 	{
 	  vp.shrink(0);
-	  result.coeffs[n] = t->coeff; // COPY THIS
+	  COEFF_TYPE a = t->coeff;
+	  K->init_set(result.coeffs+n, &a);
+	  //result.coeffs[n] = t->coeff; // COPY THIS
 	  M->to_varpower(t->monom, vp);
 	  vp[0] = (vp[0]-1)/2;
 	  H->find_or_insert(vp.raw(), result.monoms[n]);
@@ -45,10 +48,12 @@ void from_M2_vec(MonomialSet *H,
     }
 }
 
-void poly_set_degrees(const M2_arrayint wts,
-		      const poly &f,
-		      int &deg, 
-		      int &alpha)
+template<typename CoefficientRing>
+void M2Interface<CoefficientRing>::poly_set_degrees(CoefficientRing *K,
+						    const M2_arrayint wts,
+						    const poly &f,
+						    int &deg, 
+						    int &alpha)
 {
   int leaddeg = monomial_weight(f.monoms[0], wts);
   deg = leaddeg;
@@ -60,7 +65,9 @@ void poly_set_degrees(const M2_arrayint wts,
   alpha = deg-leaddeg;
 }
 
-void from_M2_matrix(const Matrix *m, 
+template<typename CoefficientRing>
+void M2Interface<CoefficientRing>::from_M2_matrix(CoefficientRing *K,
+		    const Matrix *m, 
 		    MonomialSet *H,
 		    M2_arrayint wts,
 		    gb_array &result_polys)
@@ -69,15 +76,17 @@ void from_M2_matrix(const Matrix *m,
   for (int i=0; i<m->n_cols(); i++)
     {
       gbelem *g = new gbelem;
-      from_M2_vec(H,F,m->elem(i),g->f);
+      from_M2_vec(K,H,F,m->elem(i),g->f);
       if (wts != 0)
-	poly_set_degrees(wts,g->f,g->deg,g->alpha);
+	poly_set_degrees(K,wts,g->f,g->deg,g->alpha);
       result_polys.push_back(g);
     }
 }
 
-vec to_M2_vec(poly &f,
-	      const FreeModule *F)
+template<typename CoefficientRing>
+vec M2Interface<CoefficientRing>::to_M2_vec(CoefficientRing *K,
+					    poly &f,
+					    const FreeModule *F)
 {
 #warning "only handles polynomials in one component, assumes polynomials are in order"
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
@@ -106,14 +115,17 @@ vec to_M2_vec(poly &f,
   return R->make_vec(0, head.next);
 }
 
-Matrix *to_M2_matrix(gb_array &polys, const FreeModule *F)
+template<typename CoefficientRing>
+Matrix *M2Interface<CoefficientRing>::to_M2_matrix(CoefficientRing *K,
+						   gb_array &polys, const FreeModule *F)
 {
   MatrixConstructor result(F,polys.size());
   for (int i=0; i<polys.size(); i++)
-    result.set_column(i, to_M2_vec(polys[i]->f, F));
+    result.set_column(i, to_M2_vec(K,polys[i]->f, F));
   return result.to_matrix();
 }
 
+#if 0
 void spair_testing(MonomialSet *H,
 		   gb_array &polys)
 {
@@ -132,17 +144,19 @@ void spair_testing(MonomialSet *H,
       S->display();
     }
 }
+#endif
 
-MutableMatrix * to_M2_MutableMatrix(  
+template<typename CoefficientRing>
+MutableMatrix * M2Interface<CoefficientRing>::to_M2_MutableMatrix(  
     const Ring *K,
-    std::vector<LinearAlgebraGB::row_elem, gc_allocator<LinearAlgebraGB::row_elem> > &rows,
-    std::vector<LinearAlgebraGB::column_elem, gc_allocator<LinearAlgebraGB::column_elem> > &columns
-    )
+    coefficient_matrix<COEFF_TYPE> *mat)
 {
-  SparseMutableMatrix *result = SparseMutableMatrix::zero_matrix(K,rows.size(),columns.size());
-  for (int r=0; r<rows.size(); r++)
+  int nrows = mat->rows.size();
+  int ncols = mat->columns.size();
+  SparseMutableMatrix *result = SparseMutableMatrix::zero_matrix(K,nrows,ncols);
+  for (int r=0; r<nrows; r++)
     {
-      sparse_row &row = rows[r].row;
+      typename coefficient_matrix<COEFF_TYPE>::row_elem &row = mat->rows[r];
       for (int i=0; i<row.len; i++)
 	{
 	  ring_elem a = K->copy(row.coeffs[i]);
@@ -152,17 +166,15 @@ MutableMatrix * to_M2_MutableMatrix(
   return result;
 }
 
+#include "SPairSet.cc"
+#include "linalgGB.cpp"
 
-#if 0
-Todo:
-  Define the matrix type
-  Create the matrix, row and column info
-    Sort the matrix
-    Polynomial arithmetic
-  Solve the matrix
-  
+template class M2Interface<CoefficientRingZZp>;
+template class LinAlgGB<CoefficientRingZZp>;
+template int SPairSet::find_new_pairs<>(
+   const LinAlgGB<CoefficientRingZZp>::gb_array &gb,
+   bool remove_disjoints);
 
-#endif
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "
 //  End:

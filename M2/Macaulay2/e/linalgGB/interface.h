@@ -7,7 +7,7 @@
 #include <vector>
 
 class Matrix;
-
+#if 0
 typedef int COEFF_TYPE;
 
 struct poly : public our_new_delete {
@@ -59,10 +59,12 @@ Matrix *to_M2_matrix(gb_array &polys, const FreeModule *F);
 
 void spair_testing(MonomialSet *H,
 		   gb_array &result_polys);
-
+#endif
 
 #endif
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "
 //  End:
+
+

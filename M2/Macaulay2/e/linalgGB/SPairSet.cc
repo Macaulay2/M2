@@ -1,6 +1,6 @@
 // Copyright 2004 Michael E. Stillman
 
-#include "linalgGB.hpp"
+#include "lingb.hpp"
 #include "SPairSet.h"
 #include "monoms.h"
 #include <functional>
@@ -138,12 +138,13 @@ void SPairSet::insert(SPairSet::spair *p)
   p->next = heap;
   heap = p;
 }
+template<typename gb_array>
 int SPairSet::find_new_pairs(const gb_array &gb,
 			     bool remove_disjoints)
   // returns the number of new pairs found
 {
   remove_unneeded_pairs();
-  int len = SPairConstructor::make(H,this,gb,remove_disjoints);
+  int len = SPairConstructor<gb_array>::make(H,this,gb,remove_disjoints);
   return len;
 }
 
@@ -190,7 +191,9 @@ void SPairSet::display()
 // Construction of new spairs //
 ////////////////////////////////
 
-SPairConstructor::pre_spair *SPairConstructor::create_pre_spair(int i)
+template<typename gb_array>
+typename SPairConstructor<gb_array>::pre_spair *
+SPairConstructor<gb_array>::create_pre_spair(int i)
 {
   // Construct the pre_spair (gb.size()-1, i)
   monomial m0 = gb[gb.size()-1]->f.monoms[0];
@@ -211,7 +214,8 @@ SPairConstructor::pre_spair *SPairConstructor::create_pre_spair(int i)
   return result;
 }
 
-SPairConstructor::SPairConstructor(MonomialSet* H0,
+template<typename gb_array>
+SPairConstructor<gb_array>::SPairConstructor(MonomialSet* H0,
 				   SPairSet *S0,
 				   const gb_array &gb0,
 				   bool remove_disjoints0)
@@ -222,13 +226,15 @@ SPairConstructor::SPairConstructor(MonomialSet* H0,
 {
 }
 
-struct pre_spair_sorter : public binary_function<SPairConstructor::pre_spair *,
-			                         SPairConstructor::pre_spair *,
-                                                 bool>
+template<typename gb_array>
+struct pre_spair_sorter : public binary_function<typename SPairConstructor<gb_array>::pre_spair *,
+						 typename SPairConstructor<gb_array>::pre_spair *,
+						 bool>
 {
+  typedef typename SPairConstructor<gb_array>::pre_spair pre_spair;
   pre_spair_sorter() {}
-  bool operator()(SPairConstructor::pre_spair *a, 
-		  SPairConstructor::pre_spair *b)
+  bool operator()(pre_spair *a, 
+		  pre_spair *b)
   {
     /* Compare using degree, then quotient, then degree of other spair */
     /* should implement "<" */
@@ -245,7 +251,8 @@ struct pre_spair_sorter : public binary_function<SPairConstructor::pre_spair *,
   }
 };
 
-void SPairConstructor::send_spair(pre_spair *p)
+template<typename gb_array>
+void SPairConstructor<gb_array>::send_spair(pre_spair *p)
 {
   monomial quot1;
   H->find_or_insert(p->quot, quot1);
@@ -263,7 +270,8 @@ void SPairConstructor::send_spair(pre_spair *p)
   S->insert(result);
 }
 
-int SPairConstructor::construct_pairs()
+template<typename gb_array>
+int SPairConstructor<gb_array>::construct_pairs()
 {
   if (gb.size() == 0) return 0; // NOT VALID if quotient ring.
   typedef vector<pre_spair *,gc_allocator<pre_spair*> > spairs;
@@ -282,16 +290,16 @@ int SPairConstructor::construct_pairs()
   // Sort these so that ones of lowest degree are first, all ones with the
   // same quot monomial come together, and any disjoint ones come first.
   /////////////////////////////////////////////////////
-  sort(new_set.begin(), new_set.end(), pre_spair_sorter());
+  sort(new_set.begin(), new_set.end(), pre_spair_sorter<gb_array>());
 
   ////////////////////////////
   // Now minimalize the set //
   ////////////////////////////
   MonomialLookupTable *montab = new MonomialLookupTable;
 
-  spairs::iterator first = new_set.begin();
-  spairs::iterator next = first;
-  spairs::iterator end = new_set.end();
+  typename spairs::iterator first = new_set.begin();
+  typename spairs::iterator next = first;
+  typename spairs::iterator end = new_set.end();
   int n_new_pairs = 0;
   for ( ; first != end; first = next)
     {
@@ -309,7 +317,7 @@ int SPairConstructor::construct_pairs()
       int inideal = montab->search(me->quot, junk);
       if (inideal == 0)
 	{
-	  spairs::iterator t = first;// Maybe make a better choice?
+	  typename spairs::iterator t = first;// Maybe make a better choice?
 	  pre_spair *p = *t;
 	  montab->insert_minimal(new tagged_monomial(p->quot,0));
 	  // The following condition is that gcd is not one
@@ -332,7 +340,8 @@ int SPairConstructor::construct_pairs()
   ///////////////////////////////////////
 }
 
-int SPairConstructor::make(MonomialSet* H0,
+template<typename gb_array>
+int SPairConstructor<gb_array>::make(MonomialSet* H0,
 			   SPairSet *S0,
 			   const gb_array &gb0,
 			   bool remove_disjoints0)
