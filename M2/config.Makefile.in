@@ -105,8 +105,8 @@ endif
 
 ifeq "$(OPTIMIZE)" "yes"
 ifeq "$(CC)" "gcc"
-CFLAGS="$CFLAGS -fexpensive-optimizations -O3"
-CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -O3"
+CFLAGS   += -fexpensive-optimizations -O3
+CXXFLAGS += -fexpensive-optimizations -O3
 endif
 endif
 
