@@ -225,12 +225,13 @@ public:
 
   virtual vec vec_top_coefficient(const vec v, int &var, int &exp) const;
 
-protected:
-  vec vec_coefficient_of_var(vec v, int var, int exp) const;
-
   const vecterm * vec_find_lead_term(const FreeModule *F, vec v) const;
   // Returns a pointer to the lead vector of v.
   // This works if F has a Schreyer order, or an up/down order.
+
+protected:
+  vec vec_coefficient_of_var(vec v, int var, int exp) const;
+
 
   ring_elem diff_term(const int *m, const int *n, 
 		      int *resultmon,

@@ -1654,22 +1654,23 @@ MatrixOrNull *Matrix::coeffs(M2_arrayint vars, const Matrix *monoms) const
 
 MonomialIdeal *Matrix::make_monideal(int n) const
 {
-#warning "this is NOT WHAT WE USUALLY WANT!!"
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
+  const PolyRing *P = get_ring()->cast_to_PolyRing();
   if (P == 0)
     {
-      ERROR("expected polynomial ring");
+      ERROR("expected polynomial ring with no fractions");
       return 0;
     }
+#warning "make this work with fraction rings too"
   const Monoid *M = P->getMonoid();
   queue <Bag *> new_elems;
   for (int i=0; i<n_cols(); i++)
     {
       vec v = elem(i);
       if (v == 0) continue;
-      if (v->comp != n) continue;
+      const vecterm * w = P->vec_find_lead_term(rows(), v);
+      if (w->comp != n) continue;
       Bag *b = new Bag(i);
-      M->to_varpower(P->lead_flat_monomial(v->coeff), b->monom());
+      M->to_varpower(P->lead_flat_monomial(w->coeff), b->monom());
       new_elems.insert(b);      
     }
 
