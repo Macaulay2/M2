@@ -181,20 +181,33 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
   return convert(f->get_ring(),h);
 }
 
-void rawFactor(const RingElement *g, RingElement_array **factors, M2_arrayint powers)
+void rawFactor(const RingElement *f, 
+	       RingElement_array_OrNull **result_factors, 
+	       M2_arrayint_OrNull *result_powers)
 {
+#if 0
   factoryseed(23984729);
   const Ring *R = g->get_ring();
   CanonicalForm h = convert(g);
   CFFList q = Factorize(h);
   int nfactors = q.length();
-  *factors = XXX;
-  powers == XXX;
+  *result_factors = XXX;
+  *result_powers == XXX;
   int next = 0;
   for (CFFListIterator i = q; i.hasItem(); i++) {
-    factors->array[next] = convert(R,i.getItem().factor());
-    powers->array[next++] = i.getItem().exp();
+    (*result_factors)->array[next] = convert(R,i.getItem().factor());
+    (*result_powers)->array[next++] = i.getItem().exp();
   }
+#endif
+  ERROR("not implemented yet");
+  *result_factors = 0;
+  *result_powers = 0;
+}
+
+Matrix_array_OrNull * rawCharSeries(const Matrix *M)
+{
+  ERROR("not implemented yet");
+  return 0;
 }
 
 #if 0

@@ -1335,8 +1335,7 @@ enum gbTraceValues
 		 RingElement_array_OrNull **result_factors, 
 		 M2_arrayint_OrNull *result_powers);
 
-  void rawCharSeries(const Matrix *M, 
-		     Matrix_array_OrNull *result_ideals);
+  Matrix_array_OrNull * rawCharSeries(const Matrix *M);
 
 #if defined(__cplusplus)
 }
