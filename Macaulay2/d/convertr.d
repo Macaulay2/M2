@@ -152,60 +152,6 @@ export showFrames(f:Frame):void := (
 	  );
      stdout << endl;
      );
-export frame(frameID:int):Frame := (			    -- old version, becoming obsolete
-     if frameID == 0 then globalFrame
-     else (
-     	  f := localFrame;
-     	  while f.frameID > frameID do f = f.outerFrame;
-     	  if f.frameID != frameID 
-	  then (
-	       stderr << "frame for dictionary " << frameID << " not found" << endl;
-	       stderr << "frames active for dictionaries: ";
-	       f = localFrame;
-	       while f.frameID > -1 do (
-		    stderr << " " << f.frameID;
-		    f = f.outerFrame;
-		    );
-	       stderr << endl;
-	       fatal("exiting");
-	       );
-     	  f));
-export frameWithNestingDepth(frameID:int,nestingDepth:int):Frame := (	    -- transitional version, just to verify nestingDepth
-     if frameID == 0 then (
-	  stderr << "warning: nesting depth not applicable to global frame" << endl;
-	  globalFrame)
-     else (
-	  n := 0;
-     	  f := localFrame;
-     	  while f.frameID > frameID do (
-	       f = f.outerFrame;
-	       n = n+1;
-	       );
-     	  if f.frameID != frameID 
-	  then (
-	       stderr << "frame for dictionary " << frameID << " not found" << endl;
-	       stderr << "frames active for dictionaries: ";
-	       f = localFrame;
-	       while f.frameID > -1 do (
-		    stderr << " " << f.frameID;
-		    f = f.outerFrame;
-		    );
-	       stderr << endl;
-	       fatal("exiting");
-	       );
-	  if n != nestingDepth then (
-	       stderr << "estimated nesting depth for frame " << frameID << " incorrect: " << nestingDepth << endl;
-	       showFrames(localFrame);
-	       );
-     	  f));
-
-export frameByNestingDepth(nestingDepth:int):Frame := (	    -- new version
-     f := localFrame;
-     while nestingDepth > 0 do (
-	  f = f.outerFrame;
-	  nestingDepth = nestingDepth - 1;
-	  );
-     f);
 
 nestingDepth(frameID:int,d:Dictionary):int := (
      if frameID == 0 then return(-1);
