@@ -362,16 +362,16 @@ fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
-makeFileName := (key,filename) -> (
+makeFileName := (key,filename) -> (			 -- may return 'null'
      prefix := first documentationPath;
      if filename =!= null then cacheFileName(prefix, key, filename)
      else (
-     	  t := cacheFileName(documentationPath, key);
+     	  t := cacheFileName(if writing() then first documentationPath, documentationPath, key);
 	  if #t > 1 then (
 	       stderr << "warning: documentation node '" << key << "' occurs in multiple locations:" << endl;
 	       apply(t, fn -> stderr << "    " << fn << endl );
 	       );
-	  first t))
+	  if #t > 0 then first t))
 
 checkForExampleOutputFile := () -> (
      exampleResultsFound = false;
@@ -927,7 +927,7 @@ SEEALSO = v -> (
      if class v =!= List then v = {v};
      if #v > 0 then SEQ { PARA{}, BOLD "See also:", SHIELD MENU (TO \ v) })
 
-CAVEAT = v -> SEQ { PARA{}, BOLD "Caveat:", MENU { SEQ v } }
+CAVEAT = v -> SEQ { PARA{}, BOLD "Caveat:", SHIELD MENU { SEQ v } }
 
 -----------------------------------------------------------------------------
 -- html output
@@ -1541,25 +1541,40 @@ html TOC := x -> (
 	  }
      )
 
-addEndFunction( () -> if writingFinalDocDatabase() then (
-	  scan(values symbolTable(), x -> (
-		    if not DocDatabase#?(toString x) 
-		    then (
-			 pos := locate x;
-			 if pos =!= null then pos = pos#0 | ":" | toString pos#1 | ": ";
-			 stderr << pos << "warning: no documentation for symbol " << x;
-			 if value x =!= x then stderr << " with value of class " << class value x;
-			 stderr << endl;
-			 document {
-			      if value x =!= x and (
-				   class value x === Function
-				   or class value x === ScriptedFunctor
-				   or instance(value x, Type)
-				   )
-			      then value x
-			      else x,
-			      Headline => "undocumented symbol", "No documentation provided yet."};
-			 )))))
+-----------------------------------------------------------------------------
+
+dummyDoc := x -> document {
+     if value x =!= x and (
+	  class value x === Function
+	  or class value x === ScriptedFunctor
+	  or instance(value x, Type)
+	  )
+     then value x
+     else x,
+     Headline => "undocumented symbol", "No documentation provided yet."}
+
+undocErr := x -> (
+     pos := locate x;
+     pos = if pos === null then "error: " else pos#0 | ":" | toString pos#1 | ": ";
+     stderr << pos << x;
+     stderr << " undocumented " << synonym class value x;
+     stderr << endl;
+     )
+
+undocumentedSymbols = () -> select(
+     values symbolTable(), 
+     x -> if not DocDatabase#?(toString x) and not Documentation#?(toString x) then (
+	  undocErr x;
+	  dummyDoc x;
+	  true))
+
+addEndFunction(
+     () -> (
+	  if writingFinalDocDatabase() and #(undocumentedSymbols()) > 0 then error "undocumented symbols"
+	  )
+     )
+
+-----------------------------------------------------------------------------
 
 new TO from List := (TO,x) -> (
      verifyTag first x;

@@ -1,38 +1,6 @@
 StateTable = new Type of HashTable
 StateTable.synonym = "state table"
 
-document { StateTable, Headline => "the class of all state tables",
-     "State tables are hash tables designed to be used in the implementation
-     of finite state machines.  The state of such a machine can be mostly
-     encapsulated in a state table whose keys are the possible inputs and whose
-     values are the functions to be applied to the current key.  A side effect
-     of those functions may be to change the current state.",
-     PARA,
-     "Useful keys for finite state machines:",
-     MENU {
-	  TO "alpha",
-	  TO "alphanum",
-	  TO "default",
-	  TO "digit",
-	  TO "lower",
-	  TO "space",
-	  TO "upper",
-	  },
-     "Useful values for finite state machines:",
-     MENU {
-	  TO "ignore"
-	  },
-     "Useful state tables:",
-     MENU {
-	  TO "done"
-	  },
-     "Methods for creating or combining state tables:",
-     MENU {
-	  TO "stateTable",
-	  TO (symbol ||, StateTable, StateTable),
-	  }
-     }
-
 fixStateTableEntry := method()
 fixStateTableEntry Option := (v) -> fixStateTableEntry(v#0,v#1)
 fixStateTableEntry(Thing,Thing) := (a,s) -> {a,s}
@@ -188,4 +156,37 @@ document { done,
      terminal state.",
      PARA,
      SEEALSO "StateTable"
+     }
+
+
+document { StateTable, Headline => "the class of all state tables",
+     "State tables are hash tables designed to be used in the implementation
+     of finite state machines.  The state of such a machine can be mostly
+     encapsulated in a state table whose keys are the possible inputs and whose
+     values are the functions to be applied to the current key.  A side effect
+     of those functions may be to change the current state.",
+     PARA,
+     "Useful keys for finite state machines:",
+     MENU {
+	  TO "alpha",
+	  TO "alphanum",
+	  TO "default",
+	  TO "digit",
+	  TO "lower",
+	  TO "space",
+	  TO "upper",
+	  },
+     "Useful values for finite state machines:",
+     MENU {
+	  TO "ignore"
+	  },
+     "Useful state tables:",
+     MENU {
+	  TO "done"
+	  },
+     "Methods for creating or combining state tables:",
+     MENU {
+	  TO "stateTable",
+	  TO (symbol ||, StateTable, StateTable),
+	  }
      }

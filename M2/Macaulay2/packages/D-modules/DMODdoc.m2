@@ -54,27 +54,6 @@ document { "D-modules Package",
 	  TO {"diffOps", " -- differential operators on affine varieties"}
 	  },
      PARA,
-     HEADER3 "Miscellaneous:",
-     MENU{
-	  TO {"createDpairs", 
-	       " -- tags coordinate and derivation variables"},
-	  TO {"Dtrace", " -- toggles verbose comments"},
-	  TO {"setHomSwitch", 
-	       " -- toggles use of homogeneous Weyl algebra"}
-	  },
-     PARA,
-     HEADER3 "B-functions:",
-     MENU{
-	  TO {"bFunction", " -- b-function"}, 
-	  TO {"globalBFunction", " -- global b-function"},
-	  TO {"paramBpoly", " -- Bernstein-Sato polynomials of a
-	       polynomial with parametric coefficients"},
-	  TO {"factorBFunction", " -- factors a univariate polynomial"},
-	  TO {"getIntRoots", " -- gets integer roots of a univariate polynomial"},
-	  TO {"AnnFs", " -- annihilator of f^s"},
-	  TO {"AnnIFs", " -- annihilator of f^s in D/I"}
-	  },     
-     PARA,
      HEADER3 "Resolutions and Functors:",
      MENU{TO {"Dresolution", " -- resolutions"}, 
 	  TO {"Dlocalize", " -- localization"}, 
@@ -88,7 +67,12 @@ document { "D-modules Package",
      HEADER3 "Programming aids:",
      MENU{TO {"createDpairs", " -- tags coordinate and derivation variables"},
 	  TO {"Dtrace", " -- toggles verbose comments"},
-	  TO {"setHomSwitch", " -- toggles use of homogeneous Weyl algebra"}}
+	  TO {"setHomSwitch", " -- toggles use of homogeneous Weyl algebra"}},
+     HEADER3 "Miscellaneous:",
+     MENU {
+	  TO "makeWeylAlgebra",
+	  TO "PolyExt"
+	  }
      }
 -----------------------------------------------
 document { (bFunction, Ideal, List),
@@ -244,7 +228,8 @@ document {  (globalBFunction, RingElement),
 
 document { (globalBFunction => Strategy),
      Headline => "specify strategy for computing global b-function",
-     MENU { 
+     -- this menu looks like a mess (DRG) :
+     SHIELD MENU { 
 	  {BOLD "IntRing, TryGeneric, NonGeneric", 
 	       " -- passed to ", TO "bFunction",  ", see ", 
 	       TO (bFunction => Strategy) },

@@ -115,20 +115,30 @@ buttonBar := (key) -> CENTER {
      }
 
 pass1 := () -> (
-     << "pass 1, descending through documentation tree" << endl;
-     follow topNodeName;
+     << "pass 1, finding undocumented symbols" << endl;
+     scan(undocumentedSymbols(), 
+	  x -> (
+	       haderror = true;
+	       follow x;
+	       )
+	  )
      )
 
 pass2 := () -> (
-     << "pass 2, checking for unreachable documentation nodes" << endl;
+     << "pass 2, descending through documentation tree" << endl;
+     follow topNodeName;
+     )
+
+pass3 := () -> (
+     << "pass 3, checking for unreachable documentation nodes" << endl;
      scan(keys docdatabase,
 	  key -> (
 	       if not linkFollowedTable#?key then (
 		    haderror = true;
 		    stderr << "documentation node '" << key << "' not reachable" << endl ) ) ) )
 
-pass3 := () -> (
-     << "pass 3, writing html files" << endl;
+pass4 := () -> (
+     << "pass 4, writing html files" << endl;
      scan(keys linkFollowedTable, fkey -> if linkFollowedTable#?fkey then (
 	       linkFilename fkey
 	       << html HTML { 
@@ -145,6 +155,8 @@ pass3 := () -> (
 		    }
 	       << endl << close ) ) )
 
+-----------------------------------------------------------------------------
+
 alpha := characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 anchorPoint := 0
 anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
@@ -153,8 +165,8 @@ anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
      SEQ apply(s, c -> ANCHOR {c, ""})
      )
 
-pass4 := () -> (
-     << "pass 4, creating the master index" << endl;
+pass5 := () -> (
+     << "pass 5, creating the master index" << endl;
      masterNodeName := topNodeName | " Index";
      masterFileName << html HTML {
 	  HEAD { TITLE masterNodeName },
@@ -162,9 +174,7 @@ pass4 := () -> (
 	       HEADER2 masterNodeName, PARA,
 	       CENTER topNodeButton, PARA,
 	       CENTER between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), PARA,
-	       MENU apply(sort keys masterIndex, (fkey,key) -> SEQ { anchor fkey, TO key }), PARA,
-	       CENTER between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), PARA,
-	       CENTER topNodeButton
+	       MENU apply(sort keys masterIndex, (fkey,key) -> SEQ { anchor fkey, TOH key })
 	       }
 	  } << endl << close
      )
@@ -190,8 +200,9 @@ cacheVars := varlist -> (
      valuelist := apply(varlist, x -> value x);
      () -> apply(varlist, valuelist, (x,n) -> x <- n))
 
-makeHTML = (topnode,gifpath,prefix0,docdatabase0) -> (
+makeHTML = (topnode,prefix0,docdatabase0) -> (
      restore := cacheVars{symbol documentationPath};
+     gifpath := minimizeFilename( getenv "M2HOME" | "/html/" );
      prefix = prefix0;
      docdatabase = docdatabase0;
      checkDirectory prefix;
@@ -226,7 +237,8 @@ makeHTML = (topnode,gifpath,prefix0,docdatabase0) -> (
      	  time pass1(),
      	  time pass2(),
      	  time pass3(),
-     	  time pass4()
+     	  time pass4(),
+     	  time pass5()
 	  );
      if sav =!= null then htmlDefaults#"BODY" = sav;
      if haderror then error "documentation errors occurred";
