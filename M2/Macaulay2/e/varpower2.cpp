@@ -64,6 +64,7 @@ static bool check_var(int v, int e)
 }
 
 // TO REMOVE
+#if 0
 int varpower::var(int n)
 {
   return n >> 16;
@@ -100,7 +101,7 @@ int varpower::pair(int v, int e)
 {
   return (v << 16) | (0x0000ffff & e);
 }
-#if 0
+
 int varpower::degree_of(int n, const int *a)
 {
   int len = *a++;
@@ -427,43 +428,64 @@ bool varpower::divides(const int *b, const int *a)
     }
 }
 
-// TO REWRITE
 void varpower::monsyz(const int *a, const int *b, 
 		      intarray &sa, intarray &sb)
+// sa, sb are set so that a * sa = b * sb
+// and sa, sb have disjoint support.
 {
-  int sasize = sa.start();
-  int sbsize = sb.start();
-  int alen = *a++;
-  int blen = *b++;
-  int va = (--alen > 0 ? var(*a) : -1);
-  int vb = (--blen > 0 ? var(*b) : -1);
+  index_varpower i = a;
+  index_varpower j = b;
+  insure_space(*b);
+  insure_space2(*a);
+  varpower_monomial::vp *sa1 = staticVP->pairs;
+  varpower_monomial::vp *sb1 = staticVP2->pairs;
+
+  int va = (i.valid() ? i.var() : -1);
+  int vb = (j.valid() ? j.var() : -1);
   for (;;)
     {
       if (va > vb)
 	{
-	  sb.append(*a++);
-	  va = (--alen > 0 ? var(*a) : -1);
+	  // va should be placed into sb
+	  sb1->var = va;
+	  sb1->exponent = i.exponent();
+	  sb1++;
+	  ++i;
+	  va = (i.valid() ? i.var() : -1);
 	}
       else if (va < vb)
 	{
-	  sa.append(*b++);
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  // vb should be placed into sa
+	  sa1->var = vb;
+	  sa1->exponent = j.exponent();
+	  sa1++;
+	  ++j;
+	  vb = (j.valid() ? j.var() : -1);
 	}
-      else
+      else 
 	{
 	  if (va == -1) break;
-	  int v = exponent(*a) - exponent(*b);
-	  if (v > 0)
-	    sb.append(pair(va, v));
-	  else if (v < 0)
-	    sa.append(pair(va, -v));
-	  a++; b++;
-	  va = (--alen > 0 ? var(*a) : -1);
-	  vb = (--blen > 0 ? var(*b) : -1);
+	  int ea = i.exponent();
+	  int eb = j.exponent();  
+	  if (ea < eb)
+	    {
+	      sa1->var = va;
+	      sa1->exponent = eb-ea;
+	      sa1++;
+	    }
+	  else if (ea > eb)
+	    {
+	      sb1->var = va;
+	      sb1->exponent = ea-eb;
+	      sb1++;
+	    }
+	  ++i; ++j;
+	  va = (i.valid() ? i.var() : -1);
+	  vb = (j.valid() ? j.var() : -1);
 	}
     }
-  sa[sasize] = sa.length() - sasize;
-  sb[sbsize] = sb.length() - sbsize;
+  copy_to(staticVP, sa1-staticVP->pairs, sa);
+  copy_to(staticVP2, sb1-staticVP2->pairs, sb);
 }
 
 void varpower::lcm(const int *a, const int *b, intarray &result)
@@ -525,17 +547,11 @@ void varpower::gcd(const int *a, const int *b, intarray &result)
     {
       if (va > vb)
 	{
-	  pairs->var = va;
-	  pairs->exponent = i.exponent();
-	  ++pairs;
 	  ++i;
 	  va = (i.valid() ? i.var() : -1);
 	}
       else if (vb > va)
 	{
-	  pairs->var = vb;
-	  pairs->exponent = j.exponent();
-	  ++pairs;
 	  ++j;
 	  vb = (j.valid() ? j.var() : -1);
 	}

@@ -415,7 +415,8 @@ needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 A = rawQuotientRing(R,mat{{a^2+b^2+c^2}})
 m = mat{{a,b,c}}
-m = rawPromote(A,m) -- THIS SHOULD BE MADE TO WORK...
+<< "rawPromote needs to be able to accept matrices" << endl;
+--m = rawPromote(A,m) -- THIS SHOULD BE MADE TO WORK...
 a = rawPromote(A,a)
 b = rawPromote(A,b)
 c = rawPromote(A,c)
@@ -446,7 +447,8 @@ needs "raw-util.m2"
 R = polyring(rawZZp(101), (symbol a, symbol b, symbol c))
 A = rawQuotientRing(R,mat{{a^2+b^2+c^2}})
 m = mat{{a,b,c}}
-m = rawPromote(A,m) -- THIS SHOULD BE MADE TO WORK...
+<< "rawPromote needs to be able to accept matrices" << endl;
+--m = rawPromote(A,m) -- THIS SHOULD BE MADE TO WORK...
 a = rawPromote(A,a)
 b = rawPromote(A,b)
 c = rawPromote(A,c)

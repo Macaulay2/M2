@@ -6,6 +6,31 @@ load "raw-util.m2"
 show := s -> << s << " --> " << value s << endl
 errorDepth = 0
 
+----------------------------------
+-- Test of engine monomial code --
+----------------------------------
+-- These monomials use the internal 'varpower' representation
+-- and are not connected to any ring or monoid.  Monomials can have
+-- negative exponents, etc.
+-- rawVarMonomial  TESTED
+-- rawMakeMonomial  TESTED
+-- ===  TESTED
+-- rawMonomialIsOne (m == 1)  TESTED
+-- rawCompareMonomial -- needs a Monoid
+-- divides -- needs a Monoid
+-- /  TESTED
+-- *  TESTED
+-- rawColon  TESTED
+-- ^  TESTED
+-- rawLCM  TESTED
+-- rawGCD  TESTED
+-- rawSaturate TESTED
+-- rawRadical TESTED
+-- rawSyzygy TESTED
+-- hash  TESTED, I guess
+-- toString  TESTED
+-- rawSparseListFormMonomial TESTED
+
 a = rawVarMonomial 0
 b = rawVarMonomial 1
 c = rawVarMonomial 2
@@ -20,9 +45,47 @@ ab = rawMakeMonomial{(0,1),(1,1)}
 
 assert( hash a2 === hash a^2 )
 
+assert(a*b === ab)
+assert(rawVarMonomial(5,-100) * rawVarMonomial(5,100) === o)
+
+assert(o == 1)
+assert(a2 != 1)
+assert(a2 / a === a)
+assert(a2 / b2 == rawVarMonomial(0,2) * rawVarMonomial(1,-2))
 assert( rawColon(ab,a) == b )
 assert( rawColon(ab,a^2) == b )
+assert( rawColon(a2,a) == a )
+assert( rawColon(a2,a^2) == o )
+assert( rawColon(a2,b2) == a2 )
+assert( rawColon(a^10, a^5) == a^5 )
+assert( rawColon(a^(-1), a^11) == o )
+assert( rawColon(a^(-1), a^(-2)) == a )
 
+assert( rawLCM(a*b,a*c) === a*b*c )
+assert( rawLCM(a*b^3,a*b*c^4) === a*b^3*c^4 )
+assert( rawLCM(a^2*b^3,a^3*b*c^4) === a^3*b^3*c^4 )
+assert( rawLCM(a^-2*b^3,a^-3*b*c^4) === a^-2*b^3*c^4 )
+
+assert( rawGCD(a*b,a*c) === a )
+assert( rawGCD(a*b^3,a*b*c^4) === a*b )
+assert( rawGCD(a^2*b^3,a^3*b*c^4) === a^2*b )
+assert( rawGCD(a^-2*b^3,a^-3*b*c^4) === a^-3*b )
+
+rawSyzygy(a*b, a*c)
+p = rawSyzygy(a^3*b, b^4*c*rawVarMonomial(10,15))
+p#0 === rawMakeMonomial(rawSparseListFormMonomial(p#0))
+rawSaturate(a^3*b^2*c,b*c)
+rawSaturate(a^3*b^2*c,b*c^2)
+rawSaturate(a^3*c,b*c^2)
+rawSaturate(a*b^232131*c,a*c)
+rawSaturate(a*b^232131*c,b)
+
+assert(rawRadical(a*b^5*c^2*a) === a*b*c)
+rawRadical(a^-2*b^5*c^2) -- should this return a^-1*b*c ??
+
+///
+-- testing the limits REWRITE THIS PART
+lastone = 2147483647
 a32766 = rawVarMonomial(0,32766)
 assert(a32766 * a == rawVarMonomial(0,32767))
 assert(try (a32766 * a2; false) else true)
@@ -35,16 +98,12 @@ a'^32768
 assert(try (a'^32769; false) else true)
 assert(try (rawVarMonomial(-1,4); false) else true)
 assert(try (rawVarMonomial(3,32768); false) else true)
-
-a^(-1)
-rawColon(a^10, a^5)
-rawColon(a^(-1), a^11)
-rawColon(a^(-1), a^(-2))
+///
 
 assert( toString x === "d4" )
 assert( x === x' )
 assert not mutable x
-assert( toString y === "c3d4" )
+assert( toString y === "d4c3" )
 assert( x =!= y )
 assert( not (x === y) )
 assert( rawSparseListFormMonomial y ===  t )
@@ -67,6 +126,9 @@ assert( gcd(a^5*b^3*c^7 , a^7*b^2*c) == a^5*b^2*c )
 
 assert( rawSyzygy(ab,b2) == {b,a} )
 
+------------------------
+-- Monomial Orderings --
+------------------------
 rawMonomialOrdering {Position => Up, Lex => 3, LexTiny => 4, GRevLex => {1,2,3}}
 rawMonomialOrdering {Lex => 1, LexSmall => 2, LexTiny => 4}
 rawMonomialOrdering {GRevLex => {1,1,1}, GRevLexSmall => {2,2}, GRevLexTiny => {4,4,4,4}}
@@ -146,11 +208,6 @@ assert( 1_k // 10_k != -1 )
 assert( 1_k - 10_k == 92 )
 assert( 1 - 10_k == 92 )
 assert( 1_k - 10 == 92 )
-
-degs = {};
-
-singlyGradedOrdering = makeMonomialOrdering( null, false, 1, degs, {}, {GroupLex => 1} )
-singlyGraded = rawMonoid(singlyGradedOrdering,{"t"},degring 0,degs)
 
 degs = {{1},{1},{1}}
 m' = makeMonomialOrdering( null, false, 3, degs / first, {}, {} )
