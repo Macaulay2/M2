@@ -32,12 +32,12 @@ skew multiplication: does it still work?  Get it working, test it.
 
 leadTerm needs to be made to work again
 
-basis needs to be made to work again
+basis needs to be made to work again (engine part DONE)
 
-basis needs to be functorial
+basis needs to be functorial 
 
-rawMonomials needs to be connected to front end (this is the new version which 
-takes a matrix instead a list of exponent vectors)
+DONE rawMonomials needs to be connected to front end (this is the new version which 
+takes a matrix instead a list of exponent vectors) 
 
 Monomial orders for free modules should obey what we agreed with Cox
 

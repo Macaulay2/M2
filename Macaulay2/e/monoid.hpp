@@ -71,6 +71,11 @@ protected:
   static Monoid *trivial_monoid;
 
   Monoid(monoid_info *mo, int nbits);
+
+  void unpack(const int *m, int *result) const;
+  void pack(const int *exp, int *result) const;
+
+
 public:
   static Monoid *create(MonomialOrdering *mo,
 			M2_stringarray names,
@@ -81,7 +86,6 @@ public:
 
   ~Monoid();
 
-  monoid_info *get_private_monoid_info() const { return moninfo; }
 
   static void set_trivial_monoid_degree_ring(const PolynomialRing *DR);
   // ONLY to be called by PolyRing::get_trivial_poly_ring()
@@ -98,9 +102,6 @@ public:
 
   M2_arrayint to_arrayint(const int *monom) const; /* Returns an exponent vector representation 
 						      of the monomial */
-
-  void unpack(const int *m, int *result) const;
-  void pack(const int *exp, int *result) const;
 
   int in_subring(int n, const int *m) const;
   int compare(int nslots, const int *m, const int *n) const;
@@ -130,6 +131,7 @@ public:
   void elem_text_out(buffer &o, const int *m) const;
 
   int primary_value(const int *m) const;
+
   void multi_degree(const int *m, int *result) const;
   int primary_degree(const int *m) const;
   int degree_weights(const int *m, const M2_arrayint wts) const;
@@ -143,7 +145,6 @@ public:
   // Infrastructure here
   void text_out(buffer &o) const;
 
-  int          length_of() const      { return n_vars(); }
 };
 
 #if 0

@@ -4,10 +4,11 @@
 #define _gbweight_hpp_
 
 #include "engine.h"
+#include "newdelete.hpp"
 class GBRing;
 class gbvector;
 
-class GBWeight
+class GBWeight : public our_new_delete
 // A class to compute the "heuristic weight" of elements
 // Mainly for use with Groebner basis computation
 {

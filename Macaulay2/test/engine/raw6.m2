@@ -464,6 +464,13 @@ assert try (b1 = rawBasis(mat{{0_R}}, {}, {3,2}, {3,2}, {0,1,2}, false, -1);fals
 assert try(b1 = rawBasis(mat{{0_R}}, {3,2}, {3,2}, {1,6}, {0,1,2,3}, false, -1);false) else true
 b1 = rawBasis(mat{{0_R}}, {3,2}, {3,2}, {6,1}, {0,1,2,3}, false, -1)
 
+-- Polynomial ring over polynomial ring
+A = polyring(rawZZp 101, (symbol a .. symbol c))
+B = polyring(A, (symbol x, symbol y))
+b1 = rawBasis(mat{{0_B}}, {2},{2},{1},{0,1,2,3},false,-1)
+b1 = rawBasis(mat{{0_B}}, {2},{2},{1},(0,1),false,-1)
+f = rawPromote(B,a)*x^2 + rawPromote(B,b)*x*y + rawPromote(B,c)*y^2
+rawCoefficients((0,1),b1,mat{{f}})
 << "rawBasis: test for quotient rings" << endl;
 ---------------------------------------
 -- mutable matrix routines ------------
