@@ -177,10 +177,13 @@ document { "do",
 
 document { "try",
      Headline => "catch an error",
-     TT "try x else y ", " -- returns the value of x unless an error or
+     TT "try x then y else z", " -- returns the value of y unless an error or
+     ", TO "alarm", " occurs during the evaluation of x, in which case it 
+     returns the value of z.", BR, NOINDENT,
+     TT "try x else y", " -- returns the value of x unless an error or
      ", TO "alarm", " occurs during the evaluation of x, in which case it 
      returns the value of y.", BR, NOINDENT,
-     TT "try x ", " -- returns the value of x unless an error or
+     TT "try x", " -- returns the value of x unless an error or
      ", TO "alarm", " occurs during the evaluation of x, in which case it 
      returns ", TO "null", ".",
      PARA,
