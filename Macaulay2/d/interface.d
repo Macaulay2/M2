@@ -2076,6 +2076,18 @@ export rawGBGetMatrix(e:Expr):Expr := (
      else WrongArg("a raw Groebner basis computation"));
 setupfun("rawGBGetMatrix", rawGBGetMatrix);
 
+export rawGBChangeOfBasis(e:Expr):Expr := (
+     when e is G:RawComputation do 
+     toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBChangeOfBasis(", "(Computation *)", G, ")" ))
+     else WrongArg("a raw Groebner basis computation"));
+setupfun("rawGBChangeOfBasis", rawGBChangeOfBasis);
+
+export rawGBSyzygies(e:Expr):Expr := (
+     when e is G:RawComputation do 
+     toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBSyzygies(", "(Computation *)", G, ")" ))
+     else WrongArg("a raw Groebner basis computation"));
+setupfun("rawGBSyzygies", rawGBSyzygies);
+
 export rawResolutionGetMatrix(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 2 then 
@@ -2113,24 +2125,6 @@ export rawResolutionStatusLevel(e:Expr):Expr := (
      else WrongNumArgs(3)
      );
 setupfun("rawResolutionStatusLevel", rawResolutionStatusLevel);
-
--- export rawGBGetChange(e:Expr):Expr := (
---      when e is a:Sequence do 
---      if length(a) == 2 then 
---      when a.0 is G:RawComputation do 
---      when a.1 is level:Integer do
---      if !isInt(level) then WrongArgSmallInteger(2) else
---      toExpr(
--- 	  Ccode(RawMatrixOrNull, 
--- 		    "(engine_RawMatrixOrNull)IM2_GB_get_change(",
--- 		    "(Computation *)", G, ",",
--- 		    toInt(level),
--- 		    ")" ))
---      else WrongArgInteger(2)
---      else WrongArg(1,"a raw computation")
---      else WrongNumArgs(2)
---      else WrongNumArgs(2));
--- setupfun("rawGBGetChange", rawGBGetChange);
 
 -- export rawGBGetLeadTerms(e:Expr):Expr := (
 --      when e is a:Sequence do 
