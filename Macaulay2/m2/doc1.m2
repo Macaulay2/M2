@@ -18,7 +18,7 @@ document { document,
      are converted to empty instances of their type.",
      PARA,
      "Special documentation entries:",
-     MENU {
+     UL {
 	  SEQ { TT "Headline => \"...\"", " -- some text to be displayed along
 	       with menu items that lead to this node.  The text should be
 	       less than a line full." },

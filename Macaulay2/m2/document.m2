@@ -460,8 +460,8 @@ moreGeneral := s -> (
 
 optTO := i -> if getDoc i =!= null then SEQ{ TO i, headline i } else formatDocumentTagTO i
 
-smenu := s -> MENU (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
- menu := s -> MENU (optTO \ s)
+smenu := s -> UL (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
+ menu := s -> UL (optTO \ s)
 
 ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
@@ -505,7 +505,7 @@ type := S -> (
 			 "Each ", synonym s, " is also a member of class ", TO parent s, ".",
 			 SEQ {
 			      "More general types (whose methods may also apply) :",
-			      SHIELD MENU (
+			      SHIELD UL (
 				   Y := parent s;
 				   while Y =!= Thing list TO toString Y do Y = parent Y
 				   )
@@ -544,10 +544,10 @@ synopsis Thing := f -> (
 	       );
 	  SEQ {
 	       BOLD "Synopsis:",
-	       SHIELD MENU {
+	       SHIELD UL {
 		    if SYN#?0 then SEQ { "Usage: ", TT SYN#0},
-		    if SYN#?1 then SEQ { "Input:", MENU { t 1, t 2, t 3 } },
-		    if SYN#?1 and SYN#-1 =!= null then SEQ { "Output:", MENU { t(-1) } }
+		    if SYN#?1 then SEQ { "Input:", UL { t 1, t 2, t 3 } },
+		    if SYN#?1 and SYN#-1 =!= null then SEQ { "Output:", UL { t(-1) } }
 		    }
 	       }
 	  )
@@ -582,11 +582,11 @@ synopsis Sequence := s -> (
 	  );
      PARA {
 	  BOLD "Synopsis:",
-	  SHIELD MENU {
+	  SHIELD UL {
 	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
 	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0, headline s#0 },
 	       SEQ { "Input:",
-		    MENU {
+		    UL {
 			 if arg1 === null
 			 then SEQ {justClass s#1, desc1 }
 			 else SEQ {arg1, ", ", justClass s#1, desc1 }, 
@@ -603,7 +603,7 @@ synopsis Sequence := s -> (
 	       if t =!= Thing or retv =!= null or descv =!= "." 
 	       then SEQ {
 	       	    "Output:",
-	       	    MENU {
+	       	    UL {
 		    	 if retv === null
 		    	 then SEQ {justClass t, descv}
 		    	 else SEQ {retv, ", ", justClass t  , descv}
@@ -621,7 +621,7 @@ fmeth := f -> (
      b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ {
+     if #b > 0 then PARA {
 	  "Ways to use ", TT toString f," :", newline, 
 	  SHIELD smenu b
 	  } )
@@ -753,7 +753,7 @@ documentation Option := v -> (
 	       synopsis v,
 	       usage v,
 	       BOLD "See also:",
-	       SHIELD MENU {
+	       SHIELD UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
 		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
 		    SEQ{ "Option name: ", TOH opt }
@@ -805,9 +805,9 @@ TEST List := y -> TEST \ y
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
-     if #v > 0 then PARA { BOLD "See also:", SHIELD MENU (TO \ v) })
+     if #v > 0 then PARA { BOLD "See also:", SHIELD UL (TO \ v) })
 
-CAVEAT = v -> PARA { BOLD "Caveat:", SHIELD MENU { SEQ v } }
+CAVEAT = v -> PARA { BOLD "Caveat:", SHIELD UL { SEQ v } }
 
 -----------------------------------------------------------------------------
 -- html output
@@ -921,10 +921,13 @@ tex  NOINDENT := x -> ///
 \noindent\ignorespaces
 ///
 
-html BIG := x -> concatenate( "<b><font size=4>", apply(x, html), "</font></b>" )
+html BIG := x -> concatenate( 				    -- not right any more -- no size option to font -- no font tag -- use css
+     "<b>", apply(x, html), "</b>"
+     )
 
-html HEAD := html CENTER := 
-x -> concatenate(newline, 
+html CENTER := x -> concatenate(newline, apply(x, html), newline ) -- obsolete tag
+
+html HEAD := x -> concatenate(newline, 
      "<", toString class x, ">", newline,
      apply(x, html), newline,
      "</", toString class x, ">", newline
@@ -954,10 +957,11 @@ html PARA := x -> (
      else concatenate(///
 <P>
 ///,
-          apply(x,html),
-          ///
-</P>
-///
+          apply(x,html)
+--     end P tag is optional, and giving too many of makes it not verify
+--          ///
+--</P>
+--///
           )
      )
 
@@ -1020,7 +1024,6 @@ html TABLE := x -> concatenate(
 html ExampleTABLE := x -> concatenate(
      newline,
      "<p>",
-     "<center>",
      "<table cellspacing='0' cellpadding='12' border='4' bgcolor='#80ffff' width='100%'>",
      newline,
      apply(x, 
@@ -1031,7 +1034,6 @@ html ExampleTABLE := x -> concatenate(
 	       )
 	  ),
      "</table>",
-     "</center>",
      "</p>"
      )			 
 
@@ -1080,7 +1082,8 @@ net TT     := x -> horizontalJoin splice ("'", net  \ toSequence x, "'")
 
 
 htmlDefaults = new MutableHashTable from {
-     "BODY" => "bgcolor='#e4e4ff'"
+     -- "BODY" => "bgcolor='#e4e4ff'"
+     "BODY" => ""
      }
 
 html BODY := x -> concatenate(
@@ -1155,56 +1158,47 @@ html TEX := x -> x#0
 
 addHeadlines := x -> apply(x, i -> if instance(i,TO) then SEQ{ i, headline i#0 } else i)
 
-html MENU := x -> concatenate (
+html UL := x -> concatenate (
      newline,
-     "<p>", newline,
      "<menu>", newline,
      apply(addHeadlines x, s -> if s =!= null then ("<li>", html s, "</li>", newline)),
-     "</menu>", newline, 
-     "</p>", newline)
+     "</menu>", newline)
 
 addHeadlines1 := x -> apply(x, i -> if instance(i,TO) then SEQ{ "help ", i, headline i#0 } else i)
 
-text MENU := x -> concatenate(
+text UL := x -> concatenate(
      newline,
      apply(addHeadlines1 x, s -> if s =!= null then ("    ", text s, newline))
      )
 
-net MENU := x -> "    " | stack apply(toList addHeadlines x, net)
+net UL := x -> "    " | stack apply(toList addHeadlines x, net)
 
-tex MENU := x -> concatenate(
+tex UL := x -> concatenate(
      ///\begin{itemize}///, newline,
      apply(addHeadlines x, x -> if x =!= null then ( ///\item ///, tex x, newline)),
      ///\end{itemize}///, newline)
 
 html UL   := x -> concatenate(
-     "<p>", newline,
      "<ul>", newline,
      apply(x, s -> ("<li>", html s, "</li>", newline)),
-     "</ul>", newline, 
-     "</p>", newline)
+     "</ul>", newline)
 
 text UL   := x -> concatenate(
      newline,
      apply(x, s -> ("    ", text s, newline)))
 
 html OL   := x -> concatenate(
-     "<p>", newline,
      "<ol>", newline,
      apply(x,s -> ("<li>", html s, "</li>", newline)),
-     "</ol>", newline, 
-     "</p>", newline
-     )
+     "</ol>", newline )
 text OL   := x -> concatenate(
      newline,
      apply(x,s -> ("    ", text s, newline)))
 
 html NL   := x -> concatenate(
-     "<p>", newline,
      "<nl>", newline,
      apply(x, s -> ("<li>", html s, newline)),
-     "</nl>", newline, 
-     "</p>", newline)
+     "</nl>", newline)
 text NL   := x -> concatenate(
      newline,
      apply(x,s -> ("    ",text s, newline)))
@@ -1394,7 +1388,7 @@ html TOC := x -> (
      html SEQ {
 	  SECTION {
 	       "Sections:",
-	       MENU for i from 0 to #x-1 list HREF { "#" | tag i, title i }
+	       UL for i from 0 to #x-1 list HREF { "#" | tag i, title i }
 	       },
 	  SEQ for i from 0 to #x-1 list SEQ { newline, ANCHOR { tag i, ""} , x#i }
 	  }

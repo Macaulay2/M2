@@ -18,7 +18,7 @@ document { Group,
      PARA,
      "A group is created using the ", TO "newGroup", " routine.  Operations
      involving groups:",
-     MENU {
+     UL {
 	(TO "newGroup", "(FF) -- create a (finite!) group"),
 	(TO "ring", "(G)      -- the base ring R mentioned above"),
 	(TO "generators", "(G)-- the list of generators (each is a ring map)"),
@@ -27,7 +27,7 @@ document { Group,
 	},
      "Operations involving computing invariants of groups.  Some of these operations
      store their result, or partial result, into G (under a key of the same name).",
-     MENU {
+     UL {
 	(TO "reynolds","(G,F) -- average the polynomial or matrix over F"),
 	(TO "molien","(G)     -- the Molien series of the given representation"),
 	(TO "invariants","(G,d) -- a basis of the invariants of degree d"),
@@ -37,7 +37,7 @@ document { Group,
 	(TO "secondaryInvariants", "(G,d) -- a set of secondary invariants of G of degree d")
 	},
      "Some supporting routines, which might be of independent use",
-     MENU {
+     UL {
 	(TO "charPolys", "(G) -- compute det(1-zg), for all g in the group")
 	},
      "For a series of examples of interesting groups, see the file 'examples/groups.m2'
@@ -158,7 +158,7 @@ document { molien,
      do a so-called 'Brauer lift'.",
      PARA,
      "To obtain numerical information from this series, use ",
-     MENU {
+     UL {
 	  (TO "expandPowerSeries", "(f,n) -- expand the rational function f in k(z)
 	       as a polynomial, whose degree >= n terms have been truncated"),
 	  (TO "")

@@ -128,7 +128,7 @@ document { EngineRing,
      users, and provides the developers with a way to create top-level 
      rings corresponding to rings implemented in the engine.  Here ", TT "x", "
      may be:",
-     MENU {
+     UL {
 	  "commands for the engine, as a string, or a sequence or list
 	  of strings, which cause a ring to be placed on the top of the
 	  engine's stack.",
@@ -707,7 +707,7 @@ document { MonomialOrder,
      monomial ordering other than the default (graded reverse lexicographic)",
      PARA,
      "Permissible values:",
-     MENU {
+     UL {
 	  TO "GRevLex",
 	  TO "GLex",
 	  TO "Lex",
@@ -753,7 +753,7 @@ document { (monoid, Array),
      TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
      PARA,
      "Optional arguments (placed between the brackets):",
-     SHIELD MENU (TO \ keys monoidOptions),
+     SHIELD UL (TO \ keys monoidOptions),
      SEEALSO {(symbol " ", Ring, Array)}
      }
 
@@ -765,7 +765,7 @@ document { (symbol " ", Ring, Array),
      "This is the customary way to make a polynomial ring.",
      PARA,
      "Optional arguments (placed inside the array):",
-     MENU (TO \ keys monoidOptions),
+     UL (TO \ keys monoidOptions),
      SEEALSO "polynomial rings"
      }
 
@@ -891,7 +891,7 @@ document { Module,
      Headline => "the class of all modules",
      PARA,
      "Common ways to make a module:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO (symbol ^, Ring, ZZ),
 	  TO (symbol ^, Ring, List),
 	  TO (cokernel, Matrix),
@@ -900,7 +900,7 @@ document { Module,
 	  TO (homology, Matrix, Matrix)
 	  },
      "Common ways to get information about modules:",
-     MENU {
+     UL {
 	  TO (ring, Module),
 	  TO (numgens, Module),
 	  TO (degrees, Module),
@@ -914,7 +914,7 @@ document { Module,
 	  TO (super, Module),
 	  },
      "Common operations on modules:",
-     MENU {
+     UL {
 	  TO (symbol +, Module, Module),
 	  TO (symbol /, Module, Module),
 	  TO (symbol ==, Module, Module),
@@ -924,7 +924,7 @@ document { Module,
 	  TO (symbol _, Module, List),
 	  },
      "Numerical information about a module:",
-     MENU {
+     UL {
 	  TO (codim, Module),
 	  TO (degree, Module),
 	  TO (dim, Module),
@@ -937,7 +937,7 @@ document { Module,
 	  TO (rank, Module)
 	  },
      "Common computations on modules:",
-     MENU {
+     UL {
 	  TO (symbol :, Module, Ideal),
 	  TO (annihilator, Module),
 	  TO (gb, Module),
@@ -950,7 +950,7 @@ document { Module,
 	  TO (Tor,ZZ,Module,Module)
 	  },
      "Common ways to use a module:",
-     MENU {
+     UL {
 	  TO (fittingIdeal, ZZ, Module),
 	  TO (isSubset, Module, Module),
 	  TO (exteriorPower,ZZ,Module),
@@ -1217,7 +1217,7 @@ document { components,
      formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a 
      direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
      PARA,
-     MENU {
+     UL {
 	  TO (components,ChainComplex)
 	  },
      SEEALSO {"vector", "directSum", "++"}
@@ -1376,18 +1376,18 @@ document { Matrix,
      cache information about it, put it in the hash table ", TT "f.cache", ".",
      PARA,
      "Common ways to make a matrix:",
-     MENU {
+     UL {
 	  TO "map",
 	  TO "matrix",
 	  },
      "Common ways to get information about matrices:",
-     MENU {
+     UL {
 	  TO (degree, Matrix),
 	  TO (isHomogeneous, Matrix),
 	  TO (matrix, Matrix),
 	  },
      "Common operations on matrices:",
-     MENU {
+     UL {
 	  TO (symbol +, Matrix, Matrix),
 	  TO (symbol -, Matrix, Matrix),
 	  TO (symbol *, RingElement, Matrix),
@@ -1403,7 +1403,7 @@ document { Matrix,
 	  TO (symbol _, Matrix, List),
 	  },
      "Common ways to use a matrix:",
-     MENU {
+     UL {
 	  TO (cokernel, Matrix),
 	  TO (image, Matrix),
 	  TO (kernel, Matrix),
@@ -1463,7 +1463,7 @@ document { (symbol ++,Module,Module),
       	  "image vars R ++ kernel vars R",
 	  },
      "Projection and inclusion maps for direct sums:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO (symbol ^,Module,Array),
 	  TO (symbol _,Module,Array)
 	  },
@@ -1483,7 +1483,7 @@ document { (symbol ++,Matrix,Matrix),
       	  "a++b++c",
 	  },
      "Selecting rows or columns of blocks:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO (symbol ^,Matrix,Array),
 	  TO (symbol _,Matrix,Array)
 	  },
@@ -1497,7 +1497,7 @@ document { directSum,
      "The components can be recovered later with ", TO "components", ".",
      PARA,
      "Projection and inclusion maps for direct sums:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO (symbol ^,Module,Array),
 	  TO (symbol _,Module,Array),
 	  TO (symbol ^,Matrix,List),

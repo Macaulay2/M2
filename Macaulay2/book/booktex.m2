@@ -68,7 +68,7 @@ reach3 = method(SingleArgumentDispatch=>true)
 reach1 Thing := identity
 reach1 Sequence := reach1 BasicList := x -> scan(x,reach1)
 reach1 SHIELD := x -> scan(x,reach3)
-reach1 MENU := x -> scan(x,reach2)
+reach1 UL := x -> scan(x,reach2)
 reach1 TO := reach1 TOH := (x) -> (
      node := formatDocumentTag x#0;
      if not getNumberFromName#?node and not otherNodes#?node 
@@ -89,7 +89,7 @@ reach2 TO := reach2 TOH := (x) -> (
      	  goOver node;
 	  ))
 reach3 Thing := reach1
-reach3 MENU := x -> scan(x,reach1)
+reach3 UL := x -> scan(x,reach1)
 --------------- body of book
 reach1 documentationMemo "Macaulay 2"
 --------------- appendix
@@ -119,7 +119,7 @@ reach2 = oldreach2
 -- docDatabase = openDatabase "../cache/Macaulay2-doc"
 document { "Miscellaneous documentation",
      "We present various additional documentation in this chapter.",
-     MENU apply(sort unique join(
+     UL apply(sort unique join(
 	       formatDocumentTag \ value \ keys docDatabase,
 	       keys otherNodes
 	       ),
@@ -127,7 +127,7 @@ document { "Miscellaneous documentation",
      }
 document { "Appendix",
      "This appendix contains additional information about the following topics.",
-     MENU {
+     UL {
 	  TO "Miscellaneous documentation"
 	  }
      }
@@ -172,7 +172,7 @@ booktex TO := booktex TOH := x -> crossReference(formatDocumentTag x#0, formatDo
 
 menuLevel := 2
 
-booktex MENU := x -> concatenate(
+booktex UL := x -> concatenate(
      ///
 \begingroup
 \parskip=0pt

@@ -282,7 +282,7 @@ document { symbol gbTrace,
      0, 1, 2, and 3.",
      PARA,
      "The notations used in tracing are :",
-     MENU {
+     UL {
 	  "g       - a generator reduced to something nonzero and has been added to the basis.",
 	  "m       - an S-pair reduced to something nonzero and has been added to the basis.",
 	  "z       - an S-pair reduced to zero, and a syzygy has been recorded.",
@@ -415,7 +415,7 @@ document { CodimensionLimit,
      PARA,
      "Eventually the codimension of the ideal of leading terms is the
      codimension of the original ideal.",
-     MENU {
+     UL {
 	  TO (gb => CodimensionLimit),
 	  TO (syz => CodimensionLimit),
 	  }
@@ -442,7 +442,7 @@ document { StopWithMinimalGenerators,
      complete list of minimal generators for the submodule or ideal has been
      determined.",
      PARA,
-     MENU {
+     UL {
 	  TO (gb => StopWithMinimalGenerators),
 	  TO (pushForward => StopWithMinimalGenerators),
 	  TO (pushForward1 => StopWithMinimalGenerators),
@@ -479,7 +479,7 @@ document { gb => Strategy,
      be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "Primary",
      	  TO "Homogeneous",
 	  TO "Inhomogeneous",
@@ -1185,24 +1185,24 @@ document { isAffineRing, Headline => "whether something is an affine ring",
 document { RingMap,
      Headline => "the class of all ring maps",
      "Common ways to make a ring map:",
-     MENU {
+     UL {
 	  TO (map,Ring,Ring),
 	  TO (map,Ring,Ring,List),
 	  TO (map,Ring,Ring,Matrix),
 	  },
      "Common ways to get information about ring maps:",
-     MENU {
+     UL {
 	  TO (isHomogeneous, RingMap),
 	  TO (isInjective, RingMap)
 	  },
      "Common operations on ring maps:",
-     MENU {
+     UL {
 	  TO (symbol *, RingMap, RingMap),
 	  TO (kernel, RingMap),
 	  TO (coimage, RingMap)
 	  },
      "Common ways to use a ring map:",
-     MENU {
+     UL {
 	  TO (symbol " ", RingMap, Matrix),
 	  TO (symbol " ", RingMap, Ideal),
 	  TO (symbol " ", RingMap, Module),
@@ -1511,7 +1511,7 @@ document { pushForward1 => MonomialOrder,
      involved.",
      PARA,
      "Possible values:",
-     MENU {
+     UL {
 	  (TT "MonomialOrder => EliminationOrder", " -- use the natural elimination order (the default)"),
 	  (TT "MonomialOrder => ProductOrder", " -- use the product order"),
 	  (TT "MonomialOrder => LexOrder", " -- use lexical order"),
@@ -1534,7 +1534,7 @@ document { pushForward1 => Strategy,
      which can be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "NonLinear",
      	  TO "Linear"
 	  },

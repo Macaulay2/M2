@@ -146,7 +146,7 @@ document { resolution => Strategy,
      TT "Strategy => n", " -- an option for ", TO "resolution", " which specifies
      which algorithm to use.  Strategies are specified by number and the
      algorithms available are",
-     MENU {
+     UL {
 	  (TT "Strategy => 0", " -- Compute syzygies on the Groebner bases of each syzygy
 	       module.  The algorithm uses important speedups due to R. La Scala.
 	       This algorithm appears to be on the average the fastest."),
@@ -200,13 +200,13 @@ document { (resolution, Module),
 	  "C = resolution(M, LengthLimit=>6)"
 	  },
      "For an overview of resolutions, in order of increasing detail, see",
-     SHIELD MENU {
+     SHIELD UL {
 	  (TO "Hilbert functions and free resolutions"),
 	  TO "free resolutions of modules",
 	  (TO "computing resolutions", " -- most detailed")
 	  },
      "Some useful related functions",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO (betti,ChainComplex),
 	  TO (status,Resolution),
 	  }
@@ -248,7 +248,7 @@ document { status,
      the number(s) displayed in each degree differ.",
      PARA,
      "Options:",
-     MENU {
+     UL {
 	  {TO TotalPairs, " -- display the total number of S-pairs, default value ",
 	       toString (options status).TotalPairs },
 	  {TO PairsRemaining, " -- display the number of S-pairs remaining, default value ",

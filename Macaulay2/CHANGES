@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+MENU html tag is obsolete -- replaced by UL
+
 The operator '==' used to return True when the two arguments are
 identical, even if no method for the comparison is defined.  That was
 a misfeature -- now the method is called even in that case, so, for

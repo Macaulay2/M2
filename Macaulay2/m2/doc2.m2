@@ -1041,13 +1041,13 @@ document { Ring,
      Headline => "the class of all rings",
      SEEALSO "rings",
      "Common ways to make a ring:",
-     MENU {
+     UL {
 	  TO (symbol /, Ring, Ideal),
 	  TO (symbol " ", Ring, Array),
 	  TO "GF",
 	  },
      "Common functions for accessing the variables or elemenets in a ring:",
-     MENU {
+     UL {
 	  TO (use, Ring),
 	  TO (generators, Ring),
 	  TO (numgens, Ring),
@@ -1055,13 +1055,13 @@ document { Ring,
 	  TO (symbol _, ZZ, Ring)
 	  },
      "Common ways to get information about a ring:",
-     MENU {
+     UL {
 	  TO (char, Ring),
 	  TO (coefficientRing, Ring),
 	  TO (dim, Ring),
 	  },
      "Common ways to use a ring:",
-     MENU {
+     UL {
 	  TO (symbol ^, Ring, ZZ),
 	  TO (symbol ^, Ring, List),
 	  TO (vars, Ring),

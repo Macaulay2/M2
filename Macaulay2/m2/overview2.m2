@@ -15,7 +15,7 @@ document { "ideals and modules",
      and the submodule is represented internally by a matrix whose columns
      generate the submodule.  The two matrices the same number of rows, namely,
      the rank of ", TT "F", ".",
-     MENU {
+     UL {
 	  TO "ideals",
 	  TO "free modules",
 	  TO "making modules from matrices", -- coker, ker, image, etc.
@@ -119,7 +119,7 @@ document { "manipulating modules",
      both represented as modules with two generators.",
      PARA,
      "Functions for finding related modules:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "ambient",
 	  TO "cover",
 	  TO "super",
@@ -129,7 +129,7 @@ document { "manipulating modules",
 	  "cover N",
 	  },
      "Some simple operations on modules:",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO (symbol ^, Module, ZZ),
 	  TO (symbol ++, Module, Module),
 	  TO (symbol **, Module, Module),
@@ -226,7 +226,7 @@ document { "extracting information from chain complexes",
       	  "C = res coker matrix {{x,y^2,z^3}};",
 	  },
      "Some simple functions for discovering the shape of ", TT "C", ".",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO (length, ChainComplex),
 	  TO (max, ChainComplex),
 	  TO (min, ChainComplex),
@@ -429,7 +429,7 @@ document { "Language and Programming Overview",
      "In this section we give a comprehensive overview of the user
      language and the main programming features of Macaulay 2.",
      PARA,
-     MENU {
+     UL {
 	  TO "syntax",
 	  TO "variables and symbols",
 	  TO "functions",
@@ -447,7 +447,7 @@ document { "Language and Programming Overview",
 
 document { "variables and symbols",
      Headline => "an overview",
-     MENU {
+     UL {
 	  TO "valid names",
 	  TO "assigning values",
 	  TO "local variables in a file",
@@ -462,7 +462,7 @@ document { "functions",
      "In this section we present an overview of functions.  For details, 
      see ", TO "Function", ".",
      PARA,
-     MENU {
+     UL {
 	  TO "using functions",
 	  TO "making functions",
 	  TO "local variables in a function",
@@ -480,7 +480,7 @@ document { "basic types",
      ", TT "basictype", ".",
      PARA,
      "Some common basic types:",     
-     MENU {
+     UL {
 	  TO "strings",
 	  TO "nets",
 	  TO "lists",
@@ -491,7 +491,7 @@ document { "basic types",
 
 document { "control structures",
      Headline => "an overview",
-     MENU {
+     UL {
 	  TO "loops",
 	  TO "mapping over lists",
 	  TO "mapping over hash tables",
@@ -503,7 +503,7 @@ document { "control structures",
 
 document { "input and output",
      Headline => "an overview",
-     MENU {
+     UL {
 	  TO "printing to the screen",
 	  TO "reading files",
 	  TO "getting input from the user",
@@ -516,7 +516,7 @@ document { "input and output",
 
 document { "classes and types",
      Headline => "an overview",
-     MENU {
+     UL {
 	  TO "what a class is",
 	  TO "installing methods",
 	  TO "binary methods",
@@ -525,7 +525,7 @@ document { "classes and types",
 	  TO "printing and formatting for new classes",
 	  (
 	       "method functions",
-	       MENU {
+	       UL {
 		    TO "making a new method function",
 		    TO (method => SingleArgumentDispatch),
 		    TO (method => Options),
@@ -1371,7 +1371,7 @@ document { "hashing",
      "Here we come to a question of design.  As discussed above, we must assign
      hash codes to mutable things in such a way that the hash codes don't depend
      on their contents.  We can do this in various ways.",
-     MENU {
+     UL {
 	  {
      	       "One way to assign hash codes to mutable things is to give 
      	       the same hash code, say 1000000, to every mutable thing.  We
@@ -1992,7 +1992,7 @@ document { "what a class is",
      types of its arguments whose details the user doesn't need to know.",
      PARA,
      "For more details, see one of the topics below.",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "class",
 	  TO "parent",
 	  TO "instance",
@@ -2001,7 +2001,7 @@ document { "what a class is",
 	  TO "new",
 	  },
      "For related topics, see one of the following.",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "uniform",
 	  TO "Thing",
 	  TO "Nothing",

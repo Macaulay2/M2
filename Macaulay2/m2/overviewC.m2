@@ -3,7 +3,7 @@
 document { "basic rings",
      "The following rings are initially present in every session with
      Macaulay 2.",
-     SHIELD MENU { 
+     SHIELD UL { 
 	  TO "ZZ", 
 	  TO "QQ", 
 	  TO "RR", 
@@ -39,7 +39,7 @@ document { "finite fields",
      -- Current restrictions on p, p^n.
      -- example should include: making these, simple arithmetic
      -- Pointer to finite fields II.
-     MENU {
+     UL {
 	  TO "ZZ/p",
 	  TO "GF(p^n)"
 	  },
@@ -225,7 +225,7 @@ document { "polynomial rings",
 	  },
      PARA,NOINDENT,
      "Some things to watch out for when using polynomial rings:",
-     MENU {
+     UL {
 	  ("Defining a ring twice gives different rings, as far as Macaulay 2 is concerned:
      	       We use the strict comparison operator ", TO "===", " to	    
      	       demonstrate this.",     
@@ -453,7 +453,7 @@ document { "quotient rings",
      }
 
 document { "manipulating polynomials",
-     MENU {
+     UL {
 	  TO "+",
 	  TO "-",
 	  TO "*",
@@ -688,7 +688,7 @@ document { "fraction fields",
      }
 
 document { "finite field extensions",
-     MENU {
+     UL {
 	  TO "toField",
 	  -- writeup under "toField" is a good start,
 	  -- needs an example

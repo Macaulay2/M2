@@ -34,7 +34,7 @@ document { pushForward => Strategy,
      which can be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "NonLinear",
      	  TO "Linear"
 	  }
@@ -755,7 +755,7 @@ document { quotient => Strategy,
      be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     SHIELD MENU {
+     SHIELD UL {
 	  TO "Iterate",
           TO "Linear"
           }
@@ -1084,7 +1084,7 @@ document { MinimalGenerators,
      TT "MinimalGenerators => true", " -- an option for certain functions
      which specifies whether to compute minimal generators for the result.",
      PARA,
-     MENU {
+     UL {
 	  TO (quotient => MinimalGenerators),
 	  TO (saturate => MinimalGenerators),
 	  },
