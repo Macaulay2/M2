@@ -23,10 +23,22 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 
 -- Results:
 
+-- beginning computation Sat May 25 17:27:49 CDT 2002
+-- Linux lisboa.ks.uiuc.edu 2.4.16 #9 Tue Feb 19 14:11:28 CST 2002 i686 unknown
+-- model name      : Intel(R) Pentium(R) 4 CPU 1700MHz
+-- Macaulay2 0.9, compiled with gcc 3.0
+-- res39: 0.44 seconds
+-- resG25: 8.43 seconds
+
 -- FreeBSD euclid.math.purdue.edu 4.5-RELEASE FreeBSD i386
 -- Macaulay2 0.9.2, compiled with gcc 2.95
 -- res39: 0.523437 seconds
 -- resG25: 8.14062 seconds
+
+-- Linux hn03 2.4.9-31pctr #1 SMP Thu May 9 13:22:43 CDT 2002 i686 unknown
+-- Macaulay2 0.9.2, compiled with gcc 3.0
+-- res39: 0.66 seconds
+-- resG25: 10.23 seconds
 
 -- OSF1 cosimo.medicis.polytechnique.fr V4.0 1229 alpha
 -- 0.683216 seconds, Macaulay2 0.8.57, compiled with gcc 2.95
