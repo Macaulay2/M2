@@ -310,7 +310,7 @@ document {
 
 document {
      Key => (depth,Ideal,Module),
-     Headline => {"the ", TT "I", "-depth of ", TT "M"},
+     Headline => "the I-depth of M",
      OldSynopsis => {
 	  "d = depth(I,M)",
 	  "I" => null,

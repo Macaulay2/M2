@@ -131,8 +131,8 @@ vert := (op,post) -> x -> net new ParagraphList from post select(
      n -> width n > 0)
 net SEQ := net PARA := net Hypertext := vert(net,x -> between("",x)) -- doublespacing
 info SEQ := info PARA := info Hypertext := vert(info,x -> between("",x))
-net SEQ1 := vert(net,identity)				    -- singlespacing
-info SEQ1 := vert(info,identity)
+net PARA1 := vert(net,identity)				    -- singlespacing
+info PARA1 := vert(info,identity)
 
 html BR := x -> ///
 <BR>
@@ -418,9 +418,9 @@ infoTagConvert DocumentTag := tag -> (
      if currentPackage === pkg 
      then tagConvert fkey
      else concatenate("(",pkg#"title",")",tagConvert fkey))
-info TO  := x -> concatenate(fkey, if x#?1 then x#1, "  (*note ", infoTagConvert x#0, "::)")
+info TO  := x -> concatenate(DocumentTag.FormattedKey x#0, if x#?1 then x#1, "  (*note ", infoTagConvert x#0, "::)")
 info TO2 := x -> concatenate(x#1, "  (*note ", x#1, ":", infoTagConvert x#0, ".)")
-info TOH := x -> concatenate(fkey, if x#?1 then x#1, commentize headline x#0,, "  (*note ", infoTagConvert x#0, "::)" )
+info TOH := x -> concatenate(DocumentTag.FormattedKey x#0, if x#?1 then x#1, commentize headline x#0,, "  (*note ", infoTagConvert x#0, "::)" )
 
 info IMG := net IMG := tex IMG  := x -> ""
 info HREF := net HREF := x -> net last x
