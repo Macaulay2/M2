@@ -177,9 +177,9 @@ A. While running Macaulay 2.
 
 B. With a web browser
 
-    The directory 'html' contains the documentation in HTML form.  Start
-    at the file 'html/index.html' using your favorite web browser, such as
-    Netscape or Internet Explorer.
+    The directory 'm2/cache/doc' contains the main documentation in HTML form.
+    Start at the file 'm2/cache/doc/index.html' using your favorite web
+    browser.  Documentation for the packages is located in 'packages/cache/doc'.
 
 ----------------------
 4. Other documentation

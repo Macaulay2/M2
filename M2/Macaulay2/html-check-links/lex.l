@@ -31,6 +31,7 @@ NEWLINE	 \r\n|\r|\n
 "<"				tagline = lineno; tagcol = column; COUNT; BEGIN(tag); return '<';
 [^<\n\r]+			COUNT;
 
+<tag>background			COUNT; yylval = strperm(yytext); return BACKGROUND;
 <tag>href			COUNT; yylval = strperm(yytext); return HREF;
 <tag>src			COUNT; yylval = strperm(yytext); return SRC;
 <tag>{STRING}			COUNTN; yylval = strperm(yytext); return WORD;
