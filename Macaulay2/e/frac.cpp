@@ -69,6 +69,14 @@ ring_elem FractionField::fraction(const ring_elem top, const ring_elem bottom) c
 
 void FractionField::simplify(frac_elem *f) const
 {
+  ring_elem x, y;
+  R->syzygy(f->numer, f->denom, x, y);
+  R->negate_to(y);
+  R->remove(f->numer);
+  R->remove(f->denom);
+  f->numer = y;
+  f->denom = x;
+#if 0
   if (R->is_zero(f->numer))
     {
       R->remove(f->denom);
@@ -97,6 +105,7 @@ void FractionField::simplify(frac_elem *f) const
       f->numer = tmp;
       f->denom = R->from_int(1);
     }
+#endif
 }
 
 frac_elem *FractionField::make_elem(ring_elem a, ring_elem b) const
@@ -479,6 +488,14 @@ ring_elem FractionField::gcd_extended(const ring_elem f, const ring_elem,
   v = from_int(0);
   u = invert(f);
   return from_int(1);
+}
+
+void FractionField::syzygy(const ring_elem a, const ring_elem b,
+			   ring_elem &x, ring_elem &y) const
+{
+  x = FractionField::from_int(1);
+  y = FractionField::divide(a,b);
+  FractionField::negate_to(y);
 }
 
 ring_elem FractionField::eval(const RingMap *map, const ring_elem a) const

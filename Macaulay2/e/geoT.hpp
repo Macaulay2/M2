@@ -13,7 +13,8 @@
 //    fields of this structure type should include:
 //    next, coeff
 
-const int GEOHEAP_SIZE = 15;
+// GEOHEAP_SIZE: defined in style.hpp
+// heap_size: defined in object.cpp
 
 class geobucket
 {
@@ -39,11 +40,6 @@ public:
   VECTYPE current_value() const; // Adds up all the elements and returns this value
 				 // Mainly used for debugging.
 };
-
-static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
-				    16384, 65536, 262144, 1048576, 4194304,
-				    16777216, 67108864, 268435456,
-				    1073741824};
 
 inline geobucket::geobucket(const FREEMODULETYPE *FF)
 : F(FF),

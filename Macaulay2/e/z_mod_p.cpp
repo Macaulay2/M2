@@ -330,6 +330,15 @@ ring_elem Z_mod::gcd_extended(const ring_elem f, const ring_elem,
   return from_int(1);
 }
 
+void Z_mod::syzygy(const ring_elem a, const ring_elem b,
+		   ring_elem &x, ring_elem &y) const
+{
+  x = Z_mod::from_int(1);
+  y = Z_mod::divide(a,b);
+  Z_mod::negate_to(y);
+}
+
+
 ring_elem Z_mod::eval(const RingMap *map, const ring_elem f) const
 {
   int a = to_int(f);

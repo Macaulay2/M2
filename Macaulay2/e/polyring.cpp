@@ -15,6 +15,8 @@
 
 #define POLY(q) ((q).poly_val)
 
+buffer debugo;
+
 PolynomialRing::PolynomialRing(const Ring *K, const Monoid *MF)
 : Ring(K->charac(), MF->n_vars(), MF->n_vars() + K->total_n_vars(), 
 	K, MF, MF->degree_monoid()),
@@ -1186,6 +1188,64 @@ ring_elem PolynomialRing::gcd_extended(const ring_elem f, const ring_elem g,
   remove(temp1); remove(temp2); remove(temp3);
 
   return result;
+}
+
+#include "EGB1.hpp"
+
+void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
+			    ring_elem &x, ring_elem &y) const
+{
+  // Do some special cases first.  After that: compute a GB
+
+  // For the GB, we need to make a 1 by 2 matrix, and compute until one syzygy is found.
+  // create the matrix
+  // create the gb comp
+  // compute until one syz is found
+  // grab the answer from the syz matrix.
+
+  intarray syzygy_stop_conditions;
+  syzygy_stop_conditions.append(0); // ngb
+  syzygy_stop_conditions.append(1); // nsyz
+  syzygy_stop_conditions.append(0); // npairs
+  syzygy_stop_conditions.append(0);
+  syzygy_stop_conditions.append(0); 
+  syzygy_stop_conditions.append(0); // subring limit
+  syzygy_stop_conditions.append(0);
+
+  const FreeModule *F = make_FreeModule(1);
+  Matrix m(F);
+  m.append(F->term(0,a));
+  m.append(F->term(0,b));
+  
+  buffer o;
+  o << "constructing syzygy on ";
+  elem_text_out(o,a);
+  o << " and ";
+  elem_text_out(o,b);
+  emit_line(o.str());
+  o.reset();
+  o << "matrix is" << newline;
+  m.text_out(o);
+  emit_line(o.str());
+  o.reset();
+
+  EGB1 *g = new EGB1(m,true,-1,0);
+  g->calc(0, syzygy_stop_conditions);
+  Matrix s = g->syz_matrix();
+  if (s.n_cols() != 1)
+    {
+      o << "found " << s.n_cols() << " syzygies";
+      emit_line(o.str());
+    }
+  x = s.elem(0,0);
+  y = s.elem(1,0);
+
+  o << "result: x = ";
+  elem_text_out(o,x);
+  o << " and y = ";
+  elem_text_out(o,y);
+  emit_line(o.str());
+  delete g;
 }
 
 ring_elem PolynomialRing::random() const

@@ -537,7 +537,7 @@ bool EVector::lift(const EFreeModule *newF, EVector &result) const
 // Vector heap //
 /////////////////
 
-static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
+static int Eheap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
 				    16384, 65536, 262144, 1048576, 4194304,
 				    16777216, 67108864, 268435456,
 				    1073741824};
@@ -563,10 +563,10 @@ void EVectorHeap::add(EVector &G)
 {
   int len = G.len;
   int i = 0;
-  while (len >= heap_size[i]) i++;
+  while (len >= Eheap_size[i]) i++;
   heap[i].addTo(G);
   len = heap[i].len;
-  while (len >= heap_size[i])
+  while (len >= Eheap_size[i])
     {
       i++;
       heap[i].addTo(heap[i-1]);
@@ -684,10 +684,10 @@ void EPolynomialRing::heap::add(epoly *g)
 {
   int len = n_terms(g);
   int i = 0;
-  while (len >= heap_size[i]) i++;
+  while (len >= Eheap_size[i]) i++;
   R->add_to(theHeap[i], g);
   len = n_terms(theHeap[i]);
-  while (len >= heap_size[i])
+  while (len >= Eheap_size[i])
     {
       i++;
       R->add_to(theHeap[i], theHeap[i-1]);
