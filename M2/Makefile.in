@@ -60,32 +60,31 @@ all :: $(TARGET)
 check :: $(MAKE) -C Macaulay2 tests
 MACAULAY2:; $(MAKE) -C Macaulay2 all
 justM2 distclean::; $(MAKE) -C Macaulay2 $@
-DISTFILES := 	Macaulay2/README.txt \
-		Macaulay2/CHANGES \
+DISTFILES_MADE:= \
 		Macaulay2/setup \
 		Macaulay2/cache/Macaulay2-doc \
-		Macaulay2/packages/*.m2 \
 		Macaulay2/libexec/Macaulay2@EXEEXT@ \
-		Macaulay2/m2/*.m2 \
-		Macaulay2/m2/Makefile \
 		Macaulay2/emacs \
-		$(patsubst %.m2,%.out,$(wildcard Macaulay2/tutorial/final/*.m2))
-
-ifeq "$(SHARED)" "yes"
-DISTFILES += Macaulay2/lib
-endif
+		Macaulay2/m2/*.m2
+DISTFILES_SRC := \
+		$(shell cd @srcdir@; echo Macaulay2/m2/*.m2) \
+		Macaulay2/tutorial/final/*.m2 \
+		Macaulay2/packages \
+		Macaulay2/emacs \
+		Macaulay2/CHANGES \
+	 	Macaulay2/README.txt
 distributions :; mkdir $@
 clean ::; rm -rf distributions
 distributions/Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES) distributions
-	tar cf - $(DISTFILES) | gzip >"$@"
+	tar cf - $(DISTFILES_MADE) -C @srcdir@ $(DISTFILES_SRC) |gzip >"$@"
 	@echo "-----------------------------------------------------------------------------"
 	@echo "  $@ contains everything but the documentation"
 	@echo "-----------------------------------------------------------------------------"
-distributions/Macaulay2-$(DESC).zip : Makefile $(DISTFILES) distributions
-	winzip32 -u -r -p $@ @WindowsNT/DistributionFiles.lst
-	@echo "-----------------------------------------------------------------------------"
-	@echo "  $@ contains everything but the documentation"
-	@echo "-----------------------------------------------------------------------------"
+# distributions/Macaulay2-$(DESC).zip : Makefile $(DISTFILES) distributions
+# 	winzip32 -u -r -p $@ @WindowsNT/DistributionFiles.lst
+# 	@echo "-----------------------------------------------------------------------------"
+# 	@echo "  $@ contains everything but the documentation"
+# 	@echo "-----------------------------------------------------------------------------"
 install clean ::; $(MAKE) -C Macaulay2 $@
 ###################### Macaulay 2 porting source distribution
 PORTING := CVS \
