@@ -541,7 +541,7 @@ extern "C" {
 
   int
   IM2_FreeModule_rank(
-          const FreeModule *F); /* drg: connected rawRank, used in rawMatrixColumns*/
+          const FreeModule *F); /* drg: connected rawRank*/
 
   const M2_string 
   IM2_FreeModule_to_string(
@@ -551,7 +551,7 @@ extern "C" {
   IM2_FreeModule_hash(
           const FreeModule *F); /* TODO */ /* drg: waiting, returning 0 */
 
-  const FreeModule *
+  const FreeModuleOrNull *
   IM2_FreeModule_make(
           const Ring *R, 
 	  int rank); /* drg: connected rawFreeModule*/

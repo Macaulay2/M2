@@ -24,9 +24,13 @@ const M2_string IM2_FreeModule_to_string(const FreeModule *F)
 
 const unsigned long int IM2_FreeModule_hash(const FreeModule *F); /* TODO */
 
-const FreeModule *IM2_FreeModule_make(const Ring *R, int rank)
+const FreeModuleOrNull *IM2_FreeModule_make(const Ring *R, int rank)
 {
-  if (rank < 0) rank = 0;
+  if (rank < 0)
+    {
+      ERROR("freemodule rank must be non-negative");
+      return 0;
+    }
   return R->make_FreeModule(rank);
 }
 
