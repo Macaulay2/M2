@@ -761,6 +761,7 @@ extern "C" {
 
   const Vector * IM2_Matrix_get_column(const Matrix *M, int c); /* drg: connected rawMatrixColumn, used in rawMatrixColumns*/
 
+#if 0
 
   const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 					const Vector_array *V); /* drg: connected rawMatrix*/
@@ -774,8 +775,8 @@ extern "C" {
 					const FreeModule *source,
 					const M2_arrayint deg,
 					const Matrix *M); /* drg: connected rawMatrix*/
+#endif
   /*******************************************************************************/
-#if 0
   const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 					int ncols,
 					const RingElement_array *M,
@@ -809,14 +810,13 @@ extern "C" {
 					const FreeModule *source,
 					const M2_arrayint deg,
 					const Matrix *M,
-					M2_bool is_mutable,
+					M2_bool is_mutable
 					); /* drg: connected rawMatrix*/
   /* Create a new matrix (mutable or immutable), from M, with new target,
      source, deg and/or mutable-ness. The new free modules must have 
      the expected rank. 
   */
 
-#endif
   /**********************************************************************************/
 
   const M2_bool IM2_Matrix_is_zero(const Matrix *M); /* drg: connected rawIsZero*/
