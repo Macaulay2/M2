@@ -167,10 +167,14 @@ statuscodes.m2 : ../e/statuscodes
 		sed 's/\(.*\):\(.*\):\(.*\)/  \1 => \3,/' ; \
 		echo '}' ; \
 	) <$< >$@
+clean::; rm -f statuscodes.m2
 
 all:: tmp tmp/.documentation-made
 tmp :; mkdir "$@"
 #	see startup.m2, too, for setting "prefixDirectory" to ./tmp while building, so it can find example output files
+
+PACKAGEPREFIX = tmp
+clean::; rm -rf $(PACKAGEPREFIX)/Macaulay2-$(PACKAGE_VERSION)
 
 MAKEINFO = true
 M2OPTIONS := -q
@@ -180,7 +184,7 @@ M2OPTIONS += --no-debug
 endif
 M2OPTIONS += -e errorDepth=0
 M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => "tmp/", MakeLinks => false) '
+M2OPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => "$(PACKAGEPREFIX)/", MakeLinks => false) '
 ifndef INTERACTIVE
 M2OPTIONS += -e 'exit 0 '
 endif
@@ -188,10 +192,12 @@ endif
 % : %.in
 	cp "$<" "$@"
 
+clean::; rm -f $(EXAMPLEDATAFILES)
 tmp/.documentation-made : $(DOCSEQUENCE) $(EXAMPLEDATAFILES)
 	@ echo making the Macaulay2 package, including the documentation and example output
 	@ set -x ; time ../bin/M2 $(M2OPTIONS)
 	touch "$@"
+clean::; rm -f tmp/.documentation-made
 
 remake-all: remake-doc remake2 remake3 remake4
 remake-html : remake-doc remake3
