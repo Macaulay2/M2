@@ -114,18 +114,17 @@ setup := (args, symbols) -> (
 	  )))
 
 setup((), { 
-	  borel, codim, prune, euler, genera, gcdCoefficients,
-	  singularLocus, 
-	  dim, Hom, diff, diff', contract, contract', exteriorPower, subsets, partitions, member,
-	  koszul, symmetricPower, basis, coefficientRing, trace, binomial,
+	  borel, prune, gcdCoefficients, singularLocus, 
+	  Hom, diff, diff', contract, contract', exteriorPower, subsets, partitions, member,
+	  koszul, symmetricPower, basis, coefficientRing, trace,
 	  getChangeMatrix, poincare, cover, super, poincareN, terms,
 	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, scanValues, stats, 
-	  substitute, rank, complete, ambient, top, transpose, length, baseName,
-	  degree, degreeLength, coefficients, size, sum, product,
-	  exponents, height, depth, width, regularity, nullhomotopy,
+	  substitute, rank, complete, ambient, top, transpose, baseName,
+	  degree, coefficients, size, sum, product,
+	  exponents, nullhomotopy,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, 
 	  leadComponent, degreesRing, newDegreesRing, degrees, annihilator, assign, numgens,
-	  autoload, ggPush, char, minprimes, relations, cone, pdim, random,
+	  autoload, ggPush, minprimes, relations, cone, random,
 	  det, presentation, symbol use, degreesMonoid, newDegreesMonoid, submatrix,
 	  truncate, fraction
 	  })
@@ -134,6 +133,10 @@ setup(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
 	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField
 	  })
+setup(TypicalValue => ZZ,
+     {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,regularity})
+setup(TypicalValue => List,
+     {euler, genera})
 
 use Thing := identity
 
