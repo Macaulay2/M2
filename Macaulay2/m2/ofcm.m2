@@ -249,15 +249,14 @@ makeMonoid := (options) -> (
      -- First check the variable names
      if class options.Variables === ZZ 
      then (
-	 x := symbol x;
-         options.Variables = toList (x_0 .. x_(options.Variables - 1)))
+	  x := symbol x;
+          options.Variables = toList (x_0 .. x_(options.Variables - 1)))
      else (
-         options.Variables =
-	    apply(flatten toList apply(options.Variables,
-		    x->if class x === MutableList then toList x else x), 
+	  v := flatten toList apply(options.Variables, x->if class x === MutableList then toList x else x);
+          options.Variables = apply(#v, 
 	       i -> (
-		    try baseName i
-		    else error ("'", toString i, "'", " can't be used as a variable" )
+		    try baseName v#i
+		    else error ("object of class '", toString class v#i, "'", " at position ",toString i," in list can't be used as a variable" )
 		    )
 	       ));
 

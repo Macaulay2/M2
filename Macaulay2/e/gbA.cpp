@@ -824,7 +824,7 @@ void gbA::insert(POLY f, int minlevel)
     {
       char s[100];
       buffer o;
-      sprintf(s, "inserting element %d (minimal %d): ",me,minlevel);
+      sprintf(s, "%sinserting element %d (minimal %d): ",wrapping_prefix,me,minlevel);
       o << s;
       GBasis::gbelem *g = G->gb[me];
       R->gbvector_text_out(o,_F,g->g.f);
@@ -939,7 +939,7 @@ void gbA::start_computation()
 	  if (gbTrace >= 1)
 	    {
 	      char s[100];
-	      sprintf(s, "DEGREE %d (npairs %d)\n", _this_degree, npairs);
+	      sprintf(s, "%sDEGREE %d (npairs %d)\n%s", wrapping_prefix, _this_degree, npairs,wrapping_prefix);
 	      emit(s);
 	    }
 	}
