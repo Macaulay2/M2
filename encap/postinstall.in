@@ -17,6 +17,6 @@ cd bin
 
 
 cd "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"
-cd lib/@PACKAGE_NAME@/@PACKAGE_VERSION@
+cd lib/@PACKAGE_TARNAME@/@PACKAGE_VERSION@
 
     ./setup

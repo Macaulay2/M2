@@ -49,7 +49,7 @@ config ::; $(MAKE) DEPENDS=no -C d compat.h
 justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
 distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# basictests
-all ::; $(MAKE) -C basictests -k
+check ::; $(MAKE) -C basictests -k
 distclean clean ::; $(MAKE) -C basictests $@
 ################################# tutorial
 #### keep this before 'm2' so the final/*.out files get made

@@ -10,12 +10,12 @@ M2 : M2-build.in
 	chmod 0755 $@
 
 install :: $(bindir)/M2 $(bindir)/M2.bat
+
+SEDFLAGS = -e 's,@prefix\@,$(prefix),' -e 's,@PACKAGE_VERSION\@,$(PACKAGE_VERSION),'
+
 $(bindir)/M2 : M2-final.in
 	$(INSTALL) -d $(bindir)
-	sed \
-		-e 's,@prefix\@,$(prefix),' \
-		-e 's,@PACKAGE_VERSION\@,$(PACKAGE_VERSION),' \
-		$< >"$@".tmp
+	sed $(SEDFLAGS) $< >"$@".tmp
 	mv "$@".tmp "$@"
 	chmod 0755 "$@"
 $(bindir)/M2.bat : M2.bat
@@ -27,7 +27,7 @@ all :: M2-help
 install :: $(bindir)/M2-help
 $(bindir)/M2-help : M2-help
 	$(INSTALL) -d $(bindir)
-	sed -e 's,^M2HOME=.*,M2HOME=$(prefix)/lib/Macaulay2-@PACKAGE_VERSION@,' $< >"$@".tmp
+	sed $(SEDFLAGS) $< >"$@".tmp
 	mv "$@".tmp "$@"
 	chmod 0755 "$@"
 

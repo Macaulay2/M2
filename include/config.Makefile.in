@@ -10,8 +10,9 @@ all::
 .DELETE_ON_ERROR :
 
 PACKAGE_NAME = @PACKAGE_NAME@
+PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
-package = $(PACKAGE_NAME)-$(PACKAGE_VERSION)
+package = $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
 ARCH    = @ARCH@
 OS      = @OS@
 REL     = @REL@
@@ -65,7 +66,7 @@ target = $(prefix)
 endif
 bindir = $(target)/bin
 libdir = $(target)/lib
-libm2dir = $(libdir)/$(PACKAGE_NAME)/$(PACKAGE_VERSION)
+libm2dir = $(libdir)/$(PACKAGE_TARNAME)/$(PACKAGE_VERSION)
 cachedir = $(libm2dir)/cache
 libexecdir = $(libm2dir)/libexec
 packagesdir = $(libdir)/packages
@@ -73,11 +74,13 @@ datadir = $(target)/share
 mandir = $(datadir)/man
 man1dir = $(mandir)/man1
 emacsdir = $(datadir)/emacs/site-lisp
-sharedir = $(datadir)/$(PACKAGE_NAME)/$(PACKAGE_VERSION)
+sharedir = $(datadir)/$(PACKAGE_TARNAME)/$(PACKAGE_VERSION)
 m2dir = $(sharedir)/m2
-docdir = $(target)/doc
-docm2dir = $(docdir)/$(PACKAGE_NAME)
+docdir = $(datadir)/doc
+docm2dir = $(docdir)/$(PACKAGE_TARNAME)
 docm2reldir = $(docm2dir)/$(PACKAGE_VERSION)
+emacsdocdir = $(docm2reldir)/emacs
+htmldocdir = $(docm2reldir)/html
 
 # end file system layout
 
