@@ -156,8 +156,24 @@ localVariables = Command(
 	       )
 	  else ll x)
 
+usage := () -> (
+     << endl
+     << "useful break loop commands:" << endl
+     << "    break                   leave the break loop" << endl
+     << "    end (or Control-D)      end this break loop and restart one step earlier" << endl
+     << "    continue                execute the same code again" << endl
+     << "    return                  return 'null' as the value of the code" << endl
+     << "    return x                return 'x' as the value of the code" << endl
+     )
+
+firstTime := true
+
 interpreterHook = () -> if interpreterDepth > 1 then (
      << localVariables errorCode << endl;
+     if firstTime then (
+	  usage();
+	  firstTime = false;
+	  )
      )
 
 -- Local Variables:
