@@ -329,7 +329,7 @@ PORTING := CVS \
 	Macaulay2/tutorial \
 	Macaulay2/util \
 	WindowsNT \
-	bin factory gc gcStatic gmp libfac mp
+	bin factory gc gcStatic gmp libfac
 port : rmcores Macaulay2-$(VERSION)-porting-src.tar.gz
 Macaulay2-$(VERSION)-porting-src.tar.gz : Makefile
 	tar cf - `Export3 $(PORTING)` | gzip >$@
