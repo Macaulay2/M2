@@ -1,3 +1,4 @@
 s///
 s/-- used [0-9.][0-9.]* seconds/-- used XXX seconds/g
 s/-- [0-9.][0-9.]* seconds/-- XXX seconds/g
+s=\(-- .*:\)[1-9][0-9]*-[1-9][0-9]*=\1xxx-xxx=
