@@ -1050,7 +1050,7 @@ void SparseMutableMatrix::reducePivots()
     }
 
   // now reduce other units
-  for (int i = 0; i < ncols; i++) 
+  for (i = 0; i < ncols; i++) 
     { 
       for (sparse_vector *p = matrix[i]; p != 0; p = p->next) 
 	{

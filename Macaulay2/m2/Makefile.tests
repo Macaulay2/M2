@@ -17,9 +17,9 @@ else
 ifeq "$(CC)" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
 ## and does strange things to quotation marks.
-ARGS := -q -silent -ephase=1 ../../m2/setup.m2 -ephase=0 '-epath=append(path,\"..\")' '-erunStartFunctions()' '-eerrorDepth(0)'
+ARGS := -q -silent -ephase=1 ../../../m2/setup.m2 -ephase=0 '-epath=append(path,\"..\")' '-erunStartFunctions()' '-eerrorDepth(0)'
 else
-ARGS := -q -silent -ephase=1 ../../m2/setup.m2 -ephase=0 '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)'
+ARGS := -q -silent -ephase=1 ../../../m2/setup.m2 -ephase=0 '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)'
 endif
 endif
 

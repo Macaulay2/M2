@@ -764,7 +764,8 @@ document { read,
      PARA,
      "Input files are buffered, so the current contents of the buffer are returned
      if the buffer is not empty, otherwise reading from the file is attempted first.",
-     EXAMPLE {
+     if version#"operating system" =!= "Windows-95-98-NT"
+     then EXAMPLE {
 	  ///f = openInOut "!cat"///,
 	  ///isReady f///,
 	  ///f << "hi there" << flush;///,

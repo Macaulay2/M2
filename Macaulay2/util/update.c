@@ -1,4 +1,6 @@
+#if 0
 #include <unistd.h>
+#endif
 #include <errno.h>
 #include <sys/types.h>
 

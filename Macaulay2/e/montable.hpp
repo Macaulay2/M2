@@ -3,6 +3,7 @@
 #define _montable_hh_
 
 #include <vector>
+using namespace std;
 #include "varpower.hpp"
 
 template <class Tag>
@@ -25,8 +26,9 @@ class MonomialTable
 {
   class iterator; 
   friend class iterator;
+public:
   typedef tagged_monomial<Tag> tagged_monomial;
-
+private:
 protected:
   class node // monomial ideal internal node ///
   {
@@ -141,7 +143,7 @@ public:
   void debug_check() const;
 
   class iterator {
-    MonomialTable<Tag>::node *p;
+    node *p;
   public:
     iterator(node *p) : p(p) {}
     iterator() : p(0) {}

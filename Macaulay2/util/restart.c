@@ -1,4 +1,6 @@
+#if 0
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -45,6 +47,6 @@ int main(int argc,char **argv) {
 	    puts("restart: restarting");
 	  }
 	  puts("restart: done");
-	  exit(ret);
+	  return ret;
 	  }
      }

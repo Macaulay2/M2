@@ -144,8 +144,8 @@ export ARFLAGS = -MACHINE:i386 -nologo -verbose
 
 export RANLIB = true
 
-CFLAGS   = -O2 -Zi -nologo -G5 -W3
-CXXFLAGS = -O2 -Zi -nologo -G5 -W3
+CFLAGS   = -O2 -Zi -nologo -G5 -W3 -GR -GX
+CXXFLAGS = -O2 -Zi -nologo -G5 -W3 -GR -GX
 
 LINK.c = $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 %: %.c;  $(LINK.c) $^ $(LOADLIBES) -link $(LDLIBS) -out:$@.exe

@@ -326,7 +326,7 @@ double system_etime(){
      }
 #endif
 
-#if defined(__sun__)
+#if defined(__sun__) || defined(_WIN32)
 #define __environ _environ
 #endif
 
@@ -1606,7 +1606,7 @@ int pipe(int v[2]) { return ERROR; }
 int wait() { return ERROR; }
 int alarm(int i) { return ERROR ; }
 int sleep(int i) { return ERROR; }
-int getpagesize() { return 4096; }
+/* int getpagesize() { return 4096; } */
 int brk() { return 0; }
 void *sbrk(int i) { return 0; }
 void *getprotobyname() { errno = ENOSYS; return 0; }
