@@ -155,19 +155,6 @@ toString Sum := v -> (
 		    else toString v#i ));
 	  concatenate mingle ( seps, names )))
 
-DoubleArrow = new HeaderType of Expression
-DoubleArrow.synonym = "double arrow expression"
-DoubleArrow#operator = "=>"
-value DoubleArrow := (v) -> value v#0 => value v#1
-expression Option := v -> new DoubleArrow from apply(toList v,expression)
-net DoubleArrow := v -> (
-     p := precedence v;
-     v0 := net v#0;
-     v1 := net v#1;
-     if precedence v#0 <= p then v0 = horizontalJoin("(",net v0,")");
-     if precedence v#1 <  p then v1 = horizontalJoin("(",net v1,")");
-     horizontalJoin(v0," => ",v1))
-
 Product = new WrapperType of AssociativeExpression
 Product.synonym = "product expression"
 
@@ -524,7 +511,6 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      )
 -----------------------------------------------------------------------------
 	      precedence Sequence := x -> if #x === 0 then 70 else if #x === 1 then 40 else 70
-	   precedence DoubleArrow := x -> 5
 	      precedence Equation := x -> 10
 	     precedence HashTable := x -> 20		    -- some things might print out as symbols though...
 		 precedence Thing := x -> 20

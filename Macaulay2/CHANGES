@@ -760,10 +760,7 @@ extended to work with VisibleLists.
 
 New function HEADLINE -- use this as the first entry in documentation to
 give a capsule summary (1/2 line long).
-
-new function 'sameFunctionBody', tells whether two functions are perhaps different
-closures of the same function body.
-
+				   
 'OptionsRegistry' removed, and 'options' now returns 'null' instead of an empty
 OptionTable if function has no options.
 

@@ -440,17 +440,6 @@ document {
      }
 
 document {
-     Key => ",",
-     Headline => "separator for elements of a visible list",
-     TT "x,y,...,z", " -- the comma is used to separate elements of a list or
-     sequence.",
-     EXAMPLE {
-	  "a,b,c",
-	  "{a,b,c}"
-	  }
-     }
-
-document {
      Key => (apply,BasicList,BasicList,Function),
      Headline => "apply function to elements in pairs",
      TT "apply(v,w,f)", " -- produces, from lists ", TT "v", " and ", TT "w", ",

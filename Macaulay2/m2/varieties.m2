@@ -57,7 +57,7 @@ expression CoherentSheaf := F -> new FunctionApplication from { sheaf, F.module 
 
 -- net CoherentSheaf := (F) -> net expression F
 
-runLengthEncoding = x -> if #x === 0 then x else (
+runLengthEncoding := x -> if #x === 0 then x else (
      p := join({0}, select(1 .. #x - 1, i -> x#i =!= x#(i-1)), {#x});
      apply(#p-1, i -> (p#(i+1)-p#i, x#(p#i))))
 

@@ -240,7 +240,6 @@ UserDictionary = new Dictionary				    -- no package comes with this dictionary
 load "loads.m2"
 stderr << "--loaded setup.m2" << endl
 
-globalDictionaries = prepend(UserDictionary,globalDictionaries)
 notify = true
 protect Macaulay2.Dictionary
 
