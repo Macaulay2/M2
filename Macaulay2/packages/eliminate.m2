@@ -21,7 +21,7 @@ degree (RingElement, RingElement) := (f,x) -> (
 eliminate = method()
 
 inversePermutation = (p) -> (
-     q = new MutableList from toList(0..#p-1);
+     q := new MutableList from toList(0..#p-1);
      scan(0..#p-1, i -> q#(p#i) = i);
      toList q)
 
