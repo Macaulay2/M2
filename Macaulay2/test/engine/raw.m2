@@ -284,7 +284,7 @@ assert( F =!= P )
 assert( rank F == 4 )
 assert( rank P == 7 )
 
-f = rawMatrix1(F,2,(x^3,y*z,x,y^2,x^3),false,0)
+f = rawMatrix1(F,2,(x^3,y*z,x,y^2,x^3),0)
 
 << "rawCoefficients isn't tested correctly here" << endl
 entries f

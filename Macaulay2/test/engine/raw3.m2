@@ -406,7 +406,7 @@ a = rawRingVar(R2,0,1)
 b = rawRingVar(R2,1,1)
 F = rawFreeModule(R2,4)
 elems = toList apply(0..3, j -> toList apply(0..3, i -> rawRingVar(R2,i+j,1)))
-m = rawMatrix1(F,4,toSequence flatten elems,false,0)
+m = rawMatrix1(F,4,toSequence flatten elems,0)
 
 
 
@@ -436,22 +436,22 @@ m2 = rawMatrixRemake2(F,G,{13}, m, false, 0)
 assert(rawMultiDegree m2 === {13})
 
 elems = splice apply(0..3, j -> apply(0..3, i -> rawRingVar(R,i+j,1)))
-m = rawMatrix1(F,5,elems,false,0)
-p1 = rawMatrix1(F,5,toSequence flatten entries m,false,0)
+m = rawMatrix1(F,5,elems,0)
+p1 = rawMatrix1(F,5,toSequence flatten entries m,0)
 p2 = rawMatrix2(F,F,{0},toSequence flatten entries m,false,0)
 p1 == p2
 
 2*m
 a*m
 
-m = rawMatrix1(R^4,4,(a,b,c,d, b,e,f,g, c,f,h,i, d,g,i,j),false,0)
+m = rawMatrix1(R^4,4,(a,b,c,d, b,e,f,g, c,f,h,i, d,g,i,j),0)
 rawDual m
 rawTarget m
 rawSource m
 rawMultiDegree m
 rawMatrixEntry(m,1,1)
 
-m = rawMatrix1(R^4,4,(a,b,c,d, b^2+c*d,e^2,f^2,g^2, c^3,f^3,h^3,0_R, d^4,g^4,i^4,j^4),false,0)
+m = rawMatrix1(R^4,4,(a,b,c,d, b^2+c*d,e^2,f^2,g^2, c^3,f^3,h^3,0_R, d^4,g^4,i^4,j^4),0)
 assert(m == rawDual rawDual m)
 m2 = m*m
 
@@ -481,8 +481,8 @@ mm2 = mat{{a^2,a*c,a*b,b*c},
 
 rawSubmatrix(m,(1,2))
 rawSubmatrix(m,(0,1),(1,2))
-a*rawIdentity(F,false,0)
-rawZero(F,F,false,0)
+a*rawIdentity(F,0)
+rawZero(F,F,0)
 -- rawKoszul
 -- is IM2_Matrix_koszul_monoms connected?
 m1 = rawSubmatrix(m,1: 0,(0,1,2,3))
@@ -493,9 +493,9 @@ rawExteriorPower(3,m,0)
 rawSortColumns(m,1,1)
 rawMinors(2,m,0)
 
-m = rawMatrix1(R^4,4,(0_R,b,c,d, -b,0_R,f,g, -c,-f,0_R,i, -d,-g,-i,0_R),false,0)
+m = rawMatrix1(R^4,4,(0_R,b,c,d, -b,0_R,f,g, -c,-f,0_R,i, -d,-g,-i,0_R),0)
 --<< "equality checking of matrices is screwed up, since hash values are not being set correctly" << endl;
-assert(rawPfaffians(4,m) == rawMatrix1(R^1,1,1: (d*f-c*g+b*i), false,0))
+assert(rawPfaffians(4,m) == rawMatrix1(R^1,1,1: (d*f-c*g+b*i), 0))
 
 R2 = polyring(rawZZ(), (symbol x, symbol y, symbol z))
 m = mat {{x+y+z, x*y+y*z+z*x, x*y*z-1, (x+y+z)^5+x*(x*y*z-1) + 13}}
@@ -528,6 +528,7 @@ mr = rawMatrixRandom(R,10,10,.5,1,false,0)
 -- row and column operations --
 -------------------------------
 needs "raw-util.m2"
+<< "change these to mutable matrices" << endl;
 R = polyring(rawZZ(), (symbol a .. symbol f))
 m = rawMatrix1(R^3,3,(3_R,2_R,17_R,1_R,-5_R,13_R,0_R,2_R,1_R),true,0)
 assert(3_R === rawMatrixEntry(m,0,0))
@@ -535,7 +536,7 @@ rawMatrixEntry(m,1,2,15_R)
 assert(15_R === rawMatrixEntry(m,1,2))
 m
 -- now let's do row and column operations on this
-m1 = rawConcat(m,rawIdentity(R^3,false,0))
+m1 = rawConcat(m,rawIdentity(R^3,0))
 m = rawMatrixRemake1(R^3,m1,true,0)
 rawMatrixRowScale(m,3_R,1,true)  -- OK now
 m
@@ -715,11 +716,11 @@ assert(rawFactor (4*x^3) === ((4_R, x), (1,3)))
 -- rawCharSeries --
 -------------------
 R = polyring(rawZZ(), (symbol x .. symbol z))
-I = rawMatrix1(R^1, 2, (x*y^2+1, x*z+y+1), false,0)
+I = rawMatrix1(R^1, 2, (x*y^2+1, x*z+y+1), 0)
 rawCharSeries(I)
 rawIdealReorder I
 
-I = rawMatrix1(R^1, 2, (x*y+x+1, y*z-x), false, 0)
+I = rawMatrix1(R^1, 2, (x*y+x+1, y*z-x), 0)
 rawCharSeries(I)
 rawIdealReorder I
 

@@ -7,7 +7,7 @@
 needs "raw-util.m2"
 
 R = polyring(rawZZ(), (symbol a .. symbol g))
-M = rawMatrix1(R^1, 4, (a*b,a*c-c^2,b^3*f, c*d*f*g), false, 0)
+M = rawMatrix1(R^1, 4, (a*b,a*c-c^2,b^3*f, c*d*f*g), 0)
 I = rawMonomialIdeal(M,0)  -- ERROR: need to grab the lead term...
 M1 = rawMonomialIdealToMatrix I
 J = rawMonomialIdeal(M1,0)  -- ERROR: need to grab the lead term...
@@ -15,12 +15,12 @@ assert(J === I)
 assert(M1 === rawMonomialIdealToMatrix J)
 assert(rawNumgens I === 4)
 
-I = rawMonomialIdeal(rawMatrix1(R^1,4,(a^3*b^2,a*b*c^3,a^2*d^3,a^2*b^2*c^2*d^2),false,0),0)
+I = rawMonomialIdeal(rawMatrix1(R^1,4,(a^3*b^2,a*b*c^3,a^2*d^3,a^2*b^2*c^2*d^2),0),0)
 rawMonomialIdealToMatrix I
 assert(rawNumgens rawRadical I === 2)
 
-I = rawMonomialIdeal(rawMatrix1(R^1,3,(a^2*b,a*b*c,e*d),false,0),0)
-J = rawMonomialIdeal(rawMatrix1(R^1,3,(a,b*c,c*d),false,0),0)
+I = rawMonomialIdeal(rawMatrix1(R^1,3,(a^2*b,a*b*c,e*d),0),0)
+J = rawMonomialIdeal(rawMatrix1(R^1,3,(a,b*c,c*d),0),0)
 m = rawLeadMonomial(a*b-b^2)
 rawMonomialIdealToMatrix (I + J)
 rawMonomialIdealToMatrix (I * J)
@@ -35,7 +35,7 @@ assert(rawCodimension I === 2)
 L = rawSaturate(I,m)
 rawCodimension L -- is 8??
 rawMonomialIdealToMatrix rawAssociatedPrimes L
-B = rawStronglyStableClosure rawMonomialIdeal(rawMatrix1(R^1, 1, 1:(a*b^2*c),false,0), 0)
+B = rawStronglyStableClosure rawMonomialIdeal(rawMatrix1(R^1, 1, 1:(a*b^2*c),0), 0)
 rawMonomialIdealToMatrix B
 assert rawIsStronglyStable B
 
@@ -66,7 +66,7 @@ topPrimes I  -- should this be the name, instead of minprimes??
 needs "raw-util.m2"
 
 R = polyring(rawQQ(), (symbol a .. symbol g))
-M = rawMatrix1(R^1, 3, (a^2, a*b, b^2), true,0)
+M = rawMatrix1(R^1, 3, (a^2, a*b, b^2), 0)
 f = rawHilbert M
 rawFactor f
 t = (rawRing f)_0
@@ -84,7 +84,7 @@ assert(poincare Mi == poincare coker M)
 
 needs "raw-util.m2"
 R = polyring(rawZZp 32003, (symbol a .. symbol h))
-M = rawMatrix1(R^1, 8, (a^2, a*b, b^2*c, c^4, c^3*a*g*h^4, h^7*a, f*g*h, e^12*h^3), true,0)
+M = rawMatrix1(R^1, 8, (a^2, a*b, b^2*c, c^4, c^3*a*g*h^4, h^7*a, f*g*h, e^12*h^3), 0)
 f = rawHilbert M
 t = (rawRing f)_0
 answer = 1-2*t^2-t^3+2*t^5+3*t^6-2*t^7-t^8-2*t^9+6*t^10-8*t^11+7*t^12-7*t^13+6*t^14-3*t^15+3*t^17-2*t^19+t^20-4*t^21-2*t^22+11*t^23-9*t^24+7*t^25-6*t^26+2*t^27
