@@ -236,7 +236,7 @@ document { quote isField,
 isAffineRing = method()
 isAffineRing Ring := R -> isField R
 isAffineRing PolynomialRing := R -> (
-     not (options R)#SkewCommutative and not (options R)#Inverses and
+     not (options R).SkewCommutative and not (options R).Inverses and
      isAffineRing coefficientRing R
      )
 isAffineRing QuotientRing := R -> isField R or isAffineRing ambient R
