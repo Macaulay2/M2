@@ -357,36 +357,40 @@ makeMasterIndex := keylist -> (
 
 installPackage = method(Options => { 
 	  Prefix => "/tmp/", 
-	  Encapsulate => true,
+	  Encapsulate => false,
 	  IgnoreExampleErrors => true
 	  })
 
 installPackage Package := o -> pkg -> (
      topNodeName = pkg.name;
-     buildPackage = pkg.name;
+     buildPackage = if pkg === Main then "Macaulay2" else pkg.name;
      buildDirectory = minimizeFilename(o.Prefix | "/");
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Version|"/";
      buildPackage = minimizeFilename buildPackage;
      stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
 
-     currentSourceDir := pkg#"source directory";
-     stderr << "--using package sources found in " << currentSourceDir << endl;
+     if pkg =!= Main then (				    -- Main sources are handled separately
 
-     -- copy source file
-     pkgDirectory := LAYOUT#"packages";
-     makeDirectory (buildDirectory|pkgDirectory);
-     bn := buildPackage | ".m2";
-     fn := currentSourceDir|bn;
-     if not fileExists fn then error("file ", fn, " not found");
-     copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose=>true);
+	  currentSourceDir := pkg#"source directory";
+	  stderr << "--using package sources found in " << currentSourceDir << endl;
 
-     -- copy source subdirectory
-     srcDirectory := LAYOUT#"packagesrc" buildPackage;
-     makeDirectory (buildDirectory|srcDirectory);
-     dn := realpath(currentSourceDir|buildPackage);
-     stderr << "--copying auxiliary source files from " << dn << endl;
-     if fileExists dn
-     then copyDirectory(dn, buildDirectory|srcDirectory, Verbose=>true, Exclude => {"CVS"});
+	  -- copy source file
+	  pkgDirectory := LAYOUT#"packages";
+	  makeDirectory (buildDirectory|pkgDirectory);
+	  bn := buildPackage | ".m2";
+	  fn := currentSourceDir|bn;
+	  if not fileExists fn then error("file ", fn, " not found");
+	  copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose=>true);
+
+	  -- copy source subdirectory
+	  srcDirectory := LAYOUT#"packagesrc" buildPackage;
+	  makeDirectory (buildDirectory|srcDirectory);
+	  dn := realpath(currentSourceDir|buildPackage);
+	  stderr << "--copying auxiliary source files from " << dn << endl;
+	  if fileExists dn
+	  then copyDirectory(dn, buildDirectory|srcDirectory, Verbose=>true, Exclude => {"CVS"});
+
+     	  );
 
      -- This is a bit of a fiction: we've copied the files for our package into the build directory,
      -- so let's pretend we loaded the package from there in the first place, thereby allowing "documentation()"

@@ -156,6 +156,13 @@ install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) $(TUTORIALS)
 	$(INSTALL) -d "$(m2dir)"
 	$(INSTALL_DATA) $^ "$(m2dir)"
 
+install::install-main
+install-main: all
+	M2 -q --stop \
+	   -e 'errorDepth = 0' \
+	   -e 'installPackage(Main, Prefix => "$(prefix)") ' \
+	   -e 'exit 0 '
+
 clean::
 	rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample \
 		temp.data distfiles loads.m2 docloads.m2 mpcodes.m2 version.m2 core
