@@ -245,7 +245,14 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	       )
 	  -- other cases needed soon
 	  else False)
-     is CodeWrapper do False
+     is c:CodeClosure do (
+	  when rhs
+	  is d:CodeClosure do (
+	       if c.frame == d.frame
+	       && c.code == d.code
+	       then True else False)
+	  else False
+	  )
      is x:BigReal do (
 	  when rhs
 	  is y:BigReal do (
@@ -471,7 +478,7 @@ export Class(e:Expr):HashTable := (
      is obj:HashTable do obj.class
      is x:List do x.class
      is Integer do integerClass
-     is CodeWrapper do codeClass
+     is CodeClosure do codeClass
      is Rational do rationalClass
      is Real do doubleClass
      is Complex do complexClass

@@ -1107,7 +1107,7 @@ mathML Thing := x -> mathML expression x
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (o,x) -> (x = net x; scan(o, o -> printString(o,x)); o)
 
-o := () -> concatenate(interpreterDepth():"o")
+o := () -> concatenate(interpreterDepth:"o")
 
 Thing.AfterPrint = x -> (
      << endl;				  -- double space
