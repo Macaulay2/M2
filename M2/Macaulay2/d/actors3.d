@@ -27,7 +27,7 @@ EqualEqualfun(lhs:Code,rhs:Code):Expr := (
      else (
      	  y := eval(rhs);
      	  when y is Error do y
-	  else if equal(x,y) == True then True
+	  else if x == y || equal(x,y) == True then True
 	  else (
 	       cx := Class(x);
 	       cy := Class(y);

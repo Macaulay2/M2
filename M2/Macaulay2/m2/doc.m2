@@ -975,7 +975,15 @@ document { quote "===",
      details about why strict equality cannot depend on the contents of
      mutable hash tables, see ", TO "hashing", ".  On the other hand, if x
      and y are non-mutable, then they are strictly equal if and only if
-     their contents are equal.",
+     all their contents are strictly equal.",
+     EXAMPLE "{1,2,3} === {1,2,3}",
+     EXAMPLE "{1,2,3} === {2,1,3}",
+     "In the current implementation, matrices are mutable objects, so ", TT "===", "
+     will yield false more often than you might expect.  We hope to change this
+     in the future.",
+     EXAMPLE "matrix {{2}} === matrix {{2}}",
+     EXAMPLE "matrix {{2}} == matrix {{2}}",
+     EXAMPLE "matrix {{2}} == matrix {{3}}",
      PARA,
      SEEALSO{ "==",  "=!=" }
      }
@@ -994,7 +1002,8 @@ document { quote ==,
      with code such as ",
      PRE "         X == Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
+     class of ", TT "y", ".  This code will not be consulted if ", TT "x===y", "
+     is true.",
      PARA,
      "A test for mathematical equality will typically involve doing a computation
      to see whether two representations of the same mathematical object are being
@@ -1006,6 +1015,9 @@ document { quote ==,
      for testing mathematical equality, in which case an error will be given.  If
      you wanted to test strict equality, use the operator ", TO "===", " or 
      ", TO "=!=", ".",
+     PARA,
+     "Warning: this comparison operator returning true is not necesarily related to
+     the comaprison operator ", TO "?", " returning ", TT "quote ==", ".",
      PARA,
      SEEALSO{ "!=" }
      }
