@@ -1199,7 +1199,7 @@ getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
      when globalLookup(w) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
      is null do (
-	  t := makeSymbol(w,dummyPosition,globalDictionary);
+	  t := makeSymbol(w,dummyPosition,d);
 	  globalFrame.values.(t.frameindex)));
 getglobalsym(s:string):Expr := getglobalsym(globalDictionary,s);
 

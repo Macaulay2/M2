@@ -16,7 +16,7 @@ addStartFunction(
      () -> (
 	  fn := docFilename();
 	  if fn =!= null then DocDatabase = try openDatabase fn else (
-	       if phase != 3 then stderr << "warning: couldn't open help file " << docFilename() << endl;
+	       stderr << "warning: couldn't open help file " << docFilename() << endl;
 	       new HashTable)))
 
 -- Documentation = new MutableHashTable
@@ -89,7 +89,7 @@ isDocumentableTag   Option := s -> all(toList s, isDocumentableThing)
 isDocumentableTag    Thing := s -> false
 
 packageTag          = method(SingleArgumentDispatch => true)
-packageTag   Symbol := s -> if class value s === Package then value s else package s
+packageTag   Symbol := s -> if class value s === Package and toString value s === toString s then value s else package s
 packageTag   String := s -> currentPackage
 packageTag  Package := identity
 packageTag Sequence := s -> youngest \\ package \ s
@@ -795,7 +795,7 @@ documentation Thing := x -> (
 hasDocumentation = x -> (
      needDoc();
      fkey := formatDocumentTag x;
-     pkgs := select(packages, P -> P =!= User and P =!= Output); -- see also packages.m2
+     pkgs := select(packages, P -> P =!= User); -- see also packages.m2
      p := select(pkgs, P -> P#"documentation"#?fkey);
      0 < #p)
 

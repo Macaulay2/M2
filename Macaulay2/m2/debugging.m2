@@ -37,8 +37,6 @@ on = { CallLimit => 100000, Name => null } ==> opts -> f -> (
      	  value)
      )
 
-assert = x -> if not x then error "assertion failed"
-
 notImplemented = x -> error "not implemented yet"
 
 benchmark = (s) -> (
@@ -176,7 +174,10 @@ debuggerHook = () -> if interpreterDepth > 1 then (
      << endl << " -- code just attempted: " << code errorCode << endl
      )
 
-clearOutput = Command (() -> scan(values Output.Dictionary, s -> ( s <- null; erase s )))
+clearOutput = Command (() -> (
+	  oo <- ooo <- oooo <- null;
+	  scan(values OutputDictionary, s -> ( s <- null; erase s ));
+	  ))
 
 clearAll = Command (() -> ( 
      	  unmarkAllLoadedFiles();

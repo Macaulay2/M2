@@ -302,7 +302,7 @@ makeMasterIndex := keylist -> (
      )
 
 installPackage = method(Options => { 
-	  Prefix => "./tmp/", 
+	  Prefix => "./tmp/",
 	  Encapsulate => true,
 	  IgnoreExampleErrors => true
 	  })
@@ -398,8 +398,9 @@ installPackage Package := o -> pkg -> (
 			 haderror = true;
 			 )
 		    else (
+			 if fileExists outf then unlink outf;
 			 link(tmpf,outf);
-			 unlink(tmpf);
+			 unlink tmpf;
 			 ));
 	       -- read, separate, and store example output
 	       if fileExists outf then pkg#"example results"#nodename = drop(separateM2output get outf,-1)

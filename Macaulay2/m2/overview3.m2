@@ -671,7 +671,6 @@ document { "help functions",
      "Some internals:",
      SHIELD MENU {
 	  TO "Documentation",
-	  TO "phase",
 	  },
      SEEALSO "Reading the Documentation"
      }

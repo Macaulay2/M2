@@ -5,14 +5,10 @@ TeXmacsEnd   = ascii 5
 
 statementNumber := 0
 
-oo := getGlobalSymbol(OutputDictionary,"oo");
-ooo := getGlobalSymbol(OutputDictionary,"ooo");
-oooo := getGlobalSymbol(OutputDictionary,"oooo");
-
 rot := x -> (
-     oooo <- value ooo;			  -- avoid GlobalAssignHook with <-
-     ooo <- value oo;
-     oo <- x;
+     global oooo <- ooo;			  -- avoid GlobalAssignHook with <-
+     global ooo <- oo;
+     global oo <- x;
      )
 
 String.TeXmacsEvaluate = s -> (

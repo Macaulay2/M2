@@ -36,7 +36,7 @@ ifneq "$(DUMPDATA)" "no"
 DUMPEDM2FILES := $(DUMPEDM2FILES)
 endif
 
-OTHERM2FILES = eg.m2 sagbi.m2
+OTHERM2FILES = sagbi.m2
 
 NONDOCM2FILES = startup.m2 setup.m2 $(LOADSEQUENCE) $(OTHERM2FILES)
 
@@ -77,7 +77,6 @@ phase1 :: prep
 ifneq "$(DUMPDATA)" "no"
 phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../bin/M2
-	 #------ phase 1: reading *.m2 (not the documentation), making $@
 	rm -f ../$(DUMPDATAFILE)
 	../bin/M2 --stop --dumpdata
 endif
@@ -164,11 +163,15 @@ tmp :; mkdir "$@"
 #	see startup.m2, too, for setting "prefixDirectory" to ./tmp while building, so it can find example output files
 tmp/.documentation-made : $(DOCSEQUENCE)
 	@ echo making the Main package, including the documentation
-	cd tmp && ../../bin/M2 -q --stop \
-	   -e 'errorDepth = 0' \
-	   -e 'debugLevel = 1' \
-	   -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") ' \
-	   -e 'exit 0 '
+	@ 
+	@ cd tmp && \
+	   echo "make: Entering directory \`tmp'" >&2 && ( set -x ; \
+	   ../../bin/M2 -q --stop \
+	     -e 'errorDepth = 0' \
+	     -e 'debugLevel = 1' \
+	     -e 'installPackage(Main, IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") ' \
+	     -e 'exit 0 ' ) || (echo "make: Leaving directory \`tmp'" >&2 ; false )
+	@ echo "make: Leaving directory \`tmp'"
 	touch "$@"
 
 install::all install-main
