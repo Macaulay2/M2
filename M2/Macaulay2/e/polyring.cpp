@@ -1770,6 +1770,51 @@ ring_elem PolyRing::divide_by_expvector(const int *exp, const ring_elem a) const
   sort(result);
   return result;
 }
+///////////////////////////////////
+// vec routines for polynomials ///
+///////////////////////////////////
+ring_elem PolyRing::lead_term(int nparts, const ring_elem f) const
+{
+  Nterm *lead = f;
+  Nterm head;
+  Nterm *result = &head;
+  for (Nterm *a = f; a != NULL; a = a->next)
+    {
+      if (M_->compare(nparts, lead->monom, a->monom) != EQ)
+	break;
+      result->next = new_term();
+      result = result->next;
+      result->coeff = a->coeff;
+      M_->copy(a->monom, result->monom);
+    }
+  result->next = NULL;
+  return head.next;
+}
+
+vec PolyRing::vec_lead_term(int nparts, vec v) const
+{
+  // The first step is to find the lead monomial.
+
+  if (v == 0) return 0;
+  vec lead = v;
+  for (vec w = v->next; w != 0; w = w->next)
+    {
+      if (M_->compare(POLY(lead->coeff)->monom, 
+		      lead->comp,
+		      POLY(w->coeff)->monom, 
+		      w->comp) == LT)
+	{
+	  lead = w;
+	}
+    }
+
+  // Now that we have the lead term, use the first n parts of the monomial
+  // ordering
+
+  ring_elem r = PolyRing::lead_term(nparts, lead->coeff);
+  return make_vec(lead->comp, r);
+}
+
 
 ///////////////////////////////////
 // translation gbvector <--> vec //

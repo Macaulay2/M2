@@ -406,9 +406,34 @@ rawDivideByVariable(m-m,1,-1)
 
 ---------------------
 -- rawModuleTensor --
---------------------- -- not written
+---------------------
 
+---------------------
+-- rawBasis --
+---------------------
+needs "raw-util.m2"
+R = polyring(rawZZp 101, (symbol a .. symbol c))
 
+m = mat{{0_R}}
+b1 = rawBasis(m, {2}, {2}, {1}, {0,1,2}, false, -1)
+assert(b1 == mat{{a^2, a*b, a*c, b^2, b*c, c^2}})
+
+b1 = rawBasis(m, {2}, {3}, {1}, {0,1,2}, false, -1)
+
+m = mat{{a^2,b^2}}
+b1 = rawBasis(m, {2}, {3}, {1}, {0,1,2}, false, -1)
+assert(b1 == mat{{a*b,a*b*c,a*c,a*c^2,b*c,b*c^2,c^2,c^3}})
+
+m = mat{{a^3,b^3,a*b*c,c^3}}
+b1 = rawBasis(m, {}, {}, {1}, {0,1,2}, false, -1)  -- WRONG
+
+m = mat{{a^3,b^3}}
+rawBasis(m, {}, {}, {1}, {0,1}, false, -1)  -- WRONG
+
+m = rawMatrix1(R^{-1}, 2, (a^3,b^2), false, 0)
+mb = rawBasis(m, {2}, {2}, {1}, {0,1}, false, -1)
+assert(mb == mat{{a,b}})
+<< "do MUCH MORE TESTING of rawBasis!!" << endl;
 ---------------------------------------
 -- mutable matrix routines ------------
 ---------------------------------------

@@ -32,9 +32,6 @@ private:
   int kb_exp_lo_weight;
   int kb_exp_hi_weight;
   int          * kb_exp_degree;
-  int          * kb_exp_lo_degree; // possibly NULL, meaning no low degree
-                    // HOWEVER: that can only happen if this is not a multi grading
-  int          * kb_exp_hi_degree; // possibly NULL, as for kb_exp_lo_degree
 
   MonomialIdeal* kb_monideal;
   int          * kb_exp;
@@ -54,7 +51,7 @@ private:
 
   ~KBasis() {}
 
-  bool compute();
+  void compute();
 
   Matrix *value() { return mat.to_matrix(); }
 public:
@@ -107,6 +104,10 @@ KBasis::KBasis(const Matrix *bottom,
   kb_exp_weight = 0;
   if (lo_degree != 0) kb_exp_lo_weight = weight(lo_degree);
   if (hi_degree != 0) kb_exp_hi_weight = weight(hi_degree);
+
+  kb_mon = M->make_one();
+
+  mat = MatrixConstructor(bottom->rows(), 0, false);
 }
 
 int KBasis::weight(const int *deg) const
@@ -129,15 +130,21 @@ void KBasis::insert()
   ring_elem r = P->make_flat_term(P->getCoefficients()->one(), kb_mon);
   vec v = P->make_vec(kb_comp, r);
   mat.append(v);
+  if (limit > 0) limit--;
 }
 
 void KBasis::k_basis0(int firstvar)
     // Recursively add to the result matrix all monomials in the
     // variables 0..topvar having degree 'deg' which are not in 'mi'.
 {
+  // First: decide whether to insert this element
+
+  // Second: decide whether to recurse
+
+
   for (int i=firstvar; i<vars->len; i++)
     {
-      int v = vars->array[v];
+      int v = vars->array[i];
       if (P->is_skew_commutative() &&
 	    P->is_skew_var(v) &&
 	    kb_exp[v] >= 1)
@@ -152,7 +159,7 @@ void KBasis::k_basis0(int firstvar)
       kb_exp_weight += var_wts[i];
 
       Bag *b;
-      if (kb_exp_hi_degree // this means that kb_exp_hi_weight will be set
+      if (hi_degree // this means that kb_exp_hi_weight will be set
 	  && kb_exp_weight > kb_exp_hi_weight
 	  && do_truncation 
 	  && !kb_monideal->search_expvector(kb_exp,b))
@@ -175,16 +182,17 @@ void KBasis::k_basis0(int firstvar)
 	      }
 	    else
 	      {
-		if (lo_degree != 0 || kb_exp_weight >= kb_exp_lo_weight)
+		if (!lo_degree || kb_exp_weight >= kb_exp_lo_weight)
 		  insert();
 	      }
-	    
+	    if (limit == 0) return;	    
 	    // When do we recurse further
 	    // when the weight is strictly less than kb_exp_hi_weight
 	    if (hi_degree == 0 || kb_exp_weight <= kb_exp_hi_weight)
 	      k_basis0(i);
 	  }
       }
+      if (limit == 0) return;
       kb_exp[v]--;
       D->divide(kb_exp_degree, M->degree_of_var(v),
 		   kb_exp_degree);
@@ -192,7 +200,7 @@ void KBasis::k_basis0(int firstvar)
     }
 }
 
-bool KBasis::compute()
+void KBasis::compute()
     // Only the lead monomials of the two matrices 'this' and 'bottom' are
     // considered.  Thus, you must perform the required GB's elsewhere.
     // Find a basis for (image this)/(image bottom) in degree d.
@@ -200,6 +208,7 @@ bool KBasis::compute()
     // finite dimension, and if so, return a basis.
     // If 'd' is not NULL, it is an element of the degree monoid.
 {
+  if (limit == 0) return;
   for (int i=0; i<bottom_matrix->n_rows(); i++)
     {
       kb_comp = i;
@@ -223,8 +232,6 @@ bool KBasis::compute()
       // Do the recursion
       k_basis0(0);
     }
-
-  return true;
 }
 
 MatrixOrNull *KBasis::k_basis(const Matrix *bottom, 
@@ -237,7 +244,9 @@ MatrixOrNull *KBasis::k_basis(const Matrix *bottom,
 {
   // Do some checks first, return 0 if not good.
 #warning "do some sanity checks here"
-  KBasis KB(bottom,lo_degree->array,hi_degree->array,wt,vars,do_truncation,limit);
+  const int *lo = (lo_degree->len > 0 ? lo_degree->array : 0);
+  const int *hi = (hi_degree->len > 0 ? hi_degree->array : 0);
+  KBasis KB(bottom,lo,hi,wt,vars,do_truncation,limit);
   KB.compute();
   return KB.value();
 }
