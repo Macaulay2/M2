@@ -272,7 +272,7 @@ rawConcatColumns = (mats) -> rawConcat toSequence mats
 rawConcatRows = (mats) -> rawDual rawConcat apply(toSequence mats,rawDual)
 rawConcatBlocks = (mats) -> rawDual rawConcat apply(toSequence mats, row -> rawDual rawConcat toSequence (raw \ row))
 
-new RawMatrix from RawRingElement := (RawMatrix,f) -> rawMatrix1(rawFreeModule(raw R,1),1,1:f,false,0)
+new RawMatrix from RawRingElement := (RawMatrix,f) -> rawMatrix1(rawFreeModule(raw ring f,1),1,1:f,false,0)
 
 -- computations
 
