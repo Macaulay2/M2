@@ -32,7 +32,7 @@ closePackage "Macaulay2Core"
 -- newPackage "Missing"
 -- closePackage "Missing"
 
-installedPackages := {"PrimaryDecomposition", "Macaulay2Doc"}
+installedPackages := {"PrimaryDecomposition", "Macaulay2"}
 scan(installedPackages, pkg -> loadPackage(pkg,DebuggingMode => not stopIfError))
 
 -- currentPackage = null					    -- eliminate the phony package we used for collecting TEST inputs
