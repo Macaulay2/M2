@@ -1223,7 +1223,6 @@ document { Matrix,
      "Common ways to get information about matrices:",
      MENU {
 	  TO (degree, Matrix),
-	  TO (generators, Matrix),
 	  TO (isHomogeneous, Matrix),
 	  },
      "Common operations on matrices:",
