@@ -128,8 +128,12 @@ void RingMap::text_out(buffer &o) const
 ring_elem RingMap::eval_term(const Ring *sourceK,
 			      const ring_elem a, const int *vp) const
 {
+#if 0
+  // I think that this is removable MES 1/5/04
   assert(sourceK->total_n_vars() <= nvars);
   int first_var = sourceK->total_n_vars();
+#endif
+  int first_var = 0;
   for (index_varpower i = vp; i.valid(); ++i)
     {
       int v = first_var + i.var();

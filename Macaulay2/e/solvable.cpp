@@ -15,13 +15,11 @@ bool SolvableAlgebra::initialize_solvable(const Matrix *Q)
 
 SolvableAlgebra *SolvableAlgebra::create(const Ring *K,
 					 const Monoid *M,
-					 const Ring *originalK,
-					 const Monoid *originalM,
 					 const Matrix *Q)
 {
   SolvableAlgebra *result = new SolvableAlgebra;
 
-  result->initialize_poly_ring(K,M,originalK,originalM);
+  result->initialize_poly_ring(K,M);
   if (!result->initialize_solvable(Q)) return 0;
   result->_gb_ring = GBRing::create_SolvableAlgebra(K,M,result);
   return result;
@@ -32,11 +30,10 @@ SolvableAlgebra *SolvableAlgebra::create(const PolynomialRing *R,
 {
   return create(R->getCoefficients(),
 		R->getMonoid(),
-		R->getLogicalCoefficients(),
-		R->getLogicalMonoid(),
 		Q);
 }
 
+#if 0
 const SolvableAlgebra *SolvableAlgebra::createPolyRing(const Monoid *M) const
   // creates this[M], which is commutative in M variables, but skew commutative in
   // (some of) the variables of this
@@ -53,6 +50,7 @@ const SolvableAlgebra *SolvableAlgebra::createPolyRing(const Monoid *M) const
 		M,
 		Q);
 }
+#endif
 
 ring_elem SolvableAlgebra::mult_by_term(const ring_elem f, 
 					       const ring_elem c, 

@@ -58,7 +58,6 @@ void PolyRing::make_trivial_ZZ_poly_ring()
   Monoid::set_trivial_monoid_degree_ring(trivial_poly_ring);
   globalZZ->initialize_ZZ(trivial_poly_ring);
   trivial_poly_ring->initialize_poly_ring(globalZZ,M,
-					  globalZZ,M,
 					  trivial_poly_ring);
   
   const PolyRing *flatR = trivial_poly_ring;
@@ -67,21 +66,16 @@ void PolyRing::make_trivial_ZZ_poly_ring()
 }
 
 void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M, 
-				    const Ring *logicalK, const Monoid *logicalM, 
 				    const PolynomialRing *deg_ring)
 // This version is to be called directly ONLY by initialize_poly_ring
 // and make_trivial_ZZ_poly_ring.
 {
   initialize_ring(K->charac(),
 		  M->n_vars(),
-		  M->n_vars() + K->total_n_vars(),
 		  deg_ring);
 
   K_ = K;
   M_ = M;
-  logicalK_ = logicalK;
-  logicalM_ = logicalM;
-
   _poly_size = 
     sizeof(Nterm) + sizeof(int) * (M_->monomial_size() - 1);
 
@@ -105,21 +99,20 @@ void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
   minus_oneV = from_int(-1);
 }
 
-void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
-				    const Ring *logicalK, const Monoid *logicalM)
+void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M)
 {
-  initialize_poly_ring(K, M, logicalK, logicalM, M->get_degree_ring());
+  initialize_poly_ring(K, M, M->get_degree_ring());
 }
 
-const PolyRing *PolyRing::create_poly_ring(const Ring *K, const Monoid *M,
-				const Ring *logicalK, const Monoid *logicalM)
+const PolyRing *PolyRing::create(const Ring *K, const Monoid *M)
 {
   PolyRing *R = new PolyRing;
-  R->initialize_poly_ring(K,M, logicalK, logicalM);
+  R->initialize_poly_ring(K,M);
   R->_gb_ring = GBRing::create_PolynomialRing(K,M);
   return R;
 }
 
+#if 0
 const PolyRing *PolyRing::create(const Ring *K, const Monoid *M)
   // Create the ring K[M].  
   // K must be either a basic ring, or an ambient polynomial ring,
@@ -129,11 +122,12 @@ const PolyRing *PolyRing::create(const Ring *K, const Monoid *M)
   if (A == 0 || K->is_basic_ring())
     {
       // K is a basic ring
-      return create_poly_ring(K,M, K,M);
+      return create_poly_ring(K,M);
     }
   const PolyRing *B = A->getAmbientRing();
   return B->createPolyRing(M);
 }
+
 
 const PolyRing *PolyRing::createPolyRing(const Monoid *M) const
   // creates this[M], which is commutative in M variables, but possible skew or Weyl
@@ -147,6 +141,7 @@ const PolyRing *PolyRing::createPolyRing(const Monoid *M) const
 			  this,
 			  M);
 }
+#endif
 
 void PolyRing::text_out(buffer &o) const
 {

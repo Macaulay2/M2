@@ -35,16 +35,20 @@ public:
 
   Matrix * getPresentation() const;
 
+#if 0
   virtual const Ring *getLogicalCoefficients() const { return R_->getLogicalCoefficients(); }
   // The logical coefficient ring of 'this'.  
   // This is either a non polynomial ring, or it is a PolyRing.
+#endif
 
   virtual const Ring *getCoefficients() const { return R_->getCoefficients(); }
   // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
   // is another PolyRing.
 
+#if 0
   virtual const Monoid *getLogicalMonoid() const { return R_->getLogicalMonoid(); }
   // The logical monoid of this polynomial ring.
+#endif
 
   virtual const Monoid *getMonoid() const { return R_->getMonoid(); }
   // The implementation monoid of this ring.

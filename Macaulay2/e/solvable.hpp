@@ -13,13 +13,7 @@ class SolvableAlgebra : public PolyRing
 
   static SolvableAlgebra *create(const Ring *K,
 				 const Monoid *M,
-				 const Ring *originalK,
-				 const Monoid *originalM,
 				 const Matrix *Q);
-  
-  const SolvableAlgebra *createPolyRing(const Monoid *M) const;
-  // creates this[M], which is commutative in M variables, but solvable commutative in
-  // (some of) the variables of this
 
 protected:
   bool initialize_solvable(const Matrix *Q);

@@ -43,8 +43,6 @@ protected:
   PolynomialRing() : is_graded_(true), qinfo_(new QRingInfo) {}
 
 public:
-  static PolynomialRing *create(const Ring *K, const Monoid *MF);
-
   static PolynomialRing *create_quotient_ring(const Matrix *M);
 
   QRingInfo *get_quotient_info() const { return qinfo_; }
@@ -54,16 +52,9 @@ public:
   // MY BAD: sometimes means flat coeffs, sometimes logical coeffs
   // Both Ncoeffs and Nmonoms need to be totally removed.
 
-  virtual const Ring *getLogicalCoefficients() const = 0;
-  // The logical coefficient ring of 'this'.  
-  // This is either a non polynomial ring, or it is a PolyRing.
-
   virtual const Ring *getCoefficients() const = 0;
   // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
   // is another PolyRing.
-
-  virtual const Monoid *getLogicalMonoid() const = 0;
-  // The logical monoid of this polynomial ring.
 
   virtual const Monoid *getMonoid() const = 0;
   // The implementation monoid of this ring.
@@ -124,7 +115,7 @@ public:
   { return getCoefficients()->coefficient_type(); }
 
   virtual int n_fraction_vars() const
-  { return getCoefficients()->n_fraction_vars(); }
+  { return 0; }
 
   virtual void text_out(buffer &o) const = 0;
 

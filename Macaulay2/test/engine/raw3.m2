@@ -83,7 +83,7 @@ time (
        i = i+1;
        ))
 
-assert(2 == rawLeadCoefficient(2*x))
+assert(2 == rawLeadCoefficient(rawZZ(),2*x))
 
 x100 = rawRingVar(R1,0,100)
 x1000 = rawRingVar(R1,0,1000)
@@ -93,7 +93,7 @@ assert(x100 === x^100)
 -x
 x+y
 assert(x+y+z-x-y-z == 0)
-assert(size(x+y+z-x-y-z) == 0)
+assert(size(3,x+y+z-x-y-z) == 0)
 assert(size(x+y+z-x-y-z^2) == 2)
 f = (x^2+x*y+y^2)
 g = ((3*x^10+x*y-3)*f)//(3*x^10+x*y-3)

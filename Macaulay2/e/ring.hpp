@@ -51,7 +51,6 @@ protected:
 
   void initialize_ring(int charac, 
 		       int nvars, 
-		       int totalvars, 
 		       const PolynomialRing *DR = 0);
   Ring() {}
 public:
@@ -63,9 +62,6 @@ public:
 
   int charac() const { return P; }
   int n_vars() const { return _nvars; } // This will be 0 except for frac fields and poly rings.
-  int total_n_vars() const { return _totalvars; }
-  virtual int n_fraction_vars() const { return 0; }
-  // The ultimate number of fraction field variables.
 
   const Monoid * degree_monoid() const;
   const PolynomialRing *get_degree_ring() const { return degree_ring; }

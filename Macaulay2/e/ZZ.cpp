@@ -17,7 +17,7 @@
 
 bool ZZ::initialize_ZZ(const PolynomialRing *deg_ring) 
 {
-  initialize_ring(0,0,0,0);
+  initialize_ring(0,0);
   _elem_size = sizeof(mpz_t);
   _zero_elem = new_elem();
   mpz_init_set_si(_zero_elem, 0);

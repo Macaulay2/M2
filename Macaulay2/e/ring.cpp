@@ -12,7 +12,6 @@ const Monoid * Ring::degree_monoid() const { return degree_ring->Nmonoms(); }
 
 void Ring::initialize_ring(int P0,
 			   int nvars,
-			   int totalvars,
 			   const PolynomialRing *DR)
 {
   // Remember: if this is a poly ring, the ring is K[M].
@@ -20,7 +19,6 @@ void Ring::initialize_ring(int P0,
   // If this is a frac field, K = R, M = trivial monoid.
   P = P0;
   _nvars = nvars;
-  _totalvars = totalvars;
   if (DR == 0)
     degree_ring = PolyRing::get_trivial_poly_ring();
   else

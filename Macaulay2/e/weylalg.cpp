@@ -80,34 +80,19 @@ bool WeylAlgebra::initialize_weyl(
 
 WeylAlgebra *WeylAlgebra::create(const Ring *K,
 				 const Monoid *M,
-				 const Ring *originalK,
-				 const Monoid *originalM,
 				 M2_arrayint derivs,
 				 M2_arrayint comms,
 				 int homog_var)
 {
   WeylAlgebra *result = new WeylAlgebra;
 
-  result->initialize_poly_ring(K,M,originalK,originalM);
+  result->initialize_poly_ring(K,M);
   if (!result->initialize_weyl(derivs,comms,homog_var)) return 0;
   result->_gb_ring = GBRing::create_WeylAlgebra(K,M,result);
   return result;
 }
 
-WeylAlgebra *WeylAlgebra::create(const PolynomialRing *R,
-				 M2_arrayint derivs,
-				 M2_arrayint comms,
-				 int homog_var)
-{
-  return create(R->getCoefficients(),
-		R->getMonoid(),
-		R->getLogicalCoefficients(),
-		R->getLogicalMonoid(),
-		derivs,
-		comms,
-		homog_var);
-}
-
+#if 0
 const WeylAlgebra *WeylAlgebra::createPolyRing(const Monoid *M) const
   // creates this[M], which is commutative in M variables, but skew commutative in
   // (some of) the variables of this
@@ -145,6 +130,7 @@ const WeylAlgebra *WeylAlgebra::createPolyRing(const Monoid *M) const
 		new_comms,
 		new_homog_var);
 }
+#endif
 
 void WeylAlgebra::text_out(buffer &o) const
 {
