@@ -208,8 +208,13 @@ coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
 coefficients(Matrix) := coefficients(RingElement) := (m) -> coefficients(toList (0 .. numgens ring m - 1), m)
 
 terms RingElement := f -> (
-     s := coefficients f;
-     apply(first entries s#0,first entries s#1, times))
+     R := ring f;
+     n := numgens R;
+     m := new RawMatrix from raw f;
+     monoms := rawMonomials(0 .. n-1, m);
+     error "'terms' not re-implemented yet";
+     -- now we will want to hand monoms to a new version of rawCoefficients
+     )
 
 sortColumns = method ( 
      Options => {
