@@ -27,7 +27,7 @@ vec FreeModule::new_term() const
 {
   vec result = (vec) R->vecstash->new_elem();
   result->next = NULL;
-  result->coeff = 0;
+  result->coeff = (Nterm*)0;
   return result;
 }
 vec FreeModule::copy_term(vec v) const

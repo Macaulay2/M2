@@ -14,7 +14,7 @@ union ring_elem
   int    int_val;
   Nterm * poly_val;
 
-  ring_elem() : int_val(0) {}
+  ring_elem() : poly_val(0) {}
   ring_elem(int a) : int_val(a) {}
 //  ring_elem(mpz_ptr a) : mpz_val(a) {}
 //  ring_elem(mpq_ptr a) : mpq_val(a) {}
