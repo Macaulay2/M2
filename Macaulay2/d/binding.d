@@ -729,11 +729,6 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(i.primary,dictionary);
 	  )
      );
-export bind(e:ParseTree):bool := (
-     HadError = false;
-     bind(e,globalDictionary);
-     !HadError
-     );
 export localBind(e:ParseTree,dictionary:Dictionary):bool := (
      HadError = false;
      bind(e,dictionary);
