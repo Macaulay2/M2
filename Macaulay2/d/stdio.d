@@ -396,33 +396,6 @@ export (o:file) << (c:char) : file := (
      o
      );
 
-export filbuf(o:file):int := (
-     -- returns number of bytes added to buffer, or ERROR if a system call had an error
-     if ! o.input then return(0);
-     if o.inindex > 0
-     then (
-	  o.insize = o.insize - o.inindex;
-	  for i from 0 to o.insize - 1 do o.inbuffer.i = o.inbuffer.(i+o.inindex);
-	  o.inindex = 0;
-	  );
-     n := length(o.inbuffer)-o.insize;
-     if n == 0 then return(0);
-     r := readPrompt(o.infd,o.inbuffer,n,o.insize,o.prompt());
-     if r == ERROR then (fileErrorMessage(o,"read");)
-     else if r == 0 then (o.eof = true;)
-     else o.insize = o.insize + r;
-     r);
-
-haveLine(o:file):bool := (
-     i := o.inindex;
-     while i < o.insize do (
-	  c := o.inbuffer.i;
-	  if c == '\n' || c == '\r' then return(true);
-	  i = i+1;
-	  );
-     return(false);
-     );
-
 export (o:file) << (x:string) : file := (
      if o.output then (
 	  if o.hadNet then (
@@ -462,10 +435,45 @@ echoLine(o:file):void := (
 	  i = i+1;
 	  ));
 
+-- there's a difference between read() and readline() in that readline() returns exactly one line at a time, but read() may return several.
+-- readline() is buffered and read() is not
+
+export filbuf(o:file):int := (
+     -- returns number of bytes added to buffer, or ERROR if a system call had an error
+     if ! o.input then return(0);
+     if o.inindex > 0
+     then (
+	  o.insize = o.insize - o.inindex;
+	  for i from 0 to o.insize - 1 do o.inbuffer.i = o.inbuffer.(i+o.inindex);
+	  o.inindex = 0;
+	  );
+     n := length(o.inbuffer)-o.insize;
+     if n == 0 then return(0);
+     r := readPrompt(o.infd,o.inbuffer,n,o.insize,o.prompt()); -- sometimes we read, even though we have a full line of input, so it seems like a waste
+     if r == ERROR then (fileErrorMessage(o,"read");)
+     else if r == 0 then (
+	  o.eof = true;
+	  if o.echo then echoLine(o);
+	  )
+     else (
+	  o.insize = o.insize + r;
+	  if o.echo then echoLine(o);
+	  );
+     r);
+
+haveLine(o:file):bool := (
+     i := o.inindex;
+     while i < o.insize do (
+	  c := o.inbuffer.i;
+	  if c == '\n' || c == '\r' then return(true);
+	  i = i+1;
+	  );
+     return(false);
+     );
+
 prepare(o:file):int := (
      o.bol = false;
      if ERROR == filbuf(o) then return(ERROR);
-     if o.echo then echoLine(o);
      0);
 
 putdigit(o:file,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
