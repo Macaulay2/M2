@@ -70,6 +70,14 @@ import readDirectory(name:string):(null or array(string));
 import strncmp(s:string,t:string,n:int):int;
 import history():array(string);
 
+everytimeCell := { f:function():void, next:everytimeCell };
+dummyfun():void := nothing;
+everytimeList := everytimeCell(dummyfun,self);
+export everytime(f:function():void):void := everytimeList = everytimeCell(f,everytimeList);
+export everytimeRun():void := (
+     x := everytimeList;
+     while x.next != x do (x.f(); x = x.next;));
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 -- End:
