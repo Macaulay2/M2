@@ -62,45 +62,28 @@ static void cmd_EMO_clone(object &o1)
   EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
   gStack.insert(mo->clone());
 }
-static void cmd_EMO_revlex(object &o1, object &o2)
-{
-  int nvars = o1->int_of();
-  EMonomialOrder *mo = o2->cast_to_EMonomialOrder();
-  mo->revlex(nvars);
-}
-static void cmd_EMO_lex(object &o1, object &o2)
-{
-  int nvars = o1->int_of();
-  EMonomialOrder *mo = o2->cast_to_EMonomialOrder();
-  mo->lex(nvars);
-}
-static void cmd_EMO_revlexWeights(object &o1, object &o2)
-{
-  intarray *a = o1->intarray_of();
-  EMonomialOrder *mo = o2->cast_to_EMonomialOrder();
-  mo->revlexWeights(a->length(),a->raw());
-}
-static void cmd_EMO_revlex1(object &o1, object &o2, object &o3)
+static void cmd_EMO_revlex(object &o1, object &o2, object &o3)
 {
   int nvars = o1->int_of();
   int isgroup = o2->int_of();
   EMonomialOrder *mo = o3->cast_to_EMonomialOrder();
   mo->revlex(nvars, isgroup);
 }
-static void cmd_EMO_lex1(object &o1, object &o2, object &o3)
+static void cmd_EMO_lex(object &o1, object &o2, object &o3)
 {
   int nvars = o1->int_of();
   int isgroup = o2->int_of();
   EMonomialOrder *mo = o3->cast_to_EMonomialOrder();
   mo->lex(nvars,isgroup);
 }
-static void cmd_EMO_revlexWeights1(object &o1, object &o2, object &o3)
+static void cmd_EMO_revlexWeights(object &o1, object &o2, object &o3)
 {
   intarray *a = o1->intarray_of();
   int isgroup = o2->int_of();
   EMonomialOrder *mo = o3->cast_to_EMonomialOrder();
   mo->revlexWeights(a->length(),a->raw(),isgroup);
 }
+
 static void cmd_EMO_component(object &o1)
 {
   EMonomialOrder *mo = o1->cast_to_EMonomialOrder();
@@ -1009,7 +992,16 @@ static void cmd_ERingElement_leadMonomial(object &o1)
   R->getMonoid()->to_variable_exponent_pairs(m,a);
   gStack.insert(new object_intarray(a));
 }
-
+#if 0
+static void cmd_ERingElement_getCoefficient(object &oelem, object &om)
+{
+  object_ERingElement *r = oelem->cast_to_ERingElement();
+  intarray *mon = om->intarray_of();
+  XXX
+  Monomial m = om->cast_to_Monomial();
+  gStack.insert(r.get_coeff(m));
+}
+#endif
 static void cmd_ERingElement_isgraded(object &o1)
 {
   object_ERingElement *r = o1->cast_to_ERingElement();
@@ -1614,12 +1606,11 @@ void i_Ecommands(void)
 
   install(ggMOinit, cmd_EMO_init);
   install(ggMOclone, cmd_EMO_clone, TY_EMonomialOrder);
-  install(ggMOrevlex, cmd_EMO_revlex, TY_INT, TY_EMonomialOrder);
-  install(ggMOrevlex, cmd_EMO_revlexWeights, TY_INTARRAY, TY_EMonomialOrder);
-  install(ggMOlex, cmd_EMO_lex, TY_INT, TY_EMonomialOrder);
-  install(ggMOrevlex, cmd_EMO_revlex1, TY_INT, TY_INT, TY_EMonomialOrder);
-  install(ggMOrevlex, cmd_EMO_revlexWeights1, TY_INTARRAY, TY_INT, TY_EMonomialOrder);
-  install(ggMOlex, cmd_EMO_lex1, TY_INT, TY_INT, TY_EMonomialOrder);
+
+  install(ggMOrevlex, cmd_EMO_revlex, TY_INT, TY_INT, TY_EMonomialOrder);
+  install(ggMOrevlex, cmd_EMO_revlexWeights, TY_INTARRAY, TY_INT, TY_EMonomialOrder);
+  install(ggMOlex, cmd_EMO_lex, TY_INT, TY_INT, TY_EMonomialOrder);
+
   install(ggMOcomponent, cmd_EMO_component, TY_EMonomialOrder);
   install(ggMOwtfcn, cmd_EMO_weightFunction, TY_INTARRAY, TY_EMonomialOrder);
   install(ggMOproduct, cmd_EMO_product, TY_EMonomialOrder, TY_EMonomialOrder);
@@ -1647,12 +1638,6 @@ void i_Ecommands(void)
   install(ggEcharp, cmd_EZZp, TY_INT);
 
   install(ggcharacteristic, cmd_EZZp_characteristic, TY_ERing);
-
-  install(ggpolyring, cmd_EPolynomialRing, TY_ERing, TY_EMonoid);
-  install(ggweylalgebra, cmd_EWeylAlgebra, TY_ERing, TY_EMonoid, 
-	  TY_INTARRAY, TY_INTARRAY, TY_INT);
-  install(ggskewpolyring, cmd_ESkewCommPolynomialRing, 
-	  TY_ERing, TY_EMonoid, TY_INTARRAY);
 
   install(ggpolyring, cmd_EPolynomialRing, TY_ERing, TY_EMonoid);
   install(ggweylalgebra, cmd_EWeylAlgebra, TY_ERing, TY_EMonoid, 

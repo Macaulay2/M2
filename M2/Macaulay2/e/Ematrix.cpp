@@ -81,7 +81,6 @@ void EMatrix::text_out(buffer &o) const
 	for (int k=maxcount+1-p[r].size(); k > 0; k--)
 	  p[r] << ' ';
     }
-  o << newline;
   for (r=0; r<nrows; r++)
     {
       p[r] << '\0';
