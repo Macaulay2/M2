@@ -18,10 +18,3 @@ void warning(char *s,...) {
   va_end(ap);
 }
 
-volatile void fatal(char *s,...) {
-  va_list ap;
-  va_start(ap,s);
-  warning1(s,ap);
-  va_end(ap);
-  exit(1);
-}
