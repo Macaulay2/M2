@@ -4,24 +4,50 @@
 -- configuration
 -----------------------------------------------------------------------------
 maximumCodeWidth := 200
-CachePrefix          := "cache/"
-DocumentationPrefix  := CachePrefix | "doc/"
-TestsPrefix          := CachePrefix | "tests/"
+filepath := x -> concatenate mingle(x,#x:pathSeparator)
+CachePrefix := filepath {"cache"}
+TestsPrefix := filepath {"cache", "tests"}
+documentationPath = {
+     filepath{"cache","doc"}
+     }
+addStartFunction(
+     () -> (
+	  if getenv "M2HOME" === "" then error "environment variable M2HOME not set";
+	  path = join(path, {
+	       	    filepath{getenv "M2HOME","m2"},
+	       	    filepath{getenv "M2HOME","packages"}
+		    });
+	  documentationPath = {
+	       filepath{"cache","doc"},
+	       filepath{getenv "M2HOME","m2","cache","doc"},
+	       filepath{getenv "M2HOME","packages","cache","doc"},
+	       filepath{getenv "M2HOME","packages","D-modules","cache","doc"}
+	       };
+	  )
+     )
 -----------------------------------------------------------------------------
--- initialization and finalization
+-- the phase encoding
 -----------------------------------------------------------------------------
-DocDatabase := null
-addEndFunction(() -> (
-	  if class DocDatabase === Database then (
-	       close DocDatabase;
-	       DocDatabase = null;
-	       )))
+writingDocDatabase        := () -> phase === 2 or phase === 4
+writingExampleInputFiles  := () -> phase === 2
+writingTestInputFiles     := () -> phase === 2
+readingExampleOutputFiles := () -> phase === 4
 docExtension := () -> (
      if phase === 2 then "-tmp"		  -- writing, to be renamed -pre externally
      else if phase === 3 then "-pre"	  -- reading
      else if phase === 4 then "-tmp"	  -- writing, to be renamed -doc externally
      else "-doc"			  -- reading
      )
+-----------------------------------------------------------------------------
+-- initialization and finalization
+-----------------------------------------------------------------------------
+local DocDatabase
+local nodeBaseFilename
+local exampleOutputFilename				    -- nodeBaseFilename | ( ".out" or ".tmp" )
+local exampleCounter
+local exampleInputFile
+local exampleResultsFound
+local exampleResults
 docFilename := () -> (
      progname := commandLine#0;
      if substring(progname,0,1) === "\"" then progname = substring(progname,1);
@@ -33,7 +59,7 @@ docFilename := () -> (
 	  )
      )
 
-if phase === 1 then addStartFunction( 
+addStartFunction( 
      () -> DocDatabase = (
 	  t := docFilename();
 	  try openDatabase t
@@ -41,8 +67,10 @@ if phase === 1 then addStartFunction(
 	       stderr << "--warning: couldn't open help file " << t << endl;
 	       new MutableHashTable))
      )
-
-if phase === 2 or phase === 4 then DocDatabase = openDatabaseOut docFilename()
+if writingDocDatabase() then (
+     DocDatabase = openDatabaseOut docFilename();
+     addEndFunction(() -> (close DocDatabase; DocDatabase = null; ));
+     )
 Documentation = new MutableHashTable
 duplicateDocError := nodeName -> (
      stderr << concatenate ("warning: documentation already provided for '", nodeName, "'") 
@@ -348,21 +376,72 @@ testFileCounter := 0
 exprCounter := 0
 file := null
 fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
+
+htmlFilename := fkey -> (
+     v := cacheFileName(documentationPath, fkey);
+     if v =!= {} then first v else cacheFileName(first documentationPath, fkey)
+     ) | ".html"
+
 -----------------------------------------------------------------------------
-nodeBaseFilename := ""
-exampleCounter := 0
-exampleOutputFile := null
-exampleResultsFound := false
-exampleResults := {}
+-- process examples
+-----------------------------------------------------------------------------
+checkForNodeBaseFilename := nodeName -> (
+     nodeBaseFilename = cacheFileName(documentationPath, nodeName); -- returns a list
+     assert( class nodeBaseFilename === List );
+     if #nodeBaseFilename > 1 then (
+	  stderr << "warning: documentation node '" << nodeName << "' occurs in multiple locations:" << endl;
+	  apply(nodeBaseFilename, fn -> stderr << "    " << fn << endl );
+	  );
+     nodeBaseFilename = (
+	  if #nodeBaseFilename == 0 then (
+	       if writingExampleInputFiles()
+	       then cacheFileName(first documentPath, nodeName)
+	       else null)
+	  else first nodeBaseFilename
+     	  );
+     )
+checkForExampleOutputFile := () -> (
+     exampleResultsFound = false;
+     exampleOutputFilename = null;
+     if nodeBaseFilename =!= null then (
+	  if fileExists (nodeBaseFilename | ".out")
+	  then exampleOutputFilename = nodeBaseFilename | ".out" 
+	  else (
+	       if readingExampleOutputFiles() then (
+		    -- we don't insist, but we do warn.
+		    -- we depend on the Makefile to stop 'make' if the file didn't get made
+		    stderr << "warning : can't open input file '" << nodeBaseFilename << ".out'"
+		    << endl;
+		    );
+	       if fileExists (nodeBaseFilename | ".tmp")
+	       then exampleOutputFilename = nodeBaseFilename | ".tmp" 
+	       );
+	  if exampleOutputFilename =!= null then (
+	       exampleResults = separate("\1", get exampleOutputFilename);
+	       exampleResultsFound = true;
+	       );
+	  );
+     )
+
+checkForExampleInputFile := () -> exampleInputFile = (
+     if writingExampleInputFiles() then openOut(nodeBaseFilename | ".example")
+     else null
+     )
+
+extractExamples            := method(SingleArgumentDispatch => true)
+extractExamples Thing      := x -> {}
+extractExamples EXAMPLE    := x -> toList x
+extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
+
 processExample := x -> (
      exampleCounter = exampleCounter + 1;
-     exampleOutputFile << x << endl;
-     if exampleResults#?exampleCounter
+     if exampleInputFile =!= null then exampleInputFile << x << endl;
+     if exampleResultsFound and exampleResults#?exampleCounter
      then {x, CODE exampleResults#exampleCounter}
      else (
 	  if exampleResultsFound and #exampleResults === exampleCounter then (
-	       stderr << "warning : input file " << nodeBaseFilename 
-	       << ".out terminates prematurely" << endl;
+	       stderr << "warning : input file " << exampleOutputFilename 
+	       << " terminates prematurely" << endl;
 	       );
 	  {x, CODE concatenate("i", toString exampleCounter, " = ",x)}
 	  ))
@@ -374,28 +453,21 @@ processExamplesLoop := s -> (
      else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)
-extractExamples            := method(SingleArgumentDispatch => true)
-extractExamples Thing      := x -> {}
-extractExamples EXAMPLE    := x -> toList x
-extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
+
 processExamples := (docBody) -> (
+     exampleResults = {};
+     exampleCounter = 0;
      examples := extractExamples docBody;
      if #examples > 0 then (
-	  exampleResultsFound = true;
-	  exampleResults = "";
-	  try exampleResults = get (nodeBaseFilename | ".out") else (
-	       exampleResultsFound = false;
-	       if phase === 4 or phase === 5 then (
-		    stderr << "warning : can't open input file '" << nodeBaseFilename << ".out'" << endl;
-		    );
-	       );
-	  exampleResults = separate("\1",exampleResults);
-	  exampleCounter = 0;
-	  exampleOutputFile = if phase === 2 then openOut(nodeBaseFilename | ".example");
+     	  checkForExampleOutputFile();
+     	  checkForExampleInputFile();
 	  docBody = apply(docBody,processExamplesLoop);
-	  close exampleOutputFile;
+	  if exampleInputFile =!= null then close exampleInputFile;
 	  );
-     docBody )
+     docBody)
+-----------------------------------------------------------------------------
+--
+-----------------------------------------------------------------------------
 document = method()
 document List := z -> (
      if #z === 0 then error "expected a nonempty list";
@@ -405,8 +477,7 @@ document List := z -> (
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
      -- stderr << "documenting " << nodeName << " in " << currentFileName << " in " << currentFileDirectory << endl;
-     nodeBaseFilename = cacheFileName(concatenate("",DocumentationPrefix), nodeName);
-     -- nodeBaseFilename = concatenate(currentFileDirectory, DocumentationPrefix, toFilename nodeName);
+     checkForNodeBaseFilename nodeName;
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
      )
@@ -875,8 +946,11 @@ help Thing := s -> (
 -- helper functions useable in documentation
 -----------------------------------------------------------------------------
 
-TEST = (e) -> if phase === 2 then (
-     cacheFileName concatenate("",TestsPrefix) | ".m2" << e << endl << close;
+numtests := 0
+
+TEST = (e) -> if writingTestInputFiles() then (
+     TestsPrefix | toString numtests | ".m2" << e << endl << close;
+     numtests = numtests + 1;
      null
      )
 
@@ -1315,7 +1389,7 @@ net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop
 html TO := x -> (
      fkey := formatDocumentTag x#0;
      concatenate ( 
-     	  "<A HREF=\"", cacheFileName(documentationPath, fkey), ".html", "\">", 
+     	  "<A HREF=\"", htmlFilename fkey, "\">", 
      	  htmlExtraLiteral fkey,
      	  "</A>",
      	  drop(toList x,1) 
@@ -1325,7 +1399,10 @@ tex  TO := x -> (
      node := formatDocumentTag x#0;
      tex SEQ {
      	  TT formatDocumentTag x#0,
-     	  " [", LITERAL { ///\ref{///, cacheFileName(documentationPath, node), ///}/// },
+     	  " [", LITERAL { ///\ref{///, 
+		    -- rewrite this later:
+		    -- cacheFileName(documentationPath, node),
+		    ///}/// },
 	  "]"
 	  }
      )
