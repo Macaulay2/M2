@@ -605,6 +605,30 @@ R = ZZ/101[symbol a .. symbol c]
 m = mat{{0_(raw R)}}
 rawBasis(m,{1},{1},{1},{0,1,2},false,-1)
 
+------------------------------
+-- rawRemoveScalarMultiples --
+------------------------------
+needs "raw-util.m2"
+R = ZZ/32003[a..d]
+m = matrix{{3*a^2-6*a*b, 2*a^2-4*a*b, -a^2+a*b}}
+m1 = rawRemoveScalarMultiples raw m
+assert(m1 === raw matrix{{2*a^2-4*a*b, -a^2+a*b}})
+
+m = matrix{{3*a^2-6*a*b, 2*a^2-4*a*b, -a^2+2*a*b, 0_R, 1_R}}
+m1 = rawRemoveScalarMultiples raw m
+assert(m1 === raw matrix{{-a^2+2*a*b, 1_R}})
+
+------------------------------
+-- rawRemoveMonomialFactors --
+------------------------------
+needs "raw-util.m2"
+R = ZZ/32003[a..d]
+m = matrix{{a^2*b*c*(a^3-b^3-c^3)}}
+m1 = rawRemoveMonomialFactors(raw m,true)
+m1 = rawRemoveMonomialFactors(raw m,false)
+
+
+assert(m1 === raw matrix{{2*a^2-4*a*b, -a^2+a*b}})
 
 -- Local Variables:
 -- compile-command: "M2 -e errorDepth=0 --stop -e 'load \"raw-matrix.m2\"' -e 'exit 0' "

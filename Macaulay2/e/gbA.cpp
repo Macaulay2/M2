@@ -1422,6 +1422,13 @@ void gbA::collect_syzygy(gbvector *f)
   _syz.push_back(f);
   _n_syz++;
 
+  if (gbTrace >= 10)
+    {
+      buffer o;
+      o << " new syzygy : ";
+      R->gbvector_text_out(o,_Fsyz,f);
+      emit_line(o.str());
+    }
 }
 
 void gbA::handle_elem(POLY f, gbelem_type minlevel)

@@ -303,6 +303,12 @@ public:
     return R_->PolyRing::divide_by_expvector(exp,a);
   }
 
+  const vecterm * vec_locate_lead_term(const FreeModule *F, vec v) const {
+    // Returns a pointer to the lead vector of v.
+    // This works if F has a Schreyer order, or an up/down order.
+    return R_->PolyRing::vec_locate_lead_term(F, v);
+  }    
+
   virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const {
     return R_->PolyRing::vec_lead_term(nparts, F, v);
   }
