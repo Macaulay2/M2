@@ -27,7 +27,7 @@ document { symbol lineNumber,
      Headline => "current line number",
      TT "lineNumber", " -- the current line number.",
      BR, NOINDENT,
-     TT "lineNumber = n", " -- sets the line number to ", TO "n", ".",
+     TT "lineNumber = n", " -- sets the line number to ", TT "n", ".",
      }
 
 document { FilePosition,

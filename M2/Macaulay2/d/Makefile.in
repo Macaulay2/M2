@@ -27,7 +27,7 @@ ALLOBJ += debug.o
 endif
 
 OPTCFILES += M2inits1.c M2inits2.c
-CFILES += M2inits.c M2initschk.c M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c
+CFILES += M2inits.c M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c
 SRCFILES += $(OPTCFILES) $(CFILES)
 ALLOBJ += $(CFILES:.c=.o)
 

@@ -382,7 +382,7 @@ document { factor,
      factorization is done with code of Michael Messollen (see 
      ", TO "Singular-Libfac", ").  For univariate
      polynomials the factorization is in turn done with code of 
-     Gert-Martin Greuel and Ruediger Stobbe (see ", TO "Factory library", ").",
+     Gert-Martin Greuel and Ruediger Stobbe (see ", TO "Singular-Factory", ").",
      EXAMPLE {
 	  "R = ZZ/101[u]",
       	  "factor (u^3-1)",

@@ -84,12 +84,7 @@ document { loaddata,
 	  "whether the standard input is echoed and prompts to the 
 	  standard output are properly flushed, which depends on whether 
 	  the standard input is a terminal."
-	  },
-     "THIS IS NO LONGER CORRECT: After the data segments have been reloaded, the command line arguments
-     will be dealt with in the usual way, except that only the arguments
-     after the i-th '--' and before the i+1-st '--' (if any) will be considered,
-     where ", TT "i", " is the current value of ", TO "reloaded", ".",
-     SEEALSO {"listUserSymbols"}
+	  }
      }
 
 document { buckets,
@@ -98,21 +93,6 @@ document { buckets,
      hash table ", TT "x", ".",
      PARA,
      "Each bucket is represented as a list of key/value pairs."
-     }
-
-document { ggPush,
-     Headline => "convert a push command to engine communication format",
-     TT "ggPush h", " -- provides a string which when sent to the engine will
-     cause it to push the object ", TT "h", " onto the engine's stack.",
-     PARA,
-     "This command is intended for internal use only.",
-     PARA,
-     "Warning: in an expression of the form ", TT "ggPush f()", " where ", TT "f", "
-     is a function that returns an object with a handle, there is no pointer to
-     the object retained in the string provided, so the garbage collector may
-     cause the object and its handle to be freed before the arrival of the
-     command!  The solution is to store the result in a local variable until
-     the command has been sent."
      }
 
 document { identity,
@@ -200,14 +180,6 @@ document { matches,
 	  ///matches ("asd((f)*)", "--asffff--")///
 	  },
      SEEALSO "match"
-     }
-
-document { gg,
-     Headline => "convert to engine communication format",
-     TT "gg x", " -- converts an integer, handle, or list of integers to the format
-     required for communication with the engine.",
-     PARA,
-     SEEALSO "engine communication protocol"
      }
 
 document { pairs,

@@ -15,7 +15,6 @@ local NEXT, local PREV, local UP
 local nextButton, local prevButton, local upButton
 local lastKey, local thisKey
 local linkFollowedTable, local masterIndex
-local docdatabase
 
 buildPackage := null					    -- name of the package currently being built
 topNodeName := null					    -- name of the top node of this package
@@ -32,9 +31,11 @@ rel := url -> (
      else relativizeFilename(htmlDirectory, url)
      )
 
-htmlFilename = (nodename) -> (	-- returns the relative path from the PREFIX to the file
-     pkg := package TO nodename;
-     LAYOUT#"packagehtml" pkg.name | if nodename === pkg.name then topFileName else toFilename nodename|".html" )
+htmlFilename = key -> (				   -- returns the relative path from the PREFIX to the file
+     key = normalizeDocumentTag key;
+     pkg := package TO key;
+     fkey := formatDocumentTag key;
+     LAYOUT#"packagehtml" pkg.name | if fkey === pkg.name then topFileName else toFilename fkey|".html" )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
 text IMG  := x -> ""
@@ -59,11 +60,11 @@ tex HREF := x -> (
      )
 
 html TO := x -> (
-     key := x#0;
+     key := normalizeDocumentTag x#0;
      formattedKey := formatDocumentTag key;
      concatenate ( 
      	  ///<A HREF="///,				    -- "
-	  rel htmlFilename formattedKey,
+	  rel htmlFilename key,
 	  ///">///, 					    -- "
      	  htmlExtraLiteral formattedKey,
      	  "</A>",
@@ -99,16 +100,16 @@ scope2 := method(SingleArgumentDispatch => true)
 scope1 := method(SingleArgumentDispatch => true)
 
 follow := key -> (
+     key = normalizeDocumentTag key;
      fkey := formatDocumentTag key;
      -- stderr << "key     = " << key << endl;
      -- stderr << "fkey    = " << fkey << endl; 
      -- stderr << "prefix  = " << prefix << endl; 
-     -- stderr << "linkFollowedTable#?fkey  = " << linkFollowedTable#?fkey << endl; 
-     if not linkFollowedTable#?fkey then (
-	  fn := htmlFilename fkey;
-     	  -- stderr << "fn      = " << fn << endl;
+     -- stderr << "linkFollowedTable#?key  = " << linkFollowedTable#?key << endl; 
+     if not linkFollowedTable#?key then (
+	  fn := htmlFilename key;
 	  if true or prefix == substring(fn,0,#prefix) then (	    -- don't stray outside this package???
-	       linkFollowedTable#fkey = true;
+	       linkFollowedTable#key = true;
 	       if class key =!= Option and class key =!= Sequence then masterIndex#(fkey,key) = true;
 	       saveThisKey := thisKey;
 	       saveLastKey := lastKey;
@@ -119,7 +120,7 @@ follow := key -> (
 	       lastKey = saveLastKey;
 	       )
 	  else (
-	       linkFollowedTable#fkey = false;
+	       linkFollowedTable#key = false;
 	       )
 	  )
      )
@@ -143,22 +144,23 @@ scope2 SHIELD := x -> scan(x,scope1)
 scope2 TO := scope2 TOH := x -> (
      -- here we construct the ordered tree needed for presentation in book format,
      -- with UP, NEXT, and PREVIOUS pointers.
-     key := formatDocumentTag x#0;
+     key := normalizeDocumentTag x#0;
+     fkey := formatDocumentTag key;
      if UP#?key 
      then (
-	  stderr << "error: links to '" << key << "' from two nodes: '"
+	  stderr << "error: links to '" << fkey << "' from two nodes: '"
 	  << UP#key << "' and '" << thisKey << "'" << endl
 	  )
-     else if key == thisKey then stderr << "error: node " << key << " links to itself" << endl
+     else if fkey == thisKey then stderr << "error: node " << fkey << " links to itself" << endl
      else (
-	  UP#key = thisKey;
+	  UP#fkey = thisKey;
 	  if lastKey =!= null then (
-	       PREV#key = lastKey;
-	       NEXT#lastKey = key;
+	       PREV#fkey = lastKey;
+	       NEXT#lastKey = fkey;
 	       );
-	  lastKey = key;
+	  lastKey = fkey;
 	  );
-     follow x#0;
+     follow key;
      )
 
 buttonBar := (key) -> CENTER {
@@ -197,14 +199,6 @@ pass2 := () -> (
      follow topNodeName;
      )
 
-pass3 := () -> (
-     << "pass 3, checking for unreachable documentation nodes" << endl;
-     scan(keys docdatabase,
-	  key -> (
-	       if not linkFollowedTable#?key then (
-		    haderror = true;
-		    stderr << "error: documentation node '" << key << "' not reachable" << endl ) ) ) )
-
 fakeMenu := x -> (
      --   o  item 1
      --     o  item 2
@@ -216,26 +210,26 @@ fakeMenu := x -> (
 	  }
      )
 
-makeHtmlNode = fkey -> (
-     fn := buildDirectory | htmlFilename fkey;
-     stderr << "--making html page for " << fkey << endl;
+makeHtmlNode = key -> (
+     fn := buildDirectory | htmlFilename key;
+     stderr << "--making html page for " << key << endl;
      fn << html HTML { 
-	  HEAD TITLE {fkey, headline fkey},
+	  HEAD TITLE {key, headline key},
 	  BODY { 
-	       buttonBar fkey,
-	       if UP#?fkey then SEQ {
+	       buttonBar key,
+	       if UP#?key then SEQ {
 		    "Parent headings:",
-		    fakeMenu apply(upAncestors fkey, i -> TOH i)
+		    fakeMenu apply(upAncestors key, i -> TOH i)
 		    },
 	       HR{}, 
-	       documentationMemo fkey,
+	       documentationMemo key,
 	       }
 	  }
      << endl << close)
 
 pass4 := () -> (
      << "pass 4, writing html files" << endl;
-     scan(keys linkFollowedTable, fkey -> if linkFollowedTable#fkey then makeHtmlNode fkey))
+     scan(keys linkFollowedTable, key -> if linkFollowedTable#key then makeHtmlNode key))
 
 -----------------------------------------------------------------------------
 
@@ -381,8 +375,8 @@ installPackage Package := o -> pkg -> (
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
-			 unlink tmpf;
-			 stderr << "--error return code: " << r << endl;
+			 if o.IgnoreExampleErrors then link(tmpf,outf) else unlink tmpf;
+			 stderr << "--error return code: (" << r//256 << "," << r%256 << ")" << endl;
 			 if r == 131 then (
 			      stderr << "subprocess terminated abnormally, exiting" << endl;
 			      exit r;
