@@ -306,12 +306,11 @@ void GBinhom_comp::find_pairs(gb_elem *p)
 
   // Add in syzygies arising from a base ring
 #warning "quotient ring stuff"
-#if 0
-  if (GR->is_quotient_ring())
+  if (originalR->is_quotient_ring())
     {
-      for (int i=0; i<GR->n_quotients(); i++)
+      for (int i=0; i<originalR->n_quotients(); i++)
 	{
-	  const gbvector * f = GR->quotient_element(i);
+	  const gbvector * f = originalR->quotient_gbvector(i);
 	  M->lcm(f->monom, f_m, find_pairs_lcm);
 	  vplcm.shrink(0);
 	  M->to_varpower(find_pairs_lcm, vplcm);
@@ -319,7 +318,6 @@ void GBinhom_comp::find_pairs(gb_elem *p)
 	  elems.insert(new Bag(q2, vplcm));
 	}
     }
-#endif
 
   // Add in syzygies arising as s-pairs
   for (gb_elem *s = gb->next_min; s != NULL; s = s->next_min)
@@ -477,29 +475,27 @@ int GBinhom_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
     {
       GR->gbvector_get_lead_exponents(F, f, div_totalexp);
 #warning "quotient ring stuff"
-#if 0
       Bag *b;
-      if (GR->is_quotient_ring() 
-	  && GR->get_quotient_monomials()->search_expvector(div_totalexp, b))
+      if (originalR->is_quotient_ring() 
+	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
-	  gbvector *g = (gbvector *) b->basis_ptr();
+	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,g,0);
 	  count++;
 	}
       else 
-#endif
-if (search(div_totalexp, f->comp, q))
-	{
-	  GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,q->f,q->fsyz);
-	  count++;
-	}
-      else
-	{
-	  result->next = f;
-	  f = f->next;
-	  result = result->next;
-	  result->next = 0;
-	}
+	if (search(div_totalexp, f->comp, q))
+	  {
+	    GR->gbvector_reduce_lead_term(F,Fsyz,head.next,f,fsyz,q->f,q->fsyz);
+	    count++;
+	  }
+	else
+	  {
+	    result->next = f;
+	    f = f->next;
+	    result = result->next;
+	    result->next = 0;
+	  }
     }
   if (gbTrace >= 4)
     {
@@ -535,12 +531,11 @@ int GBinhom_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
     {
       GR->gbvector_get_lead_exponents(F, lead, div_totalexp);
 #warning "quotient ring stuff"
-#if 0
       Bag *b;
-      if (GR->is_quotient_ring()
-	  && GR->get_quotient_monomials()->search_expvector(div_totalexp, b))
+      if (originalR->is_quotient_ring()
+	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
-	  gbvector *g = (gbvector *) b->basis_ptr();
+	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  GR->reduce_lead_term_heap(F,Fsyz,
 				    lead, div_totalexp, // are these two needed
 				    result,fb,fsyzb,
@@ -548,23 +543,22 @@ int GBinhom_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 	  count++;
 	}
       else 
-#endif
-if (search(div_totalexp, lead->comp, q))
-	{
-	  GR->reduce_lead_term_heap(F,Fsyz,
-				    lead, div_totalexp,
-				    result,fb,fsyzb,
-				    q->f,q->fsyz);
-	  count++;
-	}
-      else
-	{
-	  result->next = fb.remove_lead_term();
-	  result = result->next;
-	  result->next = 0;
-	}
+	if (search(div_totalexp, lead->comp, q))
+	  {
+	    GR->reduce_lead_term_heap(F,Fsyz,
+				      lead, div_totalexp,
+				      result,fb,fsyzb,
+				      q->f,q->fsyz);
+	    count++;
+	  }
+	else
+	  {
+	    result->next = fb.remove_lead_term();
+	    result = result->next;
+	    result->next = 0;
+	  }
     }
-
+  
   if (gbTrace >= 4)
     {
       buffer o;

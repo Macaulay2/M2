@@ -75,3 +75,15 @@ rawbettimat = (C,typ) -> (
      w1 := drop(w,3);
      matrix pack(w1,w#2+1)
      )
+
+rawgb = (m) -> (
+  Gcomp = rawGB(m,false,0,{},false,0,0,0);
+  rawStartComputation Gcomp;
+  rawGBGetMatrix Gcomp)
+
+rawsyz = (m) -> (
+  Gcomp = rawGB(m,true,-1,{},false,0,0,0);
+  rawStartComputation Gcomp;
+  rawGBSyzygies Gcomp)
+
+          

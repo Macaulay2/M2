@@ -13,12 +13,13 @@
 class gbA : public GBComputation {
 public:
   enum gbelem_type { 
-    ELEM_IN_STONE,  // These are ring elements
-    ELEM_TRIMMED,   // These are min GB elements which might also be min gens
+    ELEM_IN_RING,  // These are ring elements
+    ELEM_POSSIBLE_MINGEN,   // These are min GB elements which might also be min gens
+                            // In the graded case, they ARE minimal generators
     ELEM_MIN_GB,    // These are elements which are minimal GB elements
     ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
   };
-  
+
   struct gbelem : public our_new_delete {
     POLY g;
     int deg;
@@ -91,6 +92,9 @@ private:
   MinimalGB *minimal_gb;
   //vector<POLY,gc_alloc> minimal_gb; // Contains NO quotient ring elements
   bool minimal_gb_valid;
+
+  const MonomialTable *ringtable;    // At most one of these two will be non-NULL.
+  const MonomialTableZZ *ringtableZZ;
 
   MonomialTable *lookup;
   MonomialTableZZ *lookupZZ; // Only one of these two will be non-NULL.
@@ -202,8 +206,8 @@ private:
   bool reduce(spair *p);
   void collect_syzygy(gbvector *fsyz);
 
-  void insert(POLY f, int minlevel);
-  void handle_elem(POLY f, int minlevel);
+  void insert(POLY f, gbelem_type minlevel);
+  void handle_elem(POLY f, gbelem_type minlevel);
   bool s_pair_step();
   enum ComputationStatusCode computation_is_complete();
 

@@ -220,7 +220,8 @@ bool GBKernelComputation::find_ring_divisor(const int *exp, ring_elem &result)
   Bag *b;
   if (!R->get_quotient_monomials()->search_expvector(exp, b))
     return false;
-  result = (Nterm *) b->basis_ptr();
+  int index = b->basis_elem();
+  result = R->quotient_element(index);
   return true;
 }
 

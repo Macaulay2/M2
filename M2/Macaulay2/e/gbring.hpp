@@ -115,11 +115,17 @@ protected:
 		       int *exp3,
 		       int *exp4);
 
-  virtual gbvector *mult_by_term(const FreeModule *F,
+  virtual gbvector *mult_by_term1(const FreeModule *F,
 				 const gbvector *f,
 				 ring_elem u,
 				 const int *monom,
 				 int comp) = 0;
+
+  gbvector *mult_by_term(const FreeModule *F,
+			 const gbvector *f,
+			 ring_elem u,
+			 const int *monom,
+			 int comp);
   
   int skew_mult_sign(int *exp1, int *exp2) const;
   // returns -1 if exp1 * exp2 = - sort(exp1,exp2).
@@ -437,7 +443,7 @@ protected:
   friend class GBRing;
   GBRingPoly(const Ring *K0, const Monoid *M0) : GBRing(K0,M0) { }
 public:
-  virtual gbvector *mult_by_term(const FreeModule *F,
+  virtual gbvector *mult_by_term1(const FreeModule *F,
 				 const gbvector *f,
 				 ring_elem u,
 				 const int *monom,
@@ -451,7 +457,7 @@ protected:
   friend class GBRing;
   GBRingWeyl(const Ring *K0, const Monoid *M0, const WeylAlgebra *R0);
 public:
-  virtual gbvector *mult_by_term(const FreeModule *F,
+  virtual gbvector *mult_by_term1(const FreeModule *F,
 				 const gbvector *f,
 				 ring_elem u,
 				 const int *monom,
@@ -465,7 +471,7 @@ protected:
   friend class GBRing;
   GBRingWeylZZ(const Ring *K0, const Monoid *M0, const WeylAlgebra *R0);
 public:
-  virtual gbvector *mult_by_term(const FreeModule *F,
+  virtual gbvector *mult_by_term1(const FreeModule *F,
 				 const gbvector *f,
 				 ring_elem u,
 				 const int *monom,
@@ -480,7 +486,7 @@ protected:
   GBRingSkew(const Ring *K0, const Monoid *M0, SkewMultiplication skew0);
 
 public:
-  virtual gbvector *mult_by_term(const FreeModule *F,
+  virtual gbvector *mult_by_term1(const FreeModule *F,
 				 const gbvector *f,
 				 ring_elem u,
 				 const int *monom,
@@ -494,7 +500,7 @@ protected:
   friend class GBRing;
   GBRingSolvable(const Ring *K0, const Monoid *M0, const SolvableAlgebra *R0);
 public:
-  virtual gbvector *mult_by_term(const FreeModule *F,
+  virtual gbvector *mult_by_term1(const FreeModule *F,
 				 const gbvector *f,
 				 ring_elem u,
 				 const int *monom,

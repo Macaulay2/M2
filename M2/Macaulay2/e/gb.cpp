@@ -324,12 +324,11 @@ void GB_comp::find_pairs(gb_elem *p)
   // Add in syzygies arising from a base ring
 
 #warning "put back quotient ring stuff here"
-#if 0
   if (originalR->is_quotient_ring())
     {
-      for (int i=0; i<_GR->n_quotients(); i++)
+      for (int i=0; i<originalR->n_quotients(); i++)
 	{
-	  const gbvector * f = _GR->quotient_element(i);
+	  const gbvector * f = originalR->quotient_gbvector(i);
 	  _M->lcm(f->monom, f_m, find_pairs_lcm);
 	  vplcm.shrink(0);
 	  _M->to_varpower(find_pairs_lcm, vplcm);
@@ -337,7 +336,6 @@ void GB_comp::find_pairs(gb_elem *p)
 	  elems.insert(new Bag(q, vplcm));
 	}
     }
-#endif
   // Add in syzygies arising as s-pairs
   MonomialIdeal *mi1 = _monideals[p->f->comp]->mi;
   for (Index<MonomialIdeal> i = mi1->first(); i.valid(); i++)
@@ -449,18 +447,15 @@ void GB_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
     {
       Bag *b;
       _GR->gbvector_get_lead_exponents(_F, f, div_totalexp);
-#warning "put back quotient ring stuff"
-#if 0
       if (originalR->is_quotient_ring() 
-	  && _GR->get_quotient_monomials()->search_expvector(div_totalexp, b))
+	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
-	  gbvector *g = (gbvector *) b->basis_ptr();
+	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  _GR->gbvector_reduce_lead_term(_F,_Fsyz,head.next,f,fsyz,g,0);
 	  count++;
 	  _n_reductions++;
 	}
       else 
-#endif
 	if (_monideals[f->comp]->mi_search->search_expvector(div_totalexp, b))
 	{
 	  gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());
@@ -520,11 +515,10 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
       Bag *b;
       _GR->gbvector_get_lead_exponents(_F, lead, div_totalexp);
 #warning "put back quotient ring stuff"
-#if 0
-      if (_GR->is_quotient_ring() 
-	  && _GR->get_quotient_monomials()->search_expvector(div_totalexp, b))
+      if (originalR->is_quotient_ring() 
+	  && originalR->get_quotient_monomials()->search_expvector(div_totalexp, b))
 	{
-	  gbvector *g = (gbvector *) b->basis_ptr();
+	  const gbvector *g = originalR->quotient_gbvector(b->basis_elem());
 	  _GR->reduce_lead_term_heap(_F,_Fsyz,
 				    lead, div_totalexp, // are these two needed
 				    result,fb,fsyzb,
@@ -532,7 +526,6 @@ void GB_comp::gb_geo_reduce(gbvector * &f, gbvector * &fsyz)
 	  count++;
 	}
       else 
-#endif
 	if (_monideals[lead->comp]->mi_search->search_expvector(div_totalexp, b))
 	{
 	  gb_elem *q = reinterpret_cast<gb_elem *>(b->basis_ptr());

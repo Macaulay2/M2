@@ -129,9 +129,8 @@ private:
   // Ring information
   const PolynomialRing *originalR;
   GBRing *GR;
-  const PolynomialRing *R;
-  const Monoid *M; // flattened monomials (same as R->getMonoid())
-  const Ring *K;  // flattened coefficients (same as R->getCoefficients())
+  const Monoid *M; // flattened monomials (same as originalR->getMonoid())
+  const Ring *K;  // flattened coefficients (same as originalR->getCoefficients())
 
   FreeModule *F;
   FreeModule *Fsyz;	// This is a Schreyer module

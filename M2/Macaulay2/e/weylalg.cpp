@@ -6,8 +6,6 @@
 #include "geopoly.hpp"
 #include "text_io.hpp"
 
-#include "weylfree.hpp"
-
 bool WeylAlgebra::initialize_weyl(
 	M2_arrayint derivs,
 	M2_arrayint comms,

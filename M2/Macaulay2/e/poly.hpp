@@ -32,7 +32,10 @@ class GBComputation;
 class PolynomialRing : public Ring
 {
   bool is_graded_;
+  vector<Nterm *, gc_alloc> quotient_ideal_;
+  vector<gbvector *, gc_alloc> quotient_gbvectors_;
 protected:
+  void appendQuotientElement(Nterm *f, gbvector *g);
   void setIsGraded(bool new_val) { is_graded_ = new_val; }
 
   virtual ~PolynomialRing();
@@ -72,8 +75,7 @@ public:
   // If this ring has no denominators, NULL is returned.  Otherwise the ring which
   // implements denominators is returned.  When one asks for a denominator for elements of
   // 'this', the result value is its ring.
-#if 0
-#endif
+
   virtual GBRing *get_gb_ring() const = 0;
 
   virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
@@ -83,7 +85,12 @@ public:
 
   // Quotient ring information
   virtual bool        is_quotient_ring() const { return false; }
-  virtual MonomialIdeal *  get_quotient_monomials() const = 0;
+  virtual const MonomialTable * get_quotient_MonomialTable() const { return 0; }
+  virtual const MonomialIdeal *  get_quotient_monomials() const { return 0; }
+  virtual const MonomialTableZZ * get_quotient_MonomialTableZZ() const { return 0; }
+  int n_quotients() const { return quotient_ideal_.size(); }
+  Nterm * quotient_element(int i) const { return quotient_ideal_[i]; }
+  const gbvector * quotient_gbvector(int i) const { return quotient_gbvectors_[i]; }
   
   // skew commutativity 
   virtual bool is_skew_commutative() const { return false; }
@@ -109,12 +116,10 @@ public:
   // Arithmetic //////////
   ////////////////////////
 
-#if 0
   virtual ring_elem from_double(double n) const = 0;
   virtual ring_elem from_int(int n) const = 0;
   virtual ring_elem from_int(mpz_ptr n) const = 0;
   virtual ring_elem var(int v, int n) const = 0;
-#endif
 
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const = 0;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const = 0;

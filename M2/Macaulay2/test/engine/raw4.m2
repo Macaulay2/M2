@@ -1,9 +1,82 @@
 -- MES
 -- Test of the rawGB commands
 
-load "raw-util.m2"
+-----------------------------
+-- GB's over finite fields --
+-- simplest examples --------
+-----------------------------
+--- simplest example
+needs "raw-util.m2"
+algorithm = 0
+R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
 
-R1 = polyring(rawQQ(), (symbol x, symbol y, symbol z))
+G = mat {{x,y,z}}
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp -- Groebner basis
+assert(m === mat{{z,y,x}})
+-----------------------------
+--- Test 1A.
+needs "raw-util.m2"
+R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
+G = mat {{x,y,z^2, x*z+z^2}}
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp -- Groebner basis
+assert(m == mat{{y,x,z^2}})
+m1 = rawGBMinimalGenerators Gcomp -- mingens
+assert(m1 == mat{{y,x,z^2}})
+-----------------------------
+--- Test 2. 
+needs "raw-util.m2"
+algorithm = 0
+R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
+G = mat {{x*y-y^2, x^2}}
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp -- Groebner basis
+assert(m == mat{{x*y-y^2, x^2, y^3}})
+
+Gcomp = rawGB(G,true,-1,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBSyzygies Gcomp
+m = rawGBGetMatrix Gcomp
+RawStatusCodes#(rawStatus1 Gcomp)
+rawStatus2 Gcomp -- last degree something was computed in
+
+assert(rawGBMatrixRemainder(Gcomp,mat{{x*y}}) === mat{{y^2}})
+-----------------------------
+--- Test 3. 
+-- a simple GB, and testing min gens
+needs "raw-util.m2"
+algorithm = 0
+R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
+G = mat {{x*y-y^2, x^2, y^4}}
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp -- Groebner basis
+assert(m == mat{{x*y-y^2, x^2, y^3}})
+assert(rawGBMinimalGenerators(Gcomp) == mat{{x*y-y^2, x^2}})
+-----------------------------
+--- Test: 2: simple example of powers of linear forms.
+-- 
+needs "raw-util.m2"
+algorithm = 0
+R1 = polyring(rawZZp(101), (symbol x, symbol y, symbol z))
+
+G = mat{{(3*x+y+z)^2, (7*x+2*y+3*z)^2}}
+Gcomp = rawGB(G,false,0,{},false,0,0,0)
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp
+answerm = mat{{(21*x^2-2*y^2+42*x*z+8*y*z+13*z^2)//(21_R1),
+	       (42*x*y+13*y^2-84*x*z-10*y*z-32*z^2)//(42_R1),
+	       y^3-6*y^2*z+12*y*z^2-8*z^3}}
+assert(m == answerm)     -- FIX THE SORTED ORDER OF A GROEBNER BASIS!!
+-----------------------------
+
+
+
+
 
 R1 = rawPolynomialRing(rawQQ(), singlemonoid{x,y,z})
 x = rawRingVar(R1,0,1)
@@ -443,7 +516,63 @@ Gcomp = rawGB(G,false,0,{},false,0,0,0)
 << "can we get thisZZ GB working?" << endl;
 --time rawStartComputation Gcomp
 --m1 = rawGBGetMatrix Gcomp;
+-----------------------------------
+-- Groebner bases over quotients --
+-----------------------------------
+needs "raw-util.m2"
+R = polyring(rawZZp 101, (symbol x, symbol y, symbol z, symbol w))
+G = mat{{x*w-y*z, y^2-x*z}}
+m = rawgb G
+A = rawQuotientRing(R,m)
+P = mat{{rawPromote(A,x)}}
+rawsyz P
 
+P = mat{{rawPromote(A,x), rawPromote(A,y), rawPromote(A,z), rawPromote(A,w)}}
+rawsyz P
+
+m = mat{{x^2+y^2, z^2+w^2}}
+A = rawQuotientRing(R,m)
+P = mat{{rawPromote(A,x), rawPromote(A,y), rawPromote(A,z), rawPromote(A,w)}}
+P1 = rawsyz P
+P2 = rawsyz P1
+P3 = rawsyz P2
+P * P1
+P1 * P2
+P2 * P3 -- NOT ZERO !! -- BUG BUG
+P4 = rawsyz P3
+P3 * P4 -- NOT ZERO !! -- BUG BUG
+-----------------------------------------
+-- Groebner bases over quotients of ZZ --
+-----------------------------------------
+needs "raw-util.m2"
+R = polyring(rawZZ(), (symbol x, symbol y, symbol z, symbol w))
+f1 = 36*x*y-5*z^2
+f2 = 8*x*y-z
+G1 = rawgb mat{{f1,f2}}
+A = rawQuotientRing(R, mat{{f1}})
+m = mat{{rawPromote(A,f2)}}
+G2 = rawgb m
+assert(toString G1 == toString G2) -- this doesn't insure that they are the same...
+--------------------------------
+-- Groebner bases over ZZ/p[i]/(i^2+1)
+needs "raw-util.m2"
+R = polyring(rawZZ(), 1 : symbol i)
+A = rawQuotientRing(R, mat{{i^2+1}})
+i = rawPromote(A,i)
+assert(i^2 == -1)
+S = polyring(A,(symbol x, symbol y, symbol z))
+  -- BUG: quotient element not re-introduced.
+
+needs "raw-util.m2"
+R = polyring(rawZZ(), (symbol i, symbol x))
+A = rawQuotientRing(R, mat{{i^2+1}})
+i = rawPromote(A,i)
+x = rawPromote(A,x)
+rawsyz mat{{x^2-1}} -- CRASH
+assert(i^2 == -1)
+S = polyring(A,(symbol x, symbol y, symbol z))
+  -- BUG: quotient element not re-introduced.
+  
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine raw4.okay "
 -- compile-command: "M2 --debug-M2 --stop -e 'input \"raw4.m2\"' -e 'exit 0' "

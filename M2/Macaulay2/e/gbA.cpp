@@ -94,12 +94,26 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
     lookup = MonomialTable::make(R->n_vars());
 
   if (over_ZZ())
-    minimal_gb = new MinimalGB_ZZ(R,_F,_Fsyz);
+    minimal_gb = new MinimalGB_ZZ(R,originalR,_F,_Fsyz);
   else
-    minimal_gb = new MinimalGB_Field(R,_F,_Fsyz);
+    minimal_gb = new MinimalGB_Field(R,originalR,_F,_Fsyz);
   minimal_gb_valid = true;
   _EXP = R->exponents_make();
 
+  if (originalR->is_quotient_ring())
+    {
+      ringtable = originalR->get_quotient_MonomialTable();
+      ringtableZZ = originalR->get_quotient_MonomialTableZZ();
+
+      _first_gb_element = originalR->n_quotients();
+      for (int i=0; i<_first_gb_element; i++)
+	{
+	  const gbvector *f = originalR->quotient_gbvector(i);
+	  int deg = R->gbvector_term_weight(_F, f);
+	  gbelem *g = gbelem_make(f, 0, ELEM_IN_RING, deg);
+	  gb.push_back(g);
+	}
+    }
   for (int i=0; i<m->n_cols(); i++)
     {
       ring_elem denom;
@@ -650,7 +664,7 @@ void gbA::update_pairs(int id)
   for (int i=_first_gb_element; i<id; i++)
     {
       gbelem *g = gb[i];
-      if (g->minlevel <= ELEM_MIN_GB && gbelem_COMPONENT(g) == x)
+      if (g->minlevel != ELEM_NON_MIN_GB && gbelem_COMPONENT(g) == x)
 	{
 	  spair *s = spair_make(id,i);
 	  new_set.push_back(s);
@@ -902,6 +916,7 @@ bool gbA::reduce(spair *p)
 	      {
 		// f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
 		// p <-- c*p-d*f
+#warning "quotient ring handling, lookupZZ needs to change too?"
 		gbelem *g = gb[t->_val];
 		if (gbTrace >= 10)
 		  {
@@ -1021,10 +1036,8 @@ int gbA::find_good_monomial_divisor_ZZ(
   ealpha = degf - R->exponents_weight(e);
 
   /* First search for ring divisors */
-#if 0
-  /* MES: removed until ringtable is functional */
-  n += ringtable->find_divisors(-1, e, 1, &divisors);
-#endif
+  if (ringtableZZ)
+    n += ringtableZZ->find_monomial_divisors(-1, e, 1, &divisors);
 
   /* Next search for GB divisors */
   n += lookupZZ->find_monomial_divisors(-1, e, x, &divisors);
@@ -1068,10 +1081,8 @@ int gbA::find_good_term_divisor_ZZ(
   ealpha = degf - R->exponents_weight(e);
 
   /* First search for ring divisors */
-#if 0
-  /* MES: removed until ringtable is functional */
-  n += ringtable->find_divisors(-1, e, 1, &divisors);
-#endif
+  if (ringtableZZ)
+    n += ringtableZZ->find_term_divisors(-1, c, e, 1, &divisors);
 
   /* Next search for GB divisors */
   n += lookupZZ->find_term_divisors(-1, c, e, x, &divisors);
@@ -1114,10 +1125,8 @@ int gbA::find_good_divisor(exponents e,
   ealpha = degf - R->exponents_weight(e);
 
   /* First search for ring divisors */
-#if 0
-  /* MES: removed until ringtable is functional */
-  n += ringtable->find_divisors(-1, e, 1, &divisors);
-#endif
+  if (ringtable)
+    n += ringtable->find_divisors(-1, e, 1, &divisors);
 
   /* Next search for GB divisors */
   n += lookup->find_divisors(-1, e, x, &divisors);
@@ -1332,7 +1341,7 @@ void gbA::auto_reduce_by(int id)
     }
 }
 
-void gbA::insert(POLY f, int minlevel)
+void gbA::insert(POLY f, gbelem_type minlevel)
 {
   /* Reduce this element as far as possible.  This either removes content, 
      makes it monic, or at least negates it so the lead coeff is positive. */
@@ -1341,17 +1350,13 @@ void gbA::insert(POLY f, int minlevel)
 
   _stats_ngb++;
 
-  //  int me = G->insert(f.f, f.fsyz, (gbelem_type)minlevel, _this_degree);
-
-#warning "this cast should not be needed"
-  gbelem *g = gbelem_make(f.f, f.fsyz, static_cast<gbelem_type>(minlevel), _this_degree);
+  gbelem *g = gbelem_make(f.f, f.fsyz, minlevel, _this_degree);
   minimal_gb_valid = false;
   int me = gb.size();
   gb.push_back(g);
   
   int x = g->g.f->comp;
 
-  // ZZZZ split
   if (over_ZZ())
     lookupZZ->insert(MPZ_VAL(g->g.f->coeff),g->lead,x,me);
   else
@@ -1368,7 +1373,7 @@ void gbA::insert(POLY f, int minlevel)
       R->gbvector_text_out(o,_Fsyz,g->g.fsyz);
       emit_line(o.str());
     }
-  if (minlevel <= ELEM_MIN_GB)
+  if (minlevel != ELEM_NON_MIN_GB)
     update_pairs(me);
 
   auto_reduce_by(me);
@@ -1390,6 +1395,7 @@ void gbA::insert(POLY f, int minlevel)
 	}
       else
 	{
+#warning "todo: codimension stop condition"
 	  // codim test is set.  Compute the codimension now.
 	}
     }
@@ -1408,7 +1414,7 @@ void gbA::collect_syzygy(gbvector *f)
 
 }
 
-void gbA::handle_elem(POLY f, int minlevel)
+void gbA::handle_elem(POLY f, gbelem_type minlevel)
 {
   if (!R->gbvector_is_zero(f.f))
     {
@@ -1432,15 +1438,14 @@ void gbA::handle_elem(POLY f, int minlevel)
 
 bool gbA::s_pair_step()
 {
-  int minlevel;
   spair *p = spair_set_next();
   if (!p) return false;
 
   _stats_npairs++;
-  minlevel = (p->type == SPAIR_GEN ? 0 : 1); /* MES: Fix this line */
 
   if (reduce(p)) /* i.e. if the reduction is not deferred */
     {
+      gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_POSSIBLE_MINGEN : ELEM_MIN_GB);
       POLY f = p->x.f;
       spair_delete(p);
 
@@ -1558,55 +1563,6 @@ void gbA::start_computation()
 /*******************************
  ** Minimalization of the GB ***
  *******************************/
-#if 0
-void gbA::poly_auto_reduce_ZZ(vector<POLY,gc_alloc> &mat)
-{
-  MonomialTableZZ *T = MonomialTableZZ::make(_nvars);
-  vector<POLY,gc_alloc> polys;
-
-  for (int i=0; i<mat.size(); i++)
-    {
-      remainder_by_ZZ(_F,_Fsyz,
-		      mat[i],
-		      polys, T);
-      R->gbvector_get_lead_exponents(_F, mat[i].f, _EXP);
-      T->insert(MPZ_VAL(mat[i].f->coeff), _EXP, mat[i].f->comp, i);
-      polys.push_back(mat[i]);
-    }
-}
-
-void gbA::poly_auto_reduce(vector<POLY,gc_alloc> &mat)
-{
-  if (over_ZZ())
-    {
-      poly_auto_reduce_ZZ(mat);
-      return;
-    }
-  for (vector<POLY,gc_alloc>::iterator i = mat.begin(); i != mat.end(); i++)
-    //    for (vector<POLY,gc_alloc>::iterator j = mat.begin(); j != i; j++)
-    for (vector<POLY,gc_alloc>::iterator j = i-1; j >= mat.begin(); j--)
-      {
-	R->gbvector_auto_reduce(_F,_Fsyz,
-				(*i).f, (*i).fsyz,
-				(*j).f, (*j).fsyz);
-      }
-}
-
-struct gbelem_sorter : public binary_function<int,int,bool> {
-  GBRing *R;
-  const FreeModule *F;
-  const vector<gbA::gbelem *,gc_alloc> &gb;
-  gbelem_sorter(GBRing *R0,
-		const FreeModule *F0,
-		const vector<gbA::gbelem *,gc_alloc> &gb0)
-    : R(R0), F(F0), gb(gb0) {}
-  bool operator()(int xx, int yy) {
-    gbvector *x = gb[xx]->g.f;
-    gbvector *y = gb[yy]->g.f;
-    return R->gbvector_compare(F,x,y) == LT;
-  }
-};
-#endif
 void gbA::minimalize_gb()
 {
   if (minimal_gb_valid) return;
@@ -1614,7 +1570,7 @@ void gbA::minimalize_gb()
   vector<POLY,gc_alloc> polys;
   for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
     {
-      //      if ((*i)->minlevel <= ELEM_MIN_GB)
+      if ((*i)->minlevel != ELEM_NON_MIN_GB)
 	{
 	  polys.push_back((*i)->g);
 	}
@@ -1625,83 +1581,6 @@ void gbA::minimalize_gb()
 
 
   minimal_gb_valid = true;
-#if 0
-  // Place into _minimal_gb a sorted minimal GB
-  vector<exponents,gc_alloc> exps;
-  vector<int,gc_alloc> comps;
-  vector<int,gc_alloc> positions;
-  exps.reserve(gb.size());
-  comps.reserve(gb.size());
-  positions.reserve(gb.size());
-
-  for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
-    {
-      //      if ((*i)->minlevel <= ELEM_MIN_GB)
-	{
-	  exponents e = (*i)->lead;
-	  exps.push_back(e);
-	  int x = (*i)->g.f->comp; // component of this element
-	  comps.push_back(x);
-	}
-    }
-
-  if (over_ZZ())
-    {
-      vector<mpz_ptr,gc_alloc> coeffs;
-      for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
-	coeffs.push_back(MPZ_VAL((*i)->g.f->coeff));
-
-      MonomialTableZZ::find_strong_generators(_nvars,
-					      coeffs, 
-					      exps,
-					      comps,
-					      positions);
-    }
-  else
-    MonomialTable::minimalize(_nvars,
-			      exps,
-			      comps,
-			      false,
-			      positions);
-
-  if (gbTrace >= 10)
-    {
-      buffer o;
-      for (unsigned int i=0; i<positions.size(); i++)
-	{
-	  o << i << '\t';
-	  R->gbvector_text_out(o, _F, gb[positions[i]]->g.f);
-	  o << newline;
-	}
-      emit_line(o.str());
-    }
-
-  // Now sort 'positions'.
-  sort(positions.begin(), positions.end(), gbelem_sorter(R,_F,gb));
-
-  for (vector<int,gc_alloc>::iterator i = positions.begin(); i != positions.end(); i++)
-    {
-      // possibly first copy gb[*i]->g...
-      minimal_gb.push_back(gb[*i]->g);
-    }
-
-  if (gbTrace >= 10)
-    {
-      buffer o;
-      for (unsigned int i=0; i<minimal_gb.size(); i++)
-	{
-	  o << i << '\t';
-	  R->gbvector_text_out(o, _F, minimal_gb[i].f);
-	  o << newline;
-	}
-      emit(o.str());
-    }
-
-  
-  poly_auto_reduce(minimal_gb);
-
-  minimal_gb_valid = true;
-#endif
 }
 
 /*******************************
@@ -1771,7 +1650,7 @@ const MatrixOrNull *gbA::get_mingens()
 {
   MatrixConstructor mat(_F,0,false/*not mutable*/);
   for (vector<gbelem *,gc_alloc>::iterator i = gb.begin(); i != gb.end(); i++)
-    if ((*i)->minlevel <= ELEM_TRIMMED)
+    if ((*i)->minlevel == ELEM_POSSIBLE_MINGEN)
       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
   return mat.to_matrix();
 
@@ -1973,85 +1852,6 @@ void gbA::showgb()
     }
   emit(o.str());
 }
-
-#if 0
-void gbA::remainder_by(const FreeMoudle *F,
-		       const FreeModule *Fsyz,
-		       POLY &f,
-		       const vector<POLY,gc_alloc> &polys,
-		       MonomialTable *T,
-		       bool use_denom,
-		       ring_elem &denom)
-{
-  gbvector head;
-  gbvector *frem = &head;
-  frem->next = 0;
-  POLY h = f;
-  while (!R->gbvector_is_zero(h.f))
-    {
-      int alpha;
-      R->gbvector_get_lead_exponents(_F, h.f, _EXP);
-      int x = h.f->comp;
-      int nmatches = T->find_divisors(1,_EXP,x,divisors);
-        // replaced alpha, g.
-      if (nmatches < 0)
-	{
-	  frem->next = h.f;
-	  frem = frem->next;
-	  h.f = h.f->next;
-	  frem->next = 0;
-	}
-      else
-	{
-	  POLY g = polys[0]->g;
-	  R->gbvector_reduce_lead_term(_F, _Fsyz,
-				       head.next,
-				       h.f, h.fsyz,
-				       g.f, g.fsyz,
-				       use_denom, denom);
-	}
-    }
-  h.f = head.next;
-  R->gbvector_remove_content(h.f, h.fsyz, use_denom, denom);
-  f.f = h.f;
-  f.fsyz = h.fsyz;
-}
-
-
-void gbA::remainder_by_ZZ(const FreeModule *F,
-			  const FreeModule *Fsyz,
-			  POLY &f,
-			  const vector<POLY,gc_alloc> &polys,
-			  MonomialTableZZ *T)
-{
-  gbvector head;
-  gbvector *frem = &head;
-  frem->next = 0;
-  POLY h = f;
-  while (!R->gbvector_is_zero(h.f))
-    {
-      R->gbvector_get_lead_exponents(_F, h.f, _EXP);
-      int x = h.f->comp;
-      int w = T->find_smallest_coeff_divisor(_EXP,x); // gives smallest coeff
-      // of all elements dividing _EXP*x
-      if (w >= 0)
-	{
-	  POLY g = polys[w];
-	  if (R->gbvector_reduce_lead_term_ZZ(_F, _Fsyz,
-					      h.f, h.fsyz,
-					      g.f, g.fsyz))
-	    continue;
-	}
-      frem->next = h.f;
-      frem = frem->next;
-      h.f = h.f->next;
-      frem->next = 0;
-    }
-  h.f = head.next;
-  f.f = h.f;
-  f.fsyz = h.fsyz;
-}
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
