@@ -101,7 +101,7 @@ ARGS := -q -silent '-eloaddata("../cache/Macaulay2-$(ARCH).data")' -- '-erunStar
 phase1 :: ../cache/Macaulay2-$(ARCH).data
 ../cache/Macaulay2-$(ARCH).data : $(DUMPEDGFILES) ../bin/Macaulay2
 	rm -f ../cache/Macaulay2-$(ARCH).data
-	../bin/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-eexit(0)'
+	../bin/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2
 endif

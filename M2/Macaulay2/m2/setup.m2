@@ -270,11 +270,7 @@ document { quote Options,
 
 -- if phase===1 or phase===2 or phase===4 then exportDocumentation()
 
--- the first function run at restart
-addStartFunction(
-     -- We left dumpdata.m2 open when we dumped data!  So now we close it.
-     () -> scan(openFiles(), f -> if f =!= stdio and f =!= stderr then try close f)
-     )
+addEndFunction(() -> scan(openFiles(), f -> if isOutputFile f then flush f))
 
 -- the last function restarted
 addStartFunction(

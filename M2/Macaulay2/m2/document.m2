@@ -4,12 +4,11 @@ endFunctions := {}
 addEndFunction = g -> (
      endFunctions = append(endFunctions,g);
      g)
-exit1 := ret -> (
-     scan(endFunctions, f -> f());
-     exit ret)
+runEndFunctions = () -> scan(endFunctions, f -> f())
+
+exit1 := ret -> (runEndFunctions(); exit ret)
 erase quote exit
 exit = exit1
-protect quote exit
 
 erase quote [
 
@@ -18,7 +17,14 @@ between = (m,v) -> mingle(v,#v-1:m)
 -----------------------------------------------------------------------------
 
 ExampleHashTable := new MutableHashTable
+
 DocDatabase := null
+addEndFunction(() -> (
+	  if class DocDatabase === Database then (
+	       close DocDatabase;
+	       DocDatabase = null;
+	       )))
+
 docExtension := () -> (
      if phase === 2 then ".tmp"		  -- writing, to be renamed .pre
      else if phase === 3 then ".pre"	  -- reading temporary one renamed
@@ -36,14 +42,15 @@ docFilename := () -> (
 	       pathSeparator, "Macaulay2", docExtension())))
 
 if phase === 1 then addStartFunction( 
-     () -> DocDatabase = (
+     () -> (
 	  try (
-	       g := openDatabase docFilename();
+	       DocDatabase = openDatabase docFilename();
 	       -- << "--using help file " << docFilename() << endl;
-	       g)
+	       )
 	  else (
 	       stderr << "--warning: couldn't open help file " << docFilename() << endl;
-	       new MutableHashTable)))
+	       DocDatabase = new MutableHashTable;
+	       )))
 
 if phase === 2 or phase === 4 then DocDatabase = openDatabaseOut docFilename()
 

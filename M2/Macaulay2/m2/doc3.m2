@@ -144,6 +144,8 @@ document { "programming",
 	  (TO "notImplemented", "    -- 'not implemented yet' error message"),
 	  (TO "processArgs", "       -- process optional arguments to functions"),
 	  (TO "protect", "           -- protecting the value of a symbol"),
+	  (TO "runEndFunctions", "   -- run the ending functions"),
+	  (TO "runStartFunctions", " -- run the starting functions"),
 	  (TO "setrecursionlimit", " -- limits on recursion depth"),
 	  SHIELD {
 	       (TO "syntax", "            -- the syntax of the language")
