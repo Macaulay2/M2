@@ -140,7 +140,7 @@ DISTFILES = 	Macaulay2/README \
 		Macaulay2/licenses \
 		Macaulay2/setup \
 		Macaulay2/cache/Macaulay2.doc \
-		Macaulay2/bin Macaulay2/m2 Macaulay2/emacs #Macaulay2/tutorial/final/*.out
+		Macaulay2/bin Macaulay2/m2 Macaulay2/emacs Macaulay2/tutorial/final/*.out
 Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
 	tar cf - $(DISTFILES) | gzip >$@
 clean ::; rm -f Macaulay2-$(DESC).tar.gz
