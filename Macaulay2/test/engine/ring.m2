@@ -171,6 +171,7 @@ I = image f
 G = gb I
 peek G
 peek G.matrix
+gens G
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "
