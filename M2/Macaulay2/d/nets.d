@@ -211,11 +211,7 @@ export wrap(wid:int, sep:char, t:Net):Net := (
      leftbkpt := 0;
      nextleftbkpt := 0;
      rightbkpt := 0;
-     while (
-	  while leftbkpt < t.width && blankcolumn(leftbkpt,t) do leftbkpt = leftbkpt+1;
-	  leftbkpt < t.width
-	  )
-     do (
+     while true do (
 	  breaks << leftbkpt;
 	  n := leftbkpt + wid;
 	  nextleftbkpt = n;
@@ -238,6 +234,8 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 	  while rightbkpt>leftbkpt && blankcolumn(rightbkpt-1,t) do rightbkpt = rightbkpt-1;
 	  breaks << rightbkpt;
 	  leftbkpt = nextleftbkpt;
+	  while leftbkpt < t.width && blankcolumn(leftbkpt,t) do leftbkpt = leftbkpt+1;
+	  if leftbkpt >= t.width then break;
 	  );
      j := 0;
      VerticalJoin(
