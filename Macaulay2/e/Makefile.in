@@ -186,7 +186,7 @@ geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
 # this target is used by the Makefile in the parent directory
 initialize :: $(addsuffix .hpp, $(GENERATED_H))
 
-tags:: TAGS
+all tags:: TAGS
 TAGS: $(HHFILES) $(CCFILES); etags $^
 clean::; rm -f *.lo *.o $(LIBGB) TAGS $(addsuffix .hpp, $(GENERATED_H))
 clean::; $(MAKE) -C tests $@
