@@ -192,7 +192,7 @@ endif
 ifndef NOSTATIC
 ifeq ($(OS),Linux)
 # so I tried it, but it doesn't work...
-ALLOBJ += /usr/lib/libnsl.a /usr/lib/libnss_*.a
+# ALLOBJ += /usr/lib/libnsl.a /usr/lib/libnss_*.a
 endif
 endif
 
