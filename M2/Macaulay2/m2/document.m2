@@ -711,16 +711,18 @@ briefSynopsis := key -> (
      ino = apply(sortByName unique join(keys opt,keys ino),
 	  optionName -> (
 	       fn := if class key === Sequence then key#0 else value key;
+	       hd := headline [fn,optionName];
+	       if hd =!= null then hd = SEQ{ ", ", hd };
 	       fixup (
 		    if opt#?optionName
 	       	    then (
 			 defaultValue := opt#optionName;
 			 -- ino#optionName used to give the name of the variable used as value
-			 SEQ { TO2{ [fn,optionName], concatenate(toString optionName," => ...") } }
+			 SEQ { TO2{ [fn,optionName], concatenate(toString optionName," => ...") }, hd }
 			 )
 	       	    else (
 			 stderr << "--warning: " << optionName << " not an option for documentation key " << key << endl;
-			 SEQ { TO2{ [fn,optionName], concatenate(toString optionName," => ...") } }
+			 SEQ { TO2{ [fn,optionName], concatenate(toString optionName," => ...") }, hd }
 			 ))));
      (inp',out') := types key;
      if out' === {Thing} then out' = {};		    -- not informative enough
@@ -897,7 +899,7 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 		    if #d > 0 then PARA1 {"Other things", smenuCLASS d}})))
 
 documentation Symbol := S -> (
-     a := apply(select(optionFor S,f -> isDocumentableMethod f), f -> f => S);
+     a := apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      b := documentableMethods S;
      Hypertext fixuptop ( title S, synopsis S, makeDocBody S, op S,
 	  if #a > 0 then (PARA {"Functions with optional argument named ", toExternalString S, " :"}, smenu a),

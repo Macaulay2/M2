@@ -121,7 +121,7 @@ minors(ZZ,Matrix) := Ideal => options -> (j,m) -> (
      else (
        --if options.Limit =!= Infinity or options.Start =!= null then
 	--    someMinors(j,m,options)
-       if options.?First and options.First =!= null then
+       if options.First =!= null then
 	    someMinors(j,m,options)
        else (
 	  strat := getMinorsStrategy(ring m,options);

@@ -136,7 +136,7 @@ document {
      }
 
 document {
-     Key => (bFunction,Strategy),
+     Key => [bFunction,Strategy],
      Headline => "specify strategy for computing b-function",
      UL { 
 	  {BOLD "IntRing", " -- the simplest algorithm available. 
@@ -263,7 +263,7 @@ document {
 
 
 document {
-     Key => (globalBFunction,Strategy),
+     Key => [globalBFunction,Strategy],
      Headline => "specify strategy for computing global b-function",
      UL { 
 	  {BOLD "IntRing, TryGeneric, NonGeneric", 
@@ -515,7 +515,7 @@ document {
      }  
 
 document {
-     Key => (localCohom,Strategy),
+     Key => [localCohom,Strategy],
      Headline => "specify strategy for local cohomology",
      "This option together with ", TO "LocStrategy", " determines a strategy for ", 
      TT "localCohom(...Ideal...)", " and ", TT "localCohom(...Ideal, Module...)", ".",
@@ -561,9 +561,9 @@ document {
      "see ", TO "localCohom"
      } 
 document {
-     Key => (LocStrategy) }
+     Key => LocStrategy }
 document {
-     Key => (localCohom,LocStrategy),
+     Key => [localCohom,LocStrategy],
      Headline => "specify localization strategy for local cohomology",
      "See ", TO (localCohom,Strategy)
      }
@@ -796,7 +796,7 @@ document {(isHolonomic),
      Headline => "determines whether a D-module (or ideal in Weyl algebra) is holonomic"
      } 
 document {
-     Key => (DHom,Strategy),
+     Key => [DHom,Strategy],
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
@@ -842,7 +842,7 @@ document {
      }
 
 document {
-     Key => (DExt,Strategy),
+     Key => [DExt,Strategy],
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
@@ -955,7 +955,7 @@ document {
      },
 
 document {
-     Key => (PolyExt,Strategy),
+     Key => [PolyExt,Strategy],
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
@@ -1043,7 +1043,7 @@ document {
      },
 
 document {
-     Key => (RatExt,Strategy),
+     Key => [RatExt,Strategy],
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
@@ -1415,7 +1415,7 @@ document {
      }
 
 document {
-     Key => (Dlocalize,Strategy),
+     Key => [Dlocalize,Strategy],
      Headline=>"strategy for computing a localization of a D-module",
      UL{
 	  {BOLD "Oaku", " -- use the Oaku algorithm"},
@@ -1541,7 +1541,7 @@ document {
 
 
 document {
-     Key => (Dresolution,Strategy),
+     Key => [Dresolution,Strategy],
      Headline => "strategy for computing a resolution of a D-module",
      UL { 
 	  {BOLD "Schreyer", 
@@ -1618,7 +1618,7 @@ document {
      }	
 
 document {
-     Key => (Drestriction,Strategy),
+     Key => [Drestriction,Strategy],
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 	  }
@@ -1792,7 +1792,7 @@ document {
      }
 
 document {
-     Key => (Dintegration,Strategy),
+     Key => [Dintegration,Strategy],
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }
@@ -2088,7 +2088,7 @@ document {
      SEEALSO {"Dlocalize", "singLocus", "Drank"}
      }
 document {
-     Key => (deRham,Strategy),
+     Key => [deRham,Strategy],
 	  "Option is passed to Dresolution. See ",
 	  TO (Dresolution,Strategy)
 }

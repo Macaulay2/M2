@@ -585,7 +585,29 @@ document {
      in any order, and may even occur before the required inputs.  If more than one optional input with the same
      option name are given, then the value accompanying the right-most one is the value provided to the function.",
      PARA,
-     "Use ", TO (options,Function), " to discover the optional arguments accepted by a function."
+     "Use ", TO2{ (options,Function), "options" }, " to discover the optional arguments accepted by a function.",
+     SUBSECTION "Examples",
+     EXAMPLE {
+     	  "R = ZZ/101[x,y,z,w];",
+     	  "gb ideal(x*y-z^2,y^2-w^2)",
+	  "gens oo"
+	  },
+     "One of the optional arguments for ", TO "gb", "
+     is named ", TO "DegreeLimit", "; we may use ", TO2{ (options,Function), "options" }, " to discover that,
+     as follows.",
+     EXAMPLE {
+	  "options gb"
+	  },
+     "The optional input named ", TO "DegreeLimit", " can be used to specify that the computation should stop after a certain degree has been reached.",
+     EXAMPLE {
+	  "gb(ideal(x*y-z^2,y^2-w^2), DegreeLimit => 2)",
+	  "gens oo",
+	  },
+     SUBSECTION "Programming hint",
+     "The value returned by ", TO2{ (options,Function), "options" }, " is a type of hash table that can be used to obtain default values.",
+     EXAMPLE {
+	  "(options gb).Syzygies"
+	  }
      }
 
 -- Local Variables:
