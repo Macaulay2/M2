@@ -148,7 +148,7 @@ buttonBar := (key) -> TABLE { {
 
 	  } }
 
-documentationMemo := memoize documentation		    -- for speed
+documentationMemo := memoize ( key -> documentation(key, Examples => false) )
 
 BUTTON := (s,alt) -> (
      s = rel s;
