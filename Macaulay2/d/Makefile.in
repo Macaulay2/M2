@@ -160,6 +160,8 @@ M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h memdebug.h
 gmp_int.o M2lib.o scclib.ogdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/config.h
 memdebug.o scclib.o actors5.o : memdebug.h
 
+all :: tokens_stub.o
+
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 layout.m2 : ../../include/config.Makefile
