@@ -28,8 +28,8 @@ INTERFACE = \
 	computation \
 	comp_gb \
 	gbA \
-	gbasis \
 	montable \
+	montableZZ \
 	schorder \
 	monorder \
 	GF \

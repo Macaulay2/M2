@@ -7,6 +7,7 @@ using namespace std;
 #include <memory>
 #include <algorithm>
 #include <stdio.h>
+#include <gmp.h>
 
 #include "newdelete.hpp"
 
@@ -31,6 +32,7 @@ public:
     exponents _lead;		/* Who owns this? */
     unsigned long _mask;
     int       _val;
+    mpz_ptr   _coeff;           /* If not given, this is NULL */
   };
 
   static MonomialTable *make(int nvars);
@@ -48,6 +50,8 @@ public:
   /* Insert [exp,comp,id] into the table.  If there is already
      an element which is <= [exp,comp], this triple is still
      inserted.  If that is not desired, use find_divisors.
+     WARNING: once 'insert' is called, insert_ZZ, find_divisors_ZZ  routines
+     should not be called.
   */
 
   int find_divisors(int max,
@@ -74,9 +78,38 @@ public:
 
   void show(FILE *fil); /* Only for debugging */
 
+  bool insert_ZZ(mpz_ptr coeff, exponents exp, int comp, int &id);
+  /* Insert [coeff,exp,comp,id] into the table.  If there is already
+     an element [coeff',exp,comp,id'], then replace id', coeff' with these
+     new values, return true, and set id := id'.
+     If no such node with same [exp,comp] exists, return false.
+  */
+  
+  int find_divisors_ZZ(int max,
+		    mpz_ptr coeff,
+		    exponents exp, 
+		    int comp,
+		    vector<mon_term *,gc_alloc> *result = 0) const;
+  /* max: the max number of divisors to find. 
+     [coeff,exp,comp]: the term whose divisors we seek.
+     result: an array of mon_term's.
+     return value: length of this array, i.e. the number of matches found */
+
+  static void minimalize_ZZ(int nvars,
+			    const vector<mpz_ptr,gc_alloc> &coeffs,
+			    const vector<exponents,gc_alloc> &exps, 
+			    const vector<int,gc_alloc> &comps,
+			    bool keep_duplicates, 
+			    vector<int,gc_alloc> &result_positions
+			    );
+
+
 private:
   int _nvars;
   int _count;
+  int _coeffs_ZZ; /* starts at 0.  Set to 1 if insert_ZZ is called.  Set to
+		     -1 if insert is called.  If < 0 then insert_ZZ, find_divisors_ZZ
+		     cannot be called (internal error). */
   vector<mon_term *,gc_alloc> _head; /* One per component */
 
   static mon_term *make_list_head();

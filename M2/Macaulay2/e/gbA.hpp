@@ -7,31 +7,56 @@
 
 #include "gbring.hpp"
 #include "montable.hpp"
-#include "gbasis.hpp"
+#include "montableZZ.hpp"
 
 class gbA : public GBComputation {
+public:
+  enum gbelem_type { 
+    ELEM_IN_STONE,  // These are ring elements
+    ELEM_TRIMMED,   // These are min GB elements which might also be min gens
+    ELEM_MIN_GB,    // These are elements which are minimal GB elements
+    ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
+  };
+  
+  struct POLY {
+    gbvector *f;
+    gbvector *fsyz;
+  };
+
+  struct gbelem : public our_new_delete {
+    POLY g;
+    int deg;
+    int alpha; // the homogenizing degree
+    exponents lead; // -1..nvars-1, the -1 part is the component
+    gbelem_type minlevel;
+  };
+
 private:
   /* Types of minimality */
   enum spair_type {
     SPAIR_SPAIR,
+    SPAIR_GCD_ZZ,
     SPAIR_RING,
     SPAIR_SKEW,
     SPAIR_GEN,
     SPAIR_ELEM
   };
 
+
 public:
   // This is only public to allow spair_sorter to use it!!
   struct spair : public our_new_delete {
     spair *next;
-    spair_type type; /* SPAIR_SPAIR, SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
+    spair_type type; /* SPAIR_SPAIR, SPAIR_GCD_ZZ, 
+			SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
     int deg;
     exponents lcm; /* Contains homogenizing variable, component */
     union {
       POLY f; /* SPAIR_GEN, SPAIR_ELEM */
       struct pair {
 	int i,j; /* i refers to a GB element. j refers to GB element (SPAIR_SPAIR)
-		    or a ring element (SPAIR_RING) or a variable number (SPAIR_SKEW) */
+		    or a ring element (SPAIR_RING) or a variable number (SPAIR_SKEW)
+		    or an SPAIR_GCD_ZZ */
       } pair;
     } x;
     gbvector *&f() { return x.f.f; }
@@ -56,12 +81,22 @@ private:
   // Data
   const PolynomialRing *originalR;
   GBRing *R;
+
   // Ring information
 
   const FreeModule *_F;
   const FreeModule *_Fsyz;
   int _nvars;
-  GBasis *G;
+
+  vector<gbelem *,gc_alloc> gb; // Contains any quotient ring elements
+
+  vector<POLY,gc_alloc> minimal_gb; // Contains NO quotient ring elements
+  bool minimal_gb_valid;
+
+  MonomialTable *lookup;
+  MonomialTableZZ *lookupZZ; // Only one of these two will be non-NULL.
+
+  exponents _EXP; // Used in 'remainder'
 
   SPairSet S;
   vector <gbvector *,gc_alloc> _syz;
@@ -71,6 +106,7 @@ private:
   int _n_rows_per_syz;
   bool _collect_syz;
   bool _is_ideal;
+  bool over_ZZ; /* true if the original coeff ring is ZZ, not QQ or a finite field */
   int _first_gb_element; /* First index past the skew variable squares, quotient elements,
 			   in the array in G */
 
@@ -97,17 +133,23 @@ private:
   void lead_exponents(gbvector *f, exponents e);
   void lead_exponents_deg(gbvector *f, exponents e, int deg);
 
-  int gbelem_COMPONENT(GBasis::gbelem *g) { return g->g.f->comp; }
+  int gbelem_COMPONENT(gbelem *g) { return g->g.f->comp; }
   int spair_COMPONENT(spair *s) { 
     // Only valid if this is an SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW.
     // Probably better is to put it into spair structure.
-    return G->gb[s->x.pair.i]->g.f->comp;
+    return gb[s->x.pair.i]->g.f->comp;
   }
+
+  gbelem *gbelem_make(gbvector *f,  // grabs f
+		      gbvector *fsyz, // grabs fsyz
+		      gbelem_type minlevel,
+		      int deg);
 
   /* spair creation */
   /* negative indices index quotient ring elements */
   spair *spair_node();
   spair *spair_make(int i, int j);
+  spair *spair_make_gcd_ZZ(int i, int j);
   spair *spair_make_gen(POLY f);
   spair *spair_make_skew(int i, int v);
   spair *spair_make_ring(int i, int j);
@@ -115,11 +157,13 @@ private:
   void spair_delete(spair *&p);
 
   /* spair handling */
-  bool pair_not_needed(spair *p, GBasis::gbelem *m);
+  bool pair_not_needed(spair *p, gbelem *m);
   void remove_unneeded_pairs(int id);
   bool is_gcd_one_pair(spair *p);
   spairs::iterator choose_pair(spairs::iterator first, spairs::iterator next);
   void minimalize_pairs(spairs &new_set);
+  void minimalize_pairs_ZZ(spairs &new_set);
+  void minimalize_pairs_non_ZZ(spairs &new_set);
   void update_pairs(int id);
 
   /* spair set handling */
@@ -143,14 +187,50 @@ private:
   void collect_syzygy(gbvector *fsyz);
 
   void insert(POLY f, int minlevel);
+  void handle_elem(POLY f, int minlevel);
   bool s_pair_step();
   enum ComputationStatusCode computation_is_complete();
 
-  /* Making the minimal GB */
-  void poly_auto_reduce(vector<POLY,gc_alloc> &mat);
 
   virtual bool stop_conditions_ok() { return true; }
 
+private:
+  int insert(gbvector *f, gbvector *fsyz, gbelem_type minlevel, int deg);
+    // returns integer index of this inserted element
+
+  /* Making the minimal GB */
+
+  void poly_auto_reduce(vector<POLY,gc_alloc> &mat);
+
+  void minimalize_gb();
+
+  int find_good_divisor(exponents e,
+			int x,
+			int degf, 
+			int &result_alpha);
+
+  int find_good_monomial_divisor_ZZ(
+				    mpz_ptr c,
+				    exponents e,
+				    int x,
+				    int degf, 
+				    int &result_alpha);
+
+  int find_good_term_divisor_ZZ(
+				mpz_ptr c,
+				exponents e,
+				int x,
+				int degf, 
+				int &result_alpha);
+
+  void remainder(POLY &f, int degf, bool use_denom, ring_elem &denom);
+  // denom must start out as an element of the base R->get_flattened_coefficients().
+  // denom is multiplied by the coefficient which is multiplied to f in order to
+  // reduce f.
+  // i.e. the result g satisfies: g = c*f mod GB, where new(denom) = c * old(denom).
+
+  void remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom);
+  void remainder_non_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom);
 public:
   //////////////////////////
   // Computation routines //
