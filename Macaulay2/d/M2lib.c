@@ -2,6 +2,9 @@
 
 #include "types.h"
 
+#ifdef MP
+#include "mpversion.h"
+#endif
 
 #if !(defined(GDBM) || defined(NDBM))
 #define GDBM
@@ -610,7 +613,7 @@ int SPINCOUNT = 10000;
 int spincount = 10000;		/* this one is decremented during loops */
 
 void spincursor(){
-     /*spincount = SPINCOUNT;*/
+     spincount = SPINCOUNT;
 #ifdef __MWERKS__
      SpinCursor();
 #endif
@@ -671,7 +674,7 @@ static void *first_rw_page_after_etext() {
      }
 #endif
 
-static int probe();
+static int probe() __attribute__ ((unused));
 
 int system_dumpdata(datafilename)
 M2_string datafilename;

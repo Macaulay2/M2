@@ -15,15 +15,13 @@ void advance(){
 	       cur.column = 0;
      	       break;
 	       }
+#if 0
 	  case '\t': {
 	       cur.column = roundup(cur.column+1,tabwidth); 
 	       break;
 	       }
+#endif
 	  default: {
-	       if (c < ' ' || c == 127) {
-		    cur.column += 2;
-		    break;
-		    }
 	       cur.column++;
 	       }
 	  }
