@@ -1341,7 +1341,6 @@ storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,globalDict
 export setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
 export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
 
-export stopIfError := false;
 export lineNumber := 0;
 
 backtraceS := dummySymbol;

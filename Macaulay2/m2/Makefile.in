@@ -30,6 +30,8 @@ endif
 
 DUMPEDM2FILES := $(LOADSEQUENCE) setup.m2 startup.m2 $(MADEM2FILES)
 
+DUMPEDM2FILES += $(DOCSEQUENCE) # this depends on whether we load the documentation in last.m2
+
 ifneq "$(DUMPDATA)" "no"
 DUMPEDM2FILES := $(DUMPEDM2FILES)
 endif
