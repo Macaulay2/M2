@@ -499,15 +499,6 @@ getenvfun(e:Expr):Expr := (
      else WrongArgString());
 setupfun("getenv",getenvfun);
 
-getcwdfun(e:Expr):Expr := (
-     when e
-     is s:Sequence do
-     if length(s) == 0
-     then Expr(getcwd())
-     else WrongNumArgs(0)
-     else WrongNumArgs(0));
-setupfun("currentDirectory",getcwdfun);
-
 getfun(e:Expr):Expr := (
      when e
      is f:file do (

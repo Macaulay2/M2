@@ -335,7 +335,7 @@ action := hashTable {
      };
 
 action2 := hashTable {
-     "-E" => arg -> if phase == 1 then value arg,
+     "-E" => arg -> if phase == 2 then value arg,
      "-e" => arg -> if phase == 3 then value arg,
      "--print-width" => arg -> if phase == 3 then printWidth = value arg
      }
@@ -409,11 +409,12 @@ if firstTime and not nosetup then (
      )
 processCommandLineOptions 2
 runStartFunctions()
-errorDepth = loadDepth+1
+errorDepth = loadDepth
 if not noinitfile then (
      -- the location of init.m2 is documented in the node "initialization file"
      tryLoad ("init.m2", homeDirectory | packageSuffix | "init.m2");
      );
+errorDepth = loadDepth+1				    -- anticipate loadDepth being 2 later
 processCommandLineOptions 3
 n := interpreter()					    -- loadDepth is incremented by commandInterpreter
 if class n === ZZ and 0 <= n and n < 128 then exit n

@@ -16,6 +16,10 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The function 'currentDirectory' has been replaced by a variable whose
+value is the current working directory.  During a session, it doesn't
+change, because there is no M2 command to change the working directory.
+
 New variable 'homeDirectory' contains the path to the user's home
 directory.
 

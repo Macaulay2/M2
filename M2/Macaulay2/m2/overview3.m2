@@ -774,7 +774,7 @@ document {
      directory to be loaded automatically when the program is started, then the
      following line of code can be placed in the file ", TT "init.m2", ".",
      PRE {
-	  ///if fileExists "start.m2" then load(currentDirectory()|"start.m2")///
+	  ///if fileExists "start.m2" then load(currentDirectory|"start.m2")///
 	  }
      }
 

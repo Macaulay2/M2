@@ -850,10 +850,10 @@ userMacaulay2Directory := () -> (
 -- startup of Macaulay2, unless you use the "-q" option.
 
 -- Uncomment the following line to cause Macaulay2 to load "start.m2" in the current working directory upon startup.
--- if fileExists "start.m2" then load(currentDirectory()|"start.m2")
+-- if fileExists "start.m2" then load(currentDirectory|"start.m2")
 
 -- Uncomment and edit the following lines to add your favorite directories containing Macaulay 2
--- source code files the load path.  Terminate each directory name with a "/".
+-- source code files to the load path.  Terminate each directory name with a "/".
 -- path = join( { homeDirectory | "src/singularities/", "/usr/local/src/M2/" }, path )
 
 -- Uncomment the following line if you prefer Macaulay2's larger 2-dimensional display form for matrices.
