@@ -2,6 +2,8 @@ Changes made, most recent ones first:
 
 New in 0.8.42:
 
+SEEALSO now takes a list of items instead of a sequence of items
+
 graphIdeal now returns an ideal instead of a matrix
 
 Formerly once could specify that a hash table assigned to the variable X 

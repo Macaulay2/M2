@@ -17,8 +17,14 @@ String ^ ZZ := (s,i) -> raise(horizontalJoin s,i)
 Net ^ ZZ := raise; erase quote raise
 net Net := x -> ( 
      s := concatenate("+", width x : "-", "+");
-     t := (verticalJoin (height x + depth x : "|")) ^ (height x - 1);
-     (s || t | x | t || s) ^ (height x)
+     n := height x + depth x;
+     if n === 0 then (
+     	  (s || x || s) ^ (height x)
+	  )
+     else (
+     	  t := (verticalJoin (n : "|")) ^ (height x - 1);
+     	  (s || t | x | t || s) ^ (height x)
+	  )
      )
 
 comma := ", "

@@ -157,7 +157,7 @@ document { quote exteriorPower,
      PARA,
      "The rows and columns are indexed in the same order as that used by
      ", TO "subsets", " when listing the subsets of a set.",
-     SEEALSO ("minors", "det", "wedgeProduct")
+     SEEALSO {"minors", "det", "wedgeProduct"}
      }
 
 document { quote minors,
@@ -174,7 +174,7 @@ document { quote minors,
 	  TO "MinorsComputation"
 	  },
      PARA,
-     SEEALSO ("det", "exteriorPower")
+     SEEALSO {"det", "exteriorPower"}
      }
 
 TEST "

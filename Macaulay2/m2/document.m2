@@ -141,9 +141,9 @@ formatDocumentTag = s -> concatenate (
 		    then ("new ", name s#1, " from ", name s#2)
 		    else if s#0 === NewOfMethod
 		    then ("new ", name s#1, " of ", name s#2)
-		    else if string s#0 === " "
+		    else if s#0 === quote " "
 		    then (name s#1, " ", name s#2)
-		    else (name s#1, " ", string s#0, " ", name s#2)
+		    else (formatDocumentTag s#1, " ", string s#0, " ", name s#2)
 		    )
 	       else if s#0 === homology
 	       then ("HH_", name s#1, " ", name s#2)
@@ -212,7 +212,7 @@ help2 := (o,s) -> (
      d := doc s;
      if d === null 
      then o << "No documentation available for '" << formatDocumentTag s << "'." << endl
-     else o << "Documentation for " << formatDocumentTag s << endl << text d << endl;
+     else o << "Documentation for " << formatDocumentTag s << ":" << endl << endl << text d << endl;
      )
 
 OS := "operating system"
@@ -393,7 +393,10 @@ document = z -> (
 	  -- p for the function f
 	  fn := key#0;
 	  opt := key#1;
-	  if not (options fn)#?opt then error ("expected ", name opt, " to be an option of ", name fn);
+	  if not (options fn)#?opt then error("expected ", name opt, " to be an option of ", name fn);
+	  );
+     if class key === Sequence and class lookup key =!= Function then (
+	  error("expected a method for ", formatDocumentTag key);
 	  );
      if phase === 1 and not writableGlobals#?key and class key === Symbol then protect key;
      if documentableValue key then Documentation#(value key) = key;
@@ -429,11 +432,11 @@ exportDocumentation = () -> (
      )
 
 SEEALSO = v -> (
-     if class v =!= Sequence then v = seq v;
+     if class v =!= List then v = {v};
      if #v > 0 then (
 	  PARA, 
 	  "See also ",
-	  if #v === 1 then {TO v#0}
+	  if #v === 1 then TO v#0
 	  else if #v === 2 then {TO v#0, " and ", TO v#1}
 	  else mingle(
 	       apply(v, i -> TO {i}),
@@ -448,7 +451,7 @@ document { quote document,
      PARA,
      "The documentation d should be ", TO "hypertext", ".",
      PARA,
-     SEEALSO ("help", "doc", "phase", "examples", "Documentation")
+     SEEALSO {"help", "doc", "phase", "examples", "Documentation"}
      }
 
 document { quote TEST,
@@ -464,7 +467,7 @@ document { quote between,
      }
 
 document { quote SEEALSO,
-     TT "SEEALSO (\"a\",\"b\")", " -- inserts, into a documentation page, a sentence
+     TT "SEEALSO {\"a\",\"b\"}", " -- inserts, into a documentation page, a sentence
      instructing the reader to see some other topics.",
      PARA,
      SEEALSO "document"
@@ -531,7 +534,7 @@ document { quote examples,
      PARA,
      EXAMPLE ///examples partitions///,
      EXAMPLE ///print \ examples partitions;///,
-     SEEALSO ("document", "printExamples")
+     SEEALSO {"document", "printExamples"}
      }
 
 TEST ///
@@ -549,7 +552,7 @@ document { quote printExamples,
      ", TT "f", ".",
      PARA,
      EXAMPLE "printExamples partition",
-     SEEALSO ("examples", "document")
+     SEEALSO {"examples", "document"}
      }
 
 document { quote Documentation,

@@ -66,7 +66,7 @@ document { quote Type,
      "A type is a hash table intended to contain methods for 
      its instances.",
      PARA,
-     SEEALSO ("parent",  "class", "using methods")
+     SEEALSO {"parent",  "class", "using methods"}
      }
 
 document { "enclosed",
@@ -150,7 +150,7 @@ document { quote name,
      NOINDENT,
      TT "x.name = \"x\"", " -- sets the name of ", TT "x", " to ", TT "\"x\"", ".",
      PARA,
-     SEEALSO( "describe")
+     SEEALSO{ "describe"}
      }
 
 document { quote setrecursionlimit,
@@ -228,16 +228,16 @@ document { quote HashTable,
      PARA,
      "Access functions:",
      MENU {
- 	  TO "#",
- 	  TO ".",
+ 	  TO quote #,
+ 	  TO quote .,
  	  TO "pairs",
  	  TO "keys",
  	  TO "values"
  	  },
      "Query functions:",
      MENU {
- 	  TO "#?",
- 	  TO ".?",
+ 	  TO quote #?,
+ 	  TO quote .?,
 	  TO "mutable"
  	  },
      "Structural functions:",
@@ -253,7 +253,7 @@ document { quote HashTable,
 	  TO "hashTable",
  	  TO "merge",
      	  TO "new",
-	  TO "new HashTable from List",
+	  TO (NewFromMethod, HashTable, List),
 	  TO "scanKeys",
  	  TO "scanPairs",
 	  TO "select"
@@ -322,7 +322,7 @@ document { quote seq,
      produce only sequences of length 2 and greater, and the convention about 
      empty pairs of parentheses can produce only sequences of length zero.",
      PARA,
-     SEEALSO( "sequence", "lists, arrays, and sequences")
+     SEEALSO{ "sequence", "lists, arrays, and sequences"}
      }
 
 document { quote ",",
@@ -354,14 +354,14 @@ document { quote apply,
      NOINDENT,
      TT "apply(n,f)", " -- equivalent to apply(list (0 .. n-1),f), for an integer n.",
      PARA,
-     SEEALSO( "scan", "select",  "any",  "all", "member"),
+     SEEALSO{ "scan", "select",  "any",  "all", "member"},
      PARA,
      NOINDENT,
      TT "apply(x,f)", " -- produces a new hash table ", TT "y", " from
      an hash table ", TT "x", " by applying the function
      ", TT "f", " to each of the values of ", TT "x", ".  This means that
      if ", TT "x#k === v", " then ", TT "y#k === f(v)", ".",
-     SEEALSO ("List / Function", ///Function \ List///)
+     SEEALSO {(quote /,List, Function), (quote \, Function, List)}
      }
 
 document { quote scan,
@@ -372,7 +372,7 @@ document { quote scan,
      NOINDENT,
      TT "scan(n,f)", " -- equivalent to scan(0 .. n-1, f), for an integer n.",
      EXAMPLE "scan(3,print)",
-     SEEALSO ( "select", "any", "all", "member")
+     SEEALSO { "select", "any", "all", "member"}
      }
 
 document { quote scanPairs,
@@ -407,7 +407,7 @@ document { quote select,
      EXAMPLE "select({1,2,3,4,5}, odd)",
      EXAMPLE "select(2,{1,2,3,4,5}, odd)",
      PARA,
-     SEEALSO( "scan", "apply", "any", "all", "member", "mutable")
+     SEEALSO{ "scan", "apply", "any", "all", "member", "mutable"}
      }
 
 --document { quote find,
@@ -425,7 +425,7 @@ document { quote any,
      hash table, f is applied to each pair (k,x) consisting of a key k
      and a value x from v.",
      PARA,
-     SEEALSO( "scan", "apply", "select", "all", "member")
+     SEEALSO{ "scan", "apply", "select", "all", "member"}
      }
 
 document { quote describe,
@@ -447,7 +447,7 @@ document { quote input,
      "The file is sought along the ", TO "path", ", unless the name of the
      file begins with '/' or './' or '../' .",
      PARA,
-     SEEALSO( "path", "needs", "load")
+     SEEALSO{ "path", "needs", "load"}
      }
 
 document { quote load,
@@ -456,7 +456,7 @@ document { quote load,
      "The file is sought along the ", TO "path", ", unless the name of the
      file begins with the character(s) in ", TO "pathSeparator", ".",
      PARA,
-     SEEALSO( "path", "needs", "input")
+     SEEALSO{ "path", "needs", "input"}
      }
 
 document { quote needs,
@@ -500,7 +500,7 @@ document { quote append,
      PARA,
      EXAMPLE "append( {a,b,c}, x )",
      PARA,
-     SEEALSO( "prepend", "join")
+     SEEALSO{ "prepend", "join"}
      }
 
 document { quote prepend,
@@ -509,7 +509,7 @@ document { quote prepend,
      PARA,
      EXAMPLE "prepend( x, {a,b,c} )",
      PARA,
-     SEEALSO( "append", "join")
+     SEEALSO{ "append", "join"}
      }
 
 document { "--",
@@ -521,7 +521,7 @@ document { quote ascii,
      TT "ascii s", " -- convert a string to a list of ascii codes.", BR,
      "ascii v -- convert a list of ascii codes to a string.",
      PARA,
-     SEEALSO( "String" )
+     SEEALSO{ "String" }
      }
 
 document { quote transnet,
@@ -533,7 +533,7 @@ document { quote transnet,
      assembles them four at a time into integers, returning the list of
      assembled integers.",
      PARA,
-     SEEALSO( "String" )
+     SEEALSO{ "String" }
      }
 
 document { quote " ",
@@ -559,7 +559,11 @@ document { quote *,
      PARA,
      "A unary method for this operator may be installed with code such as ", 
      PRE "          * X := x -> ... ",
-     SEEALSO( "times", "product" )
+     "Here are some of the methods installed.",
+     MENU {
+	  TO (quote *, Set, Set)
+	  },
+     SEEALSO{ "times", "product" }
      }
 
 document { quote &,
@@ -614,14 +618,19 @@ document { quote ^^,
      }
 
 document { quote +,
-     TT "x + y", " -- a binary operator used for sums and union.",
+     TT "x + y", " -- a binary operator used for addition in many situations
+     and union of sets.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
      with code such as ",
      PRE "         X + Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
-     SEEALSO( "plus", "sum" )
+     PARA,
+     MENU {
+	  TO (quote +, Set, Set)
+	  },
+     SEEALSO{ "plus", "sum" }
      }
 
 document { (quote +, Set, Set),
@@ -631,23 +640,22 @@ document { (quote +, Set, Set),
      }
 
 document { quote -,
-     TT "x - y", " -- a binary operator used for subtraction and set difference.",
+     TT "x - y", " -- a binary operator used for subtraction in many situations
+     and set difference.",
+     BR,NOINDENT,
+     TT "- y", "   -- a unary operator used for negation.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
      with code such as ",
      PRE "         X - Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
-     SEEALSO( "minus" )
-     }
-
-document { "- (unary)",
-     TT "- y", " -- a unary operator used for negation.",
      PARA,
      "The user may install a method for this unary operator with code
      such as ",
      PRE "          - Y := y -> ...",
      "where ", TT "Y", " is the class of ", TT "y", ".",
+     SEEALSO{ "difference", "minus" }
      }
 
 document { quote /,
@@ -657,7 +665,14 @@ document { quote /,
      with code such as ",
      PRE "         X / Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
+     class of ", TT "y", ".",
+     MENU {
+	  TO (quote /, Ring, Ideal),
+	  TO (quote /, Module, Module),
+	  TO (quote /, Module, Ideal),
+	  TO (quote /, Ideal, Ideal),
+	  TO (quote /, List, Function)
+	  }
      }
 
 document { quote %,
@@ -736,7 +751,7 @@ document { quote substring,
      "Requests for character positions out of bounds are 
      silently ignored.",
      PARA,
-     SEEALSO( "String" )
+     SEEALSO{ "String" }
      }
 
 document { quote reverse,
@@ -755,7 +770,7 @@ document { quote read,
      PARA,
      "Input files are buffered, so the current contents of the buffer are returned
      if the buffer is not empty, otherwise reading from the file is attempted first.",
-     SEEALSO ("get", "File")
+     SEEALSO {"get", "File"}
      }
 
 document { quote get,
@@ -786,7 +801,7 @@ document { quote get,
      and version#"operating system" =!= "CYGWIN32-NT"
      and version#"operating system" =!= "CYGWIN32-95"
      then EXAMPLE "get \"$localhost:daytime\"",
-     SEEALSO( "File", "String", "read" )
+     SEEALSO{ "File", "String", "read" }
      }
 
 document { quote lines,
@@ -812,7 +827,7 @@ document { quote !,
 
 document { quote "not",
      TT "not x", " -- yields the negation of x, which must be true or false.",
-     SEEALSO( "and", "or" )
+     SEEALSO{ "and", "or" }
      }
 
 document { quote |,
@@ -824,22 +839,52 @@ document { quote |,
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
      PARA,
-     BR, NOINDENT,
-     TT "m|n", " -- produce an integer obtained from the bits of the 
-     integers ", TT "m", " and ", TT "n", " by logical 'or'.",
-     BR, NOINDENT,
-     TT "s|t", " -- concatenate strings or nets horizontally.", 
-     BR, NOINDENT,
+     MENU {
+	  TO {(quote |, List, List), " -- join two lists"},
+	  TO {(quote |, String, String), " -- concatenate two strings or nets horizontally"},
+	  TO {(quote |, ZZ, ZZ), " -- logical OR of two integers"},
+	  TO {(quote |, Matrix, Matrix), " -- join two matrices horizontally"}
+	  },
+     SEEALSO "||"
+     }
+document { (quote |, List, List),
      TT "v|w", " -- join two lists.", 
-     BR, NOINDENT,
-     TT "f|g", " -- concatenate matrices horizontally.",
      PARA,
      EXAMPLE "{1,2,3}|{4,5,6}",
-     EXAMPLE "\"abc\" | \"def\"",
+     SEEALSO "|"
+     }
+document { (quote |, String, String),
+     TT "s|t", " -- concatenates strings or nets horizontally.", 
+     PARA,
+     "The result is a string if the arguments are all strings, otherwise it
+     is a net.  The baselines of the nets are aligned.",
+     EXAMPLE ///"abc" | "def"///,
+     EXAMPLE ///x = "abc" || "ABC"///,
+     EXAMPLE ///x|"x"|x///,
+     PARA,
+     "If one of the two arguments is an integer, it is converted to a string first.",
+     EXAMPLE ///"t = " | 333///,      
+     SEEALSO {"|", "horizontalJoin", "Net"}
+     }
+document { (quote |, ZZ, ZZ),
+     TT "m|n", " -- produce an integer obtained from the bits of the 
+     integers ", TT "m", " and ", TT "n", " by logical 'or'.",
+     PARA,
+     EXAMPLE "5 | 12",
+     SEEALSO "|"
+     }
+document { (quote |, Matrix, Matrix),
+     TT "f|g", " -- concatenate matrices horizontally.",
+     PARA,
+     "It is assumed that ", TT "f", " and ", TT "g", " both have the same target.",
      EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "f = vars R",
+     EXAMPLE "f = matrix {{x,0,0},{0,y,0},{0,0,z}}",
      EXAMPLE "f|f|f",
-     SEEALSO ("||", "Net")
+     "If one of the arguments is ring element or an integer, then it
+     will be multiplied by a suitable identity matrix.",
+     PARA,
+     EXAMPLE "2|f|3",
+     SEEALSO {"|", (quote ||, Matrix, Matrix)}
      }
 
 document { quote ||,
@@ -851,29 +896,43 @@ document { quote ||,
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
      PARA,
-     TT "s||t", " -- concatenates strings or nets vertically, yielding a
-     net.",
-     TT "f||g", " -- yields the matrix obtained from matrices f and g by
+     MENU {
+	  TO (quote ||, Net, Net),
+	  TO (quote ||, Matrix, Matrix)
+	  }
+     }
+
+document { (quote ||, Net, Net),
+     TT "m||n", " -- joins nets or strings by concatenating
+     them vertically.  The baseline of the result is the baseline of the
+     first one.",
+     PARA,
+     EXAMPLE ///x = "x" | "3"^1///,
+     EXAMPLE ///"<--- " | ( x || "" || x ) | " --->"///,
+     SEEALSO {"||", "|", "Net", "verticalJoin"}
+     }
+document { (quote ||, Matrix, Matrix),
+     TT "f||g", " -- yields the matrix obtained from matrices ", TT "f", " and ", TT "g", " by
      concatenating the columns.",
-     EXAMPLE "R = ZZ/101[a..h]",
+     PARA,
+     EXAMPLE "R = ZZ[a..h]",
      EXAMPLE "p = matrix {{a,b},{c,d}}",
      EXAMPLE "q = matrix {{e,f},{g,h}}",
      EXAMPLE "p || q",
      "If one of the arguments is ring element or an integer, then it
      will be multiplied by a suitable identity matrix.",
-     EXAMPLE "p || 1",
+     EXAMPLE "p || 33",
      PARA,
-     SEEALSO("|", "Net")
+     SEEALSO{"||", (quote ||, Matrix, Matrix)}
      }
 
 document { quote "===",
      TT "x === y", " -- returns true or false depending on whether the 
      expressions x and y are strictly equal.",
      PARA,
-     "Strictly equal expressions have the same type, 
-     so ", PRE "          0===0.", " and ", PRE "          0===0/1", 
-     " are false: the three types involved here are ", TO "ZZ", ",
-     ", TO "RR", ", and ", TO "QQ", ".",
+     "Strictly equal expressions have the same type, so ", TT "0===0.", " and
+     ", TT "0===0/1", " are false; the three types involved here are ", TO
+     "ZZ", ", ", TO "RR", ", and ", TO "QQ", ".",
      PARA,
      "If x and y are ", TO "mutable", " then they are strictly equal only
      if they are identical (i.e., at the same address in memory).  For
@@ -882,7 +941,7 @@ document { quote "===",
      and y are non-mutable, then they are strictly equal if and only if
      their contents are equal.",
      PARA,
-     SEEALSO( "==",  "!=" )
+     SEEALSO{ "==",  "=!=" }
      }
 
 document { quote "=!=",
@@ -912,13 +971,13 @@ document { quote ==,
      you wanted to test strict equality, use the operator ", TO "===", " or 
      ", TO "=!=", ".",
      PARA,
-     SEEALSO( "!=" )
+     SEEALSO{ "!=" }
      }
 
 document { quote !=,
      TT "x != y", " -- the negation of ", TT "x == y", ".",
      PARA,
-     SEEALSO( "==" )
+     SEEALSO{ "==" }
      }
 
 document { quote **, 
@@ -937,6 +996,8 @@ document { (quote **, Set, Set),
      PARA,
      "Its elements are the sequences (x,y), where x is an element
      of X, and y is an element of Y.",
+     PARA,
+     EXAMPLE "set {1,2} ** set {a,b,c}",
      PARA,
      "See also ", TO "**", " and ", TO "Set", "."
      }
@@ -976,13 +1037,13 @@ document { quote random,
 document { quote true,
      PARA,
      "true -- a value indicating truth.",
-     SEEALSO("false", "Boolean")
+     SEEALSO{"false", "Boolean"}
      }
 
 document { quote false,
      PARA,
      "false -- a value indicating falsity.",
-     SEEALSO("true", "Boolean")
+     SEEALSO{"true", "Boolean"}
      }
 
 document { quote "timing",
@@ -1025,7 +1086,7 @@ document { quote null,
      EXAMPLE "x = {2,3,,4}",
      EXAMPLE "x#2",
      EXAMPLE "name x#2",
-     SEEALSO ( "Nothing" )
+     SEEALSO { "Nothing" }
      }
 
 document { quote "then",
@@ -1045,7 +1106,7 @@ document { quote "if",
      or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
      else the symbol ", TO "null", " is provided.",
      PARA,
-     SEEALSO ("then", "else")
+     SEEALSO {"then", "else"}
      }
 
 document { quote "while",
@@ -1170,14 +1231,14 @@ document { quote <<,
 	  }
      }
 
-document { "ZZ << ZZ",
+document { (quote <<,ZZ, ZZ),
      TT "i << j", " -- shifts the bits in the integer i leftward j places.",
      PARA,
      EXAMPLE "2 << 5",
      SEEALSO ">>"
      }
 
-document { "ZZ >> ZZ",
+document { (quote >>, ZZ, ZZ),
      TT "i >> j", " -- shifts the bits in the integer i rightward j places.",
      PARA,
      EXAMPLE "256 >> 5",
@@ -1202,7 +1263,7 @@ document { (quote <<, Thing),
      TO "stdout", ".",
      PARA,
      EXAMPLE "<< \"abcdefghij\" << endl",
-     SEEALSO ("<<")
+     SEEALSO {"<<"}
      }
 
 document { quote >>,
@@ -1218,16 +1279,21 @@ document { quote :,
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
      PARA,
-     TT "f : g", " -- if f and g are matrices with the same target free module,
-     computes the ideal of ring elements r which send the image of g into
-     the image of f, and returns a matrix which generates that ideal.  Also
-     works if f or g are ring elements themselves, in which case the ring
-     element is multiplied by an identity map, or if they are ideal, submodules,
-     or monomial ideals.  See also ", TO "quotient", ".",
-     BR,NOINDENT, 
-     TT "n : x", " -- if n is an integer and x is anything, return a
-     sequence consisting of x repeated n times.  A negative value for
-     ", TT "n", " will silently be treated as zero."
+     MENU {
+	  }
+     }
+
+document { (quote :, ZZ, Thing),
+     TT "n : x", " -- repetition n times of x",
+     PARA,
+     "If ", TT "n", " is an integer and ", TT "x", " is anything, return a
+     sequence consisting of ", TT "x", " repeated ", TT "n", " times.  A negative 
+     value for ", TT "n", " will silently be treated as zero.",
+     PARA,
+     "Warning: such sequences do not get automatically spliced into lists
+     containing them.",
+     PARA,
+     EXAMPLE "{5:a,10:b}"
      }
 
 document { quote getc,
@@ -1266,26 +1332,6 @@ document { quote >=,
      TO "false", " depending on whether x >= y.",
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
-     }
-
-document { "s|t",
-     TT "s|t", " -- concatenates two strings."
-     }
-
-document { "f|g",
-     TT "f|g", " -- yields the matrix obtained from the matrices ", TT "f", " and
-     ", TT "g", " by concatenating the columns.",
-     PARA,
-     "It is assumed that ", TT "f", " and ", TT "g", " both have the same target.  
-     For example,",
-     EXAMPLE "R = ZZ/101[a..f]",
-     EXAMPLE "f = matrix {{a^2, b*c, c*d}, {a-b, c-d, e-f}}",
-     EXAMPLE "g = genericMatrix(R, a, 2, 3)",
-     EXAMPLE "f | g",
-     "If one of the arguments is ring element or an integer, then it
-     will be multiplied by a suitable identity matrix.",
-     EXAMPLE "f | 1",
-     SEEALSO("||")
      }
 
 protect incomparable
@@ -1354,7 +1400,7 @@ document { quote =,
      NOINDENT,
      TT "x#k = e", "    -- assigns the value e to the key k in the hash table
      x.  Here k can be any expression.",
-     SEEALSO ("HashTable", ":=", "GlobalReleaseHook", "GlobalAssignHook")
+     SEEALSO {"HashTable", ":=", "GlobalReleaseHook", "GlobalAssignHook"}
      }
 
 
@@ -1438,7 +1484,7 @@ document { quote "global",
      EXAMPLE "num = 5",
      EXAMPLE "num",
      EXAMPLE "global num",
-     SEEALSO ("local", "quote")
+     SEEALSO {"local", "quote"}
      }
 
 document { quote erase,
@@ -1453,7 +1499,7 @@ document { quote "local",
      EXAMPLE "f = () -> ZZ[local t]",
      EXAMPLE "f()",
      EXAMPLE "t",
-     SEEALSO ("global", "quote")
+     SEEALSO {"global", "quote"}
      }
 
 document { quote quote,
@@ -1469,7 +1515,7 @@ document { quote quote,
      symbol is used by the interpreter in constructing keys for methods
      associated to the symbol.",
      EXAMPLE "quote +",
-     SEEALSO ("local", "global")
+     SEEALSO {"local", "global"}
      }
 
 document { quote gcd,
@@ -1485,7 +1531,7 @@ document { quote concatenate,
      an integer may be used to represent a number of spaces.",
      PARA,
      EXAMPLE "concatenate {\"a\",(\"s\",3,\"d\"),\"f\"}",
-     SEEALSO ( "String") 
+     SEEALSO { "String"} 
      }
 
 document { quote error,
@@ -1547,7 +1593,7 @@ document { quote mergePairs,
      collide.  The class of the result is taken to be the minimal common
      ancestor of the class of x and the class of y.",
      PARA,
-     SEEALSO ( "merge" )
+     SEEALSO { "merge" }
      }
 
 document { quote merge,
@@ -1635,8 +1681,10 @@ document { quote Ring,
 	  },
      "Here are some functions:",
      MENU {
-	  TO "0_R",
-	  TO "1_R",
+	  {TO (quote _, ZZ, Ring), " -- get integer elements of a ring."},
+	  (TO (quote _,Ring,ZZ), " -- get a generator of a ring."),
+	  (TO (quote _,Ring,String), " -- getting generators by name"),
+	  (TO (quote _,Ring,List), " -- getting monomials with given exponents"),
 	  TO "char",
 	  TO "coefficientRing",
 	  TO "lift",
@@ -1646,9 +1694,9 @@ document { quote Ring,
 	  },
      "Ways to create new rings:",
      MENU {
-	  (TO (quote **,Ring,Ring), " -- tensor product of rings."),
-	  TO "Ring Monoid",
-	  TO "symmetricAlgebra"
+	  (TO (quote **,Ring,Ring), " -- tensor product of rings"),
+	  (TO (quote " ", Ring, OrdereMonoid), " -- monoid ring"),
+	  (TO "symmetricAlgebra", " -- symmetric algebra")
 	  },
      "Here are some keys used in rings:",
      MENU {
@@ -1658,13 +1706,12 @@ document { quote Ring,
 	  }
      }
 
-document { "1_R",
-     TT "1_R", " -- provides the unit element of a ring R."
-     }
-
-document { "0_R",
+document { (quote _, ZZ, Ring),
+     TT "1_R", " -- provides the unit element of a ring R.",
+     BR, NOINDENT,
      TT "0_R", " -- provides the zero element of a ring R."
      }
+
 
 document { quote SymbolTable,
      TT "SymbolTable", " -- the class of all symbol tables.",
@@ -1893,7 +1940,7 @@ document { "Factory library",
      routines which provides for factorization of polynomials. That library
      is copyright 1996 by Gert-Martin Greuel and Ruediger Stobbe.  We provide
      a copy of the license in the file ", TT "Macaulay2/licenses/factory.lic", ".",
-     SEEALSO ("factor", "gcd")
+     SEEALSO {"factor", "gcd"}
      }
 
 document { "Factorization and characteristic sets library",
@@ -1904,7 +1951,7 @@ document { "Factorization and characteristic sets library",
      characteristic sets.  That library is copyright 1996 by Michael
      Messollen.  We provide a copy of the license in the file
      ", TT "Macaulay2/licenses/libfac.lic", ".",
-     SEEALSO ("factor", "gcd", "decompose", "irreducibleCharacteristicSeries")
+     SEEALSO {"factor", "gcd", "decompose", "irreducibleCharacteristicSeries"}
      }
 
 document { "GNU MP",
@@ -1926,7 +1973,7 @@ document { "operators",
      of them can have methods installed for handling arguments of specific
      types.",
      MENU {
-          (TO {quote " "}, " -- function application"),
+          (TO quote " ", " -- function application"),
           (TO ",", " -- separates elements of lists or sequences"),
           (TO ";", " -- statement separator"),
           (TO "=", " -- assignment"),
@@ -1948,7 +1995,6 @@ document { "operators",
           (TO "..", " -- sequence builder"),
           (TO "+", " -- addition"),
           (TO "-", " -- subtraction"),
-          (TO "- (unary)", " -- minus"),
           (TO "*", " -- multiplication"),
           (TO "/", " -- division"),
           (TO "//", " -- quotient"),
@@ -1969,7 +2015,7 @@ document { "operators",
           (TO "||", " -- vertical concatentation of strings or matrices"),
           (TO "&", " -- bit-wise and"),
           (TO ":", " -- ideal quotient, repetitions"),
-          (TO {quote "\\"}, " -- applying a function to elements of a list"),
+          (TO quote "\\", " -- applying a function to elements of a list"),
           (TO "/", " -- applying a function to elements of a list"),
           (TO "@", " -- "),
           (TO "@@", " -- composing functions"),
@@ -2225,7 +2271,7 @@ document { quote backtrace,
      "Bug: some of the expressions are reconstructed from the local variables
      of the function returning an error, so the parameters passed to the
      routine may have been replaced by new values.",
-     SEEALSO ("Expression", "Position")
+     SEEALSO {"Expression", "Position"}
      }
 
 document { quote Position,
@@ -2511,7 +2557,8 @@ document { quote basictype,
      }
 
 document { quote ++,
-     TT "M ++ N", " -- direct sum for modules, matrices, or chain complexes.",
+     TT "M ++ N", " -- direct sum for modules, matrices, or chain complexes and
+     disjoint union for sets.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator with code
      such as ",
@@ -2519,7 +2566,12 @@ document { quote ++,
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
      PARA,
-     SEEALSO ("classes", "directSum")
+     MENU {
+	  TO (quote ++,ChainComplex,ChainComplex),
+	  TO (quote ++,Module,Module),
+	  TO (quote ++, Set, Set)
+	  },
+     SEEALSO {"classes", "directSum"}
      }
 
 document { quote @@,
@@ -2559,26 +2611,30 @@ document { quote \,
      class of ", TT "y", "."
      }
 
-document { "List / Function",
+document { (quote /, List, Function),
      TT "w / f", " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
      results.  The same as ", TT "apply(w,f)", ".",
+     PARA,
+     "This operator is left associative, which means that ", TT "w / f / g", "
+     is interpreted as meaning ", TT "(w / f) / g", ".",
      EXAMPLE "{1,2,3} / (i -> i+1) / (j -> j^2)",
-     SEEALSO ("apply", ///Function \ List///)
+     SEEALSO {"apply", (quote \,Function, List)}
      }
 
-document { ///Function \ List///,
+document { (quote \,Function, List),
      TT ///f \ w///, " -- apply the function ", TT "f", " to each member of the 
      list or sequence ", TT "w"," returning a list or sequence containing the 
      results.  The same as ", TT "apply(w,f)", ".",
      PARA,
-     "This operator is right associative, and the precendence is lower than 
-     that of ", TT "@@", ".  Hence, the following two examples yield the same
-     result.",
+     "This operator is right associative, which means that ", TT ///g \ f \ w///, "
+     is interpreted as meaning ", TT ///g \ (f \ w)///, ".",
+     EXAMPLE ///(j -> j^2) \ (i -> i+1) \ {1,2,3}///,
+     "The precendence is lower than that of ", TT "@@", ".  Hence, the following 
+     two examples yield the same result.",
      EXAMPLE ///sin \ sin \ {1,2,3}///,
      EXAMPLE ///sin @@ sin \ {1,2,3}///,
-     EXAMPLE ///(j -> j^2) \ (i -> i+1) \ {1,2,3}///,
-     SEEALSO ("apply", "@@", "List / Function")
+     SEEALSO {"apply", "@@", (quote /,List, Function)}
      }
 
 document { quote String,
@@ -2607,13 +2663,13 @@ document { quote String,
      PARA,
      "Operations on strings:",
      MENU {
-	  (TO "s#i", "        -- getting a character from a string"),
- 	  (TO "s|t", "        -- concatenation"),
- 	  (TO "ascii", "      -- ASCII conversion"),
- 	  (TO "substring", "     -- substring extraction"),
- 	  (TO "concatenate", "     -- concatenation"),
+	  (TO "String # ZZ", " -- getting a character from a string"),
+	  (TO quote #, " -- length of a string"),
+ 	  (TO (quote |, String, String), "        -- concatenation"),
+ 	  (TO "ascii", " -- ASCII conversion"),
+ 	  (TO "substring", " -- substring extraction"),
+ 	  (TO "concatenate", " -- concatenation"),
  	  (TO "characters", " -- extraction of characters"),
-	  (TO "#", "          -- length of a string"),
  	  (TO "transnet", "   -- convert integers into network order"),
 	  (TO "match", "      -- match patterns")
  	  },
@@ -2652,13 +2708,13 @@ document { quote Net,
      "Operations on nets:",
      MENU {
 	  TO "horizontalJoin",
-	  TO "m|n",
+	  TO (quote |, String, String),
 	  TO "verticalJoin",
-	  TO "m||n",
+	  TO (quote ||, Net, Net),
 	  TO "width",
 	  TO "height",
 	  TO "depth",
-	  TO "Net ^ ZZ"
+	  TO (quote ^,Net, ZZ)
 	  },
      "Formatting expressions:",
      MENU {
@@ -2689,7 +2745,7 @@ document { quote net,
      EXAMPLE "net x^2",
      EXAMPLE "code(net,List)",
      PARA,
-     SEEALSO ("Net", "expression", "Expression", "Net")
+     SEEALSO {"Net", "expression", "Expression", "Net"}
      }
 
 document { quote horizontalJoin,
@@ -2697,33 +2753,26 @@ document { quote horizontalJoin,
      them horizontally.  The baselines in each of the nets are aligned
      appropriately.",
      PARA,
-     "The result is a string if the arguments are all strings.",
-     SEEALSO ("Net", "m|n")
+     "Nested sequences among the arguments are first spliced together.",
+     PARA,
+     "If there are no arguments, then the net returned has zero height and
+     zero depth.  This might be unexpected.",
+     SEEALSO {"Net", (quote |, String, String)}
      }
 
 document { quote verticalJoin,
      TT "verticalJoin(m,n,...)", " -- joins nets or strings by concatenating
      them vertically.  The baseline in the result is the baseline of the
      first one.",
-     SEEALSO ("Net", "m||n")
-     }
-
-document { "m|n",
-     TT "m|n", " -- joins nets or strings by concatenating them horizontally.
-     The baselines in each of the nets are aligned appropriately.",
      PARA,
-     "The result is a string if the arguments are all strings.",
-     SEEALSO ("Net", "horizontalJoin")
+     "Nested sequences among the arguments are first spliced together.",
+     PARA,
+     "If there are no arguments, then the net returned has zero height and
+     zero depth.  This might be unexpected.",
+     SEEALSO {"Net", (quote ||, Net, Net)}
      }
 
-document { "m||n",
-     TT "m||n", " -- joins nets or strings by concatenating
-     them vertically.  The baseline in the result is the baseline of the
-     first one.",
-     SEEALSO ("Net", "verticalJoin")
-     }
-
-document { "Net ^ ZZ",
+document { (quote ^, Net, ZZ),
      TT "n^i", " -- elevates a net or string ", TT "n", " by raising its
      characters by ", TT "i", " rows.",
      PARA,
@@ -2738,7 +2787,7 @@ document { quote width,
      TT "width f", " -- determines the width of the terminal associated to an
      output file ", TT "f", ", if any.", BR,NOINDENT, 
      TT "width n", " -- the width of a net ", TT "n", ".",
-     SEEALSO ("Net", "File")
+     SEEALSO {"Net", "File"}
      }
 
 document { quote height,
@@ -2747,7 +2796,7 @@ document { quote height,
      "The height of a net is the number of rows of characters it has above
      the baseline.  It may be a negative number, but the depth plus the 
      height is always the total number of rows, which is not negative.",
-     SEEALSO ("Net", "depth")
+     SEEALSO {"Net", "depth"}
      }
 
 document { quote depth,
@@ -2756,10 +2805,10 @@ document { quote depth,
      "The depth of a net is the number of rows of characters it has below
      the baseline.  It may be a negative number, but the depth plus the 
      height is always the total number of rows, which is not negative.",
-     SEEALSO ("Net", "height")
+     SEEALSO {"Net", "height"}
      }
 
-document { "s#i",
+document { "String # ZZ",
      TT "s#i", " -- produce the i-th character from a string s.",
      PARA,
      "If i is negative and the length of the string is n, then
@@ -3010,7 +3059,7 @@ document { "lists, arrays, and sequences",
      "Creating new lists or sequences:",
      MENU {
 	  TO "..",
-	  TO ":",
+	  TO (quote :, ZZ, Thing),	  -- was ":"
 	  TO "toList",
 	  TO "newClass",
 	  TO "seq",
@@ -3018,8 +3067,8 @@ document { "lists, arrays, and sequences",
 	  },
      "Selecting elements of lists:",
      MENU {
-	  TO "_",
-	  TO "#",
+	  TO (quote _, List, ZZ),
+	  TO quote #,
 	  TO "first",
 	  TO "last"
 	  },
@@ -3048,7 +3097,7 @@ document { "lists, arrays, and sequences",
      MENU {
 	  TO "all",
 	  TO "any",
-	  TO "#",
+	  {TO quote #, " -- length of a list"},
 	  TO "max",
 	  TO "maxPosition",
 	  TO "member",
@@ -3086,7 +3135,7 @@ document { quote BasicList,
      is so lists can be treated as vectors, without everything else
      implemented as a basic list inheriting that behavior.",
      PARA,
-     SEEALSO ("List", "lists, arrays, and sequences")
+     SEEALSO {"List", "lists, arrays, and sequences"}
      }
 
 document { quote toSequence,
@@ -3115,9 +3164,9 @@ document { quote Boolean,
      PARA,
      "Functions dealing with truth values.",
      MENU {
-	  (TO "not", "     -- not"),
-	  (TO "and", "     -- and"),
-	  (TO "or", "      -- or"),
+	  (TO "not", "     -- negation"),
+	  (TO "and", "     -- conjunction"),
+	  (TO "or", "      -- disjunction"),
 	  (TO "if", "      -- condition testing"),
 	  (TO "select", "  -- selection of elements"),
 	  (TO "while", "   -- loop control")
@@ -3167,7 +3216,7 @@ document { quote Symbol,
      PARA,
      EXAMPLE "ab12345cde",
      PARA,
-     SEEALSO ("symbolTable", "local", "global", "quote", ":=")
+     SEEALSO {"symbolTable", "local", "global", "quote", ":="}
      }
 
 document { quote File,
@@ -3268,8 +3317,7 @@ document { "arithmetic functions",
      MENU {
 	  (TO "+", "          -- addition"),
 	  (TO "plus", "       -- addition"),
-	  (TO "-", "          -- subtraction"),
-	  (TO "- (unary)", "  -- minus"),
+	  (TO "-", "          -- subtraction and minus"),
 	  (TO "minus", "      -- minus"),
 	  (TO "difference", " -- subtraction"),
           (TO "*", "          -- multiplication"),
@@ -3327,7 +3375,7 @@ document { quote mutable,
      PARA,
      "The contents of a mutable hash table do not participate in strong comparison
      with ", TO "===", " or in ", TO "hashing", ".",
-     SEEALSO ("MutableList", "MutableHashTable")
+     SEEALSO {"MutableList", "MutableHashTable"}
      }
 
 document { "()",
@@ -3441,7 +3489,7 @@ document { quote loaddata,
      will be dealt with in the usual way, except that only the arguments
      after the i-th '--' and before the i+1-st '--' (if any) will be considered,
      where i is the current value of ", TO "reloaded", ".",
-     SEEALSO ("listUserSymbols")
+     SEEALSO {"listUserSymbols"}
      }
      
 document { quote reloaded,
@@ -3604,13 +3652,13 @@ document { quote close,
      normally 0, or -1 on error, or the return status of the child
      process in case the the file was a pipe.",
      PARA,
-     SEEALSO ("File", "Manipulator")
+     SEEALSO {"File", "Manipulator"}
      }
 
 document { quote flush,
      TT "f << flush", " -- writes out any buffered output for the output file f.",
      PARA,
-     SEEALSO ("File", "Manipulator")
+     SEEALSO {"File", "Manipulator"}
      }
 
 document { quote endl,
@@ -3622,7 +3670,7 @@ document { quote endl,
      file will not terminate a line containing nets properly,
      and it will not flush the output buffer.",
      PARA,
-     SEEALSO ("File", "Manipulator", "Net")
+     SEEALSO {"File", "Manipulator", "Net"}
      }
 
 document { quote newline,
@@ -3697,8 +3745,8 @@ document { quote Database,
 	  {TO "openDatabase", "    -- open a database file"},
 	  {TO "openDatabaseOut", " -- open a database file for writing"},
 	  {TO "close", "           -- close a database file"},
-	  {TO "#", "               -- fetch or store in a database file"},
-	  {TO "#?", "              -- query a database file"},
+	  {TO quote #, " -- fetch or store in a database file"},
+	  {TO quote #?, " -- query a database file"},
 	  {TO "firstkey", "        -- get the first key"},
 	  {TO "mutable", "         -- whether changes can be made"},
 	  {TO "nextkey", "         -- get the next key"},
@@ -3994,19 +4042,19 @@ document { "editing Macaulay2 code with emacs",
 document { quote oo,
      TT "oo", " -- denotes the value of the expression on the previous output
      line.",
-     SEEALSO ( "oo", "ooo", "oooo" )
+     SEEALSO { "oo", "ooo", "oooo" }
      }
 
 document { quote ooo,
      TT "ooo", " -- denotes the value of the expression on the output line
      two lines above.",
-     SEEALSO ( "oo", "oooo" )
+     SEEALSO { "oo", "oooo" }
      }
 
 document { quote oooo,
      TT "oooo", " -- denotes the value of the expression on the output line
      three lines above.",
-     SEEALSO ( "oo", "ooo" )
+     SEEALSO { "oo", "ooo" }
      }
 
 document { quote InverseMethod,
@@ -4022,7 +4070,7 @@ document { quote or,
      is true.",
      PARA,
      "If ", TT "t", " is true, then the code in ", TT "u", " is not evaluated.",
-     SEEALSO( "and", "not" )
+     SEEALSO{ "and", "not" }
      }
 
 document { quote and,
@@ -4030,7 +4078,7 @@ document { quote and,
      is true.",
      PARA,
      "If ", TT "t", " is false, then the code in ", TT "u", " is not evaluated.",
-     SEEALSO( "or", "not" )
+     SEEALSO{ "or", "not" }
      }
 
 document { quote locate,
@@ -4063,15 +4111,15 @@ document { quote map,
      PARA,
      "Installed methods:",
      MENU {
-	  (TO "map(Ring,Ring,...)", "     -- constructing ring homomorphisms"),
-	  (TO "map(Module,Module,...)", " -- constructing module homomorphisms")
+	  (TO "making ring maps"),
+	  (TO "making module maps")
 	  }
      }
 document { quote precedence,
      TT "precedence x", " -- returns the parsing precedence of x for use in
      the printing routines.",
      PARA,
-     SEEALSO ("Expression", "net", "name")
+     SEEALSO {"Expression", "net", "name"}
      }
 
 document { quote hashTable,
@@ -4090,7 +4138,9 @@ document { quote toList,
      or set ", TT "x", ".",
      PARA,
      "This is a good way to convert a list of some type to a list of type
-     ", TO "List", "."
+     ", TO "List", ".",
+     EXAMPLE "x = set {a,b,c,d}",
+     EXAMPLE "toList x"
      }
 
 document { quote hypertex,
@@ -4144,24 +4194,25 @@ document { quote saturate,
     "Allowable options include:",
     MENU {
         TO (saturate => DegreeLimit),
-	--TO "BasisElementLimit",
-	--TO "PairLimit",
-	TO "Strategy",
-	TO "MinimalGenerators"
-        },
-    BR,
-    "The strategy option value should be one of the following:",
-    MENU {
-        (TO "Linear", "      -- use the reverse lex order"),
-	(TO "Iterate", "     -- use successive ideal quotients (the default)"),
-	(TO "Bayer", "       -- use the method in Bayer's thesis"),
-	(TO "Elimination", " -- compute the saturation (I:f) by eliminating z from (I,f*z-1)")
+	TO (saturate => Strategy),
+	TO (saturate => MinimalGenerators)
         },
     PARA,
     "The computation is currently not stored anywhere: this means
     that the computation cannot be continued after an interrupt.
     This will be changed in a later version."
     }
+
+document { saturate => Strategy,
+     "The strategy option value should be one of the following:",
+    MENU {
+        (TO "Linear", "      -- use the reverse lex order"),
+	(TO "Iterate", "     -- use successive ideal quotients (the default)"),
+	(TO "Bayer", "       -- use the method in Bayer's thesis"),
+	(TO "Elimination", " -- compute the saturation ", TT "(I:f)", " by eliminating ", TT "z", " from ", TT "(I,f*z-1)", "")
+        },
+     }
+
 
 document { saturate => DegreeLimit,
      TT "DegreeLimit => n", " -- keyword for an optional argument used with

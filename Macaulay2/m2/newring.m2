@@ -60,6 +60,8 @@ QuotientRing ** PolynomialRing :=
 PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
+Ring ** Ring := (R,S) -> error "tensor product not implemented for these rings"
+
 document { (quote **, Ring, Ring),
      TT "R ** S", " -- tensor product of rings.",
      PARA,

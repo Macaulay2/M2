@@ -153,7 +153,7 @@ elements(e:Expr):Expr := (
 	       	    List(listClass, if b.mutable then copy(b.v) else b.v,
 		    	 0, false),
 	       	    false)))
-     else WrongArg("a hash table"));
+     else WrongArg("a hash table, list, or sequence"));
 setupfun("toList",elements);
 values(e:Expr):Expr := (
      when e
@@ -474,10 +474,10 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 
 transform(e:Expr,class:HashTable,returned:bool):Expr := (
      -- same as above, but no parent specified, so leave what s provided alone
-     basicType := basictype(class);
      when e
      is Error do e
      is o:HashTable do (
+     	  basicType := basictype(class);
 	  if basicType == hashTableClass then (
 	       if o.class == class then e
 	       else (
@@ -493,6 +493,7 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
+     	  basicType := basictype(class);
      	  if basicType == basicListClass then (
 	       if o.class == class then e
 	       else (
@@ -506,15 +507,14 @@ transform(e:Expr,class:HashTable,returned:bool):Expr := (
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
-     else expected(
-	  if basicType == basicListClass
-	  then "a list"
-	  else if basicType == hashTableClass
-	  then "a hash table"
-	  else "a list or hash table",
-	  returned
-	  )
-     );
+     else if Class(e) == class then e
+     else (
+	  basicType := basictype(class);
+	  expected(
+	       if basicType == basicListClass then "a list"
+	       else if basicType == hashTableClass then "a hash table"
+	       else "a list or hash table",
+	       returned)));
 newclassfun(e:Expr):Expr := (
      when e
      is a:Sequence do

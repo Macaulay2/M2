@@ -179,7 +179,7 @@ document { quote radical,
   rather than e.g. 5, the methods used will produce the radical of I.  Of
   course, you may do the computation over QQ, but it will often run much
   slower.  In general, this routine still needs to be tuned for speed.",
-  SEEALSO ("top", "removeLowestDimension", "saturate", "quotient")
+  SEEALSO {"top", "removeLowestDimension", "saturate", "quotient"}
   }
 
 document { quote CompleteIntersection,
@@ -215,7 +215,7 @@ document { quote top,
      Eisenbud-Huneke-Vasconcelos, in their 1993 Inventiones Mathematicae
      paper.  For a very brief description of the method used, see ", TO
      "top-method", ".",
-     SEEALSO ("removeLowestDimension", "saturate", "quotient", "radical")
+     SEEALSO {"removeLowestDimension", "saturate", "quotient", "radical"}
      }
 
 document { quote removeLowestDimension,
@@ -229,7 +229,7 @@ document { quote removeLowestDimension,
      "Computes one free resolution, and some homology groups, but no
      projections or determinants are used.",
      "For a very brief description of the method used, see ", TO "top-method", ".",
-     SEEALSO ("top", "saturate", "quotient", "radical", "decompose")
+     SEEALSO {"top", "saturate", "quotient", "radical", "decompose"}
      }
 
 document { "component example",

@@ -40,7 +40,7 @@ document { quote Module,
      PARA,
      "Functions which create modules:",
      MENU {
-	  TO "Ring ^ ZZ",
+	  TO (quote ^, Ring, ZZ),
 	  TO "cokernel",
 	  TO "homology",
 	  TO "ideal",
@@ -59,17 +59,17 @@ document { quote Module,
 	  },
      "Operations on modules:",
      MENU {
-	  TO "==",
-	  TO "M_i",
+	  TO (quote ==, Module, Module),
+	  (TO (quote _, Module, ZZ), " -- get a generator of a module"),
 	  TO (quote +,Module,Module),
-	  TO (quote **,Module,Ring),
-	  ("M ", TO "++", " N -- direct sum"),
-	  ("M ", TO (quote **, Module, Module), " N -- tensor product"),
-	  ("M ", TO ":", " N -- the submodule quotient M : N"),
-	  ("M ", TO "/", " N -- the cokernel module (M+N)/N"),
+	  (TO (quote **,Module,Ring), " -- tensor product, base change."),
+	  (TO (quote ++, Module, Module), " -- direct sum"),
+	  (TO (quote **, Module, Module), " -- tensor product"),
+	  (TO (quote :, Module, Module), " -- the submodule quotient ", TT "M : N", ""),
+	  (TO (quote /, Module, Module), " -- the quotient module ", TT "(M+N)/N"),
 	  TO "ambient",
-	  (TO "annihilator", " M -- the annihilator of M"),
-	  TO "codim",
+	  (TO "annihilator", " -- the annihilator of a module"),
+	  (TO "codim", " -- codimension of the support of a module"),
 	  TO "cover",
 	  TO "degree",
 	  TO "degrees",
@@ -77,17 +77,17 @@ document { quote Module,
 	  TO "dual",
 	  TO "End",
 	  TO "euler",
-	  (TO "fittingIdeal", "(i,m) -- the i-th Fitting ideal of the module M"),
-	  (TO "Ext", "^i(M,N) -- the ext module"),
+	  (TO {"fittingIdeal", "(i,m)"}, " -- the ", TT "i", "-th Fitting ideal of the module ", TT "M"),
+	  (TO {"Ext", "^i(M,N)"}, " -- Ext of two modules"),
 	  TO "gcdDegree",
 	  TO "genera",
 	  TO "generators",
-	  (TO "poincare", "(M,t) -- the numerator of the Hilbert series of M"),
-	  (TO "hilbertFunction", "(d,M) -- the Hilbert function of a module."),
-	  (TO "hilbertPolynomial", "(M) -- the Hilbert polynomial of a module"),
-	  (TO "hilbertSeries", "(M) -- the Hilbert series of a module."),
-	  (TO "Hom", "(M,N) -- the module of homomorphisms"),
-	  (TO "intersect", "(I,J) -- intersection of modules"),
+	  (TO {"poincare", "(M,t)", }, " -- the numerator of the Hilbert series of ", TT "M", "."),
+	  (TO {"hilbertFunction", "(d,M)"}, " -- the Hilbert function of a module."),
+	  (TO {"hilbertPolynomial", "(M)"}, " -- the Hilbert polynomial of a module"),
+	  (TO {"hilbertSeries", "(M)"}, " -- the Hilbert series of a module."),
+	  (TO {"Hom", "(M,N)"}, " -- the module of homomorphisms"),
+	  (TO {"intersect", "(I,J)"}, " -- intersection of modules or ideals"),
 	  TO "lcmDegree",
 	  TO "numgens",
 	  TO "mingens",
@@ -101,23 +101,23 @@ document { quote Module,
 	  (TO "resolution", " M -- a finite free resolution of M"),
 	  TO "super",
 	  TO "top",
-  	  (TO "Tor", "_i(M,N) -- the tor module"),
+  	  (TO {"Tor", "_i(M,N)"}, " -- Tor of two modules"),
 	  (TO "trim", " -- replace generators and relations by minimal sets"),
 	  TO "truncate"
      	  },
-     "Operations on elements of modules:",
+     "Operations on elements of modules (vectors):",
      MENU {
 	  TO "+",
 	  TO "-",
 	  TO "*",
+	  (TO (quote _, Vector, ZZ), " -- get a component of a vector"),
 	  TO "components",
 	  TO "leadCoefficient",
 	  TO "leadMonomial"
 	  },
      PARA,
-     SEEALSO( "Vector")
+     SEEALSO{ "Vector"}
      }
-
 
 isModule = method()
 isModule Thing := M -> false
@@ -202,7 +202,7 @@ document { quote relations,
      in the module under M.relations, the matrix is understood to be
      empty.",
      PARA,
-     SEEALSO ("generators","subquotient")
+     SEEALSO {"generators","subquotient"}
      }
 
 name Module := M -> (
@@ -290,6 +290,17 @@ Module == Module := (M,N) -> (
 		    if isHomogeneous g then g = substitute(g,0);
 		    isSubset(ambient M, image g))
 	       else true)))
+
+document { (quote ==, Module, Module),
+     TT "M == N", " -- test whether two modules are equal.",
+     PARA,
+     "Two modules are equal if they are isomorphic as subquotients of the
+     same ambient free module.",
+     PARA,
+     EXAMPLE "R = ZZ/101[x]",
+     EXAMPLE "image matrix {{2,x},{1,5}} == R^2",
+     EXAMPLE "image matrix {{2,x},{0,5}} == R^2"
+     }
 
 TEST "
 R = ZZ/101[a,b,c]
@@ -395,13 +406,13 @@ Vector _ ZZ := (v,i) -> (
      if i < 0 or i >= n then error "subscript out of range for vector";
      sendgg( ggPush v, ggINT, gg i, ggelem);
      new R)
-document { "v_i",
+document { (quote _, Vector, ZZ),
      TT "v_i", " -- produce the i-th entry of a vector or module element v.",
      PARA,
      EXAMPLE "R = ZZ/101[a..f]",
      EXAMPLE "v = vector {a,b,c}",
      EXAMPLE "v_1",
-     SEEALSO ("_")
+     SEEALSO {"_"}
      }
 
 reduceit := M -> (
@@ -443,12 +454,9 @@ new Vector from List := (M,w) -> (
 new Module from Ring := (Module,R) -> (
      M := new Module of Vector;
      M.handle = newHandle ggdup;
-     sendgg gglength;
-     M.numgens = eePopInt();
      M.ring = R;
-     M#0 = (
-	  sendgg(ggPush M, ggzero);
-	  new M);
+     M.numgens = (sendgg gglength; eePopInt());
+     M#0 = (sendgg(ggPush M, ggzero); new M);
      M)
 
 degrees Module := M -> (
@@ -515,7 +523,7 @@ Ring ^ List := (
 	       		 new Module from R)))
 	  else error "non-engine free modules with degrees not implemented yet"
 	  ))
-document { "Ring ^ List",
+document { (quote ^, Ring, List),
      TT "R^{i,j, k, ...}", " -- produce a free module over R whose generators have
      degrees -i, -j, -k, ...",
      PARA,
@@ -525,7 +533,7 @@ document { "Ring ^ List",
      EXAMPLE "R = ZZ/101[x,y,z]",
      EXAMPLE "F = R^{1,4:2,3,3:4}",
      EXAMPLE "degrees F",
-     SEEALSO ("degrees", "^")
+     SEEALSO {"degrees", "^"}
      }
 
 components = method()
@@ -541,7 +549,7 @@ document { quote components,
      MENU {
 	  TO (components,ChainComplex)
 	  },
-     SEEALSO ("vector", "directSum", "++")
+     SEEALSO {"vector", "directSum", "++"}
      }
 
 SparseDisplayThreshhold := 15
@@ -561,10 +569,10 @@ Ring ^ ZZ := (
 	  )
      )
 
-document { "Ring ^ ZZ",
-     TT "R^n", " -- produce a free module of rank n over the ring R",
+document { (quote ^, Ring, ZZ),
+     TT "R^n", " -- produce a free module of rank ", TT "n", " over the ring ", TT "R", "",
      PARA,
-     SEEALSO("^", "isFreeModule", "Ring ^ List")
+     SEEALSO{"^", "isFreeModule", (quote ^, Ring, List)}
      }
 
 -- euler(Module) := (M) -> (
@@ -651,7 +659,7 @@ document { quote cover,
      TT "cover M", " -- yields the free module whose basis elements correspond
      to the generators of M.",
      PARA,
-     SEEALSO ("ambient", "super")
+     SEEALSO {"ambient", "super"}
      }
 
 super(Module) := (M) -> (
@@ -668,7 +676,7 @@ document { quote super,
      TT "super f", " -- if f is a map whose target is a submodule of M, yields the
      composite of f with the inclusion into M.",
      PARA,
-     SEEALSO ( "cover", "ambient" )
+     SEEALSO { "cover", "ambient" }
      }
 
 End = (M) -> Hom(M,M)

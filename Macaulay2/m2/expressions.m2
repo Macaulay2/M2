@@ -657,7 +657,7 @@ padto := (s,n) -> (
 --      are summed.  Additionally, an integer may be used to represent a
 --      number of spaces.",
 --      PARA,
---      SEEALSO ("String", "concatenate", "#" )
+--      SEEALSO {"String", "concatenate", "#" }
 --      }
 
 erase quote stringlen
@@ -848,7 +848,7 @@ document { quote tex,
      EXAMPLE "R = ZZ/101[a..f]",
      EXAMPLE "p = matrix {{a^2+2,b,c},{d,e,f^3-a}}",
      EXAMPLE "tex p",
-     SEEALSO ("TeX", "hypertex")
+     SEEALSO {"TeX", "hypertex"}
      }
 tex Expression := v -> (
      op := class v;
@@ -992,7 +992,7 @@ document { (quote <<, File, Thing),
      PARA,
      EXAMPLE "x = 5",
      EXAMPLE "stdout << \"the value of x is \" << x << endl",
-     SEEALSO ("<<")
+     SEEALSO {"<<"}
      }     
 
 nodocs := new MutableHashTable from {

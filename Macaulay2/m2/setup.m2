@@ -189,7 +189,7 @@ document { quote listUserSymbols,
      PARA,
      "This function is useful after using ", TO "loaddata", " to restore 
      a previous session.",
-     SEEALSO ("userSymbols")
+     SEEALSO {"userSymbols"}
      }
 
 clearAll = new Command from (
@@ -204,6 +204,35 @@ clearAll = new Command from (
 document { quote clearAll,
      TT "clearAll()", " -- attempts to release memory by clearing the values
      retained by the output line symbols."
+     }
+
+-- leave this at the END of setup, to get a complete list of options
+
+document { quote Options,
+     TT "Options", " -- an option used with ", TO "method", " to specify
+     names of optional arguments and their default values.",
+     PARA,
+     NOINDENT,
+     TT "f = method(Options => w)", " -- creates a method which accepts
+     optional arguments.  Here 'w' is a list ", TT "{A=>a,B=>b,...}", " of
+     optional argument names A,B,... and corresponding default values a,b,...",
+     PARA,
+     "When optional arguments are specified, the method functions installed
+     should accept an additional argument to which will be passed a
+     hash table of type ", TO "OptionTable", " containing the optional 
+     argument names and their values.  The table will be stored in the
+     ", TO "OptionsRegistry", " and can be recovered with the function
+     ", TO "options", ".",
+     EXAMPLE "f = method(Options => {Slope => 1, Intercept => 1})",
+     EXAMPLE "f RR := (x,options) -> options.Slope * x + options.Intercept",
+     EXAMPLE "f(5.,Slope=>100)",
+     PARA,
+     "Here is a complete list of symbols which are used as names of options: ",
+     between( ", ",
+     	  (i -> TO i) \ rsort keys set flatten (keys \ values OptionsRegistry)
+	  ),
+     ".",
+     SEEALSO "method"
      }
 
 if phase===1 or phase===2 or phase===4 then exportDocumentation()

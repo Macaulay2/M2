@@ -49,7 +49,7 @@ document { "using methods",
      MENU {
 	  TO "method"
 	  },
-     SEEALSO( ".", "binary method", "classes", "lookup")
+     SEEALSO{ ".", "binary method", "classes", "lookup"}
      }
 
 document { "binary method",
@@ -271,7 +271,7 @@ document { quote method,
      "the effect of which happens to be the same as that of",
      PRE "     X#f := (x) -> ...",
      PARA,
-     SEEALSO ("Options", "methods", "OptionsRegistry")
+     SEEALSO {"Options", "methods", "OptionsRegistry"}
      }
 
 -- document { quote ClassArgument,
@@ -326,27 +326,6 @@ document { quote Associative,
      EXAMPLE "f = method(Associative => true)",
      EXAMPLE "f(String,String) := (i,j) -> \"(\" | i | \"),\" | j;",
      EXAMPLE "f(\"a\",\"b\",\"c\",\"d\")",
-     SEEALSO "method"
-     }
-
-document { quote Options,
-     TT "Options", " -- an option used with ", TO "method", " to specify
-     names of optional arguments and their default values.",
-     PARA,
-     NOINDENT,
-     TT "f = method(Options => w)", " -- creates a method which accepts
-     optional arguments.  Here 'w' is a list ", TT "{A=>a,B=>b,...}", " of
-     optional argument names A,B,... and corresponding default values a,b,...",
-     PARA,
-     "When optional arguments are specified, the method functions installed
-     should accept an additional argument to which will be passed a
-     hash table of type ", TO "OptionTable", " containing the optional 
-     argument names and their values.  The table will be stored in the
-     ", TO "OptionsRegistry", " and can be recovered with the function
-     ", TO "options", ".",
-     EXAMPLE "f = method(Options => {Slope => 1, Intercept => 1})",
-     EXAMPLE "f RR := (x,options) -> options.Slope * x + options.Intercept",
-     EXAMPLE "f(5.,Slope=>100)",
      SEEALSO "method"
      }
 
@@ -490,21 +469,21 @@ document { quote leadCoefficient,
      TT "leadCoefficient f", " -- return the leading coefficient of the polynomial
      or vector f.",
      PARA,
-     SEEALSO ("leadTerm", "leadMonomial", "leadComponent")
+     SEEALSO {"leadTerm", "leadMonomial", "leadComponent"}
      }
 
 document { quote leadComponent,
      TT "leadComponent f", " -- return the leading component of the vector f,
      i.e., the integer i so that f_i is the first nonzero component of f.",
      PARA,
-     SEEALSO ("leadTerm", "leadCoefficient", "leadMonomial")
+     SEEALSO {"leadTerm", "leadCoefficient", "leadMonomial"}
      }
 
 document { quote leadMonomial,
      TT "leadMonomial f", " -- return the leading monomial of the polynomial
      or vector f.",
      PARA,
-     SEEALSO ("leadTerm", "leadCoefficient", "leadCoefficient")
+     SEEALSO {"leadTerm", "leadCoefficient", "leadCoefficient"}
      }
 
 oldflatten := flatten
@@ -567,7 +546,7 @@ document { quote ambient,
      For a Galois field it yields the ring it was constructed from.",
      PARA,
      EXAMPLE "ambient(ZZ/101[a,b]/b^3/a^3)",
-     SEEALSO ("cover", "super")
+     SEEALSO {"cover", "super"}
      }
      
 document { quote Hom,
@@ -597,7 +576,7 @@ document { quote generators,
      a module or Groebner basis are provided as the columns in a matrix.  
      The matrix is stored in a module M under M.generators, unless the matrix
      is the identity matrix.",
-     SEEALSO ("Monoid", "GroebnerBasis", "Module", "relations", "subquotient")
+     SEEALSO {"Monoid", "GroebnerBasis", "Module", "relations", "subquotient"}
      }
 
 document { quote someTerms,
@@ -668,7 +647,7 @@ document { quote stats,
      PARA,
      EXAMPLE "ZZ/101[a..f]",
      EXAMPLE "stats gb matrix {{a*b, b*c},{a^3*f, b^3*e}}",
-     SEEALSO ( "GroebnerBasis", "Resolution" )
+     SEEALSO { "GroebnerBasis", "Resolution" }
      }
 
 document { quote complete,
@@ -692,7 +671,7 @@ document { quote drop,
      "drop(v,{m,n}) -- yields the list obtained from the list v by dropping the
      elements at positions m through n.",
      PARA,
-     SEEALSO( "take")
+     SEEALSO{ "take"}
      }
 
 oldnumerator := numerator
@@ -714,14 +693,18 @@ options Function := function -> (
      if OptionsRegistry#?function then OptionsRegistry#function
      else emptyOptionTable
      )
-document {quote options,
+options Symbol := s -> select(apply(pairs OptionsRegistry, (f,o) -> if o#?s then f), i -> i =!= null)
+document { quote options,
      TT "options f", " -- returns the table of option names and default values
      provided for the function ", TT "f", ", if one has been registered.",
      BR,NOINDENT,
      TT "options X", " -- returns the options used when the monoid or polynomial
      ring X was created.",
+     BR,NOINDENT,
+     TT "options S", " -- returns a list of those functions which have an
+     optional argument named ", TT "S", ".  Here ", TT "S", " is a symbol.",
      PARA,
-     SEEALSO ("method", "OptionsRegistry")
+     SEEALSO {"method", "OptionsRegistry"}
      }
 
 computeAndCache := (M,options,name,goodEnough,computeIt) -> (

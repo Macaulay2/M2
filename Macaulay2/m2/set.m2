@@ -32,20 +32,10 @@ document { quote Tally,
 	  (TO (quote _,Tally,Thing), "  -- access"),
 	  (TO "tally", "                -- tally the elements of a list"),
 	  (TO "toList", "               -- a list of the elements"),
-	  (TO (apply,Tally,Function), " -- apply a function to the elements."),
-	  (TO "sum(Tally)", "           -- add the elements"),
-	  (TO "product(Tally)", "       -- multiply the elements")
+	  (TO "apply(Tally,Function)", " -- apply a function to elements of a tally."),
+	  (TO (sum,Tally), "           -- add the elements"),
+	  (TO (product,Tally), "       -- multiply the elements")
 	  }
-     }
-
-document { "sum(Tally)",
-     TT "sum x", " -- adds the elements of a tally.",
-     SEEALSO "Tally"
-     }
-
-document { "product(Tally)",
-     TT "product x", " -- adds the elements of a tally.",
-     SEEALSO "Tally"
      }
 
 Tally ** Tally := (x,y) -> combine(x,y,identity,times,)
@@ -58,7 +48,7 @@ document { (quote **, Tally, Tally),
      EXAMPLE "x = tally {a,a,b}",
      EXAMPLE "y = tally {1,2,2,2}",
      EXAMPLE "x ** y",
-     SEEALSO ("Tally", "tally")
+     SEEALSO {"Tally", "tally"}
      }
 
 Tally ? Tally := (x,y) -> (
@@ -82,16 +72,16 @@ document { (quote +, Tally, Tally),
      EXAMPLE "x = tally {a,a,a,b,b,c}",
      EXAMPLE "y = tally {b,c,c,d,d,d}",
      EXAMPLE "x + y",
-     SEEALSO ("Tally", "tally")
+     SEEALSO {"Tally", "tally"}
      }
 
-document { (apply,Tally,Function),
+document { "apply(Tally,Function)",
      TT "apply(x,f)", " -- applies the function ", TT "f", " to each element of the
      tally ", TT "x", ", accumulating the results in a tally.",
      PARA,
      EXAMPLE "x = tally {-1,-1,-2,1}",
      EXAMPLE "apply(x,abs)",
-     SEEALSO ("Tally", "tally")
+     SEEALSO {"Tally", "tally"}
      }
 
 singleton := tally {0}
@@ -137,29 +127,25 @@ document { quote Set,
      "Operations on sets:",
      MENU {
 	  (TO (quote +,Set,Set), " -- union"),
-	  (TO "Set ++ Set", " -- disjoint union"),
-	  (TO "Set - Set", "  -- difference"),
-	  (TO "*", "          -- intersection"),
+	  (TO (quote ++,Set, Set), " -- disjoint union"),
+	  (TO (quote -,Set, Set), "  -- difference"),
+	  (TO (quote *,Set,Set), " -- intersection"),
 	  (TO (quote **, Set, Set), " -- Cartesian product"),
-	  (TO "#", "          -- the number of elements"),
+	  (TO quote #, " -- the number of elements"),
 	  (TO "apply(Set,Function)", "  -- applying a function to elements"),
-	  (TO "toList", "   -- a list of the elements"),
-	  (TO "member", "     -- whether something is a member"),
-	  (TO "product", "    -- multiply the elements"),
-	  (TO "isSubset", "   -- whether a set is a subset of another"),
-	  (TO "subsets", "    -- a list of the subsets"),
-	  (TO "sum", "        -- sum the elements")
+	  (TO toList, " -- a list of the elements"),
+	  (TO member, " -- whether something is a member"),
+	  (TO (product,Set), " -- multiply the elements"),
+	  (TO (isSubset,Set,Set), " -- whether a set is a subset of another"),
+	  (TO (subsets,Set), " -- a list of the subsets"),
+	  (TO (subsets,Set,ZZ), " -- a list of the subsets with given cardinality"),
+	  (TO (sum,Set), " -- sum the elements")
 	  }
      }
 
-document { "Set - Set",
+document { (quote -, Set, Set),
      TT "x - y", " -- the difference of two sets.",
-     SEEALSO ("Set", "-")
-     }
-
-document { "Set ++ Set",
-     TT "x ++ y", " -- the disjoint union of two sets.",
-     SEEALSO ("Set", "++")
+     SEEALSO {"Set", "-"}
      }
 
 set Set := x -> x
@@ -214,3 +200,18 @@ document { quote isSubset,
 	  TO (isSubset,Set,Set)
 	  }
      }
+
+document { (quote ++, Set, Set),
+     TT "x ++ y", " -- the disjoint union of two sets.",
+     PARA,
+     EXAMPLE "set {a,b,c} ++ set {b,c,d}",
+     SEEALSO {"Set", "++"}
+     }
+
+document { (quote *, Set, Set),
+     TT "x * y", " -- the intersection of two sets.",
+     PARA,
+     EXAMPLE "set {1,2,3} * set {2,3,4}",
+     SEEALSO {"Set", "*"}
+     }
+

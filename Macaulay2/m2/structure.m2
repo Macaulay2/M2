@@ -17,7 +17,7 @@ document { quote join,
      If there is just one argument, and it's mutable, a copy is returned.",
      EXAMPLE "join({1,2,3},{7,8,9})",
      PARA,
-     "The operator ", TO "|", " can be used as a synonym."
+     "The operator ", TO (quote |, List, List), " can be used as a synonym."
      }
 
 document { quote take,

@@ -68,7 +68,6 @@ name String := format;
 	  )
      alphabet = null
      operators#(quote " ") = ///quote " "///
-     operators#(quote \) = ///quote "\\"///
 
 name Symbol := s -> (
      if operators#?s then operators#s 

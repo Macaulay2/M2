@@ -824,7 +824,7 @@ deepinsert(a:Sequence):int := (
 	       );
 	  );
      n);
-deepsplice(a:Sequence):Sequence := (
+export deepsplice(a:Sequence):Sequence := (
      -- warning: this returns its arg if no change is required.
      hadseq = false;
      newlen := deeplen(a);

@@ -61,7 +61,7 @@ document { (quote **, Module, Module),
 
 Matrix ** Module := (f,M) -> f ** id_M
 Module ** Matrix := (M,f) -> id_M ** f
-document { "Matrix ** Module",
+document { (quote **, Matrix, Module),
      TT "f ** N", " -- tensor product of a matrix f and a module N.",
      BR,NOINDENT,
      TT "N ** f", " -- tensor product of a matrix f and a module N.",
@@ -74,7 +74,7 @@ document { "Matrix ** Module",
      EXAMPLE "f = matrix {{t}}",
      EXAMPLE "degrees source f",
      EXAMPLE "degrees source (f ** R^{-3})",
-     SEEALSO ("Matrix", "Module")
+     SEEALSO {"Matrix", "Module"}
      }
 
 -----------------------------------------------------------------------------
@@ -135,7 +135,7 @@ document { quote poincareComputation,
      TT "poincareComputation", " -- a key used in a module or monomial
      ideal to store a computation of Poincare polynomial.",
      PARA,
-     SEEALSO ("poincare")
+     SEEALSO {"poincare"}
      }
 
 poincare Module := M -> (
@@ -264,7 +264,7 @@ document { quote hilbertFunction,
      PARA,
      "At the moment, the function is computed simply by calling ", TO "basis", "
      and extracting the number of basis elements.",
-     SEEALSO ("hilbertSeries", "hilbertPolynomial")
+     SEEALSO {"hilbertSeries", "hilbertPolynomial"}
      }
 
 TEST ///
@@ -301,7 +301,7 @@ document { quote hilbertSeries,
      EXAMPLE "hilbertSeries(R/x^2, Order => 12)",
      EXAMPLE "R=ZZ/101[x, Degrees => {{1,1}}]",
      EXAMPLE "hilbertSeries (R/x^2)",
-     SEEALSO ("degreesRing", "Order")
+     SEEALSO {"degreesRing", "Order"}
      }
 
 ProjectiveHilbertPolynomial = new Type of HashTable
@@ -324,13 +324,23 @@ document { quote ProjectiveHilbertPolynomial,
 	  (TO "+", "      -- add two projective Hilbert polynomials"),
 	  (TO "-", "      -- subtract two projective Hilbert polynomials"),
 	  (TO "*", "      -- multiply a projective Hilbert polynomial by an integer"),
-	  (TT "P(n)", "   -- evaluate a projective Hilbert polynomial at an integer")
+	  (TO (quote " ", ProjectiveHilbertPolynomial, ZZ), "   -- evaluate a projective Hilbert polynomial at an integer")
 	  },
      "The functions ", TO "degree", " and ", TO "dim", " are designed so they
      correspond the degree and dimension of the algebraic variety that may have
      been used to produce the Hilbert polynomial."
      }
+
 ProjectiveHilbertPolynomial ZZ := (P,i) -> sum(pairs P, (n,c) -> c * binomial(n+i,n))
+document { (quote " ", ProjectiveHilbertPolynomial, ZZ),
+     TT "P i", " -- the value of a projective Hilbert polynomial ", TT "P", " at 
+     an integer ", TT "i", ".",
+     PARA,
+     EXAMPLE "P = projectiveHilbertPolynomial 2",
+     EXAMPLE "apply(0 .. 12, i -> P i)",
+     SEEALSO ProjectiveHilbertPolynomial
+     }
+
 euler ProjectiveHilbertPolynomial := (P) -> P(0)
 diff(ProjectiveHilbertPolynomial,ZZ) := (P,i) -> (
      new ProjectiveHilbertPolynomial from select(
@@ -552,7 +562,7 @@ document { quote dim,
      TT "dim r", " -- calculate the dimension of the virtual representation
      corresponding to an element of a Schur ring.",
      PARA,
-     SEEALSO ("Schur")
+     SEEALSO {"Schur"}
      }
 
 degree Module := M -> (
@@ -598,7 +608,7 @@ document { quote prune,
      with code such as ", TT "g = N.pruningMap", ".  You may obtain the inverse
      isomorphism with ", TT "g^-1", ".",
      PARA,
-     SEEALSO ("presentation", "trim", "pruningMap")
+     SEEALSO {"presentation", "trim", "pruningMap"}
      }
 
 document { quote pruningMap,
@@ -778,6 +788,12 @@ Module / Module := (M,N) -> (
 	       p))
      else image id_L)
 
+document { (quote /, Module, Module),
+     TT "M/N", " -- computes the quotient module ", TT "M/N", ".",
+     PARA,
+     "The modules should be submodules of the same module."
+     }
+
 Module / RingElement := (M,x) -> M / (x * M)
 Module / Sequence := Module / List := (M,v) -> (
      R := ring M;
@@ -836,11 +852,12 @@ Module _ ZZ := (M,i) -> (
      	  new M)
      )
 
-document { "M_i", 
-     TT "M_i", " -- the i-th generator of the module or monoid M.",
+document { (quote _, Module, ZZ),
+     TT "M_i", " -- get the ", TT "i", "-th generator of a module ", TT "M", "",
      PARA,
-     SEEALSO "_"
+     EXAMPLE "(ZZ^5)_2"
      }
+
 -----------------------------------------------------------------------------
 Module ^ Array := (M,rows) -> (
      rows = splice rows;
@@ -888,30 +905,56 @@ Module _ Array := (M,cols) -> (
 	  else matrix apply(#M.components, i -> 
 	       apply(toList cols, j -> 
 		    map( M.components#i, M.components#j, if i===j then 1 else 0)))))
+
+document { (quote ^,Module,Array),
+     TT "M^[i,j,k]", " -- projection onto some factors of a direct sum module.",
+     PARA,
+     "The module ", TT "M", " should be a direct sum, and the result is the matrix
+     obtained by projection onto the sum of the components numbered
+     ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
+     PARA,
+     EXAMPLE "M = ZZ^2 ++ ZZ^3",
+     EXAMPLE "M^[0]",
+     EXAMPLE "M^[1]",
+     EXAMPLE "M^[1,0]",
+     SEEALSO {(quote ^,Matrix,Array), (quote _,Module,Array),(quote ^,Module,List)}
+     }
+
+document { (quote _,Module,Array),
+     TT "M_[i,j,k]", " -- extract some columns of blocks from a matrix ", TT "f", ".",
+     PARA,
+     "The module ", TT "M", " should be a direct sum, and the result is the matrix
+     obtained by inclusion from the sum of the components numbered
+     ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
+     PARA,
+     EXAMPLE "M = ZZ^2 ++ ZZ^3",
+     EXAMPLE "M_[0]",
+     EXAMPLE "M_[1]",
+     EXAMPLE "M_[1,0]",
+     SEEALSO {submatrix, (quote _,Matrix,Array), (quote ^,Module,Array),(quote _,Module,List)}
+     }
 -----------------------------------------------------------------------------
 Module ^ List := (M,rows) -> submatrix(id_M,rows,)
-document { "M^{i}",
+document { (quote ^, Module, List),
      TT "M^{i,j,k,...}", " -- provides the projection map from a free module
-     M to the free module corresponding to the basis vectors number 
-     i, j, k, ... .",
-     SEEALSO "M_{i}"
+     ", TT "M", " to the free module corresponding to the basis vectors whose
+     index numbers are listed.",
+     PARA,
+     EXAMPLE "(ZZ^5)^{2,3}",
+     SEEALSO {quote _, Module, List}
      }
 -----------------------------------------------------------------------------
 Module _ List := (M,v) -> (
      N := cover M;
      f := id_N_v;
      map(M, source f, f))
-document { "M_{i}",
+document { (quote _, Module, List),
      TT "M_{i,j,k,...}", " -- provides a map from a free module to the module
-     M which sends the basis vectors to the generators of M numbered
-     i, j, k, ...",
+     ", TT "M", " which sends the basis vectors to the generators of ", TT "M", "
+     whose index numbers are listed.",
      PARA,
-     "Alternatively, if ", TT "M", " is a monoid, then entries in the list
-     are applied as exponents to the generators, returning a monomial.",
-     PARA,
-     EXAMPLE "M = monoid [x,y,z]",
-     EXAMPLE "M_{2,3,4}",
-     SEEALSO ("M^{i}", "_")
+     EXAMPLE "(ZZ^5)^{2,3}",
+     SEEALSO {quote ^, Module, List}
      }
 -----------------------------------------------------------------------------
 basis(List,Module) := (deg,M) -> (

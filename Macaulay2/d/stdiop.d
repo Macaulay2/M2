@@ -101,15 +101,15 @@ export getc(o:PosFile):int := (
 	       )
 	  else if c == int('\t')
 	  then o.pos.column = roundup(o.pos.column+1,tabwidth)
-	  else if c == int('\\')
-	  then (
-	       o.pos.column = o.pos.column + 1;
-	       if isnewline(peek(o))
-	       then (
-		    getc(o);
-		    while iswhite(peek(o)) do c = getc(o);
-		    )
-	       )
+	  --	  else if c == int('\\')
+	  --	  then (
+	  --	       o.pos.column = o.pos.column + 1;
+	  --	       if isnewline(peek(o))
+	  --	       then (
+	  --		    getc(o);
+	  --		    while iswhite(peek(o)) do c = getc(o);
+	  --		    )
+	  --	       )
 	  else (
 	       o.pos.column = o.pos.column + (
 		    if c < int(' ') || c == 127

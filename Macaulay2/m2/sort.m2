@@ -28,7 +28,7 @@ document { quote sort,
      "The sort function uses ", TO "<=", " to compare elements of the
      list, which in turn calls upon ", TO "?", ".",
      PARA,
-     SEEALSO ( "rsort", "<=", "?" )
+     SEEALSO { "rsort", "<=", "?" }
      }
 
 rsort = (v) -> (
@@ -60,7 +60,7 @@ document { quote rsort,
      "The rsort function uses ", TO "<=", " to compare elements of the
      list, which in turn calls upon ", TO "?", ".",
      PARA,
-     SEEALSO ( "sort", "<=", "?" )
+     SEEALSO { "sort", "<=", "?" }
      }
 
 lexcompare := (v,w,i) -> (

@@ -25,14 +25,14 @@ document { quote Option,
      "These pairs are implemented as lists, so that if ", TT "z", " is ", TT "x => y", ", then 
      ", TT "x", " is ", TT "z#0", " and ", TT "y", " is ", TT "z#1", ".",
      PARA,
-     SEEALSO ("classes", "=>")
+     SEEALSO {"classes", "=>"}
      }
 
 Thing => Thing := (x,y) -> new Option from {x,y}
 
 new HashTable from List := (O,v) -> hashTable v
 -- erase quote hashTable
-document { "new HashTable from List",
+document { (NewFromMethod, HashTable, List),
      TT "new HashTable from x", " -- produce a new hash table from a
      list ", TT "x", ".",
      PARA,
@@ -82,5 +82,5 @@ document { quote processArgs,
      one may use ", TT "X", ".",
      PARA,
      EXAMPLE "processArgs((t,u,a=>4,c), new HashTable from {a=>1,b=>2,c=>false},identity)",
-     SEEALSO ("OptionTable", "Option", "=>")
+     SEEALSO {"OptionTable", "Option", "=>"}
      }

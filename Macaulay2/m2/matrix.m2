@@ -5,7 +5,7 @@ document { quote ModuleMap,
      TT "ModuleMap", " -- the class of all maps between modules.",
      PARA,
      "This class is experimental, designed to support graded modules.",
-     SEEALSO ("Matrix")
+     SEEALSO {"Matrix"}
      }
 
 Matrix = new Type of ModuleMap
@@ -62,24 +62,27 @@ document { quote Matrix,
 	  },
      "Operations on matrices:",
      MENU {
-	  TO "==",
-	  TO "!=",
-	  TO "+",
-	  TO "-",
-	  TO "*",
-	  TO "^",
-	  TO (quote %,Matrix,Matrix),
-	  TO (quote %,Matrix,RingElement),
-	  TO (quote //,Matrix,Matrix),
-	  TO (quote //,Matrix,RingElement),
-	  (TO "f_(i,j)", "              -- getting an entry"),
-	  (TO "f_{i,j}", "              -- extracting or permuting columns"),
-	  (TO "f|g", "                  -- horizontal concatenation"),
-	  (TO "||", "                   -- vertical concatenation"),
-	  ("m ", TO "++", " n           -- direct sum"),
-	  (TO "Matrix ** Matrix", "     -- tensor product of matrices"),
-	  (TO "Matrix ** Module", "     -- tensor product, degree shifting"),
-	  TO (quote **,Matrix,Ring),
+	  (TO "==", " -- equality test"),
+	  (TO "!=", " -- inequality test"),
+	  (TO "+", " -- sum"),
+	  (TO "-", " -- difference"),
+	  (TO "*", " -- product"),
+	  (TO "^", " -- power"),
+	  (TO (quote ^, Matrix, List), " -- extracting or permuting rows"),
+	  (TO (quote ^, Matrix, Array), " -- extracting or permuting blocks of rows"),
+	  (TO (quote %,Matrix,Matrix), " -- remainder"),
+	  (TO (quote %,Matrix,RingElement), " -- remainder"),
+	  (TO (quote //,Matrix,Matrix), " -- quotient"),
+	  (TO (quote //,Matrix,RingElement), " -- quotient"),
+	  (TO (quote _, Matrix, Sequence), " -- getting an entry"),
+	  (TO (quote _, Matrix, List), " -- extracting or permuting columns"),
+	  (TO (quote _, Matrix, Array), " -- extracting or permuting blocks of columns"),
+	  (TO (quote |, Matrix, Matrix), " -- horizontal concatenation"),
+	  (TO (quote ||, Matrix, Matrix), " -- vertical concatenation"),
+	  (TO (quote ++, Matrix, Matrix), " -- direct sum"),
+	  (TO (quote **,Matrix, Matrix), " -- tensor product of matrices"),
+	  (TO (quote **, Matrix, Module), " -- tensor product, degree shifting"),
+	  (TO (quote **,Matrix,Ring), " -- tensor product, base change"),
 	  TO ":",
 	  TO "adjoint",
 	  TO "adjoint1",
@@ -90,7 +93,7 @@ document { quote Matrix,
 	  TO "complement",
 	  (TO "compress", "             -- removal of zero columns"),
 	  TO "content",
-	  (TO "contract", "(m,n)        -- contraction of n by m (differentiation without 
+	  (TO {"contract", "(m,n)"}, " -- contraction of n by m (differentiation without 
                           the coefficients)"),
 	  TO "degree",
 	  (TO "det", "                 -- determinant"),
@@ -148,12 +151,6 @@ document { quote Matrix,
 	  TO "mingens",
 	  TO "syz"
 	  }
-     }
-
-document { "Matrix ** Matrix",
-     TT "f ** g", " -- computes the tensor product of two matrices.",
-     PARA,
-     SEEALSO "Matrix"
      }
 
 document { quote gcdDegree,
@@ -246,9 +243,10 @@ Matrix _ Sequence := (m,ind) -> (
      	  R.pop())
      else error "expected a sequence of length two"
      )
-document { "f_(i,j)",
-     TT "f_(i,j)", " -- provide the element in row i and column j of the matrix f.",
-     SEEALSO ("_", "Matrix")
+document { (quote _, Matrix, Sequence),
+     TT "f_(i,j)", " -- provide the element in row ", TT "i", " and
+     column ", TT "j", " of the matrix ", TT "f", ".",
+     SEEALSO {"_", "Matrix"}
      }
 
 Matrix _ ZZ := (m,i) -> (
@@ -256,8 +254,10 @@ Matrix _ ZZ := (m,i) -> (
      	  sendgg (ggPush m, ggPush i, ggelem);
      	  new m.target)
      else error ("subscript '", name i, "' out of range"))
-document { "f_i",
-     TT "f_i", " -- provide the i-th column of a matrix f as a vector.",
+document { (quote _, Matrix, ZZ),
+     TT "f_i", " -- provide the ", TT "i", "-th column of a matrix ", TT "f", " as a vector.",
+     PARA,
+     "Vectors are disparaged, so we may do away with this function in the future.",
      SEEALSO "_"
      }
 
@@ -502,11 +502,49 @@ directSum List := args -> directSum toSequence args
 Matrix ++ Matrix := directSum
 Module ++ Module := directSum
 
+document { (quote ++,Module,Module),
+     TT "M++N", " -- computes the direct sum of two modules.",
+     PARA,
+     EXAMPLE "R = ZZ/101[a..c];",
+     EXAMPLE "image vars R ++ kernel vars R",
+     "Projection and inclusion maps for direct sums:",
+     MENU {
+	  TO (quote ^,Module,Array),
+	  TO (quote _,Module,Array)
+	  },
+     SEEALSO directSum
+     }
+
+document { (quote ++,Matrix,Matrix),
+     TT "f++g", " -- computes the direct sum of two maps between modules.",
+     PARA,
+     "If an argument is a ring element or integer, it is promoted
+     to a one by one matrix.",
+     EXAMPLE "R = ZZ/101[a..c];",
+     EXAMPLE "vars R ++ transpose vars R",
+     EXAMPLE "oo^[1]",
+     EXAMPLE "a++b++c",
+     "Selecting rows or columns of blocks:",
+     MENU {
+	  TO (quote ^,Matrix,Array),
+	  TO (quote _,Matrix,Array)
+	  },
+     SEEALSO {directSum, (quote |, Matrix, Matrix), (quote ||, Matrix, Matrix)}
+     }
+
 document { quote directSum,
-     TT "directSum(m,n,...)", " -- forms the direct sum of matrices or modules.",
+     TT "directSum(M,N,...)", " -- forms the direct sum of matrices or modules.",
      PARA,
      "The components can be recovered later with ", TO "components", ".",
-     SEEALSO ("++", "components")
+     PARA,
+     "Projection and inclusion maps for direct sums:",
+     MENU {
+	  TO (quote ^,Module,Array),
+	  TO (quote _,Module,Array),
+	  TO (quote ^,Matrix,Array),
+	  TO (quote _,Matrix,Array)
+	  },
+     SEEALSO {"++", "components"}
      }
 
 Matrix ++ ZZ :=
@@ -668,7 +706,7 @@ document { quote diff,
      EXAMPLE "W = diff(transpose v * v, f)",
      EXAMPLE "Wf = minors(3,W)",
      PARA,
-     SEEALSO ( "contract", "jacobian" )
+     SEEALSO { "contract", "jacobian" }
      }
 
 contract(Matrix, Matrix) := BinaryMatrixOperation ggcontract
@@ -765,7 +803,7 @@ document { quote leadTerm,
      EXAMPLE "leadTerm (3 + 8*a^2*b + 7*b*c^2)",
      EXAMPLE "leadTerm matrix {{a,b},{c,d}}",
      EXAMPLE "leadTerm matrix {{c,d},{a,b}}",
-     SEEALSO ("leadCoefficient", "leadMonomial", "leadComponent")
+     SEEALSO {"leadCoefficient", "leadMonomial", "leadComponent"}
      }
 
 borel Matrix := m -> (
@@ -981,7 +1019,7 @@ map(Module,Module,Function) := (M,N,f,options) -> (
      map(M,N,table(numgens M, numgens N, f))
      )
 
-document { "map(Module,Module,Function)",
+document { (map,Module,Module,Function),
      TT "map(M,N,f)", " -- creates a map from the module N to the module M whose
      matrix entries are obtained from the function f by evaluating f(i,j)"
      }
@@ -1202,40 +1240,38 @@ document { quote matrix,
   PARA,
   "Various ways to use ", TO "matrix", ".",
   MENU {
-       TO "matrix(List)",
-       TO "matrix(Matrix)",
-       TO "matrix(Ring,List)"
+       TO (matrix, List),
+       TO (matrix,Matrix),
+       TO (matrix,Ring,List)
        },
   "Optional arguments, valid with each form above:",
   MENU {
        (TO "Degree", " -- specify the degree of the resulting map."),
        },
-  SEEALSO ("map", "Matrix" )
+  SEEALSO {"map", "Matrix" }
   }
 
-document { "map(Module,Module,...)",
-     TT "map(N,M,...)", " -- methods for making maps from a module M to
-     a module N.",
-     PARA,
-     "If a matrix is provided, and the modules are subquotient modules, then
-     the matrix is understood to be formed with respect to generators of
-     the subquotient modules.",
+document { "making module maps",
+     "There are several different ways to use ", TO "map", " to make maps
+     maps between modules.  In all case, if a matrix is provided, and the
+     modules are subquotient modules, then the matrix is understood to be
+     formed with respect to generators of the subquotient modules.",
      PARA,
      MENU {
-	  TO "map(Matrix)",
-	  TO "map(Module)",
-       	  TO "map(Module,Module)",
-       	  TO "map(Module,Module,List)",
-       	  TO "map(Module,Module,Function)",
-       	  TO "map(Module,Module,Matrix)",
-       	  TO "map(Module,RingElement)",
-       	  TO "map(Module,Nothing,List)",
-       	  TO "map(Module,ZZ,List)",
-       	  TO "map(Module,ZZ,Function)",
-       	  TO "map(Module,Matrix)",
-	  TO "map(Module,Module,RingElement)"
+	  TO (map,Matrix),
+	  TO (map,Module),
+       	  TO (map,Module,Module),
+       	  TO (map,Module,Module,List),
+       	  TO (map,Module,Module,Function),
+       	  TO (map,Module,Module,Matrix),
+       	  TO (map,Module,RingElement),
+       	  TO (map,Module,Nothing,List),
+       	  TO (map,Module,ZZ,List),
+       	  TO (map,Module,ZZ,Function),
+       	  TO (map,Module,Matrix),
+	  TO (map,Module,Module,RingElement)
 	  },
-     SEEALSO ("map", "matrix")
+     SEEALSO {"map", "matrix"}
      }
 
 matrix(Matrix) := (m,options) -> (
@@ -1245,23 +1281,170 @@ matrix(Matrix) := (m,options) -> (
      else map(cover target m, cover source m ** ring target m, m, Degree => degree m)
      )
 
-document { "map(Matrix)",
+document { (map,Matrix),
      TT "map(f, Degree => d)", " -- make a map of degree d from a map f
      of modules by tensoring the source module with a free module of
      rank 1 and appropriate degree."
      }
 
-document { "matrix(Matrix)",
+document { (matrix,Matrix),
      TT "matrix f", " -- produce the matrix of a map f.",
      PARA,
      "If the source and target of f are free, then the result is
      f itself.  Otherwise, the source and target will be replaced by
      the free modules whose basis elements correspond to the generators
      of the modules.",
-     SEEALSO ("map", "matrix")
+     SEEALSO {"map", "matrix"}
      }
 
-document { "matrix(List)",
+document { (matrix,Ring,List),
+     TT "matrix(R,v)", " -- create a matrix over R from a doubly-nested list of
+     ring elements or matrices.",
+     PARA,
+     "This is essentially the same as ", TO (matrix,List), " together with
+     the specification of the ring.",
+     PARA,
+     EXAMPLE "R = ZZ/101[a..f]",
+     EXAMPLE "matrix(R, {{a,b,0},{d,0,f}})",
+     SEEALSO {"map", "matrix"}
+     }
+
+document { (map,Module,Module),
+     TT "map(M,N)", " -- constructs the natural map from N to M.",
+     PARA,
+     "The modules M and N should be subquotient modules of the same
+     free module",
+     SEEALSO {"map", "isWellDefined"}
+     }
+
+document { (map,Module,Matrix),
+     TT "map(M,p)", " -- recasts a matrix p to a map whose target is M by
+     tensoring p with a graded free module of rank 1.",
+     PARA,
+     EXAMPLE "R = ZZ/101[x,y]",
+     EXAMPLE "p = matrix{{x,y}}",
+     EXAMPLE "q = map(R^{3},p)",
+     EXAMPLE "degrees target q",
+     EXAMPLE "degrees source q",
+     SEEALSO {"map", "matrix"}
+     }
+
+document { (map,Module,Module,List),
+     TT "map(M,N,v)", " -- produces a map (matrix) from the module N
+     to the module M whose entries are obtained from the doubly-nested list
+     v of ring elements.",
+     PARA,
+     EXAMPLE "R = ZZ/101[x,y,z]",
+     EXAMPLE "p = map(R^2,R^{-2,-2},{{x^2,0},{0,y^2}})",
+     EXAMPLE "isHomogeneous p",
+     SEEALSO {"map", "matrix"}
+     }
+document { (map,Module,Module,Matrix),
+     TT "map(M,N,p)", " -- recasts the matrix p as a map (matrix) from
+     the module N to the module M.",
+     PARA,
+     EXAMPLE "R = ZZ/101[x,y,z]",
+     EXAMPLE "p = matrix {{x,y,z}}",
+     EXAMPLE "q = map(R^1,R^3,p)",
+     EXAMPLE "degrees source p",
+     EXAMPLE "degrees source q",
+     SEEALSO {"map", "matrix"}
+     }
+document { (map,Module,Module,RingElement),
+     TT "map(M,N,r)", " -- construct a map from a module N to M which provided
+     by the ring element r.",
+     PARA,
+     "If r is nonzero, then M and N should be equal, or differ at most by
+     a degree (i.e., by tensoring with a graded free module of rank 1).",
+     PARA,
+     EXAMPLE "R = ZZ/101[x]",
+     EXAMPLE "map(R^2,R^3,0)",
+     EXAMPLE "map(R^2,R^2,x)",
+     EXAMPLE "q = map(R^2,R^2,x,Degree=>1)",
+     EXAMPLE "isHomogeneous q",
+     PARA,
+     SEEALSO {"map", "matrix"}
+     }
+document { (map,Module),
+     TT "map M", " -- construct the identity map from M to itself.",
+     PARA,
+     "This can also be accomplished with ", TT "id_M", " or ", TT "map(M,1)", ".",
+     SEEALSO {"map", "id"}
+     }
+document { (map,Module,RingElement),
+     TT "map(M,r)", " -- construct the map from M to itself which is provided
+     by scalar multiplication by the ring element r.",
+     PARA,
+     EXAMPLE "R = ZZ/101[x]",
+     EXAMPLE "map(R^2,x)",
+     SEEALSO {"map", "matrix"}
+     }
+document { quote Degree,
+     TT "Degree => d", " -- an optional argument to ", TO "matrix", " that
+     specifies that the degree of the map created should be ", TT "d", ".",
+     PARA,
+     "The degree may be an integer or a list of integers (multidegree).  The
+     length of the list should be the same as the length of a degree for the
+     ring, see ", TO "degreeLength", ".",
+     PARA,
+     EXAMPLE "R = ZZ/101[x]",
+     EXAMPLE "p = map(R^1, R^1, {{x^4}})",
+     EXAMPLE "isHomogeneous p",
+     EXAMPLE "q = map(R^1, R^1, {{x^4}}, Degree => 4)",
+     EXAMPLE "isHomogeneous q",
+     SEEALSO {"map", "matrix"}
+     }
+
+document { (map,Module,ZZ,Function),
+     TT "map(M,n,f)", " -- construct a map from a free graded module of
+     rank n to M whose entries are obtained from the function f by 
+     evaluating f(i,j).",
+     PARA,
+     "The degrees of the basis elements of the source module are chosen
+     in an attempt to ensure that the resulting map is homogeneous of
+     degree zero."
+     }
+
+document { (map,Module,ZZ,List),
+     TT "map(M,n,v)", " -- construct a map from a free graded module of
+     rank n to M whose entries are in the doubly nested list v.",
+     PARA,
+     "The degrees of the basis elements of the source module are chosen
+     in an attempt to ensure that the resulting map is homogeneous of
+     degree zero."
+     }
+
+document { (map,Module,Nothing,List),
+     TT "map(M,,v)", " -- construct a map from a free graded module to M
+     whose entries are obtained from the doubly-nested list v of
+     ring elements.",
+     PARA,
+     "The absence of the second argument indicates that the source of the map
+     is to be a free module constructed with an attempt made to assign degrees
+     to its basis elements so as to make the map homogeneous of degree zero.",
+     PARA,
+     EXAMPLE "R = ZZ/101[x,y]",
+     EXAMPLE "f = map(R^2,,{{x^2,y^2},{x*y,0}})",
+     EXAMPLE "degrees source f",
+     EXAMPLE "isHomogeneous f",
+     SEEALSO {"map", "matrix"}
+     }
+
+matrix(List) := (m,options) -> (
+     if #m === 0 then error "expected nonempty list";
+     m = apply(splice m,splice);
+     types := unique apply(m,class);
+     if #types === 1 then (
+	  type := types#0;
+	  if instance(type,Module) 
+	  then map(type,,table(numgens type, #m, (i,j) -> m_j_i))
+	  else if type === List then (
+	       if isTable m then matrixTable(m,options)
+	       else error "expected rows all to be the same length"
+	       )
+	  else error "expected a table of ring elements or matrices")
+     else error "expected a table of ring elements or matrices")
+document { (matrix,List),
      TT "matrix v", " -- create a matrix from a doubly-nested list of
      ring elements or matrices, or from a list of (column) vectors.",
      PARA,
@@ -1287,154 +1470,8 @@ document { "matrix(List)",
      "Here we construct a matrix from column vectors.",
      EXAMPLE "F = R^3",
      EXAMPLE "matrix {F_2, F_1, x*F_0 + y*F_1 + z*F_2}",
-     SEEALSO ("map", "matrix")
+     SEEALSO {"map", "matrix"}
      }
-document { "matrix(Ring,List)",
-     TT "matrix(R,v)", " -- create a matrix over R from a doubly-nested list of
-     ring elements or matrices.",
-     PARA,
-     "This is essentially the same as ", TO "matrix(List)", " together with
-     the specification of the ring.",
-     PARA,
-     EXAMPLE "R = ZZ/101[a..f]",
-     EXAMPLE "matrix(R, {{a,b,0},{d,0,f}})",
-     SEEALSO ("map", "matrix")
-     }
-
-document { "map(Module,Module)",
-     TT "map(M,N)", " -- constructs the natural map from N to M.",
-     PARA,
-     "The modules M and N should be subquotient modules of the same
-     free module",
-     SEEALSO ("map", "isWellDefined")
-     }
-
-document { "map(Module,Matrix)",
-     TT "map(M,p)", " -- recasts a matrix p to a map whose target is M by
-     tensoring p with a graded free module of rank 1.",
-     PARA,
-     EXAMPLE "R = ZZ/101[x,y]",
-     EXAMPLE "p = matrix{{x,y}}",
-     EXAMPLE "q = map(R^{3},p)",
-     EXAMPLE "degrees target q",
-     EXAMPLE "degrees source q",
-     SEEALSO ("map", "matrix")
-     }
-
-document { "map(Module,Module,List)",
-     TT "map(M,N,v)", " -- produces a map (matrix) from the module N
-     to the module M whose entries are obtained from the doubly-nested list
-     v of ring elements.",
-     PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "p = map(R^2,R^{-2,-2},{{x^2,0},{0,y^2}})",
-     EXAMPLE "isHomogeneous p",
-     SEEALSO ("map", "matrix")
-     }
-document { "map(Module,Module,Matrix)",
-     TT "map(M,N,p)", " -- recasts the matrix p as a map (matrix) from
-     the module N to the module M.",
-     PARA,
-     EXAMPLE "R = ZZ/101[x,y,z]",
-     EXAMPLE "p = matrix {{x,y,z}}",
-     EXAMPLE "q = map(R^1,R^3,p)",
-     EXAMPLE "degrees source p",
-     EXAMPLE "degrees source q",
-     SEEALSO ("map", "matrix")
-     }
-document { "map(Module,Module,RingElement)",
-     TT "map(M,N,r)", " -- construct a map from a module N to M which provided
-     by the ring element r.",
-     PARA,
-     "If r is nonzero, then M and N should be equal, or differ at most by
-     a degree (i.e., by tensoring with a graded free module of rank 1).",
-     PARA,
-     EXAMPLE "R = ZZ/101[x]",
-     EXAMPLE "map(R^2,R^3,0)",
-     EXAMPLE "map(R^2,R^2,x)",
-     EXAMPLE "q = map(R^2,R^2,x,Degree=>1)",
-     EXAMPLE "isHomogeneous q",
-     PARA,
-     SEEALSO ("map", "matrix")
-     }
-document { "map(Module)",
-     TT "map M", " -- construct the identity map from M to itself.",
-     PARA,
-     "This can also be accomplished with ", TT "id_M", " or ", TT "map(M,1)", ".",
-     SEEALSO ("map", "id")
-     }
-document { "map(Module,RingElement)",
-     TT "map(M,r)", " -- construct the map from M to itself which is provided
-     by scalar multiplication by the ring element r.",
-     PARA,
-     EXAMPLE "R = ZZ/101[x]",
-     EXAMPLE "map(R^2,x)",
-     SEEALSO ("map", "matrix")
-     }
-document { quote Degree,
-     TT "Degree => d", " -- an optional argument to ", TO "matrix", " that
-     specifies that the degree of the map created should be ", TT "d", ".",
-     PARA,
-     "The degree may be an integer or a list of integers (multidegree).  The
-     length of the list should be the same as the length of a degree for the
-     ring, see ", TO "degreeLength", ".",
-     PARA,
-     EXAMPLE "R = ZZ/101[x]",
-     EXAMPLE "p = map(R^1, R^1, {{x^4}})",
-     EXAMPLE "isHomogeneous p",
-     EXAMPLE "q = map(R^1, R^1, {{x^4}}, Degree => 4)",
-     EXAMPLE "isHomogeneous q",
-     SEEALSO ("map", "matrix")
-     }
-
-document { "map(Module,ZZ,Function)",
-     TT "map(M,n,f)", " -- construct a map from a free graded module of
-     rank n to M whose entries are obtained from the function f by 
-     evaluating f(i,j).",
-     PARA,
-     "The degrees of the basis elements of the source module are chosen
-     in an attempt to ensure that the resulting map is homogeneous of
-     degree zero."
-     }
-
-document { "map(Module,ZZ,List)",
-     TT "map(M,n,v)", " -- construct a map from a free graded module of
-     rank n to M whose entries are in the doubly nested list v.",
-     PARA,
-     "The degrees of the basis elements of the source module are chosen
-     in an attempt to ensure that the resulting map is homogeneous of
-     degree zero."
-     }
-
-document { "map(Module,Nothing,List)",
-     TT "map(M,,v)", " -- construct a map from a free graded module to M
-     whose entries are obtained from the doubly-nested list v of
-     ring elements.",
-     PARA,
-     "The absence of the second argument indicates that the source of the map
-     is to be a free module constructed with an attempt made to assign degrees
-     to its basis elements so as to make the map homogeneous of degree zero.",
-     PARA,
-     EXAMPLE "R = ZZ/101[x,y]",
-     EXAMPLE "f = map(R^2,,{{x^2,y^2},{x*y,0}})",
-     EXAMPLE "degrees source f",
-     EXAMPLE "isHomogeneous f",
-     SEEALSO ("map", "matrix")
-     }
-matrix(List) := (m,options) -> (
-     if #m === 0 then error "expected nonempty list";
-     m = apply(splice m,splice);
-     types := unique apply(m,class);
-     if #types === 1 then (
-	  type := types#0;
-	  if instance(type,Module) 
-	  then map(type,,table(numgens type, #m, (i,j) -> m_j_i))
-	  else if type === List then (
-	       if isTable m then matrixTable(m,options)
-	       else error "expected rows all to be the same length"
-	       )
-	  else error "expected a table of ring elements or matrices")
-     else error "expected a table of ring elements or matrices")
 
 --------------------------------------------------------------------------
 
@@ -1445,7 +1482,7 @@ document { quote id,
      PARA,
      "M may be a ", TO "Module", " or a ", TO "ChainComplex", ".",
      PARA,
-     SEEALSO("Matrix", "ChainComplexMap", "ScriptedFunction")
+     SEEALSO{"Matrix", "ChainComplexMap", "ScriptedFunction"}
      }
 
 reshape = (F, G, m) -> (
@@ -1518,10 +1555,8 @@ subquotient(Nothing,Matrix) := (null,relns) -> (
 	  );
      if E.?relations then relns = relns | E.relations;
      if relns != 0 then M.relations = relns;
-     if not M.?generators and not M.?relations then M.numgens = E.numgens;
-     M#0 = (
-	  sendgg(ggPush M, ggzero);
-	  new M);
+     M.numgens = (sendgg (ggPush M.handle, gglength); eePopInt());
+     M#0 = (sendgg(ggPush M, ggzero); new M);
      M)
 subquotient(Matrix,Nothing) := (subgens,null) -> (
      M := new Module of Vector;
@@ -1532,9 +1567,8 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
      M.generators = subgens;
      if E.?relations then M.relations = E.relations;
      M.ring = ring subgens;
-     M#0 = (
-	  sendgg(ggPush M, ggzero);
-	  new M);
+     M.numgens = (sendgg (ggPush M.handle, gglength); eePopInt());
+     M#0 = (sendgg(ggPush M, ggzero); new M);
      M)
 subquotient(Matrix,Matrix) := (subgens,relns) -> (
      E := target subgens;
@@ -1542,19 +1576,20 @@ subquotient(Matrix,Matrix) := (subgens,relns) -> (
      M := new Module of Vector;
      M.ring = ring subgens;
      M.handle = handle E;
-     relns = matrix relns;
-     subgens = matrix subgens;
-     if E.?generators then (
-	  relns = E.generators * relns;
-	  subgens = E.generators * subgens;
-	  );
-     if E.?relations then relns = relns | E.relations;
-     M.generators = subgens;
-     if relns != 0 then M.relations = relns;
-     M#0 = (
-	  sendgg(ggPush M, ggzero);
-	  new M);
-     M)
+     M.numgens = (sendgg (ggPush M.handle, gglength); eePopInt());
+     M#0 = ( sendgg(ggPush M, ggzero); new M);
+     if M == 0 then M
+     else (
+	  relns = matrix relns;
+	  subgens = matrix subgens;
+	  if E.?generators then (
+	       relns = E.generators * relns;
+	       subgens = E.generators * subgens;
+	       );
+	  if E.?relations then relns = relns | E.relations;
+	  M.generators = subgens;
+	  if relns != 0 then M.relations = relns;
+	  M))
 document { quote subquotient,
      TT "subquotient(f,g)", " -- given matrices f and g with the same target, 
      produces a new module representing the image of f in the cokernel
@@ -1565,9 +1600,9 @@ document { quote subquotient,
      PARA,
      "Functions:",
      MENU {
-	  {TO "generators", "      -- recover the generators"},
-	  {TO "relations", " -- recover the relations"},
-	  {TO "prune", "     -- convert to a module with presentation"}
+	  {TO "generators", " -- recover the generators"},
+	  {TO "relations", "  -- recover the relations"},
+	  {TO "prune", "      -- convert to a module with presentation"}
 	  },
      "This is the general form in which modules are represented, and
      subquotient modules are often returned as values of computations.",
@@ -1576,7 +1611,7 @@ document { quote subquotient,
      EXAMPLE "generators M",
      EXAMPLE "relations M",
      EXAMPLE "prune M",
-     SEEALSO ("generators", "relations")
+     SEEALSO {"generators", "relations"}
      }
 
 
@@ -1586,6 +1621,12 @@ Matrix ** Matrix := (f,g) -> (
      sendgg (ggPush f, ggPush g, ggtensor);
      h := getMatrix R;
      map(target f ** target g, source f ** source g, h, Degree => degree f + degree g))
+
+document { (quote **, Matrix, Matrix),
+     TT "f ** g", " -- computes the tensor product of two matrices.",
+     PARA,
+     SEEALSO "Matrix"
+     }
 
 TEST "
 ZZ[t]
@@ -1714,8 +1755,8 @@ document { quote Ideal,
 	  TO "codim",
 	  TO "decompose",
 	  TO "dim",
-	  TO "Ideal * Ideal",
-	  TO "Ideal ^ ZZ",
+	  TO (quote *,Ideal, Ideal),
+	  TO (quote ^,Ideal, ZZ),
 	  TO "module",
 	  TO "radical",
 	  TO "removeLowestDimension",
@@ -1723,11 +1764,11 @@ document { quote Ideal,
 	  }
      }
 
-document { "Ideal * Ideal",
+document { (quote *,Ideal,Ideal),
      TT "I * J", " -- the product of two ideals."
      }
 
-document { "Ideal ^ ZZ",
+document { (quote ^,Ideal,ZZ),
      TT "I^n", " -- the n-th power of an ideal I."
      }
 
@@ -1914,13 +1955,41 @@ TEST "
 
 Matrix _ Array := (f,v) -> f * (source f)_v
 Matrix ^ Array := (f,v) -> (target f)^v * f
+document { (quote ^,Matrix,Array),
+     TT "f^[i,j,k]", " -- extract some rows of blocks from a matrix ", TT "f", ".",
+     PARA,
+     "The target of ", TT "f", " should be a direct sum, and the result is obtained by
+     composition with the projection onto the sum of the components numbered
+     ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
+     PARA,
+     EXAMPLE "f = map(ZZ^2 ++ ZZ^2, ZZ^2, {{1,2},{3,4},{5,6},{7,8}})",
+     EXAMPLE "f^[0]",
+     EXAMPLE "f^[1]",
+     EXAMPLE "f^[1,0]",
+     SEEALSO {submatrix, (quote ^,Module,Array), (quote _,Matrix,Array)}
+     }
+
+document { (quote _,Matrix,Array),
+     TT "f_[i,j,k]", " -- extract some columns of blocks from a matrix ", TT "f", ".",
+     PARA,
+     "The source of ", TT "f", " should be a direct sum, and the result is obtained by
+     composition with the inclusion into the sum of the components numbered
+     ", TT "i, j, k", ".  Free modules are regarded as direct sums.",
+     PARA,
+     EXAMPLE "f = map(ZZ^2 ++ ZZ^2, ZZ^2, {{1,2},{3,4},{5,6},{7,8}})",
+     EXAMPLE "f^[0]",
+     EXAMPLE "f^[1]",
+     EXAMPLE "f^[1,0]",
+     SEEALSO {submatrix, (quote _,Module,Array), (quote ^,Matrix,Array)}
+     }
 
 Matrix _ List := (f,v) -> (
      v = splice v;
      listZ v;
      submatrix(f,v)
      )
-document { "f_{i,j}",
+
+document { (quote _, Matrix, List),
      TT "f_{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
      columns numbered i, j, k, ... .",
      PARA,
@@ -1943,7 +2012,7 @@ Matrix ^ List := (f,v) -> (
      listZ v;
      submatrix(f,v,)
      )
-document { "f^{i,j}",
+document { (quote ^,Matrix,List),
      TT "f^{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
      rows numbered i, j, k, ... .",
      PARA,

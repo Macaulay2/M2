@@ -18,6 +18,8 @@ struct.c
 basic.c
 strings.c
 actors3.c
+stdio.c
+lex.c
 t
 mapfile
 restart.tmp

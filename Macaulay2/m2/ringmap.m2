@@ -13,7 +13,7 @@ document { quote RingMap,
      TT "RingMap", " -- the class of all ring maps.",
      "Operations which produce ring maps:",
      MENU {
-	  TO "map",
+	  TO "maps between rings",
 	  TO "newCoordinateSystem"
 	  },
      "Operations on ring maps:",
@@ -82,7 +82,7 @@ map(Ring,Ring) := (S,R,options) -> (
 
 map(Ring,Ring,List) := (R,S,m,options) -> map(R,S,matrix(R,{m}),options)
 
-document { "map(Ring,Ring,...)",
+document { "making ring maps",
      TT "map(R,S,m)", " -- sets up a ring homomorphism from ", TT "S", "
      to ", TT "R", " which sends the i-th variable of S to the i-th element
      of the list ", TT "m", ".  Alternatively, ", TT "m", " may be

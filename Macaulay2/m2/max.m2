@@ -4,7 +4,7 @@ InfiniteNumber = new Type of HashTable
 document { quote InfiniteNumber,
      TT "InfiniteNumber", " -- the class of all infinite numbers.",
      PARA,
-     SEEALSO ( "infinity", "-infinity" )
+     SEEALSO { "infinity", "-infinity" }
      }
 
 sign := quote sign
@@ -16,7 +16,7 @@ infinity = new InfiniteNumber from {
      }
 document { quote infinity,
      TT "infinity", " -- a representation of infinity.",
-     SEEALSO ( "-infinity", "InfiniteNumber" )
+     SEEALSO { "-infinity", "InfiniteNumber" }
      }
 
 IndeterminateNumber = new Type of HashTable
@@ -52,7 +52,7 @@ document { quote indeterminate,
 
 document { "-infinity",
      TT "-infinity", " -- a representation of negative infinity.",
-     SEEALSO ( "infinity", "InfiniteNumber" )
+     SEEALSO { "infinity", "InfiniteNumber" }
      }
 
 InfiniteNumber ? InfiniteNumber := (x,y) -> x#sign ? y#sign

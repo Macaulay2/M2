@@ -98,7 +98,7 @@ cohomology(ZZ,Sequence) := (i,X) -> ((M,N) -> cohomology(i,M,N)) X
 document { quote ScriptedFunctor,
      TT "ScriptedFunctor", " -- the class of all functors which accept a 
      subscript or a superscript, the primary example of which is ", TO "HH", ".",
-     SEEALSO ("subscript", "superscript", "argument")
+     SEEALSO {"subscript", "superscript", "argument"}
      }
 
 document { quote argument,
@@ -153,7 +153,7 @@ document { quote cohomology,
      "If it is intended that i be of class ZZ, M be of class A, and N be of 
      class B, then the method can be installed with ",
      PRE "   cohomology(ZZ, A, B) := (i,M,N) -> ...",
-     SEEALSO ("homology", "ScriptedFunctor")
+     SEEALSO {"homology", "ScriptedFunctor"}
      }
 
 document { quote homology,
@@ -165,5 +165,5 @@ document { quote homology,
      "If it is intended that i be of class ZZ, M be of class A, and N be of
      class B, then the method can be installed with ",
      PRE "   homology(ZZ, A, B) := (i,M,N) -> ...",
-     SEEALSO ("cohomology", "ScriptedFunctor")
+     SEEALSO {"cohomology", "ScriptedFunctor"}
      }

@@ -5,7 +5,8 @@ QuotientRing = new Type of EngineRing
 
 document { quote QuotientRing,
      TT "QuotientRing", " -- the class of all quotient rings.",
-     SEEALSO "Ring / Ideal"
+     PARA,
+     SEEALSO {quote /, Ring, Ideal}
      }
 
 isQuotientRing = method()
@@ -26,29 +27,6 @@ document { quote isQuotientOf,
 document { quote isQuotientRing,
      TT "isQuotientRing R", " -- tells whether R is provided as a quotient
      ring."
-     }
-
-document { "Ring / Ideal",
-     TT "R/I", " -- form a quotient ring.",
-     PARA,
-     "Here ", TT "I", " may be: an element of ", TT "R", "; a sequence of elements of
-     ", TT "R", "; or a submodule of ", TT "R^1", ".",
-     PARA,
-     "The names of the variables are assigned values in the new quotient ring
-     by automatically running ", TT "use R", ", unless R has a name,
-     or one of the rings R is a quotient ring of has a name.",
-     PARA,
-     "Quotient rings are bulky objects, because they contain a Groebner basis
-     for their ideals, so only quotients of ", TT "ZZ", " are remembered
-     forever.  Typically the ring created by ", TT "R/I", " will
-     be a brand new ring, and its elements will be incompatible with the
-     elements of previously created quotient rings for the same ideal.",
-     PARA,
-     EXAMPLE "ZZ/2 === ZZ/(4,6)",
-     EXAMPLE "R = ZZ/101[t]",
-     EXAMPLE "R/t === R/t",
-     PARA,
-     SEEALSO ("QuotientRing", "use")
      }
 
 TEST "
@@ -141,6 +119,29 @@ Ring / Ideal := (R,I) -> if I == 0 then R else (
 	  error "can't form quotient of this ring"
 	  )
      )
+
+document { (quote /, Ring, Ideal),
+     TT "R/I", " -- form a quotient ring.",
+     PARA,
+     "Here ", TT "I", " may be: an element of ", TT "R", "; a sequence of elements of
+     ", TT "R", "; or a submodule of ", TT "R^1", ".",
+     PARA,
+     "The names of the variables are assigned values in the new quotient ring
+     by automatically running ", TT "use R", ", unless R has a name,
+     or one of the rings R is a quotient ring of has a name.",
+     PARA,
+     "Quotient rings are bulky objects, because they contain a Groebner basis
+     for their ideals, so only quotients of ", TT "ZZ", " are remembered
+     forever.  Typically the ring created by ", TT "R/I", " will
+     be a brand new ring, and its elements will be incompatible with the
+     elements of previously created quotient rings for the same ideal.",
+     PARA,
+     EXAMPLE "ZZ/2 === ZZ/(4,6)",
+     EXAMPLE "R = ZZ/101[t]",
+     EXAMPLE "R/t === R/t",
+     PARA,
+     SEEALSO {"QuotientRing", "use"}
+     }
 
 predecessors := method()
 predecessors Ring := R -> {R}
