@@ -1,7 +1,12 @@
 --		Copyright 1996 by Daniel R. Grayson
 
 split := s -> flatten apply(separate(s,"/"), i -> separate(i,"\\")) -- sigh...
-M2HOME := concatenate between(pathSeparator, drop(split currentDirectory(),-1))
+
+M2HOME := concatenate between(
+     pathSeparator, 
+     drop(split if getenv "PWD" =!= "" then getenv "PWD" else currentDirectory(),
+	  -1))
+
 fix := s -> format concatenate s
 
 (
