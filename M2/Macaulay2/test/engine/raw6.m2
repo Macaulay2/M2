@@ -425,15 +425,46 @@ b1 = rawBasis(m, {2}, {3}, {1}, {0,1,2}, false, -1)
 assert(b1 == mat{{a*b,a*b*c,a*c,a*c^2,b*c,b*c^2,c^2,c^3}})
 
 m = mat{{a^3,b^3,a*b*c,c^3}}
-b1 = rawBasis(m, {}, {}, {1}, {0,1,2}, false, -1)  -- WRONG
+b1 = rawBasis(m, {}, {}, {1}, {0,1,2}, false, -1)
 
 m = mat{{a^3,b^3}}
-rawBasis(m, {}, {}, {1}, {0,1}, false, -1)  -- WRONG
+rawBasis(m, {}, {}, {1}, {0,1}, false, -1)
+
+m = mat{{a^7,b^7}}
+b1 = rawBasis(m, {}, {}, {1}, {0,1}, false, 10)
+assert(rawNumberOfColumns b1 == 10)
 
 m = rawMatrix1(R^{-1}, 2, (a^3,b^2), false, 0)
 mb = rawBasis(m, {2}, {2}, {1}, {0,1}, false, -1)
 assert(mb == mat{{a,b}})
-<< "do MUCH MORE TESTING of rawBasis!!" << endl;
+
+-- A truncation example
+m = rawMatrix1(R^{-1,-3,-6}, 3, (a^3,0_R,0_R,
+	                         0_R,b^3,0_R,
+				 0_R,0_R,a*b), false, 0)
+mb = rawBasis(m, {2}, {2}, {1}, {0,1}, true, -1)
+mb = rawBasis(m, {3}, {3}, {1}, {0,1}, true, -1)
+mb = rawBasis(m, {4}, {4}, {1}, {0,1}, true, -1)
+mb = rawBasis(m, {5}, {5}, {1}, {0,1}, true, -1)
+mb = rawBasis(m, {6}, {6}, {1}, {0,1}, true, -1)
+mb = rawBasis(m, {7}, {7}, {1}, {0,1}, true, -1)
+mb = rawBasis(m, {100}, {100}, {1}, {0,1}, true, -1)
+mb = rawBasis(m, {1000}, {1000}, {1}, {0,1}, true, -1)
+
+-- Multigraded examples
+needs "raw-util.m2"
+R = polyring3(rawZZp 101, (symbol a, symbol b, symbol c), rawMonomialOrdering { Lex => 3}, {(1,1,0),(0,1,1),(0,1,2)})
+m = mat{{0_R}}
+mb = rawBasis(m, {1,3,3}, {1,3,3}, {1,1,1}, {0,1,2}, false, -1)
+assert (mb == mat{{a*b*c}})
+mb = rawBasis(m, {2,6,6}, {2,6,6}, {1,1,1}, {0,1,2}, false, -1)
+
+R = polyring3(rawZZp 101, (symbol a .. symbol d), rawMonomialOrdering { Lex => 4}, ((1,-3),(1,-5),(0,1),(0,1)))
+assert try (b1 = rawBasis(mat{{0_R}}, {}, {3,2}, {3,2}, {0,1,2}, false, -1);false) else true
+assert try(b1 = rawBasis(mat{{0_R}}, {3,2}, {3,2}, {1,6}, {0,1,2,3}, false, -1);false) else true
+b1 = rawBasis(mat{{0_R}}, {3,2}, {3,2}, {6,1}, {0,1,2,3}, false, -1)
+
+<< "rawBasis: test for quotient rings" << endl;
 ---------------------------------------
 -- mutable matrix routines ------------
 ---------------------------------------
