@@ -376,6 +376,26 @@ ch = mat{{-x^4-4*x^3*y-4*x^3*z-6*x^2*y^2-12*x^2*y*z-6*x^2*z^2
 	 {y+z},
 	 {1_R2}}
 m * ch
+
+
+load "raw-util.m2"
+R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
+f = (7*x+2*y+3*z)^2*(13*x^2+y-5)
+g = (9*x-2*y+3*z)^2*(13*x^2+y-5)
+assert(rawGCD(f,g) == 13*x^2+y-5)
+
+R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
+f = (7*x+2*y+3*z)^2*(13*x^2+y-5)
+g = (9*x-2*y+3*z)^2*(13*x^2+y-5)
+h = rawGCD(f,g)
+assert(rawGCD(f,g) == x^2+4*y-3)
+
+R = polyring(rawQQ(), (symbol x,symbol y,symbol z))
+f = (7*x+2*y+3*z)^2*(13*x^2+y-5)
+g = (9*x-2*y+3*z)^2*(13*x^2+y-5)
+assert(rawGCD(f,g) == 13*x^2+y-5)
+rawGCD(f,g)
+f1 = (7*x+2*y+3*z)^2*(13*x^2+y-5)
 -- TODO: 
 --  compress
 --  uniquify

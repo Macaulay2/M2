@@ -91,7 +91,9 @@ CanonicalForm convert(const mpz_ptr p) {
      m = m * sign;
      return m;
 }
-#define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
+
+//#define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
+#define MPQ_VAL(f) (M2_Rational ((f).poly_val))
 
 CanonicalForm convert(const RingElement &g) {
      const Ring *R = g.get_ring();
@@ -99,6 +101,8 @@ CanonicalForm convert(const RingElement &g) {
      const Ring *F = R->Ncoeffs();
      const Z_mod *Zn = F->cast_to_Z_mod();
      const ZZ *Z0 = F->cast_to_ZZ();
+     const QQ *Q = F->cast_to_QQ();
+#if 0
      const FractionField *Q = (
 			       NULL != F->cast_to_FractionField()
 			       &&
@@ -108,6 +112,7 @@ CanonicalForm convert(const RingElement &g) {
 			       :
 			       (FractionField*) NULL
 			       );
+#endif
      if (Zn == NULL && Z0 == NULL && Q == NULL) {
 	  ERROR("expected coefficient ring of the form ZZ/n, ZZ, or QQ");
 	  return 0;
@@ -131,8 +136,12 @@ CanonicalForm convert(const RingElement &g) {
 			  :
 			  Q != NULL 
 			  ?
+			  convert(mpq_numref(MPQ_VAL(t->coeff)))
+			  / convert(mpq_denref(MPQ_VAL(t->coeff)))
+#if 0
 			  convert(MPZ_VAL(FRAC_VAL(t->coeff)->numer))
 			  / convert(MPZ_VAL(FRAC_VAL(t->coeff)->denom))
+#endif
 			  :
 			  CanonicalForm(0) // shouldn't happen
 			  );
@@ -172,21 +181,22 @@ const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElem
   return convert(f->get_ring(),h);
 }
 
-void rawFactor(const RingElement *f, RingElement_array **factors, M2_arrayint powers)
+void rawFactor(const RingElement *g, RingElement_array **factors, M2_arrayint powers)
 {
-#if 0
-     factoryseed(23984729);
-     const RingElement &g = gg -> cast_to_RingElement();
-     const Ring *R = g.get_ring();
-     CanonicalForm h = convert(g);
-     CFFList q = Factorize(h);
-     for (CFFListIterator i = q; i.hasItem(); i++) {
-	  gStack.insert(convert(R,i.getItem().factor()));
-	  gStack.insert(new object_int(i.getItem().exp()));
-     }
-     gStack.insert(new object_int(q.length()));
-#endif
+  factoryseed(23984729);
+  const Ring *R = g->get_ring();
+  CanonicalForm h = convert(g);
+  CFFList q = Factorize(h);
+  int nfactors = q.length();
+  *factors = XXX;
+  powers == XXX;
+  int next = 0;
+  for (CFFListIterator i = q; i.hasItem(); i++) {
+    factors->array[next] = convert(R,i.getItem().factor());
+    powers->array[next++] = i.getItem().exp();
+  }
 }
+
 #if 0
 
 static void gcd_ring_elem(object &ff, object &gg) {
