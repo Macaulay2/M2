@@ -141,7 +141,6 @@ map(Module,Nothing,List) := map(Module,Module,List) := options -> (M,N,p) -> (
 	       	    else degreeCheck(options.Degree,R)
 		    )
 	       ),
-ggstack,
 	  ggmatrix);
      m.source = (
      	  if N === null then (sendgg(ggPush m,gggetcols); new Module from R)
