@@ -166,7 +166,7 @@ void cmd_PolynomialRing_term(object &oR, object &oa, object &om)
   // (2) the RingElement construction is incorrect
   const Ring *R = oR->cast_to_Ring();
   RingElement a = oa->cast_to_RingElement();
-  monomial m = om->cast_to_monomial();
+  Monomial m = om->cast_to_Monomial();
   if (R->Ncoeffs() != a.Ring_of())
     { *gError << "term: incorrect arguments"; return; }
   if (R->n_vars() == 0)
@@ -184,7 +184,7 @@ void cmd_PolynomialRing_getterms(object &or, object &om, object &on)
 void cmd_PolynomialRing_getcoeff(object &or, object &om)
 {
   RingElement r = or->cast_to_RingElement();
-  monomial m = om->cast_to_monomial();
+  Monomial m = om->cast_to_Monomial();
   gStack.insert(r.get_coeff(m));
 }
 void cmd_PolynomialRing_leadcoeff(object &or)

@@ -862,7 +862,7 @@ void cmd_Nmi_intersect(object &oa, object &ob)
 void cmd_Nmi_quotient1(object &oa, object &om)
 {
   MonomialIdeal mi = oa->cast_to_MonomialIdeal();
-  monomial m = om->cast_to_monomial();
+  Monomial m = om->cast_to_Monomial();
   gStack.insert(mi.quotient(m.ints()));
 }
 
@@ -876,7 +876,7 @@ void cmd_Nmi_quotient(object &oa, object &ob)
 void cmd_Nmi_sat1(object &oa, object &om)
 {
   MonomialIdeal mi = oa->cast_to_MonomialIdeal();
-  monomial m = om->cast_to_monomial();
+  Monomial m = om->cast_to_Monomial();
   gStack.insert(mi.erase(m.ints()));
 }
 
@@ -893,7 +893,7 @@ void cmd_Nmi_remove(object &oa)
   Bag *b;
   if (!mi.remove(b)) return;
   gStack.insert(make_object_int(b->basis_elem()));
-  gStack.insert(monomial(b->monom().raw()));
+  gStack.insert(Monomial(b->monom().raw()));
   delete b;
 }
 

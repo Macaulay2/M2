@@ -8,7 +8,7 @@
 stash *RingElement_rec::mystash;
 
 
-RingElement::RingElement(const Ring *R, RingElement a, monomial m) : 
+RingElement::RingElement(const Ring *R, RingElement a, Monomial m) : 
   obj(new RingElement_rec(R))
 {
   intarray ma;
@@ -247,7 +247,7 @@ RingElement RingElement::lead_coeff() const
   return result;
 }
 
-RingElement RingElement::get_coeff(const monomial &m) const
+RingElement RingElement::get_coeff(const Monomial &m) const
 {
   const Ring *R = Ring_of();
   const Ring *K = R->Ncoeffs();
@@ -256,19 +256,19 @@ RingElement RingElement::get_coeff(const monomial &m) const
   return result;
 }
 
-monomial RingElement::lead_monom() const
+Monomial RingElement::lead_monom() const
 {
   const Ring *R = Ring_of();
   if (is_zero()) 
     {
       *gError << "zero polynomial has no lead monomial";
-      return monomial();
+      return Monomial();
     }
   intarray resultvp;
 
   Nterm *t = get_value();
   R->Nmonoms()->to_varpower(t->monom, resultvp);
-  return monomial(resultvp.raw());
+  return Monomial(resultvp.raw());
 }
 
 int RingElement::is_homogeneous() const

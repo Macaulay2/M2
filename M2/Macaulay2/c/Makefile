@@ -2,7 +2,7 @@
 ############################## main target
 CC=gcc
 all : scc1
-include ../Makefile.develop
+include ../../Makeconf
 ############################################
 %.c        : %.y
 	$(YACC) $(YFLAGS) $^

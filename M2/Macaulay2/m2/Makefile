@@ -1,7 +1,7 @@
 # reminder - this file must run with non-gnu make programs
 # sigh, but I can't make it
 
-include ../Makefile.develop
+include ../../Makeconf
 ##############################
 .SUFFIXES: .m2
 .PHONY: clean all install
@@ -68,6 +68,7 @@ DUMPSEQUENCE = \
 	ringmap.m2 \
         scriptde/newring.m2 \
         scriptde/subring.m2 \
+	sagbi.m2 \
 	ext.m2 \
 	tor.m2 \
 	monideal.m2 \
@@ -140,7 +141,7 @@ loads.m2 : Makefile
 	@echo making loads.m2
 	@../bin/echoout '>loads.m2' $(foreach i, $(DUMPSEQUENCE), 'load "$(i)"')
 
-version.m2 : ../Makefile.develop makeVersion.awk ../bin/Macaulay2 $(DUMPEDGFILES)
+version.m2 : ../../Makeconf makeVersion.awk ../bin/Macaulay2 $(DUMPEDGFILES)
 	gawk -f makeVersion.awk </dev/null >version.tmp
 	mv version.tmp $@
 

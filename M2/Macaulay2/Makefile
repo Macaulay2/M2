@@ -1,13 +1,13 @@
 # SHELL := bash
 # export SHELL
 ################################# targets to use
-default : all install tests
+default : all
 doc : html book
 everything : default doc
 dists : dist bookdist devdist srcdist
 ################################# set up
 all :: initialize
-include Makefile.develop
+include ../Makeconf
 # MAKEFLAGS += --no-print-directory
 .PHONY: default install tests all allfiles clean dirs misc \
 		initialize doc html book exe zip
@@ -21,11 +21,11 @@ misc ::
 	@echo '  with LIBDIR = $(LIBDIR)'
 	@echo '  and  INCDIR = $(INCDIR)'
 ################################# version
-version : Makefile.develop
+version : ../Makeconf
 	bin/echoout '>$@' 'version ${VERSION} for ${SYSTEM}' 
-version.gen : Makefile.develop
+version.gen : ../Makeconf
 	bin/echoout '>$@' 'version ${VERSION}'
-version.date : Makefile.develop
+version.date : ../Makeconf
 	bin/echoout '>$@' '${VERSIONDATE}'
 misc :: version version.gen version.date
 ################################# bin
@@ -115,7 +115,7 @@ clean ::; if [ -d Mathematica ]; then $(MAKE) -C Mathematica clean; fi
 ################################# limited source distribution for porting
 SRCDIST := tgz/Macaulay2-${VERSION}-src-limited.tgz
 srcdist : ${SRCDIST}
-SRCDISTFILES = Makefile.develop util licenses install.bat include msdos \
+SRCDISTFILES = util licenses install.bat include msdos \
 	Makefile README CHANGES setup \
 	$(shell sed 's-^-c/-' <c/allfiles) \
 	$(shell sed 's-^-d/-' <d/allfiles) \

@@ -1966,11 +1966,9 @@ document { "GNU MP",
      package in the file licenses/gnulib.lic.  Macaulay 2 contains
      no derivative of GNU MP, and works with it by being linked
      with it, and hence the Macaulay2 executable is covered by section
-     6 of the GNU license.  Under its terms we must offer you, and do
-     offer you, a relocatable machine-readable version of our object 
-     code so that you can relink it with other versions of the 
-     GNU MP library.  If you let us know within three years that you
-     need it we'll make it available at our public ftp site.",
+     6 of the GNU license.  We fulfill the terms of its license by
+     offering you the source code of the program, available at our
+     web site and our anonymous ftp site.",
      SEEALSO "how to get this program"
      }
 
@@ -2128,7 +2126,7 @@ document { "Michael E. Stillman",
 document { "how to get this program",
      "The program is available over the web at the
      ", HREF("http://www.math.uiuc.edu/Macaulay2","Macaulay 2 home page"), ", or by 
-     anonymous ftp to the host ", TT "math.uiuc.edu", ", in the subdirectory
+     anonymous ftp to the host ", TT "ftp.math.uiuc.edu", ", in the subdirectory
      ", TT "Macaulay2", "."
      }
 

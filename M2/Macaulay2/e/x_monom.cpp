@@ -16,13 +16,13 @@ void cmd_monoid_var(object &oF, object &ov, object &oe)
   const Monoid *F = oF->cast_to_Monoid();
   int v = ov->int_of();
   int e = oe->int_of();
-  gStack.insert(monomial(F,v,e));
+  gStack.insert(Monomial(F,v,e));
 }
 
 void cmd_monoid_monomial(object &oM)
 {
   const Monoid *M = oM->cast_to_Monoid();
-  gStack.insert(monomial(M, gInput, gInputLen));
+  gStack.insert(Monomial(M, gInput, gInputLen));
 }
 #endif
 
@@ -30,95 +30,93 @@ void cmd_monoid_var(object &ov, object &oe)
 {
   int v = ov->int_of();
   int e = oe->int_of();
-  gStack.insert(monomial(v,e));
+  gStack.insert(Monomial(v,e));
 }
 
 void cmd_monoid_monomial()
 {
-  gStack.insert(monomial(gInput, gInputLen));
+  gStack.insert(Monomial(gInput, gInputLen));
 }
 
 void cmd_monoid_isequal(object &oa, object &ob)
 {
-  monomial a = oa->cast_to_monomial();
-  monomial b = ob->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
+  Monomial b = ob->cast_to_Monomial();
   gStack.insert(make_object_int(a.is_equal(b)));
 }
 
 void cmd_monoid_isone(object &oa)
 {
-  monomial a = oa->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
   gStack.insert(make_object_int(a.is_one()));
 }
 
 void cmd_monoid_compare(object &oa, object &ob)
 {
-  monomial a = oa->cast_to_monomial();
-  monomial b = ob->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
+  Monomial b = ob->cast_to_Monomial();
   gStack.insert(make_object_int(a.compare(b)));
 }
 void cmd_monoid_divides(object &oa, object &ob)
 {
-  monomial a = oa->cast_to_monomial();
-  monomial b = ob->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
+  Monomial b = ob->cast_to_Monomial();
   gStack.insert(make_object_int(a.divides(b)));
 }
 void cmd_monoid_degree(object &oa)
 {
-  monomial a = oa->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
   gStack.insert(make_object_int(a.simple_degree()));
 }
 void cmd_monoid_mult(object &oa, object &ob)
 {
-  monomial a = oa->cast_to_monomial();
-  monomial b = ob->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
+  Monomial b = ob->cast_to_Monomial();
   gStack.insert(a*b);
 }
 void cmd_monoid_div(object &oa, object &ob)
 {
-  monomial a = oa->cast_to_monomial();
-  monomial b = ob->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
+  Monomial b = ob->cast_to_Monomial();
   gStack.insert(a/b);
 }
 void cmd_monoid_monsyz(object &oa, object &ob)
 {
-  monomial a = oa->cast_to_monomial();
-  monomial b = ob->cast_to_monomial();
-//  monomial c(a.monoms());
-//  monomial d(a.monoms());
-  monomial c(0);
-  monomial d(0);
+  Monomial a = oa->cast_to_Monomial();
+  Monomial b = ob->cast_to_Monomial();
+  Monomial c(0);
+  Monomial d(0);
   a.monsyz(b,c,d);
   gStack.insert(c);
   gStack.insert(d);
 }
 void cmd_monoid_lcm(object &oa, object &ob)
 {
-  monomial a = oa->cast_to_monomial();
-  monomial b = ob->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
+  Monomial b = ob->cast_to_Monomial();
   gStack.insert(a.lcm(b));
 }
 void cmd_monoid_gcd(object &oa, object &ob)
 {
-  monomial a = oa->cast_to_monomial();
-  monomial b = ob->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
+  Monomial b = ob->cast_to_Monomial();
   gStack.insert(a.gcd(b));
 }
 void cmd_monoid_power(object &oa, object &on)
 {
-  monomial a = oa->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
   int n = on->int_of();
   gStack.insert(a.power(n));
 }
 void cmd_monoid_sat(object &oa, object &ob)
 {
-  monomial a = oa->cast_to_monomial();
-  monomial b = ob->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
+  Monomial b = ob->cast_to_Monomial();
   gStack.insert(a.erase(b));
 }
 void cmd_monoid_radical(object &oa)
 {
-  monomial a = oa->cast_to_monomial();
+  Monomial a = oa->cast_to_Monomial();
   gStack.insert(a.radical());
 }
 

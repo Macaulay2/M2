@@ -248,7 +248,9 @@ resolution Module := (M,options) -> (
 	  C)
      )
 
-resolution Ideal := (I,options) -> resolution(module I, options)
+resolution Ideal := (I,options) -> (
+     R := ring I;
+     resolution(R^1/I, options))
 
 TEST "
 S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
