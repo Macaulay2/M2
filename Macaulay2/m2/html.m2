@@ -464,6 +464,24 @@ installPackage Package := o -> pkg -> (
 	       ));
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
+     -- cache raw documentation in database
+     stderr << "--storing processed documentation" << endl;
+     docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";
+     makeDirectory docDir;
+     rawtmpname := docDir | "rawdocumentation.db.tmp";
+     rawdbname := docDir | "rawdocumentation.db";
+     if fileExists rawtmpname then unlink rawtmpname;
+     rawdocDatabase := openDatabaseOut rawtmpname;
+     scan(pairs pkg#"raw documentation", (k,v) -> rawdocDatabase#k = toExternalString v);
+     close rawdocDatabase;
+     if fileExists rawdbname then unlink rawdbname;
+     link(rawtmpname,rawdbname);
+     unlink rawtmpname;
+     stderr << "--stored raw documentation in " << rawdbname << endl;
+     rawkey := "raw documentation database";
+     pkg#rawkey = openDatabase rawdbname;
+     addEndFunction(() -> if pkg#?rawkey and isOpen pkg#rawkey then close pkg#rawkey);
+
      -- process documentation
      stderr << "--processing documentation nodes" << endl;
      scan(nodes, tag -> (
@@ -473,8 +491,6 @@ installPackage Package := o -> pkg -> (
 
      -- cache processed documentation in database
      stderr << "--storing processed documentation" << endl;
-     docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";
-     makeDirectory docDir;
      tmpname := docDir | "documentation.db.tmp";
      dbname := docDir | "documentation.db";
      if fileExists tmpname then unlink tmpname;
@@ -485,8 +501,9 @@ installPackage Package := o -> pkg -> (
      link(tmpname,dbname);
      unlink tmpname;
      stderr << "--stored processed documentation in " << dbname << endl;
-     pkg#"processed documentation database" = openDatabase dbname;
-     addEndFunction(() -> if pkg#?"processed documentation database" and isOpen pkg#"processed documentation database" then close pkg#"processed documentation database");
+     prockey := "processed documentation database";
+     pkg#prockey = openDatabase dbname;
+     addEndFunction(() -> if pkg#?prockey and isOpen pkg#prockey then close pkg#prockey);
 
      -- make table of contents, including next, prev, and up links
      stderr << "--assembling table of contents" << endl;
