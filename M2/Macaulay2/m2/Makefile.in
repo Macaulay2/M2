@@ -28,7 +28,7 @@ all:: mpcodes.m2
 MADEM2FILES += mpcodes.m2
 endif
 
-DUMPEDM2FILES := $(LOADSEQUENCE) setup.m2 startup.m2 $(MADEM2FILES)
+DUMPEDM2FILES := $(LOADSEQUENCE) setup.m2 startup.m2 $(MADEM2FILES) @srcdir@/../packages/Macaulay2/*.m2 @srcdir@/../packages/Macaulay2.m2
 
 ifneq "$(DUMPDATA)" "no"
 DUMPEDM2FILES := $(DUMPEDM2FILES)

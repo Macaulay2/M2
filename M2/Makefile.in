@@ -18,7 +18,6 @@ all :: include/config.Makefile
 include/config.h: include/config.h.in; ./config.status include/config.h
 all :: include/config.h
 
-
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
 	$(MAKE) -C @srcdir@ -f Makefile-configuration
 	@echo '-----------------------------------------------------------------------------'
