@@ -18,3 +18,4 @@ Macaulay2/setup
 Macaulay2/util/Makefile
 bin/M2
 bin/Makefile
+encap/Makefile

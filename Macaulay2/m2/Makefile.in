@@ -215,7 +215,7 @@ endif
 
 $(packagedir)/m2:; $(INSTALL) -d $(packagedir)/m2
 install:: $(packagedir)/m2
-install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) makeM2.m2
+install:: $(DUMPEDM2FILES) $(DOCSEQUENCE)
 	$(INSTALL_DATA) $^ $(packagedir)/m2
 
 clean::

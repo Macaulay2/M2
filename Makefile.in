@@ -63,16 +63,7 @@ install :: all doc
 install :: $(DIRS)
 install :: ; $(MAKE) -C bin $@
 install :: ; $(MAKE) -C Macaulay2 $@
-ifeq "$(encap)" "yes"
-install :: $(target)/encapinfo
-$(target)/encapinfo: encap/encapinfo; $(INSTALL_DATA) $< "$@"
-ifeq "$(DUMPDATA)" "yes"
-install :: $(target)/postinstall
-install :: $(target)/preremove
-$(target)/postinstall: encap/postinstall; $(INSTALL_PROGRAM) $< "$@"
-$(target)/preremove: encap/preremove; $(INSTALL_PROGRAM) $< "$@"
-endif
-endif
+install :: ; $(MAKE) -C encap $@
 $(DIRS) :; $(INSTALL) -d $@
 #################################
 Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
