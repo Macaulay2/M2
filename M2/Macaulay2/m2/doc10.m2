@@ -666,7 +666,8 @@ document { (cohomology, ZZ, Module),
 
 document { Variety,
      Headline => "the class of all algebraic varieties", 
-     SEEALSO "CoherentSheaf" }
+     SEEALSO "varieties"
+     }
 
 document { AffineVariety,
      Headline => "the class of all affine varieties",

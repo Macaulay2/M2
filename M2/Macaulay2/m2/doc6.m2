@@ -923,14 +923,7 @@ document { vector,
 
 document { Module,
      Headline => "the class of all modules",
-     "For an introduction, see ", TO "free modules", " and the pages following it.",
-     PARA,
-     "The most general module ", TT "M", " is represented as a submodule of a 
-     quotient module of a free module ", TT "F", ".  The quotient module is
-     presented internally by a matrix whose columns generate the relations, 
-     and the submodule is represented internally by a matrix whose columns
-     generate the submodule.  The two matrices the same number of rows, namely,
-     the rank of ", TT "F", ".",
+     SEEALSO "ideals and modules",
      PARA,
      "Common ways to make a module:",
      MENU {
@@ -1211,10 +1204,8 @@ document { Matrix,
      Headline => "the class of all matrices",
      "A matrix is a homomorphism between two modules, together with
      an integer (or vector of integers) called its degree, which is
-     used when determining whether the map is homogeneous.  See
-     ", TO "making matrices", " and the nodes following it for an
-     introduction to matrices.",
-     PARA,
+     used when determining whether the map is homogeneous.",
+     SEEALSO "matrices",
      "Common ways to make a matrix:",
      MENU {
 	  TO "map",

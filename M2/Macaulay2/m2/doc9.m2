@@ -281,27 +281,7 @@ document { coimage,
 
 document { ChainComplex,
      Headline => "the class of all chain complexes",
-     "If ", TT "C", " is a chain complex, then ", TT "C_i", " will produce 
-     the ", TT "i", "-th module in the complex, and ", TT "C.dd_i", " will 
-     produce the differential whose source is ", TT "C_i", ".",
-     PARA,
-     "A new chain complex can be made with ", TT "C = new ChainComplex", ".  This will
-     automatically initialize ", TT "C.dd", ", in which the differentials are stored.
-     The modules can be installed with statements like ", TT "C#i=M", " and the 
-     differentials can be installed with statements like ", TT "C.dd#i=d", ".",
-     PARA,
-     "See also ", TO "ChainComplexMap", " for a discussion of maps between
-     chain complexes.  (The boundary map C.dd is regarded as one.)",
-     PARA,
-     "The default display for a chain complex shows the modules and
-     the stage at which they appear.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "C = resolution cokernel matrix {{x,y,z}}",
-	  },
-     "In order to see the matrices of the differentials, examine 'C.dd'.",
-     EXAMPLE "C.dd",
-     SEEALSO {"Resolution", "dd", symbol Resolution}
+     SEEALSO "chain complexes"
      }
 
 document { (complete, ChainComplex),

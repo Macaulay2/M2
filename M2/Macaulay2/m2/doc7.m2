@@ -689,10 +689,7 @@ assert( 2 == codim I )
 
 document { Ideal,
      Headline => "the class of all ideals",
-     "In Macaulay 2, an ideal ", TT "I", " is represented by its generators,
-     which are stored inside it in a one-rowed matrix.  See ", TO "ideals", "
-     for an introduction.",
-     PARA,
+     SEEALSO "ideals",
      "Common ways to make an ideal:",
      MENU {
 	  TO "ideal",
