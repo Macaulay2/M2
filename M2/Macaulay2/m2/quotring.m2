@@ -73,10 +73,9 @@ savedQuotients := new MutableHashTable
 savedEQuotients := new MutableHashTable
 
 ZZquotient := (R,I) -> (
-     if ring I.generators =!= ZZ then error "expected an ideal of ZZ";
-     gensI := I.generators;
-     gensgbI := generators gb gensI;
-     n := if gensgbI == 0 then 0 else gensgbI_(0,0);
+     gensI := gens I;
+     if ring gensI =!= ZZ then error "expected an ideal of ZZ";
+     n := gcd flatten entries gensI;
      if n < 0 then n = -n;
      if n === 0 then ZZ
      else if savedQuotients#?n 
@@ -85,8 +84,7 @@ ZZquotient := (R,I) -> (
 	  if n > 32767 then error "large characteristics not implemented yet";
 	  if n > 1 and not isPrime n
 	  then error "ZZ/n not implemented yet for composite n";
-	  S := new QuotientRing from newHandle();
-     	  S.RawRing = rawZZp n;
+	  S := new QuotientRing from rawZZp n;
 	  S.ideal = I;
 	  S.baseRings = {R};
 	  S.relations = gensI;

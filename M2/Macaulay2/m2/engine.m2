@@ -4,6 +4,7 @@
 
 RawObject.name = "RawObject"
 RawObject.synonym = "raw object"
+raw RawObject := x -> error "'raw' received a raw object"
 
 -- monomials
 
@@ -255,6 +256,10 @@ ZZ * RawMatrix := (n,f) -> (
      )
 
 RawMatrix ** RawMatrix := rawTensor
+
+rawConcatColumns = (mats) -> rawConcat toSequence mats
+rawConcatRows = (mats) -> rawDual rawConcat apply(toSequence mats,rawDual)
+rawConcatBlocks = (mats) -> rawDual rawConcat apply(toSequence mats, row -> rawDual rawConcat row)
 
 -- ring maps
 

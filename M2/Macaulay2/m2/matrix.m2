@@ -218,30 +218,21 @@ isHomogeneous Matrix := m -> (
 isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
 
 ggConcatCols := (tar,src,mats) -> (
-     sendgg(apply(mats,ggPush), ggPush (#mats), ggconcat);
-     f := newMatrix(tar,src);
+     f := newMatrix(tar,src,rawConcatColumns (raw\mats));
      if same(degree \ mats) and degree f != degree mats#0
      then f = map(target f, source f, f, Degree => degree mats#0);
      f)
 
 ggConcatRows := (tar,src,mats) -> (
-     sendgg(
-	  apply(mats,m -> (ggPush m, ggtranspose)), 
-	  ggPush (# mats), ggconcat, ggtranspose
-	  );
-     f := newMatrix(tar,src);
+     rawmats := raw \ mats;
+     f := newMatrix(tar,src,rawConcatRows (raw\mats));
      if same(degree \ mats)
      and degree f != degree mats#0
      then f = map(target f, source f, f, Degree => degree mats#0);
      f)
 
 ggConcatBlocks = (tar,src,mats) -> (			    -- we erase this later
-     sendgg (
-	  apply(mats, row -> ( 
-		    apply(row, m -> ggPush m), 
-		    ggPush(#row), ggconcat, ggtranspose )),
-	  ggPush(#mats), ggconcat, ggtranspose );
-     f := newMatrix(tar,src);
+     f := newMatrix(tar,src,rawConcatBlocks mats);
      if same(degree \ flatten mats)
      and degree f != degree mats#0#0
      then f = map(target f, source f, f, Degree => degree mats#0#0);
