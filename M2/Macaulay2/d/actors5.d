@@ -450,7 +450,7 @@ examine(e:Expr):Expr := (
 	  << " lookupCount : " << s.lookupCount << endl
 	  << " protected : " << s.protected << endl
 	  << " transient : " << s.transient << endl
-	  << " frames bound for scopes :";
+	  << " frames bound for dictionaries :";
 	  while f.frameID >= 0 do (
 	       stdout << " " << f.frameID;
 	       f = f.outerFrame;
@@ -467,7 +467,7 @@ examine(e:Expr):Expr := (
 	  << " framesize : " << desc.framesize << endl
 	  << " numparms : " << desc.numparms << endl
 	  << " hasClosure : " << desc.hasClosure << endl
-	  << " frames bound for scopes :";
+	  << " frames bound for dictionaries :";
 	  while f.frameID >= 0 do (
 	       stdout << " " << f.frameID;
 	       f = f.outerFrame;
@@ -477,7 +477,7 @@ examine(e:Expr):Expr := (
      is s:Sequence do (
 	  if length(s) == 0 then (
 	       f := localFrame;
-	       stdout << "frames currently bound for scopes :";
+	       stdout << "frames currently bound for dictionaries :";
 	       while f.frameID >= 0 do (
 		    stdout << " " << f.frameID;
 		    f = f.outerFrame;

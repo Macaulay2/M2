@@ -39,13 +39,13 @@ enlarge(table:SymbolHashTable):void := (
 	  );
      table.buckets = newbuckets;
      );
-insert(entry:Symbol,table:SymbolHashTable):void := (
+insert(entry:Symbol,table:SymbolHashTable):Symbol := (
      table.numEntries = table.numEntries + 1;
      if 3 * table.numEntries > 2 * length(table.buckets) + 1
      then enlarge(table);
      h := entry.word.hash & (length(table.buckets)-1);
      table.buckets.h = SymbolListCell(entry,table.buckets.h);
-     );
+     entry);
 enlarge(f:Frame):int := (
      n := f.valuesUsed;
      f.valuesUsed = n + 1;
@@ -55,42 +55,39 @@ enlarge(f:Frame):int := (
 	       while true do provide nullE));
      n);
 export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
-     frameindex := (
-	  if dictionary.transient then (
-	       -- this is a dynamic frame, not allocated yet
-	       dictionary.numsyms
-	       )
-	  else (
-	       if dictionary.frameID == 0 then (
-		    -- this allows the global frame to grow
-		    enlarge(globalFrame)
-		    )
-	       else if dictionary.frameID == localFrame.frameID then (
-		    -- this should take care of scopes which span a file,
-		    -- and have a single frame which ought to be allowed to grow
-		    enlarge(localFrame)
-		    )
-	       else (
-		    -- shouldn't occur
-	       	    dictionary.numsyms
-		    )
-	       )
+     frameindex := 0;
+     if dictionary.transient then (
+	  -- this is a dynamic frame, not allocated yet
+	  frameindex = dictionary.framesize;
+	  dictionary.framesize = dictionary.framesize + 1;
+	   )
+     else if dictionary.frameID == 0 then (
+	  -- this allows the global frame to grow
+	  frameindex = enlarge(globalFrame))
+     else if dictionary.frameID == localFrame.frameID then (
+	  -- this should take care of scopes which span a file,
+	  -- and have a single frame which ought to be allowed to grow
+	  frameindex = enlarge(localFrame) )
+     else (
+	  -- shouldn't occur
+	  error("non-transient frame missing"); -- let's assume it's transient:
+	  frameindex = dictionary.framesize;
+	  dictionary.framesize = dictionary.framesize + 1;
 	  );
-     dictionary.numsyms = dictionary.numsyms + 1;
-     entry := Symbol(
-	  word, 
-	  nextHash(), 
-	  position,
-	  dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-	  dictionary.frameID, 
-	  frameindex,
-	  1,				  -- first lookup is now
-	  false,			  -- not protected
-	  dictionary.transient,
-	  false
-	  );
-     insert(entry,dictionary.symboltable);
-     entry);
+     insert(
+	  Symbol(
+	       word, 
+	       nextHash(), 
+	       position,
+	       dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
+	       dictionary.frameID, 
+	       frameindex,
+	       1,				-- first lookup is now
+	       false,				      -- not protected
+	       dictionary.transient,
+	       false
+	       ),
+	  dictionary.symboltable));
 export makeSymbol(word:Word,position:Position,dictionary:Dictionary):Symbol := (
      s := makeEntry(word,position,dictionary);
      if dictionary.frameID == 0 && isalnum(word.name)
@@ -679,7 +676,7 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  a.desc = functionDescription(newdict.frameID,0,0,false,false);
 	  bindParenParmList(a.lhs,newdict,a.desc);
 	  bind(a.rhs,newdict);
-	  a.desc.framesize = newdict.numsyms;
+	  a.desc.framesize = newdict.framesize;
 	  a.desc.hasClosure = SawClosure;
 	  SawClosure = true; )
      is unary:Unary do (
