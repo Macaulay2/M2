@@ -71,7 +71,7 @@ include/config.h.in : configure.in aclocal.m4
 	touch $@
 
 stage2 : include/config.h
-config.status : configure Makefile.overrides
+config.status : configure Makefile.overrides version
 	unset CONFIG_SITE; \
 	$(CONFIGURE_ENVIRON) ./configure $(CONFIGURE_OPTIONS) --no-create --cache-file=config.cache
 
