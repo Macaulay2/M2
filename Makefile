@@ -70,15 +70,16 @@ include/config.h.in : configure.in aclocal.m4
 	autoheader
 	touch $@
 
-stage2 : Makefile include/config.h
-config.status : configure Makefile Makefile.overrides
+stage2 : include/config.h
+config.status : configure Makefile.overrides
+	unset CONFIG_SITE; \
 	$(CONFIGURE_ENVIRON) ./configure $(CONFIGURE_OPTIONS) --no-create --cache-file=config.cache
 
 $(CONFIGURED_FILES) include/config.h : $(CONFIGURED_FILES:=.in) config.status include/config.h.in
 	./config.status
 	touch include/config.h
 
-TARGETS = all install dist check clean distclean uninstall
+TARGETS = all install dist check clean distclean uninstall doc
 
 $(TARGETS) :: Makefile-run include/config.h
 	make $@ -f Makefile-run

@@ -157,7 +157,7 @@ GMPconfigure : gmp/config.status
 gmp/config.status: gmp/configure
 	cd gmp; \
 	rm -f config.status; \
-	unset CC CFLAGS; ./configure --silent --disable-shared
+	unset CC CFLAGS CONFIG_SITE; ./configure --silent --disable-shared
 #	gmp 3.1 configure has a bug -- can't accept CC=gcc hint.
 endif
 
@@ -230,7 +230,7 @@ factory/config.status factory/GNUmakefile : \
 	CFLAGS="$(CFLAGS) $(FACFLAGS)" \
 	CXXFLAGS="$(CXXFLAGS) $(FACFLAGS)" \
 	LDFLAGS="$(LDFLAGS)" \
-	./configure --prefix=.. --with-memman --with-optimize
+	unset CONFIG_SITE; ./configure --prefix=.. --with-memman --with-optimize
 endif
 
 FACTORYmade:
@@ -287,7 +287,7 @@ libfac/config.status : libfac/configure
 	CFLAGS="$(CFLAGS) $(LIBFACFLAGS)" \
 	CXXFLAGS="$(CXXFLAGS) $(LIBFACFLAGS)" \
 	LDFLAGS="$(LDFLAGS)" \
-	./configure --silent --includedir=../include
+	unset CONFIG_SITE; ./configure --silent --includedir=../include
 lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
 libfac/libfac.a : always
 	$(MAKE) -C libfac libfac
@@ -312,13 +312,13 @@ endif
 MP:	mp mp/config.status mp/Makefile mp/libMP.a \
 	lib/libMP.a include/MP.h include/MP_Config.h
 mp/config.status mp/Makefile : mp/configure
-	cd mp; ./configure --prefix=$(TOPDIR) # --with-debug
+	unset CONFIG_SITE; cd mp; ./configure --prefix=$(TOPDIR) # --with-debug
 mp/libMP.a: mp/Makefile
 	$(MAKE) -C mp libMP.a
 lib/libMP.a: mp/MP/libMP.a lib/.exists; cp $< $@; ranlib $@
 include/MP.h: mp/MP/MP.h ; cp $< $@
 include/MP_Config.h: mp/MP/MP_Config.h ; cp $< $@
-distclean clean::; -$(MAKE) -C mp $@
+clean::; -$(MAKE) -C mp $@
 clean::; rm -f 'mp/&'
 ###################### Macaulay 2 binary distribution
 all :: MACAULAY2
@@ -392,7 +392,7 @@ testport-files: distributions/Macaulay2-$(VERSION)-porting-src.tar.gz
 	gunzip <$< |tar xf - -C tmp/M2
 testport-go:
 	@echo '## testing porting source'
-	cd tmp/M2; ./configure
+	cd tmp/M2; unset CONFIG_SITE; ./configure
 	$(MAKE) -C tmp/M2
 ###################### Macaulay 2 documentation
 DOCFILES = Macaulay2/html
@@ -470,5 +470,5 @@ lsm:
 	sendmail lsm@execpc.com <Macaulay2.LSM
 
 ## Local Variables:
-## Mode: Makefile
+## mode: Makefile
 ## End:

@@ -97,10 +97,11 @@ graphIdeal RingMap := Ideal => options -> (f) -> (
      xvars := (vars RS)_{0..numgens R - 1};
      ideal(yvars - substitute(I, xvars)))
 
-graphRing RingMap := QuotientRing => options -> (f) -> if f.?graphRing then f.graphRing else f.graphRing = (
-     I := graphIdeal(f,options);
-     R := ring I;
-     R/I)
+graphRing RingMap := QuotientRing => options -> (f) -> (
+     if f.cache.?graphRing then f.cache.graphRing else f.cache.graphRing = (
+     	  I := graphIdeal(f,options);
+     	  R := ring I;
+     	  R/I))
 
 -----------------------
 -- Symmetric Algebra --
