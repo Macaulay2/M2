@@ -55,7 +55,7 @@ export storeInDictionary(dc:DictionaryClosure,i:Code,rhs:Code):Expr := (
 	       else (
      		    newword := makeUniqueWord(newname,sc.symbol.word.parse);
 		    when lookup(newword,dc.dictionary.symboltable)
-		    is Symbol do return buildErrorPacket("symbol already exists with this name")
+		    is Symbol do return buildErrorPacket("symbol already exists: " + newname)
 		    else (
 			 insert(dc.dictionary.symboltable,newword,sc.symbol);
 			 rhsval)))
