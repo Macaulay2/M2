@@ -241,11 +241,19 @@ ifeq ($(OS),Linux)
 putc.o : /usr/lib/libc.a; ar x $^ $@
 endif
 
+ifeq ($(OS),SunOS)
+# We use mmap in loaddata(), but if it's dynamically loaded, it may stop working as our mapped
+# data covers up the jump tables it uses.  I think.
+ALLOBJ += mmap.o
+mmap.o : /usr/lib/libc.a; ar x $^ $@
+endif
+
 ifeq ($(OS),Linux)
 # ALLOBJ += malloc.o
 # LDFLAGS += -rdynamic
 malloc.o : /usr/lib/libc.a; ar x $^ $@
 endif
+
 ################################# c file production for porting
 ALLC := $(PROJECT:.d=.c)
 all-c-files :: $(ALLC)
