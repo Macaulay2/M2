@@ -395,10 +395,8 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
      desc := model.desc;
      if desc.restargs
      then (
-	  e := evalSequence(cs);
-	  when e is Error do backtr(e)
-	  is v:Sequence do apply(c,v)
-	  else nullE			  -- will not happen
+	  v := evalSequence(cs);
+	  if evalSequenceHadError then backtr(evalSequenceErrorMessage) else apply(c,v)
 	  )
      else if desc.numparms != length(cs)
      then backtr(WrongNumArgs(model.parms,desc.numparms,length(cs)),

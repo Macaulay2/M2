@@ -297,7 +297,7 @@ dotfun(lhs:Code,rhs:Code):Expr := (
      when left is Error do left
      is x:HashTable do (
 	  when rhs
-	  is r:exprCode do lookup1force(x, r.v)
+	  is r:globalSymbolClosureCode do lookup1force(x, Expr(SymbolClosure(globalFrame,r.symbol)))
 	  else printErrorMessage(rhs,"expected a symbol"))
      else WrongArg(1,"a hash table")
      );
@@ -308,7 +308,7 @@ dotQfun(lhs:Code,rhs:Code):Expr := (
      when left is Error do left
      is x:HashTable do (
 	  when rhs
-	  is r:exprCode do if lookup1Q(x,r.v) then True else False
+	  is r:globalSymbolClosureCode do if lookup1Q(x,Expr(SymbolClosure(globalFrame,r.symbol))) then True else False
 	  else printErrorMessage(rhs,"expected a symbol"))
      else False);
 setup(DotQuestionS,dotQfun);

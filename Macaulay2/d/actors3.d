@@ -419,22 +419,6 @@ timesfun(lhs:Code,rhs:Code):Expr := (
      	  when r is Error do r
 	  else l*r));
 setup(StarS,starfun,timesfun);
-bracefun(args:CodeSequence):Expr := (
-     v := evalSequence(args);
-     when v
-     is a:Sequence do list(a)
-     is Error do v
-     else v				  -- shouldnt happen
-     );
-braceFun = bracefun;
-bracketfun(args:CodeSequence):Expr := (
-     v := evalSequence(args);
-     when v
-     is a:Sequence do Array(a)
-     is Error do v
-     else v				  -- shouldnt happen
-     );
-bracketFun = bracketfun;
 
 -- functions
 

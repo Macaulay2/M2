@@ -61,9 +61,6 @@ export UnaryInstallMethodFun := dummyTernaryFun;
 export InstallValueFun := dummyMultaryFun;
 export UnaryInstallValueFun := dummyTernaryFun;
 
-export braceFun := dummyMultaryFun;     -- filled in later in actors.d
-export bracketFun := dummyMultaryFun;   -- filled in later in actors.d
-
 export convert(e:ParseTree):Code;
 CodeSequenceLength(e:ParseTree):int := (
      i := 0;
@@ -210,17 +207,6 @@ export frameByNestingDepth(nestingDepth:int):Frame := (	    -- new version
 	  );
      f);
 
-allExprCodes(cs:CodeSequence):bool := (
-     foreach c in cs do when c is exprCode do nothing else return(false);
-     return(true);
-     );
-combine(cs:CodeSequence):Sequence := (
-     new Sequence len length(cs) do (
-	  foreach c in cs do
-	  when c is z:exprCode do provide z.v
-	  else provide nullE		  -- will not happen
-	  ));
-
 nestingDepth(frameID:int,d:Dictionary):int := (
      if frameID == 0 then return(-1);
      n := 0;
@@ -320,18 +306,18 @@ export convert(e:ParseTree):Code := (
 	  binaryCode(AdjacentFun, convert(a.lhs),convert(a.rhs),
 	       treePosition(e)))
      is p:EmptyParentheses do (
-	  if p.left.word == leftparen then Code(exprCode(emptySequenceE,treePosition(e)))
-	  else if p.left.word == leftbrace then Code(exprCode(emptyList,treePosition(e)))
-	  else if p.left.word == leftbracket then Code(exprCode(emptyArray, treePosition(e)))
+	  if p.left.word == leftparen then Code(sequenceCode(CodeSequence(),treePosition(e)))
+	  else if p.left.word == leftbrace then Code(listCode(CodeSequence(),treePosition(e)))
+	  else if p.left.word == leftbracket then Code(arrayCode(CodeSequence(),treePosition(e)))
 	  else dummyCode			  -- should not happen
 	  )
      is p:Parentheses do (
 	  if p.left.word == leftparen then convert(p.contents)
 	  else if p.left.word == leftbrace 
-	  then Code(multaryCode(braceFun,makeCodeSequence(p.contents),treePosition(e)))
+	  then Code(listCode(makeCodeSequence(p.contents),treePosition(e)))
 	  else 
 	  if p.left.word == leftbracket 
-	  then Code(multaryCode(bracketFun,makeCodeSequence(p.contents),treePosition(e)))
+	  then Code(arrayCode(makeCodeSequence(p.contents),treePosition(e)))
 	  else 
 	  dummyCode			  -- should not happen
 	  )
@@ -348,9 +334,7 @@ export convert(e:ParseTree):Code := (
 	       		 Code(binaryCode(
 			 	   b.operator.entry.binary,
 			 	   convert(b.lhs),
-	       	    	 	   Code(exprCode(
-					     Expr(SymbolClosure(globalFrame,var)),
-					     treePosition(b.rhs))),
+	       	    	 	   Code(globalSymbolClosureCode(var,treePosition(b.rhs))),
 			 	   treePosition(e)
 				   )
 			      )
@@ -369,7 +353,7 @@ export convert(e:ParseTree):Code := (
 			 multaryCode(
 			      InstallValueFun,
 			      CodeSequence(
-			      	   Code(exprCode(AdjacentS,dummyPosition)),
+			      	   Code(globalSymbolClosureCode(AdjacentS.symbol,dummyPosition)),
 			      	   convert(a.lhs),
 			      	   convert(a.rhs),
 			      	   convert(b.rhs)),
@@ -452,7 +436,7 @@ export convert(e:ParseTree):Code := (
 		    Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence(
-			      	   Code(exprCode(AdjacentS,dummyPosition)),
+			      	   Code(globalSymbolClosureCode(AdjacentS.symbol,dummyPosition)),
 			      	   convert(a.lhs),
 			      	   convert(a.rhs),
 			      	   convert(b.rhs)),
@@ -473,7 +457,7 @@ export convert(e:ParseTree):Code := (
 		    then Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence( 
-			      	   Code(exprCode(UnderscoreS,dummyPosition)),
+			      	   Code(globalSymbolClosureCode(UnderscoreS.symbol,dummyPosition)),
 				   convert(c.lhs),
 				   convert(c.rhs),
 			      	   convert(b.rhs)),
@@ -541,14 +525,11 @@ export convert(e:ParseTree):Code := (
 	       treePosition(e)))
      is u:Postfix do Code(
 	  unaryCode(u.operator.entry.postfix,convert(u.lhs),treePosition(e)))
-     is d:dummy do (
-     	  -- was Code(exprCode(nullE,d.position)), but forfun() is looking for dummyCode
-	  dummyCode
-	  ));
+     is d:dummy do dummyCode
+     );
 export codePosition(e:Code):Position := (
      when e
      is f:binaryCode do f.position
-     is f:exprCode do f.position
      is f:forCode do f.position
      is f:functionCode do codePosition(f.parms)
      is f:globalAssignmentCode do f.position
@@ -564,6 +545,8 @@ export codePosition(e:Code):Position := (
      is f:parallelAssignmentCode do f.position
      is f:realCode do f.position
      is f:sequenceCode do f.position
+     is f:listCode do f.position
+     is f:arrayCode do f.position
      is f:stringCode do f.position
      is f:ternaryCode do f.position
      is f:unaryCode do f.position
@@ -647,41 +630,50 @@ export breakLoopFun := dummyBreakLoop;
 export debuggingMode := false;
 
 export eval(c:Code):Expr;
-hadError := false;
-errm := nullE;
-export evalSequence(v:CodeSequence):Expr := (
+export evalSequenceHadError := false;
+export evalSequenceErrorMessage := nullE;
+export evalSequence(v:CodeSequence):Sequence := (
+     evalSequenceHadError = false;
      n := length(v);
-     if n == 0 then Expr(emptySequence)
+     if n == 0 then emptySequence
      else if n == 1 then (
 	  x := eval(v.0);
-	  when x is Error do x
-	  else Expr(Sequence(x))
+	  when x is Error do (
+	       evalSequenceHadError = true;
+	       evalSequenceErrorMessage = x;
+	       emptySequence
+	       )
+	  else Sequence(x)
 	  )
      else if n == 2 then (
 	  x := eval(v.0);
-	  when x is Error do x
+	  when x is Error do (
+	       evalSequenceHadError = true;
+	       evalSequenceErrorMessage = x;
+	       emptySequence
+	       )
 	  else (
 	       y := eval(v.1);
-	       when y is Error do y
-	       else Expr(Sequence(x,y))))
+	       when y is Error do (
+		    evalSequenceHadError = true;
+		    evalSequenceErrorMessage = y;
+		    emptySequence
+		    )
+	       else Sequence(x,y)))
      else (
-	  r := Expr(new Sequence len n do (
+	  r := new Sequence len n do (
 		    foreach c in v do (
 			 value := eval(c);
 			 when value 
 			 is Error do (
-			      hadError = true;
-			      errm = value;
+			      evalSequenceHadError = true;
+			      evalSequenceErrorMessage = value;
 			      while true do provide nullE;
 			      )
 			 else nothing;
 			 provide value;
-			 )));
-	  if hadError then (
-	       r = errm;
-	       errm = nullE;
-	       hadError = false;
-	       );
+			 ));
+	  if evalSequenceHadError then r = emptySequence;
 	  r));
 export trace := false;
 NumberErrorMessagesShown := 0;
@@ -704,9 +696,6 @@ export eval(c:Code):Expr := (
      	  SuppressErrors = false;
 	  printErrorMessage(c,"interrupted"))
      else when c
-     is n:exprCode do (
-	  --couldtrace=false; 
-	  n.v)
      is r:localMemoryReferenceCode do (
 	  f := localFrame;
 	  nd := r.nestingDepth;
@@ -757,7 +746,18 @@ export eval(c:Code):Expr := (
      is v:realCode do Expr(Real(v.x))
      is v:integerCode do Expr(v.x)
      is v:stringCode do Expr(v.x)
-     is v:sequenceCode do evalSequence(v.x);
+     is v:sequenceCode do (
+	  r := evalSequence(v.x);
+	  if evalSequenceHadError then evalSequenceErrorMessage else Expr(r)
+	  )
+     is v:listCode do (
+	  r := evalSequence(v.y);
+	  if evalSequenceHadError then evalSequenceErrorMessage else list(r)
+	  )
+     is v:arrayCode do (
+	  r := evalSequence(v.z);
+	  if evalSequenceHadError then evalSequenceErrorMessage else Array(r)
+	  );
      when e is err:Error do (
 	  -- stderr << "err: " << err.position << " : " << err.message << endl;
 	  if err.message == returnMessage || err.message == breakMessage then return(e);

@@ -881,7 +881,7 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
      when opr 
      is Error do opr
      is oper:SymbolClosure do (
-	  if oper == AdjacentS then (
+	  if oper.symbol == AdjacentS.symbol then (
 	       b := eval(args.2);
 	       when b
 	       is Error do b

@@ -1032,7 +1032,6 @@ locate(e:Code):void := (
      is f:localAssignmentCode do (lookat(f.position); locate(f.rhs);)
      is f:globalAssignmentCode do (lookat(f.position); locate(f.rhs);)
      is f:parallelAssignmentCode do (lookat(f.position); locate(f.rhs);)
-     is f:exprCode do lookat(f.position)
      is f:localMemoryReferenceCode do lookat(f.position)
      is f:globalMemoryReferenceCode do lookat(f.position)
      is f:globalSymbolClosureCode do lookat(f.position)
@@ -1056,6 +1055,8 @@ locate(e:Code):void := (
      is f:openDictionaryCode do locate(f.body)
      is f:functionCode do (locate(f.parms);locate(f.body);)
      is v:sequenceCode do foreach c in v.x do locate(c)
+     is v:listCode do foreach c in v.y do locate(c)
+     is v:arrayCode do foreach c in v.z do locate(c)
      is nullCode do nothing
      is v:realCode do lookat(v.position)
      is v:stringCode do lookat(v.position)
