@@ -38,7 +38,7 @@ protected:
 
   Computation();
 
-  ComputationStatusCode set_status(enum ComputationStatusCode c);
+  void set_status(enum ComputationStatusCode c);
   
   virtual bool stop_conditions_ok() = 0;
   // If the stop conditions in _Stop are inappropriate,

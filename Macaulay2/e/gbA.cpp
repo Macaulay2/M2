@@ -68,6 +68,8 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
   // set local variables for certain time-critical routines
 
   _this_degree = _F->lowest_primary_degree() - 1;
+  _complete_thru_this_degree = _this_degree;
+  set_status(COMP_NOT_STARTED);
 
   _stats_nreductions = 0;
   _stats_ntail = 0;
@@ -879,7 +881,7 @@ bool gbA::s_pair_step()
   return true;
 }
 
-int gbA::computation_is_complete()
+enum ComputationStatusCode gbA::computation_is_complete()
 {
   // This handles everything but _Stop.always, _Stop.degree_limit
   if (_Stop.basis_element_limit > 0 && G->gb.size() > _Stop.basis_element_limit) 
@@ -906,7 +908,7 @@ int gbA::computation_is_complete()
 void gbA::start_computation()
 {
   int npairs;
-  int is_done = COMP_COMPUTING;
+  enum ComputationStatusCode is_done = COMP_COMPUTING;
 
   for (;;)
     {
@@ -923,7 +925,7 @@ void gbA::start_computation()
       if (S.n_in_degree  == 0)
 	{
 	  npairs = spair_set_prepare_next_degree(_this_degree); // sets _this_degree
-
+	  _complete_thru_this_degree = _this_degree-1;
 	  if (npairs == 0)
 	    {
 	      is_done = COMP_DONE;
@@ -940,12 +942,12 @@ void gbA::start_computation()
 	      sprintf(s, "DEGREE %d (npairs %d)\n", _this_degree, npairs);
 	      emit(s);
 	    }
-	  /*	  if (C->this_degree == 8) return COMP_DONE; */
 	}
 
       s_pair_step();
     }
   //  return is_done;
+  set_status(is_done);
 }
 
 void gbA::poly_auto_reduce(vector<POLY> &mat)
@@ -998,27 +1000,23 @@ ComputationOrNull *gbA::set_hilbert_function(const RingElement *hf)
 
 const MatrixOrNull *gbA::get_gb()
 {
-  start_computation();
   return G->get_minimal_gb();
 }
 
 const MatrixOrNull *gbA::get_mingens()
 {
   // return the minimal generators (or as minimal as possible?)
-  start_computation();
   return G->get_minimal_gens();
 }
 
 const MatrixOrNull *gbA::get_change()
 {
-  start_computation();
   return G->get_change();
 }
 
 const MatrixOrNull *gbA::get_syzygies()
 {
   // The (non-minimal) syzygy matrix
-  start_computation();
   Matrix *result = new Matrix(_Fsyz);
   for (vector<gbvector *>::iterator i = _syz.begin(); i != _syz.end(); i++)
     result->append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
@@ -1027,7 +1025,6 @@ const MatrixOrNull *gbA::get_syzygies()
 
 const MatrixOrNull *gbA::get_initial(int nparts)
 {
-  start_computation();
   return G->get_leadterms(nparts);
 }
 
@@ -1043,7 +1040,6 @@ const MatrixOrNull *gbA::matrix_remainder(const Matrix *m)
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  start_computation();
   return G->matrix_remainder(m);
 }
 
@@ -1063,7 +1059,6 @@ void gbA::matrix_lift(const Matrix *m,
       *result_remainder = 0;
       *result_quotient = 0;
   }
-  start_computation();
   G->matrix_lift(m, result_remainder, result_quotient);
 }
 
@@ -1078,15 +1073,13 @@ int gbA::contains(const Matrix *m)
       ERROR("expected matrix over the same ring");
       return -2;
     }
-  start_computation();
   return G->contains(m);
 }
 
 enum ComputationStatusCode gbA::gb_status(int *degree)
   // The computation is complete up through this degree.
 {
-  *degree = _this_degree - 1;
-#warning "set *degree correctly"
+  *degree = _complete_thru_this_degree;
   return status();
 }
 
