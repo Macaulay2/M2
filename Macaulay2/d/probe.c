@@ -42,10 +42,10 @@ typedef struct {
 void *sbrk(int);
 #endif
 
-jmp_buf buf;
 static int sig = -1;
-void handler(int k) { sig = -1; longjmp(buf,1); }
-void handler2(int k) { sig = -2; longjmp(buf,2); }
+jmp_buf buf;
+void handler(int k) { sig = 1; longjmp(buf,1); }
+void handler2(int k) { sig = 2; longjmp(buf,2); }
 char statmem[3 * PAGESIZE];
 int strarrlen(char **p) {
      int i=0;

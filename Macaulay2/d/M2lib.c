@@ -6,6 +6,10 @@
 #include "../dumpdata/dumpdata.h"
 #endif
 
+#ifndef __GNUC__
+#define __attribute__(x)
+#endif
+
 #ifdef MP
 #include "mpversion.h"
 #endif
@@ -132,6 +136,13 @@ static void alarm_handler(int sig)
      }
 
 extern bool interp_StopIfError;
+
+#if defined(_WIN32)
+#define sigjmp_buf jmp_buf
+#define siglongjmp(j,c) longjmp(j,c)
+#define sigsetjmp(j,m) setjmp(j)
+#endif
+
 static sigjmp_buf loaddata_jump, out_of_memory_jump, abort_jump;
 static bool out_of_memory_jump_set = FALSE, abort_jump_set = FALSE;
 
@@ -518,12 +529,7 @@ char **argv;
      if (getenv("GC_expand_hp")) {
 	  GC_expand_hp(atoi(getenv("GC_expand_hp")));
 	  }
-#ifdef GCMALLOC
-     /* obsolete, search and destroy GCMALLOC eventually */
      mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
-#else
-     mp_set_memory_functions(malloc1,realloc3,free2);
-#endif
 #ifdef NDEBUG
      GC_set_warn_proc(dummy_GC_warn_proc);
 #endif
@@ -697,11 +703,13 @@ static void *first_rw_page_after_etext() {
 	  else {
 	       char *t = (char *)p;
 	       char c;
+#if defined(__alpha__) && defined(__linux__)
                { /* for some reason we need this on alpha linux, sigh */
                  static sigset_t newset;
                  sigaddset(&newset,SIGSEGV);
                  sigprocmask(SIG_UNBLOCK, &newset, NULL);
                }
+#endif
 	       c = *t;
 	       ONSTACK(p);	/* fool the optimizer */
 	       *t = c;		/* try to write to page */
@@ -847,7 +855,7 @@ static int probe() {
      }
 #endif
 
-#ifndef __linux__
+#if !defined(NEWDUMPDATA) && defined(DUMPDATA)
 static int loaddata(char *filename) {
      char savetimestamp[60];
      struct stat statbuf;
@@ -1475,7 +1483,7 @@ M2_string oper1;
 void C__prepare() {}
 
 int actors4_isReady(int fd) {
-#if defined(__MWERKS__)
+#if defined(__MWERKS__) || defined(_WIN32)
      return 1;
 #else
   int ret;
@@ -1540,6 +1548,8 @@ void abort() {
 #ifndef ENOSYS
 #define ENOSYS 0
 #endif
+int kill() { return ERROR; }
+int waitpid() { return ERROR; }
 int fork() { return ERROR; }
 int pipe(int v[2]) { return ERROR; }
 int wait() { return ERROR; }

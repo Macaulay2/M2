@@ -8,7 +8,10 @@ EXES := echoout timestmp restart update
 ifeq ($(OS),Linux)
 EXES += screen
 endif
+
+ifeq "$(CC)" "gcc"
 CFLAGS += -Wall
+endif
 
 all:: $(EXES)
 update.o : restart.h

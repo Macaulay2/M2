@@ -313,6 +313,9 @@ int pid;
      }
 
 M2_arrayint system_select(M2_arrayint v) {
+#if defined(_WIN32)
+  return ERROR;
+#else
   static fd_set r, w, e;
   int n = v->len;
   int *s = v->array;
@@ -326,6 +329,7 @@ M2_arrayint system_select(M2_arrayint v) {
   z->len = m;
   for (i=j=0; i<n; i++) if (FD_ISSET(s[i],&r)) { z->array[j++] = i; FD_CLR(s[i],&r); }
   return z;
+#endif
 }
 
 unsigned int system_hash(x)
@@ -717,8 +721,6 @@ int M2close(int fd)
 }
 #endif
 
-#ifdef GCMALLOC
-
 void *GC_malloc1 (size_t size_in_bytes) {
      void *p;
      p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
@@ -736,7 +738,7 @@ void GC_free2 (void *s, size_t old) {
      GC_FREE(s);
      }
 
-#else
+#if 0
 
 void *malloc1 (size_t size_in_bytes) {
      void *p;

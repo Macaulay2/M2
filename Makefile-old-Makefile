@@ -152,7 +152,8 @@ FACTORY:: include/gmp.h FACTORYconfigured FACTORYmade lib/libcf.a lib/FACTORYins
 
 ifdef SHAREDLIBS
 FACTORY:: Macaulay2/lib/libcf.so
-Macaulay2/lib/libcf.so : lib/libcf.a
+Macaulay2/lib/.exists:; mkdir -p Macaulay2/lib; touch $@
+Macaulay2/lib/libcf.so : lib/libcf.a Macaulay2/lib/.exists
 	rm -rf tmplib
 	mkdir tmplib
 	(cd tmplib; ar x ../$<; $(CC) -shared *.o -o ../$@)
@@ -441,3 +442,5 @@ checkin:
 ################################# TAGS
 TAGS:
 	etags `find . \( -name '*.h' -o -name '*.c' -o -name '*.s' -o -name '*.S' \)`
+PATH:
+	printenv $@

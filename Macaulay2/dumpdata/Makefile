@@ -5,6 +5,7 @@ CFLAGS := -Wall -g
 LDFLAGS := 
 check: check.o libdump.a
 map.o: map.h file.h std.h warning.h
+map.o: map-solaris.c map-linux.c
 dumpdata.o: dumpdata.h map.h warning.h std.h
 check.o: dumpdata.h std.h
 file.o: std.h

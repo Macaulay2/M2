@@ -17,7 +17,7 @@ class EFreeModule : public type
 
   bool              _induced_order;
   const monomial ** _orderings;
-  const int *       _tiebreaks;
+  int *             _tiebreaks;
   
   const EFreeModule *_cover;  // if not a quotient ring, then 'this'
 public:

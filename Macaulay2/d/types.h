@@ -1,5 +1,5 @@
 
-#include "../../Makeconf.h"	/* VERSION, MP, FACTORY, GCMALLOC, and DUMPDATA are defined here */
+#include "../../Makeconf.h"	/* VERSION, MP, FACTORY, and DUMPDATA are defined here */
 
 #include "../c2/targettypes.h"
 
@@ -52,6 +52,7 @@ extern char *libfac_version;
 #include <sys/wait.h>
 #endif
 
+#include <stddef.h>
 #include <signal.h>
 #include <time.h>
 #include <errno.h>
@@ -163,13 +164,11 @@ extern M2_stringarray tostrings(int,char **);
 #define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) \
      + (len)*sizeof(s->array[0]))
 
-#ifdef GCMALLOC
-
 void *GC_malloc1 (size_t size_in_bytes);
 void *GC_realloc3 (void *s, size_t old, size_t new);
 void GC_free2 (void *s, size_t old);
 
-#else
+#if 0
 
 void *malloc1 (size_t size_in_bytes);
 void *realloc3 (void *s, size_t old, size_t new);

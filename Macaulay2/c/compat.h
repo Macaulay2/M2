@@ -85,8 +85,11 @@ extern char errfmtnc[];
 
 #include <fcntl.h>
 
-#if 0
+#if defined(_WIN32)
 int write(int, char *, int);
+#endif
+
+#if 0
 int read(int, char *, int);
 int open(const char *, int, ...);
 #endif

@@ -162,11 +162,11 @@ endif
 endif
 
 ifdef SHAREDLIBS
-# This next bit is really needed only for gnu libc6 (glibc-2.0.6)
+# This next bit is really needed only for gnu libc6 (glibc-2.0.7)
 # Without it, it does dynamic linking at run time and breaks our dumpdata scheme
 # Don't link statically, so that these libraries actually get loaded at run time.
 # If we must link statically, we should find out how to link all members.
-LDLIBS += -lnss_compat -lnss_db -lnss_dns -lnss_nis
+LDLIBS += -lnsl -lnss_files -ldb -lnss_compat -lnss_db -lnss_dns -lnss_nis -lresolv
 endif
 
 
@@ -300,7 +300,7 @@ interpret.a : $(ALLOBJ)
 	ar rcs $@ $^ tmp_init.o
 ############################## probe memory for dumpdata
 probe : probe.c
-	$(CC) -static -I$(INCDIR) probe.c $(OUTPUT_OPTION)
+	$(CC) -g -static -I$(INCDIR) probe.c $(OUTPUT_OPTION)
 test-probe : probe
 	nm probe |grep -v "gcc2_compiled\|gnu_compiled\0| \." >syms
 	./probe a b c d >> syms

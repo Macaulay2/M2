@@ -1,5 +1,6 @@
 /*		Copyright 1999 by Daniel R. Grayson		*/
 
+#include <string.h>
 #include <stddef.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -97,7 +98,7 @@ static int install(int fd, map m, long *pos) {
   return OKAY;
 #else
   ret = mmap(start, len, prot, flags, fd, offset);
-  return MAP_FAILED == ret ? ERROR : OKAY;
+  return (char *)MAP_FAILED == ret ? ERROR : OKAY;
 #endif
 }
 

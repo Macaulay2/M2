@@ -286,7 +286,7 @@ public:
     const EPolynomialRing *R;
     const EMonoid *M;
     const ERing *K;		// The coefficient ring
-    epoly * heap[GEOHEAP_SIZE];
+    epoly * theHeap[GEOHEAP_SIZE];
     int len[GEOHEAP_SIZE];
     int top_of_heap;
     int n_terms(const epoly *g) const;

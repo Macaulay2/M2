@@ -205,11 +205,12 @@ bool EVector::homogenize(int v, int d, int nwts, const int *wts, EVector &result
   EVectorHeap H(F);
   for (EVector::iterator a = *this; a.valid(); ++a)
     {
+      int i;
       exp1 = M->to_exponents(a->monom);
-      for (int i=0; i<nvars; i++)
+      for (i=0; i<nvars; i++)
         exp[i] = exp1[i];
       int e = 0;
-      for (int i=0; i<nvars; i++) e += wts[i] * exp[i];
+      for (i=0; i<nvars; i++) e += wts[i] * exp[i];
       //e += F->getDegree(a->comp)->exponents[0];
       if (((d-e) % wts[v]) != 0)
 	{
@@ -657,7 +658,7 @@ EPolynomialRing::heap::heap(const EPolynomialRing *R)
 
   int i;
   for (i=0; i<GEOHEAP_SIZE; i++)
-    heap[i] = 0;
+    theHeap[i] = 0;
 }
 
 EPolynomialRing::heap::~heap()
@@ -684,13 +685,13 @@ void EPolynomialRing::heap::add(epoly *g)
   int len = n_terms(g);
   int i = 0;
   while (len >= heap_size[i]) i++;
-  R->add_to(heap[i], g);
-  len = n_terms(heap[i]);
+  R->add_to(theHeap[i], g);
+  len = n_terms(theHeap[i]);
   while (len >= heap_size[i])
     {
       i++;
-      R->add_to(heap[i], heap[i-1]);
-      len = n_terms(heap[i]);
+      R->add_to(theHeap[i], theHeap[i-1]);
+      len = n_terms(theHeap[i]);
     }
   if (i > top_of_heap)
     top_of_heap = i;
@@ -701,8 +702,8 @@ epoly * EPolynomialRing::heap::poly_value()
   epoly *result = 0;
   for (int i=0; i<=top_of_heap; i++)
     {
-      if (heap[i] == 0) continue;
-      R->add_to(result, heap[i]);
+      if (theHeap[i] == 0) continue;
+      R->add_to(result, theHeap[i]);
     }
   top_of_heap = -1;
   return result;

@@ -22,7 +22,7 @@ main(int argc, char **argv) {
 	for (i=0; i<sizeof dir; i++) if (dir[i] == '\\') dir[i] = '/';
 	fprintf(M2bat,
 		"\"%s\\bin\\Macaulay2\""
-		" -tty"
+		/* " -tty" */
 		" -ephase=1"
 		" \"%s/m2/setup.m2\""
 		" -ephase=0"
@@ -33,7 +33,7 @@ main(int argc, char **argv) {
 	fprintf(M2,
 		"#! /bin/sh\n"
 		"'%s/bin/Macaulay2'"
-		" -tty"
+		/* " -tty" */
 		" '%s/bin/startup.m2'"
 		" \"$@\""
 		"\n",

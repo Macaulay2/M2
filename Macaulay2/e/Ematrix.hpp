@@ -6,12 +6,12 @@
 #include "Evector.hpp"
 
 
+  const int EMatrix_left = 1;
+  const int EMatrix_right = 2;
+  const int EMatrix_both = 3;
+
 class EMatrix : public type
 {
-  const int left = 1;
-  const int right = 2;
-  const int both = 3;
-
   const EFreeModule *target;
   const EFreeModule *source;
   int ncolumns;			// Same as source->rank()
@@ -20,7 +20,7 @@ class EMatrix : public type
 				// target->getRing()->getDegreeMonoid(),
 				// which is a commutative monoid, and the actual values can be obtained
 				// via D->to_exponents(degree), or degree->exponents
-  int type;			// left, right, or both.  It is only 'both' in the
+  int theType;			// left, right, or both.  It is only 'both' in the
 				// cases where the ring is commutative or the entries are scalars
 				// and the coefficients are commutative.
 				// The columns are always the image vectors, but multiplication
@@ -44,13 +44,13 @@ public:
   static EMatrix *make(const EFreeModule *F,
 	  const EFreeModule *G,
 	  EVector *elements,
-	  int type = both,
+	  int type = EMatrix_both,
 	  const monomial *d = 0);  // GRABS the array and elements in 'elements'.
 
   static EMatrix *make(const EFreeModule *F,
 	  const EFreeModule *G,
 	  const EMatrix *elements, // Take the columns from 'elements'
-	  int type = both,
+	  int type = EMatrix_both,
 	  const monomial *d = 0);  // GRABS the array and elements in 'elements'.
 
   void text_out(ostream &o) const;
@@ -69,7 +69,7 @@ public:
   const EFreeModule *getTarget() const { return target; }
   const EFreeModule *getSource() const { return source; }
   const monomial *getMapDegree() const { return mapdegree; }
-  const int getMatrixType() const { return type; }
+  const int getMatrixType() const { return theType; }
 
   EGB *getGB() const { return gb; }
 
