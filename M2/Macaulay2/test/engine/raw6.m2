@@ -451,6 +451,12 @@ mb = rawBasis(m, {7}, {7}, {1}, {0,1}, true, -1)
 mb = rawBasis(m, {100}, {100}, {1}, {0,1}, true, -1)
 mb = rawBasis(m, {1000}, {1000}, {1}, {0,1}, true, -1)
 
+-- entire basis of a multi-graded ring
+needs "raw-util.m2"
+R = polyring3(rawZZp 101, (symbol a, symbol b, symbol c), rawMonomialOrdering { Lex => 3}, {(1,1,0),(0,1,1),(0,1,2)})
+m = mat{{a^2,b^3,c^3}}
+mb = rawBasis(m, {}, {}, {1,1,1}, {0,1,2}, false, -1)
+
 -- Multigraded examples
 needs "raw-util.m2"
 R = polyring3(rawZZp 101, (symbol a, symbol b, symbol c), rawMonomialOrdering { Lex => 3}, {(1,1,0),(0,1,1),(0,1,2)})
