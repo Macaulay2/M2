@@ -74,3 +74,23 @@ assert(null === r)
 
 any({1,2,3}, i -> break 4)
 select({1,2,3,4}, i -> break 4 )
+
+assert( relativizeFilename ( "/a/b/c" , "/a/b/c/d/e" ) === "d/e" )
+assert( relativizeFilename ( "/a/b/c" , "/a/b/c/d/e/" ) === "d/e/" )
+assert( relativizeFilename ( "/a/b/c/" , "/a/b/c/d/e/" ) === "d/e/" )
+
+assert( relativizeFilename ( "/a/b/c/d/e" , "/a/b/c" ) === "../../" )
+assert( relativizeFilename ( "/a/b/c/d/e/" , "/a/b/c" ) === "../../" )
+assert( relativizeFilename ( "/a/b/c/d/e" , "/a/b/c/" ) === "../../" )
+assert( relativizeFilename ( "/a/b/c/d/e/" , "/a/b/c/" ) === "../../" )
+
+assert( relativizeFilename ( "/a/b/c/d/e" , "/a/b/c/f/g" ) === "../../f/g" )
+assert( relativizeFilename ( "/a/b/c/d/e/" , "/a/b/c/f/g" ) === "../../f/g" )
+assert( relativizeFilename ( "/a/b/c/d/e" , "/a/b/c/f/g" ) === "../../f/g" )
+assert( relativizeFilename ( "/a/b/c/d/e/" , "/a/b/c/f/g" ) === "../../f/g" )
+
+assert( relativizeFilename ( "/a/b/c/d/e" , "/a/b/c/f/g/" ) === "../../f/g/" )
+assert( relativizeFilename ( "/a/b/c/d/e/" , "/a/b/c/f/g/" ) === "../../f/g/" )
+assert( relativizeFilename ( "/a/b/c/d/e" , "/a/b/c/f/g/" ) === "../../f/g/" )
+assert( relativizeFilename ( "/a/b/c/d/e/" , "/a/b/c/f/g/" ) === "../../f/g/" )
+

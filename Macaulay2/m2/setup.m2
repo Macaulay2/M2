@@ -132,23 +132,11 @@ ZZ | String := String => (i,s) -> concatenate(string i,s)
 loaded := new MutableHashTable
 unmarkAllLoadedFiles = () -> loaded = new MutableHashTable  -- symbol will be erased in debugging.m2
 
-canonicalFilename := f -> (
-     f = separate(pathSeparator,f);
-     while (
-     	  i := position(f,s -> s === "..");
-     	  i =!= null and i > 0
-	  )
-     do f = drop(f,{i-1,i});
-     concatenate mingle(f, apply(#f-1,i -> pathSeparator)))
-
 markLoaded := (filename,origfilename) -> ( 
      loaded#origfilename = true; 
      if notify then (
-	  filename = canonicalFilename filename;
-	  -- if filename === origfilename
-	  -- then stderr << "--loaded " << filename << endl
-	  -- else stderr << "--loaded " << origfilename << " from " << filename << endl
-	  stderr << "--loaded " << filename << endl
+	  filename = minimizeFilename filename;
+	  -- stderr << "--loaded " << filename << endl
 	  );
      )
 
@@ -225,6 +213,7 @@ scan((
 	  symbol phase,
 	  symbol currentDirectory,
 	  symbol documentationPath,
+	  symbol DocDatabase,
 	  symbol currentFileName,
 	  symbol compactMatrixForm,
 	  symbol TeXmacsMode
