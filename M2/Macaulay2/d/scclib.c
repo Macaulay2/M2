@@ -936,7 +936,7 @@ M2_arrayint system_regexmatch(M2_string pattern, M2_string text) {
     char *s_pattern;
     if (last_pattern != NULL) regfree(&regex), last_pattern = NULL;
     s_pattern = tocharstar(pattern);
-    ret = regcomp(&regex, s_pattern, REG_NEWLINE|REG_EXTENDED);
+    ret = regcomp(&regex, s_pattern, REG_EXTENDED);
     GC_FREE(s_pattern);
     if (ret != 0) { regfree(&regex); return empty; }
     last_pattern = pattern;

@@ -1,3 +1,454 @@
+2004-01-26  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/orderedmonoidrings.m2, Macaulay2/m2/overview2.m2, Macaulay2/m2/packages.m2, Macaulay2/m2/setup.m2, Macaulay2/packages/normal.m2, Macaulay2/m2/doc.m2, Macaulay2/m2/doc1.m2, Macaulay2/m2/doc12.m2, Macaulay2/m2/doc2.m2, Macaulay2/m2/doc4.m2, Macaulay2/m2/document.m2, Macaulay2/m2/html.m2, Macaulay2/m2/methods.m2, Macaulay2/m2/nets.m2, Macaulay2/m2/normal.m2:
+	*** empty log message ***
+
+2004-01-25  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/document.m2, Macaulay2/m2/debugging.m2, Macaulay2/m2/packages.m2, Macaulay2/m2/setup.m2, Macaulay2/m2/Makefile.in, Macaulay2/m2/startup.m2, Macaulay2/d/actors5.d, Macaulay2/m2/Makefile.egs.in, Macaulay2/m2/doc3.m2, Macaulay2/m2/eg.m2, Macaulay2/m2/html.m2, Macaulay2/m2/overview3.m2, Macaulay2/m2/texmacs.m2, config/files, configure, Macaulay2/m2/matrix1.m2, Macaulay2/m2/modules2.m2, Macaulay2/m2/nets.m2, Macaulay2/test/engine/raw-util.m2, Macaulay2/test/engine/raw.m2, Macaulay2/test/engine/raw3.m2, Macaulay2/test/engine/raw5.m2, Macaulay2/test/engine/ring.m2, Macaulay2/d/evaluate.d, Macaulay2/m2/doc.m2, Macaulay2/m2/doc2.m2, Macaulay2/m2/doc7.m2, Macaulay2/m2/engine.m2, Macaulay2/m2/html0.m2, Macaulay2/m2/matrix.m2, Macaulay2/packages/hom.m2, Macaulay2/d/interface.d, Macaulay2/e/engine.h, Macaulay2/m2/last.m2:
+	*** empty log message ***
+
+2004-01-24  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/interface.d, Macaulay2/packages/Dmodules/Dsystems.m2, Macaulay2/packages/Dmodules/EXA/DHom.exa.m2, Macaulay2/packages/Dmodules/EXA/Dbasic.exa.m2, Macaulay2/packages/Dmodules/EXA/Ddual.exa.m2, Macaulay2/packages/Dmodules/EXA/DeRham.exa.m2, Macaulay2/packages/Dmodules/EXA/DiffOps.exa.m2, Macaulay2/packages/Dmodules/EXA/Dlocalize.exa.m2, Macaulay2/packages/Dmodules/EXA/Dresolution.exa.m2, Macaulay2/packages/Dmodules/EXA/Drestriction.exa.m2, Macaulay2/packages/Dmodules/EXA/WeylClosure.exa.m2, Macaulay2/packages/Dmodules/EXA/annFs.exa.m2, Macaulay2/packages/Dmodules/EXA/bFunction.ideal.exa.m2, Macaulay2/packages/Dmodules/EXA/bFunction.module.exa.m2, Macaulay2/packages/Dmodules/EXA/globalBFunction.exa.m2, Macaulay2/packages/Dmodules/EXA/localCohom.exa.m2, Macaulay2/packages/Dmodules/EXA/makeCyclic.exa.m2, Macaulay2/packages/Dmodules/EXA/paramBpoly.exa.m2, Macaulay2/packages/Dmodules/Gbw.m2, Macaulay2/packages/Dmodules/Sparsemat.m2, Macaulay2/packages/Dmodules/TST/.cvsignore, Macaulay2/packages/Dmodules/TST/AnnFs.tst.m2, Macaulay2/packages/Dmodules/TST/DHom.tst.m2, Macaulay2/packages/Dmodules/TST/Dbasic.tst.m2, Macaulay2/packages/Dmodules/TST/Ddual.tst.m2, Macaulay2/packages/Dmodules/TST/DeRham.tst.m2, Macaulay2/packages/Dmodules/TST/Dloadtst.m2, Macaulay2/packages/Dmodules/TST/Dlocalize.tst.m2, Macaulay2/packages/Dmodules/TST/Dresolution.tst.m2, Macaulay2/packages/Dmodules/TST/Drestriction.tst.m2, Macaulay2/packages/Dmodules/TST/WeylClosure.tst.m2, Macaulay2/packages/Dmodules/TST/b-function.ideal.tst.m2, Macaulay2/packages/Dmodules/TST/b-function.module.tst.m2, Macaulay2/packages/Dmodules/TST/localCohom.tst.m2, Macaulay2/packages/Dmodules/TST/makeCyclic.tst.m2, Macaulay2/packages/Dmodules/TST/paramBpoly.tst.m2, Macaulay2/packages/Dmodules/WeylClosure.m2, Macaulay2/packages/Dmodules/annFs.m2, Macaulay2/packages/Dmodules/bFunction.ideal.m2, Macaulay2/packages/Dmodules/bFunction.module.m2, Macaulay2/packages/Dmodules/globalBFunction.m2, Macaulay2/packages/Dmodules/localCohom.m2, Macaulay2/packages/Dmodules/makeCyclic.m2, Macaulay2/packages/Dmodules/newRings.m2, Macaulay2/packages/Dmodules/paramBpoly.m2, Macaulay2/packages/Dmodules/switch.m2, Macaulay2/packages/D-modules/DiffOps.m2, Macaulay2/packages/D-modules/Dloadfile.m2, Macaulay2/packages/D-modules/Dlocalize.m2, Macaulay2/packages/D-modules/Dresolution.m2, Macaulay2/packages/D-modules/Drestriction.m2, Macaulay2/packages/D-modules/Dsystems.m2, Macaulay2/packages/D-modules/EXA/DHom.exa.m2, Macaulay2/packages/D-modules/EXA/Dbasic.exa.m2, Macaulay2/packages/D-modules/EXA/Ddual.exa.m2, Macaulay2/packages/D-modules/EXA/DeRham.exa.m2, Macaulay2/packages/D-modules/EXA/DiffOps.exa.m2, Macaulay2/packages/D-modules/EXA/Dlocalize.exa.m2, Macaulay2/packages/D-modules/EXA/Dresolution.exa.m2, Macaulay2/packages/D-modules/EXA/Drestriction.exa.m2, Macaulay2/packages/D-modules/EXA/WeylClosure.exa.m2, Macaulay2/packages/D-modules/EXA/annFs.exa.m2, Macaulay2/packages/D-modules/EXA/bFunction.ideal.exa.m2, Macaulay2/packages/D-modules/EXA/bFunction.module.exa.m2, Macaulay2/packages/D-modules/EXA/globalBFunction.exa.m2, Macaulay2/packages/D-modules/EXA/localCohom.exa.m2, Macaulay2/packages/D-modules/EXA/makeCyclic.exa.m2, Macaulay2/packages/D-modules/EXA/paramBpoly.exa.m2, Macaulay2/packages/D-modules/Gbw.m2, Macaulay2/packages/D-modules/Sparsemat.m2, Macaulay2/packages/D-modules/TST/AnnFs.tst.m2, Macaulay2/packages/D-modules/TST/DHom.tst.m2, Macaulay2/packages/D-modules/TST/Dbasic.tst.m2, Macaulay2/packages/D-modules/TST/Ddual.tst.m2, Macaulay2/packages/D-modules/TST/DeRham.tst.m2, Macaulay2/packages/D-modules/TST/Dloadtst.m2, Macaulay2/packages/D-modules/TST/Dlocalize.tst.m2, Macaulay2/packages/D-modules/TST/Dresolution.tst.m2, Macaulay2/packages/D-modules/TST/Drestriction.tst.m2, Macaulay2/packages/D-modules/TST/WeylClosure.tst.m2, Macaulay2/packages/D-modules/TST/b-function.ideal.tst.m2, Macaulay2/packages/D-modules/TST/b-function.module.tst.m2, Macaulay2/packages/D-modules/TST/localCohom.tst.m2, Macaulay2/packages/D-modules/TST/makeCyclic.tst.m2, Macaulay2/packages/D-modules/TST/paramBpoly.tst.m2, Macaulay2/packages/D-modules/WeylClosure.m2, Macaulay2/packages/D-modules/annFs.m2, Macaulay2/packages/D-modules/bFunction.ideal.m2, Macaulay2/packages/D-modules/bFunction.module.m2, Macaulay2/packages/D-modules/globalBFunction.m2, Macaulay2/packages/D-modules/localCohom.m2, Macaulay2/packages/D-modules/makeCyclic.m2, Macaulay2/packages/D-modules/newRings.m2, Macaulay2/packages/D-modules/paramBpoly.m2, Macaulay2/packages/D-modules/switch.m2, Macaulay2/packages/Dmodules/DHom.m2, Macaulay2/packages/Dmodules/DMODdoc.m2, Macaulay2/packages/Dmodules/Dbasic.m2, Macaulay2/packages/Dmodules/Ddual.m2, Macaulay2/packages/Dmodules/DeRham.m2, Macaulay2/packages/Dmodules/DiffOps.m2, Macaulay2/packages/Dmodules/Dloadfile.m2, Macaulay2/packages/Dmodules/Dlocalize.m2, Macaulay2/packages/Dmodules/Dresolution.m2, Macaulay2/packages/Dmodules/Drestriction.m2, Macaulay2/d/Makefile.in, Macaulay2/e/engine.h, Macaulay2/e/x_mat.cpp, Macaulay2/m2/lists.m2, Macaulay2/packages/D-modules.m2, Macaulay2/packages/D-modules/DHom.m2, Macaulay2/packages/D-modules/DMODdoc.m2, Macaulay2/packages/D-modules/Dbasic.m2, Macaulay2/packages/D-modules/Ddual.m2, Macaulay2/packages/D-modules/DeRham.m2, Macaulay2/packages/Dmodules.m2, Macaulay2/packages/Makefile.in:
+	*** empty log message ***
+
+2004-01-24  mike  <mike@rhodium>
+
+	* Macaulay2/e/engine.h, Macaulay2/e/x_mat.cpp:
+	added shell for matrix random routine
+
+	* INSTALL, Macaulay2/e/Makefile.in, Macaulay2/e/engine.h, Macaulay2/e/matrix.hpp, Macaulay2/e/x_factor.cpp, Macaulay2/e/x_mat.cpp, Macaulay2/test/engine/raw3.m2, Macaulay2/test/engine/raw5.m2:
+	some new matrix routines, and some changes to interface
+
+2004-01-24  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/nets.m2, Macaulay2/packages/.cvsignore, Macaulay2/packages/Makefile.in, Macaulay2/packages/CacheFileName.m2, Macaulay2/m2/html.m2, Macaulay2/m2/doc1.m2, Macaulay2/m2/doc10.m2, Macaulay2/m2/doc3.m2, Macaulay2/m2/doc8.m2, Macaulay2/m2/document.m2, Macaulay2/m2/files.m2, Macaulay2/m2/packages.m2, Macaulay2/m2/last.m2, Macaulay2/m2/classes.m2, Macaulay2/m2/gateway.m2:
+	*** empty log message ***
+
+2004-01-23  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/nets.d, Macaulay2/m2/document.m2, Macaulay2/m2/overview3.m2:
+	*** empty log message ***
+
+2004-01-22  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/document.m2, Macaulay2/m2/nets.m2, Macaulay2/d/actors5.d, Macaulay2/d/nets.d, Macaulay2/m2/overview2.m2, Macaulay2/m2/packages.m2, Macaulay2/m2/doc3.m2, Macaulay2/m2/html.m2, Macaulay2/basictests/A06.m2, Macaulay2/m2/overview3.m2, Macaulay2/m2/startup.m2, Macaulay2/test/nets.m2:
+	*** empty log message ***
+
+	* Macaulay2/d/nets.d:
+	undo the last change -- we want to be able to convert back and forth
+	between strings and nets without losing information
+
+	* Macaulay2/d/ChangeLog, Macaulay2/m2/document.m2, Macaulay2/m2/peek.m2:
+	*** empty log message ***
+
+	* Macaulay2/d/nets.d:
+	Fixed the conversion from strings to nets so that a terminal newline
+	in the string doesn't result in an extra blank line in the list of
+	lines.
+
+	    i1 : peek net "\n\n"
+
+		 ++
+	    o1 = ||
+		 ||
+		 ++
+
+	* Macaulay2/d/basic.d, Macaulay2/d/evaluate.d, Macaulay2/d/objects.d, Macaulay2/m2/Makefile.in, Macaulay2/m2/document.m2, Macaulay2/m2/html.m2, Macaulay2/m2/last.m2, Macaulay2/m2/loads.awk, Macaulay2/m2/packages.m2, Macaulay2/m2/peek.m2, Macaulay2/m2/startup.m2, Macaulay2/d/actors2.d, Macaulay2/d/actors3.d, Macaulay2/d/actors4.d, Macaulay2/basictests/D01.m2, Macaulay2/m2/Makefile.tests, Macaulay2/m2/debugging.m2, Macaulay2/basictests/Makefile.in, Macaulay2/d/actors5.d:
+	*** empty log message ***
+
+2004-01-21  mike  <mike@rhodium>
+
+	* Macaulay2/e/check/Makefile.in, Macaulay2/e/check/util.c, Macaulay2/e/engine.h, Macaulay2/e/ring-vecs.cpp, Macaulay2/e/ring.hpp, Macaulay2/test/engine/raw3.m2, Macaulay2/test/engine/raw5.m2:
+	more tests aded
+
+2004-01-21  Dan Grayson  <dan@math.uiuc.edu>
+
+	* INSTALL, Macaulay2/m2/Makefile.in: *** empty log message ***
+
+2004-01-20  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/Makefile.in, Macaulay2/m2/Makefile.in, Macaulay2/m2/document.m2, Macaulay2/m2/html.m2, Macaulay2/m2/packages.m2, configure.ac, encap/Makefile.in, include/config.Makefile.in, include/config.h.in.stamp, configure, Macaulay2/m2/overview3.m2, Macaulay2/m2/overviewB.m2, Macaulay2/m2/overviewC.m2, Macaulay2/d/util.d, Macaulay2/test/engine/ring.m2, Macaulay2/d/interface.d, Macaulay2/m2/startup.m2, Macaulay2/m2/doc6.m2, Macaulay2/m2/doc8.m2, Macaulay2/m2/normal_doc.m2:
+	*** empty log message ***
+
+2004-01-20  mike  <mike@rhodium>
+
+	* Macaulay2/test/engine/raw3.m2: *** empty log message ***
+
+2004-01-20  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/doc10.m2, Macaulay2/m2/doc12.m2, Macaulay2/m2/doc3.m2, Macaulay2/m2/doc4.m2, Macaulay2/m2/doc7.m2, Macaulay2/m2/document.m2, Macaulay2/m2/html.m2, Macaulay2/m2/normal_doc.m2, Macaulay2/m2/packages.m2, Macaulay2/d/M2initschk.c, Macaulay2/d/Makefile.in, Macaulay2/d/interface.d, Macaulay2/e/x_factor.cpp:
+	*** empty log message ***
+
+2004-01-20  mike  <mike@rhodium>
+
+	* Macaulay2/test/engine/raw3.m2: *** empty log message ***
+
+2004-01-19  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/M2initschk.c: *** empty log message ***
+
+	* Macaulay2/m2/files.m2:
+	fix makeDir so it works if the argument names a symbolic link to an existing directory
+
+	* Macaulay2/m2/startup.m2:
+	Added test/ and test/engine/ to the path if the sources are present,
+	for help with debugging.
+
+2004-01-19  mike  <mike@rhodium>
+
+	* Macaulay2/e/x_factor.cpp, Macaulay2/test/engine/raw3.m2:
+	*** empty log message ***
+
+2004-01-19  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/M2inits.h, Macaulay2/d/M2inits1.c, Macaulay2/d/M2inits2.c, Macaulay2/d/M2mem.c, Macaulay2/d/M2mem.h, Macaulay2/d/M2mem2.h, Macaulay2/d/M2types.c, Macaulay2/d/M2types.h, Macaulay2/d/Makefile.in, Macaulay2/d/memdebug.c, Macaulay2/d/scclib.c, Macaulay2/d/types.h, Macaulay2/dumpdata/map.h, Macaulay2/dumpdata/std.h, Macaulay2/e/CC.cpp, Macaulay2/e/QQ.cpp, Macaulay2/e/RR.cpp, Macaulay2/e/ZZ.cpp, Macaulay2/e/bigCC.cpp, Macaulay2/e/bigRR.cpp, Macaulay2/e/frac.cpp, Macaulay2/e/matrixCC.cpp, Macaulay2/e/matrixRR.cpp, Macaulay2/e/monoid.cpp, Macaulay2/e/monordering.c, Macaulay2/e/polyring.cpp, Macaulay2/e/table.h, Macaulay2/e/x_factor.cpp, Macaulay2/e/x_lapack.cpp, Macaulay2/e/x_relem.cpp, Macaulay2/m2/Makefile.in, Macaulay2/m2/html.m2, Macaulay2/m2/packages.m2, Macaulay2/d/M2inits.c, Macaulay2/d/M2lib.c, Macaulay2/d/M2initschk.c, Macaulay2/m2/startup.m2, Macaulay2/test/engine/ring.m2, Macaulay2/d/debug.c, Macaulay2/d/debug.h, Macaulay2/e/mem.cpp, include/config.Makefile.in, include/config.h.in.stamp, configure, Macaulay2/m2/.gdbinit.dan:
+	*** empty log message ***
+
+2004-01-18  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/gmp_aux.c, configure.ac: *** empty log message ***
+
+2004-01-17  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/actors4.d, Macaulay2/d/stdio.d, Macaulay2/e/x_factor.cpp, Macaulay2/m2/.gdbinit.dan, Macaulay2/test/engine/Makefile.in, Macaulay2/test/engine/ring.m2, Macaulay2/d/interp.d, Macaulay2/d/system.d, Macaulay2/d/M2lib.c, Macaulay2/d/Makefile.in, Macaulay2/d/common.d, Macaulay2/d/engine.d, Macaulay2/d/err.d, Macaulay2/d/evaluate.d, Macaulay2/d/interface.d, Macaulay2/d/stdiop.d, Macaulay2/d/texmacs.d, Macaulay2/d/util.d, Macaulay2/dumpdata/dumpdata.c, Macaulay2/m2/bug.m2, Macaulay2/m2/engine.m2, Macaulay2/m2/enginering.m2, Macaulay2/m2/factor.m2, Macaulay2/m2/matrix.m2, Macaulay2/m2/orderedmonoidrings.m2:
+	*** empty log message ***
+
+2004-01-17  mike  <mike@rhodium>
+
+	* Macaulay2/e/engine.h, Macaulay2/e/x_factor.cpp:
+	finished re-implementing x_factor.cpp, modulo some error messages
+
+2004-01-16  mike  <mike@rhodium>
+
+	* Macaulay2/e/engine.h, Macaulay2/e/x_factor.cpp:
+	*** empty log message ***
+
+2004-01-16  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/e/engine.h: *** empty log message ***
+
+2004-01-16  mike  <mike@rhodium>
+
+	* Macaulay2/e/engine.h, Macaulay2/e/factor.cpp, Macaulay2/e/x_factor.cpp, Macaulay2/test/engine/raw3.m2:
+	*** empty log message ***
+
+2004-01-16  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/interface.d, Macaulay2/m2/matrix.m2, Macaulay2/m2/modules2.m2, Macaulay2/m2/monideal.m2, Macaulay2/m2/varieties.m2, Macaulay2/test/engine/ring.m2, Macaulay2/test/newlines.m2, Macaulay2/e/x_factor.cpp:
+	*** empty log message ***
+
+2004-01-16  mike  <mike@rhodium>
+
+	* Macaulay2/e/x_factor.cpp: *** empty log message ***
+
+2004-01-16  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/bug.m2: *** empty log message ***
+
+2004-01-16  mike  <mike@rhodium>
+
+	* Macaulay2/e/x_factor.cpp, Macaulay2/e/Makefile.in, Macaulay2/e/engine.h:
+	*** empty log message ***
+
+2004-01-16  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/stdio.d, Macaulay2/m2/multilin.m2:
+	*** empty log message ***
+
+2004-01-15  mike  <mike@rhodium>
+
+	* Macaulay2/e/gbasis.cpp, Macaulay2/e/gbring.cpp, Macaulay2/e/ring-vecs.cpp, Macaulay2/test/engine/raw3.m2, Macaulay2/test/engine/raw4.m2:
+	*** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/test/engine/ring.m2, Macaulay2/test/newlines.m2, Macaulay2/m2/expressions.m2, Macaulay2/m2/gb.m2, Macaulay2/m2/matrix1.m2, Macaulay2/m2/matrix2.m2, Macaulay2/m2/modules2.m2, Macaulay2/m2/monideal.m2, Macaulay2/m2/multilin.m2, Macaulay2/m2/orderedmonoidrings.m2, Macaulay2/packages/hom.m2, Macaulay2/test/memleak4.m2, Macaulay2/m2/quotring.m2, Macaulay2/packages/D-modules/localCohom.m2, Macaulay2/test/4c.m2, Macaulay2/test/ISSAC-97.m2, Macaulay2/test/Makefile.in, Macaulay2/test/direct.m2, Macaulay2/test/subring.m2, Macaulay2/m2/chaincomplexes.m2, Macaulay2/m2/gradedmodules.m2, Macaulay2/m2/indeterminates.m2, Macaulay2/m2/matrix.m2, Macaulay2/e/engine.h, Macaulay2/test/engine/Makefile.in, Macaulay2/test/engine/raw.m2:
+	*** empty log message ***
+
+2004-01-15  mike  <mike@rhodium>
+
+	* Macaulay2/test/engine/raw4.m2: *** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/res.m2, Macaulay2/test/4c.m2, Macaulay2/test/Makefile.in, Macaulay2/test/subring.m2, Macaulay2/d/interface.d, Macaulay2/e/engine.h, Macaulay2/e/x_gb.cpp, Macaulay2/m2/modules2.m2, Macaulay2/m2/quotring.m2, Macaulay2/d/evaluate.d, Macaulay2/e/gbA.cpp, Macaulay2/e/text_io.cpp, Macaulay2/m2/debugging.m2, Macaulay2/m2/ofcm.m2, Macaulay2/test/engine/ring.m2:
+	*** empty log message ***
+
+2004-01-15  mike  <mike@rhodium>
+
+	* Macaulay2/test/engine/raw4.m2: *** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/e/text_io.cpp, Macaulay2/e/text_io.hpp, Macaulay2/m2/engine.m2, Macaulay2/m2/gb.m2, Macaulay2/test/engine/ring.m2, Macaulay2/e/gbA.cpp, Macaulay2/d/interface.d:
+	*** empty log message ***
+
+2004-01-15  mike  <mike@rhodium>
+
+	* Macaulay2/e/x_gb.cpp: *** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/interface.d, Macaulay2/e/x_gb.cpp, Macaulay2/m2/gb.m2, Macaulay2/test/engine/ring.m2:
+	*** empty log message ***
+
+2004-01-15  mike  <mike@rhodium>
+
+	* Macaulay2/e/comp_gb.hpp, Macaulay2/e/engine.h, Macaulay2/e/gb.cpp, Macaulay2/e/gb.hpp, Macaulay2/e/gbA.cpp, Macaulay2/e/gbA.hpp, Macaulay2/e/matrix.cpp, Macaulay2/e/x_gb.cpp, Macaulay2/test/engine/raw4.m2:
+	*** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/interface.d, Macaulay2/e/x_gb.cpp, Macaulay2/m2/gb.m2, Macaulay2/test/engine/ring.m2, Macaulay2/test/engine/raw4.m2, Macaulay2/e/Makefile.in, Macaulay2/m2/Makefile.in, Macaulay2/CHANGES:
+	*** empty log message ***
+
+2004-01-15  mike  <mike@rhodium>
+
+	* Macaulay2/e/comp_gb.hpp, Macaulay2/test/engine/raw4.m2:
+	*** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/Makefile.in, Macaulay2/e/engine.h, Macaulay2/e/statuscodes, Macaulay2/e/x_gb.cpp, Macaulay2/m2/Makefile.in, Macaulay2/m2/gb.m2, Macaulay2/d/interface.d, Macaulay2/e/Makefile.in:
+	*** empty log message ***
+
+2004-01-15  mike  <mike@rhodium>
+
+	* Macaulay2/e/computation.cpp, Macaulay2/e/computation.hpp, Macaulay2/e/engine.h, Macaulay2/e/gbA.cpp, Macaulay2/e/gbA.hpp, Macaulay2/test/engine/raw4.m2:
+	*** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/e/statuscodes: *** empty log message ***
+
+2004-01-15  mike  <mike@rhodium>
+
+	* Macaulay2/e/comp_gb.cpp, Macaulay2/e/comp_gb.hpp, Macaulay2/e/computation.cpp, Macaulay2/e/gb.hpp, Macaulay2/e/gbA.hpp, Macaulay2/e/x_gb.cpp:
+	*** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/interface.d, Macaulay2/e/x_gb.cpp:
+	*** empty log message ***
+
+2004-01-15  mike  <mike@rhodium>
+
+	* Macaulay2/e/x_gb.cpp, Macaulay2/e/comp_gb.cpp:
+	*** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/Makefile.in, Macaulay2/d/interface.d, Macaulay2/e/engine.h, Macaulay2/e/x_gb.cpp, Macaulay2/m2/debugging.m2, Macaulay2/m2/gb.m2, Macaulay2/test/engine/raw4.m2:
+	*** empty log message ***
+
+2004-01-15  mike  <mike@rhodium>
+
+	* Macaulay2/e/comp.hpp, Macaulay2/e/comp_gb.cpp, Macaulay2/e/computation.hpp, Macaulay2/e/x_gb.cpp, Macaulay2/e/Makefile.in, Macaulay2/e/engine.h, Macaulay2/e/comp_gb.hpp, Macaulay2/e/computation.cpp, Macaulay2/e/gb.cpp, Macaulay2/e/gb.hpp, Macaulay2/e/gb2.hpp, Macaulay2/e/gbA.cpp, Macaulay2/e/gbA.hpp, Macaulay2/e/gbZZ.cpp, Macaulay2/e/gb_comp.cpp, Macaulay2/e/gb_comp.hpp, Macaulay2/e/gbinhom.cpp, Macaulay2/e/gbinhom.hpp, Macaulay2/e/gbnod.cpp, Macaulay2/e/hermite.cpp, Macaulay2/e/hermite.hpp, Macaulay2/e/polyring.cpp, Macaulay2/e/polyring.hpp, Macaulay2/e/sagbi.cpp, Macaulay2/e/sagbi.hpp:
+	*** empty log message ***
+
+2004-01-15  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/gb.m2, Macaulay2/m2/matrix.m2, Macaulay2/test/engine/ring.m2, Macaulay2/packages/primdec.m2, Macaulay2/test/Makefile.in, Macaulay2/basictests/Makefile.in, Macaulay2/d/actors.d, Macaulay2/d/actors2.d, Macaulay2/d/interface.d, Macaulay2/d/objects.d, Macaulay2/e/gb.cpp, Macaulay2/e/x_gb.cpp, Macaulay2/m2/chaincomplexes.m2, Macaulay2/m2/gradedmodules.m2, Macaulay2/m2/matrix1.m2, Macaulay2/m2/matrix2.m2, Macaulay2/m2/modules.m2, Macaulay2/m2/modules2.m2, Macaulay2/m2/methods.m2, Macaulay2/m2/monideal.m2, Macaulay2/m2/ringmap.m2:
+	*** empty log message ***
+
+2004-01-14  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/interface.d, Macaulay2/d/scclib.c, Macaulay2/d/system.d, Macaulay2/e/engine.h, Macaulay2/e/gbA.cpp, Macaulay2/e/x_gb.cpp, Macaulay2/m2/engine.m2, Macaulay2/m2/gb.m2, Macaulay2/m2/html.m2, Macaulay2/test/Makefile.in, Macaulay2/test/engine/raw4.m2, Macaulay2/test/engine/ring.m2, Macaulay2/basictests/A10.m2, Macaulay2/d/actors5.d:
+	*** empty log message ***
+
+	* Macaulay2/d/objects.d:
+	fixed a bug in equal(x:HashTable,y:HashTable):Expr -- it wasn't
+	considering cache tables to be equal
+
+2004-01-14  mike  <mike@rhodium>
+
+	* Macaulay2/e/check/Makefile.in, Macaulay2/e/check/check_c.c, Macaulay2/e/frac.hpp, Macaulay2/e/matrix.cpp, Macaulay2/e/monoid.cpp, Macaulay2/e/polyring.cpp, Macaulay2/e/polyring.hpp, Macaulay2/e/ring-vecs.cpp, Macaulay2/e/ring.cpp, Macaulay2/e/ring.hpp, Macaulay2/e/z_mod_p.cpp, Macaulay2/e/z_mod_p.hpp, Macaulay2/test/engine/raw3.m2, Macaulay2/e/CC.cpp, Macaulay2/e/CC.hpp, Macaulay2/e/GF.cpp, Macaulay2/e/GF.hpp, Macaulay2/e/QQ.cpp, Macaulay2/e/QQ.hpp, Macaulay2/e/RR.cpp, Macaulay2/e/RR.hpp, Macaulay2/e/ZZ.cpp, Macaulay2/e/ZZ.hpp, Macaulay2/e/bigCC.cpp, Macaulay2/e/bigCC.hpp, Macaulay2/e/bigRR.cpp, Macaulay2/e/bigRR.hpp, Macaulay2/e/comb.cpp, Macaulay2/e/comb.hpp, Macaulay2/e/frac.cpp:
+	*** empty log message ***
+
+2004-01-14  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/e/engine.h, Macaulay2/e/x_gb.cpp, Macaulay2/m2/engine.m2, Macaulay2/m2/gb.m2, Macaulay2/m2/methods.m2, Macaulay2/m2/res.m2, Macaulay2/test/engine/raw4.m2, Macaulay2/d/interface.d:
+	*** empty log message ***
+
+2004-01-14  mike  <mike@rhodium>
+
+	* Macaulay2/e/check/Makefile.in, Macaulay2/e/check/check_c.c, Macaulay2/e/check/check_freemodule.c, Macaulay2/e/check/check_matrix.c, Macaulay2/e/check/check_monomial.c, Macaulay2/e/check/check_vector.c, Macaulay2/e/check/util.c, Macaulay2/e/check/util.h:
+	*** empty log message ***
+
+2004-01-14  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/gb.m2, Macaulay2/test/engine/raw4.m2, Macaulay2/test/engine/ring.m2, Macaulay2/m2/document.m2, Macaulay2/m2/printing.m2, Macaulay2/d/interface.d, Macaulay2/e/engine.h, Macaulay2/e/gb.cpp, Macaulay2/e/x_gb.cpp, Macaulay2/test/engine/raw.m2, Macaulay2/test/engine/raw2.m2, Macaulay2/test/engine/raw3.m2, Macaulay2/test/user.m2, Macaulay2/test/varieties.m2, Macaulay2/test/welldef.m2, Macaulay2/test/groupcoh.m2, Macaulay2/test/hh2.m2, Macaulay2/test/inhom.m2, Macaulay2/test/integer.m2, Macaulay2/test/ker.m2, Macaulay2/test/ker2.m2, Macaulay2/test/ker3.m2, Macaulay2/test/ker4.m2, Macaulay2/test/koszul.m2, Macaulay2/test/lex.m2, Macaulay2/test/lift.m2, Macaulay2/test/linalg.m2, Macaulay2/test/lucho.m2, Macaulay2/test/matrix.m2, Macaulay2/test/memleak2.m2, Macaulay2/test/missingDoc.m2, Macaulay2/test/monideal.m2, Macaulay2/test/monideal2.m2, Macaulay2/test/monideal3.m2, Macaulay2/test/moty.m2, Macaulay2/test/names.m2, Macaulay2/test/newlines.m2, Macaulay2/test/overflow.m2, Macaulay2/test/parallel.m2, Macaulay2/test/printing.m2, Macaulay2/test/protection.m2, Macaulay2/test/prune.m2, Macaulay2/test/pushforward.m2, Macaulay2/test/quotient.m2, Macaulay2/test/quotientring.m2, Macaulay2/test/ragnar.m2, Macaulay2/test/regularity.m2, Macaulay2/test/repair.m2, Macaulay2/test/res.m2, Macaulay2/test/res2.m2, Macaulay2/test/res4.m2, Macaulay2/test/res5.m2, Macaulay2/test/res6.m2, Macaulay2/test/res7.m2, Macaulay2/test/resmap.m2, Macaulay2/test/resskew.m2, Macaulay2/test/ringmap.m2, Macaulay2/test/ringmap2.m2, Macaulay2/test/rings.m2, Macaulay2/test/roos2.m2, Macaulay2/test/saturate.m2, Macaulay2/test/schorder.m2, Macaulay2/test/schreyer.m2, Macaulay2/test/schur.m2, Macaulay2/test/singular.m2, Macaulay2/test/skew.m2, Macaulay2/test/sottile.m2, Macaulay2/test/sturmfels.m2, Macaulay2/test/subring.m2, Macaulay2/test/subst.m2, Macaulay2/test/subst2.m2, Macaulay2/test/subst3.m2, Macaulay2/test/subst4.m2, Macaulay2/test/subst5.m2, Macaulay2/test/sums.m2, Macaulay2/test/tensor.m2, Macaulay2/test/testdet.m2, Macaulay2/test/testgb.m2, Macaulay2/test/testkbasis.m2, Macaulay2/test/testmat.m2, Macaulay2/test/testmulti.m2, Macaulay2/test/testpromote.m2, Macaulay2/test/testskew.m2, Macaulay2/test/testsubring.m2, Macaulay2/test/trim.m2, Macaulay2/test/typicalval.m2, Macaulay2/test/frac.m2, Macaulay2/test/fracinverses.m2, Macaulay2/test/galois.m2, Macaulay2/test/gb2.m2, Macaulay2/test/gb3.m2, Macaulay2/test/gbZZbug.m2, Macaulay2/test/gbinhom.m2, Macaulay2/test/gcd.m2, Macaulay2/test/gens.m2, Macaulay2/test/ggbetti.m2, Macaulay2/test/ggisequal.m2, Macaulay2/test/glob.m2, Macaulay2/test/global.m2, Macaulay2/m2/underscore.m2, Macaulay2/m2/variables.m2, Macaulay2/m2/varieties.m2, Macaulay2/test/00vars.m2, Macaulay2/test/4a.m2, Macaulay2/test/4b.m2, Macaulay2/test/4c.m2, Macaulay2/test/4d.m2, Macaulay2/test/B44.m2, Macaulay2/test/B66.m2, Macaulay2/test/C05.m2, Macaulay2/test/Ext.m2, Macaulay2/test/HH.m2, Macaulay2/test/ISSAC-97.m2, Macaulay2/test/ann.m2, Macaulay2/test/ann2.m2, Macaulay2/test/arrange.m2, Macaulay2/test/betti.m2, Macaulay2/test/betti2.m2, Macaulay2/test/bug.m2, Macaulay2/test/calabi-yau.m2, Macaulay2/test/commutative.m2, Macaulay2/test/complete-intersections.m2, Macaulay2/test/crash.m2, Macaulay2/test/crash2.m2, Macaulay2/test/crash3.m2, Macaulay2/test/crash4.m2, Macaulay2/test/dd-modules.m2, Macaulay2/test/decompose.m2, Macaulay2/test/diff.m2, Macaulay2/test/direct.m2, Macaulay2/test/direct2.m2, Macaulay2/test/docStructure.m2, Macaulay2/test/eisenbud.m2, Macaulay2/test/elliptic.m2, Macaulay2/test/engine-div.m2, Macaulay2/test/euclid.m2, Macaulay2/test/expressions.m2, Macaulay2/test/ext2.m2, Macaulay2/test/extmap.m2, Macaulay2/test/flip.m2, Macaulay2/m2/radical.m2, Macaulay2/m2/rationals.m2, Macaulay2/m2/reals.m2, Macaulay2/m2/remember.m2, Macaulay2/m2/res.m2, Macaulay2/m2/ringmap.m2, Macaulay2/m2/rings.m2, Macaulay2/m2/sagbi.m2, Macaulay2/m2/schur.m2, Macaulay2/m2/set.m2, Macaulay2/m2/setup.m2, Macaulay2/m2/sort.m2, Macaulay2/m2/startup.m2, Macaulay2/m2/structure.m2, Macaulay2/m2/subring.m2, Macaulay2/m2/system.m2, Macaulay2/m2/tables.m2, Macaulay2/m2/texmacs.m2, Macaulay2/m2/tor.m2, Macaulay2/m2/typicalvalues.m2, Macaulay2/m2/overview4.m2, Macaulay2/m2/overviewA.m2, Macaulay2/m2/overviewB.m2, Macaulay2/m2/overviewC.m2, Macaulay2/m2/packages.m2, Macaulay2/m2/peek.m2, Macaulay2/m2/powers.m2, Macaulay2/m2/primdecomp-EHV.m2, Macaulay2/m2/primdecomp-SY.m2, Macaulay2/m2/primdecomp-doc.m2, Macaulay2/m2/primdecomp-fastgb.m2, Macaulay2/m2/primdecomp.m2, Macaulay2/m2/profile.m2, Macaulay2/m2/quotient.m2, Macaulay2/m2/quotring.m2, Macaulay2/m2/overview3.m2, Macaulay2/m2/normal_doc.m2, Macaulay2/m2/numbers.m2, Macaulay2/m2/obsolete.m2, Macaulay2/m2/ofcm.m2, Macaulay2/m2/option.m2, Macaulay2/m2/orderedmonoidrings.m2, Macaulay2/m2/overview2.m2, Macaulay2/m2/engine.m2, Macaulay2/m2/enginering.m2, Macaulay2/m2/equal.m2, Macaulay2/m2/expressions.m2, Macaulay2/m2/ext.m2, Macaulay2/m2/factor.m2, Macaulay2/m2/fano.m2, Macaulay2/m2/files.m2, Macaulay2/m2/fold.m2, Macaulay2/m2/galois.m2, Macaulay2/m2/gateway.m2, Macaulay2/m2/genmat.m2, Macaulay2/m2/gradedmodules.m2, Macaulay2/m2/html.m2, Macaulay2/m2/html0.m2, Macaulay2/m2/http.m2, Macaulay2/m2/indeterminates.m2, Macaulay2/m2/integers.m2, Macaulay2/m2/integrate.m2, Macaulay2/m2/last.m2, Macaulay2/m2/lists.m2, Macaulay2/m2/local.m2, Macaulay2/m2/macaulay.m2, Macaulay2/m2/matrix.m2, Macaulay2/m2/matrix1.m2, Macaulay2/m2/matrix2.m2, Macaulay2/m2/max.m2, Macaulay2/m2/methods.m2, Macaulay2/m2/minPres.m2, Macaulay2/m2/minPres_doc.m2, Macaulay2/m2/modules.m2, Macaulay2/m2/modules2.m2, Macaulay2/m2/monideal.m2, Macaulay2/m2/monoids.m2, Macaulay2/m2/monomcurve.m2, Macaulay2/m2/multilin.m2, Macaulay2/m2/nets.m2, Macaulay2/m2/newring.m2, Macaulay2/m2/normal.m2, Macaulay2/m2/doc.m2, Macaulay2/m2/doc1.m2, Macaulay2/m2/doc10.m2, Macaulay2/m2/doc11.m2, Macaulay2/m2/doc12.m2, Macaulay2/m2/doc2.m2, Macaulay2/m2/doc3.m2, Macaulay2/m2/doc4.m2, Macaulay2/m2/doc5.m2, Macaulay2/m2/doc6.m2, Macaulay2/m2/doc7.m2, Macaulay2/m2/doc8.m2, Macaulay2/m2/doc9.m2, Macaulay2/m2/duals.m2, Macaulay2/m2/eg.m2, Macaulay2/e/check/check.c, Macaulay2/e/check/check_c.c, Macaulay2/e/check/check_cc.cpp, Macaulay2/e/check/check_freemodule.c, Macaulay2/e/check/check_lapack.c, Macaulay2/e/check/check_matrix.c, Macaulay2/e/check/check_monoid.c, Macaulay2/e/check/check_monomial.c, Macaulay2/e/check/check_monordering.c, Macaulay2/e/check/check_ring.c, Macaulay2/e/check/check_sparsemat.c, Macaulay2/e/check/check_vector.c, Macaulay2/e/check/test_monomial.cpp, Macaulay2/e/check/util.c, Macaulay2/e/check/util.h, Macaulay2/e/varpower.hpp, Macaulay2/e/vector.cpp, Macaulay2/e/vector.hpp, Macaulay2/e/weylalg.cpp, Macaulay2/e/weylalg.hpp, Macaulay2/e/weylfree.cpp, Macaulay2/e/weylfree.hpp, Macaulay2/e/x_factor.cpp, Macaulay2/e/x_free.cpp, Macaulay2/e/x_lapack.cpp, Macaulay2/e/x_mat.cpp, Macaulay2/e/x_monideal.cpp, Macaulay2/e/x_monoid.cpp, Macaulay2/e/x_monom.cpp, Macaulay2/e/x_relem.cpp, Macaulay2/e/x_ringmap.cpp, Macaulay2/e/x_sparsemat.cpp, Macaulay2/e/z_mod_p.cpp, Macaulay2/e/z_mod_p.hpp, Macaulay2/emacs/Makefile.in, Macaulay2/m2/Makefile.egs.in, Macaulay2/m2/Makefile.in, Macaulay2/m2/Makefile.tests, Macaulay2/m2/autoload.m2, Macaulay2/m2/browse.m2, Macaulay2/m2/chaincomplexes.m2, Macaulay2/m2/classes.m2, Macaulay2/m2/code.m2, Macaulay2/m2/colon.m2, Macaulay2/m2/combinatorics.m2, Macaulay2/m2/command.m2, Macaulay2/m2/complex.m2, Macaulay2/m2/convert.m2, Macaulay2/m2/debugging.m2, Macaulay2/e/ntuple.hpp, Macaulay2/e/obj_iarr.hpp, Macaulay2/e/pfaff.cpp, Macaulay2/e/pfaff.hpp, Macaulay2/e/polyring.cpp, Macaulay2/e/polyring.hpp, Macaulay2/e/queue.hpp, Macaulay2/e/random.cpp, Macaulay2/e/random.hpp, Macaulay2/e/relem.cpp, Macaulay2/e/relem.hpp, Macaulay2/e/res.cpp, Macaulay2/e/res.hpp, Macaulay2/e/res2.cpp, Macaulay2/e/res2.hpp, Macaulay2/e/res_aux.cpp, Macaulay2/e/res_aux2.cpp, Macaulay2/e/respair2.hpp, Macaulay2/e/respoly.cpp, Macaulay2/e/respoly.hpp, Macaulay2/e/respoly2.cpp, Macaulay2/e/respoly2.hpp, Macaulay2/e/ring-vecs.cpp, Macaulay2/e/ring.cpp, Macaulay2/e/ring.hpp, Macaulay2/e/ringelem.hpp, Macaulay2/e/ringmap.cpp, Macaulay2/e/ringmap.hpp, Macaulay2/e/sagbi.cpp, Macaulay2/e/sagbi.hpp, Macaulay2/e/schorder.cpp, Macaulay2/e/schorder.hpp, Macaulay2/e/schur.cpp, Macaulay2/e/schur.hpp, Macaulay2/e/skew.cpp, Macaulay2/e/skew.hpp, Macaulay2/e/skewpoly.cpp, Macaulay2/e/skewpoly.hpp, Macaulay2/e/solvable.cpp, Macaulay2/e/solvable.hpp, Macaulay2/e/spair.cpp, Macaulay2/e/spair.hpp, Macaulay2/e/sparsemat.cpp, Macaulay2/e/sparsemat.hpp, Macaulay2/e/style.hpp, Macaulay2/e/table.c, Macaulay2/e/table.h, Macaulay2/e/termideal.cpp, Macaulay2/e/termideal.hpp, Macaulay2/e/text_io.cpp, Macaulay2/e/text_io.hpp, Macaulay2/e/varpower.cpp, Macaulay2/e/gbring.cpp, Macaulay2/e/gbring.hpp, Macaulay2/e/geoT.hpp, Macaulay2/e/geopoly.hpp, Macaulay2/e/hash.hpp, Macaulay2/e/hermite.cpp, Macaulay2/e/hermite.hpp, Macaulay2/e/hilb.cpp, Macaulay2/e/hilb.hpp, Macaulay2/e/index.hpp, Macaulay2/e/int_bag.cpp, Macaulay2/e/int_bag.hpp, Macaulay2/e/intarray.cpp, Macaulay2/e/intarray.hpp, Macaulay2/e/lapack.h, Macaulay2/e/lattice.cpp, Macaulay2/e/lattice.hpp, Macaulay2/e/mac2.c, Macaulay2/e/matrix.cpp, Macaulay2/e/matrix.hpp, Macaulay2/e/matrixCC.cpp, Macaulay2/e/matrixCC.hpp, Macaulay2/e/matrixRR.cpp, Macaulay2/e/matrixRR.hpp, Macaulay2/e/mem.cpp, Macaulay2/e/mem.hpp, Macaulay2/e/monideal.cpp, Macaulay2/e/monideal.hpp, Macaulay2/e/monoid.cpp, Macaulay2/e/monoid.hpp, Macaulay2/e/monomial.cpp, Macaulay2/e/monomial.hpp, Macaulay2/e/monorder.cpp, Macaulay2/e/monorder.hpp, Macaulay2/e/monordering.c, Macaulay2/e/monordering.h, Macaulay2/e/montable.cpp, Macaulay2/e/montable.hpp, Macaulay2/e/newspair.cpp, Macaulay2/e/newspair.hpp, Macaulay2/e/ntuple.cpp, Macaulay2/e/assprime.cpp, Macaulay2/e/assprime.hpp, Macaulay2/e/bigCC.cpp, Macaulay2/e/bigCC.hpp, Macaulay2/e/bigRR.cpp, Macaulay2/e/bigRR.hpp, Macaulay2/e/buffer.cpp, Macaulay2/e/buffer.hpp, Macaulay2/e/comb.cpp, Macaulay2/e/comb.hpp, Macaulay2/e/comp.hpp, Macaulay2/e/det.cpp, Macaulay2/e/det.hpp, Macaulay2/e/engine.cpp, Macaulay2/e/error.c, Macaulay2/e/error.h, Macaulay2/e/exptable.c, Macaulay2/e/exptable.h, Macaulay2/e/factor.cpp, Macaulay2/e/frac.cpp, Macaulay2/e/frac.hpp, Macaulay2/e/freemod.cpp, Macaulay2/e/freemod.hpp, Macaulay2/e/freemod2.cpp, Macaulay2/e/gauss.cpp, Macaulay2/e/gauss.hpp, Macaulay2/e/gb.hpp, Macaulay2/e/gb2.cpp, Macaulay2/e/gb2.hpp, Macaulay2/e/gbA.cpp, Macaulay2/e/gbA.hpp, Macaulay2/e/gbZZ.cpp, Macaulay2/e/gbZZ.hpp, Macaulay2/e/gb_comp.cpp, Macaulay2/e/gb_comp.hpp, Macaulay2/e/gbasis.cpp, Macaulay2/e/gbasis.hpp, Macaulay2/e/gbbinom.cpp, Macaulay2/e/gbbinom.hpp, Macaulay2/e/gbinhom.cpp, Macaulay2/e/gbinhom.hpp, Macaulay2/e/gbnod.cpp, Macaulay2/d/err.d, Macaulay2/d/evaluate.d, Macaulay2/d/getline.d, Macaulay2/d/gmp.d, Macaulay2/d/interp.d, Macaulay2/d/lex.d, Macaulay2/d/nets.d, Macaulay2/d/objects.d, Macaulay2/d/parser.d, Macaulay2/d/scclib.c, Macaulay2/d/stdio.d, Macaulay2/d/stdiop.d, Macaulay2/d/strings.d, Macaulay2/d/struct.d, Macaulay2/d/system.d, Macaulay2/d/texmacs.d, Macaulay2/d/tokens.d, Macaulay2/d/types.h, Macaulay2/d/util.d, Macaulay2/d/vararray.d, Macaulay2/d/varstrin.d, Macaulay2/e/CC.cpp, Macaulay2/e/CC.hpp, Macaulay2/e/Eschreyer.cpp, Macaulay2/e/Eschreyer.hpp, Macaulay2/e/GF.cpp, Macaulay2/e/GF.hpp, Macaulay2/e/LLL.cpp, Macaulay2/e/LLL.hpp, Macaulay2/e/M2-factory.cpp, Macaulay2/e/M2-factory.h, Macaulay2/e/Makefile.in, Macaulay2/e/QQ.cpp, Macaulay2/e/QQ.hpp, Macaulay2/e/RR.cpp, Macaulay2/e/RR.hpp, Macaulay2/e/ZZ.cpp, Macaulay2/e/ZZ.hpp, Macaulay2/e/array.hpp, Macaulay2/d/C.d, Macaulay2/d/GC.d, Macaulay2/d/M2inits.c, Macaulay2/d/M2lib.c, Macaulay2/d/actors.d, Macaulay2/d/actors2.d, Macaulay2/d/actors3.d, Macaulay2/d/actors4.d, Macaulay2/d/actors5.d, Macaulay2/d/basic.d, Macaulay2/d/binding.d, Macaulay2/d/common.d, Macaulay2/d/convertr.d, Macaulay2/d/ctype.d, Macaulay2/d/engine.d:
+	*** empty log message ***
+
+2004-01-14  mike  <mike@rhodium>
+
+	* Macaulay2/e/check/util.c, Macaulay2/e/check/util.h, Macaulay2/test/engine/raw4.m2:
+	*** empty log message ***
+
+2004-01-14  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/util.d, Macaulay2/test/engine/raw.m2, Macaulay2/d/interface.d, Macaulay2/m2/gb.m2:
+	*** empty log message ***
+
+2004-01-14  mike  <mike@rhodium>
+
+	* Macaulay2/e/x_gb.cpp: *** empty log message ***
+
+2004-01-14  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/engine.d, Macaulay2/d/interface.d, Macaulay2/d/objects.d, Macaulay2/e/engine.h, Macaulay2/test/engine/ring.m2:
+	*** empty log message ***
+
+2004-01-14  mike  <mike@rhodium>
+
+	* Macaulay2/e/engine.h, Macaulay2/e/gb.cpp, Macaulay2/e/gb.hpp, Macaulay2/e/gbA.cpp, Macaulay2/e/gbA.hpp, Macaulay2/e/gb_comp.cpp, Macaulay2/e/gb_comp.hpp, Macaulay2/e/ring-vecs.cpp, Macaulay2/e/x_gb.cpp, Macaulay2/e/QQ.cpp:
+	*** empty log message ***
+
+2004-01-14  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/gb.m2, Macaulay2/m2/doc8.m2, Macaulay2/m2/engine.m2, Macaulay2/m2/matrix.m2:
+	*** empty log message ***
+
+2004-01-13  mike  <mike@rhodium>
+
+	* Macaulay2/e/matrix.cpp, Macaulay2/e/ring-vecs.cpp, Macaulay2/test/engine/raw-util.m2, Macaulay2/test/engine/ring.m2:
+	*** empty log message ***
+
+2004-01-13  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/enginering.m2, Macaulay2/m2/ofcm.m2, Macaulay2/test/engine/ring.m2, Macaulay2/d/actors2.d, Macaulay2/d/interface.d, Macaulay2/e/engine.h, Macaulay2/m2/engine.m2, Macaulay2/m2/expressions.m2, Macaulay2/m2/matrix.m2:
+	*** empty log message ***
+
+2004-01-13  mike  <mike@rhodium>
+
+	* Macaulay2/e/polyring.cpp: *** empty log message ***
+
+	* Macaulay2/e/engine.h, Macaulay2/e/frac.cpp, Macaulay2/e/frac.hpp, Macaulay2/e/polyring.cpp, Macaulay2/e/polyring.hpp, Macaulay2/e/ring.cpp, Macaulay2/e/ring.hpp, Macaulay2/e/x_relem.cpp, Macaulay2/test/engine/raw3.m2:
+	added routines IM2_RingElement_index_if_var, IM2_RingElement_indices
+
+2004-01-13  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/actors2.d:
+	We can now make a new object from a sequence, where as before, we had
+	to make it from a list.  Example:
+
+	    i2 : new MutableList from (0..10)
+
+	    o2 = MutableList{...11...}
+
+	    o2 : MutableList
+
+	    i3 : toList oo
+
+	    o3 = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	    o3 : List
+
+2004-01-13  mike  <mike@rhodium>
+
+	* Macaulay2/test/engine/raw3.m2: tests for raw free modules redone
+
+2004-01-13  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/orderedmonoidrings.m2, Macaulay2/test/engine/ring.m2, Macaulay2/d/engine.d, Macaulay2/d/interface.d, Macaulay2/test/engine/raw.m2:
+	*** empty log message ***
+
+2004-01-13  mike  <mike@rhodium>
+
+	* Macaulay2/e/engine.h, Macaulay2/e/matrix.cpp, Macaulay2/e/matrix.hpp, Macaulay2/e/ring-vecs.cpp, Macaulay2/e/ring.hpp, Macaulay2/e/x_mat.cpp:
+	*** empty log message ***
+
+2004-01-13  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/matrix1.m2, Macaulay2/test/engine/ring.m2:
+	*** empty log message ***
+
+2004-01-13  mike  <mike@rhodium>
+
+	* Macaulay2/e/matrix.hpp, Macaulay2/e/ring-vecs.cpp, Macaulay2/e/ring.hpp, Macaulay2/e/x_mat.cpp, Macaulay2/e/engine.h, Macaulay2/e/matrix.cpp:
+	made all matrix mult take a left_mult boolean flag
+
+2004-01-13  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/engine.m2, Macaulay2/test/engine/ring.m2, Macaulay2/m2/matrix.m2, Macaulay2/m2/matrix1.m2, Macaulay2/test/engine/raw.m2, Macaulay2/test/engine/raw3.m2, Macaulay2/d/actors.d, Macaulay2/d/engine.d, Macaulay2/d/interface.d, Macaulay2/e/engine.h, Macaulay2/m2/monideal.m2:
+	*** empty log message ***
+
+2004-01-13  mike  <mike@rhodium>
+
+	* Macaulay2/e/engine.h, Macaulay2/e/matrix.cpp, Macaulay2/e/matrix.hpp, Macaulay2/e/x_mat.cpp:
+	*** empty log message ***
+
+	* Macaulay2/e/engine.h, Macaulay2/e/matrix.cpp, Macaulay2/e/matrix.hpp, Macaulay2/e/x_mat.cpp:
+	added a new routine IM2_make_copy, renamed that one to IM2_make_copy2
+
+	* Macaulay2/e/engine.h, Macaulay2/e/matrix.cpp, Macaulay2/e/x_free.cpp, Macaulay2/test/engine/raw3.m2:
+	changed matrix creation routines to do row by row, instead of column by column
+
+2004-01-13  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/ofcm.m2, Macaulay2/test/engine/ring.m2, Macaulay2/e/engine.h, Macaulay2/m2/engine.m2, Macaulay2/d/actors3.d, Macaulay2/d/interface.d, Macaulay2/d/objects.d, Macaulay2/m2/enginering.m2, Macaulay2/m2/matrix.m2, Macaulay2/m2/obsolete.m2, Macaulay2/m2/gradedmodules.m2, Macaulay2/m2/matrix1.m2, Macaulay2/m2/quotring.m2, Macaulay2/m2/modules.m2, Macaulay2/m2/setup.m2, Macaulay2/test/engine/Makefile.in, Macaulay2/test/engine/raw.m2, Macaulay2/test/engine/raw3.m2:
+	*** empty log message ***
+
+2004-01-13  mike  <mike@rhodium>
+
+	* Macaulay2/e/gb2.cpp, Macaulay2/e/gb2.hpp, Macaulay2/e/gbZZ.cpp, Macaulay2/e/gbZZ.hpp, Macaulay2/e/gb_comp.hpp, Macaulay2/e/gbbinom.cpp, Macaulay2/e/gbbinom.hpp, Macaulay2/e/gbinhom.cpp, Macaulay2/e/gbinhom.hpp, Macaulay2/e/hermite.cpp, Macaulay2/e/hermite.hpp, Macaulay2/e/matrix.cpp, Macaulay2/e/matrix.hpp, Macaulay2/e/monomial.cpp, Macaulay2/e/monomial.hpp, Macaulay2/e/ringmap.cpp, Macaulay2/e/ringmap.hpp, Macaulay2/e/sagbi.cpp, Macaulay2/e/sagbi.hpp, Macaulay2/e/varpower.cpp, Macaulay2/e/x_free.cpp, Macaulay2/e/x_mat.cpp, Macaulay2/e/x_monideal.cpp, Macaulay2/e/x_monom.cpp, Macaulay2/e/x_ringmap.cpp, Macaulay2/e/Makefile.in, Macaulay2/e/engine.h, Macaulay2/e/gauss.cpp, Macaulay2/e/gauss.hpp:
+	changed monomial code to fix: comparison, colon, divides
+
+2004-01-13  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/packages.m2, Macaulay2/d/actors5.d, Macaulay2/m2/startup.m2, Macaulay2/d/M2lib.c, Macaulay2/d/interface.d, Macaulay2/m2/modules.m2, Macaulay2/m2/ofcm.m2, Macaulay2/test/engine/Makefile.in, Macaulay2/test/engine/ring.m2, Macaulay2/test/engine/raw.m2, Macaulay2/e/engine.h, Macaulay2/emacs/Makefile.in, Macaulay2/m2/engine.m2, Macaulay2/m2/last.m2:
+	*** empty log message ***
+
+2004-01-13  mike  <mike@rhodium>
+
+	* Macaulay2/e/engine.h, Macaulay2/e/x_mat.cpp:
+	*** empty log message ***
+
+2004-01-13  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Makefile.in, include/config.Makefile.in, Macaulay2/m2/html.m2, Macaulay2/m2/last.m2, Macaulay2/m2/modules.m2, Macaulay2/m2/startup.m2, Macaulay2/CHANGES, Macaulay2/d/ChangeLog, Macaulay2/d/M2lib.c, Macaulay2/d/evaluate.d, Macaulay2/d/interp.d, Macaulay2/d/tokens.d, Macaulay2/m2/Makefile.in:
+	*** empty log message ***
+
+2004-01-13  mike  <mike@rhodium>
+
+	* Macaulay2/e/engine.h, Macaulay2/e/matrix.cpp, Macaulay2/e/matrix.hpp, Macaulay2/e/ring-vecs.cpp, Macaulay2/e/ring.hpp, Macaulay2/e/x_mat.cpp, Macaulay2/e/x_sparsemat.cpp, Macaulay2/m2/.gdbinit.mike, Macaulay2/test/engine/raw3.m2:
+	more mutable matrix routines for Matrix
+
+2004-01-12  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/scclib.c:
+	changed "run" so that it returns the entire exit status, not just the
+	second 8 bits
+
+	* Macaulay2/CHANGES: *** empty log message ***
+
+	* Macaulay2/e/engine.h: connected rawIsMutable
+
+	* Macaulay2/m2/document.m2, Macaulay2/m2/engine.m2, Macaulay2/m2/matrix2.m2, Macaulay2/m2/modules.m2:
+	*** empty log message ***
+
+2004-01-12  mike  <mike@rhodium>
+
+	* Macaulay2/e/check/util.c, Macaulay2/e/engine.h, Macaulay2/e/x_mat.cpp, Macaulay2/e/x_sparsemat.cpp:
+	*** empty log message ***
+
+2004-01-12  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/d/actors.d, Macaulay2/d/actors4.d, Macaulay2/d/basic.d, Macaulay2/d/engine.d, Macaulay2/d/interface.d, Macaulay2/d/objects.d, Macaulay2/d/tokens.d, Macaulay2/d/util.d, ChangeLog, Macaulay2/ChangeLog, Macaulay2/d/ChangeLog, Macaulay2/e/ChangeLog, Macaulay2/m2/ChangeLog, Makefile.in, Macaulay2/e/engine.h, Macaulay2/test/engine/raw.m2, Macaulay2/d/interp.d, Macaulay2/e/x_mat.cpp, Macaulay2/m2/debugging.m2, Macaulay2/d/actors5.d:
+	*** empty log message ***
+
+2004-01-12  mike  <mike@rhodium>
+
+	* Macaulay2/e/check/check_ring.c, Macaulay2/e/check/check_freemodule.c, Macaulay2/e/check/check_lapack.c, Macaulay2/e/check/check_matrix.c, Macaulay2/e/check/check_sparsemat.c, Macaulay2/e/check/check_vector.c, Macaulay2/e/ring-vecs.cpp, Macaulay2/e/engine.h, Macaulay2/e/Eschreyer.hpp, Macaulay2/e/Makefile.in, Macaulay2/e/check/Makefile.in, Macaulay2/e/check/check_c.c, Macaulay2/e/check/check_monordering.c, Macaulay2/e/engine.cpp, Macaulay2/e/hash.hpp, Macaulay2/e/matrix.cpp, Macaulay2/e/matrix.hpp, Macaulay2/e/ring.hpp, Macaulay2/e/x_mat.cpp:
+	*** empty log message ***
+
+2004-01-12  Dan Grayson  <dan@math.uiuc.edu>
+
+	* Macaulay2/m2/Makefile.in, Macaulay2/m2/files.m2, Macaulay2/m2/html.m2:
+	*** empty log message ***
+
 2004-01-12  Dan Grayson  <dan@math.uiuc.edu>
 
 	* Macaulay2/e/engine.h, Macaulay2/test/engine/raw.m2, Macaulay2/d/interface.d, Macaulay2/d/interp.d, Macaulay2/d/objects.d, Macaulay2/d/tokens.d, Macaulay2/d/util.d, Macaulay2/e/x_mat.cpp, Macaulay2/m2/debugging.m2, Macaulay2/d/actors5.d:

@@ -297,9 +297,8 @@ processExample := x -> (
      a)
 processExamplesLoop := s -> (
      if class s === EXAMPLE then SEQ{
-	  PARA{},
 	  ExampleTABLE apply(select(toList s, i -> i =!= null), processExample),
-	  PARA{}}
+	  }
      else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)
@@ -441,7 +440,7 @@ headline = memoize (
 
 moreGeneral := s -> (
      n := nextMoreGeneral s;
-     if n =!= null then SEQ { "Next more general method: ", TO n, headline n, PARA{} }
+     if n =!= null then SEQ { "Next more general method: ", TO n, headline n }
      )
 
 -----------------------------------------------------------------------------
@@ -468,39 +467,39 @@ justClass := X -> SEQ {"an instance of class ", TO X}
 
 usage := s -> (
      o := getDocBody s;
-     if o =!= null then SEQ {o, PARA{}}
+     if o =!= null then PARA {o}
      )
 
-title := s -> SEQ { CENTER { BIG formatDocumentTag s, headline s }, PARA{} }
+title := s -> PARA { CENTER { BIG formatDocumentTag s, headline s } }
 
 inlineMenu := x -> between(", ", TO \ x)
 
 type := S -> (
      s := value S;
      X := class s;
-     SEQ {
+     PARA {
 	  SEQ {
 	       "The ",
 	       if X.?synonym then X.synonym else "object",
-	       " \"", toString S, "\" is a member of the class ", TO class s, ".\n"
+	       " \"", toString S, "\" is a member of the class ", TO class s, "."
 	       },
 	  if instance(s,Type) then (
 	       SEQ {
 		    if s.?synonym then SEQ {
-			 "Each object of class ", toString s, " is called ", indefinite s.synonym, ".\n"
+			 "Each object of class ", toString s, " is called ", indefinite s.synonym, "."
 			 },
 		    if parent s =!= Thing then SEQ {
 			 "Each ", synonym s, " is also a member of class ", TO parent s, ".",
-			 PARA{},
-			 "More general types (whose methods may also apply) :",
-			 SHIELD MENU (
-			      Y := parent s;
-			      while Y =!= Thing list TO toString Y do Y = parent Y
-			      )
+			 SEQ {
+			      "More general types (whose methods may also apply) :",
+			      SHIELD MENU (
+				   Y := parent s;
+				   while Y =!= Thing list TO toString Y do Y = parent Y
+				   )
+			      }
 			 }
 		    }
-	       ),
-	  PARA{}
+	       )
 	  }
      )
 
@@ -511,14 +510,12 @@ optargs Thing := x -> null
 optargs Function := f -> (
      o := options f;
      if o =!= null then SEQ {
-	  NOINDENT{},
 	  "Optional arguments :", newline,
 	  SHIELD smenu apply(keys o, t -> f => t)})
 
 optargs Sequence := s -> (
      o := options s;
      if o =!= null then SEQ {
-	  NOINDENT{},
 	  "Optional arguments :", newline,
 	  SHIELD smenu apply(keys o, t -> s => t)}
      else optargs s#0)
@@ -570,7 +567,7 @@ synopsis Sequence := s -> (
 	       else descv = d SYN#-1);
 	       );
 	  );
-     SEQ {
+     PARA {
 	  BOLD "Synopsis:",
 	  SHIELD MENU {
 	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
@@ -612,7 +609,6 @@ fmeth := f -> (
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
      if #b > 0 then SEQ {
-	  NOINDENT{},
 	  "Ways to use ", TT toString f," :", newline, 
 	  SHIELD smenu b
 	  } )
@@ -656,34 +652,29 @@ operatorSet = binary + prefix + postfix + other
 op := s -> if operatorSet#?s then (
      ss := toString s;
      SEQ {
-	  if binary#?s then SEQ {
-	       NOINDENT{}, 
+	  if binary#?s then PARA {
 	       "This operator may be used as a binary operator in an expression \n",
 	       "like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary methods"}, " \n",
 	       "for handling such expressions with code such as ",
 	       if ss == " "
 	       then PRE ("         X Y := (x,y) -> ...")
 	       else PRE ("         X "|ss|" Y := (x,y) -> ..."), 
-	       NOINDENT{},
 	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the \n",
-	       "class of ", TT "y", ".", PARA{}
+	       "class of ", TT "y", "."
 	       },
-	  if prefix#?s then SEQ {
-	       NOINDENT{}, 
+	  if prefix#?s then PARA {
 	       "This operator may be used as a prefix unary operator in an expression \n",
 	       "like ", TT (ss|" y"), ".  The user may install a method for handling \n",
 	       "such expressions with code such as \n",
 	       PRE ("           "|ss|" Y := (y) -> ..."),
-	       NOINDENT{},
-	       "where ", TT "Y", " is the class of ", TT "y", ".", PARA{}
+	       "where ", TT "Y", " is the class of ", TT "y", "."
 	       },
-	  if postfix#?s then SEQ {
-	       NOINDENT{}, 
+	  if postfix#?s then PARA {
 	       "This operator may be used as a postfix unary operator in an expression \n",
 	       "like ", TT ("x "|ss), ".  The user may install a method for handling \n",
 	       "such expressions with code such as \n",
 	       PRE ("         X "|ss|"   := (x,y) -> ..."),
-	       NOINDENT{}, "where ", TT "X", " is the class of ", TT "x", ".", PARA{}
+	       "where ", TT "X", " is the class of ", TT "x", "."
 	       },
 	  }
      )
@@ -692,7 +683,7 @@ optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f
 
 ret := k -> (
      t := typicalValue k;
-     if t =!= Thing then SEQ {"Class of returned value: ", TO t, headline t, PARA{}}
+     if t =!= Thing then PARA {"Class of returned value: ", TO t, headline t}
      )
 seecode := x -> (
      f := lookup x;
@@ -711,25 +702,16 @@ documentationValue(Symbol,Type) := (s,X) -> (
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
-	  if #b > 0 then SEQ {
-	       "Types of ", if X.?synonym then X.synonym else toString X, " :", PARA{},
-	       smenu b, PARA{}},
-	  if #a > 0 then SEQ {
-	       "Functions and methods returning ",
-	       indefinite synonym X, " :", PARA{},
-	       SHIELD smenu a, PARA{}
-	       },
-	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, 
-	       SHIELD smenu c, PARA{}},
-	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, 
-	       SHIELD smenu e, PARA{}},
+	  if #b > 0 then ( 
+	       PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"},
+	       PARA {smenu b}),
+	  if #a > 0 then PARA { "Functions and methods returning ", indefinite synonym X, " :", SHIELD smenu a },
+	  if #c > 0 then PARA {"Methods for using ", indefinite synonym X, " :", SHIELD smenu c},
+	  if #e > 0 then PARA {"Fixed objects of class ", toString X, " :", SHIELD smenu e},
 	  })
 documentationValue(Symbol,HashTable) := (s,x) -> (
      c := documentableMethods x;
-     SEQ {
-	  if #c > 0 then SEQ {"Functions installed in ", toString x, " :", PARA{}, 
-	       SHIELD smenu c, PARA{}},
-	  })
+     SEQ { if #c > 0 then PARA {"Functions installed in ", toString x, " :", SHIELD smenu c}})
 documentationValue(Symbol,Thing) := (s,x) -> SEQ { }
 
 documentation Symbol := S -> (
@@ -740,8 +722,8 @@ documentation Symbol := S -> (
 	  synopsis S,
 	  usage S,
 	  op S,
-	  if #a > 0 then SEQ {"Functions with optional argument named ", toExternalString S, " :", PARA{}, SHIELD smenu a, PARA{}},
-	  if #b > 0 then SEQ {"Methods for ", toExternalString S, " :", PARA{}, SHIELD smenu b, PARA{}},
+	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", SHIELD smenu a},
+	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", SHIELD smenu b},
      	  documentationValue(S,value S),
 	  type S
      	  }
@@ -809,9 +791,9 @@ TEST List := y -> TEST \ y
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
-     if #v > 0 then SEQ { PARA{}, BOLD "See also:", SHIELD MENU (TO \ v) })
+     if #v > 0 then PARA { BOLD "See also:", SHIELD MENU (TO \ v) })
 
-CAVEAT = v -> SEQ { PARA{}, BOLD "Caveat:", SHIELD MENU { SEQ v } }
+CAVEAT = v -> PARA { BOLD "Caveat:", SHIELD MENU { SEQ v } }
 
 -----------------------------------------------------------------------------
 -- html output
