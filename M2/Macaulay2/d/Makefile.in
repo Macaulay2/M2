@@ -133,7 +133,7 @@ ifneq "$(CC)" "cl"
 LDLIBS  += -L../../lib
 endif
 
-ifeq ($(OS),linux-gnu)
+ifeq ($(OS),Linux)
 ## - use this to get a memory map listing from the gnu linker
 LDFLAGS  += -Wl,-Map,mapfile
 endif
@@ -172,7 +172,7 @@ endif
 ifeq "$(SHARED)" "no"
 ifeq "$(STATIC)" "yes"
 LDFLAGS += -static
-ifeq ($(OS),linux-gnu)
+ifeq ($(OS),Linux)
 # this is for gc somehow, see the end of gc/config.h
 LDFLAGS += -Wl,-defsym,_DYNAMIC=0
 endif
@@ -194,14 +194,14 @@ ifeq "$(SHARED)" "yes"
 endif
 
 ifeq "$(STATIC)" "yes"
-ifeq ($(OS),linux-gnu)
+ifeq ($(OS),Linux)
 # so I tried it, but it doesn't work...
 # ALLOBJ += /usr/lib/libnsl.a /usr/lib/libnss_*.a
 endif
 endif
 
 
-#ifeq ($(OS),linux-gnu)
+#ifeq ($(OS),Linux)
 #LDLIBS += -lieee
 #endif
 
@@ -259,7 +259,7 @@ MISCO := M2lib.o scclib.o tmp_init.o memdebug.o
 # calls to gc.
 # MISCO += gc_cpp.o
 
-ifeq ($(OS),linux-gnu)
+ifeq ($(OS),Linux)
 # MISCO += readline.o
 # LIBRARYOPTIONS += -ldl -lncurses
 # LDFLAGS += -rdynamic
@@ -291,7 +291,7 @@ ifneq "$(CC)" "cl"
 # ALLOBJ += compat.o
 endif
 
-ifeq ($(OS),linux-gnu)
+ifeq ($(OS),Linux)
 # The maintainers of linux' libstdc++ unwisely decided to incorporate
 # their own private versions of routines from libc in their library!
 # Unforgiveable, since the symbols defined differ (of course).
@@ -299,7 +299,7 @@ ifeq ($(OS),linux-gnu)
 putc.o : /usr/lib/libc.a; ar x $^ $@
 endif
 
-ifeq ($(OS),linux-gnu)
+ifeq ($(OS),Linux)
 # ALLOBJ += malloc.o
 # LDFLAGS += -rdynamic
 malloc.o : /usr/lib/libc.a; ar x $^ $@
@@ -389,10 +389,9 @@ LIBRARYOPTIONS += ../../lib/libfac.a
 LIBRARYFILES += ../../lib/libcf.a
 LIBRARYOPTIONS += ../../lib/libcf.a
 endif
-LIBRARYFILES += ../../gmp/.libs/libgmp.a
-LIBRARYOPTIONS += ../../gmp/.libs/libgmp.a
-LIBRARYFILES += ../../lib/libgc.a
-LIBRARYOPTIONS += ../../lib/libgc.a
+LIBRARYFILES += $(GMPLIB)
+LIBRARYOPTIONS += $(GMPLIB)
+LIBRARYOPTIONS += -lgc
 endif
 
 LDLIBS := $(LIBRARYOPTIONS) $(LDLIBS)

@@ -18,6 +18,8 @@ Makefile-configure.overrides :
 	echo "# CONFIGURE_OPTIONS += --enable-memdebug" >>$@
 	echo "# CONFIGURE_OPTIONS += --enable-verbose" >>$@
 	echo "# CONFIGURE_OPTIONS += --without-factory" >>$@
+	echo "# CONFIGURE_OPTIONS += --with-gmp" >>$@
+	echo "# CONFIGURE_OPTIONS += --with-gc" >>$@
 
 ## to build:
 ##	add overrides to the file Makefile-configure.overrides
@@ -81,7 +83,7 @@ include/config.h.in : configure.in aclocal.m4
 	touch $@
 
 stage2 : Makefile include/config.h
-config.status : configure Makefile-configure
+config.status : configure Makefile-configure Makefile-configure.overrides
 	$(CONFIGURE_ENVIRON) ./configure $(CONFIGURE_OPTIONS) --no-create --cache-file=config.cache
 
 $(CONFIGURED_FILES) include/config.h : $(CONFIGURED_FILES:=.in) config.status include/config.h.in

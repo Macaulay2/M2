@@ -1,6 +1,9 @@
  -*- Mode: sh -*-
 AC_INIT(Macaulay2.LSM)
 
+# 5 compiler messages saved in config.log
+# 6 checking for... messages and results
+
 VERSION="`cat $srcdir/version`"
 AC_SUBST(VERSION)
 AC_DEFINE_UNQUOTED(VERSION,"$VERSION",version number)
@@ -57,11 +60,30 @@ case "$FACTORY" in
 esac
 
 GMP=provided
+GMPLIB=../../gmp/.libs/libgmp.a
 AC_SUBST(GMP)
+AC_SUBST(GMPLIB)
 AC_ARG_WITH(gmp,[  --with-gmp              use system gmp library],GMP="$withval")
 case "$GMP" in
-   provided|yes) ;;
+   provided) ;;
+   yes) if test -f /usr/lib/libgmp.a
+        then GMPLIB=/usr/lib/libgmp.a
+	elif test -f /opt/lib/libgmp.a
+	then GMPLIB=/opt/lib/libgmp.a
+	elif test -f /usr/local/lib/libgmp.a
+	then GMPLIB=/usr/local/lib/libgmp.a
+	else echo "configure: error: can't find libgmp.a" >&2; exit 1
+	fi
+	;;
    *) echo configure: error: unrecognized value --with-gmp="$withval" >&2; exit 1 ;;
+esac
+
+GC=provided
+AC_SUBST(GC)
+AC_ARG_WITH(gc,[  --with-gc               use system gc library],GC="$withval")
+case "$GC" in
+   provided|yes) ;;
+   *) echo configure: error: unrecognized value --with-gc="$withval" >&2; exit 1 ;;
 esac
 
 # 'enable' options

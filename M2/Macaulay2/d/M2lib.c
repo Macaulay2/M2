@@ -250,6 +250,7 @@ M2_string actors5_REL;
 M2_string actors5_DATE;
 M2_string actors5_TIME;
 M2_string actors5_GCVERSION;
+M2_string actors5_GMPVERSION;
 M2_string actors5_LIBFACVERSION;
 M2_string actors5_FACTORYVERSION;
 M2_bool actors5_DUMPDATA;
@@ -614,6 +615,7 @@ char **argv;
 	       }
 	  actors5_GCVERSION = tostring(buf);
 	  }
+     actors5_GMPVERSION = tostring(__gmp_version);
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);
 #if defined(__MWERKS__) && !defined(__BUILDING_MPW__)

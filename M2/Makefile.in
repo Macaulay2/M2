@@ -64,7 +64,10 @@ doc:: announce.doc
 announce.doc ::
 	@echo '## making $(DOCTARGET)'
 ################################ GC
+ifeq "$(GC)" "provided"
 justM2 all:: GC
+endif
+
 clean::; rm -f gc/*.obj gc/*.lib
 GC:: gc include/gc.h include/gc_cpp.h
 
