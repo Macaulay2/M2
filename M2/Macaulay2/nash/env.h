@@ -1,2 +1,2 @@
-int setenv(char *,char *,int);
-void unsetenv(char *);
+int setenv(const char *,const char *,int);
+void unsetenv(const char *);
