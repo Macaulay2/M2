@@ -1167,7 +1167,7 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
      when left
      is q:SymbolClosure do (
 	  if q.symbol.protected then (
-	       printErrorMessageE(lhs, "assignment to protected variable '" + q.symbol.word.name + "'")
+	       buildErrorPacket("assignment to protected variable '" + q.symbol.word.name + "'")
 	       )
 	  else (
 	       value := eval(rhs);
@@ -1177,7 +1177,7 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
      is Error do left
      else (
 	  method := lookup(Class(left),LeftArrowE); -- method for x <- y is looked up under (symbol <-, class x)
-	  if method == nullE then printErrorMessageE(lhs,"'<-': no method for object on left")
+	  if method == nullE then buildErrorPacket("'<-': no method for object on left")
 	  else (
 	       value := eval(rhs);
 	       when value is Error do return value else nothing;
