@@ -857,6 +857,10 @@ Matrix GBinhom_comp::reduce(const Matrix &m, Matrix &lift)
 {
   Matrix red(m.rows(), m.cols());
   lift = Matrix(Fsyz, m.cols());
+  if (m.n_rows() != F->rank()) {
+       gError << "expected matrices to have same number of rows";
+       return red;
+  }
   for (int i=0; i<m.n_cols(); i++)
     {
       vec f = F->copy(m[i]);

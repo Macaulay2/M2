@@ -90,6 +90,7 @@ void i_stashes()
 
   TermIdeal::mystash       = new stash("TermIdeal", sizeof(TermIdeal));
   mon_term::mystash        = new stash("monterm", sizeof(mon_term));
+  tagged_term::mystash     = new stash("tagged terms", sizeof(tagged_term));
 
   res_degree::mystash      = new stash("resDegree", sizeof(res_degree));
   res_level::mystash       = new stash("resLevel", sizeof(res_level));

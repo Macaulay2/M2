@@ -8,6 +8,10 @@
 
 class cursor_TermIdeal;
 
+const int TI_TERM = 1;
+const int TI_MONOMIAL = 2;
+const int TI_NONE = 3;
+
 //////////////////////////////////
 // tagged_term ///////////////////
 //////////////////////////////////
@@ -33,6 +37,11 @@ struct tagged_term
   const int *monom() const { return _monom; }
   vec gsyz() const { return _gsyz; }
   vec rsyz() const { return _rsyz; }
+
+  friend void i_stashes();
+  static stash *mystash;
+  void *operator new(size_t) { return mystash->new_elem(); }
+  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 // mon_term
@@ -138,7 +147,18 @@ public:
 
   // Finding divisors of monomials
   int replace_minimal(const ring_elem new_coeff, const int *mon);
-  bool search(const ring_elem c, const int *m, vec &result_gsyz, vec &result_rsyz) const;
+
+  int search(const int *m, ring_elem &result_gcd, vec &result_gsyz, vec &result_rsyz) const;
+    // Returns the number of divisors found.
+
+  int search(const ring_elem c, const int *m, vec &result_gsyz, vec &result_rsyz) const;
+    // return value is one of TI_TERM, TI_MONOMIAL, TI_NONE.
+
+  int search(const ring_elem c, const int *m, 
+	     ring_elem &termgcd, vec &result_gsyz, vec &result_rsyz) const;
+    // return value is one of TI_TERM, TI_MONOMIAL, TI_NONE.
+    // termgcd is ONLY set if the return value is not TI_NONE.
+
   Matrix search(const Matrix &m) const;
 
   // Creating and deleting "mon_terms"s

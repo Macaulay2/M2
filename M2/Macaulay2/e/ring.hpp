@@ -31,6 +31,11 @@ protected:
 
   bool isquotientring;		// True if constructed via Ring(const Ring &R).
 				// If true, then vecstash,resstash are not owned.
+
+  bool is_ZZ_quotient;		// true if this is a quotient of a polynomial ring over ZZ, AND
+				// there is an integer in the factored ideal.
+  ring_elem ZZ_quotient_value;	// This is the integer in the factor ideal, if is_ZZ_quotient is set.
+
   stash *vecstash;		// Stash used to allocate vectors over this ring.
   stash *resstash;		// For resolutions
 

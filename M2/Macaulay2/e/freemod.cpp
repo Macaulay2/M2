@@ -398,6 +398,12 @@ void FreeModule::add_to(vec &f, vec &g) const
 	f = f->next;
 	g = g->next;
 	K->add_to(tmf->coeff, tmg->coeff);
+	if (R->is_ZZ_quotient)
+	  {
+	    ring_elem t = K->remainder(tmf->coeff, R->ZZ_quotient_value);
+	    K->remove(tmf->coeff);
+	    tmf->coeff = t;
+	  }
 	if (K->is_zero(tmf->coeff))
 	  {
 	    K->remove(tmf->coeff);
@@ -511,6 +517,7 @@ int FreeModule::is_scalar_multiple(vec f, vec g) const
 vec FreeModule::imp_mult_by_coeff(const ring_elem c, vec v) const
    // return c*v
 {
+  if (K->is_zero(c)) return 0;
   vecterm head;
   vecterm *result = &head;
   for (vecterm *a = v; a != NULL; a = a->next)
@@ -771,15 +778,13 @@ void FreeModule::imp_subtract_ring_multiple_to
   add_to(f, result);
   K->remove(minus_a);
 }
-void FreeModule::apply_quotient_ring_elements(vec &f, vec rsyz) const
+void FreeModule::apply_quotient_ring_elements(vec &f, int x, vec rsyz) const
 {
   // f in F
   // rsyz in Rsyz
   // Modify f using the ring elements in rsyz, applied to component 'x'.
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   assert(P != NULL);
-  assert(f != NULL);
-  int x = f->comp;
   for (vec t = rsyz; t != NULL; t = t->next)
     {
       ring_elem r = P->get_quotient_elem(t->comp);
@@ -797,14 +802,14 @@ void FreeModule::normal_form_ZZ(vec &f) const
   while (f != NULL)
     {
       vec gsyz, rsyz;
-      bool reduces = P->RidealZ->search(f->coeff, f->monom,
+      int reduces = P->RidealZ->search(f->coeff, f->monom,
 					gsyz, rsyz);
       if (rsyz != NULL)	
 	{
-	  apply_quotient_ring_elements(f, rsyz);
+	  apply_quotient_ring_elements(f, f->comp, rsyz);
 	  Rsyz->remove(rsyz);
 	}
-      if (!reduces)
+      if (reduces != TI_TERM)
 	{
 	  result->next = f;
 	  f = f->next;
@@ -883,11 +888,11 @@ void FreeModule::normal_form_ZZ(vec &f,
   while (f != NULL)
     {
       vec gsyz, rsyz;
-      bool reduces = termideals[f->comp]->search(f->coeff, f->monom,
+      int reduces = termideals[f->comp]->search(f->coeff, f->monom,
 						 gsyz, rsyz);
       if (rsyz != NULL)	
 	{
-	  apply_quotient_ring_elements(f, rsyz);
+	  apply_quotient_ring_elements(f, f->comp, rsyz);
 	  Rsyz->remove(rsyz);
 	}
       if (gsyz != NULL) 
@@ -895,7 +900,7 @@ void FreeModule::normal_form_ZZ(vec &f,
 	  apply_map(f,gsyz,vecs);
 	  Gsyz->remove(gsyz);
 	}
-      if (!reduces)
+      if (reduces != TI_TERM)
 	{
 	  result->next = f;
 	  f = f->next;

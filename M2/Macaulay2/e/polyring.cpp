@@ -66,6 +66,9 @@ PolynomialRing::~PolynomialRing()
     }
   else
     {
+      if (is_ZZ_quotient)
+	K->remove(ZZ_quotient_value);
+
       for (int i=0; i<quotient_ideal.length(); i++)
 	base_ring->remove(quotient_ideal[i]);
 
@@ -86,6 +89,18 @@ PolynomialRing *PolynomialRing::create(
   PolynomialRing *obj = new PolynomialRing(R,I);
   if (obj->coefficients_are_ZZ)
     {
+      obj->is_ZZ_quotient = false;
+      obj->ZZ_quotient_value = (Nterm*)0;
+      for (int i=0; i<I.length(); i++)
+	{
+	  Nterm *f = I[i];
+	  if (f->next == 0 && R->M->is_one(f->monom))
+	    {
+	      obj->is_ZZ_quotient = true;
+	      obj->ZZ_quotient_value = R->K->copy(f->coeff);
+	      break;
+	    }
+	}
       obj->make_RidealZ(I);
       obj->make_Rideal(I);
     }
@@ -601,6 +616,12 @@ void PolynomialRing::add_to(ring_elem &ff, ring_elem &gg) const
 	f = f->next;
 	g = g->next;
 	K->add_to(tmf->coeff, tmg->coeff);
+	if (is_ZZ_quotient)
+	  {
+	    ring_elem t = K->remainder(tmf->coeff, ZZ_quotient_value);
+	    K->remove(tmf->coeff);
+	    tmf->coeff = t;
+	  }
 	if (K->is_zero(tmf->coeff))
 	  {
 	    K->remove(tmf->coeff);
@@ -1686,14 +1707,14 @@ void PolynomialRing::normal_form_ZZ(Nterm *&f) const
   while (f != NULL)
     {
       vec gsyz, rsyz;
-      bool reduces = RidealZ->search(f->coeff, f->monom,
+      int reduces = RidealZ->search(f->coeff, f->monom,
 				     gsyz, rsyz);
       if (rsyz != NULL)	
 	{
 	  apply_ring_elements(f,rsyz,quotient_ideal);
 	  Rsyz->remove(rsyz);
 	}
-      if (!reduces)
+      if (reduces != TI_TERM)
 	{
 	  result->next = f;
 	  f = f->next;

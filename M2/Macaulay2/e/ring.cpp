@@ -42,6 +42,8 @@ HRing(NULL)
   isquotientring = false;
   zero_divisor = (Nterm *)0;
 
+  is_ZZ_quotient = false;
+  ZZ_quotient_value = (Nterm *)0;
 }
 
 Ring::Ring(const Ring &R)
@@ -56,6 +58,8 @@ Ring::Ring(const Ring &R)
   zero_divisor((Nterm *)0),
   isfield(false),
   isquotientring(true),
+  is_ZZ_quotient(false), // Needs to be set in polynomial ring creation
+  ZZ_quotient_value((Nterm *)0), // Ditto.
   vecstash(R.vecstash),
   resstash(R.resstash)
 {
