@@ -113,6 +113,8 @@ int loaddata(const char *filename) {
     int f_end = NULL == fgets(fbuf,sizeof fbuf,f) || fbuf[0]=='\n';
     if (maps_end != f_end) { 
       fclose(maps); fclose(f); 
+      if (!f_end) fprintf(stderr,"data file has an extra map: %s\n", fbuf);
+      else        fprintf(stderr,"program running with an extra map: %s\n", buf);
       return ERROR;
     }
     fn[0] = 0;
