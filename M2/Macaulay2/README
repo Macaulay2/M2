@@ -26,7 +26,17 @@ the command
 
 	M2
 
-to start the program.  To see if it works, make a ring with
+to start the program.
+
+    NOTE: On some types of computers Macaulay 2 will take extra time to
+    start up: it will print "loading source code" and load the contents of
+    about 100 files containing code written in the Macaulay 2 language.  On
+    other types of computers, this process is replaced by one we call
+    "loaddata", which is much quicker because it involves mapping into
+    memory a large file containing an image of the data segment of the
+    program saved with "dumpdata" by "setup" script mentioned above.
+
+To see if Macaulay 2 works, make a ring with
 
 	R = ZZ/101[x,y,z]
 

@@ -117,7 +117,9 @@ LDLIBS += ../dbm/libdbm2.a
 # __underflow
 # LDLIBS+= -lc
 
+ifndef NOSTATIC
 LDFLAGS += -static
+endif
 
 ifeq ($(OS),Linux)
 LDFLAGS += -Wl,-defsym,_DYNAMIC=0
