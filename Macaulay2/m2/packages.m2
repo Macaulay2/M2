@@ -32,13 +32,20 @@ dismiss String := title -> if PackageDictionary#?title and class value PackageDi
 substituteOptions := new MutableHashTable
 loadPackage = method(
      Options => {
-	  Title => null, 
-	  DebuggingMode => null } )
-loadPackage String := opts -> filename -> (
-     filename = filename | ".m2";
-     substituteOptions#filename = opts;
+	  DebuggingMode => null
+	  } )
+loadPackage String := opts -> pkgtitle -> (
+     filename := pkgtitle | ".m2";
+     substituteOptions#pkgtitle = opts;
      load filename;
-     remove(substituteOptions,filename);
+     remove(substituteOptions,pkgtitle);
+     if not PackageDictionary#?pkgtitle then error("the file ", filename, " did not define a package ", pkgtitle);
+     )
+
+needsPackage = method(Options => options loadPackage)
+needsPackage String := opts -> s -> (
+     if PackageDictionary#?s then use value PackageDictionary#s
+     else loadPackage(s | ".m2", opts)
      )
 
 newPackage = method( 
@@ -52,8 +59,6 @@ newPackage = method(
 	  Date => null } )
 newPackage(String) := opts -> (title) -> (
      originalTitle := title;
-     filename := baseFilename currentFileName;
-     if substituteOptions#?filename and substituteOptions#filename#Title =!= null then title = substituteOptions#filename#Title;
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      stderr << "--package \"" << title << "\" loading" << endl;
      dismiss title;
@@ -140,7 +145,7 @@ newPackage(String) := opts -> (title) -> (
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
      PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
-     debuggingMode = if substituteOptions#?filename and substituteOptions#filename#DebuggingMode =!= null then substituteOptions#filename#DebuggingMode else opts.DebuggingMode;
+     debuggingMode = if substituteOptions#?title and substituteOptions#title#DebuggingMode =!= null then substituteOptions#title#DebuggingMode else opts.DebuggingMode;
      newpkg)
 
 export = method(SingleArgumentDispatch => true)
@@ -163,7 +168,7 @@ export Sequence := v -> (
 		    nam = toString sym;
 		    );
 	       if not instance(sym,Symbol) then error ("expected a symbol: ", sym);
-	       if not pd#?(toString sym) or pd#(toString sym) =!= sym then error ("symbol ",sym," not defined in current package: ", currentPackage);
+	       if not pd#?(toString sym) or pd#(toString sym) =!= sym then error ("symbol ",sym," not first defined in current package: ", currentPackage);
 	       syn := title | "$" | nam;
 	       d#syn = d#nam = sym;
 	       ));
@@ -270,12 +275,6 @@ Package.GlobalReleaseHook = globalReleaseFunction
 use Package := pkg -> if not member(pkg,packages) then (
      packages = prepend(pkg,packages);
      globalDictionaries = prepend(pkg.Dictionary,globalDictionaries);
-     )
-
-needsPackage = method()
-needsPackage String := s -> (
-     if PackageDictionary#?s then use value PackageDictionary#s
-     else load (s | ".m2")
      )
 
 forceLoadDocumentation = false

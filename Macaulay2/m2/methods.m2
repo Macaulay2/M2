@@ -189,16 +189,18 @@ use HashTable := x -> (
      x)
 
 radical = method( Options=>{ Unmixed=>false, CompleteIntersection => null } )
-ass = method(
-     TypicalValue => List,
-     Options =>{
-	  PrintLevel => 0,
-	  Strategy => 2})
+
 primaryDecomposition = method(
      TypicalValue => List,
      Options => {
 	  PrintLevel => 0,
 	  Strategy => null})
+
+ass = method(
+     TypicalValue => List,
+     Options =>{
+	  PrintLevel => 0,
+	  Strategy => 2})
 
 quotient = method(
      Options => {

@@ -383,10 +383,10 @@ document {
      Key => examples,
      Headline => "list the examples in documentation",
      -- this should come after the documentation for partitions, because of the example
-     TT "examples f", " returns a list of strings containing examples
+     TT "examples f", " returns a net containing examples
      of code using the function ", TT "f", " provided in the documentation
      of ", TT "f", ".",
-     SeeAlso => {"document", "printExamples"}
+     SeeAlso => {"document"}
      }
 
 TEST ///

@@ -325,16 +325,6 @@ document {
      EXAMPLE "apropos \"scan\""
      }
 document {
-     Key => printExamples,
-     Headline => "print examples of use from documentation",
-     TT "printExamples f", " -- prints out the examples of code using
-     the function ", TT "f", " provided in the documentation for
-     ", TT "f", ".",
-     PARA,
-     EXAMPLE "printExamples partitions",
-     SeeAlso => {"examples", "document"}
-     }
-document {
      Key => uniform,
      Headline => "test whether elements of a list are of the same class",
      TT "uniform x", " -- whether all elements of the list x have the same class."

@@ -386,7 +386,6 @@ J1 = J1 + ideal(R_3^5)
 trim substitute(J1,T)
 ///
 
-
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "
 -- End:

@@ -4,7 +4,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-load "primdecomp.m2"
+needsPackage "PrimaryDecomposition"
 
 -- 'clear' is now defined in primdecomp.m2, for ease of use.
 
@@ -1071,7 +1071,6 @@ I = ideal(
        l*i*s*t p*r= m*i*nAs*sPr*i*m*e*s(i*d))
        t*i*m*e*r-a*a)
     
-
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PrimaryDecomposition.installed "
 -- End:
