@@ -88,8 +88,7 @@ standardForm RingElement := (f) -> (
 listForm = method()
 listForm RingElement := (f) -> (
      RM := ring f;
-     if not isPolynomialRing RM then error "expected a polynomial";
-     -- was: convert(RM.listForm, sendgg(ggPush f, ggtonet))
+     -- if not isPolynomialRing RM then error "expected a polynomial";
      c := coefficients f;
      apply(
 	  first entries c#0 / leadMonomial / exponents,

@@ -228,14 +228,15 @@ oldCoefficients(RingElement) := (m) -> (
 
 coefficients(ZZ, Matrix) := coefficients(ZZ, RingElement) := (v,m) -> coefficients({v},m)
 
-coefficients(List, Matrix) := (v,f) -> (
+coefficients(List, Matrix) := (vrs,f) -> (
      R := ring f;
-     n := numgens R;
-     m := new RawMatrix from raw f;
-     monoms := rawMonomials(splice v, m);
-     error "coefficients' not re-implemented yet";
-     sendgg(ggPush f, ggPush v, ggcoeffs); 
-     {getMatrix R, getMatrix R})
+     m := raw f;
+     monoms := rawMonomials(splice vrs, m);
+     monoms = rawTensor(rawIdentity(raw target f,false,0),monoms);
+     c := rawCoefficients(vrs,monoms,m);
+     monoms = map(target f,,monoms);
+     c = map(source monoms,source f,c);
+     (monoms,c))
 
 coefficients(List, RingElement) := (v,m) -> coefficients(v,matrix{{m}})
 
