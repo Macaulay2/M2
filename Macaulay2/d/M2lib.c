@@ -321,6 +321,7 @@ double system_etime(){
      }
 #endif
 
+#if defined(DUMPDATA)
 #if defined(__sun__) || defined(_WIN32) || defined(__CYGWIN__)
 #define __environ _environ
 #elif defined(__FreeBSD__)
@@ -328,6 +329,8 @@ double system_etime(){
 #endif
 
 extern char **__environ;
+#endif
+
 extern char timestamp[];
 static void clean_up();
 
@@ -467,7 +470,7 @@ char **argv;
      saveargv[i] = NULL;
 #endif
 
-#if !defined(__MWERKS__) && !defined(__CYGWIN__)
+#if defined(DUMPDATA) && !defined(__MWERKS__) && !defined(__CYGWIN__)
      /* save environment on stack in case it's on the heap */
      for (envc=0, x=__environ; *x; x++) envc++;
      saveenvp = (char **)alloca((envc + 1)*sizeof(char *));
@@ -535,7 +538,7 @@ char **argv;
      	  GC_free_space_divisor = 4;
 	  if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
 	  old_collections = GC_gc_no;
-#if !defined(__MWERKS__) && !defined(__CYGWIN__)
+#if defined(DUMPDATA) && !defined(__MWERKS__) && !defined(__CYGWIN__)
      	  __environ = saveenvp;	/* __environ is a static variable that points
 				   to the heap and has been overwritten by
 				   loaddata(), thereby pointing to a previous

@@ -20,7 +20,7 @@ volatile void fatal(char *s,...)
      exit(1);
      }
 
-int errors = 0;
+int n_errors = 0;
 #define ERRLIMIT 24
 int warnings = 0;
 #define WARNLIMIT 24
@@ -39,8 +39,8 @@ void error(char *s,...)
      fprintf(stderr,"\n");
      fflush(stderr);
      va_end(ap);
-     errors++;
-     if (errors > ERRLIMIT) fatal("too many errors");
+     n_errors++;
+     if (n_errors > ERRLIMIT) fatal("too many errors");
      }
 
 void warning(char *s,...)
@@ -88,8 +88,8 @@ void errorpos(node p, char *s,...)
      fprintf(stderr,"\n");
      fflush(stderr);
      va_end(ap);
-     errors++;
-     if (errors > ERRLIMIT) fatal("too many errors");
+     n_errors++;
+     if (n_errors > ERRLIMIT) fatal("too many errors");
      }
 
 void warningpos(node p, char *s,...)
@@ -126,7 +126,7 @@ node notimpl(node e){
      }
 
 volatile void quit(){
-     myexit(errors != 0);
+     myexit(n_errors != 0);
      }
 
 void fail(char *filename, int lineno) {

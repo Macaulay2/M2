@@ -25,6 +25,11 @@ extern char errfmtnc[];
 #define HAS_SYSTYPES_H
 #define VA_START_HAS_TWO_ARGS
 
+#if defined(__ppc__) && defined(__MACH__)
+/* This is how we identify MacOS X, and Darwin */
+#define __DARWIN__ 1
+#endif
+
 #if defined(_WIN32) && !defined(__CYGWIN32__)
 #define __WIN32__
 /* This is for Microsoft's Visual C/C++ compiler, version 4, /Za */
@@ -122,7 +127,11 @@ int sscanf(const char *, const char *, ...);
 void exit(int);
 #endif
 
+#if !defined(__DARWIN__)
 #define GaCo 1
+#else
+#define GaCo 0
+#endif
 
 #if GaCo
 #include <gc.h>
