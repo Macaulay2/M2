@@ -192,9 +192,10 @@ void MonomialTable::reset_exponent_vector(monomial m)
 
 int MonomialTable::search(monomial m, tagged_monomial *&b) const
 {
-  update_exponent_vector(m);
+  MonomialTable *me = const_cast<MonomialTable *>(this);
+  me->update_exponent_vector(m);
   int result = search_expvector(exp0, b);
-  reset_exponent_vector(m);
+  me->reset_exponent_vector(m);
   return result;
 }
 
