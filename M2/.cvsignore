@@ -1,5 +1,5 @@
 config.cache
-Makefile.overrides
+configure.options
 Makefile-run
 include
 lib
