@@ -24,6 +24,10 @@ indexFileName := "master.html"  			    -- file name for master index of topics i
 tocFileName := "toc.html"       			    -- file name for the table of contents of a package
 buildDirectory := "/tmp/"				    -- the root of the relative paths:
 htmlDirectory := ""					    -- relative path to the html directory, depends on the package
+installDirectory := ""					    -- absolute path to the install directory
+
+runfun := o -> if class o === Function then o() else o
+initInstallDirectory := o -> installDirectory = minimizeFilename(runfun o.InstallPrefix | "/")
 
 -----------------------------------------------------------------------------
 -- relative URLs and filenames
@@ -106,8 +110,8 @@ links := tag -> (
 	       LINK { htmlFilename FIRST tag, " rel=\"First\"", linkTitleTag FIRST tag},
 	       },
 	  if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"", linkTitleTag UP#tag},
-	  LINK { LAYOUT #"packagesrc" "Style" | "doc.css", " rel=\"stylesheet\" type=\"text/css\"" },
-	  LINK { LAYOUT #"packagesrc" "Style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" }
+	  LINK { installDirectory | LAYOUT #"packagesrc" "Style" | "doc.css", " rel=\"stylesheet\" type=\"text/css\"" },
+	  LINK { installDirectory | LAYOUT #"packagesrc" "Style" | "doc-no-buttons.css", " rel=\"alternate stylesheet\" title=\"no buttons\" type=\"text/css\"" }
 	  }
      )
 
@@ -433,8 +437,6 @@ check Package := pkg -> (
      scan(values pkg#"test inputs", s -> runString(s,pkg,"."))
      )
 
-runfun := o -> if class o === Function then o() else o
-
 setupNames := (opts,pkg) -> (
      buildPackage = pkg#"title";
      buildDirectory = minimizeFilename(runfun opts.PackagePrefix | "/");
@@ -465,7 +467,7 @@ uninstallPackage String := opts -> pkg -> (
 
 uninstallPackage Package := o -> pkg -> (
      setupNames(o,pkg);
-     installDirectory := minimizeFilename(runfun o.InstallPrefix | "/");
+     initInstallDirectory o;
      stderr << "--uninstalling package " << pkg << " in " << buildDirectory << endl;
      -- unmake symbolic links
      if o.Encapsulate and o.MakeLinks then (
@@ -508,8 +510,7 @@ installPackage Package := opts -> pkg -> (
      nodes := if opts.MakeDocumentation then packageTagList(pkg,topDocumentTag) else {};
      
      setupNames(opts,pkg);
-     
-     installDirectory := minimizeFilename(runfun opts.InstallPrefix | "/");
+     initInstallDirectory opts;
      
      stderr << "--installing package " << pkg << " in " << buildDirectory << endl;
      
@@ -1002,6 +1003,7 @@ Michael R. Stillman <mike@math.cornell.edu>
 makePackageIndex = method(SingleArgumentDispatch => true)
 makePackageIndex Sequence := () -> makePackageIndex packagePath
 makePackageIndex List := packagePath -> (
+     initInstallDirectory options installPackage;
      if prefixDirectory === null then (
 	  stderr << "warning: can't make package index" << endl;
 	  return;
