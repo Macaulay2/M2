@@ -300,10 +300,14 @@ clean:
 	rm -f *.lo *.o *.dd *.ii $(LIB) allfiles cmdinst.hpp cmdnames.hpp cmdnames.m2
 	rm -f TAGS
 
-Makefile-o.depends: Makefile $(HHFILES) $(CCFILES) $(CFILES)
+Makefile : Makefile.in
+	cd $(TOPDIR); config.status Macaulay2/packages/ComputationsBook/Makefile
+
+# should remake these two manually once in a while -- not all systems have makedepend
+Makefile-o.depends:
 	touch $@
 	-makedepend -o.o -f$@ -Y -I../../include -- $(CFLAGS) -- $(CCFILES) $(CFILES)
-Makefile-lo.depends: Makefile $(HHFILES) $(CCFILES) $(CFILES)
+Makefile-lo.depends:
 	touch $@
 	-makedepend -o.lo -f$@ -Y -I../../include -- $(CFLAGS) -- $(CCFILES) $(CFILES)
 

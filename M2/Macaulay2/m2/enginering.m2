@@ -177,7 +177,7 @@ degreeLength RingElement := f -> degreeLength ring f
 
 use Ring := R -> (
      if R.?ring then use R.ring;
-     try generators R;
+     generators R;
      if R.?generators and R.?generatorSymbols then scan(R.generatorSymbols,R.generators,assign);
      if R.?use then R.use R;
      R)
@@ -219,11 +219,7 @@ RingElement _ List := RingElement => (f,d) -> (
      else sum u
      )
 
-Ring _ ZZ := RingElement => (R,i) -> (
-     if R.?generators 
-     then R.generators#i
-     else error "ring has no generators"
-     )
+Ring _ ZZ := RingElement => (R,i) -> (generators R)#i
 
 EngineRing _ ZZ := (R,i) -> (
      if R.?generators 

@@ -100,6 +100,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 			      const ring_elem a, const int *vp) const
 {
   int i;
+  assert(sourceK->total_n_vars() <= nvars);
   int first_var = sourceK->total_n_vars();
   int npairs = *vp++ - 1;
   for (i=0; i<npairs; i++)
@@ -128,6 +129,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 	  int e = varpower::exponent(vp[i]);
 	  for (int j=0; j<e; j++)
 	    {
+	      assert(v < nvars);
 	      ring_elem tmp = R->mult(_elem[v].bigelem,result);
 	      R->remove(result);
 	      result = tmp;
@@ -139,6 +141,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
       {
 	int v = first_var + varpower::var(vp[i]);
 	int e = varpower::exponent(vp[i]);
+	assert(v < nvars);
 	if (_elem[v].bigelem_is_one)
 	  {
 	    if (!_elem[v].coeff_is_one)
