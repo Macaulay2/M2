@@ -159,7 +159,7 @@ tests:: test1 test2
 test1:
 	echo 2+3 | M2
 	touch $@
-test2:
+test2: ../util/screen
 	echo 2+3 | ../util/screen M2
 	touch $@
 
