@@ -505,7 +505,7 @@ bindParallelAssignmentItem(e:ParseTree,scope:Scope,colon:bool):void := (
 	  if token.word.typecode != TCid then makeErrorTree(token,"expected symbol")
 	  else bindToken(token,scope,colon);
 	  )
-     else makeErrorTree(e,"syntax error - 1"));
+     else makeErrorTree(e,"syntax error"));
 bindParallelAssignmentList(e:ParseTree,scope:Scope,colon:bool):void := (
      when e
      is binary:Binary do (
@@ -515,17 +515,21 @@ bindParallelAssignmentList(e:ParseTree,scope:Scope,colon:bool):void := (
 	       bindop(binary.operator,scope);
 	       bindParallelAssignmentItem(binary.rhs,scope,colon);
 	       )
-     	  else makeErrorTree(e,"syntax error - 2")
+     	  else makeErrorTree(e,"syntax error")
 	  )
      else bindParallelAssignmentItem(e,scope,colon));
 bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
      bindop(assn.operator,scope);
      body := assn.rhs;
      when assn.lhs
-     is p:Parentheses do bindParallelAssignmentList(p.contents,scope,colon)
+     is p:Parentheses do (
+	  bindParallelAssignmentList(p.contents,scope,colon);
+	  bind(body,scope);
+	  )
      is token:Token do (
 	  bindToken(token,scope,colon);
-	  bind(body,scope);)
+	  bind(body,scope);
+	  )
      is a:Adjacent do (
 	  bind(a.lhs,scope);
 	  bind(a.rhs,scope);
