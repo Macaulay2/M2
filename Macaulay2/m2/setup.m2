@@ -90,32 +90,24 @@ trunc := (wid,ht,s) -> (
      s)
 checkNet := n -> if class n === Net or class n === String then n else error "didn't format correctly"
 checkString := n -> if class n === String then n else error "didn't format correctly"
-silentRobustNet2 := (wid,ht,sec,y) -> (
+silentRobustNet = (wid,ht,sec,y) -> (
      trunc(wid,ht,
 	  try timelimit (sec, () -> checkNet net y)
 	  else 
 	  try timelimit (sec, () -> checkString toString y)
 	  else
 	  simpleToString y))
-silentRobustNet := (wid,ht,sec,y) -> (			    -- we know wid is at least 80
-     part2 := horizontalJoin(" (of class ", silentRobustNet2(wid//2,           ht,sec,class y), ")");
-     part1 :=                               silentRobustNet2(wid - width part2,ht,sec,      y);
+silentRobustNetWithClass := (wid,ht,sec,y) -> (			    -- we know wid is at least 80
+     part2 := horizontalJoin(" (of class ", silentRobustNet(wid//2,           ht,sec,class y), ")");
+     part1 :=                               silentRobustNet(wid - width part2,ht,sec,      y);
      horizontalJoin(part1, part2));
-
-operatorNames := new HashTable from join(
-     { symbol " " => "adjacent objects" },
-     apply(binaryOperators, op -> op => concatenate("binary operator ", op)),
-     apply(prefixOperators, op -> op => concatenate("prefix unary operator ", op)),
-     apply(postfixOperators, op -> op => concatenate("postfix unary operator ", op)),
-     apply(otherOperators, op -> op => concatenate("operator ", op)))
-opName := op -> if operatorNames#?op then operatorNames#op else concatenate("operator ",op)
 
 hush := false
 scan(binaryOperators, op -> 
      if not Thing#?(op,Thing,Thing) then installMethod(op, Thing, Thing, 
 	  (x,y) -> (
 	       line1 := concatenate("no method for ",
-		    if op === symbol " " then "adjacent objects" else concatenate("binary operator ",op)
+		    if op === symbol " " then "adjacent objects" else concatenate("binary operator ",op," applied to objects")
 		    );
 	       if hush then error line1;
 	       ht := 8;
@@ -124,8 +116,8 @@ scan(binaryOperators, op ->
 	       preY := "       and  ";
 	       wid = wid - width preX;
 	       hush = true;					    -- prevent error message recursion
-	       line2 := preX | silentRobustNet(wid,ht,errorPrintingTimeLimit,x);
-	       line3 := preY | silentRobustNet(wid,ht,errorPrintingTimeLimit,y);
+	       line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
+	       line3 := preY | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,y);
 	       hush = false;
 	       error toString stack(line1,line2,line3))))
 scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) -> (
@@ -139,7 +131,7 @@ scan( {(prefixOperators,"prefix"), (postfixOperators,"postfix")}, (ops,type) -> 
 			 preX := "            ";
 			 wid = wid - width preX;
 			 hush = true;					    -- prevent error message recursion
-			 line2 := preX | silentRobustNet(wid,ht,errorPrintingTimeLimit,x);
+			 line2 := preX | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,x);
 			 hush = false;
 			 error toString stack(line1,line2))))))
 

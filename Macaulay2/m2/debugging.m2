@@ -91,23 +91,6 @@ pos := s -> (
      t := locate s;
      if t =!= null then t#0 | ":" | toString t#1| ":" | toString t#2 | "-" | toString t#3| ":" | toString t#4)
 
-truncate := s -> (
-     narrowed := false;
-     if width s > 45
-     then (
-	  s = stack ( apply( unstack s, l -> substring(l,0,45)));
-	  s = s | (stack ( height s + depth s : "|" ))^(height s - 1);
-     	  narrowed = true;
-	  );
-     if height s + depth s  > 4 
-     then (
-	  s = stack take(unstack s,4);
-	  if narrowed
-	  then s = s || concatenate(width s - 1 : "-", "+")
-	  else s = s || concatenate(width s : "-");
-	  );
-     s)
-
 sortByHash := v -> last \ sort \\ (i -> (hash i, i)) \ v
 
 select2 := (type,syms) -> apply(
@@ -142,12 +125,23 @@ abbreviate := x -> (
      if class x === Function and match("^--Function.*--$", toString x) then "..."
      else x)
 
+vbar := (ht,dp) -> " "^(ht-1)
+upWidth := (wid,n) -> n | horizontalJoin(wid - width n : " "^(height n - 1))
+joinRow := x -> horizontalJoin mingle(#x+1:vbar(max\\height\x,max\\depth\x),x)
+robustNetTable := x -> (
+     if not isTable x then error "expected a table";
+     if #x == 0 or #x#0 == 0 then return stack();
+     x = applyTable(x,y -> silentRobustNet(25,4,3,y)); -- fix
+     colwids := max \ transpose applyTable(x,width);
+     x = joinRow \ apply(x, row -> apply(colwids,row,upWidth));
+     hbar := "";
+     (stack mingle(#x+1:hbar,x))^(height x#0))
+
 listSymbols = x -> (
      if #x == 0 then "--no local variables"
-     else net Table (
-	  prepend(
-	       {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
-	       apply (x, s -> {s,":",net class value s, "--", truncate net abbreviate value s, pos s}))))
+     else robustNetTable prepend(
+	  {"symbol"||"------",, "type"||"----",, "value"||"-----", "location"||"--------"},
+	  apply (x, s -> {s,":", class value s, "--", abbreviate value s, pos s})))
 
 listLocalSymbols = Command(f -> listSymbols localSymbols f)
 
@@ -190,6 +184,7 @@ clearAll = Command (() -> (
 	  )
      )
 
+erase symbol silentRobustNet				    -- symbol was created in setup.m2
 erase symbol unmarkAllLoadedFiles			    -- symbol was created in setup.m2
 
 -- Local Variables:
