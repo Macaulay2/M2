@@ -7,8 +7,9 @@ AC_INIT(Macaulay2.LSM)
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
 
+echo $ac_n "checking for GNU make... " >&6
 if make -n --version nothing | grep GNU >/dev/null 2>&1
-then :
+then echo "found" >&6
 else echo "`basename $0`: make: GNU make is required" >&2
      exit 1
 fi
