@@ -149,7 +149,7 @@ makeit1 := (options) -> (
 	       order = transpose internalDegrees;
 	       primaryDegrees = order#0;
 	       )
-	  else error "first component of each degree should be positive"
+	  else error "first component of each degree should be positive" -- this error message will go away
 	  );
      variableOrder := toList (0 .. n-1);
      wts := splice flatten options.Weights;
