@@ -209,7 +209,7 @@ defaultResolutionLength := (R) -> (
      numgens R + 1 + if ZZ === ultimate(coefficientRing, R) then 1 else 0
      )
 
-resolutionLength := options -> (R) -> (
+resolutionLength := (R,options) -> (
      if options.LengthLimit == infinity then defaultResolutionLength R else options.LengthLimit
      )
 
@@ -231,13 +231,13 @@ resolutionByHomogenization := options -> (M) -> (
      toRH := map(RH, R', vars RH);
      fH   := homogenize(toRH generators gb f',RH_n); 	  forceGB fH;
      MH   := cokernel fH;
-     C    := resolution(MH, options, LengthLimit => (resolutionLength options)(R));
+     C    := resolution(MH, options, LengthLimit => resolutionLength(R,options));
      toR  := map(R, RH, vars R | 1);
      toR C)
 
 resolutionBySyzygies := options -> (M) -> (
      R := ring M;
-     maxlength := (resolutionLength options)(R);
+     maxlength := resolutionLength(R,options);
      if M.?resolution 
      then C := M.resolution
      else (
@@ -269,7 +269,7 @@ resolutionInEngine := options -> (M) -> (
 	  if class options.DegreeLimit === ZZ then {options.DegreeLimit}
 	  else if degreelimit === null then degreelimit = {}
 	  else error "expected DegreeLimit to be an integer or null");
-     maxlength := (resolutionLength options)(R);
+     maxlength := resolutionLength(R,options);
      if not M.?resolution 
      or M.resolution.Resolution.length < maxlength
      then M.resolution = (

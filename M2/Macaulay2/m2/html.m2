@@ -339,8 +339,6 @@ SHIELD     = newListHead "SHIELD"
 html SHIELD := x -> concatenate apply(x,html)
 text SHIELD := x -> concatenate apply(x,text)
 
-html TEX := x -> x#0
-
 MENU       = newListHead "MENU"
 html MENU := x -> concatenate (
      "<MENU>", newline,
