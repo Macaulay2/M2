@@ -94,7 +94,7 @@ g
 rawFactor raw (f*g)
 factor(f*g)
 
--- rawCharSeries raw vars R
+rawCharSeries raw vars R
 
 end
 

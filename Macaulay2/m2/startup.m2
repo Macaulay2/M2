@@ -151,7 +151,6 @@ notdir := s -> matchpart("[^/]*$",0,s)
 dir := s -> (
      m := matches(".*/",s);
      if 0 == #m then "./" else substring_(m#0) s)
-preload := true
 noloaddata := false
 nobanner := false;
 nosetup := false
@@ -207,7 +206,7 @@ if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then 
 
 silence := arg -> null
 notyeterr := arg -> error("command line option ", arg, " not re-implemented yet")
-notyet := arg -> if preload then (
+notyet := arg -> if phrase == 1 then (
      << "warning: command line option " << arg << " not re-implemented yet" << newline << flush;
      )
 obsolete := arg -> error ("warning: command line option ", arg, " is obsolete")
@@ -270,6 +269,8 @@ dump := () -> (
 
 printWidth = 0
 
+phase := 1
+
 action := hashTable {
      "--help" => usage,
      "-h" => usage,
@@ -278,24 +279,23 @@ action := hashTable {
      "-q" => arg -> noinitfile = true,
      "--silent" => arg -> nobanner = true,
      "--no-debug" => arg -> debuggingMode = false,
-     "--dumpdata" => arg -> (noinitfile = noloaddata = true; if not preload then dump()),
-     "--debug-M2" => arg -> (debuggingMode = true; errorDepth = 0),
+     "--dumpdata" => arg -> (noinitfile = noloaddata = true; if phase == 3 then dump()),
      "-silent" => obsolete,
      "-tty" => notyet,
      "-n" => obsolete,
      "--int" => arg -> arg,
-     "--copyright" => arg -> fullCopyright = true,
-     "--no-prompts" => arg -> noPrompts(),
-     "--notify" => arg -> notify = true,
+     "--copyright" => arg -> if phase == 1 then fullCopyright = true,
+     "--no-prompts" => arg -> if phase == 1 then noPrompts(),
+     "--notify" => arg -> if phase == 1 then notify = true,
      "-x" => obsolete,
-     "--example-prompts" => arg -> examplePrompts(),
+     "--example-prompts" => arg -> if phase == 1 then examplePrompts(),
      "-s" => obsolete,
-     "--fullbacktrace" => arg -> fullBacktrace = true,
-     "--no-backtrace" => arg -> fullBacktrace = backtrace = false,
-     "--stop" => arg -> (stopIfError = true; debuggingMode = false), -- see also M2lib.c
-     "--no-loaddata" => arg -> noloaddata = true,
-     "--no-setup" => arg -> nosetup = true,
-     "--texmacs" => arg -> (
+     "--fullbacktrace" => arg -> if phase == 1 then fullBacktrace = true,
+     "--no-backtrace" => arg -> if phase == 1 then fullBacktrace = backtrace = false,
+     "--stop" => arg -> if phase == 1 then (stopIfError = true; debuggingMode = false), -- see also M2lib.c
+     "--no-loaddata" => arg -> if phase == 1 then noloaddata = true,
+     "--no-setup" => arg -> if phase == 1 then nosetup = true,
+     "--texmacs" => arg -> if phase == 3 then (
 	  interpreter = topLevelTexmacs;
 	  << TeXmacsBegin << "verbatim:" << " Macaulay 2 starting up " << endl << TeXmacsEnd << flush;
 	  ),
@@ -303,37 +303,34 @@ action := hashTable {
      };
 
 action2 := hashTable {
-     "-E" => arg -> if preload then value arg,
-     "-e" => arg -> if not preload then value arg,
-     "--print-width" => arg -> printWidth atoi arg
+     "-E" => arg -> if phase == 1 then value arg,
+     "-e" => arg -> if phase == 3 then value arg,
+     "--print-width" => arg -> if phase == 1 then printWidth atoi arg
      }
 
-processCommandLineOptions := pl -> (			    -- two passes, based on value of 'preload'
-     preload = pl;
+processCommandLineOptions := phase0 -> (			    -- 3 passes
+     phase = phase0;
      argno := 1;
      while argno < #commandLine do (
 	  arg := commandLine#argno;
 	  if action#?arg then action#arg arg
 	  else if action2#?arg then (
 	       if argno < #commandLine + 1
-	       then (
-		    argno = argno + 1;
-		    action2#arg commandLine#argno
-		    )
+	       then action2#arg commandLine#(argno = argno + 1)
 	       else error("command line option ", arg, " missing argument")
 	       )
-	  else if match("^-e",arg) and not preload then value substring(2,arg) -- to become obsolete
+	  else if match("^-e",arg) and phase == 2 then value substring(2,arg) -- to become obsolete
 	  else if arg#0 == "-" then (
 	       stderr << "error: unrecognized command line option: " << arg << endl;
 	       usage();
 	       exit 1;
 	       )
-	  else if not preload then load arg;
+	  else if phase == 3 then load arg;
 	  argno = argno+1;
 	  );
      )
 
-if firstTime then processCommandLineOptions true
+if firstTime then processCommandLineOptions 1
 if firstTime and not nobanner then stderr << (if fullCopyright then copyright else first separate copyright) << newline << flush
 if firstTime and not noloaddata and version#"dumpdata" then (
      -- try to load dumped data
@@ -360,10 +357,11 @@ path = select(path, fileExists)
 normalPrompts()
 if firstTime and not nosetup then loadSetup()
 errorDepth = loadDepth = loadDepth + 1
-processCommandLineOptions false
+processCommandLineOptions 2
 runStartFunctions()
 tryLoad := fn -> if fileExists fn then (load fn; true) else false
 noinitfile or tryLoad "init.m2" or tryLoad (getenv "HOME" | "/init.m2") or tryLoad (getenv "HOME" | "/.init.m2")
+processCommandLineOptions 3
 n := interpreter()
 if class n === ZZ and 0 <= n and n < 128 then exit n
 if n === null then exit 0
