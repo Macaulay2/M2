@@ -134,7 +134,7 @@ setup((), {
 	  degree, coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, 
 	  leadComponent, degreesRing, degrees, annihilator, assign, numgens,
-	  autoload, minprimes, relations, cone, random, standardForm,
+	  autoload, minprimes, relations, cone, random, standardForm, inverse,
 	  det, presentation, use = symbol use, dismiss, degreesMonoid, submatrix,
 	  truncate, fraction
 	  })

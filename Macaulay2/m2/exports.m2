@@ -40,6 +40,7 @@ exportMutable (
 	)
 
 export (
+        symbol inverse,
         symbol LinearAlgebra,
         symbol indexHtml,
      	symbol Email,
