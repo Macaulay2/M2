@@ -27,10 +27,10 @@ source .gdb-files
 # b GC_default_warn_proc
 # can only to this after the program starts:
 # b __gmp_set_memory_functions
-b trap
+# b trap
 # b dbg_mlc.c:791
 # b GC_gcollect
-handle SIGINT pass
-b rawCharSeries
-b IrrCharSeries
+# handle SIGINT pass
+# b rawCharSeries
+# b IrrCharSeries
 source .gdb-run-it
