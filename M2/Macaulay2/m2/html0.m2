@@ -53,7 +53,7 @@ MarkUpType.GlobalAssignHook = (X,x) -> (
 
 new MarkUpType := x -> error "obsolete 'new' method called"
 
-BR         = new EmptyMarkUpType of MarkUpList
+BR         = new EmptyMarkUpType of MarkUpListParagraph
 NOINDENT   = new EmptyMarkUpType of MarkUpList
 HR         = new EmptyMarkUpType of MarkUpListParagraph
 PARA       = new MarkUpType of MarkUpListParagraph
@@ -61,19 +61,17 @@ EXAMPLE    = new MarkUpType of MarkUpListParagraph; new EXAMPLE from List := (EX
 TABLE      = new MarkUpType of MarkUpListParagraph
 ExampleTABLE = new MarkUpType of MarkUpListParagraph
 PRE        = new MarkUpType of MarkUpListParagraph
-TITLE      = new MarkUpType of MarkUpList
+TITLE      = new MarkUpType of MarkUpListParagraph
 BASE	   = new MarkUpType of MarkUpList
-HEAD       = new MarkUpType of MarkUpList
-BODY       = new MarkUpType of MarkUpList
+HEAD       = new MarkUpType of MarkUpListParagraph
+BODY       = new MarkUpType of MarkUpListParagraph
 IMG	   = new MarkUpType of MarkUpList
 HTML       = new MarkUpType of MarkUpList
 BIG        = new MarkUpType of MarkUpList
 HEADER1    = new MarkUpType of MarkUpListParagraph
-net HEADER1 := x -> (
-     r := "" || horizontalJoin apply(x,net);
-     r || concatenate( width r : "=" )
-     )
 HEADER2    = new MarkUpType of MarkUpListParagraph
+net TITLE := 
+net HEADER1 := 
 net HEADER2 := x -> (
      r := "" || horizontalJoin apply(x,net);
      r || concatenate( width r : "-" )
