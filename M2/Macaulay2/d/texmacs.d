@@ -14,7 +14,7 @@ use struct;
 TeXmacsEvaluate := makeProtectedSymbolClosure("TeXmacsEvaluate");
 
 export topLevelTexmacs():bool := (
-     stdin.prompt = noprompt;
+     unsetprompt(stdin);
      while true do (
 	  stdin.bol = false;				    -- sigh, prevent a possible prompt
 	  r := getline(stdin);

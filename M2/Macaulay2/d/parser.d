@@ -112,6 +112,7 @@ export openTokenFile(filename:string):(TokenFile or errmsg) := (
      is s:errmsg  do (TokenFile or errmsg)(s)
      );
 export setprompt(file:TokenFile,prompt:function():string):void := setprompt(file.posFile,prompt);
+export unsetprompt(file:TokenFile):void := unsetprompt(file.posFile);
 export flush(file:TokenFile):void := flush(file.posFile);
 export close(file:TokenFile):int := close(file.posFile);
 export gettoken(file:TokenFile,obeylines:bool):Token := (

@@ -137,7 +137,7 @@ void exit(int);
 #include <gc.h>
 #undef malloc
 #define malloc(n) GC_MALLOC(n)
-#define free(n)
+#define free(n) (void)0
 #endif
 
 #ifndef O_RDONLY
