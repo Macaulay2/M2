@@ -47,16 +47,14 @@ void ZZ::remove_elem(mpz_ptr f) const
 
 bool ZZ::get_ui(unsigned int &result, mpz_t n)
 {
-  if (n->_mp_size > 1 || n->_mp_size < -1) return false;
   result = mpz_get_ui(n);
-  return true;
+  return mpz_fits_ulong_p(n);
 }
 
 bool ZZ::get_si(int &result, mpz_t n)
 {
-  if (n->_mp_size > 1 || n->_mp_size < -1) return false;
   result = mpz_get_si(n);
-  return true;
+  return mpz_fits_slong_p(n);
 }
 
 unsigned int ZZ::mod_ui(mpz_t n, unsigned int p)

@@ -34,7 +34,18 @@ f // (1-t)^3
 R = ZZ/32003[symbol a..symbol h]
 M = matrix{{a^2, a*b, b^2*c, c^4, c^3*a*g*h^4, h^7*a, f*g*h, e^12*h^3}}
 poincare coker M
-hilbertSeries coker M
+hf = hilbertSeries coker M
+hf = reduceHilbert hf
+hf = numerator hf
+substitute(hf, (ring hf)_0 => 1)
 assert(hilbertPolynomial coker M === new ProjectiveHilbertPolynomial from {0 => 2352, 1 => -449, 2 => -65, 3 => 38, 4 => 1})
 assert(degree coker M === 1)
-assert(codim coker M === 3) -- CRASHES
+assert(codim coker M === 3)
+
+
+R = ZZ/32003[symbol a .. symbol d]
+I = ideal(a*d-b*c, b^2-a*c, c^2-b*d)
+hf = hilbertSeries I
+reduceHilbert hf
+T = (ring numerator hf)_0
+assert(numerator reduceHilbert hf == 1 + 2*T)

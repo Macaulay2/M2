@@ -232,7 +232,7 @@ assert(toString(a*b^41*c^513) === "ab41c513")
 assert(toString(a^1000*b^41*c^513) === "a1000b41c513")
 assert(toString(a^32767*b^41*c^513) === "a32767b41c513")
 print "ERROR: a^32768 should not be allowed?"
-  --assert try (assert(toString(a^32768*b^41*c^513) === "a32768b41c513"); false) else true
+assert try (assert(toString(a^32768*b^41*c^513) === "a32768b41c513"); false) else true
 -------------------
 -- LexTiny -------
 -------------------

@@ -400,7 +400,13 @@ void varpower::power(const int *a, int n, intarray &result)
     {
       pairs->var = i.var();
 #warning "check overflow"
-      pairs->exponent = n * i.exponent();
+      long e = i.exponent();
+      long long e1 = e;
+      e *= n;
+      e1 *= n;
+      if (e != e1)
+	ERROR("monomial overflow");
+      pairs->exponent = e;
       pairs++;
     }
   copy_to(staticVP, pairs - staticVP->pairs, result);
