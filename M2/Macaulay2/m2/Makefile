@@ -5,7 +5,7 @@ all::
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install it phase1 tests
+.PHONY: clean all install phase1 tests
 CFLAGS =
 LDFLAGS = -s
 LOADLIBES =
@@ -68,7 +68,7 @@ all:: TAGS
 TAGS: Makefile
 	@echo making TAGS
 	@../util/echoout '>TAGS' $(foreach i, \
-			      $(GFILES) ../CHANGES \
+			      $(GFILES) $(MADEGFILES) ../CHANGES \
 			      $(wildcard ../html/*.m2 ../test/*.m2 ../book/*.m2 \
 				../basictests/*.m2 ../emacs/*.m2 \
 				../tutorial/prelim/*.m2 ../tutorial/final/*.m2 \
@@ -95,7 +95,7 @@ phase1 :: ../cache/Macaulay2-$(ARCH).data
 	../bin/Macaulay2 -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-eexit(0)'
 else
 ARGS := -silent setup.m2
-phase1 it ::
+phase1 ::
 endif
 
 all:: $(SCRIPTS)

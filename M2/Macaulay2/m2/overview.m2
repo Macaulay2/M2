@@ -276,6 +276,13 @@ document { "manipulating polynomials",
      an integer.  The degree is actually a vector of integers, represented as
      a list, with one component by default.)",
      PARA,
+     "The list of terms of a polynomial is obtained with ", TO "terms", ".",
+     EXAMPLE "terms g",
+     "We may combine that with ", TO "select", " to select terms satisfying certain 
+     conditions.  Here we select the terms of degree 2, subsequently summing them,
+     keeping in mind that the degree is a list of integers.",
+     EXAMPLE "select(terms g, i -> degree i == {2})",
+     EXAMPLE "sum oo",
      "A string representing the polynomial, suitable for entry into other programs,
      can be obtained with ", TO "name", ".",
      EXAMPLE "name f",

@@ -79,7 +79,6 @@ endif
 %     : %.oo;	$(CC) -o $@ $< $(LDFLAGS) $(LDLIBS)
 %.o   : %.c;	$(CC) -o $@ $< -c $(CPPFLAGS) $(CFLAGS)
 ############################## flags
-CC       := gcc
 
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
@@ -90,12 +89,13 @@ CPPFLAGS := -I$(INCDIR) -I. -DGaCo=1 $(DEBUGFLAGS)
 
 WARNINGS := -Wall -Wshadow -Wcast-qual
 
-CCFLAGS  := -O3 -g
+CCFLAGS  := -O2 -g
 
 CFLAGS   := $(CCFLAGS) $(WARNINGS)
 CXXFLAGS := $(CFLAGS)
 LDLIBS   := 
 LDFLAGS  := -L${LIBDIR} $(STRIPFLAG) $(DEBUGFLAGS)
+LDFLAGS  += -Wl,-Map,mapfile
 #################################
 
 ifdef includeX11
@@ -133,7 +133,11 @@ endif
 ifeq ($(OS),MS-DOS)
 LDLIBS += -lgpp
 else
-LDLIBS += -lg++ -lstdc++
+LDLIBS += -lg++ -lc -lstdc++
+#	It may look strange to put -lc in here, but it's for a good reason.
+#	Under linux, I have a modern version 2.8.0 of libstdc++ that defines
+#	the routine _IO_init which is called by sprintf, indirectly.  My sprintf
+#	comes from the old libc, and the _IO_init is incompatible, for some reason.
 endif
 
 # but on some machines, with non-gnu ld being used, libiostream is

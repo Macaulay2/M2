@@ -348,7 +348,9 @@ char **argv;
      for (n=1; ; n++) {
 	  if (n >= argc) {
 	       char buf[100];
-	       sprintf(buf,"Macaulay 2, version %s",VERSION);
+	       if (-1 == sprintf(buf,"Macaulay 2, version %s",VERSION)) {
+		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
+	       }
 	       putstderr(buf);
 	       putstderr("  Copyright 1993-1997, all rights reserved, D. R. Grayson and M. E. Stillman");
 #     	       ifdef FACTORY

@@ -380,6 +380,60 @@ coefficients(RingElement) := (m) -> (
      n := numgens R;
      coefficients(splice {0 .. n-1}, m))
 
+terms RingElement := f -> (
+     s := coefficients f;
+     apply(first entries s#0,first entries s#1, times))
+
+document { quote terms,
+     TT "terms f", " -- provide a list of terms of a polynomial.",
+     PARA,
+     EXAMPLE "R = QQ[x,y]",
+     EXAMPLE "terms (x+2*y-1)^2",
+     SEEALSO "coefficients"
+     }
+
+sortColumns = method ( 
+     Options => {
+	  DegreeOrder => Ascending,
+	  MonomialOrder => Ascending
+	  }
+     )
+
+sortColumns Matrix := (f,options) -> (
+     callgg(ggsortcolumns, f,
+	  (
+	       if options.DegreeOrder === Ascending then 1 else
+	       if options.DegreeOrder === Descending then -1 else
+	       if options.DegreeOrder === null then 0 else
+	       error "expected DegreeOrder option value to be Ascending, Descending, or null"),
+	  (
+	       if options.MonomialOrder === Ascending then 1 else
+	       if options.MonomialOrder === Descending then -1 else
+	       error "expected MonomialOrder option value to be Ascending or Descending"));
+     eePopIntarray())
+
+document { quote sortColumns,
+     TT "sortColumns f", " -- sorts the columns of a matrix, returning a list of integers
+     describing the resulting permutation.",
+     PARA,
+     "The sort ordering used is by degree first, and then by monomial order.  Optional
+     arguments may be given to specify whether the ordering is ascending, descending,
+     or ignored.  The default ordering is ascending.",
+     MENU {
+	  TT "DegreeOrder => Ascending",
+	  TT "DegreeOrder => Descending",
+	  TT "DegreeOrder => null",
+	  TT "MonomialOrder => Ascending",
+	  TT "MonomialOrder => Descending"
+	  },
+     EXAMPLE "R = ZZ/101[a..c];",
+     EXAMPLE "f = matrix{{1,a,a^2,b^2,b,c,c^2,a*b,b*c,a*c}}",
+     EXAMPLE "s = sortColumns f",
+     EXAMPLE "f_s",
+     EXAMPLE "s = sortColumns(f,DegreeOrder => Descending)",
+     EXAMPLE "f_s"
+     }
+
 -----------------------------
 -- Matrix utility routines --
 -----------------------------
