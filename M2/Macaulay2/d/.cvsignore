@@ -1,6 +1,7 @@
 t.c
 a.out
 *.loo
+*.lo
 *.dp
 *.dep
 *.oo
