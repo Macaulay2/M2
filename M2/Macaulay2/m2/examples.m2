@@ -224,6 +224,7 @@ document {
      PARA,
      "Here are the functions for creating hypertext.",
      MENU {
+	  TO "BIG",
 	  TO "BLOCKQUOTE",
 	  TO "BODY",
 	  TO "BOLD",
@@ -258,7 +259,10 @@ document {
 	  TO "SEEALSO",
 	  TO "SEQ",
 	  TO "SHIELD",
+	  TO "SMALL",
 	  TO "STRONG",
+	  TO "SUB",
+	  TO "SUP",
 	  TO "TABLE",
 	  TO "TEST",
 	  TO "TEX",
@@ -270,19 +274,24 @@ document {
 	  TO "VAR",
 	  TO "XMP"
 	  },
-     SEEALSO {"HtmlList", "ListHead"}
+     SEEALSO {"MarkUpList", "MarkUpType"}
      }
 
-document { quote HtmlList,
-     "HtmlList", " -- the class of lists used with ", TO "hypertext", ".",
+document { quote MarkUpList,
+     "MarkUpList", " -- the class of lists used with ", TO "hypertext", ".",
      PARA,
      "Intended for internal use only."
      }
 
-document { quote ListHead,
-     "ListHead", " -- the class of types used with ", TO "hypertext", ".",
+document { quote MarkUpType,
+     "MarkUpType", " -- the class of types used with ", TO "hypertext", ".",
      PARA,
-     "Intended for internal use only."
+     SEEALSO "EmptyMarkUpType"
+     }
+
+document { quote EmptyMarkUpType,
+     "EmptyMarkUpType", " -- a type of ", TO "MarkUpType", " used with ", TO "hypertext", ",
+     which can't accept any content."
      }
 
 document { quote SHIELD,
@@ -325,7 +334,7 @@ document {
 document { quote PRE,
      TT "PRE x", " -- encloses x in a hypertext PRE item.",
      PARA,
-     "The argument x should be a string, possibly containing newlines.",
+     "The argument ", TT "x", " should be a string, possibly containing newlines.",
      PARA,
      "Here is an example.",
      PRE "
@@ -339,7 +348,7 @@ document { quote PRE,
 document { quote TITLE,
      TT "TITLE x", " -- encloses x in a hypertext TITLE item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "See also ", TO "hypertext", "."
@@ -348,7 +357,7 @@ document { quote TITLE,
 document { quote HEAD,
      TT "HEAD x", " -- encloses x in a hypertext HEAD item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "See also ", TO "hypertext", "."
@@ -357,7 +366,7 @@ document { quote HEAD,
 document { quote BODY,
      TT "BODY x", " -- encloses x in a hypertext BODY item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "See also ", TO "hypertext", "."
@@ -366,7 +375,7 @@ document { quote BODY,
 document { quote IMG,
      TT "IMG x", " -- encloses x in a hypertext IMG item.",
      PARA,
-     "The argument x should be a string containing the URL of the image.",
+     "The argument ", TT "x", " should be a string containing the URL of the image.",
      PARA,
      "See also ", TO "hypertext", "."
      }
@@ -374,11 +383,9 @@ document { quote IMG,
 document { quote SEQ,
      TT "SEQ x", " -- encloses x in a hypertext SEQ item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.  The result is that the entries in the
-     list or sequence are displayed sequentially.  This function is needed
-     because a list would be displayed with its braces, and a sequence
-     would be displayed with its parentheses.",
+     list or sequence are displayed sequentially.",
      PARA,
      "See also ", TO "hypertext", "."
      }
@@ -386,7 +393,7 @@ document { quote SEQ,
 document { quote HTML,
      TT "HTML x", " -- encloses x in a hypertext HTML item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "See also ", TO "hypertext", "."
@@ -395,7 +402,7 @@ document { quote HTML,
 document { quote H1,
      TT "H1 x", " -- encloses x in a hypertext H1 header item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
@@ -409,7 +416,7 @@ document { quote H1,
 document { quote H2,
      TT "H2 x", " -- encloses x in a hypertext H2 header item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
@@ -423,7 +430,7 @@ document { quote H2,
 document { quote H3,
      TT "H3 x", " -- encloses x in a hypertext H3 header item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
@@ -437,7 +444,7 @@ document { quote H3,
 document { quote H4,
      TT "H4 x", " -- encloses x in a hypertext H4 header item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
@@ -451,7 +458,7 @@ document { quote H4,
 document { quote H5,
      TT "H5 x", " -- encloses x in a hypertext H5 header item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
@@ -465,7 +472,7 @@ document { quote H5,
 document { quote H6,
      TT "H6 x", " -- encloses x in a hypertext H6 header item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
@@ -479,7 +486,7 @@ document { quote H6,
 document { quote LISTING,
      TT "LISTING x", " -- encloses x in a hypertext LISTING item.",
      PARA,
-     "The argument x should be a string.",
+     "The argument ", TT "x", " should be a string.",
      PARA,
      "Here is an example.",
      LISTING "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  
@@ -493,7 +500,7 @@ document { quote LISTING,
 document { quote XMP,
      TT "XMP x", " -- encloses x in a hypertext XMP item.",
      PARA,
-     "The argument x should be a string.",
+     "The argument ", TT "x", " should be a string.",
      PARA,
      "Here is an example.",
      XMP "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  
@@ -507,7 +514,7 @@ document { quote XMP,
 document { quote BLOCKQUOTE,
      TT "BLOCKQUOTE x", " -- encloses x in a hypertext BLOCKQUOTE item.",
      PARA,
-     "The argument x should be a string.",
+     "The argument ", TT "x", " should be a string.",
      PARA,
      "Here is an example.",
      BLOCKQUOTE "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  
@@ -550,7 +557,7 @@ document { quote VAR,
 document { quote DFN,
      TT "DFN x", " -- encloses x in a hypertext DFN item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",
@@ -562,7 +569,7 @@ document { quote DFN,
 document { quote STRONG,
      TT "STRONG x", " -- encloses x in a hypertext STRONG item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",
@@ -572,10 +579,56 @@ document { quote STRONG,
      "See also ", TO "hypertext", "."
      }
 
+document { quote BIG,
+     TT "BIG x", " -- encloses x in a hypertext BIG item.",
+     PARA,
+     "The argument ", TT "x", " should be a string, or a list or sequence of
+     strings or hypertext items.",
+     PARA,
+     "Here is an example.",
+     PARA,
+     BIG "Here is some big text.",
+     PARA,
+     "See also ", TO "hypertext", "."
+     }
+
+document { quote SMALL,
+     TT "SMALL x", " -- encloses x in a hypertext SMALL item.",
+     PARA,
+     "The argument ", TT "x", " should be a string, or a list or sequence of
+     strings or hypertext items.",
+     PARA,
+     "Here is an example.",
+     PARA,
+     SMALL "Here is some small text.",
+     PARA,
+     "See also ", TO "hypertext", "."
+     }
+
+document { quote SUB,
+     TT "SUB x", " -- encloses ", TT "x", " in a hypertext ", TT "SUB", " item,
+     thereby making it a subscript.",
+     PARA,
+     "The argument ", TT "x", " should be a string, or a list or sequence of
+     strings or hypertext items.",
+     PARA,
+     "See also ", TO "hypertext", "."
+     }
+
+document { quote SUP,
+     TT "SUP x", " -- encloses ", TT "x", " in a hypertext ", TT "SUP", " item,
+     thereby making it a superscript.",
+     PARA,
+     "The argument ", TT "x", " should be a string, or a list or sequence of
+     strings or hypertext items.",
+     PARA,
+     "See also ", TO "hypertext", "."
+     }
+
 document { quote SAMP,
      TT "SAMP x", " -- encloses x in a hypertext SAMP item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",
@@ -588,7 +641,7 @@ document { quote SAMP,
 document { quote KBD,
      TT "KBD x", " -- encloses x in a hypertext KBD item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",
@@ -601,7 +654,7 @@ document { quote KBD,
 document { quote ITALIC,
      TT "ITALIC x", " -- encloses x in a hypertext ITALIC item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.  The result corresponds to the
      html I command.",
      PARA,
@@ -615,7 +668,7 @@ document { quote ITALIC,
 document { quote UNDERLINE,
      TT "UNDERLINE x", " -- encloses x in a hypertext UNDERLINE item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",
@@ -636,7 +689,7 @@ document { quote TEX,
 document { quote TT,
      TT "TT x", " -- encloses x in a hypertext TT item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",
@@ -649,7 +702,7 @@ document { quote TT,
 document { quote EM,
      TT "EM x", " -- encloses x in a hypertext EM item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",
@@ -662,7 +715,7 @@ document { quote EM,
 document { quote CITE,
      TT "CITE x", " -- encloses x in a hypertext CITE item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",
@@ -675,7 +728,7 @@ document { quote CITE,
 document { quote BOLD,
      TT "BOLD x", " -- encloses x in a hypertext BOLD item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.  This corresponds to B in html format.",
      PARA,
      "Here is an example.",
@@ -688,7 +741,7 @@ document { quote BOLD,
 document { quote CODE,
      TT "CODE x", " -- encloses x in a hypertext CODE item.",
      PARA,
-     "The argument x should be a string, or a list or sequence of
+     "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.",
@@ -708,7 +761,7 @@ document { quote HREF,
 document { quote MENU,
      TT "MENU x", " -- encloses the list x as a hypertext MENU.",
      PARA,
-     "The argument x should be a list of hypertext items or strings.",
+     "The argument ", TT "x", " should be a list of hypertext items or strings.",
      PARA,
      "Here is an example. The expression ",
      PRE "MENU {\"first\",\"second\",\"third\"}",
@@ -721,7 +774,7 @@ document { quote MENU,
 document { quote UL,
      TT "UL x", " -- encloses the list x as a hypertext UL itemized list.",
      PARA,
-     "The argument x should be a list of strings or hypertext items.",
+     "The argument ", TT "x", " should be a list of strings or hypertext items.",
      PARA,
      "Here is an example. The expression ",
      PRE "UL {\"first\",\"second\",\"third\"}",
@@ -734,7 +787,7 @@ document { quote UL,
 document { quote DL,
      TT "DL x", " -- encloses the list x as a hypertext DL itemized list.",
      PARA,
-     "The argument x should be a list, each member of which should be
+     "The argument ", TT "x", " should be a list, each member of which should be
      a list of length two.",
      PARA,
      "Here is an example. The expression ",
@@ -755,7 +808,7 @@ document { quote DL,
 document { quote OL,
      TT "OL x", " -- encloses the list x as a hypertext OL itemized list.",
      PARA,
-     "The argument x should be a list of strings or hypertext items.
+     "The argument ", TT "x", " should be a list of strings or hypertext items.
      The items are numbered in the display.",
      PARA,
      "Here is an example. The expression ",
@@ -769,7 +822,7 @@ document { quote OL,
 document { quote NL,
      TT "NL x", " -- encloses the list x as a hypertext NL itemized list.",
      PARA,
-     "The argument x should be a list of strings or hypertext items.",
+     "The argument ", TT "x", " should be a list of strings or hypertext items.",
      PARA,
      "Here is an example. The expression ",
      PRE "NL {\"first\",\"second\",\"third\"}",

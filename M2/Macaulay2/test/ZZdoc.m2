@@ -28,9 +28,9 @@ reach := method(SingleArgumentDispatch=>true)
 DocumentationMissing := new MutableHashTable
 reachable = new MutableHashTable
 verify Thing := x -> null
-verify Sequence := verify HtmlList := x -> scan(x,verify)
+verify Sequence := verify MarkUpList := x -> scan(x,verify)
 reach Thing := x -> null
-reach Sequence := reach HtmlList := x -> scan(x,reach)
+reach Sequence := reach MarkUpList := x -> scan(x,reach)
 
 DocumentationProvided := set apply(topicList(), getDocumentationTag)
 

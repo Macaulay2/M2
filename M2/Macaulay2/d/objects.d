@@ -710,7 +710,7 @@ installIt(h:HashTable,key:Expr,value:Expr):Expr := (
 --	       )
 --	  else errorExpr("expected a list of class List")
 --	  )
-     else errorExpr("expected a function or list"));
+     else errorExpr("expected a function"));
 -----------------------------------------------------------------------------
 -- unary methods
 export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (

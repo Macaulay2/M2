@@ -89,7 +89,7 @@ name Function := f -> (
 repl := z -> (
      if class z === List or class z === Sequence then SEQ apply(toList z, repl)
      else if class z === TO then z     
-     else if instance(z,HtmlList) then apply(z,repl)
+     else if instance(z,MarkUpList) then apply(z,repl)
      else z
      )
 
@@ -104,7 +104,9 @@ doc = x -> (
      else null
      )
 
-err := nodeName -> error("warning: documentation already provided for '", nodeName, "'")
+err := nodeName -> (
+     stderr << concatenate ("warning: documentation already provided for '", nodeName, "'") << newline
+     )
 
 keysDoc := () -> (
 	if DocDatabase === null
@@ -352,7 +354,7 @@ processExample := x -> { CODE (
 
 processExamplesLoop := s -> (
      if class s === EXAMPLE then TABLE apply(select(toList s, i -> i =!= null), processExample)
-     else if class s === Sequence or instance(s,ListHead)
+     else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)
 
@@ -451,155 +453,7 @@ SEEALSO = v -> (
 
 Nothing << Thing := (x,y) -> null
 
-document { quote document,
-     TT "document {s, d}", " -- install documentation ", TT "d", " for 
-     the topic ", TT "s", ".",
-     PARA,
-     "The documentation ", TT "d", " should be ", TO "hypertext", ".  The topic
-     ", TT "s", " may be one of the special forms useable with ", TO "TO", ".",
-     PARA,
-     SEEALSO {"help functions"}
-     }
-
-document { quote TEST,
-     TT "TEST s", " -- writes the string s to a new test file.  The
-     commands in that file can be run later as a test.",
-     PARA,
-     "Intended for internal use only."
-     }
-
-document { quote between,
-     TT "between(m,v)", " -- inserts ", TT "m", " between each pair of elements 
-     of the list or sequence ", TT "v", ", returning a list.",
-     }
-
-document { quote SEEALSO,
-     TT "SEEALSO {a, b, ...}", " -- inserts, into a documentation page, a sentence
-     instructing the reader to see some other topics.",
-     PARA,
-     "The topics may have the special forms used with ", TO "TO", ".",
-     SEEALSO "document"
-     }
-
-document { quote doc,
-     TT "doc s", " -- provides the online documention for the topic s, in
-     internal ", TO "hypertext", " form, suitable for conversion to
-     text with ", TO "text", " or to html with ", TO "html", ".",
-     PARA,
-     EXAMPLE "doc partitions"
-     }
-
-document { quote help,
-     -- no PARA in this documentation, so it all gets displayed.
-     TT "help X", " -- displays the online documentation for ", TT "X", ".",
-     BR, NOINDENT,
-     TT "help \"Macaulay 2\"", " -- displays the base of the online documentation
-     tree.",
-     BR, NOINDENT,
-     TT "help methods X", " -- displays help messages about the methods usable
-     with things of type ", TT "X", ".",
-     BR, NOINDENT,
-     TT "help methods res", " -- displays help messages about the methods 
-     usable with the function ", TT "res", ".",
-     BR, NOINDENT,
-     TT "help methods quote **", " -- displays help messages about the methods 
-     usable with the operator ", TT "**", ".",
-     BR, NOINDENT,
-     TT "help methods (res, X)", " -- displays help messages about the 
-     methods usable with the function ", TT "res", " and a thing of
-     class ", TT "X", ".",
-     BR, NOINDENT,
-     TT "help methods (quote **, X)", " -- displays help messages about the 
-     methods usable with the operator ", TT "**", " and a thing of
-     class ", TT "X", ".",
-     BR, NOINDENT,
-     TT "help methods (X, Y)", " -- displays help messages about the 
-     methods usable with a thing of class ", TT "X", " and a thing of class
-     ", TT "Y", "."
-     }
-
-document { quote topicList,
-     TT "topicList()", " -- provides a complete list of topics on which help 
-     is available.",
-     PARA,
-     "Intended to be used in programs.  Users will prefer 
-     to use ", TO "topics", ".",
-     PARA,
-     SEEALSO "help"
-     }
-
-document { quote topics,
-     TT "topics  ", " -- displays a list of topics on which help is available.",
-     PARA,
-     "topics() -- Does the same in a function or file.",
-     PARA,
-     SEEALSO "help"
-     }
-
-document { quote apropos,
-     TT "apropos s", " -- displays a list of global symbols which match
-     the pattern specified by the string s.",
-     PARA,
-     "The pattern may contain '*'s as wild card characters.",
-     EXAMPLE "apropos \"scan\""
-     }
-
 printExamples = f -> scan(examples f, i -> << i << endl)
-
-document { quote printExamples,
-     TT "printExamples f", " -- prints out the examples of code using
-     the function ", TT "f", " provided in the documentation for
-     ", TT "f", ".",
-     PARA,
-     EXAMPLE "printExamples partition",
-     SEEALSO {"examples", "document"}
-     }
-
-document { quote Documentation,
-     TT "Documentation", " -- a hash table which is used to store
-     pointers to documentation of functions, symbols, and methods.",
-     PARA,
-     "This hash table is used by the routines that display 
-     documentation, is intended for internal use only, and its format may change.",
-     PARA,
-     "The documentation is stored both in a hash table in memory, and in a 
-     database file.  Combined, the two look like a single hash table, but
-     the ", TO "phase", " variable controls whether entries stored in it 
-     persist to the next session.",
-     PARA,
-     "The key may be anything, and if the value is a string, then
-     that string is taken to be the name of the thing, (which can be used for
-     when printing the thing).  The search for documentation continues 
-     with the name.",
-     PARA,
-     "The key may be anything, and if the value is a symbol, then
-     the symbol is one whose value is the thing, (which can be used for
-     when printing the thing), and the search for 
-     documentation continues with the symbol.",
-     PARA,
-     "The key may be a string: if the value is a database, then the
-     documentation is to be found there.  If the value is a list of
-     type ", TO "SEQ", " then it's the documentation itself.",
-     PARA,
-     "The key may be a sequence such as ", TT "(quote +,X,Y)", "
-     which is used to access the documentation installed when the method
-     for adding an instance of class X to an instance of class Y was
-     defined.  In this case the value is the list presented at that time,
-     i.e., a list of the form ", TT "{Z, (x,y) -> ... , documentation ... }",
-     ".",
-     PARA,
-     "The function ", TO "getDocumentationTag", " is used to chase through this
-     hash table to the final key.",
-     SEEALSO ":="
-     }
-
-document { quote getDocumentationTag,
-     TT "getDocumentationTag s", " -- chase through the pointers in 
-     the hash table ", TO "Documentation", " and return the final key, which
-     is a string which can be used as a key into the documentation database.",
-     PARA,
-     "This function is intended for internal use only."
-     }
 
 TEST ///
 assert( null =!= doc sin)
@@ -607,9 +461,3 @@ assert( null =!= doc "sin")
 assert( null =!= doc quote sin)
 ///
 
-document { quote formatDocumentTag,
-     TT "formatDocumentTag x", " -- formats the tags used with ", TO "TO", " for
-     display purposes in documents.",
-     PARA,
-     "This function is intended for internal use only."
-     }

@@ -451,7 +451,9 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	  else wrongTarget())
      is o:List do (
      	  if basicType == basicListClass then (
-	       if o.class == class then e
+	       if parent != nothingClass
+	       then errorExpr("expected Nothing as parent for list")
+	       else if o.class == class then e
 	       else (
 	       	    mutable := ancestor(class,mutableListClass);
 		    Expr(
@@ -541,10 +543,13 @@ makenew(class:HashTable,parent:HashTable):Expr := (
 	       newHashTable(class,parent),
 	       ancestor(class,mutableHashTableClass)))
      else if basicType == basicListClass 
-     then Expr(
-	  sethash(
-	       List(class,emptySequence,0,false),
-	       ancestor(class,mutableHashTableClass)))
+     then (
+	  if parent != nothingClass
+	  then errorExpr("expected Nothing as parent for list")
+	  else Expr(
+	       sethash(
+		    List(class,emptySequence,0,false),
+		    ancestor(class,mutableHashTableClass))))
      else errorExpr("basic type for 'new' method should have been BasicList or HashTable"));
 makenew(class:HashTable):Expr := makenew(class,nothingClass);
 -----------------------------------------------------------------------------

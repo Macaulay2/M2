@@ -2232,14 +2232,14 @@ document { "syntax",
      level for parsing the subsequent expression, unless the current level
      is higher, in which case it is used.",
      PARA,
-     "Consider a binary operator such as * .  The relationship between
-     its scope and its precedence turns out to determine whether a*b*c
-     is parsed as (a*b)*c or as a*(b*c).  When the parser encounters
-     the second *, the current parsing level is equal to the scope of
-     the first *.  If the scope is less than the precedence, then
-     the second * becomes part of the right hand operand of the
-     first *, and the expression is parsed as a*(b*c).  Otherwise, the
-     expression is parsed as (a*b)*c.",
+     "Consider a binary operator such as ", TT "*", ".  The relationship between
+     its scope and its precedence turns out to determine whether ", TT "a*b*c", "
+     is parsed as ", TT "(a*b)*c", " or as ", TT "a*(b*c)", ".  When the parser encounters
+     the second ", TT "*", ", the current parsing level is equal to the scope of
+     the first ", TT "*", ".  If the scope is less than the precedence, then
+     the second ", TT "*", " becomes part of the right hand operand of the
+     first ", TT "*", ", and the expression is parsed as ", TT "a*(b*c)", ".  Otherwise, the
+     expression is parsed as ", TT "(a*b)*c", ".",
      PARA,
      "For unary operators, the strength is used instead of the scope to reset
      the current level.  The reason for having both numbers is that some
@@ -2248,10 +2248,10 @@ document { "syntax",
      when used as an infix operator, and binds as loosely as adjacency or
      function application when used as a prefix operator.",
      PARA,
-     "To handle expressions like 'b c d', where there are no tokens present
+     "To handle expressions like ", TT "b c d", ", where there are no tokens present
      which can serve as a binary multiplication operator, after parsing b,
      the level will be set to 1 less than the precedence of an identifier,
-     so that 'b c d' will be parsed as 'b (c d)'.",
+     so that ", TT "b c d", " will be parsed as ", TT "b (c d)", ".",
      PARA,
      "The exclamation point is allowed as a unary operator either to the
      right or to the left of its operand.  The other unary operators occur
@@ -2324,7 +2324,7 @@ document { "programming",
 --      }
 
 document { quote "shield",
-     TT "shield x", " -- executes the expression x, temporarily
+     TT "shield x", " -- executes the expression ", TT "x", ", temporarily
      ignoring interrupts."
      }
 
@@ -2628,14 +2628,14 @@ document { quote Field,
      }
 
 document { quote char,
-     TT "char F", " -- returns the characteristic of the ring F.",
+     TT "char F", " -- returns the characteristic of the ring ", TT "F", ".",
      PARA,
      "The key ", TO "char", " is used to store the characteristic
      in F after it has been computed."
      }
 
 document { quote basictype,
-     TT "basictype x", " -- yields a symbol representing the basic type of x.",
+     TT "basictype x", " -- yields a symbol representing the basic type of ", TT "x", ".",
      PARA,
      "Every thing has basic type which tells what sort of thing it
      really is, internally.  It is not possible for the user to create 
@@ -2669,7 +2669,7 @@ document { quote ++,
 document { quote @@,
      TT "f @@ g", " -- a binary operator used for composition of functions.",
      PARA,
-     "If f and g are homomorphisms of modules, then f @@ g yields their
+     "If ", TT "f", " and ", TT "g", " are homomorphisms of modules, then ", TT "f @@ g", " yields their
      composite as a homomorphism.",
      PARA,
      "The user may install other ", TO {"binary method", "s"}, " for this 
@@ -2911,9 +2911,9 @@ document { quote depth,
      }
 
 document { "String # ZZ",
-     TT "s#i", " -- produce the i-th character from a string s.",
+     TT "s#i", " -- produce the ", TT "i", "-th character from a string ", TT "s", ".",
      PARA,
-     "If i is negative and the length of the string is n, then
+     "If ", TT "i", " is negative and the length of the string is ", TT "n", ", then
      the (n-i)-th character is provided.",
      PARA,
      SEEALSO "String"
@@ -2959,10 +2959,10 @@ document { "combinatorial functions",
      }
 
 document { quote hash,
-     TT "hash x", " -- returns the hash code of x.",
+     TT "hash x", " -- returns the hash code of ", TT "x", ".",
      PARA,
-     "The hash code of x is an integer produced in a deterministic way
-     from x, and perhaps from the hash codes of the contents of x.
+     "The hash code of ", TT "x", " is an integer produced in a deterministic way
+     from ", TT "x", ", and perhaps from the hash codes of the contents of ", TT "x", ".
      See ", TO "hashing", " for a discussion of the requirements that
      the hash codes used here are designed to satisfy."
      }
@@ -3258,9 +3258,9 @@ document { quote BasicList,
      }
 
 document { quote toSequence,
-     TT "toSequence x", " -- yields the elements of a list x as a sequence.",
+     TT "toSequence x", " -- yields the elements of a list ", TT "x", " as a sequence.",
      PARA,
-     "If x is a sequence, then x is returned.",
+     "If ", TT "x", " is a sequence, then ", TT "x", " is returned.",
      PARA,
      EXAMPLE {
 	  "toSequence {1,2,3}",
@@ -3495,13 +3495,13 @@ document { "transcendental functions",
 document { quote mutable,
      TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
      PARA,
-     "If x is a hash table, list, or database, then it's mutable if its contents
+     "If ", TT "x", " is a hash table, list, or database, then it's mutable if its contents
      can be destructively altered.",
      PARA,
-     "If x is a symbol, then it's mutable if a value can be assigned to
+     "If ", TT "x", " is a symbol, then it's mutable if a value can be assigned to
      it. (See ", TO "protect", ".)",
      PARA,
-     "If x is anything else, then it isn't mutable.",
+     "If ", TT "x", " is anything else, then it isn't mutable.",
      PARA,
      "The contents of a mutable hash table do not participate in strong comparison
      with ", TO "===", " or in ", TO "hashing", ".",
@@ -3535,7 +3535,8 @@ exit = new Command from exit
 quit = new Command from (() -> oldexit 0)
 
 document { quote exit,
-     TT "exit n", " -- terminates the program and returns n as return code.",BR,
+     TT "exit n", " -- terminates the program and returns ", TT "n", " as return code.",
+     BR,
      NOINDENT, 
      TT "exit", " -- terminates the program and returns 0 as return code.",
      PARA,
@@ -3560,7 +3561,7 @@ document { quote fork,
      }
 
 document { quote sleep,
-     TT "sleep n", " -- sleeps for n seconds."
+     TT "sleep n", " -- sleeps for ", TT "n", " seconds."
      }
 
 document { quote processID,
@@ -3568,16 +3569,16 @@ document { quote processID,
      }
 
 document { quote string,
-     TT "string x", " -- convert x to a string unless it is one already.",
+     TT "string x", " -- convert ", TT "x", " to a string unless it is one already.",
      PARA,
      "Not intended for general use, as it is primitive, and doesn't display
      contents or names, for example.  Use ", TO "name", " instead."
      }
 
 document { quote BinaryPowerMethod,
-     TT "BinaryPowerMethod(x,n)", " -- computes x^n using successive squaring",
+     TT "BinaryPowerMethod(x,n)", " -- computes ", TT "x^n", " using successive squaring",
      PARA,
-     "The technique depends in a standard way on the binary expansion of n,
+     "The technique depends in a standard way on the binary expansion of ", TT "n", ",
      hence the name.",
      PARA,
      SEEALSO "SimplePowerMethod"
@@ -3618,7 +3619,7 @@ document { quote loaddata,
      "After the data segments have been reloaded, the command line arguments
      will be dealt with in the usual way, except that only the arguments
      after the i-th '--' and before the i+1-st '--' (if any) will be considered,
-     where i is the current value of ", TO "reloaded", ".",
+     where ", TT "i", " is the current value of ", TO "reloaded", ".",
      SEEALSO {"listUserSymbols"}
      }
      
@@ -3631,7 +3632,7 @@ document { quote reloaded,
 
 document { quote buckets,
      TT "buckets x", " -- returns a list of the buckets used internally in an 
-     hash table x.",
+     hash table ", TT "x", ".",
      PARA,
      "Each bucket is represented as a list of key/value pairs."
      }
@@ -3667,9 +3668,10 @@ if class XCreateWindow === Function then (
 document { quote XCreateWindow,
      TT "XCreateWindow(pid,x,y,a,b,w,n)", " -- makes a new window.",
      PARA,
-     "Here pid is the id of the parent window, x and y are the coordinates
-     of the upper left corner of the window, a and b are the width and
-     height, w is the width of the border, and n is the name of the window."
+     "Here ", TT "pid", " is the id of the parent window, ", TT "x", " 
+     and ", TT "y", " are the coordinates of the upper left corner of the 
+     window, ", TT "a", " and ", TT "b", " are the width and
+     height, ", TT "w", " is the width of the border, and ", TT "n", " is the name of the window."
      }
 ) else erase quote XCreateWindow
 
@@ -3691,7 +3693,7 @@ document { quote generatorSymbols,
      }
 
 document { quote match,
-     TT "match(s,p)", " -- whether the string s matches the pattern p.",
+     TT "match(s,p)", " -- whether the string s matches the pattern ", TT "p", ".",
      PARA,
      "The pattern p may contain '*'s, which serve as wild card characters.
      This is provisional - eventually it will provide regular expression
@@ -3706,15 +3708,15 @@ document { quote gg,
      }
 
 document { quote pairs,
-     TT "pairs x", " -- makes a list of all key/value pairs (k,v) in
-     a hash table x.",
+     TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
+     a hash table ", TT "x", ".",
      PARA,
      EXAMPLE "scan(pairs Nothing, print)"
      }
 
 document { quote sequence,
-     TT "sequence v", " -- returns v if v is a sequence, otherwise makes
-     a sequence of length one containing v.",
+     TT "sequence v", " -- returns ", TT "v", " if ", TT "v", " is a sequence, otherwise makes
+     a sequence of length one containing ", TT "v", ".",
      PARA,
      EXAMPLE {
 	  "sequence 4",
@@ -3727,7 +3729,7 @@ document { quote sequence,
 
 document { quote xor,
      TT "xor(i,j)", " -- produces the bitwise logical exclusive-or of
-     the integers i and j.",
+     the integers ", TT "i", " and ", TT "j", ".",
      PARA,
      EXAMPLE "xor(10,12)"
      }
@@ -3751,8 +3753,8 @@ document { quote mingle,
 document { quote SelfInitializingType,
      TT "SelfInitializingType", " -- the class of all self initializing types.",
      PARA,
-     "A self initializing type X will produce an instance of X from
-     initial data v with the expression 'X v'.",
+     "A self initializing type ", TT "X", " will produce an instance of X from
+     initial data ", TT "v", " with the expression ", TT "X v", ".",
      PARA,
      EXAMPLE {
 	  "X = new SelfInitializingType of BasicList",
@@ -3830,9 +3832,9 @@ document { quote newline,
      }
 
 document { quote linkFilename,
-     TT "linkFilename s", " -- convert a string s into a string which can be
-     used as a file name to contain HTML about the topic referred
-     to by s.",
+     TT "linkFilename s", " -- convert a string ", TT "s", " into a string 
+     which can be used as a file name to contain HTML about the topic 
+     referred to by ", TT "s", ".",
      PARA,
      "The value returned is a sequence number, and hence may not be
      the same in subsequent sessions.  Hence this is mainly useful
@@ -3867,7 +3869,7 @@ document { "apply(Set,Function)",
      }
 
 document { quote lookupCount,
-     TT "lookupCount s", " -- the number of times the symbol s has been
+     TT "lookupCount s", " -- the number of times the symbol ", TT "s", " has been
      encountered in source code presented to the interpreter."
      }
 
@@ -3906,21 +3908,21 @@ document { quote Database,
      }
 
 document { quote reorganize,
-     TT "reorganize x", " -- reorganize the database file x, compactifying it.",
+     TT "reorganize x", " -- reorganize the database ", TT "file", " x, compactifying it.",
      PARA,
      SEEALSO "Database"
      }
 
 document { quote openDatabase,
      TT "openDatabase s", " -- open a database file corresponding to the file
-     whose name is contained in the string s.",
+     whose name is contained in the string ", TT "s", ".",
      PARA,
      SEEALSO "Database"
      }
 
 document { quote openDatabaseOut,
      TT "openDatabaseOut s", " -- open a database file corresponding to the file
-     whose name is contained in the string s, and allow changes to be made
+     whose name is contained in the string ", TT "s", ", and allow changes to be made
      to it.",
      PARA,
      SEEALSO "Database"
@@ -3928,7 +3930,7 @@ document { quote openDatabaseOut,
 
 document { quote firstkey,
      TT "firstkey f", " -- return the first key available in the database
-     file f.",
+     file ", TT "f", ".",
      PARA,
      "Returns ", TT "null", " if none.",
      PARA,
@@ -4286,7 +4288,7 @@ document { quote MutableHashTable,
      }
 
 document { quote map,
-     TT "map(Y,X,d)", " -- constructs a map to Y from X defined by data d.",
+     TT "map(Y,X,d)", " -- constructs a map to ", TT "Y", " from ", TT "X", " defined by data ", TT "d", ".",
      PARA,
      "This is intended to be a general mechanism for constructing maps
      (homomorphisms) between objects in various categories.",
@@ -4298,14 +4300,14 @@ document { quote map,
 	  }
      }
 document { quote precedence,
-     TT "precedence x", " -- returns the parsing precedence of x for use in
+     TT "precedence x", " -- returns the parsing precedence of ", TT "x", " for use in
      the printing routines.",
      PARA,
      SEEALSO {"Expression", "net", "name"}
      }
 
 document { quote hashTable,
-     TT "hashTable v", " -- produce a hash table from a list v of key-value
+     TT "hashTable v", " -- produce a hash table from a list ", TT "v", " of key-value
      pairs.",
      PARA,
      "The pairs may be of the form ", TT "a=>b", ", ", TT "{a,b}", ",
@@ -4343,10 +4345,10 @@ document { quote hypertex,
      }
 
 document { quote saturate,
-    TT "saturate(I,J,options)", " -- computes the saturation
-    (I : J^*) of I w.r.t. J.  If J is not given, the ideal J
-    is taken to be the ideal generated by the variables of 
-    the ring R of I.",
+    TT "saturate(I,J,options)", " -- computes the saturation ", TT "(I : J^*)", " 
+    of I with respect to ", TT "J", ".  If ", TT "J", " is not given, the 
+    ideal ", TT "J", " is taken to be the ideal generated by the variables of 
+    the ring ", TT "R", " of ", TT "I", ".",
     BR,NOINDENT,
     TT "saturate(Ideal)",
     BR,NOINDENT,
