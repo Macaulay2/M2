@@ -555,7 +555,7 @@ void Matrix::minimal_lead_terms_ZZ(intarray &result) const
       vec v = vecs[indices[i]];
       vec gsyz, rsyz;
       if (v == NULL) continue;
-      if (!mis[v->comp]->search(v->coeff, v->monom, gsyz, rsyz))
+      if (TI_TERM != mis[v->comp]->search(v->coeff, v->monom, gsyz, rsyz))
 	{
 	  mis[v->comp]->insert_minimal(
 				       new tagged_term(P->Ncoeffs()->copy(v->coeff),

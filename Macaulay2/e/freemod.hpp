@@ -239,7 +239,7 @@ protected:
 				     const int *m, 
 				     const Nterm *g) const;
 public:
-  void apply_quotient_ring_elements(vec &f, vec rsyz) const;
+  void apply_quotient_ring_elements(vec &f, int x, vec rsyz) const;
   void apply_map(vec &f, vec gsyz, const array<vec> &vecs) const;
   
   virtual void normal_form(vec &v) const;

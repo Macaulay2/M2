@@ -78,7 +78,8 @@ public:
   RingElement(const Ring *R, RingElement a, Monomial m);
 
   ring_elem    get_value ()             const { return obj->val; }
-  void         set_value (ring_elem f)       { obj->val = f; }
+  void         set_value (ring_elem f)       { obj->R->remove(obj->val);
+                                               obj->val = f; }
   const Ring * get_ring  ()             const { return obj->R; }
 
   // ring arithmetic

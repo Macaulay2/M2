@@ -21,14 +21,13 @@ struct GB_elem
   vec fsyz;
   int *lead_exp;
   int sugar_degree;
-  bool is_min;			// eventually: TY_MINIMAL, TY_SMALL_GB, TY_LARGE_GB, TY_REMOVED
   
   GB_elem()
     : f(NULL), fsyz(NULL), lead_exp(NULL), 
-      sugar_degree(0), is_min(0) {}
-  GB_elem(vec f, vec fsyz, int sugar_degree, int is_min) 
+      sugar_degree(0) {}
+  GB_elem(vec f, vec fsyz, int sugar_degree) 
     : f(f), fsyz(fsyz), lead_exp(NULL), 
-      sugar_degree(sugar_degree), is_min(is_min) {}
+      sugar_degree(sugar_degree) {}
 
   // infrastructure
   friend void i_stashes();
@@ -75,6 +74,9 @@ private:
   intarray gbpairlocs;		// permutation of 0..gb.length()-1
 				// Used for s-pair construction.
 
+  // Minimal generators being collected
+  Matrix mingens;
+
   // Syzygies collected
   Matrix syz;
 
@@ -116,9 +118,10 @@ private:
 
   void find_pairs(int me);
 
-  void insert_gb_element(vec f, vec fsyz, bool is_minimal);
+  void insert_gb_element(vec f, vec fsyz);
+  void replace_or_insert_gb_element(vec f, vec fsyz);
   bool insert_syzygy(vec fsyz);
-  void handle_element(vec f, vec fsyz, bool maybe_minimal);
+  void handle_element(vec f, vec fsyz);
 
   int gb_sort_partition(int lo, int hi);
   void gb_sort(int lo, int hi);

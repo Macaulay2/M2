@@ -164,6 +164,7 @@ NAMES = \
 	monoid \
 
 NOT_USED_YET = \
+	gbc \
 	Emonorder \
 	Emonoid \
 	EEhilbtrack \
