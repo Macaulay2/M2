@@ -125,7 +125,7 @@ buttonBar = (key) -> CENTER {
      masterIndexButton,
      LITERAL concatenate (///
      <form action="///,
-     if getenv "SEARCHENGINE" === "" then "/cgi-bin/htsearch" else getenv "SEARCHENGINE",
+     if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
      ///">
 	search for:
 	<input type="text"   name="words">

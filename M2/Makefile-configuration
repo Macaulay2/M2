@@ -1,16 +1,7 @@
 # -*- Mode: Makefile -*-
 
-#############################################################################
-ifdef XYZZY
-  If you get an error message on this line, it is because you are not using
-  the 'gnu' version of the 'make' program.  The source code for it is
-  available at ftp://ftp.gnu.org/pub/gnu/make.
-endif
-#############################################################################
-
 default : configure include/config.h.in
 
-include configure.options
 configure.options :
 	echo "# -*- Mode: Makefile -*-" > $@
 	echo "# CONFIGURE_ENVIRON = " >>$@
@@ -27,23 +18,8 @@ configure.options :
 	echo "# CONFIGURE_OPTIONS += --enable-verbose" >>$@
 	echo "# CONFIGURE_OPTIONS += --disable-gc-for-new" >>$@
 
-export CONFIGURED_FILES := $(shell cat config.files)
-% : %.in config.status
-	./config.status $@
-#############################################################################
-
 configure : configure.ac aclocal.m4 config.files
 	autoconf
 include/config.h.in : configure.ac aclocal.m4
 	autoheader
 	touch $@
-
-config.status : configure configure.options version
-	unset CONFIG_SITE; \
-	$(CONFIGURE_ENVIRON) ./configure $(CONFIGURE_OPTIONS) --no-create --cache-file=config.cache
-
-include/config.h : config.status include/config.h.in
-	./config.status $@
-	touch $@
-
-configuration : include/config.h $(CONFIGURED_FILES)
