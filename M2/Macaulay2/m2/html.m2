@@ -435,6 +435,12 @@ check Package := pkg -> (
 
 runfun := o -> if class o === Function then o() else o
 
+setupNames := (opts,pkg) -> (
+     buildPackage = pkg#"title";
+     buildDirectory = minimizeFilename(runfun opts.PackagePrefix | "/");
+     if opts.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
+     )
+
 installPackage = method(Options => { 
 	  PackagePrefix => () -> homeDirectory | packageSuffix | "encap/",
           InstallPrefix => () -> homeDirectory | packageSuffix | "local/",
@@ -458,9 +464,7 @@ uninstallPackage String := opts -> pkg -> (
      )
 
 uninstallPackage Package := o -> pkg -> (
-     buildPackage = pkg#"title";
-     buildDirectory = minimizeFilename(runfun o.PackagePrefix | "/");
-     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
+     setupNames(o,pkg);
      installDirectory := minimizeFilename(runfun o.InstallPrefix | "/");
      stderr << "--uninstalling package " << pkg << " in " << buildDirectory << endl;
      -- unmake symbolic links
@@ -503,10 +507,7 @@ installPackage Package := opts -> pkg -> (
      -- here's where we get the list of nodes from the raw documentation
      nodes := if opts.MakeDocumentation then packageTagList(pkg,topDocumentTag) else {};
      
-     buildPackage = pkg#"title";
-     
-     buildDirectory = minimizeFilename(runfun opts.PackagePrefix | "/");
-     if opts.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
+     setupNames(opts,pkg);
      
      installDirectory := minimizeFilename(runfun opts.InstallPrefix | "/");
      
@@ -523,7 +524,7 @@ installPackage Package := opts -> pkg -> (
      if not fileExists fn then error("file ", fn, " not found");
      copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose => debugLevel > 0);
 
-     if pkg === Macaulay2 then (
+     if pkg === Macaulay2Core then (
 	  ) else (
      	  
 	  -- copy package source subdirectory
@@ -651,7 +652,7 @@ installPackage Package := opts -> pkg -> (
 		    ));
 
      	  -- Make sure the processed documentation database exists, even if empty, so when running the examples,
-	  -- M2 doesn't read in all the documentation sources each time.  For the package M2doc this makes a big
+	  -- M2 doesn't read in all the documentation sources each time.  For the package Macaulay2Doc this makes a big
 	  -- difference.
 	  dbname := docDir | "documentation.db";
      	  if not fileExists dbname then (
@@ -849,7 +850,7 @@ installPackage Package := opts -> pkg -> (
 	  << ///for i in *.info/// << endl
 	  << ///do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")/// << endl
 	  << ///done/// << endl;
-	  if version#"dumpdata" and pkg#"title" == "Macaulay2" then (
+	  if version#"dumpdata" and pkg#"title" == "Macaulay2Core" then (
 	       f << endl << ///(set -x ; "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/bin/M2 -q --stop --dumpdata)/// << endl;
 	       );
 	  fileChangeMode(f,octal "755");

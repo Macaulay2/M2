@@ -12,7 +12,7 @@ g = (3*x^3+x*y+y^2) * d
 h = gcd(f,g)
 assert(h == d)
 
-debug Macaulay2
+debug Macaulay2Core
 R = QQ[x,y]
 f = 1+x^2
 g = 1+x^3

@@ -64,8 +64,8 @@ verifyKey Array   := s -> (				    -- e.g., [res, Strategy]
 -- We need three bits of information about a document tag:
 --     the original key	    	    e.g., (operator **,Module,Module)
 --     the formatted key            e.g., "Module ** Module"
---     the package                  e.g., Macaulay2, or null if there is none
---     the package title            e.g., "Macaulay2", or "" if there is none
+--     the package                  e.g., Macaulay2Core, or null if there is none
+--     the package title            e.g., "Macaulay2Core", or "" if there is none
 -- Here we assemble them together, so we don't have to recompute the information later.
 DocumentTag = new Type of BasicList
 DocumentTag.synonym = "document tag"
@@ -112,7 +112,7 @@ hasDocumentation := key -> isDocumentableThing key and (
 -----------------------------------------------------------------------------
 -- Here we introduce the class FormattedDocumentTag, which contains just the parts of a DocumentTag that are strings
 --     the formatted key            e.g., "Module ** Module"
---     the package title            e.g., "Macaulay2", or "" if there is none
+--     the package title            e.g., "Macaulay2Core", or "" if there is none
 -- The main point is that toExternalString will work for objects of this type, and thus they can be stored externally
 -- as part of the documentation.
 FinalDocumentTag = new Type of BasicList
@@ -197,7 +197,7 @@ record      := f -> x -> (
 -----------------------------------------------------------------------------
 -- identifying the package of a document tag
 -----------------------------------------------------------------------------
--- If we don't find it in a package, then we assume it's missing, and assign it to the "Missing" package.
+-- If we don't find it in a package, then we assume it's missing, and assign it to the "Missing" package.  -- or not...
 -- That way we can compute the package during the loading of a package, while just some of the documentation has been installed.
 -- Missing documentation can be detected when the package is closed, or later.
 packageKey = method(SingleArgumentDispatch => true)	    -- assume the input key has been normalized
@@ -888,7 +888,7 @@ documentationValue(Symbol,HashTable) := (s,x) -> splice (
      c := documentableMethods x;
      if #c > 0 then (DIV {"Functions installed in ", toString x, " :"}, smenu c))
 documentationValue(Symbol,Thing) := (s,x) -> ()
-documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2 then (
+documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Macaulay2Core then (
      e := toSequence pkg#"exported symbols";
      a := select(e,x -> instance(value x,Function));	    -- functions
      b := select(e,x -> instance(value x,Type));	    -- types

@@ -66,7 +66,7 @@ newPackage(String) := opts -> (title) -> (
      saveD := globalDictionaries;
      saveP := packages;
      local hook;
-     if title =!= "Macaulay2" then (
+     if title =!= "Macaulay2Core" then (
      	  hook = (
 	       haderror -> if haderror then (
 	       	    globalDictionaries = saveD;
@@ -80,7 +80,7 @@ newPackage(String) := opts -> (title) -> (
           "title" => title,
 	  symbol Options => opts,
      	  symbol Dictionary => new Dictionary, -- this is the global one
-     	  "private dictionary" => if title === "Macaulay2" then first globalDictionaries else new Dictionary, -- this is the local one
+     	  "private dictionary" => if title === "Macaulay2Core" then first globalDictionaries else new Dictionary, -- this is the local one
      	  "close hook" => hook,
 	  "previous currentPackage" => currentPackage,
 	  "previous dictionaries" => saveD,
@@ -139,12 +139,12 @@ newPackage(String) := opts -> (title) -> (
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
      packages = join(
-	  if title === "Macaulay2" then {} else {newpkg},
-	  {Macaulay2}
+	  if title === "Macaulay2Core" then {} else {newpkg},
+	  {Macaulay2Core}
 	  );
      globalDictionaries = join(
 	  {newpkg#"private dictionary"},
-	  {Macaulay2.Dictionary, OutputDictionary, PackageDictionary}
+	  {Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary}
 	  );
      PrintNames#(newpkg.Dictionary) = title | ".Dictionary";
      PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
@@ -185,19 +185,17 @@ exportMutable Sequence := v -> (
      currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",select(v,s -> instance(s,Symbol)));
      v)
 
-addStartFunction( () -> if prefixDirectory =!= null then Macaulay2#"package prefix" = prefixDirectory )
+addStartFunction( () -> if prefixDirectory =!= null then Macaulay2Core#"package prefix" = prefixDirectory )
 
 saveCurrentPackage := currentPackage
 
-newPackage("Macaulay2", 
+newPackage("Macaulay2Core", 
      Author => {"Daniel R. Grayson", "Michael E. Stillman"},
      Email => {"dan@math.uiuc.edu", "mike@math.cornell.edu"},
      HomePage => {"http://www.math.uiuc.edu/~dan/", "http://www.math.cornell.edu/People/Faculty/stillman.html"},
      DebuggingMode => debuggingMode, 
      Version => version#"VERSION", 
      Headline => "A computer algebra system designed to support algebraic geometry")
-
--- Macaulay2#"test inputs" = saveCurrentPackage#"test inputs"
 
 findSynonyms = method()
 findSynonyms Symbol := x -> (
@@ -234,13 +232,13 @@ closePackage String := title -> (
      scan(sortByHash values exportDict, s -> if not ws#?s then (
 	       protect s;
 	       if value s =!= s and not ReverseDictionary#?(value s) then ReverseDictionary#(value s) = s));
-     if true or pkg =!= Macaulay2 then (			    -- protect it later
+     if true or pkg =!= Macaulay2Core then (			    -- protect it later
 	  protect pkg#"private dictionary";
 	  protect exportDict;
 	  );
-     if pkg#"title" === "Macaulay2" then (
+     if pkg#"title" === "Macaulay2Core" then (
 	  packages = {pkg};
-	  globalDictionaries = {Macaulay2.Dictionary, OutputDictionary, PackageDictionary};
+	  globalDictionaries = {Macaulay2Core.Dictionary, OutputDictionary, PackageDictionary};
 	  )
      else (
 	  packages = prepend(pkg,pkg#"previous packages");

@@ -1,6 +1,6 @@
 S = ZZ/32003[a..i]
 assert(class a === S)
-debug Macaulay2
+debug Macaulay2Core
 -- now a has been clobbered, for some reason
 assert(class a === S)
 -- even a 'use' doesn't help:

@@ -14,7 +14,7 @@ assert( unique {3,4,4,5,5,3,3} === {3, 4, 5} )
 
 -- test for duplicate entries in the dictionary
 
-assert ( {} === select ( pairs tally keys Macaulay2.Dictionary , (s,n) -> n>1 ) )
+assert ( {} === select ( pairs tally keys Macaulay2Core.Dictionary , (s,n) -> n>1 ) )
 
 -- version and printing
 
