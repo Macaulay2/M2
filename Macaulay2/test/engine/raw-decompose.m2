@@ -2,7 +2,6 @@
 -- and the resulting routines in factor.m2 (e.g. decompose)
 
 -- 2 by 2 permanents of a 3 by 3.
-restart
 S = ZZ/32003[a..i]
 J = ideal(b*d+a*e, c*d+a*f, c*e+b*f, b*g+a*h, c*g+a*i, c*h+b*i, e*g+d*h, f*g+d*i, f*h+e*i)
 errorDepth = 0
