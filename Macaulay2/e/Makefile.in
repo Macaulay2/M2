@@ -24,6 +24,7 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 INTERFACE = \
+	minimalgb \
 	matrixcon \
 	computation \
 	comp_gb \

@@ -65,7 +65,6 @@ MonomialTable *MonomialTable::make(int nvars)
   result = new MonomialTable;
   result->_nvars = nvars;
   result->_count = 0;
-  result->_coeffs_ZZ = 0;
   /* The first entry is a dummy entry.  Components 
      will always start at 1. */
   result->_head.push_back(0);
@@ -89,6 +88,35 @@ MonomialTable::~MonomialTable()
       _head[i] = 0;
     }
   _count = 0;
+}
+
+int MonomialTable::find_divisor(exponents exp,
+				int comp) const
+{
+  assert(comp >= 1);
+  if (comp >= (int)_head.size()) return -1;
+  mon_term *head = _head[comp];
+  mon_term *t;
+  int i;
+
+  unsigned long expmask = ~(monomial_mask(_nvars, exp));
+
+  for (t = head->_next; t != head; t = t->_next)
+    if ((expmask & t->_mask) == 0)
+      {
+	bool is_div = 1;
+	for (i=0; i<_nvars; i++)
+	  if (exp[i] < t->_lead[i])
+	    {
+	      is_div = 0;
+	      break;
+	    }
+	if (is_div)
+	  {
+	    return t->_val;
+	  }
+      }
+  return -1;
 }
 
 int MonomialTable::find_divisors(int max,
@@ -156,8 +184,6 @@ void MonomialTable::insert(exponents exp, int comp, int id)
      in some order (lex order?).  No element is ever removed.
   */
 
-  assert(_coeffs_ZZ <= 0);
-  _coeffs_ZZ = -1;
   if (comp >= (int)_head.size())
     {
       for (int i=_head.size(); i <= comp; i++)

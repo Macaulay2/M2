@@ -8,6 +8,7 @@
 #include "gbring.hpp"
 #include "montable.hpp"
 #include "montableZZ.hpp"
+#include "minimalgb.hpp"
 
 class gbA : public GBComputation {
 public:
@@ -18,11 +19,6 @@ public:
     ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
   };
   
-  struct POLY {
-    gbvector *f;
-    gbvector *fsyz;
-  };
-
   struct gbelem : public our_new_delete {
     POLY g;
     int deg;
@@ -92,7 +88,8 @@ private:
 
   vector<gbelem *,gc_alloc> gb; // Contains any quotient ring elements
 
-  vector<POLY,gc_alloc> minimal_gb; // Contains NO quotient ring elements
+  MinimalGB *minimal_gb;
+  //vector<POLY,gc_alloc> minimal_gb; // Contains NO quotient ring elements
   bool minimal_gb_valid;
 
   MonomialTable *lookup;
@@ -204,6 +201,13 @@ private:
   /* Making the minimal GB */
 
   void poly_auto_reduce(vector<POLY,gc_alloc> &mat);
+  void poly_auto_reduce_ZZ(vector<POLY,gc_alloc> &mat);
+
+  void remainder_by_ZZ(const FreeModule *F,
+		       const FreeModule *Fsyz,
+		       POLY &f,
+		       const vector<POLY,gc_alloc> &polys,
+		       MonomialTableZZ *T);
 
   void minimalize_gb();
 

@@ -184,6 +184,42 @@ bool MonomialTableZZ::is_strong_member(mpz_ptr c, exponents exp, int comp) const
   return (find_term_divisors(1,c,exp,comp,0) > 0);
 }
 
+int MonomialTableZZ::find_smallest_coeff_divisor(exponents exp, 
+						 int comp) const
+{
+  assert(comp >= 1);
+  if (comp >= (int)_head.size()) return -1;
+  mon_term *head = _head[comp];
+  mon_term *t;
+
+  int smallest_val = -1;
+  mpz_ptr smallest = 0;
+
+  unsigned long expmask = ~(monomial_mask(_nvars, exp));
+
+  for (t = head->_next; t != head; t = t->_next)
+    if ((expmask & t->_mask) == 0)
+      {
+	bool is_div = 1;
+	for (int i=0; i<_nvars; i++)
+	  if (exp[i] < t->_lead[i])
+	    {
+	      is_div = 0;
+	      break;
+	    }
+	if (is_div)
+	  {
+	    if (smallest_val < 0 || (mpz_cmpabs(smallest, t->_coeff) > 0))
+	      {
+		smallest_val = t->_val;
+		smallest = t->_coeff;
+	      }
+	  }
+      }
+  return smallest_val;
+}
+
+
 int MonomialTableZZ::find_monomial_divisors(int max,
 					  exponents exp, 
 					  int comp,
@@ -215,7 +251,7 @@ int MonomialTableZZ::find_monomial_divisors(int max,
 	  }
       }
 
-  if (true)
+  if (false)
     {
       fprintf(stderr, "find_monomial_divisors called with [");
       for (int i=0; i<_nvars; i++) fprintf(stderr, "%d ",exp[i]);
@@ -401,10 +437,12 @@ void MonomialTableZZ::find_weak_generators(int nvars,
      and finally the coefficient */
   sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
 
+#if 0
   fprintf(stderr, "sorted terms: ");
   for (int i=0; i<positions.size(); i++)
     fprintf(stderr, "%d ", positions[i]);
   fprintf(stderr, "\n");
+#endif
 
   MonomialTableZZ *T = MonomialTableZZ::make(nvars);
   for (vector<int,gc_alloc>::iterator j = positions.begin(); j != positions.end(); j++)
@@ -415,7 +453,7 @@ void MonomialTableZZ::find_weak_generators(int nvars,
       }
   /* We could return T if that is desired */
   T->show(stderr);
-  deleteitem(T);
+  //  deleteitem(T);
 }
 
 void MonomialTableZZ::find_strong_generators(int nvars, 
@@ -436,10 +474,12 @@ void MonomialTableZZ::find_strong_generators(int nvars,
      and finally the coefficient */
   sort(positions.begin(), positions.end(), montable_sorter_ZZ(nvars,coeffs,exps,comps));
 
+#if 0
   fprintf(stderr, "sorted terms: ");
   for (int i=0; i<positions.size(); i++)
     fprintf(stderr, "%d ", positions[i]);
   fprintf(stderr, "\n");
+#endif
 
   MonomialTableZZ *T = MonomialTableZZ::make(nvars);
   for (vector<int,gc_alloc>::iterator j = positions.begin(); j != positions.end(); j++)
@@ -449,7 +489,7 @@ void MonomialTableZZ::find_strong_generators(int nvars,
 	T->insert(coeffs[*j], exps[*j], comps[*j], *j);
       }
   /* We could return T if that is desired */
-  deleteitem(T);
+  //  deleteitem(T);
 }
 
 void MonomialTableZZ::show_mon_term(FILE *fil, mon_term *t) const
