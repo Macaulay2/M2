@@ -143,7 +143,11 @@ methods Thing := F -> (
 		    scan(pairs x, (key,meth) -> (
 			      if class meth === Function then
 			      if key === F then found#(F,x) = true
-			      else if class key === Sequence and member(F,key)
+			      else if class key === Sequence and (
+				   member(F,key) 
+				   or 
+				   key#?0 and class key#0 === Sequence and member(F,key#0)
+				   )
 			      then found#key = true)))));
      sort keys found)
 

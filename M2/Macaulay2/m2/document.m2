@@ -93,7 +93,10 @@ packageTag    Thing := key -> ( p := package key; if p === null then currentPack
    --    for display in menus and links
    --    as the key for access in a database, where the key must be a string
 
-Strings := hashTable { Sequence => "(...)", List => "{...}", Array => "[...]" }
+Strings := hashTable { 
+     -- I'm not sure I like this any longer;
+     -- Sequence => "(...)", List => "{...}", Array => "[...]" 
+     }
 toStr := s -> if Strings#?s then Strings#s else toString s
 formatDocumentTag           = method(SingleArgumentDispatch => true)
 	  

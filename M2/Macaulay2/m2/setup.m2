@@ -2,6 +2,9 @@
 
 if class oooo =!= Symbol then error "setup.m2 already loaded"
 
+OutputDictionary = new Dictionary
+globalDictionaries = append(globalDictionaries,OutputDictionary)
+
 --
 
 PackageDictionary = new Dictionary
@@ -29,21 +32,16 @@ match := X -> 0 < #(matches X)				    -- defined as a method later
 
 somethingElse = () -> error "something else needs to be implemented here"
 
-oo <- ooo <- oooo <- null
-
 rot := x -> (
-     global oooo <- ooo;			  -- avoid GlobalAssignHook with <-
-     global ooo <- oo;
-     global oo <- x;
+     if ooo =!= null then global oooo <- ooo;
+     if oo =!= null then global ooo <- oo;
+     if x =!= null then global oo <- x;
      )
 
 applyMethod := (m,x) -> if x === null then x else (
      method := lookup(m,class x);
      if method === null then x else method x
      )
-
-OutputDictionary = new Dictionary
-globalDictionaries = append(globalDictionaries,OutputDictionary)
 
 commonProcessing := x -> (
      x = applyMethod(AfterEval,x);
@@ -92,7 +90,7 @@ checkNet := n -> if class n === Net or class n === String then n else error "did
 checkString := n -> if class n === String then n else error "didn't format correctly"
 silentRobustNet = (wid,ht,sec,y) -> (
      trunc(wid,ht,
-	  try timelimit (sec, () -> checkNet net y)
+	  try timelimit (sec, () -> if y === null then "null" else checkNet net y)
 	  else 
 	  try timelimit (sec, () -> checkString toString y)
 	  else

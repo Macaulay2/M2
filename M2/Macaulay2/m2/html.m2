@@ -491,7 +491,8 @@ installPackage Package := o -> pkg -> (
      makeDirectory infodir;
      infotitle := pkg#"title";
      infobasename := infotitle|".info";
-     infofile := openOut (infodir|infobasename);
+     tmpinfobasename := infobasename|".tmp";
+     infofile := openOut (infodir|tmpinfobasename);
      stderr << "--making info file in " << infofile << endl;
      upto30 := t -> concatenate(t,30-#t:" ");
      infofile << "This is " << infobasename << ", produced by Macaulay 2, version " << version#"VERSION" << endl << endl;
@@ -518,6 +519,10 @@ installPackage Package := o -> pkg -> (
      scan(values byteOffsets, b -> infofile << b << endl);
      infofile << "\037" << endl << "End Tag Table" << endl;
      infofile << close;
+     if fileExists(infodir|infobasename) then unlink(infodir|infobasename);
+     link(infodir|tmpinfobasename,infodir|infobasename);
+     unlink(infodir|tmpinfobasename);
+     stderr << "--completed info file moved to " << infodir|infobasename << endl;
      printWidth = savePW;
 
      -- make postinstall and preremove files, if encap
