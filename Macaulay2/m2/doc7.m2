@@ -1,5 +1,18 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 document {
+     Key => (ambient,Module),
+     Headline => "",
+     Usage => "",
+     Inputs => {
+	  },
+     Outputs => {
+	  },
+     -- description here, with examples
+     SeeAlso => {},
+     Caveat => {}
+     }
+
+document {
      Key => (symbol _, Matrix, List),
      Headline => "get some columns from a matrix",
      TT "f_{i,j,k,...}", " -- produce the submatrix of a matrix f consisting of 
@@ -559,17 +572,31 @@ document {
      }
 document {
      Key => (matrix,Ring,List),
-     TT "matrix(R,v)", " -- create a matrix over R from a doubly-nested list of
-     ring elements or matrices.",
+     Headline => "create a matrix from a doubly nested list of ring elements or matrices",
+     Usage => "matrix(R, v)",
+     Inputs => {
+	  "R" => null,
+	  "v" => "a list of vectors; or a doubly nested list of ring elements 
+	         and/or matrices",
+	  },
+     Outputs => {
+	  {"A matrix over ", TT "R", ", whose source and target are both 
+	       free, formed by the  elements of ", TT "v", "."}
+	  },
+     "All of the vectors, ring elements, or matrices must be defined over the ring ", 
+     TT "R", ", or a base ring of ", TT "R", ".",
+     PARA,
+     "If a doubly nested list of matrices is given, then ring elements can be used for
+     1 by 1 blocks, and 0 represents a zero block.",
      PARA,
      "This is essentially the same as ", TO (matrix,List), " together with
      the specification of the ring.",
      PARA,
      EXAMPLE {
-	  "R = ZZ/101[a..f]",
-      	  "matrix(R, {{a,b,0},{d,0,f}})",
-	  },
-     SeeAlso => {"map", "matrix"}
+	  "R = QQ[a..d];",
+	  "f = matrix{{a,b},{c,0}}",
+	  "h = matrix{{f,f},{f,0},0}"
+	  }
      }
 document {
      Key => (matrix,List),
@@ -625,20 +652,21 @@ document {
       or between objects in other categories.",
      PARA,
      "See also the function ", TO matrix, ", which focuses on creating new matrices from
-     rectangular arrays of ring elements or matrices.",
+     rectangular arrays of ring elements or matrices. Yo",
      Subnodes => {
 	  "Creating a map between modules (a matrix)",
-	  TO (map,Module,Module,Function),
-	  TO (map,Module,Module,List),
-	  TO (map,Module,Module,RingElement),
-	  TO (map,Module,Module,Matrix),
-	  TO (map,Module,Module),
+	  TO (map,Module,Module,Function),   -- done
+	  TO (map,Module,Module,List),  -- done
+	  TO (map,Module,Module,RingElement), -- done
+	  TO (map,Module,Module,Matrix), -- done
+--	  TO (map,Module,Module), -- TODO
      	  "Creating a map between modules, where the source module is computed",
-	  TO (map,Module,ZZ,Function),
-	  TO (map,Module,Nothing,List),
-	  TO (map,Module,Nothing,Matrix),
+	  TO (map,Module,ZZ,Function), -- TODO
+	  TO (map,Module,Nothing,List), -- TODO
+	  TO (map,Module,ZZ,List), -- TODO
+	  TO (map,Module,Nothing,Matrix), -- done
 	  "Creating a map with a different degree",
-	  TO (map,Matrix),
+	  TO (map,Matrix), -- done
 	  "Creating a map between rings",
 	  TO (map,Ring,Ring),
 	  TO (map,Ring,Ring,List),
@@ -739,7 +767,7 @@ document {
      }
 document {
      Key => (map,Module,Module,Matrix),
-     Headline => "",
+     Headline => "create the matrix induced on generators by a given matrix",
      Usage => "map(M,N,p)",
      Inputs => {
 	  "M" => null,
@@ -747,13 +775,11 @@ document {
 	  "p" => null
 	  },
      Outputs => {
-	  "A matrix with the same entries as ", TT "p", ", but whose target 
-	  is ", TT "M", " and source is ", TT "N", "."
+	  {"A matrix with the same entries as ", TT "p", ", but whose target 
+	  is ", TT "M", " and source is ", TT "N"}
 	  },
      TT "M", " and ", TT "N", " should be modules over the same ring, and have the same 
-     number of generators as ", TT "target p", " and ", TT "source p", ", respectively.  
-     If ", TT "M", " or ", TT "N", " is not free,
-     then we verify that the the result is a well defined homomorphism.",
+     number of generators as ", TT "target p", " and ", TT "source p", ", respectively.",
      EXAMPLE {
 	  "R = QQ[x,y,z]",
       	  "p = matrix {{x,y,z}}",
@@ -761,33 +787,40 @@ document {
       	  "degrees source p",
       	  "degrees source q",
 	  },
-     SeeAlso => inducedMap
+     SeeAlso => inducedMap,
+     Caveat => {
+     	  "If ", TT "M", " or ", TT "N", " is not free,
+     	  then we don't check that the the result is a well defined homomorphism."
+	  }
      }
 document {
      Key => (map,Module,Module,RingElement),
-     TT "map(M,N,r)", " -- construct a map from a module ", TT "N", " to ", TT "M", " which is provided
-     by the ring element ", TT "r", ".",
-     PARA,
-     "If ", TT "r", " is nonzero, then ", TT "M", " and ", TT "N", " should be equal, 
-     or at least have the same number of generators.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x]",
-      	  "map(R^2,R^3,0)",
-      	  "map(R^2,R^2,x)",
-      	  "q = map(R^2,R^2,x,Degree=>1)",
-      	  "isHomogeneous q",
+     Headline => "construct the map induced by multiplication by a ring element on the
+        generators",
+     Usage => "map(M,N,r)",
+     Inputs => {
+	  "M" => null,
+	  "N" => {"over the same ring ", TT "R", " as ", TT "M"},
+	  "r" => {"in the ring ", TT "R"}
 	  },
-     PARA,
-     SeeAlso => {(map,Module,Module,ZZ), "map", "matrix"}
-     }
-document {
-     Key => (map,Module,Module),
-     TT "map(M,N)", " -- constructs the natural map from N to M.",
-     PARA,
-     "The modules ", TT "M", " and ", TT "N", " should be subquotient modules of the same
-     free module",
-     SeeAlso => {"map", "isWellDefined"}
+     Outputs => {
+	  {"The map induced by multiplication by r on the generators"}
+	  },
+     "Either ", TT "M", " and ", TT "N", " should be equal, or they should 
+     have the same number of generators.  This gives the same map as
+     r * map(M,N,1).  map(M,N,1) is the map induced by the identity on the
+     generators of M and N.",
+     EXAMPLE {
+	  "R = QQ[x]",
+      	  "map(R^2,R^3,0)",
+      	  "f = map(R^2,R^2,x)",
+	  "f == x *map(R^2,R^2,1)"
+	  },
+     SeeAlso => inducedMap,
+     Caveat => {
+     	  "If ", TT "M", " or ", TT "N", " is not free,
+     	  then we don't check that the the result is a well defined homomorphism."
+	  }
      }
 document {
      Key => (map,Matrix),
@@ -830,10 +863,17 @@ document {
 	  }
      }
 document {
-     Key => (map,Module,Matrix),
-     TT "map(M,p)", " -- recasts a matrix p to a map whose target is M by
-     tensoring p with a graded free module of rank 1.",
-     PARA,
+     Key => (map,Module,Nothing,Matrix),
+     Headline => "recast a matrix to have a new target, and a free module as source",
+     Usage => "map(M,,f)",
+     Inputs => {
+	  "M" => null,
+	  "" => null,
+	  "f" => {"whose target has the same number of generators as ", TT "M"}
+	  },
+     Outputs => {
+	  {"A map with a free source module, and target ", TT "M", ", whose entries are those of f."}
+	  },
      EXAMPLE {
 	  "R = ZZ/101[x,y]",
       	  "p = matrix{{x,y}}",
@@ -841,8 +881,140 @@ document {
       	  "degrees target q",
       	  "degrees source q",
 	  },
-     SeeAlso => {"map", "matrix"}
+     SeeAlso => {matrix}
      }
+document {
+     Key => (map,Module,ZZ,Function),
+     Headline => "create a matrix from a free module by specifying a function which gives each entry",
+     Usage => "map(M,n,f)",
+     Inputs => {
+	  "M" => null,
+	  "n" => null,
+	  "f" => null
+	  },
+     Outputs => {
+	  {"a map from a graded free module of rank ", TT "n", " to the module ", TT "M", " 
+	       whose matrix entry ", TT "h_(i,j)", " is obtained from the
+	       function ", TT "f", " by evaluating ", TT "f(i,j)", "."
+	       }
+	  },
+     "This is the same as calling map(M,R^n,f), except that the 
+     degrees of the basis elements of the source module are chosen
+     in an attempt to ensure that the resulting map is homogeneous of
+     degree zero.",
+     EXAMPLE {
+	  },
+     SeeAlso => {(map,Module,Module,Function)},
+     Caveat => {}
+     }
+document {
+     Key => (map,Module,ZZ,List),
+     Headline => "create a matrix by giving a sparse or dense list of entries",
+     Usage => "map(M,n,v)",
+     Inputs => {
+	  "M" => null,
+	  "n" => null,
+	  "v" => null
+	  },
+     Outputs => {
+	  {"A matrix ", TT "M <-- R^n", " whose entries are obtained from ", TT "v",
+	       ", where R  is the ring of M, and the source of the result is
+	       a graded free module chosen in an attempt to make the result 
+	       homogeneous of degree zero"}
+	  },
+     "The list ", TT "v", " is either a doubly nested list of 
+     ring elements, or a list of elements ",
+     TT "(i,j) => f", ".  The first version provides all of the elements of the 
+     output matrix, row by row.  The second form provides only the 
+     non-zero elements of the 
+     output matrix ", TT "h: h_(i,j) = f", ", for every ", TT "(i,j) => f", 
+     " in the list ", TT "v", ".",
+     PARA,
+     "The ring elements appearing in ", TT "v", " should be be in ", 
+     TT "R", ", or in a base
+     ring of ", TT "R", ".",
+     PARA,
+     "In the first form, each list in v gives a row of the matrix. ",
+     "The length of the list ", TT "v", " should be the number of generators of ", TT "M", 
+     ", and the length of each element of ", TT "v", " (which is itself a 
+     list of ring elements) should be the
+     number of generators of the source module ", TT "N", ".",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "p = map(R^2,3,{{x^2,0,3},{0,y^2,5}})",
+      	  "isHomogeneous p",
+	  },
+     "In the second form, if an index (i,j) occurs more than once, 
+     only the last is taken.",
+     EXAMPLE {
+      	  "p = map(R^2,3,{(0,0) => x+y, (1,1) => x^2, (0,2) => x-1, (0,0) => x-y})"
+	  },
+     SeeAlso => {matrix, (map,Module,Nothing,List), "input a matrix"}
+     }
+document {
+     Key => (map,Module,Nothing,List),
+     Headline => "create a matrix by giving a doubly nested list of ring elements",
+     Usage => "map(M,n,v)",
+     Inputs => {
+	  "M" => null,
+	  "" => null,
+	  "v" => null
+	  },
+     Outputs => {
+	  {"A matrix ", TT "M <-- R^n", " whose entries are obtained from ", TT "v",
+	       ", where R  is the ring of M, and the source of the result is
+	       a graded free module chosen in an attempt to make the result 
+	       homogeneous of degree zero"}
+	  },
+     "The list ", TT "v", " must be a doubly nested list of 
+     ring elements, which are used to fill the matrix, row by row.",
+     PARA,
+     "The ring elements appearing in ", TT "v", " should be be in ", 
+     TT "R", ", or in a base
+     ring of ", TT "R", ".",
+     PARA,
+     "Each list in v gives a row of the matrix. ",
+     "The length of the list ", TT "v", " should be the number of generators of ", TT "M", 
+     ", and the length of each element of ", TT "v", " (which is itself a 
+     list of ring elements) should be the
+     number of generators of the source module ", TT "N", ".",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "p = map(R^2,,{{x^2,0,3},{0,y^2,5}})",
+      	  "isHomogeneous p",
+	  },
+     "Another way is to use the ", TO (matrix,List), " routine:",
+     EXAMPLE {
+      	  "p = matrix {{x^2,0,3},{0,y^2,5}}"
+	  },
+     PARA,
+     "The absence of the second argument indicates that the source of the map
+     is to be a free module constructed with an attempt made to assign degrees
+     to its basis elements so as to make the map homogeneous of degree zero.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[x,y]",
+      	  "f = map(R^2,,{{x^2,y^2},{x*y,0}})",
+      	  "degrees source f",
+      	  "isHomogeneous f",
+	  },
+     SeeAlso => {matrix, (map,Module,Module,List), "input a matrix"}
+     }
+     
+///
+-- remove this?
+document {
+     Key => (map,Module,Module),
+     TT "map(M,N)", " -- constructs the natural map from N to M.",
+     PARA,
+     "The modules ", TT "M", " and ", TT "N", " should be subquotient modules of the same
+     free module",
+     SeeAlso => {"map", "isWellDefined"}
+     }
+///
+
+///
+-- remove?
 document {
      Key => (map,Module,Module,ZZ),
      TT "map(M,N,k)", " -- construct a map from a module ", TT "N", " to ", TT "M", " 
@@ -858,6 +1030,10 @@ document {
      PARA,
      SeeAlso => {(map,Module,Module,RingElement), "map", "matrix"}
      }
+///
+
+///
+-- remove?
 document {
      Key => (map,Module,RingElement),
      TT "map(M,r)", " -- construct the map from M to itself which is provided
@@ -869,6 +1045,10 @@ document {
 	  },
      SeeAlso => {"map", "matrix"}
      }
+///
+
+
+
 document {
      Key => Degree,
      TT "Degree => d", " -- an optional argument to ", TO "matrix", " that
@@ -886,43 +1066,6 @@ document {
       	  "isHomogeneous q",
 	  },
      SeeAlso => {"map", "matrix", [inducedMap,Degree]}
-     }
-document {
-     Key => (map,Module,ZZ,Function),
-     TT "map(M,n,f)", " -- construct a map from a free graded module of
-     rank n to M whose entries are obtained from the function f by 
-     evaluating f(i,j).",
-     PARA,
-     "The degrees of the basis elements of the source module are chosen
-     in an attempt to ensure that the resulting map is homogeneous of
-     degree zero."
-     }
-document {
-     Key => (map,Module,ZZ,List),
-     TT "map(M,n,v)", " -- construct a map from a free graded module of
-     rank n to M whose entries are in the doubly nested list ", TT "v", ".",
-     PARA,
-     "The degrees of the basis elements of the source module are chosen
-     in an attempt to ensure that the resulting map is homogeneous of
-     degree zero."
-     }
-document {
-     Key => (map,Module,Nothing,List),
-     TT "map(M,,v)", " -- construct a map from a free graded module to M
-     whose entries are obtained from the doubly-nested list v of
-     ring elements.",
-     PARA,
-     "The absence of the second argument indicates that the source of the map
-     is to be a free module constructed with an attempt made to assign degrees
-     to its basis elements so as to make the map homogeneous of degree zero.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y]",
-      	  "f = map(R^2,,{{x^2,y^2},{x*y,0}})",
-      	  "degrees source f",
-      	  "isHomogeneous f",
-	  },
-     SeeAlso => {"map", "matrix"}
      }
 document {
      Key => id,
