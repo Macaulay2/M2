@@ -298,7 +298,13 @@ ChainComplexMap ++ ChainComplexMap := (f,g) -> (
      complete f;
      complete g;
      scan(union(spots f, spots g), i -> h#i = f_i ++ g_i);
+     h.components = {f,g};
      h)
+
+components ChainComplexMap := f -> if f.?components then f.components else {f}
+ChainComplexMap _ Array := (f,v) -> f * (source f)_v
+ChainComplexMap ^ Array := (f,v) -> (target f)^v * f
+
 ChainComplexMap * ChainComplexMap := (g,f) -> (
      if target f != source g then error "expected composable maps of chain complexes";
      h := new ChainComplexMap;
@@ -612,7 +618,10 @@ ChainComplex ++ ChainComplex := (C,D) -> (
      complete Cd;
      complete Dd;
      scan(union(spots Cd, spots Dd), i -> Ed#i = Cd_i ++ Dd_i);
+     E.components = {C,D};
      E)
+
+components ChainComplex := C -> if C.?components then C.components else {C}
 
 ChainComplex Array := (C,A) -> (
      if # A =!= 1 then error "expected array of length 1";

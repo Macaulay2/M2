@@ -1,12 +1,42 @@
 Changes made, most recent ones first:
 -----------------------------------------------------------------------------
+New in 0.8.32:
+
+new type : AbstractSet
+
+new type : GradedModule, ++, **
+
+new notation:
++	f^{2,3,4} : rows 2,3,4 of a matrix f
++	M^{2,3,4} : projection of a free module M onto free module
+		spanned by basis vectors 2,3,4
+    direct sums:
++	M=V++W : M.components saves the list of summands
+	M_[0] : inclusion V --> M
+	M_[1] : inclusion W --> M
+	M^[0] : projection M --> V
+	M^[1] : projection M --> W
+	M = directSum(V,W,X)
+	M_[0,2] :  inclusion V++X --> M
+	M^[0,2] : projection V++X --> M
+    direct sums for homomorphisms and chain complexes, too:
++	h = f ++ g : h.components gives the list of components
+	f_[0,2] : compose f:M->N with inclusion
+	g^[0,2] : compose g:L->M with projection
+
+'incomparable', a new symbol that can be returned by "x ? y", the comparison
+operator
+
+'<=' and '>=' have been modified to behave correctly if "x ? y" might return
+'incomparable'.
+-----------------------------------------------------------------------------
 New in 0.8.24:
 
 the use of 'promote(I,R)' has been replaced by 'I*R', when I is an ideal and
 R is a ring.
 
 'ClassArgument' option to 'method' removed
-
+-----------------------------------------------------------------------------
 New in 0.8.21:
 
 'basename' has been changed to 'baseName'

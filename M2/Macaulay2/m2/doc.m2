@@ -376,6 +376,9 @@ document { quote select,
      list or hash table ", TT "v", " which yield ", TT "true", " when
      the function ", TT "f", " is applied.",
      PARA,
+     "For a list, the order of the elements in the result will be the
+     same as in the original list ", TT "v", ".",
+     PARA,
      "For a hash table, the function is applied to each value.  This may
      change, for perhaps it should be applied to the key/value pair.  The
      hash table should be immutable: to scan the values in a mutable hash
@@ -1364,9 +1367,15 @@ document { "f|g",
      SEEALSO("||")
      }
 
+protect incomparable
+document { quote incomparable,
+     TT "incomparable", " -- a symbol which may be returned by ", TO "?", "
+     when the two things being compared are incomparable."
+     }
+
 document { "?",
-     TT "x ? y", " -- compares x and y, returning quote \"<\", quote \">\", 
-     or quote \"==\".",
+     TT "x ? y", " -- compares x and y, returning ", TT "quote <", ", ",
+     TT "quote >", ", ", TT "quote ==", ", or ", TO "incomparable", ".",
      PARA,
      "The user may install ", TO ("binary method", "s"), " for this operator with code
      such as ",
@@ -2355,7 +2364,7 @@ document { "subclass",
      }
 
 document { "classes",
-     "Every thing ", TT "x", " belongs to a ", ITALIC "class", " X", " -- a
+     "Every thing ", TT "x", " belongs to a ", ITALIC "class", " ", TT "X", " -- a
      hash table that indicates in a weak sort of way what type of thing ", TT "x", "
      is.  We may also say that ", TT "x", " is an ", TO "instance", " 
      of ", TT "X", ".  The mathematical notion of a set ", TT "X", " and an
@@ -2880,19 +2889,27 @@ document { quote hash,
 document { "hashing",
      "A hash table contains a set of key-value pairs.  The access
      functions for hash tables accept a key and retrieve the
-     corresponding values.  Here are the details.",
+     corresponding value.  Here are the details, together with a
+     discussion of how we designed the hash table system seen in
+     Macaulay 2.",
      PARA,
-     "The keys and values are stored in the hash table.  This means
-     that the function ", TO "hash", " is
-     applied to each key to produce an integer in a deterministic
-     way, and this integer is used to determine which bucket the
-     key and value will be stored in.  It is essential that the
-     hash code of the key never change, for otherwise the next 
+     "The keys and values are stored in the hash table.  The hash table consists
+     of a certain number of ", ITALIC "buckets", ", each of which can hold an
+     arbitrary number of key-value pairs.  The number of buckets is chosen
+     to be large enough that typically one may expect each bucket to hold fewer than
+     three key-value pairs.  The key is used  as follows to determine in which
+     bucket the key-value pair is to be stored.  The function ", TO "hash", " 
+     is applied to the key to produce in a deterministic way an integer called
+     the hash-code, and the remainder of the hash-code upon division by the
+     number of buckets tells which bucket will be used.",
+     PARA,
+     "It is ", BOLD "essential", " that the
+     hash code of a key never change, for otherwise the next 
      attempt to find the key in the hash table have an unpredictable 
      result - the new hash code of the key may or may not lead to 
      the same bucket, and the value may or may not be located.",
      PARA,
-     "Some hash tables and lists ", TO "mutable", ", i.e., their 
+     "Some hash tables and lists are ", TO "mutable", ", i.e., their 
      contents can be altered by assignment statements.  As explained
      above, the hash code of a mutable thing is not permitted to
      change when the contents of the thing change.  Hence, the 
@@ -2901,19 +2918,56 @@ document { "hashing",
      PARA,
      "The strong comparison operator ", TO "===", " is provided to 
      parrot the equality testing that occurs implicitly when 
-     accessing a key in a hash table.  Hence, since the hash codes
-     for mutable things cannot depend on the contents  the things,
-     neither can this strong test for equality.  We may call such things 
-     ", TO "enclosed", ", because the contents are hidden from
-     the equality testing function.  For mutable things, the test 
-     for equality must be the same as equality of the hash codes.  A
-     reasonable choice for such a hash code would thus be the 
-     address in memory of the thing.  But this address can change
-     depending on environmental factors not under the control of the
-     interpreter, so we use something equivalent: a counter
-     with initial value 1000000 is incremented each time
-     a mutable thing is created, and its value is taken as the
-     hash code of the thing and stored within it.",
+     accessing a key in a hash table.  The fundamental requirement for this
+     strong comparison operator is that things with different hash codes must also
+     turn out to be different when tested with this comparison operator.",
+     PARA,
+     "Here we come to a question of design.  As discussed above, we must assign
+     hash codes to mutable things in such a way that the hash codes don't depend
+     on their contents.  We can do this in various ways.",
+     MENU {
+	  {
+     	       "One way to assign hash codes to mutable things is to give 
+     	       the same hash code, say 1000000, to every mutable thing.  We
+	       could then implement a strong comparison operator for mutable
+	       things which would proceed by examining the contents of the
+	       things, so that two mutable things would be equal if and only
+	       if their contents were equal.  A
+	       disadvantage of this approach would be that a hash table in
+	       which many mutable things appear as keys would have all of those
+	       key-value pairs appearing in the same bucket, so that access
+	       to this hashtable would be slow.  (Each bucket is implemented
+	       as a linear list, and searching a long linear list is slow.)"
+	       },
+	  {
+     	       "Another way to assign hash codes to mutable things is to
+     	       give different hash codes to each mutable thing; for example, the 
+	       first mutable thing could receive hash code 1000000, the second
+	       could receive the hash code 1000001, and so on.  (Another
+     	       choice for such a hash code is the 
+     	       address in memory of the thing.  But this address can change
+     	       depending on environmental factors not under the control of the
+     	       interpreter, and thus lead to unpredictable behavior.)
+	       A disadvantage
+	       of this approach is that the strong comparison operator could not
+	       examine the contents of mutable objects!  (Remember that
+	       if the hash codes are different, the strong comparison must declare
+	       the things to be different, too.)  The offsetting advantage is
+	       that a hash table in which many mutable things appear as keys would
+	       typically have the key-value pairs distributed among the buckets,
+	       so that access to this hashtable would be fast."
+	       }
+	  },
+     PARA,
+     "In Macaulay 2, we chose the second approach listed above; we expect to
+     have many mutable things appearing as keys in hash tables, and we need
+     the speed.  A counter
+     with initial value 1000000 is incremented each time a mutable thing is
+     created, and its value is taken as the hash code of the thing and stored
+     within it.  The strong comparison test cannot depend on the contents of
+     mutable things, and thus we may call such things ", TO "enclosed", ".
+     For mutable things, the test for equality must be the same as equality
+     of the hash codes.",
      PARA,
      "It is essential to have some hash tables for which equality amounts
      to equality of the contents.  This cannot be achieved for mutable
@@ -2931,7 +2985,9 @@ document { "hashing",
      the existence of circular structures: any circular structure 
      must come into being by means of changing something, and
      so the circular loop in the structure necessarily involves a 
-     mutable thing, whose contents are not examined by the routines.",
+     mutable thing, whose contents are not examined by the routines.
+     This is another argument in favor of taking the second approach listed
+     above.",
      SEEALSO "HashTable"
      }
 

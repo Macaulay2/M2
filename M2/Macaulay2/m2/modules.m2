@@ -531,8 +531,12 @@ components(Vector) := (x) -> apply(numgens class x,i->x_i)
 document { quote components,
      TT "components x", " -- produces a list of the components of an element of a 
      free module.",
+     BR,NOINDENT,
+     TT "components M", " -- the list of components for a module ", TT "M", " which was
+     formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a 
+     direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
      PARA,
-     SEEALSO "vector"
+     SEEALSO ("vector", "directSum", "++")
      }
 
 SparseDisplayThreshhold := 15

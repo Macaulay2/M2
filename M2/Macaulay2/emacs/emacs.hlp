@@ -72,16 +72,21 @@ Notice that the input prompts are not submitted to Macaulay 2.
 
 Here is a way to conduct a demo of Macaulay 2 in which the code to be
 submitted is not visible on the screen.  Press M-F11 now with your cursor in
-buffer to designate this buffer as the source for the Macaulay 2 commands.
-(The notation M-F11 means that while holding the Meta key down, you should
-press the F11 key.  The Meta key is the Alt key on some keyboards, or it can
-be simulated by pressing Escape (just once) and following that with the key
-you wanted to press while the meta key was held down.)  Then position your
-cursor (and thus the emacs "point") within the line "20!"  seen below.  Now
-press M-F12 to open up a new frame called "DEMO" for the *M2* window with a
-large font suitable for use with a projector, and with your cursor in that
-frame, press F11 a few times to conduct the demo.  20!  4+5 2^20 -- that's
-all folks!  One press of F11 brings the next line of code forward into the
+this buffer to designate this buffer as the source for the Macaulay 2
+commands.  (The notation M-F11 means that while holding the Meta key down,
+you should press the F11 key.  The Meta key is the Alt key on some keyboards,
+or it can be simulated by pressing Escape (just once) and following that with
+the key you wanted to press while the meta key was held down.)  Then position
+your cursor (and thus the emacs "point") within the line "20!"  seen below.
+Now press M-F12 to open up a new frame called "DEMO" for the *M2* window with
+a large font suitable for use with a projector, and with your cursor in that
+frame, press F11 a few times to conduct the demo.
+
+	20!
+	4 + 5 2^20
+	-- that's all folks!
+
+One press of F11 brings the next line of code forward into the
 *M2* buffer, and the next press executes it.  Use C-x 5 0 when you want the
 demo frame to go away.
 

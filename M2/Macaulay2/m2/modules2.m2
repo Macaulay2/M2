@@ -820,7 +820,53 @@ document { "M_i",
      SEEALSO "_"
      }
 -----------------------------------------------------------------------------
-
+Module ^ Array := (M,rows) -> (
+     rows = splice rows;
+     if not M.?components
+     then (
+	  if isFreeModule M then M ^ (elements rows)
+	  else error "expected a direct sum module"
+	  )
+     else (
+	  if isFreeModule M then (
+	       -- if the components of M have 3,4,5 generators, then
+	       -- we want to construct ( (0,1,2), (3,4,5,6), (7,8,9,10,11) ) for
+	       -- quick access
+	       k := 0;
+	       v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
+	       M ^ (apply(elements rows, i -> v#i))
+	       )
+	  else concatRows apply(rows, i -> 
+	       concatCols apply(#M.components, j -> 
+		    map( M.components#i, M.components#j, if i===j then 1 else 0)))))
+Module _ Array := (M,cols) -> (
+     cols = splice cols;
+     if not M.?components
+     then (
+	  if isFreeModule M then M _ (elements cols)
+	  else error "expected a direct sum module"
+	  )
+     else (
+	  if isFreeModule M then (
+	       -- if the components of M have 3,4,5 generators, then
+	       -- we want to construct ( (0,1,2), (3,4,5,6), (7,8,9,10,11) ) for
+	       -- quick access
+	       k := 0;
+	       v := apply(M.components, N -> k .. (k = k + numgens N) - 1);
+	       M _ (apply(elements cols, i -> v#i))
+	       )
+	  else concatRows apply(#M.components, i -> 
+	       concatCols apply(cols, j -> 
+		    map( M.components#i, M.components#j, if i===j then 1 else 0)))))
+-----------------------------------------------------------------------------
+Module ^ List := (M,rows) -> submatrix(id_M,rows,)
+document { "M^{i}",
+     TT "M^{i,j,k,...}", " -- provides the projection map from a free module
+     M to the free module corresponding to the basis vectors number 
+     i, j, k, ... .",
+     SEEALSO "M_{i}"
+     }
+-----------------------------------------------------------------------------
 Module _ List := (M,v) -> (
      N := cover M;
      f := id_N_v;
@@ -835,8 +881,7 @@ document { "M_{i}",
      PARA,
      EXAMPLE "M = monoid [x,y,z]",
      EXAMPLE "M_{2,3,4}",
-     PARA,
-     "See also ", "_", "."
+     SEEALSO ("M^{i}", "_")
      }
 -----------------------------------------------------------------------------
 basis(List,Module) := (deg,M) -> (
@@ -1006,3 +1051,6 @@ isSubset(Module,Module) := (M,N) -> (
 isSubset(Ideal,Ideal) := (I,J) -> isSubset(module I, module J)
 isSubset(Module,Ideal) := (M,J) -> isSubset(M, module J)
 isSubset(Ideal,Module) := (I,N) -> isSubset(module I, N)
+
+erase global concatRows
+erase global concatCols
