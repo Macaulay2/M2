@@ -621,6 +621,18 @@ document { isIsomorphism,
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
      }
 
+document { isConstant,
+     Headline => "test whether something is constant"
+     }
+
+document { (isConstant, RingElement),
+     Synopsis => {
+	  "t = isConstant f",
+	  "f" => null,
+	  "t" => {"whether the polynomial ", TT "f", " is constant"}
+	  }
+     }
+
 document { isHomogeneous,
      Headline => "test for homogeneity"
      }

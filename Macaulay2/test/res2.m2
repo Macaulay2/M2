@@ -1,5 +1,5 @@
 
-stderr << currentFile << ": test deferred" << endl
+stderr << currentFileName << ": test deferred" << endl
 exit 0
 
 R = ZZ/101[x,y]/(x^2-y^3)

@@ -694,6 +694,10 @@ document { Ideal,
      MENU {
 	  TO (symbol /, Ring, Ideal),
 	  },
+     PARA,
+     "An ideal ", TT "I", " is an immutable object, so if you want to 
+     cache information about it, put it in the hash table ", TT "I.cache", ".",
+     PARA
      }
 
 document { (symbol *,Ideal,Ideal),
@@ -1555,8 +1559,7 @@ document { presentation,
      eliminate redundant generators.",
      PARA,
      "For a quotient ring R, the result is a matrix over the ultimate
-     ambient polynomial ring, whose image is the ideal defining ", TT "R", ".  The 
-     entries of the matrix form a Groebner basis.",
+     ambient polynomial ring, whose image is the ideal defining ", TT "R", ".",
      SEEALSO {"cover"}
      }
 
@@ -1571,22 +1574,37 @@ TEST ///
     scan(modules, M -> assert( cover M == target presentation M ) )
 ///
 
+
 document { prune,
-     Headline => "prune generators and relations",
-     TT "prune M", " -- replace ", TT "M", " by an isomorphic module with a minimal number
-     of generators and relations.",
-     BR,NOINDENT,
-     TT "prune f", " -- replace ", TT "f", " by an isomorphic map of modules by
-     pruning its source and target.",
-     PARA,
-     "The isomorphism from ", TT "N = prune M", " back to ", TT "M", " can 
-     be obtained with code such as ", TT "g = N.pruningMap", " unless ", TT "M.pruningMap", "
-     already exists, in which case ", TT "N", " is the same as ", TT "M", ".  You may obtain 
-     the inverse isomorphism with ", TT "g^-1", ".",
-     PARA,
-     SEEALSO {"presentation", "trim", "pruningMap"}
+     Headline => "minimize generators and relations"
      }
 
+document { (prune, Matrix),
+     Synopsis => {
+	  "h = prune f",
+	  "f" => null,
+	  "h" => { "the map corresponding to f obtained by pruning its source
+	       and target"
+	       }
+	  },
+     SEEALSO {"presentation", "trim"}
+     }
+
+document { (prune, Module),
+     Synopsis => {
+	  "N = prune M",
+	  "M" => null,
+	  "N" => { "a module isomorphic to ", TT "M", " with a minimal number of
+	       generators and relations."
+	       }
+	  },
+     PARA,
+     "The isomorphism from ", TT "N", " to ", TT "M", " can 
+     be obtained with as ", TT "g = N.pruningMap", " unless ", TT "M.pruningMap", "
+     already exists, in which case ", TT "N", " is the same as ", TT "M", ".  You may obtain 
+     the inverse isomorphism with ", TT "g^-1", ".",
+     SEEALSO { "pruningMap" }
+     }
 
 document { pruningMap,
      Headline => "store the isomorphism obtained by pruning",

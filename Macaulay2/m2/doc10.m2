@@ -354,7 +354,8 @@ document { factor,
 	  "R = ZZ/101[u]",
       	  "factor (u^3-1)",
 	  },
-     "The constant term is provided as the last factor, if necessary.",
+     "The constant term is provided as the last factor, if it's not equal
+     to 1.",
      EXAMPLE {
 	  "F = frac(ZZ/101[t])",
       	  "factor ((t^3-1)/(t^3+1))",
@@ -803,22 +804,79 @@ document { (degrees, CoherentSheaf),
      defining a coherent sheaf ", TT "F", "."
      }
 
+document { (symbol >=, ZZ),
+     Synopsis => {
+	  "b = (>= d)",
+	  "d" => null,
+	  "b" => {
+	       "a special object of class ", TT "LowerBound", " used to represent
+	       the set of natural numbers at least as large as ", TT "d", "."
+	       }
+	  }
+     }
+
+document { (symbol >, ZZ),
+     Synopsis => {
+	  "b = (> d)",
+	  "d" => null,
+	  "b" => {
+	       "a special object of class ", TT "LowerBound", " used to represent
+	       the set of natural numbers larger than ", TT "d", "."
+	       }
+	  }
+     }
+
+document { (cohomology, ZZ, SumOfTwists),
+     Headline => "coherent sheaf cohomology",
+     Synopsis => {
+	  "M = HH^i(F(>=d))",
+	  "i" => null,
+	  "F(>=d)" => { "notation representing the sum of the twists ", TT "F(n)", " for
+	       all ", TT "n", " greater than or equal to ", TT "d", ", where ", TT "F", " is
+	       a coherent sheaf on a variety ", TT "X", "." },
+	  "M" => {
+	       "a module over the homogeneous coordinate ring of the variety ", TT "X", " which agrees,
+	       at least in degrees n greater than or equal to d, with the graded module which
+	       in degree n is the", TT "i", "-th cohomology group of ", TT "F(n)", "."
+	       }
+	  },
+     "To discard the part of the module M of degree less than d, use ", TT "truncate(d,M)", ".",
+     PARA,
+     "Use ", TT "HH^i(F(>d))", " to request the twists strictly greater than n.",
+     PARA,
+     "Note: use ", TT "HH^i(F(*))", " to try to compute the whole graded module.  The
+     computation will fail if the module is not finitely generated.",
+     SEEALSO {
+	  "HH",
+	  (cohomology, ZZ, CoherentSheaf)
+	  }
+     }
+
 document { (cohomology, ZZ, CoherentSheaf),
      Headline => "coherent sheaf cohomology",
-     TT "HH^i(F)", " -- for a coherent sheaf F on a projective variety X, computes
-     a module which, in degrees >= 0, agrees with the direct sum over at least the
-     natural numbers ", TT "n", ", of the ", TT "i", "-th cohomology groups of F(n).",
-     BR,
-     NOINDENT,
-     TT "HH^i(F, Degree=>e)", " -- same as above, but ", TT "n", " ranges over at least
-     the integers at least as large as ", TT "e", ".",
-     PARA,
-     SEEALSO "coherent sheaves"
+     Synopsis => {
+	  "V = HH^i(F)",
+	  "i" => null,
+	  "F" => { "a coherent sheaf on a variety ", TT "X", "." },
+	  "V" => {
+	       "the", TT "i", "-th cohomology group of ", TT "F", " as a vector space
+	       over the coefficient field of ", TT "X", "." 
+	       }
+	  },
+     SEEALSO "coherent sheaves",
+     SEEALSO {
+	  "HH",
+	  (cohomology, ZZ, SumOfTwists)
+	  }
      }
 
 document { OO,
      Headline => "the structure sheaf",
-     TT "OO_X", " -- produce the structure sheaf on a variety ", TT "X", "."
+     Synopsis => {
+	  "O = OO_X",
+	  "X" => "a variety",
+	  "O" => { "the structure sheaf of ", TT "X", "." }
+	  }
      }
 
 document { (cotangentSheaf, ProjectiveVariety),
@@ -826,7 +884,7 @@ document { (cotangentSheaf, ProjectiveVariety),
      }
 
 document { cotangentSheaf,
-     Headline => "make the cotangent sheaf"
+     Headline => "cotangent sheaf of a variety"
      }
 
 document { (cotangentSheaf, ZZ, ProjectiveVariety),

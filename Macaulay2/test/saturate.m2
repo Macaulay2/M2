@@ -16,7 +16,7 @@
 
 -- a problem with matrices formed from lists of vectors in a subquotient module
 
-stderr << currentFile << ": test deferred" << endl
+stderr << currentFileName << ": test deferred" << endl
 exit 0
 
 R = QQ[x..z]

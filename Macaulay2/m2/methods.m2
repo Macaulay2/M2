@@ -121,7 +121,7 @@ setup((), {
 	  dual, cokernel, coimage, image, generators, allGenerators, someTerms, scanKeys, scanValues,
 	  summary, substitute, rank, complete, ambient, top, transpose, baseName,
 	  degree, coefficients, oldCoefficients, size, sum, product,
-	  exponents, nullhomotopy, isConstant,
+	  exponents, nullhomotopy,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, 
 	  leadComponent, degreesRing, newDegreesRing, degrees, annihilator, assign, numgens,
 	  autoload, ggPush, minprimes, relations, cone, random,
@@ -131,7 +131,7 @@ setup((), {
 setup(TypicalValue => RR, {realPart, imaginaryPart})
 setup(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
-	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField
+	  isSubset,isHomogeneous, isIsomorphism, isPrime, isField, isConstant
 	  })
 setup(TypicalValue => ZZ,
      {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,regularity,genus})

@@ -92,6 +92,7 @@ document { (symbol ^, Module, List),
      EXAMPLE "(ZZ^5)^{2,3}",
      SEEALSO {"_", Module, List}
      }
+
 document { (symbol _, Module, List),
      Headline => "map from free module to some generators",
      TT "M_{i,j,k,...}", " -- provides a map from a free module to the module
@@ -100,6 +101,26 @@ document { (symbol _, Module, List),
      PARA,
      EXAMPLE "(ZZ^5)^{2,3}",
      SEEALSO {"^", Module, List}
+     }
+
+document { (symbol _, Ideal, List),
+     Headline => "map from free module to some generators",
+     Synopsis => {
+	  "f = I_{i,j,k,...}",
+	  "I" => null,
+	  "{i,j,k,...}" => "a list of integers",
+	  "f" => { "a map from a free module to the module ", TT "module I", "
+	       which sends the basis vectors to the generators of ", TT "I", "
+     	       whose index numbers are listed."
+	       }
+	  },
+     EXAMPLE {
+	  "R = QQ[x,y,z]",
+	  "I = ideal vars R",
+	  "f = I_{0,2}",
+	  "image f"
+	  },
+     SEEALSO { (module, Ideal) }
      }
 
 document { (basis,List,Module),
@@ -1199,6 +1220,35 @@ document { (symbol " ", RingMap, Module),
 	  "f image vars R"
 	  },
      SEEALSO { (symbol " ", RingMap, Module) }
+     }
+
+document { DegreeMap,
+     "A name for an optional argument used with ", TT "map", " when
+     creating a ring map.",
+     SEEALSO { map => DegreeMap }
+     }
+
+document { map => DegreeMap,
+     "A name for an optional argument used with ", TT "map", " when
+     creating a ring map, to specify a function that transforms degrees
+     of elements in the source ring to degrees of elements in the
+     target ring.  The function will be used later when tensoring a
+     module along the ring map to determine the degrees of the
+     generators in the result, and to determine whether the map is
+     homogeneous.",
+     EXAMPLE {
+	  "R = QQ[x,y,z];",
+	  "S = QQ[t,u];",
+	  "f = map(S,R,{t^2,t*u,u^2},DegreeMap => i -> 2*i)",
+	  "isHomogeneous f",
+	  "M = R^{1,2}",
+	  "f ** M"
+	  },
+     "The default degree map function is the identity function, but when the two
+     rings have different degree lengths, a function must be explicitly
+     provided that transforms the lengths of the degree vectors appropriately, 
+     or else the default function which maps every degree to {0,...,0} 
+     will be provided automatically."
      }
 
 document { (map,Ring,Ring,Matrix),

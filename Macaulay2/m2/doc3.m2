@@ -56,9 +56,9 @@ document { Position,
      the line number, and the column number."
      }
 
-document { symbol "currentFile",
+document { symbol "currentFileName",
      Headline => "the current source file",
-     TT "currentFile", " -- a variable whose value is the name of the current
+     TT "currentFileName", " -- a variable whose value is the name of the current
      source file."
      }
 
@@ -552,4 +552,11 @@ document { clearEcho,
      input."
      }
 
-   
+document { CacheTable,
+     Headline => "hash tables for caching",
+     "A type of mutable hash table designed for caching computed values that
+     could always be recomputed.  Cache tables are designed so their contents
+     will not participate in any comparisons by the strict comparison
+     operator ", TT "===", ".  To that end, any two cache tables with the same
+     class and parent are considered equal to each other and have hash code equal to 0."
+     }

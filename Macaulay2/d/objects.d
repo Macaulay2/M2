@@ -120,15 +120,15 @@ export ancestor(o:HashTable,p:HashTable):bool := (
 equal(x:HashTable,y:HashTable):Expr := (
      if x==y then return(True);
      if x.hash != y.hash then return(False);
-     if x.hash == 0 && x.mutable && x.class == y.class && x.parent == y.parent && ancestor(x.class,cacheTableClass)
-     then return (True);
      if x.mutable 
      || y.mutable
      || x.numEntries != y.numEntries
      || length(x.table) != length(y.table)
-     || x.class != y.class && False == equal(x.class,y.class) 
-     || x.parent != y.parent && False == equal(x.parent,y.parent) 
+     || x.class != y.class -- && False == equal(x.class,y.class) 
+     || x.parent != y.parent -- && False == equal(x.parent,y.parent) 
      then return(False);
+     if x.hash == 0					    -- cache tables has hash code 0
+     && ancestor(x.class,cacheTableClass) then return (True);
      foreach a at i in x.table do (
 	  p := a;
 	  q := y.table.i;

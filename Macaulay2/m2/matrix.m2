@@ -662,3 +662,5 @@ ambient Matrix := Matrix => f -> (
 	  else f
 	  )
      )
+
+degrees Ring := R -> degree \ gens R

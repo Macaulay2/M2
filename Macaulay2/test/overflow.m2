@@ -1,5 +1,5 @@
 
-stderr << currentFile << ": test deferred" << endl
+stderr << currentFileName << ": test deferred" << endl
 exit 0
 
 S = ZZ/101[x,y,z, MonomialOrder => Eliminate 2, MonomialSize => 16 ];
