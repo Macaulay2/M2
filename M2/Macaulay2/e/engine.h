@@ -1547,7 +1547,7 @@ enum gbTraceValues
 
   const MatrixOrNull *rawGBGetMatrix(Computation *C);
   /* Get the minimal, auto-reduced GB of a GB computation.
-     Each call to this will produce a different raw matrix */
+     Each call to this may produce a different raw matrix */
 
   const MatrixOrNull *rawGBGetLeadTerms(Computation *G, int nparts);
 
@@ -1572,7 +1572,7 @@ enum gbTraceValues
      syzygy are kept. */
 
   const MatrixOrNull *rawGBMatrixRemainder(Computation *G, 
-						const Matrix *m); /* drg: connected rawGBMatrixRemainder */
+					   const Matrix *m); /* drg: connected rawGBMatrixRemainder */
 
   void IM2_GB_matrix_lift(Computation *G,
 			  const Matrix *m,

@@ -48,11 +48,6 @@ public:
   virtual ComputationOrNull *set_hilbert_function(const RingElement *h);
   // The default version returns an error saying that Hilbert functions cannot be used.
 
-  static ComputationOrNull * force(const Matrix *m,
-				   const Matrix *gb,
-				   const Matrix *change,
-				   const Matrix *syz);
-
   virtual void start_computation() = 0;
 
   virtual int complete_thru_degree() const = 0;
