@@ -9,7 +9,7 @@ ifeq "$(DUMPDATA)" "yes"
 ARGS := -q '-eloaddata("../../../$(DUMPDATAFILE)")' -- \
 		'-epath=join(path,{"../../","$(srcdir)/"})' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
 
-all :: $(DUMPDATAFILE)
+all :: ../../../$(DUMPDATAFILE)
 
 else
 ifeq "$(CC)" "cl"
