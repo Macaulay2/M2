@@ -1,0 +1,17 @@
+COMP_NEED_RESIZE:"need resize"
+COMP_ERROR:"error"
+COMP_INTERRUPTED:"interrupted"
+COMP_NOT_STARTED:"not started"
+COMP_INITIAL_STOP:StopBeforeComputation
+COMP_DONE:"done"
+COMP_DONE_DEGREE_LIMIT:DegreeLimit
+COMP_DONE_LENGTH_LIMIT:LengthLimit
+COMP_DONE_SYZYGY_LIMIT:SyzygyLimit
+COMP_DONE_PAIR_LIMIT:PairLimit
+COMP_DONE_GB_LIMIT:BasisElementLimit
+COMP_DONE_SYZ_LIMIT:SyzygyLimit
+COMP_DONE_CODIM:CodimensionLimit
+COMP_DONE_MIN_GENS:StopWithMinimalGenerators
+COMP_DONE_STEPS:StepLimit
+COMP_DONE_SUBRING_LIMIT:SubringLimit
+COMP_COMPUTING:"computing"
