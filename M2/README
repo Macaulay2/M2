@@ -18,7 +18,7 @@ Libraries
 ---------
 
 Here are the libraries you have to download and install on your system before
-you can compile and link Macaulay 2.
+you can compile and link Macaulay 2.  We always compile with gcc.
 
     library: Singular-factory
     release: factory-1.3b, tar file date 2001/06/25
@@ -37,7 +37,14 @@ you can compile and link Macaulay 2.
      author: Michael Messollen <mmessollen@web.de>
      get at: /ftp@www.mathematik.uni-kl.de:/pub/Math/Singular/Libfac
     license: GPL
-    install: first apply patches in file libfac-0.3.2-patch
+      notes: Sometimes the configure script doesn't work.  For example, if
+		factory.h has been installed under $prefix/include, it won't find it.
+		And it can erroneously decide that 'const' and 'inline' keywords don't
+		work, and add -Dconst= -Dinline= to DEFS.
+	     Also, make sure you patch the source with the diffs in README.libfac-0.3.2,
+		or else it gets confused about the NOSTREAMIO option.
+	     Also, ignore the warning message about factory.h being missin, if you think you've put
+		it in $prefix/include.
 
     library: gmp
     release: gmp-3.1.1
@@ -45,16 +52,17 @@ you can compile and link Macaulay 2.
     bugs to: <bug-gmp@prep.ai.mit.edu>
      get at: /ftp@ftp.gnu.org:gnu/gmp
     license: gmp/COPYING.LIB
+      notes: on Solaris, gmp will use both cc and gcc; don't worry
 
     library: gc
-    release: 6.0 alpha 8 (see file gc/version.h)
+    release: 6.0 (see file gc/version.h)
      author: Hans Boehm <hboehm@exch.hpl.hp.com>
-     get at: http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc.tar.gz
+     get at: http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc6.0.tar.gz
     license: gc/README
     install: -- edit Makefile
+		    set CC=gcc
 		    value of CFLAGS : remove -DALL_INTERIOR_POINTERS
-				      add    -DLARGE_CONFIG
-				      add    -DNO_DEBUGGING
+				      add    -DLARGE_CONFIG -DNO_DEBUGGING
 	     -- make
 	     -- cp gc.a /usr/lib/libgc.a
 	     -- cp include/gc.h and include/gc_cpp.h /usr/include
