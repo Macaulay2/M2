@@ -2,6 +2,15 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+'document' has been reworked:
+	You should use
+		document { symbol X, ... }
+	only if you want to document the symbol X and its use, rather than
+	its value.  If the value of X knows its name, just use
+		document { X, ... }
+	Otherwise, use
+		document { "X", ... }
+
 'help' now returns the documentation as a Net instead of printing it out.
 
 'doc' changed to 'documentation'

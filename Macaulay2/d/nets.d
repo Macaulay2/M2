@@ -64,7 +64,7 @@ export lines(s:string):array(string) := (
 		    else i = j+1;
 		    ))));
 export toNet(s:string):Net := (
-     v := lines(s);
+     v := if length(s) > 0 then lines(s) else array(string)(s);
      wid := 0;
      foreach s in v do if wid < length(s) then wid = length(s);
      Net(1,wid,v));

@@ -83,7 +83,7 @@ document { StateTableAlternative,
      }
 
 space = new StateTableAlternative from characters " \f\n\r\t"
-document { symbol space,
+document { "space",
      TT "stateTable { space => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each white
      space ASCII character.",
@@ -96,7 +96,7 @@ document { symbol space,
      }
 
 digit = new StateTableAlternative from characters "0123456789"
-document { symbol digit,
+document { "digit",
      TT "stateTable { digit => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each ASCII character
      which is a decimal digit.",
@@ -110,7 +110,7 @@ document { symbol digit,
      }
 
 upper = new StateTableAlternative from characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-document { symbol upper,
+document { "upper",
      TT "stateTable { upper => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each upper case
      ASCII character.",
@@ -123,7 +123,7 @@ document { symbol upper,
      }
 
 lower = new StateTableAlternative from characters "abcdefghijklmnopqrstuvwxyz"
-document { symbol lower,
+document { "lower",
      TT "stateTable { lower => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each lower case
      ASCII character.",
@@ -136,7 +136,7 @@ document { symbol lower,
      }
 
 alpha = join(upper,lower)
-document { symbol alpha,
+document { "alpha",
      TT "stateTable { alpha => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each alphabetic
      ASCII character.",
@@ -149,7 +149,7 @@ document { symbol alpha,
      }
 
 alphanum = join(alpha,digit)
-document { symbol alphanum,
+document { "alphanum",
      TT "stateTable { alphanum => f , ...}", " -- a list of alternative keys which
      specifies that the function ", TT "f", " should be run for each  
      ASCII character.",
@@ -162,7 +162,7 @@ document { symbol alphanum,
      }
 
 protect default
-document { symbol default,
+document { "default",
      TT "stateTable { default => f , ...}", " -- a symbol to be used as a key in a
      state table to specify that the function ", TT "f", " should be run if the current
      input doesn't appear elsewhere in the table.",

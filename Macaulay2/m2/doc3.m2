@@ -165,14 +165,14 @@ document { "programming",
 	  }
      }
 
--- document { symbol readExamples,
+-- document { readExamples,
 --      TT "readExamples", " -- a variable used to control the compilation
 --      of the interpreted code of the system.",
 --      PARA,
 --      SEEALSO "writeExamples"
 --      }
 
--- document { symbol writeExamples,
+-- document { writeExamples,
 --      TT "writeExamples", " -- a variable used to control the compilation
 --      of the interpreted code of the system.",
 --      PARA,
@@ -515,59 +515,21 @@ document { basictype,
      SEEALSO "Thing"
      }
 
-document { "++",
+document { symbol "++",
      TT "M ++ N", " -- direct sum for modules, matrices, or chain complexes and
      disjoint union for sets.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator with code
-     such as ",
-     PRE "         X ++ Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     MENU {
-	  TO (symbol ++,ChainComplex,ChainComplex),
-	  TO (symbol ++,Module,Module),
-	  TO (symbol ++, Set, Set)
-	  },
      SEEALSO {"classes", "directSum"}
      }
 
-document { "@@",
-     TT "f @@ g", " -- a binary operator used for composition of functions.",
-     PARA,
-     "If ", TT "f", " and ", TT "g", " are homomorphisms of modules, then ", TT "f @@ g", " yields their
-     composite as a homomorphism.",
-     PARA,
-     "The user may install other ", TO {"binary method", "s"}, " for this 
-     operator with code such as ",
-     PRE "         X @@ Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
+document { symbol "@@",
      }
 
-document { "@",
-     TT "x @ y", " -- a binary operator.",
-     PARA,
-     "This operator is right associative.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X @ Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
+document { symbol "@",
+     "This operator is right associative."
      }
 
-document { "\\",
-     TT ///x \ y///, " -- a binary operator used for function application.",
-     PARA,
-     "This operator is right associative.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE ///         X \ Y := (x,y) -> ...///,
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", "."
+document { symbol "\\",
+     TT ///x \ y///, " -- a binary operator used for function application."
      }
 
 document { (symbol /, List, Function),

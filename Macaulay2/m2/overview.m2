@@ -232,8 +232,8 @@ document { "polynomial rings with other monomial orderings",
      EXAMPLE "b^2 ? a*c",
      "The monomial ordering is also used when sorting lists with ", TO "sort", ".",
      EXAMPLE "sort {1_R, a, a^2, b, b^2, a*b, a^3, b^3}",
-     "The next ring uses the reverse lexicographic ordering.  This means
-     that the term with 
+     "The next ring uses ", TO "MonomialOrder", " to specify reverse
+     lexicographic ordering.  This means that the term with 
      the higher power of the last variable comes last; for terms with the same 
      power of the last variable, the exponent on the next to last variable 
      is consulted, and so on.  Under this ordering the monomials are not
@@ -288,6 +288,8 @@ document { "polynomial rings with other monomial orderings",
 	  "R=ZZ/101[a,b,c,MonomialOrder=>ProductOrder{1,2}];",
       	  "(a+b+c+1)^2"
 	  },
+     PARA,
+     "See ", TO "MonomialOrder", " for further details."
      }
 
 document { "manipulating polynomials",

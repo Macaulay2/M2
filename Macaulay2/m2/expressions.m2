@@ -516,7 +516,7 @@ padto := (s,n) -> (
      k := n - stringlen s;
      if k === 0 then s else (s, k))
 
--- document { symbol stringlen,
+-- document { stringlen,
 --      TT "stringlen s", " -- returns the length of the string s.  The argument
 --      may also be a sequence or list of strings and symbols, and so
 --      on, recursively, in which case the lengths of the various elements
@@ -991,7 +991,7 @@ TeX = x -> (
 --     run ( "netscape -remote 'openFile(" | fn | ")'; rm " | fn );
 --     )
 --
---document { symbol netscape,
+--document { netscape,
 --     TT "netscape x", " -- convert x to html format, contact a netscape
 --     process currently running on the same host, and have it display
 --     it.",

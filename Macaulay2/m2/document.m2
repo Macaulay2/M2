@@ -60,6 +60,7 @@ Strings := hashTable { Sequence => "(...)", List => "{...}", Array => "[...]" }
 toStr := s -> if Strings#?s then Strings#s else toString s
 formatDocumentTag           = method(SingleArgumentDispatch => true)
 formatDocumentTag Thing    := s -> toString s
+formatDocumentTag Symbol   := s -> toExternalString s
 formatDocumentTag Option   := s -> concatenate(toString s#0, "(", toString s#1, " => ...)")
 fSeq := new HashTable from {
      (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toStr s#3),
@@ -373,27 +374,60 @@ ancestors := X -> if X === Thing then {} else ancestors1(parent X)
 vowels := hashTable apply(characters "aeiouAEIOU", i -> i => true)
 indefinite := s -> concatenate(if vowels#?(s#0) then "an " else "a ", s)
 
-synonym := X -> if X.?synonym then X.synonym else toString X
+synonym := X -> if X.?synonym then X.synonym else "object of class " | toString X
 
-usage = s -> (
-     o := getDoc formatDocumentTag s;
-     SEQ { PARA{}, "Usage :", PARA{}, if o === null then "No other documentation found." else o }
+usage := s -> (
+     o := getDoc toExternalString s;
+     if o === null and class s === Symbol then o = getDoc toExternalString toString s;
+     SEQ {"Usage :", PARA{}, if o === null then "No other documentation found." else o}
      )
+
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> getDoc toExternalString s
-documentation Thing := s -> if Symbols#?s then documentation Symbols#s
 type := s -> SEQ {"The object ", toString s, " is a :", PARA{}, menu ancestors1 class s, PARA{}}
+documentation Thing := s -> SEQ { type s, usage s }
+binary := set binaryOperators
+prefix := set prefixOperators
+postfix := set postfixOperators
+operator := binary + prefix + postfix
+op := s -> if operator#?s then (
+     ss := toString s;
+     SEQ {
+	  if binary#?s then SEQ {
+	       NOINDENT{}, TT ("x "|ss|" y"), " -- a binary operator.  The user may 
+	       install ", TO {"binary method", "s"}, " for this operator with code
+	       such as ",
+	       PRE ("         X "|ss|" Y := (x,y) -> ..."), "
+	       where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
+	       class of ", TT "y", ".", PARA{}
+	       },
+	  if prefix#?s then SEQ {
+	       NOINDENT{}, TT (ss|" y"), " -- a prefix unary operator.  The user may 
+	       install a method for this operator with code such as ",
+	       PRE ("           "|ss|" Y := (y) -> ..."), "
+	       where ", TT "Y", " is the class of ", TT "y", ".", PARA{}
+	       },
+	  if postfix#?s then SEQ {
+	       NOINDENT{}, TT ("x "|ss), " -- a postfix unary operator.  The user may 
+	       install a method for this operator with code such as ",
+	       PRE ("         X "|ss|"   := (x,y) -> ..."), "
+	       where ", TT "X", " is the class of ", TT "x", ".", PARA{}
+	       },
+	  }
+     )
 documentation Symbol := s -> (
      a := apply(options s, f -> f => s);
      SEQ {
      	  type s,
+	  op s,
 	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, smenu a, PARA{}},
 	  usage s
-     	  } )
+     	  }
+     )
 documentation Type := X -> (
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X), (key,Y) -> key);
-     b := select(values symbolTable(), 
+     b := toString \ select(values symbolTable(), 
 	  y -> not mutable y and value y =!= X and instance(value y, Type) and parent value y === X);
      c := apply(
 	  select(methods X, key -> not typicalValues#?key or typicalValues#key =!= X),
@@ -405,9 +439,7 @@ documentation Type := X -> (
 	       "Each object of class ", toString X, 
 	       " is also called ", indefinite X.synonym, ".", PARA{}},
 	  if #b > 0 then SEQ {"Types of ", toString X, " :", PARA{}, smenu b, PARA{}},
-	  if #d > 0 then SEQ {"Each ",
-	       if X.?synonym then X.synonym else "object of class "| toString X,
-	       " is also a :", PARA{}, menu d, PARA{}},
+	  if #d > 0 then SEQ {"Each ", synonym X, " is also a :", PARA{}, menu d, PARA{}},
 	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, smenu a, PARA{}},
 	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, smenu c, PARA{}},
 	  usage X
@@ -434,23 +466,31 @@ ret := k -> (
      if t =!= Thing then SEQ {"Value returned is typically of type ", TO toString t, ".", PARA{}}
      )
 
-documentation Function :=  f -> SEQ { type f, ret f, fmeth f, optargs f, usage f }
+seecode := x -> (
+     n := try code x;
+     if n =!= null then SEQ { "Code:", PRE concatenate between(newline,netRows n) })
+
+documentation Function :=  f -> SEQ { type f, ret f, fmeth f, optargs f, seecode f, usage f }
 documentation Option := v -> (
-     (fn, opt) -> SEQ { PARA{}, "default: ", toString opt, " => ", toString (options fn)#opt, usage fn }
+     (fn, opt) -> SEQ { PARA{}, "default: ", toString opt, " => ", toString (options fn)#opt, PARA{}, usage fn }
      ) toSequence v
-documentation Sequence := s -> if #s == 0 then null else SEQ { ret s, optargs s#0, usage s }
+documentation Sequence := s -> if #s == 0 then null else SEQ { ret s, optargs s#0, seecode s, usage s }
 
 help2 := s -> (
      d := documentation s;
      if d === null 
      then "No documentation available for '" |formatDocumentTag s | "'."
-     else "Documentation for " | formatDocumentTag s | " :" || "  " | net d
+     else "Documentation for " | toExternalString formatDocumentTag s | " :" |newline| text d
+ --  else "Documentation for " | formatDocumentTag s | " :" || "  " | net d
      )
 
-hr1 := "-----------------------------------------------------------------------------"
-hr := v -> stack mingle(#v + 1 : hr1 , v)
+    hr1 := newline | "-----------------------------------------------------------------------------" | newline
+ -- hr1 := "-----------------------------------------------------------------------------"
 
-help = method()
+    hr := v -> concatenate mingle(#v + 1 : hr1 , v)
+ -- hr := v -> stack       mingle(#v + 1 : hr1 , v)
+
+help = method(SingleArgumentDispatch => true)
 help List := v -> hr apply(v, help2)
 help Thing := help2
 
@@ -678,6 +718,7 @@ html ExampleTABLE := x -> concatenate(
      "</P>"
      )			 
 
+net PRE := x -> net concatenate x
 text PRE   := x -> concatenate(
      newline,
      demark(newline,

@@ -223,20 +223,9 @@ document { isListener,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
-document { "<<",
-     TT "x << y", " -- a binary or unary operator used for file output.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X << Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     MENU {
-	  TO (symbol <<,File,Thing),
-	  TO (symbol <<,Nothing,Thing),
-	  TO (symbol <<,Thing),
-	  TO (symbol <<, String, Thing)
-	  }
+document { symbol <<,
+     TT "x << y", " -- a binary operator usually used for file output.", BR,
+     TT "<< y", " -- a unary operator usually used for output to stdout."
      }
 
 document { (symbol <<,ZZ, ZZ),
@@ -280,17 +269,7 @@ document { ">>",
      TT "i >> j", " -- shifts the bits in the integer i rightward j places."
      }
 
-document { ":",
-     TT "x : y", " -- a binary operator.",
-     PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator 
-     with code such as ",
-     PRE "         X : Y := (x,y) -> ...",
-     "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     PARA,
-     MENU {
-	  }
+document { symbol ":",
      }
 
 document { (symbol :, ZZ, Thing),
@@ -350,12 +329,12 @@ document { incomparable,
      when the two things being compared are incomparable."
      }
 
-document { "?",
+document { symbol "?",
      TT "x ? y", " -- compares x and y, returning ", TT "symbol <", ", ",
      TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
      PARA,
-     "The user may install ", TO {"binary method", "s"}, " for this operator with code
-     such as ",
+     "The user may install additional ", TO {"binary method", "s"}, " for this 
+     operator with code such as ",
      PRE "         X ? Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
      class of ", TT "y", ".",
@@ -617,7 +596,7 @@ document { currentDirectory,
      }
 
 document { "~",
-     TT "~ x", " -- a postfix unary operator available to the user.  A method may
+     TT "x ~", " -- a postfix unary operator available to the user.  A method may
      be installed with code such as ", 
      PRE "           X ~ := x -> ... ",
      PARA,
