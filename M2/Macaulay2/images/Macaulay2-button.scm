@@ -11,36 +11,52 @@
 	 (size 20.0)
 	 (size-type POINTS)
 	 (foundry "*")
-	 (family "charter")
-	 (weight "black")
-	 (slant "r")
+	 ; (family "charter")
+	 (family "*")
+	 ; (weight "black")
+	 (weight "*")
+	 ; (slant "r")
+	 (slant "*")
 	 (set-width "*")
 	 (spacing "*")
 	 (number-of-colors 240) 
-	 (extents (gimp-text-get-extents text size size-type foundry family weight slant set-width spacing))
+	 (registry "*")
+	 (encoding "*")
+	 (extents (gimp-text-get-extents text size size-type foundry family weight slant set-width spacing registry encoding ))
 	 (text-width (car extents))
 	 (text-height (cadr extents))
 	 (text-ascent (caddr extents))
 	 (text-descent (cadddr extents))
 	 (x-text (/ (- image-width text-width) 2))
-	 (y-text (- image-height text-height)))
+	 (y-text (- image-height text-height))
+	 (dither-type 0)
+	 (MAKE_PALETTE 0)
+	 (palette-type MAKE_PALETTE)
+	 (alpha-dither 0)
+	 (remove-unused 0)
+	 (palette "")
+	 )
     (gimp-image-add-layer image drawable 0)
     (gimp-palette-set-background  '(20 40 40))
     (gimp-palette-set-foreground '(128 255 255))
-    (gimp-blend image drawable FG-BG-RGB NORMAL SHAPEBURST-SPHERICAL
+    (gimp-blend drawable
+		FG-BG-RGB		;type of blend
+		NORMAL			;paint application mode
+		SHAPEBURST-SPHERICAL	;gradient type
 		100.0			;opacity
 		0			;offset
-		REPEAT-NONE
-		FALSE 0 0		;supersample
-		0 0			;x1 y1
-		0 0			;x2 y2
+		REPEAT-NONE		;repeat mode
+		FALSE			;supersample
+		0			;maximum recursion levels for supersampling
+		0.0			;supersampling threshold
+		0.0 0.0			;x1 y1
+		0.0 0.0			;x2 y2
 		)
     (gimp-palette-set-foreground '(0 0 255))
     (gimp-floating-sel-anchor
-     (car (gimp-text image drawable x-text y-text text border antialias size size-type
-		     foundry family weight slant set-width spacing)))
+     (car (gimp-text image drawable x-text y-text text border antialias size size-type foundry family weight slant set-width spacing registry encoding)))
     (gimp-display-new image)
-    (gimp-convert-indexed image 0 number-of-colors)
+    (gimp-convert-indexed image dither-type palette-type number-of-colors alpha-dither remove-unused palette )
     (file-gif-save 1 image drawable filename filename 0 0 0 0)
     (gimp-image-clean-all image)))
 
