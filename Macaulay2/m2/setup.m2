@@ -20,8 +20,6 @@ match := X -> 0 < #(matches X)				    -- defined as a method later
 
 somethingElse = () -> error "something else needs to be implemented here"
 
-OutputDictionary = new Dictionary
-
 rot := x -> (
      global oooo <- ooo;			  -- avoid GlobalAssignHook with <-
      global ooo <- oo;
@@ -32,6 +30,11 @@ applyMethod := (m,x) -> if x === null then x else (
      method := lookup(m,class x);
      if method === null then x else method x
      )
+
+MainDictionary = first globalDictionaries
+OutputDictionary = new Dictionary
+globalDictionaries = append(globalDictionaries,OutputDictionary)
+UserDictionary = new Dictionary
 
 commonProcessing := x -> (
      x = applyMethod(AfterEval,x);
@@ -104,15 +107,11 @@ input = (filename) -> tryload(filename,simpleInput,false)
 needs = s -> if not loaded#?s then load s
 
 load "loads.m2"
-
--- don't define any global variables below this point
-
 stderr << "--loaded setup.m2" << endl
+
+globalDictionaries = prepend(UserDictionary,globalDictionaries)
 notify = true
-newPackage(User, DebuggingMode => debuggingMode)
-User#"source directory" = null
 protect Main.Dictionary
-protect symbol User
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -73,8 +73,6 @@ removePackage Package := p -> (
      )
 removePackage String := s -> scan(packages, p -> if p.name == s then removePackage p)
 
-globalDictionaries = append(globalDictionaries,OutputDictionary)
-
 newPackage = method( Options => { Using => {}, Version => "0.0", WritableSymbols => {}, DebuggingMode => false } )
 newPackage(Package) := opts -> p -> (
      hide p.Dictionary;		    -- hide the old dictionary
