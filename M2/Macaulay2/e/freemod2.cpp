@@ -344,7 +344,7 @@ FreeModule *FreeModule::exterior(int p) const
   int rk = rank();
 
   if (p == 0) 
-    result = get_ring()->make_FreeModule(1);
+    return get_ring()->make_FreeModule(1);
   else
     result = new_free();
   if (p > rk || p < 0) return result;

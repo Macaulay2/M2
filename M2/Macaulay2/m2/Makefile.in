@@ -215,12 +215,13 @@ endif
 
 $(packagedir)/m2:; $(INSTALL) -d $(packagedir)/m2
 install:: $(packagedir)/m2
-	$(INSTALL_DATA) $(DUMPEDM2FILES) $(DOCSEQUENCE) $(packagedir)/m2
+install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) makeM2.m2
+	$(INSTALL_DATA) $^ $(packagedir)/m2
 
 clean::
 	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc \
 		cache *.obj *.exe ../bin/M2 runexample \
-		temp.data allfiles distfiles \
+		temp.data distfiles \
 		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core
 distclean : clean

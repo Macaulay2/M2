@@ -9,8 +9,10 @@ justM2 all :: initialize config
 include ../config.Makefile
 VPATH = @srcdir@
 ################################# this directory's files
-install :: $(packagedir)/COPYING
-$(packagedir)/COPYING : COPYING ; cp $< "$@"
+install :: $(packagedir)/COPYING $(packagedir)/CHANGES $(packagedir)/README
+$(packagedir)/COPYING : COPYING  ; cp $< "$@"
+$(packagedir)/CHANGES : CHANGES  ; cp $< "$@"
+$(packagedir)/README  : README   ; cp $< "$@"
 ################################# bin
 libexec bin :; mkdir $@
 clean ::; rm -rf bin libexec
@@ -58,6 +60,7 @@ distclean clean ::; $(MAKE) -C test $@
 ################################# setup
 all :: setup
 	[ -x $< ] || chmod a+x $<
+install ::; $(INSTALL_PROGRAM) setup $(packagedir)
 ################################# packages
 install check clean distclean ::; $(MAKE) -C packages $@
 ################################# experiments
@@ -72,7 +75,7 @@ book ::;  $(MAKE) -C book all
 distclean clean ::; $(MAKE) -C book $@
 ################################# emacs
 all ::;  $(MAKE) -C emacs all
-distclean clean ::; $(MAKE) -C emacs $@
+install distclean clean ::; $(MAKE) -C emacs $@
 ################################# libexec
 install :: $(packagedir)/libexec
 $(packagedir)/libexec:; $(INSTALL) -d "$@"

@@ -1,48 +1,12 @@
 #! /bin/sh
-
 DUMPDATA="@DUMPDATA@"
-
-if [ ! -d bin ]
-then mkdir bin || exit 1
-fi
 cd m2
-M2HOME=..
-export M2HOME
 ARCH=`uname -m`
 export ARCH
-if [ "$DUMPDATA" != no ]
-then echo =======================================================
-     echo Dumping data
-     ../libexec/Macaulay2 '-e phase=1' setup.m2 dumpdata.m2  '-edump()' '-e exit 0' || exit 1
+if [ "$DUMPDATA" = yes ]
+then echo Dumping data
+     M2HOME=.. \
+     ../libexec/Macaulay2 -silent -q '-e phase=1' \
+	setup.m2 dumpdata.m2  '-edump()' '-e exit 0' \
+    || exit 1
 fi
-echo =======================================================
-echo Making bin/M2
-if [ "$DUMPDATA" != no ]
-then ../libexec/Macaulay2 "-e loaddata \"../libexec/Macaulay2-`uname -m | sed s=/=-=g `-data\"" \
-            -- -q '-e runStartFunctions()' makeM2.m2 '-e exit 0' || exit 1
-else ../libexec/Macaulay2 -q \
-            '-e phase=1' setup.m2 '-e phase=0' \
-            '-e runStartFunctions()' makeM2.m2 '-e exit 0' || exit 1
-fi
-echo =======================================================
-echo You may copy bin/M2 to one of the following directories below marked with "**".
-hadone=0
-for i in `printenv PATH | sed -e 's/%/%-/g' -e 's/ /%=/g' -e 's/:/ /g'`
-do i=`echo $i | sed -e 's/%=/ /g' -e 's/%-/%/g'`
-   if [ "$i" != . ]
-   then if [ -w "$i" ]
-	then hadone=1
-	     flag="**"
-	else flag="  "
-	fi
-	if [ -x "$i"/M2 ]
-	then comment="   (contains a copy of M2)"
-	else comment=""
-	fi
-	echo "    $flag $i$comment"
-   fi
-done
-if [ "$hadone" = 0 ]
-then echo Sorry, there are no writable directories on your path.
-fi
-echo =======================================================

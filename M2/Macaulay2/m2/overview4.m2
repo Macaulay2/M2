@@ -43,7 +43,7 @@ provide a package for ", TO "emacs", " which implements this, in
 of symbols in the language.",
 PARA,
 "There is an ASCII version of this section of the documentation distributed
-in the file ", TT "emacs/emacs.hlp", ".  It might be useful for you to visit
+in the file ", TT "emacs/emacs-hlp.txt", ".  It might be useful for you to visit
 that file with emacs now, thereby avoiding having to cut and paste bits of
 text into emacs buffers for the deomonstrations below.",
 PARA,
