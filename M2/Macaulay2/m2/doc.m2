@@ -2437,6 +2437,8 @@ document { "mathematics",
 	  TO "Ideal",
 	  TO "Module",
 	  TO "Matrix",
+	  TO "AbstractFreeModule",
+	  TO "GradedModule",
 	  TO "ChainComplex",
 	  TO "GroebnerBasis",
 	  TO "MonomialIdeal"

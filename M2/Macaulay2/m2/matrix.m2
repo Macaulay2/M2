@@ -1,6 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
-Matrix = new Type of MutableHashTable
+ModuleMap = new Type of MutableHashTable
+Matrix = new Type of ModuleMap
 ring Matrix := f -> (
      S := ring target f;
      R := ring source f;
@@ -409,7 +410,7 @@ samering := mats -> (
 
 directSum Matrix := identity
 
-directSumMatrix := args -> (
+Matrix.directSum = args -> (
      R := ring args#0;
      if not all(args, f -> ring f === R) 
      then error "expected matrices all over the same ring";
@@ -418,10 +419,25 @@ directSumMatrix := args -> (
      f.components = elements args;
      f)
 
+isDirectSum = method()
+isDirectSum Module := (M) -> M.?components
+document { quote isDirectSum,
+     TT "isDirectSum M", " -- returns ", TT "true", " if ", TT "M", " was
+     formed as a direct sum.",
+     PARA,
+     "Works for modules, graded modules, etc.  The components of the sum
+     can be recovered with ", TO "components", "."
+     }
+
+TEST "
+assert isDirectSum (QQ^1 ++ QQ^2)
+assert isDirectSum (QQ^1 ++ QQ^2)
+"
+
 components Module := M -> if M.?components then M.components else {M}
 components Matrix := f -> if f.?components then f.components else {f}
 
-directSumModule := args -> (
+Module.directSum = args -> (
 	  R := ring args#0;
 	  if not all(args, f -> ring f === R) 
 	  then error "expected modules all over the same ring";
@@ -441,11 +457,16 @@ directSumModule := args -> (
 	  N.components = elements args;
 	  N)
 
+single := v -> (
+     if not same v 
+     then error "incompatible objects in direct sum";
+     v#0)
+
 directSum Sequence := args -> (
      if #args === 0 then error "expected more than 0 arguments";
-     if all(args,f -> class f === Matrix) then directSumMatrix args
-     else if all(args,M -> class M === Module) then directSumModule args
-     else error "expected modules or maps"
+     type := single apply(args, class);
+     if type.?directSum then type.directSum args
+     else error "no method for direct sum"
      )
 directSum List := args -> directSum unlist args
 Matrix ++ Matrix := directSum
@@ -461,7 +482,7 @@ Matrix ++ RingElement := (f,r) -> f ++ matrix {{r}}
 RingElement ++ Matrix := (r,f) -> matrix {{r}} ++ f
 RingElement ++ RingElement := (r,s) -> matrix {{r}} ++ matrix {{s}}
 
-concatCols = mats -> (
+concatCols := mats -> (
      mats = select(elements mats,m -> m =!= null);
      if # mats === 1 
      then mats#0
@@ -472,9 +493,9 @@ concatCols = mats -> (
 	  if not all(targets, F -> F == M) 
 	  and not all(targets, F -> isFreeModule F)
 	  then error "unequal targets";
-	  ggConcatCols(targets#0, directSumModule apply(mats,source), mats)))
+	  ggConcatCols(targets#0, Module.directSum apply(mats,source), mats)))
 
-concatRows = mats -> (
+concatRows := mats -> (
      mats = select(elements mats,m -> m =!= null);
      if # mats === 1 
      then mats#0
@@ -485,7 +506,7 @@ concatRows = mats -> (
 	  if not all(sources, F -> F == N) 
 	  and not all(sources, F -> isFreeModule F)
 	  then error "unequal sources";
-	  ggConcatRows(directSumModule apply(mats,target), sources#0, mats)))
+	  ggConcatRows(Module.directSum apply(mats,target), sources#0, mats)))
 
 Matrix | Matrix := (f,g) -> concatCols(f,g)
 RingElement | Matrix := (f,g) -> concatCols(f**id_(target g),g)
@@ -981,6 +1002,8 @@ fixDegree := (m,d) -> (
      newMatrix(M,N)
      )
 
+Matrix.matrix = (f,options) -> concatRows apply(f, v -> concatCols v)
+
 matrixTable := (f,options) -> (
      types := unique apply(flatten f, class);
      if # types === 1 then (
@@ -988,8 +1011,8 @@ matrixTable := (f,options) -> (
 	  if instance(type,Ring) then (
 	       R := type;
 	       map(R^#f,, f, options))
-	  else if type === Matrix then concatRows apply(f, v -> concatCols v)
-	  else error "expected ring elements or matrices")
+	  else if type.?matrix then type.matrix(f,options)
+	  else error "no method for forming a matrix from elements of this type")
      else if all(types, T -> instance(T,Ring)) then (
 	  R = ring (
 	       try sum apply(types, R -> R#0)

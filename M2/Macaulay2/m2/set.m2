@@ -108,18 +108,19 @@ document { quote Set,
 	  },
      "Operations on sets:",
      MENU {
-	  (TO "+", "         -- union"),
-	  (TO "Set - Set", " -- difference"),
-	  (TO "*", "         -- intersection"),
-	  (TO "**", "        -- Cartesian product"),
-	  (TO "#", "         -- the number of elements"),
+	  (TO "+", "          -- union"),
+	  (TO "Set ++ Set", " -- disjoint union"),
+	  (TO "Set - Set", "  -- difference"),
+	  (TO "*", "          -- intersection"),
+	  (TO "**", "         -- Cartesian product"),
+	  (TO "#", "          -- the number of elements"),
 	  (TO "apply(Set,Function)", "  -- applying a function to elements"),
-	  (TO "elements", "  -- a list of the elements"),
-	  (TO "member", "    -- whether something is a member"),
-	  (TO "product", "   -- multiply the elements"),
-	  (TO "isSubset", "    -- whether a set is a subset of another"),
-	  (TO "subsets", "   -- a list of the subsets"),
-	  (TO "sum", "       -- sum the elements")
+	  (TO "elements", "   -- a list of the elements"),
+	  (TO "member", "     -- whether something is a member"),
+	  (TO "product", "    -- multiply the elements"),
+	  (TO "isSubset", "   -- whether a set is a subset of another"),
+	  (TO "subsets", "    -- a list of the subsets"),
+	  (TO "sum", "        -- sum the elements")
 	  }
      }
 
@@ -128,9 +129,15 @@ document { "Set - Set",
      SEEALSO ("Set", "-")
      }
 
+document { "Set ++ Set",
+     TT "x ++ y", " -- the disjoint union of two sets.",
+     SEEALSO ("Set", "++")
+     }
+
 net Set := x -> "set " | name keys x
 name Set := x -> "set " | name keys x
 Set + Set := (x,y) -> merge(x,y,(i,j)->i)
+Set ++ Set := (x,y) -> apply(x,i->(0,i)) + apply(y,j->(1,j))
 Set ** Set := (x,y) -> combine(x,y,identity,(i,j)->i,)
 special := quote special
 Set * Set := (x,y) -> (

@@ -354,7 +354,7 @@ scan({
 	  dim, Hom, diff, contract, exteriorPower, subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace, binomial, subquotient,
 	  getchange, poincare, cover, super,
-	  dual, cokernel, image, generators, someTerms, scanKeys, stats, options,
+	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, stats, options,
 	  substitute, rank, complete, ambient, top, transpose, length, baseName,
 	  degree, degreeLength, coefficients, isHomogeneous, size,
 	  isIsomorphism, exponents, 
