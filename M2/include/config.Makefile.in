@@ -133,8 +133,10 @@ endif
 
 DUMPDATAFILE := libexec/Macaulay2-$(ARCH)-data
 
+ifneq "$(prefix)" "/usr"
 CPPFLAGS += -I$(prefix)/include
 LOADLIBES += -L$(prefix)/lib
+endif
 
 # Local Variables:
 # compile-command: "make -f Makefile-configuration"
