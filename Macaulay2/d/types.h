@@ -12,7 +12,7 @@
 
 #if defined(__DJGPP__) || defined(_WIN32)
 #define NEWLINE "\r\n"
-#elif defined(__MWERKS__)
+#elif defined(__MWERKS__) && !defined(__BUILDING_MPW__)
 #define NEWLINE "\r"
 #else
 #define NEWLINE "\n"

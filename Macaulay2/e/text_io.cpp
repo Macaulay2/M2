@@ -36,6 +36,6 @@ void emit(char *s)
 
 void emit_line(char *s)
 {
-  fprintf(stderr, "%s%s", s, newline);
+  fprintf(stderr, "%s%s", s, "\n");
 }
 
