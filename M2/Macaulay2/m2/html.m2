@@ -327,7 +327,7 @@ buildLinks ForestNode := x -> (
 
 assembleTree = method()
 assembleTree Package := pkg -> (
-     doExamples = false;
+     doExamples = false;				    -- wrong way, change format for doc key for optional arg so it doesn't look like one!
      oldpkg := currentPackage;
      currentPackage = pkg;
      externalReferences = new MutableHashTable;
@@ -351,7 +351,7 @@ assembleTree Package := pkg -> (
 	  );
      t := getTrees();
      buildLinks t;
-     doExamples = true;
+     doExamples = true;					    -- wrong way
      t)
 
 -----------------------------------------------------------------------------
@@ -511,6 +511,13 @@ installPackage Package := o -> pkg -> (
 	       else stderr << "warning: missing file " << outf << endl;
 	       ));
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
+
+     -- make table of contents, including next, prev, and up links
+     stderr << "-- assembling table of contents" << endl;
+     pkg#"table of contents" = new Bag from {assembleTree pkg}; -- we bag it because it might be big!
+     pkg#"links up" = UP;
+     pkg#"links next" = NEXT;
+     pkg#"links prev" = PREV;
 
      -- make html files
      htmlDirectory = LAYOUT#"packagehtml" pkg#"title";

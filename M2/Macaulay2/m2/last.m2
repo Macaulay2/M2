@@ -27,7 +27,7 @@ closePackage "Main"
 Main#"reverse dictionary"#null = symbol null
 
 currentPackage = Main
--- load "Macaulay2-doc.m2"
+load "Macaulay2-doc.m2"
 currentPackage = null
 
 addStartFunction( () -> if sourceHomeDirectory =!= null then Main#"source directory" = sourceHomeDirectory )
