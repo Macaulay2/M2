@@ -326,6 +326,10 @@ double system_etime(){
      }
 #endif
 
+#if defined(__sun__)
+#define __environ _environ
+#endif
+
 extern char **__environ;
 extern char timestamp[];
 static void clean_up();
