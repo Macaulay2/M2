@@ -604,7 +604,7 @@ document {
      "), chain complexes (", OFCLASS ChainComplexMap, "), 
       or between objects in other categories.",
      PARA,
-     "See also ", TO matrix, ", which focuses on creating new matrices from
+     "See also the function ", TO matrix, ", which focuses on creating new matrices from
      rectangular arrays of ring elements or matrices.",
      Subnodes => {
 	  "Creating a map between modules (a matrix)",
@@ -619,6 +619,7 @@ document {
 	  "Creating a a map from a module to itself",
 	  TO (map,Module,RingElement),
 	  TO (map,Module,Matrix),
+	  TO (map,Module),
 	  "Creating a map with a different degree",
 	  TO (map,Matrix),
 	  "Creating a map between rings",

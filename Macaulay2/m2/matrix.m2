@@ -468,6 +468,11 @@ map(Module,Matrix) := Matrix => options -> (M,f) -> (
      map(M,source f ** R^{-first diffs},f)
      )
 
+map(Module) := Matrix => options -> (M) -> (
+     R := ring M;
+     if options.Degree =!= null then error "Degree option encountered with identity matrix";
+     map(M, M, reduce(M, rawIdentity(M.RawFreeModule,false,0))))
+
 inducedMap = method (
      Options => {
 	  Verify => true,
