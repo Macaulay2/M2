@@ -124,8 +124,11 @@ symlinkDirectory(String,String) := opts -> (src,dst) -> (
 		    else if match(backupFileRegexp,srcf)
 		    then stderr << "--skipping: backup file: " << srcf << endl
 		    else (
-			 tardir := concatenate drop(separate("/",tarf),-1); -- directory part of file name
+			 tardir := concatenate between("/",drop(separate("/",tarf),-1)); -- directory part of file name
 			 relsrcf := relativizeFilename(tardir,srcf);
+			 stderr << "tardir = " << tardir << endl;
+			 stderr << "srcf = " << srcf << endl;
+			 stderr << "relsrcf = relativizeFilename(tardir,srcf) = " << relsrcf << endl;
 			 if opts.Verbose then stderr << "--symlinking: " << relsrcf << " -> " << tarf << endl;
 			 if fileExists tarf then (
 			      stderr << "--skipping: file " << tarf << " already exists" << endl;
