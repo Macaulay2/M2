@@ -19,13 +19,15 @@ String.TeXmacsEvaluate = s -> (
 	  if v =!= null then value concatenate("symbol o",toString statementNumber) <- v;
 	  rot v;
 	  if v =!= null then (
-	     tv := try texMath v else "\\text{Display failed}";
-	     tc := try texMath class v else "\\text{Class display failed}";
-	     << TeXmacsBegin << "latex:";
+-- replacing latex below by mathml...
+	     tv := try mathML v else "\\text{Display failed}";
+	     tc := try mathML class v else "\\text{Class display failed}";
+	     << TeXmacsBegin << "html:<math>";
 		<< "\\begin{leqnarray*}"
 		   << "\\text{o" << statementNumber << "} & = & " << tv << "\\\\"
 		   << "\\text{o" << statementNumber << "} & : & " << tc
 		<< "\\end{leqnarray*}"
+		<< "</math>"
 	     << TeXmacsEnd;
 	     );
 	  )

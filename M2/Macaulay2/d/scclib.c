@@ -285,8 +285,6 @@ M2_string interp_dirname(M2_string s) {
   return tostring(t);
 }
 
-static M2_string last_cwd;
-
 M2_string system_getcwd()
 {
      /* this function now adds a terminal / to the directory name */
@@ -913,6 +911,20 @@ void *GC_realloc3 (void *s, size_t old, size_t new) {
 void GC_free2 (void *s, size_t old) {
      GC_FREE(s);
      }
+
+/* these next three functions are simply aliases for libcf in case it was configured 
+   with --with-memman-old.  The three functions are declared in libcfmem.a, but we don't
+   want to use their memory manager.  We make our own call to mp_set_memory_functions() 
+   in any case, see M2lib.c.
+   As a side effect, linking with libcfmem.a will cause an error about a duplicate definition,
+   which is good, since we don't want to link with libcfmem.a. */
+void* getBlock ( size_t size ) {
+  return GC_malloc1(size); }
+void* reallocBlock ( void * block, size_t oldsize, size_t newsize ) {
+  return GC_realloc3(block,oldsize,newsize); }
+void freeBlock ( void * block, size_t size ) {
+  return GC_free2(block, size);
+}
 
 #if 0
 

@@ -156,7 +156,7 @@ readeval2(file:TokenFile,printout:bool,AbortIfError:bool):Expr := (
      saveLocalFrame := localFrame;
      scope := newScope(globalScope);	  -- don't nest the scopes of files loaded.
      scope.transient = false;
-     localFrame = Frame(localFrame,scope.seqno,
+     localFrame = Frame(globalFrame,scope.seqno,
 	  new Sequence len scope.framesize do provide nullE);
      ret := readeval3(file,printout,AbortIfError,scope);
      localFrame = saveLocalFrame;
