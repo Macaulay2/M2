@@ -27,6 +27,7 @@ document { quote Tor,
 Tor(ZZ, Module, Module) := (i,M,N) -> (
      if ring M =!= ring N then error "expected the same ring";
      R := ring M;
+     if not isCommutative R then error "'Tor' not implemented yet for noncommutative rings.";
      if i < 0 then R^0
      else if i === 0 then M ** N
      else (
