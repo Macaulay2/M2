@@ -136,6 +136,8 @@ nres := (M,options) -> (
      -- homogenize with respect to a new variable and then come back by setting
      -- it to 1
      R := ring M;
+     if not isHomogeneous R 
+     then error "resolutions over inhomogeneous quotient rings not implemented yet";
      f := presentation M;
      p := presentation R;
      A := ring p;

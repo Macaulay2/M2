@@ -24,7 +24,7 @@ document { quote ZZ,
      MENU {
 	  TO "gcdCoefficients",
 	  TO "ZZ << ZZ",
-	  TO "ZZ >> ZZ",
+	  TO "ZZ >> ZZ"
 	  }
      }
 

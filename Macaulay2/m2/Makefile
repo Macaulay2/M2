@@ -95,8 +95,11 @@ phase1 :: ../cache/Macaulay2-$(ARCH).data
 	../bin/Macaulay2 -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-eexit(0)'
 else
 ARGS := -silent setup.m2
-phase1 ::
 endif
+
+phase1 :: ../cache/Macaulay2.made
+../cache/Macaulay2.made : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
+	touch $@
 
 all:: $(SCRIPTS)
 $(SCRIPTS) : makeM2.m2

@@ -45,6 +45,7 @@ printLocation Sequence := (filename,start,stop) -> (
 
 code = method(SingleArgumentDispatch=>true)
 code Symbol := code Sequence := code Function := args -> printLocation location args
+code List := v -> scan(v,i -> try code i)
 code Command := cmd -> code cmd#0
 document { quote code,
      TT "code f", " -- prints out the source code of the function f.",
@@ -60,6 +61,11 @@ document { quote code,
      TT "code(f,X,Y,Z)", " -- prints out the source code of the 
      particular method that would be applied if f were applied to 
      arguments of classes X, Y, and Z.",
+     BR, NOINDENT,
+     TT "code {v,w,...}", " -- prints out the source code for each
+     of the items listed.",
+     PARA,
+     EXAMPLE "code methods use",
      SEEALSO "methods"
      }
 
