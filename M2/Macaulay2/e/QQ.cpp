@@ -300,7 +300,6 @@ ring_elem QQ::power(const ring_elem f, mpz_t n) const
 
 ring_elem QQ::invert(const ring_elem f) const
 {
-#warning "seems like result needs to be initialized via gmp"
   if (is_zero(f))
     return QQ::from_int(0);
   else
