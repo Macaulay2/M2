@@ -13,19 +13,28 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
   "local key map for Macaulay 2 command interpreter buffers")
 (define-key M2-map [ f2 ] 'M2-position-point)
 
-(defun M2-comint-run (program &rest args)
-  "Run PROGRAM in a comint buffer with ARGS and switch to it."
-  (let ((name (file-name-nondirectory program)))
-    (switch-to-buffer (apply 'make-comint (append (list name program nil) args)))
-    (run-hooks (intern-soft (concat "comint-" name "-hook")))))
+(defun M2-comint-run (command)
+  "Run COMMAND under shell control in a comint buffer and switch to it."
+  (let* ((program (or (getenv "SHELL") "/bin/sh")))
+    (switch-to-buffer (apply 'make-comint (append (list "Macaulay2" program nil) (list "-c" command))))
+    (run-hooks (intern-soft (concat "comint-M2-hook")))))
 
-(defun M2()
+(defvar M2-history nil "The history of recent Macaulay2 command lines.")
+(defvar M2-command "M2 " "*The Macaulay2 command line.")
+
+(defun M2 (command)
   "Run Macaulay 2 in a buffer."
-  (interactive)
-  (M2-comint-run "M2" 
-		 ; "-tty"  ; This option is no longer needed.
-		           ; It tells M2 to regard stdin and stdout as tty's.
-		 )
+  (interactive
+   (list
+    (if current-prefix-arg
+	(read-from-minibuffer
+	 "M2 command line: "
+	 (if M2-history (car M2-history) "M2 ")
+	 nil
+	 nil
+	 (if M2-history '(M2-history . 1) 'M2-history))
+      M2-command)))
+  (M2-comint-run command)
   )
 
 (defvar M2-usual-jog 30 

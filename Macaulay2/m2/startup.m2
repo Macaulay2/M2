@@ -6,7 +6,14 @@
 
 firstTime := not Array.?name
 
+-- here we put local variables that might be used by the global definitions below
+match := X -> 0 < #(matches X);
+oldstring := string; string := if class oldstring === Function then oldstring else toString
+--
+
 if firstTime then (
+     -- all global definitions go here, because after loaddata is run, we'll come through here again
+     -- with all these already done and global variables set to read-only
      Array.name = "Array";
      BasicList.name = "BasicList";
      BigReal.name = "BigReal";
@@ -54,7 +61,6 @@ if firstTime then (
 	  ZZ.InputPrompt = ZZ.InputContinuationPrompt = ZZ.OutputPrompt = lineno -> null;
 	  currentPrompts = noPrompts;
 	  );
-     normalPrompts();
 
      startFunctions := {};
      addStartFunction = f -> ( startFunctions = append(startFunctions,f); f);
@@ -83,32 +89,29 @@ if firstTime then (
 
      first = x -> x#0;
      last = x -> x#-1;
+     isAbsoluteExecPath = filename -> match("/", filename);
+     isAbsolutePath = filename -> (
+	  match(
+	       (
+		    if version#"operating system" === "Windows-95-98-NT" then "^(.:|/)"
+		    else "^/"
+		    ),
+	       filename));
+     sourceHomeDirectory = null; -- home directory of Macaulay 2
+     buildHomeDirectory  = null; -- parent of the directory of the executable described in command line argument 0
      )
 
 loadFile := if class load === Function then load else simpleLoad
-match := X -> 0 < #(matches X);
 matchpart := (regex,i,s) -> substring_((matches(regex, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
 dir := s -> (
      m := matches(".*/",s);
      if 0 == #m then "./" else substring_(m#0) s)
 preload := true
-sourceHomeDirectory = null -- home directory of Macaulay 2
-buildHomeDirectory  = null -- parent of the directory of the executable described in command line argument 0
 noloaddata := false
 nobanner := false;
 nosetup := false
 interpreter := topLevel
-
-isAbsoluteExecPath = filename -> match("/", filename)
-
-isAbsolutePath = filename -> (
-     match(
-	  (
-	       if version#"operating system" === "Windows-95-98-NT" then "^(.:|/)"
-	       else "^/"
-	       ),
-	  filename))
 
 getRealPath := fn -> (
      -- look at realpath(3), which does even more
@@ -189,6 +192,12 @@ action := hashTable {
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )
      };
 
+setDefaultValues := () -> (
+     normalPrompts();
+     stopIfError false;
+     errorDepth loadDepth();
+     )
+
 processCommandLineOptions := () -> (			    -- two passes
      argno := 1;
      while argno < #commandLine do (
@@ -224,10 +233,13 @@ if firstTime and not nobanner then (
 if firstTime and not noloaddata and version#"dumpdata" then (
      -- try to load dumped data
      arch := if getenv "M2ARCH" =!= "" then getenv "M2ARCH" else version#"architecture";
-     datafile := minimizeFilename concatenate(buildHomeDirectory, "/libexec/Macaulay2-",arch, "-data");
+     datafile := minimizeFilename concatenate(buildHomeDirectory, "/cache/Macaulay2-",arch, "-data");
      if fileExists datafile then
-     try loaddata datafile else (
-	  << "warning: failed to load data from " << datafile << newline; simpleFlush stdio;
+     try (
+	  stderr << "--loading cached memory data from " << datafile << newline; simpleFlush stderr;
+	  loaddata datafile
+	  ) else (
+	  stderr << "warning: failed to load data from " << datafile << newline; simpleFlush stdio;
 	  )
      )
 
@@ -246,6 +258,7 @@ if firstTime and not nosetup then (
      loadFile minimizeFilename(sourceHomeDirectory | "/m2/setup.m2")
      )
 
+setDefaultValues()
 runStartFunctions()
 processCommandLineOptions()
 interpreter()
