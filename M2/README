@@ -43,7 +43,7 @@ bugs to: <bug-gmp@prep.ai.mit.edu>
 license: gmp-2.0/COPYING.LIB
 
 library: gc
-release: gc4.12alpha2
+release: gc4.12alpha3
  author: Hans Boehm <boehm@mti.sgi.com>
  get at: http://reality.sgi.com/employees/boehm_mti/gc.html
 license: gc/README
