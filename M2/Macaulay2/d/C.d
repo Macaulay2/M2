@@ -1,5 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+import abort():void;
 import pow(x:double,y:double):double;
 import lgamma(x:double):double;
 import cos(x:double):double;
@@ -16,6 +17,7 @@ import tanh(x:double):double;
 import exp(x:double):double;
 import log(x:double):double;
 import floor(x:double):double;
+import ldexp(x:double,exp:int):double;
 import alarm(x:int):int;
 import fork():int;
 rand():int ::= Ccode(int,"rand()");
@@ -52,3 +54,6 @@ import GrAllocColor(r:int,g:int,b:int):int;
 import kbhit():bool;
 import kill(pid:int,sig:int):int;
 import errno:int;
+export string := array(char);
+export Cstring := {Cstring:void} or null ;
+import tostring(s:Cstring):string;
