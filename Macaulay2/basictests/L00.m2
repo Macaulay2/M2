@@ -1,6 +1,3 @@
 assert = x -> if not x then error "assertion failed "
-
-x = load concatenate(srcdir, "L00.input")
-
-assert( x === true )
+load concatenate(srcdir, "L00.input")
 assert( y === 55 )
