@@ -582,46 +582,44 @@ removefun(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("remove",removefun);
 
-erase(s:Symbol,table:SymbolHashTable):bool := (
-     i := s.word.hash & (length(table.buckets)-1);
-     entryList := table.buckets.i;
-     when entryList
-     is entryListCell:SymbolListCell do (
-	  if entryListCell.entry == s
-	  then (
-	       table.numEntries = table.numEntries - 1;
-	       table.buckets.i = entryListCell.next;
-	       return(true);
-	       );
-	  lastCell := entryListCell;
-	  entryList = entryListCell.next;
-	  while true do (
+erase(e:Expr):Expr := (
+     when e is t:SymbolClosure do (
+	  s := t.symbol;
+	  d := globalDictionary;
+	  while (
+	       table := d.symboltable;
+	       i := s.word.hash & (length(table.buckets)-1);
+	       entryList := table.buckets.i;
 	       when entryList
 	       is entryListCell:SymbolListCell do (
-	  	    if entryListCell.entry == s
-	  	    then (
-	       		 table.numEntries = table.numEntries - 1;
-		    	 lastCell.next = entryListCell.next;
-		    	 return(true);
-		    	 );
-	  	    lastCell = entryListCell;
-	       	    entryList = entryListCell.next;
+		    if entryListCell.entry == s
+		    then (
+     	       	    	 if d.protected then return(buildErrorPacket("symbol is in a protected dictionary"));
+			 table.numEntries = table.numEntries - 1;
+			 table.buckets.i = entryListCell.next;
+			 return(e);
+			 );
+		    lastCell := entryListCell;
+		    entryList = entryListCell.next;
+		    while true do (
+			 when entryList
+			 is entryListCell:SymbolListCell do (
+			      if entryListCell.entry == s
+			      then (
+     	       	    	 	   if d.protected then return(buildErrorPacket("symbol is in a protected dictionary"));
+				   table.numEntries = table.numEntries - 1;
+				   lastCell.next = entryListCell.next;
+				   return(e);
+				   );
+			      lastCell = entryListCell;
+			      entryList = entryListCell.next;
+			      )
+			 is null do nothing;
+			 );
 		    )
-	       is null do return(false);
-	       );
-	  )
-     is null do return(false);
-     false
-     );
-erase(s:Symbol):bool := (
-     d := globalDictionary;
-     while (
-	  if !d.protected && erase(s,d.symboltable) then return(true);
-	  d != d.outerDictionary ) do d = d.outerDictionary;
-     false);
-erase(e:Expr):Expr := (
-     when e is s:SymbolClosure do if erase(s.symbol) then e
-     else WrongArg("a global symbol in an unprotected dictionary")
+	       is null do nothing;
+	       d != d.outerDictionary ) do d = d.outerDictionary;
+	  WrongArg("a global symbol"))
      else WrongArg("a symbol")
      );
 setupfun("erase", erase);
