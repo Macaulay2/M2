@@ -1222,7 +1222,7 @@ assert( lift(v^7,M) == (lift(v,M))^7 )
 
 TEST "
 R=ZZ/101[a,b,c]
-f = map(R,R,matrix{{1,2,3},{4,5,6},{7,8,9}})
+f = map(R,R,matrix(ZZ/101,{{1,2,3},{4,5,6},{7,8,9}}))
 assert( f(a) == a + 4*b + 7*c )
 assert( kernel f == ideal ( a-2*b+c ) )
 "
