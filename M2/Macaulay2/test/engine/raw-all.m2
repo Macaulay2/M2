@@ -1,19 +1,31 @@
-load "raw-monomial.m2"
-load "raw-monoid.m2"
-load "raw-ring.m2"
-load "raw-freemodule.m2"
-load "raw-schreyer.m2"
-load "raw-matrix.m2"
+runM2 = (filename) -> (
+     retval := run("M2 --silent --no-debug --stop " |filename|" -e 'exit 0'");
+     if retval != 0 then print("ERROR occured in file "|filename);
+     )
 
--- load "raw-decompose.m2"
--- load "raw-res.m2"
--- load "raw-mutable.m2"
--- load "raw-numerics.m2"
--- load "raw-weyl.m2" -- not much here yet
+runM2 "foo.m2"
+runM2 "foo2.m2"
 
--- load "raw-localgb.m2"
+runM2 "raw-monomial.m2"
+runM2 "raw-monoid.m2"
+runM2 "raw-ring.m2"
+runM2 "raw-freemodule.m2"
+runM2 "raw-schreyer.m2"
+runM2 "raw-matrix.m2"
+runM2 "raw-weyl.m2" -- not much here yet
 
--- load "raw.m2"
+runM2 "raw-decompose.m2"
+
+runM2 "raw-gb.m2" -- this file needs to be split into smaller files
+runM2 "raw-res.m2"
+runM2 "raw-mutable.m2"
+runM2 "raw-numerics.m2"
+
+runM2 "raw-localgb.m2"
+
+runM2 "raw.m2"
+runM2 "raw2.m2"
+runM2 "raw3.m2"
 
 -- Local Variables:
 -- compile-command: "M2 -e errorDepth=0 --stop -e 'load \"raw-all.m2\"' -e 'exit 0' "
