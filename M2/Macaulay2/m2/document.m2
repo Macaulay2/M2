@@ -7,15 +7,6 @@ maximumCodeWidth := 120
 TestsPrefix := "cache/tests/"
 
 documentationPath = {  }
-
-addStartFunction(
-     () -> (
-	  home := getenv "M2HOME";
-	  if home === "" then error "environment variable M2HOME not set";
-	  home = minimizeFilename home;
-	  path = join( path, { home | "/m2/" });
-	  )
-     )
 -----------------------------------------------------------------------------
 -- the phase encoding, obsolete
 -----------------------------------------------------------------------------

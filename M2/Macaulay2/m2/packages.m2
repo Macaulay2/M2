@@ -4,11 +4,7 @@ saveValues = varlist -> (
      valuelist := apply(varlist, x -> value x);
      () -> apply(varlist, valuelist, (x,n) -> x <- n))
 
-addStartFunction( 
-     () -> (
-	  home := getenv "M2HOME";
-	  path = append(path, home | "/packages/");
-	  ))
+addStartFunction( () -> path = join({"./", sourceHomeDirectory|"packages/"},path) )
 
 load "layout.m2"					    -- defines LAYOUT
 

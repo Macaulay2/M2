@@ -86,8 +86,10 @@ loadFile := if class load === Function then load else simpleLoad
 match := X -> 0 < #(matches X);
 matchpart := (regex,i,s) -> substring_((matches(regex, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
+dir := s -> (
+     m := matches(".*/",s);
+     if 0 == #m then "./" else substring_(m#0) s)
 preload := true
-subdirs := {"/m2/", "/packages/"}
 sourceHomeDirectory = null -- home directory of Macaulay 2
 buildHomeDirectory  = null -- parent of the directory of the executable described in command line argument 0
 noloaddata := false
@@ -124,25 +126,14 @@ exe := (
 	       )
 	  )
      )
-
-stderr << "-- debugging: exe = " << exe << newline ; simpleFlush stderr;
  
+
      -- search the PATH for our executable file and use getRealPath to locate our source files and use srcdir to locate more source files
 
-progname := notdir exe
-buildHomeDirectory = minimizeFilename(exe|"/../../");
+buildHomeDirectory = minimizeFilename(dir exe|"../");
 
--- find sourceHomeDirectory
-     dirs := { buildHomeDirectory, "./" };
-     scan(separate(":",getenv "M2HOME"), dir -> dirs = prepend(dir | "/", dirs));
-     i := 0;
-     while i < #dirs do (
-	  if dirs#i =!= "" and fileExists(dirs#i | "/m2/setup.m2") then (
-	       sourceHomeDirectory = minimizeFilename dirs#i;
-	       break;
-	       );
-	  i = i+1;
-	  );
+if fileExists (buildHomeDirectory|"m2/setup.m2"       ) then sourceHomeDirectory = buildHomeDirectory else
+if fileExists (buildHomeDirectory|"srcdir/m2/setup.m2") then sourceHomeDirectory = getRealPath(buildHomeDirectory|"srcdir")|"/"
 
 silence := arg -> null
 notyeterr := arg -> error("command line option ", arg, " not re-implemented yet")
@@ -150,6 +141,7 @@ notyet := arg -> if preload then (
      << "warning: command line option " << arg << " not re-implemented yet" << newline; simpleFlush stdio;
      )
 obsolete := arg -> error ("warning: command line option ", arg, " is obsolete")
+progname := notdir commandLine#0
 usage := arg -> (
      << "usage:"             << newline
      << "    " << progname << " [option ...] [file ...]" << newline
@@ -167,7 +159,6 @@ usage := arg -> (
      << "    -e...              evaluate expression '...'" << newline
      << "    -E...              evaluate expression '...' before initialization" << newline
      << "environment:"       << newline
-     << "    M2HOME             path to search for m2/setup.m2" << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
      << "                       bin/../libexec/Macaulay2-$M2ARCH-data, where bin is the" << newline
      << "                       directory containing the Macaulay2 executable" << newline
@@ -195,7 +186,7 @@ action := hashTable {
      "--version" => arg -> ( << version#"VERSION" << newline; exit 0; )
      };
 
-processOptions := () -> (			    -- two passes
+processCommandLineOptions := () -> (			    -- two passes
      argno := 1;
      while argno < #commandLine do (
 	  arg := commandLine#argno;
@@ -214,7 +205,7 @@ processOptions := () -> (			    -- two passes
 
 ---------------------------------
 
-if firstTime then processOptions()
+if firstTime then processCommandLineOptions()
 preload = false
 
 if firstTime and not nobanner then (
@@ -238,24 +229,20 @@ if firstTime and not noloaddata and version#"dumpdata" then (
      )
 
 path = {}
-    add := dir -> path = join(path, apply(subdirs, d -> minimizeFilename(dir|d)));
-    if sourceHomeDirectory  =!= null                then add sourceHomeDirectory
-    if buildHomeDirectory   =!= sourceHomeDirectory then add buildHomeDirectory
-    path = select(path, fileExists);
+if sourceHomeDirectory  =!= null                then path = append(path, sourceHomeDirectory|"m2/");
+if buildHomeDirectory   =!= sourceHomeDirectory then path = append(path, buildHomeDirectory |"m2/");
+path = select(path, fileExists);
 
+-- this might have to be fixed later to get the caches for the packages directory
 documentationPath = apply(path, d -> minimizeFilename(d|"/cache/doc/"))
     documentationPath = select(documentationPath, fileExists)
 
 if firstTime and not nosetup then (
      -- try to load setup.m2
-     if sourceHomeDirectory === null then (
-	  if getenv "M2HOME" === "" 
-	  then error "environment variable M2HOME not set, can't find file $M2HOME/m2/setup.m2"
-	  else error "can't find file $M2HOME/m2/setup.m2"
-	  );
+     if sourceHomeDirectory === null then error "can't find file setup.m2";
      loadFile minimizeFilename(sourceHomeDirectory | "/m2/setup.m2")
      )
 
 runStartFunctions()
-processOptions()
+processCommandLineOptions()
 interpreter()
