@@ -90,6 +90,7 @@ newPackage(String) := opts -> (title) -> (
      	  symbol Dictionary => newdict,
 	  symbol Version => opts.Version,
 	  symbol WritableSymbols => opts.WritableSymbols,
+     	  "close hook" => hook,
 	  "previous package" => currentPackage,
 	  "previous dictionaries" => saveD,
 	  "old debugging mode" => debuggingMode,
@@ -158,6 +159,8 @@ closePackage String := title -> (
 	  protect p.Dictionary;
 	  );
      if p.name =!= "Main" then globalDictionaries = prepend(d,p#"previous dictionaries");
+     hook := p#"close hook";
+     fileExitHooks = select(fileExitHooks, f -> f =!= hook);
      currentPackage = p#"previous package";
      debuggingMode = p#"old debugging mode";
      stderr << "--package " << p << " installed" << endl;
