@@ -108,6 +108,10 @@ endif
 # we can't do this because our manufactured c files have lots of unused labels
 # CFLAGS  += -Wall -Wshadow -Wcast-qual
 
+ifeq "$(DEBUG)" "TRUE"
+CFLAGS += -DGC_DEBUG
+endif
+
 ifeq "$(CC)" "cl"
 CFLAGS += -Za -W0
 endif
@@ -213,6 +217,8 @@ memdebug.o scclib.o actors5.oo gc_cpp.o memdebug.lo scclib.lo actors5.loo gc_cpp
 gc_cpp.o gc_cpp.lo : ../../Makeconf.h
 
 allc : $(PROJECT:.d=.c) tmp_init.c
+
+$(PROJECT:.d=.loo) $(PROJECT:.d=.lo) : compat.h
 
 ALLOBJ :=
 MISCO := M2lib.o scclib.o gc_cpp.o tmp_init.o memdebug.o

@@ -55,6 +55,10 @@ GC_TARGETS := gc.a
 
 GC_CFLAGS := $(CFLAGS)
 GC_CFLAGS += -DLARGE_CONFIG -DNO_SIGNALS
+ifeq "$(DEBUG)" "TRUE"
+# Hans Boehm has verified that -DALL_INTERIOR_POINTERS is not needed with -DGC_DEBUG
+GC_CFLAGS += -DGC_DEBUG
+endif
 
 # The only reason to have ALL_INTERIOR_POINTERS on is if we are using GC_malloc for C++ routines.
 # GC_CFLAGS +=  -DALL_INTERIOR_POINTERS
@@ -64,10 +68,9 @@ GC_CFLAGS += -DSILENT
 endif
 
 ifdef DEBUG
-# GC_TARGETS += test
 else
-# we want to use GC_dump(), so don't define NO_DEBUGGING
-# GC_CFLAGS += -DNO_DEBUGGING
+# GC_dump() will not be compiled!
+GC_CFLAGS += -DNO_DEBUGGING
 endif
 
 lib/libgc.a: 		gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
@@ -435,3 +438,6 @@ update:
 	$(MAKE)
 checkin:
 	cvs ci -m "check-in from $(NODENAME) [$(SYSTEM)]"
+################################# TAGS
+TAGS:
+	etags `find . \( -name '*.h' -o -name '*.c' -o -name '*.s' -o -name '*.S' \)`

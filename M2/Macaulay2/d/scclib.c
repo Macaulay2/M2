@@ -14,7 +14,11 @@ char *getmem(n)
 unsigned int n;
 {
      char *p;
+#if 0
      p = GC_malloc_ignore_off_page(n);
+#else
+     p = GC_MALLOC(n);
+#endif
      if (p == NULL) outofmem();
      return p;
      }
@@ -22,7 +26,11 @@ unsigned int n;
 char *GC_malloc_clear(n)
 unsigned int n;
 {
+#if 0
   char *p = GC_malloc_ignore_off_page(n);
+#else
+  char *p = GC_MALLOC(n);
+#endif
   if (p == NULL) outofmem();
   memset(p,0,n);
   return p;
@@ -32,7 +40,11 @@ char *getmem_atomic(n)
 unsigned int n;
 {
      char *p;
+#if 0
      p = GC_malloc_atomic_ignore_off_page(n);
+#else
+     p = GC_MALLOC_ATOMIC(n);
+#endif
      if (p == NULL) outofmem();
      return p;
      }
@@ -154,7 +166,7 @@ M2_string filename;
      char *fname = tocharstar(filename);
      int fd;
      fd = open(fname, O_BINARY | O_RDONLY);
-     GC_free(fname);
+     GC_FREE(fname);
      return fd;
      }
 
@@ -171,7 +183,7 @@ M2_string filename;
 #endif
 	  );
 #endif
-     GC_free(fname);
+     GC_FREE(fname);
      return fd;
      }
 
@@ -210,9 +222,9 @@ M2_stringarray argv;
      char **av = tocharstarstar(argv);
      execvp(av[0],av);
      for (i=0; i<(int)argv->len; i++) {
-     	  GC_free(av[i]);
+     	  GC_FREE(av[i]);
 	  }
-     GC_free(av);
+     GC_FREE(av);
      return ERROR;
      }
 
@@ -274,7 +286,7 @@ M2_string s;
 {
      char *ss = tocharstar(s);
      char *x = getenv(ss);
-     GC_free(ss);
+     GC_FREE(ss);
      if (x == NULL) return tostring("");
      else return tostring(x);
      }
@@ -286,8 +298,8 @@ M2_string s,t;
      char *ss = tocharstar(s);
      char *tt = tocharstar(t);
      int r = strcmp(ss,tt);
-     GC_free(ss);
-     GC_free(tt);
+     GC_FREE(ss);
+     GC_FREE(tt);
      return r;
      }
 
@@ -343,8 +355,8 @@ M2_string system_errfmt(M2_string filename, int lineno, int colno) {
 	M2_string ret;
 	sprintf(s,posfmt,fn,lineno,colno);
 	ret = tostring(s);
-	GC_free(s);
-	GC_free(fn);
+	GC_FREE(s);
+	GC_FREE(fn);
 	return ret;
 }
 
@@ -561,8 +573,8 @@ M2_string host,serv;
      char *Host = tocharstar(host);
      char *Serv = tocharstar(serv);
      int sd = opensocket(Host,Serv);
-     GC_free(Host);
-     GC_free(Serv);
+     GC_FREE(Host);
+     GC_FREE(Serv);
      return sd;
      }
 
@@ -571,7 +583,7 @@ M2_string serv;
 {
      char *Serv = tocharstar(serv);
      int sd = openlistener(Serv);
-     GC_free(Serv);
+     GC_FREE(Serv);
      return sd;
      }
 
@@ -610,7 +622,7 @@ M2_string system_syserrmsg()
 int system_run(M2_string command){
      char *c = tocharstar(command);
      int r = system(c);
-     GC_free(c);
+     GC_FREE(c);
      return r >> 8;
      }
 
@@ -709,19 +721,19 @@ int M2close(int fd)
 
 void *GC_malloc1 (size_t size_in_bytes) {
      void *p;
-     p = GC_malloc_uncollectable(size_in_bytes);
+     p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
      if (p == NULL) outofmem();
      return p;
      }
 
 void *GC_realloc3 (void *s, size_t old, size_t new) {
-     void *p = GC_realloc(s,new);
+     void *p = GC_REALLOC(s,new);
      if (p == NULL) outofmem();
      return p;
      }
 
 void GC_free2 (void *s, size_t old) {
-     GC_free(s);
+     GC_FREE(s);
      }
 
 #else

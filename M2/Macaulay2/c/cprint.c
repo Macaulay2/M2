@@ -414,7 +414,7 @@ void cprintgetmem(node g){
 #if CLEAR_MEMORY
 	put("GC_malloc_clear"); /* see comment below! */
 #else
-	put("GC_malloc");
+	put("GC_MALLOC");
 #endif
       }
     }

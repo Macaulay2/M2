@@ -122,7 +122,7 @@ void exit(int);
 #if GaCo
 #include <gc.h>
 #undef malloc
-#define malloc(n) GC_malloc(n)
+#define malloc(n) GC_MALLOC(n)
 #define free(n)
 #endif
 
