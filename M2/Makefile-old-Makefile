@@ -161,6 +161,8 @@ include/factor.h: libfac/factor.h include/.exists; cp $< $@
 lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
 
 ###################### MP
+# warning: perl is needed to recreate mp/MP/MP.h - but this file is
+# provided with the distribution.
 MP:	mp mp/config.status mp/libMP.a \
 	lib/libMP.a include/MP.h include/MP_Config.h
 mp/config.status: mp/configure

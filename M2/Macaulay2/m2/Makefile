@@ -38,7 +38,7 @@ loads.m2 : dumpsequence
 	@echo making loads.m2
 	@../util/echoout '>loads.m2' $(foreach i, $(DUMPSEQUENCE), 'load "$(i)"')
 
-version.m2 : ../../Makeconf ../../Makeconf-m2 ../bin/Macaulay2 $(DUMPEDGFILES)
+version.m2 : ../../Makeconf ../../Makeconf-m2
 	../../Makeconf-m2 >version.tmp
 	mv version.tmp $@
 
