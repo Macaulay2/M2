@@ -372,7 +372,7 @@ document {
      NOINDENT, TT "lookup(M,A,B)", " -- provides the binary method named ", TT "M", " for ", TT "(A,B)", ".
      The first place to look is ", TT "Y#(M,A,B)", " where ", TT "Y", " is the younger
      of ", TT "A", " and ", TT "B", ".  The search proceeds next with the parent of ", TT "B", ", 
-     and so on.",
+     and so on. ",
      PARA,
      NOINDENT, TT "lookup(M,A,B,C)", " -- provides the ternary method named ", TT "M", " for
      ", TT "(A,B,C)", ".  The first place to look is ", TT "Y#(M,A,B,C)", " where ", TT "Y", " 

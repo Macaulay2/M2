@@ -1,6 +1,6 @@
 /* -*- c -*- */
 
-body { color: black; font-size: 12pt; background-image: url("../images/recbg.jpg"); margin : 1.5em; }
+body { color: black; font-size: 12pt; background-image: url("recbg.jpg"); margin : 1.5em; }
 
 h1   { text-align: center; font-size : 125%; }
 h2   { font-size : 110%; }
