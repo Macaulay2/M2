@@ -28,8 +28,11 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
 
 MutableMatrix *MutableMatrix::identity(const Ring *R, int nrows, bool dense)
 {
-#warning "implement this one"
-  return 0;
+  MutableMatrix *result = MutableMatrix::zero_matrix(R,nrows,nrows,dense);
+  ring_elem one = R->one();
+  for (int i=0; i<nrows; i++)
+    result->set_entry(i,i,one);
+  return result;
 }
 
 bool MutableMatrix::setRowChangeMatrix(MutableMatrix *rops)

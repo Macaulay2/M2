@@ -211,8 +211,8 @@ bool DenseMutableMatrixRing::dot_product(int i, int j, ring_elem &result) const
 {
   if (error_column_bound(i)) return false;
   if (error_column_bound(j)) return false;
-  ring_elem *loc1 = array_ + i;
-  ring_elem *loc2 = array_ + j;
+  ring_elem *loc1 = array_ + nrows*i;
+  ring_elem *loc2 = array_ + nrows*j;
   result = R->zero();
   for (int r=0; r<nrows; r++)
     {
