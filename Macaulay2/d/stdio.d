@@ -540,17 +540,38 @@ endlfun(o:file):int := (
 
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';
 
+haveLine(o:file):bool := (
+     i := o.inindex;
+     while i < o.insize do (
+	  c := o.inbuffer.i;
+	  if c == '\n' || c == '\r' then return(true);
+	  i = i+1;
+	  );
+     return(false);
+     );
+
+echoLine(o:file):void := (
+     e := if o.output then o else stdout;
+     i := o.inindex;
+     while i < o.insize do (
+	  c := o.inbuffer.i;
+	  if c == '\n' || c == '\r' then (
+     	       endlfun(e);
+     	       flush(e);
+	       return();
+	       );
+	  e << c;
+	  i = i+1;
+	  ));
+
 prepare(o:file):void := (
+     e := if o.output then o else stdout;
      o.bol = false;
-     o.prompt(stdout);
-     flush(stdout);
-     if o.echo then (
-	  filbuf(o);
-	  i := o.inindex;
-	  c := ' ';
-	  while i < o.insize && (c = o.inbuffer.i; c != '\n' && c != '\r') do (stdout << c; i = i+1);
-	  endlfun(stdout);
-	  flush(stdout)));
+     o.prompt(e);
+     flush(e);
+     if !haveLine(o) then filbuf(o);
+     if o.echo then echoLine(o);
+     );
 export getc(o:file):int := (
      if !o.input then return(EOF);
      if o.bol then prepare(o);
@@ -568,9 +589,9 @@ export read(o:file):string := (
 export peek(o:file,offset:int):int := (
      if !o.input then return(EOF);
      if offset >= bufsize then return(EOF);		    -- tried to peek too far
+     if o.bol then prepare(o);
      if o.inindex+offset >= o.insize then (
 	  if o.eof then return(EOF);
-	  if o.bol then prepare(o);
      	  while (
 	       filbuf(o);
 	       o.inindex+offset >= o.insize

@@ -2,6 +2,17 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.47:
 
+New commands 'echoOn' and 'echoOff' to set echoing on or off for a file.
+On the command line, with no arguments, the standard file 'stdio' is assumed
+as the argument.
+
+prompts for input now go to the output side of the input file, if the file is
+an input output file, otherwise to stdout
+
+some file names changed:
+	cache/Macaulay2.doc --> cache/Macaulay2-doc
+	cache/Macaulay2-XXXX.data --> cache/Macaulay2-XXXX-data
+
 'openFiles()' now returns a list of all the open files, even the files open
 only for input.
 

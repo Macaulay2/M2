@@ -13,7 +13,7 @@ M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentD
        "../bin/M2.arg"
        << "'-e loaddata \"" << M2HOME << "/cache/Macaulay2-"
        << version#"architecture"
-       << ".data\"'" << endl
+       << "-data\"'" << endl
        << "--" << endl
        -- << "'-e path = {\".\", \"" << M2HOME << "/m2\"}'" << endl
        << "'-e runStartFunctions()'" << endl
@@ -32,7 +32,7 @@ M2HOME := substring(concatenate between(pathSeparator, drop(split("X" | currentD
 		 << "exec $M2HOME/bin/Macaulay2 "
 		 << format concatenate( 
 		      "-e loaddata ", format concatenate(
-			   "$M2HOME/cache/Macaulay2-`uname -m | sed s=/=-=g `.data" 
+			   "$M2HOME/cache/Macaulay2-`uname -m | sed s=/=-=g `-data" 
 			   )
 		      )
 		 << " --"

@@ -24,7 +24,7 @@ topNodeName = "Macaulay 2"
 topNodeAlias = "table of contents"
 topNodeButton := HREF { topFileName, BUTTON("star_home.gif","top") }
 
-databaseFileName = "../cache/Macaulay2.doc"
+databaseFileName = "../cache/Macaulay2-doc"
 errorDepth 0
 
 scandb = (db,f) -> scanKeys(db,k->f(k,db#k))

@@ -1262,3 +1262,25 @@ unhex(e:Expr):Expr := (
      is s:string do Expr(unhex(s))
      else WrongArg("a string"));
 setupfun("unhex",unhex);
+
+echo(f:file,v:bool):Expr := (
+     if f.input then ( f.echo = v; nullE)
+     else WrongArg("an input file"));
+echoOn(e:Expr):Expr := (
+     when e
+     is s:Sequence do
+     if length(s) == 0 then echo(stdIO,true)
+     else WrongArg("a file or ()")
+     is f:file do echo(f,true)
+     else WrongArg("a file or ()")
+     );
+setupfun("echoOn",echoOn);
+echoOff(e:Expr):Expr := (
+     when e
+     is s:Sequence do
+     if length(s) == 0 then echo(stdIO,false)
+     else WrongArg("a file or ()")
+     is f:file do echo(f,false)
+     else WrongArg("a file or ()")
+     );
+setupfun("echoOff",echoOff);
