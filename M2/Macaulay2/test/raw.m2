@@ -2,7 +2,7 @@
 
 -- test engine.d, interface.d, and engine.m2
 
-errorDepth 0
+errorDepth = 0
 
 a = rawVar 0
 b = rawVar 1
@@ -131,7 +131,7 @@ assert( q * j + r == i )
 
 -- try single grading
 
-errorDepth 0
+errorDepth = 0
 trivial = rawMonoid()
 
 k = rawZZp(101,trivial)

@@ -87,19 +87,20 @@ showStructure = Command(types -> show1 if types === () then select1 flatten(valu
 
 -----------------------------------------------------------------------------
 
+select2 := (type,syms) -> apply(
+     sort apply(
+	  select(syms, sym -> mutable sym and instance(value sym,type)),
+	  symb -> (hash symb, symb)
+	  ),
+     (h,s) -> s)
+
 userSymbols = type -> (
      if type === () then type = Thing;
-     apply(
-	  sort apply(
-	       select(values UserDictionary, sym -> mutable sym and instance(value sym,type)),
-	       symb -> (hash symb, symb)
-	       ),
-	  (h,s) -> s
-	  ))
+     select2(type,values UserDictionary))
 
-listUserSymbols = Command (
-     type -> stack apply(userSymbols type, s ->  toString s | ": " | toString class value s)
-     )
+list2 := syms -> stack apply(syms, s ->  toString s | ": " | toString class value s)
+
+listUserSymbols = Command ( type -> list2 userSymbols type )
 
 clearOutput = Command (() -> (
      	  scan(keys outputSymbols, s -> (

@@ -4,7 +4,7 @@
 << "-- the test will spur us to make it work" << endl
 exit 0
 
-errorDepth 1
+errorDepth = 1
 
 f = map(ZZ/5,ZZ)
 assert(class f 4 === ZZ/5)

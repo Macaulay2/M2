@@ -1,4 +1,4 @@
-errorDepth 0
+errorDepth = 0
 V = QQ^2
 W = QQ^3
 M = V++W

@@ -690,8 +690,8 @@ readfun(e:Expr):Expr := (
 setupfun("read",readfun);
 
 export setupargv():void := (
-     setupconst("commandLine",toExpr(argv)).transient = true;
-     setupconst("environment",toExpr(envp)).transient = true;
+     setupconst("commandLine",toExpr(argv));
+     setupconst("environment",toExpr(envp));
      );
 
 -- setupargv();

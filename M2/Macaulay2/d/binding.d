@@ -88,7 +88,6 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
 	       frameindex,
 	       1,				-- first lookup is now
 	       false,				      -- not protected
-	       dictionary.transient,
 	       false
 	       ),
 	  dictionary.symboltable));

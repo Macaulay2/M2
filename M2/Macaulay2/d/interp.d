@@ -291,10 +291,11 @@ topLevel(e:Expr):Expr := (
 setupfun("commandInterpreter",topLevel);
 
 breakLoop(f:Frame):bool := (
-     when loadprint("-",StopIfError, 
-	  newStaticLocalDictionaryClosure(localDictionaryClosure(f))
-	  ) is Error do false else true
-     );
+     interpreterDepth = interpreterDepth + 1;
+     ret := when loadprint("-",StopIfError, 
+	  newStaticLocalDictionaryClosure(localDictionaryClosure(f))) is Error do false else true;
+     interpreterDepth = interpreterDepth - 1;
+     ret);
 breakLoopFun = breakLoop;
 
 value(e:Expr):Expr := (

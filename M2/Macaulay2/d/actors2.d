@@ -546,8 +546,6 @@ forfun(c:forCode):Expr := (
 ForFun = forfun;
 
 setupconst("stdio",Expr(stdIO));
---setupconst("stdin",Expr(stdin));
---setupconst("stdout",Expr(stdout));
 setupconst("stderr",Expr(stderr));
 openfilesfun(e:Expr):Expr := (
      n := 0;
@@ -752,3 +750,27 @@ sameFunctionBody(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("sameFunctionBody", sameFunctionBody);
+
+loadDepthS := setupvar("loadDepth",Expr(toInteger(LoadDepth)));
+recursionLimitS := setupvar("recursionLimit",Expr(toInteger(recursionlimit)));
+errorDepthS := setupvar("errorDepth",Expr(toInteger(ErrorDepth)));
+storeVariable(e:Expr):Expr := (			    -- called with (symbol,newvalue)
+     when e
+     is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else (
+	  sym := s.0;
+	  when s.1
+	  is i:Integer do (
+	       if !isInt(i) then buildErrorPacket("expected new value to be a small integer")
+	       else (
+		    x := toInt(i);
+		    if sym === loadDepthS then (LoadDepth = x; nullE)
+		    else if sym === errorDepthS then (ErrorDepth = x; nullE)
+		    else if sym === recursionLimitS then (recursionlimit = x; nullE)
+		    else buildErrorPacket("global assignment hook expected loadDepth, errorDepth, or recursionLimit"))
+	       )
+	  else buildErrorPacket("expected new value to be an integer"))
+     else WrongNumArgs(2));
+f := Expr(CompiledFunction(storeVariable,nextHash()));
+storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,loadDepthS)),f);
+storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,errorDepthS)),f);
+storeInHashTable(globalAssignmentHooks,Expr(SymbolClosure(globalFrame,recursionLimitS)),f);

@@ -4,7 +4,7 @@
 
 --		Copyright 1993-2003 by Daniel R. Grayson
 
-errorDepth 0						    -- without this, we may see no error messages the second time through
+errorDepth = 0						    -- without this, we may see no error messages the second time through
 
 firstTime := not Array.?name
 
@@ -285,7 +285,7 @@ documentationPath = apply(path, d -> minimizeFilename(d|"/cache/doc/"))
 normalPrompts()
 if firstTime and not nosetup then loadSetup()
 runStartFunctions()
-errorDepth loadDepth()
+errorDepth = loadDepth
 stopIfError false					    -- this is also set in interp.d!
 processCommandLineOptions()
 if interpreter() then exit 0 else exit 1

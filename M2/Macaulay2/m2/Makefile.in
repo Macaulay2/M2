@@ -30,14 +30,15 @@ endif
 
 TUTORIALS := $(wildcard ../tutorial/final/*.out)
 
-DUMPEDM2FILES := $(LOADSEQUENCE) @srcdir@/setup.m2 $(MADEM2FILES)
+DUMPEDM2FILES := $(LOADSEQUENCE) @srcdir@/setup.m2 @srcdir@/startup.m2 $(MADEM2FILES)
 
 ifneq "$(DUMPDATA)" "no"
 DUMPEDM2FILES := $(DUMPEDM2FILES) @srcdir@/dumpdata.m2
 endif
 
-NONDOCM2FILES = @srcdir@/setup.m2 $(LOADSEQUENCE) \
-	$(patsubst %, @srcdir@/%, dumpdata.m2 eg.m2 sagbi.m2)
+OTHERM2FILES = $(patsubst %, @srcdir@/%, dumpdata.m2 eg.m2 sagbi.m2)
+
+NONDOCM2FILES = @srcdir@/startup.m2 @srcdir@/setup.m2 $(LOADSEQUENCE) $(OTHERM2FILES)
 
 M2FILES = $(NONDOCM2FILES) $(DOCSEQUENCE)
 
@@ -123,7 +124,7 @@ phase2 :: ../cache/Macaulay2-pre cache/doc/.made
 	mkdir  cache/tests
 	../bin/M2 -q --silent --stop \
 		-e 'phase = 2' \
-		-e 'errorDepth 0' \
+		-e 'errorDepth = 0' \
 		-e 'DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
 		Macaulay2-doc.m2 -e 'exit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
@@ -177,7 +178,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 	rm -f ../cache/Macaulay2-tmp
 	../bin/M2 -q --silent --stop \
 		-e 'phase = 4' \
-		-e 'errorDepth 0' \
+		-e 'errorDepth = 0' \
 		-e 'DocDatabase = openDatabaseOut "../cache/Macaulay2-tmp"' \
 		Macaulay2-doc.m2 -e 'exit(0)'
 	mv ../cache/Macaulay2-tmp $@
@@ -191,7 +192,7 @@ phase5 : phase4 $(htmldocdir) $(htmldocdir)/index.html always
 $(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../bin/M2
 	 #------ phase 5: making html documentation
 	../bin/M2 -q --silent --stop \
-		-e 'phase = 5; errorDepth 0' \
+		-e 'phase = 5; errorDepth = 0' \
 		-e 'makeHTML("$(prefix)/","@prefix@")' \
 		-e 'exit 0'
 install :: "$(docm2dir)" "$(htmldocdir)" install-html
@@ -210,7 +211,7 @@ check-links :
 ifdef NEWENGINE
 check:: test1
 test1 : test.m2 phase1
-	../bin/M2 -e 'errorDepth 0' -q test.m2 -e '<< "--test succeeded" << endl' -e 'exit 0'
+	../bin/M2 -e 'errorDepth = 0' -q test.m2 -e '<< "--test succeeded" << endl' -e 'exit 0'
 	touch $@
 endif
 

@@ -16,6 +16,38 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The internal symbol tables of the interpreters are now available at
+top level as members of the new class 'Dictionary'.  Both local and
+global symbol tables are obtainable with the functions
+'localDictionaries' and 'globalDictionaries'.  Formerly there was just
+one global dictionary, but now there is a sequence of them that are
+searched for global symbols; the sequence can be set with the function
+'globalDictionaries', and must contain at least one unprotected
+dictionary in which new global symbols can be created.
+
+The top level command interpreter can be called recursively through
+the new function 'commandInterpreter()'.  If you give it a local
+closure (such as a symbol or a function) the symbols in the lexical
+scope of the symbol or closure will be visible to the user.  One more
+"i" will be added to prompt each time the command interpreter is
+entered.  To leave it, type 'endInput' or the end of file character.
+
+There is a new hash table called 'globalAssignmentHooks' which is
+consulted just before an assignment to a global variable is about to
+take place.  The key used is the global symbol, and the value should
+be a function or a list of functions, each of which takes two
+arguments (SYM,VAL), where SYM is the symbol and VAL is the new value
+about to be assigned.  The value of the function is ignored: only the
+side effects are useful.
+
+The function 'loadDepth' has been replaced by a writable variable of
+the same name.  Just set it to change it, and the new value will be
+communicated to the internal code of the interpreter by a global
+assignment hook, described above.  Similarly, the function
+'errorDepth' has been replaced by a variable of the same name, and the
+function 'setrecursionlimit' has been replaced by a variable called
+'recursionLimit'.
+
 'netRows' is now called 'unstack'
 
 New features for nets: if n is a Net, then #n is the number of rows,

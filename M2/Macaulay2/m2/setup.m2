@@ -159,8 +159,7 @@ load "loads.m2"
 setnotify()
 addStartFunction(
      () -> (
-	  loadDepth (1 + loadDepth());
-	  errorDepth loadDepth();
+	  errorDepth = loadDepth = loadDepth + 1;
 	  if not member("-q",commandLine)
 	  then (
 	       tryload("init.m2", simpleLoad)

@@ -236,12 +236,11 @@ document { AfterNoPrint,
      been suppressed by a semicolon."
      }
 
-document { (setrecursionlimit,ZZ),
+document { "recursionLimit",
      Headline => "set the limit on recursion",
      Synopsis => {
-	  "m = setrecursionlimit n",
+	  "recursionLimit = n",
 	  "n" => "the desired limit on recursion depth",
-	  "m" => "the previous limit"
 	  },
      "Each time a function is called, the recursion depth is incremented by
      1, and each time a function returns, the recursion depth is decremented.

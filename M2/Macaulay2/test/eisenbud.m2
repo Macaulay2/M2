@@ -6,7 +6,7 @@
 << "-- with the presentation given" << endl
 exit 0
 
-errorDepth 1
+errorDepth = 1
 
 try1 = () -> (
      R = ZZ/101[a,b,c];
