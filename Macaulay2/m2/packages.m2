@@ -73,7 +73,14 @@ removePackage String := n -> if PackageDictionary#?n and class value PackageDict
 
 currentPackageS := getGlobalSymbol(PackageDictionary,"currentPackage")
 
-newPackage = method( Options => { Using => {}, Version => "0.0", WritableSymbols => {}, DebuggingMode => false } )
+newPackage = method( 
+     Options => { 
+	  Using => {}, 
+	  Version => "0.0", 
+	  WritableSymbols => {}, 
+	  DebuggingMode => false
+	  }
+     )
 newPackage(Package) := opts -> p -> (
      hide p.Dictionary;		    -- hide the old dictionary
      newPackage(p.name,opts))
@@ -107,6 +114,7 @@ newPackage(String) := opts -> (title) -> (
 	  "raw documentation" => new MutableHashTable,
 	  "documentation" => new MutableHashTable,
 	  "example inputs" => new MutableHashTable,
+	  "exported symbols" => {},
 	  "example results" => new MutableHashTable,
 	  "edited documentation" => new MutableHashTable,
 	  "html documentation" => new MutableHashTable,
@@ -119,6 +127,15 @@ newPackage(String) := opts -> (title) -> (
      PrintNames#newdict = title | ".Dictionary";
      debuggingMode = opts.DebuggingMode;
      p)
+
+export = method(SingleArgumentDispatch => true)
+export Symbol := x -> singleton x
+export Sequence := v -> export toList v
+export List := v -> (
+     if not all(v, x -> class x === Symbol) then error "expected a list of symbols";
+     if currentPackage === null then error "no current package";
+     currentPackage#"exported symbols" = join(currentPackage#"exported symbols",v);
+     v)
 
 addStartFunction( () -> if prefixDirectory =!= null then Main#"package prefix" = prefixDirectory )
 
@@ -190,7 +207,10 @@ dictionary Symbol := s -> (				    -- eventually every symbol will know what dic
 dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictionary#x
 
 package = method ()
-package Dictionary := d -> scan(values PackageDictionary, pkg -> if (value pkg).Dictionary === d then break (value pkg))
+package Dictionary := d -> (
+     if currentPackage =!= null and currentPackage.Dictionary === d then currentPackage else
+     scan(values PackageDictionary, pkg -> if (value pkg).Dictionary === d then break (value pkg))
+     )
 package Thing := x -> (
      d := dictionary x;
      if d =!= null then package d)
