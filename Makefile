@@ -17,7 +17,7 @@
 
 #############################################################################
 
-default : all
+default : all doc
 
 include Makefile.overrides
 Makefile.overrides :

@@ -54,6 +54,5 @@ $(BOOKNAME).tex : ../cache/Macaulay2-doc book.m2 booktex.m2
 	../bin/M2 -q book.m2 '-e exit 0'
 	mv M2book.tmp $(BOOKNAME).tex
 
-clean :; rm -rf .tex *.dvi *.log *.aux *.out *.tmp *.pdf *.ps \
-	*.bbl *.blg *.ilg *.ind *.toc *.idx *.bux
+clean :; rm -rf Macaulay2-*-book.*
 

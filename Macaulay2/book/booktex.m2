@@ -162,9 +162,9 @@ crossReference := (key,text,optional) -> (
 	  );
      if sectionNumber === UnknownReference
      then if optional 
-     then (                                  "{\\bf ", cmrLiteral text,  "}" )
-     else (                                  "{\\bf ", cmrLiteral text,  "} [", sectionNumber, "]" )
-     else ( "\\hyperlink{", sectionNumber, "}{{\\bf ", cmrLiteral text, "}} [", sectionNumber, "]" )
+     then (                                  "{\\bf ", tex text,  "}" )
+     else (                                  "{\\bf ", tex text,  "} [", sectionNumber, "]" )
+     else ( "\\hyperlink{", sectionNumber, "}{{\\bf ", tex text, "}} [", sectionNumber, "]" )
      )
 
 booktex = method(SingleArgumentDispatch=>true)
@@ -198,7 +198,7 @@ booktex MENU := x -> concatenate(
 ///
      )
 
-booktex HREF := s -> concatenate( "\\href{", ttLiteral s#0, "}{", booktex s#-1, "}" )
+booktex HREF := s -> concatenate( "\\href{", tex s#0, "}{", booktex s#-1, "}" )
 booktex TEX := identity
 booktex NOINDENT := (x) -> ///\noindent\ignorespaces
 ///
@@ -214,7 +214,7 @@ booktex IMG := x -> ""
 booktex Nothing := x -> ""
 booktex Boolean := booktex Symbol := toString
 booktex BasicList := booktex Sequence := x -> concatenate apply(x,booktex)
-booktex String := cmrLiteral
+booktex String := tex
 booktex ITALIC := x -> concatenate("{\\sl ",booktex toList x,"}")
 shorten := s -> (
      while #s > 0 and s#-1 == "" do s = drop(s,-1);

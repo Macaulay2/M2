@@ -134,7 +134,7 @@ bookFile << ///
 	      if class d#0 === CENTER then d = drop(d,1);
 	      bookFile << endl << endl
 	      << "\\hypertarget{" << n << "}{}" << endl
-	      << sectionType n << "{" << cmrLiteral formatDocumentTag node << "}"
+	      << sectionType n << "{" << tex formatDocumentTag node << "}"
 	      << "\\label{" << n << "}" << endl;
 	      if getenv "DEBUG" != "" then bookFile << " (label: " << n << ") " << endl;
 	      bookFile << concatenate booktex d << endl;

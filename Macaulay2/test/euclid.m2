@@ -20,7 +20,7 @@ check(x^10*(1+x+x^500),x^6*(1-x+x^2))
 check(x^10*(1+x+x^500)*(1-x+x^2),x^6*(1-x+x^2))
 check(x^10*(1+x+x^100)*(1-x+x^2),x^6*(1-x+x^2))
 
-stderr << currentFile << ": test deferred" << endl
+stderr << currentFileName << ": test deferred" << endl
 exit 0
 
 assert( try (
