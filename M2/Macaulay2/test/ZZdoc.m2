@@ -34,11 +34,13 @@ reach Sequence := reach BasicList := x -> scan(x,reach)
 DocumentationProvided := set topicList()
 verify TO := x -> (
      s := x#0;
+     if class s =!= String then s = name s;
      if not DocumentationProvided#?s and not DocumentationMissing#?s 
      then DocumentationMissing#s = currentPage;
      )
 reach TO := x -> (
      s := x#0;
+     if class s =!= String then s = name s;
      if not reachable#?s or not reachable#s
      then (
 	  reachable#s = true;
@@ -56,7 +58,9 @@ reach doc "Macaulay 2"
 scan(sort pairs DocumentationMissing,
      (s,w) -> warning(
 	  if tab#?s then tab#s,
-	  "documentation for '"|s|"' missing, needed for '"|w|"'"))
+	  concatenate(
+	       "documentation for '",toString s,"' missing, needed for '",toString w,"'"
+	       )))
 
 unreachable := applyPairs(
      new HashTable from reachable,
@@ -64,7 +68,7 @@ unreachable := applyPairs(
 scan(sort keys unreachable,
      s -> warning(
 	  if tab#?s then tab#s,
-	  "documentation for '"|s|"' not reachable"))
+	  "documentation for '"|toString s|"' not reachable"))
 
 DocumentationNotNeeded = new MutableHashTable from apply(
      toList (tab#"a" .. tab#"Z"), s -> (s,true))

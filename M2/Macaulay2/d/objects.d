@@ -680,36 +680,36 @@ export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
      else apply(method,right));
 -----------------------------------------------------------------------------
 -- method documentation
-Documentation := newHashTable(mutableHashTableClass,nothingClass);
-setupconst("Documentation", Expr(Documentation));
+-- Documentation := newHashTable(mutableHashTableClass,nothingClass);
+-- setupconst("Documentation", Expr(Documentation));
 installIt(h:HashTable,key:Expr,value:Expr):Expr := (
      when value is Error do value
      is FunctionClosure do storeInHashTable(h,key,value)
      is CompiledFunction do storeInHashTable(h,key,value)
      is CompiledFunctionClosure do storeInHashTable(h,key,value)
-     is x:List do (
-	  if x.class == listClass then (
-	       if length(x.v) >= 2 then (
-		    f := x.v.1;
-		    when f
-		    is FunctionClosure do (
-			 storeInHashTable(h,key,f);
-		    	 storeInHashTable(Documentation, key, value))
-		    is CompiledFunction do (
-			 storeInHashTable(h,key,f);
-		    	 storeInHashTable(Documentation, key, value))
-		    is CompiledFunctionClosure do (
-			 storeInHashTable(h,key,f);
-		    	 storeInHashTable(Documentation, key, value))
-		    is Nothing do (
-			 -- documentation only
-			 storeInHashTable(Documentation, key, value))
-     		    else errorExpr("expected second entry in list to be a function")
-		    )
-	       else errorExpr("expected a list of length at least 2")
-	       )
-	  else errorExpr("expected a list of class List")
-	  )
+--     is x:List do (
+--	  if x.class == listClass then (
+--	       if length(x.v) >= 2 then (
+--		    f := x.v.1;
+--		    when f
+--		    is FunctionClosure do (
+--			 storeInHashTable(h,key,f);
+--		    	 storeInHashTable(Documentation, key, value))
+--		    is CompiledFunction do (
+--			 storeInHashTable(h,key,f);
+--		    	 storeInHashTable(Documentation, key, value))
+--		    is CompiledFunctionClosure do (
+--			 storeInHashTable(h,key,f);
+--		    	 storeInHashTable(Documentation, key, value))
+--		    is Nothing do (
+--			 -- documentation only
+--			 storeInHashTable(Documentation, key, value))
+--     		    else errorExpr("expected second entry in list to be a function")
+--		    )
+--	       else errorExpr("expected a list of length at least 2")
+--	       )
+--	  else errorExpr("expected a list of class List")
+--	  )
      else errorExpr("expected a function or list"));
 -----------------------------------------------------------------------------
 -- unary methods
@@ -718,25 +718,25 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
      is FunctionClosure do storeInHashTable(s,meth,value)
      is CompiledFunction do storeInHashTable(s,meth,value)
      is CompiledFunctionClosure do storeInHashTable(s,meth,value)
-     is x:List do (
-	  if x.class == listClass then (
-	       if length(x.v) >= 3 then (
-		    f := x.v.1;
-		    when f
-		    is FunctionClosure do (
-			 storeInHashTable(s,meth,f);
-		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
-		    is CompiledFunction do (
-			 storeInHashTable(s,meth,f);
-		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
-		    is CompiledFunctionClosure do (
-			 storeInHashTable(s,meth,f);
-		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
-		    is Nothing do (
-			 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
-     		    else errorExpr("expected second entry in list to be a function"))
-	       else errorExpr("expected a list of length at least 3"))
-	  else errorExpr("expected a list of class List"))
+--     is x:List do (
+--	  if x.class == listClass then (
+--	       if length(x.v) >= 3 then (
+--		    f := x.v.1;
+--		    when f
+--		    is FunctionClosure do (
+--			 storeInHashTable(s,meth,f);
+--		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
+--		    is CompiledFunction do (
+--			 storeInHashTable(s,meth,f);
+--		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
+--		    is CompiledFunctionClosure do (
+--			 storeInHashTable(s,meth,f);
+--		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
+--		    is Nothing do (
+--			 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
+--     		    else errorExpr("expected second entry in list to be a function"))
+--	       else errorExpr("expected a list of length at least 3"))
+--	  else errorExpr("expected a list of class List"))
      else errorExpr("expected a function or list"));
 -----------------------------------------------------------------------------
 -- binary methods

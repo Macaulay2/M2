@@ -209,7 +209,7 @@ kernel RingMap := (f,options) -> if f.?kernel then f.kernel else f.kernel = (
 	  and coefficientRing R === coefficientRing F
 	  ) 
      then (
-	  JJ := graphIdeal(f,
+	  JJ := gens graphIdeal(f,
 	       MonomialOrder => Eliminate n1, 
 	       MonomialSize => 16,
 	       VariableBaseName => local X);

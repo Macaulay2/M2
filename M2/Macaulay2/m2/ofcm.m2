@@ -164,6 +164,10 @@ document { quote degreesMonoid,
 
 Eliminate = new SelfInitializingType of BasicList
 new Eliminate from ZZ := (Eliminate,n) -> Eliminate {n}
+expression Eliminate := v -> (
+     if #v === 1 
+     then new FunctionApplication from {Eliminate, v#0}
+     else new FunctionApplication from {Eliminate, toList v})
 ProductOrder = new SelfInitializingType of BasicList
 
 document { quote RevLex,
@@ -255,16 +259,24 @@ monoidDefaults := new OptionTable from {
      MonomialOrder => null,
      MonomialSize => 8,
      SkewCommutative => false,
-     VariableOrder => null,
+     VariableOrder => null,		  -- not implemented yet
      WeylAlgebra => {}
      }
 monoid = method()
+
+document { quote VariableOrder,
+     TT "VariableOrder", " -- an option used when creating a monoid.",
+     PARA,
+     "Not implemented yet.",
+     SEEALSO "monoid"
+     }
+
 document { quote monoid,
      TT "monoid R      ", " -- yields the underlying monoid of polynomial ring, 
                         group ring, or monoid ring.",
      PARA,
-     "monoid [a,b,c] -- makes a free ordered commutative monoid on the
-                        variables listed.",
+     NOINDENT,
+     TT "monoid [a,b,c]", " -- makes a free ordered commutative monoid on the variables listed.",
      PARA,
      "Options available:",
      MENU {
@@ -274,19 +286,20 @@ document { quote monoid,
 	  TO "MonomialSize",
 	  TO "SkewCommutative",
 	  TO "Variables",
-	  TO "VariableBaseName"
+	  TO "VariableBaseName",
+	  TO "VariableOrder"
 	  },
      PARA,
-     "monoid [a,b,c,Degrees=>{2,3,4}] 
-          -- makes a free ordered commutative monoid on the
+     NOINDENT,
+     TT "monoid [a,b,c,Degrees=>{2,3,4}]", " -- makes a free ordered commutative monoid on the
 	     variables listed, with degrees 2, 3, and 4, respectively.",
      PARA,
-     "monoid [a,b,c,Degrees=>{{1,2},{3,-3},{0,4}}] 
-          -- makes a free ordered commutative monoid on the
-	     variables listed, with multi-degrees as listed.",
+     NOINDENT,
+     TT "monoid [a,b,c,Degrees=>{{1,2},{3,-3},{0,4}}]", " -- makes a free ordered
+     commutative monoid on the variables listed, with multi-degrees as listed.",
      PARA,
-     "monoid [a,b,c,Degrees=>{{},{},{}}] 
-          -- makes a free ordered commutative monoid on the
+     NOINDENT,
+     TT "monoid [a,b,c,Degrees=>{{},{},{}}]", " -- makes a free ordered commutative monoid on the
 	     variables listed, ungraded.",
      PARA,
      "The variables listed may be symbols or indexed variables.
@@ -294,8 +307,7 @@ document { quote monoid,
      the corresponding monoid generators.  The function ", TO "baseName", "
      may be used to recover the original symbol or indexed variable.",
      PARA,
-     "The class of all monoids created this way is ",
-     TO "GeneralOrderedMonoid", ".",
+     "The class of all monoids created this way is ", TO "GeneralOrderedMonoid", ".",
      PARA,
      SEEALSO ("OrderedMonoid","IndexedVariable","Symbol")
      }
@@ -407,6 +419,7 @@ makeit1 := (options) -> (
      w := reverse applyTable(order, minus);
      w = if # w === 0 then apply(n,i -> {}) else transpose w;
      w = apply(w, x -> apply(makeSparse x, (k,v) -> (k + n, v)));
+     if #w =!= #varlist then error "expected same number of degrees as variables";
      M.vars = M.generators = apply(# varlist, i -> new M from join( {(i,1)}, w#i));
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
@@ -612,8 +625,8 @@ group Array := X -> monoid append(X,Inverses=>true)
 
 tensor = method( Options => options monoid )
 
-Monoid ** Monoid := { Monoid,
-     (M,N) -> tensor(M,N),
+Monoid ** Monoid := (M,N) -> tensor(M,N)
+document { (quote **, Monoid, Monoid),
      TT "M ** N", " -- tensor product of monoids.",
      PARA,
      "For complete documentation, see ", TO "tensor", "."

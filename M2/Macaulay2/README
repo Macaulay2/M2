@@ -87,12 +87,17 @@ of these in the same directory tree.
     Lugaru Software at http://lugaru.com/epsinfo.html.  We also have our own
     interface under development for you.
 
+    Another way to run Macaulay 2 and retain the output after it scrolls
+    off the screen is to use NTemacs, which ought to be compatible with our
+    provided emacs macros.
+
 ----------------------
 3. The manual
 ----------------------
 
 The manual is available in various forms, and includes tutorials as
-well as descriptions of each function.
+well as descriptions of each function.  Its constituent files are provided in
+a separate tar file at our web site.
 
 A. While running Macaulay 2.
 
@@ -142,11 +147,8 @@ Take a look at the home page for Macaulay 2
 
 	http://www.math.uiuc.edu/Macaulay2
 
-or the ftp site
-
-	ftp://math.uiuc.edu/Macaulay2
-
-to download the source code or versions of Macaulay 2 for various machines.
+to download the source code, versions of Macaulay 2 for various machines, or
+the documentation.
 
 ----------------------
 6. Other help

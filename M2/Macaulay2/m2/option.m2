@@ -1,6 +1,9 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 Option = new Type of BasicList
+ListHead Option := (x,y) -> x {y}
+html Option := x -> name x
+text Option := x -> name x
 
 name Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",name z#0,")") else name z#0,
@@ -26,11 +29,6 @@ document { quote Option,
      }
 
 Thing => Thing := (x,y) -> new Option from {x,y}
-
-document { "Thing => Thing",
-     TT "x => y", " -- an ", TO "Option", ", used as an optional argument with 
-     some functions."
-     }
 
 new HashTable from List := (O,v) -> hashTable v
 -- erase quote hashTable

@@ -28,13 +28,18 @@ name = s -> (
      else (
 	  f := lookup(name,class s);
 	  if f =!= null 
-	  then try f(s)			  -- mask out errors here because
-	       	    	      	   	  -- error printing routines often call us
-	  else concatenate("<<",name class s,":",name hash s,">>")
+	  then
+	  f(s)
+--	  try f(s)			  -- mask out errors here because
+--	       	    	      	   	  -- error printing routines often call us
+--	  else concatenate("<<",name class s,":",name hash s,">>")
 	  else concatenate("<<",name class s,":",name hash s,">>")))
 
 name Thing := string
 name String := format;
+
+name Symbol := s -> error "'name' applied to symbol too early in setup"
+name Function := f -> error "'name' applied to function too early in setup"
 
 name MutableHashTable := s -> concatenate (
      name class s,

@@ -1,54 +1,55 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
-Module + Module := {Module, (M,N) -> (
-	  if ring M =!= ring N
-	  then error "expected modules over the same ring";
-	  R := ring M;
-	  if ambient M != ambient N
-	  or M.?relations and N.?relations and M.relations != N.relations
-	  or M.?relations and not N.?relations
-	  or not M.?relations and N.?relations
-	  then error "expected submodules of the same module";
-	  subquotient(
-	       if not M.?generators or not N.?generators then null else M.generators | N.generators,
-	       if M.?relations then M.relations else null
-	       )
-	  ),
+Module + Module := (M,N) -> (
+     if ring M =!= ring N
+     then error "expected modules over the same ring";
+     R := ring M;
+     if ambient M != ambient N
+     or M.?relations and N.?relations and M.relations != N.relations
+     or M.?relations and not N.?relations
+     or not M.?relations and N.?relations
+     then error "expected submodules of the same module";
+     subquotient(
+	  if not M.?generators or not N.?generators then null else M.generators | N.generators,
+	  if M.?relations then M.relations else null
+	  )
+     )
+document { (quote +, Module, Module),
      TT "M + N", " -- the sum of two submodules.",
      PARA,
      "The two modules should be submodules of the same module."
      }
 
-Module ** Module := { Module, 
-     (M,N) -> (
-	  if M.?generators and not isFreeModule N
-	  or N.?generators and not isFreeModule M then (
-	       if M.?generators then M = cokernel presentation M;
-	       if N.?generators then N = cokernel presentation N;
-	       );
-	  R := ring M;
-	  if R =!= ring N then error "expected modules over the same ring";
-	  if isFreeModule M then (
-	       if M == R^1 then N
-	       else if isFreeModule N then (
-		    if N == R^1 then M
-		    else (
-			 sendgg(ggPush M, ggPush N, ggmult);
-			 new Module from R
-			 )
-		    )
-	       else subquotient(
-		    if N.?generators then M ** N.generators,
-		    if N.?relations then M ** N.relations))
-	  else (
-	       if isFreeModule N then (
-		    if N == R^1 then M
-		    else subquotient(
-			 if M.?generators then M.generators ** N,
-			 if M.?relations then M.relations ** N))
+Module ** Module := (M,N) -> (
+     if M.?generators and not isFreeModule N
+     or N.?generators and not isFreeModule M then (
+	  if M.?generators then M = cokernel presentation M;
+	  if N.?generators then N = cokernel presentation N;
+	  );
+     R := ring M;
+     if R =!= ring N then error "expected modules over the same ring";
+     if isFreeModule M then (
+	  if M == R^1 then N
+	  else if isFreeModule N then (
+	       if N == R^1 then M
 	       else (
-		    sendgg(ggPush M.relations, ggPush N.relations, ggmodtensor);
-		    cokernel getMatrix R))),
+		    sendgg(ggPush M, ggPush N, ggmult);
+		    new Module from R
+		    )
+	       )
+	  else subquotient(
+	       if N.?generators then M ** N.generators,
+	       if N.?relations then M ** N.relations))
+     else (
+	  if isFreeModule N then (
+	       if N == R^1 then M
+	       else subquotient(
+		    if M.?generators then M.generators ** N,
+		    if M.?relations then M.relations ** N))
+	  else (
+	       sendgg(ggPush M.relations, ggPush N.relations, ggmodtensor);
+	       cokernel getMatrix R)))
+document { (quote **, Module, Module),
      TT "M ** N", " -- produce the tensor product of two modules.",
      PARA,
      "Since M and N may be provided as submodules or subquotient modules, it
@@ -79,18 +80,18 @@ document { "Matrix ** Module",
 -----------------------------------------------------------------------------
 -- base change
 -----------------------------------------------------------------------------
-Module ** Ring := { Module,
-     (M,R) -> (
-	  k := ring M;
-	  if k === R then M
-	  else (
-	       try promote(1_k, R) else error "can't tensor by this ring";
-	       if M.?generators then coker presentation M ** R
-	       else if M.?relations then cokernel (M.relations ** R)
-	       else if isQuotientOf(R,k) then R^(- degrees M)
-	       else R^(rank M)
-	       )
-	  ),
+Module ** Ring := (M,R) -> (
+     k := ring M;
+     if k === R then M
+     else (
+	  try promote(1_k, R) else error "can't tensor by this ring";
+	  if M.?generators then coker presentation M ** R
+	  else if M.?relations then cokernel (M.relations ** R)
+	  else if isQuotientOf(R,k) then R^(- degrees M)
+	  else R^(rank M)
+	  )
+     )
+document { (quote **, Module, Ring),
      TT "M ** R", " -- form the tensor product of a module M with a ring
      R.",
      PARA,
@@ -100,23 +101,22 @@ Module ** Ring := { Module,
      EXAMPLE "M ** R[t]"
      }
 
-Matrix ** Ring := {
-     Matrix,
-     (f,R) -> (
-	  k := ring source f;
-	  S := ring target f;
-	  if k === R and S === R then f
-	  else if S === R then (
-	       -- map(target f, (source f ** R) ** R^(-degree f), f)
-	       map(target f, source f ** R, f, Degree => degree f)
-	       )
-	  else map(
-	       -- this will be pretty slow
-	       target f ** R, source f ** R, applyTable(entries f, r -> promote(r,R)),
-	       Degree => if isQuotientOf(R,k) then degree f else degree 1_R
-	       )
-	  ),
-          TT "f ** R", " -- form the tensor product of a module map f with a ring R",
+Matrix ** Ring := (f,R) -> (
+     k := ring source f;
+     S := ring target f;
+     if k === R and S === R then f
+     else if S === R then (
+	  -- map(target f, (source f ** R) ** R^(-degree f), f)
+	  map(target f, source f ** R, f, Degree => degree f)
+	  )
+     else map(
+	  -- this will be pretty slow
+	  target f ** R, source f ** R, applyTable(entries f, r -> promote(r,R)),
+	  Degree => if isQuotientOf(R,k) then degree f else degree 1_R
+	  )
+     )
+document { (quote **, Matrix, Ring),
+     TT "f ** R", " -- form the tensor product of a module map f with a ring R",
      PARA,
      "The ring of f should be a base ring of R.  The degree of the map is
      preserved.",
@@ -338,12 +338,9 @@ diff(ProjectiveHilbertPolynomial,ZZ) := (P,i) -> (
 	  (n,c) -> n >= 0
 	  ))
 diff ProjectiveHilbertPolynomial := (P) -> diff(P,1)
-ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := {
-     ProjectiveHilbertPolynomial,
-     (h,k) -> (
-     	  select( merge(h,k,plus), c -> c =!= 0 )
-     	  )
-     }
+ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := (h,k) -> (
+     select( merge(h,k,plus), c -> c =!= 0 )
+     )
 - ProjectiveHilbertPolynomial := h -> apply(h,minus)
 ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := (h,k) -> h + -k
 ProjectiveHilbertPolynomial == ProjectiveHilbertPolynomial := (h,k) -> h === k
@@ -619,14 +616,14 @@ prune(Module) := M -> (
 	  if isFreeModule M then (
 	       M.pruningMap = id_M;
 	       M)
-	  else if isHomogeneous M then (
+	  else if isHomogeneous M and isAffineRing ring M then (
 	       f := presentation M;
 	       g := complement f;
 	       N := cokernel modulo(g, f);
 	       N.pruningMap = map(M,N,g);
 	       N)
 	  else (
-	       f = presentation M;
+	       f = gens gb presentation M;
 	       -- MES: can't it do more here?
 	       N = cokernel f;
 	       N.pruningMap = map(M,N,id_(cover M));
@@ -666,15 +663,22 @@ assert ( p^-1 * p == id_N )
 "
 -----------------------------------------------------------------------------
 document { quote dual,
-     TT "dual M", " -- the dual."
+     TT "dual M", " -- the dual.",
+     PARA,
+     "For details, see one of the following.",
+     MENU {
+	  TO (dual,ChainComplex),
+	  TO (dual,Matrix),
+	  TO (dual,Module)
+	  }
      }
 
-dual Module := { Module,
-     F -> if F.?dual then F.dual else F.dual = (
-	  if not isFreeModule F then kernel transpose presentation F
-	  else (
-	       sendgg (ggPush F, ggtranspose); 
-	       new Module from ring F)),
+dual Module := F -> if F.?dual then F.dual else F.dual = (
+     if not isFreeModule F then kernel transpose presentation F
+     else (
+	  sendgg (ggPush F, ggtranspose); 
+	  new Module from ring F))
+document { (dual, Module),
      TT "dual M", " -- the dual of a module."
      }
 -----------------------------------------------------------------------------

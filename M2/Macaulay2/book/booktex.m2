@@ -127,27 +127,38 @@ crossReference := (key,text) -> (
      )
 
 booktex = method(SingleArgumentDispatch=>true)
-booktex TO  := x -> crossReference(x#0, concatenate x)
-booktex TOMETHOD := x -> crossReference(x, name x)
+booktex TO  := x -> (
+     if class x#0 === String
+     then crossReference(x#0, concatenate x)
+     else crossReference(name x#0, name x#0)
+     )
 
-menuLevel := 0
+menuLevel := 2
 
 booktex MENU := x -> (
+     ///
+\begingroup
+\parskip=0pt
+///,
      apply(x, x -> (
 	       (menuLevel = menuLevel + 1;),
-	       ///
-
+	       ///%
+\par
 ///,
 	       apply(menuLevel-1, i -> ///\indent///),
-	       ///\hangindent///, string menuLevel, ///\parindent 
-		  \textindent{$\bullet$}///,
+	       ///\hangindent///, string menuLevel, ///\parindent
+///,
+	       -- ///\textindent{$\bullet$}///,
 	       booktex x,
 	       (menuLevel = menuLevel - 1;),
-	       ///
-
+	       ///%
+\par
 ///	       
 	       )
-	  )
+	  ),
+     ///%
+\endgroup
+///
      )
 
 booktex HREF := s -> (
@@ -162,15 +173,14 @@ booktex HREF := s -> (
      )
 
 booktex TEX := identity
-(class NOINDENT)#booktex = (x) -> ///
-\noindent\ignorespaces
+(class NOINDENT)#booktex = (x) -> ///\noindent\ignorespaces
 ///
 
-(class HR)#booktex   = (x) -> ///
+(class HR)#booktex   = (x) -> ///\par
 \line{\leaders\hrule\hfill}
 ///
 
-(class PARA)#booktex = (x) -> "\n\n"
+(class PARA)#booktex = (x) -> concatenate(newline,newline)
 (class BR)#booktex  = (x) -> ///\hfil\break
 ///
 booktex IMG := x -> ""
@@ -179,7 +189,11 @@ booktex Boolean := booktex Symbol := string
 booktex BasicList := booktex Sequence := x -> apply(x,booktex)
 booktex String := cmrLiteral
 booktex ITALIC := x -> ("{\\sl ",booktex toList x,"}")
-verbatim = x -> ("\\beginverbatim%\n", ttLiteral concatenate x, "\\endverbatim{}")
+verbatim = x -> (
+     "\\beginverbatim%", newline,
+     ttLiteral concatenate x,
+     "\\endverbatim{}"
+     )
 booktex TT := verbatim
 shorten := s -> (
      while #s > 0 and s#-1 == "" do s = drop(s,-1);
@@ -192,7 +206,7 @@ booktex PRE := x -> concatenate (
 \vskip 4 pt
 \beginverbatim%
 ///,
-     between("\n", 
+     between(newline, 
 	  shorten lines concatenate x
 	  / (line ->
 	       if #line <= 71 then line
@@ -200,8 +214,8 @@ booktex PRE := x -> concatenate (
 	  / ttLiteral
 	  / (line -> if line === "" then ///\penalty-500/// else line)
 	  ),
-     ///\endverbatim
-\par
+     ///
+\endverbatim
 \noindent
 ///
      )

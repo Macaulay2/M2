@@ -137,10 +137,20 @@ ZeroExpression.name = quote ZeroExpression
 ZERO := new ZeroExpression
 name ZeroExpression := net ZeroExpression := x -> "0"
 
+document { quote ZeroExpression,
+     TT "ZeroExpression", " -- a type of ", TO "Expression", " of which
+     there is just one instance, the expression zero."
+     }
+
 OneExpression = new Type of Expression
 OneExpression.name = quote OneExpression
 ONE := new OneExpression
 name OneExpression := net OneExpression := x -> "1"
+
+document { quote OneExpression,
+     TT "OneExpression", " -- a type of ", TO "Expression", " of which
+     there is just one instance, the expression one."
+     }
 
 Sum = new Type of AssociativeExpression
 Sum#unit = ZERO
@@ -171,18 +181,11 @@ DoubleArrow#expandFunction = (i,j) -> i => j
 expression Option := v -> new DoubleArrow from apply(v,expression)
 net DoubleArrow := v -> (
      p := precedence v;
-     if precedence v#0 <= p
-     then (
-	  if precedence v#1 < p
-	  then horizontalJoin("(",net v#0,")=>(",net v#1,")")
-	  else horizontalJoin("(",net v#0,")=>",net v#1)
-	  )
-     else (
-	  if precedence v#1 < p
-	  then horizontalJoin(net v#0,"=>(",net v#1,")")
-	  else horizontalJoin(net v#0,"=>",net v#1)
-	  )
-     )
+     v0 := net v#0;
+     v1 := net v#1;
+     if precedence v#0 <= p then v0 = horizontalJoin("(",net v0,")");
+     if precedence v#1 <  p then v1 = horizontalJoin("(",net v1,")");
+     horizontalJoin(v0," => ",v1))
 
 Product = new Type of AssociativeExpression
 Product#unit = ONE
@@ -295,14 +298,14 @@ Expression == Equation      := prepend
 Expression == Expression    := (x,y) -> new Equation from {x,y}
 Expression == Thing         := (x,y) -> x == expression y
 Thing == Expression         := (x,y) -> expression x == y
-ZeroExpression + Expression := { Expression, (x,y) -> y }
-Expression + ZeroExpression := { Expression, (x,y) -> x }
-Sum + Sum                   := { Sum, join }
-Sum + Expression            := { Sum, append }
-Expression + Sum            := { Sum, prepend }
-Expression + Expression     := { Sum, (x,y) -> new Sum from {x,y} }
-Expression + Thing          := { Expression, (x,y) -> x + expression y }
-     Thing + Expression     := { Expression, (x,y) -> expression x + y }
+ZeroExpression + Expression := (x,y) -> y
+Expression + ZeroExpression := (x,y) -> x
+Sum + Sum                   := join
+Sum + Expression            := append
+Expression + Sum            := prepend
+Expression + Expression     := (x,y) -> new Sum from {x,y}
+Expression + Thing          := (x,y) -> x + expression y
+     Thing + Expression     := (x,y) -> expression x + y
        - ZeroExpression     := identity
 	   - Minus          := x -> x#0
            - Expression     := x -> new Minus from {x}
@@ -396,6 +399,7 @@ name MatrixExpression := m -> concatenate(
      between(",",apply(m,row->("{", between(",",apply(row,name)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
+
 X := new Type of HashTable
 X X := identity
 SPACE := first first keys X
@@ -408,7 +412,6 @@ binary := new HashTable from {
      quote // => ((x,y) -> x//y),	  -- 
      quote ^ => ((x,y) -> x^y),		  -- 
      quote == => ((x,y) -> x==y),	  -- 
-     quote ~ => ((x,y) -> x~y),		  -- 
      quote .. => ((x,y) -> x..y),	  -- 
      quote % => ((x,y) -> x%y),
      quote @ => ((x,y) -> x@y),
@@ -549,6 +552,7 @@ document { quote Expression,
      PARA,
      "Types of expressions:",
      MENU {
+	  TO "Adjacent",
 	  TO "AssociativeExpression",
 	  TO "BinaryOperation",
 	  TO "Divide",
@@ -620,6 +624,10 @@ document { quote BinaryOperation,
 document { quote Subscript,
      TT "Subscript", " -- a type of ", TO "Expression", " representing a
      subscripted expression."
+     }
+document { quote Adjacent,
+     TT "Adjacent", " -- a type of ", TO "Expression", " representing a pair
+     of adjacent expressions, separated only by white space."
      }
 document { quote FunctionApplication,
      TT "FunctionApplication", " -- a type of ", TO "Expression", " representing an
@@ -977,8 +985,8 @@ document { quote print,
 
 tex Thing := x -> "$" | tex expression x | "$"
 
-File << Thing := { File,
-     (o,x) -> printString(o,net x),
+File << Thing := (o,x) -> printString(o,net x)
+document { (quote <<, File, Thing),
      TT "f << x", " -- prints the expression x on the output file f.",
      PARA,
      "Returns f as its value.  Parsing associates leftward, so that 
@@ -1041,37 +1049,6 @@ net Boolean := net File := net ZZ :=
      net Handle := net Database := string
 
 net Nothing := null -> "" -- we need a way to put blank spots in matrix expressions
------------------------------------------------------------------------------
-alphabet := new MutableHashTable
-scan( characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-     c -> alphabet#c = true)
-operators := new MutableHashTable
-scan(values symbolTable(), s -> (
-	  if not alphabet#?((string s)#0) 
-	  then (
-	       operators#s=true;
-	       )
-     	  )
-     )
-alphabet = null
-
--- name Symbol := string
-name Symbol := s -> (
-     if operators#?s 
-     -- or value s =!= s 
-     -- must get rid of S.syms in quotring.m2
-     then concatenate("quote ", string s)
-     else string s
-     )
-
-net Symbol := s -> (
-     if operators#?s
-     then concatenate("quote ", string s)
-     else string s
-     )
-
-BeforePrint Symbol := net
-
 -----------------------------------------------------------------------------
 hold = x -> new Held from {x}
 

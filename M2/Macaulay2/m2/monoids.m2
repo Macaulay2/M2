@@ -24,6 +24,7 @@ document { quote Monoid,
 	  },
      "Operations on monoids:",
      MENU {
+	  (TO (quote **,Monoid,Monoid), " -- product of monoids."),
 	  (TO "generators", "        -- get the generators of the monoid"),
 	  (TO "1_G", "         -- get the unit element"),
 	  (TO "G_i", "         -- get a generator from a monoid"),

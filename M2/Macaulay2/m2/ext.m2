@@ -25,8 +25,29 @@ Ext = new ScriptedFunctor from {
 document { quote Ext,
      TT "Ext^i(M,N)", " -- compute the Ext module of two modules M, N.",
      PARA,
-     "If M or N is an ideal or ring, it is regarded as a module in the 
-     evident way.",
+     NOINDENT,
+     TT "Ext(M,N)", " -- compute the total Ext module of two modules M, N.",
+     PARA,
+     "If ", TT "M", " or ", TT "N", " is an ideal or ring, it is regarded as
+     a module in the evident way.",
+     PARA,
+     "The computation of the total Ext module is possible for modules over the
+     ring ", TT "R", " of a complete intersection.  The result is provided as a finitely
+     presented module over a new ring with one additional variable for each
+     equation of ", TT "R", ".  The variables in this new ring have degree
+     length 2; we would have liked to arrange for the degree ", TT "i", "-- 
+     part of ", TT "Ext^d(M,N)", " to appear as the degree ", TT "{i,-d}", "
+     part of ", TT "E = Ext(M,N)", ", but for technical and hopefully temporary
+     reasons, this wasn't possible.  So meanwhile, we provide a function 
+     ", TT "E.adjust", " in the result returned by ", TT "Ext", " which can
+     be used to convert ", TT "{i,-d}", " into the degree actually used.
+     This adjusted multi-degree can be used with ", TO "basis", ", as in the
+     example below.",
+     EXAMPLE "R = ZZ/101[x,y]/ideal(x^3,y^2);",
+     EXAMPLE "N = cokernel random (R^1, R^{-2,-2})",
+     EXAMPLE "E = Ext(N,N)",
+     EXAMPLE "rank source basis( E.adjust {-3,-2}, E)",
+     EXAMPLE "rank source basis( {-3}, Ext^2(N,N) )",
      SEEALSO("ScriptedFunctor")
      }
 
@@ -228,9 +249,10 @@ Ext(Module,Module) := (N,M) -> (
 	  ext#(global adjust) = adjust;
 	  ext))
 
+adjust					  -- just use it again
+
 TEST ///
-     k = ZZ/101
-     Q = k[x,y]
+     Q = ZZ/101[x,y]
      I = ideal(x^3,y^5)
      R = Q/I
      N = cokernel random (R^3, R^{2:-2})

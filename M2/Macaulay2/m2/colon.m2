@@ -216,9 +216,6 @@ document { quote quotient,
     PARA,
     "Allowable options include:",
     MENU {
-        --TO "DegreeLimit",
-	--TO "BasisElementLimit",
-	--TO "PairLimit",
 	TO "Strategy",
 	TO "MinimalGenerators"
         },

@@ -130,14 +130,14 @@ ListHead = new Type of Type
 ListHead List := (h,y) -> new h from y
 ListHead HtmlList := (h,y) -> new h from {y}
 ListHead String := (h,s) -> h {s}
-ListHead Sequence := (h,s) -> h toList s
+ListHead Sequence := (h,s) -> h {s}
 GlobalAssignHook ListHead := (X,x) -> (
      if not x#?(quote name) then x.name = X
      )
 
 newListHead := (x) -> (
      on := "<" | x | ">";
-     off := "</" | x | ">" | newline;
+     off := "</" | x | ">";
      T := new ListHead of HtmlList;
      html T := t -> concatenate(on, apply(t,html), off);
      T )
@@ -172,6 +172,7 @@ text HrHead := x -> concatenate(
      newline)
 
 tex  HrHead := x -> ///
+\hfill\break
 \line{\leaders\hrule\hfill}
 ///
 name HrHead := x -> "HR"
@@ -427,16 +428,15 @@ text DL   := x -> concatenate(
 
 TO         = newListHead "TO"
 ff := {"\"","\""}
-text TO   := x -> concatenate mingle(ff,x)
+text TO   := x -> concatenate (
+     if class x#0 === String
+     then mingle(ff,x)
+     else mingle(ff,toList x/name)
+     )
 html TO   := x -> concatenate (
-     "<A HREF=\"", linkFilename x#0, "\">", html x#0, "</A>", 
-     apply(drop(x,1), html)
+     if class x#0 === String
+     then ("<A HREF=\"", linkFilename x#0, "\">", html x#0, "</A>", apply(drop(x,1), html))
+     else ("<A HREF=\"", linkFilename name x#0, "\">", html name x#0, "</A>", apply(drop(x,1), html))
      )
 tex TO := x -> tex TT x#0
 
-TOMETHOD   = newListHead "TOMETHOD"
-text TOMETHOD   := x -> concatenate ("\"",string x#0,"\"")
-html TOMETHOD   := x -> concatenate (
-     "<A HREF=\"", linkFilename name toSequence x, "\">", html x#0, "</A>"
-     )
-tex TOMETHOD := x -> tex TT string x#0

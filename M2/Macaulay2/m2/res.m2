@@ -33,17 +33,86 @@ resolution = method(
 res = resolution
 
 document { quote res,
-    "See ", TO "resolution", "."
+    "See ", TO "resolution", ", of which ", TT "res", " is a synonym."
     }
 
+document { resolution => DegreeLimit,
+     TT "DegreeLimit => n", " -- keyword for an optional argument used with
+     ", TO "resolution", " which specifies that the computation should halt
+     after dealing with degree n.",
+     PARA,
+     "This option is relevant only for homogeneous modules.",
+     PARA,
+     "One might get some matrix entries of slightly higher degree than requested.",
+     EXAMPLE "R = ZZ/101[x,y,z,w]",
+     EXAMPLE "M = cokernel matrix {{x*y-z^2,y^2-w^2}}",
+     EXAMPLE "res(M,DegreeLimit => 1)",
+     EXAMPLE "res(M,DegreeLimit => 2)"
+     }
+
+document { resolution => SyzygyLimit,
+     TT "SyzygyLimit", " -- keyword for an optional argument used with
+     ", TO "resolution", ", which specifies that the computation should
+     stop after a certain number of syzygies have computed.",
+     PARA,
+     EXAMPLE "R = ZZ/101[x,y,z,w]",
+     EXAMPLE "M = cokernel matrix {{x*y-z^2,y^2-w^2,w^4}}",
+     EXAMPLE "res(M,SyzygyLimit => 1)",
+     EXAMPLE "res(M,SyzygyLimit => 2)",
+     EXAMPLE "res(M,SyzygyLimit => infinity)"
+     }
+
+document { resolution => PairLimit,
+     TT "PairLimit", " -- keyword for an optional argument used with
+     ", TO "resolution", ", which specifies that the computation should
+     be stopped after a certain number of S-pairs have been reduced.",
+     EXAMPLE "R = QQ[x,y,z,w]",
+     EXAMPLE "M = cokernel matrix {{x*y-z,y^2-w-1,w^4-3}}",
+     EXAMPLE "res(M, PairLimit => 1)",
+     EXAMPLE "res(M, PairLimit => 10)",
+     EXAMPLE "res(M, PairLimit => 20)"
+     }
+
+document { resolution => StopBeforeComputation,
+     TT "StopBeforeComputation", " -- keyword for an optional argument used with
+     ", TO "resolution", ".",
+     PARA,
+     "Tells whether to start the computation, with the default value
+     being ", TT "true", ".  This can be useful when you want to obtain
+     the partially computed resolution contained in an interrupted computation."
+     }
+
 document { quote resolution,
+     MENU {
+	  TO (resolution, Module),
+	  TO (resolution, Matrix),
+	  TO (resolution, Ideal)
+	  }
+     }
+
+document { (resolution, Ideal),
+     TT "resolution I", " -- produces a projective resolution of the 
+     module ", TT "R/I", " if ", TT "I", " is an ideal in the ring ", TT "R", ".",
+     SEEALSO "resolution"
+     }
+
+document { (resolution, Matrix),
+     TT "resolution f", " -- when ", TT "f", " is a module homomorphism, produces a
+     chain map from a resolution of the source of ", TT "f", " to a resolution of the
+     target of ", TT "f", ".",
+     EXAMPLE "R = ZZ/101[x,y];",
+     EXAMPLE "m = ideal vars R",
+     EXAMPLE "resolution map(m/m^3, m^2/m^4)"
+     }
+
+document { (resolution, Module),
      TT "resolution M", " -- produces a projective resolution of the 
-     module (or ideal) M.",
+     module ", TT "M", ".",
      PARA,
      "If the computation is interrupted after the skeleton has been
      successfully computed, then the partially completed
-     resolution is available as ", TT "M.resolution", ".  The computation can
-     be continued with ", TT "resolution M", ".",
+     resolution is available as ", TT "M.resolution", ".  The computation 
+     can be continued with ", TT "resolution M", ".",
      PARA,
      "If the user has a chain complex in hand which is known to be a
      projective resolution of ", TT "M", ", then it can be installed
@@ -51,33 +120,21 @@ document { quote resolution,
      PARA,
      "Optional arguments and flags:",
      MENU {
-	  (TO "Algorithm", "        -- which algorithm to use"),
-	  (TO "StopBeforeComputation", " -- whether to stop the computation immediately"),
-	  (TO "DegreeLimit", "      -- compute only up to this degree"),
-	  (TO "HardDegreeLimit", "  -- always compute only up to this degree"),
-	  (TO "SyzygyLimit", "      -- stop when this number of syzygies are obtained"),
-	  (TO "PairLimit", "        -- stop when this number of pairs are handled"),
-	  (TO "LengthLimit", "      -- stop when the resolution reaches this length"),
-	  (TO "SortStrategy", "     -- specify strategy for sorting S-pairs")
+	  (TO (resolution => Algorithm), "             -- which algorithm to use"),
+	  (TO (resolution => StopBeforeComputation), " -- whether to stop the computation immediately"),
+	  (TO (resolution => DegreeLimit), "           -- compute only up to this degree"),
+	  (TO (resolution => HardDegreeLimit), "       -- always compute only up to this degree"),
+	  (TO (resolution => SyzygyLimit), "           -- stop when this number of syzygies are obtained"),
+	  (TO (resolution => PairLimit), "             -- stop when this number of pairs are handled"),
+	  (TO (resolution => LengthLimit), "           -- stop when the resolution reaches this length"),
+	  (TO (resolution => SortStrategy), "          -- specify strategy for sorting S-pairs")
 	  },
      PARA,
      "For an abbreviation, use ", TO "res", ".",
-     SEEALSO "ChainComplex"
+     SEEALSO ("ChainComplex", "resolution")
      }
 
--- documentOption { quote HardLengthLimit,
---      TT "HardLengthLimit", " -- a keyword for an optional argument used
---      with ", TO "resolution", " which indicates that those parts of the
---      computation in higher degree than this should be discarded (i.e.
---      an implied LengthLimit=>d will be appended to this resolution 
---      computation, when HardLengthLimit=>d is given to the resolution
---      routine.  This should only be used in extreme cases when
---      the skeleton of the resolution is very large in higher degrees,
---      and you do not need that part of the resolution in these higher
---      (slanted) degrees."
---      }
-
-documentOption { resolution, quote LengthLimit,
+document { resolution => LengthLimit,
      TT "LengthLimit", " -- keyword for an optional argument used with
      ", TO "resolution", " which indicates how long a resolution to make.",
      PARA,
@@ -89,7 +146,17 @@ documentOption { resolution, quote LengthLimit,
      The extra differential is not guaranteed to be minimal."
      }
 
-documentOption { resolution, quote HardDegreeLimit,
+document { quote HardDegreeLimit,
+     TT "HardDegreeLimit", " -- keyword for an optional argument which specifies
+     that information above a specified degree is to be discarded.",
+     PARA,
+     "See:",
+     MENU {
+	  TO (resolution => HardDegreeLimit)
+	  }
+     }
+
+document { resolution => HardDegreeLimit,
      TT "HardDegreeLimit", " -- keyword for an optional argument used with
      ", TO "resolution", ".",
      PARA,
@@ -98,7 +165,7 @@ documentOption { resolution, quote HardDegreeLimit,
      "Information above the specified degree is discarded."
      }
 
-documentOption { resolution, quote Algorithm,
+document { resolution => Algorithm,
      TT "Algorithm => n", " -- an option for ", TO "resolution", " which specifies
      which algorithm to use.  Algorithms are specified by number and the
      algorithms available are",
@@ -118,7 +185,7 @@ documentOption { resolution, quote Algorithm,
      this makes an enormous improvement to the efficiency of the algorithm."
      }
 
-documentOption { resolution, quote SortStrategy,
+document { resolution => SortStrategy,
      TT "SortStrategy => n", " -- an option for ", TO "resolution", " which 
      specifies the strategy to be used for sorting S-pairs.",
      PARA,
@@ -329,4 +396,105 @@ leadTerm(ZZ, ZZ, Resolution) := (n,level,g) -> (
      sendgg(ggPush g, ggPush n, ggPush level, gginitial);
      getMatrix ring g)
 
+-----------------------------------------------------------------------------
+pairs := g -> (
+    sendgg(ggPush g, ggpairs);
+    eePopIntarray())
+remaining := g -> (
+    sendgg(ggPush g, ggremaining);
+    eePopIntarray())
+nmonoms := g -> (
+    sendgg(ggPush g, ggnmonoms);
+    eePopIntarray())
+
+ResolutionStatus := (r,options) -> (
+     v := {};
+     lab := {};
+     if options#TotalPairs     === true then (
+	  v = append(v,pairs r);
+	  lab = append(lab,"total pairs");
+	  );
+     if options#PairsRemaining === true then (
+	  v = append(v,remaining r);
+	  lab = append(lab,"pairs remaining");
+	  );
+     if options#Monomials      === true then (
+	  v = append(v,nmonoms r);
+	  lab = append(lab,"monomials");
+	  );
+     numops := # v;
+     if numops === 1 
+     then lab = concatenate( "        : ", lab)
+     else lab = concatenate( "        : (", between(",",lab), ")" );
+     if numops === 0 then error "expected at least one option to be true";
+     ss := v#0;
+     minrow := ss_0;
+     maxrow := ss_1;
+     mincol := 0;
+     maxcol := ss_2;
+     leftside := apply(
+	  splice {"totals:", apply(minrow .. maxrow, i -> string i | ":")},
+	  s -> (9-# s,s));
+     v = transpose v;
+     v = drop(v,3);
+     v = pack(v,maxcol-mincol+1);
+     totals := apply(transpose v, sum);
+     v = prepend(totals,v);
+     v = transpose v;
+     v = applyTable(v, toSequence);
+     if numops === 1
+     then v = applyTable(v,(i) -> if i === 0 then "." else name i)
+     else v = applyTable(v,args -> concatenate("(", between(",",apply(args,name)), ")" ));
+     just := (
+	  if numops === 1
+	  then (wid,s) -> (wid - # s, s)  -- right justify
+	  else (wid,s) -> (			  -- center
+	       n := # s;
+	       w := (wid - n + 1)//2; 
+	       (w, s, wid-w-n)));
+     v = apply(v, col -> apply(col, s -> just(1 + max apply(col, i -> #i), s)));
+     v = prepend(leftside,v);
+     v = transpose v;
+     v = apply(v, row -> (row,"\n"));
+     << lab << endl;
+     printString(stdout,v);
+     )
+statusDefaults := new OptionTable from {
+     TotalPairs => true,
+     PairsRemaining => false,
+     Monomials => false
+     }
+status = method (Options => statusDefaults)
+status ChainComplex := (C,options) -> ResolutionStatus(C.Resolution, options)
+document { quote status,
+     TT "status C", " -- displays the status of the computation of a
+     chain complex C constructed by ", TO "resolution", ".  The display has
+     the same shape as the display produced by ", TO "betti", ", but
+     the number(s) displayed in each degree differ.",
+     PARA,
+     "Options:",
+     MENU {
+	  {TO "TotalPairs", "     -- display the total number of S-pairs"},
+	  {TO "PairsRemaining", " -- display the number of S-pairs remaining"},
+	  {TO "Monomials", "      -- display the number of monomials"}
+	  },
+     "Default values:",
+          MENU {
+	  {TO "TotalPairs", "     => ", statusDefaults.TotalPairs},
+	  {TO "PairsRemaining", " => ", statusDefaults.PairsRemaining},
+	  {TO "Monomials", "      => ", statusDefaults.Monomials}
+	  }
+     }
+document { quote TotalPairs,
+     TT "TotalPairs", " -- an option for ", TO "status", " which specifies
+     whether to display the total number of S-pairs."
+     }
+document { quote PairsRemaining,
+     TT "PairsRemaining", " -- an option for ", TO "status", " which specifies
+     whether to display number of S-pairs remaining."
+     }
+document { quote Monomials,
+     TT "Monomials", " -- an option for ", TO "status", " which specifies
+     whether to display the number of monomials."
+     }
 status Resolution := (r,options) -> ResolutionStatus(r, options)

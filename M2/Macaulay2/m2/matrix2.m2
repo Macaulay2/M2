@@ -115,23 +115,23 @@ document { quote modulo,
      taken to be zero."
      }
 
-Matrix // Matrix := { Matrix, 
-     (f,g) -> (
-	  -- if ring g =!= ring f then error "expected maps over the same ring";
-	  M := target f;
-	  if M != target g then error "expected maps with the same target";
-	  L := source f;
-	  N := source g;
-	  f = matrix f;
-	  g = matrix g;
-	  map(N, L, f //
-	       if M.?relations 
-	       then gb(g | presentation M, 
-		    ChangeMatrix => true, SyzygyRows => rank source g)
-	       else gb(g,
-		    ChangeMatrix => true),
-	       Degree => degree f - degree g  -- do this in the engine instead
-	       )),
+Matrix // Matrix := (f,g) -> (
+     -- if ring g =!= ring f then error "expected maps over the same ring";
+     M := target f;
+     if M != target g then error "expected maps with the same target";
+     L := source f;
+     N := source g;
+     f = matrix f;
+     g = matrix g;
+     map(N, L, f //
+	  if M.?relations 
+	  then gb(g | presentation M, 
+	       ChangeMatrix => true, SyzygyRows => rank source g)
+	  else gb(g,
+	       ChangeMatrix => true),
+	  Degree => degree f - degree g  -- do this in the engine instead
+	  ))
+document { (quote //, Matrix, Matrix),
      TT "f//g", " -- yields a matrix h from matrices f and g such that f - g*h 
      is the reduction of f modulo a Groebner basis for the image of g.",
      SEEALSO "%"
@@ -155,8 +155,8 @@ assert not isWellDefined map(R^1,cokernel matrix {{a}})
 RingElement // Matrix := (r,f) -> (r * id_(target f)) // f
 ZZ           // Matrix := (r,f) -> promote(r,ring f) // f
 
-Matrix // RingElement := { Matrix,
-     (f,r) -> f // (r * id_(target f)),
+Matrix // RingElement := (f,r) -> f // (r * id_(target f))
+document { (quote //, Matrix, RingElement),
      TT "f//r", " -- yields a matrix h from a matrix f and a ring element r
      such that f - r*h is the reduction of f modulo a Groebner basis 
      for the image of r times the identity matrix.",
@@ -165,15 +165,14 @@ Matrix // RingElement := { Matrix,
 
 Matrix // ZZ           := (f,r) -> f // promote(r,ring f)
 
-Matrix % Matrix := {
-     Matrix,
-     (n,m) -> (
-	  R := ring n;
-	  if R =!= ring m then error "expected matrices over the same ring";
-	  if not isFreeModule source n or not isFreeModule source m
-	  or not isFreeModule target n or not isFreeModule target m
-	  then error "expected maps between free modules";
-	  n % gb m),
+Matrix % Matrix := (n,m) -> (
+     R := ring n;
+     if R =!= ring m then error "expected matrices over the same ring";
+     if not isFreeModule source n or not isFreeModule source m
+     or not isFreeModule target n or not isFreeModule target m
+     then error "expected maps between free modules";
+     n % gb m)
+document { (quote %, Matrix, Matrix),
      TT "f % g", " -- yields the reduction of the columns of the matrix
      ", TT "f", " modulo a Groebner basis of the matrix ", TT "g", "."
      }
@@ -183,9 +182,8 @@ Matrix % Module := (f,M) -> f % gb M
 RingElement % Matrix := (r,f) -> ((r * id_(target f)) % f)_(0,0)
 RingElement % Ideal := (r,I) -> r % gb I
 
-Matrix % RingElement := {
-     Matrix,
-     (f,r) -> f % (r * id_(target f)),
+Matrix % RingElement := (f,r) -> f % (r * id_(target f))
+document { (quote %, Matrix, RingElement),
      TT "f % r", " -- yields the reduction of the columns of the matrix
      ", TT "f", " modulo the ring element ", TT "r", "."
      }
@@ -246,7 +244,7 @@ document { quote index,
     "If the ring element 'v' is not a variable, an error is generated.",
     PARA,
     "The symbol ", TT "index", " is also as a key used in 
-    ", TO "GeneralOrderedMonoid", "s to store a table which is used to 
+    ", TO {"GeneralOrderedMonoid", "s"}, " to store a table which is used to 
     map generator names to the position of the generator in the list of generators."
     }
 
@@ -414,6 +412,32 @@ sortColumns Matrix := (f,options) -> (
 	       error "expected MonomialOrder option value to be Ascending or Descending"));
      eePopIntarray())
 
+document { quote Ascending,
+     TT "Ascending", " -- a symbol used as a value for optional
+     arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
+     }
+
+document { quote Descending,
+     TT "Descending", " -- a symbol used as a value for optional
+     arguments ", TO "DegreeOrder", " and ", TO "MonomialOrder", "."
+     }
+
+document { (sortColumns => DegreeOrder),
+     TT "DegreeOrder => x", " -- an optional argument for use with the function
+     ", TO "sortColumns", ".",
+     PARA,
+     "The possible values for ", TT "x", " are ", TO "Ascending", ",
+     ", TO "Descending", ", and ", TO "null", "."
+     }
+
+document { (sortColumns => MonomialOrder),
+     TT "MonomialOrder => x", " -- an optional argument for use with the function
+     ", TO "sortColumns", ".",
+     PARA,
+     "The possible values for ", TT "x", " are ", TO "Ascending", " and
+     ", TO "Descending", "."
+     }
+
 document { quote sortColumns,
      TT "sortColumns f", " -- sorts the columns of a matrix, returning a list of integers
      describing the resulting permutation.",
@@ -421,12 +445,11 @@ document { quote sortColumns,
      "The sort ordering used is by degree first, and then by monomial order.  Optional
      arguments may be given to specify whether the ordering is ascending, descending,
      or ignored.  The default ordering is ascending.",
+     PARA,
+     "Optional arguments:",
      MENU {
-	  TT "DegreeOrder => Ascending",
-	  TT "DegreeOrder => Descending",
-	  TT "DegreeOrder => null",
-	  TT "MonomialOrder => Ascending",
-	  TT "MonomialOrder => Descending"
+	  TO (sortColumns => DegreeOrder),
+	  TO (sortColumns => MonomialOrder)
 	  },
      EXAMPLE "R = ZZ/101[a..c];",
      EXAMPLE "f = matrix{{1,a,a^2,b^2,b,c,c^2,a*b,b*c,a*c}}",

@@ -1,6 +1,13 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
 ModuleMap = new Type of MutableHashTable
+document { quote ModuleMap,
+     TT "ModuleMap", " -- the class of all maps between modules.",
+     PARA,
+     "This class is experimental, designed to support graded modules.",
+     SEEALSO ("Matrix")
+     }
+
 Matrix = new Type of ModuleMap
 ring Matrix := f -> (
      S := ring target f;
@@ -55,8 +62,10 @@ document { quote Matrix,
 	  TO "-",
 	  TO "*",
 	  TO "^",
-	  TO "%",
-	  TO "//",
+	  TO (quote %,Matrix,Matrix),
+	  TO (quote %,Matrix,RingElement),
+	  TO (quote //,Matrix,Matrix),
+	  TO (quote //,Matrix,RingElement),
 	  (TO "f_(i,j)", "              -- getting an entry"),
 	  (TO "f_{i,j}", "              -- extracting or permuting columns"),
 	  (TO "f|g", "                  -- horizontal concatenation"),
@@ -64,6 +73,7 @@ document { quote Matrix,
 	  ("m ", TO "++", " n           -- direct sum"),
 	  (TO "Matrix ** Matrix", "     -- tensor product of matrices"),
 	  (TO "Matrix ** Module", "     -- tensor product, degree shifting"),
+	  TO (quote **,Matrix,Ring),
 	  TO ":",
 	  TO "adjoint",
 	  TO "adjoint1",
@@ -78,51 +88,52 @@ document { quote Matrix,
                           the coefficients)"),
 	  TO "degree",
 	  (TO "det", "                 -- determinant"),
-	  (TO "diff", "(m,n)           -- differentiation of n by m"),
+	  (TO "diff", "                -- differentiation"),
 	  (TO "divideByVariable", "    -- divide columns by a variable repeatedly"),
 	  TO "dual",
 	  TO "selectInSubring",
-	  (TO "entries", " m           -- the entries of m"),
-	  (TO "exteriorPower", "(i,m)  -- exterior power of m"),
-          (TO "flatten", " m           -- the one row matrix with the entries of m"),
+	  (TO "entries", "             -- the entries of m"),
+	  (TO "exteriorPower", "       -- exterior power of m"),
+          (TO "flatten", "             -- collect entries of a matrix into one row"),
 	  TO "poincare",
-          (TO "isHomogeneous", " m     -- whether the matrix m is graded"),
-	  (TO "isInjective", " m       -- whether a map is injective"),
-          (TO "isIsomorphism", " m     -- whether the map m is an isomorphism"),
-	  (TO "isSurjective", " m      -- whether a map is surjective"),
-	  (TO "isWellDefined", " m     -- whether a map is well-defined"),
-	  (TO "homogenize", " m        -- homogenize the marix m"),
-	  (TO "jacobian", " m          -- Jacobian matrix of m"),
-	  (TO "koszul", "(i,m)         -- i-th Koszul matrix of m"),
-	  (TO "basis", "(deg,m)        -- k-basis of a module in a given degree"),
-          (TO "leadTerm", " m          -- the lead monomial matrix of the columns of m"),
-          (TO "leadTerm", "(i,m)       -- the lead terms w.r.t the first i weight vectors"),
- 	  (TO "minors", "(i,m)         -- ideal of i by i minors of m"),
+	  (TO "inducedMap", "          -- a map induced on subquotients"),
+	  (TO "inducesWellDefinedMap", " -- whether a matrix would induce a well defined map"),
+          (TO "isHomogeneous", "       -- whether a matrix is homogeneous"),
+	  (TO "isInjective", "         -- whether a map is injective"),
+          (TO "isIsomorphism", "       -- whether a map is an isomorphism"),
+	  (TO "isSurjective", "        -- whether a map is surjective"),
+	  (TO "isWellDefined", "       -- whether a map is well-defined"),
+	  (TO "homogenize", "          -- homogenize a matrix"),
+	  (TO "jacobian", "            -- Jacobian matrix of a matrix"),
+	  (TO "koszul", "              -- i-th Koszul matrix of a matrix"),
+	  (TO "basis", "               -- k-basis of a module in a given degree"),
+          (TO "leadTerm", "            -- lead monomial matrix of the columns of a matrix"),
+ 	  (TO "minors", "              -- ideal minors of a matrix"),
 	  TO "modulo",
 	  (TO "pfaffians", "(i,m)      -- ideal of i by i Pfaffians of the skew
 		symmetric matrix m"),
 	  TO "reshape",
-          (TO "ring", " m              -- the base ring of the matrix m"),
+          (TO "ring", "                -- the base ring of a matrix"),
 	  TO "singularLocus",
-	  (TO "sortColumns", " m       -- sort the columns of m"),
-          (TO "source", " m            -- the source free module of m"),
- 	  (TO "submatrix", "(m,r,c)    -- extract a submatrix"),
+	  (TO "sortColumns", "         -- sort the columns of a matrix"),
+          (TO "source", "              -- the source free module of a map"),
+ 	  (TO "submatrix", "           -- extract a submatrix"),
 	  (TO "substitute", "          -- replacing the variables in a matrix"),
-	  (TO "symmetricPower", "(i,m) -- i-th symmetric power of m"),
-          (TO "target", " m            -- the target free module of m"),
+	  (TO "symmetricPower", "      -- symmetric power of a matrix"),
+          (TO "target", "              -- the target module of a map"),
 	  TO "top",
 	  TO "topCoefficients",
 	  (TO "trace", "               -- trace"),
- 	  (TO "transpose", " m         -- transpose a matrix")
+ 	  (TO "transpose", "           -- transpose a matrix")
 	  },
      PARA,
      "Operations which produce modules:",
      MENU {
-	  (TO "cokernel", " m -- the cokernel of the matrix m"),
+	  (TO "cokernel", "            -- the cokernel of a map"),
 	  TO "homology",
 	  TO "image",
 	  TO "kernel",
-	  (TO "kernel", " m -- the kernel of the matrix m"),
+	  (TO "kernel", "              -- the kernel of a map"),
 	  TO "submodule",
 	  TO "subquotient"
 	  },
@@ -150,7 +161,7 @@ document { quote lcmDegree,
 local newMatrix				  -- defined below
 
 reduce := (tar) -> (
-     if not isFreeModule tar then (
+     if not isFreeModule tar and not ring tar === ZZ then (
 	  g := gb presentation tar;
 	  sendgg(ggPush g, ggPush 1, ggpick, ggreduce, ggpop);
 	  ))
@@ -266,11 +277,11 @@ Matrix == ZZ := (m,i) -> (
      )
 ZZ == Matrix := (i,m) -> m == i
 
-Matrix + Matrix := {Matrix, BinaryMatrixOperationSame ggadd}
-Matrix + RingElement := {Matrix, (f,r) -> if r == 0 then f else f + r*id_(target f)}
-RingElement + Matrix := {Matrix, (r,f) -> if r == 0 then f else r*id_(target f) + f}
-ZZ + Matrix := {Matrix, (i,f) -> if i === 0 then f else i*1_(ring f) + f}
-Matrix + ZZ := {Matrix, (f,i) -> if i === 0 then f else f + i*1_(ring f)}
+Matrix + Matrix := BinaryMatrixOperationSame ggadd
+Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
+RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
+ZZ + Matrix := (i,f) -> if i === 0 then f else i*1_(ring f) + f
+Matrix + ZZ := (f,i) -> if i === 0 then f else f + i*1_(ring f)
 
 Matrix - Matrix := BinaryMatrixOperationSame ggsubtract
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
@@ -927,6 +938,15 @@ inducedMap(Module,Module) := (M,N,o) -> (
      then error "'inducedMap' expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
 
+document { quote inducedMap,
+     TT "inducedMap(M,N,f)", " -- produce the map from ", TT "N", " to ", TT "M", " 
+     induced by ", TT "f", ".",
+     PARA,
+     "Here ", TT "M", " should be a subquotient module of the target of ", TT "f", ", and
+     ", TT "N", " should be a subquotient module of the source of ", TT "f", ".",
+     SEEALSO "inducesWellDefinedMap"
+     }
+
 inducesWellDefinedMap = method()
 inducesWellDefinedMap(Module,Module,Matrix) := (M,N,f) -> (
      sM := target f;
@@ -940,7 +960,13 @@ inducesWellDefinedMap(Module,Module,Matrix) := (M,N,f) -> (
      (f * relations N) % (relations M) == 0)     
 inducesWellDefinedMap(Module,Nothing,Matrix) := (M,N,f) -> inducesWellDefinedMap(M,source f,f)
 inducesWellDefinedMap(Nothing,Module,Matrix) := (M,N,f) -> inducesWellDefinedMap(target f,N,f)
-inducesWellDefinedMap(Nothing,Nothing,Matrix) := (M,N,f) -> f
+inducesWellDefinedMap(Nothing,Nothing,Matrix) := (M,N,f) -> true
+
+document { quote inducesWellDefinedMap,
+     TT "inducesWellDefinedMap(M,N,f)", " -- tells whether the matrix ", TT "f", " would
+     induce a well defined map from ", TT "N", " to ", TT "M", ".",
+     SEEALSO "inducedMap"
+     }
 
 matrix(Ring,List) := (R,m,options) -> (
      if not isTable m then error "expected a table";
@@ -1629,9 +1655,10 @@ Ideal * Ideal := (I,J) -> ideal flatten (generators I ** generators J)
 Ideal * Module := (I,M) -> subquotient (generators I ** generators M, relations M)
 dim Ideal := I -> dim cokernel generators I
 codim Ideal := I -> codim cokernel generators I
-Ideal + Ideal := {Ideal,
-     (I,J) -> ideal (generators I | generators J),
-     TT "I + J", " -- the sum of two ideals."}
+Ideal + Ideal := (I,J) -> ideal (generators I | generators J)
+document { (quote +, Ideal, Ideal), 
+     TT "I + J", " -- the sum of two ideals."
+     }
 degree Ideal := I -> degree cokernel generators I
 trim Ideal := (I,options) -> ideal trim(module I, options)
 map(Ideal) := (I,options) -> map(module I,options)
@@ -1678,6 +1705,7 @@ document { quote Ideal,
 	  },
      "Operations on ideals:",
      MENU {
+	  TO (quote +,Ideal,Ideal),
 	  TO "codim",
 	  TO "decompose",
 	  TO "dim",
@@ -1837,11 +1865,11 @@ Hom(Module, Matrix) := (N,f) -> (
      then dual N ** f
      else notImplemented())
 
-dual(Matrix) := { Matrix,
-     f -> (
-	  R := ring f;
-	  Hom(f,R^1)
-	  ),
+dual(Matrix) := f -> (
+     R := ring f;
+     Hom(f,R^1)
+     )
+document { (dual, Matrix),
      TT "dual f", " -- the dual (transpose) of a homomorphism."
      }
 

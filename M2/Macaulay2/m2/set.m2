@@ -13,9 +13,8 @@ net Tally := x -> horizontalJoin flatten(
      "}"
      )
 
-Tally _ Thing := {
-     ZZ,
-     (a,b) -> if a#?b then a#b else 0,
+Tally _ Thing := (a,b) -> if a#?b then a#b else 0
+document { (quote _, Tally, Thing),     
      TT "t_x", " -- returns the number of times ", TT "x", " is counted
      by ", TT "x", ".",
      SEEALSO "Tally"
@@ -26,11 +25,16 @@ document { quote Tally,
      PARA,
      "Operations:",
      MENU {
-	  (TO "tally", "               -- tally the elements of a list"),
-	  (TO "toList", "            -- a list of the elements"),
-	  (TO "apply(Tally,Function)", " -- apply a function to the elements."),
-	  (TO "sum(Tally)", "          -- add the elements"),
-	  (TO "product(Tally)", "      -- multiply the elements")
+	  (TO (quote **,Tally,Tally), " -- Cartesian product"),
+	  (TO (quote +,Tally,Tally), "  -- sum"),
+	  (TO (quote -,Tally,Tally), "  -- difference"),
+	  (TO (quote ?,Tally,Tally), "  -- comparison"),
+	  (TO (quote _,Tally,Thing), "  -- access"),
+	  (TO "tally", "                -- tally the elements of a list"),
+	  (TO "toList", "               -- a list of the elements"),
+	  (TO (apply,Tally,Function), " -- apply a function to the elements."),
+	  (TO "sum(Tally)", "           -- add the elements"),
+	  (TO "product(Tally)", "       -- multiply the elements")
 	  }
      }
 
@@ -44,8 +48,9 @@ document { "product(Tally)",
      SEEALSO "Tally"
      }
 
-Tally ** Tally := { Tally, 
-     (x,y) -> combine(x,y,identity,times,),
+Tally ** Tally := (x,y) -> combine(x,y,identity,times,)
+
+document { (quote **, Tally, Tally),
      TT "x ** y", " -- produces the Cartesian product of two tallies.",
      PARA,
      "One of the arguments may be a ", TO "Set", ".",
@@ -56,20 +61,20 @@ Tally ** Tally := { Tally,
      SEEALSO ("Tally", "tally")
      }
 
-Tally ? Tally := { Thing,
-     (x,y) -> (
-	  w := values (x-y);
-	  if #w === 0 then quote ==
-	  else if all(w,i -> i>0) then quote >
-	  else if all(w,i -> i<0) then quote <
-	  else incomparable),
+Tally ? Tally := (x,y) -> (
+     w := values (x-y);
+     if #w === 0 then quote ==
+     else if all(w,i -> i>0) then quote >
+     else if all(w,i -> i<0) then quote <
+     else incomparable)
+document { (quote ?, Tally, Tally),
      TT "x ? y", " -- compares two tallies, returning ", TT "quote <", ", ",
      TT "quote >", ", ", TT "quote ==", ", or ", TO "incomparable", ".",
      SEEALSO "Tally"
      }
 
-Tally + Tally := { Tally, 
-     (x,y) -> merge(x,y,plus),
+Tally + Tally := (x,y) -> merge(x,y,plus)
+document { (quote +, Tally, Tally),
      TT "x + y", " -- produces the union of two tallies.",
      PARA,
      "One of the arguments may be a ", TO "Set", ".",
@@ -80,19 +85,19 @@ Tally + Tally := { Tally,
      SEEALSO ("Tally", "tally")
      }
 
---document { "apply(Tally,Function)",
---     TT "apply(x,f)", " -- applies the function ", TT "f", " to each element of the
---     tally ", TT "x", ", accumulating the results in a tally.",
---     PARA,
---     EXAMPLE "x = tally {-1,-1,-2,1}",
---     EXAMPLE "apply(x,abs)",
---     SEEALSO ("Tally", "tally")
---     }
+document { (apply,Tally,Function),
+     TT "apply(x,f)", " -- applies the function ", TT "f", " to each element of the
+     tally ", TT "x", ", accumulating the results in a tally.",
+     PARA,
+     EXAMPLE "x = tally {-1,-1,-2,1}",
+     EXAMPLE "apply(x,abs)",
+     SEEALSO ("Tally", "tally")
+     }
 
 singleton := tally {0}
 
-Tally - Tally := {Tally,
-     (x,y) -> select(merge(x,applyPairs(y,(k,v)->(k,-v)),plus),i -> i =!= 0),
+Tally - Tally := (x,y) -> select(merge(x,applyPairs(y,(k,v)->(k,-v)),plus),i -> i =!= 0)
+document { (quote -, Tally, Tally),
      TT "x - y", " -- produces the difference of two tallies.",
      PARA,
      EXAMPLE "tally {a,a,b,c} - tally {c,d,d}",
@@ -131,11 +136,11 @@ document { quote Set,
 	  },
      "Operations on sets:",
      MENU {
-	  (TO "+", "          -- union"),
+	  (TO (quote +,Set,Set), " -- union"),
 	  (TO "Set ++ Set", " -- disjoint union"),
 	  (TO "Set - Set", "  -- difference"),
 	  (TO "*", "          -- intersection"),
-	  (TO "**", "         -- Cartesian product"),
+	  (TO (quote **, Set, Set), " -- Cartesian product"),
 	  (TO "#", "          -- the number of elements"),
 	  (TO "apply(Set,Function)", "  -- applying a function to elements"),
 	  (TO "toList", "   -- a list of the elements"),
@@ -160,11 +165,7 @@ document { "Set ++ Set",
 set Set := x -> x
 net Set := x -> "set " | name keys x
 name Set := x -> "set " | name keys x
-Set + Set := {
-     Set,
-     (x,y) -> merge(x,y,(i,j)->i),
-     TT "x + y", " -- the union of two sets."
-     }
+Set + Set := (x,y) -> merge(x,y,(i,j)->i)
 Set ++ Set := (x,y) -> apply(x,i->(0,i)) + apply(y,j->(1,j))
 Set ** Set := (x,y) -> combine(x,y,identity,(i,j)->i,)
 special := quote special
@@ -180,12 +181,12 @@ unique = (x) -> keys set x
 
 member(Thing,Set) := (a,s) -> s#?a
 
-isSubset(Set,Set) := { Boolean,
-     (S,T) -> all(S, (k,v) -> T#?k),
+isSubset(Set,Set) := (S,T) -> all(S, (k,v) -> T#?k)
+document { (isSubset,Set,Set),
      TT "isSubset(X,Y)", " -- tells whether X is a subset of Y."
      }
 
-isSubset(Sequence,Set) := isSubset(List,Set) := { Boolean, (S,T) -> all(S, x -> T#?x) }
+isSubset(Sequence,Set) := isSubset(List,Set) := (S,T) -> all(S, x -> T#?x)
 isSubset(Sequence,List) := isSubset(List,List) := 
 isSubset(Sequence,Sequence) := isSubset(List,Sequence) := (S,T) -> isSubset(S,set T)
 isSubset(Set,List) := isSubset(Set,Sequence) := (S,T) -> isSubset(S,set T)
@@ -207,5 +208,9 @@ assert ( name x === \"set {1, 2, 3}\" )
 "
 
 document { quote isSubset,
-     TT "isSubset(x,y)", " -- whether ", TT "x", " is a subset of ", TT "y", "."
+     TT "isSubset(x,y)", " -- whether ", TT "x", " is a subset of ", TT "y", ".",
+     PARA,
+     MENU {
+	  TO (isSubset,Set,Set)
+	  }
      }
