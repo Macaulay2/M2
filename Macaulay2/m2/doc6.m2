@@ -1002,7 +1002,8 @@ document { Module,
 	  TO "homology",
 	  TO "ideal",
 	  TO "image",
-	  TO "kernel"
+	  TO "kernel",
+	  TO "submodule"
 	  },
      PARA,
      "Tests:",

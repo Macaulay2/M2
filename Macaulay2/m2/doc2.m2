@@ -765,7 +765,8 @@ document { Ring,
 	  TO "lift",
 	  TO "map",
 	  TO "promote",
-	  TO "ring"
+	  TO "ring",
+	  TO "singularLocus"
 	  },
      "Ways to create new rings:",
      MENU {
