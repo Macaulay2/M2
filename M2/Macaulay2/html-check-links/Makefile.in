@@ -3,7 +3,7 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 all::
-CPPFLAGS += -I@srcdir@
+CPPFLAGS += -I@srcdir@ -I.
 YACC = bison
 %.tab.c: %.y; $(YACC.y) $< $(OUTPUT_OPTION)
 %.fixed.c : %.tab.c
