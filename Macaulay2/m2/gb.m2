@@ -175,11 +175,11 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      f.cache.type = G;
      G)
 
-mingens GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,1,true))
-generators GroebnerBasis := Matrix => (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,1,false))
-getChangeMatrix GroebnerBasis := Matrix => (G) -> map(ring G,rawGBGetChange(G.RawComputation,1))
-syz = method(Options => options gb)
-syz GroebnerBasis := Matrix => options -> (G) -> map(ring G,rawGBGetMatrix(G.RawComputation,2,false))
+syz = method(Options => options gb)			    -- we seem to be ignoring these options!!
+generators      GroebnerBasis := Matrix =>            (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,1,false))
+mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,1,true))
+syz             GroebnerBasis := Matrix => options -> (G) -> map(ring G,rawGBGetMatrix(G.RawComputation,2,false))
+getChangeMatrix GroebnerBasis := Matrix =>            (G) -> map(ring G,rawGBGetChange(G.RawComputation,1))
 
 forceGB = method(
      TypicalValue => GroebnerBasis,
