@@ -21,34 +21,38 @@ document { (quote +, Module, Module),
      }
 
 Module ** Module := (M,N) -> (
-     if M.?generators and not isFreeModule N
-     or N.?generators and not isFreeModule M then (
-	  if M.?generators then M = cokernel presentation M;
-	  if N.?generators then N = cokernel presentation N;
-	  );
-     R := ring M;
-     if R =!= ring N then error "expected modules over the same ring";
-     if isFreeModule M then (
-	  if M == R^1 then N
-	  else if isFreeModule N then (
-	       if N == R^1 then M
-	       else (
-		    sendgg(ggPush M, ggPush N, ggmult);
-		    new Module from R
+     P := youngest(M,N);
+     key := (M,N,quote **);
+     if P#?key then P#key
+     else M**N = (
+	  if M.?generators and not isFreeModule N
+	  or N.?generators and not isFreeModule M then (
+	       if M.?generators then M = cokernel presentation M;
+	       if N.?generators then N = cokernel presentation N;
+	       );
+	  R := ring M;
+	  if R =!= ring N then error "expected modules over the same ring";
+	  if isFreeModule M then (
+	       if M == R^1 then N
+	       else if isFreeModule N then (
+		    if N == R^1 then M
+		    else (
+			 sendgg(ggPush M, ggPush N, ggmult);
+			 new Module from R
+			 )
 		    )
-	       )
-	  else subquotient(
-	       if N.?generators then M ** N.generators,
-	       if N.?relations then M ** N.relations))
-     else (
-	  if isFreeModule N then (
-	       if N == R^1 then M
 	       else subquotient(
-		    if M.?generators then M.generators ** N,
-		    if M.?relations then M.relations ** N))
+		    if N.?generators then M ** N.generators,
+		    if N.?relations then M ** N.relations))
 	  else (
-	       sendgg(ggPush M.relations, ggPush N.relations, ggmodtensor);
-	       cokernel getMatrix R)))
+	       if isFreeModule N then (
+		    if N == R^1 then M
+		    else subquotient(
+			 if M.?generators then M.generators ** N,
+			 if M.?relations then M.relations ** N))
+	       else (
+		    sendgg(ggPush M.relations, ggPush N.relations, ggmodtensor);
+		    cokernel getMatrix R))))
 document { (quote **, Module, Module),
      TT "M ** N", " -- produce the tensor product of two modules.",
      PARA,
@@ -72,8 +76,22 @@ TEST ///
     table(modules, modules, (P,Q) -> assert(cover P ** cover Q == cover (P ** Q)));
 ///
 
-Matrix ** Module := (f,M) -> f ** id_M
-Module ** Matrix := (M,f) -> id_M ** f
+Matrix ** Module := (f,M) -> (
+     P := youngest(f,M);
+     key := (f,M,quote **);
+     if P#?key then P#key
+     else f**M = (
+     	  f ** id_M
+	  )
+     )
+Module ** Matrix := (M,f) -> (
+     P := youngest(M,f);
+     key := (M,f,quote **);
+     if P#?key then P#key
+     else M**f = (
+     	  id_M ** f
+	  )
+     )
 document { (quote **, Matrix, Module),
      TT "f ** N", " -- tensor product of a matrix f and a module N.",
      BR,NOINDENT,
@@ -96,16 +114,20 @@ document { (quote **, Matrix, Module),
 -- base change
 -----------------------------------------------------------------------------
 Module ** Ring := (M,R) -> (
-     k := ring M;
-     if k === R then M
-     else (
-	  try promote(1_k, R) else error "can't tensor by this ring";
-	  if M.?generators then coker presentation M ** R
-	  else if M.?relations then cokernel (M.relations ** R)
-	  else if isQuotientOf(R,k) then R^(- degrees M)
-	  else R^(rank M)
-	  )
-     )
+     P := youngest(M,R);
+     key := (M,R,quote **);
+     if P#?key then P#key
+     else M**R = (
+	  k := ring M;
+	  if k === R then M
+	  else (
+	       try promote(1_k, R) else error "can't tensor by this ring";
+	       if M.?generators then coker presentation M ** R
+	       else if M.?relations then cokernel (M.relations ** R)
+	       else if isQuotientOf(R,k) then R^(- degrees M)
+	       else R^(rank M)
+	       )
+	  ))
 document { (quote **, Module, Ring),
      TT "M ** R", " -- form the tensor product of a module M with a ring
      R.",
@@ -119,19 +141,23 @@ document { (quote **, Module, Ring),
      }
 
 Matrix ** Ring := (f,R) -> (
-     k := ring source f;
-     S := ring target f;
-     if k === R and S === R then f
-     else if S === R then (
-	  -- map(target f, (source f ** R) ** R^(-degree f), f)
-	  map(target f, source f ** R, f, Degree => degree f)
-	  )
-     else map(
-	  -- this will be pretty slow
-	  target f ** R, source f ** R, applyTable(entries f, r -> promote(r,R)),
-	  Degree => if isQuotientOf(R,k) then degree f else degree 1_R
-	  )
-     )
+     P := youngest(f,R);
+     key := (f,R,quote **);
+     if P#?key then P#key
+     else f**R = (
+	  k := ring source f;
+	  S := ring target f;
+	  if k === R and S === R then f
+	  else if S === R then (
+	       -- map(target f, (source f ** R) ** R^(-degree f), f)
+	       map(target f, source f ** R, f, Degree => degree f)
+	       )
+	  else map(
+	       -- this will be pretty slow
+	       target f ** R, source f ** R, applyTable(entries f, r -> promote(r,R)),
+	       Degree => if isQuotientOf(R,k) then degree f else degree 1_R
+	       )
+	  ))
 document { (quote **, Matrix, Ring),
      TT "f ** R", " -- form the tensor product of a module map f with a ring R",
      PARA,

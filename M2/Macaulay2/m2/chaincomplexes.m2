@@ -612,26 +612,34 @@ document { quote poincareN,
      }
 
 ChainComplex ** Module := (C,M) -> (
-     D := new ChainComplex;
-     D.ring = ring C;
-     complete C.dd;
-     scan(keys C.dd,i -> if class i === ZZ then (
-	       f := D.dd#i = C.dd#i ** M;
-	       D#i = source f;
-	       D#(i-1) = target f;
-	       ));
-     D)
+     P := youngest(C,M);
+     key := (C,M,quote **);
+     if P#?key then P#key
+     else C**M = (
+	  D := new ChainComplex;
+	  D.ring = ring C;
+	  complete C.dd;
+	  scan(keys C.dd,i -> if class i === ZZ then (
+		    f := D.dd#i = C.dd#i ** M;
+		    D#i = source f;
+		    D#(i-1) = target f;
+		    ));
+	  D))
 
 Module ** ChainComplex := (M,C) -> (
-     D := new ChainComplex;
-     D.ring = ring C;
-     complete C.dd;
-     scan(keys C.dd,i -> if class i === ZZ then (
-	       f := D.dd#i = M ** C.dd#i;
-	       D#i = source f;
-	       D#(i-1) = target f;
-	       ));
-     D)
+     P := youngest(M,C);
+     key := (M,C,quote **);
+     if P#?key then P#key
+     else M**C = (
+	  D := new ChainComplex;
+	  D.ring = ring C;
+	  complete C.dd;
+	  scan(keys C.dd,i -> if class i === ZZ then (
+		    f := D.dd#i = M ** C.dd#i;
+		    D#i = source f;
+		    D#(i-1) = target f;
+		    ));
+	  D))
 -----------------------------------------------------------------------------
 
 homology(ZZ,ChainComplex) := (i,C,opts) -> homology(C.dd_i, C.dd_(i+1))
@@ -1155,25 +1163,29 @@ tens := (R,f,g) -> (
      getMatrix R)
 
 ChainComplex ** ChainComplex := (C,D) -> (
-     R := ring C;
-     if ring D =!= R then error "expected chain complexes over the same ring";
-     E := chainComplex (lookup(quote **, GradedModule, GradedModule))(C,D);
-     scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = map(
-	       E#(i-1),
-	       E#i,
-	       ggConcatBlocks(R, table(
-			 E#(i-1).indices,
-			 E#i.indices,
-			 (j,k) -> (
-			      if j#0 === k#0 and j#1 === k#1 - 1 
-			      then (-1)^(k#0) * tens(R, map cover C#(j#0), matrix D.dd_(k#1))
-			      else if j#0 === k#0 - 1 and j#1 === k#1 
-			      then tens(R, matrix C.dd_(k#0), map cover D#(k#1))
-			      else map(
-				   E#(i-1).components#(E#(i-1).indexComponents#j),
-				   E#i.components#(E#i.indexComponents#k),
-				   0))))));
-     E)
+     P := youngest(C,D);
+     key := (C,D,quote **);
+     if P#?key then P#key
+     else C**D = (
+	  R := ring C;
+	  if ring D =!= R then error "expected chain complexes over the same ring";
+	  E := chainComplex (lookup(quote **, GradedModule, GradedModule))(C,D);
+	  scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = map(
+		    E#(i-1),
+		    E#i,
+		    ggConcatBlocks(R, table(
+			      E#(i-1).indices,
+			      E#i.indices,
+			      (j,k) -> (
+				   if j#0 === k#0 and j#1 === k#1 - 1 
+				   then (-1)^(k#0) * tens(R, map cover C#(j#0), matrix D.dd_(k#1))
+				   else if j#0 === k#0 - 1 and j#1 === k#1 
+				   then tens(R, matrix C.dd_(k#0), map cover D#(k#1))
+				   else map(
+					E#(i-1).components#(E#(i-1).indexComponents#j),
+					E#i.components#(E#i.indexComponents#k),
+					0))))));
+	  E))
 
 document { (quote **, ChainComplex, ChainComplex),
      TT "C**D", " -- the tensor product of two chain complexes.",
@@ -1185,7 +1197,14 @@ document { (quote **, ChainComplex, ChainComplex),
      information about how to use preferred keys, see ", TT "directSum", "."
      }
 
-ChainComplex ** GradedModule := (C,D) -> C ** chainComplex D
+ChainComplex ** GradedModule := (C,D) -> (
+     P := youngest(C,D);
+     key := (C,D,quote **);
+     if P#?key then P#key
+     else C**D = (
+     	  C ** chainComplex D
+	  )
+     )
 
 document { (quote **, ChainComplex, GradedModule),
      TT "C**D", " -- the tensor product of a chain complex with a graded module.",
@@ -1193,7 +1212,14 @@ document { (quote **, ChainComplex, GradedModule),
      "The result is a chain complex."
      }
 
-GradedModule ** ChainComplex := (C,D) -> chainComplex C ** D
+GradedModule ** ChainComplex := (C,D) -> (
+     P := youngest(C,D);
+     key := (C,D,quote **);
+     if P#?key then P#key
+     else C**D = (
+     	  chainComplex C ** D
+	  )
+     )
 
 document { (quote **, GradedModule, ChainComplex),
      TT "C**D", " -- the tensor product of a graded module with a chain complex.",
@@ -1202,25 +1228,43 @@ document { (quote **, GradedModule, ChainComplex),
      }
 
 ChainComplexMap ** ChainComplexMap := (f,g) -> (
-     h := new ChainComplexMap;
-     E := h.source = source f ** source g;
-     F := h.target = target f ** target g;
-     deg := h.degree = f.degree + g.degree;
-     scan(spots E, n -> if F#?(n+deg) then (
-	       E' := E#n;
-	       E'i := E'.indexComponents;
-	       E'c := E'.components;
-	       F' := F#(n+deg);
-	       F'i := F'.indexComponents;
-	       h#n = map(F',E', matrix {
-			 apply(E'.indices, (i,j) -> (
-				   t := (i+f.degree, j+g.degree);
-				   if F'i#?t then F'_[t] * ( ((-1)^(g.degree * i) * f_i ** g_j) )
-				   else map(F',E'c#(E'i#(i,j)),0)))})));
-     h)
+     P := youngest(f,g);
+     key := (f,g,quote **);
+     if P#?key then P#key
+     else f**g = (
+	  h := new ChainComplexMap;
+	  E := h.source = source f ** source g;
+	  F := h.target = target f ** target g;
+	  deg := h.degree = f.degree + g.degree;
+	  scan(spots E, n -> if F#?(n+deg) then (
+		    E' := E#n;
+		    E'i := E'.indexComponents;
+		    E'c := E'.components;
+		    F' := F#(n+deg);
+		    F'i := F'.indexComponents;
+		    h#n = map(F',E', matrix {
+			      apply(E'.indices, (i,j) -> (
+					t := (i+f.degree, j+g.degree);
+					if F'i#?t then F'_[t] * ( ((-1)^(g.degree * i) * f_i ** g_j) )
+					else map(F',E'c#(E'i#(i,j)),0)))})));
+	  h))
 
-ChainComplexMap ** ChainComplex := (f,C) -> f ** id_C
-ChainComplex ** ChainComplexMap := (C,f) -> id_C ** f
+ChainComplexMap ** ChainComplex := (f,C) -> (
+     P := youngest(f,C);
+     key := (f,C,quote **);
+     if P#?key then P#key
+     else f**C = (
+     	  f ** id_C
+	  )
+     )
+ChainComplex ** ChainComplexMap := (C,f) -> (
+     P := youngest(C,f);
+     key := (C,f,quote **);
+     if P#?key then P#key
+     else C**f = (
+     	  id_C ** f
+	  )
+     )
 
 document { (quote **, ChainComplexMap, ChainComplex),
      TT "f ** C", " -- tensor product of a map of chain complexes with a chain complex.",
