@@ -518,10 +518,10 @@ forfun(c:forCode):Expr := (
 	  if listClause != dummyCode then (
 	       b := eval(listClause);
 	       when b is err:Error do (
-		    localFrame = localFrame.outerFrame;
 		    if err.message == continueMessage then b = err.value
-		    else return if err.message == breakMessage then err.value else b
-		    )
+		    else (
+			 localFrame = localFrame.outerFrame;
+			 return if err.message == breakMessage then err.value else b))
 	       else nothing;
 	       if i == length(r) then (
 		    r = new Sequence len 2*length(r) do (
@@ -535,9 +535,9 @@ forfun(c:forCode):Expr := (
 	  if doClause != dummyCode then (
 	       b := eval(doClause);
 	       when b is err:Error do (
-		    localFrame = localFrame.outerFrame;
-		    if err.message != continueMessage then return if err.message == breakMessage then err.value else b
-		    )
+		    if err.message != continueMessage then (
+		    	 localFrame = localFrame.outerFrame;
+			 return if err.message == breakMessage then err.value else b))
 	       else nothing;
 	       );
 	  );
