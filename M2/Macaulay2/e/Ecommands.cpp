@@ -45,27 +45,6 @@ static void cmd_EHashTable_stats()
   EUniqueObjects.showshape();
 }
 
-///////////////////////////////
-// Coefficient Ring Routines //
-///////////////////////////////
-
-static void cmd_EZZp(object &r)
-{
-  // MES: check the size of p: If large, make a different coefficient ring.
-  int p = r->int_of();
-  if (p > 0)
-    gStack.insert(EZZp::make(p));
-  else if (p == 0)
-    gStack.insert((object_element *)EZZ::ZZ());
-  else
-    gError << "ZZ/p: p must be non-negative";
-}
-
-static void cmd_EZZp_characteristic(object &o1)
-{
-  ECoefficientRing *K = o1->cast_to_ECoefficientRing();
-  gStack.insert(make_object_int(K->characteristic()));
-}
 /////////////////////////////
 // Monomial Order Routines //
 /////////////////////////////
@@ -219,6 +198,42 @@ static void cmd_EZZ()
   gStack.insert((object_element *)EPolynomialRing::getTrivialRing());
 }
 
+static void cmd_EZZp0(object &r)
+{
+  // MES: check the size of p: If large, make a different coefficient ring.
+  int p = r->int_of();
+  if (p > 0)
+    gStack.insert(EZZp::make(p));
+  else if (p == 0)
+    gStack.insert((object_element *)EZZ::ZZ());
+  else
+    gError << "ZZ/p: p must be non-negative";
+}
+
+static void cmd_EZZp(object &r)
+{
+  // MES: check the size of p: If large, make a different coefficient ring.
+  // This makes a polynomial ring with no variables...
+  int p = r->int_of();
+  if (p > 0)
+    {
+      ECoefficientRing *K = EZZp::make(p);
+      EPolynomialRing *R = ECommPolynomialRing::make(K,
+						     ECommMonoid::getTrivialMonoid(),
+						     EPolynomialRing::getTrivialRing(),
+						     0);
+      gStack.insert(R);
+    }
+  else
+    gError << "ZZ/p: p must be positive";
+}
+
+static void cmd_EZZp_characteristic(object &o1)
+{
+  EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  gStack.insert(make_object_int(R->characteristic()));
+}
+
 static bool grabDegreeInfo(int nvars, EPolynomialRing *&ZD, int *&degrees)
 {
   bool bad = false;
@@ -256,9 +271,30 @@ static bool grabDegreeInfo(int nvars, EPolynomialRing *&ZD, int *&degrees)
   gStack.poppem(2);
   return !bad;
 }
+ECoefficientRing *getCoefficients(object &o1)
+{
+  // If o1 is a EPolynomialRing, check that the
+  // number of variables is zero: if not return 0.
+  // If ok, return the coefficient ring.
+  // If o1 is a coefficient ring, return it.
+  ECoefficientRing *result = o1->cast_to_ECoefficientRing();
+  if (result != 0) return result;
+  EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  if (R == 0) 
+    {
+      gError << "expected polynomial or coefficient ring";
+      return 0;
+    }
+  if (R->n_vars() != 0)
+    {
+      gError << "expected a coefficient ring";
+      return 0;
+    }
+  return (ECoefficientRing *) R->getCoefficientRing();
+}
 static void cmd_EPolynomialRing(object &o1, object &o2)
 {
-  ECoefficientRing *K = o1->cast_to_ECoefficientRing();
+  ECoefficientRing *K = getCoefficients(o1);
   EMonoid * M = o2->cast_to_EMonoid();
   EPolynomialRing *R;
   EPolynomialRing *ZD;
@@ -275,7 +311,7 @@ static void cmd_EPolynomialRing(object &o1, object &o2)
 
 static void cmd_EWeylAlgebra(object &o1, object &o2, object &o3, object &o4, object &o5)
 {
-  ECoefficientRing *K = o1->cast_to_ECoefficientRing();
+  ECoefficientRing *K = getCoefficients(o1);
   EMonoid * M = o2->cast_to_EMonoid();
   intarray *diffs = o3->intarray_of();
   intarray *comms = o4->intarray_of();
@@ -311,7 +347,7 @@ static void cmd_EWeylAlgebra(object &o1, object &o2, object &o3, object &o4, obj
 
 static void cmd_ESkewCommPolynomialRing(object &o1, object &o2, object &o3)
 {
-  ECoefficientRing *K = o1->cast_to_ECoefficientRing();
+  ECoefficientRing *K = getCoefficients(o1);
   EMonoid * M = o2->cast_to_EMonoid();
   intarray *skew = o3->intarray_of();
 
@@ -369,7 +405,7 @@ static void cmd_EFreeModule2(object &o1, object &o2)
       gError << "hi wrong number of degrees";
       return;
     }
-  const monomial **result_degs = new monomial *[rank];
+  const monomial **result_degs = new const monomial *[rank];
   for (int i=0; i<rank; i++)
     {
       result_degs[i] = D->monomial_from_exponents(degs->raw() + i*ndegrees);
@@ -495,7 +531,9 @@ object_EVector * make_object_EVector(EVector *&v)
 
   if (v == 0) return 0;
   object_EVector *result = new object_EVector(v);
-  EUniqueObjects.insert(result);
+  object_element *a = result;
+  EUniqueObjects.insert(a);
+  result = (object_EVector *)a;
   return result;
 }
 static void cmd_EVector_getFreeModule(object &o1)
@@ -1146,8 +1184,6 @@ void i_Ecommands(void)
   // Commands for creation of objects
   // Coefficient rings
 
-  install(ggcharp, cmd_EZZp, TY_INT);
-  install(ggcharacteristic, cmd_EZZp_characteristic, TY_ECoefficientRing);
 
   //////////////////////
   // Monomial Orders ///
@@ -1186,12 +1222,22 @@ void i_Ecommands(void)
   // Polynomial Rings //
   //////////////////////
 
-  install(ggsagbi, cmd_EZZ);
+  install(ggEZZ, cmd_EZZ);
+  install(ggEcharp, cmd_EZZp, TY_INT);
+
+  install(ggcharacteristic, cmd_EZZp_characteristic, TY_ERing);
+
   install(ggpolyring, cmd_EPolynomialRing, TY_ECoefficientRing, TY_EMonoid);
   install(ggweylalgebra, cmd_EWeylAlgebra, TY_ECoefficientRing, TY_EMonoid, 
 	  TY_INTARRAY, TY_INTARRAY, TY_INT);
   install(ggskewpolyring, cmd_ESkewCommPolynomialRing, 
 	  TY_ECoefficientRing, TY_EMonoid, TY_INTARRAY);
+
+  install(ggpolyring, cmd_EPolynomialRing, TY_ERing, TY_EMonoid);
+  install(ggweylalgebra, cmd_EWeylAlgebra, TY_ERing, TY_EMonoid, 
+	  TY_INTARRAY, TY_INTARRAY, TY_INT);
+  install(ggskewpolyring, cmd_ESkewCommPolynomialRing, 
+	  TY_ERing, TY_EMonoid, TY_INTARRAY);
 
   install(gggetCoefficientRing, cmd_EPolyRing_getCoefficientRing, TY_ERing);
   install(gggetMonoid, cmd_EPolyRing_getMonoid, TY_ERing);

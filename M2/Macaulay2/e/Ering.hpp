@@ -98,7 +98,10 @@ public:
   
   int n_degrees() const
     { return getDegreeMonoid()->n_vars(); }
-  
+
+  int characteristic() const 
+    { return K->characteristic(); }
+
   const int *getDegreeVector(int i) const;
     
   static const EPolynomialRing *getTrivialRing();  // ZZ as a polynomial ring, trivial degree ring.
