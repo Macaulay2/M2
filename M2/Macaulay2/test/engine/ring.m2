@@ -65,6 +65,14 @@ v*2
 raw x * raw v
 x*v
 
+t = matrix {{x,y,z},{y,z,x},{z,x,y}}
+
+toString submatrix(t,{1,2})
+assert( submatrix(t,{1,2}) == matrix {{y,z},{z,x},{x,y}} )
+assert( submatrix(t,{1,2},{2,0}) == matrix {{x, y}, {y, z}} )
+assert( submatrix(t,,{2,0}) == matrix {{z, x}, {x, y}, {y, z}} )
+
+end
 
 -- remaking matrices
 w = map(R^1,,v)
