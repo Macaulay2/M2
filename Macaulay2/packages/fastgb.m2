@@ -81,7 +81,7 @@ quotMin = (I, facs, F) -> (
      )
 -- Sort the list polynomials in increasing degree order
 sortByDegree = (facs) -> (
-     x := apply(facs, f -> {degree f, f});
+     x := apply(facs, f -> (degree f, f));
      x = sort x;
      apply(x, i -> i#1))
 

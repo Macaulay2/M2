@@ -115,7 +115,8 @@ fSeqInitialize := (toString,toStr) -> new HashTable from {
      (3,homology,ZZ    ) => s -> ("HH_", toStr s#1, " ", toStr s#2),
      (3,cohomology,ZZ  ) => s -> ("HH^", toStr s#1, " ", toStr s#2),
      (2,homology       ) => s -> ("HH ", toStr s#1),
-     (2,cohomology     ) => s -> ("HH ", toStr s#1),
+-- this one was wrong:
+--      (2,cohomology     ) => s -> ("HH ", toStr s#1),
      (2,NewMethod      ) => s -> ("new ", toString s#1),
      (3,class,Keyword  ) => s -> (toStr s#1, " ", toString s#0, " ", toStr s#2),-- infix operator
      (3,class,Symbol   ) => s -> (toStr s#1, " ", toString s#0, " ", toStr s#2),-- infix operator
@@ -599,18 +600,32 @@ moreGeneral := s -> (
 
 -----------------------------------------------------------------------------
 
-optTO := i -> if getDoc i =!= null then fixup SEQ{ TOH {i} } else formatDocumentTagTO i
-optTOCLASS := i -> (if getDoc i =!= null then (
+-- these menus have to get sorted, so optTO and optTOCLASS return pairs:
+--   the first member fo the pair is the string to use for sorting
+--   the second member is the corresponding hypertext entry in the UL list
+optTO := i -> (
+     if getDoc i =!= null then (
+     	  r := fixup TOH{i};
+	  (DocumentTag.FormattedKey first r, r))
+     else (
+	  (formatDocumentTag i, formatDocumentTagTO i)
+	  )
+     )
+optTOCLASS := i -> (
+     if getDoc i =!= null then (
 	  -- we might want a new type of TO so that in info mode this would look like this:
 	  --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)
 	  -- fixup SEQ { TO i, " (", OFCLASS class value i, ")", commentize headline i }
-	  fixup SEQ{ TOH {i} }
+	  r := fixup TOH{i};
+	  (DocumentTag.FormattedKey first r, r))
+     else (
+	  (formatDocumentTag i, formatDocumentTagTO i)
 	  )
-     else formatDocumentTagTO i)
+     )
 
-smenu := s -> UL (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
-smenuCLASS := s -> UL (optTOCLASS \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
- menu := s -> UL (optTO \ s)
+menu       := s -> UL (last \         optTO      \ s)
+smenu      := s -> UL (last \ sort \\ optTO      \ s)
+smenuCLASS := s -> UL (last \ sort \\ optTOCLASS \ s)
 
 vowels := set characters "aeiouAEIOU"
 indefiniteArticle := s -> if vowels#?(s#0) and not match("^one ",s) then "an " else "a "

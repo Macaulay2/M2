@@ -218,13 +218,35 @@ compare(left:Expr,right:Expr):Expr := (
 	  else binarymethod(left,right,QuestionS))
      is x:string do (
 	  when right
-	  is y:string do if x < y then LessE else if x > y then GreaterE else EqualEqualE
+	  is y:string do (
+	       c := strcmp(x,y);
+	       if c == 1 then GreaterE
+	       else if c == -1 then LessE
+     	       else EqualEqualE
+	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
      is x:Net do (
 	  when right
 	  is y:Net do if x < y then LessE else if x > y then GreaterE else EqualEqualE
      	  is Error do right
+	  else binarymethod(left,right,QuestionS))
+     is s:Sequence do (
+	  when right
+	  is t:Sequence do (
+	       ls := length(s);
+	       lt := length(t);
+	       i := 0;
+	       while true do (
+		    if i == ls 
+		    then if i == lt then return EqualEqualE
+		    else return LessE
+		    else if i == lt then return GreaterE
+		    else (
+			 c := compare(s.i,t.i);
+			 if c != EqualEqualE then return c);
+		    i = i+1);
+	       nullE)
 	  else binarymethod(left,right,QuestionS))
      is Error do left
      else (
@@ -241,6 +263,59 @@ compareop(lhs:Code,rhs:Code):Expr := (
 	  is Error do y
 	  else compare(x,y)));
 setup(QuestionS,compareop);
+
+whichway := GreaterE;
+sortlist := emptySequence;
+subsort(l:int,r:int):void := (
+     b := r+1-l;
+     a := randomint() % b;
+     if a < 0 then a = a+b;
+     p := l + a;
+     pivot := sortlist.p;
+     sortlist.p = sortlist.l;
+     sortlist.l = pivot;
+     i := l+1;
+     j := r;
+     while i <= j do (
+	  -- spots 1 .. i-1 contain elements less or equal to the pivot
+	  -- spots j+1 .. r contain elements greater or equal to the pivot
+	  -- when i > j we've partitioned all the elements into two parts
+	  if compare(sortlist.i,pivot) != whichway then i = i+1
+	  else if compare(pivot, sortlist.j) != whichway then j = j-1
+	  else (
+	       tmp := sortlist.i;
+	       sortlist.i = sortlist.j;
+	       sortlist.j = tmp;
+	       i = i+1;
+	       j = j-1));
+     if l+1 < j then subsort(l+1,j);
+     if j+1 < r then subsort(j+1,r);
+     for k from l+1 to j do sortlist.(k-1) = sortlist.k;
+     sortlist.j = pivot;
+     );
+basicsort(s:Sequence,ww:Expr):Sequence := (
+     if length(s) <= 1 then return s;
+     savesortlist := sortlist;
+     savewhichway := whichway;
+     sortlist = s;
+     whichway = ww;
+     subsort(0,length(s)-1);
+     s = sortlist;
+     whichway = savewhichway;
+     sortlist = savesortlist;
+     s);
+basicsort2(e:Expr,ww:Expr):Expr := (
+     when e is s:Sequence do (
+	  if length(s) <= 1 then e else Expr(basicsort(s,ww)))
+     is t:List do (
+	   if ancestor(t.class, listClass) then (
+		if length(t.v) <= 1 then e else list(basicsort(t.v,ww)))
+      	   else WrongArg("a list or sequence"))
+     else WrongArg("a list or sequence"));
+sortfun(e:Expr):Expr := basicsort2(e,GreaterE);
+rsortfun(e:Expr):Expr := basicsort2(e,LessE);
+setupfun("sort",sortfun);
+setupfun("rsort",rsortfun);
 
 lessfun1(rhs:Code):Expr := unarymethod(rhs,LessS);
 lessfun2(lhs:Code,rhs:Code):Expr := (

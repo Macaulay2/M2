@@ -16,6 +16,10 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The 'methods' function no longer sorts the lists it returns, mainly
+because it takes a long time, and the sort order preferred by the user
+cannot be determined in advance.
+
 New type Keyword, subclass of Symbol:
 
     i4 : 
