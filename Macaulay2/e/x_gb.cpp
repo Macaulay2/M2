@@ -64,10 +64,10 @@ void cmd_gb_make(object &om,
     }
   else if (R->is_poly_ring() && R->Ncoeffs()->is_pid())
     {
-      *gError << "GB for polynomial rings over PID's not yet implemented";
+      gError << "GB for polynomial rings over PID's not yet implemented";
     }
   else 
-    *gError << "cannot compute Groebner bases or syzygies over this ring";
+    gError << "cannot compute Groebner bases or syzygies over this ring";
 }
 
 void cmd_gb_make1(object &om, 
@@ -87,9 +87,9 @@ void cmd_gb_make1(object &om,
   // asked to do.
   
   if (R->is_field())
-    *gError << "GB for ring = field together with Hilbert function is not yet implemented";
+    gError << "GB for ring = field together with Hilbert function is not yet implemented";
   else if (R->is_Z()) // MES later: || R->is_pid())
-    *gError << "GB for Z, using Hilbert function, is not yet implemented";
+    gError << "GB for Z, using Hilbert function, is not yet implemented";
   else if (R->is_poly_ring() && R->Ncoeffs()->is_field())
     {
       if (R->is_graded() && m.is_homogeneous())
@@ -97,14 +97,14 @@ void cmd_gb_make1(object &om,
 	  gStack.insert(new GB_comp(m, dosyz, nsyz, hf, strategy));
 	}
       else
-	*gError << "cannot use Hilbert function for an inhomogeneous GB";
+	gError << "cannot use Hilbert function for an inhomogeneous GB";
     }
   else if (R->is_poly_ring() && R->Ncoeffs()->is_pid())
     {
-      *gError << "GB for polynomial rings over PID's not yet implemented";
+      gError << "GB for polynomial rings over PID's not yet implemented";
     }
   else 
-    *gError << "cannot compute Groebner bases or syzygies over this ring";
+    gError << "cannot compute Groebner bases or syzygies over this ring";
 }
 
 #if 0
@@ -274,13 +274,13 @@ void cmd_hilb_make(object &oR, object &oM)
   PolynomialRing *P = R->cast_to_poly_ring();
   if (P == NULL)
     {
-      *gError << "Hilbert function: result ring must be a polynomial ring";
+      gError << "Hilbert function: result ring must be a polynomial ring";
       return;
     }
   Matrix M = oM->cast_to_Matrix();
   if (M.Ring_of()->degree_monoid() != P->Nmonoms())
     {
-      *gError << "Hilbert function: result monoid must be degree monoid";
+      gError << "Hilbert function: result monoid must be degree monoid";
       return;
     }
   gStack.insert(new hilb_comp(P, M));
@@ -292,13 +292,13 @@ void cmd_hilb1_make(object &oR, object &omi)
   PolynomialRing *P = R->cast_to_poly_ring();
   if (P == NULL)
     {
-      *gError << "Hilbert function: result ring must be a polynomial ring";
+      gError << "Hilbert function: result ring must be a polynomial ring";
       return;
     }
   MonomialIdeal mi = omi->cast_to_MonomialIdeal();
   if (mi.Ring_of()->degree_monoid() != P->Nmonoms())
     {
-      *gError << "Hilbert function: result monoid must be degree monoid";
+      gError << "Hilbert function: result monoid must be degree monoid";
       return;
     }
   gStack.insert(new hilb_comp(P, mi));
@@ -322,7 +322,7 @@ void cmd_hilb_value(object &oh)
   hilb_comp *h = oh->cast_to_hilb_comp();
   if (!h->is_done())
     {
-      *gError << "Hilbert function value is not yet computed";
+      gError << "Hilbert function value is not yet computed";
       return;
     }
   gStack.insert(h->value());
@@ -390,7 +390,7 @@ void cmd_binomialGB_addgens(object &og, object &om)
   binomialGB_comp *gb = g->cast_to_binomialGB_comp();
   if (gb == NULL)
     {
-      *gError << "expected binomialGB computation";
+      gError << "expected binomialGB computation";
       return;
     }
   gb->add_generators(m);
@@ -405,7 +405,7 @@ void cmd_binomialGB_enlarge(object &og, object &oR, object &owts)
   binomialGB_comp *gb = g->cast_to_binomialGB_comp();
   if (gb == NULL)
     {
-      *gError << "expected binomialGB computation";
+      gError << "expected binomialGB computation";
       return;
     }
   gb->enlarge(R,wts);
@@ -416,7 +416,7 @@ void cmd_binomialGB_subring(object &og)
   binomialGB_comp *gb = g->cast_to_binomialGB_comp();
   if (gb == NULL)
     {
-      *gError << "expected binomialGB computation";
+      gError << "expected binomialGB computation";
       return;
     }
   gStack.insert(gb->subring());
@@ -427,7 +427,7 @@ void cmd_binomialGB_subringGB(object &og)
   binomialGB_comp *gb = g->cast_to_binomialGB_comp();
   if (gb == NULL)
     {
-      *gError << "expected binomialGB computation";
+      gError << "expected binomialGB computation";
       return;
     }
   gStack.insert(gb->subringGB());

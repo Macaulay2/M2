@@ -89,7 +89,7 @@ public:
   const char * type_name      () const { return "computation"; }
   computation *       cast_to_computation   () { return this; }
 
-  void text_out(ostream &o) const { o << "computation"; }
+  void text_out(buffer &o) const { o << "computation"; }
 };
 
 #endif

@@ -49,7 +49,7 @@ mon_order::~mon_order()
   delete [] inv_order;
 }
 
-void mon_order::text_out(ostream &o) const
+void mon_order::text_out(buffer &o) const
 {
   int i;
 
@@ -89,22 +89,28 @@ void mon_order::text_out(ostream &o) const
   if (n>0) o << inv_degs[0];
   for (i=1; i<n; i++) 
     o << "," << inv_degs[i];
-  o << "]" << endl;
+  o << "]" << newline;
   
-  o << "monomial order matrix" << endl;
+  o << "monomial order matrix" << newline;
   for (i=0; i<n; i++)
     {
       for (int j=0; j<n; j++)
-	o << setw(4) << order[i][j] << ' ';
-      o << endl;
+	{
+	  o.put(order[i][j], 4);
+	  o << ' ';
+	}
+      o << newline;
     }
   
-  o << "inverse monomial order matrix" << endl;
+  o << "inverse monomial order matrix" << newline;
   for (i=0; i<n; i++)
     {
       for (int j=0; j<n; j++)
-	o << setw(4) << inv_order[i][j] << ' ';
-      o << endl;
+	{
+	  o.put(inv_order[i][j], 4);
+	  o << ' ';
+	}
+      o << newline;
     }
 }
 
@@ -345,7 +351,7 @@ grlex_mon_order::~grlex_mon_order()
 {
 }
 
-void grlex_mon_order::text_out(ostream &o) const
+void grlex_mon_order::text_out(buffer &o) const
 {
   o << "grlex[" << degs[0];
   for (int i=1; i<n; i++)
@@ -378,7 +384,7 @@ grlex1_mon_order::~grlex1_mon_order()
 {
 }
 
-void grlex1_mon_order::text_out(ostream &o) const
+void grlex1_mon_order::text_out(buffer &o) const
 {
   o << "grlex1[" << degs[0];
   for (int i=1; i<n; i++)
@@ -417,7 +423,7 @@ product_mon_order::~product_mon_order()
   delete [] blocks;
 }
 
-void product_mon_order::text_out(ostream &o) const
+void product_mon_order::text_out(buffer &o) const
 {
   int i;
   o << "product[" << degs[0];
@@ -475,7 +481,7 @@ elim_mon_order::~elim_mon_order()
 {
 }
 
-void elim_mon_order::text_out(ostream &o) const
+void elim_mon_order::text_out(buffer &o) const
 {
   int i;
   o << "elim[" << degs[0];

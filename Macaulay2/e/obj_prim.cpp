@@ -46,7 +46,7 @@ void install(int h, cmdfcn5 cmd, int arg1, int arg2, int arg3, int arg4, int arg
 void execute(int opcode)
 {
   if (opcode <= 0 || opcode >= NCOMMANDS)
-    *gError << "Unknown opcode: " << opcode;
+    gError << "Unknown opcode: " << opcode;
   else
     operations[opcode]->execute();
 }

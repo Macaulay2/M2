@@ -43,7 +43,7 @@ public:
   virtual bool is_graded() const    { return R->is_graded(); }
   virtual bool is_expensive() const { return 1; }
 
-  virtual void text_out(ostream &o) const;
+  virtual void text_out(buffer &o) const;
 
   virtual ring_elem from_int(int n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
@@ -84,8 +84,8 @@ public:
   virtual ring_elem random() const;
   virtual ring_elem random(int homog, const int *deg) const;
 
-  virtual void elem_text_out(ostream &o, const ring_elem f) const;
-  virtual void elem_bin_out(ostream &o, const ring_elem f) const;
+  virtual void elem_text_out(buffer &o, const ring_elem f) const;
+  virtual void elem_bin_out(buffer &o, const ring_elem f) const;
 
   virtual ring_elem eval(const RingMap &map, const ring_elem f) const;
 

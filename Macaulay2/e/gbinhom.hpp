@@ -110,6 +110,9 @@ public:
   void debug_out(s_pair *q) const;
   void debug_pairs_out(gb_elem *p) const;
   void debug_pairs() const;
+  void debug_out(buffer &o, s_pair *q) const;
+  void debug_pairs_out(buffer &o, gb_elem *p) const;
+  void debug_pairs(buffer &o) const;
 
   void stats() const;
 
@@ -119,9 +122,9 @@ public:
   void *operator new(size_t) { return mystash->new_elem(); }
   void operator delete(void *p) { mystash->delete_elem(p); }
 
-  void bin_out(ostream &) const {}
+  void bin_out(buffer &) const {}
   const char * type_name         () const { return "groebner computation"; }
-  void text_out(ostream &o) const { o << "groebner computation"; }
+  void text_out(buffer &o) const { o << "groebner computation"; }
 
   int length_of() const { return n_gb; }
 };  

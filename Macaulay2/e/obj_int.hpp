@@ -24,8 +24,8 @@ public:
   const char * type_name  () const { return "int"; }
   object_int * cast_to_int()       { return this; }
   
-  void bin_out(ostream &o) const { bin_mpz_out(o,((object_int *)this)->val); }
-  void text_out(ostream &o) const {  bignum_text_out(o, ((object_int *)this)->val); }
+  void bin_out(buffer &o) const { bin_mpz_out(o,((object_int *)this)->val); }
+  void text_out(buffer &o) const {  bignum_text_out(o, ((object_int *)this)->val); }
 
   friend void i_stashes();
   static stash *mystash;

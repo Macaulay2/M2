@@ -1,6 +1,7 @@
 // Copyright 1996 Michael E. Stillman.
 
 #include "det.hpp"
+#include "text_io.hpp"
 
 extern int comp_printlevel;
 
@@ -141,7 +142,7 @@ int DetComputation::calc(int nsteps)
     {
       int result = step();
       if (comp_printlevel >= 3)
-	cerr << ".";
+	emit(".");
       if (result == COMP_DONE)
 	return COMP_DONE;
       if (--nsteps == 0)

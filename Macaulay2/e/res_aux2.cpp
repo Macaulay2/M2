@@ -130,7 +130,7 @@ void res2_comp::betti_nmonoms(intarray &result) const
   delete [] bettis;
 }
 
-static void betti_display(ostream &o, const intarray &a)
+static void betti_display(buffer &o, const intarray &a)
 {
   int total_sum = 0;
   int lo = a[0];
@@ -143,25 +143,34 @@ static void betti_display(ostream &o, const intarray &a)
       for (int d=lo; d<=hi; d++)
 	sum += a[len*(d-lo)+lev+3];
       total_sum += sum;
-      o << setw(6) << sum << ' ';
+      o.put(sum, 6);
+      o << ' ';
     }
-  o << " [" << total_sum << "]" << endl;
+  o << " [" << total_sum << "]" << newline;
   for (int d=lo; d<=hi; d++)
     {
-      o << setw(5) << d << ": ";
+      o.put(d, 5);
+      o << ": ";
       for (int lev=0; lev<len; lev++)
 	{
 	  int c = a[len*(d-lo) + lev + 3];
 	  if (c != 0)
-	    o << setw(6) << c << ' ';
+	    o.put(c, 6);
 	  else
-	    o << setw(6) << "-" << ' ';
+	    o << "     -";
+	  o << " ";
 	}
-      o << endl;
+      o << newline;
     }
 }
 
 void res2_comp::text_out(const res2_pair *p) const
+{
+  buffer o;
+  text_out(o,p);
+  emit(o.str());
+}
+void res2_comp::text_out(buffer &o, const res2_pair *p) const
 {
   res2_pair *a, *b;
 
@@ -171,29 +180,29 @@ void res2_comp::text_out(const res2_pair *p) const
   else
     b = p->syz->next->comp;
 
-  cerr << p->me << ' ';
-  cerr << p->level << ' ' << p->degree << ' ';
+  o << p->me << ' ';
+  o << p->level << ' ' << p->degree << ' ';
   if (a != NULL)
-    cerr << a->me << ' ' ;
-  else cerr << ". ";
-  if (b != NULL) cerr << b->me << ' ';
-  else cerr << ". ";
+    o << a->me << ' ' ;
+  else o << ". ";
+  if (b != NULL) o << b->me << ' ';
+  else o << ". ";
 
-  cerr << p->compare_num << ' ';
+  o << p->compare_num << ' ';
 
   switch (p->syz_type) {
   case SYZ2_S_PAIR:
-    cerr << "PR";
+    o << "PR";
     break;
   case SYZ2_MINIMAL:
-    cerr << "SZ";
+    o << "SZ";
     break;
   case SYZ2_NOT_MINIMAL:
-    cerr << "GB";
-    cerr << "(pivot " << p->pivot_term->comp->me << ")";
+    o << "GB";
+    o << "(pivot " << p->pivot_term->comp->me << ")";
     break;
   case SYZ2_NOT_NEEDED:
-    cerr << "NO";
+    o << "NO";
     break;
   default:
     break;
@@ -202,51 +211,52 @@ void res2_comp::text_out(const res2_pair *p) const
 #if 0
   if (p->mi_exists)
 #endif
-    cerr << "[mi: " << p->mi.length() << "]";
+    o << "[mi: " << p->mi.length() << "]";
 #if 0
   else
     {
       res2_pair *q = p->next_div;
       int n = 0;
       while (q != NULL) { n++; q = q->next_div; }
-      cerr << "[midiv: " << n << "]";
+      o << "[midiv: " << n << "]";
     }
 #endif
-  M->elem_text_out(cerr, p->syz->monom);
-  cerr << " [" << R->n_terms(p->syz) << "] ";
+  M->elem_text_out(o, p->syz->monom);
+  o << " [" << R->n_terms(p->syz) << "] ";
   if (comp_printlevel >= 4)
     {
       // Display the vector
-      cerr << " syz: ";
-      R->elem_text_out(p->syz);
+      o << " syz: ";
+      R->elem_text_out(o, p->syz);
     }
-  cerr << endl;
+  o << newline;
 }
 
 void res2_comp::stats() const
 {
-  cerr << "--- The total number of pairs in each level/slanted degree -----" << endl;
+  buffer o;
+  o << "--- The total number of pairs in each level/slanted degree -----" << newline;
   intarray a;
   betti_skeleton(a);
-  betti_display(cerr, a);
-  //  cerr << "--- The number of pairs left to compute ------------------------" << endl;
+  betti_display(o, a);
+  //  o << "--- The number of pairs left to compute ------------------------" << newline;
   //  a.shrink(0);
   //  betti_remaining(a);
-  //  betti_display(cerr, a);
-  cerr << "--- (Lower bounds of) the minimal betti numbers ----------" << endl;
+  //  betti_display(o, a);
+  o << "--- (Lower bounds of) the minimal betti numbers ----------" << newline;
   a.shrink(0);
   betti_minimal(a);
-  betti_display(cerr, a);
+  betti_display(o, a);
   if (comp_printlevel >= 1)
     {
-      cerr << "-- #Reduction steps = " << total_reduce_count << "--" 
+      o << "-- #Reduction steps = " << total_reduce_count << "--" 
 	   << " ones " << n_ones 
 	   << " unique " << n_unique 
-	   << " others " << n_others << " ----" << endl;
-      cerr << "--- Number of monomials  ---------------------------------" << endl;
+	   << " others " << n_others << " ----" << newline;
+      o << "--- Number of monomials  ---------------------------------" << newline;
       a.shrink(0);
       betti_nmonoms(a);
-      betti_display(cerr, a);
+      betti_display(o, a);
     }
 
   // If the printlevel is high enough, display each element
@@ -254,11 +264,11 @@ void res2_comp::stats() const
     for (int lev=0; lev<resn.length(); lev++)
       {
 	if (resn[lev]->pairs == NULL) continue;
-	cerr << "---- level " << lev << " ----" << endl;
+	o << "---- level " << lev << " ----" << newline;
 	for (res2_pair *p = resn[lev]->pairs; p != NULL; p = p->next)
-	  text_out(p);
+	  text_out(o,p);
       }
-
+  emit(o.str());
 }
 
 FreeModule *res2_comp::free_of(int i) const
@@ -496,7 +506,7 @@ void cmd_res2_calc(object &op, object &odeg, object &oargs)
   intarray *args = oargs->intarray_of();
   if (args->length() != 6)
     {
-      *gError << "res: expected 5 elements in parameter array";
+      gError << "res: expected 5 elements in parameter array";
       return;
     }
   int *d;

@@ -59,8 +59,8 @@ public:
   virtual const SchurRing * cast_to_SchurRing() const { return this; }
   virtual       SchurRing * cast_to_SchurRing()       { return this; }
 
-  virtual void text_out(ostream &o) const;
-  virtual void elem_text_out(ostream &o, const ring_elem f) const;
+  virtual void text_out(buffer &o) const;
+  virtual void elem_text_out(buffer &o, const ring_elem f) const;
 
   void dimension(const int *exp, mpz_t result) const;
   ring_elem dimension(const ring_elem f) const;

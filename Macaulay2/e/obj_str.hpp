@@ -41,13 +41,13 @@ public:
   const char * type_name     () const { return "string"; }
   object_string *cast_to_string() { return this; }
 
-  void bin_out(ostream &o) const 
+  void bin_out(buffer &o) const 
     { 
       bin_int_out(o,len);
       for (int i=0; i<len; i++)
 	o << val[i];
     }
-  void text_out(ostream &o) const
+  void text_out(buffer &o) const
     {
       for (int i=0; i<len; i++) o << val[i];
 //    o << '\0';

@@ -59,7 +59,7 @@ void Ring::mult_to(ring_elem &f, const ring_elem g) const
 
 int Ring::coerce_to_int(ring_elem) const
 {
-  *gError << "cannot coerce given ring element to an integer";
+  gError << "cannot coerce given ring element to an integer";
   return 0;
 }
 
@@ -70,11 +70,11 @@ MonomialIdeal Ring::get_quotient_monomials() const
 
 ring_elem Ring::random() const
 {
-  *gError << "random scalar elements for this ring are not implemented";
+  gError << "random scalar elements for this ring are not implemented";
   return 0;
 }
 ring_elem Ring::random(int /*homog*/, const int * /*deg*/) const
 {
-  *gError << "random non-scalar elements for this ring are not implemented";
+  gError << "random non-scalar elements for this ring are not implemented";
   return 0;
 }

@@ -26,7 +26,7 @@
 int refcount_check = 0;
 caster_oil caster;
 
-void object_element::debug_out(ostream &o) const
+void object_element::debug_out(buffer &o) const
 {
   o << type_name() 
     << '(' << refcount  << ')';
@@ -34,7 +34,7 @@ void object_element::debug_out(ostream &o) const
 
 bool object_element::is_equal(const object_element * /* o */ ) const
 {
-  cerr << "object_element::is_equal called";
+  ERROR("internal error: object_element::is_equal called");
   return false;
 }
 

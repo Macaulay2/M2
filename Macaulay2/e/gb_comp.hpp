@@ -100,7 +100,7 @@ public:
 
   // These can be overridden by the specific computation
   const char * type_name      () const { return "GB computation"; }
-  void text_out(ostream &o) const { o << "GB computation"; }
+  void text_out(buffer &o) const { o << "GB computation"; }
 
   virtual binomialGB_comp * cast_to_binomialGB_comp() { return 0; }
   virtual const binomialGB_comp * cast_to_binomialGB_comp() const { return 0; }

@@ -120,6 +120,7 @@ public:
   resterm *from_vector(const array<res_pair *> &base, const vec v) const;
 
   int n_terms(const resterm *f) const; // Used for stats
+  void elem_text_out(buffer &o, const resterm *f) const; // Used for debugging and stats
   void elem_text_out(const resterm *f) const; // Used for debugging and stats
 };
 

@@ -147,7 +147,7 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
   MONlocal = new int[nvars + nwords]; // MES: should be total number of words of result...
 }
 
-void Monoid::text_out(ostream &o) const
+void Monoid::text_out(buffer &o) const
 {
   int i;
   if (moninfo->isgroup)
@@ -404,7 +404,7 @@ void Monoid::lcm(const int *m, const int *n, int *p) const
   from_expvector(EXP1, p);
 }
 
-void Monoid::elem_text_out(ostream &o, const int *m) const
+void Monoid::elem_text_out(buffer &o, const int *m) const
 {
   to_expvector(m, EXP1);
   if (moninfo->isgroup)
@@ -420,7 +420,7 @@ void Monoid::elem_text_out(ostream &o, const int *m) const
   else
     ntuple::elem_text_out(o, nvars, EXP1, moninfo->varnames);
 }
-void Monoid::elem_bin_out(ostream &o, const int *m) const
+void Monoid::elem_bin_out(buffer &o, const int *m) const
 {
   to_expvector(m, EXP1);
   ntuple::elem_bin_out(o, nvars, EXP1);

@@ -35,7 +35,6 @@ class queue
 
   void obtain(const queue<T> &qq)
     {
-      cerr << "queue::obtain called" << endl;
       queue<T> &q = (queue<T> &) qq;
       if (q.ephemeral == 0)
 	copy(q);

@@ -117,8 +117,8 @@ public:
   bool one_reduction_step(binomial &f, binomial g) const;
   bool calc_s_pair(binomial_s_pair &s, binomial &result) const;
 
-  void monomial_out(ostream &o, const monomial m) const;
-  void elem_text_out(ostream &o, const binomial &f) const;
+  void monomial_out(buffer &o, const monomial m) const;
+  void elem_text_out(buffer &o, const binomial &f) const;
 };
 
 class binomial_s_pair_set
@@ -317,9 +317,9 @@ public:
   binomialGB_comp * cast_to_binomialGB_comp() { return this; }
   const binomialGB_comp * cast_to_binomialGB_comp() const { return this; }
 
-  void bin_out(ostream &) const {}
+  void bin_out(buffer &) const {}
   const char * type_name         () const { return "binomialGB_comp"; }
-  void text_out(ostream &o) const { o << "binomialGB_comp"; }
+  void text_out(buffer &o) const { o << "binomialGB_comp"; }
 
   int length_of() const { return 0; }
   

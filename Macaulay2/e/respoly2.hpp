@@ -58,6 +58,7 @@ public:
   res2term *from_vector(const array<res2_pair *> &base, const vec v) const;
 
   int n_terms(const res2term *f) const; // Used for stats
+  void elem_text_out(buffer &o, const res2term *f) const; // Used for debugging and stats
   void elem_text_out(const res2term *f) const; // Used for debugging and stats
 
   const PolynomialRing *  Ring_of()      const { return R; }

@@ -3,6 +3,8 @@
 #include "style.hpp"
 #include "gbinhom.hpp"
 #include "geovec.hpp"
+#include "text_io.hpp"
+
 extern char system_interrupted;
 extern int comp_printlevel;
 
@@ -14,7 +16,7 @@ void GBinhom_comp::set_up0(const Matrix &m, int csyz, int nsyz)
   R = m.Ring_of()->cast_to_poly_ring();
   if (R == NULL)
     {
-      *gError << "ring is not a polynomial ring";
+      gError << "ring is not a polynomial ring";
       // MES: throw an error here.
       assert(0);
     }
@@ -245,9 +247,10 @@ int GBinhom_comp::mark_pair(gb_elem *p, gb_elem *q) const
 	    r->compare_num = -1;
 	    if (comp_printlevel >= 8)
 	      {
-		cerr << "---- removed pair ";
-		debug_out(r);
-		cerr << endl;
+		buffer o;
+		o << "---- removed pair ";
+		debug_out(o,r);
+		emit_line(o.str());
 	      }
 	    return 1;
 	  }
@@ -262,9 +265,10 @@ int GBinhom_comp::mark_pair(gb_elem *p, gb_elem *q) const
 	    r->compare_num = -1;
 	    if (comp_printlevel >= 8)
 	      {
-		cerr << "---- removed pair ";
-		debug_out(r);
-		cerr << endl;
+		buffer o;
+		o << "---- removed pair ";
+		debug_out(o,r);
+		emit_line(o.str());
 	      }
 	    return 1;
 	  }
@@ -368,8 +372,10 @@ void GBinhom_comp::find_pairs(gb_elem *p)
 				    // This means: don't compute spair.
 	      if (comp_printlevel >= 8)
 		{
-		  cerr << "removed pair[" << q->first->me << " " 
-		    << q->second->me << "]" << endl;;
+		  buffer o;
+		  o << "removed pair[" << q->first->me << " " 
+		    << q->second->me << "]";
+		  emit_line(o.str());
 		}
 	    }
 	}
@@ -380,12 +386,14 @@ void GBinhom_comp::find_pairs(gb_elem *p)
   spairs->sort_list(p->pair_list);
   if (comp_printlevel >= 8)
     {
+      buffer o;
       for (q = p->pair_list; q != NULL; q = q->next)
 	{
-	  cerr << "insert ";
-	  debug_out(q);
-	  cerr << endl;
+	  o << "insert ";
+	  debug_out(o,q);
+	  o << newline;
 	}
+      emit(o.str());
     }
   for (q = p->pair_list; q != NULL; q = q->next)
     q->next_same = q->next;
@@ -499,7 +507,11 @@ int GBinhom_comp::gb_reduce(vec &f, vec &fsyz)
 	}
     }
   if (comp_printlevel >= 4)
-    cerr << "." << count;
+    {
+      buffer o;
+      o << "." << count;
+      emit(o.str());
+    }
 
   result->next = NULL;
   f = head.next;
@@ -556,7 +568,11 @@ int GBinhom_comp::gb_geo_reduce(vec &f, vec &fsyz)
     }
 
   if (comp_printlevel >= 4)
-    cerr << "." << count;
+    {
+      buffer o;
+      o << "." << count;
+      emit(o.str());
+    }
   result->next = NULL;
   f = head.next;
 
@@ -665,9 +681,11 @@ int GBinhom_comp::s_pair_step(s_pair *p)
   n_computed++;
   if (comp_printlevel >= 8)
     {
-      cerr << "--- computing pair ";
-      debug_out(p);
-      cerr << " ----" << endl;
+      buffer o;
+      o << "--- computing pair ";
+      debug_out(o,p);
+      o << " ----" << newline;
+      emit(o.str());
     }
   int compute_pair = (p->compare_num >= 0); // MES: change field name
   if (compute_pair)
@@ -697,9 +715,10 @@ int GBinhom_comp::s_pair_step(s_pair *p)
       gb_insert(f, fsyz,0);	// The 0 means 'normal insertion'.
       if (comp_printlevel >= 8)
 	{
-	  cerr << "  gb " << last_gb_num-1 << " = ";
-	  F->elem_text_out(cerr, f);
-	  cerr << endl;
+	  buffer o;
+	  o << "  gb " << last_gb_num-1 << " = ";
+	  F->elem_text_out(o, f);
+	  emit_line(o.str());
 	}
       return SPAIR_GB;
     }
@@ -707,9 +726,10 @@ int GBinhom_comp::s_pair_step(s_pair *p)
     {
       if (comp_printlevel >= 8)
 	{
-	  cerr << "  syz = ";
-	  F->elem_text_out(cerr, fsyz);
-	  cerr << endl;
+	  buffer o;
+	  o << "  syz = ";
+	  F->elem_text_out(o, fsyz);
+	  emit_line(o.str());
 	}
       if (collect_syz)
 	{
@@ -743,7 +763,7 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
 {
   if (stop.length() != 7) 
     {
-      *gError << "inappropriate stop conditions for GB computation";
+      gError << "inappropriate stop conditions for GB computation";
       return COMP_ERROR;
     }
   int stop_gb = stop[0]; //ngb
@@ -780,32 +800,34 @@ int GBinhom_comp::calc(const int * /*deg*/, const intarray &stop)
 	switch (stype)
 	  {
 	  case SPAIR_GB:
-	    cerr << "m";
+	    emit("m");
 	    break;
 	  case SPAIR_SYZ:
-	    cerr << "z";
+	    emit("z");
 	    break;
 	  case SPAIR_ZERO:
-	    cerr << "o";
+	    emit("o");
 	    break;
 	  case SPAIR_REMOVED:
-	    cerr << "r";
+	    emit("r");
 	    break;
 	  default:
-	    cerr << "ERROR";
+	    emit("ERROR");
 	    break;
 	  }
     }
   
   // MES: complete the reduction of the GB here
-  if (comp_printlevel >= 1) cerr << endl;
+  if (comp_printlevel >= 1) emit_line("");
   if (comp_printlevel >= 4)
     {
-      cerr << "Number of pairs             = " << n_pairs << endl;
-      cerr << "Number of gb elements       = " << n_gb << endl;
-      cerr << "Number of gcd=1 pairs       = " << n_saved_gcd << endl;
-      cerr << "Number of gcd tails=1 pairs = " << n_saved_lcm << endl;
-      cerr << "Number of pairs computed    = " << n_computed << endl;
+      buffer o;
+      o << "Number of pairs             = " << n_pairs << newline;
+      o << "Number of gb elements       = " << n_gb << newline;
+      o << "Number of gcd=1 pairs       = " << n_saved_gcd << newline;
+      o << "Number of gcd tails=1 pairs = " << n_saved_lcm << newline;
+      o << "Number of pairs computed    = " << n_computed << newline;
+      emit(o.str());
     }
   return is_done;
 }
@@ -832,7 +854,7 @@ Vector GBinhom_comp::reduce(const Vector &v, Vector &lift)
 {
   if (!v.free_of()->is_equal(F))
     {
-      *gError << "reduce: vector is in incorrect free module";
+      gError << "reduce: vector is in incorrect free module";
       return Vector(F, NULL);
     }
   vec f = F->copy(v.get_value());
@@ -867,7 +889,7 @@ int GBinhom_comp::contains(const Matrix &m)
 }
 bool GBinhom_comp::is_equal(const gb_comp * /*q*/)
 {
-  *gError << "== not yet implemented for inhomogeneous GB's";
+  gError << "== not yet implemented for inhomogeneous GB's";
   return false;
 }
 
@@ -912,79 +934,100 @@ Matrix GBinhom_comp::syz_matrix()
 
 void GBinhom_comp::debug_out(s_pair *q) const
 {
+  buffer o;
+  debug_out(o,q);
+  emit(o.str());
+}
+
+void GBinhom_comp::debug_out(buffer &o, s_pair *q) const
+{
   if (q == NULL) return;
   int *m = M->make_one();
-  cerr << "(";
-  if (q->first != NULL) cerr << q->first->me; else cerr << ".";
-  cerr << " ";
-  if (q->second != NULL) cerr << q->second->me; else cerr << ".";
-  cerr << " ";
+  o << "(";
+  if (q->first != NULL) o << q->first->me; else o << ".";
+  o << " ";
+  if (q->second != NULL) o << q->second->me; else o << ".";
+  o << " ";
   if (q->first != NULL)
     {
       M->divide(q->lcm, q->first->f->monom, m);
-      M->elem_text_out(cerr, m);
-      cerr << ' ';
+      M->elem_text_out(o, m);
+      o << ' ';
     }
   if (q->second != NULL)
     {
       M->divide(q->lcm, q->second->f->monom, m);
-      M->elem_text_out(cerr, m);
-      cerr << ' ';
+      M->elem_text_out(o, m);
+      o << ' ';
     }
-  M->elem_text_out(cerr, q->lcm);
+  M->elem_text_out(o, q->lcm);
   M->remove(m);
   if (q->compare_num < 0)
-    cerr << " marked";
-  cerr << ") ";
+    o << " marked";
+  o << ") ";
 }
 
 void GBinhom_comp::debug_pairs_out(gb_elem *p) const
+{
+  buffer o;
+  debug_pairs_out(o,p);
+  emit(o.str());
+}
+void GBinhom_comp::debug_pairs_out(buffer &o, gb_elem *p) const
 {
   s_pair *q;
   int n = 0;
   for (q = p->pair_list; q != NULL; q = q->next_same)
     {
-      debug_out(q);
+      debug_out(o,q);
       n++;
-      if (n % 10 == 0) cerr << endl;
+      if (n % 10 == 0) o << newline;
     }
-  cerr << endl;
-
+  o << newline;
 }
+
 void GBinhom_comp::debug_pairs() const
 {
+  buffer o;
+  debug_pairs(o);
+  emit(o.str());
+}
+void GBinhom_comp::debug_pairs(buffer &o) const
+{
   for (gb_elem *p = gbLarge->next; p != NULL; p = p->next)
-    debug_pairs_out(p);
+    debug_pairs_out(o,p);
 
   for (int i=0; i<NHEAP; i++)
     {
       s_pair *q = spairs->debug_list(i);
       if (q == NULL) continue;
-      cerr << "---- pairs in bin " << i << " -----" << endl;
+      o << "---- pairs in bin " << i << " -----" << newline;
       int n = 0;
       for ( ; q != NULL; q = q->next)
 	{
-	  debug_out(q);
+	  debug_out(o,q);
 	  n++;
-	  if (n % 10 == 0) cerr << endl;
+	  if (n % 10 == 0) o << newline;
 	}
-      cerr << endl;
+      o << newline;
     }
 }
 void GBinhom_comp::stats() const
 {
   spairs->stats();
+  buffer o;
   if (comp_printlevel >= 5 && comp_printlevel % 2 == 1)
     {
       int i = 0;
       for (gb_elem *q = gb->next_min; q != NULL; q = q->next_min)
 	{
-	  cerr << i << '\t';
+	  o << i << '\t';
 	  i++;
-	  F->elem_text_out(cerr, q->f);
-	  cerr << endl;
+	  F->elem_text_out(o, q->f);
+	  o << newline;
 	}
     }
+  emit(o.str());
 }
 
 #if 0

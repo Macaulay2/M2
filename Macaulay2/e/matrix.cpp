@@ -129,7 +129,7 @@ void Matrix::set_degree_shift(const intarray &deg)
 {
   if (deg.length() != degree_monoid()->n_vars())
     {
-      *gError << "improper shift degree";
+      gError << "improper shift degree";
       return;
     }
   degree_monoid()->from_expvector(deg.raw(), degree_shift());
@@ -139,7 +139,7 @@ Matrix Matrix::zero(const FreeModule *F, const FreeModule *G)
 {
   Matrix result(F,G);
   if (F->Ring_of() != G->Ring_of())
-    *gError << "free modules have different base rings";
+    gError << "free modules have different base rings";
   for (int i=0; i<G->rank(); i++)
     result[i] = F->zero();
   return result;
@@ -158,10 +158,10 @@ Matrix Matrix::operator+(const Matrix &m) const
   Matrix result(rows(), cols());
 
   if (Ring_of() != m.Ring_of())
-    *gError << "matrices have different base rings";
+    gError << "matrices have different base rings";
   else if (rows()->rank() != m.rows()->rank()
 	   || cols()->rank() != m.cols()->rank())
-    *gError << "matrices have different shapes";
+    gError << "matrices have different shapes";
   else
     {
       const Ring *R = Ring_of();
@@ -194,10 +194,10 @@ Matrix Matrix::operator-(const Matrix &m) const
   Matrix result(rows(), cols());
 
   if (Ring_of() != m.Ring_of())
-    *gError << "matrices have different base rings";
+    gError << "matrices have different base rings";
   else if (rows()->rank() != m.rows()->rank()
 	   || cols()->rank() != m.cols()->rank())
-    *gError << "matrices have different shapes";
+    gError << "matrices have different shapes";
   else
     {
       const Ring *R = Ring_of();
@@ -264,7 +264,7 @@ Matrix Matrix::reshape(const FreeModule *F, const FreeModule *G) const
 {
   Matrix result(F,G);
   if (n_rows() * n_cols() != F->rank() * G->rank())
-    *gError << "reshape: ranks of freemodules incorrect";
+    gError << "reshape: ranks of freemodules incorrect";
   else
     F->reshape(*this, result);
   return result;
@@ -309,12 +309,12 @@ Matrix Matrix::concat(const Matrix &m) const
 {
   if (Ring_of() != m.Ring_of())
     {
-      *gError << "concat: different base rings";
+      gError << "concat: different base rings";
       return Matrix(rows(), cols());
     }
   if (n_rows() != m.n_rows())
     {
-      *gError << "concat: matrices have different numbers of rows";
+      gError << "concat: matrices have different numbers of rows";
       return Matrix(rows(), cols());
     }
 
@@ -334,7 +334,7 @@ Matrix Matrix::direct_sum(const Matrix &m) const
 {
   if (Ring_of() != m.Ring_of())
     {
-      *gError << "concat: different base rings";
+      gError << "concat: different base rings";
       return Matrix(rows(), cols());
     }
   int *deg;
@@ -362,12 +362,12 @@ Matrix Matrix::operator*(const Matrix &m) const
 {
   if (Ring_of() != m.Ring_of())
     {
-      *gError << "matrix mult: different base rings";
+      gError << "matrix mult: different base rings";
       return Matrix(rows(), cols());
     }
   if (n_cols() != m.n_rows())
     {
-      *gError << "matrix mult: matrix sizes don't match";
+      gError << "matrix mult: matrix sizes don't match";
       return Matrix(rows(), cols());
     }
 
@@ -386,7 +386,7 @@ Matrix Matrix::module_tensor(const Matrix &m) const
 {
   if (Ring_of() != m.Ring_of())
     {
-      *gError << "module tensor: different base rings";
+      gError << "module tensor: different base rings";
       return Matrix(rows(), cols());
     }
   FreeModule *F = rows()->tensor(m.rows());
@@ -450,7 +450,7 @@ Matrix Matrix::tensor(const Matrix &m) const
 {
   if (Ring_of() != m.Ring_of())
     {
-      *gError << "matrix tensor: different base rings";
+      gError << "matrix tensor: different base rings";
       return Matrix(rows(), cols());
     }
 
@@ -476,7 +476,7 @@ Matrix Matrix::diff(const Matrix &m, int use_coef) const
 {
   if (Ring_of() != m.Ring_of())
     {
-      *gError << "matrix diff: different base rings";
+      gError << "matrix diff: different base rings";
       return Matrix(rows(), cols());
     }
   FreeModule *F1 = rows()->transpose();
@@ -737,14 +737,14 @@ Matrix Matrix::wedge_dual(int p, const FreeModule *F)
 }
 #endif
 
-void Matrix_rec::text_out(ostream &o) const
+void Matrix_rec::text_out(buffer &o) const
 {
   Matrix_rec *M1 = (Matrix_rec *) this;
   Matrix M = M1->cast_to_Matrix();
   M.text_out(o);
 }
 
-void Matrix::text_out(ostream &o) const
+void Matrix::text_out(buffer &o) const
 {
   int nrows = n_rows();
   int ncols = n_cols();
@@ -755,7 +755,7 @@ void Matrix::text_out(ostream &o) const
 //  cols().text_out(o);
 //  o << endl;
 
-  ostrstream *p = new ostrstream[nrows];
+  buffer *p = new buffer[nrows];
   int r;
   for (int c=0; c<ncols; c++)
     {
@@ -765,24 +765,23 @@ void Matrix::text_out(ostream &o) const
 	  ring_elem f = elem(r,c);
 	  Ring_of()->elem_text_out(p[r], f);
 	  Ring_of()->remove(f);
-	  if (p[r].pcount() > maxcount)
-	    maxcount = p[r].pcount();
+	  if (p[r].size() > maxcount)
+	    maxcount = p[r].size();
 	}
       for (r=0; r<nrows; r++)
-	for (int k=maxcount+1-p[r].pcount(); k > 0; k--)
+	for (int k=maxcount+1-p[r].size(); k > 0; k--)
 	  p[r] << ' ';
     }
   for (r=0; r<nrows; r++)
     {
       p[r] << '\0';
       char *s = p[r].str();
-      o << s << endl;
-      delete [] s;
+      o << s << newline;
     }
   delete [] p;
 }
 
-void Matrix_rec::bin_out(ostream &o) const
+void Matrix_rec::bin_out(buffer &o) const
 {
   assert(cols->rank() == entries.length());
   bin_int_out(o,entries.length());
@@ -915,7 +914,7 @@ Matrix Matrix::simplify(int n) const
     break;
 #endif
   default:
-    *gError << "bad simplification type";
+    gError << "bad simplification type";
     break;
   }
 

@@ -56,7 +56,7 @@ public:
       for (int i=0; i<n; i++) remove();
     }
 
-  void text_out(ostream &o) const;
+  void text_out(buffer &o) const;
 };
 
 #endif

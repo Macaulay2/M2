@@ -80,7 +80,7 @@ Matrix PolynomialRing::get_ideal() const
   return result;
 }
 
-void PolynomialRing::text_out(ostream &o) const
+void PolynomialRing::text_out(buffer &o) const
 {
   K->text_out(o);
   M->text_out(o);
@@ -359,7 +359,7 @@ ring_elem PolynomialRing::homogenize(const ring_elem f,
 	  result->next = NULL;
 	  ring_elem g = head.next;
 	  remove(g);
-	  *gError << "homogenization impossible";
+	  gError << "homogenization impossible";
 	  result = NULL;
 	  return result;
 	}
@@ -745,7 +745,7 @@ ring_elem PolynomialRing::power(const ring_elem f0, mpz_t n) const
 	}
       else 
 	{
-	  *gError << "exponent too large";
+	  gError << "exponent too large";
 	  result = (Nterm *)NULL;
 	}
     }
@@ -854,7 +854,7 @@ ring_elem PolynomialRing::invert(const ring_elem f) const
   Nterm *ft = f;
   if (is_zero(f))
     {
-      *gError << "cannot divide by zero";
+      gError << "cannot divide by zero";
       return (Nterm *)NULL;
     }
   if (ft->next == NULL)
@@ -879,7 +879,7 @@ ring_elem PolynomialRing::invert(const ring_elem f) const
       ring_elem g = base_ring->gcd_extended(F, f, u, v);
       if (!base_ring->is_unit(g))
 	{
-	  *gError << "element is not invertible";
+	  gError << "element is not invertible";
 	  // MES: what about setting some global error ring element
 	  // which contains this 'certificate' g of non-field-ness?
 	}
@@ -888,7 +888,7 @@ ring_elem PolynomialRing::invert(const ring_elem f) const
     }
   else
     {
-      *gError << "division is not defined in this ring";
+      gError << "division is not defined in this ring";
       return (Nterm *)NULL;
     }
 }
@@ -985,7 +985,7 @@ ring_elem PolynomialRing::gcd(const ring_elem ff, const ring_elem gg) const
 {
   if (nvars != 1)
     {
-      *gError << "multivariate gcd not yet implemented";
+      gError << "multivariate gcd not yet implemented";
       return (Nterm *)NULL;
     }
   ring_elem f = copy(ff);
@@ -1009,7 +1009,7 @@ ring_elem PolynomialRing::gcd_extended(const ring_elem f, const ring_elem g,
 {
   if (!has_gcd())
     {
-      *gError << "cannot use gcd_extended in this ring";
+      gError << "cannot use gcd_extended in this ring";
       return (Nterm *) NULL;
     }
   u = from_int(1);
@@ -1061,29 +1061,31 @@ ring_elem PolynomialRing::gcd_extended(const ring_elem f, const ring_elem g,
 
 ring_elem PolynomialRing::random() const
 {
-  *gError << "not yet implemented";
+  gError << "not yet implemented";
   return 0;
 }
 ring_elem PolynomialRing::random(int /*homog*/, const int * /*deg*/) const
 {
-  *gError << "not yet implemented";
+  gError << "not yet implemented";
   return 0;
 }
 
 void PolynomialRing::debug_out(const ring_elem f) const
 {
-  elem_text_out(cerr, f);
-  cerr << endl;
+  buffer o;
+  elem_text_out(o, f);
+  emit_line(o.str());
 }
 
 void PolynomialRing::debug_out(const Nterm *f) const
 {
+  buffer o;
   ring_elem g = (Nterm *) f;
-  elem_text_out(cerr, g);
-  cerr << endl;
+  elem_text_out(o, g);
+  emit_line(o.str());
 }
 
-void PolynomialRing::elem_text_out(ostream &o, const ring_elem f) const
+void PolynomialRing::elem_text_out(buffer &o, const ring_elem f) const
 {
   Nterm *t = f;
   if (t == NULL)
@@ -1132,7 +1134,7 @@ void PolynomialRing::elem_text_out(ostream &o, const ring_elem f) const
 
 }
 
-void PolynomialRing::elem_bin_out(ostream &o, const ring_elem f) const
+void PolynomialRing::elem_bin_out(buffer &o, const ring_elem f) const
 {
   int n = n_terms(f);
   bin_int_out(o,n);

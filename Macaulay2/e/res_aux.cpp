@@ -114,7 +114,7 @@ void res_comp::betti_nmonoms(intarray &result) const
       result.append(n_monoms(lev, d));
 }
 
-static void betti_display(ostream &o, const intarray &a)
+static void betti_display(buffer &o, const intarray &a)
 {
   int total_sum = 0;
   int lo = a[0];
@@ -127,52 +127,55 @@ static void betti_display(ostream &o, const intarray &a)
       for (int d=lo; d<=hi; d++)
 	sum += a[len*(d-lo)+lev+3];
       total_sum += sum;
-      o << setw(6) << sum << ' ';
+      o.put(sum, 6);
+      o << ' ';
     }
-  o << " [" << total_sum << "]" << endl;
+  o << " [" << total_sum << "]" << newline;
   for (int d=lo; d<=hi; d++)
     {
-      o << setw(5) << d << ": ";
+      o.put(d, 5);
+      o << ": ";
       for (int lev=0; lev<len; lev++)
 	{
 	  int c = a[len*(d-lo) + lev + 3];
 	  if (c != 0)
-	    o << setw(6) << c << ' ';
+	    o.put(c, 6);
 	  else
-	    o << setw(6) << "-" << ' ';
+	    o << "     -";
+	  o << " ";
 	}
-      o << endl;
+      o << newline;
     }
 }
 
-void res_comp::text_out(const res_pair *p) const
+void res_comp::text_out(buffer &o, const res_pair *p) const
 {
   res_pair *a = p->first;
   res_pair *b = p->second; // possibly NULL
-  cerr << p->me << ' ';
+  o << p->me << ' ';
   if (a != NULL)
-    cerr << a->me << ' ' ;
-  else cerr << ". ";
-  if (b != NULL) cerr << b->me << ' ';
-  else cerr << ". ";
+    o << a->me << ' ' ;
+  else o << ". ";
+  if (b != NULL) o << b->me << ' ';
+  else o << ". ";
 
-  cerr << p->compare_num << ' ';
+  o << p->compare_num << ' ';
 
   switch (p->syz_type) {
   case SYZ_S_PAIR:
-    cerr << "PR";
+    o << "PR";
     break;
   case SYZ_GEN:
-    cerr << "GN";
+    o << "GN";
     break;
   case SYZ_MINIMAL:
-    cerr << "SZ";
+    o << "SZ";
     break;
   case SYZ_NOT_MINIMAL:
-    cerr << "GB";
+    o << "GB";
     break;
   case SYZ_NOT_NEEDED:
-    cerr << "NO";
+    o << "NO";
     break;
   default:
     break;
@@ -181,62 +184,76 @@ void res_comp::text_out(const res_pair *p) const
 #if 0
   if (p->mi_exists)
 #endif
-    cerr << "[mi: " << p->mi.length() << "]";
+    o << "[mi: " << p->mi.length() << "]";
 #if 0
   else
     {
       res_pair *q = p->next_div;
       int n = 0;
       while (q != NULL) { n++; q = q->next_div; }
-      cerr << "[midiv: " << n << "]";
+      o << "[midiv: " << n << "]";
     }
 #endif
-  M->elem_text_out(cerr, p->base_monom);
+  M->elem_text_out(o, p->base_monom);
   if (comp_printlevel >= 3)
     {
       // Display the vector
-      cerr << " syz: ";
-      R->elem_text_out(p->syz);
+      o << " syz: ";
+      R->elem_text_out(o, p->syz);
     }
-  cerr << endl;
+  o << newline;
+}
+
+void res_comp::text_out(const res_pair *p) const
+{
+  buffer o;
+  text_out(o, p);
+  emit(o.str());
 }
 
 void res_comp::stats() const
 {
-  cerr << "level/degree = " << n_level << '/' << n_degree << endl;
-  cerr << "--- The total number of pairs in each level/slanted degree -----" << endl;
+  buffer o;
+  stats(o);
+  emit(o.str());
+}
+void res_comp::stats(buffer &o) const
+{
+  o << "level/degree = " << n_level << '/' << n_degree << newline;
+  o << "--- The total number of pairs in each level/slanted degree -----" << newline;
   intarray a;
   betti_skeleton(a);
-  betti_display(cerr, a);
-  cerr << "--- The number of pairs left to compute ------------------------" << endl;
+  betti_display(o, a);
+  o << "--- The number of pairs left to compute ------------------------" << newline;
   a.shrink(0);
   betti_remaining(a);
-  betti_display(cerr, a);
-  cerr << "--- (Lower bounds of) the minimal betti numbers ----------" << endl;
+  betti_display(o, a);
+  o << "--- (Lower bounds of) the minimal betti numbers ----------" << newline;
   a.shrink(0);
   betti_minimal(a);
-  betti_display(cerr, a);
+  betti_display(o, a);
   if (comp_printlevel >= 1)
     {
-      cerr << "--- Number of monomials  ---------------------------------" << endl;
+      o << "--- Number of monomials  ---------------------------------" << newline;
       a.shrink(0);
       betti_nmonoms(a);
-      betti_display(cerr, a);
+      betti_display(o, a);
     }
 
   // If the printlevel is high enough, display each element
   if (comp_printlevel >= 2)
     for (int lev=0; lev<resn.length(); lev++)
       {
-	cerr << "---- level " << lev << " ----" << endl;
+	o << "---- level " << lev << " ----" << newline;
 	for (int i=0; i<resn[lev]->bin.length(); i++)
 	  {
 	    res_degree *pairs = resn[lev]->bin[i];
 	    if (pairs == NULL) continue;
 	    for (res_pair *p = pairs->first; p != NULL; p = p->next)
 	      {
-		cerr << setw(4) << i << ' ';
-		text_out(p);
+		o.put(i,4);
+		o << ' ';
+		text_out(o,p);
 	      }
 	  }
       }
@@ -380,7 +397,7 @@ void cmd_res_calc(object &op, object &odeg, object &oargs)
   intarray *args = oargs->intarray_of();
   if (args->length() != 6)
     {
-      *gError << "res: expected 5 elements in parameter array";
+      gError << "res: expected 5 elements in parameter array";
       return;
     }
   int *d;

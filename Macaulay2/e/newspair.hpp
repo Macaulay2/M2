@@ -93,7 +93,7 @@ class s_pair_set
 
   s_pair_bunch *get_degree(int d);
 
-  void debug_out(S_pair *s) const;
+  void debug_out(buffer &o, S_pair *s) const;
 public:
   s_pair_set(const FreeModule *F, const FreeModule *G);
   ~s_pair_set();

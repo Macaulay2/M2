@@ -43,11 +43,11 @@ int handles::enlist(const object &o)
   return h;
 }
 
-void handles::text_out(ostream &o) const
+void handles::text_out(buffer &o) const
 {
   //gHandles.objs.debug_display(cout);
-  o << "--- heap ---------" << endl;
-  o << "handle refcount type" << endl;
+  o << "--- heap ---------" << newline;
+  o << "handle refcount type" << newline;
   int nnulls = 0;
   int nnullobjs = 0;
   for (cursor_hashtable<handle *> i(gHandles.objs); i.valid(); ++i)
@@ -62,8 +62,8 @@ void handles::text_out(ostream &o) const
       if (!(hand->obj.is_null()))
 	o << ' ' << hand->obj->refcount << '\t' << hand->obj->type_name();
       else nnullobjs++;
-      o << endl;
+      o << newline;
     }
-  o << "Number of null entries in table = " << nnulls << endl;
-  o << "Number of null objects in table = " << nnullobjs << endl;
+  o << "Number of null entries in table = " << nnulls << newline;
+  o << "Number of null objects in table = " << nnullobjs << newline;
 }

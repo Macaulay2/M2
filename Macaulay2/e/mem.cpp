@@ -2,6 +2,7 @@
 
 #include "style.hpp"
 #include "handles.hpp"
+#include "text_io.hpp"
 
 static int allocated_amount = 0;
 static int deleted_amount = 0;
@@ -15,7 +16,7 @@ doubling_stash *doubles = NULL;
 
 void out_of_memory()
 {
-  cerr << "Engine: out of memory.  Bye bye... " << endl;
+  emit_line("Engine: out of memory.  Bye bye... ");
   exit(0);
 }
 
@@ -121,48 +122,54 @@ void stash::chop_slab()
   free_list = prev;
 }
 
-void stash::text_out(ostream &o) const
+void stash::text_out(buffer &o) const
     // Display statistics about this stash.
 {
-  o << setw(16) << name
-    << setw(9) << (element_size * highwater + 1023)/1024 << 'k'
-    << setw(9) << (element_size * n_inuse + 1023)/1024 << 'k'
-    << setw(10) << element_size
-    << setw(10) << n_allocs
-    << setw(10) << n_inuse
-    << setw(10) << highwater
-    << setw(10) << n_frees 
-    << endl;
+  char s[200];
+  sprintf(s, "%16s %9dk %9dk %10d %10d %10d %10d %10d%s",
+	  name, 
+	  (element_size * highwater + 1023)/1024,
+	  (element_size * n_inuse + 1023)/1024,
+	  element_size,
+	  n_allocs,
+	  n_inuse,
+	  highwater,
+	  n_frees,
+	  newline);
+  o << s;
 }
 
 unsigned int engine_allocated = 0;
 unsigned int engine_highwater = 0;
 
-void stash::stats(ostream &o)
+void stash::stats(buffer &o)
 {
 //  o << "total space allocated from system = " << engine_allocated << endl;
 //  o << "number of global delete's  = " << engine_dealloc << endl;
   int n = (slab::n_slabs*slab_size)/1024 + 
     (allocated_amount - deleted_amount)/1024;
   o << "total engine space allocated = " 
-    << n << "k" << endl;
+    << n << "k" << newline;
 
-  o << setw(16) << "stash"
-    << setw(10) << "k total"
-    << setw(10) << "k in use"
-    << setw(10) << "size"
-    << setw(10) << "nalloc"
-    << setw(10) << "inuse"
-    << setw(10) << "highwater"
-    << setw(10) << "freed" 
-    << endl;
+  char s[200];
+  sprintf(s, "%16s %10s %10s %10s %10s %10s %10s %10s%s",
+	  "stash",
+	  "k total",
+	  "k in use",
+	  "size",
+	  "nalloc",
+	  "inuse",
+	  "highwater",
+	  "freed",
+	  newline);
+  o << s;
 
   for (stash *p = stash_list; p != NULL; p = p->next)
     if (p->n_allocs > 0)
       p->text_out(o);
 
   o << "handles: highwater = " << gHandles.highwater() << ", current = " 
-    << gHandles.current() << endl;
+    << gHandles.current() << newline;
 }
 
 //--------- Doubling Stashes -----------------------------------------
@@ -183,7 +190,7 @@ doubling_stash::~doubling_stash()
   for (int i=0; i<NDOUBLES; i++)
     {
       if (doubles[i] != NULL)
-	cout << "deleting stash double " << i << endl;
+	emit("internal warning -- deleting a double stash");
       delete doubles[i];
     }
 }

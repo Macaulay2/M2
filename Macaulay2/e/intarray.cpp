@@ -14,13 +14,13 @@ void intarray::expand(int newtop)
   len = doubles->allocated_size(entries)/sizeof(int);
 }
 
-void intarray::bin_out(ostream &o) const
+void intarray::bin_out(buffer &o) const
 {
   bin_int_out(o, max);
   for (int i=0; i<max; i++)
     bin_int_out(o, entries[i]);
 }
-void intarray::text_out(ostream &o) const
+void intarray::text_out(buffer &o) const
 {
   o << '[';
   for (int i=0; i<max-1; i++)

@@ -2,11 +2,7 @@
 #ifndef _style_hh_
 #define _style_hh_
 
-
-#include <iostream.h>
-#include <iomanip.h>
-#include <strstream.h>
-
+#include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -15,7 +11,15 @@
 
 #include <gmp.h>
 
+extern char newline[];
+
+#if defined(__MWERKS__)
+#define Random RandomFoo
+#endif
+
 #include "classes.hpp"
+#include "error.hpp"
+#include "buffer.hpp"
 #include "mem.hpp"
 
 typedef unsigned int unsigned_int;
@@ -29,19 +33,6 @@ inline const T &min(const T &a, const T &b)
 template <class T>
 inline const T &max(const T &a, const T &b)
 { return (a>b ? a : b); }
-
-typedef unsigned long int ulong;
-
-inline ulong range_safe_add(ulong a, ulong b)
-{
-  ulong c = a + b;
-  if (c < a)
-    {
-      cerr << "ulong integer addition overflow" << endl;
-      exit(-1);
-    }
-  return c;
-}
 
 template <class T> 
 inline void swap(T &t1, T &t2)

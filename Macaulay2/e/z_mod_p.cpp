@@ -45,7 +45,7 @@ Z_mod::Z_mod(int p, const Monoid *D)
   P1 = P-1;
 }
 
-void Z_mod::text_out(ostream &o) const
+void Z_mod::text_out(buffer &o) const
 {
   o << "Z/" << P;
 }
@@ -80,7 +80,7 @@ inline int Z_mod::int_to_exp(int a) const
   return log_table[(n < 0 ? n+P : n)];
 }
 
-void Z_mod::elem_text_out(ostream &o, ring_elem a) const
+void Z_mod::elem_text_out(buffer &o, ring_elem a) const
 {
   int n = to_int(a);
   if (n < 0) 
@@ -93,7 +93,7 @@ void Z_mod::elem_text_out(ostream &o, ring_elem a) const
   if (p_one || n != 1) o << n;
 }
 
-void Z_mod::elem_bin_out(ostream &o, ring_elem a) const
+void Z_mod::elem_bin_out(buffer &o, ring_elem a) const
 {
   int n = to_int(a);
   bin_int_out(o, n);
@@ -321,7 +321,7 @@ int Z_mod::primary_degree(const ring_elem) const
 ring_elem Z_mod::homogenize(const ring_elem f, int, int deg, const int *) const
 {
   if (deg != 0) 
-    *gError << "homogenize: no homogenization exists";
+    gError << "homogenize: no homogenization exists";
   return f;
 }
 

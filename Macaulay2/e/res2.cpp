@@ -110,7 +110,11 @@ int res2_comp::do_pairs(int level, int degree)
 	  p = p->next;
 	}
       if (nelems > 0)
-	cerr << "[" << degree << " " << level << " " << nelems << "]";
+	{
+	  buffer o;
+	  o << "[" << degree << " " << level << " " << nelems << "]";
+	  emit(o.str());
+	}
     }
   for (p = resn[level]->next_pair; p != NULL; p = p->next)
     {
@@ -139,7 +143,11 @@ int res2_comp::do_pairs_by_level(int level)
     {
       int nelems = resn[level]->nleft;
       if (nelems > 0)
-	cerr << "[lev " << nelems << ']';
+	{
+	  buffer o;
+	  o << "[lev " << nelems << ']';
+	  emit(o.str());
+	}
     }
   for (p = resn[level]->next_pair; p != NULL; p = p->next)
     {
@@ -179,7 +187,11 @@ int res2_comp::do_pairs_by_level(int level)
 	  p->pivot_term = head.next;
 	}
       if (comp_printlevel >= 3)
-	cerr << "[kept " << nmonoms << " killed " << nkilled << "]";
+	{
+	  buffer o;
+	  o << "[kept " << nmonoms << " killed " << nkilled << "]";
+	  emit(o.str());
+	}
     }
   return COMP_DONE;
 }
@@ -201,7 +213,11 @@ int res2_comp::do_pairs_by_degree(int level, int degree)
 	  p = p->next;
 	}
       if (nelems > 0)
-	cerr << '[' << nelems << ']';
+	{
+	  buffer o;
+	  o << '[' << nelems << ']';
+	  emit(o.str());
+	}
     }
   for (p = resn[level]->next_pair; p != NULL; p = p->next)
     {
@@ -241,7 +257,7 @@ int res2_comp::calc(const int *DegreeLimit,
 
   if (LengthLimit <= 0)
     {
-      *gError << "length limit out of range";
+      gError << "length limit out of range";
       return COMP_ERROR;
     }
   if (LengthLimit > length_limit)
@@ -260,10 +276,12 @@ int res2_comp::calc(const int *DegreeLimit,
 
   if (comp_printlevel >= 3)
     {
-      cerr << "--- The total number of pairs in each level/slanted degree -----" << endl;
+      buffer o;
+      o << "--- The total number of pairs in each level/slanted degree -----" << newline;
       intarray a;
       betti_skeleton(a);
-      betti_display(cerr, a);
+      betti_display(o, a);
+      emit(o.str());
     }
 
   // The skeleton routine sets the following:
@@ -317,7 +335,11 @@ int res2_comp::calc(const int *DegreeLimit,
 	  if (DegreeLimit != NULL && deg > *DegreeLimit - lodegree)
 	    return COMP_DONE_DEGREE_LIMIT;
 	  if (comp_printlevel >= 1)
-	    cerr << '{' << deg+lodegree << '}';
+	    {
+	      buffer o;
+	      o << '{' << deg+lodegree << '}';
+	      emit(o.str());
+	    }
 	  for (level=1; level<=length_limit; level++)
 	    {
 	      int ret = do_pairs_by_degree(level, deg);
@@ -333,7 +355,11 @@ int res2_comp::calc(const int *DegreeLimit,
       if (DegreeLimit != NULL && deg > *DegreeLimit - lodegree)
 	return COMP_DONE_DEGREE_LIMIT;
       if (comp_printlevel >= 1)
-	cerr << '{' << deg+lodegree << '}';
+	{
+	  buffer o;
+	  o << '{' << deg+lodegree << '}';
+	  emit(o.str());
+	}
       for (level=1; level<=length_limit+1; level++)
 	{
 	  int ret = do_all_pairs(level, deg);
@@ -349,7 +375,11 @@ int res2_comp::calc(const int *DegreeLimit,
       if (DegreeLimit != NULL && deg > *DegreeLimit - lodegree)
 	return COMP_DONE_DEGREE_LIMIT;
       if (comp_printlevel >= 1)
-	cerr << '{' << deg+lodegree << '}';
+	{
+	  buffer o;
+	  o << '{' << deg+lodegree << '}';
+	  emit(o.str());
+	}
       for (level=1; level<=length_limit+1; level++)
 	{
 	  int ret = do_pairs(level, deg);
@@ -455,53 +485,55 @@ void res2_comp::initialize(Matrix mat,
   if (do_by_degree) do_by_level = 0;
   if (comp_printlevel >= 3)
     {
-      cerr << "auto-reduce level = " << auto_reduce << endl;
+      buffer o;
+      o << "auto-reduce level = " << auto_reduce << newline;
       if (do_by_level)
 	{
-	  cerr << "computing resolution level by level" << endl;
+	  o << "computing resolution level by level" << newline;
 	  if (do_by_level == 2)
-	    cerr << "with strip optimization" << endl;
+	    o << "with strip optimization" << newline;
 	}
       if (do_by_degree)
-	cerr << "computing resolution degree by slanted degree" << endl;
+	o << "computing resolution degree by slanted degree" << newline;
       if (use_geobuckets)
-	cerr << "using heap based reduction" << endl;
-      cerr << "skeleton order = ";
-      display_order(skeleton_sort);
-      cerr << "reduction sort = ";
-      display_order(reduction_sort);
+	o << "using heap based reduction" << newline;
+      o << "skeleton order = ";
+      display_order(o, skeleton_sort);
+      o << "reduction sort = ";
+      display_order(o, reduction_sort);
+      emit(o.str());
     }
 }
 
-void res2_comp::display_order(int sortval) const
+void res2_comp::display_order(buffer &o, int sortval) const
 {
-  cerr << "[";
+  o << "[";
   switch (sortval & FLAGS_SORT) {
   case COMPARE_LEX:
-    cerr << "LEX";
+    o << "LEX";
     break;
   case COMPARE_LEX_EXTENDED:
-    cerr << "LEX1";
+    o << "LEX1";
     break;
   case COMPARE_LEX_EXTENDED2:
-    cerr << "LEX2";
+    o << "LEX2";
     break;
   case COMPARE_ORDER:
-    cerr << "ORDER";
+    o << "ORDER";
     break;
   default:
-    cerr << "bad order";
+    o << "bad order";
     break;
   }
   if (sortval & FLAGS_DEGREE)
-    cerr << " (ascending degree first)";
+    o << " (ascending degree first)";
   if (sortval & FLAGS_DESCEND)
-    cerr << " descend";
+    o << " descend";
   else
-    cerr << " ascend";
+    o << " ascend";
   if ((sortval & FLAGS_REVERSE) && ((sortval & FLAGS_SORT) != COMPARE_ORDER))
-    cerr << " reverse";
-  cerr << "]" << endl;
+    o << " reverse";
+  o << "]" << newline;
 }
 
 res2_comp::res2_comp(Matrix m, 
@@ -905,7 +937,11 @@ void res2_comp::new_pairs(res2_pair *p)
   intarray thisvp;
 
   if (comp_printlevel >= 10)
-    cerr << "Computing pairs with first = " << p->pair_num << endl;
+    {
+      buffer o;
+      o << "Computing pairs with first = " << p->pair_num << newline;
+      emit(o.str());
+    }
   M->divide(p->syz->monom, p->syz->comp->syz->monom, PAIRS_mon);
   M->to_varpower(PAIRS_mon, vp);
 
@@ -1017,7 +1053,11 @@ int res2_comp::find_divisor(const MonomialIdeal &mi,
   // Now search through, and find the best one.  If only one, just return it.
   if (comp_printlevel >= 5)
     if (mi.length() > 1)
-      cerr << ":" << mi.length() << "." << bb.length() << ":";
+      {
+	buffer o;
+	o << ":" << mi.length() << "." << bb.length() << ":";
+	emit(o.str());
+      }
   if (bb.length() == 1)
     {
       if (mi.length() == 1)
@@ -1081,7 +1121,7 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
 
   int count = 0;
   if (comp_printlevel >= 4)
-    cerr << ",";
+    emit(",");
   
   while (f != NULL)
     {
@@ -1106,7 +1146,11 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
 	  if (q->syz_type == SYZ2_S_PAIR || q->syz_type == SYZ2_MAYBE_MINIMAL) 
 	    {
 	      if (comp_printlevel >= 4)
-		cerr << count;
+		{
+		  buffer o;
+		  o << count;
+		  emit(o.str());
+		}
 	      return q; // i.e. not computed yet
 	    }
 	  M->divide(f->monom, q->syz->monom, REDUCE_mon);
@@ -1120,13 +1164,14 @@ res2_pair *res2_comp::reduce(res2term * &f, res2term * &fsyz, res2term * &pivot,
 	  f = f->next;
 	  tmp->next = NULL;
 	  R->remove(tmp);
-	  //	  cerr << "res reduce: internal error" << endl;
-	  //	  pivot = NULL;
-	  //	  return NULL;
 	}
     }
   if (comp_printlevel >= 4)
-    cerr << count;
+    {
+      buffer o;
+      o << count;
+      emit(o.str());
+    }
   return NULL;
 }
 
@@ -1147,7 +1192,7 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
 
   int count = 0;
   if (comp_printlevel >= 4)
-    cerr << ",";
+    emit(",");
 
   while (f != NULL)
     {
@@ -1221,7 +1266,11 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
   red->next = NULL;
   f = head.next;
   if (comp_printlevel >= 4)
-    cerr << count;
+    {
+      buffer o;
+      o << count;
+      emit(o.str());
+    }
   return result;
 }
 
@@ -1249,7 +1298,7 @@ res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot
 
   int count = 0;
   if (comp_printlevel >= 4)
-    cerr << ",";
+    emit(",");
 
   while ((lead = fb.remove_lead_term()) != NULL)
     {
@@ -1306,7 +1355,11 @@ res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot
   red->next = NULL;
   f = head.next;
   if (comp_printlevel >= 4)
-    cerr << count;
+    {
+      buffer o;
+      o << count;
+      emit(o.str());
+    }
   return result;
 }
 
@@ -1330,7 +1383,7 @@ res2_pair *res2_comp::reduce4(res2term * &f, res2term * &fsyz, res2term * &pivot
 
   int count = total_reduce_count;
   if (comp_printlevel >= 4)
-    cerr << ",";
+    emit(",");
 
   while (f != NULL)
     {
@@ -1390,7 +1443,11 @@ res2_pair *res2_comp::reduce4(res2term * &f, res2term * &fsyz, res2term * &pivot
   red->next = NULL;
   f = head.next;
   if (comp_printlevel >= 4)
-    cerr << (total_reduce_count - count);
+    {
+      buffer o;
+      o << (total_reduce_count - count);
+      emit(o.str());
+    }
   return result;
 }
 
@@ -1408,7 +1465,7 @@ res2_pair *res2_comp::reduce_by_level(res2term * &f, res2term * &fsyz)
 
   int count = 0;
   if (comp_printlevel >= 4)
-    cerr << ",";
+    emit(",");
   
   while (f != NULL)
     {
@@ -1441,7 +1498,11 @@ res2_pair *res2_comp::reduce_by_level(res2term * &f, res2term * &fsyz)
 	}
     }
   if (comp_printlevel >= 4)
-    cerr << count;
+    {
+      buffer o;
+      o << count;
+      emit(o.str());
+    }
   return NULL;
 }
 
@@ -1459,7 +1520,7 @@ res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
 
   int count = 0;
   if (comp_printlevel >= 4)
-    cerr << ",";
+    emit(",");
 
   while ((lead = fb.remove_lead_term()) != NULL)
     {
@@ -1497,7 +1558,11 @@ res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
     }
   f = NULL;
   if (comp_printlevel >= 4)
-    cerr << count;
+    {
+      buffer o;
+      o << count;
+      emit(o.str());
+    }
   return NULL;
 }
 
@@ -1508,25 +1573,27 @@ res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
 void res2_comp::do_auto_reductions(res2_pair *p, auto_reduce_node *au)
   // For each node in 'au', remove the specified multiple of 'p->syz'.
 {
+  buffer o;
   while (au != NULL)
     {
       auto_reduce_node *a = au;
       au = au->next;
-      cerr << "auto reduction: " << endl << "    ";
+      o << "auto reduction: " << newline << "    ";
       R->elem_text_out(p->syz);
-      cerr << endl << "    ";
+      o << newline << "    ";
       R->elem_text_out(a->p->syz);
-      cerr << endl << "    by coeff = ";
-      K->elem_text_out(cerr, a->pivot->coeff);
+      o << newline << "    by coeff = ";
+      K->elem_text_out(o, a->pivot->coeff);
       ring_elem c = K->negate(a->pivot->coeff);
       res2term *h = R->mult_by_coefficient(p->syz, c);
       K->remove(c);
       R->add_to(a->p->syz, h);
-      cerr << endl << "    result = ";
+      o << newline << "    result = ";
       R->elem_text_out(a->p->syz);
-      cerr << endl;
+      o << newline;
       delete a;
     }
+  emit(o.str());
 }
 
 void res2_comp::handle_pair(res2_pair *p)
@@ -1539,7 +1606,7 @@ void res2_comp::handle_pair(res2_pair *p)
   if (p->level == 1)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (comp_printlevel >= 2) cerr << 'z';
+      if (comp_printlevel >= 2) emit("z");
       if (projdim == 0) projdim = 1;
       nminimal++;
       return;
@@ -1582,7 +1649,7 @@ void res2_comp::handle_pair(res2_pair *p)
 	  if (p->level > projdim)
 	    projdim = p->level;
 	}
-      if (comp_printlevel >= 2) cerr << 'z';
+      if (comp_printlevel >= 2) emit("z");
     }
   else 
     {
@@ -1605,7 +1672,7 @@ void res2_comp::handle_pair(res2_pair *p)
 	{
 	}
 
-      if (comp_printlevel >= 2) cerr << 'm';
+      if (comp_printlevel >= 2) emit("m");
     }
 }
 
@@ -1618,7 +1685,7 @@ void res2_comp::handle_pair_by_level(res2_pair *p)
   if (p->level == 1)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (comp_printlevel >= 2) cerr << 'z';
+      if (comp_printlevel >= 2) emit("z");
       return;
     }
 
@@ -1636,14 +1703,16 @@ void res2_comp::handle_pair_by_level(res2_pair *p)
   if (f == NULL)
     {
       p->syz_type = SYZ2_MINIMAL;
-      if (comp_printlevel >= 2) cerr << 'z';
+      if (comp_printlevel >= 2) emit("z");
     }
   else 
     {
       // This should not happen at all!!
-      cerr << "handle pair: should not be here!";
-      cerr << "p->syz == ";
-      R->elem_text_out(p->syz);
+      buffer o;
+      o << "handle pair: should not be here!";
+      o << "p->syz == ";
+      R->elem_text_out(o, p->syz);
+      emit(o.str());
     }
 }
 
@@ -1659,7 +1728,7 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
       if (p->syz_type != SYZ2_NOT_NEEDED)
 	{
 	  p->syz_type = SYZ2_MINIMAL;
-	  if (comp_printlevel >= 2) cerr << 'z';
+	  if (comp_printlevel >= 2) emit("z");
 	  nminimal++;
 	}
       return;
@@ -1678,18 +1747,18 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
 	  p->syz_type = SYZ2_MINIMAL;
 	  nminimal++;
 	  resn[p->level]->nminimal++;
-	  if (comp_printlevel >= 2) cerr << 'z';
+	  if (comp_printlevel >= 2) emit("z");
 	}
       else
 	{
-	  if (comp_printlevel >= 2) cerr << 'o';
+	  if (comp_printlevel >= 2) emit("o");
 	}
     }
   else 
     {
       p->syz_type = SYZ2_NOT_MINIMAL;
       q->syz_type = SYZ2_NOT_NEEDED;
-      if (comp_printlevel >= 2) cerr << 'm';
+      if (comp_printlevel >= 2) emit("m");
     }
 }
 

@@ -3,6 +3,7 @@
 #include "termideal.hpp"
 #include "polyring.hpp"
 #include "matrix.hpp"
+#include "text_io.hpp"
 
 stash *TermIdeal::mystash;
 stash *mon_term::mystash;
@@ -125,7 +126,7 @@ void TermIdeal::select_non_divisors(mon_term **a, int nelems, mon_term *g,
     }
 }
 
-void TermIdeal::text_out(ostream &o) const
+void TermIdeal::text_out(buffer &o) const
 {
   for (mon_term *p = terms->next; p != terms; p = p->next)
     {
@@ -135,9 +136,9 @@ void TermIdeal::text_out(ostream &o) const
     }
 }
 
-void TermIdeal::bin_out(ostream &/*o*/) const
+void TermIdeal::bin_out(buffer &/*o*/) const
 {
-  cerr << "bin_out not implemented for term ideals" << endl;
+  emit_line("bin_out not implemented for term ideals");
 }
 
 mon_term *TermIdeal::new_mon_term_head() const
@@ -275,12 +276,12 @@ void TermIdeal::append_to_matrix(Matrix m, int i) const
   // Should check: i is in range, m has same ring as this.
   if (i < 0 || i >= m.n_rows())
     {
-      *gError << "index out of range";
+      gError << "index out of range";
       return;
     }
   if (m.Ring_of() != R)
     {
-      *gError << "incorrect base ring";
+      gError << "incorrect base ring";
       return;
     }
   for (mon_term *p = terms->next; p != terms; p = p->next)

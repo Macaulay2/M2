@@ -17,7 +17,7 @@ void cmd_FreeModule(object &oR, object &oa)
   int rk = a->length() / n;
   if (rk * n != a->length())
     {
-      *gError << "inappropriate number of degrees";
+      gError << "inappropriate number of degrees";
       return;
     }
 
@@ -45,7 +45,7 @@ void cmd_FreeModule2(object &oR, object &oa, object &om, object &onums)
   const Ring *R = oR->cast_to_Ring();
   if (R->cast_to_poly_ring() == NULL)
     {
-      *gError << "polynomial ring required for Schreyer order";
+      gError << "polynomial ring required for Schreyer order";
       return;
     }
   const Monoid *M = R->Nmonoms();
@@ -61,13 +61,13 @@ void cmd_FreeModule2(object &oR, object &oa, object &om, object &onums)
   int rk = m.n_cols();
   if (rk != nums->length())
     {
-      *gError << "inconsistent rank";
+      gError << "inconsistent rank";
       return;
     }
   int n = R->degree_monoid()->n_vars();
   if (a->length() != n * rk)
     {
-      *gError << "inappropriate number of degrees";
+      gError << "inappropriate number of degrees";
       return;
     }
   int *deg = R->degree_monoid()->make_one();
@@ -179,7 +179,7 @@ void cmd_Nvec_make(object &oF)
   int rk = F->rank();
   if (!check_elems(rk, TY_RING_ELEM))
       {
-	*gError << "vector creation: expected ring element on the stack";
+	gError << "vector creation: expected ring element on the stack";
 	return;
       }
 
@@ -201,7 +201,7 @@ void cmd_Nvec_sparse(object &oF, object &orows)
   int n_on_stack = rows->length();
   if (!check_elems(n_on_stack, TY_RING_ELEM))
     {
-      *gError << "vector creation: expected ring element on the stack";
+      gError << "vector creation: expected ring element on the stack";
       return;
     }
   Vector result(F);
@@ -341,17 +341,17 @@ void cmd_Nvec_homogenize(object &ov, object &ovar, object &owts)
   const Ring *R = v.Ring_of();
   if (var < 0 || var >= R->n_vars())
     {
-      *gError << "homogenization: improper ring variable";
+      gError << "homogenization: improper ring variable";
       return;
     }
   if (wts == NULL || wts->length() != R->n_vars())
     {
-      *gError << "homogenization: improper weight function";
+      gError << "homogenization: improper weight function";
       return;
     }
   if ((*wts)[var] == 0)
     {
-      *gError << "homogenization: variable weight is zero";
+      gError << "homogenization: variable weight is zero";
       return;
     }
   Vector vh = v.homogenize(var, wts->raw());
@@ -367,17 +367,17 @@ void cmd_Nvec_homogenize1(object &ov, object &ovar, object &odeg, object &owts)
   const Ring *R = v.Ring_of();
   if (var < 0 || var >= R->n_vars())
     {
-      *gError << "homogenization: improper ring variable";
+      gError << "homogenization: improper ring variable";
       return;
     }
   if (wts == NULL || wts->length() != R->n_vars())
     {
-      *gError << "homogenization: improper weight function";
+      gError << "homogenization: improper weight function";
       return;
     }
   if ((*wts)[var] == 0)
     {
-      *gError << "homogenization: variable weight is zero";
+      gError << "homogenization: variable weight is zero";
       return;
     }
   Vector vh = v.homogenize(var, deg, wts->raw());

@@ -76,9 +76,9 @@ public:
   sagbi_comp * cast_to_sagbi_comp() { return this; }
   const sagbi_comp * cast_to_sagbi_comp() const { return this; }
 
-  void bin_out(ostream &) const {}
+  void bin_out(buffer &) const {}
   const char * type_name         () const { return "sagbi_comp"; }
-  void text_out(ostream &o) const { o << "sagbi_comp"; }
+  void text_out(buffer &o) const { o << "sagbi_comp"; }
 
   int length_of() const { return 0; }
 };

@@ -27,8 +27,8 @@ class monomial_rec : public object_element
 
   intarray *intarray_of() { return &val; }
 
-  void text_out(ostream &o) const { varpower::elem_text_out(o, val.raw()); }
-  void bin_out(ostream &o) const { varpower::elem_bin_out(o, val.raw()); }
+  void text_out(buffer &o) const { varpower::elem_text_out(o, val.raw()); }
+  void bin_out(buffer &o) const { varpower::elem_bin_out(o, val.raw()); }
 };
 
 class Monomial

@@ -183,11 +183,11 @@ int GaussElimComputation::calc(const int *, const intarray &stop)
 	  if (comp_printlevel >= 3)
 	    if (p->f == NULL)
 	      if (p->fsyz == NULL)
-		cerr << "o";
+		emit("o");
 	      else
-		cerr << "z";
+		emit("z");
 	    else
-	      cerr << "r";
+	      emit("r");
 	  insert(p);
 	  n_pairs++;
 	  if (system_interrupted)
@@ -239,29 +239,31 @@ Matrix GaussElimComputation::syz_matrix()
 }
 void GaussElimComputation::stats() const
 {
+  buffer o;
   for (int i=0; i<gens.n_rows(); i++) {
     if (gb_list[i] != NULL)
       {
-	cerr << "--- component " << i << " -----" << endl;
-	cerr << "gb elem = ";
-	gens.rows()->elem_text_out(cerr, gb_list[i]->f);
-	cerr << endl;
+	o << "--- component " << i << " -----" << newline;
+	o << "gb elem = ";
+	gens.rows()->elem_text_out(o, gb_list[i]->f);
+	o << newline;
       }
     else if (reduce_list[i] != NULL)
-	cerr << "--- component " << i << " -----" << endl;
+	o << "--- component " << i << " -----" << newline;
     for (gm_elem *p = reduce_list[i]; p!=NULL; p=p->next)
       {
-	cerr << p->nterms;
-	cerr << " ## ";
-	gens.rows()->elem_text_out(cerr, p->f);
-	cerr << " ## ";
-	syz.rows()->elem_text_out(cerr, p->fsyz);
-	cerr << endl;
+	o << p->nterms;
+	o << " ## ";
+	gens.rows()->elem_text_out(o, p->f);
+	o << " ## ";
+	syz.rows()->elem_text_out(o, p->fsyz);
+	o << newline;
       }
   }
-  cerr << endl;
-  syz.text_out(cerr);
-  cerr << endl;
+  o << newline;
+  syz.text_out(o);
+  o << newline;
+  emit(o.str());
 }
 int GaussElimComputation::length_of() const
 {
@@ -273,7 +275,7 @@ Matrix GaussElimComputation::reduce(const Matrix &m, Matrix &lift)
   Matrix red(m.rows(), m.cols(), m.degree_shift());
   lift = Matrix(syz.rows(), m.cols());
   if (m.n_rows() != gens.rows()->rank()) {
-       *gError << "expected matrices to have same number of rows";
+       gError << "expected matrices to have same number of rows";
        return red;
   }
   for (int i=0; i<m.n_cols(); i++)
@@ -293,7 +295,7 @@ Vector GaussElimComputation::reduce(const Vector &v, Vector &lift)
 {
   if (!v.free_of()->is_equal(gens.rows()))
     {
-      *gError << "reduce: vector is in incorrect free module";
+      gError << "reduce: vector is in incorrect free module";
       return Vector(gens.rows(), NULL);
     }
   vec f = gens.rows()->translate(v.free_of(), v.get_value());

@@ -55,7 +55,7 @@ GF::GF(const RingElement prim)
 
   if (polys.length() != Q)
     {
-      *gError << "GF: primitive element expected";
+      gError << "GF: primitive element expected";
       for (i=0; i<polys.length(); i++)
 	{
 	  K->remove(polys[i]);
@@ -98,7 +98,7 @@ GF::~GF()
   bump_down((Ring *) K);
 }
 
-void GF::text_out(ostream &o) const
+void GF::text_out(buffer &o) const
 {
   o << "GF(" << Q << ")";
 }
@@ -127,7 +127,7 @@ ring_elem GF::random() const
   return ring_elem(exp);
 }
 
-void GF::elem_text_out(ostream &o, const ring_elem a) const
+void GF::elem_text_out(buffer &o, const ring_elem a) const
 {
   if (a == ZERO) 
     {
@@ -139,7 +139,7 @@ void GF::elem_text_out(ostream &o, const ring_elem a) const
   K->remove(h);
 }
 
-void GF::elem_bin_out(ostream &o, const ring_elem a) const
+void GF::elem_bin_out(buffer &o, const ring_elem a) const
 {
   bin_int_out(o, a.int_val);
 }
@@ -395,7 +395,7 @@ int GF::primary_degree(const ring_elem) const
 ring_elem GF::homogenize(const ring_elem f, int, int deg, const int *) const
 {
   if (deg != 0) 
-    *gError << "homogenize: no homogenization exists";
+    gError << "homogenize: no homogenization exists";
   return f;
 }
 

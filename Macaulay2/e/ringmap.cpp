@@ -72,14 +72,14 @@ Matrix RingMap::eval(const FreeModule *F, const Matrix &m) const
   return result;
 }
 
-void RingMap_rec::bin_out(ostream &o) const
+void RingMap_rec::bin_out(buffer &o) const
 {
   bin_int_out(o, map.length());
   for (int i=0; i<map.length(); i++)
     R->elem_text_out(o, map[i]);
 }
 
-void RingMap_rec::text_out(ostream &o) const
+void RingMap_rec::text_out(buffer &o) const
 {
   o << "(";
   for (int i=0; i<map.length(); i++)
@@ -90,7 +90,7 @@ void RingMap_rec::text_out(ostream &o) const
   o << ")";
 }
 
-void RingMap::text_out(ostream &o) const
+void RingMap::text_out(buffer &o) const
 {
   obj->text_out(o);
 }

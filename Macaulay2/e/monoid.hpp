@@ -123,8 +123,8 @@ public:
   bool skew_is_zero(const int *exp) const;
       // Return whether any skew variable in the exponent vector has exponent >= 2
 
-  void elem_text_out(ostream &o, const int *m) const;
-  void elem_bin_out(ostream &o, const int *m) const;
+  void elem_text_out(buffer &o, const int *m) const;
+  void elem_bin_out(buffer &o, const int *m) const;
 
   int primary_value(const int *m) const;
   void multi_degree(const int *m, int *result) const;
@@ -137,7 +137,7 @@ public:
   int primary_degree_of_var(int v) const { return moninfo->primary_degree_of_var[v]; }
 
   // Infrastructure here
-  void text_out(ostream &o) const;
+  void text_out(buffer &o) const;
 
   int          length_of() const      { return n_vars(); }
   const Monoid * cast_to_Monoid() const { return this; }

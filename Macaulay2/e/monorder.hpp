@@ -55,7 +55,7 @@ public:
   int degree(int v) const { return degs[v]; }
   mon_order_types type() const { return ty; }
   int n_vars() const { return n; }
-  virtual void text_out(ostream &o) const;
+  virtual void text_out(buffer &o) const;
 };
 
 class grlex_mon_order : public mon_order
@@ -66,7 +66,7 @@ public:
 
   virtual void encode(const int *exp, int *m) const;
   virtual void decode(const int *m, int *exp) const;
-  virtual void text_out(ostream &o) const;
+  virtual void text_out(buffer &o) const;
 };
 
 class grlex1_mon_order : public mon_order
@@ -77,7 +77,7 @@ public:
 
   virtual void encode(const int *exp, int *m) const;
   virtual void decode(const int *m, int *exp) const;
-  virtual void text_out(ostream &o) const;
+  virtual void text_out(buffer &o) const;
 };
 class product_mon_order : public mon_order
 {
@@ -89,7 +89,7 @@ public:
 
   virtual void encode(const int *exp, int *m) const;
   virtual void decode(const int *m, int *exp) const;
-  virtual void text_out(ostream &o) const;
+  virtual void text_out(buffer &o) const;
 };
 class elim_mon_order : public mon_order
 {
@@ -100,7 +100,7 @@ public:
 
   virtual void encode(const int *exp, int *m) const;
   virtual void decode(const int *m, int *exp) const;
-  virtual void text_out(ostream &o) const;
+  virtual void text_out(buffer &o) const;
 };
 
 class object_mon_order : public type
@@ -121,7 +121,7 @@ public:
   
   int length_of() const { return val->n_vars(); }
 
-  void text_out(ostream &o) const 
+  void text_out(buffer &o) const 
     {
       if (val != NULL) val->text_out(o);
     }

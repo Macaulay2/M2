@@ -2,7 +2,7 @@
 
 #include "gbbinom.hpp"
 #include "ntuple.hpp"
-#include <iomanip.h>
+#include "text_io.hpp"
 
 extern int comp_printlevel;
 
@@ -42,7 +42,7 @@ binomial_ring::binomial_ring(const Ring *RR,
 
 binomial_ring::binomial_ring(const Ring * /* RR */)
 {
-  *gError << "MES: not implemented yet";
+  gError << "MES: not implemented yet";
 }
 
 binomial_ring::~binomial_ring()
@@ -416,7 +416,7 @@ bool binomial_ring::calc_s_pair(binomial_s_pair &s, binomial &result) const
   return normalize(result);
 }
 
-void binomial_ring::monomial_out(ostream &o, const monomial m) const
+void binomial_ring::monomial_out(buffer &o, const monomial m) const
 {
   if (m == NULL) return;
   intarray vp;
@@ -427,7 +427,7 @@ void binomial_ring::monomial_out(ostream &o, const monomial m) const
   R->Nmonoms()->remove(n);
 }
 
-void binomial_ring::elem_text_out(ostream &o, const binomial &f) const
+void binomial_ring::elem_text_out(buffer &o, const binomial &f) const
 {
   monomial_out(o, f.lead);
   if (f.tail == NULL) return;
@@ -629,20 +629,28 @@ int binomial_s_pair_set::n_elems() const
 
 void binomial_s_pair_set::stats() const
 {
+  buffer o;
   int np, nl;
   np = nl = 0;
-  cerr << " degree" << "   pairs" << "   left" << "   done" << endl;
+  o << " degree" << "   pairs" << "   left" << "   done" << newline;
   for (int i=0; i<=_max_degree; i++)
     {
       np += _npairs[2*i];
       nl += _npairs[2*i+1];
-      cerr << setw(7) << i << " "
-	   << setw(6) << _npairs[2*i] << " "
-	   << setw(6) << _npairs[2*i+1] << " "
-	   << setw(6) << _npairs[2*i]-_npairs[2*i+1]
-	   << endl;
+      o.put(i, 7);              o << " ";
+      o.put(_npairs[2*i], 6);   o << " ";
+      o.put(_npairs[2*i+1], 6); o << " ";
+      o.put(_npairs[2*i]-_npairs[2*i+1], 6);
+      o << newline;
     }
-  cerr << "  total " << setw(6) << np << " " << setw(6) << nl << " " << setw(6) << np-nl << endl;
+  o << "  total ";
+  o.put(np, 6);
+  o << " ";
+  o.put(nl,6);
+  o << " ";
+  o.put(np-nl,6);
+  o << newline;
+  emit(o.str());
 }
 ///////////////////////
 // Binomial GB table //
@@ -909,12 +917,14 @@ bool binomialGB::reduce(binomial &f) const
 #endif
 void binomialGB::debug_display() const
 {
+  buffer o;
   for (iterator p = begin(); p != end(); p++)
     {
       binomial_gb_elem *g = *p;
-      R->elem_text_out(cerr, g->f);
-      cerr << endl;
-    }  
+      R->elem_text_out(o, g->f);
+      o << newline;
+    }
+  emit(o.str());
 }
 
 /////////////////////////////
@@ -1008,7 +1018,7 @@ void binomialGB_comp::add_generators(const Matrix &m)
 	    }
 	  else
 	    {
-	      *gError << "expected binomials";
+	      gError << "expected binomials";
 	      return;
 	    }
 	}
@@ -1043,11 +1053,13 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
 
       if (comp_printlevel >= 5)
 	{
-	  cerr << "pair [";
-	  R->elem_text_out(cerr, s.f1->f);
-	  cerr << " ";
-	  R->elem_text_out(cerr, s.f2->f);
-	  cerr << "]" << endl;
+	  buffer o;
+	  o << "pair [";
+	  R->elem_text_out(o, s.f1->f);
+	  o << " ";
+	  R->elem_text_out(o, s.f2->f);
+	  o << "]" << newline;
+	  emit(o.str());
 	}
       if (!R->calc_s_pair(s, f))
 	{
@@ -1062,9 +1074,10 @@ void binomialGB_comp::process_pair(binomial_s_pair s)
     {
       if (comp_printlevel >= 5)
 	{
-	  cerr << "  reduced to ";
-	  R->elem_text_out(cerr, f);
-	  cerr << endl;
+	  buffer o;
+	  o << "  reduced to ";
+	  R->elem_text_out(o, f);
+	  emit_line(o.str());
 	}
       subringmin = (subringmin && R->weight(f.lead) == 0);
       binomial_gb_elem *p = new binomial_gb_elem(f);      
@@ -1124,25 +1137,25 @@ Matrix binomialGB_comp::subringGB()
 
 Matrix binomialGB_comp::reduce(const Matrix &m, Matrix &/*lift*/)
 {
-  *gError << "MES: not implemented yet";
+  gError << "MES: not implemented yet";
   return m;
 }
 
 Vector binomialGB_comp::reduce(const Vector &v, Vector &/*lift*/)
 {
-  *gError << "MES: not implemented yet";
+  gError << "MES: not implemented yet";
   return v;
 }
 
 int binomialGB_comp::contains(const Matrix &/*m*/)
 {
-  *gError << "MES: not implemented yet";
+  gError << "MES: not implemented yet";
   return 0;
 }
 
 bool binomialGB_comp::is_equal(const gb_comp * /*q*/)
 {
-  *gError << "MES: not implemented yet";
+  gError << "MES: not implemented yet";
   return false;
 }
   
@@ -1182,12 +1195,14 @@ Matrix binomialGB_comp::syz_matrix()
 
 void binomialGB_comp::stats() const
 {
-  cerr << "binomial GB ";
-  if (is_homogeneous) cerr << "homogeneous ";
-  else cerr << "inhomogeneous ";
-  if (is_nondegenerate) cerr << "nondegenerate ";
-  if (use_bigcell) cerr << "bigcell ";
-  cerr << endl;
-  cerr << "--- pairs ----" << endl;
+  buffer o;
+  o << "binomial GB ";
+  if (is_homogeneous) o << "homogeneous ";
+  else o << "inhomogeneous ";
+  if (is_nondegenerate) o << "nondegenerate ";
+  if (use_bigcell) o << "bigcell ";
+  o << newline;
+  o << "--- pairs ----" << newline;
+  emit(o.str());
   Pairs->stats();
 }

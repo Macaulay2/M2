@@ -1102,7 +1102,7 @@ void FreeModule::auto_reduce(array<vec> & vecs) const
       int isnew = mis[v->comp].insert(b);
       vecs[indices[i]] = v;
       if (!isnew)
-	*gError << "bad boy!";
+	gError << "bad boy!";
     }
 }
 
@@ -1189,7 +1189,7 @@ void FreeModule::sort(const array<vec> &vecs,
   sort_degs = NULL;
   if (deg_ascending && degrees.length() != vecs.length())
     {
-      *gError << "sort: specified degree dort, without giving degrees";
+      gError << "sort: specified degree dort, without giving degrees";
       return;
     }
   else
@@ -1359,7 +1359,7 @@ int FreeModule::degree_of_var(int n, const vec v) const
   if (M == NULL) return 0;
   if (v == NULL)
     {
-      *gError << "attempting to find degree of zero vector";
+      gError << "attempting to find degree of zero vector";
       return 0;
     }
   M->divide(v->monom, base_monom(v->comp), nf_1);
@@ -1509,7 +1509,7 @@ vec FreeModule::homogenize(const vec f,
 	  // We cannot homogenize, so clean up and exit.
 	  result->next = NULL;
 	  remove(head.next);
-	  *gError << "homogenization impossible";
+	  gError << "homogenization impossible";
 	  result = NULL;
 	  return result;
 	}
@@ -1605,7 +1605,7 @@ vec FreeModule::translate(const FreeModule *oldF, vec v) const
 
   if (M == NULL || this == oldF) return copy(v);
 //  if (rank() != oldF->rank()) {
-//       *gError << "expected free modules of the same rank";
+//       gError << "expected free modules of the same rank";
 //       return NULL;
 //  }
   int needs_sorting = 1;
@@ -1636,7 +1636,7 @@ vec FreeModule::translate(const FreeModule *oldF, vec v) const
 //  Input, output ////////////////////////////
 //////////////////////////////////////////////
 
-void FreeModule::elem_text_out(ostream &o, const vec v) const
+void FreeModule::elem_text_out(buffer &o, const vec v) const
 {
   if (v == NULL)
     {
@@ -1665,7 +1665,7 @@ void FreeModule::elem_text_out(ostream &o, const vec v) const
   p_plus = old_plus;
 }
 
-void FreeModule::elem_bin_out(ostream &o, const vec v) const
+void FreeModule::elem_bin_out(buffer &o, const vec v) const
 {
   const vecterm *t;
 
