@@ -1415,9 +1415,9 @@ int actors4_isReady(int fd) {
 #if 0
   static fd_set r, w, e;
   FD_SET(fd,&r);
-  select(1,&r,&w
+  select(1,&r,&w);
 #else
-  return -1
+  return -1;
 #endif
 }
 
