@@ -136,7 +136,7 @@ document {
 reach2 TO "Appendix"
  ------------- index
  -- sectionNumber = {"B"}
- -- document { "Combined Index",
+ -- document { "Symbol Index",
  -- --     TEX ///\begintwocolumn
  -- --///,
  --      apply(
@@ -146,7 +146,7 @@ reach2 TO "Appendix"
  -- --\endtwocolumn
  -- --///,
  --      }
- -- reach2 TO "Combined Index"
+ -- reach2 TO "Symbol Index"
 ---------------
 close docDatabase
 ---------------

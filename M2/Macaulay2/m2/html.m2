@@ -294,7 +294,7 @@ separateExampleOutput = s -> (
 
 makeMasterIndex := keylist -> (
      fn := buildDirectory | htmlDirectory | indexFileName;
-     title := "Combined Index";
+     title := "Symbol Index";
      << "--making  '" << title << "' in " << fn << endl;
      fn
      << encoding << endl
@@ -658,8 +658,7 @@ installPackage Package := o -> pkg -> (
 	  << endl << close));
 
      -- make master.html with master index of all the html files
-     makeMasterIndex nodes;
-
+     makeMasterIndex select(nodes,tag -> instance(DocumentTag.Key tag,Symbol));
 
      -- make table of contents
      makeTableOfContents();
