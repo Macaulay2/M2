@@ -25,15 +25,17 @@ export (s:string) === (t:string) : bool := (
 export strchr(s:string,c:char):bool := (
      foreach b in s do if b == c then return(true);
      false);
-export (s:string) < (t:string) : bool := (
-     n := length(s);
-     if n > length(t) then n = length(t);
-     for i from 0 to n-1 do (
-	  if s.i < t.i then return(true);
-	  if s.i > t.i then return(false);
-	  );
-     return(n < length(t));
-     );
+
+init():string := (
+     t := new string len 256 at i do provide char(i);
+     L := "abcdefghijklmnopqrstuvwxyz";
+     U := "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+     for i to length(L) do t.(int(L.i)) = U.i;
+     t);
+
+toupper := init();
+
+export (s:string) < (t:string) : bool := strcmp(s,t) == -1;
 export (s:string) >= (t:string) : bool := !(s<t);
 export (s:string) > (t:string) : bool := t<s;
 export (s:string) <= (t:string) : bool := !(t<s);

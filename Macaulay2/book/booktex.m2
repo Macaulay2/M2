@@ -69,7 +69,6 @@ reach1 Thing := identity
 reach1 Sequence := reach1 BasicList := x -> scan(x,reach1)
 reach1 SHIELD := x -> scan(x,reach3)
 reach1 MENU := x -> scan(x,reach2)
-reach1 optionalTO := identity
 reach1 TO := reach1 TOH := (x) -> (
      node := formatDocumentTag x#0;
      if not getNumberFromName#?node and not otherNodes#?node 
@@ -82,7 +81,6 @@ goOver := node -> (
      reach1 documentationMemo node;
      ascend();
      )
-reach2 optionalTO := identity
 reach2 TO := reach2 TOH := (x) -> (
      node := formatDocumentTag x#0;
      if not getNumberFromName#?node
@@ -188,7 +186,6 @@ crossReference := (key,text,optional) -> (
 
 booktex = method(SingleArgumentDispatch=>true)
 booktex TO := booktex TOH := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0,false) 
-booktex optionalTO := x -> crossReference(formatDocumentTag x#0, formatDocumentTag x#0,true) 
 
 menuLevel := 2
 

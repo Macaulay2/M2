@@ -97,15 +97,17 @@ formatDocumentTag Option   := record(
 	  else ( toString s#0, "(..., ", toString s#1, " => ...)" )
 	  )
      )
-fSeq := new HashTable from {
+
+fSeq := null
+fSeqInitialize := () -> fSeq = new HashTable from {
      (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toStr s#3),
-     (4,cohomology     ) => s -> ("HH_", toStr s#1, "^", toStr s#2, " ", toStr s#3),
-     (4,homology       ) => s -> ("HH^", toStr s#1, "_", toStr s#2, " ", toStr s#3),
+     (4,cohomology,ZZ  ) => s -> ("HH_", toStr s#1, "^", toStr s#2, " ", toStr s#3),
+     (4,homology,ZZ    ) => s -> ("HH^", toStr s#1, "_", toStr s#2, " ", toStr s#3),
      (3,NewFromMethod  ) => s -> ("new ", toString s#1, " from ", toStr s#2),
      (3,NewOfMethod    ) => s -> ("new ", toString s#1, " of ", toString s#2),
      (3,symbol " "     ) => s -> (toStr s#1, " ", toStr s#2),
-     (3,homology       ) => s -> ("HH_", toStr s#1, " ", toStr s#2),
-     (3,cohomology     ) => s -> ("HH^", toStr s#1, " ", toStr s#2),
+     (3,homology,ZZ    ) => s -> ("HH_", toStr s#1, " ", toStr s#2),
+     (3,cohomology,ZZ  ) => s -> ("HH^", toStr s#1, " ", toStr s#2),
      (2,homology       ) => s -> ("HH ", toStr s#1),
      (2,cohomology     ) => s -> ("HH ", toStr s#1),
      (2,NewMethod      ) => s -> ("new ", toString s#1),
@@ -113,13 +115,17 @@ fSeq := new HashTable from {
      (2,symbol !       ) => s -> (toStr s#1, " ", toStr s#0), -- postfix operator
      (3,class,Symbol   ) => s -> (toStr s#1, " ", toString s#0, " ", toStr s#2),-- infix operator
      (2,class,Symbol   ) => s -> (toString s#0, " ", toStr s#1),-- prefix operator
-     (2,class,ScriptedFunctor) => s -> (
+     (2,class,ScriptedFunctor,ZZ) => s -> (
 	  hh := s#0;
 	  if hh.?subscript and hh.?superscript then toString s
 	  else if hh.?subscript   then (toString s#0, " _ ", toStr s#1)
 	  else if hh.?superscript then (toString s#0, " ^ ", toStr s#1)
-	  else toString s),
-     (4,class,ScriptedFunctor) => s -> (
+	  else (toString s#0, " ", toStr s#1)),
+     (3,class,ScriptedFunctor,ZZ) => s -> (
+	  if s#0 .? subscript
+	  then (toString s#0, "_", toStr s#1, "(", toStr s#2, ")")
+	  else (toString s#0, "^", toStr s#1, "(", toStr s#2, ")")),
+     (4,class,ScriptedFunctor,ZZ) => s -> (
 	  if s#0 .? subscript
 	  then (toString s#0, "_", toStr s#1, "(", toStr s#2, ",", toStr s#3, ")")
 	  else (toString s#0, "^", toStr s#1, "(", toStr s#2, ",", toStr s#3, ")")),
@@ -128,12 +134,17 @@ fSeq := new HashTable from {
      2 => s -> (toString s#0, " ", toStr s#1)
      }
 formatDocumentTag Sequence := record(
-     s -> concatenate (
-	  if #s == 0                           then toString
-	  else if fSeq#?(#s,s#0)               then fSeq#(#s,s#0)
-	  else if fSeq#?(#s, class, class s#0) then fSeq#(#s,class, class s#0)
-	  else if fSeq#?#s                     then fSeq#(#s)
-					       else toString) s)
+     s -> (
+	  if fSeq === null then fSeqInitialize();
+	  concatenate (
+	       if #s == 0                             then toString
+	       else if fSeq#?(#s,s#0)                 then fSeq#(#s,s#0)
+	       else if #s >= 1 and fSeq#?(#s,s#0,s#1) then fSeq#(#s,s#0,s#1)
+	       else if #s >= 1 and fSeq#?(#s, class, class s#0, s#1) 
+	       					      then fSeq#(#s, class, class s#0, s#1)
+	       else if fSeq#?(#s, class, class s#0)   then fSeq#(#s, class, class s#0)
+	       else if fSeq#?#s                       then fSeq#(#s)
+						      else toString) s))
 
 -----------------------------------------------------------------------------
 -- verifying the keys
@@ -248,8 +259,6 @@ OL         = new MarkUpType
 NL         = new MarkUpType
 DL 	   = new MarkUpType
 TO         = new MarkUpType
-optionalTO = new class TO of TO
-remove(optionalTO,html)			    -- to counteract MarkUpType.GlobalAssignHook
 TOH        = new MarkUpType
 
 MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
@@ -470,11 +479,20 @@ headline = memoize (
 
 moreGeneral := s -> (
      n := nextMoreGeneral s;
-     if n =!= null then SEQ { "Next more general method: ", optionalTO n, headline n, PARA{} }
+     if n =!= null then SEQ { "Next more general method: ", TO n, headline n, PARA{} }
      )
 -----------------------------------------------------------------------------
 
-optTO := i -> if getDoc i =!= null then TO i else TT formatDocumentTag i
+optTO := i -> (
+     if getDoc i =!= null 
+     then SEQ{ TO i, headline i }
+     else if class i === Sequence and #i > 0 and class first i === Function and getDoc first i =!= null
+     then SEQ{ 
+	  TO first i, "(", SEQ between(",", toList apply(drop(i,1), formatDocumentTag)), ")",
+	  headline first i
+	  }
+     else TT formatDocumentTag i
+     )
 
 smenu := s -> MENU (optTO \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
  menu := s -> MENU (optTO \ s)
@@ -499,7 +517,10 @@ inlineMenu := x -> between(", ", TO \ x)
 
 type := s -> (
      SEQ {
-	  if class s =!= Thing then SEQ {
+	  if class s =!= Thing 
+	  and class s =!= Symbol
+	  and class s =!= Function
+	  then SEQ {
 	       "The ",
 	       if (class s).?synonym then (class s).synonym else "object",
 	       " ", TT toExternalString s, " is a member of the class ", TO class s, ".\n"
@@ -592,16 +613,18 @@ documentation Type := X -> (
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and not unDocumentable key), (key,Y) -> key);
      b := toString \ select(syms, 
 	  y -> not mutable y and value y =!= X and instance(value y, Type) and parent value y === X);
-     c := apply(
-	  select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X),
-	  formatDocumentTag);
+     c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      SEQ {
 	  title X, 
 	  usage X,
      	  type X,
 	  if #b > 0 then SEQ {"Types of ", toString X, " :", PARA{}, smenu b, PARA{}},
-	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, smenu a, PARA{}},
+	  if #a > 0 then SEQ {
+	       "Functions and methods returning a ",
+	       indefinite synonym X, " :", PARA{},
+	       smenu a, PARA{}
+	       },
 	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, smenu c, PARA{}},
 	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, SHIELD smenu e, PARA{}},
 	  })
@@ -701,7 +724,7 @@ documentation Sequence := s -> (
 	  if #s==2 and not instance(s#1,Type)
 	  then SHIELD MENU {
 	       SEQ {"Hash table: ", TO s#1 },
-	       SEQ {"Key: ", optionalTO s#0 },
+	       SEQ {"Key: ", TO s#0 },
 	       }
 	  else SHIELD MENU {
 	       SEQ {"Operator: ", TO s#0 },

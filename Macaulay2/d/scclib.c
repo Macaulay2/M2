@@ -284,24 +284,23 @@ M2_string s;
 int system_strcmp(s,t)
 M2_string s,t;
 {
-  int slen = s->len;
-  int tlen = t->len;
-  int i;
-  for (i=0;;i++) {
-    if (i < slen) {
-      if (i < tlen) {
-	unsigned char c = s->array[i];
-	unsigned char d = t->array[i];
-	if (c < d) return -1;
-	if (c > d) return 1;
-      }
-      else return 1;
-    }
-    else {
-      if (i < tlen) return -1;
-      else return 0;
+  int slen = s->len, tlen = t->len, i;
+  int ret = 0;
+  int len = slen < tlen ? slen : tlen;
+  for (i=0; i<len; i++) {
+    unsigned char c = s->array[i];
+    unsigned char d = t->array[i];
+    if (toupper(c) < toupper(d)) return -1;
+    if (toupper(c) > toupper(d)) return 1;
+    if (ret == 0) {
+      if (c < d) ret = -1;
+      if (c > d) ret = 1;
     }
   }
+  if (ret != 0) return ret;
+  if (slen > tlen) return 1;
+  if (slen < tlen) return -1;
+  return 0;
 }
 
 int system_wait(pid)

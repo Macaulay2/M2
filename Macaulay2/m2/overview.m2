@@ -6,15 +6,13 @@ document { "Mathematical Overview",
      PARA,
      MENU {
      	  (
-	       "rings",
+	       "rings (for details, see ", TO "Ring", "):",
 	       MENU {
 		    TO "basic rings",
 		    TO "polynomial rings",
 		    TO "manipulating polynomials",
 		    TO "polynomial rings with other monomial orderings",
 		    TO "multi-graded polynomial rings",
-		    TO "maps between rings",
-		    TO "ideals",
 		    TO "quotient rings",
 		    TO "finite fields",
 		    TO "fraction fields",
@@ -23,11 +21,22 @@ document { "Mathematical Overview",
 		    TO "symmetric algebras",
 		    TO "Weyl algebras",
 		    TO "associative algebras",
-		    TO "algebraic varieties",
 		    }
 	       ),
 	  (
-	       "matrices",
+	       "ideals (for details, see ", TO "Ideal", "):",
+	       MENU {
+		    TO "ideals",
+		    }
+	       ),
+	  (
+	       "maps between rings (for details, see ", TO "RingMap", "):",
+	       MENU {
+		    TO "maps between rings",
+		    }
+	       ),
+	  (
+	       "matrices (for details, see ", TO "Matrix", "):",
 	       MENU {
 		    TO "making matrices",
 		    TO "making random matrices",
@@ -38,24 +47,30 @@ document { "Mathematical Overview",
 		    }
 	       ),
 	  (
-	       "modules",
+	       "modules (for details, see ", TO "Module", "):",
 	       MENU {
 		    TO "free modules",
 		    TO "making modules from matrices", -- coker, ker, image, etc.
 		    TO "manipulating modules",
 		    TO "maps between modules",
 		    TO "bases of parts of modules",
-		    TO "coherent sheaves",
 		    }
 	       ),
 	  (
-	       "chain complexes",
+	       "chain complexes (for details, see ", TO "ChainComplex", "):",
 	       MENU {
 		    TO "free resolutions of modules",
 		    TO "making chain complexes by hand",
 		    TO "extracting information from chain complexes",
 		    TO "manipulating chain complexes",
 		    TO "maps between chain complexes"
+		    }
+	       ),
+	  (
+	       "algebraic varieties (for details, see ", TO "Variety", "):",
+	       MENU {
+		    TO "algebraic varieties",
+		    TO "coherent sheaves",
 		    }
 	       ),
 	  (
@@ -1108,6 +1123,10 @@ document { "manipulating matrices",
      EXAMPLE {
 	  "p^{1,2}_{3,4}",
 	  "p_{3,4}^{1,2}",
+	  },
+     "A single entry of a matrix can be extracted as follows.",
+     EXAMPLE {
+	  "p_(1,3)",
 	  },
      "We can ", TO "transpose", " a matrix.",
      EXAMPLE "transpose p",

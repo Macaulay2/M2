@@ -1057,7 +1057,21 @@ document { isAffineRing, HEADLINE => "whether something is an affine ring",
      "An affine ring is a quotient of a polynomial ring over a field."
      }
 
-document { RingMap, HEADLINE => "the class of all ring maps" }
+document { RingMap,
+     HEADLINE => "the class of all ring maps",
+     "Common ways to make a ring map:",
+     MENU {
+	  },
+     "Common ways to get information about ring maps:",
+     MENU {
+	  },
+     "Common operations on ring maps:",
+     MENU {
+	  },
+     "Common ways to use a ring map:",
+     MENU {
+	  },
+     }
 
 document { (map,Ring,Ring,List),
      HEADLINE => "make a ring map",

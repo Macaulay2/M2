@@ -487,7 +487,7 @@ assert ( 0 == HH_4 res M )
 "
 
 document { (symbol :, Ideal, Ideal),
-     HEADLINE => "ideal quotient for",
+     HEADLINE => "ideal quotient",
      TT "I:J", " -- computes the ideal quotient.",
      PARA,
      "The notation ", TT "I:J", " is equivalent to ", TT "quotient(I,J)", ",

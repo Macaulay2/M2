@@ -923,14 +923,57 @@ document { vector,
 
 document { Module,
      HEADLINE => "the class of all modules",
-     "The most general module ", TT "M", " is represented as a submodule of a 
-     quotient module of a free module ", TT "F", ".  The matrix of relations used to
-     produce the quotient module is stored as ", TT "M.relations", " (if
-     there is a nonzero relation) and the matrix of generators is stored as
-     ", TT "M.generators", " (if the submodule is smaller than the free module).",
+     "For an introduction, see ", TO "free modules", " and the pages following it.",
      PARA,
-     "Elements of modules are implemented as instances of the class ", TO "Vector", ".",
-     SEEALSO "modules",
+     "The most general module ", TT "M", " is represented as a submodule of a 
+     quotient module of a free module ", TT "F", ".  The quotient module is
+     presented internally by a matrix whose columns generate the relations, 
+     and the submodule is represented internally by a matrix whose columns
+     generate the submodule.  The two matrices the same number of rows, namely,
+     the rank of ", TT "F", ".",
+     PARA,
+     "Common ways to make a module:",
+     MENU {
+	  TO (symbol ^, Ring, ZZ),
+	  TO (symbol ^, Ring, List),
+	  TO (cokernel, Matrix),
+	  TO (image, Matrix),
+	  TO (kernel, Matrix),
+	  TO (homology, Matrix, Matrix),
+	  },
+     "Common ways to get information about modules:",
+     MENU {
+	  TO (degrees, Module),
+	  TO (generators, Module),
+	  TO (relations, Module),
+	  TO (isHomogeneous, Module),
+	  },
+     "Common operations on modules:",
+     MENU {
+	  TO (symbol +, Module, Module),
+	  TO (symbol /, Module, Module),
+	  TO (symbol :, Module, Ideal),
+	  TO (symbol ==, Module, Module),
+	  TO (symbol ++, Module, Module),
+	  TO (symbol **, Module, Module),
+	  TO (symbol ^, Module, Array),
+	  TO (symbol ^, Module, List),
+	  TO (symbol _, Module, Array),
+	  TO (symbol _, Module, List),
+	  TO (prune, Module),
+	  TO (saturate, Module, Ideal),
+	  },
+     "Common ways to use a module:",
+     MENU {
+	  TO (annihilator, Module),
+	  TO (codim, Module),
+	  TO (degree, Module),
+	  TO (dim, Module),
+	  TO (fittingIdeal, ZZ, Module),
+	  TO (gb, Module),
+	  TO (isSubset, Module, Module),
+	  TO (res, Module),
+	  },
      }
 
 document { isModule,
@@ -1146,15 +1189,9 @@ document { ModuleMap,
      SEEALSO {"Matrix"}
      }
 
-document { Matrix,
-     HEADLINE => "the class of all matrices",
-     "These are the matrices for which Groebner basis operations
-     are available from the ", TO "engine", ".",
-     PARA,
-     "A matrix is a map from a graded module to a graded module, see ",
-     TO "Module", ".  The degree of the map is not necessarily 0, and may
-     be obtained with ", TO "degree", ".",
-     PARA,
+
+document { (symbol *, Matrix, Matrix),
+     HEADLINE => "matrix multiplication",
      "Multiplication of matrices corresponds to composition of maps, and when
      ", TT "f", " and ", TT "g", " are maps so that the target ", TT "Q", "
      of ", TT "g", " equals the source ", TT "P", " of ", TT "f", ", the
@@ -1167,21 +1204,53 @@ document { Matrix,
      degrees of ", TT "Q", " by the same degree ", TT "d", ", then the degree
      of ", TT "f*g", " is adjusted by ", TT "d", " so it will have a good
      chance to be homogeneous, and the target and source of ", TT "f*g", "
-     are as before.", 
+     are as before."
+     }
+     
+document { Matrix,
+     HEADLINE => "the class of all matrices",
+     "A matrix is a homomorphism between two modules, together with
+     an integer (or vector of integers) called its degree, which is
+     used when determining whether the map is homogeneous.  See
+     ", TO "making matrices", " and the nodes following it for an
+     introduction to matrices.",
      PARA,
-     "If ", TT "h", " is a matrix then ", TT "h_j", " is the ", TT "j", "-th
-     column of the matrix, and ", TT "h_j_i", " is the entry in row ", TT "i",
-     ", column ", TT "j", ".  The notation ", TT "h_(i,j)", " can be
-     used as an abbreviation for ", TT "h_j_i", ", allowing row and column
-     indices to be written in the customary order.",
-     PARA,
-     "If ", TT "m", " and ", TT "n", " are matrices, ", TT "a", " is a ring element, 
-     and ", TT "i", " is an integer, then ", TT "m+n", ", ", TT "m-n", ", 
-     ", TT "-m", ", ", TT "m*n", ", ", TT "a*m", ", and ", TT "i*m", " denote the
-     usual matrix arithmetic.  Use ", TT "m == n", ", and ", TT "m == 0", " to 
-     check equality of matrices.",
-     PARA,
-     "See also ", TO "compactMatrixForm", ", which governs printing matrices."
+     "Common ways to make a matrix:",
+     MENU {
+	  TO "map",
+	  TO "matrix",
+	  },
+     "Common ways to get information about matrices:",
+     MENU {
+	  TO (degree, Matrix),
+	  TO (generators, Matrix),
+	  TO (isHomogeneous, Matrix),
+	  },
+     "Common operations on matrices:",
+     MENU {
+	  TO (symbol +, Matrix, Matrix),
+	  TO (symbol -, Matrix, Matrix),
+	  TO (symbol *, RingElement, Matrix),
+	  TO (symbol *, Matrix, Matrix),
+	  TO (symbol ==, Matrix, Matrix),
+	  TO (symbol ++, Matrix, Matrix),
+	  TO (symbol **, Matrix, Matrix),
+	  TO (symbol %, Matrix, Matrix),
+	  TO (symbol //, Matrix, Matrix),
+	  TO (symbol |, Matrix, Matrix),
+	  TO (symbol ||, Matrix, Matrix),
+	  TO (symbol ^, Matrix, Array),
+	  TO (symbol ^, Matrix, List),
+	  TO (symbol _, Matrix, Array),
+	  TO (symbol _, Matrix, List),
+	  },
+     "Common ways to use a matrix:",
+     MENU {
+	  TO (cokernel, Matrix),
+	  TO (image, Matrix),
+	  TO (kernel, Matrix),
+	  TO (homology, Matrix, Matrix),
+	  },
      }
 
 document { getMatrix,
