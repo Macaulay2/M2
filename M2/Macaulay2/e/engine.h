@@ -725,37 +725,37 @@ extern "C" {
 
   const M2_string IM2_Matrix_to_string(const Matrix *M); /* drg: connected */
 
-  int IM2_Matrix_hash(const Matrix *M); /* drg: waiting, returning 0 */
+  int IM2_Matrix_hash(const Matrix *M); /* drg: connected to "hash", but it always returns 0, sigh */
 
-  const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c); /* drg: connected rawMatrixEntry*/
+  const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c); /* drg: connected rawMatrixEntry, OK*/
 
   /*******************************************************************************/
   const Matrix * IM2_Matrix_identity(const FreeModule *F,
 				     int preference
-				     ); /* drg: connected rawIdentity*/
+				     ); /* drg: connected rawIdentity, OK*/
 
   const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
 				       const FreeModule *G,
 				       int preference
-				       ); /* drg: connected rawZero*/
+				       ); /* drg: connected rawZero, OK */
 
   const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 					int ncols,
 					const RingElement_array *M,
-					int preference); /* drg: connected rawMatrix1 */
+					int preference); /* drg: connected rawMatrix1, OK */
 
   const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
 					const FreeModule *source,
 					const M2_arrayint deg,
 					const RingElement_array *M,
-					int preference); /* drg: connected rawMatrix2 */
+					int preference); /* drg: connected rawMatrix2, OK */
 
   const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
 					       int ncols,
 					       const M2_arrayint rows,
 					       const M2_arrayint cols,
 					       const RingElement_array *entries,
-					       int preference); /* drg: connected rawSparseMatrix1 */
+					       int preference); /* drg: connected rawSparseMatrix1, OK */
   
   const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
 					       const FreeModule *source,
@@ -763,7 +763,7 @@ extern "C" {
 					       const M2_arrayint rows,
 					       const M2_arrayint cols,
 					       const RingElement_array *entries,
-					       int preference); /* drg: connected rawSparseMatrix2 */
+					       int preference); /* drg: connected rawSparseMatrix2, OK */
 
   M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M); /* connected to rawIsDense */
   /* Is the matrix M implemented in the engine as a dense matrix? */ 
@@ -771,7 +771,7 @@ extern "C" {
   const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
 					  const Matrix *M,
 					  int preference
-					  ); /* drg: connected rawMatrixRemake1  */
+					  ); /* drg: connected rawMatrixRemake1, OK  */
   /* Create a new matrix (mutable or immutable), from M, with new target,
      and/or mutable-ness. The target free module must have the expected rank.
      The source free module is computed heuristically from the the target and the
@@ -783,7 +783,7 @@ extern "C" {
 					  const M2_arrayint deg,
 					  const Matrix *M,
 					  int preference
-					  ); /* drg: connected rawMatrixRemake2 */
+					  ); /* drg: connected rawMatrixRemake2, OK */
   /* Create a new matrix (mutable or immutable), from M, with new target,
      source, deg and/or mutable-ness. The new free modules must have 
      the expected rank. 
@@ -793,7 +793,7 @@ extern "C" {
 				  int r, int c, 
 				  double fraction_non_zero, 
 				  int special_type, /* 0: general, 1:upper triangular, others? */
-				  int preference); /* connected to rawMatrixRandom */
+				  int preference); /* connected to rawMatrixRandom, OK */
 
   /**********************************************************************************/
 
@@ -1032,17 +1032,17 @@ extern "C" {
   DAN DAN DAN: these are the old routines taking a matrix, which are no longer needed.
   Please remove them from here, once you have changed the interface.d
 ------------------------------------------------------------------------------------------
-  M2_bool IM2_MutableMatrix_set_entry(Matrix *M, int r, int c, const RingElement *a); /* drg: connected rawMatrixEntry*/
+  M2_bool IM2_MutableMatrix_set_entry(Matrix *M, int r, int c, const RingElement *a); /* drg: connected rawMatrixEntry, OK */
 
-  M2_bool IM2_MutableMatrix_row_swap(Matrix *M, int i, int j); /* drg: connected rawMatrixRowSwap*/
+  M2_bool IM2_MutableMatrix_row_swap(Matrix *M, int i, int j); /* drg: connected rawMatrixRowSwap, OK*/
 
-  M2_bool IM2_MutableMatrix_column_swap(Matrix *M, int i, int j); /* drg: connected rawMatrixColSwap*/
+  M2_bool IM2_MutableMatrix_column_swap(Matrix *M, int i, int j); /* drg: connected rawMatrixColSwap, OK*/
 
   M2_bool IM2_MutableMatrix_row_operation(Matrix *M, 
 					  int i, 
 					  const RingElement *r, 
 					  int j,
-					  M2_bool opposite_mult); /* drg: connected rawMatrixRowChange*/
+					  M2_bool opposite_mult); /* drg: connected rawMatrixRowChange, OK */
   /* row(i) <- row(i) + r * row(j), returns false if matrix is 
      immutable, or rows are out of bounds */
 
@@ -1050,34 +1050,34 @@ extern "C" {
 					     int i, 
 					     const RingElement *r, 
 					     int j,
-					     M2_bool opposite_mult); /* drg: connected rawMatrixColChange*/
+					     M2_bool opposite_mult); /* drg: connected rawMatrixColChange, OK*/
   /* column(i) <- column(i) + r * column(j), returns false if matrix is 
      immutable, or columns are out of bounds */
 
   M2_bool IM2_MutableMatrix_row_scale(Matrix *M, 
 				      const RingElement *r, 
 				      int i, 
-				      M2_bool opposite_mult); /* drg: connected rawMatrixRowScale*/
+				      M2_bool opposite_mult); /* drg: connected rawMatrixRowScale, OK*/
   /* row(i) <- r * row(i), returns false if matrix is immutable
      or row is out of bounds */
 
   M2_bool IM2_MutableMatrix_column_scale(Matrix *M, 
 					 const RingElement *r, 
 					 int i, 
-					 M2_bool opposite_mult); /* drg: connected rawMatrixColumnScale*/
+					 M2_bool opposite_mult); /* drg: connected rawMatrixColumnScale, OK*/
   /* column(i) <- r * column(i), returns false if matrix is immutable
      or row is out of bounds */
 
-  M2_bool IM2_MutableMatrix_insert_columns(Matrix *M, int i, int n_to_add); /* connected to rawInsertColumns */
+  M2_bool IM2_MutableMatrix_insert_columns(Matrix *M, int i, int n_to_add); /* connected to rawInsertColumns, OK */
   /* Insert n_to_add columns directly BEFORE column i. */
 
-  M2_bool IM2_MutableMatrix_insert_rows(Matrix *M, int i, int n_to_add); /* connected to rawInsertRows */
+  M2_bool IM2_MutableMatrix_insert_rows(Matrix *M, int i, int n_to_add); /* connected to rawInsertRows, OK */
   /* Insert n_to_add rows directly BEFORE row i. */
 
-  M2_bool IM2_MutableMatrix_delete_columns(Matrix *M, int i, int j); /* connected to rawDeleteColumns  */
+  M2_bool IM2_MutableMatrix_delete_columns(Matrix *M, int i, int j); /* connected to rawDeleteColumns, OK  */
   /* Delete columns i .. j from M */
 
-  M2_bool IM2_MutableMatrix_delete_rows(Matrix *M, int i, int j); /* connected to rawDeleteRows  */
+  M2_bool IM2_MutableMatrix_delete_rows(Matrix *M, int i, int j); /* connected to rawDeleteRows, OK */
   /* Delete rows i .. j from M */
 
 
@@ -1085,7 +1085,7 @@ extern "C" {
 					int c1, int c2, 
 					const RingElement *a1, const RingElement *a2,
 					const RingElement *b1, const RingElement *b2,
-					M2_bool opposite_mult);	/* connected to rawMatrixColumnOperation2 */
+					M2_bool opposite_mult);	/* connected to rawMatrixColumnOperation2, OK */
   /* column(c1) <- a1 * column(c1) + a2 * column(c2)
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
@@ -1094,7 +1094,7 @@ extern "C" {
 				     int r1, int r2, 
 				     const RingElement *a1, const RingElement *a2,
 				     const RingElement *b1, const RingElement *b2,
-				     M2_bool opposite_mult); /* connected to rawMatrixRowOperation2 */
+				     M2_bool opposite_mult); /* connected to rawMatrixRowOperation2, OK */
   /* row(r1) <- a1 * row(r1) + a2 * row(r2)
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
@@ -1147,36 +1147,36 @@ extern "C" {
   */
 #endif
 
-  const RingElement * IM2_Matrix_dot_product(const Matrix *M, int c1, int c2);
+  const RingElement * IM2_Matrix_dot_product(const Matrix *M, int c1, int c2); /* drg: never connected, now presumably obsolete */
   /* Return the dot product of columns c1 and c2 of the matrix M.  If either c1 or c2 is
      out of range, 0 is returned. */
 
-  M2_bool IM2_MutableMatrix_sort_columns(Matrix *M, int lo, int hi); /* connected to rawSortColumns2 */
+  M2_bool IM2_MutableMatrix_sort_columns(Matrix *M, int lo, int hi); /* connected to rawSortColumns2, OK */
   /* Returns false if M is not mutable, or lo, or hi are out of range */
 
   M2_bool IM2_MutableMatrix_row_permute(Matrix *M,
 					int start, 
-					M2_arrayint perm); /* connected to rawPermuteRows */
+					M2_arrayint perm); /* connected to rawPermuteRows, OK */
   /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 
   M2_bool IM2_MutableMatrix_column_permute(Matrix *M,
 					   int start, 
-					   M2_arrayint perm); /* connected to rawPermuteColumns */
+					   M2_arrayint perm); /* connected to rawPermuteColumns, OK */
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 
-  MatrixOrNull * IM2_MutableMatrix_get_row_change(Matrix *M); /* drg: connected rawRowChange*/
+  MatrixOrNull * IM2_MutableMatrix_get_row_change(Matrix *M); /* drg: connected rawRowChange, OK*/
 
-  MatrixOrNull * IM2_MutableMatrix_get_col_change(Matrix *M); /* drg: connected rawColumnChange*/
+  MatrixOrNull * IM2_MutableMatrix_get_col_change(Matrix *M); /* drg: connected rawColumnChange, OK*/
 
   M2_bool IM2_MutableMatrix_set_row_change(Matrix *M,
-					   Matrix *rowChange); /* drg: connected rawRowChange*/
+					   Matrix *rowChange); /* drg: connected rawRowChange, OK */
   /* Returns false, if rowChange is not suitable 
      (i.e. has the wrong ring, or wrong number of columns) */
 
   M2_bool IM2_MutableMatrix_set_col_change(Matrix *M,
-					   Matrix *colChange); /* drg: connected rawColumnChange*/
+					   Matrix *colChange); /* drg: connected rawColumnChange, OK*/
   /* Returns false, if rowChange is not suitable 
      (i.e. has the wrong ring, or wrong number of columns) */
 
@@ -1244,57 +1244,57 @@ DAN DAN DAN -- this is the end of the stuff to be removed
 #endif
   MutableMatrix * IM2_MutableMatrix_identity(const Ring *R, 
 					     int nrows, 
-					     M2_bool prefer_dense); /* drg: connected rawMutableIdentityMatrix*/
+					     M2_bool prefer_dense); /* drg: connected rawMutableIdentity, OK*/
 
   MutableMatrix * IM2_MutableMatrix_make(const Ring *R,
 					 int nrows,
 					 int ncols,
-					 M2_bool prefer_dense); /* drg: connected rawMutableMatrix*/
+					 M2_bool prefer_dense); /* drg: connected rawMutableMatrix, OK */
 
-  MutableMatrix * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool prefer_dense); /* drg: connected rawMutableMatrix*/
+  MutableMatrix * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool prefer_dense); /* drg: connected rawMutableMatrix, OK*/
 
 
-  const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrix *M); /* drg: connected rawMatrix*/
+  const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrix *M); /* drg: connected rawMatrix, OK*/
 
-  const M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M); /* drg: connected rawMatrix*/
+  const M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M); /* drg: connected toString, OK */
 
-  unsigned long  IM2_MutableMatrix_hash(const MutableMatrix *M); /* TODO */ /* drg: waiting, returning 0 */
+  unsigned long  IM2_MutableMatrix_hash(const MutableMatrix *M); /* TODO */ /* drg: connected to "hash", returning 0 */
 
-  int IM2_MutableMatrix_n_rows(const MutableMatrix *M);
+  int IM2_MutableMatrix_n_rows(const MutableMatrix *M);	/* drg: connected rawNumberOfRows, OK */
 
-  int IM2_MutableMatrix_n_cols(const MutableMatrix *M);
+  int IM2_MutableMatrix_n_cols(const MutableMatrix *M);	/* drg: connected rawNumberOfColumns, OK */
 
-  MutableMatrixOrNull * IM2_MutableMatrix_get_row_change(MutableMatrix *M); /* drg: connected rawRowChange*/
+  MutableMatrixOrNull * IM2_MutableMatrix_get_row_change(MutableMatrix *M); /* drg: connected rawRowChange, OK*/
 
-  MutableMatrixOrNull * IM2_MutableMatrix_get_col_change(MutableMatrix *M); /* drg: connected rawColumnChange*/
+  MutableMatrixOrNull * IM2_MutableMatrix_get_col_change(MutableMatrix *M); /* drg: connected rawColumnChange, OK*/
 
   M2_bool IM2_MutableMatrix_set_row_change(MutableMatrix *M,
-					   MutableMatrix *rowChange); /* drg: connected rawRowChange*/
+					   MutableMatrix *rowChange); /* drg: connected rawRowChange, OK*/
   /* Returns false, if rowChange is not suitable 
      (i.e. has the wrong ring, or wrong number of columns) */
 
   M2_bool IM2_MutableMatrix_set_col_change(MutableMatrix *M,
-					   MutableMatrix *colChange); /* drg: connected rawColumnChange*/
+					   MutableMatrix *colChange); /* drg: connected rawColumnChange, OK*/
   /* Returns false, if rowChange is not suitable 
      (i.e. has the wrong ring, or wrong number of columns) */
 
 
   const RingElementOrNull * IM2_MutableMatrix_get_entry(const MutableMatrix *M, 
-							int r, int c); /* drg: connected rawMatrixEntry*/
+							int r, int c); /* drg: connected rawMatrixEntry, OK*/
 
   /* Each of these routines returns false if there was an error. */
 
-  M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M, int r, int c, const RingElement *a); /* drg: connected rawMatrixEntry*/
+  M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M, int r, int c, const RingElement *a); /* drg: connected rawMatrixEntry, OK */
 
-  M2_bool IM2_MutableMatrix_row_swap(MutableMatrix *M, int i, int j); /* drg: connected rawMatrixRowSwap*/
+  M2_bool IM2_MutableMatrix_row_swap(MutableMatrix *M, int i, int j); /* drg: connected rawMatrixRowSwap, OK */
 
-  M2_bool IM2_MutableMatrix_column_swap(MutableMatrix *M, int i, int j); /* drg: connected rawMatrixColSwap*/
+  M2_bool IM2_MutableMatrix_column_swap(MutableMatrix *M, int i, int j); /* drg: connected rawMatrixColSwap, OK*/
 
   M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M, 
 					  int i, 
 					  const RingElement *r, 
 					  int j,
-					  M2_bool opposite_mult); /* drg: connected rawMatrixRowChange*/
+					  M2_bool opposite_mult); /* drg: connected rawMatrixRowChange, OK */
   /* row(i) <- row(i) + r * row(j), returns false if matrix is 
      immutable, or rows are out of bounds */
 
@@ -1302,34 +1302,34 @@ DAN DAN DAN -- this is the end of the stuff to be removed
 					     int i, 
 					     const RingElement *r, 
 					     int j,
-					     M2_bool opposite_mult); /* drg: connected rawMatrixColChange*/
+					     M2_bool opposite_mult); /* drg: connected rawMatrixColChange, OK*/
   /* column(i) <- column(i) + r * column(j), returns false if matrix is 
      immutable, or columns are out of bounds */
 
   M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M, 
 				      const RingElement *r, 
 				      int i, 
-				      M2_bool opposite_mult); /* drg: connected rawMatrixRowScale*/
+				      M2_bool opposite_mult); /* drg: connected rawMatrixRowScale, OK*/
   /* row(i) <- r * row(i), returns false if matrix is immutable
      or row is out of bounds */
 
   M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M, 
 					 const RingElement *r, 
 					 int i, 
-					 M2_bool opposite_mult); /* drg: connected rawMatrixColumnScale*/
+					 M2_bool opposite_mult); /* drg: connected rawMatrixColumnScale, OK */
   /* column(i) <- r * column(i), returns false if matrix is immutable
      or row is out of bounds */
 
-  M2_bool IM2_MutableMatrix_insert_columns(MutableMatrix *M, int i, int n_to_add); /* connected to rawInsertColumns */
+  M2_bool IM2_MutableMatrix_insert_columns(MutableMatrix *M, int i, int n_to_add); /* connected to rawInsertColumns, OK */
   /* Insert n_to_add columns directly BEFORE column i. */
 
-  M2_bool IM2_MutableMatrix_insert_rows(MutableMatrix *M, int i, int n_to_add); /* connected to rawInsertRows */
+  M2_bool IM2_MutableMatrix_insert_rows(MutableMatrix *M, int i, int n_to_add); /* connected to rawInsertRows, OK */
   /* Insert n_to_add rows directly BEFORE row i. */
 
-  M2_bool IM2_MutableMatrix_delete_columns(MutableMatrix *M, int i, int j); /* connected to rawDeleteColumns  */
+  M2_bool IM2_MutableMatrix_delete_columns(MutableMatrix *M, int i, int j); /* connected to rawDeleteColumns, OK */
   /* Delete columns i .. j from M */
 
-  M2_bool IM2_MutableMatrix_delete_rows(MutableMatrix *M, int i, int j); /* connected to rawDeleteRows  */
+  M2_bool IM2_MutableMatrix_delete_rows(MutableMatrix *M, int i, int j); /* connected to rawDeleteRows, OK  */
   /* Delete rows i .. j from M */
 
 
@@ -1337,7 +1337,7 @@ DAN DAN DAN -- this is the end of the stuff to be removed
 					int c1, int c2, 
 					const RingElement *a1, const RingElement *a2,
 					const RingElement *b1, const RingElement *b2,
-					M2_bool opposite_mult);	/* connected to rawMatrixColumnOperation2 */
+					M2_bool opposite_mult);	/* connected to rawMatrixColumnOperation2, OK */
   /* column(c1) <- a1 * column(c1) + a2 * column(c2)
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
@@ -1346,27 +1346,27 @@ DAN DAN DAN -- this is the end of the stuff to be removed
 				     int r1, int r2, 
 				     const RingElement *a1, const RingElement *a2,
 				     const RingElement *b1, const RingElement *b2,
-				     M2_bool opposite_mult); /* connected to rawMatrixRowOperation2 */
+				     M2_bool opposite_mult); /* connected to rawMatrixRowOperation2, OK */
   /* row(r1) <- a1 * row(r1) + a2 * row(r2)
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
 
-  M2_bool IM2_MutableMatrix_sort_columns(MutableMatrix *M, int lo, int hi); /* connected to rawSortColumns2 */
+  M2_bool IM2_MutableMatrix_sort_columns(MutableMatrix *M, int lo, int hi); /* connected to rawSortColumns2, OK */
   /* Returns false if M is not mutable, or lo, or hi are out of range */
 
   M2_bool IM2_MutableMatrix_row_permute(MutableMatrix *M,
 					int start, 
-					M2_arrayint perm); /* connected to rawPermuteRows */
+					M2_arrayint perm); /* connected to rawPermuteRows, OK */
   /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 
   M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
 					   int start, 
-					   M2_arrayint perm); /* connected to rawPermuteColumns */
+					   M2_arrayint perm); /* connected to rawPermuteColumns, OK */
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 
-  const RingElement * IM2_Matrix_dot_product(const MutableMatrix *M, int c1, int c2);
+  const RingElement * IM2_Matrix_dot_product(const MutableMatrix *M, int c1, int c2); /* connect to rawColumnDotProduct, OK */
   /* Return the dot product of columns c1 and c2 of the matrix M.  If either c1 or c2 is
      out of range, 0 is returned. */
 

@@ -248,6 +248,9 @@ RawFreeModule ** RawFreeModule := rawTensor
 RawMatrix.name = "RawMatrix"
 RawMatrix.synonym = "raw matrix"
 
+RawMutableMatrix.name = "RawMutableMatrix"
+RawMutableMatrix.synonym = "raw mutable matrix"
+
 RawMatrix == RawMatrix := (v,w) -> rawIsEqual(v,w)
 
 RawMatrix == ZZ := (v,n) -> if n === 0 then rawIsZero v else error "comparison with nonzero integer"
