@@ -94,6 +94,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 	  if equal(parsed,wordEOF) then break;
 	  returnvalue = nullE;
 	  if parsed == errorTree then (
+	       if fileError(file) then return(buildErrorPacket(fileErrorMessage(file)));
 	       if AbortIfError then return(buildErrorPacket("--backtrace--"));
 	       )
 	  else (
@@ -228,6 +229,8 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	  file(nextHash(),     	    	  -- hash
 	       name,	 		  -- filename
 	       0,			  -- pid
+	       false,	       	    	  -- error
+	       "",     	    	      	  -- message
 	       false,	       	    	  -- listener
 	       NOFD,   	    	          -- listenerfd
 	       NOFD,	      	   	  -- connection

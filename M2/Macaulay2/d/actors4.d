@@ -650,9 +650,11 @@ readfun(e:Expr):Expr := (
 	  readprompt = p;
 	  oldprompt := stdin.prompt;
 	  stdin.prompt = readpromptfun;
-	  r := getline(stdin);				    -- used to be read(stdin);
-	  stdin.prompt = oldprompt;
-	  Expr(r))	  
+	  r := getline(stdin);
+	  when r is e:errmsg do buildErrorPacket(e.message)
+	  is s:string do (
+	       stdin.prompt = oldprompt;
+	       Expr(s)))
      is s:Sequence do (
 	  if length(s) == 0
 	  then readE(stdin)

@@ -16,16 +16,20 @@ export topLevelTexmacs():void := (
      stdin.prompt = noprompt;
      while true do (
 	  stdin.bol = false;				    -- sigh, prevent a possible prompt
-	  item := getline(stdin);
-	  if stdin.eof then exit(0);
-     	  method := lookup(stringClass,TeXmacsEvaluate);
-     	  if method == nullE 
-     	  then (
-	       flush(stdout);
-	       stderr << "no method for TeXmacsEvaluate" << endl;
+	  r := getline(stdin);
+	  when r is e:errmsg do (
+	       stderr << "can't get line : " << e.message << endl << Flush;
+	       exit(1);
 	       )
-     	  else (
-	       r := apply(method,Expr(item));
-	       )
-	  );
-     );
+	  is item:string do (
+	       if stdin.eof then exit(0);
+	       method := lookup(stringClass,TeXmacsEvaluate);
+	       if method == nullE 
+	       then (
+		    flush(stdout);
+		    stderr << "no method for TeXmacsEvaluate" << endl;
+		    )
+	       else (
+		    apply(method,Expr(item));
+		    )
+	       )));

@@ -29,6 +29,7 @@ chartype(c:int):int := if (c & ~255) == 0 then int(chartypes.c) else 0;
 chartype(c:char):int := int(chartypes.(int(uchar(c))));
 
 export iseof      (c:int ):bool := c == EOF;
+export iserror    (c:int ):bool := c == ERROR;
 
 export isdigit    (c:char):bool := (chartype(c) & DIGIT    ) != 0;
 export isalpha    (c:char):bool := (chartype(c) & ALPHA    ) != 0;
