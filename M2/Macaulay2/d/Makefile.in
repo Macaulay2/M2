@@ -315,8 +315,8 @@ endif
 ###################### libraries
 
 ifeq "$(CC)" "cl"
-LIBRARYFILES += ../dbm/dbm2.lib
-LIBRARYOPTIONS += ../dbm/dbm2.lib
+# LIBRARYFILES += ../dbm/dbm2.lib
+# LIBRARYOPTIONS += ../dbm/dbm2.lib
 LIBRARYFILES += ../../lib/gc.lib
 LIBRARYOPTIONS += ../../lib/gc.lib
 LIBRARYFILES += ../../lib/gmp.lib
@@ -326,31 +326,27 @@ LIBRARYOPTIONS += ../../lib/libfac.lib
 LIBRARYFILES += ../../lib/cf.lib
 LIBRARYOPTIONS += ../../lib/cf.lib
 else
-LOADLIBES += -L../dbm
-LIBRARYFILES += ../dbm/libdbm2.a
-LIBRARYOPTIONS += -ldbm2
-ifdef MP
-LIBRARYFILES += ../../lib/libMP.a
-LIBRARYOPTIONS += ../../lib/libMP.a
-endif
+# LOADLIBES += -L../dbm
+# LIBRARYFILES += ../dbm/libdbm2.a
+# LIBRARYOPTIONS += -ldbm2
 
-###################### statically linked libraries
-ifeq "$(CC) $(STATIC)" "gcc no"
+ifeq "$(GCC) $(STATIC)" "yes no"
 LIBRARYOPTIONS += -Wl,-Bstatic
 endif
 
+# statically linked libraries
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
 LIBRARYOPTIONS += -lgmp
 LIBRARYOPTIONS += -lgc
+LIBRARYOPTIONS += -lgdbm
 
 # we avoid successfully using streamio, but we need the personality function
 LIBRARYOPTIONS += -lstdc++
 
-ifeq "$(CC) $(STATIC)" "gcc no"
+ifeq "$(GCC) $(STATIC)" "yes no"
 LIBRARYOPTIONS += -Wl,-Bdynamic
 endif
-###################### end statically linked libraries
 
 endif
 
