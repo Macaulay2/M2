@@ -8,6 +8,8 @@ addStartFunction(
 	       minimizeFilename ( PREFIX | "/share/Macaulay2/packages/" )
 	       )))
 
+load "layout.m2"					    -- defines LAYOUT
+
 addStartFunction( 
      () -> (
 	  home := getenv "M2HOME";
@@ -38,7 +40,7 @@ htmlFilename = (nodename) -> (	-- returns the path from the PREFIX to the file
      if buildPackage === "" 
      then "share/doc/Macaulay2/" | version#"VERSION" | "/html/"|basename
      else (
-     	  fn0 := "share/doc/Macaulay2/currentVersion/html/"|basename;
+     	  fn0 := LAYOUT#"htmldoc"|basename;
 	  if PREFIX =!= "" and fileExists (PREFIX|"/"|fn0)
      	  then fn0
      	  else concatenate("share/doc/Macaulay2/packages/", buildPackage, "/html/", basename)
