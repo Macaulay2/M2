@@ -145,13 +145,16 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      fromChild := array(int)(NOFD,NOFD);
      if output && pipe(toChild) == ERROR || input && pipe(fromChild) == ERROR 
      then (
-	  close(  toChild.0);
-	  close(  toChild.1);
-	  close(fromChild.0);
-	  close(fromChild.1);
+	  if  toChild.0 != NOFD then close(  toChild.0);
+	  if  toChild.1 != NOFD then close(  toChild.1);
 	  return(errmsg("can't make pipe : "+syserrmsg()));
 	  );
      pid := fork();
+     if pid == -1 then (
+	  if  toChild.0 != NOFD then close(  toChild.0);
+	  if  toChild.1 != NOFD then close(  toChild.1);
+	  return(errmsg("can't fork : "+syserrmsg()));
+	  );
      listener := false;
      if pid == 0 then (
 	  close(STDIN);

@@ -105,9 +105,9 @@ buffer        gOutput;
 char         *gInput;
 int           gInputLen;
 
-extern "C" int M2main(int argc,char **argv);
-
-int main(int argc,char **argv)
-{
-  return M2main(argc,argv);
-}
+// extern "C" int M2main(int argc,char **argv);
+// 
+// int main(int argc,char **argv)
+// {
+//   return M2main(argc,argv);
+// }
