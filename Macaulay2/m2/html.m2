@@ -487,15 +487,19 @@ installPackage String := opts -> pkg -> (
      installPackage(reloadPackage(pkg,opts), opts))
 
 installPackage Package := opts -> pkg -> (
+     -- check first that we've read the raw documentation
+     rawDoc := pkg#"raw documentation";
+     if opts.MakeDocumentation and #rawDoc == 0 then (
+	  pkg = reloadPackage(pkg#"title",opts);
+     	  rawDoc = pkg#"raw documentation";
+	  if #rawDoc == 0 then stderr << "--warning: package seems to have no documentation" << endl;
+	  );
+
      absoluteLinks = opts.AbsoluteLinks;
      if class absoluteLinks =!= Boolean then error "expected true or false for option AbsoluteLinks"; 
      oldpkg := currentPackage;
      currentPackage = pkg;
      topDocumentTag = makeDocumentTag(pkg#"title", Package => pkg);
-     rawDoc := pkg#"raw documentation";
-     
-     -- check that we've read the raw documentation
-     if opts.MakeDocumentation and #rawDoc == 0 then pkg = reloadPackage(pkg#"title",opts);
      
      -- here's where we get the list of nodes from the raw documentation
      nodes := if opts.MakeDocumentation then packageTagList(pkg,topDocumentTag) else {};
@@ -627,6 +631,7 @@ installPackage Package := opts -> pkg -> (
 		    else (
 			 if rawdocDatabase#?fkey then (
 			      stderr << "--warning: raw documentation for " << fkey << ", in database, is no longer present" << endl;
+			      if debugLevel > 0 and fkey === "length" then error "debug me";
 			      )
 			 else (
 			      rawDocUnchanged#fkey = true;
@@ -720,6 +725,7 @@ installPackage Package := opts -> pkg -> (
 		    else (
 			 if debugLevel > 0 then stderr << "--processing " << tag << endl;
 			 pkg#"processed documentation"#fkey = documentation tag;
+			 if debugLevel > 0 and fkey === "length" then error "debug me";
 			 );
 		    ));
 
