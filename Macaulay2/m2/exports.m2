@@ -40,7 +40,9 @@ exportMutable (
 	)
 
 export (
+        symbol indexHtml,
      	symbol Email,
+	symbol fileLength,
         symbol primaryDecomposition,
      	symbol MutableMatrix,
 	symbol rowSwap,
