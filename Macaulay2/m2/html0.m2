@@ -21,6 +21,7 @@ FormattedMarkUpType.synonym = "formatted mark-up type"
 
 EmptyMarkUpType = new Type of MarkUpType
 EmptyMarkUpType.synonym = "empty mark-up type"
+     MarkUpType Sequence := 
      MarkUpType List := (h,y) -> new h from y
 EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expected empty list"
      MarkUpType Thing := (h,y) -> new h from {y}
