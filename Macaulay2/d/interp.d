@@ -276,20 +276,21 @@ decrementInterpreterDepth():void := (
 
 export topLevel():bool := when loadprint("-",stopIfError,newStaticLocalDictionaryClosure()) is Error do false else true;
 
-topLevel(dc:DictionaryClosure):bool := when loadprint("-",stopIfError,dc) is Error do false else true;
-topLevel(f:Frame):bool := topLevel(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
+topLevel(dc:DictionaryClosure):Expr := loadprint("-",stopIfError,dc);
+topLevel(f:Frame):Expr := topLevel(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 topLevel(e:Expr):Expr := (
      incrementInterpreterDepth();
        ret := 
        when e is s:Sequence do (
-	    if length(s) == 0 then toExpr(topLevel())
+	    if length(s) == 0 then loadprint("-",stopIfError,newStaticLocalDictionaryClosure())
 	    else WrongNumArgs(0,1)
 	    )
-       is dc:DictionaryClosure do toExpr(topLevel(dc))
-       is sc:SymbolClosure do toExpr(topLevel(sc.frame))
-       is fc:FunctionClosure do toExpr(topLevel(fc.frame))
-       is cfc:CompiledFunctionClosure do toExpr(topLevel(emptyFrame))	    -- some values are there, but no symbols
-       is CompiledFunction do toExpr(topLevel(emptyFrame))		    -- no values or symbols are there
+       is x:DictionaryClosure do topLevel(x)
+       is x:SymbolClosure do topLevel(x.frame)
+       is x:CodeClosure do topLevel(x.frame)
+       is x:FunctionClosure do topLevel(x.frame)
+       is cfc:CompiledFunctionClosure do topLevel(emptyFrame)	    -- some values are there, but no symbols
+       is CompiledFunction do topLevel(emptyFrame)		    -- no values or symbols are there
        else WrongArg("a function, a symbol, or ()");
      decrementInterpreterDepth();
      ret);
