@@ -963,6 +963,11 @@ help Thing := s -> (
      pager net r)
 help = Command help
 
+infoHelp = key -> (
+     tag := makeDocumentTag key;
+     t := infoTagConvert tag;
+     run ("info "|format t);)
+
 -----------------------------------------------------------------------------
 -- helper functions useable in documentation
 -----------------------------------------------------------------------------
