@@ -33,8 +33,6 @@ removePackage Package := p -> (
      )
 removePackage String := title -> if PackageDictionary#?title and class value PackageDictionary#title === Package then removePackage value PackageDictionary#title
 
-currentPackageSymbol := getGlobalSymbol(PackageDictionary,"currentPackage")
-
 substituteOptions := new MutableHashTable
 loadPackage = method(
      Options => {
@@ -122,7 +120,7 @@ newPackage(String) := opts -> (title) -> (
       	  PrintNames#(newpkg#"private dictionary") = title | "#\"private dictionary\"";
      	  newpkg#"private dictionary"#originalTitle = pkgsym;	    -- local synonym under original title, in case the package is loaded under a different title and tries to refer to itself
 	  );
-     currentPackageSymbol <- newpkg;
+     global currentPackage <- newpkg;
      ReverseDictionary#newpkg = pkgsym;
      pkgsym <- newpkg;
      packages = join(
@@ -175,12 +173,10 @@ newPackage("Macaulay2",
      Headline => "A computer algebra system designed to support algebraic geometry")
 
 exportMutable {
-	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol fullBacktrace, symbol backtrace, symbol packages,
-	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, 
-	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
-	  symbol notify, symbol loadDepth, symbol printingPrecision, symbol fileExitHooks, symbol debugError,
-	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol debuggingMode, 
-	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth, symbol backupFileRegexp
+	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol fullBacktrace, symbol backtrace, symbol packages, symbol currentFileName, symbol compactMatrixForm, symbol
+	  gbTrace, symbol encapDirectory, symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage, symbol
+	  notify, symbol loadDepth, symbol printingPrecision, symbol fileExitHooks, symbol debugError, symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol
+	  debuggingMode, symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth, symbol backupFileRegexp
 	  }
 
 findSynonyms = method()
@@ -239,7 +235,7 @@ closePackage String := title -> (
      hook := pkg#"close hook";
      remove(pkg,"close hook");
      fileExitHooks = select(fileExitHooks, f -> f =!= hook);
-     currentPackageSymbol <- pkg#"previous currentPackage";
+     global currentPackage <- pkg#"previous currentPackage";
      remove(pkg,"previous currentPackage");
      debuggingMode = pkg#"old debuggingMode";
      remove(pkg,"old debuggingMode");
