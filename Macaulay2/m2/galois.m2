@@ -230,7 +230,11 @@ assert( lift(v^7,M) == (lift(v,M))^7 )
 dim GaloisField := R -> 0
 
 isField GaloisField := F -> true
-isField QuotientRing := R -> ambient R === ZZ and isPrime char R
+isField QuotientRing := R -> (
+     ambient R === ZZ and isPrime char R
+     or
+     ambient R === ZZZ and isPrime char R
+     )
 isField Ring := R -> R === QQ
 
 document { quote isField,

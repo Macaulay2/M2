@@ -303,8 +303,8 @@ Ring OrderedMonoid := (			  -- no memoize
 	       RM.ConvertToExpression = ConvertApply(
 		    args -> if #args === 1 then args#0 else new Sum from toList args,
 		    ConvertRepeat ConvertApply ( 
-			 (c,m,r) -> r * m,			    -- ignore the component c
-			 ConvertJoin(ConvertInteger, M.ConvertToExpression, R.ConvertToExpression)));
+			 (m,r) -> r * m,
+			 ConvertJoin(M.ConvertToExpression, R.ConvertToExpression)));
 	       )
 	  else (
 	       RM.ConvertToExpression = ConvertApply(
