@@ -1,5 +1,7 @@
 newPackage("CacheFileName", Version => "1.0")
 
+export (cacheFileName)
+
 queryFun := symbol queryFun
 getFun := symbol getFun
 setFun := symbol setFun
@@ -139,6 +141,7 @@ document {
      search path."
      }
 
+
 -- Local Variables:
--- compile-command: "M2 -q --stop -e 'load \"CacheFileName.m2\" ' -e 'installPackage CacheFileName' -e 'exit 0'"
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages CacheFileName.installed"
 -- End:

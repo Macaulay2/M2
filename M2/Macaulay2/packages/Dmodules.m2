@@ -21,5 +21,5 @@ load "Dmodules/Dloadfile.m2"
 load "Dmodules/DMODdoc.m2"
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages Dmodules.installed"
 -- End:
