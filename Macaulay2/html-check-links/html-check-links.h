@@ -13,5 +13,5 @@
 #define roundup(n,d) ((((n)+(d)-1)/(d))*(d))
 #endif
 #endif
-extern char *filename, *dirname, *rootname;
+extern char *filename, *Dirname, *rootname;
 extern int lineno, column;

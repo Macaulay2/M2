@@ -23,7 +23,7 @@ static void process(char *f) {
     return;
   }
   filename = f;
-  dirname = dir(f);
+  Dirname = dir(f);
   yyparse();
   fclose(yyin);
 }

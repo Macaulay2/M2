@@ -12,7 +12,7 @@ unsigned lastcount;
 		  for(i=0; i<yyleng; i++) if (yytext[i]=='\n') BOL; else column++; \
 		  } while (0)
 static void yyunput(int, char *) __attribute__ ((unused));
-char *filename = "", *dirname="", *rootname = "";
+char *filename = "", *Dirname="", *rootname = "";
 int lineno = 1, column = 1, tagline, tagcol;
 int yywrap(void) { lineno = 1, column = 1; return 1; }
 %}
