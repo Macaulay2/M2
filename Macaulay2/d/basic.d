@@ -189,7 +189,7 @@ copy(f:Frame):Frame := (
      if f.scopenum == 0			  -- the global scope?
      then f
      else Frame(
-	  copy(f.next),
+	  copy(f.outerFrame),
 	  f.scopenum,
 	  new Sequence len length(f.values) do (
 	       foreach e in f.values do provide e

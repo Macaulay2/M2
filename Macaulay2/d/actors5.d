@@ -453,7 +453,7 @@ examine(e:Expr):Expr := (
 	  << " frames bound for scopes:";
 	  while f.scopenum >= 0 do (
 	       stdout << " " << f.scopenum;
-	       f = f.next;
+	       f = f.outerFrame;
 	       );
 	  stdout << endl;
 	  nullE)
@@ -470,7 +470,7 @@ examine(e:Expr):Expr := (
 	  << " frames bound for scopes:";
 	  while f.scopenum >= 0 do (
 	       stdout << " " << f.scopenum;
-	       f = f.next;
+	       f = f.outerFrame;
 	       );
 	  stdout << endl; 
 	  nullE)
@@ -480,7 +480,7 @@ examine(e:Expr):Expr := (
 	       stdout << "frames currently bound for scopes:";
 	       while f.scopenum >= 0 do (
 		    stdout << " " << f.scopenum;
-		    f = f.next;
+		    f = f.outerFrame;
 		    );
 	       stdout << endl;
 	       nullE)
@@ -1245,12 +1245,12 @@ setupfun("frame", frame);
 
 numFrames(f:Frame):int := (
      n := 0;
-     while f.next != f && f.scopenum > 0 do (n = n+1; f = f.next);
+     while f.outerFrame != f && f.scopenum > 0 do (n = n+1; f = f.outerFrame);
      n);
 
 listFrames(f:Frame):Expr := list(
      new Sequence len numFrames(f) do (
-	  while f.next != f && f.scopenum > 0 do (provide listFrame(f.values); f = f.next);
+	  while f.outerFrame != f && f.scopenum > 0 do (provide listFrame(f.values); f = f.outerFrame);
 	  )
      );     
 
@@ -1269,3 +1269,29 @@ getGlobalDictionary(e:Expr):Expr := (
      is a:Sequence do if length(a) == 0 then Expr(globalDictionary) else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("globalDictionary", getGlobalDictionary);
+
+pushDictionary(e:Expr):Expr := (
+     when e
+     is a:Sequence do if length(a) == 0 then (
+	  globalScope = newScope(globalScope);
+	  globalScope.transient = false;
+	  globalFrame = Frame(globalFrame, globalScope.seqno, new Sequence len globalScope.framesize do provide nullE);
+	  globalDictionary = Dictionary(nextHash(), globalScope, globalFrame, globalDictionary);
+	  nullE)
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("pushDictionary", pushDictionary);
+
+popDictionary(e:Expr):Expr := (
+     when e
+     is a:Sequence do if length(a) == 0 then (
+	  if globalFrame.outerFrame == dummyFrame
+	  then nullE
+	  else (
+	       globalScope = globalScope.outerScope;
+     	       globalFrame = globalFrame.outerFrame;
+     	       globalDictionary = globalDictionary.outerDictionary;
+	       nullE))
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("popDictionary", popDictionary);

@@ -141,10 +141,10 @@ makeSymbolSequence(e:ParseTree):SymbolSequence := (
 	  );
      v);
 export frame(scopenum:int):Frame := (
-     if scopenum == 0 then globalFrame
+     if scopenum == 0 then outermostGlobalFrame
      else (
      	  f := localFrame;
-     	  while f.scopenum > scopenum do f = f.next;
+     	  while f.scopenum > scopenum do f = f.outerFrame;
      	  if f.scopenum != scopenum 
 	  then (
 	       stderr << "frame for scope " << scopenum << " not found" << endl;
@@ -152,7 +152,7 @@ export frame(scopenum:int):Frame := (
 	       f = localFrame;
 	       while f.scopenum > -1 do (
 		    stderr << " " << f.scopenum;
-		    f = f.next;
+		    f = f.outerFrame;
 		    );
 	       stderr << endl;
 	       fatal("exiting");
@@ -657,13 +657,13 @@ export eval(c:Code):Expr := (
 	  localFrame = Frame(localFrame,n.scope.seqno,
 	       new Sequence len n.scope.framesize do provide nullE);
 	  x := ForFun(n);
-	  localFrame = localFrame.next;
+	  localFrame = localFrame.outerFrame;
 	  x)
      is n:openScopeCode do (
 	  localFrame = Frame(localFrame,n.scope.seqno,
 	       new Sequence len n.scope.framesize do provide nullE);
 	  x := eval(n.body);
-	  localFrame = localFrame.next;
+	  localFrame = localFrame.outerFrame;
 	  x)
      is v:CodeSequence do evalSequence(v);
      when e is err:Error do (
