@@ -39,7 +39,7 @@ public:
 
   class_identifier class_id() const { return CLASS_PfaffianComputation; }
 
-  const Ring * Ring_of () const { return R; }
+  const Ring * get_ring () const { return R; }
 };
 
 #endif

@@ -8,7 +8,7 @@
 // Redefine:
 // Ring
 //    routines that should be implemented in this class:
-//    add_to, compare, Ring_of, remove
+//    add_to, compare, get_ring, remove
 // Nterm *
 //    fields of this structure type should include:
 //    next, coeff
@@ -41,7 +41,7 @@ static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
 
 inline polyheap::polyheap(const Ring *FF)
 : F(FF),
-  K(FF->Ring_of()->Ncoeffs()),
+  K(FF->get_ring()->Ncoeffs()),
   top_of_heap(-1)
 {
   // set K

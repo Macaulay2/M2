@@ -3,7 +3,7 @@
 #include "pfaff.hpp"
 
 PfaffianComputation::PfaffianComputation(const Matrix &M, int p)
-  : R(M.Ring_of()),
+  : R(M.get_ring()),
     M(M),
     pfaffs(R->make_FreeModule(1)),
     p(p),

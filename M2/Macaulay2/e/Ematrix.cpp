@@ -1096,16 +1096,16 @@ Matrix EMatrix::random(const FreeModule *F, const FreeModule *G,
 EMatrix * EMatrix::lead_var_coefficient(EMatrix * &monoms) const
 {
   Matrix result(rows());
-  monoms = Matrix(Ring_of()->make_FreeModule(1));
+  monoms = Matrix(get_ring()->make_FreeModule(1));
   int var, exp;
   for (int i=0; i<n_cols(); i++)
     {
       vec u = elem(i);
       vec v = rows()->lead_var_coefficient(u, var, exp);
       result.append(v);
-      ring_elem a = Ring_of()->var(var,exp);
+      ring_elem a = get_ring()->var(var,exp);
       vec w = monoms.rows()->term(0,a);
-      Ring_of()->remove(a);
+      get_ring()->remove(a);
       monoms.append(w);
     }
   return result;
@@ -1236,9 +1236,9 @@ MonomialIdeal EMatrix::make_monideal(int n) const
     }
 
   // If the base ring is a quotient ring, include these lead monomials.
-  if (Ring_of()->is_quotient_poly_ring())
+  if (get_ring()->is_quotient_poly_ring())
     {
-      MonomialIdeal Rideal = Ring_of()->get_quotient_monomials();
+      MonomialIdeal Rideal = get_ring()->get_quotient_monomials();
       for (Index<MonomialIdeal> j = Rideal.first(); j.valid(); j++)
 	{
 	  Bag *b = new Bag(-1, Rideal[j]->monom());
@@ -1246,14 +1246,14 @@ MonomialIdeal EMatrix::make_monideal(int n) const
 	}
     }
 
-  MonomialIdeal result(Ring_of(), new_elems);
+  MonomialIdeal result(get_ring(), new_elems);
   return result;
 }
 
 MonomialIdeal EMatrix::make_skew_monideal(int n) const
 {
   MonomialIdeal result = make_monideal(n);
-  const Monoid *M = Ring_of()->Nmonoms();
+  const Monoid *M = get_ring()->Nmonoms();
   if (M != NULL && M->is_skew())
     {
       intarray vp;
@@ -1294,7 +1294,7 @@ void EMatrix::symm1(EMatrix * &result,
 	{
 	  ring_elem g = elem(0,i);
 	  vec h = result.rows()->mult(g, f);
-	  Ring_of()->remove(g);
+	  get_ring()->remove(g);
 	  symm1(result, h, i, pow-1);
 	}
       result.rows()->remove(f);
@@ -1333,11 +1333,11 @@ static const Monoid * kb_D;
 
 void EMatrix::k_basis_insert() const
 {
-  Ring_of()->Nmonoms()->from_expvector(kb_exp, kb_mon);
-  Ring_of()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
-  ring_elem tmp = Ring_of()->term(Ring_of()->Ncoeffs()->from_int(1), kb_mon);
+  get_ring()->Nmonoms()->from_expvector(kb_exp, kb_mon);
+  get_ring()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
+  ring_elem tmp = get_ring()->term(get_ring()->Ncoeffs()->from_int(1), kb_mon);
   kb_result.append(rows()->mult(tmp, kb_vec));
-  Ring_of()->remove(tmp);
+  get_ring()->remove(tmp);
 }
 void EMatrix::k_basis0(int firstvar) const
     // Recursively add to the result matrix all monomials in the
@@ -1345,15 +1345,15 @@ void EMatrix::k_basis0(int firstvar) const
 {
   for (int i=firstvar; i<kb_n_vars; i++)
     {
-      if (Ring_of()->Nmonoms()->is_skew() &&
-	    Ring_of()->Nmonoms()->is_skew_var(i) &&
+      if (get_ring()->Nmonoms()->is_skew() &&
+	    get_ring()->Nmonoms()->is_skew_var(i) &&
 	    kb_exp[i] >= 1)
 	{
 	  continue;
 	}
 
       kb_exp[i]++;
-      kb_D->mult(kb_exp_degree, Ring_of()->Nmonoms()->degree_of_var(i),
+      kb_D->mult(kb_exp_degree, get_ring()->Nmonoms()->degree_of_var(i),
 		     kb_exp_degree);
 
       int cmp = kb_D->primary_value(kb_exp_degree) - kb_D->primary_value(kb_deg);
@@ -1379,7 +1379,7 @@ void EMatrix::k_basis0(int firstvar) const
 	}
 
       kb_exp[i]--;
-      kb_D->divide(kb_exp_degree, Ring_of()->Nmonoms()->degree_of_var(i),
+      kb_D->divide(kb_exp_degree, get_ring()->Nmonoms()->degree_of_var(i),
 		   kb_exp_degree);
     }
 }
@@ -1394,10 +1394,10 @@ EMatrix * EMatrix::k_basis(EMatrix * bot, const int *d, int do_trunc) const
 {
   kb_do_trunc = do_trunc;
   kb_result = Matrix(rows());
-  kb_n_vars = Ring_of()->n_vars();
-  kb_D = Ring_of()->degree_monoid();
+  kb_n_vars = get_ring()->n_vars();
+  kb_D = get_ring()->degree_monoid();
 
-  kb_mon = Ring_of()->Nmonoms()->make_one();
+  kb_mon = get_ring()->Nmonoms()->make_one();
   kb_deg = kb_D->make_one();
   intarray kb_exp_a;
   kb_exp = kb_exp_a.alloc(kb_n_vars);
@@ -1427,7 +1427,7 @@ EMatrix * EMatrix::k_basis(EMatrix * bot, const int *d, int do_trunc) const
 	      
 	      kb_exp_a.shrink(0);
 	      varpower::to_ntuple(kb_n_vars, b->monom().raw(), kb_exp_a);
-	      Ring_of()->Nmonoms()->degree_of_varpower(b->monom().raw(), 
+	      get_ring()->Nmonoms()->degree_of_varpower(b->monom().raw(), 
 						       kb_exp_degree);
 
 	      int cmp = kb_D->primary_value(kb_exp_degree) 
@@ -1452,8 +1452,8 @@ EMatrix * EMatrix::k_basis(EMatrix * bot, const int *d, int do_trunc) const
   kb_D->remove(kb_deg);
   kb_D->remove(kb_exp_degree);
   kb_D->remove(e);
-  Ring_of()->Nmonoms()->remove(kb_mon);
-  kb_result = Matrix(Ring_of()); // This is so no large global data will be laying around.
+  get_ring()->Nmonoms()->remove(kb_mon);
+  kb_result = Matrix(get_ring()); // This is so no large global data will be laying around.
 
   return result;
 }
@@ -1463,16 +1463,16 @@ void EMatrix::k_basis1(int firstvar) const
     // Recursively add to the result matrix all monomials in the
     // variables 0..topvar having degree 'deg' which are not in 'mi'.
 {
-  Ring_of()->Nmonoms()->from_expvector(kb_exp, kb_mon);
-  Ring_of()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
-  ring_elem tmp = Ring_of()->term(Ring_of()->Ncoeffs()->from_int(1), kb_mon);
+  get_ring()->Nmonoms()->from_expvector(kb_exp, kb_mon);
+  get_ring()->Nmonoms()->divide(kb_mon, kb_vec->monom, kb_mon);
+  ring_elem tmp = get_ring()->term(get_ring()->Ncoeffs()->from_int(1), kb_mon);
   kb_result.append(rows()->mult(tmp, kb_vec));
-  Ring_of()->remove(tmp);
+  get_ring()->remove(tmp);
 
   for (int i=firstvar; i<kb_n_vars; i++)
     {
-      if (Ring_of()->Nmonoms()->is_skew() &&
-	    Ring_of()->Nmonoms()->is_skew_var(i) &&
+      if (get_ring()->Nmonoms()->is_skew() &&
+	    get_ring()->Nmonoms()->is_skew_var(i) &&
 	    kb_exp[i] >= 1)
 	{
 	  continue;
@@ -1494,9 +1494,9 @@ EMatrix * EMatrix::k_basis(EMatrix * bot) const
     // finite dimension, and if so, return a basis.
 {
   kb_result = Matrix(rows());
-  kb_n_vars = Ring_of()->n_vars();
+  kb_n_vars = get_ring()->n_vars();
 
-  kb_mon = Ring_of()->Nmonoms()->make_one();
+  kb_mon = get_ring()->Nmonoms()->make_one();
   intarray kb_exp_a;
   kb_exp = kb_exp_a.alloc(kb_n_vars);
 
@@ -1523,18 +1523,18 @@ EMatrix * EMatrix::k_basis(EMatrix * bot) const
 	}
     }
 
-  Ring_of()->Nmonoms()->remove(kb_mon);  
+  get_ring()->Nmonoms()->remove(kb_mon);  
   Matrix result = kb_result;
-  kb_result = Matrix(Ring_of()); // This is so no large global data will be laying around.
+  kb_result = Matrix(get_ring()); // This is so no large global data will be laying around.
   return result;
 }
 
 EMatrix::EMatrix(const MonomialIdeal &mi) 
 { 
-  const FreeModule *r = mi.Ring_of()->make_FreeModule(1);
-  int *one = r->Ring_of()->degree_monoid()->make_one();
+  const FreeModule *r = mi.get_ring()->make_FreeModule(1);
+  int *one = r->get_ring()->degree_monoid()->make_one();
   obj = new Matrix_rec(r,r->new_free(),one);
-  r->Ring_of()->degree_monoid()->remove(one);
+  r->get_ring()->degree_monoid()->remove(one);
 
   append_monideal(mi,0);
 }
@@ -1562,7 +1562,7 @@ void EMatrix::minimal_lead_terms_ZZ(intarray &result) const
   array<TermIdeal *> mis;
   const array<vec> vecs = obj->entries;
   rows()->sort(vecs, degs, 0, 1, indices);
-  const PolynomialRing *P = Ring_of()->cast_to_PolynomialRing();
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   const FreeModule *Rsyz = P->get_Rsyz();
   FreeModule *Gsyz = P->make_FreeModule(vecs.length());
   bump_up(Gsyz);
@@ -1594,7 +1594,7 @@ void EMatrix::minimal_lead_terms_ZZ(intarray &result) const
 Matrix EMatrix::minimal_lead_terms_ZZ() const
 {
   int x;
-  const PolynomialRing *P = Ring_of()->cast_to_PolynomialRing();
+  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   FreeModule *Gsyz = P->make_FreeModule(n_cols());
   bump_up(Gsyz);
   array< queue<tagged_term *> > allterms;
@@ -1634,7 +1634,7 @@ Matrix EMatrix::minimal_lead_terms_ZZ() const
 
 void EMatrix::minimal_lead_terms(intarray &result) const
 {
-  if (Ring_of()->Ncoeffs()->is_Z())
+  if (get_ring()->Ncoeffs()->is_Z())
     {
       minimal_lead_terms_ZZ(result);
       return;
@@ -1645,7 +1645,7 @@ void EMatrix::minimal_lead_terms(intarray &result) const
   const array<vec> vecs = obj->entries;
   rows()->sort(vecs, degs, 0, 1, indices);
   for (int x=0; x<n_cols(); x++)
-    mis.append(MonomialIdeal(Ring_of()));
+    mis.append(MonomialIdeal(get_ring()));
   for (int i=0; i<vecs.length(); i++)
     {
       vec v = vecs[indices[i]];

@@ -9,7 +9,7 @@ extern "C" char system_interrupted;
 extern int comp_printlevel;
 
 MatrixComputation::MatrixComputation(const Matrix &m, bool do_rowchange, bool do_colchange)
-  : R(m.Ring_of())
+  : R(m.get_ring())
 {
   gens = new SparseMutableMatrix(m);
   bump_up(gens);

@@ -13,7 +13,7 @@ stash *GBinhom_comp::mystash;
 void GBinhom_comp::set_up0(const Matrix &m, int csyz, int nsyz)
 {
   int i;
-  R = m.Ring_of()->cast_to_PolynomialRing();
+  R = m.get_ring()->cast_to_PolynomialRing();
   if (R == NULL)
     {
       gError << "ring is not a polynomial ring";
@@ -321,16 +321,19 @@ void GBinhom_comp::find_pairs(gb_elem *p)
 
   // Add in syzygies arising from a base ring
 
-  if (F->is_quotient_ring)
-    for (j = R->Rideal.first(); j.valid(); j++)
-      {
-	Nterm * f = (Nterm *) R->Rideal[j]->basis_ptr();
-	M->lcm(f->monom, p->f->monom, find_pairs_lcm);
-	vplcm.shrink(0);
-	M->to_varpower(find_pairs_lcm, vplcm);
-	q = new_ring_pair(p, find_pairs_lcm);
-	elems.insert(new Bag(q, vplcm));
-      }
+  if (R->is_quotient_ring())
+    {
+      const MonomialIdeal &Rideal = R->get_quotient_monomials();
+      for (j = Rideal.first(); j.valid(); j++)
+	{
+	  Nterm * f = (Nterm *) Rideal[j]->basis_ptr();
+	  M->lcm(f->monom, p->f->monom, find_pairs_lcm);
+	  vplcm.shrink(0);
+	  M->to_varpower(find_pairs_lcm, vplcm);
+	  q = new_ring_pair(p, find_pairs_lcm);
+	  elems.insert(new Bag(q, vplcm));
+	}
+    }
 
   // Add in syzygies arising as s-pairs
   for (gb_elem *s = gb->next_min; s != NULL; s = s->next_min)
@@ -482,7 +485,8 @@ int GBinhom_comp::gb_reduce(vec &f, vec &fsyz)
     {
       Bag *b;
       M->to_expvector(f->monom, div_totalexp);
-      if (F->is_quotient_ring && R->Rideal.search_expvector(div_totalexp, b))
+      if (R->is_quotient_ring() 
+	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  F->imp_ring_cancel_lead_term(f, g, coeff, reduce_ndiv);
@@ -538,12 +542,13 @@ int GBinhom_comp::gb_geo_reduce(vec &f, vec &fsyz)
   vecHeap fsyzb(Fsyz);
   fb.add(f);
   fsyzb.add(fsyz);
-  vecterm *lead;
+  const vecterm *lead;
   while ((lead = fb.get_lead_term()) != NULL)
     {
       Bag *b;
       M->to_expvector(lead->monom, div_totalexp);
-      if (F->is_quotient_ring && R->Rideal.search_expvector(div_totalexp, b))
+      if (R->is_quotient_ring()
+	  && R->get_quotient_monomials().search_expvector(div_totalexp, b))
 	{
 	  Nterm *g = (Nterm *) b->basis_ptr();
 	  M->divide(lead->monom, g->monom, reduce_ndiv);

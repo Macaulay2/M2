@@ -46,10 +46,10 @@ public:
 
   vec get_value() { return obj->val; }
   const vec get_value() const { return obj->val; }
-  const Ring    * Ring_of()  const  { return obj->F->Ring_of(); }
+  const Ring    * get_ring()  const  { return obj->F->get_ring(); }
   const FreeModule *free_of() const { return obj->F; }
 
-  const Monoid *degree_monoid() const { return Ring_of()->degree_monoid(); }
+  const Monoid *degree_monoid() const { return get_ring()->degree_monoid(); }
 
   // vector arithmetic
 

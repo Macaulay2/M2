@@ -111,7 +111,7 @@ void partition_table::partition(MonomialIdeal &I, array<MonomialIdeal> &result)
 
   int first = result.length();
   for (k=0; k<n_sets; k++)
-    result.append(MonomialIdeal(I.Ring_of()));
+    result.append(MonomialIdeal(I.get_ring()));
 
   // Now partition the monomials
   Bag *b;
@@ -213,8 +213,8 @@ static void iquotient_and_sum(MonomialIdeal &I,
 		       MonomialIdeal &sum)
 {
   array< queue<Bag *> *> bins;
-  sum = MonomialIdeal(I.Ring_of());
-  quot = MonomialIdeal(I.Ring_of());
+  sum = MonomialIdeal(I.get_ring());
+  quot = MonomialIdeal(I.get_ring());
   Bag *bmin = new Bag(0);
   varpower::copy(m, bmin->monom());
   sum.insert_minimal(bmin);
@@ -280,7 +280,7 @@ void hilb_comp::reset()
   current->h1 = R->from_int(1);
 }
 hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix &m)
-: S(m.Ring_of()->cast_to_PolynomialRing()),
+: S(m.get_ring()->cast_to_PolynomialRing()),
   R(RR),
   M(S->Nmonoms()),
   D(S->degree_monoid()),
@@ -310,7 +310,7 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix &m)
 
 #if 0
 hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal &I)
-: S(I.Ring_of()->cast_to_PolynomialRing()),
+: S(I.get_ring()->cast_to_PolynomialRing()),
   R(RR),
   M(S->Nmonoms()),
   D(S->degree_monoid()),
@@ -577,7 +577,7 @@ void hilb_comp::stats() const
 }
 int hilb_comp::hilbertSeries(const Matrix &M, RingElement &result)
 {
-  const PolynomialRing *P = M.Ring_of()->HilbertRing();
+  const PolynomialRing *P = M.get_ring()->HilbertRing();
   hilb_comp *hf = new hilb_comp(P,M);
   int retval = hf->calc(-1);
   if (retval != COMP_DONE) return 1;
@@ -588,7 +588,7 @@ int hilb_comp::hilbertSeries(const Matrix &M, RingElement &result)
 #if 0
 RingElement hilb_comp::hilbertSeries(const FreeModule *F)
 {
-  const Ring *P = F->Ring_of()->HilbertRing();
+  const Ring *P = F->get_ring()->HilbertRing();
   RingElement result(P);
   for (int i=0; i<F->rank(); i++)
     result += RingElement(P,...);
@@ -601,7 +601,7 @@ int hilb_comp::coeff_of(const RingElement &h, int deg)
   // This is a bit of a kludge of a routine.  The idea is to loop through
   // all the terms of the polynomial h, expand out the exponent, and to add
   // up the small integer values of the coefficients of those that have exp[0]=deg.
-  const PolynomialRing *P = h.Ring_of()->cast_to_PolynomialRing();
+  const PolynomialRing *P = h.get_ring()->cast_to_PolynomialRing();
 
   int *exp = new int[P->n_vars()];
   int result = 0;

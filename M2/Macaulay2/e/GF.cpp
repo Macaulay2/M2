@@ -11,10 +11,10 @@
 #include "serial.hpp"
 
 GF::GF(const RingElement prim)
-: Ring(prim.Ring_of()->charac(),
+: Ring(prim.get_ring()->charac(),
 	1,1,this /* Visual C WARNING */,trivial_monoid, 
-	prim.Ring_of()->degree_monoid()),
-  K(prim.Ring_of()->cast_to_PolynomialRing()),
+	prim.get_ring()->degree_monoid()),
+  K(prim.get_ring()->cast_to_PolynomialRing()),
   primitive_element(prim)
 {
   int i,j;
@@ -178,7 +178,7 @@ void GF::elem_bin_out(buffer &o, const ring_elem a) const
 
 ring_elem GF::eval(const RingMap *map, const ring_elem f) const
 {
-  return map->Ring_of()->power(map->elem(0), f.int_val);
+  return map->get_ring()->power(map->elem(0), f.int_val);
 }
 
 ring_elem GF::from_int(int n) const

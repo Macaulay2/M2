@@ -9,7 +9,7 @@ extern int comp_printlevel;
 
 DetComputation::DetComputation(const Matrix &M, int p,
 			       bool do_exterior)
-  : R(M.Ring_of()),
+  : R(M.get_ring()),
     M(M),
     done(false),
     p(p),

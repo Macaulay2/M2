@@ -130,6 +130,7 @@ private:
   int n_pairs;
   int n_computed;
   int n_saved_gcd;
+  int n_saved_gcd_choice;
   int n_saved_lcm;
 
   // Syzygy type
@@ -194,7 +195,7 @@ private:
   es_pair *merge_pairs(es_pair *f, es_pair *g) const;
   void sort_pairs(es_pair * &p) const;
 
-  void choose_nice_pair(es_pair *&p) const;
+  void choose_nice_pair(es_pair *&p);
   void choose_unique_pairs(es_pair * &p) const;
   
 private:

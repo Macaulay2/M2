@@ -54,7 +54,7 @@ FreeModule *makeSchreyerFreeModule(Ring *R, int rank,
 FreeModule *makeSchreyerFreeModule(const Matrix &m)
 {
   int i;
-  const Ring *R = m.Ring_of();
+  const Ring *R = m.get_ring();
   const Monoid *M = R->Nmonoms();
   FreeModule *F = R->make_FreeModule();
   int rk = m.n_cols();
@@ -395,7 +395,7 @@ void cmd_Nvec_homogenize(object &ov, object &ovar, object &owts)
   Vector v = ov->cast_to_Vector();
   int var = ovar->int_of();
   intarray *wts = owts->intarray_of();
-  const Ring *R = v.Ring_of();
+  const Ring *R = v.get_ring();
   if (var < 0 || var >= R->n_vars())
     {
       gError << "homogenization: improper ring variable";
@@ -421,7 +421,7 @@ void cmd_Nvec_homogenize1(object &ov, object &ovar, object &odeg, object &owts)
   int var = ovar->int_of();
   int deg = odeg->int_of();
   intarray *wts = owts->intarray_of();
-  const Ring *R = v.Ring_of();
+  const Ring *R = v.get_ring();
   if (var < 0 || var >= R->n_vars())
     {
       gError << "homogenization: improper ring variable";

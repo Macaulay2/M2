@@ -15,7 +15,7 @@ stash *GBZZ_comp::mystash;
 void GBZZ_comp::set_up0(const Matrix &m, int csyz, int nsyz)
 {
   int i;
-  A = m.Ring_of()->cast_to_PolynomialRing();
+  A = m.get_ring()->cast_to_PolynomialRing();
   if (A == NULL)
     {
       gError << "ring is not a polynomial ring";

@@ -125,14 +125,14 @@ void GaussElimComputation::reduce(gm_elem *&p, gm_elem *q)
   
   ring_elem c1 = p->f->coeff;
   ring_elem c2 = q->f->coeff;
-  ring_elem d2 = gens.Ring_of()->negate(c2);
+  ring_elem d2 = gens.get_ring()->negate(c2);
   vec v1 = gens.rows()->mult(c1, q->f);
   vec v2 = gens.rows()->mult(d2, p->f);
   vec s1 = syz.rows()->mult(c1, q->fsyz);
   vec s2 = syz.rows()->mult(d2, p->fsyz);
   gens.rows()->remove(q->f);
   syz.rows()->remove(q->fsyz);
-  gens.Ring_of()->remove(d2);
+  gens.get_ring()->remove(d2);
   gens.rows()->add_to(v1, v2);
   syz.rows()->add_to(s1, s2);
   q->f = v1;

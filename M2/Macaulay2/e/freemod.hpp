@@ -74,7 +74,7 @@ public:
   void append(const int *d, const int *basemonom); // append to a FREE_SCHREYER
   void append(const int *d, const int *basemonom, int comparenum); // append to a FREE_SCHREYER
 
-  const Ring *  Ring_of()      const { return R; }
+  const Ring *  get_ring()      const { return R; }
   const Ring *  Ncoeffs()       const { return K; }
   const Monoid * Nmonoms()       const { return M; }
   const Monoid * degree_monoid() const { return R->degree_monoid(); }

@@ -37,7 +37,7 @@ public:
   int n_vars() const { return nvars; }
   int total_n_vars() const { return totalvars; }
 
-  const Ring * Ring_of() const { return this; }
+  const Ring * get_ring() const { return this; }
   const Ring *  Ncoeffs()       const { return K; }
   const Monoid * Nmonoms()       const { return M; }
   const Monoid * degree_monoid() const { return D; }
@@ -68,9 +68,6 @@ public:
   virtual bool is_expensive() const = 0;
   virtual bool is_quotient_poly_ring() const = 0;
   virtual bool is_commutative_ring() const { return true; }
-
-  // Only valid for polynomial rings, and their quotients: otherwise returns the zero ideal
-  virtual MonomialIdeal get_quotient_monomials() const;
 
   virtual void text_out(buffer &o) const = 0;
 

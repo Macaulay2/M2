@@ -41,7 +41,7 @@ void cmd_gb_make(object &om,
 		 object &ostrategy)
 {
   Matrix m = om->cast_to_Matrix();
-  const Ring *R = m.Ring_of();
+  const Ring *R = m.get_ring();
   int dosyz = odosyz->int_of();
   int nsyz = osyz->int_of();
   int strategy = ostrategy->int_of();
@@ -101,7 +101,7 @@ void cmd_gb_make1(object &om,
       return;
     }
   Matrix m = om->cast_to_Matrix();
-  const Ring *R = m.Ring_of();
+  const Ring *R = m.get_ring();
   int nsyz = osyz->int_of();
   int strategy = ostrategy->int_of();
   RingElement hf = ohf->cast_to_RingElement();
@@ -137,7 +137,7 @@ void cmd_NGB_make(object &om,
 		 object &obits)
 {
   Matrix m = om->cast_to_Matrix();
-  const Ring *R = m.Ring_of();
+  const Ring *R = m.get_ring();
   int dosyz = odosyz->int_of();
   int bits = obits->int_of();
   if (bits <= 0) bits = -1;
@@ -168,7 +168,7 @@ void cmd_NGB_make1(object &om,
 
 object_element *make_forceGB(Matrix gens, Matrix gb, Matrix change, Matrix syz)
 {
-  const Ring *R = gens.Ring_of();
+  const Ring *R = gens.get_ring();
   if (R->is_poly_ring())
     {
       if (R->Ncoeffs()->is_field())
@@ -315,7 +315,7 @@ void cmd_hilb_make(object &oR, object &oM)
       return;
     }
   Matrix M = oM->cast_to_Matrix();
-  if (M.Ring_of()->degree_monoid() != P->Nmonoms())
+  if (M.get_ring()->degree_monoid() != P->Nmonoms())
     {
       gError << "Hilbert function: result monoid must be degree monoid";
       return;
@@ -333,7 +333,7 @@ void cmd_hilb1_make(object &oR, object &omi)
       return;
     }
   MonomialIdeal mi = omi->cast_to_MonomialIdeal();
-  if (mi.Ring_of()->degree_monoid() != P->Nmonoms())
+  if (mi.get_ring()->degree_monoid() != P->Nmonoms())
     {
       gError << "Hilbert function: result monoid must be degree monoid";
       return;
@@ -496,7 +496,7 @@ void cmd_smith_make(object &om, object &o1, object &o2)
   bool do_rowchange = (o1->int_of() != 0);
   bool do_colchange = (o2->int_of() != 0);
   // Error check here: ring of 'm' must be a computatable PID
-  if (!m.Ring_of()->is_pid())
+  if (!m.get_ring()->is_pid())
     {
       gError << "Smith normal form requires the base ring to be a computable P.I.D.";
       return;
@@ -573,7 +573,7 @@ void cmd_LLL_calc(object &o1, object &o2, object &o3)
 static void cmd_kerGB_make(object &om)
 {
   Matrix m = om->cast_to_Matrix();
-  const PolynomialRing *R = m.Ring_of()->cast_to_PolynomialRing();
+  const PolynomialRing *R = m.get_ring()->cast_to_PolynomialRing();
   if (R == 0)
     {
       gError << "expected polynomial ring";

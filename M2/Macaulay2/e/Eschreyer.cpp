@@ -6,9 +6,9 @@
 #include "text_io.hpp"
 
 GBKernelComputation::GBKernelComputation(const Matrix &m)
-  : R(m.Ring_of()->cast_to_PolynomialRing()),
-    K(m.Ring_of()->Ncoeffs()),
-    M(m.Ring_of()->Nmonoms()),
+  : R(m.get_ring()->cast_to_PolynomialRing()),
+    K(m.get_ring()->Ncoeffs()),
+    M(m.get_ring()->Nmonoms()),
     F(m.rows()),
     G(m.cols()),
     n_ones(0),
