@@ -70,3 +70,8 @@ assert(null === r)
 
 r = assert( 44 === scan({3,5,7,44,11,13,15}, j -> if j === 44 then 4 * break j))
 assert(null === r)
+
+
+any({1,2,3}, i -> break 4)
+select({1,2,3,4}, i -> break 4 )
+

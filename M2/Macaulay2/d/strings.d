@@ -26,15 +26,6 @@ export strchr(s:string,c:char):bool := (
      foreach b in s do if b == c then return(true);
      false);
 
-init():string := (
-     t := new string len 256 at i do provide char(i);
-     L := "abcdefghijklmnopqrstuvwxyz";
-     U := "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-     for i from 0 to length(L)-1 do t.(int(L.i)) = U.i;
-     t);
-
-toupper := init();
-
 export (s:string) < (t:string) : bool := strcmp(s,t) == -1;
 export (s:string) >= (t:string) : bool := !(s<t);
 export (s:string) > (t:string) : bool := t<s;

@@ -183,9 +183,6 @@ bump();
 bump();
      export ColonS := makeKeyword(binaryright(":"));
 bump();
-     -- export ColonColonS := makeKeyword(binaryleft("::"));
-     export ColonColonS := ColonS;
-bump();
      export BarS := makeKeyword(binaryleft("|"));
 bump();
      export HatHatS := makeKeyword(binaryleft("^^"));
@@ -240,6 +237,8 @@ parens(left:string,right:string,prec:int,binaryStrength:int,unaryStrength:int):W
      install(left,l);
      install(right,r);
      addmatch(left,right);
+     makeKeyword(l);
+     makeKeyword(r);
      l);
 
      export leftparen   := parens("(",")",precSpace,  precRightParen,precRightParen);

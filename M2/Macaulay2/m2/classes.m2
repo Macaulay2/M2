@@ -100,8 +100,6 @@ exit1 := ret -> (runEndFunctions(); exit ret)
 erase symbol exit
 exit = exit1
 
-erase symbol [
-
 -- miscellaneous stuff:
 
 Function @@ Function := Function => (f,g) -> x -> f g x
