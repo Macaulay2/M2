@@ -1898,11 +1898,11 @@ export rawStartComputation(e:Expr):Expr := (
      else WrongArg("a raw computation"));
 setupfun("rawStartComputation",rawStartComputation);
 
-export rawStatusGB(e:Expr):Expr := (
+export rawStatusComputation(e:Expr):Expr := (
      when e is G:RawComputation do (
 	  completionDegree := 0;
 	  stoppingReason := 0;
-	  ret := Ccode(int,"rawStatusGB(",
+	  ret := Ccode(int,"rawStatusComputation(",
 	       "(Computation*)",G,",",
 	       "&",completionDegree,",",
 	       "&",stoppingReason,
@@ -1912,7 +1912,7 @@ export rawStatusGB(e:Expr):Expr := (
 	  )
      else WrongArg("a raw computation")
      );
-setupfun("rawStatusGB", rawStatusGB);
+setupfun("rawStatusComputation", rawStatusComputation);
 
 export rawGB(e:Expr):Expr := (
      when e is s:Sequence do

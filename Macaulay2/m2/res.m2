@@ -207,13 +207,6 @@ nmonoms := g -> (
     sendgg(ggPush g, ggnmonoms);
     eePopIntarray())
 
-statusDefaults := new OptionTable from {
-     TotalPairs => true,
-     PairsRemaining => false,
-     Monomials => false
-     }
-status = method (Options => statusDefaults)
-
 status Resolution := options -> (r) -> (
      v := {};
      lab := {};
@@ -276,5 +269,5 @@ summary ChainComplex := C -> if C.?Resolution then summary C.Resolution
 testDebugging = () -> (commandInterpreter (() -> ());)
 
 -- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
 -- End:
