@@ -123,7 +123,8 @@ here, as some of the later ones depend on some of the earlier ones.
   home page: http://www.netlib.org/lapack/
      get at: http://www.netlib.org/lapack/lapack.tgz
       email: lapack@cs.utk.edu
-    license: unknown -- the README file says it is copyright but freely available
+    license: copyright but "freely available", "it can be included in commercial packages".
+	     See the users' guide at http://www.netlib.org/lapack/lug/node13.html
       notes: Provides liblapack.a
 	     Includes a copy of blas.
 
