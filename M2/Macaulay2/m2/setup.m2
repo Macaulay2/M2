@@ -150,8 +150,8 @@ load "loads.m2"
 
 setrecursionlimit 300
 
-clear = () -> (
-     clearAll();
+clearAll = () -> (
+     clearOutput();
      scan(userSymbols(), i -> i <- i);
      )
 
@@ -184,7 +184,10 @@ document { quote userSymbols,
      }
 
 listUserSymbols = new Command from (
-     type -> scan(userSymbols type, s -> << s << " : " << class value s << endl)
+     type -> (
+	  << endl;
+	  scan(userSymbols type, s -> << "    " << s << ": " << class value s << endl);
+	  )
      )
 
 document { quote listUserSymbols,
@@ -199,7 +202,7 @@ document { quote listUserSymbols,
      SEEALSO {"userSymbols"}
      }
 
-clearAll = new Command from (
+clearOutput = new Command from (
      () -> (
      	  scan(keys outputSymbols, s -> (
 	       	    remove(outputSymbols,s);
@@ -208,9 +211,18 @@ clearAll = new Command from (
      	  )
      )
 
+document { quote clearOutput,
+     TT "clearOutput()", " -- attempts to release memory by clearing the values
+     retained by the output line symbols.",
+     PARA,
+     SEEALSO { "clearAll" }
+     }
+
 document { quote clearAll,
      TT "clearAll()", " -- attempts to release memory by clearing the values
-     retained by the output line symbols."
+     retained by the output line symbols and all the user symbols.",
+     PARA,
+     SEEALSO {"userSymbols", "clearOutput"}
      }
 
 -- leave this at the END of setup, to get a complete list of options

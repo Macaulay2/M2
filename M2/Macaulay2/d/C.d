@@ -16,7 +16,6 @@ import tanh(x:double):double;
 import exp(x:double):double;
 import log(x:double):double;
 import floor(x:double):double;
-import getpid():int;
 import alarm(x:int):int;
 import fork():int;
 rand():int ::= Ccode(int,"rand()");
@@ -27,7 +26,6 @@ export sqr(x:double):double := x*x;
 import close(fd:int):int;
 import isatty(fd:int):int;
 import dup2(fildes:int,fildes2:int):int;
-import sleep(t:int):int;
 
 -- grx stuff
 import getkey():char;

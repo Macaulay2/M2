@@ -1,6 +1,8 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 export string := array(char);
+import sleep(t:int):int;
+import getpid():int;
 import exit(x:int):void;
 import interruptShield:bool;
 import interrupted:bool;
