@@ -108,11 +108,20 @@ degree J0
 degree J1
 
 time GTZ0 J1;
+J2 = oo_1;
+time GTZ0 J2;
+J3 = oo_1;
+codim J3
+degree J3
+time GTZ0 J3;
 -----------------------------------------------------
 restart
 errorDepth = 0
 debug PrimaryDecomposition
+
 R = ZZ/32003[a,b,c,d,f,g,h,k,l,s,t,u,v,w,x,y,z, MonomialOrder=>GRevLexTiny]
+R = ZZ/32003[a,b,c,d,f,g,s,t,x,h,k,l,u,v,w,y,z, MonomialOrder=>{Eliminate 9, GRevLexTiny}]
+R = ZZ/32003[a,b,c,d,f,g,s,t,x,h,k,l,u,v,w,y,z, MonomialOrder=>{GRevLexTiny=>9, GRevLexTiny=>8}]
 I = ideal(
     -a*b-a*d+2*a*h,
     a*d-b*d-c*f-2*a*h+2*b*h+2*c*k,
@@ -125,6 +134,7 @@ I = ideal(
     -a+2*x,
     -b^2-c^2+2*b*x+2*c*y,
     -d^2-f^2-g^2+2*d*x+2*f*y+2*g*z)
+
 time decompose I -- 7.06 sec, or 5.53 sec
 time primaryDecomposition(I, Strategy=>SY)
 debug PrimaryDecomposition
@@ -139,4 +149,6 @@ time decompose L
 
 gbTrace = 3
 time (L1, M1) = GTZ0 I;
-
+time gens gb I;
+independentSets I
+leadTerm(1,gens gb I)
