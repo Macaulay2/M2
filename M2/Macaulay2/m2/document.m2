@@ -310,7 +310,7 @@ fixup ANCHOR     := identity
 fixup List       := z -> fixup SEQ z
 fixup Sequence   := z -> fixup SEQ z
 -- fixup Option
-fixup UL         := z -> splice apply(nonnull z, i -> fixup if class i === TO then TOH {i#0} else i)
+fixup UL         := z -> splice apply(nonnull z, i -> SEQ fixup if class i === TO then TOH {i#0} else i)
 fixup TO         := x -> TO if x#?1 then { makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { makeDocumentTag x#0 }
 fixup TO2        := x -> TO2{ makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 fixup TOH        := x -> TOH{ makeDocumentTag x#0 }
@@ -556,9 +556,9 @@ commentize := s -> if s =!= null then concatenate(" -- ",s)
 optTO := i -> (
      if getDoc i =!= null then (
      	  r := fixup TOH{i};
-	  (DocumentTag.FormattedKey first r, r))
+	  (DocumentTag.FormattedKey first r, SEQ r))
      else (
-	  (formatDocumentTag i, formatDocumentTagTO i)
+	  (formatDocumentTag i, SEQ formatDocumentTagTO i)
 	  )
      )
 optTOCLASS := i -> (					    -- this isn't different yet, work on it!
@@ -567,9 +567,9 @@ optTOCLASS := i -> (					    -- this isn't different yet, work on it!
 	  --      * alpha (a StateTable) -- recognizing alphabetic letters  (*note: alpha::.)
 	  -- fixup SEQ { TO i, " (", OFCLASS class value i, ")", commentize headline i }
 	  r := fixup TOH{i};
-	  (DocumentTag.FormattedKey first r, r))
+	  (DocumentTag.FormattedKey first r, SEQ r))
      else (
-	  (formatDocumentTag i, formatDocumentTagTO i)
+	  (formatDocumentTag i, SEQ formatDocumentTagTO i)
 	  )
      )
 

@@ -171,7 +171,7 @@ tex  HR := x -> ///
 
 html Hypertext := x -> concatenate("<P>",apply(x,html))
 
-html PARA := x -> (
+html PARA1 := html PARA := x -> (
      if #x === 0 then "\n<P>\n"
      else concatenate("\n<P>", apply(x,html),"<P>\n")
      )
