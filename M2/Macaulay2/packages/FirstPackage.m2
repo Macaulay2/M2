@@ -13,8 +13,8 @@ export(firstFunction)
 firstFunction = method(TypicalValue => String)
 firstFunction ZZ := String => n -> (
 	if n == 1
-	then print "Hello World!"
-	else print "D'oh!"	
+	then "Hello World!"
+	else "D'oh!"	
 	);
 
 beginDocumentation()

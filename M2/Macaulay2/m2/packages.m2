@@ -49,8 +49,7 @@ newPackage = method(
 	  Headline => null,
 	  Author => null,
 	  HomePage => null,
-	  Date => null,
-	  TopNodeName => null } )
+	  Date => null } )
 newPackage(String) := opts -> (title) -> (
      originalTitle := title;
      filename := baseFilename currentFileName;
@@ -86,7 +85,6 @@ newPackage(String) := opts -> (title) -> (
 	  "raw documentation" => new MutableHashTable,	    -- deposited here by 'document'
 	  "processed documentation" => new MutableHashTable,-- the output from 'documentation', look here first
 	  "example inputs" => new MutableHashTable,
-	  "top node name" => if opts.TopNodeName === null then title else opts.TopNodeName,
 	  "exported symbols" => new MutableList from {},
 	  "exported mutable symbols" => new MutableList from {},
 	  "example results" => new MutableHashTable,
@@ -186,7 +184,6 @@ saveCurrentPackage := currentPackage
 newPackage("Macaulay2", 
      DebuggingMode => debuggingMode, 
      Version => version#"VERSION", 
-     TopNodeName => "Macaulay 2",
      Headline => "A computer algebra system designed to support algebraic geometry")
 
 Macaulay2#"test inputs" = saveCurrentPackage#"test inputs"
@@ -280,8 +277,9 @@ needsPackage String := s -> (
      else load (s | ".m2")
      )
 
+forceLoadDocumentation = false
 beginDocumentation = () -> (
-     if currentPackage#?"processed documentation database" and isOpen currentPackage#"processed documentation database" then (
+     if not forceLoadDocumentation and currentPackage#?"processed documentation database" and isOpen currentPackage#"processed documentation database" then (
 	  stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
 	  return end;
 	  );

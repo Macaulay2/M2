@@ -308,17 +308,17 @@ net RawRingMap := o -> stack lines toString o
 
 -- lapck mutable matrices
 
-LMatrixRR.name = "RawMatrixRR"
-LMatrixRR.synonym = "raw real lapack matrix"
+RawMatrixRR.name = "RawMatrixRR"
+RawMatrixRR.synonym = "raw real lapack matrix"
 
-LMatrixRR == LMatrixRR := (v,w) -> v === w
-net LMatrixRR := o -> stack lines toString o
+RawMatrixRR == RawMatrixRR := (v,w) -> v === w
+net RawMatrixRR := o -> stack lines toString o
 
-LMatrixCC.name = "RawMatrixCC"
-LMatrixCC.synonym = "raw complex lapack matrix"
+RawMatrixCC.name = "RawMatrixCC"
+RawMatrixCC.synonym = "raw complex lapack matrix"
 
-LMatrixCC == LMatrixCC := (v,w) -> v === w
-net LMatrixCC := o -> stack lines toString o
+RawMatrixCC == RawMatrixCC := (v,w) -> v === w
+net RawMatrixCC := o -> stack lines toString o
 
 -- clean up
 
