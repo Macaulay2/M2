@@ -12,6 +12,7 @@ use basic;
 use convertr;
 use struct;
 use binding;
+use ctype;
 
 enlarge(object:HashTable):void := (
      oldTable := object.table;
@@ -856,7 +857,7 @@ export completions(s:string):array(string) := (
 	  is null do break
 	  is q:SymbolListCell do (
 	       t := q.entry.word.name;
-	       if 0 == strncmp(s,t,n) then v=append(v,t);
+	       if isalnum(t.0) && n <= length(t) && 0 == strncmp(s,t,n) then v=append(v,t);
 	       p = q.next; ));
      extract(v));
 
