@@ -3,6 +3,9 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+The 'dual' of a chain complex C now inserts the right sign in the
+differential maps.  Same for Hom(C,M).
+
 The operation of 'path' with 'load' has changed slightly -- no matter what
 the path is, we first look in the directory containing the file in which the
 call to 'load' is.  The makes it easy to load a set of related files stored
