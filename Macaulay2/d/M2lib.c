@@ -391,11 +391,12 @@ char **argv;
      actors5_NODENAME = tostring(NODENAME);
      actors5_REL = tostring(REL);
 #ifdef FACTORY
+     actors5_FACTORYVERSION = tostring(FACTORYVERSION);
      actors5_LIBFACVERSION = tostring(get_libfac_version());
 #else
-     actors5_LIBFACVERSION = tostring("'factory' not installed");
+     actors5_FACTORYVERSION = tostring("'factory' not installed");
+     actors5_LIBFACVERSION = tostring("'libfac' not installed");
 #endif
-     actors5_FACTORYVERSION = tostring(FACTORYVERSION);
      sprintf(READLINEVERSION,"%d.%d",(rl_readline_version>>8)&0xff,rl_readline_version&0xff);
      actors5_READLINEVERSION = tostring(READLINEVERSION);
      actors5_DATE = tostring(current_date);

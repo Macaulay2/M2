@@ -479,8 +479,8 @@ f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 --time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03
 --testfactor f
 f1 = rawMatrixDiff(mat{{x}},mat{{f}});
---f2 = rawGCD(f,rawMatrixEntry(f1,0,0)); -- CRASHES!!
-<< "rawGCD crashes on this one!" << endl;
+<< "rawGCD will crash on this one:" << endl;
+f2 = rawGCD(f,rawMatrixEntry(f1,0,0)); -- CRASHES!!
 
 needs "raw-util.m2"
 R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
