@@ -4,7 +4,10 @@ include $(TOPDIR)/Makeconf
 # CFLAGS =
 
 CPPFLAGS += -I../include
-EXES := echoout timestmp restart update screen
+EXES := echoout timestmp restart update 
+ifeq ($(OS),Linux)
+EXES += screen
+endif
 CFLAGS += -Wall
 
 all:: $(EXES)
