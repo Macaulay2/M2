@@ -152,7 +152,11 @@ static void interrupt_handler(int sig)
 	  if (isatty(STDIN) && isatty(STDOUT)) while (TRUE) {
 	       char buf[10];
 	       printf("\nAbort (y/n)? ");
-	       fgets(buf,sizeof(buf),stdin);
+	       fflush(stdout);
+	       if (NULL == fgets(buf,sizeof(buf),stdin)) {
+		    fprintf(stderr,"exiting\n");
+		    exit(1);
+	            }
 	       if (buf[0]=='y' || buf[0]=='Y') {
      		    trap();
 		    if (!interp_StopIfError && abort_jump_set) {

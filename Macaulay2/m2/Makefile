@@ -149,11 +149,13 @@ cache-tmp/Examples/FileNames ../cache/Macaulay2-pre : $(DUMPEDGFILES) \
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 
 all:: .gdbinit
-.gdbinit : 
+.gdbinit : .gdbinit.$(USER)
 	if [ -f ".gdbinit.$(USER)" ] ;\
 	then cp ".gdbinit.$(USER)" $@ ;\
 	else cp .gdbinit.dan $@ ;\
 	fi
+.gdbinit.$(USER) :
+	cp .gdbinit.dan $@
 
 backup : CVS/Entries
 CVS/Entries : $(GFILES)

@@ -978,7 +978,7 @@ html ITALIC := x -> concatenate("<I>",apply(x,html),"</I>")
 texMath TEX := tex TEX := identity
 
 net HEADLINE := texMath HEADLINE := tex HEADLINE := text HEADLINE := s -> ""
-html HEADLINE := s -> concatenate ( "<!--headline: " , s, "-->", newline )
+html HEADLINE := s -> concatenate ( "<!--headline: -- " , s, "-->", newline )
 
 
 texMath SEQ := tex SEQ := x -> concatenate(apply(x, tex))

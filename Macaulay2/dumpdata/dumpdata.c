@@ -152,7 +152,7 @@ int loaddata(char const *filename) {
   void *newbreak;
   int got_newbreak = 0;
   int nmaps = nummaps();
-  struct MAP dumpedmap, currmap[nmaps], dumpmaps[40];
+  struct MAP dumpedmap, currmap[nmaps], dumpmaps[80];
   int i, ndumps=0, j=0;
   int fd = open(filename,O_RDONLY);
   int installed_one = FALSE;
