@@ -15,20 +15,20 @@ void MemoryAllocator::new_slab()
   // grab a new slab, and chop it into element_size pieces, placing them
   // onto the free list.
   slab *new_slab = new slab;
-  new_slab->next = _top_slab;
-  _top_slab = new_slab;
+  new_slab->next = top_slab;
+  top_slab = new_slab;
 
   // Time to chop it up.
 
   char *prev = NULL;
-  char *current = _top_slab->a;
-  for (int i=0; i<NSLAB; i+=_size)
+  char *current = top_slab->a;
+  for (int i=0; i<NSLAB; i+=size)
     {
       *((char **) current) = prev;
       prev = current;
-      current += _size;
+      current += size;
     }
-  _freelist = prev;
+  freelist = prev;
 }
 
 
@@ -44,6 +44,7 @@ gbvector * GBRing::new_raw_term()
 exponents GBRing::exponents_make()
 {
   int *e = new int[_nvars]; // length is nvars
+  return e;
 }
 
 void GBRing::exponents_delete(exponents e)
@@ -62,8 +63,8 @@ class GRType_BASE : public GRType
 {
   friend class GRType;
 
-  const Ring *_R;
-  GRType_BASE(const Ring *R) : GRType(NULL), _R(R) {}
+  const Ring *R_;
+  GRType_BASE(const Ring *R) : GRType(NULL), R_(R) {}
 public:
   GRType::tag type() const { return BASE; }
 
@@ -78,7 +79,7 @@ public:
 			      int *exp) const
   {
     // To use this, the corresponding ring MUST have division defined
-    return _R->divide(coeff, denom);
+    return R_->divide(coeff, denom);
   }
 
   void from_ringelem(gbvectorHeap &H, 
@@ -104,13 +105,13 @@ class GRType_QQ : public GRType
   // This is essentially identical to GRType_FRAC
   // so maybe they should be a template?
   friend class GRType;
-  const QQ *_KR;
-  ring_elem _one;
-  GRType_QQ(const QQ *KR) : GRType(0), _KR(KR)
+  const QQ *KR_;
+  ring_elem one_;
+  GRType_QQ(const QQ *KR) : GRType(0), KR_(KR)
   {
     const Ring *R = ZZ;
-    _next = R->get_GRType();
-    _one = R->from_int(1);
+    next_ = R->get_GRType();
+    one_ = R->from_int(1);
   }
 public:
   GRType::tag type() const { return FRAC_QQ; }
@@ -118,16 +119,16 @@ public:
   ring_elem to_ringelem(ring_elem coeff, 
 			const int *exp) const
   {
-    ring_elem a = _next->to_ringelem(coeff,exp);
-    return _KR->fraction(a, _one);
+    ring_elem a = next_->to_ringelem(coeff,exp);
+    return KR_->fraction(a, one_);
   }
 
   ring_elem to_ringelem_denom(ring_elem coeff, 
 			      ring_elem denom, 
 			      int *exp) const
   {
-    ring_elem a = _next->to_ringelem(coeff,exp);
-    return _KR->fraction(a, denom);
+    ring_elem a = next_->to_ringelem(coeff,exp);
+    return KR_->fraction(a, denom);
   }
 
   void from_ringelem(gbvectorHeap &H, 
@@ -136,21 +137,21 @@ public:
 		     int *exp,
 		     int firstvar) const
   {
-    ring_elem a = _KR->numerator(coeff);
-    _next->from_ringelem(H, a, comp, exp, firstvar);
+    ring_elem a = KR_->numerator(coeff);
+    next_->from_ringelem(H, a, comp, exp, firstvar);
   }
 };
 
 class GRType_FRAC : public GRType
 {
   friend class GRType;
-  const FractionField *_KR;
-  ring_elem _one;
-  GRType_FRAC(const FractionField *KR) : GRType(0), _KR(KR)
+  const FractionField *KR_;
+  ring_elem one_;
+  GRType_FRAC(const FractionField *KR) : GRType(0), KR_(KR)
   {
     const Ring *R = KR->get_ring();
-    _next = R->get_GRType();
-    _one = R->from_int(1);
+    next_ = R->get_GRType();
+    one_ = R->from_int(1);
   }
 public:
   GRType::tag type() const { return FRAC; }
@@ -158,16 +159,16 @@ public:
   ring_elem to_ringelem(ring_elem coeff, 
 			const int *exp) const
   {
-    ring_elem a = _next->to_ringelem(coeff,exp);
-    return _KR->fraction(a, _one);
+    ring_elem a = next_->to_ringelem(coeff,exp);
+    return KR_->fraction(a, one_);
   }
 
   ring_elem to_ringelem_denom(ring_elem coeff, 
 			      ring_elem denom, 
 			      int *exp) const
   {
-    ring_elem a = _next->to_ringelem(coeff,exp);
-    return _KR->fraction(a, denom);
+    ring_elem a = next_->to_ringelem(coeff,exp);
+    return KR_->fraction(a, denom);
   }
 
   void from_ringelem(gbvectorHeap &H, 
@@ -176,8 +177,8 @@ public:
 		     int *exp,
 		     int firstvar) const
   {
-    ring_elem a = _KR->numerator(coeff);
-    _next->from_ringelem(H, a, comp, exp, firstvar);
+    ring_elem a = KR_->numerator(coeff);
+    next_->from_ringelem(H, a, comp, exp, firstvar);
   }
 };
 
@@ -191,7 +192,7 @@ class GRType_POLY : public GRType
   GRType_POLY(const PolynomialRing *P) : GRType(0), P(P)
   {
     const Ring *R = P->Ncoeffs();
-    _next = R->get_GRType();
+    next_ = R->get_GRType();
     _n_orig_vars = R->n_vars();
     _MONOM1 = P->Nmonoms()->make_one();
   }
@@ -201,7 +202,7 @@ public:
   ring_elem to_ringelem(ring_elem coeff, 
 			const int *exp) const
   {
-    ring_elem a = _next->to_ringelem(coeff, exp + _n_orig_vars);
+    ring_elem a = next_->to_ringelem(coeff, exp + _n_orig_vars);
     P->Nmonoms()->from_expvector(exp, _MONOM1);
     Nterm *t = P->term(a, _MONOM1);
     return t;
@@ -211,7 +212,7 @@ public:
 			      ring_elem denom, 
 			      int *exp) const
   {
-    ring_elem a = _next->to_ringelem_denom(coeff, denom, exp + _n_orig_vars);
+    ring_elem a = next_->to_ringelem_denom(coeff, denom, exp + _n_orig_vars);
     P->Nmonoms()->from_expvector(exp, _MONOM1);
     Nterm *t = P->term(a, _MONOM1);
     return t;
@@ -228,7 +229,7 @@ public:
     for ( ; t != 0; t=t->next)
       {
 	M->to_expvector(t->monom, exp + firstvar);
-	_next->from_ringelem(H, t->coeff, comp, exp, firstvar + _n_orig_vars);
+	next_->from_ringelem(H, t->coeff, comp, exp, firstvar + _n_orig_vars);
       }
   }
 };
@@ -561,6 +562,20 @@ int GBRing::exponents_weight(const int *e) const
   for (int i=0; i<_nvars; i++)
     sum += e[i] * _degrees[i];
   return sum;
+}
+
+void GBRing::gbvector_weight(const FreeModule *F, const gbvector *f,
+		     int &result_lead,
+		     int &result_lo,
+		     int &result_hi)
+{
+#warning "gbvector_weight not implemented"
+}
+
+int GBRing::gbvector_term_weight(const FreeModule *F, 
+			   const gbvector *f)
+{
+#warning "gbvector_term_weight not implemented"
 }
 
 int GBRing::gbvector_degree(const FreeModule *F, 
@@ -1048,7 +1063,8 @@ void GBRing::lower_content_ZZ(gbvector *f, M2_Integer content) const
     }
 }  
 void GBRing::gbvector_remove_content_ZZ(gbvector *f, 
-				     gbvector *fsyz) const
+					gbvector *fsyz,
+					mpz_t denom) const
   // let c = gcd(content(f),content(fsyz)).
   // set f := f/c,  fsyz := fsyz/c.
 {
@@ -1075,7 +1091,7 @@ void GBRing::gbvector_remove_content_ZZ(gbvector *f,
 
   lower_content_ZZ(g, content);
   lower_content_ZZ(gsyz, content);
-
+  
   mpz_abs(content,content);
   if (mpz_cmp_si(content,1) == 0) 
     {
@@ -1095,17 +1111,21 @@ void GBRing::gbvector_remove_content_ZZ(gbvector *f,
     mpz_neg(content,content);
   divide_coeff_exact_to_ZZ(f,content);
   divide_coeff_exact_to_ZZ(fsyz,content);
+  mpz_mul(denom, content, denom);
   mpz_clear(content);
 }
 
 void GBRing::gbvector_remove_content(gbvector *f, 
-				     gbvector *fsyz)
+				     gbvector *fsyz,
+				     ring_elem &denom)
   // let c = gcd(content(f),content(fsyz)).
   // set f := f/c,  fsyz := fsyz/c.
 {
   if (_coeffs_ZZ) 
     {
-      gbvector_remove_content_ZZ(f,fsyz);
+      mpz_ptr d = MPZ_VAL(denom);
+      gbvector_remove_content_ZZ(f,fsyz,d);
+      // denom contains the changes to d...
       return;
     }
   // At this point, our coefficient ring is a field (What about
@@ -1113,6 +1133,7 @@ void GBRing::gbvector_remove_content(gbvector *f,
   ring_elem c = K->invert(f->coeff);
   gbvector_mult_by_coeff_to(f,c);
   gbvector_mult_by_coeff_to(fsyz,c);
+  // Don't change the denom...?
 }
 
 ////////////////////
@@ -1161,7 +1182,9 @@ void GBRing::gbvector_auto_reduce(const FreeModule *F,
       gbvector *gsyz1 = gbvector_mult_by_coeff(gsyz,v);
       gbvector_add_to(F,f,g1);
       gbvector_add_to(Fsyz,fsyz,gsyz1);
-      gbvector_remove_content(f,fsyz);
+      mpz_t MIKE_FIX_ME; mpz_init(MIKE_FIX_ME);
+      ring_elem MIKE_FIX_ME_2 = MPZ_RINGELEM(MIKE_FIX_ME);
+      gbvector_remove_content(f,fsyz,MIKE_FIX_ME_2);
     }
 }
 

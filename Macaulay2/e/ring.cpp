@@ -21,13 +21,13 @@ void Ring::initialize_ring(int P0,
   P = P0;
   _nvars = nvars;
   _totalvars = totalvars;
-  _K = K;
-  _M = M;
-  _D = D;
+  K_ = K;
+  M_ = M;
+  D_ = D;
 
-  if (_D->n_vars() > 0)
+  if (D_->n_vars() > 0)
     {
-      _HRing = PolynomialRing::create(ZZ, _D);
+      _HRing = PolynomialRing::create(ZZ, D_);
     }
   else
     _HRing = 0;

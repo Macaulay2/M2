@@ -3,6 +3,9 @@
 #ifndef _engine_h_
 #define _engine_h_
 
+/**
+   \mainpage Hi, this is my main documentation page.
+ */
 #include "../d/M2types.h"
 
 #if defined(__cplusplus)
@@ -477,8 +480,23 @@ extern "C" {
   /**************************************************/
   /**** fraction field ring element routines ********/
   /**************************************************/
+
+  /** The numerator of a fraction.
+   * \param a An element of a fraction ring frac(R).
+   * \return The numerator of a, as an element of the ring R.
+   *
+   * Connected as rawNumerator.
+   *
+   */
   const RingElement *IM2_RingElement_numerator(const RingElement *a); /* drg: connected rawNumerator*/
 
+  /** The denominator of a fraction.
+   * \param a An element of a fraction ring frac(R).
+   * \return The denominator of a, as an element of the ring R.
+   *
+   * Connected as rawDenominator.
+   *
+   */
   const RingElement *IM2_RingElement_denominator(const RingElement *a); /* drg: connected rawDenominator*/
 
   const RingElementOrNull *IM2_RingElement_fraction(const Ring *R,

@@ -36,21 +36,21 @@ ring_elem SkewPolynomialRing::imp_mult_by_term(const ring_elem f,
   Nterm head;
   Nterm *inresult = &head;
 
-  _M->to_expvector(m, _EXP1);
+  M_->to_expvector(m, _EXP1);
 
   for (Nterm *s = f; s != NULL; s = s->next)
     {
-      _M->to_expvector(s->monom, _EXP2);
+      M_->to_expvector(s->monom, _EXP2);
       int sign = _skew.mult_sign(_EXP1, _EXP2);
       if (sign == 0) continue;
 
       Nterm *t = new_term();
       t->next = 0;
-      t->coeff = _K->mult(c, s->coeff);
+      t->coeff = K_->mult(c, s->coeff);
       if (sign < 0)
-	_K->negate_to(t->coeff);
+	K_->negate_to(t->coeff);
 
-      _M->mult(m, s->monom, t->monom);
+      M_->mult(m, s->monom, t->monom);
       inresult->next = t;
       inresult = inresult->next;
     }

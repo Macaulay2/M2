@@ -12,7 +12,7 @@ struct frac_elem
 
 class FractionField : public Ring
 {
-  const Ring *_R;		// Base ring.  Assumed to be a domain.
+  const Ring *R_;		// Base ring.  Assumed to be a domain.
   int _elem_size;
   ring_elem _MINUS_ONE;		// this is -1 in the ring R.
 
@@ -30,7 +30,7 @@ public:
   FractionField * cast_to_FractionField() { return this; }
   const FractionField * cast_to_FractionField() const { return this; }
 
-  const Ring *get_ring() const { return _R; }
+  const Ring *get_ring() const { return R_; }
 
   ring_elem numerator(ring_elem f) const;
   ring_elem denominator(ring_elem f) const;
@@ -41,7 +41,7 @@ public:
 
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
-  virtual bool is_graded() const    { return _R->is_graded(); }
+  virtual bool is_graded() const    { return R_->is_graded(); }
   virtual bool is_expensive() const { return 1; }
 
   virtual void text_out(buffer &o) const;

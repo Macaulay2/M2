@@ -101,16 +101,16 @@ SchurRing * SchurRing::create(const PolynomialRing *R)
 void SchurRing::text_out(buffer &o) const
 {
   o << "Schur(";
-  _K->text_out(o);
+  K_->text_out(o);
   o << ", ";
-  _M->text_out(o);
+  M_->text_out(o);
   o << ")";
 }
 
 void SchurRing::to_partition(const int *m, int *exp) const
     // exp[1]..exp[nvars] are set
 {
-  _M->to_expvector(m, ((SchurRing *) this)->_EXP1);
+  M_->to_expvector(m, ((SchurRing *) this)->_EXP1);
   exp[_nvars] = _EXP1[_nvars-1];
   for (int i=_nvars-1; i>=1; i--)
     exp[i] = exp[i+1] + _EXP1[i-1];
@@ -120,7 +120,7 @@ void SchurRing::from_partition(const int *exp, int *m) const
   _EXP1[_nvars-1] = exp[_nvars];
   for (int i=_nvars-1; i>0; i--)
     ((SchurRing *) this)->_EXP1[i-1] = exp[i] - exp[i+1];
-  _M->from_expvector(_EXP1, m);
+  M_->from_expvector(_EXP1, m);
 }
 
 void SchurRing::bounds(int &lo, int &hi)
@@ -171,7 +171,7 @@ void SchurRing::SM()
     {
       // partition is to be output
       Nterm *f = new_term();
-      f->coeff = _K->from_int(1);
+      f->coeff = K_->from_int(1);
       from_partition(_SMtab.p, f->monom);
       f->next = _SMresult;
       _SMresult = f;
@@ -258,11 +258,11 @@ ring_elem SchurRing::mult_by_term(const ring_elem f,
   ring_elem result = (Nterm *)NULL;
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      ring_elem a = _K->mult(c, t->coeff);
+      ring_elem a = K_->mult(c, t->coeff);
       ring_elem g = ((SchurRing *) this)->mult_monomials(t->monom, m);
       for (Nterm *s = g; s != NULL; s = s->next)
 	{
-	  ring_elem b = _K->mult(a, s->coeff);
+	  ring_elem b = K_->mult(a, s->coeff);
 	  s->coeff = b;
 	}
       Nterm *gt = g;
@@ -329,17 +329,17 @@ ring_elem SchurRing::dimension(const ring_elem f) const
 {
   intarray expa;
   int *exp = expa.alloc(_nvars+1);
-  ring_elem result = _K->from_int(0);
+  ring_elem result = K_->from_int(0);
   mpz_t dim;
   mpz_init(dim);
   for (Nterm *t = f; t != NULL; t = t->next)
     {
       to_partition(t->monom, exp);
       dimension(exp, dim);
-      ring_elem h = _K->from_int(dim);
-      ring_elem h2 = _K->mult(t->coeff, h);
-      _K->add_to(result, h2);
-      _K->remove(h);
+      ring_elem h = K_->from_int(dim);
+      ring_elem h2 = K_->mult(t->coeff, h);
+      K_->add_to(result, h2);
+      K_->remove(h);
     }
   return result;
 }
@@ -363,11 +363,11 @@ void SchurRing::elem_text_out(buffer &o, const ring_elem f) const
     {
       int old_one = p_one;
       int old_parens = p_parens;
-      int isone = _M->is_one(t->monom);
+      int isone = M_->is_one(t->monom);
       p_parens = !isone;
       //p_one = old_one && isone;
       p_one = 0;
-      _K->elem_text_out(o,t->coeff);
+      K_->elem_text_out(o,t->coeff);
       p_one = 0;
       to_partition(t->monom, exp);
       o << "{" << exp[1];

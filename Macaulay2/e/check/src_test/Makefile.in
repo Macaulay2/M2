@@ -1,0 +1,11 @@
+include ../../../../include/config.Makefile
+
+all :: test_suite
+
+test_suite : suite.o test.o Main1.o
+	g++ suite.o test.o Main1.o -o test_suite
+
+Main1.o : Main1.cpp
+
+clean :
+	rm -f *.o test_suite

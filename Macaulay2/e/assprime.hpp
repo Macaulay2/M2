@@ -1,3 +1,10 @@
+/*!
+    @class AssociatedPrimes
+    @abstract   (description)
+    @discussion (description)
+*/
+
+
 // (c) 1994 Michael E. Stillman
 #ifndef _assprime_hh
 #define _assprime_hh

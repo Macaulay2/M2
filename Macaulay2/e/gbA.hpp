@@ -11,7 +11,7 @@
 class gbA : public Computation {
 private:
   /* Types of minimality */
-  enum {
+  enum spair_type {
     SPAIR_SPAIR,
     SPAIR_RING,
     SPAIR_SKEW,
@@ -23,7 +23,7 @@ public:
   // This is only public to allow spair_sorter to use it!!
   struct spair {
     spair *next;
-    int type; /* SPAIR_SPAIR, SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
+    spair_type type; /* SPAIR_SPAIR, SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
     int deg;
     exponents lcm; /* Contains homogenizing variable, component */
     union {

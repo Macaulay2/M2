@@ -5,11 +5,19 @@
 #include "montable.hpp"
 
 /* Types of minimality */
-enum { 
+#if 0
+enum gbelem_type { 
   ELEM_IN_STONE = -1,  /* These are ring elements, or do not count towards mingens */
   ELEM_TRIMMED = 0,
   ELEM_MIN_GB = 1,
   ELEM_NON_MIN_GB = 2
+};
+#endif
+enum gbelem_type { 
+  ELEM_IN_STONE,  // These are ring elements
+  ELEM_TRIMMED,   // These are min GB elements which might also be min gens
+  ELEM_MIN_GB,    // These are elements which are minimal GB elements
+  ELEM_NON_MIN_GB // These are elements which are not minimal GB elements
 };
 
 struct POLY {
@@ -30,7 +38,7 @@ public:
     int deg;
     int alpha; // the homogenizing degree
     exponents lead; // -1..nvars-1, the -1 part is the component
-    int minlevel;
+    gbelem_type minlevel;
   };
 
   GBasis(const FreeModule *F, const FreeModule *Fsyz);
@@ -42,10 +50,10 @@ public:
   static gbelem *gbelem_make(const FreeModule *F,
 			     gbvector *f,  // grabs f
 			     gbvector *fsyz, // grabs fsyz
-			     int minlevel,
+			     gbelem_type minlevel,
 			     int deg);
 
-  int insert(gbvector *f, gbvector *fsyz, int minlevel, int deg);
+  int insert(gbvector *f, gbvector *fsyz, gbelem_type minlevel, int deg);
     // returns integer index of this inserted element
 
   void poly_auto_reduce(vector<POLY> &mat);
@@ -131,10 +139,13 @@ private:
 class RingGBasis
 {
   GBRing *R;
+  FreeModule *R1; // Should be rank 1, degree 0 generator.
   MemoryAllocator *_mem;
   MonomialTable *ringtable;
   vector<GBasis::gbelem *> gb;
   RingGBasis() {}
+
+  GBasis::gbelem *gbelem_make(gbvector *f);
 public:
   static RingGBasis *make(GBRing *R, vector<gbvector *> &elems);
 

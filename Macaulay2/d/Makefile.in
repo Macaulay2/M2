@@ -49,7 +49,7 @@ ALLOBJ += $(PROJECT:.d=.oo)
 
 DNAMES := $(PROJECT)
 DNAMES += t.d u.d optim.d actorsX.d gr.d grx.d testall.d pp.d redblk.d
-CFILES := M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c initgmp2.c gdbm_interface.c
+CFILES := M2types.c scclib.c gmp_aux.c memdebug.c initgmp2.c gdbm_interface.c M2lib.c 
 MADECFILES := tmp_init.c startup.c
 CCFILES := version.cc initgmp.cc tmpl_inst.cc
 SRCFILES := getpagesize.h gc_cpp.cc memdebug.c memdebug.h gmp_aux.c types.h $(PROJECT) $(CFILES)
@@ -225,7 +225,8 @@ startup.c : ../m2/startup.m2 layout.m2
 	 echo ';' \
         ) >$@
 
-ALLOBJ += ../e/libgb.a
+
+#ALLOBJ += ../e/libgb.a
 
 ifeq "$(DUMPDATA)" "yes"
 LOADLIBES += -L../dumpdata
@@ -296,16 +297,18 @@ LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
   # -- we do not need -lcfmem, because we include replacement routines in d/scclib.c
 LIBRARYOPTIONS += -lntl
-LIBRARYOPTIONS += -lgmp
+#LIBRARYOPTIONS += -lgmp
+LIBRARYOPTIONS += /sw/lib/libgmp.a #/sw/lib/libreadline.a
 LIBRARYOPTIONS += -lgc
 LIBRARYOPTIONS += -lgdbm
-LIBRARYOPTIONS += -lreadline -lhistory -lcurses
+LIBRARYOPTIONS +=  -lreadline -lhistory -lcurses
   # we successfully avoid using streamio, but we need the personality function in libstc++
 LIBRARYOPTIONS += -lstdc++
 
 ifeq "$(LAPACK)" "yes"
-LIBRARYOPTIONS += -llapack -lcblas -lf77blas -lg2c
-# LIBRARYOPTIONS += -latlas
+#LIBRARYOPTIONS += -llapack -lcblas -lf77blas -lg2c
+#LIBRARYOPTIONS += -latlas
+#LIBRARYOPTIONS += -framework vecLib -bind_at_load
 endif
 
 # ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
@@ -326,10 +329,15 @@ endif
 # maybe every system now has all the unix routines we use:
 # LDLIBS += -lc ../compat/compat.a
 
+libM2d.a: $(ALLOBJ)
+	$(AR) r $@ $^
+	-$(RANLIB) libM2d.a
+
+
 MADEFILES += ../bin/M2$(EXE)
-../bin/M2$(EXE) : $(ALLOBJ) $(LIBRARYFILES)
+../bin/M2$(EXE) : libM2d.a main.o $(LIBRARYFILES)
 	rm -f $@
-	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
+	time $(PURIFYCMD) $(CC) main.o $(LDFLAGS) libM2d.a ../e/libgb.a $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 	$(STRIPCMD) $@
 
 t_main.o : types.h

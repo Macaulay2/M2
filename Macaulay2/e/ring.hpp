@@ -31,9 +31,9 @@ protected:
   int P;
   int _nvars;
   int _totalvars;		// The total number of variables, inclduing all base rings
-  const Ring *_K;		// For a base ring, this will point to self
-  const Monoid *_M;
-  const Monoid *_D;
+  const Ring *K_;		// For a base ring, this will point to self
+  const Monoid *M_;
+  const Monoid *D_;
   const PolynomialRing *_HRing;	// Hilbert function ring, if D has >= 1 variables.
 				// Otherwise, this will be NULL.
   const GRType *_grtype;	// Used for translation of gbvectors to/from ringelems and vecs.
@@ -63,9 +63,9 @@ public:
   int total_n_vars() const { return _totalvars; }
 
   const Ring * get_ring() const { return this; }
-  const Ring *  Ncoeffs()       const { return _K; }
-  const Monoid * Nmonoms()       const { return _M; }
-  const Monoid * degree_monoid() const { return _D; }
+  const Ring *  Ncoeffs()       const { return K_; }
+  const Monoid * Nmonoms()       const { return M_; }
+  const Monoid * degree_monoid() const { return D_; }
   const PolynomialRing *HilbertRing() const { return _HRing; }
   const GRType * get_GRType() const { return _grtype; }
   const Ring * get_flattened_ring() const {  return _flattened_ring; }

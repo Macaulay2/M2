@@ -12,9 +12,9 @@ class GF : public Ring
   const RingElement *_primitive_element;  // An element of K
   int _x_exponent;			// (primitive_element)^(x_exponent) = x,
 					// the given generator of K.
-  int _Q;        // this is GF(Q) = GF(P^Qexp)
-  int _Qexp;	// P^Qexp = Q
-  int _Q1;	// Q1 = Q-1
+  int Q_;        // this is GF(Q) = GF(P^Qexp)
+  int Qexp_;	// P^Qexp = Q
+  int Q1_;	// Q1 = Q-1
   int _ZERO;     // = 0   is our representation of 0.
   int _ONE;	// = Q-1 is our representation of 1.
   int _MINUS_ONE; // = (Q-1)/2 if Q odd, = ONE if Q even.

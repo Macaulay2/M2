@@ -603,12 +603,13 @@ int GBinhom_comp::search(const int *exp, int comp, gb_elem *&result)
 void GBinhom_comp::gb_insert(gbvector * f, gbvector * fsyz, int forced)
 {
   int *f_m = M->make_one();
+  ring_elem denom;
   gb_elem *p = new gb_elem(f, fsyz, 1);
   p->me = last_gb_num++;
   p->lead_exp = new int[M->n_vars()];
 
   GR->gbvector_get_lead_monomial(F,p->f,f_m);
-  GR->gbvector_remove_content(p->f, p->fsyz);
+  GR->gbvector_remove_content(p->f, p->fsyz, denom);
 
   M->to_expvector(f_m, p->lead_exp);
   if (M->in_subring(1,f_m))

@@ -846,7 +846,7 @@ MatrixOrNull *Matrix::koszul(int p) const
   FreeModule *F = cols()->exterior(p-1);
   FreeModule *G = cols()->exterior(p);
   Matrix *result = new Matrix(F, G, degree_shift());
-  if (p <= 0 || p > get_ring()->n_vars()) return result;
+  if (p <= 0 || p > n_cols()) return result;
   intarray carray(p);
   int *a = carray.alloc(p);
   for (int c=0; c < result->n_cols(); c++)

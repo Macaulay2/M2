@@ -57,15 +57,15 @@ bool WeylAlgebra::initialize_weyl(
   else {
     this->_isgraded = true;
     const Monoid *D = degree_monoid();
-    const int *degh = _M->degree_of_var(_homog_var);
+    const int *degh = M_->degree_of_var(_homog_var);
     int *deg2h = D->make_one();
     int *degxD = D->make_one();
     D->mult(degh,degh,deg2h);
     
     for (int j=0; j < _nderivatives; j++)
       {
-	const int *degx = _M->degree_of_var(_commutative[j]);
-	const int *degD = _M->degree_of_var(_derivative[j]);
+	const int *degx = M_->degree_of_var(_commutative[j]);
+	const int *degD = M_->degree_of_var(_derivative[j]);
 	D->mult(degx,degD,degxD);
 	if (D->compare(deg2h,degxD) != EQ)
 	  {
@@ -100,8 +100,8 @@ WeylAlgebra *WeylAlgebra::create(const Ring *R,
 void WeylAlgebra::text_out(buffer &o) const
 {
   o << "WeylAlgebra(";
-  _K->text_out(o);
-  _M->text_out(o);
+  K_->text_out(o);
+  M_->text_out(o);
   o << ")";
 }
 
@@ -167,20 +167,20 @@ ring_elem WeylAlgebra::binomial(int top, int bottom) const
 {
   // This should be located elsewhere
   // Assumption: bottom <= top, top >= 0, bottom >= 0.
-  if (bottom == 0) return _K->from_int(1);
-  if (bottom == 1) return _K->from_int(top);
+  if (bottom == 0) return K_->from_int(1);
+  if (bottom == 1) return K_->from_int(top);
   if (top <= binomtop)
-    return _K->from_int(binomtable[top][bottom]);
-  ring_elem result = _K->from_int(1);
+    return K_->from_int(binomtable[top][bottom]);
+  ring_elem result = K_->from_int(1);
   for (int a=0; a<bottom; a++)
     {
-      ring_elem b = _K->from_int(top-a);
-      ring_elem result1 = _K->mult(result,b);
-      _K->remove(result);
-      _K->remove(b);
-      ring_elem c = _K->from_int(a+1);
-      result = _K->divide(result1,c); // exact
-      _K->remove(c);
+      ring_elem b = K_->from_int(top-a);
+      ring_elem result1 = K_->mult(result,b);
+      K_->remove(result);
+      K_->remove(b);
+      ring_elem c = K_->from_int(a+1);
+      result = K_->divide(result1,c); // exact
+      K_->remove(c);
     }
   return result;
 }
@@ -188,14 +188,14 @@ ring_elem WeylAlgebra::binomial(int top, int bottom) const
 ring_elem WeylAlgebra::multinomial(ring_elem c, const int *top, const int *bottom) const
 {
   // Assumed: top[i] >= bottom[i] for all i.
-  ring_elem result = _K->copy(c);
+  ring_elem result = K_->copy(c);
   for (int i=0; i<_nderivatives; i++)
     if (bottom[i] > 0)
       {
 	ring_elem a = binomial(top[i],bottom[i]);
-	ring_elem b = _K->mult(a,result);
-	_K->remove(a);
-	_K->remove(result);
+	ring_elem b = K_->mult(a,result);
+	K_->remove(a);
+	K_->remove(result);
 	result = b;
       }
   return result;
@@ -246,28 +246,28 @@ ring_elem WeylAlgebra::diff_coefficients(const ring_elem c,
 					 const int *derivatives, 
 					 const int *exponents) const
 {
-  ring_elem result = _K->copy(c);
+  ring_elem result = K_->copy(c);
   for (int i=0; i<_nderivatives; i++)
     {
       if (derivatives[i] == 0) continue;
       if (exponents[i] <= diffcoeffstop)
 	{
-	  ring_elem g = _K->from_int(diffcoeffstable[exponents[i]][derivatives[i]]);
-	  ring_elem h = _K->mult(result,g);
-	  _K->remove(g);
-	  _K->remove(result);
+	  ring_elem g = K_->from_int(diffcoeffstable[exponents[i]][derivatives[i]]);
+	  ring_elem h = K_->mult(result,g);
+	  K_->remove(g);
+	  K_->remove(result);
 	  result = h;
-	  if (_K->is_zero(result))
+	  if (K_->is_zero(result))
 	    return result;
 	}
       else for (int j=derivatives[i]-1; j>=0; j--)
 	{
-	  ring_elem g = _K->from_int(exponents[i]-j);
-	  ring_elem h = _K->mult(result,g);
-	  _K->remove(g);
-	  _K->remove(result);
+	  ring_elem g = K_->from_int(exponents[i]-j);
+	  ring_elem h = K_->mult(result,g);
+	  K_->remove(g);
+	  K_->remove(result);
 	  result = h;
-	  if (_K->is_zero(result))
+	  if (K_->is_zero(result))
 	    return result;
       }
     }
@@ -319,21 +319,21 @@ Nterm * WeylAlgebra::weyl_diff(
     {
       // This first part checks whether the x-part of t->monom is divisible by
       // 'derivatives'.  If so, true is returned, and the resulting monomial is set.
-      _M->to_expvector(t->monom, result_exp);
+      M_->to_expvector(t->monom, result_exp);
       extractCommutativePart(result_exp, exp);
       if (divides(derivatives,exp))
 	{
 	  ring_elem a = diff_coefficients(c,derivatives,exp);
-	  if (_K->is_zero(a))
+	  if (K_->is_zero(a))
 	    {
-	      _K->remove(a);
+	      K_->remove(a);
 	      continue;
 	    }
-	  ring_elem b = _K->mult(a, t->coeff);
-	  _K->remove(a);
-	  if (_K->is_zero(b))
+	  ring_elem b = K_->mult(a, t->coeff);
+	  K_->remove(a);
+	  if (K_->is_zero(b))
 	    {
-	      _K->remove(b);
+	      K_->remove(b);
 	      continue;
 	    }
 	  // Now compute the new monomial:
@@ -341,7 +341,7 @@ Nterm * WeylAlgebra::weyl_diff(
 	  tm->coeff = b;
 	  for (int i=0; i<_nvars; i++)
 	    result_exp[i] += expf[i] - deriv_exp[i];
-	  _M->from_expvector(result_exp, tm->monom);
+	  M_->from_expvector(result_exp, tm->monom);
 
 	  // Append to the result
 	  result->next = tm;
@@ -363,14 +363,14 @@ ring_elem WeylAlgebra::imp_mult_by_term(const ring_elem f,
   int *expf = new int[_nvars];
   polyheap result(this);
 
-  _M->to_expvector(m, expf);
+  M_->to_expvector(m, expf);
   extractDerivativePart(expf, top_derivative);
   for (int i=0; i<_nderivatives; i++) current_derivative[i] = 0;
   // Loop over each current_derivative <= top_derivative.
   do {
       ring_elem d = multinomial(c, top_derivative, current_derivative);
       Nterm * h = weyl_diff(d,expf,current_derivative,f);
-      _K->remove(d);
+      K_->remove(d);
       result.add(h);
   } while (increment(current_derivative, top_derivative));
 
@@ -390,7 +390,7 @@ ring_elem WeylAlgebra::imp_mult_by_term(const ring_elem f,
 
 gbvector * WeylAlgebra::gbvector_weyl_diff(
 	  GBRing *GR,
-	  const ring_elem c, // in _K
+	  const ring_elem c, // in K_
 	  int comp, // adds this component to each component of g.
 	  const int *expf,  // The exponent vector of f
 	  const int *derivatives, 
@@ -435,21 +435,21 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
     {
       // This first part checks whether the x-part of t->monom is divisible by
       // 'derivatives'.  If so, true is returned, and the resulting monomial is set.
-      _M->to_expvector(t->monom, result_exp);
+      M_->to_expvector(t->monom, result_exp);
       extractCommutativePart(result_exp, exp);
       if (divides(derivatives,exp))
 	{
 	  ring_elem a = diff_coefficients(c,derivatives,exp);
-	  if (_K->is_zero(a))
+	  if (K_->is_zero(a))
 	    {
-	      _K->remove(a);
+	      K_->remove(a);
 	      continue;
 	    }
-	  ring_elem b = _K->mult(a, t->coeff);
-	  _K->remove(a);
-	  if (_K->is_zero(b))
+	  ring_elem b = K_->mult(a, t->coeff);
+	  K_->remove(a);
+	  if (K_->is_zero(b))
 	    {
-	      _K->remove(b);
+	      K_->remove(b);
 	      continue;
 	    }
 	  // Now compute the new monomial:
@@ -458,7 +458,7 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
 	  tm->coeff = b;
 	  for (int i=0; i<_nvars; i++)
 	    result_exp[i] += expf[i] - deriv_exp[i];
-	  _M->from_expvector(result_exp, tm->monom);
+	  M_->from_expvector(result_exp, tm->monom);
 
 	  // Append to the result
 	  result->next = tm;
@@ -474,8 +474,8 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
 gbvector * WeylAlgebra::gbvector_mult_by_term(
 					      gbvectorHeap &result,
 					      const gbvector *f, 
-					      const ring_elem c, // in the base _K
-					      const int *m, // monomial, in _M
+					      const ring_elem c, // in the base K_
+					      const int *m, // monomial, in M_
 					      int comp) const // comp is either 0 or a real component.
   // Computes c*m*f*e_comp  (where components of f and e_comp add).
 {
@@ -484,14 +484,14 @@ gbvector * WeylAlgebra::gbvector_mult_by_term(
   int *expf = new int[_nvars];
 
   GBRing *GR = result.get_gb_ring();
-  _M->to_expvector(m, expf);
+  M_->to_expvector(m, expf);
   extractDerivativePart(expf, top_derivative);
   for (int i=0; i<_nderivatives; i++) current_derivative[i] = 0;
   // Loop over each current_derivative <= top_derivative.
   do {
-    ring_elem d = multinomial(c, top_derivative, current_derivative);// in _K
+    ring_elem d = multinomial(c, top_derivative, current_derivative);// in K_
     gbvector * h = gbvector_weyl_diff(GR,d,comp,expf,current_derivative,f);
-    _K->remove(d);
+    K_->remove(d);
     result.add(h);
   } while (increment(current_derivative, top_derivative));
 
@@ -504,19 +504,19 @@ gbvector * WeylAlgebra::gbvector_mult_by_term(
 /////////////////
 ring_elem WeylAlgebra::multinomial(const int *exptop, const int *exp) const
 {
-  ring_elem result = _K->from_int(1);
+  ring_elem result = K_->from_int(1);
   for (int i=0; i<_nvars; i++)
     if (exptop[i] > 0)
       {
 	for (int j=exptop[i]; j > exp[i]; j--)
 	  {
-	    ring_elem c = _K->from_int(j);
-	    ring_elem d = _K->from_int(exptop[i]-j+1);
-	    _K->mult_to(result, c);
-	    ring_elem e = _K->divide(result, d); // exact
-	    _K->remove(c);
-	    _K->remove(d);
-	    _K->remove(result);
+	    ring_elem c = K_->from_int(j);
+	    ring_elem d = K_->from_int(exptop[i]-j+1);
+	    K_->mult_to(result, c);
+	    ring_elem e = K_->divide(result, d); // exact
+	    K_->remove(c);
+	    K_->remove(d);
+	    K_->remove(result);
 	    result = e;
 	  }
       }
