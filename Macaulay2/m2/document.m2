@@ -28,7 +28,7 @@ addEndFunction(() -> (
 docExtension := () -> (
      if phase === 2 then "-tmp"		  -- writing, to be renamed -pre
      else if phase === 3 then "-pre"	  -- reading temporary one renamed
-     else if phase == 4 then "-tmp"	  -- writing, to be renamed -doc
+     else if phase === 4 then "-tmp"	  -- writing, to be renamed -doc
      else "-doc"			  -- reading
      )
 

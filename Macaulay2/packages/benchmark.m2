@@ -19,9 +19,16 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 -- 1.20106 seconds, 0.8.46
 
 -- Linux geometry 2.1.121 #33 SMP Tue Sep 15 21:44:25 CDT 1998 i586
--- 4.01 seconds, Macaulay 2 version 0.8.47
+-- 4.01 seconds, Macaulay 2 version 0.8.47, compiled with gcc
+
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown
--- 4.17 seconds, Macaulay 2 version 0.8.50
+-- 4.17 seconds, Macaulay 2 version 0.8.50, compiled with gcc 2.8.1
+
+-- Linux geometry 2.2.2 #77 Wed Feb 24 10:40:05 EST 1999 i586 unknown
+-- 4.36 seconds, Macaulay2 0.8.53, compiled with gcc 2.8
+
+-- Linux geometry 2.2.2 #77 Wed Feb 24 10:40:05 EST 1999 i586 unknown
+-- 4.38 seconds, Macaulay2 0.8.53, compiled with gcc 2.91
 
 ----- with SHAREDLIBS, including engine and interpeter:
 -- Linux geometry 2.2.0-pre4 #65 Mon Jan 4 20:14:06 CST 1999 i586 unknown

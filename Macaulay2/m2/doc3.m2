@@ -192,7 +192,7 @@ document { quote phase,
      The value 1 indicates that we are loading setup.m2 and will dump data
      afterward.  The value 2 indicates that we are loading setup.m2, creating a
      preliminary version of the help file whose name is
-     Macaulay2.pre, and creating example input files.  The value 3 indicates 
+     Macaulay2-pre, and creating example input files.  The value 3 indicates 
      that we are running an example input file, and referring to Macaulay2.pre.
      The value 4 indicates that we are loading setup.m2, reading the
      example output files, and creating the final version of the help file,

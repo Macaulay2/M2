@@ -17,7 +17,7 @@ endif
 # 	 then touch $*.out ; \
 # 	 else \
 # 	   echo "running example $*"; \
-# 	   echo ../../bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' ">$*.tmp" ; \
+# 	   echo $(M2HOME)/bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' ">$*.tmp" ; \
 # 	   ../../bin/Macaulay2 $(ARGS) '-e input "$*.m2"' '-e exit 0' >$*.tmp && \
 # 	   mv $*.tmp $*.out && \
 # 	   cp $*.m2 $*.old ; \
@@ -28,7 +28,7 @@ endif
 	 then touch $*.out ; \
 	 else \
 	   echo "running example $*"; \
-	   ../../bin/Macaulay2 $(ARGS) <"$*.m2" >$*.tmp && \
+	   $(M2HOME)/bin/Macaulay2 $(ARGS) <"$*.m2" >$*.tmp && \
 	   mv $*.tmp $*.out && \
 	   cp $*.m2 $*.old ; \
 	 fi
