@@ -159,7 +159,11 @@ runStartFunctions = () -> scan(startFunctions, f -> f())
 << "--loading source code..." << endl
 load "loads.m2"
 
-path = { ".", getenv "M2HOME" | "/packages" }
+path = (
+     if getenv "M2HOME" === "" 
+     then { "." }
+     else { "." , getenv "M2HOME" | "/packages" }
+     )
 
 setrecursionlimit 300
 
@@ -266,13 +270,21 @@ document { quote Options,
 
 -- if phase===1 or phase===2 or phase===4 then exportDocumentation()
 
+-- the first function run at restart
+addStartFunction(
+     -- We left dumpdata.m2 open when we dumped data!  So now we close it.
+     () -> scan(openFiles(), f -> if f =!= stdio and f =!= stderr then try close f)
+     )
+
 -- the last function restarted
 addStartFunction(
      () -> (
 	  if not member("-q",commandLine)
 	  then (
 	       tryload("init.m2",oldLoad)
-	       or tryload(concatenate(getenv "HOME", "/init.m2"),oldLoad)
+	       or 
+	       if getenv "HOME" =!= ""
+	       then tryload(concatenate(getenv "HOME", "/init.m2"),oldLoad)
 	       )
 	  )
      )

@@ -23,7 +23,9 @@ artinianGorensteinRing = (p,n,d,s) -> (
 	  -- or c === n+1 and numgens source mingens image (v % I) > 1
 	  ) do (
 	  w := symmetricPower(e,vars R);
-	  I = mingens image Concat(I, w (syz(diff(w,matrix {{D}}),{d-e})));
+	  I = mingens image (I | w * (syz(diff(w,matrix {{D}})
+			 -- ,{d-e} -- ??
+			 )));
 	  e = e+1;
 	  );
      I)

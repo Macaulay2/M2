@@ -76,16 +76,17 @@ addfile(o:file):file := (
      openfiles = FileCell(o,openfiles);
      o);
 rmfile(o:file):void := (
+     prevcell := (null or FileCell)(NULL);
      x := openfiles;
-     z := (null or FileCell)(NULL);
      while true do (
 	  when x is null do break
-	  is cell:FileCell do (
-	       if cell.file != o then z = FileCell(cell.file,z);
-	       x = cell.next;
-	       ));
-     openfiles = z;
-     );
+	  is thiscell:FileCell do (
+	       if thiscell.file == o then 
+	       when prevcell is null do openfiles = thiscell.next
+	       is prevcell:FileCell do prevcell.next = thiscell.next
+	       else prevcell = x;
+	       x = thiscell.next;
+	       )));
 addfile(stdout);
 addfile(stderr);
 opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg) := (
@@ -100,18 +101,18 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
      sd := NOFD;
      if length(host) == 0 then (
 	  so = openlistener(serv);
-     	  if so == ERROR then return((file or errmsg)(errmsg("can't open listener")));
+     	  if so == ERROR then return((file or errmsg)(errmsg("can't open listener : "+syserrmsg())));
 	  if input || output then (
 	       sd = acceptBlocking(so);
      	       if sd == ERROR then (
 		    close(so);
-		    return((file or errmsg)(errmsg("can't open socket")));
+		    return((file or errmsg)(errmsg("can't open socket: "+syserrmsg())));
 		    );
 	       )
 	  )
      else (
 	  sd = opensocket(host,serv);
-     	  if sd == ERROR then return((file or errmsg)(errmsg("can't open socket")));
+     	  if sd == ERROR then return((file or errmsg)(errmsg("can't open socket : "+syserrmsg())));
 	  );
      (file or errmsg)(addfile(file(nextHash(), filename, 0,
 	  listener, so, NOFD, if listener then 0 else 1,
@@ -129,7 +130,7 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
 	  )
      else (
      	  sd = acceptBlocking(f.listenerfd);
-     	  if sd == ERROR then return((file or errmsg)(errmsg("can't accept connection")));
+     	  if sd == ERROR then return((file or errmsg)(errmsg("can't accept connection : "+syserrmsg())));
 	  );
      f.numconns = f.numconns + 1;
      (file or errmsg)(addfile(file(nextHash(), f.filename, 0,
@@ -141,7 +142,7 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
 openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      toChild := array(int)(NOFD,NOFD);
      fromChild := array(int)(NOFD,NOFD);
-     if pipe(toChild) == ERROR || pipe(fromChild) == ERROR then return(errmsg("can't make pipe"));
+     if pipe(toChild) == ERROR || pipe(fromChild) == ERROR then return(errmsg("can't make pipe : "+syserrmsg()));
      pid := fork();
      listener := false;
      if pid == 0 then (
@@ -178,7 +179,7 @@ export openIn(filename:string):(file or errmsg) := (
      else (
      	  fd := openin(filename);
      	  if fd == ERROR
-     	  then (file or errmsg)(errmsg("can't open input file "+filename))
+     	  then (file or errmsg)(errmsg("can't open input file "+filename+ " : "+syserrmsg()))
      	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
 		    false, NOFD,NOFD,0,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, noprompt,true,false,
@@ -193,7 +194,7 @@ export openOut(filename:string):(file or errmsg) := (
      else (
      	  fd := openout(filename);
      	  if fd == ERROR
-     	  then (file or errmsg)(errmsg("can't open output file "+filename))
+     	  then (file or errmsg)(errmsg("can't open output file "+filename+" : "+syserrmsg()))
      	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
 		    false, NOFD,NOFD,0,
 		    false, NOFD, false,           "",          0, 0, false,noprompt,true,false,
@@ -621,7 +622,7 @@ export get(filename:string):(string or errmsg) := (
 	  s := readfile(f.infd);
 	  r := close(f);
 	  if r == ERROR
-	  then (string or errmsg)(errmsg("failed to close file"))
+	  then (string or errmsg)(errmsg("failed to close file : "+syserrmsg()))
 	  else if r != 0 && length(filename) > 0 && filename . 0 == '!'
 	  then (string or errmsg)(errmsg("process exit code " + tostring(r)))
 	  else (string or errmsg)(s)));

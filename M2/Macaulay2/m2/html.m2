@@ -443,3 +443,5 @@ html TO   := x -> concatenate (
 
 tex TO := x -> tex TT formatDocumentTag x#0
 
+html Function := x -> name x
+

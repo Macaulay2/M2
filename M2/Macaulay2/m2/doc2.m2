@@ -596,7 +596,12 @@ document { quote characters,
      }
 
 document { quote getenv,
-     TT "getenv s", " -- yields the value associated with the string s in the environment."
+     TT "getenv s", " -- yields the value associated with the string s in the 
+     environment.",
+     PARA,
+     EXAMPLE {
+	  ///getenv "HOME"///
+	  }
      }
 
 document { quote currentDirectory,
