@@ -1,8 +1,13 @@
-clearAll()
-load "D-modules.m2"
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+needs "D-modules.m2"
 Dtrace 1
 pInfo(1, "testing localCohom...")
 
+X = symbol X; dX = symbol dX;
+Y = symbol Y; dY = symbol dY;
+Z = symbol Z; dZ = symbol dZ;
+ 
 W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]
 I = ideal (X*(Y-Z), X*Y*Z)
 M = ideal (dX, dY, dZ)
@@ -25,6 +30,7 @@ time h = localCohom (I, Strategy=>Walther, LocStrategy=>Oaku)
 time h = localCohom (I, Strategy=>OaTa)
 pruneLocalCohom h
 ---------------------------------------------------------------
+x = symbol x; dx = symbol dx; 
 W = QQ[x, dx, WeylAlgebra=>{x=>dx}]
 I = ideal {x, x^2, x^2+x, x^3, x^4+2*x}
 M = W^1 / ideal dx 

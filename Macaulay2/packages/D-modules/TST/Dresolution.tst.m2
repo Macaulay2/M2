@@ -1,10 +1,11 @@
-clearAll()
-path = join(path, {"../"})
-load "D-modules.m2"
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-------------------------- TESTS for Drestriction --------------------------------
+needs "D-modules.m2"
+
+------------------------- TESTS for Drestriction ----------------------------
 
 -- Boundary cases
+x = symbol x; Dx = symbol Dx; 
 W = QQ[x, Dx, WeylAlgebra => {x=>Dx}];
 I = ideal 0_W;
 J = ideal 1_W;

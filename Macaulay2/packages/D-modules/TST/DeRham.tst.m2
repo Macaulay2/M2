@@ -1,8 +1,9 @@
-clearAll();
-path = join (path, {"../"});
-load "D-modules.m2";
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+needs "D-modules.m2";
 
 --Boundary cases
+x = symbol x; y = symbol y;
 R = QQ[x,y]
 default = hashTable {0=>QQ^1, 1=>QQ^0, 2=>QQ^0};
 F1 = deRham(0_R); -- empty set

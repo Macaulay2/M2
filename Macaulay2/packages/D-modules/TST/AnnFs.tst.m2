@@ -1,9 +1,11 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 -- AnnFs
-clearAll()
-load "D-modules.m2"
+needs "D-modules.m2"
 Dtrace 1
 pInfo(1, "testing AnnFs...")
 
+x = symbol x; z = symbol z; d = symbol d; Dz = symbol Dz;
 R = QQ[x_1..x_4, z, d_1..d_4, Dz, WeylAlgebra => ( toList(1..4) / (i -> (x_i => d_i)) | {z => Dz} ) ]
 f = x_1 + x_2 * z + x_3 * z^2 + x_4 * z^3
 
@@ -24,8 +26,7 @@ assert ( Ann == ideal {
 	  })
 
 -- AnnFIs
-clearAll()
-load "D-modules.m2"
+x = symbol x; dx = symbol dx;
 W = QQ[x,dx, WeylAlgebra=>{x=>dx}]
 Ann = AnnIFs(ideal dx, x^2)
 WS = ring Ann

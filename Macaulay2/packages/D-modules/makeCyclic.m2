@@ -1,12 +1,16 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-local  howBig
-local AnnG
+--function
 local ItimesF
+
+--keys
+local  howBig
+howBig = symbol howBig
 local  annV
-local Generator
+annV = symbol annV
 local degGen
- 
+degGen = symbol degGen
+
 -------------------------------------------------
 -- cancels out the n-th (differential) variable 
 -------------------------------------------------

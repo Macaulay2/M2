@@ -1,6 +1,6 @@
-clearAll();
-path = join( path, {"../"} );
-load "D-modules.m2";
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+needs "D-modules.m2";
 
 ----------------- TESTS for Drestriction & Dintegration--------------------
 
@@ -39,6 +39,8 @@ assert(all (toList(0..2), i -> (
 
 
 -- Example 3: Restriction and Integration of a rational function
+y = symbol y; t = symbol t;
+Dy = symbol Dy; Dt = symbol Dt;
 W = QQ[y,t,Dy,Dt, WeylAlgebra => {y=>Dy, t=>Dt}];
 I = ideal(2*t*Dy+Dt, t*Dt+2*y*Dy+2); -- annihilator of 1/(t^2-y)
 resI = DrestrictionIdeal(I, {1,0});

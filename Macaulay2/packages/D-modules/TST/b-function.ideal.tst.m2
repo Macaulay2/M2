@@ -1,10 +1,11 @@
--- globalBFunction
-clearAll()
-load "D-modules.m2"
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+needs "D-modules.m2"
 Dtrace 1
 pInfo(1, "testing globalBFunction...")
 
 scan({IntRing, TryGeneric, NonGeneric}, str->(
+	  x = symbol x; dx = symbol dx; 
 	  R = QQ[x, dx, WeylAlgebra => {x=>dx}];
 	  n = 10;
 	  f = x^n;     	    	 

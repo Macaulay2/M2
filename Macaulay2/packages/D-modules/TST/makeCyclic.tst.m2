@@ -1,11 +1,14 @@
--------------------------
--- R^3
--------------------------
-clearAll()
-load "D-modules.m2"
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+needs "D-modules.m2"
 Dtrace 1
 pInfo(1, "testing makeCyclic...")
 
+-------------------------
+-- R^3
+-------------------------
+
+x = symbol x; dx = symbol dx; 
 R = QQ[x, dx, WeylAlgebra => {x=>dx}]
 M = matrix {{dx, 0, 0}, {0, dx, 0}, {0, 0, dx}}
 h = makeCyclic M
