@@ -1,6 +1,13 @@
 --		Copyright 1995 by Daniel R. Grayson
 
 Ext = new ScriptedFunctor from {
+     argument => (
+	  (M,N) -> (
+	       f := lookup(Ext,class M,class N);
+	       if f === null then error "no method available"
+	       else f(M,N)
+	       )
+	  ),	  
      superscript => (
 	  i -> new ScriptedFunctor from {
 	       argument => (X -> (
@@ -147,3 +154,82 @@ eg3 = () -> (
   newCoordinateSystem(R, m))
 --eg3()
 "
+
+-- total ext over complete intersections
+
+factorizations = (m) -> (
+     -- m is a list of exponents for a monomial
+     -- return a list of pairs of lists showing the factorizations
+     -- e.g., if m is {1,1} we return
+     --	    	 {  ( {1,0}, {0,1} ), ( {0,1}, {1,0} ), ( {1,1}, {0,0} ), ( {0,0}, {1,1} ) }
+     if m === {} then { ({}, {}) }
+     else (
+	  i := m#-1;
+	  splice apply(factorizations drop(m,-1), 
+	       (n,o) -> apply (0 .. i, j -> (append(n,j), append(o,i-j))))))
+
+makeAdjust := fudge -> v -> {- fudge * v#1 + v#0, - v#1}
+
+Ext(Module,Module) := (N,M) -> (
+     R := ring N;
+     if R =!= ring M then error "expected modules over the same ring";
+     p := R.relations;
+     Q := ring p;
+     I := ideal p;
+     n := numgens Q;
+     c := numgens I;
+     if c =!= codim R then error "total Ext is available only for complete intersections";
+     f := apply(c, i -> I_i);
+     adjust := makeAdjust ((1 + max(first \ degree \ f)) // 2);
+     toR := map(R,Q);
+     N' := pushForward( toR, N );
+     M' := pushForward( toR, M );
+     E := resolution N';
+     s := f / (g -> nullhomotopy (g*id_E));
+     X := local X;
+     T := k[X_0 .. X_(c-1), toSequence Q.syms, 
+	  Degrees => {
+	       apply(0 .. c-1,i -> adjust { - first degree f_i, -2}), 
+	       n : adjust {1,0}
+	       }];
+     toT := map(T,Q,apply(toList(c .. c+n-1), i -> T_i));
+     S := k[X_0 .. X_(c-1),Degrees=>{c:{2}}];    -- find another way to enumerate monomials
+     mS := monoid S;
+     use S;
+     spots := E -> sort select(keys E, i -> class i === ZZ);
+     DMT := T^(apply(spots E, i -> toSequence apply(degrees E_i, d -> adjust {first d,i})));
+     Delta := new MutableHashTable;
+     Delta#(exponents 1_mS) = -E.dd;
+     scan(c, i -> Delta#(exponents mS_i) = s_i);
+     scan(4 .. length E + 1, 
+	  d -> if even d then (
+	       scan( exponents \ leadMonomial \ first entries basis(d,S), 
+		    m -> (
+			 h := sum(factorizations m,
+			      (n,o) -> if Delta#?n and Delta#?o then Delta#n * Delta#o else 0);
+			 if h != 0 then (
+			      Delta#m = nullhomotopy h;
+			      )))));
+     DT := map(DMT, DMT, transpose sum ( keys Delta, m -> T_m * toT sum Delta#m ), Degree => adjust {0,-1});
+     D := DT ** toT M';
+     ext := prune homology(D,D);
+     ext#(global adjust) = adjust;
+     ext
+     )
+
+TEST ///
+     k = ZZ/101
+     Q = k[x,y]
+     I = ideal(x^3,y^5)
+     R = Q/I
+     k' = coker vars R
+     N = cokernel random (R^3, R^{2:-2})
+     M = cokernel random (R^3, R^{2:-2})
+     E = Ext(N,M)
+     adj = E.adjust
+     scan(4, d -> (
+	  bd := basis Ext^d(N,M);
+	  assert(
+	       tally splice apply(-10..10,i -> rank source basis(adj {i,-d},E) : {i}) ===
+	       tally apply(rank source bd, i -> degree bd_i))))
+///

@@ -401,13 +401,8 @@ document { quote isWellDefined,
 ggConcatCols := (tar,src,mats) -> (
      sendgg(apply(mats,ggPush), ggPush (#mats), ggconcat);
      f := newMatrix(tar,src);
-     if same(degree \ mats)
-     and degree f != degree mats#0
-     then (
-	  d := degree mats#0;
-	  R := ring f;
-	  f = map(target f, source f ** R^{d}, f, Degree => d);
-	  );
+     if same(degree \ mats) and degree f != degree mats#0
+     then f = map(target f, source f, f, Degree => degree mats#0);
      f)
 
 ggConcatRows := (tar,src,mats) -> (
@@ -418,11 +413,7 @@ ggConcatRows := (tar,src,mats) -> (
      f := newMatrix(tar,src);
      if same(degree \ mats)
      and degree f != degree mats#0
-     then (
-	  d := degree mats#0;
-	  R := ring f;
-	  f = map(target f, source f ** R^{d}, f, Degree => d);
-	  );
+     then f = map(target f, source f, f, Degree => degree mats#0);
      f )
 
 samering := mats -> (
@@ -1563,7 +1554,7 @@ Matrix ** Matrix := (f,g) -> (
      if ring g =!= R then error "expected matrices over the same ring";
      sendgg (ggPush f, ggPush g, ggtensor);
      h := getMatrix R;
-     map(target f ** target g, source f ** source g, h))
+     map(target f ** target g, source f ** source g, h, Degree => degree f + degree g))
 
 TEST "
 ZZ[t]
@@ -1591,8 +1582,8 @@ net Matrix := f -> (
 	  R := ring target f;
 	  m := verticalJoin toSequence apply(
 	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate(" | ",x,"|"));
-	  if degreeLength R > 0 and isHomogeneous f
-	  then m = verticalJoin (degrees target f / name) | m;
+	  if degreeLength R > 0 -- and isHomogeneous f
+	  then m = verticalJoin (degrees cover target f / name) | m;
 	  m))
 
 image Matrix := f -> (
@@ -1817,11 +1808,13 @@ kernel Matrix := (g,options) -> if g.?kernel then g.kernel else g.kernel = (
 kernel RingElement := (g,options) -> kernel (matrix {{g}},options)
 
 homology(Matrix,Matrix) := (g,f) -> (
+     R := ring f;
      M := source f;
      N := target f;
      P := target g;
      if source g != N then error "expected maps to be composable";
      f = matrix f;
+     if not all(degree f, i -> i === 0) then f = map(target f, source f ** R^{-degree f}, f);
      g = matrix g;
      if P.?generators then g = P.generators * g;
      h := modulo(g, if P.?relations then P.relations);

@@ -903,6 +903,7 @@ document { "M_{i}",
      }
 -----------------------------------------------------------------------------
 basis(List,Module) := (deg,M) -> (
+     if #deg =!= degreeLength ring M then error "expected degree length to match that of ring";
      R := ring M;
      A := ultimate(ambient,R);
      if not (

@@ -73,7 +73,7 @@ document { "getting started",
      EXAMPLE "oo",
      "Lines before that can be obtained with ", TO "ooo", " and ", TO "oooo", ".  
      Alternatively, the symbol labeling an output line
-     can be used to retrieve the value.",
+     can be used to retrieve the value, as in the following example.",
      EXAMPLE "o4 + 1",
      "To enter a string, use quotation marks.",
      EXAMPLE "\"hi there\"",
