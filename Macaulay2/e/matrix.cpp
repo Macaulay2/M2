@@ -832,12 +832,6 @@ MatrixOrNull *Matrix::sub_matrix(const M2_arrayint r, const M2_arrayint c) const
     }
   deletearray(trans);
   return mat.to_matrix();
-#if 0
-  MatrixConstructor mat(F,G,degree_shift(),is_mutable());
-  for (unsigned int i=0; i<c->len; i++)
-    mat.set_column(i, F->sub_vector(rows(), elem(c->array[i]), r));
-  return mat.to_matrix();
-#endif
 }
 
 MatrixOrNull *Matrix::sub_matrix(const M2_arrayint c) const
@@ -919,12 +913,6 @@ Matrix *Matrix::transpose() const
 	mat.set_entry(c,t->comp,t->coeff);
     }
   return mat.to_matrix();
-#if 0
-  Matrix *result = new Matrix(F, G, deg);
-  degree_monoid()->remove(deg);
-  F->transpose_matrix(*this, *result);
-  return result;
-#endif
 }
 
 Matrix *Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
@@ -942,17 +930,6 @@ Matrix *Matrix::scalar_mult(const ring_elem r, bool opposite_mult) const
       mat.set_column(i, w);
     }
   return mat.to_matrix();
-
-#if 0
-  Matrix *result = new Matrix(rows(), cols(), deg);
-  for (int i=0; i<n_cols(); i++)
-    {
-      vec w = R->copy_vec(elem(i));
-      R->mult_vec_to(w,r,opposite_mult);
-      (*result)[i] = w;
-    }
-  return result;
-#endif
 }
 
 Matrix *Matrix::concat(const Matrix &m) const
@@ -977,19 +954,6 @@ Matrix *Matrix::concat(const Matrix &m) const
   for (i=0; i<m.n_cols(); i++)
     mat.set_column(nc+i, get_ring()->copy_vec(m.elem(i)));
   return mat.to_matrix();
-
-#if 0
-  Matrix *result = new Matrix(rows(), G);
-  int i;
-  int nc = n_cols();
-  for (i=0; i<nc; i++)
-    (*result)[i] = rows()->copy(elem(i));
-  for (i=0; i<m.n_cols(); i++)
-    (*result)[nc+i] = rows()->copy(m.elem(i));
-
-  return result;
-#endif
-
 }
 
 Matrix *Matrix::direct_sum(const Matrix *m) const
@@ -1564,22 +1528,6 @@ void Matrix::text_out(buffer &o) const
 {
   int nrows = n_rows();
   int ncols = n_cols();
-//  o << "#rows = " << nrows << " and #cols = " << ncols << endl;
-//  o << "rows = ";
-//  rows().text_out(o);
-//  o << endl << "cols = ";
-//  cols().text_out(o);
-//  o << endl;
-
-#if 0
-  for (int c=0; c<n_cols(); c++)
-    {
-      for (vec v = _entries[c]; v!=0; v=v->next)
-	fprintf(stdout, " %x", v);
-      fprintf(stdout, "\n");
-    }
-  return;
-#endif
 
   buffer *p = newarray(buffer,nrows);
   //  buffer *p = new buffer[nrows];
@@ -1699,6 +1647,32 @@ vec Matrix::strip_vector(vec &f, const int *vars,
   return result;
 }
 #endif
+
+Matrix *Matrix::remove_monomial_factors(bool make_squarefree_only) const
+// Divide each column v by the maximal monomial 'm' which divides v.
+// If keep_one is true, divide by somewhat less, making the resulting monomial
+// factor squarefree.
+{
+  MatrixConstructor result(rows(), 0, false);
+  if (make_squarefree_only)
+    {
+      for (int i=0; i<n_cols(); i++)
+	{
+	  vec f = get_ring()->vec_monomial_squarefree(elem(i));
+	  result.append(f);
+	}
+    }
+  else
+    {
+      for (int i=0; i<n_cols(); i++)
+	{
+	  vec f = get_ring()->vec_remove_monomial_divisors(elem(i));
+	  result.append(f);
+	}
+    }
+  return result.to_matrix();
+}
+
 #if 0
 // MES Aug 2002
 Matrix *Matrix::simplify(int n) const
@@ -1788,24 +1762,6 @@ Matrix *Matrix::auto_reduce() const
   return result;
 }
 #endif
-
-M2_arrayint Matrix::sort(int degorder, int monorder) const
-  // Sort the columns of 'this': Place the column indices into 'result'.
-  // If degorder < 0, sort in descending degree order, if >0 ascending degree
-  // If ==0, or in the event that two columns have the same (simple) degree,
-  // use the monomial order: monorder > 0 means ascending, <0 means descending.
-{
-  M2_arrayint_OrNull degs = 0;
-
-  if (degorder != 0)
-    {
-      degs = makearrayint(n_cols());
-      for (int i=0; i<n_cols(); i++)
-	degs->array[i] = cols()->primary_degree(i);
-    }
-
-  return rows()->sort(_entries, degs, degorder, monorder);
-}
 
 #if 0
 Matrix *Matrix::coeffs(const int *vars, Matrix * &result_monoms) const

@@ -246,6 +246,7 @@ protected:
   // the pointer to the first term of f not used (possibly 0).
 
 public:
+  virtual void monomial_divisor(const ring_elem a, int *exp) const;
 
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
   virtual bool in_subring(int nslots, const ring_elem a) const;

@@ -249,6 +249,7 @@ public:
   virtual int index_of_var(const ring_elem a) const;
   virtual M2_arrayint support(const ring_elem a) const;
 
+  virtual void monomial_divisor(const ring_elem a, int *exp) const;
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
   virtual bool in_subring(int nslots, const ring_elem a) const;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
@@ -269,31 +270,6 @@ public:
     // returns true iff f is homogeneous
   virtual int primary_degree(const ring_elem f) const;
   virtual void degree_weights(const ring_elem f, const M2_arrayint wts, int &lo, int &hi) const;
-
-  ///////////////////////////////////////////////////////
-  // Used in gbvector <--> vector/ringelem translation //
-  ///////////////////////////////////////////////////////
-  // Default values are provided for base rings (ZZ, ZZ/p, GF)
-  // All others should redefine these routines
-
-public:
-#if 0
-  typedef enum { BASE, FRAC_QQ, FRAC, POLY } trans_tag;
-  virtual ring_elem trans_to_ringelem(ring_elem coeff, 
-				      const int *exp) const;
-  virtual ring_elem trans_to_ringelem_denom(ring_elem coeff, 
-					    ring_elem denom, 
-					    int *exp) const;
-  virtual void trans_from_ringelem(gbvectorHeap &H, 
-				   ring_elem coeff, 
-				   int comp, 
-				   int *exp,
-				   int firstvar) const;
-  
-  virtual trans_tag trans_type() const;
-#endif
-  ////////////////////////////////////////////////////////  
-
 
   //////////////////////////////////////////
   /// vector operations ////////////////////
@@ -322,7 +298,7 @@ public:
   ring_elem get_entry(vec v, int r) const;
   vec sub_vector(const vecterm * v, const M2_arrayint r) const;
   int n_nonzero_terms(const vecterm * v) const;
-  void elem_text_out(buffer &o, const vecterm * v) const;
+  void vec_text_out(buffer &o, const vecterm * v) const;
   vec vec_eval(const RingMap *map, const FreeModule *F,	const vec v) const;
 
   vec negate_vec(vec v) const;
@@ -369,6 +345,12 @@ public:
   vec vec_divide_by_var(int n, int d, const vec v) const;
   vec vec_divide_by_expvector(const int *exp, const vec v) const;
 
+  // Some divisibility routines
+  int vec_is_scalar_multiple(vec f, vec g) const;// is cf = dg, some scalars c,d? (not both zero).
+  void vec_monomial_divisor(vec f, int *exp) const;
+  vec vec_monomial_squarefree(vec f) const;
+  vec vec_remove_monomial_divisors(vec f) const;
+
   bool vec_multi_degree(const FreeModule *F, const vec f, int *degf) const;
   // returns true iff f is homogeneous
 
@@ -378,7 +360,7 @@ public:
 			  const M2_arrayint wts, 
 			  int &lo, 
 			  int &hi) const;
-  int vec_primary_degree (const FreeModule *F, const vec f) const;
+  //int vec_primary_degree (const FreeModule *F, const vec f) const;
   bool vec_is_homogeneous (const FreeModule *F, const vec f) const;
   vec vec_homogenize(const FreeModule *F, 
 		     const vec f, 
@@ -389,25 +371,6 @@ public:
 		     const vec f, 
 		     int v, 
 		     const M2_arrayint wts) const;
-
-  // Other operations desired:
-  // assemble a vector from ring elements
-  // get the entries, non-zero entries.
-
-  // negate, subtract, _to routines as well
-  // mult/divide on the right
-  // component shift (all components > a are incremented by b)
-
-  // diff
-
-  // given degrees of the components:
-  //   degree
-
-  // polynomial routines (vectors of polynomials)
-  //   degree_weights
-  //   is_homogeneous
-  //   homogenize (2 forms).
-
 };
 
 #define ZERO_RINGELEM (ring_elem(reinterpret_cast<Nterm *>(0)))

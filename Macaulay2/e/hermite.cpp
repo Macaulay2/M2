@@ -347,9 +347,9 @@ void HermiteComputation::text_out(buffer &o)
 	  {
 	    bignum_text_out(o, p->lead);
 	    o << " ## ";
-	    globalZZ->elem_text_out(o, p->f);
+	    globalZZ->vec_text_out(o, p->f);
 	    o << " ## ";
-	    globalZZ->elem_text_out(o, p->fsyz);
+	    globalZZ->vec_text_out(o, p->fsyz);
 	    o << newline;
 	  }
       }

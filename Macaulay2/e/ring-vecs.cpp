@@ -11,11 +11,6 @@
 
 vec Ring::new_vec() const
 {
-#if 0
-  vec result = new vecterm;
-  fprintf(stdout,"new vec term %x\n", result);
-  return result;
-#endif
   return new vecterm;
 }
 
@@ -273,7 +268,7 @@ vec Ring::tensor(const FreeModule *F, vec v,
   return H.value();
 }
 
-void Ring::elem_text_out(buffer &o, const vecterm * v) const
+void Ring::vec_text_out(buffer &o, const vecterm * v) const
 {
   if (v == NULL)
     {
@@ -320,9 +315,6 @@ vec Ring::vec_eval(const RingMap *map,
   result->next = 0;
   return head.next;
 }
-
-// int FreeModule::lead_component(vec v) const
-// ring_elem FreeModule::lead_coefficient(vec v) const
 
 ///////////////////////////////////////
 // Routines which modify a vec ////////
@@ -756,13 +748,6 @@ void Ring::vec_sort(vecterm *&f) const
   f = f1;
 }
 
-extern "C" void debugout(const Ring *R, const vec v)
-{
-  buffer o;
-  R->elem_text_out(o,v);
-  emit_line(o.str());
-}
-
 vec Ring::vec_diff(vec v, int rankFw, vec w, int use_coeff) const
 // rankFw is the rank of the free module corresponding to w.
 {
@@ -989,6 +974,102 @@ vec Ring::vec_homogenize(const FreeModule *F,
   assert(wts->array[v] != 0);
   int d = (wts->array[v] > 0 ? hi : lo);
   return vec_homogenize(F, f, v, d, wts);
+}
+
+#if 0
+// MES 8-9-04
+vec FreeModule::random() const
+{
+  vec result = NULL;
+  for (int i=0; i<rank(); i++)
+    {
+      vec v = R->make_vec(i,R->random());
+      if (v != NULL)
+	{
+	  v->next = result;
+	  result = v;
+	}
+    }
+  return result;
+}
+#endif
+
+//////////////////////////////////////////////
+//  Divisibility checks               ////////
+//                                    ////////
+//////////////////////////////////////////////
+#if 0
+bool Ring::vec_is_scalar_multiple(vec f, vec g) const
+  // is df = cg, some scalars c,d?
+{
+  if (f == NULL) return true;
+  if (g == NULL) return true;
+  ring_elem c = f->coeff;
+  ring_elem d = g->coeff;
+  vec p,q;
+  for (p=f, q=g; p != NULL && q != NULL; p=p->next, q=q->next)
+    {
+      if (p->comp != q->comp) return 0;
+      if (M->compare(p->monom, q->monom) != 0) return 0;
+    }
+  for (p=f, q=g; p != NULL && q != NULL; p=p->next, q=q->next)
+    {
+      ring_elem c1 = K->mult(c, q->coeff);
+      ring_elem d1 = K->mult(d, p->coeff);
+      int isequal = K->is_equal(c1, d1);
+      K->remove(c1);
+      K->remove(d1);
+      if (!isequal) return 0;
+    }
+  if (q == NULL && p == NULL) return 1;
+  return 0;
+}
+#endif
+void Ring::vec_monomial_divisor(vec f, int *exp) const
+// It is expected that 'exp' is already an initialized exponent vector.
+{
+  const PolynomialRing *PR = cast_to_PolynomialRing();
+  if (PR == 0) return;
+  if (f == NULL) return;
+  Nterm *t = f->coeff;
+  PR->getMonoid()->to_expvector(t->monom, exp); // Get the process started
+
+  for (vec a = f; a != NULL; a = a->next)
+    monomial_divisor(a->coeff, exp);
+}
+
+vec Ring::vec_monomial_squarefree(vec f) const
+{
+  const PolynomialRing *PR = cast_to_PolynomialRing();
+  if (PR == 0) return copy_vec(f);
+  if (f == 0) return 0;
+
+  int *exp = newarray(int,n_vars());
+  vec_monomial_divisor(f, exp); // 'exp' need not be initialized, just allocated
+
+  // Now divide each term by exp[i]-1, if exp[i] >= 2
+  for (int i=0; i<n_vars(); i++)
+    if (exp[i] >= 1) exp[i]--;
+  vec result = vec_divide_by_expvector(exp, f);
+
+  deletearray(exp);
+  return result;
+}
+
+vec Ring::vec_remove_monomial_divisors(vec f) const
+{
+  const PolynomialRing *PR = cast_to_PolynomialRing();
+  if (PR == 0) return copy_vec(f);
+  if (f == 0) return 0;
+
+  int *exp = newarray(int,n_vars());
+  vec_monomial_divisor(f, exp); // 'exp' need not be initialized, just allocated
+
+  // Now divide each term by exp
+  vec result = vec_divide_by_expvector(exp, f);
+
+  deletearray(exp);
+  return result;
 }
 
 // Local Variables:

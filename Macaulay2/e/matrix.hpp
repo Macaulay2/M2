@@ -129,23 +129,15 @@ public:
   /*****************************************/
 
   /* The non-const versions of these will go away */
-  FreeModule *rows() { return _rows; }
-  FreeModule *cols() { return _cols; }
+  //  FreeModule *rows() { return _rows; }
+  //  FreeModule *cols() { return _cols; }
   const FreeModule *rows() const { return _rows; }
   const FreeModule *cols() const { return _cols; }
 
   int n_rows() const { return rows()->rank(); }
   int n_cols() const { return cols()->rank(); }
 
-
   // Operations permitted on matrices which are mutable or not decided.
-
-  /* These 3 routines will go away (they will be in MatrixConstructor) */
-#if 0
-  void append(vec v);
-  void append(vec v, const int *d);
-  void schreyer_append(vec v);
-#endif
   /*********************************************************************/
 
   bool error_column_bound(int c) const;
@@ -205,7 +197,6 @@ public:
 
   // The degree shift
   const int *degree_shift() const { return _degree_shift; }
-  //  int *degree_shift() { return _degree_shift; }
 
   // to/from monideals
   MonomialIdeal * make_monideal(int n) const;
@@ -302,6 +293,7 @@ public:
   Matrix *divide_by_var(int n, int maxd, int &maxdivided) const; // maxd<0 means divide by as much as possible
 
   Matrix *compress() const; // Remove zero columns
+  Matrix *remove_monomial_factors(bool make_squarefree_only) const;
 
   static Matrix *random(const Ring *R, int r, int c);
 

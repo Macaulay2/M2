@@ -1,6 +1,8 @@
 #include "matrixcon.hpp"
 #include "matrix.hpp"
 
+#warning "logic for mutable/immutable is muddled"
+
 MatrixConstructor::MatrixConstructor()
   : R(0),
     rows(0),

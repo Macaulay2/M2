@@ -1712,7 +1712,7 @@ void PolyRing::degree_of_var(int n, const ring_elem a, int &lo, int &hi) const
       ERROR("attempting to find degree of a zero element");
       return;
     }
-  int *exp = newarray(int,n_vars());
+  int *exp = newarray_atomic(int,n_vars());
   M_->to_expvector(t->monom, exp);
   lo = hi = exp[n];
   for (t = t->next; t!=0; t=t->next)
@@ -1724,6 +1724,18 @@ void PolyRing::degree_of_var(int n, const ring_elem a, int &lo, int &hi) const
 	hi = exp[n];
     }
   deletearray(exp);
+}
+
+void PolyRing::monomial_divisor(const ring_elem a, int *exp) const
+// Replaces the flat exponent vector 'exp' with its gcd with the gcd of all
+// monomials of 'a'.
+{
+  int *exp1 = newarray_atomic(int,n_vars());
+  for (const Nterm *t = a; t != 0; t = t->next)
+    {
+      M_->to_expvector(t->monom, exp1);
+      ntuple::gcd(n_vars(),exp1,exp,exp);
+    }
 }
 
 ring_elem PolyRing::divide_by_var(int n, int d, const ring_elem a) const
