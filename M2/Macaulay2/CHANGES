@@ -1,14 +1,17 @@
 Changes made, most recent ones first:
 
+-----------------------------------------------------------------------------
 New in 0.8.41:
 
-inducedMap
+new function 'inducedMap'
 
-functoriality for Hom, etc.
+functoriality for Hom and Ext
 
+'fromPrune' gone, but see 'pruningMap'
 
-New in 0.8.40:
 -----------------------------------------------------------------------------
+New in 0.8.40:
+
 
 Minimal, an option to gb for internal use only, has been changed to 
 StopWithMinimalGenerators.
@@ -20,8 +23,9 @@ includes modules over inhomgeneous rings.  Previous results may have been
 wrong, so should be rerun.  We don't actually have any examples of wrong
 results, though - the old code seems to go into an infinite loop instead.
 
-New in 0.8.39:
 -----------------------------------------------------------------------------
+New in 0.8.39:
+
 There is a new convention about automatic assignment of generators of rings
 to global variables.  The old convention was that this happened automatically
 when the polynomial ring was created.  The new convention is that it happens

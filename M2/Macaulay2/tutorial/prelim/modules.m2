@@ -90,7 +90,7 @@ M = ideal(a,b)/ideal(a^2,b^2)
 N = ideal(a,b,a-b)/ideal(a^2,b^2)
 prune M
 prune N
-f = N.fromPrune
+f = (prune N).pruningMap
 g = f^(-1)
 h = map(M,N,matrix(R,{{1,0,1},{0,1,-1}}))
 source g == target f

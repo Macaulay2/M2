@@ -641,12 +641,26 @@ assert ( 0 == HH_3 res M )
 assert ( 0 == HH_4 res M )
 "
 
+
 cohomology(ZZ,ChainComplex) := { ChainComplex,
-     (i,C) -> HH_-i C,
+     (i,C) -> homology(-i, C),
      TT "HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      PARA,
      "By definition, this is the same as HH_(-i) C."
      }
+
+  homology(ZZ,ChainComplexMap) := (i,f) -> inducedMap(homology(i,target f), homology(i,source f),f_i)
+cohomology(ZZ,ChainComplexMap) := (i,f) -> homology(-i,f)
+
+  homology(ChainComplex) := (C) -> (
+       H := new GradedModule;
+       complete C;
+       scan(spots C, i -> H#i = homology(i,C));
+       H)
+  homology(ChainComplexMap) := (f) -> (
+       g := new GradedModuleMap;
+       scan(spots f, i -> g#i = homology(i,f));
+       g)
 
 chainComplex = method(SingleArgumentDispatch=>true)
 
@@ -770,7 +784,7 @@ Hom(ChainComplex, Module) := { ChainComplex,
 	  D := new ChainComplex;
 	  D.ring = ring C;
 	  b := D.dd;
-	  scan(keys c, i -> if class i === ZZ then (
+	  scan(spots c, i -> (
 		    j := - i + 1;
 		    f := b#j = Hom(c_i,N);
 		    D#j = source f;
@@ -780,6 +794,17 @@ Hom(ChainComplex, Module) := { ChainComplex,
      TT "Hom(C,M)", " -- produces the Hom complex from a chain complex C and
      a module M."
      }
+
+Hom(Module, ChainComplex) := (M,C) -> (
+     complete C.dd;
+     D := new ChainComplex;
+     D.ring = ring C;
+     scan(spots C.dd, i -> (
+	       f := D.dd#i = Hom(M,C.dd_i);
+	       D#i = source f;
+	       D#(i-1) = target f;
+	       ));
+     D)
 
 dual ChainComplex := { ChainComplex,
      (C) -> (
@@ -794,6 +819,14 @@ Hom(ChainComplexMap, Module) := (f,N) -> (
      g.source = Hom(target f, N);
      g.target = Hom(source f, N);
      scan(spots f, i -> g#(-i-d) = Hom(f#i,N));
+     g)
+
+Hom(Module, ChainComplexMap) := (N,f) -> (
+     g := new ChainComplexMap;
+     d := g.degree = f.degree;
+     g.source = Hom(N, source f);
+     g.target = Hom(N, target f);
+     scan(spots f, i -> g#i = Hom(N,f#i));
      g)
 
 transpose ChainComplexMap := 

@@ -251,14 +251,11 @@ Matrix == Matrix := (m,n) -> (
      and (
      	  sendgg (ggPush m, ggPush n, ggisequal); 
      	  eePopBool()))
-Matrix == RingElement := (m,f) -> m == f*id_(target m)
-RingElement == Matrix := (f,m) -> m == f*id_(target m)
-
+Matrix == RingElement := (m,f) -> m - f == 0
+RingElement == Matrix := (f,m) -> m - f == 0
 Matrix == ZZ := (m,i) -> (
      if i === 0 then ( sendgg(ggPush m, ggiszero); eePopBool())
-     else if i === 1 then ( source m == target m and m == id_(target m) )
-     else ( source m == target m and m == i*id_(target m) )
-     )
+     else m == i_R)
 ZZ == Matrix := (i,m) -> m == i
 
 Matrix + Matrix := {Matrix, BinaryMatrixOperationSame ggadd}
@@ -383,9 +380,7 @@ isHomogeneous Matrix := m -> (
 	  ( not N.?generators or isHomogeneous N.generators )
 	  ))
 
-isWellDefined Matrix := f -> (
-     matrix f * presentation source f % presentation target f == 0
-     )
+isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
 
 document { quote isWellDefined,
      TT "isWellDefined m", " -- tells whether a map m of modules is 
@@ -907,9 +902,9 @@ inducedMap = method (
 inducedMap(Module,Module,Matrix) := (M,N,f,options) -> (
      sM := target f;
      sN := source f;
-     if ambient M =!= sM
+     if ambient M != sM
      then error "'inducedMap' expected target of map to be a subquotient of target module provided";
-     if ambient N =!= sN
+     if ambient N != sN
      then error "'inducedMap' expected source of map to be a subquotient of source module provided";
      g := f * generators N;
      h := generators M;
@@ -921,24 +916,29 @@ inducedMap(Module,Module,Matrix) := (M,N,f,options) -> (
 	  then error "'inducedMap' expected matrix to induce a well-defined map";
 	  );
      p)
-inducedMap(Module,Nothing,Matrix) := (M,N,f) -> inducedMap(M,source f, f)
-inducedMap(Nothing,Module,Matrix) := (M,N,f) -> inducedMap(target f,N, f)
-inducedMap(Nothing,Nothing,Matrix) := (M,N,f) -> f
+inducedMap(Module,Nothing,Matrix) := (M,N,f,o) -> inducedMap(M,source f, f,o)
+inducedMap(Nothing,Module,Matrix) := (M,N,f,o) -> inducedMap(target f,N, f,o)
+inducedMap(Nothing,Nothing,Matrix) := (M,N,f,o) -> inducedMap(target f,source f, f,o)
 
-isWellDefinedInducedMap = method()
-isWellDefinedInducedMap(Module,Module,Matrix) := (M,N,f) -> (
+inducedMap(Module,Module) := (M,N,o) -> (
+     if ambient M != ambient N 
+     then error "'inducedMap' expected modules with same ambient free module";
+     inducedMap(M,N,id_(ambient N),o))
+
+inducesWellDefinedMap = method()
+inducesWellDefinedMap(Module,Module,Matrix) := (M,N,f) -> (
      sM := target f;
      sN := source f;
      if ambient M =!= sM
-     then error "'isWellDefinedInducedMap' expected target of map to be a subquotient of target module provided";
+     then error "'inducesWellDefinedMap' expected target of map to be a subquotient of target module provided";
      if ambient N =!= sN
-     then error "'isWellDefinedInducedMap' expected source of map to be a subquotient of source module provided";
+     then error "'inducesWellDefinedMap' expected source of map to be a subquotient of source module provided";
      (f * generators N) % (generators M) == 0
      and
      (f * relations N) % (relations M) == 0)     
-isWellDefinedInducedMap(Module,Nothing,Matrix) := (M,N,f) -> isWellDefinedInducedMap(M,source f,f)
-isWellDefinedInducedMap(Nothing,Module,Matrix) := (M,N,f) -> isWellDefinedInducedMap(target f,N,f)
-isWellDefinedInducedMap(Nothing,Nothing,Matrix) := (M,N,f) -> f
+inducesWellDefinedMap(Module,Nothing,Matrix) := (M,N,f) -> inducesWellDefinedMap(M,source f,f)
+inducesWellDefinedMap(Nothing,Module,Matrix) := (M,N,f) -> inducesWellDefinedMap(target f,N,f)
+inducesWellDefinedMap(Nothing,Nothing,Matrix) := (M,N,f) -> f
 
 matrix(Ring,List) := (R,m,options) -> (
      if not isTable m then error "expected a table";
@@ -1814,8 +1814,14 @@ TEST "
 "
 
 Hom(Matrix, Module) := (f,N) -> (
-     if not (isFreeModule source f and isFreeModule target f) then notImplemented();
-     (transpose f) ** N)
+     if isFreeModule source f and isFreeModule target f
+     then transpose f ** N
+     else notImplemented())
+
+Hom(Module, Matrix) := (N,f) -> (
+     if isFreeModule N 
+     then dual N ** f
+     else notImplemented())
 
 dual(Matrix) := { Matrix,
      f -> (
@@ -2057,9 +2063,4 @@ document { quote content,
      coefficients."
      }
 
-cover(Matrix) := (f) -> (
-     M := target f;
-     N := source f;
-     if not isFreeModule M or not isFreeModule N
-     then map(cover M, cover N, f)
-     else f)
+cover(Matrix) := (f) -> matrix f

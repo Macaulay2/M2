@@ -55,7 +55,8 @@ exteriorPower(ZZ, Matrix) := (p,m) -> (
      if p === 0 then map(R^1,R^1,1_R)
      else if p < 0 then map(R^0,R^0,0_R)
      else (
-	  h := prune m;
+	  -- h := prune m;
+	  h := m;			  -- DRG: disabled 'prune' here.
 	  h1 := matrix h;
 	  sendgg(ggPush h1, ggPush p, ggexterior);
 	  hp := getMatrix ring m;
