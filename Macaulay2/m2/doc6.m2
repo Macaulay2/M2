@@ -443,11 +443,15 @@ document { isUnit,
 document { exponents,
      TT "exponents m", " -- for a monomial ", TT "m", " provides the list
      of exponents.",
+     BR, NOINDENT,
      TT "exponents f", " -- for a polynomial ", TT "f", " provides a list
      whose elements are the lists of exponents of the terms of ", TT "f", ".",
+     PARA,
      EXAMPLE {
 	  "R = ZZ/101[x,y,z];",
-      	  "exponents (x^2 - 7 + x*y*z^11 + y)"
+      	  "exponents (f = x^2 - 7 + x*y*z^11 + y)",
+	  "leadMonomial f",
+	  "exponents leadMonomial f"
 	  },
      }
 

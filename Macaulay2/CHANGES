@@ -2,6 +2,9 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.54:
 
+Fixed a bug in opening output pipes.  This affected online display of documentation
+in a terminal window.
+
 'string' and 'name' phased out in favor of 'toString' and 'toExternalString',
 both of which accomodate methods better.
 

@@ -958,13 +958,12 @@ document { "hashing",
      PARA,
      "In Macaulay 2, we chose the second approach listed above; we expect to
      have many mutable things appearing as keys in hash tables, and we need
-     the speed.  A counter
-     with initial value 1000000 is incremented each time a mutable thing is
-     created, and its value is taken as the hash code of the thing and stored
-     within it.  The strong comparison test cannot depend on the contents of
-     mutable things, and thus such things appear to be containers with opaque
-     walls.  For mutable things, the test for equality must be the same as 
-     equality of the hash codes.",
+     the speed.  A counter with initial value 1000000 is incremented each time 
+     a mutable thing is created, and its value is taken as the hash code of the
+     thing and stored within it.  The strong comparison test cannot depend on 
+     the contents of mutable things, and thus such things appear to be 
+     containers with opaque walls.  For mutable things, the test for equality 
+     must be the same as equality of the hash codes.",
      PARA,
      "It is essential to have some hash tables for which equality amounts
      to equality of the contents.  This cannot be achieved for mutable

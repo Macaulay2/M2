@@ -65,7 +65,7 @@ menu(Function,Thing) := (x,back) -> (
      try (
 	  if (locate x)#0 === "stdio" then error "";
 	  items = join(items,{
-		    ("SOURCE",(RUNME{()->(code x;read "press return: ";)},(x,back))),
+		    ("SOURCE",(RUNME{()->(<< code x << endl;read "press return: ";)},(x,back))),
 	  	    ("EDIT",(RUNME{()->edit x},(x,back)))});
 	  );
      try items = append(items,("ORIGINAL", (original x,(x,back))));
@@ -82,7 +82,7 @@ menu(Symbol,Thing) := (x,back) -> (
      try (
 	  if (locate x)#0 === "stdio" then error "";
 	  items = append(items,
-	       ("SOURCE",(RUNME {() -> (code x;read "press return: ";)},(x,back)))
+	       ("SOURCE",(RUNME {() -> (<< code x << endl;read "press return: ";)},(x,back)))
 	       );
 	  );
      items = append(items,("METHODS", (METHODS {x}, (x,back))));

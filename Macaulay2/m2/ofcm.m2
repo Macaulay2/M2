@@ -67,12 +67,15 @@ Monoid _ List := (M,v) -> (
 numgens GeneralOrderedMonoid := M -> # M.generators
 degreeLength GeneralOrderedMonoid := M -> M.degreeLength
 
-MOgrlex := (degs) -> (sendgg(ggPush degs, ggMOgrevlex); newHandle())
-MOrlex := (degs) -> (sendgg(ggPush degs, ggMOrevlex); newHandle())
-MOglex := (degs) -> (sendgg(ggPush degs, ggMOglex); newHandle())
-MOlex := (degs) -> (sendgg(ggPush degs, ggMOlex); newHandle())
-MOproduct := (m1, m2) -> (sendgg(ggPush m1, ggPush m2, ggMOproduct); newHandle())
-MOelim := (degs, i) -> (sendgg(ggINTARRAY, gg degs, ggPush i, ggMOelim); newHandle())
+-- check #wts is divisible by #vars
+-- Weights => {{2,3},{4,5}}
+MOgrlex := (wts,degs) -> (sendgg(ggPush wts, ggPush degs, ggMOgrevlex); newHandle())
+MOrlex := (wts,degs) -> (sendgg(ggPush wts, ggPush degs, ggMOrevlex); newHandle())
+MOglex := (wts,degs) -> (sendgg(ggPush wts, ggPush degs, ggMOglex); newHandle())
+MOlex := (wts,degs) -> (sendgg(ggPush wts, ggPush degs, ggMOlex); newHandle())
+MOproduct := (wts,m1, m2) -> (sendgg(ggPush wts, ggPush m1, ggPush m2, ggMOproduct); newHandle())
+MOelim := (wts,degs, i) -> (sendgg(ggPush wts, ggINTARRAY, gg degs, ggPush i, ggMOelim); newHandle())
+
 MOwtfcn := (degs, wts) -> (
     sendgg(ggINTARRAY, gg degs, 
 	   ggINTARRAY, gg wts, 
@@ -117,6 +120,7 @@ monoidDefaults := if OLDENGINE then (
 	  VariableBaseName => null,
 	  Variables => null,
 	  Degrees => null,
+	  Weights => {},
 	  Inverses => false,
 	  MonomialOrder => null,
 	  MonomialSize => 8,
@@ -168,6 +172,11 @@ makeit1 := (options) -> (
      firstdeg := transpose degs;
      firstdeg = if #firstdeg === 0 then toList(n:1) else firstdeg#0;
      variableOrder := toList (0 .. n-1);
+     wts := flatten options.Weights;
+     if not all(wts,i -> class i === ZZ)
+     then error "expected Weights option to be a list or list of lists of integers";
+     if #wts % n != 0 
+     then error "expected Weights option length to be a multiple of the number of variables";
      if options.?NewMonomialOrder and options.NewMonomialOrder =!= null then (
 	  M.newEngine = true;
 	  M.MonomialOrder = monomialOrdering options.NewMonomialOrder;
@@ -175,13 +184,13 @@ makeit1 := (options) -> (
      else (
 	  mo := options.MonomialOrder;
 	  M.MonomialOrder = (
-	       if mo === null then MOgrlex firstdeg
-	       else if mo === quote RevLex then MOrlex firstdeg
-	       else if mo === quote GRevLex then MOgrlex firstdeg
-	       else if mo === quote Lex then MOlex firstdeg
-	       else if mo === quote GLex then MOglex firstdeg
-	       else if instance(mo, Eliminate) then MOelim(firstdeg, mo#0)
-	       else if instance(mo, ProductOrder) then MOproduct(firstdeg, toList mo)
+	       if mo === null then MOgrlex (wts,firstdeg)
+	       else if mo === quote RevLex then MOrlex (wts,firstdeg)
+	       else if mo === quote GRevLex then MOgrlex (wts,firstdeg)
+	       else if mo === quote Lex then MOlex (wts,firstdeg)
+	       else if mo === quote GLex then MOglex (wts,firstdeg)
+	       else if instance(mo, Eliminate) then MOelim(wts,firstdeg, mo#0)
+	       else if instance(mo, ProductOrder) then MOproduct(wts, firstdeg, toList mo)
 	       else error("invalid MonomialOrder option: ", toString mo)
 	       )
 	  );

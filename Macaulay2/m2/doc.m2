@@ -1087,7 +1087,7 @@ document { "==",
      ", TO "=!=", ".",
      PARA,
      "Warning: this comparison operator returning true is not necesarily related to
-     the comaprison operator ", TO "?", " returning ", TT "quote ==", ".",
+     the comparison operator ", TO "?", " returning ", TT "quote ==", ".",
      PARA,
      SEEALSO{ "!=" }
      }

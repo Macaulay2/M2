@@ -253,7 +253,6 @@ if OLDENGINE then (
      erase quote GroupRevLex;
      erase quote MonomialOrdering;
      erase quote NCLex;
-     erase quote Weights;
      erase quote newDegreesMonoid;
      erase quote newDegreesRing;
      erase quote newEngine;

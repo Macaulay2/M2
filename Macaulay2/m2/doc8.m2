@@ -458,8 +458,8 @@ document { gb => StopWithMinimalGenerators,
      has not yet been determined.",
      PARA,
      "Currently this option is implemented by stopping the computation
-     as soon as the those S-polynomials and generators, of the same 
-     degree as the generator of highest degree, have been processed.",
+     as soon as the S-polynomials and generators of the same 
+     degree as the generator of highest degree have been processed.",
      PARA,
      "This option is for internal use only.  Use ", TO "mingens", "
      instead."
