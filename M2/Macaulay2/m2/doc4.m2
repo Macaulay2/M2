@@ -174,6 +174,9 @@ document { match,
      PARA,
      "The value returned is true or false, depending on whether a the regular
      expression ", TT "s", " matches a substring of ", TT "p", ".",
+     PARA,
+     "Warning: in version 0.9.2 and earlier ", TO "match", " behaved differently, and 
+     the arguments were in the other order.",
      EXAMPLE {
 	  ///match ("asdf*", "--asdffff--")///,
 	  ///match ("asdf*", "--asffff--")///
