@@ -689,8 +689,8 @@ extern int etext, end;
 #define PAGESIZE 4096
 #endif
 
+#ifdef DUMPDATA
 static sigjmp_buf jumpbuffer;
-
 static int sig = -1;
 
 static void handler(int k) 
@@ -699,7 +699,6 @@ static void handler(int k)
      siglongjmp(jumpbuffer,1);
      }
 
-#ifdef DUMPDATA
 static void handler2(int k) 
 {
      sig = 2;
@@ -746,10 +745,10 @@ int system_dumpdata(datafilename)
 M2_string datafilename;
 {
      /* this routine should keep its data on the stack */
-     bool haderror = FALSE;
 #ifndef DUMPDATA
      return ERROR;
 #else
+     bool haderror = FALSE;
      char *datafilename_s = tocharstar(datafilename);
 #ifdef NEWDUMPDATA
      if (ERROR == dumpdata(datafilename_s)) haderror = TRUE;

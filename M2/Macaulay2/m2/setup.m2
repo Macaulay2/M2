@@ -212,7 +212,6 @@ addStartFunction = g -> (
 runStartFunctions = () -> scan(startFunctions, f -> f())
 OLDENGINE = getenv("OLDENGINE") == "TRUE"
 lastSystemSymbol = null
-<< "--loading source code..." << endl
 load "loads.m2"
 notify = true
 lastSystemSymbol = local privateSymbol

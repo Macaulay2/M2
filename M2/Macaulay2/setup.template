@@ -1,0 +1,41 @@
+#! /bin/sh
+cd m2
+ARCH=`uname -m`
+export ARCH
+if %DUMPDATA%
+then echo =======================================================
+     echo Dumping data
+     ../bin/Macaulay2 '-e phase=1' setup.m2 dumpdata.m2  '-edump()' '-e exit 0'
+fi
+echo =======================================================
+echo Making bin/M2
+if   %DUMPDATA%
+then ../bin/Macaulay2 "-e loaddata \"../cache/Macaulay2-`uname -m | sed s=/=-=g `-data\"" \
+            -- '-e runStartFunctions()' makeM2.m2 '-e exit 0'
+else ../bin/Macaulay2 \
+            '-e phase=1' setup.m2 '-e phase=0' \
+            '-e runStartFunctions()' makeM2.m2 '-e exit 0'
+fi
+echo =======================================================
+echo You may copy bin/M2 to one of the following directories below marked with "**".
+hadone=0
+for i in `printenv PATH | sed -e 's/%/%-/g' -e 's/ /%=/g' -e 's/:/ /g'`
+do i=`echo $i | sed -e 's/%=/ /g' -e 's/%-/%/g'`
+   if [ "$i" != . ]
+   then echo -n "    "
+	if [ -w "$i" ]
+	then hadone=1
+	     echo -n "**"
+        else echo -n "  "
+        fi
+	echo -n " $i"
+	if [ -x "$i"/M2 ]
+	then echo -n "   (contains a copy of M2)"
+	fi
+	echo
+   fi
+done
+if [ "$hadone" = 0 ]
+then echo Sorry, there are no writable directories on your path.
+fi
+echo =======================================================
