@@ -4,7 +4,7 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
 
-RESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2)) 
+RESULTS := $(notdir $(patsubst %.m2, %.okay, $(wildcard @srcdir@/*.m2)))
 ifneq "$(DUMPDATA)" "no"
 RESULTS := $(RESULTS) dumpdata.okay
 endif
