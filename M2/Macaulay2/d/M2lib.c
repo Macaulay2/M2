@@ -457,7 +457,7 @@ char **argv;
      }
      clean_up();
 #if 0
-     fprintf(stderr,"heap size = %d, divisor = %ld, collections = %ld\n", 
+     fprintf(stderr,"gc: heap size = %d, free space divisor = %ld, collections = %ld\n", 
 	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
 #endif
      exit(returncode);

@@ -97,12 +97,14 @@ export SuppressErrors := false;
 export printErrorMessage(position:Position,message:string):void := (
      if !SuppressErrors then (
      	  flush(stdout);
+	  endLine(stderr);
      	  stderr << position << ' ' << message << endl;
 	  );
      );
 export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
      if !SuppressErrors then (
      	  flush(stdout);
+	  endLine(stderr);
      	  stderr << Position(filename,line,column,uchar(0)) << ' ' << message << endl;
 	  );
      );

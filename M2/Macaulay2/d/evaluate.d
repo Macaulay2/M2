@@ -1048,6 +1048,7 @@ shieldfun(a:Code):Expr := (
      	  interruptShield = false;
      	  interrupted = interruptPending;
 	  if interrupted && !stdIO.inisatty then (
+     	       endLine(stderr);
 	       stderr << "interrupted" << endl;
 	       exit(1);
 	       );

@@ -41,6 +41,9 @@ size x
 rawMultiDegree raw x
 assert( symbol x == baseName x )
 assert( symbol y == baseName (monoid R)_1 )
+
+assert( raw 0_R == 0 )
+
 -- exponents x
 
 R'= raw R
@@ -72,6 +75,24 @@ f = (x+y+1)^3
 
 -- listForm f
 -- standardForm f
+
+
+-- factory
+
+f = x^3+6*x+11*y^2+1
+g = x^4+6*x+13*y
+d = x^5+6*x^2+17
+
+assert( d === gcd(f*d,g*d) )
+
+pR = (f,g) -> rawPseudoRemainder(raw f, raw g)
+assert( pR(x^2+y+11,x) == y+11 )
+assert( pR(f*d,d) == 0 )
+
+-- rawFactor raw (f*g)
+-- factor(f*g)
+
+-- rawCharSeries raw vars R
 
 -- modules
 M'= raw monoid R

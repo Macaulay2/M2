@@ -165,69 +165,27 @@ export getSequenceOfMatrices(e:Expr) : RawMatrixArray := (
 -----------------------------------------------------------------------------
 -- helper routines for checking and converting return values
 
-export toExpr(x:RawRingOrNull):Expr := (
-     when x
-     is r:RawRing do Expr(r)
-     is null do buildErrorPacket(EngineError("unknown raw ring engine error"))
-     );
+export engineErrorMessage():Expr := buildErrorPacket(EngineError("unknown engine error"));
 
-export toExpr(x:RawMonomialIdealOrNull):Expr := (
-     when x
-     is r:RawMonomialIdeal do Expr(r)
-     is null do buildErrorPacket(EngineError("unknown raw monomial ideal engine error"))
-     );
-
-export toExpr(x:RawArrayInt):Expr := Expr(
-     list(new Sequence len length(x) do foreach i in x do provide Expr(toInteger(i))));
-
-export toExpr(e:RawArrayIntOrNull):Expr := (
-     when e
-     is x:RawArrayInt do toExpr(x)
-     is null do buildErrorPacket(EngineError("unknown raw int array engine error")));
-
-export toExpr(x:RawMatrixAndInt):Expr := Expr(new Sequence len 2 do (
-	  provide Expr(x.M);
-	  provide Expr(toInteger(x.i));
-	  ));
-
+export toExpr(x:RawRingOrNull):Expr := when x is r:RawRing do Expr(r) is null do engineErrorMessage();
+export toExpr(x:RawMonomialIdealOrNull):Expr := when x is r:RawMonomialIdeal do Expr(r) is null do engineErrorMessage();
+export toExpr(x:RawArrayInt):Expr := Expr(list(new Sequence len length(x) do foreach i in x do provide Expr(toInteger(i))));
+export toExpr(e:RawArrayIntOrNull):Expr := when e is x:RawArrayInt do toExpr(x) is null do engineErrorMessage();
+export toExpr(x:RawMatrixAndInt):Expr := Expr(new Sequence len 2 do ( provide Expr(x.M); provide Expr(toInteger(x.i)); ));
 export toExpr(x:IntegerPair):Expr := Expr(new Sequence len 2 do (provide x.a; provide x.b));
-export toExpr(x:IntegerPairOrNull):Expr := (
-     when x
-     is r:IntegerPair do toExpr(r)
-     is null do buildErrorPacket(EngineError("unknown raw ring element engine error"))
-     );
-
-export toExpr(x:RawRingElementArray):Expr := (
-     new Sequence len length(x) do foreach r in x do provide Expr(r)
-     );
-
-export toExpr(x:RawRingElementPairOrNull):Expr := (
-     when x
-     is p:RawRingElementPair do seq(Expr(p.a),Expr(p.b))
-     is null do buildErrorPacket(EngineError("unknown raw ring element pair engine error"))
-     );
-
-export toExpr(x:RawMonomialOrNull):Expr := (
-     when x
-     is r:RawMonomial do Expr(r)
-     is null do buildErrorPacket(EngineError("unknown raw monomial engine error"))
-     );
-export toExpr(x:RawRingElementOrNull):Expr := (
-     when x
-     is r:RawRingElement do Expr(r)
-     is null do buildErrorPacket(EngineError("unknown raw ring element engine error"))
-     );
-export toExpr(x:RawFreeModuleOrNull):Expr := (
-     when x
-     is r:RawFreeModule do Expr(r)
-     is null do buildErrorPacket(EngineError("unknown raw ring element engine error"))
-     );
-export toExpr(x:RawMatrixOrNull):Expr := (
-     when x
-     is r:RawMatrix do Expr(r)
-     is null do buildErrorPacket(EngineError("unknown raw ring element engine error"))
-     );
-
+export toExpr(x:IntegerPairOrNull):Expr := when x is r:IntegerPair do toExpr(r) is null do engineErrorMessage();
+export toExpr(x:RawRingElementArray):Expr := new Sequence len length(x) do foreach r in x do provide Expr(r);
+export toExpr(x:RawRingElementArrayOrNull):Expr := when x is s:RawRingElementArray do toExpr(s) is null do engineErrorMessage();
+export toExpr(x:RawRingElementPairOrNull):Expr := when x is p:RawRingElementPair do seq(Expr(p.a),Expr(p.b)) is null do engineErrorMessage();
+export toExpr(x:RawMonomialOrNull):Expr := when x is r:RawMonomial do Expr(r) is null do engineErrorMessage();
+export toExpr(x:RawRingElementOrNull):Expr := when x is r:RawRingElement do Expr(r) is null do engineErrorMessage();
+export toExpr(x:RawFreeModuleOrNull):Expr := when x is r:RawFreeModule do Expr(r) is null do engineErrorMessage();
+export toExpr(x:RawMatrixOrNull):Expr := when x is r:RawMatrix do Expr(r) is null do engineErrorMessage();
+export toExpr(x:IntegerOrNull):Expr := when x is i:Integer do Expr(i) is null do engineErrorMessage();
+export toExpr(x:RawMatrixArray):Expr := Expr( list( new Sequence len length(x) do foreach m in x do provide Expr(m) ) );
+export toExpr(x:RawMatrixArrayOrNull):Expr := when x is r:RawMatrixArray do toExpr(r) is null do engineErrorMessage();
+export toExpr(x:array(string)):Expr := Expr( list( new Sequence len length(x) do foreach s in x do provide Expr(s) ) );
+export toExpr(x:RawComputationOrNull):Expr := when x is r:RawComputation do Expr(r) is null do engineErrorMessage();
 export toExpr(x:RawArrayPairOrNull):Expr := (
      when x
      is r:RawArrayPair do Expr(
@@ -235,24 +193,7 @@ export toExpr(x:RawArrayPairOrNull):Expr := (
 	       new Sequence len length(r.coeffs) at i do foreach x in r.coeffs do provide Expr(x),
 	       new Sequence len length(r.monoms) at i do foreach x in r.monoms do provide Expr(x)
 	       ))
-     is null do buildErrorPacket(EngineError("unknown raw monomial engine error"))
-     );
-
-export toExpr(x:IntegerOrNull):Expr := (
-     when x
-     is i:Integer do Expr(i)
-     is null do buildErrorPacket(EngineError("unknown raw monomial engine error"))
-     );
-export toExpr(x:array(string)):Expr := Expr(
-     list(
-     	  new Sequence len length(x) do foreach s in x do provide Expr(s)
-	  )
-     );
-export toExpr(x:RawComputationOrNull):Expr := (
-     when x
-     is r:RawComputation do Expr(r)
-     is null do buildErrorPacket(EngineError("unknown raw computation engine error"))
-     );
+     is null do engineErrorMessage());
 
 ------------------------------
 -- for lapack
@@ -311,12 +252,12 @@ export getListOfComplex(e:Expr) : array(Complex) := (
 export toExpr(x:LMatrixRROrNull):Expr := (
      when x
      is M:LMatrixRR do Expr(M)
-     is null do buildErrorPacket(EngineError("unknown lapack engine error"))
+     is null do engineErrorMessage()
      );
 export toExpr(x:LMatrixCCOrNull):Expr := (
      when x
      is M:LMatrixCC do Expr(M)
-     is null do buildErrorPacket(EngineError("unknown lapack engine error"))
+     is null do engineErrorMessage()
      );
 
 -- Local Variables:

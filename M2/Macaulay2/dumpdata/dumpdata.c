@@ -191,8 +191,9 @@ int loaddata(char const *filename) {
 	char buf[100];
 	sprintmap(buf,&currmap[j]);
 	trim(buf);
-	// warning("--loaddata: checksum has changed from %u to %u for map %s\n", dumpedmap.checksum, currmap[j].checksum, buf);
-	warning("--loaddata: checksum has changed for map %s\n", buf);
+	/* warning("--loaddata: checksum has changed from %u to %u for map %s\n", dumpedmap.checksum, currmap[j].checksum, buf); */
+	/* warning("--loaddata: checksum has changed for map %s\n", buf); */
+	warning("--warning: checksum has changed for a map\n");
 	if (getenv("LOADDATA_IGNORE_CHECKSUMS") == NULL) {
 	  fclose(f);
 	  return ERROR;

@@ -4,12 +4,14 @@ use C;
 use system;
 use strings;
 export usage(msg:string):void := ( 
+     endLine(stderr);
      stderr << "usage: " << msg << endl ;
      exit(1));
 warnings := 0;
 export warning(msg:string):void := (
      warnings = warnings + 1;
      flush(stdout);
+     endLine(stderr);
      stderr << argv.0 << ": warning: " << msg << endl;
      if warnings > 1000 then (
 	  stderr << "too many warnings, exiting" << endl;
@@ -20,6 +22,7 @@ errors := 0;
 export error(msg:string):void := (
      errors = errors + 1;
      flush(stdout);
+     endLine(stderr);
      stderr << argv.0 << ": error: " << msg << endl;
      if errors > 100 then (
 	  stderr << "too many errors, exiting" << endl;
@@ -28,16 +31,19 @@ export error(msg:string):void := (
      );
 export fatal(msg:string):void := (
      flush(stdout);
+     endLine(stderr);
      stderr << argv.0 << ": fatal: " << msg << endl;
      exit(1);
      );
 export abort(msg:string):void := (
      flush(stdout);
+     endLine(stderr);
      stderr << argv.0 << ": fatal: " << msg << endl;
      abort();
      );
 export syserr(msg:string):void := (
      flush(stdout);
+     endLine(stderr);
      stderr << argv.0 << ": system error: " << msg;
      s := syserrmsg();
      if length(s) > 0 then stderr << ": " << s;

@@ -623,11 +623,8 @@ export rawFromNumber(e:Expr):Expr := (
      when s.0
      is R:RawRing do
      when s.1
-     is n:Integer do Expr(Ccode(
-	       RawRingElement, "IM2_RingElement_from_Integer(",
-	       "(Ring*)",R,",",
-	       "(M2_Integer)",n,
-	       ")"))
+     is n:Integer do Expr(Ccode( RawRingElement, "IM2_RingElement_from_Integer(", "(Ring*)",R,",", "(M2_Integer)",n, ")"))
+     is x:Rational do Expr(Ccode( RawRingElement, "IM2_RingElement_from_rational(", "(Ring*)",R,",", "(M2_Rational)",x, ")"))
      is x:Real do (
 	  when Ccode(RawRingElementOrNull, "IM2_RingElement_from_double((Ring*)",R,",",x.v,")")
 	  is r:RawRingElement do Expr(r)
@@ -659,7 +656,7 @@ export rawMultiDegree(e:Expr):Expr := (
      is x:RawMatrix do toExpr(
 	  Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)IM2_Matrix_get_degree(",
 	       "(Matrix*)",x, ")" ) )
-     else WrongArg("a raw ring element or vector")
+     else WrongArg("a raw ring element")
      );
 setupfun("rawMultiDegree",rawMultiDegree);
 
@@ -684,7 +681,7 @@ setupfun("rawDegree",rawDegree);
 export rawTermCount(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( int, "IM2_RingElement_n_terms(", "(RingElement*)",x, ")" ))
-     else WrongArg("a raw ring element or vector")
+     else WrongArg("a raw ring element")
      );
 setupfun("rawTermCount",rawTermCount);
 
@@ -692,18 +689,18 @@ export rawIsHomogeneous(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( bool, "IM2_RingElement_is_graded(", "(RingElement*)",x, ")" ))
      is x:RawMatrix do toExpr( Ccode( bool, "IM2_Matrix_is_graded(", "(Matrix*)",x, ")" ))
-     else WrongArg("a raw ring element or vector")
+     else WrongArg("a raw ring element")
      );
 setupfun("rawIsHomogeneous",rawIsHomogeneous);
 
-rawIsMutable(e:Expr):Expr := when e is x:RawMatrix do toExpr(isMutable(x)) else WrongArg("a raw ring element or vector");
+rawIsMutable(e:Expr):Expr := when e is x:RawMatrix do toExpr(isMutable(x)) else WrongArg("a raw ring element");
 setupfun("rawIsMutable",rawIsMutable);
 
 export rawIsZero(e:Expr):Expr := (
      when e
      is x:RawRingElement do toExpr( Ccode( bool, "IM2_RingElement_is_zero(", "(RingElement*)",x, ")" ))
      is x:RawMatrix do toExpr( Ccode( bool, "IM2_Matrix_is_zero(", "(Matrix*)",x, ")" ))
-     else WrongArg("a raw ring element or vector")
+     else WrongArg("a raw ring element")
      );
 setupfun("rawIsZero",rawIsZero);
 
@@ -720,7 +717,7 @@ export rawLeadCoefficient(e:Expr):Expr := (
      is x:RawRingElement do toExpr( 
 	  Ccode( RawRingElementOrNull, 
 	       "(engine_RawRingElementOrNull)IM2_RingElement_lead_coeff(", "(RingElement *)",x, ")" ))
-     else WrongArg("a raw ring element or vector")
+     else WrongArg("a raw ring element")
      );
 setupfun("rawLeadCoefficient",rawLeadCoefficient);
 
@@ -845,7 +842,7 @@ export rawHomogenize(e:Expr):Expr := (
 			 )
 		    )
 	       )
-	  else WrongArg(1,"a raw ring element, matrix, or vector")
+	  else WrongArg(1,"a raw ring element or matrix")
 	  )
      else if length(s) == 4 then (
 	  when s.0
@@ -863,7 +860,7 @@ export rawHomogenize(e:Expr):Expr := (
 			 )
 		    )
 	       )
-	  else WrongArg(1,"a raw ring element or vector")
+	  else WrongArg(1,"a raw ring element")
 	  )
      else buildErrorPacket("expected 3 or 4 arguments")
      else buildErrorPacket("expected 3 or 4 arguments"));
@@ -949,6 +946,39 @@ export rawFraction(e:Expr):Expr := (
      else WrongNumArgs(3)
      else WrongNumArgs(3));
 setupfun("rawFraction",rawFraction);
+
+export rawFactor(e:Expr):Expr := (
+     when e
+     is x:RawRingElement do (
+	  resultFactors := RawRingElementArrayOrNull(NULL);
+	  resultPowers  := RawArrayIntOrNull(NULL);
+	  Ccode( void, "rawFactor(", 
+	       "(RingElement *)", x, ",",
+	       "(RingElement_array_OrNull **)&",resultFactors, ",",
+	       "(M2_arrayint_OrNull *)&",resultPowers, ")" );
+	  when resultFactors is null do engineErrorMessage() is f:RawRingElementArray do
+	  when resultPowers is null do engineErrorMessage() is p:RawArrayInt do Expr(Sequence(toExpr(f),toExpr(p))))
+     else WrongArg("a raw ring element")
+     );
+setupfun("rawFactor",rawFactor);
+
+export rawCharSeries(e:Expr):Expr := (
+     when e
+     is x:RawMatrix do toExpr( Ccode( RawMatrixArrayOrNull, "(engine_RawMatrixArrayOrNull)rawCharSeries(", "(Matrix *)",x, ")" ))
+     else WrongArg("a raw matrix")
+     );
+setupfun("rawCharSeries",rawCharSeries);
+
+export rawPseudoRemainder(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is x:RawRingElement do 
+     when s.1 is y:RawRingElement do toExpr(Ccode(RawRingElementOrNull, "(engine_RawRingElementOrNull)rawPseudoRemainder((RingElement *)",x,",","(RingElement *)",y,")"))
+     else WrongArg(2,"a raw ring element")
+     else WrongArg(1,"a raw ring element")
+     else WrongNumArgs(2)
+     );
+setupfun("rawPseudoRemainder",rawPseudoRemainder);
 
 -----------------------------------------------------------------------------
 -- free modules

@@ -59,7 +59,8 @@ export file := {
         hadNet:bool,		-- whether a Net is present, in which case the
 	     	       	        -- buffer will be empty
 	nets:NetList,	        -- list of nets, to be printed after the outbuffer
-        bytesWritten:int       -- bytes written so far
+        bytesWritten:int,       -- bytes written so far
+	lastCharOut:int         -- when outbuffer empty, last character written, or -1 if none
 	};
 
 export syscallErrorMessage(msg:string):string := msg + " failed: " + syserrmsg();
@@ -75,19 +76,19 @@ export dummyfile := file(nextHash(), "dummy",0,
      false, "",
      false,NOFD,NOFD,0,
      false,NOFD,false,        "",          0,0,false,false,noprompt,true,false,
-     false,NOFD,false,        "",	    	 0,0,false,dummyNetList,0);
+     false,NOFD,false,        "",	    	 0,0,false,dummyNetList,0,-1);
 export stdIO  := file(nextHash(),  "stdio",  0, 
      false, "",
      false, NOFD,NOFD,0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,true,false,
-     true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0);
+     true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0,-1);
 export stdin  := stdIO;
 export stdout := stdIO;
 export stderr := file(nextHash(), "stderr", 0, 
      false, "",
      false,NOFD,NOFD,0,
      false,NOFD  ,false,          "",        0,0,false,false,noprompt,true,false,
-     true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0);
+     true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0,-1);
 export errmsg := { message:string };
 export FileCell := {file:file,next:(null or FileCell)};
 export openfiles := (null or FileCell)(NULL);
@@ -139,7 +140,7 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, false,noprompt, true, false,
 	  output, if output then sd else NOFD, false, if output then newbuffer() else "",
-	  0, 0, false, dummyNetList,0))));
+	  0, 0, false, dummyNetList,0,-1))));
 accept(f:file,input:bool,output:bool):(file or errmsg) := (
      if !f.listener then return (file or errmsg)(errmsg("expected a listener"));
      sd := NOFD;
@@ -160,7 +161,7 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, false,noprompt, true, false,
 	  output, if output then sd else NOFD, false, if output then newbuffer() else "",
-	  0, 0, false, dummyNetList,0))));
+	  0, 0, false, dummyNetList,0,-1))));
 openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      toChild := array(int)(NOFD,NOFD);
      fromChild := array(int)(NOFD,NOFD);
@@ -199,7 +200,7 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
 	  input, if input then fromChild.0 else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, false,noprompt, true, false,
 	  output, if output then toChild.1 else NOFD, false, if output then newbuffer() else "",
-	  0, 0, false, dummyNetList,0))));
+	  0, 0, false, dummyNetList,0,-1))));
 export openIn(f:file):(file or errmsg) := accept(f,true,false);
 export openOut(f:file):(file or errmsg) := accept(f,false,true);
 export openInOut(f:file):(file or errmsg) := accept(f,true,true);
@@ -218,7 +219,7 @@ export openIn(filename:string):(file or errmsg) := (
 	  	    false, "",
 		    false, NOFD,NOFD,0,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, false,noprompt,true,false,
-		    false, NOFD, false,           "",          0, 0, false, dummyNetList,0)))));
+		    false, NOFD, false,           "",          0, 0, false, dummyNetList,0,-1)))));
 export openOut(filename:string):(file or errmsg) := (
      if filename === "-"
      then (file or errmsg)(stdout)
@@ -234,7 +235,7 @@ export openOut(filename:string):(file or errmsg) := (
 	  	    false, "",
 		    false, NOFD,NOFD,0,
 		    false, NOFD, false,           "",          0, 0, false,false,noprompt,true,false,
-		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0)))));
+		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0,-1)))));
 export openInOut(filename:string):(file or errmsg) := (
      if filename === "-"
      then (file or errmsg)(stdIO)
@@ -261,8 +262,9 @@ simpleflush(o:file):int := (				    -- write to file or enlarge the buffer
 	       fileErrorMessage(o,"writing");
 	       return -1;
 	       );
-	  o.outindex = 0;
+	  o.lastCharOut = int(o.outbuffer.(o.outindex-1));
      	  o.bytesWritten = o.bytesWritten + o.outindex;
+	  o.outindex = 0;
 	  )
      else if o.outindex == length(o.outbuffer) then (
 	  o.outbuffer = enlarge(length(o.outbuffer),o.outbuffer);
@@ -421,14 +423,6 @@ endlfun(o:file):int := (
 	  );
      0);
 
-maybeprompt(o:file):void := ( -- called when the next line of input is already in the buffer, and we might need to issue the prompt
-     o.bol = false;
-     if o.promptq then (
-	  stdout << o.prompt();
-	  flush(stdout);
-	  )
-     );
-
 export filbuf(o:file):int := (
      -- returns number of bytes added to buffer, or ERROR if a system call had an error
      if ! o.input then return 0;
@@ -445,7 +439,10 @@ export filbuf(o:file):int := (
 	       flush(stdout);
 	       readline(o.inbuffer,n,o.insize,o.prompt()))
 	  else (
-	       if o.bol then maybeprompt(o);
+	       if o.bol then (
+		    o.bol = false;
+		    if o.promptq then stdout << o.prompt();
+		    );
 	       flush(stdout);
 	       read(o.infd,o.inbuffer,n,o.insize)))
      else read(o.infd,o.inbuffer,n,o.insize);
@@ -614,8 +611,7 @@ export getc(o:file):int := (
 	  r := filbuf(o);
 	  if r == 0 then return EOF
 	  else if r == ERROR then return ERROR;
-	  )
-     else if o.bol then maybeprompt(o);
+	  );
      c := o.inbuffer.(o.inindex);
      o.inindex = o.inindex + 1;
      if o.echo then stdout << c;
@@ -628,8 +624,7 @@ export read(o:file):(string or errmsg) := (
      if o.inindex == o.insize then (
 	  r := filbuf(o);
 	  if r == ERROR then return (string or errmsg)(errmsg(fileErrorMessage(o)));
-	  )
-     else if o.bol then maybeprompt(o);
+	  );
      s := substr(o.inbuffer,o.inindex,o.insize);
      o.insize = 0;
      o.inindex = 0;
@@ -705,6 +700,14 @@ export fileLength(o:file):int := (
      if o.input then fileLength(o.infd)
      else if o.output then o.bytesWritten + o.outindex
      else -1);
+
+lastCharWritten(o:file):int := if o.outindex > 0 then int(o.outbuffer.(o.outindex-1)) else o.lastCharOut;
+atEndOfLine(o:file):bool := ( c := lastCharWritten(o); c == int('\n') || c == -1);
+export endLine(o:file):void := (
+     if !atEndOfLine(o) || !atEndOfLine(stdout) then o << '\n';
+     -- usually o == stderr == stdout
+     -- we might put a needless one out in the case where o.outfd == stdout.outfd, oh well.
+     );
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

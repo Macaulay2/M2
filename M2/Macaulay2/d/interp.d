@@ -236,7 +236,8 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       0,     	   	     	  -- outbol
 	       false,	       	    	  -- hadNet
 	       dummyNetList,   	      	  -- nets
-	       0		          -- bytesWritten
+	       0,		          -- bytesWritten
+	       -1		          -- lastCharOut
 	       )),
 	  NULL));
 
