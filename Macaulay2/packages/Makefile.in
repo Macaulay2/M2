@@ -17,9 +17,10 @@ all :: doc
 distclean :: clean
 doc : $(DOC) $(TEST) phase2
 	$(MAKE) -C $(DOC) -f $(srcdir)/../m2/Makefile.egs srcdir=$(srcdir)
-phase2 : StateTable.m2 eliminate.m2
+phase2: StateTable.m2 eliminate.m2
 	for i in $^ ; do ../../bin/M2 -q '-e phase=2' $$i '-e exit 0'; done
-	touch "$@"
+	echo tests done >$@
+clean::; rm -f phase2
 check:: doc
 	$(MAKE) -C $(TEST) -f $(srcdir)/../m2/Makefile.tests srcdir=$(srcdir)
 #############################################################################

@@ -14,7 +14,7 @@ OS      = @OS@
 REL     = @REL@
 
 DESC    = @PACKAGE_VERSION@-@host_cpu@-@OS@-@REL@
-# we used to use @ARCH@ instead of @host_cpu@ here, but for DEC alphas,
+# we used to use @ ARCH @ instead of @ host_cpu @ here, but for DEC alphas,
 # and perhaps other machines, it gives more information.  The script
 # config.guess assembles host_cpu from /proc/cpuinfo, and can be something
 # like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
