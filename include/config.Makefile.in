@@ -84,6 +84,7 @@ packagedocRelDir = $(docpackagesRelDir)/$(M2PKGNAME)
 packageimagesRelDir = $(packagedocRelDir)/images
 packagetestsRelDir = $(packagedocRelDir)/tests
 packagehtmlRelDir = $(packagedocRelDir)/html
+packageexamplesRelDir = $(packagedocRelDir)/examples
 libm2RelDir = $(libRelDir)/Macaulay2/$(PACKAGE_VERSION)
 cacheRelDir = $(libm2RelDir)/cache
 libexecRelDir = $(libm2RelDir)/libexec
@@ -121,6 +122,7 @@ packagedocdir = $(prefix)/$(packagedocRelDir)
 packageimagesdir = $(prefix)/$(packageimagesRelDir)
 packagetestsdir = $(prefix)/$(packagetestsRelDir)
 packagehtmldir = $(prefix)/$(packagehtmlRelDir)
+packageexamplesdir = $(prefix)/$(packageexamplesRelDir)
 
 MAKEFUN = "$(1)" => $(M2PKGNAME) -> "$(subst $(M2PKGNAME),"|$(M2PKGNAME)|",$($(1)RelDir))/"
 
@@ -150,7 +152,8 @@ LAYOUT += $(call MAKEFUN,packagesrc),
 LAYOUT += $(call MAKEFUN,packagedoc),
 LAYOUT += $(call MAKEFUN,packageimages),
 LAYOUT += $(call MAKEFUN,packagetests),
-LAYOUT += $(call MAKEFUN,packagehtml)
+LAYOUT += $(call MAKEFUN,packagehtml),
+LAYOUT += $(call MAKEFUN,packageexamples)
 LAYOUT += }
 
 # end file system layout

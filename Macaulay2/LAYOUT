@@ -89,6 +89,9 @@ the package "D-modules".
 						    *.jpg
 					     html/index.html    [ packagehtmldir ]
 						  *.html
+					     examples/		[ packageexamplesdir ]
+						      *.m2
+						      *.out
 
 This file may get obsolete: the official layout is prescribed in include/config.Makefile.in at
 compile time, and in the hash table LAYOUT at run time.  Here is how to look at the layout inside
