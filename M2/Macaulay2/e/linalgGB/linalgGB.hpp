@@ -41,26 +41,16 @@ class LinAlgGB : public GBComputation
   // The matrix
   coefficient_matrix *mat;
   int next_col_to_process;
-  int next_row_to_process;
 private:
   gbelem *make_gbelem(poly &g);
   void allocate_poly(poly &result, size_t len);
   void allocate_sparse_row(row_elem &result, size_t len);
-  int column(monomial m);
+  int find_or_append_column(monomial m);
   void sparse_row_to_poly(row_elem &r, poly &g);
   void insert_gb_element(poly &g);
 
-  void append_row(monomial m, int gbelem);
-  // Make a new row.  Should we also do
-  // process_row (and therefore process_vector)  here?
-
-  void process_row(int r);
-  // Do the multiplication, and process the 
-  // resulting vector.
-  //   ALSO: this is where we improve row[r] = (m,gbelem)...
-  //   search for any (t,newelem)'s for which t divides m have been done in a prev matrix.
-  //   choose the largest t.  now process (m/t, newelem):
-  //   special multiplication routine?  since newelem uses diff monomial encoding.
+  void load_gen(int which);
+  void load_row(monomial monom, int which);
 
   void process_column(int c);
     /* If this column has been handled before, return.
@@ -69,22 +59,7 @@ private:
        as not an initial element, OR append a row
     */
 
-  void append_column(monomial m);
-    /* Make a new column, insert it. */
-
   void process_s_pair(SPairSet::spair *p);
-    /*
-      3 cases:
-      (a) an spair or ringpair
-      find the lcm.
-      do append_column for this monomial
-      do 2 append_row's
-      (b) a skew pair
-      find the lcm
-      do process_vector (?)
-      (c) a generator
-      either append_row, or process_vector
-    */
 
   void set_comparisons();
     /* Sort the monomials */

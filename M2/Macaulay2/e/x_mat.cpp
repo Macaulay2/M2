@@ -525,6 +525,7 @@ const Matrix * rawMatrixCompress(const Matrix *M)
 {
   return M->compress();
 
+#if 0
   const PolynomialRing *R = M->get_ring()->cast_to_PolynomialRing();
   const Monoid *MF = R->getMonoid();
   MonomialSet H;
@@ -535,6 +536,7 @@ const Matrix * rawMatrixCompress(const Matrix *M)
   H.dump();
   spair_testing(&H,pols);
   return to_M2_matrix(pols,M->rows());
+#endif
 
 #if 0
   intarray vp;

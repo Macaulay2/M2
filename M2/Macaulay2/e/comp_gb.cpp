@@ -9,7 +9,7 @@
 #include "gbA.hpp"
 #include "gbweight.hpp"
 #include "comp_gb_proxy.hpp"
-#include "linalgGB/linalgGB.hpp"
+#include "linalgGB/lingb.hpp"
 
 GBComputation::~GBComputation()
 {
@@ -60,7 +60,7 @@ GBComputation *GBComputation::choose_gb(const Matrix *m,
 
   switch (algorithm) {
   case 3: // LinearAlgebraGB.  Must match value in m2/gb.m2
-    result = LinearAlgebraGB::create(m, 
+    result = createLinearAlgebraGB(m, 
 			 collect_syz, 
 			 n_rows_to_keep,
 			 gb_weights,
