@@ -71,7 +71,7 @@ Matrix * FreeModule::get_induced_order() const
 {
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (!schreyer || P == 0)
-    return Matrix::zero(R->make_FreeModule(0),this);
+    return Matrix::zero(R->make_FreeModule(0),this,false /* not mutable */);
   const SchreyerOrder *S = schreyer;
   int i;
   int maxtie = 0;

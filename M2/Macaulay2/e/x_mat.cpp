@@ -38,7 +38,10 @@ const M2_string IM2_Matrix_to_string(const Matrix *M)
   return o.to_string();
 }
 
-unsigned long  IM2_Matrix_hash(const Matrix *M); /* TODO */
+int IM2_Matrix_hash(const Matrix *M)
+{
+  return M->get_hash_value();
+}
 
 const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c)
 {
@@ -52,7 +55,10 @@ const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c)
       ERROR("matrix column index %d out of range 0 .. %d", c, M->n_cols()-1);
       return 0;
     }
-  return RingElement::make_raw(M->get_ring(), M->elem(r,c));
+  ring_elem result;
+  if (!M->get_entry(r,c,result))
+    return 0;
+  return RingElement::make_raw(M->get_ring(), result);
 }
 
 const Matrix * IM2_Matrix_identity(const FreeModule *F,
@@ -60,7 +66,7 @@ const Matrix * IM2_Matrix_identity(const FreeModule *F,
 				   int preference)
 {
 #warning is_mutable and prefer_dense not yet used
-  return Matrix::identity(F);
+  return Matrix::identity(F, is_mutable);
 }
 
 const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
@@ -69,7 +75,7 @@ const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
 				     int preference)
 {
 #warning is_mutable and prefer_dense not yet used
-  return Matrix::zero(F,G);
+  return Matrix::zero(F,G,is_mutable);
 }
 
 
@@ -168,8 +174,8 @@ MatrixOrNull *IM2_Matrix_random(const Ring *R,
 				M2_bool is_mutable,
 				int preference)
 {
-  ERROR("not re-implemented yet");
-  return 0;
+#warning preference not yet used
+  return Matrix::random(R,r,c,fraction_non_zero,special_type,is_mutable);
 }
 
 M2_bool IM2_MutableMatrix_set_entry(Matrix *M, 
@@ -185,12 +191,12 @@ M2_bool IM2_MutableMatrix_set_entry(Matrix *M,
     }
   if (r < 0 || r >= M->n_rows())
     {
-      ERROR("row index %d out of range 0..%d",r,M->n_rows());
+      ERROR("row index %d out of range 0..%d",r,M->n_rows()-1);
       return 0;
     }
   if (c < 0 || c >= M->n_cols())
     {
-      ERROR("row index %d out of range 0..%d",r,M->n_cols());
+      ERROR("column index %d out of range 0..%d",c,M->n_cols()-1);
       return 0;
     }
 
@@ -397,35 +403,24 @@ M2_bool IM2_MutableMatrix_column_permute(Matrix *M,
 
 MatrixOrNull * IM2_MutableMatrix_get_row_change(Matrix *M)
 {
-  ERROR("not yet implemented");
-  return 0;
-
-  //  return M->getRowChangeMatrix();
+  return M->getRowChangeMatrix();
 }
 
 MatrixOrNull * IM2_MutableMatrix_get_col_change(Matrix *M)
 {
-  ERROR("not yet implemented");
-  return 0;
-  //  return M->getColumnChangeMatrix();
+  return M->getColumnChangeMatrix();
 }
 
 M2_bool IM2_MutableMatrix_set_row_change(Matrix *M,
 					 Matrix *rowChange)
 {
-  ERROR("not yet implemented");
-  return false;
-  // WARNING: check that the rings are the same...!
-  // M->setRowChangeMatrix(rowChange);
+  return M->setRowChangeMatrix(rowChange);
 }
 
 M2_bool IM2_MutableMatrix_set_col_change(Matrix *M,
 					 Matrix *colChange)
 {
-  ERROR("not yet implemented");
-  return false;
-  // WARNING: check that the rings are the same...!
-  // M->setColumnChangeMatrix(colChange);
+  return M->setColumnChangeMatrix(colChange);
 }
 
 /////////////////////////////////////////////////////////////////////

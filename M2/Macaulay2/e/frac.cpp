@@ -21,6 +21,11 @@ bool FractionField::initialize_frac(const Ring *R)
 
   _elem_size = sizeof(frac_elem);
   _MINUS_ONE = R->from_int(-1);
+
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
   declare_field();
   return true;
 }
@@ -150,9 +155,7 @@ void FractionField::elem_text_out(buffer &o, const ring_elem a) const
   int old_parens = p_parens;
 
   frac_elem *f = FRAC_VAL(a);
-  ring_elem one = R_->from_int(1);
-  int denom_one = R_->is_equal(f->denom, one);
-  R_->remove(one);
+  int denom_one = R_->is_equal(f->denom, R_->one());
 
   p_one = p_one || !denom_one;
   p_parens = old_parens || !denom_one;

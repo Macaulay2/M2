@@ -29,6 +29,11 @@ bool bigRR::initialize_bigRR()
     _epsilon = new_elem();
     mpf_init(_epsilon);
   }
+
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
   return true;
 }
 

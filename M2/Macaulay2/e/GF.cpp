@@ -21,6 +21,10 @@ bool GF::initialize_GF(const RingElement *prim)
 		  Monoid::get_trivial_monoid(),
 		  _originalR->degree_monoid());
 
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
   declare_field();
 
   int i,j;
@@ -48,7 +52,7 @@ bool GF::initialize_GF(const RingElement *prim)
   ring_elem primelem = prim->get_value();
   polys.append(_originalR->copy(primelem));
 
-  ring_elem one = _originalR->from_int(1);
+  ring_elem oneR = _originalR->one();
 
   _x_exponent = -1;
   ring_elem x = _originalR->var(0,1);
@@ -58,7 +62,7 @@ bool GF::initialize_GF(const RingElement *prim)
     {
       ring_elem g = _originalR->mult(polys[i-1], primelem);
       polys.append(g);
-      if (_originalR->is_equal(g, one)) break;
+      if (_originalR->is_equal(g, oneR)) break;
       if (_originalR->is_equal(g, x))
 	_x_exponent = i;
     }
@@ -76,7 +80,7 @@ bool GF::initialize_GF(const RingElement *prim)
   _one_table[0] = Q_-1;
   for (i=1; i<=Q_-1; i++)
     {
-      ring_elem f1 = _originalR->add(polys[i], one);
+      ring_elem f1 = _originalR->add(polys[i], oneR);
       for (j=1; j<=Q_-1; j++)
 	if (_originalR->is_equal(f1, polys[j]))
 	  break;

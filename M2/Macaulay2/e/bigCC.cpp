@@ -23,6 +23,11 @@ bool bigCC::initialize_bigCC()
     _epsilon = (mpf_ptr) getmem(sizeof(mpf_t));
     mpf_init(_epsilon);
   }
+
+  zeroV = from_int(0);
+  oneV = from_int(1);
+  minus_oneV = from_int(-1);
+
   return true;
 }
 

@@ -39,7 +39,7 @@ public:
   
   bool is_mutable() const { return hashval < 0; }
   bool is_immutable() const { return hashval > 0; }
-  int get_hash_value() { return hashval; }
+  int get_hash_value() const { return hashval; }
 };
 
 #endif

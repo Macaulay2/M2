@@ -1335,6 +1335,7 @@ export rawMatrixRandom(e:Expr):Expr := (
      else WrongArgInteger(2)
      else WrongArg(1,"a raw ring")
      else WrongNumArgs(7));
+setupfun("rawMatrixRandom",rawMatrixRandom);
 
 export rawSparseMatrix2(e:Expr):Expr := (
      when e is s:Sequence do 
