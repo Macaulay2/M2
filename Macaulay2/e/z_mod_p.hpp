@@ -3,7 +3,7 @@
 #define _z_mod_p_hh_
 
 #include "ring.hpp"
-#include "coeffRings.hpp"
+#include "coeffrings.hpp"
 
 class Z_mod : public Ring
 {

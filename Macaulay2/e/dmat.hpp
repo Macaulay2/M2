@@ -8,7 +8,7 @@
 //   communicate with the rest of Macaulay2
 
 template<typename CoeffRing>
-class DMat
+class DMat : public our_new_delete
 {
   typedef typename CoeffRing::elem elem;
   typedef typename CoeffRing::ring_type RingType;

@@ -10,6 +10,7 @@ class CoefficientRingRR;
 class RR : public Ring
 // Elements of this ring are real numbers: 'double's
 {
+  friend class CoefficientRingRR;
   struct RRelem_rec {
     double val;
   };

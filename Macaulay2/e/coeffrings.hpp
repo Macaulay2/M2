@@ -6,7 +6,7 @@
 class Z_mod;
 #include "ringelem.hpp"
 
-class CoefficientRingZZp
+class CoefficientRingZZp : public our_new_delete
 {
   int p;
   int p1; // p-1
@@ -89,7 +89,7 @@ public:
 };
 
 #include "RR.hpp"
-class CoefficientRingRR
+class CoefficientRingRR : public our_new_delete
 {
 public:
   typedef RR ring_type;
@@ -133,7 +133,7 @@ public:
 };
 
 #include "CC.hpp"
-class CoefficientRingCC
+class CoefficientRingCC : public our_new_delete
 {
 public:
   typedef CC ring_type;
