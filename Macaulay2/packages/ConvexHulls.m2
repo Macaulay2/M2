@@ -8,7 +8,7 @@ newPackage(
     	DebuggingMode => true
     	)
 
-export(polarCone)
+export(polarCone, convexHull)
 
 ------------------------------------------------------------
 -- PURPOSE:    compute the polar dual of a rational convex 
@@ -352,6 +352,14 @@ polarCone(Matrix) := (Z) -> (
      polarCone(Z,H)
      );
 
+convexHull = method()
+
+convexHull(Matrix) := (Z) -> (
+     R := ring target Z;
+     Z = addRowOfOne Z;
+     polarCone polarCone(Z)
+     )
+
 beginDocumentation()
 
 document { 
@@ -480,10 +488,12 @@ H = transpose matrix{{1,0,-1}};
 P = polarCone polarCone (C,H);
 assert(P#0 == transpose matrix{{0,1,1}})
 assert(P#1 == H)
+
 ///
 
 end
-needsPackage "ConvexHulls"
+installPackage "ConvexHulls"
+uninstallPackage "ConvexHulls"
 
 octahedron = transpose matrix{
 	       { 1,  1,  1, -1},

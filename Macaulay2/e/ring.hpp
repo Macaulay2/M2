@@ -298,6 +298,8 @@ public:
   void vec_text_out(buffer &o, const vecterm * v) const;
   vec vec_eval(const RingMap *map, const FreeModule *F,	const vec v) const;
 
+  virtual vec vec_lead_term(int nparts, const FreeModule *F, vec v) const;
+
   vec negate_vec(vec v) const;
   vec add_vec(vec v, vec w) const;
   vec subtract_vec(vec v, vec w) const;

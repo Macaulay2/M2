@@ -828,11 +828,10 @@ Matrix *Matrix::lead_term(int nparts) const
     // which are maximal in the order under
     // the first n parts of the monomial order.
 {
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
   MatrixConstructor mat(rows(),cols(),degree_shift());
 
   for (int i=0; i<n_cols(); i++)
-    mat.set_column(i, P->vec_lead_term(nparts, rows(), elem(i)));
+    mat.set_column(i, get_ring()->vec_lead_term(nparts, rows(), elem(i)));
   return mat.to_matrix();
 }
 
