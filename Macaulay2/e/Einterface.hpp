@@ -147,6 +147,7 @@ public:
   const ringelement &term_coefficient(const term &t) const;
   const monomial *term_monomial(const term &t) const;
   int term_component(const term &t) const;
+  int term_degree(const exponent_vector *wts, const term &t) const;
 
   /////////////
   // vectors //
@@ -160,6 +161,10 @@ public:
   vec zero_vector(const freemodule &F) const;
   vec e_sub_i(const freemodule &F, int i) const;
   bool is_zero_vector(const freemodule &F, const vec &v) const;
+
+  void degree_lohi(const exponent_vector *wts, 
+		   const freemodule &F, const vec &v, 
+		   int &lo, int &hi) const;
 
   vec mult_by_term(const freemodule &F, 
 		   const ringelement &coeff,
@@ -183,6 +188,7 @@ public:
 		   const vec &gsyz) const;
 
   void display_vector(buffer &o, const freemodule &F, const vec &f) const;
+  void out_vector(const freemodule &F, const vec &f) const;
 
   ///////////////////////
   // Vector collecting //
@@ -221,6 +227,12 @@ public:
 			 const exponent_vector *gexponents,
 			 const vec &g,
 			 const vec &gsyz) const;
+
+  void display_vector_heap(buffer &o, const vector_heap &h) const;
+  // To be used for debugging
+
+  void out_vector_heap(const vector_heap &h) const;
+
   // h -= c*hcoefficient*t*g, hsyz -= c*hcoefficient*t*gsyz, where
   // where leadterm(h) = hcoefficient*hlead*hcomponent, and 
   // leadterm(g) = gexponents*hcomponent, and

@@ -32,10 +32,12 @@ public:
   const res2term * get_lead_term(); // Returns NULL if none.
   res2term * remove_lead_term();	// Returns NULL if none.
 
-  const res2_poly *get_target() { return F; }
+  const res2_poly *get_target() const { return F; }
   res2term * value();		// Returns the linearized value, and resets the respolyHeap.
 
   res2term * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
+  res2term * current_value() const; // Adds up all the elements and returns this value
+				 // Mainly used for debugging.
 };
 
 static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
@@ -144,5 +146,16 @@ inline res2term * respolyHeap::value()
       heap[i] = NULL;
     }
   top_of_heap = -1;
+  return result;
+}
+inline res2term * respolyHeap::current_value() const
+{
+  res2term * result = NULL;
+  for (int i=0; i<=top_of_heap; i++)
+    {
+      if (heap[i] == NULL) continue;
+      res2term * tmp = F->copy(heap[i]);
+      F->add_to(result, tmp);
+    }
   return result;
 }

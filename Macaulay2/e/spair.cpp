@@ -52,7 +52,7 @@ int s_pair_heap::compare(s_pair *f, s_pair *g) const
   switch (compare_type) {
   case 0:
     cmp = M->compare(f->lcm, g->lcm);
-    if (cmp != 0) return cmp;
+    if (cmp != 0) return -cmp; // MES: changed cmp to -cmp, to try out different order 2/21/00.
     if (f->first == NULL || g->first == NULL)
       return 0;
     cmp = f->first->me - g->first->me;

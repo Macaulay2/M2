@@ -32,10 +32,12 @@ public:
   const vecterm * get_lead_term(); // Returns NULL if none.
   vecterm * remove_lead_term();	// Returns NULL if none.
 
-  const FreeModule *get_target() { return F; }
+  const FreeModule *get_target() const { return F; }
   vecterm * value();		// Returns the linearized value, and resets the vecHeap.
 
   vecterm * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
+  vecterm * current_value() const; // Adds up all the elements and returns this value
+				 // Mainly used for debugging.
 };
 
 static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096, 
@@ -144,5 +146,16 @@ inline vecterm * vecHeap::value()
       heap[i] = NULL;
     }
   top_of_heap = -1;
+  return result;
+}
+inline vecterm * vecHeap::current_value() const
+{
+  vecterm * result = NULL;
+  for (int i=0; i<=top_of_heap; i++)
+    {
+      if (heap[i] == NULL) continue;
+      vecterm * tmp = F->copy(heap[i]);
+      F->add_to(result, tmp);
+    }
   return result;
 }

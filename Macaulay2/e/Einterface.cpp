@@ -38,6 +38,16 @@ EInterface::EInterface(const Ring *RR)
   nvars_ = M->n_vars();
 }
 
+int EInterface::term_degree(const exponent_vector *wts, const term &t) const
+{
+  return M->degree_weights(t->monom, wts);
+}
+
+void EInterface::degree_lohi(const exponent_vector *wts, const freemodule &F, const vec &v, int &lo, int &hi) const
+{
+  F->degree_weights(v,wts,lo,hi);
+}
+
 void EInterface::divide_exponents(const exponent_vector *exp1,
 				  const exponent_vector *exp2,
 				  exponent_vector *result,
@@ -174,4 +184,25 @@ void EInterface::display_exponents(buffer &o, const exponent_vector *exp) const
 void EInterface::display_vector(buffer &o, const freemodule &F, const vec &f) const
 {
   F->elem_text_out(o,f);
+}
+void EInterface::out_vector(const freemodule &F, const vec &f) const
+{
+  buffer o;
+  F->elem_text_out(o,f);
+  o << newline;
+  emit(o.str());
+}
+
+void EInterface::display_vector_heap(buffer &o, const vector_heap &f) const
+{
+  vec g = f.current_value();
+  f.get_target()->elem_text_out(o,g);
+  f.get_target()->remove(g);
+}
+void EInterface::out_vector_heap(const vector_heap &f) const
+{
+  buffer o;
+  display_vector_heap(o,f);
+  o << newline;
+  emit(o.str());
 }
