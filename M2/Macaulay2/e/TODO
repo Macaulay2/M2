@@ -1,0 +1,13 @@
+-- Mike's to do list, new version, started 3/29/04
+
+Add GroupRevLex to monomial order creation routines
+
+Get resolutions back up and running
+
+Get quotient rings functional: this includes getting fraction rings functional,
+  and polynomial rings over that.  This includes having various routines
+  like leadCoefficient do the right thing.
+
+Polynomial rings should take a degree ring instead of a degree monoid.  Then we need a
+way of specifying the trivial ring.
+
