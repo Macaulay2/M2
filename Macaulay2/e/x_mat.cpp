@@ -531,7 +531,7 @@ const Matrix * rawMatrixCompress(const Matrix *M)
 
   gb_array pols;
 
-  from_M2_matrix(M,&H,pols);
+  from_M2_matrix(M,&H,NULL,pols);
   H.dump();
   spair_testing(&H,pols);
   return to_M2_matrix(pols,M->rows());

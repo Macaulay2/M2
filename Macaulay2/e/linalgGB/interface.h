@@ -37,15 +37,19 @@ struct gbelem : public our_new_delete {
 
 typedef std::vector<gbelem *, gc_allocator<gbelem *> > gb_array;
 
+void poly_set_degrees(const M2_arrayint wts,
+		      const poly &f,
+		      int &deg, 
+		      int &alpha);
+
 void from_M2_vec(MonomialSet *H,
 		 const FreeModule *F, 
 		 vec v, 
-		 int &degree,
-		 int &alpha,
 		 poly &result);
 
 void from_M2_matrix(const Matrix *m, 
 		    MonomialSet *H,
+		    M2_arrayint wts,
 		    gb_array &result_polys);
 
 vec to_M2_vec(poly &f,
@@ -55,6 +59,7 @@ Matrix *to_M2_matrix(gb_array &polys, const FreeModule *F);
 
 void spair_testing(MonomialSet *H,
 		   gb_array &result_polys);
+
 
 #endif
 

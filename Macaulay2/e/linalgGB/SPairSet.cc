@@ -41,14 +41,13 @@ SPairSet::spair *SPairSet::make_spair(int deg,
   return result;
 }
 
-SPairSet::spair *SPairSet::make_spair_gen(int deg, poly *f, int col)
+SPairSet::spair *SPairSet::make_spair_gen(int deg, monomial lcm, int col)
 {
   spair *result = new spair;
   result->next = 0;
   result->type = SPAIR_GEN;
   result->deg = deg;
-  result->lcm = f->monoms[0];
-  result->s.poly.gen = f;
+  result->lcm = lcm;
   result->s.poly.column = col;
   return result;
 }
@@ -70,7 +69,11 @@ int SPairSet::determine_next_degree(int &result_number)
   spair *p;
   int nextdeg;
   int len = 1;
-  if (heap == 0) return 0;
+  if (heap == 0) 
+    {
+      result_number = 0;
+      return 0;
+    }
   nextdeg = heap->deg;
   for (p = heap->next; p!=0; p=p->next)
     if (p->deg > nextdeg) 
@@ -262,6 +265,7 @@ void SPairConstructor::send_spair(pre_spair *p)
 
 int SPairConstructor::construct_pairs()
 {
+  if (gb.size() == 0) return 0; // NOT VALID if quotient ring.
   typedef vector<pre_spair *,gc_allocator<pre_spair*> > spairs;
   spairs new_set;
 

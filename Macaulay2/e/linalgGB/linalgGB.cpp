@@ -3,6 +3,20 @@
 #include "../text_io.hpp"
 #include "monoms.h"
 #include "../matrix.hpp"
+#include "../mutablemat.hpp"
+#include "../matrixcon.hpp"
+
+// Problems still to consider
+// (a) finish implementation
+// (b) set_comparisons
+// (c) choosing an alpha value not too high.
+//     Also, can we do Mora algorithm this way?
+// (d) field arithmetic in the matrix and polys.  Use templates?
+// (e) After this is all working, then play with the LU decomposition
+//
+// To put in later:
+//    module orders, Schreyer orders, syzygies, hilbert functions, ZZ,
+//    quotients.
 
 void LinearAlgebraGB::allocate_poly(poly &result, size_t len)
 {
@@ -33,6 +47,7 @@ void LinearAlgebraGB::append_row(monomial m, int elem)
 void LinearAlgebraGB::append_column(monomial m)
 {
   column_elem c;
+  c.comp = 0;
   c.monom = m;
   c.gb_divisor = -2;
   c.ord = 0;
@@ -61,7 +76,7 @@ int LinearAlgebraGB::mult_monomials(monomial m, monomial n)
   
   uninterned_monomial mn;
   monomial result;
-  H.reserve(MONOMIAL_LENGTH(m) + MONOMIAL_LENGTH(n));
+  mn = H.reserve(MONOMIAL_LENGTH(m) + MONOMIAL_LENGTH(n));
   monomial_mult(m,n,mn);
   H.find_or_insert(mn,result);
   return column(result);
@@ -81,11 +96,11 @@ void LinearAlgebraGB::process_row(int r)
   // There are 2 cases: the monomial of row r is NULL.
   // This means that we use a generator instead of a GB element
   row_elem &re = rows[r];
+  sparse_row &mg = re.row;
   monomial m = re.monom;
   if (m == NULL)
     {
       poly &g = gens[re.elem]->f;
-      sparse_row mg;
       allocate_sparse_row(mg, g.len);
       for (int i=0; i<g.len; i++)
 	coeffK->init_set(mg.coeffs+i, g.coeffs+i);
@@ -101,7 +116,6 @@ void LinearAlgebraGB::process_row(int r)
       poly &g = gb[re.elem]->f;
       
       // step 1: find size of the polynomial, allocate a new polynomial
-      sparse_row mg;
       allocate_sparse_row(mg, g.len);
       
       // step 2: do the multiplication.  Note that this does not need
@@ -121,14 +135,6 @@ void LinearAlgebraGB::process_row(int r)
 	  // the above routine creates a new column if it is not there yet
 	}
     }
-}
-
-void LinearAlgebraGB::import_vector(vec f)
-{
-  /* Creates a sparse_matrix row, and appends it to the current
-     matrix being made */
-
-  
 }
 
 void LinearAlgebraGB::process_column(int c)
@@ -217,12 +223,47 @@ void LinearAlgebraGB::make_matrix()
       else break;
     }
 
+  fprintf(stderr, "--matrix--%d by %d\n", rows.size(), columns.size());
+  show_row_info();
+  show_column_info();
+  //  show_matrix();
+  H.dump();
   /* Now sort the monomials */
   set_comparisons();
 }
 
 void LinearAlgebraGB::LU_decompose()
 {
+}
+
+void LinearAlgebraGB::sparse_row_to_poly(sparse_row &r, poly &g)
+{
+  allocate_poly(g, r.len);
+  for (int i=0; i<r.len; i++)
+    {
+      coeffK->init_set(g.coeffs+i, r.coeffs+i);
+      g.monoms[i] = columns[r.comps[i]].monom;
+    }
+}
+
+gbelem *LinearAlgebraGB::make_gbelem(poly &g)
+{
+  gbelem *result = new gbelem;
+  swap(result->f,g);
+  poly_set_degrees(weights,result->f,result->deg,result->alpha);
+  result->is_minimal = 1;
+  result->minlevel = ELEM_MIN_GB;
+  return result;
+}
+
+void LinearAlgebraGB::insert_gb_element(poly &g)
+{
+  // Grabs g.  Needs to set degree, alpha degree.
+  gbelem *result = make_gbelem(g);
+  void *v = reinterpret_cast<void *>(gb.size());
+  tagged_monomial *b = new tagged_monomial(result->f.monoms[0], v);
+  lookup->insert(b);
+  gb.push_back(result);
 }
 
 void LinearAlgebraGB::new_GB_elements()
@@ -236,6 +277,19 @@ void LinearAlgebraGB::new_GB_elements()
      If instead the lead term is not new, then keep track of this
      information somehow: place ... into a monheap...
   */
+  for (int r=0; r<rows.size(); r++)
+    {
+      if (rows[r].row.len == 0) continue;
+      int c = rows[r].row.comps[0];
+      if (columns[c].gb_divisor < 0)
+	{
+	  poly g;
+	  sparse_row_to_poly(rows[r].row, g); // This grabs the row poly
+	                                      // leaving a zero poly
+	  insert_gb_element(g);
+	  S.find_new_pairs(gb, false);
+	}
+    }
 }
 
 void LinearAlgebraGB::s_pair_step()
@@ -243,6 +297,12 @@ void LinearAlgebraGB::s_pair_step()
   make_matrix();
   LU_decompose();
   new_GB_elements();
+  // reset rows and columns and other matrix aspects
+  rows.clear();
+  columns.clear();
+  H0.clear();
+  next_col_to_process = 0;
+  next_row_to_process = 0;
 }
 
 enum ComputationStatusCode LinearAlgebraGB::computation_is_complete()
@@ -311,8 +371,32 @@ LinearAlgebraGB::LinearAlgebraGB(const Matrix *m,
 				  int max_degree)
   : S(&H)
 {
+  originalR = m->get_ring()->cast_to_PolynomialRing();
+  F = m->rows();
+  coeffK = new CoefficientRing(originalR->getCoefficients());
+
+  n_subring = 0;
+  n_pairs_computed = 0;
+  n_gens_left = m->n_cols();
+
+  lookup = new MonomialLookupTable;
+
+  this_degree = -1;
+  next_col_to_process = 0;
+  next_row_to_process = 0;
+  weights = gb_weights;
+
   // Set the gens array
-  from_M2_matrix(m, &H, gens);
+  from_M2_matrix(m, &H, weights, gens);
+
+  for (int i=0; i<gens.size(); i++)
+    {
+      gbelem *g = gens[i];
+      S.insert(SPairSet::make_spair_gen(g->deg, g->f.monoms[0], i));
+    }
+
+  show_gb_array(gens);
+  set_status(COMP_NOT_STARTED);
 }
 
 LinearAlgebraGB::~LinearAlgebraGB()
@@ -360,6 +444,13 @@ ComputationOrNull *LinearAlgebraGB::set_hilbert_function(const RingElement *hf)
 
 const MatrixOrNull *LinearAlgebraGB::get_gb()
 {
+  MatrixConstructor mat(F,0);
+  for (int i=0; i<gb.size(); i++)
+    {
+      vec v = to_M2_vec(gb[i]->f, F);
+      mat.append(v);
+    }
+  return mat.to_matrix();
 #if 0
   minimalize_gb();
   return minimal_gb->get_gb();
@@ -466,6 +557,60 @@ void LinearAlgebraGB::text_out(buffer &o)
       }
 }
 
+void LinearAlgebraGB::show_gb_array(const gb_array &g)
+{
+  // Debugging routine
+  // Display the array, and all of the internal information in it too.
+  buffer o;
+  for (int i=0; i<g.size(); i++)
+    {
+      vec v = to_M2_vec(g[i]->f, F);
+      o << "element " << i 
+	<< " degree " << g[i]->deg 
+	<< " alpha " << g[i]->alpha 
+	<< newline << "    ";
+      originalR->vec_text_out(o, v);
+      o << newline;
+    }
+  emit(o.str());
+}
+
+void LinearAlgebraGB::show_row_info()
+{
+  // Debugging routine
+  for (int i=0; i<rows.size(); i++)
+    {
+      fprintf(stderr, "%4d ", rows[i].elem);
+      if (rows[i].monom == 0)
+	fprintf(stderr, "generator");
+      else
+	monomial_elem_text_out(stderr, rows[i].monom);
+      fprintf(stderr, "\n");
+    }
+}
+
+void LinearAlgebraGB::show_column_info()
+{
+  // Debugging routine
+  for (int i=0; i<columns.size(); i++)
+    {
+      fprintf(stderr, "comp %4d gbdivisor %4d ord %4d monomial ", 
+	      columns[i].comp,
+	      columns[i].gb_divisor,
+	      columns[i].ord);
+      monomial_elem_text_out(stderr, columns[i].monom);
+      fprintf(stderr, "\n");
+    }
+}
+
+void LinearAlgebraGB::show_matrix()
+{
+  // Debugging routine
+  MutableMatrix *q = to_M2_MutableMatrix(originalR->getCoefficients(),rows,columns);
+  buffer o;
+  q->text_out(o);
+  emit(o.str());
+}
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "
 //  End:

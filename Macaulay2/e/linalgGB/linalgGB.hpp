@@ -20,8 +20,10 @@ struct sparse_row : public our_new_delete {
 };
 
 class CoefficientRing : public our_new_delete {
+  const Ring *K;
 public:
-  void init_set(COEFF_TYPE *result, COEFF_TYPE *a) const { } 
+  CoefficientRing(const Ring *K0) : K(K0) {}
+  void init_set(COEFF_TYPE *result, COEFF_TYPE *a) const { *result = *a; }
 };
 
 class LinearAlgebraGB : public GBComputation {
@@ -46,6 +48,7 @@ private:
   const PolynomialRing *originalR;
   const FreeModule *F; // determines whether the monomial order is a Schreyer order
                        // Also determines degrees of elements in F.
+  M2_arrayint weights;
 
   const CoefficientRing *coeffK;
   int n_subring; // number of GB elements in the first subring
@@ -80,10 +83,13 @@ private:
   int next_col_to_process;
   int next_row_to_process;
 
+  gbelem *LinearAlgebraGB::make_gbelem(poly &g);
   void allocate_poly(poly &result, size_t len);
   void allocate_sparse_row(sparse_row &result, size_t len);
   int mult_monomials(monomial m, monomial n);
   int column(monomial m);
+  void sparse_row_to_poly(sparse_row &r, poly &g);
+  void insert_gb_element(poly &g);
 
   void append_row(monomial m, int gbelem);
   // Make a new row.  Should we also do
@@ -96,10 +102,6 @@ private:
   //   search for any (t,newelem)'s for which t divides m have been done in a prev matrix.
   //   choose the largest t.  now process (m/t, newelem):
   //   special multiplication routine?  since newelem uses diff monomial encoding.
-
-  void import_vector(vec f);
-  // Creates a sparse_matrix row, and appends it to the current
-  //   matrix being made
 
   void process_column(int c);
     /* If this column has been handled before, return.
@@ -214,7 +216,19 @@ public:
   virtual int complete_thru_degree() const;
   // The computation is complete up through this degree.
 
+  void LinearAlgebraGB::show_gb_array(const gb_array &g);
+  void LinearAlgebraGB::show_row_info();
+  void LinearAlgebraGB::show_column_info();
+  void LinearAlgebraGB::show_matrix();
 };  
+
+class MutableMatrix;
+
+MutableMatrix * to_M2_MutableMatrix(  
+    const Ring *K,
+    std::vector<LinearAlgebraGB::row_elem, gc_allocator<LinearAlgebraGB::row_elem> > &rows,
+    std::vector<LinearAlgebraGB::column_elem, gc_allocator<LinearAlgebraGB::column_elem> > &columns
+    );
 
 #endif
 

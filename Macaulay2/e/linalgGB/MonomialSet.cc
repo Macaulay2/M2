@@ -79,18 +79,28 @@ MonomialSet *MonomialSet::make()
 
 uninterned_monomial MonomialSet::reserve(int len)
 {
-  return B.reserve(len);
+  last_alloc = B.reserve(len);
+  return last_alloc;
 }
 
 monomial MonomialSet::intern_monomial(uninterned_monomial m)
 {
   // Copy the monomial to a the latest slab.
+  monomial result;
   int len = 2*m[0]+2;
-  int *next_free = B.reserve(len);
-  *next_free++ = 0;
-  monomial result = next_free;
-  for (int i=len-1; i>0; i--)
-    *next_free++ = *m++;
+  if (m == last_alloc)
+    {
+      last_alloc = 0;
+      result = m;
+    }
+  else
+    {
+      int *next_free = B.reserve(len);
+      *next_free++ = 0;
+      result = next_free;
+      for (int i=len-1; i>0; i--)
+	*next_free++ = *m++;
+    }
   B.intern(len);
   return result;
 }
