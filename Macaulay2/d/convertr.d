@@ -45,7 +45,6 @@ export ForFun := dummyForFun;      -- filled in later in actors.d
 export WhileDoFun := dummyBinaryFun;      -- filled in later in actors.d
 export WhileListFun := dummyBinaryFun;      -- filled in later in actors.d
 export WhileListDoFun := dummyTernaryFun;      -- filled in later in actors.d
-export QuoteFun := dummyUnaryFun;       -- filled in later in actors.d
 export NewFun := dummyUnaryFun;	  -- filled in later in actors.d
 export NewFromFun := dummyBinaryFun;	  -- filled in later in actors.d
 export NewOfFun := dummyBinaryFun;	  -- filled in later in actors.d
@@ -315,7 +314,7 @@ export convert(e:ParseTree):Code := (
 	  then Code(exprCode(parseString(wrd.name), pos))
 	  else (
 	       if var.frameID == 0
-	       then Code(staticMemoryReferenceCode(var.frameindex,pos))
+	       then Code(globalMemoryReferenceCode(var.frameindex,pos))
 	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,pos))
 	       )
 	  )
@@ -538,25 +537,24 @@ export convert(e:ParseTree):Code := (
 	       )
 	  else Code(unaryCode(u.operator.entry.unary,convert(u.rhs),treePosition(e))))
      is q:Quote do (
-	  Code(unaryCode(
-		    QuoteFun,
-		    Code(variableCode(q.rhs.entry,q.rhs.position)),
-		    treePosition(e)
-		    )
-	       )
-	  )
+	  token := q.rhs;
+	  sym := token.entry;
+	  pos := treePosition(e);
+	  if sym.frameID == 0
+	  then Code(globalSymbolClosureCode(sym,pos))
+	  else Code(localSymbolClosureCode(nestingDepth(sym.frameID,token.dictionary),sym,pos)))
      is q:GlobalQuote do (
-	  Code(unaryCode(
-	       	    QuoteFun,
-	       	    Code(variableCode(q.rhs.entry,q.rhs.position)),
-	            treePosition(e))
-	       )
-	  )
+	  token := q.rhs;
+	  sym := token.entry;
+	  pos := treePosition(e);
+     	  Code(globalSymbolClosureCode(sym,pos)))
      is q:LocalQuote do (
-	  Code(unaryCode(
-	       	    QuoteFun,
-	       	    Code(variableCode(q.rhs.entry,q.rhs.position)),
-		    treePosition(e))))
+	  token := q.rhs;
+	  sym := token.entry;
+	  if sym.frameID == 0 then fatal("internal error: local quote but frameID == 0");
+	  pos := treePosition(e);
+	  nd := nestingDepth(sym.frameID,token.dictionary);
+	  Code(localSymbolClosureCode(nd,sym,pos)))
      is i:TryElse do Code(
 	  binaryCode(TryElseFun,
 	       convert(i.primary),convert(i.alternate),
@@ -573,13 +571,14 @@ export convert(e:ParseTree):Code := (
 	  ));
 export codePosition(e:Code):Position := (
      when e
+     is f:globalSymbolClosureCode do f.position
+     is f:localSymbolClosureCode do f.position
      is f:globalAssignmentCode do f.position
      is f:localAssignmentCode do f.position
      is f:localMemoryReferenceCode do f.position
-     is f:staticMemoryReferenceCode do f.position
+     is f:globalMemoryReferenceCode do f.position
      is f:parallelAssignmentCode do f.position
      is f:exprCode do f.position
-     is f:variableCode do f.position
      is f:unaryCode do f.position
      is f:binaryCode do f.position
      is f:ternaryCode do f.position
@@ -728,7 +727,6 @@ export eval(c:Code):Expr := (
      is n:exprCode do (
 	  --couldtrace=false; 
 	  n.v)
-     is var:variableCode do frame(var.v.frameID).values.(var.v.frameindex)
      is r:localMemoryReferenceCode do (
 	  f := localFrame;
 	  nd := r.nestingDepth;
@@ -741,13 +739,26 @@ export eval(c:Code):Expr := (
 	       while nd > 0 do ( nd = nd - 1; f = f.outerFrame );
 	       );
 	  f.values.(r.frameindex))
-     is r:staticMemoryReferenceCode do globalFrame.values.(r.frameindex)
+     is r:globalMemoryReferenceCode do globalFrame.values.(r.frameindex)
      is u:unaryCode do u.f(u.rhs)
      is b:binaryCode do b.f(b.lhs,b.rhs)
      is m:functionCode do Expr(FunctionClosure(localFrame, m))
      is a:localAssignmentCode do LocalAssignmentFun(a)
      is a:globalAssignmentCode do GlobalAssignmentFun(a)
      is p:parallelAssignmentCode do ParallelAssignmentFun(p)
+     is c:globalSymbolClosureCode do Expr(SymbolClosure(globalFrame,c.symbol))
+     is r:localSymbolClosureCode do (
+	  f := localFrame;
+	  nd := r.nestingDepth;
+	  if nd == 0 then nothing
+	  else if nd == 1 then f = f.outerFrame
+	  else if nd == 2 then f = f.outerFrame.outerFrame
+	  else (
+	       f = f.outerFrame.outerFrame.outerFrame;
+	       nd = nd - 3;
+	       while nd > 0 do ( nd = nd - 1; f = f.outerFrame );
+	       );
+	  Expr(SymbolClosure(f,r.symbol)))
      is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
      is b:multaryCode do b.f(b.args)
      is n:forCode do (

@@ -1153,17 +1153,6 @@ flagSymbol(e:Expr):Expr := (
 	  )
      else WrongArg("a symbol"));
 setupfun("flag",flagSymbol);
---unprotect(e:Expr):Expr := (
---     when e
---     is q:SymbolClosure do (q.symbol.protected = false; nullE)
---     else WrongArg( "a symbol"));
---setupfun("unprotect",unprotect);
-quoteF(rhs:Code):Expr := (
-     when rhs
-     is var:variableCode do Expr(makeSymbolClosure(var.v))
-     else printErrorMessage(rhs,"expected a symbol"));
-QuoteFun = quoteF;
--- setupfun("quote",quoteF);
 
 export chars := new array(Expr) len 256 do (
      i := 0;

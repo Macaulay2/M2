@@ -1033,9 +1033,10 @@ locate(e:Code):void := (
      is f:globalAssignmentCode do (lookat(f.position); locate(f.rhs);)
      is f:parallelAssignmentCode do (lookat(f.position); locate(f.rhs);)
      is f:exprCode do lookat(f.position)
-     is f:variableCode do lookat(f.position)
      is f:localMemoryReferenceCode do lookat(f.position)
-     is f:staticMemoryReferenceCode do lookat(f.position)
+     is f:globalMemoryReferenceCode do lookat(f.position)
+     is f:globalSymbolClosureCode do lookat(f.position)
+     is f:localSymbolClosureCode do lookat(f.position)
      is f:unaryCode do (lookat(f.position); locate(f.rhs);)
      is f:binaryCode do (lookat(f.position); locate(f.lhs); locate(f.rhs);)
      is f:ternaryCode do (
