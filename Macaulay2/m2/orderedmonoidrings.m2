@@ -125,7 +125,8 @@ Ring OrderedMonoid := (			  -- no memoize
 			 else toList x
 			 ));
 	       diffs = flatten diffs;
-	       local diffs0, diffs1;
+	       local diffs0;
+	       local diffs1;
 	       if R.?newEngine then (
 		    diffs = pack(diffs,2);
 		    diffs0 = indices(M,first\diffs);

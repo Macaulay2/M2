@@ -121,6 +121,14 @@ document { quote printExamples,
      SEEALSO {"examples", "document"}
      }
 
+document { quote Symbols,
+     TT "Symbols", " -- a hash table which can be used to obtain the global
+     symbol with a particular value.",
+     PARA,
+     "This is useful internally for getting the name of a function, for 
+     example."
+     }
+
 document { quote Documentation,
      TT "Documentation", " -- a hash table which is used to store
      pointers to documentation of functions, symbols, and methods.",
@@ -129,40 +137,13 @@ document { quote Documentation,
      documentation, is intended for internal use only, and its format may change.",
      PARA,
      "The documentation is stored both in a hash table in memory, and in a 
-     database file.  Combined, the two look like a single hash table, but
-     the ", TO "phase", " variable controls whether entries stored in it 
-     persist to the next session.",
-     PARA,
-     "The key may be anything, and if the value is a string, then
-     that string is taken to be the name of the thing, (which can be used for
-     when printing the thing).  The search for documentation continues 
-     with the name.",
-     PARA,
-     "The key may be anything, and if the value is a symbol, then
-     the symbol is one whose value is the thing, (which can be used for
-     when printing the thing), and the search for 
-     documentation continues with the symbol.",
-     PARA,
-     "The key may be a string: if the value is a database, then the
-     documentation is to be found there.  If the value is a list of
-     type ", TO "SEQ", " then it's the documentation itself.",
-     PARA,
-     "The key may be a sequence such as ", TT "(quote +,X,Y)", "
-     which is used to access the documentation installed when the method
-     for adding an instance of class X to an instance of class Y was
-     defined.  In this case the value is the list presented at that time,
-     i.e., a list of the form ", TT "{Z, (x,y) -> ... , documentation ... }",
-     ".",
-     PARA,
-     "The function ", TO "getDocumentationTag", " is used to chase through this
-     hash table to the final key.",
-     SEEALSO ":="
+     database file.",
+     SEEALSO {"Symbols", ":=", "getDocumentationTag"}
      }
 
 document { quote getDocumentationTag,
-     TT "getDocumentationTag s", " -- chase through the pointers in 
-     the hash table ", TO "Documentation", " and return the final key, which
-     is a string which can be used as a key into the documentation database.",
+     TT "getDocumentationTag s", " -- converts an expression to a string
+     which can be used as a key into the documentation database.",
      PARA,
      "This function is intended for internal use only."
      }

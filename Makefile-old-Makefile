@@ -369,7 +369,7 @@ clean ::; $(MAKE) -C Macaulay2 clean
 PORTING := CVS \
 	M2.dsw WindowsDistribution.dsp root.dsp \
 	Macaulay2/Macaulay2.dsp Macaulay2/WindowsFixUps.dsp \
-	Macaulay2/setup.nodumpdata Macaulay2/setup.dumpdata \
+	Macaulay2/setup.template \
 	Macaulay2/CVS \
 	Macaulay2/Vasconcelos-appendix \
 	Macaulay2/basictests \

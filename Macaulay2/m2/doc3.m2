@@ -618,7 +618,7 @@ document { quote String,
      "Operations on strings:",
      MENU {
 	  (TO "String # ZZ", " -- getting a character from a string"),
-	  (TO quote #, " -- length of a string"),
+	  (TO "#", " -- length of a string"),
  	  (TO (quote |, String, String), "        -- concatenation"),
  	  (TO "ascii", " -- ASCII conversion"),
  	  (TO "substring", " -- substring extraction"),

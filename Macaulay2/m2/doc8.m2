@@ -80,7 +80,7 @@ document { (quote ^, Module, List),
      index numbers are listed.",
      PARA,
      EXAMPLE "(ZZ^5)^{2,3}",
-     SEEALSO {quote _, Module, List}
+     SEEALSO {"_", Module, List}
      }
 document { (quote _, Module, List),
      TT "M_{i,j,k,...}", " -- provides a map from a free module to the module
@@ -88,7 +88,7 @@ document { (quote _, Module, List),
      whose index numbers are listed.",
      PARA,
      EXAMPLE "(ZZ^5)^{2,3}",
-     SEEALSO {quote ^, Module, List}
+     SEEALSO {"^", Module, List}
      }
 
 document { quote basis,

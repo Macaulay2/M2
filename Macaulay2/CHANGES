@@ -5,6 +5,9 @@ New in 0.8.53:
 Comparison of monomials using '>' in rings with nonstandard monomial orderings 
 now works.
 
+Various bugs have been fixed and improvements made in the Weyl Algebra code.
+This work continues.
+
 -----------------------------------------------------------------------------
 
 New in 0.8.51:

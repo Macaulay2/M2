@@ -393,9 +393,9 @@ document { quote PolynomialRing,
 	  },
      "Operations on ring elements:",
      MENU {
-	  TO quote +,
-	  TO quote -,
-	  TO quote *,
+	  TO "+",
+	  TO "-",
+	  TO "*",
 	  TO "coefficients",
 	  TO "content",
 	  TO "exponents",
@@ -592,7 +592,7 @@ document { quote SchurRing,
      EXAMPLE "dim R_{3,2,1}",
      "Multiplication in the ring comes from tensor product of representations.",
      EXAMPLE "R_{3,2,1} * R_{1,1}",
-     SEEALSO {quote _, SchurRing, List}
+     SEEALSO {"_", SchurRing, List}
      }
 
 document { (quote _, SchurRing, List),

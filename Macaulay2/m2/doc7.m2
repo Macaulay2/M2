@@ -891,7 +891,7 @@ document { quote content,
 document { quote QuotientRing,
      TT "QuotientRing", " -- the class of all quotient rings.",
      PARA,
-     SEEALSO {quote /, Ring, Ideal}
+     SEEALSO {"/", Ring, Ideal}
      }
 document { quote isQuotientOf,
      TT "isQuotientOf(S,R)", " -- tells whether S is a quotient ring of R."
