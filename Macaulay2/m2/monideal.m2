@@ -33,9 +33,6 @@ codim Module := M -> if M.cache.?codim then M.cache.codim else M.cache.codim = (
 
 toString MonomialIdeal := m -> if m.?name then m.name else "monomialIdeal " | toString generators m
 
-UnaryMonomialIdealOperation  := (operation) -> (m) -> newMonomialIdeal(ring m, operation raw m)
-BinaryMonomialIdealOperation := (operation) -> (m,n) -> newMonomialIdeal(ring m, operation(raw m, raw n))
-
 -- net MonomialIdeal := I -> if I == 0 then "0" else "monomialIdeal " | net toSequence first entries generators I
 
 MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> SimplePowerMethod(I,n)
@@ -66,11 +63,16 @@ MonomialIdeal * MonomialIdeal := MonomialIdeal => (I,J) -> (
      if ring I =!= ring J then error "expected monomial ideals in the same ring";
      newMonomialIdeal(ring I, raw I * raw J))
 
-radical MonomialIdeal := MonomialIdeal => options -> (I) -> (UnaryMonomialIdealOperation rawRadical) I
+radical MonomialIdeal := MonomialIdeal => options -> (I) -> newMonomialIdeal(ring I, rawRadical raw I)
 
-MonomialIdeal : MonomialIdeal := MonomialIdeal => BinaryMonomialIdealOperation rawColon
+MonomialIdeal : MonomialIdeal := MonomialIdeal => (I,J) -> newMonomialIdeal(ring I, rawColon(raw I, raw J))
 
-saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => options -> (I,J) -> (BinaryMonomialIdealOperation rawSaturate) (I,J)
+saturate(MonomialIdeal, MonomialIdeal) := MonomialIdeal => options -> (I,J) -> newMonomialIdeal(ring I, rawSaturate(raw I, raw J))
+
+saturate(MonomialIdeal, RingElement) := Ideal => (I,f) -> (
+     if size f === 1 and leadCoefficient f == 1 then saturate (I,monomialIdeal f)
+     else saturate(ideal I, ideal f)
+     )
 
 int := (I,J) -> (
      if ring I =!= ring J then error "expected monomial ideals in the same ring";
@@ -122,7 +124,7 @@ intersect(Sequence) := args -> (
     else error "expected modules, ideals, or monomial ideals"
     )
 
-borel MonomialIdeal := MonomialIdeal => UnaryMonomialIdealOperation rawStronglyStableClosure
+borel MonomialIdeal := MonomialIdeal => (I) -> newMonomialIdeal(ring I, rawStronglyStableClosure raw I)
 isBorel MonomialIdeal := Boolean => m -> rawIsStronglyStable raw m
 codim MonomialIdeal := m -> rawCodimension raw m
 
@@ -181,7 +183,7 @@ module MonomialIdeal := Module => (I) -> image generators I
 isMonomialIdeal = method(TypicalValue => Boolean)
 isMonomialIdeal Thing := x -> false
 isMonomialIdeal MonomialIdeal := (I) -> true
-isMonomialIdeal Ideal := (I) -> isPolynomialRing ring I and all(first entries generators I, r -> size r === 1)
+isMonomialIdeal Ideal := (I) -> isPolynomialRing ring I and all(first entries generators I, r -> size r === 1 and leadCoefficient r == 1)
 
 MonomialIdeal == Ideal := (I,J) -> ideal I == J
 Ideal == MonomialIdeal := (I,J) -> I == ideal J
