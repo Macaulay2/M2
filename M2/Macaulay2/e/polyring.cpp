@@ -1236,6 +1236,8 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   bump_up(g);
   g->calc(0, syzygy_stop_conditions);
   Matrix s = g->syz_matrix();
+
+#if 0
   if (s.n_cols() != 1)
     {
       o << "found " << s.n_cols() << " syzygies";
@@ -1249,6 +1251,8 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   o << " and y = ";
   elem_text_out(o,y);
   emit_line(o.str());
+#endif
+
   delete g;
 }
 
