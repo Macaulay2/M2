@@ -206,7 +206,10 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       (coeffs,monoms) -> sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else new R from a) * expression (if m == 1 then 1 else new M from m))
 	       ) rawPairs f.RawRingElement;
 	  toString RM := toExternalString RM := x -> toString expression x;
-	  fac := options -> f -> new Product from apply_(rawFactor raw f)((p,n) -> new Power from {new RM from p,n});
+	  fac := options -> f -> (
+	       facs := rawFactor raw f;
+	       new Product from apply(facs#0,facs#1,(p,n) -> new Power from {new RM from p,n})
+	       );
 	  factor RM := if R === QQ then (
 	       -- for factoring over QQ we find a commond denominator ourselves and reduce the problem to factoring over ZZ
 	       options -> f -> (
@@ -226,7 +229,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       v := factor f;				    -- constant term last
 	       #v === 1 and last v#0 === 1 and not isConstant first v#0
 	       or
-	       #v === 2 and v#0#1 === 1 and isConstant first v#1
+	       #v === 2 and v#0#1 === 1 and isConstant first v#0
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generatorExpressions = M.generatorExpressions;

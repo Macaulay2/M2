@@ -38,10 +38,7 @@ override(h:HashTable,v:Sequence,numopts:int):Expr := (
      numargs := length(v) - numopts;
      newargs := nullE;
      if numargs == 0 then (newargs = emptySequenceE;)
-     else if numargs == 1 then foreach x in v do (
-	  if !isOption(h.class,x) then newargs = (
-	       -- when x is Sequence do Expr(Sequence(x)) else -- distinguish f((a,b),c=>5) from f(a,b,c=>5)
-	       x))
+     else if numargs == 1 then foreach x in v do (if !isOption(h.class,x) then newargs = x)
      else (
 	  newargs = Expr(
 	       new Sequence len numargs do (

@@ -14,9 +14,6 @@ Sequence == Sequence := (x,y) -> (
      and
      all( 0 .. # x - 1, i -> x#i == y#i ))
 
--- Thing == Thing := Boolean => (x,y) -> x === y			    
-    -- this is a bit experimental, installed 7/15/99, deleted 3/20/2000
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -61,9 +61,10 @@ printingTimeLimit = 20
 errorPrintingTimeLimit := 3
 symbol debugError <- identity				    -- use '<-' to bypass global assignment method
 robustNet := y -> (
-     try timelimit(printingTimeLimit, () -> net y) else (
-	  global debugError <- x -> net y;
-	  stderr << "--error in conversion of output to net: type 'debugError()' to see it; will try conversion to string" << endl << endl ;
+     fun := () -> net y;
+     try timelimit(printingTimeLimit, fun) else (
+	  global debugError <- fun;
+	  stderr << "--error or time limit reached in conversion of output to net: type 'debugError()' to run it again; will try conversion to string" << endl << endl ;
 	  try timelimit(errorPrintingTimeLimit, () -> toString y) else (
 	       stderr << "--error in conversion of output to string" << endl << endl;
 	       simpleToString y)))
@@ -71,10 +72,14 @@ Thing.Print = x -> (
      x = commonProcessing x;
      y := applyMethod(BeforePrint,x);
      if y =!= null then (
-	  << endl			  -- double space
-	  << concatenate(interpreterDepth:"o") << lineNumber << " = " 
-	  << robustNet y << endl;
-	  );
+     	  z := robustNet y;
+	  wrapper := lookup(symbol Wrap,class y);
+	  if wrapper =!= null then (
+	       fun := () -> z = wrapper z;
+	       try timelimit(printingTimeLimit, fun) else (
+	  	    global debugError <- fun;
+		    stderr << "--error or time limit reached in applying Wrap method to output; type 'debugError()' to see it" << endl << endl));
+	  << endl << concatenate(interpreterDepth:"o") << lineNumber << " = " << z << endl);
      applyMethod(AfterPrint,x);
      )
 
@@ -107,6 +112,7 @@ silentRobustString = (wid,sec,y) -> (
 
 hush := false
 scan(binaryOperators, op -> (
+	  if op === symbol "!=" then return;		    -- this one has an internal binary method
 	  ht := 8;
 	  preX := "            ";
 	  if not Thing#?((op,symbol =),Thing,Thing) then installMethod((op,symbol =), Thing, Thing, (x,y,z) -> (
