@@ -99,7 +99,7 @@ ZZZquotient := (R,I) -> (
 	  if En > 1 and not isPrime En
 	  then error "ZZZ/n not implemented yet for composite n";
 	  ES := new QuotientRing from newHandle(ggPush En, ggEcharp);
-	  ES.baseRings = {R};
+	  ES.baseRings = append(R.baseRings,R);
 	  ES.newEngine = true;
 	  ES.relations = EgensI;
 	  ES.ConvertToExpression = R.ConvertToExpression;
