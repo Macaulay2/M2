@@ -82,7 +82,7 @@ getenv String := String => getenv
 hashTable List := HashTable => hashTable
 typicalValues#horizontalJoin = Net
 horizontalJoin BasicList := Net => horizontalJoin
-netRows Net := List => netRows
+unstack Net := List => unstack
 join(BasicList,BasicList) := BasicList => join
 keys HashTable := List => keys
 pairs HashTable := List => pairs

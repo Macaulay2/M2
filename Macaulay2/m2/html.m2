@@ -418,7 +418,7 @@ assemble Package := o -> pkg -> (
 	       else (
 		    stderr << "--making example output file for " << nodename << endl;
 		    -- later we'll figure out how to start *this* version of M2!!!
-		    cmd := "M2 --silent -q -s -x -e'load \""|buildPackage|".m2\"' <"|inf|" >"|outf;
+		    cmd := "M2 --silent -q -x -e 'load \""|buildPackage|".m2\"' <"|inf|" >"|outf;
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
@@ -433,7 +433,7 @@ check Package := pkg -> (
      logfile := "Macaulay2-test.log";
      scan(values pkg#"test inputs", t -> (
 	       -- later we'll figure out how to start *this* version of M2!!!
-	       cmd := "M2 --silent -q -s -e'load \""|pkg.name|".m2\"' >/dev/null";
+	       cmd := "M2 --silent -q -e 'load \""|pkg.name|".m2\"' >/dev/null";
 	       stderr << "--   " << cmd << endl << "     " << net t << endl;
 	       "!" | cmd << t << endl << close;
 	       )))

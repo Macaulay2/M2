@@ -143,7 +143,7 @@ keys(e:Expr):Expr := (
      is o:HashTable do keys(o)
      else WrongArg("a hash table"));
 setupfun("keys",keys);
-elements(e:Expr):Expr := (
+toList(e:Expr):Expr := (
      when e
      is o:HashTable do keys(o)
      is a:Sequence do list(a)
@@ -154,8 +154,8 @@ elements(e:Expr):Expr := (
 	       	    List(listClass, if b.mutable then copy(b.v) else b.v,
 		    	 0, false),
 	       	    false)))
-     else WrongArg("a hash table, list, or sequence"));
-setupfun("toList",elements);
+     else WrongArg("a hash table, list, net, or sequence"));
+setupfun("toList",toList);
 values(e:Expr):Expr := (
      when e
      is o:HashTable do list(

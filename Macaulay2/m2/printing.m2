@@ -35,7 +35,7 @@ truncateOutput ZZ := maxwidth -> (
      Thing.BeforePrint = x -> (
 	  x = net x;
 	  if width x <= maxwidth then return x;
-	  stack apply( netRows x, row -> (
+	  stack apply( unstack x, row -> (
 		    if #row <= maxwidth then return row;
 		    concatenate(substring(0,maxwidth - 4,row), " ...")))))
 truncateOutput InfiniteNumber := maxwidth -> remove(Thing,BeforePrint)

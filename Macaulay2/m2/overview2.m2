@@ -1123,9 +1123,9 @@ document { "nets",
      the baseline, and the height is the number of rows above the baseline.
      The depth and the height can be negative.",
      EXAMPLE "width x, height x, depth x",
-     "We may extract the rows of a net as strings with ", TO "netRows", ".",
+     "We may extract the rows of a net as strings with ", TO "unstack", ".",
      EXAMPLE {
-	  "netRows x",
+	  "unstack x",
 	  "peek oo"
 	  },
      "The class of all nets is ", TO "Net", "."

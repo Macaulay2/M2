@@ -10,14 +10,6 @@ load "layout.m2"					    -- defines LAYOUT
 
 layout = new Command from ( () -> applyValues(LAYOUT, f -> if Function === class f then f "@PACKAGE_NAME@" else f) )
 
-PREFIX := ""
-addStartFunction(
-     () -> (
-          PREFIX = getenv "M2PREFIX";			    -- usually /usr or /sw or /usr/local
-	  if PREFIX =!= "" then path = append( path, 
-	       minimizeFilename ( PREFIX | "/" | LAYOUT#"packages" )
-	       )))
-
 currentPackage = null
 
 packages = new VerticalList from {}

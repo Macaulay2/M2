@@ -773,7 +773,7 @@ seecode := x -> (
      n := code f;
      if n =!= null 
      and height n + depth n <= 10 and width n <= maximumCodeWidth
-     then SEQ { "Code:", PRE concatenate between(newline,netRows n) }
+     then SEQ { "Code:", PRE concatenate between(newline,unstack n) }
      )
 
 documentation Function := f -> SEQ { 

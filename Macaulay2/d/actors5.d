@@ -506,12 +506,12 @@ netDepth(e:Expr):Expr := (
      else WrongArg("a net"));
 setupfun("netDepth",netDepth);
 
-netRows(e:Expr):Expr := (
+unstack(e:Expr):Expr := (
      when e
      is n:Net do list(new Sequence len length(n.body) do foreach s in n.body do provide Expr(s))
      is s:string do list(e)
      else WrongArg("a net"));
-setupfun("netRows",netRows);
+setupfun("unstack",unstack);
 
 alarm(e:Expr):Expr := (
      when e is i:Integer do 
