@@ -1,3 +1,137 @@
+needs "Engine.m2"
+-----------------------
+-- Vector operations --
+-----------------------
+
+-- Over a simple base ring.
+R = makeRing(monomialOrder(RevLex=>6))
+F = R^3
+v = evector(F,{a,b,c})
+w = esparseVector(F,{{a,0},{b^2-c,1}})
+(a+1_R)*v
+assert(size v == 3)
+assert(size(v-v) == 0)
+assert(v+v == 2*v)
+assert((v+v)+v == 3*v)
+assert(-v == evector(F,{-a,-b,-c}))
+assert(v+w == evector(F,{2*a, b + b^2 - c, c}))
+assert(v-w == evector(F,{0_R, b - b^2 + c, c}))
+assert(a*v == evector(F,{a^2,a*b,a*c}))
+assert(101*v == 0)
+
+-- BELOW THIS NOT SET UP YET
+M = emonoid(monomialOrder 4, toList(0..3), "a b c d")
+R = polyring(ZmodP 101, M, degreeRing 1, {1,1,1,1})
+R1 = R^1
+a = R1_((1,0,0,0),0)
+b = R1_((0,1,0,0),0)
+c = R1_((0,0,1,0),0)
+d = R1_((0,0,0,1),0)
+
+v = esparseVector(R^10,{{a*b,4},{c^5,8}})  -- is the order correct?
+assert(v_4 == a*b)
+assert(v_3 == 0)
+assert(v_0 == 0)
+assert(v_10 == 0)
+assert(v_(-1) == 0)
+assert(leadComponent v === 4)
+assert(leadCoefficient v === 1)
+leadTerm(v,1)  -- INCORRECT since compare routine is not written yet...
+v = esparseVector(R^5, {{2*a*b-c^2,3}, {a*d-b*c,4}})
+assert(degree v == {2})
+assert(degreeWeights(v,{1,1,1,1}) == {2,2})
+assert(degreeWeights(v,{0,0,-1,0}) == {-2,0})
+assert(degreeWeights(v,{0,0,1,0}) == {0,2})
+assert(degreeWeights(v,{0,1,1,1}) == {1,2})
+assert(size v == 4)
+assert((getTerms(v,0,0))_3 == 2*a*b)
+assert(v == getTerms(v,0,0) + getTerms(v,1,-1))
+assert(getTerms(v,-1,-1) == -c^2 * (R^5)_3)
+assert(getTerms(v,4,4) == 0)
+assert(getTerms(v,4,-1) == 0)
+
+M = emonoid(monomialOrder(Weights=>{1,1,0,0},4), toList(0..3), "a b c d")
+R = polyring(ZmodP 101, M, degreeRing 1, {1,1,1,1})
+R1 = R^1
+a = R1_((1,0,0,0),0)
+b = R1_((0,1,0,0),0)
+c = R1_((0,0,1,0),0)
+d = R1_((0,0,0,1),0)
+
+F = R^3
+v = a*b*F_0 + a^2*b*c*F_1 + b^3*F_2 + F_0 + a^2*b*c*F_0 + a^2*b*d*F_1
+  -- a2bc<1>+a2bc<0>+a2bd<1>+b3<2>+ab<0>+<0>
+assert(leadTerm v == a^2*b*c*F_1)
+assert(leadTerm(v,1) == a^2*b*c*F_1 + a^2*b*d*F_1)
+assert(leadTerm(v,2) == a^2*b*c*F_1)
+assert(leadTerm(v,2,0) == a^2*b*c*F_1 + a^2*b*c*F_0)
+assert(leadTerm(v,1,1) == a^2*b*c*F_1 + a^2*b*d*F_1)
+assert(leadTerm(v,1,0) == a^2*b*c*F_1 + a^2*b*c*F_0 + a^2*b*d*F_1 + 
+                          b^3*F_2)
+
+----------------------------------------------------------
+----------------------------------------------------------
+-- Basic arithmetic
+
+-- Test A. Base ring is a coefficient ring
+
+-- Test B. Base is a polynomial ring
+makeRing monomialOrder(RevLex=>6)  
+m1 = ematrix(R,{{a,b},{c,d}})
+m2 = ematrix(R,{{a^2,0_R,1_R},{d^3+b^2,a*b*c-2*a,0_R}})
+m3 = random(R,3,5)
+
+src m1
+targ m1
+degree m1  -- FAILS: what name is this?
+
+assert(not(m1 == m2))
+m1 + m1 == 2*m1 -- FAILS
+assert(m1 - m1 == 0)
+m1_(0,0)
+m1_0  -- INCORRECT: base shoul be R^2, but display is as in R^1
+m1 + m2  -- MY PROBLEM
+- m1
+m1 - m2 -- MY PROBLEM
+m1 * m1
+f = a+b
+f*m1  -- NOT DONE
+2*m1  -- NOT DONE
+transpose m1
+m1 * transpose m2  -- CRASHES
+submatrix(m1,{0,1,2})
+submatrix(m1,{0,2},{1,0,2})
+m1 ** m2
+m1 ++ m2
+m1 | m2
+m * (src m)_2
+
+m = ematrix(R,{{a,b,c,d}})
+koszul(0,m)
+koszul(1,m)
+koszul(2,m)
+koszul(3,m)
+koszul(4,m)
+koszul(5,m)
+
+-- MISSING: zero, identity
+
+-- MISSING: degree routines, isGraded
+isGraded m
+homogenize(m,f,{1,2,3,4,5,1})
+
+-- MISSING: kbasis, truncate, symm, wedge, 
+
+-- MISSING: flip, reshape, other koszul, exteriorProduct
+
+-- MISSING: moduleTensor, selectInSubring, divideByVariable
+
+-- MISSING: leadTerm
+
+-- NOT DONE: diff, contract, coeffs, simplify, sort,
+-- auto_reduce, minimal_lead_terms
+
+
 -- Test set A for low level engine functionality
 needs "Engine.m2"
 
@@ -134,54 +268,6 @@ b*d*b
 ------------------------------
 -- Test of vector routines ---
 ------------------------------
-M = emonoid(monomialOrder 4, toList(0..3), "a b c d")
-R = polyring(ZmodP 101, M, degreeRing 1, {1,1,1,1})
-R1 = R^1
-a = R1_((1,0,0,0),0)
-b = R1_((0,1,0,0),0)
-c = R1_((0,0,1,0),0)
-d = R1_((0,0,0,1),0)
-
-v = esparseVector(R^10,{{a*b,4},{c^5,8}})  -- is the order correct?
-assert(v_4 == a*b)
-assert(v_3 == 0)
-assert(v_0 == 0)
-assert(v_10 == 0)
-assert(v_(-1) == 0)
-assert(leadComponent v === 4)
-assert(leadCoefficient v === 1)
-leadTerm(v,1)  -- INCORRECT since compare routine is not written yet...
-v = esparseVector(R^5, {{2*a*b-c^2,3}, {a*d-b*c,4}})
-assert(degree v == {2})
-assert(degreeWeights(v,{1,1,1,1}) == {2,2})
-assert(degreeWeights(v,{0,0,-1,0}) == {-2,0})
-assert(degreeWeights(v,{0,0,1,0}) == {0,2})
-assert(degreeWeights(v,{0,1,1,1}) == {1,2})
-assert(size v == 4)
-assert((getTerms(v,0,0))_3 == 2*a*b)
-assert(v == getTerms(v,0,0) + getTerms(v,1,-1))
-assert(getTerms(v,-1,-1) == -c^2 * (R^5)_3)
-assert(getTerms(v,4,4) == 0)
-assert(getTerms(v,4,-1) == 0)
-
-M = emonoid(monomialOrder(Weights=>{1,1,0,0},4), toList(0..3), "a b c d")
-R = polyring(ZmodP 101, M, degreeRing 1, {1,1,1,1})
-R1 = R^1
-a = R1_((1,0,0,0),0)
-b = R1_((0,1,0,0),0)
-c = R1_((0,0,1,0),0)
-d = R1_((0,0,0,1),0)
-
-F = R^3
-v = a*b*F_0 + a^2*b*c*F_1 + b^3*F_2 + F_0 + a^2*b*c*F_0 + a^2*b*d*F_1
-  -- a2bc<1>+a2bc<0>+a2bd<1>+b3<2>+ab<0>+<0>
-assert(leadTerm v == a^2*b*c*F_1)
-assert(leadTerm(v,1) == a^2*b*c*F_1 + a^2*b*d*F_1)
-assert(leadTerm(v,2) == a^2*b*c*F_1)
-assert(leadTerm(v,2,0) == a^2*b*c*F_1 + a^2*b*c*F_0)
-assert(leadTerm(v,1,1) == a^2*b*c*F_1 + a^2*b*d*F_1)
-assert(leadTerm(v,1,0) == a^2*b*c*F_1 + a^2*b*c*F_0 + a^2*b*d*F_1 + 
-                          b^3*F_2)
 
 ------------------------------
 -- Test of matrix routines ---

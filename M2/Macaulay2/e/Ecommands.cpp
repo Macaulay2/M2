@@ -8,12 +8,15 @@
 #include "Efreemod.hpp"
 #include "Evector.hpp"
 #include "Ematrix.hpp"
+#include "Eringmap.hpp"
 
 #include "interp.hpp"
 #include "Ehashtab.hpp"
 
 EHashTable EUniqueObjects;
+const EZZ *EZ;
 
+template class array<EVector>;
 void appendMonomialToIntarray(const EMonoid *M, const monomial *m, intarray &result)
 {
   const int *exp = M->to_exponents(m);
@@ -28,7 +31,7 @@ intarray monomialToIntarray(const EMonoid *M, const monomial *m)
   return result;
 }
 
-monomial *monomialFromIntarray(const EMonoid *D, const intarray &mapdeg)
+const monomial *monomialFromIntarray(const EMonoid *D, const intarray &mapdeg)
 {
   if (mapdeg.length() == 0)
     return D->clone(D->one());
@@ -44,6 +47,7 @@ static void cmd_EHashTable_stats()
 {
   EUniqueObjects.showshape();
 }
+
 
 /////////////////////////////
 // Monomial Order Routines //
@@ -141,11 +145,11 @@ static void cmd_EMonoid(object &o1, object &o2, object &o3)
     }
   EMonoid *M;
   if (mo->is_commutative())
-    M = ECommMonoid::make(mo,
+    M = ECommMonoid::make(mo->clone(),
 			  printorder->raw(),
 			  (const char **) names);
   else
-    M = ENCMonoid::make(mo,
+    M = ENCMonoid::make(mo->clone(),
 			printorder->raw(),
 			(const char **) names);
 
@@ -179,10 +183,9 @@ static void cmd_EMonoid_stats(object &o1)
 /////////////////////////////
 // Polynomial Rings /////////
 /////////////////////////////
-
 static void cmd_EZZ()
 {
-  gStack.insert((object_element *)EPolynomialRing::getTrivialRing());
+  gStack.insert((object_element *)EZZ::make());
 }
 
 static void cmd_EZZp(object &r)
@@ -192,11 +195,7 @@ static void cmd_EZZp(object &r)
   int p = r->int_of();
   if (p > 0)
     {
-      ECoefficientRing *K = EZZp::make(p);
-      EPolynomialRing *R = ECommPolynomialRing::make(K,
-						     ECommMonoid::getTrivialMonoid(),
-						     EPolynomialRing::getTrivialRing(),
-						     0);
+      ERing *R = EZZp::make(p);
       gStack.insert(R);
     }
   else
@@ -205,11 +204,11 @@ static void cmd_EZZp(object &r)
 
 static void cmd_EZZp_characteristic(object &o1)
 {
-  EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  ERing *R = o1->cast_to_ERing();
   gStack.insert(make_object_int(R->characteristic()));
 }
 
-static bool grabDegreeInfo(int nvars, EPolynomialRing *&ZD, int *&degrees)
+static bool grabDegreeInfo(int nvars, const EPolynomialRing *&ZD, int *&degrees)
 {
   bool bad = false;
   intarray *degs;
@@ -229,8 +228,23 @@ static bool grabDegreeInfo(int nvars, EPolynomialRing *&ZD, int *&degrees)
       ZD = 0;
     }
   else
-    ZD = gStack[1]->cast_to_EPolynomialRing();
+    {
+      const ERing *ZD1 = gStack[1]->cast_to_ERing();
+      ZD = ZD1->toPolynomialRing();
+      if (ZD == 0)
+	{
+	  if (ZD1 == EZZ::make())
+	    ZD = ECommPolynomialRing::getTrivialRing();
+	  else
+	    bad = true;
+	}
+    }
 
+  if (bad)
+    {
+      gError << "expected ZZ or polynomial ring for degree ring";
+      degrees = 0;
+    }
   if (!bad && degs->length() != nvars * ZD->n_vars())
     {
       bad = true;
@@ -246,30 +260,9 @@ static bool grabDegreeInfo(int nvars, EPolynomialRing *&ZD, int *&degrees)
   gStack.poppem(2);
   return !bad;
 }
-ECoefficientRing *getCoefficients(object &o1)
-{
-  // If o1 is a EPolynomialRing, check that the
-  // number of variables is zero: if not return 0.
-  // If ok, return the coefficient ring.
-  // If o1 is a coefficient ring, return it.
-  ECoefficientRing *result = o1->cast_to_ECoefficientRing();
-  if (result != 0) return result;
-  EPolynomialRing *R = o1->cast_to_EPolynomialRing();
-  if (R == 0) 
-    {
-      gError << "expected polynomial or coefficient ring";
-      return 0;
-    }
-  if (R->n_vars() != 0)
-    {
-      gError << "expected a coefficient ring";
-      return 0;
-    }
-  return (ECoefficientRing *) R->getCoefficientRing();
-}
 static void cmd_EPolynomialRing(object &o1, object &o2)
 {
-  ECoefficientRing *K = getCoefficients(o1);
+  ERing *K = o1->cast_to_ERing();
   EMonoid * M = o2->cast_to_EMonoid();
   EPolynomialRing *R;
   EPolynomialRing *ZD;
@@ -286,7 +279,7 @@ static void cmd_EPolynomialRing(object &o1, object &o2)
 
 static void cmd_EWeylAlgebra(object &o1, object &o2, object &o3, object &o4, object &o5)
 {
-  ECoefficientRing *K = getCoefficients(o1);
+  ERing *K = o1->cast_to_ERing();
   EMonoid * M = o2->cast_to_EMonoid();
   intarray *diffs = o3->intarray_of();
   intarray *comms = o4->intarray_of();
@@ -322,7 +315,7 @@ static void cmd_EWeylAlgebra(object &o1, object &o2, object &o3, object &o4, obj
 
 static void cmd_ESkewCommPolynomialRing(object &o1, object &o2, object &o3)
 {
-  ECoefficientRing *K = getCoefficients(o1);
+  ERing *K = o1->cast_to_ERing();
   EMonoid * M = o2->cast_to_EMonoid();
   intarray *skew = o3->intarray_of();
 
@@ -343,17 +336,17 @@ static void cmd_ESkewCommPolynomialRing(object &o1, object &o2, object &o3)
 static void cmd_EPolyRing_getMonoid(object &o1)
 {
   EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  if (R == 0)
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
   gStack.insert((object_element *)R->getMonoid());
 }
 static void cmd_EPolyRing_getCoefficientRing(object &o1)
 {
-  EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  ERing *R = o1->cast_to_ERing();
   gStack.insert((object_element *)R->getCoefficientRing());
-}
-static void cmd_EPolyRing_getRingFreeModule(object &o1)
-{
-  EPolynomialRing *R = o1->cast_to_EPolynomialRing();
-  gStack.insert((object_element *)R->getRingFreeModule());
 }
 
 //////////////////////
@@ -362,7 +355,7 @@ static void cmd_EPolyRing_getRingFreeModule(object &o1)
 
 static void cmd_EFreeModule(object &o1, object &o2)
 {
-  EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  ERing *R = o1->cast_to_ERing();
   int r = o2->int_of();
   EFreeModule *F = R->makeFreeModule(r);
   gStack.insert(F);
@@ -370,7 +363,7 @@ static void cmd_EFreeModule(object &o1, object &o2)
 
 static void cmd_EFreeModule2(object &o1, object &o2)
 {
-  EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  ERing *R = o1->cast_to_ERing();
   intarray *degs = o2->intarray_of();
   const EMonoid *D = R->getDegreeMonoid();
   int ndegrees = R->n_degrees();
@@ -397,7 +390,14 @@ static void cmd_EFreeModule2(object &o1, object &o2)
 static void cmd_EFreeModule3(object &o1)
 {
   EMatrix *m = o1->cast_to_EMatrix();
-  EFreeModule *F = m->getSource()->getRing()->makeFreeModule(m);
+  const ERing *R = m->getTarget()->getRing();
+  const EPolynomialRing *A = R->toPolynomialRing();
+  if (A == 0)
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
+  EFreeModule *F = A->makeSchreyerFreeModule(m);
   gStack.insert(F);
 }
 
@@ -459,7 +459,7 @@ void cmd_EFreeModule_shift(object &oV, object &oa)
   const EFreeModule *V = oV->cast_to_EFreeModule();
   intarray *a = oa->intarray_of();
   const EMonoid *D = V->getDegreeMonoid();
-  monomial *m = monomialFromIntarray(D,*a);
+  const monomial *m = monomialFromIntarray(D,*a);
   if (m == 0) return;
   gStack.insert(V->shift(m));
 }
@@ -490,14 +490,20 @@ void cmd_EFreeModule_exterior(object &oV, object &on)
 //////////////////////
 
 // Creation of new elements
-
-object_EVector * make_object_EVector(EVector *&v)
+object_ERingElement * make_object_ERingElement(const ERing *R, ERingElement a)
+{
+  object_ERingElement *result = new object_ERingElement(R,a);
+  object_element *b = result;
+  //  EUniqueObjects.insert(b);
+  result = (object_ERingElement *)b;
+  return result;
+}  
+object_EVector * make_object_EVector(EVector &v)
 {
   // Consumes v.  Soon: The output will be UNIQUE:  two vectors
   // in the front end will be equal iff their handles are equal.
   // MES: WRITE THIS!!
 
-  if (v == 0) return 0;
   object_EVector *result = new object_EVector(v);
   object_element *a = result;
   EUniqueObjects.insert(a);
@@ -513,7 +519,7 @@ static void cmd_EVector_getFreeModule(object &o1)
 static void cmd_EVector_zero(object &o1)
 {
   EFreeModule *F = o1->cast_to_EFreeModule();
-  EVector *v = F->zero();
+  EVector v = F->zero();
   gStack.insert(make_object_EVector(v));
 }
 
@@ -521,43 +527,55 @@ static void cmd_EVector_basisElement(object &o1,object &o2)
 {
   EFreeModule *F = o1->cast_to_EFreeModule();
   int i = o2->int_of();
-  EVector *v = F->basisElement(i);
+  EVector v = F->basisElement(i);
   gStack.insert(make_object_EVector(v));
 }
 
 static void cmd_EVector_makeTerm(object &o1, object &o2, object &o3)
 {
   EFreeModule *F = o1->cast_to_EFreeModule();
+  const EPolynomialRing *R = F->getRing()->toPolynomialRing();
+  if (R == 0)
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
   intarray *a = o2->intarray_of();
   int x = o3->int_of();
-  const EMonoid *M = F->getMonoid();
+  const EMonoid *M = R->getMonoid();
   if (a->length() != M->n_vars())
     {
       gError << "expected exponent vector of length " << M->n_vars();
       return;
     }
-  field one = F->getCoefficientRing()->one();
-  monomial *m = M->monomial_from_exponents(a->raw());
+  ERingElement one = F->getCoefficientRing()->one();
+  const monomial *m = M->monomial_from_exponents(a->raw());
   if (m == 0) return;
-  EVector *v = F->makeTerm(one,m,x);
+  EVector v = R->vec_term(F,one,m,x);
   gStack.insert(make_object_EVector(v));
 }
 static void cmd_EVector_makeTerm1(object &o1, object &o2, object &o3, object &o4)
 {
   EFreeModule *F = o1->cast_to_EFreeModule();
+  const EPolynomialRing *R = F->getRing()->toPolynomialRing();
+  if (R == 0)
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
   int c = o2->int_of();
   intarray *a = o3->intarray_of();
   int x = o4->int_of();
-  const EMonoid *M = F->getMonoid();
+  const EMonoid *M = R->getMonoid();
   if (a->length() != M->n_vars())
     {
       gError << "expected exponent vector of length " << M->n_vars();
       return;
     }
-  field c1 = F->getCoefficientRing()->from_int(c);
-  monomial *m = M->monomial_from_exponents(a->raw());
+  ERingElement c1 = F->getCoefficientRing()->from_int(c);
+  const monomial *m = M->monomial_from_exponents(a->raw());
   if (m == 0) return;
-  EVector *v = F->makeTerm(c1,m,x);
+  EVector v = R->vec_term(F,c1,m,x);
   gStack.insert(make_object_EVector(v));
 }
 static int check_elems(int num, int typ)
@@ -572,17 +590,18 @@ static void cmd_EVector_make(object &o1)
 {
   EFreeModule *F = o1->cast_to_EFreeModule();
   // Now the previous F->rank() elements on the stack should be vectors...
-  if (!check_elems(F->rank(), TY_EVector))
+  if (!check_elems(F->rank(), TY_ERingElement))
     {
-      gError << "expected ring elements or vectors";
+      gError << "expected ring elements";
       return;
     }
   // Now grab each element in term.
-  const EVector **elems = new const EVector *[F->rank()];
+  ERingElement *elems = new ERingElement [F->rank()];
   for (int i=0; i<F->rank(); i++)
-    elems[i] = gStack[F->rank() - 1 - i]->cast_to_EVector();
-  EVector *v = F->makeVector(elems);
+    elems[i] = gStack[F->rank() - 1 - i]->cast_to_ERingElement()->getValue();
+  EVector v = F->makeVector(elems);
   delete [] elems;
+  gStack.poppem(F->rank());
   gStack.insert(make_object_EVector(v));
 }
 static void cmd_EVector_sparse(object &o1, object &o2)
@@ -591,24 +610,25 @@ static void cmd_EVector_sparse(object &o1, object &o2)
   intarray *a = o2->intarray_of();
   int len = a->length();
   // Now the previous len elements on the stack should be vectors...
-  if (!check_elems(len, TY_EVector))
+  if (!check_elems(len, TY_ERingElement))
     {
-      gError << "expected ring elements or vectors";
+      gError << "expected ring elements";
       return;
     }
   // Now grab each element in term.
-  const EVector **elems = new const EVector *[len];
+  ERingElement *elems = new ERingElement[len];
   for (int i=0; i<len; i++)
-    elems[i] = gStack[len - 1 - i]->cast_to_EVector();
-  EVector *v = F->makeSparseVector(elems, *a);
+    elems[i] = gStack[len - 1 - i]->cast_to_ERingElement()->getValue();
+  EVector v = F->makeSparseVector(elems, *a);
   delete [] elems;
+  gStack.poppem(len);
   gStack.insert(make_object_EVector(v));
 }
 static void cmd_EVector_isequal(object &o1, object &o2)
 {
   EVector *v = o1->cast_to_EVector();
   EVector *w = o2->cast_to_EVector();
-  int result = v->isEqual(w);
+  int result = v->isEqual(*w);
   gStack.insert(make_object_int(result));
 }
 static void cmd_EVector_iszero(object &o1)
@@ -622,8 +642,9 @@ static void cmd_EVector_getComponent(object &o1, object &o2)
 {
   EVector *v = o1->cast_to_EVector();
   int n = o2->int_of();
-  EVector *result = v->getComponent(n);
-  gStack.insert(make_object_EVector(result));
+  ERingElement g = v->getComponent(n);
+  const ERing *R = v->getRing();
+  gStack.insert(make_object_ERingElement(R,g));
 }
 static void cmd_EVector_leadComponent(object &o1)
 {
@@ -632,13 +653,24 @@ static void cmd_EVector_leadComponent(object &o1)
 }
 static void cmd_EVector_leadCoefficient(object &o1)
 {
-  // This will CHANGE when better coefficients are ready!!
   EVector *v = o1->cast_to_EVector();
-  gStack.insert(make_object_int(v->leadCoefficient()));
+  ERingElement a;
+  if (!v->leadCoefficient(a))
+    {
+      gError << "expected non-zero vector";
+      return;
+    }
+  gStack.insert(make_object_ERingElement(v->getRing(),a));
 }
 static void cmd_EVector_leadMonomial(object &o1)
 {
   EVector *v = o1->cast_to_EVector();
+  const EPolynomialRing *R = v->getRing()->toPolynomialRing();
+  if (R == 0)
+    {
+      gError << "expected vector over polynomial ring";
+      return;
+    }
   intarray a;
   const monomial *m = v->leadMonomial();
   if (m == 0)
@@ -646,7 +678,7 @@ static void cmd_EVector_leadMonomial(object &o1)
       gError << "zero vector has no lead monomial";
       return;
     }
-  v->getFreeModule()->getRing()->getMonoid()->to_variable_exponent_pairs(m,a);
+  R->getMonoid()->to_variable_exponent_pairs(m,a);
   gStack.insert(new object_intarray(a));
 }
 static void cmd_EVector_leadTerm(object &o1, object &o2, object &o3)
@@ -654,7 +686,7 @@ static void cmd_EVector_leadTerm(object &o1, object &o2, object &o3)
   EVector *v = o1->cast_to_EVector();
   int n = o2->int_of();
   int only_same_component = o3->int_of();
-  EVector *result = v->leadTerm(n,only_same_component);
+  EVector result = v->leadTerm(n,only_same_component);
   gStack.insert(make_object_EVector(result));
 }
 static void cmd_EVector_getterms(object &ov, object &om, object &on)
@@ -662,7 +694,7 @@ static void cmd_EVector_getterms(object &ov, object &om, object &on)
   EVector *v = ov->cast_to_EVector();
   int m = om->int_of();
   int n = on->int_of();
-  EVector *result = v->getTerms(m,n);
+  EVector result = v->getTerms(m,n);
   gStack.insert(make_object_EVector(result));
 }
 static void cmd_EVector_subvector(object &ov, object &oF, object &oa)
@@ -670,7 +702,7 @@ static void cmd_EVector_subvector(object &ov, object &oF, object &oa)
   EVector *v = ov->cast_to_EVector();
   const EFreeModule *F = oF->cast_to_EFreeModule();
   intarray *a = oa->intarray_of();
-  EVector *result = F->subvector(v,*a);
+  EVector result = v->subvector(F,*a);
   gStack.insert(make_object_EVector(result));
 }
 
@@ -678,55 +710,52 @@ static void cmd_EVector_subvector(object &ov, object &oF, object &oa)
 static void cmd_EVector_negate(object &o1)
 {
   EVector *v = o1->cast_to_EVector();
-  EVector *result = v->negate();
+  EVector result = v->negate();
   gStack.insert(make_object_EVector(result));
 }
 static void cmd_EVector_add(object &o1, object &o2)
 {
   EVector *v = o1->cast_to_EVector();
   EVector *w = o2->cast_to_EVector();
-  EVector *result = v->add(w);
+  EVector result = v->add(*w);
   gStack.insert(make_object_EVector(result));
 }
 static void cmd_EVector_subtract(object &o1, object &o2)
 {
   EVector *v = o1->cast_to_EVector();
   EVector *w = o2->cast_to_EVector();
-  EVector *result = v->subtract(w);
+  EVector result = v->subtract(*w);
   gStack.insert(make_object_EVector(result));
 }
 static void cmd_EVector_ZZmultiply(object &o1, object &o2)
 {
   int a = o1->int_of();
   EVector *w = o2->cast_to_EVector();
-  EVector *result = w->multiply_by_ZZ(a);
+  EVector result = w->multiply_by_ZZ(a);
   gStack.insert(make_object_EVector(result));
 }
 static void cmd_EVector_multiply(object &o1, object &o2)
 {
-  EVector *v = o1->cast_to_EVector();
-  EVector *w = o2->cast_to_EVector();
-  EVector *result = v->multiply(w);
+  object_ERingElement *w = o1->cast_to_ERingElement();
+  EVector *v = o2->cast_to_EVector();
+  if (v->getRing() != w->getRing())
+    {
+      gError << "expected same ring";
+      return;
+    }
+  EVector result = v->leftMultiply(*w);
   gStack.insert(make_object_EVector(result));
 }
 static void cmd_EVector_rightMultiply(object &o1, object &o2)
 {
   EVector *v = o1->cast_to_EVector();
-  EVector *w = o2->cast_to_EVector();
-  EVector *result = v->rightMultiply(w);
-  gStack.insert(make_object_EVector(result));
-}
-static void cmd_EVector_power(object &o1, object &o2)
-{
-  EVector *v = o1->cast_to_EVector();
-  int n = o2->int_of();
-  EVector *result = v->getFreeModule()->basisElement(0);
-  for (int i=0; i<n; i++)
+  object_ERingElement *w = o2->cast_to_ERingElement();
+  if (v->getRing() != w->getRing())
     {
-      EVector *a = v->multiply(result);
-      delete result;
-      result = a;
+      gError << "expected same ring";
+      return;
     }
+  EVector result = v->rightMultiply(*w);
   gStack.insert(make_object_EVector(result));
 }
 // Homogeneity
@@ -739,7 +768,7 @@ static void cmd_EVector_isgraded(object &o1)
 static void cmd_EVector_degree(object &o1)
 {
   EVector *v = o1->cast_to_EVector();
-  monomial *d = v->degree();
+  const monomial *d = v->degree();
   intarray degs = monomialToIntarray(v->getFreeModule()->getDegreeMonoid(), d);
   gStack.insert(new object_intarray(degs));
   
@@ -749,16 +778,17 @@ static void cmd_EVector_degreeWeightsLoHi(object &o1, object &o2)
   EVector *v = o1->cast_to_EVector();
   intarray *wts = o2->intarray_of();
   int lo,hi;
-  v->degreeWeightsLoHi(wts->raw(),lo,hi);
+  v->degreeWeightsLoHi(wts->length(), wts->raw(),lo,hi);
   gStack.insert(make_object_int(lo));
   gStack.insert(make_object_int(hi));
 }
 static void cmd_EVector_homogenize(object &ov, object &ovar, object &owts)
 {
   EVector *v = ov->cast_to_EVector();
+  EVector result;
   int var = ovar->int_of();
   intarray *wts = owts->intarray_of();
-  const EPolynomialRing *R = v->getFreeModule()->getRing();
+  const ERing *R = v->getRing();
   if (var < 0 || var >= R->n_vars())
     {
       gError << "homogenization: improper ring variable";
@@ -774,16 +804,20 @@ static void cmd_EVector_homogenize(object &ov, object &ovar, object &owts)
       gError << "homogenization: variable weight is zero";
       return;
     }
-  EVector *result = v->homogenize(var,wts->raw());
+  if (!v->homogenize(var, wts->length(), wts->raw(), result))
+    {
+      return;
+    }
   gStack.insert(make_object_EVector(result));
 }
 static void cmd_EVector_homogenize1(object &ov, object &ovar, object &odeg, object &owts)
 {
   EVector *v = ov->cast_to_EVector();
+  EVector result;
   int var = ovar->int_of();
   int deg = odeg->int_of();
   intarray *wts = owts->intarray_of();
-  const EPolynomialRing *R = v->getFreeModule()->getRing();
+  const ERing *R = v->getFreeModule()->getRing();
   if (var < 0 || var >= R->n_vars())
     {
       gError << "homogenization: improper ring variable";
@@ -799,7 +833,10 @@ static void cmd_EVector_homogenize1(object &ov, object &ovar, object &odeg, obje
       gError << "homogenization: variable weight is zero";
       return;
     }
-  EVector *result = v->homogenize(var,deg,wts->raw());
+  if (!v->homogenize(var, deg, wts->raw(), result))
+    {
+      return;
+    }
   gStack.insert(make_object_EVector(result));
 }
 
@@ -807,15 +844,18 @@ static void cmd_EVector_homogenize1(object &ov, object &ovar, object &odeg, obje
 // Ring Elements /////
 //////////////////////
   
-// Currently, ring elements are merely elements of R^1
-
+static void cmd_ERingElement_getRing(object &o1)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  gStack.insert(r->getRing());
+}
 static void cmd_ERingElement_fromInteger(object &o1, object &o2)
 {
   // WARNING!! THIS NEEDS TO CHANGE WITH ZZ...!!
-  const EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  const ERing *R = o1->cast_to_ERing();
   int a = o2->int_of();
-  ERingElement *result = R->fromInteger(a);
-  gStack.insert(make_object_EVector(result));
+  ERingElement result = R->from_int(a);
+  gStack.insert(make_object_ERingElement(R,result));
 }
 
 static void cmd_ERingElement_var(object &o1, object &o2, object &o3)
@@ -823,20 +863,245 @@ static void cmd_ERingElement_var(object &o1, object &o2, object &o3)
   int v = o1->int_of();
   int e = o2->int_of();
   const EPolynomialRing *R = o3->cast_to_EPolynomialRing();
-  ERingElement *result = R->makeRingVariable(v,e);
-  if (result == 0) return;
-  gStack.insert(make_object_EVector(result));
+  ERingElement result = R->make_ring_variable(v,e);
+  gStack.insert(make_object_ERingElement(R,result));
 }
 
 static void cmd_ERingElement_term(object &o1, object &o2, object &o3)
 {
   const EPolynomialRing *R = o1->cast_to_EPolynomialRing();
-  ERingElement *c = o2->cast_to_EVector();
+  object_ERingElement *c = o2->cast_to_ERingElement();
   intarray *a = o3->intarray_of();
-  ERingElement *result = R->makeRingTerm(c,*a);
-  if (result == 0) return;
+
+  // Now check that the coefficient ring of 'coeff' is the same as the coefficient ring.
+  if (c->getRing() != R->getCoefficientRing())
+    {
+      gError << "expected coefficient in coefficient ring";
+      return;
+    }
+
+  ERingElement c1 = c->getRing()->clone(*c);
+  ERingElement result = R->make_term(c1,*a);
+  gStack.insert(make_object_ERingElement(R,result));
+}
+
+
+static void cmd_ERingElement_isequal(object &o1, object &o2)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  object_ERingElement *r2 = o2->cast_to_ERingElement();
+  const ERing *R = r->getRing();
+  if (R != r2->getRing())
+    {
+      gError << "expected same ring";
+      return;
+    }
+  int s = R->is_equal(*r, *r2);
+  gStack.insert(make_object_int(s));
+}
+static void cmd_ERingElement_iszero(object &o1)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  int s = r->getRing()->is_zero(*r);
+  gStack.insert(make_object_int(s));
+}
+static void cmd_ERingElement_negate(object &o1)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  ERingElement s = r->getRing()->negate(*r);
+  gStack.insert(make_object_ERingElement(r->getRing(), s));
+}
+static void cmd_ERingElement_add(object &o1, object &o2)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  object_ERingElement *r2 = o2->cast_to_ERingElement();
+  const ERing *R = r->getRing();
+  if (R != r2->getRing())
+    {
+      gError << "expected same ring";
+      return;
+    }
+  ERingElement s = R->add(*r, *r2);
+  gStack.insert(make_object_ERingElement(R, s));
+}
+static void cmd_ERingElement_subtract(object &o1, object &o2)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  object_ERingElement *r2 = o2->cast_to_ERingElement();
+  const ERing *R = r->getRing();
+  if (R != r2->getRing())
+    {
+      gError << "expected same ring";
+      return;
+    }
+  ERingElement s = R->subtract(*r, *r2);
+  gStack.insert(make_object_ERingElement(R, s));
+}
+static void cmd_ERingElement_ZZmultiply(object &o1, object &o2)
+{
+  int a = o1->int_of();
+  object_ERingElement *r = o2->cast_to_ERingElement();
+  ERingElement s = r->getRing()->mult_by_ZZ(*r,a);
+  gStack.insert(make_object_ERingElement(r->getRing(), s));
+}
+static void cmd_ERingElement_multiply(object &o1, object &o2)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  object_ERingElement *r2 = o2->cast_to_ERingElement();
+  const ERing *R = r->getRing();
+  if (R != r2->getRing())
+    {
+      gError << "expected same ring";
+      return;
+    }
+  ERingElement s = R->mult(*r, *r2);
+  gStack.insert(make_object_ERingElement(R, s));
+}
+static void cmd_ERingElement_power(object &o1, object &o2)
+{
+  int a = o2->int_of();
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  ERingElement s = r->getRing()->power(*r,a);
+  gStack.insert(make_object_ERingElement(r->getRing(), s));
+}
+
+static void cmd_ERingElement_leadCoefficient(object &o1)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  const EPolynomialRing *R = r->getRing()->toPolynomialRing();
+  if (R == 0) 
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
+  ERingElement s = R->leadCoefficient(*r);
+  gStack.insert(make_object_ERingElement(R->getCoefficientRing(), s));
+}
+static void cmd_ERingElement_leadTerm(object &o1, object &o2)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  int n = o2->int_of();
+  const EPolynomialRing *R = r->getRing()->toPolynomialRing();
+  if (R == 0) 
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
+  ERingElement s = R->leadTerm(*r, n);
+  gStack.insert(make_object_ERingElement(R, s));
+}
+static void cmd_ERingElement_leadMonomial(object &o1)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  const EPolynomialRing *R = r->getRing()->toPolynomialRing();
+  if (R == 0) 
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
+  const monomial *m = R->leadMonomial(*r);
+  if (m == 0)
+    {
+      gError << "zero vector has no lead monomial";
+      return;
+    }
+  intarray a;
+  R->getMonoid()->to_variable_exponent_pairs(m,a);
+  gStack.insert(new object_intarray(a));
+}
+
+static void cmd_ERingElement_isgraded(object &o1)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  const EPolynomialRing *R = r->getRing()->toPolynomialRing();
+  if (R == 0) 
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
+  monomial *d;  // NOT USED
+  gStack.insert(make_object_int(R->isGraded(*r,d)));
+}
+static void cmd_ERingElement_degree(object &o1)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  const ERing *R = r->getRing();
+  const monomial *result = R->degree(r->getValue());
+  intarray degs = monomialToIntarray(R->getDegreeMonoid(), result);
+  gStack.insert(new object_intarray(degs));
+  
+}
+static void cmd_ERingElement_degreeWeightsLoHi(object &o1, object &o2)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  const EPolynomialRing *R = r->getRing()->toPolynomialRing();
+  if (R == 0) 
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
+  intarray *wts = o2->intarray_of();
+  int lo,hi;
+  R->degreeWeightsLoHi(*r, wts->length(), wts->raw(),lo,hi);
+  gStack.insert(make_object_int(lo));
+  gStack.insert(make_object_int(hi));
+}
+static void cmd_ERingElement_getterms(object &o1, object &om, object &on)
+{
+  object_ERingElement *r = o1->cast_to_ERingElement();
+  const EPolynomialRing *R = r->getRing()->toPolynomialRing();
+  if (R == 0) 
+    {
+      gError << "expected polynomial ring";
+      return;
+    }
+  int m = om->int_of();
+  int n = on->int_of();
+  ERingElement result = R->getTerms(*r,m,n);
+  gStack.insert(make_object_ERingElement(R,result));
+}
+/////////////////////////
+// Ring map operations //
+/////////////////////////
+
+static void cmd_ERingMap(object &o1)
+{
+  EMatrix *m = o1->cast_to_EMatrix();
+  ERingMap *result = new ERingMap(m);
+  gStack.insert(result);
+}
+static void cmd_ERingMap_getRing(object &o1)
+{
+  ERingMap *f = o1->cast_to_ERingMap();
+  gStack.insert(f->getTarget());
+}
+static void cmd_ERingMap_eval_ERingElement(object &o1, object &o2)
+{
+  ERingMap *f = o1->cast_to_ERingMap();
+  object_ERingElement *g = o2->cast_to_ERingElement();
+  ERingElement result = f->evaluate(g->getRing(), g->getValue());
+  const ERing *resultR = f->getTarget();
+  gStack.insert(make_object_ERingElement(resultR,result));
+}
+static void cmd_ERingMap_eval_EVector(object &o1, object &o2, object &o3)
+{
+  ERingMap *f = o1->cast_to_ERingMap();
+  const EFreeModule *resultF = o2->cast_to_EFreeModule();
+  EVector *g = o3->cast_to_EVector();
+  EVector result = f->evaluate(resultF, *g);
   gStack.insert(make_object_EVector(result));
 }
+static void cmd_ERingMap_eval_EMatrix(object &o1, object &o2, object &o3)
+{
+  ERingMap *f = o1->cast_to_ERingMap();
+  const EFreeModule *resultF = o2->cast_to_EFreeModule();
+  EMatrix *m = o3->cast_to_EMatrix();
+  EMatrix *result = f->evaluate(resultF, m);
+  gStack.insert(result);
+}
+
+
+
 ///////////////////////
 // Matrix Operations //
 ///////////////////////
@@ -845,13 +1110,11 @@ static void cmd_ERingElement_term(object &o1, object &o2, object &o3)
 // getVectorsFromStack: returns an array 0..ncols-1 of EVector *'s.
 // If an error occurs, gError is set, and 0 is returned.
 
-EVector **getVectorsFromStack(const EFreeModule *F, int ncols)
+EVector *getVectorsFromStack(const EFreeModule *F, int ncols)
 {
   int i;
   bool bad = false;
-  EVector **result = new EVector *[ncols];
-  for (i=0; i<ncols; i++)
-    result[i] = 0;
+  EVector *result = new EVector [ncols];
     
   for (i=ncols-1; i >= 0 ; i--) 
     {
@@ -868,12 +1131,10 @@ EVector **getVectorsFromStack(const EFreeModule *F, int ncols)
 	  bad = true;
 	  break;
 	}
-      result[ncols-1-i] = F->translate(v);
+      result[ncols-1-i] = v->translate(F);
     }
   if (bad)
     {
-      for (i=0; i<ncols; i++) 
-        delete result[i];
       delete [] result;
       result = 0;
     }
@@ -915,15 +1176,7 @@ EMatrix **getMatricesFromStack(int n)
   return result;
 }
 
-EFreeModule *makeFreeModuleFromDegrees(const EPolynomialRing *R, int ncols, EVector **cols)
-{
-  const monomial **degs = new const monomial *[ncols];
-  for (int i=0; i<ncols; i++)
-    degs[i] = cols[i]->degree();
-  return R->makeFreeModule(ncols,degs);
-}
-
-static void cmd_EMatrix1(object &orows, object &ocols, object &omapdeg)
+static void cmd_EMatrix1(object &orows, object &ocols, object &otype, object &omapdeg)
      // Create a matrix from elements on the stack.
      // On stack: v0 v1 v2 ... v(ncols-1) rows:EFreeModule ncols:int mapdeg:intarray>> matrix
 {
@@ -931,15 +1184,26 @@ static void cmd_EMatrix1(object &orows, object &ocols, object &omapdeg)
   EFreeModule *F = orows->cast_to_EFreeModule();
   intarray *mapdeg = omapdeg->intarray_of();
   
-  EVector **newcols = getVectorsFromStack(F,ncols);
+  EVector *newcols = getVectorsFromStack(F,ncols);
   if (newcols == 0) return;
-  monomial *mapdegree = monomialFromIntarray(F->getDegreeMonoid(),*mapdeg);
-  if (mapdegree == 0) return;
-  EFreeModule *G = makeFreeModuleFromDegrees(F->getRing(),ncols,newcols);
-  gStack.insert(EMatrix::make(F,G,newcols,mapdegree));
+  int newtype = otype->int_of();
+  if (newtype <= 0 || newtype > 3)
+    {
+      gError << "incorrect matrix type (left,right or both)";
+      delete [] newcols;
+      return;
+    }
+  const monomial *mapdegree = monomialFromIntarray(F->getDegreeMonoid(),*mapdeg);
+  if (mapdegree != 0)
+    {
+      EFreeModule *G = EFreeModule::makeFreeModuleFromDegrees(F->getRing(),ncols,newcols);
+      gStack.insert(EMatrix::make(F,G,newcols,newtype,mapdegree));
+    }
+  else
+    delete [] newcols;
 }
 
-static void cmd_EMatrix2(object &orows, object &ocols, object &omapdeg)
+static void cmd_EMatrix2(object &orows, object &ocols, object &otype, object &omapdeg)
      // Create a matrix from elements on the stack.
      // On stack: v0 v1 v2 ... v(ncols-1) rows:EFreeModule cols:EFreeModule mapdeg:intarray>> matrix
 {
@@ -947,11 +1211,20 @@ static void cmd_EMatrix2(object &orows, object &ocols, object &omapdeg)
   EFreeModule *F = orows->cast_to_EFreeModule();
   intarray *mapdeg = omapdeg->intarray_of();
   
-  EVector **newcols = getVectorsFromStack(F,G->rank());
+  EVector *newcols = getVectorsFromStack(F,G->rank());
   if (newcols == 0) return;
-  monomial *mapdegree = monomialFromIntarray(F->getDegreeMonoid(),*mapdeg);
-  if (mapdegree == 0) return;
-  gStack.insert(EMatrix::make(F,G,newcols,mapdegree));
+  int newtype = otype->int_of();
+  if (newtype <= 0 || newtype > 3)
+    {
+      gError << "incorrect matrix type (left,right or both)";
+      delete [] newcols;
+      return;
+    }
+  const monomial *mapdegree = monomialFromIntarray(F->getDegreeMonoid(),*mapdeg);
+  if (mapdegree == 0)
+    delete [] newcols;
+  else
+    gStack.insert(EMatrix::make(F,G,newcols,newtype,mapdegree));
 }
 
 static void cmd_EMatrix_getTarget(object &o1)
@@ -972,6 +1245,11 @@ static void cmd_EMatrix_getMapDegree(object &o1)
   const EMonoid *D = m->getTarget()->getDegreeMonoid();
   gStack.insert(new object_intarray(monomialToIntarray(D,mapdeg)));
 }
+static void cmd_EMatrix_getMatrixType(object &o1)
+{
+  EMatrix *m = o1->cast_to_EMatrix();
+  gStack.insert(make_object_int(m->getMatrixType()));
+}
 static void cmd_EMatrix_column(object &oM, object &on)
 {
   EMatrix *M = oM->cast_to_EMatrix();
@@ -980,7 +1258,7 @@ static void cmd_EMatrix_column(object &oM, object &on)
     gError << "matrix index " << n << " out of range 0 .. " << M->n_cols()-1;
   else
     {
-      EVector *result = M->column(n)->clone();
+      EVector result = M->column(n).clone();
       gStack.insert(make_object_EVector(result));
     }
 }
@@ -996,8 +1274,8 @@ static void cmd_EMatrix_entry(object &oM, object &on, object &om)
       << M->n_cols()-1;
   else
     {
-      EVector *result = M->entry(n,m);
-      gStack.insert(make_object_EVector(result));
+      ERingElement elem = M->entry(n,m);
+      gStack.insert(make_object_ERingElement(M->getTarget()->getRing(), elem));
     }
 }
 static void cmd_EMatrix_isEqual(object &o1, object &o2)
@@ -1044,7 +1322,7 @@ static void cmd_EMatrix_multvec(object &o1, object &o2)
 {
   const EMatrix *m = o1->cast_to_EMatrix();
   const EVector *v = o2->cast_to_EVector();
-  EVector *result = m->rightMultiply(v);
+  EVector result = m->vectorImage(*v);
   gStack.insert(make_object_EVector(result));
 }
 // Multi-linear algebra
@@ -1118,7 +1396,7 @@ static void cmd_EMatrix_zero(object &o1,object &o2)
 }
 static void cmd_EMatrix_random(object &o1,object &o2,object &o3)
 {
-  EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  ERing *R = o1->cast_to_ERing();
   int r = o2->int_of();
   int c = o3->int_of();
   gStack.insert(EMatrix::random(R,r,c));
@@ -1201,11 +1479,127 @@ static void cmd_EMatrix_homogenize(object &o1,object &o2,object &o3)
       gError << "weight vector is of incorrect length";
       return;
     }
-  gStack.insert(m->homogenize(v,wts->raw()));
+  gStack.insert(m->homogenize(v,wts->length(),wts->raw()));
+}
+
+static void cmd_EMatrix_smult(object &o1, object &o2)
+{
+  const object_ERingElement *a = o1->cast_to_ERingElement();
+  const EMatrix *m = o2->cast_to_EMatrix();
+  if (a->getRing() != m->getTarget()->getRing())
+    {
+      gError << "expected same ring";
+      return;
+    }
+  gStack.insert(m->leftMultiply(a->getValue()));
+}
+static void cmd_EMatrix_srightmult(object &o1, object &o2)
+{
+  const EMatrix *m = o1->cast_to_EMatrix();
+  const object_ERingElement *a = o2->cast_to_ERingElement();
+  if (a->getRing() != m->getTarget()->getRing())
+    {
+      gError << "expected same ring";
+      return;
+    }
+  gStack.insert(m->rightMultiply(a->getValue()));
+}
+static void cmd_EMatrix_diff(object &o1, object &o2)
+{
+  const EMatrix *m = o1->cast_to_EMatrix();
+  const EMatrix *n = o2->cast_to_EMatrix();
+  // rings must be the same: checked in 'diff'.
+  gStack.insert(m->diff(n,true));
+}
+static void cmd_EMatrix_contract(object &o1, object &o2)
+{
+  const EMatrix *m = o1->cast_to_EMatrix();
+  const EMatrix *n = o2->cast_to_EMatrix();
+  // rings must be the same: checked in 'diff'.
+  gStack.insert(m->diff(n,false));
+}
+static void cmd_EMatrix_sort(object &om, object &odegorder, object &omonorder)
+{
+  const EMatrix *M = om->cast_to_EMatrix();
+  int degorder = odegorder->int_of();
+  int monorder = omonorder->int_of();
+  object_intarray *result = new object_intarray;
+  int *perm = M->sort(degorder,monorder);
+  for (int i=0; i<M->n_cols(); i++)
+    result->intarray_of()->append(perm[i]);
+  gStack.insert(result);
+}
+static void cmd_EMatrix_elim(object &oM, object &on)
+{
+  const EMatrix *M = oM->cast_to_EMatrix();
+  int n = on->int_of();
+  object_intarray *result = new object_intarray;
+  M->selectInSubring(n, *result->intarray_of());
+  gStack.insert(result);
+}
+static void cmd_EMatrix_coefficients(object &om, object &ovars)
+{
+  EMatrix *M = om->cast_to_EMatrix();
+  intarray *vars = ovars->intarray_of();
+  const EPolynomialRing *R = M->getTarget()->getRing()->toPolynomialRing();
+  if (R == NULL)
+    {
+      gError << "need a polynomial ring";
+      return;
+    }
+  int nvars = R->n_vars();
+  bool *v = new bool[nvars];
+  int i;
+  for (i=0; i<nvars; i++) v[i] = false;
+  for (i=0; i<vars->length(); i++)
+    {
+      int w = (*vars)[i];
+      if (w < 0 || w >= nvars)
+	{
+	  gError << "'coeffs': variable index out of range";
+	  delete [] v;
+	  return;
+	}
+      v[w] = true;
+    }
+  EMatrix *result_monoms;
+  EMatrix *result_coeffs = M->coefficients(v, result_monoms);
+  delete [] v;
+  gStack.insert(result_coeffs);
+  gStack.insert(result_monoms);
+
+}
+static void cmd_EMatrix_sat(object &oM, object &on, object &omax)
+{
+#if 0
+  const EMatrix *M = oM->cast_to_EMatrix();
+  int n = on->int_of();
+  int maxd = omax->int_of();
+  int actual_divisor;
+  EMatrix *result = M->divideByVariable(n,maxd,actual_divisor);
+  gStack.insert(result);
+  gStack.insert(make_object_int(actual_divisor));
+#endif
+}
+static void cmd_EMatrix_divideByVariables(object &oM, object &on, object &omax)
+{
+#if 0
+  // MES: implement divideByVariable
+  const EMatrix *M = oM->cast_to_EMatrix();
+  intarray  *n = on->intarray_of();
+  intarray  *maxd = omax->intarray_of();  // entry of -1 means: divide by this variable as much as possible
+				// entry of -2 means: divide by all but 1 of this variable.
+  object_intarray *actual_divisor = new object_intarray;
+  EMatrix *result = M->divideByVariables(*n,*maxd,actual_divisor->intarray_of());
+  gStack.insert(result);
+  gStack.insert(actual_divisor);
+#endif
 }
 
 void i_Ecommands(void)
 {
+  EZ = EZZ::make();
+  install(ggEZZ, cmd_EZZ);
   // Initialize stashes.
   
   install(ggtest, cmd_EHashTable_stats);
@@ -1254,11 +1648,11 @@ void i_Ecommands(void)
 
   install(ggcharacteristic, cmd_EZZp_characteristic, TY_ERing);
 
-  install(ggpolyring, cmd_EPolynomialRing, TY_ECoefficientRing, TY_EMonoid);
-  install(ggweylalgebra, cmd_EWeylAlgebra, TY_ECoefficientRing, TY_EMonoid, 
+  install(ggpolyring, cmd_EPolynomialRing, TY_ERing, TY_EMonoid);
+  install(ggweylalgebra, cmd_EWeylAlgebra, TY_ERing, TY_EMonoid, 
 	  TY_INTARRAY, TY_INTARRAY, TY_INT);
   install(ggskewpolyring, cmd_ESkewCommPolynomialRing, 
-	  TY_ECoefficientRing, TY_EMonoid, TY_INTARRAY);
+	  TY_ERing, TY_EMonoid, TY_INTARRAY);
 
   install(ggpolyring, cmd_EPolynomialRing, TY_ERing, TY_EMonoid);
   install(ggweylalgebra, cmd_EWeylAlgebra, TY_ERing, TY_EMonoid, 
@@ -1268,7 +1662,6 @@ void i_Ecommands(void)
 
   install(gggetCoefficientRing, cmd_EPolyRing_getCoefficientRing, TY_ERing);
   install(gggetMonoid, cmd_EPolyRing_getMonoid, TY_ERing);
-  install(gggetRingFreeModule, cmd_EPolyRing_getRingFreeModule, TY_ERing);
 
   //////////////////////
   // Free Modules //////
@@ -1297,11 +1690,30 @@ void i_Ecommands(void)
   // Ring Elements /////
   //////////////////////
   
-    // Currently, ring elements are merely elements of R^1
+  install(gggetring, cmd_ERingElement_getRing, TY_ERingElement);
 
   install(ggfromint, cmd_ERingElement_fromInteger, TY_ERing, TY_INT);
   install(ggvar, cmd_ERingElement_var, TY_INT, TY_INT, TY_ERing);
-  install(ggterm, cmd_ERingElement_term, TY_ERing, TY_EVector, TY_INTARRAY);
+  install(ggterm, cmd_ERingElement_term, TY_ERing, TY_ERingElement, TY_INTARRAY);
+
+  install(ggisequal, cmd_ERingElement_isequal, TY_ERingElement, TY_ERingElement);
+  install(ggiszero, cmd_ERingElement_iszero, TY_ERingElement);
+  install(ggnegate, cmd_ERingElement_negate, TY_ERingElement);
+  install(ggadd, cmd_ERingElement_add, TY_ERingElement, TY_ERingElement);
+  install(ggsubtract, cmd_ERingElement_subtract, TY_ERingElement, TY_ERingElement);
+  install(ggmult, cmd_ERingElement_ZZmultiply, TY_INT, TY_ERingElement);
+  install(ggmult, cmd_ERingElement_multiply, TY_ERingElement, TY_ERingElement);
+  install(ggpower, cmd_ERingElement_power, TY_ERingElement, TY_INT);
+
+  install(ggleadcoeff, cmd_ERingElement_leadCoefficient, TY_ERingElement);
+  install(ggleadterm, cmd_ERingElement_leadTerm, TY_ERingElement, TY_INT);
+  install(ggleadmonom, cmd_ERingElement_leadMonomial, TY_ERingElement);
+
+  install(ggdegree, cmd_ERingElement_degree, TY_ERingElement);
+  install(ggdegree, cmd_ERingElement_degreeWeightsLoHi, TY_ERingElement, TY_INTARRAY);
+  install(ggishomogeneous, cmd_ERingElement_isgraded, TY_ERingElement);
+
+  install(gggetterms, cmd_ERingElement_getterms, TY_ERingElement, TY_INT, TY_INT);
 
   //////////////////////
   // Vectors ///////////
@@ -1329,9 +1741,8 @@ void i_Ecommands(void)
   install(ggadd, cmd_EVector_add, TY_EVector, TY_EVector);
   install(ggsubtract, cmd_EVector_subtract, TY_EVector, TY_EVector);
   install(ggmult, cmd_EVector_ZZmultiply, TY_INT, TY_EVector);
-  install(ggmult, cmd_EVector_multiply, TY_EVector, TY_EVector);
-  install(ggrightmult, cmd_EVector_rightMultiply, TY_EVector, TY_EVector);
-  install(ggpower, cmd_EVector_power, TY_EVector, TY_INT);
+  install(ggmult, cmd_EVector_multiply, TY_ERingElement, TY_EVector);
+  install(ggrightmult, cmd_EVector_rightMultiply, TY_EVector, TY_ERingElement);
 
   install(ggdegree, cmd_EVector_degree, TY_EVector);
   install(ggdegree, cmd_EVector_degreeWeightsLoHi, TY_EVector, TY_INTARRAY);
@@ -1348,8 +1759,8 @@ void i_Ecommands(void)
   // Matrices //////////
   //////////////////////
 
-  install(ggmatrix, cmd_EMatrix1, TY_EFreeModule, TY_INT, TY_INTARRAY);
-  install(ggmatrix, cmd_EMatrix2, TY_EFreeModule, TY_EFreeModule, TY_INTARRAY);
+  install(ggmatrix, cmd_EMatrix1, TY_EFreeModule, TY_INT, TY_INT, TY_INTARRAY);
+  install(ggmatrix, cmd_EMatrix2, TY_EFreeModule, TY_EFreeModule, TY_INT, TY_INTARRAY);
 
   install(ggisequal, cmd_EMatrix_isEqual, TY_EMatrix, TY_EMatrix);
   install(ggiszero, cmd_EMatrix_isZero, TY_EMatrix);
@@ -1357,6 +1768,7 @@ void i_Ecommands(void)
   install(gggetrows, cmd_EMatrix_getTarget, TY_EMatrix);
   install(gggetcols, cmd_EMatrix_getSource, TY_EMatrix);
   install(gggetshift, cmd_EMatrix_getMapDegree, TY_EMatrix);
+  install(ggsetshift, cmd_EMatrix_getMatrixType, TY_EMatrix);   // MES:change which gg command this is!!
   install(ggelem, cmd_EMatrix_column, TY_EMatrix, TY_INT);
   install(ggelem, cmd_EMatrix_entry, TY_EMatrix, TY_INT, TY_INT);
 
@@ -1389,14 +1801,17 @@ void i_Ecommands(void)
   install(ggconcat, cmd_EMatrix_concatenate, TY_INT);
   install(gghomogenize, cmd_EMatrix_homogenize, TY_EMatrix, TY_INT, TY_INTARRAY);
 
-#if 0
-  install(ggmult, cmd_EMatrix_smult, TY_RING_ELEM, TY_EMatrix);
-
-  install(ggelim, cmd_EMatrix_elim, TY_EMatrix, TY_INT);
-  install(ggsat, cmd_EMatrix_sat, TY_EMatrix, TY_INT, TY_INT);
-
+  install(ggmult, cmd_EMatrix_smult, TY_ERingElement, TY_EMatrix);
+  install(ggmult, cmd_EMatrix_srightmult, TY_EMatrix, TY_ERingElement);
   install(ggcontract, cmd_EMatrix_contract, TY_EMatrix, TY_EMatrix);
   install(ggdiff, cmd_EMatrix_diff, TY_EMatrix, TY_EMatrix);
+  install(ggsortcolumns, cmd_EMatrix_sort, TY_EMatrix, TY_INT, TY_INT);
+  install(ggelim, cmd_EMatrix_elim, TY_EMatrix, TY_INT);
+  install(ggsat, cmd_EMatrix_sat, TY_EMatrix, TY_INT, TY_INT);
+  install(ggsat, cmd_EMatrix_divideByVariables, TY_EMatrix, TY_INTARRAY, TY_INTARRAY);
+  install(ggcoeffs, cmd_EMatrix_coefficients, TY_EMatrix, TY_INTARRAY);
+
+#if 0
   install(ggsymm, cmd_EMatrix_symm, TY_EMatrix, TY_INT);
   install(ggkbasis, cmd_EMatrix_kbasis, TY_EMatrix, TY_EMatrix, TY_INTARRAY);
   install(ggtruncate, cmd_EMatrix_truncate, TY_EMatrix, TY_EMatrix, TY_INTARRAY);
@@ -1404,25 +1819,23 @@ void i_Ecommands(void)
 
   install(ggexterior, cmd_EMatrix_exterior, TY_EMatrix, TY_INT);
 
-  install(ggcoeffs, cmd_EMatrix_coeffs, TY_EMatrix, TY_INTARRAY);
   install(ggcoeffs, cmd_EMatrix_var_coeffs, TY_EMatrix);
 
   install(ggminleadterms, cmd_EMatrix_minleadterms, TY_EMatrix);
   install(ggsimplify, cmd_EMatrix_simplify, TY_EMatrix, TY_INT);
-  install(ggsortcolumns, cmd_EMatrix_sort, TY_EMatrix, TY_INT, TY_INT);
   install(ggautoreduce, cmd_EMatrix_autoreduce, TY_EMatrix);
 #endif
 
   //////////////////////
   // Ring Maps /////////
   //////////////////////
-#if 0
   install(ggringmap, cmd_ERingMap, TY_EMatrix);
+  install(gggetring, cmd_ERingMap_getRing, TY_ERingMap);
 
-  install(ggev, cmd_ERingMap_eval_ringelem, TY_ERingMap, TY_RING_ELEM);
-  install(ggev, cmd_ERingMap_eval_vector, TY_ERingMap, TY_EFreeModule, TY_EVector);
-  install(ggev, cmd_ERingMap_eval_matrix, TY_ERingMap, TY_EFreeModule, TY_EMatrix);
-
+  install(ggev, cmd_ERingMap_eval_ERingElement, TY_ERingMap, TY_ERingElement);
+  install(ggev, cmd_ERingMap_eval_EVector, TY_ERingMap, TY_EFreeModule, TY_EVector);
+  install(ggev, cmd_ERingMap_eval_EMatrix, TY_ERingMap, TY_EFreeModule, TY_EMatrix);
+#if 0
   install(ggpromote, cmd_ERingElement_promote, TY_RING, TY_RING_ELEM);
   install(ggpromote, cmd_EMatrix_promote, TY_EFreeModule, TY_EMatrix);
   install(ggpromote, cmd_EVector_promote, TY_EFreeModule, TY_EVector);

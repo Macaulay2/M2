@@ -2,17 +2,22 @@
 
 #include "Ematrix.hpp"
 #include "Evector.hpp"
+#include "Eringmap.hpp"
+
 #include "text_io.hpp"
 #include "comb.hpp"
+
 EMatrix::EMatrix(const EFreeModule *F,
 	         const EFreeModule *G,
-	         EVector **elements,
+	         EVector *elements,
+		 int type,
 	         const monomial *d)  // GRABS the array and elements in 'elements'.
 : target(F),
   source(G),
   ncolumns(G->rank()),
   columns(elements),
   mapdegree(d),
+  type(type),
   gb(0)
 {
   bump_up(target);
@@ -24,37 +29,34 @@ EMatrix::~EMatrix()
   // We allow the possibility that a matrix routine grabs the columns
   // array, sets 'columns' to 0, and deletes the matrix, keeping the
   // vectors.
-  delete_columns(ncolumns,columns);
+  delete [] columns;
   bump_down(target); 
   bump_down(source); 
 }
 
 EMatrix *EMatrix::make(const EFreeModule *F,
 	      const EFreeModule *G,
-	      EVector **elements,
+	      EVector *elements,
+	      int type,
 	      const monomial *d)  // GRABS the array and elements in 'elements'.
 {
-  EMatrix *result = new EMatrix(F,G,elements,d);
+  if (type != left && type != right && type != both)
+    type = left;
+  if (d == 0) d = F->getDegreeMonoid()->one();
+  EMatrix *result = new EMatrix(F,G,elements,type,d);
   return result;
 }
 
-EVector **EMatrix::allocate_columns(int c)
+EVector *EMatrix::allocate_columns(int c)
 {
-  return new EVector *[c];
+  return new EVector[c];
 }
-EVector **EMatrix::initialize_columns(const EFreeModule *F, int c)
+EVector *EMatrix::initialize_columns(const EFreeModule *F, int c)
 {
-  EVector **newcols = allocate_columns(c);
+  EVector *newcols = allocate_columns(c);
   for (int i=0; i<c; i++)
     newcols[i] = F->zero();
   return newcols;
-}
-void EMatrix::delete_columns(int ncols, EVector **cols)
-{
-  if (cols == 0) return;
-  for (int i=0; i<ncols; i++)
-    delete cols[i];
-  delete [] cols;
 }
 
 void EMatrix::text_out(buffer &o) const
@@ -69,9 +71,9 @@ void EMatrix::text_out(buffer &o) const
       int maxcount = 0;
       for (r=0; r<nrows; r++)
 	{
-	  ERingElement *f = entry(r,c);
+	  ERingElement f = entry(r,c);
 	  getRing()->elem_text_out(p[r], f);
-	  delete f;
+	  getRing()->remove(f);
 	  if (p[r].size() > maxcount)
 	    maxcount = p[r].size();
 	}
@@ -93,12 +95,14 @@ void EMatrix::text_out(buffer &o) const
 bool EMatrix::isEqual(const EMatrix *m) const
 {
   if (this == m) return true;
-  if (getTarget()->isEqual(m->getTarget()))
+  if (!getTarget()->isEqual(m->getTarget()))
     return false;
-  if (getSource()->isEqual(m->getSource()))
+  if (!getSource()->isEqual(m->getSource()))
+    return false;
+  if (getMatrixType() != m->getMatrixType())
     return false;
   for (int i=0; i<n_cols(); i++)
-    if (! column(i)->isEqual(m->column(i)))
+    if (! column(i).isEqual(m->column(i)))
       return false;
   return true;
 }
@@ -122,7 +126,7 @@ bool EMatrix::entriesEqual(const EMatrix *m) const
 bool EMatrix::isZero() const
 {
   for (int i=0; i<n_cols(); i++)
-    if (! column(i)->isZero()) return false;
+    if (! column(i).isZero()) return false;
   return true;
 }
 
@@ -133,9 +137,9 @@ bool EMatrix::isGraded() const
   const EMonoid *D = getDegreeMonoid();
   for (int i=0; i<n_cols(); i++)
     {
-      if (column(i)->isZero()) continue;
+      if (column(i).isZero()) continue;
       monomial *d;
-      if (!column(i)->isGraded(d))
+      if (!column(i).isGraded(d))
         return false;
       if (!D->is_equal(d, D->mult(getSource()->getDegree(i), mapdegree)))
         return false;
@@ -151,35 +155,38 @@ EMatrix *EMatrix::zero(const EFreeModule *F, const EFreeModule *G)
       return 0;
     }
   int ncols = G->rank();
-  EVector **newcols = initialize_columns(F,ncols);
-  return make(F,G,newcols,F->getDegreeMonoid()->one());
+  EVector *newcols = initialize_columns(F,ncols);
+  return make(F,G,newcols);
 }
 
 EMatrix *EMatrix::identity(const EFreeModule *F)
 {
   int ncols = F->rank();
-  EVector **newcols = allocate_columns(ncols);
+  EVector *newcols = allocate_columns(ncols);
   for (int i=0; i<ncols; i++)
     newcols[i] = F->basisElement(i);
-  return make(F,F,newcols,F->getDegreeMonoid()->one());
+  return make(F,F,newcols);
 }
 
-ERingElement *EMatrix::entry(int r, int c) const
+ERingElement EMatrix::entry(int r, int c) const
 {
-  if (c < 0 || c >= n_cols()) return getTarget()->zero();
-  return column(c)->getComponent(r);
+  if (c < 0 || c >= n_cols()) return getRing()->zero();
+  return column(c).getComponent(r);
 }
 
 EMatrix *EMatrix::add(const EMatrix *m) const
 {
-  if (getRing() != m->getRing())
+  int newtype = (type & m->type);
+  if (newtype == 0)
+    gError << "cannot add left-matrix and right-matrix";
+  else if (getRing() != m->getRing())
     gError << "matrices have different base rings";
   else if (n_rows() != m->n_rows()
 	   || n_cols() != m->n_cols())
     gError << "matrices have different shapes";
   else
     {
-      const EPolynomialRing *R = getRing();
+      const ERing *R = getRing();
       const EFreeModule *F = getTarget();
       const EFreeModule *G = getSource();
       
@@ -193,30 +200,33 @@ EMatrix *EMatrix::add(const EMatrix *m) const
           deg = getDegreeMonoid()->one();
           
       int c = G->rank();
-      EVector **newcols = allocate_columns(c);
+      EVector *newcols = allocate_columns(c);
 
       for (int i=0; i<c; i++)
 	{
-	  EVector *v = F->translate(column(i));
-	  EVector *w = F->translate(m->column(i));
-	  v->addTo(w);
+	  EVector v = column(i).translate(F);
+	  EVector w = m->column(i).translate(F);
+	  v.addTo(w);
 	  newcols[i] = v;
 	}
-      return make(F,G,newcols,deg);
+      return make(F,G,newcols,newtype,deg);
     }
   return 0;
 }
 
 EMatrix *EMatrix::subtract(const EMatrix *m) const
 {
-  if (getRing() != m->getRing())
+  int newtype = (type & m->type);
+  if (newtype == 0)
+    gError << "cannot add left-matrix and right-matrix";
+  else if (getRing() != m->getRing())
     gError << "matrices have different base rings";
   else if (n_rows() != m->n_rows()
 	   || n_cols() != m->n_cols())
     gError << "matrices have different shapes";
   else
     {
-      const EPolynomialRing *R = getRing();
+      const ERing *R = getRing();
       const EFreeModule *F = getTarget();
       const EFreeModule *G = getSource();
       
@@ -230,92 +240,146 @@ EMatrix *EMatrix::subtract(const EMatrix *m) const
           deg = getDegreeMonoid()->one();
           
       int c = G->rank();
-      EVector **newcols = allocate_columns(c);
+      EVector *newcols = allocate_columns(c);
 
       for (int i=0; i<c; i++)
 	{
-	  EVector *v = F->translate(column(i));
-	  EVector *w = F->translate(m->column(i));
-	  v->subtractTo(w);
+	  EVector v = column(i).translate(F);
+	  EVector w = m->column(i).translate(F);
+	  v.subtractTo(w);
 	  newcols[i] = v;
 	}
-      return make(F,G,newcols,deg);
+      return make(F,G,newcols,newtype,deg);
     }
   return 0;
 }
 
 EMatrix *EMatrix::negate() const
 {
-  EVector **newcols = allocate_columns(n_cols());
+  EVector *newcols = allocate_columns(n_cols());
   for (int i=0; i<n_cols(); i++)
-    newcols[i] = column(i)->negate();
-  return make(getTarget(), getSource(), newcols, getMapDegree());
+    newcols[i] = column(i).negate();
+  return make(getTarget(), getSource(), newcols, type, getMapDegree());
 }
 
 EMatrix *EMatrix::submatrix(const intarray &c) const
 {
   const EFreeModule *G = getSource()->subSpace(c);
-  EVector **newcols = allocate_columns(G->rank());
+  if (G == 0) return 0;
+  EVector *newcols = allocate_columns(G->rank());
   for (int i=0; i<c.length(); i++)
-    newcols[i] = column(c[i])->clone();
-  return make(getTarget(), G, newcols, getMapDegree());
+    if (c[i] < 0 || c[i] >= n_cols())
+      newcols[i] = getTarget()->zero();
+    else
+      newcols[i] = column(c[i]).clone();
+  return make(getTarget(), G, newcols, type, getMapDegree());
 }
 
 EMatrix *EMatrix::submatrix(const intarray &r, const intarray &c) const
 {
   const EFreeModule *F = getTarget()->subSpace(r);
+  if (F == 0) return 0;
   const EFreeModule *G = getSource()->subSpace(c);
-  EVector **newcols = allocate_columns(G->rank());
+  if (G == 0) return 0;
+
+  EVector *newcols = allocate_columns(G->rank());
   for (int i=0; i<c.length(); i++)
-    newcols[i] = F->subvector(column(c[i]),r);
-  return make(F, G, newcols, getMapDegree());
+    if (c[i] < 0 || c[i] >= n_cols())
+      newcols[i] = getTarget()->zero();
+    else
+      newcols[i] = column(c[i]).subvector(F,r);
+  return make(F, G, newcols, type, getMapDegree());
 }
 
 EMatrix *EMatrix::transpose() const
 {
-  const EPolynomialRing *R = getRing();
+  const ERing *R = getRing();
   const EFreeModule *F = getSource()->dual();
   const EFreeModule *G = getTarget()->dual();
-  monomial *newdeg = getDegreeMonoid()->divide(
+  const monomial *newdeg = getDegreeMonoid()->divide(
     getDegreeMonoid()->one(), getMapDegree());
 
-  EVector **newcols = initialize_columns(F,G->rank());
+  EVector *newcols = initialize_columns(F,G->rank());
   for (int c=0; c<ncolumns; c++)
-    for (poly *t = column(c)->elems; t != 0; t=t->next)
+    for (EVector::iterator t = column(c); t.valid(); ++t)
       {
-        poly *s = R->copy_term(t);
+        evec *s = R->vec_copy_term(*t);
         int r = s->component;
         s->component = c;
-        newcols[r]->prepend_term(s);
+        newcols[r].prepend_term(s);
       }
-  for (int r=0; r<F->rank(); r++)
-    newcols[r]->sort();
-  return make(F, G, newcols, newdeg);
+  for (int r=0; r<G->rank(); r++)
+    newcols[r].sort();
+
+  int newtype = both - type;
+  if (newtype == 0) newtype = both;
+  return make(F, G, newcols, newtype, newdeg);
 }
 
-EVector *EMatrix::rightMultiply(const EVector * v) const
+EMatrix *EMatrix::leftMultiply(ERingElement a) const
 {
-  EVectorHeap g(getTarget());
-  ERingElement *w = getRing()->getRingFreeModule()->zero();
-  w->len = 1;
-  w->elems = getRing()->newTerm();
-  w->elems->next = 0;
-  // We modify w as we go, and also v, but we put v back the
-  // way it was...
-  for (const poly *t = v->elems; t!=0; t=t->next)
+  // Note: we cannot check that the ring of 'a' is the same as the ring of 'this'.
+  // but this had better be the case!!
+  if (type == right)
     {
-      w->elems->coeff = t->coeff;
-      w->elems->monom = t->monom;
-      w->elems->component = t->component;
-      // Multiply t by the vector column(t->component):
-      g.add(column(t->component)->rightMultiply(w));
+      gError << "cannot multiply right-matrix by element on the left";
+      return 0;
     }
-  delete w;
+  EVector *newcols = allocate_columns(n_cols());
+  for (int i=0; i<n_cols(); i++)
+    newcols[i] = column(i).leftMultiply(a);
+  const monomial *deg = getDegreeMonoid()->mult(getMapDegree(), getRing()->degree(a));
+  return make(getTarget(),getSource(),newcols,type,deg);
+}
+EMatrix *EMatrix::rightMultiply(ERingElement a) const
+{
+  // Note: we cannot check that the ring of 'a' is the same as the ring of 'this'.
+  // but this had better be the case!!
+  if (type == left)
+    {
+      gError << "cannot multiply left-matrix by element on the right";
+      return 0;
+    }
+  EVector *newcols = allocate_columns(n_cols());
+  for (int i=0; i<n_cols(); i++)
+    newcols[i] = column(i).rightMultiply(a);
+  const monomial *deg = getDegreeMonoid()->mult(getMapDegree(), getRing()->degree(a));
+  return make(getTarget(),getSource(),newcols,type,deg);
+}
+
+EVector EMatrix::vectorImage(const EVector &v) const
+{
+  if (v.getFreeModule()->rank() > n_cols())
+    {
+      gError << "matrix vector sizes don't match";
+      return getTarget()->zero();
+    }
+  EVectorHeap g(getTarget());
+  
+  // We modify w as we go
+  for (EVector::iterator t = v; t.valid(); ++t)
+    {
+      ERingElement a = getRing()->vec_term_to_ring(*t);
+      // Multiply t by the vector column(t->component):
+      EVector w;
+      if (type != right)
+	w = column(t->component).leftMultiply(a);
+      else
+	w = column(t->component).rightMultiply(a);
+      g.add(w);
+      getRing()->remove(a);
+    }
   return g.value();  
 }
 
 EMatrix *EMatrix::multiply(const EMatrix * m) const
 {
+  int newtype = (type & m->type);
+  if (newtype == 0)
+    {
+      gError << "cannot compose left-matrix with a right-matrix";
+      return 0;
+    }
   if (getRing() != m->getRing())
     {
       gError << "matrix multiplication: different base rings";
@@ -328,24 +392,24 @@ EMatrix *EMatrix::multiply(const EMatrix * m) const
     }
 
   // Degree of the map is the sum of the two degrees
-  monomial *newdeg = getDegreeMonoid()->mult(getMapDegree(),
+  const monomial *newdeg = getDegreeMonoid()->mult(getMapDegree(),
                           m->getMapDegree());
 
-  EVector **newcols = allocate_columns(m->n_cols());
+  EVector *newcols = allocate_columns(m->n_cols());
   for (int i=0; i<m->n_cols(); i++)
-    newcols[i] = rightMultiply(m->column(i));
-  return make(getTarget(), m->getSource(), newcols, newdeg);
+    newcols[i] = vectorImage(m->column(i));
+  return make(getTarget(), m->getSource(), newcols, newtype, newdeg);
 }
 
 EMatrix *EMatrix::flip(const EFreeModule *F, const EFreeModule *G)
 {
   const EFreeModule *H = F->tensor(G);
-  EVector **newcols = allocate_columns(H->rank());
+  EVector *newcols = allocate_columns(H->rank());
   int next = 0;
   for (int g=0; g<G->rank(); g++)
     for (int f=0; f<F->rank(); f++)
       newcols[next++] = H->basisElement(f * G->rank() + g);
-  return make(H,H,newcols,F->getDegreeMonoid()->one());
+  return make(H,H,newcols,both);
 }
 
 EMatrix *EMatrix::reshape(const EFreeModule *F, const EFreeModule *G) const
@@ -356,12 +420,17 @@ EMatrix *EMatrix::reshape(const EFreeModule *F, const EFreeModule *G) const
     gError << "reshape: ranks of freemodules incorrect";
     return 0;
   }
-  EVector **newcols = initialize_columns(F,G->rank());
+  if (F->getRing() != getRing() || G->getRing() != getRing())
+    {
+      gError << "reshape: expected freemodules over same ring";
+      return 0;
+    }
+  EVector *newcols = initialize_columns(F,G->rank());
   int c;
   for (c=0; c < n_cols(); c++)
-    for (poly *t = column(c)->elems; t != 0; t=t->next)
+    for (EVector::iterator t = column(c); t.valid(); ++t)
       {
-        poly *q = getRing()->copy_term(t);
+        evec *q = getRing()->vec_copy_term(*t);
         int r = q->component;
         
         // Determine new component
@@ -370,11 +439,11 @@ EMatrix *EMatrix::reshape(const EFreeModule *F, const EFreeModule *G) const
         int result_row = loc % F->rank();
         
         q->component = result_row;
-        newcols[result_col]->prepend_term(q);
+        newcols[result_col].prepend_term(q);
       }
   for (c=0; c<G->rank(); c++)
-    newcols[c]->sort();
-  return make(F,G,newcols,getDegreeMonoid()->one());
+    newcols[c].sort();
+  return make(F,G,newcols,type);
 }
 
 EMatrix *EMatrix::concatenate(const EMatrix *m) const
@@ -391,19 +460,26 @@ EMatrix *EMatrix::concatenate(const EMatrix *m) const
     }
 
   const EFreeModule *G = getSource()->directSum(m->getSource());
-  EVector **newcols = allocate_columns(G->rank());
+  EVector *newcols = allocate_columns(G->rank());
   int nc = n_cols();
   int i;
   for (i=0; i<nc; i++)
-    newcols[i] = column(i)->clone();
+    newcols[i] = column(i).clone();
   for (i=0; i<m->n_cols(); i++)
-    newcols[nc+i] = getTarget()->translate(m->column(i));
+    newcols[nc+i] = m->column(i).translate(getTarget());
 
-  return make(getTarget(), G, newcols, getMapDegree());
+  return make(getTarget(), G, newcols, type, getMapDegree());
 }
 
 EMatrix *EMatrix::directSum(const EMatrix *m) const
 {
+  int newtype = (type & m->type);
+  if (newtype == 0)
+    {
+      gError << "expected either both right-matrices or both left-matrices";
+      return 0;
+    }
+  
   if (getRing() != m->getRing())
     {
       gError << "matrix direct sum: different base rings";
@@ -419,16 +495,16 @@ EMatrix *EMatrix::directSum(const EMatrix *m) const
   const EFreeModule *F = getTarget()->directSum(m->getTarget());
   const EFreeModule *G = getSource()->directSum(m->getSource());
 
-  EVector **newcols = allocate_columns(G->rank());
+  EVector *newcols = allocate_columns(G->rank());
   int i;
   int nr = n_rows();
   int nc = n_cols();
   for (i=0; i<nc; i++) 
-    newcols[i] = F->translate(column(i));
+    newcols[i] = column(i).translate(F);
   for (i=0; i<m->n_cols(); i++)
-    newcols[nc+i] = F->componentShift(nr, m->column(i));
+    newcols[nc+i] = m->column(i).componentShift(F,nr);
 
-  return make(F,G,newcols,mapdeg);
+  return make(F,G,newcols,newtype,mapdeg);
 }
 
 EMatrix *EMatrix::moduleTensor(const EMatrix *m) const
@@ -438,13 +514,21 @@ EMatrix *EMatrix::moduleTensor(const EMatrix *m) const
       gError << "module tensor product: different base rings";
       return 0;
     }
-
+  if (!((type & right) || (m->type & left)))
+    {
+      gError << "module tensor: expected left and right module";
+      return 0;
+    }
+  int newtype = (type & left) | (m->type & right);
+  if (newtype == 0)
+    {
+      gError << "expected bi-module";
+      return 0;
+    }
   EFreeModule *F = getTarget()->tensor(m->getTarget());
   EFreeModule *G1 = getTarget()->tensor(m->getSource());
   EFreeModule *G2 = m->getTarget()->tensor(getSource());
   EFreeModule *G = G1->directSum(G2);
-  delete G1;
-  delete G2;
 
   const monomial *mapdeg;
   if (getDegreeMonoid()->is_equal(getMapDegree(), m->getMapDegree()))
@@ -452,33 +536,38 @@ EMatrix *EMatrix::moduleTensor(const EMatrix *m) const
   else
     mapdeg = getDegreeMonoid()->one();
   
-  EVector **newcols = allocate_columns(G->rank());
+  EVector *newcols = allocate_columns(G->rank());
   int i, j, next=0;
 
   for (i=0; i<n_rows(); i++)
     for (j=0; j<m->n_cols(); j++)
-      newcols[next++] = F->componentShift(i * m->n_rows(), m->column(j));
+      newcols[next++] = m->column(j).componentShift(F, i * m->n_rows());
 
   for (i=0; i<m->n_rows(); i++)
     for (j=0; j<n_cols(); j++)
-      newcols[next++] = F->tensorShift(m->n_rows(), i, column(j));
+      newcols[next++] = column(j).tensorShift(F, m->n_rows(), i);
 
-  return make(F,G,newcols,mapdeg);
+  return make(F,G,newcols,newtype,mapdeg);
 }
 
-EMatrix *EMatrix::random(const EPolynomialRing *R, int r, int c)
+EMatrix *EMatrix::random(const ERing *R, int r, int c)
 {
   EFreeModule *F = R->makeFreeModule(r);
   EFreeModule *G = R->makeFreeModule(c);
-  EVector **newcols = allocate_columns(c);
+  if (F == 0 || G == 0)
+    {
+      return 0;
+    }
+  EVector *newcols = allocate_columns(c);
 
   for (int i=0; i<c; i++)
     newcols[i] = F->random();
-  return make(F,G,newcols,R->getDegreeMonoid()->one());
+  return make(F,G,newcols);
 }
 
 EMatrix *EMatrix::tensor(const EMatrix *m) const
 {
+  // MES: What should the resulting type be?
   if (getRing() != m->getRing())
     {
       gError << "matrix tensor product: different base rings";
@@ -490,13 +579,13 @@ EMatrix *EMatrix::tensor(const EMatrix *m) const
   const monomial *mapdeg = getDegreeMonoid()->mult(
                               getMapDegree(), 
                               m->getMapDegree());
-  EVector **newcols = allocate_columns(G->rank());
+  EVector *newcols = allocate_columns(G->rank());
   int i, j, next = 0;
   for (i=0; i<n_cols(); i++)
     for (j=0; j<m->n_cols(); j++)
-      newcols[next++] = F->tensor(column(i), m->column(j)); 
+      newcols[next++] = column(i).tensor(F, m->column(j));
 				 
-  return make(F,G,newcols,mapdeg);
+  return make(F,G,newcols,type,mapdeg);
 }
 
 EMatrix *EMatrix::leadTerm(int n, bool same_component_only) const
@@ -506,33 +595,37 @@ EMatrix *EMatrix::leadTerm(int n, bool same_component_only) const
     // component slot is considered as the nvars+1 st weight
     // vector.
 {
-  EVector **newcols = allocate_columns(n_cols());
+  EVector *newcols = allocate_columns(n_cols());
   for (int i=0; i<n_cols(); i++)
-    newcols[i] = column(i)->leadTerm(n,same_component_only);
-  return make(getTarget(), getSource(), newcols, getMapDegree());
+    newcols[i] = column(i).leadTerm(n,same_component_only);
+  return make(getTarget(), getSource(), newcols, type, getMapDegree());
 }
-EMatrix * EMatrix::homogenize(int v, const int *wts) const
+EMatrix * EMatrix::homogenize(int v, int nwts, const int *wts) const
 {
-  EVector **newcols = allocate_columns(n_cols());
+  EVector *newcols = allocate_columns(n_cols());
   for (int i=0; i<n_cols(); i++)
     {
-      newcols[i] = column(i)->homogenize(v,wts);
-      if (newcols[i] == 0)
+      if (!column(i).homogenize(v,nwts,wts,newcols[i]))
         {
           // Clean up and return 0:
-          for (int j=0; j<i; j++)
-            delete newcols[j];
           delete [] newcols;
           return 0;
         }
     }
-  return make(getTarget(), getSource(), newcols, getMapDegree());
+  return make(getTarget(), getSource(), newcols, type, getMapDegree());
 }
-
-void EMatrix::selectInSubring(intarray &result, int n) const
+EMatrix *EMatrix::evaluate(const ERingMap *f, const EFreeModule *newTarget) const
+{
+  EVector *newcols = initialize_columns(newTarget, n_cols());
+  for (int i=0; i<n_cols(); i++)
+    newcols[i] = f->evaluate(newTarget, column(i));
+  EFreeModule *G = EFreeModule::makeFreeModuleFromDegrees(getRing(),n_cols(),newcols);
+  return make(newTarget, G, newcols, type);
+}
+void EMatrix::selectInSubring(int n, intarray &result) const
 {
 #if 0
-  // MES: FIX THIS!!
+  // MES: write EVector::inSubring
   for (int i=0; i<n_cols(); i++)
     if (column(i)->inSubring(n))
       result.append(i);
@@ -602,9 +695,9 @@ EMatrix *EMatrix::koszul(int p) const
   EFreeModule *F = getSource()->exterior(p-1);
   EFreeModule *G = getSource()->exterior(p);
   
-  EVector **newcols = initialize_columns(F,G->rank());
-  if (p <= 0 || p > getRing()->getMonoid()->n_vars())
-    return make(F,G,newcols,getMapDegree());
+  EVector *newcols = initialize_columns(F,G->rank());
+  if (p <= 0 || p > getRing()->n_vars())
+    return make(F,G,newcols,type,getMapDegree());
   int *a = new int[p];
   for (int c=0; c < G->rank(); c++)
     {
@@ -618,19 +711,21 @@ EMatrix *EMatrix::koszul(int p) const
 	  a[p-1] = a[r];
 	  a[r] = tmp;
 	  int x = comb::encode(a, p-1);
-	  EVector *temp = F->getComponent(column(a[p-1]),0,x);
+	  EVector temp = column(a[p-1]).translate(F,x);
 
 	  if (negate)
-	    newcols[c]->subtractTo(temp);
+	    newcols[c].subtractTo(temp);
 	  else
-	    newcols[c]->addTo(temp);
+	    newcols[c].addTo(temp);
 	}
     }
-  return make(F,G,newcols,getMapDegree());
+  return make(F,G,newcols,type,getMapDegree());
 }
 
 EMatrix *EMatrix::koszul(const EMatrix *r, const EMatrix *c)
 {
+  // MES: check whether the ring is non-commutative.
+  // If so, return 0?
   int i;
   if (r->n_rows() != 1 || c->n_rows() != 1)
     {
@@ -639,13 +734,13 @@ EMatrix *EMatrix::koszul(const EMatrix *r, const EMatrix *c)
     }
   // We also expect that each entry of r,c is a monomial...
   for (i=0; i<r->n_cols(); i++)
-    if (r->column(i)->nTerms() > 1)
+    if (r->column(i).nTerms() > 1)
       {
         gError << "koszul: expected matrix to have monomial entries";
         return 0;
       }
   for (i=0; i<c->n_cols(); i++)
-    if (c->column(i)->nTerms() > 1)
+    if (c->column(i).nTerms() > 1)
       {
         gError << "koszul: expected matrix to have monomial entries";
         return 0;
@@ -653,10 +748,15 @@ EMatrix *EMatrix::koszul(const EMatrix *r, const EMatrix *c)
       
   const EFreeModule *F = r->getSource();
   const EFreeModule *G = c->getSource();
-  const EPolynomialRing *R = F->getRing();
+  const EPolynomialRing *R = F->getRing()->toPolynomialRing();
+  if (R == 0)
+    {
+      gError << "expected polynomial ring";
+      return 0;
+    }
   const EMonoid *M = R->getMonoid();
   
-  EVector **newcols = initialize_columns(F,G->rank());
+  EVector *newcols = initialize_columns(F,G->rank());
   
   int nvars = M->n_vars();
   int nrows = F->rank();
@@ -666,27 +766,27 @@ EMatrix *EMatrix::koszul(const EMatrix *r, const EMatrix *c)
   int *result_exp = new int[nvars];
   for (int i=0; i<ncols; i++)
     {
-      aexp = M->to_exponents(c->column(i)->elems->monom);
+      aexp = M->to_exponents(c->column(i).leadMonomial());
       for (int j=0; j<nrows; j++)
 	{
-	  bexp = M->to_exponents(r->column(j)->elems->monom);
+	  bexp = M->to_exponents(r->column(j).leadMonomial());
 	  int sign = signdivide(nvars, aexp, bexp, result_exp);
 	  if (sign != 0)
 	    {
-	      poly *p = R->newTerm();
+	      evec *p = R->vec_new_term();
 	      p->next = 0;
 	      p->coeff = R->getCoefficientRing()->from_int(sign);
 	      p->component = j;
 	      p->monom = M->monomial_from_exponents(result_exp);
-	      newcols[i]->prepend_term(p);
+	      newcols[i].prepend_term(p);
 	    }
 	}
-      newcols[i]->sort();
+      newcols[i].sort();
     }
   delete [] aexp;
   delete [] bexp;
   delete [] result_exp;
-  return make(F,G,newcols,r->getMapDegree());
+  return make(F,G,newcols,both,r->getMapDegree());
 }
 
 EMatrix *EMatrix::exteriorProduct(int p, int q, const EFreeModule *F)
@@ -695,25 +795,22 @@ EMatrix *EMatrix::exteriorProduct(int p, int q, const EFreeModule *F)
   const EFreeModule *Fq = F->exterior(q);
   const EFreeModule *Fn = F->exterior(p+q);
   const EFreeModule *G = Fp->tensor(Fq);
-  const EPolynomialRing *R = F->getRing();
-  const ECoefficientRing *K = R->getCoefficientRing();
-  const EMonoid *M = R->getMonoid();
-  const EMonoid *D = F->getDegreeMonoid();
+  const ERing *R = F->getRing();
 
-  EVector **newcols = initialize_columns(Fn,G->rank());
+  EVector *newcols = initialize_columns(Fn,G->rank());
   
   if (p < 0 || q < 0 || p+q >F->rank())
     {
       for (int i=0; i<G->rank(); i++)
 	newcols[i] = Fn->zero();
-      return make(Fn,G,newcols,D->one());
+      return make(Fn,G,newcols);
     }
 
   if (p == 0 || q == 0)
     {
       for (int i=0; i<G->rank(); i++)
 	newcols[i] = Fn->basisElement(i);
-      return make(Fn,G,newcols,D->one());
+      return make(Fn,G,newcols);
     }
 
   int *a = new int[p];
@@ -723,6 +820,7 @@ EMatrix *EMatrix::exteriorProduct(int p, int q, const EFreeModule *F)
 
   for (int i=0; i<Fp->rank(); i++)
     {
+      EVectorHeap v(Fn);
       comb::decode(i, a, p);
       for (int j=0; j<Fq->rank(); j++)
 	{
@@ -733,35 +831,107 @@ EMatrix *EMatrix::exteriorProduct(int p, int q, const EFreeModule *F)
 	      col++;
 	      continue;
 	    }
-	  poly *t = R->newTerm();
-	  t->next = 0;
-	  t->coeff = K->from_int(sgn);
-	  t->component = comb::encode(c,p+q);
-	  t->monom = M->one();
-	  newcols[col++]->prepend_term(t);
+	  EVector tmp = R->vec_make(Fn,R->from_int(sgn),comb::encode(c,p+q));
+	  v.add(tmp);
 	}
+       newcols[col++] = v.value();
     }
 
   delete [] a;
   delete [] b;
   delete [] c;
-  return make(Fn,G,newcols,D->one());
+  return make(Fn,G,newcols);
 }
 
-#if 0
-EMatrix * EMatrix::operator*(const ring_elem r) const
+int * EMatrix::sort(int degorder, int monorder) const
+  // Sort the columns of 'this': Place the column indices into 'result'.
+  // If degorder < 0, sort in descending degree order, if >0 ascending degree
+  // If ==0, or in the event that two columns have the same (simple) degree,
+  // use the monomial order: monorder > 0 means ascending, <0 means descending.
 {
-  int *deg = degree_monoid()->make_one();
-  if (!Ring_of()->is_zero(r))
-    Ring_of()->degree(r, deg);
-  degree_monoid()->mult(deg, degree_shift(), deg);
-  Matrix result(rows(), cols(), deg);
+  int *degs = 0;
+  if (degorder != 0)
+    {
+      degs = new int[n_cols()];
+      for (int i=0; i<n_cols(); i++)
+	degs[i] = getSource()->getPrimaryDegree(i);
+    }
+
+  return ESortColumnAlgorithm::sort(n_cols(), columns, degorder, monorder, degs);
+}
+
+EMatrix * EMatrix::diff(const EMatrix * m, bool use_coeff) const
+{
+  if (getRing() != m->getRing())
+    {
+      gError << "matrix diff: different base rings";
+      return 0;
+    }
+  const EFreeModule *F1 = getTarget()->dual();
+  const EFreeModule *F = F1->tensor(m->getTarget());
+
+  const EFreeModule *G1 = getSource()->dual();
+  const EFreeModule *G = G1->tensor(m->getSource());
+
+  const monomial *mapdeg = getDegreeMonoid()->divide(
+                              m->getMapDegree(),
+			      getMapDegree());
+
+  EVector *newcols = initialize_columns(F, G->rank());
+  int next = 0;
   for (int i=0; i<n_cols(); i++)
-    result[i] = rows()->mult(r, elem(i));
-  return result;
+    for (int j=0; j<m->n_cols(); j++)
+      newcols[next++] = column(i).diff(F, m->column(j), use_coeff);      
+
+  return make(F,G,newcols,m->getMatrixType(), mapdeg);
+}
+
+EMatrix * EMatrix::coefficients(const bool *vars, EMatrix * &result_monoms) const
+{
+  const EFreeModule *R1 = getRing()->makeFreeModule(1);
+  // result_coeffs: will have same target as this.
+  array<EVector> monoms;
+  array<EVector> coeffs;
+  for (int j=0; j<n_cols(); j++)
+    {
+      EVector f = column(j).clone();
+      EVector vmonom;
+      while (!f.isZero())
+	{
+	  EVector g = f.strip_vector(vars, R1, vmonom);
+	  coeffs.append(g);
+	  monoms.append(vmonom);
+	}
+    }
+  // If monoms has length 0 (will only happen if 'this' is the zero matrix)
+  // Then don't sort.
+
+  int *perm = ESortColumnAlgorithm::sort(
+                monoms.length(), 
+		monoms.get_raw_array(), 
+		1, -1); // increasing degree, but decreasing in the order
+  EVector *new_monoms = initialize_columns(R1, monoms.length());
+  EVector *new_coeffs = initialize_columns(getTarget(), monoms.length());
+  for (int i=0; i<monoms.length(); i++)
+    {
+      new_monoms[perm[i]] = monoms[i]; // essentially removes monoms[i] as well.
+      new_coeffs[perm[i]] = coeffs[i]; // and coeffs[i], so that when monoms,coeffs are destroyed,
+				        // they won't take our values with them!
+    }
+  delete [] perm;
+
+  result_monoms = make(R1, EFreeModule::makeFreeModuleFromDegrees(getRing(),monoms.length(),new_monoms),
+		       new_monoms, getMatrixType());
+
+  return make(getTarget(), EFreeModule::makeFreeModuleFromDegrees(getRing(),
+								  monoms.length(),
+								  new_coeffs),
+	      new_coeffs, getMatrixType());
+
 }
 
 #if 0
+
 Matrix EMatrix::random(const FreeModule *F, const FreeModule *G, 
 		      int *mapdeg,	// Degree of the map, not the elements
 		      int ishomog)	// Whether the map is homog.  If not
@@ -796,34 +966,6 @@ Matrix EMatrix::random(const FreeModule *F, const FreeModule *G,
 	  result[j] = F->sort(f);
 	}
     }
-}
-#endif		      
-
-EMatrix * EMatrix::diff(const EMatrix * &m, int use_coef) const
-{
-  if (Ring_of() != m.Ring_of())
-    {
-      gError << "matrix diff: different base rings";
-      return Matrix(rows(), cols());
-    }
-  FreeModule *F1 = rows()->transpose();
-  const FreeModule *F = F1->tensor(m.rows());
-  FreeModule *G1 = cols()->transpose();
-  const FreeModule *G = G1->tensor(m.cols());
-  int *deg = degree_monoid()->make_one();
-  degree_monoid()->divide(m.degree_shift(), degree_shift(), deg);
-  delete F1;
-  delete G1;
-  Matrix result(F, G, deg);
-  degree_monoid()->remove(deg);
-  int i, j, next=0;
-  for (i=0; i<n_cols(); i++)
-    for (j=0; j<m.n_cols(); j++)
-      result[next++] = F->diff(rows(), elem(i), 
-			       m.rows(), m[j],
-			       use_coef);
-
-  return result;
 }
 
 EMatrix * EMatrix::lead_var_coefficient(EMatrix * &monoms) const
@@ -868,85 +1010,6 @@ void Matrix_rec::bin_out(buffer &o) const
   bin_int_out(o,entries.length());
   for (int i=0; i<entries.length(); i++)
     rows->elem_bin_out(o, entries[i]);
-}
-int EMatrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const
-    // Internal private routine for 'coeffs'.
-    // exp2 is a scratch value.  It is a paramter so we only have to allocate 
-    // it once...
-{
-  Ring_of()->Nmonoms()->to_expvector(m, exp2);
-  int nvars = Ring_of()->n_vars();
-  for (int i=0; i<nvars; i++)
-    {
-      if (vars[i] == 0) continue;
-      if (exp[i] != exp2[i]) 
-	return 0;
-      else 
-	exp2[i] = 0;
-    }
-  Ring_of()->Nmonoms()->from_expvector(exp2, m);
-  return 1;
-}
-vec EMatrix::strip_vector(vec &f, const int *vars, 
-			      const FreeModule *F, vec &vmonom) const
-    // private routine for 'coeffs'
-{
-  if (f == NULL) 
-    {
-      vmonom = NULL;
-      return NULL;
-    }
-  if (Ring_of()->Nmonoms() == NULL)
-    {
-      vmonom = F->e_sub_i(0);
-      vec result = f;
-      f = NULL;
-      return result;
-    }
-  // At this point, we know that we have a polynomial ring
-  int nvars = Ring_of()->n_vars();
-  int *exp = new int[nvars];
-  int *scratch_exp = new int[nvars];
-  const Monoid *M = Ring_of()->Nmonoms();
-
-  M->to_expvector(f->monom, exp);
-  for (int i=0; i<nvars; i++)
-    if (vars[i] == 0) exp[i] = 0;
-
-  // the following two lines do NOT work if 'F' is a Schreyer free module,
-  // but this routine is private to 'coeffs', where this is not the case.
-  vmonom = F->e_sub_i(0);
-  M->from_expvector(exp, vmonom->monom);
-
-  vecterm head;
-  vecterm *newf = &head;
-  vec result = NULL;
-
-  // Loop through f: if monomial matches 'exp', strip and add to result,
-  // otherwise leave alone, and place on head list.
-  while (f != NULL)
-    {
-      if (moneq(exp, f->monom, vars, scratch_exp))
-	{
-	  vec temp = f;
-	  f = f->next;
-	  temp->next = NULL;
-	  rows()->add_to(result, temp);
-	}
-      else
-	{
-	  newf->next = f;
-	  f = f->next;
-	  newf = newf->next;
-	  newf->next = NULL;
-	}
-    }
-  newf->next = NULL;
-  f = head.next;
-
-  delete [] exp;
-  delete [] scratch_exp;
-  return result;
 }
 EMatrix * EMatrix::simplify(int n) const
 {
@@ -1033,38 +1096,6 @@ EMatrix * EMatrix::auto_reduce() const
   return result;
 }
 
-void EMatrix::sort(int degorder, int monorder, intarray &result) const
-  // Sort the columns of 'this': Place the column indices into 'result'.
-  // If degorder < 0, sort in descending degree order, if >0 ascending degree
-  // If ==0, or in the event that two columns have the same (simple) degree,
-  // use the monomial order: monorder > 0 means ascending, <0 means descending.
-{
-  intarray degs;
-
-  if (degorder != 0)
-    for (int i=0; i<n_cols(); i++)
-      degs.append(cols()->primary_degree(i));
-
-  rows()->sort(obj->entries, degs, degorder, monorder, result);
-}
-
-EMatrix * EMatrix::coeffs(const int *vars, EMatrix * &result_monoms) const
-{
-  Matrix result_coeffs(rows());
-  result_monoms = Matrix(Ring_of()->make_FreeModule(1));	// One row matrix
-  for (int j=0; j<n_cols(); j++)
-    {
-      vec f = rows()->copy(elem(j));
-      vec vmonom;
-      while (f != NULL)
-	{
-	  vec g = strip_vector(f, vars, result_monoms.rows(), vmonom);
-	  result_coeffs.append(g);
-	  result_monoms.append(vmonom);
-	}
-    }
-  return result_coeffs;
-}
 
 MonomialIdeal EMatrix::make_monideal(int n) const
 {
@@ -1510,3 +1541,140 @@ void EMatrix::minimal_lead_terms(intarray &result) const
 
 
 #endif
+
+////////////////////////////
+// Sort a set of veectors //
+////////////////////////////
+int ESortColumnAlgorithm::sort_compare(int i, int j) const
+{
+  if (i == j) return 0;
+  if (deg_ascending != 0)
+    {
+      int d1 = sort_degs[i];
+      int d2 = sort_degs[j];
+      if (d1 > d2) return -deg_ascending;
+      if (d1 < d2) return deg_ascending;
+    }
+  evec *v1 = sort_vecs[i].elems;
+  evec *v2 = sort_vecs[j].elems;
+  if (v1 == 0) return -monorder_ascending;
+  if (v2 == 0) return monorder_ascending;
+  int cmp = R->vec_compare_terms(v1,v2);
+  if (cmp > 0) return -monorder_ascending;
+  if (cmp < 0) return monorder_ascending;  
+  if (isZZ)
+    {
+      // Compare coeficients as well.
+      cmp = EZ->compare(ZZVAL(v1->coeff), ZZVAL(v2->coeff));
+      if (cmp < 0) return 1;
+      if (cmp > 0) return -1;
+    }
+  return 0;
+}
+
+int ESortColumnAlgorithm::sort_partition(int lo, int hi) const
+{
+  int pivot = sort_vals[lo];
+  int i = lo-1;
+  int j = hi+1;
+  for (;;)
+    {
+      do { j--; }
+      while (sort_compare(sort_vals[j], pivot) < 0);
+      do { i++; }
+      while (sort_compare(sort_vals[i], pivot) > 0);
+
+      if (i < j)
+	{
+	  int tmp = sort_vals[j];
+	  sort_vals[j] = sort_vals[i];
+	  sort_vals[i] = tmp;
+	}
+      else
+	return j;
+    }
+}
+
+void ESortColumnAlgorithm::sort_range(int lo, int hi) const
+{
+  if (lo < hi)
+    {
+      int q = sort_partition(lo, hi);
+      sort_range(lo, q);
+      sort_range(q+1, hi);
+    }
+}
+
+ESortColumnAlgorithm::ESortColumnAlgorithm(int ncols,
+		       const EVector *vecs,
+		       int degorder,  // -1=descending, 0=don't use, 1=ascending
+		       int monorder_ascending,  // -1=descending, 1=ascending
+		       const int *degrees)  // degree of each vector, for use if degorder != 0
+  : deg_ascending(degorder),
+    monorder_ascending(monorder_ascending),
+    ncols(ncols),
+    sort_vecs(vecs),
+    sort_degs(degrees)
+{
+  if (ncols == 0) return;
+
+  sort_vals = new int[ncols];
+  for (int i=0; i<ncols; i++)
+    sort_vals[i] = i;
+
+  if (deg_ascending && sort_degs == 0)
+    {
+      gError << "sort: specified degree dort, without giving degrees";
+      return;
+    }
+
+  R = vecs[0].getRing();
+  isZZ = (R->getCoefficientRing() == EZ);
+  sort_range(0,ncols-1);
+}
+ESortColumnAlgorithm::~ESortColumnAlgorithm()
+{
+  delete [] sort_vals;  // Probably
+}
+int *ESortColumnAlgorithm::result()
+{
+  int *val = sort_vals;
+  sort_vals = 0;
+  return val;
+}
+int *ESortColumnAlgorithm::sort(int ncols,
+				const EVector *vecs,
+				int degorder,  // -1=descending, 0=don't use, 1=ascending
+				int monorder_ascending,  // -1=descending, 1=ascending
+				const int *degrees)  // degree of each vector, for use if degorder != 0
+{
+  ESortColumnAlgorithm A(ncols,vecs,degorder,monorder_ascending,degrees);
+  return A.result();
+}
+
+int *ESortColumnAlgorithm::sort(int ncols,
+				const EVector *vecs,
+				int degorder,  // -1=descending, 0=don't use, 1=ascending
+				int monorder_ascending)  // -1=descending, 1=ascending
+{
+  if (ncols == 0) return 0;
+  int *degrees = 0;
+  if (degorder != 0)
+    {
+      const EMonoid *D = vecs[0].getFreeModule()->getDegreeMonoid();
+      if (D->n_vars() == 0)
+	degorder = 0;
+      else 
+	{
+	  degrees = new int[ncols];
+	  for (int i=0; i<ncols; i++)
+	    {
+	      const monomial *d = vecs[i].degree();
+	      degrees[i] = D->to_exponents(d)[0];
+	    }
+	}
+    }
+  
+  ESortColumnAlgorithm A(ncols,vecs,degorder,monorder_ascending,degrees);
+  return A.result();
+}

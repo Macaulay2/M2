@@ -13,6 +13,7 @@
 #include "Ering.hpp"
 #include "Efreemod.hpp"
 #include "Evector.hpp"
+#include "Eringmap.hpp"
 
 #include "bin_io.hpp"
 
@@ -57,9 +58,23 @@ EZZ *EZZ::binary_in(istream &i)
 // EZZ elements /////
 /////////////////////
 
-void EZZ::elem_text_out(buffer &o, int a) const
+void EZZ::elem_text_out(buffer &o, ZZ a) const
 {
   // This depends on whether we need to print a "+", a "1".
+#if 0
+  bool is_neg = (a < 0);
+  bool is_one = (a == 1 || a = -1);
+
+  if (!is_neg && p_plus) o << "+";
+  if (isone)
+    {
+      if (is_neg) o << "-";
+      if (p_one) o << "1";
+    }
+  else
+    o << a;
+#endif
+
   if (a < 0) 
     {
       o << '-';
@@ -68,19 +83,18 @@ void EZZ::elem_text_out(buffer &o, int a) const
   else if (p_plus) 
     o << '+';
   if (p_one || a != 1) o << a;
-
 }
 
-void EZZ::elem_bin_out(buffer &o, int a) const
+void EZZ::elem_bin_out(buffer &o, ZZ a) const
 {
   bin_int_out(o, a);  // CHANGE WHEN element can be infinite precision
 }
 
-int EZZ::elem_binary_in(istream &i) const
+ZZ EZZ::elem_binary_in(istream &i) const
 {
   int a;
   bin_int_in(i,a);
-  return from_int(a);
+  return _from_int(a);
 }
 
 /////////////////////
@@ -105,7 +119,7 @@ EZZp *EZZp::binary_in(istream &i)
     return 0;
   bin_int_in(i, p);
   // CHECK: that p is a proper value (perhaps also check that it is prime?)
-  return new EZZp(p);
+  return EZZp::make(p);
 }
 
 /////////////////////
@@ -138,7 +152,7 @@ int EZZp::elem_binary_in(istream &i) const
 {
   int a;
   bin_int_in(i,a);
-  return from_int(a);
+  return _from_int(a);
 }
 
 /////////////////////
@@ -447,7 +461,7 @@ void ECommMonoid::elem_bin_out(buffer &o, const monomial *a) const
     bin_int_out(o, vp[i]);
 }
 
-monomial *ECommMonoid::elem_binary_in(istream &i) const
+const monomial *ECommMonoid::elem_binary_in(istream &i) const
 {
   int j, len, v, e;
   intarray vp;
@@ -468,28 +482,18 @@ monomial *ECommMonoid::elem_binary_in(istream &i) const
 
 void ENCMonoid::elem_text_out(buffer &o, const monomial *a) const
 {
-  int len = 0;
-  int *exp = a->exponents;
-  for (int pv=0; pv<nvars; pv++)
+  intarray vp;
+  to_variable_exponent_pairs(a, vp);
+  int len = vp.length();
+  for (int i=0; i<len; i+=2)
     {
-      if (!isCommutativeVariable(pv)) continue;
-      int v = print_order[pv];
-      if (exp[v] != 0) {
-	len++;
-	o << var_names[v];
-	int e = exp[v];
-	int single = (var_names[v][1] == '\0');
-	if (e > 1 && single) o << e;
-	else if (e > 1) o << "^" << e;
-	else if (e < 0) o << "^(" << e << ")";	
-      }
-    }
-  int past = nslots;
-  int mon_len = encoded_length(a->partial_sums);
-  for (int j=past; j<mon_len; j++)
-    {
-      len++;
-      o << var_names[a->partial_sums[j]];
+      int v = vp[i];
+      int e = vp[i+1];
+      int single = (var_names[v][1] == '\0');
+      o << var_names[v];
+      if (e > 1 && single) o << e;
+      else if (e > 1) o << "^" << e;
+      else if (e < 0) o << "^(" << e << ")";	
     }
   if (len == 0 && p_one) o << "1";
 }
@@ -503,7 +507,7 @@ void ENCMonoid::elem_bin_out(buffer &o, const monomial *a) const
     bin_int_out(o, vp[i]);
 }
 
-monomial *ENCMonoid::elem_binary_in(istream &i) const
+const monomial *ENCMonoid::elem_binary_in(istream &i) const
 {
   int j, len, v, e;
   intarray vp;
@@ -627,38 +631,62 @@ void ENCPolynomialRing::text_out(buffer &o) const
 // Polynomials ////////
 //////////////////////
 
-void EPolynomialRing::elem_text_out(buffer &o, const ERingElement *f) const
+void EPolynomialRing::elem_text_out(buffer &o, const epoly *f) const
 {
-  if (f->len == 0)
+  if (f == 0)
     {
       o << "0";
       return;
     }
 
   const EMonoid *M = getMonoid();
-  const ECoefficientRing *K = getCoefficientRing();
+  const ERing *K = getCoefficientRing();
   int old_one = p_one;
   int old_parens = p_parens;
   int old_plus = p_plus;
 
-  p_one = 0;
-  for (poly *t = f->elems; t != 0; t = t->next)
+  bool two_terms = (f->next != 0);
+  bool needs_parens = p_parens && two_terms;
+
+  if (needs_parens) 
+    {
+      if (old_plus) o << '+';
+      o << '(';
+      p_plus = 0;
+    }
+
+  for (const epoly *t = f; t != 0; t = t->next)
     {
       int isone = M->is_one(t->monom);
+      p_parens = !isone;
+      p_one = (isone && needs_parens) || (isone && old_one);
       K->elem_text_out(o,t->coeff);
       if (!isone)
 	M->elem_text_out(o, t->monom);
       p_plus = 1;
     }
+  if (needs_parens) o << ')';
 
   p_one = old_one;
   p_parens = old_parens;
   p_plus = old_plus;
 }
 
+void EPolynomialRing::elem_bin_out(buffer &o, const epoly *f) const
+{
+  const EMonoid *M = getMonoid();
+  bin_int_out(o,n_terms(f));
+
+  for (const epoly *t=f; t != 0; t = t->next)
+    {
+      M->elem_bin_out(o, t->monom);
+      K->elem_bin_out(o, t->coeff);
+    }
+}
 
 void EFreeModule::text_out(buffer &o) const
 {
+  const EPolynomialRing *A = R->toPolynomialRing();
   o << "EFreeModule(",
   R->text_out(o);
   o << ",rank = ";
@@ -670,7 +698,7 @@ void EFreeModule::text_out(buffer &o) const
       if (hasInducedOrder())
         {
           o << ".";
-          getMonoid()->elem_text_out(o, _orderings[i]);
+          A->getMonoid()->elem_text_out(o, _orderings[i]);
           o << ".";
           o << _tiebreaks[i];
         }
@@ -680,28 +708,58 @@ void EFreeModule::text_out(buffer &o) const
 
 void EVector::text_out(buffer &o) const
 {
-  if (len == 0)
+  F->getRing()->vec_text_out(o, *this);
+}
+void EVector::bin_out(buffer &o) const
+{
+  F->getRing()->vec_bin_out(o, *this);
+}
+void ERing::vec_text_out(buffer &o, const EVector &v) const
+{
+  if (v.len == 0)
     {
       o << "0";
       return;
     }
 
-  const EMonoid *M = F->getRing()->getMonoid();
-  const ECoefficientRing *K = F->getRing()->getCoefficientRing();
-  bool isring = F->getRing()->getRingFreeModule() == F;
   int old_one = p_one;
   int old_parens = p_parens;
   int old_plus = p_plus;
+  
+  for (EVector::iterator t = v; t.valid(); ++t)
+    {
+      p_one = false;
+      K->elem_text_out(o,t->coeff);
+      o << "<" << t->component << ">";
+      p_plus = 1;
+    }
 
-  for (poly *t = elems; t != 0; t = t->next)
+  p_one = old_one;
+  p_parens = old_parens;
+  p_plus = old_plus;
+}
+void EPolynomialRing::vec_text_out(buffer &o, const EVector &v) const
+{
+  if (v.len == 0)
+    {
+      o << "0";
+      return;
+    }
+
+  const EMonoid *M = getMonoid();
+
+  int old_one = p_one;
+  int old_parens = p_parens;
+  int old_plus = p_plus;
+  
+  for (EVector::iterator t = v; t.valid(); ++t)
     {
       int isone = M->is_one(t->monom);
-      p_one = (isone && p_one && isring);
+      p_one = false;
       K->elem_text_out(o,t->coeff);
       if (!isone)
 	M->elem_text_out(o, t->monom);
-      if (!isring)
-	o << "<" << t->component << ">";
+      o << "<" << t->component << ">";
       p_plus = 1;
     }
 
@@ -710,43 +768,50 @@ void EVector::text_out(buffer &o) const
   p_plus = old_plus;
 }
 
-void EVector::bin_out(buffer &o) const
+void ERing::vec_bin_out(buffer &o, const EVector &v) const
 {
-  const EMonoid *M = F->getRing()->getMonoid();
-  const ECoefficientRing *K = F->getRing()->getCoefficientRing();
+  bin_int_out(o,v.len);
 
-  if (M->n_vars() == 0 && F->rank() == 1)
-    {
-      if (len == 0) 
-	K->elem_bin_out(o, K->zero());
-      else
-	K->elem_bin_out(o, elems->coeff);
-      return;
-    }
-  bin_int_out(o,len);
-
-  for (const poly *t=elems; t != 0; t = t->next)
+  for (EVector::iterator t = v; t.valid(); ++t)
     {
       bin_int_out(o, t->component);
-      M->elem_bin_out(o, t->monom);
       K->elem_bin_out(o, t->coeff);
     }
 }
-
-#if 0
-void EFreeModule::elem_binary_out(ostream &o, const vector F) const
+void EPolynomialRing::vec_bin_out(buffer &o, const EVector &v) const
 {
-  const poly *t;
+  bin_int_out(o,v.len);
 
-  bin_int_out(o,F.len);
-
-  for (t=F.elems; t != 0; t = t->next)
+  for (EVector::iterator t = v; t.valid(); ++t)
     {
       bin_int_out(o, t->component);
-      M->elem_binary_out(o, t->monom);
-      K->elem_binary_out(o, t->coeff);
+      getMonoid()->elem_bin_out(o, t->monom);
+      K->elem_bin_out(o, t->coeff);
     }
 }
+///////////////
+// Ring maps //
+///////////////
+void ERingMap::bin_out(buffer &o) const
+{
+  bin_int_out(o, nvars);
+  for (int i=0; i<nvars; i++)
+    R->elem_text_out(o, _elem[i].bigelem);
+}
+
+void ERingMap::text_out(buffer &o) const
+{
+  o << "(";
+  for (int i=0; i<nvars; i++)
+    {
+      if (i > 0) o << ", ";
+      R->elem_text_out(o, _elem[i].bigelem);
+    }
+  o << ")";
+}
+
+
+#if 0
 
 vector EFreeModule::elem_binary_in(istream &i) const
 {

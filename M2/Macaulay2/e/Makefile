@@ -1,6 +1,8 @@
 #ARING = true
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
+# MES:
+CXXFLAGS = -DGCMALLOC -DDEBUG
 
 %.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< $(OUTPUT_OPTION)
@@ -24,7 +26,7 @@ WARNINGS = -Wno-import -Wchar-subscripts -Wcomment -Wformat -Wimplicit \
 WARNINGS = -Wall
 endif
 
-CPPFLAGS += -I$(INCDIR) -DNDEBUG
+CPPFLAGS += -I$(INCDIR) #-DNDEBUG  #MES
 
 ifdef ARING
 CPPFLAGS += -DARING
@@ -41,7 +43,7 @@ ifeq "$(CC)" "cl"
 # cl doesn't know about -O3
 CXXFLAGS += -O2
 else
-CXXFLAGS += -O3 
+#CXXFLAGS += -O3 #MES
 CXXFLAGS += -g $(WARNINGS)
 endif
 
@@ -310,7 +312,8 @@ endif
 
 EZZp.o: EZZp.hpp Edefs.hpp object.hpp style.hpp ../../include/gmp.h
 EZZp.o: classes.hpp error.hpp buffer.hpp mem.hpp array.hpp intarray.hpp
-EZZp.o: obj_ptr.hpp
+EZZp.o: obj_ptr.hpp Emonoid.hpp Emonorder.hpp Ering.hpp Evector.hpp
+EZZp.o: Efreemod.hpp
 Emonorder.o: Emonorder.hpp Edefs.hpp object.hpp style.hpp ../../include/gmp.h
 Emonorder.o: classes.hpp error.hpp buffer.hpp mem.hpp array.hpp intarray.hpp
 Emonorder.o: obj_ptr.hpp
@@ -319,7 +322,7 @@ Emonoid.o: classes.hpp error.hpp buffer.hpp mem.hpp array.hpp intarray.hpp
 Emonoid.o: obj_ptr.hpp Emonorder.hpp Emontable.hpp text_io.hpp random.hpp
 Epoly.o: Epoly.hpp Edefs.hpp object.hpp style.hpp ../../include/gmp.h
 Epoly.o: classes.hpp error.hpp buffer.hpp mem.hpp array.hpp intarray.hpp
-Epoly.o: obj_ptr.hpp EZZp.hpp
+Epoly.o: obj_ptr.hpp EZZp.hpp Emonoid.hpp Emonorder.hpp
 Ering.o: Ering.hpp EZZp.hpp Edefs.hpp object.hpp style.hpp
 Ering.o: ../../include/gmp.h classes.hpp error.hpp buffer.hpp mem.hpp
 Ering.o: array.hpp intarray.hpp obj_ptr.hpp Emonoid.hpp Emonorder.hpp
@@ -335,21 +338,21 @@ Efreemod.o: Evector.hpp random.hpp comb.hpp Ematrix.hpp
 Ematrix.o: Ematrix.hpp Efreemod.hpp Edefs.hpp object.hpp style.hpp
 Ematrix.o: ../../include/gmp.h classes.hpp error.hpp buffer.hpp mem.hpp
 Ematrix.o: array.hpp intarray.hpp obj_ptr.hpp Emonoid.hpp Emonorder.hpp
-Ematrix.o: EZZp.hpp Ering.hpp Evector.hpp text_io.hpp comb.hpp
+Ematrix.o: EZZp.hpp Ering.hpp Evector.hpp Eringmap.hpp text_io.hpp comb.hpp
 Eringmap.o: Eringmap.hpp Evector.hpp Ering.hpp EZZp.hpp Edefs.hpp object.hpp
 Eringmap.o: style.hpp ../../include/gmp.h classes.hpp error.hpp buffer.hpp
 Eringmap.o: mem.hpp array.hpp intarray.hpp obj_ptr.hpp Emonoid.hpp
-Eringmap.o: Emonorder.hpp Efreemod.hpp
+Eringmap.o: Emonorder.hpp Efreemod.hpp Ematrix.hpp
 Eio.o: Eio.hpp EZZp.hpp Edefs.hpp object.hpp style.hpp ../../include/gmp.h
 Eio.o: classes.hpp error.hpp buffer.hpp mem.hpp array.hpp intarray.hpp
-Eio.o: obj_ptr.hpp Emonorder.hpp Emonoid.hpp Ering.hpp Efreemod.hpp
-Eio.o: Evector.hpp
+Eio.o: obj_ptr.hpp Emonoid.hpp Emonorder.hpp Ering.hpp Efreemod.hpp
+Eio.o: Evector.hpp Eringmap.hpp bin_io.hpp
 Ecommands.o: Eio.hpp EZZp.hpp Edefs.hpp object.hpp style.hpp
 Ecommands.o: ../../include/gmp.h classes.hpp error.hpp buffer.hpp mem.hpp
-Ecommands.o: array.hpp intarray.hpp obj_ptr.hpp Emonorder.hpp Emonoid.hpp
-Ecommands.o: Ering.hpp Efreemod.hpp Evector.hpp Ematrix.hpp interp.hpp
-Ecommands.o: stack.hpp obj_int.hpp bin_io.hpp text_io.hpp obj_str.hpp
-Ecommands.o: obj_iarr.hpp cmdnames.hpp Ehashtab.hpp
+Ecommands.o: array.hpp intarray.hpp obj_ptr.hpp Emonoid.hpp Emonorder.hpp
+Ecommands.o: Ering.hpp Efreemod.hpp Evector.hpp Ematrix.hpp Eringmap.hpp
+Ecommands.o: interp.hpp stack.hpp obj_int.hpp bin_io.hpp text_io.hpp
+Ecommands.o: obj_str.hpp obj_iarr.hpp cmdnames.hpp Ehashtab.hpp
 array.o: array.hpp style.hpp ../../include/gmp.h classes.hpp error.hpp
 array.o: buffer.hpp mem.hpp intarray.hpp object.hpp obj_ptr.hpp queue.hpp
 array.o: int_bag.hpp varpower.hpp respoly.hpp monideal.hpp index.hpp ring.hpp

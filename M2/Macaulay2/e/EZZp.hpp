@@ -3,147 +3,614 @@
 #define __EZZp_hpp_
 
 #include "Edefs.hpp"
+#include "Emonoid.hpp"
+class EZZ;
+class EZZp;
 
-typedef int field;
-
-class ECoefficientRing : public type
+class monomial;
+typedef long ZZ;
+struct epoly;
+union ERingElement
 {
-public:
-  virtual ~ECoefficientRing() {}
-
-  virtual void text_out(buffer &o) const = 0;
-  virtual void bin_out(buffer &o) const = 0;
-
-  virtual int characteristic() const = 0;
-  virtual field from_int(int n) const = 0;
-  virtual void remove(field a) const = 0;
-  virtual field clone(field a) const = 0;
-
-  virtual field zero() const = 0;
-  virtual field one() const = 0;
-  virtual field negate(field a) const = 0;
-  virtual field add(field a, field b) const = 0;
-  virtual field mult(field a, field b) const = 0;
-  virtual field divide(field a, field b) const = 0;
-  virtual bool is_zero(field a) const = 0;
-  virtual bool is_equal(field a, field b) const = 0;
-
-  virtual void elem_text_out(buffer &o, field a) const = 0;
-  virtual void elem_bin_out(buffer &o, field a) const = 0;
-
-  virtual ECoefficientRing * cast_to_ECoefficientRing() { return this; }
-  virtual const ECoefficientRing * cast_to_ECoefficientRing() const { return this; }
-  type_identifier  type_id () const { return TY_ECoefficientRing; }
-  const char * type_name   () const { return "ECoefficientRing"; }
+  int int_val;
+  epoly * poly_val;
+  ZZ ZZ_val;
 };
 
-class EZZ : public ECoefficientRing
+struct epoly
+{
+  epoly *          next;
+  ERingElement     coeff;
+  const monomial * monom;
+};
+
+struct evec0
+{
+  evec0 *          next;
+  int              component;
+  ERingElement     coeff;
+};
+struct evec
+{
+  evec *           next;
+  int              component;
+  ERingElement     coeff;
+  const monomial * monom;
+};
+
+
+inline ZZ ZZVAL(ERingElement a) { return a.ZZ_val; }
+inline ERingElement ZZ_TO_ERingElement(ZZ a)
+  { ERingElement result; result.ZZ_val = a; return result; }
+
+inline int ZZPVAL(ERingElement a) { return a.int_val; }
+inline ERingElement ZZP_TO_ERingElement(int a)
+  { ERingElement result; result.int_val = a; return result; }
+
+inline epoly *POLYVAL(ERingElement a) { return a.poly_val; }
+inline ERingElement POLY_TO_ERingElement(epoly *a)
+  { ERingElement result; result.poly_val = a; return result; }
+
+
+extern const EZZ * EZ;
+class ERing : public type
+{
+protected:
+  static stash *vec_stash;  // Set to the desired size...
+  static stash *vecpoly_stash;
+  static ECommPolynomialRing *_trivial;
+protected:
+  const ERing *K;    // Either 'this' or the coefficient ring.
+                     // Ths is the ring type stored in each term of a vector.
+                     // Typically, this will be set in 'make'.
+  int nvars;
+  int totalvars;
+
+  stash *evec_stash;  // One of vec_stash, vecpoly_stash.
+
+  // Degree information
+  const ECommMonoid *D;		// Degree Monoid
+  const EPolynomialRing *ZD;	// Usually the ring ZZ[D], although a different base may be used.
+  const int *_degrees;
+  
+  // GB information
+  const ERing *GBring;  // For polynomial rings over ZZ,ZZp, GBring is 'this'
+                        // Otherwise, it is a 'flattened' ring.
+                        // Probably NEED ringmaps to/from as well.
+  const EPolynomialRing *_cover;
+    // If this is a polynomial ring, and a quotient, 
+    // _cover is this polynomial ring (with no quotient).
+    // Otherwise, it is 0.
+
+public:
+  ERing() {}
+  void initialize(int nvars, 
+        int totalvars, 
+        const ERing *K,
+        const EPolynomialRing *ZZDD, // if 0, set to the trivial poly ring ZZ[].
+        int *_degs   // grabbed
+        );
+  void setGBring(const EPolynomialRing *GBR);
+  virtual ~ERing();
+
+  // Each ring type should have the following routines defined:
+  // Only constructor is the default one: do nothing.
+  // void initialize(...) <-- NOT VIRTUAL!!
+  // static T *make(...);
+
+  const EPolynomialRing *getCover() const
+    { return _cover; }  
+
+  EFreeModule *makeFreeModule(int rank) const; // Make a free module over this ring.
+  EFreeModule *makeFreeModule(int rank, const monomial **degrees) const; // Make a free module over this ring.
+
+  const ERing *getCoefficientRing() const 
+    { return K; }
+
+  const EMonoid *getDegreeMonoid() const
+    { return D; }
+  
+  int n_degrees() const
+    { return getDegreeMonoid()->n_vars(); }
+
+  const int *getDegreeVector(int i) const;
+
+  int n_vars() const
+    { return nvars; }
+  
+  int total_n_vars() const
+    { return totalvars; }
+
+  const ERing * getVectorCoefficientRing() const 
+    { return K; }
+      
+  virtual void text_out(buffer &o) const = 0;
+  virtual void bin_out(buffer &o) const = 0;
+  virtual int characteristic() const = 0;
+
+  virtual ERingElement from_int(int n) const = 0;
+  virtual ERingElement zero() const = 0;
+  virtual ERingElement one() const = 0;
+
+  virtual void remove(ERingElement a) const = 0;
+  virtual ERingElement clone(ERingElement a) const = 0;
+  virtual ERingElement negate(ERingElement a) const = 0;
+  virtual void negate_to(ERingElement &a) const = 0;
+  virtual void add_to(ERingElement &a, ERingElement &b) const = 0;
+  virtual ERingElement add(ERingElement a, ERingElement b) const = 0;
+  virtual ERingElement subtract(ERingElement a, ERingElement b) const = 0;
+  virtual ERingElement mult_by_ZZ(ERingElement a, int n) const = 0;
+  virtual ERingElement mult(ERingElement a, ERingElement b) const = 0;
+  virtual ERingElement divide(ERingElement a, ERingElement b) const = 0;
+  virtual ERingElement power(ERingElement a, int n) const = 0;
+  virtual bool is_zero(ERingElement a) const = 0;
+  virtual bool is_equal(ERingElement a, ERingElement b) const = 0;
+  virtual void elem_text_out(buffer &o, ERingElement a) const = 0;
+  virtual void elem_bin_out(buffer &o, ERingElement a) const = 0;
+
+  virtual void degreeWeightsLoHi(ERingElement f, int nwts, const int *wts,
+                          int &lo,
+                          int &hi) const;
+  void degreeLoHi(ERingElement f, const monomial *&lo, const monomial *&hi) const;
+  const monomial * degree(ERingElement f) const;
+  bool isGraded(ERingElement f, const monomial *&deg) const;
+  virtual ERingElement evaluate(const ERingMap *map, const ERingElement r) const = 0;
+
+  // Vector operations
+  evec *vec_new_term() const;  // Virtual not needed here
+  void vec_remove_term(evec *t) const;
+  virtual evec *vec_copy_term(const evec *t) const;
+  virtual bool vec_terms_equal(const evec *s, const evec *t) const;
+  virtual ERingElement vec_term_to_ring(const evec *v) const;
+  virtual int vec_compare_terms(const evec *v, const evec *w) const;
+  virtual ERingElement vec_component(const EVector &v, int x) const;
+  virtual void vec_degree_lohi(const evec *v, int nwts, const int *wts,
+                               int &lo, int &hi) const;
+  
+  virtual EVector vec_make(const EFreeModule *F, ERingElement c, int x) const;
+  virtual void vec_add_to(EVector &a, EVector &b) const;
+  virtual EVector vec_left_mult(const ERingElement a, const EVector &b) const;
+  virtual EVector vec_right_mult(const EVector &a, const ERingElement b) const;
+  virtual void vec_text_out(buffer &o, const EVector &v) const;
+  virtual void vec_bin_out(buffer &o, const EVector &v) const;
+
+  virtual EVector vec_evaluate(const ERingMap *map, const EFreeModule *Ftarget, const EVector &v) const;
+#if 0
+  int n_terms(const evec *v) const;
+  EVector clone(const EVector &a) const;
+  void remove(EVector &a) const;
+  bool is_zero(const EVector &a) const;
+  bool is_equal(const EVector &a, const EVector &b) const;
+  void negate_to(const EVector &a) const;
+  EVector negate(const EVector &a) const;
+  EVector add(const EVector &a, const EVector &b) const;
+  EVector subtract(const EVector &a, const EVector &b) const;
+  EVector zero_vector(const EFreeModule *F) const;
+  EVector basis_element(const EFreeModule *F, int x) const;
+
+  virtual void vector_text_out(buffer &o, const EVector &a) const;
+  virtual void vector_bin_out(buffer &o, const EVector &a) const;
+  virtual EVector make_vector(const EFreeModule *F, const EVector * &vecs) const = 0;
+  virtual EVector make_sparse_matrix(const EFreeModule *F,
+                                     const EVector * & elems,
+                                     const intarray &rows) const = 0;
+
+  virtual EVector make_vector(const EFreeModule *F, const vector<EVector> &vecs) const = 0;
+  virtual EVector make_sparse_matrix(const EFreeModule *F,
+                                     const vector<EVector> & elems,
+                                     const vector<int> &rows) const = 0;
+    // In above two routines,
+    // Should this be const EVector * ??  In other words, do we grab the EVector?
+                                     
+  virtual EVector random(const EFreeModule *F) const = 0;
+  
+  virtual EVector divide(const EVector &a, const ERingElement b) const = 0;
+  
+  virtual int n_terms(const EVector &a) const = 0;
+  virtual ERingElement get_component(const EVector &a, int x) const = 0;
+  virtual EVector lead_term(const EVector &a, int n, bool same_component_only=true) const = 0;
+  virtual EVector get_terms(const EVector &a, int lo, int hi) const = 0;
+
+  virtual bool isGraded(const EVector &a, monomial *&result_degree) const;
+  virtual monomial *degree(const EVector &a) const;
+  virtual void degreeLoHi(const EVector &a, monomial *&lo, monomial *&hi) const;
+  virtual void degreeWeightsLoHi(const EVector &a, int i, int &lo, int &hi) const;
+  virtual void degreeWeightsLoHi(const EVector &a,
+                         const int *wts, 
+                         const int * componentdegs, 
+                         int &lo, int &hi) const;
+  virtual void degreeWeightsLoHi(const EVector &a,
+                         const int *wts, 
+                         int &lo, int &hi) const;
+
+  virtual EVector homogenize(const EVector &a, int v, int d, const int *wts) const;
+  virtual EVector homogenize(const EVector &a, int v, const int *wts) const;
+
+  virtual EVector eval(const ERingMap *map, const EFreeModule *Fnew, const EVector &v) const;
+  virtual bool promote(const EFreeModule *Fnew, const EVector &v, EVector &result) const;
+  virtual bool lift(const EFreeModule *Fnew, const EVector &v, EVector &result) const;
+  
+  // Vector operations for matrices
+  virtual EVector subvector(const EFreeModule *newF, 
+                            const EVector &a,
+                            const intarray &r) const = 0;
+  virtual EVector translate(const EFreeModule *newF, const EVector &a) const = 0;
+  virtual EVector component_shift(const EFreeModule *newF,
+                                  const EVector &a,
+                                  int r) const = 0;
+  virtual EVector tensor_shift(const EFreeModule *newF,
+                               const EVector &a,
+                               int n, int m) const = 0;
+  virtual EVector tensor(const EFreeModule *newF,
+                         const EVector &a,
+                         const EVector &b) const = 0;
+  virtual EVector *transpose(const EFreeModule *newTarget,
+                             const vector<EVector> &columns) const = 0;
+  virtual EVector multiplyByMatrix(const vector<EVector> &columns, const EVector &a) const = 0;
+                        
+  // Vector polynomial operations
+  virtual monomial * lead_monomial(const EVector &a) const = 0;
+  virtual bool coefficient_of(const EVector &a, 
+                              const monomial *m, 
+                              int x,
+                              ERingElement &result) const = 0;
+
+  virtual EVector diff(const int *exponents, 
+                       const EVector &a, 
+                       bool do_contract=false) const = 0;                            
+  
+  // Missing so far:
+  // matrix routines: koszul, coeffs (maybe more?)
+  
+  // Mutable Vector operations
+  virtual void sort(EVector &a) const = 0;
+  virtual void prepend_term(EVector &a, 
+                            ERingElement c, 
+                            int x) const = 0;
+  virtual void prepend_term(EVector &a, 
+                            ERingElement c,
+                            const monomial *m, 
+                            int x) const = 0;
+#endif  
+
+  virtual ERing * cast_to_ERing() { return this; }
+  virtual const ERing * cast_to_ERing() const { return this; }
+  type_identifier  type_id () const { return TY_ERing; }
+  const char * type_name   () const { return "ERing"; }
+  
+  // Here we put cast routines for each kind of ring.
+  // These may be used to determine whether, e.g. a ring is a polynomial ring.
+  virtual EZZ *to_EZZ() { return 0; }
+  virtual const EZZ *to_EZZ() const { return 0; }
+  
+  virtual EZZp *to_EZZp() { return 0; }
+  virtual const EZZp *to_EZZp() const { return 0; }
+
+  virtual const ENCPolynomialRing *toENCPolynomialRing() const { return 0; }
+  virtual const EPolynomialRing *toPolynomialRing() const { return 0; }
+  virtual const ECommPolynomialRing *toCommPolynomialRing() const { return 0; }
+  virtual const EWeylAlgebra *toEWeylAlgebra() const { return 0; }
+  virtual const ESkewCommPolynomialRing *toESkewCommPolynomialRing() const { return 0; }
+
+  virtual EPolynomialRing * cast_to_EPolynomialRing() { return 0; }
+  virtual const EPolynomialRing * cast_to_EPolynomialRing() const { return 0; }
+};
+
+class EZZ : public ERing
 {
   static EZZ *_ZZ;
 public:
-  EZZ() : ECoefficientRing() {}
+  EZZ() {}
+  void initialize() { ERing::initialize(0,0,this,0,0); }
   virtual ~EZZ() {}
 
-  static const EZZ *ZZ() { if (_ZZ == 0) _ZZ = new EZZ; return _ZZ; }
+  static const EZZ *make() { 
+    if (_ZZ == 0) {
+      _ZZ = new EZZ; 
+      _ZZ->initialize();
+    }
+    return _ZZ; 
+  }
   
-  static const EZZ *make() { return ZZ(); }
-
   virtual void text_out(buffer &o) const;
   virtual void bin_out(buffer &o) const;
   static EZZ *binary_in(istream &i);
 
   virtual int characteristic() const
     { return 0; }
-    
-  virtual field from_int(int n) const
-    { return n; }
-    
-  virtual void remove(field a) const
+
+  virtual class_identifier class_id() const { return CLASS_EZZ; }
+  virtual EZZ *to_EZZ() { return this; }
+  virtual const EZZ *to_EZZ() const { return this; }
+
+/////////////////////////////////////////////////////////////////////////
+// Non-virtual functions which operate directly on elements of type ZZ // 
+/////////////////////////////////////////////////////////////////////////
+   
+  void remove(ZZ a) const
     { }
      
-  virtual field clone(field a) const
+  ZZ clone(ZZ a) const
     { return a; }
 
-  virtual field zero() const
+  ZZ _zero() const
     { return 0; }
     
-  virtual field one() const
+  ZZ _one() const
     { return 1; }
     
-  virtual field negate(field a) const
+  ZZ _from_int(int n) const
+    { return n; }
+
+  ZZ negate(ZZ a) const
     { return -a; }
     
-  virtual field add(field a, field b) const
+  ZZ add(ZZ a, ZZ b) const
     { return a+b; }
     
-  virtual field mult(field a, field b) const
+  ZZ subtract(ZZ a, ZZ b) const
+    { return a-b; }
+    
+  ZZ mult_by_ZZ(ZZ a, int n) const
+    { return n*a; }
+    
+  ZZ mult(ZZ a, ZZ b) const
     { return a*b; }
 
-  virtual field divide(field a, field b) const
+  ZZ divide(ZZ a, ZZ b) const
     { return a/b; }
     
-  virtual bool is_zero(field a) const
+  ZZ power(ZZ a, int n) const
+    { ZZ result = 1; for (int i=0; i<n; i++) result *= a; return result;}
+
+  bool is_zero(ZZ a) const
     { return a == 0; }
     
-  virtual bool is_equal(field a, field b) const
+  bool is_equal(ZZ a, ZZ b) const
     { return a == b; }
 
-  virtual void elem_text_out(buffer &o, field a) const;
-  virtual void elem_bin_out(buffer &o, field a) const;
-  int elem_binary_in(istream &i) const;
-  
-  class_identifier class_id() const { return CLASS_EZZ; }
+  void elem_text_out(buffer &o, ZZ a) const;
+  void elem_bin_out(buffer &o, ZZ a) const;
+  ZZ elem_binary_in(istream &i) const;
 
+  int compare(ZZ a, ZZ b) const
+    { if (a>b) return GT; if (a<b) return LT; return EQ; }
+
+/////////////////////////////
+// Virtual Ring Operations //
+/////////////////////////////
+  virtual ERingElement from_int(int n) const 
+    { return ZZ_TO_ERingElement(n); }
+    
+  virtual ERingElement zero() const
+    { return ZZ_TO_ERingElement(0); }
+    
+  virtual ERingElement one() const
+    { return ZZ_TO_ERingElement(1); }
+
+  virtual void remove(ERingElement a) const
+    { }
+
+  virtual ERingElement clone(ERingElement a)  const
+    { return a; }
+
+  virtual ERingElement negate(ERingElement a) const 
+    { return ZZ_TO_ERingElement(negate(ZZVAL(a))); }
+
+  virtual void negate_to(ERingElement &a) const
+    { a.ZZ_val = -a.ZZ_val; }
+
+  virtual ERingElement add(ERingElement a, ERingElement b) const
+    { return ZZ_TO_ERingElement(add(ZZVAL(a),ZZVAL(b))); }
+
+  virtual void add_to(ERingElement &a, ERingElement &b) const
+    { a.ZZ_val = a.ZZ_val + b.ZZ_val; }
+    
+  virtual ERingElement subtract(ERingElement a, ERingElement b) const
+    { return ZZ_TO_ERingElement(subtract(ZZVAL(a),ZZVAL(b))); }
+
+  virtual ERingElement mult_by_ZZ(ERingElement a, int n) const
+    { return ZZ_TO_ERingElement(mult_by_ZZ(ZZVAL(a),n)); }
+
+  virtual ERingElement mult(ERingElement a, ERingElement b) const
+    { return ZZ_TO_ERingElement(mult(ZZVAL(a),ZZVAL(b))); }
+
+  virtual ERingElement divide(ERingElement a, ERingElement b) const
+    { return ZZ_TO_ERingElement(divide(ZZVAL(a),ZZVAL(b))); }
+
+  virtual ERingElement power(ERingElement a, int n) const
+    { return ZZ_TO_ERingElement(power(ZZVAL(a),n)); }
+
+  virtual bool is_zero(ERingElement a) const
+    { return is_zero(ZZVAL(a)); }
+
+  virtual bool is_equal(ERingElement a, ERingElement b) const
+    { return is_equal(ZZVAL(a),ZZVAL(b)); }
+
+  virtual void elem_text_out(buffer &o, ERingElement a) const
+    { elem_text_out(o, ZZVAL(a)); }
+
+  virtual void elem_bin_out(buffer &o, ERingElement a) const
+    { elem_bin_out(o, ZZVAL(a)); }
+
+  virtual ERingElement evaluate(const ERingMap *map, const ERingElement r) const;
 };
-class EZZp : public ECoefficientRing
+
+class EZZp : public ERing
 {
   int P;
 public:
-  EZZp(int p) : ECoefficientRing(), P(p) {}
+  EZZp() {}
+  void initialize(int p) { 
+    ERing::initialize(0,0,this,0,0);
+    P = p;
+  }
   virtual ~EZZp() {}
 
-  static EZZp *make(int p) { return new EZZp(p); }
+  static EZZp *make(int p) { 
+    EZZp *R = new EZZp();
+    R->initialize(p);
+    return R;
+  }
 
   virtual void text_out(buffer &o) const;
   virtual void bin_out(buffer &o) const;
   static EZZp *binary_in(istream &i);
 
   virtual int characteristic() const { return P; }
+  virtual class_identifier class_id() const { return CLASS_EZZp; }
+  virtual EZZp *to_EZZp() { return this; }
+  virtual const EZZp *to_EZZp() const { return this; }
+  
+//////////////////////////////////////////////////////////////////////////
+// Non-virtual functions which operate directly on elements of type int // 
+//////////////////////////////////////////////////////////////////////////
 
   void gcd_extended(int a, int b, int &u, int &v, int &g) const;
 
-  void remove(int) const {}
+  int invert(int a) const
+    { int u,v,g; gcd_extended(a,P,u,v,g); return u; }
+
+  void remove(int) const 
+    { }
+
   int clone(int a) const 
     { return a; }
 
-  int zero() const
+  int _zero() const
     { return 0; }
-  int one() const
+    
+  int _one() const
     { return 1; }
-  int from_int(int n) const
+    
+  int _from_int(int n) const
     { int c = (n % P); if (c < 0) c += P; return c; }
 
-  bool is_zero(int a) const
-    { return a == 0; }
-  bool is_equal(int a, int b) const
-    { return a == b; }
-  int mult(int a, int b) const 
-    { return from_int(a*b); }
-  int add(int a, int b) const 
-    { int c = a+b; if (c >= P) c -= P; return c; }
-  int invert(int a) const
-    { int u,v,g; gcd_extended(a,P,u,v,g); return u; }
   int negate(int a) const
     { return P - a; }
+
+  int add(int a, int b) const 
+    { int c = a+b; if (c >= P) c -= P; return c; }
+
+  int subtract(int a, int b) const
+    { int c = a-b; if (c < 0) c += P; return c; }
+    
+  int mult_by_ZZ(int a, int n) const
+    { return _from_int(n*a); }
+
+  int mult(int a, int b) const 
+    { return _from_int(a*b); }
+
   int divide(int a, int b) const
     { int c = invert(b); return mult(a,c); }
 
-  // I/O
+  // MES: REWRITE TO USE repeated squaring
+  int power(int a, int n) const
+    { int result = 1; 
+      for (int i=0; i<n; i++) 
+        result = mult(result,a); 
+      return result;
+    }
+
+  bool is_zero(int a) const
+    { return a == 0; }
+    
+  bool is_equal(int a, int b) const
+    { return a == b; }
+
   void elem_text_out(buffer &o, int a) const;
   void elem_bin_out(buffer &o, int a) const;
   int elem_binary_in(istream &i) const;
 
-  class_identifier class_id() const { return CLASS_EZZp; }
+/////////////////////////////
+// Virtual Ring Operations //
+/////////////////////////////
+  virtual ERingElement from_int(int n) const 
+    { return ZZP_TO_ERingElement(_from_int(n)); }
+    
+  virtual ERingElement zero() const
+    { return ZZP_TO_ERingElement(0); }
+    
+  virtual ERingElement one() const
+    { return ZZP_TO_ERingElement(1); }
+
+  virtual void remove(ERingElement a) const
+    { }
+
+  virtual ERingElement clone(ERingElement a)  const
+    { return a; }
+
+  virtual ERingElement negate(ERingElement a) const 
+    { return ZZP_TO_ERingElement(negate(ZZPVAL(a))); }
+
+  virtual void negate_to(ERingElement &a) const
+    { a.int_val = P - a.int_val; }
+
+  virtual void add_to(ERingElement &a, ERingElement &b) const
+    { a.int_val = add(a.int_val, b.int_val); }
+    
+  virtual ERingElement add(ERingElement a, ERingElement b) const
+    { return ZZP_TO_ERingElement(add(ZZPVAL(a),ZZPVAL(b))); }
+
+  virtual ERingElement subtract(ERingElement a, ERingElement b) const
+    { return ZZ_TO_ERingElement(subtract(ZZVAL(a),ZZVAL(b))); }
+
+  virtual ERingElement mult_by_ZZ(ERingElement a, int n) const
+    { return ZZ_TO_ERingElement(mult_by_ZZ(ZZVAL(a),n)); }
+
+  virtual ERingElement mult(ERingElement a, ERingElement b) const
+    { return ZZP_TO_ERingElement(mult(ZZPVAL(a),ZZPVAL(b))); }
+
+  virtual ERingElement divide(ERingElement a, ERingElement b) const
+    { return ZZP_TO_ERingElement(divide(ZZPVAL(a),ZZPVAL(b))); }
+
+  virtual ERingElement power(ERingElement a, int n) const
+    { return ZZP_TO_ERingElement(power(ZZPVAL(a),n)); }
+
+  virtual bool is_zero(ERingElement a) const
+    { return is_zero(ZZPVAL(a)); }
+
+  virtual bool is_equal(ERingElement a, ERingElement b) const
+    { return is_equal(ZZPVAL(a),ZZPVAL(b)); }
+
+  virtual void elem_text_out(buffer &o, ERingElement a) const
+    { elem_text_out(o, ZZPVAL(a)); }
+
+  virtual void elem_bin_out(buffer &o, ERingElement a) const
+    { elem_bin_out(o, ZZPVAL(a)); }
+
+  virtual ERingElement evaluate(const ERingMap *map, const ERingElement r) const;
+};
+
+class object_ERingElement : public object_element
+{
+  const ERing *R;
+  ERingElement val;
+public:
+  object_ERingElement(const ERing *R, ERingElement a) 
+    : R(R), val(a) {
+    bump_up(R);
+  }
+  ~object_ERingElement() { 
+    R->remove(val);
+    bump_down(R);
+  }
+  
+  ERingElement getValue() const { return val; }
+  const ERing *getRing() const { return R; }
+  int length_of() const;
+  
+  operator ERingElement() { return val; }
+  
+  class_identifier class_id() const { return CLASS_ERingElement; }
+  type_identifier  type_id () const { return TY_ERingElement; }
+  const char * type_name   () const { return "ERingElement"; }
+
+  void text_out(buffer &o) const {  R->elem_text_out(o,val); }
+  void bin_out(buffer &o) const {  R->elem_bin_out(o,val); }
+
+  object_ERingElement *cast_to_ERingElement() { return this; }
+  const object_ERingElement * cast_to_ERingElement() const { return this; }
 };
 
 #endif
