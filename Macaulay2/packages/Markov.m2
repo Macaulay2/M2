@@ -33,11 +33,9 @@ newPackage("Markov",
 
 
 
-export(makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts, p,
+export(makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
        markovRing, marginMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, bayesBall, prob)
 exportMutable(dotBinary,jpgViewer)
-
-
 
 -------------------------
 -- Graph visualization --
@@ -74,9 +72,9 @@ writeDotFile = method()
 writeDotFile(String,Graph) := (filename,G) -> (
      fil := openOut filename;
      fil << "digraph G {" << endl;
-     p := pairs G;
-     for i from 0 to #p-1 do (
-	  e := p#i;
+     q := pairs G;
+     for i from 0 to #q-1 do (
+	  e := q#i;
 	  fil << "  " << toString e#0;
 	  if #e#1 === 0 then
 	    fil << ";" << endl
@@ -297,9 +295,10 @@ markovRing = d -> (
      -- d should be a sequence of integers di >= 1
      if any(d, di -> not instance(di,ZZ) or di <= 0)
      then error "useMarkovRing expected positive integers";
+     p = value "symbol p";
      if not markovRingList#?d then (
      	  start := (#d):1;
-     	  markovRingList#d = ZZ/32003[(symbol p)_start .. (symbol p)_d];
+     	  markovRingList#d = ZZ/32003[p_start .. p_d];
 	  markovRingList#d.markov = d;
 	  );
      markovRingList#d
