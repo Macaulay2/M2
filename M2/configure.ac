@@ -194,7 +194,7 @@ AC_ARG_WITH(lapacklibs,
     LAPACKLIBS="-llapack -lcblas -lf77blas -lg2c"
     )
 AC_ARG_WITH(veclib,
-    AC_HELP_STRING(--with-veclib...,replace lapack libraries by "-framework vecLib"),
+    AC_HELP_STRING(--with-veclib,replace lapack libraries by "-framework vecLib"),
     LAPACKLIBS="-framework vecLib"
     )
 
