@@ -38,6 +38,7 @@ exportMutable (
 	)
 
 export (
+        symbol monomials,
         symbol MakeLinks,
         symbol Undo,
         symbol symlinkDirectory,
