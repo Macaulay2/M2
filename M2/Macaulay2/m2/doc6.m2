@@ -649,7 +649,7 @@ document { GRevLex,
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the graded reverse lexicographic order.",
      PARA,
-     "Caveat: If the number of degree vectors is greater than one, this
+     CAVEAT "If the number of degree vectors is greater than one, this
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
@@ -659,7 +659,7 @@ document { GLex,
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the graded lexicographic order.",
      PARA,
-     "Caveat: If the number of degree vectors is greater than one, this
+     CAVEAT "If the number of degree vectors is greater than one, this
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
@@ -678,7 +678,7 @@ document { Eliminate,
      indicate that the monomial order is the elimination order eliminating the
      first n variables, refined by the graded reverse lexicographic order.",
      PARA,
-     "Caveat: If the number of degree vectors is greater than one, this
+     CAVEAT "If the number of degree vectors is greater than one, this
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
@@ -690,7 +690,7 @@ document { ProductOrder,
      indicate that the monomial order is the product of r graded reverse lex
      orders, each with n1, n2, ..., nr variables.",
      PARA,
-     "Caveat: If the number of degree vectors is greater than one, the
+     CAVEAT "If the number of degree vectors is greater than one, the
      grading in each block only uses the first degree vector. This will 
      eventually change."  -- MES
      }
