@@ -11,8 +11,7 @@ void test_monomials(Test *pTest)
   Also test overflow cases: should get an error
   Are negative exponents allowed?
   */
-  int i;
-  M2_arrayint m1, m2, m3;
+  M2_arrayint m1;
   const Monomial *one;
   const Monomial *a, *a2, *b, *c1, *c2, *c3, *c4, *c5, *c6, *c7;
 

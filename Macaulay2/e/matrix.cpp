@@ -84,7 +84,7 @@ Matrix::Matrix(const MonomialIdeal *mi)
 Matrix::Matrix(const FreeModule *rows0, 
 	       const FreeModule *cols0,
 	       const int *degree_shift0,
-	       vector<vec> & entries0,
+	       vector<vec,gc_alloc> & entries0,
 	       bool is_mutable_flag)
 {
   _rows = const_cast<FreeModule *>(rows0);
@@ -585,8 +585,9 @@ void Matrix::column2by2(int c1, int c2,
 ring_elem Matrix::dot_product(int i, int j, ring_elem &result) const
 {
   if (error_column_bound(i) || error_column_bound(j))
-    return get_ring()->zero();
-  return get_ring()->dot_product(_entries[i], _entries[j]);
+    result =  get_ring()->zero();
+  else
+    result = get_ring()->dot_product(_entries[i], _entries[j]);
 }
 
 
@@ -970,7 +971,6 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
   const FreeModule *G = cols()->direct_sum(m->cols());
 
   MatrixConstructor mat(F,G,is_mutable() && m->is_mutable(),deg);
-  degree_monoid()->remove((int *)deg);
 
   int i;
   int nr = n_rows();
@@ -978,21 +978,8 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
   for (i=0; i<nc; i++) 
     mat.set_column(i, get_ring()->copy_vec(elem(i)));
   for (i=0; i<m->n_cols(); i++)
-    mat.set_column(nc+i, F->component_shift(nr, m->rows(), (*m)[i]));
+    mat.set_column(nc+i, get_ring()->component_shift(nr, m->elem(i)));
   return mat.to_matrix();
-#if 0  
-  Matrix *result = new Matrix(F, G, deg);
-
-  degree_monoid()->remove(deg);
-
-  int i;
-  int nr = n_rows();
-  int nc = n_cols();
-  for (i=0; i<nc; i++) (*result)[i] = F->copy(elem(i));
-  for (i=0; i<m->n_cols(); i++)
-    (*result)[nc+i] = F->component_shift(nr, m->rows(), (*m)[i]);
-  return result;
-#endif
 }
 
 Matrix *Matrix::mult(const Matrix *m, bool opposite_mult) const
@@ -1019,15 +1006,6 @@ Matrix *Matrix::mult(const Matrix *m, bool opposite_mult) const
   for (int i=0; i<m->n_cols(); i++)
     mat.set_column(i, R->mult_vec_matrix(this, m->elem(i), opposite_mult));
   return mat.to_matrix();
-
-#if 0
-  Matrix *result = new Matrix(rows(), m->cols(), deg);
-  degree_monoid()->remove(deg);
-
-  for (int i=0; i<m->n_cols(); i++)
-    (*result)[i] = R->mult_vec_matrix(this, m->elem(i), opposite_mult);
-  return result;
-#endif
 }
 
 Matrix *Matrix::module_tensor(const Matrix *m) const
@@ -1049,29 +1027,14 @@ Matrix *Matrix::module_tensor(const Matrix *m) const
 
   for (i=0; i<n_rows(); i++)
     for (j=0; j<m->n_cols(); j++)
-      mat.set_column(next++, F->component_shift(i * m->n_rows(), m->rows(), (*m)[j]));
+      mat.set_column(next++, get_ring()->component_shift(i * m->n_rows(), m->elem(j)));
 
   for (i=0; i<m->n_rows(); i++)
     for (j=0; j<n_cols(); j++)
-      mat.set_column(next++, F->tensor_shift(m->n_rows(), i, rows(), elem(j)));
+      mat.set_column(next++, get_ring()->tensor_shift(m->n_rows(), i, elem(j)));
   return mat.to_matrix();
-
-#if 0
-  Matrix *result = new Matrix(F, G);
-
-  int i, j, next=0;
-
-  for (i=0; i<n_rows(); i++)
-    for (j=0; j<m->n_cols(); j++)
-      (*result)[next++] = F->component_shift(i * m->n_rows(), m->rows(), (*m)[j]);
-
-  for (i=0; i<m->n_rows(); i++)
-    for (j=0; j<n_cols(); j++)
-      (*result)[next++] = F->tensor_shift(m->n_rows(), i, rows(), elem(j));
-
-  return result;
-#endif
 }
+
 #if 0
 // REMOVE THIS ONE??
 Matrix *Matrix::random(const Ring *R, int r, int c)
@@ -1146,22 +1109,9 @@ Matrix *Matrix::tensor(const Matrix *m) const
   int i, j, next = 0;
   for (i=0; i<n_cols(); i++)
     for (j=0; j<m->n_cols(); j++)
-      mat.set_column(next++, F->tensor(rows(), elem(i), 
-				       m->rows(), (*m)[j]));
+      mat.set_column(next++, get_ring()->tensor(rows(), elem(i), 
+						m->rows(), (*m)[j]));
   return mat.to_matrix();
-#if 0
-  Matrix *result = new Matrix(F, G, deg);
-
-  degree_monoid()->remove(deg);
-
-  int i, j, next = 0;
-  for (i=0; i<n_cols(); i++)
-    for (j=0; j<m->n_cols(); j++)
-      (*result)[next++] = F->tensor(rows(), elem(i), 
-				 m->rows(), (*m)[j]);
-				 
-  return result;
-#endif
 }
 
 Matrix *Matrix::diff(const Matrix *m, int use_coef) const
@@ -1550,6 +1500,16 @@ void Matrix::text_out(buffer &o) const
 //  o << endl << "cols = ";
 //  cols().text_out(o);
 //  o << endl;
+
+#if 0
+  for (int c=0; c<n_cols(); c++)
+    {
+      for (vec v = _entries[c]; v!=0; v=v->next)
+	fprintf(stdout, " %x", v);
+      fprintf(stdout, "\n");
+    }
+  return;
+#endif
 
   buffer *p = newarray(buffer,nrows);
   //  buffer *p = new buffer[nrows];

@@ -288,6 +288,13 @@ public:
 		      vec v,
 		      bool opposite_mult) const;
 
+  vec component_shift(int n, vec v) const;
+
+  vec tensor_shift(int n, int m, vec v) const;
+
+  vec tensor(const FreeModule *F, vec v, 
+	     const FreeModule *G, vec w) const;
+
 
   void row2by2(vec &, int r1, int r2,
 	       ring_elem a1, ring_elem a2,
