@@ -16,6 +16,8 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The function 'basis' can now take a range of degrees, as in 'basis(2,5,M)'.
+
 The functions 'examine', 'frame', which were used mainly for
 debugging by the developers, have been removed or hidden from view.
 
