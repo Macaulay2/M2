@@ -19,7 +19,10 @@ New in 0.9.5:
 User input is now obtained through the GNU readline routine, with
 history.  It's a versatile mechanism for editing the current input
 line and retrieving previous input lines using emacs-like
-control-character editing commands.
+control-character editing commands.  Moreover, TAB-completion
+completes words to currently defined global symbols, except for those
+words preceded by a quotation mark, which are subject to filename
+completion.
 
 At compile time, you may now set the environment variable LIBS to
 provide additional libraries to link against, and the makefiles will
