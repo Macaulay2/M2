@@ -41,7 +41,6 @@ public:
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
   virtual bool is_graded() const    { return R_->is_graded(); }
-  virtual bool is_expensive() const { return 1; }
 
   virtual CoefficientType coefficient_type() const;
   virtual int n_fraction_vars() const;

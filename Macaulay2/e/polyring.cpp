@@ -77,6 +77,119 @@ PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *MF)
   return result;
 }
 
+#if 0
+
+  /**
+   *  @brief  The main routine for creating a polynomial ring
+   *  @param  K  The coefficient ring.  Can be a basic ring, fraction ring,
+   *             quotient ring, Weyl or skew-commutative algebra, etc.
+   *  @param  M  The monoid.
+   *  @return A new polynomial ring.  If there is an error, then NULL is returned
+   *             and an error is signalled.
+   *
+   * If one wants a Weyl algebra, quotient or skew-commutative ring, then after
+   * this ring has been created, call PolynomialRing::createWeylAlgebra(R,...)
+   * createSkew(R,...), or createQuotient(R,...), or for fractions, call
+   * createFractionRing(R,...).  
+  */
+
+const PolynomialRing *PolynomialRing::create1(const Ring *K, const Monoid *M)
+{
+  // The first thing to do is 
+
+  if (K == globalZZ) return new PolyZZ(M, K,M);
+  if (K->is_basic_ring()) return new PolyKK(K,M,  K,M);
+  if (K == globalQQ) return new PolyQQ(M,  K,M);
+  // Now, K is either a polynomial ring of some sort, or a fraction ring.
+  const PolynomialRing *K1 = K->get_numerator_ring();
+  const Ring *newK = K1->Ncoeffs();
+  const Monoid *newM = Monoid::tensor_product(M, K1->Nmonoms());
+  int nfrac = K1->get_n_fraction_vars();
+  if (nfrac == 0 && newK == globalZZ)
+    {
+      // NOT QUITE: this doesn't distinguish between ZZ and QQ!!
+      // Here if newK is a fraction field, nfrac is still 0.
+      // If nfrac=0, then it should be the case that newK is ZZ, and that the coeffs
+      // in the denominator are ZZ's too.
+      return new PolyQQ(newM,  K,M);
+    }
+  else
+    return new PolyFrac(newK, newM, nfrac, K,M);
+}
+
+const PolynomialRing *PolynomialRing::create(const Ring *K, const Monoid *M)
+{
+  const PolynomialRing *R = create1(K,M);
+  if (R == 0) return 0;
+
+  // Now we need to re-incorporate quotients in K, and/or funny multiplication in K.
+  
+  // First re-introduce multiplications
+  if (K->is_skew())
+    {
+      // Grab the list of skew comm vars (from K)
+      R = create_SkewPolynomialRing(R, newskewvars);
+    }
+  else if (K->is_weyl())
+    {
+      // Grab the Weyl lists from K, increment each number by M->n_vars().
+      R = create_WeylAlgebra(R, newcomm, newderiv, newhomogvar);
+    }
+
+  // Now re-introduce quotients, if any
+  if (K->is_quotient())
+    {
+      // Loop through each quotient element, and bump it up by M->n_vars() slots.
+      vector<ring_elem, gc_alloc> newquotients;
+      for (int i=0; i<K->quotients().size();i++)
+	{
+	  ring_elem f = R->from_coefficient(K->quotients()[i]);
+	  newquotients.push_back(f);
+	}
+      // Now create the new quotient.
+      R = create_Quotient(R, newquotients);
+    }
+
+  return R;
+}
+
+PolynomialRing *PolynomialRing::clone() const
+{
+  // This should make a copy of the poly ring, with the intent that the multipliction
+  // will change.  The ring points to the old one.
+}
+
+PolynomialRing *PolynomialRing::clone_SkewPolynomialRing(M2_arrayint skewvars) const
+{
+  if (is_skew() || is_weyl())
+    {
+      ERROR("cannot create a skew commutative polynomial ring over another non-commutative ring");
+      return 0;
+    }
+  PolynomialRing *S = clone();
+  S->initialize_skew(newvars);
+  return S;
+}
+
+PolynomialRing *PolynomialRing::clone_WeylAlgebra(M2_arrayint comm, 
+						  M2_arrayint derivs,
+						  int homog_var) const
+{
+  if (is_skew() || is_weyl())
+    {
+      ERROR("cannot create a Weyl algebra over another non-commutative ring");
+      return 0;
+    }
+  PolynomialRing *S = clone();
+  S->initialize_weyl(comm,derivs,homog_var);
+  return S;
+}
+
+// Each poly ring class should have its own normal form routine(s).
+// Informational routines: ??
+
+#endif
+
 const PolynomialRing *PolynomialRing::make_flattened_ring()
 {
   // This is called only from PolynomialRing::create.  Thus, K[M]

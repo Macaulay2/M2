@@ -20,8 +20,6 @@ public:
 
   virtual bool is_pid() const       { return false; }
   virtual bool has_gcd() const      { return false; }
-  virtual bool is_graded() const    { return _isgraded; }
-  virtual bool is_expensive() const { return true; }
 
   virtual bool is_commutative_ring() const { return false; }
   virtual bool is_solvable_algebra() const { return true; }

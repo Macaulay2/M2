@@ -31,6 +31,8 @@ protected:
   virtual ~ZZ() {}
   bool initialize_ZZ(const Monoid *D);
 public:
+  typedef mpz_ptr element_type;
+
   static ZZ * create(const Monoid *D);
 
   ZZ * cast_to_ZZ() { return this; }
@@ -41,8 +43,6 @@ public:
 
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
-  virtual bool is_graded() const    { return 1; }
-  virtual bool is_expensive() const { return 1; }
 
   virtual CoefficientType coefficient_type() const { return COEFF_ZZ; }
 
