@@ -77,16 +77,15 @@ robustNet := y -> (
 	       stderr << endl << "--error in conversion of output to string" << endl;
 	       simpleToString y)))
 Thing.Print = x -> (
-     if x =!= null then (
-     	  z := robustNet x;
-	  wrapper := lookup(symbol Wrap,class x);
-	  if wrapper =!= null then (
-	       fun := () -> z = wrapper z;
-	       try timelimit(printingTimeLimit, fun) else (
-	  	    global debugError <- fun;
-		    stderr << "--error or time limit reached in applying Wrap method to output; type 'debugError()' to see it" << endl << endl));
-	  << endl << concatenate(interpreterDepth:"o") << lineNumber << " = " << z << endl);
-     )
+     z := robustNet x;
+     wrapper := lookup(symbol Wrap,class x);
+     if wrapper =!= null then (
+	  fun := () -> z = wrapper z;
+	  try timelimit(printingTimeLimit, fun) else (
+	       global debugError <- fun;
+	       stderr << "--error or time limit reached in applying Wrap method to output; type 'debugError()' to see it" << endl << endl));
+     << endl << concatenate(interpreterDepth:"o") << lineNumber << " = " << z << endl)
+Nothing.Print = identity
 
 truncNet := (wid,ht,s) -> (
      if wid > 0 and width s > wid then (

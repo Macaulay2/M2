@@ -23,12 +23,6 @@ if firstTime then (
      ReverseDictionary = new MutableHashTable;
      PrintNames = new MutableHashTable;
      Thing.AfterEval = identity;
-     Thing.BeforePrint = identity;
-     Thing.BeforeNoPrint = identity;
-     Thing.Print = identity;
-     Thing.NoPrint = identity;
-     Thing.AfterPrint = identity;
-     Thing.AfterNoPrint = identity;
      scan(
 	  {symbol Array, symbol BasicList, symbol RRR, symbol CCC,
 		symbol Boolean, symbol CacheTable, symbol Pseudocode, symbol Database,
@@ -43,6 +37,22 @@ if firstTime then (
 
      notify = false;
 
+     slimPrompts = () -> (
+	  lastprompt := "";
+	  ZZ.InputPrompt = lineno -> concatenate(lastprompt = concatenate(interpreterDepth:"i", toString lineno, ": "));
+	  ZZ.InputContinuationPrompt = lineno -> #lastprompt;
+	  symbol currentPrompts <- slimPrompts;
+	  );
+     hush = () -> (
+	  Thing.BeforePrint = identity;
+	  Thing.BeforeNoPrint = identity;
+	  Thing.Print = identity;
+	  Thing.NoPrint = identity;
+	  Thing.AfterPrint = identity;
+	  Thing.AfterNoPrint = identity;
+	  slimPrompts();
+	  );
+     hush();
      normalPrompts = () -> (
 	  lastprompt := "";
 	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate(interpreterDepth:"i", toString lineno, " : "));
