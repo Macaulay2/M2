@@ -42,9 +42,11 @@ extern "C" {
 #include "memdebug.h"
 }
 
+#if 0
+
 void* operator new( size_t size ) {
     void *p;
-    p = GC_MALLOC( size );
+    p = GC_MALLOC_UNCOLLECTABLE( size );
     if (p == NULL) outofmem();
     return p;
 }
@@ -55,7 +57,7 @@ void operator delete( void* p ) {
 
 void* operator new[]( size_t size ) {
     void *p;
-    p = GC_MALLOC( size );
+    p = GC_MALLOC_UNCOLLECTABLE( size );
     if (p == NULL) outofmem();
     return p;
     }
@@ -63,6 +65,8 @@ void* operator new[]( size_t size ) {
 void operator delete[]( void* p ) {
     if (p != NULL) GC_FREE(p) ;
     }
+
+#endif
 
 #else
 

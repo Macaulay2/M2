@@ -18,7 +18,16 @@ char *getmem(n)
 unsigned int n;
 {
      char *p;
-     p = GC_MALLOC(n);
+     p = GC_malloc(n);
+     if (p == NULL) outofmem();
+     return p;
+     }
+
+char *getmem_atomic(n)
+unsigned int n;
+{
+     char *p;
+     p = GC_malloc_atomic(n);
      if (p == NULL) outofmem();
      return p;
      }
@@ -110,7 +119,7 @@ M2_string system_newline = &system_newline_contents;
 char *tocharstar(s)
 M2_string s;
 {
-     char *p = getmem(s->len + 1 + sizeof(int));
+     char *p = getmem_atomic(s->len + 1 + sizeof(int));
      memcpy(p,s->array,s->len);
      p[s->len] = 0;
      return p;
@@ -132,7 +141,7 @@ M2_string filename;
      char *fname = tocharstar(filename);
      int fd;
      fd = open(fname, O_BINARY | O_RDONLY);
-     GC_FREE(fname);
+     GC_free(fname);
      return fd;
      }
 
@@ -145,7 +154,7 @@ M2_string filename;
 	  , 0644
 #endif
 	  );
-     GC_FREE(fname);
+     GC_free(fname);
      return fd;
      }
 
@@ -158,7 +167,7 @@ int len;
      if (start < 0) start = 0;
      if (start + len > (int)x->len) len = x->len - start;
      if (len < 0) len = 0;
-     p = (M2_string) getmem(sizeofarray(p,len));
+     p = (M2_string) getmem_atomic(sizeofarray(p,len));
      p->len = len;
      memcpy(p->array,x->array+start,len);
      return p;
@@ -184,9 +193,9 @@ stringarray argv;
      char **av = tocharstarstar(argv);
      execvp(av[0],av);
      for (i=0; i<(int)argv->len; i++) {
-     	  GC_FREE(av[i]);
+     	  GC_free(av[i]);
 	  }
-     GC_FREE(av);
+     GC_free(av);
      return ERROR;
      }
 
@@ -194,7 +203,7 @@ M2_string tostring(s)
 char *s;
 {
      int n = strlen(s);
-     M2_string p = (M2_string)getmem(sizeofarray(p,n));
+     M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
      p->len = n;
      memcpy(p->array,s,n);
      return p;
@@ -204,7 +213,7 @@ M2_string tostringn(s,n)
 char *s;
 int n;
 {
-     M2_string p = (M2_string)getmem(sizeofarray(p,n));
+     M2_string p = (M2_string)getmem_atomic(sizeofarray(p,n));
      p->len = n;
      memcpy(p->array,s,n);
      return p;
@@ -214,7 +223,7 @@ arrayint toarrayint(n,p)
 int n;
 int *p;
 {
-     arrayint z = (arrayint)getmem(sizeofarray(z,n));
+     arrayint z = (arrayint)getmem_atomic(sizeofarray(z,n));
      z->len = n;
      memcpy(z->array,p,n * sizeof(int));
      return z;
@@ -245,7 +254,7 @@ M2_string s;
 {
      char *ss = tocharstar(s);
      char *x = getenv(ss);
-     GC_FREE(ss);
+     GC_free(ss);
      if (x == NULL) return tostring("");
      else return tostring(x);
      }
@@ -257,8 +266,8 @@ M2_string s,t;
      char *ss = tocharstar(s);
      char *tt = tocharstar(t);
      int r = strcmp(ss,tt);
-     GC_FREE(ss);
-     GC_FREE(tt);
+     GC_free(ss);
+     GC_free(tt);
      return r;
      }
 
@@ -292,13 +301,13 @@ double x;
      }
 
 M2_string system_errfmt(M2_string filename, int lineno, int colno) {
-	char *s = getmem(filename->len+strlen(posfmt)+10);
+	char *s = getmem_atomic(filename->len+strlen(posfmt)+10);
 	char *fn = tocharstar(filename);
 	M2_string ret;
 	sprintf(s,posfmt,fn,lineno,colno);
 	ret = tostring(s);
-	GC_FREE(s);
-	GC_FREE(fn);
+	GC_free(s);
+	GC_free(fn);
 	return ret;
 }
 
@@ -329,10 +338,23 @@ int offset;
 M2_string stdio_readfile(fd)
 int fd;
 {
-     char *text;
      M2_string s;
-     unsigned int size = 0, bufsize = 4096;
-     text = getmem(bufsize);
+#if 1
+     /* this version uses fstat() to get the length of the file */
+     unsigned int filesize;
+     struct stat buf;
+     if (ERROR == fstat(fd,&buf)) fatal("can't stat file descriptor %d", fd);
+     filesize = buf.st_size;
+     s = (M2_string)getmem_atomic(sizeofarray(s,filesize));
+     s->len = filesize;
+     if (filesize != read(fd,s->array,filesize)) fatal("can't read entire file, file descriptor %d", fd);
+     return s;
+#else
+     /* this version just keeps reading larger and larger blocks */
+     char *text;
+     unsigned int bufsize = 4096;
+     unsigned int size = 0;
+     text = getmem_atomic(bufsize);
      while (TRUE) {
 	  int n = read(fd,text+size,bufsize-size);
 	  if (ERROR == n) {
@@ -346,15 +368,16 @@ int fd;
 	  if (size == bufsize) {
 	       char *p;
 	       int newbufsize = 2 * bufsize;
-	       p = getmem(newbufsize);
+	       p = getmem_atomic(newbufsize);
 	       memcpy(p,text,size);
 	       bufsize = newbufsize;
 	       text = p;
 	       }
 	  }
-     s = (M2_string)getmem(sizeofarray(s,size));
+     s = (M2_string)getmem_atomic(sizeofarray(s,size));
      s->len = size;
      memcpy(s->array,text,size);
+#endif
      return s;
      }
 
@@ -363,7 +386,7 @@ M2_string x;
 M2_string y;
 {
      M2_string p;
-     p = (M2_string) getmem(sizeofarray(p,x->len+y->len));
+     p = (M2_string) getmem_atomic(sizeofarray(p,x->len+y->len));
      p->len = x->len + y->len;
      memcpy(p->array,x->array,x->len);
      memcpy(p->array+x->len,y->array,y->len);
@@ -434,8 +457,8 @@ M2_string host,serv;
      char *Host = tocharstar(host);
      char *Serv = tocharstar(serv);
      int sd = opensocket(Host,Serv);
-     GC_FREE(Host);
-     GC_FREE(Serv);
+     GC_free(Host);
+     GC_free(Serv);
      return sd;
      }
 
@@ -453,7 +476,7 @@ M2_string system_syserrmsg()
 int system_run(M2_string command){
      char *c = tocharstar(command);
      int r = system(c);
-     GC_FREE(c);
+     GC_free(c);
      return r >> 8;
      }
 
@@ -470,19 +493,19 @@ void system_atend(void (*f)()){
 
 void *GC_malloc1 (size_t size_in_bytes) {
      void *p;
-     p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
+     p = GC_malloc_uncollectable(size_in_bytes);
      if (p == NULL) outofmem();
      return p;
      }
 
 void *GC_realloc3 (void *s, size_t old, size_t new) {
-     void *p = GC_REALLOC(s,new);
+     void *p = GC_realloc(s,new);
      if (p == NULL) outofmem();
      return p;
      }
 
 void GC_free2 (void *s, size_t old) {
-     GC_FREE(s);
+     GC_free(s);
      }
 
 #else
