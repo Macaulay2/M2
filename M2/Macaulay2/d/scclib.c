@@ -304,7 +304,7 @@ int pid;
 M2_arrayint system_select(M2_arrayint v) {
   static fd_set r, w, e;
   int n = v->len;
-  int *s = v->array, *t;
+  int *s = v->array;
   int i, j, max = 0, m;
   M2_arrayint z;
   if (n == 0) return v;
