@@ -49,7 +49,7 @@ justM2 all ::; $(MAKE) -C c all
 clean ::; $(MAKE) NODEPENDS=1 -C c clean
 wc ::;  $(MAKE) -C c NODEPENDS=1 wc
 ################################# c2
-all ::; $(MAKE) NODEPENDS=1 -C c2 targettypes.h
+justM2 all ::; $(MAKE) NODEPENDS=1 -C c2 targettypes.h
 clean ::; $(MAKE) NODEPENDS=1 -C c2 clean
 ################################# e
 justM2 all ::; $(MAKE) -C e all
