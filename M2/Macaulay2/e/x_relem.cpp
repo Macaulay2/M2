@@ -160,13 +160,13 @@ const RingOrNull *IM2_Ring_localization(const Ring *R, const Matrix *Prime)
   return P->create_FractionRing(Prime);
 #endif
   /* TODO */
+#warning "implement IM2_Ring_localization"
   return 0;
 }
 
 const RingOrNull * IM2_Ring_quotient(const Ring *R, 
 				     const Matrix *I)
 {
-#warning "implement IM2_Ring_quotient"
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0) 
     {
@@ -196,21 +196,14 @@ const RingOrNull * IM2_Ring_quotient1(const Ring *R,
 /* if R is a polynomial ring of the form A[x]/J, and B = A/I (where A is a poly ring)
    then form the quotient ring B[x]/J. */
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (P == 0) 
+  const PolyRing *R1 = R->cast_to_PolyRing();
+  const PolynomialRing *B1 = B->cast_to_PolynomialRing();
+  if (R1 == 0 || B1 == 0) 
     {
       ERROR("expected a polynomial ring");
       return 0;
     }
-#if 0
-  // TODO
-  return R->create_Quotient(B);
-#endif
-
-
-#warning "implement IM2_Ring_quotient1"
-  ERROR("not implemented yet");
-  return 0;
+  return PolyRingQuotient::create(R1,B1);
 }
 
 const RingOrNull *IM2_Ring_schur(const Ring *R)
@@ -252,8 +245,13 @@ const RingOrNull *rawAmbientRing(const Ring *R)
    For example, if R = frac(ZZ[s,t]/(s^2-1))[x,y,z]/(s*x+t*y+z^2), then the returned
    ring is ZZ[s,t][x,y,z]. This routine is provided only for debugging the engine. */
 {
-#warning implement rawAmbientRing
-  return NULL;
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  return P->getAmbientRing();
 }
 
 const RingOrNull *rawDenominatorRing(const Ring *R)
@@ -261,8 +259,13 @@ const RingOrNull *rawDenominatorRing(const Ring *R)
    the ambient ring for denominators is placed into resultRing. Otherwise, false
    is returned. This routine is provided only for debugging the engine. */
 {
-#warning implement rawDenominatorRing
-  return NULL;
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  return P->getDenominatorRing();
 }
 /*********************************************************************/
 

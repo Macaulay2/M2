@@ -160,6 +160,8 @@ F2 = rawTarget m2
 F3 = rawSource m2
 F3b = rawTarget m3
 assert(F3 == F3b)
+
+end
 ----------------------------------
 -- real projective plane        --
 -- Algorithm 0                  --

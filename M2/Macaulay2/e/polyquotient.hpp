@@ -35,8 +35,21 @@ protected:
   virtual ~PolyRingQuotient();
   PolyRingQuotient() {}
 
+  static PolyRingQuotient *create(const PolyRing *R, 
+			   std::vector<Nterm *, gc_alloc> &elems);
+  // Grabs 'elems'.  Each element of 'elems' should be in the ring R.
+  // They should also form a GB.
+
 public:
+
   static PolyRingQuotient *create(const PolyRing *R, const Matrix *M);
+
+  static PolyRingQuotient *create(const PolyRing *R, 
+				  const PolynomialRing *B);
+  // R should be an ambient poly ring
+  // B should have: ambient of B is the logical coeff ring of R
+  //   i.e. R = A[x], B = A/I
+  // return A[x]/I.
 
   Matrix * getPresentation() const;
 
