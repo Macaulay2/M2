@@ -30,6 +30,21 @@ if firstTime then (
 		symbol Time, symbol Type, symbol VisibleList, symbol ZZ},
 	  s -> ReverseDictionary#(value s) = s		    -- get an early start for debugging
 	  );
+
+     use = identity;				  -- just temporary, until methods.m2
+     globalAssignFunction = (X,x) -> (
+	  ReverseDictionary#x = X;
+	  use x;
+	  );
+     globalReleaseFunction = (X,x) -> remove(ReverseDictionary,x);
+     scan(
+	  {Type,Function},
+	  X -> (
+	       X.GlobalAssignHook = globalAssignFunction; 
+	       X.GlobalReleaseHook = globalReleaseFunction;
+	       )
+	  );
+
      notify = false;
 
      normalPrompts = () -> (

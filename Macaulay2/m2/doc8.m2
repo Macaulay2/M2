@@ -1334,11 +1334,6 @@ document { (map,Ring,Ring,List),
      SEEALSO {(map,Ring,Ring,Matrix)}
      }
 
-document { symbol "sub",
-     Headline => "substitute values for variables",
-     TT "sub", " -- a synonym for ", TO "substitute", "."
-     }
-
 document { substitute,
      Headline => "substitute values for variables",
      TT "substitute(f,v)", " -- substitute values for the variables in the matrix,

@@ -44,23 +44,6 @@ toString Dictionary := d -> (
      if length d == 0 then "Dictionary{}" else "Dictionary{..." | toString length d | "...}"
      )
 
-globalAssignFunction = (X,x) -> (
-     ReverseDictionary#x = X;
-     use x;
-     )
-
-globalReleaseFunction = (X,x) -> (
-     remove(ReverseDictionary,x);
-     )
-
-scan(
-     {Type,ScriptedFunctor,Function,Command,Manipulator}, 
-     X -> (
-	  X.GlobalAssignHook = globalAssignFunction; 
-	  X.GlobalReleaseHook = globalReleaseFunction;
-	  )
-     )
-
 installMethod(GlobalAssignHook,Package,globalAssignFunction)
 installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 
@@ -204,12 +187,6 @@ popDictionary = d -> (
      if d =!= first globalDictionaries then error "expected argument to be current dictionary";
      globalDictionaries = drop(globalDictionaries,1);
      d)
-
-dictionary = method()
-dictionary Symbol := s -> (				    -- eventually every symbol will know what dictionary it's in, perhaps
-     n := toString s;
-     scan(globalDictionaries, d -> if d#?n and d#n === s then break d))
-dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictionary#x
 
 package = method ()
 package Dictionary := d -> (

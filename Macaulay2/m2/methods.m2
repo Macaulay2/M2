@@ -118,7 +118,7 @@ setup := (args, symbols) -> (
 setup((), { 
 	  entries, borel, prune, gcdCoefficients, singularLocus,
 	  Hom, diff, diff', contract, contract', subsets, partitions, member,
-	  koszul, symmetricPower, basis, coefficientRing, trace,
+	  koszul, symmetricPower, basis, coefficientRing, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
 	  dual, cokernel, coimage, image, generators, allGenerators, someTerms, scanKeys, scanValues,
 	  summary, substitute, rank, complete, ambient, top, baseName,
@@ -131,12 +131,13 @@ setup((), {
 	  truncate, fraction
 	  })
 
+use Thing := identity
+
 status = method (Options => new OptionTable from {
      	  TotalPairs => true,
      	  PairsRemaining => false,
      	  Monomials => false
      	  })
-
 
 mopts := Options => {
      Degree => null,					    -- for use with matrices
@@ -156,9 +157,6 @@ setup(TypicalValue => ZZ,
      {length,codim,binomial,degreeLength,height,char,pdim,dim,depth,width,regularity,genus})
 setup(TypicalValue => List,
      {euler, genera})
-
-
-use Thing := identity
 
 use HashTable := x -> (
      if x.?use then x.use x; 
@@ -227,21 +225,19 @@ oldflatten := flatten
 erase symbol flatten
 flatten = method(SingleArgumentDispatch=>true)
 flatten VisibleList := VisibleList => oldflatten
-coker = cokernel
 
-source = method()
--- source Thing := (h) -> (
---      if h#?(symbol source) then h.source
---      else if (class h)#?(symbol source) then (class h)#?(symbol source)
---      else error ( toString h, " of class ", toString class h, " has no source" ))
+-----------------------------------------------------------------------------
 
-target = method()
--- target Thing := (h) -> (
---      if h.?target then h.target
---      else if (class h)#?(symbol target) then (class h)#?(symbol target)
---      else error (toString h | " of class " | toString class h | " has no target"))
+dictionary = method()
+dictionary Symbol := s -> (				    -- eventually every symbol will know what dictionary it's in, perhaps
+     n := toString s;
+     scan(globalDictionaries, d -> if d#?n and d#n === s then break d))
+dictionary Thing := x -> if ReverseDictionary#?x then dictionary ReverseDictionary#x
 
-gens = generators
+addSynonym = method()
+addSynonym(Symbol,String) := (X,nam) -> (dictionary X)#nam = X
+
+{(symbol cokernel, "coker"), (symbol kernel, "ker"), (symbol substitute, "sub"), (symbol resolution, "res")} / addSynonym
 
 -----------------------------------------------------------------------------
 oldvalue := value
