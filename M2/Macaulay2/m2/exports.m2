@@ -161,7 +161,6 @@ export (
 	symbol benchmark,
 	symbol betti,
 	symbol between,
-	symbol BIG,
 	symbol BigCC,
 	symbol BigRR,
 	symbol BinaryOperation,

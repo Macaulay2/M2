@@ -1190,14 +1190,14 @@ use Entity := x -> if x.?use then x.use x else x
 
 RightArrow = Entity {
      symbol texMath => ///\rightarrow{}///,
-     symbol html    => ///<img src="RightArrow.gif">///,
+     symbol html    => ///<img src="RightArrow.gif"/>///,
      symbol net     => "--->",
      symbol symbol  => symbol RightArrow
      }
 
 DownArrow = Entity {
      symbol texMath => ///\downarrow{}///,
-     symbol html    => ///<img src="DownArrow.gif">///,
+     symbol html    => ///<img src="DownArrow.gif"/>///,
      symbol net     => "|" || "|" || "V",
      symbol symbol  => symbol DownArrow
      }

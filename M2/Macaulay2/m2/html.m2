@@ -43,8 +43,8 @@ htmlFilename DocumentTag := tag -> (
      if pkg === null then toFilename fkey|".html"
      else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
 
-html IMG  := x -> concatenate("<img src=\"", rel first x, "\">")
-html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), ">",newline)
+html IMG  := x -> concatenate("<img src=\"", rel first x, "\"/>")
+html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), "/>",newline)
 html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
 tex  HREF := x -> concatenate("\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</a>}")
 html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
@@ -92,11 +92,14 @@ BUTTON := (s,alt) -> (
      s = rel s;
      if alt === null
      then error "required attribute: ALT"
-     else LITERAL concatenate("<img class=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
+     else LITERAL concatenate("<img src=\"",s,"\" alt=\"[", alt, "]\"/>\n")
      )
 
-encoding := ///<?xml version="1.0" encoding="us-ascii"?>///
-doctype := ///<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">///
+html HTML := t -> concatenate(
+     "<?xml version=\"1.0\" encoding=\"us-ascii\"?>", newline,
+     "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN\" \"http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd\" >", newline,
+     "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">", apply(t,html), "</html>",newline
+     )
 
 -- validate := LITERAL ///
 -- <a href="http://validator.w3.org/check/referer">Validate</a> the html on this page, or <a href="http://jigsaw.w3.org/css-validator/check/referer">validate</a> the css on this page.
@@ -106,29 +109,29 @@ doctype := ///<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.o
 
 buttonBar := (tag) -> ButtonTABLE {{ 
 	  LITERAL concatenate (///
-	       <form class="search" action="///,					    -- "
+	       <form action="///,					    -- "
 	       if getenv "SEARCHENGINE" === "" then "http://rhenium.math.uiuc.edu:7003/" else getenv "SEARCHENGINE",
 	       ///">
 	       <p>
 	       <label title="Macaulay2 term to search for">Search: 
-	         <input type="text" name="words">
+	         <input type="text" name="words"/>
 	       </label>
-	       <input type="hidden" name="method"   value="boolean">
-	       <input type="hidden" name="format"   value="builtin-short">
-	       <input type="hidden" name="sort"     value="score">
-	       <input type="hidden" name="config"   value="htdig-M2">
+	       <input type="hidden" name="method"   value="boolean"/>
+	       <input type="hidden" name="format"   value="builtin-short"/>
+	       <input type="hidden" name="sort"     value="score"/>
+	       <input type="hidden" name="config"   value="htdig-M2"/>
 	       </p>
 	       </form>
 	       ///),						    -- "
 
 	  SEQ {
-	       LITERAL "<p class=\"buttonbar\">",
+	       LITERAL "<div class=\"buttonbar\">",
 	       next tag, prev tag, up tag,
      	       if tag =!= topDocumentTag then topNodeButton else nullButton,
      	       masterIndexButton,
      	       tocButton,
      	       homeButton,
-     	       LITERAL "</p>"
+     	       LITERAL "</div>"
 
 	       }}}
 
@@ -312,8 +315,6 @@ makeMasterIndex := keylist -> (
      title := "Symbol Index";
      << "--making  '" << title << "' in " << fn << endl;
      fn
-     << encoding << endl
-     << doctype << endl     
      << html HTML {
 	  HEAD { TITLE title, links() },
 	  BODY {
@@ -333,8 +334,6 @@ makeTableOfContents := () -> (
      title := DocumentTag.FormattedKey topDocumentTag | " : Table of Contents";
      << "--making  '" << title << "' in " << fn << endl;
      fn
-     << encoding << endl
-     << doctype << endl     
      << html HTML {
 	  HEAD { TITLE title, links() },
 	  BODY {
@@ -656,8 +655,6 @@ installPackage Package := o -> pkg -> (
 	  if fileExists fn and rawDocUnchanged#?fkey then return;
 	  stderr << "--making html page for " << tag << endl;
 	  fn
-	  << encoding << endl
-	  << doctype << endl
 	  << html HTML { 
 	       HEAD {
 		    TITLE {fkey, commentize headline key},
@@ -665,7 +662,7 @@ installPackage Package := o -> pkg -> (
 		    },
 	       BODY { 
 		    buttonBar tag,
-		    if UP#?tag then SEQ between(" > ", apply(upAncestors tag, i -> TO i)),
+		    if UP#?tag then DIV between(" > ", apply(upAncestors tag, i -> TO i)),
 		    HR{}, 
 		    getPDoc fkey
 		    }
@@ -713,8 +710,6 @@ makePackageIndex String := prefixDirectory -> (
      key := "package index";
      tag := makeDocumentTag key;
      p | "index.html"
-     << encoding << endl
-     << doctype << endl
      << html HTML { 
 	  HEAD {
 	       TITLE {key, commentize headline key},

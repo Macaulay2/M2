@@ -288,10 +288,15 @@ fixflat := z -> splice apply(z, i -> flat fixup i)
 
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
 fixup MarkUpListParagraph := z -> splice apply(z,fixup)
+fixup PARA := z -> (
+     z = splice apply(z,fixup);
+     if any(z,i -> class i === PARA) then error "can't have PARA inside PARA";
+     if any(z,i -> class i === EXAMPLE) then error "can't have EXAMPLE inside PARA";
+     z)
 fixup MarkUpList := x -> (
      x = splice apply(x, fixup);
      if any(toSequence x, i -> instance(i, MarkUpListParagraph))
-     then PARA sublists( x, i -> instance(i,MarkUpListParagraph), identity, i -> PARA i)
+     then DIV sublists( x, i -> instance(i,MarkUpListParagraph), identity, i -> DIV i)
      else fixflat x)
 fixup Nothing    := x -> ()				       -- so it will get removed by splice later
 fixup BR         := identity
@@ -453,7 +458,7 @@ fixupTable := new HashTable from {
      FileName => chkIsString FileName,
      Headline => chkIsString Headline,
      Description => val -> extractExamples hypertext val,
-     Caveat => v -> if v =!= null then fixup PARA { SUBSECTION "Caveat", SEQ v },
+     Caveat => v -> if v =!= null then fixup DIV { SUBSECTION "Caveat", SEQ v },
      SeeAlso => v -> if v =!= {} and v =!= null then fixup PARA { SUBSECTION "See also", UL (TO \ enlist v) },
      Subnodes => v -> MENU apply(nonNull enlist v, x -> fixup (
 	       if class x === TO then x
@@ -583,8 +588,8 @@ makeDocBody Thing := key -> (
 	  if docBody =!= null and #docBody > 0 then (
 	       docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
-	       then PARA {docBody}
-	       else SEQ { SUBSECTION "Description", PARA {docBody} })))
+	       then DIV {docBody}
+	       else SEQ { SUBSECTION "Description", DIV {docBody} })))
 
 title := s -> (
      h := headline s;
@@ -593,7 +598,7 @@ title := s -> (
 type := S -> fixup (
      s := value S;
      if class s =!= Function then (
-	  PARA deepSplice { "The object ", TO S, " is ", OFCLASS class s,
+	  DIV deepSplice { "The object ", TO S, " is ", OFCLASS class s,
 	       if parent s =!= Nothing then (
 		    f := (T -> while T =!= Thing list parent T do T = parent T) s;
 		    (
@@ -752,7 +757,7 @@ briefSynopsis := key -> (
 
 synopsis := key -> (
      s := briefSynopsis key;
-     if s =!= null then PARA { SUBSECTION "Synopsis", s })
+     if s =!= null then DIV { SUBSECTION "Synopsis", s })
 
 documentableMethods := s -> select(methods s,isDocumentableMethod)
 
@@ -794,7 +799,7 @@ operator := set join(binaryOperators, prefixOperators, postfixOperators)
 op := s -> if operator#?s then (
      ss := toString s;
      fixup SEQ {
-	  if binary#?s then PARA {
+	  if binary#?s then DIV {
 	       "This operator may be used as a binary operator in an expression \n",
 	       "like ", TT ("x"|ss|"y"), ".  The user may install ", TO "binary methods", " \n",
 	       "for handling such expressions with code such as ",
@@ -804,14 +809,14 @@ op := s -> if operator#?s then (
 	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the \n",
 	       "class of ", TT "y", "."
 	       },
-	  if prefix#?s then PARA {
+	  if prefix#?s then DIV {
 	       "This operator may be used as a prefix unary operator in an expression \n",
 	       "like ", TT (ss|"y"), ".  The user may install a method for handling \n",
 	       "such expressions with code such as \n",
 	       PRE ("           "|ss|" Y := (y) -> ..."),
 	       "where ", TT "Y", " is the class of ", TT "y", "."
 	       },
-	  if postfix#?s then PARA {
+	  if postfix#?s then DIV {
 	       "This operator may be used as a postfix unary operator in an expression \n",
 	       "like ", TT ("x "|ss), ".  The user may install a method for handling \n",
 	       "such expressions with code such as \n",
@@ -825,7 +830,7 @@ optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f
 
 ret := k -> (
      t := typicalValue k;
-     if t =!= Thing then fixup PARA {"Class of returned value: ", TO t, commentize headline t}
+     if t =!= Thing then fixup DIV {"Class of returned value: ", TO t, commentize headline t}
      )
 seecode := x -> (
      f := lookup x;
@@ -845,13 +850,13 @@ documentationValue(Symbol,Type) := (s,X) -> (
      c := select(documentableMethods X, key -> not typicalValues#?key or typicalValues#key =!= X);
      e := toString \ select(syms, y -> not mutable y and class value y === X);
      splice (
-	  if #b > 0 then ( PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b),
-	  if #a > 0 then ( PARA {"Functions and methods returning ", indefinite synonym X, " :"}, smenu a ),
-	  if #c > 0 then ( PARA {"Additional methods, which use ", indefinite synonym X, " :"}, smenu c),
-	  if #e > 0 then ( PARA {"Fixed objects of class ", toString X, " :"}, smenu e)))
+	  if #b > 0 then ( DIV {"Types of ", if X.?synonym then X.synonym else toString X, " :"}, smenu b),
+	  if #a > 0 then ( DIV {"Functions and methods returning ", indefinite synonym X, " :"}, smenu a ),
+	  if #c > 0 then ( DIV {"Additional methods, which use ", indefinite synonym X, " :"}, smenu c),
+	  if #e > 0 then ( DIV {"Fixed objects of class ", toString X, " :"}, smenu e)))
 documentationValue(Symbol,HashTable) := (s,x) -> splice (
      c := documentableMethods x;
-     if #c > 0 then (PARA {"Functions installed in ", toString x, " :"}, smenu c))
+     if #c > 0 then (DIV {"Functions installed in ", toString x, " :"}, smenu c))
 documentationValue(Symbol,Thing) := (s,x) -> ()
 documentationValue(Symbol,Package) := (s,pkg) -> (
      e := toSequence pkg#"exported symbols";
@@ -879,8 +884,8 @@ documentation Symbol := S -> (
      a := apply(select(optionFor S,f -> isDocumentableMethod f), f -> [f,S]);
      b := documentableMethods S;
      Hypertext fixuptop ( title S, synopsis S, makeDocBody S, op S,
-	  if #a > 0 then (PARA {"Functions with optional argument named ", toExternalString S, " :"}, smenu a),
-	  if #b > 0 then (PARA {"Methods for ", toExternalString S, " :"}, smenu b),
+	  if #a > 0 then (DIV {"Functions with optional argument named ", toExternalString S, " :"}, smenu a),
+	  if #b > 0 then (DIV {"Methods for ", toExternalString S, " :"}, smenu b),
      	  documentationValue(S,value S),
 	  type S, theExamples S, caveat S, seealso S, theMenu S ))
 
@@ -892,12 +897,12 @@ documentation Array := key -> (		    -- optional argument
      if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
      default := (options fn)#opt;
      Hypertext fixuptop ( title key, synopsis key, makeDocBody key,
-	  PARA BOLD "Further information", 
-	  fixup UL {
-	       SEQ{ "Default value: ", if hasDocumentation default then TO {default} else TT toString default },
-	       SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
-	       SEQ{ "Option name: ", TOH {opt} }
-	       },
+	  DIV { BOLD "Further information", 
+	       fixup UL {
+	       	    SEQ{ "Default value: ", if hasDocumentation default then TO {default} else TT toString default },
+	       	    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH {fn} },
+	       	    SEQ{ "Option name: ", TOH {opt} }
+	       	    }},
 	  theExamples key, caveat key, seealso key, theMenu key ))
 
 documentation Sequence := key -> (						    -- method key

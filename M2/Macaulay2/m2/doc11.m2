@@ -340,21 +340,6 @@ document {
      }
 
 document {
-     Key => BIG,
-     Headline => "HTML BIG item",
-     TT "BIG x", " -- encloses ", TT "x", " in a hypertext BIG item.",
-     PARA,
-     "The argument ", TT "x", " should be a string, or a list or sequence of
-     strings or hypertext items.",
-     PARA,
-     "Here is an example.",
-     PARA,
-     BIG "Here is some big text.",
-     PARA,
-     SeeAlso => "hypertext"
-     }
-
-document {
      Key => SMALL,
      Headline => "HTML SMALL item",
      TT "SMALL x", " -- encloses ", TT "x", " in a hypertext SMALL item.",
