@@ -11,9 +11,18 @@ LINALGGB_FILES := MonomialOps Monomials MonomialSet MonomialTable SPairSet monom
 
 LINALGGB_OBJECT_FILES :=  $(addsuffix .o, $(LINALGGB_FILES))
 
-all :: $(LINALGGB_OBJECT_FILES) place_into_lib #check_it
-place_into_lib : $(LINALGGB_OBJECT_FILES); $(AR) rcs ../$(LIBGB) $^
+all :: ../$(LIBGB) #check_it
+../$(LIBGB) : $(LINALGGB_OBJECT_FILES); $(AR) rcs ../$(LIBGB) $?
 check_it : $(LINALGGB_OBJECT_FILES) check_it.o
 	gcc -o check_it check_it.o $(LINALGGB_OBJECT_FILES) -L/sw/lib -lgc
 
 %.s : %.c; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
+
+Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/e/linalgGB/Makefile
+clean :; rm -f *.o
+distclean: clean; rm -f Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "
+# End:
+

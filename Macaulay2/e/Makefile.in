@@ -239,7 +239,7 @@ dups-okay: dups-tmp
 	 else touch $@; fi
 clean check::; $(MAKE) -C check $@
 doxygen : ; cd @srcdir@ && doxygen
-$(LIBGB): $(OFILES); $(AR) rcs $@ $^
+$(LIBGB): $(OFILES); $(AR) rcs $@ $?
 distclean: clean; rm -f Makefile
 
 all:: check-global-new-delete
@@ -248,7 +248,6 @@ check-global-new-delete : $(OBJFILES) ; nm -o --demangle $^ | egrep 'U operator 
 initialize :: statuscodes.h
 statuscodes.h : statuscodes
 	sed 's/\(.*\):\(.*\):\(.*\)/  \2 = \1,/' <$< >$@
-
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
