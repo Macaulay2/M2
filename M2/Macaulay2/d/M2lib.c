@@ -218,9 +218,9 @@ M2_bool actors5_DUMPDATA;
 M2_bool actors5_FACTORY;
 M2_bool actors5_MP;
 
-stringarray system_envp;
-stringarray system_argv;
-stringarray system_args;
+M2_stringarray system_envp;
+M2_stringarray system_argv;
+M2_stringarray system_args;
 int system_reloaded;
 
 int system_randomint() {
@@ -1085,7 +1085,7 @@ static void close_all_links() {
 static MP_Env_pt MP_env;
 
 int mp_OpenLink(args) 
-stringarray args;
+M2_stringarray args;
 {
      int link_handle;
      char **argv;
@@ -1314,7 +1314,7 @@ static void close_all_links() {
      }
 
 int mp_OpenLink(args) 
-stringarray args;
+M2_stringarray args;
 {
      return ERROR;
      }

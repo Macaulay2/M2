@@ -36,6 +36,7 @@ import strcmp(s:string,t:string):int;
 import gc:bool;
 import randomint():int;
 import wait(pid:int):int;
+import select(s:array(int)):array(int);
 import hash(x:double):int;
 import getcwd():string;
 import dumpdata(filename:string):int;

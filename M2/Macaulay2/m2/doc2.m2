@@ -473,14 +473,20 @@ document { quote ceiling,
      }
 
 document { quote run,
-     TT "run s", " -- runs the command string s by passing it to the operating system.",
+     TT "run s", " -- runs the command string ", TT "s", " by passing it to the operating system.",
      PARA,
      "The return value is the exit status of the command."
      }
 
 document { quote wait,
      TT "wait i", " -- wait for the completion of child process with process id
-     ", TT "i", "."
+     ", TT "i", ".",
+     BR,NOINDENT,
+     TT "wait f", " -- wait for the input file to have some input ready.",
+     BR,NOINDENT,
+     TT "wait s", " -- wait for at least one of the files in the list 
+     ", TT "s", " of input files to be ready, and return the list of positions
+     corresponding to ready files."
      }
 
 document { quote value,

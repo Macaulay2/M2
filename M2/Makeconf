@@ -81,7 +81,7 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# VERBOSE     := TRUE' >>$@
 	echo 'GCMALLOC    := TRUE' >>$@
 	echo '# NODUMPDATA  := TRUE' >>$@
-	echo '# NOMP        := TRUE' >>$@
+	echo 'NOMP        := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
 	echo '# SOCKS       := TRUE' >>$@
 	echo 'CC            := gcc' >>$@

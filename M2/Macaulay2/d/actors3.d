@@ -474,16 +474,6 @@ run(e:Expr):Expr := (
      );
 setupfun("run",run);
 
-waitf(e:Expr):Expr := (
-     when e
-     is x:Integer do (
-	  if isInt(x) then Expr(toInteger(wait(toInt(x))))
-	  else WrongArgSmallInteger()
-	  )
-     else WrongArgInteger()
-     );
-setupfun("wait",waitf);
-
 sqrt(a:Expr):Expr := (
      when a
      is x:Real do Expr(Real(sqrt(x.v)))

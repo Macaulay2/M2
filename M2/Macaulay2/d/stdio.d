@@ -281,7 +281,7 @@ export closeListener(o:file):int := (
      if haderror then ERROR else 0);
 export closeIn(o:file):int := (
      if o.infd == NOFD then return(ERROR);
-     if o == stdin && o.inisatty then return(ERROR);
+     if o == stdin then return(0);			    -- silently refuse to close stdin
      if o.input then flushinput(o);
      haderror := false;
      haderror = haderror || o.infd != o.outfd && close(o.infd) == ERROR;

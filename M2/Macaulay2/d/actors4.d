@@ -564,6 +564,56 @@ atEOFfun(e:Expr):Expr := (
      else WrongArg("a file"));
 setupfun("atEndOfFile",atEOFfun);
 
+allInputFiles(s:Sequence):bool := (
+     foreach f in s do (
+     	  when f is g:file do ( if !g.input then return(false); )
+     	  else return(false);
+	  );
+     true);
+numberReadyOnes(s:Sequence):int := (
+     n := 0;
+     foreach f in s do (
+     	  when f is g:file do ( if g.insize > g.inindex then n = n+1; )
+     	  else nothing;
+	  );
+     n);
+readyOnes(s:Sequence):array(int) := (
+     new array(int) len numberReadyOnes(s) do
+     foreach f at i in s do
+     when f is g:file do ( if g.insize > g.inindex then provide i; )
+     else nothing
+     );
+fdlist(s:Sequence):array(int) := (
+     new array(int) len length(s) do
+     foreach f in s do 
+     when f is g:file do provide g.infd else nothing
+     );
+wait(s:Sequence):Expr := (
+     if !allInputFiles(s) then WrongArg("an input file or list of input files")
+     else if numberReadyOnes(s) > 0 then list(toArrayExpr(readyOnes(s)))
+     else list(toArrayExpr(select(fdlist(s))))
+     );
+wait(f:file):Expr := (
+     if !f.input then WrongArg("an input file or list of input files")
+     else if f.insize > f.inindex then nullE
+     else ( filbuf(f); nullE ));
+wait(e:Expr):Expr := (
+     when e
+     is f:List do wait(f.v)
+     is f:file do wait(f)
+     is x:Integer do (
+	  if isInt(x) then (
+	       ret := wait(toInt(x));
+	       if ret == ERROR 
+	       then errorExpr("wait failed")
+	       else Expr(toInteger(ret))
+	       )
+	  else WrongArgSmallInteger()
+	  )
+     else WrongArg("an integer, or an input file or list of input files")
+     );
+setupfun("wait",wait);
+
 tokenbuf := newvarstring(100);
 getline(o:file):string := (
      ch := 0;
@@ -756,7 +806,7 @@ tostringfun(e:Expr):Expr := (
 	  else if f == stdin then "stdin"
 	  else if f == stdout then "stdout"
 	  else if f == stderr then "stderr"
-	  else if f.listener then "--listener "+f.filename+" [" + tostring(f.numconns) + "]--"
+	  else if f.listener then "--listener "+f.filename + "--"
 	  else if f.numconns == 0 then (
 	       if f.input && f.output then "--input output file "+f.filename+"--"
 	       else if f.input then "--input file "+f.filename+"--"

@@ -302,7 +302,7 @@ all:: TAGS
 
 TAGS: Makefile
 	@ echo making TAGS
-	@ $(UTIL)echoout -r2 '>TAGS' $(foreach i, $(SRCFILES),  $(i),0)
+	@ $(UTIL)echoout -r2 '>TAGS' $(foreach i, $(SRCFILES) M2lib.c types.h,  $(i),0)
 allfiles: Makefile
 	@ echo making allfiles
 	@ $(UTIL)echoout '>allfiles.tmp' $(ALLFILES)

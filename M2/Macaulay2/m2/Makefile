@@ -1,3 +1,5 @@
+default : phase1
+
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
