@@ -7,7 +7,7 @@
 
 extern void outofmem();
 
-void trap(){}
+void trap(void) {}
 
 void
 #if defined(__STDC__) || defined(_WIN32) && !defined(__CYGWIN32__)
@@ -88,7 +88,7 @@ int system_write(int fd, M2_string buffer, int len){
      return write(fd,buffer->array,len);
      }
 
-int system_getpid() {
+int system_getpid(void) {
   return getpid();
 }
 
@@ -159,7 +159,7 @@ M2_string system_tostringn(char const *s, int n)
      return p;
      }
 
-int actors5_sizeofDouble() { return sizeof(double); }
+int actors5_sizeofDouble(void) { return sizeof(double); }
 
 double actors5_convertnettodouble(M2_string p,int pos) {
   double x;
@@ -405,7 +405,7 @@ static char **M2_completion(const char *text, int start, int end) {
 }
 
 
-void init_readline_variables() {
+void init_readline_variables(void) {
   extern char *_rl_comment_begin;
   _rl_comment_begin = "-- ";
   rl_readline_name = "M2";
@@ -445,7 +445,7 @@ int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
   return r;
 }
 
-M2_stringarray system_history() {
+M2_stringarray system_history(void) {
   M2_stringarray a;
   HIST_ENTRY **h = history_list();
   int i,n;
@@ -748,7 +748,7 @@ extern const char * const h_errlist[];
 extern const char * const sys_errlist[];
 #endif
 
-int system_errno() {
+int system_errno(void) {
   return 
 #ifndef NO_HERROR
     h_errno > 0 ? h_errno : 
@@ -756,7 +756,7 @@ int system_errno() {
     errno;
 }
 
-char const *system_strerror() {
+char const *system_strerror(void) {
      char const *msg =
 #ifndef NO_HERROR
      h_errno > 0 && h_errno < h_nerr ? h_errlist[h_errno] : 

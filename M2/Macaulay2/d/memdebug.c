@@ -80,7 +80,7 @@ void* debug_new_atomic(size_t size) {
      return p;
      }
 
-static void volatile smashed() {
+static void volatile smashed(void) {
      fprintf(stderr,"smashed object found\n");
      trap();
      _exit(1);
