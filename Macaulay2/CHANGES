@@ -3,6 +3,14 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+The degrees rings (used for return values from 'hilbertSeries' and
+'poincare') now have a new monomial order : RevLex.  This way, polynomials
+are displayed with the powers of t in increasing order, which is the usual
+way for a Hilbert series to be displayed.  Similarly, in a RevLex polynomial
+ring with inverses and nonzero degrees length, division and remainder now
+works, at least on polynomials involving just one of the variables.  The
+division algorithm is one that makes k[t,t^-1] a Euclidean domain.
+
 'monomialCurve' has been renamed to 'monomialCurveIdeal'
 
 Oops, found a long standing bug : when a quotient module M/N was constructed,

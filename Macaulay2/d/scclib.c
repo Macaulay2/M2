@@ -456,7 +456,7 @@ int fd;
      M2_string s;
      unsigned int filesize;
      struct stat buf;
-     if (ERROR == fstat(fd,&buf) || !S_ISREG(buf.st_mode)) {
+     if (ERROR == fstat(fd,&buf) || !S_ISREG(buf.st_mode) || 0 == buf.st_size) {
        char *text;
        unsigned int bufsize = 1024;
        unsigned int size = 0;
