@@ -5,7 +5,7 @@
 
 #include "hash.hpp"
 
-extern "C" char system_interrupted;
+extern char system_interrupted;
 extern int gbTrace;
 
 

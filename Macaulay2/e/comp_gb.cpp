@@ -10,7 +10,7 @@
 #include "hermite.hpp"
 #include "gbA.hpp"
 
-Computation::~Computation()
+GBComputation::~GBComputation()
 {
 }
 

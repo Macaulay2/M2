@@ -3,8 +3,8 @@
 #ifndef _computation_hpp_
 #define _computation_hpp_
 
-extern "C" char system_interrupted;
-extern "C" int gbTrace;
+extern char system_interrupted;
+extern int gbTrace;
 
 #include "engine.h"
 /* engine.h includes definitions of the stop conditions
