@@ -4,7 +4,7 @@ exportMutable (
      	symbol homeDirectory,
         symbol GF$a,
         symbol packageSuffix,
-        symbol packagePrefixPath,
+        symbol packagePath,
 	symbol backtrace,
 	symbol backupFileRegexp,
 	symbol buildHomeDirectory,

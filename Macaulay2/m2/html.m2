@@ -386,7 +386,7 @@ runFile := (inf,outf,tmpf,desc,pkg,announcechange,rundir) -> (
 	  ldpkg := "-e 'needsPackage \""|toString pkg|"\"'";
 	  args := "--silent --print-width 80 --stop --int -e errorDepth=0 -q" | " " | ldpkg;
 	  cmdname := commandLine#0;
-	  cmd := ulimit | "; cd " | rundir | "; " | cmdname | " " | args | " <" | inf | " >" | tmpf | " 2>&1";
+	  cmd := ulimit | "; cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >" | format tmpf | " 2>&1";
 	  stderr << cmd << endl;
 	  r := run cmd;
 	  if r == 0 then (
@@ -909,8 +909,8 @@ Michael R. Stillman <mike@math.cornell.edu>
      dir)
 
 makePackageIndex = method(SingleArgumentDispatch => true)
-makePackageIndex Sequence := () -> makePackageIndex packagePrefixPath
-makePackageIndex List := packagePrefixPath -> (
+makePackageIndex Sequence := () -> makePackageIndex packagePath
+makePackageIndex List := packagePath -> (
      absoluteLinks = true;
      key := "package index";
      fn := userMacaulay2Directory() | "index.html";
@@ -923,7 +923,7 @@ makePackageIndex List := packagePrefixPath -> (
 	  BODY { 
 	       -- buttonBar tag, HR{},
 	       PARA BOLD "Index of installed packages:",
-	       UL apply(packagePrefixPath, prefixDirectory -> (
+	       UL apply(packagePath, prefixDirectory -> (
 			 p := prefixDirectory | LAYOUT#"docm2";
 			 if isDirectory p then (
 			      r := readDirectory p;
