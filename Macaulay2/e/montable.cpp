@@ -1,6 +1,7 @@
 #include "montable.hpp"
 #include <functional>
 #include <algorithm>
+#include <assert.h>
 
 /********************/
 /* Support routines */
