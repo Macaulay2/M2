@@ -48,7 +48,7 @@ map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (
      if o.Degree =!= null then error "Degree option given with indeterminate source module";
-     f := rawMatrixRemake1(raw target p, rawMatrixColumns raw p);
+     f := rawMatrixRemake1(raw target p, raw p,false);
      newMatrix(M, newModule(ring source p, rawSource f), f)
      )
 
