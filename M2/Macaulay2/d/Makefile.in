@@ -220,7 +220,7 @@ startup.c : ../m2/startup.m2
 	 echo "    \"$$dir/startup.m2\";"; \
 	 echo ; \
 	 echo 'char startupString[] ='; \
-	 sed -e 's/\\/\\\\/' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'  ; \
+	 sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'  ; \
 	 echo ';' \
         ) <$^ >$@ 
 

@@ -95,9 +95,15 @@ nobanner := false;
 nosetup := false
 interpreter := topLevel
 
-exe := commandLine#0; while readlink exe =!= null do exe = minimizeFilename(exe|"/../"|readlink exe)
-     	  -- look at realpath(3), which does even more
-	  -- how standard is it?
+exe := commandLine#0
+    if fileExists exe then (
+	 while readlink exe =!= null do exe = minimizeFilename(exe|"/../"|readlink exe);
+	 -- look at realpath(3), which does even more
+	 -- how standard is it?
+    ) else (
+	 stderr << "warning: argv[0] = \"" << exe << "\" : file does not exist" << newline;
+	 simpleFlush stderr;
+	 )  
 
 progname := notdir exe
 buildHomeDirectory = minimizeFilename(exe|"/../../");
