@@ -30,6 +30,7 @@ LDFLAGS =  -g -L/capybara/lib
 benchmark : factor factor.poly
 	time ./factor < @srcdir@/factor.poly | tee factor.out
 	fgrep -s '( (x^2-y*x-13*z^2*x+y^4+z^7+12)^3, (x+3*y-14)^15 )' factor.out >/dev/null
+factor.o factor-init.o : factor.h
 factor : factor.o factor-init.o factor-init1.o 
 	$(CXX) $(LDFLAGS) factor.o factor-init.o -lcf -lntl -lgmp -lgc -lm factor-init1.o -o "$@"
 
