@@ -95,22 +95,46 @@ nobanner := false;
 nosetup := false
 interpreter := topLevel
 
-exe := commandLine#0
-    if fileExists exe then (
-	 while readlink exe =!= null do exe = minimizeFilename(exe|"/../"|readlink exe);
-	 -- look at realpath(3), which does even more
-	 -- how standard is it?
-    ) else (
-	 stderr << "warning: argv[0] = \"" << exe << "\" : file does not exist" << newline;
-	 simpleFlush stderr;
-	 )  
+isAbsoluteExecPath = filename -> match("/", filename)
+
+isAbsolutePath = filename -> (
+     match(
+	  (
+	       if version#"operating system" === "Windows-95-98-NT" then "^(.:|/)"
+	       else "^/"
+	       ),
+	  filename))
+
+getRealPath := fn -> (
+     -- look at realpath(3), which does even more
+     -- how standard is it?
+     while (s := readlink fn) =!= null do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
+     fn)
+
+exe := (
+     processExe := "/proc/" | string processID() | "/exe";  -- this is a reliable way to get the executable in linux
+     if fileExists processExe then getRealPath processExe
+     else (
+	  e := commandLine#0;
+	  if not isAbsoluteExecPath e then (
+	       -- the only other choice is to search the path, but we don't do it the same way execvp does, too bad.
+	       PATH := separate(":",if "" =!= getenv "PATH" then getenv "PATH" else ".:/bin:/usr/bin");
+	       PATH = apply(PATH, x -> if x === "" then "." else x);
+	       scan(PATH, p -> if fileExists (p|"/"|e) then (e = p|"/"|e; break));
+	       )
+	  )
+     )
+
+stderr << "-- debugging: exe = " << exe << newline ; simpleFlush stderr;
+ 
+     -- search the PATH for our executable file and use getRealPath to locate our source files and use srcdir to locate more source files
 
 progname := notdir exe
 buildHomeDirectory = minimizeFilename(exe|"/../../");
 
 -- find sourceHomeDirectory
      dirs := { buildHomeDirectory, "./" };
-     if getenv "M2HOME" =!= null then dirs = prepend(getenv "M2HOME" | "/", dirs);
+     scan(separate(":",getenv "M2HOME"), dir -> dirs = prepend(dir | "/", dirs));
      i := 0;
      while i < #dirs do (
 	  if dirs#i =!= "" and fileExists(dirs#i | "/m2/setup.m2") then (
@@ -143,7 +167,7 @@ usage := arg -> (
      << "    -e...              evaluate expression '...'" << newline
      << "    -E...              evaluate expression '...' before initialization" << newline
      << "environment:"       << newline
-     << "    M2HOME             a hint to find setup.m2 as $M2HOME/m2/setup.m2" << newline
+     << "    M2HOME             path to search for m2/setup.m2" << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
      << "                       bin/../libexec/Macaulay2-$M2ARCH-data, where bin is the" << newline
      << "                       directory containing the Macaulay2 executable" << newline

@@ -10,13 +10,10 @@ ENV = env M2HOME=@srcdir@/..
 
 all :: initialize
 
-Makefile : Makefile.in
-	cd ../..; ./config.status Macaulay2/packages/Makefile
-
 #############################################################################
 all :: doc
 distclean :: clean
-DOCFILES := StateTable.m2 eliminate.m2 D-modules/DMODdoc.m2
+DOCFILES := eliminate.m2 D-modules/DMODdoc.m2
 
 phase2: $(DOCFILES)
 	@ set -x; for i in $^ ; do $(ENV) ../../bin/M2 -q '-e phase=2' $$i '-e exit 0' || exit 1; done
@@ -65,6 +62,9 @@ $(Dtestresults) : ../bin/Macaulay2$(EXE) ../cache/Macaulay2-doc ../cache/Macaula
 	@ echo running test file $<
 	$(ENV) ../../bin/M2 -q '-e path = prepend( "D-modules/", path )' '-e input "$<"' '-e exit 0'
 	touch $@
+################################# srcdir
+initialize :: srcdir
+srcdir :; ln -s "@srcdir@" srcdir
 #############################################################################
 clean check distclean ::
 	$(MAKE) -C ComputationsBook $@
@@ -80,4 +80,7 @@ install :: $(packagedir)/packages
 	$(INSTALL_DATA) @srcdir@/*.m2 $<
 	tar cf - -C @srcdir@ D-modules ComputationsBook | tar xf - -C $<
 
-distclean ::; rm -f Makefile
+################################# Makefile
+Makefile : Makefile.in
+	cd ../..; ./config.status Macaulay2/packages/Makefile
+distclean::; rm -f Makefile

@@ -60,12 +60,6 @@ if notify then stderr << "--loading setup.m2" << endl
 
 match := X -> 0 < #(matches X)				    -- defined as a method later
 
-isAbsolutePath := (
-     if version#"operating system" === "Windows-95-98-NT"
-     then filename -> match("^(.:|/)", filename)
-     else filename -> match("^/", filename)
-     )
-
 if class phase === Symbol then phase = 0
 
 erase symbol "--newline--"

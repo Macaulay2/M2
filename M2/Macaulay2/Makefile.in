@@ -19,6 +19,9 @@ $(docm2reldir)/COPYING : COPYING ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/CHANGES : CHANGES ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/README  : README  ; $(INSTALL_DATA) $< "$@"
 $(docm2reldir)/LAYOUT  : LAYOUT  ; $(INSTALL_DATA) $< "$@"
+################################# srcdir
+initialize :: srcdir
+srcdir :; ln -s "@srcdir@" srcdir
 ################################# cache
 initialize :: cache
 cache :; mkdir $@
@@ -95,7 +98,9 @@ install :: $(cachedir)/$(DUMPDATAFILE)
 $(cachedir)/$(DUMPDATAFILE) : $(DUMPDATAFILE); $(INSTALL) $< "$@"
 endif
 endif
-#################################
+################################# Makefile
+Makefile : Makefile.in
+	cd ..; ./config.status Macaulay2/Makefile
 distclean::; rm -f Makefile
 ################################# final status messages
 justM2 all doc clean distclean::

@@ -12,14 +12,16 @@ ENV = env M2HOME=@srcdir@/..
 
 ##############################
 .SUFFIXES: .m2
-.PHONY: clean all install check html clean distclean check default initialize phase1 \
-	phase2 phase3 phase4 phase5 prep
+.PHONY: clean all install check html clean distclean check default initialize prep
 
 LOADSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/loadsequence))
 DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq ))
 
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE above
 MADEM2FILES := loads.m2 tutorials.m2 layout.m2
+
+initialize:: srcdir
+srcdir:; ln -s @srcdir@ srcdir
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -104,7 +106,7 @@ phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../bin/Macaulay2
 	 #------ phase 1: reading *.m2 (not the documentation), making $@
 	rm -f ../$(DUMPDATAFILE)
-	time $(ENV) ../bin/Macaulay2 -q --silent --stop @srcdir@/dumpdata.m2 '-edump()'
+	time $(ENV) ../bin/Macaulay2 -q --silent --stop ../../../Macaulay2/m2/dumpdata.m2 '-edump "$(DUMPDATAFILE)"'
 endif
 
 phase1 :: ../cache/Macaulay2-made
