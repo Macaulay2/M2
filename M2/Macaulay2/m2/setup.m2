@@ -6,13 +6,6 @@ if class Manipulator =!= Symbol then (
 
 if class Manipulator =!= Symbol then error "setup.m2 already loaded"
 
-writableGlobals := set (
-     symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory,
-     symbol documentationPath, symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm,
-     symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol currentPrompts, symbol currentPackage,
-     symbol packages, symbol currentDictionary
-     )
-
 Symbols = new MutableHashTable
 Function.GlobalAssignHook = (X,x) -> (
      if not Symbols#?x then Symbols#x = X;
@@ -152,23 +145,18 @@ input = (filename) -> (
      )
 erase symbol simpleInput
 
+setnotify := () -> (
+     notify = true			-- notify after initialization
+     )
+erase symbol notify    -- we have to erase this while we have a chance
+
 needs = s -> if not loaded#?s then load s
 
 new HashTable from List := HashTable => (O,v) -> hashTable v
 
 load "loads.m2"
-stderr << "--loaded loads.m2" << endl
-
-lastSystemSymbol = local newPrivateSymbol
-
-addStartFunction(
-     () -> scan(pairs first dictionaries(), (name,sym) -> if not writableGlobals#?sym then protect sym)
-     )
-
-notify = true						    -- notify after initialization
-
-erase symbol notify					    -- this symbol was made global in startup.m2
-
+-- don't define any global variables below this point
+setnotify()
 addStartFunction(
      () -> (
 	  loadDepth (1 + loadDepth());
@@ -181,5 +169,5 @@ addStartFunction(
 		    tryload(getenv "HOME" | "/init.m2", simpleLoad)
 		    or
 		    tryload(getenv "HOME" | "/.init.m2", simpleLoad)))))
-
 erase symbol simpleLoad
+newPackage "User"

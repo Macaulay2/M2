@@ -85,3 +85,9 @@ product(List, Sequence, Function) :=
 product(Sequence, Sequence, Function) :=
 product(List, List, Function) := (v,w,f) -> product(apply(v,w,identity),f)
 
+rotate = method()
+rotate(VisibleList,ZZ) := (s,n) -> (
+     if #s == 0 then s
+     else (
+	  n = n % #s;
+	  join(drop(s,n),take(s,n))))

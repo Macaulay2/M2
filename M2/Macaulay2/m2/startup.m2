@@ -50,17 +50,17 @@ if firstTime then (
 	  lastprompt := "";
 	  ZZ.InputPrompt = lineno -> concatenate(newline, lastprompt = concatenate("i", string lineno, " : "));
 	  ZZ.InputContinuationPrompt = lineno -> #lastprompt; -- will print that many blanks, see interp.d
-	  currentPrompts = normalPrompts;
+	  symbol currentPrompts <- normalPrompts;	    -- this avoids the warning about redefining a function
 	  );
      examplePrompts = () -> (
 	  normalPrompts();
 	  ZZ.InputPrompt = lineno -> concatenate (newline, "\1i", string lineno, " : ");
-	  currentPrompts = examplePrompts;
+	  symbol currentPrompts <- examplePrompts;
 	  );
      noPrompts = () -> (
 	  ZZ.InputPrompt = lineno -> "";
 	  ZZ.InputContinuationPrompt = lineno -> "";
-	  currentPrompts = noPrompts;
+	  symbol currentPrompts <- noPrompts;
 	  );
 
      startFunctions := {};
