@@ -650,7 +650,7 @@ extern "C" {
   
   const FreeModuleOrNull *
   IM2_FreeModule_make_schreyer(
-          const Matrix *m); /* drg: connected rawFreeModule*/
+          const Matrix *m); /* drg: connected rawSchreyerSource */
     /* Returns G, (a copy of) the source free module of 'm', modified to
      * use the induced order via m: compare two monomials of G via
      * x^A e_i > x^B e_j iff either 

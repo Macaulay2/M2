@@ -248,7 +248,8 @@ schreyerOrder Module := Matrix => (F) -> (
      tar := newModule(ring F, rawTarget m);
      map(tar,src,m))
 
-schreyerOrder Matrix := Matrix => (m) -> map(target m, newModule(ring m, rawFreeModule raw m), m)
+schreyerOrder Matrix := Matrix => (m) -> map(target m, newModule(ring m, rawSchreyerSource raw m), m)
+schreyerOrder RawMatrix := RawMatrix => (m) -> rawMatrixRemake2(rawTarget m, rawSchreyerSource m, {}, m, 0)
 
 -- euler(Module) := (M) -> (
 --      f := poincare M;

@@ -1168,11 +1168,16 @@ export rawRank(e:Expr):Expr := (
      );
 setupfun("rawRank",rawRank);
 
-export rawFreeModule(e:Expr):Expr := (
+export rawSchreyerSource(e:Expr):Expr := (
      when e
      is m:RawMatrix do toExpr(
 	  Ccode(RawFreeModuleOrNull, "(engine_RawFreeModuleOrNull)IM2_FreeModule_make_schreyer(",
 	       "(Matrix *)", m, ")" ) )
+     else WrongArgMatrix());
+setupfun("rawSchreyerSource",rawSchreyerSource);
+
+export rawFreeModule(e:Expr):Expr := (
+     when e
      is s:Sequence do
      if length(s) == 2 then (
 	  when s.0
