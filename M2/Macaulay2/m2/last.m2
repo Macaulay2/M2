@@ -29,8 +29,11 @@ String.Wrap = x -> wr("",x)
 
 closePackage "Macaulay2"
 
+newPackage "Missing"
+closePackage "Missing"
+
 installedPackages := {"PrimaryDecomposition", "M2doc"}
-loadPackage \ installedPackages 
+scan(installedPackages, pkg -> loadPackage(pkg,DebuggingMode => not stopIfError))
 
 -- currentPackage = null					    -- eliminate the phony package we used for collecting TEST inputs
 

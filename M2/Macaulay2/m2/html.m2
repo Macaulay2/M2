@@ -458,8 +458,7 @@ uninstallPackage String := opts -> pkg -> (
      )
 
 uninstallPackage Package := o -> pkg -> (
-     buildPackage = if pkg === Macaulay2 then "Macaulay2" else pkg#"title";
-     buildPackage = minimizeFilename buildPackage;
+     buildPackage = pkg#"title";
      buildDirectory = minimizeFilename(runfun o.PackagePrefix | "/");
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
      installDirectory := minimizeFilename(runfun o.InstallPrefix | "/");
@@ -547,6 +546,9 @@ installPackage Package := opts -> pkg -> (
 	  if oldPackagePrefix === null then oldPackagePrefix = buildDirectory;
 	  pkg#"package prefix" = buildDirectory;
 
+	  -- copy package doc subdirectory if we loaded the package from a distribution
+     	  -- ... to be implemented, but we seem to be copying the examples already, but only partially
+
 	  -- make example input files
 	  exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
 	  infn := fkey -> exampleDir|toFilename fkey|".m2";
@@ -556,7 +558,6 @@ installPackage Package := opts -> pkg -> (
 	  makeDirectory exampleDir;
 	  exampleDir|".linkdir" << close;
 	  exampleInputFiles := new MutableHashTable;
-     	  if debugLevel > 10 then error "debug me";
 	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
 		    inf := infn fkey;
 		    exampleInputFiles#inf = true;
@@ -601,7 +602,7 @@ installPackage Package := opts -> pkg -> (
 
 	  -- cache raw documentation in database, and check for changes
 	  rawDocUnchanged := new MutableHashTable;
-	  docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";
+	  docDir := pkg#"package prefix" | LAYOUT#"packagedoc" pkg#"title";
 	  rawdbname := docDir | "rawdocumentation.db";
 	  rawdbnametmp := rawdbname | ".tmp";
 	  stderr << "--storing raw documentation in " << rawdbname << endl;
@@ -631,7 +632,6 @@ installPackage Package := opts -> pkg -> (
 		    else (
 			 if rawdocDatabase#?fkey then (
 			      stderr << "--warning: raw documentation for " << fkey << ", in database, is no longer present" << endl;
-			      if debugLevel > 0 and fkey === "length" then error "debug me";
 			      )
 			 else (
 			      rawDocUnchanged#fkey = true;
@@ -725,7 +725,6 @@ installPackage Package := opts -> pkg -> (
 		    else (
 			 if debugLevel > 0 then stderr << "--processing " << tag << endl;
 			 pkg#"processed documentation"#fkey = documentation tag;
-			 if debugLevel > 0 and fkey === "length" then error "debug me";
 			 );
 		    ));
 

@@ -110,7 +110,6 @@ resolutionInEngine := options -> (M) -> (
 	  or W.DegreeLimit < degreelimit
 	  then (
 	       if debugLevel > 0 then stderr << "--warning: about to recompute resolution, discarding data" << endl;
-	       if debugLevel > 10 then error "debug me";
 	       scan(keys C,i -> if class i === ZZ then remove(C,i));
 	       scan(keys C.dd,i -> if class i === ZZ then remove(C.dd,i));
 	       remove(C,complete);
