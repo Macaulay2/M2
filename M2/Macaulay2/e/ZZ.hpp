@@ -35,6 +35,8 @@ public:
   virtual bool is_graded() const    { return 1; }
   virtual bool is_expensive() const { return 1; }
 
+  virtual CoefficientType coefficient_type() const { return COEFF_ZZ; }
+
   virtual void text_out(buffer &o) const;
 
   static unsigned int mod_ui(mpz_t n, unsigned int p);

@@ -35,6 +35,8 @@ public:
   virtual bool is_graded() const    { return 1; }
   virtual bool is_expensive() const { return 1; }
 
+  virtual CoefficientType coefficient_type() const { return COEFF_QQ; }
+
   virtual void text_out(buffer &o) const;
 
   virtual int coerce_to_int(ring_elem a) const;

@@ -93,7 +93,9 @@ WeylAlgebra *WeylAlgebra::create(const PolynomialRing *R,
     return 0;
 
   const PolynomialRing *flatR = R->get_flattened_ring();
-  result->_gb_ring = GBRing::create_WeylAlgebra(flatR->Ncoeffs(), flatR->Nmonoms(), result);
+  result->_gb_ring = GBRing::create_WeylAlgebra(flatR->Ncoeffs(), 
+						flatR->Nmonoms(), 
+						result);
   return result;
 }
 

@@ -74,6 +74,14 @@ public:
   /* If this returns non-NULL, it is valid to grab the 'val' field, and/or to assign to it.
      All other fields should be considered read only */
 
+  mon_term *find_exact_monomial(exponents exp, 
+				int comp,
+				int first_val) const;
+  // Is there an element 'exp*comp' with _val >= first_val?  If so, return the mon_term.
+  // Otherwise return 0.
+
+  void change_coefficient(mon_term *t, mpz_ptr new_coeff);
+
   static void find_weak_generators(int nvars, 
 				   const vector<mpz_ptr,gc_alloc> &coeffs,
 				   const vector<exponents,gc_alloc> &exps,
@@ -86,7 +94,9 @@ public:
 				   const vector<int,gc_alloc> &comps,
 				   vector<int,gc_alloc> &result_positions);
 
-  void show(FILE *fil); /* Only for debugging */
+  void show_mon_term(FILE *fil, mon_term *t) const; /* Only for debugging */
+  void show(FILE *fil) const; /* Only for debugging */
+  void showmontable();
 
 
 private:
