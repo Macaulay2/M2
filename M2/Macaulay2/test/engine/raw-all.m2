@@ -3,6 +3,7 @@ runM2 = (filename) -> (
      if retval != 0 then print("ERROR occured in file "|filename);
      )
 
+runM2 "raw.m2" -- some general tests
 runM2 "raw-monomial.m2"
 runM2 "raw-monoid.m2"
 runM2 "raw-ring.m2"
@@ -23,7 +24,6 @@ runM2 "raw-mutable.m2"
 runM2 "raw-numerics.m2"
 runM2 "raw-localgb.m2"
 
-runM2 "raw.m2"
 runM2 "raw3.m2"
 
 runM2 "ring.m2"

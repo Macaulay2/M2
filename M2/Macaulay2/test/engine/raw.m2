@@ -194,33 +194,6 @@ assert( f+f == 2*f )
 assert( -f == (-1) * f )
 -- assert( f-f == 0 )
 
--- mutable matrix
-
-assert not rawIsMutable f
-h = rawMatrixRemake1 (rawTarget f, f, true, 0)		    -- mutable!
-assert rawIsMutable h
-<< "h = " << h << endl
-assert( f == rawMatrixRemake2(rawTarget h,rawSource h, rawMultiDegree h, h, 0) )
-assert( y^2 == rawMatrixEntry(f,1,1) )
-assert( x^3 == rawMatrixEntry(f,2,0) )
-assert( y^2 == rawMatrixEntry(h,1,1) )
-assert( x^3 == rawMatrixEntry(h,2,0) )
-rawMatrixEntry(h,1,1,y^4)
-<< "h = " << h << endl
-assert( y^4 == rawMatrixEntry(h,1,1) )
-assert( y^2 != y^4 )
-
-rawMatrixRowChange(h,0,x,1,false)
-rawMatrixRowChange(h,0,y,2,false)
-<< "h = " << h << endl
-
-rawMatrixColumnChange(h,0,x,1,false)
-rawMatrixColumnChange(h,1,-y,0,false)
-<< "h = " << h << endl
-
-rawMatrixColumnSwap(h,0,1)
-<< "h = " << h << endl
-
 -- fraction ring
 
 stderr << "warning: rawFraction not implemented yet" << endl
