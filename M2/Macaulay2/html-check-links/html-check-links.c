@@ -10,7 +10,7 @@ extern int yydebug;
 #endif
 
 static char *dir(char *s) {
-  char *t = rindex(s,'/');
+  char *t = strrchr(s,'/');
   if (t == NULL) return "";
   t++;
   return strnperm(s,t-s);

@@ -3,7 +3,7 @@
 //#if !defined(__MWERKS__)
 #if 1
 #include <assert.h>
-#include <iostream.h>
+#include <iostream>
 #define divides ignore_this_symbol /* bits/stl_function.h contains a generic one, sigh, gcc 3.0 */
 #include "interp.hpp"
 #undef divides
