@@ -204,6 +204,7 @@ AC_MSG_RESULT([yes])
 AC_MSG_CHECKING([whether factory library is installed])
 LIBS="-lcf $SAVELIBS"
 dnl -- we do not try linking, because we do not know whether libcfmem.a is installed or needed by libcf.a
+dnl -- we do not need libcfmem later, in either case, because we include replacement routines in d/scclib.c
 AC_TRY_COMPILE(
     [#include <factoryconf.h>],
     [FACTORYVERSION;],
