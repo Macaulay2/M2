@@ -208,13 +208,19 @@ package TO := x -> (
      p := select(value \ values PackageDictionary, P -> P#"documentation"#?fkey); -- speed this up by implementing break for scanValues
      if #p == 1 then (
 	  p = p#0;
-	  if pkg =!= p then stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it seems to belong in " << pkg << endl;
+	  if pkg =!= p then
+	  if pkg == null
+	  then stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it wasn't predicted" << endl
+	  else stderr << "warning: documentation for \"" << fkey << "\" found in package " << p << ", but it seems to belong in " << pkg << endl;
 	  p)
      else if #p > 1 then (
 	  error("documentation for ",fkey," occurs in multiple packages: ", concatenate between(", ",apply(p,P -> P#"title")));
 	  )
      else (
-	  if not warned#?key then stderr << "warning: documentation for \"" << fkey << "\" not found, assuming it will be found in package " << pkg << " eventually" << endl;
+	  if not warned#?key then 
+     	  if pkg === null
+	  then stderr << "warning: documentation for \"" << fkey << "\" not found" << endl
+	  else stderr << "warning: documentation for \"" << fkey << "\" not found, assuming it will be found in package " << pkg << " eventually" << endl;
 	  warned#key = true;
      	  pkg))
 
