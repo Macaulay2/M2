@@ -63,6 +63,14 @@ assgn(RawMutableMatrix,ZZ,ZZ,RR) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
 assgn(RawMutableMatrix,ZZ,ZZ,CC) := (m,r,c,x) -> rawSetMatrixEntry(m,r,c,raw x)
 installAssignmentMethod(symbol _, MutableMatrix, Sequence, (m,rc,x) -> ((r,c) -> assgn(raw m,r,c,x)) rc)
 
+nrows = method()
+nrows(RawMutableMatrix) := (m) -> rawNumberOfRows m
+nrows(MutableMatrix) := (m) -> rawNumberOfRows raw m
+
+ncols = method()
+ncols(RawMutableMatrix) := (m) -> rawNumberOfColumns m
+ncols(MutableMatrix) := (m) -> rawNumberOfColumns raw m
+
 rowSwap = method()
 rowSwap(RawMutableMatrix,ZZ,ZZ) := (m,i,j) -> rawMatrixRowSwap(m,i,j)
 rowSwap(MutableMatrix,ZZ,ZZ) := (m,i,j) -> rawMatrixRowSwap(raw m,i,j)
@@ -78,6 +86,44 @@ rowPermute(MutableMatrix,ZZ,List) := (m,start,p) -> rawPermuteRows(raw m,start,p
 columnPermute = method()
 columnPermute(RawMutableMatrix,ZZ,List) := (m,start,p) -> rawPermuteColumns(m,start,p)
 columnPermute(MutableMatrix,ZZ,List) := (m,start,p) -> rawPermuteColumns(raw m,start,p)
+
+rowMult = method()
+rowMult(MutableMatrix,ZZ,RingElement) := (A,r,f) -> rawMatrixRowScale(raw A,raw f,r,false)
+rowMult(MutableMatrix,ZZ,ZZ) := (A,r,f) -> rawMatrixRowScale(raw A,raw f,r,false)
+rowMult(MutableMatrix,ZZ,QQ) := (A,r,f) -> rawMatrixRowScale(raw A,raw f,r,false)
+rowMult(MutableMatrix,ZZ,RR) := (A,r,f) -> rawMatrixRowScale(raw A,raw f,r,false)
+rowMult(MutableMatrix,ZZ,CC) := (A,r,f) -> rawMatrixRowScale(raw A,raw f,r,false)
+
+columnMult = method()
+columnMult(MutableMatrix,ZZ,RingElement) := (A,r,f) -> rawMatrixRowScale(raw A,raw f,r,false)
+columnMult(MutableMatrix,ZZ,ZZ) := (A,r,f) -> rawMatrixRowScale(raw A,raw f,r,false)
+columnMult(MutableMatrix,ZZ,QQ) := (A,r,f) -> rawMatrixRowScale(raw A,raw f,r,false)
+columnMult(MutableMatrix,ZZ,RR) := (A,r,f) -> rawMatrixRowScale(raw A,raw f,r,false)
+columnMult(MutableMatrix,ZZ,CC) := (A,r,f) -> rawMatrixRowScale(raw A,raw f,r,false)
+
+rowAdd = method()
+rowAdd(MutableMatrix,ZZ,RingElement,ZZ) := (A,r,f,i) -> 
+    rawMatrixRowChange(raw A,r,raw f,i,false)
+rowAdd(MutableMatrix,ZZ,ZZ,ZZ) := (A,r,f,i) -> 
+    rawMatrixRowChange(raw A,r,raw f,i,false)
+rowAdd(MutableMatrix,ZZ,QQ,ZZ) := (A,r,f,i) -> 
+    rawMatrixRowChange(raw A,r,raw f,i,false)
+rowAdd(MutableMatrix,ZZ,RR,ZZ) := (A,r,f,i) -> 
+    rawMatrixRowChange(raw A,r,raw f,i,false)
+rowAdd(MutableMatrix,ZZ,CC,ZZ) := (A,r,f,i) -> 
+    rawMatrixRowChange(raw A,r,raw f,i,false)
+
+columnAdd = method()
+columnAdd(MutableMatrix,ZZ,RingElement,ZZ) := (A,r,f,i) -> 
+    rawMatrixRowChange(raw A,r,raw f,i,false)
+columnAdd(MutableMatrix,ZZ,ZZ,ZZ) := (A,r,f,i) -> 
+    rawMatrixRowChange(raw A,r,raw f,i,false)
+columnAdd(MutableMatrix,ZZ,QQ,ZZ) := (A,r,f,i) -> 
+    rawMatrixRowChange(raw A,r,raw f,i,false)
+columnAdd(MutableMatrix,ZZ,RR,ZZ) := (A,r,f,i) -> 
+    rawMatrixRowChange(raw A,r,raw f,i,false)
+columnAdd(MutableMatrix,ZZ,CC,ZZ) := (A,r,f,i) -> 
+    rawMatrixRowChange(raw A,r,raw f,i,false)
 
 LU = method()
 LU MutableMatrix := (A) -> (
