@@ -1,2 +1,3 @@
+b dumpdata
 b loaddata
-run load
+run dump
