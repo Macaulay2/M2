@@ -604,22 +604,59 @@ istype := X -> parent X =!= Nothing
 alter := x -> (
      if class x === Option and #x === 2 then (
 	  if istype x#0 then (
-	       SEQ { justSynonym x#0, ": ", SEQ x#1 }
+	       if x#1 =!= null and x#1 =!= ""
+	       then SEQ { justSynonym x#0, ": ", x#1 }
+	       else SEQ { justSynonym x#0 }
 	       )
 	  else if class x#0 === String then (
 	       y := x#1;
 	       if class y === Option and #y === 2 then (
 		    if istype y#0 then (
 			 if y#1 =!= null and y#1 =!= ""
-			 then SEQ { TT x#0, ", ", justSynonym y#0, SEQ y#1 }
+			 then SEQ { TT x#0, ", ", justSynonym y#0, y#1 }
 			 else SEQ { TT x#0, ", ", justSynonym y#0 }
 			 )
 		    else error "expected type to left of '=>' in synopsis"
+		    )
+	       else (
+	       	    if x#1 =!= null and x#1 =!= ""
+	       	    then SEQ { TT x#0, ": ", x#1 }
+	       	    else SEQ { TT x#0 }
 		    )
 	       )
 	  else error "expected string or type to left of '=>' in synopsis"
 	  )
      else x)
+
+typicalValue := k -> (
+     if typicalValues#?k then typicalValues#k 
+     else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
+     else Thing
+     )
+
+types := method(SingleArgumentDispatch => true)
+types Thing := x -> ({},{typicalValue x})
+types Sequence := x -> ( drop(toList x,1), { typicalValue x } )
+
+isopt := x -> class x === Option and #x === 2
+
+merget := (v,v') -> apply(v,v',(a,t) -> (
+	  if t =!= Thing then (
+	       if isopt a then (
+		    if isopt a#1 then (
+			 if a#1#0 =!= t then error "type mismatch"
+			 else a
+			 )
+		    else (
+			 if istype a#0 then (
+			      if a#0 =!= t then error "type mismatch"
+			      else a
+			      )
+			 else a#0 => t => a#1			      
+			 )
+		    )
+	       else t => a)
+	  else a))
 
 newSynopsis := method(SingleArgumentDispatch => true)
 newSynopsis Thing := f -> (
@@ -631,12 +668,17 @@ newSynopsis Thing := f -> (
      inp = select(inp, x -> not iso x);
      out := getOptionList(SYN,Outputs);
      res := getOptionList(SYN,Results);
+     (inp',out') := types f;
+     if #inp =!= #inp' then error "mismatched number of inputs";
+     if #out =!= #out' then error "mismatched number of outputs";
+     inp = merget(inp,inp');
+     out = merget(out,out');
      inp = alter \ inp;
      ino = alter \ ino;
      out = alter \ out;
      if SYN =!= null then (
 	  SEQ {						    -- to be implemented
-     	       PARA BOLD "New synopsis",
+     	       PARA BOLD "Synopsis",
 	       UL {
      	       	    if usa#?0 then PARA { "Usage: ", TT usa },
 		    if inp#?0 then PARA { "Inputs:", UL inp },
@@ -657,7 +699,7 @@ synopsis Thing := f -> (
 	       else SEQ SYN#i
 	       );
 	  SEQ {
-	       PARA BOLD "OldSynopsis",
+	       PARA BOLD "Old Synopsis",
 	       SHIELD UL {
 		    if SYN#?0 then SEQ { "Usage: ", TT SYN#0},
 		    if SYN#?1 then SEQ { "Input:", UL { t 1, t 2, t 3 } },
@@ -665,12 +707,6 @@ synopsis Thing := f -> (
 		    }
 	       }
 	  )
-     )
-
-typicalValue := k -> (
-     if typicalValues#?k then typicalValues#k 
-     else if class k === Sequence and typicalValues#?(k#0) then typicalValues#(k#0)
-     else Thing
      )
 
 synopsis Sequence := s -> (
@@ -695,7 +731,7 @@ synopsis Sequence := s -> (
 	       );
 	  );
      SEQ {
-	  PARA BOLD "OldSynopsis",
+	  PARA BOLD "Old Synopsis",
 	  SHIELD UL {
 	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
 	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0, headline s#0 },
@@ -755,16 +791,13 @@ briefDocumentation HashTable := x -> (
      r := getUsage x;
      if r =!= null then << endl << text r << endl
      else (
-	  r = synopsis x;
+	  r = newSynopsis x;
 	  if r =!= null then << endl << text r << endl
 	  else (
-	       r = newSynopsis x;
-	       if r =!= null then << endl << text r << endl
-	       else (
-		    if headline x =!= null then << endl << headline x << endl;
-		    if class x === Function then (
-			 s := fmeth x;
-			 if s =!= null then << endl << text s << endl;)))))
+	       if headline x =!= null then << endl << headline x << endl;
+	       if class x === Function then (
+		    s := fmeth x;
+		    if s =!= null then << endl << text s << endl;))))
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
@@ -874,7 +907,6 @@ documentation Symbol := S -> (
      b := documentableMethods S;
      SEQ {
 	  title S, 
-	  synopsis S,
 	  newSynopsis S,
 	  getDocBody(S),
 	  op S,
@@ -891,7 +923,6 @@ documentation Option := v -> (
 	  default := (options fn)#opt;
 	  SEQ { 
 	       title v,
-	       synopsis v,
 	       newSynopsis v,
 	       getDocBody(v),
 	       PARA BOLD "See also:",
@@ -908,7 +939,6 @@ documentation Sequence := s -> (
      if null === lookup s then error("expected ", toString s, " to be a method");
      SEQ {
 	  title s, 
-	  synopsis s,
 	  newSynopsis s,
 	  getDocBody(s),
 	  seecode s

@@ -21,10 +21,10 @@ document { (parent,Thing),
      Synopsis => {
 	  Usage => "parent x",
 	  Inputs => {
-	       "x" => "anything"
+	       "x" => ""
 	       },
 	  Outputs => {
-	       Type => { ", the parent class of ", TT "x" }
+	       { ", the parent class of ", TT "x" }
 	       }
 	  },
      PARA,
