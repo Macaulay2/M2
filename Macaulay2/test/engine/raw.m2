@@ -120,7 +120,7 @@ assert( q * j + r == i )
 -- try single grading
 
 errorDepth = 0
-trivial = rawMonoid()
+trivial = rawPolynomialRing()
 
 k = rawZZp(101)
 3_k
@@ -360,8 +360,8 @@ assert( 11_R == 11_Z_R )
 makeRawMonoid = (vars) -> (
      -- Make a grevlex order, singly standard graded
      n := #vars;
-     -- The trivial monoid
-     trivial = rawMonoid();
+     -- The trivial degree ring
+     trivial = rawPolynomialRing();
      -- The degree monoid
      degs := toList(n:1);
      singlyGradedOrdering = rawMonomialOrdering {GroupLex=>1};
