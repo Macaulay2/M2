@@ -279,6 +279,7 @@ void GBasis::remainder(POLY &f, int degf, ring_elem &denom)
 	}
     }
   h.f = head.next;
+  // This needs to be changed
   R->gbvector_remove_content(h.f, h.fsyz,denom);
   f.f = h.f;
   f.fsyz = h.fsyz;
