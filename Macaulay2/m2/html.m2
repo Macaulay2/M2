@@ -93,6 +93,7 @@ html Symbol := html Boolean := string
 
 linkFilenameTable := new MutableHashTable
 linkFilenameCounter := 0
+linkFilenameKeys = () -> keys linkFilenameTable
 linkFilename = s -> (
      if linkFilenameTable#?s 
      then linkFilenameTable#s

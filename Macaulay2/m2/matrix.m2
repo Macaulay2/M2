@@ -372,7 +372,8 @@ name Matrix := m -> concatenate (
 isIsomorphism Matrix := f -> coker f == 0 and ker f == 0
 
 isHomogeneous Matrix := m -> (
-     if m.?isHomogeneous then m.isHomogeneous else m.isHomogeneous = (
+     if m.?isHomogeneous then m.isHomogeneous 
+     else m.isHomogeneous = isHomogeneous ring m and (
      	  M := source m;
      	  N := target m;
 	  (sendgg(ggPush m, ggishomogeneous); eePopBool())

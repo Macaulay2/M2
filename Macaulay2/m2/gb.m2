@@ -117,9 +117,6 @@ gbWithSyzygy := {true , -1}
 --     	         ^^^^ -------- whether to collect syzygies
 
 makeGB := (f,type,strategy) -> (
-     -- if not isHomogeneous f then error "expected a homogeneous matrix";
-     --   commented out to prevent a crash!
-     --     intarray.hh:65: failed assertion entries != NULL
      if f#?type then f#type
      else if (
 	  type===gbOnly 
