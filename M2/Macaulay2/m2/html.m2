@@ -120,6 +120,10 @@ LITERAL ///
 
 -- produce html form of documentation, for Macaulay 2 and for packages
 
+next := key -> if NEXT#?key then LABEL { "Next node",     HREF { htmlFilename NEXT#key, nextButton } } else nullButton
+prev := key -> if PREV#?key then LABEL { "Previous node", HREF { htmlFilename PREV#key, prevButton } } else nullButton
+up   := key -> if   UP#?key then LABEL { "Parent node",   HREF { htmlFilename   UP#key,   upButton } } else nullButton
+
 buttonBar := (key) -> TABLE { { 
 
 	  LITERAL concatenate (///
@@ -161,10 +165,6 @@ upAncestors := key -> reverse (
      n := 0;
      while UP#?key and n < 20 list (n = n+1; key = UP#key)
      )
-
-next := key -> if NEXT#?key then LABEL { "Next node",     HREF { htmlFilename NEXT#key, nextButton } } else nullButton
-prev := key -> if PREV#?key then LABEL { "Previous node", HREF { htmlFilename PREV#key, prevButton } } else nullButton
-up   := key -> if   UP#?key then LABEL { "Parent node",   HREF { htmlFilename   UP#key,   upButton } } else nullButton
 
 fakeMenu := x -> (
      --   o  item 1
@@ -255,7 +255,6 @@ makeForest := x -> new ForestNode from makeTree \ x
 leaves := () -> keys set flatten values linkTable
 roots := () -> sort keys ( set keys linkTable - set leaves() )
 getTrees := topNode -> (
-     -- error "debug this";
      visitCount = new MutableHashTable;
      return makeForest roots())
 
@@ -306,6 +305,26 @@ follow = key -> (
 	       ))
      else externalReferences#fkey = true)
 
+-----------------------------------------------------------------------------
+
+markLinks := method()
+markLinks ForestNode := x -> (
+     for i from 0 to #x-2 do ( NEXT#(x#i#0) = x#(i+1)#0; PREV#(x#(i+1)#0) = x#i#0; );
+     scan(x,markLinks))
+markLinks TreeNode   := x -> (
+     scan(x#1, i -> UP#(i#0) = x#0);
+     markLinks x#1)
+
+buildLinks := method()
+buildLinks ForestNode := x -> (
+     UP = new MutableHashTable;
+     NEXT = new MutableHashTable;
+     PREV = new MutableHashTable;
+     markLinks x;
+     (UP,PREV,NEXT))
+
+-----------------------------------------------------------------------------
+
 assembleTree = method()
 assembleTree Package := pkg -> (
      doExamples = false;
@@ -322,9 +341,6 @@ assembleTree Package := pkg -> (
 	  { (fkey,key) => true },
 	  apply(keys pkg#"documentation", fkey -> (fkey,fkey) => true)
 	  );
-     UP = new MutableHashTable;
-     NEXT = new MutableHashTable;
-     PREV = new MutableHashTable;
      while #nodesToScope > 0 do (
 	  m := keys nodesToScope;
 	  scan(m, (fkey,key) -> (
@@ -334,6 +350,7 @@ assembleTree Package := pkg -> (
 	  nodesToScope = new MutableHashTable from (set keys nodesToScope - set m);
 	  );
      t := getTrees();
+     buildLinks t;
      doExamples = true;
      t)
 
@@ -523,6 +540,8 @@ check Package := pkg -> (
 	       else if class t === Function then (
 		    stderr << "-- test " << i << ":" << endl << code t << endl;
 		    t()))))
+
+htmlDebug = () -> commandInterpreter local x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
