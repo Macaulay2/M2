@@ -10,10 +10,15 @@ com(a,b)
 com(a,x)
 com(b,y)
 
-C = ZZ[x,dx,WeylAlgebra => x => dx]
+A = ZZ[a,b]/(a^3-b^3)
+B = A[x,y]
+assert(B_2^3 == B_3^3)
+
+C = ZZ[x,dx,a,WeylAlgebra => x => dx]/(a^3-x^3)
 del(dx,x,1)
 
 D = C[t]
+assert(D_1^3==D_3^3)
 com(x,t)
 com(dx,t)
 del(D_2,D_1,1)
@@ -40,10 +45,11 @@ H = G[x]
 assert( (p*1_H)^2 == 0 )
 assert( x^2 != 0 )
 
-G = ZZ[p]
+G = ZZ[p]/p^3
 assert( p^2 != 0 )
 H = G[x,SkewCommutative => true]
 assert( (p*1_H)^2 != 0 )
+assert( (p*1_H)^3 == 0 )
 assert( x^2 == 0 )
 
 
@@ -52,4 +58,5 @@ assert( p^2 == 0 )
 H = G[x,SkewCommutative => true]
 assert( (p*1_H)^2 == 0 )
 assert( x^2 == 0 )
+
 
