@@ -43,7 +43,7 @@ net Package := p -> p#"package title" | " version " | p#"package version";
 newPackage = method( Options => { Using => {} } )
 newPackage(String,String) := opts -> (title,vers) -> (
      doctable := new MutableHashTable;
-     documentationPath = append(documentationPath,doctable);
+     -- documentationPath = append(documentationPath,doctable);
      restore := saveValues { global currentPackage, global currentDictionary };
      global currentPackage <- new Package from {
 	  "restore" => restore,

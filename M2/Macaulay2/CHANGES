@@ -14,6 +14,10 @@ Changes made, most recent ones first:
 
 New in 0.9.3:
 
+The code for 'sort' (quick sort) unfortunately was choosing the left most
+array element as the pivot, leading to deep recursion when the array is
+already sorted.  Fixed.
+
 New system for 3rd party packages: see 'Package'.  Related items:
 'newPackage', 'end', 'assemble', 'check', 'LAYOUT', 'layout'.
 
