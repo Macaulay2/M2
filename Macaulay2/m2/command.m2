@@ -13,11 +13,6 @@ List/SelfInitializingType := (z,T) -> z / (i -> T i)
 Command = new SelfInitializingType of BasicList
 Command.synonym = "command"
 Command.name = "Command"
-Command.GlobalAssignHook = (X,x) -> if not Symbols#?x then Symbols#x = X
-Command.GlobalReleaseHook = (X,x) -> (
-     stderr << "warning: " << toString X << " redefined" << endl;
-     if Symbols#x === X then remove(Symbols,x);
-     )
 new Command from Function := Command => (command,f) -> command {f}
 new Command from String   := Command => (command,cmdname) -> command {
      x -> (

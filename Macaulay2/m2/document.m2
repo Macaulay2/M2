@@ -5,8 +5,6 @@
 -----------------------------------------------------------------------------
 maximumCodeWidth := 120
 TestsPrefix := "cache/tests/"
-
-documentationPath = {  }
 -----------------------------------------------------------------------------
 -- the phase encoding, obsolete
 -----------------------------------------------------------------------------
@@ -56,7 +54,7 @@ duplicateDocWarning := () -> (
 -----------------------------------------------------------------------------
 unDocumentable := method(SingleArgumentDispatch => true)
 unDocumentable Thing := x ->true
-unDocumentable Function := f -> class f === Function and match("^--Function.*--$", toString f)
+unDocumentable Function := f -> false -- class f === Function and match("^--Function.*--$", toString f)
 unDocumentable Sequence := s -> #s > 0 and unDocumentable s#0
 scan( {
 	  IndeterminateNumber,Manipulator, Manipulator, ScriptedFunctor, InfiniteNumber, Boolean, CC,
@@ -90,12 +88,14 @@ unformat    = s -> (
 -- getting database records
 -----------------------------------------------------------------------------
 
-getRecord := key -> (
-     t := select(1,documentationPath,d -> d#?key);
-     if t#?0 then t#0#key
+getRecord = key -> scan(packages, 			    -- later, we make this function local to this file
+     pkg -> (
+	  d := pkg#"raw documentation";	-- later on, we will use the processed documentation
+	  if d#?key then break d#key;
+	  )
      )
 
--- getRecord = on (getRecord, Name => "getRecord") -- debugging
+-- getRecord = on (getRecord, Name => "getRecord") -- useful for debugging
 
 -----------------------------------------------------------------------------
 -- formatting document tags
@@ -237,7 +237,9 @@ UndocumentableValue := hashTable { symbol environment => true, symbol commandLin
 documentableValue := key -> (
      class key === Symbol and value key =!= key
      and not UndocumentableValue#?key and DocumentableValueType#?(basictype value key))
-scan(flatten(pairs \ globalDictionaries), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
+
+---- how could this have worked (so soon)?
+-- scan(flatten(pairs \ globalDictionaries), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
 
 fixup := method(SingleArgumentDispatch => true)
 fixup Nothing    := z -> z				    -- null
@@ -251,10 +253,7 @@ fixup TOH        := z -> z				    -- TOH{x}
 fixup MarkUpType := z -> z{}				    -- convert PARA to PARA{}
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
 
-testFileCounter := 0
-exprCounter := 0
 file := null
-fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 
 -----------------------------------------------------------------------------
 -- process examples
@@ -664,7 +663,13 @@ documentation String := s -> (
      else if isGlobalSymbol s then documentation getGlobalSymbol s
      else SEQ { title s, getDocBody s }
      )
-documentation Thing := s -> SEQ { title s, usage s, type s }
+
+documentation Thing := s -> (
+     scan(packages, pkg -> (
+	       d := pkg#"reverse dictionary";
+	       if d#?s then break documentation d#s;
+	       )))
+
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
 postfix := set postfixOperators; erase symbol postfixOperators
@@ -705,19 +710,13 @@ op := s -> if operatorSet#?s then (
 	  }
      )
 
-optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f -> class f === Function and (options f)#?s)
+optionFor := s -> unique select( value \ flatten(values \ globalDictionaries), f -> class f === Function and (options f)#?s) -- this is slow!
 
 documentation Symbol := s -> (
      a := apply(select(optionFor s,f -> not unDocumentable f), f -> f => s);
      b := documentableMethods s;
-     val := value s;
-     if val =!= s and class val =!= String 
-     then SEQ {
-	  documentation val,
-	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, SHIELD smenu a, PARA{}},
-	  if #b > 0 then SEQ {"Methods for ", toString s, " :", PARA{}, SHIELD smenu b, PARA{}} 
-     	  }
-     else SEQ {
+     if value s =!= s then stderr << "warning: symbol " << s << " has a value" << endl;	-- might have to do something different
+     SEQ {
 	  title s, 
 	  usage s,
 	  op s,
@@ -999,7 +998,10 @@ tex PARA := x -> concatenate(///
 text PARA := x -> concatenate(newline, newline, apply(x,text))
 
 text EXAMPLE := x -> concatenate apply(x,i -> text PRE i)
-html EXAMPLE := x -> concatenate html ExampleTABLE apply(toList x, x -> {x, CODE concatenate("in = ",x)})
+html EXAMPLE := x -> (
+     x = toList x;
+     concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," = ",x#i)})
+     )
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
 text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y#1, newline)))

@@ -841,7 +841,7 @@ localAssignment(nestingDepth:int,frameindex:int,newvalue:Expr):Expr := ( -- fram
      newvalue);
 
 globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
-     if t.protected then return buildErrorPacket("assignment to protected variable");
+     if t.protected then return buildErrorPacket("assignment to protected variable '" + t.word.name + "'");
      vals := globalFrame.values;
      r := globalAssignmentHook(t,vals.frameindex,newvalue);
      when r is Error do return r else nothing;
@@ -864,7 +864,7 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      nestingDepth := x.nestingDepth;
      frameindex := x.frameindex;
      nlhs := length(frameindex);
-     foreach sym in syms do if sym.protected then return buildErrorPacket("assignment to protected variable");
+     foreach sym in syms do if sym.protected then return buildErrorPacket("assignment to protected variable '" + sym.word.name + "'");
      value := eval(x.rhs);
      when value 
      is Error do return value 

@@ -16,6 +16,11 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The variable "Symbols" has been removed, in favor of a reverse
+dictionary for each immutable symbol in each package.
+
+The variable 'documentationPath' has been removed.
+
 The function 'backtrace' has been eliminated in favor of a new
 variable, 'errorReport', which is a list of pseudocodes gathered while
 the evaluation stack was unwound.

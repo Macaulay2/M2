@@ -24,18 +24,24 @@ toString Sequence := s -> (
      if # s === 1 then concatenate("singleton ",toString s#0)
      else concatenate("(",between(",",toString \ s),")")
      )
-net Command := toString Command := toExternalString Command := f -> if Symbols#?f then toString Symbols#f else "--Command--"
+net Command := toString Command := toExternalString Command := f -> (
+     X := reverseDictionary f;
+     if X =!= null then toString X else "--Command--"
+     )
 
 net Function := toString Function := f -> (
-     if Symbols#?f then toString Symbols#f 
-     else (
+     X := reverseDictionary f;
+     if X =!= null then toString X else (
 	  t := locate f;
 	  if t === null then "--Function--" 
 	  else concatenate("--Function[", t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4, "]--")
 	  )
      )
 
-toExternalString Manipulator := toString Manipulator := f -> if Symbols#?f then toString Symbols#f else "--Manipulator--"
+toExternalString Manipulator := toString Manipulator := f -> (
+     X := reverseDictionary f;
+     if X =!= null then toString X else "--Manipulator--"
+     )
 -----------------------------------------------------------------------------
 toExternalString String := format
 
@@ -171,8 +177,6 @@ net HashTable := x -> (
 	  "}" 
      	  )
      )
-
-net Dictionary := d -> if Symbols#?d then toString Symbols#d else if length d == 0 then "Dictionary{}" else "Dictionary{..." | toString length d | "...}"
 
 net MutableHashTable := x -> (
      if x.?name then x.name 

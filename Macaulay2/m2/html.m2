@@ -361,6 +361,19 @@ makeMasterIndex := keylist -> (
 	  } << endl << close
      )
 
+separateRegexp = method()
+separateRegexp(String,String) := (re,s) -> separateRegexp(re,0,s)
+separateRegexp(String,ZZ,String) := (re,n,s) -> (
+     m := matches(re,s);
+     if m#?n then prepend(substring(s,0,m#n#0), separateRegexp(re,n,substring(m#n#0+m#n#1,s))) else {s})
+
+M2outputRE = "(\n\n)i+[1-9][0-9]* : "
+separateM2output = method()
+separateM2output String := r -> (
+     while r#0 == "\n" do r = substring(1,r);
+     while r#-1 == "\n" do r = substring(0,#r-1,r);
+     separateRegexp(M2outputRE,1,r))
+
 assemble = method(Options => { 
 	  TemporaryDirectory => "tmp/", 
 	  FinalDirectory => "tmp/",
@@ -395,17 +408,6 @@ assemble Package := o -> pkg -> (
      if fileExists dn
      then copyDirectory(dn, buildDirectory|srcDirectory, Verbose=>true, Exclude => {"CVS"});
 
-     -- make html files
-     htmlDirectory = LAYOUT#"packagehtml" buildPackage;
-     setupButtons();
-     makeDirectory (buildDirectory|htmlDirectory);     
-     nodes := unique join(keys pkg.Dictionary,keys pkg#"raw documentation",{topNodeName});
-     stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
-     ret := makeHtmlNode \ toString \ nodes;
-
-     -- make master.html with master index of all the html files
-     makeMasterIndex nodes;
-
      -- make example input files
      exampleDir := buildDirectory|LAYOUT#"packageexamples" buildPackage;
      infn := nodename -> exampleDir|toFilename nodename|".m2";
@@ -431,15 +433,28 @@ assemble Package := o -> pkg -> (
 	       then stderr << "--leaving example output file for " << nodename << endl
 	       else (
 		    stderr << "--making example output file for " << nodename << endl;
-		    -- later we'll figure out how to start *this* version of M2!!!
-		    cmd := "M2 --silent -q -e 'load \""|buildPackage|".m2\"' <"|inf|" >"|outf;
+		    cmd := commandLine#0 | " --silent -q -e 'load \""|buildPackage|".m2\"' <"|inf|" >"|outf;
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
 			 stderr << "--error return code: " << r << endl;
 			 haderror = true;
-			 ))));
+			 ));
+	       pkg#"example outputs"#nodename = drop(separateM2output get outf,-1);
+	       stderr << "node " << nodename << " : " << peek \ net \ pkg#"example outputs"#nodename << endl;
+	       ));
      if haderror then error "error occurred running example files";
+
+     -- make html files
+     htmlDirectory = LAYOUT#"packagehtml" buildPackage;
+     setupButtons();
+     makeDirectory (buildDirectory|htmlDirectory);     
+     nodes := unique join(keys pkg.Dictionary,keys pkg#"raw documentation",{topNodeName});
+     stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
+     ret := makeHtmlNode \ toString \ nodes;
+
+     -- make master.html with master index of all the html files
+     makeMasterIndex nodes;
      )
 
 check = method()

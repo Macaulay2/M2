@@ -151,15 +151,6 @@ document { printExamples,
      SEEALSO {"examples", "document"}
      }
 
-document { symbol "Symbols",
-     Headline => "find the symbol with a given value",
-     TT "Symbols", " -- a hash table which can be used to obtain the global
-     symbol with a particular value.",
-     PARA,
-     "This is useful internally for getting the name of a function, for 
-     example."
-     }
-
 document { symbol "Documentation",
      Headline => "where the documentation is stored",
      TT "Documentation", " -- a hash table which is used to store
@@ -170,7 +161,7 @@ document { symbol "Documentation",
      PARA,
      "The documentation is stored both in a hash table in memory, and in a 
      database file.",
-     SEEALSO {"Symbols", ":="}
+     SEEALSO {":="}
      }
 
 document { formatDocumentTag,
