@@ -48,14 +48,15 @@ variety = method()
 variety CoherentSheaf := Variety => (F) -> F.variety
 ring CoherentSheaf := (F) -> ring F.module
 module CoherentSheaf := Module => (F) -> F.module
-CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.module ++ G.module)
-CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.module ** G.module)
-CoherentSheaf ZZ := CoherentSheaf => (F,n) -> sheaf(F.module ** (ring F)^{n})
-CoherentSheaf / CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.module / G.module)
+Ideal * CoherentSheaf := (I,F) -> sheaf(variety F, I * module F)
+CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(variety F, F.module ++ G.module)
+CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(variety F, F.module ** G.module)
+CoherentSheaf ZZ := CoherentSheaf => (F,n) -> sheaf(variety F, F.module ** (ring F)^{n})
+CoherentSheaf / CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(variety F, F.module / G.module)
 annihilator CoherentSheaf := Ideal => (F) -> annihilator F.module
 codim CoherentSheaf := (F) -> codim F.module
 rank CoherentSheaf := (F) -> rank F.module
-exteriorPower(ZZ,CoherentSheaf) := CoherentSheaf => (i,F) -> sheaf(exteriorPower(i,F.module))
+exteriorPower(ZZ,CoherentSheaf) := CoherentSheaf => (i,F) -> sheaf(variety F, exteriorPower(i,F.module))
 degrees CoherentSheaf := (F) -> degrees F.module
 
 degreeList := (M) -> (
@@ -71,7 +72,6 @@ cohomology(ZZ,CoherentSheaf) :=  Module => opts -> (i,G) -> (
      then HH^(i+1)(M,opts)
      else (
 	  -- compute global sections
-	  e := opts.Degree;
 	  A := ring M;
 	  M = cokernel presentation M;
 	  M = M / saturate image map(M,A^0,0);
@@ -80,21 +80,16 @@ cohomology(ZZ,CoherentSheaf) :=  Module => opts -> (i,G) -> (
 	  N := coker lift(presentation M,R) ** coker F;
 	  r := numgens R;
 	  wR := R^{-r};
-	  if pdim N < r-1
-	  then M
-	  else (
+	  if pdim N >= r-1 then (
 	       E1 := Ext^(r-1)(N,wR);
-	       p := (
+	       p := 1 + opts.Degree + (
 		    if dim E1 <= 0 
-		    then max degreeList E1 - min degreeList E1 + 1
-		    else first min degrees E1 + e + 1 -- I've guessed when inserting 'first'
+		    then (max degreeList E1 - min degreeList E1)
+		    else (- first min degrees E1)
 		    );
-	       if p > 0
-	       then Hom(image matrix {apply(numgens A, j -> A_j^p)}, M)
-	       else M
-	       )
-	  )
-     )
+	       if p > 0 then M = Hom(image matrix {apply(numgens A, j -> A_j^p)}, M);
+	       );
+	  M))
 
 structureSheaf := method()		  -- private
 structureSheaf(Variety) := (X) -> sheaf(X, (ring X)^1)
@@ -112,13 +107,8 @@ OO = new ScriptedFunctor from { subscript => structureSheaf }
 
 prune CoherentSheaf := F -> (
      X := variety F;
-     M := module F;
-     M = cokernel presentation M;
-     M = M / saturate 0_M;
-     F = sheaf_X M;
-     M = HH^0 F;
-     M = prune M;
-     sheaf_X M)
+     sheaf_X prune HH^0 F
+     )
 
 cotangentSheaf = method()
 cotangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> (
