@@ -183,7 +183,7 @@ document { quote ChainComplexMap,
 	  (TO "^", "             -- power (repeated composition)"),
 	  (TO "++", "            -- direct sum"),
 	  (TO "cone", "          -- mapping cone"),
-	  (TO "extend", "          -- produce a map by lifting"),
+	  (TO "extend", "        -- produce a map by lifting"),
 	  (TO "ring", "          -- get the base ring"),
 	  (TO "nullhomotopy", "  -- produce a null homotopy"),
 	  (TO "p_i", "           -- get a component from a map of chain complexes")
@@ -424,6 +424,7 @@ extend(ChainComplex,ChainComplex,Matrix) := (D,C,fi)-> (
      f := new ChainComplexMap;
      f.source = C;
      f.target = D;
+     complete C;
      s := f.degree = j-i;
      f#i = fi;
      n := i+1;
@@ -787,6 +788,17 @@ dual ChainComplex := { ChainComplex,
      TT "dual C", " -- the dual of a chain complex."
      }
 
+Hom(ChainComplexMap, Module) := (f,N) -> (
+     g := new ChainComplexMap;
+     d := g.degree = f.degree;
+     g.source = Hom(target f, N);
+     g.target = Hom(source f, N);
+     scan(spots f, i -> g#(-i-d) = Hom(f#i,N));
+     g)
+
+transpose ChainComplexMap := 
+dual ChainComplexMap := f -> Hom(f, (ring f)^1)
+
 regularity ChainComplex := C -> (
      maxrow := null;
      complete C;
@@ -1034,7 +1046,6 @@ statusDefaults := new OptionTable from {
      Monomials => false
      }
 status = method (Options => statusDefaults)
-status Resolution := (r,options) -> ResolutionStatus(r, options)
 status ChainComplex := (C,options) -> ResolutionStatus(C.Resolution, options)
 document { quote status,
      TT "status C", " -- displays the status of the computation of a

@@ -267,6 +267,10 @@ resolution Module := (M,o) -> (
      else resolutionInEngine(M,o)
      )
 
+resolution Matrix := (f,o) -> (
+     extend(resolution(target f, o), resolution(source f, o), cover f)
+     )
+
 resolution Ideal := (I,options) -> (
      R := ring I;
      resolution(R^1/I, options))
@@ -309,3 +313,5 @@ getchange(ZZ,Resolution) := (level,g) -> (
 leadTerm(ZZ, ZZ, Resolution) := (n,level,g) -> (
      sendgg(ggPush g, ggPush n, ggPush level, gginitial);
      getMatrix ring g)
+
+status Resolution := (r,options) -> ResolutionStatus(r, options)

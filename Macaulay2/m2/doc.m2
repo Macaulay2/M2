@@ -4019,7 +4019,7 @@ document { quote map,
      "Installed methods:",
      MENU {
 	  (TO "map(Ring,Ring,...)", "     -- constructing ring homomorphisms"),
-	  (TO "map(Module,Module,...)", " -- constructing ring homomorphisms")
+	  (TO "map(Module,Module,...)", " -- constructing module homomorphisms")
 	  }
      }
 document { quote precedence,
