@@ -26,13 +26,13 @@ reach2 = method(SingleArgumentDispatch=>true)
 
 reach1 Thing := identity
 reach1 Sequence :=
-reach1 HtmlList := x -> scan(x,reach1)
+reach1 MarkUpList := x -> scan(x,reach1)
 reach1 TO := identity
 reach1 MENU := reach2
 
 reach2 Thing := identity
 reach2 Sequence :=
-reach2 HtmlList := x -> scan(x,reach2)
+reach2 MarkUpList := x -> scan(x,reach2)
 reach2 SHIELD := x -> null
 reach2 TO := x -> (
      s := getDocumentationTag x#0;

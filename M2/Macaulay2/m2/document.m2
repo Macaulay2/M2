@@ -88,8 +88,9 @@ name Function := f -> (
 
 repl := z -> (
      if class z === List or class z === Sequence then SEQ apply(toList z, repl)
-     else if class z === TO then z     
+     else if class z === TO then z
      else if instance(z,MarkUpList) then apply(z,repl)
+     else if instance(z,MarkUpType) then z{}
      else z
      )
 
@@ -105,7 +106,10 @@ doc = x -> (
      )
 
 err := nodeName -> (
-     stderr << concatenate ("warning: documentation already provided for '", nodeName, "'") << newline
+     stderr
+     << concatenate ("warning: documentation already provided for '", nodeName, "'") 
+     << newline
+     << flush
      )
 
 keysDoc := () -> (
@@ -318,7 +322,7 @@ NameHashTable := () -> (
 if phase === 2 then (
      addEndFunction( () -> (
 	       stderr << "writing " << NameFile << endl;
-	       NameFile << pairs NameHashTable() << endl << close;
+	       NameFile << name pairs NameHashTable() << endl << close;
 	       ));
      )
 
@@ -339,21 +343,21 @@ makeBaseFilename := () -> (
 	  )
      );
 
-processExample := x -> { CODE (
-	  exampleCounter = exampleCounter + 1;
-	  exampleOutputFile << x << endl;
-	  if exampleResults#?exampleCounter
-	  then exampleResults#exampleCounter
-	  else (
-	       if #exampleResults === exampleCounter then (
-		    stderr << "warning : input file " << nodeBaseFilename 
-		    << ".out terminates prematurely" << endl;
-		    );
-	       concatenate("in = ",x)
-	       ))}
+processExample := x -> CODE (
+     exampleCounter = exampleCounter + 1;
+     exampleOutputFile << x << endl;
+     if exampleResults#?exampleCounter
+     then exampleResults#exampleCounter
+     else (
+	  if #exampleResults === exampleCounter then (
+	       stderr << "warning : input file " << nodeBaseFilename 
+	       << ".out terminates prematurely" << endl;
+	       );
+	  concatenate("in = ",x)
+	  ))
 
 processExamplesLoop := s -> (
-     if class s === EXAMPLE then TABLE apply(select(toList s, i -> i =!= null), processExample)
+     if class s === EXAMPLE then ExampleTABLE apply(select(toList s, i -> i =!= null), processExample)
      else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)

@@ -3139,7 +3139,7 @@ document { "lists, arrays, and sequences",
      PARA,
      EXAMPLE {
 	  "z = {{a,1},{b,2},{c,3}}",
-      	  "new MatrixExpression from z",
+      	  "MatrixExpression z",
 	  },
      PARA,
      "An array is created by surrounding a sequence with brackets.

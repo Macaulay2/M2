@@ -289,7 +289,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	       args -> (
 		    if # args === 1 
 		    then args#0
-		    else new Sum from toList args
+		    else Sum toList args
 		    ),
 	       ConvertRepeat ConvertApply ( 
 		    (m,r) -> r * m,
@@ -306,7 +306,7 @@ Ring OrderedMonoid := (			  -- no memoize
 	       apply(eePopInt(), i -> (
 			 exp := eePopInt();
 			 fact := RM.pop();
-			 new Power from {fact,exp})));
+			 Power{fact,exp})));
 	  factor RM := if R === QQ then (
 	       (f,options) -> (
 		    error "factorization over QQ not implemented yet";

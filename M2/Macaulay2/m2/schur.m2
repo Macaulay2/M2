@@ -49,7 +49,7 @@ newSchur := (R,M) -> (
 	  args -> (
 	       if # args === 1 
 	       then args#0
-	       else new Sum from toList args
+	       else Sum toList args
 	       ),
 	  ConvertRepeat ConvertApply ( 
 	       (m,r) -> r * m,
@@ -105,11 +105,11 @@ Schur(ZZ) := (n,options) -> (
      vec := apply(n, i -> apply(n, j -> if j<=i then 1 else 0));
      name M := net M := x -> first lines sendgg(ggPush x, ggsee, ggpop);
      M.ConvertToExpression = ConvertApply(
-	  args -> new HeldString from name (
+	  args -> new Holder from {name (
 	       if args === ()
 	       then {}
 	       else prune sum(args,(v,n) -> n * vec#v)
-	       ),
+	       )},
 	  ConvertRepeat ConvertJoin(
 	       ConvertInteger,	  -- index of variable
 	       ConvertInteger	  -- exponent on variable

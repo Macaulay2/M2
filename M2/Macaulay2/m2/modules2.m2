@@ -231,16 +231,13 @@ hilbertSeries Module := (M,options) -> (
 			 uf = uf + 1;
 			 )
 		    );
-	       new Divide from {
+	       Divide {
 		    if uf == 0 
 		    then num
-		    else new Product from {num, new Power from {1 - T_0, uf}},
-		    new Product from apply(
+		    else Product {num, Power{1 - T_0, uf}},
+		    Product apply(
 			 sort pairs denom,
-			 (i,e) -> new Power from {
-			      1 - product(#i, j -> T_j ^ (i_j)),
-			      e
-			      }
+			 (i,e) -> Power{ 1 - product(#i, j -> T_j ^ (i_j)), e }
 			 )
 		    }
 	       )
@@ -374,7 +371,7 @@ ZZ * ProjectiveHilbertPolynomial := (b,h) -> (
      else apply(h,c -> b*c)
      )
 
-PPP := new HeldString from "P"
+PPP := new Holder from {"P"}
 expression ProjectiveHilbertPolynomial := (h) -> (
      sum(sort pairs h, (n,c) -> c * new Subscript from {PPP, n})
      )	  

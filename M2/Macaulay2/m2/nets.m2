@@ -15,17 +15,20 @@ Net | Net := Net | String := String | Net := horizontalJoin
 String || String := Net || Net := Net || String := String || Net := verticalJoin
 String ^ ZZ := (s,i) -> raise(horizontalJoin s,i)
 Net ^ ZZ := raise; erase quote raise
-net Net := x -> ( 
-     s := concatenate("+", width x : "-", "+");
-     n := height x + depth x;
-     if n === 0 then (
-     	  (s || x || s) ^ (height x)
-	  )
-     else (
-     	  t := (verticalJoin (n : "|")) ^ (height x - 1);
-     	  (s || t | x | t || s) ^ (height x)
-	  )
-     )
+
+net Net := identity
+---- this old routine draws a box around a net
+--net Net := x -> ( 
+--     s := concatenate("+", width x : "-", "+");
+--     n := height x + depth x;
+--     if n === 0 then (
+--     	  (s || x || s) ^ (height x)
+--	  )
+--     else (
+--     	  t := (verticalJoin (n : "|")) ^ (height x - 1);
+--     	  (s || t | x | t || s) ^ (height x)
+--	  )
+--     )
 
 comma := ", "
 

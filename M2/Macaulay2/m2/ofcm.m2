@@ -54,7 +54,7 @@ vars GeneralOrderedMonoid := M -> M.vars
 options GeneralOrderedMonoid := M -> M.Options
 expression GeneralOrderedMonoid := M -> (
      if not M.?generatorSymbols
-     then new HeldString from "--empty GeneralOrderedMonoid--"
+     then new Holder from {"--empty GeneralOrderedMonoid--"}
      else (
      	  v := M.generatorSymbols;
      	  if any(M.degrees, i -> i != {1}) 
@@ -420,7 +420,7 @@ makeit1 := (options) -> (
 	  x = select(x, (k,v) -> k < n);
 	  x = new Product from apply(
 	       toList x,
-	       (k,v) -> new Power from {expression M.generatorSymbols#k, v}
+	       (k,v) -> Power{expression M.generatorSymbols#k, v}
 	       );
 	  if #x === 0 then expression 1 else x
 	  );

@@ -229,12 +229,14 @@ document {
 	  TO "BODY",
 	  TO "BOLD",
 	  TO "BR",
+	  TO "CENTER",
 	  TO "CITE",
 	  TO "CODE",
 	  TO "DFN",
 	  TO "DL",
 	  TO "EM",
 	  TO "EXAMPLE",
+	  TO "ExampleTABLE",
 	  TO "H1",
 	  TO "H2",
 	  TO "H3",
@@ -301,15 +303,15 @@ document { quote SHIELD,
      }
 
 document { quote PARA,
-     TT "PARA", " -- a ", TO "hypertext", " paragraph separator.",
+     TT "PARA x", " -- a ", TO "hypertext", " paragraph.",
      }
 
 document { quote BR,
-     TT "BR", " -- a ", TO "hypertext", " line break."
+     TT "BR{}", " -- a ", TO "hypertext", " line break."
      }
 
 document { quote HR,
-     TT "HR", " -- a ", TO "hypertext", " horiziontal rule."
+     TT "HR{}", " -- a ", TO "hypertext", " horiziontal rule."
      }
 
 document {
@@ -342,7 +344,7 @@ document { quote PRE,
      34    345    3455       7
 ",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote TITLE,
@@ -351,7 +353,7 @@ document { quote TITLE,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote HEAD,
@@ -360,7 +362,7 @@ document { quote HEAD,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote BODY,
@@ -369,7 +371,7 @@ document { quote BODY,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote IMG,
@@ -377,7 +379,7 @@ document { quote IMG,
      PARA,
      "The argument ", TT "x", " should be a string containing the URL of the image.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote SEQ,
@@ -387,7 +389,7 @@ document { quote SEQ,
      strings or hypertext items.  The result is that the entries in the
      list or sequence are displayed sequentially.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote HTML,
@@ -396,7 +398,7 @@ document { quote HTML,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote H1,
@@ -410,7 +412,7 @@ document { quote H1,
      " produces ",
      H1 "Interesting thing",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote H2,
@@ -424,7 +426,7 @@ document { quote H2,
      " produces ",
      H2 "Interesting thing",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote H3,
@@ -438,7 +440,7 @@ document { quote H3,
      " produces ",
      H3 "Interesting thing",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote H4,
@@ -452,7 +454,7 @@ document { quote H4,
      " produces ",
      H4 "Interesting thing",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote H5,
@@ -466,7 +468,7 @@ document { quote H5,
      " produces ",
      H5 "Interesting thing",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote H6,
@@ -480,7 +482,7 @@ document { quote H6,
      " produces ",
      H6 "Interesting thing",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote LISTING,
@@ -494,7 +496,7 @@ document { quote LISTING,
      34    345    3455       7
 ",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote XMP,
@@ -508,7 +510,7 @@ document { quote XMP,
      34    345    3455       7
 ",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote BLOCKQUOTE,
@@ -522,7 +524,7 @@ document { quote BLOCKQUOTE,
      34    345    3455       7
 ",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote EXAMPLE,
@@ -541,6 +543,11 @@ document { quote TABLE,
      TT "TABLE x", " -- produces a hypertext TABLE from a list of lists."
      }
 
+document { quote ExampleTABLE,
+     TT "ExampleTABLE x", " -- produces a hypertext display suitable for displaying
+     a list of examples."
+     }
+
 document { quote VAR,
      TT "VAR x", " -- encloses ", TT "x", " in a hypertext VAR item.",
      PARA,
@@ -551,7 +558,7 @@ document { quote VAR,
      PARA,
      VAR "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote DFN,
@@ -563,7 +570,7 @@ document { quote DFN,
      "Here is an example.",
      DFN "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote STRONG,
@@ -576,7 +583,15 @@ document { quote STRONG,
      PARA,
      STRONG "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
+     }
+
+document { quote CENTER,
+     TT "CENTER x", " -- encloses x in a hypertext CENTER item.",
+     PARA,
+     "The argument ", TT "x", " should be a string, or a list or sequence of
+     strings or hypertext items.",
+     SEEALSO "hypertext"
      }
 
 document { quote BIG,
@@ -589,7 +604,7 @@ document { quote BIG,
      PARA,
      BIG "Here is some big text.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote SMALL,
@@ -602,7 +617,7 @@ document { quote SMALL,
      PARA,
      SMALL "Here is some small text.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote SUB,
@@ -612,7 +627,7 @@ document { quote SUB,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote SUP,
@@ -622,7 +637,7 @@ document { quote SUP,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote SAMP,
@@ -635,7 +650,7 @@ document { quote SAMP,
      PARA,
      SAMP "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote KBD,
@@ -648,7 +663,7 @@ document { quote KBD,
      PARA,
      KBD "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote ITALIC,
@@ -662,7 +677,7 @@ document { quote ITALIC,
      PARA,
      ITALIC "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote UNDERLINE,
@@ -675,7 +690,7 @@ document { quote UNDERLINE,
      PARA,
      UNDERLINE "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote TEX,
@@ -696,7 +711,7 @@ document { quote TT,
      PARA,
      TT "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote EM,
@@ -709,7 +724,7 @@ document { quote EM,
      PARA,
      EM "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote CITE,
@@ -722,7 +737,7 @@ document { quote CITE,
      PARA,
      CITE "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote BOLD,
@@ -735,7 +750,7 @@ document { quote BOLD,
      PARA,
      BOLD "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote CODE,
@@ -748,14 +763,14 @@ document { quote CODE,
      PARA,
      CODE "Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.  Here is a long line.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote HREF,
      TT "HREF{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext HREF link
      pointing to the url ", TT "u", ".",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote MENU,
@@ -768,7 +783,7 @@ document { quote MENU,
      "produces",
      MENU {"first","second","third"},
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote UL,
@@ -781,7 +796,7 @@ document { quote UL,
      "produces",
      UL {"first","second","third"},
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote DL,
@@ -802,7 +817,7 @@ document { quote DL,
 	  {"third heading","third item's text"}
 	  },
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote OL,
@@ -816,7 +831,7 @@ document { quote OL,
      "produces",
      OL {"first","second","third"},
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote NL,
@@ -829,17 +844,17 @@ document { quote NL,
      "produces",
      NL {"first","second","third"},
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote NOINDENT,
-     TT "NOINDENT", " -- specifies that no indentation should be used
+     TT "NOINDENT{}", " -- specifies that no indentation should be used
      for following hypertext items.",
      PARA,
      "This item is mainly of interest for hypertext that ultimately will
      be viewed with TeX, for html viewers don't indent paragraphs.",
      PARA,
-     "See also ", TO "hypertext", "."
+     SEEALSO "hypertext"
      }
 
 document { quote TO,

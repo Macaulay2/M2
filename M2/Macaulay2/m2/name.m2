@@ -49,30 +49,35 @@ name = s -> (
 	  else concatenate("<<",name class s,":",name hash s,">>")))
 
 name Thing := string
-name String := format;
+name String := format
+name Net := x -> (
+     s := concatenate( "verticalJoin(", between(",",apply(netRows x, format)), ")" );
+     if height x === 1 then s
+     else concatenate( "((", s, ")^", string(height x - 1), ")" )
+     )
 
-     alphabet := new MutableHashTable
-     scan( characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", c -> alphabet#c = true)
-     operators := new MutableHashTable
-     scan( { quote or, quote do, quote else, quote then, quote of, quote shield,
-	       quote from, quote and, quote not, quote if, quote try, 
-	       quote new, quote while, quote quote, quote global, quote local,
-	       quote timing, quote time
-	       },
-	  i -> operators#i = concatenate("quote ", string i))
-     scan(pairs symbolTable(), (n,s) -> (
-	       if not alphabet#?(n#0) then (
-		    operators#s = concatenate("quote ",n);
-		    )
+alphabet := new MutableHashTable
+scan( characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", c -> alphabet#c = true)
+operators = new MutableHashTable	  -- erased in methods.m2
+scan( { quote or, quote do, quote else, quote then, quote of, quote shield,
+	  quote from, quote and, quote not, quote if, quote try, 
+	  quote new, quote while, quote quote, quote global, quote local,
+	  quote timing, quote time
+	  },
+     i -> operators#i = concatenate("quote ", string i))
+scan(pairs symbolTable(), (n,s) -> (
+	  if not alphabet#?(n#0) then (
+	       operators#s = concatenate("quote ",n);
 	       )
 	  )
-     alphabet = null
-     operators#(quote " ") = ///quote " "///
+     )
+alphabet = null
+operators#(quote " ") = ///quote " "///
 
 name Symbol := s -> (
      if operators#?s then operators#s 
-     else if value s === s then string s
-     else concatenate("quote ", string s)
+     -- else if value s =!= s then concatenate("quote ", string s)
+     else string s
      )
 
 name Function := f -> error "'name' applied to function too early in setup"

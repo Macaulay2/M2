@@ -332,7 +332,7 @@ expression Vector := v -> (
      if class R === PolynomialRing or class R === QuotientRing then (
 	  M := monoid R;
 	  A := coefficientRing R;
-	  new SparseMonomialVectorExpression from { numgens ambient F, 
+	  SparseMonomialVectorExpression { numgens ambient F, 
 	       convert(
 		    ConvertRepeat ConvertJoin(
 			 ConvertInteger,
@@ -340,7 +340,7 @@ expression Vector := v -> (
 			 A.ConvertToExpression),
 		    callgg(ggtonet, v))})
      else (
-	  new SparseVectorExpression from { numgens ambient F, 
+	  SparseVectorExpression { numgens ambient F, 
 	       convert(
 		    ConvertRepeat ConvertJoin(ConvertInteger,R.ConvertToExpression),
 		    callgg(ggtonet, v))}))

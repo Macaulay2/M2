@@ -158,7 +158,7 @@ document { quote cohomology,
 
 document { quote homology,
      TT "homology(f,g)", " -- computes the homology module (kernel f)/(image g).",
-     NOINDENT,BR,     
+     BR, NOINDENT,
      TT "homology", " -- a method name available for computing expressions
      of the forms HH_i(X) and HH_i(M,N).",
      PARA,

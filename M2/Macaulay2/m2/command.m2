@@ -4,6 +4,7 @@
 
 SelfInitializingType = new Type of Type
 SelfInitializingType.name = "SelfInitializingType"
+SelfInitializingType.symbol = quote SelfInitializingType
 SelfInitializingType Thing := (T,z) -> new T from z
 
 Command = new SelfInitializingType of BasicList
