@@ -42,7 +42,7 @@ map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
      if #p != numgens M or #p > 0 and ( not isTable p or # p#0 != rankN )
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      p = makeRawTable(R,p);
-     h := rawMatrix1(raw cover M, rankN, apply(toSequence flatten p, r -> r.RawRingElement), false, 0);
+     h := rawMatrix1(raw cover M, rankN, toSequence flatten p, false, 0);
      map(M,newModule(R,rawSource h),h))
 
 map(Module,Nothing,Matrix) := Matrix => o -> (M,nothing,p) -> (

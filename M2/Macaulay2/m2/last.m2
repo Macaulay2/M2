@@ -22,9 +22,10 @@ promptWidth = () -> (
      else (
 	  lastLN = lineNumber;
 	  lastWI = max \\ width \ lines ZZ.InputPrompt lineNumber))
+
 wr := (sep,x) -> wrap(printWidth - promptWidth(), sep, net x)
-RawMatrix.BeforePrint = Matrix.BeforePrint = RingElement.BeforePrint = List.BeforePrint = Sequence.BeforePrint = x -> wr("-",x)
-String.BeforePrint = x -> wr("",x)
+RawMatrix.Wrap = Matrix.Wrap = RingElement.Wrap = List.Wrap = Sequence.Wrap = x -> wr("-",x)
+String.Wrap = x -> wr("",x)
 
 -- make sure this is after all global symbols are defined or erased
 closePackage "Macaulay2"
