@@ -130,7 +130,7 @@ setup((), {
 	  koszul, symmetricPower, basis, coefficientRing, trace, target, source,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
 	  dual, cokernel, coimage, image, generators, allGenerators, someTerms, scanKeys, scanValues,
-	  summary, substitute, rank, complete, ambient, top, baseName,
+	  summary, substitute, rank, complete, ambient, top, baseName, remainder, quotientRemainder,
 	  degree, coefficients, oldCoefficients, size, sum, product,
 	  exponents, nullhomotopy, module, raw,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, 
@@ -181,6 +181,16 @@ primaryDecomposition = method(
      Options => {
 	  PrintLevel => 0,
 	  Strategy => null})
+
+quotient = method(
+     Options => {
+	  --DegreeLimit => {},
+	  --BasisElementLimit => infinity,
+	  --PairLimit => infinity,
+	  MinimalGenerators => true,
+	  Strategy => null
+	  }
+     )
 
 simpleToString = toString
 toString = method(SingleArgumentDispatch => true, TypicalValue => String)

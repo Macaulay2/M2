@@ -142,6 +142,7 @@ nunaryleft(s:string)    :Word := install(s,makeUniqueWord(s, parseinfo(prec,prec
 token(s:string)         :Word :=           makeUniqueWord(s, parseinfo(prec,nopr  ,prec,parsefuns(errorunary,errorbinary)));
 binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree):Word
                               := install(s,makeUniqueWord(s, parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binary))));
+binaryrightword(s:string):Word:=           makeUniqueWord(s, parseinfo(prec,prec-1,nopr,parsefuns(errorunary,binaryop)));
 binaryright(s:string)   :Word := binaryright(s,binaryop);
 
 -- Now the symbols and operators:
@@ -189,29 +190,29 @@ bump();
 bump();
      export LongLongDoubleArrowS := makeKeyword(binaryright("===>"));
 bump();
-     export DeductionS := makeKeyword(unaryleft("|-"));	    -- also binary
+     export DeductionS := makeKeyword(unaryright("|-"));	    -- also binary
 bump();
      export LongBiDoubleArrowS := makeKeyword(binaryright("<==>"));
 bump();
      export LongDoubleArrowS := makeKeyword(binaryright("==>"));
 bump();
-     export orS := makeKeyword(binaryleftword("or"));
+     export orS := makeKeyword(binaryrightword("or"));
 bump();
-     export andS := makeKeyword(binaryleftword("and"));
+     export andS := makeKeyword(binaryrightword("and"));
 bump();
      export notS := makeKeyword(unaryword("not"));
 -- binary predicates on terms:
 bump();
-     export LessS := makeKeyword(unaryleft("<"));
-     export GreaterS := makeKeyword(unaryleft(">"));
-     export LessEqualS := makeKeyword(unaryleft("<="));
-     export GreaterEqualS := makeKeyword(unaryleft(">="));
-     export EqualEqualEqualS := makeKeyword(binaryleft("==="));
-     export EqualEqualS := makeKeyword(binaryleft("=="));
-     export QuestionS := makeKeyword(binaryleft("?"));
-     export NotEqualEqualEqualS := makeKeyword(binaryleft("=!="));
-     export NotEqualS := makeKeyword(binaryleft("!="));
-     export inS := makeKeyword(binaryleftword("in"));
+     export LessS := makeKeyword(unaryright("<"));
+     export GreaterS := makeKeyword(unaryright(">"));
+     export LessEqualS := makeKeyword(unaryright("<="));
+     export GreaterEqualS := makeKeyword(unaryright(">="));
+     export EqualEqualEqualS := makeKeyword(binaryright("==="));
+     export EqualEqualS := makeKeyword(binaryright("=="));
+     export QuestionS := makeKeyword(binaryright("?"));
+     export NotEqualEqualEqualS := makeKeyword(binaryright("=!="));
+     export NotEqualS := makeKeyword(binaryright("!="));
+     export inS := makeKeyword(binaryrightword("in"));
 -- operations on terms that yield terms:
 bump();
      export BarBarS := makeKeyword(binaryleft("||"));

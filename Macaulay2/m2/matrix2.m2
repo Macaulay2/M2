@@ -67,7 +67,10 @@ modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      syz(m|n, options, SyzygyRows => numgens source m)
      )
 
-Matrix // Matrix := Matrix => (f,g) -> (
+quotientRemainder(Matrix,Matrix) := Matrix => opts -> (f,g) -> notImplemented()
+
+Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
+quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
      -- if ring g =!= ring f then error "expected maps over the same ring";
      M := target f;
      if M != target g then error "expected maps with the same target";
@@ -89,7 +92,7 @@ Matrix // RingElement := (f,r) -> f // (r * id_(target f))
 
 Matrix // ZZ           := (f,r) -> f // promote(r,ring f)
 
-Matrix % Matrix := Matrix => (n,m) -> (
+remainder(Matrix,Matrix) := Matrix % Matrix := Matrix => (n,m) -> (
      R := ring n;
      if R =!= ring m then error "expected matrices over the same ring";
      if not isFreeModule source n or not isFreeModule source m
