@@ -1,6 +1,7 @@
 #include "polyring.hpp"
 #include "matrix.hpp"
 #include "matrixcon.hpp"
+#include "ntuple.hpp"
 
 class KBasis
 {
@@ -16,8 +17,6 @@ private:
   MatrixConstructor mat;
 
   const Matrix *bottom_matrix;
-  const int * lo_degree;
-  const int * hi_degree;
   M2_arrayint wt_vector; // length is D->n_vars(), or less.
   // Dot product of a degree of a variable
   // in 'vars' will give a positive value.
@@ -27,18 +26,33 @@ private:
   bool do_truncation;
   int limit; // if >= 0, then stop after that number.
 
+  const int * lo_degree; // if non-null, the lowest degree to collect
+  const int * hi_degree; // if non-null, the highest degree to collect
+  // In the singly graded case: collect every monomial whose weight lies >= weight of
+  // lo_degree (kb_target_lo_weight), and <= weight of hi_degree (kb_target_hi_weight).
+  // (resp -infty, infty, if lo_degree resp hi_degree is null).
+  //
+  // in multi-graded case, we can only collect one degree, or the entire module.
+  // so: lo_degree and hi_degree must be the same (null, or same degree vector).
+
+  int * kb_exp; // exponent vector being constructed recursively
+  int kb_exp_weight; // weight of this exponent vector  
+
+  int kb_target_lo_weight; // only valid if lo_degree is not null 
+  int kb_target_hi_weight; // only valid if hi_degree is not null
+
+  int * kb_target_multidegree; // in multigraded case this is not null, and is the
+                              // degree vector which is our target.
+  int * kb_exp_multidegree; // only used when kb_target_multidegree is non-null
+
   int kb_comp;
-  int kb_exp_weight;
-  int kb_exp_lo_weight;
-  int kb_exp_hi_weight;
-  int          * kb_exp_degree;
-  int * kb_target_degree; // Only set or used for multi-degrees.
+
+  int          * kb_mon;
   
   MonomialIdeal* kb_monideal;
-  int          * kb_exp;
-  int          * kb_mon;
 
-  int weight(const int *deg) const;
+  int weight_of_monomial(const int *deg) const; // deg is an encoded degree monomials
+  int weight(const int *exp) const; // exp is an exponent vector
   void insert();
   void k_basis0(int firstvar);
 
@@ -73,12 +87,12 @@ KBasis::KBasis(const Matrix *bottom,
 	       bool do_truncation0,
 	       int limit0)
   : bottom_matrix(bottom),
-    lo_degree(lo_degree0),
-    hi_degree(hi_degree0),
     wt_vector(wt),
     vars(vars0),
     do_truncation(do_truncation0),
-    limit(limit0)
+    limit(limit0),
+    lo_degree(lo_degree0),
+    hi_degree(hi_degree0)
 {
   P = bottom->get_ring()->cast_to_PolynomialRing();
   M = P->getMonoid();
@@ -89,7 +103,7 @@ KBasis::KBasis(const Matrix *bottom,
   var_wts = newarray(int, vars->len);
   for (int i=0; i<vars->len; i++)
     {
-      var_wts[i] = weight(M->degree_of_var(vars->array[i]));
+      var_wts[i] = weight_of_monomial(M->degree_of_var(vars->array[i]));
     }
 
   // Set the recursion variables
@@ -98,11 +112,8 @@ KBasis::KBasis(const Matrix *bottom,
     kb_exp[i] = 0;
   kb_exp_weight = 0;
 
-  kb_exp_degree = D->make_one();
-  kb_exp_weight = 0;
-
-  if (lo_degree != 0) kb_exp_lo_weight = weight(lo_degree);
-  if (hi_degree != 0) kb_exp_hi_weight = weight(hi_degree);
+  if (lo_degree != 0) kb_target_lo_weight = weight(lo_degree);
+  if (hi_degree != 0) kb_target_hi_weight = weight(hi_degree);
 
   kb_mon = M->make_one();
 
@@ -110,22 +121,29 @@ KBasis::KBasis(const Matrix *bottom,
 
   if (D->n_vars() > 1 && lo_degree)
     {
-      kb_target_degree = D->make_one();
-      D->from_expvector(lo_degree, kb_target_degree);
+      kb_target_multidegree = D->make_one();
+      D->from_expvector(lo_degree, kb_target_multidegree);
+      kb_exp_multidegree = D->make_one();
     }
   else
-    kb_target_degree = 0;
+    {
+      kb_target_multidegree = 0;
+      kb_exp_multidegree = 0;
+    }
 }
 
-int KBasis::weight(const int *deg) const
+int KBasis::weight_of_monomial(const int *deg) const
 {
   int *exp = newarray(int,D->n_vars());
   D->to_expvector(deg, exp);
-  int sum = 0;
-  for (int i=0; i<wt_vector->len; i++)
-    sum += wt_vector->array[i] * exp[i];
+  int result = ntuple::weight(wt_vector->len, exp, wt_vector);
   deletearray(exp);
-  return sum;
+  return result;
+}
+
+int KBasis::weight(const int *exp) const
+{
+  return ntuple::weight(wt_vector->len, exp, wt_vector);
 }
 
 void KBasis::insert()
@@ -144,22 +162,39 @@ void KBasis::k_basis0(int firstvar)
     // variables 0..topvar having degree 'deg' which are not in 'mi'.
 {
   bool do_insert = false;
+  bool do_recurse;
   Bag *b;
 
-  if (hi_degree && kb_exp_weight > kb_exp_hi_weight)
+  if (hi_degree && kb_exp_weight >= kb_target_hi_weight)
     {
-      if (!do_truncation) return;
-      do_insert = true; // unless the following search_expvector fails
+      if (kb_exp_weight > kb_target_hi_weight)
+	{
+	  if (!do_truncation) return;
+	  do_insert = true;
+	}
+      do_recurse = false;
     }
+  else
+    do_recurse = true;
+
   if (kb_monideal->search_expvector(kb_exp,b)) return;
-  if (kb_target_degree)
+
+  if (kb_target_multidegree)
     {
-      if (D->compare(kb_exp_degree, kb_target_degree) == EQ)
-	do_insert = true;
+      if (kb_exp_weight < kb_target_lo_weight)
+	{
+	  do_insert = false;
+	}
+      else 
+	{
+	  // We have the same weight.  The case when kb_exp_weight > kb_target_lo_weight
+	  // should not get to this point.
+	  do_insert = (D->compare(kb_target_multidegree, kb_exp_multidegree) == EQ);
+	}
     }
   else
     {
-      if (!lo_degree || kb_exp_weight >= kb_exp_lo_weight)
+      if (!lo_degree || kb_exp_weight >= kb_target_lo_weight)
 	do_insert = true;
     }
 
@@ -169,8 +204,7 @@ void KBasis::k_basis0(int firstvar)
       if (limit == 0) return;	    
     }
 
-  if (hi_degree && kb_exp_weight >= kb_exp_hi_weight)
-    return;  // Do not recurse
+  if (!do_recurse) return;
 
   for (int i=firstvar; i<vars->len; i++)
     {
@@ -183,18 +217,20 @@ void KBasis::k_basis0(int firstvar)
 	}
 
       kb_exp[v]++;
-      D->mult(kb_exp_degree, 
-		 M->degree_of_var(v),
-		 kb_exp_degree);
       kb_exp_weight += var_wts[i];
-
-
+      if (kb_target_multidegree)
+	D->mult(kb_exp_multidegree, 
+		M->degree_of_var(v),
+		kb_exp_multidegree);
+      
       k_basis0(i);
 
       kb_exp[v]--;
-      D->divide(kb_exp_degree, M->degree_of_var(v),
-		   kb_exp_degree);
       kb_exp_weight -= var_wts[i];
+      if (kb_target_multidegree)
+	D->divide(kb_exp_multidegree, 
+		  M->degree_of_var(v),
+		  kb_exp_multidegree);
 
       if (limit == 0) return;
     }
@@ -212,14 +248,16 @@ void KBasis::compute()
   for (int i=0; i<bottom_matrix->n_rows(); i++)
     {
       kb_comp = i;
+
       // Make the monomial ideal: this should contain only
       // monomials involving 'vars'.
       kb_monideal = bottom_matrix->make_basis_monideal(i);
 
-      // Change kb_exp_degree, kb_exp_weight to reflect the degree
-      // of this row.
-      D->copy(bottom_matrix->rows()->degree(i), kb_exp_degree);
-      kb_exp_weight = weight(kb_exp_degree);
+      const int *component_degree = bottom_matrix->rows()->degree(i);
+      kb_exp_weight = weight_of_monomial(component_degree);
+
+      if (kb_target_multidegree)
+	D->copy(component_degree, kb_exp_multidegree);
 
       // Do the recursion
       k_basis0(0);

@@ -415,12 +415,11 @@ needs "raw-util.m2"
 R = polyring(rawZZp 101, (symbol a .. symbol c))
 m = mat{{0_R}}
 b1 = rawBasis(m, {1}, {1}, {1}, {0,1,2}, false, -1)
+assert(b1 == mat{{a,b,c}})
 
-R = ZZ/101[symbol a .. symbol c]
-m = mat{{0_(raw R)}}
-rawBasis(m,{1},{1},{1},{0,1,2},false,-1)
-
-
+needs "raw-util.m2"
+R = polyring(rawZZp 101, (symbol a .. symbol c))
+m = mat{{0_R}}
 b1 = rawBasis(m, {2}, {2}, {1}, {0,1,2}, false, -1)
 assert(b1 == mat{{a^2, a*b, a*c, b^2, b*c, c^2}})
 
@@ -462,6 +461,8 @@ m
 rawTarget m
 rawSource m
 -- A truncation example
+needs "raw-util.m2"
+R = polyring(rawZZp 101, (symbol a .. symbol c))
 m = rawMatrix1(R^{-1,-3,-6}, 3, (a^3,0_R,0_R,
 	                         0_R,b^3,0_R,
 				 0_R,0_R,a*b), false, 0)
@@ -507,6 +508,11 @@ b1 = rawBasis(mat{{0_B}}, {2},{2},{1},(0,1),false,-1)
 f = rawPromote(B,a)*x^2 + rawPromote(B,b)*x*y + rawPromote(B,c)*y^2
 rawCoefficients((0,1),b1,mat{{f}})
 << "rawBasis: test for quotient rings" << endl;
+
+R = ZZ/101[symbol a .. symbol c]
+m = mat{{0_(raw R)}}
+rawBasis(m,{1},{1},{1},{0,1,2},false,-1)
+
 ---------------------------------------
 -- mutable matrix routines ------------
 ---------------------------------------
