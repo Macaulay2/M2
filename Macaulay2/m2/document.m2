@@ -98,8 +98,7 @@ formatDocumentTag Option   := record(
 	  )
      )
 
-fSeq := null
-fSeqInitialize := () -> fSeq = new HashTable from {
+fSeqInitialize := (toString,toStr) -> new HashTable from {
      (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toStr s#3),
      (4,cohomology,ZZ  ) => s -> ("HH_", toStr s#1, "^", toStr s#2, " ", toStr s#3),
      (4,homology,ZZ    ) => s -> ("HH^", toStr s#1, "_", toStr s#2, " ", toStr s#3),
@@ -133,10 +132,14 @@ fSeqInitialize := () -> fSeq = new HashTable from {
      3 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ")"),
      2 => s -> (toString s#0, " ", toStr s#1)
      }
+
+fSeq := null
 formatDocumentTag Sequence := record(
      s -> (
-	  if fSeq === null then fSeqInitialize();
-	  concatenate (
+	  if fSeq === null then (
+	       fSeq = fSeqInitialize(toString,toStr);
+	       );
+	  SEQ (
 	       if #s == 0                             then toString
 	       else if fSeq#?(#s,s#0)                 then fSeq#(#s,s#0)
 	       else if #s >= 1 and fSeq#?(#s,s#0,s#1) then fSeq#(#s,s#0,s#1)
@@ -145,6 +148,23 @@ formatDocumentTag Sequence := record(
 	       else if fSeq#?(#s, class, class s#0)   then fSeq#(#s, class, class s#0)
 	       else if fSeq#?#s                       then fSeq#(#s)
 						      else toString) s))
+
+formatDocumentTagTO := method(SingleArgumentDispatch => true)
+fSeqTO := null
+formatDocumentTagTO Sequence := (
+     s -> (
+	  if fSeqTO === null then (
+	       fSeqTO = fSeqInitialize(i -> TO i, i -> TO i);
+	       );
+	  (
+	       if #s == 0                               then toString
+	       else if fSeqTO#?(#s,s#0)                 then fSeqTO#(#s,s#0)
+	       else if #s >= 1 and fSeqTO#?(#s,s#0,s#1) then fSeqTO#(#s,s#0,s#1)
+	       else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) 
+	       					        then fSeqTO#(#s, class, class s#0, s#1)
+	       else if fSeqTO#?(#s, class, class s#0)   then fSeqTO#(#s, class, class s#0)
+	       else if fSeqTO#?#s                       then fSeqTO#(#s)
+						        else toString) s))
 
 -----------------------------------------------------------------------------
 -- verifying the keys
@@ -488,13 +508,8 @@ moreGeneral := s -> (
 -----------------------------------------------------------------------------
 
 optTO := i -> (
-     if getDoc i =!= null 
-     then SEQ{ TO i, headline i }
-     else if class i === Sequence and #i > 0 and class first i === Function and getDoc first i =!= null
-     then SEQ{ 
-	  TO first i, "(", SEQ between(",", toList apply(drop(i,1), c -> TO c)), ")",
-	  headline first i
-	  }
+     if getDoc i =!= null then SEQ{ TO i, headline i }
+     else if class i === Sequence then SEQ formatDocumentTagTO i
      else TT formatDocumentTag i
      )
 
