@@ -21,8 +21,6 @@ class Random
   static mpz_t _maxN;
 public:
   static void i_random();
-  static void set_seed(int32 s);
-  static void set_max_int(RingElement *a);
   static RingElement *get_max_int();
 
   static int32 random0();	// Return a random number in range 0..2^31-2
@@ -32,8 +30,12 @@ public:
   }
   static RingElement *random();
 
-  static void set_max_int(M2_Integer N); // values will be in the range 0..N-1
+
   static void random_integer(M2_Integer a); // a should be an mpz_t which has been initialized
+
+  static void set_seed(int32 s);
+  static void set_max_int(M2_Integer N); // values will be in the range 0..N-1
+  static M2_Integer get_random_integer(M2_Integer maxN);
 };
 
 

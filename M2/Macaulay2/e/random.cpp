@@ -38,23 +38,6 @@ void Random::set_seed(int32 s)
   gmp_randseed_ui(_st, static_cast<unsigned long int>(seed));
 }
 
-void Random::set_max_int(RingElement *a)
-{
-  maxint = a;
-  // If maxint is larger than 2^29 (somewhat arbitrary bound, but
-  // less than the 2^31-1 by a factor of several...
-  int cmp = mask_mpz_cmp_si(MPZ_VAL(maxint->get_value()), IM/2);
-  if (cmp <= 0)
-    maxint32 = mpz_get_ui(MPZ_VAL(maxint->get_value()));
-  else
-    ERROR("max random integer is %d",IM/2);
-}
-
-RingElement *Random::get_max_int()
-{
-  return maxint;
-}
-
 int32 Random::random0()
 {
   int32 k = seed/IQ;
@@ -65,22 +48,10 @@ int32 Random::random0()
   return seed;
 }
 
-extern "C"
-int32 random00() {
-     return Random::random0();
-}
-
 int32 Random::random0(int32 r)
 {
   if (r <= 0) return 0;
   return random0() % r;
-}
-
-RingElement *Random::random()
-{
-  int result = random0(2*maxint32);
-  result -= maxint32;
-  return RingElement::make_raw(globalZZ, globalZZ->from_int(result));
 }
 
 void Random::set_max_int(M2_Integer N)
@@ -92,6 +63,55 @@ void Random::random_integer(M2_Integer a)
   // a should be an mpz_t which has been initialized
 {
   mpz_urandomm(a, _st, _maxN);
+}
+
+M2_Integer Random::get_random_integer(M2_Integer maxN)
+{
+  M2_Integer result = newitem(__mpz_struct);
+  if (mpz_fits_sint_p(maxN))
+    {
+      int32 maxval = mpz_get_si(maxN);
+      int32 r = Random::random0(maxval);
+      mpz_init_set_si(result,r);
+    }
+  else
+    {
+      mpz_init(result);
+      mpz_urandomm(result, _st, maxN);
+    }
+  return result;
+}
+
+
+
+
+extern "C"
+int32 random00() {
+     return Random::random0();
+}
+
+RingElement *Random::random()
+{
+  int result = random0(2*maxint32);
+  result -= maxint32;
+  return RingElement::make_raw(globalZZ, globalZZ->from_int(result));
+}
+#if 0
+void Random::set_max_int(RingElement *a)
+{
+  maxint = a;
+  // If maxint is larger than 2^29 (somewhat arbitrary bound, but
+  // less than the 2^31-1 by a factor of several...
+  int cmp = mask_mpz_cmp_si(MPZ_VAL(maxint->get_value()), IM/2);
+  if (cmp <= 0)
+    maxint32 = mpz_get_ui(MPZ_VAL(maxint->get_value()));
+  else
+    ERROR("max random integer is %d",IM/2);
+}
+#endif
+RingElement *Random::get_max_int()
+{
+  return maxint;
 }
 
 // Local Variables:
