@@ -202,6 +202,12 @@ CCFILES := $(addsuffix .cpp,$(CC_FILES))
 CFILES := $(addsuffix .c,$(C_FILES))
 OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES))
 
+ifdef SHAREDLIBS
+OBJFILES := $(LOFILES)
+else
+OBJFILES := $(OFILES)
+endif
+
 HHFILES := $(addsuffix .hpp, \
 		$(NAMES_H) $(NAMES) \
 		$(INTERFACE_H) $(INTERFACE) $(CONTAINER) $(E_H))
@@ -273,6 +279,15 @@ include Makefile-lo.depends
 allfiles: Makefile
 	@echo making allfiles
 	@echoout '>allfiles' $(ALLFILES)
+
+# this requires gnu sort and gnu uniq commands
+dups-tmp: $(OBJFILES)
+	nm -o $(OBJFILES) |grep ' T ' |demangle |sort +2 |uniq -2 -d |tee dups-tmp
+dups-okay: dups-tmp
+	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
+	 else touch $@; fi
+
+tests:: dups-okay
 
 install:
 

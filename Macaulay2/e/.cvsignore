@@ -1,3 +1,5 @@
+dups-tmp
+dups-okay
 *.lo
 *.obj
 *.dd
