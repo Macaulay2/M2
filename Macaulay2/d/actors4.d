@@ -1,13 +1,16 @@
 -- Copyright 1994 by Daniel R. Grayson
 
+use C;
 use system; 
 use convertr;
 use binding;
 use parser;
 use lex;
-use arith;
+use gmp;
+use engine;
 use nets;
 use tokens;
+use util;
 use err;
 use stdiop;
 use ctype;
@@ -21,7 +24,6 @@ use actors2;
 use basic;
 use struct;
 use objects;
-use GB;
 
 internalName(s:string):string := "$" + s;
 
@@ -146,8 +148,8 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
 	  else e			  -- shouldn't happen
 	  )
      else WrongArg(1+1,"a list")
-     else WrongArg(0+1,"a small integer")
-     else WrongArg(0+1,"an integer"));
+     else WrongArgSmallInteger(0+1)
+     else WrongArgInteger(0+1));
 select(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
@@ -432,19 +434,6 @@ stringcatfun(e:Expr):Expr := (
      else WrongArg("a sequence or list of strings, integers, or symbols"));
 setupfun("concatenate",stringcatfun);
 
-sendgg(e:Expr):Expr := (
-     e = stringcatfun(e);
-     when e
-     is s:string do (
-	  ret := gbprocess(s);
-	  code := int(ret.0);
-	  tail := substr(ret,1);
-	  if code != 0 then buildErrorPacket(tail) else Expr(tail)
-	  )
-     else e				  -- an Error
-     );
-setupfun("sendgg",sendgg);
-
 errorfun(e:Expr):Expr := (
      e = stringcatfun(e);
      when e
@@ -499,7 +488,7 @@ packfun(e:Expr):Expr := (
 			      )
 			 else WrongArg(1,"a positive integer")
 			 )
-		    else WrongArg(1,"a small integer")
+		    else WrongArgSmallInteger(1)
 		    )
 	       is x:Sequence do (
 		    when a.1
@@ -510,8 +499,8 @@ packfun(e:Expr):Expr := (
 			      if nn > 0 
 			      then packlist(x,nn)
 			      else WrongArg(2,"a positive integer"))
-			 else WrongArg(2,"a small integer"))
-		    else WrongArg(2,"an integer"))
+			 else WrongArgSmallInteger(2))
+		    else WrongArgInteger(2))
 	       is x:List do (
 		    when a.1
 		    is n:Integer do (
@@ -521,8 +510,8 @@ packfun(e:Expr):Expr := (
 			      if nn > 0 
 			      then packlist(x.v,nn)
 			      else WrongArg(2,"a positive integer"))
-			 else WrongArg(2,"a small integer"))
-		    else WrongArg(2,"an integer"))
+			 else WrongArgSmallInteger(2))
+		    else WrongArgInteger(2))
 	       else WrongArg(1,"a list or sequence"))
 	  else WrongNumArgs(2))
      else WrongNumArgs(2));	  
@@ -531,7 +520,7 @@ setupfun("pack", packfun);
 getenvfun(e:Expr):Expr := (
      when e
      is s:string do Expr(getenv(s))
-     else WrongArg("a string"));
+     else WrongArgString());
 setupfun("getenv",getenvfun);
 
 getcwdfun(e:Expr):Expr := (
@@ -570,7 +559,7 @@ readpromptfun(o:file):void := ( o << readprompt; );
 import isReady(fd:int):int;
 isReadyFun(e:Expr):Expr := (
      when e
-     is f:file do toBoolean ( 
+     is f:file do toExpr ( 
 	  f.input && !f.eof && ( f.insize > f.inindex || isReady(f.infd) > 0 ) 
 	  ||
 	  f.listener && (
@@ -584,7 +573,7 @@ setupfun("isReady",isReadyFun);
 
 atEOFfun(e:Expr):Expr := (
      when e
-     is f:file do toBoolean ( !f.input || f.eof || f.insize == f.inindex && isReady(f.infd) > 0 
+     is f:file do toExpr ( !f.input || f.eof || f.insize == f.inindex && isReady(f.infd) > 0 
 	  && 0 == filbuf(f) )
      else WrongArg("a file"));
 setupfun("atEndOfFile",atEOFfun);
@@ -687,16 +676,13 @@ readfun(e:Expr):Expr := (
 			      )
 			 else WrongArgSmallInteger(2)
 			 )
-		    else WrongArg(2,"an integer")
+		    else WrongArgInteger(2)
 		    )
 	       else WrongArg(1,"a file")
 	       )
 	  else WrongNumArgs(0,1))
      else WrongArg(1,"a file or a string"));
 setupfun("read",readfun);
-
-toExpr(v:array(string)):Expr := list(
-     new Sequence len length(v) do foreach s in v do provide Expr(s));
 
 export setupargv():void := (
      setupconst("commandLine",toExpr(argv)).transientScope = true;
@@ -706,31 +692,31 @@ export setupargv():void := (
 -- setupargv();
 
 substrfun(e:Expr):Expr := (
-     when e is args:Sequence
-     do if length(args) == 3
-     then when args . 0 is s:string
-     do when args . 1 is i:Integer
-     do if isInt(i)
-     then when args . 2 is j:Integer
-     do if isInt(j) then (
-	  ii := toInt(i);
-	  if ii < 0 then ii = ii + length(s);
-	  Expr(substr(s,ii,toInt(j))))
-     else WrongArgSmallInteger(3)
-     else WrongArgInteger(3)
-     else WrongArgSmallInteger(2)
-     else WrongArgInteger(2)
-     else WrongArgString(1)
-     else if length(args) == 2
-     then when args . 0 is s:string
-     do when args . 1 is i:Integer
-     do if isInt(i) then (
-	  ii := toInt(i);
-	  if ii < 0 then ii = ii + length(s);
-	  Expr(substr(s,ii)))
-     else WrongArgSmallInteger(2)
-     else WrongArgInteger(2)
-     else WrongArgString(1)
+     when e is args:Sequence do
+     if length(args) == 3 then
+     when args.0
+     is i:Integer do if !isInt(i) then WrongArgSmallInteger(1) else (
+	  when args.1 is j:Integer do if !isInt(j) then WrongArgSmallInteger(2) else
+	  when args.2 is s:string do Expr(substr(s,toInt(i),toInt(j)))
+	  else WrongArgString(3)
+	  else WrongArgInteger(2))
+     is s:string do (
+	  when args.1 is i:Integer do if !isInt(i) then WrongArgSmallInteger(2) else
+	  when args.2 is j:Integer do if !isInt(j) then WrongArgSmallInteger(3) else Expr(substr(s,toInt(i),toInt(j)))
+	  else WrongArgInteger(3)
+	  else WrongArgInteger(2))
+     else WrongArg(1,"a string or an integer")
+     else if length(args) == 2 then
+     when args.0
+     is s:string do (
+	  when args.1 
+	  is i:Integer do if !isInt(i) then WrongArgSmallInteger(2) else Expr(substr(s,toInt(i)))
+	  else WrongArgInteger(2))
+     is i:Integer do if !isInt(i) then WrongArgSmallInteger(1) else (
+	  when args.1
+	  is s:string do Expr(substr(s,toInt(i)))
+	  else WrongArgString(2))
+     else WrongArg(1,"a string or an integer")
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("substring",substrfun);
@@ -813,9 +799,9 @@ setupfun("separate",linesfun);
 tostringfun(e:Expr):Expr := (
      when e 
      is i:Integer do Expr(tostring(i))
-     is h:Handle do Expr("#" + tostring(h.handle) + "#")
      is x:Real do Expr(tostring(x.v))
-     is x:Rational do Expr(tostring(x.numerator) + "/" + tostring(x.denominator))
+     is z:Complex do Expr(tostring(z.re) + " + ii * " + tostring(z.im))
+     is x:Rational do Expr(tostring(x))
      is s:string do e
      is q:SymbolClosure do Expr(
 	  if q.frame == globalFrame
@@ -830,10 +816,42 @@ tostringfun(e:Expr):Expr := (
      is f:CompiledFunction do Expr("--compiled function--")
      is f:CompiledFunctionClosure do Expr("--compiled function closure--")
      is c:FunctionClosure do Expr("--function closure--")
+     is x:BigReal do Expr(tostring(x))
      is e:Error do Expr("--error message--")
      is s:Sequence do Expr("--sequence--")
      is o:HashTable do Expr("--hash table--")
      is l:List do Expr("--list--")
+     is x:LMatrixRR do (
+	  Expr(Ccode(string, "LP_LMatrixRR_to_string((LMatrixRR*)",x,")" ))
+	  )
+     is x:LMatrixCC do (
+	  Expr(Ccode(string, "LP_LMatrixCC_to_string((LMatrixCC*)",x,")" ))
+	  )
+     is x:RawMonomial do Expr(Ccode(string, "IM2_Monomial_to_string((Monomial*)",x,")" ))
+     is x:RawFreeModule do Expr(Ccode(string, "IM2_FreeModule_to_string((FreeModule*)",x,")" ))
+     is x:RawVector do Expr(Ccode(string, "IM2_Vector_to_string((Vector*)",x,")" ))
+     is x:RawMatrix do (
+	  Expr(Ccode(string, "IM2_Matrix_to_string((Matrix*)",x,")" ))
+	  )
+     is x:RawMutableMatrix do (
+	  Expr(Ccode(string, "IM2_MutableMatrix_to_string((MutableMatrix*)",x,")" ))
+	  )
+     is x:RawRingMap do (
+	  Expr(Ccode(string, "IM2_RingMap_to_string((RingMap*)",x,")" ))
+	  )
+     is x:RawMonomialOrdering do Expr(Ccode(string,
+	       "IM2_MonomialOrdering_to_string((MonomialOrdering*)",x,")" ))
+     is x:RawMonoid do Expr(Ccode(string, "IM2_Monoid_to_string((Monoid*)",x,")" ))
+     is x:RawRing do Expr(Ccode(string, "IM2_Ring_to_string((Ring*)",x,")" ))
+     is x:RawRingElement do Expr(
+	  Ccode(string, "IM2_RingElement_to_string((RingElement*)",x,")" )
+	  )
+     is x:RawMonomialIdeal do Expr(
+	  "--raw monomial ideal--"
+	  -- Ccode(string, "IM2_MonomialIdeal_to_string((MonomialIdeal*)",x,")" )
+	  )
+     is x:BigComplex do Expr("--big complex number--")
+     is c:RawComputation do Expr(Ccode(string, "IM2_GB_to_string((Computation*)",c,")" ))
      );
 setupfun("string",tostringfun);
 
@@ -852,12 +870,12 @@ setupfun("format",presentfun);
 
 numfun(e:Expr):Expr := (
      when e
-     is r:Rational do Expr(r.numerator)
+     is r:Rational do Expr(numerator(r))
      else WrongArg("a rational number"));
 setupfun("numerator",numfun);
 denfun(e:Expr):Expr := (
      when e
-     is r:Rational do Expr(r.denominator)
+     is r:Rational do Expr(denominator(r))
      else WrongArg("a rational number"));
 setupfun("denominator",denfun);
 
@@ -1083,3 +1101,42 @@ youngest(e:Expr):Expr := (
 	       e))
      else nullE);
 setupfun("youngest", youngest);
+
+toBigReal(e:Expr):Expr := (
+     when e
+     is x:Rational do Expr(toBigReal(x))
+     is x:Integer do Expr(toBigReal(x))
+     is x:Real do Expr(toBigReal(x.v))
+     else WrongArg("a number")
+     );
+setupfun("toBigReal",toBigReal);
+
+precision(e:Expr):Expr := (
+     when e 
+     is x:BigReal do Expr(toInteger(precision(x)))
+     else WrongArg("a big real number")
+     );
+setupfun("precision",precision);
+
+setprec(e:Expr):Expr := (
+     when e
+     is i:Integer do (
+	  if isInt(i) then Expr(toInteger(setprec(toInt(i))))
+	  else WrongArgSmallInteger())
+     else WrongArgInteger());
+setupfun("setPrecision",setprec);
+
+pairs(e:Expr):Expr := (
+     when e
+     is o:HashTable do list(
+	  new Sequence len o.numEntries do
+	  foreach bucket in o.table do (
+	       p := bucket;
+	       while p != bucketEnd do (
+		    provide Expr(Sequence(p.key,p.value));
+		    p = p.next;
+		    )
+	       )
+	  )
+     else WrongArg("a hash table or a raw polynomial"));
+setupfun("pairs",pairs);
