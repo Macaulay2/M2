@@ -102,7 +102,10 @@ CODE       = new MarkUpType of MarkUpList
 HREF       = new MarkUpType of MarkUpList
 ANCHOR     = new MarkUpType of MarkUpList
 SHIELD     = new MarkUpType of MarkUpList
-UL         = new MarkUpType of MarkUpListParagraph; new UL from SEQ := new UL from List := (UL,x) -> select(x,i -> i =!= null)
+UL         = new MarkUpType of MarkUpListParagraph
+
+new UL from SEQ := new UL from List := (UL,x) -> select(x,i -> i =!= null)
+
 OL         = new MarkUpType of MarkUpListParagraph
 DIV        = new MarkUpType of MarkUpList
 NL         = new MarkUpType of MarkUpListParagraph

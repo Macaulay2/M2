@@ -893,7 +893,9 @@ document { (peek2,ZZ,Thing),
 	       "n" => "",
 	       "s" => ""
 	       },
-	  Outputs => { "a net that displays the contents of ", TT "s", ", bypassing installed formatting and printing methods to depth ", TT "n" }
+	  Outputs => {
+	       { "a net that displays the contents of ", TT "s", ", bypassing installed formatting and printing methods to depth ", TT "n" }
+	       }
 	  },
      EXAMPLE {
 	  "s = factor 112",

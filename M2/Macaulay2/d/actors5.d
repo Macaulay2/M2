@@ -1230,7 +1230,7 @@ wrap(e:Expr):Expr := (
      is s:string do net = toNet(s)
      is n:Net do net = n
      else return WrongArg("a string or a net");
-     if wid <= 0 then return e;
+     if wid <= 0 then return Expr(net);
      Expr(wrap(wid,sep,net)));
 setupfun("wrap",wrap);
 

@@ -42,12 +42,12 @@ document { "rings",
      you give the variables that you want, and the kinds of coefficients
      you want (e.g. rational numbers, or integers modulo a prime number).",
      UL {
-	  (TO "basic rings",
+	  SEQ (TO "basic rings",
 	       UL {
 		    TO "finite fields"
 		    }
 	       ),
-	  (TO "polynomial rings",
+	  SEQ (TO "polynomial rings",
 	       UL {
 		    TO "monomial orderings",
 		    TO "quasi- and multi-graded polynomial rings",
@@ -56,20 +56,20 @@ document { "rings",
 		    TO "factoring polynomials"
 		    }
 	       ),
-	  ("fields",
+	  SEQ ("fields",
 	       UL {
 		    TO "finite fields, part II",
 		    TO "fraction fields",
 		    TO "finite field extensions"
 		    }
 	       ),
-	  ("other algebras",
+	  SEQ ("other algebras",
 	       UL {
 		    TO "exterior algebras",
 		    TO "symmetric algebras",
 		    TO "tensor products of rings",
 		    TO "Weyl algebras",
-		    (TO "Schur rings", 
+		    SEQ (TO "Schur rings", 
 			 " -- monomials represent irreducible representations of GL(n)"),
 		    TO "associative algebras"
 		    }
@@ -86,13 +86,13 @@ document { "ideals",
      by giving a set of generators.",
      UL {
 	  TO "creating an ideal",
-	  ("conversions",
+	  SEQ ("conversions",
 	       UL {
 		    TO "ideals to and from matrices",
 		    SHIELD TO "ideals to and from modules"
 		    }
 	       ),
-	  ("basic operations on ideals",
+	  SEQ ("basic operations on ideals",
 	       UL {
 		    TO "sums, products, and powers of ideals",
 		    TO "equality and containment",
@@ -100,7 +100,7 @@ document { "ideals",
 		    TO "dimension, codimension, and degree"
 		    }
 	       ),
-	  ("components of ideals",
+	  SEQ ("components of ideals",
 	       UL {
 		    TO "intersection of ideals",
 		    TO "ideal quotients and saturation",
@@ -110,7 +110,7 @@ document { "ideals",
 		    TO "primary decomposition"
 		    }
 	       ),
-	  (SHIELD TO "Groebner bases and related computations"),
+	  SHIELD TO "Groebner bases and related computations",
           },
      "For those operations where we consider an ideal as a module, such
      as computing Hilbert functions and polynomials, syzygies, free resolutions, see ",
@@ -247,14 +247,14 @@ document { "matrices",
      "In Macaulay 2, each matrix is defined over a ring, (see ", TO "rings", "). 
      Matrices are perhaps the most common data type in Macaulay 2.",
      UL {
-	  ("making matrices", 
+	  SEQ ("making matrices", 
 	       UL {
 		    TO "input a matrix",
 		    TO "random and generic matrices",
 		    TO "concatenating matrices"
 		    }
 	       ),
-	  ("operations involving matrices",
+	  SEQ ("operations involving matrices",
 	       UL {
 		    TO "simple information about a matrix",
 		    TO "basic arithmetic of matrices",
@@ -262,7 +262,7 @@ document { "matrices",
 		    TO "differentiation"
 		    }
 	       ),
-	  ("determinants and related computations",
+	  SEQ ("determinants and related computations",
 	       UL {
 		    TO "rank of a matrix",
 		    TO "determinants and minors",
@@ -270,7 +270,7 @@ document { "matrices",
 		    TO "exterior power of a matrix"
 		    }
 	       ),
-	  ("display of matrices and saving matrices to a file",
+	  SEQ ("display of matrices and saving matrices to a file",
 	       UL {
 		    TO "format and display of matrices in Macaulay 2",
 		    TO "importing and exporting matrices"
@@ -288,7 +288,7 @@ document { "substitution and maps between rings",
      UL {
 	  TO "substitute values for variables",
 	  TO "working with multiple rings",
-	  ("ring maps",
+	  SEQ ("ring maps",
 	       UL {
 		    TO "basic construction, source and target of a ring map",
 	       	    TO "evaluation and composition of ring maps",
@@ -303,24 +303,24 @@ document { "substitution and maps between rings",
 document { "modules: part I",
      HEADER2 "Getting started",
      UL {
-	  ("construction of modules",
+	  SEQ ("construction of modules",
 	       UL {
 		    TO "free modules",
-		    (TO "matrices to and from modules", " (including kernel, cokernel and image)"),
+		    SEQ (TO "matrices to and from modules", " (including kernel, cokernel and image)"),
 		    TO "ideals to and from modules"
 		    }
 	       ),
-	  (TO "Hilbert functions and free resolutions",
+	  SEQ (TO "Hilbert functions and free resolutions",
 	       UL {
 		    "including degree and betti numbers"
 		    }
 	       ),
-	  (TO "operations on modules",
+	  SEQ (TO "operations on modules",
 	       UL {
 		    "including direct sum, tensor products, and annihilators"
 		    }
 	       ),
-	  (TO "homomorphisms (maps) between modules",
+	  SEQ (TO "homomorphisms (maps) between modules",
 	       UL {
 		    "including elements of modules"
 		    }
@@ -339,7 +339,7 @@ document { "modules: part I",
 --		    TO "truncation and homogeneous components of a graded module"
 --		    }
 --	       ),
-	  (TO "subquotient modules", " -- the way Macaulay 2 represents modules",
+	  SEQ (TO "subquotient modules", " -- the way Macaulay 2 represents modules",
 	       UL {
 		    "Macaulay 2 has handed you a subquotient module.  What now?"
 		    }
@@ -355,14 +355,14 @@ document { "modules: part I",
 
 document { "modules: part II",
      UL {
-	  ("multilinear algebra",
+	  SEQ ("multilinear algebra",
 	       UL {
 		    TO "exterior power of a module",
 		    TO "Fitting ideals",
 		    TO "adjoints of maps"
 		    }
 	       ),
-	  ("homological algebra",
+	  SEQ ("homological algebra",
 	       UL {
 		    TO "Hom module",
 		    TO "Tor and Ext"
@@ -380,7 +380,7 @@ document { "Groebner bases and related computations",
 	  TO "what is a Groebner basis?",
 	  TO "finding a Groebner basis",
 	  TO "rings that are available for Groebner basis computations",
-	  ("a few applications of Groebner bases",
+	  SEQ ("a few applications of Groebner bases",
 	       UL {
 		    TO "elimination of variables",
 		    TO "Hilbert functions",
@@ -421,16 +421,16 @@ document { "using external libraries",
      UL {
      	  TO "loading a library",
      	  TO "how to get documentation on a library",
-     	  ("available libraries",
+     	  SEQ ("available libraries",
 	       UL {
-	       	    (TO "blow ups", ""),
-	       	    (TO "convex hulls and polar cones", " -- polarCone.m2"),
-	       	    (TO "D-modules", " -- D-modules.m2"),
-	       	    (TO "elimination theory", " -- eliminate.m2"),
-	       	    (TO "graphing curves and surfaces via 'surf'", ""),
-	       	    (TO "invariants of finite groups", " -- invariants.m2"),
-	       	    (TO "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction", " -- LLL.m2"),
-	       	    (TO "SAGBI bases", " -- sagbi.m2")
+	       	    SEQ (TO "blow ups", ""),
+	       	    SEQ (TO "convex hulls and polar cones", " -- polarCone.m2"),
+	       	    SEQ (TO "D-modules", " -- D-modules.m2"),
+	       	    SEQ (TO "elimination theory", " -- eliminate.m2"),
+	       	    SEQ (TO "graphing curves and surfaces via 'surf'", ""),
+	       	    SEQ (TO "invariants of finite groups", " -- invariants.m2"),
+	       	    SEQ (TO "Lenstra-Lenstra-Lovasz (LLL) lattice basis reduction", " -- LLL.m2"),
+	       	    SEQ (TO "SAGBI bases", " -- sagbi.m2")
 	       	    })
 	  }
      }

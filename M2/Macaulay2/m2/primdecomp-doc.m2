@@ -39,8 +39,8 @@ document { (ass, Ideal),
 document { (ass,Strategy),
      "The strategy option value should be one of the following.",
      SHIELD UL{
-	  ("1", " -- The assasinator is found using Ext modules."),
-	  ("2", " -- The assasinator is found using ", TO(top), " on a 
+	  SEQ ("1", " -- The assasinator is found using Ext modules."),
+	  SEQ ("2", " -- The assasinator is found using ", TO(top), " on a 
 	       series of ideals.")
 	  },
      PARA,
@@ -59,10 +59,10 @@ document { (ass,Strategy),
 document { (ass,PrintLevel),
      "The PrintLevel should be one of the following.",
      SHIELD UL {
-	  ("0", " -- (default) Returns the list of associated primes."),
-	  ("1", " -- Returns strategy number, associated primes as they are 
+	  SEQ ("0", " -- (default) Returns the list of associated primes."),
+	  SEQ ("1", " -- Returns strategy number, associated primes as they are 
 	       found, and full list at the end."),
-	  ("2", " -- Returns the results of ", TT "PrintLevel=>1", " and signals 
+	  SEQ ("2", " -- Returns the results of ", TT "PrintLevel=>1", " and signals 
 	       presence in loop.  With ", TT "Strategy => 1", ", the codimension 
 	       of the associated primes is the loop number.")
 	       },
@@ -112,8 +112,8 @@ document { (localize,Ideal,Ideal),
 document { (localize,Strategy),
 	  "The strategy option value should be one of the following.",
 	  SHIELD UL{
-	       ("0" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
-	       ("1" , " -- Uses a separator to find the localization")
+	       SEQ ("0" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
+	       SEQ ("1" , " -- Uses a separator to find the localization")
 	       },
 	  PARA,
 	  "The default strategy is 1.",
@@ -139,9 +139,9 @@ document { (localize,Strategy),
 document { (localize,PrintLevel),
 	  "The PrintLevel option value should be one of the following.",
 	  SHIELD UL{
-	       ("0", " -- default"),
-	       ("1" , " -- Informs the user of the current operation"),
-	       ("2" , " -- Prints the current operation and its result")},
+	       SEQ ("0", " -- default"),
+	       SEQ ("1" , " -- Informs the user of the current operation"),
+	       SEQ ("2" , " -- Prints the current operation and its result")},
 	  EXAMPLE{
 	       "R = ZZ/(101)[x,y];",
 	       "I = ideal (x^2,x*y);",
@@ -183,9 +183,9 @@ document { (primaryComponent,Strategy),
      "The Strategy option value sets the localize strategy 
      option, and should be one of the following.",
      SHIELD UL{
-	  ("0", " -- Uses ", TT "localize", " Strategy 0"),
-	  ("1", " -- Uses ", TT "localize", " Strategy 1"),
-	  ("2", " -- Uses ", TT "localize", " Strategy 2")}
+	  SEQ ("0", " -- Uses ", TT "localize", " Strategy 0"),
+	  SEQ ("1", " -- Uses ", TT "localize", " Strategy 1"),
+	  SEQ ("2", " -- Uses ", TT "localize", " Strategy 2")}
      }
 
 document { (primaryComponent,Increment),
@@ -201,9 +201,9 @@ document { (primaryComponent,Increment),
 document { (primaryComponent,PrintLevel),     
       "The Strategy option value should be one of the following.",
      SHIELD UL{
-	  ("0", " -- default"),
-	  ("1", " -- informs user of the current power being checked."),
-	  ("2", " -- gives output of time-consuming processes.")
+	  SEQ ("0", " -- default"),
+	  SEQ ("1", " -- informs user of the current power being checked."),
+	  SEQ ("2", " -- gives output of time-consuming processes.")
      	  },
      PARA,
      "See ", TO (primaryComponent,Ideal,Ideal) , " for more information."}
@@ -240,13 +240,13 @@ document { (primaryDecomposition, Ideal),
 document { (primaryDecomposition,Strategy),
      "The strategy option value should be one of the following.",
      SHIELD UL {
-          ("Monomial", " -- uses Alexander duality of a monomial ideal"),
-	  ("Binomial", " -- finds a cellular resolution of a 
+          SEQ ("Monomial", " -- uses Alexander duality of a monomial ideal"),
+	  SEQ ("Binomial", " -- finds a cellular resolution of a 
 	                     binomial ideal"),
-	  ("EHV", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
-	  ("SY", " -- uses the algorithm of Shimoyama-Yokoyama"),
-	  ("Hybrid"," -- uses parts of the above two algorithms"),
-	  ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias.  
+	  SEQ ("EHV", " -- uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
+	  SEQ ("SY", " -- uses the algorithm of Shimoyama-Yokoyama"),
+	  SEQ ("Hybrid"," -- uses parts of the above two algorithms"),
+	  SEQ ("GTZ", " -- uses the algorithm of Gianni-Trager-Zacharias.  
 	           NOT IMPLEMENTED YET.")
           },
      PARA,
