@@ -20,11 +20,13 @@ Net.AfterPrint = identity
 
 toString MutableHashTable := s -> (
      if s.?name and class s.name === String then return s.name;
+     if s.?Symbol and class s.Symbol === Symbol then return toString s.Symbol;
      r := reverseDictionary s;
      if r =!= null then return toString r;
      concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
 toString HashTable := s -> (
      if s.?name and class s.name === String then return s.name;
+     if s.?Symbol and class s.Symbol === Symbol then return toString s.Symbol;
      r := reverseDictionary s;
      if r =!= null then return toString r;
      concatenate (
@@ -192,6 +194,7 @@ net BasicList := x -> horizontalJoin deepSplice (
 net MutableList := x -> horizontalJoin ( net class x, "{...", toString(#x), "...}" )
 net HashTable := x -> (
      if x.?name and class x.name === String then return x.name;
+     if x.?Symbol and class x.Symbol === Symbol then return toString x.Symbol;
      r := reverseDictionary x;
      if r =!= null then return toString r;
      horizontalJoin flatten ( 
@@ -205,6 +208,7 @@ net HashTable := x -> (
 
 net MutableHashTable := x -> (
      if x.?name and class x.name === String then return x.name;
+     if x.?Symbol and class x.Symbol === Symbol then return toString x.Symbol;
      r := reverseDictionary x;
      if r =!= null then return toString r;
      horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" ))
