@@ -38,15 +38,12 @@ extern node getmem_S, sizeof_S, function_K, define_S, define_recursive_types_K,
    len__S, setd_K, if_K, foreach_K, le_S, plusplus_S, object_S, clean_S, kindof_K, 
    postfix_S, minus_S, for_K, ge_S, symbol_K, andand_K, oror_K,
    true_K, false_K, self_K, sizeof_K, sizeof_S, comma_S,
-   spincount_S, spincursor_S, Ccode_K, Ccode_S,
-   dot_K, colon_K, colonequal_K, coloncolonequal_K, colon_S, colonequal_S,
-   not_S, isnull_S, equal_S, when_K,
-   until_K, while_K, space_S, or_S,
+   Ccode_K, Ccode_S, dot_K, colon_K, colonequal_K, coloncolonequal_K, colon_S, colonequal_S,
+   not_S, isnull_S, equal_S, when_K, until_K, while_K, space_S, or_S,
    label_S, keyword_K, release_S, releasec_S, reservec_S, reservenc_S,
    reserve_S, reserven_S, defun_S, equal_K, unequal_K, unequal_S, minusminus_S,
    declare_K, undefined_K, bad_K, void_K, returned_K, returnedThing_K, type_K, null_K, blockn_K, assign_S,
    cast_S, block1_K, or_K, object_K, array_K, block_K, float_K, package_S, open_fd_K,
    ushort_K, uint_K, ulong_K, uchar_K, oror_S, andand_S, pointer_K,
-   str_S,
-   double_K, int_K, goto_S, long_K, short_K, char_K, bool_K, tmp_S, zero, one;
+   str_S, double_K, int_K, goto_S, long_K, short_K, char_K, bool_K, tmp_S, zero, one;
 

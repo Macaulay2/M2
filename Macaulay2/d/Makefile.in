@@ -5,17 +5,10 @@ DEPENDS = yes
 ############################## main target
 all :: compat.h
 all :: ../bin/M2$(EXE)
-############################## useful targets
-all-c-files ::
-remove-c-files ::
-##############################
-.PHONY : all-c-files remove-c-files
 ############################## files
 # the names on these lines should be in sequence from most dependent to
 # least dependent so that "make" can remake the *.dep makefiles
-
 ALLOBJ :=
-MADEFILES :=
 MADECFILES :=
 PROJECT := 
 PROJECT += interp.d
@@ -53,11 +46,11 @@ CFILES := M2types.c scclib.c M2lib.c gmp_aux.c memdebug.c initgmp2.c gdbm_interf
 MADECFILES := tmp_init.c startup.c
 CCFILES := version.cc initgmp.cc
 SRCFILES := getpagesize.h gc_cpp.cc memdebug.c memdebug.h gmp_aux.c types.h $(PROJECT) $(CFILES)
-MADEFILES += $(DNAMES:.d=.c)
 ALLOBJ += $(CFILES:.c=.o) $(MADECFILES:.c=.o) $(CCFILES:.cc=.o)
 
-############################## dependencies
+clean::; rm -f $(DNAMES:.d=.c)
 
+############################## dependencies
 ifeq "$(DEPENDS)" "yes"
 include $(PROJECT:.d=.dep)
 endif
@@ -71,8 +64,6 @@ SCCFLAGS =
 ifeq "$(OPTIMIZE)" "yes"
 SCCFLAGS += -O
 endif
-
-# SCCFLAGS += -spincursor
 
 ifeq "$(GCC)" "no"
 SCCFLAGS += -nogcc
@@ -88,10 +79,6 @@ endif
 	$(SCC1) $(SCCFLAGS) +gc -J. $<
 	$(COMPILE.c) -Wno-unused -Wno-uninitialized $*.c $(OUTPUT_OPTION)
 	rm $*.c
-############################## flags
-
-PURIFYCMD :=
-# PURIFYCMD := purify -always-use-cache-dir
 
 CPPFLAGS += -I../../include -I@srcdir@ -I. -I../util
 CFLAGS += $(DEBUGFLAGS)
@@ -99,12 +86,8 @@ CFLAGS += $(DEBUGFLAGS)
 # we can't do this because our manufactured c files have lots of unused labels
 # CFLAGS  += -Wall -Wshadow -Wcast-qual
 
-ifeq "$(DEBUG)" "TRUE"
+ifeq "$(DEBUG)" "yes"
 CFLAGS += -DGC_DEBUG
-endif
-
-ifeq "$(CC)" "cl"
-CFLAGS += -Za -W0
 endif
 
 CXXFLAGS += $(WARNINGS)
@@ -113,33 +96,10 @@ ifeq (gcc,$(CC))
 ifeq (yes,$(shell if gcc -Wl,-v 2>&1 | grep -q 'GNU ld' ; then echo yes ; else echo no ; fi))
 ifdef MAPFILE
 ## - use this to get a memory map listing from the gnu linker
-MADEFILES += mapfile
 LDFLAGS  += -Wl,-Map,mapfile
 endif
 endif
 endif
-
-ifeq ($(OS),SunOS)
-## - use this to get a memory map listing from the linker
-##   if using Sun's ld.  Sigh, it comes to stdout.
-# LDFLAGS  += -Wl,-m
-endif
-
-#################################
-
-ifdef includeX11
-CPPFLAGS += -DincludeX11
-LOADLIBES += -lX11
-endif
-
-## we use one of these in scclib.c
-# libdbm2.a is our own database manager
-# libgdbm.a is the gnu database manager
-# libndbm.a is the new database manager
-
-# hopefully, this will prevent us from getting the buggy version of 
-# __underflow
-# LOADLIBES+= -lc
 
 ifeq "$(STATIC)" "yes"
 LDFLAGS += -static
@@ -153,51 +113,9 @@ ifeq ($(OS),SunOS)
 LOADLIBES += -lsocket -lnsl
 endif
 
-ifeq "$(STATIC)" "yes"
-ifeq ($(OS),Linux)
-# so I tried it, but it doesn't work...
-# ALLOBJ += /usr/lib/libnsl.a /usr/lib/libnss_*.a
-endif
-endif
-
-#ifeq ($(OS),Linux)
-#LOADLIBES += -lieee
-#endif
-
-# -lsunmath makes suns obey ieee for floating point operations, at
-# -liberty is /usr/local/lib/libiberty.a, and it has random() in it
-# least under solaris
-ifeq ($(OS),SunOS)
-# LOADLIBES += -lsunmath -liberty
-endif
-
-ifeq ($(OS),MS-DOS)
-LOADLIBES += -lgpp
-else
-
-#	We used to -lc in here, but it's for a good reason.
-#	Under linux, I have a modern version 2.8.0 of libstdc++ that defines
-#	the routine _IO_init which is called by sprintf, indirectly.  My sprintf
-#	comes from the old libc, and the _IO_init is incompatible, for some reason.
-
-# 	We used to have -lg++ here, too, (before -lc), but it's obsolete now, and 
-#	has been incorporated into libstdc++ with version 2.8.1.1.
-endif
-
-# but on some machines, with non-gnu ld being used, libiostream is
-# not used automatically, so put it in anyway.
-# LOADLIBES += -liostream
-
-############################## compiling
-
-MADEFILES += compat.c compat.h
-ifeq "$(CC)" "cl"
-compat.c : ../msdos/compat.c; cp $< $@
-compat.h : ../msdos/compat.h; cp $< $@
-else
+clean::; rm -f compat.c compat.h
 compat.c compat.h : configure ../../include/config.h
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" @srcdir@/configure
-endif
 
 M2types.o : M2types.h
 M2lib.o scclib.o : compat.h
@@ -205,14 +123,12 @@ M2lib.o scclib.o : ../c/compat.h ../c/compat.c types.h memdebug.h ../../include/
 memdebug.o scclib.o actors5.o gc_cpp.o  : memdebug.h
 gc_cpp.o : ../../include/config.h
 
-allc : $(PROJECT:.d=.c) tmp_init.c
-
 ifeq ($(GC_FOR_NEW),yes)
 # replace the builtin c++ memory allocation routines by calls to gc.
 ALLOBJ += gc_cpp.o
 endif
 
-MADEFILES += startup.c
+clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 layout.m2 : ../../include/config.Makefile
 	(echo '--layout.m2'; echo 'if class LAYOUT === Symbol then LAYOUT = hashTable $(LAYOUT)' ) | sed 's/,/,%     /g' | tr % '\n' >$@
@@ -224,23 +140,12 @@ startup.c : ../m2/startup.m2 layout.m2
 	 cat $< | sed $(SSTRING) ; \
 	 echo ';' \
         ) >$@
+clean :: ; rm -f layout.m2 startup.c
 
 ifeq "$(DUMPDATA)" "yes"
 LOADLIBES += -L../dumpdata
 LIBRARYFILES += ../dumpdata/libdump.a
 LIBRARYOPTIONS += -ldump
-endif
-
-ifneq "$(CC)" "cl"
-# ALLOBJ += compat.o
-endif
-
-ifeq ($(OS),Linux)
-# The maintainers of linux' libstdc++ unwisely decided to incorporate
-# their own private versions of routines from libc in their library!
-# Unforgiveable, since the symbols defined differ (of course).
-# ALLOBJ += putc.o
-putc.o : /usr/lib/libc.a; ar x $^ $@
 endif
 
 ifeq ($(OS),SunOS)
@@ -250,25 +155,10 @@ ALLOBJ += mmap.o
 mmap.o : /usr/lib/libc.a; ar x $^ $@
 endif
 
-ifeq ($(OS),Linux)
-# ALLOBJ += malloc.o
-# LDFLAGS += -rdynamic
-malloc.o : /usr/lib/libc.a; ar x $^ $@
-endif
-
-################################# c file production for porting
-ALLC := $(PROJECT:.d=.c)
-all-c-files :: $(ALLC)
-remove-c-files ::; rm -rf $(ALLC)
-MADEFILES += c-files.tar
-c-files.tar :: $(ALLC)
-	tar cf $@ $(ALLC)
-##############################
-
 UTIL := ../util/
 
 tmp_init.o : tmp_init.c
-MADEFILES += tmp_init.c
+clean::; rm -f tmp_init.c
 tmp_init.c : $(PROJECT)
 	$(UTIL)timestmp >tmp
 	for i in $(PROJECT:.d=) ; do echo "void $${i}__prepare();" ; done >>tmp
@@ -279,16 +169,9 @@ tmp_init.c : $(PROJECT)
 	echo '   return 0;}' >>tmp
 	mv tmp tmp_init.c
 
-.._c_compat.c: ../c/compat.c; cp $^ $@
-.._c_compat.h: ../c/compat.h; cp $^ $@
-
-c-port: $(ALLC) tmp_init.c gc_cpp.cc gmp_aux.c M2types.c scclib.c memdebug.c memdebug.h \
-		compat.c compat.h \
-		.._c_compat.c .._c_compat.h
-	tar cfz /tmp/c-port.tgz $^
-
 interpret.a : $(ALLOBJ)
-	ar rcs $@ $^ tmp_init.o
+	$(AR) rcs $@ $^ tmp_init.o
+
 ###################### libraries
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
@@ -300,55 +183,35 @@ LIBRARYOPTIONS += -lgdbm
 LIBRARYOPTIONS += -lreadline -lhistory -lcurses
   # we successfully avoid using streamio, but we need the personality function in libstc++
 LIBRARYOPTIONS += -lstdc++
-
-ifeq "$(LAPACK)" "yes"
 LIBRARYOPTIONS += $(LAPACKLIBS)
-endif
-
 LOADLIBES := $(LIBRARYOPTIONS) $(LOADLIBES)
-
-ifeq "$(CC)" "cl"
-LINK_OUTPUT_OPTION = -link -out:$@.exe
-else
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
-endif
-
-ifneq "$(CC)" "cl"
-LOADLIBES += -lm
-endif
 
 # maybe every system now has all the unix routines we use:
 # LDLIBS += -lc ../compat/compat.a
 
-libM2d.a: $(ALLOBJ)
-	$(AR) r $@ $^
-	$(RANLIB) libM2d.a
-
-MADEFILES += ../bin/M2$(EXE)
-../bin/M2$(EXE) : libM2d.a main.o $(LIBRARYFILES) ../e/libgb.a
+clean::; rm -f ../bin/M2$(EXE)
+../bin/M2$(EXE) : interpret.a main.o $(LIBRARYFILES) ../e/libgb.a
 	rm -f $@
-	time $(PURIFYCMD) $(CC) main.o $(LDFLAGS) libM2d.a ../e/libgb.a $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
+	time $(CC) main.o $(LDFLAGS) interpret.a ../e/libgb.a $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 	$(STRIPCMD) $@
 
+# just for testing scc stuff
 t_main.o : types.h
 t : t_main.o gmp.oo stdio.oo strings.oo system.oo C.o t.o
 	$(CC) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+###
 
 all:: TAGS
-
-MADEFILES += TAGS 
+clean::; rm -f TAGS
 TAGS: Makefile
 	@ echo making TAGS
 	@ $(UTIL)echoout -r2 '>TAGS' \
 		$(foreach i, $(patsubst %, @srcdir@/%, $(SRCFILES)),  $(i),0)
 
-clean ::
-	rm -f $(MADEFILES) *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep core 
-distclean : clean
-	rm -f Makefile
-
-Makefile : Makefile.in
-	cd ../..; ./config.status Macaulay2/d/Makefile
-
+clean ::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep core gmon.out mapfile restart.tmp
+distclean : clean; rm -f Makefile
+Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 all :: .gdbinit
 .gdbinit: .gdbinit.$(USER); cp $< $@
+clean::; rm -f .gdbinit

@@ -548,31 +548,7 @@ int x;
      clean_up();
      exit(x);
      }
-     
-int SPINCOUNT = 10000;
-int spincount = 10000;		/* this one is decremented during loops */
 
-void spincursor(){
-     spincount = SPINCOUNT;
-#ifdef __MWERKS__
-     SpinCursor();
-#endif
-     }
-
-int system_setspinspan(int n){
-  int result = SPINCOUNT;
-  SPINCOUNT = spincount = n;
-  return result;
-}
-
-void system_spincursor(){
-#ifdef __MWERKS__
-  if (--spincount == 0) {
-    SpinCursor();
-    spincount = SPINCOUNT;
-  }
-#endif
-}
 void scclib__prepare(){}
 
 extern int etext, end;

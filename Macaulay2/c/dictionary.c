@@ -8,7 +8,7 @@ node type_T, keyword_T, int_T, double_T, long_T, short_T, bool_T, char_T;
 node float_T, uint_T, ulong_T, ushort_T, uchar_T, package_T, pointer_T;
 node void_T, returned_T, undefined_T, null_T, symbol_T, deferred_T;
 node getmem_S, sizeof_S, function_K, define_S, define_recursive_types_K,
-   spincount_S, spincursor_S, chked_K, blank_S, function_S, package_K,
+   chked_K, blank_S, function_S, package_K,
    use_K, export_K, import_K, export_S, import_S, package_S, use_S,
    signature_S, signature_K, array_len_check_S,
    nop_K, return_K, return_S, if_S, ptr_S, brace_list_S, dot_S, memcpy_S,
@@ -74,7 +74,6 @@ struct {
      {"funcall_",&funcall_S}, {"tmp_",&tmp_S}, {"!",&not_S},
      {"str_",&str_S},
      {"<SPACE>",&space_S}, {"defun", &defun_S},
-     {"spincursor", &spincursor_S}, {"spincount", &spincount_S},
      {"label_", &label_S}, {"getmem_", &getmem_S}, {"sizeof_", &sizeof_S},
      {"type_",&type__S}, {"array_",&array__S}, {"len_",&len__S},
      {"define-destroy",&define_destroy_S}, {"assign_",&assign_S},

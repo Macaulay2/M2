@@ -5,7 +5,6 @@ struct ENV global;
 extern FILE *dependfile;
 extern char *targetname;
 extern bool gc;
-extern bool spincursor;
 extern bool noline;
 extern bool do_refctchks;
 extern bool do_memstats;

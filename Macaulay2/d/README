@@ -48,7 +48,6 @@ files
 			-nogcc		produce cc style c code
 			-noansi		produce old style c code
 			-memstats	turn off memory allocation stats
-			-spincursor	loops call spincursor in scclib.c
 			-yydebug	print parse actions
 			-debug		produce *.out, *.log, *.sym files
 			-O		send -O2 to gcc and implies

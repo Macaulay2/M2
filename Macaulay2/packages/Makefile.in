@@ -18,7 +18,6 @@ phase2: $(DOCFILES)
 	@ set -x; for i in $^ ; do ../../bin/M2 -q -e 'phase=2' $$i -e 'exit 0' || exit 1; done
 	touch "$@"
 
-
 ifeq "$(DEBUG)" "yes"
 EGFLAGS = -k
 EGMORE = || true

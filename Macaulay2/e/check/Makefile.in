@@ -1,7 +1,6 @@
 # @configure_input@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
-
 TESTS = test_monomial.o
 CTESTS = check_monomial.o
 
@@ -15,22 +14,16 @@ ifeq "$(OS)" "Darwin"
 LDFLAGS += -multiply_defined suppress
 endif
 
-#LDLIBS += $(LIBRARYFILES) $(LAPACKLIBS) -lfac -lcf -lntl $(LIBGMP) ../../d/libM2d.a -lgc -lm -lc -lstdc++
 LDLIBS += $(LIBRARYFILES) $(LAPACKLIBS) -lfac -lcf -lntl $(LIBGMP) -lgc -lm -lc -lstdc++
-
-
 CFLAGS += -g -ansi
 
 all :: check
-
 check_cc : $(TESTS) ../../d/M2types.o util.o src_test/test.o src_test/suite.o
-
 check_c : $(CTESTS) ../../d/M2types.o util.o src_test/Ctest.o src_test/Csuite.o
-
 check : check_cc check_c
 	./check_cc
 	./check_c
 
-clean : 
-	rm -f *.o check_cc check_c
-
+clean::; rm -f *.o check_cc check_c
+clean distclean::; $(MAKE) -C src_test $@
+distclean::; rm -f Makefile

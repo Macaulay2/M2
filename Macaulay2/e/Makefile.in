@@ -2,130 +2,96 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
-# MES:
-# CXXFLAGS = -DGCMALLOC -DDEBUG
 
-%.o : %.cpp
-	$(COMPILE.cc) $(OUTPUT_OPTION) $<
-
-ifeq "$(GCC)" "yes"
-CXXFLAGS += -Wno-shadow -Wno-cast-qual
-endif
-
-ifeq "$(CC)" "cl"
-WARNINGS = -W3
-else
-# WARNINGS += -Wno-non-template-friend
-endif
+%.o : %.cpp; $(COMPILE.cc) $(OUTPUT_OPTION) $<
 
 CPPFLAGS += -I../../include
 CPPFLAGS += -I../util
 CPPFLAGS += -I.
 
-
-# CXXFLAGS += -fhandle-exceptions
-
-######################
 CXXFLAGS += $(DEBUGFLAGS)
-######################
+CFLAGS   += $(DEBUGFLAGS)
 
 ifeq "$(SHARED)" "yes"
 CXXFLAGS += -fPIC
 endif
 
-CFLAGS = $(CXXFLAGS)
-# ARFLAGS  = r
-LIBNAME  = gb
-
-ifeq "$(CC)" "cl"
-LIB      = $(LIBNAME).lib
-else
-LIB      = lib$(LIBNAME).a
-endif
-
+LIBGB      = libgb.a
 PRE.cc   = $(COMPILE.cc) -E 
 
 ##################
 ## Source code ###
 ##################
 
-CONTAINER = \
-
-
 INTERFACE = \
-gbA \
-gbasis \
-montable \
-schorder \
-monorder \
-GF \
-LLL \
-RR \
-Z \
-QQ \
-bigRR \
-bigCC \
-CC \
-assprime \
-buffer \
-comb \
-det \
-frac \
-freemod \
-gb \
-gb_comp \
-gbinhom \
-gbring \
-gb2 \
-hermite \
-hilb \
-int_bag \
-intarray \
-lattice \
-matrix \
-mem \
-monideal \
-monoid \
-monomial \
-ntuple \
-polyring \
-pfaff \
-random \
-relem \
-ring \
-ringmap \
-sagbi \
-schur \
-skew \
-skewpoly \
-solvable \
-spair \
-sparsemat \
-text_io \
-varpower \
-vector \
-weylalg \
-z_mod_p
-
-ifeq "$(LAPACK)" "yes"
-INTERFACE += \
-matrixRR \
-matrixCC
-endif
+	gbA \
+	gbasis \
+	montable \
+	schorder \
+	monorder \
+	GF \
+	LLL \
+	RR \
+	Z \
+	QQ \
+	bigRR \
+	bigCC \
+	CC \
+	assprime \
+	buffer \
+	comb \
+	det \
+	frac \
+	freemod \
+	gb \
+	gb_comp \
+	gbinhom \
+	gbring \
+	gb2 \
+	hermite \
+	hilb \
+	int_bag \
+	intarray \
+	lattice \
+	matrix \
+	matrixRR \
+	matrixCC \
+	mem \
+	monideal \
+	monoid \
+	monomial \
+	ntuple \
+	polyring \
+	pfaff \
+	random \
+	relem \
+	ring \
+	ringmap \
+	sagbi \
+	schur \
+	skew \
+	skewpoly \
+	solvable \
+	spair \
+	sparsemat \
+	text_io \
+	varpower \
+	vector \
+	weylalg \
+	z_mod_p
 
 STILLTOCOMPILE = \
-newspair \
-weylfree \
-res \
-res2 \
-respoly \
-respoly2 \
-Eschreyer \
-gauss \
-termideal \
-gbZZ \
-gbbinom \
-
+	newspair \
+	weylfree \
+	res \
+	res2 \
+	respoly \
+	respoly2 \
+	Eschreyer \
+	gauss \
+	termideal \
+	gbZZ \
+	gbbinom
 
 COMMANDS = \
         gbnod \
@@ -138,85 +104,12 @@ COMMANDS = \
 	x_relem \
 	M2-factory \
 	x_free \
+	x_lapack \
 	x_mat \
 	x_monideal \
 	x_gb \
 	x_ringmap \
 	x_sparsemat
-
-ifeq "$(LAPACK)" "yes"
-COMMANDS += \
-	x_lapack
-endif
-
-INTERFACE0 = \
-	buffer \
-	engine \
-	error \
-	intarray \
-	mem \
-	text_io \
-	ntuple \
-	varpower \
-	monomial \
-	x_monom \
-	monorder \
-	monoid \
-	monideal \
-	x_monideal \
-	ring \
-	relem \
-	vector \
-	freemod \
-	matrix \
-	Z \
-	z_mod_p \
-	GF \
-	RR \
-	frac \
-	polyring \
-	schur \
-	weylalg \
-	freemod2 \
-	random \
-	weylfree \
-	int_bag \
-	hilb \
-	comb \
-	sparsemat \
-	termideal \
-	det \
-	pfaff \
-	assprime \
-	gb_comp \
-	LLL \
-	hermite \
-	gauss \
-	sagbi \
-	gb \
-	gbinhom \
-	gbbinom \
-	gbZZ \
-	respoly \
-	respoly2 \
-	res \
-	res2 \
-	gbnod \
-	gb2 \
-	Eschreyer
-
-#	x_relem \
-
-#	x_monoid \
-
-INTERFACE_OLD_H = obj_int obj_iarr obj_str obj_ptr
-
-REMOVEDESTUFF_OLD = \
-	Eschreyer \
-	Espairs \
-	EGB1 \
-	Elookup \
-	Einterface
 
 COMMANDS_REDO = \
 	x_monoid \
@@ -230,110 +123,6 @@ COMMANDS_REDO = \
 	x_borel \
 	gbnod
 
-NAMES_OLD = \
-	error \
-	ntuple \
-	res \
-	respoly \
-	hilb \
-	frac \
-	polyring \
-	weylalg \
-	freemod \
-	weylfree \
-	matrix \
-	sparsemat \
-	LLL \
-	relem \
-	ring \
-	vector \
-	z_mod_p \
-	Z \
-	RR \
-	GF \
-	schur \
-	monideal \
-	termideal \
-	newspair \
-	assprime \
-	det \
-	pfaff \
-	ringmap \
-	hermite \
-	lattice \
-	gauss \
-	comb \
-	int_bag \
-	monorder \
-	monomial \
-	varpower \
-	gb_comp \
-	gb \
-	spair \
-	gbinhom \
-	gbbinom \
-	sagbi \
-	random \
-	gbZZ \
-	gb2 \
-	res2 \
-	respoly2 \
-	monoid
-
-NOT_USED_YET = \
-	gbc \
-	Emonorder \
-	Emonoid \
-	EEhilbtrack \
-	EEGB1 \
-	EEspairs \
-	EEbasics \
-	EElookup \
-	EEGB \
-	Emonlookup \
-	Emonideal \
-	newmonorder \
-	monideal2 \
-	montable \
-	monheap
-
-OLDSTUFF = \
-	bin_io \
-	handles \
-	interp \
-	object \
-	obj_prim \
-	hashtab \
-	stack 
-
-OLDESTUFF_OLD = \
-	EZZp \
-	Emonoid \
-	Epoly \
-	Ering \
-	Evector \
-	Efreemod \
-	Ematrix \
-	Eringmap \
-	Eio \
-	EGB \
-	Ecommands
-
-E_H_OLD = \
-	Edefs.hpp \
-	Ehashtab.hpp \
-	Ematrix.hpp \
-	Eringmap.hpp \
-	Epolywrap.hpp
-
-NAMES_H_OLD = \
-	comp \
-	ringelem \
-	style \
-	classes \
-	index \
-	respair2
-
 NAMES_H = comp \
 	ringelem \
 	style \
@@ -341,8 +130,7 @@ NAMES_H = comp \
 	index \
 	respair2
 
-C_FILES = error table exptable monordering # ../d/M2types # borel
-
+C_FILES = error table exptable monordering
 
 ##############################
 ## end of source code files ##
@@ -350,14 +138,9 @@ C_FILES = error table exptable monordering # ../d/M2types # borel
 
 GENERATED_H = geovec geogbvec geores
 
-#CC_FILES1 := $(ESTUFF) $(NAMES) $(CONTAINER) $(INTERFACE)
-#CC_FILES2 := $(COMMANDS)
-#CC_FILES := $(CC_FILES1) $(CC_FILES2)
 CC_FILES := $(INTERFACE) $(COMMANDS)
 FILES := $(CC_FILES) $(C_FILES)
-LOFILES1 := $(addsuffix .lo,$(CC_FILES1))
-LOFILES2 := $(addsuffix .lo,$(CC_FILES2) $(C_FILES))
-LOFILES := $(LOFILES1) $(LOFILES2)
+LOFILES := $(addsuffix .lo,$(CC_FILES) $(C_FILES))
 CCFILES := $(addsuffix .cpp,$(CC_FILES))
 CFILES := $(addsuffix .c,$(C_FILES))
 OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES))
@@ -368,11 +151,9 @@ else
 OBJFILES := $(OFILES)
 endif
 
-HHFILES := $(addsuffix .hpp, \
-		$(NAMES_H) $(NAMES) \
-		$(INTERFACE_H) $(INTERFACE) $(CONTAINER))  $(E_H)
+HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE)) $(E_H)
 
-.PHONY : all clean distclean install tar check
+.PHONY : all clean distclean install tar check tags
 
 ###################################################################
 ## Targets ##
@@ -383,19 +164,16 @@ ifeq "$(SHARED)" "yes"
 all:: ../lib/libengine1.so ../lib/libengine2.so
 else
 all:: $(OFILES)
-all:: $(LIB)
+all:: $(LIBGB)
 endif
 
-%.ii: %.cpp
-	$(PRE.cc) $< -o $@
-%.s: %.cpp
-	$(CXX) $(CXXFLAGS) -S $< -o $@
+%.ii: %.cpp; $(PRE.cc) $< -o $@
+%.s: %.cpp; $(CXX) $(CXXFLAGS) -S $< -o $@
 
 %.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
 %.lo : %.cpp; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
-../lib/libengine1.so : $(LOFILES1); $(CC) -shared $^ $(OUTPUT_OPTION)
-../lib/libengine2.so : $(LOFILES2); $(CC) -shared $^ $(OUTPUT_OPTION)
+../lib/libengine.so : $(LOFILES); $(CC) -shared $^ $(OUTPUT_OPTION)
 
 VEC =   -e "s/geobucket/vecHeap/g"      -e "s/FREEMODULETYPE/const FreeModule/g" -e "s/VECTYPE/vecterm */g"
 GBVEC = -e "s/geobucket/gbvectorHeap/g" -e "s/FREEMODULETYPE/GBRing/g"     -e "s/VECTYPE/gbvector */g"
@@ -405,22 +183,11 @@ geovec.hpp  : geoT.hpp; sed $(VEC)   $^ >$@
 geogbvec.hpp: geoT.hpp; sed $(GBVEC) $^ >$@
 geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
 initialize :: $(addsuffix .hpp, $(GENERATED_H))
-
 tags:: TAGS
-
-TAGS: $(HHFILES) $(CCFILES)
-	etags $^
-
-clean::
-	rm -f *.lo *.o $(LIB) TAGS $(addsuffix .hpp, $(GENERATED_H))
-
-clean::
-	$(MAKE) -C tests $@
-
-Makefile : Makefile.in
-	cd ../..; ./config.status Macaulay2/e/Makefile
-
-# dependency files, made automatically
+TAGS: $(HHFILES) $(CCFILES); etags $^
+clean::; rm -f *.lo *.o $(LIBGB) TAGS $(addsuffix .hpp, $(GENERATED_H))
+clean::; $(MAKE) -C tests $@
+Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
 %.dep: %.cpp; $(CXX) -MM $(CPPFLAGS) $< | sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@
 %.dep: %.c;   $(CC)  -MM $(CPPFLAGS) $< | sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@
 clean::; rm -f *.dep
@@ -434,45 +201,7 @@ dups-tmp: $(OBJFILES)
 dups-okay: dups-tmp
 	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
 	 else touch $@; fi
-
-check::
-	$(MAKE) -C check check
-
-ifeq ($(OS),Linux)
-# don't run it elsewhere because we may not have gnu sort and gnu uniq there
-# check:: dups-okay
-else
-check::
-endif
-
-install:
-
-ifeq "$(CC)" "cl"
-x_relem.o : x_relem.cpp
-	$(CXX) -c `echo $(CXXFLAGS) | sed 's/-O[0-9] //'` $(CPPFLAGS) $< $(OUTPUT_OPTION)
-endif
-
-m2.exe : # used on Wintel
-
-doxygen : 
-	rm -rf html latex
-	doxygen
-
-########################
-## Obsolete targets ####
-########################
-
-ifeq "$(CC)" "cl"
-$(LIB): $(OFILES)
-	$(AR) $(ARFLAGS) /out:$@ $^	
-else
-#$(LIB): $(LIB)($(OFILES))
-#	-$(RANLIB) $(LIB)
-$(LIB): $(OFILES)
-	$(AR) $(ARFLAGS) $@ $^
-	-$(RANLIB) $(LIB)
-
-endif
-
-distclean : clean
-	rm -f Makefile
+clean check::; $(MAKE) -C check $@
+doxygen : ; cd @srcdir@ && doxygen
+$(LIBGB): $(OFILES); $(AR) rcs $@ $^
+distclean: clean; rm -f Makefile

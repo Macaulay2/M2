@@ -33,6 +33,7 @@ install all clean distclean::
 install :: all
 
 install :: ; rm -f INSTALLDIR && ln -s $(target) INSTALLDIR
+clean   :: ; rm -f INSTALLDIR
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
 ifeq "$(CC)" "cl"
@@ -45,27 +46,6 @@ DIRS := $(target) $(bindir) $(libm2dir) $(man1dir) $(emacsdir) $(m2dir) $(docm2r
 install :: $(DIRS)
 install :: ; $(MAKE) -C encap $@
 $(DIRS) :; $(INSTALL) -d $@
-
 Makefile : Makefile.in; ./config.status Makefile
-
-################################# tar manufactured files
-# this probably isn't correct any longer:
-manufactured.tgz : Makefile
-	$(MAKE) -C Macaulay2/d all-c-files
-	$(MAKE) -C Macaulay2/tutorial
-	tar cfz $@ \
-		Macaulay2/e/geovec.hpp \
-		Macaulay2/e/geores.hpp \
-		Macaulay2/e/cmdnames.m2 \
-		Macaulay2/e/cmdnames.hpp \
-		Macaulay2/e/cmdinst.hpp \
-		Macaulay2/m2/tutorials.m2 \
-		Macaulay2/tutorial/final/*.out \
-		Macaulay2/m2/gbdoc.m2 \
-		Macaulay2/m2/gbfunctions.m2 \
-		Macaulay2/m2/loads.m2 \
-		Macaulay2/d/*.c \
-		Macaulay2/m2/cache-tmp/Examples/*.m2 \
-		Macaulay2/m2/cache-tmp/Tests/*.m2
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 install all clean distclean::; @echo "-------- done making '$@' --------"

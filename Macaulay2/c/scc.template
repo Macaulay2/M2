@@ -33,7 +33,7 @@ do case $1 in
     +gc)    if [ scclib != "" ]; then scclib="--LIBDIR--/scclib.o"; fi
 	    sccflags="$sccflags $1" ;;
     -noarraychks|-nogcc|-noansi|-memstats|+countstats|\
-    -spincursor|-yydebug|-debug|-nosetup)
+    -yydebug|-debug|-nosetup)
 	    sccflags="$sccflags $1" ;;
     -sig)   compile=0; sccflags="$sccflags $1" ;;
     -dep)   dep=1; compile=0; sccflags="$sccflags $1" ;;
