@@ -48,21 +48,6 @@ AC_DEFUN(M2_CONFIGURED_FILES,
  Makefile\
  Macaulay2/Makefile\
  Macaulay2/m2/Makefile\
- Macaulay2/ComputationsBook/Makefile\
- Macaulay2/ComputationsBook/book/Makefile\
- Macaulay2/ComputationsBook/chapters/Makefile\
- Macaulay2/ComputationsBook/chapters/TEMPLATE/Makefile\
- Macaulay2/ComputationsBook/chapters/authorInstructions/Makefile\
- Macaulay2/ComputationsBook/chapters/completeIntersections/Makefile\
- Macaulay2/ComputationsBook/chapters/d-modules/Makefile\
- Macaulay2/ComputationsBook/chapters/sample1/Makefile\
- Macaulay2/ComputationsBook/chapters/sample2/Makefile\
- Macaulay2/ComputationsBook/chapters/schemes/Makefile\
- Macaulay2/ComputationsBook/chapters/solving/Makefile\
- Macaulay2/ComputationsBook/inputs/Makefile\
- Macaulay2/ComputationsBook/lncse-macros/Makefile\
- Macaulay2/ComputationsBook/proposals/Makefile\
- Macaulay2/ComputationsBook/util/Makefile\
  Macaulay2/Mathematica/Makefile\
  Macaulay2/Vasconcelos-appendix/Makefile\
  Macaulay2/basictests/Makefile\
