@@ -523,7 +523,7 @@ document {
      SeeAlso => {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
      }
 document {
-     Key => (method, SingleArgumentDispatch),
+     Key => [method, SingleArgumentDispatch],
      Headline => "method functions with a variable number of arguments",
      Usage => "f = method(SingleArgumentDispatch => true)",
      Inputs => {
@@ -553,7 +553,7 @@ document {
      SeeAlso => { "specifying typical values" }
      }
 document {
-     Key => (method,TypicalValue),
+     Key => [method,TypicalValue],
      Headline => "specify return value type",
      TT "TypicalValue => X", " -- an option to ", TO "method", "
      which specifies that values returned by the method function will
@@ -583,7 +583,7 @@ document {
      SeeAlso => {"methods" }
      }
 document {
-     Key => (method,Associative),
+     Key => [method,Associative],
      Headline => "allows associative methods to be created",
      NOINDENT,
      TT "f = method(Associative=>true)", " -- creates an associative

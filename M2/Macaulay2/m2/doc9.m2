@@ -13,7 +13,7 @@ document {
      }
 
 document {
-     Key => (pushForward,StopBeforeComputation),
+     Key => [pushForward,StopBeforeComputation],
      TT "StopBeforeComputation => false", " -- an optional argument used with
      ", TO "pushForward", ".",
      PARA,
@@ -22,18 +22,18 @@ document {
      }
 
 document {
-     Key => (pushForward,StopWithMinimalGenerators),
+     Key => [pushForward,StopWithMinimalGenerators],
      TT "StopWithMinimalGenerators => true", " -- an option for ", TO "pushForward", "
      that specifies that the computation should stop as soon as a
      complete list of minimal generators for the submodule or ideal has been
      determined.",
      PARA,
      "The value provided is simply passed on to ", TO "gb", ": see 
-     ", TO (gb,StopWithMinimalGenerators), " for details."
+     ", TO [gb,StopWithMinimalGenerators], " for details."
      }
 
 document {
-     Key => (pushForward,Strategy),
+     Key => [pushForward,Strategy],
      TT "pushForward(f,M,Strategy => v)", " -- an option for ", TO pushForward, " 
      which can be used to specify the strategy to be used in the computation.",
      PARA,
@@ -836,7 +836,7 @@ document {
      }
 
 document {
-     Key => (quotient,Strategy),
+     Key => [quotient,Strategy],
      TT "quotient(I,J,Strategy => v)", " -- an option which can
      be used to specify the strategy to be used in the computation.",
      PARA,
@@ -1172,15 +1172,15 @@ document {
      which specifies whether to compute minimal generators for the result.",
      PARA,
      UL {
-	  TO (quotient,MinimalGenerators),
-	  TO (saturate,MinimalGenerators),
+	  TO [quotient,MinimalGenerators],
+	  TO [saturate,MinimalGenerators],
 	  },
      PARA,
      "The default value is ", TT "true", "."
      }
 
 document {
-     Key => (quotient,MinimalGenerators),
+     Key => [quotient,MinimalGenerators],
      TT "MinimalGenerators => true", " -- an option for ", TO "quotient", "
      which specifies whether to compute minimal generators for the result.",
      PARA,
@@ -1188,7 +1188,7 @@ document {
      }
 
 document {
-     Key => (saturate,MinimalGenerators),
+     Key => [saturate,MinimalGenerators],
      TT "MinimalGenerators => true", " -- an option for ", TO "saturate", "
      which specifies whether to compute minimal generators for the result.",
      PARA,

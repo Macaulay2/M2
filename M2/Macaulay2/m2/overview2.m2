@@ -535,8 +535,8 @@ document {
 	  TO "inheritance from parents",
 	  TO "printing and formatting for new classes",
 	  TO "making a new method function",
-	  TO (method, SingleArgumentDispatch),
-	  TO (method, Options),
+	  TO [method, SingleArgumentDispatch],
+	  TO [method, Options],
 	  }
      }
 
@@ -2219,7 +2219,7 @@ document {
      }
 
 document {
-     Key => (method,Options),
+     Key => [method,Options],
      Headline => "method functions with optional arguments",
      OldSynopsis => {
 	  "f = method(Options => {a=>x, b=>y, ...})",
