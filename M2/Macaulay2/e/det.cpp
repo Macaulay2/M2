@@ -183,10 +183,13 @@ ring_elem DetComputation::calc_det(int *r, int *c, int p)
   int negate = 1;
   for (i=p-1; i>=0; i--)
     {
-      // swap(c[i],c[p-1]);
+#if 1
+      swap(c[i],c[p-1]);
+#else
       int tmp = c[i];
       c[i] = c[p-1];
       c[p-1] = tmp;
+#endif
       negate = !negate;
       ring_elem g = M.elem(r[p-1],c[p-1]);
       if (R->is_zero(g)) 

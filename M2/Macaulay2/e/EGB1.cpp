@@ -156,7 +156,7 @@ bool EGB1::set_up(const Matrix &m, int csyz, int nsyz, int strat)
   bump_up(F);
   bump_up(Fsyz);
 
-  for (int i=0; i<nrows; i++)
+  for (i=0; i<nrows; i++)
     gb[i] = new EGBLookupTable(I);
 
   moreGenerators(0, ncols - 1, m);
@@ -216,6 +216,7 @@ int EGB1::lead_component(es_pair *p) const
   default:
     emit_line("internal error: unknown spair type");
     abort();
+    return 0;
   }
 
 }
@@ -777,9 +778,9 @@ void EGB1::update_pairs(egb_elem *m)
 
   // S-pairs from the vectors themselves.
   int x = lead_component(m);
-  for (EGBLookupTable::iterator p = gb[x]->first(); p.valid(); ++p)
+  for (EGBLookupTable::iterator pp = gb[x]->first(); pp.valid(); ++pp)
     {
-      egb_elem *g = *p;
+      egb_elem *g = *pp;
       es_pair *s = make_s_pair(m, g);
       s->next = new_set;
       new_set = s;
@@ -1145,10 +1146,11 @@ EGB1::~EGB1()
   delete spairs;
 
   // remove the gb_elem's
-  for (int i=0; i < gb.length(); i++)
+  int i;
+  for (i=0; i < gb.length(); i++)
     delete gb[i];
 
-  for (int i=0; i < gbLarge.length(); i++)
+  for (i=0; i < gbLarge.length(); i++)
     {
       remove_exponent_vector(const_cast<int *&>(gbLarge[i]->lcm));
       I.remove_vector(F,gbLarge[i]->f);
@@ -1157,7 +1159,7 @@ EGB1::~EGB1()
     }
 
   // Remove the syzygies
-  for (int i=0; i<syz.length(); i++)
+  for (i=0; i<syz.length(); i++)
     I.remove_vector(Fsyz,syz[i]);
 
   // Finally, decrement ref counts

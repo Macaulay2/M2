@@ -3,6 +3,7 @@
 #define _monideal2_hh_
 
 #include <vector>
+using namespace std;
 #include "varpower.hpp"
 #include "montable.hpp"
 #include "matrix.hpp"

@@ -836,10 +836,13 @@ EMatrix *EMatrix::koszul(int p) const
       for (int r=p-1; r>=0; r--)
 	{
 	  negate = !negate;
-	  // swap(a[p-1], a[r]);
+#if 1
+	  swap(a[p-1], a[r]);
+#else
 	  int tmp = a[p-1];
 	  a[p-1] = a[r];
 	  a[r] = tmp;
+#endif
 	  int x = comb::encode(a, p-1);
 	  EVector temp = column(a[p-1]).translate(F,x);
 

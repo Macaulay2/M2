@@ -66,7 +66,13 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p)
   int negate = 1;
   for (i=p-2; i>=0; i--)
     {
+#if 0
+      int tmp = r[i];
+      r[i] = r[p-2];
+      r[p-2] = tmp;
+#else
       swap(r[i],r[p-2]);
+#endif
       negate = !negate;
       ring_elem g = M.elem(r[p-2],r[p-1]);
       if (R->is_zero(g)) 

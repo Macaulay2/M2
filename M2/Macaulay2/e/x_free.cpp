@@ -51,6 +51,7 @@ FreeModule *makeSchreyerFreeModule(Ring *R, int rank,
   return F;
 }
 #include <algorithm>
+using namespace std;
 FreeModule *makeSchreyerFreeModule(const Matrix &m)
 {
   int i;

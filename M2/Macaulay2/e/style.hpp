@@ -34,8 +34,9 @@ inline const T &min(const T &a, const T &b)
 template <class T>
 inline const T &max(const T &a, const T &b)
 { return (a>b ? a : b); }
+#endif
 
-//#if !(defined(__MWERKS__))
+#if defined(_WIN32)
 template <class T> 
 inline void swap(T &t1, T &t2)
 {
@@ -43,7 +44,6 @@ inline void swap(T &t1, T &t2)
   t1 = t2;
   t2 = tmp;
 }
-//#endif
 #endif
 
 typedef unsigned long int uint32;

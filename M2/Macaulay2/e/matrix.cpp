@@ -698,7 +698,13 @@ Matrix Matrix::koszul(int p) const
       for (int r=p-1; r>=0; r--)
 	{
 	  negate = !negate;
+#if 0
+	  int tmp = a[r];
+	  a[r] = a[p-1];
+	  a[p-1] = tmp;
+#else
 	  swap(a[p-1], a[r]);
+#endif
 	  int x = comb::encode(a, p-1);
 	  vec temp = F->term(x, elem(0, a[p-1]));
 

@@ -32,7 +32,7 @@ clean::; rm -f core
 rmcores :; find . '(' -name core -o -name gmon.out -o -name profile ')' -exec rm '{}' ';'
 ################################ SETUP
 ifeq "$(CC)" "cl"
-all::;	$(MAKE) -C WindowsNT
+all:: include/.exists;	$(MAKE) -C WindowsNT
 TARGET := Macaulay2-$(DESC).zip
 DOCTARGET := Macaulay2-$(VERSION)-doc.zip
 else
