@@ -14,8 +14,8 @@ document { "Mathematical Overview",
 	  TO "substitution and maps between rings",
 	  ("modules",
 	       MENU {
-		    (TO "modules I", " -- getting started"),
-		    (TO "modules II", " -- homological and multilinear algebra")
+		    (TO "modules: part I", " -- getting started"),
+		    (TO "modules: part II", " -- homological and multilinear algebra")
 		    }
 	       ),
 	  TO "Groebner bases and related computations",
@@ -90,7 +90,7 @@ document { "ideals",
 	  ("conversions",
 	       MENU {
 		    TO "ideals to and from matrices",
-		    TO "ideals to and from modules"
+		    SHIELD TO "ideals to and from modules"
 		    }
 	       ),
 	  ("basic operations on ideals",
@@ -111,11 +111,11 @@ document { "ideals",
 		    TO "primary decomposition"
 		    }
 	       ),
-	  (TO "Groebner bases and related computations"),
+	  (SHIELD TO "Groebner bases and related computations"),
           },
      "For those operations where we consider an ideal as a module, such
      as computing Hilbert functions and polynomials, syzygies, free resolutions, see ",
-     TO "modules I", ".",
+     TO "modules: part I", ".",
      PARA,
       "For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use ideals, see ", TO "Ideal", "."
@@ -158,7 +158,7 @@ document { "matrices",
 	       )
 	  },
      "For an overview of matrices as homomorphisms between modules, 
-     see ", TO "modules I", ".  
+     see ", TO "modules: part I", ".  
      For additional common operations and a comprehensive list of all routines
      in Macaulay 2 which return or use matrices, see ", TO "Matrix", "."
      }
@@ -180,7 +180,7 @@ document { "substitution and maps between rings",
      in Macaulay 2 which return or use ring maps, see ", TO "RingMap", "."
      }
      
-document { "modules I",
+document { "modules: part I",
      HEADER2 "Getting started",
      MENU {
 	  ("construction of modules",
@@ -230,10 +230,10 @@ document { "modules I",
 --		    }
 	       )
 	  },
-     "See ", TO "modules II", " for more operations on modules."
+     "See ", TO "modules: part II", " for more operations on modules."
      }
 
-document { "modules II",
+document { "modules: part II",
      MENU {
 	  ("multilinear algebra",
 	       MENU {

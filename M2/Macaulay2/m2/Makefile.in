@@ -191,8 +191,6 @@ phase5 : phase4
 		@srcdir@/docfinish.m2 '-eexit(0)'
 	touch $@
 
-all :: phase5
-
 ifdef NEWENGINE
 check:: test1
 test1 : test.m2 phase1

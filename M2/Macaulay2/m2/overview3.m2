@@ -282,7 +282,7 @@ document { "Reference Manual",
 	  },
      "A list of the operators:",
      MENU {
-	  TO "operators",
+	  SHIELD TO "operators",
 	  },
      "We've mentioned that our software is organized according to the
      types of things there are.  The types form a hierarchy; for example,
@@ -376,7 +376,7 @@ document { "David Eisenbud",
      }
 
 document { "Daniel R. Grayson",
-     HREF {"http://www.math.uiuc.edu/~dan", "Daniel R. Grayson"}, " ",
+     HREF {"http://www.math.uiuc.edu/~dan/", "Daniel R. Grayson"}, " ",
      HREF {"mailto:dan@math.uiuc.edu", "<dan@math.uiuc.edu>"}, ".",
      PARA,
      "Daniel Grayson received his PhD in Mathematics from MIT in 1976, taught
@@ -392,7 +392,7 @@ document { "Daniel R. Grayson",
      }
 
 document { "Michael E. Stillman",
-     HREF { "http://www.math.cornell.edu/~mike", "Michael E. Stillman"}, " ",
+     HREF { "http://www.math.cornell.edu/~mike/", "Michael E. Stillman"}, " ",
      HREF {"mailto:mike@math.cornell.edu", "<mike@math.cornell.edu>"},
      PARA,
      "Michael E. Stillman received his PhD in Mathematics from Harvard in 1983,
@@ -413,7 +413,7 @@ document { "Resources required",
 document { "How to get this program",
      "The program is available over the web at the Macaulay 2 home page",
      PARA, 
-     CENTER HREF {"http://www.math.uiuc.edu/Macaulay2"}, 
+     CENTER HREF {"http://www.math.uiuc.edu/Macaulay2/"}, 
      PARA,
      NOINDENT,
      "or by ftp to the host ", TT "ftp.math.uiuc.edu", " with user name ", TT "Macaulay2", " 

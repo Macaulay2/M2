@@ -925,12 +925,13 @@ document { Module,
      SEEALSO "ideals and modules",
      PARA,
      "Common ways to make a module:",
-     MENU {
+     SHIELD MENU {
 	  TO (symbol ^, Ring, ZZ),
 	  TO (symbol ^, Ring, List),
 	  TO (cokernel, Matrix),
 	  TO (image, Matrix),
 	  TO (kernel, Matrix),
+	  TO (homology, Matrix, Matrix)
 	  },
      "Common ways to get information about modules:",
      MENU {
@@ -980,8 +981,7 @@ document { Module,
 	  TO "Hom",
 	  TO (homomorphism,Matrix),
 	  TO (Ext,ZZ,Module,Module),
-	  TO (Tor,ZZ,Module,Module),
-	  TO (homology, Matrix, Matrix),
+	  TO (Tor,ZZ,Module,Module)
 	  },
      "Common ways to use a module:",
      MENU {

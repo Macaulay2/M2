@@ -1046,6 +1046,7 @@ document { Ring,
      "Common ways to use a ring:",
      MENU {
 	  TO (symbol ^, Ring, ZZ),
+	  TO (symbol ^, Ring, List),
 	  TO (vars, Ring),
 	  },
      }

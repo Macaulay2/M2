@@ -17,21 +17,16 @@ esac
 M2HOME="`dirname $0`/../Macaulay2"
 export M2HOME
 
-SETUP="$SRCHOME/m2/setup.m2"
-EXE="$M2HOME/libexec/Macaulay2"
 DATA="$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
-M2PATH=
+INIPATH="-e path = { \"$SRCHOME/m2/\", \"$M2HOME/m2/\" }" \
+M2PATH="-e path = join(path,{ \"$SRCHOME/m2/\", \"$SRCHOME/packages/\", \"$SRCHOME/experiments/\" })"
+START="-e runStartFunctions()"
 
 if [ -f "$DATA" ]
-then exec "$EXE" \
-         "-e loaddata \"$DATA\"" \
-         -- \
-	 "-e path = join(path,{ \"$SRCHOME/m2/\", \"$SRCHOME/packages/\", \"$SRCHOME/experiments/\" })" \
-	 "-e runStartFunctions()" \
-	 "$@"
-else exec "$EXE" \
-         "-e path = { \"$SRCHOME/m2/\", \"$M2HOME/m2/\" }" \
-         "$SETUP" \
-	 "-e runStartFunctions()" \
-	 "$@"
-fi
+then SETUP="-e loaddata \"$DATA\""
+     SEP="--"
+else SETUP="$SRCHOME/m2/setup.m2"
+     SEP=""
+fi 
+
+exec "$M2HOME/libexec/Macaulay2" "$INIPATH" "$SETUP" $SEP "$M2PATH" "$START" "$@"

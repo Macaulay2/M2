@@ -74,7 +74,7 @@ indexTable := memoize(
 	       if #key > 300 then error "suspiciously long key";
 	       if not mutable tb then error (
 		    if class tb === HashTable 
-	       	    then ("failed to create database file ", fn)
+	       	    then ("failed to open database file for writing or reading: ", fn)
 	       	    else ("database file ", fn, " is read-only")
 		    );
 	       tb#key = val
@@ -95,8 +95,12 @@ indexTable := memoize(
 	       getFun => key -> prefix | if tb#?key then tb#key else store(key,makeName key),
      	       keysFun => () -> keys tb,
 	       setFun => (key,val) -> prefix | (
-		    if tb#?key then error("key ",key," already has a value");
-		    store(key,val)
+		    if tb#?key 
+		    then (
+			 if tb#key =!= val then error("key ",key," already has a different value");
+			 )
+		    else store(key,val);
+		    val
 		    )
 	       }
 	  )

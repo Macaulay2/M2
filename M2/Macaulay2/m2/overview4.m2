@@ -20,7 +20,7 @@ document { "emacs",
      web page is ", HREF "http://www.gnu.org/software/emacs/emacs.html", "
      and the software can be obtained from one of the ftp sites listed
      at ", HREF "http://www.gnu.org/order/ftp.html", "; the primary ftp
-     site is ", HREF "ftp://ftp.gnu.org/pub/gnu", ".",
+     site is ", HREF "ftp://ftp.gnu.org/pub/gnu/", ".",
      PARA,
      "There is a version of emacs for Windows NT and Windows 95 called ", TT "NTemacs", ".
      See ", HREF "http://www.cs.washington.edu/homes/voelker/ntemacs.html", " for

@@ -666,7 +666,7 @@ document { Ideal,
 	  TO "annihilator",
 	  TO "content",
 	  TO "fittingIdeal",
-	  TO (kernel, RingMap),
+	  SHIELD TO (kernel, RingMap),
 	  },
      "Common ways to get information about an ideal:",
      MENU {
@@ -692,7 +692,7 @@ document { Ideal,
 	  },
      "Common ways to use an ideal:",
      MENU {
-	  TO (symbol /, Ring, Ideal),
+	  SHIELD TO (symbol /, Ring, Ideal),
 	  },
      PARA,
      "An ideal ", TT "I", " is an immutable object, so if you want to 

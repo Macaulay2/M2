@@ -1,5 +1,5 @@
 
-fastmingens = (m) -> (
+fastmingens := (m) -> (
      sendgg(ggPush m, -- the matrix
 	  ggPush 0, -- collect syzygyies?
 	  ggPush 0, -- how many rows
@@ -57,7 +57,7 @@ fastquotient = (I,f) -> (
      sendgg(ggPush g, gggetsyz);
      fastmingens getMatrix ring m)
 
-fastequal = (m,n) -> (
+fastequal := (m,n) -> (
      sendgg(ggPush m, ggPush n, ggisequal);
      eePopInt() =!= 0)
 

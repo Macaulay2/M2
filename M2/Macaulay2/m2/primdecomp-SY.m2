@@ -91,7 +91,7 @@ flattener(I,F1)
 ///
 
 -- Return a list of the prime factors of F
-factors = (F) -> (
+factors := (F) -> (
      facs := factor F;
      facs = apply(#facs, i -> facs#i#0);
      select(facs, f -> degree f =!= {0}))

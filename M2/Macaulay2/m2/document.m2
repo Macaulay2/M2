@@ -21,11 +21,13 @@ addStartFunction(
 		    });
 	  path = {};
 	  apply(p, dir -> if not member(dir,path) then path = append(path,dir));
-	  documentationPath = {
+	  p = {
 	       filepath{"cache","doc"},			    -- this is where new documentation is written
 	       filepath{home,"m2","cache","doc"},
 	       filepath{home,"packages","cache","doc"}
 	       };
+     	  documentationPath = {};
+	  apply(p, dir -> if not member(dir,path) then documentationPath = append(documentationPath,dir));
 	  )
      )
 -----------------------------------------------------------------------------
@@ -869,7 +871,7 @@ documentation HashTable := x -> (
 
 ret := k -> (
      t := typicalValue k;
-     if t =!= Thing then SEQ {"Class of returned value: ", TO t, headline t}
+     if t =!= Thing then SEQ {"Class of returned value: ", TO t, headline t, PARA{}}
      )
 seecode := x -> (
      f := lookup x;
