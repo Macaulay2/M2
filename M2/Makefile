@@ -6,7 +6,7 @@
 ##      make 
 ##      make install
 ## or
-##	make Makefile.configure
+##	make Makefile.overrides
 ##	select overrides in the file Makefile.overrides, and add some of your own
 ##	make
 ##      make install
@@ -15,6 +15,12 @@
 ##	autoconf
 ##	autoheader
 
+#############################################################################
+ifdef XYZZY
+  If you get an error message on this line, it is because you are not using
+  the 'gnu' version of the 'make' program.  The source code for it is
+  available at ftp://ftp.gnu.org/pub/gnu/make.
+endif
 #############################################################################
 
 default : all doc
@@ -36,9 +42,6 @@ Makefile.overrides :
 	echo "# CONFIGURE_OPTIONS += --enable-memdebug" >>$@
 	echo "# CONFIGURE_OPTIONS += --enable-verbose" >>$@
 	echo "# CONFIGURE_OPTIONS += --disable-gc-for-new" >>$@
-	echo "# CONFIGURE_OPTIONS += --without-factory" >>$@
-	echo "# CONFIGURE_OPTIONS += --with-gmp" >>$@
-	echo "# CONFIGURE_OPTIONS += --with-gc" >>$@
 
 # this list is the same as the one in aclocal.m4
 export CONFIGURED_FILES := \
@@ -57,6 +60,7 @@ export CONFIGURED_FILES := \
 	Macaulay2/emacs/Makefile \
 	Macaulay2/html/Makefile \
 	Macaulay2/packages/Makefile \
+	Macaulay2/packages/ComputationsBook/Makefile \
 	Macaulay2/test/Makefile \
 	Macaulay2/tutorial/Makefile \
 	Macaulay2/setup \
@@ -75,9 +79,11 @@ config.status : configure Makefile.overrides version
 	unset CONFIG_SITE; \
 	$(CONFIGURE_ENVIRON) ./configure $(CONFIGURE_OPTIONS) --no-create --cache-file=config.cache
 
-$(CONFIGURED_FILES) include/config.h : $(CONFIGURED_FILES:=.in) config.status include/config.h.in
+$(CONFIGURED_FILES) : $(CONFIGURED_FILES:=.in) config.status
 	./config.status
-	touch include/config.h
+
+include/config.h : config.status include/config.h.in
+	./config.status
 
 TARGETS = all install dist check clean distclean uninstall doc port justM2 testport \
 	FACTORY LIBFAC GMP GC

@@ -1,71 +1,70 @@
-				 Macaulay 2
-		by Daniel R. Grayson and Michael E. Stillman
+			   Macaulay 2
+	    by Daniel R. Grayson <dan@math.uiuc.edu>
+	 and Michael E. Stillman <mike@math.cornell.edu>
 
-Macaulay 2 preliminary porting instructions and notes
+	available from http://www.math.uiuc.edu/Macaulay2/
 
-    We use gcc/g++ version 2.95.2, gnu make version 3.79.1, and gawk 3.0.3;
-you should install these yourself.  Be sure to install the latest version.
-We use various other libraries, whose sources are included in this
-distribution for your convenience, although you may prefer to pick up more
-recent versions of these libraries.  These libraries have their own copying
-licenses, as described below.  The copying license for Macaulay 2 is in
-./Macaulay2/licenses/README.
+We thank the United States National Science Foundation for generous funding
+to develop Macaulay 2.
 
-library: Macaulay2
- author: Daniel R. Grayson <dan@math.uiuc.edu>
-	 Michael E. Stillman <mike@math.cornell.edu>
- get at: http://www.math.uiuc.edu/Macaulay2
-license: Macaulay2/licenses/README
+Macaulay 2 is copyright 1993-2001 by Daniel R. Grayson and Michael
+E. Stillman.  We permit you to use it under the terms of the GNU General
+Public License, version 2, as published by the Free Software Foundation; see
+the file Macaulay2/COPYING.  This is free software.  There is no warranty;
+not even for merchantability or fitness for a particular purpose.
 
-library: factory
-release: factory-1.2c
- author: G-M. Greuel <greuel@mathematik.uni-kl.de>
-	 R. Stobbe <stobbe@mathematik.uni-kl.de>
- get at: helios.mathematik.uni-kl.de:/pub/Math/Factory
-license: Macaulay2/licenses/factory.lic
+---------
+Libraries
+---------
 
-library: libfac
-release: libfac-0.3.0
- author: Michael Messollen <michael@math.uni-sb.de>
- get at:
-license: libfac/00README
+Here are the libraries you have to download and install on your system before
+you can compile and link Macaulay 2.
 
-library: MP
-release: 1.1.3
- author: S. Gray, N. Kajler, P. Wang 
- get at: ftp.mcs.kent.edu:dist/MP
-license: mp/README
+    library: Singular-factory
+    release: factory-1.3b
+     author: G-M. Greuel <greuel@mathematik.uni-kl.de>
+	     R. Stobbe <stobbe@mathematik.uni-kl.de>
+	     J. Schmidt
+	     G. Pfister <pfister@mathematik.uni-kl.de>
+	     H. Schoenemann <hannes@mathematik.uni-kl.de>
+     get at: /ftp@www.mathematik.uni-kl.de:/pub/Math/Singular/Factory
+    license: GPL
 
-library: gmp
-release: gmp-3.1.1
- author: Torbjorn Granlund <tege@nada.kth.se>
-bugs to: <bug-gmp@prep.ai.mit.edu>
- get at: ftp.gnu.org:gnu/gmp
-license: gmp/COPYING.LIB
+    library: Singular-libfac
+    release: libfac-0.3.2  (in 00README, in configure.in it says 0.3.0)
+     author: Michael Messollen <mmessollen@web.de>
+     get at: /ftp@www.mathematik.uni-kl.de:/pub/Math/Singular/Libfac
+    license: GPL
+    install: first apply patches in file libfac-0.3.2-patch
 
-library: gc
-release: 6.0 alpha 2 (see file gc/version.h)
- author: Hans Boehm <hboehm@exch.hpl.hp.com>
- get at: http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc.tar.gz
-license: gc/README
+    library: gmp
+    release: gmp-3.1.1
+     author: Torbjorn Granlund <tege@nada.kth.se>
+    bugs to: <bug-gmp@prep.ai.mit.edu>
+     get at: ftp.gnu.org:gnu/gmp
+    license: gmp/COPYING.LIB
 
-library: libm.so and libc.so from glibc
-release: 2.2.1
- get at: ftp.gnu.org:gnu/glibc
-license: Macaulay2/licenses/gnulib.lic
+    library: gc
+    release: 6.0 alpha 8 (see file gc/version.h)
+     author: Hans Boehm <hboehm@exch.hpl.hp.com>
+     get at: http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc.tar.gz
+    license: gc/README
+    install: -- edit Makefile
+		    value of CFLAGS : remove -DALL_INTERIOR_POINTERS
+				      add    -DLARGE_CONFIG
+				      add    -DNO_DEBUGGING
+	     -- make
+	     -- cp gc.a /usr/lib/libgc.a
+	     -- cp include/gc.h and include/gc_cpp.h /usr/include
 
-To configure Macaulay 2 type 'make -f Makefile-configure' in this directory,
-or run 'configure' yourself.  If 'configure' isn't there, run 'autoheader; autoconf'
-first.  See what options are available with 'configure --help'.
-
-Recommended options to configure:
-
-	--without-dumpdata		for Solaris and Microsoft Windows
+-----------------------
+Compiling
+-----------------------
 
 To compile Macaulay 2 type 'make' in this directory.  The resulting shell
 script, ./Macaulay2/bin/M2, can then be installed in /usr/local/bin.  The
-resulting distributions/Macaulay2-*-tar.gz file can be distributed.
-	
+resulting files distributions/Macaulay2-*-tar.gz file can be distributed.
+
 -----------------------
 Windows 95, 98 and NT notes
 -----------------------
@@ -98,6 +97,9 @@ There are two ways to compile Macaulay 2 under Windows 95 and NT.
 
 	You will also want to pick up emacs for Windows from
 	http://www.cs.washington.edu/homes/voelker/ntemacs.html .
+
+	Configure with the option
+		--without-dumpdata
 
 	Problems:
 	   general:
@@ -141,6 +143,13 @@ path instead in the current directory to find the file.  This causes a
 problem for 'configure'.  Just edit its first line to use 'bash' instead.
 
 ----------------------
+Solaris notes
+----------------------
+
+Configure with the option
+	--without-dumpdata
+
+----------------------
 FreeBSD notes
 ----------------------
 
@@ -155,42 +164,3 @@ and commented out the Makefile line
 	all:: GMP
 
 Dumpdata doesn't work, so configure with the option --disable-dumpdata.
-
-----------------------
-MS-DOS notes
-----------------------
-
-The MS-DOS version is no longer supported, but here are the instructions
-previously given.
-
-Install DJGPP v2, available from /ftp@ftp.coast.net:SimTel/vendors/djgpp.
-Install all the applications, too: make, ranlib, gawk, ar, sed, ...
-
-Remember to use utod to convert all the *.m2 files in m2, m2/scriptde, and
-tutorial/final to the msdos newline conventions.  This will ensure that
-embedded strings containing newlines will have the right newline characters
-there.
-
-crt0.s: The source is in djlsr201.zip, and needs to be modified according to
-	the file Macaulay2/msdos/crt0-diffs to support gc.  Do this manually
-	and replace %DJGPP%/lib/crt0.o.
-	The variable _go32_info_block is defined in src/libc/go32/infostrc.c.
-gmp: Use the file make.bat that comes with it to compile it.
-gc: Still needs a bit of work.
-factory: Run 
-		GMP_INCLUDE_PATH=../include
-		export GMP_INCLUDE_PATH
-		configure msdos --prefix=../lib --with-memman --with-optimize
-	under Linux and then move Makefile and conf.h over.
-libfac: The include files factor.h and Factor.h tend to get confused for each
-	other.  One thing to try is to remove -I. from IFLAGS in libfac-0.2/Makefile.
-
------------------------------------------------------------------------------
-
-Macaulay 2 is copyright 1993-2001 by Daniel R. Grayson and Michael
-E. Stillman, all rights reserved.
-
-Daniel R. Grayson 	<dan@math.uiuc.edu>
-Michael E. Stillman	<mike@math.cornell.edu>
-
------------------------------------------------------------------------------

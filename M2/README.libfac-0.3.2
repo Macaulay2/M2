@@ -1,0 +1,196 @@
+rhenium# diff -ru  libfac-0.3.0.orig   libfac-0.3.0  
+diff -ru libfac-0.3.0.orig/factor/Factor.cc libfac-0.3.0/factor/Factor.cc
+--- libfac-0.3.0.orig/factor/Factor.cc	Tue Apr 10 09:01:11 2001
++++ libfac-0.3.0/factor/Factor.cc	Sun Jun 24 07:12:41 2001
+@@ -215,9 +215,11 @@
+ #ifdef HAVE_SINGULAR
+ 	    WerrorS("libfac: ERROR: not_monic1: case lt is a sum.");
+ #else 
++#ifndef NOSTREAMIO
+ 	    cerr << "libfac: ERROR: not_monic1: case lt is a sum.\n" 
+ 		 << rcsid << errmsg << endl;
+ #endif
++#endif
+ 	  } 
+ 	}
+ 	// Now we add a test if we did the right thing:
+@@ -232,9 +234,11 @@
+ #ifdef HAVE_SINGULAR
+ 	  WerrorS("libfac: ERROR: not_monic2: case lt is a sum.");
+ #else 
++#ifndef NOSTREAMIO
+ 	  cerr << "libfac: ERROR: not_monic2: case lt is a sum.\n" 
+                << rcsid << errmsg << endl;
+ #endif
++#endif
+ 	} 
+       }
+     }
+@@ -321,9 +325,11 @@
+ #ifdef HAVE_SINGULAR
+     WerrorS("libfac: evaluate: Extension not inFF() or inGF() !");
+ #else 
++#ifndef NOSTREAMIO
+     cerr << "libfac: evaluate: " << Extension << " not inFF() or inGF() !" 
+ 	 << endl;
+ #endif
++#endif
+     FFRandom gen;
+     }
+   }
+@@ -392,9 +398,11 @@
+ #ifdef HAVE_SINGULAR
+       WerrorS("libfac: spezializePoly ERROR: Working over given extension-field not yet implemented!");
+ #else 
++#ifndef NOSTREAMIO
+       cerr << "libfac: spezializePoly ERROR: Working over given extension-field not yet implemented!\n" 
+            << rcsid << errmsg << endl;
+ #endif
++#endif
+       return 0;
+     }
+   }
+@@ -426,9 +434,11 @@
+ #ifdef HAVE_SINGULAR
+     WerrorS("libfac: evaluate: Extension not inFF() or inGF() !");
+ #else
++#ifndef NOSTREAMIO
+     cerr << "libfac: evaluate: " << Extension << " not inFF() or inGF() !" 
+ 	 << endl;
+ #endif
++#endif
+     FFRandom gen; }}
+   REvaluation k(1,n,gen);
+   k.nextpoint();
+@@ -605,8 +615,10 @@
+ #ifdef SINGULAR
+       WarnS("libfac: Factorize: ERROR: Not able to find a valid specialization!");    
+ #else
++#ifndef NOSTREAMIO
+       cerr << "libfac: Factorize: ERROR: Not able to find a valid specialization!\n" 
+ 	   << rcsid << errmsg << endl; 
++#endif
+ #endif
+       Outputlist.append(CFFactor(F,1));
+       return Outputlist;
+diff -ru libfac-0.3.0.orig/factor/MVMultiHensel.cc libfac-0.3.0/factor/MVMultiHensel.cc
+--- libfac-0.3.0.orig/factor/MVMultiHensel.cc	Tue Apr 10 09:01:11 2001
++++ libfac-0.3.0/factor/MVMultiHensel.cc	Sun Jun 24 07:16:04 2001
+@@ -108,9 +108,11 @@
+ #ifdef HAVE_SINGULAR
+     WerrorS("libfac: diophant ERROR: degree too large!  ");
+ #else
++#ifndef NOSTREAMIO
+     cerr << "libfac: diophant ERROR: degree too large!  " 
+ 	 << (degree(F1,levelU) + degree(F2,levelU) ) <<endl;
+ #endif
++#endif
+     Retvalue.One=F1;Retvalue.Two=F2;
+     return Retvalue;
+   }
+@@ -122,8 +124,10 @@
+ #ifdef HAVE_SINGULAR
+       WerrorS("libfac: diophant ERROR: F1 and F2 are not relatively prime! ");
+ #else
++#ifndef NOSTREAMIO
+       cerr << "libfac: diophant ERROR: " << F1 << "  and  " << F2 
+ 	   << "  are not relatively prime!" << endl;
++#endif
+ #endif
+       Retvalue.One=F1;Retvalue.Two=F2;
+       return Retvalue;
+diff -ru libfac-0.3.0.orig/factor/SqrFree.cc libfac-0.3.0/factor/SqrFree.cc
+--- libfac-0.3.0.orig/factor/SqrFree.cc	Tue Apr 10 09:01:11 2001
++++ libfac-0.3.0/factor/SqrFree.cc	Sun Jun 24 07:06:32 2001
+@@ -127,9 +127,11 @@
+ #ifdef HAVE_SINGULAR
+   WerrorS("libfac: ERROR: SqrFreeTest: we should never fall trough here!");
+ #else
+-  cerr << "\nlibfac: ERROR: SqrFreeTest: we should never fall trough here!\n" 
++#ifndef NOSTREAMIO
++  cerr << "\nlibfac: ERROR: SqrFreeTest: we should never fall through here!\n" 
+        << rcsid << errmsg << endl;
+ #endif
++#endif
+   return 0;
+ }
+ 
+@@ -253,8 +255,10 @@
+ #ifdef HAVE_SINGULAR
+   WerrorS("libfac: ERROR: SqrFreed: we should never fall trough here!");
+ #else
++#ifndef NOSTREAMIO
+   cerr << "\nlibfac: ERROR: SqrFreed: we should never fall trough here!\n" 
+        << rcsid << errmsg << endl;
++#endif
+ #endif
+   DEBDECLEVEL(cout, "SqrFreed");
+   return Outputlist; // for safety purpose
+diff -ru libfac-0.3.0.orig/factor/Truefactor.cc libfac-0.3.0/factor/Truefactor.cc
+--- libfac-0.3.0.orig/factor/Truefactor.cc	Tue Apr 10 09:01:11 2001
++++ libfac-0.3.0/factor/Truefactor.cc	Sun Jun 24 07:16:46 2001
+@@ -283,9 +283,11 @@
+ #ifdef HAVE_SINGULAR
+       WerrorS("libfac: ERROR: TakeNorms less then two items remaining!");
+ #else
++#ifndef NOSTREAMIO
+       cerr << "libfac: ERROR: TakeNorms less then two items remaining! " 
+ 	   << endl;
+ #endif
++#endif
+     }
+     while ( n < PossibleFactors.length() ){
+       // generate all combinations of n elements
+@@ -325,8 +327,10 @@
+ #ifdef HAVE_SINGULAR
+ 	WerrorS("libfac: TakeNorms: somethings wrong with remaining factors!");
+ #else
++#ifndef NOSTREAMIO
+ 	cerr << "libfac: TakeNorms: somethings wrong with remaining factors!" 
+ 	     << endl;
++#endif
+ #endif
+       }
+     }
+diff -ru libfac-0.3.0.orig/factor/tmpl_inst.cc libfac-0.3.0/factor/tmpl_inst.cc
+--- libfac-0.3.0.orig/factor/tmpl_inst.cc	Tue Apr 10 09:01:11 2001
++++ libfac-0.3.0/factor/tmpl_inst.cc	Sun Jun 24 07:03:28 2001
+@@ -24,12 +24,14 @@
+ template class Matrix<CanonicalForm>;
+ template class SubMatrix<CanonicalForm>;
+ 
++#ifndef NOSTREAMIO
+ template ostream & operator << ( ostream &, const List<CanonicalForm> & );
+ template ostream & operator << ( ostream &, const List<CFFactor> & );
+ template ostream & operator << ( ostream &, const List<MapPair> & );
+ template ostream & operator << ( ostream &, const Array<CanonicalForm> & );
+ template ostream & operator << ( ostream &, const Factor<CanonicalForm> & );
+ //template ostream & operator << ( ostream &, const Matrix<CanonicalForm> & );
++#endif
+ 
+ template List<CFFactor> Union ( const List<CFFactor>&, const List<CFFactor>& );
+ 
+@@ -61,8 +63,10 @@
+ template List<CanonicalForm> Union ( const List<CanonicalForm>&, const List<CanonicalForm>& );
+ template List<CanonicalForm> Difference ( const List<CanonicalForm>&, const List<CanonicalForm>& );
+ 
++#ifndef NOSTREAMIO
+ template ostream & operator << ( ostream &, const List<int> & );
+ template ostream & operator << ( ostream &, const List<IntList> & );
++#endif
+ 
+ // for charsets:
+ template class List<CFList>;
+@@ -73,10 +77,12 @@
+ template List<Variable> Union ( const List<Variable>&, const List<Variable>& );
+ template List<Variable> Difference ( const List<Variable>&, const List<Variable>& );
+ 
++#ifndef NOSTREAMIO
+ template ostream & operator << ( ostream &, const List<CFList> & );
+ template ostream & operator << ( ostream &, const List<Variable> & );
+ template ostream & operator << ( ostream &, const List<int> & );
+ template ostream & operator << ( ostream &, const Array<int> & );
++#endif
+ 
+ template class Array<int>;
+ template class Array<Variable>;
