@@ -35,6 +35,7 @@ public:
 
   static int32 set_seed(M2_Integer s); // returns previous seed value
   static void set_max_int(M2_Integer N); // values will be in the range 0..N-1
+  static M2_Integer get_random_integer_0(M2_Integer maxN);
   static M2_Integer get_random_integer(M2_Integer maxN);
 };
 
