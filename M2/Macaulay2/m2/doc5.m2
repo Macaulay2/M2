@@ -355,7 +355,10 @@ document { exec,
 
 
 document { restart,
-     TT "restart", " -- restart Macaulay 2 from the beginning."
+     TT "restart", " -- restart Macaulay 2 from the beginning.",
+     PARA,
+     "Functions previously registered with ", TO "addEndFunction", " will
+     be called first."
      }
 document { on,
      TT "f = on f", " -- replaces the function ", TT "f", " by a version which 

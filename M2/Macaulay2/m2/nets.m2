@@ -66,7 +66,7 @@ describe MutableHashTable := x -> (
      if x.?name then (
 	  n := x.name;
 	  remove(x, quote name);
-	  d := net x;
+	  d := expression x;
 	  x.name = n;
 	  d)
      else net x

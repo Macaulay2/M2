@@ -8,52 +8,21 @@ GeneralOrderedMonoid = new Type of OrderedMonoid
 GeneralOrderedMonoid.Engine = true
 vars GeneralOrderedMonoid := M -> M.vars
 options GeneralOrderedMonoid := M -> M.Options
-expression GeneralOrderedMonoid := M -> (
-     if not M.?generatorSymbols
-     then new Holder from {"--empty GeneralOrderedMonoid--"}
-     else (
-     	  v := M.generatorExpressions;
-     	  if any(M.degrees, i -> i != {1}) 
-	  then v = append(v, Degrees => M.degrees);
-          if M.Options.MonomialOrder =!= (options monoid).MonomialOrder
-          then v = append(v, MonomialOrder => M.Options.MonomialOrder);
-          if M.Options.MonomialSize =!= (options monoid).MonomialSize
-          then v = append(v, MonomialSize => M.Options.MonomialSize);
-	  if M.Options.SkewCommutative != false
-	  then v = append(v, SkewCommutative => M.Options.SkewCommutative);
-	  new Array from apply(v,expression)
-	  )
-     )
-toString GeneralOrderedMonoid := M -> if M.?name then M.name else (
-     if not M.?generatorExpressions
-     then "--empty GeneralOrderedMonoid--"
-     else (
-     	  v := M.generatorExpressions;
-     	  if any(M.degrees, i -> i != {1}) 
-	  then v = append(v, Degrees => M.degrees);
-          if M.Options.MonomialOrder =!= (options monoid).MonomialOrder
-          then v = append(v, MonomialOrder => M.Options.MonomialOrder);
-          if M.Options.MonomialSize =!= (options monoid).MonomialSize
-          then v = append(v, MonomialSize => M.Options.MonomialSize);
-	  if M.Options.SkewCommutative != false
-	  then v = append(v, SkewCommutative => M.Options.SkewCommutative);
-     	  concatenate("[",between(",",toString\v),"]")
-	  ))
-net GeneralOrderedMonoid := M -> (
-     if M.?name then M.name
-     else if not M.?generatorExpressions then "--empty GeneralOrderedMonoid--"
-     else (
-     	  v := M.generatorExpressions;
-     	  if any(M.degrees, i -> i != {1}) 
-	  then v = append(v, Degrees => M.degrees);
-          if M.Options.MonomialOrder =!= (options monoid).MonomialOrder
-          then v = append(v, MonomialOrder => M.Options.MonomialOrder);
-          if M.Options.MonomialSize =!= (options monoid).MonomialSize
-          then v = append(v, MonomialSize => M.Options.MonomialSize);
-	  if M.Options.WeylAlgebra =!= {}
-	  then v = append(v, WeylAlgebra => M.Options.WeylAlgebra);
-     	  horizontalJoin flatten ("[",between(",",net\v),"]")
-	  ))
+
+parts := (M) -> (
+     O := options monoid;
+     o := M.Options;
+     join(
+	  if M.?generatorExpressions then M.generatorExpressions else {},
+	  if any(M.degrees, i -> i =!= {1}) then {Degrees => M.degrees} else {},
+	  select(
+	       { MonomialOrder, MonomialSize, WeylAlgebra, SkewCommutative, Inverses }
+	       / (key -> if o#key =!= O#key then key => o#key),
+	       i -> i =!= null)))
+
+expression GeneralOrderedMonoid := M -> if M.?name then M.name else new Array from apply(parts M,expression)
+toString GeneralOrderedMonoid := M -> toString expression M
+net GeneralOrderedMonoid := M -> net expression M
 
 -- this implementation is for sparse monomials, but it might
 -- make sense to have a dense implementation
@@ -122,7 +91,7 @@ monoidDefaults := if OLDENGINE then (
 	  Degrees => null,
 	  Weights => {},
 	  Inverses => false,
-	  MonomialOrder => null,
+	  MonomialOrder => GRevLex,
 	  MonomialSize => 8,
 	  SkewCommutative => false,
 	  VariableOrder => null,		  -- not implemented yet
@@ -185,8 +154,7 @@ makeit1 := (options) -> (
      else (
 	  mo := options.MonomialOrder;
 	  M.MonomialOrder = (
-	       if mo === null then MOgrlex (wts,firstdeg)
-	       else if mo === quote RevLex then MOrlex (wts,firstdeg)
+	       if mo === quote RevLex then MOrlex (wts,firstdeg)
 	       else if mo === quote GRevLex then MOgrlex (wts,firstdeg)
 	       else if mo === quote Lex then MOlex (wts,firstdeg)
 	       else if mo === quote GLex then MOglex (wts,firstdeg)

@@ -649,8 +649,8 @@ document { "fraction fields",
       	  "R = ZZ/101[x,y]/(x^3 + 1 + y^3)",
       	  "frac R",
 	  },
-     "After defining a ring such as ", TT "R", ", fractions in it can be obtained 
-     by writing them explicitly.",
+     "After defining a ring such as ", TT "R", ", fractions in its fraction field
+     can be obtained by writing them explicitly.",
      EXAMPLE {
 	  "x",
       	  "1/x",
@@ -908,7 +908,8 @@ document { "making matrices",
      "One way to construct a doubly nested
      list of ring elements is with the ", TO "table", " command.",
      EXAMPLE {
-	  "p = matrix table(3,3,(i,j) -> R_i^j)",
+	  "table(3,3,(i,j) -> R_i^j)",
+	  "p = matrix oo",
       	  "q = matrix table(3,3,(i,j) -> R_j^i)",
 	  },
      "The usual arithmetic operations among matrices are available, including
@@ -933,10 +934,11 @@ document { "making matrices",
       	  "p|1",
       	  "x^3||p",
 	  },
-     "The identity matrix can be obtained as the identity map on a free module.",
+     "An identity matrix can be obtained with ", TO "id", " as the identity map
+     on a free module.",
      EXAMPLE "id_(R^3)",
      "A matrix is regarded as a homomorphism between two free modules, its
-     source and target.",
+     ", TO "source", " and ", TO "target", ".",
      EXAMPLE {
 	  "M = target f",
       	  "N = source f",
@@ -1025,20 +1027,22 @@ document { "making generic matrices",
      matrix is one whose entries are independent variables from the ring, subject
      to certain relations.",
      PARA,
-     "We begin by making a ring with enough variables to accomodate
+     "We begin by making a ring with enough variables to accomodate all
      the examples.",
      EXAMPLE "R = ZZ/101[a..z];",
-     "We can make a general generic matrix.  We specify the ring, the starting 
-     variable and the dimensions.",
+     "We can make a general generic matrix with ", TO "genericMatrix", ".  We specify
+     the ring, the starting variable and the dimensions.",
      EXAMPLE "genericMatrix(R,c,3,5)",
-     "We can also make a skew symmetric matrix or a symmetric matrix.",
+     "We can also make a skew symmetric matrix with ", TO "genericSkewMatrix", " or
+     a symmetric matrix with ", TO "genericSymmetricMatrix", ".",
      EXAMPLE {
 	  "R = ZZ/101[a..i];",
       	  "genericSkewMatrix(R,c,3)",
       	  "gs = genericSymmetricMatrix(R,a,3)",
 	  },
      "Suppose we need a random symmetric matrix of linear forms in three variables.
-     We can use ", TO "random", " and ", TO "substitute", " to obtain it.",
+     We can use ", TO "random", " and ", TO "substitute", " to obtain it from the
+     generic symmetric matrix ", TT "gs", " above.",
      EXAMPLE {
 	  "S = ZZ/101[x,y,z];",
       	  "rn = random(S^1, S^{9:-1})",
@@ -1072,6 +1076,50 @@ document { "displaying matrices",
 document { "manipulating matrices",
      "In previous sections we have learned various ways to make matrices.  Now
      we discuss methods for manipulating matrices.",
+     PARA,
+     "The principal way to extract a submatrix of a matrix is with ", TO "submatrix", ".",
+     EXAMPLE {
+	  "R = ZZ/101[a .. o];",
+	  "p = genericMatrix(R, a, 3, 5)",
+	  "submatrix(p,{1,2},{3,4})",
+	  },
+     "A subset of columns can be extracted with ", TO "_", " and a subset of the rows
+     can be extracted with ", TO "^", ".",
+     EXAMPLE {
+	  "p^{1,2}",
+	  "p_{3,4}",
+	  },
+     "Since ", TO "^", " and ", TO "_", " have the same parsing precedence, and
+     associate to the left by default, these operations can be combined without 
+     adding parentheses, giving a slower form of ", TO "submatrix", ".",
+     EXAMPLE {
+	  "p^{1,2}_{3,4}",
+	  "p_{3,4}^{1,2}",
+	  },
+     "We can ", TO "transpose", " a matrix.",
+     EXAMPLE "transpose p",
+     "We can test whether a matrix, regarded as a linear transformation, is
+     injective or surfective.",
+     EXAMPLE {
+	  "isSurjective p",
+	  "isInjective p",
+	  "isInjective transpose p",
+	  },
+     "We can use ", TO "diff", " to differentiate a matrix with respect to a
+     variable and ", TO "contract", " to contract.",
+     EXAMPLE {
+	  "q = matrix {{a^2,b^2,c^2},{a*b,b*c,a*c}}",
+	  "diff(a,q)",
+	  "contract(a,q)",
+	  },
+     NOINDENT, "These operations have a meaning when the first argument
+     is itself a polynomial, or even a matrix of polynomials.",
+     EXAMPLE {
+	  "r = matrix{{1,a,a^2,a^3}}",
+	  "diff(transpose r,r)",
+	  "contract(transpose r,r)",
+	  },
+     "See ", TO "Matrix", " for the complete list of operations on matrices."
      }
 
 document { "Groebner bases",

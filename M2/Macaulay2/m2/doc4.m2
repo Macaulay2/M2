@@ -441,22 +441,34 @@ document { nextkey,
 
 document { addStartFunction,
      TT "addStartFunction (() -> ...)", " -- record a function for later 
-     execution, when the program is restarted after loading dumped data."
+     execution, when the program is restarted after loading dumped data.",
+     PARA,
+     SEEALSO "runStartFunctions"
      }
 
 document { addEndFunction,
      TT "addEndFunction (() -> ...)", " -- record a function for later 
-     execution, when the program is exited."
+     execution, when the program is exited.",
+     PARA,
+     SEEALSO "runEndFunctions"
      }
 
 document { runStartFunctions,
      TT "runStartFunctions()", " -- call all the functions previously recorded
-     by ", TO "addStartFunction", " passing ", TT "()", " as argument sequence."
+     by ", TO "addStartFunction", ".",
+     PARA,
+     "This function is intended for internal use only.",
+     PARA,
+     "The funuctions are called with no arguments."
      }
 
 document { runEndFunctions,
      TT "runEndFunctions()", " -- call all the functions previously recorded
-     by ", TO "addEndFunction", " passing ", TT "()", " as argument sequence."
+     by ", TO "addEndFunction", ".",
+     PARA,
+     "This function is intended for internal use only.",
+     PARA,
+     "The funuctions are called with no arguments."
      }
 
 document { "emacs",

@@ -15,3 +15,5 @@ Sequence == Sequence := (x,y) -> (
      class x === class y
      and
      all( 0 .. # x - 1, i -> x#i == y#i ))
+
+Thing == Thing := (x,y) -> x === y			    -- this is a bit experimental, installed 7/15/99

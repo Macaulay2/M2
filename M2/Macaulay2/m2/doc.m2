@@ -495,15 +495,16 @@ document { any,
      }
 
 document { describe,
-     TT "describe x", " -- returns a string containing the real
-     name of ", TT "x", ", bypassing the feature which causes certian
-     types of things to acquire the names of global variables to which
+     TT "describe x", " -- returns an ", TO "Expression", " containing the 
+     real description of ", TT "x", ", bypassing the feature which causes
+     certain types of things to acquire the names of global variables to which
      they are assigned.",
      PARA,
      EXAMPLE {
-	  "R = ZZ[a,b,c_1,c_2];",
+	  "R = ZZ/101[a,b,c_1,c_2];",
       	  "R",
       	  "describe R",
+	  "toString describe R",
 	  },
      PARA,
      "Currently, this function works by temporarily removing the value
@@ -1082,12 +1083,16 @@ document { "==",
      ideal involves a computation with Groebner bases.",
      PARA,
      "It may happen that for certain types of objects, there is no method installed
-     for testing mathematical equality, in which case an error will be given.  If
-     you wanted to test strict equality, use the operator ", TO "===", " or 
-     ", TO "=!=", ".",
+     for testing mathematical equality, in which strict equality will be tested with
+     the operator ", TO "===", ".  If a test for mathematical equality is installed
+     later, your results may change.",
+     -- "It may happen that for certain types of objects, there is no method installed
+     -- for testing mathematical equality, in which case an error will be given.  If
+     -- you wanted to test strict equality, use the operator ", TO "===", " or 
+     -- ", TO "=!=", ".",
      PARA,
-     "Warning: this comparison operator returning true is not necesarily related to
-     the comparison operator ", TO "?", " returning ", TT "quote ==", ".",
+     "Warning: whether this comparison operator returns true is not necessarily 
+     related to whether the comparison operator ", TO "?", " returns ", TT "quote ==", ".",
      PARA,
      SEEALSO{ "!=" }
      }
