@@ -186,7 +186,7 @@ export nnunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree 
 export precSpace := 0;		-- filled in later by binding.d
 export defaultbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      if token2.followsNewline then (
-     	  errorpos(token2.position,"missing semicolon on previous line?");
+     	  errorpos(token2.position,"missing semicolon or comma on previous line?");
      	  errorTree)
      else (
      	  ret := token2.word.parse.funs.unary(token2,file,precSpace-1,obeylines);

@@ -453,7 +453,7 @@ document { symbol "?",
      TT "x ? y", " -- compares x and y, returning ", TT "symbol <", ", ",
      TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
      PARA,
-     "The user may install additional ", TO {"binary method", "s"}, " for this 
+     "The user may install additional ", TO "binary methods", " for this 
      operator with code such as ",
      PRE "         X ? Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
@@ -857,7 +857,7 @@ document { ancestor,
      PARA,
      "The ancestors of x are x, parent x, parent parent x, and so on.",
      PARA,
-     SEEALSO "classes"
+     SEEALSO "classes and types"
      }
 
 document { unique,

@@ -112,7 +112,7 @@ document { instance,
      "We say that x is an instance of X if X is the class of x, or a parent
      of the class of x, or a grandparent, and so on.",
      PARA,
-     SEEALSO { "classes", "class", "parent" }
+     SEEALSO { "classes and types", "class", "parent" }
      }
 
 document { symbol "pathSeparator",
@@ -392,7 +392,7 @@ document { class,
      Headline => "class of an object",
      TT "class x", " -- yields the class of ", TT "x", ".",
      PARA,
-     SEEALSO "classes"
+     SEEALSO "classes and types"
      }
 
 document { hash,

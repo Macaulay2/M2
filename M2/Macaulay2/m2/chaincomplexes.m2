@@ -427,6 +427,15 @@ Module ** ChainComplex := ChainComplex => (M,C) -> (
 		    D#(i-1) = target f;
 		    ));
 	  D))
+
+Module ** ChainComplexMap := ChainComplexMap => (M,f) -> (
+     map(M ** target f, M ** source f, i -> M ** f_i)
+     )
+
+ChainComplexMap ** Module := ChainComplexMap => (f,M) -> (
+     map(target f ** M, source f ** M, i -> f_i ** M)
+     )
+
 -----------------------------------------------------------------------------
 
 homology(ZZ,ChainComplex) := Module => opts -> (i,C) -> homology(C.dd_i, C.dd_(i+1))
