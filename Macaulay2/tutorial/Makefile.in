@@ -3,8 +3,7 @@ include ../../config.Makefile
 VPATH = @srcdir@
 FILES := Makefile tutbook.m2 titlepage.tex \
 	final/--INDEX final/*.m2 prelim/*.m2 translate.c
-TUTORIALS := ../tutorial/final/Fano.m2 ../tutorial/final/canEmbed.m2 \
-		 ../tutorial/final/divisors.m2 ../tutorial/final/elementary.m2
+TUTORIALS := final/Fano.m2 final/canEmbed.m2 final/divisors.m2 final/elementary.m2
 OUTPUTS := $(TUTORIALS:.m2=.out)
 
 # Amazingly, under WINDOWS, whether the output from translate has nonzero length
@@ -35,11 +34,15 @@ tutbook.tex : ../cache/Macaulay2-doc tutbook.m2 translate $(OUTPUTS)
 	$(MAKE) -k -C Examples -f ../../m2/Makefile.egs
 	../bin/M2 -e'readExamples=true' tutbook.m2 '-e exit 0'
 
-allfiles : Makefile prelim/*.m2 final/*.m2
-	../bin/echoout $(FILES) >allfiles
+#################################
+install:: $(packagedir)/tutorial/final
+install:: $(TUTORIALS) $(OUTPUTS)
+	$(INSTALL_DATA) $^ "$(packagedir)/tutorial/final"
+$(packagedir)/tutorial/final :; $(INSTALL) -d "$@"
+#################################
 
 clean :
-	rm -rf *.dvi *.log allfiles translate final/*.out *.exe *.obj *.ilk *.pdb
+	rm -rf *.dvi *.log translate final/*.out *.exe *.obj *.ilk *.pdb
 
 distclean : clean
 	rm -f Makefile

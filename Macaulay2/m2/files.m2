@@ -29,7 +29,7 @@ indexTable := memoize(
 			 try fn << toExternalString pairs tb << endl << close
 			 else (
 			      stderr << "warning: cache file '" << fn << "' not created" << endl
-			      << "    keys : " << keys tb << endl;
+			      -- << "    keys : " << keys tb << endl;
 			      );
 			 remove(changed,tb);
 			 )
