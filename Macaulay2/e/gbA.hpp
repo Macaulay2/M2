@@ -159,6 +159,8 @@ private:
     return gb[s->x.pair.i]->g.f->comp;
   }
 
+  gbelem *gbelem_ring_make(gbvector *f);
+
   gbelem *gbelem_make(gbvector *f,  // grabs f
 		      gbvector *fsyz, // grabs fsyz
 		      gbelem_type minlevel,

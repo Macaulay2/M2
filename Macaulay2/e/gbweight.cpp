@@ -64,24 +64,30 @@ int GBWeight::gbvector_term_weight(const gbvector *f) const
   return exponents_weight(EXP_,f->comp);
 }
 
-int GBWeight::gbvector_weight(const gbvector *f) const
+int GBWeight::gbvector_weight(const gbvector *f, int &initial_term_weight) const
 {
   /* Return the maximum degree of any term of f */
-  bool first_term = true;
-  int deg = 0;
-  if (f == 0) return 0;
-  for (const gbvector *t=f; t != 0; t = t->next)
+
+  if (f == 0) 
+    {
+      initial_term_weight = 0;
+      return 0;
+    }
+  int deg = gbvector_term_weight(f); 
+  initial_term_weight = deg;
+  for (const gbvector *t=f->next; t != 0; t = t->next)
     {
       int tdeg = gbvector_term_weight(t);
-      if (first_term)
-	{
-	  deg = tdeg;
-	  first_term = false;
-	}
-      else
-	if (tdeg > deg) deg = tdeg;
+      if (tdeg > deg) deg = tdeg;
     }
+
   return deg;
+}
+
+int GBWeight::gbvector_weight(const gbvector *f) const
+{
+  int not_used;
+  return gbvector_weight(f, not_used);
 }
 
 int GBWeight::monomial_weight(const int *monom, int comp) const

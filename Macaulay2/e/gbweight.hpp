@@ -37,6 +37,8 @@ public:
 
   int gbvector_weight(const gbvector *f) const;
 
+  int gbvector_weight(const gbvector *f, int &lead_term_weight) const;
+
   int monomial_weight(const int *monom, int comp) const;
 };
 

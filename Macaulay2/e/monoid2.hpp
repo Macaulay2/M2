@@ -49,6 +49,8 @@ class Monoid : public mutable_object
   int n_after_component_;
   bool component_up_;
 
+  M2_arrayint local_vars; // These are the variables which are < 1 in the monomial order.
+
   vector<int, gc_allocator<int> > nslots_;
   
   
@@ -90,7 +92,7 @@ public:
   static Monoid *get_trivial_monoid();
 
   const MonomialOrdering * getMonomialOrdering() const { return mo_; }
-
+  const M2_arrayint getNonTermOrderVariables() const { return local_vars; }
   const PolynomialRing *get_degree_ring() const { return degree_ring_; }
   const Monoid *degree_monoid() const { return degree_monoid_; }
   const_monomial degree_of_var(int v) const { return degree_of_var_[v]; }

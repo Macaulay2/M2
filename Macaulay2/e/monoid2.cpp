@@ -28,8 +28,14 @@ Monoid::Monoid()
      degree_monoid_(0), // will be set later
      mo_(0),
      monorder_(0),
+     overflow_(0),
      monomial_size_(0),
      monomial_bound_(0),
+     n_invertible_vars_(0),
+     n_before_component_(0),
+     n_after_component_(0),
+     component_up_(false),
+     local_vars(0),
      EXP1_(0),
      EXP2_(0),
      EXP3_(0),
@@ -71,18 +77,8 @@ Monoid *Monoid::create(MonomialOrdering *mo,
       return 0;
     }
 
-// Debugging only:
-#if 0
-  M2_arrayint nontermvars = rawNonTermOrderVariables(mo);
-  fprintf(stderr, "%d variables < 1\n", nontermvars->len);
-  if (nontermvars->len > 0)
-    {
-      fprintf(stderr, "they are: ");
-      for (int i=0; i<nontermvars->len; i++)
-	fprintf(stderr, "%d ", nontermvars->array[i]);
-      fprintf(stderr, "\n");
-    }
-#endif
+
+
   return new Monoid(mo,names,deg_ring,degs);
 }
 
@@ -122,6 +118,18 @@ Monoid::Monoid(MonomialOrdering *mo,
 
   set_degrees();
   set_overflow_flags();
+
+  local_vars = rawNonTermOrderVariables(mo);
+
+// Debugging only:
+//  fprintf(stderr, "%d variables < 1\n", local_vars->len);
+//  if (local_vars->len > 0)
+//    {
+//      fprintf(stderr, "they are: ");
+//      for (int i=0; i<local_vars->len; i++)
+//	fprintf(stderr, "%d ", local_vars->array[i]);
+//      fprintf(stderr, "\n");
+//    }
 }
 
 void Monoid::set_degrees()
