@@ -17,7 +17,7 @@ C=ZZ/101[x,y,z,u,w]/ideal(x-x^2-y,z+x*y,w^2-u^2)
 V= time minPres(C)
 gens V == {x,u,w}
 use ring ideal V
-ideal V == ideal(u^2-w^2)
+assert(ideal V == ideal(u^2-w^2))
 
 w = symbol w
 y = symbol y

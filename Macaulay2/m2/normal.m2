@@ -201,7 +201,7 @@ idealizer0 = (C,w) -> (
 	       newI1 := trim ideal matrix entries generators (
 		    ideal lins + ideal quads + IA);
 	       newJ1 := newI1 + RtoA JR;
-	       newI := minPresIdeal(newI1);
+	       newI := minPres(newI1);
 	       R2 := ring newI;
 	       FF := substitute(((newI1).cache.minPresMap).matrix,R2);
 	       F := map(R2,A,FF);

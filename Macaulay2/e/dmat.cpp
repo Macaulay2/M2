@@ -295,6 +295,21 @@ void DMat<CoeffRing>::dot_product(int i, int j, elem &result) const
     }
 }
 
+template<typename CoeffRing>
+bool DMat<CoeffRing>::row_permute(int start_row, const M2_arrayint perm)
+{
+#warning "write DMat<CoeffRing>::row_permute"
+  return false;
+}
+
+template<typename CoeffRing>
+bool DMat<CoeffRing>::column_permute(int start_col, const M2_arrayint perm)
+{
+#warning "write DMat<CoeffRing>::column_permute"
+  return false;
+}
+
+
 #if 0
 template<typename CoeffRing>
 bool DMat<CoeffRing>::is_zero() const
