@@ -342,7 +342,7 @@ installPackage Package := o -> pkg -> (
 	  copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose=>true);
 
 	  -- copy source subdirectory
-	  srcDirectory := LAYOUT#"packagesrc" buildPackage;
+	  srcDirectory := LAYOUT#"packagesrc" pkg.name;
 	  makeDirectory (buildDirectory|srcDirectory);
 	  dn := realpath(currentSourceDir|buildPackage);
 	  stderr << "--copying auxiliary source files from " << dn << endl;
@@ -357,9 +357,10 @@ installPackage Package := o -> pkg -> (
      pkg#"package prefix" = buildDirectory;
 
      -- make example input files
-     exampleDir := buildDirectory|LAYOUT#"packageexamples" buildPackage;
+     exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg.name;
      infn := nodename -> exampleDir|toFilename nodename|".m2";
      outfn := nodename -> exampleDir|toFilename nodename|".out";
+     tmpfn := nodename -> exampleDir|toFilename nodename|".tmp";
      stderr << "--making example files in " << exampleDir << endl;
      makeDirectory exampleDir;
      scan(pairs pkg#"example inputs", (nodename,inputs) -> (
@@ -377,15 +378,17 @@ installPackage Package := o -> pkg -> (
      scan(pairs pkg#"example inputs", (nodename,inputs) -> (
 	       inf := infn nodename;
 	       outf := outfn nodename;
+	       tmpf := tmpfn nodename;
 	       if fileExists outf and fileTime outf >= fileTime inf
 	       then stderr << "--leaving example output file for " << nodename << endl
 	       else (
 		    stderr << "--making example output file for " << nodename << endl;
 		    loadargs := if pkg === Main then "" else "-e 'load \""|fn|"\"'";
-		    cmd := commandLine#0 | " --silent --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | outf;
+		    cmd := commandLine#0 | " --silent --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf;
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
+			 unlinkFile(tmpf);
 			 stderr << "--error return code: " << r << endl;
 			 if r == 131 then (
 			      stderr << "subprocess terminated abnormally, exiting" << endl;
@@ -396,6 +399,10 @@ installPackage Package := o -> pkg -> (
 			      exit r;
 			      );
 			 haderror = true;
+			 )
+		    else (
+			 link(tmpf,outf);
+			 unlink(tmpf);
 			 ));
 	       -- read, separate, and store example output
 	       pkg#"example outputs"#nodename = drop(separateM2output get outf,-1);
@@ -404,7 +411,7 @@ installPackage Package := o -> pkg -> (
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
      -- make html files
-     htmlDirectory = LAYOUT#"packagehtml" buildPackage;
+     htmlDirectory = LAYOUT#"packagehtml" pkg.name;
      setupButtons();
      makeDirectory (buildDirectory|htmlDirectory);     
      nodes := unique join(keys pkg.Dictionary,keys pkg#"raw documentation",{topNodeName});

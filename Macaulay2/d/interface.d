@@ -1898,11 +1898,11 @@ export rawStartComputation(e:Expr):Expr := (
      else WrongArg("a raw computation"));
 setupfun("rawStartComputation",rawStartComputation);
 
-export rawStatusComputation(e:Expr):Expr := (
+export rawStatus(e:Expr):Expr := (
      when e is G:RawComputation do (
 	  completionDegree := 0;
 	  stoppingReason := 0;
-	  ret := Ccode(int,"rawStatusComputation(",
+	  ret := Ccode(int,"rawStatus(",
 	       "(Computation*)",G,",",
 	       "&",completionDegree,",",
 	       "&",stoppingReason,
@@ -1912,7 +1912,7 @@ export rawStatusComputation(e:Expr):Expr := (
 	  )
      else WrongArg("a raw computation")
      );
-setupfun("rawStatusComputation", rawStatusComputation);
+setupfun("rawStatus", rawStatus);
 
 export rawGB(e:Expr):Expr := (
      when e is s:Sequence do
@@ -2183,7 +2183,7 @@ export rawGBMatrixRemainder(e:Expr):Expr := (
      if !isInt(level) then WrongArgSmallInteger(2) else
      when a.2 is m:RawMatrix do toExpr(
 	  Ccode(RawMatrixOrNull, 
-		    "(engine_RawMatrixOrNull)IM2_GB_matrix_remainder(",
+		    "(engine_RawMatrixOrNull)rawGBMatrixRemainder(",
 		    "(Computation *)", G, ",",
 		    toInt(level),",",
 		    "(Matrix*)", m,		    

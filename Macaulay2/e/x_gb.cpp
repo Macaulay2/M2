@@ -110,11 +110,11 @@ IM2_GB_get_matrix(Computation *G,
   return G->get_matrix(level, minimize);
 }
 
-int rawStatusComputation(Computation *G,
+int rawStatus(Computation *G,
 		  int * complete_up_through_this_degree,
 		  int * stopping_reason) /* number from IM2_Computation_set_stop,
 					     interrupted is -1. None is 0. */
-  /* connected rawStatusComputation */
+  /* connected rawStatus */
   /* -1: error condition, and the error message is set.
      1: not started,
      2: started, but still running in another thread (not implemented yet)
@@ -179,7 +179,7 @@ IM2_GB_get_free(Computation *G,
 }
 
 const MatrixOrNull *
-IM2_GB_matrix_remainder(Computation *G, 
+rawGBMatrixRemainder(Computation *G, 
 			int level,
 			const Matrix *m)
 {

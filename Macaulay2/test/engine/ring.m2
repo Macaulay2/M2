@@ -14,6 +14,7 @@ assert ( 3 === lift(a,ZZ) )
 assert ( 3 == a )
 
 -- poly rings
+R2 = ZZ[x,y,z,t]
 R = ZZ[x,y,z]
 assert ( degree x == {1} )
 assert ( degree (x*y*z^8) == {10} )
@@ -166,12 +167,22 @@ degree c
 -- assert( matrix {{X}} * matrix {{Y}} == matrix {{Y*X}} )
 
 -- Groebner bases
-f = vars R
+f = matrix {{x,y^2,z^3}}
 I = image f
-G = gb I
-peek G
-peek G.matrix
-gens G
+G = gb (I, DegreeLimit => 100)
+G2 = gb vars R2
+g = gens G
+f === g
+f === map(target f,source f,g)
+
+-- oops : Mike should check this:
+-- assert try ( matrix {{x^2,y}} % G2; false ) else true
+
+matrix {{x^2,y}} % G
+
+assert ( gens G == f )
+assert ( target gens G === target f )
+assert ( gens G === f )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "

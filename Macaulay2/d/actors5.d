@@ -1086,9 +1086,19 @@ setupfun("isRegularFile",isRegularFile);
 
 unlinkfun(e:Expr):Expr := (
      when e is name:string do
-     if -1 == unlink(name) then buildErrorPacket("failed to unlink " + name + " : " + syserrmsg()) else nullE
+     if -1 == unlink(name) then buildErrorPacket("failed to unlink file " + name + " : " + syserrmsg()) else nullE
      else WrongArgString());
 setupfun("unlink",unlinkfun);
+
+linkfun(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is oldfilename:string do
+     when s.1 is newfilename:string do
+     if -1 == link(oldfilename,newfilename) then buildErrorPacket("failed to link file " + oldfilename + " to " + newfilename + " : " + syserrmsg()) else nullE     
+     else WrongArgString(2)
+     else WrongArgString(1)
+     else WrongNumArgs(2));
+setupfun("link",linkfun);
 
 fileTime(e:Expr):Expr := (
      when e is name:string do (
