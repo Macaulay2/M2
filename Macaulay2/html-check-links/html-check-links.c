@@ -19,7 +19,8 @@ static char *dir(char *s) {
 static void process(char *f) {
   yyin = fopen(f,"r");
   if (yyin == NULL) {
-    fprintf(stderr, "can't open %s\n",f);
+    error("can't open %s\n",f);
+    return;
   }
   filename = f;
   dirname = dir(f);

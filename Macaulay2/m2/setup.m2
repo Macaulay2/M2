@@ -173,7 +173,7 @@ input = (filename) -> (
 
 needs = s -> if not loaded#?s then load s
 
-writableGlobals := new MutableHashTable
+writableGlobals = new MutableHashTable
 scan((
 	  symbol oooo,
 	  symbol ooo,
