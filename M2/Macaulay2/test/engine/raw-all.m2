@@ -11,6 +11,7 @@ runM2 "raw-freemodule.m2"
 runM2 "raw-schreyer.m2"
 runM2 "raw-matrix.m2"
 runM2 "raw-weyl.m2" -- not much here yet
+runM2 "ring.m2" -- works
 
 runM2 "raw-ring2.m2"
 runM2 "raw-ring3.m2"
@@ -26,7 +27,7 @@ runM2 "raw-localgb.m2"
 
 runM2 "raw3.m2"
 
-runM2 "ring.m2"
+
 
 -- Local Variables:
 -- compile-command: "M2 -e errorDepth=0 --stop -e 'load \"raw-all.m2\"' -e 'exit 0' "

@@ -336,7 +336,7 @@ promote(MonoidElement, RingElement) := RingElement => (m,o) -> (
      if M =!= class m then error "expected monomial from same ring";
      one := 1_k;
      promote(M,R) := (m,o) -> new R from rawTerm(R.RawRing, 
-	                                         one.RawRingElement, 
+	                                         raw one,
 						 m.RawMonomial);
      promote(m,o))
 

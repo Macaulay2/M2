@@ -1216,7 +1216,7 @@ void gbA::remainder_ZZ(POLY &f, int degf, bool use_denom, ring_elem &denom)
     }
   h.f = head.next;
   // Negate these if needed
-  if (mpz_sgn(MPZ_VAL(h.f->coeff)) < 0)
+  if (h.f != 0 && mpz_sgn(MPZ_VAL(h.f->coeff)) < 0)
     {
       R->gbvector_mult_by_coeff_to(h.f, globalZZ->minus_one());
       R->gbvector_mult_by_coeff_to(h.fsyz, globalZZ->minus_one());

@@ -147,7 +147,7 @@ assert( v' ++ v === v' ++ v )
 v ** v
 v ** v'
 assert( v ** v' === v ** v' )
-end
+
 2*v
 v*2
 assert ( 2*v === v*2 )
@@ -216,8 +216,7 @@ degrees source c
 degree b
 degree c
 
--- what to do about this?
--- assert( matrix {{X}} * matrix {{Y}} == matrix {{Y*X}} )
+assert( matrix {{X}} * matrix {{Y}} - matrix {{Y*X}} == 0)
 
 -- Groebner bases
 f = matrix {{x,y^2,z^3}}
