@@ -43,7 +43,7 @@ Primary
 -- make sure this is after all global symbols are defined or erased
 closePackage "Macaulay2"
 
-if not Macaulay2#?"processed documentation database" or not isOpen Macaulay2#"processed documentation database" then (
+if not Macaulay2#?"raw documentation database" or not isOpen Macaulay2#"raw documentation database" then (
      currentPackage = Macaulay2;
      stderr << "--loading Macaulay2-doc.m2" << endl;
      notify = true;
