@@ -340,19 +340,23 @@ assemble Package := o -> pkg -> (
      buildPackage = pkg.name;
      buildDirectory = minimizeFilename(o.TemporaryDirectory | "/");
      finalDirectory = minimizeFilename(o.FinalDirectory | "/");
-     stderr << "--assembing package in " << buildDirectory << endl;
+     stderr << "--assembling package " << pkg#"package title" << " in " << buildDirectory << endl;
+
+     currentSourceDir := pkg#"file directory";
+     stderr << "--using package sources found in " << currentSourceDir << endl;
 
      -- copy source file
      pkgDirectory := LAYOUT#"packages";
      makeDirectory (buildDirectory|pkgDirectory);
-     fn := pkg.name | ".m2";
+     fn := currentSourceDir | pkg.name | ".m2";
      if not fileExists fn then error("file ", fn, " not found");
      copyFile(fn, buildDirectory|pkgDirectory|fn, Verbose=>true);
 
      -- copy source subdirectory
      srcDirectory := LAYOUT#"packagesrc" pkg.name;
      makeDirectory (buildDirectory|srcDirectory);
-     dn := pkg.name;
+     dn := currentSourceDir | pkg.name;
+     stderr << "--copying auxiliary source files from " << dn << endl;
      if fileExists dn
      then copyDirectory(dn, buildDirectory|srcDirectory, Verbose=>true, Exclude => {"CVS"});
 
@@ -368,7 +372,7 @@ assemble Package := o -> pkg -> (
      stderr << "--making example input files in " << exampleDir << endl;
      makeDirectory exampleDir;
      scan(pairs pkg#"example inputs", (nodename,inputs) -> (
-	       stderr << "--make example input file for " << nodename << endl;
+	       stderr << "--making example input file for " << nodename << endl;
 	       exampleDir|toFilename nodename|".m2" << stack values inputs << close
 	       ));
      )
