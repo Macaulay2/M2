@@ -697,13 +697,13 @@ ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
 		    E#(i-1),
 		    E#i,
 		    concatBlocks(R, table(
-			      E#(i-1).indices,
-			      E#i.indices,
+			      E#(i-1).cache.indices,
+			      E#i.cache.indices,
 			      (j,k) -> (
 				   if j#0 === k#0 and j#1 === k#1 - 1 
-				   then (-1)^(k#0) * tens(R, map cover C#(j#0), matrix D.dd_(k#1))
+				   then (-1)^(k#0) * tens(R, id_(cover C#(j#0)), matrix D.dd_(k#1))
 				   else if j#0 === k#0 - 1 and j#1 === k#1 
-				   then tens(R, matrix C.dd_(k#0), map cover D#(k#1))
+				   then tens(R, matrix C.dd_(k#0), id_(cover D#(k#1)))
 				   else map(
 					E#(i-1).cache.components#(E#(i-1).cache.indexComponents#j),
 					E#i.cache.components#(E#i.cache.indexComponents#k),
@@ -747,7 +747,7 @@ ChainComplexMap ** ChainComplexMap := ChainComplexMap => (f,g) -> (
 		    F' := F#(n+deg);
 		    F'i := F'.cache.indexComponents;
 		    h#n = map(F',E', matrix {
-			      apply(E'.indices, (i,j) -> (
+			      apply(E'.cache.indices, (i,j) -> (
 					t := (i+f.degree, j+g.degree);
 					if F'i#?t then F'_[t] * ( ((-1)^(g.degree * i) * f_i ** g_j) )
 					else map(F',E'c#(E'i#(i,j)),0)))})));
@@ -782,8 +782,8 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := ChainComplexMap =
      map(
 	  F := (AB := A ** B) ** C,
 	  E :=  A ** (BC := B ** C),
-	  k -> concatBlocks(R, apply(F_k.indices, (ab,c) -> (
-			 apply(E_k.indices, (a,bc) -> (
+	  k -> concatBlocks(R, apply(F_k.cache.indices, (ab,c) -> (
+			 apply(E_k.cache.indices, (a,bc) -> (
 				   b := bc-c;  -- ab+c=k=a+bc, so b=bc-c=ab-a
 				   if A#?a and B#?b and C#?c
 				   then (
@@ -797,8 +797,8 @@ tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := ChainComplexMap =
 	       ))
 
 
-     -- 	  k -> sum(E_k.indices, (a,bc) -> (
-     -- 		    sum(BC_bc.indices, (b,c) -> (
+     -- 	  k -> sum(E_k.cache.indices, (a,bc) -> (
+     -- 		    sum(BC_bc.cache.indices, (b,c) -> (
      -- 			      F_k_[(a+b,c)]
      -- 			      * (AB_(a+b)_[(a,b)] ** C_c)
      -- 			      * tensorAssociativity(A_a,B_b,C_c)

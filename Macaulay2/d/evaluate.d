@@ -591,7 +591,7 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
 			      ret = eval(tailCode);
 			      break));
 		    localFrame = saveLocalFrame;
-		    if !f.notrecyclable then (
+		    if !f.notrecyclable && framesize < length(recycleBin) then (
 			 -- clean it and recycle it
 			 foreach x in f.values do x = nullE;
 			 f.outerFrame = recycleBin.framesize;

@@ -24,6 +24,9 @@ use convertr;
 -----------------------------------------------------------------------------
 -- helper routines for checking arguments
 
+export isBoolean(e:Expr):bool := e == True || e == False;
+export toBoolean(e:Expr):bool := e == True;
+
 export isSmallInt(e:Expr):bool := (
      when e is i:Integer do 
      if isInt(i) then true else false

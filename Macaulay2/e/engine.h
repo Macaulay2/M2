@@ -928,7 +928,7 @@ extern "C" {
   */
 
   const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree_only);
-  /* Dan: please connect */
+  /* connected to rawRemoveMonomialFactors */
 
   const MatrixOrNull * IM2_Matrix_remove_content(const Matrix *M); 
       /* drg: tried to connect to rawRemoveContent*/
