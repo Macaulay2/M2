@@ -137,6 +137,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
 	       );
 	  local basering; local flatmonoid;
+	  quotfix := rawRM -> if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawQuotientRing(rawRM, raw R) else rawRM;
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  skews := M.Options.SkewCommutative;
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
@@ -183,7 +184,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    );
 	       scan(diffs0,diffs1,(x,dx) -> if not x<dx then error "expected differentiation variables to occur to the right of their variables");
 	       if R.?skews then error "coefficient ring has skew commuting variables";
-	       RM = new PolynomialRing from rawWeylAlgebra(rawPolynomialRing(raw basering, raw flatmonoid),diffs0,diffs1,h);
+	       RM = new PolynomialRing from quotfix rawWeylAlgebra(rawPolynomialRing(raw basering, raw flatmonoid),diffs0,diffs1,h);
 	       RM.diffs0 = diffs0;
 	       RM.diffs1 = diffs1;
      	       if h != -1 then RM.h = h;
@@ -198,13 +199,11 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    else error "expected SkewCommutative option to be true, false, or a list of variables or integers"
 		    );
 	       if R.?skews then skews = join(skews, apply(R.skews, i -> i + num));
-	       RM = new PolynomialRing from rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
+	       RM = new PolynomialRing from quotfix rawSkewPolynomialRing(rawPolynomialRing(raw basering, raw flatmonoid),skews);
 	       RM.skews = skews;
 	       )
 	  else (
-	       rawRM := rawPolynomialRing(raw basering, raw flatmonoid);
-	       if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawRM = rawQuotientRing(rawRM, raw R);
-	       RM = new PolynomialRing from rawRM;
+	       RM = new PolynomialRing from quotfix rawPolynomialRing(raw basering, raw flatmonoid);
 	       );
 	  RM.basering = basering;
 	  RM.flatmonoid = flatmonoid;
