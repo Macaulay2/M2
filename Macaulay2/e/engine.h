@@ -17,7 +17,6 @@ class MonomialIdeal;
 class Matrix;
 class RingElement;
 class RingMap;
-class SparseMutableMatrix;
 class Computation;
 
 typedef struct MonomialOrdering MonomialOrdering;
@@ -30,7 +29,6 @@ typedef struct RingElement RingElement;
 typedef struct FreeModule FreeModule;
 typedef struct Matrix Matrix;
 typedef struct RingMap RingMap;
-typedef struct SparseMutableMatrix SparseMutableMatrix;
 typedef struct Computation Computation;
 
 typedef struct MonomialOrdering MonomialOrdering;
@@ -96,10 +94,6 @@ typedef M2_arrayint M2_arrayint_OrNull;
 typedef Matrix_array Matrix_array_OrNull;
 typedef RingElement_array RingElement_array_OrNull;
 
-typedef SparseMutableMatrix MutableMatrix;
-typedef MutableMatrix MutableMatrixOrNull;
-
-  
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -694,23 +688,42 @@ extern "C" {
   const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c); /* drg: connected rawMatrixEntry*/
 
   /*******************************************************************************/
+  const Matrix * IM2_Matrix_identity(const FreeModule *F,
+				     M2_bool is_mutable,
+				     M2_bool prefer_dense
+				     ); /* drg: connected rawIdentity*/
+  /* NEWLY CHANGED */
+
+  const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
+				       const FreeModule *G,
+				       M2_bool is_mutable,
+				       M2_bool prefer_dense
+				       ); /* drg: connected rawZero*/
+  /* NEWLY CHANGED */
+
   const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 					int ncols,
 					const RingElement_array *M,
-					M2_bool is_mutable); /* drg: connected rawMatrix1 */
-  
+					M2_bool is_mutable,
+					M2_bool prefer_dense); /* drg: connected rawMatrix1 */
+  /* NEWLY CHANGED */
+
   const MatrixOrNull * IM2_Matrix_make2(const FreeModule *target,
 					const FreeModule *source,
 					const M2_arrayint deg,
 					const RingElement_array *M,
-					M2_bool is_mutable); /* drg: connected rawMatrix2 */
+					M2_bool is_mutable,
+					M2_bool prefer_dense); /* drg: connected rawMatrix2 */
+  /* NEWLY CHANGED */
 
   const MatrixOrNull * IM2_Matrix_make_sparse1(const FreeModule *target,
 					       int ncols,
 					       const M2_arrayint rows,
 					       const M2_arrayint cols,
 					       const RingElement_array *entries,
-					       M2_bool is_mutable); /* drg: connected rawSparseMatrix1 */
+					       M2_bool is_mutable,
+					       M2_bool prefer_dense); /* drg: connected rawSparseMatrix1 */
+  /* NEWLY CHANGED */
   
   const MatrixOrNull * IM2_Matrix_make_sparse2(const FreeModule *target,
 					       const FreeModule *source,
@@ -718,15 +731,23 @@ extern "C" {
 					       const M2_arrayint rows,
 					       const M2_arrayint cols,
 					       const RingElement_array *entries,
-					       M2_bool is_mutable); /* drg: connected rawSparseMatrix2 */
+					       M2_bool is_mutable,
+					       M2_bool prefer_dense); /* drg: connected rawSparseMatrix2 */
+  /* NEWLY CHANGED */
 
   M2_bool IM2_Matrix_is_mutable(const Matrix *M);
   /* Is the matrix M mutable? */ /* drg : connected rawIsMutable */
 
+  M2_bool IM2_Matrix_is_implemented_as_dense(const Matrix *M);
+  /* Is the matrix M implemented in the engine as a dense matrix? */ 
+  /* NEWLY CHANGED */
+
   const MatrixOrNull * IM2_Matrix_remake1(const FreeModule *target,
 					 const Matrix *M,
-					 M2_bool is_mutable
+					  M2_bool is_mutable,
+					  M2_bool prefer_dense
 					 ); /* drg: connected rawMatrixRemake1  */
+  /* NEWLY CHANGED */
   /* Create a new matrix (mutable or immutable), from M, with new target,
      and/or mutable-ness. The target free module must have the expected rank.
      The source free module is computed heuristically from the the target and the
@@ -734,16 +755,17 @@ extern "C" {
   */
 
   const MatrixOrNull * IM2_Matrix_remake2(const FreeModule *target,
-					const FreeModule *source,
-					const M2_arrayint deg,
-					const Matrix *M,
-					M2_bool is_mutable
-					); /* drg: connected rawMatrixRemake2 */
+					  const FreeModule *source,
+					  const M2_arrayint deg,
+					  const Matrix *M,
+					  M2_bool is_mutable,
+					  M2_bool prefer_dense
+					  ); /* drg: connected rawMatrixRemake2 */
+  /* NEWLY CHANGED */
   /* Create a new matrix (mutable or immutable), from M, with new target,
      source, deg and/or mutable-ness. The new free modules must have 
      the expected rank. 
   */
-
 
   /**********************************************************************************/
 
@@ -806,10 +828,6 @@ extern "C" {
   const MatrixOrNull * IM2_Matrix_submatrix1(const Matrix *M,
 					     const M2_arrayint cols); /* drg: connected rawSubmatrix*/
 
-  const Matrix * IM2_Matrix_identity(const FreeModule *F); /* drg: connected rawIdentity*/
-
-  const MatrixOrNull * IM2_Matrix_zero(const FreeModule *F,
-				       const FreeModule *G); /* drg: connected rawZero*/
 
   const MatrixOrNull * IM2_Matrix_koszul(int p, const Matrix *M); /* drg: connected rawKoszul*/
 
@@ -963,20 +981,131 @@ extern "C" {
   /* column(i) <- r * column(i), returns false if matrix is immutable
      or row is out of bounds */
 
-#if 0
   M2_bool IM2_MutableMatrix_insert_columns(Matrix *M, int i, int n_to_add); /* TO BE CONNECTED */
+  /* NEWLY CHANGED */
   /* Insert n_to_add columns directly BEFORE column i. */
 
   M2_bool IM2_MutableMatrix_insert_rows(Matrix *M, int i, int n_to_add); /* TO BE CONNECTED */
+  /* NEWLY CHANGED */
   /* Insert n_to_add rows directly BEFORE row i. */
 
   M2_bool IM2_MutableMatrix_delete_columns(Matrix *M, int i, int j); /* TO BE CONNECTED */
+  /* NEWLY CHANGED */
   /* Delete columns i .. j from M */
 
   M2_bool IM2_MutableMatrix_delete_rows(Matrix *M, int i, int j); /* TO BE CONNECTED */
+  /* NEWLY CHANGED */
   /* Delete rows i .. j from M */
+
+
+  M2_bool IM2_MutableMatrix_column_2by2(Matrix *M,
+					int c1, int c2, 
+					const RingElement *a1, const RingElement *a2,
+					const RingElement *b1, const RingElement *b2,
+					M2_bool opposite_mult);
+  /* NEWLY CHANGED */
+  /* column(c1) <- a1 * column(c1) + a2 * column(c2)
+     column(c2) <- b1 * column(c1) + b2 * column(c2)
+  */
+
+  M2_bool IM2_MutableMatrix_row_2by2(Matrix *M,
+				     int r1, int r2, 
+				     const RingElement *a1, const RingElement *a2,
+				     const RingElement *b1, const RingElement *b2,
+				     M2_bool opposite_mult);
+  /* NEWLY CHANGED */
+  /* row(r1) <- a1 * row(r1) + a2 * row(r2)
+     row(r2) <- b1 * row(r1) + b2 * row(r2)
+  */
+
+#if 0
+  NOTE:: DO WE REALLY NEED THESE AT TOP LEVEL??
+
+  M2_bool IM2_MutableMatrix_column_reduce(Matrix *M, int c1, int c2);
+  /* NEWLY CHANGED */
+  /*
+   c1 is the "pivot column"
+   If a1 is the lead coefficient of column c1, and if a2 is the
+   coeff of column c2 in the same row as a1, then set
+     column(c2) = column(c2) - (a2/a1) * column(c1).
+   If a1 is '1', then division is not performed.
+  */
+
+  M2_bool IM2_MutableMatrix_gcd_column_reduce1(Matrix *M, int c1, int c2);
+  /* NEWLY CHANGED */
+  /* c1 is the "pivot column"
+   If a1 is the lead coefficient of column c1, and if a2 is the
+   coeff of column c2 in the same row as a1,
+   and if x*a1+y*a2=d=gcd(a1,a2), then set
+     column(c1) <- x*column(c1) + y*column(c2)
+     column(c2) <- (a1/d) * column(c1) - (a2/d) * column(c2)
+   This assumes that gcdExtended is defined in the base ring.
+  */
+
+  M2_bool IM2_MutableMatrix_gcd_row_reduce(Matrix *M, int c, int r1, int r2);
+  /* NEWLY CHANGED */
+  /* r1 is the "pivot column"
+   If a1 is the last non-zero coefficient of row r1, and if a2 is the
+   coeff of row r2 in the same column as a1,
+   and if x*a1+y*a2=d=gcd(a1,a2), then set
+    row(r1) <- x*row(r1) + y*row(r2)
+    row(r2) <- (a1/d) row(r1) - (a2/d) row(r2)
+   This assumes that gcdExtended is defined in the base ring.
+  */
+
+  M2_bool IM2_MutableMatrix_gcd_column_reduce2(Matrix *M, int r, int c1, int c2);
+  /* NEWLY CHANGED */
+  /* c1 is the "pivot column"
+   If a1 is coefficient of column c1 in row r, and if a2 is the
+   coeff of column c2 in the same row,
+   and if x*a1+y*a2=d=gcd(a1,a2), then set
+     column(c1) <- x*column(c1) + y*column(c2)
+     column(c2) <- (a1/d) * column(c1) - (a2/d) * column(c2)
+   This assumes that gcdExtended is defined in the base ring.
+   NOTE: there is no row version of this routine...  Should there be?
+  */
 #endif
+
+  M2_bool IM2_MutableMatrix_sort_columns(Matrix *M, int lo, int hi);
+  /* NEWLY CHANGED */
+  /* Returns false if M is not mutable, or lo, or hi are out of range */
+
+  M2_bool IM2_MutableMatrix_row_permute(Matrix *M,
+					int start, 
+					M2_arrayint perm);
+  /* NEWLY CHANGED */
+  /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
+     all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
+
+  M2_bool IM2_MutableMatrix_column_permute(Matrix *M,
+					   int start, 
+					   M2_arrayint perm);
+  /* NEWLY CHANGED */
+  /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
+     all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
+
+  MatrixOrNull * IM2_MutableMatrix_get_row_change(Matrix *M); /* drg: connected rawRowChange*/
+  /* NEWLY CHANGED */
+
+  MatrixOrNull * IM2_MutableMatrix_get_col_change(Matrix *M); /* drg: connected rawColumnChange*/
+  /* NEWLY CHANGED */
+
+  M2_bool IM2_MutableMatrix_set_row_change(Matrix *M,
+					   Matrix *rowChange); /* drg: connected rawRowChange*/
+  /* NEWLY CHANGED */
+  /* Returns false, if rowChange is not suitable 
+     (i.e. has the wrong ring, or wrong number of columns) */
+
+  M2_bool IM2_MutableMatrix_set_col_change(Matrix *M,
+					   Matrix *colChange); /* drg: connected rawColumnChange*/
+  /* NEWLY CHANGED */
+  /* Returns false, if rowChange is not suitable 
+     (i.e. has the wrong ring, or wrong number of columns) */
+
+  
   /* There are more mutable matrix routines:  find good pivots... What else? */
+
+
 
   /**************************************************/
   /**** RingMap routines ****************************/
@@ -1042,17 +1171,6 @@ extern "C" {
   unsigned long  IM2_MutableMatrix_hash(const MutableMatrix *M); /* TODO */ /* drg: waiting, returning 0 */
 #endif
 
-  MutableMatrix * IM2_MutableMatrix_get_row_change(MutableMatrix *M); /* drg: connected rawRowChange*/
-
-  MutableMatrix * IM2_MutableMatrix_get_col_change(MutableMatrix *M); /* drg: connected rawColumnChange*/
-
-  void IM2_MutableMatrix_set_row_change(MutableMatrix *M,
-					MutableMatrix *rowChange); /* drg: connected rawRowChange*/
-
-  void IM2_MutableMatrix_set_col_change(MutableMatrix *M,
-					MutableMatrix *colChange); /* drg: connected rawColumnChange*/
-
-  
 
   /**************************************************/
   /**** Monomial ideal routines *********************/

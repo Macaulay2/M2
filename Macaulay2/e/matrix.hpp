@@ -209,7 +209,7 @@ public:
 
   // Simplification of column set
   Matrix *simplify(int n) const;
-  Matrix *auto_reduce() const;	// An error is given, if their are two lead terms
+  Matrix *auto_reduce() const;	// An error is given, if there are two lead terms
 				// one which divides another.
 
   // Sorting the columns of the matrix (new positions into 'result')

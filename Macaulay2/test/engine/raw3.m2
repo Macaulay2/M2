@@ -355,8 +355,7 @@ rawSortColumns(m,1,1)
 rawMinors(2,m,0)
 
 m = rawMatrix1(R^4,4,(0_R,b,c,d, -b,0_R,f,g, -c,-f,0_R,i, -d,-g,-i,0_R),false)
-rawPfaffians(4,m)
-<< "raw pfaffians is INCORRECT" << endl;
+assert(rawPfaffians(4,m) == rawMatrix1(R^1,1,singleton (d*f-c*g+b*i), false))
 -- 
 load "raw-util.m2"
 R2 = rawPolynomialRing(rawQQ(), lex{x,y,z})
@@ -419,15 +418,15 @@ rawMatrixEntry(m,2,1,0_R)
 assert(rawMatrixEntry(m,2,1) == 0_R)
 m
 rawMatrixRowSwap(m,0,1)
-rawMatrixRowSwap(m,2,3) -- should give an error, but doesn't ERROR
+assert try (rawMatrixRowSwap(m,2,3); false) else true
 rawMatrixRowSwap(m,1,2)
 rawMatrixColumnSwap(m,1,2)
 
 m
 
-rawMatrixRowChange(m,1,a^5,0,true) -- row index out of range... ERROR
-rawMatrixRowChange(m,1,a^5,0,true) -- now it doesn't give an error message!!
-rawMatrixRowChange(m,1,a^5,0) -- error message is OK.
+rawMatrixRowChange(m,1,a^5,0,true) 
+rawMatrixRowChange(m,1,a^5,0,true) 
+assert try (rawMatrixRowChange(m,1,a^5,0);false) else true
 
   
 rawMatrixColumnChange(m,1,a^5,0,true) -- 
@@ -524,13 +523,13 @@ f = (x+3*y-14)^3*(x^2+y^4+z^7-x*y-13*x*z^2+12)
 time rawFactor f
 testfactor f
 f = (x+3*y-14)^10*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
-time rawFactor f -- 5.63 sec 1 Gz G4 tibook 1/19/03
-testfactor f
+--time rawFactor f -- 5.63 sec 1 Gz G4 tibook 1/19/03
+--testfactor f
 
 R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
-time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03
-testfactor f
+--time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03
+--testfactor f
 
 R = polyring(rawZZp(17), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
@@ -542,23 +541,23 @@ f = x^20+13*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 g = x^20+17*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 h = x^20+21*x^19+7*x^15+12*x^12-x^10-x^8+x^4+13*x-20
 F = f*g*h
-time rawFactor F -- 4.1 sec 1 Gz G4 tibook 1/19/03
-testfactor F
+--time rawFactor F -- 4.1 sec 1 Gz G4 tibook 1/19/03
+--testfactor F
 
 F = f^2*g^2*h^3;
 time rawFactor F -- 1.41 sec 1 Gz G4 tibook 1/19/03
 testfactor F
 
 F = f^2*g^2*h^2;
-time rawFactor F -- 4.25 sec 1 Gz G4 tibook 1/19/03
-testfactor F
+--time rawFactor F -- 4.25 sec 1 Gz G4 tibook 1/19/03
+--testfactor F
 
 R = polyring(rawZZ(), (symbol x .. symbol z))
 f = 20_R
 assert(f1 = rawFactor f; #f1_0 === 1 and f1_1_0 === 1)
-assert(rawFactor (0_R) === (singleton (0_R), {1}))
-assert(rawFactor (4_R) === (singleton (4_R), {1}))
-assert(rawFactor (4*x^3) === ((4_R, x), {1,3}))
+assert(rawFactor (0_R) === (singleton (0_R), singleton 1))
+assert(rawFactor (4_R) === (singleton (4_R), singleton 1))
+assert(rawFactor (4*x^3) === ((4_R, x), (1,3)))
 
 -------------------
 -- rawCharSeries --

@@ -111,8 +111,7 @@ COMMANDS = \
 	x_mat \
 	x_monideal \
 	x_gb \
-	x_ringmap \
-	x_sparsemat
+	x_ringmap
 
 COMMANDS_REDO = \
 	x_monoid \
