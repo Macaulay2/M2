@@ -44,30 +44,76 @@ document {
      SeeAlso => "^"
      }
 
-     
 document {
-     Key => submatrix,
+     Key => (submatrix,Matrix,VisibleList,VisibleList),
      Headline => "select part of a matrix",
-     TT "submatrix(m, rows, cols)", " -- yields a submatrix of the matrix ", TT "m", ".",
-     BR,NOINDENT,
-     TT "submatrix(m, cols)", " -- yields a submatrix of the matrix ", TT "m", ".",
-     PARA,
+     Usage => "submatrix(f, rows, cols)",
+     Inputs => { "f" => Matrix => null,
+	  "rows" => VisibleList => "a list of integers denoting the choice of rows",
+	  "cols" => VisibleList => "a list of integers denoting the choice of columns"},
+     Outputs => {Matrix => {"the submatrix of ", TT "f", " corresponding to the lists ", TT "rows", 
+	  " and ", TT "cols", ""}},
      "Yields an r by c matrix, where r is the length of the list of integers
      ", TT "rows", ", and c is the length of the list of integers ", TT "cols", ".  
-     The (i,j)-th entry of the result is m_(rows_i, cols_j).  If necessary, any
-     sequences in the lists are spliced into the list.",
+     The ", TT "(i,j)", "-th entry of the result is ", TT "f_(rows_i, cols_j)", ".",
+     PARA,
+     "The lists of integers may contain ", TO "ranges and repetitions", ", as in ", 
+     TT "{3, 5..7, 3:0}",
+     PARA,
+     "If ", TT "rows", " or ", TT "cols", " is omitted, all the corresponding indices are used.",
+     PARA,
+     "Both ", TT "rows", " and/or ", TT "cols", " may contain duplicate values, 
+     in which case the result will contain
+     duplicate rows and/or columns.",
+     PARA,
+     "Both the source and target of ", TT "f", " must be free modules.",
      PARA,
      EXAMPLE {
-	  "R = ZZ/101[a .. o]",
-      	  "m = genericMatrix(R, a, 3, 5)",
-      	  "submatrix(m, {1,2,0}, {0..2, 4})",
+	  "R = ZZ/101[a .. o];",
+      	  "f = genericMatrix(R, a, 3, 5)",
+      	  "submatrix(f, {1,2,0}, {0..2, 4})",
 	  },
      PARA,
-     "If ", TT "rows", " or ", TT "cols", " is omitted, all the indices are used.",
-     EXAMPLE "submatrix(m, {1,2}, )",
+     EXAMPLE {"submatrix(f, {1,2}, )",
+	  "submatrix(f,,{0,1})"},
+     SeeAlso => {
+	  (symbol_,Matrix,VisibleList),
+	  (symbol^,Matrix,VisibleList)
+	  },
+
+     }
+
+document {
+     Key => (submatrix,Matrix,VisibleList),
+     Headline => "select certain columns of a matrix",
+     Usage => "submatrix(f, cols)",
+     Inputs => { "f" => Matrix => null,
+	  "cols" => VisibleList => "a list of integers denoting the choice of columns"},
+     Outputs => {Matrix => {"the submatrix of ", TT "f", " corresponding to the columns ",
+	        TT "cols", ""}},
+     "Yields an r by c matrix, where r is the number of rows of ", TT "f", ", and 
+     c is the length of the list of integers ", TT "cols", ".  
+     The ", TT "(i,j)", "-th entry of the result is ", TT "f_(i, cols_j)", ".",
      PARA,
-     "It is an error if any element of ", TT "rows", " or ", TT "cols", " is out 
-     of range."
+     "The list ", TT "cols", " may contain ", TO "ranges and repetitions", ", as in ", 
+     TT "{3, 5..7, 3:0}",
+     PARA,
+     "The source of ", TT "f", " must be a free module.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[a .. o];",
+      	  "f = genericMatrix(R, a, 3, 5)",
+      	  "submatrix(f, {0..2})",
+	  },
+     SeeAlso => {
+	  (symbol_,Matrix,VisibleList),
+	  (symbol^,Matrix,VisibleList)
+	  },
+     }
+
+document {
+     Key => submatrix,
+     Headline => "select part of a matrix"
      }
 
 document {
@@ -164,35 +210,89 @@ jacobian A
 singA = minors(codim ideal presentation A, jacobian A)
 generators gb singA
 "
+
 document {
      Key => jacobian,
      Headline => "the Jacobian matrix of partial derivatives",
-     TT "jacobian R", " -- calculates the Jacobian matrix of the ring R",
-     BR,NOINDENT,
-     TT "jacobian f", " -- calculates the Jacobian matrix of the matrix f,
-     which will normally be a matrix with one row.",
-     BR,NOINDENT,
-     TT "jacobian I", " -- compute the matrix of derivatives of the 
-     generators of I w.r.t. all of the variables",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..d];",
-      	  "I = monomialCurveIdeal(R,{1,3,4})",
-      	  "A = R/I",
-      	  "jacobian A",
-	  },
-     "For a one row matrix, the derivatives w.r.t. all the variables
-     is given",
-     EXAMPLE {
-	  "R = ZZ/101[a..c]",
-      	  "p = symmetricPower(2,vars R)",
-      	  "jacobian p",
-	  },
-     Caveat => {
-	  "If a matrix or ideal over a quotient polynomial ring ", TT "S/J", "
-     	  is given, then only the derivatives of the given elements are
-     	  computed and NOT the derivatives of elements of ", TT "J", "."
+     SeeAlso => {
+	 "diff",
+	 "contract"
 	  }
+     }
+
+
+document {
+     Key => (jacobian,Matrix),
+     Headline => "the matrix of partial derivatives of polynomials in a matrix",
+     Usage => "jacobian f",
+     Inputs => {"f" => " with one row"},
+     Outputs => {Matrix => {"the Jacobian matrix of partial derivatives of 
+	           the polynomial entries of ", TT "f"}},
+     "If ", TT "f", " is a 1 by ", TT "m", " matrix over a polynomial ring ",
+     TT "R", " with ", TT "n"," indeterminates,
+     then the resulting matrix of partial derivatives has dimensions ",TT "n"," by ",TT "m",", 
+     and the ", TT "(i,j)", " entry is the partial derivative of the ", TT "j", "th entry of
+     ", TT "f", " by the ", TT "i", "th indeterminate of the ring.",
+     PARA,
+     "If the ring of ", TT "f", " is a quotient polynomial ring ", TT "S/J", ",
+     	  then only the derivatives of the given entries of ", TT "f", " are
+     	  computed and NOT the derivatives of elements of ", TT "J", ".",
+     	  EXAMPLE {
+	       "R = QQ[x,y,z];",
+      	       "f = matrix{{y^2-x*(x-1)*(x-13)}}",
+      	       "jacobian f",
+	       },
+	  "If the ring of ", TT "f", " is a polynomial ring over a polynomial ring,
+	  then indeterminates in the coefficient ring are treated as constants.",
+     	  EXAMPLE {
+	       "R = ZZ[a,b,c][x,y,z]",
+	       "jacobian matrix{{a*x+b*y^2+c*z^3, a*x*y+b*x*z}}"
+	       }
+     }
+
+document {
+     Key => (jacobian,Ideal),
+     Headline => "the Jacobian matrix of the generators of an ideal",
+     Usage => "jacobian I",
+     Inputs => {"I" => " in a polynomial ring"},
+     Outputs => {Matrix => {"the Jacobian matrix of partial derivatives of 
+	           the generators of ", TT "I"}},
+     "This is identical to ", TT "jacobian generators I", ".  See ", TO (jacobian,Matrix), 
+     " for more information.",
+     	  EXAMPLE {
+	       "R = QQ[x,y,z];",
+      	       "I = ideal(y^2-x*(x-1)*(x-13))",
+      	       "jacobian I",
+	       },
+	  "If the ring of ", TT "I", " is a polynomial ring over a polynomial ring,
+	  then indeterminates in the coefficient ring are treated as constants.",
+     	  EXAMPLE {
+	       "R = ZZ[a,b,c][x,y,z]",
+	       "jacobian ideal(a*y*z+b*x*z+c*x*y)"
+	       }
+     }
+
+document {
+     Key => (jacobian,Ring),
+     Headline => "the Jacobian matrix of the polynomials defining a quotient ring",
+     Usage => "jacobian R",
+     Inputs => {"R" => " a quotient of a polynomial ring"},
+     Outputs => {Matrix => {"the Jacobian matrix of partial derivatives of 
+	           the presentation matrix of ", TT "R"}},
+     "This is identical to ", TT "jacobian presentation R", ", except
+     that the resulting matrix is over the ring ", TT "R", ".  See ", TO (jacobian,Matrix), 
+     " for more information.",
+     	  EXAMPLE {
+	       "R = QQ[x,y,z]/(y^2-x^3-x^7);",
+      	       "jacobian R",
+	       },
+	  "If the ring ", TT "R", " is a (quotient of a) polynomial ring over a polynomial ring,
+	  then the top set of indeterminates is used, on the top set of quotients:",
+     	  EXAMPLE {
+	       "A = ZZ[a,b,c]/(a^2+b^2+c^2);",
+	       "R = A[x,y,z]/(a*x+b*y+c*z-1)",
+	       "jacobian R"
+	       }
      }
 
 
