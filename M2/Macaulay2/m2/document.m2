@@ -305,7 +305,7 @@ processExamplesLoop := s -> (
 processExamples := (key,docBody) -> (
      currentNodeName = formatDocumentTag key;
      pkg := packageTag key;
-     if pkg === null then error ("can't determine the correct package for documentation key ", currentNodeName);
+     if pkg === null then error ("can't determine the correct package for documentation key ", format currentNodeName);
      exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,pkg);
      checkForExampleOutputFile(currentNodeName,pkg);
      processExamplesLoop docBody)
