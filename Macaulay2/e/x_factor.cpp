@@ -87,10 +87,23 @@ static const RingElement * convert(const Ring *R, CanonicalForm h) {
      return RingElement::make_raw(R,result);
 }
 
-static int base_set = 0;
-static CanonicalForm base;
+struct enter_factory { 
+  enter_factory:: enter_factory() { factory_setup(); }
+  enter_factory::~enter_factory() { M2_setup(); }
+};
+
+struct leave_factory { 
+  leave_factory:: leave_factory() { M2_setup(); }
+  leave_factory::~leave_factory() { factory_setup(); }
+};
+
+static enter_factory before;
+ static int base_set = 0;
+ static CanonicalForm base;
+static leave_factory after;
 
 static CanonicalForm convert(const mpz_ptr p) {
+     factory_setup();
      int size = p -> _mp_size;
      int sign = size < 0 ? -1 : 1;
      if (size < 0) size = -size;
@@ -99,7 +112,6 @@ static CanonicalForm convert(const mpz_ptr p) {
 	  base = 1;
 	  for (int i = 0; i < mp_bits_per_limb; i++) base *= 2;
      }
-     factory_setup();
      CanonicalForm m = 0;
      for (int i = size - 1; i >= 0; i--) {
 	  mp_limb_t digit = p -> _mp_d[i];

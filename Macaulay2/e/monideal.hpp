@@ -192,7 +192,7 @@ inline Index<MonomialIdeal > MonomialIdeal::first() const
 
 inline Index<MonomialIdeal > MonomialIdeal::last() const 
 { 
-  return Index<MonomialIdeal >(prev((void *)(mi)), this);
+  return Index<MonomialIdeal >(prev(reinterpret_cast<void *>(mi)), this);
 }
 
 #endif
