@@ -67,7 +67,7 @@ reach3 = method(SingleArgumentDispatch=>true)
 
 reach1 Thing := identity
 reach1 Sequence := reach1 BasicList := x -> scan(x,reach1)
-reach1 SHIELD := x -> scan(x,reach3)
+reach1 NOCONTENTS := x -> scan(x,reach3)
 reach1 UL := x -> scan(x,reach2)
 reach1 TO := reach1 TOH := (x) -> (
      node := formatDocumentTag x#0;

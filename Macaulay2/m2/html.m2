@@ -11,7 +11,7 @@
 
 local prefix, local topNodeButton
 local haderror, local nullButton, local masterIndexButton, local tocButton, local homeButton
-local NEXT, local PREV, local UP, local CONTENTS
+local NEXT, local PREV, local UP, local CONT
 local nextButton, local prevButton, local upButton
 local masterIndex
 
@@ -269,28 +269,29 @@ scope := method()
 scope2 := method()
 scope1 := method()
 
--- scanning at top level
-scope (String, Thing    ) := (f,x) -> null
-scope (String, Sequence ) :=
-scope (String, BasicList) := (f,x) -> scan(x,y -> scope(f,y))
-scope (String, SHIELD   ) := (f,x) -> scan(x,y -> scope1(f,y))
-scope (String, UL       ) := (f,x) -> scan(x,y -> scope2(f,y))
-scope (String, TO       ) :=
-scope (String, TOH      ) := (f,x) -> follow(x#0)
+-- scanning at top level, not inside a CONTENTS or a NOCONTENTS
+scope (String, Thing      ) := (f,x) -> null
+scope (String, Sequence   ) :=
+scope (String, BasicList  ) := (f,x) -> scan(x,y -> scope(f,y))
+scope (String, NOCONTENTS ) := (f,x) -> scan(x,y -> scope1(f,y))
+scope (String, CONTENTS   ) := (f,x) -> scan(x,y -> scope2(f,y))
+scope (String, TO         ) :=
+scope (String, TOH        ) := (f,x) -> follow(x#0)
 
--- scanning inside a SHIELD
-scope1 (String, Thing    ) := (f,x) -> null
-scope1 (String, Sequence ) :=
-scope1 (String, BasicList) := (f,x) -> scan(x,y -> scope1(f,y))
-scope1 (String, TO       ) :=
-scope1 (String, TOH      ) := (f,x) -> follow(x#0)
+-- scanning inside a NOCONTENTS
+scope1 (String, Thing     ) := (f,x) -> null
+scope1 (String, Sequence  ) :=
+scope1 (String, BasicList ) := (f,x) -> scan(x,y -> scope1(f,y))
+scope1 (String, TO        ) :=
+scope1 (String, TOH       ) := (f,x) -> follow(x#0)
+scope1 (String, CONTENTS  ) := (f,x) -> error ("CONTENTS tag encountered withing a NOCONTENTS tag: ", f)
 
--- scanning inside a UL not inside a SHIELD
-scope2 (String, Thing    ) := scope
-scope2 (String, SEQ      ) := (f,x) -> scan(x,y -> scope2(f,y))
-scope2 (String, SHIELD   ) := (f,x) -> scan(x,y -> scope1(f,y))
-scope2 (String, TO       ) :=
-scope2 (String, TOH      ) := (f,x) -> (
+-- scanning inside a CONTENTS not inside a NOCONTENTS
+scope2 (String, Thing     ) := scope
+scope2 (String, SEQ       ) := (f,x) -> scan(x,y -> scope2(f,y))
+scope2 (String, NOCONTENTS) := (f,x) -> scan(x,y -> scope1(f,y))
+scope2 (String, TO        ) :=
+scope2 (String, TOH       ) := (f,x) -> (
       key := normalizeDocumentTag x#0;
       fkey := formatDocumentTag key;
       linkTable#f = append(linkTable#f,fkey);		    -- linkTable is a graph, not a tree
@@ -352,8 +353,8 @@ assembleTree Package := pkg -> (
 		    scope(fkey,documentation key)));
 	  nodesToScope = new MutableHashTable from (set keys nodesToScope - set m);
 	  );
-     CONTENTS = getTrees();
-     buildLinks CONTENTS;
+     CONT = getTrees();
+     buildLinks CONT;
      doExamples = true;					    -- wrong way
      )
 
@@ -420,7 +421,7 @@ makeTableOfContents := () -> (
 	       HEADER2 title, PARA,
 	       topNodeButton, masterIndexButton, homeButton,
 	       HR{},
-	       toDoc CONTENTS
+	       toDoc CONT
 	       }
 	  } << endl << close
      )
@@ -549,7 +550,7 @@ installPackage Package := o -> pkg -> (
      -- make table of contents, including next, prev, and up links
      stderr << "--assembling table of contents" << endl;
      assembleTree pkg;
-     pkg#"table of contents" = new Bag from {CONTENTS}; -- we bag it because it might be big!
+     pkg#"table of contents" = new Bag from {CONT}; -- we bag it because it might be big!
      pkg#"links up" = UP;
      pkg#"links next" = NEXT;
      pkg#"links prev" = PREV;

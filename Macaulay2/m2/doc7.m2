@@ -660,7 +660,7 @@ document { Ideal,
 	  TO "annihilator",
 	  TO "content",
 	  TO "fittingIdeal",
-	  SHIELD TO (kernel, RingMap),
+	  NOCONTENTS TO (kernel, RingMap),
 	  },
      "Common ways to get information about an ideal:",
      UL {
@@ -686,7 +686,7 @@ document { Ideal,
 	  },
      "Common ways to use an ideal:",
      UL {
-	  SHIELD TO (symbol /, Ring, Ideal),
+	  NOCONTENTS TO (symbol /, Ring, Ideal),
 	  },
      PARA,
      "An ideal ", TT "I", " is an immutable object, so if you want to 

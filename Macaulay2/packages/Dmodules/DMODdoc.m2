@@ -249,7 +249,7 @@ document { (bFunction, Module, List, List),
 
 document { (globalBFunction,Strategy),
      Headline => "specify strategy for computing global b-function",
-     SHIELD UL { 
+     NOCONTENTS UL { 
 	  {BOLD "IntRing, TryGeneric, NonGeneric", 
 	       " -- passed to ", TO "bFunction",  ", see ", 
 	       TO (bFunction,Strategy) },

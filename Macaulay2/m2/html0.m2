@@ -19,13 +19,17 @@ MarkUpList.synonym = "mark-up list paragraph"
      MarkUpType = new Type of Type
 MarkUpType.synonym = "mark-up type"
 
+DistributedMarkUpType = new Type of MarkUpType
+DistributedMarkUpType.synonym = "distributed mark-up type"
+
 EmptyMarkUpType = new Type of MarkUpType
 EmptyMarkUpType.synonym = "empty mark-up type"
      MarkUpType Sequence := 
-     MarkUpType List := (h,y) -> new h from y
+     MarkUpType List := (h,y) -> new h from select(y,i -> i =!= null)
 EmptyMarkUpType List := (h,y) -> if #y === 0 then new h from y else error "expected empty list"
      MarkUpType Thing := (h,y) -> new h from {y}
      MarkUpType\List := (h,y) -> (i -> h i) \ y
+DistributedMarkUpType MarkUpListParagraph := (h,y) -> apply(y, i -> h i)
      List/MarkUpType := (y,h) -> y / (i -> h i)
 EmptyMarkUpType Thing := (h,y) -> error "expected empty list"
 
@@ -88,9 +92,19 @@ UNDERLINE  = new MarkUpType of MarkUpList
 TEX	   = new MarkUpType of MarkUpList
 SEQ	   = new MarkUpType of MarkUpList
 
+trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
+trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
+trimline1 := x -> selectRegexp ( "^ *(.*[^ ]|)$",1, x)
+addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
+fix := s -> (						    -- remove clumsy newlines within strings
+     ln := lines s;
+     if not ln#?1 then return s;
+     concatenate ({addspaces trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
+
 new SEQ from List := (seq,z) -> (
      z = select(toList z, i -> i =!= null);
      z = apply(z, i -> if class i === SEQ then toList i else i);
+     z = apply(z, i -> if class i === String then fix i else i);
      flatten splice z)
 
 TT         = new MarkUpType of MarkUpList
@@ -101,10 +115,11 @@ BOLD       = new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
 HREF       = new MarkUpType of MarkUpList
 ANCHOR     = new MarkUpType of MarkUpList
-SHIELD     = new MarkUpType of MarkUpList
+
 UL         = new MarkUpType of MarkUpListParagraph
 
-new UL from SEQ := new UL from List := (UL,x) -> select(x,i -> i =!= null)
+CONTENTS   = new DistributedMarkUpType of MarkUpList
+NOCONTENTS = new DistributedMarkUpType of MarkUpList
 
 OL         = new MarkUpType of MarkUpListParagraph
 DIV        = new MarkUpType of MarkUpList

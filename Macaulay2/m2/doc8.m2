@@ -477,7 +477,7 @@ document { (gb,Strategy),
      be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TO "Primary",
      	  TO "Homogeneous",
 	  TO "Inhomogeneous",
@@ -1533,7 +1533,7 @@ document { (pushForward1,Strategy),
      which can be used to specify the strategy to be used in the computation.",
      PARA,
      "The strategy option value ", TT "v", " should be one of the following.",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TO "NonLinear",
      	  TO "Linear"
 	  },
