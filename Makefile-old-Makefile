@@ -2,6 +2,8 @@
 
 # Targets to use:
 #	all:	make a binary distribution
+#	justM2:	make Macalay2/bin/Macaulay2 and Macaulay2/bin/M2, and setup
+#               for running it
 #	doc:	make the documentation
 #	port:   make a porting source distribution
 #	testport: test the porting source distribution in tmp/Macaulay2
@@ -33,21 +35,21 @@ clean::; rm -f core
 rmcores :; find . '(' -name core -o -name gmon.out -o -name profile ')' -exec rm '{}' ';'
 ################################ SETUP
 ifeq "$(CC)" "cl"
-all:: include/.exists;	$(MAKE) -C WindowsNT
+justM2 all:: include/.exists;	$(MAKE) -C WindowsNT
 TARGET := Macaulay2-$(DESC).zip
 DOCTARGET := Macaulay2-$(VERSION)-doc.zip
 else
 TARGET := Macaulay2-$(DESC).tar.gz
 DOCTARGET := Macaulay2-$(VERSION)-doc.tar.gz
 endif
-all:: announce
+justM2 all:: announce
 announce ::
 	@echo '## making $(TARGET)'
 doc:: announce.doc
 announce.doc ::
 	@echo '## making $(DOCTARGET)'
 ################################ GC
-all:: GC
+justM2 all:: GC
 clean::; rm -f gc/*.obj gc/*.lib
 GC:: gc include/gc.h include/gc_cpp.h
 
@@ -99,7 +101,7 @@ clean::; rm -f gc/base_lib
 
 ###################### GMP
 
-all:: GMP
+justM2 all:: GMP
 
 ifeq "$(OS)" "FreeBSD"
 GMP : 	lib/libgmp.a
@@ -146,7 +148,7 @@ GMPclean clean::
 # when importing a new version of factory, make sure the directory is clean,
 # (look to see if factory/config.status is there)
 
-all:: FACTORY
+justM2 all:: FACTORY
 
 FACTORYMFLAGS :=
 FACTORYINC :=
@@ -224,7 +226,7 @@ FACTORYclean clean::
 	rm -f lib/cf.lib lib/libcf.a lib/FACTORYinstalled
 clean::; rm -rf share
 ###################### LIBFAC
-all:: LIBFAC
+justM2 all:: LIBFAC
 
 ifdef SHAREDLIBS
 LIBFACFLAGS := -fPIC
@@ -288,7 +290,7 @@ include/MP_Config.h: mp/MP/MP_Config.h include/.exists; cp $< $@
 clean::; -$(MAKE) -C mp distclean
 clean::; rm -f 'mp/&'
 ################################# Makeconf.h
-all:: Makeconf.h
+justM2 all:: Makeconf.h
 Makeconf.h : Makeconf Makeconf.var Makeconf.lcl
 	echo "/* This file created automatically, don't edit. */" >tmp.tmp
 	echo '#define VERSION "$(VERSION)"' >>tmp.tmp
@@ -338,6 +340,8 @@ all :: MACAULAY2
 all :: $(TARGET)
 MACAULAY2: Macaulay2
 	$(MAKE) -C Macaulay2 all tests
+justM2:: Macaulay2
+	$(MAKE) -C Macaulay2 justM2
 DISTFILES := 	Macaulay2/README.txt \
 		Macaulay2/CHANGES \
 		Macaulay2/licenses \
@@ -443,10 +447,8 @@ clean::
 		\) -exec rm -r '{}' ';'
 	rm -f M2.ncb M2.opt
 ################################# final status messages
-all::
-	@echo "--------------------- done making 'all' --------------------"
-doc::
-	@echo "--------------------- done making 'doc' --------------------"
+justM2 all doc::
+	@echo "--------------------- done making '$@' --------------------"
 ################################# tar manufactured files
 manufactured.tgz : Makefile
 	make -C Macaulay2/d all-c-files

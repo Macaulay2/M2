@@ -1,4 +1,5 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1994-2000 by Daniel R. Grayson
+
 use system;
 use C;
 use actors;
@@ -22,6 +23,7 @@ use strings;
 use objects;
 use basic;
 use struct;
+use texmacs;
 
 setvalue(x:Symbol,y:Expr):void := globalFrame.values.(x.frameindex) = y;
 getvalue(x:Symbol):Expr := globalFrame.values.(x.frameindex);
@@ -221,7 +223,6 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	  file(nextHash(),     	    	  -- hash
 	       name,	 		  -- filename
 	       0,			  -- pid
-	       false,false,false,false,false,
 	       false,	       	    	  -- listener
 	       NOFD,   	    	          -- listenerfd
 	       NOFD,	      	   	  -- connection
@@ -263,12 +264,13 @@ usageMessage():void := (
 	  + "    -x              examples-prompt mode" + newline
 	  ));
 
-export process2():void := (
+export topLevel():void := (
      when loadprint("-") is Error do exit(2) else nothing;
      );
 
 export process():void := (
      laststmtno = -1;			  -- might have done dumpdata()
+     texmacsMode := false;
      localFrame = globalFrame;
      stdin .inisatty  =   0 != isatty(0) ;
      stdin.echo       = !(0 != isatty(0));
@@ -291,10 +293,8 @@ export process():void := (
 		    )	       
 	       else if arg === "-x" then xprompt = true
 	       else if arg === "--texmacs" then (
-		    stdIO.halfduplex = true;
-		    stdIO.outputting = true;
-		    stdIO.inputting = true;
-		    stdIO << BEGIN;			    -- might want to get rid of this
+		    texmacsMode = true;
+		    
 		    )
 	       else if arg === "-tty" then (
 		    stdin.inisatty = true;
@@ -324,7 +324,9 @@ export process():void := (
 			 exit(1);
 			 )
 		    )));
-     process2();
+     if texmacsMode
+     then topLevelTexmacs()
+     else topLevel();
      exit(0);
      );
 value(e:Expr):Expr := (

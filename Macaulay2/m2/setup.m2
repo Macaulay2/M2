@@ -223,7 +223,8 @@ scan((
 	  -- symbol writeExamples,
 	  -- symbol readExamples,
 	  symbol phase,
-	  symbol compactMatrixForm
+	  symbol compactMatrixForm,
+	  symbol TeXmacsMode
 	  ), x -> writableGlobals#x = true)
 
 startFunctions := {}

@@ -20,6 +20,7 @@ remove-c-files ::
 
 PROJECT := 
 PROJECT += interp.d
+PROJECT += texmacs.d
 PROJECT += mp.d
 # PROJECT += actorsX.d
 PROJECT += actors5.d actors4.d actors3.d actors2.d actors.d
@@ -35,6 +36,7 @@ PROJECT += stdiop.d
 PROJECT += ctype.d
 PROJECT += stdio.d
 PROJECT += nets.d
+PROJECT += getline.d
 PROJECT += varstrin.d
 PROJECT += strings.d 
 PROJECT += X.d

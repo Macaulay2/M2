@@ -13,6 +13,7 @@ use stdiop;
 use ctype;
 use stdio;
 use varstrin;
+use getline;
 use strings;
 use C;
 use actors;
@@ -636,12 +637,6 @@ wait(e:Expr):Expr := (
      );
 setupfun("wait",wait);
 
-tokenbuf := newvarstring(100);
-getline(o:file):string := (
-     ch := 0;
-     while ( ch = getc(o); !(isnewline(ch) || ch == EOF))
-     do ( tokenbuf << char(ch); );
-     takestring(tokenbuf));
 readfun(e:Expr):Expr := (
      when e
      is f:file do Expr(read(f))

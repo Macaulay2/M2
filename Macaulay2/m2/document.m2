@@ -944,8 +944,14 @@ texMath List := x -> concatenate("\\{", between(",", apply(x,texMath)), "\\}")
 texMath Array := x -> concatenate("[", between(",", apply(x,texMath)), "]")
 texMath Sequence := x -> concatenate("(", between(",", apply(x,texMath)), ")")
 
-texMath HashTable := x -> if x.?tex then x.tex else texMath expression x
-tex HashTable := x -> if x.?tex then "$" | x.tex | "$" else tex expression x
+texMath HashTable := x -> if x.?texMath then x.texMath else texMath expression x
+
+tex HashTable := x -> (
+     if x.?tex then x.tex 
+     else if x.?texMath then concatenate("$",x.texMath,"$")
+     else if x.?name then x.name
+     else tex expression x
+     )
 
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := text Nothing := x -> ""
 

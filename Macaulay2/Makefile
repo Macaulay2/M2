@@ -10,7 +10,7 @@ ifndef CYGWIN32
 doc:: Vasconcelos-appendix
 endif
 ################################# prologue
-all :: initialize config
+justM2 all :: initialize config
 TOPDIR = ..
 include $(TOPDIR)/Makeconf
 .PHONY: default tests all clean dirs misc config \
@@ -34,7 +34,7 @@ cache :; mkdir $@
 clean ::; rm -rf cache
 ################################# lib
 ifdef SHAREDLIBS
-all :: lib
+justM2 all :: lib
 lib :; mkdir $@
 endif
 clean ::; rm -rf lib
@@ -45,26 +45,26 @@ initialize ::; $(MAKE) -C util all
 clean ::; $(MAKE) NODEPENDS=1 -C util clean
 wc ::; $(MAKE) NODEPENDS=1 -C util wc
 ################################# c
-all ::; $(MAKE) -C c all
+justM2 all ::; $(MAKE) -C c all
 clean ::; $(MAKE) NODEPENDS=1 -C c clean
 wc ::;  $(MAKE) -C c NODEPENDS=1 wc
 ################################# c2
 all ::; $(MAKE) NODEPENDS=1 -C c2 targettypes.h
 clean ::; $(MAKE) NODEPENDS=1 -C c2 clean
 ################################# e
-all ::; $(MAKE) -C e all
+justM2 all ::; $(MAKE) -C e all
 tests ::; $(MAKE) -C e tests
 clean ::; $(MAKE) NODEPENDS=1 -C e clean
 wc ::;  $(MAKE) -C e NODEPENDS=1 wc
 ################################# dbm
-all ::; $(MAKE) -C dbm all
+justM2 all ::; $(MAKE) -C dbm all
 tests ::; $(MAKE) -C dbm tests
 clean ::; $(MAKE) NODEPENDS=1 -C dbm clean
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# dumpdata
 ifndef NODUMPDATA
 ifdef NEWDUMPDATA
-all ::; $(MAKE) -C dumpdata all
+justM2 all ::; $(MAKE) -C dumpdata all
 tests ::; $(MAKE) -C dumpdata tests
 endif
 endif
@@ -72,7 +72,7 @@ clean ::; $(MAKE) NODEPENDS=1 -C dumpdata clean
 wc ::;  $(MAKE) -C dumpdata NODEPENDS=1 wc
 ################################# d
 config ::; $(MAKE) NODEPENDS=1 -C d compat.h
-all ::; util/restart d/restart.tmp $(MAKE) -C d all
+justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
 clean ::; $(MAKE) NODEPENDS=1 -C d clean
 wc ::;  $(MAKE) -C d NODEPENDS=1 wc
 ################################# basictests
@@ -82,10 +82,11 @@ clean ::; $(MAKE) -C basictests clean
 clean ::; if [ -d thread ]; then $(MAKE) -C thread clean; fi
 ################################# tutorial
 #### keep this before 'm2' so the final/*.out files get made
-all::; $(MAKE) -C tutorial all
+justM2 all::; $(MAKE) -C tutorial all
 clean::; $(MAKE) -C tutorial clean
 ################################# m2
 all ::; $(MAKE) -C m2 all
+justM2 ::; $(MAKE) -C m2 default
 tests ::;  $(MAKE) -C m2 tests
 clean ::; $(MAKE) -C m2 clean
 wc ::;  $(MAKE) -C m2 wc
