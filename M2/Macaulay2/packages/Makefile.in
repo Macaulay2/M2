@@ -17,7 +17,7 @@ Makefile : Makefile.in
 
 #############################################################################
 all :: doc
-doc :
+doc : $(DOC)
 	../bin/M2 -q '-e phase=2' StateTable.m2 '-e exit 0'
 	../bin/M2 -q '-e phase=2' eliminate.m2  '-e exit 0'
 	$(MAKE) -k -C $(DOC) -f ../../../m2/Makefile.egs
@@ -39,7 +39,7 @@ tests ::
 #############################################################################
 initialize :: cache $(DOC) $(TEST)
 clean :; rm -rf cache
-cache $(DOC) $(TEST) :; mkdir $@
+cache $(DOC) $(TEST) :; mkdir -p $@
 
 initialize :: $(DOC)/up.gif $(DOC)/next.gif $(DOC)/previous.gif $(DOC)/top.gif \
 		$(DOC)/index.gif $(DOC)/null.gif 
