@@ -295,7 +295,7 @@ M2_string system_getcwd()
 #if defined(__MWERKS__) && !defined(__BUILDING_MPW__)
      strcat(buf,":");
 #else
-     strcat(buf,"/");
+     if (0 != strcmp(buf,"/")) strcat(buf,"/");
 #endif
      if (x != NULL) return tostring(x);
      return tostring("");
