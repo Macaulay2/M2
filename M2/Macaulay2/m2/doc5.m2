@@ -22,18 +22,20 @@ document { override,
      }
 
 document { userSymbols,
-     TT "userSymbols ()", " -- provides a list of variables defined by
+     HEADLINE "a list of the user's symbols",
+     TT "userSymbols ()", " -- provides a list of symbols defined by
      the user.",
      BR,
-     NOINDENT, TT "userSymbols X", " -- limits the list to those variables whose
+     NOINDENT, TT "userSymbols X", " -- limits the list to those symbols whose
      values are instances of the class X.",
      PARA,
-     "Protected variables are excluded from the list.",
+     "Protected symbols are excluded from the list.",
      SEEALSO "listUserSymbols"
      }
 
 
 document { listUserSymbols,
+     HEADLINE "display the user's symbols",
      TT "listUserSymbols", " -- a command which returns a display of the variables 
      defined by the user, along with their types.",
      BR,
@@ -46,6 +48,7 @@ document { listUserSymbols,
      }
 
 document { clearOutput,
+     HEADLINE "forget output values",
      TT "clearOutput", " -- a command which attempts to release memory by 
      clearing the values retained by the output line symbols.",
      PARA,
@@ -53,6 +56,7 @@ document { clearOutput,
      }
 
 document { clearAll,
+     HEADLINE "forget evertything",
      TT "clearAll", " -- a command which attempts to release memory by clearing 
      the values retained by the output line symbols and all the user symbols.",
      PARA,
@@ -60,12 +64,14 @@ document { clearAll,
      }
 
 document { ConversionFormat,
+     HEADLINE "convert to engine format",
      TT "ConversionFormat", " -- a method consulted to provide an engine conversion
      format.",
      SEEALSO {"convert", "pop"}
      }
 
 document { convert,
+     HEADLINE "convert to engine format",
      TT "convert (fmt,str)", " -- converts a string ", TT "str", " containing data 
      transmitted from the engine in the ", TO "engine communication protocol", ".
      The argument ", TT "fmt", " is a recursive description of the format to
@@ -110,6 +116,7 @@ document { convert,
      }
 
 document { ConvertToExpression,
+     HEADLINE "specify mehtod for converting to engine format",
      TT "ConvertToExpression", " -- a key for classes under which a
      conversion format is stored.",
      PARA,
@@ -117,72 +124,77 @@ document { ConvertToExpression,
      }
 
 document { pop,
-     TT "pop", " -- used as a key.  If X is a class, then X.pop will contain a
-     routine which uses ", TO "convert", " to pop the top item off the
-     engine's stack and return it.",
+     HEADLINE "pop a value from the engine's stack",
+     TT "pop", " -- used as a key.  If ", TT "X", " is a class,
+     then ", TT "X.pop", " will contain a routine which uses
+     ", TO "convert", " to pop the top item off the engine's stack
+     and return it.",
      SEEALSO "engine communication protocol"
      }
 
 document { ConvertInteger,
+     HEADLINE "convert an integer from engine format",
      "A format item for communication with the engine that corresponds to
      an integer.  See ", TO "transmitting an integer", "."
      }
 
-
 document { ConvertApply,
+     HEADLINE "apply a function after specified engine format conversions",
      TT "ConvertApply(f,T1,...,Tm)", " -- a format item for communication with
-     the engine that specifies that format items T1, ..., Tm should be 
+     the engine that specifies that format items ", TT "T1", ", ..., ", TT "Tm", " should be 
      applied to the bytes received from the engine, and then the function
      ", TT "f", " should be applied to the sequence of results.",
      PARA,
      "See ", TO "convert", "."
      }
 
-
 document { ConvertList,
+     HEADLINE "convert a sequence of items from engine format",
      TT "ConvertList T", " -- a format item for converting data received from the
-     ", TO "engine", ", which specifies that format item T be applied to each
+     ", TO "engine", ", which specifies that format item ", TT "T", " be applied to each
      element in the array, returning the results as a list.",
      PARA,
      "See ", TO "convert", "."
      }
 
-
 document { ConvertRepeat,
+     HEADLINE "convert a sequence of items from engine format",
      TT "ConvertRepeat T", " -- a format item for converting data received from the
-     ", TO "engine", ", which specifies that format item T be applied to each
+     ", TO "engine", ", which specifies that format item ", TT "T", " be applied to each
      element in the array, returning the results as a sequence.",
      PARA,
      "See ", TO "convert", "."
      }
 
-
 document { ConvertFixedRepeat,
+     HEADLINE "convert a fixed length sequence of items from engine format",
      TT "ConvertFixedRepeat(n,T1,...,Tm)", " -- a format item for converting data
-     from the engine that specifies that the format items T1,...Tm be applied
-     to the incoming data a total of n times.",
+     from the engine that specifies that the format items ", TT "T1", ",...,", TT "Tm", " be applied
+     to the incoming data a total of ", TT "n", " times.",
      PARA,
      "See ", TO "convert", "."
      }
 
-
 document { ConvertJoin,
+     HEADLINE "convert several items from engine format",
      TT "ConvertJoin(T1,...,Tm)", " -- a format item for converting data
-     from the engine that specifies that format items T1,...,Tm be applied
+     from the engine that specifies that format items ", TT "T1", ",...,", TT "Tm", " be applied
      to the data received, and the sequence of results returned.",
      PARA,
-     "If there is just one format item T1, then its result is returned.",
+     "If there is just one format item ", TT "T1", ", then its result is returned.",
      PARA,
      "See ", TO "convert", "."
      }
 
 document { sendToEngine,
+     HEADLINE "send a command string to the engine",
      TT "sendToEngine s", " -- sends the string ", TT "s", " to the engine and returns the result.",
      PARA,
      "See also ", TO "engine communication protocol", "."
      }
 
 document { ConvertMissing,
+     HEADLINE "a missing engine conversion format item",
      TT "ConvertMissing", " -- a format item for converting data from the engine
      which specifies that the class for which this item has been installed
      has no conversion format specified, presumably because it corresponds
@@ -213,6 +225,7 @@ TEST "
      "
 
 document { exec,
+     HEADLINE "execute another program",
      TT "exec argv", " -- uses the 'exec' operating system call to
      start up another program, replacing the current Macaulay 2 process.
      Here ", TT "argv", " is a string, or a sequence or list of strings
@@ -220,14 +233,16 @@ document { exec,
      is the name of the executable file."
      }
 
-
 document { restart,
+     HEADLINE "restart Macaulay 2",
      TT "restart", " -- restart Macaulay 2 from the beginning.",
      PARA,
      "Functions previously registered with ", TO "addEndFunction", " will
      be called first."
      }
+
 document { on,
+     HEADLINE "trace a function each time it's run",
      TT "f = on f", " -- replaces the function ", TT "f", " by a version which 
      will print out its arguments and return value each time it's called,
      together with a sequence number so the two reports can be connected.",
@@ -240,16 +255,19 @@ document { on,
      will know its name.  The name will appear in the display."
      }
 
-
 document { assert,
+     HEADLINE "assert something is true",
      TT "assert x", " -- prints an error message if x isn't true."
      }
+
 document { notImplemented,
+     HEADLINE "print an 'not implemented' error message",
      TT "notImplemented()", " -- print an error message that 
      says \"not implemented yet\"."
      }
 
 document { errorDepth,
+     HEADLINE "set the error printing depth",
      TT "errorDepth i", " -- sets the error depth to i, which should be
      a small integer, returning the old value.",
      PARA,
@@ -261,6 +279,7 @@ document { errorDepth,
      }
 
 document { benchmark,
+     HEADLINE "accurate timing of execution",
      TT "benchmark s", " -- produce an accurate timing for the code contained
      in the string ", TT "s", ".  The value returned is the number of seconds.",
      PARA,
@@ -270,6 +289,7 @@ document { benchmark,
      }
 
 document { memoize,
+     HEADLINE "record results of function evaluation for future use",
      TT "memoize f", " -- produces, from a function f, a new function which
      behaves the same as f, but remembers previous answers to be provided
      the next time the same arguments are presented.",
@@ -323,6 +343,7 @@ assert( a == 3 )
 "
 
 document { (symbol _, Tally, Thing),     
+     HEADLINE "get a count from a tally",
      TT "t_x", " -- returns the number of times ", TT "x", " is counted
      by ", TT "t", ".",
      SEEALSO "Tally"
@@ -334,6 +355,7 @@ document { Tally,
      }
 
 document { (symbol **, Tally, Tally),
+     HEADLINE "Cartesian product of tallies",
      TT "x ** y", " -- produces the Cartesian product of two tallies.",
      PARA,
      "One of the arguments may be a ", TO "Set", ".",
@@ -347,12 +369,14 @@ document { (symbol **, Tally, Tally),
      }
 
 document { (symbol ?, Tally, Tally),
+     HEADLINE "comparison of tallies",
      TT "x ? y", " -- compares two tallies, returning ", TT "symbol <", ", ",
      TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
      SEEALSO "Tally"
      }
 
 document { (symbol +, Tally, Tally),
+     HEADLINE "union of tallies",
      TT "x + y", " -- produces the union of two tallies.",
      PARA,
      "One of the arguments may be a ", TO "Set", ".",
@@ -366,6 +390,7 @@ document { (symbol +, Tally, Tally),
      }
 
 document { (symbol -, Tally, Tally),
+     HEADLINE "difference of tallies",
      TT "x - y", " -- produces the difference of two tallies.",
      PARA,
      EXAMPLE "tally {a,a,b,c} - tally {c,d,d}",
@@ -394,7 +419,9 @@ assert( toString tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 =>
 assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
 ///
 
-document { Set, HEADLINE "the class of all sets" }
+document { Set, 
+     HEADLINE "the class of all sets"
+     }
 
 document { (symbol #?, Set, Thing), HEADLINE "test set membership",
      TT "x#?i", " -- tests whether ", TT "i", " is a member of the set ", TT "x", "."
