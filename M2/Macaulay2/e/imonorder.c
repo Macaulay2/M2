@@ -155,7 +155,7 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 {
   MonomialOrder *result;
   int i,j,nv,this_block;
-  double *wts;
+  double *wts = NULL;
   /* Determine the number of variables, the number of blocks, and the location
      of the component */
   int nblocks = 0;
