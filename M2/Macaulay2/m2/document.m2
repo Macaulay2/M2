@@ -471,12 +471,16 @@ indefinite := s -> concatenate(if vowels#?(s#0) and not match("^one ",s) then "a
 synonym = X -> if X.?synonym then X.synonym else "object of class " | toString X
 
 synonymAndClass := X -> (
-     if X.?synonym
-     then SEQ {indefinite X.synonym, " (of class ", TO X, ")"}
+     if X.?synonym then SEQ {indefinite X.synonym, " (of class ", TO X, ")"}
      else SEQ {"an object of class ", TO X}
      )     
 
 justClass := X -> SEQ {"an instance of class ", TO X}
+
+justSynonym := X -> (
+     if X.?synonym then TO2 {X, indefinite X.synonym}
+     else SEQ {"an object of class ", TO X}
+     )
 
 usage := s -> (
      o := getDocBody s;
@@ -543,7 +547,7 @@ synopsis Thing := f -> (
 	       else SEQ SYN#i
 	       );
 	  SEQ {
-	       BOLD "Synopsis:",
+	       PARA BOLD "Synopsis:",
 	       SHIELD UL {
 		    if SYN#?0 then SEQ { "Usage: ", TT SYN#0},
 		    if SYN#?1 then SEQ { "Input:", UL { t 1, t 2, t 3 } },
@@ -580,24 +584,24 @@ synopsis Sequence := s -> (
 	       else descv = d SYN#-1);
 	       );
 	  );
-     PARA {
-	  BOLD "Synopsis:",
+     SEQ {
+	  PARA BOLD "Synopsis:",
 	  SHIELD UL {
 	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
 	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0, headline s#0 },
 	       SEQ { "Input:",
 		    UL {
 			 if arg1 === null
-			 then SEQ {justClass s#1, desc1 }
-			 else SEQ {arg1, ", ", justClass s#1, desc1 }, 
+			 then SEQ {justSynonym s#1, desc1 }
+			 else SEQ {arg1, ", ", justSynonym s#1, desc1 }, 
 			 if #s > 2 then
 			 if arg2 === null
-			 then SEQ {justClass s#2, desc2 } 
-			 else SEQ {arg2, ", ", justClass s#2, desc2 }, 
+			 then SEQ {justSynonym s#2, desc2 } 
+			 else SEQ {arg2, ", ", justSynonym s#2, desc2 }, 
 			 if #s > 3 then
 			 if arg3 === null
-			 then SEQ {justClass s#3, desc3 }
-			 else SEQ {arg3, ", ", justClass s#3, desc3 }
+			 then SEQ {justSynonym s#3, desc3 }
+			 else SEQ {arg3, ", ", justSynonym s#3, desc3 }
 			 }
 		    },
 	       if t =!= Thing or retv =!= null or descv =!= "." 
@@ -605,8 +609,8 @@ synopsis Sequence := s -> (
 	       	    "Output:",
 	       	    UL {
 		    	 if retv === null
-		    	 then SEQ {justClass t, descv}
-		    	 else SEQ {retv, ", ", justClass t  , descv}
+		    	 then SEQ {justSynonym t, descv}
+		    	 else SEQ {retv, ", ", justSynonym t  , descv}
 		    	 }
 		    },
 	       optargs s,
@@ -705,7 +709,7 @@ seecode := x -> (
      n := code f;
      if n =!= null 
      and height n + depth n <= 10 and width n <= maximumCodeWidth
-     then SEQ { BOLD "Code:", PRE concatenate between(newline,unstack n) }
+     then PARA { BOLD "Code:", PRE concatenate between(newline,unstack n) }
      )
 
 documentationValue := method()
@@ -752,7 +756,7 @@ documentation Option := v -> (
 	       title v,
 	       synopsis v,
 	       usage v,
-	       BOLD "See also:",
+	       PARA BOLD "See also:",
 	       SHIELD UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
 		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
@@ -805,9 +809,9 @@ TEST List := y -> TEST \ y
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
-     if #v > 0 then PARA { BOLD "See also:", SHIELD UL (TO \ v) })
+     if #v > 0 then SEQ { PARA BOLD "See also:", SHIELD UL (TO \ v) })
 
-CAVEAT = v -> PARA { BOLD "Caveat:", SHIELD UL { SEQ v } }
+CAVEAT = v -> SEQ { PARA BOLD "Caveat:", SHIELD UL { SEQ v } }
 
 -----------------------------------------------------------------------------
 -- html output
@@ -1021,7 +1025,7 @@ html TABLE := x -> concatenate(
 
 html ExampleTABLE := x -> concatenate(
      newline,
-     "<table id=\"examples\" cellspacing='0' cellpadding='12' border='4' width='100%'>",
+     "<table class=\"examples\" cellspacing='0' cellpadding='12' border='4' width='100%'>",
      newline,
      apply(x, 
 	  item -> (
@@ -1170,9 +1174,9 @@ tex UL := x -> concatenate(
 
 html UL := x -> concatenate (
      newline,
-     "<menu>", newline,
+     "<ul>", newline,
      apply(addHeadlines x, s -> if s =!= null then ("<li>", html s, "</li>", newline)),
-     "</menu>", newline)
+     "</ul>", newline)
 
 text UL   := x -> concatenate(
      newline,

@@ -94,6 +94,7 @@ new SEQ from List := (SEQ,v) -> select (splice apply(v,
 TT         = new MarkUpType
 EM         = new MarkUpType
 CITE       = new MarkUpType
+LABEL      = new MarkUpType
 BOLD       = new MarkUpType
 CODE       = new MarkUpType
 HREF       = new MarkUpType
@@ -104,6 +105,7 @@ OL         = new MarkUpType
 NL         = new MarkUpType
 DL 	   = new MarkUpType
 TO         = new MarkUpType
+TO2        = new MarkUpType
 TOH        = new MarkUpType
 
 MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}

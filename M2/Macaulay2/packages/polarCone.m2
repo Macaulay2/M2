@@ -347,12 +347,12 @@ polarCone(Matrix) := (Z) -> (
 -- DOCUMENTATION
 ------------------------------------------------------------
 document { polarCone
-     HEADLINE => {"find the polar dual of a rational convex 
+     Headline => {"find the polar dual of a rational convex 
 	  polyhedral cone"},
-     USAGE => {
+     Usage => {
 	  TT "polarCone(A, B)", " -- find the polar cone"
 	  },
-     SYNOPSIS => {
+     Synopsis => {
 	  "C' = polarCone(A, B)",
 	  "A" => {"a ", TT "d ", "by ", TT "n ", "matrix 
 	       over ", TT "ZZ ", "or ", TT "QQ", "."},
