@@ -91,16 +91,19 @@ GMPlibs = lib/gmp.lib
 lib/gmp.lib: gmp/gmp.lib lib/.exists; cp $< $@
 gmp/gmp.lib : make-gmp
 else
-GMPlibs = lib/libmpn.a lib/libmpz.a lib/libmpq.a lib/libmpf.a lib/libgmp.a
-lib/libmpn.a: gmp/mpn/libmpn.a lib/.exists; cp $< $@; ranlib $@
-lib/libmpz.a: gmp/mpz/libmpz.a lib/.exists; cp $< $@; ranlib $@
-lib/libmpq.a: gmp/mpq/libmpq.a lib/.exists; cp $< $@; ranlib $@
-lib/libmpf.a: gmp/mpf/libmpf.a lib/.exists; cp $< $@; ranlib $@
-lib/libgmp.a: gmp/libgmp.a lib/.exists; cp $< $@; ranlib $@
-gmp/mpn/libmpn.a : make-gmp
-gmp/mpz/libmpz.a : make-gmp
-gmp/mpq/libmpq.a : make-gmp
-gmp/mpf/libmpf.a : make-gmp
+GMPnames := gmp
+# GMPnames += mpn mpz mpq mpf 
+GMPFLAGS := -g -O2
+GMPlibs := $(foreach i, $(GMPnames), lib/lib$(i).a)
+# lib/libmpn.a: gmp/mpn/libmpn.a lib/.exists; cp $< $@; ranlib $@
+# lib/libmpz.a: gmp/mpz/libmpz.a lib/.exists; cp $< $@; ranlib $@
+# lib/libmpq.a: gmp/mpq/libmpq.a lib/.exists; cp $< $@; ranlib $@
+# lib/libmpf.a: gmp/mpf/libmpf.a lib/.exists; cp $< $@; ranlib $@
+lib/libgmp.a: gmp/libgmp.a     lib/.exists; cp $< $@; ranlib $@
+# gmp/mpn/libmpn.a : make-gmp
+# gmp/mpz/libmpz.a : make-gmp
+# gmp/mpq/libmpq.a : make-gmp
+# gmp/mpf/libmpf.a : make-gmp
 gmp/libgmp.a : make-gmp
 endif
 
@@ -109,7 +112,7 @@ GMP : 	gmp include/gmp.h $(GMPlibs)
 include/gmp.h: gmp/gmp.h include/.exists; cp $< $@
 
 make-gmp : GMPconfigure
-	$(MAKE) -C gmp
+	$(MAKE) CFLAGS="$(GMPFLAGS)" -C gmp
 
 ifeq "$(CC)" "cl"
 GMPconfigure : gmp/Makefile
@@ -136,7 +139,13 @@ all:: FACTORY
 FACTORYMFLAGS :=
 FACTORYINC :=
 
-FACTORY:: include/gmp.h FACTORYconfigured FACTORYmade lib/FACTORYinstalled
+FACTORY:: include/gmp.h FACTORYconfigured FACTORYmade lib/libcf.a lib/FACTORYinstalled
+
+ifdef SHAREDLIBS
+FACTORY:: Macaulay2/lib/libcf.so
+Macaulay2/lib/libcf.so : lib/libcf.a
+	ld -shared --whole-archive $< $(OUTPUT_OPTION)
+endif
 
 FACTORYexports := \
 		factory/factory.h \
@@ -152,6 +161,8 @@ FACTORYexports := \
 		factory/templates/matrix.h     \
 		factory/tmpl_inst.cc
 
+FACFLAGS :=
+
 ifeq "$(CC)" "cl"
 FACTORYexports += factory/cf.lib
 clean::; rm -f factory/malloc.h
@@ -163,25 +174,28 @@ factory/config.h : WindowsNT/factory/config.h
 factory/factoryconf.h : WindowsNT/factory/factoryconf.h
 	cp $< $@
 else
+ifdef SHAREDLIBS
+FACFLAGS += -fPIC
+endif
 FACTORYexports += factory/libcf.a
 FACTORYconfigured: factory/config.status factory/config.h
 factory/config.h factory/config.status factory/GNUmakefile : \
 		factory/GNUmakefile.in factory/configure
 	cd factory;\
 	GMP_INCLUDE_PATH=../include \
-	CFLAGS="$(CFLAGS)" \
-	CXXFLAGS="$(CXXFLAGS)" \
+	CFLAGS="$(CFLAGS) $(FACFLAGS)" \
+	CXXFLAGS="$(CXXFLAGS) $(FACFLAGS)" \
 	LDFLAGS="$(LDFLAGS)" \
 	./configure --cache-file=../config.cache --prefix=.. --with-memman --with-optimize
 endif
 
 FACTORYmade:
 	$(MAKE) -C factory $(FACTORYMAKEFLAGS) \
-	   CFLAGS="$(CFLAGS)" \
-	   CXXFLAGS="$(CXXFLAGS)" \
+	   CFLAGS="$(CFLAGS) $(FACFLAGS)" \
+	   CXXFLAGS="$(CXXFLAGS) $(FACFLAGS)" \
 	   CPPFLAGS="$(CPPFLAGS) -I../include $(FACTORYINC)"
 
-lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
+lib/libcf.a lib/FACTORYinstalled: lib/.exists include/.exists $(FACTORYexports)
 	$(MAKE) -C factory $(FACTORYMAKEFLAGS) install
 	rm -f lib/libcfmem.a
 	touch $@
@@ -193,21 +207,36 @@ clean::; rm -rf share
 ###################### LIBFAC
 all:: LIBFAC
 
+ifdef SHAREDLIBS
+LIBFACFLAGS := -fPIC
+else
+LIBFACFLAGS := 
+endif
+
 ifeq "$(CC)" "cl"
-LIBFAC: libfac libfac/Makefile lib/libfac.lib include/factor.h
+LIBFAC:: libfac libfac/Makefile lib/libfac.lib include/factor.h
 libfac/Makefile : WindowsNT/libfac/Makefile
 	cp WindowsNT/$@ $@
 lib/libfac.lib: libfac/libfac.lib lib/.exists; cp $< $@; ranlib $@
 libfac/libfac.lib : always
 	$(MAKE) -C libfac
 else
-LIBFAC: libfac libfac/OPTOBJ libfac/config.status libfac/libfac.a include/factor.h lib/libfac.a
+LIBFAC:: libfac libfac/OPTOBJ libfac/config.status libfac/libfac.a include/factor.h
+ifdef SHAREDLIBS
+LIBFAC:: Macaulay2/lib/libfac.so
+Macaulay2/lib/libfac.so : libfac/libfac.a
+	ld -shared --whole-archive $^ $(OUTPUT_OPTION)
+else
+LIBFAC:: lib/libfac.a
+endif
 libfac/OPTOBJ :; mkdir $@
 libfac/config.status : libfac/configure
 	cd libfac; ./configure --silent --cache-file=../config.cache --includedir=../include
 lib/libfac.a: libfac/libfac.a lib/.exists; cp $< $@; ranlib $@
 libfac/libfac.a : always
-	$(MAKE) CXX=$(CXX) OPTCXX=$(CXX) -C libfac libfac
+	$(MAKE) CXX=$(CXX) OPTCXX=$(CXX) \
+		CXXFLAGS="-O2 -g $(LIBFACFLAGS)" CFLAGS="-O2 -g $(LIBFACFLAGS)" \
+		-C libfac libfac
 endif
 
 include/factor.h: libfac/factor.h include/.exists; cp $< $@
@@ -242,6 +271,7 @@ Makeconf.h : Makeconf Makeconf.var Makeconf.lcl
 	echo '#define OS "$(OS)"' >>tmp.tmp
 	echo '#define ARCH "$(ARCH)"' >>tmp.tmp
 	echo '#define REL "$(REL)"' >>tmp.tmp
+	echo '#define SHAREDLIBS "$(SHAREDLIBS)"' >>tmp.tmp
 ifdef FACTORYVERSION
 	echo '#define FACTORYVERSION $(FACTORYVERSION)' >>tmp.tmp
 else
@@ -293,6 +323,9 @@ DISTFILES := 	Macaulay2/README.txt \
 		Macaulay2/setup \
 		Macaulay2/cache/Macaulay2-doc \
 		Macaulay2/bin Macaulay2/m2 Macaulay2/emacs Macaulay2/tutorial/final/*.out
+ifdef SHAREDLIBS
+DISTFILES += Macaulay2/lib
+endif
 Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
 	tar cf - $(DISTFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"

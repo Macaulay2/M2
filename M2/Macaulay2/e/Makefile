@@ -45,6 +45,10 @@ CXXFLAGS += -O3
 CXXFLAGS += -g $(WARNINGS)
 endif
 
+ifdef SHAREDLIBS
+CXXFLAGS += -fPIC
+endif
+
 CFLAGS = $(CXXFLAGS)
 # ARFLAGS  = r
 LIBNAME  = gb
@@ -185,11 +189,14 @@ endif
 
 GENERATED_H = cmdnames cmdinst geovec geores
 
-FILES := $(ESTUFF) $(CONTAINER) $(INTERFACE) $(COMMANDS) $(NAMES)
-OFILES := $(addsuffix .o,$(FILES)) $(addsuffix .o,$(C_FILES))
-
+LOFILES1 := $(addsuffix .lo,$(ESTUFF) $(NAMES) $(CONTAINER) $(INTERFACE))
+LOFILES2 := $(addsuffix .lo,$(COMMANDS) $(C_FILES))
+LOFILES := $(LOFILES1) $(LOFILES2)
+FILES := $(LOFILES:.lo=)
+%.lo : %.c  ; $(COMPILE.c)  -fPIC $< $(OUTPUT_OPTION)
+%.lo : %.cc ; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
+%.lo : %.cpp; $(COMPILE.cc) -fPIC $< $(OUTPUT_OPTION)
 CCFILES := $(addsuffix .cpp,$(FILES))
-
 CFILES := $(addsuffix .c,$(C_FILES))
 
 HHFILES := $(addsuffix .hpp, \
@@ -207,6 +214,12 @@ ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS)
 ## Targets ##
 #############
 all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H)) $(OFILES)
+
+ifdef SHAREDLIBS
+all:: ../lib/engine1.so ../lib/engine2.so
+../lib/engine1.so : $(LOFILES1); $(CC) -shared $^ $(OUTPUT_OPTION)
+../lib/engine2.so : $(LOFILES2); $(CC) -shared $^ $(OUTPUT_OPTION)
+endif
 
 %.ii: %.cpp
 	$(PRE.cc) $< -o $@
@@ -236,7 +249,7 @@ TAGS: $(HFILES) $(CCFILES)
 	etags *.hpp *.cpp *.c
 
 clean:
-	rm -f *.o *.dd *.ii $(LIB) allfiles cmdinst.hpp cmdnames.hpp cmdnames.m2
+	rm -f *.lo *.o *.dd *.ii $(LIB) allfiles cmdinst.hpp cmdnames.hpp cmdnames.m2
 	rm -f TAGS
 
 depend:
