@@ -43,6 +43,9 @@ stoppingOptionDefaults := new OptionTable from {
      -- LengthLimit => null -- is only for res computations
      }
 
+
+getSomeOptions := (opts,which) -> applyPairs( which, (key,val) -> (key,opts#key) )
+
 gbDefaults := merge(computationOptionDefaults,stoppingOptionDefaults, x -> error "overlap")
 
 computationIsComplete := (f,type) -> f.cache#?type and f.cache#type.?returnCode and f.cache#type.returnCode === 0
@@ -117,7 +120,8 @@ elseSomething(Nothing,Function) := (x,f) -> f()
 
 newGB := (f,type,opts) -> (
      G := new GroebnerBasis;
-     G.matrix = f;
+     G.cache = new MutableHashTable;
+     G.cache.matrix = f;
      G.ring = ring f;
      G.target = target f;
      G.RawComputation = rawGB(
@@ -156,12 +160,18 @@ checkArgGB := f -> (
      if isPolynomialRing R and not (isField coefficientRing R or coefficientRing R === ZZ) then error "expected coefficient ring to be ZZ or a field"; -- remove later
      )
 
+recordOptions := (G,opts) -> (
+     G#"stopping options" = getSomeOptions(opts,stoppingOptionDefaults);
+     G#"computation options" = getSomeOptions(opts,computationOptionDefaults);
+     )
+
 gb Matrix := GroebnerBasis => opts -> (f) -> (
      checkArgGB f;
      type := gbTypeCode opts;
      G := elseSomething( gbGetSuitable(f,type), () -> newGB(f,type,opts) );
      ifSomething( gbGetHilbertHint(f,opts), hil -> rawGBSetHilbertFunction(G.RawComputation,raw hil) );
      setStopGB(G,opts);
+     recordOptions(G,opts);
      rawStartComputation G.RawComputation;
      G)
 
