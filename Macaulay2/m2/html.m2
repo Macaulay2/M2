@@ -227,7 +227,9 @@ ForestNode = new Type of BasicList			    -- list of formatted keys for descenden
 TreeNode = new Type of BasicList			    -- first entry is formatted key for this node, second entry is a descendent list
 
 net ForestNode := x -> stack apply(toList x,net)
-net TreeNode := x -> net x#0 || (stack (#x#1 : " |  ")) | net x#1
+net TreeNode := x -> (
+     y := net x#1;
+     net x#0 || (stack (height y + depth y : " |  ")) | y)
 
 local visitCount
 local externalReferences
