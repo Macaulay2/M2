@@ -658,7 +658,10 @@ M2_string serv;
      return sd;
      }
 
-extern int errno, sys_nerr;
+extern int errno;
+#if defined HAVE_DECL_SYS_NERR && !HAVE_DECL_SYS_NERR
+extern int sys_nerr;
+#endif
 
 #ifdef __CYGWIN__
 #define NO_HERROR

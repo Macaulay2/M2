@@ -74,4 +74,3 @@ assert(null === r)
 
 any({1,2,3}, i -> break 4)
 select({1,2,3,4}, i -> break 4 )
-

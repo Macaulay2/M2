@@ -1,10 +1,41 @@
-/* include/config.h.in.  Generated automatically from configure.ac by autoheader.  */
+/* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* machine hardware type, obtained with uname -m */
 #undef ARCH
 
 /* whether to use dumpdata */
 #undef DUMPDATA
+
+/* Define to 1 if you have the declaration of `sys_nerr', and to 0 if you
+   don't. */
+#undef HAVE_DECL_SYS_NERR
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
 
 /* whether h_errlist is declared in errno.h or stdio.h */
 #undef H_ERRLIST_IS_DECLARED
@@ -27,11 +58,26 @@
 /* operating system name, obtained with uname -s */
 #undef OS
 
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
 /* version number */
 #undef PACKAGE_VERSION
 
 /* operating system release, obtained with uname -r */
 #undef REL
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
 
 /* whether sys_errlist is declared in errno.h or stdio.h */
 #undef SYS_ERRLIST_IS_DECLARED

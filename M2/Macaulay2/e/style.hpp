@@ -3,7 +3,6 @@
 #define _style_hh_
 
 #include <cmath>    // to get fabs(), gcc 3.0
-#include <vector.h> // just to get swap(), which is included from algobase.h by vector.h, gcc 3.0
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -12,6 +11,16 @@
 #include <string.h>
 
 #include <gmp.h>
+
+// took this include out because <vector> doesn't seem to provide it
+// #include <vector.h> // just to get swap(), which is included from algobase.h by vector.h, gcc 3.0
+// here's the code instead
+template<typename A> inline void swap(A& a, A& b) {
+  A tmp = a;
+  a = b;
+  b = tmp;
+}
+//
 
 extern "C" char newline[];
 
