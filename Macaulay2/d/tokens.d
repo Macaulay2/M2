@@ -242,7 +242,7 @@ export Frame := {
 
 export noRecycle(f:Frame):Frame := (
      g := f;
-     while (
+     while !g.notrecyclable && (
 	  g.notrecyclable = true;
 	  g != g.outerFrame
 	  ) do g = g.outerFrame;

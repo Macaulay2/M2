@@ -407,10 +407,7 @@ bitxorfun(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("xor",bitxorfun);
-semicolonfun(lhs:Code,rhs:Code):Expr := (
-     when eval(lhs)
-     is err:Error do Expr(err)
-     else if rhs == dummyCode then nullE else eval(rhs));
+semicolonfun(lhs:Code,rhs:Code):Expr := when eval(lhs) is err:Error do Expr(err) else eval(rhs);
 setup(semicolonS,semicolonfun);
 starfun(rhs:Code):Expr := unarymethod(rhs,StarS);
 timesfun(lhs:Code,rhs:Code):Expr := (
