@@ -23,7 +23,7 @@ cat <<EOF >compat.mak
 EOF
 
 cat <<'EOF' >$TMP
-main(){}
+int main(){ return 0; }
 EOF
 if $CC $TMP -lm >/dev/null 2>&1
 then :
@@ -33,9 +33,10 @@ fi
 
 cat <<'EOF' >$TMP
 #include <math.h>
-main(){
+int main(){
 	double x;
 	__finite(x);
+	return 0;
 	}
 EOF
 $CC $TMP -lm >/dev/null 2>&1 || echo '#define __finite finite' >>compat.h
@@ -43,9 +44,10 @@ $CC $TMP -lm >/dev/null 2>&1 || echo '#define __finite finite' >>compat.h
 
 cat <<'EOF' >$TMP
 #include <math.h>
-main(){
+int main(){
 	double x;
 	__isnan(x);
+	return 0;
 	}
 EOF
 $CC $TMP -lm >/dev/null 2>&1 || echo '#define __isnan isnan' >>compat.h
@@ -53,9 +55,10 @@ $CC $TMP -lm >/dev/null 2>&1 || echo '#define __isnan isnan' >>compat.h
 
 cat <<'EOF' >$TMP
 #include <math.h>
-main(){
+int main(){
 	double x;
 	__isinf(x);
+	return 0;
 	}
 EOF
 $CC $TMP -lm >/dev/null 2>&1 || echo '#define __isinf isinf' >>compat.h
@@ -78,63 +81,66 @@ EOF
 # fi
 
 cat <<'EOF' >$TMP
-main(){ getprotobyname(); }
+int main(){ getprotobyname(); }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || (
 	echo 'void *getprotobyname() { errno = ENOSYS; return 0; }'
 	) >>compat.c
 
 cat <<'EOF' >$TMP
-main(){ accept(); }
+int main(){
+        accept();
+	return 0;
+        }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || (
 	echo 'int accept() { errno = ENOSYS; return -1; }'
 	) >>compat.c
 
 cat <<'EOF' >$TMP
-main(){ bind(); }
+int main(){ bind(); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || (
 	echo 'int bind() { errno = ENOSYS; return -1; }'
 	) >>compat.c
 
 cat <<'EOF' >$TMP
-main(){ listen(); }
+int main(){ listen(); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || (
 	echo 'int listen() { errno = ENOSYS; return -1; }'
 	) >>compat.c
 
 cat <<'EOF' >$TMP
-main(){ socket(); }
+int main(){ socket(); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || (
 	echo 'int socket() { errno = ENOSYS; return -1; }'
 	) >>compat.c
 
 cat <<'EOF' >$TMP
-main(){ gethostbyname(); }
+int main(){ gethostbyname(); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 ||
 	echo 'void *gethostbyname() { errno = ENOSYS; return (void *)0; }' \
 	>>compat.c
 
 cat <<'EOF' >$TMP
-main(){ inet_addr(); }
+int main(){ inet_addr(); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || 
 	echo 'int inet_addr() { errno = ENOSYS; return -1; }' \
 	>>compat.c
 
 cat <<'EOF' >$TMP
-main(){ getservbyname(); }
+int main(){ getservbyname(); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || 
 	echo 'void *getservbyname() { errno = ENOSYS; return (void *)0; }' \
 	>>compat.c
 
 cat <<'EOF' >$TMP
-main(){ authdes_create(); }
+int main(){ authdes_create(); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || (
 	echo '#ifndef ENOSYS'
@@ -144,7 +150,7 @@ $CC $TMP $FLAGS >/dev/null 2>&1 || (
 	) >>compat.c
 
 cat <<'EOF' >$TMP
-main(){ xdrmem_create(); }
+int main(){ xdrmem_create(); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || 
 	echo 'void *xdrmem_create() { errno = ENOSYS; return (void *)0; }' \
@@ -152,29 +158,50 @@ $CC $TMP $FLAGS >/dev/null 2>&1 ||
 
 cat <<'EOF' >$TMP
 #include <errno.h>
+#include <stdio.h>
+extern const int * sys_errlist;	/* the wrong type, to provoke the compiler */
+int main(){return 0;}
+EOF
+$CC $TMP $FLAGS >/dev/null 2>&1 || 
+	echo '#define SYS_ERRLIST_IS_DECLARED' \
+	>>compat.h
+
+cat <<'EOF' >$TMP
+#include <errno.h>
+#include <stdio.h>
+extern const int * h_errlist;	/* the wrong type, to provoke the compiler */
+int main(){return 0;}
+EOF
+$CC $TMP $FLAGS >/dev/null 2>&1 || 
+	echo '#define H_ERRLIST_IS_DECLARED' \
+	>>compat.h
+
+cat <<'EOF' >$TMP
+#include <errno.h>
+#include <stdio.h>
 extern const char * const sys_errlist[];
-main(){}
+int main(){return 0;}
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || 
 	echo '#define SYS_ERRLIST_NOT_CONST' \
 	>>compat.h
 
 cat <<'EOF' >$TMP
-main(){ connect(); }
+int main(){ connect(); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || 
 	echo 'int connect() { errno = ENOSYS; return -1; }' \
 	>>compat.c
 
 cat <<'EOF' >$TMP
-main(){ setsockopt(); }
+int main(){ setsockopt(); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || 
 	echo 'int setsockopt() { errno = ENOSYS; return -1; }' \
 	>>compat.c
 
 cat <<'EOF' >$TMP
-main(){ extern char *sys_errlist; char *p = sys_errlist; return -1; }
+int main(){ extern char *sys_errlist; char *p = sys_errlist; return -1; }
 EOF
 gcc $TMP $FLAGS >/dev/null 2>&1 || 
 	echo '#define NO_SYS_ERRLIST 1' \
@@ -182,7 +209,7 @@ gcc $TMP $FLAGS >/dev/null 2>&1 ||
 
 cat <<'EOF' >$TMP
 #include <netinet/in.h>
-main(){ htons(0); }
+int main(){ htons(0); return 0; }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || 
 	echo 'short htons(short x) { return x; }' \
@@ -191,9 +218,10 @@ $CC $TMP $FLAGS >/dev/null 2>&1 ||
 cat <<'EOF' >$TMP
 #include <netdb.h>
 extern int h_nerr;
-main(){ 
+int main(){ 
     int i = h_nerr;
     herror((char *)0); 
+    return 0;
     }
 EOF
 $CC $TMP $FLAGS >/dev/null 2>&1 || 

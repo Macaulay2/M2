@@ -614,17 +614,22 @@ M2_string serv;
 extern int errno, sys_nerr;
 #ifndef NO_HERROR
 extern int h_nerr;
+
+#ifndef H_ERRLIST_IS_DECLARED
 #ifdef SYS_ERRLIST_NOT_CONST
 extern char * h_errlist[];
 #else
 extern const char * const h_errlist[];
 #endif
 #endif
+#endif
 
+#ifndef SYS_ERRLIST_IS_DECLARED
 #ifdef SYS_ERRLIST_NOT_CONST
 extern char * sys_errlist[];
 #else
 extern const char * const sys_errlist[];
+#endif
 #endif
 
 int system_errno() {
