@@ -10,11 +10,7 @@
 #endif
 #include "hermite.hpp"
 #include "gbA.hpp"
-
-GBComputation::GBComputation()
-{
-}
-
+#include "gbweight.hpp"
 
 GBComputation::~GBComputation()
 {
@@ -23,7 +19,7 @@ GBComputation::~GBComputation()
 ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
 					  M2_bool collect_syz,
 					  int n_rows_to_keep,
-					  M2_arrayint gb_degrees,
+					  M2_arrayint gb_weights,
 					  M2_bool use_max_degree,
 					  int max_degree,
 					  int algorithm,
@@ -49,12 +45,13 @@ ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
   // bool base_is_field = !R->Ncoeffs()->is_ZZ();
 
   //  if (algorithm == 2)
-    return gbA::create(m, 
-		       collect_syz, 
-		       n_rows_to_keep,
-		       strategy,
-		       use_max_degree,
-		       max_degree);
+  return gbA::create(m, 
+		     collect_syz, 
+		     n_rows_to_keep,
+		     gb_weights,
+		     strategy,
+		     use_max_degree,
+		     max_degree);
 #if 0
   if (is_graded)
     return GB_comp::create(m, 

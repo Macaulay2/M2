@@ -66,7 +66,7 @@ public:
   static ComputationOrNull *choose_gb(const Matrix *m,
 				      M2_bool collect_syz,
 				      int n_rows_to_keep,
-				      M2_arrayint gb_degrees,
+				      M2_arrayint gb_weights,
 				      M2_bool use_max_degree,
 				      int max_degree,
 				      int algorithm,

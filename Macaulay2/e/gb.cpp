@@ -29,7 +29,7 @@ extern ring_elem hilb(const Matrix *M, const Ring *RR);
 // Creation, initialization //
 //////////////////////////////
 
-void GB_comp::initialize0(const Matrix *m, int csyz, int nsyz)
+void GB_comp::initialize0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights)
 {
   int i;
   const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
@@ -41,6 +41,7 @@ void GB_comp::initialize0(const Matrix *m, int csyz, int nsyz)
     }
   originalR = R;
   _GR = R->get_gb_ring();
+  weightInfo_ = new GBWeight(m->rows(), gb_weights);
   _M = _GR->get_flattened_monoid();
   _K = _GR->get_flattened_coefficients();
   
@@ -83,12 +84,16 @@ void GB_comp::initialize0(const Matrix *m, int csyz, int nsyz)
     }
 }
 
-void GB_comp::initialize(const Matrix *m, int csyz, int nsyz, int strat)
+void GB_comp::initialize(const Matrix *m, 
+			 int csyz, 
+			 int nsyz, 
+			 M2_arrayint gb_weights, 
+			 int strat)
 {
   int i;
   _strategy = strat;
 
-  initialize0(m, csyz, nsyz);
+  initialize0(m, csyz, nsyz, gb_weights);
 
   _Fsyz = m->cols()->sub_space(_n_rows_per_syz);  
 
@@ -111,8 +116,10 @@ void GB_comp::initialize_forced(const Matrix *m,
 				const Matrix *gb, 
 				const Matrix *mchange)
 {
+#warning "forced GB: need to set weightInfo_ for remainder?"
   int csyz = false;
-  initialize0(m, csyz, mchange->n_rows());
+  M2_arrayint do_we_need_something_non_null = 0;
+  initialize0(m, csyz, mchange->n_rows(), do_we_need_something_non_null);
 
   _Fsyz = mchange->rows();
 
@@ -132,16 +139,16 @@ void GB_comp::initialize_forced(const Matrix *m,
     }
 }
 
-GB_comp * GB_comp::create(
-			  const Matrix *m,
+GB_comp * GB_comp::create(const Matrix *m,
 			  M2_bool collect_syz,
 			  int n_rows_to_keep,
+			  M2_arrayint gb_weights,
 			  int strategy,
 			  M2_bool use_max_degree_limit,
 			  int max_degree_limit)
 {
   GB_comp *result = new GB_comp;
-  result->initialize(m, collect_syz, n_rows_to_keep, strategy);
+  result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy);
   return result;
 }
 
@@ -184,7 +191,7 @@ s_pair *GB_comp::new_ring_pair(gb_elem *p, const int *lcm)
   s_pair *result = new s_pair;
   result->next = NULL;
   result->syz_type = SPAIR_RING;
-  result->degree = _M->primary_degree(lcm) + _F->primary_degree(p->f->comp-1);
+  result->degree = weightInfo_->monomial_weight(lcm, p->f->comp-1); //_M->primary_degree(lcm) + _F->primary_degree(p->f->comp-1);
   result->compare_num = 0;
   result->first = p;
   result->second = NULL;
@@ -201,7 +208,7 @@ s_pair *GB_comp::new_s_pair(gb_elem *p, gb_elem *q, const int *lcm)
   s_pair *result = new s_pair;
   result->next = NULL;
   result->syz_type = SPAIR_PAIR;
-  result->degree = _M->primary_degree(lcm) + _F->primary_degree(p->f->comp-1);
+  result->degree = weightInfo_->monomial_weight(lcm, p->f->comp-1); //_M->primary_degree(lcm) + _F->primary_degree(p->f->comp-1);
   result->compare_num = 0;
   result->first = p;
   result->second = q;
@@ -236,7 +243,7 @@ s_pair *GB_comp::new_gen(int i, gbvector *f, ring_elem denom)
   s_pair *result = new s_pair;
   result->next = NULL;
   result->syz_type = SPAIR_GEN;
-  result->degree = _GR->gbvector_degree(_F,f);
+  result->degree = weightInfo_->gbvector_weight(f);
   result->compare_num = 0;
   result->first = NULL;
   result->second = NULL;

@@ -13,24 +13,26 @@
 #include "relem.hpp"
 #include "hilb.hpp"
 
+#include "gbweight.hpp"
+
 /*************************
  * Initialization ********
  *************************/
 
-gbA * gbA::create(
-		  const Matrix *m,
+gbA * gbA::create(const Matrix *m,
 		  M2_bool collect_syz,
 		  int n_rows_to_keep,
+		  M2_arrayint gb_weights,
 		  int strategy,
 		  M2_bool use_max_degree_limit,
 		  int max_degree_limit)
 {
   gbA *result = new gbA;
-  result->initialize(m, collect_syz, n_rows_to_keep, strategy);
+  result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy);
   return result;
 }
 
-void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
+void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights, int strat)
 {
   const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
   if (origR == NULL)
@@ -41,6 +43,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
     }
   originalR = origR;
   R = origR->get_gb_ring();
+  weightInfo_ = new GBWeight(m->rows(), gb_weights);
 
   _nvars = R->get_flattened_monoid()->n_vars();
   _coeff_type = origR->coefficient_type();
@@ -109,7 +112,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, int strat)
       for (int i=0; i<_first_gb_element; i++)
 	{
 	  const gbvector *f = originalR->quotient_gbvector(i);
-	  int deg = R->gbvector_term_weight(_F, f);
+	  int deg = weightInfo_->gbvector_term_weight(f);
 	  gbelem *g = gbelem_make(f, 0, ELEM_IN_RING, deg);
 	  gb.push_back(g);
 	}
@@ -223,7 +226,7 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
   g->lead = R->exponents_make();
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = deg;
-  g->alpha = deg - R->gbvector_term_weight(_F,f);
+  g->alpha = deg - weightInfo_->gbvector_term_weight(f);
   g->minlevel = minlevel;
   return g;
 }
@@ -274,7 +277,7 @@ gbA::spair *gbA::spair_make_gen(POLY f)
   assert(f.f != 0);
   exponents exp1 = R->exponents_make();
   R->gbvector_get_lead_exponents(_F, f.f, exp1);
-  int deg = R->gbvector_degree(_F, f.f);
+  int deg = weightInfo_->gbvector_weight(f.f);
   spair *result = spair_node();
   result->next = 0;
   result->type = SPAIR_GEN;
@@ -1033,7 +1036,7 @@ int gbA::find_good_monomial_divisor_ZZ(
   int n = 0;
 
   vector<MonomialTableZZ::mon_term *,gc_alloc> divisors;
-  ealpha = degf - R->exponents_weight(e);
+  ealpha = degf - weightInfo_->exponents_weight(e);
 
   /* First search for ring divisors */
   if (ringtableZZ)
@@ -1078,7 +1081,7 @@ int gbA::find_good_term_divisor_ZZ(
   int n = 0;
 
   vector<MonomialTableZZ::mon_term *,gc_alloc> divisors;
-  ealpha = degf - R->exponents_weight(e);
+  ealpha = degf - weightInfo_->exponents_weight(e);
 
   /* First search for ring divisors */
   if (ringtableZZ)
@@ -1122,7 +1125,7 @@ int gbA::find_good_divisor(exponents e,
   int n = 0;
 
   vector<MonomialTable::mon_term *,gc_alloc> divisors;
-  ealpha = degf - R->exponents_weight(e);
+  ealpha = degf - weightInfo_->exponents_weight(e);
 
   /* First search for ring divisors */
   if (ringtable)
@@ -1713,7 +1716,7 @@ const MatrixOrNull *gbA::matrix_remainder(const Matrix *m)
       g.fsyz = R->gbvector_zero();
 
       remainder(g, 
-		R->gbvector_degree(m->rows(), g.f), 
+		weightInfo_->gbvector_weight(g.f), 
 		true, denom);
 
       vec fv = originalR->translate_gbvector_to_vec_denom(_F, g.f, denom);
@@ -1754,7 +1757,7 @@ void gbA::matrix_lift(const Matrix *m,
       g.fsyz = R->gbvector_zero();
 
       remainder(g, 
-		R->gbvector_degree(m->rows(), g.f), 
+		weightInfo_->gbvector_weight(g.f), 
 		true, denom);
 
       vec fv = originalR->translate_gbvector_to_vec_denom(_F, g.f, denom);
@@ -1786,7 +1789,7 @@ int gbA::contains(const Matrix *m)
       g.f = originalR->translate_gbvector_from_vec(_F,(*m)[i], denom);
       g.fsyz = NULL;
       remainder(g, 
-		R->gbvector_degree(m->rows(), g.f),
+		weightInfo_->gbvector_weight(g.f),
 		false, junk);
       R->gbvector_remove(g.fsyz);
       if (g.f != NULL)

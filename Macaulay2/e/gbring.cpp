@@ -60,7 +60,6 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
     K(K0),
     _coeffs_ZZ(false),  // set below
     _nvars(M->n_vars()),
-    _degrees(0), // set below
     _is_skew(false),
     _skew(),
     is_weyl(false),
@@ -83,11 +82,6 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
 
   if (K == globalZZ)
     _coeffs_ZZ = true;
-
-  // How to get the degree vector?
-  _degrees = newarray(int,_nvars);
-  for (int i=0; i<_nvars; i++)
-    _degrees[i] = M->primary_degree_of_var(i);
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -372,6 +366,7 @@ int GBRing::gbvector_n_terms(const gbvector *v) const
   return result;
 }
 
+#if 0
 int GBRing::exponents_weight(const int *e) const
   // e is an exponent vector 0.._nvars-1
 {
@@ -426,6 +421,7 @@ int GBRing::gbvector_degree(const FreeModule *F,
     }
   return deg;
 }
+#endif
 
 void GBRing::gbvector_multidegree(const FreeModule *F, 
 				  const gbvector *f,

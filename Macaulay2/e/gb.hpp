@@ -9,6 +9,7 @@
 #include "comp_gb.hpp"
 
 #include "spair.hpp"
+#include "gbweight.hpp"
 
 class hilb_comp;
 
@@ -27,6 +28,7 @@ private:
   // Ring information
   const PolynomialRing *originalR;
   GBRing *_GR;
+  const GBWeight *weightInfo_;
   const Monoid *_M;
   const Ring *_K;
 
@@ -73,8 +75,13 @@ private:
   const RingElement *_hf_orig;	// The Hilbert function that we are given at the beginning
   RingElement *_hf_diff;		// The difference between hf_orig and the computed hilb fcn
 private:
-  void initialize0(const Matrix *m, int csyz, int nsyz);
-  void initialize(const Matrix *m, int csyz, int nsyz, int strategy);
+  void initialize0(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights);
+  void initialize(const Matrix *m, 
+		  int csyz, 
+		  int nsyz, 
+		  M2_arrayint gb_weights,
+		  int strategy);
+
   void initialize_forced(const Matrix *m, 
 			 const Matrix *gb, 
 			 const Matrix *mchange);
@@ -127,6 +134,7 @@ public:
   static GB_comp * create(const Matrix *m, 
 			  M2_bool collect_syz, 
 			  int n_rows_to_keep,
+			  M2_arrayint gb_weights,
 			  int strategy, 
 			  M2_bool use_max_degree,
 			  int max_degree);

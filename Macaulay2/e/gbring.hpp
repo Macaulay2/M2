@@ -65,8 +65,7 @@ protected:
   int gbvector_size;
 
   int _nvars;
-  int *_degrees;
-
+  
   bool _up_order; // is the free module order up or down?
 
 #if 0
@@ -226,6 +225,7 @@ public:
 
   int gbvector_n_terms(const gbvector *f) const;
 
+#if 0
   // Degrees, using the weight vector _degrees.
   int exponents_weight(const int *e) const;
 
@@ -239,6 +239,7 @@ public:
 
   int gbvector_degree(const FreeModule *F, 
 		      const gbvector *f);
+#endif
 
   void gbvector_multidegree(const FreeModule *F, 
 			    const gbvector *f,
