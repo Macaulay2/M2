@@ -1268,11 +1268,17 @@ frames(e:Expr):Expr := (
      else WrongArg("a function, a symbol, or ()"));
 setupfun("frames", frames);
 
-getGlobalDictionary(e:Expr):Expr := (
+getGlobalDictionaryList(e:Expr):Expr := (
      when e
-     is a:Sequence do if length(a) == 0 then Expr(globalDictionaryList.dictionary) else WrongNumArgs(0)
+     is a:Sequence do if length(a) == 0 then (
+	  g := globalDictionaryList;
+	  n := 0;
+	  while ( n = n+1; g != g.next ) do g = g.next;
+	  g = globalDictionaryList;
+	  Expr(list(new Sequence len n do while true do ( provide Expr(g.dictionary); g = g.next ))))
+     else WrongNumArgs(0)
      else WrongNumArgs(0));
-setupfun("globalDictionary", getGlobalDictionary);
+setupfun("globalDictionaryList", getGlobalDictionaryList);
 
 pushDictionary(e:Expr):Expr := (
      when e
@@ -1296,17 +1302,22 @@ popDictionary(e:Expr):Expr := (
      else WrongNumArgs(0));
 setupfun("popDictionary", popDictionary);
 
+outerDictionary(e:Expr):Expr := (
+     when e is d:Dictionary do Expr(d.outerDictionary)
+     else WrongArg("a dictionary"));
+setupfun("outerDictionary", outerDictionary);
+
 useDictionary(e:Expr):Expr := (
      when e is d:Dictionary do (
-	  -- insert this dictionary second in line
-	  if globalDictionaryList.next == globalDictionaryList then (
-	       -- detect pointer to self indicating end
-	       globalDictionaryList.next = DictionaryList(d,self);
-	       )
-	  else (
-	       -- 'next' pointer is legitimate, so use it
-	       globalDictionaryList.next = DictionaryList(d,globalDictionaryList.next);
-	       );
-	  nullE)
+	  -- insert this dictionary second in the list
+     	  g := globalDictionaryList;
+	  g.next = (
+	       if g.next == g then (
+	       	    -- detect pointer to self indicating end
+	       	    DictionaryList(d,self))
+	       else (
+	       	    -- 'next' pointer is legitimate, so use it
+	       	    DictionaryList(d,g.next)));
+	  e)
      else WrongArg("a dictionary"));
 setupfun("useDictionary", useDictionary);

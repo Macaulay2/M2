@@ -237,7 +237,7 @@ UndocumentableValue := hashTable { symbol environment => true, symbol commandLin
 documentableValue := key -> (
      class key === Symbol and value key =!= key
      and not UndocumentableValue#?key and DocumentableValueType#?(basictype value key))
-scan(pairs globalDictionary(), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
+scan(pairs first globalDictionaryList(), (name,sym) -> if documentableValue sym then Symbols#(value sym) = sym)
 
 fixup := method(SingleArgumentDispatch => true)
 fixup Nothing    := z -> z				    -- null

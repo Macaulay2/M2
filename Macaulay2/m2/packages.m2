@@ -18,9 +18,9 @@ M2title := "Macaulay 2"
 
 newPackage = method( Options => { Using => {} } )
 newPackage(String,String) := opts -> (title,vers) -> (
-     global currentPackage <- new Package from {
+     p := global currentPackage <- new Package from {
 	  "outerPackage" => currentPackage,
-     	  "dictionary" => if title === M2title then globalDictionary() else pushDictionary(),
+     	  "dictionary" => if title === M2title then first globalDictionaryList() else pushDictionary(),
 	  "package title" => title,
 	  "package version" => vers,
 	  "test inputs" => new MutableHashTable,
@@ -31,13 +31,20 @@ newPackage(String,String) := opts -> (title,vers) -> (
 	  "html documentation" => new MutableHashTable,
 	  "options" => opts,
 	  "file directory" => currentFileDirectory
-	  }
-     )
+	  };
+     packages = append(packages,p);
+     p)
+
+Package _ Symbol := (p,s) -> value p#"dictionary"#(toString s)
+
+Macaulay2 = newPackage(M2title,version#"VERSION")
 
 end Package := p -> (
      if p =!= currentPackage then error ("package not open");
-     packages = append(packages,p);
      if not p.?name then p.name = p#"package title";
-     p )
-
-Macaulay2 = newPackage(M2title,version#"VERSION")
+     if p =!= Macaulay2 then (
+	  d := popDictionary();
+	  assert( d === p#"dictionary" );
+	  useDictionary d;
+	  );
+     p)
