@@ -194,3 +194,5 @@ extern struct FINAL {
 
 extern char current_date[];
 extern char current_time[];
+extern char *system_strerror();
+extern int system_errno();

@@ -1,18 +1,18 @@
 --		Copyright 1995 by Daniel R. Grayson
 
-search := (filename,fun) -> (
-     if substring(filename,0,1) === "/" 
-     or substring(filename,0,2) === "./" 
-     or substring(filename,0,3) === "../" then try fun filename else null
-     else (
-	  ret := null;
-	  select(1,path, 
-	       dir -> (
-	       	    fn := if dir == "." then filename else dir | "/" | filename;
-	       	    try (ret = fun fn; true) else false));
-	  ret))
-getpath := (filename) -> search(filename,get)
-resolve := (filename) -> search(filename,fn -> (close openIn fn; fn))
+-- search := (filename,fun) -> (
+--      if substring(filename,0,1) === "/" 
+--      or substring(filename,0,2) === "./" 
+--      or substring(filename,0,3) === "../" then try fun filename else null
+--      else (
+-- 	  ret := null;
+-- 	  select(1,path, 
+-- 	       dir -> (
+-- 	       	    fn := if dir == "." then filename else dir | "/" | filename;
+-- 	       	    try (ret = fun fn; true) else false));
+-- 	  ret))
+-- getpath := (filename) -> search(filename,get)
+-- resolve := (filename) -> search(filename,fn -> (close openIn fn; fn))
 
 location := method(SingleArgumentDispatch=>true)
 location Sequence := args -> (
@@ -26,7 +26,7 @@ netLocation := method(SingleArgumentDispatch=>true)
 netLocation Nothing := null -> (stderr << "source code not available" << endl;)
 netLocation Sequence := (filename,start,stop) -> (
      wp := set characters " \t);";
-     file := getpath filename;
+     file := get filename;
      if file === null then error ("couldn't find file ", filename);
      file = lines file;
      while (
@@ -63,7 +63,10 @@ EDIT Sequence := (filename,start,stop) -> (
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor,
 	  " +",name start,
-	  " ",resolve filename))
+	  " ",
+	  filename
+	  -- resolve filename -- the old way
+	  ))
 edit Function := args -> EDIT location args
 edit Command := c -> edit c#0
 edit Sequence := args -> (

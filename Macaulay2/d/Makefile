@@ -1,3 +1,6 @@
+## useful flags:
+#	NOSTRIP=TRUE - don't strip symbols from ../bin/Macaulay2
+
 ############################## includes
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf

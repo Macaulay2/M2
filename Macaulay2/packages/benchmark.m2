@@ -22,6 +22,10 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 -- (250 MHz Macintosh Powerbook G3)
 -- 1.67 seconds, Macaulay 2 version 0.8.52
 
+-- Linux yttrium 2.2.6 #82 Sun Apr 18 15:06:16 CDT 1999 i686 unknown
+-- e-machine: Cyrix M II - 333 MMX
+-- 2.45 seconds, Macaulay2 0.8.53, compiled with gcc 2.91
+
 -- Linux geometry 2.1.121 #33 SMP Tue Sep 15 21:44:25 CDT 1998 i586
 -- 4.01 seconds, Macaulay 2 version 0.8.47, compiled with gcc
 

@@ -764,3 +764,10 @@ tex TO := x -> tex TT formatDocumentTag x#0
 texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
 texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
 
+oldexit := exit
+erase quote exit
+exit = method(SingleArgumentDispatch => true)
+exit ZZ := i -> oldexit i
+exit Sequence := () -> oldexit 0
+exit = new Command from exit
+quit = new Command from (() -> oldexit 0)

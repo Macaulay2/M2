@@ -1131,11 +1131,7 @@ int system_dbmreorganize(int handle) {
 
 M2_string system_dbmstrerror() {
 #ifdef GDBM
-#if 0
      return tostring(gdbm_strerror(gdbm_errno));
-#else
-     return tostring("database error");
-#endif
 #else
      return tostring("database error");
 #endif
