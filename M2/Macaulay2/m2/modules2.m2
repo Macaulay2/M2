@@ -566,7 +566,6 @@ basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
 	  ZZ === A
 	  ) then error "'basis' can't handle this type of ring";
      k := coefficientRing A;
-     if M.?generators then notImplemented();		    -- because we are about to ask for a presentation
      pres := generators gb presentation M;
      f := map(M,,rawBasis(raw pres, lo, hi, heft, var, opts.Truncate, opts.Limit));
      --s := sortColumns f;
