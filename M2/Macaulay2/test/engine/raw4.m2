@@ -18,6 +18,8 @@ rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp -- Groebner basis
 assert(m === mat{{z,y,x}})
 
+rawGBMatrixRemainder(Gcomp,mat{{x}})
+
 Gcomp = rawGB(G,true,3,{},false,0,0,0)
 rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp -- Groebner basis
@@ -34,6 +36,8 @@ rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp -- Groebner basis
 assert(m === G)
 
+assert(rawGBMatrixRemainder(Gcomp,mat{{x-1}}) === mat{{1_R1}})
+
 -- Test 1A.
 G = mat {{x,y,z^2, x*z+z^2}}
 Gcomp = rawGB(G,false,0,{},false,0,0,0)
@@ -42,6 +46,7 @@ m = rawGBGetMatrix Gcomp -- Groebner basis
 assert(m == mat{{y,x,z^2}})
 m1 = rawGBMinimalGenerators Gcomp -- mingens
 assert(m1 == mat{{y,x,z^2}})
+
 
 -- Test 2. 
 G = mat {{x*y-y^2, x^2}}
@@ -56,6 +61,8 @@ m = rawGBSyzygies Gcomp
 m = rawGBGetMatrix Gcomp
 RawStatusCodes#(rawStatus1 Gcomp)
 rawStatus2 Gcomp -- last degree something was computed in
+
+assert(rawGBMatrixRemainder(Gcomp,mat{{x*y}}) === mat{{y^2}})
 
 -- Test 3. 
 

@@ -442,7 +442,9 @@ const MatrixOrNull *GBasis::matrix_remainder(const Matrix *m)
       g.f = originalR->translate_gbvector_from_vec(F, (*m)[i], denom);
       g.fsyz = R->gbvector_zero();
 
-      remainder(g, 0, denom); // MES: this degree.  What should it be?
+      remainder(g, 
+		R->gbvector_degree(m->rows(), g.f), 
+		denom);
 
       vec fv = originalR->translate_gbvector_to_vec_denom(F, g.f, denom);
       // MES: what about g.fsyz??
@@ -472,7 +474,9 @@ void GBasis::matrix_lift(const Matrix *m,
       g.f = originalR->translate_gbvector_from_vec(F, (*m)[i], denom);
       g.fsyz = R->gbvector_zero();
 
-      remainder(g, 0, denom); // MES: this degree.  What should it be?
+      remainder(g, 
+		R->gbvector_degree(m->rows(), g.f), 
+		denom);
 
       vec fv = originalR->translate_gbvector_to_vec_denom(F, g.f, denom);
       K->negate_to(denom);
@@ -496,7 +500,8 @@ int GBasis::contains(const Matrix *m)
       POLY g;
       g.f = originalR->translate_gbvector_from_vec(F,(*m)[i], denom);
       g.fsyz = NULL;
-      remainder(g,0);
+      remainder(g, 
+		R->gbvector_degree(m->rows(), g.f));
       R->gbvector_remove(g.fsyz);
       if (g.f != NULL)
 	{
