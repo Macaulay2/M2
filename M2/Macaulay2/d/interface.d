@@ -2080,7 +2080,7 @@ export rawStatus2(e:Expr):Expr := (
      when e is G:RawComputation do 
      toExpr(Ccode(int, "rawStatus2(", "(Computation *)", G, ")" ))
      else WrongArg("a raw Groebner basis computation"));
-setupfun("rawStatus1", rawStatus1);
+setupfun("rawStatus2", rawStatus2);
 
 export rawGBGetMatrix(e:Expr):Expr := (
      when e is G:RawComputation do 
