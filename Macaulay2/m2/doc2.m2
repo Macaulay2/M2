@@ -146,11 +146,13 @@ document { "return",
      being evaluated.",
      PARA,
      EXAMPLE {
-	  "f = x -> (3 + 4 * return {x}; 5);",
-	  "f 101",
-	  "g = x -> (3 + 4 * return; 5);",
-	  "g 101",
-	  "g 101 === null"
+	  "f = x -> (
+     if x == 3 then return;
+     if x > 3 then return x^2;
+     5);",
+	  "f 2",
+	  "f 3",
+	  "f 4"
 	  },
      SEEALSO { "break" }
      }
@@ -568,158 +570,96 @@ document { abs,
 -- the next three document nodes illustrate three possibilities for the first entry of the list:
 -- string, function, and symbol.
 
-document { "sin",
-     Headline => "sine function", 
-     OldSynopsis => {
-	  "y = sin x",
-	  "x" => null,
-	  "y" => { "the sine of ", TT "x", "" }
-	  },
-     }
-
-document { cos,
-     Headline => "cosine function", 
-     OldSynopsis => {
-	  "y = cos x",
-	  "x" => null,
-	  "y" => { "the cosine of ", TT "x", "" }
-	  },
-     }
-
+document { sin, 
+     Headline => "sine function",
+     Synopsis => {
+	  Usage => "sin x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the sine of ", TT "x", "" } } } }
+document { cos, 
+     Headline => "cosine function",
+     Synopsis => {
+	  Usage => "cos x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the cosine of ", TT "x", "" } } } }
 document { symbol tan,
      Headline => "tangent function",
-     OldSynopsis => {
-	  "y = tan x",
-	  "x" => null,
-	  "y" => { "the tangent of ", TT "x", "" }
-	  }
-     }
-
+     Synopsis => {
+	  Usage => "tan x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the tangent of ", TT "x" } } } }
 document { asin,
      Headline => "arcsine function", 
-     OldSynopsis => {
-	  "y = asin x",
-	  "x" => null,
-	  "y" => { "the arcsine of ", TT "x", "" }
-	  }
-     }
-
+     Synopsis => {
+	  Usage => "asin x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the arcsine of ", TT "x"} } } }
 document { acos,
      Headline => "arccosine function", 
-     OldSynopsis => {
-	  "y = acos x",
-	  "x" => null,
-	  "y" => { "the arccosine of ", TT "x", "" }
-	  }
-     }
-
+     Synopsis => {
+	  Usage => "acos x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the arccosine of ", TT "x"} } } }
 document { atan,
-     Headline => "arctangent function"
-     }
-
-document { (atan,RR),
-     OldSynopsis => {
-	  "y = atan x",
-	  "x" => null,
-	  "y" => { "the arctangent of ", TT "x", "" }
-	  }
-     }
-
+     Headline => "arctangent function",
+     Synopsis => {
+	  Usage => "atan x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the arctangent of ", TT "x"} } } }
 document { (atan,RR,RR),
-     OldSynopsis => {
-	  "t = atan(x,y)",
-	  "x" => null,
-	  "y" => null,
-	  "y" => { "the angle formed with the x-axis by the
-	       ray from the origin to the point ", TT "{x,y}"
-	       }
-	  }
-    }
-
+     Synopsis => {
+	  Usage => "atan(x,y)",
+	  Inputs => { "x" => RR => null, "y" => RR => null },
+	  Outputs => { { "the angle formed with the x-axis by the ray from the origin to the point ", TT "{x,y}" } } } }
 document { sinh,
      Headline => "hyperbolic sine function",
-     OldSynopsis => {
-	  "y = sinh x",
-	  "x" => null,
-	  "y" => { "the hyperbolic sine of ", TT "x", "" }
-	  }
-     }
-
-document { cosh,
-     Headline => "hyperbolic cosine function",
-     OldSynopsis => {
-	  "y = cosh x",
-	  "x" => null,
-	  "y" => { "the hyperbolic cosine of ", TT "x", "" }
-	  }
-     }
-
-document { tanh,
-     Headline => "hyperbolic tangent function",
-     OldSynopsis => {
-	  "y = tanh x",
-	  "x" => null,
-	  "y" => { "the hyperbolic tangent of ", TT "x", "" }
-	  }
-     }
-
-document { exp,
-     Headline => "exponential function",
-     OldSynopsis => {
-	  "y = exp x",
-	  "x" => null,
-	  "y" => { "the exponential of ", TT "x", "" }
-	  }
-     }
-
-document { log,
-     Headline => "logarithm function",
-     OldSynopsis => {
-	  "y = log x",
-	  "x" => null,
-	  "y" => { "the logarithm of ", TT "x", "" }
-	  }
-     }
-
-document { sqrt,
-     Headline => "square root function",
-     OldSynopsis => {
-	  "y = sqrt x",
-	  "x" => null,
-	  "y" => { "the square root of ", TT "x", "" }
-	  }
-     }
-
+     Synopsis => {
+	  Usage => "sinh x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the hyperbolic sine of ", TT "x" } } } }
+document { cosh, Headline => "hyperbolic cosine function",
+     Synopsis => {
+	  Usage => "cosh x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the hyperbolic cosine of ", TT "x" } } } }
+document { tanh, Headline => "hyperbolic tangent function",
+     Synopsis => {
+	  Usage => "tanh x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the hyperbolic tangent of ", TT "x" } } } }
+document { exp, Headline => "exponential function",
+     Synopsis => {
+	  Usage => "exp x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the exponential of ", TT "x" } } } }
+document { log, Headline => "logarithm function",
+     Synopsis => {
+	  Usage => "log x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the logarithm of ", TT "x"} } } }
+document { sqrt, Headline => "square root function",
+     Synopsis => {
+	  Usage => "sqrt x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the square root of ", TT "x"} } } }
 document { floor,
      Headline => "floor function",
-     OldSynopsis => {
-	  "y = floor x",
-	  "x" => null,
-	  "y" => { "the largest integer less than or equal to the number ", TT "x" }
-	  }
-    }
-
+     Synopsis => {
+	  Usage => "floor x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the largest integer less than or equal to the number ", TT "x" } } } }
 document { ceiling,
      Headline => "ceiling function",
-     OldSynopsis => {
-	  "y = ceiling x",
-	  "x" => null,
-	  "y" => { "the largest integer greater than or equal to the number ", TT "x" }
-	  }
-     }
-
+     Synopsis => {
+	  Usage => "ceiling x",
+	  Inputs => { "x" => RR => null },
+	  Outputs => { { "the largest integer greater than or equal to the number ", TT "x" } } } }
 document { run,
      Headline => "run an external command", 
-     OldSynopsis => {
-	  "r = run s",
-	  "s" => {"a command string ", TT "s", " understandable by your operating system"},
-	  "r" => "the exit status of the command (a small integer which is normally zero)"
-	  },
-     "The command is run expanding it into words with ", TO "expandWord", ", forking, and
-     running the command.  While it's running, Macaulay 2 simply waits.  Commands indicating
-     pipes or redirection of input/output are not run."
-     }
-
+     Synopsis => {
+	  Usage => "run s",
+	  Inputs => { "s" => String => {"a command understandable by your operating system"} },
+	  Outputs => { "the exit status of the command (a small integer which is normally zero)" } } }
 document { wait,
      Headline => "wait for child process", 
      TT "wait i", " -- wait for the completion of child process with process id
@@ -737,12 +677,11 @@ document { value,
      }
 
 document { (value,Symbol),
-     Headline => "evaluate a symbol",
-     OldSynopsis => {
-	  "x = value s",
-	  "s" => null,
-	  "x" => {"the value of ", TT "s", ""}
-	  },
+     Headline => "retrieve the value of a symbol",
+     Synopsis => {
+	  Usage => "value s",
+	  Inputs => { "s" => null },
+	  Outputs => { {"the value of ", TT "s" } } },
      EXAMPLE {
 	  "x = s",
 	  "s = 11111111111",
@@ -753,14 +692,13 @@ document { (value,Symbol),
 
 document { (value,String),
      Headline => "evaluate a string",
-     OldSynopsis => {
-	  "x = value s",
-	  "s" => {},
-	  "x" => {"the value of ", TT "s", ""}
-	  },
+     Synopsis => {
+	  Usage => "value s",
+	  Inputs => { "s" => null },
+	  Outputs => { {"the value obtained by evaluating the code in ", TT "s" } } },
      "The contents of ", TT "s", " are treated as code in the
      Macaulay 2 language, parsed it in its own scope (the same way a file is)
-     and evaluated.  The string may even contain multiple lines.",
+     and evaluated.  The string may contain multiple lines.",
      EXAMPLE {
 	  ///value "2 + 2"///,
       	  ///value "a := 33
@@ -771,33 +709,29 @@ a+a"///,
      the value of the global variable ", TT "a", " is unaffected."
      }
 
--- fix this:
--- document { (value,Expression),
---      Headline => "evaluate an expression",
---      OldSynopsis => {
--- 	  "x = value s",
--- 	  "s" => null,
--- 	  "x" => {"the value of ", TT "s", ""}
--- 	  },
---      EXAMPLE {
--- 	  "p = (expression 2)^3 * (expression 3)^2",
---       	  "value p",
--- 	  }
---      }
+document { (value,Expression),
+     Headline => "evaluate an expression",
+     Synopsis => {
+	  Usage => "value s",
+	  Inputs => { "s" => null },
+	  Outputs => { "x" => {"the value of ", TT "s" } } },
+     EXAMPLE {
+	  "p = (expression 2)^3 * (expression 3)^2",
+      	  "value p"
+	  }
+     }
 
 document { "global",
      Headline => "get a global symbol", 
      TT "global s", " -- provides the global symbol s, even if s currently has 
      a value.",
-     PARA,
      EXAMPLE {
 	  "num",
       	  "num = 5",
       	  "num",
       	  "global num",
 	  },
-     SEEALSO {"local", "symbol"
-     }
+     SEEALSO {"local", "symbol" }
      }
 
 document { erase,
@@ -938,57 +872,54 @@ document { mergePairs,
 
 document { merge,
      Headline => "merge hash tables",
-     OldSynopsis => {
-	  "z = merge(x,y,g)",
-	  "x" => {"a hash table"},
-	  "y" => {"a hash table"},
-	  "g" => {"a function of two variables to be used to combine a value
-	       of ", TT "x", " with a value of ", TT "y", " when the 
-	       corresponding keys coincide"
-	       },
-	  "z" => {
-	       "a new hash table whose keys are the keys occuring in ", TT "x", "
-	       or in ", TT "y", "; the same values are used, except that if
-	       if a key ", TT "k", " occurs in both arguments, then
-	       ", TT "g(x#k,y#k)", " is used instead."
-	       }
-	  },
-     PARA,
-     "If ", TT "x", " and ", TT "y", " have the same class and parent, then 
-     the ", TT "z", " will, too.",
-     PARA,
-     "This function is useful for multiplying monomials or adding polynomials.",
+     Synopsis => {
+	  Usage => "z = merge(x,y,g)",
+	  Inputs => {
+	       "x" => {"a hash table"},
+	       "y" => {"a hash table"},
+	       "g" => {"a function of two variables to be used to combine a value of ", TT "x", " with a value of ", TT "y", " when the 
+	       	    corresponding keys coincide"
+		    } },
+	  Outputs => {
+	       "z" => { "a new hash table whose keys are the keys occuring in ", TT "x", "
+		    or in ", TT "y", "; the same values are used, except that if if a key ", TT "k", " occurs in both arguments, then
+		    ", TT "g(x#k,y#k)", " is used instead." } } },
+     "If ", TT "x", " and ", TT "y", " have the same class and parent, then so will ", TT "z", ".",
+     PARA "This function is useful for multiplying monomials or adding polynomials.",
      SEEALSO {"combine"}
      }
 
 document { combine,
      Headline => "combine hash tables",
-     OldSynopsis => {
-	  "z = combine(x,y,f,g,h)",
-	  "x" => "a hash table",
-	  "y" => {"a hash table of the same class as ", TT "x"},
-	  "f" => { "a function of two variables to be used for combining a key
-	       of ", TT "x", " with a key of ", TT "y", " to make a new key
-	       for ", TT "z", "." },
-	  "g" => { "a function of two variables to be used for combining a value
-	       of ", TT "x", " with a value of ", TT "y", " to make a new value
-	       for ", TT "z", "." },
-	  "h" => { "a function of two variables to be used for combining two
-	       values returned by ", TT "g", " when the corresponding keys
-	       returned by ", TT "f", " turn out to be equal.  Its first argument
-	       will be the value accumulated so far, and its second argument will
-	       be a value just provided by ", TT "g", "."
+     Synopsis => {
+	  Usage => "z = combine(x,y,f,g,h)",
+	  Inputs => {
+	       "x" => "a hash table",
+	       "y" => {"a hash table of the same class as ", TT "x"},
+	       "f" => { "a function of two variables to be used for combining a key
+		    of ", TT "x", " with a key of ", TT "y", " to make a new key
+		    for ", TT "z", "." },
+	       "g" => { "a function of two variables to be used for combining a value
+		    of ", TT "x", " with a value of ", TT "y", " to make a new value
+		    for ", TT "z", "." },
+	       "h" => { "a function of two variables to be used for combining two
+		    values returned by ", TT "g", " when the corresponding keys
+		    returned by ", TT "f", " turn out to be equal.  Its first argument
+		    will be the value accumulated so far, and its second argument will
+		    be a value just provided by ", TT "g", "."
+		    }
 	       },
-	  "z" => {
-	       "a new hash table, of the same class as ", TT "x", " and ", TT "y", ",
-	       containing the pair ", TT "f(p,q) => g(b,c)", "
-	       whenever ", TT "x", " contains the pair ", TT "p => b", "
-	       and ", TT "y", " contains the pair ", TT "q => c", ",
-	       except that ", TT "h", " is used to combine values when two keys
-	       coincide."
+	  Outputs => {
+	       "z" => {
+		    "a new hash table, of the same class as ", TT "x", " and ", TT "y", ",
+		    containing the pair ", TT "f(p,q) => g(b,c)", "
+		    whenever ", TT "x", " contains the pair ", TT "p => b", "
+		    and ", TT "y", " contains the pair ", TT "q => c", ",
+		    except that ", TT "h", " is used to combine values when two keys
+		    coincide."
+		    }
 	       }
 	  },
-     PARA,
      "The function ", TT "f", " is applied to every pair ", TT "(p,q)", "
      where ", TT "p", " is a key of ", TT "x", " and ", TT "q", " is a
      key of ", TT "y", ".  The number of times ", TT "f", " is evaluated is thus 
@@ -1009,15 +940,13 @@ document { combine,
      }
 
 document { ancestor,
-     Headline => "whether one thing is an ancestor of another",
-     OldSynopsis => {
-	  "b = ancestor(x,y)",
-	  "x" => null,
-	  "y" => null,
-	  "b" => {" -- tells whether ", TT "y", " is an ancestor of ", TT "x", "."},
+     Headline => "whether one type is an ancestor of another",
+     Synopsis => {
+	  Usage => "ancestor(x,y)",
+	  Inputs => { "x" => Type => null, "y" => Type => null },
+	  Outputs => { {"whether ", TT "y", " is an ancestor of ", TT "x"} },
 	  },
      "The ancestors of ", TT "x", " are ", TT "x", ", ", TT "parent x", ", ", TT "parent parent x", ", and so on.",
-     PARA,
      SEEALSO "classes and types"
      }
 
@@ -1169,14 +1098,13 @@ document { symbol "=>",
 
 document { (symbol " ", RingElement, Array),
      Headline => "substitution of variables",
-     OldSynopsis => {
-	  "r = f[a,b,c]",
-	  "f" => null,
-	  "[a,b,c]" => { "an array of ring elements" },
-	  "r" => { "the result of replacing the variables in ", TT "f", " by the ring
-	       elements provided in brackets."
-	       }
-	  },
+     Synopsis => {
+	  Usage => "f[a,b,c]",
+	  Inputs => {
+	       "f" => null,
+	       "[a,b,c]" => { "an array of ring elements" } },
+	  Outputs => {
+	       "r" => { "the result of replacing the variables in ", TT "f", " by the ring elements provided in brackets." } } },
      EXAMPLE {
 	  "R = QQ[x,y];",
 	  "f = x^3 + 99*y;",
@@ -1186,33 +1114,30 @@ document { (symbol " ", RingElement, Array),
      
 document { (symbol _, Symbol, Ring),
      Headline => "generator of a ring with a given name",
-     OldSynopsis => {
-	  "r = x_R",
-	  "x" => null,
-	  "R" => null,
-	  "r" => { "the generator of the ring ", TT "R", " whose name is ", TT "x", "." },
-	  }
-     }
+     Synopsis => {
+	  Usage => "x_R",
+	  Inputs => {
+	       "x" => null,
+	       "R" => null },
+	  Outputs => { { "the generator of the ring ", TT "R", " whose name is ", TT "x" } } } }
      
 document { (symbol _, IndexedVariable, Ring),
      Headline => "generator of a ring with a given name",
-     OldSynopsis => {
-	  "r = x_R",
-	  "x" => null,
-	  "R" => null,
-	  "r" => { "the generator of the ring ", TT "R", " whose name is
-	       the same as that of ", TT "x", "." },
-	  }
-     }
+     Synopsis => {
+	  Usage => "x_R",
+	  Inputs => {
+	       "x" => null,
+	       "R" => null },
+	  Outputs => { { "the generator of the ring ", TT "R", " whose name is the same as that of ", TT "x" } } } }
      
 document { (symbol _, RingElement, Ring),
      Headline => "generator of a ring with a given name",
-     OldSynopsis => {
-	  "r = x_R",
-	  "x" => null,
-	  "R" => null,
-	  "r" => { "the generator of the ring ", TT "R", " whose name is
-	       the same as that of ", TT "x", "." },
+     Synopsis => {
+	  Usage => "x_R",
+	  Inputs => {
+	       "x" => null,
+	       "R" => null },
+	  Outputs => { { "the generator of the ring ", TT "R", " whose name is the same as that of ", TT "x" } },
 	  }
      }
 

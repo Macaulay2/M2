@@ -38,6 +38,7 @@ Expression.synonym = "expression"
 expression = method(SingleArgumentDispatch=>true, TypicalValue => Expression)
 expression Expression := identity
 Expression#operator = ""
+value Expression := x -> error "no method for 'value' of expression"
 
 AssociativeExpression = new Type of Expression
 AssociativeExpression.synonym = "associative expression"

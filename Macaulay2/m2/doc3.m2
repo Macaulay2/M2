@@ -110,10 +110,10 @@ document { char,
 
 document { basictype,
      Headline => "the basic type of an object",
-     OldSynopsis => {
-	  "T = basictype x",
-	  "x" => "anything",
-	  "T" => { "class representing the basic type of ", TT "x" }
+     Synopsis => {
+	  Usage => "T = basictype x",
+	  Inputs => { "x" => "anything" },
+	  Outputs => { { "class representing the basic type of ", TT "x" } }
 	  },
      "Every thing has basic type which tells what sort of thing it
      really is, internally.",
@@ -164,7 +164,7 @@ document { (symbol /, VisibleList, Function),
      "This operator is left associative, which means that ", TT "w / f / g", "
      is interpreted as meaning ", TT "(w / f) / g", ".",
      EXAMPLE "{1,2,3} / (i -> i+1) / (j -> j^2)",
-     SEEALSO {"apply", (symbol \,Function, List)}
+     SEEALSO {"apply", (symbol \,Function, VisibleList)}
      }
 
 document { (symbol \,Function, VisibleList),
@@ -383,12 +383,16 @@ document { remove,
 
 document { BasicList,
      Headline => "the class of all basic lists",
-     "A list is a sequence of expressions indexed by integers
-     ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ", where ", TT "N", " is the length of the sequence.",
+     "A basic list is a sequence of expressions indexed by integers
+     ", TT "0", ", ", TT "1", ", ..., ", TT "N-1", ", where ", TT "N", " is the length of the list.",
      PARA,
-     "The reason for distinguishing ", TO "List", " from ", TT "BasicList", "
-     is so lists can be treated as vectors, without everything else
-     implemented as a basic list inheriting that behavior.",
+     "There are various types of basic lists, depending on the application, and they are displayed in different ways.
+     The types first encountered are those of type ", TO "VisibleList", ", but new types are easy to introduce.",
+     EXAMPLE {
+	  "L = new Type of BasicList",
+	  "x = new L from {a,b,c,d}",
+	  "join(x,x)"
+	  }
      }
 
 document { toSequence,
