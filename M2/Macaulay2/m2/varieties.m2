@@ -57,6 +57,10 @@ expression CoherentSheaf := F -> new FunctionApplication from { sheaf, F.module 
 
 -- net CoherentSheaf := (F) -> net expression F
 
+runLengthEncoding = x -> if #x === 0 then x else (
+     p := join({0}, select(1 .. #x - 1, i -> x#i =!= x#(i-1)), {#x});
+     apply(#p-1, i -> (p#(i+1)-p#i, x#(p#i))))
+
 net CoherentSheaf := F -> (
      M := module F;
      if M.?relations 
@@ -68,9 +72,13 @@ net CoherentSheaf := F -> (
      else if numgens M === 0 then "0"
      else (
 	  X := variety F;
-	  net new Superscript from {net OO_X, numgens M}
-	  )
-     )
+	  horizontalJoin between(" ++ ",
+	       apply(runLengthEncoding (- degrees F),
+		    (n,d) -> (
+			 net new Superscript from {net OO_X, n},
+			 if all(d, zero) then "" else 
+			 if #d === 1 then ("(", toString first d, ")")
+			 else toString toSequence d)))))
 
 CoherentSheaf.AfterPrint = F -> (
      X := variety F;
@@ -84,8 +92,8 @@ CoherentSheaf.AfterPrint = F -> (
      else if M.?relations then << ", quotient of " << ambient F
      else if n > 0 then (
 	  << ", free";
-	  if not all(degrees M, d -> all(d, zero))
-	  then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
+	  -- if not all(degrees M, d -> all(d, zero))
+	  -- then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
 	  );
      << endl;
      )
@@ -107,6 +115,7 @@ variety SheafOfRings := Variety => O -> O.variety
 ring CoherentSheaf := (F) -> ring F.module
 numgens CoherentSheaf := (F) -> numgens F.module
 module CoherentSheaf := Module => (F) -> F.module
+module SheafOfRings  := Module => (F) -> (F.ring)^1
 Ideal * CoherentSheaf := (I,F) -> sheaf(F.variety, I * module F)
 CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(F.variety, F.module ++ G.module)
 tensor(CoherentSheaf,CoherentSheaf) := CoherentSheaf => options -> (F,G) -> F**G
@@ -146,6 +155,7 @@ degreeList := (M) -> (
 
 globalSectionsModule := (G,bound) -> (
      -- compute global sections
+     if degreeLength G =!= 1 then error "expected degree length 1";
      M := module G;
      A := ring G;
      M = cokernel presentation M;
@@ -188,8 +198,15 @@ cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
      R := ring F;
      if not isAffineRing R then error "expected coherent sheaf over a variety over a field";
      k := coefficientRing R;
-     n := rank source basis(0, HH^i F(>=0));
-     k^n)
+     k^(
+	  if i === 0
+	  then rank source basis(0, HH^i F(>=0))
+	  else (
+	       p := presentation R;
+	       A := ring p;
+	       n := numgens A;
+	       M := coker lift(presentation module F,A) ** coker p;
+	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
 
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
@@ -226,12 +243,13 @@ cotangentSheaf ProjectiveVariety := CoherentSheaf => (X) -> (
 cotangentSheaf(ZZ,ProjectiveVariety) := CoherentSheaf => (i,X) -> (
      if X#?(cotangentSheaf,i)
      then X#(cotangentSheaf,i) 
-     else X#(cotangentSheaf,i) = exteriorPower(i,cotangentSheaf X))
+     else X#(cotangentSheaf,i) = prune exteriorPower(i,cotangentSheaf X))
 
 TEST ///
-     R = ZZ/101[a,b,c,d]/(a^4+b^4+c^4+d^4)
+     k = ZZ/101
+     R = k[a,b,c,d]/(a^4+b^4+c^4+d^4)
      X = Proj R
-     result = table(3,3,(p,q) -> timing ((p,q) => hilbertFunction(0, HH^q(cotangentSheaf(p,X)))))
+     result = table(3,3,(p,q) -> timing ((p,q) => rank HH^q(cotangentSheaf(p,X))))
      assert( {{1, 0, 1}, {0, 20, 0}, {1, 0, 1}} === applyTable(result,last@@last) )
      print new MatrixExpression from result
      ///
