@@ -1092,6 +1092,7 @@ export setInterruptFlag():void := (
      exceptionFlag = true;
      );
 export setAlarmedFlag():void := (
+     interruptedFlag = true;				    -- an alarm is an interrupt, as far as the engine is concerned
      alarmedFlag = true;
      exceptionFlag = true;
      );
@@ -1104,6 +1105,7 @@ export clearInterruptFlag():void := (
      determineExceptionFlag();
      );
 export clearAlarmedFlag():void := (
+     interruptedFlag = false;
      alarmedFlag = false;
      determineExceptionFlag();
      );

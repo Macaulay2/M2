@@ -367,13 +367,14 @@ char **argv;
 
      if (!gotArg("--int", saveargv)) {
        signal(SIGINT,interrupt_handler);
-#      ifdef SIGALRM
-       signal(SIGALRM,alarm_handler);
-#      endif
 #      ifdef SIGPIPE
        signal(SIGPIPE, SIG_IGN);
 #      endif
      }
+
+#      ifdef SIGALRM
+       signal(SIGALRM,alarm_handler);
+#      endif
 
      arginits(argc,saveargv);
 
