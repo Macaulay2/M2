@@ -182,7 +182,7 @@ static CanonicalForm convert(const RingElement &g) {
 void displayCF(Ring *R, const CanonicalForm &h)
 {
   buffer o;
-  RingElement *g = convert(R,h);
+  const RingElement *g = convert(R,h);
   o << IM2_RingElement_to_string(g);
   emit(o.str());
 }
