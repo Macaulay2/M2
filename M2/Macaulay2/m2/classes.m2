@@ -46,8 +46,6 @@ VisibleList /  Command  := VisibleList => (v,f) -> apply(v,i -> f i)
 VisibleList /  Function := VisibleList => (v,f) -> apply(v,f)
 VisibleList // Command  := 
 VisibleList // Function := VisibleList => (v,f) -> f v
-
-use = identity				  -- just temporary, until methods.m2
 -----------------------------------------------------------------------------
 
 -- miscellaneous stuff:

@@ -739,11 +739,6 @@ document docTemplate {
        }
      }
 ///
-	  
-document { symbol coker,
-     Headline => "cokernel of a map",
-     "An abbreviation for ", TO "cokernel", "."
-     }
 
 document { symbol cokernel,
      Headline => "cokernel of a map",
@@ -834,11 +829,6 @@ document { Hom,
      PARA,
      "Use ", TO "homomorphism", " to convert an element of the module of
      homomorphisms to a matrix."
-     }
-
-document { "gens",
-     Headline => "matrix of generators",
-     "See ", TO "generators", "."
      }
 
 document { generators,

@@ -572,10 +572,7 @@ ideal Ring := R -> ideal 0_R
 
 kernel = method(Options => {
 	  SubringLimit => infinity
-	  -- DegreeLimit => {}
 	  })
-
-ker = kernel
 
 kernel Matrix := Module => options -> (g) -> if g.cache.?kernel then g.cache.kernel else g.cache.kernel = (
      N := source g;

@@ -213,8 +213,6 @@ isHomogeneous RingMap := (f) -> (
 	       s == 0 or degree s === f.DegreeMap degree r
 	       )))
 
-sub = substitute
-
 substitute(Power,Thing) := (v,s) -> Power{substitute(v#0,s),v#1}
 substitute(Divide,Thing) := (v,s) -> Divide{substitute(v#0,s),substitute(v#1,s)}
 substitute(Sum,Thing) := substitute(Product,Thing) := (v,s) -> apply(v,t -> substitute(t,s))

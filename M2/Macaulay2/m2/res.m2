@@ -1,21 +1,5 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
-resolution = method(
-     Options => {
-	  StopBeforeComputation => false,
-	  LengthLimit => infinity,	  -- (infinity means numgens R)
-	  DegreeLimit => null,		  -- slant degree limit
-	  SyzygyLimit => infinity,	  -- number of min syzs found
-	  PairLimit => infinity,	  -- number of pairs computed
-	  HardDegreeLimit => {},          -- throw out information in degrees above this one
-	  -- HardLengthLimit => infinity,    -- throw out information in lengths above this one
-	  SortStrategy => 0,		  -- strategy choice for sorting S-pairs
-          Strategy => null		  -- algorithm to use, usually 1, but sometimes 2
-	  }
-     )
-
-res = resolution
-
 inf := t -> if t === infinity then -1 else t
 
 spots := C -> select(keys C, i -> class i === ZZ)
@@ -146,6 +130,20 @@ default := (o,defaults) -> merge(o,defaults,(x,y) -> if x === null then y else x
 Strategy0 := new OptionTable from { Strategy => 0 }
 Strategy1 := new OptionTable from { Strategy => 1 }
 Strategy2 := new OptionTable from { Strategy => 2 }
+
+resolution = method(
+     Options => {
+	  StopBeforeComputation => false,
+	  LengthLimit => infinity,	  -- (infinity means numgens R)
+	  DegreeLimit => null,		  -- slant degree limit
+	  SyzygyLimit => infinity,	  -- number of min syzs found
+	  PairLimit => infinity,	  -- number of pairs computed
+	  HardDegreeLimit => {},          -- throw out information in degrees above this one
+	  -- HardLengthLimit => infinity,    -- throw out information in lengths above this one
+	  SortStrategy => 0,		  -- strategy choice for sorting S-pairs
+          Strategy => null		  -- algorithm to use, usually 1, but sometimes 2
+	  }
+     )
 
 resolution Module := ChainComplex => o -> (M) -> (
      R := ring M;

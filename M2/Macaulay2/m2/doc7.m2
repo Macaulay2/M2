@@ -732,11 +732,6 @@ document { ideal,
 	  },
      }
 
-document { symbol "ker",
-     Headline => "kernel of a map",
-     "See ", TO "kernel", "."
-     }
-
 document { kernel,
      Headline => "kernel of a map",
      TT "kernel f", " -- produces the kernel of a matrix or ring homomorphism.",

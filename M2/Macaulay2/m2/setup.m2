@@ -1,15 +1,17 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
+if class oooo =!= Symbol then error "setup.m2 already loaded"
+
+--
+
 PackageDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,PackageDictionary)
 getGlobalSymbol(PackageDictionary,"Main")
 
 -----------
 
-
 assert = x -> if not x then error "assertion failed"
 
-if Function.?GlobalAssignHook then error "setup.m2 already loaded"
 addStartFunction(
      () -> (
 	  Function.GlobalReleaseHook = (X,x) -> (
