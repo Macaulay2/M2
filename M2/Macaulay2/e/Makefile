@@ -58,9 +58,9 @@ CFLAGS = $(CXXFLAGS)
 LIBNAME  = gb
 
 ifeq "$(CC)" "cl"
-LIB      = lib$(LIBNAME).a
-else
 LIB      = $(LIBNAME).lib
+else
+LIB      = lib$(LIBNAME).a
 endif
 
 PRE.cc   = $(COMPILE.cc) -E 
@@ -247,6 +247,7 @@ ifdef SHAREDLIBS
 all:: ../lib/libengine1.so ../lib/libengine2.so
 else
 all:: $(OFILES)
+all:: $(LIB)
 endif
 
 %.ii: %.cpp
@@ -277,7 +278,7 @@ cmdnames.hpp : misc/cmdnames.input
 cmdinst.hpp : misc/cmdnames.input
 	$(AWK) -f misc/cmdinst.awk $^ >$@
 
-tags: TAGS
+all tags:: TAGS
 
 TAGS: $(HFILES) $(CCFILES)
 	etags *.hpp *.cpp *.c
@@ -312,7 +313,7 @@ dups-okay: dups-tmp
 tests::
 
 ifeq ($(OS),Linux)
-	# don't run it elsewhere because we may not have gnu sort and gnu uniq there
+# don't run it elsewhere because we may not have gnu sort and gnu uniq there
 tests:: dups-okay
 else
 tests::
@@ -344,7 +345,7 @@ $(LIB): $(OFILES)
 	$(AR) $(ARFLAGS) /out:$@ $^	
 else
 $(LIB): $(LIB)($(OFILES))
-	$(RANLIB) $(LIB) || true
+	-$(RANLIB) $(LIB)
 endif
 
 %.dd: %.cpp

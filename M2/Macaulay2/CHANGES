@@ -8,7 +8,17 @@ exterior algebra or a quotient polynomial ring.
 Substitution in skew commutative algebras now works correctly.
 
 -----------------------------------------------------------------------------
-New in 0.8.59:
+New in 0.8.61:
+
+The parser now checks for instances where a function and its arguments are on
+separate lines, and prints out a message, "missing semicolon before this token?".
+It does the same any time the "adjacency" operator is applied to a pair of tokens on
+separate lines.
+
+The 'M2' script has been changed so that if the dumpdata file isn't there,
+the system will start up by reading setup.m2.  On my machine, reading the
+source code in setup.m2 takes 1.9 seconds, and starting up with loaddata/dumpdata
+takes 0.3 seconds.  Machines are a lot faster now!
 
 -----------------------------------------------------------------------------
 New in 0.8.58:

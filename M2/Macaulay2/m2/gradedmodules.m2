@@ -18,8 +18,7 @@ net GradedModule := C -> if C.?name then C.name else (
      s := sort spots C;
      if # s === 0 then "0"
      else (
-	  horizontalJoin 
-	  between("  ", apply(s, i -> stack (net C_i,"",net i)))))
+	  horizontalJoin between("  ", apply(s, i -> stack (net C_i,"",net i)))))
 length GradedModule := (M) -> (
      s := spots M;
      if #s === 0 then 0 else max s - min s)

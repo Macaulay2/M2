@@ -53,6 +53,8 @@ oldendl := endl
 erase symbol endl
 endl = new Manipulator from oldendl
 
+stderr << "--loading setup.m2" << endl
+
 if class path =!= List then path = { "." }
 
 OS := "operating system"

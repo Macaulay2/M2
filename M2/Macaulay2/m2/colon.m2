@@ -302,8 +302,8 @@ saturate(Ideal,Ideal) := Ideal => options -> (J,I) -> (
     local f;
     if strategy === Linear then
       (
-	if not linearvar or not homog then error
-	  "'Linear' method requires saturation w.r.t. single linear element";
+	if not linearvar or not homog 
+	then error "'Linear' method requires saturation w.r.t. single linear element";
         f = satideal2;
       )
     else if strategy === Bayer then 
@@ -316,8 +316,8 @@ saturate(Ideal,Ideal) := Ideal => options -> (J,I) -> (
       )
     else if strategy === Elimination then
       (
-	if n =!= 1 then error
-	  "'Elimination' method requires a single element";
+	if n =!= 1
+	then error "'Elimination' method requires a single element";
         f = satideal4
       )
     else if strategy === Iterate then

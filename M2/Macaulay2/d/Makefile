@@ -101,7 +101,7 @@ endif
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
 
-CPPFLAGS := -I$(INCDIR) -I. -DGaCo=1
+CPPFLAGS := -I$(INCDIR) -I.
 # the purpose of the -I. is so scclib.c can find ./alloca.h if it's missing
 # from the gcc installation, as it often is
 
@@ -272,9 +272,9 @@ LIBRARYOPTIONS += -linterpreter
 ../lib/libinterpreter.so : $(PROJECT:.d=.loo) $(MISCO:.o=.lo)
 	$(CC) -shared $^ $(OUTPUT_OPTION)
 else
-ALLOBJ += $(wildcard ../e/*.o)
 ALLOBJ += $(PROJECT:.d=.oo) 
 ALLOBJ += $(MISCO)
+ALLOBJ += ../e/libgb.a
 endif
 
 ifdef NEWDUMPDATA

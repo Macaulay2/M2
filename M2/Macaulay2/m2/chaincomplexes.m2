@@ -52,8 +52,7 @@ net ChainComplex := C -> if C.?name then C.name else (
      else (
 	  a := s#0;
 	  b := s#-1;
-	  horizontalJoin 
-	  between(" <-- ", apply(a .. b,i -> stack (net C_i,"",net i)))))
+	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i,"",net i)))))
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of MutableHashTable
 ChainComplexMap.synonym = "chain complex map"
@@ -587,8 +586,7 @@ firstDegrees Module := M -> (
 	  if nd == 0 then toList (rk : 0)
 	  else (
 	       sendgg ggPush M;
-	       eePop ConvertList
-	       if nd == 1 then ConvertInteger
+	       eePop ConvertList if nd == 1 then ConvertInteger
 	       else ConvertApply splice (first, nd : ConvertInteger))))
 
 BettiNumbers := C -> (

@@ -210,7 +210,11 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      	  ONE := RM#1;
 	  if R.?char then RM.char = R.char;
 	  RM ? RM := (f,g) -> (
-	       sendgg(ggPush f, ggleadmonom, ggPush g, ggleadmonom, ggcompare);
+	       sendgg(ggPush f, 
+		    ggleadmonom, 
+		    ggPush g, 
+		    ggleadmonom, 
+		    ggcompare);
 	       ret := ZZ.pop();
 	       if ret === 1 then symbol >
 	       else if ret === 0 then symbol ==

@@ -6,8 +6,6 @@
 
 char newline[] = NEWLINE;
 
-bool system_gc = GaCo;
-
 extern void outofmem();
 
 char *getmem(n)

@@ -176,7 +176,7 @@ export precObject := 0;		-- filled in later by keywords.d
 export defaultbinary(
      lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      if token2.followsNewline then (
-     	  errorpos(token2.position,"missing semicolon on line before " + token2.word.name + "?");
+     	  errorpos(token2.position,"missing semicolon before this token?");
      	  errorTree
 	  )
      else (

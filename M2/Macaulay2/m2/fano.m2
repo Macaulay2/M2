@@ -37,8 +37,7 @@ Fano(ZZ,Ideal,Ring) := Ideal => (k,X,GR) -> (
   -- The following line produces the matrix of
   -- coefficients of the monomials in the 
   -- variables labelled 0..k:
-  cFX := (coefficients
-            (toList(0..k),gens FX))_1;
+  cFX := (coefficients (toList(0..k),gens FX))_1;
   -- We can get rid of the variables t_i
   -- to ease the computation:
   cFX = substitute(cFX, S2);

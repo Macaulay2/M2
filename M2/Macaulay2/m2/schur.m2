@@ -90,8 +90,7 @@ SchurRing _ List := (S,a) -> (
 	  if # a === 0 
 	  then 1_M
 	  else product(# a, i -> (M#i) ^ (
-		    ck
-	       	    if i+1 < # a 
+		    ck if i+1 < # a 
 	       	    then a#i - a#(i+1)
 	       	    else a#i)));
      sendgg(ggPush S, ggPush 1, ggPush m, ggterm);
