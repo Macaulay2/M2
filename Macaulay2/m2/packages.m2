@@ -66,31 +66,33 @@ removePackage Package := p -> (
      )
 removePackage String := s -> scan(packages, p -> if p.name == s then removePackage p)
 
+currentPackageS := getGlobalSymbol(PackagesDictionary,"currentPackage")
+
 newPackage = method( Options => { Using => {}, Version => "0.0", WritableSymbols => {}, DebuggingMode => false } )
 newPackage(Package) := opts -> p -> (
      hide p.Dictionary;		    -- hide the old dictionary
      newPackage(p.name,opts))
-newPackage(Symbol) := opts -> p -> newPackage(toString p,opts)
 newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
-     sym := value ("symbol " | title);
+     stderr << "--package " << p << " loading" << endl;
      removePackage title;
      saveD := globalDictionaries;
+     hook := () -> globalDictionaries = saveD;
      newdict := (
 	  if title === "Main" then first globalDictionaries
 	  else (
 	       d := new Dictionary;
-	       loadErrorHook = () -> globalDictionaries = saveD;
-	       globalDictionaries = {d,Main.Dictionary};    -- implement Using, too
+	       loadErrorHooks = prepend(hook, loadErrorHooks);
+	       globalDictionaries = {d,Main.Dictionary,PackagesDictionary};    -- implement Using, too
 	       d));
      if class opts.WritableSymbols =!= List then error "option WritableSymbols: expected a list";
      if not all(opts.WritableSymbols, s -> class s === Symbol) then error "option WritableSymbols: expected a list of symbols";
-     p := global currentPackage <- new Package from {
+     p := currentPackageS <- new Package from {
           symbol name => title,
-	  symbol Symbol => sym,
      	  symbol Dictionary => newdict,
 	  symbol Version => opts.Version,
 	  symbol WritableSymbols => opts.WritableSymbols,
+	  "load error hook" => hook,
 	  "previous package" => currentPackage,
 	  "previous dictionaries" => saveD,
 	  "old debugging mode" => debuggingMode,
@@ -111,8 +113,6 @@ newPackage(String) := opts -> (title) -> (
 	  };
      PrintNames#newdict = title | ".Dictionary";
      debuggingMode = opts.DebuggingMode;
-     globalAssignFunction(sym,p);
-     sym <- p;
      packages = prepend(p,packages);
      p)
 
@@ -125,7 +125,7 @@ newPackage("Main",
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
 	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, 
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
-	  symbol packages, symbol notify, symbol loadDepth, symbol printingPrecision, symbol loadErrorHook,
+	  symbol packages, symbol notify, symbol loadDepth, symbol printingPrecision, symbol loadErrorHooks,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
 	  })
@@ -142,11 +142,19 @@ Command.GlobalReleaseHook = (X,x) -> (
      remove(ReverseDictionary,x);
      )
 
-closePackage = p -> (
-     if p =!= currentPackage then error ("package not open");
+closePackage = method()
+closePackage String := title -> (
+     if title =!= currentPackage.name then error ("package not the current package");
+     p := currentPackage;
+     sym := getGlobalSymbol(PackagesDictionary,title);
+     p.Symbol = sym;
+     globalAssignFunction(sym,p);
+     sym <- p;
      scan(p.WritableSymbols, s -> if value s === s then stderr << "warning: unused writable symbol '" << s << "'" << endl);
      ws := set p.WritableSymbols;
      d := p.Dictionary;
+     loadErrorHooks = select(loadErrorHooks, f -> f =!= p#"load error hook");
+     remove(p,"load error hook");
      scan(values d,
 	  s -> (
 	       if not ws#?s then protect s;
@@ -156,7 +164,7 @@ closePackage = p -> (
 	  protect p.Dictionary;
 	  );
      if first globalDictionaries =!= p.Dictionary then error ("another dictionary is open");
-     globalDictionaries = prepend(d,p#"previous dictionaries");
+     if p.name =!= "Main" then globalDictionaries = prepend(d,p#"previous dictionaries");
      currentPackage = p#"previous package";
      debuggingMode = p#"old debugging mode";
      stderr << "--package " << p << " installed" << endl;

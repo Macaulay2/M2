@@ -1,5 +1,12 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
+PackagesDictionary = new Dictionary
+globalDictionaries = append(globalDictionaries,PackagesDictionary)
+getGlobalSymbol(PackagesDictionary,"Main")
+
+-----------
+
+
 assert = x -> if not x then error "assertion failed"
 
 if Function.?GlobalAssignHook then error "setup.m2 already loaded"
