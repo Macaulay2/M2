@@ -18,8 +18,8 @@ ab = rawMonomialMake{(1,1),(0,1)}
 
 assert( hash a2 === hash a^2 )
 
-assert( rawQuotient(ab,a) == b )
-assert( rawQuotient(ab,a^2) == b )
+assert( rawColon(ab,a) == b )
+assert( rawColon(ab,a^2) == b )
 
 a32766 = rawVar(0,32766)
 assert(a32766 * a == rawVar(0,32767))
@@ -35,8 +35,8 @@ assert(try (rawVar(-1,4); false) else true)
 assert(try (rawVar(3,32768); false) else true)
 
 a^(-1)
-rawQuotient(a^10, a^5)
-rawQuotient(a^(-1), a^11)
+rawColon(a^10, a^5)
+rawColon(a^(-1), a^11)
 
 assert( toString x === "d4" )
 assert( x === x' )
@@ -404,7 +404,7 @@ makeRawMonoid = (vars) -> (
 -- rawSkewPolynomialRing(R, skewvars)
 -- rawWeylAlgebra(R, {x=>D_x, h})
 -- rawSolvableAlgebra(R, P, Q)
--- rawQuotient(R,M) -- R is a polynomial ring, skew poly, Weyl or solvable algebra
+-- rawColon(R,M) -- R is a polynomial ring, skew poly, Weyl or solvable algebra
 --   R can be ZZ
 --   R can be poly,skew,weyl.  Is the quotient by a 2-sided ideal in these noncomm 
 --     cases?

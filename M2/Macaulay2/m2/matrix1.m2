@@ -109,16 +109,12 @@ options -> (M,N,p) -> (
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      if N === null and options.Degree =!= null
      then error "Degree option given with indeterminate source module";
-     p = makeRawTable(R,p);
+     p = toSequence transpose makeRawTable(R,p);	    -- eventually remove 'transpose'
      rawM := M.RawFreeModule;
-     p = if # p === 0 then rankN:() else toSequence transpose p;
-     p = apply(p, col -> rawVector(rawM,toSequence col));
      h := (
 	  if N === null 
-	  then rawMatrix(rawM,p)
-	  else rawMatrix(rawM,N.RawFreeModule,
-	       if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),
-	       p)
+	  then rawMatrix1(rawM, rankN, flatten p, false)
+	  else rawMatrix2(rawM, N.RawFreeModule, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,false)
 	  );
      new Matrix from {
 	  symbol target => M,

@@ -11,6 +11,7 @@ RawMonomial.name = "RawMonomial"
 RawMonomial.synonym = "raw monomial"
 
 RawMonomial == RawMonomial := (x,y) -> x === y
+RawMonomial : RawMonomial := (x,y) -> rawColon(x,y)
 ZZ == RawMonomial := (i,x) -> x == i
 
 expression RawMonomial := x -> (
@@ -246,12 +247,7 @@ target RawMatrix := o -> rawTarget o
 source RawMatrix := o -> rawSource o
 transposeSequence := t -> pack(#t, mingle t)
 isHomogeneous RawMatrix := rawIsHomogeneous
-entries RawMatrix := m -> (
-     c := rawMatrixColumns m;
-     if #c === 0
-     then toList ( rank target m : {} )
-     else transposeSequence ( rawVectorEntries \ c )
-     )
+entries RawMatrix := m -> table(rawNumberOfRows m,rawNumberOfColumns m,(i,j)->rawMatrixEntry(m,i,j))
 
 ZZ * RawMatrix := (n,f) -> (
      R := rawRing rawTarget f;

@@ -18,6 +18,8 @@ match := X -> 0 < #(matches X)				    -- defined as a method later
 
 if class phase === Symbol then phase = 0
 
+somethingElse = () -> error "something else needs to be implemented here"
+
 protect AfterEval
 protect AfterPrint
 protect BeforePrint
