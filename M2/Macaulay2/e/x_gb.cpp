@@ -55,6 +55,8 @@ ComputationOrNull *IM2_res_make(
 				 algorithm,
 				 strategy);
 #endif
+  ERROR("resolutions not yet re-implemented");
+  return 0;
 }
 
 ComputationOrNull *
@@ -113,6 +115,7 @@ void rawStartComputation(Computation *C)
 
 enum ComputationStatusCode rawStatus1(Computation *C)
 {
+  return C->status();
 }
 
 const MatrixOrNull *rawGBMatrix(Computation *C)
@@ -168,39 +171,69 @@ const MatrixOrNull *rawGBSyzygies(Computation *C)
 }
 
 const MatrixOrNull *
-rawResolutionGetMatrix(Computation *G, 
+rawGBMatrixRemainder(Computation *C, 
+		     const Matrix *m)
+{
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    return G->matrix_remainder(m);
+  ERROR("computation type unknown or not implemented");
+  return 0;
+}
+
+void IM2_GB_matrix_lift(Computation *C,
+			const Matrix *m,
+			MatrixOrNull **result_remainder,
+			MatrixOrNull **result_quotient
+			)
+{
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    G->matrix_lift(m, result_remainder, result_quotient);
+  ERROR("computation type unknown or not implemented");
+  return 0;
+
+}
+
+int 
+IM2_GB_contains(Computation *C, 
+		const Matrix *m)
+{
+  GBComputation *G = C->cast_to_GBComputation();
+  if (G != 0)
+    return G->contains(m);
+  ERROR("computation type unknown or not implemented");
+  return -2;
+}
+
+const MatrixOrNull *
+rawResolutionGetMatrix(Computation *C, 
 		  int level, 
 		  M2_bool minimize)
 {
+#warning write this routine
+#if 0
   return G->get_matrix(level, minimize);
+#endif
+  ERROR("resolutions need to be re-implemented");
+  return 0;
 }
 
-int rawStatus(Computation *G,
-		  int * complete_up_through_this_degree,
-		  int * stopping_reason) /* number from IM2_Computation_set_stop,
-					     interrupted is -1. None is 0. */
-  /* connected rawStatus */
-  /* -1: error condition, and the error message is set.
-     1: not started,
-     2: started, but still running in another thread (not implemented yet)
-     3: stopped because of a stopping condition or an interrupt
-     4: finished the computation completely
-  */
+enum ComputationStatusCode rawStatus(Computation *C,
+		  int * complete_up_through_this_degree)
 {
+#warning write this routine
+#if 0
   return G->status(complete_up_through_this_degree,
 		   stopping_reason);
+#endif
+  ERROR("resolutions need to be re-implemented");
+  return 0;
 }
 
-int IM2_Resolution_status(Computation *G,
+int IM2_Resolution_status(Computation *C,
 			  int * complete_up_through_this_degree,
 			  int * complete_up_through_this_level)
-  /* -1: error condition, and the error message is set.
-     0: not made, and in fact it won't ever be done...
-     1: not started,
-     2: started, 
-     3: stopped because of a stopping condition
-     4: finished the computation completely
-  */
 {
 #warning "IM2_Resolution_status to be written"
   ERROR("not re-implemented yet");
@@ -209,68 +242,38 @@ int IM2_Resolution_status(Computation *G,
 
 
 int 
-IM2_Resolution_status_level(Computation *G, 
+IM2_Resolution_status_level(Computation *C, 
 		    int level, 
 		    M2_bool minimize,
 		    int * complete_up_through_this_degree)
   /* Same return values */
 {
+#warning write this routine
+#if 0
   return G->status_level(level, 
 			 minimize,
 			 complete_up_through_this_degree);
-}
-
-const MatrixOrNull *
-IM2_GB_get_change(Computation *G, 
-		  int level)
-{
-  return G->get_change(level);
-}
-
-const MatrixOrNull *
-IM2_GB_get_leadterms(Computation *G, 
-		     int nparts, 
-		     int level)
-{
-  return G->get_leadterms(nparts, level);
+#endif
+  ERROR("resolutions need to be re-implemented");
+  return 0;
 }
 
 const FreeModuleOrNull *
-rawResolutionGetFree(Computation *G, 
+rawResolutionGetFree(Computation *C, 
 		int level, 
 		M2_bool minimal)
 {
+#warning write this routine
+#if 0
   return G->get_free(level, minimal);
+#endif
+  ERROR("resolutions need to be re-implemented");
+  return 0;
 }
 
-const MatrixOrNull *
-rawGBMatrixRemainder(Computation *G, 
-			int level,
-			const Matrix *m)
-{
-  return G->matrix_remainder(level, m);
-}
-
-void IM2_GB_matrix_lift(Computation *G,
-			int level,
-			const Matrix *m,
-			MatrixOrNull **result_remainder,
-			MatrixOrNull **result_quotient
-			)
-{
-  G->matrix_lift(level, m, result_remainder, result_quotient);
-}
-
-int 
-IM2_GB_contains(Computation *G, 
-		int level,
-		const Matrix *m)
-{
-  return G->contains(level, m);
-}
 
 const M2_arrayint_OrNull
-rawResolutionBetti(Computation *G,
+rawResolutionBetti(Computation *C,
 	     int type)
   /* 0: minimal betti numbers,
      1:
@@ -278,23 +281,28 @@ rawResolutionBetti(Computation *G,
      3:
   */
 {
+#warning write this routine
+#if 0
   return G->betti(type);
+#endif
+  ERROR("resolutions need to be re-implemented");
+  return 0;
 }
 
 const M2_string
-IM2_GB_to_string(Computation *G)
+IM2_GB_to_string(Computation *C)
   /* TODO */
 {
   buffer o;
   o << "--RawGroebnerBasis[";
-  G->text_out(o);
+  C->text_out(o);
   o << "]--";
   return o.to_string();
 }
 
-int IM2_GB_hash(const Computation *G)
+int IM2_GB_hash(const Computation *C)
 {
-  return G->get_hash_value();
+  return C->get_hash_value();
 }
 
 #if 0
