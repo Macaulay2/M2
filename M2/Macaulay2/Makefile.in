@@ -85,12 +85,7 @@ distclean clean ::; $(MAKE) -C book $@
 all ::;  $(MAKE) -C emacs all
 install distclean clean ::; $(MAKE) -C emacs $@
 ################################# bin
-bin :; mkdir $@
-clean ::; rm -rf bin
-initialize :: bin
-$(bindir) :; $(INSTALL) -d "$@"
-install       :: $(bindir); $(INSTALL_PROGRAM)    bin/M2$(EXE) $(bindir)/M2$(EXE)
-install-strip :: $(bindir); $(INSTALL_PROGRAM) -s bin/M2$(EXE) $(bindir)/M2$(EXE)
+install install-strip distclean clean ::; $(MAKE) -C bin $@
 ################################# cache
 ifeq "$(DUMPDATA)" "yes"
 ifeq "$(ENCAP)" "no"
