@@ -339,9 +339,9 @@ installPackage Package := o -> pkg -> (
 	  -- copy source subdirectory
 	  srcDirectory := LAYOUT#"packagesrc" pkg.name;
 	  dn := realpath(currentSourceDir|buildPackage);
-	  stderr << "--copying auxiliary source files from " << dn << endl;
 	  if fileExists dn
 	  then (
+	       stderr << "--copying auxiliary source files from " << dn << endl;
 	       makeDirectory (buildDirectory|srcDirectory);
 	       copyDirectory(dn, buildDirectory|srcDirectory, Verbose=>true, Exclude => {"CVS"});
 	       );
