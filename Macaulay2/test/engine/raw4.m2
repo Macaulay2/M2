@@ -55,6 +55,8 @@ rawStartComputation Gcomp
 m = rawGBSyzygies Gcomp
 m = rawGBGetMatrix Gcomp
 rawStatus1 Gcomp
+rawStatus2 Gcomp
+
 -- Test 3. 
 
 G = mat{{(3*x+y+z)^2, (7*x+2*y+3*z)^2}}
