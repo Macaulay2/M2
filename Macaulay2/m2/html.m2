@@ -417,8 +417,8 @@ runString := (x,pkg) -> (
      rmall();
      result)
 
-checkPackage = method();
-checkPackage Package := pkg -> (
+check = method()
+check Package := pkg -> (
      scan(values pkg#"test inputs", s -> runString(s,pkg))
      )
 
@@ -770,21 +770,6 @@ installPackage Package := o -> pkg -> (
      stderr << "--installed package " << pkg << " in " << buildDirectory << endl;
      currentPackage = oldpkg;
      )
-
-check = method()
-check Package := pkg -> (
-     logfile := "Macaulay2-test.log";
-     scan(pairs pkg#"test inputs", 
-	  (i,t) -> (
-	       stderr << "--------------------------------------------" << endl;
-	       if class t === String then (
-	       	    cmd := commandLine#0 | " --silent -q -e 'load \""|pkg#"title"|".m2\"'";
-	       	    stderr << "-- test " << i << ": " << cmd << endl;
-	       	    "!" | cmd << t << endl << close;
-		    )
-	       else if class t === Function then (
-		    stderr << "-- test " << i << ":" << endl << code t << endl;
-		    t()))))
 
 makePackageIndex = method(SingleArgumentDispatch => true)
 makePackageIndex Sequence := () -> makePackageIndex packagePrefixPath
