@@ -127,7 +127,7 @@ MarkUpList _ MarkUpList := (x,y) -> SEQ{x,SUB y}
 
 trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
 trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
-trimline1 := x -> selectRegexp ( "^ *(.*[^ ]|)$",1, x)
+trimline1 := x -> selectRegexp ( "^ *(.*)$",1, x)
 addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
 
 fixup := method(SingleArgumentDispatch => true)

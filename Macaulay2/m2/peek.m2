@@ -25,22 +25,19 @@ peek'(ZZ,List) := (depth,s) -> (
 	  "{", horizontalJoin between (",", apply(s, value -> peek'(depth,value))), "}" ) )
 peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
 
+vbar := (ht,dp) -> (stack (ht + dp : "|"^-1)) ^ ht;
 boxList = method(SingleArgumentDispatch => true)
 boxList List := boxList Sequence := nets -> (
      nets = net \ nets;
      wid := if #nets === 0 then 0 else max \\ width \ nets;
-     side := stack between("+", apply(nets, n -> (stack (height n + depth n : "|"^-1)) ^ (height n)));
+     side := stack between("+", apply(nets, n -> vbar(height n, depth n)));
      w := side | stack between(concatenate (wid:"-"), nets) | side;
      top := concatenate("+", width w - 2 : "-", "+");
      w = stack(top,w,top);
      if #nets > 0 then w = w ^ (height first nets);
      w)
-upWidth := (wid,n) -> if width n == wid then n else n|concatenate(wid - width n : " ")
-joinRow := x -> (
-     maxht := max(height \ x);
-     maxdp := max(depth  \ x);
-     vbar := (stack (maxht + maxdp : "|"^-1)) ^ maxht;
-     horizontalJoin mingle(#x+1:vbar,x))
+upWidth := (wid,n) -> n | horizontalJoin(wid - width n : " "^(height n - 1))
+joinRow := x -> horizontalJoin mingle(#x+1:vbar(max\\height\x,max\\depth\x),x)
 boxTable = method(SingleArgumentDispatch => true)
 boxTable List :=
 boxTable Sequence := x -> (
@@ -48,10 +45,9 @@ boxTable Sequence := x -> (
      if #x == 0 or #x#0 == 0 then return boxList x;
      x = applyTable(x,net);
      colwids := max \ transpose applyTable(x,width);
-     x = apply(x, row -> apply(colwids,row,upWidth));
-     x = joinRow \ x;
+     x = joinRow \ apply(x, row -> apply(colwids,row,upWidth));
      hbar := concatenate mingle(#colwids+1:"+",apply(colwids,wid -> wid:"-"));
-     stack mingle(#x+1:hbar,x))
+     (stack mingle(#x+1:hbar,x))^(height x#0))
 
 peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else boxList {s}
 peek'(ZZ,Sequence) := (depth,s) -> (

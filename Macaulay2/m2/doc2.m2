@@ -334,26 +334,27 @@ document { isListener,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
-document { symbol <<,
-     TT "x << y", " -- a binary operator usually used for file output.", 
-     BR, NOINDENT,
-     TT "<< y", " -- a unary operator usually used for output to stdout."
-     }
-
-document { (symbol <<,ZZ, ZZ),
-     Headline => "shift bits leftward",
-     TT "i << j", " -- shifts the bits in the integer ", TT "i", " leftward ", TT "j", " places.",
-     PARA,
-     EXAMPLE "2 << 5",
-     SEEALSO ">>"
-     }
-
+document { symbol <<, Headline => " -- a binary operator" }
+document { symbol >>, Headline => " -- a binary operator" }
 document { (symbol >>, ZZ, ZZ),
      Headline => "shift bits rightward",
-     TT "i >> j", " -- shifts the bits in the integer ", TT "i", " rightward ", TT "j", " places.",
-     PARA,
+     Synopsis => {
+	  Usage => "i >> j",
+	  Inputs => { "i" => null, "j" => null },
+	  Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation rightward ", TT "j", " places" }}
+	  },
      EXAMPLE "256 >> 5",
-     SEEALSO "<<"
+     SEEALSO {(symbol <<,ZZ, ZZ)}
+     }
+document { (symbol <<, ZZ, ZZ),
+     Headline => "shift bits rightward",
+     Synopsis => {
+	  Usage => "i << j",
+	  Inputs => { "i" => null, "j" => null },
+	  Outputs => {{ "the integer obtained from ", TT "i", " by shifting its binary representation leftward ", TT "j", " places" }}
+	  },
+     EXAMPLE "256 << 5",
+     SEEALSO {(symbol >>,ZZ, ZZ)}
      }
 
 document { (symbol <<, String, Thing),
@@ -379,11 +380,6 @@ document { (symbol <<, Thing),
      PARA,
      EXAMPLE "<< \"abcdefghij\" << endl",
      SEEALSO {"<<"}
-     }
-
-document { symbol ">>",
-     Headline => "shift bits rightward",
-     TT "i >> j", " -- shifts the bits in the integer ", TT "i", " rightward ", TT "j", " places."
      }
 
 document { symbol ":",

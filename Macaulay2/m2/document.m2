@@ -452,7 +452,7 @@ OFCLASS = X -> (
      )
 
 getDocBody := method(SingleArgumentDispatch => true)
-doExamples = false					    -- sigh, another global variable???
+doExamples = true					    -- sigh, another global variable???
 getDocBody Thing := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
@@ -948,8 +948,7 @@ net MarkUpList := x -> horizontalJoin apply(x,net)
 texMath MarkUpList := x -> concatenate apply(x,texMath)
 mathML MarkUpList := x -> concatenate apply(x,mathML)
 
-net SEQ := net PARA :=
-net Hypertext := x -> (					    -- we have to be prepared for a mixture of vertical and horizontal items
+net SEQ := net PARA := net Hypertext := x -> (					    -- we have to be prepared for a mixture of vertical and horizontal items
      x = toList x;
      p := positions(x, i -> instance(i,MarkUpListParagraph)); -- these ones have to stand as independent paragraphs, the ones in between can be joined horizontally
      x = select(
@@ -1019,7 +1018,21 @@ tex PARA := x -> concatenate(///
      apply(x,tex))
 
 
+html ExampleTABLE := x -> concatenate(
+     newline,
+     "<p><table class=\"examples\" cellspacing='0' cellpadding='12' border='4' width='100%'>",
+     newline,
+     apply(x, 
+	  item -> (
+	       "  <tr>", newline,
+	       "    <td>", html item#1, "</td>", newline,
+	       "  </tr>", newline
+	       )
+	  ),
+     "</table></p><p>"
+     )			 
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
+
 net ExampleTABLE := x -> "    " | boxList apply(toList x, y -> net y#1)
 net EXAMPLE := x -> net ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
@@ -1056,19 +1069,6 @@ html TABLE := x -> concatenate(
      newline
      )			 
 
-html ExampleTABLE := x -> concatenate(
-     newline,
-     "<p><table class=\"examples\" cellspacing='0' cellpadding='12' border='4' width='100%'>",
-     newline,
-     apply(x, 
-	  item -> (
-	       "  <tr>", newline,
-	       "    <td>", html item#1, "</td>", newline,
-	       "  </tr>", newline
-	       )
-	  ),
-     "</table></p><p>"
-     )			 
 
 net PRE := x -> net concatenate x
 html PRE   := x -> concatenate( 
@@ -1129,18 +1129,17 @@ texMath TEX := tex TEX := x -> concatenate toList x
 texMath SEQ := tex SEQ := x -> concatenate(apply(toList x, tex))
 html SEQ := x -> concatenate(apply(toList x, html))
 
+-- these seem questionable:
 tex Sequence := tex List := tex Array := x -> concatenate("$",texMath x,"$")
 html Sequence := x -> concatenate("(", between(",", apply(x,html)), ")")
 html List := x -> concatenate("{", between(",", apply(x,html)), "}")
 
 net CODE := x -> stack lines concatenate x
-
 html CODE   := x -> concatenate( 
      "<tt>", 
      demark( ("<br>",newline), apply(lines concatenate x, htmlExtraLiteral) ),
      "</tt>"
      )
-
 
 html ANCHOR := x -> (
      "<a name=\"" | x#0 | "\">" | html x#-1 | "</a>"
