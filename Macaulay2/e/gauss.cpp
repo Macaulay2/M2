@@ -4,6 +4,7 @@
 #include "gauss.hpp"
 #include "text_io.hpp"
 #include "matrixcon.hpp"
+#include "newdelete.hpp"
 
 extern ZZ *globalZZ;
 
@@ -75,8 +76,8 @@ GaussElimComputation::GaussElimComputation(const Matrix *m, int collsyz, int nsy
   int i;
 
   typedef struct gm_elem *gm_elem_ptr;
-  reduce_list = new gm_elem_ptr[m->n_rows()];
-  gb_list = new gm_elem_ptr[m->n_rows()];
+  reduce_list = newarray(gm_elem_ptr,m->n_rows());
+  gb_list = newarray(gm_elem_ptr,m->n_rows());
 
   for (i=0; i<m->n_rows(); i++)
     {
