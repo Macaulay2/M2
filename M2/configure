@@ -1443,9 +1443,9 @@ fi
 
 OPTIMIZE=yes
 
-# Check whether --enable-profile or --disable-profile was given.
-if test "${enable_profile+set}" = set; then
-  enableval="$enable_profile"
+# Check whether --enable-optimize or --disable-optimize was given.
+if test "${enable_optimize+set}" = set; then
+  enableval="$enable_optimize"
   OPTIMIZE="$enableval"
 fi
 
