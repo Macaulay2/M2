@@ -9,7 +9,7 @@
 -----------------------------------------------------------------------
 
  
-bFunction = method(Options => {Strategy => TryGeneric})
+bFunction = method(Options => {Strategy => IntRing})
 
 -- makes polynomial f monic (internal) 
 makeMonic := f -> ( if coefficientRing ring f === QQ 

@@ -9,7 +9,7 @@ localCohom = method(Options => {Strategy => Walther, LocStrategy => null})
 
 ----------------------------------------------------------------------------------------
 -- computes the local cohomology H_I(R), where I is an ideal in a polynomial ring R.
--- using the Walther's algorithm
+-- using Walther's algorithm
 --
 -- option: Strategy (sets the way localizations are computed)
 ----------------------------------------------------------------------------------------
@@ -119,6 +119,9 @@ localCohom(ZZ, Ideal, Module) := HashTable => o -> (l,I,M) -> (
      );
 
 localCohom(List, Ideal, Module) := HashTable => o -> (l,I,M) -> (
+     pInfo (1, "localCohom: holonomicity check ...");
+     if not isHolonomic M then
+     error "expected a holonomic module";
      if o.Strategy == Walther then (
      	  if o.LocStrategy === null then localCohomRegular(l,I,M)
      	  else if o.LocStrategy == OaTaWa then localCohomILOTW(l,I,M)
@@ -149,7 +152,7 @@ localCohomILOaku(List, Ideal, Module) := (l, I, M) -> (
      C := new MutableList from toList ((r+1):());
      MM := new MutableList from toList (r:());
      C#0 = directSum { {} => M };
-     -- (For this strategy only!!!) 
+     -- (For this strategy only!) 
      -- keep track of powers of f_i in the localizations
      FPower := new MutableList from toList (r:0);
      scan(toList(1..r), k->(
@@ -193,7 +196,7 @@ localCohomILOaku(List, Ideal, Module) := (l, I, M) -> (
 					-- Have to recompute the previous component
 					flagOK = false;
 					error "Bad luck..."
-					--!!!! Write it sometime
+					--!!! Write it sometime
 					);
 				   TempM = TempM 
 				   + (C#k)_[j0] -- injection from j0-th component

@@ -518,6 +518,10 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      nW := numgens W;
      K := coefficientRing W;
 
+     pInfo (1, "DHom: holonomicity check ...");
+     if not (isHolonomic M and isHolonomic N) then
+     error "expected holonomic ideals/modules";     
+     
      outputList := {};
      if (ring N != W) then error "expected modules over the same Weyl algebra";
      if (W.monoid.Options.WeylAlgebra === {}) then
@@ -636,6 +640,10 @@ DExt(Module, Module, List) := options -> (M, N, w) -> (
      outputList := {};
 
      -- ERROR CHECKING
+     pInfo (1, "DExt: holonomicity check ...");
+     if not (isHolonomic M and isHolonomic N) then
+     error "expected holonomic ideals/modules";     
+
      if ring M != ring N then
      error "Expected modules over the same rings";
      if W.monoid.Options.WeylAlgebra === {} then
