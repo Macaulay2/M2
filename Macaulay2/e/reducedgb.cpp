@@ -1,10 +1,10 @@
-#include "minimalgb.hpp"
+#include "reducedgb.hpp"
 
 #include "matrixcon.hpp"
 #include "poly.hpp"
 #include "matrix.hpp"
 
-MinimalGB::MinimalGB(GBRing *R0,
+ReducedGB::ReducedGB(GBRing *R0,
 		     const PolynomialRing *originalR0,
 		     const FreeModule *F0,
 		     const FreeModule *Fsyz0) 
@@ -16,12 +16,12 @@ MinimalGB::MinimalGB(GBRing *R0,
   set_status(COMP_DONE);
 }
 
-MinimalGB::~MinimalGB()
+ReducedGB::~ReducedGB()
 {
   // intentionally blank
 }
 
-const MatrixOrNull *MinimalGB::get_gb()
+const MatrixOrNull *ReducedGB::get_gb()
 {
   MatrixConstructor mat(F,0);
   for (vector<POLY, gc_allocator<POLY> >::const_iterator i = polys.begin(); i != polys.end(); i++)
@@ -32,19 +32,19 @@ const MatrixOrNull *MinimalGB::get_gb()
   return mat.to_matrix();
 }
 
-const MatrixOrNull *MinimalGB::get_mingens()
+const MatrixOrNull *ReducedGB::get_mingens()
 {
 #warning "mingens?"
   return 0;
 }
 
-const MatrixOrNull *MinimalGB::get_syzygies()
+const MatrixOrNull *ReducedGB::get_syzygies()
 {
 #warning "syzygies?"
   return 0;
 }
 
-const MatrixOrNull *MinimalGB::get_change()
+const MatrixOrNull *ReducedGB::get_change()
 {
   MatrixConstructor mat(Fsyz,0);
   for (vector<POLY, gc_allocator<POLY> >::const_iterator i = polys.begin(); i != polys.end(); i++)
@@ -55,7 +55,7 @@ const MatrixOrNull *MinimalGB::get_change()
   return mat.to_matrix();
 }
 
-const MatrixOrNull *MinimalGB::get_initial(int nparts)
+const MatrixOrNull *ReducedGB::get_initial(int nparts)
 {
   MatrixConstructor mat(F,0);
   for (vector<POLY, gc_allocator<POLY> >::const_iterator i = polys.begin(); i != polys.end(); i++)
@@ -66,11 +66,11 @@ const MatrixOrNull *MinimalGB::get_initial(int nparts)
   return mat.to_matrix();
 }
 
-void MinimalGB::text_out(buffer &o)
+void ReducedGB::text_out(buffer &o)
 {
 }
 
-const MatrixOrNull *MinimalGB::matrix_remainder(const Matrix *m)
+const MatrixOrNull *ReducedGB::matrix_remainder(const Matrix *m)
 {
   if (m->get_ring() != originalR)
     {
@@ -98,7 +98,7 @@ const MatrixOrNull *MinimalGB::matrix_remainder(const Matrix *m)
 
 }
 
-void MinimalGB::matrix_lift(const Matrix *m,
+void ReducedGB::matrix_lift(const Matrix *m,
 			    MatrixOrNull **result_remainder,
 			    MatrixOrNull **result_quotient)
 {
@@ -140,7 +140,7 @@ void MinimalGB::matrix_lift(const Matrix *m,
   *result_quotient = mat_quotient.to_matrix();
 }
 
-int MinimalGB::contains(const Matrix *m)
+int ReducedGB::contains(const Matrix *m)
 {
   // Reduce each column of m one by one.
   if (m->get_ring() != originalR)

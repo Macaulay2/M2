@@ -1,23 +1,23 @@
 // Copyright 2005, Michael E. Stillman
 
-#include "minimalgb-field.hpp"
+#include "reducedgb-field.hpp"
 #include "monideal.hpp"
 #include <functional>
 #include <algorithm>
 
-MinimalGB_Field::~MinimalGB_Field()
+ReducedGB_Field::~ReducedGB_Field()
 {
 }
 
-void MinimalGB_Field::set_gb(vector<POLY, gc_allocator<POLY> > &polys0)
+void ReducedGB_Field::set_gb(vector<POLY, gc_allocator<POLY> > &polys0)
 {
 }
 
-struct MinimalGB_Field_sorter : public binary_function<int,int,bool> {
+struct ReducedGB_Field_sorter : public binary_function<int,int,bool> {
   GBRing *R;
   const FreeModule *F;
   const vector<POLY, gc_allocator<POLY> > &gb;
-  MinimalGB_Field_sorter(GBRing *R0,
+  ReducedGB_Field_sorter(GBRing *R0,
 			 const FreeModule *F0,
 			 const vector<POLY, gc_allocator<POLY> > &gb0)
     : R(R0), F(F0), gb(gb0) {}
@@ -28,18 +28,18 @@ struct MinimalGB_Field_sorter : public binary_function<int,int,bool> {
   }
 };
 
-MinimalGB_Field::MinimalGB_Field(GBRing *R0,
+ReducedGB_Field::ReducedGB_Field(GBRing *R0,
 				 const PolynomialRing *originalR0,
 				 const FreeModule *F0,
 				 const FreeModule *Fsyz0) 
-: MinimalGB(R0,originalR0,F0,Fsyz0), T(0)
+: ReducedGB(R0,originalR0,F0,Fsyz0), T(0)
 {
   T = MonomialTable::make(R0->n_vars());
   if (originalR->is_quotient_ring())
     Rideal = originalR->get_quotient_monomials();
 }
 
-void MinimalGB_Field::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0)
+void ReducedGB_Field::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0)
 // I have to decide: does this ADD to the existing set?
 {
   // First sort these elements via increasing lex order (or monomial order?)
@@ -51,7 +51,7 @@ void MinimalGB_Field::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0
   for (int i=0; i<polys0.size(); i++)
     positions.push_back(i);
 
-  sort(positions.begin(), positions.end(), MinimalGB_Field_sorter(R,F,polys0));
+  sort(positions.begin(), positions.end(), ReducedGB_Field_sorter(R,F,polys0));
 
   // Now loop through each element, and see if the lead monomial is in T.
   // If not, add it in , and place element into 'polys'.
@@ -83,7 +83,7 @@ void MinimalGB_Field::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0
     }
 }
 
-void MinimalGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
+void ReducedGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
 {
   gbvector head;
   gbvector *frem = &head;
@@ -134,7 +134,7 @@ void MinimalGB_Field::remainder(POLY &f, bool use_denom, ring_elem &denom)
   R->exponents_delete(_EXP);
 }
 
-void MinimalGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
+void ReducedGB_Field::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 {
   gbvector *zero = 0;
   gbvector head;

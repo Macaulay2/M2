@@ -65,9 +65,10 @@ INTERFACE = \
 	comp_res \
 	res \
 	respoly \
-	minimalgb \
-	minimalgb-field \
-	minimalgb-ZZ \
+	reducedgb \
+	reducedgb-field \
+	reducedgb-field-local \
+	reducedgb-ZZ \
 	matrixcon \
 	computation \
 	comp_gb \

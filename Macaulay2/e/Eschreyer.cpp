@@ -34,7 +34,8 @@ Matrix *GBMatrix::to_matrix()
 {
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
   assert(R != 0);
-  MatrixConstructor mat(F, elems.size());
+  const FreeModule *G = FreeModule::make_schreyer(this);
+  MatrixConstructor mat(F, G);
   for (int i=0; i<elems.size(); i++)
     {
       vec v = R->translate_gbvector_to_vec(F,elems[i]);
@@ -60,7 +61,6 @@ GBKernelComputation::GBKernelComputation(const GBMatrix *m)
   SF = F->get_schreyer_order();
   SG = G->get_schreyer_order();
 
-  one = K->from_int(1);
   PAIRS_mon = M->make_one();
   REDUCE_mon = M->make_one();
   REDUCE_exp = newarray(int,M->n_vars());
@@ -74,7 +74,6 @@ GBKernelComputation::~GBKernelComputation()
   M->remove(PAIRS_mon);
   M->remove(REDUCE_mon);
   deletearray(REDUCE_exp);
-  K->remove(one);
   // Remove gb
   // Remove syzygies
   // Remove mi
@@ -85,16 +84,16 @@ int GBKernelComputation::calc()
   // First find the skeleton
   for (int i=0; i<gb.length(); i++) new_pairs(i);
 
-#if 0
-  Matrix *mm = new Matrix(G);
+  // Debug code
+  GBMatrix *mm = new GBMatrix(G);
   for (int p=0; p<syzygies.length(); p++)
-    mm->append(G->copy(syzygies[p]));
-
+    mm->append(GR->gbvector_copy(syzygies[p]));
   buffer o;
+  Matrix *m = mm->to_matrix();
   o << "skeleton = " << newline;
-  mm.text_out(o);
+  m->text_out(o);
   emit(o.str());
-#endif
+
   // Sort the skeleton now?
 
   // Now reduce each one of these elements
@@ -122,6 +121,8 @@ GBMatrix *GBKernelComputation::get_syzygies()
 // Private routines //
 //////////////////////
 gbvector * GBKernelComputation::make_syz_term(ring_elem c, const int *m, int comp) const
+  // c is an element of GR->get_flattened_coefficients()
+  // (m,comp) is a Schreyer encoded monomial in Fsyz
 {
 #warning "this might add in the Schreyer up"
   return GR->gbvector_raw_term(c,m,comp);
@@ -180,7 +181,6 @@ void GBKernelComputation::new_pairs(int i)
 
   if (R->is_skew_commutative())
     {
-      intarray vplcm;
       int * find_pairs_exp = newarray(int, M->n_vars());
 
       varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_exp);
@@ -244,7 +244,7 @@ void GBKernelComputation::new_pairs(int i)
       M->from_varpower((*new_mi)[j]->monom().raw(), m);
       M->mult(m, gb[i]->monom, m);
       
-      gbvector * q = make_syz_term(K->from_int(1),m,i+1);
+      gbvector * q = make_syz_term(GR->get_flattened_coefficients()->from_int(1),m,i+1);
       syzygies.append(q);
     }
 }
@@ -362,6 +362,8 @@ void GBKernelComputation::wipe_unneeded_terms(gbvector * & f)
 
 void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
 {
+  const Ring *gbringK = GR->get_flattened_coefficients();
+  ring_elem one = gbringK->from_int(1);
   gbvector * lastterm = fsyz;  // fsyz has only ONE term.
   const gbvector * r;
   int q;
@@ -385,27 +387,41 @@ void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
 	M->to_expvector(f->monom, REDUCE_exp);
       if (find_ring_divisor(REDUCE_exp, r))
 	{
+	  ring_elem u,v;
 	  // Subtract off f, leave fsyz alone
 	  M->divide(f->monom, r->monom, REDUCE_mon);
-	  ring_elem c = K->negate(f->coeff);
-	  gbvector * h = GR->mult_by_term(F, r, c, REDUCE_mon, f->comp);
+	  gbringK->syzygy(f->coeff, r->coeff, u, v);
+	  gbvector * h = GR->mult_by_term(F, r, v, REDUCE_mon, f->comp);
 	  GR->gbvector_add_to(F,f,h);
-	  K->remove(c);
+	  if (!gbringK->is_equal(u,one))
+	    {
+	      GR->gbvector_mult_by_coeff_to(fsyz, u);
+	      GR->gbvector_mult_by_coeff_to(f, u);
+	      gbringK->remove(u);
+	      gbringK->remove(v);
+	    }
 	  total_reduce_count++;
 	  count++;
 	}
       else if (find_divisor(mi[f->comp-1], REDUCE_exp, q))
 	{
-	  ring_elem c = K->negate(f->coeff);
+	  ring_elem u,v;
+	  gbringK->syzygy(f->coeff, gb[q]->coeff, u, v);
 	  M->divide(f->monom, gb[q]->monom, REDUCE_mon);
-	  gbvector * h = GR->mult_by_term(F, gb[q], c, REDUCE_mon, 0);
+	  gbvector * h = GR->mult_by_term(F, gb[q], v, REDUCE_mon, 0);
+	  if (!gbringK->is_equal(u,one))
+	    {
+	      GR->gbvector_mult_by_coeff_to(fsyz, u);
+	      GR->gbvector_mult_by_coeff_to(f, u);
+	    }
 	  int n1 = GR->gbvector_n_terms(h);
 	  wipe_unneeded_terms(h);
 	  int n2 = GR->gbvector_n_terms(h);
 	  nremoved += (n1-n2);
-	  lastterm->next = make_syz_term(c, f->monom, q+1); // grabs c.
+	  lastterm->next = make_syz_term(v, f->monom, q+1); // grabs v.
 	  lastterm = lastterm->next;
-	  K->remove(c);
+	  gbringK->remove(u);
+	  gbringK->remove(v);
 	  int n3 = GR->gbvector_n_terms(f);
 	  GR->gbvector_add_to(F,f,h);
 	  int n4 = GR->gbvector_n_terms(f);
@@ -433,6 +449,8 @@ void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
 
 void GBKernelComputation::geo_reduce(gbvector * &f, gbvector * &fsyz)
 {
+  const Ring *gbringK = GR->get_flattened_coefficients();
+  ring_elem one = gbringK->from_int(1);
   gbvector * lastterm = fsyz;  // fsyz has only ONE term.
   const gbvector * r;
   gbvectorHeap fb(GR,F);
@@ -456,22 +474,38 @@ void GBKernelComputation::geo_reduce(gbvector * &f, gbvector * &fsyz)
 	M->to_expvector(lead->monom, REDUCE_exp);
       if (find_ring_divisor(REDUCE_exp, r))
 	{
+	  ring_elem u,v;
 	  // Subtract off f, leave fsyz alone
 	  M->divide(lead->monom, r->monom, REDUCE_mon);
-	  ring_elem c = K->negate(lead->coeff);
-	  gbvector * h = GR->mult_by_term(F, r, c, REDUCE_mon, lead->comp);
-	  K->remove(c);
+
+	  gbringK->syzygy(f->coeff, r->coeff, u, v);
+	  gbvector * h = GR->mult_by_term(F, r, v, REDUCE_mon, f->comp);
+	  fb.add(h);
+	  if (!gbringK->is_equal(u,one))
+	    {
+	      GR->gbvector_mult_by_coeff_to(fsyz, u);
+	      GR->gbvector_mult_by_coeff_to(f, u);
+	      gbringK->remove(u);
+	      gbringK->remove(v);
+	    }
+
 	  fb.add(h);
 	  total_reduce_count++;
 	  count++;
 	}
       else if (find_divisor(mi[lead->comp-1], REDUCE_exp, q))
 	{
-	  ring_elem c = K->negate(lead->coeff);
+	  ring_elem u,v;
+	  gbringK->syzygy(f->coeff, gb[q]->coeff, u, v);
 	  M->divide(lead->monom, gb[q]->monom, REDUCE_mon);
-	  gbvector * h = GR->mult_by_term(F, gb[q], c, REDUCE_mon, 0);
+	  gbvector * h = GR->mult_by_term(F, gb[q], v, REDUCE_mon, 0);
+	  if (!gbringK->is_equal(u,one))
+	    {
+	      GR->gbvector_mult_by_coeff_to(fsyz, u);
+	      GR->gbvector_mult_by_coeff_to(f, u);
+	    }
 	  wipe_unneeded_terms(h);
-	  lastterm->next = make_syz_term(c, lead->monom, q+1); // grabs c.
+	  lastterm->next = make_syz_term(v, lead->monom, q+1); // grabs v.
 	  lastterm = lastterm->next;
 	  fb.add(h);
 	  total_reduce_count++;

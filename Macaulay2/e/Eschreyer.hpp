@@ -34,7 +34,6 @@ class GBKernelComputation : public object
   array<gbvector *> gb;            // This is the "stripped" GB.
   array<gbvector *> syzygies;     // This is basically the result.
 
-  ring_elem one;
   int *PAIRS_mon;   // A monomial in M, used only in new_pairs.
   int *REDUCE_mon;  // A monomial in M, used only in reduce.
   int *REDUCE_exp;  // An exponent vector, used only in reduce.

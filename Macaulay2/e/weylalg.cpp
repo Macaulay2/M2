@@ -495,12 +495,10 @@ gbvector * WeylAlgebra::gbvector_weyl_diff(
 	      continue;
 	    }
 	  // Now compute the new monomial:
-	  gbvector *tm = GR->new_raw_term();
-	  tm->comp = comp + t->comp;
-	  tm->coeff = b;
 	  for (int i2=0; i2<nvars_; i2++)
 	    result_exp[i2] += expf[i2] - deriv_exp[i2];
-	  M_->from_expvector(result_exp, tm->monom);
+
+	  gbvector *tm = GR->gbvector_term_exponents(F,b,result_exp,comp+t->comp);
 
 	  // Append to the result
 	  result->next = tm;

@@ -1,34 +1,34 @@
 // Copyright 2005, Michael E. Stillman
 
-#include "minimalgb-ZZ.hpp"
+#include "reducedgb-ZZ.hpp"
 #include "monideal.hpp"
 #include <functional>
 #include <algorithm>
 
-MinimalGB_ZZ::~MinimalGB_ZZ()
+ReducedGB_ZZ::~ReducedGB_ZZ()
 {
 }
 
-MinimalGB_ZZ::MinimalGB_ZZ(GBRing *R0,
+ReducedGB_ZZ::ReducedGB_ZZ(GBRing *R0,
 			   const PolynomialRing *originalR0,
 			   const FreeModule *F0,
 			   const FreeModule *Fsyz0) 
-: MinimalGB(R0,originalR0,F0,Fsyz0), T(0)
+: ReducedGB(R0,originalR0,F0,Fsyz0), T(0)
 {
   T = MonomialTableZZ::make(R0->n_vars());
   if (originalR->is_quotient_ring())
     ringtableZZ = originalR->get_quotient_MonomialTableZZ();
 }
 
-void MinimalGB_ZZ::set_gb(vector<POLY, gc_allocator<POLY> > &polys0)
+void ReducedGB_ZZ::set_gb(vector<POLY, gc_allocator<POLY> > &polys0)
 {
 }
 
-struct MinimalGB_ZZ_sorter : public binary_function<int,int,bool> {
+struct ReducedGB_ZZ_sorter : public binary_function<int,int,bool> {
   GBRing *R;
   const FreeModule *F;
   const vector<POLY, gc_allocator<POLY> > &gb;
-  MinimalGB_ZZ_sorter(GBRing *R0,
+  ReducedGB_ZZ_sorter(GBRing *R0,
 			 const FreeModule *F0,
 			 const vector<POLY, gc_allocator<POLY> > &gb0)
     : R(R0), F(F0), gb(gb0) {}
@@ -43,7 +43,7 @@ struct MinimalGB_ZZ_sorter : public binary_function<int,int,bool> {
   }
 };
 
-void MinimalGB_ZZ::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0)
+void ReducedGB_ZZ::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0)
 // I have to decide: does this ADD to the existing set?
 {
   // First sort these elements via increasing lex order (or monomial order?)
@@ -55,7 +55,7 @@ void MinimalGB_ZZ::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0)
   for (int i=0; i<polys0.size(); i++)
     positions.push_back(i);
 
-  sort(positions.begin(), positions.end(), MinimalGB_ZZ_sorter(R,F,polys0));
+  sort(positions.begin(), positions.end(), ReducedGB_ZZ_sorter(R,F,polys0));
 
   // Now loop through each element, and see if the lead monomial is in T.
   // If not, add it in , and place element into 'polys'.
@@ -86,8 +86,8 @@ void MinimalGB_ZZ::minimalize(const vector<POLY, gc_allocator<POLY> > &polys0)
     }
 }
 
-enum MinimalGB_ZZ::divisor_type 
-MinimalGB_ZZ::find_divisor(exponents exp, int comp, int &result_loc)
+enum ReducedGB_ZZ::divisor_type 
+ReducedGB_ZZ::find_divisor(exponents exp, int comp, int &result_loc)
 {
   int w = T->find_smallest_coeff_divisor(exp,comp); // gives smallest coeff
   int r = -1;
@@ -118,7 +118,7 @@ MinimalGB_ZZ::find_divisor(exponents exp, int comp, int &result_loc)
   return DIVISOR_RING;
 }
 
-void MinimalGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
+void ReducedGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
 {
   gbvector *zero = 0;
   gbvector head;
@@ -163,7 +163,7 @@ void MinimalGB_ZZ::remainder(POLY &f, bool use_denom, ring_elem &denom)
   R->exponents_delete(_EXP);
 }
 
-void MinimalGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
+void ReducedGB_ZZ::remainder(gbvector *&f, bool use_denom, ring_elem &denom)
 {
   gbvector *zero = 0;
   gbvector head;
