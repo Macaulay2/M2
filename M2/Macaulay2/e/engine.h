@@ -896,7 +896,7 @@ extern "C" {
 
   const MatrixOrNull * IM2_Matrix_pfaffians(int p, const Matrix *M); /* drg: connected rawPfaffians*/
 
-  const Matrix * IM2_Matrix_compress(const Matrix *M); /* DAN, please connect */
+  const Matrix * rawMatrixCompress(const Matrix *M); /* connected rawMatrixCompress */
 
   const MatrixOrNull * IM2_Matrix_uniquify(const Matrix *M); /* TODO */
 
@@ -959,7 +959,7 @@ extern "C" {
      QUESTION: what rings should this work over?
   */
 
-  Matrix_pair_OrNull * rawTopCoefficients(const Matrix *M); /* DAN: please connect */
+  Matrix_pair_OrNull * rawTopCoefficients(const Matrix *M); /* connected to rawTopCoefficients */
   /* Returns a pair of matrices: the first is a list of monomials (of form var^exp),
      and the second has the same row space as M.  For each column, find the smallest 
      index variable, var,  which occurs, and exp, the largest degree to which it occurs

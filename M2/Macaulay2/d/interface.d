@@ -750,12 +750,6 @@ export rawIsHomogeneous(e:Expr):Expr := (
      );
 setupfun("rawIsHomogeneous",rawIsHomogeneous);
 
-rawIsMutable(e:Expr):Expr := (
-     when e is x:RawMatrix do
-     toExpr(isMutable(x))
-     else WrongArg("a raw matrix"));
-setupfun("rawIsMutable",rawIsMutable);
-
 rawIsDense(e:Expr):Expr := (
      when e is x:RawMatrix do
      toExpr(Ccode( bool, "IM2_Matrix_is_implemented_as_dense(", "(Matrix*)",x, ")" ))
@@ -1053,6 +1047,12 @@ export rawPseudoRemainder(e:Expr):Expr := (
      );
 setupfun("rawPseudoRemainder",rawPseudoRemainder);
 
+export rawSchurDimension(e:Expr):Expr := (
+     when e
+     is x:RawRingElement do toExpr( Ccode( IntegerOrNull, "(engine_IntegerOrNull)rawSchurDimension(", "(RingElement*)",x, ")" ))
+     else WrongArg("a raw ring element"));
+setupfun("rawSchurDimension",rawSchurDimension);
+
 -----------------------------------------------------------------------------
 -- free modules
 
@@ -1214,6 +1214,12 @@ setupfun("rawSubmodule",rawSubmodule);
 
 -----------------------------------------------------------------------------
 -- matrices
+
+rawIsMutable(e:Expr):Expr := (
+     when e is x:RawMatrix do
+     toExpr(isMutable(x))
+     else WrongArg("a raw matrix"));
+setupfun("rawIsMutable",rawIsMutable);
 
 export rawIsEqual(e:Expr):Expr := (
      when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
@@ -2041,6 +2047,18 @@ export rawWedgeProduct(e:Expr):Expr := (
      else WrongArgInteger(1)
      else WrongNumArgs(3));
 setupfun("rawWedgeProduct",rawWedgeProduct);
+
+export rawTopCoefficients(e:Expr):Expr := (
+     when e
+     is x:RawMatrix do toExpr( Ccode( RawMatrixPairOrNull, "(engine_RawMatrixPairOrNull)rawTopCoefficients(", "(Matrix *)",x, ")" ))
+     else WrongArg("a raw matrix"));
+setupfun("rawTopCoefficients",rawTopCoefficients);
+
+export rawMatrixCompress(e:Expr):Expr := (
+     when e
+     is x:RawMatrix do Expr( Ccode( RawMatrix, "(engine_RawMatrix)rawMatrixCompress(", "(Matrix *)",x, ")" ))
+     else WrongArg("a raw matrix"));
+setupfun("rawMatrixCompress",rawMatrixCompress);
 
 -----------------------------------------------------------------------------
 -- monomial ideals
