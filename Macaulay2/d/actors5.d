@@ -1419,3 +1419,15 @@ fileExists(e:Expr):Expr := (
      else buildErrorPacket("expected a string as file name")
      );
 setupfun("fileExists",fileExists);
+--import setFactorySeed(s:int):void;
+--setFactorySeed(e:Expr):Expr := (
+--     when e is s:Integer do (
+--	  if isInt(s) then (
+--	       setFactorySeed(toInt(s));
+--	       nullE
+--	       )
+--	  else WrongArg(0+1,"a small integer")
+--	  )
+--     else WrongArg(0+1,"an integer")
+--     );
+--setupfun("setFactorySeed",setFactorySeed);

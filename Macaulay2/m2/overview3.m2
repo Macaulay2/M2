@@ -34,34 +34,15 @@ document { "Invoking the program",
 
 document { "Copyright and license",
      "Macaulay 2, its object code and source code, and its documentation,
-     are copyright by Daniel R. Grayson and Michael E. Stillman.  We 
-     permit you to make copies under the following conditions.",
+     are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit 
+     you to use it under the terms of the GNU General Public License, version
+     2, as published by the Free Software Foundation; see the file
+     ", TT "Macaulay2/COPYING", ".",
      PARA,
-     -- this paragraph has to be duplicated in licenses/README
-     "Provided you are a person (and not a corporate entity), you may make as
-     many copies of Macaulay 2 as you like for your personal non-commercial
-     use.  You may install copies of Macaulay 2 on computers owned by
-     Universities, Colleges, High Schools, and other schools in such a way
-     that students and staff of those institutions may use it.  You may
-     modify and distribute the source code in the Macaulay 2 language we
-     provide you, but you must retain our copyright notices and mark modified
-     source code so others will know that it's been modified.  You may print
-     out the manual and make copies of it for your personal use.",
-     PARA,
-     "If your intended use of Macaulay 2 is not covered by the license above,
-     please contact us so we can work something out.  Notice that in the
-     license above we have not granted you permission to make copies of
-     Macaulay 2 to be sold, distributed on media which are sold, or
-     distributed along with software which is sold.  We have not granted you
-     permission to make derivative works, or to distribute them.  If you
-     encounter a copy which appears not to conform to the terms of the
-     license above, we would like to hear about it.",
-     PARA,
-     "Various libraries have been compiled into Macaulay 2.",
+     "Various free libraries have been compiled into Macaulay 2.",
      SHIELD MENU {
 	  TO "Factory library",
 	  TO "Factorization and characteristic sets library",
-	  -- SHIELD TO "MP: Multi Protocol",
 	  TO "GNU MP",
 	  TO "GC garbage collector"
 	  }
@@ -78,23 +59,21 @@ document { "GC garbage collector",
      }
 
 document { "Factory library",
-     "With the kind permission of the authors of Singular, G.-M. Greuel,
-     G. Pfister, H. Schoenemann and R. Stobbe, University of Kaiserslautern,
-     Macaulay 2 incorporates 'Factory', a Singular library of polynomial
-     routines which provides for factorization of polynomials. That library
-     is copyright 1996 by Gert-Martin Greuel and Ruediger Stobbe.  We provide
-     a copy of the license in the file ", TT "Macaulay2/licenses/factory.lic", ".",
+     "With the kind permission of the authors of Singular, 
+     G.-M. Greuel, R. Stobbe, G. Pfister, H. Schoenemann, and J. Schmidt,
+     University of Kaiserslautern, Macaulay 2 incorporates ", TT "Singular-Factory", ",
+     a free library of polynomial routines which provides for factorization of polynomials. 
+     It is distributed under the terms of the GNU General Public License.",
      SEEALSO {"factor", "gcd"}
      }
 
 document { "Factorization and characteristic sets library",
-     "With the kind permission of the author, Michael Messollen, University
-     of Saarbruecken, Macaulay 2 incorporates a library of routines which
-     provides factorization of multivariate polynomials over finite fields
-     and computation of the minimal associated primes of ideals via
-     characteristic sets.  That library is copyright 1996 by Michael
-     Messollen.  We provide a copy of the license in the file
-     ", TT "Macaulay2/licenses/libfac.lic", ".",
+     "With the kind permission of the author, Michael Messollen, Macaulay 2
+     incorporates ", TT "Singular-Libfac", " a free library of routines which
+     provides factorization of multivariate polynomials over 
+     finite fields and computation of the minimal associated primes of ideals via
+     characteristic sets.  It is distributed under the terms of the
+     GNU General Public License.",
      SEEALSO {"factor", "gcd", "decompose", "irreducibleCharacteristicSeries"}
      }
 

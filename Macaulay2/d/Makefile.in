@@ -259,6 +259,8 @@ $(PROJECT:.d=.loo) $(PROJECT:.d=.lo) : compat.h
 
 MISCO := M2lib.o scclib.o tmp_init.o memdebug.o initgmp.o tmpl_inst.o version.o
 
+# MISCO += factoryseed.o
+
 ifeq ($(GC_FOR_NEW),yes)
 # replace the builtin c++ memory allocation routines by calls to gc.
 MISCO += gc_cpp.o

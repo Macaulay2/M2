@@ -1,0 +1,979 @@
+i1 : A = QQ[w,x,y,z]
+
+o1 = A
+
+o1 : PolynomialRing
+i2 : U = matrix {{w,x},{y,z}}
+
+o2 = | w x |
+     | y z |
+
+             2       2
+o2 : Matrix A  <--- A
+i3 : C = chainComplex U
+
+      2      2
+o3 = A  <-- A
+             
+     0      1
+
+o3 : ChainComplex
+i4 : L = HH_0 C
+
+o4 = cokernel | w x |
+              | y z |
+
+                            2
+o4 : A-module, quotient of A
+i5 : f = -det U
+
+o5 = x*y - w*z
+
+o5 : A
+i6 : f * L == 0
+
+o6 = true
+i7 : s = nullhomotopy (-f * id_C)
+
+          2                     2
+o7 = 1 : A  <----------------- A  : 0
+               {1} | z  -x |
+               {1} | -y w  |
+
+o7 : ChainComplexMap
+i8 : s * C.dd + C.dd * s == -f
+
+o8 = true
+i9 : V = s_0
+
+o9 = {1} | z  -x |
+     {1} | -y w  |
+
+             2       2
+o9 : Matrix A  <--- A
+i10 : A = QQ[x,y,z];
+i11 : f = x^3 + 3*y^3 - 2*y*z^2 + 5*z^3;
+i12 : B = A/f;
+i13 : m = ideal(x,y,z)
+
+o13 = ideal (x, y, z)
+
+o13 : Ideal of B
+i14 : M = B^1/m^2;
+i15 : F = resolution(M, LengthLimit=>8)
+
+       1      6      9      9      9      9      9      9      9
+o15 = B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B
+                                                               
+      0      1      2      3      4      5      6      7      8
+
+o15 : ChainComplex
+i16 : restrict1 = N -> coker(lift(presentation N,A) | f);
+i17 : L = restrict1 cokernel F.dd_4;
+i18 : C = res L;
+i19 : U = C.dd_1;
+
+              9       9
+o19 : Matrix A  <--- A
+i20 : print U
+{4} | 0  xy x2       y2    0        0        0        yz-5/2z2 0      |
+{4} | 0  x2 -3y2     xy    yz-5/2z2 0        yz-5/2z2 0        0      |
+{4} | x2 0  -2yz+5z2 0     y2-5/2yz yz-5/2z2 -5/2yz   0        0      |
+{5} | 0  0  0        1/3z  0        0        0        1/2y     x      |
+{5} | 0  0  -z       0     1/2y     0        1/2y     -1/2x    0      |
+{5} | 0  -z 0        0     -1/2x    0        -1/2x    0        3y     |
+{5} | 0  0  0        -1/3x 0        1/2y     -1/3z    0        0      |
+{5} | -z y  x        0     0        -1/2x    0        0        0      |
+{5} | y  0  0        0     0        0        1/3x     0        -2y+5z |
+i21 : s = nullhomotopy (-f * id_C);
+i22 : V = s_0;
+
+              9       9
+o22 : Matrix A  <--- A
+i23 : print V
+{6} | 0   0  -x  0         0         -2y2+5yz 0         -2yz+5z2 -3y2 |
+{6} | 0   -x 0   0         0         -2yz+5z2 -3xy      -3y2     -3yz |
+{6} | -x  y  0   0         -2yz+5z2  0        0         0        0    |
+{6} | -3y 0  0   6yz-15z2  0         0        3x2       3xy      3xz  |
+{6} | 0   2z -3y -15xz     -15yz     2x2      6yz-15z2  0        3x2  |
+{6} | -2x 0  2z  0         -4yz+10z2 0        -6y2      2x2      0    |
+{6} | 0   0  3y  -6xy+15xz -6y2+15yz 0        -6yz+15z2 0        -3x2 |
+{6} | 2z  0  0   -6y2      2x2       2xy      0         0        0    |
+{6} | 0   0  0   -x2       -xy       -y2      -xz       -yz      -z2  |
+i24 : U*V+f==0
+
+o24 = true
+i25 : V*U+f==0
+
+o25 = true
+i26 : matrixFactorization = M -> (
+         B := ring M;
+         f := (ideal B)_0;
+         e := numgens B;
+         F := resolution(M, LengthLimit => e+1);
+         L := restrict1 cokernel F.dd_(e+1);
+         C := res L;
+         U := C.dd_1;
+         s := nullhomotopy (-f * id_C);
+         V := s_0;
+         assert( U*V + f == 0 );
+         assert( V*U + f == 0 );
+         return (U,V));
+i27 : time (U,V) = matrixFactorization(B^1/m^3);
+     -- used 0.21 seconds
+i28 : U;
+
+              15       15
+o28 : Matrix A   <--- A
+i29 : V;
+
+              15       15
+o29 : Matrix A   <--- A
+i30 : F.dd_3 - F.dd_5 == 0
+
+o30 = false
+i31 : F.dd_4 - F.dd_6 == 0
+
+o31 = false
+i32 : F.dd_5 - F.dd_7 == 0
+
+o32 = true
+i33 : M = B^1/m^2;
+i34 : G = resolution(M, LengthLimit => 8, Strategy => 0)
+
+       1      6      9      9      9      9      9      9      9
+o34 = B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B  <-- B
+                                                               
+      0      1      2      3      4      5      6      7      8
+
+o34 : ChainComplex
+i35 : G.dd_3 - G.dd_5 == 0
+
+o35 = true
+i36 : G.dd_4 - G.dd_6 == 0
+
+o36 = true
+i37 : G.dd_5 - G.dd_7 == 0
+
+o37 = true
+i38 : M = B^1/m^3;
+i39 : F = resolution(M, LengthLimit=>8)
+
+       1      10      16      15      15      15      15      15      15
+o39 = B  <-- B   <-- B   <-- B   <-- B   <-- B   <-- B   <-- B   <-- B
+                                                                      
+      0      1       2       3       4       5       6       7       8
+
+o39 : ChainComplex
+i40 : M' = restrict1 M;
+i41 : C = res M'
+
+       1      10      15      6
+o41 = A  <-- A   <-- A   <-- A  <-- 0
+                                     
+      0      1       2       3      4
+
+o41 : ChainComplex
+i42 : K = ZZ/103; 
+i43 : A = K[x,Degrees=>{5}];
+i44 : B = A/(x^3);
+i45 : M = B^1/(x^2);
+i46 : N = B^1/(x);
+i47 : H = Ext(M,N);
+i48 : ring H
+
+o48 = K [$X , x, Degrees => {{-2, -15}, {0, 5}}]
+           1
+
+o48 : PolynomialRing
+i49 : degree \ gens ring H
+
+o49 = {{-2, -15}, {0, 5}}
+
+o49 : List
+i50 : S = ring H;
+i51 : H
+
+o51 = cokernel {0, 0}    | 0 x |
+               {-1, -10} | x 0 |
+
+                             2
+o51 : S-module, quotient of S
+i52 : A = K[x,y];
+i53 : J = ideal(x^3,y^2);
+
+o53 : Ideal of A
+i54 : B = A/J;
+i55 : N = cokernel matrix{{x^2,x*y}}
+
+o55 = cokernel | x2 xy |
+
+                             1
+o55 : B-module, quotient of B
+i56 : time H = Ext(N,N);
+     -- used 0.2 seconds
+i57 : ring H
+
+o57 = K [$X , $X , x, y, Degrees => {{-2, -2}, {-2, -3}, {0, 1}, {0, 1}}]
+           1    2
+
+o57 : PolynomialRing
+i58 : S = ring H;
+i59 : transpose vars S
+
+o59 = {2, 2}  | $X_1 |
+      {2, 3}  | $X_2 |
+      {0, -1} | x    |
+      {0, -1} | y    |
+
+              4       1
+o59 : Matrix S  <--- S
+i60 : trim J
+
+              2   3
+o60 = ideal (y , x )
+
+o60 : Ideal of A
+i61 : H
+
+o61 = cokernel {-2, -2} | 0 0 0 0 0 0 0 0 0  0  0  y x 0    0    0     0     |
+               {-1, -1} | y 0 0 0 0 x 0 0 0  0  0  0 0 $X_1 0    0     0     |
+               {-1, -1} | 0 0 0 y 0 0 0 x 0  0  0  0 0 0    $X_1 0     0     |
+               {-1, -1} | 0 y 0 0 x 0 0 0 0  0  0  0 0 0    0    0     0     |
+               {-1, -1} | 0 0 y 0 0 0 x 0 0  0  0  0 0 0    0    0     0     |
+               {0, 0}   | 0 0 0 0 0 0 0 0 y2 xy x2 0 0 0    0    $X_1y $X_1x |
+
+                             6
+o61 : S-module, quotient of S
+i62 : partSelector = predicate -> H -> (
+         R := ring H;
+         H' := prune image matrix {
+             select(
+                 apply(numgens H, i -> H_{i}),
+                 f -> predicate first first degrees source f
+                 )
+             };
+         H');
+i63 : evenPart = partSelector even; oddPart = partSelector odd;
+i65 : evenPart H
+
+o65 = cokernel {-2, -2} | 0  0  0  y x 0     0     |
+               {0, 0}   | y2 xy x2 0 0 $X_1y $X_1x |
+
+                             2
+o65 : S-module, quotient of S
+i66 : oddPart H
+
+o66 = cokernel {-1, -1} | 0 0 y 0 0 0 x 0 0    0    |
+               {-1, -1} | 0 y 0 0 x 0 0 0 0    0    |
+               {-1, -1} | 0 0 0 y 0 0 0 x 0    $X_1 |
+               {-1, -1} | y 0 0 0 0 x 0 0 $X_1 0    |
+
+                             4
+o66 : S-module, quotient of S
+i67 : print code(Ext,Module,Module)
+-- ../../../m2/ext.m2:82-171
+Ext(Module,Module) := Module => (M,N) -> (
+  cacheModule := youngest(M,N);
+  cacheKey := (Ext,M,N);
+  if cacheModule#?cacheKey then return cacheModule#cacheKey;
+  B := ring M;
+  if B =!= ring N
+  then error "expected modules over the same ring";
+  if not isCommutative B
+  then error "'Ext' not implemented yet for noncommutative rings.";
+  if not isHomogeneous B
+  then error "'Ext' received modules over an inhomogeneous ring";
+  if not isHomogeneous N or not isHomogeneous M
+  then error "'Ext' received an inhomogeneous module";
+  if N == 0 then B^0
+  else if M == 0 then B^0
+  else (
+    p := presentation B;
+    A := ring p;
+    I := ideal mingens ideal p;
+    n := numgens A;
+    c := numgens I;
+    if c =!= codim B 
+    then error "total Ext available only for complete intersections";
+    f := apply(c, i -> I_i);
+    pM := lift(presentation M,A);
+    pN := lift(presentation N,A);
+    M' := cokernel ( pM | p ** id_(target pM) );
+    N' := cokernel ( pN | p ** id_(target pN) );
+    C := complete resolution M';
+    X := local X;
+    K := coefficientRing A;
+    -- compute the fudge factor for the adjustment of bidegrees
+    fudge := if #f > 0 then 1 + max(first \ degree \ f) // 2 else 0;
+    S := K(monoid [X_1 .. X_c, toSequence A.generatorSymbols,
+      Degrees => {
+        apply(0 .. c-1, i -> {-2, - first degree f_i}),
+        apply(0 .. n-1, j -> { 0,   first degree A_j})
+        },
+      Adjust => v -> {- fudge * v#0 + v#1, - v#0},
+      Repair => w -> {- w#1, - fudge * w#1 + w#0}
+      ]);
+    -- make a monoid whose monomials can be used as indices
+    Rmon := monoid [X_1 .. X_c,Degrees=>{c:{2}}];
+    -- make group ring, so 'basis' can enumerate the monomials
+    R := K Rmon;
+    -- make a hash table to store the blocks of the matrix
+    blks := new MutableHashTable;
+    blks#(exponents 1_Rmon) = C.dd;
+    scan(0 .. c-1, i -> 
+         blks#(exponents Rmon_i) = nullhomotopy (- f_i*id_C));
+    -- a helper function to list the factorizations of a monomial
+    factorizations := (gamma) -> (
+      -- Input: gamma is the list of exponents for a monomial
+      -- Return a list of pairs of lists of exponents showing the
+      -- possible factorizations of gamma.
+      if gamma === {} then { ({}, {}) }
+      else (
+        i := gamma#-1;
+        splice apply(factorizations drop(gamma,-1), 
+          (alpha,beta) -> apply (0..i, 
+               j -> (append(alpha,j), append(beta,i-j))))));
+    scan(4 .. length C + 1, 
+      d -> if even d then (
+        scan( exponents \ leadMonomial \ first entries basis(d,R), 
+          gamma -> (
+            s := - sum(factorizations gamma,
+              (alpha,beta) -> (
+                if blks#?alpha and blks#?beta
+                then blks#alpha * blks#beta
+                else 0));
+            -- compute and save the nonzero nullhomotopies
+            if s != 0 then blks#gamma = nullhomotopy s;
+            ))));
+    -- make a free module whose basis elements have the right degrees
+    spots := C -> sort select(keys C, i -> class i === ZZ);
+    Cstar := S^(apply(spots C,
+        i -> toSequence apply(degrees C_i, d -> {i,first d})));
+    -- assemble the matrix from its blocks.
+    -- We omit the sign (-1)^(n+1) which would ordinarily be used,
+    -- which does not affect the homology.
+    toS := map(S,A,apply(toList(c .. c+n-1), i -> S_i),
+      DegreeMap => prepend_0);
+    Delta := map(Cstar, Cstar, 
+      transpose sum(keys blks, m -> S_m * toS sum blks#m),
+      Degree => {-1,0});
+    DeltaBar := Delta ** (toS ** N');
+    assert isHomogeneous DeltaBar;
+    assert(DeltaBar * DeltaBar == 0);
+    -- now compute the total Ext as a single homology module
+    cacheModule#cacheKey = prune homology(DeltaBar,DeltaBar)))
+i68 : A = K[x,y,z];
+i69 : J = trim ideal(x^3,y^4,z^5)
+
+              3   4   5
+o69 = ideal (x , y , z )
+
+o69 : Ideal of A
+i70 : B = A/J;
+i71 : f = random (B^3, B^{-2,-3})
+
+o71 = | 27x2+49xy-14y2-23xz-6yz-19z2 38x2y-34xy2+4y3+x2z+16xyz-y2z-5xz2-6yz2+47z3        |
+      | -5x2+44xy+38y2+40xz+15yz+4z2 -37x2y+51xy2-36y3+26x2z-38xyz-17y2z+17xz2-11yz2+8z3 |
+      | 21x2-30xy+32y2-47xz+7yz-50z2 -6x2y-14xy2-26y3-7x2z+41xyz+50y2z+26xz2+46yz2-44z3  |
+
+              3       2
+o71 : Matrix B  <--- B
+i72 : f_{1}
+
+o72 = | 38x2y-34xy2+4y3+x2z+16xyz-y2z-5xz2-6yz2+47z3        |
+      | -37x2y+51xy2-36y3+26x2z-38xyz-17y2z+17xz2-11yz2+8z3 |
+      | -6x2y-14xy2-26y3-7x2z+41xyz+50y2z+26xz2+46yz2-44z3  |
+
+              3       1
+o72 : Matrix B  <--- B
+i73 : M = cokernel f;
+i74 : time P = Ext(M,B^1/(x,y,z));
+     -- used 1.64 seconds
+i75 : S = ring P;
+i76 : transpose vars S
+
+o76 = {2, 3}  | $X_1 |
+      {2, 4}  | $X_2 |
+      {2, 5}  | $X_3 |
+      {0, -1} | x    |
+      {0, -1} | y    |
+      {0, -1} | z    |
+
+              6       1
+o76 : Matrix S  <--- S
+i77 : R = K[X_1..X_3,Degrees => {{-2,-3},{-2,-4},{-2,-5}},
+              Adjust => S.Adjust, Repair => S.Repair];
+i78 : phi = map(R,S,{X_1,X_2,X_3,0,0,0})
+
+o78 = map(R,S,{X , X , X , 0, 0, 0})
+                1   2   3
+
+o78 : RingMap R <--- S
+i79 : P = prune (phi ** P);
+i80 : transpose vars ring P
+
+o80 = {2, 3} | X_1 |
+      {2, 4} | X_2 |
+      {2, 5} | X_3 |
+
+              3       1
+o80 : Matrix R  <--- R
+i81 : evenPart P
+
+o81 = cokernel {-4, -10} | 0   0   0   0   0   0   0   0   0   0    |
+               {-4, -10} | 0   0   0   0   0   0   0   0   0   -X_2 |
+               {-4, -11} | 0   0   0   0   0   0   0   0   0   X_1  |
+               {0, 0}    | 0   0   X_3 0   0   X_2 0   X_1 0   0    |
+               {0, 0}    | 0   X_3 0   0   X_2 0   X_1 0   0   0    |
+               {0, 0}    | X_3 0   0   X_2 0   0   0   0   X_1 0    |
+               {-2, -7}  | 0   0   0   0   0   0   0   0   0   0    |
+               {-2, -7}  | 0   0   0   0   0   0   0   0   0   0    |
+               {-2, -7}  | 0   0   0   0   0   0   0   0   0   0    |
+               {-2, -7}  | 0   0   0   0   0   0   0   0   0   0    |
+
+                             10
+o81 : R-module, quotient of R
+i82 : oddPart P
+
+o82 = cokernel {-1, -2} | X_3 0   X_2 0   0   0   0   X_1 |
+               {-3, -9} | 0   0   0   0   0   0   X_1 0   |
+               {-3, -9} | 0   0   0   0   0   X_1 0   0   |
+               {-3, -9} | 0   0   0   0   X_1 0   0   0   |
+               {-1, -3} | 0   X_2 0   X_1 0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+
+                             11
+o82 : R-module, quotient of R
+i83 : changeRing = H -> (
+         S := ring H;
+         K := coefficientRing S;
+         degs := select(degrees source vars S,
+              d -> 0 != first d);
+         R := K[X_1 .. X_#degs, Degrees => degs,
+              Repair => S.Repair, Adjust => S.Adjust];
+         phi := map(R,S,join(gens R,(numgens S - numgens R):0));
+         prune (phi ** H)
+         );
+i84 : Ext(Module,Ring) := (M,k) -> (
+         B := ring M;
+         if ideal k != ideal vars B
+         then error "expected the residue field of the module";
+         changeRing Ext(M,coker vars B)
+         );
+i85 : use B;
+i86 : k = B/(x,y,z);
+i87 : use B;
+i88 : P = Ext(M,k);
+i89 : time oddPart P
+     -- used 0.09 seconds
+
+o89 = cokernel {-1, -2} | X_3 0   X_2 0   0   0   0   X_1 |
+               {-3, -9} | 0   0   0   0   0   0   X_1 0   |
+               {-3, -9} | 0   0   0   0   0   X_1 0   0   |
+               {-3, -9} | 0   0   0   0   X_1 0   0   0   |
+               {-1, -3} | 0   X_2 0   X_1 0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+               {-3, -9} | 0   0   0   0   0   0   0   0   |
+
+                                                                                                                                             11
+o89 : K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]-module, quotient of K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]
+          1   2   3                                                                     1   2   3
+i90 : Ext(Ring,Module) := (k,M) -> (
+         B := ring M;
+         if ideal k != ideal vars B
+         then error "expected the residue field of the module";
+         changeRing Ext(coker vars B,M)
+         );
+i91 : time I = Ext(k,M);
+     -- used 14.81 seconds
+i92 : evenPart I
+
+o92 = cokernel {0, 6} | 37X_2  37X_1  |
+               {0, 6} | -18X_2 -18X_1 |
+               {0, 6} | -13X_2 -13X_1 |
+               {0, 6} | -37X_2 -37X_1 |
+               {0, 6} | 22X_2  22X_1  |
+               {0, 6} | 0      0      |
+               {0, 6} | X_2    X_1    |
+
+                                                                                                                                             7
+o92 : K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]-module, quotient of K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]
+          1   2   3                                                                     1   2   3
+i93 : oddPart I
+
+o93 = cokernel {-1, 5} | -48X_3 13X_3  34X_3  3X_3   0     0      0      5X_1  -20X_1 X_1 |
+               {-1, 5} | 3X_3   -40X_3 8X_3   8X_3   0     0      0      33X_1 X_1    0   |
+               {-1, 5} | -X_3   37X_3  -13X_3 -35X_3 0     0      0      X_1   0      0   |
+               {-1, 4} | 4X_2   20X_2  3X_2   -47X_2 4X_1  20X_1  3X_1   0     0      0   |
+               {-1, 4} | 0      51X_2  0      -30X_2 0     51X_1  0      0     0      0   |
+               {-1, 4} | 0      12X_2  0      -3X_2  0     12X_1  0      0     0      0   |
+               {-1, 4} | 42X_2  12X_2  46X_2  25X_2  42X_1 12X_1  46X_1  0     0      0   |
+               {-1, 4} | 45X_2  24X_2  -14X_2 -35X_2 45X_1 24X_1  -14X_1 0     0      0   |
+               {-1, 4} | 0      0      X_2    0      0     0      X_1    0     0      0   |
+               {-1, 4} | X_2    0      0      0      X_1   0      0      0     0      0   |
+               {-1, 4} | 0      -40X_2 0      10X_2  0     -40X_1 0      0     0      0   |
+               {-1, 4} | 0      X_2    0      0      0     X_1    0      0     0      0   |
+               {-1, 3} | 0      0      0      X_1    0     0      0      0     0      0   |
+
+                                                                                                                                             13
+o93 : K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]-module, quotient of K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]
+          1   2   3                                                                     1   2   3
+i94 : T = ZZ[t,u,Inverses=>true,MonomialOrder=>RevLex];
+i95 : poincareSeries2 = M -> (
+         B := ring M;
+         k := B/ideal vars B;
+         P := Ext(M,k);
+         h := hilbertSeries P;
+         T':= degreesRing P;
+         substitute(h, {T'_0=>t^-1,T'_1=>u^-1})
+         );
+i96 : poincareSeries1 = M -> (
+         substitute(poincareSeries2 M, {u=>1_T})
+         );
+i97 : A' = K[x,y,z];
+i98 : B' = A'/(x^2,y^2,z^3);
+i99 : C' = res(B'^1/(x,y,z), LengthLimit => 6)
+
+        1       3       6       10       15       21       28
+o99 = B'  <-- B'  <-- B'  <-- B'   <-- B'   <-- B'   <-- B'
+                                                          
+      0       1       2       3        4        5        6
+
+o99 : ChainComplex
+i100 : M' = coker transpose C'.dd_5
+
+o100 = cokernel {-5} | -y 0   0  0  z  0 0 0  0 0  0  0 0  0 0 |
+                {-5} | -x -y  0  0  0  z 0 0  0 0  0  0 0  0 0 |
+                {-5} | 0  x   -y 0  0  0 z 0  0 0  0  0 0  0 0 |
+                {-5} | 0  0   x  -y 0  0 0 z  0 0  0  0 0  0 0 |
+                {-5} | 0  0   0  -x 0  0 0 0  z 0  0  0 0  0 0 |
+                {-5} | 0  0   0  0  y  0 0 0  0 0  0  0 0  0 0 |
+                {-5} | 0  0   0  0  -x y 0 0  0 0  0  0 0  0 0 |
+                {-5} | 0  0   0  0  0  x y 0  0 0  0  0 0  0 0 |
+                {-5} | 0  0   0  0  0  0 x y  0 0  0  0 0  0 0 |
+                {-5} | 0  0   0  0  0  0 0 -x y 0  0  0 0  0 0 |
+                {-5} | 0  0   0  0  0  0 0 0  x 0  0  0 0  0 0 |
+                {-6} | 0  0   0  0  0  0 0 0  0 -y 0  z 0  0 0 |
+                {-6} | 0  0   0  0  0  0 0 0  0 x  -y 0 z  0 0 |
+                {-6} | 0  0   0  0  0  0 0 0  0 0  -x 0 0  z 0 |
+                {-6} | z2 0   0  0  0  0 0 0  0 0  0  y 0  0 0 |
+                {-6} | 0  -z2 0  0  0  0 0 0  0 0  0  x y  0 0 |
+                {-6} | 0  0   z2 0  0  0 0 0  0 0  0  0 -x y 0 |
+                {-6} | 0  0   0  z2 0  0 0 0  0 0  0  0 0  x 0 |
+                {-7} | 0  0   0  0  0  0 0 0  0 0  0  0 0  0 z |
+                {-7} | 0  0   0  0  0  0 0 0  0 z2 0  0 0  0 y |
+                {-7} | 0  0   0  0  0  0 0 0  0 0  z2 0 0  0 x |
+
+                                21
+o100 : B'-module, quotient of B'
+i101 : poincareSeries2 M'
+
+         -7     -6      -5      -6       -5       -4     2 -5      2 -4      2 -3      2 -2     3 -4      3 -3      3 -2     3 -1     4 -3     4 -2      4 -1      4    5 -2     5 -1     5      5     6 4     7 5    8 4     8 6     9 5    9 7     10 6    11 7
+       3u   + 7u   + 11u   + t*u   + 5t*u   + 9t*u   - 6t u   - 14t u   - 22t u   - 11t u   - 2t u   - 10t u   - 18t u   - 9t u   + 3t u   + 7t u   + 11t u   + 15t  + t u   + 5t u   + 9t  + 13t u + t u  + 3t u  - t u  + 3t u  - 3t u  + t u  - 3t  u  - t  u
+o101 = ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                                                2 2 2      2 3
+                                                                                                                          (1 - t u ) (1 - t u )
+
+o101 : Divide
+i102 : p = poincareSeries1 M
+
+                  2     3      4    5     6    7
+       3 + 2t - 5t  + 4t  + 12t  + t  - 4t  - t
+o102 = -----------------------------------------
+                      2       2       2
+                (1 - t )(1 - t )(1 - t )
+
+o102 : Divide
+i103 : load "simplify.m2"
+i104 : simplify p
+
+                 2     3     4     5    6
+       3 - t - 4t  + 8t  + 4t  - 3t  - t
+o104 = ----------------------------------
+                       2       3
+                (1 + t) (1 - t)
+
+o104 : Divide
+i105 : T' = QQ[t,Inverses=>true,MonomialOrder=>RevLex];
+i106 : expansion = (n,q) -> (
+           t := T'_0;
+           rho := map(T',T,{t,1});
+           num := rho value numerator q;
+           den := rho value denominator q;
+           n = n + first degree den;
+           n = max(n, first degree num + 1);
+           (num + t^n) // den
+           );
+i107 : expansion(20,p)
+
+                  2      3      4      5      6      7      8      9      10       11       12       13       14       15       16       17       18       19       20
+o107 = 3 + 2t + 4t  + 10t  + 15t  + 25t  + 32t  + 46t  + 55t  + 73t  + 84t   + 106t   + 119t   + 145t   + 160t   + 190t   + 207t   + 241t   + 260t   + 298t   + 319t
+
+o107 : T'
+i108 : psi = map(K,B)
+
+o108 = map(K,B,{0, 0, 0})
+
+o108 : RingMap K <--- B
+i109 : apply(10, i -> rank (psi ** Ext^i(M,coker vars B)))
+
+o109 = {3, 2, 4, 10, 15, 25, 32, 46, 55, 73}
+
+o109 : List
+i110 : use T;
+i111 : complexity = M -> dim Ext(M,coker vars ring M);
+i112 : complexity M
+
+o112 = 3
+i113 : k = coker vars ring H;
+i114 : prune Hom(k,H)
+
+o114 = 0
+
+o114 : K [$X , $X , x, y, Degrees => {{-2, -2}, {-2, -3}, {0, 1}, {0, 1}}]-module
+            1    2
+i115 : criticalDegree = M -> (
+          B := ring M;
+          k := B / ideal vars B;
+          P := Ext(M,k);
+          k  = coker vars ring P;
+          - min ( first \ degrees source gens prune Hom(k,P))
+          );
+i116 : criticalDegree M
+
+o116 = 1
+i117 : criticalDegree M'
+
+o117 = 5
+i118 : supportVarietyIdeal = M -> (
+          B := ring M;
+          k := B/ideal vars B;
+          ann Ext(M,k)
+          );
+i119 : K'' = ZZ/7;
+i120 : A'' = K''[x,y,z];
+i121 : J'' = ideal(x^7,y^7,z^7);
+
+o121 : Ideal of A''
+i122 : B'' = A''/J'';
+i123 : scan((1,1) .. (3,3), (r,d) -> (
+               V := cokernel random (B''^r,B''^{-d});
+               << "------------------------------------------------------------------"
+               << endl
+               << "V = " << V << endl
+               << "support variety ideal = "
+               << timing supportVarietyIdeal V
+               << endl))
+------------------------------------------------------------------
+V = cokernel | -2x+3y+2z |
+support variety ideal = ideal (X  - 2X , X  + X )
+                                2     3   1    3
+                        -- 0.7 seconds
+------------------------------------------------------------------
+V = cokernel | 3x2-2xy+xz-3yz |
+support variety ideal = ideal(X  + 3X  + 2X )
+                               1     2     3
+                        -- 0.48 seconds
+------------------------------------------------------------------
+V = cokernel | -2x3+3x2y+y3-x2z-3y2z-xz2-3z3 |
+support variety ideal = 0
+                        -- 1.54 seconds
+------------------------------------------------------------------
+V = cokernel | -3y+3z |
+             | -2x-2y |
+support variety ideal = ideal(X  + X  - X )
+                               1    2    3
+                        -- 0.86 seconds
+------------------------------------------------------------------
+V = cokernel | -x2+2y2-xz+yz+3z2 |
+             | 2xy-3xz-3yz-2z2   |
+support variety ideal = 0
+                        -- 1.31 seconds
+------------------------------------------------------------------
+V = cokernel | -x3-2x2y-xy2-2xyz+3y2z+2xz2-yz2-2z3 |
+             | 2xy2+3y3-3x2z-2y2z+2xz2+2yz2        |
+support variety ideal = 0
+                        -- 2.21 seconds
+------------------------------------------------------------------
+V = cokernel | 3x-y-z   |
+             | -3x-y+2z |
+             | x-2y+3z  |
+support variety ideal = 0
+                        -- 1.1 seconds
+------------------------------------------------------------------
+V = cokernel | 2x2-2xy+2y2+2xz-3z2   |
+             | -x2+2xy+y2+3xz+3yz-z2 |
+             | -2xz+2yz+2z2          |
+support variety ideal = 0
+                        -- 1.67 seconds
+------------------------------------------------------------------
+V = cokernel | 2x3-x2y+2xy2-y3-2xyz+3y2z+xz2+3yz2+z3  |
+             | -3x3-3x2y+3xy2+2x2z+3xyz-3y2z-xz2      |
+             | -3x3-2x2y-xy2-2y3-2xyz+y2z+xz2+3yz2-z3 |
+support variety ideal = 0
+                        -- 1.92 seconds
+i124 : bassSeries2 = M -> (
+          B := ring M;
+          k := B/ideal vars B;
+          I := Ext(k,M);
+          h := hilbertSeries I;
+          T':= degreesRing I;
+          substitute(h, {T'_0=>t^-1, T'_1=>u})
+          );
+i125 : bassSeries1 = M -> (
+          substitute(bassSeries2 M, {u=>1_T})
+          );
+i126 : use B;
+i127 : L = B^1/(x,y,z);
+i128 : p = poincareSeries2 L
+
+                        2 2    3 3
+           1 + 3t*u + 3t u  + t u
+o128 = ------------------------------
+             2 3       2 4       2 5
+       (1 - t u )(1 - t u )(1 - t u )
+
+o128 : Divide
+i129 : b = bassSeries2 L
+
+                  -1     2 -2    3 -3
+          1 + 3t*u   + 3t u   + t u
+o129 = ---------------------------------
+             2 -3       2 -4       2 -5
+       (1 - t u  )(1 - t u  )(1 - t u  )
+
+o129 : Divide
+i130 : b2 = bassSeries2 M
+
+         6      3       4       5    2 2    2 3     3     3      3 2    4 -1     5 -3
+       7u  + t*u  + 9t*u  + 3t*u  - t u  - t u  - 4t  - 3t u - 3t u  + t u   + 3t u
+o130 = ------------------------------------------------------------------------------
+                                    2 -3       2 -4       2 -5
+                              (1 - t u  )(1 - t u  )(1 - t u  )
+
+o130 : Divide
+i131 : b1 = bassSeries1 M;
+i132 : simplify b1
+
+                  2     3     4
+       7 + 6t - 8t  - 2t  + 3t
+o132 = ------------------------
+                  2       3
+           (1 + t) (1 - t)
+
+o132 : Divide
+i133 : ext = (M,N) -> changeRing Ext(M,N);
+i134 : use B;
+i135 : N = B^1/(x^2 + z^2,y^3);
+i136 : time rH = ext(M,N);
+     -- used 15.91 seconds
+i137 : evenPart rH
+
+o137 = cokernel {-4, -9} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      0      0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   X_1 |
+                {0, 2}   | 0   0   0   0   0   0   0   X_3 0   0   0   0   0   0   0   0   X_2 0      0      0   0   0   0   0   0   0   0   X_1 0   0   0   0   0   0   0   0   |
+                {0, 2}   | 0   0   0   0   0   X_3 0   0   0   0   0   0   0   0   0   X_2 0   0      0      0   0   0   0   0   0   0   X_1 0   0   0   0   0   0   0   0   0   |
+                {0, 2}   | 0   0   0   0   0   0   X_3 0   0   0   0   0   0   0   X_2 0   0   0      0      0   0   0   0   0   0   X_1 0   0   0   0   0   0   0   0   0   0   |
+                {0, 2}   | 0   0   0   0   X_3 0   0   0   0   0   0   0   0   X_2 0   0   0   0      0      0   0   0   0   0   X_1 0   0   0   0   0   0   0   0   0   0   0   |
+                {0, 2}   | 0   0   0   X_3 0   0   0   0   0   0   0   0   X_2 0   0   0   0   0      0      0   0   0   0   X_1 0   0   0   0   0   0   0   0   0   0   0   0   |
+                {0, 2}   | 0   0   X_3 0   0   0   0   0   0   0   0   X_2 0   0   0   0   0   0      0      0   0   0   X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   |
+                {0, 2}   | 0   X_3 0   0   0   0   0   0   0   0   X_2 0   0   0   0   0   0   0      0      0   0   X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   |
+                {0, 2}   | X_3 0   0   0   0   0   0   0   0   X_2 0   0   0   0   0   0   0   0      0      0   X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   -4X_2  -22X_2 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   X_1 0   |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   -50X_2 8X_2   0   0   0   0   0   0   0   0   0   0   0   0   0   0   X_1 0   0   |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   46X_2  9X_2   0   0   0   0   0   0   0   0   0   0   0   0   0   X_1 0   0   0   |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   16X_2  -14X_2 0   0   0   0   0   0   0   0   0   0   0   0   X_1 0   0   0   0   |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   7X_2   -48X_2 0   0   0   0   0   0   0   0   0   0   0   X_1 0   0   0   0   0   |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0      X_2    0   0   0   0   0   0   0   0   0   0   X_1 0   0   0   0   0   0   |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   X_2    0      0   0   0   0   0   0   0   0   0   X_1 0   0   0   0   0   0   0   |
+                {0, 1}   | 0   0   0   0   0   0   0   0   X_2 0   0   0   0   0   0   0   0   0      0      X_1 0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   |
+
+                                                                                                                                              17
+o137 : K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]-module, quotient of K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]
+           1   2   3                                                                     1   2   3
+i138 : oddPart rH
+
+o138 = cokernel {-3, -6} | 0      0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   -45X_1 4X_1   -31X_1 -13X_1 X_1 |
+                {-3, -6} | 0      0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   -41X_1 7X_1   -43X_1 X_1    0   |
+                {-3, -6} | 0      0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   10X_1  -32X_1 X_1    0      0   |
+                {-3, -6} | 0      0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   4X_1   X_1    0      0      0   |
+                {-3, -6} | 0      0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   X_1    0      0      0      0   |
+                {-1, -1} | -39X_3 0   0   0   0   0   0   0   X_2 0   0   0   0   0   0   0   0   X_1 0      0      0      0      0   |
+                {-1, -1} | 31X_3  0   0   0   0   0   0   X_2 0   0   0   0   0   0   0   0   X_1 0   0      0      0      0      0   |
+                {-1, -1} | -34X_3 0   0   0   0   0   X_2 0   0   0   0   0   0   0   0   X_1 0   0   0      0      0      0      0   |
+                {-1, -1} | -35X_3 0   0   0   0   X_2 0   0   0   0   0   0   0   0   X_1 0   0   0   0      0      0      0      0   |
+                {-1, -1} | -29X_3 0   0   0   X_2 0   0   0   0   0   0   0   0   X_1 0   0   0   0   0      0      0      0      0   |
+                {-1, -1} | 12X_3  0   0   X_2 0   0   0   0   0   0   0   0   X_1 0   0   0   0   0   0      0      0      0      0   |
+                {-1, -1} | -8X_3  0   X_2 0   0   0   0   0   0   0   0   X_1 0   0   0   0   0   0   0      0      0      0      0   |
+                {-1, -1} | X_3    X_2 0   0   0   0   0   0   0   0   X_1 0   0   0   0   0   0   0   0      0      0      0      0   |
+                {-3, -7} | 0      0   0   0   0   0   0   0   0   X_1 0   0   0   0   0   0   0   0   0      0      0      0      0   |
+
+                                                                                                                                              14
+o138 : K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]-module, quotient of K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]
+           1   2   3                                                                     1   2   3
+i139 : N' = B^1/(x^2 + z^2,y^3 - 2*z^3);
+i140 : time rH' = ext(M,N');
+     -- used 20.26 seconds
+i141 : evenPart rH'
+
+o141 = cokernel {-4, -8} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     0         48X_2             -48X_2            47X_2            -45X_2            -17X_2         |
+                {-4, -8} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     0         -5X_2             44X_2             -23X_2           0                 0              |
+                {-4, -9} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     -51X_1    42X_1             11X_1             19X_1            -X_1              30X_1          |
+                {-4, -9} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     -32X_1    -11X_1            -49X_1            -49X_1           45X_1             44X_1          |
+                {-4, -9} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     35X_1     48X_1             -13X_1            25X_1            -33X_1            -35X_1         |
+                {-4, -9} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     -51X_1    -3X_1             -8X_1             -16X_1           17X_1             -24X_1         |
+                {-4, -9} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     -46X_1    34X_1             -27X_1            11X_1            -5X_1             -41X_1         |
+                {-4, -9} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     -24X_1    -17X_1            16X_1             -7X_1            24X_1             -5X_1          |
+                {0, 2}   | 0   0   0   0   0   0   X_3 0   0   0   0   0   0     0   0   0   X_2 0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   X_1 0      0      0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {0, 2}   | 0   0   0   0   0   X_3 0   0   0   0   0   0   0     0   0   X_2 0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   X_1 0   0      0      0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   4X_2  0   0   0   0   -14X_2 -4X_2  12X_2  47X_2 18X_2  -45X_2 31X_2  37X_2  3X_2   45X_2  0   0   0   0   0   0   0   0   0   49X_1  -43X_1 26X_1 -40X_1 X_1    32X_1  0     -49X_1 21X_1  -13X_1 -44X_1 30X_1 19X_1X_3  -14X_2^2+2X_1X_3  -29X_2^2-7X_1X_3  -2X_2^2-32X_1X_3 -23X_2^2+12X_1X_3 X_2^2+13X_1X_3 |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   41X_2 0   0   0   0   8X_2   -44X_2 9X_2   12X_2 48X_2  -7X_2  0      -22X_2 -50X_2 11X_2  0   0   0   0   0   0   0   0   0   -8X_1  35X_1  -8X_1 29X_1  -2X_1  3X_1   47X_1 7X_1   0      -28X_1 -34X_1 36X_1 39X_1X_3  -33X_2^2+20X_1X_3 -47X_2^2-21X_1X_3 -6X_2^2+41X_1X_3 X_2^2+2X_1X_3     33X_1X_3       |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   14X_2 0   0   0   0   -42X_2 17X_2  40X_2  40X_2 23X_2  42X_2  -44X_2 39X_2  -41X_2 5X_2   0   0   0   0   0   0   0   0   0   -18X_1 45X_1  30X_1 -10X_1 -28X_1 -19X_1 10X_1 -10X_1 -16X_1 7X_1   -37X_1 13X_1 -27X_1X_3 10X_2^2+35X_1X_3  -40X_2^2+17X_1X_3 X_2^2+29X_1X_3   -33X_1X_3         -48X_1X_3      |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   24X_2 0   0   0   0   19X_2  -16X_2 49X_2  51X_2 -49X_2 31X_2  -33X_2 -48X_2 18X_2  -46X_2 0   0   0   0   0   0   0   0   0   13X_1  -38X_1 11X_1 -39X_1 -11X_1 46X_1  20X_1 -2X_1  20X_1  -17X_1 49X_1  27X_1 X_1X_3    32X_2^2           X_2^2             0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   50X_2 0   0   0   0   25X_2  -X_2   -12X_2 29X_2 27X_2  50X_2  37X_2  28X_2  28X_2  27X_2  0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      X_1   0         X_2^2             0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      X_2    0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      X_1    0     0         0                 0                 0                0                 0              |
+                {0, 2}   | 0   0   0   0   X_3 0   0   0   0   0   0   0   0     0   X_2 0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   X_1 0   0   0      0      0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {0, 2}   | 0   0   X_3 0   0   0   0   0   0   0   X_2 0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   X_1 0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      X_2    0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      X_1    0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      X_2    0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      X_1    0      0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      X_2    0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     X_1    0      0      0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     0      X_2    0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      0      X_1   0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {0, 2}   | 0   0   0   X_3 0   0   0   0   0   0   0   0   0     X_2 0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   X_1 0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {0, 2}   | 0   X_3 0   0   0   0   0   0   0   X_2 0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   X_1 0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      0     X_2    0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      0      X_1    0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      0      X_2   0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     0      X_1    0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      0      X_2    0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      0     X_1    0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   0      X_2    0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      0      X_1   0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   0     0   0   0   0   X_2    0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   0      X_1    0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {-2, -4} | 0   0   0   0   0   0   0   0   0   0   0   0   X_2   0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   0   0   0   0   0   X_1    0      0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {0, 2}   | X_3 0   0   0   0   0   0   0   0   0   0   X_2 0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   0   0   0   X_1 0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {0, 1}   | 0   0   0   0   0   0   0   X_2 0   0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      X_1 0   0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+                {0, 1}   | 0   0   0   0   0   0   0   0   X_2 0   0   0   0     0   0   0   0   0      0      0      0     0      0      0      0      0      0      0   X_1 0   0   0   0   0   0   0   0      0      0     0      0      0      0     0      0      0      0      0     0         0                 0                 0                0                 0              |
+
+                                                                                                                                              33
+o141 : K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]-module, quotient of K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]
+           1   2   3                                                                     1   2   3
+i142 : oddPart rH'
+
+o142 = cokernel {-3, -6} | 0   0   0   0   0   0   0   0   -42X_2 21X_2  -47X_2 -13X_2 32X_2  49X_2  |
+                {-3, -6} | 0   0   0   0   0   0   0   0   -6X_2  -32X_2 -38X_2 -27X_2 -11X_2 -47X_2 |
+                {-3, -6} | 0   0   0   0   0   0   0   0   -8X_2  12X_2  -12X_2 -34X_2 -12X_2 -5X_2  |
+                {-3, -6} | 0   0   0   0   0   0   0   0   26X_2  -36X_2 36X_2  21X_2  47X_2  29X_2  |
+                {-3, -6} | 0   0   0   0   0   0   0   0   50X_2  18X_2  -37X_2 23X_2  -12X_2 42X_2  |
+                {-3, -6} | 0   0   0   0   0   0   0   0   31X_2  7X_2   -49X_2 -34X_2 -46X_2 11X_2  |
+                {-3, -7} | 0   0   0   0   0   0   0   0   0      0      0      0      0      X_1    |
+                {-3, -7} | 0   0   0   0   0   0   0   0   0      0      0      0      X_1    0      |
+                {-3, -7} | 0   0   0   0   0   0   0   0   0      0      0      X_1    0      0      |
+                {-3, -7} | 0   0   0   0   0   0   0   0   0      0      X_1    0      0      0      |
+                {-3, -7} | 0   0   0   0   0   0   0   0   0      X_1    0      0      0      0      |
+                {-3, -7} | 0   0   0   0   0   0   0   0   X_1    0      0      0      0      0      |
+                {-1, -2} | 0   0   0   X_2 0   0   0   X_1 0      0      0      0      0      0      |
+                {-1, -2} | 0   0   X_2 0   0   0   X_1 0   0      0      0      0      0      0      |
+                {-1, -2} | 0   X_2 0   0   0   X_1 0   0   0      0      0      0      0      0      |
+                {-1, -2} | X_2 0   0   0   X_1 0   0   0   0      0      0      0      0      0      |
+
+                                                                                                                                              16
+o142 : K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]-module, quotient of K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]
+           1   2   3                                                                     1   2   3
+i143 : extgenSeries2 = (M,N) -> (
+          H := ext(M,N);
+          h := hilbertSeries H;
+          T':= degreesRing H;
+          substitute(h, {T'_0=>t^-1,T'_1=>u^-1})
+          );
+i144 : extgenSeries1 = (M,N) -> (
+          substitute(extgenSeries2(M,N), {u=>1_T})
+          );
+i145 : time extgenSeries2(M,N)
+     -- used 0.44 seconds
+
+         -2    -1            2      2 2     2 3     2 4     3 4     3 5     3 6    3 7     4 5     4 6    4 7     4 8    4 9     5 8     5 9     6 10     6 11    6 12    7 13
+       8u   + u   + 8t*u - 8t u - 9t u  - 9t u  + 7t u  - 8t u  - 8t u  + 4t u  + t u  + 8t u  + 9t u  + t u  - 2t u  + t u  + 8t u  - 4t u  - 8t u   + 2t u   - t u   - t u
+o145 = -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                  2 3       2 4       2 5
+                                                                            (1 - t u )(1 - t u )(1 - t u )
+
+o145 : Divide
+i146 : g=time extgenSeries1(M,N)
+     -- used 0.13 seconds
+
+                   2      3      4     5     6    7
+       9 + 8t - 19t  - 11t  + 17t  + 4t  - 7t  - t
+o146 = --------------------------------------------
+                       2       2       2
+                 (1 - t )(1 - t )(1 - t )
+
+o146 : Divide
+i147 : simplify g
+
+                 2     3    4
+       9 - t - 9t  + 6t  + t
+o147 = ----------------------
+                         2
+           (1 + t)(1 - t)
+
+o147 : Divide
+i148 : time extgenSeries2(M,N')
+     -- used 0.15 seconds
+
+         -2     -1       2     2      2 2     2 3      2 4     3 5     3 6     3 7     4 5     4 6     4 7     4 8     4 9     5 9     5 10     6 10      6 11     6 12
+       7u   + 2u   + 4t*u  - 7t u - 9t u  - 9t u  + 16t u  - 4t u  + 2t u  + 6t u  + 7t u  + 9t u  - 5t u  - 9t u  + 6t u  + 4t u  - 6t u   - 7t u   + 11t u   - 6t u
+o148 = ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                              2 3       2 4       2 5
+                                                                        (1 - t u )(1 - t u )(1 - t u )
+
+o148 : Divide
+i149 : g'=time extgenSeries1(M,N')
+     -- used 0.18 seconds
+
+                  2     3     4     5     6
+       9 + 4t - 9t  + 4t  + 8t  - 2t  - 2t
+o149 = ------------------------------------
+                   2       2       2
+             (1 - t )(1 - t )(1 - t )
+
+o149 : Divide
+i150 : simplify g'
+
+                  2     3     5
+       9 - 5t - 4t  + 8t  - 2t
+o150 = ------------------------
+                  2       3
+           (1 + t) (1 - t)
+
+o150 : Divide
+i151 : complexityPair = (M,N) -> dim ext(M,N);
+i152 : time complexityPair(M,N)
+     -- used 0.39 seconds
+
+o152 = 2
+i153 : time complexityPair(M,N')
+     -- used 0.12 seconds
+
+o153 = 3
+i154 : supportVarietyPairIdeal = (M,N) -> ann ext(M,N);
+i155 : time supportVarietyPairIdeal(M,N)
+     -- used 0.97 seconds
+
+o155 = ideal X
+              1
+
+o155 : Ideal of K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]
+                    1   2   3
+i156 : time supportVarietyPairIdeal(M,N')
+     -- used 1.73 seconds
+
+o156 = 0
+
+o156 : Ideal of K [X , X , X , Degrees => {{-2, -3}, {-2, -4}, {-2, -5}}]
+                    1   2   3
+i157 : 

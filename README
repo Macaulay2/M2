@@ -40,10 +40,11 @@ you can compile and link Macaulay 2.  We always compile with gcc.
       notes: Sometimes the configure script doesn't work.  For example, if
 		factory.h has been installed under $prefix/include, it won't find it.
 		And it can erroneously decide that 'const' and 'inline' keywords don't
-		work, and add -Dconst= -Dinline= to DEFS.
+		work, and add -Dconst= -Dinline= to DEFS.  This results in a stream of
+		error messages about duplicate declarations.
 	     Also, make sure you patch the source with the diffs in README.libfac-0.3.2,
 		or else it gets confused about the NOSTREAMIO option.
-	     Also, ignore the warning message about factory.h being missin, if you think you've put
+	     Also, ignore the warning message about factory.h being missing, if you think you've put
 		it in $prefix/include.
 
     library: gmp

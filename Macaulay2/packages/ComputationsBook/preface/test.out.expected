@@ -1,0 +1,67 @@
+i1 : 3/5 + 7/11
+
+     68
+o1 = --
+     55
+
+o1 : QQ
+i2 : 100!
+
+o2 = 93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
+i3 : R = QQ[x,y,z]/(x^3-y^3-z^3)
+
+o3 = R
+
+o3 : QuotientRing
+i4 : (x+y+z)^3
+
+       2        2     3     2               2        2       2     3
+o4 = 3x y + 3x*y  + 2y  + 3x z + 6x*y*z + 3y z + 3x*z  + 3y*z  + 2z
+
+o4 : R
+i5 : b = vars R
+
+o5 = | x y z |
+
+             1       3
+o5 : Matrix R  <--- R
+i6 : c = matrix {{x^2,y^2,z^2}}
+
+o6 = | x2 y2 z2 |
+
+             1       3
+o6 : Matrix R  <--- R
+i7 : M = coker b
+
+o7 = cokernel | x y z |
+
+                            1
+o7 : R-module, quotient of R
+i8 : N = ker c
+
+o8 = image {2} | x  0   -y2 -z2 |
+           {2} | -y -z2 x2  0   |
+           {2} | -z y2  0   x2  |
+
+                             3
+o8 : R-module, submodule of R
+i9 : res M
+
+      1      3      4      4      4
+o9 = R  <-- R  <-- R  <-- R  <-- R
+                                  
+     0      1      2      3      4
+
+o9 : ChainComplex
+i10 : X = Proj R
+
+o10 = X
+
+o10 : ProjectiveVariety
+i11 : HH^1 cotangentSheaf X 
+
+        1
+o11 = QQ
+
+o11 : QQ-module, free
+i12 : 

@@ -1008,10 +1008,14 @@ document { unique,
      TT "unique v", " -- yields the elements of the list ", TT "v", ", without duplicates.",
      PARA,
      EXAMPLE {
-	  "unique {3,2,1,3,2,4,3,2,3,-2,1,2,4}"
+	  "unique {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}"
 	  },
-     "The order of elements is not necessarily maintained.",
-     PARA,
+     "The order of elements is maintained.  For something that might be slightly 
+     faster, but doesn't maintain the order of the elements, and may different
+     answers, try making a set and then getting its elements.",
+     EXAMPLE {
+	  "toList set {3,2,1,3,2,4,a,3,2,3,-2,1,2,4}"
+	  },
      SEEALSO {"sort"}
      }
 
