@@ -19,12 +19,7 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> new ring r from rawGCD(r
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
-     error "gggcdextended not re-implemented";
-     sendgg(ggPush f, ggPush g, gggcdextended);
-     q := R.pop();
-     p := R.pop();
-     sendgg(ggpop);
-     {p,q})     
+     new R from rawExtendedGCD(raw f, raw g))
 
 pseudoRemainder = method()
 pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (

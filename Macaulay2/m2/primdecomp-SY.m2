@@ -6,13 +6,74 @@
 --
 
 -- this next file loads before this:
---needs "primdecomp-fastgb.m2"
 
--- New simplify routine
-simplify := method()
-simplify (Matrix, ZZ) := (m,n) -> (
-     sendgg(ggPush m, ggPush n, ggsimplify);
-     getMatrix ring m)
+quotMin = (I, facs, F) -> (
+     J := quotient(I,F);
+     if #facs > 1 then (
+	  i := 0;
+     	  while i < #facs and #facs > 1 do (
+	       fac1 := drop(facs,{i,i});
+	       G := product fac1;
+	       J1 := quotient(I,G);
+	       if J == J1
+	       then (
+	      	    facs = fac1;
+	      	    F = G;
+	      	    )
+	       else i = i+1;
+     	       );
+	  );
+     {J,facs,F}
+     )
+-- Sort the list polynomials in increasing degree order
+sortByDegree = (facs) -> (
+     x := apply(facs, f -> (degree f, f));
+     x = sort x;
+     apply(x, i -> i#1))
+
+minSatPPD = (I, facs) -> (
+     R := ring I;
+     facs = sortByDegree facs;
+     F0 := product facs;
+     ret := quotMin(generators I,facs,F0);
+     facs0 := ret#1;
+     F := 1_R;   -- will be s.t. sat(I,F0) = I:F
+     Iprev := generators I;
+     while not ret#0 == Iprev do (
+	  F = F * ret#2;
+	  Iprev = ret#0;
+	  ret = quotMin toSequence ret;
+	  );
+     {ideal ret#0, F0, F, facs0}
+     )
+
+TEST ///
+R = ZZ/32003[b,s,t,u,v,w,x,y,z]
+I = ideal(
+    b*v+s*u,
+    b*w+t*u,
+    s*w+t*v,
+    b*y+s*x,
+    b*z+t*x,
+    s*z+t*y,
+    u*y+v*x,
+    u*z+w*x,
+    v*z+w*y)
+F = x*y*z
+time gb generators I
+time gb I
+time quotient(generators I,F)
+time (I:F)
+time (quotMin(generators I,{x,y,z},F))
+time (minSatPPD(I,{x,y,z}))
+
+I1 = I + ideal(v*w*y, u*v*x, s*v*y, s*t*y, b*s*x, x*y*z, s*t*v, u*v*w, 
+     b*s*t, b*s*u, u*w*x, b*u*x, b*t*x, b*t*u, t*w*z)
+time (minSatPPD(I1,{b,t}))
+
+///
+
+removeScalarMultipleColumns := m -> notImplemented()	    -- Mike will implement
 
 newdecompose = method()
 newdecompose(Ideal) := List => (I) -> (
@@ -96,15 +157,12 @@ factors := (F) -> (
      facs = apply(#facs, i -> facs#i#0);
      select(facs, f -> degree f =!= {0}))
 
--- find, if any, an element of the GB of I which is
--- NOT in the ideal J.
+-- find, if any, an element of the GB of I which is NOT in the ideal J.
 findNonMember = (I,J) -> (
      m := generators I;
      n := gb J;
-     sendgg(ggPush m, ggPush n, ggissubset);
-     x := eePopInt();
+     x := rawGBContains(raw n, raw m);
      if x === -1 then false else I_x)
-
 
 TEST ///
 R = ZZ/32003[a..d]
@@ -147,44 +205,44 @@ radicalContainment(G-a^2,J)
 --    i.e. (I : product facs) = I:F
 -- 3. The product of the elements in 'facs'.
 
-quotMinold = (I, facs, F) -> (
---     J := time(I:F);
-     J := (I:F);
-     if #facs > 1 then (
-	  i := 0;
-     	  while i < #facs and #facs > 1 do (
-	       fac1 := drop(facs,{i,i});
-	       G := product fac1;
-	       --J1 := time(I:G);
-	       J1 := (I:G);
-	       if J == J1 
-	       then (
-	      	    facs = fac1;
-	      	    F = G;
-	      	    )
-	       else i = i+1;
-     	       );
-	  );
-     {J,facs,F}
-     )
+-- quotMinold := (I, facs, F) -> (
+-- --     J := time(I:F);
+--      J := (I:F);
+--      if #facs > 1 then (
+-- 	  i := 0;
+--      	  while i < #facs and #facs > 1 do (
+-- 	       fac1 := drop(facs,{i,i});
+-- 	       G := product fac1;
+-- 	       --J1 := time(I:G);
+-- 	       J1 := (I:G);
+-- 	       if J == J1 
+-- 	       then (
+-- 	      	    facs = fac1;
+-- 	      	    F = G;
+-- 	      	    )
+-- 	       else i = i+1;
+--      	       );
+-- 	  );
+--      {J,facs,F}
+--      )
 
 minSat = (I, F) -> minSatPPD(I, factors F)
 
-minSatPPDold = (I, facs) -> (
-     R := ring I;
-     facs = sortByDegree facs;
-     F0 := product facs;
-     ret := quotMinold(I,facs,F0);
-     facs0 := ret#1;
-     F := 1_R;   -- will be s.t. sat(I,F0) = I:F
-     Iprev := I;
-     while ret#0 != Iprev do (
-	  F = F * ret#2;
-	  Iprev = ret#0;
-	  ret = quotMinold toSequence ret;
-	  );
-     {ret#0, F0, F, facs0}
-     )
+-- minSatPPDold := (I, facs) -> (
+--      R := ring I;
+--      facs = sortByDegree facs;
+--      F0 := product facs;
+--      ret := quotMinold(I,facs,F0);
+--      facs0 := ret#1;
+--      F := 1_R;   -- will be s.t. sat(I,F0) = I:F
+--      Iprev := I;
+--      while ret#0 != Iprev do (
+-- 	  F = F * ret#2;
+-- 	  Iprev = ret#0;
+-- 	  ret = quotMinold toSequence ret;
+-- 	  );
+--      {ret#0, F0, F, facs0}
+--      )
 
 TEST ///
 R = ZZ/32003[a..d]
@@ -196,7 +254,7 @@ fac2 = J_1
 F = fac1 * fac2
 minSat(L,F)
 quotMin(generators L,{fac1,fac2},F)
-quotMinold(L,{fac1,fac2},F)
+-- quotMinold(L,{fac1,fac2},F)
 ///
 
 
@@ -247,7 +305,7 @@ PPD(L,{I})
 -- #3: minimal divisor of the sep, as computed by minSat
 --     (list of polynomials, which are the factors).
 
-PPD = (I,PP) -> (
+PPD := (I,PP) -> (
      R := ring I;
      if #PP === 1 then 
          {{{I, PP#0, 1_R, {1_R}}}, ideal(1_R)}
@@ -259,7 +317,7 @@ PPD = (I,PP) -> (
 		    else findNonMember(PP#j, PP#i));
 	       -- the following throws out zeros, and elements which are 
 	       -- not constant multiples of others.
-	       seps := flatten entries simplify(matrix {ss},2);
+	       seps := flatten entries removeScalarMultipleColumns matrix {ss};
 	       ret := minSatPPD(I,seps);
 	       I' = I' + ideal(ret#2);
 	       {ret#0, PP#i, ret#1, ret#3}));
@@ -273,9 +331,9 @@ L = intersect(I^2, J)
 PPD(L,{I,J})
 ///
 
-PPDcharSets = (I) -> PPD(I, newdecompose I)
+PPDcharSets := (I) -> PPD(I, newdecompose I)
 
-PPDSpecialCharSets = (I, PP) -> (
+PPDSpecialCharSets := (I, PP) -> (
      -- PP is a list of pairs (prime ideal P_i, a list of factors of a polynomial f_i).
      -- assumption: rad I = intersection(rad(P_i,f_i), all i)
      -- returns a PPD of I.
@@ -332,10 +390,10 @@ REMAIN := symbol REMAIN
 if primdecComputation === symbol primdecComputation then
 primdecComputation = new Type of MutableHashTable
 
-PDinitialize = (I,printlevel) -> (
-     if I.cache.?PDC then (
-	  I.cache.PDC.PrintLevel = printlevel;
-          I.cache.PDC
+PDinitialize := (I,printlevel) -> (
+     if I.cache#?"PDC" then (
+	  I.cache#"PDC".PrintLevel = printlevel;
+          I.cache#"PDC"
 	  )
      else (
      	  PDC := new primdecComputation;
@@ -347,11 +405,11 @@ PDinitialize = (I,printlevel) -> (
      	  PDC.U = {};
      	  PDC.W = {{I, ROOT, 0, 1_R, null, {ideal(0_R), 1_R}}};
 	  PDC.thisNode = null;
-     	  I.cache.PDC = PDC;
+     	  I.cache#"PDC" = PDC;
      	  PDC
      ))
 
-PDnext = (PDC) -> (
+PDnext := (PDC) -> (
      if PDC.thisNode =!= null then PDC.thisNode else (
      -- returns the next node, and removes it from the list
      if #PDC.W === 0 then 
@@ -372,7 +430,7 @@ PDnext = (PDC) -> (
 	  PDnext PDC)
      ))
 
-PDdonode = (PDC) -> (
+PDdonode := (PDC) -> (
      local ret;
      node := PDC.thisNode;
      done := false;
@@ -442,7 +500,7 @@ PDdonode = (PDC) -> (
      PDC.thisNode = null;
      )
 
-SYprimaryDecomposition = (I,printlevel) -> (
+SYprimaryDecomposition = (I,printlevel) -> (		    -- called by a later file
      C := PDinitialize(I,printlevel);
      while #C.W > 0 do (
 	  PDnext C;
