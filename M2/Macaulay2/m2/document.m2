@@ -681,7 +681,7 @@ documentation Symbol := s -> (
 	  title s, 
 	  usage s,
 	  op s,
-     	  type s,
+     	  type value s,
 	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, SHIELD smenu a, PARA{}},
 	  if #b > 0 then SEQ {"Methods for ", toString s, " :", PARA{}, SHIELD smenu b, PARA{}} 
      	  }
