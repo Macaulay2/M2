@@ -184,6 +184,15 @@ blankcolumn(i:int, t:Net):bool := (
      true
      );
 
+verticalTrim(t:Net):Net := (
+     a := 0;
+     b := length(t.body)-1;
+     while a<b && length(t.body.a)==0 do a = a+1;
+     while a<b && length(t.body.b)==0 do b = b-1;
+     h := t.height - a;
+     if h < 1 then h = 1;
+     Net(h,t.width,new array(string) len b-a+1 do for i from a to b do provide t.body.i));
+
 subnet(t:Net,startcol:int,wid:int):Net := (
      if startcol < 0 then startcol = 0;			  -- shouldn't happen
      if wid > t.width-startcol then wid = t.width-startcol;
@@ -232,17 +241,21 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 	  );
      j := 0;
      VerticalJoin(
-	  if length(t.body) > 1 then (
-     	       sepline := toNet(new string len wid do provide sep);
-     	       new array(Net) len breaks.size - 1 do (
-	  	    provide subnet(t,breaks.ints.j,breaks.ints.(j+1)-breaks.ints.j);
+	  if int(sep) == 0 then (
+	       new array(Net) len breaks.size/2 do (
+		    a := breaks.ints.j;
+		    b := breaks.ints.(j+1);
+		    provide verticalTrim(subnet(t,a,b-a));
 		    j = j+2;
-	  	    provide sepline;
-	  	    ))
+		    ))
 	  else (
-     	       new array(Net) len breaks.size/2 do (
-		    provide subnet(t,breaks.ints.j,breaks.ints.(j+1)-breaks.ints.j);
-	       	    j = j+2;
+	       sepline := toNet(new string len wid do provide sep);
+	       new array(Net) len breaks.size - 1 do (
+		    a := breaks.ints.j;
+		    b := breaks.ints.(j+1);
+		    provide verticalTrim(subnet(t,a,b-a));
+		    j = j+2;
+		    provide sepline;
 		    ))));
 
 -- Local Variables:
