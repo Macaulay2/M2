@@ -1,6 +1,6 @@
 --		Copyright 1997 by Daniel R. Grayson
 
-asciiLineWidth = 80
+asciiLineWidth = 60
 
 nodeTable = new MutableHashTable
 nodeTable2 = new MutableHashTable
@@ -73,18 +73,18 @@ document { "Appendix",
      ascend()
      )
 --------------- index
-sectionNumber = {"B"}
-document { "Combined Index",
-     TEX ///\begintwocolumn
-///,
-     apply(
-	  sort join(keys docDatabase, {"Appendix"}), 
-	  node -> (NOINDENT{}, TO node, PARA{})),
-     TEX ///
-\endtwocolumn
-///,
-     }
-reach2 TO "Combined Index"
+ -- sectionNumber = {"B"}
+ -- document { "Combined Index",
+ -- --     TEX ///\begintwocolumn
+ -- --///,
+ --      apply(
+ -- 	  sort join(keys docDatabase, {"Appendix"}), 
+ -- 	  node -> (NOINDENT{}, TO node, PARA{})),
+ -- --     TEX ///
+ -- --\endtwocolumn
+ -- --///,
+ --      }
+ -- reach2 TO "Combined Index"
 ---------------
 close docDatabase
 ---------------
@@ -110,20 +110,22 @@ cmrLiteralTable# "{" = "{\\tt\\char`\\{}"
 cmrLiteralTable# "}" = "{\\tt\\char`\\}}"
 cmrLiteral = s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 ---------------
+
+UnknownReference := "???"
+
 crossReference := (key,text) -> (
      sectionNumber := (
 	  if fileNumberTable#?key
 	  then sectionNumberTable#(fileNumberTable#key)
 	  else (
-	       error("warning: documentation for key '", key, "' not found");
+	       -- error("warning: documentation for key '", key, "' not found");
 	       -- stderr << "warning: documentation for key '" << key << "' not found" << endl;
-	       "???"
+	       UnknownReference
 	       )
 	  );
-     if hypertex then ( ///\null\special{html:<A href="#///, sectionNumber, ///">}/// ),
-     "\\cite{", cmrLiteral text, "}{", sectionNumber, "}",
-     if hypertex then   ///\special{html:</A>}///,
-     "%", newline
+     if sectionNumber === UnknownReference
+     then (                                  "{\\bf ", cmrLiteral text,  "} [", sectionNumber, "]" )
+     else ( "\\hyperlink{", sectionNumber, "}{{\\bf ", cmrLiteral text, "}} [\\ref{", sectionNumber, "}]" )
      )
 
 booktex = method(SingleArgumentDispatch=>true)
@@ -157,21 +159,8 @@ booktex MENU := x -> concatenate(
 ///
      )
 
-booktex HREF := s -> (
-     if hypertex then concatenate(
-	  "\\special{html:<A href=\"",
-	  ttLiteral s#0,
-	  "\">}",
-	  booktex s#-1,
-	  "\\special{html:</A>}"
-	  )
-     else (
-	  if #s === 2
-	  then booktex {s#1, " (the URL is ", TT s#0, ")"}
-	  else booktex TT s#0
-	  )
-     )
-
+booktex HREF := s -> concatenate( "\\href{", ttLiteral s#0, "}{", booktex s#-1, "}" )
+booktex HEADLINE := s -> ""
 booktex TEX := identity
 booktex NOINDENT := (x) -> ///\noindent\ignorespaces
 ///

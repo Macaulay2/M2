@@ -849,8 +849,6 @@ document { setSpin,
      "The value returned is the previous interval."
      }
 
---load "tutorials.m2"
-
 document { symbol "=>",
      TT "x => y", " -- a binary operator which produces a type of list called
      an ", TO "Option", "."
