@@ -17,9 +17,9 @@ R = QQ[x,y]
 f = 1+x^2
 g = 1+x^3
 rawGCD( raw ( f ), raw ( g ))
-rawGCD( raw ( 1/2*f ), raw ( 1/3*g ))			    -- crashes, probably because convert() in x-factor.cpp doesn't handle rational coefficients at all
+rawGCD( raw ( 1/2*f ), raw ( 1/3*g ))                       -- crashes, probably because convert() in x-factor.cpp doesn't handle rational coefficients at all
 rawExtendedGCD( raw ( f ), raw ( g ))
-rawExtendedGCD( raw ( 1/2*f ), raw ( 1/3*g ))	       	    -- loops forever
+rawExtendedGCD( raw ( 1/2*f ), raw ( 1/3*g ))               -- loops forever
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test gcd.out"
