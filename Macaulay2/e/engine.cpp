@@ -13,7 +13,7 @@
 #include "Z.hpp"
 #include "QQ.hpp"
 
-#include "M2-factory.h"
+extern void factory_setup(); // M2-factory.cpp
 
 unsigned long mutable_object::next_hash_sequence_number = 100000;
 
