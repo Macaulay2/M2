@@ -433,7 +433,7 @@ export dummySymbol := Symbol(
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
-export dummyCode := Code(exprCode(Expr(dummySymbolClosure),dummyPosition)); -- was Code(CodeSequence());
+export dummyCode := Code(globalMemoryReferenceCode(0,dummyPosition));
 export dummyToken   := Token(dummyWord,dummyPosition,Macaulay2Dictionary,dummySymbol,false);
 export parseEOF     := newParseinfo();
 export parseWORD    := newParseinfo();

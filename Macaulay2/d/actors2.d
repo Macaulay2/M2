@@ -426,13 +426,14 @@ assignvector(x:Sequence,i:Code,rhs:Code):Expr := (
 globalAssignmentHook(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
      -- top level hooks for assignment to a global variable
      method := lookup(Class(oldvalue),GlobalReleaseE);
+     sym := Expr(SymbolClosure(globalFrame,t));
      if method != nullE then (
-	  y := apply(method,Expr(makeSymbolClosure(t)),oldvalue);
+	  y := apply(method,sym,oldvalue);
 	  when y is Error do return(y) else nothing;
 	  );
      method = lookup(Class(newvalue),GlobalAssignE);
      if method != nullE then (
-	  y := apply(method,Expr(makeSymbolClosure(t)),newvalue);
+	  y := apply(method,sym,newvalue);
 	  when y is Error do return(y) else nothing;
 	  );
      nullE

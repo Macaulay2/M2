@@ -255,8 +255,6 @@ parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
 	       ))
      );
 
-export makeSymbolClosure(s:Symbol):SymbolClosure := SymbolClosure(frame(s.frameID),s);
-
 export convert(e:ParseTree):Code := (
      when e
      is s:StartDictionary do (
@@ -382,7 +380,8 @@ export convert(e:ParseTree):Code := (
 	  then (
 	       when b.lhs
 	       is a:Adjacent do (
-		    Code(multaryCode(
+		    Code(
+			 multaryCode(
 			      InstallValueFun,
 			      CodeSequence(
 			      	   Code(exprCode(AdjacentS,dummyPosition)),
@@ -390,14 +389,20 @@ export convert(e:ParseTree):Code := (
 			      	   convert(a.rhs),
 			      	   convert(b.rhs)),
 			      treePosition(e))))
-	       is u:Unary do Code(ternaryCode(
+	       is u:Unary do Code(
+		    ternaryCode(
 			 UnaryInstallValueFun,
-			 Code(exprCode(makeSymbolClosure(u.operator.entry), dummyPosition)),
-			 convert(u.rhs), convert(b.rhs), treePosition(e)))
-	       is u:Postfix do Code(ternaryCode(
+			 Code(globalSymbolClosureCode(u.operator.entry,u.operator.position)),
+			 convert(u.rhs),
+			 convert(b.rhs),
+			 treePosition(e)))
+	       is u:Postfix do Code(
+		    ternaryCode(
 			 UnaryInstallValueFun,
-			 Code(exprCode(makeSymbolClosure(u.operator.entry), dummyPosition)),
-			 convert(u.lhs), convert(b.rhs), treePosition(e)))
+			 Code(globalSymbolClosureCode(u.operator.entry,u.operator.position)),
+			 convert(u.lhs),
+			 convert(b.rhs),
+			 treePosition(e)))
 	       is c:Binary do (
 		    if c.operator.entry == SharpS.symbol
 		    then Code(ternaryCode( AssignElemFun, convert(c.lhs),
@@ -409,8 +414,7 @@ export convert(e:ParseTree):Code := (
 			 Code(ternaryCode(
 				   AssignElemFun,
 				   convert(c.lhs),
-				   Code(exprCode(Expr(SymbolClosure( globalFrame, crhs.entry)), 
-					     treePosition(c.rhs))),
+			 	   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
 				   convert(b.rhs),
 				   treePosition(e)))
 			 else dummyCode --should not happen
@@ -418,8 +422,7 @@ export convert(e:ParseTree):Code := (
 		    else Code(multaryCode(
 			      InstallValueFun,
 			      CodeSequence(
-				   Code(exprCode( Expr(makeSymbolClosure(c.operator.entry)), 
-					     dummyPosition)),
+				   Code(globalSymbolClosureCode(c.operator.entry,c.operator.position)), 
 				   convert(c.lhs),
 				   convert(c.rhs),
 				   convert(b.rhs)),
@@ -471,11 +474,11 @@ export convert(e:ParseTree):Code := (
 			      treePosition(e))))
 	       is u:Unary do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(exprCode(makeSymbolClosure(u.operator.entry), dummyPosition)),
+			 Code(globalSymbolClosureCode(u.operator.entry,u.operator.position)),
 			 convert(u.rhs), convert(b.rhs), treePosition(e)))
 	       is u:Postfix do Code(ternaryCode(
 			 UnaryInstallMethodFun,
-			 Code(exprCode(makeSymbolClosure(u.operator.entry), dummyPosition)),
+			 Code(globalSymbolClosureCode(u.operator.entry,u.operator.position)),
 			 convert(u.lhs), convert(b.rhs), treePosition(e)))
 	       is c:Binary do (
 		    if c.operator.entry == SharpS.symbol
@@ -497,10 +500,7 @@ export convert(e:ParseTree):Code := (
 			 Code(ternaryCode(
 				   AssignElemFun,
 				   convert(c.lhs),
-				   Code(exprCode(Expr(SymbolClosure(
-						       globalFrame,
-						       crhs.entry)),
-					     treePosition(c.rhs))),
+			 	   Code(globalSymbolClosureCode(crhs.entry,crhs.position)),
 				   convert(b.rhs),
 				   treePosition(e)))
 			 else dummyCode --should not happen
@@ -508,10 +508,7 @@ export convert(e:ParseTree):Code := (
 		    else Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence(
-				   Code(
-					exprCode(
-					     Expr(makeSymbolClosure(c.operator.entry)),
-					     dummyPosition)),
+			 	   Code(globalSymbolClosureCode(c.operator.entry,c.operator.position)),
 				   convert(c.lhs),
 				   convert(c.rhs),
 				   convert(b.rhs)),
@@ -551,7 +548,6 @@ export convert(e:ParseTree):Code := (
      is q:LocalQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  if sym.frameID == 0 then fatal("internal error: local quote but frameID == 0");
 	  pos := treePosition(e);
 	  nd := nestingDepth(sym.frameID,token.dictionary);
 	  Code(localSymbolClosureCode(nd,sym,pos)))
