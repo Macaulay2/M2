@@ -62,16 +62,16 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		@srcdir@/../tutorial/final/*.m2 Makefile.tests @srcdir@/../e/statuscodes @srcdir@/doc.css \
 		../basictests/Makefile.in ../emacs/Makefile.in ../images/Makefile.in ../packages/Makefile.in ../tutorial/Makefile.in ../CHANGES
 	@echo making $@
-	set -e ; \
-	cd @srcdir@ && \
-	for i in $(patsubst @srcdir@/%, %, $^) ; \
-	do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
+	@ set -e ; \
+	  cd @srcdir@ && \
+	  for i in $(patsubst @srcdir@/%, %, $^) ; \
+	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
 @srcdir@/TAGS.doc: docseq Makefile.in $(DOCSEQUENCE)
 	@echo making $@
-	set -e ; \
-	cd @srcdir@ && \
-	for i in $(patsubst @srcdir@/%, %, $^) ; \
-	do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS.doc
+	@ set -e ; \
+	  cd @srcdir@ && \
+	  for i in $(patsubst @srcdir@/%, %, $^) ; \
+	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS.doc
 clean::; rm -f TAGS.doc
 prep :: $(DUMPEDM2FILES)
 
@@ -174,12 +174,16 @@ tmp :; mkdir "$@"
 
 MAKEINFO = true
 EXAMPLEOPTIONS := -q
+ifndef INTERACTIVE
 EXAMPLEOPTIONS += --stop
 EXAMPLEOPTIONS += --no-debug
+endif
 EXAMPLEOPTIONS += -e errorDepth=0
 EXAMPLEOPTIONS += -e debugLevel=2
 EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => $(ENCAPVALUE), Prefix => ".") '
+ifndef INTERACTIVE
 EXAMPLEOPTIONS += -e 'exit 0 '
+endif
 
 tmp/.documentation-made : $(DOCSEQUENCE)
 	@ echo making the Macaulay2 package, including the documentation

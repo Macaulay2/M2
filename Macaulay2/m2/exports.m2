@@ -1,6 +1,7 @@
 --		Copyright 2004 by Daniel R. Grayson
 
 exportMutable (
+     symbol valueString,
 	symbol backtrace,
 	symbol backupFileRegexp,
 	symbol buildHomeDirectory,

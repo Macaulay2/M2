@@ -113,6 +113,7 @@ poincare Module := M -> (
      	  ZZn := degreesRing R;
 	  g := generators gb presentation M;
 	  p := M.cache.poincareComputation = new ZZn from rawHilbert raw g;
+	  assert( raw ring p === rawRing raw p );	    -- fix this!
 	  if R.?Repair and R.Repair =!= identity then (
 	       repair := R.Repair;
 	       p = substitute(p,

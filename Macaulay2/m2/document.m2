@@ -732,7 +732,7 @@ briefSynopsis := key -> (
 	  );
      inp = alter \ inp;
      out = alter \ out;
-     if #inp > 0 or #out > 0 then (
+     if usa =!= null or #inp > 0 or #out > 0 then (
 	  fixup SEQ {				  -- to be implemented
 	       UL {
      	       	    if usa =!= null then SEQ { "Usage: ", if class usa === String then TT usa else usa},
