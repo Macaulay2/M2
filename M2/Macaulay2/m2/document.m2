@@ -298,11 +298,11 @@ checkForExampleOutputFile := () -> (
      if exampleBaseFilename =!= null then (
 	  exampleOutputFilename = exampleBaseFilename | ".out";
 	  if debugLevel > 0 then (
-	       stderr << "checking for example output in file '" << exampleOutputFilename << "' : " << (if fileExists exampleOutputFilename then "it exists" else "it doesn't exist") << endl;
+	       stderr << "checking for example results in file '" << exampleOutputFilename << "' : " << (if fileExists exampleOutputFilename then "it exists" else "it doesn't exist") << endl;
 	       );
 	  if fileExists exampleOutputFilename then (
-	       -- read, separate, and store example output
-	       exampleResults = currentPackage#"example outputs"#currentNodeName = drop(separateM2output get exampleOutputFilename,-1);
+	       -- read, separate, and store example results
+	       exampleResults = currentPackage#"example results"#currentNodeName = drop(separateM2output get exampleOutputFilename,-1);
 	       if debugLevel > 0 then stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl;
 	       exampleResultsFound = true)))
 processExample := x -> (
@@ -311,8 +311,7 @@ processExample := x -> (
      then {x, CODE exampleResults#exampleCounter}
      else (
 	  if exampleResultsFound and #exampleResults === exampleCounter then (
-	       stderr << "warning : input file " << exampleOutputFilename 
-	       << " terminates prematurely" << endl;
+	       stderr << "warning : example results file " << exampleOutputFilename << " terminates prematurely" << endl;
 	       );
 	  {x, CODE concatenate("i", toString (exampleCounter+1), " : ",x)}
 	  );
@@ -1130,7 +1129,7 @@ text SEQ := x -> (
      x = toList x;
      P := PARA{};
      p := positions(x, i -> i === P);
-     p = apply(prepend(-1,p),append(p,#p),identity);
+     p = apply(prepend(-1,p),append(p,#x),identity);
      p = select(p, (i,j) -> i+1 < j);
      x = apply(p, (i,j) -> text \ take(x, {i+1,j-1}));
      x = flatten between(P,x);

@@ -375,9 +375,9 @@ installPackage Package := o -> pkg -> (
 	       outf := outfn nodename;
 	       tmpf := tmpfn nodename;
 	       if fileExists outf and fileTime outf >= fileTime inf
-	       then stderr << "--leaving example output file for " << nodename << endl
+	       then stderr << "--leaving example results file for " << nodename << endl
 	       else (
-		    stderr << "--making example output file for " << nodename << endl;
+		    stderr << "--making example results file for " << nodename << endl;
 		    loadargs := if pkg === Main then "" else "-e 'load \""|fn|"\"'";
 		    cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf;
 		    stderr << cmd << endl;
@@ -400,7 +400,7 @@ installPackage Package := o -> pkg -> (
 			 unlink(tmpf);
 			 ));
 	       -- read, separate, and store example output
-	       if fileExists outf then pkg#"example outputs"#nodename = drop(separateM2output get outf,-1)
+	       if fileExists outf then pkg#"example results"#nodename = drop(separateM2output get outf,-1)
 	       else stderr << "warning: missing file " << outf << endl;
 	       ));
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
