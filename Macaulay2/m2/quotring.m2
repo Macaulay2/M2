@@ -2,7 +2,6 @@
 
 
 QuotientRing = new Type of EngineRing
-NewQuotientRing = new Type of NewEngineRing
 
 document { quote QuotientRing,
      TT "QuotientRing", " -- the class of all quotient rings.",
@@ -101,8 +100,7 @@ Ring / Ideal := (R,I) -> if I == 0 then R else (
 	       if En > 1 and not isPrime En
 	       then error "ZZZ/n not implemented yet for composite n";
 	       -- EG := degreesMonoid 0;
-	       sendgg(ggPush En, ggEcharp);
-	       ES := new NewQuotientRing from newHandle();
+	       ES := new QuotientRing from newHandle(ggPush En, ggEcharp);
 	       ES.relations = EgensI;
 	       ES.ConvertToExpression = R.ConvertToExpression;
 	       ES.isCommutative = R.isCommutative;

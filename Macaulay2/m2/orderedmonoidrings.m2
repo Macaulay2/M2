@@ -110,20 +110,20 @@ degreesRing2 := memoize(
 	  Zn := degreesMonoid n;
 	  ZZn := ZZ Zn;
 	  ZZn.name = "ZZ[" | Zn.name | "]";
---	  ZZn.handle = newHandle (ggPush ZZ, ggPush Zn, ggpolyring);
---	  ZZn.pop = () -> eePop ConvertList ConvertJoin(Zn.ConversionFormat, ConvertInteger);
---	  ggPush ZZn := x -> (
---	       if # x === 0 then (ggPush ZZn, ggPush 0, ggfromint)
---	       else (
---		    apply(list x, (m,c) -> (
---		    	      ggPush ZZn, 
---			      ggPush ZZ, ggPush c, ggfromint, 
---			      ggPush m, ggterm)),
---		    #x-1:ggadd));
-     	  use ZZn			  -- this doesn't actually set any global variables
+     	  use ZZn
 	  ))
 
 degreesRing ZZ := n -> degreesRing2 n
+
+newDegreesRing2 := memoize(
+     (n) -> (
+	  Zn := newDegreesMonoid n;
+	  ZZn := ZZZ Zn;
+	  ZZn.name = "ZZ[" | Zn.name | "]";
+     	  use ZZn
+	  ))
+
+newDegreesRing ZZ := n -> newDegreesRing2 n
 
 degreesRing PolynomialRing := R -> (
      if R.?degreesRing then R.degreesRing
@@ -217,8 +217,21 @@ Ring OrderedMonoid := (			  -- no memoize
 	  if not (R.?Engine and R.Engine) 
 	  then error "expected coefficient ring handled by the engine";
 	  Weyl := M.Options.WeylAlgebra =!= {};
+	  degRing := (
+	       if M.?newEngine or R.?newEngine
+	       then if degreeLength M != 0 then newDegreesRing degreeLength M else ZZZ
+	       else if degreeLength M != 0 then degreesRing degreeLength M else ZZ
+	       );
 	  RM := if not Weyl then (
-	       new PolynomialRing from (ggPush R, ggPush M, ggpolyring)
+	       if M.?newEngine
+	       then new PolynomialRing from (
+		    ggPush degRing, 
+		    ggPush flatten (options M).Degrees, 
+		    ggPush R, 
+		    ggPush M, 
+		    ggpolyring
+		    )
+	       else new PolynomialRing from (ggPush R, ggPush M, ggpolyring)
 	       )
 	  else (
 	       diffs := M.Options.WeylAlgebra;
@@ -245,20 +258,11 @@ Ring OrderedMonoid := (			  -- no memoize
 			 else error "expected a variable of the ring"));
 	       new PolynomialRing from (ggPush R, ggPush M, ggPush diffs, ggweylalgebra)
 	       );
+	  RM.degreesRing = degRing;
 	  RM.isCommutative = not Weyl and M.Options.SkewCommutative === false;
 	  RM.baseRings = append(R.baseRings,R);
+	  if M.?newEngine then RM.newEngine = true;
      	  ONE := RM#1;
-	  if degreeLength M != 0 then (
-	       -- there must be something smarter to do, but if we
-	       -- do not do this, then we get into an infinite loop
-	       -- because each monoid ring ZZ[a,b,c] needs its degrees ring
-	       -- ZZ[t], which in turn needs to make its degrees ring 
-	       -- ZZ[], which in turn needs one.
-	       RM.degreesRing = degreesRing degreeLength M;
-	       )
-	  else (
-	       RM.degreesRing = ZZ;
-	       );
 	  if R.?char then RM.char = R.char;
 	  RM.monoid = M;
 	  RM ? RM := (f,g) -> (

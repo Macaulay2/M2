@@ -74,9 +74,7 @@ document { quote returnCode,
      stored the return code from the engine for the computation."
      }
 
-stats GroebnerBasis := g -> (
-     <<sendgg(ggPush g, ggstats);
-     )
+stats GroebnerBasis := g -> sendgg(ggPush g, ggstats)
 
 gbTrace = (n) -> (
      if class n === ZZ then (

@@ -156,13 +156,21 @@ MOgeneral := (degs, ord, invord, invdegs) -> (
 
 degreesMonoid2 := memoize(
      (n) -> (
-	  t := local T;
-	  Zn := group [if n === 1 then t else t_0 .. t_(n-1), 
-			Degrees => {}]; -- MonomialOrder => RevLex];
+	  T := local T;
+	  Zn := group [if n === 1 then T else T_0 .. T_(n-1), Degrees => {}];
 	  Zn.name = "ZZ^" | name n;
 	  Zn))
 
 degreesMonoid ZZ := n -> use degreesMonoid2 n
+
+newDegreesMonoid2 := memoize(
+     (n) -> (
+	  T := local T;
+	  Zn := monoid [if n === 1 then T else T_0 .. T_(n-1), NewMonomialOrder => GroupLex => n, Degrees => {}];
+	  Zn.name = "ZZ^" | name n;
+	  Zn))
+
+newDegreesMonoid ZZ := n -> use newDegreesMonoid2 n
 
 document { quote degreesMonoid,
      TT "degreesMonoid n", " -- returns the monoid whose elements correspond
@@ -268,7 +276,6 @@ monoidDefaults := new OptionTable from {
      MonomialOrder => null,
      NewMonomialOrder => null,
      MonomialSize => 8,
-     PrintOrder => null,
      SkewCommutative => false,
      VariableOrder => null,		  -- not implemented yet
      WeylAlgebra => {}
@@ -350,8 +357,9 @@ makeit1 := (options) -> (
      order := transpose degs;
      firstdeg := transpose degs;
      firstdeg = if #firstdeg === 0 then toList(n:1) else firstdeg#0;
-     printOrder := toList (0 .. n-1);
+     variableOrder := toList (0 .. n-1);
      if options.NewMonomialOrder =!= null then (
+	  M.newEngine = true;
 	  M.MonomialOrder = monomialOrdering options.NewMonomialOrder;
 	  )
      else (
@@ -509,9 +517,9 @@ makeit1 := (options) -> (
 	  );
      M.handle = newHandle (
 	  ggPush M.MonomialOrder,
-	  if options.NewMonomialOrder =!= null then ggPush printOrder,
+	  if M.?newEngine then ggPush variableOrder,
 	  ggPush betwNames(" ",M.generators),		    -- or "" to omit them
-	  if not options.NewMonomialOrder =!= null then (
+	  if not M.?newEngine then (
 	       if degreeLength M === 0 then ggzeromonoid else ggPush degreesMonoid degreeLength M,
 	       ggPush flatten M.degrees,
 	       ggPush {if options.Inverses then 1 else 0, 
@@ -726,3 +734,5 @@ RingElement _ MonoidElement := (f,m) -> (
 	  R.pop()
 	  );
      f _ m)
+
+stats GeneralOrderedMonoid := (M) -> sendgg(ggPush M, ggstats)

@@ -170,10 +170,10 @@ scan({
 	  height, depth, width, regularity, nullhomotopy,
 	  hilbertFunction, content, isUnit, monoid,
 	  isPrime, leadTerm, leadCoefficient, leadMonomial, isField,
-	  leadComponent, degreesRing, degrees, annihilator,
+	  leadComponent, degreesRing, newDegreesRing, degrees, annihilator,
 	  chainComplex, assign, numgens,
 	  autoload, ggPush, char, minprimes, relations, cone, pdim, random,
-	  frac, betti, det, ring, presentation, quote use, degreesMonoid, submatrix,
+	  frac, betti, det, ring, presentation, quote use, degreesMonoid, newDegreesMonoid, submatrix,
 	  truncate, fraction
 	  },
      n -> (
