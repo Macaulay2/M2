@@ -62,6 +62,8 @@ SCC1 := ../c/scc1
 
 SCCFLAGS = -O
 
+# SCCFLAGS += -spincursor
+
 ifneq "$(CC)" "gcc"
 SCCFLAGS += -nogcc
 endif
@@ -251,7 +253,13 @@ test-probe : probe
 	rm syms
 ############################## miscellaneous
 
+ifdef MP
+M2lib.o : mpversion.h
+mpversion.h : ../../mp/MP/MP_Config.h
+	grep MP_VERSION $< >$@
+endif
 
+###################### libraries
 
 ifeq "$(CC)" "cl"
 LIBRARIES += ../dbm/dbm2.lib
@@ -275,6 +283,8 @@ LIBRARIES += ../../lib/libgc.a
 endif
 
 LDLIBS := $(LIBRARIES) $(LDLIBS)
+
+######################
 
 ifeq "$(CC)" "cl"
 LINK_OUTPUT_OPTION = -link -out:$@.exe
