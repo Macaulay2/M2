@@ -28,6 +28,7 @@ DESC    = @PACKAGE_VERSION@-@host_cpu@-@OS@-@REL@
 DUMPDATA = @DUMPDATA@
 NODENAME = @NODENAME@
 PROFILE = @PROFILE@
+FACTORY = @FACTORY@
 STRIP = @STRIP@
 OPTIMIZE = @OPTIMIZE@
 DEBUG = @DEBUG@
@@ -206,7 +207,7 @@ endif
 
 ifeq "$(GCC)" "yes"
 CFLAGS   += -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
-CXXFLAGS += -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare
+CXXFLAGS += -Wall -Wshadow -Wcast-qual -Wno-parentheses -Wno-sign-compare -Wold-style-cast
 ifeq "$(OPTIMIZE)" "yes"
 CFLAGS   += -O3 -fexpensive-optimizations
 CXXFLAGS += -O3 -fexpensive-optimizations
@@ -239,13 +240,6 @@ DEBUGFLAGS += -DMEM_DEBUG
 endif
 
 DUMPDATAFILE := cache/Macaulay2-$(ARCH)-data
-
-ifneq "$(prefix)" "/usr"
-ifneq "$(prefix)" "/usr/local"
-CPPFLAGS += -I$(prefix)/include
-LDFLAGS += -L$(prefix)/lib
-endif
-endif
 
 ifeq "$(DEBUG)" "yes"
 CPPFLAGS += -DGC_DEBUG

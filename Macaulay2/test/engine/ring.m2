@@ -254,5 +254,5 @@ assert ( i == -1 )
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "
--- compile-command: "echo 'input \"ring.m2\"' | M2 --stop"
+-- compile-command: "echo 'input \"ring.m2\"' | M2 -q --stop"
 -- End:
