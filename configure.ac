@@ -174,11 +174,11 @@ AC_ARG_WITH(encapsrc,
     encapsrc="$withval",
     )
 
-AC_SUBST(LIBGDB)
-AC_ARG_WITH(LIBGDB,
-    AC_HELP_STRING(--with-libgdb=...,libgdb option (-lgdb)),
-    LIBGDB="$withval",
-    LIBGDB="-lgdb"
+AC_SUBST(LIBGMP)
+AC_ARG_WITH(LIBGMP,
+    AC_HELP_STRING(--with-libgmp=...,libgmp option (-lgmp)),
+    LIBGMP="$withval",
+    LIBGMP="-lgmp"
     )
 
 AC_SUBST(GC_FOR_NEW)
