@@ -81,6 +81,7 @@ GF::GF(const RingElement prim)
   // Create the Z/P ---> GF(Q) inclusion map
   from_int_table = new int[P];
   int a = ONE;
+  from_int_table[0] = ZERO;
   for (i=1; i<P; i++)
     {
       from_int_table[i] = a;

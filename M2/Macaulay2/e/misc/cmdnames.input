@@ -336,8 +336,13 @@ Compute the numerator of the Hilbert series (the Poincare polynomial) of the giv
 
 gghomogenize
 homogenize
-m:matrix n:int >> matrix;  OR  m:matrix deg:intarray n:int >> matrix
-Homogenize the given matrix using the n th variable in the ring to homogenize.  An error is given if the resulting matrix cannot be made (multi-)homogeneous.
+m:matrix n:int >> matrix
+Homogenize the given matrix using the n th variable in the ring to homogenize.  An error is given if the resulting matrix cannot be made (multi-)homogeneous.  The matrix m could also be a ring element.
+
+gghomogenize1
+homogenize1
+m:ring_elem deg:intarray n:int >> ring_elem
+Homogenize the given ring element using the n th variable in the ring to homogenize.  An error is given if the resulting matrix cannot be made (multi-)homogeneous.  The degree 'deg' is the target degree.
 
 ggiden
 iden
