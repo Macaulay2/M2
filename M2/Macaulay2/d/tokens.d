@@ -93,19 +93,10 @@ export WhileListDo := {
 export TryElse := {
      tryToken:Token, primary:ParseTree,
      elseToken:Token, alternate:ParseTree};
-export Try := {
-     tryToken:Token, primary:ParseTree};
-export IfThen := {
-     ifToken:Token, predicate:ParseTree, 
-     thenToken:Token, thenclause:ParseTree};
-export IfThenElse := {
-     ifToken:Token, predicate:ParseTree, 
-     thenToken:Token, thenclause:ParseTree, 
-     elseToken:Token, elseClause:ParseTree};
-export New := {
-     newtoken:Token, newclass:ParseTree,
-     oftoken:Token, newparent:ParseTree,
-     fromtoken:Token, newinitializer:ParseTree};
+export Try := { tryToken:Token, primary:ParseTree};
+export IfThen := { ifToken:Token, predicate:ParseTree, thenclause:ParseTree };
+export IfThenElse := { ifToken:Token, predicate:ParseTree, thenclause:ParseTree, elseClause:ParseTree};
+export New := { newtoken:Token, newclass:ParseTree, newparent:ParseTree, newinitializer:ParseTree};
 export Arrow := {lhs:ParseTree, operator:Token, rhs:ParseTree, desc:functionDescription};
 export Quote := {operator:Token, rhs:Token};
 export GlobalQuote := {operator:Token, rhs:Token, global:void};
