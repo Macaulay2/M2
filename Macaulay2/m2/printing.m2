@@ -10,7 +10,8 @@ columnate = (s,w) -> (
      ncols := (w+1) // (max lens + 1);
      if ncols === 0 then ncols = 1;
      nrows := (# s + ncols - 1)//ncols;
-     local newcols, local newrows;
+     local newcols;
+     local newrows;
      while (
 	  ncols < # s and (
 	       newcols = ncols+1;

@@ -16,8 +16,6 @@ between = (m,v) -> mingle(v,#v-1:m)
 
 -----------------------------------------------------------------------------
 
-ExampleHashTable := new MutableHashTable
-
 DocDatabase := null
 addEndFunction(() -> (
 	  if class DocDatabase === Database then (
@@ -135,11 +133,12 @@ keysDoc := () -> (
 
 topicList = () -> sort select(keysDoc(), i -> class i === String)
 
-examples = x -> (
-     if Documentation#?x then x = Documentation#x;
-     x = name x;
-     if ExampleHashTable#?x then select(ExampleHashTable#x, i -> i =!= null) else {}
-     )
+getExampleInputs = t -> (
+     if instance(t, ExampleTABLE) then apply(toList t, first)
+     else if instance(t,BasicList) then join apply(toSequence t, getExampleInputs)
+     else {})
+
+examples = x -> getExampleInputs doc x
 
 formatDocumentTag = s -> concatenate (
      if class s === Sequence then (
@@ -357,13 +356,13 @@ processExample := x -> (
      exampleCounter = exampleCounter + 1;
      exampleOutputFile << x << endl;
      if exampleResults#?exampleCounter
-     then CODE exampleResults#exampleCounter
+     then {x, CODE exampleResults#exampleCounter}
      else (
 	  if #exampleResults === exampleCounter then (
 	       stderr << "warning : input file " << nodeBaseFilename 
 	       << ".out terminates prematurely" << endl;
 	       );
-	  CODE concatenate("in = ",x)
+	  {x, CODE concatenate("in = ",x)}
 	  ))
 
 processExamplesLoop := s -> (
@@ -389,7 +388,6 @@ processExamples := (docBody) -> (
 	  docBody = apply(docBody,processExamplesLoop);
 	  close exampleOutputFile;
 	  );
-     if #examples > 0 then ExampleHashTable#nodeName = examples;
      docBody
      )
 storeDoc := (docBody) -> (

@@ -46,10 +46,12 @@ net GeneralOrderedMonoid := M -> (
      	  v := M.generatorExpressions;
      	  if any(M.degrees, i -> i != {1}) 
 	  then v = append(v, Degrees => M.degrees);
-          if (M.Options.MonomialOrder =!= (options monoid).MonomialOrder)
+          if M.Options.MonomialOrder =!= (options monoid).MonomialOrder
           then v = append(v, MonomialOrder => M.Options.MonomialOrder);
-          if (M.Options.MonomialSize =!= (options monoid).MonomialSize)
+          if M.Options.MonomialSize =!= (options monoid).MonomialSize
           then v = append(v, MonomialSize => M.Options.MonomialSize);
+	  if M.Options.WeylAlgebra =!= {}
+	  then v = append(v, WeylAlgebra => M.Options.WeylAlgebra);
      	  horizontalJoin flatten ("[",between(",",net\v),"]")
 	  ))
 
