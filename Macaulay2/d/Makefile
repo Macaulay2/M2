@@ -182,7 +182,13 @@ gc_cpp.o : ../../Makeconf.h
 
 allc : $(PROJECT:.d=.c) tmp_init.c
 
-ALLOBJ := $(PROJECT:.d=.oo) M2lib.o scclib.o compat.o gc_cpp.o tmp_init.o memdebug.o
+ALLOBJ := $(PROJECT:.d=.oo) M2lib.o scclib.o compat.o gc_cpp.o tmp_init.o memdebug.o 
+
+ifeq ($(OS),Linux)
+ALLOBJ += putc.o
+putc.o : /usr/lib/libc.a
+	ar x $^ $@
+endif
 
 ################################# c file production for porting
 ALLC := $(PROJECT:.d=.c)

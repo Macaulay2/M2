@@ -535,71 +535,54 @@ bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
 	  else bind(token,scope);
 	  bind(body,scope);)
      is a:Adjacent do (
-	  if colon then (
-	       bind(a.lhs,scope);
-	       bind(a.rhs,scope);
-	       bind(body,scope);
-	       )
-	  else makeErrorTree(assn.operator,
-	       "left hand of assignment involves invalid binary operator"))
+	  bind(a.lhs,scope);
+	  bind(a.rhs,scope);
+	  bind(body,scope);
+	  )
      is unary:Unary do (
+	  bindop(unary.operator,scope);
+	  bind(unary.rhs,scope);
+	  bind(body,scope);
 	  if colon
 	  then (
-	       bindop(unary.operator,scope);
-	       bind(unary.rhs,scope);
-	       bind(body,scope);
 	       if ! opHasUnaryMethod(unary.operator.entry)
-	       then makeErrorTree(assn.operator,
-	       	    "left hand of assignment involves invalid unary operator");
+	       then makeErrorTree(assn.operator, "can't assign a method for this unary operator");
 	       )
 	  else (
-	       makeErrorTree(assn.operator,
-	       	    "left hand of assignment involves invalid unary operator")
+	       if ! opHasUnaryMethod(unary.operator.entry)
+	       then makeErrorTree(assn.operator, "can't assign a value for this unary operator")
 	       )
 	  )
      is unary:Postfix do (
+	  bind(unary.lhs,scope);
+	  bindop(unary.operator,scope);
+	  bind(body,scope);
 	  if colon
 	  then (
-	       bind(unary.lhs,scope);
-	       bindop(unary.operator,scope);
-	       bind(body,scope);
 	       if ! opHasPostfixMethod(unary.operator.entry)
-	       then makeErrorTree(assn.operator,
-	       	    "left hand of assignment involves invalid postfix operator");
+	       then makeErrorTree(assn.operator, "can't assign a method for this postfix operator");
 	       )
 	  else (
-	       makeErrorTree(assn.operator,
-	       	    "left hand of assignment involves invalid postfix operator")
+	       if ! opHasPostfixMethod(unary.operator.entry)
+	       then makeErrorTree(assn.operator, "cna't assign a value for this postfix operator")
 	       )
 	  )
      is binary:Binary do (
+	  bind(binary.lhs,scope);
+	  bindop(binary.operator,scope);
+	  bind(binary.rhs, if binary.operator.word == DotS.symbol.word then globalScope else scope );
+	  bind(body,scope);
 	  if colon then (
-	       bind(binary.lhs,scope);
-	       bindop(binary.operator,scope);
-	       bind(binary.rhs,scope);
-	       bind(body,scope);
 	       if ! opHasBinaryMethod(binary.operator.entry)
-	       then makeErrorTree(
-		    assn.operator, 
-		    "can't assign a method to this binary operator");
+	       then makeErrorTree( assn.operator, "can't assign a method for this binary operator");
 	       )
 	  else (
-	       if binary.operator.word == DotS.symbol.word
-	       then (
-	       	    bind(binary.lhs,scope);
-	       	    bindop(binary.operator,scope);
-	       	    bind(binary.rhs,globalScope);
-	       	    bind(body,scope);
-		    )
-	       else if binary.operator.word == SharpS.symbol.word
-	       then (
-	       	    bind(binary.lhs,scope);
-	       	    bindop(binary.operator,scope);
-	       	    bind(binary.rhs,scope);
-	       	    bind(body,scope))
-	       else makeErrorTree(
-		    assn.operator, 
-	       	    "assignment to an invalid binary operator")
+	       if !(binary.operator.word == DotS.symbol.word
+		    || 
+		    binary.operator.word == SharpS.symbol.word
+		    ||
+		    opHasBinaryMethod(binary.operator.entry))
+	       then makeErrorTree( assn.operator, "can't assign a value for this binary operator");
 	       )
 	  )
      is n:New do (
@@ -659,13 +642,9 @@ export bind(e:ParseTree,scope:Scope):void := (
 	       when binary.rhs
 	       is token:Token do (
 		    if token.word.typecode != TCid
-		    then makeErrorTree(binary.operator,
-			 "expected a symbol to right of '.'"
-			 );
+		    then makeErrorTree(binary.operator, "expected a symbol to right of '.'" );
 		    )
-	       else makeErrorTree(binary.operator,
-		    "expected a symbol to right of '.'"
-		    );
+	       else makeErrorTree(binary.operator, "expected a symbol to right of '.'" );
 	       )
 	  else (
 	       bind(binary.lhs,scope);
@@ -679,12 +658,8 @@ export bind(e:ParseTree,scope:Scope):void := (
 	  tok.scope = scope;
 	  r := lookup(tok.word,scope.dictionary);
 	  when r
-	  is entry:Symbol do (
-	       tok.entry = entry;
-	       )
-	  else (
-	       makeSymbol(tok);
-	       );
+	  is entry:Symbol do ( tok.entry = entry; )
+	  else ( makeSymbol(tok); );
 	  SawClosure = true; 
 	  )
      is q:GlobalQuote do (

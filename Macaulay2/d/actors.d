@@ -612,7 +612,7 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 	       else errorExpr("expected right hand parameter to be a hash table or sequence"))
 	  else errorExpr("encountered symbol instead of a class"))
      else errorExpr("expected operator to be a symbol"));
-installFun(args:CodeSequence):Expr := (
+installMethodFun(args:CodeSequence):Expr := (
      a := eval(args.1);
      when a 
      is Error do a
@@ -636,9 +636,23 @@ installFun(args:CodeSequence):Expr := (
 		    else errorExpr("expected right hand parameter to be a type"))
 	       else errorExpr("expected right hand parameter to be a hash table")))
      else errorExpr("expected a hash table"));
-InstallFun = installFun;
+InstallMethodFun = installMethodFun;
 
-unaryInstallFun(meth:Code,argtype:Code,body:Code):Expr := (
+installValueFun(args:CodeSequence):Expr := (
+     a := eval(args.1);
+     when a is Error do a
+     is aa:HashTable do (
+	  b := eval(args.2);
+	  when b is Error do b 
+	  is bb:HashTable do (
+	       opr := eval(args.0);
+	       when opr is Error do opr
+	       else installValue(opr,aa,bb,eval(args.3)))
+	  else errorExpr("expected right hand parameter to be a hash table"))
+     else errorExpr("expected a hash table"));
+InstallValueFun = installValueFun;
+
+unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
      Argtype := eval(argtype);
      when Argtype is Error 
      do Argtype 
@@ -646,7 +660,28 @@ unaryInstallFun(meth:Code,argtype:Code,body:Code):Expr := (
      o:HashTable do storeInHashTable(o,meth,body)
      else errorpos(argtype,"expected a hash table")
      );
-UnaryInstallFun = unaryInstallFun;
+UnaryInstallMethodFun = unaryInstallMethodFun;
+
+unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
+     Argtype := eval(argtype);
+     when Argtype is Error 
+     do Argtype 
+     else when Argtype is
+     o:HashTable do (
+	  methv := eval(meth);
+	  when methv is Error do methv else (
+	       bodyv := eval(body);
+	       when bodyv is Error do bodyv else (
+	  	    storeInHashTable(o,
+			 Expr(Sequence(methv)),  -- distinguishing feature of "values"
+			      	   	  -- so after -x the answer can be stored in x#(seq quote -)
+			 bodyv)
+		    )
+	       )
+	  )
+     else errorpos(argtype,"expected a hash table")
+     );
+UnaryInstallValueFun = unaryInstallValueFun;
 
 flatten(a:Sequence):Sequence := (
      -- warning - this function may return its argument without copying
