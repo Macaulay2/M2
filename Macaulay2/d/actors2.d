@@ -22,28 +22,28 @@ use objects;
 -----------------------------------------------------------------------------
 -- Database stuff
 dbmcheck(ret:int):Expr := (
-     if ret == -1 then errorExpr(dbmstrerror())
+     if ret == -1 then buildErrorPacket(dbmstrerror())
      else Expr(toInteger(ret)));
 dbmopenin(filename:string):Expr := (
      mutable := false;
      handle := dbmopen(filename,mutable);
      if handle == -1 
-     then errorExpr(dbmstrerror() + " : " + filename)
+     then buildErrorPacket(dbmstrerror() + " : " + filename)
      else Expr(Database(filename,nextHash(),handle,true,mutable)));
 dbmopenout(filename:string):Expr := (
      mutable := true;
      handle := dbmopen(filename,mutable);
      if handle == -1 
-     then errorExpr(dbmstrerror() + " : " + filename)
+     then buildErrorPacket(dbmstrerror() + " : " + filename)
      else Expr(Database(filename,nextHash(),handle,true,mutable)));
 dbmclose(f:Database):Expr := (
-     if !f.isopen then return(errorExpr("database already closed"));
+     if !f.isopen then return(buildErrorPacket("database already closed"));
      dbmclose(f.handle);
      f.isopen = false;
      Expr(toInteger(0)));
 dbmstore(f:Database,key:string,content:string):Expr := (
-     if !f.isopen then return(errorExpr("database closed"));
-     if !f.mutable then return(errorExpr("database not mutable"));
+     if !f.isopen then return(buildErrorPacket("database closed"));
+     if !f.mutable then return(buildErrorPacket("database not mutable"));
      ret := dbmstore(f.handle,key,content);
      if 0 == ret then Expr(content)
      else dbmcheck(ret));
@@ -57,30 +57,30 @@ dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
 	  is Error do Content
 	  is content:string do dbmstore(f,key,content)
 	  is Nothing do (
-	       if !f.isopen then return(errorExpr("database closed"));
-	       if !f.mutable then return(errorExpr("database not mutable"));
+	       if !f.isopen then return(buildErrorPacket("database closed"));
+	       if !f.mutable then return(buildErrorPacket("database not mutable"));
 	       if 0 == dbmdelete(f.handle,key)
 	       then nullE
-	       else errorExpr(dbmstrerror() + " : " + f.filename))
-	  else errorpos(CONTENT,"expected a string or null"))
-     else errorpos(KEY,"expected a string"));
+	       else buildErrorPacket(dbmstrerror() + " : " + f.filename))
+	  else printErrorMessage(CONTENT,"expected a string or null"))
+     else printErrorMessage(KEY,"expected a string"));
 dbmquery(f:Database,key:string):Expr := (
-     if !f.isopen then return(errorExpr("database closed"));
+     if !f.isopen then return(buildErrorPacket("database closed"));
      when dbmfetch(f.handle,key)
      is a:string do True
      else False);
 dbmfirst(f:Database):Expr := (
-     if !f.isopen then return(errorExpr("database closed"));
+     if !f.isopen then return(buildErrorPacket("database closed"));
      when dbmfirst(f.handle)
      is a:string do Expr(a)
      else nullE);
 dbmfirst(e:Expr):Expr := (
      when e
      is f:Database do dbmfirst(f)
-     else errorExpr("expected a database"));
+     else buildErrorPacket("expected a database"));
 setupfun("firstkey",dbmfirst);
 dbmnext(f:Database):Expr := (
-     if !f.isopen then return(errorExpr("database closed"));
+     if !f.isopen then return(buildErrorPacket("database closed"));
      when dbmnext(f.handle)
      is a:string do Expr(a)
      else nullE);
@@ -91,23 +91,23 @@ dbmnext(e:Expr):Expr := (
      else WrongArg(1,"a database"));
 setupfun("nextkey",dbmnext);
 dbmreorganize(f:Database):Expr := (
-     if !f.isopen then return(errorExpr("database closed"));
-     if !f.mutable then return(errorExpr("database not mutable"));
+     if !f.isopen then return(buildErrorPacket("database closed"));
+     if !f.mutable then return(buildErrorPacket("database not mutable"));
      dbmcheck(dbmreorganize(f.handle)));
 dbmreorganize(e:Expr):Expr := (
      when e
      is f:Database do dbmreorganize(f)
-     else errorExpr("expected a database"));
+     else buildErrorPacket("expected a database"));
 setupfun("reorganize",dbmreorganize);
 dbmopenin(e:Expr):Expr := (
      when e
      is a:string do dbmopenin(a)
-     else errorExpr("expected a string as filename"));
+     else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabase",dbmopenin);
 dbmopenout(e:Expr):Expr := (
      when e
      is a:string do dbmopenout(a)
-     else errorExpr("expected a string as filename"));
+     else buildErrorPacket("expected a string as filename"));
 setupfun("openDatabaseOut",dbmopenout);
 -----------------------------------------------------------------------------
 
@@ -123,7 +123,7 @@ keys(o:HashTable):Expr := list(
      );
 
 keys(f:Database):Expr := (
-     if !f.isopen then return(errorExpr("database closed"));
+     if !f.isopen then return(buildErrorPacket("database closed"));
      x := newHashTable(mutableHashTableClass,nothingClass);
      k := dbmfirst(f.handle);
      continue := true;
@@ -191,7 +191,7 @@ showtimefun(a:Code):Expr := (
 setupop(timeS,showtimefun);
 getvalue(x:Sequence,i:int):Expr := (
      if i < -length(x) || i >= length(x)
-     then errorExpr("array index "
+     then buildErrorPacket("array index "
 	  + tostring(i)
 	  + " out of bounds 0 .. "
 	  + tostring(length(x)-1))
@@ -204,39 +204,39 @@ subvalue(left:Expr,right:Expr):Expr := (
      when left is x:Sequence do (
 	  when right is r:Integer do (
 	       if isInt(r) then getvalue(x,toInt(r))
-	       else errorExpr("array index "
+	       else buildErrorPacket("array index "
 		    + tostring(r)
 		    + " out of bounds 0 .. "
 		    + tostring(length(x)-1)))
-	  else errorExpr("expected subscript to be an integer"))
+	  else buildErrorPacket("expected subscript to be an integer"))
      is x:HashTable do lookup1force(x,right)
      is f:Database do (
 	  when right
 	  is key:string do (
-	       if !f.isopen then return(errorExpr("database closed"));
+	       if !f.isopen then return(buildErrorPacket("database closed"));
 	       when dbmfetch(f.handle,key)
 	       is a:string do Expr(a)
-	       else errorExpr("encountered missing value"))
-	  else errorExpr("expected a string as key to database"))
+	       else buildErrorPacket("encountered missing value"))
+	  else buildErrorPacket("expected a string as key to database"))
      is x:List do (
 	  when right is r:Integer do (
 	       if isInt(r) then getvalue(x.v,toInt(r))
-	       else errorExpr("array index "
+	       else buildErrorPacket("array index "
 		    + tostring(r)
 		    + " out of bounds 0 .. "
 		    + tostring(length(x.v)-1)))
-	  else errorExpr("array index not an integer"))
+	  else buildErrorPacket("array index not an integer"))
      is x:string do (
 	  when right is r:Integer do (
 	       if isInt(r) then (
 		    rr := toInt(r);
 		    if rr < 0 then rr = rr + length(x);
 		    if rr < 0 || rr >= length(x) 
-		    then errorExpr("string index out of bounds")
+		    then buildErrorPacket("string index out of bounds")
 		    else Expr(string(x.rr)))
-	       else errorExpr("string index out of bounds"))
-	  else errorExpr("expected subscript to be an integer"))
-     else errorExpr("expected a list, hash table, or sequence"));
+	       else buildErrorPacket("string index out of bounds"))
+	  else buildErrorPacket("expected subscript to be an integer"))
+     else buildErrorPacket("expected a list, hash table, or sequence"));
 subvalueQ(left:Expr,right:Expr):Expr := (
      -- don't change this without changing subvalue above
      when left is x:Sequence do (
@@ -287,13 +287,13 @@ lengthFun(rhs:Code):Expr := (
      is f:file do (
 	  if f.input || f.output then (
 	       r := fileLength(f);
-	       if r == ERROR then errorExpr("couldn't determine length of file")
+	       if r == ERROR then buildErrorPacket("couldn't determine length of file")
 	       else Expr(toInteger(r))
 	       )
-	  else errorExpr("file not open")
+	  else buildErrorPacket("file not open")
 	  )
      is s:string do Expr(toInteger(length(s)))
-     else errorExpr("expected a list, sequence, hash table, file, or string"));
+     else buildErrorPacket("expected a list, sequence, hash table, file, or string"));
 setup(SharpS,lengthFun,subvalue);
 subvalueQ(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
@@ -312,7 +312,7 @@ assignvector(x:Sequence,i:Code,rhs:Code):Expr := (
 	  then (
 	       k := toInt(j);
 	       if k < -length(x) || k >= length(x)
-	       then errorpos(i,"subscript out of bounds 0 .. "+tostring(length(x)-1))
+	       then printErrorMessage(i,"subscript out of bounds 0 .. "+tostring(length(x)-1))
 	       else (
 		    val := eval(rhs);
 		    when val is Error do val
@@ -321,22 +321,22 @@ assignvector(x:Sequence,i:Code,rhs:Code):Expr := (
 			 then x.(length(x) + k) = val
 			 else x.k = val;
 			 val)))
-	  else errorpos(i,"subscript out of bounds"))
+	  else printErrorMessage(i,"subscript out of bounds"))
      is Error do ival
-     else errorpos(i,"expected integer as subscript")
+     else printErrorMessage(i,"expected integer as subscript")
      );
 assignfun(lhs:Code,rhs:Code):Expr := (
      when lhs
      is var:variableCode do (
 	  if var.v.protected then (
-	       errorpos(lhs,"assignment to protected variable")
+	       printErrorMessage(lhs,"assignment to protected variable")
 	       )
 	  else (
 	       value := eval(rhs);
 	       when value is Error do return(value) else nothing;
 	       frame(var.v.scopenum).values.(var.v.frameindex) = value;
 	       value))
-     else errorpos(lhs,"left side of assignment should be symbol")
+     else printErrorMessage(lhs,"left side of assignment should be symbol")
      );
 AssignFun = assignfun;
 
@@ -344,7 +344,7 @@ globalassignfun(lhs:Code,rhs:Code):Expr := (
      when lhs
      is var:variableCode do (
 	  if var.v.protected then (
-	       errorpos(lhs,"assignment to protected variable")
+	       printErrorMessage(lhs,"assignment to protected variable")
 	       )
 	  else (
 	       value := eval(rhs);
@@ -368,7 +368,7 @@ globalassignfun(lhs:Code,rhs:Code):Expr := (
 		    );
 	       f.i = value;
 	       value))
-     else errorpos(lhs,"left side of assignment should be symbol")
+     else printErrorMessage(lhs,"left side of assignment should be symbol")
      );
 GlobalAssignFun = globalassignfun;
 assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
@@ -376,19 +376,19 @@ assignelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      when x
      is x:List do (
 	  if x.mutable then assignvector(x.v,lhsindex,rhs)
-	  else errorExpr("assignment attempted to element of immutable list")
+	  else buildErrorPacket("assignment attempted to element of immutable list")
 	  )
-     is x:Sequence do errorExpr("assignment attempted to element of sequence")
+     is x:Sequence do buildErrorPacket("assignment attempted to element of sequence")
      is x:HashTable do storeInHashTable(x,lhsindex,rhs)
      is x:Database do dbmstore(x,lhsindex,rhs)
-     else errorpos(lhsarray,"expected a list, sequence, hash table, or database")
+     else printErrorMessage(lhsarray,"expected a list, sequence, hash table, or database")
      );
 AssignElemFun = assignelemfun;
 assignquotedelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      x := eval(lhsarray);
      when x
      is x:HashTable do assignquotedobject(x,lhsindex,rhs)
-     else errorpos(lhsarray,"'.' expected left hand side to be a hash table")
+     else printErrorMessage(lhsarray,"'.' expected left hand side to be a hash table")
      );
 AssignQuotedElemFun = assignquotedelemfun;
 ifthenfun(predicate:Code,thenclause:Code):Expr := (
@@ -396,7 +396,7 @@ ifthenfun(predicate:Code,thenclause:Code):Expr := (
      when p is Error do p
      else if p == True then eval(thenclause)
      else if p == False then nullE
-     else errorpos(predicate,"expected true or false"));
+     else printErrorMessage(predicate,"expected true or false"));
 IfThenFun = ifthenfun;
 tryelsefun(primary:Code,alternate:Code):Expr := (
      oldSuppressErrors := SuppressErrors;
@@ -429,20 +429,20 @@ ifthenelsefun(predicate:Code,thenclause:Code,elseClause:Code):Expr := (
      when p is Error do p
      else if p == True then eval(thenclause)
      else if p == False then eval(elseClause)
-     else errorpos(predicate,"expected true or false"));
+     else printErrorMessage(predicate,"expected true or false"));
 IfThenElseFun = ifthenelsefun;
 
 basictype(e:Expr):HashTable := basictype(Class(e));
 basictypefun(e:Expr):Expr := Expr(basictype(e));
 setupfun("basictype",basictypefun);
 
-expected(type:string,returned:bool):Expr := errorExpr(
+expected(type:string,returned:bool):Expr := buildErrorPacket(
      if returned 
      then "'new' expected method to return " + type
      else "expected " + type + " (in absence of a 'new' method)"
      );
 
-wrongTarget():Expr := errorExpr("'new' expected a type of list or hash table");
+wrongTarget():Expr := buildErrorPacket("'new' expected a type of list or hash table");
 
 transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
      basicType := basictype(class);
@@ -467,7 +467,7 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
      is o:List do (
      	  if basicType == basicListClass then (
 	       if parent != nothingClass
-	       then errorExpr("expected Nothing as parent for list")
+	       then buildErrorPacket("expected Nothing as parent for list")
 	       else if o.class == class then e
 	       else (
 	       	    mutable := ancestor(class,mutableListClass);
@@ -560,18 +560,18 @@ makenew(class:HashTable,parent:HashTable):Expr := (
      else if basicType == basicListClass 
      then (
 	  if parent != nothingClass
-	  then errorExpr("expected Nothing as parent for list")
+	  then buildErrorPacket("expected Nothing as parent for list")
 	  else Expr(
 	       sethash(
 		    List(class,emptySequence,0,false),
 		    ancestor(class,mutableHashTableClass))))
-     else errorExpr("basic type for 'new' method should have been BasicList or HashTable"));
+     else buildErrorPacket("basic type for 'new' method should have been BasicList or HashTable"));
 makenew(class:HashTable):Expr := makenew(class,nothingClass);
 -----------------------------------------------------------------------------
 
-errt (newClassCode :Code):Expr := errorpos(newClassCode ,"'new' expected a Type as prospective class");
-errtt(newClassCode :Code):Expr := errorpos(newClassCode ,"'new' expected a Type of Type as prospective class");
-errp (newParentCode:Code):Expr := errorpos(newParentCode,"'new' expected a Type as prospective parent");
+errt (newClassCode :Code):Expr := printErrorMessage(newClassCode ,"'new' expected a Type as prospective class");
+errtt(newClassCode :Code):Expr := printErrorMessage(newClassCode ,"'new' expected a Type of Type as prospective class");
+errp (newParentCode:Code):Expr := printErrorMessage(newParentCode,"'new' expected a Type as prospective parent");
 
 newfun(newClassCode:Code):Expr := (
      classExpr := eval(newClassCode);
@@ -690,7 +690,7 @@ whiledofun(predicate:Code,body:Code):Expr := (
 	       else nothing;
 	       )
 	  else if p == False then break
-	  else return(errorpos(predicate,"expected true or false")));
+	  else return(printErrorMessage(predicate,"expected true or false")));
      nullE);
 WhileDoFun = whiledofun;
 
@@ -719,7 +719,7 @@ whilelistfun(predicate:Code,body:Code):Expr := (
 		    );
 	       )
 	  else if p == False then break
-	  else return(errorpos(predicate,"expected true or false")));
+	  else return(printErrorMessage(predicate,"expected true or false")));
      Expr(
 	  list(
 	       if i == 0 then emptySequence
@@ -753,7 +753,7 @@ whilelistdofun(predicate:Code,listClause:Code,doClause:Code):Expr := (
 	       else nothing;
 	       )
 	  else if p == False then break
-	  else return(errorpos(predicate,"expected true or false")));
+	  else return(printErrorMessage(predicate,"expected true or false")));
      Expr(
 	  list(
 	       if i == 0 then emptySequence
@@ -775,16 +775,16 @@ forfun(c:forCode):Expr := (
      	  fromvalue := eval(fromClause);
      	  when fromvalue is f:Integer do (
 	       if isInt(f) then j = toInt(f)
-	       else return(errorpos(fromClause,"expected a small integer"));
+	       else return(printErrorMessage(fromClause,"expected a small integer"));
 	       )
-     	  else return(errorpos(fromClause,"expected an integer")));
+     	  else return(printErrorMessage(fromClause,"expected an integer")));
      if toClause != dummyCode then (
 	  tovalue := eval(toClause);
 	  when tovalue is f:Integer do (
 	       if isInt(f) then n = toInt(f)
-	       else return(errorpos(toClause,"expected a small integer"));
+	       else return(printErrorMessage(toClause,"expected a small integer"));
 	       )
-	  else return(errorpos(toClause,"expected an integer")));
+	  else return(printErrorMessage(toClause,"expected an integer")));
      while true do (
 	  if toClause != dummyCode && j > n then break;
 	  localFrame.values.0 = toInteger(j);		    -- should be the frame spot for the loop var!
@@ -796,7 +796,7 @@ forfun(c:forCode):Expr := (
 		    else return(p)
 		    )
 	       else if p == False then break
-	       else if p != True then return(errorpos(predicate,"expected true or false"));
+	       else if p != True then return(printErrorMessage(predicate,"expected true or false"));
 	       );
 	  if listClause != dummyCode then (
 	       b := eval(listClause);
@@ -857,11 +857,11 @@ openIn(filename:Expr):Expr := (
      is f:file do (
 	  when openIn(f)
 	  is g:file do Expr(g)
-	  is m:errmsg do errorExpr(m.message))
+	  is m:errmsg do buildErrorPacket(m.message))
      is f:string do (
 	  when openIn(f)
 	  is g:file do Expr(g)
-	  is m:errmsg do errorExpr(m.message))
+	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
      else WrongArg("a string"));
 setupfun("openIn",openIn);
@@ -870,11 +870,11 @@ openOut(filename:Expr):Expr := (
      is f:file do (
 	  when openOut(f)
 	  is g:file do Expr(g)
-	  is m:errmsg do errorExpr(m.message))
+	  is m:errmsg do buildErrorPacket(m.message))
      is f:string do (
 	  when openOut(f)
 	  is g:file do Expr(g)
-	  is m:errmsg do errorExpr(m.message))
+	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
      else WrongArg("a string"));
 setupfun("openOut",openOut);
@@ -883,11 +883,11 @@ openInOut(filename:Expr):Expr := (
      is f:file do (
 	  when openInOut(f)
 	  is g:file do Expr(g)
-	  is m:errmsg do errorExpr(m.message))
+	  is m:errmsg do buildErrorPacket(m.message))
      is f:string do (
 	  when openInOut(f)
 	  is g:file do Expr(g)
-	  is m:errmsg do errorExpr(m.message))
+	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
      else WrongArg("a string"));
 setupfun("openInOut",openInOut);
@@ -896,7 +896,7 @@ openListener(filename:Expr):Expr := (
      is f:string do (
 	  when openListener(f)
 	  is g:file do Expr(g)
-	  is m:errmsg do errorExpr(m.message))
+	  is m:errmsg do buildErrorPacket(m.message))
      is Error do filename
      else WrongArg("a string"));
 setupfun("openListener",openListener);
@@ -923,27 +923,27 @@ setupfun("isListener",isListener);
 close(g:Expr):Expr := (
      when g
      is f:file do ( 
-	  if !f.input && !f.output && !f.listener then return(errorExpr("file already closed"));
+	  if !f.input && !f.output && !f.listener then return(buildErrorPacket("file already closed"));
 	  if close(f) == 0 then g
-	  else errorExpr(if f.pid != 0 then "error return from child" else "error closing file"))
+	  else buildErrorPacket(if f.pid != 0 then "error return from child" else "error closing file"))
      is x:Database do dbmclose(x)
-     else errorExpr("expected a file or database"));
+     else buildErrorPacket("expected a file or database"));
 setupfun("close",close);
 closeIn(g:Expr):Expr := (
      when g
      is f:file do ( 
-	  if f.infd == -1 then return(errorExpr("file already closed"));
+	  if f.infd == -1 then return(buildErrorPacket("file already closed"));
 	  if closeIn(f) == 0 then g
-	  else errorExpr(if f.pid != 0 then "error closing pipe" else "error closing file"))
-     else errorExpr("expected an open input file"));
+	  else buildErrorPacket(if f.pid != 0 then "error closing pipe" else "error closing file"))
+     else buildErrorPacket("expected an open input file"));
 setupfun("closeIn",closeIn);
 closeOut(g:Expr):Expr := (
      when g
      is f:file do ( 
-	  if f.infd == -1 && f.outfd == -1 then return(errorExpr("file already closed"));
+	  if f.infd == -1 && f.outfd == -1 then return(buildErrorPacket("file already closed"));
 	  if closeOut(f) == 0 then g
-	  else errorExpr(if f.pid != 0 then "error closing pipe" else "error closing file"))
-     else errorExpr("expected an open output file"));
+	  else buildErrorPacket(if f.pid != 0 then "error closing pipe" else "error closing file"))
+     else buildErrorPacket("expected an open output file"));
 setupfun("closeOut",closeOut);
 flush(g:Expr):Expr := (
      when g
@@ -958,7 +958,7 @@ protect(e:Expr):Expr := (
      is q:SymbolClosure do (
 	  if !q.symbol.protected then
 	  if q.symbol.transientScope
-	  then errorExpr("can't protect a symbol with transient scope")
+	  then buildErrorPacket("can't protect a symbol with transient scope")
 	  else (
 	       q.symbol.protected = true; 
 	       nullE
@@ -983,7 +983,7 @@ setupfun("flag",flagSymbol);
 quoteF(rhs:Code):Expr := (
      when rhs
      is var:variableCode do Expr(makeSymbolClosure(var.v))
-     else errorpos(rhs,"expected a symbol"));
+     else printErrorMessage(rhs,"expected a symbol"));
 QuoteFun = quoteF;
 -- setupfun("quote",quoteF);
 
@@ -999,7 +999,7 @@ getcfun(e:Expr):Expr := (
 	  i := getc(f);
 	  if i == -1 then Expr("") else chars.(i & 255))
      is Error do e
-     else errorExpr("expected an input file"));
+     else buildErrorPacket("expected an input file"));
 setupfun("getc",getcfun);
 leftshiftfun(e:Expr):Expr := (
      when e

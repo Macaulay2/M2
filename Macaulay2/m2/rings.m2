@@ -1,5 +1,12 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+Ring == ZZ := (R,i) -> (
+     if i === 0 then 1_R == 0
+     else error "comparison of ring with nonzero integer encountered"
+     )
+
+ZZ == Ring := (i,R) -> R == i
+
 poincare Ring := R -> poincare R^1
 
 dim Ring := R -> (

@@ -230,7 +230,7 @@ characters(e:Expr):Expr := (
      is s:string do list(
 	  new Sequence len length(s) do (
 	       foreach c in s do provide chars.(int(uchar(c)))))
-     else errorExpr("expects a string"));
+     else buildErrorPacket("expects a string"));
 setupfun("characters",characters);
 
 ascii(e:Expr):Expr := (
@@ -246,7 +246,7 @@ ascii(e:Expr):Expr := (
 	  if isInt(i)
 	  then Expr(new string len 1 do provide char(toInt(i)))
 	  else WrongArgSmallInteger(1))
-     else errorExpr("expects a string, a small integer, or an array of small integers"));
+     else buildErrorPacket("expects a string, a small integer, or an array of small integers"));
 setupfun("ascii",ascii);
 
 transnet(e:Expr):Expr := (
@@ -422,9 +422,9 @@ stringcatfun(e:Expr):Expr := (
 	       m := toInt(n);
 	       if m >= 0 
 	       then Expr(new string len m do provide ' ')
-	       else errorExpr("encountered negative integer")
+	       else buildErrorPacket("encountered negative integer")
 	       )
-	  else errorExpr("encountered a large integer")
+	  else buildErrorPacket("encountered a large integer")
 	  )
      is string do e
      is Error do e
@@ -438,7 +438,7 @@ sendgg(e:Expr):Expr := (
 	  ret := gbprocess(s);
 	  code := int(ret.0);
 	  tail := substr(ret,1);
-	  if code != 0 then errorExpr(tail) else Expr(tail)
+	  if code != 0 then buildErrorPacket(tail) else Expr(tail)
 	  )
      else e				  -- an Error
      );
@@ -447,8 +447,8 @@ setupfun("sendgg",sendgg);
 errorfun(e:Expr):Expr := (
      e = stringcatfun(e);
      when e
-     is s:string do errorExpr(s)
-     else errorExpr("expects a string or sequence of strings as its argument"));
+     is s:string do buildErrorPacket(s)
+     else buildErrorPacket("expects a string or sequence of strings as its argument"));
 setupfun("error",errorfun);
 
 mingleseq(a:Sequence):Expr := (
@@ -553,12 +553,12 @@ getfun(e:Expr):Expr := (
 		    closeIn(f);
 		    Expr(s)
 		    )
-	       else errorExpr("unable to read file: "+syserrmsg())
+	       else buildErrorPacket("unable to read file: "+syserrmsg())
 	       )
 	  )
      is filename:string do (
 	  when get(filename)
-	  is e:errmsg do errorExpr(e.message)
+	  is e:errmsg do buildErrorPacket(e.message)
 	  is s:string do Expr(s))
      else WrongArg("a string as filename"));
 setupfun("get",getfun);
@@ -628,7 +628,7 @@ wait(e:Expr):Expr := (
 	  if isInt(x) then (
 	       ret := wait(toInt(x));
 	       if ret == ERROR 
-	       then errorExpr("wait failed")
+	       then buildErrorPacket("wait failed")
 	       else Expr(toInteger(ret))
 	       )
 	  else WrongArgSmallInteger()
@@ -932,7 +932,7 @@ exec(a:Sequence):Expr := (
 	  is s:string do newargv.i = s
 	  else return(WrongArg(i+1,"a string")));
      exec(newargv);
-     errorExpr("exec failed"));
+     buildErrorPacket("exec failed"));
 exec(e:Expr):Expr := (
      when e
      is a:Sequence do exec(a)

@@ -2,7 +2,7 @@
 
 MonomialIdeal = new Type of MutableHashTable
 MonomialIdeal.synonym = "monomial ideal"
-monomialIdeal = method(SingleArgumentDispatch=>true, TypicalValue => MonomialIdeal)
+monomialIdeal = method(TypicalValue => MonomialIdeal)
 numgens MonomialIdeal := I -> I.numgens
 
 generators(MonomialIdeal) := (I) -> (
@@ -49,7 +49,7 @@ monomialIdeal Matrix := MonomialIdeal => f -> (
      sendgg(ggPush f, ggPush 0, ggmonideal);
      newMonomialIdeal ring f)
 
-monomialIdeal List := monomialIdeal Sequence := MonomialIdeal => v -> monomialIdeal matrix {toList v}
+monomialIdeal List := MonomialIdeal => v -> monomialIdeal matrix {v}
 
 monomialIdeal(ZZ,Matrix) := MonomialIdeal => (i,m) -> (
      sendgg(ggPush m, ggPush i, ggmonideal);

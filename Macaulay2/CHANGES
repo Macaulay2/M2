@@ -3,6 +3,12 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+monomialIdeal(i,f) will create a monomial ideal from the i-th row of a 
+matrix f, representing the lead terms of the subquotient module of coker f
+coming from the filtration on it by the rows of f.
+
+monomialIdeal(f,g,h) will not work any more : use monomialIdeal{f,g,h} instead.
+
 f_d now gives the part of the polynomial f of total degree d.  And
   f_{a,b,c} gives the part of multi-degree {a,b,c}.
 WARNING: f_1 no longer gives the constant term of a polynomial;

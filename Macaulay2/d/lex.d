@@ -21,7 +21,7 @@ export hashTable := (
      len 7313			-- just a convenient prime number
      do provide(null())
      );
-export unique(s:string,p:parseinfo):Word := (
+export makeUniqueWord(s:string,p:parseinfo):Word := (
      h := hash(s);
      hashCode := h%length(hashTable);
      hashList := hashTable.hashCode;
@@ -104,7 +104,7 @@ recognize(file:PosFile):(null or Word) := (
 	  );
      when last
      is null do (
-	  errorpos(file.pos,"invalid character" );
+	  printErrorMessage(file.pos,"invalid character" );
 	  getc(file);
 	  (null or Word)(NULL))
      is word:Word do ( 
@@ -124,7 +124,7 @@ getstringslashes(o:PosFile):(null or Word) := (
 	  if ch == EOF 
 	  then (
 	       empty(tokenbuf);
-	       errorpos(pos,"EOF in string or character constant beginning here");
+	       printErrorMessage(pos,"EOF in string or character constant beginning here");
 	       return(NULL);
 	       );
 	  if (
@@ -155,7 +155,7 @@ getstring(o:PosFile):(null or Word) := (
 	  if ch == EOF 
 	  then (
 	       empty(tokenbuf);
-	       errorpos(pos,"EOF in string or character constant beginning here");
+	       printErrorMessage(pos,"EOF in string or character constant beginning here");
 	       return(NULL);
 	       );
      	  tokenbuf << char(ch);
@@ -197,7 +197,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
 	       return(Token(
-			 unique(takestring(tokenbuf),parseWORD),
+			 makeUniqueWord(takestring(tokenbuf),parseWORD),
 			 pos,globalScope,dummySymbol,sawNewline)))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
@@ -211,7 +211,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 			 tokenbuf << char(getc(file))
 			 );
 		    if peek(file)==int('.') then (
-			 errorpos(file.pos,"'.' follows floating point constant");
+			 printErrorMessage(file.pos,"'.' follows floating point constant");
 			 while peek(file)==int('.') || isdigit(peek(file)) 
 			 do getc(file);
 			 );

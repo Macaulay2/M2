@@ -156,11 +156,11 @@ accumulate(e:ParseTree,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      ret
      );
 export errorunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     errorpos(token1.position,"syntax error at '" + token1.word.name + "'");
+     printErrorMessage(token1.position,"syntax error at '" + token1.word.name + "'");
      errorTree
      );
 export errorbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int,obeylines:bool):ParseTree := (
-     errorpos(token2.position,"syntax error at '" + token2.word.name + "'");
+     printErrorMessage(token2.position,"syntax error at '" + token2.word.name + "'");
      errorTree
      );
 export defaultunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -186,7 +186,7 @@ export nnunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree 
 export precSpace := 0;		-- filled in later by binding.d
 export defaultbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      if token2.followsNewline then (
-     	  errorpos(token2.position,"missing semicolon or comma on previous line?");
+     	  printErrorMessage(token2.position,"missing semicolon or comma on previous line?");
      	  errorTree)
      else (
      	  ret := token2.word.parse.funs.unary(token2,file,precSpace-1,obeylines);
@@ -289,8 +289,8 @@ export unaryparen(left:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
 	  if rightparen == right.word.name
 	  then accumulate(ParseTree(Parentheses(left,e,right)),file,prec,obeylines)
 	  else (
-	       errorpos(right.position, "expected \"" + rightparen + "\"");
-	       errorpos(left.position," ... to match this");
+	       printErrorMessage(right.position, "expected \"" + rightparen + "\"");
+	       printErrorMessage(left.position," ... to match this");
 	       errorTree)));
 export unarywhile(
      whileToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -317,8 +317,8 @@ export unarywhile(
 	       ret := ParseTree(WhileList(whileToken,predicate,token2,listClause));
 	       accumulate(ret,file,prec,obeylines)))
      else (
-	  errorpos(token2.position,"syntax error : expected 'do' or 'list'");
-	  errorpos(whileToken.position," ... to match this 'while'");
+	  printErrorMessage(token2.position,"syntax error : expected 'do' or 'list'");
+	  printErrorMessage(whileToken.position," ... to match this 'while'");
 	  errorTree));
 
 export unaryfor(
@@ -363,13 +363,13 @@ export unaryfor(
 	  r := ParseTree(For(forToken, var, fromClause, toClause,whenClause, listClause, doClause, dummyScope));
 	  accumulate(r,file,prec,obeylines))
      else (
-	  errorpos(token2.position,"syntax error : expected 'do' or 'list'");
-	  errorpos(forToken.position," ... to match this 'for'");
+	  printErrorMessage(token2.position,"syntax error : expected 'do' or 'list'");
+	  printErrorMessage(forToken.position," ... to match this 'for'");
 	  errorTree));
 
 unstringToken(q:Token):Token := (
      if q.word.typecode == TCstring 
-     then Token(unique(parseString(q.word.name),q.word.parse),q.position,q.scope,q.entry,q.followsNewline)
+     then Token(makeUniqueWord(parseString(q.word.name),q.word.parse),q.position,q.scope,q.entry,q.followsNewline)
      else q);
 export unaryquote(
      quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
@@ -395,8 +395,8 @@ export unaryif(ifToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
      thenToken := gettoken(file,false);
      if thenToken == errorToken then return(errorTree);
      if thenToken.word != thenW then (
-	  errorpos(thenToken.position,"syntax error : expected 'then'");
-	  errorpos(ifToken.position," ... to match this 'if'");
+	  printErrorMessage(thenToken.position,"syntax error : expected 'then'");
+	  printErrorMessage(ifToken.position," ... to match this 'if'");
 	  return(errorTree));
      thenClause := parse(file,thenW.parse.unaryStrength,obeylines);
      if thenClause == errorTree then return(errorTree);
@@ -418,8 +418,8 @@ export unarytry(tryToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  elseToken := gettoken(file,false);
 	  if elseToken == errorToken then return(errorTree);
 	  if elseToken.word != elseW then (
-	       errorpos(elseToken.position,"syntax error : expected 'else'");
-	       errorpos(tryToken.position," ... to match this 'try'");
+	       printErrorMessage(elseToken.position,"syntax error : expected 'else'");
+	       printErrorMessage(tryToken.position," ... to match this 'try'");
 	       return(errorTree));
 	  elseClause := parse(file,elseW.parse.unaryStrength,obeylines);
 	  if elseClause == errorTree then return(errorTree);

@@ -33,8 +33,8 @@ currentFile := setupvar("currentFile", nullE);
 currentFileDirectory := setupvar("currentFileDirectory", nullE);
 update(err:Error,prefix:string,f:Code):Expr := (
      if err.position == dummyPosition
-     then errorpos(f,prefix + ": " + err.message)
-     else errorpos(f,prefix + ": --backtrace--")
+     then printErrorMessage(f,prefix + ": " + err.message)
+     else printErrorMessage(f,prefix + ": --backtrace-- ")
      );
 stmtno := 0;
 linefun(e:Expr):Expr := (
@@ -69,7 +69,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      methodname := if semi then NoPrint else Print;
      method := lookup(Class(g),methodname);
      if method == nullE 
-     then errorpos(f,"no method for '" + methodname.symbol.word.name + "'")
+     then printErrorMessage(f,"no method for '" + methodname.symbol.word.name + "'")
      else apply(method,g)
      );
 errorReportS := setupconst("report",Expr(emptySequence));
@@ -94,13 +94,13 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 	  if equal(parsed,wordEOF) then break;
 	  returnvalue = nullE;
 	  if parsed == errorTree then (
-	       if AbortIfError then return(errorExpr("--backtrace--"));
+	       if AbortIfError then return(buildErrorPacket("--backtrace--"));
 	       )
 	  else (
 	       s := gettoken(file,true);  -- get the semicolon
 	       if !(s.word == semicolonW || s.word == newlineW)
 	       then (
-		    errorpos(s.position,"syntax error");
+		    printErrorMessage(s.position,"syntax error");
 		    if AbortIfError 
 		    then return(Expr(Error(s.position,"syntax error",emptySequence,nullE)));
 		    )
@@ -136,7 +136,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 				   else nothing; ) ) )
 		    else if isatty(file) 
 		    then flush(file)
-		    else return(errorExpr("error while loading file")); ); );
+		    else return(buildErrorPacket("error while loading file")); ); );
 	  lastvalue = nullE; );
      if isatty(file) then stdout << endl;
      returnvalue);
@@ -191,7 +191,7 @@ loadprint(s:string):Expr := (
 	  when r is Error do r 
 	  else (
 	       if t == ERROR
-	       then errorExpr("error closing file") 
+	       then buildErrorPacket("error closing file") 
 	       else True)));
 load(s:string):Expr := (
      when openTokenFile(s)
@@ -202,13 +202,13 @@ load(s:string):Expr := (
 	  when r is Error do r
 	  else (
 	       if t == ERROR
-	       then errorExpr("error closing file") 
+	       then buildErrorPacket("error closing file") 
  	       else True)));
 
 load(e:Expr):Expr := (
      when e
      is s:string do load(s)
-     else errorExpr("expected string as file name"));
+     else buildErrorPacket("expected string as file name"));
 setupfun("load",load);
 
 input(e:Expr):Expr := (
@@ -220,7 +220,7 @@ input(e:Expr):Expr := (
 	  xprompt = oldxprompt;
 	  laststmtno = -1;
 	  ret)
-     else errorExpr("expected string as file name"));
+     else buildErrorPacket("expected string as file name"));
 setupfun("input",input);
 
 stringTokenFile(name:string,contents:string):TokenFile := (
@@ -284,7 +284,7 @@ value(e:Expr):Expr := (
 	       if err.position == dummyPosition
 	       || int(err.position.reloaded) < ErrorDepth
 	       then r
-	       else errorExpr("--backtrace--"))
+	       else buildErrorPacket("--backtrace--"))
 	  else r)
      else WrongArg(1,"a string or a symbol"));
 setupfun("value",value);

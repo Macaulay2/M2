@@ -69,7 +69,7 @@ export - (rhs:Expr) : Expr := (
      else (
 	  method := lookup(Class(rhs),MinusS);
 	  if method == nullE
-	  then errorExpr("no method found")
+	  then buildErrorPacket("no method found")
 	  else apply(method,Expr(rhs))));
 minusfun1(rhs:Code):Expr := - eval(rhs);
 
@@ -159,15 +159,15 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do (
 	       if y === 0
-	       then errorExpr("division by zero")
+	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
      	  is y:Rational do (
 	       if y === 0
-	       then errorExpr("division by zero")
+	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
 	  is y:Real do (
 	       --if y.v == 0.
-	       --then errorExpr("division by zero")
+	       --then buildErrorPacket("division by zero")
 	       --else 
 	       Expr(Real(x / y.v)))
 	  is Error do rhs
@@ -176,17 +176,17 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Real do (
 	       --if y.v == 0.
-	       --then errorExpr("division by zero")
+	       --then buildErrorPacket("division by zero")
 	       --else 
 	       Expr(Real(x.v/y.v)))
      	  is y:Integer do (
 	       --if y === 0
-	       --then errorExpr("division by zero")
+	       --then buildErrorPacket("division by zero")
 	       --else 
 	       Expr(Real(x.v/y)))
      	  is y:Rational do (
 	       --if y === 0
-	       --then errorExpr("division by zero")
+	       --then buildErrorPacket("division by zero")
 	       --else 
 	       Expr(Real(x.v/y)))
      	  is Error do rhs
@@ -195,15 +195,15 @@ export (lhs:Expr) / (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do (
 	       if y === 0
-	       then errorExpr("division by zero")
+	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
      	  is y:Rational do (
 	       if y === 0
-	       then errorExpr("division by zero")
+	       then buildErrorPacket("division by zero")
 	       else Expr(x / y))
 	  is y:Real do (
 	       --if y.v == 0.
-	       --then errorExpr("division by zero")
+	       --then buildErrorPacket("division by zero")
 	       --else 
 	       Expr(Real(x / y.v)))
 	  is Error do rhs
@@ -224,7 +224,7 @@ export (lhs:Expr) // (rhs:Expr) : Expr := (
 	  when rhs
 	  is y:Integer do (
 	       if y === 0
-	       then errorExpr("division by zero")
+	       then buildErrorPacket("division by zero")
 	       else Expr(x//y)
 	       )
      	  is Error do rhs
@@ -264,7 +264,7 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	  if i === 0 then (
 	       onex := lookup(Class(x),OneE);
 	       if onex == nullE then (
-		    return(errorExpr("missing unit element"))
+		    return(buildErrorPacket("missing unit element"))
 		    )
 	       else return(onex);
 	       );
@@ -274,7 +274,7 @@ BinaryPowerMethod(x:Expr,y:Expr):Expr := (
 	       inverse = lookup(Class(x),InverseS);
 	       if inverse == nullE then return(MissingMethod("^","InverseMethod"));
 	       );
-	  if !isInt(i) then return(errorExpr("'^' expects a small integer exponent"));
+	  if !isInt(i) then return(buildErrorPacket("'^' expects a small integer exponent"));
 	  n := toInt(i);
 	  w := x;
 	  z := nullE;	  -- meaning 1
@@ -306,7 +306,7 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	  if i === 0 then (
 	       onex := lookup(Class(x),OneE);
 	       if onex == nullE
-	       then return(errorExpr("missing unit element"))
+	       then return(buildErrorPacket("missing unit element"))
 	       else return(onex);
 	       );
 	  if i <= 0 then (
@@ -315,7 +315,7 @@ SimplePowerMethod(x:Expr,y:Expr):Expr := (
 	       inverse = lookup(Class(x),InverseS);
 	       if inverse == nullE then return(MissingMethod("^","InverseMethod"));
 	       );
-	  if !isInt(i) then return(errorExpr("'^' expects a small integer exponent"));
+	  if !isInt(i) then return(buildErrorPacket("'^' expects a small integer exponent"));
 	  n := toInt(i);
 	  z := x;
 	  while n>1 do (
@@ -424,11 +424,11 @@ factorial(rhs:Code):Expr := (
      when eval(rhs)
      is x:Error do Expr(x)
      is x:Integer do (
-	  if !isInt(x) then return(errorpos(rhs,"argument too large"));
+	  if !isInt(x) then return(printErrorMessage(rhs,"argument too large"));
 	  n := toInt(x);
 	  if n==0 || n==1 then return(Expr(toInteger(1)));
 	  if n<0 then return( 
-	       errorpos(rhs,"expected a positive number"));
+	       printErrorMessage(rhs,"expected a positive number"));
 	  y := x;
 	  while true do (
 	       n = n-1;
@@ -437,7 +437,7 @@ factorial(rhs:Code):Expr := (
 	  Expr(y))
      is x:Real do (
 	  Expr(Real(exp(lgamma(x.v+1)))))
-     else errorpos(rhs,"expected a number"));
+     else printErrorMessage(rhs,"expected a number"));
 setuppostfix(ExclamationS,factorial);
 EqualEqualEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
@@ -480,7 +480,7 @@ DotDotfun(lhs:Code,rhs:Code):Expr := (
 		    else if isInt(z) then (
 			 m := toInt(z);
 			 Expr(new Sequence len m+1 at k do provide x+k))
-		    else errorpos(rhs,"range too large")))
+		    else printErrorMessage(rhs,"range too large")))
 	  else binarymethod(left,right,DotDotS))
      else binarymethod(left,rhs,DotDotS));
 setup(DotDotS,DotDotfun);
@@ -490,7 +490,7 @@ assignNewFun(newclass:Code,rhs:Code):Expr := (
      when c
      is Error do c
      is o:HashTable do installMethod(NewE,o,eval(rhs))
-     else errorpos(newclass,"expected a hash table as prospective class"));
+     else printErrorMessage(newclass,"expected a hash table as prospective class"));
 AssignNewFun = assignNewFun;
 assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
      c := eval(newclass);
@@ -503,10 +503,10 @@ assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
 	  is Error do p
 	  is pp:HashTable do 
 	  if pp.mutable then installMethod(NewOfE,cc,pp,eval(rhs))
-	  else errorpos(newparent,"expected a mutable hash table")
-	  else errorpos(newparent,"expected a hash table as prospective parent"))
-     else errorpos(newclass,"expected a mutable hash table")
-     else errorpos(newclass,"expected a hash table as prospective class")
+	  else printErrorMessage(newparent,"expected a mutable hash table")
+	  else printErrorMessage(newparent,"expected a hash table as prospective parent"))
+     else printErrorMessage(newclass,"expected a mutable hash table")
+     else printErrorMessage(newclass,"expected a hash table as prospective class")
      );
 AssignNewOfFun = assignNewOfFun;
 assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
@@ -520,10 +520,10 @@ assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
 	  is Error do i
 	  is ii:HashTable do 
 	  if ii.mutable then installMethod(NewFromE,cc,ii,eval(rhs))
-     	  else errorpos(newinitializer,"expected a mutable hash table")
-     	  else errorpos(newinitializer,"expected a hash table"))
-     else errorpos(newclass,"expected a mutable hash table")
-     else errorpos(newclass,"expected a hash table as prospective class"));
+     	  else printErrorMessage(newinitializer,"expected a mutable hash table")
+     	  else printErrorMessage(newinitializer,"expected a hash table"))
+     else printErrorMessage(newclass,"expected a mutable hash table")
+     else printErrorMessage(newclass,"expected a hash table as prospective class"));
 AssignNewFromFun = assignNewFromFun;
 assignNewOfFromFun(args:CodeSequence):Expr := (
      newclass := args.0;
@@ -549,12 +549,12 @@ assignNewOfFromFun(args:CodeSequence):Expr := (
 	       	    when r 
 		    is Error do r
 	       	    else installMethod(NewOfFromE,cc,pp,ii,r))
-     	       else errorpos(newinitializer,"expected a mutable hash table")
-     	       else errorpos(newinitializer,"expected a hash table"))
-	  else errorpos(newparent,"expected a mutable hash table")
-	  else errorpos(newparent,"expected a hash table as prospective parent"))
-     else errorpos(newclass,"expected a mutable hash table")
-     else errorpos(newclass,"expected a hash table as prospective class")
+     	       else printErrorMessage(newinitializer,"expected a mutable hash table")
+     	       else printErrorMessage(newinitializer,"expected a hash table"))
+	  else printErrorMessage(newparent,"expected a mutable hash table")
+	  else printErrorMessage(newparent,"expected a hash table as prospective parent"))
+     else printErrorMessage(newclass,"expected a mutable hash table")
+     else printErrorMessage(newclass,"expected a hash table as prospective class")
      );
 AssignNewOfFromFun = assignNewOfFromFun;
 export ancestor(o:HashTable,p:HashTable):bool := (
@@ -577,41 +577,41 @@ installFun2(a:Expr,args:CodeSequence):Expr := (
 			 when bcd.0
 			 is bb:HashTable do
 			 if !ancestor(bb.class,typeClass)
-			 then errorExpr("expected first parameter to be a type") else
+			 then buildErrorPacket("expected first parameter to be a type") else
 			 when bcd.1
 			 is cc:HashTable do
 			 if ancestor(cc.class,typeClass)
 			 then installMethod(a,bb,cc,eval(args.3))
-			 else errorExpr("expected second parameter to be a type")
-			 else errorExpr("expected second parameter to be a hash table")
-			 else errorExpr("expected first parameter to be a hash table")
+			 else buildErrorPacket("expected second parameter to be a type")
+			 else buildErrorPacket("expected second parameter to be a hash table")
+			 else buildErrorPacket("expected first parameter to be a hash table")
 			 )
 		    else if length(bcd) == 3 then (
 			 when bcd.0
 			 is bb:HashTable do
 			 if !ancestor(bb.class,typeClass)
-			 then errorExpr("expected first parameter to be a type") else
+			 then buildErrorPacket("expected first parameter to be a type") else
 			 when bcd.1
 			 is cc:HashTable do
 			 if !ancestor(cc.class,typeClass)
-			 then errorExpr("expected second parameter to be a type") else 
+			 then buildErrorPacket("expected second parameter to be a type") else 
 			 when bcd.2
 			 is dd:HashTable do
 			 if ancestor(dd.class,typeClass)
 			 then installMethod(a,bb,cc,dd,eval(args.3))
-			 else errorExpr("expected third parameter to be a type") 
-			 else errorExpr("expected third parameter to be a hash table")
-			 else errorExpr("expected second parameter to be a hash table")
-			 else errorExpr("expected first parameter to be a hash table")
+			 else buildErrorPacket("expected third parameter to be a type") 
+			 else buildErrorPacket("expected third parameter to be a hash table")
+			 else buildErrorPacket("expected second parameter to be a hash table")
+			 else buildErrorPacket("expected first parameter to be a hash table")
 			 )
-		    else errorExpr("expected two or three parameter types"))
+		    else buildErrorPacket("expected two or three parameter types"))
 	       is bb:HashTable do (
 		    if ancestor(bb.class,typeClass)
 		    then installMethod(a,bb,eval(args.3))
-		    else errorExpr("expected right hand parameter to be a type"))
-	       else errorExpr("expected right hand parameter to be a hash table or sequence"))
-	  else errorExpr("encountered symbol instead of a class"))
-     else errorExpr("expected operator to be a symbol"));
+		    else buildErrorPacket("expected right hand parameter to be a type"))
+	       else buildErrorPacket("expected right hand parameter to be a hash table or sequence"))
+	  else buildErrorPacket("encountered symbol instead of a class"))
+     else buildErrorPacket("expected operator to be a symbol"));
 installMethodFun(args:CodeSequence):Expr := (
      a := eval(args.1);
      when a 
@@ -633,9 +633,9 @@ installMethodFun(args:CodeSequence):Expr := (
 			 opr := eval(args.0);
 			 when opr is Error do opr
 			 else installMethod(opr,aa,bb,eval(args.3)))
-		    else errorExpr("expected right hand parameter to be a type"))
-	       else errorExpr("expected right hand parameter to be a hash table")))
-     else errorExpr("expected left hand parameter to be a function, type, or a hash table"));
+		    else buildErrorPacket("expected right hand parameter to be a type"))
+	       else buildErrorPacket("expected right hand parameter to be a hash table")))
+     else buildErrorPacket("expected left hand parameter to be a function, type, or a hash table"));
 InstallMethodFun = installMethodFun;
 
 mess1 := "objects on left hand side of assignment are not types (use ':=' instead?)";
@@ -649,9 +649,14 @@ installValueFun(args:CodeSequence):Expr := (
 	  is bb:HashTable do (
 	       opr := eval(args.0);
 	       when opr is Error do opr
-	       else installValue(opr,aa,bb,eval(args.3)))
-	  else errorExpr(mess1))
-     else errorExpr(mess1));
+	       else (
+		    x := eval(args.3);
+		    when x is Error do x
+		    else installValue(opr,aa,bb,x)
+		    )
+	       )
+	  else buildErrorPacket(mess1))
+     else buildErrorPacket(mess1));
 InstallValueFun = installValueFun;
 
 unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
@@ -665,7 +670,7 @@ unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
 	       when b is Error do b
 	       else installMethod(f,T,b)
 	       )
-	  else errorpos(argtype,"expected a hash table")));
+	  else printErrorMessage(argtype,"expected a hash table")));
 UnaryInstallMethodFun = unaryInstallMethodFun;
 
 unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
@@ -685,7 +690,7 @@ unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
 		    )
 	       )
 	  )
-     else errorpos(argtype,"expected a hash table")
+     else printErrorMessage(argtype,"expected a hash table")
      );
 UnaryInstallValueFun = unaryInstallValueFun;
 

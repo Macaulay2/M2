@@ -142,7 +142,7 @@ export basictype(o:HashTable):HashTable := (
 	  ));
 
 export RecursionLimit():Expr := (
-     errorExpr("recursion limit of " + tostring(recursionlimit) + " exceeded"));
+     buildErrorPacket("recursion limit of " + tostring(recursionlimit) + " exceeded"));
 setrecursionlimit(e:Expr):Expr := (
      when e
      is i:Integer do (
@@ -151,9 +151,9 @@ setrecursionlimit(e:Expr):Expr := (
 	       old := toInteger(recursionlimit);
 	       recursionlimit = toInt(i); 
 	       Expr(old))
-	  else errorExpr("'setrecursionlimit' expected a small integer")
+	  else buildErrorPacket("'setrecursionlimit' expected a small integer")
 	  )
-     else errorExpr("'setrecursionlimit' expected a small integer"));
+     else buildErrorPacket("'setrecursionlimit' expected a small integer"));
 setupfun("setrecursionlimit",setrecursionlimit);
 errordepthfun(e:Expr):Expr := (
      when e
@@ -171,7 +171,7 @@ export backtr(z:Expr):Expr := (
      || int(err.position.reloaded) < ErrorDepth
      || SuppressErrors
      then z
-     else errorExpr("--backtrace--",err.report)
+     else buildErrorPacket("--backtrace--",err.report)
      else z);
 export backtr(z:Expr,report:Expr):Expr := (
      when z is err:Error do (
@@ -201,7 +201,7 @@ export backtrLoop(z:Expr,report:Expr):Expr := (
 	  else backtr(z,report))
      else z);
 export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
-     errorpos(c, "expected " + tostring(wanted) + " argument"
+     printErrorMessage(c, "expected " + tostring(wanted) + " argument"
 	  + (if wanted == 1 then "" else "s") + ", but got "
 	  + tostring(got)));
 stash := new array(Frame) len 20 do provide dummyFrame;
@@ -321,7 +321,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
      if desc.numparms != 1
      then return(
 	  backtr(
-	       errorpos(model.parms, "expected " +tostring(desc.numparms)
+	       printErrorMessage(model.parms, "expected " +tostring(desc.numparms)
 	       	    +" argument"
 		    +(if desc.numparms == 1 then "" else "s")
 		    +" but got 1"
@@ -491,7 +491,7 @@ export apply(f:Expr,v:Sequence):Expr := (
 	  ret := ff.fn(Expr(v),ff.env);
 	  when ret is Error do backtr(ret,list(f,Expr(v))) else ret)
      is c:FunctionClosure do apply(c,v)
-     else errorExpr("expected a function",list(f,Expr(v))));
+     else buildErrorPacket("expected a function",list(f,Expr(v))));
 export apply(f:Expr,e:Expr):Expr := (
      when f
      is ff:CompiledFunction do (
@@ -505,7 +505,7 @@ export apply(f:Expr,e:Expr):Expr := (
 	  is v:Sequence do apply(c,v)
 	  else apply(c,e)
 	  )
-     else errorExpr("expected a function",list(f,e)));
+     else buildErrorPacket("expected a function",list(f,e)));
 export apply2 := apply;
 --------
 -- could optimize later
@@ -581,7 +581,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 		    )
 	       )
 	  )
-     else errorExpr("expected a function"));     
+     else buildErrorPacket("expected a function"));     
 export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
      -- was simply apply(f,Expr(Sequence(e0,e1,e2)));
      when g
@@ -657,19 +657,19 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 		    )
 	       )
 	  )
-     else errorExpr("expected a function"));     
+     else buildErrorPacket("expected a function"));     
 export MissingMethod(name:string,method:string):Expr := (
-     errorExpr(quoteit(name) + " expected item to have a method for " + method));
+     buildErrorPacket(quoteit(name) + " expected item to have a method for " + method));
 export MissingMethod(method:SymbolClosure):Expr := (
-     errorExpr("expected a method for "+quoteit(method.symbol.word.name)));
+     buildErrorPacket("expected a method for "+quoteit(method.symbol.word.name)));
 export MissingMethodPair(method:string):Expr := (
-     errorExpr("expected pair to have a method for "+quoteit(method)));
+     buildErrorPacket("expected pair to have a method for "+quoteit(method)));
 export MissingMethodPair(method:SymbolClosure):Expr := (
-     errorExpr("expected pair to have a method for "+
+     buildErrorPacket("expected pair to have a method for "+
 	  quoteit(method.symbol.word.name)));
 export MissingMethodPair(method:SymbolClosure,left:Expr,right:Expr):Expr := (
      backtr(
-	  errorExpr(
+	  buildErrorPacket(
 	       "expected pair to have a method for "
 	       +quoteit(method.symbol.word.name)
 	       ),

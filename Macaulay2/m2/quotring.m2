@@ -51,7 +51,6 @@ tex QuotientRing := S -> "$" | texMath S | "$"
 texMath QuotientRing := S -> texMath new Divide from { last S.baseRings, pretty S.relations }
 
 net QuotientRing := S -> net expression S
-dim QuotientRing := S -> if S.?dim then S.dim else S.dim = dim S^1
 
 ambient PolynomialRing := R -> R
 ambient QuotientRing := Ring => R -> last R.baseRings
@@ -217,6 +216,10 @@ presentation(PolynomialRing,PolynomialRing) := (R,S) -> (
 
 codim PolynomialRing := R -> 0
 codim QuotientRing := (R) -> codim cokernel presentation R
+dim QuotientRing := (R) -> (
+     if isField R then 0
+     else dim ultimate(ambient,R) - codim R
+     )
 
 hilbertSeries QuotientRing := options -> (S) -> (
      hilbertSeries(coker presentation S,options)

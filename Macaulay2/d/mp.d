@@ -80,7 +80,7 @@ writePacket(h:int,x:Expr):Expr := (
 	  method := lookupBinaryMethod(integerClass,Class(x),WritePacketS);
      	  if method != nullE 
      	  then apply(method,Expr(toInteger(h)),x)
-     	  else errorExpr("no method found for WritePacket")
+     	  else buildErrorPacket("no method found for WritePacket")
 	  ));
 
 writePacket(e:Expr):Expr := (

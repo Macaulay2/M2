@@ -14,6 +14,8 @@ CC#1 = new CC from {1,0}
 
 CC.degreeLength = 0
 
+degree CC := i -> {}
+
 mathML CC := z -> concatenate(
      "<cn type='complex'>",toString realPart z, "<sep/>", toString imaginaryPart z, "</cn>"
      )     

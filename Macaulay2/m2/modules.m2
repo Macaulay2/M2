@@ -105,7 +105,7 @@ net Module := M -> (
      else net new FunctionApplication from { cokernel, net M.relations }
      else if M.?generators
      then net new FunctionApplication from { image, net M.generators }
-     else if numgens M === 0 then 0
+     else if numgens M === 0 then "0"
      else net new Superscript from {net ring M, numgens M}
      )
 

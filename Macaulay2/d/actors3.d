@@ -111,7 +111,7 @@ not(z:Expr):Expr := (
      when z is Error do z 
      else if z == True then False 
      else if z == False then True
-     else errorExpr("expected true or false"));
+     else buildErrorPacket("expected true or false"));
 notequalfun(lhs:Code,rhs:Code):Expr := not(EqualEqualfun(lhs,rhs));
 setup(NotEqualS,notequalfun);
 
@@ -396,7 +396,7 @@ sin(e:Expr):Expr := (
      is x:Integer do Expr(Real(sin(toDouble(x))))
      is x:Rational do Expr(Real(sin(toDouble(x))))
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("sin",sin);
 cos(e:Expr):Expr := (
@@ -405,7 +405,7 @@ cos(e:Expr):Expr := (
      is x:Integer do Expr(Real(cos(toDouble(x))))
      is x:Rational do Expr(Real(cos(toDouble(x))))
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("cos",cos);
 tan(e:Expr):Expr := (
@@ -414,7 +414,7 @@ tan(e:Expr):Expr := (
      is x:Integer do Expr(Real(tan(toDouble(x))))
      is x:Rational do Expr(Real(tan(toDouble(x))))
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("tan",tan);
 acos(e:Expr):Expr := (
@@ -423,7 +423,7 @@ acos(e:Expr):Expr := (
      is x:Integer do Expr(Real(acos(toDouble(x))))
      is x:Rational do Expr(Real(acos(toDouble(x))))
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("acos",acos);
 asin(e:Expr):Expr := (
@@ -432,7 +432,7 @@ asin(e:Expr):Expr := (
      is x:Integer do Expr(Real(asin(toDouble(x))))
      is x:Rational do Expr(Real(asin(toDouble(x))))
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("asin",asin);
 atan(e:Expr):Expr := (
@@ -460,7 +460,7 @@ atan(e:Expr):Expr := (
      is x:Rational do Expr(Real(atan2(toDouble(y),toDouble(x))))
      else WrongArg(2,"a number")
      else WrongArg(1,"a number")
-     else errorExpr("expected a number or a pair of numbers")
+     else buildErrorPacket("expected a number or a pair of numbers")
      );
 setupfun("atan",atan);
 cosh(e:Expr):Expr := (
@@ -469,7 +469,7 @@ cosh(e:Expr):Expr := (
      is x:Integer do Expr(Real(cosh(toDouble(x))))
      is x:Rational do Expr(Real(cosh(toDouble(x))))
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("cosh",cosh);
 sinh(e:Expr):Expr := (
@@ -478,7 +478,7 @@ sinh(e:Expr):Expr := (
      is x:Integer do Expr(Real(sinh(toDouble(x))))
      is x:Rational do Expr(Real(sinh(toDouble(x))))
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("sinh",sinh);
 tanh(e:Expr):Expr := (
@@ -487,7 +487,7 @@ tanh(e:Expr):Expr := (
      is x:Integer do Expr(Real(tanh(toDouble(x))))
      is x:Rational do Expr(Real(tanh(toDouble(x))))
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("tanh",tanh);
 exp(e:Expr):Expr := (
@@ -496,7 +496,7 @@ exp(e:Expr):Expr := (
      is x:Integer do Expr(Real(exp(toDouble(x))))
      is x:Rational do Expr(Real(exp(toDouble(x))))
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("exp",exp);
 log(e:Expr):Expr := (
@@ -505,7 +505,7 @@ log(e:Expr):Expr := (
      is x:Integer do Expr(Real(log(toDouble(x))))
      is x:Rational do Expr(Real(log(toDouble(x))))
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("log",log);
 abs(x:double):double := if x < 0. then -x else x;
@@ -517,7 +517,7 @@ floor(e:Expr):Expr := (
 	  )
      is x:Rational do Expr(x.numerator//x.denominator)
      is x:Error do Expr(x)
-     else errorExpr("expected a number")
+     else buildErrorPacket("expected a number")
      );
 setupfun("floor",floor);
 
@@ -525,7 +525,7 @@ run(e:Expr):Expr := (
      when e
      is x:string do Expr(toInteger(run(x)))
      is x:Error do Expr(x)
-     else errorExpr("expected a string")
+     else buildErrorPacket("expected a string")
      );
 setupfun("run",run);
 
@@ -533,7 +533,7 @@ sqrt(a:Expr):Expr := (
      when a
      is x:Real do Expr(Real(sqrt(x.v)))
      is Error do a
-     else errorExpr("expected a double"));
+     else buildErrorPacket("expected a double"));
 setupfun("sqrt",sqrt);
 map(a1:Sequence,a2:Sequence,f:Expr):Expr := (
      newlen := length(a1);
@@ -1679,7 +1679,7 @@ scan(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger(1)
 	  else scan(toInt(i),f))
-     else errorExpr("scan expects a list"));
+     else buildErrorPacket("scan expects a list"));
 scan(e:Expr):Expr := (
      when e is a:Sequence do (
 	  if length(a) == 2
@@ -1694,8 +1694,8 @@ gcd(x:Expr,y:Expr):Expr := (
      is a:Integer do (
 	  when y
 	  is b:Integer do Expr(gcd(a,b))
-	  else errorExpr("expected an integer"))
-     else errorExpr("expected an integer"));
+	  else buildErrorPacket("expected an integer"))
+     else buildErrorPacket("expected an integer"));
 gcdfun(e:Expr):Expr := accumulate(plus0,plus1,gcd,e);
 setupfun("gcd",gcdfun);
 

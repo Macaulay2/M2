@@ -487,70 +487,70 @@ export codePosition(e:Code):Position := (
 export returnMessage := "return value";
 export breakMessage := "break value";
 
-export errorExpr(message:string):Expr := Expr(Error(dummyPosition,message,emptySequence,nullE));
-export errorExpr(message:string,report:Expr):Expr := Expr(Error(dummyPosition,message,report,nullE));
+export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,emptySequence,nullE));
+export buildErrorPacket(message:string,report:Expr):Expr := Expr(Error(dummyPosition,message,report,nullE));
 export quoteit(name:string):string := "'" + name + "'";
-export NotYet(desc:string):Expr := errorExpr(desc + " not implemented yet");
-export WrongArg(desc:string):Expr := errorExpr("expected " + desc);
+export NotYet(desc:string):Expr := buildErrorPacket(desc + " not implemented yet");
+export WrongArg(desc:string):Expr := buildErrorPacket("expected " + desc);
 export WrongArg(n:int,desc:string):Expr := (
-     errorExpr("expected argument " + tostring(n) + " to be " + desc));
+     buildErrorPacket("expected argument " + tostring(n) + " to be " + desc));
 export WrongArgInteger():Expr := WrongArg("an integer");
 export WrongArgSmallInteger():Expr := WrongArg("a small integer");
 export WrongArgInteger(n:int):Expr := WrongArg(n,"an integer");
 export WrongArgString():Expr := WrongArg("a string");
 export WrongArgSmallInteger(n:int):Expr := WrongArg(n,"a small integer");
 export ArgChanged(name:string,n:int):Expr := (
-     errorExpr(quoteit(name) + " expected argument " + tostring(n)
+     buildErrorPacket(quoteit(name) + " expected argument " + tostring(n)
 	  + " not to change its type during execution"));
 export WrongNumArgs(name:string,n:int):Expr := (
      if n == 0
-     then errorExpr(quoteit(name) + " expected no arguments")
+     then buildErrorPacket(quoteit(name) + " expected no arguments")
      else if n == 1
-     then errorExpr(quoteit(name) + " expected " + tostring(n) + " argument")
-     else errorExpr(quoteit(name) + " expected " + tostring(n) + " arguments")
+     then buildErrorPacket(quoteit(name) + " expected " + tostring(n) + " argument")
+     else buildErrorPacket(quoteit(name) + " expected " + tostring(n) + " arguments")
      );
-export WrongNumArgs(n:int):Expr := errorExpr(
+export WrongNumArgs(n:int):Expr := buildErrorPacket(
      if n == 0 then "expected no arguments"
      else if n == 1 then "expected " + tostring(n) + " argument"
      else "expected " + tostring(n) + " arguments"
      );
 export WrongNumArgs(name:string,m:int,n:int):Expr := (
      if n == m+1
-     then errorExpr(quoteit(name) + " expected " 
+     then buildErrorPacket(quoteit(name) + " expected " 
 	  + tostring(m) + " or "
 	  + tostring(n) + " arguments")
-     else errorExpr(quoteit(name) + " expected " 
+     else buildErrorPacket(quoteit(name) + " expected " 
 	  + tostring(m) + " to "
 	  + tostring(n) + " arguments"));
 export WrongNumArgs(m:int,n:int):Expr := (
      if n == m+1
-     then errorExpr("expected " + tostring(m) + " or " + tostring(n) + " arguments")
-     else errorExpr("expected " + tostring(m) + " to " + tostring(n) + " arguments"));
+     then buildErrorPacket("expected " + tostring(m) + " or " + tostring(n) + " arguments")
+     else buildErrorPacket("expected " + tostring(m) + " to " + tostring(n) + " arguments"));
 export TooFewArgs(name:string,m:int):Expr := (
      if m == 1
-     then errorExpr(quoteit(name) + " expected at least 1 argument")
-     else errorExpr(quoteit(name) + " expected at least " 
+     then buildErrorPacket(quoteit(name) + " expected at least 1 argument")
+     else buildErrorPacket(quoteit(name) + " expected at least " 
 	  + tostring(m) + " arguments"));
 export TooManyArgs(name:string,m:int):Expr := (
      if m == 1
-     then errorExpr(quoteit(name) + " expected at most 1 argument")
-     else errorExpr(quoteit(name) + " expected at most " 
+     then buildErrorPacket(quoteit(name) + " expected at most 1 argument")
+     else buildErrorPacket(quoteit(name) + " expected at most " 
 	  + tostring(m) + " arguments"));
 export ErrorDepth := 0;
-export errorpos(e:Code,message:string):Expr := (
+export printErrorMessage(e:Code,message:string):Expr := (
      p := codePosition(e);
      if int(p.reloaded) >= ErrorDepth
      then (
-     	  errorpos(p,message);
+     	  printErrorMessage(p,message);
      	  Expr(Error(p,message,emptySequence,nullE)))
-     else errorExpr(message));
-export errorpos(e:Code,message:string,report:Expr):Expr := (
+     else buildErrorPacket(message));
+export printErrorMessage(e:Code,message:string,report:Expr):Expr := (
      p := codePosition(e);
      if int(p.reloaded) >= ErrorDepth
      then (
-     	  errorpos(p,message);
+     	  printErrorMessage(p,message);
      	  Expr(Error(p,message,report,nullE)))
-     else errorExpr(message));
+     else buildErrorPacket(message));
 export eval(c:Code):Expr;
 hadError := false;
 errm := nullE;
@@ -589,7 +589,7 @@ export evalSequence(v:CodeSequence):Expr := (
 	       );
 	  r));
 export trace := false;
-shown := 0;
+NumberErrorMessagesShown := 0;
 export recursionlimit := 300;
 export recursiondepth := 0;
 
@@ -603,11 +603,11 @@ export eval(c:Code):Expr := (
      if alarmed then (
 	  interrupted = false;
 	  alarmed = false;
-	  errorpos(c,"alarm occurred"))
+	  printErrorMessage(c,"alarm occurred"))
      else (
 	  interrupted = false;
      	  SuppressErrors = false;
-	  errorpos(c,"interrupted"))
+	  printErrorMessage(c,"interrupted"))
      else when c
      is n:exprCode do (
 	  --couldtrace=false; 
@@ -632,8 +632,10 @@ export eval(c:Code):Expr := (
 	  x)
      is v:CodeSequence do evalSequence(v);
      when e is err:Error do (
+	  -- stderr << "err: " << err.position << " : " << err.message << endl;
 	  if err.message == returnMessage || err.message == breakMessage then return(e);
 	  p := codePosition(c);
+	  -- stderr << "pos: " << p << endl;
 	  err.report = seq(
 	       list(Expr(p.filename),
 		    Expr(toInteger(int(p.line))),
@@ -644,11 +646,12 @@ export eval(c:Code):Expr := (
 	  && !SuppressErrors then (
 	       interrupted = false;
 	       alarmed = false;
-	       if shown < printtop || recursiondepth < printbottom then (
-		    -- print the error message
+	       if NumberErrorMessagesShown < printtop || recursiondepth < printbottom then (
+		    printErrorMessage(p,err.message);
 		    if recursiondepth < printbottom
-		    then shown = 0 else shown = shown + 1;
-		    errorpos(p,err.message);)
+		    then NumberErrorMessagesShown = 0 
+		    else NumberErrorMessagesShown = NumberErrorMessagesShown + 1;
+		    )
 	       else if recursiondepth == printbottom then (
 		    flush(stdout);
 		    stderr << "..." << endl;);
@@ -696,19 +699,20 @@ export setup(e:SymbolClosure,fun1:unop,fun2:unop):void := (
      );
 export setupop(s:SymbolClosure,fun:unop):void := s.symbol.unary = fun;
 export setupfun(name:string,fun:unop):void := (
-     word := unique(name, parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
+     word := makeUniqueWord(name,
+	  parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
      entry := makeSymbol(word,dummyPosition,globalScope);
      entry.unary = fun;
      entry.protected = true;
      );     
 export setupfun(name:string,value:fun):void := (
-     word := unique(name,parseWORD);
+     word := makeUniqueWord(name,parseWORD);
      entry := makeSymbol(word,dummyPosition,globalScope);
      globalFrame.values.(entry.frameindex) = Expr(CompiledFunction(value,nextHash()));
      entry.protected = true;
      );
 export setupvar(name:string,value:Expr):Symbol := (
-     word := unique(name,parseWORD);
+     word := makeUniqueWord(name,parseWORD);
      when lookup(word,globalScope)
      is null do (
      	  entry := makeSymbol(word,dummyPosition,globalScope);

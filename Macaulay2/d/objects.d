@@ -74,7 +74,7 @@ export lookup1force(object:HashTable,key:Expr,keyhash:int):Expr := (
 	  then return(bucket.value);
 	  bucket = bucket.next;
 	  );
-     errorExpr("key not found in hash table"));
+     buildErrorPacket("key not found in hash table"));
 export lookup1force(object:HashTable,key:Expr):Expr := lookup1force(object,key,hash(key));
 export lookup1Q(object:HashTable,key:Expr,keyhash:int):bool := (
      keymod := int(keyhash & (length(object.table)-1));
@@ -238,7 +238,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      );
 export remove(x:HashTable,key:Expr):Expr := (
      if !x.mutable then (
-	  return(errorExpr("attempted to modify an immutable hash table"));
+	  return(buildErrorPacket("attempted to modify an immutable hash table"));
 	  );
      h := hash(key);
      hmod := int(h & (length(x.table)-1));
@@ -259,7 +259,7 @@ export remove(x:HashTable,key:Expr):Expr := (
 	  p = p.next);
      Expr(x));
 export storeInHashTable(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
-     if !x.mutable then return(errorExpr("attempted to modify an immutable hash table"));
+     if !x.mutable then return(buildErrorPacket("attempted to modify an immutable hash table"));
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      while p != bucketEnd do (
@@ -284,12 +284,12 @@ export storeInHashTable(x:HashTable,i:Code,rhs:Code):Expr := (
 	  when val is Error do val else storeInHashTable(x,ival,val)));
 export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
      -- derived from storeInHashTable above!
-     if !x.mutable then return(errorExpr("attempted to modify an immutable hash table"));
+     if !x.mutable then return(buildErrorPacket("attempted to modify an immutable hash table"));
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      while p != bucketEnd do (
 	  if p.key == key || equal(p.key,key)==True 
-	  then return(errorExpr("collision of keys in hash table"));
+	  then return(buildErrorPacket("collision of keys in hash table"));
 	  p = p.next);
      if 4 * x.numEntries == 3 * length(x.table) -- SEE ABOVE
      then (
@@ -301,7 +301,7 @@ export storeInHashTableNoClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := 
      value);
 export storeInHashTableNoClobber(x:HashTable,key:Expr,value:Expr):Expr := storeInHashTableNoClobber(x,key,hash(key),value);
 export storeInHashTableMustClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr := (
-     if !x.mutable then return(errorExpr("attempted to modify an immutable hash table"));
+     if !x.mutable then return(buildErrorPacket("attempted to modify an immutable hash table"));
      hmod := int(h & (length(x.table)-1));
      p := x.table.hmod;
      while p != bucketEnd do (
@@ -310,7 +310,7 @@ export storeInHashTableMustClobber(x:HashTable,key:Expr,h:int,value:Expr):Expr :
 	       p.value = value; 
 	       return(value));
 	  p = p.next);
-     errorExpr("encountered an unknown key or option"));
+     buildErrorPacket("encountered an unknown key or option"));
 export storeInHashTableMustClobber(x:HashTable,key:Expr,value:Expr):Expr := (
      storeInHashTableMustClobber(x,key,hash(key),value)
      );
@@ -320,7 +320,7 @@ export assignquotedobject(x:HashTable,i:Code,rhs:Code):Expr := (
 	  ival := Expr(makeSymbolClosure(var.v));
 	  val := eval(rhs);
 	  when val is Error do val else storeInHashTable(x,ival,val))
-     else errorpos(i,"'.' expected right hand argument to be a symbol")
+     else printErrorMessage(i,"'.' expected right hand argument to be a symbol")
      );
 idfun(e:Expr):Expr := e;
 setupfun("identity",idfun);
@@ -364,11 +364,11 @@ mappairs(f:Expr,obj:HashTable):Expr := (
 			 when ret is Error do return(ret) else nothing;
 			 )
 		    else return(
-			 errorExpr(
+			 buildErrorPacket(
 			      "'applyPairs' expected return value to be a pair or 'null'"));
 		    )
 	       else return(
-		    errorExpr(
+		    buildErrorPacket(
 			 "'applyPairs' expected return value to be a pair or 'null'"));
 	       p = p.next;
 	       ));
@@ -394,7 +394,7 @@ export mapkeys(f:Expr,obj:HashTable):Expr := (
 	  while true do (
 	       if p == bucketEnd then break;
 	       newkey := apply(f,p.key);
-	       if newkey == nullE then return(errorExpr("null key encountered")); -- remove soon!!!
+	       if newkey == nullE then return(buildErrorPacket("null key encountered")); -- remove soon!!!
 	       when newkey is Error do return(newkey) else nothing;
 	       storeInHashTableNoClobber(newobj,newkey,p.value);
 	       p = p.next;
@@ -650,7 +650,7 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
      when left
      is q:SymbolClosure do (
 	  if q.symbol.protected then (
-	       errorpos(lhs, "assignment to protected variable '" + q.symbol.word.name + "'")
+	       printErrorMessage(lhs, "assignment to protected variable '" + q.symbol.word.name + "'")
 	       )
 	  else (
 	       value := eval(rhs);
@@ -665,8 +665,8 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 		    o.numEntries = p.numEntries;
 		    left)
 	       is Error do y
-	       else errorpos(rhs,"expected hash table on right"))
-	  else errorpos(lhs,"encountered read only hash table"))
+	       else printErrorMessage(rhs,"expected hash table on right"))
+	  else printErrorMessage(lhs,"encountered read only hash table"))
      is l:List do (
 	  if l.mutable then (
 	       y := eval(rhs);
@@ -674,10 +674,10 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 	       is p:List do ( l.v = copy(p.v); left)
 	       is s:Sequence do ( l.v = copy(s); left)
 	       is Error do y
-	       else errorpos(rhs,"'<-' expected list or sequence on right"))
-	  else errorpos(lhs,"'<-' encountered read-only list"))
+	       else printErrorMessage(rhs,"'<-' expected list or sequence on right"))
+	  else printErrorMessage(lhs,"'<-' encountered read-only list"))
      is Error do left
-     else errorpos(lhs,"'<-' expected symbol or hash table on left")
+     else printErrorMessage(lhs,"'<-' expected symbol or hash table on left")
      );
 setup(LeftArrowW,assigntofun);
 
@@ -740,8 +740,8 @@ installIt(h:HashTable,key:Expr,value:Expr):Expr := (
 	       storeInHashTable(typicalValues,key,x.v.0);
 	       installIt(h,key,x.v.1);
 	       value)
-	  else errorExpr(messx))
-     else errorExpr(messx));
+	  else buildErrorPacket(messx))
+     else buildErrorPacket(messx));
 -----------------------------------------------------------------------------
 -- unary methods
 export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
@@ -754,8 +754,8 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
 	       storeInHashTable(typicalValues,Expr(Sequence(meth,Expr(s))),x.v.0);
 	       installMethod(meth,s,x.v.1);
 	       value)
-	  else errorExpr(messx))
-     else errorExpr(messx));
+	  else buildErrorPacket(messx))
+     else buildErrorPacket(messx));
 key1 := Sequence(nullE,nullE);
 key1E := Expr(key1);
 export lookupUnaryValue(s:HashTable,meth:Expr,methhash:int):Expr := (
@@ -975,7 +975,7 @@ export lookupfun(e:Expr):Expr := (
      else nullE);
 setupfun("lookup",lookupfun);	  
 
-toHashTableError(i:int):Expr := errorExpr(
+toHashTableError(i:int):Expr := buildErrorPacket(
      "expected element at position "+tostring(i)+" to be a pair");
 toHashTable(v:Sequence):Expr := (
      o := newHashTable(hashTableClass,nothingClass);
