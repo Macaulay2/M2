@@ -221,13 +221,16 @@ export ScopeList := null or ScopeListCell;
 export ScopeListCell := {scope:Scope, next:ScopeList};
 export allScopes := ScopeList(NULL);
 export numScopes := 0;
+dummySymbolFrameIndex := 0;
 export globalScope := (
-     s := Scope(newDictionary(),self,numScopes,0,false);
+     s := Scope(newDictionary(),self,numScopes,dummySymbolFrameIndex+1,false);
      numScopes = numScopes + 1;
      allScopes = ScopeListCell(s,allScopes);
      s
      );
-export globalFrame := Frame(dummyFrame,globalScope.seqno,Sequence());
+export globalFrame := Frame(dummyFrame,globalScope.seqno,Sequence(
+	  nullE						    -- value for dummySymbol
+	  ));
 export localFrame := globalFrame;
 export newScope(scope:Scope):Scope := (
      s := Scope(newDictionary(),scope,numScopes,0,true);
@@ -267,7 +270,6 @@ export dummyScope := (
      s);
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
-export dummyCode := Code(exprCode(nullE,dummyPosition)); -- was Code(CodeSequence());
 export emptySequence := Sequence();
 export dummyUnaryFun(c:Code):Expr := (
      error("dummy unary function called");
@@ -293,8 +295,11 @@ export thingClass := HashTable(
 export dummySymbol := Symbol(
      dummyWord,nextHash(),dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-     globalScope.seqno,-1,1,true,true,false
+     globalScope.seqno,dummySymbolFrameIndex,1,true,true,false
      );
+dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
+globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
+export dummyCode := Code(exprCode(Expr(dummySymbolClosure),dummyPosition)); -- was Code(CodeSequence());
 export dummyToken   := Token(dummyWord,dummyPosition,globalScope,dummySymbol,false);
 export parseEOF     := newParseinfo();
 export parseWORD    := newParseinfo();

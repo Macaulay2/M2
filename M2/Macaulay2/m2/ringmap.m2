@@ -36,16 +36,22 @@ map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
 	       symbol handle => newHandle(ggPush m, ggringmap)
 	       }
 	  )
-     else if coefficientRing R === coefficientRing S
-     and ring m === coefficientRing R
-     and isFreeModule target m
-     and isFreeModule source m
-     and numgens source m === numgens target m
+     else if (
+	  ring m === try coefficientRing R
+     	  and ring m === try coefficientRing S
+     	  and isFreeModule target m
+     	  and isFreeModule source m
+	  )
      then map(R,S,vars R * (m ** R))
      else error (
-	  "expected a 1 by ", numgens S, " matrix over ", toString R, 
-	  " or a square matrix over the coefficient ring"
-	  ))
+	  if try coefficientRing R === try coefficientRing S
+	  then (
+	       "expected a 1 by ", numgens S, " matrix over ", toString R, 
+	       " or a ", numgens R, " by ", numgens S, " matrix over ", toString coefficientRing S
+	       )
+	  else ( "expected a 1 by ", numgens S, " matrix over ", toString R )
+	  )
+     )
 
 map(Ring,Matrix) := RingMap => options -> (S,m) -> map(ring m,S,m)
 
@@ -225,17 +231,21 @@ substitute(Matrix,ZZ) := Matrix => (m,i) -> (
      )
 
 sub2 := (R,v) -> (
-     m := new MutableList from generators R;
+     m := generators R;
+     A := R;
+     while (
+	  A = try coefficientRing A;
+	  A =!= null
+	  ) do m = join(generators A, m);
+     h := hashTable apply(#m, i -> m#i => i);
+     m = new MutableList from m;
      scan(v, opt -> (
-	       if class opt =!= Option 
-	       or #opt =!= 2
-	       then error "expected a list of options";
+	       if class opt =!= Option or #opt =!= 2 then error "expected a list of options";
 	       x := opt#0;
 	       y := opt#1;
-	       s := try baseName x else error(
-		    "expected ", toString x, " to be a generator of ", toString R
-		    );
-	       m#((monoid R).index#s) = y));
+	       if not h#?x then error( "expected ", toString x, " to be a generator of ", toString R );
+	       m#(h#x) = y)
+	  );
      f := matrix{toList m};
      S := ring f;
      map(S,R,f))

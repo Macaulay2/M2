@@ -556,6 +556,13 @@ bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
 		    ||
 		    opHasBinaryMethod(binary.operator.entry))
 	       then makeErrorTree( assn.operator, "can't assign a value for this binary operator");
+	       if binary.operator.word == DotS.symbol.word then (
+		    when binary.rhs is t:Token do (
+			 if t.word.typecode != TCid
+			 then makeErrorTree(assn.operator, "expected a symbol to right of '.'");
+			 )
+		    else makeErrorTree(assn.operator, "expected a symbol to right of '.'");
+		    );
 	       )
 	  )
      is n:New do (
