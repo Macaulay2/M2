@@ -17,6 +17,8 @@ x+x^2
 
 k = GF(2,3,Variable=>a)
 
+assert( length degree id_(k^1) == 0 )
+
 -- Local Variables:
 -- compile-command: "make galois.okay "
 -- End:
