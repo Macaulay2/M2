@@ -266,7 +266,7 @@ checkForExampleOutputFile := () -> (
 	  if fileExists exampleOutputFilename then (
 	       -- read, separate, and store example output
 	       exampleResults = currentPackage#"example outputs"#currentNodeName = drop(separateM2output get exampleOutputFilename,-1);
-	       stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl; -- debugging
+	       -- stderr << "node " << currentNodeName << " : " << peek \ net \ exampleResults << endl; -- debugging
 	       exampleResultsFound = true)))
 processExample := x -> (
      a :=
@@ -289,7 +289,6 @@ processExamplesLoop := s -> (
      else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)
-makeFileName= on makeFileName
 processExamples := (key,docBody) -> (
      currentNodeName = formatDocumentTag key;
      exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,thePackage);
