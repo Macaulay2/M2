@@ -38,13 +38,13 @@ ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
       ERROR("GB computation for non-polynomial rings not yet re-implemented");
       return 0;
     }
-  const PolynomialRing *R = R2->get_flattened_ring();
 
-  bool is_graded = (R->is_graded() && m->is_homogeneous());
+  //  const PolynomialRing *R = R2->get_flattened_ring();
+  // bool is_graded = (R->is_graded() && m->is_homogeneous());
   //bool ring_is_base = R->is_basic_ring();
   //bool base_is_ZZ = R->Ncoeffs()->is_ZZ(); 
 #warning "NOT QUITE!!  Need to know if it is ZZ or QQ"
-#warning "unused variable commented out"
+#warning "unused variables commented out"
   // bool base_is_field = !R->Ncoeffs()->is_ZZ();
 
   //  if (algorithm == 2)

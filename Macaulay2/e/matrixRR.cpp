@@ -147,7 +147,7 @@ void LMatrixRR::initialize(int nrows0, int ncols0, double *array)
   _nrows = nrows0;
   _ncols = ncols0;
   int len = nrows0 * ncols0;
-  _array = (double *) getmem_atomic(sizeof(double) * len);
+  _array = newarray_atomic(double,len);
   if (array == 0)
     {
       for (int i=0; i<len; i++)
@@ -172,7 +172,7 @@ LMatrixRR::LMatrixRR(int nrows0, int ncols0)
 void LMatrixRR::text_out(buffer &o) const
 {
   char s[1000], t[1000];
-  int *field_len = (int *) getmem_atomic(sizeof(int) * _ncols);
+  int *field_len = newarray_atomic(int, _ncols);
   int loc = 0;
 
   for (int j=0; j<_ncols; j++) {
@@ -339,7 +339,7 @@ LMatrixCCOrNull * LMatrixRR::operator+(const LMatrixCC *N) const
   LMatrixCC *P = N->copy();
 
   // increment P by 2 to only add to real part
-  cblas_daxpy(len, 1, _array, 1, (double *)P->_array, 2);
+  cblas_daxpy(len, 1, _array, 1, P->_array, 2);
   return P;
 }
 
@@ -368,10 +368,10 @@ LMatrixCCOrNull * LMatrixRR::operator-(const LMatrixCC *N) const
   LMatrixCC *P = N->copy();
 
   //compute -P
-  cblas_dscal(2*len, -1, (double *)P->_array, 1);
+  cblas_dscal(2*len, -1, P->_array, 1);
 
   // increment P by 2 to only add to real part
-  cblas_daxpy(len, 1, _array, 1, (double *)P->_array, 2);
+  cblas_daxpy(len, 1, _array, 1, P->_array, 2);
   return P;
 }
 
@@ -487,7 +487,7 @@ LMatrixRROrNull * LMatrixRR::solve(LMatrixRR *b, LMatrixRR *x)
 
   int size = _nrows;
   int bsize, info;
-  int *permutation = (int *) getmem_atomic(sizeof(int) * size);
+  int *permutation = newarray_atomic(int, size);
 
   /* make sure matrix is square */
   if (_nrows != _ncols)
@@ -532,7 +532,7 @@ LMatrixRROrNull * LMatrixRR::LU(LMatrixRR *L, LMatrixRR *U, LMatrixRR *P)
   int cols = _ncols;
   int info;
   int min = (rows <= cols) ? rows : cols;
-  int *permutation = (int *) getmem_atomic(sizeof(int) * min);
+  int *permutation = newarray_atomic(int, min);
 
   LMatrixRR *copythis = copy();
 
@@ -610,7 +610,7 @@ LMatrixCCOrNull * LMatrixRR::eigenvalues(LMatrixCC *eigvals)
   char dont = 'N';
   int size = _nrows;
   int wsize = 3*size;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
+  double *workspace = newarray_atomic(double, wsize);
   int info;
 
   LMatrixRR * real = new LMatrixRR(size,1); // real components of eigvals
@@ -620,8 +620,8 @@ LMatrixCCOrNull * LMatrixRR::eigenvalues(LMatrixCC *eigvals)
 	 &size, copythis->_array, &size,
 	 real->_array, 
 	 imag->_array,
-	 (double *)0, &size,  /* left eigenvectors */
-	 (double *)0, &size,  /* right eigenvectors */
+	 static_cast<double *>(0), &size,  /* left eigenvectors */
+	 static_cast<double *>(0), &size,  /* right eigenvectors */
 	 workspace, &wsize, &info);
 
   if (info < 0)       
@@ -659,7 +659,7 @@ LMatrixCC * LMatrixRR::eigenvectors(LMatrixCC *eigvals,
   char doit = 'V';
   int size = _nrows;
   int wsize = 4*size;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
+  double *workspace = newarray_atomic(double, wsize);
   int info;
 
   LMatrixRR * real = new LMatrixRR(size,1); // real components of eigvals
@@ -670,7 +670,7 @@ LMatrixCC * LMatrixRR::eigenvectors(LMatrixCC *eigvals,
 	 &size, copythis->_array, &size,
 	 real->_array, 
 	 imag->_array,
-	 (double *)0, &size,  /* left eigvecs */
+	 static_cast<double *>(0), &size,  /* left eigvecs */
 	 eigen->_array, &size,  /* right eigvecs */
 	 workspace, &wsize, &info);
 
@@ -724,7 +724,7 @@ LMatrixRROrNull * LMatrixRR::eigenvalues_symmetric(LMatrixRR *eigvals)
 
   int size = _nrows;
   int wsize = 3*size-1;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
+  double *workspace = newarray_atomic(double, wsize);
   int info;
 
   eigvals->resize(size,1);
@@ -761,7 +761,7 @@ LMatrixRROrNull * LMatrixRR::eigenvectors_symmetric(LMatrixRR *eigvals,
 
   int size = _nrows;
   int wsize = 3*size-1;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
+  double *workspace = newarray_atomic(double, wsize);
   int info;
 
   eigvecs->set_matrix(this);
@@ -798,7 +798,7 @@ LMatrixRROrNull * LMatrixRR::SVD(LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *VT)
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = (3*min+max >= 5*min) ? 3*min+max : 5*min;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
+  double *workspace = newarray_atomic(double, wsize);
 
   U->resize(rows,rows);
   VT->resize(cols,cols);
@@ -837,8 +837,8 @@ LMatrixRROrNull * LMatrixRR::SVD_divide_conquer(LMatrixRR *Sigma,
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = 4*min*min + max + 9*min;
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
-  int *iworkspace = (int *) getmem_atomic(sizeof(int) * 8 * min);
+  double *workspace = newarray_atomic(double,wsize);
+  int *iworkspace = newarray_atomic(int, 8*min);
 
   U->resize(rows,rows);
   VT->resize(cols,cols);
@@ -880,7 +880,7 @@ LMatrixRROrNull * LMatrixRR::least_squares(LMatrixRR *b, LMatrixRR *x)
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = min + ((bcols >=  max) ? bcols : max);
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
+  double *workspace = newarray_atomic(double, wsize);
 
   if (brows != rows) {
     ERROR("expected compatible right hand side");
@@ -949,8 +949,8 @@ LMatrixRROrNull * LMatrixRR::least_squares_deficient(LMatrixRR *b, LMatrixRR *x)
   int max = (rows > cols) ? rows : cols;
   int tempmax = ((2*min >  max) ? 2*min : max);
   int wsize = 3*min + ((tempmax >  bcols) ? tempmax : bcols);
-  double *workspace = (double *) getmem_atomic(sizeof(double) * wsize);
-  double *sing = (double *) getmem_atomic(sizeof(double) * min);
+  double *workspace = newarray_atomic(double,wsize);
+  double *sing = newarray_atomic(double,min);
 
   if (brows != rows) {
     ERROR("expected compatible right hand side");

@@ -94,7 +94,7 @@ int MonomialTable::find_divisor(exponents exp,
 				int comp) const
 {
   assert(comp >= 1);
-  if (comp >= (int)_head.size()) return -1;
+  if (comp >= static_cast<int>(_head.size())) return -1;
   mon_term *head = _head[comp];
   mon_term *t;
   int i;
@@ -125,7 +125,7 @@ int MonomialTable::find_divisors(int max,
 				 vector< mon_term * ,gc_alloc> *result) const
 {
   assert(comp >= 1);
-  if (comp >= (int)_head.size()) return 0;
+  if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
   mon_term *t;
   int i;
@@ -155,7 +155,7 @@ int MonomialTable::find_divisors(int max,
 
 MonomialTable::mon_term *MonomialTable::find_exact(exponents exp, int comp) const
 {
-  if (comp >= (int)_head.size()) return 0;
+  if (comp >= static_cast<int>(_head.size())) return 0;
   mon_term *head = _head[comp];
   mon_term *t;
   int i;
@@ -184,7 +184,7 @@ void MonomialTable::insert(exponents exp, int comp, int id)
      in some order (lex order?).  No element is ever removed.
   */
 
-  if (comp >= (int)_head.size())
+  if (comp >= static_cast<int>(_head.size()))
     {
       for (int i=_head.size(); i <= comp; i++)
 	_head.push_back(make_list_head());
@@ -364,7 +364,7 @@ void MonomialTable::show(FILE *fil)
   mon_term *t,*head;
   /* Loop through each component, display monomials(val) 10 per line */
   fprintf(fil, "monomial table: %d vars, %d components, %d elements\n",
-	  this->_nvars, (int)_head.size(), this->_count);
+	  this->_nvars, static_cast<int>(_head.size()), this->_count);
   for (unsigned i=1; i<_head.size(); i++)
     {
       head = this->_head[i];

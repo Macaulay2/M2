@@ -63,8 +63,8 @@ HermiteComputation::HermiteComputation(const Matrix *m, int collsyz, int nsyz)
   if (nsyz < 0 || nsyz > m->n_cols())
     nsyz = m->n_cols();
   n_comps_per_syz = nsyz;
-  const FreeModule *F = m->cols()->sub_space(nsyz);  
 #warning "this syz needs to be replaced, assuming we are keeping this code"
+  //  const FreeModule *F = m->cols()->sub_space(nsyz);  
   //  syz = new Matrix(F);
 
   for (i=0; i<m->n_cols(); i++)
