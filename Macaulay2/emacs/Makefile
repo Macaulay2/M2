@@ -10,9 +10,6 @@ all:: M2-symbols.el
 M2-symbols.el : ../cache/Macaulay2-doc makesyms.m2
 	../bin/M2 -q -silent makesyms.m2 '-e exit 0'
 
-M2HOME.el :
-	echo "(defvar M2HOME \"`cd ..; pwd`\")" >$@
-
 all:: emacs-hlp.txt
 emacs-hlp.txt: ../cache/Macaulay2-doc makehlp.m2
 	../bin/M2 -q -silent makehlp.m2 '-e exit 0'

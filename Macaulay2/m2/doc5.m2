@@ -1,5 +1,26 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+document { override,
+     HEADLINE "override default values for optional arguments",
+     TT "override(defaults,args)", " -- overrides default values for
+     optional arguments present in the argument sequence ", TT "args", ".",
+     PARA,
+     "The argument ", TT "defaults", " should be an immutable hash table (
+     usually of type ", TO "OptionTable", "), and ", TT "args", " should be
+     a sequence of arguments, some of which are optional arguments of
+     the form ", TT "x => v", ".  Each such optional argument
+     is removed from ", TT "args", ", and the value in ", TT "defaults", "
+     corresponding to the key ", TT "x", " is replaced by ", TT "v", ".
+     The value returned is the modified pair ", TT "(defaults, args)", ".",
+     PARA,
+     "This function is intended for internal use only, and is used in the processing
+     of optional arguments for method functions which accept them.",
+     EXAMPLE {
+	  "defs = new HashTable from { a => 1, b => 2 };",
+	  "override(defs, (4,b=>6,5))"
+	  }
+     }
+
 document { userSymbols,
      TT "userSymbols ()", " -- provides a list of variables defined by
      the user.",
@@ -264,6 +285,10 @@ document { memoize,
      "The function ", TT "memoize", " operates by constructing 
      a ", TO "MutableHashTable", " in which the argument sequences are used
      as keys for accessing the return value of the function.",
+     PARA,
+     "An optional second argument to memoize provides a list of initial values,
+     each of the form ", TT "x => v", ", where ", TT "v", " is the value to
+     be provided for the argument ", TT "x", ".",
      PARA,
      "Warning: when the value returned by f is null, it will always be 
      recomputed, even if the same arguments are presented.",

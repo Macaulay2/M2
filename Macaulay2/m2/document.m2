@@ -452,8 +452,8 @@ briefDocumentation = x -> (
      else if headline x =!= null then << endl << headline x << endl
      )
 
-smenu := s -> MENU (TOH \ sort (formatDocumentTag \ s))
- menu := s -> SHIELD MENU (TOH \ formatDocumentTag \ s)
+smenu := s -> MENU (TOH \ last \ sort apply(s , i -> {formatDocumentTag i, i}) )
+ menu := s -> MENU (TOH \ s)
 
 ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent X)
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
@@ -469,21 +469,22 @@ usage = s -> (
      if o =!= null then SEQ {o, PARA{}}
      )
 
+title := s -> SEQ { CENTER { BIG formatDocumentTag s, headline s }, PARA{} }
+type := s -> SEQ {
+     "The object ", TT toExternalString s, " is a member of each of the
+     following classes, most specific first:", PARA{}, 
+     SHIELD menu ancestors1 class s, PARA{}
+     }
+
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
      if unformatTag#?s then documentation unformatTag#s
      else (
 	  key := betterKey s;
-	  if key =!= s then documentation key else getUsage s
+	  if key =!= s then documentation key 
+	  else SEQ { title s, getUsage s }
 	  )
      )
-
-title := s -> SEQ { CENTER { BIG formatDocumentTag s, headline s }, PARA{} }
-type := s -> SEQ {
-     "The object ", TT toExternalString s, " is a member of each of the
-     following classes, most specific first:", PARA{}, 
-     menu ancestors1 class s, PARA{}
-     }
 documentation Thing := s -> SEQ { title s, usage s, type s }
 binary := set binaryOperators
 prefix := set prefixOperators
@@ -561,7 +562,7 @@ documentation Type := X -> (
 	       "Each object of class ", toString X, 
 	       " is also called ", indefinite X.synonym, ".", PARA{}},
 	  if #b > 0 then SEQ {"Types of ", toString X, " :", PARA{}, smenu b, PARA{}},
-	  if #d > 0 then SEQ {"Each ", synonym X, " is also a :", PARA{}, menu d, PARA{}},
+	  if #d > 0 then SEQ {"Each ", synonym X, " is also a :", PARA{}, SHIELD menu d, PARA{}},
 	  if #a > 0 then SEQ {"Making ", indefinite synonym X, " :", PARA{}, SHIELD smenu a, PARA{}},
 	  if #c > 0 then SEQ {"Methods for using ", indefinite synonym X, " :", PARA{}, SHIELD smenu c, PARA{}},
 	  if #e > 0 then SEQ {"Fixed objects of class ", toString X, " :", PARA{}, SHIELD smenu e, PARA{}},
