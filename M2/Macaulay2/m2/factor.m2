@@ -26,17 +26,11 @@ gcdCoefficients(RingElement,RingElement) := (f,g) -> (
      sendgg(ggpop);
      {p,q})     
 
---- this is the way the engine's own gcd routine would get called
---- pgcd = (f, g) -> (sendgg(ggPush f, ggPush g, gggcd); new ring f)
---- but it isn't implemented yet when there is more than one variable.
-
 pseudoRemainder = method()
-
 pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
-     sendgg(ggPush f, ggPush g, ggfactor2);
-     R.pop())
+     new R from rawPseudoRemainder(raw f, raw g));
 
 reorder := I -> (
      f := generators I;
