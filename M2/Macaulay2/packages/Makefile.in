@@ -19,17 +19,17 @@ PACKAGES += minimal
 
 REMAKE = false
 
-%.installed : %.m2
-	../bin/M2 \
+all ::
+	for i in $(PACKAGES) ; do \
+	    ( set -x ; \
+	      ../bin/M2 \
 		-q \
 		--stop \
 		--prefix $(encapdir) \
 		-e errorDepth=0 \
-		-e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"$(encapdir)/\")" \
-		-e "exit 0"
-	touch "$@"
-
-all :: $(PACKAGES:=.installed)
+		-e "installPackage(\"$$i\", Encapsulate => false, RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"$(encapdir)/\")" \
+		-e "exit 0" ) || break ; \
+	done
 
 clean::; rm -rf tmp *.installed
 
