@@ -2,6 +2,10 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.47:
 
+'wait' will now take a list of files and wait for one of them to have
+input ready.  (At least this works under unix, with the 'select' system
+call.)
+
 New commands 'echoOn' and 'echoOff' to set echoing on or off for a file.
 On the command line, with no arguments, the standard file 'stdio' is assumed
 as the argument.

@@ -145,16 +145,15 @@ typedef char M2_bool;
 typedef struct {
      unsigned int len;
      int array[1];
-     } *arrayint;
-
+     } *M2_arrayint;
 
 typedef struct {
      unsigned int len;
      M2_string array[1];
-     } *stringarray;
+     } *M2_stringarray;
 
-extern char **tocharstarstar(stringarray);
-extern stringarray tostrings(int,char **);
+extern char **tocharstarstar(M2_stringarray);
+extern M2_stringarray tostrings(int,char **);
 
 #define sizeofarray(s,len) (sizeof(*s) - sizeof(s->array) \
      + (len)*sizeof(s->array[0]))

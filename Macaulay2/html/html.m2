@@ -137,15 +137,7 @@ masterFileName << html HTML {
 
 OS := "operating system"
 
-run concatenate ( 
-     if version#OS === "MS-DOS" then "copy" else 
-     if version#OS === "Windows NT" then "copy" else 
-     if version#OS === "CYGWIN32-95" then "copy" else 
-     if version#OS === "CYGWIN32-NT" then "copy" else 
-	 "ln -f",
-     " ",
-     masterIndex#(format "Macaulay 2"),
-     " index.html")
+run concatenate ("cp ", masterIndex#(format "Macaulay 2"), " index.html")
 
 if missing then error "missing some nodes"
 

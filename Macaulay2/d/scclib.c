@@ -139,7 +139,7 @@ M2_string s;
      }
 
 char **tocharstarstar(p)
-stringarray p;
+M2_stringarray p;
 {
      char **s = (char **)getmem((1 + p->len)*sizeof(char *));
      unsigned int i;
@@ -198,13 +198,13 @@ int start;
      }
 
 int system_pipe(fildes)
-arrayint fildes;
+M2_arrayint fildes;
 {
      return pipe(fildes->array);
      }
 
 int system_exec(argv)
-stringarray argv;
+M2_stringarray argv;
 {
      int i;
      char **av = tocharstarstar(argv);
@@ -236,23 +236,23 @@ int n;
      return p;
      }
 
-arrayint toarrayint(n,p)
+M2_arrayint toarrayint(n,p)
 int n;
 int *p;
 {
-     arrayint z = (arrayint)getmem_atomic(sizeofarray(z,n));
+     M2_arrayint z = (M2_arrayint)getmem_atomic(sizeofarray(z,n));
      z->len = n;
      memcpy(z->array,p,n * sizeof(int));
      return z;
      }
 
-stringarray tostrings(n,s)
+M2_stringarray tostrings(n,s)
 int n;
 char **s;
 {
      int i;
-     stringarray a;
-     a = (stringarray) getmem (sizeofarray(a,n));
+     M2_stringarray a;
+     a = (M2_stringarray) getmem (sizeofarray(a,n));
      a->len = n;
      for (i=0; i<n; i++) a->array[i] = tostring(s[i]);
      return a;
@@ -296,9 +296,26 @@ int system_wait(pid)
 int pid;
 {
      int status;
-     while (pid != wait(&status));
+     int ret = waitpid(pid,&status,0);
+     if (ret == ERROR) return ERROR;
      return status>>8;
      }
+
+M2_arrayint system_select(M2_arrayint v) {
+  static fd_set r, w, e;
+  int n = v->len;
+  int *s = v->array, *t;
+  int i, j, max = 0, m;
+  M2_arrayint z;
+  if (n == 0) return v;
+  for (i=0; i<n; i++) if (s[i] > max) max = s[i];
+  for (i=0; i<n; i++) FD_SET(s[i], &r);
+  m = select(max+1,&r,&w,&e,NULL);
+  z = (M2_arrayint)getmem_atomic(sizeofarray(z,m));
+  z->len = m;
+  for (i=j=0; i<n; i++) if (FD_ISSET(s[i],&r)) { z->array[j++] = i; FD_CLR(s[i],&r); }
+  return z;
+}
 
 unsigned int system_hash(x)
 double x;
