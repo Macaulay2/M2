@@ -206,6 +206,19 @@ ring_elem PolyRing::from_double(double n) const
   return result;
 }
 
+ring_elem PolyRing::from_rational(mpq_ptr q) const
+{
+  ring_elem a = K_->from_rational(q);
+  if (K_->is_zero(a)) 
+    {
+      return ZERO_RINGELEM;
+    }
+  Nterm *result = new_term();
+  result->coeff = a;
+  M_->one(result->monom);
+  return result;
+}
+
 ring_elem PolyRing::var(int v) const
 {
   for (int i=0; i<nvars_; i++) _EXP1[i] = 0;

@@ -126,6 +126,13 @@ ring_elem QQ::from_int(mpz_ptr n) const
   return MPQ_RINGELEM(result);
 }
 
+ring_elem QQ::from_rational(mpq_ptr a) const
+{
+  M2_Rational result = QQ::new_elem();
+  mpq_set(result, a);
+  return MPQ_RINGELEM(result);
+}
+
 bool QQ::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   // Rf = ZZ ---> QQ
@@ -187,11 +194,7 @@ int QQ::is_positive(const ring_elem f) const
 
 ring_elem QQ::copy(const ring_elem f) const
 {
-  M2_Rational a = MPQ_VAL(f);
-
-  M2_Rational result = QQ::new_elem();
-  mpq_set(result, a);
-  return MPQ_RINGELEM(result);
+  return QQ::from_rational(MPQ_VAL(f));
 }
 
 void QQ::remove(ring_elem &f) const
@@ -372,7 +375,14 @@ void QQ::syzygy(const ring_elem a, const ring_elem b,
 ring_elem QQ::eval(const RingMap *map, const ring_elem a) const
 {
   const Ring *S = map->get_ring();
+  return S->from_rational(MPQ_VAL(a));
+#if 0
+  const PolynomialRing *SP = S->cast_to_PolynomialRing();
   const M2_Rational f = MPQ_VAL(a);
+  if (S == globalQQ || (SP != 0 && SP->getCoefficients() == globalQQ))
+    {
+      return S->from_QQ(a);
+    }
   ring_elem top = globalZZ->eval(map, MPZ_RINGELEM(mpq_numref(f)));
   if (S->is_zero(top)) return top;
   ring_elem bottom = globalZZ->eval(map, MPZ_RINGELEM(mpq_denref(f)));
@@ -386,6 +396,7 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a) const
   S->remove(top);
   S->remove(bottom);
   return result;
+#endif
 }
 
 #if 0

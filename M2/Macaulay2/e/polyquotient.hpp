@@ -80,6 +80,7 @@ public:
   virtual ring_elem from_double(double n) const { return numerR_->from_double(n); }
   virtual ring_elem from_int(int n) const { return numerR_->from_int(n); }
   virtual ring_elem from_int(mpz_ptr n) const { return numerR_->from_int(n); }
+  virtual ring_elem from_rational(mpq_ptr q) const { return numerR_->from_rational(q); }
 
   virtual ring_elem var(int v) const { 
     ring_elem result = numerR_->var(v);
