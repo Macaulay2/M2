@@ -290,11 +290,23 @@ M2_string s,t;
   for (i=0; i<len; i++) {
     unsigned char c = s->array[i];
     unsigned char d = t->array[i];
-    if (toupper(c) < toupper(d)) return -1;
-    if (toupper(c) > toupper(d)) return 1;
-    if (ret == 0) {
-      if (c < d) ret = -1;
-      if (c > d) ret = 1;
+    if (isalnum(c)) {
+      if (isalnum(d)) {
+	if (toupper(c) < toupper(d)) return -1;
+	if (toupper(c) > toupper(d)) return 1;
+	if (ret == 0) {
+	  if (c < d) ret = -1;
+	  if (c > d) ret = 1;
+	}
+      }
+      else return 1;
+    }
+    else {
+      if (isalnum(d)) return -1;
+      else {
+	if (c < d) return -1;
+	if (c > d) return 1;
+      }
     }
   }
   if (ret != 0) return ret;

@@ -1304,10 +1304,21 @@ document { (components, ChainComplex),
      }
 
 document { (symbol " ", ChainComplex, Array),
-     Headline => "chain complex degree shift",
-     TT "C[i]", " -- shifts the chain complex C, producing a new chain complex
-     D in which D_j is C_(i+j).  The signs of the differentials are reversed
-     if i is odd."
+     Headline => "degree shift",
+     Synopsis => {
+	  "D = C[i]",
+	  "C" => {},
+	  "[i]" => {"in which ", TT "i", " is an integer"},
+	  "D" => {"a new chain complex ", TT "D", " in which
+	       ", TT "D_j", " is ", TT "C_(i+j)", ".  The signs of the
+	       differentials are reversed if ", TT "i", " is odd."}
+	  }
+     }
+
+document { (symbol " ", GradedModule, Array),
+     Headline => "degree shift",
+     TT "C[i]", " -- shifts the graded module ", TT "C", ", producing a new graded module
+     ", TT "D", " in which ", TT "D_j", " is ", TT "C_(i+j)", "."
      }
 
 document { (Hom,ChainComplex,Module),

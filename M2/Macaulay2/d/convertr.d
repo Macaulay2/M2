@@ -165,7 +165,7 @@ export convert(e:ParseTree):Code := (
      is w:For do Code(
 	  forCode(
 	       convert(w.fromclause), convert(w.toclause),
-	       convert(w.whileclause), convert(w.listclause), 
+	       convert(w.whenclause), convert(w.listclause), 
 	       convert(w.doclause),
 	       w.scope,
 	       treePosition(e)))

@@ -34,9 +34,21 @@ linkFilename = memoize(
      { topNodeName => topFileName }
      )
 
-html TO   := x -> (
-     key := formatDocumentTag x#0;
-     concatenate("<A HREF=\"", linkFilename key, "\">", html key, "</A>", drop(toList x,1))
+htmlLiteralTable := new MutableHashTable
+scan(characters ascii(0 .. 255), c -> htmlLiteralTable#c = c)
+htmlLiteralTable#"\"" = "&quot;"
+htmlLiteralTable#"<" = "&lt;"
+htmlLiteralTable#"&" = "&amp;"
+htmlLiteralTable#">" = "&gt;"
+htmlLiteral := s -> concatenate apply(characters s, c -> htmlLiteralTable#c)
+
+htmlExtraLiteralTable := copy htmlLiteralTable
+htmlExtraLiteralTable#" " = "&nbsp;"
+htmlExtraLiteral := s -> concatenate apply(characters s, c -> htmlExtraLiteralTable#c)
+
+html TO := x -> (
+     fkey := formatDocumentTag x#0;
+     concatenate("<A HREF=\"", linkFilename fkey, "\">", htmlExtraLiteral fkey, "</A>", drop(toList x,1))
      )
 
 html BODY := x -> concatenate(
@@ -69,7 +81,7 @@ masterIndex = new MutableHashTable
 follow := key -> (
      fkey := formatDocumentTag key;
      if not linkFollowedTable#?fkey then (
-	  if class key =!= Option and class key =!= Sequence then masterIndex#fkey = true;
+	  if class key =!= Option and class key =!= Sequence then masterIndex#(fkey,key) = true;
 	  linkFollowedTable#fkey = true;
 	  linkFilename fkey;
 	  saveThisKey := thisKey;
@@ -177,30 +189,25 @@ time scan(keys linkFollowedTable, fkey -> (
 -- create the master index
 al := characters "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 i := 0
+anchor := entry -> if al#?i and entry >= al#i then (
+     s := select(drop(al,i), c -> entry >= c);
+     i = i + #s;
+     SEQ apply(s, c -> ANCHOR {c, ""})
+     )
 
 masterFileName << html HTML {
      HEAD { TITLE masterNodeName },
      BODY {
-	  H2 masterNodeName,
-	  CENTER topNodeButton,
-	  PARA,
-	  CENTER between(" ",apply(al, c -> HREF {"#"|c, c})),
-	  PARA,
-	  MENU apply(sort keys masterIndex, fkey -> SEQ {
-		    if al#?i and fkey >= al#i then (
-			 s := select(drop(al,i), c -> fkey >= c);
-			 i = i + #s;
-			 SEQ apply(s, c -> ANCHOR {c, ""})
-			 ),
-		    HREF {linkFilename fkey, fkey}}),
-	  PARA,
-	  CENTER between(" ",apply(al, c -> HREF {"#"|c, c})),
-	  PARA,
+	  H2 masterNodeName, PARA,
+	  CENTER topNodeButton, PARA,
+	  CENTER between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(al, c -> HREF {"#"|c, c})), PARA,
+	  MENU apply(sort keys masterIndex, (fkey,key) -> SEQ { anchor fkey, TO key }), PARA,
+	  CENTER between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(al, c -> HREF {"#"|c, c})), PARA,
 	  CENTER topNodeButton
 	  }
      } << endl << close
 
 if haderror then (
-     stderr << "exiting after having encountered documentation errors" << endl;
+     stderr << "exiting after having encountered some documentation errors" << endl;
      exit 1
      )

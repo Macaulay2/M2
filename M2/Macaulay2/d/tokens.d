@@ -76,11 +76,7 @@ export Token := {		-- a word, as encountered in the input
 export Adjacent := {lhs:ParseTree, rhs:ParseTree};
 export For := {
      fortoken:Token, variable:ParseTree,
-     fromtoken:Token, fromclause:ParseTree,		    -- optional
-     totoken:Token, toclause:ParseTree,			    -- optional
-     whiletoken:Token, whileclause:ParseTree,		    -- optional
-     listtoken:Token, listclause:ParseTree,		    -- optional
-     dotoken:Token, doclause:ParseTree,			    -- optional
+     fromclause:ParseTree, toclause:ParseTree, whenclause:ParseTree, listclause:ParseTree, doclause:ParseTree,
      scope:Scope					    -- filled in later
      };
 export WhileDo := {
@@ -202,7 +198,7 @@ export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
 export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
-export forCode := {fromclause:Code,toclause:Code, whileclause:Code,listclause:Code,doclause:Code,
+export forCode := {fromclause:Code,toclause:Code, whenclause:Code,listclause:Code,doclause:Code,
      scope:Scope, position:Position} ;
 export unop := function(Code):Expr;
 export binop := function(Code,Code):Expr;

@@ -37,6 +37,6 @@ installMethod(symbol ==>, OptionTable, Function, Function =>
      )
   )
 
-installMethod(symbol ==>, List, Function, Function => 
-     (o,f) -> (new OptionTable from o) ==> f
+installMethod(symbol ==>, List, Function, Function =>
+     (o,f) -> new OptionTable from o ==> f
      )
