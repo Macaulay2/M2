@@ -243,8 +243,7 @@ file := null
 -- getting database records
 -----------------------------------------------------------------------------
 
-extractOptions := x -> x
-extractBody := x -> x.Description
+extractBody := x -> if x.?Description then x.Description
 getRecord := (pkg,key) -> pkg#"documentation"#key	    -- for Databases, insert 'value' here
 getPackage := key -> scan(
      value \ values PackageDictionary,
@@ -259,7 +258,6 @@ if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
 getOption := (key,tag) -> (
      s := getDoc key;
      if s =!= null and s#?tag then s#tag)
-getSynopsis := key -> getDoc key
 getBody := key -> getOption(key,Description)
 -----------------------------------------------------------------------------
 -- process examples
@@ -527,7 +525,7 @@ makeDocBody Thing := key -> (
      if pkg =!= null then (
 	  rec := getRecord(pkg,fkey);
 	  docBody := extractBody rec;
-	  if #docBody > 0 then (
+	  if docBody =!= null and #docBody > 0 then (
 	       if doExamples then docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
 	       then PARA {docBody}
