@@ -1,5 +1,7 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+char *gnu_get_libc_version();
+
 #include "readline.h"
 #include "types.h"
 
@@ -507,15 +509,16 @@ char **argv;
 #     	       endif
 	       sprintf(buf,
 #                      if GC_ALPHA_VERSION == GC_NOT_ALPHA
-		       "--GC %d.%d, copyright, H-J. Boehm, A. Demers, Xerox, Silicon Graphics",
+		       "--GC %d.%d, copyright, H-J. Boehm, A. oDemers",
 #                      else
-		       "--GC %d.%d alpha %d, copyright, H-J. Boehm, A. Demers, Xerox, Silicon Graphics",
+		       "--GC %d.%d alpha %d, copyright, H-J. Boehm, A. Demers",
 #                      endif
 		       GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_ALPHA_VERSION
 		       );
 	       putstderr(buf);
-	       putstderr("--GNU libc and libg++, copyright, Free Software Foundation");
-	       sprintf(buf,"--GNU MP %s, copyright, Free Software Foundation",__gmp_version);
+	       sprintf(buf,"--GNU C Library (glibc-%s), copyright, Free Software Foundation", gnu_get_libc_version());
+	       putstderr(buf);
+	       sprintf(buf,"--GNU MP Library (gmp-%s), copyright, Free Software Foundation",__gmp_version);
 	       putstderr(buf);
 	       break;
        	       }

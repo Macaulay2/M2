@@ -21,7 +21,7 @@ library: factory
 release: factory-1.2c
  author: G-M. Greuel <greuel@mathematik.uni-kl.de>
 	 R. Stobbe <stobbe@mathematik.uni-kl.de>
- get at: 
+ get at: helios.mathematik.uni-kl.de:/pub/Math/Factory
 license: Macaulay2/licenses/factory.lic
 
 library: libfac
@@ -37,26 +37,21 @@ release: 1.1.3
 license: mp/README
 
 library: gmp
-release: gmp-2.0.2
+release: gmp-3.1.1
  author: Torbjorn Granlund <tege@nada.kth.se>
 bugs to: <bug-gmp@prep.ai.mit.edu>
- get at: prep.ai.mit.edu:pub/gnu
-license: gmp-2.0/COPYING.LIB
+ get at: ftp.gnu.org:gnu/gmp
+license: gmp/COPYING.LIB
 
 library: gc
-release: gc4.13alpha1 (see file gc/version.h)
- author: Hans Boehm <boehm@mti.sgi.com>
- get at: http://reality.sgi.com/employees/boehm_mti/gc.html
+release: 6.0 alpha 2 (see file gc/version.h)
+ author: Hans Boehm <hboehm@exch.hpl.hp.com>
+ get at: http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc.tar.gz
 license: gc/README
 
-library: libc
-release: 5.3.12
- get at: prep.ai.mit.edu:pub/gnu
-license: Macaulay2/licenses/gnulib.lic
-
-library: libg++
-release:
- get at: prep.ai.mit.edu:pub/gnu
+library: libm.so and libc.so from glibc
+release: 2.2.1
+ get at: ftp.gnu.org:gnu/glibc
 license: Macaulay2/licenses/gnulib.lic
 
 To configure Macaulay 2 type 'make -f Makefile-configure' in this directory,
@@ -124,9 +119,26 @@ There are two ways to compile Macaulay 2 under Windows 95 and NT.
 ----------------------
 Linux notes
 ----------------------
-You may have to remove the option -lieee from Macaulay2/d/Makefile if the
-library doesn't exist on your system.  It exists in Slackware Linux, at least
-old versions, but not in RedHat Linux.
+
+----------------------
+HPUX notes
+----------------------
+
+On hppa-2.0w systems, gmp will not compile with gcc, so the configure script
+for gmp prefers to use /usr/ccs/bin/cc.  So it is best to install gmp
+separately, making sure /usr/ccs/bin is before /usr/local/bin on the path
+(just in case gnu nm is in /usr/local/bin).  To use the previously installed
+version of gmp when compiling M2, specify the option --with-gmp to configure,
+or in Makefile.overrides.
+
+Why don't we simply unset CC when automatically configuring gmp?  Because
+under other operating systems, it is desirable for the same compiler to be
+used for the whole package.  For example, under Windows, gcc and cl aren't
+library compatible.
+
+Another strange problem: the . command in /bin/sh seems to look along the
+path instead in the current directory to find the file.  This causes a
+problem for 'configure'.  Just edit its first line to use 'bash' instead.
 
 ----------------------
 FreeBSD notes
@@ -175,7 +187,7 @@ libfac: The include files factor.h and Factor.h tend to get confused for each
 
 -----------------------------------------------------------------------------
 
-Macaulay 2 is copyright 1993-1997 by Daniel R. Grayson and Michael
+Macaulay 2 is copyright 1993-2001 by Daniel R. Grayson and Michael
 E. Stillman, all rights reserved.
 
 Daniel R. Grayson 	<dan@math.uiuc.edu>

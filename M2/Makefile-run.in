@@ -80,6 +80,9 @@ endif
 GC_TARGETS := gc.a
 GC_CFLAGS := $(CFLAGS)
 GC_CFLAGS += -DLARGE_CONFIG -DNO_SIGNALS
+GC_CFLAGS += -DATOMIC_UNCOLLECTABLE -DNO_EXECUTE_PERMISSION
+# we don't need -DALL_INTERIOR_POINTERS
+GC_CFLAGS += -Iinclude
 
 ifeq "$(DEBUG)" "yes"
 # Hans Boehm has verified that -DALL_INTERIOR_POINTERS is not needed with -DGC_DEBUG
@@ -98,8 +101,8 @@ endif
 
 lib/libgc.a: 		gc/gc.a lib/.exists;	 	cp $< $@; ranlib $@
 lib/gc.lib: 		gc/gc.lib lib/.exists;	 	cp $< $@
-include/gc.h:		gc/gc.h ;			cp $< $@
-include/gc_cpp.h: 	gc/gc_cpp.h ;			cp $< $@
+include/gc.h:		gc/include/gc.h ;		cp $< $@
+include/gc_cpp.h: 	gc/include/gc_cpp.h ;		cp $< $@
 
 ifeq "$(CC)" "cl"
 gc/gc.lib:	  always
