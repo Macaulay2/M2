@@ -42,7 +42,7 @@ you can compile and link Macaulay 2.
     release: gmp-3.1.1
      author: Torbjorn Granlund <tege@nada.kth.se>
     bugs to: <bug-gmp@prep.ai.mit.edu>
-     get at: ftp.gnu.org:gnu/gmp
+     get at: /ftp@ftp.gnu.org:gnu/gmp
     license: gmp/COPYING.LIB
 
     library: gc
