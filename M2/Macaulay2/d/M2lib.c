@@ -5,47 +5,13 @@
 #include <NTL/version.h>
 
 extern int haveDumpdata();	/* in dumpdata/map.o */
-
-const char *get_libfac_version();	/* in version.cc */
-
-unsigned GC_version;		/* in libgc.a */
-#define GC_NOT_ALPHA 0xff
-#define GC_VERSION_MAJOR ((GC_version >> 16) & 0xffff)
-#define GC_VERSION_MINOR ((GC_version >> 8) & 0xff)
-#define GC_ALPHA_VERSION (GC_version & 0xff)
-
-#ifndef NO_GNU_GET_LIBC_VERSION
-char *gnu_get_libc_version();
-#endif
-
-#include "readline.h"
 #include "types.h"
-
-#ifdef NEWDUMPDATA
-#include "../dumpdata/dumpdata.h"
-#endif
-
-#ifndef __GNUC__
-#define __attribute__(x)
-#endif
 
 /* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
 #define GDBM_STATIC
-
 #include <gdbm.h>
-#define DBM_REPLACE GDBM_REPLACE
-#define DBM_WRCREAT GDBM_WRCREAT
-#define DBM_RD GDBM_READER
-#define DBM_FILE GDBM_FILE
-#define dbm_close gdbm_close
-#define dbm_open gdbm_open
-#define dbm_store gdbm_store
-#define dbm_fetch gdbm_fetch
-#define dbm_delete gdbm_delete
-#define dbm_firstkey gdbm_firstkey
-#define dbm_nextkey gdbm_nextkey
-#define DBM_CREAT GDBM_CREAT
-#define DBM_FAST GDBM_FAST
+
+const char *get_libfac_version();	/* in version.cc */
 
 static void putstderr(char *m) {
      write(STDERR,m,strlen(m));
@@ -61,31 +27,16 @@ void WarnS(char *m) {
   putstderr(m);
 }
 
-static char *progname;
+char *progname;
 #ifdef includeX11
 Display *display;
 Font font;
 #endif
 
-bool system_interrupted = FALSE;
-bool system_interruptPending = FALSE;
-bool system_interruptShield = FALSE;
-bool system_alarmed = FALSE;
-
-#ifdef FACTORY
-extern int libfac_interruptflag;
-#endif
-
-#if 0
-void unblock(int sig)
-{
-  /* following a suggestion of Tom Hageman  <tom@basil.icce.dev.rug.null.nl>  [NeXTmail/Mime OK] */
-  sigset_t s;
-  sigemptyset(&s);
-  sigaddset(&s, sig);
-  sigprocmask(SIG_UNBLOCK, &s, NULL);
-}
-#endif
+M2_bool system_interrupted = FALSE;
+M2_bool system_interruptPending = FALSE;
+M2_bool system_interruptShield = FALSE;
+M2_bool system_alarmed = FALSE;
 
 static void alarm_handler(int sig)
 {
@@ -101,8 +52,6 @@ static void alarm_handler(int sig)
      signal(SIGALRM,alarm_handler);
 #endif
      }
-
-extern bool interp_StopIfError;
 
 #if defined(__MWERKS__) || (defined(_WIN32) && !defined(__CYGWIN__))
 #define sigjmp_buf jmp_buf
@@ -214,6 +163,7 @@ M2_string actors5_DATE;
 M2_string actors5_TIME;
 M2_string actors5_GCVERSION;
 M2_string actors5_GMPVERSION;
+M2_string actors5_startupString;
 M2_string actors5_NTLVERSION;
 M2_string actors5_LIBFACVERSION;
 M2_string actors5_FACTORYVERSION;
@@ -304,8 +254,7 @@ void *p;
 #define ONSTACK(p) nop((void *)&p)
 
 #ifdef NDEBUG
-static void dummy_GC_warn_proc(char *msg, GC_word arg) {
-}
+void dummy_GC_warn_proc(char *msg, GC_word arg) { }
 #endif
 
 #if defined(__MWERKS__)
@@ -329,32 +278,11 @@ void SetMinimumStack(long minSize)
 #define stringify(x) #x
 
 #if defined(__GNUC__)
-char CCVERSION[30] = "gcc" ;
+#define stringize(a) #a
+char CCVERSION[] = "gcc " stringize(__GNUC__) "." stringize(__GNUC_MINOR__) ;
 #else
 char CCVERSION[] = "unknown" ;
 #endif
-
-void M2_init_gmp() {
-     mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
-     if (getenv("GC_free_space_divisor")) {
-	  GC_free_space_divisor = atoi(getenv("GC_free_space_divisor"));
-	  if (GC_free_space_divisor <= 0) {
-	       fprintf(stderr, "%s: non-positive GC_free_space_divisor value, %ld\n", 
-		    progname, GC_free_space_divisor);
-	       exit (1);
-	       }
-	  }
-     if (getenv("GC_enable_incremental") && atoi(getenv("GC_enable_incremental"))==1) {
-	  GC_enable_incremental();
-	  fprintf(stderr,"GC_enable_incremental()\n");
-	  }
-     if (getenv("GC_expand_hp")) {
-	  GC_expand_hp(atoi(getenv("GC_expand_hp")));
-	  }
-#ifdef NDEBUG
-     GC_set_warn_proc(dummy_GC_warn_proc);
-#endif
-     }
 
 /* we test gc to whether it properly marks pointers found in registers */
 static void uniq(void *p, ...) {
@@ -395,21 +323,13 @@ char **argv;
      int envc = 0;
      static int old_collections = 0;
      char **saveargv;
-     int i, n;
+     int i;
      void main_inits();
      static void *reserve = NULL;
      extern void actors4_setupargv();
      extern void interp_process(), interp_process2(), interp_topLevel();
 
-#if defined(__MWERKS__) && !defined(__BUILDING_MPW__)
-	int n_mac_args = 4;
-	char *mac_args[4] = {"-e phase=1","setup.m2","-e phase=0","-e runStartFunctions()"};
-	char *mac_argv[5] = {"M2", "-e phase=1","setup.m2","-e phase=0","-e runStartFunctions()"};
-	argv = mac_argv;
-	argc = 5;
-#endif
-
-	//MES     GC_stackbottom = &dummy;
+     //MES     GC_stackbottom = &dummy;
 
      ONSTACK(saveenvp);
 
@@ -471,56 +391,6 @@ char **argv;
      saveenvp[i] = NULL;
 #endif
 
-#if defined(__GNUC__)
-     sprintf(CCVERSION, "gcc %d.%d", __GNUC__, __GNUC_MINOR__);
-#else
-#endif
-
-     for (n=1; ; n++) {
-	  if (n >= argc) {
-	       char buf[100];
-	       if (-1 == sprintf(buf,"Macaulay 2, version %s",PACKAGE_VERSION)) {
-		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
-	       }
-	       putstderr(buf);
-	       putstderr("--Copyright 1993-2003, D. R. Grayson and M. E. Stillman");
-	       putstderr("--Singular-Factory " 
-		    FACTORYVERSION
-		    ", copyright 1991-2003, G.-M. Greuel et al.");
-	       sprintf(buf,"--Singular-Libfac %s, copyright 1996-2001, M. Messollen",
-		    get_libfac_version());
-	       putstderr(buf);
-#              ifdef PORTA
-	       sprintf(buf,"--PORTA %s, copyright 1997, T. Christof and A. Loebel",PORTA_VERSION);
-	       putstderr(buf);
-#              endif
-# if 1
-	       if (GC_ALPHA_VERSION == GC_NOT_ALPHA) {
-		 sprintf(buf,
-			 "--GC %d.%d, copyright, H-J. Boehm, A. J. Demers",
-			 GC_VERSION_MAJOR, GC_VERSION_MINOR);
-	       }
-	       else {
-		 sprintf(buf,
-			 "--GC %d.%d alpha %d, copyright, H-J. Boehm, A. J. Demers",
-			 GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_ALPHA_VERSION);
-	       }
-	       putstderr(buf);
-#ifndef NO_GNU_GET_LIBC_VERSION
-	       sprintf(buf,"--GNU C Library (glibc-%s), copyright, Free Software Foundation", gnu_get_libc_version());
-	       putstderr(buf);
-#endif
-	       sprintf(buf,"--GNU MP Library (gmp-%s), copyright, Free Software Foundation",__gmp_version);
-	       putstderr(buf);
-
-	       sprintf(buf,"--NTL Library (ntl-%s), copyright, Victor Shoup",NTL_VERSION);
-	       putstderr(buf);
-
-# endif
-	       break;
-       	       }
-	  if (0 == strcmp(argv[n],"-silent")) break;
-	  }
 #if !defined(__MWERKS__)
      ONSTACK(envc);
 #endif
@@ -589,6 +459,7 @@ char **argv;
      actors5_FACTORYVERSION = tostring(FACTORYVERSION);
      actors5_DATE = tostring(current_date);
      actors5_TIME = tostring(current_time);
+     actors5_startupString = tostring(startupString);
 #ifdef DUMPDATA
      actors5_DUMPDATA = TRUE;
      if (!haveDumpdata()) actors5_DUMPDATA = FALSE; /* even if dumpdata was enabled at configuration time, we may not have implemented it in the C code */
@@ -613,11 +484,7 @@ char **argv;
      actors5_NTLVERSION = tostring(NTL_VERSION);
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);
-#if defined(__MWERKS__) && !defined(__BUILDING_MPW__)
-	 system_args = tostrings(n_mac_args,mac_args);
-#else
      system_args = tostrings(argc == 0 ? 0 : argc - 1, saveargv + 1);
-#endif
 
 #ifdef includeX11
      display = XOpenDisplay(NULL);
@@ -631,8 +498,6 @@ char **argv;
 	  }
      sigsetjmp(abort_jump,TRUE);
      abort_jump_set = TRUE;
-
-     /* setup_readline(); */
 
      if (sigsetjmp(out_of_memory_jump,TRUE)) {
 	  if (reserve != NULL) {
@@ -661,9 +526,8 @@ char **argv;
      return(system_returncode);
      }
 
-static void close_all_dbms();
-
 static void clean_up() {
+     extern void close_all_dbms();
      close_all_dbms();
      while (pre_final_list != NULL) {
 	  pre_final_list->final();
@@ -711,12 +575,7 @@ void scclib__prepare(){}
 
 extern int etext, end;
 
-#ifndef PAGESIZE
-#define PAGESIZE 4096
-#endif
-
-int system_dumpdata(datafilename)
-M2_string datafilename;
+int system_dumpdata(M2_string datafilename)
 {
      /* this routine should keep its data on the stack */
 #ifndef DUMPDATA
@@ -729,24 +588,6 @@ M2_string datafilename;
      return haderror ? ERROR : OKAY;
 #endif
      }
-
-#undef min
-
-int min(int i, int j) {
-     return i<j ? i : j;
-     }
-
-#if defined(DUMPDATA) && !defined(NEWDUMPDATA)
-static void extend_memory(void *newbreak) {
-     if (ERROR == brk(newbreak)) {
-	  char buf[200];
-	  sprintf(buf,"loaddata: out of memory (extending break from 0x%p to 0x%p)",
-	       sbrk(0), newbreak);
-	  perror(buf);
-	  _exit(1);
-	  }
-     }
-#endif
 
 int system_loaddata(M2_string datafilename){
 #ifndef DUMPDATA
@@ -761,117 +602,6 @@ int system_loaddata(M2_string datafilename){
      system_LoadDepth = LoadDepth + 1;
      siglongjmp(loaddata_jump,1);
 #endif
-     }
-
-/**********************************************
- *                  dbm stuff                 *
- **********************************************/
-
-static int numfiles = 0;
-static DBM_FILE *dbm_files = NULL;
-static void close_all_dbms() {
-     int i;
-     for (i=0; i<numfiles; i++) {
-	  if (dbm_files[i] != NULL) dbm_close(dbm_files[i]);
-	  }
-     }
-
-int system_dbmopen(M2_string filename, bool mutable) {
-     int dbm_handle;
-     int flags = mutable ? DBM_WRCREAT : DBM_RD;
-     int mode = 0666;
-     char *FileName = tocharstar(filename);
-     DBM_FILE f = dbm_open(FileName, 0, flags, mode, NULL);
-     GC_FREE(FileName);
-     if (f == NULL) return ERROR;
-     if (numfiles == 0) {
-	  int i;
-	  numfiles = 10;
-	  dbm_files = (DBM_FILE *) getmem(numfiles * sizeof(DBM_FILE));
-	  for (i=0; i<numfiles; i++) dbm_files[i] = NULL;
-	  dbm_handle = 0;
-	  }
-     else {
-	  for (dbm_handle=0; TRUE ; dbm_handle++) {
-	       if (dbm_handle==numfiles) {
-		    DBM_FILE *p;
-		    int j;
-		    numfiles *= 2;
-		    p = (DBM_FILE *) getmem(numfiles * sizeof(DBM_FILE));
-		    for (j=0; j<dbm_handle; j++) p[j] = dbm_files[j];
-		    dbm_files = p;
-	  	    for (j=dbm_handle; j<numfiles; j++) dbm_files[j] = NULL;
-		    break;
-		    }
-	       else if (dbm_files[dbm_handle] == NULL) break;
-	       }
-	  }
-     dbm_files[dbm_handle] = f;
-     return dbm_handle;
-     }
-
-int system_dbmclose(int handle) {
-     dbm_close(dbm_files[handle]);
-     dbm_files[handle] = NULL;
-     return 0;
-     }
-
-static datum todatum(M2_string x) {
-     datum y;
-     y.dptr = x->array;
-     y.dsize = x->len;
-     return y;
-     }
-
-static M2_string fromdatum(datum y) {
-     M2_string x;
-     if (y.dptr == NULL) return NULL;
-     x = (M2_string)getmem(sizeofarray(x,y.dsize));
-     x->len = y.dsize;
-     memcpy(x->array, y.dptr, y.dsize);
-     return x;
-     }
-
-int system_dbmstore(int handle, M2_string key, M2_string content) {
-     return dbm_store(dbm_files[handle],todatum(key),todatum(content),DBM_REPLACE);
-     }
-
-M2_string /* or NULL */ system_dbmfetch(int handle, M2_string key) {
-     return fromdatum(dbm_fetch(dbm_files[handle],todatum(key)));
-     }
-
-int system_dbmdelete(int handle, M2_string key) {
-     return dbm_delete(dbm_files[handle],todatum(key));
-     }
-
-static datum lastkey;
-static bool hadlastkey = FALSE;
-
-M2_string /* or NULL */ system_dbmfirst(int handle) {
-     lastkey = dbm_firstkey(dbm_files[handle]);
-     hadlastkey = TRUE;
-     return fromdatum(lastkey);
-     }
-
-M2_string /* or NULL */ system_dbmnext(int handle) {
-     if (hadlastkey) {
-	  lastkey = dbm_nextkey(dbm_files[handle]
-	       ,lastkey
-	       );
-	  hadlastkey = TRUE;
-	  return fromdatum(lastkey);
-	  }
-     else {
-	  return system_dbmfirst(handle);
-	  }
-     }
-
-int system_dbmreorganize(int handle) {
-     return gdbm_reorganize(dbm_files[handle]);
-     }
-
-M2_string system_dbmstrerror() {
-     return tostring(gdbm_strerror(gdbm_errno));
      }
 
 void C__prepare() {}
@@ -901,111 +631,4 @@ int actors5_WindowWidth(int fd) {
 #endif
      }
 
-#if 0
-#include <regex.h>
 
-regex_t regex;
-M2_string last_pattern;
-
-int actors5_rxmatch(M2_string text, M2_string pattern) {
-     regmatch_t match;
-     char *s_text;
-     int ret;
-     if (pattern != last_pattern) {
-	  char *s_pattern = tocharstar(pattern);
-	  ret = regcomp(&regex, s_pattern, REG_NEWLINE|REG_NOSUB);
-	  GC_FREE(s_pattern);
-	  if (ret != 0) return ERROR;
-	  }
-     s_text = tocharstar(text); /* end strings with 0's! */
-     ret = regexec(&regex, s_text, 1, &match, REG_NOTEOL);
-     GC_FREE(s_text);
-     if (ret == 0) return match.rm_so;
-     else if (ret == REG_NOMATCH) return -2;
-     else return ERROR;
-     }
-#endif
-
-#if defined(__DJGPP__) || defined(_WIN32)
-double lgamma(double x) { return -1. ; }	/* sigh, fix later */
-#endif
-
-#if defined(__CYGWIN32__)
-void abort() {
-  putstderr("abort() called");
-  *(int*)-1=0;
-  exit(1);
-}
-#endif
-
-#if defined(_WIN32) && !defined(__CYGWIN32__)
-#ifndef ENOSYS
-#define ENOSYS 0
-#endif
-int kill() { return ERROR; }
-int waitpid() { return ERROR; }
-int fork() { return ERROR; }
-int pipe(int v[2]) { return ERROR; }
-int wait() { return ERROR; }
-int alarm(int i) { return ERROR ; }
-int sleep(int i) { return ERROR; }
-/* int getpagesize() { return 4096; } */
-int brk() { return 0; }
-void *sbrk(int i) { return 0; }
-void *getprotobyname() { errno = ENOSYS; return 0; }
-int accept() { errno = ENOSYS; return -1; }
-int bind() { errno = ENOSYS; return -1; }
-int listen() { errno = ENOSYS; return -1; }
-int socket() { errno = ENOSYS; return -1; }
-void *gethostbyname() { errno = ENOSYS; return (void *)0; }
-int inet_addr() { errno = ENOSYS; return -1; }
-void *getservbyname() { errno = ENOSYS; return (void *)0; }
-void *authdes_create() { errno = ENOSYS; return (void *)0; }
-void *xdrmem_create() { errno = ENOSYS; return (void *)0; }
-int connect() { errno = ENOSYS; return -1; }
-int setsockopt() { errno = ENOSYS; return -1; }
-short htons(short x) { return x; }
-#endif
-
-#ifdef __MWERKS__
-#ifndef ENOSYS
-#define ENOSYS 0
-#endif
-#undef getpid
-/* Added for MPW support: I can't find the routines yet! */
-/* MES: 8/27/98 */
-#if defined(__BUILDING_MPW__)
-int system(const char * s) { return ERROR; }
-char * getcwd(char * s, int n) { return ""; }
-int exec(const char *s,...) { return ERROR; }
-unsigned int sleep(unsigned int i) { return ERROR; }
-/* End of MPW missing stuff */
-#else
-char * getcwd(char * s, int n) { return ""; }
-#endif
-
-int getpid(){ return ERROR; }
-int dup2() { return ERROR; }
-int fork() { return ERROR; }
-int pipe(int v[2]) { return ERROR; }
-int wait() { return ERROR; }
-int alarm(int i) { return ERROR ; }
-//unsigned int sleep(unsigned int i) { return ERROR; }
-unsigned long getpagesize() { return 4096; }
-int brk() { return 0; }
-void *sbrk(int i) { return 0; }
-void *getprotobyname() { errno = ENOSYS; return 0; }
-int accept() { errno = ENOSYS; return -1; }
-int bind() { errno = ENOSYS; return -1; }
-int listen() { errno = ENOSYS; return -1; }
-int socket() { errno = ENOSYS; return -1; }
-void *gethostbyname() { errno = ENOSYS; return (void *)0; }
-int inet_addr() { errno = ENOSYS; return -1; }
-void *getservbyname() { errno = ENOSYS; return (void *)0; }
-void *authdes_create() { errno = ENOSYS; return (void *)0; }
-void *xdrmem_create() { errno = ENOSYS; return (void *)0; }
-int connect() { errno = ENOSYS; return -1; }
-int setsockopt() { errno = ENOSYS; return -1; }
-short htons(short x) { return x; }
-int kill(int pid, int signal) { errno = ENOSYS; return -1; }
-#endif
