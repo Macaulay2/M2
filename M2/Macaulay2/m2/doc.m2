@@ -2805,14 +2805,15 @@ document { quote Net,
      PARA,
      "Operations on nets:",
      MENU {
-	  TO "horizontalJoin",
 	  TO (quote |, String, String),
-	  TO "verticalJoin",
 	  TO (quote ||, Net, Net),
-	  TO "width",
-	  TO "height",
+	  TO (quote ^,Net, ZZ),
 	  TO "depth",
-	  TO (quote ^,Net, ZZ)
+	  TO "height",
+	  TO "horizontalJoin",
+	  TO "netRows",
+	  TO "verticalJoin",
+	  TO "width",
 	  },
      "Formatting expressions:",
      MENU {
@@ -3430,8 +3431,13 @@ document { "help functions",
      MENU {
 	  TO "document",
 	  TO "hypertext",
+	  },
+     "Output formatting routines:",
+     MENU {
 	  TO "html",
-	  TO "text"
+	  TO "mathML",
+	  TO "tex",
+	  TO "text",
 	  },
      "Some internals:",
      MENU {
@@ -3762,7 +3768,8 @@ document { quote SelfInitializingType,
       	  "class x",
 	  },
      PARA,
-     TO "Command", " is an example of a self initializing type."
+     TO "Command", " is an example of a self initializing type.",
+     SEEALSO {"HeaderType", "WrapperType"}
      }
 
 document { quote Manipulator,
@@ -4568,6 +4575,36 @@ document { quote symbol,
      }
 
 document { "programming overview",
+     }
+
+document { quote Entity,
+     TT "Entity", " -- the class of all entities, special typsettable objects which have
+     different realizations in various typesetting systems.",
+     PARA,
+     "An example of an entity is ", TO "DownArrow", ", a downward pointing arrow.",
+     EXAMPLE {
+	  "DownArrow",
+	  "peek (DownArrow,2)"
+	  },
+     "Here is a list of all entities.",
+     MENU apply(
+	  select(
+	       values symbolTable(),
+	       v -> class value v === Holder and (value v)#?0 and class (value v)#0 === Entity
+	       ),
+	  v -> TO string v
+	  )
+     }
+
+document { quote netRows,
+     TT "netRows x", " -- produces a list of strings, each containing the
+     characters in one row of the ", TT "Net", " ", TT "x", ".",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ[x,y];",
+	  "net (x+y)^3",
+	  "peek(oo,2)",
+	  }
      }
 
 -- these files are made at compile time

@@ -38,6 +38,10 @@ CC#1 = new CC from {1,0}
 
 CC.degreeLength = 0
 
+mathML CC := z -> concatenate(
+     "<cn type='complex'>",string realPart z, "<sep/>", string imaginaryPart z, "</cn>"
+     )     
+
 conjugate ZZ := identity
 realPart ZZ := identity
 imaginaryPart ZZ := z -> 0
@@ -114,7 +118,7 @@ QQ == CC := (i,z) -> z#0 == i and z#1 == 0
 CC == RR := (z,i) -> z#0 == i and z#1 == 0
 RR == CC := (i,z) -> z#0 == i and z#1 == 0
 
-TEST "
+TEST ///
      z = 2 - 3*ii
      w = 4 + 5*ii
      x = 2 + ii - ii
@@ -123,10 +127,11 @@ TEST "
      assert( 1 + z == 3 - 3*ii )
      assert( 2*w == 8 + 10*ii )
      assert( z + w == 6 + 2*ii )
-     assert( name w == \"4+5*ii\" )
+     assert( name w == "4+5*ii" )
      assert( conjugate z == 2 + 3*ii )
      assert( x == 2 )
      assert( x == 2. )
      assert( x == 2/1 )
-     assert( net (2-3*ii) === \"2-3ii\"^0 )
-     "
+     assert( net (2-3*ii) === "2 - 3ii"^0 )
+     ///
+     

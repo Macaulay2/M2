@@ -295,6 +295,7 @@ html = method(SingleArgumentDispatch=>true)
 text = method(SingleArgumentDispatch=>true)
 tex = method(SingleArgumentDispatch=>true)
 texMath = method(SingleArgumentDispatch=>true)
+mathML = method(SingleArgumentDispatch=>true)
 
 -----------------------------------------------------------------------------
 
@@ -436,6 +437,7 @@ cmrLiteral := s -> concatenate apply(characters s, c -> cmrLiteralTable#c)
 -----------------------------------------------------------------------------
 
 html String := htmlLiteral
+mathML String := htmlLiteral
 tex String := cmrLiteral
 texMath String := cmrLiteral
 text String := identity
@@ -443,9 +445,11 @@ text String := identity
 texMath List := x -> concatenate("\\{", between(",", apply(x,texMath)), "\\}")
 texMath Sequence := x -> concatenate("(", between(",", apply(x,texMath)), ")")
 
-texMath Nothing := tex Nothing := html Nothing := text Nothing := x -> ""
+mathML Nothing := texMath Nothing := tex Nothing := html Nothing := text Nothing := x -> ""
 
-texMath Boolean := texMath Symbol :=
+mathML Symbol := x -> concatenate("<ci>",string x,"</ci>")
+
+texMath Boolean := texMath Symbol := 
 tex Boolean := tex Symbol :=
 text Symbol := text Boolean := 
 html Symbol := html Boolean := string
@@ -471,7 +475,8 @@ html MarkUpList := x -> concatenate apply(x,html)
 text MarkUpList := x -> concatenate apply(x,text)
 tex MarkUpList := x -> concatenate apply(x,tex)
 net MarkUpList := x -> horizontalJoin apply(toList x,net)
-texMath MarkUpList := x -> concatenate apply(x,tex)
+texMath MarkUpList := x -> concatenate apply(x,texMath)
+mathML MarkUpList := x -> concatenate apply(x,mathML)
 
 --html MarkUpType := H -> html H{}
 --text MarkUpType := H -> text H{}
@@ -533,6 +538,7 @@ html EXAMPLE := x -> concatenate html ExampleTABLE apply(toList x, x -> CODE x)
 
 text TABLE := x -> concatenate(newline, newline, apply(x, row -> (row/text, newline))) -- not good yet
 text ExampleTABLE := x -> concatenate(newline, newline, apply(x, y -> (text y, newline)))
+net ExampleTABLE := x -> verticalJoin between("",apply(toList x, net))
 
 net TABLE := x -> net MatrixExpression toList x
 tex TABLE := x -> concatenate applyTable(x,tex)
@@ -1716,3 +1722,12 @@ document { (quote =>, Thing, Thing),
      some functions."
      }
 
+document { quote mathML,
+     TT "mathML x", " -- converts ", TT "x", " to MathML form.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ[x,y];",
+	  "mathML matrix {{x,y},{x^2+2,0}}"
+	  },
+     SEEALSO "hypertext"
+     }
