@@ -40,7 +40,7 @@ const M2_string IM2_Matrix_to_string(const Matrix *M)
 
 unsigned long  IM2_Matrix_hash(const Matrix *M); /* TODO */
 
-const RingElementOrNull * IM2_Matrix_get_element(const Matrix *M, int r, int c)
+const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c)
 {
   if (r < 0 || r >= M->n_rows())
     {
