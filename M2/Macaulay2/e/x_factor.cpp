@@ -127,7 +127,7 @@ static CanonicalForm convert(const RingElement &g) {
      const Monoid *M = R->Nmonoms();
      intarray vp;
      setCharacteristic(R->charac());
-     // if (Q != NULL) On( SW_RATIONAL );
+     if (Q != NULL) On( SW_RATIONAL );
      CanonicalForm f = 0;
      for (Nterm *t = g.get_value(); t != NULL; t = t->next) {
        vp.shrink(0);
@@ -144,7 +144,7 @@ static CanonicalForm convert(const RingElement &g) {
 			  Q != NULL 
 			  ?
 			  convert(MPZ_VAL(FRAC_VAL(t->coeff)->numer))
-			  /* / convert(MPZ_VAL(FRAC_VAL(t->coeff)->denom)) */
+			  / convert(MPZ_VAL(FRAC_VAL(t->coeff)->denom))
 			  :
 			  CanonicalForm(0) // shouldn't happen
 			  );
@@ -158,7 +158,7 @@ static CanonicalForm convert(const RingElement &g) {
        }
        f += m;
      }
-     // if (Q != NULL) Off( SW_RATIONAL );
+     if (Q != NULL) Off( SW_RATIONAL );
      return f;
 }
 
@@ -166,7 +166,11 @@ static void gcd_ring_elem(object &ff, object &gg) {
      const RingElement &f = ff -> cast_to_RingElement();
      const RingElement &g = gg -> cast_to_RingElement();
      const Ring *R = f.Ring_of();
-     CanonicalForm h = gcd(convert(f),convert(g));
+     CanonicalForm p = convert(f);
+     CanonicalForm q = convert(g);
+     cerr << "p = " << p << endl
+          << "q = " << q << endl;
+     CanonicalForm h = gcd(p,q);
      gStack.insert(convert(R,h));
 }
 

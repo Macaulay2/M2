@@ -371,3 +371,7 @@ manufactured.tgz :
 		Macaulay2/cache/Macaulay2.doc \
 		Macaulay2/tmp/Examples/*.m2 \
 		Macaulay2/tmp/Tests/*.m2
+################################# automated compilation
+update:
+	cvs update
+	$(MAKE) 2>&1 | mail dan@math.uiuc.edu
