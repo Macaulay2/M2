@@ -53,12 +53,18 @@ document { quote genericSymmetricMatrix,
 
 randommat := (R,r,c) -> (sendgg(ggPush R, ggPush r, ggPush c, ggrandom); getMatrix R)
 
-random(List,Ring) := random(ZZ,Ring) := (deg,R) -> (
-     m := basis(deg, R) ** R;
-     --p := char R;
-     n := randommat(R,numgens source m,1);
-     --n := matrix table(numgens source m,1, x -> promote(random p,R));
-     (m*n)_(0,0))
+random(List,Ring) := (deg,R) -> (
+     if #deg =!= degreeLength R
+     then error ("expected length of degree vector to be ", degreeLength R);
+     if deg === {} then random R
+     else (
+	  m := basis(deg, R) ** R;
+	  --p := char R;
+	  n := randommat(R,numgens source m,1);
+	  --n := matrix table(numgens source m,1, x -> promote(random p,R));
+	  (m*n)_(0,0)))
+
+random(ZZ,Ring) := (n,R) -> random({n},R)
 
 random(Module, Module) := (F,G) -> (
      R := ring F;

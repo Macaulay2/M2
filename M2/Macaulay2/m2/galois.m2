@@ -122,12 +122,15 @@ assert (not isPrimitive 0_R)
 "
 
 GF(ZZ,ZZ) := (p,n,options) -> (
-     x := if options.Variable === null then local x else baseName options.Variable;
-     R := ZZ/p[x,MonomialSize => 16];
-     t := R_0;
-     while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
-     GF(R/f,options,Variable => x)
-     )
+     if not isPrime p then error "expected a prime number as base";
+     if n <= 0 then error "expected positive exponent";
+     if n === 1 then ZZ/p
+     else (
+	  x := if options.Variable === null then local x else baseName options.Variable;
+	  R := ZZ/p[x,MonomialSize => 16];
+	  t := R_0;
+	  while ( f := t^n + sum(n, i-> random p * t^i); not isPrime f) do ();
+	  GF(R/f,options,Variable => x)))
 
 GF(ZZ) := (q,options) -> (
      factors := factor q;

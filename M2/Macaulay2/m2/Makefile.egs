@@ -20,7 +20,7 @@ ARGS := -silent -x -s -ephase=1 ../../m2/setup.m2 ../../m2/eg.m2
 endif
 
 %.out : %.m2
-	@ - if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
+	@ if [ -f $*.out ] && cmp -s $*.m2 $*.old ; \
 	 then touch $*.out ; \
 	 else echo "run example $* `head -1 $*.m2`"; \
 	   sed 1d <$*.m2 | \
