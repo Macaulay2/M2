@@ -620,7 +620,10 @@ export getc(o:file):int := (
      c := o.inbuffer.(o.inindex);
      o.inindex = o.inindex + 1;
      if o.echo then stdout << c;
-     o.bol = c == nl;
+     if c == nl then (
+	  o.bol = true;
+	  if o.echo then flush(stdout);
+	  );
      int(uchar(c)));
 export read(o:file):(string or errmsg) := (
      if o.inindex == o.insize then (
@@ -631,7 +634,10 @@ export read(o:file):(string or errmsg) := (
      s := substr(o.inbuffer,o.inindex,o.insize);
      o.insize = 0;
      o.inindex = 0;
-     if o.echo then stdout << s;
+     if o.echo then (
+	  stdout << s;
+	  flush(stdout);
+	  );
      s);
 export peek(o:file,offset:int):int := (
      if !o.input then return(EOF);

@@ -70,3 +70,4 @@ import realpath(filename:string):string;
 import regexmatch(pattern:string, text:string):array(int);
 import readDirectory(name:string):(null or array(string));
 import strncmp(s:string,t:string,n:int):int;
+import history():array(string);

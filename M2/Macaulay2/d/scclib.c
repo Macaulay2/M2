@@ -417,6 +417,8 @@ static char **M2_completion(const char *text, int start, int end) {
 
 
 void init_readline_variables() {
+  extern char *_rl_comment_begin;
+  _rl_comment_begin = "-- ";
   rl_readline_name = "M2";
   rl_attempted_completion_function = M2_completion;
   rl_basic_word_break_characters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
@@ -452,6 +454,17 @@ int system_readline(M2_string buffer, int len, int offset, M2_string prompt) {
   r = read_via_readline(buffer->array + offset,len,p);
   free(p);
   return r;
+}
+
+M2_stringarray system_history() {
+  M2_stringarray a;
+  HIST_ENTRY **h = history_list();
+  int i,n;
+  for (n=0; h[n]!=NULL; n++);
+  a = (M2_stringarray) getmem (sizeofarray(a,n));
+  a->len = n;
+  for (i=0; i<n; i++) a->array[i] = tostring(h[i]->line);
+  return a;
 }
 
 /* stupid ANSI forces some systems to put underscores in front of useful identifiers */
