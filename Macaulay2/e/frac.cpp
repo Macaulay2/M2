@@ -201,6 +201,29 @@ ring_elem FractionField::var(int v, int n) const
   return FRAC_RINGELEM(f);
 }
 
+int FractionField::index_of_var(const ring_elem a) const
+{
+  const frac_elem *f = FRAC_VAL(a);
+  if (!R_->is_unit(f->denom)) 
+    // If so, a cannot be a variable, otherwise, by 'simplify', f->denom == 1.
+    return -1;
+  return R_->index_of_var(f->numer);
+}
+
+M2_arrayint FractionField::support(const ring_elem a) const
+{
+  const frac_elem *f = FRAC_VAL(a);
+  M2_arrayint result1 = R_->support(f->numer);
+  M2_arrayint result2 = R_->support(f->denom);
+  M2_arrayint result = makearrayint(result1->len + result2->len);
+  for (int i=0; i<result1->len; i++)
+    result->array[i] = result1->array[i];
+  for (int i=0; i<result2->len; i++)
+    result->array[result1->len+i] = result2->array[i];
+
+  return result;
+}
+
 bool FractionField::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
   // Rf = R ---> frac R

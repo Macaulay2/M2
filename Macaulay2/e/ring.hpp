@@ -191,6 +191,9 @@ public:
 
   // Polynomial routines
   // The default implementation is for non-polynomial rings
+  virtual int index_of_var(const ring_elem a) const;
+  virtual M2_arrayint support(const ring_elem a) const;
+
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
   virtual bool in_subring(int n, const ring_elem a) const;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
