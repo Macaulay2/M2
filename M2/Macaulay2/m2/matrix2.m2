@@ -67,7 +67,24 @@ modulo(Matrix,Matrix)  := Matrix => options -> (m,n) -> (
      syz(m|n, options, SyzygyRows => numgens source m)
      )
 
-quotientRemainder(Matrix,Matrix) := Matrix => opts -> (f,g) -> notImplemented()
+quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
+     if ring g =!= ring f then error "expected maps over the same ring";
+     M := target f;
+     if M != target g then error "expected maps with the same target";
+     L := source f;
+     N := source g;
+     f = matrix f;
+     g = matrix g;
+     G := (
+	  if M.?relations 
+	  then gb(g | presentation M, ChangeMatrix => true, SyzygyRows => rank source g)
+	  else gb(g,                  ChangeMatrix => true)
+	  );
+     (rem,quo) := rawGBMatrixLift(raw G, raw f);
+     (
+	  map(N, L, quo, Degree => degree f - degree g),
+	  map(M, L, rem)
+     ))
 
 Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
 quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
