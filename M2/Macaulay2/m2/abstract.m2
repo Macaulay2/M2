@@ -77,6 +77,20 @@ Ring AbstractSet := (R,X) -> (
      )
 
 AbstractModuleMap = new Type of ModuleMap
+document { quote AbstractModuleMap,
+     TT "AbstractModuleMap", " -- the class of all maps between abstract free
+     modules.",
+     PARA,
+     "Such a map ", TT "f", " is defined either by a table ", TT "f.table", "
+     or by a function ", TT "f.function", ", either of which is to be used to
+     take a basis element of the source abstract free module and produce
+     an element of the target abstract free module.",
+     SEEALSO ("function", "table")
+     }
+document { quote function,
+     TT "function", " -- a key used in instances of the
+     class ", TO "AbstractModuleMap", "."
+     }
 AbstractModuleMap AbstractFreeModuleElement := (f,m) -> (
      -- this assumes the source and target are abstract modules
      if source f =!= class m then error "module element not in source of map";

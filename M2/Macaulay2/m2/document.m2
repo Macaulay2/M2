@@ -39,7 +39,12 @@ between = (m,v) -> mingle(v,#v-1:m)
 
 ExampleHashTable := new MutableHashTable
 DocDatabase := null
-docExtension := () -> if phase === 2 or phase === 3 then ".pre" else ".doc"
+docExtension := () -> (
+     if phase === 2 then ".tmp"		  -- writing, to be renamed .pre
+     else if phase === 3 then ".pre"	  -- reading temporary one renamed
+     else if phase == 4 then ".tmp"	  -- writing, to be renamed .doc
+     else ".doc"			  -- reading
+     )
 docFilename := () -> (
      v := lines(commandLine#0,"/");
      v = apply(#v-2, i -> v#i);		  -- drop isn't defined yet
@@ -237,7 +242,7 @@ help = s -> (
      pager := getenv "PAGER";
      if pager === "" then pager = "more";
      if getenv "TERM" === "emacs" then pager = null;
-     o = if pager === null then stdout else openOut concatenate("!", pager );
+     o := if pager === null then stdout else openOut concatenate("!", pager );
      if class s === List
      then (
 	  scan(s, i -> ( hr o; help2 (o,i); ));
@@ -295,7 +300,7 @@ fourDigits := i -> (
 
 TEST = (e) -> if phase === 2 then (
      testFileCounter = testFileCounter + 1;
-     openOut concatenate("Tests/", fourDigits testFileCounter, ".m2") 
+     openOut concatenate("../tmp/Tests/", fourDigits testFileCounter, ".m2") 
      << e << endl << close;
      )
 -- writeExamples = false
@@ -313,7 +318,7 @@ extractExamples := x -> (
      then join apply(unlist x, extractExamples)
      else {})
 
-NameFile := "Examples/FileNames"
+NameFile := "../tmp/Examples/FileNames"
 
 saveNameHashTable := null
 NameHashTable := () -> (
@@ -355,7 +360,7 @@ document = z -> (
 	       if phase === 4 then error(
 		    "documentation node '", nodeName, "' has no sequence number");
 	       (NameHashTable())#nodeName = concatenate(
-		    "Examples/", fourDigits (#(NameHashTable()))
+		    "../tmp/Examples/", fourDigits (#(NameHashTable()))
 		    )
 	       )
 	  );
@@ -367,13 +372,7 @@ document = z -> (
      if phase > 1 and #examples > 0 then (
 	  if phase === 2 then (
 	       -- write example input to file
-	       file := (
-		    try openOut (filename | ".m2")
-		    else (
-			 stderr << "failed to open '" << file << "'";
-			 null
-			 )
-		    );
+	       file := openOut (filename | ".m2");
 	       file << "-- " << nodeName << endl;
 	       if phase === 0 and file =!= null then (
 		    << "-- " << nodeName << " -- " << filename << ".m2" << endl;

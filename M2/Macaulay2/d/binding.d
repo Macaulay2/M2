@@ -472,7 +472,7 @@ bindParenParmList(e:ParseTree,scope:Scope,desc:functionDescription):void := (
      is p:parentheses do nothing
      else makeErrorTree(e,"expected parenthesized argument list or symbol"));
 
-opsWithMethod := array(Symbol)(
+opsWithBinaryMethod := array(Symbol)(
      DoubleArrowS.symbol, LessLessS.symbol, GreaterGreaterS.symbol,
      EqualEqualS.symbol, QuestionS.symbol, BarBarS.symbol,
      AmpersandAmpersandS.symbol, ColonS.symbol, 
@@ -484,8 +484,18 @@ opsWithMethod := array(Symbol)(
      SlashSlashS.symbol, AtS.symbol, AdjacentS.symbol, AtAtS.symbol,
      SlashHatS.symbol, PowerS.symbol, UnderscoreS.symbol
      );
-opHasMethod(o:Symbol):bool := (
-     foreach s in opsWithMethod do if s == o then return(true);
+opHasBinaryMethod(o:Symbol):bool := (
+     foreach s in opsWithBinaryMethod do if s == o then return(true);
+     return(false);
+     );
+opsWithUnaryMethod := array(Symbol)(
+     StarS.symbol,
+     MinusS.symbol,
+     TildeS.symbol,
+     LessLessS.symbol
+     );
+opHasUnaryMethod(o:Symbol):bool := (
+     foreach s in opsWithUnaryMethod do if s == o then return(true);
      return(false);
      );
 bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
@@ -522,24 +532,27 @@ bindassignment(assn:Binary,scope:Scope,colon:bool):void := (
 	  else makeErrorTree(assn.operator,
 	       "left hand of assignment involves invalid binary operator"))
      is unary:Unary do (
-	  if colon && (
-	       unary.operator.word == StarS.symbol.word
-	       || unary.operator.word == MinusS.symbol.word
-	       || unary.operator.word == TildeS.symbol.word
-	       ) 
+	  if colon
 	  then (
 	       bindop(unary.operator,scope);
 	       bind(unary.rhs,scope);
-	       bind(body,scope))
-	  else makeErrorTree(assn.operator,
-	       "left hand of assignment involves invalid unary operator"))
+	       bind(body,scope);
+	       if ! opHasUnaryMethod(unary.operator.entry)
+	       then makeErrorTree(assn.operator,
+	       	    "left hand of assignment involves invalid unary operator");
+	       )
+	  else (
+	       makeErrorTree(assn.operator,
+	       	    "left hand of assignment involves invalid unary operator")
+	       )
+	  )
      is binary:Binary do (
 	  if colon then (
 	       bind(binary.lhs,scope);
 	       bindop(binary.operator,scope);
 	       bind(binary.rhs,scope);
 	       bind(body,scope);
-	       if ! opHasMethod(binary.operator.entry)
+	       if ! opHasBinaryMethod(binary.operator.entry)
 	       then makeErrorTree(
 		    assn.operator, 
 		    "can't assign a method to this binary operator");

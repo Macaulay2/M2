@@ -131,7 +131,6 @@ bk << ///
 \centerline{Daniel R. Grayson and Michael E. Stillman}
 \vskip .5 in
 \centerline{version /// << version#"VERSION" << ///}
-\centerline{/// << version#"VERSIONDATE" << ///}
 \vskip .5 in
 \centerline{tutorial sections written with David Eisenbud}
 \endgroup

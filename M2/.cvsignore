@@ -2,3 +2,5 @@ config.cache
 include
 lib
 share
+Makeconf.h
+Makeconf.m2

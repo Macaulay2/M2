@@ -1,0 +1,6 @@
+#! /bin/bash
+
+echo "/* this file made automatically from Makeconf */"
+echo "#define VERSION \"$VERSION\""
+echo "#define VERSIONDATE \"$VERSIONDATE\""
+echo "#define SYSTEM \"$SYSTEM\""

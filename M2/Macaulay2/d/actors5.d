@@ -554,7 +554,7 @@ doubleplusfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PlusPlusS);
 setup(PlusPlusS,doubleplusfun);
 
 lesslessfun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LessLessS);
-lesslessfun1(rhs:Code):Expr := binarymethod(Expr(stdout),rhs,LessLessS);
+lesslessfun1(rhs:Code):Expr := unarymethod(rhs,LessLessS);
 setup(LessLessS,lesslessfun1,lesslessfun2);
 
 greatergreaterfun2(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,GreaterGreaterS);

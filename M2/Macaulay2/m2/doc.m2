@@ -1,5 +1,10 @@
 --		Copyright 1994 by Daniel R. Grayson
 
+document { quote length,
+     TT "length C", " -- returns the length of a graded module or a chain
+     complex."
+     }
+
 document { quote sendgg,
      TT "sendgg s", " -- uses ", TO "sendToEngine", " to send the  string ", TT "s", " 
      of data and commands to the engine.  The first byte of the result is examined 
@@ -3939,6 +3944,20 @@ document { quote profileSummary,
      TT "profileSummary", " -- a command which will display the data
      accumulated by running functions produced with ", TO "profile", "."
      }
+
+
+document { quote examples,
+     TT "examples X", " -- returns a list of examples of the use of ", TT "X", "
+     from the online documentation.",
+     SEEALSO "printExamples"
+     }
+
+
+TEST ///
+     assert( class examples MutableList === List )
+     assert( examples MutableList > 0 )
+///
+
 
 -- these files are made at compile time
 load "gbdoc.m2"

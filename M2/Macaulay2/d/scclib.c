@@ -14,6 +14,8 @@ char newline[] = NEWLINE;
 extern char *libfac_version;
 #endif
 
+#include "../../Makeconf.h"	/* VERSION is defined here */
+
 #ifdef __MWERKS__
 #include ".._c_compat.h"
 #else
@@ -626,9 +628,9 @@ char **argv;
 				   to the heap and has been overwritten by
 				   loaddata(), thereby pointing to a previous
 				   incarnation of the heap. */
-	  /* make a copy of the environment on the heap for 'environ' */
-	  /* in some systems, putenv() calls free() on the old item */
-	  /* we are careful to use malloc here, and not GC_malloc */
+	  /* Make a copy of the environment on the heap for 'environ'. */
+	  /* In some systems, putenv() calls free() on the old item,
+	     so we are careful to use malloc here, and not GC_malloc. */
 	  environ0 = (char **)malloc((envc + 1)*sizeof(char *));
 	  /* amazing but true:
 	     On linux, malloc calls getenv to get values for tunable

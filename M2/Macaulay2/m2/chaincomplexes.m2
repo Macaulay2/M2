@@ -605,6 +605,10 @@ cohomology(ZZ,ChainComplex) := { ChainComplex,
 
 chainComplex = method(SingleArgumentDispatch=>true)
 
+document { quote chainComplex,
+     TT "chainComplex", " -- a method for creating chain complexes."
+     }
+
 chainComplex Matrix := { ChainComplex,
      f -> chainComplex {f},
      TT "chainComplex f", " -- create a chain complex ", TT "C", " with

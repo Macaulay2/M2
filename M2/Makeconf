@@ -10,7 +10,6 @@ endif
 
 export VERSION	      := 0.8.34
 export FACTORYVERSION := 1.2c
-export VERSIONDATE    := August 7, 1997
 export ARCH           := $(shell uname -m | sed s=/=-=g )
 export OS             := $(shell uname -s | sed s=/=-=g )
 export REL            := $(shell uname -r | sed s=/=-=g )
@@ -21,12 +20,9 @@ export SYSTEM         := $(ARCH) $(OS) $(REL)
 export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)
 export LIBDIR	      := ../../lib
 export INCDIR	      := ../../include
-export PATH           := ..$(PATHSEP)bin:$(PATH)
+export PATH           := ..$(PATHSEP)util:$(PATH)
 
-ifneq ($(OS),SunOS)
 MP := TRUE
-endif
-
 FACTOR := TRUE
 # includeX11 = TRUE
 
