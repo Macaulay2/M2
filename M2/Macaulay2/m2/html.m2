@@ -409,11 +409,10 @@ assemble Package := o -> pkg -> (
 
 check = method()
 check Package := pkg -> (
+     logfile := "Macaulay2-test.log";
      scan(values pkg#"test inputs", t -> (
-	       stderr << "--testing " << net t << endl;
 	       -- later we'll figure out how to start *this* version of M2!!!
-	       cmd := "M2 -silent -q -s -e'load \""|pkg.name|".m2\"'";
-	       stderr << cmd << endl;
+	       cmd := "M2 -silent -q -s -e'load \""|pkg.name|".m2\"' >/dev/null";
+	       stderr << "--   " << cmd << endl << "     " << net t << endl;
 	       "!" | cmd << t << endl << close;
-	       << endl;
 	       )))

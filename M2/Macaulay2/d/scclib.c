@@ -538,6 +538,20 @@ int system_mkdir(M2_string name) {
   return r;
 }
 
+int system_rmdir(M2_string name) {
+  char *cname = tocharstar(name);
+  int r = rmdir(cname);
+  GC_FREE(cname);
+  return r;
+}
+
+int system_unlink(M2_string name) {
+  char *cname = tocharstar(name);
+  int r = unlink(cname);
+  GC_FREE(cname);
+  return r;
+}
+
 M2_string system_readfile(fd)
 int fd;
 {
