@@ -332,7 +332,7 @@ cleanGlobalFrame():void := globalFrame.values = emptySequence;
 atend(cleanGlobalFrame);
 -----------------------------------------------------------------------------
 lookupCountIncrement := 1;
-lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
+export lookup(word:Word,table:SymbolHashTable):(null or Symbol) := (
      if table == dummySymbolHashTable then error("dummy symbol table used");
      entryList := table.buckets.(
 	  word.hash & (length(table.buckets)-1)

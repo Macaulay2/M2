@@ -204,7 +204,7 @@ tags: @srcdir@/TAGS
 clean::; rm -f TAGS @srcdir@/TAGS
 @srcdir@/TAGS: Makefile $(SRCFILES)
 	@ echo making TAGS
-	cd @srcdir@ && etags $(SRCFILES)
+	cd @srcdir@ && etags $(shell ../util/echoout -r $(SRCFILES))
 #	../util/echoout -r2 $(foreach i, $(SRCFILES),  $(i),0) >"$@"
 
 clean ::; rm -f *.log a.out *.o *.sym *.a *.oo *.sig *.sg *.dep core gmon.out mapfile restart.tmp
