@@ -254,17 +254,26 @@ lcmOfGens := (I) -> if I#?(local lcm) then I#(local lcm) else I#(local lcm) = (
 
 dual(MonomialIdeal, List) := (I,a) -> (
      -- Alexander dual
-     -- we use E. Miller's definition for nonsquare free monomial
-     -- ideals.
+     -- We use E. Miller's definition for nonsquare 
+     -- free monomial -- ideals.
      R := ring I;
      X := gens R;
      aI := lcmOfGens I;
      if aI =!= a then (
-     	  if #aI =!= #a then error ("expected list of length ", toString (#aI));
-	  scan(a, aI, (b,c) -> if b<c then error "exponent vector not large enough");
+     	  if #aI =!= #a 
+	  then error (
+	       "expected list of length ",
+	       toString (#aI));
+	  scan(a, aI, 
+	       (b,c) -> (
+		    if b<c then
+		    error "exponent vector not large enough"
+		    ));
 	  ); 
-     S := R / (I + monomialIdeal apply(#X, i -> X#i^(a#i+1)));
-     monomialIdeal contract(lift(syz transpose vars S, R), product(#X, i -> X#i^(a#i)))
+     S := R/(I + monomialIdeal apply(#X, i -> X#i^(a#i+1)));
+     monomialIdeal contract(
+	  lift(syz transpose vars S, R), 
+	  product(#X, i -> X#i^(a#i)))
      )
 
 dual(MonomialIdeal,RingElement) := (I,r) -> dual(I,first exponents r)
@@ -316,13 +325,15 @@ standardPairs(MonomialIdeal, List) := (I,D) -> (
 	       Lset := set L;
 	       Y = select(Y, r -> not Lset#?r);
      	       m = substitute(m, apply(L, r -> r => 1));
-	       -- using monoid to create ring to avoid changing global ring.
+	       -- using monoid to create ring to avoid 
+	       -- changing global ring.
      	       A := k (monoid [Y]);
      	       phi := map(A, R, substitute(m, A));
      	       J := ideal mingens ideal phi gens I;
      	       Jsat := saturate(J, ideal vars A);
      	       if Jsat != J then (
-     	  	    B := flatten entries super basis trim (Jsat / J);
+     	  	    B := flatten entries super basis (
+			 trim (Jsat / J));
 		    psi := map(R, A, matrix{Y});
 		    S = join(S, apply(B, b -> {psi(b), L}));
 	       	    )));
