@@ -452,7 +452,13 @@ export filbuf(o:file):int := (
 	       read(o.infd,o.inbuffer,n,o.insize)))
 	  else read(o.infd,o.inbuffer,n,o.insize);
      if r == ERROR then (fileErrorMessage(o,"read");)
-     else if r == 0 then o.eof = true
+     else if r == 0 then (
+	  o.eof = true;
+	  if o.promptq then (
+	       stdout << newline;
+	       flush(stdout);
+	       );
+	  )
      else o.insize = o.insize + r;
      r);
 

@@ -141,7 +141,8 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
 		    then flush(file)
 		    else return(buildErrorPacket("error while loading file")); ); );
 	  lastvalue = nullE; );
-     if isatty(file) then stdout << endl;
+     -- now we let filbuf handle all prompting:
+     -- if isatty(file) then stdout << endl;
      returnvalue);
 readeval3(file:TokenFile,printout:bool,AbortIfError:bool,scope:Scope):Expr := (
      savecf := getvalue(currentFileName);
