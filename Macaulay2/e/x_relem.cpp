@@ -61,7 +61,7 @@ const RingOrNull *IM2_Ring_ZZp(int p)
   return Z_mod::create(p);
 }
 
-const RingOrNull *IM2_Ring_GF(const RingElement *f)
+const RingOrNull *rawGaloisField(const RingElement *f)
 {
   // Check that the ring R of f is a polynomial ring in one var over a ZZ/p
   // Check that f has degree >= 2
