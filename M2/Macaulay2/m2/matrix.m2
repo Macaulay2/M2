@@ -899,6 +899,47 @@ map(Module,Module,Matrix) := (M,N,f,options) -> (
 	  reduce M;
 	  newMatrix(M,N)))
 
+inducedMap = method (
+     Options => {
+	  Verify => true,
+	  Degree => null 
+	  })
+inducedMap(Module,Module,Matrix) := (M,N,f,options) -> (
+     sM := target f;
+     sN := source f;
+     if ambient M =!= sM
+     then error "'inducedMap' expected target of map to be a subquotient of target module provided";
+     if ambient N =!= sN
+     then error "'inducedMap' expected source of map to be a subquotient of source module provided";
+     g := f * generators N;
+     h := generators M;
+     p := map(M, N, g // h, Degree => options.Degree);
+     if options.Verify then (
+	  if g % h != 0
+	  then error "'inducedMap' expected matrix to induce a map";
+	  if not isWellDefined p
+	  then error "'inducedMap' expected matrix to induce a well-defined map";
+	  );
+     p)
+inducedMap(Module,Nothing,Matrix) := (M,N,f) -> inducedMap(M,source f, f)
+inducedMap(Nothing,Module,Matrix) := (M,N,f) -> inducedMap(target f,N, f)
+inducedMap(Nothing,Nothing,Matrix) := (M,N,f) -> f
+
+isWellDefinedInducedMap = method()
+isWellDefinedInducedMap(Module,Module,Matrix) := (M,N,f) -> (
+     sM := target f;
+     sN := source f;
+     if ambient M =!= sM
+     then error "'isWellDefinedInducedMap' expected target of map to be a subquotient of target module provided";
+     if ambient N =!= sN
+     then error "'isWellDefinedInducedMap' expected source of map to be a subquotient of source module provided";
+     (f * generators N) % (generators M) == 0
+     and
+     (f * relations N) % (relations M) == 0)     
+isWellDefinedInducedMap(Module,Nothing,Matrix) := (M,N,f) -> isWellDefinedInducedMap(M,source f,f)
+isWellDefinedInducedMap(Nothing,Module,Matrix) := (M,N,f) -> isWellDefinedInducedMap(target f,N,f)
+isWellDefinedInducedMap(Nothing,Nothing,Matrix) := (M,N,f) -> f
+
 matrix(Ring,List) := (R,m,options) -> (
      if not isTable m then error "expected a table";
      map(R^#m,,m,options))
@@ -2016,3 +2057,9 @@ document { quote content,
      coefficients."
      }
 
+cover(Matrix) := (f) -> (
+     M := target f;
+     N := source f;
+     if not isFreeModule M or not isFreeModule N
+     then map(cover M, cover N, f)
+     else f)
