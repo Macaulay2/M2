@@ -1,8 +1,13 @@
 # @configure_input@
-VPATH = @srcdir@
 include ../config.Makefile
+all:: M2
+ifneq "@srcdir@" "."
+M2 : @srcdir@/M2 ; cp $< $@
+endif
 install : $(bindir)/M2
-$(bindir)/M2 : M2.in
-	sed -e 's,@pr.fix@,$(prefix),g' \
-	    -e 's,@PACKAGE.VERSION@,@PACKAGE_VERSION@,g' $< >"$@"
-	chmod a+x "$@"
+$(bindir)/M2 : @srcdir@/M2
+	sed -e 's,^M2HOME=.*,M2HOME=$(prefix)/lib/Macaulay2-@PACKAGE_VERSION@,' $< >"$@".tmp
+	mv "$@".tmp "$@"
+	chmod 0755 "$@"
+clean :; rm -f M2
+

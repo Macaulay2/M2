@@ -1,98 +1,31 @@
 # @configure_input@
-#############################################################################
-
 # Targets to use:
-#	all:	make a binary distribution
-#	check:  run the tests
-#	justM2:	make Macalay2/libexec/Macaulay2 and Macaulay2/bin/M2, and set up
-#               for running it
-#	doc:	make the documentation
-
-#############################################################################
+.PHONY : all check clean distclean
 ifdef XYZZY
   If you get an error message on this line, it is because you are not using
   the 'gnu' version of the 'make' program.  The source code for it is
   available at ftp://ftp.gnu.org/pub/gnu/make.
 endif
-#############################################################################
 include config.Makefile
-top_srcdir = @top_srcdir@
 VPATH = @srcdir@
-.PHONY : all always dirs clean announce MACAULAY2 MACAULAY2.doc doc port default lsm
-default: all
-all::
-
-################################# preparation
-justM2 all::; @echo 'making Macaulay 2 version $(PACKAGE_VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL)'
-always:
-clean::; rm -rf lib
-clean::; rm -f core
+install all clean distclean::
+	@echo '-------- making '$@', $(PACKAGE_VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) --------'
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
-################################ SETUP
 ifeq "$(CC)" "cl"
-justM2 all:: ;	$(MAKE) -C WindowsNT
-TARGET := Macaulay2-$(DESC).zip
-DOCTARGET := Macaulay2-$(PACKAGE_VERSION)-doc.zip
-else
-TARGET := Macaulay2-$(DESC).tar.gz
-DOCTARGET := Macaulay2-$(PACKAGE_VERSION)-doc.tar.gz
+all:: ;	$(MAKE) -C WindowsNT
 endif
-###################### Macaulay 2 binary distribution
-all :: MACAULAY2
-distribution :: all $(TARGET)
-check : ; $(MAKE) -C Macaulay2 check
-MACAULAY2:; $(MAKE) -C Macaulay2 all
-justM2 distclean::; $(MAKE) -C Macaulay2 $@
-DISTFILES_MADE:= \
-		Macaulay2/setup \
-		Macaulay2/cache/Macaulay2-doc \
-		Macaulay2/libexec/Macaulay2@EXEEXT@ \
-		Macaulay2/emacs \
-		Macaulay2/m2/*.m2
-DISTFILES_SRC := \
-		$(shell cd @srcdir@; echo Macaulay2/m2/*.m2 Macaulay2/tutorial/final/*.m2) \
-		Macaulay2/packages \
-		Macaulay2/emacs \
-		Macaulay2/CHANGES \
-	 	Macaulay2/README.txt
-DISTFILES := $(DISTFILES_SRC) $(DISTFILES_MADE)
-################################# install
+all install clean :: ; $(MAKE) -C bin $@
+all distclean check clean install :: ; $(MAKE) -C Macaulay2 $@
+all::; $(MAKE) -C Macaulay2 doc
 DIRS := $(target) $(packagedir) $(bindir)
-install :: all doc
+install :: all
 install :: $(DIRS)
-install :: ; $(MAKE) -C bin $@
-install :: ; $(MAKE) -C Macaulay2 $@
 install :: ; $(MAKE) -C encap $@
 $(DIRS) :; $(INSTALL) -d $@
-#################################
-Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
-	tar cf - $(DISTFILES_MADE) -C @srcdir@ $(DISTFILES_SRC) |gzip >"$@"
-	@echo "-----------------------------------------------------------------------------"
-	@echo "  $@ contains everything but the documentation"
-	@echo "-----------------------------------------------------------------------------"
-# Macaulay2-$(DESC).zip : Makefile $(DISTFILES)
-# 	winzip32 -u -r -p $@ @WindowsNT/DistributionFiles.lst
-# 	@echo "-----------------------------------------------------------------------------"
-# 	@echo "  $@ contains everything but the documentation"
-# 	@echo "-----------------------------------------------------------------------------"
-clean ::; $(MAKE) -C Macaulay2 $@
-###################### Macaulay 2 documentation
-DOCFILES = Macaulay2/html
-Macaulay2-$(PACKAGE_VERSION)-doc.tar.gz : $(DOCFILES)
-	tar cf - $(DOCFILES) | gzip >$@
-	@echo "-----------------------------------------------------------------------------"
-	@echo "  $@ contains the documentation"
-	@echo "-----------------------------------------------------------------------------"
-Macaulay2-$(PACKAGE_VERSION)-doc.zip : $(DOCFILES)
-	winzip32 -u -r -p $@ $(DOCFILES)
-	@echo "-----------------------------------------------------------------------------"
-	@echo "  $@ contains the documentation"
-	@echo "-----------------------------------------------------------------------------"
-MACAULAY2.doc:
-	$(MAKE) -C Macaulay2 doc
-doc:: MACAULAY2.doc 
-distribution:: doc $(DOCTARGET)
+distribution :
+	tar cf -C $(encapdir) $(package) | gzip > Macaulay2-$(DESC).tar.gz
+
 ################################# tar manufactured files
 manufactured.tgz : Makefile
 	make -C Macaulay2/d all-c-files
@@ -112,13 +45,5 @@ manufactured.tgz : Makefile
 		Macaulay2/m2/cache-tmp/Examples/*.m2 \
 		Macaulay2/m2/cache-tmp/Tests/*.m2 \
 		Macaulay2/html
-################################# configure
-# make this one last
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h config.Makefile
-################################# final status messages
-justM2 all doc clean distclean::
-	@echo "--------------------- done making '$@' --------------------"
-
-# Local Variables:
-# mode: Makefile
-# End:
+install all clean distclean::; @echo "-------- done making '$@' --------"

@@ -541,6 +541,10 @@ ac_env_CC_set=${CC+set}
 ac_env_CC_value=$CC
 ac_cv_env_CC_set=${CC+set}
 ac_cv_env_CC_value=$CC
+ac_env_CXX_set=${CXX+set}
+ac_env_CXX_value=$CXX
+ac_cv_env_CXX_set=${CXX+set}
+ac_cv_env_CXX_value=$CXX
 ac_env_CFLAGS_set=${CFLAGS+set}
 ac_env_CFLAGS_value=$CFLAGS
 ac_cv_env_CFLAGS_set=${CFLAGS+set}
@@ -553,10 +557,6 @@ ac_env_CPPFLAGS_set=${CPPFLAGS+set}
 ac_env_CPPFLAGS_value=$CPPFLAGS
 ac_cv_env_CPPFLAGS_set=${CPPFLAGS+set}
 ac_cv_env_CPPFLAGS_value=$CPPFLAGS
-ac_env_CXX_set=${CXX+set}
-ac_env_CXX_value=$CXX
-ac_cv_env_CXX_set=${CXX+set}
-ac_cv_env_CXX_value=$CXX
 ac_env_CXXFLAGS_set=${CXXFLAGS+set}
 ac_env_CXXFLAGS_value=$CXXFLAGS
 ac_cv_env_CXXFLAGS_set=${CXXFLAGS+set}
@@ -653,13 +653,13 @@ Optional Packages:
   --with-encapdir=...     encap source directory /usr/local/encap
 
 Some influential environment variables:
-  CC          C compiler command
+  CC          C compiler to use
+  CXX         C++ compiler to use
   CFLAGS      C compiler flags
   LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
               nonstandard directory <lib dir>
   CPPFLAGS    C/C++ preprocessor flags, e.g. -I<include dir> if you have
               headers in a nonstandard directory <include dir>
-  CXX         C++ compiler command
   CXXFLAGS    C++ compiler flags
 
 Use these variables to override the choices made by `configure' or to help
@@ -958,7 +958,7 @@ test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
 
-echo $ac_n "checking for GNU make... " >&6
+echo $ECHO_N "checking for GNU make... " >&6
 if make -n --version nothing | grep GNU >/dev/null 2>&1
 then echo "found" >&6
 else echo "`basename $0`: make: GNU make is required" >&2
@@ -2596,16 +2596,15 @@ EOF
 
 fi
 
-  echo contents of confdefs.h: >&6
-  sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
+# M2_SHOW_CONFDEFS()
 
-  echo "$as_me:2602: checking for sys_errlist" >&5
+  echo "$as_me:2601: checking for sys_errlist" >&5
 echo $ECHO_N "checking for sys_errlist... $ECHO_C" >&6
 if test "${ac_cv_func_sys_errlist+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2608 "configure"
+#line 2607 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char sys_errlist (); below.  */
@@ -2636,16 +2635,16 @@ f = sys_errlist;
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:2639: \"$ac_link\"") >&5
+if { (eval echo "$as_me:2638: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:2642: \$? = $ac_status" >&5
+  echo "$as_me:2641: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:2645: \"$ac_try\"") >&5
+  { (eval echo "$as_me:2644: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:2648: \$? = $ac_status" >&5
+  echo "$as_me:2647: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_cv_func_sys_errlist=yes
 else
@@ -2655,7 +2654,7 @@ ac_cv_func_sys_errlist=no
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "$as_me:2658: result: $ac_cv_func_sys_errlist" >&5
+echo "$as_me:2657: result: $ac_cv_func_sys_errlist" >&5
 echo "${ECHO_T}$ac_cv_func_sys_errlist" >&6
 if test $ac_cv_func_sys_errlist = yes; then
   :
@@ -2667,13 +2666,13 @@ EOF
 
 fi
 
-  echo "$as_me:2670: checking for herror" >&5
+  echo "$as_me:2669: checking for herror" >&5
 echo $ECHO_N "checking for herror... $ECHO_C" >&6
 if test "${ac_cv_func_herror+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2676 "configure"
+#line 2675 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char herror (); below.  */
@@ -2704,16 +2703,16 @@ f = herror;
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:2707: \"$ac_link\"") >&5
+if { (eval echo "$as_me:2706: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:2710: \$? = $ac_status" >&5
+  echo "$as_me:2709: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:2713: \"$ac_try\"") >&5
+  { (eval echo "$as_me:2712: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:2716: \$? = $ac_status" >&5
+  echo "$as_me:2715: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_cv_func_herror=yes
 else
@@ -2723,7 +2722,7 @@ ac_cv_func_herror=no
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "$as_me:2726: result: $ac_cv_func_herror" >&5
+echo "$as_me:2725: result: $ac_cv_func_herror" >&5
 echo "${ECHO_T}$ac_cv_func_herror" >&6
 if test $ac_cv_func_herror = yes; then
   :
@@ -2735,13 +2734,13 @@ EOF
 
 fi
 
-  echo "$as_me:2738: checking for gnu_get_libc_version" >&5
+  echo "$as_me:2737: checking for gnu_get_libc_version" >&5
 echo $ECHO_N "checking for gnu_get_libc_version... $ECHO_C" >&6
 if test "${ac_cv_func_gnu_get_libc_version+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2744 "configure"
+#line 2743 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char gnu_get_libc_version (); below.  */
@@ -2772,16 +2771,16 @@ f = gnu_get_libc_version;
 }
 _ACEOF
 rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:2775: \"$ac_link\"") >&5
+if { (eval echo "$as_me:2774: \"$ac_link\"") >&5
   (eval $ac_link) 2>&5
   ac_status=$?
-  echo "$as_me:2778: \$? = $ac_status" >&5
+  echo "$as_me:2777: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:2781: \"$ac_try\"") >&5
+  { (eval echo "$as_me:2780: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:2784: \$? = $ac_status" >&5
+  echo "$as_me:2783: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   ac_cv_func_gnu_get_libc_version=yes
 else
@@ -2791,7 +2790,7 @@ ac_cv_func_gnu_get_libc_version=no
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
 fi
-echo "$as_me:2794: result: $ac_cv_func_gnu_get_libc_version" >&5
+echo "$as_me:2793: result: $ac_cv_func_gnu_get_libc_version" >&5
 echo "${ECHO_T}$ac_cv_func_gnu_get_libc_version" >&6
 if test $ac_cv_func_gnu_get_libc_version = yes; then
   :
@@ -2803,13 +2802,13 @@ EOF
 
 fi
 
-  echo "$as_me:2806: checking whether sys_errlist is declared" >&5
+  echo "$as_me:2805: checking whether sys_errlist is declared" >&5
 echo $ECHO_N "checking whether sys_errlist is declared... $ECHO_C" >&6
 if test "${m2_cv_sys_errlist_is_declared+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2812 "configure"
+#line 2811 "configure"
 #include "confdefs.h"
 
       #include <stdio.h>
@@ -2824,16 +2823,16 @@ char ** x = sys_errlist
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:2827: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:2826: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:2830: \$? = $ac_status" >&5
+  echo "$as_me:2829: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:2833: \"$ac_try\"") >&5
+  { (eval echo "$as_me:2832: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:2836: \$? = $ac_status" >&5
+  echo "$as_me:2835: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   m2_cv_sys_errlist_is_declared=yes
 else
@@ -2843,7 +2842,7 @@ m2_cv_sys_errlist_is_declared=no
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 fi
-echo "$as_me:2846: result: $m2_cv_sys_errlist_is_declared" >&5
+echo "$as_me:2845: result: $m2_cv_sys_errlist_is_declared" >&5
 echo "${ECHO_T}$m2_cv_sys_errlist_is_declared" >&6
   if test "$m2_cv_sys_errlist_is_declared" = yes
   then
@@ -2853,13 +2852,13 @@ EOF
 
   fi
 
-  echo "$as_me:2856: checking whether h_errlist is declared" >&5
+  echo "$as_me:2855: checking whether h_errlist is declared" >&5
 echo $ECHO_N "checking whether h_errlist is declared... $ECHO_C" >&6
 if test "${m2_cv_h_errlist_is_declared+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
-#line 2862 "configure"
+#line 2861 "configure"
 #include "confdefs.h"
 
       #include <stdio.h>
@@ -2874,16 +2873,16 @@ char ** x = h_errlist
 }
 _ACEOF
 rm -f conftest.$ac_objext
-if { (eval echo "$as_me:2877: \"$ac_compile\"") >&5
+if { (eval echo "$as_me:2876: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
-  echo "$as_me:2880: \$? = $ac_status" >&5
+  echo "$as_me:2879: \$? = $ac_status" >&5
   (exit $ac_status); } &&
          { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:2883: \"$ac_try\"") >&5
+  { (eval echo "$as_me:2882: \"$ac_try\"") >&5
   (eval $ac_try) 2>&5
   ac_status=$?
-  echo "$as_me:2886: \$? = $ac_status" >&5
+  echo "$as_me:2885: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
   m2_cv_h_errlist_is_declared=yes
 else
@@ -2893,7 +2892,7 @@ m2_cv_h_errlist_is_declared=no
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 fi
-echo "$as_me:2896: result: $m2_cv_h_errlist_is_declared" >&5
+echo "$as_me:2895: result: $m2_cv_h_errlist_is_declared" >&5
 echo "${ECHO_T}$m2_cv_h_errlist_is_declared" >&6
   if test "$m2_cv_h_errlist_is_declared" = yes
   then
@@ -2905,9 +2904,9 @@ EOF
 
 ac_config_headers="$ac_config_headers include/config.h"
 
-CONFIGURED_FILES="config.Makefile Makefile Macaulay2/Makefile Macaulay2/m2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/d/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/emacs/Makefile Macaulay2/html/Makefile Macaulay2/packages/Makefile Macaulay2/packages/ComputationsBook/Makefile Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/setup Macaulay2/util/Makefile bin/M2 bin/Makefile encap/Makefile "
+CONFIGURED_FILES="config.Makefile Makefile Macaulay2/Makefile Macaulay2/m2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/d/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/emacs/Makefile Macaulay2/html/Makefile Macaulay2/packages/Makefile Macaulay2/packages/ComputationsBook/Makefile Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/setup Macaulay2/util/Makefile bin/Makefile encap/Makefile "
 
-ac_config_files="$ac_config_files config.Makefile Makefile Macaulay2/Makefile Macaulay2/m2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/d/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/emacs/Makefile Macaulay2/html/Makefile Macaulay2/packages/Makefile Macaulay2/packages/ComputationsBook/Makefile Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/setup Macaulay2/util/Makefile bin/M2 bin/Makefile encap/Makefile"
+ac_config_files="$ac_config_files config.Makefile Makefile Macaulay2/Makefile Macaulay2/m2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/d/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/emacs/Makefile Macaulay2/html/Makefile Macaulay2/packages/Makefile Macaulay2/packages/ComputationsBook/Makefile Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/setup Macaulay2/util/Makefile bin/Makefile encap/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -2987,7 +2986,7 @@ DEFS=-DHAVE_CONFIG_H
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
 ac_clean_files="$ac_clean_files $CONFIG_STATUS"
-{ echo "$as_me:2990: creating $CONFIG_STATUS" >&5
+{ echo "$as_me:2989: creating $CONFIG_STATUS" >&5
 echo "$as_me: creating $CONFIG_STATUS" >&6;}
 cat >$CONFIG_STATUS <<_ACEOF
 #! $SHELL
@@ -3160,7 +3159,7 @@ cat >>$CONFIG_STATUS <<\EOF
     echo "$ac_cs_version"; exit 0 ;;
   --he | --h)
     # Conflict between --help and --header
-    { { echo "$as_me:3163: error: ambiguous option: $1
+    { { echo "$as_me:3162: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: ambiguous option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -3179,7 +3178,7 @@ Try \`$0 --help' for more information." >&2;}
     ac_need_defaults=false;;
 
   # This is an error.
-  -*) { { echo "$as_me:3182: error: unrecognized option: $1
+  -*) { { echo "$as_me:3181: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&5
 echo "$as_me: error: unrecognized option: $1
 Try \`$0 --help' for more information." >&2;}
@@ -3232,11 +3231,10 @@ do
   "Macaulay2/tutorial/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/tutorial/Makefile" ;;
   "Macaulay2/setup" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/setup" ;;
   "Macaulay2/util/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/util/Makefile" ;;
-  "bin/M2" ) CONFIG_FILES="$CONFIG_FILES bin/M2" ;;
   "bin/Makefile" ) CONFIG_FILES="$CONFIG_FILES bin/Makefile" ;;
   "encap/Makefile" ) CONFIG_FILES="$CONFIG_FILES encap/Makefile" ;;
   "include/config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS include/config.h" ;;
-  *) { { echo "$as_me:3239: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:3237: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -3329,13 +3327,14 @@ s,@host@,$host,;t t
 s,@host_cpu@,$host_cpu,;t t
 s,@host_vendor@,$host_vendor,;t t
 s,@host_os@,$host_os,;t t
+s,@CC@,$CC,;t t
+s,@CXX@,$CXX,;t t
 s,@RANLIB@,$RANLIB,;t t
 s,@ac_ct_RANLIB@,$ac_ct_RANLIB,;t t
 s,@INSTALL_PROGRAM@,$INSTALL_PROGRAM,;t t
 s,@INSTALL_SCRIPT@,$INSTALL_SCRIPT,;t t
 s,@INSTALL_DATA@,$INSTALL_DATA,;t t
 s,@AWK@,$AWK,;t t
-s,@CC@,$CC,;t t
 s,@CFLAGS@,$CFLAGS,;t t
 s,@LDFLAGS@,$LDFLAGS,;t t
 s,@CPPFLAGS@,$CPPFLAGS,;t t
@@ -3343,7 +3342,6 @@ s,@ac_ct_CC@,$ac_ct_CC,;t t
 s,@EXEEXT@,$EXEEXT,;t t
 s,@OBJEXT@,$OBJEXT,;t t
 s,@GCC@,$GCC,;t t
-s,@CXX@,$CXX,;t t
 s,@CXXFLAGS@,$CXXFLAGS,;t t
 s,@ac_ct_CXX@,$ac_ct_CXX,;t t
 s,@YACC@,$YACC,;t t
@@ -3473,7 +3471,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:3476: creating $ac_file" >&5
+    { echo "$as_me:3474: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -3491,7 +3489,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:3494: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:3492: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -3504,7 +3502,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:3507: error: cannot find input file: $f" >&5
+           { { echo "$as_me:3505: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -3565,7 +3563,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:3568: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:3566: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -3576,7 +3574,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:3579: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:3577: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -3589,7 +3587,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:3592: error: cannot find input file: $f" >&5
+           { { echo "$as_me:3590: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -3706,7 +3704,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:3709: $ac_file is unchanged" >&5
+      { echo "$as_me:3707: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \

@@ -9,15 +9,15 @@ ALLFILES = makesyms.m2 Makefile $(ELFILES) emacs-hlp.txt emacs.m2
 all:: M2-symbols.el M2-symbols
 
 M2-symbols M2-symbols.el : ../cache/Macaulay2-doc makesyms.m2
-	../bin/M2 -q -silent @srcdir@/makesyms.m2 '-e exit 0'
+	../../bin/M2 -q -silent @srcdir@/makesyms.m2 '-e exit 0'
 
 all:: emacs-hlp.txt
 emacs-hlp.txt: ../cache/Macaulay2-doc makehlp.m2
-	../bin/M2 -q -silent @srcdir@/makehlp.m2 '-e exit 0'
+	../../bin/M2 -q -silent @srcdir@/makehlp.m2 '-e exit 0'
 
 all:: emacs.m2
 emacs.m2: ../cache/Macaulay2-doc makem2.m2
-	../bin/M2 -q -silent @srcdir@/makem2.m2 '-e exit 0'
+	../../bin/M2 -q -silent @srcdir@/makem2.m2 '-e exit 0'
 
 clean:
 	rm -f M2-symbols.el emacs-hlp.txt emacs.m2 M2-symbols

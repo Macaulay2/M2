@@ -2,6 +2,7 @@
 #ARING = true
 include ../../config.Makefile
 VPATH = @srcdir@
+DEPENDS = yes
 # MES:
 # CXXFLAGS = -DGCMALLOC -DDEBUG
 
@@ -284,7 +285,7 @@ Makefile-o.depends: $(CFILES) $(CCFILES) cmdnames.hpp cmdinst.hpp
 	$(CC) -MM $(CPPFLAGS) $(patsubst %, @srcdir@/%, $(CFILES) $(CCFILES)) >"$@"
 clean::; rm -f Makefile-o.depends
 
-ifndef NODEPENDS
+ifeq "$(DEPENDS)" "yes"
 include Makefile-o.depends
 endif
 
@@ -338,7 +339,7 @@ endif
 
 #$(addsuffix .dd,$(FILES)) : cmdnames.hpp cmdinst.hpp
 
-#ifndef NODEPENDS
+#ifeq "$(DEPENDS)" "yes"
 #include $(addsuffix .dd,$(FILES))
 #endif
 

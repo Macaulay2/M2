@@ -1,6 +1,7 @@
 # @configure_input@
 include ../../config.Makefile
 VPATH = @srcdir@
+DEPENDS = yes
 ############################## main target
 all :: compat.h
 all :: ../libexec/Macaulay2
@@ -39,7 +40,7 @@ PROJECT += GB.d
 PROJECT += system.d
 PROJECT += C.d
 ##############################
-ifndef NODEPENDS
+ifeq "$(DEPENDS)" "yes"
 include $(PROJECT:.d=.dep)
 endif
 ##############################

@@ -8,15 +8,14 @@ justM2 all :: initialize config
 
 include ../config.Makefile
 VPATH = @srcdir@
-################################# this directory's files
 install :: $(packagedir)/COPYING $(packagedir)/CHANGES $(packagedir)/README
 $(packagedir)/COPYING : COPYING  ; cp $< "$@"
 $(packagedir)/CHANGES : CHANGES  ; cp $< "$@"
 $(packagedir)/README  : README   ; cp $< "$@"
-################################# bin
-libexec bin :; mkdir $@
-clean ::; rm -rf bin libexec
-initialize :: bin libexec
+################################# libexec
+libexec :; mkdir $@
+clean ::; rm -rf libexec
+initialize :: libexec
 ################################# cache
 initialize :: cache
 cache :; mkdir $@
@@ -27,24 +26,24 @@ install :: $(packagedir)/cache/Macaulay2-doc
 $(packagedir)/cache/Macaulay2-doc : cache/Macaulay2-doc; $(INSTALL_DATA) $^ "$(packagedir)/cache"
 ################################# util
 initialize::; $(MAKE) -C util all
-distclean clean ::; $(MAKE) NODEPENDS=1 -C util $@
+distclean clean ::; $(MAKE) DEPENDS=no -C util $@
 ################################# c
-distclean clean ::; $(MAKE) NODEPENDS=1 -C c $@
+distclean clean ::; $(MAKE) DEPENDS=no -C c $@
 all justM2 ::; $(MAKE) -C c all
 ################################# e
 justM2 ::; $(MAKE) -C e all
 all check ::; $(MAKE) -C e $@
-distclean clean ::; $(MAKE) NODEPENDS=1 -C e $@
+distclean clean ::; $(MAKE) DEPENDS=no -C e $@
 ################################# dumpdata
 ifeq "$(DUMPDATA)" "yes"
 justM2 ::; $(MAKE) -C dumpdata all
 all check ::; $(MAKE) -C dumpdata $@
 endif
-distclean clean ::; $(MAKE) NODEPENDS=1 -C dumpdata $@
+distclean clean ::; $(MAKE) DEPENDS=no -C dumpdata $@
 ################################# d
-config ::; $(MAKE) NODEPENDS=1 -C d compat.h
+config ::; $(MAKE) DEPENDS=no -C d compat.h
 justM2 all ::; util/restart d/restart.tmp $(MAKE) -C d all
-distclean clean ::; $(MAKE) NODEPENDS=1 -C d $@
+distclean clean ::; $(MAKE) DEPENDS=no -C d $@
 ################################# basictests
 all ::; $(MAKE) -C basictests -k
 distclean clean ::; $(MAKE) -C basictests $@
@@ -63,8 +62,6 @@ all :: setup
 install ::; $(INSTALL_PROGRAM) setup $(packagedir)
 ################################# packages
 install check clean distclean ::; $(MAKE) -C packages $@
-################################# experiments
-all distclean clean ::; if [ -d experiments ]; then $(MAKE) -C experiments $@; fi
 ################################# html
 doc :: html
 html ::; $(MAKE) -C html all
@@ -92,4 +89,4 @@ endif
 distclean::; rm -f Makefile
 ################################# final status messages
 justM2 all doc clean distclean::
-	@echo "--------------------- done making '$@' --------------------"
+	@echo "-------- done making '$@' --------"

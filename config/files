@@ -16,6 +16,5 @@ Macaulay2/test/Makefile
 Macaulay2/tutorial/Makefile
 Macaulay2/setup
 Macaulay2/util/Makefile
-bin/M2
 bin/Makefile
 encap/Makefile

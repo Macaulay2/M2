@@ -2,7 +2,7 @@
 
 // Mike, I replaced all uses of "long" by "int32", defined in targettypes.h, to make it work
 // on machines where long can be longer.
-#include "../c2/targettypes.h"
+#include "targettypes.h"
 
 #define Random RandomFoo
 

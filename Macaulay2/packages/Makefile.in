@@ -13,10 +13,11 @@ Makefile : Makefile.in
 
 #############################################################################
 all :: doc
+distclean :: clean
 doc : $(DOC) $(TEST) phase2
 	$(MAKE) -C $(DOC) -f ../../@srcdir@/../m2/Makefile.egs srcdir=../../@srcdir@
 phase2 : StateTable.m2 eliminate.m2
-	for i in $^ ; do ../bin/M2 -q '-e phase=2' $$i '-e exit 0'; done
+	for i in $^ ; do ../../bin/M2 -q '-e phase=2' $$i '-e exit 0'; done
 	touch "$@"
 check:: doc
 	$(MAKE) -C $(TEST) -f ../../@srcdir@/../m2/Makefile.tests srcdir=../../@srcdir@
@@ -28,14 +29,14 @@ test-D-modules : $(Dtestresults)
 $(Dtestresults) : ../libexec/Macaulay2 ../cache/Macaulay2-doc ../cache/Macaulay2-made
 %.okay : %.m2
 	@ echo running test file $<
-	../bin/M2 -q '-e path = prepend( "D-modules/", path )' '-e input "$<"' '-e exit 0'
+	../../bin/M2 -q '-e path = prepend( "D-modules/", path )' '-e input "$<"' '-e exit 0'
 	touch $@
 #############################################################################
-check ::
+clean check distclean ::
 	$(MAKE) -C ComputationsBook $@
 #############################################################################
 initialize :: cache $(DOC) $(TEST)
-clean :; rm -rf cache
+clean ::; rm -rf cache
 cache $(DOC) $(TEST) :; mkdir -p $@
 
 initialize :: $(DOC)/up.gif $(DOC)/next.gif $(DOC)/previous.gif $(DOC)/top.gif \
@@ -48,5 +49,4 @@ install :: $(packagedir)/packages
 	$(INSTALL_DATA) @srcdir@/*.m2 $<
 	tar cf - -C @srcdir@ D-modules ComputationsBook | tar xf - -C $<
 
-distclean : clean
-	rm -f Makefile
+distclean ::; rm -f Makefile

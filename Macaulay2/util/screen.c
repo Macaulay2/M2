@@ -160,7 +160,7 @@ void stop(int sig){
      }
 
 void
-getpty(int *master,char **slavename)
+getpty(int *master,char **SlaveName)
 {
      static char name[24];
      struct stat stb;
@@ -177,7 +177,7 @@ getpty(int *master,char **slavename)
 		    close(*master);
 		    continue;
 		    }
-	       *slavename = name;
+	       *SlaveName = name;
 	       p=1;
 	       ckioctl(*master,FIONBIO,&p);
      	       return;
@@ -263,19 +263,19 @@ HandleSIGCHLD(int sig)
      	  if (pid == ChildPID) {
 	       if (status != 0) {
 		    int code = (status >> 8) & 0xff;
-		    int sig = status & 0xff;
+		    int sig0 = status & 0xff;
 		    int n;
      		    char buf[BUFFER_SIZE];
 		    while (0 < (n = read(masterfd,buf,sizeof(buf)))) {
 			 write(STDOUT,buf,n);
 			 }
 		    if (code == 0) {
-			 sprintf(buf,"process exited: signal %d", sig);
+			 sprintf(buf,"process exited: signal %d", sig0);
 			 }
-		    else if (sig == 0) {
+		    else if (sig0 == 0) {
 			 sprintf(buf,"process exited: return code %d", code);
 			 }
-		    else sprintf(buf,"process exited: return code %d, signal %d", code, sig);
+		    else sprintf(buf,"process exited: return code %d, signal %d", code, sig0);
 	       	    errno = 0;
 	       	    error(buf);
 		    }
