@@ -149,7 +149,8 @@ fakeMenu := x -> (
      )
 
 makeHtmlNode = fkey -> (
-     htmlFilename fkey << html HTML { 
+     -- stderr << "--fkey=" << fkey << endl;		    --  debugging
+     (buildDirectory | "/" | htmlFilename fkey) << html HTML { 
 	  HEAD TITLE {fkey, headline fkey},
 	  BODY { 
 	       buttonBar fkey,

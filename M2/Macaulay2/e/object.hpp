@@ -203,8 +203,9 @@ public:
     { 
       if (obj != NULL) 
 	{
-	  if (--obj->refcount <= 0) 
+	  if (--obj->refcount == 0) 
 	    delete obj; 
+	  obj = NULL;
 	}
     }
 

@@ -133,3 +133,6 @@ if false then assert false
 -- if false then i :=6 else i :=6
 -- if true then i :=6 else i :=6
 -- assert(i === 5)
+
+endInput						    -- should end the input file
+assert false
