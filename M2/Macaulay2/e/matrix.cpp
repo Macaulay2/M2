@@ -1330,24 +1330,25 @@ void Matrix::minimal_lead_terms(intarray &result) const
     }
 }
 
-Matrix *Matrix::lead_var_coefficient(Matrix *&monoms) const
+#endif
+Matrix *Matrix::top_coefficients(Matrix *&monoms) const
 {
-  Matrix *result = new Matrix(rows());
-  monoms = new Matrix(get_ring()->make_FreeModule(1));
-  int var, exp;
+  const PolynomialRing *R = get_ring()->cast_to_PolynomialRing();
+  MatrixConstructor result(rows(), 0, false);
+  MatrixConstructor cons_monoms(R->make_FreeModule(1), 0, false);
   for (int i=0; i<n_cols(); i++)
     {
+      int var, exp;
       vec u = elem(i);
-      vec v = rows()->lead_var_coefficient(u, var, exp);
-      result->append(v);
-      ring_elem a = get_ring()->var(var,exp);
-      vec w = monoms->rows()->term(0,a);
-      get_ring()->remove(a);
-      monoms->append(w);
+      vec v = R->vec_top_coefficient(u, var, exp);
+      result.append(v);
+      ring_elem a = R->var(var,exp);
+      vec w = R->make_vec(0,a);
+      cons_monoms.append(w);
     }
-  return result;
+  monoms = cons_monoms.to_matrix();
+  return result.to_matrix();
 }
-#endif
 
 M2_arrayint_OrNull Matrix::elim_vars(int nparts) const
 {
@@ -1602,6 +1603,16 @@ void Matrix::text_out(buffer &o) const
     }
   deletearray(p);
 }
+
+Matrix *Matrix::compress() const
+{
+  MatrixConstructor result(rows(), 0, false);
+  for (int i=0; i<n_cols(); i++)
+    if (elem(i) != 0)
+      result.append(elem(i), cols()->degree(i));
+  return result.to_matrix();
+}
+
 
 #if 0
 int Matrix::moneq(const int *exp, int *m, const int *vars, int *exp2) const

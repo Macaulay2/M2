@@ -229,7 +229,7 @@ satideal2 := options -> (I,f) -> (
 	fback := res#0;
 	J := fto generators I;
 	gb(J,options);
-	m := divideByVariable(generators gb J, R_(numgens R-1));
+	(m, notused) := divideByVariable(generators gb J, R_(numgens R-1));
 	ideal fback m)
     )
 
@@ -249,8 +249,8 @@ satideal3 := options -> (I,f) -> (
      iback := map(R,A,vars R | f);
      IA := generators I1 ** A;
      g := generators gb(IA,options);
-     g = divideByVariable(g, A_n);
-     ideal iback g
+     (g1,notused) := divideByVariable(g, A_n);
+     ideal iback g1
      )
 
 satideal4 := options -> (I,f) -> (

@@ -525,7 +525,7 @@ extern "C" {
 
   int IM2_RingElement_index_if_var(const RingElement *f); /* drg: connected rawIndexIfVariable */
   /* if f is a variable of its ring, then the index of that variable is returned.
-     If f isnot a variable, then -1 is returned. */
+     If f is not a variable, then -1 is returned. */
 
   M2_arrayint IM2_RingElement_indices(const RingElement *f); /* drg: connected rawIndices */
   /* The list of indices of variables which occur in f is returned. */
@@ -896,7 +896,7 @@ extern "C" {
 
   const MatrixOrNull * IM2_Matrix_pfaffians(int p, const Matrix *M); /* drg: connected rawPfaffians*/
 
-  const MatrixOrNull * IM2_Matrix_compress(const Matrix *M); /* TODO */
+  const Matrix * IM2_Matrix_compress(const Matrix *M); /* DAN, please connect */
 
   const MatrixOrNull * IM2_Matrix_uniquify(const Matrix *M); /* TODO */
 
@@ -957,6 +957,15 @@ extern "C" {
      and wi is not divisible by x, or ai = maxdegree, 
      and the integer which is the maximum of the ai's.
      QUESTION: what rings should this work over?
+  */
+
+  Matrix_pair_OrNull * rawTopCoefficients(const Matrix *M); /* DAN: please connect */
+  /* Returns a pair of matrices: the first is a list of monomials (of form var^exp),
+     and the second has the same row space as M.  For each column, find the smallest 
+     index variable, var,  which occurs, and exp, the largest degree to which it occurs
+     in that column.  Place var^exp in the first matrix.
+     Place the coeff of var^exp (a vector) into the second matrix.
+     If the ring is not a polynomial ring, an error is given, and Null is returned.
   */
 
   M2_arrayint IM2_Matrix_min_leadterms(const Matrix *M, M2_arrayint vars); /* TODO */
@@ -1582,11 +1591,11 @@ enum gbTraceValues
 
   void rawFactor(const RingElement *f, 
 		 RingElement_array_OrNull **result_factors, 
-		 M2_arrayint_OrNull *result_powers); /*to be connected */
+		 M2_arrayint_OrNull *result_powers); /* rawFactor */
 
-  M2_arrayint_OrNull rawIdealReorder(const Matrix *M);/*to be connected */
+  M2_arrayint_OrNull rawIdealReorder(const Matrix *M);/* rawIdealReorder */
 
-  Matrix_array_OrNull * rawCharSeries(const Matrix *M);/*to be connected */
+  Matrix_array_OrNull * rawCharSeries(const Matrix *M);/* rawCharSeries */
 
 #if defined(__cplusplus)
 }

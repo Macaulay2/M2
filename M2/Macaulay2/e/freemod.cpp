@@ -703,67 +703,6 @@ int FreeModule::in_subring(int nslots, const vec v) const
 }
 
 #if 0
-vec FreeModule::coefficient_of_var(vec v, int var, int exp) const
-{
-  if (M == NULL) return copy(v);
-  vecterm head;
-  vecterm *result = &head;
-  for (vecterm *t = v; t != NULL; t = t->next)
-    {
-      M->to_expvector(t->monom, nf_exp);
-      if (nf_exp[var] != exp) continue;
-
-      nf_exp[var] = 0;
-
-      result->next = new_term();
-      result = result->next;
-      result->comp = t->comp;
-      result->coeff = K->copy(t->coeff);
-      M->from_expvector(nf_exp, result->monom);
-    }
-  result->next = NULL;
-  return head.next;
-}
-
-vec FreeModule::lead_var_coefficient(vec &v, int &var, int &exp) const
-{
-  var = -1;
-  exp = 0;
-  if (M == NULL) return NULL;
-  if (v == NULL)
-    {
-      return NULL;
-    }
-  M->divide(v->monom, base_monom(v->comp), nf_1);
-  M->to_expvector(nf_1, nf_exp);
-  for (int i=0; i<M->n_vars(); i++)
-    if (nf_exp[i] > 0) 
-      {
-	var = i;
-	exp = nf_exp[i];
-	break;
-      }
-
-  for (vecterm *t = v->next; t != NULL; t = t->next)
-    {
-      M->divide(t->monom, base_monom(t->comp), nf_1);
-      M->to_expvector(nf_1, nf_exp);
-      for (int j=0; j<var; j++)
-	{
-	  if (nf_exp[j] > 0)
-	    {
-	      var = j;
-	      exp = nf_exp[j];
-	      break;
-	    }
-	  if (nf_exp[var] > exp)
-	    exp = nf_exp[var];
-	}
-    }
-  // Now we have the variable, and its exponent.
-  
-  return coefficient_of_var(v, var, exp);
-}
 #endif
 
 void FreeModule::degree_of_var(int n, const vec v, int &lo, int &hi) const

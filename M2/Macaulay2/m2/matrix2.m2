@@ -284,14 +284,14 @@ divideByVariable = method()
 divideByVariable(Matrix, RingElement) := Matrix => (m,v) -> (
      if ring v =!= ring m then 
          error("must divide by a variable in the ring ", ring m);
-     sendgg(ggPush m, ggPush index v, ggPush (-1), ggsat);
-     getMatrix ring m)
+     (m1,topdegree) := rawDivideByVariable(m.RawMatrix, index v, -1);
+     (map(ring m, m1), topdegree))
 
 divideByVariable(Matrix, RingElement, ZZ) := Matrix => (m,v,d) -> (
      if ring v =!= ring m then 
          error("must divide by a variable in the ring ", ring m);
-     sendgg(ggPush m, ggPush index v, ggPush d, ggsat);
-     getMatrix ring m)
+     (m1,topdegree) := rawDivideByVariable(m.RawMatrix, index v, d);
+     (map(ring m, m1), topdegree))
 
 compress = method()
 --compress Matrix := (m) -> (

@@ -1841,6 +1841,68 @@ vec PolyRing::vec_lead_term(int nparts, const FreeModule *F, vec v) const
   return make_vec(lead->comp, r);
 }
 
+vec PolyRing::vec_coefficient_of_var(vec v, int x, int e) const
+// Find the coefficient of x^e in v.
+{
+  int *exp = newarray(int,n_vars());
+  vecterm vec_head;
+  vecterm *vec_result = &vec_head;
+  for (vecterm *t = v; t != NULL; t = t->next)
+    {
+      Nterm head;
+      Nterm *result = &head;
+      for (Nterm *f = t->coeff; f != NULL; f=f->next)
+	{
+	  M_->to_expvector(f->monom, exp);
+	  if (exp[x] != e) continue;
+	  exp[x] = 0;
+	  result->next = new_term();
+	  result = result->next;
+	  result->coeff = f->coeff;
+	  M_->from_expvector(exp, result->monom);
+	}
+      result->next = NULL;
+      vec_result->next = make_vec(t->comp, head.next);
+      vec_result = vec_result->next;
+    }
+  vec_result->next = NULL;
+  return vec_head.next;
+}
+
+vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
+// find the smallest variable x which occurs in v, and also find e s.t. x^e is
+// the largest power of x occuring in v.  Set x and e accordingly.
+// Return the coefficient of x^e,
+{
+  x = n_vars();
+  e = 0;
+  if (v == NULL)
+    {
+      return NULL;
+    }
+
+  int *exp = newarray(int, n_vars());
+  for (vec t = v; t != 0; t = t->next)
+    for (Nterm *f = t->coeff; f != 0; f = f->next)
+      {
+	M_->to_expvector(f->monom, exp);
+	for (int i=0; i<x; i++)
+	  {
+	    if (exp[i] > 0)
+	      {
+		x = i;
+		e = exp[i];
+		break;
+	      }
+	  }
+	if (exp[x] > e)
+	  e = exp[x];
+      }
+      
+  // Now we have the variable, and its exponent.
+  if (x == n_vars()) return v;
+  return vec_coefficient_of_var(v, x, e);
+}
 
 
 ///////////////////////////////////

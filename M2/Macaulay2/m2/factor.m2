@@ -35,8 +35,7 @@ pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
 reorder := I -> (
      f := generators I;
      R := ring I;
-     sendgg(ggPush f, ggfactor1);
-     v := eePopIntarray();
+     v := rawIdealReorder raw f;
      assert( #v == numgens R );
      v)
 
@@ -53,7 +52,7 @@ commden := (f) -> (
 irreducibleCharacteristicSeries = method()
 irreducibleCharacteristicSeries Ideal := I -> (
      f := generators I;
-     f = compress f;					    -- avoid a bug 
+     --f = compress f;					    -- avoid a bug 
      R := ring I;
      if not isPolynomialRing R 
      then error "expected ideal in a polynomial ring";
@@ -62,10 +61,9 @@ irreducibleCharacteristicSeries Ideal := I -> (
      if k === QQ then f = matrix { first entries f / (r -> r * commden r) };
      re := reorder I;
      n := #re;
-     x := symbol x;
      f = substitute(f,apply(n,i -> R_(re#i) => R_i));
-     sendgg(ggPush f, ggfactor2);
-     ics := apply(eePopInt(), i -> apply(eePopInt(), j -> R.pop()));
+     ics := rawCharSeries raw f;
+     ics = apply(ics, m -> map(R,m));
      phi := map(R,R,apply(n,i->R_(re#i)));
      {ics,phi}
      )

@@ -16,6 +16,10 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+Warning: the return value of the function divideByVariable has changed.  It now returns a
+pair consisting of a matrix (the old return value), and an integer,
+which is the largest power of the variable which was divided out.
+
 Warning: the function 'coefficients' has changed.  Instead of
 returning a list of two matrices, it returns a sequence, so it can be
 used in parallel assignment statements.  Also, the shape of the

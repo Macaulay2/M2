@@ -254,6 +254,88 @@ document {
 	  },
      }
 
+-- a) free modules, bases and monomials
+-- b) monomial orders: def
+-- c) kinds in M2
+-- d) Schreyer orders
+--    examples of use
+
+document { 
+     Key => "Monomial orders in free modules",
+     "In Macaulay 2, each free module F = R^s over a ring R has a basis
+     of unit column vectors F_0, F_1, ..., F_(s-1).  The monomials of F
+     are the elements m*F_i, where m is a monomial of the ring R.
+     In Macaulay 2, orders on the monomials of F are used for computing Groebner bases and
+     syzygies, and also to determine the initial, or lead term of elements of F.",
+     PARA,
+     "The ring R comes equipped with a total order on the monomials of R.
+     A total order on the monomials of F is called ", EM "compatible", " (with the order
+     on R), if m*F_i > n*F_i (in F) whenever m > n (in R). There are many types of
+     compatible orders, but several stand out: term over position up, term over position down,
+     position up over term, position down over term, and Schreyer orders.",
+     PARA,
+     "term over position up:   m*F_i > n*F_j iff m>n or m==n and i>j",
+     PARA,
+     "term over position down: m*F_i > n*F_j iff m>n or m==n and i<j",
+     PARA,
+     "position up over term:   m*F_i > n*F_j iff i>j or i==j and m>n",
+     PARA,
+     "position down over term: m*F_i > n*F_j iff i>j or i==j and m>n",
+     PARA,
+     "Induced monomial orders are another class of important orders on F.",
+     "Given a free module G and a set of monomials phi_0, ..., phi_(s-1) of G,
+     and a monomial order on the monomials of G, the induced order, or, Schreyer
+     order is defined by:
+     m*F_i > n*F_j (in F) iff m*phi_i > n*phi_j (in G), or m*phi_i and n*phi_j
+     are scalar multiples of each other, and i>j.
+     ",
+     PARA,
+     "In Macaulay 2, free modules come equipped with a compatible order.  The default
+     order is: m*F_i > n*F_j if m > n (in R), or m == n, and i > j. 
+     This is called Position=>Up.  In the following example, the lead term is a*F_1,
+     since a > b.",
+     EXAMPLE {
+	  "R = ZZ[a..d];",
+	  "F = R^3",
+	  "f = b*F_0 + a*F_1",
+	  "leadTerm f"
+	  },
+     "This is the same as giving the monomial order as:",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder => {GRevLex => 4, Position => Up}];",
+	  "F = R^3",
+	  "leadTerm(a*F_0 + a*F_1)"
+	  },
+     "Giving Position=>Down instead switches the test above to i < j.  In this case the 
+     monomial order on F is:
+     m*F_i > n*F_j if m>n or m==n and i<j.",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder => {GRevLex => 4, Position => Down}];",
+	  "F = R^3",
+	  "leadTerm(a*F_0 + a*F_1)"
+	  },
+     "If one gives Position=>Up or Position=>Down earlier, then the position will be 
+     taken into account earlier. For example",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder => {GRevLex => 2, Position => Down, GRevLex => 2}];",
+	  "F = R^3",
+	  "leadTerm(a*F_0 + a*F_1)",
+	  "leadTerm(b*F_0 + c^4*F_1)",	  
+	  "leadTerm(c*F_0 + d^2*F_1)"	  
+	  },
+     "If one wants Position over Term (POT), place the Position element first",
+     EXAMPLE {
+	  "R = ZZ[a..d, MonomialOrder => {Position => Down}];",
+	  "F = R^3",
+	  "leadTerm(a*F_0 + a*F_1)",
+	  "leadTerm(b*F_0 + c^4*F_1)",	  
+	  "leadTerm(c*F_0 + d^2*F_1)"	  
+	  },
+     SeeAlso => {
+	  "Schreyer order"
+	  }
+     }
+     
 document {
      Key => "Schreyer order",
      Headline => "induced monomial order on a free module",

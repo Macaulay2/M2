@@ -2,6 +2,9 @@
 
 BUGS: 
       Grassmannian(2,5)
+      compress (uses submatrix)
+      submatrix (vectors not yet re-implemented)
+      terms RingElement
 
 packages:
 	gin
@@ -13,7 +16,13 @@ packages:
 	complexes
 	toric ideals
 	
-	
+matrix2.m2 gg problems:
+  divideByVariable DONE
+  compress
+  oldCoefficients
+  selectInSubring	
+  Matrix::lead_var_coefficients -- needed for decompose
+    changed to top_coefficients
 
 random aspects of resolutions and GB's:
        matrices returned should NEVER be able to be changed by the computation.
