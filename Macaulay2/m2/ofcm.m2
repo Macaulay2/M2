@@ -132,7 +132,7 @@ RingElement _ Ring := RingElement => (x,R) -> (
 makeit1 := (options) -> (
      M := new GeneralOrderedMonoid of MonoidElement;
      M.Engine = true;
-     varlist := options.Variables;
+     varlist := baseName \ options.Variables;
      n := # varlist;
      externalDegrees := options.Degrees;
      M.degrees = externalDegrees;
@@ -249,7 +249,7 @@ makeMonoid := (options) -> (
      -- First check the variable names
      if class options.Variables === ZZ 
      then (
-	  x := symbol x;
+	  x := local "$x";
           options.Variables = toList (x_0 .. x_(options.Variables - 1)))
      else (
 	  v := flatten toList apply(options.Variables, x->if class x === MutableList then toList x else x);

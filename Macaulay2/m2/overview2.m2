@@ -691,13 +691,11 @@ document {
 	  "x_10 .. x_20",
 	  "x_(1,1) .. x_(2,3)",
 	  },
-     "Values can be assigned to these variables with ", TO "#", ".",
+     "Values can be assigned to these variables with ", TO "_", ".",
      EXAMPLE {
-	  "x#10 = 555;",
-	  "x_10",
+	  "y_10 = 555;",
+	  "y_10",
 	  },
-     "Be careful not to assign a value to ", TT "x", " itself if you wish to continue
-     using it as a subscripted variable.",
      SeeAlso => {"IndexedVariable"}
      }
 
