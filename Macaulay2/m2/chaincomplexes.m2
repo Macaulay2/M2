@@ -279,6 +279,7 @@ ChainComplexMap ++ ChainComplexMap := ChainComplexMap => (f,g) -> (
      h)
 
 isHomogeneous ChainComplexMap := f -> all(spots f, i -> isHomogeneous f_i)
+isHomogeneous ChainComplex := C -> isHomogeneous C.dd
 
 isDirectSum ChainComplex := (C) -> C.?components
 components ChainComplexMap := f -> if f.?components then f.components else {f}
