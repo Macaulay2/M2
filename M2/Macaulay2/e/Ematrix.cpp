@@ -836,7 +836,7 @@ EMatrix *EMatrix::koszul(int p) const
       for (int r=p-1; r>=0; r--)
 	{
 	  negate = !negate;
-#if 1
+#if 0
 	  swap(a[p-1], a[r]);
 #else
 	  int tmp = a[p-1];

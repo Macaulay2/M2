@@ -972,7 +972,8 @@ void SparseMutableMatrix::reducePivots()
   int columnPivot = ncols-1;
 
   // first reduce 1's and -1's
-  for (int i = 0; i < ncols; i++) 
+  int i;
+  for (i = 0; i < ncols; i++) 
     { 
       for (sparse_vector *p = matrix[i]; p != 0; p = p->next) 
 	{
