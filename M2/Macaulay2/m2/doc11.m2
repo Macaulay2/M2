@@ -151,92 +151,92 @@ document { HTML,
      SEEALSO "hypertext"
      }
 
-document { H1,
-     Headline => "HTML H1 item",
-     TT "H1 x", " -- encloses ", TT "x", " in a hypertext H1 header item.",
+document { HEADER1,
+     Headline => "HTML HEADER1 item",
+     TT "HEADER1 x", " -- encloses ", TT "x", " in a hypertext HEADER1 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "H1 \"Interesting thing\"",
+     PRE "HEADER1 \"Interesting thing\"",
      " produces ",
-     H1 "Interesting thing",
+     HEADER1 "Interesting thing",
      PARA,
      SEEALSO "hypertext"
      }
 
-document { H2,
-     Headline => "HTML H2 item",
-     TT "H2 x", " -- encloses ", TT "x", " in a hypertext H2 header item.",
+document { HEADER2,
+     Headline => "HTML HEADER2 item",
+     TT "HEADER2 x", " -- encloses ", TT "x", " in a hypertext HEADER2 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "H2 \"Interesting thing\"",
+     PRE "HEADER2 \"Interesting thing\"",
      " produces ",
-     H2 "Interesting thing",
+     HEADER2 "Interesting thing",
      PARA,
      SEEALSO "hypertext"
      }
 
-document { H3,
-     Headline => "HTML H3 item",
-     TT "H3 x", " -- encloses ", TT "x", " in a hypertext H3 header item.",
+document { HEADER3,
+     Headline => "HTML HEADER3 item",
+     TT "HEADER3 x", " -- encloses ", TT "x", " in a hypertext HEADER3 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "H3 \"Interesting thing\"",
+     PRE "HEADER3 \"Interesting thing\"",
      " produces ",
-     H3 "Interesting thing",
+     HEADER3 "Interesting thing",
      PARA,
      SEEALSO "hypertext"
      }
 
-document { H4,
-     Headline => "HTML H4 item",
-     TT "H4 x", " -- encloses ", TT "x", " in a hypertext H4 header item.",
+document { HEADER4,
+     Headline => "HTML HEADER4 item",
+     TT "HEADER4 x", " -- encloses ", TT "x", " in a hypertext HEADER4 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "H4 \"Interesting thing\"",
+     PRE "HEADER4 \"Interesting thing\"",
      " produces ",
-     H4 "Interesting thing",
+     HEADER4 "Interesting thing",
      PARA,
      SEEALSO "hypertext"
      }
 
-document { H5,
-     Headline => "HTML H5 item",
-     TT "H5 x", " -- encloses ", TT "x", " in a hypertext H5 header item.",
+document { HEADER5,
+     Headline => "HTML HEADER5 item",
+     TT "HEADER5 x", " -- encloses ", TT "x", " in a hypertext HEADER5 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "H5 \"Interesting thing\"",
+     PRE "HEADER5 \"Interesting thing\"",
      " produces ",
-     H5 "Interesting thing",
+     HEADER5 "Interesting thing",
      PARA,
      SEEALSO "hypertext"
      }
 
-document { H6,
-     Headline => "HTML H6 item",
-     TT "H6 x", " -- encloses ", TT "x", " in a hypertext H6 header item.",
+document { HEADER6,
+     Headline => "HTML HEADER6 item",
+     TT "HEADER6 x", " -- encloses ", TT "x", " in a hypertext HEADER6 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",
      PARA,
      "Here is an example.  The code ",
-     PRE "H6 \"Interesting thing\"",
+     PRE "HEADER6 \"Interesting thing\"",
      " produces ",
-     H6 "Interesting thing",
+     HEADER6 "Interesting thing",
      PARA,
      SEEALSO "hypertext"
      }

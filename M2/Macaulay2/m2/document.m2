@@ -254,13 +254,13 @@ BODY       = new MarkUpType
 IMG	   = new MarkUpType
 HTML       = new MarkUpType
 CENTER     = new MarkUpType
-H1         = new MarkUpType
-H2         = new MarkUpType
 BIG        = new MarkUpType
-H3         = new MarkUpType
-H4         = new MarkUpType
-H5         = new MarkUpType
-H6         = new MarkUpType
+HEADER1    = new MarkUpType
+HEADER2    = new MarkUpType
+HEADER3    = new MarkUpType
+HEADER4    = new MarkUpType
+HEADER5    = new MarkUpType
+HEADER6    = new MarkUpType
 LISTING    = new MarkUpType
 LITERAL    = new MarkUpType
 XMP        = new MarkUpType
@@ -1342,45 +1342,119 @@ text Option := x -> toString x
 net BIG := x -> net x#0
 net CENTER := x -> net x#0
 
-tex H1 := x -> concatenate (
+tex HEADER1 := x -> concatenate (
      ///\medskip\noindent\begingroup\font\headerFontOne=cmbx12 scaled \magstep 1\headerFontOne%
 ///,
      apply(toList x, tex),
      ///\endgroup\par\smallskip%
 ///
      )
-tex H2 := x -> concatenate (
+tex HEADER2 := x -> concatenate (
      ///\medskip\noindent\begingroup\font\headerFontTwo=cmbx12 scaled \magstep 1\headerFontTwo%
 ///,
      apply(toList x, tex),
      ///\endgroup\par\smallskip%
 ///
      )
-tex H3 := x -> concatenate (
+tex HEADER3 := x -> concatenate (
      ///\medskip\noindent\begingroup\font\headerFontThree=cmbx12\headerFontThree%
 ///,
      apply(toList x, tex),
      ///\endgroup\par\smallskip%
 ///
      )
-tex H4 := x -> concatenate (
+tex HEADER4 := x -> concatenate (
      ///\medskip\noindent\begingroup\font\headerFontFour=cmbx12\headerFontFour%
 ///,
      apply(toList x, tex),
      ///\endgroup\par\smallskip%
 ///
      )
-tex H5 := x -> concatenate (
+tex HEADER5 := x -> concatenate (
      ///\medskip\noindent\begingroup\font\headerFontFive=cmbx10\headerFontFive%
 ///,
      apply(toList x, tex),
      ///\endgroup\par\smallskip%
 ///
      )
-tex H6 := x -> concatenate (
+tex HEADER6 := x -> concatenate (
      ///\medskip\noindent\begingroup\font\headerFontSix=cmbx10\headerFontSix%
 ///,
      apply(toList x, tex),
      ///\endgroup\par\smallskip%
 ///
+     )
+
+html HEADER1 := x -> concatenate (
+     ///
+<H1>///,
+     apply(toList x, html),
+     ///</H1>
+///
+     )
+
+html HEADER2 := x -> concatenate (
+     ///
+<H2>///,
+     apply(toList x, html),
+     ///</H2>
+///
+     )
+
+html HEADER3 := x -> concatenate (
+     ///
+<H3>///,
+     apply(toList x, html),
+     ///</H3>
+///
+     )
+
+html HEADER4 := x -> concatenate (
+     ///
+<H4>///,
+     apply(toList x, html),
+     ///</H4>
+///
+     )
+
+html HEADER5 := x -> concatenate (
+     ///
+<H5>///,
+     apply(toList x, html),
+     ///</H5>
+///
+     )
+
+html HEADER6 := x -> concatenate (
+     ///
+<H6>///,
+     apply(toList x, html),
+     ///</H6>
+///
+     )
+
+SECTION = new MarkUpType
+html SECTION := x -> html SEQ {
+     HEADER2 take(toList x,1),
+     SEQ drop(toList x,1)
+     }
+tex SECTION := x -> tex SEQ {
+     HEADER2 take(toList x,1),
+     SEQ drop(toList x,1)
+     }
+
+TOC = new MarkUpType
+html TOC := x -> (
+     x = toList x;
+     if not all(apply(x,class), i -> i === SECTION)
+     then error "expected a list of SECTIONs";
+     title := i -> x#i#0;
+     tag := i -> "sec:" | toString i;
+     html SEQ {
+	  SECTION {
+	       "Sections:",
+	       MENU for i from 0 to #x-1 list HREF { "#" | tag i, title i }
+	       },
+	  SEQ for i from 0 to #x-1 list SEQ { newline, ANCHOR { tag i, ""} , x#i }
+	  }
      )
