@@ -557,12 +557,6 @@ assignNewOfFromFun(args:CodeSequence):Expr := (
      else printErrorMessage(newclass,"expected a hash table as prospective class")
      );
 AssignNewOfFromFun = assignNewOfFromFun;
-export ancestor(o:HashTable,p:HashTable):bool := (
-     while true do (
-	  if o == p then return(true);
-	  if o == thingClass then return(false);
-	  o = o.parent;
-	  ));
 installFun2(a:Expr,args:CodeSequence):Expr := (
      opr := eval(args.0);
      when opr 

@@ -553,10 +553,28 @@ setupfun("newClass",newclassfun);
 makenew(class:HashTable,parent:HashTable):Expr := (
      basicType := basictype(class);
      if basicType == hashTableClass 
-     then Expr(
-	  sethash(
-	       newHashTable(class,parent),
-	       ancestor(class,mutableHashTableClass)))
+     then (
+	  o := newHashTable(class,parent);
+	  p := class;
+	  while true do (
+	       if p == hashTableClass then (
+		    o.mutable = false;
+		    o.hash = hash(o);
+		    break;
+		    );
+	       if p == mutableHashTableClass then (
+		    -- o.mutable = true;
+		    -- o.hash = nextHash();
+		    break;
+		    );
+	       if p == cacheTableClass then (
+		    -- o.mutable = true;
+		    o.hash = 0;
+		    break;
+		    );
+	       p = p.parent;
+	       );
+     	  Expr(o))
      else if basicType == basicListClass 
      then (
 	  if parent != nothingClass

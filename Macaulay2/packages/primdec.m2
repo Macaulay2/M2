@@ -395,8 +395,8 @@ primdecComputation = new Type of MutableHashTable
 
 PD = method()
 PD Ideal := (I) -> (
-     if I.?PDC then 
-          I.PDC 
+     if I.cache.?PDC then 
+          I.cache.PDC 
      else (
      	  PDC := new primdecComputation;
      	  R := ring I;
@@ -406,7 +406,7 @@ PD Ideal := (I) -> (
      	  PDC.U = {};
      	  PDC.W = {{I, ROOT, 0, 1_R, null, {ideal(0_R), 1_R}}};
 	  PDC.thisNode = null;
-     	  I.PDC = PDC;
+     	  I.cache.PDC = PDC;
      	  PDC
      ))
 

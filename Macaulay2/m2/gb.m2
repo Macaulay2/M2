@@ -24,21 +24,21 @@ gbWithSyzygy := {true , -1}
 -- tracingLevel := 0
 
 makeGB := (f,type,strategy) -> (
-     if f#?type then f#type
+     if f.cache#?type then f.cache#type
      else if (
 	  type===gbOnly 
-	  and f#?gbWithChg 
-	  and f#gbWithChg.?returnCode 
-	  and f#gbWithChg.returnCode === 0
+	  and f.cache#?gbWithChg 
+	  and f.cache#gbWithChg.?returnCode 
+	  and f.cache#gbWithChg.returnCode === 0
 	  )
-     then f#gbWithChg
+     then f.cache#gbWithChg
      else if (
 	  ( type===gbOnly or type===gbWithChg ) 
-	  and f#?gbWithSyzygy
-	  and f#gbWithSyzygy.?returnCode 
-	  and f#gbWithSyzygy.returnCode === 0
+	  and f.cache#?gbWithSyzygy
+	  and f.cache#gbWithSyzygy.?returnCode 
+	  and f.cache#gbWithSyzygy.returnCode === 0
 	  )
-     then f#gbWithSyzygy
+     then f.cache#gbWithSyzygy
      else (
 	  g := new GroebnerBasis;
 	  withSyz := type#0;
@@ -66,7 +66,7 @@ makeGB := (f,type,strategy) -> (
 		    ),
 	       ggPush strategy, 	  -- which strategy to use (0=default)
 	       gggb);
-	  f#type = g;			  -- do this last (interrupts!)
+	  f.cache#type = g;			  -- do this last (interrupts!)
 	  g))
 
 runGB := (G,ggcmds) -> (
@@ -240,7 +240,7 @@ forceGB Matrix := GroebnerBasis => options -> (f) -> (
           ggPush changemat, 
           ggPush syzmat, 
           gggb);
-     f#type = g;
+     f.cache#type = g;
      g)
 
 Matrix // GroebnerBasis := Matrix => (n,g) -> (

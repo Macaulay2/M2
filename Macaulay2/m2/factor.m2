@@ -95,7 +95,7 @@ topCoefficients Matrix := f -> (
      {monoms, coeffs})
 
 decompose = method()
-decompose(Ideal) := (I) -> if I.?decompose then I.decompose else I.decompose = (
+decompose(Ideal) := (I) -> if I.cache.?decompose then I.cache.decompose else I.cache.decompose = (
      if not isPolynomialRing ring I
      then error "expected ideal in a polynomial ring";
      ics := irreducibleCharacteristicSeries I;

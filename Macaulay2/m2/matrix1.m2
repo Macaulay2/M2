@@ -28,10 +28,8 @@ map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
      or #p > 0 and ( not isTable p or # p#0 != rankN )
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      p = applyTable(p,x -> promote(x,R));
-     m := new Matrix;
-     m.target = M;
      coverM := cover M;
-     m.handle = newHandle(
+     h := newHandle(
 	  apply(
 	       if # p === 0 then splice {rankN:{}}
 	       else transpose p, 
@@ -40,8 +38,14 @@ map(Module,ZZ,List) := Matrix => options -> (M,rankN,p) -> (
 	  ggPush coverM,
 	  ggPush rankN,
 	  ggmatrix);
-     m.source = ( sendgg(ggPush m,gggetcols); new Module from R );
-     m)
+     N := ( sendgg(ggPush h,gggetcols); new Module from R );
+     new Matrix from {
+     	  symbol handle => h,
+	  symbol source => N,
+	  symbol target => M,
+	  symbol ring => R,
+	  symbol cache => new CacheTable
+	  })
 
 map(Module,Nothing,Matrix) := Matrix => options -> (M,nothing,p) -> (
      R := ring M;
@@ -50,11 +54,15 @@ map(Module,Nothing,Matrix) := Matrix => options -> (M,nothing,p) -> (
      colvectors := apply(n, i -> p_i);
      if options.Degree =!= null
      then error "Degree option given with indeterminate source module";
-     m := new Matrix;
-     m.target = M;
-     m.handle = newHandle( colvectors / ggPush, ggPush coverM, ggPush n, ggmatrix);
-     m.source = (sendgg(ggPush m,gggetcols); new Module from R);
-     m
+     h := newHandle( colvectors / ggPush, ggPush coverM, ggPush n, ggmatrix);
+     N := (sendgg(ggPush h,gggetcols); new Module from R);
+     new Matrix from {
+	  symbol target => M,
+	  symbol handle => h,
+	  symbol source => N,
+	  symbol ring => R,
+	  symbol cache => new CacheTable
+	  }
      )
 
 degreeCheck := (d,R) -> (
@@ -110,10 +118,8 @@ options -> (M,N,p) -> (
      or #p > 0 and ( not isTable p or # p#0 != rankN )
      then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      p = applyTable(p,x -> promote(x,R));
-     m := new Matrix;
-     m.target = M;
      coverM := cover M;
-     m.handle = newHandle(
+     h := newHandle(
 	  apply(
 	       if # p === 0 then splice {rankN:{}}
 	       else transpose p, 
@@ -137,16 +143,22 @@ options -> (M,N,p) -> (
 		    ),
 	       ggPush (
 		    if options.Degree === null
-	       	    then toList (degreeLength R:0)
-	       	    else degreeCheck(options.Degree,R)
+		    then toList (degreeLength R:0)
+		    else degreeCheck(options.Degree,R)
 		    )
 	       ),
 	  ggmatrix);
-     m.source = (
-     	  if N === null then (sendgg(ggPush m,gggetcols); new Module from R)
-     	  else N
+     N' := (
+	  if N === null then (sendgg(ggPush h,gggetcols); new Module from R)
+	  else N
 	  );
-     m)
+     new Matrix from {
+	  symbol target => M,
+	  symbol handle => h,
+	  symbol source => N',
+	  symbol ring => R,
+	  symbol cache => new CacheTable
+	  })
 
 fixDegree := (m,d) -> (
      M := target m;
@@ -416,19 +428,19 @@ net Matrix := f -> (
      )
 
 image Matrix := Module => f -> (
-     if f.?image then f.image else f.image = subquotient(f,)
+     if f.cache.?image then f.cache.image else f.cache.image = subquotient(f,)
      )
 coimage Matrix := Module => f -> (
-     if f.?coimage then f.coimage else f.coimage = cokernel map(source f, kernel f)
+     if f.cache.?coimage then f.cache.coimage else f.cache.coimage = cokernel map(source f, kernel f)
      )
 cokernel Matrix := Module => m -> (
-     if m.?cokernel then m.cokernel else m.cokernel = subquotient(,m)
+     if m.cache.?cokernel then m.cache.cokernel else m.cache.cokernel = subquotient(,m)
      )
 
 cokernel RingElement := Module => f -> cokernel matrix {{f}}
 image RingElement := Module => f -> image matrix {{f}}
 
-Ideal = new Type of MutableHashTable
+Ideal = new Type of HashTable
 Ideal.synonym = "ideal"
 
 ideal = method(SingleArgumentDispatch=>true, TypicalValue => Ideal)
@@ -444,7 +456,7 @@ net Ideal := (I) -> (
      if numgens I === 0 then "0"
      else net expression I
      )
-toString Ideal := (I) -> if I.?name then I.name else toString expression I
+toString Ideal := (I) -> if I.cache.?name then I.cache.name else toString expression I
 
 isHomogeneous Ideal := (I) -> isHomogeneous I.generators
 genera(Ideal) := (I) -> genera module I
@@ -512,7 +524,11 @@ Ideal == Ideal := (I,J) -> (
 Ideal == Module := (I,M) -> module I == M
 Module == Ideal := (M,I) -> M == module I
 
-module Ideal := Module => I -> image I.generators
+module Ideal := Module => I -> (
+     M := image I.generators;
+     if I.cache.?poincare then M.poincare = I.cache.poincare;
+     M
+     )
 
 ideal Matrix := Ideal => (f) -> (
      R := ring f;
@@ -526,7 +542,7 @@ ideal Matrix := Ideal => (f) -> (
      	  g := map(R^1,,f);			  -- in case the degrees are wrong
      	  if isHomogeneous g then f = g;
 	  );
-     new Ideal from { symbol generators => f, symbol ring => R } )
+     new Ideal from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
 ideal Module := Ideal => (M) -> (
      F := ambient M;
@@ -547,7 +563,7 @@ kernel = method(Options => {
 
 ker = kernel
 
-kernel Matrix := Module => options -> (g) -> if g.?kernel then g.kernel else g.kernel = (
+kernel Matrix := Module => options -> (g) -> if g.cache.?kernel then g.cache.kernel else g.cache.kernel = (
      N := source g;
      P := target g;
      g = matrix g;
@@ -595,7 +611,7 @@ dual(Matrix) := Matrix => f -> (
      Hom(f,R^1)
      )
 
-Matrix.InverseMethod = m -> if m#?-1 then m#-1 else m#-1 = (
+Matrix.InverseMethod = m -> if m.cache#?-1 then m.cache#-1 else m.cache#-1 = (
      id_(target m) // m
      )
 

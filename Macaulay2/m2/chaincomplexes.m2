@@ -818,13 +818,15 @@ max ChainComplex := C -> max spots C
 
 tensorAssociativity(Module,Module,Module) := Matrix => (A,B,C) -> map((A**B)**C,A**(B**C),1)
 
+
 newMatrix := (tar,src) -> (
-     R := ring tar;
-     p := new Matrix;
-     p.source = src;
-     p.target = tar;
-     p.handle = newHandle "";
-     p)
+     new Matrix from {
+	  symbol ring => ring tar,
+	  symbol source => src,
+	  symbol target => tar,
+	  symbol handle => newHandle "",
+	  symbol cache => new CacheTable
+	  })
      
 tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := ChainComplexMap => (A,B,C) -> (
      R := ring A;

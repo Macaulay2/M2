@@ -111,10 +111,18 @@ export lookup(object:HashTable,key:Expr):Expr := lookup(object,key,hash(key));
 export lookup(object:HashTable,key:SymbolClosure):Expr := (
      lookup(object,Expr(key),key.symbol.hash)
      );
+export ancestor(o:HashTable,p:HashTable):bool := (
+     while true do (
+	  if o == p then return(true);
+	  if o == thingClass then return(false);
+	  o = o.parent;
+	  ));
 equal(x:HashTable,y:HashTable):Expr := (
      if x==y then return(True);
-     if x.hash != y.hash
-     || x.mutable 
+     if x.hash != y.hash then return(False);
+     if x.hash == 0 && x.mutable && x.class == y.class && x.parent == y.parent && ancestor(x.class,cacheTableClass)
+     then return (True);
+     if x.mutable 
      || y.mutable
      || x.numEntries != y.numEntries
      || length(x.table) != length(y.table)
@@ -618,6 +626,7 @@ setupconst("Type",Expr(typeClass));
 setupconst("Thing",Expr(thingClass));
 setupconst("HashTable",Expr(hashTableClass));
 setupconst("MutableHashTable",Expr(mutableHashTableClass));
+setupconst("CacheTable",Expr(cacheTableClass));
 setupconst("BasicList",Expr(basicListClass));
 setupconst("List",Expr(listClass));
 setupconst("MutableList",Expr(mutableListClass));
@@ -772,8 +781,12 @@ export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
 	  Expr(Sequence(meth,Expr(lhs),Expr(rhs))),
 	  value));
 export installValue(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
+     if ! rhs.mutable && !lhs.mutable
+     then return(buildErrorPacket("value installation attempted, but neither hash tables is mutable"));
      storeInHashTable(
-	  if lhs.hash > rhs.hash then lhs else rhs,
+	  if !lhs.mutable then rhs
+	  else if rhs.mutable then ( if lhs.hash > rhs.hash then lhs else rhs )
+	  else lhs,
 	  Expr(Sequence(Expr(lhs),Expr(rhs),meth)),
 	  value));
 key2 := Sequence(nullE,nullE,nullE);

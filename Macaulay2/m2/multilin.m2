@@ -64,22 +64,22 @@ minors(ZZ,Matrix) := Matrix => options -> (j,m) -> (
      else if j < 0 then ideal 0_(ring m)
      else (
 	  comp := MinorsComputation{j};
-	  if not m#?comp then (
+	  if not m.cache#?comp then (
 	      sendgg(
 		   ggPush m,			  -- m
 		   ggINT, gg j,		  -- m j
 		   ggdets);			  -- create computation
-	      m#comp = {1, newHandle()};       -- the '1' means: not done yet.
+	      m.cache#comp = {1, newHandle()};       -- the '1' means: not done yet.
 	     );
-	  if m#comp#0 =!= 0 then (
+	  if m.cache#comp#0 =!= 0 then (
 	      nsteps := if options.Limit === infinity then -1 else options.Limit;
 	      sendgg(
-		   ggPush m#comp#1,
+		   ggPush m.cache#comp#1,
 		   ggPush nsteps,
 		   ggcalc);
-	      m#comp = {eePopInt(), m#comp#1}   -- return code: 0 means done, != 0 means more left
+	      m.cache#comp = {eePopInt(), m.cache#comp#1}   -- return code: 0 means done, != 0 means more left
 	      );
-	  sendgg(ggPush m#comp#1,
+	  sendgg(ggPush m.cache#comp#1,
 		 ggINT, gg 0,
 		 ggindex);
 	  ideal getMatrix ring m
@@ -91,24 +91,24 @@ pfaffians(ZZ,Matrix) := Matrix => options -> (j,m) -> (
      else if j < 0 then ideal 0_(ring m)
      else (
 	  comp := PfaffiansComputation{j};
-	  if not m#?comp then (
+	  if not m.cache#?comp then (
 	      sendgg(
 		   ggPush m,			  -- m
 		   ggINT, gg j,		  -- m j
 		   ggpfaffs);			  -- create computation
-	      m#comp = {1, newHandle()};       -- the '1' means: not done yet.
+	      m.cache#comp = {1, newHandle()};       -- the '1' means: not done yet.
 	     );
-	  if m#comp#0 =!= 0 then (
+	  if m.cache#comp#0 =!= 0 then (
 	      nsteps := if options.Limit === infinity then -1 else options.Limit;
 
 	      sendgg(
-		   ggPush m#comp#1,
+		   ggPush m.cache#comp#1,
 		   ggPush nsteps,
 		   ggcalc);
-	      m#comp = {eePopInt(), m#comp#1}   -- return code: 0 means done, != 0 means more left
+	      m.cache#comp = {eePopInt(), m.cache#comp#1}   -- return code: 0 means done, != 0 means more left
 	      );
 
-	  sendgg(ggPush m#comp#1,
+	  sendgg(ggPush m.cache#comp#1,
 		 ggINT, gg 0,
 		 ggindex);
 	  ideal getMatrix ring m
