@@ -12,14 +12,11 @@ local lastKey, local thisKey
 local linkFollowedTable, local masterIndex
 local docdatabase
 
--- linkFilename := s -> first cacheFileName(prefix, documentationPath, s) | ".html"
-linkFilename := s -> prefix | toFilename s | ".html"
-
 documentationMemo := memoize documentation		    -- for speed
 
 BUTTON := (s,alt) -> (
      -- if not fileExists s then error ("file ", s, " doesn't exist");
-     s = relativizeFilename(prefix,s);
+     s = relativizeFilename(currentHTMLDirectory,s);
      if alt === null
      then LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center>")
      else LITERAL concatenate("<IMG src=\"",s,"\" border=0 align=center alt=\"[", alt, "]\">")
@@ -30,9 +27,9 @@ upAncestors := key -> reverse (
      while UP#?key and n < 20 list (n = n+1; key = UP#key)
      )
 
-next := key -> if NEXT#?key then HREF { linkFilename NEXT#key, nextButton } else nullButton
-prev := key -> if PREV#?key then HREF { linkFilename PREV#key, prevButton } else nullButton
-up   := key -> if   UP#?key then HREF { linkFilename   UP#key,   upButton } else nullButton
+next := key -> if NEXT#?key then HREF { htmlFilename NEXT#key, nextButton } else nullButton
+prev := key -> if PREV#?key then HREF { htmlFilename PREV#key, prevButton } else nullButton
+up   := key -> if   UP#?key then HREF { htmlFilename   UP#key,   upButton } else nullButton
 
 scope := method(SingleArgumentDispatch => true)
 scope2 := method(SingleArgumentDispatch => true)
@@ -41,7 +38,7 @@ scope1 := method(SingleArgumentDispatch => true)
 follow := key -> (
      fkey := formatDocumentTag key;
      if not linkFollowedTable#?fkey then (
-	  fn := linkFilename fkey;
+	  fn := htmlFilename fkey;
 	  if prefix == substring(fn,0,#prefix) then (	    -- don't stray outside this package
 	       linkFollowedTable#fkey = true;
 	       if class key =!= Option and class key =!= Sequence then masterIndex#(fkey,key) = true;
@@ -151,9 +148,8 @@ fakeMenu := x -> (
 	  }
      )
 
-makeHtmlNode = (pfix, fkey) -> (
-     prefix = pfix;
-     linkFilename fkey << html HTML { 
+makeHtmlNode = fkey -> (
+     htmlFilename fkey << html HTML { 
 	  HEAD TITLE {fkey, headline fkey},
 	  BODY { 
 	       buttonBar fkey,
@@ -237,7 +233,7 @@ makeHTML = (topnode,docdatabase0) -> (
      sav := if htmlDefaults#?"BODY" then htmlDefaults#"BODY";
      htmlDefaults#"BODY" = concatenate(
 	  "BACKGROUND=\"",				    -- "
-	  relativizeFilename(prefix,checkFile(gifpath|"recbg.jpg")),
+	  relativizeFilename(currentHTMLDirectory,checkFile(gifpath|"recbg.jpg")),
 	  "\""						    -- "
 	  );
      lastKey = null;
