@@ -409,11 +409,8 @@ genus(Ring) := R -> first genera R
 rank Module := M -> (
      if isFreeModule M then numgens M 
      else if degreeLength ring M === 0 and isField ring M then numgens prune M
-     else (
-	  f := poincare M // poincare ring M;
-	  T := (ring f)_0;
-	  substitute(f,{T=>1})
-	  )
+     else if dim M < dim ring M then 0
+     else degree M // degree ring M
      )
 
 ambient Module := Module => M -> (
