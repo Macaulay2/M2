@@ -143,11 +143,11 @@ binaryright(s:string)   :Word := binaryright(s,binaryop);
      parseEOF.binaryStrength = prec;
      precRightParen := prec;
 bump();
-     semicolonW = nright(";");
-     export semicolonS := makeKeyword(semicolonW);
-     newlineW = nleftword("<NEWLINE>");			    -- no symbol for this one needed
+     SemicolonW = nright(";");
+     export semicolonS := makeKeyword(SemicolonW);
+     NewlineW = nleftword("<NEWLINE>");			    -- no symbol for this one needed
 bump();
-     export commaW := nunaryleft(","); makeKeyword(commaW);
+     export CommaW := nunaryleft(","); export commaS := makeKeyword(CommaW);
 bump();
      wide := prec;
      elseW = token("else"); makeKeyword(elseW);
@@ -157,7 +157,7 @@ bump();
 bump();
      export ColonEqualW := binaryright(":="); makeKeyword(ColonEqualW);
      export EqualW := binaryright("="); makeKeyword(EqualW);
-     export LeftArrowW := binaryright("<-"); makeKeyword(LeftArrowW);
+     export LeftArrowW := binaryright("<-"); export LeftArrowS := makeKeyword(LeftArrowW);
      export RightArrowW := binaryright("->",arrowop); makeKeyword(RightArrowW);
      export DoubleArrowS := makeKeyword(binaryright("=>"));
      export LongDoubleArrowS := makeKeyword(binaryright("==>"));
@@ -405,7 +405,7 @@ bindFormalParm(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void 
 bindFormalParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e 
      is binary:Binary do (
-	  if binary.operator.word == commaW
+	  if binary.operator.word == CommaW
 	  then (
 	       bindFormalParmList(binary.lhs,dictionary,desc);
 	       bindop(binary.operator,dictionary);
@@ -484,7 +484,7 @@ bindParallelAssignmentItem(e:ParseTree,dictionary:Dictionary,colon:bool):void :=
 bindParallelAssignmentList(e:ParseTree,dictionary:Dictionary,colon:bool):void := (
      when e
      is binary:Binary do (
-	  if binary.operator.word == commaW
+	  if binary.operator.word == CommaW
 	  then (
 	       bindParallelAssignmentList(binary.lhs,dictionary,colon);
 	       bindop(binary.operator,dictionary);

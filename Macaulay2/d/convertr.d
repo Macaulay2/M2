@@ -43,11 +43,11 @@ CodeSequenceLength(e:ParseTree):int := (
      while true do (
      	  when e
      	  is b:Binary do (
-	       if b.operator.word == commaW
+	       if b.operator.word == CommaW
 	       then ( i = i + CodeSequenceLength(b.lhs); e = b.rhs )
 	       else return i+1)
 	  is u:Unary do (
-	       if u.operator.word == commaW
+	       if u.operator.word == CommaW
 	       then ( i = i + 1; e = u.rhs )
 	       else return i+1)
 	  else return i+1));
@@ -56,11 +56,11 @@ fillCodeSequence(e:ParseTree,v:CodeSequence,m:int):int := (
      while true do (
      	  when e
      	  is b:Binary do (
-	       if b.operator.word == commaW
+	       if b.operator.word == CommaW
 	       then ( m = fillCodeSequence(b.lhs,v,m); e = b.rhs )
 	       else ( v.m = convert(e); return m+1))
 	  is u:Unary do (
-	       if u.operator.word == commaW
+	       if u.operator.word == CommaW
 	       then ( 
 		    v.m = Code(nullCode());
 		    m = m + 1; 
@@ -236,7 +236,7 @@ export convert(e:ParseTree):Code := (
 		    )
 	       else dummyCode		  -- should not occur
 	       )
-	  else if b.operator.word == commaW
+	  else if b.operator.word == CommaW
 	  then Code(sequenceCode(makeCodeSequence(e),treePosition(e)))
 	  else if b.operator.word == EqualW
 	  then (
@@ -387,7 +387,7 @@ export convert(e:ParseTree):Code := (
 	       convert(a.rhs),a.desc
 	       ))
      is u:Unary do (
-	  if u.operator.word == commaW
+	  if u.operator.word == CommaW
 	  then Code(sequenceCode(makeCodeSequence(e),treePosition(e)))
 	  else Code(unaryCode(u.operator.entry.unary,convert(u.rhs),treePosition(e))))
      is q:Quote do (

@@ -12,6 +12,10 @@ assert( 4 === max {3,4,2} )
 assert( unique {4,4,5,5,3,3} === {4, 5, 3} )
 assert( unique {3,4,4,5,5,3,3} === {3, 4, 5} )
 
+-- test for duplicate entries in the dictionary
+
+assert ( {} === select ( pairs tally keys MainDictionary , (s,n) -> n>1 ) )
+
 -- Local Variables:
 -- compile-command: "make C05.okay "
 -- End:

@@ -71,7 +71,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
      	  if printout then setLineNumber(lineNumber + 1);
 	  interrupted = false;
 	  interruptPending = false;
-	  while peektoken(file,true).word == newlineW do (
+	  while peektoken(file,true).word == NewlineW do (
 	       -- previousLineNumber = -1; -- so there will be a new prompt after a blank line
 	       -- but now we don't like so many extra prompts
 	       interrupted = false;
@@ -80,7 +80,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 	       );
 	  interrupted = false;
 	  interruptPending = false;
-	  parsed := parse(file,semicolonW.parse.precedence,true);
+	  parsed := parse(file,SemicolonW.parse.precedence,true);
 	  if equal(parsed,wordEOF) then return if returnLastvalue then lastvalue else nullE;
 	  if parsed == errorTree then (
 	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
@@ -88,7 +88,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 	       )
 	  else (
 	       s := gettoken(file,true);  -- get the semicolon
-	       if !(s.word == semicolonW || s.word == newlineW)
+	       if !(s.word == SemicolonW || s.word == NewlineW)
 	       then (
 		    printErrorMessage(s,"syntax error");
 		    if AbortIfError then return Expr(Error(position(s),"syntax error",dummyCodeClosureList,nullE,false));
@@ -107,7 +107,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 			      )
 			 else (
 			      if printout then (
-				   g := PrintOut(lastvalue,s.word == semicolonW,f);
+				   g := PrintOut(lastvalue,s.word == SemicolonW,f);
 				   when g is err:Error do (
 					g = update(err,"at print",f);
 					when g is err2:Error do (
