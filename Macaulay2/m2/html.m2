@@ -148,7 +148,7 @@ buttonBar := (key) -> TABLE { {
 
 	  } }
 
-documentationMemo := memoize ( key -> documentation(key, Examples => false) )
+documentationMemo := memoize ( key -> documentation(key) )
 
 BUTTON := (s,alt) -> (
      s = rel s;
@@ -238,7 +238,18 @@ makeNode := x -> (
 	  if not foundLoop then stderr << "warning: loop found in documentation tree" << endl;
 	  foundLoop = true;
 	  );
-     new TreeNode from { x, new ForestNode from if visited then { "-- node visited already --" } else apply(linkTable#x,makeNode) })
+     if linkTable#?x 
+     then (
+	  if visited 
+     	  then new TreeNode from { x, new ForestNode from { "-- node visited already --" }  }
+     	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeNode) }
+	  )
+     else (
+	  if externalReferences#?x
+     	  then new TreeNode from { x, new ForestNode from { "-- external node --" } }
+     	  else new TreeNode from { x, new ForestNode from { "-- internal error --" } }
+	  )
+     )
 
 leaves := () -> keys set flatten values linkTable
 roots := () -> sort keys ( set keys linkTable - set leaves() )
@@ -305,6 +316,7 @@ follow = key -> (
 
 assembleTree = method()
 assembleTree Package := pkg -> (
+     doExamples = false;
      oldpkg := currentPackage;
      currentPackage = pkg;
      topNodeName = pkg#"title";
@@ -320,12 +332,13 @@ assembleTree Package := pkg -> (
 	  m := keys nodesToScope;
 	  scan(m, (fkey,key) -> (
 		    linkTable#fkey = {};
+		    stderr << "scanning documentation for  '" << fkey << "'" << endl;
 		    scope(fkey,documentationMemo key)));
-     	  -- stderr << "nodesToScope = " << peek nodesToScope << endl;
-     	  -- error "debug this";
 	  nodesToScope = new MutableHashTable from (set keys nodesToScope - set m);
 	  );
-     makeTree())
+     t := makeTree();
+     doExamples = true;
+     t)
 
 -----------------------------------------------------------------------------
 -- making the html pages

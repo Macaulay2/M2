@@ -473,14 +473,15 @@ justSynonym := X -> (
      else SEQ {"an object of class ", TO X}
      )
 
-getDocBody := method(Options => {Examples => true}, SingleArgumentDispatch => true)
-getDocBody Thing := opts -> key -> (
+getDocBody := method(SingleArgumentDispatch => true)
+doExamples = false					    -- sigh, another global variable???
+getDocBody Thing := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
      if pkg =!= null then (
 	  docBody := value getRecord(pkg,fkey);
 	  docBody = select(docBody, s -> class s =!= Option);
-	  if opts.Examples then docBody = processExamples(pkg, fkey, docBody);
+	  if doExamples then docBody = processExamples(pkg, fkey, docBody);
 	  PARA {docBody}))
 
 title := s -> PARA { STRONG formatDocumentTag s, headline s }
@@ -631,14 +632,16 @@ briefDocumentation HashTable := x -> (
 		    s := fmeth x;
 		    if s =!= null then << endl << text s << endl;))))
 
-documentation = method(SingleArgumentDispatch => true, Options => {Examples => true})
-documentation String := opts -> s -> (
+documentation = method(SingleArgumentDispatch => true)
+documentation String := s -> (
      if unformatTag#?s then documentation unformatTag#s 
      else if isGlobalSymbol s then (
 	  t := getGlobalSymbol s;
-	  documentation(t,opts)
+	  documentation(t)
 	  )
-     else SEQ { title s, PARA getDocBody(s,opts) }
+     else (
+	  SEQ { title s, PARA getDocBody(s) }
+	  )
      )
 
 binary := set binaryOperators; erase symbol binaryOperators
@@ -732,13 +735,13 @@ documentationValue(Symbol,Package) := (s,pkg) -> (
 	  }
      )
 
-documentation Symbol := opts -> S -> (
+documentation Symbol := S -> (
      a := apply(select(optionFor S,f -> isDocumentableTag f), f -> f => S);
      b := documentableMethods S;
      SEQ {
 	  title S, 
 	  synopsis S,
-	  getDocBody(S,opts),
+	  getDocBody(S),
 	  op S,
 	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", SHIELD smenu a},
 	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", SHIELD smenu b},
@@ -747,14 +750,14 @@ documentation Symbol := opts -> S -> (
      	  }
      )
 
-documentation Option := opts -> v -> (
+documentation Option := v -> (
      (fn, opt) -> (
 	  if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
 	  default := (options fn)#opt;
 	  SEQ { 
 	       title v,
 	       synopsis v,
-	       getDocBody(v,opts),
+	       getDocBody(v),
 	       PARA BOLD "See also:",
 	       SHIELD UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
@@ -765,12 +768,12 @@ documentation Option := opts -> v -> (
 	  )
      ) toSequence v
 
-documentation Sequence := opts -> s -> (
+documentation Sequence := s -> (
      if null === lookup s then error("expected ", toString s, " to be a method");
      SEQ {
 	  title s, 
 	  synopsis s,
-	  getDocBody(s,opts),
+	  getDocBody(s),
 	  seecode s
 	  }
      )

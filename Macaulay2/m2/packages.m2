@@ -118,7 +118,7 @@ exportMutable {
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
 	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, 
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
-	  symbol notify, symbol loadDepth, symbol printingPrecision, symbol fileExitHooks,
+	  symbol notify, symbol loadDepth, symbol printingPrecision, symbol fileExitHooks, symbol doExamples,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
 	  }
