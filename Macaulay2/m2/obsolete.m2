@@ -8,4 +8,4 @@ seq = X -> error "'seq' has been replaced by 'singleton'"
 verticalJoin = X -> error "'verticalJoin' has been replaced by 'stack'"
 -- name = X -> error "'name' has been replaced by 'toString'"
 quote = X -> error "'quote' has been replaced by 'symbol'"
-
+Numeric = X -> error "'Numeric' has been replaced by 'numeric'"

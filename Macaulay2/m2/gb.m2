@@ -197,7 +197,7 @@ generators GroebnerBasis := Matrix => (g) -> (
      sendgg(ggPush g, gggetgb);
      getMatrix ring g)
 
-getchange GroebnerBasis := Matrix => (g) -> (
+getChangeMatrix GroebnerBasis := Matrix => (g) -> (
      sendgg(ggPush g, gggetchange);
      getMatrix ring g)
 

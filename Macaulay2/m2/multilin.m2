@@ -9,8 +9,10 @@ symmetricPower(ZZ, Matrix) := Matrix => (i,m) -> (
      getMatrix ring m)
 
 MinorsComputation = new SelfInitializingType of BasicList
+MinorsComputation.synonym = "minors computation"
 
 PfaffiansComputation = new SelfInitializingType of BasicList
+PfaffiansComputation.synonym = "Pfaffians computation"
 
 exteriorPower(ZZ,Module) := Module => (p,M) -> (
      R := ring M;

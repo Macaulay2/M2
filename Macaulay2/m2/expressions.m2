@@ -67,6 +67,7 @@ toString Expression := v -> (
      )
 
 Holder = new WrapperType of Expression
+Holder.synonym = "holder"
 
 texMath Holder := v -> "{" | texMath v#0 | "}"
 mathML Holder := v -> mathML v#0
@@ -77,6 +78,7 @@ toString Holder := v -> toString v#0
 remove(Sequence,expression)
 
 Minus = new WrapperType of Expression		  -- unary minus
+Minus.synonym = "minus expression"
 
 Minus#operator = "-"
 value Minus := v -> minus apply(toSequence v,value)
@@ -88,6 +90,7 @@ toString Minus := v -> (
      )
 
 Equation = new HeaderType of AssociativeExpression
+Equation.synonym = "equation expression"
 Equation#operator = "=="
 value Equation := (v) -> (
      v = apply(toSequence v,value);
@@ -129,6 +132,7 @@ OneExpression.name = "OneExpression"
 ONE := new OneExpression from {1}
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
+Sum.synonym = "sum expression"
 
 Sum#unit = ZERO
 Sum#EmptyName = "0"
@@ -153,6 +157,7 @@ toString Sum := v -> (
 	  concatenate mingle ( seps, names )))
 
 DoubleArrow = new HeaderType of Expression
+DoubleArrow.synonym = "double arrow expression"
 DoubleArrow#operator = "=>"
 value DoubleArrow := (v) -> value v#0 => value v#1
 expression Option := v -> new DoubleArrow from apply(v,expression)
@@ -165,6 +170,7 @@ net DoubleArrow := v -> (
      horizontalJoin(v0," => ",v1))
 
 Product = new WrapperType of AssociativeExpression
+Product.synonym = "product expression"
 
 Product#unit = ONE
 Product#EmptyName = "1"
@@ -202,6 +208,7 @@ toString Product := v -> (
      )
 
 NonAssociativeProduct = new WrapperType of Expression
+NonAssociativeProduct.synonym = "nonassociative product expression"
 
 NonAssociativeProduct#unit = ONE
 NonAssociativeProduct#EmptyName = "1"
@@ -236,20 +243,24 @@ toString NonAssociativeProduct := v -> (
      )
 
 Divide = new HeaderType of Expression
+Divide.synonym = "divide expression"
 Divide#operator = "/"
 value Divide := (x) -> (value x#0) / (value x#1)
 numerator Divide := x -> x#0
 denominator Divide := x -> x#1
 
 Power = new HeaderType of Expression
+Power.synonym = "power expression"
 Power#operator = "^"
 value Power := (x) -> (value x#0) ^ (value x#1)
 
 Subscript = new HeaderType of Expression
+Subscript.synonym = "subscript expression"
 Subscript#operator = "_"
 value Subscript := (x) -> (value x#0)_(value x#1)
 
 Superscript = new HeaderType of Expression
+Superscript.synonym = "superscript expression"
 Superscript#operator = "^"
 value Superscript := (x) -> (value x#0)^(value x#1)
 
@@ -265,12 +276,14 @@ toString Power := toString Subscript := toString Superscript := v -> (
 
 -----------------------------------------------------------------------------
 RowExpression = new HeaderType of Expression
+RowExpression.synonym = "row expression"
 net RowExpression := w -> horizontalJoin apply(toList w,net)
 html RowExpression := w -> concatenate apply(w,html)
 texMath RowExpression := w -> concatenate apply(w,texMath)
 toString RowExpression := w -> concatenate apply(w,toString)
 -----------------------------------------------------------------------------
 Adjacent = new HeaderType of Expression
+Adjacent.synonym = "adjacent expression"
 value Adjacent := x -> (value x#0) (value x#1)
 -----------------------------------------------------------------------------
 prepend0 := (e,x) -> prepend(e#0, x)
@@ -384,6 +397,7 @@ value ZeroExpression := v -> 0
 value Thing := identity
 -----------------------------------------------------------------------------
 SparseVectorExpression = new HeaderType of Expression
+SparseVectorExpression.synonym = "sparse vector expression"
 value SparseVectorExpression := x -> notImplemented()
 toString SparseVectorExpression := v -> (
      n := v#0;
@@ -393,6 +407,7 @@ toString SparseVectorExpression := v -> (
      )
 -----------------------------------------------------------------------------
 SparseMonomialVectorExpression = new HeaderType of Expression
+SparseMonomialVectorExpression.synonym = "sparse monomial vector expression"
 -- in these, the basis vectors are treated as variables for printing purposes
 value SparseMonomialVectorExpression := x -> notImplemented()
 toString SparseMonomialVectorExpression := v -> toString (
@@ -403,6 +418,7 @@ toString SparseMonomialVectorExpression := v -> toString (
      )
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
+MatrixExpression.synonym = "matrix expression"
 value MatrixExpression := x -> matrix applyTable(toList x,value)
 toString MatrixExpression := m -> concatenate(
      "MatrixExpression {",		  -- ????
@@ -410,6 +426,7 @@ toString MatrixExpression := m -> concatenate(
      "}" )
 -----------------------------------------------------------------------------
 Table = new HeaderType of Expression
+Table.synonym = "table expression"
 value Table := x -> applyTable(toList x,value)
 toString Table := m -> concatenate(
      "Table {",
@@ -446,6 +463,7 @@ binary := new HashTable from {
      symbol " " => ((x,y) -> x y)
      }
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
+BinaryOperation.synonym = "binary operation expression"
 value BinaryOperation := (m) -> (
      if binary#?(m#0) then binary#(m#0) (value m#1,value m#2) else m
      )
@@ -458,6 +476,7 @@ toString BinaryOperation := m -> (
      )
 -----------------------------------------------------------------------------
 FunctionApplication = new HeaderType of Expression -- {fun,args}
+FunctionApplication.synonym = "function application expression"
 value FunctionApplication := (m) -> (value m#0) (value m#1)
 toString Adjacent := toString FunctionApplication := m -> (
      p := precedence m;
@@ -1111,6 +1130,7 @@ erase symbol report
 -----------------------------------------------------------------------------
 
 Entity = new HeaderType of HashTable
+Entity.synonym = "entity"
 tex Entity := x -> if x.?tex then x.tex else "$" | texMath x | "$"
 texMath Entity := x -> if x.?texMath then x.texMath else x.name
 html Entity := x -> if x.?html then x.html else x.name

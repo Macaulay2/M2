@@ -2,6 +2,7 @@
 
 -- SubringComputation = new SelfInitializingType of BasicList
 PushforwardComputation = new SelfInitializingType of BasicList
+PushforwardComputation.synonym = "push-forward computation"
 
 -- valid values are (a) {J,cleanup code}   -- J is the aux matrix and the code to derive
 -- 						the answer is the 2nd element.

@@ -190,7 +190,7 @@ generators(ZZ,Resolution) := Matrix => (level,g) -> (
 
 -- this is undocumented debugging junk of Mike's
 
-getchange(ZZ,Resolution) := Matrix => (level,g) -> (
+getChangeMatrix(ZZ,Resolution) := Matrix => (level,g) -> (
      sendgg(ggPush g, ggPush level, gggetchange);
      getMatrix ring g)
 
