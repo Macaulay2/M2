@@ -1101,27 +1101,7 @@ document { "coherent sheaves",
      "This node has not been written yet."
      }
 
-document { "general overview",
-     "In this section we give a comprehensive overview of the general
-     features and functions of Macaulay 2 which support basic interaction
-     with the program."
-     PARA,
-     MENU {
-	  (
-	       "input and output",
-	       MENU {
-		    TO "printing to the screen",
-		    TO "reading files",
-		    TO "creating and writing files",
-		    TO "running programs",
-		    TO "communicating with programs",
-		    TO "using sockets",
-		    }
-	       ),
-	  }
-     }
-
-document { "programming overview",
+document { "language and programming overview",
      "In this section we give a comprehensive overview of the user
      language and the main programming features of Macaulay 2.",
      PARA,
@@ -1146,8 +1126,19 @@ document { "programming overview",
 	  (
 	       "input and output",
 	       MENU {
+		    TO "printing to the screen",
+		    TO "reading files",
 		    TO "getting input from the user",
+		    TO "creating and writing files",
 		    TO "two dimensional formatting",
+		    TO "communicating with programs",
+		    TO "using sockets",
+		    }
+	       ),
+	  (
+	       "interfacing with the system",
+	       MENU {
+		    TO "running programs",
 		    }
 	       ),
 	  (
