@@ -11,13 +11,14 @@
 // --time rawFactor f -- 32.72 sec 1 Gz G4 tibook 1/19/03 -- 22.76 seconds on a 2 Ghz Pentium 4 Dell Latitude laptop
 // --testfactor f
 
-
-
 ring r = 0, (x,y,z), dp;
 poly f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 timer = 1;
 factorize(f);  // .17 sec
-quit;
+
+ring r = 0, (z,y,x), dp;
+poly f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
+factorize(f);  // 7.04 sec
 
 // Example 2
 
