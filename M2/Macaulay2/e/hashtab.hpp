@@ -40,7 +40,7 @@ class hashtable
        bin = newbin;
        size = newsize;
        }
-  friend cursor_hashtable<T>;
+  friend class cursor_hashtable<T>;
 public:
   int highwater() { return maxused; }
   int current() { return used; }

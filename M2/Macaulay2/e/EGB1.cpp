@@ -611,7 +611,7 @@ void EGB1::choose_unique_pairs(es_pair *&p)
 	q = q->next;
       p = q->next;
       q->next = 0;
-      choose_nice_pair(first);
+      const_cast<EGB1 *>(this)->choose_nice_pair(first);
       last->next = first;  // Other elements have been removed
       last = first;
     }

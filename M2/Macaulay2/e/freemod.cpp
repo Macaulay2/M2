@@ -1,3 +1,6 @@
+#if defined(__MWERKS__)
+#pragma optimization_level 2
+#endif
 // Copyright 1995  Michael E. Stillman
 
 #include "freemod.hpp"

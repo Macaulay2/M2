@@ -1703,22 +1703,28 @@ static void cmd_EMI_fromMatrix(object &o1,  object &o2)
 ////////////////////
 static void cmd_EGB_declareGB(object &ogens, object &ogb, object &ochange)
 {
+#if 0
+  // ::make became undefined for some reason...
   EMatrix *gens = ogens->cast_to_EMatrix();
   EMatrix *m    = ogb->cast_to_EMatrix();
   EMatrix *change = ochange->cast_to_EMatrix();
   EMatrix *syz = EMatrix::zero(change->getTarget(), change->getRing()->makeFreeModule(0));
   EGroebnerComputation *p = EDeclaredGB::make(gens,m,change,syz);
   gStack.insert(p);
+#endif
 }
 
 static void cmd_EGB_declareGB1(object &ogens, object &ogb, object &ochange, object &osyz)
 {
+#if 0
+  // ::make became undefined for some reason...
   EMatrix *gens = ogens->cast_to_EMatrix();
   EMatrix *m    = ogb->cast_to_EMatrix();
   EMatrix *change = ochange->cast_to_EMatrix();
   EMatrix *syz = osyz->cast_to_EMatrix();
   EGroebnerComputation *p = EDeclaredGB::make(gens,m,change,syz);
   gStack.insert(p);
+#endif
 }
 static void cmd_EGB_stats(object &op)
 {
@@ -1767,12 +1773,15 @@ static void cmd_EGB_reduceVector(object &op, object &ov, object &om)
 }
 static void cmd_EGB_reduceMatrix(object &op, object &ov)
 {
+#if 0
+  // FOR SOME REASON, THIS ROUTINE: p->reduceMatrix, became undefined...
   EGroebnerComputation *p = op->cast_to_EGroebnerComputation();
   EMatrix *v = ov->cast_to_EMatrix();
   EMatrix *lifted;
   EMatrix *result = p->reduceMatrix(v,lifted);
   gStack.insert(result);
   gStack.insert(lifted);
+#endif
 }
 void i_Ecommands(void)
 {

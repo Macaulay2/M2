@@ -849,8 +849,58 @@ document { setSpin,
      "The value returned is the previous interval."
      }
 
+<<<<<<< doc2.m2
+--load "tutorials.m2"
+
+document { "acknowledgements",
+     "We thank the National Science Foundation for generous funding since
+     1993 for this project, Gert-Martin Greuel and Ruediger Stobbe for the
+     incorporation of their ", TO "Factory library", ", Michael Messollen for
+     the incorporation of his ", TO "Factorization and characteristic sets library", ",
+     and David Eisenbud, Wolfram Decker and Sorin Popescu for
+     early support, encouragement and suggestions.  We also acknowledge an
+     intellectual debt to David Bayer, who, with Michael Stillman,
+     wrote Macaulay, a specialized computer algebra system for algebraic
+     geometry and the predecessor of this program."
+     }
+
+document { "copyright and license",
+     "Macaulay 2, its object code and source code, and its documentation,
+     are copyright by Daniel R. Grayson and Michael E. Stillman.  We 
+     permit you to make copies under the following conditions.",
+     PARA,
+     -- this paragraph has to be duplicated in licenses/README
+     "Provided you are a person (and not a corporate entity), you may make as
+     many copies of Macaulay 2 as you like for your personal non-commercial
+     use.  You may install copies of Macaulay 2 on computers owned by
+     Universities, Colleges, High Schools, and other schools in such a way
+     that students and staff of those institutions may use it.  You may
+     modify and distribute the source code in the Macaulay 2 language we
+     provide you, but you must retain our copyright notices and mark modified
+     source code so others will know that it's been modified.  You may print
+     out the manual and make copies of it for your personal use.",
+     PARA,
+     "If your intended use of Macaulay 2 is not covered by the license above,
+     please contact us so we can work something out.  Notice that in the
+     license above we have not granted you permission to make copies of
+     Macaulay 2 to be sold, distributed on media which are sold, or
+     distributed along with software which is sold.  We have not granted you
+     permission to make derivative works, or to distribute them.  If you
+     encounter a copy which appears not to conform to the terms of the
+     license above, we would like to hear about it.",
+     PARA,
+     "Various libraries have been compiled into Macaulay 2.",
+     MENU {
+	  SHIELD TO "Factory library",
+	  SHIELD TO "Factorization and characteristic sets library",
+	  -- SHIELD TO "MP: Multi Protocol",
+	  SHIELD TO "GNU MP",
+	  SHIELD TO "GC garbage collector"
+	  }
+=======
 document { symbol "=>",
      TT "x => y", " -- a binary operator which produces a type of list called
      an ", TO "Option", "."
+>>>>>>> 1.27
      }
 
