@@ -16,7 +16,16 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
-The definition of a "Type" is not enlarged slightly: anything
+Warning: the operator ==> has been renamed to >>> so a new operator,
+==>, with higher parsing precedence, can be introduced for use as
+"implication" in logical expressions.  Other new operators introduced
+are |- and <==> .
+
+The definition of a type is enlarged slightly: anything whose parent
+class is not equal to the class "Nothing" is now considered to be a
+type by the "new" routines.  Formerly a type was instance of the class
+"Type", but that definition was too restrictive, for it didn't allow
+types to be immutable hash tables.
 
 'run' now returns the entire return code of the program, rather than
 just the exit status.  For a normal exit, this will be 256 times the

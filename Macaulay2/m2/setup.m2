@@ -54,8 +54,14 @@ Thing.Print = x -> (
      x = commonProcessing x;
      y := applyMethod(BeforePrint,x);
      if y =!= null then (
-	  << endl;			  -- double space
-	  << concatenate(interpreterDepth:"o") << lineNumber << " = " << (try net y else try toString y else try simpleToString y else "--something--") << endl;
+	  << endl			  -- double space
+	  << concatenate(interpreterDepth:"o") << lineNumber << " = " 
+	  << (
+	       try net y else (
+		    stderr << "warning: got error when converting output to net" << endl;
+		    try toString y else (
+		    	 stderr << "warning: got error when converting output to string" << endl;
+			 try simpleToString y else "--something--"))) << endl;
 	  );
      applyMethod(AfterPrint,x);
      )

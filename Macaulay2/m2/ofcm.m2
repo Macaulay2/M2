@@ -279,7 +279,7 @@ makeMonoid := (options) -> (
      makeit1 options)
 
 monoid Array := Monoid => (
-     monoidDefaults ==> options -> args -> (
+     monoidDefaults >>> options -> args -> (
      	  if options.Variables === null
      	  then options = merge(options, new OptionTable from {Variables => deepSplice sequence args}, last);
      	  makeMonoid options)

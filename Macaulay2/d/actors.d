@@ -680,8 +680,8 @@ logorfun(lhs:Code,rhs:Code):Expr := (
 	       else (
 		    if right == True then True
 		    else if right == False then False
-		    else WrongArg(1+1,"true or false")))
-	  else WrongArg(1,"true or false")));
+		    else binarymethod(left,right,orS)))
+	  else binarymethod(left,rhs,orS)));
 setup(orS,logorfun);
 BarBarF(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BarBarS);
 setup(BarBarS,BarBarF);
@@ -702,8 +702,8 @@ logandfun(lhs:Code,rhs:Code):Expr := (
 	       else (
 		    if b == True then True
 		    else if b == False then False
-		    else WrongArg(1+1,"true or false")))
-	  else WrongArg(1,"true or false")));
+		    else binarymethod(a,b,andS)))
+	  else binarymethod(a,rhs,andS)));
 setup(andS,logandfun);
 lognotfun(rhs:Code):Expr := (
      a := eval(rhs);
@@ -711,7 +711,7 @@ lognotfun(rhs:Code):Expr := (
      is Error do a
      else if a == True then False
      else if a == False then True
-     else WrongArg("true or false"));
+     else unarymethod(a,notS));
 setup(notS,lognotfun);
 factorial(rhs:Code):Expr := (
      when eval(rhs)

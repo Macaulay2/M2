@@ -71,6 +71,16 @@ setupfun("loaddata",loaddatafun);
 LongDoubleArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongDoubleArrowS);
 setup(LongDoubleArrowS,LongDoubleArrowFun);
 
+GreaterGreaterGreaterFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,GreaterGreaterGreaterS);
+setup(GreaterGreaterGreaterS,GreaterGreaterGreaterFun);
+
+LongBiDoubleArrowFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LongBiDoubleArrowS);
+setup(LongBiDoubleArrowS,LongBiDoubleArrowFun);
+
+binaryDeductionFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DeductionS);
+unaryDeductionFun(rhs:Code):Expr := unarymethod(rhs,DeductionS);
+setup(DeductionS,unaryDeductionFun,binaryDeductionFun);
+
 -- doublePointerfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,DoubleArrowS);
 optionFun(lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);

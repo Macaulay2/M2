@@ -138,7 +138,7 @@ document { symbol "@@",
      Headline => "a binary operator"
      }
 
-document { symbol "==>",
+document { symbol ">>>",
      Headline => "a binary operator",
      "This operator is right associative.",
      PARA,

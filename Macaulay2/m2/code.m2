@@ -30,7 +30,7 @@ getSourceLines Sequence := (filename,start,startcol,stop,stopcol) -> if filename
      )
 
 limit := 4
-optionedFunction := {} ==> sin
+optionedFunction := {} >>> sin
 composedFunction := sin @@ sin
 memoizedFunction := memoize sin
 isOptionedFunction := f -> sameFunctionBody(f,optionedFunction)
