@@ -81,11 +81,11 @@ newPackage(String) := opts -> (title) -> (
      sym := value ("symbol " | title);
      removePackage title;
      newdict := (
-	  if title === "Main"
-	  then first globalDictionaries
-	  else if title === "Output" then OutputDictionary
-	  else first (globalDictionaries = prepend(new Dictionary,globalDictionaries))
-	  );
+	  if title === "Main" then first globalDictionaries
+	  else (
+	       d := new Dictionary;
+	       globalDictionaries = prepend(d,globalDictionaries);
+	       d));
      p := global currentPackage <- new Package from {
           symbol name => title,
 	  symbol Symbol => sym,
@@ -120,11 +120,11 @@ newPackage("Main",
      DebuggingMode => debuggingMode,
      Version => version#"VERSION",
      WritableSymbols => {
-	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
+	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol currentDirectory, symbol fullBacktrace, symbol backtrace,
 	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace, symbol encapDirectory, symbol User,
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
 	  symbol packages, symbol currentDictionary, symbol notify, symbol loadDepth, symbol printingPrecision,
-	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol Output, symbol debuggingMode, 
+	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber, symbol debuggerHook, symbol printWidth
 	  })
 
@@ -170,9 +170,7 @@ popDictionary = d -> (
 dictionary = method()
 dictionary Symbol := s -> (				    -- eventually every symbol will know what dictionary it's in, perhaps
      n := toString s;
-     r := select(globalDictionaries, d -> d#?n and d#n === s);
-     if #r === 0 then null else first r			    -- could return null, if we don't find it
-     )
+     scan(globalDictionaries, d -> if d#?n and d#n === s then break d))
 dictionary Thing := x -> (
      s := reverseDictionary x;
      if s === null then null else dictionary s
@@ -197,7 +195,7 @@ package TO := x -> (
      key := normalizeDocumentTag x#0;
      pkg := packageTag key;
      fkey := formatDocumentTag key;
-     pkgs := select(packages, P -> P =!= User and P =!= Output);
+     pkgs := select(packages, P -> P =!= User);
      p := select(pkgs, P -> P#"documentation"#?fkey);
      if #p == 1 then (
 	  p = p#0;

@@ -1,5 +1,7 @@
 --		Copyright 1993-2003 by Daniel R. Grayson
 
+assert = x -> if not x then error "assertion failed"
+
 if Function.?GlobalAssignHook then error "setup.m2 already loaded"
 addStartFunction(
      () -> (
@@ -16,24 +18,14 @@ if notify then stderr << "--loading setup.m2" << endl
 
 match := X -> 0 < #(matches X)				    -- defined as a method later
 
-if class phase === Symbol then phase = 0
-
 somethingElse = () -> error "something else needs to be implemented here"
-
-protect AfterEval
-protect AfterPrint
-protect BeforePrint
 
 OutputDictionary = new Dictionary
 
-oo := getGlobalSymbol(OutputDictionary,"oo");
-ooo := getGlobalSymbol(OutputDictionary,"ooo");
-oooo := getGlobalSymbol(OutputDictionary,"oooo");
-
 rot := x -> (
-     oooo <- value ooo;			  -- avoid GlobalAssignHook with <-
-     ooo <- value oo;
-     oo <- x;
+     global oooo <- ooo;			  -- avoid GlobalAssignHook with <-
+     global ooo <- oo;
+     global oo <- x;
      )
 
 applyMethod := (m,x) -> if x === null then x else (
@@ -117,8 +109,6 @@ load "loads.m2"
 
 stderr << "--loaded setup.m2" << endl
 notify = true
-newPackage(Output, DebuggingMode => debuggingMode)
-protect symbol Output
 newPackage(User, DebuggingMode => debuggingMode)
 User#"source directory" = null
 protect Main.Dictionary
