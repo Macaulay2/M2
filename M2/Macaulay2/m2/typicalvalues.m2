@@ -5,7 +5,6 @@
 
 dummy := method(SingleArgumentDispatch=>true)	    -- a compiled function closure is pretty anonymous
 installMethod(symbol !, ZZ, ZZ => dummy)
-installMethod(symbol !=, Thing, Thing, Boolean => dummy)
 installMethod(symbol ##, Function, Sequence, Thing => dummy)
 installMethod(symbol #?, HashTable, Thing, Boolean => dummy)
 installMethod(symbol #?, Set, Thing, Boolean => dummy)
