@@ -165,7 +165,6 @@ Ext(Module,Module) := Module => (M,N) -> (
     assert isHomogeneous DeltaBar;
     assert(DeltaBar * DeltaBar == 0);
     -- now compute the total Ext as a single homology module
-    return DeltaBar;
     prune homology(DeltaBar,DeltaBar)))
 
 Adjust					  -- just use it again
