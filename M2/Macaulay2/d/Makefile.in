@@ -92,7 +92,7 @@ endif
 	$(COMPILE.c) -Wno-unused -Wno-uninitialized $*.c $(OUTPUT_OPTION)
 	rm $*.c
 
-CPPFLAGS += -I../../include -I@srcdir@ -I. -I../util
+CPPFLAGS += -I../../include -I@srcdir@ -I. -I../util -I../e
 CFLAGS += $(DEBUGFLAGS)
 
 # we can't do this because our manufactured c files have lots of unused labels
