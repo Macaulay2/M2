@@ -11,12 +11,20 @@ export warning(msg:string):void := (
      warnings = warnings + 1;
      flush(stdout);
      stderr << argv.0 << ": warning: " << msg << endl;
+     if warnings > 1000 then (
+	  stderr << "too many warnings, exiting" << endl;
+	  exit(1);
+	  );
      );
 errors := 0;
 export error(msg:string):void := (
      errors = errors + 1;
      flush(stdout);
      stderr << argv.0 << ": error: " << msg << endl;
+     if errors > 100 then (
+	  stderr << "too many errors, exiting" << endl;
+	  exit(1);
+	  );
      );
 export fatal(msg:string):void := (
      flush(stdout);

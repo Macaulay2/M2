@@ -260,21 +260,33 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       )),
 	  NULL));
 
+interpreterDepth := 0;
+interpreterDepthFun(e:Expr):Expr := (
+     when e
+     is s:Sequence do if length(s) != 0 then WrongNumArgs(0) else Expr(toInteger(interpreterDepth))
+     else WrongArgInteger());
+setupfun("interpreterDepth",interpreterDepthFun);
+
 export topLevel():bool := when loadprint("-",StopIfError,newStaticLocalDictionaryClosure()) is Error do false else true;
-topLevel(d:DictionaryClosure):bool := when loadprint("-",StopIfError,d) is Error do false else true;
+
+topLevel(dc:DictionaryClosure):bool := when loadprint("-",StopIfError,dc) is Error do false else true;
 topLevel(f:Frame):bool := topLevel(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
 topLevel(e:Expr):Expr := (
+     interpreterDepth = interpreterDepth + 1;
+     ret := 
      when e is s:Sequence do (
 	  if length(s) == 0 then toExpr(topLevel())
 	  else WrongNumArgs(0,1)
 	  )
+     is dc:DictionaryClosure do toExpr(topLevel(dc))
      is sc:SymbolClosure do toExpr(topLevel(sc.frame))
      is fc:FunctionClosure do toExpr(topLevel(fc.frame))
      is cfc:CompiledFunctionClosure do toExpr(topLevel(emptyFrame))	    -- some values are there, but no symbols
      is CompiledFunction do toExpr(topLevel(emptyFrame))		    -- no values or symbols are there
-     else WrongArg("a function, a symbol, or ()")
-     );
-setupfun("topLevel",topLevel);
+     else WrongArg("a function, a symbol, or ()");
+     interpreterDepth = interpreterDepth - 1;
+     ret);
+setupfun("commandInterpreter",topLevel);
 
 breakLoop(f:Frame):bool := (
      when loadprint("-",StopIfError, 

@@ -25,13 +25,13 @@ writableGlobals := set (
      symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify
      )
 
-scan(pairs Macaulay2Dictionary, (name,sym) -> if not writableGlobals#?sym then protect sym)
+scan(pairs Macaulay2.Dictionary, (name,sym) -> if not writableGlobals#?sym then protect sym)
 
 -- try to wrap long lines intelligently, could be improved:
 Matrix.BeforePrint =
 RingElement.BeforePrint =
 List.BeforePrint = 
-Sequence.BeforePrint = x -> wrap(- width stack lines ZZ.InputPrompt lineNumber() + if width stdio > 0 then width stdio else 80, net x) -- 10 to allow for the prompt
+Sequence.BeforePrint = x -> if width stdio == 0 then x else wrap(- width stack lines ZZ.InputPrompt lineNumber() + width stdio, net x)
 
 -- make sure this is after all global symbols are defined or erased
 closePackage Macaulay2

@@ -85,7 +85,7 @@ CoherentSheaf.AfterPrint = F -> (
      M := module F;
      << endl;				  -- double space
      n := rank ambient F;
-     << "o" << lineNumber() << " : coherent sheaf on " << X;
+     << concatenate(interpreterDepth():"o") << lineNumber() << " : coherent sheaf on " << X;
      if M.?generators then
      if M.?relations then << ", subquotient of " << ambient F
      else << ", subsheaf of " << ambient F

@@ -197,7 +197,7 @@ leadTerm(ZZ, ZZ, Resolution) := Matrix => (n,level,g) -> (
      getMatrix ring g)
 
 -----------------------------------------------------------------------------
-pairs := g -> (
+getpairs := g -> (
     sendgg(ggPush g, ggpairs);
     eePopIntarray())
 remaining := g -> (
@@ -218,7 +218,7 @@ status Resolution := options -> (r) -> (
      v := {};
      lab := {};
      if options#TotalPairs     === true then (
-	  v = append(v,pairs r);
+	  v = append(v,getpairs r);
 	  lab = append(lab,"total pairs");
 	  );
      if options#PairsRemaining === true then (
@@ -272,3 +272,5 @@ status ChainComplex := options -> (C) -> status(C.Resolution, options)
 
 summary Resolution := g -> (sendgg(ggPush g, ggstats);)
 summary ChainComplex := C -> if C.?Resolution then summary C.Resolution
+
+testDebugging = () -> (commandInterpreter (() -> ());)

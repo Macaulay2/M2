@@ -140,7 +140,19 @@ makeSymbolSequence(e:ParseTree):SymbolSequence := (
 	  else break;					    -- shouldn't happen
 	  );
      v);
-export frame(frameID:int):Frame := (
+export showFrames(f:Frame):void := (
+     stdout << " frames bound :";
+     while (
+	  stdout << " " << f.frameID << " [" << f.valuesUsed;
+	  if f.valuesUsed != length(f.values) then stdout << "<" << length(f.values);
+	  stdout << "]";
+	  f != f.outerFrame ) do (
+	  stdout << ",";
+	  f = f.outerFrame;
+	  );
+     stdout << endl;
+     );
+export frame(frameID:int):Frame := (			    -- old version, becoming obsolete
      if frameID == 0 then globalFrame
      else (
      	  f := localFrame;
@@ -158,6 +170,43 @@ export frame(frameID:int):Frame := (
 	       fatal("exiting");
 	       );
      	  f));
+export frameAndVerify(frameID:int,nestingDepth:int):Frame := (	    -- transitional version, just to verify nestingDepth
+     if frameID == 0 then (
+	  stderr << "warning: nesting depth not applicable to global frame" << endl;
+	  globalFrame)
+     else (
+	  n := 0;
+     	  f := localFrame;
+     	  while f.frameID > frameID do (
+	       f = f.outerFrame;
+	       n = n+1;
+	       );
+     	  if f.frameID != frameID 
+	  then (
+	       stderr << "frame for dictionary " << frameID << " not found" << endl;
+	       stderr << "frames active for dictionaries: ";
+	       f = localFrame;
+	       while f.frameID > -1 do (
+		    stderr << " " << f.frameID;
+		    f = f.outerFrame;
+		    );
+	       stderr << endl;
+	       fatal("exiting");
+	       );
+	  if n != nestingDepth then (
+	       stderr << "estimated nesting depth for frame " << frameID << " incorrect: " << nestingDepth << endl;
+	       showFrames(localFrame);
+	       );
+     	  f));
+
+export frameByDepth(nestingDepth:int):Frame := (	    -- new version
+     f := localFrame;
+     while nestingDepth > 0 do (
+	  f = f.outerFrame;
+	  nestingDepth = nestingDepth - 1;
+	  );
+     f);
+
 export makeSymbolClosure(s:Symbol):SymbolClosure := SymbolClosure(frame(s.frameID),s);
 allExprCodes(cs:CodeSequence):bool := (
      foreach c in cs do when c is exprCode do nothing else return(false);
@@ -170,8 +219,21 @@ combine(cs:CodeSequence):Sequence := (
 	  else provide nullE		  -- will not happen
 	  ));
 
+nestingDepth(frameID:int,d:Dictionary):int := (
+     if frameID == 0 then return(0);
+     n := 0;
+     while d.frameID != frameID do (
+	  if !d.transient || d.framesize != 0 then n = n+1; -- empty transient frames will not appear at runtime
+	  if d == d.outerDictionary then (
+	       error("internal error during conversion: frameID " + tostring(frameID) + " not found");
+	       break;
+	       );
+	  d = d.outerDictionary;
+	  );
+     n);
+
 tokenAssignment(e:ParseTree,b:Binary,t:Token):Code := (
-     Code(assignmentCode(t.entry,convert(b.rhs),treePosition(e)))
+     Code(assignmentCode(nestingDepth(t.entry.frameID,t.dictionary),t.entry,convert(b.rhs),treePosition(e)))
      );
 
 parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (

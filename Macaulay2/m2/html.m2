@@ -387,7 +387,7 @@ assemble Package := o -> pkg -> (
      htmlDirectory = LAYOUT#"packagehtml" buildPackage;
      setupButtons();
      makeDirectory (buildDirectory|htmlDirectory);     
-     nodes := unique join(keys pkg#"dictionary",keys pkg#"raw documentation",{topNodeName});
+     nodes := unique join(keys pkg.Dictionary,keys pkg#"raw documentation",{topNodeName});
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      ret := makeHtmlNode \ toString \ nodes;
 

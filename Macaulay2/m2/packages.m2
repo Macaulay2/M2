@@ -9,18 +9,12 @@ packages = {}
 Package = new Type of MutableHashTable
 Package.synonym = "package"
 
-net Dictionary := toString Dictionary := toExternalString Dictionary := d -> if Symbols#?d then toString Symbols#d else "--dictionary--"
+toString Dictionary := toExternalString Dictionary := d -> if Symbols#?d then toString Symbols#d else "--dictionary--"
 
 installMethod(GlobalAssignHook,Package,globalAssignFunction)
 installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 
 M2title := "Macaulay2"
-
-record := (sym,val) -> (
-     if Symbols#?(value sym) then remove(Symbols,value sym);
-     sym <- val;
-     Symbols#val = sym;
-     )
 
 hide := d -> (
      globalDictionaries select(globalDictionaries(), x -> x =!= d);
@@ -28,7 +22,7 @@ hide := d -> (
 
 removePackage = method()
 removePackage Package := p -> (
-     hide p#"dictionary";
+     hide p.Dictionary;
      packages = select(packages, q -> q =!= p);
      stderr << "--previous definitions removed for package " << p << endl;
      )
@@ -36,7 +30,7 @@ removePackage String := s -> scan(packages, p -> if p.name == s then removePacka
 
 newPackage = method( Options => { Using => {}, Version => "0.0" } )
 newPackage(Package) := opts -> p -> (
-     hide p#"dictionary";		    -- hide the old dictionary
+     hide p.Dictionary;		    -- hide the old dictionary
      newPackage(p.name,opts))
 newPackage(Symbol) := opts -> p -> newPackage(toString p,opts)
 newPackage(String) := opts -> (title) -> (
@@ -47,9 +41,9 @@ newPackage(String) := opts -> (title) -> (
      p := global currentPackage <- new Package from {
           symbol name => title,
 	  symbol Symbol => sym,
+     	  symbol Dictionary => newdict,
+	  symbol Version => opts.Version,
 	  "outerPackage" => currentPackage,
-     	  "dictionary" => newdict,
-	  "version" => opts.Version,
 	  "test inputs" => new MutableHashTable,
 	  "raw documentation" => new MutableHashTable,
 	  "example inputs" => new MutableHashTable,
@@ -58,7 +52,6 @@ newPackage(String) := opts -> (title) -> (
 	  "html documentation" => new MutableHashTable,
 	  "file directory" => currentFileDirectory
 	  };
-     record(value ("symbol " | title | "Dictionary"), p#"dictionary");
      globalAssignFunction(sym,p);
      sym <- p;
      packages = append(packages,p);
@@ -69,9 +62,9 @@ newPackage(M2title,Version => version#"VERSION")
 closePackage = p -> (
      if p =!= currentPackage then error ("package not open");
      if p =!= Macaulay2 then (			    -- protect it later, after package User is open
-	  protect p#"dictionary";
+	  protect p.Dictionary;
 	  );
-     if first globalDictionaries() =!= p#"dictionary" then error ("another dictionary is open");
+     if first globalDictionaries() =!= p.Dictionary then error ("another dictionary is open");
      currentPackage = p#"outerPackage";
      remove(p,"outerPackage");
      stderr << "--package " << p << " installed" << endl;
@@ -97,6 +90,6 @@ package = method ()
 package Symbol := s -> (
      d := dictionary s;
      if d === null then return(null);
-     r := select(packages,p -> p#"dictionary" === d);
+     r := select(packages,p -> p.Dictionary === d);
      if #r > 0 then first r)
 package Thing := x -> if Symbols#?x then package Symbols#x

@@ -3,6 +3,7 @@ needs "D-modules/Dloadfile.m2"
 needs "D-modules/DMODdoc.m2"
 
 -- erase the internal symbols
+assert( Dmodules.?Dictionary and class Dmodules.Dictionary === Dictionary )
 scan({"createCommAlgebra", "CommAlgebra", "createAssCommRing", "ThetaRing",
      "createThetaRing", "createIntRing", "createHomWeylAlgebra", "zeroize",
      "DBIGPRIME", "computeLocalization", "invPermute", "gbW1",
@@ -13,6 +14,6 @@ scan({"createCommAlgebra", "CommAlgebra", "createAssCommRing", "ThetaRing",
      "LocalizeMap", "diagonal", "computeRestriction", "TwistOperator",
      "divideOutGCD"},
   s -> (
-       if not DmodulesDictionary#?s then error("expected ",s," to be a symbol first defined by the Dmodules package");
-       erase DmodulesDictionary#s))
+       if not Dmodules.Dictionary#?s then error("expected ",s," to be a symbol first defined by the Dmodules package");
+       erase Dmodules.Dictionary#s))
 closePackage Dmodules

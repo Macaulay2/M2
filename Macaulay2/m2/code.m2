@@ -5,8 +5,10 @@ getSourceLines Nothing := null -> null
 getSourceLines Sequence := (filename,start,stop) -> if filename =!= "stdio" then (
      wp := set characters " \t);";
      file := (
-	  if filename === "--startupString--/startup.m2"
-	  then startupString
+	  if filename === "--startupString1--/layout.m2"
+	  then startupString1
+	  else if filename === "--startupString2--/startup.m2"
+	  then startupString2
 	  else (
 	       if not fileExists filename then error ("couldn't find file ", filename);
 	       get filename

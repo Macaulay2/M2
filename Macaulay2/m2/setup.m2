@@ -75,7 +75,7 @@ outputSymbols = new MutableHashTable
 outputLabel := ""
 
 commonProcessing := x -> (
-     outputLabel = concatenate("o",string lineNumber());
+     outputLabel = concatenate(interpreterDepth():"o",string lineNumber());
      x = applyMethod(AfterEval,x);
      if x =!= null then (
      	  s := getGlobalSymbol outputLabel;
