@@ -376,7 +376,7 @@ M2outputRE := "(\n\n)i+[1-9][0-9]* : "
 M2outputREindex := 1
 separateM2output = method()
 separateM2output String := r -> (
-     while r#?0 and r#0 == "\n" do r = substring(1,r);
+     r = selectRegexp( "(^|\n)(i1 : .*)",2,r);
      while r#?-1 and r#-1 == "\n" do r = substring(0,#r-1,r);
      separateRegexp(M2outputRE,M2outputREindex,r))
 

@@ -762,14 +762,36 @@ document {
      }
 
 document { Key => "Using the debugger",
+     "We have a Macaulay 2 source file with a pair of functions in it that
+     we can use for demonstrating the debugger.  Let's load it so we can
+     run the functions in it.",
      EXAMPLE "load \"demo1.m2\"",
-     EXAMPLE "g 4",
-     EXAMPLE "g 3",
+     "We can see what functions were provided to us with ", TO "listUserSymbols", ".",
+     EXAMPLE "listUserSymbols",
+     "Let's peek at the code of the function ", TT "g", ".",
+     EXAMPLE "code g",
+     "We see that the function g calls a function ", TT "f", ", but ", TT "f", " is not visible to us
+     (because ", TT "f", " is a local variable).",
+     PARA,
+     "The first few times we use ", TT "g", " seem to work.",
+     EXAMPLE {"g 4", "g 3"},
+     "The following attempt results in an error, and the debugger starts up automatically.",
      EXAMPLE "g 2",
-     EXAMPLE "listLocalSymbols ",
-     EXAMPLE "end",
+     "As suggested, we can use ", TO "listLocalSymbols", " to list the local symbols and their values.",
      EXAMPLE "listLocalSymbols",
-     EXAMPLE "break",
+     "We see the the value of ", TT "x", " is 0, and that explains the error message about division by zero.
+     The other local symbols are the ones defined in the body of the function ", TT "f", ", whose
+     code can now be displayed with ", TO "code", ".",
+     EXAMPLE "code f",
+     "If we decide the problem is one level up, we can use ", TT "end", " to quit this
+     instance of the debugger.  In this case, the debugger will be entered again
+     at the point inside the function ", TT "g", " from which the function ", TT "f", " was called.",
+     EXAMPLE "end",
+     "We can use ", TO "listLocalSymbols", " again to see the local variables of ", TT "g", ".",
+     EXAMPLE "listLocalSymbols",
+     "After we are done debugging, we can quit the debugger entirely and return to top level
+     with ", TO "break", ".",
+     EXAMPLE "break"
      }     
 
 -- Local Variables:
