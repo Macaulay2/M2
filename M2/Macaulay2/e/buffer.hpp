@@ -20,7 +20,7 @@ public:
 
   int size() { return _size; }
   int capacity() { return _capacity; }
-  char *str() { _buf[_size+1] = '\0'; return _buf; }
+  char *str() { _buf[_size] = '\0'; return _buf; }
 
   void put(const char *s);		// Place null-terminated string into buffer
   void put(const char *s, int len);	// Place a string possible containing null chars

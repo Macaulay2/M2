@@ -230,14 +230,20 @@ protected:
 				     const int *m, 
 				     const Nterm *g) const;
 public:
-  virtual void normal_form(vec &v) const;
-
   void apply_quotient_ring_elements(vec &f, vec rsyz) const;
+  void apply_map(vec &f, vec gsyz, const array<vec> &vecs) const;
+  
+  virtual void normal_form(vec &v) const;
   virtual void normal_form_ZZ(vec &v) const;
 
   void normal_form(vec &v, 
 		   const array<MonomialIdeal> &mis, 
 		   const array<vec> &vecs) const;
+
+  void normal_form_ZZ(vec &f,
+		      const array<TermIdeal *> &termideals,
+		      const FreeModule *Gsyz,
+		      const array<vec> &vecs) const;
 
 //////////////////////////////////////////////
 //  Matrix routines //////////////////////////
@@ -271,7 +277,9 @@ public:
 		 const FreeModule *G, vec w) const;
 
   void auto_reduce(array<vec> &vecs) const;
-
+protected:
+  void auto_reduce_ZZ(array<vec> &vecs) const;
+public:
   vec random() const;  // Produces a random vector of coefficients (no monomials)
 protected:
   int sort_compare(int i, int j) const;

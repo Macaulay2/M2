@@ -30,19 +30,18 @@ void GBZZ_comp::set_up0(const Matrix &m, int csyz, int nsyz)
 
   Rsyz = A->get_Rsyz();
 
-  gbmatrix = Matrix(m.rows());
   Gsyz = R->make_FreeModule();
 
   F = m.rows();
   bump_up(F);
 
-
   if (nsyz < 0 || nsyz > m.n_cols())
     nsyz = m.n_cols();
   n_comps_per_syz = nsyz;
 
-
-  ar_i = ar_j = np_i = -1;
+  ar_first_in_deg = 0;
+  ar_i = ar_j = -1;
+  np_i = 0;
 
   n_gb = n_mingens = n_subring = 0;
   n_pairs = n_computed = n_saved_gcd = 0;
@@ -52,6 +51,7 @@ void GBZZ_comp::set_up0(const Matrix &m, int csyz, int nsyz)
   is_ideal = (F->rank() == 1 && csyz == 0);
 
   this_degree = F->lowest_primary_degree() - 1;
+  prev_degree = this_degree;
 
   for (i=0; i<F->rank(); i++)
     termideals.append(new TermIdeal(A,Gsyz));
@@ -127,9 +127,7 @@ GBZZ_comp::~GBZZ_comp()
   // remove the gb
   for (i=0; i<gb.length(); i++)
     {
-      // Don't remove the 'f' field of 'gb[i]', since this is also pointed
-      // to by 'gbmatrix'.
-      gb[i]->f = NULL;
+      F->remove(gb[i]->f);
       Fsyz->remove(gb[i]->fsyz);
       delete gb[i];
     }
@@ -211,15 +209,54 @@ void GBZZ_comp::gb_sort(int lo, int hi)
     }
 }
 
+// Sort for auto-reduction: Descending monomial order.
+// Usually this is only called for elements of the same degree.
+int GBZZ_comp::autoreduce_sort_partition(int lo, int hi)
+{
+  GB_elem *pivot = gb[gblocs[lo]];
+  const int *pivot_monom = pivot->f->monom;
+  int i = lo-1;
+  int j = hi+1;
+  for (;;)
+    {
+      do { j--; }
+      while (M->compare(gb[gblocs[j]]->f->monom, pivot_monom) < 0);
+
+      do { i++; }
+      while (M->compare(gb[gblocs[i]]->f->monom, pivot_monom) > 0);
+
+      if (i < j)
+	{
+	  int tmp = gblocs[j];
+	  gblocs[j] = gblocs[i];
+	  gblocs[i] = tmp;
+	}
+      else
+	return j;
+    }
+}
+
+void GBZZ_comp::autoreduce_sort(int lo, int hi)
+{
+  if (lo < hi)
+    {
+      int q = autoreduce_sort_partition(lo, hi);
+      autoreduce_sort(lo, q);
+      autoreduce_sort(q+1, hi);
+    }
+}
+
 //////////////////////////////////////////////
 //  Finding new S-pairs //////////////////////
 //////////////////////////////////////////////
 
-void GBZZ_comp::find_pairs(GB_elem *p)
+void GBZZ_comp::find_pairs(int me)
   // compute min gen set of {m | m lead(p) is in (p1, ..., pr, f1, ..., fs)}
   // (includes cases m * lead(p) = 0).
   // Returns a list of new s_pair's.
 {
+  int my_gb_num = gbpairlocs[me];
+  GB_elem *p = gb[my_gb_num];
   queue<tagged_term *> elems;
   int j;
   intarray vplcm;
@@ -244,7 +281,7 @@ void GBZZ_comp::find_pairs(GB_elem *p)
 	  find_pairs_exp[w]--;
 
 	  // Add in the monomial syzygy (x_w * g_i), for p = g_i.
-	  vec vsyz = Gsyz->term(p->me, one, find_pairs_lcm);
+	  vec vsyz = Gsyz->term(my_gb_num, one, find_pairs_lcm);
 	  elems.insert(new tagged_term(K->copy(vsyz->coeff), 
 				       M->make_new(vsyz->monom), 
 				       vsyz, 
@@ -269,7 +306,7 @@ void GBZZ_comp::find_pairs(GB_elem *p)
 	g2 = K->divide(p->f->coeff, g);
 	// K->negate_to(g2);// This is not needed, since negation is handled ahead of time
 	// for ring elements.
-	vec gsyz = Gsyz->term(p->me, g1, mon1);
+	vec gsyz = Gsyz->term(my_gb_num, g1, mon1);
 	vec rsyz = Rsyz->term(j, g2, mon2);
 	elems.insert(new tagged_term(g1, M->make_new(mon1), gsyz, rsyz));
 	K->remove(g);
@@ -277,18 +314,19 @@ void GBZZ_comp::find_pairs(GB_elem *p)
       }
 
   // Add in syzygies arising as s-pairs
-  for (j=0; j<p->me; j++)
+  for (j=0; j<me; j++)
     {
-      if (gb[j]->f->comp != p->f->comp)
+      GB_elem *other = gb[gbpairlocs[j]];
+      if (other->f->comp != p->f->comp)
 	continue;
-      vec f = gb[j]->f;
+      vec f = other->f;
       M->monsyz(p->f->monom, f->monom, mon1, mon2);
       g = K->gcd(f->coeff, p->f->coeff);
       g1 = K->divide(f->coeff, g);
       g2 = K->divide(p->f->coeff, g);
       K->negate_to(g2); 
-      vec gsyz = Gsyz->term(p->me, g1, mon1);
-      vec gsyz2 = Gsyz->term(j, g2, mon2);
+      vec gsyz = Gsyz->term(my_gb_num, g1, mon1);
+      vec gsyz2 = Gsyz->term(gbpairlocs[j], g2, mon2);
       Gsyz->add_to(gsyz, gsyz2);
       elems.insert(new tagged_term(g1, M->make_new(mon1), gsyz, NULL));
       K->remove(g);
@@ -433,9 +471,11 @@ void GBZZ_comp::insert_gb_element(vec f, vec fsyz, bool ismin)
 {
   GB_elem *p = new GB_elem(f, fsyz, ismin);
 
-  // MESXX
-  // Makemonic, if over a field.  But here, let's just make the
-  // term positive.  If p->f->coeff < 0 then negate p->f, p->fsyz.
+  if (!ZZ->is_positive(f->coeff))
+    {
+      F->negate_to(f);
+      Fsyz->negate_to(fsyz);
+    }
 
   if (ismin)
     {
@@ -452,19 +492,18 @@ void GBZZ_comp::insert_gb_element(vec f, vec fsyz, bool ismin)
   TermIdeal *ti = termideals[p->f->comp];
   vec gsyz = Gsyz->e_sub_i(gb.length()-1);
 
-  ti->insert_minimal(new tagged_term(K->copy(p->f->coeff),  // MESXX: what should be copied here?
+  ti->insert_minimal(new tagged_term(K->copy(p->f->coeff),
 				     M->make_new(p->f->monom),
 				     gsyz,
 				     NULL));
 
-  // Now we must be a bit careful about this next, but we only want one
-  // copy of a GB element, since the whole thing can be quite large.
-  // Just make sure that when the GB is deleted at the end, that the 'f'
-  // field of the gb_elem's is not removed.
-
-  gbmatrix.append(p->f);
-  int i = gbmatrix.n_cols() - 1;
-  Gsyz->append(gbmatrix.cols()->degree(i));
+  int i = gblocs.length();
+  gblocs.append(i);
+  gbpairlocs.append(i);
+  int *d = M->make_one();
+  F->degree(p->f, d);
+  Gsyz->append(d);
+  M->remove(d);
 }
 
 bool GBZZ_comp::insert_syzygy(vec fsyz)
@@ -497,6 +536,12 @@ void GBZZ_comp::handle_element(vec f, vec fsyz, bool maybe_minimal)
       // and resets the coefficient for this monomial to be the given one.
       // If a negative value is returned, then this means that the lead monomial
       // is not already a GB lead term.
+      if (!ZZ->is_positive(f->coeff))
+	{
+	  F->negate_to(f);
+	  Fsyz->negate_to(fsyz);
+	}
+
       int i = termideals[f->comp]->replace_minimal(f->coeff, f->monom);
       if (i < 0) break;
       // At this point, we have a new lead coefficient for this monomial.
@@ -515,7 +560,6 @@ void GBZZ_comp::handle_element(vec f, vec fsyz, bool maybe_minimal)
       swap(gb[i]->f, f);
       swap(gb[i]->fsyz,fsyz);
       swap(gb[i]->is_min, maybe_minimal);
-      gbmatrix[i] = gb[i]->f;  // This must ALWAYS match gb[i]->f !!
     }
   
   if (f != NULL)
@@ -607,8 +651,8 @@ bool GBZZ_comp::auto_reduce_step()
   // c in(gb(j)) is a term in gb(i).
   // Also compute change(i) -= c change(j).
   
-  F->auto_reduce_coeffs(Fsyz, gb[ar_i]->f, gb[ar_i]->fsyz, 
-			gb[ar_j]->f, gb[ar_j]->fsyz);
+  F->auto_reduce_coeffs(Fsyz, gb[gblocs[ar_i]]->f, gb[gblocs[ar_i]]->fsyz, 
+			gb[gblocs[ar_j]]->f, gb[gblocs[ar_j]]->fsyz);
   ar_j++;
   return true;
 }
@@ -619,7 +663,7 @@ bool GBZZ_comp::new_pairs_step()
      // degree, return false.
 {
   if (np_i >= n_gb) return false;
-  find_pairs(gb[np_i]);
+  find_pairs(np_i);
   np_i++;
   return true;
 }
@@ -656,7 +700,7 @@ int GBZZ_comp::computation_complete(const int * /* stop_degree */,
 
 int GBZZ_comp::calc(const int *deg, const intarray &stop)
 {
-  int n_in_degree;
+  int n_in_degree, d;
 
   if (stop.length() != 7) 
     {
@@ -688,6 +732,7 @@ int GBZZ_comp::calc(const int *deg, const intarray &stop)
       switch (state) 
 	{
 	case GB_COMP_NEWDEGREE:
+	  prev_degree = this_degree;
 	  n_in_degree = spairs->next_degree(this_degree);
 	  if (n_in_degree == 0)
 	    {
@@ -712,9 +757,10 @@ int GBZZ_comp::calc(const int *deg, const intarray &stop)
 	    }
 
 	  // Set state information for auto reduction, new pairs
-	  ar_i = n_gb;
+	  if (prev_degree != this_degree)
+	    ar_first_in_deg = n_gb;
+	  ar_i = ar_first_in_deg;
 	  ar_j = ar_i + 1;
-	  np_i = n_gb;
 	  state = GB_COMP_S_PAIRS;
 	  break;
 	  
@@ -725,24 +771,31 @@ int GBZZ_comp::calc(const int *deg, const intarray &stop)
 
 	case GB_COMP_GENS:
 	  if (!gen_step())
-	    state = GB_COMP_AUTO_REDUCE;
-	  break;
-	  
-	case GB_COMP_AUTO_REDUCE:
-	  if (!auto_reduce_step()) 
 	    {
 	      state = GB_COMP_NEWPAIRS;
-	      if ((strategy & USE_SORT) != 0)
-		{
-		  gb_sort(np_i, n_gb-1); // This is the range of elements to sort.
-		}
-	      for (int j=np_i; j < n_gb; j++)
-		gb[j]->me = j;
+	      //sort_for_pairs(np_i, n_gb-1);
+	      autoreduce_sort(ar_first_in_deg, n_gb-1);  // Elements of this degree
 	    }
 	  break;
 	  
 	case GB_COMP_NEWPAIRS:
-	  if (!new_pairs_step()) state = GB_COMP_NEWDEGREE;
+	  if (!new_pairs_step()) 
+	    {
+	      if (spairs->lowest_degree(d))
+		{
+		  if (d == this_degree)
+		    state = GB_COMP_NEWDEGREE; // Actually, the same degree...
+		  else
+		    state = GB_COMP_AUTO_REDUCE;
+		}
+	      else
+		state = GB_COMP_AUTO_REDUCE;
+	    }
+	  break;
+
+	case GB_COMP_AUTO_REDUCE:
+	  if (!auto_reduce_step()) 
+	    state = GB_COMP_NEWDEGREE;
 	  break;
 	  
 	case GB_COMP_DONE:
@@ -854,11 +907,10 @@ Matrix GBZZ_comp::initial_matrix(int n)
 
 Matrix GBZZ_comp::gb_matrix()
 {
-  return gbmatrix;
-//  Matrix result(F);
-//  for (int i=0; i<gb.length(); i++)
-//    result.append(F->copy(gb[i]->f));
-//  return result;
+  Matrix result(F);
+  for (int i=0; i<gb.length(); i++)
+    result.append(F->copy(gb[gblocs[i]]->f));
+  return result;
 }
 
 Matrix GBZZ_comp::change_matrix()

@@ -818,6 +818,58 @@ void FreeModule::normal_form(vec &v) const
   v = head.next;
 }
 
+void FreeModule::apply_map(vec &f, vec gsyz, const array<vec> &vecs) const
+{
+  // f in F
+  // gsyz in Gsyz
+  // Modify f using the GB elements in gsyz.
+  for (vec t = gsyz; t != NULL; t = t->next)
+    {
+      vec g = vecs[t->comp];
+      int *s = t->monom;
+      ring_elem c = K->negate(t->coeff);
+      vec f1 = imp_mult_by_term(c, s, g);
+      add_to(f, f1);
+      K->remove(c);
+    }
+}
+
+void FreeModule::normal_form_ZZ(vec &f,
+			     const array<TermIdeal *> &termideals,
+			     const FreeModule *Gsyz,
+			     const array<vec> &vecs) const
+{
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  const FreeModule *Rsyz = P->get_Rsyz();
+  vecterm head;
+  vecterm *result = &head;
+
+  while (f != NULL)
+    {
+      vec gsyz, rsyz;
+      bool reduces = termideals[f->comp]->search(f->coeff, f->monom,
+						 gsyz, rsyz);
+      if (rsyz != NULL)	
+	{
+	  apply_quotient_ring_elements(f, rsyz);
+	  Rsyz->remove(rsyz);
+	}
+      if (gsyz != NULL) 
+	{
+	  apply_map(f,gsyz,vecs);
+	  Gsyz->remove(gsyz);
+	}
+      if (!reduces)
+	{
+	  result->next = f;
+	  f = f->next;
+	  result = result->next;
+	}
+    }
+  result->next = NULL;
+  f = head.next;
+}
+
 void FreeModule::normal_form(vec &v, 
 			     const array<MonomialIdeal> &mis, 
 			     const array<vec> &vecs) const
@@ -927,16 +979,17 @@ void FreeModule::auto_reduce_coeffs(const FreeModule *Fsyz, vec &f, vec &fsyz,
   // and r = floor(c/d), then f -= r*f, fsyz -= r*fsyz.
 {
   // Valid only for coefficients = ZZ.
+  ring_elem rem;
   ring_elem c1 = coeff_of(f, g->monom, g->comp);
-  ring_elem c = K->divide(c1, g->coeff);
+  ring_elem c = K->divide(c1, g->coeff, rem);
   if (!K->is_zero(c))
     {
       if (M != NULL) M->one(nf_1);
       imp_subtract_multiple_to(f, c, nf_1, g);
       Fsyz->imp_subtract_multiple_to(fsyz, c, nf_1, gsyz);
     }
-  K->remove(c1);
   K->remove(c);
+  K->remove(c1);
 }
 
 void FreeModule::make_monic(vec &v, vec &vsyz) const
@@ -1160,11 +1213,49 @@ vec FreeModule::tensor(const FreeModule *F, vec v,
   return result;
 }
 
+void FreeModule::auto_reduce_ZZ(array<vec> & vecs) const
+{
+  // (a) Sort into increasing monomial order
+  // (b) For each element: reduce w.r.t. the previous elements
+  //     and then insert into the appropriate monomial ideal.
+  int x;
+  intarray indices;
+  intarray degs; // Not used.
+  array<TermIdeal *> mis;
+  sort(vecs, degs, 0, 1, indices);
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  FreeModule *Gsyz = R->make_FreeModule(vecs.length());
+  bump_up(Gsyz);
+  for (x=0; x<rank(); x++)
+    mis.append(new TermIdeal(P,Gsyz));
+  for (int i=0; i<vecs.length(); i++)
+    {
+      // Reduce each one in turn, and replace.
+      vec v = vecs[indices[i]];
+      normal_form_ZZ(v, mis, Gsyz, vecs);
+      if (v != NULL)
+	mis[v->comp]->insert_minimal(
+			  new tagged_term(K->copy(v->coeff),
+			  M->make_new(v->monom),
+			  Gsyz->e_sub_i(indices[i]),
+			  NULL));
+      vecs[indices[i]] = v;
+    }
+  for (x=0; x<rank(); x++)
+    delete mis[x];
+  bump_down(Gsyz);
+}
+
 void FreeModule::auto_reduce(array<vec> & vecs) const
 {
   // (a) Sort into increasing monomial order
   // (b) For each element: reduce w.r.t. the previous elements
   //     and then insert into the appropriate monomial ideal.
+  if (Ncoeffs()->is_Z())
+    {
+      auto_reduce_ZZ(vecs);
+      return;
+    }
   intarray indices, vp;
   intarray degs; // Not used.
   array<MonomialIdeal> mis;
@@ -1213,6 +1304,20 @@ int FreeModule::sort_compare(int i, int j) const
   int cmp = compare(v1, v2);
   if (cmp > 0) return -monorder_ascending;
   if (cmp < 0) return monorder_ascending;  
+  if (K->is_Z())
+    {
+      // Compare coeficients as well.
+      cmp = K->cast_to_Z()->compare(v1->coeff, v2->coeff);
+      buffer o;
+      o << "comparing ";
+      K->elem_text_out(o, v1->coeff);
+      o << " and ";
+      K->elem_text_out(o, v2->coeff);
+      o << " result = " << cmp << newline;
+      emit(o.str());
+      if (cmp < 0) return 1;
+      if (cmp > 0) return -1;
+    }
   return 0;
 }
 

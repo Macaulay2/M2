@@ -312,6 +312,21 @@ void s_pair_set::insert_generator(vec f, vec fsyz)
 //// Removal /////////////////////////////////
 //////////////////////////////////////////////
 
+bool s_pair_set::lowest_degree(int &lodeg) const
+{
+  // Returns false if no elements left.  Other wise,
+  // sets lodeg, and returns true.
+  s_pair_bunch *s = heap;
+  while (s != NULL && s->nelems == 0 && s->ngens == 0)
+    s = s->next;
+  if (s != NULL)
+    {
+      lodeg = s->mydeg;
+      return true;
+    }
+  return false;
+}
+
 int s_pair_set::next_degree(int &nextdeg)
      // Returns number to be done in nextdeg.
 {

@@ -22,7 +22,7 @@ To do here:
 #include "matrix.hpp"
 #include "comb.hpp"
 #include "det.hpp"
-
+#include "termideal.hpp"
 stash *Matrix_rec::mystash;
 
 Matrix_rec::~Matrix_rec()
@@ -518,6 +518,115 @@ Matrix Matrix::lead_term(int n) const
   for (int i=0; i<n_cols(); i++)
     result[i] = rows()->lead_term(n, elem(i));
   return result;
+}
+
+void Matrix::minimal_lead_terms_ZZ(intarray &result) const
+{
+  int x;
+  intarray indices;
+  intarray degs; // Not used.
+  array<TermIdeal *> mis;
+  const array<vec> vecs = obj->entries;
+  rows()->sort(vecs, degs, 0, 1, indices);
+  const PolynomialRing *P = Ring_of()->cast_to_PolynomialRing();
+  const FreeModule *Rsyz = P->get_Rsyz();
+  FreeModule *Gsyz = P->make_FreeModule(vecs.length());
+  bump_up(Gsyz);
+  for (x=0; x<n_cols(); x++)
+    mis.append(new TermIdeal(P,Gsyz));
+  for (int i=0; i<vecs.length(); i++)
+    {
+      vec v = vecs[indices[i]];
+      vec gsyz, rsyz;
+      if (v == NULL) continue;
+      if (!mis[v->comp]->search(v->coeff, v->monom, gsyz, rsyz))
+	{
+	  mis[v->comp]->insert_minimal(
+				       new tagged_term(P->Ncoeffs()->copy(v->coeff),
+						       P->Nmonoms()->make_new(v->monom),
+						       NULL,
+						       NULL));
+	  result.append(indices[i]);
+	}
+      Gsyz->remove(gsyz);
+      Rsyz->remove(rsyz);
+    }
+  for (x=0; x<n_cols(); x++)
+    delete mis[x];
+  bump_down(Gsyz);
+}
+
+#if 0
+Matrix Matrix::minimal_lead_terms_ZZ() const
+{
+  int x;
+  const PolynomialRing *P = Ring_of()->cast_to_PolynomialRing();
+  FreeModule *Gsyz = P->make_FreeModule(n_cols());
+  bump_up(Gsyz);
+  array< queue<tagged_term *> > allterms;
+  for (int i=0; i<n_cols(); i++)
+    {
+      vec v = elem(i);
+      if (v == NULL) continue;
+      allterms[v->comp].insert(
+			       new tagged_term(P->Ncoeffs()->copy(v->coeff),
+					       P->Nmonoms()->make_new(v->monom),
+					       Gsyz->e_sub_i(i),
+					       NULL));
+    }
+  Matrix result(rows());
+  for (x=0; x<n_cols(); x++)
+    {
+      if (allterms[x].length() > 0)
+	{
+	  TermIdeal *ti = TermIdeal::make_termideal(P,Gsyz,allterms[x]);
+	  // Loop through and add the corresponding elements in...
+	  for (cursor_TermIdeal k(ti); k.valid(); ++k)
+	    {
+	      tagged_term *t = *k;
+	      vec gsyz = t->_gsyz;
+	      vec v = NULL;
+	      rows()->apply_map(v, gsyz, obj->entries);
+	      rows()->negate_to(v);
+	      result.append(v);
+	    }
+	  delete ti;
+	}
+    }
+  bump_down(Gsyz);
+  return result;
+}
+#endif
+
+void Matrix::minimal_lead_terms(intarray &result) const
+{
+  if (Ring_of()->Ncoeffs()->is_Z())
+    {
+      minimal_lead_terms_ZZ(result);
+      return;
+    }
+  intarray indices, vp;
+  intarray degs; // Not used.
+  array<MonomialIdeal> mis;
+  const array<vec> vecs = obj->entries;
+  rows()->sort(vecs, degs, 0, 1, indices);
+  for (int x=0; x<n_cols(); x++)
+    mis.append(MonomialIdeal(Ring_of()));
+  for (int i=0; i<vecs.length(); i++)
+    {
+      vec v = vecs[indices[i]];
+      if (v == NULL) continue;
+      // Reduce each one in turn, and replace.
+      Bag *junk_bag;
+      vp.shrink(0);
+      rows()->lead_varpower(v, vp);
+      if (!mis[v->comp].search(vp.raw(),junk_bag))
+	{
+	  Bag *b = new Bag(indices[i], vp);
+	  mis[v->comp].insert(b);
+	  result.append(indices[i]);
+	}
+    }
 }
 
 Matrix Matrix::lead_var_coefficient(Matrix &monoms) const
