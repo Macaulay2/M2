@@ -67,11 +67,12 @@ IM2_GB_set_hilbert_function(Computation *C,
 }
 
 ComputationOrNull *
-IM2_GB_force(const Matrix *m,
+IM2_GB_force(const Matrix *m, /* trimmed or minimal gens, may be the same as gb */
 	     const Matrix *gb,
-	     const Matrix *change)
+	     const Matrix *change, /* same number of columns as 'gb', if not 0 */
+	     const Matrix *syz) /* possibly 0 too, otherwise same rows as change */
 {
-  return GBComputation::force(m,gb,change);
+  return GBComputation::force(m,gb,change,syz);
 }
 
 ComputationOrNull* 

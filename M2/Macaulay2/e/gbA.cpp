@@ -299,9 +299,10 @@ gbA::spair *gbA::spair_make_skew(int i, int v)
   gbelem *g1 = gb[i];
   exponents exp1 = g1->lead;
   exponents exp2 = R->exponents_make();
+  int vvar = R->skew_variable(v);
   for (j=0; j<_nvars; j++)
     exp2[j] = 0;
-  exp2[v] = 2;
+  exp2[vvar] = 2;
   result = spair_node();
   result->next = 0;
   result->type = SPAIR_SKEW;
@@ -847,14 +848,11 @@ void gbA::compute_s_pair(spair *p)
   f = gb[p->x.pair.i]->g;
   if (p->type == SPAIR_SKEW)
     {
-#if 0
-      // MES: need to implement skew_poly...
-      gbvector *g1 = R->skew_poly(p->x.pair.j);
+      const int *mon = R->skew_monomial_var(p->x.pair.j);
       R->gbvector_mult_by_term(_F,_Fsyz,
-			       R->one(), g1->monom,
+			       R->one(), mon,
 			       f.f, f.fsyz,
 			       p->f(), p->fsyz());
-#endif
     }
   else if (p->type == SPAIR_GCD_ZZ)
     {

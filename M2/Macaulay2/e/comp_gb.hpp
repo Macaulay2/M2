@@ -50,7 +50,8 @@ public:
 
   static ComputationOrNull * force(const Matrix *m,
 				   const Matrix *gb,
-				   const Matrix *change);
+				   const Matrix *change,
+				   const Matrix *syz);
 
   virtual void start_computation() = 0;
 

@@ -62,6 +62,7 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
     _nvars(M->n_vars()),
     _is_skew(false),
     _skew(),
+    _skew_monoms(0),
     is_weyl(false),
     weyl(0),
     is_solvable(false),
@@ -132,6 +133,18 @@ GBRingSkew::GBRingSkew(const Ring *K0,
 {
   _is_skew = true;
   _skew = skew0;
+  int ** skew_monoms = newarray(int *, _skew.n_skew_vars());
+  int *exp = newarray(int, M0->n_vars());
+  for (int i=0; i<M0->n_vars(); i++)
+    exp[i] = 0;
+  for (int v=0; v<_skew.n_skew_vars(); v++)
+    {
+      exp[_skew.skew_variable(v)] ++;
+      skew_monoms[v] = M0->make_one();
+      M0->from_expvector(exp, skew_monoms[v]);
+      exp[_skew.skew_variable(v)] --;
+    }
+  _skew_monoms = skew_monoms;
 }
 
 GBRing * GBRing::create_SkewPolynomialRing(const Ring *K0, 
