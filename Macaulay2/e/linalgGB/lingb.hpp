@@ -30,6 +30,11 @@ public:
   CoefficientRingZZp(int p0) : p(p0) {}
 
   void init_set(elem *result, elem *a) const { *result = *a; }
+  void set_zero(elem &result) const { result = 0; }
+  bool is_zero(elem &result) const { return result == 0; }
+  void invert(elem &result, elem &a) const;
+  void subtract_multiple(elem &result, elem a, elem b);
+    // result -= a*b
 };
 
 enum gbelem_type { 

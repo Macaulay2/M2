@@ -51,7 +51,6 @@ LinAlgGB<CoefficientRing>::LinAlgGB(CoefficientRing *K,
 
   this_degree = -1;
   next_col_to_process = 0;
-  next_row_to_process = 0;
   weights = gb_weights;
 
   // Set the gens array
@@ -104,30 +103,7 @@ void LinAlgGB<CoefficientRing>::allocate_sparse_row(row_elem &result, size_t len
 }
 
 template<typename CoefficientRing>
-void LinAlgGB<CoefficientRing>::append_row(monomial m, int elem)
-{
-  /* Make a new row.  Should we also do
-     process_row (and therefore process_vector)  here?
-
-  */
-  row_elem r;
-  r.monom = m;
-  r.elem = elem;
-  mat->rows.push_back(r);
-}
-
-template<typename CoefficientRing>
-void LinAlgGB<CoefficientRing>::append_column(monomial m)
-{
-  column_elem c;
-  c.monom = m;
-  c.gb_divisor = -2;
-  c.ord = 0;
-  mat->columns.push_back(c);
-}
-
-template<typename CoefficientRing>
-int LinAlgGB<CoefficientRing>::column(monomial m)
+int LinAlgGB<CoefficientRing>::find_or_append_column(monomial m)
 {
   int next_column = mat->columns.size();
   std::pair<const monomial, int> p(m, next_column);
@@ -135,64 +111,53 @@ int LinAlgGB<CoefficientRing>::column(monomial m)
   if (i != mat->H0.end())
     return (*i).second;
   mat->H0.insert(p);
-  append_column(m);
+  column_elem c;
+  c.monom = m;
+  c.gb_divisor = -2;
+  c.ord = 0;
+  mat->columns.push_back(c);
   return next_column;
 }
 
 template<typename CoefficientRing>
-void LinAlgGB<CoefficientRing>::process_row(int r)
+void LinAlgGB<CoefficientRing>::load_gen(int which)
 {
-  /* Do the multiplication, and process the 
-     resulting vector.
+  row_elem r;
+  r.monom = NULL;
+  r.elem = which;
 
-     ALSO: this is where we improve row[r] = (m,gbelem)...
-     search for any (t,newelem)'s for which t divides m have been done in a prev matrix.
-       choose the largest t.  now process (m/t, newelem):
-         special multiplication routine?  since newelem uses diff monomial encoding.
- */
+  poly &g = gens[which]->f;
+  allocate_sparse_row(r, g.len);
 
-  // There are 2 cases: the monomial of row r is NULL.
-  // This means that we use a generator instead of a GB element
-  row_elem &re = mat->rows[r];
-  monomial m = re.monom;
-  if (m == NULL)
+  for (int i=0; i<g.len; i++)
+    coeffK->init_set(r.coeffs+i, g.coeffs+i);
+  for (int i=0; i<g.len; i++)
+    r.comps[i] = find_or_append_column(g.monoms[i]);
+
+  mat->rows.push_back(r);
+}
+
+template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::load_row(monomial monom, int which)
+{
+  row_elem r;
+  r.monom = monom;
+  r.elem = which;
+
+  poly &g = gens[which]->f;
+  allocate_sparse_row(r, g.len);
+
+
+  for (int i=0; i<g.len; i++)
+    coeffK->init_set(r.coeffs+i, g.coeffs+i);
+
+  for (int i=0; i<g.len; i++)
     {
-      poly &g = gens[re.elem]->f;
-      allocate_sparse_row(re, g.len);
-      for (int i=0; i<g.len; i++)
-	coeffK->init_set(re.coeffs+i, g.coeffs+i);
+      monomial n = MonomialOps::mult(&H, monom, g.monoms[i]);
+      r.comps[i] = find_or_append_column(n);
+    }
 
-      for (int i=0; i<g.len; i++)
-	{
-	  re.comps[i] = column(g.monoms[i]);
-	  // the above routine creates a new column if it is not there yet
-	}
-    }
-  else
-    {
-      poly &g = gb[re.elem]->f;
-      
-      // step 1: find size of the polynomial, allocate a new polynomial
-      allocate_sparse_row(re, g.len);
-      
-      // step 2: do the multiplication.  Note that this does not need
-      // multiplication in the base field/ring.
-      // This will also insert monomials into the column hash table,
-      // and also append columns to 'columns'.
-      // Weyl: this will be more complicated
-      // Skew: just need to modify signs, don't put elements in that
-      //   have squares.  mg.len will decrease.
-      
-      // It would be interesting to see if using iterators changes speed at all
-      for (int i=0; i<g.len; i++)
-	coeffK->init_set(re.coeffs+i, g.coeffs+i);
-      for (int i=0; i<g.len; i++)
-	{
-	  monomial n = MonomialOps::mult(&H, m, g.monoms[i]);
-	  re.comps[i] = column(n);
-	  // the above routine creates a new column if it is not there yet
-	}
-    }
+  mat->rows.push_back(r);
 }
 
 template<typename CoefficientRing>
@@ -211,12 +176,13 @@ void LinAlgGB<CoefficientRing>::process_column(int c)
   bool found = lookup->search(ce.monom, b);
   if (found)
     {
-      ce.gb_divisor = reinterpret_cast<int>(b->bag);
+      int which = reinterpret_cast<int>(b->bag);
       uninterned_monomial um = H.reserve(MONOMIAL_LENGTH(ce.monom));
       monomial m;
-      monomial_quotient(ce.monom, gb[ce.gb_divisor]->f.monoms[0], um);
+      monomial_quotient(ce.monom, gb[which]->f.monoms[0], um);
       H.find_or_insert(um, m);
-      append_row(m,ce.gb_divisor);
+      ce.gb_divisor = mat->rows.size();
+      load_row(m,which);
     }
   else 
     ce.gb_divisor = -1;
@@ -225,31 +191,21 @@ void LinAlgGB<CoefficientRing>::process_column(int c)
 template<typename CoefficientRing>
 void LinAlgGB<CoefficientRing>::process_s_pair(SPairSet::spair *p)
 {
+  int c;
+
   switch (p->type) {
   case SPairSet::SPAIR_SPAIR:
-    append_row(p->s.spair.first_monom, p->s.spair.first_gb_num);
-    append_row(p->s.spair.second_monom, p->s.spair.second_gb_num);
+    load_row(p->s.spair.first_monom, p->s.spair.first_gb_num);
+    c = mat->rows[mat->rows.size()-1].comps[0];
+    mat->columns[c].gb_divisor = mat->rows.size()-1;
+    load_row(p->s.spair.second_monom, p->s.spair.second_gb_num);
     break;
   case SPairSet::SPAIR_GEN:
-    append_row(NULL, p->s.poly.column);
+    load_gen(p->s.poly.column);
     break;
   default:
     break;
   }
-    
-  /*
-    3 cases:
-    (a) an spair or ringpair
-       find the lcm.
-       do append_column for this monomial
-       do 2 append_row's
-    (b) a skew pair
-       find the lcm
-       do process_vector (?)
-    (c) a generator
-       either append_row, or process_vector
-  */
-     
 }
 
 static int ncomparisons = 0;
@@ -323,14 +279,8 @@ void LinAlgGB<CoefficientRing>::make_matrix()
       //remove_s_pair(p);
     }
 
-  for (;;)
-    {
-      if (next_row_to_process < mat->rows.size())
-	process_row(next_row_to_process++);
-      else if (next_col_to_process < mat->columns.size())
-	process_column(next_col_to_process++);
-      else break;
-    }
+  while (next_col_to_process < mat->columns.size())
+    process_column(next_col_to_process++);
 
   fprintf(stderr, "--matrix--%d by %d\n", mat->rows.size(), mat->columns.size());
   show_row_info();
@@ -345,8 +295,68 @@ void LinAlgGB<CoefficientRing>::make_matrix()
 }
 
 template<typename CoefficientRing>
+void LinAlgGB<CoefficientRing>::make_dense_row(int r, )
+{
+}
+
+template<typename CoefficientRing>
 void LinAlgGB<CoefficientRing>::LU_decompose()
 {
+#if 0
+  int ncols = mat->columns.size();
+  int nrows = mat->rows.size();
+  COEFF_TYPE *our_row = newarray(COEFF_TYPE, ncols);
+  for (int r=0; r<nrows; r++)
+    {
+      row_elem &re = mat->rows[r];
+      if (re.is_pivot) continue;
+      // We now reduce the r th row
+      // FILLIN:
+        for (int c=0; c<ncols; c++)
+	  coeffK->set_zero(our_row[c]);
+	for (int i=0; i<re.len; i++)
+	  {
+	    int thisc = re.comps[i].ord;
+	    coeffK->init_set(our_row[thisc], re.coeffs[i]);
+	  }
+      // 
+      int nterm = 0;
+      int lead_col = -1;
+      for (int c=0; c<ncols; c++)
+	if (!coeffK->is_zero(our_row[c]))
+	  {
+	    int rpivot = mat->columns[c].gb_divisor;
+	    if (rpivot >= 0)
+	      {
+		//subtract_row_multiple(our_row, rpivot);
+		row_ele &rpivot = mat->rows[rpivot];
+		for (int j=0; j<rpivot.len; j++)
+		  {
+		    int cj = mat->columns[rpivot.comps[j]].ord;
+		    coeffK->subtract_multiple(our_row[cj], pivot, 
+		  }
+	      }
+	    if (!coeffK->is_zero(our_row[c]))
+	      {
+		nterms++;
+		if (lead_col < 0)
+		  lead_col = c;
+	      }
+	  }
+      // Now copy the row back to row r, making it monic at the same time
+      // REALLOCATE ROW
+      COEFF_TYPE *a = our_row+lead_col;
+      int next = 0;
+      for (int c=lead_col; c<ncols; c++)
+	if (!coeffK->is_zero(our_row[c]))
+	  {
+	    coeffK->divide(newr.coeffs+next, our_row+c, a);
+	    newr.comps[next] = c; // WARNING: either change all rows, or keep
+	    // track of which rows are represented using sorted column order
+	    next++;
+	  }
+    }
+#endif
 }
 
 template<typename CoefficientRing>
@@ -421,7 +431,6 @@ void LinAlgGB<CoefficientRing>::s_pair_step()
   mat->columns.clear();
   mat->H0.clear();
   next_col_to_process = 0;
-  next_row_to_process = 0;
 }
 
 template<typename CoefficientRing>
@@ -483,75 +492,11 @@ void LinAlgGB<CoefficientRing>::start_computation()
   set_status(is_done);
 }
 
-#if 0
-template<typename CoefficientRing>
-LinAlgGB<CoefficientRing>::LinearAlgebraGB(const Matrix *m,
-				  M2_bool collect_syz, 
-				  int n_rows_to_keep,
-				  M2_arrayint gb_weights,
-				  int strategy, 
-				  M2_bool use_max_degree,
-				  int max_degree)
-  : S(&H)
-{
-  originalR = m->get_ring()->cast_to_PolynomialRing();
-  F = m->rows();
-  coeffK = new CoefficientRing(originalR->getCoefficients());
-
-  n_subring = 0;
-  n_pairs_computed = 0;
-  n_gens_left = m->n_cols();
-
-  lookup = new MonomialLookupTable;
-
-  this_degree = -1;
-  next_col_to_process = 0;
-  next_row_to_process = 0;
-  weights = gb_weights;
-
-  // Set the gens array
-  from_M2_matrix(m, &H, weights, gens);
-
-  for (int i=0; i<gens.size(); i++)
-    {
-      gbelem *g = gens[i];
-      S.insert(SPairSet::make_spair_gen(g->deg, g->f.monoms[0], i));
-    }
-
-  show_gb_array(gens);
-  set_status(COMP_NOT_STARTED);
-}
-#endif
-
 template<typename CoefficientRing>
 LinAlgGB<CoefficientRing>::~LinAlgGB()
 {
 #warning "anything to delete?"
 }
-
-#if 0
-template<typename CoefficientRing>
-LinAlgGB * LinAlgGB<CoefficientRing>::create(const Matrix *m, 
-				  M2_bool collect_syz, 
-				  int n_rows_to_keep,
-				  M2_arrayint gb_weights,
-				  int strategy, 
-				  M2_bool use_max_degree,
-				  int max_degree)
-{
-  buffer o;
-  o << "entering LinAlgGB<CoefficientRing>::create" << newline;
-  emit(o.str());
-  LinearAlgebraGB *result = new LinearAlgebraGB(m,
-						collect_syz,
-						n_rows_to_keep,
-						gb_weights,
-						strategy,
-						use_max_degree,
-						max_degree);
-  return result;
-}
-#endif
 
 /*************************
  ** Top level interface **
