@@ -586,55 +586,6 @@ document {
      }
 
 document {
-     Key => map,
-     Headline => "make a map",
-     Usage => "map(Y,X,d) or map(Y,d) or map(Y,X)",
-     Inputs => {
-	  "Y" => "an object, such as a ring, module, or chain complex",
-	  "X" => {"another object of the same type, or if omitted, 
-	          understood to be equal to ", TT "Y"},
-	  "d" => "a specification, such as a function, list, or 
-	          matrix, or if omitted, understood to specify the identity map"
-	  },
-     Outputs => {
-	  {"a map to ", TT "Y", " from ", TT "X", " defined by data ", TT "d", "."},
-	  },
-     "The function ", TT "map", " provides a general mechanism for constructing a map
-     (homomorphism) between rings (", OFCLASS RingMap, "), modules (", OFCLASS Matrix,
-     "), chain complexes (", OFCLASS ChainComplexMap, "), 
-      or between objects in other categories.",
-     PARA,
-     "See also the function ", TO matrix, ", which focuses on creating new matrices from
-     rectangular arrays of ring elements or matrices.",
-     Subnodes => {
-	  "Creating a map between modules (a matrix)",
-	  TO (map,Module,Module,Function),
-	  TO (map,Module,Module,List),
-	  TO (map,Module,Module,RingElement),
-	  TO (map,Module,Module,Matrix),
-	  TO (map,Module,Module),
-     	  "Creating a map between modules, where the source module is computed",
-	  TO (map,Module,ZZ,Function),
-	  TO (map,Module,Nothing,List),
-	  "Creating a a map from a module to itself",
-	  TO (map,Module,RingElement),
-	  TO (map,Module,Matrix),
-	  TO (map,Module),
-	  "Creating a map with a different degree",
-	  TO (map,Matrix),
-	  "Creating a map between rings",
-	  TO (map,Ring,Ring),
-	  TO (map,Ring,Ring,List),
-	  TO (map,Ring,Ring,Matrix),
-	  "Creating a map from a ring to itself",
-	  TO (map,Ring,Matrix),
-	  "Creating a map between chain complexes",
-	  TO (map,ChainComplex,ChainComplex,ChainComplexMap),
-	  TO (map,ChainComplex,ChainComplex,Function)
-	  }
-     }
-
-document {
      Key => precedence,
      Headline => "parsing precedence",
      TT "precedence x", " -- returns the parsing precedence of ", TT "x", " for use in
