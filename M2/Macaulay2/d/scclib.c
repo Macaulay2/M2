@@ -10,9 +10,7 @@
 
 char newline[] = NEWLINE;
 
-#ifdef FACTOR
 extern char *libfac_version;
-#endif
 
 #include "../../Makeconf.h"	/* VERSION is defined here */
 
@@ -603,12 +601,10 @@ char **argv;
 	       sprintf(buf,"Macaulay 2, version %s",VERSION);
 	       putstderr(buf);
 	       putstderr("  Copyright 1993-1997, all rights reserved, D. R. Grayson and M. E. Stillman");
-#ifdef FACTOR
 	       putstderr("  Factory library from Singular, copyright 1993-1997, G.-M. Greuel, R. Stobbe");
 	       sprintf(buf,"  Factorization and characteristic sets %s, copyright 1996, M. Messollen",
 		    libfac_version);
 	       putstderr(buf);
-#endif
 	       putstderr("  GC, copyright 1996, Hans-J. Boehm, Alan J. Demers, Xerox, Silicon Graphics");
 	       putstderr("  GNU libc and libg++, copyright 1996, Free Software Foundation");
 	       putstderr("  GNU MP, copyright 1996, Free Software Foundation");
@@ -695,15 +691,11 @@ char **argv;
 
 static void close_all_dbms();
 
-#ifdef MP
 static void close_all_links();
-#endif
 
 static void clean_up() {
      close_all_dbms();
-#ifdef MP
      close_all_links();
-#endif
      while (pre_final_list != NULL) {
 	  pre_final_list->final();
 	  pre_final_list = pre_final_list->next;
@@ -1482,8 +1474,6 @@ M2_string system_dbmstrerror() {
  *                  MP stuff                  *
  **********************************************/
 
-#ifdef MP
-
 #define link _link
 #include <MP.h>
 #undef link
@@ -1729,8 +1719,6 @@ M2_string oper1;
      GC_FREE(oper);
      return r;
      }
-
-#endif
 
 #ifdef __DJGPP__
 double lgamma(double x) { return 0. ; }	/* sigh, fix later */

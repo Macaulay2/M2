@@ -20,10 +20,6 @@ WARNINGS = -Wall
 
 CPPFLAGS += -I$(INCDIR) -DNDEBUG
 
-ifdef FACTOR
-CPPFLAGS += -DFACTOR
-endif
-
 # CXXFLAGS += -fhandle-exceptions
 # CXXFLAGS += -pg
 

@@ -17,7 +17,6 @@ ostream &operator<<(ostream &o,const intarray &w) {
      return o;
 }
 
-#ifdef FACTOR
 #define Matrix MaTrIx
 /* #include <factory.h> */
 #include <factor.h>		// from Messollen
@@ -296,6 +295,3 @@ void i_factor_cmds() {
 //template CanonicalForm tmax(CanonicalForm const &, CanonicalForm const &);
 //template CanonicalForm tmin(CanonicalForm const &, CanonicalForm const &);
 
-#else
-void i_factor_cmds() {}
-#endif

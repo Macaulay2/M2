@@ -22,8 +22,4 @@ export LIBDIR	      := ../../lib
 export INCDIR	      := ../../include
 export PATH           := ..$(PATHSEP)util:$(PATH)
 
-MP := TRUE
-FACTOR := TRUE
-# includeX11 = TRUE
-
 endif
