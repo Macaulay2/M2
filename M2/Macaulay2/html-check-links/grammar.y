@@ -156,7 +156,7 @@ static void checkURL(char *s) {
   }
   t = strrchr(s,'#'); if (t != NULL) *t = 0;
   if (*s == 0) return;
-  s = concat(s[0] == '/' ? rootname : dirname,s);
+  s = concat(s[0] == '/' ? rootname : Dirname,s);
   if (-1 == access(s, R_OK)) {
     error("can't reach %s",s);
     u = concat(s,"");
