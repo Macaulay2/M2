@@ -1428,6 +1428,24 @@ directoryExists(e:Expr):Expr := (
      );
 setupfun("directoryExists",directoryExists);
 
+fileTime(e:Expr):Expr := (
+     when e is name:string do (
+	  r := fileTime(name);
+	  if r == 0 && errno != 0
+	  then buildErrorPacket("can't make directory : " + syserrmsg())
+	  else Expr(toInteger(r))
+	  )
+     else WrongArgString());
+setupfun("fileTime",fileTime);
+
+makeDirectory(e:Expr):Expr := (
+     when e is name:string do (
+	  r := mkdir(name);
+	  if r == -1 then buildErrorPacket("can't make directory : " + syserrmsg())
+	  else nullE)
+     else WrongArgString());
+setupfun("makeDirectory",makeDirectory);
+
 --import setFactorySeed(s:int):void;
 --setFactorySeed(e:Expr):Expr := (
 --     when e is s:Integer do (

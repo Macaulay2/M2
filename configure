@@ -3977,6 +3977,8 @@ LIBS="$SAVELIBS"
 
 # M2_SHOW_CONFDEFS()
 
+# the next three are obsolete:
+
   echo "$as_me:$LINENO: checking for sys_errlist" >&5
 echo $ECHO_N "checking for sys_errlist... $ECHO_C" >&6
 if test "${ac_cv_func_sys_errlist+set}" = set; then
@@ -4226,6 +4228,70 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+
+
+echo "$as_me:$LINENO: checking whether sys_errlist herror gnu_get_libc_version is declared" >&5
+echo $ECHO_N "checking whether sys_errlist herror gnu_get_libc_version is declared... $ECHO_C" >&6
+if test "${ac_cv_have_decl_sys_errlist_herror_gnu_get_libc_version+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+#ifndef sys_errlist herror gnu_get_libc_version
+  char *p = (char *) sys_errlist herror gnu_get_libc_version;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_have_decl_sys_errlist_herror_gnu_get_libc_version=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_have_decl_sys_errlist_herror_gnu_get_libc_version=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_have_decl_sys_errlist_herror_gnu_get_libc_version" >&5
+echo "${ECHO_T}$ac_cv_have_decl_sys_errlist_herror_gnu_get_libc_version" >&6
+if test $ac_cv_have_decl_sys_errlist_herror_gnu_get_libc_version = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_SYS_ERRLIST_HERROR_GNU_GET_LIBC_VERSION 1
+_ACEOF
+
+
+else
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_SYS_ERRLIST_HERROR_GNU_GET_LIBC_VERSION 0
+_ACEOF
+
+
+fi
+
 
 
 
