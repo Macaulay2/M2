@@ -152,7 +152,7 @@ tryload := (filename,load) -> (
      -- if notify then << "--loading " << filename << endl;
      if isAbsolutePath filename or isSpecial filename then (
 	  if load filename then (
-	       markLoaded filename;
+	       markLoaded(filename,filename);
 	       true)
 	  else false)
      else (
