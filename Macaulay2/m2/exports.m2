@@ -36,6 +36,8 @@ exportMutable (
 	)
 
 export (
+        symbol MissingMethod,
+	symbol Error,
      	symbol runEndFunctions,
      	symbol runStartFunctions,
 	"coker" => symbol cokernel,

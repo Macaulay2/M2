@@ -157,8 +157,8 @@ binaryright(s:string)   :Word := binaryright(s,binaryop);
      precRightParen := prec;
 -- programming:
 bump();
-     SemicolonW = nright(";");
-     export semicolonS := makeKeyword(SemicolonW);
+     export SemicolonW := nright(";");
+     export SemicolonS := makeKeyword(SemicolonW);
      NewlineW = nleftword("<NEWLINE>");			    -- no symbol for this one needed
 bump();
      export CommaW := nunaryleft(","); export commaS := makeKeyword(CommaW);
