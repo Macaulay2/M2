@@ -34,3 +34,5 @@ clean  :
 
 allfiles : *.m2 Makefile COPYRIGHT dumpdata.1 dumpdata.2 dumpdata.3
 	echo $^ |tr ' ' \\012 >allfiles
+
+docStructure.out : docStructure.m2

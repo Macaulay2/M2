@@ -1044,7 +1044,7 @@ document { quote Verify,
      that a map is well defined.",
      PARA,
      MENU {
-	  (inducedMap => Verify)
+	  TO (inducedMap => Verify)
 	  }
      }
 

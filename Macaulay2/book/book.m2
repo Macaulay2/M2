@@ -149,11 +149,10 @@ bk << ///
 -- a small integer being the integer itself
 
 scan(pairs nodeTable, (i,node) -> (
-	  if class node =!= String then node = name node;
 	  bk << ///
 
 \sectionhdr{///
-	  << concatenate cmrLiteral node << "}{" << sectionNumberTable#i 
+	  << ttLiteral formatDocumentTag evaluate node << "}{" << sectionNumberTable#i 
 	  << "}" << endl
 	  << concatenate booktex doc node << endl;
 	  )

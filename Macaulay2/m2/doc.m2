@@ -1847,16 +1847,24 @@ document { quote use,
 document { "reading the documentation",
      "The documentation for Macaulay 2 is available in several formats.
      The directory ", TT "Macaulay2/html", " contains the documentation in html
-     form, suitable for viewing with a web browser such as Netscape.",
+     form, suitable for viewing with a web browser such as Netscape, and this
+     is the best way to view it.",
      PARA,
      "The directory ", TT "Macaulay2/book", " contains the code for producing
      the documentation in TeX form, which can be printed or viewed with
      ", TT "xdvi", ".  A hyperTeX form of the book is also makeable there
      which can be viewed with ", TT "xhdvi", ", the most recent version of
-     which is available (summer, 1996) at",
-     PRE "ftp://ftp.duke.edu/tex-archive/support/hypertex/hypertex/xhdvi_0.8a.tar.gz",
-     "and with needed WWW library routines at",
-     PRE "http://publish.aps.org/eprint/reports/hypertex/WWWLibrary.tar.Z",
+     which is available (May, 1995) at ",
+     PARA,
+     HREF "ftp://ftp.duke.edu/tex-archive/support/hypertex/hypertex/index.html",
+     PARA,
+     " in the file ",
+     PARA,
+     HREF "ftp://ftp.duke.edu/tex-archive/support/hypertex/hypertex/xhdvi_0.8a.tar.gz",
+     PARA,
+     " with needed WWW library routines at ",
+     PARA,
+     HREF "http://publish.aps.org/eprint/reports/hypertex/WWWLibrary.tar.Z",
      PARA,
      "Finally, all the documentation can be viewed within the program in
      text form using ", TO "help", "."
@@ -1890,7 +1898,7 @@ document { "Macaulay 2",
 	       are relatively independent of each other, and each one introduces the use
 	       of some features of Macaulay 2 in a slow and leisurely way, assuming the
 	       reader is already familiar with the mathematical concepts involved.  
-	       ", TO "David Eisenbud", " joins us as a co-author of these tutorials.",
+	       ", SHIELD TO "David Eisenbud", " joins us as a co-author of these tutorials.",
 	       MENU {
 		    TO "Elementary uses of Groebner bases",
 		    TO "Canonical Embeddings of Plane Curves and Gonality",
@@ -1966,9 +1974,9 @@ document { "plans for the future",
 	  },
      "Here are some known problems.",
      MENU {
-	  ("The ", TO "DegreeLimit", " option doesn't work with ", TO "saturate", "
+	  SHIELD ("The ", TO "DegreeLimit", " option doesn't work with ", TO "saturate", "
 	  or ", TO "quotient", ".  This will be fixed soon."),
-	  ("There is an upper bound on the size of an exponent in a polynomial, and
+	  SHIELD ("There is an upper bound on the size of an exponent in a polynomial, and
 	  overflow can occur silently, producing incorrect results.  The size of
 	  the upper bound is affected by the option ", TO "MonomialSize", ".")
 	  }
@@ -2003,11 +2011,11 @@ document { "copyright and license",
      PARA,
      "Various libraries have been compiled into Macaulay 2.",
      MENU {
-	  TO "Factory library",
-	  TO "Factorization and characteristic sets library",
-	  TO "MP: Multi Protocol",
-	  TO "GNU MP",
-	  TO "GC garbage collector"
+	  SHIELD TO "Factory library",
+	  SHIELD TO "Factorization and characteristic sets library",
+	  SHIELD TO "MP: Multi Protocol",
+	  SHIELD TO "GNU MP",
+	  SHIELD TO "GC garbage collector"
 	  }
      }
 
@@ -2150,10 +2158,14 @@ document { "invoking the program",
      }
 
 document { "the authors",
-     "Here are the authors of Macaulay 2 and the bulk of this manual.",
+     "The authors of Macaulay 2 and the bulk of this manual:",
      MENU {
 	  TO "Daniel R. Grayson",
 	  TO "Michael E. Stillman"
+	  },
+     "Our co-author for the tutorials:",
+     MENU {
+	  TO "David Eisenbud",
 	  }
      }
 
@@ -3960,33 +3972,33 @@ document { quote runStartFunctions,
      }
 
 document { "emacs",
-     "Because some answers can be very wide, it is a good idea to run the
-     program in a window which does not wrap output lines, and allows the
-     user to scroll horizontally to see the rest of the output.  We
-     provide a package for emacs which implements this, in
-     ", TT "emacs/M2.el", ".  It also provides for dynamic completiong
-     of symbols in the language.  See ", TO "running Macaulay 2 in emacs", ".",
+     "The best way to edit Macaulay 2 code or to run Macaulay 2 is with GNU 
+     emacs, a versatile text editor written by Richard Stallman which
+     runs well under most UNIX systems.  Its
+     web page is ", HREF "http://www.gnu.org/software/emacs/emacs.html", "
+     and the software can be obtained from one of the ftp sites listed
+     at ", HREF "http://www.gnu.org/order/ftp.html", "; the primary ftp
+     site is ", HREF "ftp://ftp.gnu.org/pub/gnu", ".",
      PARA,
-     "A package for editing program text in the Macaulay 2 language
-     is available in ", TT "emacs/M2-mode.el", ".  It also provides for
-     dynamic completion of symbols in the language.  See ",
-     TO "editing Macaulay 2 code with emacs", "."
+     "There is a version of emacs for Windows NT and Windows 95 called ", TT "NTemacs", ".
+     See ", HREF "http://www.cs.washington.edu/homes/voelker/ntemacs.html", " for
+     details about how to get it, as well as information about how to swap your
+     caps lock and control keys.",
+     PARA,
+     MENU {
+	  TO "running Macaulay 2 in emacs",
+	  TO "editing Macaulay 2 code with emacs",
+	  },
      }
 
 document { "running Macaulay 2 in emacs",
 -- don't indent
-"The best way to run Macaulay 2 is with GNU emacs,
-a versatile text editor written by Richard Stallman which
-runs well under most UNIX systems.  Its
-web page is ", HREF "http://www.gnu.org/software/emacs/emacs.html", "
-and the software can be obtained from one of the ftp sites listed
-at ", HREF "http://www.gnu.org/order/ftp.html", "; the primary ftp
-site is ", HREF "ftp://ftp.gnu.org/pub/gnu", ".",
-PARA,
-"There is a version of emacs for Windows NT and Windows 95 called ", TT "NTemacs", ".
-See ", HREF "http://www.cs.washington.edu/homes/voelker/ntemacs.html", " for
-details about how to get it, as well as information about how to swap your
-caps lock and control keys.",
+"Because some answers can be very wide, it is a good idea to run Macaulay 2
+in a window which does not wrap output lines and allows the
+user to scroll horizontally to see the rest of the output.  We
+provide a package for ", TO "emacs", " which implements this, in
+", TT "emacs/M2.el", ".  It also provides for dynamic completion
+of symbols in the language.",
 PARA,
 "There is an ASCII version of this section of the documentation distributed
 in the file ", TT "emacs/emacs.hlp", ".  It might be useful for you to visit
@@ -4167,7 +4179,8 @@ document { "editing Macaulay 2 code with emacs",
 have set up your emacs init file as described in ", TO "running Macaulay 2 in emacs", "
 when you visit a file whose name ends with ", TT ".m2", " 
 you will see on the mode line the name ", TT "Macaulay 2", " in
-parentheses, indicating that the file is being edited in Macaulay 2 mode.",
+parentheses, indicating that the file is being edited in Macaulay 2 mode.  (Make
+sure that the file ", TT "emacs/M2-mode.el", " is on your ", TT "load-path", ".)",
 PARA,
 "To see how electric parentheses, electric semicolons, and indentation work,
 move to a blank line of this file and type the following text.",

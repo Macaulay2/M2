@@ -192,6 +192,7 @@ text TABLE := x -> (
      -- not good yet
      concatenate apply(toList x, row -> (row/text, newline))
      )
+tex TABLE := x -> concatenate applyTable(x,tex)
 html TABLE := x -> concatenate(
      newline,
      "<P>",
@@ -317,19 +318,21 @@ hypertex = true
 
 HREF       = newListHead "HREF"
 html HREF := x -> (
-     "<A HREF=\"" | x#0 | "\">" | 
-     (if #x === 2 then x#1 else x#0) | 
-     "</A>"
+     "<A HREF=\"" | x#0 | "\">" | x#-1 | "</A>"
      )
-text HREF := x -> "\"" | (if #x === 2 then x#1 else x#0) | "\""
-tex HREF := s -> (
+text HREF := x -> "\"" | x#-1 | "\""
+tex HREF := x -> (
      if hypertex 
      then concatenate(
-	  ///\special{html:<A href="///, ttLiteral s#0, ///">}///,
-	  tex s#1,
+	  ///\special{html:<A href="///, ttLiteral x#0, ///">}///,
+	  tex x#-1,
 	  ///\special{html:</A>}///
 	  )
-     else concatenate(tex s#1, " (the URL is ", tex TT s#0, ")")
+     else (
+	  if #x == 2
+	  then concatenate(tex x#1, " (the URL is ", tex TT x#0, ")")
+	  else tex TT x#0
+	  )
      )
 
 SHIELD     = newListHead "SHIELD"
