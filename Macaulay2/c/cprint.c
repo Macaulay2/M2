@@ -134,7 +134,7 @@ void pprint(node p){
      switch (p->tag) {
 	  case cons_tag: {
 	       if (debug && p->body.cons.pos.filename != NULL) {
-	       	    printf("@%d.%d ",p->body.cons.pos.lineno, p->body.cons.pos.column);
+	       	    printf("@%d:%d ", p->body.cons.pos.lineno, p->body.cons.pos.column);
 		    }
 	       pput("(");
 	       while (p != NULL) {
@@ -162,9 +162,8 @@ void pprint(node p){
 	       break;
 	       }
 	  case position_tag: {
-	       if (debug) {
-		    printf("@%d.%d ",p->body.position.pos.lineno, 
-		    	 p->body.position.pos.column);
+	       if (debug && p->body.cons.pos.filename != NULL) {
+	       	    printf("@%d:%d ", p->body.cons.pos.lineno, p->body.cons.pos.column);
 		    }
 	       pprint(p->body.position.contents);
 	       break;

@@ -74,7 +74,7 @@ PrintOut(g:Expr,semi:bool,f:Code):Expr := (
      then printErrorMessage(f,"no method for '" + methodname.symbol.word.name + "'")
      else apply(method,g)
      );
-errorReportS := setupconst("report",Expr(emptySequence));
+errorReportS := setupconst("errorReport",Expr(emptySequence));
 errorReportS.protected = false;
 readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,returnLastvalue:bool):Expr := (
      lastvalue := nullE;
@@ -102,7 +102,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 	       if !(s.word == semicolonW || s.word == newlineW)
 	       then (
 		    printErrorMessage(s,"syntax error");
-		    if AbortIfError then return Expr(Error(position(s),"syntax error",emptySequence,nullE));
+		    if AbortIfError then return Expr(Error(position(s),"syntax error",dummyCodeClosureList,nullE));
 		    )
 	       else (
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up
@@ -114,7 +114,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 			      if err.message == returnMessage then return lastvalue
 			      else if err.message == breakMessage then lastvalue = nullE
 			      else (
-				   setGlobalVariable(errorReportS, err.report);
+				   setGlobalVariable(errorReportS, toExpr(err.report));
 				   if AbortIfError then return lastvalue))
 			 else (
 			      if printout then (
@@ -122,7 +122,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
 				   when g is err:Error do (
 					g = update(err,"at print",f);
 					when g is err2:Error do (
-					     setGlobalVariable(errorReportS, err2.report);
+					     setGlobalVariable(errorReportS, toExpr(err2.report));
 					     )
 					else nothing;
 					if AbortIfError then return g;

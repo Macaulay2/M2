@@ -26,7 +26,7 @@ extern node newsymbol(node, node, env, int);
 extern node type_T, keyword_T, int_T, double_T, long_T, short_T, 
        bool_T, char_T, symbol_T, package_T;
 extern node float_T, uint_T, ulong_T, ushort_T, uchar_T, pointer_T;
-extern node void_T, undefined_T, null_T, deferred_T;
+extern node void_T, returned_T, undefined_T, null_T, deferred_T;
 
 extern node getmem_S, sizeof_S, function_K, define_S, define_recursive_types_K,
    nop_K, return_K, return_S, if_S, ptr_S, brace_list_S, dot_S, memcpy_S,
@@ -44,7 +44,7 @@ extern node getmem_S, sizeof_S, function_K, define_S, define_recursive_types_K,
    until_K, while_K, space_S, or_S,
    label_S, keyword_K, release_S, releasec_S, reservec_S, reservenc_S,
    reserve_S, reserven_S, defun_S, equal_K, unequal_K, unequal_S, minusminus_S,
-   declare_K, undefined_K, bad_K, void_K, type_K, null_K, blockn_K, assign_S,
+   declare_K, undefined_K, bad_K, void_K, returned_K, returnedThing_K, type_K, null_K, blockn_K, assign_S,
    cast_S, block1_K, or_K, object_K, array_K, block_K, float_K, package_S, open_fd_K,
    ushort_K, uint_K, ulong_K, uchar_K, oror_S, andand_S, pointer_K,
    str_S,

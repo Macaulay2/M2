@@ -6,7 +6,7 @@ static node hash_buckets[7313];
 node complete_symbol_list;
 node type_T, keyword_T, int_T, double_T, long_T, short_T, bool_T, char_T;
 node float_T, uint_T, ulong_T, ushort_T, uchar_T, package_T, pointer_T;
-node void_T, undefined_T, null_T, symbol_T, deferred_T;
+node void_T, returned_T, undefined_T, null_T, symbol_T, deferred_T;
 node getmem_S, sizeof_S, function_K, define_S, define_recursive_types_K,
    spincount_S, spincursor_S, chked_K, blank_S, function_S, package_K,
    use_K, export_K, import_K, export_S, import_S, package_S, use_S,
@@ -21,7 +21,7 @@ node getmem_S, sizeof_S, function_K, define_S, define_recursive_types_K,
    label_S, keyword_K, release_S, releasec_S, reservec_S, reservenc_S,
    reserve_S, reserven_S, defun_S, equal_K, unequal_K, unequal_S,
    true_K, false_K, self_K, sizeof_K, comma_S, colon_S, space_S, deferred_K,
-   declare_K, undefined_K, bad_K, void_K, type_K, null_K, blockn_K, assign_S,
+   declare_K, undefined_K, bad_K, void_K, returned_K, returnedThing_K, type_K, null_K, blockn_K, assign_S,
    cast_S, block1_K, or_K, object_K, array_K, block_K, float_K, symbol_K, open_fd_K,
    ushort_K, uint_K, ulong_K, uchar_K, andand_S, oror_S, or_S,
    Ccode_K, Ccode_S, dot_K, colon_K, colonequal_K, coloncolonequal_K, str_S,
@@ -47,7 +47,7 @@ struct {
      {"deferred", &deferred_K},
      {"bad", &bad_K},
      {"int",&int_K}, {"short",&short_K}, {"long",&long_K}, {"char",&char_K},
-     {"function",&function_K}, {"void",&void_K}, {"float",&float_K},
+     {"function",&function_K}, {"void",&void_K}, {"returned", &returned_K}, {"returnedThing", &returnedThing_K}, {"float",&float_K},
      {"File",&open_fd_K},
      {"double",&double_K}, {"null",&null_K}, {"symbol", &symbol_K},
      {"uchar", &uchar_K},
@@ -162,6 +162,9 @@ void init_dictionary(env v){
      false_K->body.symbol.type = bool_T;
      false_K->body.symbol.Cname = "0";
      void_T = basictype(void_K);
+     returned_T = basictype(returned_K);
+     returnedThing_K->body.symbol.type = returned_T;
+     returnedThing_K->body.symbol.flags &= ~keyword_F;
      nothing_K->body.symbol.type = void_T;
      nothing_K->body.symbol.flags &= ~keyword_F;
      undefined_T = basictype(undefined_K);
@@ -560,6 +563,7 @@ void setcprintvalue(node sym, node val){
 
 node newtmp(node ttype, env v, bool decl){
      node tmpsymb;
+     assert(ttype != returned_T);
      tmpsymb = newsymbol(tmp_S,totype(ttype),NULL,
 	  intern_F|tmp_F|initialized_F|literal_F);
      if (decl) push(v->tmpdecls,list(2,define_S,tmpsymb));
