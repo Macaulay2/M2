@@ -170,7 +170,7 @@ f = vars R
 I = image f
 G = gb I
 peek G
-peek G.cache
+peek G.matrix
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "

@@ -40,6 +40,12 @@ truncateOutput ZZ := maxwidth -> (
 		    concatenate(substring(0,maxwidth - 4,row), " ...")))))
 truncateOutput InfiniteNumber := maxwidth -> remove(Thing,BeforePrint)
 
+-- not printing:
+Bag = new SelfInitializingType of MutableList
+unbag = method()
+unbag Bag := first
+net Bag := toString Bag := x -> "--a bagged " | synonym class first x | "--"
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

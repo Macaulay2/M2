@@ -120,8 +120,7 @@ elseSomething(Nothing,Function) := (x,f) -> f()
 
 newGB := (f,type,opts) -> (
      G := new GroebnerBasis;
-     G.cache = new MutableHashTable;
-     G.cache.matrix = f;
+     G.matrix = Bag{f};
      G.ring = ring f;
      G.target = target f;
      G.RawComputation = rawGB(
