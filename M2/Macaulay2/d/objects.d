@@ -47,7 +47,7 @@ mutablefun(e:Expr):Expr := Expr(toExpr(
      	  when e is o:HashTable do o.mutable
      	  is x:List do x.mutable
      	  is s:SymbolClosure do !s.symbol.protected
-     	  is d:Dictionary do !d.protected
+     	  is d:DictionaryClosure do !d.dictionary.protected
      	  is x:Database do x.mutable
      	  else false));
 setupfun("mutable",mutablefun);
@@ -228,7 +228,14 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is file do False
      is CompiledFunction do False
      is CompiledFunctionClosure do False
-     is Dictionary do False
+     is a:DictionaryClosure do (
+	  when rhs
+	  is b:DictionaryClosure do (
+	       if a.frame == b.frame
+	       && a.dictionary == b.dictionary		    -- strictly speaking, this second part is redundant
+	       then True else False
+	       )
+	  else False)
      is x:Rational do (
 	  when rhs
 	  is y:Rational do (
@@ -558,24 +565,28 @@ setupfun("applyValues",mapvaluesfun);
 
 bucketsfun(e:Expr):Expr := (
      when e
-     is d:Dictionary do list(
-	  new Sequence len length(d.symboltable.buckets) do (
-	       foreach b in d.symboltable.buckets do (
-		    n := 0;
-		    c := b;
-		    while ( when c is null do false is cell:SymbolListCell do (c = cell.next; true) ) do n = n+1;
-		    c = b;
-		    provide list(
-			 new Sequence len n do
-			 while (
-			      when c
-			      is null do false
-			      is cell:SymbolListCell do (
-				   provide Expr(SymbolClosure(globalFrame,cell.entry));
-				   c = cell.next;
-				   true)
-			      )
-			 do nothing))))
+     is dc:DictionaryClosure do (
+	  d := dc.dictionary;
+	  f := dc.frame;
+	  Expr(
+	       list(
+		    new Sequence len length(d.symboltable.buckets) do (
+			 foreach b in d.symboltable.buckets do (
+			      n := 0;
+			      c := b;
+			      while ( when c is null do false is cell:SymbolListCell do (c = cell.next; true) ) do n = n+1;
+			      c = b;
+			      provide list(
+				   new Sequence len n do
+				   while (
+					when c
+					is null do false
+					is cell:SymbolListCell do (
+					     provide Expr(SymbolClosure(f,cell.entry));
+					     c = cell.next;
+					     true)
+					)
+				   do nothing))))))
      is h:HashTable do list(
 	  new Sequence len length(h.table) do (
 	       foreach pp in h.table do (
@@ -712,7 +723,7 @@ export Class(e:Expr):HashTable := (
      is Real do doubleClass
      is Complex do complexClass
      is file do fileClass
-     is Dictionary do dictionaryClass
+     is DictionaryClosure do dictionaryClass
      is string do stringClass
      is FunctionClosure do functionClass
      is Net do netClass

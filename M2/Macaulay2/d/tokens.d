@@ -141,8 +141,15 @@ export Frame := {
      valuesUsed:int,      -- sigh, we really need this only for static frames
      values:Sequence
      };
+export DictionaryClosure := {
+     frame:Frame,					    -- every symbol in the dictionary has the same frameID as this frame does
+     dictionary:Dictionary
+     };
 export FunctionClosure := { frame:Frame, model:functionCode };
-export SymbolClosure := {frame:Frame, symbol:Symbol};
+export SymbolClosure := {
+     frame:Frame,      -- this is a frame whose frameID is the same as that of the symbol
+     symbol:Symbol
+     };
 export List := {
      class:HashTable,
      v:Sequence,
@@ -171,7 +178,7 @@ export Expr := (
      CompiledFunctionClosure or
      Complex or
      Database or
-     Dictionary or 
+     DictionaryClosure or 
      Error or
      FunctionClosure or
      HashTable or
@@ -276,16 +283,42 @@ export globalDictionary := Macaulay2Dictionary;
 
 numLocalDictionaries := 0;
 export localFrame := dummyFrame;
+
+export dummySymbolHashTable := newSymbolHashTable();
+
+export dummyDictionary := (
+     numLocalDictionaries = numLocalDictionaries + 1;
+     Dictionary(nextHash(),dummySymbolHashTable,self,numLocalDictionaries,0,false,true));
+
+export dummyDictionaryClosure := DictionaryClosure(dummyFrame,dummyDictionary);
+
+export LocalDictionaryList := {
+     dictionary:Dictionary,
+     next:LocalDictionaryList				    -- pointer to self indicates end
+     };
+     
+allLocalDictionaries := LocalDictionaryList(dummyDictionary,self);
+export getLocalDictionary(frameID:int):Dictionary := (
+     p := allLocalDictionaries;
+     while (
+	  if p.dictionary.frameID == frameID then return(p.dictionary);
+	  p != p.next) do p = p.next;
+     error("internal error: local dictionary with frameID " + tostring(frameID) + " not found");
+     dummyDictionary);
+
 export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
-     Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false));
+     d := Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false);
+     allLocalDictionaries = LocalDictionaryList(d,allLocalDictionaries);
+     d);
 export newLocalDictionary():Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
-     Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,0,
+     d := Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,0,
 	  false, -- the first local dictionary is usually (?) non-transient
 	  false
-	  )
-     );
+	  );
+     allLocalDictionaries = LocalDictionaryList(d,allLocalDictionaries);
+     d);
 
 export newLocalFrame(dictionary:Dictionary):Frame := Frame(dummyFrame, dictionary.frameID, dictionary.framesize, new Sequence len dictionary.framesize do provide nullE);
 
@@ -301,7 +334,7 @@ export HashTable := {
      mutable:bool
      };
 
--- dummies
+-- more dummies
 
 dummyunary(w:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree := (
      error("unary dummy used"); 
@@ -312,10 +345,6 @@ dummybinary(w:ParseTree,v:Token,o:TokenFile,prec:int,obeylines:bool):ParseTree :
 export nopr := -1;						    -- represents unused precedence
 export newParseinfo():parseinfo := parseinfo(nopr,nopr,nopr,parsefuns(dummyunary,dummybinary));
 export dummyWord    := Word("--dummy word--",TCnone,0,newParseinfo());
-export dummySymbolHashTable := newSymbolHashTable();
-export dummyDictionary := (
-     numLocalDictionaries = numLocalDictionaries + 1;
-     Dictionary(nextHash(),dummySymbolHashTable,self,numLocalDictionaries,0,false,true));
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 export emptySequence := Sequence();

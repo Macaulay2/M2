@@ -4,6 +4,8 @@
 
 --		Copyright 1993-2003 by Daniel R. Grayson
 
+errorDepth 0						    -- without this, we may see no error messages the second time through
+
 firstTime := not Array.?name
 
 -- here we put local variables that might be used by the global definitions below
@@ -102,8 +104,18 @@ if firstTime then (
      isAbsolutePath = filename -> match(isAbsolutePathRegexp, filename);
      sourceHomeDirectory = null; -- home directory of Macaulay 2
      buildHomeDirectory  = null; -- parent of the directory of the executable described in command line argument 0
+
+     copyright = (
+	  "Macaulay 2, version " | version#"VERSION" | newline
+	  | "--Copyright 1993-2003, D. R. Grayson and M. E. Stillman" | newline
+	  | "--Singular-Factory " | version#"factory version" | ", copyright 1993-2001, G.-M. Greuel, et al." | newline
+	  | "--Singular-Libfac " | version#"libfac version" | ", copyright 1996-2001, M. Messollen" | newline
+	  | "--NTL Library " | version#"ntl version" | ", copyright, Victor Shoup" | newline
+     	  | "--GNU MP Library " | version#"gmp version"
+	  );
      )
 
+fullCopyright := false
 loadFile := if class load === Function then load else simpleLoad
 matchpart := (regex,i,s) -> substring_((matches(regex, s))#i) s
 notdir := s -> matchpart("[^/]*$",0,s)
@@ -157,6 +169,7 @@ usage := arg -> (
      << "    " << progname << " [option ...] [file ...]" << newline
      << "options:"  << newline
      << "    --help             print brief help message and exit" << newline
+     << "    --copyright        display full copyright messasge" << newline
      << "    --example-prompts  examples prompt mode" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --no-prompts       print no input prompts" << newline;
@@ -174,14 +187,8 @@ usage := arg -> (
      << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
      << "                       directory containing the Macaulay2 executable" << newline
      << "    EDITOR             default text editor" << newline
-     << "    LOADDATA_IGNORE_CHECKSUMS	   ignore checksums (for debugging)" << newline
+     << "    LOADDATA_IGNORE_CHECKSUMS	   (for debugging)" << newline
      ;exit 0)
-
-setDefaultValues := () -> (
-     normalPrompts();
-     stopIfError false;
-     errorDepth loadDepth();
-     )
 
 loadSetup := () -> (
      -- try to load setup.m2
@@ -199,6 +206,7 @@ action := hashTable {
      "-silent" => obsolete,
      "-tty" => notyet,
      "-n" => obsolete,
+     "--copyright" => arg -> fullCopyright = true,
      "--no-prompts" => arg -> noPrompts(),
      "--notify" => arg -> notify = true,
      "-x" => obsolete,
@@ -246,12 +254,7 @@ if firstTime then processCommandLineOptions()
 preload = false
 
 if firstTime and not nobanner then (
-     stderr
-     << "Macaulay 2, version " << version#"VERSION" << newline
-     << "--Copyright 1993-2003, D. R. Grayson and M. E. Stillman" << newline
-     << "--Singular-Factory " << version#"factory version" << ", copyright 1993-2001, G.-M. Greuel, et al." << newline
-     << "--Singular-Libfac " << version#"libfac version" << ", copyright 1996-2001, M. Messollen" << newline
-     << "--NTL Library " << version#"ntl version" << ", copyright, Victor Shoup" << newline;
+     stderr << (if fullCopyright then copyright else first separate copyright) << newline;
      simpleFlush stderr
      )
 
@@ -277,8 +280,10 @@ path = select(path, fileExists);
 documentationPath = apply(path, d -> minimizeFilename(d|"/cache/doc/"))
     documentationPath = select(documentationPath, fileExists)
 
-setDefaultValues()
+normalPrompts()
 if firstTime and not nosetup then loadSetup()
 runStartFunctions()
+errorDepth loadDepth()
+stopIfError false					    -- this is also set in interp.d!
 processCommandLineOptions()
 if interpreter() then exit 0 else exit 1

@@ -816,7 +816,7 @@ tostringfun(e:Expr):Expr := (
      is CompiledFunction do Expr("--compiled function--")
      is CompiledFunctionClosure do Expr("--compiled function closure--")
      is FunctionClosure do Expr("--function closure--")
-     is d:Dictionary do Expr("--dictionary[" + tostring(d.hash) + "]--")
+     is d:DictionaryClosure do Expr("--dictionary[" + tostring(d.dictionary.hash) + "]--")
      is x:BigReal do Expr(tostring(x))
      is Error do Expr("--error message--")
      is Sequence do Expr("--sequence--")

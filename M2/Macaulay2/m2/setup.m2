@@ -146,9 +146,9 @@ input = (filename) -> (
 erase symbol simpleInput
 
 setnotify := () -> (
-     notify = true			-- notify after initialization
+     -- notify = true			-- notify after initialization, commented out
      )
-erase symbol notify    -- we have to erase this while we have a chance
+-- erase symbol notify    -- we have to erase this while we have a chance
 
 needs = s -> if not loaded#?s then load s
 

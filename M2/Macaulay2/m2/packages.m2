@@ -23,7 +23,7 @@ record := (sym,val) -> (
      )
 
 hide := d -> (
-     dictionaries select(dictionaries(), x -> x =!= d);
+     globalDictionaries select(globalDictionaries(), x -> x =!= d);
      )
 
 removePackage = method()
@@ -43,7 +43,7 @@ newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      sym := value ("symbol " | title);
      removePackage title;
-     newdict := if title === M2title then first dictionaries() else first dictionaries prepend(newDictionary(),dictionaries());
+     newdict := if title === M2title then first globalDictionaries() else first globalDictionaries prepend(newDictionary(),globalDictionaries());
      p := global currentPackage <- new Package from {
           symbol name => title,
 	  symbol Symbol => sym,
@@ -71,23 +71,25 @@ closePackage = p -> (
      if p =!= Macaulay2 then (			    -- protect it later, after package User is open
 	  protect p#"dictionary";
 	  );
-     if first dictionaries() =!= p#"dictionary" then error ("another dictionary is open");
-     currentPackage = null;
+     if first globalDictionaries() =!= p#"dictionary" then error ("another dictionary is open");
+     currentPackage = p#"outerPackage";
+     remove(p,"outerPackage");
+     stderr << "--package " << p << " installed" << endl;
      p)
 
 pushDictionary = () -> (
      d := newDictionary();
-     dictionaries prepend(d,dictionaries());
+     globalDictionaries prepend(d,globalDictionaries());
      d)
 
 popDictionary = d -> (
-     if d =!= first dictionaries() then error "expected argument to be current dictionary";
-     dictionaries drop(dictionaries(),1);
+     if d =!= first globalDictionaries() then error "expected argument to be current dictionary";
+     globalDictionaries drop(globalDictionaries(),1);
      d)
 
 dictionary := s -> (
      n := toString s;
-     r := select(dictionaries(), d -> d#?n and d#n === s);
+     r := select(globalDictionaries(), d -> d#?n and d#n === s);
      if #r === 0 then null else first r
      )
 
