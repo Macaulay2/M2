@@ -2,7 +2,7 @@
 PREFIX=@prefix@
 M2HOME="$PREFIX/share/Macaulay2/@PACKAGE_VERSION@"
 M2LIB="$PREFIX/lib/Macaulay2/@PACKAGE_VERSION@"
-export M2HOME M2LIB
+export PREFIX M2HOME M2LIB
 EXE="$M2LIB/libexec/Macaulay2"
 DATA="$M2LIB/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
 SETUP="$M2HOME/m2/setup.m2"

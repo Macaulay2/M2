@@ -13,8 +13,9 @@ VPATH = @srcdir@
 install all clean distclean::
 	@echo '-------- making '$@', $(PACKAGE_VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) --------'
 
-# first install target:
+# first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
 install :: all
+
 install :: ; rm -f INSTALLDIR && ln -s $(target) INSTALLDIR
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean

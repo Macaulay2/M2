@@ -11,9 +11,12 @@ addStartFunction(
 	  home := getenv "M2HOME";
 	  if home === "" then error "environment variable M2HOME not set";
 	  home = minimizeFilename home;
-	  path = unique apply(
-	       join( path, { home | "/m2/", home | "/packages/" }),
-	       minimizeFilename);
+	  path = join( path, { home | "/m2/", home | "/packages/" }),
+          prefix := getenv "PREFIX";
+	  if prefix =!= "" then path = append( path, 
+	       minimizeFilename ( prefix | "/share/Macaulay2/packages/" )
+	       );
+	  path = unique apply( path, minimizeFilename);
 	  documentationPath = unique apply(
 	       {
 		    "cache/doc/",	-- this is where new documentation is written
