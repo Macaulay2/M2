@@ -10,7 +10,7 @@ use tokens;
 use err;
 use stdio;
 use arith;
-
+use GB;
 
 export hash(e:Expr):int := (
      when e
@@ -42,7 +42,7 @@ export hash(e:Expr):int := (
      is x:CompiledFunctionClosure do x.hash
      is x:List do x.hash
      is x:Rational do hash(x.numerator)+1299841*hash(x.denominator)
-     is h:Handle do h.handle
+     is h:Handle do gbhash(h.handle)
      );
 export hash(x:List):int := (
      h := x.class.hash + 23407;

@@ -142,6 +142,24 @@ void cmdLength(void)
   gStack.insert(make_object_int(r->length_of()));
 }
 ////////// Hash values and equality //////////////////////////////////
+
+extern "C" {
+  int GB_gbhash(int h) {
+    object x;
+    if (!gHandles.deref(h,x)) return 0; // bad handle
+    return x->hash();
+  }
+
+  int GB_gbequal(int h, int k) {
+    if (h==k) return 1;
+    object x;
+    if (!gHandles.deref(h,x)) return 0; // bad handle
+    object y;
+    if (!gHandles.deref(k,y)) return 0; // bad handle
+    return x->check_equality(*y);
+  }
+}
+
 static void cmdHashValue()
 {
   if (gStack.is_empty()) return;

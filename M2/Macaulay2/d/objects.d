@@ -11,6 +11,8 @@ use basic;
 use convertr;
 use struct;
 use binding;
+use GB;
+
 
 enlarge(object:HashTable):void := (
      oldTable := object.table;
@@ -221,7 +223,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is x:SymbolClosure do (
 	  when rhs 
 	  is y:SymbolClosure do (
-	       if x.symbol == y.symbol && x.frame == y.frame
+       if x.symbol == y.symbol && x.frame == y.frame
 	       then True else False
 	       )
 	  else False
@@ -230,9 +232,7 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
      is Database do False
      is x:Handle do (
 	  when rhs
-	  is y:Handle do (
-	       if x.handle == y.handle then True else False
-	       )
+	  is y:Handle do if gbequal(x.handle,y.handle) then True else False
 	  else False
 	  )
      );

@@ -2,7 +2,7 @@
 lift = method()
 liftable = method()
 promote = method()
-RingElement = new Type of MutableHashTable
+RingElement = new Type of HashTable
 RingElement.synonym = "ring element"
 EngineRing = new Type of Ring
 EngineRing.synonym = "engine ring"
