@@ -1,8 +1,0 @@
-#! /bin/sh
-M2HOME="`dirname $0`/../Macaulay2"
-if   [ "$WWWBROWSER" ]
-then "$WWWBROWSER" "$M2HOME/html/index.html"
-elif [ `uname -s` = Darwin ]
-then open "$M2HOME/html/index.html"
-else netscape "$M2HOME/html/index.html"
-fi
