@@ -147,7 +147,7 @@ homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      wts = flatten wts;
      homogCheck(f,v,wts);
      error "IM2_Matrix_homogenize not re-implemented yet";
-     newMatrix(target f, source f, rawHomogenize(f.RawMatrix, index v, wts)))
+     map(target f, source f, rawHomogenize(f.RawMatrix, index v, wts)))
 
 homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
      wts := (transpose (monoid ring f).Options.Degrees)#0;

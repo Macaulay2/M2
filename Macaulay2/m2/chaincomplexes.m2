@@ -678,14 +678,14 @@ chainComplex GradedModule := ChainComplex => (M) -> (
      C)
 -----------------------------------------------------------------------------
 
-ggConcatCols := (R,mats) -> newMatrix(R, rawDirectSum apply(toSequence mats, f -> f.RawMatrix))
+ggConcatCols := (R,mats) -> map(R, rawDirectSum apply(toSequence mats, f -> f.RawMatrix))
 
 ggConcatBlocks := (R,mats) -> (
      mats = applyTable(mats, f -> f.RawMatrix);
-     newMatrix(R, 
+     map(R, 
 	  rawDual rawDirectSum apply(toSequence mats, row -> rawDual rawDirectSum toSequence row)))
 
-tens := (R,f,g) -> newMatrix(R, rawTensor( f.RawMatrix, g.RawMatrix ))
+tens := (R,f,g) -> map(R, rawTensor( f.RawMatrix, g.RawMatrix ))
 
 ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
      P := youngest(C,D);
@@ -774,15 +774,6 @@ max ChainComplex := C -> max spots C
 
 tensorAssociativity(Module,Module,Module) := Matrix => (A,B,C) -> map((A**B)**C,A**(B**C),1)
 
-
-newMatrix := (tar,src) -> (
-     new Matrix from {
-	  symbol ring => ring tar,
-	  symbol source => src,
-	  symbol target => tar,
-	  symbol cache => new CacheTable
-	  })
-     
 tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := ChainComplexMap => (A,B,C) -> (
      R := ring A;
      map(
