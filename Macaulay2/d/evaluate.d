@@ -420,7 +420,7 @@ export eval(c:Code):Expr := (
      when e is err:Error do (
 	  if err.message == returnMessage || err.message == continueMessage || err.message == breakMessage || err.message == unwindMessage then return e;
 	  p := codePosition(c);
-	  err.report = CodeClosureList(CodeClosure(localFrame,c), err.report);
+	  err.report = CodeClosureList(CodeClosure(noRecycle(localFrame),c), err.report);
      	  if err.position == dummyPosition && int(p.loadDepth) >= errorDepth && !SuppressErrors then (
 	       interrupted = false;
 	       alarmed = false;

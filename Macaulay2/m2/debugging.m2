@@ -136,7 +136,7 @@ truncate := s -> (
 	  );
      s)
 
-sortByHash := v -> last \ sort (v / (i -> (hash i, i)))
+sortByHash := v -> last \ sort \\ (i -> (hash i, i)) \ v
 
 abbreviate := x -> (
      if class x === Function and match("^--Function.*--$", toString x) then "..."

@@ -31,21 +31,6 @@ document { lineNumber,
      returns the old line number.",
      }
 
-document { backtrace,
-     Headline => "trace back through evaluations after an error",
-     TT "backtrace()", " -- after an error, returns a list representing the
-     steps in the computation that led to the error.",
-     PARA,
-     "The elements in the list are expressions that can be examined, or
-     reevaluated with ", TO "value", ", or are references to positions in the 
-     source code.",
-     PARA,
-     "Bug: some of the expressions are reconstructed from the local variables
-     of the function returning an error, so the parameters passed to the
-     routine may have been replaced by new values.",
-     SEEALSO {"Expression", "Position"}
-     }
-
 document { FilePosition,
      Headline => "the class of all file positions",
      TT "FilePosition", " -- a type of list designed to represent a position
