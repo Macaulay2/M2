@@ -127,13 +127,11 @@ void RingMap::text_out(buffer &o) const
 ring_elem RingMap::eval_term(const Ring *sourceK,
 			      const ring_elem a, const int *vp) const
 {
-  int i;
   assert(sourceK->total_n_vars() <= nvars);
   int first_var = sourceK->total_n_vars();
-  int npairs = *vp++ - 1;
-  for (i=0; i<npairs; i++)
+  for (index_varpower i = vp; i.valid(); ++i)
     {
-      int v = first_var + varpower::var(vp[i]);
+      int v = first_var + i.var();
       if (v >= nvars || _elem[v].is_zero)
 	return R->from_int(0);	// The result is zero.
     }
@@ -157,10 +155,10 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
   if (!R->is_commutative_ring())
     {
       // This is the only non-commutative case so far
-      for (i=0; i<npairs; i++)
+      for (index_varpower i = vp; i.valid(); ++i)
 	{
-	  int v = first_var + varpower::var(vp[i]);
-	  int e = varpower::exponent(vp[i]);
+	  int v = first_var + i.var();
+	  int e = i.exponent();
 	  for (int j=0; j<e; j++)
 	    {
 	      assert(v < nvars);
@@ -171,10 +169,10 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 	}
     }
   else {
-    for (i=0; i<npairs; i++)
+    for (index_varpower i = vp; i.valid(); ++i)
       {
-	int v = first_var + varpower::var(vp[i]);
-	int e = varpower::exponent(vp[i]);
+	int v = first_var + i.var();
+	int e = i.exponent();
 	assert(v < nvars);
 	if (_elem[v].bigelem_is_one)
 	  {

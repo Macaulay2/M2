@@ -140,28 +140,6 @@ static void mo_block_group_revlex(struct mo_block *b, int nvars)
   b->weights = 0;
 }
 
-static void mo_block_position_up(struct mo_block *b)
-{
-  b->typ = MO_POSITION_UP;
-  b->nvars = 0;
-  b->nslots = 0;
-  b->first_exp = 0; /* will be set later */
-  b->first_slot = 0; /* will be set later */
-  b->nweights = 0;
-  b->weights = 0;
-}
-
-static void mo_block_position_down(struct mo_block *b)
-{
-  b->typ = MO_POSITION_DOWN;
-  b->nvars = 0;
-  b->nslots = 0;
-  b->first_exp = 0; /* will be set later */
-  b->first_slot = 0; /* will be set later */
-  b->nweights = 0;
-  b->weights = 0;
-}
-
 static void mo_block_wt_function(struct mo_block *b, int nvars, double *wts)
 {
   b->typ = MO_WEIGHTS;
@@ -324,18 +302,6 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
 	}
     }
 
-#if 0
-  result->component_slot = -1;
-  for (i=0; i<nblocks; i++)
-    if (result->blocks[i].typ == MO_POSITION_DOWN ||
-	result->blocks[i].typ == MO_POSITION_UP)
-      {
-	result->component_slot = result->blocks[i].first_slot;
-	result->blocks[i].first_exp = result->nvars;
-	break;
-      }
-#endif
-
   /* Set is_laurent */
   result->is_laurent = (int *) getmem_atomic(result->nvars * sizeof(int));
   for (i=0; i<result->nvars; i++) result->is_laurent[i] = 0;
@@ -361,7 +327,8 @@ extern void monomialOrderFree(MonomialOrder *mo)
 {
 }
 
-#if 0
+#include "overlay.h"
+#if OVERLAY == 0x04030201
 union pack4 {
   long i;
   struct {
@@ -377,48 +344,83 @@ union pack2 {
   struct {
     unsigned short a;
     unsigned short b;
+  } ch;
+};
+#else
+union pack4 {
+  long i;
+  struct {
+    unsigned char d;
+    unsigned char c;
+    unsigned char b;
+    unsigned char a;
+  } ch;
+};
+
+union pack2 {
+  long i;
+  struct {
+    unsigned short b;
+    unsigned short a;
   } ch;
 };
 #endif
-
-union pack4 {
-  long i;
-  struct {
-    unsigned char d;
-    unsigned char c;
-    unsigned char b;
-    unsigned char a;
-  } ch;
-};
-
-union pack2 {
-  long i;
-  struct {
-    unsigned short b;
-    unsigned short a;
-  } ch;
-};
-	  
-#if 0
-static void MO_pack4(int nvars, const int *expon, int *slots)
+	
+#if 0  
+static bool MO_pack4(int nvars, const int *expon, int *slots)
+// return false if any of the non-negative exponents are >= 128.
 {
+  int x;
   union pack4 w;
   while (nvars > 0)
     {
       w.i = 0;
       if (--nvars >= 0) {
-	w.ch.a = *expon++;
+	x = *expon++;
+	if (x >= 128) return false;
+	w.ch.d = x;
 	if (--nvars >= 0) {
-	  w.ch.b = *expon++;
+	  x = *expon++;
+	  if (x >= 128) return false;
+	  w.ch.c = x;
 	  if (--nvars >= 0) {
-	    w.ch.c = *expon++;
-	    if (--nvars >= 0) w.ch.d = *expon++;
+	    x = *expon++;
+	    if (x >= 128) return false;
+	    w.ch.b = x;
+	    if (--nvars >= 0) {
+	      x = *expon++;
+	      if (x >= 128) return false;
+	      w.ch.a = x;
+	    }
 	  }}}
       *slots++ = w.i;
     }
+  return true;
+}
+
+static bool MO_pack2(int nvars, const int *expon, int *slots)
+// return false if any of the non-negative exponents are >= (1<<15) == 32768
+{
+  int x;
+  union pack2 w;
+  while (nvars > 0)
+    {
+      w.i = 0;
+      if (--nvars >= 0) {
+	x = *expon++;
+	if (x >= 32768) return false;
+	w.ch.b = x;
+	if (--nvars >= 0) {
+	  x = *expon++;
+	  if (x >= 32768) return false;
+	  w.ch.a = *expon++;
+	}
+      }
+      *slots++ = w.i;
+    }
+  return true;
 }
 #endif
-
 static void MO_pack4(int nvars, const int *expon, int *slots)
 {
   union pack4 w;
@@ -451,24 +453,6 @@ static void MO_pack2(int nvars, const int *expon, int *slots)
     }
 }
 
-#if 0
-static void MO_unpack4(int nvars, const int *slots, int *expon)
-{
-  union pack4 w;
-  while (nvars > 0)
-    {
-      w.i = *slots++;
-      if (--nvars >= 0) {
-	*expon++ = w.ch.a;
-	if (--nvars >= 0) {
-	  *expon++ = w.ch.b;
-	  if (--nvars >= 0) {
-	    *expon++ = w.ch.c;
-	    if (--nvars >= 0) *expon++ = w.ch.d;
-	  }}}
-    }
-}
-#endif
 static void MO_unpack4(int nvars, const int *slots, int *expon)
 {
   union pack4 w;
@@ -533,7 +517,7 @@ void monomialOrderEncode(const MonomialOrder *mo,
       for (j=1; j<nvars; j++)
 	{
 	  --p1;
-	  *p1 = *e++ + p1[1];
+	  *p1 = *e++ + p1[1];              // check overflow here?
 	}
       break;
     case MO_GREVLEX4:
@@ -559,25 +543,25 @@ void monomialOrderEncode(const MonomialOrder *mo,
 	  --p1;
 	  *p1 = *e++ + p1[1];
 	}
-      MO_pack2(nvars,p1,p);
+      MO_pack2(nvars,p1,p);             // check overflow here?
       p += b->nslots;
       break;
     case MO_LEX4:
       nvars = b->nvars;
-      MO_pack4(nvars,e,p);
+      MO_pack4(nvars,e,p);             // check overflow here?
       p += b->nslots;
       e += nvars;
       break;
     case MO_LEX2:
       nvars = b->nvars;
-      MO_pack2(nvars,e,p);
+      MO_pack2(nvars,e,p);             // check overflow here?
       p += b->nslots;
       e += nvars;
       break;
     case MO_WEIGHTS:
       s = 0;
       for (j=0; j<b->nweights; j++)
-	s += b->weights[j] * expon[j];
+	s += b->weights[j] * expon[j];             // check overflow here?
       *p++ = s;
       break;
     case MO_POSITION_UP:
@@ -602,8 +586,17 @@ int monomialOrderFromActualExponents(const MonomialOrder *mo,
   for (i=0; i<mo->nvars; i++)
     {
       result_exp[i] = expon[i] * mo->degs[i];
-      if (expon[i] < 0 && !mo->is_laurent[i])
-	result = 0;
+      if (expon[i] < 0)
+	{
+	  if (!mo->is_laurent[i])
+	    result = 0;
+	}
+#if 0
+      else 
+	{
+	  if (expon[i] > mo->top[i]
+	}
+#endif
     }
   return result;
 }

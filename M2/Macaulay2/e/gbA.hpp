@@ -101,7 +101,7 @@ private:
   MonomialTable *lookup;
   MonomialTableZZ *lookupZZ; // Only one of these two will be non-NULL.
 
-  exponents _EXP; // Used in 'remainder'
+  exponents EXP_; // Used in 'remainder'
 
   SPairSet S;
   vector <gbvector *,gc_alloc> _syz;

@@ -37,120 +37,6 @@ Monoid::Monoid()
 {
 }
 
-#if 0
-
-static mon_order *make_mon_order(MonomialOrdering *mo)
-{
-  unsigned int nvars = rawNumberOfVariables(mo);
-  unsigned int nwt_blocks = 0;
-  unsigned int first_non_weight = 0;
-  unsigned int last_non_component = 0;
-
-  bool prev_is_wt = true;
-  for (unsigned int i=0; i<mo->len; i++)
-    {
-      mon_part p = mo->array[i];
-      if (prev_is_wt)
-	{
-	  if (p->type == MO_WEIGHTS)
-	    nwt_blocks++;
-	  else
-	    {
-	      first_non_weight = i;
-	      prev_is_wt = false;
-	    }
-	}
-      if (p->type != MO_POSITION_UP && p->type != MO_POSITION_DOWN)
-	last_non_component = i;
-    }
-
-  // Now make the weight vector values, and grab the degrees
-  unsigned int nweights = nvars * nwt_blocks;
-  M2_arrayint wts = makearrayint(nweights);
-  M2_arrayint degs = makearrayint(nvars);
-
-  unsigned int nextwt = 0;
-  unsigned next = 0;
-  for (unsigned int i=0; i<mo->len; i++)
-    {
-      mon_part p = mo->array[i];
-      if (p->wts == 0)
-	{
-	  for (int j=0; j<p->nvars; j++)
-	    degs->array[next++] = 1;
-	}
-      else if (p->type == MO_WEIGHTS && i < nwt_blocks)
-	{
-	  for (int j=0; static_cast<unsigned>(j) < nvars; j++)
-	    {
-	      if (j < p->nvars)
-		wts->array[nextwt++] = p->wts[j];
-	      else
-		wts->array[nextwt++] = 0;
-	    }
-	}
-      else
-	// Should only be one of the grevlex weights blocks
-	{
-	  for (int j=0; j<p->nvars; j++)
-	    degs->array[next++] = p->wts[j];;
-	}
-    }
-
-  // Check: either there is only one here, or there are several grevlex...
-  if (first_non_weight == last_non_component)
-    {
-      // Only one block, not a product order
-      switch (mo->array[first_non_weight]->type) {
-      case MO_LEX:
-      case MO_LEX2:
-      case MO_LEX4:
-      case MO_LAURENT:
-	return mon_order::lex(degs,wts);
-      case MO_GREVLEX:
-      case MO_GREVLEX2:
-      case MO_GREVLEX4:
-      case MO_GREVLEX_WTS:
-      case MO_GREVLEX2_WTS:
-      case MO_GREVLEX4_WTS:
-	return mon_order::grlex(degs,wts);
-      case MO_REVLEX:
-	return mon_order::rlex(degs,wts);
-      case MO_NC_LEX:
-	ERROR("noncommutative monomials are not yet implemented");
-	return 0;
-      default:
-	ERROR("internal error in monorder construction");
-	return 0;
-      }
-    }
-
-  // Check that every part is a grevlex type
-  M2_arrayint blocks = makearrayint(last_non_component - first_non_weight + 1);
-  next = 0;
-  for (unsigned int i=first_non_weight; i<=last_non_component; i++)
-    {
-      mon_part p = mo->array[i];
-      if (p->type == MO_GREVLEX ||
-	  p->type == MO_GREVLEX2 ||
-	  p->type == MO_GREVLEX4 ||
-	  p->type == MO_GREVLEX_WTS ||
-	  p->type == MO_GREVLEX2_WTS ||
-	  p->type == MO_GREVLEX4_WTS)
-	{
-	  blocks->array[next++] = p->nvars;
-	}
-      else
-	{
-	  ERROR("cannot currently handle products of non GRevLex orders");
-	  return 0;
-	}
-    }
-  return mon_order::product(degs,blocks,wts);
-}
-#endif
-
-
 Monoid::~Monoid()
 {
   deletearray(EXP1_);
@@ -223,6 +109,7 @@ Monoid::Monoid(MonomialOrdering *mo,
   n_invertible_vars_ = rawNumberOfInvertibleVariables(mo_);
 
   set_degrees();
+  set_overflow_flags();
 }
 
 void Monoid::set_degrees()
@@ -254,6 +141,45 @@ void Monoid::set_degrees()
 	primary_degree_of_var_->array[i] = 1;
     }
   degree_of_var_.append(degree_monoid_->make_one());
+}
+
+void Monoid::set_overflow_flags()
+{
+  int j;
+  overflow_ = newarray(enum overflow_type, monomial_size_);
+  for (int i=0; i<monomial_size_; i++)
+    overflow_[i] = OVER;
+
+  for (int i=0; i<monorder_->nblocks; i++)
+    {
+      mo_block *b = &monorder_->blocks[i];
+      switch (monorder_->blocks[i].typ) {
+      case MO_LEX:
+      case MO_GREVLEX:
+      case MO_GREVLEX_WTS:
+      case MO_REVLEX:
+      case MO_WEIGHTS:
+      case MO_LAURENT:
+      case MO_LAURENT_REVLEX:
+      case MO_NC_LEX:
+      case MO_POSITION_UP:
+      case MO_POSITION_DOWN:
+	// No need to do anything 
+	break;
+      case MO_LEX2:
+      case MO_GREVLEX2:
+      case MO_GREVLEX2_WTS:
+	for (j = b->first_slot; j<b->nslots; j++)
+	  overflow_[j] = OVER2;
+	break;
+      case MO_LEX4:
+      case MO_GREVLEX4:
+      case MO_GREVLEX4_WTS:
+	for (j = b->first_slot; j<b->nslots; j++)
+	  overflow_[j] = OVER4;
+	break;
+      }
+    }
 }
 
 Monoid *Monoid::tensor_product(const Monoid *M1, const Monoid *M2)
@@ -360,6 +286,7 @@ void Monoid::to_expvector(const_monomial m, exponents result_exp) const
   monomialOrderToActualExponents(monorder_, EXP1_, result_exp);
 }
 
+#if 0
 void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 {
   for (int i=0; i<monomial_size_; i++)
@@ -376,7 +303,60 @@ void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
 	}
     }
 }
+#endif
 
+void Monoid::mult(const_monomial m, const_monomial n, monomial result) const
+{
+  overflow_type *check = overflow_;
+  bool error = false;
+  for (int i=0; i<monomial_size_; i++)
+    {
+      int x = *m++;
+      int y = *n++;
+      int z = x+y;
+      *result++ = z;
+      // Check for overflow
+      switch (*check++) {
+      case OVER:
+	if ((x < 0) == (y < 0) && (x < 0) != (z < 0))
+	  error = true;
+	break;
+      case OVER2:
+	if ((z % 0x80008000) != 0)
+	  error = true;
+	break;
+      case OVER4:
+	if ((z % 0x80808080) != 0)
+	  error = true;
+	break;
+      }
+      if (error)
+	{
+	  ERROR("monomial overflow");
+#ifndef NDEBUG
+	  fprintf(stderr, "monomial overflow has occurred\n");
+#endif
+	}
+    }
+}
+
+#if 0
+mult is called:
+  respoly2.cpp
+  res2.cpp
+  res.cpp
+  respoly.cpp
+  schorder.cpp
+  freemod.cpp
+  gbring.cpp
+  matrix.cpp
+  polyring.cpp
+  ringmap.cpp
+  skewpoly.cpp
+  weylalg.cpp
+  mat-kbasis.cpp
+  freemod2.cpp
+#endif
 int Monoid::num_parts() const
 {
   return monorder_->nblocks;

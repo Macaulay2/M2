@@ -215,17 +215,18 @@ static CanonicalForm convert(const RingElement &g) {
 #endif
 			  : CanonicalForm(0) // shouldn't happen
 			  );
-       for (int l = 1; l < vp[0] ; l++) {
-	 m *= power(
-		    Variable(1 + (
+       for (index_varpower l = vp.raw(); l.valid(); ++l)
+	 {
+	   m *= power(
+		      Variable(1 + (
 #                       if REVERSE_VARIABLES
-				  (n-1) - 
+				    (n-1) - 
 #                       endif
-				  varpower::var(vp[l])
-				  )), 
-		    varpower::exponent(vp[l])
-		    );
-       }
+				    l.var()
+				    )), 
+		      l.exponent()
+		      );
+	 }
        f += m;
      }
      if (Q != NULL) Off( SW_RATIONAL );

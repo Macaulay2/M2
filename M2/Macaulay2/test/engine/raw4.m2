@@ -130,7 +130,7 @@ M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
 Gcomp = rawGB(M,false,0,{0},false,0,0,0)
 rawStartComputation Gcomp  -- crashes due to bad access in spair_sorter -- NO LONGER CRASHES...
 mgb = rawGBGetMatrix Gcomp;
-
+rawDual mgb
 rawGBGetLeadTerms(Gcomp,6)
 mmin = rawGBMinimalGenerators Gcomp
 msyz = rawGBSyzygies Gcomp
@@ -232,7 +232,8 @@ z = rawRingVar(R2,2,1)
 algorithm = 0
 G = mat {{3*x-y^20, 4*y-z^20, x*y-x-1}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0) 
-rawStartComputation Gcomp -- GC_debug_free warnings
+gbTrace = 0
+rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp
 -----------------------------
 needs "raw-util.m2"
@@ -279,7 +280,7 @@ z = rawRingVar(R2,4,1)
 G = mat{{x - 3*u-3*u*v^2+u^3, y-3*v-3*u^2*v+v^3, z-3*u^2+3*v^2}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
 --gbTrace = 4
-rawStartComputation Gcomp  -- GC_debug_free warnings
+rawStartComputation Gcomp
 time m = rawGBGetMatrix Gcomp
 rawGBGetLeadTerms(Gcomp,6)
 -----------------------------
@@ -432,11 +433,11 @@ m = mat{{x^2+y^2, z^2+w^2}}
 A = rawQuotientRing(R,m)
 P = mat{{rawPromote(A,x), rawPromote(A,y), rawPromote(A,z), rawPromote(A,w)}}
 P1 = rawsyz P
-P2 = rawsyz P1
+P2 = rawsyz P1 -- (One problem: syzygyies are not reduced mod ideal)
 P3 = rawsyz P2
 P * P1
 P1 * P2
-P2 * P3 -- NOT ZERO !! -- BUG BUG -- CRASHES
+P2 * P3 -- NOT ZERO !! -- BUG BUG -- CRASHES 
 P4 = rawsyz P3
 P3 * P4 -- NOT ZERO !! -- BUG BUG
 -----------------------------------------

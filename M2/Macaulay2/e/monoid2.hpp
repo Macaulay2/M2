@@ -40,6 +40,7 @@ class Monoid : public mutable_object
 
   MonomialOrdering *mo_;
   MonomialOrder *monorder_; // Internal version, with encoding information
+  enum overflow_type { OVER, OVER2, OVER4 } *overflow_;
 
   int monomial_size_;  // in ints
   int monomial_bound_;
@@ -50,8 +51,10 @@ class Monoid : public mutable_object
   bool component_up_;
 
   vector<int> nslots_;
-
+  
+  
   void set_degrees();
+  void set_overflow_flags();
 
   exponents EXP1_, EXP2_, EXP3_;// allocated ntuples.
 				// A local routine may use these ONLY if
