@@ -328,9 +328,10 @@ document {  "Developer's Corner",
 document { "Macaulay 2",
      IMG "9planets.gif", PARA,
      "Macaulay 2 is a software system devoted to supporting research in 
-     algebraic geometry and commutative algebra.  The current version is 
+     algebraic geometry and commutative algebra, developed with funding
+     from the National Science Foundation.  The current version is 
      ", version#"VERSION", ".  The program is still under development, but
-     most of the main features are working.  We are eager to help new users
+     the main features are working.  We are eager to help new users
      get started with it.",
      MENU {
 	  (TO "User's Guide", " -- This is the place to get started"),

@@ -105,6 +105,6 @@ clearOutput = Command (() -> (
 		    s <- s;
 	       	    erase s))))
 
-clearAll = Command (() -> ( clearOutput(); scan(userSymbols(), i -> erase(i <- i))))
+clearAll = Command (() -> ( clearOutput(); scan(userSymbols(), i -> i <- i)))
 
 typicalValues#frame = MutableList

@@ -363,7 +363,7 @@ void cmd_monheap_test(void)
 {
   extern void monheap_make_sure_works();
 
-  monheap_make_sure_works();
+  //  monheap_make_sure_works();
 }
 
 void i_monoid_cmds(void)
@@ -371,7 +371,7 @@ void i_monoid_cmds(void)
   // Construction of new monoid objects
   install(ggzeromonoid, cmd_zero_monoid);
 
-  install(ggtest, cmd_monheap_test);
+  // install(ggtest, cmd_monheap_test);
 
 #ifdef MIKE_OLD_MONOID
   trivial_monoid = new Monoid(new monoid_info, sizeof(int)*8);

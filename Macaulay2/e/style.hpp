@@ -2,6 +2,8 @@
 #ifndef _style_hh_
 #define _style_hh_
 
+#include <cmath>    // to get fabs(), gcc 3.0
+#include <vector.h> // just to get swap(), which is included from algobase.h by vector.h, gcc 3.0
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
