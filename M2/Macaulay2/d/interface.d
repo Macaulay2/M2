@@ -101,6 +101,20 @@ rawMonomialIsOne(e:Expr):Expr := (
 installMethod(Expr(EqualEqualS), rawMonomialClass,integerClass,
      Expr(CompiledFunction(rawMonomialIsOne,nextHash())));
 
+rawCompare(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is M:RawMonoid do
+     when s.1 is x:RawMonomial do
+     when s.2 is y:RawMonomial do (
+	  r := Ccode(int, "IM2_Monomial_compare((Monoid *)", M,",(Monomial *)", x, ",(Monomial *)", y, ")");
+	  if r < 0 then LessE else if r > 0 then GreaterE else EqualE
+	  )
+     else WrongArg(3,"a raw monomial")
+     else WrongArg(2,"a raw monomial")
+     else WrongArg(1,"a raw monoid")
+     else WrongNumArgs(3));
+setupfun("rawCompare",rawCompare);
+
 rawRadical(e:Expr):Expr := (
      when e
      is x:RawMonomial do Expr(Ccode(RawMonomial, "(engine_RawMonomial)",
@@ -678,7 +692,6 @@ rawIsHomogeneous(e:Expr):Expr := (
      );
 setupfun("rawIsHomogeneous",rawIsHomogeneous);
 
-isMutable(x:RawMatrix):bool := Ccode( bool, "IM2_Matrix_is_mutable(", "(Matrix*)",x, ")" );
 rawIsMutable(e:Expr):Expr := when e is x:RawMatrix do toExpr(isMutable(x)) else WrongArg("a raw ring element or vector");
 setupfun("rawIsMutable",rawIsMutable);
 
@@ -1089,6 +1102,16 @@ setupfun("rawSubmodule",rawSubmodule);
 
 -----------------------------------------------------------------------------
 -- matrices
+
+rawIsEqual(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is x:RawMatrix do
+     when s.1 is y:RawMatrix do
+     toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
+     else WrongArg(2,"a raw matrix")
+     else WrongArg(1,"a raw matrix")
+     else WrongNumArgs(2));
+setupfun("rawIsEqual",rawIsEqual);
 
 rawSource(e:Expr):Expr := (
      when e

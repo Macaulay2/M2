@@ -147,11 +147,11 @@ extern "C" {
        and returns the monomial v1^e1*v2^e2*...vn^en.
        ASSUMPTION: v1 > v2 > ... > vn >= 0, each en is not 0. */
 
-  M2_bool IM2_Monomial_is_equal(const Monomial *a, const Monomial *b); /* drg: connected === */
+  M2_bool IM2_Monomial_is_equal(const Monomial *a, const Monomial *b); /* drg: connected to === */
 
   M2_bool IM2_Monomial_is_one(const Monomial *a); /* drg: connected rawMonomialIsOne */
 
-  int IM2_Monomial_compare(const Monoid *M, const Monomial *a, const Monomial *b); /* drg: connected intrinsic */
+  int IM2_Monomial_compare(const Monoid *M, const Monomial *a, const Monomial *b); /* drg: connected to rawCompare */
   /* returns -1, 0, or 1, if a < b, a==b, a > b respectively, in the monomial ordering
    * in the monoid M 
    */
@@ -729,7 +729,7 @@ extern "C" {
   const M2_bool IM2_Matrix_is_zero(const Matrix *M); /* drg: connected rawIsZero*/
 
   const M2_bool IM2_Matrix_is_equal(const Matrix *M, 
-				    const Matrix *N); /* drg: connected === */
+				    const Matrix *N); /* drg: connected === and to rawIsEqual for use with == */
     /* This checks that the entries of M,N are the same, as well as
        that the source and target are the same (as graded free modules).
        Therefore, it can happen that M-N == 0, but M != N.

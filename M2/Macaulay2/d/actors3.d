@@ -210,14 +210,6 @@ compare(left:Expr,right:Expr):Expr := (
 	  is y:Net do if x < y then LessE else if x > y then GreaterE else EqualE
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
-     is x:RawMonomial do (
-	  when right
-	  is y:RawMonomial do (
-	       r := Ccode(int, "IM2_Monomial_compare((Monomial *)", x, ",(Monomial *)", y, ")");
-	       if r < 0 then LessE else if r > 0 then GreaterE else EqualE
-	       )
-     	  is Error do right
-	  else binarymethod(left,right,QuestionS))
      is Error do left
      else (
 	  when right
