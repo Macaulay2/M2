@@ -264,6 +264,7 @@ simpleflush(o:file):int := (				    -- write to file or enlarge the buffer
      o.outbol = 0;
      if o.outindex == 0 then return 0;
      if o.outfd != -1 then (
+	  if interrupted then return -1;
 	  if write(o.outfd,o.outbuffer,o.outindex) == -1 then (
 	       fileErrorMessage(o,"writing");
 	       return -1;
