@@ -123,7 +123,13 @@ examples = x -> (
 fm := (o,s) -> (
      if class s === Sequence then (
 	  if #s === 4 then (
-	       if s#0 === NewOfFromMethod 
+	       if class s#0 === ScriptedFunctor
+	       then (
+		    if s#0 .? subscript
+		    then o << s#0 << "_" << s#1 << "(" << s#2 << "," << s#3 << ")"
+		    else o << s#0 << "^" << s#1 << "(" << s#2 << "," << s#3 << ")"
+		    )
+	       else if s#0 === NewOfFromMethod
 	       then o << "new " << s#1 << " of " << s#2 << " from " << s#3
 	       else if s#0 === cohomology
 	       then o << "HH_" << s#1 << "^" << s#2 << " " << s#3
