@@ -1,3 +1,5 @@
+needs "D-modules.m2"
+
 document { symbol gkz,
      TT "gkz (A,b)", " -- 
      computes the Gel'fand-Kapranov-Zelevinsky hypergeometric ideal
@@ -18,6 +20,7 @@ document { symbol gkz,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "A = matrix{{1,1,1},{0,1,2}}",
      EXAMPLE "b = {3,4}", 
      EXAMPLE "I = gkz (A,b)",
@@ -46,6 +49,7 @@ document { symbol AppellF1,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "w = {1,4/5,-2,3/2}",
      EXAMPLE "I = AppellF1(w)",
 
@@ -72,6 +76,7 @@ document { symbol PolyAnn,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
      EXAMPLE "f = x^2-y^3",
      EXAMPLE "I = PolyAnn f",
@@ -105,6 +110,7 @@ document { symbol RatAnn,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
      EXAMPLE "f = x^2-y^3",
      EXAMPLE "g = 2*x*y",

@@ -1,3 +1,5 @@
+needs "D-modules.m2"
+
 document { symbol deRham,
      TT "deRham f", "-- 
      computes the deRham cohomology groups of the complement of the
@@ -23,6 +25,7 @@ document { symbol deRham,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "R = QQ[x,y]",
      EXAMPLE "f = x^2-y^3", 
      EXAMPLE "deRham(f)",

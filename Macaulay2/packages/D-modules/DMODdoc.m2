@@ -1,3 +1,5 @@
+needs "D-modules.m2"
+
 document { "D-modules Package",
      "Welcome to the online documentation for the Macaulay 2 
      D-modules package.",
@@ -131,6 +133,7 @@ document { (bFunction, Ideal, List),
 	  SUB "n", "t", SUB "n", "]"}, 
      " (here ", EM {"t", SUB "i", " = x", SUB "i", "D", SUB "i"}, ").", 
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
 	  "R = QQ[x_1,x_2,D_1,D_2,WeylAlgebra=>{x_1=>D_1,x_2=>D_2}]",
      	  "I = ideal(x_1, D_2-1)",
      	  "bFunction(I,{1, 0})",
@@ -197,6 +200,7 @@ document { (bFunction, Module, List, List),
      EM {"lcm{ b", SUB "i", "(s-m", SUB "i",") }"},
      PARA,
      EXAMPLE{
+	  ///needs "D-modules.m2"///,
 	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
 	  "M = cokernel matrix {{x^2, 0, 0}, {0, dx^3, 0}, {0, 0, x^3}}",
 	  "factorBFunction bFunction(M, {1}, {0,0,0})",
@@ -240,6 +244,7 @@ document {  (globalBFunction, RingElement),
      " where 1 in the weight that corresponds to ", EM "dt. ", 
      "Then the global b-function is ", EM "b_f = B(-s-1)",
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
 	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
      	  "f = x^10",
     	  "globalBFunction f"
@@ -279,6 +284,7 @@ document { (factorBFunction, RingElement),
      PARA,
      BOLD "Fact. ", "The roots of any b-function are rational.",
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
 	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
      	  "f = x^10",
      	  "b = globalBFunction f",
@@ -316,6 +322,7 @@ document { (globalB, Ideal, RingElement),
      "The algorithm used here is a modification of the original
      algorithm of Oaku for computing Bernstein-Sato polynomials",
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
 	  "R = QQ[x, dx, WeylAlgebra => {x=>dx}]",
      	  "f = x^7",
      	  "b = globalB(ideal dx, f)",
@@ -346,6 +353,7 @@ document { (AnnFs, RingElement),
      representation of the localization of ", 
      EM {"k[x", SUB "1", ",...,x", SUB "n", "]"}, " at ", EM "f", ".",
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
      	  "R = QQ[x_1..x_4, z, d_1..d_4, Dz, ", 
 	  "       WeylAlgebra => (toList(1..4)/(i -> (x_i=>d_i)) | {z=>Dz})]",
      	  "f = x_1 + x_2 * z + x_3 * z^2 + x_4 * z^3",
@@ -375,6 +383,7 @@ document { (AnnIFs, Ideal, RingElement),
 	  "J" => {"the annihilating ideal"}
 	  },
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
 	  "W = QQ[x,dx, WeylAlgebra=>{x=>dx}]",
 	  "AnnIFs (ideal dx, x^2)"
 	  }, 
@@ -437,6 +446,7 @@ document { (localCohom, Ideal),
 	       }
 	  },
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
      	  "h = localCohom I",
@@ -454,6 +464,7 @@ document { (localCohom, List, Ideal),
 	  },
      "See ", TO "localCohom Ideal", " for the full description.",
      EXAMPLE { 
+	  ///needs "D-modules.m2"///,
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
      	  "h = localCohom({1,2}, I)",
@@ -469,6 +480,7 @@ document { (localCohom, ZZ, Ideal),
 	  },
      "See ", TO "localCohom Ideal", " for the full description.",
      EXAMPLE { 
+	  ///needs "D-modules.m2"///,
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
 	  "h = localCohom (2,I)",
@@ -540,6 +552,7 @@ document { (localCohom, Ideal, Module),
 	       }
 	  },
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
      	  "h = localCohom(I, W^1 / ideal{dX,dY,dZ})",
@@ -558,6 +571,7 @@ document { (localCohom, ZZ, Ideal, Module),
 	  },     
      "See ", TO "localCohom(Ideal,Module)", " for the full description.",
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
 	  "h = localCohom(2, I, W^1 / ideal{dX,dY,dZ})",
@@ -575,6 +589,7 @@ document { (localCohom, List, Ideal, Module),
 	  },     
      "See ", TO "localCohom(Ideal,Module)", " for the full description.",
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
 	  "W = QQ[X, dX, Y, dY, Z, dZ, WeylAlgebra=>{X=>dX, Y=>dY, Z=>dZ}]",
      	  "I = ideal (X*(Y-Z), X*Y*Z)",
 	  "h = localCohom({1,2}, I, W^1 / ideal{dX,dY,dZ})",
@@ -601,6 +616,7 @@ document { (paramBpoly, RingElement, String),
      "Also the file <filename.tex> that contains the list of 
      the BS-polynomials and the corresponding constructible sets.",
      EXAMPLE {
+	  ///needs "D-modules.m2"///,
 	  "A =  (QQ [a,b,c]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]",
      	  "paramBpoly(a*x^2 + b*x*y + c*y^2, \"quadratic\")"
 	  },
@@ -625,6 +641,7 @@ document { (makeCyclic,Matrix),
 	       of this generator"} 
 	  },
      EXAMPLE{
+	  ///needs "D-modules.m2"///,
 	  "W = QQ[x, dx, WeylAlgebra => {x=>dx}]",
 	  "M = matrix {{dx,0,0},{0,dx,0},{0,0,dx}} -- coker M = QQ[x]^3", 
 	  "h = makeCyclic M"

@@ -145,9 +145,10 @@ markLoaded := (filename,origfilename) -> (
      loaded#origfilename = true; 
      if notify then (
 	  filename = canonicalFilename filename;
-	  if filename === origfilename
-	  then stderr << "--loaded " << filename << endl
-	  else stderr << "--loaded " << origfilename << " from " << filename << endl
+	  -- if filename === origfilename
+	  -- then stderr << "--loaded " << filename << endl
+	  -- else stderr << "--loaded " << origfilename << " from " << filename << endl
+	  stderr << "--loaded " << filename << endl
 	  );
      )
 

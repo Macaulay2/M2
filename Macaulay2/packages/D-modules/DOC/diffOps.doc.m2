@@ -1,3 +1,5 @@
+needs "D-modules.m2"
+
 document { symbol diffOps,
      TT "diffOps (I, k)", " -- 
      compute differential operators of order less than or equal to k 
@@ -25,6 +27,7 @@ document { symbol diffOps,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "R = QQ[x,y,z]",
      EXAMPLE "I = ideal(x^2-y*z)", 
      EXAMPLE "diffOps(I, 3)",
@@ -47,6 +50,7 @@ document { symbol putWeylAlgebra,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "R = QQ[x,y,z]",
      EXAMPLE "I = ideal(x^2-y*z)", 
      EXAMPLE "m = diffOps(I, 3)",

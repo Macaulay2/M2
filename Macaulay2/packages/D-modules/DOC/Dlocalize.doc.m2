@@ -1,3 +1,5 @@
+needs "D-modules.m2"
+
 document { symbol Dlocalize,
      TT "Dlocalize (M, f)", " -- 
      compute the localization of the D-module M with respect to the
@@ -37,6 +39,7 @@ document { symbol Dlocalize,
 
      PARA,
      "A simple example:",
+     EXAMPLE ///needs "D-modules.m2"///,
      EXAMPLE "W = QQ[x,y,Dx,Dy, WeylAlgebra => {x=>Dx,y=>Dy}]",
      EXAMPLE "M = W^1/(ideal(x*Dx+1, Dy))", 
      EXAMPLE "f = x^2-y^3",
