@@ -12,8 +12,7 @@ VPATH = @srcdir@
 ############################################################
 .PHONY : clean all install
 YFLAGS := -vdlt
-LDLIBS += -lm -lgc
-LDLIBS += $(LIBS)
+LOADLIBES += -lm -lgc
 CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h
 OFILES := $(CNAMES:.c=.o) grammar.o
@@ -22,7 +21,7 @@ CPPFLAGS += -I../../include
 CPPFLAGS += -I@srcdir@
 ############################## compiling
 scc1 : $(OFILES)
-	$(LINK.o) $^ $(LDLIBS) $(OUTPUT_OPTION)
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 $(OFILES) : $(HFILES)
 grammar.o : grammar.c; $(CC) $(CPPFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## miscellaneous

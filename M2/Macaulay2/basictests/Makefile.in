@@ -24,7 +24,7 @@ ARGS := --silent --stop --no-loaddata --no-setup -e 'srcdir = "@srcdir@/"'
 clean  :	
 	rm -f *.okay
 
-LDLIBS += -lgc
+LOADLIBES += -lgc
 all:: testgc
 	./testgc
 
