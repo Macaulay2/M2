@@ -52,7 +52,8 @@ public:
   void poppem(int n=1)
     // Remove the top n elements from the stack, freeing them.
     {
-      n = min(n, sp+1);
+      if (sp+1 < n)
+        n = sp+1;
       for (int i=0; i<n; i++) remove();
     }
 

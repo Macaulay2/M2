@@ -68,6 +68,23 @@ enum class_identifier {
 
   CLASS_RingMap,
 
+  CLASS_ECoefficientRing,
+  CLASS_EZZ,
+  CLASS_EZZp,
+  CLASS_EMonomialOrder,
+  CLASS_EMonoid,
+  CLASS_ECommMonoid,
+  CLASS_ENCMonoid,
+  CLASS_EPolynomialRing,
+  CLASS_ECommPolynomialRing,
+  CLASS_EWeylAlgebra,
+  CLASS_ESkewCommPolynomialRing,
+  CLASS_ENCPolynomialRing,
+  CLASS_EFreeModule,
+  CLASS_EVector,
+  CLASS_EMatrix,
+  CLASS_ERingMap,
+
 #if defined(ARING)
   CLASS_APolynomialRing,
   CLASS_APolynomial,
@@ -107,6 +124,15 @@ enum type_identifier {
   TY_ARingElement,
   TY_AVector,
 #endif
+    TY_ECoefficientRing,
+    TY_EMonomialOrder,
+    TY_EMonoid,
+    TY_ERing,
+    TY_EVector,
+    TY_EFreeModule,
+    TY_EMatrix,
+    TY_ERingMap,
+
     TY_SparseMutableMatrix,
     TY_MatrixComputation,
     TY_COMP, 
@@ -212,6 +238,21 @@ class PolynomialRing;
 class Polynomial;
 #endif
 
-
+class ECoefficientRing;
+  class EZZp;
+class EMonomialOrder;
+class EMonoid;
+  class ECommMonoid;
+  class ENCMonoid;
+class EPolynomialRing;
+  class ECommPolynomialRing;
+  class EWeylAlgebra;
+  class ESkewCommPolynomialRing;
+  class ENCPolynomialRing;
+class EFreeModule;
+class EVector;
+class ERingMap;
+class EMatrix;
+class EGB;
 #endif
 

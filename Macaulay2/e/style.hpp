@@ -44,6 +44,8 @@ inline void swap(T &t1, T &t2)
 }
 //#endif
 
+typedef unsigned long int uint32;
+
 const int LT = -1;
 const int EQ = 0;
 const int GT = 1;

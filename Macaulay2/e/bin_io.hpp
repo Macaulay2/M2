@@ -4,6 +4,7 @@
 
 #include "style.hpp"
 
+
 void bin_mpz_out(buffer &o, mpz_t n);
 void bin_mpz_in(mpz_t result, char *&s, int &len);
 

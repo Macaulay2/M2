@@ -7,9 +7,11 @@ AssociatedPrimes::AssociatedPrimes(const MonomialIdeal &I)
     min_codim(I.Ring_of()->n_vars()+1),
     nvars(I.Ring_of()->n_vars()),
     mi(I.radical()),
-    ass_primes(I.Ring_of()),
-    exps()
+    ass_primes(I.Ring_of())
 {
+  exps = new int *[nvars+1];
+  for (int i=0; i<=nvars; i++)
+    exps[i] = 0;
 }
 
 AssociatedPrimes::AssociatedPrimes(const MonomialIdeal &I, int cod)
@@ -17,17 +19,24 @@ AssociatedPrimes::AssociatedPrimes(const MonomialIdeal &I, int cod)
     min_codim(cod),
     nvars(I.Ring_of()->n_vars()),
     mi(I.radical()),
-    ass_primes(I.Ring_of()),
-    exps()
+    ass_primes(I.Ring_of())
 {
+  exps = new int *[nvars+1];
+  for (int i=0; i<=nvars; i++)
+    exps[i] = 0;
+}
+AssociatedPrimes::~AssociatedPrimes()
+{
+  for (int i=0; i<=nvars; i++)
+    if (exps[i] != 0) delete [] exps[i];
+  delete [] exps;
 }
 
 int AssociatedPrimes::codimension()
 {
-  exps.shrink(0);
-  int *exp = exps.alloc(nvars);
-  for (int i=0; i<nvars; i++) exp[i] = 0;
-  ass_prime_generator(mi.first_node(), exp, 0);
+  exps[0] = new int[nvars];
+  for (int i=0; i<nvars; i++) exps[0][i] = 0;
+  ass_prime_generator(mi.first_node(), 0);
   state = do_primes;
   return min_codim;
 }
@@ -42,10 +51,9 @@ MonomialIdeal AssociatedPrimes::associated_primes()
       codimension();
       state = do_primes;
     }
-  exps.shrink(0);
-  int *exp = exps.alloc(nvars);
-  for (int i=0; i<nvars; i++) exp[i] = 0;
-  ass_prime_generator(mi.first_node(), exp, 0);
+  if (exps[0] == 0) exps[0] = new int[nvars];
+  for (int i=0; i<nvars; i++) exps[0][i] = 0;
+  ass_prime_generator(mi.first_node(), 0);
   return ass_primes;
 }
 
@@ -79,11 +87,13 @@ static void to_prime_ideal(int n, int *exp)
       exp[i] = 0;
 }
 
-void AssociatedPrimes::ass_prime_generator(Nmi_node *p, 
-					   const int *exp1, int codim)
+void AssociatedPrimes::ass_prime_generator(Nmi_node *p, int codim)
 {
-  int *exp = exps.alloc(nvars);
-  for (int i=0; i<nvars; i++) exp[i] = exp1[i];
+  int i=codim+1;
+  if (exps[i] == 0)
+    exps[i] = new int[nvars];
+  int *exp = exps[i];
+  for (int j=0; j<nvars; j++) exp[j] = exps[codim][j];
   for (;;)
     {
       if (p == NULL)
@@ -113,7 +123,7 @@ void AssociatedPrimes::ass_prime_generator(Nmi_node *p,
 	      if (exp[i.var()] == 0)
 		{
 		  exp[i.var()] = 1 ;
-		  ass_prime_generator(mi.next(p), exp, codim+1) ;
+		  ass_prime_generator(mi.next(p), codim+1) ;
 		  exp[i.var()] = -1 ;
 		}
 	  return ;

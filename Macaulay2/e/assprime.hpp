@@ -20,13 +20,14 @@ class AssociatedPrimes
 				// whose generators are the variables occuring
 				// in the monomial.
 
-  intarray exps;
+  int **exps;
 
-  void ass_prime_generator(Nmi_node *p, const int *exp, int codim);
+  void ass_prime_generator(Nmi_node *p, int codim);
 
 public:
   AssociatedPrimes(const MonomialIdeal &mi);
   AssociatedPrimes(const MonomialIdeal &mi, int codim);
+  ~AssociatedPrimes();
 
   int codimension();
   MonomialIdeal associated_primes();

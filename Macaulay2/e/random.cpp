@@ -8,6 +8,7 @@
 
 #include "random.hpp"
 #include "Z.hpp"
+#include "relem.hpp"
 
 extern Z *ZZ;
 long Random::seed;
