@@ -641,14 +641,17 @@ setupfun("fileWidth",fileWidth);
 
 horizontalJoin(s:Sequence):Expr := (
      s = deepsplice(s);
+     ln := 0;
      foreach f at i in s do (
 	  when f 
-	  is n:Net do nothing
-	  is s:string do nothing
-	  else return(WrongArg(i+1,"a net or string")));
-     v := new array(Net) len length(s) do (
+	  is Nothing do nothing
+	  is n:Net do (ln = ln + 1;)
+	  is s:string do (ln = ln + 1;)
+	  else return(WrongArg(i+1,"a net, string, or null")));
+     v := new array(Net) len ln do (
 	  foreach f in s do (
 	       when f 
+	       is Nothing do nothing
 	       is n:Net do provide n
 	       is s:string do provide toNet(s)
 	       else nothing));
@@ -659,19 +662,23 @@ horizontalJoin(e:Expr):Expr := (
      is s:List do horizontalJoin(s.v)
      is n:Net do e
      is s:string do Expr(toNet(s))
+     is Nothing do horizontalJoin(emptySequence)
      else WrongArg("a net, a string, or a list or sequence of nets and strings"));
 setupfun("horizontalJoin",horizontalJoin);
 
 stack(s:Sequence):Expr := (
      s = deepsplice(s);
+     ln := 0;
      foreach f at i in s do (
 	  when f 
-	  is n:Net do nothing
-	  is s:string do nothing
-	  else return(WrongArg("a list of nets or strings")));
-     v := new array(Net) len length(s) do (
+	  is Nothing do nothing
+	  is n:Net do (ln = ln + 1;)
+	  is s:string do (ln = ln + 1;)
+	  else return(WrongArg(i+1,"a net, string, or null")));
+     v := new array(Net) len ln do (
 	  foreach f in s do (
 	       when f 
+	       is Nothing do nothing
 	       is n:Net do provide n
 	       is s:string do provide toNet(s)
 	       else nothing));
@@ -682,6 +689,7 @@ stack(e:Expr):Expr := (
      is s:List do stack(s.v)
      is n:Net do e
      is s:string do Expr(toNet(s))
+     is Nothing do stack(emptySequence)
      else WrongArg("a sequence of nets and strings"));
 setupfun("stack",stack);
 

@@ -26,10 +26,13 @@ toString Sequence := s -> (
      )
 toString Command := toExternalString Command := f -> if Symbols#?f then string Symbols#f else "--Command--"
 
-fm := (fn,li,co) -> concatenate("--Function[", fn, ":", toString li, ":", toString co, "]--")
 net Function := toString Function := f -> (
      if Symbols#?f then string Symbols#f 
-     else try fm locate f else "--Function--"
+     else (
+	  l := locate f;
+	  if l === null then "--Function--" 
+	  else ((fn,li,co) -> concatenate("--Function[", fn, ":", toString li, ":", toString co, "]--")) l
+	  )
      )
 
 toExternalString Manipulator := toString Manipulator := f -> if Symbols#?f then string Symbols#f else "--Manipulator--"

@@ -311,13 +311,8 @@ document { ",",
 	  }
      }
 
-document { (apply,List,Function), HEADLINE "apply function to each element",
-     TT "apply(v,f)", " -- applies the function ", TT "f", " to each element of the 
-     list ", TT "v", ", returning the list of results.",
-     EXAMPLE "apply({1,3,5,7}, i->i^2)",
-     SEEALSO {(symbol /,List, Function), (symbol \, Function, List)}
-     }
-document { (apply,List,List,Function), HEADLINE "apply function to elements in pairs",
+document { (apply,BasicList,BasicList,Function),
+     HEADLINE "apply function to elements in pairs",
      TT "apply(v,w,f)", " -- produces, from lists ", TT "v", " and ", TT "w", ",
      a list ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
      by evaluating ", TT "f(v_i,w_i)", ".  If ", TT "v", " and ", TT "w", " are
@@ -329,24 +324,13 @@ document { (apply,BasicList,Function), HEADLINE "apply function to each element"
      list ", TT "v", ", returning the list of results.  The result is of the same
      class, for example, ", TO "Array", ".",
      EXAMPLE "apply([1,3,5,7], i->i^2)",
+     SEEALSO {(symbol /,VisibleList, Function), (symbol \, Function, VisibleList)}
      }
 document { (apply,HashTable,Function), HEADLINE "apply function to each value",
      TT "apply(x,f)", " -- produces a new hash table ", TT "y", " from
      an hash table ", TT "x", " by applying the function
      ", TT "f", " to each of the values of ", TT "x", ".  This means that
      if ", TT "x#k === v", " then ", TT "y#k === f(v)", "."
-     }
-document { (apply,Sequence,Function), HEADLINE "apply function to each element",
-     TT "apply(v,f)", " -- applies the function ", TT "f", " to each element of the 
-     sequence ", TT "v", ", returning the list of results.",
-     EXAMPLE "apply((1,3,5,7), i->i^2)",
-     SEEALSO {(symbol /,Sequence, Function), (symbol \, Function, Sequence)}
-     }
-document { (apply,Sequence,Sequence,Function), HEADLINE "apply function to elements in pairs",
-     TT "apply(v,w,f)", " -- produces, from sequences ", TT "v", " and ", TT "w", ",
-     a sequencs ", TT "z", " in which the i-th element ", TT "w_i", " is obtained
-     by evaluating ", TT "f(v_i,w_i)", ".",
-     EXAMPLE "apply((1,2,3),(a,b,c), identity)"
      }
 document { (apply,ZZ,Function), HEADLINE "apply function to 0 .. n-1",
      TT "apply(n,f)", " -- applies the function ", TT "f", " to each integer

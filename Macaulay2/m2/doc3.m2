@@ -297,7 +297,8 @@ document { net, "convert to net",
 	  }
      }
 
-document { horizontalJoin, HEADLINE "join nets or strings horizontally",
+document { horizontalJoin,
+     HEADLINE "join nets or strings horizontally",
      TT "horizontalJoin(m,n,...)", " -- joins nets or strings by concatenating
      them horizontally.  The baselines in each of the nets are aligned
      appropriately.",
@@ -306,10 +307,13 @@ document { horizontalJoin, HEADLINE "join nets or strings horizontally",
      PARA,
      "If there are no arguments, then the net returned has zero height and
      zero depth.  This might be unexpected.",
+     PARA,
+     "Null arguments are allowed and ignored.",
      SEEALSO {"Net", (symbol |, String, String)}
      }
 
-document { stack, HEADLINE "join nets or string vertically",
+document { stack,
+     HEADLINE "join nets or string vertically",
      TT "stack(m,n,...)", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the
      first argument.",
@@ -321,6 +325,8 @@ document { stack, HEADLINE "join nets or string vertically",
      PARA,
      "Tab characters in any of the strings are first expanded into spaces,
      assuming tab stops at every eighth column.",
+     PARA,
+     "Null arguments are allowed and ignored.",
      SEEALSO { (symbol ||, Net, Net)}
      }
 

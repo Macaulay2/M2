@@ -32,7 +32,9 @@ AssociativeNoOptions := () -> (
 	  -- Common code for every associative method without options
 	  f := lookup(methodFunction,class x,class y);
 	  if f === null then noMethod(x,y)
-	  else f(x,y));
+	  else f(x,y)
+	  )
+     ;
      methodFunction(Sequence) := self := 
      args -> (
 	  -- Common code for every associative method without options
@@ -41,31 +43,42 @@ AssociativeNoOptions := () -> (
 	  else if #args === 1 then args#0
 	  else if #args === 0 then noMethod args
 	  else error "wrong number of arguments"
-	  );
+	  )
+     ;
      methodFunction)
 
 SingleArgWithOptions := () -> (
      if class opts =!= OptionTable then opts = new OptionTable from opts;
-     methodFunction := opts ==> options -> args -> (
+     methodFunction := opts ==> 
+     options -> arg -> (
 	  -- Common code for every method with options, single argument
-	  f := lookup(methodFunction, class args);
-	  if f === null then noMethod args
-	  else (f options) args );
+	  f := lookup(methodFunction, class arg);
+	  if f === null then noMethod arg
+	  else (f options) arg
+	  )
+     ;
      methodFunction)
 
 AssociativeWithOptions := opts -> error "associative methods with options not implemented yet"
 
 MultipleArgsWithOptions := opts -> (
      if class opts =!= OptionTable then opts = new OptionTable from opts;
-     methodFunction := opts ==> options -> args -> (
+     methodFunction := opts ==> 
+     options -> arg -> (
+	  -- Common code for methods with options, multiple arguments.
+	  -- Dispatches on type of argument.
+	  f := lookup(methodFunction, class arg);
+	  if f === null then noMethod arg else (f options) arg
+	  )
+     ;
+     methodFunction(Sequence) := 
+     options -> args -> (
 	  -- Common code for every method with options, multiple arguments
-	  f := lookup(methodFunction, class args);
-	  if f === null then noMethod args
-	  else (f options) args);
-     methodFunction(Sequence) := options -> args -> (
-	  -- Common code for every method with options, multiple arguments
+	  -- Dispatches on type of arguments ('args' is a sequence).
 	  f := lookup prepend(methodFunction,apply(args,class));
-	  if f === null then noMethod args else (f options) args);
+	  if f === null then noMethod args else (f options) args
+	  )
+     ;
      methodFunction)
 
 MultipleArgsNoOptions := () -> (

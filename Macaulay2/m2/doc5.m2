@@ -274,14 +274,7 @@ document { memoize,
      as soon as they might have been.  If the arguments are
      implemented as mutable hash tables (modules, matrices and rings are
      implemented this way) then a viable strategy is to stash computed
-     results in the arugments themselves!",
-     SEEALSO "original"
-     }
-
-document { original,
-     TT "original f", " -- provides the original function from which the
-     memoized function ", TT "f", " was made.",
-     SEEALSO "memoize"
+     results in the arugments themselves!"
      }
 
 TEST "
@@ -302,12 +295,6 @@ f 1
 f 2
 f 3
 assert( a == 3 )
-f = memoize original f
-f 3
-f 4
-f 5
-f 6
-assert( a == 7 )
 "
 
 document { (symbol _, Tally, Thing),     

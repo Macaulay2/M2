@@ -2,6 +2,11 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+'stack' and 'horizontalJoin' will now silently accept 'null' an argument
+
+'locate' now will return 'null' instead of giving an error for a compiled function
+or symbol
+
 New class VisibleList.  List, Sequence, and Array are now types of VisibleList.
 Functions fold, accumulate, and methods List / Function, Function \ List, are
 extended to work with VisibleLists.

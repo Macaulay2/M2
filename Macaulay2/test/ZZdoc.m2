@@ -20,7 +20,7 @@ haderror := false
 
 warning := (sym,msg) -> (
      haderror = true;
-     r := try locate sym else null;
+     r := locate sym;
      if r === null then (
 	  stderr << "error: " << msg << endl;
 	  )
