@@ -274,7 +274,7 @@ cmdinst.hpp : misc/cmdinst.awk misc/cmdnames.input
 tags:: TAGS
 
 TAGS: $(HHFILES) $(CCFILES)
-	etags *.hpp *.cpp *.c
+	etags $^
 
 clean::
 	rm -f *.lo *.o *.dd *.ii $(LIB) allfiles cmdinst.hpp cmdnames.hpp cmdnames.m2
@@ -284,7 +284,7 @@ Makefile : Makefile.in
 	cd ../..; ./config.status Macaulay2/e/Makefile
 
 Makefile-o.depends: $(CFILES) $(CCFILES) cmdnames.hpp cmdinst.hpp
-	$(CC) -M $(CPPFLAGS) $(patsubst %, @srcdir@/%, $(CFILES) $(CCFILES)) >"$@"
+	$(CC) -MM $(CPPFLAGS) $(patsubst %, @srcdir@/%, $(CFILES) $(CCFILES)) >"$@"
 clean::; rm -f Makefile-o.depends
 
 ifndef NODEPENDS

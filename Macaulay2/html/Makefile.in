@@ -1,54 +1,57 @@
 include ../../config.Makefile
-VPATH = @srcdir@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
 
-all :: up.gif next.gif previous.gif top.gif index.gif null.gif index.html
+all :: Macaulay2-button.scm \
+	up.gif next.gif previous.gif top.gif index.gif null.gif \
+	recbg.jpg 9planets.gif \
+	index.html
 
 # for gimp to find this *.scm file, put
 # (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts:/home/geometry/dan/src/M2/Macaulay2/html")
 # into ~/.gimp/gimprc
 
-# we include the .gif files below, so you don't need gimp
-up.gif : Macaulay2-button.scm
-	gimp -b "(Macaulay2-button \"Up\" \"up.gif\")"  -b '(gimp-quit 0)'
-next.gif : Macaulay2-button.scm
-	gimp -b "(Macaulay2-button \"Next\" \"next.gif\")"  -b '(gimp-quit 0)'
-previous.gif : Macaulay2-button.scm
-	gimp -b "(Macaulay2-button \"Previous\" \"previous.gif\")"  -b '(gimp-quit 0)'
-index.gif : Macaulay2-button.scm
-	gimp -b "(Macaulay2-button \"Index\" \"index.gif\")"  -b '(gimp-quit 0)'
-top.gif : Macaulay2-button.scm
-	gimp -b "(Macaulay2-button \"Top\" \"top.gif\")"  -b '(gimp-quit 0)'
-null.gif : Macaulay2-empty-button.scm
-	gimp -b "(Macaulay2-empty-button \"null.gif\")"  -b '(gimp-quit 0)'
+# the .gif files are part of the distribution, so you don't usually need gimp
+# that also explains why these make rules operate in the source directory!
+# and why setting VPATH would be bad
 
-index.html : html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
+# The following lines are commented out because gimp fails to execute my commands now.
+# Oh well, we have the gif files already.  Here is the error message from gimp:
+#   batch command: experienced an execution error.
+#   batch command: experienced an execution error.
+#   Gtk-CRITICAL **: file gtkmain.c: line 534 (gtk_main_quit): assertion `main_loops != NULL' failed.
+# Not very illuminating!  It's impossible to debug gimp code.
+# And after all that, it doesn't even give a nonzero return code.
+
+## @srcdir@/up.gif : @srcdir@/Macaulay2-button.scm
+## 	cd @srcdir@; gimp -b "(Macaulay2-button \"Up\" \"up.gif\")"  -b '(gimp-quit 0)'
+## @srcdir@/next.gif : @srcdir@/Macaulay2-button.scm
+## 	cd @srcdir@; gimp -b "(Macaulay2-button \"Next\" \"next.gif\")"  -b '(gimp-quit 0)'
+## @srcdir@/previous.gif : @srcdir@/Macaulay2-button.scm
+## 	cd @srcdir@; gimp -b "(Macaulay2-button \"Previous\" \"previous.gif\")"  -b '(gimp-quit 0)'
+## @srcdir@/index.gif : @srcdir@/Macaulay2-button.scm
+## 	cd @srcdir@; gimp -b "(Macaulay2-button \"Index\" \"index.gif\")"  -b '(gimp-quit 0)'
+## @srcdir@/top.gif : @srcdir@/Macaulay2-button.scm
+## 	cd @srcdir@; gimp -b "(Macaulay2-button \"Top\" \"top.gif\")"  -b '(gimp-quit 0)'
+## @srcdir@/null.gif : @srcdir@/Macaulay2-empty-button.scm
+## 	cd @srcdir@; gimp -b "(Macaulay2-empty-button \"null.gif\")"  -b '(gimp-quit 0)'
+
+ifneq "@srcdir@" "."
+up.gif : @srcdir@/up.gif ; cp $< $@
+next.gif : @srcdir@/next.gif ; cp $< $@
+previous.gif : @srcdir@/previous.gif ; cp $< $@
+index.gif : @srcdir@/index.gif ; cp $< $@
+top.gif : @srcdir@/top.gif ; cp $< $@
+null.gif : @srcdir@/null.gif ; cp $< $@
+recbg.jpg : @srcdir@/recbg.jpg ; cp $< $@
+9planets.gif : @srcdir@/9planets.gif ; cp $< $@
+endif
+
+index.html : @srcdir@/html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
 	rm -f ./*.html
 	../bin/M2 -q $< '-eexit(0)'
-view :
-	netscape index.html &
-clean ::
-	rm -f ./*.html
-allfiles : *.jpg *.gif html.m2 Makefile
-	echo $^ |tr ' ' \\012 >allfiles
-
-## wais - index the files for searching
-## install freeWAIS-sf-2.2.13 and SFgate-5.111 first
-wais:
-	waisindex \
-		-t URL "$(shell pwd)" "http://localhost/~dan/Macaulay2/html" \
-		-t fields \
-		-export \
-		-l 1 \
-		-d Macaulay2 \
-		-r "$(shell pwd)"
-	waisserver -p 2200 -l 1
-wais-service:
-	waisserver -p 2200 -l 1
-clean::
-	rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct
-
-distclean : clean
-	rm -f Makefile
+view:; netscape index.html &
+clean::; rm -f ./*.html
+clean::; rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct
+distclean: clean; rm -f Makefile

@@ -16,8 +16,8 @@ emacs html: all; $(MAKE) -C ../$@
 # CFLAGS =
 # LDFLAGS = -s
 # LOADLIBES =
-DUMPSEQUENCE = $(shell cat @srcdir@/dumpseq)
-DOCSEQUENCE = $(shell cat @srcdir@/docseq)
+DUMPSEQUENCE = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/dumpseq))
+DOCSEQUENCE  = $(patsubst %, @srcdir@/%, $(shell cat @srcdir@/docseq ))
 
 MADEM2FILES := gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2
 
@@ -32,13 +32,14 @@ cmdnames.m2 : ../e/cmdnames.m2; cp $< $@
 
 TUTORIALS := $(wildcard ../tutorial/final/*.out)
 
-DUMPEDM2FILES := $(DUMPSEQUENCE) setup.m2 $(MADEM2FILES)
+DUMPEDM2FILES := $(DUMPSEQUENCE) @srcdir@/setup.m2 $(MADEM2FILES)
 
 ifneq "$(DUMPDATA)" "no"
-DUMPEDM2FILES := $(DUMPEDM2FILES) dumpdata.m2
+DUMPEDM2FILES := $(DUMPEDM2FILES) @srcdir@/dumpdata.m2
 endif
 
-NONDOCM2FILES = setup.m2 $(DUMPSEQUENCE) dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2
+NONDOCM2FILES = @srcdir@/setup.m2 $(DUMPSEQUENCE) \
+	$(patsubst %, @srcdir@/%, dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2)
 
 wc:
 	wc -l $(DOCSEQUENCE)
@@ -81,36 +82,33 @@ gbfunctions.m2 : gbfuns.awk ../e/misc/cmdnames.input
 	awk -f $^ >tmp
 	mv tmp $@
 default:: TAGS.doc
-TAGS.doc : Makefile docseq
+TAGS.doc : docseq
 	@echo making $@
 	@../util/echoout '>$@' $(foreach i, $(DOCSEQUENCE),  $(i),0)
 clean::; rm -f TAGS.doc
 
 default:: TAGS
 clean::; rm -f TAGS
-TAGS: Makefile dumpseq
+TAGS: dumpseq
 	@echo making $@
 	@../util/echoout '>$@' $(foreach i, \
-			      $(M2FILES) $(MADEM2FILES) \
-			      $(wildcard ../html/*.m2 ../test/*.m2 ../book/*.m2 \
-				../basictests/*.m2 \
-				../emacs/makehlp.m2 \
-				../emacs/makem2.m2 \
-				../*/COPYRIGHT \
-				../emacs/makesyms.m2 \
-				../tutorial/prelim/*.m2 ../tutorial/final/*.m2 \
-				../packages/*.m2 \
-				../packages/*/*.m2 \
-				../*/Makefile* \
-			        ../slides/*.m2 \
-			        ../slides/lib/*.m2 \
-				../Vasconcelos-appendix/eg.m2 \
-				../Vasconcelos-appendix/appendix.tex \
-				../Vasconcelos-appendix/cohomology.tex \
-				../Vasconcelos-appendix/elementary.tex \
-				../Vasconcelos-appendix/introduction.tex \
-				../examples/*.m2 ../schubert/*.m2 \
-				../CHANGES), \
+			      $(M2FILES) \
+			      $(wildcard \
+				@srcdir@/*.awk \
+				@srcdir@/../basictests/*.m2 \
+				@srcdir@/../test/*.m2 \
+				@srcdir@/../html/*.m2 \
+				@srcdir@/../book/*.m2 \
+				@srcdir@/../packages/*.m2 \
+				@srcdir@/../packages/*/*.m2 \
+				@srcdir@/../emacs/makehlp.m2 \
+				@srcdir@/../emacs/makem2.m2 \
+				@srcdir@/../*/COPYRIGHT \
+				@srcdir@/../emacs/makesyms.m2 \
+				@srcdir@/../tutorial/prelim/*.m2 \
+				@srcdir@/../tutorial/final/*.m2 \
+				@srcdir@/../*/Makefile* \
+				@srcdir@/../CHANGES), \
 			       $(i),0)
 
 phase1 :: $(DUMPEDM2FILES)

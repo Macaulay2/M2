@@ -2908,9 +2908,9 @@ EOF
 
 ac_config_headers="$ac_config_headers include/config.h"
 
-CONFIGURED_FILES="config.Makefile Makefile Macaulay2/Makefile Macaulay2/m2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/c2/Makefile Macaulay2/d/Makefile Macaulay2/dbm/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/emacs/Makefile Macaulay2/html/Makefile Macaulay2/packages/Makefile Macaulay2/packages/ComputationsBook/Makefile Macaulay2/schubert/Makefile Macaulay2/slides/Makefile Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/setup Macaulay2/util/Makefile "
+CONFIGURED_FILES="config.Makefile Makefile Macaulay2/Makefile Macaulay2/m2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/d/Makefile Macaulay2/dbm/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/emacs/Makefile Macaulay2/html/Makefile Macaulay2/packages/Makefile Macaulay2/packages/ComputationsBook/Makefile Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/setup Macaulay2/util/Makefile "
 
-ac_config_files="$ac_config_files config.Makefile Makefile Macaulay2/Makefile Macaulay2/m2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/c2/Makefile Macaulay2/d/Makefile Macaulay2/dbm/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/emacs/Makefile Macaulay2/html/Makefile Macaulay2/packages/Makefile Macaulay2/packages/ComputationsBook/Makefile Macaulay2/schubert/Makefile Macaulay2/slides/Makefile Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/setup Macaulay2/util/Makefile"
+ac_config_files="$ac_config_files config.Makefile Makefile Macaulay2/Makefile Macaulay2/m2/Makefile Macaulay2/basictests/Makefile Macaulay2/book/Makefile Macaulay2/c/Makefile Macaulay2/d/Makefile Macaulay2/dbm/Makefile Macaulay2/dumpdata/Makefile Macaulay2/e/Makefile Macaulay2/emacs/Makefile Macaulay2/html/Makefile Macaulay2/packages/Makefile Macaulay2/packages/ComputationsBook/Makefile Macaulay2/test/Makefile Macaulay2/tutorial/Makefile Macaulay2/setup Macaulay2/util/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -3224,7 +3224,6 @@ do
   "Macaulay2/basictests/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/basictests/Makefile" ;;
   "Macaulay2/book/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/book/Makefile" ;;
   "Macaulay2/c/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/c/Makefile" ;;
-  "Macaulay2/c2/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/c2/Makefile" ;;
   "Macaulay2/d/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/d/Makefile" ;;
   "Macaulay2/dbm/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/dbm/Makefile" ;;
   "Macaulay2/dumpdata/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/dumpdata/Makefile" ;;
@@ -3233,14 +3232,12 @@ do
   "Macaulay2/html/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/html/Makefile" ;;
   "Macaulay2/packages/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/packages/Makefile" ;;
   "Macaulay2/packages/ComputationsBook/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/packages/ComputationsBook/Makefile" ;;
-  "Macaulay2/schubert/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/schubert/Makefile" ;;
-  "Macaulay2/slides/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/slides/Makefile" ;;
   "Macaulay2/test/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/test/Makefile" ;;
   "Macaulay2/tutorial/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/tutorial/Makefile" ;;
   "Macaulay2/setup" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/setup" ;;
   "Macaulay2/util/Makefile" ) CONFIG_FILES="$CONFIG_FILES Macaulay2/util/Makefile" ;;
   "include/config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS include/config.h" ;;
-  *) { { echo "$as_me:3243: error: invalid argument: $ac_config_target" >&5
+  *) { { echo "$as_me:3240: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
   esac
@@ -3477,7 +3474,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:3480: creating $ac_file" >&5
+    { echo "$as_me:3477: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -3495,7 +3492,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:3498: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:3495: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -3508,7 +3505,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:3511: error: cannot find input file: $f" >&5
+           { { echo "$as_me:3508: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -3569,7 +3566,7 @@ for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
   * )   ac_file_in=$ac_file.in ;;
   esac
 
-  test x"$ac_file" != x- && { echo "$as_me:3572: creating $ac_file" >&5
+  test x"$ac_file" != x- && { echo "$as_me:3569: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
 
   # First look for the input files in the build tree, otherwise in the
@@ -3580,7 +3577,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:3583: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:3580: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -3593,7 +3590,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:3596: error: cannot find input file: $f" >&5
+           { { echo "$as_me:3593: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;
@@ -3710,7 +3707,7 @@ cat >>$CONFIG_STATUS <<\EOF
   rm -f $tmp/in
   if test x"$ac_file" != x-; then
     if cmp -s $ac_file $tmp/config.h 2>/dev/null; then
-      { echo "$as_me:3713: $ac_file is unchanged" >&5
+      { echo "$as_me:3710: $ac_file is unchanged" >&5
 echo "$as_me: $ac_file is unchanged" >&6;}
     else
       ac_dir=`$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \

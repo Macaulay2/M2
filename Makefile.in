@@ -2,13 +2,17 @@
 
 # Targets to use:
 #	all:	make a binary distribution
+#	check:  run the tests
 #	justM2:	make Macalay2/libexec/Macaulay2 and Macaulay2/bin/M2, and set up
 #               for running it
 #	doc:	make the documentation
-#	port:   make a porting source distribution
-#	testport: test the porting source distribution in tmp/Macaulay2
-# The default is 'all' and 'doc'.
 
+#############################################################################
+ifdef XYZZY
+  If you get an error message on this line, it is because you are not using
+  the 'gnu' version of the 'make' program.  The source code for it is
+  available at ftp://ftp.gnu.org/pub/gnu/make.
+endif
 #############################################################################
 include config.Makefile
 top_srcdir = @top_srcdir@
