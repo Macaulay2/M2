@@ -40,4 +40,7 @@ endif
 INFILES = $(wildcard *.m2)
 OUTFILES = $(INFILES:.m2=.out)
 
+all:: sample
+sample : ../../packages/sample; cp $< $@
+
 all:: $(OUTFILES)

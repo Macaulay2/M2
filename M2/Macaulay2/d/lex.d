@@ -118,7 +118,7 @@ getstringslashes(o:PosFile):(null or Word) := (
      getc(o);		  -- pass '/'
      pos := copy(o.pos);
      hadnewline := false;
-     tokenbuf << '"';
+     tokenbuf << '\"';
      while true do (
 	  ch := getc(o);
 	  if ch == EOF 
@@ -132,7 +132,7 @@ getstringslashes(o:PosFile):(null or Word) := (
 	       && peek(o,0) == int('/') 
 	       && peek(o,1) == int('/')
 	       ) then break;
-	  if ch == int('"') || ch == int('\\') then tokenbuf << '\\';
+	  if ch == int('\"') || ch == int('\\') then tokenbuf << '\\';
      	  tokenbuf << char(ch);
 	  if isnewline(ch) && hadnewline && isatty(o) then (
 	       return(NULL);	  -- user gets out with an extra NEWLINE
@@ -141,7 +141,7 @@ getstringslashes(o:PosFile):(null or Word) := (
 	  );
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
-     tokenbuf << '"';
+     tokenbuf << '\"';
      s := takestring(tokenbuf);
      Word(s,TCstring,0,parseWORD));
 getstring(o:PosFile):(null or Word) := (

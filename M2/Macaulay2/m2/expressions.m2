@@ -23,6 +23,45 @@ endsWithIdentifier := s -> (
 	  ) do n = n - 1;
      letters#?c)
 
+-----------------------------------------------------------------------------
+
+HeaderType = new Type of Type
+HeaderType List := (T,z) -> new T from z
+HeaderType Sequence := (T,z) -> new T from toList z
+
+document { quote HeaderType,
+     TT "HeaderType", " -- the class of all types ", TT "X", " of lists which can be
+     constructed by expressions of the form ", TT "X {a,b,c,...}", ".  They
+     also act on sequences.",
+     PARA,
+     EXAMPLE {
+	  "X = new HeaderType of BasicList",
+	  "X {a,b,c}"
+	  },
+     SEEALSO {"WrapperType", "SelfInitializingType"}
+     }
+
+WrapperType = new Type of Type
+WrapperType List := (T,z) -> new T from z
+WrapperType Sequence := (T,z) -> new T from toList z
+WrapperType Thing := (T,z) -> new T from {z}
+
+document { quote WrapperType,
+     TT "WrapperType", " -- the class of all types ", TT "X", " of lists which can be
+     constructed by expressions of the form ", TT "X {a,b,c,...}", ", or, for lists
+     of length one, by an expression of the form ", TT "X a", ".  They also act
+     on sequences.",
+     PARA,
+     EXAMPLE {
+	  "X = new WrapperType of BasicList",
+	  "X {a,b,c}",
+	  "X a"
+	  },
+     SEEALSO {"HeaderType", "SelfInitializingType"}
+     }
+
+-----------------------------------------------------------------------------
+
 Expression = new Type of BasicList
 expression Expression := identity
 Expression#operator = ""
@@ -64,37 +103,6 @@ name Expression := v -> (
      if # v === 0 then op#EmptyName
      else concatenate between(op#operator,names)
      )
-
-HeaderType = new Type of Type
-HeaderType List := (T,z) -> new T from z
-
-document { quote HeaderType,
-     TT "HeaderType", " -- the class of all types ", TT "X", " of lists which can be
-     constructed by expressions of the form ", TT "X {a,b,c,...}", ".",
-     PARA,
-     EXAMPLE {
-	  "X = new HeaderType of BasicList",
-	  "X {a,b,c}"
-	  },
-     SEEALSO {"HeaderType", "SelfInitializingType"}
-     }
-
-WrapperType = new Type of Type
-WrapperType List := (T,z) -> new T from z
-WrapperType Thing := (T,z) -> new T from {z}
-
-document { quote WrapperType,
-     TT "WrapperType", " -- the class of all types ", TT "X", " of lists which can be
-     constructed by expressions of the form ", TT "X {a,b,c,...}", ", or, for lists
-     of length one, by an expression of the form ", TT "X a", ".",
-     PARA,
-     EXAMPLE {
-	  "X = new WrapperType of BasicList",
-	  "X {a,b,c}",
-	  "X a"
-	  },
-     SEEALSO {"WrapperType", "SelfInitializingType"}
-     }
 
 Holder = new WrapperType of Expression
 
@@ -438,6 +446,13 @@ name MatrixExpression := m -> concatenate(
      between(",",apply(m,row->("{", between(",",apply(row,name)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
+Table = new HeaderType of Expression
+value Table := x -> applyTable(toList x,value)
+name Table := m -> concatenate(
+     "Table {",
+     between(",",apply(m,row->("{", between(",",apply(row,name)), "}"))),
+     "}" )
+-----------------------------------------------------------------------------
 
 binary := new HashTable from {
      quote * => ((x,y) -> x*y),		  -- 
@@ -573,6 +588,7 @@ document { quote Expression,
 	  TO "Subscript",
 	  TO "Superscript",
 	  TO "Sum",
+	  TO "Table",
 	  TO "Unquote",
 	  TO "ZeroExpression",
 	  },
@@ -592,9 +608,22 @@ document { quote expression,
 document { quote Divide,
      TT "Divide", " -- a type of ", TO "Expression", " representing a quotient."
      }
+document { quote Table,
+     TT "Table", " -- a type of ", TO "Expression", " representing
+     a table, i.e., a list of lists of the same length.",
+     PARA,
+     EXAMPLE {
+	  ///Table {{a,b,c},{a,bb,ccc}}///,
+	  ///value oo///,
+	  },
+     SEEALSO {"MatrixExpression"}
+     }
 document { quote MatrixExpression,
      TT "MatrixExpression", " -- a type of ", TO "Expression", " representing
-     a matrix."
+     a matrix.",
+     PARA,
+     EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
+     SEEALSO {"Table"}
      }
 document { quote RowExpression,
      TT "RowExpression", " -- a type of ", TO "Expression", " representing
@@ -876,24 +905,21 @@ center := (s,wid) -> (
      n := width s;
      if n === wid then s
      else (
-     	  w := (wid-n+2)//2;
+     	  w := (wid-n+1)//2;
      	  horizontalJoin(spaces w,s,spaces(wid-w-n))))
 
+net Table := x -> (
+     x = applyTable(toList x, net);
+     w := apply(transpose x, col -> 2 + max apply(col, i -> width i));
+     verticalJoin between("",
+	  apply(x, row -> horizontalJoin apply(#row, j -> center(row#j,w#j)))))
+
 net MatrixExpression := x -> (
-     x = toList x;
      if # x === 0 or # (x#0) === 0 then "|  |"
      else (
-     	  x = applyTable(x, net);
-     	  w := apply(transpose x, 
-	       col -> 2 + max apply(col, i -> width i));
-	  m := verticalJoin between("",
-	       apply(#x,
-		    i -> (
-	       	    	 row := x#i;
-	       	    	 horizontalJoin apply(#row, j -> center(row#j,w#j)))));
-	  side := verticalJoin apply(height m + depth m, i -> "|");
-	  side = side^(height m - height side);
-	  horizontalJoin(side,m," ",side)))
+	  m := net Table toList x;
+	  side := "|" ^ (height m, depth m);
+	  horizontalJoin(side,m,side)))
 
 html MatrixExpression := x -> html TABLE toList x
 

@@ -324,6 +324,7 @@ document { quote HashTable,
 	  TO (NewFromMethod, HashTable, List),
 	  TO "scanKeys",
  	  TO "scanPairs",
+	  TO "scanValues",
 	  TO "select"
  	  },
      "Examining hash tables:",

@@ -15,6 +15,7 @@ Net | Net := horizontalJoin
 Net || Net := verticalJoin
 String ^ ZZ := (s,i) -> raise(horizontalJoin s,i)
 Net ^ ZZ := raise; erase quote raise
+String ^ Sequence := (s,p) -> ((height,depth) -> (verticalJoin apply(height+depth,i->s))^(height-1))(p)
 
 net Net := identity
 ---- this old routine draws a box around a net
