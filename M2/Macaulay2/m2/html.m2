@@ -63,19 +63,13 @@ next := tag -> if NEXT#?tag then LABEL { "Next node",     HREF { htmlFilename NE
 prev := tag -> if PREV#?tag then LABEL { "Previous node", HREF { htmlFilename PREV#tag, prevButton } } else nullButton
 up   := tag -> if   UP#?tag then LABEL { "Parent node",   HREF { htmlFilename   UP#tag,   upButton } } else nullButton
 
+linkTitle := tag -> concatenate( " title=\"", DocumentTag.FormattedKey tag, commentize headline tag, "\"" );
 links := tag -> SEQ {
      if tag =!= () then (
-	  fkey := DocumentTag.FormattedKey tag;
-	  h := concatenate(
-	       " title=\"",
-	       fkey,
-	       commentize headline tag,
-	       "\""
-	       );
 	  SEQ {
-	       if NEXT#?tag then LINK { htmlFilename NEXT#tag, " rel=\"Next\"",h },
-	       if PREV#?tag then LINK { htmlFilename PREV#tag, " rel=\"Previous\"",h },
-	       if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"",h }
+	       if NEXT#?tag then LINK { htmlFilename NEXT#tag, " rel=\"Next\"", linkTitle NEXT#tag},
+	       if PREV#?tag then LINK { htmlFilename PREV#tag, " rel=\"Previous\"", linkTitle PREV#tag},
+	       if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"", linkTitle UP#tag}
 	       }
 	  ),
      LINK { LAYOUT#"style" | "doc.css", " rel=\"stylesheet\" title=\"Macaulay 2 document\" type=\"text/css\"" }
