@@ -28,7 +28,6 @@ CCC.char = 0
 CCC.degreeLength = 0
 degree CCC := i -> {}
 
-conjugate = method(TypicalValue => CC)
 conjugate ZZ := identity
 conjugate QQ := identity
 conjugate RR := identity

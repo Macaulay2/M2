@@ -1,14 +1,132 @@
+--		Copyright 1996-2002,2004 by Daniel R. Grayson
+
+newPackage(
+	"SchurRings",
+    	Version => "1.0", 
+    	Date => "March 11, 2005",
+    	Author => "Michael Stillman and Hal Schenck",
+	Email => "mike@math.cornell.edu",
+    	HomePage => "http://www.math.cornell.edu/~mike/",
+    	Headline => "representation rings of general linear groups and of symmetric groups",
+    	DebuggingMode => true
+    	)
+
+export (schurRing, SchurRing, symmRing, plethysmMap, jacobiTrudiE, plethysm, cauchy, bott)
+
+debug Macaulay2
+
+SchurRing = new Type of EngineRing
+SchurRing.synonym = "Schur ring"
+expression SchurRing := S -> new FunctionApplication from { schurRing, (S.Symbol, numgens monoid S) }
+toExternalString SchurRing := R -> toString expression R
+toString SchurRing := R -> (
+     if ReverseDictionary#?R then toString ReverseDictionary#R
+     else toString expression R)
+net SchurRing := R -> (
+     if ReverseDictionary#?R then toString ReverseDictionary#R
+     else net expression R)
+
+coefficientRing SchurRing := Ring => R -> last R.baseRings
+
+newSchur := (R,M,p) -> (
+     if not (M.?Engine and M.Engine) 
+     then error "expected ordered monoid handled by the engine";
+     if not (R.?Engine and R.Engine) 
+     then error "expected coefficient ring handled by the engine";
+     RM := R M;
+     SR := new SchurRing from rawSchurRing(RM.RawRing);
+     SR.Symbol = p;
+     SR.baseRings = append(R.baseRings,R);
+     ONE := SR#1;
+     if degreeLength M != 0 then (
+	  -- there must be something smarter to do, but if we
+	  -- do not do this, then we get into an infinite loop
+	  -- because each monoid ring ZZ[a,b,c] needs its degrees ring
+	  -- ZZ[t], which in turn needs to make its degrees ring 
+	  -- ZZ[], which in turn needs one.
+	  SR.degreesRing = degreesRing degreeLength M;
+	  )
+     else (
+	  SR.degreesRing = ZZ;
+	  );
+     if R.?char then SR.char = R.char;
+     SR.monoid = M;
+     SR ? SR := (f,g) -> (
+	  if f == g then symbol ==
+	  else leadMonomial f ? leadMonomial g
+	  );
+     R * M := (r,m) -> new SR from rawTerm(SR.RawRing,raw r,m.RawMonomial);
+     M * R := (m,r) -> new SR from rawTerm(SR.RawRing,raw r,m.RawMonomial);
+     SR * M := (p,m) -> p * (R#1 * m);
+     M * SR := (m,p) -> (R#1 * m) * p;
+     R + M := (r,m) -> r * M#1 + R#1 * m;
+     M + R := (m,r) -> r * M#1 + R#1 * m;
+     SR + M := (p,m) -> p + R#1 * m;
+     M + SR := (m,p) -> p + R#1 * m;
+     R - M := (r,m) -> r * M#1 - R#1 * m;
+     M - R := (m,r) -> R#1 * m - r * M#1;
+     SR - M := (p,m) -> p - R#1 * m;
+     M - SR := (m,p) -> R#1 * m - p;
+     toExternalString SR := 
+     expression SR := f -> (
+	  (coeffs,monoms) -> sum(
+	       coeffs,monoms,
+	       (a,m) -> new Subscript from {p, (
+		    t := new MutableHashTable;
+		    apply(rawSparseListFormMonomial m, (x,e) -> scan(0 .. x, i -> if t#?i then t#i = t#i + e else t#i = e)); 
+		    toSequence values t
+		    )})
+	  ) rawPairs(raw R, raw f);
+     SR.generators = apply(M.generators, m -> SR#(toString m) = SR#0 + m);
+     scan(keys R,k -> if class k === String then SR#k = promote(R#k,SR));
+     SR.use = x -> (
+	  M + M := (m,n) -> R#1 * m + R#1 * n;
+	  M - M := (m,n) -> R#1 * m - R#1 * n;
+	  - M := (m,n) -> - R#1 * n;
+	  scan(SR.baseRings, A -> (
+	       if A =!= R then (
+		    A * M := (i,m) -> (i * R#1) * m;
+		    M * A := (m,i) -> m * (i * R#1);
+		    );
+	       A + M := (i,m) -> i * R#1 + m;
+	       M + A := (m,i) -> m + i * R#1;
+	       A - M := (i,m) -> i * R#1 - m;
+	       M - A := (m,i) -> m - i * R#1;
+	       M / A := (m,r) -> (m * ONE) / (r * ONE);
+	       M % A := (m,r) -> (m * ONE) % (r * ONE);
+	       ));
+	  SR);
+     -- leadMonomial R := f -> new M from rawLeadMonomial(n, f.RawRingElement); -- fix this?
+     SR
+     )
+
+ck := i -> if i < 0 then error "expected decreasing row lengths" else i
+
+schurRing = method ()
+schurRing(Symbol,ZZ) := SchurRing => (p,n) -> (
+     R := ZZ;
+     x := symbol x;
+     prune := v -> drop(v, - # select(v,i -> i === 0));
+     M := monoid[x_1 .. x_n];
+     vec := apply(n, i -> apply(n, j -> if j<=i then 1 else 0));
+     -- toString M := net M := x -> first lines toString x;
+     S := newSchur(R,M,p);
+     dim S := s -> rawSchurDimension raw s;
+     Mgens := M.generators;
+     methodTable#p = (p,a) -> (
+	  m := (
+	       if # a === 0 then 1_M
+	       else product(# a, i -> (Mgens#i) ^ (
+			 ck if i+1 < # a 
+			 then a#i - a#(i+1)
+			 else a#i)));
+	  new S from rawTerm(S.RawRing, raw 1, m.RawMonomial));
+     S)
+
+
 -- BUG in M2: R_0 .. R_n does not always give elements in the ring R!!
 -- workaround:
 varlist = (i,j,R) -> apply(i..j, p -> R_p)
-
-conjugate List := (lambda) -> (
-     if #lambda === 0 then {} else (
-     	  slot := #lambda-1;
-     	  for i from 1 to lambda#0 list (
-	       while lambda#slot < i do slot=slot-1;
-	       slot+1)
-     ))
 
 symmRings := new MutableHashTable;
 symmRing = (n) -> (
@@ -52,7 +170,6 @@ jacobiTrudiE = (lambda, R) -> (
 	       if p < 0 or p > R.dim then 0_R
 	       else if p == 0 then 1_R else R_(p-1))) -- R_(p-1) IS e_p
      )
-jt = jacobiTrudiE
 
 parts = (d, n) -> (
      -- d is an integer >= 0
@@ -156,23 +273,23 @@ plethysm(RingElement,RingElement) := (f,g) -> (
 plethysm(List,RingElement) := (lambda,g) -> (
      d := sum lambda;
      Rf := symmRing d;
-     f := jt(lambda,Rf);
+     f := jacobiTrudiE(lambda,Rf);
      plethysm(f,g))
 
-cauchy = (i,f,g) -> (
-     -- f and g are elements of symmRing's (possibly different)
-     -- compute the i th exterior power of the representation f ** g
-     P := partitions i;
-     n := (ring f).dim;
-     n' := (ring g).dim;
-     result := apply(P, lambda -> (
-	       if #lambda > n or lambda#0 > n' then null
-	       else (
-		    plethysm(lambda, f),
-	     	    plethysm(conjugate lambda, g))
-		    ));
-     select(result, x -> x =!= null)
-     )
+-- cauchy = (i,f,g) -> (
+--      -- f and g are elements of symmRing's (possibly different)
+--      -- compute the i th exterior power of the representation f ** g
+--      P := partitions i;
+--      n := (ring f).dim;
+--      n' := (ring g).dim;
+--      result := apply(P, lambda -> (
+-- 	       if #lambda > n or lambda#0 > n' then null
+-- 	       else (
+-- 		    plethysm(lambda, f),
+-- 	     	    plethysm(conjugate lambda, g))
+-- 		    ));
+--      select(result, x -> x =!= null)
+--      )
 
 cauchy = (i,f,g) -> (
      -- f and g are elements of symmRing's (possibly different)
@@ -395,14 +512,14 @@ toS toE toP PtoE(4,R)
 toS PtoE(4,R)
 PtoE(4,R)
 
-toS (jt({2,1},R))^2
+toS (jacobiTrudiE({2,1},R))^2
 R.Schur_{2,1}^2
 
-f = toS plethysm(jt({2},R), jt({2},R)) -- assert(f == {({4}, 1), ({2, 2}, 1)})
-f = toS plethysm(jt({3},R), jt({2},R)) -- assert(f == 
-f = toS plethysm(jt({2,1},R), jt({2},R)) -- assert(f == 
-f = toS plethysm(jt({1,1,1},R), jt({2},R)) -- assert(f == 
-toS (jt({1},R))^3
+f = toS plethysm(jacobiTrudiE({2},R), jacobiTrudiE({2},R)) -- assert(f == {({4}, 1), ({2, 2}, 1)})
+f = toS plethysm(jacobiTrudiE({3},R), jacobiTrudiE({2},R)) -- assert(f == 
+f = toS plethysm(jacobiTrudiE({2,1},R), jacobiTrudiE({2},R)) -- assert(f == 
+f = toS plethysm(jacobiTrudiE({1,1,1},R), jacobiTrudiE({2},R)) -- assert(f == 
+toS (jacobiTrudiE({1},R))^3
 ps2 = plethysm(e_2, e_1^2 - e_2)
 toP ps2
 toS ps2
@@ -426,11 +543,11 @@ plethysmMap(3,R)
 
 R10 = symmRing 10
 R = symmRing 3
-f = toS plethysm(jt({10},R10), jt({2},R)) -- assert(f == {({4}, 1), ({2, 2}, 1)})
+f = toS plethysm(jacobiTrudiE({10},R10), jacobiTrudiE({2},R)) -- assert(f == {({4}, 1), ({2, 2}, 1)})
 
 R = symmRing 5
-f = toS plethysm(jt({1,1},R), jt({2},R)) -- {3,1}
-f = toS plethysm(jt({1,1},R), jt({3},R)) -- {5,1} + {3,3}
+f = toS plethysm(jacobiTrudiE({1,1},R), jacobiTrudiE({2},R)) -- {3,1}
+f = toS plethysm(jacobiTrudiE({1,1},R), jacobiTrudiE({3},R)) -- {5,1} + {3,3}
 
 
 --------------------
@@ -439,15 +556,15 @@ f = toS plethysm(jt({1,1},R), jt({3},R)) -- {5,1} + {3,3}
 restart
 load "schur.m2"
 R1 = symmRing 5
-f = jt({2},R1)
-g = jt({1},R1)
+f = jacobiTrudiE({2},R1)
+g = jacobiTrudiE({1},R1)
 cauchy(2,f,g)
 cauchy(3,f,g)
 R1 = symmRing 1
 R2 = symmRing 2
-cauchy(2,jt({1},R1),jt({2},R2))
+cauchy(2,jacobiTrudiE({1},R1),jacobiTrudiE({2},R2))
 toS oo_0_1
-cauchy(3,1_R1,jt({3},R2))
+cauchy(3,1_R1,jacobiTrudiE({3},R2))
 toS oo_0_1
 --------------------
 -- test of bott ----
@@ -468,9 +585,9 @@ restart
 load "schur.m2"
 R1 = symmRing 1
 R2 = symmRing 2
-L = {{(1_R1, jt({3},R2))}, 
-     {(jt({1},R1), jt({2},R2))}, 
-     {(jt({2},R1), jt({1},R2))}}
+L = {{(1_R1, jacobiTrudiE({3},R2))}, 
+     {(jacobiTrudiE({1},R1), jacobiTrudiE({2},R2))}, 
+     {(jacobiTrudiE({2},R1), jacobiTrudiE({1},R2))}}
 pairProduct L
 L1 = drop(L,1)
 pairProduct L1
@@ -492,9 +609,9 @@ L/(v -> (toS v#0#1))
 restart
 load "schur.m2"
 R = symmRing 2
-plethysm({1,1},jt({2},R))
+plethysm({1,1},jacobiTrudiE({2},R))
 toS oo
-plethysm({1,1,1},jt({4},R))
+plethysm({1,1,1},jacobiTrudiE({4},R))
 toS oo
 --------------------
 -- test of wedge
@@ -503,9 +620,9 @@ restart
 load "schur.m2"
 R1 = symmRing 1
 R2 = symmRing 2
-L = {{(1_R1, jt({3},R2))}, 
-     {(jt({1},R1), jt({2},R2))}, 
-     {(jt({2},R1), jt({1},R2))}}
+L = {{(1_R1, jacobiTrudiE({3},R2))}, 
+     {(jacobiTrudiE({1},R1), jacobiTrudiE({2},R2))}, 
+     {(jacobiTrudiE({2},R1), jacobiTrudiE({1},R2))}}
 wedge({3,2,0},L)
 wedge({3,0,0},L)
 z = preBott(1,L,{4,3,2})
@@ -525,10 +642,10 @@ restart
 load "schur.m2"
 R1 = symmRing 1
 R2 = symmRing 3
-L = {{(1_R1, jt({4},R2))}, 
-     {(jt({1},R1), jt({3},R2))}, 
-     {(jt({2},R1), jt({2},R2))},
-     {(jt({3},R1), jt({1},R2))}}
+L = {{(1_R1, jacobiTrudiE({4},R2))}, 
+     {(jacobiTrudiE({1},R1), jacobiTrudiE({3},R2))}, 
+     {(jacobiTrudiE({2},R1), jacobiTrudiE({2},R2))},
+     {(jacobiTrudiE({3},R1), jacobiTrudiE({1},R2))}}
 wedge({3,2,0},L)
 wedge({3,0,0},L)
 z = preBott(1,L,{4,3,2})

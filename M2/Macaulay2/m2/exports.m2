@@ -40,6 +40,7 @@ exportMutable (
 	)
 
 export (
+        symbol Partition,
         symbol inverse,
         symbol LinearAlgebra,
         symbol indexHtml,
@@ -376,8 +377,6 @@ export (
 	symbol SUP,
 	symbol SVD,
 	symbol SY,
-	symbol Schur,
-	symbol SchurRing,
 	symbol ScriptedFunctor,
 	symbol SeeAlso,
 	symbol SelfInitializingType,
