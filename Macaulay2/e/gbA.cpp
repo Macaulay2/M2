@@ -828,7 +828,7 @@ void gbA::insert(POLY f, int minlevel)
       o << s;
       GBasis::gbelem *g = G->gb[me];
       R->gbvector_text_out(o,_F,g->g.f);
-      o << "\n";
+      o << "\n" << wrapping_prefix;
       R->gbvector_text_out(o,_Fsyz,g->g.fsyz);
       emit_line(o.str());
     }

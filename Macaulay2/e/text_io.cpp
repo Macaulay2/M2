@@ -45,6 +45,7 @@ void emit_wrapped(char *s)
   if (emit_line_len <= 0) {
     emit_line_len = MAX_LINE_LENGTH;
     fprintf(stdout, "\n");
+    fprintf(stdout, wrapping_prefix);
   }
   fprintf(stdout, s);
   fflush(stdout);
