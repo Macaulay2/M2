@@ -3,11 +3,11 @@
 
 Macaulay 2 preliminary porting instructions and notes
 
-    We use gcc/g++ version 2.7.2 or 2.7.2.1, gnu make version 3.74, and gawk
-3.0; you should install these yourself.  We use various other libraries,
-whose sources are included in this distribution for your convenience,
-although you may prefer to pick up more recent versions of these libraries.
-These libraries have their own copying licenses.  The copying license for
+    We use gcc/g++ version 2.8.1, gnu make version 3.77, and gawk 3.0.2; you
+should install these yourself.  We use various other libraries, whose sources
+are included in this distribution for your convenience, although you may
+prefer to pick up more recent versions of these libraries.  These libraries
+have their own copying licenses, as described below.  The copying license for
 Macaulay 2 is in ./Macaulay2/licenses/README.
 
 library: Macaulay2
@@ -21,7 +21,7 @@ release: factory-1.2c
  author: G-M. Greuel <greuel@mathematik.uni-kl.de>
 	 R. Stobbe <stobbe@mathematik.uni-kl.de>
  get at: 
-license: available soon
+license: Macaulay2/licenses/factory.lic
 
 library: libfac
 release: libfac-0.3.0
@@ -43,7 +43,7 @@ bugs to: <bug-gmp@prep.ai.mit.edu>
 license: gmp-2.0/COPYING.LIB
 
 library: gc
-release: gc4.13alpha1
+release: gc4.13alpha1 (see file gc/version.h)
  author: Hans Boehm <boehm@mti.sgi.com>
  get at: http://reality.sgi.com/employees/boehm_mti/gc.html
 license: gc/README
@@ -64,7 +64,7 @@ options (governing profiling, stripping, etc) can be set in the file
 Makefile.lcl.
 	
 -----------------------
-Windows 95 and NT notes
+Windows 95, 98 and NT notes
 -----------------------
 
 There are two ways to compile Macaulay 2 under Windows 95 and NT.

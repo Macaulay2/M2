@@ -89,9 +89,12 @@ reduce := (r,s) -> (
      z := syz( matrix{{r,s}}, SyzygyLimit => 1 );
      a := z_(1,0);
      b := - z_(0,0);
-     c := leadCoefficient b;
-     ((a//c),(b//c))
-     )
+     if isField coefficientRing ring b then (
+     	  c := leadCoefficient b;
+	  a = a//c;
+	  b = b//c;
+	  );
+     (a,b))
 
 name EngineRing := R -> sendgg(ggPush R, ggsee, ggpop)
 
