@@ -1333,9 +1333,11 @@ enum gbTraceValues
 
   void rawFactor(const RingElement *f, 
 		 RingElement_array_OrNull **result_factors, 
-		 M2_arrayint_OrNull *result_powers);
+		 M2_arrayint_OrNull *result_powers); /*to be connected */
 
-  Matrix_array_OrNull * rawCharSeries(const Matrix *M);
+  M2_arrayint_OrNull rawIdealReorder(const Matrix *M);/*to be connected */
+
+  Matrix_array_OrNull * rawCharSeries(const Matrix *M);/*to be connected */
 
 #if defined(__cplusplus)
 }
