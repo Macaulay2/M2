@@ -404,7 +404,7 @@ char **argv;
 	argc = 5;
 #endif
 
-     GC_stackbottom = &dummy;
+	//MES     GC_stackbottom = &dummy;
 
      ONSTACK(saveenvp);
 
@@ -506,6 +506,7 @@ char **argv;
      ONSTACK(envc);
 #endif
      GC_free_space_divisor = 14;
+     GC_free_space_divisor = 3;
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  char **environ0;
      	  GC_free_space_divisor = 4;
