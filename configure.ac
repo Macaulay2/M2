@@ -166,28 +166,48 @@ AC_CHECK_DECL(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing),[#inc
 AC_CHECK_DECL(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing),[#include <math.h>])
 AC_CHECK_DECLS(sys_nerr)
 
-OLIBS="$LIBS"
-LIBS="$LIBS -lgmp -lgc -lgdbm -lcf -lfac"
+SAVELIBS="$LIBS"
+
+AC_MSG_CHECKING([whether gc library is installed])
+LIBS="$SAVELIBS -lgc"
 AC_TRY_LINK(
     [#include <gc.h>],
     [GC_malloc(1);],
-    ,AC_MSG_ERROR(missing library: libgc))
+    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: libgc]))
+AC_MSG_RESULT([yes])
+
+AC_MSG_CHECKING([whether gmp library is installed])
+LIBS="$SAVELIBS -lgmp"
 AC_TRY_LINK(
     [#include <gmp.h>],
     [__gmp_version;],
-    ,AC_MSG_ERROR(missing library: libgmp))
+    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: gmp]))
+AC_MSG_RESULT([yes])
+
+AC_MSG_CHECKING([whether gdbm library is installed])
+LIBS="$SAVELIBS -lgdbm"
 AC_TRY_LINK([#include <gdbm.h>],
     [gdbm_close(0);],
-    ,AC_MSG_ERROR(missing library: libgdbm))
+    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: gdbm]))
+AC_MSG_RESULT([yes])
+
+AC_MSG_CHECKING([whether factory library is installed])
+LIBS="$SAVELIBS -lcf"
 AC_TRY_LINK(
     [#include <factoryconf.h>],
     [FACTORYVERSION;],
-    ,AC_MSG_ERROR(missing library: libcf))
+    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: factory]))
+AC_MSG_RESULT([yes])
+
+AC_MSG_CHECKING([whether libfac library is installed])
+LIBS="$SAVELIBS -lfac -lcf"
 AC_TRY_LINK(
     [extern const char * libfac_version;],
     [libfac_version;],
-    ,AC_MSG_ERROR(missing library: libfac))
-LIBS="$OLIBS"
+    ,AC_MSG_RESULT([no]);AC_MSG_ERROR([missing library: libfac]))
+AC_MSG_RESULT([yes])
+
+LIBS="$SAVELIBS"
 
 # M2_SHOW_CONFDEFS()
 M2_IS_THERE(sys_errlist)

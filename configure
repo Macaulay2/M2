@@ -3494,8 +3494,11 @@ fi
 
 
 
-OLIBS="$LIBS"
-LIBS="$LIBS -lgmp -lgc -lgdbm -lcf -lfac"
+SAVELIBS="$LIBS"
+
+echo "$as_me:$LINENO: checking whether gc library is installed" >&5
+echo $ECHO_N "checking whether gc library is installed... $ECHO_C" >&6
+LIBS="$SAVELIBS -lgc"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
@@ -3530,11 +3533,18 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 else
   echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
-{ { echo "$as_me:$LINENO: error: missing library: libgc" >&5
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6;{ { echo "$as_me:$LINENO: error: missing library: libgc" >&5
 echo "$as_me: error: missing library: libgc" >&2;}
    { (exit 1); exit 1; }; }
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+echo "$as_me:$LINENO: checking whether gmp library is installed" >&5
+echo $ECHO_N "checking whether gmp library is installed... $ECHO_C" >&6
+LIBS="$SAVELIBS -lgmp"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
@@ -3569,11 +3579,18 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 else
   echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
-{ { echo "$as_me:$LINENO: error: missing library: libgmp" >&5
-echo "$as_me: error: missing library: libgmp" >&2;}
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6;{ { echo "$as_me:$LINENO: error: missing library: gmp" >&5
+echo "$as_me: error: missing library: gmp" >&2;}
    { (exit 1); exit 1; }; }
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+echo "$as_me:$LINENO: checking whether gdbm library is installed" >&5
+echo $ECHO_N "checking whether gdbm library is installed... $ECHO_C" >&6
+LIBS="$SAVELIBS -lgdbm"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
@@ -3608,11 +3625,18 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 else
   echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
-{ { echo "$as_me:$LINENO: error: missing library: libgdbm" >&5
-echo "$as_me: error: missing library: libgdbm" >&2;}
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6;{ { echo "$as_me:$LINENO: error: missing library: gdbm" >&5
+echo "$as_me: error: missing library: gdbm" >&2;}
    { (exit 1); exit 1; }; }
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+echo "$as_me:$LINENO: checking whether factory library is installed" >&5
+echo $ECHO_N "checking whether factory library is installed... $ECHO_C" >&6
+LIBS="$SAVELIBS -lcf"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
@@ -3647,11 +3671,18 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 else
   echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
-{ { echo "$as_me:$LINENO: error: missing library: libcf" >&5
-echo "$as_me: error: missing library: libcf" >&2;}
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6;{ { echo "$as_me:$LINENO: error: missing library: factory" >&5
+echo "$as_me: error: missing library: factory" >&2;}
    { (exit 1); exit 1; }; }
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+echo "$as_me:$LINENO: checking whether libfac library is installed" >&5
+echo $ECHO_N "checking whether libfac library is installed... $ECHO_C" >&6
+LIBS="$SAVELIBS -lfac -lcf"
 cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
@@ -3686,12 +3717,16 @@ if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
 else
   echo "$as_me: failed program was:" >&5
 cat conftest.$ac_ext >&5
-{ { echo "$as_me:$LINENO: error: missing library: libfac" >&5
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6;{ { echo "$as_me:$LINENO: error: missing library: libfac" >&5
 echo "$as_me: error: missing library: libfac" >&2;}
    { (exit 1); exit 1; }; }
 fi
 rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
-LIBS="$OLIBS"
+echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+
+LIBS="$SAVELIBS"
 
 # M2_SHOW_CONFDEFS()
 
