@@ -38,3 +38,7 @@ M2_string IM2_Monoid_to_string(Monoid *M)
   M->text_out(o);
   return o.to_string();
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

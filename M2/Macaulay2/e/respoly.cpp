@@ -318,3 +318,7 @@ const resterm *res_poly::component_occurs_in(const res_pair *x,
   return NULL;
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

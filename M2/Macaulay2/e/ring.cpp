@@ -229,3 +229,7 @@ extern "C" void prelem(const Ring *R, const ring_elem f)
   R->elem_text_out(o,f);
   emit(o.str());
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

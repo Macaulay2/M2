@@ -25,3 +25,7 @@ void ntuple::elem_text_out(buffer &o,
   if (len == 0 && p_one) o << "1";
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

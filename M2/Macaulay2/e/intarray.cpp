@@ -19,3 +19,7 @@ void intarray::text_out(buffer &o) const
   if (max > 0) o << entries[max-1];
   o << ']';
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

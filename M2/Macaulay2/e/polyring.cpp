@@ -2126,3 +2126,7 @@ ring_elem PolynomialRing::divide_by_expvector(const int *exp, const ring_elem a)
   sort(result);
   return result;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

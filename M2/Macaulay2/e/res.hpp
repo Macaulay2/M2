@@ -242,3 +242,7 @@ public:
   const Monoid  * degree_monoid() const { return P->degree_monoid(); }
 };
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -395,3 +395,7 @@ RingElement *RingElement::fraction(const Ring *K, const RingElement *bottom) con
     }
   return new RingElement(K1,K1->fraction(val, bottom->get_value()));
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -975,3 +975,7 @@ void i_ring_elem_cmds(void)
   install(ggfraction, cmd_FractionField_fraction, TY_RING, TY_RING_ELEM, TY_RING_ELEM);
 }
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

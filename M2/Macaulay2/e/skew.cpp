@@ -121,3 +121,7 @@ bool SkewMultiplication::exp_is_zero(const int *exp) const
     }
   return false;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

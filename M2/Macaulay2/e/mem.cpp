@@ -14,12 +14,6 @@ stash *stash::stash_list = NULL;
 
 doubling_stash *doubles = NULL;
 
-void out_of_memory()
-{
-  emit_line("Engine: out of memory.  Bye bye... ");
-  exit(0);
-}
-
 stash::stash(char *s, size_t len)
 : next(NULL), name(s), slabs(NULL), free_list(NULL),
   n_allocs(0), n_inuse(0), highwater(0), n_frees(0)
@@ -67,7 +61,6 @@ void *stash::new_elem()
       if (n_per_slab == 0) 
 	{
 	  void *result = new char[element_size];
-	  if (result == NULL) out_of_memory();
 	  allocated_amount += element_size;
 	  return result;
 	}
@@ -253,3 +246,7 @@ void* operator new []( size_t size ) {
 void operator delete []( void* obj ) {
   if (obj != NULL) GC_FREE( obj );
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

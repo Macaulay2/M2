@@ -62,3 +62,7 @@ void emit_line(char *s)
   fflush(stdout);
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -761,3 +761,7 @@ void i_Vector_cmds(void)
   install(gggcd, cmd_Nfree_gcd, TY_FREEMODULE);
 }
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

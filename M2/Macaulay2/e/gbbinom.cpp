@@ -1269,3 +1269,7 @@ void binomialGB_comp::stats() const
   if (comp_printlevel >= 3)
     Gmin->debug_display();
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

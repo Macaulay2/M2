@@ -167,3 +167,7 @@ Monomial *Monomial::radical() const
   result->set_hash_code();
   return result;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

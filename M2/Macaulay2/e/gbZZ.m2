@@ -705,3 +705,7 @@ s
 transpose getmat G
 view G
 ///
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

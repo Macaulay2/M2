@@ -160,3 +160,7 @@ int comb::mult_subsets(int p, const int *s, int q, const int *t, int *&result)
   return -1;
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -341,3 +341,7 @@ bool GaussElimComputation::is_equal(const gb_comp *q)
     }
   return true;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

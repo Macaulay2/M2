@@ -587,3 +587,7 @@ void RingGBasis::normal_form(FreeModule *F,
   R->exponents_delete(_EXP);
 #endif
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

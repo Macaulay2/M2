@@ -669,3 +669,7 @@ assert(reshape(R^2,R^3,m) == matrix (R,{{0, 2, 4}, {1, 3, 5}}))
 assert(wedgeProduct(2,3,ZZ^5) ** R == wedgeProduct(2,3,R^5))  -- FAILS
 
 ///
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

@@ -333,3 +333,7 @@ void GBKernelComputation::reduce(vec &f, vec &fsyz)
       emit_wrapped(o.str());
     }
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

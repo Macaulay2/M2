@@ -92,3 +92,7 @@ void buffer::put(unsigned long n, int width)
   put(s, strlen(s));
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

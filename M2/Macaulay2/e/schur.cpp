@@ -381,3 +381,7 @@ void SchurRing::elem_text_out(buffer &o, const ring_elem f) const
   if (needs_parens) o << ')';
   p_plus = old_plus;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

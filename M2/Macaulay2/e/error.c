@@ -59,3 +59,7 @@ void clear_error()
   errmsg[0] = '\0';
   _iserror = 0;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

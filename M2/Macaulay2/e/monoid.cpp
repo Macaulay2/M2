@@ -698,3 +698,7 @@ void Monoid::to_varpower(const int *m, intarray &result_vp) const
   varpower::from_ntuple(nvars, EXP1, result_vp);
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

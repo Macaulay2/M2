@@ -697,3 +697,7 @@ Matrix *TermIdeal::search(const Matrix *m) const
     }
   return result;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

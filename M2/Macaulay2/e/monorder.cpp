@@ -606,3 +606,7 @@ mon_order * IM2_mon_order::grab_mon_order()
     ERROR("cannot reuse engine monomial order");
   return result;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

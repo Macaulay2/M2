@@ -174,3 +174,7 @@ void ntuple::syz(int nvars, const int *a, const int *b,
 }
 
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

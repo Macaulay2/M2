@@ -210,3 +210,7 @@ clean check::; $(MAKE) -C check $@
 doxygen : ; cd @srcdir@ && doxygen
 $(LIBGB): $(OFILES); $(AR) rcs $@ $^
 distclean: clean; rm -f Makefile
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+# End:

@@ -93,3 +93,7 @@ void Random::random_integer(M2_Integer a)
 {
   mpz_urandomm(a, _st, _maxN);
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

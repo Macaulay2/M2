@@ -29,3 +29,7 @@ struct MonomialOrdering {
   mon_part array[1];
 };
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -319,3 +319,7 @@ M2_arrayint_OrNull FF_LUComputation::DO(SparseMutableMatrix *M)
 }
 
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

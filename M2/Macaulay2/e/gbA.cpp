@@ -1196,3 +1196,7 @@ void gbA::debug_spair_array(spairs &spairlist)
   for (int i=0; i<spairlist.size(); i++)
     debug_spair(spairlist[i]);
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

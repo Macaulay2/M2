@@ -33,3 +33,7 @@ string GB_gbprocess(string s)
   return result;
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

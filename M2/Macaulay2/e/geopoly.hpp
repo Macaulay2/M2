@@ -138,3 +138,7 @@ inline Nterm * polyheap::value()
   top_of_heap = -1;
   return result;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -125,3 +125,7 @@ inline const int *res_poly::lead_monomial(const resterm *f) const
     { return f->monom; }
 
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

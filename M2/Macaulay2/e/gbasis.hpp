@@ -161,3 +161,7 @@ public:
   void set_quotient(vector <GBasis::gbelem *> &gb);
 };
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

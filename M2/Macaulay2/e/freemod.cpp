@@ -1163,3 +1163,7 @@ vec FreeModule::eval(const RingMap *map, const FreeModule *F,
   result->next = 0;
   return head.next;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -51,3 +51,7 @@ IM2_RingMap_eval_matrix(const RingMap *F,
   return F->eval(newTarget,M);
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -469,3 +469,7 @@ bool HermiteComputation::is_equal(const gb_comp *q1)
   if (q != NULL) return false;
   return true;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

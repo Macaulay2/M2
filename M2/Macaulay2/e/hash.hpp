@@ -18,3 +18,7 @@ public:
   unsigned long get_hash_value() const { return _hashval; }
 };
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

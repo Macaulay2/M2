@@ -1433,3 +1433,7 @@ extern "C" void dvec(const GBRing *R, gbvector *v)
   R->gbvector_text_out(o, F, v);
   emit(o.str());
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

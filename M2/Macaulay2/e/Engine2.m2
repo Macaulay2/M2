@@ -126,3 +126,7 @@ H = F ++ G
 inducedOrder H  -- Not correct?
 assert(rank targ inducedOrder dual F == 0)
 -- Test of arithmetic in this order NEEDS TO BE DONE
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:
