@@ -3,6 +3,9 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+'presentation' of a quotient ring will now give the original generators of
+the ideal, rather than the generators of a Groebner basis of the ideal.
+
 'lcm' and 'gcd' will now accept more than two arguments.
 
 Added 'lcm'.

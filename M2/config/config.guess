@@ -3,7 +3,7 @@
 #   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000
 #   Free Software Foundation, Inc.
 
-version='2000-10-23'
+version='2000-11-10'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -78,6 +78,10 @@ if test $# != 0; then
   exit 1
 fi
 
+
+dummy=dummy-$$
+trap 'rm -f $dummy.c $dummy.o $dummy; exit 1' 1 2 15
+
 # Use $HOST_CC if defined. $CC may point to a cross-compiler
 if test x"$CC_FOR_BUILD" = x; then
   if test x"$HOST_CC" != x; then
@@ -86,7 +90,17 @@ if test x"$CC_FOR_BUILD" = x; then
     if test x"$CC" != x; then
       CC_FOR_BUILD="$CC"
     else
-      CC_FOR_BUILD=cc
+      echo 'int dummy(){}' >$dummy.c
+      for c in cc c89 gcc; do 
+	($c $dummy.c -c) >/dev/null 2>&1
+	if test $? = 0; then
+	  CC_FOR_BUILD="$c"; break
+	fi
+      done
+      rm -f $dummy.c $dummy.o
+      if test x"$CC_FOR_BUILD" = x; then
+	CC_FOR_BUILD=no_compiler_found
+      fi
     fi
   fi
 fi
@@ -102,9 +116,6 @@ UNAME_MACHINE=`(uname -m) 2>/dev/null` || UNAME_MACHINE=unknown
 UNAME_RELEASE=`(uname -r) 2>/dev/null` || UNAME_RELEASE=unknown
 UNAME_SYSTEM=`(uname -s) 2>/dev/null` || UNAME_SYSTEM=unknown
 UNAME_VERSION=`(uname -v) 2>/dev/null` || UNAME_VERSION=unknown
-
-dummy=dummy-$$
-trap 'rm -f $dummy.c $dummy.o $dummy; exit 1' 1 2 15
 
 # Note: order is significant - the case branches are not exclusive.
 
@@ -533,6 +544,7 @@ EOF
               }
 EOF
 	(CCOPTS= $CC_FOR_BUILD $dummy.c -o $dummy 2>/dev/null ) && HP_ARCH=`./$dummy`
+	if test -z "$HP_ARCH"; then HP_ARCH=hppa; fi
 	rm -f $dummy.c $dummy
 	esac
 	HPUX_REV=`echo ${UNAME_RELEASE}|sed -e 's/[^.]*.[0B]*//'`
@@ -722,6 +734,10 @@ EOF
 		;;
 	  sparclinux)
 		echo "${UNAME_MACHINE}-unknown-linux-gnuaout"
+		exit 0
+		;;
+	  elf32_sparc)
+		echo "${UNAME_MACHINE}-unknown-linux-gnu"
 		exit 0
 		;;
 	  armlinux)
