@@ -356,13 +356,13 @@ document {
 	  "This documentation addresses version ", version#"VERSION", " of Macaulay 2."
 	  },
      Subnodes => {
-	  TOH "Preface",
-	  TOH "Getting started",
-	  TOH "Mathematical Overview",
- 	  TOH "Mathematical Tutorials",
-	  TOH "Language and Programming Overview",
-	  TOH "Writing documentation",
-	  TOH "replacements for commands and scripts from Macaulay",
+	  TO "Preface",
+	  TO "Getting started",
+	  TO "Mathematical Overview",
+ 	  TO "Mathematical Tutorials",
+	  TO "Language and Programming Overview",
+	  TO "Writing documentation",
+	  TO "replacements for commands and scripts from Macaulay",
 	  }
      }
 
