@@ -99,10 +99,19 @@ formatDocumentTag           = method(SingleArgumentDispatch => true)
 	  
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 
----- shouldn't convert such things as matrices to strings here!
-formatDocumentTag Thing    := s -> "--undocumentable--"
+formatDocumentTag Thing    := key -> (
+     -- giving an error is better than trying willy-nilly to convert the key to a string, because
+     -- the key might be a matrix, which gets converted to a gigantic string 
+     error("can't document \"", try net key else try toString key else "this", "\"")
+     )
+
+scan( {
+	  IndeterminateNumber,Manipulator, Manipulator, ScriptedFunctor, InfiniteNumber, Boolean, CC,
+      	  Command, File, Function, Nothing, Symbol, Type, Entity
+	  },
+     type -> formatDocumentTag type := toString)
 formatDocumentTag String   := s -> s
-formatDocumentTag Function := toString
+
 
 after := (w,s) -> mingle(w,#w:s)
 formatDocumentTag Option   := record(
