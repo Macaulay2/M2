@@ -16,9 +16,6 @@ local nextButton, local prevButton, local upButton
 local lastKey, local thisKey
 local linkFollowedTable, local masterIndex
 
-encoding := ///<?xml version="1.0" encoding="us-ascii"?>///
-doctype := ///<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">///
-
 buildPackage := null					    -- name of the package currently being built
 topNodeName := null					    -- name of the top node of this package
 topFileName := "index.html"				    -- top node's file name, constant
@@ -76,6 +73,28 @@ html TO := x -> (
      )
 html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
 
+--
+
+encoding := ///<?xml version="1.0" encoding="us-ascii"?>///
+doctype := ///<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">///
+style := () -> LITERAL {///
+<style type="text/css">
+   body { color: black; background-image: url("/// | rel ( LAYOUT#"images" | "recbg.jpg" ) | ///"); margin : 1.5em; }
+   h1   { text-align: center; }
+   h2   { text-align: center; }
+   ul   { clear: both; } 
+   p#buttons { text-align: center; }
+   img#myface { float: left; margin-right: 1em;  margin-bottom: 1em;}
+   a:link { background-color: transparent; color: #0000ee; }
+   a:visited { background-color: transparent; color: #52188b; }
+   a:hover { background-color: transparent; color: #009999; }
+   a:active { background-color: transparent; color: #ee0000; }
+</style>
+/// }
+
+validate := LITERAL ///
+<a href="http://validator.w3.org/check/referer">Validate</a> the html on this page, or <a href="http://jigsaw.w3.org/css-validator/check/referer">validate</a> the css on this page.
+///
 
 
 -- produce html form of documentation, for Macaulay 2 and for packages
@@ -167,10 +186,12 @@ scope2 TO := scope2 TOH := x -> (
      )
 
 buttonBar := (key) -> SEQ {
-     PARA { 
+     SEQ { 
+	  LITERAL ///<p id="buttons">///,
 	  next key, prev key, up key,
      	  if key =!= topNodeName then topNodeButton else nullButton,
-     	  masterIndexButton
+     	  masterIndexButton,
+     	  LITERAL ///<p>///
 	  },
      LITERAL concatenate (///
      <form action="///,					    -- "
@@ -222,7 +243,10 @@ makeHtmlNode = key -> (
      << encoding << endl
      << doctype << endl
      << html HTML { 
-	  HEAD TITLE {key, headline key},
+	  HEAD {
+	       TITLE {key, headline key},
+	       style()
+	       },
 	  BODY { 
 	       buttonBar key,
 	       if UP#?key then SEQ {
@@ -231,6 +255,8 @@ makeHtmlNode = key -> (
 		    },
 	       HR{}, 
 	       documentationMemo key,
+	       HR{},
+	       PARA {validate}
 	       }
 	  }
      << endl << close)
@@ -287,12 +313,14 @@ makeMasterIndex := keylist -> (
      << encoding << endl
      << doctype << endl     
      << html HTML {
-	  HEAD { TITLE title },
+	  HEAD { TITLE title, style() },
 	  BODY {
 	       HEADER2 title, PARA,
 	       topNodeButton, PARA,
  	       between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), PARA,
-	       UL apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey })
+	       UL apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey }),
+	       HR{},
+	       PARA {validate}
 	       }
 	  } << endl << close
      )
