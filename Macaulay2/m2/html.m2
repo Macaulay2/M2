@@ -338,6 +338,7 @@ assemble Package := o -> pkg -> (
      buildPackage = pkg.name;
      buildDirectory = minimizeFilename(o.TemporaryDirectory | "/");
      finalDirectory = minimizeFilename(o.FinalDirectory | "/");
+     stderr << "--assembing package in " << buildDirectory << endl;
 
      -- copy source file
      pkgDirectory := LAYOUT#"packages";
@@ -359,4 +360,13 @@ assemble Package := o -> pkg -> (
      nodes := unique join(keys pkg#"dictionary",keys pkg#"raw documentation",{topNodeName});
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      ret := makeHtmlNode \ toString \ nodes;
+
+     -- make example input files
+     exampleDir := buildDirectory | LAYOUT#"packageexamples" pkg.name;
+     stderr << "--making example input files in " << exampleDir << endl;
+     makeDirectory exampleDir;
+     scan(pairs pkg#"example inputs", (nodename,inputs) -> (
+	       stderr << "--make example input file for " << nodename << endl;
+	       exampleDir|toFilename nodename|".m2" << stack values inputs << close
+	       ));
      )

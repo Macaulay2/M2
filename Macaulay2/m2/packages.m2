@@ -11,6 +11,9 @@ addStartFunction(
 	  ))
 
 load "layout.m2"					    -- defines LAYOUT
+
+layout = new Command from ( () -> applyValues(LAYOUT, f -> if Function === class f then f "@PACKAGE_NAME@" else f) )
+
 PREFIX := ""
 addStartFunction(
      () -> (
