@@ -79,7 +79,7 @@ makeDocumentTag Thing := opts -> key -> (
      nkey := normalizeDocumentKey key;
      verifyKey nkey;
      fkey := if opts#FormattedKey =!= null then opts#FormattedKey else formatDocumentTag nkey;
-     pkg := if opts#Package =!= null then opts#Package else packageKey nkey;
+     pkg := if opts#Package =!= null then opts#Package else packageKey fkey;
      -- figure out to avoid this warning message for f = method ( Options => { a => 4 } )
      if pkg === null then stderr << "warning: can't determine correct package for document tag '" << nkey << "'" << endl;
      title := if pkg === null then "" else pkg#"title";
@@ -127,6 +127,10 @@ FinalDocumentTag ? FinalDocumentTag := (x,y) -> x#0 ? y#0
 net FinalDocumentTag := x -> concatenate ( FinalDocumentTag.Title x, " :: ", FinalDocumentTag.FormattedKey x )
 toString FinalDocumentTag := x -> error "who wants a string?"
 
+-----------------------------------------------------------------------------
+formattedKey = method()
+formattedKey DocumentTag := tag -> DocumentTag.FormattedKey tag
+formattedKey FinalDocumentTag := tag -> FinalDocumentTag.FormattedKey tag
 -----------------------------------------------------------------------------
 
 local exampleBaseFilename
@@ -193,21 +197,22 @@ record      := f -> x -> (
 -----------------------------------------------------------------------------
 -- identifying the package of a document tag
 -----------------------------------------------------------------------------
--- If we don't find it in another package, then we assume it's in the current package (which might be null)
+-- If we don't find it in a package, then we assume it's missing, and assign it to the "Missing" package.
 -- That way we can compute the package during the loading of a package, while just some of the documentation has been installed.
 -- Missing documentation can be detected when the package is closed, or later.
 packageKey = method(SingleArgumentDispatch => true)	    -- assume the input key has been normalized
-packageKey DocumentTag := DocumentTag.Package
-packageKey   Symbol := key -> package key
-packageKey   String := key -> (
-     r := scan(packages, pkg -> if fetchRawDocumentation(pkg,key) =!= null then break pkg);
-     if r === null then currentPackage else r)
-packageKey  Package := identity
-packageKey    Array := key -> youngest \\ package \ toSequence key
-packageKey Sequence := key -> youngest splice apply(key, i -> if class i === Sequence then apply(i,package) else package i)
-packageKey    Thing := key -> ( p := package key; if p === null then currentPackage else p)
+--packageKey DocumentTag := DocumentTag.Package
+--packageKey   Symbol := key -> package key
+packageKey   String := fkey -> (
+     r := scan(packages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
+     if r === null then value PackageDictionary#"Missing" else r)
+--packageKey  Package := identity
+--packageKey    Array := key -> youngest \\ package \ toSequence key
+--packageKey Sequence := key -> youngest splice apply(key, i -> if class i === Sequence then apply(i,package) else package i)
+--packageKey    Thing := key -> ( p := package key; if p === null then currentPackage else p)
+
 -- here is an alternative method -- it's fishy that we have both!
-getPackage := fkey -> scan(value \ values PackageDictionary, pkg -> if null =!= fetchRawDocumentation(pkg,fkey) then break pkg)
+-- getPackage := fkey -> scan(value \ values PackageDictionary, pkg -> if null =!= fetchRawDocumentation(pkg,fkey) then break pkg)
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
@@ -553,7 +558,11 @@ headline = method(SingleArgumentDispatch => true)
 headline Thing := key -> getOption(key,Headline)	    -- old method
 headline FinalDocumentTag := headline DocumentTag := tag -> (
      d := fetchRawDocumentation tag;
-     if d === null then return "missing documentation";
+     if d === null then (
+	  if debugLevel > 0 and formattedKey tag == "Ring ^ ZZ" then error "debug me";
+	  d = fetchAnyRawDocumentation formattedKey tag;    -- this is a kludge!  Our heuristics for determining the package of a tag are bad.
+	  if d === null then return "missing documentation";
+	  );
      if d#?Headline then d#Headline
      else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
@@ -597,7 +606,7 @@ OFCLASS = X -> fixup (
 makeDocBody := method(SingleArgumentDispatch => true)
 makeDocBody Thing := key -> (
      fkey := formatDocumentTag key;
-     pkg := getPackage fkey;
+     pkg := packageKey fkey;
      if pkg =!= null then (
 	  rec := fetchRawDocumentation(pkg,fkey);
 	  docBody := extractBody rec;

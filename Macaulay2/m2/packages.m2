@@ -96,14 +96,11 @@ newPackage(String) := opts -> (title) -> (
 	  "example results" => new MutableHashTable,
 	  "source directory" => currentFileDirectory,
 	  "undocumented keys" => new MutableHashTable,
-	  "package prefix" => if title === "Macaulay2" then prefixDirectory else (
+	  "package prefix" => (
 	       m := matches("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
-	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)
-	       else if prefixDirectory =!= null then (
-		    stderr << "--warning: guessing that the package prefix for " << title << " is " << prefixDirectory << endl;
-		    -- error "debug me"
-		    prefixDirectory
-		    )
+	       if m#?1 
+	       then substring(currentFileDirectory,0,m#1#0 + m#1#1)
+	       else prefixDirectory
 	       ),
 	  };
      testnumber = 0;

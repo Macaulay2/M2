@@ -42,7 +42,7 @@
   (modify-syntax-entry ?|  ".")
   (modify-syntax-entry ?\n ">")
   (modify-syntax-entry ?\^m ">")
-  (set (make-local-variable 'comint-use-prompt-regexp-instead-of-fields) t) ; we might want to start using "input fields", too!
+  (set (make-local-variable 'comint-use-prompt-regexp-instead-of-fields) nil) ; we might want to start using "input fields", too!
   (set (make-local-variable 'comment-start) "-- ")
   (set (make-local-variable 'comment-end) "")
   (set (make-local-variable 'comment-column) 60)
