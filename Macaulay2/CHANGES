@@ -8,7 +8,7 @@ be zero after dividing an integer by a rational number.
 New function 'override' designed for internal use in collecting optional 
 arguments for funtions that use them.
 
-New built-in operator '##' for uncurrying functions.  f#(a,b) becomes ((f a) b),
+New built-in operator '##' for uncurrying functions.  f##(a,b) becomes ((f a) b),
 and so on.
 
 In 'new A' we are now enforcing the rule that A should be a Type.

@@ -1,3 +1,4 @@
+.gdbinit
 cache-tmp
 bare
 gmon.out

@@ -198,7 +198,7 @@ static void interrupt_handler(int sig)
      }
 
 void outofmem(){
-     static count = 0;
+     static int count = 0;
      if (!interp_StopIfError && out_of_memory_jump_set && count++ < 5) {
      	  fprintf(stderr,"out of memory, returning to top level");
      	  fflush(stderr);
@@ -357,6 +357,28 @@ char CCVERSION[30] = "gcc" ;
 char CCVERSION[] = "unknown" ;
 #endif
 
+void M2_init_gmp() {
+     mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
+     if (getenv("GC_free_space_divisor")) {
+	  GC_free_space_divisor = atoi(getenv("GC_free_space_divisor"));
+	  if (GC_free_space_divisor <= 0) {
+	       fprintf(stderr, "%s: non-positive GC_free_space_divisor value, %ld\n", 
+		    progname, GC_free_space_divisor);
+	       exit (1);
+	       }
+	  }
+     if (getenv("GC_enable_incremental") && atoi(getenv("GC_enable_incremental"))==1) {
+	  GC_enable_incremental();
+	  fprintf(stderr,"GC_enable_incremental()\n");
+	  }
+     if (getenv("GC_expand_hp")) {
+	  GC_expand_hp(atoi(getenv("GC_expand_hp")));
+	  }
+#ifdef NDEBUG
+     GC_set_warn_proc(dummy_GC_warn_proc);
+#endif
+     }
+
 int M2main(argc,argv)
 int argc; 
 char **argv;
@@ -487,7 +509,7 @@ char **argv;
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  char **environ0;
      	  GC_free_space_divisor = 4;
-	  GC_stackbottom = &dummy;
+	  if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
 	  old_collections = GC_gc_no;
 #if !defined(__MWERKS__)
      	  _environ = saveenvp;	/* _environ is a static variable that points
@@ -528,26 +550,8 @@ char **argv;
      progname = saveargv[0];
      for (p=progname; *p; p++) if (*p=='/') progname = p+1;
 
-     GC_stackbottom = &dummy;
-     if (getenv("GC_free_space_divisor")) {
-	  GC_free_space_divisor = atoi(getenv("GC_free_space_divisor"));
-	  if (GC_free_space_divisor <= 0) {
-	       fprintf(stderr, "%s: non-positive GC_free_space_divisor value, %ld\n", 
-		    progname, GC_free_space_divisor);
-	       exit (1);
-	       }
-	  }
-     if (getenv("GC_enable_incremental") && atoi(getenv("GC_enable_incremental"))==1) {
-	  GC_enable_incremental();
-	  fprintf(stderr,"GC_enable_incremental()\n");
-	  }
-     if (getenv("GC_expand_hp")) {
-	  GC_expand_hp(atoi(getenv("GC_expand_hp")));
-	  }
-     mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
-#ifdef NDEBUG
-     GC_set_warn_proc(dummy_GC_warn_proc);
-#endif
+     if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
+     M2_init_gmp();
      initrandom();
      system_newline = tostring(newline);
      actors5_CCVERSION = tostring(CCVERSION);
