@@ -267,7 +267,8 @@ filbuf(o:file):bool := (
 	  );
      if o.isatty then (
 	  flush(stdout);
-	  o.prompt();
+	  if o.bol then o.prompt();	  -- ?????? changed 8/12/98
+	       -- under Windows and emacs we receive incomplete lines!
 	  );
      r := read(o.fd,o.inbuffer,length(o.inbuffer)-o.insize,o.insize);
      if r <= 0 then (
