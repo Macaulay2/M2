@@ -396,7 +396,6 @@ testport-files: distributions/Macaulay2-$(VERSION)-porting-src.tar.gz
 	gunzip <$< |tar xf - -C tmp/M2
 testport-go:
 	@echo '## testing porting source'
-	cd tmp/M2; unset CONFIG_SITE; ./configure
 	$(MAKE) -C tmp/M2
 ###################### Macaulay 2 documentation
 DOCFILES = Macaulay2/html
