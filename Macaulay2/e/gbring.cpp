@@ -12,33 +12,10 @@
 
 #define sizeofgbvector(s,len) (sizeof(*s) - sizeof(s->monom) + (len)*sizeof(s->monom[0]))
 
-static int nslabs = 0;
-void MemoryAllocator::new_slab()
-{
-  // grab a new slab, and chop it into element_size pieces, placing them
-  // onto the free list.
-  nslabs++;
-  slab *newSlab = new slab;
-  newSlab->next = top_slab;
-  top_slab = newSlab;
-
-  // Time to chop it up.
-
-  char *prev = NULL;
-  char *current = top_slab->a;
-  for (int i=0; i<NSLAB; i+=size)
-    {
-      *((char **) current) = prev;
-      prev = current;
-      current += size;
-    }
-  freelist = prev;
-}
-
 
 gbvector * GBRing::new_raw_term()
 {
-  return (gbvector *) _mem.new_elem();
+  return (gbvector *) GC_MALLOC(gbvector_size);
 }
 
 /*************************
@@ -294,7 +271,7 @@ GBRing::GBRing(const PolynomialRing *origR)
     _skew(),
     _is_weyl_algebra(false),
     _one(K->from_int(1)),
-    _mem(sizeofgbvector(used_to_determine_size,M->monomial_size()))
+    gbvector_size(sizeofgbvector(used_to_determine_size,M->monomial_size()))
 {
   _EXP1 = new int[_nvars+2];
   _EXP2 = new int[_nvars+2];
@@ -491,7 +468,7 @@ void GBRing::gbvector_remove_term(gbvector *f)
   // It is not clear whether we should try to free elements of K
   f->next = 0;
   f->coeff = (Nterm*)0;
-  _mem.remove_elem((char *)f);
+  GC_FREE((char *)f);
 }
 
 void GBRing::gbvector_remove(gbvector *f)
@@ -508,7 +485,7 @@ void GBRing::gbvector_remove(gbvector *f)
 gbvector * GBRing::gbvector_term(const FreeModule *F, ring_elem coeff, int comp)
   // Returns coeff*e_sub_i in F, the monomial is set to 1.
 {
-  gbvector *v = (gbvector *) _mem.new_elem();
+  gbvector *v = (gbvector *) GC_MALLOC(gbvector_size);
   v->coeff = coeff;
   v->comp = comp;
   v->next = 0;
@@ -521,7 +498,7 @@ gbvector * GBRing::gbvector_term(const FreeModule *F, ring_elem coeff, int comp)
 
 gbvector * GBRing::gbvector_copy_term(const gbvector *t)
 {
-  gbvector *v = (gbvector *) _mem.new_elem();
+  gbvector *v = (gbvector *) GC_MALLOC(gbvector_size);
   v->next = 0;
   v->coeff = t->coeff;
   v->comp = t->comp;

@@ -72,9 +72,9 @@ assert(mgb == m * mchange)
 -- Test 5. -- Semi-random cubics
 M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
 Gcomp = rawGB(M,false,0,false,0,0,0)
-time mgb = rawGBGetMatrix(Gcomp,1,false); -- gb  -- too many heap sections in algorithm 0
+time mgb = rawGBGetMatrix(Gcomp,1,false); -- gb
 Gcomp = rawGB(M,false,0,false,0,1,0)
-time mgb = rawGBGetMatrix(Gcomp,1,false); -- gb  -- same crash
+time mgb = rawGBGetMatrix(Gcomp,1,false); -- gb -- -- crashes due to bad access in spair_sorter
 rawGBGetLeadTerms(Gcomp,6,1)
 
 -- Test 6. -- same in char 101
@@ -205,7 +205,7 @@ d = rawRingVar(R1,4,1)
 algorithm = 1
 G = mat{{b^4-13*a*c, 12*b*c^2-7*a*d^3, t*a-1}}
 Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-m = rawGBGetMatrix(Gcomp,1,false) -- Groebner basis
+m = rawGBGetMatrix(Gcomp,1,false) -- Groebner basis -- infinite loop BUG!!
 
 R2 = rawPolynomialRing(rawQQ(), lex{u,v,x,y,z})
 u = rawRingVar(R2,0,1)
@@ -215,7 +215,7 @@ y = rawRingVar(R2,3,1)
 z = rawRingVar(R2,4,1)
 G = mat{{x - 3*u-3*u*v^2+u^3, y-3*v-3*u^2*v+v^3, z-3*u^2+3*v^2}}
 Gcomp = rawGB(G,false,0,false,0,algorithm,0)
-time m = rawGBGetMatrix(Gcomp,1,false); -- Groebner basis. get ABORT
+time m = rawGBGetMatrix(Gcomp,1,false); -- Groebner basis. infinite loop BUG
 rawGBGetLeadTerms(Gcomp,6,1)
 
 time rawGBGetMatrix(rawGB(oo,false,0,false,0,algorithm,0), 1,true)
