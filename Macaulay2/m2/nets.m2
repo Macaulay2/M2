@@ -174,13 +174,10 @@ net HashTable := x -> (
      )
 
 net Dictionary := d -> if Symbols#?d then toString Symbols#d else (
-     if d.?name then d.name
-     else horizontalJoin flatten ( 
+     horizontalJoin flatten ( 
      	  net class d,
 	  "{", 
-	  -- the first line prints the parts vertically, second: horizontally
- 	  stack (horizontalJoin \ sort apply(values d,v -> (net v, " => ", net value v))),
-	  -- between(", ", apply(pairs d,(k,v) -> net k | "=>" | net v)), 
+ 	  stack (horizontalJoin \ sort apply(values d,v -> (net v, " => ..."))),
 	  "}" 
      	  )
      )
