@@ -28,7 +28,7 @@ endif
 	@if [ -f ./"$*.out" ] && cmp -s ./"$*.example" ./"$*.example.old" ; \
 	then touch ./"$*.out" ; \
 	else echo "running example $*"; \
-	     if $(M2HOME)/bin/Macaulay2 $(ARGS) <./"$*.example" >./"$*.tmp" ; \
+	     if $(M2HOME)/libexec/Macaulay2 $(ARGS) <./"$*.example" >./"$*.tmp" ; \
 	     then mv ./"$*.tmp" ./"$*.out" ; \
 		  cp ./"$*.example" ./"$*.example.old" ; \
 	     else echo "contents of $*.example:" ; \

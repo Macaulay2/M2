@@ -8,13 +8,13 @@ TESTRESULTS := $(patsubst %.m2, %.okay, $(TESTFILES))
 all:: $(TESTRESULTS)
 
 ifneq "$(DUMPDATA)" "no"
-$(TESTRESULTS) : ../../../cache/Macaulay2-$(ARCH)-data
+$(TESTRESULTS) : ../../../libexec/Macaulay2-$(ARCH)-data
 else
 $(TESTRESULTS) : ../../../cache/Macaulay2-doc
 endif
 
 ifneq "$(DUMPDATA)" "no"
-ARGS := -q '-eloaddata("../../../cache/Macaulay2-$(ARCH)-data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
+ARGS := -q '-eloaddata("../../../libexec/Macaulay2-$(ARCH)-data")' -- '-epath=append(path,"..")' '-erunStartFunctions()' '-eerrorDepth(0)' -silent
 else
 ifeq "$(CC)" "cl"
 ## work around weirdness in the Microsoft runtime startup - it eliminates backslashes
@@ -28,5 +28,5 @@ endif
 
 %.okay : %.m2
 	@ echo testing $<
-	@  ../../../bin/Macaulay2 $(ARGS) $< '-eexit(0)'
+	@  ../../../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
 	@ touch $@

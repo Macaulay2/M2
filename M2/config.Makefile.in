@@ -59,14 +59,6 @@ AR = ar
 
 MAKEFLAGS += -w
 
-#################################
-
-# all:: announce
-announce ::
-	@echo '## making Macaulay 2 version $(VERSION) for ARCH=$(ARCH) OS=$(OS) REL=$(REL) ##'
-
-#################################
-
 ifdef CYGWIN32
 # CFLAGS += '-Dabort()=exit(1)'
 # CXXFLAGS += '-Dabort()=exit(1)'
@@ -136,4 +128,8 @@ export LD_LIBRARY_PATH:=$(M2HOME)/lib:$(LD_LIBRARY_PATH)
 else
 export LD_LIBRARY_PATH:=$(M2HOME)/lib
 endif
+endif
+
+ifneq "$(DUMPDATA)" "no"
+DUMPDATAFILE := libexec/Macaulay2-$(ARCH)-data
 endif

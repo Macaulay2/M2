@@ -118,17 +118,17 @@ TAGS: Makefile dumpseq
 phase1 :: $(DUMPEDGFILES)
 
 ifneq "$(DUMPDATA)" "no"
-ARGS := -q -silent '-eloaddata("../cache/Macaulay2-$(ARCH)-data")' -- '-erunStartFunctions()' 
-phase1 :: ../cache/Macaulay2-$(ARCH)-data
-../cache/Macaulay2-$(ARCH)-data : $(DUMPEDGFILES) ../bin/Macaulay2
-	rm -f ../cache/Macaulay2-$(ARCH)-data
-	time ../bin/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
+ARGS := -q -silent '-eloaddata("../$(DUMPDATAFILE)")' -- '-erunStartFunctions()' 
+phase1 :: ../$(DUMPDATAFILE)
+../$(DUMPDATAFILE) : $(DUMPEDGFILES) ../libexec/Macaulay2
+	rm -f ../libexex/Macaulay2-$(ARCH)-data
+	time ../libexec/Macaulay2 -q -silent -tty '-ephase=1' setup.m2 dumpdata.m2 '-edump()'
 else
 ARGS := -silent setup.m2
 endif
 
 phase1 :: ../cache/Macaulay2-made
-../cache/Macaulay2-made : $(DUMPEDGFILES) ../bin/Macaulay2
+../cache/Macaulay2-made : $(DUMPEDGFILES) ../libexec/Macaulay2
 	touch $@
 
 phase1 :: $(SCRIPTS)
@@ -138,19 +138,19 @@ $(SCRIPTS) : ../util/setup.exe
 else
 $(SCRIPTS) : makeM2.m2
 	rm -f $(SCRIPTS)
-	../bin/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
+	../libexec/Macaulay2 $(ARGS) makeM2.m2 '-eexit(0)'
 endif
 
 phase2 :: initialize
 phase2 :: phase1
 phase2 :: ../cache/Macaulay2-pre
 
-../cache/Macaulay2-pre : $(DUMPEDGFILES) ../bin/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS)
+../cache/Macaulay2-pre : $(DUMPEDGFILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS)
 	 # phase 2 makes the example and test files
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
 	mkdir  cache/tests
-	../bin/Macaulay2 -q -silent '-ephase=2' setup.m2 '-eexit(0)'
+	../libexec/Macaulay2 -q -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 
 all:: .gdbinit
@@ -169,7 +169,7 @@ CVS/Entries : $(GFILES)
 	umount /a.ext2
 
 profile : gmon.out
-	gprof ../bin/Macaulay2 >profile
+	gprof ../libexec/Macaulay2 >profile
 clean ::; rm -f profile
 
 INPUTS := cache/doc/sample cache/doc/expression
@@ -185,7 +185,7 @@ phase4 : phase3 ../cache/Macaulay2-doc
 ../cache/Macaulay2-doc : ../cache/Macaulay2-pre \
 		$(MADEGFILES) $(INPUTS) $(DOCSEQUENCE) $(TUTORIALS)
 	rm -f ../cache/Macaulay2-tmp
-	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
+	../libexec/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
 
 ifdef NEWENGINE
@@ -215,10 +215,10 @@ test4: ../util/screen
 clean::; rm -f test4
 endif
 
-gdb :; gdb ../bin/Macaulay2
+gdb :; gdb ../libexec/Macaulay2
 
 clean::
-	rm -rf ../cache/Macaulay2-$(ARCH)-data ../cache/Macaulay2-doc \
+	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc \
 		cache *.obj *.exe ../bin/M2 runexample \
 		temp.data allfiles distfiles \
 		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \

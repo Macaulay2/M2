@@ -80,7 +80,7 @@ configure : configure.in aclocal.m4
 	autoconf
 include/config.h.in : configure.in aclocal.m4
 	autoheader
-	touch $@
+#	touch $@
 
 stage2 : Makefile include/config.h
 config.status : configure Makefile-configure Makefile-configure.overrides
@@ -88,7 +88,7 @@ config.status : configure Makefile-configure Makefile-configure.overrides
 
 $(CONFIGURED_FILES) include/config.h : $(CONFIGURED_FILES:=.in) config.status include/config.h.in
 	./config.status
-	touch include/config.h
+#	touch include/config.h
 
 TARGETS = all install dist check clean distclean uninstall
 
