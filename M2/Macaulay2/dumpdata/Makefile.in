@@ -14,7 +14,7 @@ file.o: std.h
 warning.o: warning.h std.h
 gdb: checkit; gdb checkit
 TAGS:; etags *.h *.c
-clean:; rm -f *.o checkit core check-data *.a libdump.a
+clean::; rm -f *.o checkit core check-data *.a libdump.a
 LIBS :=
 # LIBS += mmap.o
 # LIBS += write.o
@@ -31,6 +31,7 @@ test1: checkit
 	./checkit dump "hi there"
 	./checkit load "look!"
 	touch "$@"
+clean ::; rm -f "$@"
 
 distclean : clean
 	rm -f Makefile

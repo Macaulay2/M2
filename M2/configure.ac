@@ -13,7 +13,7 @@ test "$CXXFLAGS"   && echo "   CXXFLAGS=$CXXFLAGS"
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
 
-echo $ac_n "checking for GNU make... " >&6
+echo $ECHO_N "checking for GNU make... " >&6
 if make -n --version nothing | grep GNU >/dev/null 2>&1
 then echo "found" >&6
 else echo "`basename $0`: make: GNU make is required" >&2
@@ -47,6 +47,9 @@ AC_VALIDATE_CACHED_SYSTEM_TUPLE()
 # ARCH=$host_cpu
 # AC_SUBST(ARCH)
 # AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
+
+AC_ARG_VAR(CC,C compiler to use)
+AC_ARG_VAR(CXX,C++ compiler to use)
 
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
@@ -135,7 +138,7 @@ AC_ARG_ENABLE(gc_for_new,
 AC_CHECK_FUNC(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing))
 AC_CHECK_FUNC(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing))
 AC_CHECK_FUNC(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing))
-M2_SHOW_CONFDEFS()
+# M2_SHOW_CONFDEFS()
 M2_IS_THERE(sys_errlist)
 M2_IS_THERE(herror)
 M2_IS_THERE(gnu_get_libc_version)

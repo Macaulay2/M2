@@ -39,16 +39,6 @@ NONDOCM2FILES = @srcdir@/setup.m2 $(DUMPSEQUENCE) \
 	$(patsubst %, @srcdir@/%, dumpdata.m2 eg.m2 sagbi.m2 makeM2.m2)
 
 M2FILES = $(NONDOCM2FILES) $(DOCSEQUENCE)
-SCRIPTS = ../bin/M2
-
-ifeq "$(OS)" "MS-DOS"
-SCRIPTS = ../bin/M2.bat ../bin/M2.arg
-endif
-
-ifeq "$(OS)" "Windows-95-98-NT"
-SCRIPTS = ../bin/M2.bat ../bin/M2
-endif
-
 
 loads.m2 : loads.awk dumpseq
 	@echo making $@
@@ -122,16 +112,6 @@ phase1 :: ../cache/Macaulay2-made
 ../cache/Macaulay2-made : $(DUMPEDM2FILES) ../libexec/Macaulay2
 	touch $@
 
-phase1 :: $(SCRIPTS)
-ifeq "$(CC)" "cl"
-$(SCRIPTS) : ../util/setup.exe
-	cd ..; util/setup
-else
-$(SCRIPTS) : makeM2.m2
-	rm -f $(SCRIPTS)
-	env M2HOME=.. ../libexec/Macaulay2 $(ARGS) $< '-eexit(0)'
-endif
-
 phase2 :: initialize
 phase2 :: phase1
 phase2 :: ../cache/Macaulay2-pre
@@ -154,10 +134,11 @@ clean::; rm -f .gdbinit
 	echo 'file ../libexec/Macaulay2' >$@
 	: echo 'dir ../e ../d ../../gc ../../factory ../../libfac ../../gmp' >>$@
 	echo 'set environment M2HOME ..' >>$@
+clean :: ; rm -f .gdb-files
 .gdb-run-it:
 	echo 'echo \n' >$@
 	echo 'run -ephase=1 @srcdir@/setup.m2 "-e path = join({\"@srcdir@/../packages/\"},path)" -ephase=0 "-e runStartFunctions()"' >>$@
-
+clean :: ; rm -f .gdb-run-it
 ##
 backup : CVS/Entries
 CVS/Entries : $(M2FILES)
@@ -174,7 +155,7 @@ cache/doc/sample: sample; cp $< $@
 cache/doc/expression: expression; cp $< $@
 
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
-	 # phase 3: running the example input files
+	 # phase 3: perhaps running the example input files
 	$(MAKE) -C cache/doc -f ../../@srcdir@/Makefile.egs srcdir=../../@srcdir@
 
 all :: phase4
@@ -188,20 +169,20 @@ phase4 : phase3 ../cache/Macaulay2-doc
 
 ifdef NEWENGINE
 check:: test1
-test1 : test.m2 phase1 $(SCRIPTS)
-	M2 '-e errorDepth 0' -q test.m2 '-e << "--test succeeded" << endl' '-e exit 0'
+test1 : test.m2 phase1
+	../../bin/M2 '-e errorDepth 0' -q test.m2 '-e << "--test succeeded" << endl' '-e exit 0'
 	touch $@
 endif
 
 check:: test2
-test2: $(SCRIPTS) phase1 ../libexec/Macaulay2
+test2: phase1 ../libexec/Macaulay2
 	$(MAKE) -k -C cache/tests -f ../../@srcdir@/Makefile.tests
 	touch $@
 clean::; rm -f test2
 
 check:: test3
 test3:
-	echo 2+3 | ../bin/M2
+	echo 2+3 | ../../bin/M2
 	touch $@
 clean::; rm -f test3
 
@@ -220,7 +201,7 @@ install:: $(DUMPEDM2FILES) $(DOCSEQUENCE)
 
 clean::
 	rm -rf ../$(DUMPDATAFILE) ../cache/Macaulay2-doc \
-		cache *.obj *.exe ../bin/M2 runexample \
+		cache *.obj *.exe runexample \
 		temp.data distfiles \
 		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core

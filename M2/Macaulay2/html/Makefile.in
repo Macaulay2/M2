@@ -1,6 +1,6 @@
 # @configure_input@
 include ../../config.Makefile
-IMAGES = Macaulay2-button.scm \
+IMAGES = \
 	up.gif next.gif previous.gif top.gif index.gif null.gif \
 	recbg.jpg 9planets.gif
 all :: $(IMAGES)
@@ -44,14 +44,15 @@ top.gif : @srcdir@/top.gif ; cp $< $@
 null.gif : @srcdir@/null.gif ; cp $< $@
 recbg.jpg : @srcdir@/recbg.jpg ; cp $< $@
 9planets.gif : @srcdir@/9planets.gif ; cp $< $@
+clean ::; rm -f *.gif *.jpg
 endif
 
 index.html : @srcdir@/html.m2 ../cache/Macaulay2-made ../cache/Macaulay2-doc
 	rm -f ./*.html
-	../bin/M2 -q $< '-eexit(0)'
+	../../bin/M2 -q $< '-eexit(0)'
 view:; netscape index.html &
 clean::; rm -f ./*.html
-clean::; rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct
+clean::; rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct Macaulay2-index-cache
 distclean: clean; rm -f Makefile
 $(packagedir)/html:; $(INSTALL) -d "$@"
 install:: $(packagedir)/html

@@ -10,6 +10,8 @@ TESTRESULTS := $(patsubst %.m2, %.okay, $(wildcard *.m2))
 
 all:: $(TESTRESULTS)
 
+distclean :: clean
+
 $(TESTRESULTS) : ../libexec/Macaulay2
 
 %.okay : %.m2
@@ -20,6 +22,5 @@ $(TESTRESULTS) : ../libexec/Macaulay2
 clean  :	
 	rm -f *.okay
 
-distclean : clean
-	rm -f Makefile
+distclean ::; rm -f Makefile
 

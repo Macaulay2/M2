@@ -101,14 +101,7 @@ Quick and easy:
 	./configure
 	make
 	make check
-	make doc
-
-    The resulting shell script, ./Macaulay2/bin/M2, can then be installed in
-    /usr/local/bin.  The command
-	make distribution
-    will produce files Macaulay2-*-tar.gz that can be distributed.
-
-    Eventually 'make install' will do something, but not yet!
+	make install
 
 To compile in another directory, for example, in a subdirectory:
 
@@ -117,27 +110,15 @@ To compile in another directory, for example, in a subdirectory:
 	../configure
 	make
 	make check
-	make doc
+	make install
 
-Useful make targets:
+To make a distribution tarball:
 
-    Use
-	    make -f configure-options configure.options
-    to make a file containing possible options for the 'configure' script.
-    Comment out the ones you want, or install some of your own.  An example of
-    one you might want to add is
-	    CONFIGURE_OPTIONS += --prefix=$HOME/local
-    Use
-	    make -f configure-options configuration
-    to do that and also to run the 'configure' script in the current directory
-
-    Use
-	    make
-    to do configure and compile Macaulay 2.
-
-    Use
-	    make doc
-    to do configure and make the documentation.
+	../configure --enable-encap --with-encapdir=/tmp
+	make
+	make check
+	make install
+	make distribution
 
 -----------------------
 Windows 95, 98 and NT notes
