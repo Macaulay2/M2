@@ -97,7 +97,7 @@ LDLIBS   :=
 LDFLAGS  := -L${LIBDIR} $(STRIPFLAG) $(DEBUGFLAGS)
 
 ifeq ($(OS),Linux)
-## LDFLAGS  += -Wl,-Map,mapfile
+LDFLAGS  += -Wl,-Map,mapfile
 endif
 
 #################################
@@ -165,7 +165,10 @@ endif
 
 M2lib.o scclib.o : ../c/compat.h ../c/compat.c types.h ../../Makeconf.h compat.h memdebug.h
 memdebug.o scclib.o actors5.oo gc_cpp.o : memdebug.h
+gc_cpp.o : ../../Makeconf.h
+
 allc : $(PROJECT:.d=.c) tmp_init.c
+
 ALLOBJ := $(PROJECT:.d=.oo) M2lib.o scclib.o compat.o gc_cpp.o tmp_init.o memdebug.o
 
 ################################# c file production for porting

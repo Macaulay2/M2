@@ -296,6 +296,11 @@ void *p;
 #define NOTHING(p) nop((void *)p)
 #define ONSTACK(p) nop((void *)&p)
 
+#ifdef NDEBUG
+static void dummy_GC_warn_proc(char *msg, GC_word arg) {
+}
+#endif
+
 int main(argc,argv)
 int argc; 
 char **argv;
@@ -448,7 +453,14 @@ char **argv;
      if (getenv("GC_expand_hp")) {
 	  GC_expand_hp(atoi(getenv("GC_expand_hp")));
 	  }
+#ifdef GCMALLOC
      mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
+#else
+     mp_set_memory_functions(malloc1,realloc3,free2);
+#endif
+#ifdef NDEBUG
+     GC_set_warn_proc(dummy_GC_warn_proc);
+#endif
      initrandom();
      system_newline = tostring(newline);
      actors5_VERSION = tostring(VERSION);

@@ -74,6 +74,7 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# NODUMPDATA  := TRUE' >>$@
 	echo '# NOMP        := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
+	echo '# NOGCMALLOC  := TRUE' >>$@
 	echo 'CC            := gcc' >>$@
 	echo 'CXX           := g++' >>$@
 include $(TOPDIR)/Makeconf.lcl
@@ -146,6 +147,14 @@ ifdef NOFACTORY
 FACTORY :=
 endif
 
+export GCMALLOC := TRUE
+ifdef NOGCMALLOC
+GCMALLOC :=
+else
+CFLAGS += -DGCMALLOC
+CXXFLAGS += -DGCMALLOC
+endif
+
 export DUMPDATA := TRUE
 ifdef CYGWIN32
 DUMPDATA :=
@@ -157,7 +166,9 @@ endif
 export DEBUGFLAGS :=
 
 ifdef DEBUG
-DEBUGFLAGS += -g
+DEBUGFLAGS += -g -DDEBUG
+else
+DEBUGFLAGS += -DNDEBUG
 endif
 
 ifdef PROFILE
@@ -169,10 +180,8 @@ ifdef NOSTRIP
 STRIPFLAG :=
 STRIPCMD := :
 else
-# don't omit frame pointers, because it adds 1MB to the executable size!
-# export CFLAGS += -fomit-frame-pointer
-# export CXXFLAGS += -fomit-frame-pointer
-
+export CFLAGS += -fomit-frame-pointer
+export CXXFLAGS += -fomit-frame-pointer
 ifneq "$(CC)" "cl"
 export LDFLAGS += -s
 endif
