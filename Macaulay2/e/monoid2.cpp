@@ -282,8 +282,9 @@ M2_arrayint Monoid::to_arrayint(const_monomial monom) const
 
 void Monoid::to_expvector(const_monomial m, exponents result_exp) const
 {
-  decode(m, EXP1_);
-  monomialOrderToActualExponents(monorder_, EXP1_, result_exp);
+  // MONlocal_ has enough space for either monomials or exponent vectors.
+  decode(m, MONlocal_);
+  monomialOrderToActualExponents(monorder_, MONlocal_, result_exp);
 }
 
 #if 0
