@@ -23,6 +23,8 @@ use strings;
 use basic;
 use struct;
 use objects;
+use evaluate;
+use common;
 
 -----------------------------------------------------------------------------
 -- types

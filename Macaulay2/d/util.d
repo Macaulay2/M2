@@ -10,6 +10,7 @@ use ctype;
 use getline;
 use stdiop;
 use err;
+use common;
 use gmp;
 use engine;
 use tokens;

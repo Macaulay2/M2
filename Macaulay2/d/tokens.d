@@ -339,16 +339,16 @@ export globalFrame := Frame(self, 0, globalFramesize,
 
 export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,globalFramesize,false,false);
 
-export LocalDictionaryList := {
+export DictionaryList := {
      dictionary:Dictionary,
-     next:LocalDictionaryList				    -- pointer to self indicates end
+     next:DictionaryList				    -- pointer to self indicates end
      };
      
-allDictionaries := LocalDictionaryList(Macaulay2Dictionary,self);
+allDictionaries := DictionaryList(Macaulay2Dictionary,self);
 
 export newGlobalDictionary():Dictionary := (
      d := Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false,false);
-     allDictionaries = LocalDictionaryList(d,allDictionaries);
+     allDictionaries = DictionaryList(d,allDictionaries);
      d);
 
 export globalDictionary := Macaulay2Dictionary;
@@ -374,7 +374,7 @@ export localDictionaryClosure(f:Frame):DictionaryClosure := DictionaryClosure(f,
 export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      d := Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false);
-     allDictionaries = LocalDictionaryList(d,allDictionaries);
+     allDictionaries = DictionaryList(d,allDictionaries);
      d);
 export newStaticLocalDictionary():Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
@@ -383,7 +383,7 @@ export newStaticLocalDictionary():Dictionary := (
 	  false,  -- the first local dictionary is usually (?) non-transient
 	  false
 	  );
-     allDictionaries = LocalDictionaryList(d,allDictionaries);
+     allDictionaries = DictionaryList(d,allDictionaries);
      d);
 export emptyLocalDictionary := newStaticLocalDictionary();
 
@@ -392,13 +392,13 @@ export newLocalFrame(outerFrame:Frame,d:Dictionary):Frame := Frame(outerFrame, d
 export newLocalDictionaryClosure(d:Dictionary):DictionaryClosure := DictionaryClosure(newLocalFrame(d),d);
 export newStaticLocalDictionaryClosure():DictionaryClosure := (
      d := newStaticLocalDictionary();
-     allDictionaries = LocalDictionaryList(d,allDictionaries);
+     allDictionaries = DictionaryList(d,allDictionaries);
      DictionaryClosure(newLocalFrame(d),d));
 
 export newStaticLocalDictionaryClosure(dc:DictionaryClosure):DictionaryClosure := (
      d := newLocalDictionary(dc.dictionary);
      d.transient = false;
-     allDictionaries = LocalDictionaryList(d,allDictionaries);
+     allDictionaries = DictionaryList(d,allDictionaries);
      f := newLocalFrame(dc.frame,d);
      DictionaryClosure(f,d));
 
@@ -553,4 +553,29 @@ export (x:Symbol) === (y:Expr):bool := (
      );
 export (x:Expr) === (y:Symbol):bool := (
      when x is z:SymbolClosure do y == z.symbol else false
+     );
+
+export codePosition(e:Code):Position := (
+     when e
+     is f:binaryCode do f.position
+     is f:forCode do f.position
+     is f:functionCode do codePosition(f.parms)
+     is f:globalAssignmentCode do f.position
+     is f:globalMemoryReferenceCode do f.position
+     is f:globalSymbolClosureCode do f.position
+     is f:integerCode do f.position
+     is f:localAssignmentCode do f.position
+     is f:localMemoryReferenceCode do f.position
+     is f:localSymbolClosureCode do f.position
+     is f:multaryCode do f.position
+     is f:nullCode do dummyPosition
+     is f:openDictionaryCode do codePosition(f.body)
+     is f:parallelAssignmentCode do f.position
+     is f:realCode do f.position
+     is f:sequenceCode do f.position
+     is f:listCode do f.position
+     is f:arrayCode do f.position
+     is f:stringCode do f.position
+     is f:ternaryCode do f.position
+     is f:unaryCode do f.position
      );
