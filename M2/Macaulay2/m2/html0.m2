@@ -143,6 +143,7 @@ fixup List       := z -> SEQ fixflat z
 fixup MarkUpList := z -> apply(z,fixup)			       -- recursion
 fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
 fixup PRE        := 
+fixup CODE       := 
 fixup TO         := 
 fixup TO2        := 
 fixup TOH        := identity

@@ -39,7 +39,7 @@ htmlFilename = key -> (				   -- returns the relative path from the PREFIX to th
      else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
-tex  IMG  := x -> ""
+net IMG := tex IMG  := x -> ""
 
 html HREF := x -> (
      "<A HREF=\"" 					    -- "

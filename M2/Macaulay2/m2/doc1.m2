@@ -137,6 +137,15 @@ document { documentation,
      PARA,
      EXAMPLE "documentation partitions"
      }
+document { "initial help",				    -- display by the help command by default
+     Headline => "initial help screen",
+     "Various ways to get help:",
+     UL {
+     	  (TT "help \"Macaulay 2\"", " -- displays the base of the online documentation tree."),
+     	  (TT "help X", " -- displays the online documentation for ", TT "X"),
+	  (TT "help methods X", " -- displays help messages about the methods usable with things of type ", TT "X"),
+	  }
+     }
 document { help,
      Headline => "help command",
      "Various ways to get help:",

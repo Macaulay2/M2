@@ -675,7 +675,7 @@ documentation String := s -> (
      else (
 	  b := getDocBody(s);
 	  if b === null then null
-	  else join( Hypertext { title s, PARA{" "} }, b )))
+	  else prepend(title s, b)))
 
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
@@ -830,18 +830,18 @@ hasDocumentation = x -> (
      p := select(value \ values PackageDictionary, P -> P#"documentation"#?fkey);
      0 < #p)
 
+pager = x -> "!" | (if getenv "PAGER" == "" then "more" else getenv "PAGER") << x << close
 help = method(SingleArgumentDispatch => true)
 help List := v -> (
      printWidth = printWidth - 2;
-     r := boxList apply(v, help);
+     r := boxList apply(v, x -> net documentation x);
      printWidth = printWidth + 2;
-     r)
-help Thing := s -> net (
-     if s === () then s = help;
+     pager r)
+help Thing := s -> (
+     if s === () then s = "initial help";
      r := documentation s;
-     if r === null
-     then Hypertext { "No documentation found for '", formatDocumentTag s, "'"}
-     else r)
+     if r === null then r = Hypertext { "No documentation found for '", formatDocumentTag s, "'"};
+     pager net r)
 help = Command help
 
 -----------------------------------------------------------------------------
