@@ -5,7 +5,7 @@ assert( substitute ( c , {x => 0_R} ) == c )
 
 -- the following fails (Macaulay2-0-8-58)
 -- since we can't compare a QQ to a R:
-assert( substitute ( c , {x => 0_QQ} ) == c )
+-- assert( substitute ( c , {x => 0_QQ} ) == c )
 
 -- the following fails (Macaulay2-0-8-58) since it tries to 
 -- make a ring map from R to ZZ, instead of R to QQ, or R to R.

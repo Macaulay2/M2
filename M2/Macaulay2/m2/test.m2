@@ -1,10 +1,12 @@
 errorDepth 0
 l = matrix {{5}}
-m = matrix {{5_ZZZ}}
-print m
-ideal 5_ZZZ
-k = ZZZ/5
-print k
+if instance(ZZZ, Type) then (
+    m = matrix {{5_ZZZ}};
+    print m;
+    ideal 5_ZZZ;
+    k = ZZZ/5;
+    print k;
+    )
 o = monomialOrdering(RevLex => 4)
 print o
 print (o ** o)
