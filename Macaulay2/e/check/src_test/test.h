@@ -3,6 +3,8 @@
 #ifndef TEST_H
 #define TEST_H
 
+#include <gc/new_gc_alloc.h>
+#include "newdelete.hpp"
 #include <string>
 #include <iosfwd>
 

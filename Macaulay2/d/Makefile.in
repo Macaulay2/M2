@@ -3,6 +3,7 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
 ############################## main targets
+all :: tokens_stub.o
 all :: gc_tested
 all :: tags
 all :: compat.h
@@ -159,8 +160,6 @@ M2types.o : M2types.h
 M2lib.o scclib.o : compat.h ../c/compat.h ../c/compat.c types.h memdebug.h
 gmp_int.o M2lib.o scclib.ogdbm_interface.o gc_cpp.o version.o M2inits.o debug.o : ../../include/config.h
 memdebug.o scclib.o actors5.o : memdebug.h
-
-all :: tokens_stub.o
 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'

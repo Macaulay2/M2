@@ -95,7 +95,7 @@ void test_schreyer_order(Test *pTest)
     {
       V->array[i] = IM2_RingElement_term(R, one, monom(2,i,i+1));
     }
-  M = IM2_Matrix_make1(F,5,V,0);
+#warning error  M = IM2_Matrix_make1(F,5,V,0);
   display_matrix(M);
 
   /* Now use this to make a free module of rank 5: */
