@@ -45,7 +45,7 @@ config.status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
 reconfigure:
-	@srcdir@/config/config.command |sh
+	@srcdir@/config/config.command |sh -x
 
 # announcement only:
 install all clean distclean install-strip ::

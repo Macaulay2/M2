@@ -91,10 +91,10 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   // case (1), (2): PolyRingQuotient
   // case (3): PolyQQ
 
-  PolynomialRing *result;
+  PolynomialRing *result = NULL;
   Ring::CoefficientType coeff_type = R->coefficient_type();
 
-  QRingInfo *qrinfo;
+  QRingInfo *qrinfo NULL;
   switch (coeff_type) {
   case COEFF_BASIC:
     qrinfo = new QRingInfo_field_basic(R->getNumeratorRing(),elems);
