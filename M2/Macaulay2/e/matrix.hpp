@@ -60,20 +60,20 @@ public:
   static const MatrixOrNull * make(const FreeModule *target,
 				   int ncols,
 				   const RingElement_array *M,
-				   M2_bool is_mutable);// TO WRITE
+				   M2_bool is_mutable);
 
   static const MatrixOrNull * make(const FreeModule *target,
 				   const FreeModule *source,
 				   const M2_arrayint deg,
 				   const RingElement_array *M,
-				   M2_bool is_mutable);// TO WRITE
+				   M2_bool is_mutable);
 
   static const MatrixOrNull * make_sparse(const FreeModule *target,
 					  int ncols,
 					  const M2_arrayint rows,
 					  const M2_arrayint cols,
 					  const RingElement_array *entries,
-					  M2_bool is_mutable);// TO WRITE
+					  M2_bool is_mutable);
 
   static const MatrixOrNull * make_sparse(const FreeModule *target,
 					  const FreeModule *source,
@@ -81,12 +81,15 @@ public:
 					  const M2_arrayint rows,
 					  const M2_arrayint cols,
 					  const RingElement_array *entries,
-					  M2_bool is_mutable);// TO WRITE
+					  M2_bool is_mutable);
 
   const MatrixOrNull * make_copy(const FreeModule *target,
 				 const FreeModule *source,
 				 const M2_arrayint deg,
-				 M2_bool is_mutable) const;// TO WRITE
+				 M2_bool is_mutable) const;
+
+  const MatrixOrNull * make_copy(const FreeModule *target,
+				 M2_bool is_mutable) const;
 
   static const Matrix * make(const MonomialIdeal * mi);
 
