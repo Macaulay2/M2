@@ -7,7 +7,7 @@
 
 ///// Ring Hierarchy ///////////////////////////////////
 
-class SolvableAlgebra : public PolynomialRing
+class SolvableAlgebra : public PolyRing
 {
 protected:
   bool initialize_solvable(const Matrix *Q);

@@ -24,6 +24,7 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 INTERFACE = \
+	poly \
 	debug \
 	respoly2 \
 	res2 \

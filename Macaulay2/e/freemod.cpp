@@ -83,7 +83,7 @@ vec FreeModule::copy(vec v) const
 
 void FreeModule::remove(vec &v) const
 {
-  R->remove_vector(v);
+  R->remove_vec(v);
 }
 
 ring_elem FreeModule::get_coefficient(vec v, int e) const

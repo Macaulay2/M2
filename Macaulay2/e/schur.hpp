@@ -32,7 +32,7 @@ class tableau
   void display() const;
 };
 
-class SchurRing : public PolynomialRing
+class SchurRing : public PolyRing
 {
 private:
   // These are variables that are used in the recursive routine 

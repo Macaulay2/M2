@@ -84,7 +84,7 @@ public:
   monoid_info *get_private_monoid_info() const { return moninfo; }
 
   static void set_trivial_monoid_degree_ring(const PolynomialRing *DR);
-  // ONLY to be called by PolynomialRing::get_trivial_poly_ring()
+  // ONLY to be called by PolyRing::get_trivial_poly_ring()
 
   static Monoid *get_trivial_monoid();
 

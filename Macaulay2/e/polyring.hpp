@@ -15,13 +15,15 @@ class GBRing;
 class GBRingSkew;
 class GBComputation;
 
+#include "poly.hpp"
+
 #if 0
 class QuotientInfo
 {
 public:
   bool is_quotient() const;
   vector<gbvector *,gc_alloc> elements;
-  const PolynomialRing *ambient_ring;
+  const PolyRing *ambient_ring;
 #if 0
   MonomialIdeal * _Rideal;	// This is used if the coeff ring is not ZZ.
   TermIdeal *_RidealZZ;		// This is used if the coeff ring is ZZ.
@@ -44,24 +46,31 @@ public:
   void initialize_quotients(const array<ring_elem> &I);
 #endif
 
-class PolynomialRing : public Ring
+class PolyRing : public PolynomialRing
 {
   friend class GBRingSkew;
   friend class FreeModule;
 protected:
-  const PolynomialRing * make_flattened_ring();
+#if 0
+  virtual PolyRing *createPolyRing(const Monoid *M);
+  // Create the PolyRing this[M].  This is virtual, since it must be the same type of noncomm
+  // as 'this'.  e.g., if K has skew comm variables, so does the result.
+#endif
+
+  const PolyRing * make_flattened_ring();
+
   void initialize_poly_ring(const Ring *K, const Monoid *M);
 
   void initialize_poly_ring(const Ring *K, const Monoid *M, const PolynomialRing *deg_ring);
   // Only to be called from initialize_poly_ring and make_trivial_ZZ_poly_ring
 
-  virtual ~PolynomialRing();
-  PolynomialRing() {}
+  virtual ~PolyRing();
+  PolyRing() {}
 
-  static PolynomialRing *trivial_poly_ring;
+  static PolyRing *trivial_poly_ring;
   static void make_trivial_ZZ_poly_ring();
 public:
-  static PolynomialRing *create(const Ring *K, const Monoid *MF);
+  static PolyRing *create(const Ring *K, const Monoid *MF);
 
 protected:
   const Ring *K_;
@@ -75,10 +84,10 @@ protected:
 
   
   GBRing *_gb_ring;
-  const PolynomialRing *flattened_ring;
+  const PolyRing *flattened_ring;
 
   // Quotient ring information
-  const PolynomialRing *_base_ring; // == NULL iff this is not a quotient ring
+  const PolyRing *_base_ring; // == NULL iff this is not a quotient ring
   GBComputation *_quotient_gb;
 
 #if 0
@@ -91,7 +100,6 @@ protected:
 
 
   bool _coefficients_are_ZZ;
-  bool _isgraded;
 
   // Most skew-mult specific poly code is in skewpoly.{hpp,cpp}.  However, var, homogenize,
   //   and diff_term all have a small amount of skew commutative specific code.
@@ -100,24 +108,41 @@ protected:
 
   int *_EXP1, *_EXP2, *_EXP3;
 public:
-  const Ring * get_ring() const { return this; }
   const Ring *  Ncoeffs()       const { return K_; }
   const Monoid * Nmonoms()       const { return M_; }
 
-  static const PolynomialRing *get_trivial_poly_ring();
+  virtual const PolyRing * getAmbientRing() const { return this; }
 
-  static PolynomialRing *create_quotient_ring(GBComputation *G);
+  virtual const RingOrNull *getDenominatorRing() const { return 0; }
 
-  virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
-  virtual       PolynomialRing * cast_to_PolynomialRing()        { return this; }
+  virtual const Ring *getCoefficients() const { return K_; }
+  // The coefficient ring of 'this'.  This is either a non polynomial ring, or it is a PolyRing.
+
+  virtual const Ring *getFlatCoefficients() const { return K_; }
+  // The implementation coeff ring of 'this'.  This is either a basic ring (field, ZZ), or
+  // is another PolyRing.
+
+  virtual const Monoid *getMonoid() const { return M_; }
+  // The monoid of this polynomial ring.
+
+  virtual const Monoid *getFlatMonoid() const { return M_; }
+  // The implementation monoid of this ring.
+
+
+
+  static const PolyRing *get_trivial_poly_ring();
+
+  static PolyRing *create_quotient_ring(GBComputation *G);
+
+  virtual const PolyRing * cast_to_PolyRing()  const { return this; }
+  virtual       PolyRing * cast_to_PolyRing()        { return this; }
 
   virtual bool is_basic_ring() const { return false; }
   GBRing *get_gb_ring() const { return _gb_ring; }
-  const PolynomialRing * get_flattened_ring() const {  return flattened_ring; }
+  const PolyRing * get_flattened_ring() const {  return flattened_ring; }
 
   // Quotient ring information
   bool        is_quotient_ring() const { return (_base_ring != NULL); }
-  const PolynomialRing * get_base_poly_ring() const { return _base_ring; }
   MonomialIdeal *  get_quotient_monomials() const { return _Rideal; }
   
   // skew commutativity 
@@ -130,7 +155,6 @@ public:
 				       || (_nvars == 0 && K_->is_pid()); }
   virtual bool has_gcd() const      { return (_nvars == 1 && K_->is_field())
 				       || (_nvars == 0 && K_->has_gcd()); }
-  virtual bool is_graded() const    { return _isgraded; } // MES: change this
 
   virtual bool is_poly_ring() const { return true; }
   virtual bool is_quotient_poly_ring() const { return _base_ring != NULL; }
@@ -142,6 +166,10 @@ public:
   { return Ncoeffs()->n_fraction_vars(); }
 
   virtual void text_out(buffer &o) const;
+
+  /////////////////////////
+  // Arithmetic ///////////
+  /////////////////////////
 
   virtual ring_elem from_double(double n) const;
   virtual ring_elem from_int(int n) const;
@@ -243,9 +271,10 @@ public:
 #endif
   virtual void mult_coeff_to(ring_elem a, ring_elem &f) const;
 
-  ring_elem coeff_of(const ring_elem f, const int *m) const;
 
 protected:
+  ring_elem coeff_of(const ring_elem f, const int *m) const;
+  
   ring_elem diff_term(const int *m, const int *n, 
 		      int *resultmon,
 		      int use_coeff) const;
@@ -298,7 +327,7 @@ protected:
   void imp_subtract_multiple_to(ring_elem &f, 
 				ring_elem a, const int *m, const ring_elem g) const;
 public:
-  Nterm *resize(const PolynomialRing *R, Nterm *f) const;
+  Nterm *resize(const PolyRing *R, Nterm *f) const;
   void sort(Nterm *&f) const;
   void debug_out(const ring_elem f) const;
   void debug_outt(const Nterm *f) const;

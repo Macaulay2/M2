@@ -122,7 +122,7 @@ mgb = rawGBGetMatrix Gcomp;
 
 rawGBGetLeadTerms(Gcomp,6)
 
-rawGBSetStop(Gcomp, ...) -- MES: make sure the default is set correctly
+--rawGBSetStop(Gcomp, ...) -- MES: make sure the default is set correctly
 -- Actual computation is done in, eg:
 
 mmin = rawGBMinimalGenerators Gcomp

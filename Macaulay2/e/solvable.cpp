@@ -52,7 +52,7 @@ ring_elem SolvableAlgebra::power(const ring_elem f, mpz_t n) const
 
 ring_elem SolvableAlgebra::power(const ring_elem f, int n) const
 {
-  return PolynomialRing::power2(f,n);
+  return PolyRing::power2(f,n);
 }
 
 

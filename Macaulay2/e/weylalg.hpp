@@ -8,7 +8,7 @@
 
 ///// Ring Hierarchy ///////////////////////////////////
 
-class WeylAlgebra : public PolynomialRing
+class WeylAlgebra : public PolyRing
 {
 protected:
   int _nderivatives;
@@ -75,7 +75,6 @@ public:
 
   virtual bool is_pid() const       { return false; }
   virtual bool has_gcd() const      { return false; }
-  virtual bool is_graded() const    { return _isgraded; }
 
   virtual bool is_commutative_ring() const { return false; }
   virtual bool is_weyl_algebra() const { return true; }

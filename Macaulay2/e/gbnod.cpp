@@ -737,9 +737,8 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
   // prematurely, our state will be one of STATE_NEW_DEGREE,
   // STATE_GB, STATE_GENS.
 
-  buffer o;
+  buffer o1;
 
-  int n1,n2;
   if (state == STATE_NEW_DEGREE)
     {
       if (use_hilb)
@@ -751,7 +750,7 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
 	    {
 	      hsyz = syz->hilbertNumerator();
 	      if (hsyz == 0) return COMP_INTERRUPTED;
-	      //	      o << "hsyz = "; hsyz->text_out(o);
+	      //	      o1 << "hsyz = "; hsyz->text_out(o);
 	      h = (*h) + (*hsyz);
 	    }
 	  RingElement *hf1 = hilbertNumerator();
@@ -762,12 +761,12 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
 	  h = (*h) - (*hF);
 
 #if 0
-	  o << "\nhf   = "; hf1->text_out(o);
-	  o << "\nhF   = "; hF->text_out(o);
-	  o << "\nh    = "; h->text_out(o);
-	  o << "\n";
-	  emit(o.str());
-	  o.reset();
+	  o1 << "\nhf   = "; hf1->text_out(o1);
+	  o1 << "\nhF   = "; hF->text_out(o1);
+	  o1 << "\nh    = "; h->text_out(o1);
+	  o1 << "\n";
+	  emit(o1.str());
+	  o1.reset();
 #endif
 	  if (gbTrace >= 1 && n_gb_syz != 0)
 	    {
