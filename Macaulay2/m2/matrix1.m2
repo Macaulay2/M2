@@ -89,6 +89,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  rankN = N;
 	  )
      else (
+	  assert( class N === Module );
      	  k = ring N;
      	  try promote(1_k,R) else error "modules over incompatible rings";
 	  -- later, allow a ring homomorphism
@@ -105,14 +106,14 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  then error( "expected ", toString numgens M, " by ", toString rankN, " table");
 	  p = toSequence makeRawTable(R,p);
 	  h := (
-	       if N === null 
-	       then rawMatrix1(raw cover M, rankN, flatten p, 0)
-	       else rawMatrix2(raw cover M, raw cover N, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,0)
+	       if class N === Module
+	       then rawMatrix2(raw cover M, raw cover N, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,0)
+	       else rawMatrix1(raw cover M, rankN, flatten p, 0)
 	       );
 	  new Matrix from {
 	       symbol target => M,
 	       symbol RawMatrix => h,
-	       symbol source => if N === null then newModule(R, rawSource h) else N,
+	       symbol source => if class N === Module then N else newModule(R, rawSource h),
 	       symbol ring => R,
 	       symbol cache => new CacheTable
 	       })
