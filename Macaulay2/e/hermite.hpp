@@ -47,7 +47,6 @@ private:
   void gb_reduce(vec &f) const;
   void gb_reduce(vec &f, vec &fsyz) const;
   
-protected:
   virtual bool stop_conditions_ok() { return true; }
 
 public:

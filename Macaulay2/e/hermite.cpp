@@ -1,4 +1,4 @@
-// Copyright 1996  Michael E. Stillman
+// Copyright 1996-2005  Michael E. Stillman
 
 #include "style.hpp"
 #include "hermite.hpp"
@@ -362,7 +362,6 @@ void HermiteComputation::text_out(buffer &o)
   for (int i=0; i<syz_list.size(); i++)
     globalZZ->vec_text_out(o,syz_list[i]);
   o << newline;
-  emit(o.str());
 }
 
 void HermiteComputation::gb_reduce(vec &f) const
@@ -508,9 +507,7 @@ int HermiteComputation::contains(const Matrix *m)
   for (int i=0; i<m->n_cols(); i++)
     {
       vec f = globalZZ->copy_vec(m->elem(i));
-      vec fsyz = NULL;
-      gb_reduce(f, fsyz);
-      globalZZ->remove_vec(fsyz);
+      gb_reduce(f);
       if (f != NULL)
 	{
 	  globalZZ->remove_vec(f);

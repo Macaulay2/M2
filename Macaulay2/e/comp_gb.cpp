@@ -4,10 +4,7 @@
 
 #include "gb.hpp"
 #include "gbinhom.hpp"
-#if 0
-#include "gbZZ.hpp"
 #include "gauss.hpp"
-#endif
 #include "hermite.hpp"
 #include "gbA.hpp"
 #include "gbweight.hpp"
@@ -40,6 +37,10 @@ ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
       if (R1 == globalZZ)
 	{
 	  return new HermiteComputation(m, collect_syz, n_rows_to_keep);
+	}
+      if (R1->is_field())
+	{
+	  return new GaussElimComputation(m, collect_syz, n_rows_to_keep);
 	}
 #warning "handle non polynomial rings"
       ERROR("GB computation for non-polynomial rings not yet re-implemented");
