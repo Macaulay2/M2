@@ -435,5 +435,9 @@ M2-send-to-prorgram can obtain lines from this buffer."
   "The buffer from which lines are obtained by M2-send-to-program when the
 cursor is at the end of the buffer.  Set it with M2-set-demo-buffer." )
 
+; enable syntax highlighting:
+(add-hook 'M2-comint-mode-hook 'turn-on-font-lock)
+(add-hook 'M2-mode-hook 'turn-on-font-lock) 
+
 (provide 'M2)				;last thing to do
 

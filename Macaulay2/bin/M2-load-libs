@@ -1,0 +1,11 @@
+#! /bin/sh
+dir=`dirname $0`
+dir=`dirname $dir`
+if [ "$LD_LIBRARY_PATH" ]
+then echo "appending $dir/lib to environment variable LD_LIBRARY_PATH"
+     LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$dir/lib
+else echo "storing $dir/lib in environment variable LD_LIBRARY_PATH"
+     LD_LIBRARY_PATH=$dir/lib
+fi
+export LD_LIBRARY_PATH
+exec $dir/bin/M2 "$@"
