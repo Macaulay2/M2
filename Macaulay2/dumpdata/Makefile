@@ -1,9 +1,11 @@
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
-CFLAGS += -Wall -g
+CFLAGS := -Wall -g
+LDFLAGS := 
 
 all :: check
-	check
+	check dump
+	check load
 check : dumpdata.o check.o
 dumpdata.o check.o : dumpdata.h
 

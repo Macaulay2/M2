@@ -27,6 +27,12 @@ initialize :: bin
 initialize :: cache
 cache :; mkdir $@
 clean ::; rm -rf cache
+################################# lib
+ifdef SHAREDLIBS
+all :: lib
+lib :; mkdir $@
+endif
+clean ::; rm -rf lib
 ################################# tmp
 tmp :; mkdir $@
 tmp/Examples :; mkdir $@

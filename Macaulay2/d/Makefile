@@ -78,8 +78,14 @@ endif
 	$(SCC1) $(SCCFLAGS) +gc -J. $<
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $*.c $(OUTPUT_OPTION)
 	rm $*.c
-%     : %.oo;	$(CC) $< $(LDFLAGS) $(LDLIBS) $(OUTPUT_OPTION)
-%.o   : %.c;	$(CC) $< -c $(CPPFLAGS) $(CFLAGS) $(WARNINGS) $(OUTPUT_OPTION)
+%.loo  : %.d
+	$(SCC1) $(SCCFLAGS) +gc -J. $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -fPIC -c $*.c $(OUTPUT_OPTION)
+	rm $*.c
+%     : %.oo;	$(LINK.o)                $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+%.o   : %.c;	$(COMPILE.c) $(WARNINGS) $<                        $(OUTPUT_OPTION)
+%.lo  : %.c;    $(COMPILE.c)  -fPIC      $<                        $(OUTPUT_OPTION)
+%.lo  : %.cc;   $(COMPILE.cc) -fPIC      $<			   $(OUTPUT_OPTION)
 ############################## flags
 
 PURIFYCMD :=
@@ -105,7 +111,7 @@ endif
 CXXFLAGS += $(WARNINGS)
 
 ifneq "$(CC)" "cl"
-LDFLAGS  += -L${LIBDIR}
+LDLIBS  += -L${LIBDIR}
 endif
 
 ifeq ($(OS),Linux)
@@ -139,10 +145,8 @@ endif
 # __underflow
 # LDLIBS+= -lc
 
-ifndef NOSTATIC
-ifneq "$(CC)" "cl"
+ifndef SHAREDLIBS
 LDFLAGS += -static
-endif
 endif
 
 ifeq ($(OS),Linux)
@@ -154,7 +158,7 @@ ifeq ($(OS),Linux)
 # Without it, it does dynamic linking at run time and breaks our dumpdata scheme
 # Don't link statically, so that these libraries actually get loaded at run time.
 # If we must link statically, we should find out how to link all members.
-LDFLAGS += -lnss_compat -lnss_db -lnss_dns -lnss_nis
+LDLIBS += -lnss_compat -lnss_db -lnss_dns -lnss_nis
 
 endif
 
@@ -205,7 +209,21 @@ gc_cpp.o : ../../Makeconf.h
 
 allc : $(PROJECT:.d=.c) tmp_init.c
 
-ALLOBJ := $(PROJECT:.d=.oo) M2lib.o scclib.o gc_cpp.o tmp_init.o memdebug.o $(wildcard ../e/*.o)
+ALLOBJ :=
+MISCO := M2lib.o scclib.o gc_cpp.o tmp_init.o memdebug.o
+
+ifdef SHAREDLIBS
+ALLOBJ += $(wildcard ../lib/engine*.so)
+LOADLIBES += -L../lib
+LDFLAGS += -rdynamic
+ALLOBJ += ../lib/interpreter.so
+../lib/interpreter.so : $(PROJECT:.d=.loo) $(MISCO:.o=.lo)
+	$(CC) -shared $^ $(OUTPUT_OPTION)
+else
+ALLOBJ += $(wildcard ../e/*.so)
+ALLOBJ += $(PROJECT:.d=.oo) 
+ALLOBJ += $(MISCO)
+endif
 
 ifneq "$(CC)" "cl"
 ALLOBJ += compat.o
@@ -286,12 +304,13 @@ LIBRARIES += ../dbm/libdbm2.a
 ifdef MP
 LIBRARIES += ../../lib/libMP.a
 endif
+ifdef SHAREDLIBS
+LIBRARIES += ../lib/libfac.so
+LIBRARIES += ../lib/libcf.so
+else
 LIBRARIES += ../../lib/libfac.a
 LIBRARIES += ../../lib/libcf.a
-LIBRARIES += ../../lib/libmpf.a
-LIBRARIES += ../../lib/libmpz.a
-LIBRARIES += ../../lib/libmpn.a
-LIBRARIES += ../../lib/libmpq.a
+endif
 LIBRARIES += ../../lib/libgmp.a
 LIBRARIES += ../../lib/libgc.a
 endif
@@ -313,7 +332,7 @@ endif
 ../bin/Macaulay2 : $(ALLOBJ) $(LIBRARIES)
 	rm -f $@
 	@ echo 'linking $@ with $(LDFLAGS) $(LDLIBS)'
-	time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LDLIBS) $(LINK_OUTPUT_OPTION)
+	@ time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LOADLIBES) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 ifndef CYGWIN32
 	$(STRIPCMD) $@
 endif

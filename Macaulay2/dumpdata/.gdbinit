@@ -1,2 +1,2 @@
-# b main
-# run
+b loaddata
+run load
