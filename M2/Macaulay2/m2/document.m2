@@ -459,16 +459,14 @@ title := s -> SEQ { CENTER { BIG formatDocumentTag s, headline s }, PARA{} }
 
 inlineMenu := x -> between(", ", TO \ x)
 
-type := s -> (
+type := S -> (
+     s := value S;
      X := class s;
      SEQ {
-	  if class s =!= Thing 
-	  and class s =!= Symbol
-	  and class s =!= Function
-	  then SEQ {
+	  SEQ {
 	       "The ",
 	       if X.?synonym then X.synonym else "object",
-	       " ", toString s, " is a member of the class ", TO class s, ".\n"
+	       " \"", toString S, "\" is a member of the class ", TO class s, ".\n"
 	       },
 	  if instance(s,Type) then (
 	       SEQ {
@@ -681,7 +679,7 @@ documentation Symbol := s -> (
 	  title s, 
 	  usage s,
 	  op s,
-     	  type value s,
+     	  type s,
 	  if #a > 0 then SEQ {"Functions with optional argument named ", toString s, " :", PARA{}, SHIELD smenu a, PARA{}},
 	  if #b > 0 then SEQ {"Methods for ", toString s, " :", PARA{}, SHIELD smenu b, PARA{}} 
      	  }

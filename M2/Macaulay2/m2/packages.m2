@@ -19,8 +19,6 @@ toString Dictionary := d -> if length d == 0 then "Dictionary{}" else "Dictionar
 installMethod(GlobalAssignHook,Package,globalAssignFunction)
 installMethod(GlobalReleaseHook,Package,globalReleaseFunction)
 
-M2title := "Macaulay2"
-
 hide := d -> (
      globalDictionaries = select(globalDictionaries, x -> x =!= d);
      )
@@ -45,7 +43,7 @@ newPackage(String) := opts -> (title) -> (
      sym := value ("symbol " | title);
      removePackage title;
      newdict := (
-	  if title === M2title
+	  if title === "Main"
 	  then first globalDictionaries
 	  else if title === "Output" then OutputDictionary
 	  else first (globalDictionaries = prepend(new Dictionary,globalDictionaries))
@@ -75,7 +73,7 @@ newPackage(String) := opts -> (title) -> (
      packages = prepend(p,packages);
      p)
 
-newPackage(M2title,
+newPackage("Main",
      Version => version#"VERSION",
      WritableSymbols => {
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory,
@@ -121,7 +119,7 @@ closePackage = p -> (
 	       if not ws#?s then protect s;
 	       if value s =!= s then p#"reverse dictionary"#(value s) = s;
 	       ));
-     if p =!= Macaulay2 then (			    -- protect it later, after package User is open
+     if p =!= Main then (			    -- protect it later, after package User is open
 	  protect p.Dictionary;
 	  );
      if first globalDictionaries =!= p.Dictionary then error ("another dictionary is open");

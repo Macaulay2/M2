@@ -18,8 +18,8 @@ List.BeforePrint =
 Sequence.BeforePrint = x -> if width stdio == 0 then x else wrap(- width stack lines ZZ.InputPrompt lineNumber + width stdio, net x)
 
 -- make sure this is after all global symbols are defined or erased
-closePackage Macaulay2
+closePackage Main
 -- we load the documentation afterwards, because closing the package records the reverse dictionary entries
-currentPackage = Macaulay2
+currentPackage = Main
 -- load "Macaulay2-doc.m2"
 currentPackage = null

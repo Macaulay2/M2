@@ -11,6 +11,11 @@ VPATH = @srcdir@
 
 .PRECIOUS test-configuration install all clean distclean:: @srcdir@/configure config.status
 
+Makefile : Makefile.in; ./config.status Makefile
+include/config.Makefile: include/config.Makefile.in; ./config.status include/config.Makefile
+all :: include/config.h
+include/config.h: include/config.h.in; ./config.status include/config.h
+
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
 	$(MAKE) -C @srcdir@ -f Makefile-configuration
 	@echo '-----------------------------------------------------------------------------'
@@ -32,7 +37,7 @@ install all clean distclean::
 # first install target, the only place in the tree where 'all' is a prerequisite of 'install', hopefully.
 install :: all
 
-install :: ; rm -f INSTALLDIR && ln -s $(target) INSTALLDIR
+install :: ; rm -f INSTALLDIR && ln -s $(prefix) INSTALLDIR
 clean   :: ; rm -f INSTALLDIR
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
@@ -46,6 +51,5 @@ DIRS := $(target) $(bindir) $(libm2dir) $(man1dir) $(emacsdir) $(m2dir) $(docm2r
 install :: $(DIRS)
 install :: ; $(MAKE) -C encap $@
 $(DIRS) :; $(INSTALL) -d $@
-Makefile : Makefile.in; ./config.status Makefile
 distclean ::; rm -f @CONFIGURED_FILES@ include/config.h include/config.Makefile
 install all clean distclean::; @echo "-------- done making '$@' --------"

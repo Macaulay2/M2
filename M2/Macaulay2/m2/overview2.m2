@@ -1819,7 +1819,7 @@ document { "communicating with programs",
      ", TT "in", ".",
      EXAMPLE {
 	  ///f = openInOut "!egrep '^in'"///,
-	  ///scan(keys Macaulay2.Dictionary, key -> f << key << endl)///,
+	  ///scan(keys Main.Dictionary, key -> f << key << endl)///,
 	  ///f << closeOut///,
 	  ///get f///
 	  },

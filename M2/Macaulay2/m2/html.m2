@@ -35,7 +35,7 @@ rel := url -> (
 htmlFilename = (nodename) -> (	-- returns the relative path from the PREFIX to the file
      if buildPackage === null then buildPackage = currentPackage.name;
      if nodename === topNodeName then (
-	  if buildPackage === "Macaulay2"
+	  if buildPackage === "Main"
 	  then LAYOUT#"htmldoc" | topFileName
 	  else LAYOUT#"packagehtml" buildPackage | topFileName
 	  )
@@ -291,7 +291,7 @@ makeHTML = (builddir) -> (
      docdatabase = DocDatabase;				    -- used to be an argument
      topNodeName = "Macaulay 2";			    -- used to be an argument
      htmlDirectory = LAYOUT#"htmldoc";
-     buildPackage = "Macaulay2";
+     buildPackage = "Main";
      prefix = htmlDirectory;
      setupButtons();
      sav := if htmlDefaults#?"BODY" then htmlDefaults#"BODY";
