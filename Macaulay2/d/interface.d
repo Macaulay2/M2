@@ -1678,21 +1678,19 @@ export rawMonomials(e:Expr):Expr := (
 setupfun("rawMonomials",rawMonomials);
 
 export rawCoefficients(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) != 3 then WrongNumArgs(3) else
-     if !isSequenceOfSmallIntegers(s.0) then WrongArg(1,"a sequence of small integers") else
-     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
-     when s.2 is M:RawMatrix do (
-	  vars := getSequenceOfSmallIntegers(s.0);
-	  monoms := getSequenceOfSmallIntegers(s.1);
-	  toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)",
-		    "IM2_Matrix_get_coeffs(",
-		    "(M2_arrayint)", vars, ",",
-		    "(M2_arrayint)", monoms, ",",
-		    "(Matrix *)", M,
-		    ")" ))
-	  )
+     when e is s:Sequence do if length(s) != 3 then WrongNumArgs(3) else
+     if isSequenceOfSmallIntegers(s.0) then
+     when s.1 is monoms:RawMatrix do 
+     when s.2 is M:RawMatrix do toExpr(
+	  Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)",
+	       "rawCoefficients(",
+	       "(M2_arrayint)", getSequenceOfSmallIntegers(s.0), ",",
+	       "(Matrix *)", monoms, ",",
+	       "(Matrix *)", M,
+	       ")" ))
      else WrongArg(3,"a raw matrix")
+     else WrongArg(2,"a raw matrix of monomials")
+     else WrongArg(1,"a sequence of small integers")
      else WrongNumArgs(3));
 setupfun("rawCoefficients",rawCoefficients);
 
