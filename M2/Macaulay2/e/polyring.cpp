@@ -273,17 +273,15 @@ bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) con
   // case 1:  Rf = A[x]/J ---> A[x]/I  is one of the 'base_ring's of 'this'.
   // case 2:  Rf = A      ---> A[x]/I  is the ring of scalars
 
-  const PolynomialRing *R1 = Rf->cast_to_PolynomialRing();
-
-  if (logicalK_ == Rf || (R1 != 0 && logicalK_ == R1->getAmbientRing()))
+  int nvars0 = n_vars() - Rf->n_vars();
+  if (nvars0 == 0) 
     {
-      int *m = logicalM_->make_one();
-      result = make_logical_term(f,m);
-      //      M_->remove(m);
+      result = copy(f);
       return true;
     }
-
-  return false;
+  int *exp = newarray(int,nvars0);
+  result = make_logical_term(Rf,f,exp);
+  return true;
 }
 
 bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
@@ -1471,24 +1469,31 @@ ArrayPairOrNull PolyRing::list_form(const Ring *coeffR, const ring_elem f) const
   return result;
 }
 
-ring_elem PolyRing::make_logical_term(const ring_elem a, const int *m) const
+ring_elem PolyRing::make_logical_term(const Ring *coeffR, const ring_elem a, const int *exp0) const
 {
-  if (K_ == logicalK_) return make_flat_term(a,m);
-  // Otherwise logicalK_ is a polynomial ring
-  const PolynomialRing *logicalK = logicalK_->cast_to_PolyRing();
+  int nvars0 = n_vars() - coeffR->n_vars();
+
+  if (coeffR->n_vars() == 0) 
+    {
+      int *m = M_->make_one();
+      M_->from_expvector(exp0,m);
+      return make_flat_term(a,m);
+    }
+
+  // Otherwise coeffR is a polynomial ring
+  const PolynomialRing *logicalK = coeffR->cast_to_PolyRing();
   assert(logicalK);
   Nterm head;
   Nterm *inresult = &head;
   int *exp = newarray(int,M_->n_vars());
-  int nvars = logicalM_->n_vars();
-  logicalM_->to_expvector(m, exp); // sets the first part of exp
+  ntuple::copy(nvars0, exp0, exp); // Sets the first part of exp
   for (Nterm *f = a; f != 0; f = f->next)
     {
       Nterm *t = new_term();
       inresult->next = t;
       inresult = t;
       t->coeff = f->coeff;
-      logicalK->getMonoid()->to_expvector(f->monom, exp+nvars);
+      logicalK->getMonoid()->to_expvector(f->monom, exp+nvars0);
       M_->from_expvector(exp, t->monom);
     }
   inresult->next = 0;

@@ -204,7 +204,7 @@ public:
   // This is here mainly because geopoly requires n_terms.
 
   virtual ring_elem make_flat_term(const ring_elem a, const int *m) const = 0;
-  virtual ring_elem make_logical_term(const ring_elem a, const int *m) const = 0;
+  virtual ring_elem make_logical_term(const Ring *coeffR, const ring_elem a, const int *exp) const = 0;
   //  virtual ring_elem term(const ring_elem a, const int *m) const = 0;
 
   virtual ring_elem lead_flat_coeff(const ring_elem f) const = 0;

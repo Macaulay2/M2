@@ -1,5 +1,20 @@
 -- Test of towers of quotient rings --
 
+A = ZZ[a,b,c]
+f = a+b+c
+
+B = A[x,y]
+f = (a+b)*x + (2*a-3*c)*y^4
+
+listForm f -- fails
+size f -- fails
+leadMonomial f -- fails
+leadCoefficient f -- fails
+f_x -- fails
+someTerms(1,f,1,1) -- doesn't seem right
+a*x > b*x
+x ? y
+
 -- many things not working here yet...
 
 needs "raw-util.m2"
