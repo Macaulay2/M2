@@ -1888,8 +1888,31 @@ export rawMatrixColumnScale(e:Expr):Expr := (
 setupfun("rawMatrixColumnScale",rawMatrixColumnScale);
 
 -----------------------------------------------------------------------------
--- Groebner bases and resolutions
+-- Groebner bases and resolutions and computations
 -----------------------------------------------------------------------------
+
+export rawStartComputation(e:Expr):Expr := (
+     when e is c:RawComputation do (
+	  Ccode(void, "rawStartComputation(", "(Computation *)", c, ")");
+	  nullE)
+     else WrongArg("a raw computation"));
+setupfun("rawStartComputation",rawStartComputation);
+
+export rawStatusGB(e:Expr):Expr := (
+     when e is G:RawComputation do (
+	  completionDegree := 0;
+	  stoppingReason := 0;
+	  ret := Ccode(int,"rawStatusGB(",
+	       "(Computation*)",G,",",
+	       "&",completionDegree,",",
+	       "&",stoppingReason,
+	       ")" );
+	  if ret == -1 then buildErrorPacket(EngineError("unknown raw gb computation status error")) 
+	  else Expr(Sequence(toInteger(ret),toInteger(completionDegree),toInteger(stoppingReason)))
+	  )
+     else WrongArg("a raw computation")
+     );
+setupfun("rawStatusGB", rawStatusGB);
 
 export rawGB(e:Expr):Expr := (
      when e is s:Sequence do
@@ -2066,23 +2089,6 @@ export rawGBGetMatrix(e:Expr):Expr := (
      else WrongNumArgs(3)
      else WrongNumArgs(3));
 setupfun("rawGBGetMatrix", rawGBGetMatrix);
-
-export rawGBStatus(e:Expr):Expr := (
-     when e is G:RawComputation do (
-	  completionDegree := 0;
-	  stoppingReason := 0;
-	  ret := Ccode(int,"IM2_GB_status(",
-	       "(Computation*)",G,",",
-	       "&",completionDegree,",",
-	       "&",stoppingReason,
-	       ")"
-	       );
-	  if ret == -1 then buildErrorPacket(EngineError("unknown raw gb computation status error")) 
-	  else Expr(Sequence(toInteger(ret),toInteger(completionDegree),toInteger(stoppingReason)))
-	  )
-     else WrongArg("a raw computation")
-     );
-setupfun("rawGBStatus", rawGBStatus);
 
 export rawResolutionStatusLevel(e:Expr):Expr := (
      when e is s:Sequence do

@@ -96,7 +96,7 @@ IM2_Computation_set_stop(Computation *G,
 				 length_limit);
 }
 
-void IM2_Computation_start(Computation *G)
+void rawStartComputation(Computation *G)
   /* start or continue the computation */
 {
   G->compute();
@@ -110,11 +110,11 @@ IM2_GB_get_matrix(Computation *G,
   return G->get_matrix(level, minimize);
 }
 
-int IM2_GB_status(Computation *G,
+int rawStatusGB(Computation *G,
 		  int * complete_up_through_this_degree,
 		  int * stopping_reason) /* number from IM2_Computation_set_stop,
 					     interrupted is -1. None is 0. */
-  /* connected rawGBStatus */
+  /* connected rawStatusGB */
   /* -1: error condition, and the error message is set.
      1: not started,
      2: started, but still running in another thread (not implemented yet)

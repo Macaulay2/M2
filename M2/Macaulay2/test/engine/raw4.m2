@@ -228,7 +228,7 @@ time rawGBGetMatrix(rawGB(oo,false,0,false,0,algorithm,0), 1,true)
 -- rawGB, rawGBSetHilbertFunction, rawGBForce
 -- rawGBSetStop
 -- rawGBGetMatrix, rawGBGetChange, rawGBGetLeadTerms, rawGBGetFree
--- rawGBStatus, rawGBStatusLevel, rawGBBetti
+-- rawStatusGB, rawStatusGBLevel, rawGBBetti
 -- rawGBMatrixRemainder, rawGBMatrixLift, rawGBContains
 -- rawGBverbose
 

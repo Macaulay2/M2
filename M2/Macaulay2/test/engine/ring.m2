@@ -166,8 +166,10 @@ degree c
 -- assert( matrix {{X}} * matrix {{Y}} == matrix {{Y*X}} )
 
 -- Groebner bases
-I = ideal vars R
-gb I
+f = vars R
+I = image f
+G = gb I
+peek G
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "
