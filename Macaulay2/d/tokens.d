@@ -182,10 +182,16 @@ export notfoundE := Expr(Nothing());			    -- internal use only, not visible to 
 
 export exprCode := {v:Expr,position:Position};
 export variableCode := {v:Symbol,position:Position};
-export CodeSequence := array(Code);
+export assignmentCode := {lhs:Symbol,rhs:Code,position:Position};
+
+export SymbolSequence := array(Symbol);
+export parallelAssignmentCode := {lhs:SymbolSequence,rhs:Code,position:Position};
+
 export unaryCode := {f:unop,rhs:Code,position:Position};
 export binaryCode := {f:binop,lhs:Code,rhs:Code,position:Position};
 export ternaryCode := {f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
+
+export CodeSequence := array(Code);
 export multaryCode := {f:multop, args:CodeSequence, position:Position};
 export forCode := {fromClause:Code,toClause:Code, whenClause:Code,listClause:Code,doClause:Code,
      scope:Scope, position:Position} ;
@@ -211,6 +217,7 @@ export Code := (exprCode or variableCode
      or unaryCode or binaryCode 
      or ternaryCode or multaryCode or forCode
      or CodeSequence or openScopeCode or functionCode
+     or assignmentCode or parallelAssignmentCode
      );
 
 -- scopes

@@ -199,8 +199,8 @@ test1 : test.m2 phase1 $(SCRIPTS)
 endif
 
 tests:: test2
-test2: $(SCRIPTS)
-	 $(MAKE) -k -C cache/tests -f ../../Makefile.tests
+test2: $(SCRIPTS) phase1 ../libexec/Macaulay2
+	$(MAKE) -k -C cache/tests -f ../../Makefile.tests
 	touch $@
 clean::; rm -f test2
 

@@ -20,10 +20,16 @@ dummyMultaryFun(c:CodeSequence):Expr := (
 dummyForFun(c:forCode):Expr := (
      error("dummy for function called");
      nullE);
+dummyAssignmentFun(x:assignmentCode):Expr := (
+     error("dummy assignment function called");
+     nullE);
+dummyParallelAssignmentFun(x:parallelAssignmentCode):Expr := (
+     error("dummy parallel assignment function called");
+     nullE);
 
+export AssignmentFun := dummyAssignmentFun;	-- filled in later in actors2.d
+export ParallelAssignmentFun := dummyParallelAssignmentFun;	-- filled in later in actors2.d
 export AdjacentFun := dummyBinaryFun;	-- filled in later in actors.d
-export GlobalAssignFun := dummyBinaryFun;	-- filled in later in actors.d
-export AssignFun := dummyBinaryFun;	-- filled in later in actors.d
 export AssignElemFun := dummyTernaryFun;	-- filled in later in actors.d
 export AssignQuotedElemFun := dummyTernaryFun;	-- filled in later in actors.d
 export TryElseFun := dummyBinaryFun; 	-- filled in later in actors.d
@@ -55,64 +61,83 @@ export braceFun := dummyMultaryFun;     -- filled in later in actors.d
 export bracketFun := dummyMultaryFun;   -- filled in later in actors.d
 
 export convert(e:ParseTree):Code;
-seqlen(e:ParseTree):int := (
+CodeSequenceLength(e:ParseTree):int := (
      i := 0;
      while true do (
      	  when e
      	  is b:Binary do (
 	       if b.operator.word == commaW
-	       then ( i = i + seqlen(b.lhs); e = b.rhs )
+	       then ( i = i + CodeSequenceLength(b.lhs); e = b.rhs )
 	       else return(i+1))
 	  is u:Unary do (
 	       if u.operator.word == commaW
 	       then ( i = i + 1; e = u.rhs )
 	       else return(i+1))
-	  is p:EmptyParentheses do (
-	       --if p.left.word == leftparen
-	       --then return(i)
-	       --else 
-	       return(i+1))
-	  is p:Parentheses do (
-	       --if p.left.word == leftparen
-	       --then e = p.contents
-	       --else
-	       return(i+1))
 	  else return(i+1)));
-fillseq(e:ParseTree,v:CodeSequence,m:int):int := (
+fillCodeSequence(e:ParseTree,v:CodeSequence,m:int):int := (
      -- starts filling v at position m, returns the next available position
      while true do (
      	  when e
      	  is b:Binary do (
 	       if b.operator.word == commaW
-	       then ( m = fillseq(b.lhs,v,m); e = b.rhs )
+	       then ( m = fillCodeSequence(b.lhs,v,m); e = b.rhs )
 	       else ( v.m = convert(e); return(m+1)))
 	  is u:Unary do (
 	       if u.operator.word == commaW
 	       then ( 
-		    -- positions should be intervals rather than points,
-		    -- and then we could give an interval of length zero!
 		    v.m = exprCode(nullE,treePosition(e));
 		    m = m + 1; 
 		    e = u.rhs )
 	       else ( v.m = convert(e); return(m+1)))
 	  is p:EmptyParentheses do (
-	       --if p.left.word == leftparen
-	       --then (return(m))
-	       --else
 	       (v.m = convert(e); return(m+1)))
 	  is dummy do (
 	       v.m = exprCode(nullE,treePosition(e));
 	       return(m+1);
 	       )
 	  is p:Parentheses do (
-	       --if p.left.word == leftparen
-	       --then e = p.contents
-	       --else 
 	       ( v.m = convert(e); return(m+1)))
 	  else ( v.m = convert(e); return(m+1))));
-ensequence(e:ParseTree):CodeSequence := (
-     v := new CodeSequence len seqlen(e) do provide dummyCode;
-     fillseq(e,v,0);
+makeCodeSequence(e:ParseTree):CodeSequence := (
+     v := new CodeSequence len CodeSequenceLength(e) do provide dummyCode;
+     fillCodeSequence(e,v,0);
+     v);
+SymbolSequenceLength(e:ParseTree):int := (
+     i := 0;
+     while true do (
+     	  when e
+	  is p:Parentheses do e = p.contents
+     	  is b:Binary do (
+	       i = i+1;
+	       e = b.lhs;
+	       )
+	  else (					    -- should be the first token
+	       i = i+1;
+	       return(i);
+	       )
+	  )
+     );
+makeSymbolSequence(e:ParseTree):SymbolSequence := (
+     m := SymbolSequenceLength(e);
+     v := new SymbolSequence len m do provide dummySymbol;
+     while true do (
+     	  when e
+	  is p:Parentheses do e = p.contents
+     	  is b:Binary do (
+	       when b.rhs is t:Token do (
+		    m = m-1;
+		    v.m = t.entry;
+		    )
+	       else nothing;				    -- shouldn't happen
+	       e = b.lhs;
+	       )
+	  is t:Token do (
+	       m = m-1;
+	       v.m = t.entry;
+	       break;
+	       )
+	  else break;					    -- shouldn't happen
+	  );
      v);
 export frame(scopenum:int):Frame := (
      if scopenum == 0 then globalFrame
@@ -145,17 +170,11 @@ combine(cs:CodeSequence):Sequence := (
 	  ));
 
 tokenAssignment(e:ParseTree,b:Binary,t:Token):Code := (
-     -- we know it is a token, but we forget that now, sigh
-     Code(binaryCode(
-	       if t.entry.scopenum == globalScope.seqno
-	       then GlobalAssignFun else AssignFun,
-	       if t.word.typecode == TCid
-	       then Code(variableCode(t.entry,t.position))
-	       else (
-		    -- would have liked to give an error instead
-		    convert(b.lhs)
-		    ),
-	       convert(b.rhs),treePosition(e)))
+     Code(assignmentCode(t.entry,convert(b.rhs),treePosition(e)))
+     );
+
+parallelAssignment(e:ParseTree,b:Binary,p:Parentheses):Code := (
+     Code(parallelAssignmentCode(makeSymbolSequence(b.lhs),convert(b.rhs),treePosition(e)))
      );
 
 export convert(e:ParseTree):Code := (
@@ -229,7 +248,7 @@ export convert(e:ParseTree):Code := (
 	  if p.left.word == leftparen then convert(p.contents)
 	  else if p.left.word == leftbrace 
 	  then (
-	       cs := ensequence(p.contents);
+	       cs := makeCodeSequence(p.contents);
 	       if allExprCodes(cs)
 	       then Code(exprCode(list(combine(cs)),treePosition(e)))
 	       else Code(multaryCode(braceFun,cs,treePosition(e)))
@@ -237,7 +256,7 @@ export convert(e:ParseTree):Code := (
 	  else 
 	  if p.left.word == leftbracket 
 	  then (
-	       cs := ensequence(p.contents);
+	       cs := makeCodeSequence(p.contents);
 	       if allExprCodes(cs)
 	       then Code(exprCode(Array(combine(cs)),treePosition(e)))
 	       else Code(multaryCode(bracketFun,cs,treePosition(e)))
@@ -271,7 +290,7 @@ export convert(e:ParseTree):Code := (
 	       )
 	  else if b.operator.word == commaW
 	  then (
-	       cs := ensequence(e);
+	       cs := makeCodeSequence(e);
 	       if allExprCodes(cs)
 	       then Code(exprCode(Expr(combine(cs)),treePosition(e)))
 	       else Code(cs)
@@ -323,6 +342,7 @@ export convert(e:ParseTree):Code := (
 				   convert(b.rhs)),
 			      treePosition(e))))
 	       is t:Token do tokenAssignment(e,b,t)
+	       is p:Parentheses do parallelAssignment(e,b,p)
 	       else dummyCode		  -- should not happen
 	       )
 	  else if b.operator.word == ColonEqualW
@@ -414,6 +434,7 @@ export convert(e:ParseTree):Code := (
 				   convert(b.rhs)),
 			      treePosition(e))))
 	       is t:Token do tokenAssignment(e,b,t)
+	       is p:Parentheses do parallelAssignment(e,b,p)
 	       else dummyCode		  -- should not happen
 	       )
 	  else Code(binaryCode(b.operator.entry.binary,convert(b.lhs),
@@ -426,7 +447,7 @@ export convert(e:ParseTree):Code := (
      is u:Unary do (
 	  if u.operator.word == commaW
 	  then (
-	       cs := ensequence(e);
+	       cs := makeCodeSequence(e);
 	       if allExprCodes(cs)
 	       then Code(exprCode(Expr(combine(cs)),treePosition(e)))
 	       else Code(cs)
@@ -476,6 +497,8 @@ export convert(e:ParseTree):Code := (
 	  ));
 export codePosition(e:Code):Position := (
      when e
+     is f:assignmentCode do f.position
+     is f:parallelAssignmentCode do f.position
      is f:exprCode do f.position
      is f:variableCode do f.position
      is f:unaryCode do f.position
@@ -619,9 +642,11 @@ export eval(c:Code):Expr := (
      is var:variableCode do frame(var.v.scopenum).values.(var.v.frameindex)
      is u:unaryCode do u.f(u.rhs)
      is b:binaryCode do b.f(b.lhs,b.rhs)
+     is m:functionCode do Expr(FunctionClosure(localFrame, m))
+     is a:assignmentCode do AssignmentFun(a)
+     is p:parallelAssignmentCode do ParallelAssignmentFun(p)
      is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
      is b:multaryCode do b.f(b.args)
-     is m:functionCode do Expr(FunctionClosure(localFrame, m))
      is n:forCode do (
 	  localFrame = Frame(localFrame,n.scope.seqno,
 	       new Sequence len n.scope.framesize do provide nullE);
