@@ -18,7 +18,7 @@ Ring * Ring := ProductRing => (R,S) -> (
      RS - RS := (x,y) -> new RS from {x#0-y#0,x#1-y#1};
      RS * RS := (x,y) -> new RS from {x#0 y#0,x#1 y#1};
      RS / RS := (x,y) -> new RS from {x#0/y#0,x#1/y#1};
-     InverseMethod RS := x -> new RS from {x#0^-1,x#1^-1};
+     RS.InverseMethod = x -> new RS from {x#0^-1,x#1^-1};
      ZZ + RS := (x,y) -> new RS from {x + y#0,x + y#1};
      ZZ - RS := (x,y) -> new RS from {x - y#0,x - y#1};
      ZZ * RS := (x,y) -> new RS from {x * y#0,x * y#1};
