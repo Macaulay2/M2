@@ -256,9 +256,11 @@ makeMonoid := (options) -> (
           options.Variables = apply(#v, 
 	       i -> (
 		    try baseName v#i
-		    else error ("object of class '", toString class v#i, "'", " at position ",toString i," in list can't be used as a variable" )
-		    )
-	       ));
+		    else (
+			 msg := concatenate("encountered object not usable as variable at position ",toString i," in list:");
+			 preX := "        ";
+			 pw := max(printWidth,80) - promptWidth();
+			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
 
      -- Check the degree list
      n := # options.Variables;
