@@ -455,26 +455,26 @@ char **argv;
 		 putstderr("  Warning: perhaps stdio is not initialized properly by _IO_init.");
 	       }
 	       putstderr(buf);
-	       putstderr("  Copyright 1993-1999, all rights reserved, D. R. Grayson and M. E. Stillman");
+	       putstderr("--Copyright 1993-1999, all rights reserved, D. R. Grayson and M. E. Stillman");
 #     	       ifdef FACTORY
-	       putstderr("  Factory " 
+	       putstderr("--Factory " 
 		    FACTORYVERSION
 		    " from Singular, copyright 1993-1997, G.-M. Greuel, R. Stobbe");
-	       sprintf(buf,"  Factorization and characteristic sets %s, copyright 1996, M. Messollen",
+	       sprintf(buf,"--Factorization and characteristic sets %s, copyright 1996, M. Messollen",
 		    libfac_version);
 	       putstderr(buf);
 #     	       endif
 #              ifdef PORTA
-	       sprintf(buf,"  PORTA %s, copyright 1997, T. Christof and A. Loebel",PORTA_VERSION);
+	       sprintf(buf,"--PORTA %s, copyright 1997, T. Christof and A. Loebel",PORTA_VERSION);
 	       putstderr(buf);
 #              endif
 #     	       ifdef MP
-	       sprintf(buf,"  MP %s, copyright 1993-1997, S. Gray, N. Kajler, P. Wang",MP_VERSION);
+	       sprintf(buf,"--MP %s, copyright 1993-1997, S. Gray, N. Kajler, P. Wang",MP_VERSION);
                putstderr(buf);
 #     	       endif
-	       putstderr("  GC, copyright 1996, Hans-J. Boehm, Alan J. Demers, Xerox, Silicon Graphics");
-	       putstderr("  GNU libc and libg++, copyright 1996, Free Software Foundation");
-	       putstderr("  GNU MP, copyright 1996, Free Software Foundation");
+	       putstderr("--GC, copyright 1996, Hans-J. Boehm, Alan J. Demers, Xerox, Silicon Graphics");
+	       putstderr("--GNU libc and libg++, copyright 1996, Free Software Foundation");
+	       putstderr("--GNU MP, copyright 1996, Free Software Foundation");
 	       break;
        	       }
 	  if (0 == strcmp(argv[n],"-silent")) break;

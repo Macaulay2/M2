@@ -48,6 +48,7 @@
   (define-key M2-mode-map "\t" 'M2-electric-tab)
   (define-key M2-mode-map "}" 'M2-electric-right-brace)
   (define-key M2-mode-map ";" 'M2-electric-semi)
+  (define-key M2-mode-map "\^Cd" 'M2-find-documentation)
   )
 
 (defvar M2-mode-syntax-table nil
@@ -140,4 +141,24 @@
 		       (indent-to i)
 		       ) ) ) ) )
 
+(load "M2HOME.el")
+;(defvar M2HOME "/home/geometry/dan/src/M2/Macaulay2")
+
+(defvar M2-default-html-index (concat M2HOME "/html/master.html"))
+
+(autoload 'find-tag-interactive "etags")
+
+(defun M2-find-documentation (key)
+  (interactive (find-tag-interactive "Find documentation: "))
+  (let ((file M2-default-html-index))
+    (save-excursion
+      (if (get-file-buffer file)
+	  (set-buffer (get-file-buffer file))
+	(set-buffer (find-file-noselect M2-default-html-index nil t)))
+      (goto-char (point-min))
+      (if (re-search-forward (concat "^<LI><A HREF=\"\\(.*\\.html\\)\">" key "</A>$") nil t)
+	  (w3-fetch (format "file:%s/html/%s" M2HOME (buffer-substring (match-beginning 1) (match-end 1))))
+	(error "didn't find key %s in file %s" key file)))))
+
+(require 'M2-symbols)
 (provide 'M2-mode)

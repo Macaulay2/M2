@@ -685,12 +685,12 @@ linesE(s:string):Expr := (
      v := lines(s);
      list(new Sequence len length(v) do foreach t in v do provide Expr(t)));
 lines(s:string,c:char):Expr := (
-     nlines := 0;
+     nlines := 1;
      i := 0;
      while true do (
 	  j := index(s,i,c);
 	  if j == -1 then (
-     	       if i != length(s) then nlines = nlines + 1;
+     	       -- if i != length(s) then nlines = nlines + 1;
 	       break;
 	       );
 	  i = j+1;
@@ -701,7 +701,8 @@ lines(s:string,c:char):Expr := (
 	       while true do (
 		    j := index(s,i,c);
 		    if j == -1 then (
-			 if i != length(s) then provide Expr(substr(s,i));
+			 -- if i != length(s) then provide Expr(substr(s,i));
+			 provide Expr(substr(s,i));
 			 break;
 			 )
 		    else (
@@ -709,12 +710,13 @@ lines(s:string,c:char):Expr := (
 			 i = j+1;
 			 )))));
 lines(s:string,c:char,d:char):Expr := (
-     nlines := 0;
+     -- nlines := 0;
+     nlines := 1;
      i := 0;
      while true do (
 	  j := index(s,i,c,d);
 	  if j == -1 then (
-     	       if i != length(s) then nlines = nlines + 1;
+     	       -- if i != length(s) then nlines = nlines + 1;
 	       break;
 	       );
 	  i = j+2;
@@ -725,7 +727,8 @@ lines(s:string,c:char,d:char):Expr := (
 	       while true do (
 		    j := index(s,i,c,d);
 	  	    if j == -1 then (
-			 if i != length(s) then provide Expr(substr(s,i));
+			 -- if i != length(s) then provide Expr(substr(s,i));
+			 provide Expr(substr(s,i));
 			 break;
 			 )
 		    else (
@@ -751,45 +754,7 @@ linesfun(e:Expr):Expr := (
      else WrongNumArgs(2)
      is s:string do linesE(s)
      else WrongArgString());
-setupfun("lines",linesfun);
-
--- split(s:string,c:string):Expr := (
---      nlines := 0;
---      i := 0;
---      while true do (
--- 	  j := index(s,i,c);
--- 	  if j == -1 then (
---      	       if i != length(s) then nlines = nlines + 1;
--- 	       break;
--- 	       );
--- 	  i = j+1;
--- 	  nlines = nlines + 1;
--- 	  );
---      i = 0;
---      list(new Sequence len nlines do (
--- 	       while true do (
--- 		    j := index(s,i,c);
--- 		    if j == -1 then (
--- 			 if i != length(s) then provide Expr(substr(s,i));
--- 			 break;
--- 			 )
--- 		    else (
--- 			 provide Expr(substr(s,i,j-i));
--- 			 i = j+1;
--- 			 )))));
--- 
--- splitfun(e:Expr):Expr := (
---      when e
---      is a:Sequence do
---      if length(a) == 2 then
---      when a.0
---      is s:string do 
---      when a.1 is ch:string do lines(s,ch)
---      else WrongArg(2,"a string")
---      else WrongArg(1,"a string")
---      else WrongNumArgs(2)
---      else WrongArg("two strings"));
--- setupfun("split",splitfun);
+setupfun("separate",linesfun);
 
 tostringfun(e:Expr):Expr := (
      when e 
