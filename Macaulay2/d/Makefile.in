@@ -217,7 +217,11 @@ LDLIBS += -lgpp
 else
 
 ifneq "$(CC)" "cl"
+ifeq ($(OS),SunOS)
+LDLIBS += /usr/local/lib/libstdc++.a.*
+else
 LDLIBS += -lstdc++
+endif
 endif
 
 #	We used to -lc in here, but it's for a good reason.
