@@ -41,7 +41,7 @@ isNormal(Ring) := Boolean => (R) -> (
 -- example in Wolmer's book where one takes the radical of 3
 -- generators, radical computes it in about 4 or 5 sec and 
 -- radical0 does not finish.
-radical0 := (I) -> (
+radical0 = (I) -> (
      I = ideal mingens ideal generators gb I;
      comps := decompose I;
      result := if #comps === 1 then comps#0
@@ -233,6 +233,8 @@ normal0 := (C) -> (
      -- This handles the first node: finding an ideal that contains the NNL 
      -- locus.  
      I := C#"pending"#0;
+     III = I;
+     error "got to normal0";
      local J;
      SI := jacobian I;
      R := (ring I)/I;

@@ -5,6 +5,7 @@
 #include "montable.hpp"
 #include "montableZZ.hpp"
 #include "gbring.hpp"
+#include "QQ.hpp"
 
 void QRingInfo::appendQuotientElement(Nterm *f, gbvector *g)
 {
@@ -130,7 +131,7 @@ void QRingInfo_field_basic::normal_form(ring_elem& f) const
   f = head.next;
 }
 
-void QRingInfo_field_basic::normal_form(const FreeModule *F, gbvector *&f) const
+void QRingInfo_field_basic::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
 {
   GBRing *GR = R->get_gb_ring();
   const Monoid *M = R->getMonoid();
@@ -167,6 +168,85 @@ QRingInfo_field_QQ::QRingInfo_field_QQ(const PolyRing *ambientR,
 
 QRingInfo_field_QQ::~QRingInfo_field_QQ()
 {
+}
+
+void QRingInfo_field_QQ::reduce_lead_term_QQ(Nterm * &f, const Nterm * g) const
+{
+  const Monoid *M = R->getMonoid();
+  M->divide(f->monom, g->monom, MONOM1_);
+  ring_elem c = globalQQ->QQ::negate(f->coeff);
+  c = globalQQ->QQ::divide(c,g->coeff);
+  if (R->is_skew_commutative())
+    {
+      // We need to determine the sign
+      M->to_expvector(g->monom, EXP2_);
+      M->to_expvector(MONOM1_, EXP1_);
+      if (R->getSkewInfo().mult_sign(EXP1_, EXP2_) < 0)
+	globalQQ->QQ::negate_to(c);
+    }
+  ring_elem g1 = const_cast<Nterm *>(g);
+  g1 = R->mult_by_term(g1,c,MONOM1_);
+  ring_elem f1 = f;
+  R->internal_add_to(f1, g1);
+  f = f1;
+}
+
+void QRingInfo_field_QQ::normal_form(ring_elem& f) const
+// This handles the case of monic GB over a small field
+// It must handle skew multiplication too
+{
+  const Monoid *M = R->getMonoid();
+  Nterm head;
+  Nterm *result = &head;
+  Nterm *t = f;
+  while (t != NULL)
+    {
+      M->to_expvector(t->monom, EXP1_);
+      int_bag *b;
+      if (Rideal->search_expvector(EXP1_, b))
+	{
+	  Nterm *s = quotient_element(b->basis_elem());
+	  // Now we must replace t with 
+	  // t + c*m*s, where in(t) = in(c*m*s), and c is 1 or -1.
+	  reduce_lead_term_QQ(t, s);
+	}
+      else
+	{
+	  result->next = t;
+	  t = t->next;
+	  result = result->next;
+	}
+    }
+  result->next = NULL;
+  f = head.next;
+}
+
+void QRingInfo_field_QQ::gbvector_normal_form(const FreeModule *F, gbvector *&f) const
+{
+  GBRing *GR = R->get_gb_ring();
+  const Monoid *M = R->getMonoid();
+  gbvector head;
+  gbvector *result = &head;
+  gbvector *t = f;
+  while (t != NULL)
+    {
+      M->to_expvector(t->monom, EXP1_);
+      int x = ringtable->find_divisor(EXP1_, 1);
+      if (x >= 0)
+	{
+	  const gbvector *r = quotient_gbvector(x);
+	  gbvector *zero = 0;
+	  GR->gbvector_reduce_lead_term(F,F,head.next,t,zero,r,zero);
+	}
+      else
+	{
+	  result->next = t;
+	  t = t->next;
+	  result = result->next;
+	}
+    }
+  result->next = NULL;
+  f = head.next;
 }
 
 QRingInfo_ZZ::~QRingInfo_ZZ()
@@ -267,7 +347,7 @@ void QRingInfo_ZZ::normal_form(ring_elem& f) const
   f = head.next;
 }
 
-void QRingInfo_ZZ::normal_form(const FreeModule *F, gbvector * &f) const
+void QRingInfo_ZZ::gbvector_normal_form(const FreeModule *F, gbvector * &f) const
 // This handles the case of monic GB over a small field
 // It must handle skew multiplication too
 {
