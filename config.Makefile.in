@@ -4,7 +4,7 @@
 all::
 
 # cygwin 'make' might get confused by setting SHELL
-SHELL = @SHELL@
+# SHELL = @SHELL@
 
 VERSION = @VERSION@
 ARCH    = @ARCH@

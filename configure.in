@@ -78,6 +78,8 @@ case "$GMP" in
    provided) ;;
    yes) if test -f /usr/lib/libgmp.a
         then GMPLIB=/usr/lib/libgmp.a
+	elif test -f $HOME/local/lib/libgmp.a
+	then GMPLIB=$HOME/local/lib/libgmp.a
 	elif test -f /opt/lib/libgmp.a
 	then GMPLIB=/opt/lib/libgmp.a
 	elif test -f /usr/local/lib/libgmp.a
