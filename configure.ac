@@ -120,10 +120,16 @@ AC_ARG_ENABLE(profile,
     PROFILE="$enableval",
     PROFILE=no)
 
+AC_SUBST(STRIP)
+AC_ARG_ENABLE(strip,
+    AC_HELP_STRING(--disable-strip,do not strip the Macaulay 2 binary),
+    STRIP="$enableval",
+    STRIP=yes)
+
 AC_SUBST(DEBUG)
 AC_ARG_ENABLE(debug,
-    AC_HELP_STRING(--enable-debug,enable debugging),
-    DEBUG="$enableval",
+    AC_HELP_STRING(--enable-debug,enable debugging (and disable stripping)),
+    DEBUG=yes; STRIP=no,
     DEBUG=no)
 
 AC_SUBST(VERBOSE)
@@ -149,12 +155,6 @@ AC_ARG_ENABLE(optimize,
     AC_HELP_STRING(--disable-optimize,disable optimization),
     OPTIMIZE="$enableval",
     OPTIMIZE=yes)
-
-AC_SUBST(STRIP)
-AC_ARG_ENABLE(strip,
-    AC_HELP_STRING(--disable-strip,do not strip the Macaulay 2 binary),
-    STRIP="$enableval",
-    STRIP=yes)
 
 AC_SUBST(encap)
 AC_ARG_ENABLE(encap,
