@@ -2,35 +2,19 @@
 
 #include <gc.h>
 #include <stdio.h>
+#define MEM_DEBUG_INTERNAL
+#include "memdebug.h"
+
+#if MEM_DEBUG
 
 extern void outofmem(void);
 extern void trap(void);
 
-#define FREE_DELAY       0
-#define FENCE_INTS 	 2
-#define FRONT_FENCE      0xaaaaaaaa
-#define FRONT_FENCE_GONE 0xa0a0a0a0
-#define BODY_PART        0xbbbbbbbb
-#define BODY_PART_GONE   0xb0b0b0b0
-#define REAR_FENCE       0xcccccccc
-#define REAR_FENCE_GONE  0xc0c0c0c0
 int trapset = 0;
 void *trapaddr = 0;
 int trapcount = 0;
 void *delay_chain[FREE_DELAY];
 int delay_chain_index;
-
-typedef struct FRONT {
-     int trapcount;
-     size_t size;
-     unsigned int fence[FENCE_INTS];
-     } front;
-
-typedef struct REAR {
-     unsigned int fence[FENCE_INTS];
-     size_t size;
-     int trapcount;
-     } rear;
 
 void* debug_new(size_t size) {
      front *f;
@@ -133,3 +117,5 @@ void debug_delete(void *p) {
      GC_FREE(f);
 #endif
      }
+
+#endif

@@ -983,6 +983,7 @@ void res_comp::handle_gen(res_pair *p)
       p->first = p->syz->comp;
       p->second = NULL;
       p->syz_type = SYZ_MINIMAL;
+      p->base_comp = p->syz->comp->base_comp;  // MES: added 7/11/97
       insert_res_pair(1, p);
       p->minimal_me = resn[1]->nminimal++;
       nminimal++;

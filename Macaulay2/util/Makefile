@@ -1,4 +1,4 @@
-include ../Makefile.develop
+include ../../Makeconf
 CPPFLAGS += -I../include
 
 all : ../bin/echoout ../bin/timestmp ../bin/restart ../bin/update

@@ -34,11 +34,9 @@ extern "C" void outofmem();
 
 #if !defined(__MWERKS__)
 
-#ifdef MEM_DEBUG
 extern "C" {
 #include "memdebug.h"
 }
-#endif
 
 void* operator new( size_t size ) {
     void *p;

@@ -426,12 +426,15 @@ RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::=
      Ccode( void,
      	  "GC_register_finalizer((void *)(",
      	  h,
-	  "),(void *)(", 
+	  " - sizeof(front)),(void *)(", 
 	  fn,
 	  "),(void *)(", 
 	  0,
 	  "),0,0)" 
 	  );
+
+FixUp( obj:Handle ):void ::= Ccode( void, "((void *) ", obj, ") += sizeof(front)" );
+
 --RegisterFinalizerFun(e:Expr):Expr := (
 --     when e
 --     is a:sequence do
@@ -453,6 +456,7 @@ RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::=
 --setupfun("register",RegisterFinalizerFun);
 
 freeHandle(obj:Handle,i:int):void := (
+     FixUp(obj);
      gbforget(obj.handle);
      obj.handle = -1;			  -- mainly for debugging
      );

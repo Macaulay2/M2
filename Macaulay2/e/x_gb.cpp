@@ -4,9 +4,7 @@
 
 #include "gb.hpp"
 #include "gbinhom.hpp"
-#if 0
 #include "gbbinom.hpp"
-#endif
 #include "comp.hpp"
 #include "hilb.hpp"
 #include "hermite.hpp"
@@ -15,6 +13,9 @@
 #include "gb2.hpp"
 #include "res.hpp"
 #include "res2.hpp"
+
+#include "ringmap.hpp"
+#include "sagbi.hpp"
 
 extern int comp_printlevel;
 extern Z *ZZ;
@@ -369,18 +370,22 @@ void cmd_res(object &om, object &oalg, object &olength, object &odegree, object 
     break;
   }
 }
-#if 0
-void cmd_binomialGB_make(object &oR)
+
+void cmd_binomialGB_make(object &oR, object &owts, object &orevlex)
 {
   const Ring *R = oR->cast_to_Ring();
-  gStack.insert(new binomialGB(R));
+  intarray *awts = owts->intarray_of();
+  int *wts = NULL;
+  if (awts != NULL) wts = awts->raw();
+  bool revlex = (orevlex->int_of() != 0);
+  gStack.insert(new binomialGB_comp(R,wts,revlex));
 }
 
 void cmd_binomialGB_addgens(object &og, object &om)
 {
   Matrix m = om->cast_to_Matrix();
   gb_comp *g = og->cast_to_gb_comp();
-  binomialGB *gb = g->cast_to_binomialGB();
+  binomialGB_comp *gb = g->cast_to_binomialGB_comp();
   if (gb == NULL)
     {
       *gError << "expected binomialGB computation";
@@ -388,43 +393,64 @@ void cmd_binomialGB_addgens(object &og, object &om)
     }
   gb->add_generators(m);
 }
-void cmd_binomialGB_enlarge(object &og, object &oR)
+void cmd_binomialGB_enlarge(object &og, object &oR, object &owts)
 {
   const Ring *R = oR->cast_to_Ring();
+  intarray *awts = owts->intarray_of();
+  int *wts = NULL;
+  if (awts != NULL) wts = awts->raw();
   gb_comp *g = og->cast_to_gb_comp();
-  binomialGB *gb = g->cast_to_binomialGB();
+  binomialGB_comp *gb = g->cast_to_binomialGB_comp();
   if (gb == NULL)
     {
       *gError << "expected binomialGB computation";
       return;
     }
-  gb->enlarge(R);
+  gb->enlarge(R,wts);
 }
-void cmd_binomialGB_subring(object &og, object &on)
+void cmd_binomialGB_subring(object &og)
 {
   gb_comp *g = og->cast_to_gb_comp();
-  binomialGB *gb = g->cast_to_binomialGB();
+  binomialGB_comp *gb = g->cast_to_binomialGB_comp();
   if (gb == NULL)
     {
       *gError << "expected binomialGB computation";
       return;
     }
-  int n = on->int_of();
-  gStack.insert(gb->subring(n));
+  gStack.insert(gb->subring());
 }
-void cmd_binomialGB_subringGB(object &og, object &on)
+void cmd_binomialGB_subringGB(object &og)
 {
   gb_comp *g = og->cast_to_gb_comp();
-  binomialGB *gb = g->cast_to_binomialGB();
+  binomialGB_comp *gb = g->cast_to_binomialGB_comp();
   if (gb == NULL)
     {
       *gError << "expected binomialGB computation";
       return;
     }
-  int n = on->int_of();
-  gStack.insert(gb->subringGB(n));
+  gStack.insert(gb->subringGB());
 }
-#endif
+
+//////////////////////////////////////////////////
+// Sagbi routines (written with Harrison Tsai) ///
+//////////////////////////////////////////////////
+
+void cmd_sagbi_make(object &om)
+{
+  Matrix m = om->cast_to_Matrix();
+  sagbi_comp *g = new sagbi_comp(m);
+  gStack.insert(g);
+}
+void cmd_sagbi_subduction(object &om, object &oF, object &og)
+{
+  Matrix m = om->cast_to_Matrix();
+  RingMap F = oF->cast_to_RingMap();
+  gb_comp *g = og->cast_to_gb_comp();
+
+  Matrix result = sagbi::subduct(m, F, g);
+  gStack.insert(result);
+}
+
 void i_NGB_cmds(void)
 {
   // New NGB commands
@@ -450,14 +476,14 @@ void i_NGB_cmds(void)
 
   // Computation display/statistics
   install(ggtracing, cmd_NGB_tracing, TY_INT);
-#if 0
+
   // binomial GB's
-  install(ggbinomialGB, cmd_binomialGB_make, TY_RING);
+  install(ggbinomialGB, cmd_binomialGB_make, TY_RING, TY_INTARRAY, TY_INT);
   install(ggbinomialGBaddgens, cmd_binomialGB_addgens, TY_GB_COMP, TY_MATRIX);
-  install(ggbinomialGBenlarge, cmd_binomialGB_enlarge, TY_GB_COMP, TY_RING);
-  install(gggetsubring, cmd_binomialGB_subring, TY_GB_COMP, TY_INT);
-  install(gggetsubringGB, cmd_binomialGB_subringGB, TY_GB_COMP, TY_INT);
-#endif
+  install(ggbinomialGBenlarge, cmd_binomialGB_enlarge, TY_GB_COMP, TY_RING, TY_INTARRAY);
+  install(gggetsubring, cmd_binomialGB_subring, TY_GB_COMP);
+  install(gggetsubringGB, cmd_binomialGB_subringGB, TY_GB_COMP);
+
   // Performing the computation (for dets/pfaffians)
   install(ggcalc, cmd_comp_calc, TY_COMP, TY_INT);
   install(ggcalc, cmd_comp_calc2, TY_COMP, TY_INT, TY_INT, TY_INTARRAY, TY_INTARRAY);
@@ -471,4 +497,8 @@ void i_NGB_cmds(void)
 
   // Resolutions
   install(ggres, cmd_res, TY_MATRIX, TY_INT, TY_INT, TY_INTARRAY, TY_INT);
+
+  // SAGBI basis routines
+  install(ggsubduction, cmd_sagbi_subduction, TY_MATRIX, TY_RING_MAP, TY_GB_COMP);
+  install(ggsagbi, cmd_sagbi_make, TY_MATRIX);
 }

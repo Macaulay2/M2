@@ -333,10 +333,6 @@ static struct COUNTER {
      struct COUNTER *next;
      } *counters = NULL;
 
-#ifdef MEM_DEBUG
-#include "memdebug.h"
-#endif
-
 char *getmem(n)
 unsigned int n;
 {
@@ -623,19 +619,29 @@ char **argv;
 #endif
      GC_free_space_divisor = 14;
      if (0 != setjmp(loaddata_jump)) {
+	  char **environ0;
      	  GC_free_space_divisor = 4;
 #if !defined(__MWERKS__)
+     	  environ = saveenvp;	/* environ is a static variable that points
+				   to the heap and has been overwritten by
+				   loaddata(), thereby pointing to a previous
+				   incarnation of the heap. */
 	  /* make a copy of the environment on the heap for 'environ' */
 	  /* in some systems, putenv() calls free() on the old item */
 	  /* we are careful to use malloc here, and not GC_malloc */
-	  environ = (char **)malloc((envc + 1)*sizeof(char *));
-	  if (environ == NULL) fatal("out of memory");
+	  environ0 = (char **)malloc((envc + 1)*sizeof(char *));
+	  /* amazing but true:
+	     On linux, malloc calls getenv to get values for tunable
+	     parameters, so don't trash environ yet.
+	     */
+	  if (environ0 == NULL) fatal("out of memory");
 	  for (i=0; i<envc; i++) {
-	       environ[i] = malloc(strlen(saveenvp[i]) + 1);
-	       if (environ[i] == NULL) fatal("out of memory");
-	       strcpy(environ[i],saveenvp[i]);
+	       environ0[i] = malloc(strlen(saveenvp[i]) + 1);
+	       if (environ0[i] == NULL) fatal("out of memory");
+	       strcpy(environ0[i],saveenvp[i]);
 	  }
-	  environ[i] = NULL;
+	  environ0[i] = NULL;
+	  environ = environ0;
 #endif
 	  }
      system_stime();

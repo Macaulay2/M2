@@ -69,3 +69,6 @@ template class ARRAY(res2term *);
 
 #include "termideal.hpp"
 template class ARRAY(mon_term *);
+
+#include "gbbinom.hpp"
+template class ARRAY(binomial_gb_elem *);

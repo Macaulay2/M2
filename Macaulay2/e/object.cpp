@@ -17,9 +17,8 @@
 #include "respoly.hpp"
 #include "gb.hpp"
 #include "gbinhom.hpp"
-#if 0
 #include "gbbinom.hpp"
-#endif
+#include "sagbi.hpp"
 #include "gb2.hpp"
 #include "respoly2.hpp"
 #include "res2.hpp"
@@ -39,7 +38,7 @@ bool object_element::is_equal(const object_element * /* o */ ) const
   return false;
 }
 
-monomial    object_element::cast_to_monomial()  { return monomial(0,caster); }
+Monomial    object_element::cast_to_Monomial()  { return Monomial(0,caster); }
 MonomialIdeal   object_element::cast_to_MonomialIdeal()  { return MonomialIdeal(0,caster); }
 RingElement object_element::cast_to_RingElement() { return RingElement(0,caster); }
 Vector     object_element::cast_to_Vector()     { return Vector(0,caster); }
@@ -107,9 +106,9 @@ void i_stashes()
   GB_elem::mystash         = new stash("GBelem", sizeof(GB_elem));
   s_pair_bunch::mystash    = new stash("spair_bunch", sizeof(s_pair_bunch));
   s_pair_set::mystash      = new stash("spair_set", sizeof(s_pair_set));
-#if 0
-  binomialGB::mystash = new stash("binomialGB", sizeof(binomialGB));
-#endif
+
+  binomialGB_comp::mystash = new stash("binomialGB", sizeof(binomialGB_comp));
+  sagbi_comp::mystash = new stash("sagbi", sizeof(sagbi_comp));
 }
 
 

@@ -1,7 +1,7 @@
 ############################## main target
 all :: misc compat.h ../bin/Macaulay2
 ############################## includes
-include ../Makefile.develop
+include ../../Makeconf
 .PHONY : misc
 misc :
 	@echo 'making Macaulay2 for ARCH=$(ARCH), OS=$(OS), REL=$(REL)'
@@ -182,8 +182,8 @@ else
 compat.c compat.h : configure; ./configure
 endif
 
-scclib.o : ../c/compat.h ../c/compat.c ../Makefile.develop memdebug.h
-gc_cpp.o : memdebug.h
+scclib.o : ../c/compat.h ../c/compat.c ../../Makeconf
+memdebug.o scclib.o actors5.oo gc_cpp.o : memdebug.h
 allc : $(PROJECT:.d=.c) tmp_init.c
 ALLOBJ := $(PROJECT:.d=.oo) scclib.o compat.o gc_cpp.o tmp_init.o memdebug.o
 ALLC := $(PROJECT:.d=.c)
@@ -232,7 +232,7 @@ test-probe : probe
 		../../lib/libfac.a
 	rm -f $@
 	@ echo 'linking $@ with $(LDFLAGS) $(LOADLIBES)'
-	@ $(PURIFYCMD) $(CC) -o $@ $(LDFLAGS) $^ $(LOADLIBES)
+	@ time $(PURIFYCMD) $(CC) -o $@ $(LDFLAGS) $^ $(LOADLIBES)
 	$(STRIPCMD) $@
 TAGS: Makefile
 	@echo making TAGS

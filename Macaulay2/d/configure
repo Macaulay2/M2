@@ -8,6 +8,7 @@ cat <<EOF >compat.h
 #include <math.h>
 #include <gc.h>
 #include <string.h>
+#include "memdebug.h"
 EOF
 
 cat <<EOF >compat.c

@@ -1,4 +1,4 @@
-include ../../Makefile.develop
+include ../../../Makeconf
 
 ifeq "$(OS)" "MS-DOS"
 #	under MS-DOS, gnu make is confused about continuation lines, so there is

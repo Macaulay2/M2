@@ -1183,6 +1183,8 @@ Matrix Matrix::k_basis(Matrix bot, const int *d, int do_trunc) const
 		kb_result.append(rows()->copy(kb_vec));
 	      else if (cmp < 0)
 		k_basis0(0);
+
+	      delete b;
 	    }
 //	}
 //      else if (do_trunc)
@@ -1262,6 +1264,8 @@ Matrix Matrix::k_basis(Matrix bot) const
 	  varpower::to_ntuple(kb_n_vars, b->monom().raw(), kb_exp_a);
 	  if (!kb_monideal.search(b->monom().raw(), c))
 	    k_basis1(0);
+
+	  delete b;
 	}
     }
 
