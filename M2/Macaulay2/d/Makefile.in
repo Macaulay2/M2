@@ -281,6 +281,7 @@ LIBRARYOPTIONS += -lgdbm
 LIBRARYOPTIONS += -lreadline -lhistory -lcurses
   # we successfully avoid using streamio, but we need the personality function in libstc++
 LIBRARYOPTIONS += -lstdc++
+LIBRARYOPTIONS += -lm
 M2_LOADLIBES := $(LIBRARYOPTIONS) $(M2_LOADLIBES)
 LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
 
