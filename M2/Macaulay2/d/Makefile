@@ -162,7 +162,9 @@ endif
 # LDLIBS+= -lc
 
 ifndef SHAREDLIBS
+ifndef NOSTATIC
 LDFLAGS += -static
+endif
 ifeq ($(OS),Linux)
 # this is for gc somehow, see the end of gc/config.h
 LDFLAGS += -Wl,-defsym,_DYNAMIC=0

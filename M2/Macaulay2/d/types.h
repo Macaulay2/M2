@@ -108,7 +108,9 @@ extern char *libfac_version;
 #endif
 
 #ifndef PAGESIZE
+#if !defined(__linux__)
 extern size_t getpagesize();
+#endif
 #define PAGESIZE getpagesize()
 #endif
 #define RUP(x) ((((x) + PAGESIZE - 1) / PAGESIZE) * PAGESIZE)
