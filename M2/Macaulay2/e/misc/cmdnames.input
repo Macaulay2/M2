@@ -119,6 +119,11 @@ contract
 m:matrix n:matrix >> matrix
 Yields the matrix having the same shape as the tensor product, whose individual entries are the result of contracting (i.e. differentiate without using bringing down coefficients) entries of n by entries of m.
 
+ggdeclarefield
+declarefield
+R:Ring >> .
+Informs the engine that R is (probably) a field.  If at some point a zero divisor is found, then the engine flags that R is not a field, raises an error, and keeps a zero divisor stashed in the ring.  gggetzerodivisor retrieves this ring element.
+
 ggdegree
 degree
 f:ringelem >> intarray;  OR  monomial >> int
@@ -381,6 +386,11 @@ gggetvalue
 getvalue
 h:hilb_comp >> ringelement
 Yields the so-called Poincare polynomial (the numerator of the Hilbert series) if the computation has been completed.  If the computation is not yet complete, an error is issued.
+
+gggetzerodivisor
+getzerodivisor
+R:Ring >> RingElement
+If the ring R has been found to have a zero divisor, this yields that element.  If not, the zero element is returned.
 
 ggrandom
 random

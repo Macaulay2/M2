@@ -35,7 +35,6 @@ public:
   const Z * cast_to_Z() const { return this; }
 
 // The following are all the routines required by 'ring'
-  virtual bool is_field() const     { return 0; }
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
   virtual bool is_Z() const         { return 1; }

@@ -631,7 +631,11 @@ bool EGB1::pair_not_needed(es_pair *p, egb_elem *m) const
   const int *mexp = m->lcm;
   const int *lcm = p->lcm;
   const int *p1exp = p->s.syz.i->lcm;
-  const int *p2exp = p->s.syz.j->lcm;  // WRONG FOR others kinds of pairs!!!
+  const int *p2exp;
+  if (p->type == SP_SYZ)      // WRONG FOR others kinds of pairs!!!
+    p2exp = p->s.syz.j->lcm;  
+  else
+    p2exp = p->s.ringsyz.j->lcm;  
   int i;
   for (i=0; i<nvars; i++)
     if (mexp[i] > lcm[i]) return false;

@@ -474,6 +474,17 @@ void cmd_qring_ideal(object &oR)
     }
   gStack.insert(R->get_ideal());
 }
+void cmd_declare_field(object &oR)
+{
+  Ring *R = oR->cast_to_Ring();
+  R->declare_field();
+}
+void cmd_get_zero_divisor(object &oR)
+{
+  const Ring *R = oR->cast_to_Ring();
+  RingElement result(R, R->get_zero_divisor());
+  gStack.insert(result);
+}
 void i_ring_elem_cmds(void)
 {
   assert(trivial_monoid != NULL);
@@ -495,6 +506,9 @@ void i_ring_elem_cmds(void)
   install(ggfractionfield, cmd_fraction_field, TY_RING);
 
   install(gggetideal, cmd_qring_ideal, TY_RING);
+
+  install(ggdeclarefield, cmd_declare_field, TY_RING);
+  install(gggetzerodivisor, cmd_get_zero_divisor, TY_RING);
 
   // Informational
   install(ggisequal, cmd_Ring_isequal, TY_RING_ELEM, TY_RING_ELEM);

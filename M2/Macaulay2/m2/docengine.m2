@@ -1671,4 +1671,19 @@ I = ideal(t*x^2-y, (t+1)*x*y-y^2)
 gbTrace 3
 gens gb I
 ideal oo
+
+R = ZZ/101[a,b,c,d]/(a*d-b*c)
+K = frac R
+a/b
+
+-- Try working over a number field
+K = QQ[a]/(a^2-5)
+sendgg(ggPush K, ggdeclarefield);
+R = K[x,y,z]
+S = K[s,t]
+I = matrix{{s^3 - a*s*t^2, s^2*t - a*s*t^2, t^3}}
+F = map(S,R,I)
+F(ker F)
+
+
 ///

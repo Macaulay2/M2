@@ -42,7 +42,6 @@ public:
   const GF * cast_to_GF() const { return this; }
 
 // The following are all the routines required by 'ring'
-  virtual bool is_field() const     { return 1; }
   virtual bool is_pid() const       { return 1; }
   virtual bool has_gcd() const      { return 1; }
   virtual bool is_Z() const         { return 0; }

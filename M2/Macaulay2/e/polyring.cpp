@@ -36,7 +36,8 @@ PolynomialRing::PolynomialRing(const Ring *K, const Monoid *MF)
   Rsyz = NULL;
   RidealZ = NULL;
 
-  isfield = (nvars == 0 && K->is_field());
+  bool isfield = (nvars == 0 && K->is_field());
+  if (isfield) declare_field();
 }
 
 PolynomialRing::PolynomialRing(const PolynomialRing *R, const array<ring_elem> &)
@@ -55,8 +56,8 @@ PolynomialRing::PolynomialRing(const PolynomialRing *R, const array<ring_elem> &
   Rsyz = NULL;
   RidealZ = NULL;
 
-  isfield = (nvars == 0 && K->is_field());
-
+  bool isfield = (nvars == 0 && K->is_field());
+  if (isfield) declare_field();
   // isgraded: is set in PolynomialRing::create.
 }
 
@@ -1230,6 +1231,7 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   o.reset();
 
   EGB1 *g = new EGB1(m,true,-1,0);
+  bump_up(g);
   g->calc(0, syzygy_stop_conditions);
   Matrix s = g->syz_matrix();
   if (s.n_cols() != 1)

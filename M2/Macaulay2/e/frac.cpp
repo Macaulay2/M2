@@ -15,6 +15,7 @@ FractionField::FractionField(const Ring *RR)
 	this /* Visual C WARNING */, trivial_monoid, RR->degree_monoid()),
   R(RR)
 {
+  declare_field();
   MINUS_ONE = R->from_int(-1);
   bump_up((Ring *) R);
   frac_stash = new stash("fractions", sizeof(frac_elem));
