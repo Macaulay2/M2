@@ -1150,10 +1150,10 @@ assert(homogenize(f,b,{1,1,0,-1,1}) == a^2 - d^3*b^5 - b^2)
 
 m = map(R^{1,-1}, , {{a,b},{c,d-1}})
 assert(homogenize(m,t) == map(R^{1,-1}, , {{a*t^2, b*t^2}, {c, d-t}}))
-assert(homogenize(m,t,{-1,-1,-1,-1,1}) == map(R^{1,-1}, , {{a*t^2, b*t^3}, {c, d*t-1}}))
+assert(homogenize(m,t,{-1,-1,-1,-1,1}) - map(R^{1,-1}, , {{a*t^2, b*t^3}, {c, d*t-1}}) == 0)
 
 v = m_0
-F = class v
+F = target v
 assert(homogenize(v,t) == a*t^2 * F_0 + c * F_1)
 assert(homogenize(v,t,{-1,-1,-1,-1,1}) == a*t^2 * F_0 + c * F_1)
 
