@@ -40,6 +40,12 @@ ifndef CYGWIN32
 all:: $(BOOKNAME).dvi $(BOOKNAME).ps $(BOOKNAME).pdf
 endif
 
+## for M2book.pdf put these lines in texmf.cnf
+# main_memory = 1263000
+# hash_extra = 15000
+# pool_size = 300000
+# max_strings = 30000
+
 $(BOOKNAME).tex : ../cache/Macaulay2-doc book.m2 booktex.m2
 	../bin/M2 -q book.m2 '-e exit 0'
 	mv M2book.tmp $(BOOKNAME).tex
