@@ -133,3 +133,5 @@ endif
 ifneq "$(DUMPDATA)" "no"
 DUMPDATAFILE := libexec/Macaulay2-$(ARCH)-data
 endif
+
+CPPFLAGS += -I$(prefix)/include
