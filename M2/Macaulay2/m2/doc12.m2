@@ -695,14 +695,6 @@ document {
      }
 
 document {
-     Key => DoubleArrow,
-     TT "DoubleArrow", " -- a type of ", TO "Expression", " which represents
-     something of the form ", TT "a => b", ".",
-     PARA,
-     "This is experimental, and intended for internal use only."
-     }
-
-document {
      Key => Expression,
      Headline => "the class of all expressions",
      "These expressions are symbolic representations of algebraic

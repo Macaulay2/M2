@@ -285,6 +285,9 @@ options     Ring := x -> null
 options Sequence := s -> if lookup s =!= null then options lookup s
   optionFunction := {} >> () -> ()
 
+-- new function 'sameFunctionBody', tells whether two functions are perhaps different
+-- closures of the same function body.
+
 -- this works for any function created with ">>", not just with "method"!
 options Function := OptionTable => function -> (
      if sameFunctionBody(function, optionFunction) then first frame function

@@ -36,6 +36,8 @@ exportMutable (
 	)
 
 export (
+     	symbol runEndFunctions,
+     	symbol runStartFunctions,
 	"coker" => symbol cokernel,
 	"gens" => symbol generators,
 	"ker" => symbol kernel,
@@ -141,7 +143,6 @@ export (
 	symbol DistributedMarkUpType,
 	symbol Divide,
 	symbol DocumentTag,
-	symbol DoubleArrow,
 	symbol Down,
 	symbol DownArrow,
 	symbol EHV,					    -- cryptic
@@ -953,11 +954,7 @@ export (
 	symbol rotate,
 	symbol rsort,
 	symbol run,
-	symbol runEndFunctions,
-	symbol runLengthEncoding,
-	symbol runStartFunctions,
 	symbol same,
-	symbol sameFunctionBody,
 	symbol saturate,
 	symbol scan,
 	symbol scanKeys,

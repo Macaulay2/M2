@@ -444,9 +444,7 @@ document {
      Key => addStartFunction,
      Headline => "add a startup function",
      TT "addStartFunction (() -> ...)", " -- record a function for later 
-     execution, when the program is restarted after loading dumped data.",
-     PARA,
-     SeeAlso => "runStartFunctions"
+     execution, when the program is restarted after loading dumped data."
      }
 
 document {
@@ -454,28 +452,6 @@ document {
      Headline => "add an ending function",
      TT "addEndFunction (() -> ...)", " -- record a function for later 
      execution, when the program is exited.",
-     PARA,
-     SeeAlso => "runEndFunctions"
-     }
-
-document {
-     Key => runStartFunctions,
-     Headline => "run the start up functions",
-     TT "runStartFunctions()", " -- call all the functions previously recorded
-     by ", TO "addStartFunction", ".",
-     PARA,
-     "This function is intended for internal use only.",
-     PARA,
-     "The funuctions are called with no arguments."
-     }
-
-document {
-     Key => runEndFunctions,
-     Headline => "run the ending functions",
-     TT "runEndFunctions()", " -- call all the functions previously recorded
-     by ", TO "addEndFunction", ".",
-     PARA,
-     "The funuctions are called with no arguments."
      }
 
 document {
