@@ -223,8 +223,7 @@ Matrix.directSum = args -> (
 	  symbol ring => R,
 	  symbol source => directSum apply(args,source),
 	  symbol target => directSum apply(args,target),
-	  symbol cache => new CacheTable,
-	  symbol components => toList args
+	  symbol cache => new CacheTable from { symbol components => toList args }
 	  })
 
 isDirectSum = method()

@@ -1,6 +1,9 @@
 gbTrace = 5
 oops := () -> stderr << "warning: segmentation fault commented out" << endl
 chk  := () -> stderr << "warning: error commented out" << endl
+cmp = method()
+cmp(HashTable,HashTable) := (x,y) -> new HashTable from merge (x,y,(a,b) -> if a === b then "equal" else (a,b))
+
 
 -- ideals in ZZ :
 I = ideal (30,40,50)
@@ -76,13 +79,14 @@ F = R^3
 
 assert ( degrees F == {{0}, {0}, {0}} )
 assert not mutable F
-
 assert ( F === R^3 )
 
-assert(raw F == raw R^3)
-assert(raw F != raw R^4)
+assert(raw F === raw R^3)
+assert(raw F =!= raw R^4)
 
 G = F**F						    -- we no longer cache the results of tensor products of modules
+assert( G === F**F )
+
 raw G
 assert( rank G == 9 )
 
@@ -115,31 +119,40 @@ w = v || v
 w | w
 v ++ v
 v' ++ v
+assert( v' ++ v === v' ++ v )
+
 v ** v
 v ** v'
+assert( v ** v' === v ** v' )
 
 2*v
 v*2
+assert ( 2*v === v*2 )
+
 raw x * raw v
 x*v
 
 t = matrix {{x,y,z},{y,z,x},{z,x,y}}
 
-assert( matrix({{v,v},{v,v}}) == v | v || v | v )
-assert( matrix({{v,0},{0,v}}) == v ++ v )
-
-
+assert( matrix({{v,v},{v,v}}) === v | v || v | v )
+assert( source matrix({{v,0},{0,v}}) === source (v ++ v) )
+assert( target matrix({{v,0},{0,v}}) === target (v ++ v) )
+assert( matrix({{v,0},{0,v}}) === v ++ v )
 
 toString submatrix(t,{1,2})
-assert( submatrix(t,{1,2}) == matrix {{y,z},{z,x},{x,y}} )
-assert( submatrix(t,{1,2},{2,0}) == matrix {{x, y}, {y, z}} )
-assert( submatrix(t,,{2,0}) == matrix {{z, x}, {x, y}, {y, z}} )
+assert( submatrix(t,{1,2}) === matrix {{y,z},{z,x},{x,y}} )
+assert( submatrix(t,{1,2},{2,0}) === matrix {{x, y}, {y, z}} )
+assert( submatrix(t,,{2,0}) === matrix {{z, x}, {x, y}, {y, z}} )
 
 -- making modules from matrices
 N = coker v
 L = image v
-N ++ L
-     
+P = N ++ L
+assert( N ++ L === N ++ L )
+peek P.cache
+isHomogeneous P
+peek P.cache
+
 -- remaking matrices
 w = map(R^1,,v)
 degrees source w
@@ -187,24 +200,18 @@ oops()
 G = gb (I, DegreeLimit => 100)
 raw G
 g = gens G
+assert( f === g )
 
 G2 = gb vars R2
-assert( f == g )
-f === g
-f === map(target f,source f,g)
 
 chk()
 -- assert try ( matrix {{x^2,y}} % G2; false ) else true
 
 matrix {{x^2,y}} % G
-
-assert ( gens G == f )
-assert ( target gens G === target f )
-assert ( source gens G == source f )
-
 syz f
 
-peek f.cache
+oops()
+-- peek f.cache
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay "
