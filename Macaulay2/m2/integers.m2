@@ -23,8 +23,6 @@ promote(ZZ,ZZ) := (i,ZZ) -> i
 lift(ZZ,ZZ) := (i,ZZ) -> i
 ZZ.random = () -> random 21 - 10
 
-ZZ >> ZZ := ZZ => (i,j) -> i << -j
-
 oldgcd := gcd
 erase symbol gcd
 gcd = method(Associative => true)

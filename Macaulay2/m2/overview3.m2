@@ -148,7 +148,7 @@ document {
           SEQ (TO "++", " -- direct sum"),
           SEQ (TO "**", " -- tensor product"),
           SEQ (TO "<<", " -- file output, bit shifting"),
-          SEQ (TO ">>", " -- bit shifting"),
+          SEQ (TO ">>", " -- bit shifting and attaching optional inputs to functions"),
           SEQ (TO "_", " -- subscripting"),
           SEQ (TO ".", " -- hash table access or assignment"),
           SEQ (TO ".?", " -- test for hash table access"),
@@ -159,7 +159,6 @@ document {
           SEQ (TO "&", " -- bit-wise and"),
           SEQ (TO ":", " -- ideal quotient, repetitions"),
           SEQ (TO "\\", " -- applying a function to elements of a list"),
-          SEQ (TO ">>>", " -- attaching options to a function"),
           SEQ (TO "@@", " -- composing functions"),
           SEQ (TO "@"),
           SEQ (TO "^^"),
@@ -269,9 +268,6 @@ document {
 document {
      Key => "LAYOUT",
      Headline => "relative locations of Macaulay 2 files",
-     OldSynopsis => {
-	  "LAYOUT"
-	  },
      PARA {
 	  "The hash table ", TT "LAYOUT", " is a translation table from symbolic names to directory paths,
 	  which are to interpreted relative to the path stored in ", TO "prefixDirectory", ".
@@ -290,12 +286,7 @@ document {
 
 document {
      Key => "Macaulay2",
-     OldSynopsis => {
-	  "Macaulay2"
-	  },
-     PARA {
-	  "This package is the main Macaulay 2 package.  Its dictionary contains all the global Macaulay 2 symbols."
-	  }
+     PARA { "This package is the main Macaulay 2 package.  Its dictionary contains all the global Macaulay 2 symbols." }
      }
 
 document {
@@ -330,7 +321,7 @@ document {
 document {
      Key => "Macaulay 2",
      FileName => "index",
-     PARA IMG (LAYOUT#"images" | "9planets.gif"),
+     PARA IMG (LAYOUT#"images" | "9planets.gif", "image of nine planets"),
      PARA {
 	  "This documentation addresses version ", version#"VERSION", " of Macaulay 2."
 	  },
@@ -510,7 +501,7 @@ document {
      its introduction in 1988 has become the pre-eminent system for
      mathematics on the computer.",
      PARA,
-     IMG "../html/Grayson2.jpg"
+     IMG { "../html/Grayson2.jpg", "picture of Grayson" }
      }
 
 document {

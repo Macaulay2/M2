@@ -54,7 +54,7 @@ chkopts := x -> if class x === OptionTable then scan(keys x,chkopt0) else if cla
 SingleArgWithOptions := opts -> (
      -- chkopts opts;
      if class opts =!= OptionTable then opts = new OptionTable from opts;
-     methodFunction := opts >>> 
+     methodFunction := opts >> 
      options ->
          arg -> (
 	  -- Common code for every method with options, single argument
@@ -72,7 +72,7 @@ AssociativeWithOptions := opts -> (
 MultipleArgsWithOptions := opts -> (
      -- chkopts opts;
      if class opts =!= OptionTable then opts = new OptionTable from opts;
-     methodFunction := opts >>> 
+     methodFunction := opts >> 
      options ->
          arg -> (
 	  -- Common code for methods with options, multiple arguments.
@@ -98,7 +98,7 @@ MultipleArgsNoOptions := () -> (
      methodDispatchFunctions#self = true;
      methodFunction)     
 
-method = methodDefaults >>> options -> args -> (
+method = methodDefaults >> options -> args -> (
      if args =!= () then error "expected only optional arguments";
      methodFunction := (
 	  if options.Options === null then (
@@ -283,9 +283,9 @@ denominator QQ := olddenominator
 emptyOptionTable := new OptionTable
 options     Ring := x -> null
 options Sequence := s -> if lookup s =!= null then options lookup s
-  optionFunction := {} >>> () -> ()
+  optionFunction := {} >> () -> ()
 
--- this works for any function created with ">>>", not just with "method"!
+-- this works for any function created with ">>", not just with "method"!
 options Function := OptionTable => function -> (
      if sameFunctionBody(function, optionFunction) then first frame function
      else null)

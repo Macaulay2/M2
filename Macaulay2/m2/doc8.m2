@@ -37,7 +37,7 @@ document {
 document {
      Key => symbol ann,
      Headline => "the annihilator ideal",
-     TT "ann", " -- a synonym for ", TO "annihilator", "."
+     "You may use ", TT "ann", " as a synonym for ", TO "annihilator", "."
      }
 
 document {
@@ -49,13 +49,13 @@ document {
 
 document {
      Key => (annihilator, Module),
-     OldSynopsis => {
-	  "I = annihilator M",
-	  "M" => "a module, or an ideal or ring element",
-	  "I" => { "The annihilator, ", TT "ann", "(M) = { f in R | fM = 0 }",
-	       " where ", TT "R", " is the ring of ", TT "M", "."}
+     Usage => "annihilator M",
+     Inputs => {
+	  "M" => "a module, or an ideal or ring element"
 	  },
-     TT "ann", " is a synonym for ", TT "annihilator", ".",
+     Outputs => {
+	  { "the annihilator, ", TT "ann(M) = { f in R | fM = 0 }", " where ", TT "R", " is the ring of ", TT "M"}
+	  },
      EXAMPLE {
 	  "R = QQ[a..d];",
 	  "J = monomialCurveIdeal(R,{1,3,4})",
@@ -72,7 +72,7 @@ document {
      version is to compute the annihilator of each generator of the module ",
      TT "M", " and to intersect these two by two.  Each annihilator is
      done using a submodule quotient.",
-     SeeAlso => {(symbol :, Module, Module), (quotient, Module, Module)}
+     SeeAlso => {(quotient, Module, Module)}
      }
 
 document {
@@ -143,10 +143,12 @@ document {
 document {
      Key => (symbol _, Ideal, List),
      Headline => "map from free module to some generators",
-     OldSynopsis => {
-	  "f = I_{i,j,k,...}",
+     Usage => "I_{i,j,k,...}",
+     Inputs => {
 	  "I" => null,
-	  "{i,j,k,...}" => "a list of integers",
+	  "{i,j,k,...}" => "a list of integers"
+	  },
+     Outputs => {
 	  "f" => { "a map from a free module to the module ", TT "module I", "
 	       which sends the basis vectors to the generators of ", TT "I", "
      	       whose index numbers are listed."
@@ -164,18 +166,20 @@ document {
 document {
      Key => (basis,List,Module),
      Headline => "basis of the part of a module of a certain degree",
-     OldSynopsis => {
-	  "f = basis(i,M)",
-	  "i" => "the degree of the desired part of the module",
-	  "M" => "a module",
-	  "f" => {
+     Usage => "basis(i,M)",
+     Inputs => {
+	  "i" => "a list of integers to serve as a degree or multidegree",
+	  "M" => "a module"
+	  },
+     Outputs => {
+	  {
 	       "a map from a free module to ", TT "M", " which sends the
 	       basis elements to a basis, over the ground field, of the
-	       degree ", TT "i", " part of ", TT "M", "."
+	       degree ", TT "i", " part of ", TT "M"
 	       }
 	  },
      "The degree ", TT "i", " is a multi-degree, represented as a list of 
-     integers.  If the number of degrees is just 1, then ", TT "i", " may
+     integers.  If the number of degrees is 1, then ", TT "i", " may
      be provided as an integer.",
      SeeAlso => {
 	  (basis,Module),
@@ -186,10 +190,12 @@ document {
 document {
      Key => (basis,Module),
      Headline => "basis of a module",
-     OldSynopsis => {
-	  "f = basis M",
-	  "M" => "a module",
-	  "f" => {
+     Usage => "basis M",
+     Inputs => {
+	  "M" => "a module"
+	  },
+     Outputs => {
+	  {
 	       "a map from a free module to ", TT "M", " which sends the
 	       basis elements to a basis, over the ground field, of ", TT "M", "."
 	       }
@@ -203,12 +209,14 @@ document {
 document {
      Key => (basis,Ring),
      Headline => "basis of a ring",
-     OldSynopsis => {
-	  "f = basis R",
-	  "R" => "a ring",
-	  "f" => {
+     Usage => "basis R",
+     Inputs => {
+	  "R" => "a ring"
+	  },
+     Outputs => {
+	  {
 	       "a map from a free module to ", TT "R", " which sends the
-	       basis elements to a basis, over the ground field, of ", TT "R", "."
+	       basis elements to a basis, over the ground field, of ", TT "R"
 	       }
 	  },
      EXAMPLE {
@@ -765,10 +773,12 @@ document {
 document {
      Key => (syz, GroebnerBasis),
      Headline => "retrieve the syzygy matrix",
-     OldSynopsis => {
-	  "f = syz G",
-	  "G" => {"the Groebner basis of a matrix ", TT "h"},
-	  "f" => {"the matrix of syzygies among the columns of ", TT "h"}
+     Usage => "syz G",
+     Inputs => {
+	  "G" => {"the Groebner basis of a matrix ", TT "h"}
+	  },
+     Outputs => {
+	  {"the matrix of syzygies among the columns of ", TT "h"}
 	  },
      "Warning: the result may be zero if syzygies were not to be retained 
      during the calculation, or if the computation was not continued to a
@@ -778,11 +788,12 @@ document {
 document {
      Key => (syz, Matrix),
      Headline => "compute the syzygy matrix",
-     OldSynopsis => {
-	  "f = syz h",
-	  "h" => {"a matrix"},
-	  "f" => {"the matrix of minimal generators for the syzygies among
-	       the columns of ", TT "h"}
+     Usage => "syz h",
+     Inputs => {
+	  "h" => {"a matrix"}
+	  },
+     Outputs => {
+	  {"the matrix of minimal generators for the syzygies among the columns of ", TT "h"}
 	  }
      }
 
@@ -1230,14 +1241,16 @@ document {
      }
 
 document {
-     Key => toField, Headline => "declare that a ring is a field",
-     OldSynopsis => {
-	  "toField R",
-	  "R" => "a ring",
-     	  null
+     Key => toField,
+     Headline => "declare that a ring is a field",
+     Usage => "toField R",
+     Inputs => {
+	  "R" => "a ring"
 	  },
-     "Use this to declare that a ring ", TT "R", " is known to be a field.  This
-     is accomplished by setting ", TT "R.isField", " to be ", TT "true", ",
+     Consequences => {
+	  { "The ring ", TT "R", " is declared to be a field." }
+	  },
+     "The declaration is accomplished by setting ", TT "R.isField", " to be ", TT "true", ",
      and, in case the ring is a ring handled by the engine, informing the
      engine.  Polynomial rings over rings declared to be fields support
      Groebner basis operations.",
@@ -1253,10 +1266,12 @@ document {
 
 document {
      Key => getNonUnit, Headline => "retrieve a previously discovered non-unit",
-     OldSynopsis => {
-	  "r = getNonUnit R",
-	  "R" => "a ring in which division by a non-unit has been attempted",
-	  "r" => "the non-unit"
+     Usage => "getNonUnit R",
+     Inputs => {
+	  "R" => "a ring in which division by a non-unit has been attempted"
+	  },
+     Outputs => {
+	  "the non-unit"
 	  },
      "Warning: this function does not work yet for divisions attempted in the course
      of computing a Groebner basis or resolution.",
@@ -1264,11 +1279,14 @@ document {
      }
 
 document {
-     Key => getZeroDivisor, Headline => "retrieve a previously discovered zero divisor",
-     OldSynopsis => {
-	  "r = getZeroDivisor R",
-	  "R" => "a ring in which a zero-divisor has been found",
-	  "r" => "the zero divisor"
+     Key => getZeroDivisor,
+     Headline => "retrieve a previously discovered zero divisor",
+     Usage => "getZeroDivisor R",
+     Inputs => {
+	  "R" => "a ring in which a zero-divisor has been found"
+	  },
+     Outputs => {
+	  "the zero divisor"
 	  },
      SeeAlso => { "toField", "getNonUnit" }
      }
@@ -1309,11 +1327,13 @@ document {
 
 document {
      Key => (symbol **, RingMap, Module),
-     OldSynopsis => {
-	  "N = f ** M",
-	  "f" => { "a ring map from ", TT "R", " to ", TT "S", "." },
-	  "M" => { "an ", TT "R", "-module" },
-	  "N" => { "the tensor product of ", TT "M", " with ", TT "S", " over ", TT "R", "." }
+     Usage => "f ** M",
+     Inputs => {
+	  "f" => { "a ring map from ", TT "R", " to ", TT "S" },
+	  "M" => { "an ", TT "R", "-module" }
+	  },
+     Outputs => {
+	  { "the tensor product of ", TT "M", " with ", TT "S", " over ", TT "R" }
 	  },
      EXAMPLE {
 	  "R = QQ[x,y];",
@@ -1327,11 +1347,13 @@ document {
 
 document {
      Key => (symbol " ", RingMap, Module),
-     OldSynopsis => {
-	  "N = f M",
+     Usage => "f M",
+     Inputs => {
 	  "f" => { "a ring map from ", TT "R", " to ", TT "S", "." },
-	  "M" => { "a free ", TT "R", "-module ", TT "R^n", " or a submodule of one" },
-	  "N" => { "the submodule of ", TT "S^n", " generated by the image of ", TT "M", "." }
+	  "M" => { "a free ", TT "R", "-module ", TT "R^n", " or a submodule of one" }
+	  },
+     Outputs => {
+	  { "the submodule of ", TT "S^n", " generated by the image of ", TT "M" }
 	  },
      EXAMPLE {
 	  "R = QQ[x,y];",
@@ -1376,21 +1398,23 @@ document {
 document {
      Key => (map,Ring,Ring,Matrix),
      Headline => "make a ring map",
-     OldSynopsis => {
-	  "f = map(R,S,m)",
+     Usage => "map(R,S,m)",
+     Inputs => {
 	  "R" => "the target ring",
 	  "S" => "the source ring",
 	  "m" => {"a 1 by n matrix over ", TT "R", ", where n is the
      	       number of variables in the polynomial ring ", TT "S", ",
 	       or a matrix over the common coefficient ring of the 
 	       two rings."
-	       },
-	  "f" => {
+	       }
+	  },
+     Outputs => {
+	  {
 	       "the ring homomorphism from ", TT "S", " to ", TT "R", " which,
 	       in case m is a matrix over R, sends the i-th variable
 	       of ", TT "S", " to the i-th entry in ", TT "m", ",
 	       or, in case ", TT "m", " is a matrix over the common coefficient ring,
-	       is the linear change of coordinates corresponding to ", TT "m", "."
+	       is the linear change of coordinates corresponding to ", TT "m"
 	       }
 	  },
      EXAMPLE {
@@ -1416,16 +1440,16 @@ document {
 document {
      Key => (map,Ring,Ring,List),
      Headline => "make a ring map",
-     OldSynopsis => {
-	  "f = map(R,S,m)",
+     Usage => "map(R,S,m)",
+     Inputs => {
 	  "R" => "the target ring",
 	  "S" => "the source ring",
-	  "m" => {"a list of n elements of ", TT "R", ", where n is the
-     	       number of variables in the polynomial ring ", TT "S", "."
-	       },
-	  "f" => {
+	  "m" => {"a list of n elements of ", TT "R", ", where n is the number of variables in the polynomial ring ", TT "S" }
+	  },
+     Outputs => {
+	  {
 	       "the ring homomorphism from ", TT "S", " to ", TT "R", " which sends the i-th variable
-	       of ", TT "S", " to the i-th entry in ", TT "m", "."
+	       of ", TT "S", " to the i-th entry in ", TT "m"
 	       }
 	  },
      EXAMPLE {

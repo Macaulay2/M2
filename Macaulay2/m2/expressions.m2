@@ -447,7 +447,6 @@ binary := new HashTable from {
      symbol .. => ((x,y) -> x..y),	  -- 
      symbol % => ((x,y) -> x%y),
      symbol @ => ((x,y) -> x@y),
-     symbol >>> => ((x,y) -> x>>>y),
      symbol ==> => ((x,y) -> x==>y),
      symbol <==> => ((x,y) -> x<==>y),
      symbol |- => ((x,y) -> x|-y),

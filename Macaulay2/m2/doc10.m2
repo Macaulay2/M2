@@ -913,37 +913,29 @@ document {
 
 document {
      Key => (symbol >=, ZZ),
-     OldSynopsis => {
-	  "b = (>= d)",
-	  "d" => null,
-	  "b" => {
-	       "a special object of class ", TT "LowerBound", " used to represent
-	       the set of natural numbers at least as large as ", TT "d", "."
-	       }
-	  }
+     Usage => "(>= d)",
+     Inputs => { "d" => null },
+     Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers at least as large as ", TT "d" } }
      }
 
 document {
      Key => (symbol >, ZZ),
-     OldSynopsis => {
-	  "b = (> d)",
-	  "d" => null,
-	  "b" => {
-	       "a special object of class ", TT "LowerBound", " used to represent
-	       the set of natural numbers larger than ", TT "d", "."
-	       }
-	  }
+     Usage => "(> d)",
+     Inputs => { "d" => null },
+     Outputs => { { "a special object of class ", TT "LowerBound", " used to represent the set of natural numbers larger than ", TT "d" } }
      }
 
 document {
      Key => (cohomology, ZZ, SumOfTwists),
      Headline => "coherent sheaf cohomology",
-     OldSynopsis => {
-	  "M = HH^i(F(>=d))",
+     Usage => "M = HH^i(F(>=d))",
+     Inputs => {
 	  "i" => null,
 	  "F(>=d)" => { "notation representing the sum of the twists ", TT "F(n)", " for
 	       all ", TT "n", " greater than or equal to ", TT "d", ", where ", TT "F", " is
-	       a coherent sheaf on a variety ", TT "X", "." },
+	       a coherent sheaf on a variety ", TT "X", "." }
+	       },
+     Outputs => {
 	  "M" => {
 	       "a module over the homogeneous coordinate ring of the variety ", TT "X", " which agrees,
 	       at least in degrees n greater than or equal to d, with the graded module which
@@ -956,35 +948,27 @@ document {
      PARA,
      "Note: use ", TT "HH^i(F(*))", " to try to compute the whole graded module.  The
      computation will fail if the module is not finitely generated.",
-     SeeAlso => {
-	  "HH",
-	  (cohomology, ZZ, CoherentSheaf)
-	  }
+     SeeAlso => { "HH", (cohomology, ZZ, CoherentSheaf) }
      }
 
 document {
      Key => (cohomology, ZZ, CoherentSheaf),
      Headline => "coherent sheaf cohomology",
-     OldSynopsis => {
-	  "V = HH^i(F)",
+     Usage => "HH^i(F)",
+     Inputs => {
 	  "i" => null,
-	  "F" => { "a coherent sheaf on a variety ", TT "X", "." },
-	  "V" => {
-	       "the", TT "i", "-th cohomology group of ", TT "F", " as a vector space
-	       over the coefficient field of ", TT "X", "." 
-	       }
+	  "F" => { "a coherent sheaf on a variety ", TT "X", "." }
 	  },
+     Outputs => { { "the", TT "i", "-th cohomology group of ", TT "F", " as a vector space over the coefficient field of ", TT "X" } },
      SeeAlso => {"coherent sheaves", "HH", (cohomology, ZZ, SumOfTwists) }
      }
 
 document {
      Key => OO,
      Headline => "the structure sheaf",
-     OldSynopsis => {
-	  "O = OO_X",
-	  "X" => "a variety",
-	  "O" => { "the structure sheaf of ", TT "X", "." }
-	  }
+     Usage => "OO_X",
+     Inputs => { "X" => "a variety" },
+     Outputs => { { "the structure sheaf of ", TT "X", "." } }
      }
 
 document {
@@ -1006,27 +990,23 @@ document {
 
 document {
      Key => (symbol _, RingElement, ZZ),
-     OldSynopsis => {
-	  "g = f_d",
+     Usage => "f_d",
+     Inputs => {
 	  "f" => "a polynomial",
-	  "d" => null,
-	  "g" => { "the sum of those terms of ", TT "f", " whose total degree is
-	       ", TT "d", "."
-	       }
+	  "d" => null
 	  },
+     Outputs => { { "the sum of those terms of ", TT "f", " whose total degree is ", TT "d" } },
      SeeAlso => (symbol _, RingElement, List)
      }
 
 document {
      Key => (symbol _, RingElement, List),
-     OldSynopsis => {
-	  "g = f_d",
+     Usage => "f_d",
+     Inputs => {
 	  "f" => "a polynomial",
-	  "d" => "a list of integers",
-	  "g" => { "the sum of those terms of ", TT "f", " whose multi-degree is
-	       ", TT "d", "."
-	       }
+	  "d" => "a list of integers"
 	  },
+     Outputs => { { "the sum of those terms of ", TT "f", " whose multi-degree is ", TT "d" } },
      "The length of ", TT "d", " should be the same as the degree length of ", TT "f", ".",
      SeeAlso => {(symbol _, RingElement, ZZ), "degreeLength"}
      }

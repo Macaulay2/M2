@@ -174,7 +174,7 @@ bump();
      export LeftArrowW := binaryright("<-"); export LeftArrowS := makeKeyword(LeftArrowW);
      export RightArrowW := binaryright("->",arrowop); makeKeyword(RightArrowW);
      export DoubleArrowS := makeKeyword(binaryright("=>"));
-     export GreaterGreaterGreaterS := makeKeyword(binaryright(">>>"));
+     export GreaterGreaterS := makeKeyword(binaryright(">>"));
 bump();
      narrow := prec;
      whenW = token("when"); makeKeyword(whenW);
@@ -184,8 +184,6 @@ bump();
 -- input/output:
 bump();
      export LessLessS := makeKeyword(unaryleft("<<"));	    -- also binary
-bump();
-     export GreaterGreaterS := makeKeyword(binaryright(">>"));
 -- logic:
 bump();
      export LongLongDoubleArrowS := makeKeyword(binaryright("===>"));
@@ -463,7 +461,7 @@ bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):vo
 
 export opsWithBinaryMethod := array(SymbolClosure)(
      LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS, NotEqualS,
-     LongLongDoubleArrowS, GreaterGreaterGreaterS, LongBiDoubleArrowS, DeductionS,
+     LongLongDoubleArrowS, LongBiDoubleArrowS, DeductionS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
      AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, inS);

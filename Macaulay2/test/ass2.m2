@@ -6,7 +6,7 @@
 -- Subject: Bug report.
 -- 
 -- 
--- There appears to a bug in the Assasinator code.
+-- There appears to a bug in the Assassinator code.
 -- In particular, "ass P" doesn't return all the
 -- associated primes in the following example.
 -- 

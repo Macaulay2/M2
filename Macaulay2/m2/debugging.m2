@@ -8,7 +8,7 @@ error = args -> olderror (
      )
 protect symbol error
 
-on = { CallLimit => 100000, Name => null } >>> opts -> f -> (
+on = { CallLimit => 100000, Name => null } >> opts -> f -> (
      depth := 0;
      totaltime := 0.;
      callCount := 0;

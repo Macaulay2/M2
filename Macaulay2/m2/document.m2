@@ -650,12 +650,12 @@ merget := (v,v') -> apply(v,v',(a,t) -> (
 	  if t =!= Thing then (
 	       if isopt a then (
 		    if isopt a#1 then (
-			 if a#1#0 =!= t then error "type mismatch"
+			 if a#1#0 =!= t then error("type mismatch: ", toString a#1#0, " =!= ", toString t)
 			 else a
 			 )
 		    else (
 			 if istype a#0 then (
-			      if a#0 =!= t then error "type mismatch"
+			      if a#0 =!= t then error("type mismatch: ", toString a#0, " =!= ", toString t)
 			      else a
 			      )
 			 else a#0 => t => a#1			      

@@ -1,20 +1,19 @@
 document {
      Key => (ass, Ideal),
      Headline => "find the associated primes of an ideal",
-     OldSynopsis => {
-	  "L = ass(I)",
-	  "I" => {"an ideal in a (quotient of a) polynomial ring ", 
-	          TT "R", "."},
-	  "L" => {"a list of prime ideals in ", TT "R", "."}
+     Usage => "ass(I)",
+     Inputs => {
+	  "I" => {"an ideal in a (quotient of a) polynomial ring ", TT "R"}
 	  },
-     PARA,
-     "Computes the set of associated primes for the ideal ", TT "I", 
-     ".  The resulting list
-     is stashed in ", TT "I", " under the key ", TT "Assasinator", ".",
+     Outputs => {
+	  {"a list of prime ideals in ", TT "R", " that are associated to ", TT "I"}
+	  },
+     "Computes the set of associated primes for the ideal ", TT "I", ".  The resulting list
+     is stashed in ", TT "I", " under the key ", TT "Assassinator", ".",
      EXAMPLE {
 	  "R = ZZ/101[a..d];",
 	  "I = intersect(ideal(a^2,b),ideal(a,b,c^5),ideal(b^4,c^4))",
-	  "ass(I)"
+	  "ass I"
 	  },
      EXAMPLE {
 	  "R = ZZ/7[x,y,z]/(x^2,x*y);",
@@ -79,18 +78,17 @@ document {
 document {
      Key => (localize,Ideal,Ideal),
      Headline => "localize an ideal at a prime ideal",
-     OldSynopsis => {
-	  "J = localize(I,P)",
+     Usage => "localize(I,P)",
+     Inputs => {
 	  "I" => {"an ideal in a (quotient of a) polynomial ring ", 
 	          TT "R", "."},
-	  "P" => {"a prime ideal in the same ring."},
-	  "J" => {"the extension contraction ideal I R_P intersect R."}
+	  "P" => {"a prime ideal in the same ring."}
 	  },
-     PARA,
+     Outputs => { {"the extension contraction ideal I R_P intersect R."} },
      "The result is the ideal obtained by first extending to
      the localized ring and then contracting back to the original
      ring.",
-      EXAMPLE {
+     EXAMPLE {
 	  "R = ZZ/(101)[x,y];",
 	  "I = ideal (x^2,x*y);",
 	  "P1 = ideal (x);",
@@ -161,26 +159,26 @@ document {
 
 document {
      Key => (primaryComponent, Ideal, Ideal),
-    Headline => "find a primary component corresponding to an associated prime",
-    OldSynopsis => {
-	 "Q = primaryComponent(I,P)",
-   	 "I" => {"an ideal in a (quotient of a) polynomial ring ", 
-	          TT "R", "."},
-	 "P" => {"an associated prime of ", TT "I", "."},
-	 "Q" => {"a ", TT "P", "-primary ideal of ", TT "I", "."}
-	 },
-    PARA,
-    "Q is top(I + P^m), for sufficiently large m.  The criterion that Q
-    is primary is given in 
-    Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
-    "However, we use", TO (localize,Ideal,Ideal), ".",
-    BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
-    Last modified June 2000.",
-    SeeAlso => {(ass,Ideal),
-	 (primaryDecomposition,Ideal), 
-	 radical, decompose, top, 
-	 removeLowestDimension}
-    }
+     Headline => "find a primary component corresponding to an associated prime",
+     Usage => "Q = primaryComponent(I,P)",
+     Inputs => {
+   	  "I" => {"an ideal in a (quotient of a) polynomial ring ", 
+	       TT "R"},
+	  "P" => {"an associated prime of ", TT "I"}
+	  },
+     Outputs => {
+	  "Q" => {"a ", TT "P", "-primary ideal of ", TT "I", "."}
+	  },
+     PARA,
+     "Q is top(I + P^m), for sufficiently large m.  The criterion that Q
+     is primary is given in 
+     Eisenbud-Huneke-Vasconcelos, Invent math, 110, 207-235 (1992).",
+     "However, we use", TO (localize,Ideal,Ideal), ".",
+     PARA,
+     BOLD "Author and maintainer: ", "C. Yackel, cyackel@math.indiana.edu.  
+     Last modified June, 2000.",
+     SeeAlso => {(ass,Ideal), (primaryDecomposition,Ideal), radical, decompose, top, removeLowestDimension}
+     }
 
 document {
      Key => [primaryComponent,Strategy],
@@ -212,21 +210,17 @@ document {
 	  SEQ ("2", " -- gives output of time-consuming processes.")
      	  },
      PARA,
-     "See ", TO (primaryComponent,Ideal,Ideal) , " for more information."}
+     "See ", TO (primaryComponent,Ideal,Ideal) , " for more information."
+     }
 
-     
-     
 document {
      Key => (primaryDecomposition, Ideal),
      Headline => "find a primary decomposition of an ideal",
-     OldSynopsis => {
-	  "L = primaryDecomposition I",
-	  "I" => {"an ideal in a (quotient of a) polynomial ring ", 
-	          TT "R", "."},
-	  "L" => {"a list of primary ideals whose 
-	           intersection is ", TT "I", "."}
+     Usage => "primaryDecomposition I",
+     Inputs => {
+	  "I" => {"an ideal in a (quotient of a) polynomial ring ", TT "R", "."}
 	  },
-     PARA,
+     Outputs => { {"a list of primary ideals whose intersection is ", TT "I"} },
      "This routine returns an irredundant primary decomposition
      for the ideal ", TT "I", ".  The specific algorithm used varies
      depending on the characteristics of the ideal, and can also be specified

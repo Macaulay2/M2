@@ -11,7 +11,7 @@
 --
 
 ass1 := (I,printlevel) -> (
-     if I.cache.?Assasinator then I.cache.Assasinator else I.cache.Assasinator = (
+     if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
      assasinator := {};
      RI := ring I;
      polyRing := ring presentation RI;
@@ -43,7 +43,7 @@ ass1 := (I,printlevel) -> (
 
 
 ass2 := (I,printlevel) -> (
-     if I.cache.?Assasinator then I.cache.Assasinator else I.cache.Assasinator = (
+     if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
      assasinator := {};
      local newcomponents;
      RI := ring I;
@@ -73,7 +73,7 @@ ass2 := (I,printlevel) -> (
 
 
 ass Ideal := List => o -> (I) -> (
-     if I.cache.?Assasinator then I.cache.Assasinator else I.cache.Assasinator = (
+     if I.cache.?Assassinator then I.cache.Assassinator else I.cache.Assassinator = (
      	  if o.Strategy === 1 then (
 	       if o.PrintLevel >= 1 then
 	       print "ass:  Using Strategy 1";

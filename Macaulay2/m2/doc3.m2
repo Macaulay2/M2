@@ -150,15 +150,6 @@ document {
      }
 
 document {
-     Key => symbol ">>>",
-     Headline => "a binary operator",
-     "This operator is right associative.",
-     PARA,
-     "New methods must be installed with ", TO "installMethod", ", because the
-     parsing precedence is so low!  This will be fixed eventually."
-     }
-
-document {
      Key => symbol "@",
      Headline => "a binary operator",
      "This operator is right associative."

@@ -64,7 +64,7 @@ New type Keyword, subclass of Symbol:
 
     o4 = {while, when, try, to, timing, time, then, symbol, shield, return, or, of, not, new, local, list, in, if, global, from, for, else, do, continue, break, and, ~, }, ||, |-, |, {, _,
 	 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 ^^, ^**, ^, ], \\, \, [, @@, @, ?, >>>, >>, >=, >, =>, ==>, ===>, ===, ==, =!=, =, <==>, <=, <<, <-, <, ;, :=, :, /^, //, /, .?, .., ., ->, -, ,, ++, +, **, *, ), (*), (, &&, &, %,
+	 ^^, ^**, ^, ], \\, \, [, @@, @, ?, >>, >=, >, =>, ==>, ===>, ===, ==, =!=, =, <==>, <=, <<, <-, <, ;, :=, :, /^, //, /, .?, .., ., ->, -, ,, ++, +, **, *, ), (*), (, &&, &, %,
 	 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 #?, ##, #, !=, !,  }
 
@@ -121,10 +121,13 @@ result of == is not Boolean.
 The function "remove" can now be used to remove an element from a list
 or sequence, like this: remove({a,b,c},1).
 
-Warning: the operator ==> has been renamed to >>> so a new operator,
+Warning: the operator ==> has been renamed to >> so a new operator,
 ==>, with higher parsing precedence, can be introduced for use as
 "implication" in logical expressions.  Other new operators introduced
 are |- and <==> .
+
+The meaning of i>>j as bit shifting to the right has been removed for
+lack of use.  The user may replace it by i<<-j.
 
 The definition of a type is enlarged slightly: anything whose parent
 class is not equal to the class "Nothing" is now considered to be a

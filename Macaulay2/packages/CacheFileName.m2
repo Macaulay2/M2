@@ -77,8 +77,7 @@ document {
 
 document {
      Key => (cacheFileName, String, String),
-     OldSynopsis => {
-	  ///fn = cacheFileName(prefix,key)///,
+     Usage => ///fn = cacheFileName(prefix,key)///,
 	  "prefix" => "the prefix from which to construct the file name",
 	  "key" => "a key, which can be anything"
 	  },

@@ -308,12 +308,12 @@ html CODE   := x -> concatenate(
      )
 
 html ANCHOR := x -> (
-     "\n<a name=\"" | x#0 | "\">" | html x#-1 | "</a>"
+     "\n<a id=\"" | x#0 | "\">" | html x#-1 | "</a>"
      )
 info ANCHOR := net ANCHOR := x -> net last x
 tex ANCHOR := x -> (
      concatenate(
-	  ///\special{html:<a name="///, texLiteral x#0, ///">}///,
+	  ///\special{html:<a id="///, texLiteral x#0, ///">}///,
 	  tex x#-1,
 	  ///\special{html:</a>}///
 	  )
