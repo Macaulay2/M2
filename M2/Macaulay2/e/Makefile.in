@@ -13,6 +13,16 @@ DEPENDS = yes
 	@ echo " ** compiling $<"
 	@ $(COMPILE.c) $(OUTPUT_OPTION) $<
 
+%.dep: %.cpp
+	@ echo "$(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo " ** creating $@ from $<"
+	@ $(CXX) -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+
+%.dep: %.c
+	@ echo "$(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo " ** creating $@ from $<"
+	@ $(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+
 CPPFLAGS += -I../../include
 CPPFLAGS += -I../util
 CPPFLAGS += -I.
@@ -232,8 +242,6 @@ M2-factory.o : M2-factory.cpp ; $(COMPILE.cc) -Wno-old-style-cast $(OUTPUT_OPTIO
 clean::; rm -f *.lo *.o $(LIBGB) TAGS LOGFILE $(addsuffix .hpp, $(GENERATED_H))
 clean::; $(MAKE) -C tests $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
-%.dep: %.cpp; $(CXX) -MM $(CPPFLAGS) $< >dep-$$$$.tmp && <dep-$$$$.tmp sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm dep-$$$$.tmp
-%.dep: %.c;   $(CC)  -MM $(CPPFLAGS) $< >dep-$$$$.tmp && <dep-$$$$.tmp sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm dep-$$$$.tmp
 clean::; rm -f *.dep dep-*.tmp
 ifeq "$(DEPENDS)" "yes"
 include $(CFILES:.c=.dep) $(CCFILES:.cpp=.dep)
