@@ -35,7 +35,7 @@ htmlFilename = key -> (				   -- returns the relative path from the PREFIX to th
      key = normalizeDocumentTag key;
      pkg := package TO key;
      fkey := formatDocumentTag key;
-     LAYOUT#"packagehtml" pkg.name | if fkey === pkg.name then topFileName else toFilename fkey|".html" )
+     LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"title" then topFileName else toFilename fkey|".html" )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
 text IMG  := x -> ""
@@ -318,8 +318,8 @@ installPackage Symbol := opts -> pkg -> (
 installPackage Package := o -> pkg -> (
      oldpkg := currentPackage;
      currentPackage = pkg;
-     topNodeName = pkg.name;
-     buildPackage = if pkg === Main then "Macaulay2" else pkg.name;
+     topNodeName = pkg#"title";
+     buildPackage = if pkg === Main then "Macaulay2" else pkg#"title";
      buildDirectory = minimizeFilename(o.Prefix | "/");
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
      buildPackage = minimizeFilename buildPackage;
@@ -339,7 +339,7 @@ installPackage Package := o -> pkg -> (
 	  copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose=>true);
 
 	  -- copy source subdirectory
-	  srcDirectory := LAYOUT#"packagesrc" pkg.name;
+	  srcDirectory := LAYOUT#"packagesrc" pkg#"title";
 	  dn := realpath(currentSourceDir|buildPackage);
 	  if fileExists dn
 	  then (
@@ -356,7 +356,7 @@ installPackage Package := o -> pkg -> (
      pkg#"package prefix" = buildDirectory;
 
      -- make example input files
-     exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg.name;
+     exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
      infn := nodename -> exampleDir|toFilename nodename|".m2";
      outfn := nodename -> exampleDir|toFilename nodename|".out";
      tmpfn := nodename -> exampleDir|toFilename nodename|".tmp";
@@ -411,10 +411,10 @@ installPackage Package := o -> pkg -> (
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
      -- make html files
-     htmlDirectory = LAYOUT#"packagehtml" pkg.name;
+     htmlDirectory = LAYOUT#"packagehtml" pkg#"title";
      setupButtons();
      makeDirectory (buildDirectory|htmlDirectory);     
-     nodes := unique join(keys pkg.Dictionary,keys pkg#"documentation",{topNodeName});
+     nodes := unique join(select(keys pkg.Dictionary,s -> not match ( "\\$" , s )),keys pkg#"documentation",{topNodeName});
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
      ret := makeHtmlNode \ toString \ nodes;
 
@@ -429,7 +429,7 @@ check = method()
 check Package := pkg -> (
      logfile := "Macaulay2-test.log";
      scan(values pkg#"test inputs", t -> (
-	       cmd := commandLine#0 | " --silent -q -e 'load \""|pkg.name|".m2\"' >/dev/null";
+	       cmd := commandLine#0 | " --silent -q -e 'load \""|pkg#"title"|".m2\"' >/dev/null";
 	       stderr << "--   " << cmd << endl << "     " << net t << endl;
 	       "!" | cmd << t << endl << close;
 	       )))

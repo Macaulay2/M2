@@ -1,6 +1,9 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 peek2 = method(TypicalValue => Net)
+peek2(ZZ,Thing) := (depth,s) -> peek2(s,depth) -- wish we had implemented it the other way around
+
+peek2(ZZ,ZZ) := (n,depth) -> toString n
 
 peek2(Nothing,ZZ) := (s,depth) -> "null"
 peek2(Symbol,ZZ) := (s,depth) -> if depth === 0 then toString s else toExternalString s

@@ -1022,6 +1022,8 @@ lookat(p:Position):void := (
 	  );
      );
 
+locate(x:Token):void := lookat(position(x));
+
 locate(e:Code):void := (
      when e
      is nullCode do nothing
@@ -1029,7 +1031,7 @@ locate(e:Code):void := (
      is v:arrayCode do foreach c in v.z do locate(c)
      is v:binaryCode do (lookat(v.position); locate(v.lhs); locate(v.rhs);)
      is v:forCode do ( lookat(v.position); locate(v.fromClause); locate(v.toClause); locate(v.whenClause); locate(v.listClause); locate(v.doClause); )
-     is v:functionCode do (locate(v.parms);locate(v.body);)
+     is v:functionCode do (locate(v.arrow);locate(v.body);)
      is v:globalAssignmentCode do (lookat(v.position); locate(v.rhs);)
      is v:globalMemoryReferenceCode do lookat(v.position)
      is v:globalSymbolClosureCode do lookat(v.position)
@@ -1096,7 +1098,7 @@ locate(e:Expr):Expr := (
 	  locate1())
      is f:FunctionClosure do (
 	  locate0();
-	  locate(f.model.parms);
+	  locate(f.model.arrow);
 	  locate(f.model.body);
 	  locate1())
      else WrongArg("a function, symbol, sequence, or null"));

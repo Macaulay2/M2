@@ -383,7 +383,7 @@ export convert(e:ParseTree):Code := (
 	       	    convert(b.rhs),treePosition(e)))
 	  )
      is a:Arrow do Code(functionCode(
-	       convert(a.lhs),		  -- just for display purposes!
+	       a.operator,		  -- just for display purposes!
 	       convert(a.rhs),a.desc
 	       ))
      is u:Unary do (

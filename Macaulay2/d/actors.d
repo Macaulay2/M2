@@ -718,11 +718,11 @@ factorial(rhs:Code):Expr := (
      when eval(rhs)
      is x:Error do Expr(x)
      is x:Integer do (
-	  if !isInt(x) then return printErrorMessage(rhs,"argument too large");
+	  if !isInt(x) then return printErrorMessageE(rhs,"argument too large");
 	  n := toInt(x);
 	  if n==0 || n==1 then return Expr(toInteger(1));
 	  if n<0 then return  
-	       printErrorMessage(rhs,"expected a positive number");
+	       printErrorMessageE(rhs,"expected a positive number");
 	  y := x;
 	  while true do (
 	       n = n-1;
@@ -731,7 +731,7 @@ factorial(rhs:Code):Expr := (
 	  Expr(y))
      is x:Real do (
 	  Expr(Real(exp(lgamma(x.v+1)))))
-     else printErrorMessage(rhs,"expected a number"));
+     else printErrorMessageE(rhs,"expected a number"));
 setuppostfix(ExclamationS,factorial);
 EqualEqualEqualfun(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
@@ -774,7 +774,7 @@ DotDotfun(lhs:Code,rhs:Code):Expr := (
 		    else if isInt(z) then (
 			 m := toInt(z);
 			 Expr(new Sequence len m+1 at k do provide x+k))
-		    else printErrorMessage(rhs,"range too large")))
+		    else printErrorMessageE(rhs,"range too large")))
 	  else binarymethod(left,right,DotDotS))
      else binarymethod(left,rhs,DotDotS));
 setup(DotDotS,DotDotfun);
@@ -784,7 +784,7 @@ assignNewFun(newclass:Code,rhs:Code):Expr := (
      when c
      is Error do c
      is o:HashTable do installMethod(NewE,o,eval(rhs))
-     else printErrorMessage(newclass,"expected a hash table as prospective class"));
+     else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewFun = assignNewFun;
 assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
      c := eval(newclass);
@@ -797,10 +797,10 @@ assignNewOfFun(newclass:Code,newparent:Code,rhs:Code):Expr := (
 	  is Error do p
 	  is pp:HashTable do 
 	  if pp.mutable then installMethod(NewOfE,cc,pp,eval(rhs))
-	  else printErrorMessage(newparent,"expected a mutable hash table")
-	  else printErrorMessage(newparent,"expected a hash table as prospective parent"))
-     else printErrorMessage(newclass,"expected a mutable hash table")
-     else printErrorMessage(newclass,"expected a hash table as prospective class")
+	  else printErrorMessageE(newparent,"expected a mutable hash table")
+	  else printErrorMessageE(newparent,"expected a hash table as prospective parent"))
+     else printErrorMessageE(newclass,"expected a mutable hash table")
+     else printErrorMessageE(newclass,"expected a hash table as prospective class")
      );
 AssignNewOfFun = assignNewOfFun;
 assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
@@ -814,10 +814,10 @@ assignNewFromFun(newclass:Code,newinitializer:Code,rhs:Code):Expr := (
 	  is Error do i
 	  is ii:HashTable do 
 	  if ii.mutable then installMethod(NewFromE,cc,ii,eval(rhs))
-     	  else printErrorMessage(newinitializer,"expected a mutable hash table")
-     	  else printErrorMessage(newinitializer,"expected a hash table"))
-     else printErrorMessage(newclass,"expected a mutable hash table")
-     else printErrorMessage(newclass,"expected a hash table as prospective class"));
+     	  else printErrorMessageE(newinitializer,"expected a mutable hash table")
+     	  else printErrorMessageE(newinitializer,"expected a hash table"))
+     else printErrorMessageE(newclass,"expected a mutable hash table")
+     else printErrorMessageE(newclass,"expected a hash table as prospective class"));
 AssignNewFromFun = assignNewFromFun;
 assignNewOfFromFun(args:CodeSequence):Expr := (
      newclass := args.0;
@@ -843,12 +843,12 @@ assignNewOfFromFun(args:CodeSequence):Expr := (
 	       	    when r 
 		    is Error do r
 	       	    else installMethod(NewOfFromE,cc,pp,ii,r))
-     	       else printErrorMessage(newinitializer,"expected a mutable hash table")
-     	       else printErrorMessage(newinitializer,"expected a hash table"))
-	  else printErrorMessage(newparent,"expected a mutable hash table")
-	  else printErrorMessage(newparent,"expected a hash table as prospective parent"))
-     else printErrorMessage(newclass,"expected a mutable hash table")
-     else printErrorMessage(newclass,"expected a hash table as prospective class")
+     	       else printErrorMessageE(newinitializer,"expected a mutable hash table")
+     	       else printErrorMessageE(newinitializer,"expected a hash table"))
+	  else printErrorMessageE(newparent,"expected a mutable hash table")
+	  else printErrorMessageE(newparent,"expected a hash table as prospective parent"))
+     else printErrorMessageE(newclass,"expected a mutable hash table")
+     else printErrorMessageE(newclass,"expected a hash table as prospective class")
      );
 AssignNewOfFromFun = assignNewOfFromFun;
 installFun2(a:Expr,args:CodeSequence):Expr := (
@@ -983,7 +983,7 @@ unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (
 	       when b is Error do b
 	       else installMethod(f,T,b)
 	       )
-	  else printErrorMessage(argtype,"expected a hash table")));
+	  else printErrorMessageE(argtype,"expected a hash table")));
 UnaryInstallMethodFun = unaryInstallMethodFun;
 
 unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
@@ -1003,7 +1003,7 @@ unaryInstallValueFun(meth:Code,argtype:Code,body:Code):Expr := (
 		    )
 	       )
 	  )
-     else printErrorMessage(argtype,"expected a hash table")
+     else printErrorMessageE(argtype,"expected a hash table")
      );
 UnaryInstallValueFun = unaryInstallValueFun;
 

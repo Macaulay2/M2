@@ -30,7 +30,7 @@ export codePosition(c:Code):Position := (
      is f:whileListCode do f.position
      is f:whileDoCode do f.position
      is f:tryCode do f.position
-     is f:functionCode do codePosition(f.parms)
+     is f:functionCode do position(f.arrow)
      is f:globalAssignmentCode do f.position
      is f:globalMemoryReferenceCode do f.position
      is f:globalSymbolClosureCode do f.position
@@ -233,19 +233,31 @@ export TooManyArgs(name:string,m:int):Expr := (
      else buildErrorPacket(quoteit(name) + " expected at most " 
 	  + tostring(m) + " arguments"));
 export errorDepth := 0;
-export printErrorMessage(c:Code,message:string):Expr := (
+export printErrorMessageE(c:Code,message:string):Expr := (
      p := codePosition(c);
      if int(p.loadDepth) >= errorDepth
      then Expr(
 	  printError					    -- keep this in so "update" can emit error messages
 	  (Error(p,message,CodeClosureList(CodeClosure(noRecycle(localFrame),c),self),nullE,false)))
      else buildErrorPacket(message));
+export printErrorMessageE(p:Position,message:string):Expr := ( -- for use when we have no code
+     if int(p.loadDepth) >= errorDepth
+     then Expr(
+	  printError					    -- keep this in so "update" can emit error messages
+	  (Error(p,message,dummyCodeClosureList,nullE,false)))
+     else buildErrorPacket(message));
+export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
+     printErrorMessageE(position(c),message));
 
 export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
 export returnFromLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then err.value else z else z;
 
 export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
-     printErrorMessage(c, "expected " + tostring(wanted) + " argument"
+     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
+	  + (if wanted == 1 then "" else "s") + ", but got "
+	  + tostring(got)));
+export WrongNumArgs(c:Token,wanted:int,got:int):Expr := (
+     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
 	  + (if wanted == 1 then "" else "s") + ", but got "
 	  + tostring(got)));
 
