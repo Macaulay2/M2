@@ -190,11 +190,11 @@ stderr << "warning: flattening not rewritten yet" << endl
 --------------------------
 -- rawRing, rawRank, rawMultiDegree
 -- rawFreeModule(R,5), rawFreeModule(R,(0,1,2,3))
--- rawFreeModule mat, rawGetSchreyer, 
--- +++, rawDirectSum, rawTensor
+-- rawDirectSum, rawTensor
 -- rawDual, rawSymmetricPower, rawExteriorPower, rawSubmodule
 -- toString
--- todo: hash 
+-- TO BE TESTED: rawFreeModule mat, rawGetSchreyer, 
+-- TO BE WRITTEN: hash 
 R = polyring(rawZZ(), (symbol a .. symbol f))
 F = rawFreeModule(R,5)
 assert(rawRank F === 5)
@@ -217,42 +217,26 @@ assert(F ** G === H)
 assert(rawRank H === rawRank F * rawRank G)
 assert(rawMultiDegree H === 
      {1, 2, 3, 11, 12, 13, 101, 102, 103, 1001, 1002, 1003})
-
-
-
-R1 = rawPolynomialRing(rawZZ(), singlemonoid{x,y,z})
-x = rawRingVar(R1,0,1)
-y = rawRingVar(R1,1,1)
-z = rawRingVar(R1,2,1)
-F = rawFreeModule(R1,5)
-assert(rank F === 5)
-assert(rawRing F === R1)
-
--- test Schreyer order later, after matrices have been tested
--- rawFreeModule(rawMatrix)
-rawGetSchreyer G
-
-assert(rawMultiDegree G === {0,0,1,1,-3})
-rawMultiDegree F
-
-H = rawDirectSum(F,G)
-H2 = rawTensor(F,G)
-rawMultiDegree H2
-
-F = rawFreeModule(R1,(0,10,100,1000))
-G = rawFreeModule(R1,(1,2,3))
-H = rawTensor(F,G)
-assert(rawRank H === rawRank F * rawRank G)
-assert(rawMultiDegree H === 
-     {1, 2, 3, 11, 12, 13, 101, 102, 103, 1001, 1002, 1003})
-
 assert(rawMultiDegree rawDual F === - rawMultiDegree F)
 assert(rawMultiDegree rawDual H === - rawMultiDegree H)
+assert(rawMultiDegree rawExteriorPower(3,F) === {110,1010,1100,1110})
+assert(rawSubmodule(F, (0,0,1,1,2,2)) === rawFreeModule(R,(0,0,10,10,100,100)))
+S2F = rawSymmetricPower(2,F)
+assert(rawRank S2F === 10)
+assert(toString S2F === 
+     "free(rank 10 degrees = {1, t10, t100, t1000, t20, t110, t1010, t200, t1100, t2000})")
 
-rawSymmetricPower(5,F)
-rawExteriorPower(2,F)
 assert(rawMultiDegree rawExteriorPower(3,F) === {110,1010,1100,1110})
 assert(rawSubmodule(F, (0,0,1,1,2,2)) === rawFreeModule(R1,(0,0,10,10,100,100)))
+assert(rawRank rawSubmodule(F, (0,1)) === 2)
+assert(rawRank rawSubmodule(F, ()) === 0)
+
+assert(rawRank rawSymmetricPower(-1,F) === 0)
+assert(rawSymmetricPower(0,F) === R^1)
+assert(rawSymmetricPower(1,F) === F)
+assert(rawRank rawExteriorPower(-1,F) == 0)
+assert(rawExteriorPower(0,F) == R^1)
+assert(rawExteriorPower(1,F) == F)
 
 assert(R^4 == rawFreeModule(R,4))
 assert(R^4 === rawFreeModule(R,4))
