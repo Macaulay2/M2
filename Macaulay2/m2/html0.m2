@@ -106,9 +106,10 @@ OL         = new MarkUpType of MarkUpListParagraph
 DIV        = new MarkUpType of MarkUpList
 NL         = new MarkUpType of MarkUpListParagraph
 DL 	   = new MarkUpType of MarkUpListParagraph
-TO         = new MarkUpType of MarkUpList
 TO2        = new MarkUpType of MarkUpList
+TO         = new MarkUpType of MarkUpList
 TOH        = new MarkUpType of MarkUpList
+new TO from Sequence := new TOH from Sequence := (TO,x) -> new TO from {x} -- document tags can be sequences, so keep them intact
 MENU       = new MarkUpType of MarkUpListParagraph	    -- like "* Menu:" of "info"
 SECTION    = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this
 TOC	   = new MarkUpType of MarkUpListParagraph		    -- let's get rid of this

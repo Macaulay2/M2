@@ -295,7 +295,7 @@ html CODE   := x -> concatenate(
      )
 
 html ANCHOR := x -> (
-     "<a name=\"" | x#0 | "\">" | html x#-1 | "</a>"
+     "\n<a name=\"" | x#0 | "\">" | html x#-1 | "</a>"
      )
 info ANCHOR := net ANCHOR := x -> net last x
 tex ANCHOR := x -> (
@@ -364,23 +364,24 @@ info SUP := opSU(info,1)
 net SUB := opSU(net,-1)
 info SUB := opSU(info,-1)
 
-tex  TO := x -> (
-     key := x#0;
-     node := formatDocumentTag key;
+tex TO := x -> (
+     tag := x#0;
      tex SEQ {
-     	  TT formatDocumentTag x#0,
-     	  " [", LITERAL { ///\ref{///, 
-		    -- rewrite this later:
-		    -- cacheFileName(documentationPath, node),
-		    ///}/// },
+     	  TT DocumentTag.FormattedKey tag,
+     	  " [", LITERAL { 
+	       "\ref{", 
+	       -- need something here
+	       "}" },
 	  "]"
 	  }
      )
 
-net TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
-info TO := x -> concatenate ("*Note ",formatDocumentTag x#0,"::")
+net  TO := x -> concatenate( "\"",     DocumentTag.FormattedKey x#0, "\"", if x#?1 then x#1)
+net TO2 := x -> x#1
 
-info TO2 := net TO2 := x -> x#1
+info TO := x -> concatenate( "*Note ", DocumentTag.FormattedKey x#0, "::")
+info TO2:= x -> x#1					    -- link won't be active...
+
 info IMG := net IMG := tex IMG  := x -> ""
 info HREF := net HREF := x -> net last x
 

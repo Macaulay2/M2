@@ -16,7 +16,7 @@ local nextButton, local prevButton, local upButton
 local masterIndex
 
 buildPackage := null					    -- name of the package currently being built
-topNodeName := null					    -- name of the top node of this package
+topDocumentTag := null
 topFileName := "index.html"				    -- top node's file name, constant
 indexFileName := "master.html"  			    -- file name for master index of topics in a package
 tocFileName := "toc.html"       			    -- file name for the table of contents of a package
@@ -34,7 +34,15 @@ rel := url -> (
      then url
      else relativizeFilename(htmlDirectory, url))
 
-htmlFilename = key -> (				   -- returns the relative path from the PREFIX to the file
+htmlFilename = method(SingleArgumentDispatch => true)
+htmlFilename DocumentTag := tag -> (
+     fkey := DocumentTag.FormattedKey tag;
+     pkg := DocumentTag.Package tag;
+     if pkg === null then toFilename fkey|".html"
+     else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
+
+htmlFilename Thing := key -> (				   -- returns the relative path from the PREFIX to the file
+     error "do we still need this?";
      fkey := formatDocumentTag key;
      pkg := package TO key;
      if pkg === null then toFilename fkey|".html"
@@ -44,13 +52,13 @@ html IMG  := x -> concatenate("<IMG src=\"", rel first x, "\">")
 html HREF := x -> concatenate("<A HREF=\"", rel first x, "\">", html last x, "</A>")
 tex  HREF := x -> concatenate("\special{html:<A href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</A>}")
 html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
-html TO   := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral formatDocumentTag x#0, "</A>", if x#?1 then x#1)
-html TO2  := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral                   x#1, "</A>")
+html TO   := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral DocumentTag.FormattedKey x#0, "</A>", if x#?1 then x#1)
+html TO2  := x -> concatenate("<A HREF=\"", rel htmlFilename x#0, "\">", htmlExtraLiteral                          x#1, "</A>")
 html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
 
-next := key -> if NEXT#?key then LABEL { "Next node",     HREF { htmlFilename NEXT#key, nextButton } } else nullButton
-prev := key -> if PREV#?key then LABEL { "Previous node", HREF { htmlFilename PREV#key, prevButton } } else nullButton
-up   := key -> if   UP#?key then LABEL { "Parent node",   HREF { htmlFilename   UP#key,   upButton } } else nullButton
+next := tag -> if NEXT#?tag then LABEL { "Next node",     HREF { htmlFilename NEXT#tag, nextButton } } else nullButton
+prev := tag -> if PREV#?tag then LABEL { "Previous node", HREF { htmlFilename PREV#tag, prevButton } } else nullButton
+up   := tag -> if   UP#?tag then LABEL { "Parent node",   HREF { htmlFilename   UP#tag,   upButton } } else nullButton
 
 style := () -> LITERAL {///
 <style type="text/css">
@@ -87,7 +95,7 @@ links := () -> ""
 
 -- produce html form of documentation, for Macaulay 2 and for packages
 
-buttonBar := (key) -> TABLE { { 
+buttonBar := (tag) -> TABLE { { 
 
 	  LITERAL concatenate (///
 	       <form class="search" action="///,					    -- "
@@ -107,8 +115,8 @@ buttonBar := (key) -> TABLE { {
 
 	  SEQ {
 	       LITERAL ///<p class="buttonbar">///,
-	       next key, prev key, up key,
-     	       if key =!= topNodeName then topNodeButton else nullButton,
+	       next tag, prev tag, up tag,
+     	       if tag =!= topDocumentTag then topNodeButton else nullButton,
      	       masterIndexButton,
      	       tocButton,
      	       homeButton,
@@ -134,22 +142,25 @@ fakeMenu := x -> (
 
 commentize := s -> if s =!= null then concatenate(" -- ",s)
 
-makeHtmlNode = key -> (
-     fn := buildDirectory | htmlFilename key;
-     if debugLevel > 1 then stderr << "--making html page for " << key << endl;
+makeHtmlNode = method()
+makeHtmlNode DocumentTag := tag -> (
+     key := DocumentTag.Key tag;
+     fkey := DocumentTag.FormattedKey tag;
+     fn := buildDirectory | htmlFilename tag;
+     if debugLevel > 1 then stderr << "--making html page for " << tag << endl;
      fn
      << encoding << endl
      << doctype << endl
      << html HTML { 
 	  HEAD {
-	       TITLE {key, commentize headline key},
+	       TITLE {fkey, commentize headline key},
 	       style(), links()
 	       },
 	  BODY { 
-	       buttonBar key,
+	       buttonBar tag,
 	       if UP#?key then SEQ between(" > ", apply(upAncestors key, i -> TO i)),
 	       HR{}, 
-	       documentation key,
+	       documentation key,			    -- a better way??
 	       }
 	  }
      << endl << close)
@@ -164,20 +175,28 @@ anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
      SEQ apply(s, c -> ANCHOR {c, ""})
      )
 
-packageNodes := (pkg,topNodeName) -> unique join(
-     select(keys pkg.Dictionary,s -> not match ( "\\$" , s )),
-     keys pkg#"documentation",{topNodeName})
+checkIsTag := tag -> ( assert(class tag === DocumentTag); tag )
+
+packageNodes := (pkg,topDocumentTag) -> checkIsTag \ unique join(
+     apply(
+     	  select(pairs pkg.Dictionary,(nam,sym) -> not match ( "\\$" , nam )),
+	  (nam,sym) -> makeDocumentTag(sym, Package => pkg)),
+     apply(
+	  values pkg#"documentation",
+	  doc -> doc.DocumentTag),
+     { topDocumentTag }
+     )
 
 -----------------------------------------------------------------------------
 -- constructing the tree-structure for the documentation nodes in a package
 -----------------------------------------------------------------------------
 
 -- make this first:
-linkTable := new MutableHashTable			    -- keys are fkeys for a node, values are ordinary lists of descendents
+linkTable := new MutableHashTable			    -- keys are DocumentTags for a node, values are lists of DocumentTags of descendents
 
 -- assemble this next
-ForestNode = new Type of BasicList			    -- list of formatted keys for descendents
-TreeNode = new Type of BasicList			    -- first entry is formatted key for this node, second entry is a descendent list
+ForestNode = new Type of BasicList			    -- list of DocumentTags for descendents
+TreeNode = new Type of BasicList			    -- first entry is DocumentTag for this node, second entry is a descendent list
 
 net ForestNode := x -> stack apply(toList x,net)
 net TreeNode := x -> (
@@ -204,22 +223,24 @@ makeTree := x -> (
 		    repeatedReferences#x = true;
 		    stderr << "--error: repeated reference(s) to documentation as subnode: " << x << endl;
 		    );
-	       new TreeNode from { x | " -- repeated reference" , new ForestNode})
+	       new TreeNode from { x , new ForestNode}	    -- repeated reference
+	       )
      	  else new TreeNode from { x, new ForestNode from apply(linkTable#x,makeTree)})
      else (
 	  if not missingReferences#?x then (
 	       missingReferences#x = true;
 	       stderr << "--error: missing reference to documentation as subnode: " << x << endl;
 	       );
-	  new TreeNode from { x | " -- missing reference", new ForestNode}))
+	  new TreeNode from { x , new ForestNode}	    -- missing reference
+	  ))
 makeForest := x -> new ForestNode from makeTree \ x
 
 leaves := () -> keys set flatten values linkTable
 roots := () -> (
      x := keys ( set keys linkTable - set leaves() );
-     if not member(topNodeName,x) then stderr << "--warning: top node name " << topNodeName << " not a root" << endl;
-     x = select(x,k -> k =!= topNodeName);
-     prepend(topNodeName, sort x))
+     if not member(topDocumentTag,x) then stderr << "--warning: top node name " << topDocumentTag << " not a root" << endl;
+     x = select(x,k -> k =!= topDocumentTag);
+     prepend(topDocumentTag, sort x))
 getTrees := topNode -> (
      visitCount = new MutableHashTable;
      return makeForest roots())
@@ -228,10 +249,13 @@ getTrees := topNode -> (
 
 markLinks := method()
 markLinks ForestNode := x -> (
-     for i from 0 to #x-2 do ( NEXT#(x#i#0) = x#(i+1)#0; PREV#(x#(i+1)#0) = x#i#0; );
+     for i from 0 to #x-2 do ( 
+	  NEXT#(x#i#0) = checkIsTag x#(i+1)#0;
+	  PREV#(x#(i+1)#0) = checkIsTag x#i#0;
+	  );
      scan(x,markLinks))
 markLinks TreeNode   := x -> (
-     scan(x#1, i -> UP#(i#0) = x#0);
+     scan(x#1, i -> UP#(i#0) = checkIsTag x#0);
      markLinks x#1)
 
 buildLinks := method()
@@ -250,10 +274,12 @@ assembleTree Package := pkg -> (
      oldpkg := currentPackage;
      currentPackage = pkg;
      duplicateReferences = new MutableHashTable;
-     topNodeName = pkg#"top node name";
+     topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg);
      linkTable = new HashTable from apply(
-	  pairs pkg#"documentation", (fkey,doc) -> fkey => (
-	       if not doc.?Subnodes then {} else formatDocumentTag \ normalizeDocumentTag \ first \ select(toList doc.Subnodes, x -> class x === TO)));
+	  values pkg#"documentation", 
+	  doc -> doc.DocumentTag => checkIsTag \ (
+	       if not doc.?Subnodes then {} else first \ select(toList doc.Subnodes, x -> class x === TO)
+	       ));
      CONT = getTrees();
      buildLinks CONT;
      )
@@ -292,7 +318,7 @@ separateExampleOutput = s -> (
 
 makeMasterIndex := keylist -> (
      fn := buildDirectory | htmlDirectory | indexFileName;
-     title := topNodeName | " Index";
+     title := DocumentTag.FormattedKey topDocumentTag | " Index";
      << "--making  '" << title << "' in " << fn << endl;
      fn
      << encoding << endl
@@ -310,7 +336,7 @@ makeMasterIndex := keylist -> (
 
 makeTableOfContents := () -> (
      fn := buildDirectory | htmlDirectory | tocFileName;
-     title := topNodeName | " : Table of Contents";
+     title := DocumentTag.FormattedKey topDocumentTag | " : Table of Contents";
      << "--making  '" << title << "' in " << fn << endl;
      fn
      << encoding << endl
@@ -343,8 +369,8 @@ installPackage Symbol := opts -> pkg -> (
 installPackage Package := o -> pkg -> (
      oldpkg := currentPackage;
      currentPackage = pkg;
-     topNodeName = pkg#"top node name";
-     nodes := packageNodes(pkg,topNodeName);
+     topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg); -- duplicated above
+     nodes := packageNodes(pkg,topDocumentTag);
      buildPackage = if pkg === Main then "Macaulay2" else pkg#"title";
      buildDirectory = minimizeFilename(o.Prefix | "/");
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
@@ -460,7 +486,7 @@ installPackage Package := o -> pkg -> (
      setupButtons();
      makeDirectory (buildDirectory|htmlDirectory);     
      stderr << "--making html pages in " << buildDirectory|htmlDirectory << endl;
-     ret := makeHtmlNode \ toString \ nodes;
+     ret := makeHtmlNode \ nodes;
 
      -- make master.html with master index of all the html files
      makeMasterIndex nodes;
@@ -501,6 +527,7 @@ makePackageIndex String := prefixDirectory -> (
      r = select(r, fn -> fn != "." and fn != "..");
      r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
      key := "package index";
+     tag := makeDocumentTag key;
      p | "index.html"
      << encoding << endl
      << doctype << endl
@@ -510,7 +537,7 @@ makePackageIndex String := prefixDirectory -> (
 	       style(), links()
 	       },
 	  BODY { 
-	       buttonBar key,
+	       buttonBar tag,
 	       HR{},
 	       PARA BOLD "Index of installed packages:",
 	       UL apply(r, pkg -> HREF { LAYOUT#"packagehtml" pkg | "index.html", pkg })
