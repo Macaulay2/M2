@@ -398,8 +398,7 @@ document { toSequence,
      "If ", TT "x", " is a sequence, then ", TT "x", " is returned.",
      PARA,
      EXAMPLE {
-	  "toSequence {1,2,3}",
-      	  "toSequence (1,2,3)"
+	  "toSequence {1,2,3}"
 	  },
      }
 
