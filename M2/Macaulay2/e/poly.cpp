@@ -24,6 +24,8 @@ void PolynomialRing::setQuotientInfo(QRingInfo *qinfo0)
 	  break;
 	}
     }
+
+  overZZ_ = (coeff_type_ == Ring::COEFF_ZZ);
 }
 
 void PolynomialRing::initialize_PolynomialRing(
@@ -99,17 +101,17 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
     result = new PolyRingQuotient;
     break;
   case COEFF_QQ:
-#if 0
-    qrinfo = new QRingInfo_field_QQ(R,elems);
+    qrinfo = new QRingInfo_field_QQ(R->getNumeratorRing(),elems);
     result = new PolyQQ;
-#endif
     break;
   case COEFF_ZZ:
-    qrinfo = new QRingInfo_ZZ(R->getNumeratorRing(),elems);
+    QRingInfo_ZZ *qrinfoZZ = new QRingInfo_ZZ(R->getNumeratorRing(),elems);
+    qrinfo = qrinfoZZ;
     result = new PolyRingQuotient;
+    result->is_ZZ_quotient_ = qrinfoZZ->is_ZZ_quotient();
+    result->ZZ_quotient_value_ = qrinfoZZ->ZZ_quotient_value();
     break;
   }
-
 
   result->initialize_ring(R->charac(),
 			  R->get_degree_ring());

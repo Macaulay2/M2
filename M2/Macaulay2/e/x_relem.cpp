@@ -117,17 +117,20 @@ const Ring *IM2_Ring_trivial_polyring()
 
 const RingOrNull *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 {
+#if 0
   if (K == globalQQ)
     {
       const PolyRing *P = PolyRing::create(globalZZ,M);
       return PolyQQ::create(P);
     }
+#endif
   return PolyRing::create(K,M);
 }
 
 const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
 					 M2_arrayint skewvars)
 {
+#if 0
   const PolyQQ *RQ = R->cast_to_PolyQQ();
   if (RQ != 0)
     {
@@ -136,6 +139,7 @@ const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
 						     skewvars);
       return PolyQQ::create(P);
     }
+#endif
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0) 
     {
@@ -152,6 +156,7 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
 					M2_arrayint diff_vars,
 					int homog_var)
 {
+#if 0
   const PolyQQ *RQ = R->cast_to_PolyQQ();
   if (RQ != 0)
     {
@@ -162,7 +167,7 @@ const RingOrNull *IM2_Ring_weyl_algebra(const Ring *R,
 						 homog_var);
       return PolyQQ::create(P);
     }
-
+#endif
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0) 
     {

@@ -83,9 +83,9 @@ public:
 		     const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
   ~QRingInfo_field_QQ();
 
-  void normal_form(ring_elem &f) const;
+  void normal_form(ring_elem &f) const {}
 
-  void normal_form(const FreeModule *F, gbvector *&f) const;
+  void normal_form(const FreeModule *F, gbvector *&f) const {}
 };
 
 class QRingInfo_ZZ : public QRingInfo
@@ -101,6 +101,9 @@ public:
   QRingInfo_ZZ(const PolyRing *ambientR,
 	       const std::vector<Nterm *, gc_allocator<Nterm *> > &quotients);
   ~QRingInfo_ZZ();
+
+  bool is_ZZ_quotient() const { return is_ZZ_quotient_; }
+  ring_elem ZZ_quotient_value() const { return ZZ_quotient_value_; }
 
   void normal_form(ring_elem &f) const;
   
