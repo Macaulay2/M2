@@ -112,20 +112,10 @@ GMP : 	gmp include/gmp.h $(GMPlibs)
 lib/gmp.lib: gmp/gmp.lib lib/.exists; cp $< $@
 gmp/gmp.lib : make-gmp
 else
-GMPlibs := gmp/.libs/libgmp.a
-GMPnames := gmp
 GMPFLAGS := -g -O2
+GMPlibs := gmp/.libs/libgmp.a
 GMP : 	gmp include/gmp.h $(GMPlibs)
-# GMPnames += mpn mpz mpq mpf 
-# lib/libmpn.a: gmp/mpn/libmpn.a lib/.exists; cp $< $@; ranlib $@
-# lib/libmpz.a: gmp/mpz/libmpz.a lib/.exists; cp $< $@; ranlib $@
-# lib/libmpq.a: gmp/mpq/libmpq.a lib/.exists; cp $< $@; ranlib $@
-# lib/libmpf.a: gmp/mpf/libmpf.a lib/.exists; cp $< $@; ranlib $@
-# lib/libgmp.a: gmp/libgmp.a     lib/.exists; cp $< $@; ranlib $@
-# gmp/mpn/libmpn.a : make-gmp
-# gmp/mpz/libmpz.a : make-gmp
-# gmp/mpq/libmpq.a : make-gmp
-# gmp/mpf/libmpf.a : make-gmp
+GMPFLAGS := -g -O2
 gmp/.libs/libgmp.a : make-gmp
 endif
 endif

@@ -23,6 +23,15 @@ cat <<EOF >compat.mak
 EOF
 
 cat <<'EOF' >$TMP
+main(){}
+EOF
+if $CC $TMP -lm >/dev/null 2>&1
+then :
+else echo "can't compile at all!" >&2
+     exit 1
+fi
+
+cat <<'EOF' >$TMP
 #include <math.h>
 main(){
 	double x;
