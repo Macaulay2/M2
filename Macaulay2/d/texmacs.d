@@ -1,5 +1,6 @@
 --		Copyright 2000 by Daniel R. Grayson
 
+use C;
 use system;
 use strings;
 use stdio;
@@ -12,7 +13,7 @@ use struct;
 
 TeXmacsEvaluate := makeProtectedSymbolClosure("TeXmacsEvaluate");
 
-export topLevelTexmacs():void := (
+export topLevelTexmacs():bool := (
      stdin.prompt = noprompt;
      while true do (
 	  stdin.bol = false;				    -- sigh, prevent a possible prompt
@@ -22,7 +23,7 @@ export topLevelTexmacs():void := (
 	       exit(1);
 	       )
 	  is item:string do (
-	       if stdin.eof then exit(0);
+	       if stdin.eof then return(true);;
 	       method := lookup(stringClass,TeXmacsEvaluate);
 	       if method == nullE 
 	       then (
@@ -33,3 +34,5 @@ export topLevelTexmacs():void := (
 		    apply(method,Expr(item));
 		    )
 	       )));
+topLevelTexmacs(e:Expr):Expr := toExpr(topLevelTexmacs());
+setupfun("topLevelTexmacs",topLevelTexmacs);

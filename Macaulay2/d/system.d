@@ -1,6 +1,6 @@
 --		Copyright 1994 by Daniel R. Grayson
 
-export string := array(char);
+use C;
 import sleep(t:int):int;
 import getpid():int;
 import exit(x:int):void;
@@ -14,6 +14,7 @@ import returncode:int;
 import write(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int):int;
 import read(fd:int, buffer:string, buffersize:int, offset:int):int;
+import unlink(filename:string):int;
 import openin(filename:string):int;
 import openout(filename:string):int;
 import opensocket(host:string,serv:string):int;
@@ -62,5 +63,9 @@ import rmdir(name:string):int;
 import unlink(name:string):int;
 import isDirectory(name:string):int;
 import isRegularFile(name:string):int;
+import fileTime(name:string):long;
+export ArrayStringOrNull := null or array(string);
+import wordexp(word:string):ArrayStringOrNull;
 import readlink(filename:string):string;
+import regexmatch(pattern:string, text:string):array(int);
 import readDirectory(name:string):(null or array(string));
