@@ -62,11 +62,10 @@ next := tag -> if NEXT#?tag then LABEL { "Next node",     HREF { htmlFilename NE
 prev := tag -> if PREV#?tag then LABEL { "Previous node", HREF { htmlFilename PREV#tag, prevButton } } else nullButton
 up   := tag -> if   UP#?tag then LABEL { "Parent node",   HREF { htmlFilename   UP#tag,   upButton } } else nullButton
 
-style := () -> LITERAL {///
-<style type="text/css">
-   @import "/// | rel ( LAYOUT#"style" | "doc.css" ) | ///";
-</style>
-/// }
+style := () -> LITERAL {
+     "<link rel=\"stylesheet\" title=\"Macaulay 2 document\" type=\"text/css\" href=\""
+     | rel ( LAYOUT#"style" | "doc.css" )
+     | "\"/>" }
 
 BUTTON := (s,alt) -> (
      s = rel s;
