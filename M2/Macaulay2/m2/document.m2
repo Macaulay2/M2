@@ -57,22 +57,28 @@ normalizeDocumentTag    Thing := key -> (
      if ReverseDictionary#?key then return ReverseDictionary#key;
      error("encountered unidentifiable document tag: ",key);
      )
-
-isDocumentableThing = x -> null =!= package x		    -- maybe not quite right
-
-packageTag = method(SingleArgumentDispatch => true)	    -- assumes the input key has been normalized
+-----------------------------------------------------------------------------
+-- identifying the package of a document tag
+-----------------------------------------------------------------------------
+-- If we don't find it in another package, then we assume it's in the current package (which might be null)
+-- That way we can compute the package during the loading of a package, while just some of the documentation has been installed.
+-- Missing documentation can be detected when the package is closed, or later.
+packageTag = method(SingleArgumentDispatch => true)	    -- assume the input key has been normalized
 packageTag   Symbol := key -> package key
-packageTag   String := key -> currentPackage
+packageTag   String := key -> (
+     r := scan(packages, pkg -> if pkg#"documentation"#?key then break pkg);
+     if r === null then currentPackage else r)
 packageTag  Package := identity
 packageTag Sequence := key -> youngest \\ package \ key
 packageTag    Thing := key -> ( p := package key; if p === null then currentPackage else p)
-
-isDocumentableTag = method(SingleArgumentDispatch => true)  -- assumes the input key has been normalized
+-----------------------------------------------------------------------------
+isDocumentableThing = x -> null =!= package x		    -- maybe not quite right
+-----------------------------------------------------------------------------
+isDocumentableTag = method(SingleArgumentDispatch => true)  -- assume the input key has been normalized
 isDocumentableTag   Symbol := s -> null =!= packageTag s
 isDocumentableTag   String := s -> true
 isDocumentableTag Sequence := s -> all(s, isDocumentableThing)
 isDocumentableTag    Thing := s -> false
-
 -----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
@@ -176,27 +182,35 @@ verifyTag Sequence := s -> (
      else (						    -- e.g., (res,Module) or (symbol **, Module, Module)
 	  if class lookup s =!= Function then error("documentation provided for '", formatDocumentTag s, "' but no method installed")))
 verifyTag Option   := s -> error "old style option documentation tag"
-
 -----------------------------------------------------------------------------
 -- making document tags
 -----------------------------------------------------------------------------
 -- We need three bits of information about a document tag:
 --     the original key	    	    e.g., (operator **,Module,Module)
 --     the formatted key            e.g., "Module ** Module"
---     the title of the package     e.g., "Main"
--- Here we assemble them together.
-DocumentTag = new Type of BasicList			    -- {normalized key (symbol or sequence or string), formatted key (string), package title (string)}
-net DocumentTag := x -> x#1
-makeDocumentTag = key -> (
-     verifyTag key;
+--     the package                  e.g., Main, or null if there is none
+--     the package title            e.g., "Main", or "" if there is none
+-- Here we assemble them together, so we don't have to recompute the information later.
+DocumentTag = new Type of BasicList
+makeDocumentTag = method(SingleArgumentDispatch => true)
+makeDocumentTag DocumentTag := identity
+makeDocumentTag Thing := key -> (
      key = normalizeDocumentTag key;
+     verifyTag key;
      fkey := formatDocumentTag key;
      pkg := packageTag key;
-     new DocumentTag from {key,fkey,pkg})
+     title := if pkg === null then "" else pkg#"title";
+     new DocumentTag from {key,fkey,pkg,title})
+DocumentTag.Key = x -> x#0				    -- just a bit of experimentation...
+DocumentTag.FormattedKey = x -> x#1
+DocumentTag.Package = x -> x#2
+DocumentTag.Title = x -> x#3
+net DocumentTag := DocumentTag.FormattedKey
+package DocumentTag := DocumentTag.Package
+packageTag DocumentTag := DocumentTag.Package
 -----------------------------------------------------------------------------
 -- fixing up hypertext
 -----------------------------------------------------------------------------
-
 trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
 trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
 trimline1 := x -> selectRegexp ( "^ *(.*)$",1, x)
@@ -217,9 +231,9 @@ fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
 fixup UL         := z -> apply(z, i -> fixup if class i === TO then TOH i#0 else i)
 fixup PRE        := identity
 fixup CODE       := identity
-fixup TO         := x -> TO if x#?1 then { normalizeDocumentTag x#0, concatenate drop(toSequence x,1) } else { normalizeDocumentTag x#0 }
-fixup TO2        := x -> TO2{ normalizeDocumentTag x#0, concatenate drop(toSequence x,1) }
-fixup TOH        := x -> TOH{ normalizeDocumentTag x#0 }
+fixup TO         := x -> TO if x#?1 then { DocumentTag.Key makeDocumentTag x#0, concatenate drop(toSequence x,1) } else { normalizeDocumentTag x#0 }
+fixup TO2        := x -> TO2{ DocumentTag.Key makeDocumentTag x#0, concatenate drop(toSequence x,1) }
+fixup TOH        := x -> TOH{ DocumentTag.Key makeDocumentTag x#0 }
 fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
 fixup Function   := z -> z				       -- allow Function => f 
 fixup String     := s -> (				       -- remove clumsy newlines within strings
@@ -357,6 +371,7 @@ enlist := x -> if class x === List then x else {x}
 fixupTable := new HashTable from {
      Key => identity,
      FormattedKey => identity,
+     symbol DocumentTag => identity,
      Usage => fixup,
      Function => fixup,
      Inputs => fixupList,
@@ -407,10 +422,15 @@ document Sequence := args -> (
 	       ));
      args = select(args, arg -> class arg =!= Option);
      if not opts.?Key then error "missing Key";
+     -- new:
+     opts.DocumentTag = tag := makeDocumentTag opts.Key;
+     currentNodeName = tag#1;
+     -- old:
      key := normalizeDocumentTag opts.Key;
      verifyTag key;
      if not isDocumentableTag key then error("undocumentable item encountered");
      opts.FormattedKey = currentNodeName = formatDocumentTag key;
+     -- end so far
      pkg := packageTag key;
      if pkg =!= currentPackage then error("documentation for \"",key,"\" belongs in package ",pkg," but current package is ",currentPackage);
      if #args > 0 then (
