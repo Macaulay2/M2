@@ -45,9 +45,7 @@ Module ** Module := Module => (M,N) -> (
 		    else subquotient(
 			 if M.?generators then M.generators ** N,
 			 if M.?relations then M.relations ** N))
-	       else (
-		    sendgg(ggPush M.relations, ggPush N.relations, ggmodtensor); -- we could do this at top level
-		    cokernel getMatrix R))))
+	       else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations )))))
 
 Matrix ** Module := Matrix => (f,M) -> (
      -- P := youngest(f,M);
