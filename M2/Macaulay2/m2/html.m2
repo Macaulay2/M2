@@ -455,10 +455,18 @@ installPackage Package := o -> pkg -> (
 
      -- process documentation
      stderr << "--processing documentation nodes" << endl;
-     scan(nodes, tag -> time (
-	       stderr << "processing " << tag << endl;
+     scan(nodes, tag -> (
+	       -- stderr << "processing " << tag << endl;
 	       pkg#"processed documentation"#(DocumentTag.FormattedKey tag) = documentation tag;
 	       ));
+
+     -- cache processed documentation in database
+     docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";
+     makeDirectory docDir;
+     docDatabase := openDatabaseOut(docDir | "documentation.db");
+     scan(pairs pkg#"processed documentation", (k,v) -> docDatabase#k = toExternalString v);
+     close docDatabase;
+     stderr << "--stored processed documentation in " << docDatabase << endl;
 
      -- make table of contents, including next, prev, and up links
      stderr << "--assembling table of contents" << endl;
