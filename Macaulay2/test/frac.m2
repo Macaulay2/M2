@@ -10,6 +10,11 @@ assert( w === oldw )
 
 -----------------------------------------------------------------------------
 
+-- From: Allen Knutson <allenk@Math.Berkeley.EDU>
+-- Subject: Reproducible segfault in rational function arithmetic
+-- To: Macaulay2@math.uiuc.edu
+-- Date: Sat, 19 Jul 2003 10:39:01 -0700 (PDT)
+
 R = ZZ[d,e];
 d + (e/d)						   -- this may crash or give "zero divisor found"
 
