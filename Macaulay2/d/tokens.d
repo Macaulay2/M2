@@ -121,6 +121,8 @@ export TokenFile := {
      posFile:PosFile,
      last:(null or Token)
      };
+export fileErrorMessage(f:TokenFile):string := fileErrorMessage(f.posFile);
+export fileError(f:TokenFile):bool := fileError(f.posFile);
 export isatty(f:TokenFile):bool := isatty(f.posFile);
 
 export Real := {v:double};

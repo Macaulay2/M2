@@ -12,7 +12,7 @@ export nextHash():int := (
 
 export ERROR := -1;
 export NOFD := -1;
-export EOF := -1;					    -- end of file
+export EOF := -2;					    -- end of file
 export NULL := null();
 export STDIN := 0;
 export STDOUT := 1;
@@ -20,9 +20,12 @@ export STDERR := 2;
 bufsize := 4 * 1024;
 
 export file := {
+        -- general stuff
      	hash:int,     	   	-- hash code
 	filename:string,	-- name of file
 	pid:int,	        -- pid if it's a pipe or pair of pipes to a child process, else 0
+        error:bool,             -- a system call returned ERROR
+	errorMessage:string,    -- the error message associated to the system call that returned ERROR
 	-- listener stuff
         listener:bool,	   	-- is a listener
 	listenerfd:int,	    	-- file descriptor of listener, or -1
@@ -55,19 +58,30 @@ export file := {
 	nets:NetList,	        -- list of nets, to be printed after the outbuffer
         bytesWritten:int       -- bytes written so far
 	};
+
+export syscallErrorMessage(msg:string):string := msg + " failed: " + syserrmsg();
+export fileErrorMessage(o:file,msg:string):string := (
+     o.error = true;
+     o.errorMessage = syscallErrorMessage(msg);
+     o.errorMessage);
+export fileError(o:file):bool := o.error;
+export fileErrorMessage(o:file):string := o.errorMessage;
 export noprompt(o:file):void := nothing;
 newbuffer():string := new string len bufsize do provide ' ';
 export dummyfile := file(nextHash(), "dummy",0, 
+     false, "",
      false,NOFD,NOFD,0,
      false,NOFD,false,        "",          0,0,false,noprompt,true,false,
      false,NOFD,false,        "",	    	 0,0,false,dummyNetList,0);
 export stdIO  := file(nextHash(),  "stdio",  0, 
+     false, "",
      false, NOFD,NOFD,0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,noprompt,true,false,
      true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0);
 export stdin  := stdIO;
 export stdout := stdIO;
 export stderr := file(nextHash(), "stderr", 0, 
+     false, "",
      false,NOFD,NOFD,0,
      false,NOFD  ,false,          "",        0,0,false,noprompt,true,false,
      true, STDERR,0!=isatty(2), newbuffer(), 0,0,false,dummyNetList,0);
@@ -117,6 +131,7 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
      	  if sd == ERROR then return((file or errmsg)(errmsg("can't open socket : "+syserrmsg())));
 	  );
      (file or errmsg)(addfile(file(nextHash(), filename, 0,
+	  false, "",
 	  listener, so, NOFD, if listener then 0 else 1,
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, noprompt, true, false,
@@ -132,10 +147,12 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
 	  )
      else (
      	  sd = acceptBlocking(f.listenerfd);
-     	  if sd == ERROR then return((file or errmsg)(errmsg("can't accept connection : "+syserrmsg())));
+     	  if sd == ERROR
+	  then return((file or errmsg)(errmsg(fileErrorMessage(f,"accepting connection"))));
 	  );
      f.numconns = f.numconns + 1;
      (file or errmsg)(addfile(file(nextHash(), f.filename, 0,
+	  false, "",
 	  false, NOFD,NOFD,f.numconns,
 	  input, if input then sd else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, noprompt, true, false,
@@ -174,6 +191,7 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      if input then close(fromChild.1);
      if output then close(toChild.0);
      (file or errmsg)(addfile(file(nextHash(), filename, pid, 
+	  false, "",
 	  listener, NOFD,NOFD,0,
 	  input, if input then fromChild.0 else NOFD, false, if input then newbuffer() else "", 
 	  0, 0, false, noprompt, true, false,
@@ -192,8 +210,9 @@ export openIn(filename:string):(file or errmsg) := (
      else (
      	  fd := openin(filename);
      	  if fd == ERROR
-     	  then (file or errmsg)(errmsg("can't open input file "+filename+ " : "+syserrmsg()))
+     	  then (file or errmsg)(errmsg(syscallErrorMessage("opening input file '"+filename+ "'")))
      	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
+	  	    false, "",
 		    false, NOFD,NOFD,0,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false, noprompt,true,false,
 		    false, NOFD, false,           "",          0, 0, false, dummyNetList,0)))));
@@ -207,8 +226,9 @@ export openOut(filename:string):(file or errmsg) := (
      else (
      	  fd := openout(filename);
      	  if fd == ERROR
-     	  then (file or errmsg)(errmsg("can't open output file "+filename+" : "+syserrmsg()))
+     	  then (file or errmsg)(errmsg(syscallErrorMessage("opening output file '"+filename+"'")))
      	  else (file or errmsg)(addfile(file(nextHash(), filename, 0, 
+	  	    false, "",
 		    false, NOFD,NOFD,0,
 		    false, NOFD, false,           "",          0, 0, false,noprompt,true,false,
 		    true,  fd, 0 != isatty(fd), newbuffer(), 0, 0, false,dummyNetList,0)))));
@@ -235,7 +255,10 @@ simpleflush(o:file):int := (
      if o.outindex == 0 then return(0);
      r := write(o.outfd,o.outbuffer,o.outindex);
      o.outindex = 0;
-     if r == ERROR then return(r);
+     if r == ERROR then (
+	  fileErrorMessage(o,"writing");
+	  return(r);
+	  );
      o.bytesWritten = o.bytesWritten + r;
      0);
 simpleout(o:file,c:char):int := (
@@ -384,10 +407,10 @@ export filbuf(o:file):int := (
      n := length(o.inbuffer)-o.insize;
      if n == 0 then return(0);
      r := read(o.infd,o.inbuffer,n,o.insize);
-     if r > 0 then ( o.insize = o.insize + r; r)
-     else if r == 0 then ( o.eof = true; 0 )
-     else ERROR
-     );
+     if r == ERROR then (fileErrorMessage(o,"read");)
+     else if r == 0 then (o.eof = true;)
+     else o.insize = o.insize + r;
+     r);
 putdigit(o:file,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putdigit(o:varstring,x:int):void := o << (x + if x<10 then '0' else 'a'-10) ;
 putneg(o:file,x:int):void := (
@@ -605,7 +628,7 @@ export getc(o:file):int := (
 export read(o:file):(string or errmsg) := (
      if o.inindex == o.insize then (
 	  r := filbuf(o);
-	  if r == ERROR then return((string or errmsg)(errmsg("failed to read file : "+syserrmsg())));
+	  if r == ERROR then return((string or errmsg)(errmsg(fileErrorMessage(o))));
 	  );
      s := substr(o.inbuffer,o.inindex,o.insize);
      o.insize = 0;
@@ -654,16 +677,16 @@ export get(filename:string):(string or errmsg) := (
      is x:errmsg do (string or errmsg)(x)
      is f:file do (
 	  when readfile(f.infd)
+	  is null do (
+	       close(f);
+	       (string or errmsg)(errmsg(fileErrorMessage(f,"read")))
+	       )
 	  is s:string do (
 	       r := close(f);
-	       if r == ERROR
-	       then (string or errmsg)(errmsg("failed to close file : "+syserrmsg()))
+	       if r == ERROR then (string or errmsg)(errmsg(fileErrorMessage(f,"close")))
 	       else if r != 0 && length(filename) > 0 && filename . 0 == '!'
 	       then (string or errmsg)(errmsg("process exit code " + tostring(r)))
-	       else (string or errmsg)(s))
-	  else (string or errmsg)(errmsg("unable to read file: "+syserrmsg()))
-	  )
-     );
+	       else (string or errmsg)(s))));
 
 export Manipulator := {fun:function(file):int};
 export (o:file) << (m:Manipulator) : file := (
@@ -671,6 +694,7 @@ export (o:file) << (m:Manipulator) : file := (
      o
      );
 export endl := Manipulator(endlfun);
+export Flush := Manipulator(flush);
 
 element(s:Cstring, i:int):char ::= Ccode( char, "(((char *)", s, ")[", i, "])" );
 export (o:file) << (s:Cstring) : file := (

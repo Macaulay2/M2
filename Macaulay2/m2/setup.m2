@@ -185,7 +185,6 @@ scan((
 	  symbol oo,
 	  symbol path,
 	  symbol phase,
-	  symbol currentDirectory,
 	  symbol documentationPath,			    -- being removed...
 	  symbol DocDatabase,
 	  symbol currentDictionary,

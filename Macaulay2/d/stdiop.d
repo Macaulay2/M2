@@ -102,6 +102,8 @@ export (o:file) << (p:(null or Position)):file := (
 export copy(p:Position):Position := Position(
      p.filename, p.line, p.column, uchar(LoadDepth));
 export PosFile := {file:file, lastchar:int, pos:Position};
+export fileError(f:PosFile):bool := fileError(f.file);
+export fileErrorMessage(f:PosFile):string := fileErrorMessage(f.file);
 export makePosFile(o:file):PosFile := PosFile(o, 0,
      Position(o.filename, ushort(1), ushort(0), uchar(LoadDepth)));
 export peek(o:PosFile, offset:int):int := (
@@ -139,29 +141,28 @@ tabwidth := 8;
 export getc(o:PosFile):int := (
      prevchar := o.lastchar;
      c := getc(o.file);
+     if c == ERROR || c == EOF then return(c);
      o.lastchar = c;
-     if c != EOF then (
- 	  if c == int('\r') then (
-	       o.pos.line = o.pos.line + 1;
-	       o.pos.column = ushort(0);
-	       c = int('\n');
-	       )
- 	  else if c == int('\n') then (
-	       if prevchar == int('\r') then (
-		    -- swallow a \n that comes after a \r
-		    return(getc(o));
-		    )
-	       else (
-	       	    o.pos.line = o.pos.line + 1;
-	       	    o.pos.column = ushort(0);
-		    );
-	       )
-	  else if c == int('\t') then (
-	       o.pos.column = ushort(((int(o.pos.column)+8)/8)*8);
+     if c == int('\r') then (
+	  o.pos.line = o.pos.line + 1;
+	  o.pos.column = ushort(0);
+	  c = int('\n');
+	  )
+     else if c == int('\n') then (
+	  if prevchar == int('\r') then (
+	       -- swallow a \n that comes after a \r
+	       return(getc(o));
 	       )
 	  else (
-	       o.pos.column = o.pos.column + 1;
-	       )
+	       o.pos.line = o.pos.line + 1;
+	       o.pos.column = ushort(0);
+	       );
+	  )
+     else if c == int('\t') then (
+	  o.pos.column = ushort(((int(o.pos.column)+8)/8)*8);
+	  )
+     else (
+	  o.pos.column = o.pos.column + 1;
 	  );
      c );
 export flush(o:PosFile):void := flushinput(o.file);

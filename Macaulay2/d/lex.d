@@ -65,7 +65,7 @@ base := Node( char(0), NULL, NULL, NULL );
      o);
 export dumpNodes():void := stdout << "[" << base << "]" << endl;
 advance(node:Node,ch:int):(null or Node) := (
-     if ch == EOF then return(NULL);
+     if ch == EOF || ch == ERROR then return(NULL);
      t := node.further;
      while true do (
 	  when t
@@ -121,10 +121,11 @@ getstringslashes(o:PosFile):(null or Word) := (
      tokenbuf << '\"';
      while true do (
 	  ch := getc(o);
-	  if ch == EOF 
+	  if ch == EOF
+	  || ch == ERROR				    -- is that the right thing to do?
 	  then (
 	       empty(tokenbuf);
-	       printErrorMessage(pos,"EOF in string or character constant beginning here");
+	       printErrorMessage(pos,"EOF or ERROR in string or character constant beginning here");
 	       return(NULL);
 	       );
 	  if (
@@ -153,9 +154,10 @@ getstring(o:PosFile):(null or Word) := (
      while true do (
 	  ch := getc(o);
 	  if ch == EOF 
+	  || ch == ERROR				    -- is that the right thing to do?
 	  then (
 	       empty(tokenbuf);
-	       printErrorMessage(pos,"EOF in string or character constant beginning here");
+	       printErrorMessage(pos,"EOF or ERROR in string or character constant beginning here");
 	       return(NULL);
 	       );
      	  tokenbuf << char(ch);
@@ -176,13 +178,22 @@ lookingatcomment(file:PosFile):bool := (
 skipwhite(file:PosFile):void := (
      while true do (
 	  if lookingatcomment(file)
-	  then while !isnewline(peek(file)) && peek(file) != EOF do getc(file)
+	  then while (
+	       !isnewline(peek(file)) 
+	       && (
+		    c := peek(file);
+		    c != EOF && c != ERROR
+		    )
+	       ) do getc(file)
 	  else 
 	  if iswhite(peek(file)) then (getc(file); while iswhite(peek(file)) do getc(file))
 	  else break;
 	  );
      );
+
+-- this errorToken means there was a parsing error or an error reading the file!
 export errorToken := Token(dummyWord,dummyPosition,globalScope,dummySymbol,false);
+
 gettoken1(file:PosFile,sawNewline:bool):Token := (
      -- warning : tokenbuf is static
      while true do (
@@ -190,6 +201,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  pos := copy(file.pos);
 	  ch := peek(file);
      	  if iseof(ch) then return(Token(wordEOF,pos,globalScope,dummySymbol,sawNewline))
+     	  else if iserror(ch) then return(errorToken)
 	  else if isnewline(ch) then (
 	       getc(file);
 	       return(Token(newlineW,pos,globalScope,dummySymbol,sawNewline)))
