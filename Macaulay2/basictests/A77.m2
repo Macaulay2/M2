@@ -55,5 +55,6 @@ assert(null === r)
 i = 1
 r = assert( 44 === while i < 3 do (break 44; i = i+1) )
 assert(null === r)
-r = assert( 44 === scan({3,5,7,11,44,55,77}, i -> if even i then 7*break i) )
+
+r = assert( 44 === scan({3,5,7,44,11,13,15}, j -> if j === 44 then 4 * break j))
 assert(null === r)

@@ -30,7 +30,7 @@ init():string := (
      t := new string len 256 at i do provide char(i);
      L := "abcdefghijklmnopqrstuvwxyz";
      U := "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-     for i to length(L) do t.(int(L.i)) = U.i;
+     for i from 0 to length(L)-1 do t.(int(L.i)) = U.i;
      t);
 
 toupper := init();

@@ -35,7 +35,6 @@ export WhileDoFun := dummyBinaryFun;      -- filled in later in actors.d
 export WhileListFun := dummyBinaryFun;      -- filled in later in actors.d
 export WhileListDoFun := dummyTernaryFun;      -- filled in later in actors.d
 export QuoteFun := dummyUnaryFun;       -- filled in later in actors.d
-export UntilFun := dummyBinaryFun;      -- filled in later in actors.d
 export NewFun := dummyUnaryFun;	  -- filled in later in actors.d
 export NewFromFun := dummyBinaryFun;	  -- filled in later in actors.d
 export NewOfFun := dummyBinaryFun;	  -- filled in later in actors.d
