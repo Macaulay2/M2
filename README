@@ -29,6 +29,7 @@ you can compile and link Macaulay 2.
 	     H. Schoenemann <hannes@mathematik.uni-kl.de>
      get at: /ftp@www.mathematik.uni-kl.de:/pub/Math/Singular/Factory
     license: GPL
+      notes: ./configure --disable-streamio
 
     library: Singular-libfac
     release: libfac-0.3.2, tar file date 2001/06/28
