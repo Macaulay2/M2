@@ -153,21 +153,21 @@ extern "C" {
 
   M2_bool IM2_Monomial_is_equal(const Monomial *a, const Monomial *b); /* drg: connected to === */
 
-  M2_bool rawMonomialIsOne(const Monomial *a); /* drg: connected rawMonomialIsOne */
+  M2_bool rawMonomialIsOne(const Monomial *a); /* drg: connected to x == 1 */
 
   int rawCompareMonomial(const Monoid *M, const Monomial *a, const Monomial *b); /* drg: connected to rawCompareMonomial */
   /* returns -1, 0, or 1, if a < b, a==b, a > b respectively, in the monomial ordering
    * in the monoid M 
    */
 
-  M2_bool IM2_Monomial_divides(const Monoid *M, const Monomial *a, const Monomial *b);
+  M2_bool rawMonomialDivides(const Monoid *M, const Monomial *a, const Monomial *b); /* drg : connected to rawMonomialDivides */
   /* returns true if in the monoid M, there is a monomial c such that a*c === b */
 
-  MonomialOrNull *IM2_Monomial_divide(const Monoid *M, const Monomial *a, const Monomial *b);
+  MonomialOrNull *rawMonomialDivide(const Monoid *M, const Monomial *a, const Monomial *b); /* drg : connected to rawMonomialDivide */
   /* returns a/b if b divides a in the monoid M, and null otherwise. */
 
 #if 0
-  M2_bool IM2_Monomial_divides(const Monomial *a, const Monomial *b);
+  M2_bool rawMonomialDivides(const Monomial *a, const Monomial *b);
 
 
   int IM2_Monomial_degree(const Monomial *a); /* drg: connected rawDegree*/
