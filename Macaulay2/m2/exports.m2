@@ -207,6 +207,7 @@ export (
 	symbol HashTable,
 	symbol HeaderType,
 	symbol Headline,
+	symbol Heft,
 	symbol Hilbert,
 	symbol Holder,
 	symbol Hom,

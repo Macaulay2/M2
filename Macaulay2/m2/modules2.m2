@@ -591,16 +591,19 @@ Module _ List := Matrix => (M,v) -> (
      f := id_N_v;
      map(M, source f, f))
 -----------------------------------------------------------------------------
-basis(List,Module) := Matrix => opts -> (deg,M) -> basis(deg,deg,M)
+basis(List,Module) := Matrix => opts -> (deg,M) -> basis(deg,deg,M,opts)
 basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
      R := ring M;
      if #lo != 0 and #lo =!= degreeLength R
      or #hi != 0 and #hi =!= degreeLength R then error "expected degree length to match that of ring";
      if lo =!= hi and #lo > 1 then error "encountered a range of multi-degrees";
+     heft := opts.Heft;
      if R.?Adjust then (
 	  lo = R.Adjust lo;
 	  hi = R.Adjust hi;
+	  if R.Adjust =!= identity and heft =!= null then error "encountered both Heft and Adjust options";
 	  );
+     if heft === null then heft = splice(1, degreeLength R - 1 : 0);
      A := ultimate(ambient,R);
      if not (
 	  isAffineRing A 
@@ -613,20 +616,20 @@ basis(List,List,Module) := Matrix => opts -> (lo,hi,M) -> (
 	  ) then error "'basis' can't handle this type of ring";
      k := coefficientRing A;
      pres := generators gb presentation M;
-     f := map(M,,rawBasis(raw pres, lo, hi, splice(1, degreeLength R - 1 : 0), 0 .. numgens R - 1, false, -1));
+     f := map(M,,rawBasis(raw pres, lo, hi, heft, 0 .. numgens R - 1, false, -1));
      s := sortColumns f;
      f = f_s;
      f)
 
-basis(ZZ,Module) := Matrix => opts -> (deg,M) -> basis({deg},M)
-basis(ZZ,ZZ,Module) := Matrix => opts -> (lo,hi,M) -> basis({lo},{hi},M)
-basis(List,Ideal) := basis(ZZ,Ideal) := Matrix => opts -> (deg,I) -> basis(deg,module I)
-basis(List,List,Ideal) := basis(ZZ,ZZ,Ideal) := Matrix => opts -> (lo,hi,I) -> basis(lo,hi,module I)
-basis(List,Ring) := Matrix => opts -> (deg,R) -> basis(deg, R^1)
-basis(List,List,Ring) := Matrix => opts -> (lo,hi,R) -> basis(lo,hi,R^1)
+basis(ZZ,Module) := Matrix => opts -> (deg,M) -> basis({deg},M,opts)
+basis(ZZ,ZZ,Module) := Matrix => opts -> (lo,hi,M) -> basis({lo},{hi},M,opts)
+basis(List,Ideal) := basis(ZZ,Ideal) := Matrix => opts -> (deg,I) -> basis(deg,module I,opts)
+basis(List,List,Ideal) := basis(ZZ,ZZ,Ideal) := Matrix => opts -> (lo,hi,I) -> basis(lo,hi,module I,opts)
+basis(List,Ring) := Matrix => opts -> (deg,R) -> basis(deg, R^1,opts)
+basis(List,List,Ring) := Matrix => opts -> (lo,hi,R) -> basis(lo,hi,R^1,opts)
 
-basis(ZZ,Ring) := Matrix => opts -> (deg,R) -> basis({deg}, R^1)
-basis(ZZ,ZZ,Ring) := Matrix => opts -> (lo,hi,R) -> basis({lo},{hi}, R^1)
+basis(ZZ,Ring) := Matrix => opts -> (deg,R) -> basis({deg}, R^1,opts)
+basis(ZZ,ZZ,Ring) := Matrix => opts -> (lo,hi,R) -> basis({lo},{hi}, R^1,opts)
 
 basis Module := Matrix => opts -> M -> if M.cache.?basis then M.cache.basis else M.cache.basis = (
      -- check the following:
@@ -640,8 +643,8 @@ basis Module := Matrix => opts -> M -> if M.cache.?basis then M.cache.basis else
      pres := generators gb presentation M;
      map(M,,rawBasis(raw pres, {}, {}, splice(1, degreeLength R - 1 : 0), 0 .. numgens R - 1, false, -1)))
 
-basis Ring := Matrix => opts -> R -> if R.?basis then R.cache.basis else R.cache.basis = basis(R^1)
-basis Ideal := Matrix => opts -> I -> if I.cache.?basis then I.cache.basis else I.cache.basis = basis module I
+basis Ring := Matrix => opts -> R -> if R.?basis then R.cache.basis else R.cache.basis = basis(R^1,opts)
+basis Ideal := Matrix => opts -> I -> if I.cache.?basis then I.cache.basis else I.cache.basis = basis(module I,opts)
 -----------------------------------------------------------------------------
 
 truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)
