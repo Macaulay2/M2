@@ -91,23 +91,23 @@ globalAssignmentHook(t:Symbol,oldvalue:Expr,newvalue:Expr):Expr := (
 	  is s:List do (
 	       foreach f in s.v do (
 		    r := apply(f,sym,newvalue);
-		    when r is Error do return(r) else nothing;
+		    when r is Error do return r else nothing;
 		    );
 	       nullE)
 	  is f:CompiledFunction do apply(g,sym,newvalue)
 	  is f:CompiledFunctionClosure do apply(g,sym,newvalue)
 	  is f:FunctionClosure do apply(g,sym,newvalue)
 	  else buildErrorPacket("expected global assignment hook for " + t.word.name + " to be a function or list of functions");
-	  when y is Error do return(y) else nothing;
+	  when y is Error do return y else nothing;
 	  );
      if method != nullE then (
 	  y := apply(method,sym,oldvalue);
-	  when y is Error do return(y) else nothing;
+	  when y is Error do return y else nothing;
 	  );
      method = lookup(Class(newvalue),GlobalAssignE);
      if method != nullE then (
 	  y := apply(method,sym,newvalue);
-	  when y is Error do return(y) else nothing;
+	  when y is Error do return y else nothing;
 	  );
      nullE
      );
@@ -126,10 +126,10 @@ localAssignment(nestingDepth:int,frameindex:int,newvalue:Expr):Expr := ( -- fram
      newvalue);
 
 globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
-     if t.protected then return(buildErrorPacket("assignment to protected variable"));
+     if t.protected then return buildErrorPacket("assignment to protected variable");
      vals := globalFrame.values;
      r := globalAssignmentHook(t,vals.frameindex,newvalue);
-     when r is Error do return(r) else nothing;
+     when r is Error do return r else nothing;
      vals.frameindex = newvalue;
      newvalue);
 
@@ -140,13 +140,13 @@ assignment(nestingDepth:int,frameindex:int,t:Symbol,newvalue:Expr):Expr := (
 
 localAssignmentFun(x:localAssignmentCode):Expr := (
      newvalue := eval(x.rhs);
-     when newvalue is Error do return(newvalue) else nothing;
+     when newvalue is Error do return newvalue else nothing;
      localAssignment(x.nestingDepth,x.frameindex,newvalue));
 
 globalAssignmentFun(x:globalAssignmentCode):Expr := (
      t := x.lhs;
      newvalue := eval(x.rhs);
-     when newvalue is Error do return(newvalue) else nothing;
+     when newvalue is Error do return newvalue else nothing;
      globalAssignment(t.frameindex,t,newvalue));
 
 parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
@@ -154,46 +154,46 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      nestingDepth := x.nestingDepth;
      frameindex := x.frameindex;
      nlhs := length(frameindex);
-     foreach sym in syms do if sym.protected then return(buildErrorPacket("assignment to protected variable"));
+     foreach sym in syms do if sym.protected then return buildErrorPacket("assignment to protected variable");
      value := eval(x.rhs);
      when value 
-     is Error do return(value) 
+     is Error do return value 
      is values:Sequence do (
 	  nvals := length(values);
 	  if nlhs == nvals
 	  then (
 	       for i from 0 to nlhs-1 do (
 		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-		    when r is Error do return(r) else nothing;
+		    when r is Error do return r else nothing;
 		    )
 	       )
 	  else if nlhs < nvals
 	  then (
 	       for i from 0 to nlhs-2 do (
 		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-		    when r is Error do return(r) else nothing;
+		    when r is Error do return r else nothing;
 		    );
 	       m := nlhs-1;
 	       r := assignment(nestingDepth.m,frameindex.m,syms.m, Expr(new Sequence len nvals-nlhs+1 do for i from nlhs-1 to nvals-1 do provide values.i));
-	       when r is Error do return(r) else nothing;
+	       when r is Error do return r else nothing;
 	       )
 	  else (
 	       for i from 0     to nvals-1 do (
 		    r := assignment(nestingDepth.i,frameindex.i,syms.i,values.i);
-		    when r is Error do return(r) else nothing;
+		    when r is Error do return r else nothing;
 		    );
 	       for i from nvals to nlhs-1 do (
 		    r := assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
-		    when r is Error do return(r) else nothing;
+		    when r is Error do return r else nothing;
 		    );
 	       )
 	  )
      else (
 	  r := assignment(nestingDepth.0,frameindex.0,syms.0,value);
-	  when r is Error do return(r) else nothing;
+	  when r is Error do return r else nothing;
 	  for i from 1 to nlhs-1 do (
 	       r = assignment(nestingDepth.i,frameindex.i,syms.i,nullE);
-	       when r is Error do return(r) else nothing;
+	       when r is Error do return r else nothing;
 	       );
 	  );
      value);
@@ -208,8 +208,8 @@ dbmstore(f:Database,KEY:Code,CONTENT:Code):Expr := (
 	  is Error do Content
 	  is content:string do dbmstore(f,key,content)
 	  is Nothing do (
-	       if !f.isopen then return(buildErrorPacket("database closed"));
-	       if !f.mutable then return(buildErrorPacket("database not mutable"));
+	       if !f.isopen then return buildErrorPacket("database closed");
+	       if !f.mutable then return buildErrorPacket("database not mutable");
 	       if 0 == dbmdelete(f.handle,key)
 	       then nullE
 	       else buildErrorPacket(dbmstrerror() + " : " + f.filename))
@@ -423,7 +423,7 @@ export eval(c:Code):Expr := (
 	  );
      when e is err:Error do (
 	  -- stderr << "err: " << err.position << " : " << err.message << endl;
-	  if err.message == returnMessage || err.message == breakMessage then return(e);
+	  if err.message == returnMessage || err.message == breakMessage then return e;
 	  p := codePosition(c);
 	  -- stderr << "pos: " << p << endl;
 	  err.report = seq(
@@ -580,7 +580,7 @@ export apply(c:FunctionClosure,e:Expr):Expr := (
 		    +" but got 1"
 	       	    ),
 	       report(c,e)));
-     if recursiondepth > recursionlimit then return(RecursionLimit());
+     if recursiondepth > recursionlimit then return RecursionLimit();
      recursiondepth = recursiondepth + 1;
      if framesize < length(recycleBin) then (
 	  f := recycleBin.framesize;
@@ -681,7 +681,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 					else provide codevalue;
 					);
 			      	   while true do provide nullE;));
-			 if haderror then return(backtr(errorreturn));
+			 if haderror then return backtr(errorreturn);
 			 )
 		    else (
 			 recycleBin.framesize = previousStashedFrame;
@@ -690,7 +690,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 			 foreach code at i in cs do (
 			      codevalue := eval(code);
 			      when codevalue
-			      is Error do return(backtr(codevalue))
+			      is Error do return backtr(codevalue)
 			      else f.values.i = codevalue;
 			      );
 			 );
@@ -727,7 +727,7 @@ export apply(c:FunctionClosure,cs:CodeSequence):Expr := (
 				   else provide codevalue;
 				   );
 			      while true do provide nullE));
-		    if haderror then return(backtr(errorreturn));
+		    if haderror then return backtr(errorreturn);
 		    localFrame = f;
 		    ret := eval(model.body);
 		    when ret is err:Error do ret = backtrFunction(ret,report(c,length(cs)))
@@ -829,7 +829,7 @@ export apply(g:Expr,e0:Expr,e1:Expr):Expr := (
 			      provide e0;
 			      provide e1;
 			      while true do provide nullE));
-		    if haderror then return(backtr(errorreturn));
+		    if haderror then return backtr(errorreturn);
 		    localFrame = f;
 		    ret := eval(model.body);
 		    when ret is err:Error do ret = backtrFunction(ret,report(c,2)) 
@@ -907,7 +907,7 @@ export apply(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 			      provide e1;
 			      provide e2;
 			      while true do provide nullE));
-		    if haderror then return(backtr(errorreturn));
+		    if haderror then return backtr(errorreturn);
 		    localFrame = f;
 		    ret := eval(model.body);
 		    when ret is err:Error do ret = backtrFunction(ret,report(c,3)) 
@@ -955,7 +955,7 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 	       )
 	  else (
 	       value := eval(rhs);
-	       when value is Error do return(value) else nothing;
+	       when value is Error do return value else nothing;
 	       q.frame.values.(q.symbol.frameindex) = value;
 	       value))
      is o:HashTable do (
@@ -1018,7 +1018,7 @@ scanpairs(f:Expr,obj:HashTable):Expr := (
 	  while true do (
 	       if p == bucketEnd then break;
 	       v := apply(f,p.key,p.value);
-	       when v is Error do return(v) else nothing;
+	       when v is Error do return v else nothing;
 	       p = p.next;
 	       ));
      nullE);
@@ -1043,21 +1043,21 @@ mappairs(f:Expr,obj:HashTable):Expr := (
 	       if p == bucketEnd then break;
 	       v := apply(f,p.key,p.value);
 	       when v 
-	       is Error do return(v) 
+	       is Error do return v 
 	       is Nothing do nothing
 	       is a:Sequence do (
 		    if length(a) == 2
 		    then (
 			 ret := storeInHashTable(newobj,a.0,a.1);
-			 when ret is Error do return(ret) else nothing;
+			 when ret is Error do return ret else nothing;
 			 )
-		    else return(
+		    else return 
 			 buildErrorPacket(
-			      "'applyPairs' expected return value to be a pair or 'null'"));
+			      "'applyPairs' expected return value to be a pair or 'null'");
 		    )
-	       else return(
+	       else return 
 		    buildErrorPacket(
-			 "'applyPairs' expected return value to be a pair or 'null'"));
+			 "'applyPairs' expected return value to be a pair or 'null'");
 	       p = p.next;
 	       ));
      sethash(newobj,obj.mutable);
@@ -1082,8 +1082,8 @@ export mapkeys(f:Expr,obj:HashTable):Expr := (
 	  while true do (
 	       if p == bucketEnd then break;
 	       newkey := apply(f,p.key);
-	       if newkey == nullE then return(buildErrorPacket("null key encountered")); -- remove soon!!!
-	       when newkey is Error do return(newkey) else nothing;
+	       if newkey == nullE then return buildErrorPacket("null key encountered"); -- remove soon!!!
+	       when newkey is Error do return newkey else nothing;
 	       storeInHashTableNoClobber(newobj,newkey,p.value);
 	       p = p.next;
 	       ));
@@ -1125,7 +1125,7 @@ export mapvalues(f:Expr,obj:HashTable):Expr := (
 	       provide q;
 	       );
 	  );
-     if hadError then return(errm);
+     if hadError then return errm;
      sethash(u,obj.mutable);
      Expr(u));
 mapvaluesfun(e:Expr):Expr := (
@@ -1143,7 +1143,7 @@ setupfun("applyValues",mapvaluesfun);
 
 merge(e:Expr):Expr := (
      when e is v:Sequence do (
-	  if length(v) != 3 then return(WrongNumArgs(3));
+	  if length(v) != 3 then return WrongNumArgs(3);
 	  g := v.2;
 	  when v.0 is x:HashTable do
 	  if x.mutable then WrongArg("an immutable hash table") else
@@ -1158,7 +1158,7 @@ merge(e:Expr):Expr := (
 			 val := lookup1(z,q.key,q.hash);
 			 if val != notfoundE then (
 			      t := apply(g,val,q.value);
-			      when t is Error do return(t) else nothing;
+			      when t is Error do return t else nothing;
 			      storeInHashTable(z,q.key,q.hash,t);
 			      )
 			 else (
@@ -1185,7 +1185,7 @@ merge(e:Expr):Expr := (
 			 val := lookup1(z,q.key,q.hash);
 			 if val != notfoundE then (
 			      t := apply(g,q.value,val);
-			      when t is Error do return(t) else nothing;
+			      when t is Error do return t else nothing;
 			      storeInHashTable(z,q.key,q.hash,t);
 			      )
 			 else (
@@ -1217,9 +1217,9 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 		    q := qq;
 		    while q != bucketEnd do (
 			 pqkey := apply(f,p.key,q.key);
-			 when pqkey is Error do return(pqkey) else nothing;
+			 when pqkey is Error do return pqkey else nothing;
 			 pqvalue := apply(g,p.value,q.value);
-			 when pqvalue is Error do return(pqvalue) else nothing;
+			 when pqvalue is Error do return pqvalue else nothing;
 			 pqhash := hash(pqkey);
 			 previous := lookup1(z,pqkey,pqhash);
 			 r := storeInHashTable(z,pqkey,pqhash,
@@ -1227,9 +1227,9 @@ combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (
 			      then pqvalue
 			      else (
 				   t := apply(h,previous,pqvalue);
-				   when t is Error do return(t) else nothing;
+				   when t is Error do return t else nothing;
 				   t));
-			 when r is Error do return(r) else nothing;
+			 when r is Error do return r else nothing;
 			 q = q.next);
 		    );
 	       p = p.next));

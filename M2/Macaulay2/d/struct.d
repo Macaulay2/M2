@@ -32,11 +32,11 @@ export splice(a:Sequence):Sequence := (
      -- warning - this function may return its argument without copying
      hadseq := false;
      newlen := length(a);
-     if newlen == 0 then return(a);
+     if newlen == 0 then return a;
      if newlen == 1 then (
 	  when a.0
-	  is s:Sequence do return(s)
-	  else return(a); );
+	  is s:Sequence do return s
+	  else return a; );
      foreach i in a do (
 	  when i is ii:Sequence do (
 	       hadseq = true; 
@@ -74,7 +74,7 @@ export accumulate(
 	       g := a.0;
 	       for i from 1 to length(a)-1 do (
 		    g = f2(g,a.i);
-		    when g is Error do return(g) else nothing;
+		    when g is Error do return g else nothing;
 		    );
 	       g))
      else f1(e));
@@ -92,7 +92,7 @@ export subarray(v:Sequence,leng:int):Sequence := subarray(v,0,leng);
 export isInteger(e:Expr):bool := when e is Integer do true else false;
 export isInt(e:Expr):bool := when e is i:Integer do isInt(i) else false;
 export isIntArray(e:Sequence):bool := (
-     foreach x in e do if !isInt(x) then return(false);
+     foreach x in e do if !isInt(x) then return false;
      true);
 export isIntArray(e:Expr):bool := (
      when e
@@ -124,7 +124,7 @@ export newlist(class:HashTable,v:Sequence):List := (
      x);
 export basictype(o:HashTable):HashTable := (
      while true do (
-	  if o.parent == thingClass then return(o);
+	  if o.parent == thingClass then return o;
 	  o = o.parent;
 	  ));
 

@@ -96,8 +96,8 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 	  if equal(parsed,wordEOF) then break;
 	  returnvalue = nullE;
 	  if parsed == errorTree then (
-	       if fileError(file) then return(buildErrorPacket(fileErrorMessage(file)));
-	       if AbortIfError then return(buildErrorPacket("--backtrace--"));
+	       if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
+	       if AbortIfError then return buildErrorPacket("--backtrace--");
 	       )
 	  else (
 	       s := gettoken(file,true);  -- get the semicolon
@@ -105,14 +105,14 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 	       then (
 		    printErrorMessage(s.position,"syntax error");
 		    if AbortIfError 
-		    then return(Expr(Error(s.position,"syntax error",emptySequence,nullE)));
+		    then return Expr(Error(s.position,"syntax error",emptySequence,nullE));
 		    )
 	       else (
 		    if localBind(parsed,dictionary) -- assign scopes to tokens, look up
 		    then (		  
 			 f := convert(parsed); -- convert to runnable code
 			 lastvalue = eval(f);	  -- run it
-			 if lastvalue == endInput then return(lastvalue);
+			 if lastvalue == endInput then return lastvalue;
 			 when lastvalue is err:Error do (
 			      if err.message == returnMessage
 			      || err.message == breakMessage
@@ -121,7 +121,7 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 			 else nothing;
 			 when lastvalue is err:Error do (
 			      setGlobalVariable(errorReportS, err.report);
-			      if AbortIfError then return(lastvalue);
+			      if AbortIfError then return lastvalue;
 			      lastvalue = nullE;
 			      )
 			 else (
@@ -134,12 +134,12 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
 					     setGlobalVariable(errorReportS, err2.report);
 					     )
 					else nothing;
-					if AbortIfError then return(g);
+					if AbortIfError then return g;
 					)
 				   else nothing; ) ) )
 		    else if isatty(file) 
 		    then flush(file)
-		    else return(buildErrorPacket("error while loading file")); ); );
+		    else return buildErrorPacket("error while loading file"); ); );
 	  lastvalue = nullE; );
      -- now we let filbuf handle all prompting:
      -- if isatty(file) then stdout << endl;

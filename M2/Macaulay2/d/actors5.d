@@ -161,20 +161,20 @@ applythem(obj:HashTable,fn:FunctionClosure):void := (
 -- match(subject:string,i:int,pattern:string,j:int):bool := (
 --      while true do (
 -- 	  if j == length(pattern) 
--- 	  then return(i == length(subject))
+-- 	  then return i == length(subject)
 -- 	  else if pattern.j == '*' then (
 -- 	       if match(subject,i,pattern,j+1)
--- 	       then return(true)
+-- 	       then return true
 -- 	       else if i < length(subject)
 -- 	       then i = i+1
--- 	       else return(false)
+-- 	       else return false
 -- 	       )
 -- 	  else if i < length(subject) && subject.i == pattern.j
 -- 	  then (
 -- 	       i=i+1; 
 -- 	       j=j+1
 -- 	       )
--- 	  else return(false)));
+-- 	  else return false));
 -- matchfun(e:Expr):Expr := (
 --      when e
 --      is a:Sequence do
@@ -314,7 +314,7 @@ horizontalJoin(s:Sequence):Expr := (
 	  is Nothing do nothing
 	  is n:Net do (ln = ln + 1;)
 	  is s:string do (ln = ln + 1;)
-	  else return(WrongArg(i+1,"a net, string, or null")));
+	  else return WrongArg(i+1,"a net, string, or null"));
      v := new array(Net) len ln do (
 	  foreach f in s do (
 	       when f 
@@ -341,7 +341,7 @@ stack(s:Sequence):Expr := (
 	  is Nothing do nothing
 	  is n:Net do (ln = ln + 1;)
 	  is s:string do (ln = ln + 1;)
-	  else return(WrongArg(i+1,"a net, string, or null")));
+	  else return WrongArg(i+1,"a net, string, or null"));
      v := new array(Net) len ln do (
 	  foreach f in s do (
 	       when f 
@@ -582,7 +582,7 @@ erase(e:Expr):Expr := (
      when e is t:SymbolClosure do (
 	  s := t.symbol;
 	  d := globalDictionary;
-	  if t.frame != globalFrame then return(WrongArg("a global symbol"));
+	  if t.frame != globalFrame then return WrongArg("a global symbol");
 	  while (
 	       table := d.symboltable;
 	       i := s.word.hash & (length(table.buckets)-1);
@@ -591,10 +591,10 @@ erase(e:Expr):Expr := (
 	       is entryListCell:SymbolListCell do (
 		    if entryListCell.entry == s
 		    then (
-     	       	    	 if d.protected then return(buildErrorPacket("symbol is in a protected dictionary"));
+     	       	    	 if d.protected then return buildErrorPacket("symbol is in a protected dictionary");
 			 table.numEntries = table.numEntries - 1;
 			 table.buckets.i = entryListCell.next;
-			 return(nullE);
+			 return nullE;
 			 );
 		    lastCell := entryListCell;
 		    entryList = entryListCell.next;
@@ -603,10 +603,10 @@ erase(e:Expr):Expr := (
 			 is entryListCell:SymbolListCell do (
 			      if entryListCell.entry == s
 			      then (
-     	       	    	 	   if d.protected then return(buildErrorPacket("symbol is in a protected dictionary"));
+     	       	    	 	   if d.protected then return buildErrorPacket("symbol is in a protected dictionary");
 				   table.numEntries = table.numEntries - 1;
 				   lastCell.next = entryListCell.next;
-				   return(nullE);
+				   return nullE;
 				   );
 			      lastCell = entryListCell;
 			      entryList = entryListCell.next;
@@ -783,16 +783,16 @@ newmethod123c(e:Expr):Expr := (
 	       is CompiledFunction do nothing
 	       is CompiledFunctionClosure do nothing
 	       is FunctionClosure do nothing
-	       else return(WrongArg(1,"a function"));
+	       else return WrongArg(1,"a function");
 	       when env.1
 	       is CompiledFunction do nothing
 	       is CompiledFunctionClosure do nothing
 	       is FunctionClosure do nothing
-	       else return(WrongArg(2,"a function"));
+	       else return WrongArg(2,"a function");
 	       when env.2 is u:List do (
 		    useClass := u.v;
 		    foreach i in useClass do if !(i == True || i == False) 
-		    then return( WrongArg(3,"a list of boolean values") );
+		    then return  WrongArg(3,"a list of boolean values") ;
 		    allFalse := true;
 		    foreach i in useClass do if i != False then allFalse = false;
 		    cfc :=
@@ -929,7 +929,7 @@ take(e:Expr):Expr := (
 setupfun("take",take);
 
 anyhex(s:string):bool := (
-     foreach c in s do if c == '+' || c == '%' then return(true);
+     foreach c in s do if c == '+' || c == '%' then return true;
      false);
 lengthUnhexed(s:string):int := (
      n := 0;
@@ -1310,7 +1310,7 @@ globalDictionaries(e:Expr):Expr := (
      is t:List do (					    -- set the current globalDictionary list
 	  s := t.v;
 	  n := length(s);
-	  if n == 0 then return(WrongArg("expected a nonempty list of globalDictionaries"));
+	  if n == 0 then return WrongArg("expected a nonempty list of globalDictionaries");
           sawUnprotected := false;
 	  sawM2dict := false;
 	  foreach x in s do 
@@ -1318,11 +1318,11 @@ globalDictionaries(e:Expr):Expr := (
 	       d := dc.dictionary;
 	       if d == Macaulay2Dictionary then sawM2dict = true;
 	       if !d.protected then sawUnprotected = true;
-	       if d.frameID != 0 || d.transient then return(WrongArg("expected a list of global dictionaries"))
+	       if d.frameID != 0 || d.transient then return WrongArg("expected a list of global dictionaries")
 	       )
-	  else return(WrongArg("expected a list of dictionaries"));
-	  if !sawM2dict then return(WrongArg("expected a list of dictionaries containing Macaulay2Dictionary"));
-          if !sawUnprotected then return(WrongArg("expected a list of dictionaries, not all protected"));
+	  else return WrongArg("expected a list of dictionaries");
+	  if !sawM2dict then return WrongArg("expected a list of dictionaries containing Macaulay2Dictionary");
+          if !sawUnprotected then return WrongArg("expected a list of dictionaries, not all protected");
      	  a := new array(Dictionary) len n do foreach x in s do when x is d:DictionaryClosure do provide d.dictionary else nothing;
      	  a.(n-1).outerDictionary = a.(n-1);
      	  for i from 0 to n-2 do a.i.outerDictionary = a.(i+1);

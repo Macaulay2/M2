@@ -13,7 +13,7 @@ static int yylex(void);
 %token NUMBER IDENTIFIER STRINGCONST SELF OP SUPER
 %left ';'
 %left ')' 
-%left whiledo PROVIDE
+%left whiledo PROVIDE RETURN
 %left ifte
 %left infix1 prefix1
 %left IMPORT EXPORT
@@ -165,6 +165,9 @@ expr : typecasen	      	   %prec whiledo { $$ = reverse($1); }
      | prefix4 expr 	      	   	       { $$ = list(2,$1,$2); }
      | prefix3 expr 	      	   	       { $$ = list(2,$1,$2); }
      | prefix2 expr 	      	   	       { $$ = list(2,$1,$2); }
+     | RETURN expr	     	       	       { $$ = cons($1,cons($2,NULL)); }
+     | RETURN '(' ')'	     	       	       { $$ = cons($1,NULL); }
+     | RETURN	     	       	       	       { $$ = cons($1,NULL); }
      | expr '(' arglistornull ')'              { $$ = cons($1,$3); }
      | '(' exprlist ')'	     	       	       { 
 	  $$ = cons(blockn_K,$2); 
@@ -293,6 +296,7 @@ void yyinit() {
      registerkeyword("else",ELSE);
      registerkeyword("break",BREAK);
      registerkeyword("provide",PROVIDE);
+     registerkeyword("return",RETURN);
      registerop("::=",infix1);
      registerop(":=",infix1);
      registerop("=",infix2);

@@ -14,7 +14,7 @@ export Net := {
      };
 
 anytabs(s:string):bool := (
-     foreach c in s do if c == '\t' then return(true);
+     foreach c in s do if c == '\t' then return true;
      false);
 lengthUntabified(s:string):int := (
      n := 0;
@@ -73,8 +73,8 @@ export toNet(s:string):Net := (
 export toNet(c:char):Net := toNet(string(c));
 export RaiseNet(n:Net,i:int):Net := Net(n.height+i,n.width,n.body);
 export HorizontalJoin(v:array(Net)):Net := (
-     if length(v) == 0 then return(Net(0,0,array(string)()));
-     if length(v) == 1 then return(v.0);
+     if length(v) == 0 then return Net(0,0,array(string)());
+     if length(v) == 1 then return v.0;
      width := 0;
      accumwids := new array(int) len length(v) do (
 	  foreach n in v do (
@@ -121,8 +121,8 @@ export HorizontalJoin(v:array(Net)):Net := (
 		    else for n.width do provide ' '))));
 
 export VerticalJoin(v:array(Net)):Net := (
-     if length(v) == 0 then return(Net(0,0,array(string)()));
-     if length(v) == 1 then return(v.0);
+     if length(v) == 0 then return Net(0,0,array(string)());
+     if length(v) == 1 then return v.0;
      leng := 0;
      width := 0;
      foreach n in v do (
@@ -138,8 +138,8 @@ export VerticalJoin(v:array(Net)):Net := (
 export (x:Net) === (y:Net) : bool := (
      if x.height != y.height
      || x.width != y.width
-     || length(x.body) != length(y.body) then return(false);
-     foreach s at i in x.body do if !(s === y.body.i) then return(false);
+     || length(x.body) != length(y.body) then return false;
+     foreach s at i in x.body do if !(s === y.body.i) then return false;
      true);
 
 export NetList := {
@@ -153,12 +153,12 @@ export dummyNetList := NetList(self,dummyNet);
 min(x:int,y:int):int := if x<y then x else y;
 
 export (s:Net) < (t:Net) : bool := (
-     if s.height != t.height then return(s.height < t.height);
+     if s.height != t.height then return s.height < t.height;
      n := min(length(s.body),length(t.body));
      for i from 0 to n-1 do (
-	  if !(s.body.i === t.body.i) then return(s.body.i < t.body.i);
+	  if !(s.body.i === t.body.i) then return s.body.i < t.body.i;
 	  );
-     return(length(s.body)<length(t.body));
+     return length(s.body) < length(t.body);
      );
 export (s:Net) >= (t:Net) : bool := !(s<t);
 export (s:Net) > (t:Net) : bool := t<s;
@@ -167,22 +167,22 @@ export (s:Net) <= (t:Net) : bool := !(t<s);
 use vararray;
 
 blankcolumn(i:int, t:Net):bool := (
-     if i >= 0 then foreach s in t.body do if length(s) > i && s.i != ' ' then return(false);
+     if i >= 0 then foreach s in t.body do if length(s) > i && s.i != ' ' then return false;
      true
      );
 
 subnet(t:Net,startcol:int,wid:int):Net := (
      if startcol < 0 then startcol = 0;			  -- shouldn't happen
      if wid > t.width-startcol then wid = t.width-startcol;
-     if startcol == 0 && wid == t.width then return(t);
+     if startcol == 0 && wid == t.width then return t;
      Net( t.height, 
 	  wid, 
 	  new array(string) len length(t.body) do foreach s in t.body do provide substr(s,startcol,wid)
 	  ));
 
 export wrap(wid:int, sep:char, t:Net):Net := (
-     if t.width <= wid then return(t);
-     if wid <= 0 then return(t);
+     if t.width <= wid then return t;
+     if wid <= 0 then return t;
      breaks := newvararrayint(t.width/wid + 5);
      minwid := wid/3;
      if minwid == 0 then minwid = 1;

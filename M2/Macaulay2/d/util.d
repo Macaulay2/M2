@@ -37,15 +37,15 @@ export isSequenceOfPairsOfSmallIntegers(v:Sequence) : (string or null) := (
      when i 
      is pair:Sequence do 
      if length(pair) != 2
-     then return("a list of pairs of integers") 
+     then return "a list of pairs of integers" 
      else foreach j in pair do
      when j 
      is a:Integer do
      if isInt(a) 
      then nothing
-     else return("a list of pairs of small integers")
-     else return("a list of pairs of integers")
-     else return("a list of pairs of integers");
+     else return "a list of pairs of small integers"
+     else return "a list of pairs of integers"
+     else return "a list of pairs of integers";
      null());
 
 export getSequenceOfPairsOfSmallIntegers(v:Sequence) : array(int) := (
@@ -63,9 +63,9 @@ export isListOfSmallIntegers(e:Expr) : bool := (
      when e is l:List do (
      	  foreach i in l.v do (
 	       when i is a:Integer do (
-		    if !isInt(a) then return(false);
+		    if !isInt(a) then return false;
 		    )
-	       else return(false));
+	       else return false);
 	  true)
      else false);
 export getListOfSmallIntegers(e:Expr) : array(int) := (
@@ -80,9 +80,9 @@ export getListOfSmallIntegers(e:Expr) : array(int) := (
 export isSequenceOfSmallIntegers(s:Sequence) : bool := (
      foreach i in s do (
 	  when i is a:Integer do (
-	       if !isInt(a) then return(false);
+	       if !isInt(a) then return false;
 	       )
-	  else return(false));
+	  else return false);
      true);
 export getSequenceOfSmallIntegers(s:Sequence) : array(int) := (
      new array(int) len length(s) do (
@@ -99,9 +99,9 @@ export isSequenceOfSmallIntegers(e:Expr) : bool := (
      is s:Sequence do (
 	  foreach i in s do (
 	       when i is a:Integer do (
-		    if !isInt(a) then return(false);
+		    if !isInt(a) then return false;
 		    )
-	       else return(false));
+	       else return false);
 	  true)
      is a:Integer do isInt(a)
      else false);
@@ -121,7 +121,7 @@ export getSequenceOfSmallIntegers(e:Expr) : array(int) := (
 
 export isListOfStrings(e:Expr) : bool := (
      when e is l:List do (
-     	  foreach i in l.v do when i is string do nothing else return(false);
+     	  foreach i in l.v do when i is string do nothing else return false;
 	  true)
      else false);
 export getListOfStrings(e:Expr) : array(string) := (
@@ -134,7 +134,7 @@ export getListOfStrings(e:Expr) : array(string) := (
      );
 
 export isSequenceOfMonomialOrderings(s:Sequence) : bool := (
-     foreach i in s do when i is RawMonomialOrdering do nothing else return(false);
+     foreach i in s do when i is RawMonomialOrdering do nothing else return false;
      true);
 export getSequenceOfMonomialOrderings(s:Sequence) : RawMonomialOrderingArray := (
      new RawMonomialOrderingArray len length(s) do (
@@ -145,7 +145,7 @@ export getSequenceOfMonomialOrderings(s:Sequence) : RawMonomialOrderingArray := 
 
 export isSequenceOfVectors(e:Expr) : bool := (
      when e is s:Sequence do (
-	  foreach i in s do when i is RawVector do nothing else return(false);
+	  foreach i in s do when i is RawVector do nothing else return false;
 	  true)
      is RawVector do true
      else false);
@@ -162,7 +162,7 @@ export getSequenceOfVectors(e:Expr) : RawVectorArray := (
 
 export isSequenceOfRingElements(e:Expr) : bool := (
      when e is s:Sequence do (
-	  foreach i in s do when i is RawRingElement do nothing else return(false);
+	  foreach i in s do when i is RawRingElement do nothing else return false;
 	  true)
      is RawRingElement do true
      else false);
@@ -178,7 +178,7 @@ export getSequenceOfRingElements(e:Expr) : RawRingElementArray := (
      else RawRingElementArray());
 export isSequenceOfMatrices(e:Expr) : bool := (
      when e is s:Sequence do (
-	  foreach i in s do when i is RawMatrix do nothing else return(false);
+	  foreach i in s do when i is RawMatrix do nothing else return false;
 	  true)
      is RawMatrix do true
      else false);
@@ -299,7 +299,7 @@ export isSequenceOfReals(e:Expr) : bool := (
      when e
      is s:Sequence do (
 	  foreach i in s do (
-	       when i is a:Real do nothing else return(false));
+	       when i is a:Real do nothing else return false);
 	  true)
      is Real do true
      else false);
@@ -320,7 +320,7 @@ export getSequenceOfReals(e:Expr) : array(double) := (
 export isListOfReals(e:Expr) : bool := (
      when e is l:List do (
      	  foreach i in l.v do (
-	       when i is a:Real do nothing else return(false));
+	       when i is a:Real do nothing else return false);
 	  true)
      else false);
 export getListOfReals(e:Expr) : array(double) := (
@@ -334,7 +334,7 @@ export getListOfReals(e:Expr) : array(double) := (
 export isListOfComplex(e:Expr) : bool := (
      when e is l:List do (
      	  foreach i in l.v do (
-	       when i is a:Complex do nothing else return(false));
+	       when i is a:Complex do nothing else return false);
 	  true)
      else false);
 export getListOfComplex(e:Expr) : array(Complex) := (

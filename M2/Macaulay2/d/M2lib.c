@@ -539,7 +539,7 @@ char **argv;
 	  GC_get_heap_size(), GC_free_space_divisor, GC_gc_no-old_collections);
 #endif
      exit(returncode);
-     return(returncode);
+     return returncode;
      }
 
 static void clean_up() {

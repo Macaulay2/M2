@@ -75,7 +75,7 @@ rawMonomialMake(e:Expr):Expr := (
      -- accepts a list of pairs : {(5,4),(3,7),(2,1)}
      when e
      is l:List do (
-	  when isSequenceOfPairsOfSmallIntegers(l.v) is s:string do return(WrongArg(s)) else nothing;
+	  when isSequenceOfPairsOfSmallIntegers(l.v) is s:string do return WrongArg(s) else nothing;
 	  when Ccode(RawMonomialOrNull, 
 	       "(engine_RawMonomialOrNull)IM2_Monomial_make(",
 	          "(M2_arrayint)", getSequenceOfPairsOfSmallIntegers(l.v), 
@@ -262,9 +262,9 @@ makers := array(Maker)(
 getmaker(sym:SymbolClosure):funtypeornull := (
      foreach pair in makers do if sym == pair.sym then (
 	  when pair.fun
-	  is f:fun1 do return(f)
-	  is f:fun2 do return(f)
-	  is f:fun3 do return(f)
+	  is f:fun1 do return f
+	  is f:fun2 do return f
+	  is f:fun3 do return f
 	  );
      null());
 
@@ -290,21 +290,21 @@ rawMonomialOrdering(e:Expr):Expr := (
 		    when getmaker(sym)
 		    is g:fun1 do (
 			 if sp.v.1 != nullE
-			 then return(buildErrorPacket("expected option value to be 'null'"));
+			 then return buildErrorPacket("expected option value to be 'null'");
 			 )
 		    is g:fun2 do (
 			 if !isSmallInt(sp.v.1)
-			 then return(buildErrorPacket("expected option value to be a small integer"));
+			 then return buildErrorPacket("expected option value to be a small integer");
 			 )
 		    is g:fun3 do (
-			 if !isListOfSmallIntegers(sp.v.1) then return(
-			      buildErrorPacket("expected option value to be list of small integers"));
+			 if !isListOfSmallIntegers(sp.v.1) then return 
+			      buildErrorPacket("expected option value to be list of small integers");
 			 )
-		    is null do return(buildErrorPacket("expected option key to be a monomial ordering key"))
+		    is null do return buildErrorPacket("expected option key to be a monomial ordering key")
 		    )
-	       else return(buildErrorPacket("expected option key to be a symbol"))
-	       else return(WrongArg("a list of options"))
-	       else return(WrongArg("a list of options")));
+	       else return buildErrorPacket("expected option key to be a symbol")
+	       else return WrongArg("a list of options")
+	       else return WrongArg("a list of options"));
 	  -- then accumulate it
      	  Expr(join(new RawMonomialOrderingArray len length(s.v) do (
 	       foreach spec in s.v do
@@ -2664,7 +2664,7 @@ rawSetMatrixValues(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 3 then
      when s.1 is l:List do (
-     when isSequenceOfPairsOfSmallIntegers(l.v) is t:string do return(WrongArg(t)) else nothing;
+     when isSequenceOfPairsOfSmallIntegers(l.v) is t:string do return WrongArg(t) else nothing;
      	when s.0 
      	is M:LMatrixRR do (
 		if isListOfReals(s.2) then (

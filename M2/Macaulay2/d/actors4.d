@@ -73,7 +73,7 @@ select(a:Sequence,f:Expr):Expr := (
      found := 0;
      foreach x at i in a do (
 	  y := apply(f,x);
-	  when y is Error do return(y) else nothing;
+	  when y is Error do return y else nothing;
 	  if y == True then (
 	       b.i = true;
 	       found = found + 1;
@@ -83,14 +83,14 @@ select(a:Sequence,f:Expr):Expr := (
 select(e:Expr,f:Expr):Expr := (
      when e
      is obj:HashTable do (
-	  if obj.mutable then return(WrongArg(0+1,"an immutable hash table"));
+	  if obj.mutable then return WrongArg(0+1,"an immutable hash table");
 	  u := newHashTable(obj.class,obj.parent);
 	  foreach bucket in obj.table do (
 	       p := bucket;
 	       while p != bucketEnd do (
 		    newvalue := apply(f,p.value);
 		    when newvalue 
-		    is Error do return(newvalue)
+		    is Error do return newvalue
 		    else if newvalue == True 
 		    then storeInHashTable(u,p.key,p.hash,p.value);
 		    p = p.next;
@@ -112,7 +112,7 @@ select(n:int,a:Sequence,f:Expr):Expr := (
      foreach x at i in a do (
 	  if found < n then (
 	       y := apply(f,x);
-	       when y is Error do return(y) else nothing;
+	       when y is Error do return y else nothing;
 	       if y == True then (
 		    b.i = true;
 		    found = found + 1;
@@ -125,7 +125,7 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
      if isInt(n) then
      when e
      is obj:HashTable do (
-	  if obj.mutable then return(WrongArg(1+1,"an immutable hash table"));
+	  if obj.mutable then return WrongArg(1+1,"an immutable hash table");
 	  u := newHashTable(obj.class,obj.parent);
 	  nval := toInt(n);
 	  if nval > 0 then
@@ -134,7 +134,7 @@ select(n:Expr,e:Expr,f:Expr):Expr := (
 	       while nval > 0 && p != bucketEnd do (
 		    newvalue := apply(f,p.value);
 		    when newvalue 
-		    is Error do return(newvalue)
+		    is Error do return newvalue
 		    else if newvalue == True 
 		    then (
 			 storeInHashTable(u,p.key,p.hash,p.value);
@@ -171,16 +171,16 @@ any(f:Expr,obj:HashTable):Expr := (
 	  while true do (
 	       if p == bucketEnd then break;
 	       v := apply(f,p.key,p.value);
-	       when v is Error do return(v) else nothing;
-	       if v == True then return(True);
+	       when v is Error do return v else nothing;
+	       if v == True then return True;
 	       p = p.next;
 	       ));
      False);
 any(f:Expr,a:Sequence):Expr := (
      foreach x at i in a do (
 	  y := apply(f,x);
-	  when y is Error do return(y) else nothing;
-	  if y == True then return(True));
+	  when y is Error do return y else nothing;
+	  if y == True then return True);
      False);
 any(f:Expr,e:Expr):Expr := (
      when e
@@ -204,7 +204,7 @@ setupfun("any",any);
 --	  while true do (
 --	       if p == bucketEnd then break;
 --	       r := apply(f,p.key,p.value);
---	       if r != nullE then return(r);
+--	       if r != nullE then return r;
 --	       p = p.next;
 --	       ));
 --     nullE);
@@ -212,7 +212,7 @@ setupfun("any",any);
 --     i := 0;
 --     while i < length(a) do (
 --	  r := apply(f,a.i);
---	  if r != nullE then return(r);
+--	  if r != nullE then return r;
 --	  i = i+1;
 --	  );
 --     nullE);
@@ -298,7 +298,7 @@ export checknoargs(e:Expr):Expr := (
      );
 
 randomint(e:Expr):Expr := (
-     when checknoargs(e) is f:Error do return(Expr(f)) else nothing;
+     when checknoargs(e) is f:Error do return Expr(f) else nothing;
      Expr(toInteger(randomint()))
      );
 setupfun("randomint",randomint);
@@ -316,10 +316,10 @@ outseq(x:file,y:Sequence):Expr := (
 	  is y:Integer do (
 	       if isInt(y) 
 	       then for toInt(y) do x << ' '
-	       else return(WrongArg(2,"a string, or list or sequence of strings and small integers, or null")))
+	       else return WrongArg(2,"a string, or list or sequence of strings and small integers, or null"))
 	  is w:Sequence do (outseq(x,w);)
 	  is s:string do (x << s;)
-	  else return(WrongArg(2,"a string, or list or sequence of strings and integers, or null")));
+	  else return WrongArg(2,"a string, or list or sequence of strings and integers, or null"));
      Expr(x));
 outstringfun(e:Expr):Expr := (
      when e
@@ -327,7 +327,7 @@ outstringfun(e:Expr):Expr := (
 	  if length(a) == 2 then (
 	       when a.0 
 	       is x:file do (
-		    if x.outfd == -1 then return(WrongArg("an open output file"));
+		    if x.outfd == -1 then return WrongArg("an open output file");
 		    when a.1 
 		    is y:string do Expr(x << y)
 		    is Nothing do Expr(x)
@@ -360,7 +360,7 @@ lenseq(y:Sequence):int := (
 	  when z
 	  is w:List do (
 	       m := lenseq(w.v);
-	       if m == -1 then return(-1);
+	       if m == -1 then return -1;
 	       l = l + m;
 	       )
 	  is Nothing do nothing
@@ -368,16 +368,16 @@ lenseq(y:Sequence):int := (
 	  is y:Integer do (
 	       if isInt(y) 
 	       then l = l + toInt(y)
-	       else return(-1))
+	       else return -1)
 	  is w:Sequence do (
 	       m := lenseq(w);
-	       if m == -1 then return(-1);
+	       if m == -1 then return -1;
 	       l = l + m;
 	       )
 	  is s:string do (
 	       l = l + length(s);
 	       )
-	  else return(-1));
+	  else return -1);
      l);
 stringlenfun(e:Expr):Expr := (
      when e
@@ -454,7 +454,7 @@ mingleseq(a:Sequence):Expr := (
 	  when a.i
 	  is d:Sequence do ( newlen = newlen + length(d); b.i = d; )
 	  is d:List do ( newlen = newlen + length(d.v); b.i = d.v; )
-	  else return(WrongArg(i+1,"a list or sequence")));
+	  else return WrongArg(i+1,"a list or sequence"));
      list ( new Sequence len newlen do
      	  for j from 0 to newlen-1 do for i from 0 to n-1 do
      	  if j < length(b.i) then provide b.i.j));
@@ -585,8 +585,8 @@ setupfun("atEndOfFile",atEOFfun);
 
 allInputFiles(s:Sequence):bool := (
      foreach f in s do (
-     	  when f is g:file do ( if !g.input then return(false); )
-     	  else return(false);
+     	  when f is g:file do ( if !g.input then return false; )
+     	  else return false;
 	  );
      true);
 numberReadyOnes(s:Sequence):int := (
@@ -658,14 +658,14 @@ readfun(e:Expr):Expr := (
 	       when s.0
 	       is f:file do (
 		    if ! f.input
-		    then return(WrongArg(1,"expected an input file"));
+		    then return WrongArg(1,"expected an input file");
 		    when s.1
 		    is n:Integer do (
 			 if isInt(n)
 			 then (
 			      nn := toInt(n);
 			      if nn < 0
-			      then return(WrongArg(2,"a positive integer"));
+			      then return WrongArg(2,"a positive integer");
 			      if f.inindex < f.insize
 			      then (
 				   nn = min(nn,f.insize - f.inindex);
@@ -890,13 +890,13 @@ join(e:Expr):Expr := (
      when e
      is a:Sequence do (
 	  n := length(a);
-	  if n == 0 then return(e);
+	  if n == 0 then return e;
 	  newlen := 0;
 	  foreach x in a do (
 	       when x
 	       is b:Sequence do (newlen = newlen + length(b);)
 	       is c:List do (newlen = newlen + length(c.v);)
-	       else return(WrongArg("lists or sequences"));
+	       else return WrongArg("lists or sequences");
 	       );
 	  z := new Sequence len newlen do (
 	       foreach x in a do (
@@ -929,7 +929,7 @@ ancestorfun(e:Expr):Expr := (
      is args:Sequence do (
 	  x := args.0;
 	  y := args.1;
-	  if x==y then return(True);
+	  if x==y then return True;
 	  when y 
 	  is yy:HashTable do if ancestor(Parent(x),yy) then True else False
 	  else False)
@@ -995,7 +995,7 @@ exec(a:Sequence):Expr := (
      foreach x at i in a do (
 	  when x
 	  is s:string do newargv.i = s
-	  else return(WrongArgString(i+1)));
+	  else return WrongArgString(i+1));
      exec(newargv);
      buildErrorPacket("exec failed"));
 exec(e:Expr):Expr := (
@@ -1012,7 +1012,7 @@ code := extent("",0,0,0,0);
 locate(e:Code):void;
 
 lookat(p:Position):void := (
-     if p == dummyPosition then return();
+     if p == dummyPosition then return;
      code.filename = p.filename;
      if code.minline > int(p.line) then (
 	  code.minline = int(p.line);

@@ -118,18 +118,18 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
      sd := NOFD;
      if length(host) == 0 then (
 	  so = openlistener(serv);
-     	  if so == ERROR then return((file or errmsg)(errmsg("can't open listener : "+syserrmsg())));
+     	  if so == ERROR then return (file or errmsg)(errmsg("can't open listener : "+syserrmsg()));
 	  if input || output then (
 	       sd = acceptBlocking(so);
      	       if sd == ERROR then (
 		    close(so);
-		    return((file or errmsg)(errmsg("can't open socket: "+syserrmsg())));
+		    return (file or errmsg)(errmsg("can't open socket: "+syserrmsg()));
 		    );
 	       )
 	  )
      else (
 	  sd = opensocket(host,serv);
-     	  if sd == ERROR then return((file or errmsg)(errmsg("can't open socket : "+syserrmsg())));
+     	  if sd == ERROR then return (file or errmsg)(errmsg("can't open socket : "+syserrmsg()));
 	  );
      (file or errmsg)(addfile(file(nextHash(), filename, 0,
 	  false, "",
@@ -139,7 +139,7 @@ opensocket(filename:string,input:bool,output:bool,listener:bool):(file or errmsg
 	  output, if output then sd else NOFD, false, if output then newbuffer() else "",
 	  0, 0, false, dummyNetList,0))));
 accept(f:file,input:bool,output:bool):(file or errmsg) := (
-     if !f.listener then return((file or errmsg)(errmsg("expected a listener")));
+     if !f.listener then return (file or errmsg)(errmsg("expected a listener"));
      sd := NOFD;
      if f.connection != NOFD
      then (
@@ -149,7 +149,7 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
      else (
      	  sd = acceptBlocking(f.listenerfd);
      	  if sd == ERROR
-	  then return((file or errmsg)(errmsg(fileErrorMessage(f,"accepting connection"))));
+	  then return (file or errmsg)(errmsg(fileErrorMessage(f,"accepting connection")));
 	  );
      f.numconns = f.numconns + 1;
      (file or errmsg)(addfile(file(nextHash(), f.filename, 0,
@@ -166,13 +166,13 @@ openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      then (
 	  if  toChild.0 != NOFD then close(  toChild.0);
 	  if  toChild.1 != NOFD then close(  toChild.1);
-	  return(errmsg("can't make pipe : "+syserrmsg()));
+	  return errmsg("can't make pipe : "+syserrmsg());
 	  );
      pid := fork();
      if pid == -1 then (
 	  if  toChild.0 != NOFD then close(  toChild.0);
 	  if  toChild.1 != NOFD then close(  toChild.1);
-	  return(errmsg("can't fork : "+syserrmsg()));
+	  return errmsg("can't fork : "+syserrmsg());
 	  );
      listener := false;
      if pid == 0 then (
@@ -253,25 +253,25 @@ export flushinput(o:file):void := (
 
 simpleflush(o:file):int := (
      o.outbol = 0;
-     if o.outindex == 0 then return(0);
+     if o.outindex == 0 then return 0;
      r := write(o.outfd,o.outbuffer,o.outindex);
      o.outindex = 0;
      if r == ERROR then (
 	  fileErrorMessage(o,"writing");
-	  return(r);
+	  return r;
 	  );
      o.bytesWritten = o.bytesWritten + r;
      0);
 simpleout(o:file,c:char):int := (
      if o.outindex == length(o.outbuffer) then (
 	  r := simpleflush(o);
-	  if r == ERROR then return(ERROR);
+	  if r == ERROR then return ERROR;
 	  );
      o.outbuffer.(o.outindex) = c;
      o.outindex = o.outindex + 1;
      0);
 simpleout(o:file,x:string):int := (
-     foreach c in x do if ERROR == simpleout(o,c) then return(ERROR);
+     foreach c in x do if ERROR == simpleout(o,c) then return ERROR;
      0);
 flushnets(o:file):int := (
      if o.hadNet then (
@@ -299,15 +299,15 @@ flushnets(o:file):int := (
 	  o.nets = dummyNetList;
 	  lastone := length(n.body)-1;
 	  foreach s at i in n.body do (
-	       if ERROR == simpleout(o,s) then return(ERROR);
+	       if ERROR == simpleout(o,s) then return ERROR;
 	       if i != lastone then (
-		    if ERROR == simpleout(o,newline) then return(ERROR);
+		    if ERROR == simpleout(o,newline) then return ERROR;
 		    );
 	       ); 
 	  );
      0);
 export flush(o:file):int := (
-     if o.hadNet then if ERROR == flushnets(o) then return(ERROR);
+     if o.hadNet then if ERROR == flushnets(o) then return ERROR;
      simpleflush(o));
 cleanUp(o:file):void := (
      if !o.listener && !o.input && !o.output then (
@@ -315,15 +315,15 @@ cleanUp(o:file):void := (
 	  );
      );
 export closeListener(o:file):int := (
-     if o.listenerfd == NOFD then return(ERROR);
+     if o.listenerfd == NOFD then return ERROR;
      haderror := close(o.listenerfd) == ERROR;
      o.listenerfd = NOFD;
      o.listener = false;
      cleanUp(o); 
      if haderror then ERROR else 0);
 export closeIn(o:file):int := (
-     if o.infd == NOFD then return(ERROR);
-     if o == stdin then return(0);			    -- silently refuse to close stdin
+     if o.infd == NOFD then return ERROR;
+     if o == stdin then return 0;			    -- silently refuse to close stdin
      if o.input then flushinput(o);
      haderror := false;
      haderror = haderror || o.infd != o.outfd && close(o.infd) == ERROR;
@@ -337,7 +337,7 @@ export closeIn(o:file):int := (
      if haderror then ERROR else 0     
      );
 export closeOut(o:file):int := (
-     if o.outfd == NOFD then return(ERROR);
+     if o.outfd == NOFD then return ERROR;
      haderror := false;
      haderror = haderror || flush(o) == ERROR;
      haderror = haderror || o.infd != o.outfd && close(o.outfd) == ERROR;
@@ -410,11 +410,11 @@ export (o:file) << (x:string) : file := (
 
 endlfun(o:file):int := (
      if o.output then (
-	  if o.hadNet then if ERROR == flushnets(o) then return(ERROR);
+	  if o.hadNet then if ERROR == flushnets(o) then return ERROR;
 	  o << newline;
 	  if o.outisatty || o == stderr 
 	  then (
-	       if ERROR == simpleflush(o) then return(ERROR);
+	       if ERROR == simpleflush(o) then return ERROR;
 	       )
 	  else (
 	       o.outbol = o.outindex;
@@ -432,7 +432,7 @@ maybeprompt(o:file):void := ( -- called when the next line of input is already i
 
 export filbuf(o:file):int := (
      -- returns number of bytes added to buffer, or ERROR if a system call had an error
-     if ! o.input then return(0);
+     if ! o.input then return 0;
      if o.inindex > 0
      then (
 	  o.insize = o.insize - o.inindex;
@@ -541,7 +541,7 @@ export present(x:string):string := (
 	  tostring(v))
      else x);
 export tostring(i:int):string := (
-     if i==0 then return("0");
+     if i==0 then return "0";
      s := newvarstring(25);
      sign := i<0;
      if sign then i=-i;
@@ -574,9 +574,9 @@ export isnan(x:double):bool := x!=x;
 export tostring(x:bool):string := if x then "true" else "false";
 export tostring(x:double) : string := (
      o := newvarstring(25);
-     if isinf(x) then return("infinity");
-     if isnan(x) then return("NotANumber");
-     if x==0. then return("0.");
+     if isinf(x) then return "infinity";
+     if isnan(x) then return "NotANumber";
+     if x==0. then return "0.";
      if x<0. then (o << '-'; x=-x);
      oldx := x;
      i := 0;
@@ -611,11 +611,11 @@ export (o:file) << (x:double) : file := o << tostring(x);
 nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';
 
 export getc(o:file):int := (
-     if !o.input then return(EOF);
+     if !o.input then return EOF;
      if o.inindex == o.insize then (
 	  r := filbuf(o);
-	  if r == 0 then return(EOF)
-	  else if r == ERROR then return(ERROR);
+	  if r == 0 then return EOF
+	  else if r == ERROR then return ERROR;
 	  )
      else if o.bol then maybeprompt(o);
      c := o.inbuffer.(o.inindex);
@@ -629,7 +629,7 @@ export getc(o:file):int := (
 export read(o:file):(string or errmsg) := (
      if o.inindex == o.insize then (
 	  r := filbuf(o);
-	  if r == ERROR then return((string or errmsg)(errmsg(fileErrorMessage(o))));
+	  if r == ERROR then return (string or errmsg)(errmsg(fileErrorMessage(o)));
 	  )
      else if o.bol then maybeprompt(o);
      s := substr(o.inbuffer,o.inindex,o.insize);
@@ -641,17 +641,17 @@ export read(o:file):(string or errmsg) := (
 	  );
      s);
 export peek(o:file,offset:int):int := (
-     if !o.input then return(EOF);
-     if offset >= bufsize then return(ERROR);		    -- tried to peek too far
+     if !o.input then return EOF;
+     if offset >= bufsize then return ERROR;		    -- tried to peek too far
      if o.inindex+offset >= o.insize then (
-	  if o.eof then return(EOF);
+	  if o.eof then return EOF;
      	  while (
 	       r := filbuf(o);
-	       if r == ERROR then return(ERROR);
+	       if r == ERROR then return ERROR;
 	       o.inindex+offset >= o.insize
 	       )
 	  do (
-	       if o.eof then return(EOF);
+	       if o.eof then return EOF;
 	       );
 	  );
      int(uchar(o.inbuffer.(o.inindex+offset))));

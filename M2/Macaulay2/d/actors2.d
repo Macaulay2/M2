@@ -28,7 +28,7 @@ dbmfirst(e:Expr):Expr := (
      else buildErrorPacket("expected a database"));
 setupfun("firstkey",dbmfirst);
 dbmnext(f:Database):Expr := (
-     if !f.isopen then return(buildErrorPacket("database closed"));
+     if !f.isopen then return buildErrorPacket("database closed");
      when dbmnext(f.handle)
      is a:string do Expr(a)
      else nullE);
@@ -395,15 +395,15 @@ whiledofun(predicate:Code,body:Code):Expr := (
      while true do (
 	  p := eval(predicate);
 	  when p is err:Error 
-	  do return(if err.message == breakMessage then err.value else p)
+	  do return if err.message == breakMessage then err.value else p
 	  else if p == True then (
 	       b := eval(body);
 	       when b is err:Error 
-	       do return(if err.message == breakMessage then err.value else b) 
+	       do return if err.message == breakMessage then err.value else b 
 	       else nothing;
 	       )
 	  else if p == False then break
-	  else return(printErrorMessage(predicate,"expected true or false")));
+	  else return printErrorMessage(predicate,"expected true or false"));
      nullE);
 WhileDoFun = whiledofun;
 
@@ -414,11 +414,11 @@ whilelistfun(predicate:Code,body:Code):Expr := (
      while true do (
 	  p := eval(predicate);
 	  when p is err:Error
-	  do return(if err.message == breakMessage then err.value else p)
+	  do return if err.message == breakMessage then err.value else p
 	  else if p == True then (
 	       b := eval(body);
 	       when b is err:Error 
-	       do return(if err.message == breakMessage then err.value else b) 
+	       do return if err.message == breakMessage then err.value else b 
 	       else (
 		    if i == n then (
 			 n = 2*n;
@@ -432,7 +432,7 @@ whilelistfun(predicate:Code,body:Code):Expr := (
 		    );
 	       )
 	  else if p == False then break
-	  else return(printErrorMessage(predicate,"expected true or false")));
+	  else return printErrorMessage(predicate,"expected true or false"));
      Expr(
 	  list(
 	       if i == 0 then emptySequence
@@ -445,11 +445,11 @@ whilelistdofun(predicate:Code,listClause:Code,doClause:Code):Expr := (
      i := 0;
      while true do (
 	  p := eval(predicate);
-	  when p is err:Error do return(if err.message == breakMessage then err.value else p)
+	  when p is err:Error do return if err.message == breakMessage then err.value else p
 	  else if p == True then (
 	       b := eval(listClause);
 	       when b is err:Error
-	       do return(if err.message == breakMessage then err.value else b)
+	       do return if err.message == breakMessage then err.value else b
 	       else (
 		    if i == length(r) then (
 			 r = new Sequence len 2*length(r) do (
@@ -462,11 +462,11 @@ whilelistdofun(predicate:Code,listClause:Code,doClause:Code):Expr := (
 		    );
      	       c := eval(doClause);
 	       when c is err:Error
-	       do return(if err.message == breakMessage then err.value else c) 
+	       do return if err.message == breakMessage then err.value else c 
 	       else nothing;
 	       )
 	  else if p == False then break
-	  else return(printErrorMessage(predicate,"expected true or false")));
+	  else return printErrorMessage(predicate,"expected true or false"));
      Expr(
 	  list(
 	       if i == 0 then emptySequence
@@ -488,16 +488,16 @@ forfun(c:forCode):Expr := (
      	  fromvalue := eval(fromClause);
      	  when fromvalue is f:Integer do (
 	       if isInt(f) then j = toInt(f)
-	       else return(printErrorMessage(fromClause,"expected a small integer"));
+	       else return printErrorMessage(fromClause,"expected a small integer");
 	       )
-     	  else return(printErrorMessage(fromClause,"expected an integer")));
+     	  else return printErrorMessage(fromClause,"expected an integer"));
      if toClause != dummyCode then (
 	  tovalue := eval(toClause);
 	  when tovalue is f:Integer do (
 	       if isInt(f) then n = toInt(f)
-	       else return(printErrorMessage(toClause,"expected a small integer"));
+	       else return printErrorMessage(toClause,"expected a small integer");
 	       )
-	  else return(printErrorMessage(toClause,"expected an integer")));
+	  else return printErrorMessage(toClause,"expected an integer"));
      while true do (
 	  if toClause != dummyCode && j > n then break;
 	  localFrame.values.0 = toInteger(j);		    -- should be the frame spot for the loop var!
@@ -505,17 +505,17 @@ forfun(c:forCode):Expr := (
 	  if predicate != dummyCode then (
 	       p := eval(predicate);
 	       when p is err:Error do (
-		    if err.message == breakMessage then return(err.value)
-		    else return(p)
+		    if err.message == breakMessage then return err.value
+		    else return p
 		    )
 	       else if p == False then break
-	       else if p != True then return(printErrorMessage(predicate,"expected true or false"));
+	       else if p != True then return printErrorMessage(predicate,"expected true or false");
 	       );
 	  if listClause != dummyCode then (
 	       b := eval(listClause);
 	       when b is err:Error do (
-		    if err.message == breakMessage then return(err.value)
-		    else return(b)
+		    if err.message == breakMessage then return err.value
+		    else return b
 		    )
 	       else (
 		    if i == length(r) then (
@@ -531,8 +531,8 @@ forfun(c:forCode):Expr := (
 	  if doClause != dummyCode then (
 	       b := eval(doClause);
 	       when b is err:Error do (
-		    if err.message == breakMessage then return(err.value)
-		    else return(b)
+		    if err.message == breakMessage then return err.value
+		    else return b
 		    )
 	       else nothing;
 	       );
@@ -634,7 +634,7 @@ setupfun("isListener",isListener);
 close(g:Expr):Expr := (
      when g
      is f:file do ( 
-	  if !f.input && !f.output && !f.listener then return(buildErrorPacket("file already closed"));
+	  if !f.input && !f.output && !f.listener then return buildErrorPacket("file already closed");
 	  if close(f) == 0 then g
 	  else buildErrorPacket(if f.pid != 0 then "error return from child" else "error closing file"))
      is x:Database do dbmclose(x)
@@ -643,7 +643,7 @@ setupfun("simpleClose",close);
 closeIn(g:Expr):Expr := (
      when g
      is f:file do ( 
-	  if f.infd == -1 then return(buildErrorPacket("file already closed"));
+	  if f.infd == -1 then return buildErrorPacket("file already closed");
 	  if closeIn(f) == 0 then g
 	  else buildErrorPacket(if f.pid != 0 then "error closing pipe" else "error closing file"))
      else buildErrorPacket("expected an open input file"));
@@ -651,7 +651,7 @@ setupfun("simpleCloseIn",closeIn);
 closeOut(g:Expr):Expr := (
      when g
      is f:file do ( 
-	  if f.infd == -1 && f.outfd == -1 then return(buildErrorPacket("file already closed"));
+	  if f.infd == -1 && f.outfd == -1 then return buildErrorPacket("file already closed");
 	  if closeOut(f) == 0 then g
 	  else buildErrorPacket(if f.pid != 0 then "error closing pipe" else "error closing file"))
      else buildErrorPacket("expected an open output file"));

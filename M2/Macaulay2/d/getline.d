@@ -12,7 +12,7 @@ export getline(o:file):(string or errmsg) := (
      ch := 0;
      while (
 	  ch = getc(o);
-	  if iserror(ch) then return((string or errmsg)(errmsg("failed to read file : "+syserrmsg())));
+	  if iserror(ch) then return (string or errmsg)(errmsg("failed to read file : "+syserrmsg()));
 	  !(isnewline(ch) || iseof(ch))
 	  )
      do (
