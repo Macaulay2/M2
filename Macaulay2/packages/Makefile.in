@@ -22,7 +22,7 @@ REMAKE = false
 install ::
 	@ for i in $(PACKAGES) ; \
 	  do ( \
-	      if [ "$i" = Macaulay2 ] ; \
+	      if [ "$$i" = Macaulay2 ] ; \
 	      then \
 		  set -x ; \
 		  ../bin/M2 \
@@ -30,7 +30,7 @@ install ::
 		    --stop \
 		    --prefix $(encapdir) \
 		    -e errorDepth=0 \
-		    -e "installPackage(\"$$i\", Encapsulate => true, RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"$(prefix)/\")" \
+		    -e "installPackage(\"$$i\", Encapsulate => true, MakeLinks => false, RemakeAllDocumentation => $(REMAKE), MakeInfo => true, PackagePrefix => \"$(prefix)/\")" \
 		    -e "exit 0" ; \
 	      else \
 		  set -x ; \
