@@ -71,6 +71,7 @@ end Package := p -> (
      packages = append(packages,p);
      p#"restore"();
      remove(p,"restore");
+     if not p.?name then p.name = p#"package title";
      p )
 
 Macaulay2 = newPackage("Macaulay 2",version#"VERSION")
