@@ -74,7 +74,6 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   _n_saved_hilb = 0;
   _hf_orig = 0;
   _hf_diff = 0;
-  _hilb_matrix = 0;
 
   // set local variables for certain time-critical routines
 
@@ -1395,28 +1394,15 @@ void gbA::insert(POLY f, gbelem_type minlevel)
 
   auto_reduce_by(me);
 
-  if (_hilb_matrix)
+  if (_use_hilb)
     {
-      // _hilb_matrix is non-zero if codim test is set, or _use_hilb is set
-      // Make the element 1 * m * comp, as an element of _hilb_matrix->get_ring().
-      // and append it as the last column of _hilb_matrix.
-
-      ring_elem a = originalR->make_flat_term(originalR->Ncoeffs()->one(), g->g.f->monom);
-#warning "I BROKE hilb_matrix!!"
-#if 0
-      _hilb_matrix->append_column(0);
-      _hilb_matrix->set_entry(g->g.f->comp-1,_hilb_matrix->n_cols()-1, a);
-#endif      
-      if (_use_hilb)
-	{
-	  _hilb_new_elems = true;
-	  if (--_hilb_n_in_degree == 0) flush_pairs();
-	}
-      else
-	{
+      _hilb_new_elems = true;
+      if (--_hilb_n_in_degree == 0) flush_pairs();
+    }
+  else
+    {
 #warning "todo: codimension stop condition"
-	  // codim test is set.  Compute the codimension now.
-	}
+      // codim test is set.  Compute the codimension now.
     }
 
   if (gbTrace >= 10)
@@ -1497,6 +1483,23 @@ enum ComputationStatusCode gbA::computation_is_complete()
   return COMP_COMPUTING;
 }
 
+Matrix *gbA::make_lead_term_matrix()
+{
+  MatrixConstructor result(_F, gb.size());
+  ring_elem one = originalR->Ncoeffs()->one();
+  for (int i=_first_gb_element; i<gb.size(); i++)
+    {
+      gbelem *g = gb[i];
+      if (g->minlevel != ELEM_NON_MIN_GB)
+	{
+	  int x = gbelem_COMPONENT(g)-1;
+	  ring_elem a = originalR->make_flat_term(one, g->g.f->monom);
+	  result.set_entry(x,i,a);
+	}
+    }
+  return result.to_matrix();
+}
+
 void gbA::start_computation()
 {
   int npairs;
@@ -1519,7 +1522,8 @@ void gbA::start_computation()
 	  if (_hilb_new_elems)
 	    {
 	      // Recompute h, _hf_diff
-	      RingElement *h = hilb_comp::hilbertNumerator(_hilb_matrix);
+	      Matrix *hf = make_lead_term_matrix();
+	      RingElement *h = hilb_comp::hilbertNumerator(hf);
 	      if (h == 0)
 		{
 		  is_done = COMP_INTERRUPTED;
