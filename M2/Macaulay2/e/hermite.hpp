@@ -8,6 +8,7 @@
 #include "comp.hpp"
 #include "comp_gb.hpp"
 #include "ZZ.hpp"
+#include <vector>
 
 struct hm_elem : public our_new_delete
 {
@@ -21,13 +22,13 @@ class HermiteComputation : public GBComputation
 {
 private:
   int row;
-  array<hm_elem *> initial;
+  std::vector<hm_elem *, gc_allocator<hm_elem *> > initial;
 
   const Matrix *gens;			// This is the input
 
   hm_elem *GB_list;
   const FreeModule *Fsyz;
-  Matrix * syz;
+  std::vector<vec, gc_allocator<vec> > syz_list;
 
   int n_gb;
   int collect_syz;	// 0 or 1
@@ -43,7 +44,8 @@ private:
   void sort(hm_elem *&p);
   void reduce(hm_elem *&p, hm_elem *q);
 
-  void gb_reduce(vec &f, vec & /*fsyz*/) const;
+  void gb_reduce(vec &f) const;
+  void gb_reduce(vec &f, vec &fsyz) const;
   
 protected:
   virtual bool stop_conditions_ok() { return true; }
@@ -75,10 +77,7 @@ public:
   // Normal forms and lifting ////
   ////////////////////////////////
 
-     virtual const MatrixOrNull *matrix_remainder(const Matrix *m) {
-#warning "HermiteComputation::matrix_remainder(Matrix const*) -- needs to be written"
-	  return NULL;
-     }
+  virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
 
   virtual void matrix_lift(const Matrix *m,
 			   MatrixOrNull **result_remainder,

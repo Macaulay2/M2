@@ -364,7 +364,7 @@ int LLLoperations::doLLL(MutableMatrix *A,
   LLLstate->set_entry(0,n,globalZZ->from_int(k));
   LLLstate->set_entry(0,n+1,globalZZ->from_int(kmax));
 
-  if (k > n) return COMP_DONE;
+  if (k >= n) return COMP_DONE;
   if (nsteps == 0) return COMP_DONE_STEPS;
   return COMP_INTERRUPTED;
 }
