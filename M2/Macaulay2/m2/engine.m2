@@ -220,7 +220,7 @@ ZZ // RawRingElement := (y,x) -> y_(rawRing x) // x
 
 compvals := hashTable { 0 => symbol == , 1 => symbol > , -1 => symbol < }
 comparison := n -> compvals#n
-RawRingElement ? RawRingElement := (f,g) -> comparison rawRingElementCompare(f,g)
+RawRingElement ? RawRingElement := (f,g) -> comparison rawCompare(f,g)
 
 -- monomial ideals
 
