@@ -1,3 +1,14 @@
-#! /bin/sh -xe
+#! /bin/sh -e
 
-"$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/bin/M2 -q --dumpdata
+cd "$ENCAP_SOURCE/$ENCAP_PKGNAME/info" || exit 0
+for i in *.info
+do (set -x ; install-info --dir-file="$ENCAP_TARGET/info/dir" "$i")
+done
+
+if [ "@DUMPDATA@" = yes ]
+then (set -x ; "$ENCAP_SOURCE"/"$ENCAP_PKGNAME"/bin/M2 -q --dumpdata)
+fi
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/encap "
+# End:

@@ -3,24 +3,28 @@ include ../include/config.Makefile
 VPATH = @srcdir@
 
 install ::
-
-Makefile : Makefile.in; cd ..; ./config.status encap/Makefile
+Makefile    : Makefile.in    ; cd ..; ./config.status encap/$@
 
 ifeq "$(ENCAP)" "yes"
+
+postinstall : postinstall.in ; cd .. && ./config.status encap/$@
+preremove   : preremove.in   ; cd .. && ./config.status encap/$@
 
 install :: $(encapdir)/encapinfo
 $(encapdir)/encapinfo: encapinfo
 	$(INSTALL_DATA) $< "$@"
 
 install :: $(encapdir)/postinstall
-$(encapdir)/postinstall: postinstall
-	$(INSTALL_PROGRAM) $< "$@"
-postinstall : @srcdir@ ; cd .. && ./config.status encap/$@
+$(encapdir)/postinstall: postinstall; $(INSTALL_PROGRAM) $< "$@"
+
+install :: $(encapdir)/preremove
+$(encapdir)/preremove : preremove; $(INSTALL_PROGRAM) $< "$@"
 
 install :: $(encapdir)/INSTALL
-
-$(encapdir)/INSTALL : INSTALL
-	cp $< $@
+$(encapdir)/INSTALL : INSTALL; $(INSTALL_DATA) $< $@
 
 endif
 
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/encap "
+# End:

@@ -1,5 +1,6 @@
 encap 2.0
 contact dan@math.uiuc.edu
+# this depends on the LAYOUT, and was constructed manually
 linkdir lib/Macaulay2/*
 linkdir share/Macaulay2/*
 linkdir share/doc/Macaulay2/*
