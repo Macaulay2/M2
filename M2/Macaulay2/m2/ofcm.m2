@@ -530,5 +530,3 @@ RingElement _ MonoidElement := RingElement => (f,m) -> (
 	  R.pop()
 	  );
      f _ m)
-
-stats GeneralOrderedMonoid := (M) -> sendgg(ggPush M, ggstats)

@@ -118,7 +118,7 @@ setup((), {
 	  Hom, diff, diff', contract, contract', exteriorPower, subsets, partitions, member,
 	  koszul, symmetricPower, basis, coefficientRing, trace,
 	  getChangeMatrix, poincare, cover, coverMap, super, poincareN, terms,
-	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, scanValues, stats, 
+	  dual, cokernel, coimage, image, generators, someTerms, scanKeys, scanValues, summary, 
 	  substitute, rank, complete, ambient, top, transpose, baseName,
 	  degree, coefficients, size, sum, product,
 	  exponents, nullhomotopy,

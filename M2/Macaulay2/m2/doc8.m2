@@ -208,7 +208,7 @@ document { GroebnerBasis,
      ", TO "computing Groebner bases", "."
      }
 
-document { (stats, GroebnerBasis),
+document { (summary, GroebnerBasis),
      Headline => "display some statistics about the computation"
      }
 

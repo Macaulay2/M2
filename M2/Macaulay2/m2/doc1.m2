@@ -950,13 +950,13 @@ document { GlobalReleaseHook,
      SEEALSO "GlobalAssignHook"
      }
 
-document { stats,
-     TT "stats g", " -- describe the status of a Groebner basis computation
+document { summary,
+     TT "summary g", " -- describe the status of a Groebner basis computation
      or of a resolution computation.",
      PARA,
      EXAMPLE {
 	  "ZZ/101[a..f]",
-      	  "stats gb matrix {{a*b, b*c},{a^3*f, b^3*e}}",
+      	  "summary gb matrix {{a*b, b*c},{a^3*f, b^3*e}}",
 	  },
      SEEALSO { "GroebnerBasis", "Resolution" }
      }

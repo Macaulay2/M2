@@ -5,7 +5,7 @@ GroebnerBasis.synonym = "Groebner basis"
 toString GroebnerBasis := g -> toString new FunctionApplication from { gb, g.matrix }
 net GroebnerBasis := g -> net gens g
 
-stats GroebnerBasis := g -> (sendgg(ggPush g, ggstats);)
+summary GroebnerBasis := g -> (sendgg(ggPush g, ggstats);)
 
 gbTrace = (n) -> (
      if class n === ZZ then (

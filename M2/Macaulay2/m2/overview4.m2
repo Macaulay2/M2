@@ -604,14 +604,14 @@ document { "computing Groebner bases",
      after S-polynomials up to a certain degree have been handled with
      the ", TO "DegreeLimit", " option.  (This is meaningful only
      in homogeneous situations.)  Certains statistics about the suspended
-     computation can be displayed with ", TO "stats", ".",     
+     computation can be displayed with ", TO "summary", ".",     
      EXAMPLE {
 	  "R = ZZ/101[x,y,z,w];",
       	  "I = ideal(x*y-z^2,y^2-w^2)",
       	  "g2 = gb(I,DegreeLimit => 2)",
-	  "stats g2",
+	  "summary g2",
       	  "g3 = gb(I,DegreeLimit => 3)",
-	  "stats g3"
+	  "summary g3"
 	  },
      "The computation advanced further with the higher degree limit.",
      PARA,
@@ -692,7 +692,7 @@ document { "computing Groebner bases",
      is continued by re-issuing the same command.  Alternatively, the
      command can be issued with the option ", TT "StopBeforeComputation => true", ".
      It will stop immediately, and return a Groebner basis object that can
-     be inspected with ", TO "stats", ", ", TO "gens", " or ", TO "syz", ".
+     be inspected with ", TO "summary", ", ", TO "gens", " or ", TO "syz", ".
      The computation can be continued later.",
      PARA,
      "The function ", TO "forceGB", " can be used to create a Groebner
