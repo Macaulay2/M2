@@ -78,4 +78,4 @@ template class QUEUE(object);
 template class QUEUE(int_bag *);
 
 #include "termideal.hpp"
-template class QUEUE(mon_term *);
+template class QUEUE(tagged_term *);

@@ -39,7 +39,6 @@ void gb2_comp::setup(FreeModule *FFsyz,
 
   n_gb = n_mingens = n_subring = 0;
   n_gb_first = 0;
-
   n_pairs = n_pairs_computed = 0;
   n_pairs_syz = n_pairs_usyz = 0;
   n_pairs_gb = n_pairs_zero = 0;

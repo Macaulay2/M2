@@ -18,6 +18,7 @@
 #include "gb.hpp"
 #include "gbinhom.hpp"
 #include "gbbinom.hpp"
+#include "gbZZ.hpp"
 #include "sagbi.hpp"
 #include "gb2.hpp"
 #include "respoly2.hpp"
@@ -99,6 +100,7 @@ void i_stashes()
   s_pair::mystash          = new stash("spair", sizeof(s_pair));
   gb_elem::mystash         = new stash("gbelem", sizeof(gb_elem));
   GB_comp::mystash         = new stash("GB", sizeof(GB_comp));
+  GBZZ_comp::mystash       = new stash("GBZZ", sizeof(GBZZ_comp));
   GBinhom_comp::mystash    = new stash("GBinhom", sizeof(GBinhom_comp));
 
   gbres_comp::mystash       = new stash("gbres_comp",sizeof(gbres_comp));
@@ -108,6 +110,7 @@ void i_stashes()
   auto_reduce_node::mystash = new stash("autoreduce", sizeof(auto_reduce_node));
 
   S_pair::mystash          = new stash("Spair", sizeof(S_pair));
+  gen_pair::mystash        = new stash("genpair", sizeof(gen_pair));
   GB_elem::mystash         = new stash("GBelem", sizeof(GB_elem));
   s_pair_bunch::mystash    = new stash("spair_bunch", sizeof(s_pair_bunch));
   s_pair_set::mystash      = new stash("spair_set", sizeof(s_pair_set));

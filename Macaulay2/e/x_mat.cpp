@@ -947,7 +947,12 @@ void cmd_ti_getchange(object &oti, object &on)
     result = ti->ring_change_matrix();
   gStack.insert(result);
 }
-
+void cmd_ti_search(object &oti, object &om)
+{
+  TermIdeal *ti = oti->cast_to_TermIdeal();
+  Matrix m = om->cast_to_Matrix();
+  gStack.insert(ti->search(m));
+}
 // Random number/element generation
 void cmd_random_seed(object &on)
 {
@@ -1107,4 +1112,5 @@ void i_Matrix_cmds(void)
   install(ggmatrix, cmd_ti_matrix, TY_TERMIDEAL);
   install(ggtermideal, cmd_ti_ti, TY_MATRIX, TY_INT);
   install(gggetchange, cmd_ti_getchange, TY_TERMIDEAL, TY_INT);
+  install(ggsearch, cmd_ti_search, TY_TERMIDEAL, TY_MATRIX);
 }

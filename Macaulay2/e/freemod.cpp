@@ -8,6 +8,7 @@
 #include "polyring.hpp"
 #include "ringmap.hpp"
 #include "ntuple.hpp"
+#include "termideal.hpp"
 
 #include "geovec.hpp"
 
@@ -729,24 +730,67 @@ void FreeModule::imp_subtract_ring_multiple_to
   add_to(f, result);
   K->remove(minus_a);
 }
+void FreeModule::apply_quotient_ring_elements(vec &f, vec rsyz) const
+{
+  // f in F
+  // rsyz in Rsyz
+  // Modify f using the ring elements in rsyz, applied to component 'x'.
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  assert(P != NULL);
+  assert(f != NULL);
+  int x = f->comp;
+  for (vec t = rsyz; t != NULL; t = t->next)
+    {
+      ring_elem r = P->get_quotient_elem(t->comp);
+      vec f1 = imp_ring_mult_by_term(r, t->coeff, t->monom, x);
+      add_to(f, f1);
+    }
+}
+void FreeModule::normal_form_ZZ(vec &f) const
+{
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  vecterm head;
+  vecterm *result = &head;
+
+  while (f != NULL)
+    {
+      vec gsyz, rsyz;
+      bool reduces = P->RidealZ->search(f->coeff, f->monom,
+					gsyz, rsyz);
+      if (rsyz != NULL)	
+	{
+	  apply_quotient_ring_elements(f, rsyz);
+	  P->Rsyz->remove(rsyz);
+	}
+      if (!reduces)
+	{
+	  result->next = f;
+	  f = f->next;
+	  result = result->next;
+	}
+    }
+  result->next = NULL;
+  f = head.next;
+}
+
 void FreeModule::normal_form(vec &v) const
 {
   assert(M != NULL);		// This routine should only be called
 				// if is_quotient_ring is set, which should
 				// only be set if M != NULL.
   const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (coefficients_are_ZZ)
+    {
+      normal_form_ZZ(v);
+      return;
+    }
   vecterm head;
   vecterm *result = &head;
 
   vecterm *t = v;
 
-  //buffer o;
-  //emit_line("---in normal form---");
   while (t != NULL)
     {
-      //  elem_text_out(o,t);
-      //  emit_line(o.str());
-      //  o.reset();
       if (ty == FREE_POLY)
 	M->to_expvector(t->monom, nf_exp);
       else
@@ -762,8 +806,6 @@ void FreeModule::normal_form(vec &v) const
 	  ring_elem coeff;
 	  imp_ring_cancel_lead_term(t, s, coeff, nf_1);
 	  K->remove(coeff);
-	  //M->divide(t->monom, s->monom, nf_1);
-	  //imp_subtract_ring_multiple_to(t, t->coeff, nf_1, s);
 	}
       else
 	{
@@ -875,6 +917,25 @@ void FreeModule::auto_reduce(const FreeModule *Fsyz, vec &f, vec &fsyz,
       imp_subtract_multiple_to(f, c, nf_1, g);
       Fsyz->imp_subtract_multiple_to(fsyz, c, nf_1, gsyz);
     }
+  K->remove(c);
+}
+
+void FreeModule::auto_reduce_coeffs(const FreeModule *Fsyz, vec &f, vec &fsyz, 
+		 vec g, vec gsyz) const
+  // If f = ... + c m + ...
+  // and g = d m + ...
+  // and r = floor(c/d), then f -= r*f, fsyz -= r*fsyz.
+{
+  // Valid only for coefficients = ZZ.
+  ring_elem c1 = coeff_of(f, g->monom, g->comp);
+  ring_elem c = K->divide(c1, g->coeff);
+  if (!K->is_zero(c))
+    {
+      if (M != NULL) M->one(nf_1);
+      imp_subtract_multiple_to(f, c, nf_1, g);
+      Fsyz->imp_subtract_multiple_to(fsyz, c, nf_1, gsyz);
+    }
+  K->remove(c1);
   K->remove(c);
 }
 

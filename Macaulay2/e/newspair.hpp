@@ -5,28 +5,9 @@
 #include "freemod.hpp"
 #include "polyring.hpp"
 
-struct GB_elem
-{
-  GB_elem *next;
-  vec f;
-  vec fsyz;
-  int *lead_exp;
-  int is_min;			// TY_MINIMAL, TY_SMALL_GB, TY_LARGE_GB, TY_REMOVED
-  int me;
-  
-  GB_elem()
-    : next(NULL),
-      f(NULL), fsyz(NULL), lead_exp(NULL), is_min(0), me(0) {}
-  GB_elem(vec f, vec fsyz, int is_min) 
-    : next(NULL),
-      f(f), fsyz(fsyz), lead_exp(NULL), is_min(is_min), me(0) {}
-
-  // infrastructure
-  friend void i_stashes();
-  static stash *mystash;
-  void *operator new(size_t) { return mystash->new_elem(); }
-  void operator delete(void *p) { mystash->delete_elem(p); }
-};
+struct gen_pair;
+struct S_pair;
+struct s_pair_bunch;
 
 struct gen_pair
 {
@@ -45,10 +26,11 @@ struct gen_pair
 struct S_pair
 {
   S_pair *next;
-  vec fsyz;
+  vec gsyz;			// element of Gsyz
+  vec rsyz;			// element of Rsyz
 
   S_pair();
-  S_pair(vec fsyz);
+  S_pair(vec gsyz, vec rsyz);
   // infrastructure
   friend void i_stashes();
   static stash *mystash;
@@ -82,7 +64,7 @@ struct s_pair_bunch
 
 class s_pair_set
 {
-  const FreeModule *F, *Fsyz, *Gsyz;
+  const FreeModule *F, *Fsyz, *Gsyz, *Rsyz;
 
   s_pair_bunch *heap;		// Sorted by increasing degree
   s_pair_bunch *this_deg;	// Points to current degree (which should be the first)
@@ -105,6 +87,7 @@ class s_pair_set
 
   s_pair_bunch *get_degree(int d);
 
+  void debug_out(S_pair *s) const;
   void debug_out(buffer &o, S_pair *s) const;
   void debug_out(buffer &o, gen_pair *s) const;
 
@@ -114,15 +97,16 @@ class s_pair_set
   void remove_gen(gen_pair *&s);
   void remove_gen_list(gen_pair *&p);
 public:
-  s_pair_set(const FreeModule *F, const FreeModule *Fsyz, const FreeModule *Gsyz);
+  s_pair_set(const FreeModule *F, const FreeModule *Fsyz, const FreeModule *Gsyz, const FreeModule *Rsyz);
   ~s_pair_set();
 
-  void insert(S_pair *&p);	// Insert an s-pair
-  void insert(gen_pair *&p);	// Insert a generator
+  void insert_generator(vec f, vec fsyz);
+  bool next_generator(vec &f, vec &fsyz);
+
+  void insert_s_pair(vec gsyz, vec rsyz);
+  bool next_s_pair(vec &gsyz, vec &rsyz);
 
   int next_degree(int &nextdeg);	// Returns number to be done in nextdeg.
-  S_pair *next_pair();		// Returns NULL if no more
-  gen_pair *next_gen();		// Returns NULL if no more
   void flush_degree();
 
   int n_elems_left() const { return nelems; } // The number currently contained in this set

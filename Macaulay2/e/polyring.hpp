@@ -30,7 +30,10 @@ protected:
   // Quotient ring information
   const PolynomialRing *base_ring; // == NULL iff this is not a quotient ring
   array<ring_elem> quotient_ideal;
-  MonomialIdeal Rideal;
+  MonomialIdeal Rideal;		// This is used if the coeff ring is not ZZ.
+  TermIdeal *RidealZ;		// This is used if the coeff ring is ZZ.
+  bool coefficients_are_ZZ;
+  FreeModule *Rsyz;
   bool isgraded;
   bool isfield;
 
@@ -61,6 +64,9 @@ public:
   bool        is_quotient_ring() const { return (base_ring != NULL); }
   const PolynomialRing * get_base_poly_ring() const { return base_ring; }
   MonomialIdeal  get_quotient_monomials() const { return Rideal; }
+  const TermIdeal *get_quotient_monomials_ZZ() const { return RidealZ; }
+  const FreeModule *get_Rsyz() const { return Rsyz; }
+
   Matrix     get_ideal() const;
   ring_elem get_quotient_elem(int i) const { return quotient_ideal[i]; }
   int        get_quotient_elem_length() const { return quotient_ideal.length(); }
@@ -127,9 +133,10 @@ protected:
   virtual ring_elem power2(const ring_elem f, mpz_t n) const;
   virtual ring_elem power2(const ring_elem f, int n) const;
 
-public:
   // Polynomial routines
   void make_Rideal(const array<ring_elem> &polys);
+  void make_RidealZ(const array<ring_elem> &polys);
+public:
 
   virtual ring_elem mult_by_term(const ring_elem f, 
 				  const ring_elem c, const int *m) const;
@@ -174,7 +181,11 @@ protected:
 			ring_elem &coeff, 
 			int *monom) const;
 
+public:
   void normal_form(Nterm *&f) const;
+  void apply_ring_elements(Nterm * &f, vec rsyz, const array<ring_elem> &elems) const;
+  void normal_form_ZZ(Nterm *&f) const;
+protected:
   void term_degree(const Nterm *t, int *degt) const;
   ring_elem imp_skew_mult_by_term(const ring_elem f, 
 				  const ring_elem c, const int *m) const;

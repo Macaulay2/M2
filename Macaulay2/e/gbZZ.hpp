@@ -10,19 +10,53 @@
 #include "gb_comp.hpp"
 
 #include "newspair.hpp"
+#include "termideal.hpp"
+
+const bool GB_NOT_MINIMAL = false;
+const bool GB_MAYBE_MINIMAL = true;
+
+struct GB_elem
+{
+  GB_elem *next;
+  vec f;
+  vec fsyz;
+  int *lead_exp;
+  bool is_min;			// eventually: TY_MINIMAL, TY_SMALL_GB, TY_LARGE_GB, TY_REMOVED
+  int me;
+  
+  GB_elem()
+    : next(NULL),
+      f(NULL), fsyz(NULL), lead_exp(NULL), is_min(0), me(0) {}
+  GB_elem(vec f, vec fsyz, int is_min) 
+    : next(NULL),
+      f(f), fsyz(fsyz), lead_exp(NULL), is_min(is_min), me(0) {}
+
+  // infrastructure
+  friend void i_stashes();
+  static stash *mystash;
+  void *operator new(size_t) { return mystash->new_elem(); }
+  void operator delete(void *p) { mystash->delete_elem(p); }
+};
+
 
 class GBZZ_comp : public gb_comp
 {
 private:
   // Ring information
+  const Ring *K;
   const Monoid *M;
-  const PolynomialRing *R;
+  const PolynomialRing *A;	// The quotient ring (if a quotient, that is)
+  const PolynomialRing *R;	// The polynomial ring (possibly A = R).
   const FreeModule *F;		// generators live here
   const FreeModule *Fsyz;	// original generators correspond to basis elements
-  const FreeModule *Gsyz;	// GB elements correspond to basis elements
+  FreeModule *Gsyz;	// GB elements correspond to basis elements
 				// These are NOT necessarily minimal GB elements.
 				// spairs are initially constructed using Gsyz.
-				// 
+				// This is NOT a Schreyer order...
+
+  // Base ring information.  This should be in the PolynomialRing class...
+  const FreeModule *Rsyz;	// NOT a Schreyer order.
+
   int this_degree;
 
   // state information
@@ -33,7 +67,7 @@ private:
   s_pair_set *spairs;
 
   array<GB_elem *> gb;
-  array<monideal_pair *> monideals; // baggage for each is 'gb_elem *'
+  array<TermIdeal *> termideals;
 
   // Syzygies collected
   Matrix syz;
@@ -53,11 +87,9 @@ private:
   bool collect_syz;
   int n_comps_per_syz;
   bool is_ideal;
-  int strategy;			// 0 = don't sort gb, 1 = sort gb
+  int strategy;
 
-  // Local data
-  int *REDUCE_EXP;		// exponent vector, used in reduction routines as local var.
-  int *REDUCE_DIV;		// element of M, used in reduction routines as local var.
+  ring_elem one;		// K->one.
 private:
   void set_up0(const Matrix &m, int csyz, int nsyz);
   void set_up(const Matrix &m, int csyz, int nsyz, int strategy);
@@ -65,17 +97,23 @@ private:
 	  const Matrix &syz);
 
   // S-pair control
-  S_pair *new_ring_pair(GB_elem *p, const int *lcm);
-  S_pair *new_s_pair(GB_elem *p, GB_elem *q, const int *lcm);
-  gen_pair *new_gen(int i, const vec f);
-  void remove_pair(S_pair *& p);
-  void remove_gen(gen_pair *& p);
+  bool new_generator(int i, const vec m, 
+		     vec &f, vec &fsyz);
+
+  void apply_gb_elements(vec &f, vec &fsyz, vec gsyz) const;
+  void compute_s_pair(vec gsyz, vec rsyz,
+		      vec &f, vec &fsyz) const;
+  bool gb_reduce(vec &f, vec &fsyz) const; 
+  // gb_reduce: returns 'false' iff the final lead term of 'f' is not in the
+  // initial monomial ideal.  If 'f' reduces to zero, 'true' is returned.
+
+  // void gb_geo_reduce(vec &f, vec &fsyz) const;
 
   void find_pairs(GB_elem *p);
-  void compute_s_pair(S_pair *p, vec &f, vec &fsyz);
-  void gb_reduce(vec &f, vec &fsyz);
-  void gb_geo_reduce(vec &f, vec &fsyz);
-  void gb_insert(vec f, vec fsyz, int ismin);
+
+  void insert_gb_element(vec f, vec fsyz, bool is_minimal);
+  bool insert_syzygy(vec fsyz);
+  void handle_element(vec f, vec fsyz, bool maybe_minimal);
 
   int gb_sort_partition(int lo, int hi);
   void gb_sort(int lo, int hi);
@@ -123,7 +161,6 @@ public:
   Matrix gb_matrix();
   Matrix change_matrix();
   Matrix syz_matrix();
-  void debug_out(S_pair *q) const;
   void stats() const;
 
   // infrastructure

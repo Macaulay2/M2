@@ -5,6 +5,7 @@
 #include "gb.hpp"
 #include "gbinhom.hpp"
 #include "gbbinom.hpp"
+#include "gbZZ.hpp"
 #include "comp.hpp"
 #include "hilb.hpp"
 #include "hermite.hpp"
@@ -62,6 +63,10 @@ void cmd_gb_make(object &om,
       else
 	gStack.insert(new GBinhom_comp(m, dosyz, nsyz, strategy));
     }
+  else if (R->is_poly_ring() && R->Ncoeffs()->is_Z())
+    {
+      gStack.insert(new GBZZ_comp(m, dosyz, nsyz, strategy));
+    }
   else if (R->is_poly_ring() && R->Ncoeffs()->is_pid())
     {
       gError << "GB for polynomial rings over PID's not yet implemented";
@@ -79,8 +84,8 @@ void cmd_gb_make1(object &om,
   int dosyz = odosyz->int_of();
   if (dosyz)
     {
-    cmd_gb_make(om,odosyz,osyz,ostrategy);
-    return;
+      cmd_gb_make(om,odosyz,osyz,ostrategy);
+      return;
     }
   Matrix m = om->cast_to_Matrix();
   const Ring *R = m.Ring_of();
@@ -148,13 +153,27 @@ void cmd_NGB_make1(object &om,
   gStack.insert(p);
 }
 
+object_element *make_forceGB(Matrix gens, Matrix gb, Matrix change, Matrix syz)
+{
+  const Ring *R = gens.Ring_of();
+  if (R->is_poly_ring())
+    {
+      if (R->Ncoeffs()->is_field())
+	return new GB_comp(gens, gb, change, syz);
+      else if (R->Ncoeffs()->is_Z())
+	return new GBZZ_comp(gens, gb, change, syz);
+    }
+  gError << "Cannot create the desired forced Groebner basis";
+  return NULL;
+}
+
 void cmd_NGB_force(object &ogens, object &ogb, object &ochange)
 {
   Matrix gens = ogens->cast_to_Matrix();
   Matrix m    = ogb->cast_to_Matrix();
   Matrix change = ochange->cast_to_Matrix();
   Matrix syz(change.rows());
-  GB_comp *p    = new GB_comp(gens, m, change, syz);
+  object_element *p = make_forceGB(gens,m,change,syz);
   gStack.insert(p);
 }
 
@@ -164,7 +183,7 @@ void cmd_NGB_force1(object &ogens, object &ogb, object &ochange, object &osyz)
   Matrix m      = ogb->cast_to_Matrix();
   Matrix change = ochange->cast_to_Matrix();
   Matrix syz    = osyz->cast_to_Matrix();
-  GB_comp *p     = new GB_comp(gens, m, change, syz);
+  object_element *p = make_forceGB(gens,m,change,syz);
   gStack.insert(p);
 }
 

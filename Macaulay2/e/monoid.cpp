@@ -400,8 +400,8 @@ void Monoid::monsyz(const int *m, const int *n, int *sm, int *sn) const
 	}
       else
 	{
-	  EXP2[i] = 0;
 	  EXP1[i] = EXP2[i] - EXP1[i];
+	  EXP2[i] = 0;
 	}
   from_expvector(EXP1, sm);
   from_expvector(EXP2, sn);
