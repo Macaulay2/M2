@@ -143,7 +143,7 @@ PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
 }
 
 
-PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 
+PolyRingQuotient *PolyRingQuotient::create(const PolynomialRing *R, 
 					   const Matrix *M)
 {
   if (M->get_ring() != R)
@@ -152,10 +152,12 @@ PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R,
       return 0;
     }
   std::vector<Nterm *, gc_alloc> elems;
+  for (int i=0; i<R->n_quotients(); i++)
+    elems.push_back(R->quotient_element(i));
   for (int i=0; i<M->n_cols(); i++)
     elems.push_back(M->elem(0,i));
 
-  return create(R,elems);
+  return create(R->getAmbientRing(),elems);
 }
 
 PolyRingQuotient *PolyRingQuotient::create(const PolyRing *R, 

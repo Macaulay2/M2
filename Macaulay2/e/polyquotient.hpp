@@ -42,7 +42,7 @@ protected:
 
 public:
 
-  static PolyRingQuotient *create(const PolyRing *R, const Matrix *M);
+  static PolyRingQuotient *create(const PolynomialRing *R, const Matrix *M);
 
   static PolyRingQuotient *create(const PolyRing *R, 
 				  const PolynomialRing *B);
