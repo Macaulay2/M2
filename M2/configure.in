@@ -6,11 +6,20 @@ AC_DEFINE_UNQUOTED(VERSION,"$VERSION",version number)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_HOST()
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
+
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
 AC_PROG_CC()
 AC_PROG_CXX()
+
+case "$CC" in
+    cl) export CFLAGS="$CFLAGS -Zi -nologo -G5 -W3 -GR -GX"
+        export CXXFLAGS="$CXXFLAGS -Zi -nologo -G5 -W3 -GR -GX" ;;
+    gcc) export CFLAGS="$CFLAGS -fexpensive-optimizations -O3"
+         export CXXFLAGS="$CXXFLAGS -fexpensive-optimizations -O3" ;;
+esac
+
 AC_PROG_YACC()
 M2_ENABLE_DUMPDATA()
 AC_CHECK_FUNC(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing))
