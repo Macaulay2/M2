@@ -59,15 +59,16 @@ announce ::
 
 $(TOPDIR)/Makeconf.lcl :
 	echo '# This file generated automatically, but may be edited to set local options.' >$@
+	(echo -n "# uname -a => "; uname -a) >>$@
 	echo '# COMPILER    := microsoft' >>$@
-	echo '#	PROFILE     := TRUE' >>$@
-	echo '#	NOSTRIP     := TRUE' >>$@
-	echo '#	MEMDEBUG    := TRUE' >>$@
-	echo '#	DEBUG       := TRUE' >>$@
-	echo '#	VERBOSE     := TRUE' >>$@
-	echo '#	NODUMPDATA  := TRUE' >>$@
-	echo '#	NOMP        := TRUE' >>$@
-	echo '#	NOFACTORY   := TRUE' >>$@
+	echo '# PROFILE     := TRUE' >>$@
+	echo '# NOSTRIP     := TRUE' >>$@
+	echo '# MEMDEBUG    := TRUE' >>$@
+	echo '# DEBUG       := TRUE' >>$@
+	echo '# VERBOSE     := TRUE' >>$@
+	echo '# NODUMPDATA  := TRUE' >>$@
+	echo '# NOMP        := TRUE' >>$@
+	echo '# NOFACTORY   := TRUE' >>$@
 	echo 'CC            := gcc' >>$@
 	echo 'CXX           := g++' >>$@
 include $(TOPDIR)/Makeconf.lcl
