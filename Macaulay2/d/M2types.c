@@ -1,6 +1,7 @@
 #include "M2types.h"
 #include <string.h>
 #include <stdio.h>
+#include <malloc.h>
 
 #if defined(__DJGPP__) || defined(_WIN32)
 #define NEWLINE "\r\n"
@@ -16,6 +17,14 @@ char *getmem(unsigned int n)
 {
   char *p;
   p = GC_MALLOC(n);
+  if (p == NULL) outofmem();
+  return p;
+}
+
+char *getmem_malloc(unsigned int n)
+{
+  char *p;
+  p = malloc(n);
   if (p == NULL) outofmem();
   return p;
 }
@@ -45,6 +54,24 @@ char **tocharstarstar(M2_stringarray p)
   char **s = (char **)getmem((n + 1)*sizeof(char *));
   unsigned int i;
   for (i=0; i<n; i++) s[i] = tocharstar(p->array[i]);
+  s[n] = NULL;
+  return s;
+}
+
+char *tocharstar_malloc(M2_string s)
+{
+  char *p = getmem_malloc(s->len + 1);
+  memcpy(p,s->array,s->len);
+  p[s->len] = 0;
+  return p;
+}
+
+char **tocharstarstar_malloc(M2_stringarray p)
+{
+  int n = p->len;
+  char **s = (char **)getmem_malloc((n + 1)*sizeof(char *));
+  unsigned int i;
+  for (i=0; i<n; i++) s[i] = tocharstar_malloc(p->array[i]);
   s[n] = NULL;
   return s;
 }

@@ -442,7 +442,7 @@ export filbuf(o:file):int := (
      o.bol = false;
      n := length(o.inbuffer) - o.insize;
      r := if o.promptq then (
-	  if o.infd == STDIN
+	  if o.infd == STDIN && o.inisatty
 	  then (
 	       flush(stdout);
 	       readline(o.inbuffer,n,o.insize,o.prompt()))
@@ -450,7 +450,7 @@ export filbuf(o:file):int := (
 	       stdout << o.prompt();
 	       flush(stdout);
 	       read(o.infd,o.inbuffer,n,o.insize)))
-	  else read(o.infd,o.inbuffer,n,o.insize);
+     else read(o.infd,o.inbuffer,n,o.insize);
      if r == ERROR then (fileErrorMessage(o,"read");)
      else if r == 0 then (
 	  o.eof = true;

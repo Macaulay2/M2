@@ -830,6 +830,36 @@ symbols(e:Expr):Expr := (
      o);
 setupfun("symbolTable",symbols);
 
+varstringarray := { a:array(string), n:int };
+newvarstringarray(m:int):varstringarray := varstringarray( new array(string) len m do provide "", 0 );
+append(v:varstringarray,s:string):varstringarray := (
+     n := v.n;
+     if length(v.a) == n then varstringarray( 
+	  new array(string) len 2*n+1 do (
+	       foreach t in v.a do provide t;
+	       provide s;
+	       while true do provide "";
+	       ),
+	  n+1)
+     else (
+     	  v.a.n = s;
+     	  v.n = n+1;
+     	  v));
+extract(v:varstringarray):array(string) := new array(string) len v.n do foreach s in v.a do provide s;
+
+export completions(s:string):array(string) := (
+     n := length(s);
+     v := newvarstringarray(6);
+     foreach bucket in globalScope.dictionary.hashTable do (
+	  p := bucket;
+	  while true do when p
+	  is null do break
+	  is q:SymbolListCell do (
+	       t := q.entry.word.name;
+	       if 0 == strncmp(s,t,n) then v=append(v,t);
+	       p = q.next; ));
+     extract(v));
+
 export commonAncestor(x:HashTable,y:HashTable):HashTable := (
      if x == y then return(x);
      t := x;

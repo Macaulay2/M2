@@ -292,12 +292,13 @@ interpret.a : $(ALLOBJ)
 ###################### libraries
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
+  # -- we do not need -lcfmem, because we include replacement routines in d/scclib.c
 LIBRARYOPTIONS += -lntl
 LIBRARYOPTIONS += -lgmp
 LIBRARYOPTIONS += -lgc
 LIBRARYOPTIONS += -lgdbm
 LIBRARYOPTIONS += -lreadline -lhistory -lcurses
-# we avoid successfully using streamio, but we need the personality function
+  # we successfully avoid using streamio, but we need the personality function in libstc++
 LIBRARYOPTIONS += -lstdc++
 
 ifeq "$(LAPACK)" "yes"

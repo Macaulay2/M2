@@ -388,6 +388,40 @@ int offset;
 #include <readline/readline.h>
 #include <readline/history.h>
 
+extern M2_stringarray objects_completions(M2_string);
+
+static char *M2_completion_generator(const char *text, int state) {
+  static int i;
+  static char **v;
+  char *p;
+  if (state == 0) {
+    M2_string s;
+    M2_stringarray ret;
+    i = 0;
+    if (v != NULL) free(v);
+    s = tostring(text);
+    ret = objects_completions(s);
+    GC_FREE(s);
+    v = tocharstarstar_malloc(ret); /* readline will use free() to free these strings */
+    GC_FREE(ret);
+  }
+  p = v[i];
+  if (p != NULL) i++;
+  return p;
+}
+
+static char **M2_completion(const char *text, int start, int end) {
+  if (start > 0 && rl_line_buffer[start-1] == '"') return NULL;	/* force filename completion */
+  return rl_completion_matches(text, M2_completion_generator);
+}
+
+
+void init_readline_variables() {
+  rl_readline_name = "M2";
+  rl_attempted_completion_function = M2_completion;
+  rl_basic_word_break_characters = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r";
+}
+
 static int read_via_readline(char *buf,int len,char *prompt) {
   static char *p;		/* buffer, NULL if newline has already been returned */
   static int plen;		/* number of chars in p */
@@ -957,6 +991,10 @@ M2_stringarray system_wordexp(M2_string s) {
   fprintf(stderr,"warning: wordexp() not installed on your system\n");
   return NULL;
 #endif
+}
+
+int system_strncmp(M2_string s,M2_string t,int n) {
+  return strncmp(s->array,t->array,n);
 }
 
 #include <regex.h>
