@@ -312,8 +312,8 @@ ifeq "$(GCC) $(STATIC)" "yes no"
 LIBRARYOPTIONS += -Wl,-Bdynamic
 endif
 
-ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $(OUTPUT_OPTION) $<
+# ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
+# 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c $(OUTPUT_OPTION) $<
 
 LDLIBS := $(LIBRARYOPTIONS) $(LDLIBS)
 
