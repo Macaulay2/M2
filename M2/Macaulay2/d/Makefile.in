@@ -316,8 +316,6 @@ endif
 # statically linked libraries
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
-LIBRARYOPTIONS += -lfac
-LIBRARYOPTIONS += -lcf
 LIBRARYOPTIONS += -lgmp
 LIBRARYOPTIONS += -lgc
 LIBRARYOPTIONS += -lgdbm

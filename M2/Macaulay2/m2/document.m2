@@ -1,29 +1,26 @@
---		Copyright 1994-1999 by Daniel R. Grayson
+--		Copyright 1994-2002 by Daniel R. Grayson
 
 -----------------------------------------------------------------------------
 -- configuration
 -----------------------------------------------------------------------------
-maximumCodeWidth := 200
-directoryPath = x -> minimizeFilename concatenate mingle(x,#x:pathSeparator)
-CachePrefix := directoryPath {"cache"}
-TestsPrefix := directoryPath {"cache", "tests"}
-documentationPath = {
-     directoryPath{"cache","doc"}
-     }
+maximumCodeWidth := 120
+TestsPrefix := "cache/tests/"
+documentationPath = { "cache/doc/" }
 addStartFunction(
      () -> (
 	  home := getenv "M2HOME";
 	  if home === "" then error "environment variable M2HOME not set";
 	  home = minimizeFilename home;
-	  path = unique join(apply(path, minimizeFilename), {
-	       	    directoryPath{home,"m2"},
-	       	    directoryPath{home,"packages"}
-		    });
-	  documentationPath = unique {
-	       directoryPath{"cache","doc"}, -- this is where new documentation is written
-	       directoryPath{home,"m2","cache","doc"},
-	       directoryPath{home,"packages","cache","doc"}
-	       };
+	  path = unique apply(
+	       join( path, { home | "m2/", home | "packages/" }),
+	       minimizeFilename);
+	  documentationPath = unique apply(
+	       {
+		    "cache/doc/",	-- this is where new documentation is written
+		    home | "m2/cache/doc/",
+		    home | "packages/cache/doc/"
+		    },
+	       minimizeFilename);
 	  )
      )
 -----------------------------------------------------------------------------

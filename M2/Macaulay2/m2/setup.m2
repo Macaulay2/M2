@@ -60,17 +60,10 @@ if class path =!= List then path = { "" }
 savepath := path
 path = join({ currentFileDirectory, ""}, path)
 
-OS := "operating system"
-
-pathSeparator = (
-	if version#"operating system" === "MACOS" then "" 
-	else "/"
-	)
+pathSeparator = "/"
 
 isAbsolutePath := (
-     if version#"operating system" === "MACOS"
-     then filename -> any(characters substring(filename,1,#filename), c -> c === ":")
-     else if version#"operating system" === "Windows-95-98-NT"
+     if version#"operating system" === "Windows-95-98-NT"
      then filename -> substring(filename,1,1) === ":"
      else filename -> pathSeparator === substring(filename,0,#pathSeparator)
      )
@@ -162,28 +155,6 @@ tryload := (filename,load) -> (
 		    result := load fullfilename;
 		    if result then markLoaded(fullfilename,filename);
 		    result))))
-
- -- if version#"operating system" === "MACOS"
- -- then tryload = (filename,load) -> (
- --      if isAbsolutePath filename then (
- -- 	  if load filename then (
- -- 	       markLoaded filename;
- -- 	       true)
- -- 	  else false)
- --      else (
- --           if class path =!= List
- -- 	  then error "expected 'path' to be a list of strings";
- --           {} =!= select(1,path, 
- -- 	       dir -> (
- -- 		    if class dir =!= String 
- -- 		    then error "member of 'path' not a string";
- -- 		    fn := (
- -- 			 if dir === "." or dir === ":" then filename 
- -- 			 else dir  | filename
- -- 			 );
- -- 		    result := load fn;
- -- 		    if result then markLoaded fn;
- -- 		    result))))
 
 oldLoad := load
 erase symbol load

@@ -33,7 +33,7 @@ up   := key -> if   UP#?key then HREF { linkFilename   UP#key,   upButton } else
 
 scope := method(SingleArgumentDispatch => true)
 scope2 := method(SingleArgumentDispatch => true)
-scope3 := method(SingleArgumentDispatch => true)
+scope1 := method(SingleArgumentDispatch => true)
 
 follow := key -> (
      fkey := formatDocumentTag key;
@@ -56,23 +56,32 @@ follow := key -> (
 	  )
      )
 
+-- scanning at top level
 scope Thing := x -> null
 scope Sequence := scope BasicList := x -> scan(x,scope)
-scope SHIELD := x -> scan(x,scope3)
+scope SHIELD := x -> scan(x,scope1)
 scope MENU := x -> scan(x,scope2)
 scope TO := scope TOH := x -> follow x#0
 
-scope3 Thing := x -> null
-scope3 Sequence := scope3 BasicList := x -> scan(x,scope3)
-scope3 TO := scope3 TOH := x -> follow x#0
+-- scanning inside a SHIELD
+scope1 Thing := x -> null
+scope1 Sequence := scope1 BasicList := x -> scan(x,scope1)
+scope1 TO := scope1 TOH := x -> follow x#0
 
+-- scanning inside a MENU not inside a SHIELD
 scope2 Thing := scope
 scope2 SEQ := x -> scan(x,scope2)
+scope2 SHIELD := x -> scan(x,scope1)
 scope2 TO := scope2 TOH := x -> (
+     -- here we construct the ordered tree needed for presentation in book format,
+     -- with UP, NEXT, and PREVIOUS pointers.
      key := formatDocumentTag x#0;
      if UP#?key 
-     then << "links to '" << key << "' from two nodes: '" << UP#key << "' and '" << thisKey << "'" << endl
-     else if key == thisKey then << "node " << key << " links to itself" << endl
+     then (
+	  stderr << "links to '" << key << "' from two nodes: '"
+	  << UP#key << "' and '" << thisKey << "'" << endl
+	  )
+     else if key == thisKey then stderr << "node " << key << " links to itself" << endl
      else (
 	  UP#key = thisKey;
 	  if lastKey =!= null then (
@@ -146,7 +155,7 @@ anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
 
 pass4 := () -> (
      << "pass 4, creating the master index" << endl;
-     masterNodeName := "master index";
+     masterNodeName := topNodeName | " Index";
      masterFileName << html HTML {
 	  HEAD { TITLE masterNodeName },
 	  BODY {
