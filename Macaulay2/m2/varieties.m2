@@ -6,7 +6,8 @@ AffineVariety = new Type of Variety
 AffineVariety.synonym = "affine variety"
 ProjectiveVariety = new Type of Variety
 ProjectiveVariety.synonym = "projective variety"
-ring Variety := (X) -> X.ring
+ring Variety := X -> X.ring
+ideal Variety := X -> ideal ring X
 hilbertPolynomial Variety := ProjectiveHilbertPolynomial => opts -> X -> hilbertPolynomial ring X
 Spec = method()
 expression AffineVariety := (X) -> new FunctionApplication from { Spec, X.ring }

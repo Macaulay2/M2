@@ -1218,6 +1218,7 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   m.append(F->term(0,a));
   m.append(F->term(0,b));
   
+#if 0
   buffer o;
   o << "constructing syzygy on ";
   elem_text_out(o,a);
@@ -1229,6 +1230,7 @@ void PolynomialRing::syzygy(const ring_elem a, const ring_elem b,
   m.text_out(o);
   emit_line(o.str());
   o.reset();
+#endif
 
   EGB1 *g = new EGB1(m,true,-1,0);
   bump_up(g);

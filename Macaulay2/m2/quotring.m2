@@ -4,6 +4,8 @@
 QuotientRing = new Type of EngineRing
 QuotientRing.synonym = "quotient ring"
 
+ideal QuotientRing := R -> R.ideal
+
 isQuotientRing = method(TypicalValue => Boolean)
 isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
@@ -82,6 +84,7 @@ ZZZquotient := (R,I) -> (
 	  if En > 1 and not isPrime En
 	  then error "ZZZ/n not implemented yet for composite n";
 	  ES := new QuotientRing from newHandle(ggPush En, ggEcharp);
+	  ES.ideal = I;
 	  ES.baseRings = append(R.baseRings,R);
 	  ES.newEngine = true;
 	  ES.relations = EgensI;
@@ -114,6 +117,7 @@ ZZquotient := (R,I) -> (
 	  G := degreesMonoid 0;
 	  sendgg(ggPush n, ggPush G, ggcharp);
 	  S := new QuotientRing from newHandle();
+	  S.ideal = I;
 	  S.baseRings = {R};
 	  S.relations = gensI;
 	  S.ConvertToExpression = R.ConvertToExpression;
@@ -150,6 +154,7 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else if R === ZZZ then ZZZquotie
      sendgg(ggPush gensgbI, ggqring);
      S := new QuotientRing from newHandle();
      if R.?newEngine then S.newEngine = true;
+     S.ideal = I;
      S.baseRings = append(R.baseRings,R);
      S.relations = gensI;
      S.ConvertToExpression = R.ConvertToExpression;
