@@ -45,6 +45,7 @@ scan( {
 -----------------------------------------------------------------------------
 -- unformatting document tags
 -----------------------------------------------------------------------------
+-- we need to be able to do this only for the document tags we have shown to the user in formatted form 
 unformatTag := new MutableHashTable
 record      := f -> x -> (
      val := f x; 
@@ -69,8 +70,30 @@ getRecord = key -> scan(packages, 			    -- later, we make this function local t
 -- getRecord = on (getRecord, Name => "getRecord") -- useful for debugging
 
 -----------------------------------------------------------------------------
+-- normalizing document tags
+-----------------------------------------------------------------------------
+   -- The normalized form for simple objects will be the symbol whose value is the object
+   -- (We don't document objects that are not stored in global variables.)
+   -- This allows us to write documentation links like
+   --                TO "sin" 
+   -- or
+   --	             TO sin
+   -- or
+   --	             TO symbol sin
+   -- and have them all get recorded the same way
+normalizeDocumentTag           = method(SingleArgumentDispatch => true)
+normalizeDocumentTag   String := s -> if isGlobalSymbol s then getGlobalSymbol s else s
+normalizeDocumentTag   Symbol := identity
+normalizeDocumentTag Sequence := identity
+normalizeDocumentTag   Option := identity
+normalizeDocumentTag    Thing := x -> (
+     t := reverseDictionary x;
+     if t === null then error "encountered unidentifiable document tag";
+     t)
+-----------------------------------------------------------------------------
 -- formatting document tags
 -----------------------------------------------------------------------------
+   -- The formatted form should be a human-readable string, and different normalized tags should yield different formatted tags.
 Strings := hashTable { Sequence => "(...)", List => "{...}", Array => "[...]" }
 toStr := s -> if Strings#?s then Strings#s else toString s
 formatDocumentTag           = method(SingleArgumentDispatch => true)

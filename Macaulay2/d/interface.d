@@ -969,6 +969,13 @@ export rawCharSeries(e:Expr):Expr := (
      );
 setupfun("rawCharSeries",rawCharSeries);
 
+export rawIdealReorder(e:Expr):Expr := (
+     when e
+     is x:RawMatrix do toExpr( Ccode( RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawIdealReorder(", "(Matrix *)",x, ")" ))
+     else WrongArg("a raw matrix")
+     );
+setupfun("rawIdealReorder",rawIdealReorder);
+
 export rawPseudoRemainder(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else

@@ -153,33 +153,40 @@ package Symbol := s -> (
      if d === null then return(null);
      r := select(packages,p -> p.Dictionary === d);
      if #r > 0 then first r)
+package HashTable := package Function := x -> (
+     X := reverseDictionary x;
+     if X =!= null then package X
+     )
 
 warned := new MutableHashTable
 
 package TO := x -> (
-     key := formatDocumentTag x#0;
-     pkgs := select(packages, P -> P =!= User);
-     p := select(pkgs, P -> P#"raw documentation"#?key);
+     key := normalizeDocumentTag x#0;
+     fkey := formatDocumentTag key;
+     pkgs := select(packages, P -> P =!= User and P =!= Output);
+     p := select(pkgs, P -> P#"raw documentation"#?fkey);
      if #p == 1 then return p#0;
-     if #p > 1 then error("documentation for ",key," occurs in multiple packages: ", concatenate between(", ",apply(p,P -> P.name)));
-     if isGlobalSymbol key then (
-	  sym := getGlobalSymbol key;
-	  pkg := package sym;
+     if #p > 1 then error("documentation for ",fkey," occurs in multiple packages: ", concatenate between(", ",apply(p,P -> P.name)));
+     if class key === Symbol then (
+	  pkg := package key;
 	  if pkg =!= User then (
 	       if not warned#?key then (
-		    stderr << "--warning: documentation for symbol " << sym << " in package " << pkg.name << " not found" << endl;
+		    stderr << "--warning: documentation for symbol " << key << " in package " << pkg.name << " not found" << endl;
 		    warned#key = true;
 		    );
 	       return pkg;
 	       );
 	  );
-     error("documentation for ",key," not found in any current package: ", concatenate between(", ",apply(pkgs,P -> P.name)));
+     if class key === Sequence then (
+	  -- it might be a link to documentation for a method such as : TO (kernel, RingMap)
+	  p = apply(toList key, package);
+	  -- now find the youngest of the packages involved by checking for the largest hash code
+	  pkg = last last sort(apply(p, P -> (hash P,P)));
+	  stderr << "--warning: documentation for method " << fkey << " not found, assuming it will be found in package " << pkg.name << " eventually" << endl;
+	  return pkg;
+	  );
+     error("documentation for \"",fkey,"\" not found among current packages (", concatenate between(", ",apply(pkgs,P -> P.name)),")");
      )
-package Thing := x -> (					    -- try hard
-     X := reverseDictionary x;
-     if X =!= null then package X
-     )
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

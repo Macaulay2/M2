@@ -25,7 +25,7 @@ document { (isNormal,Ring),
      }
 document { integralClosure,
      Headline => "compute the integral closure of a ring",
-     SEEALSO {"ICMap", "ICFractions", "conductor"}
+     SEEALSO {"ICmap", "ICfractions", "conductor"}
      }
 
 ---------  Take out the w and do options as Variable - where??

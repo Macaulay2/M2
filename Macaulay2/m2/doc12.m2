@@ -789,7 +789,7 @@ document { tex,
 	  "R = ZZ[a..f]",
       	  "tex matrix {{a^2+2,b,c},{d,e,f^3-a}}",
 	  },
-     SEEALSO {"TeX", "texMath"}
+     SEEALSO {"texMath"}
      }
 
 document { texMath,
@@ -804,7 +804,7 @@ document { texMath,
 	  "R = ZZ[x]",
       	  "texMath (x-1)^6",
 	  },
-     SEEALSO {"TeX", "tex"}
+     SEEALSO {"tex"}
      }
 
 document { showTex,
