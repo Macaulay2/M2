@@ -56,6 +56,8 @@ degreesRing ZZ := PolynomialRing => memoize(
 	  if n == 0 then (
 	       ZZn = new PolynomialRing from rawPolynomialRing();
 	       ZZn.name = "ZZ[]";
+	       ZZn.basering = ZZ;
+	       ZZn.flatmonoid = monoid[];
 	       ZZn)
 	  else (
 	       Zn = degreesMonoid n;
@@ -129,6 +131,11 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  if not M.?RawMonoid then error "expected ordered monoid handled by the engine";
 	  if not R.?RawRing then error "expected coefficient ring handled by the engine";
      	  num := numgens M;
+	  (basering,flatmonoid) := (
+	       if R.?isBasic then (R,M)
+	       else if R.?basering and R.?flatmonoid then (R.basering, M ** R.flatmonoid)
+	       else error "internal error: expected coefficient ring to have a base ring and a flat monoid"
+	       );
 	  Weyl := M.Options.WeylAlgebra =!= {};
 	  skewoption := M.Options.SkewCommutative;
 	  degRing := if degreeLength M != 0 then degreesRing degreeLength M else ZZ;
@@ -178,7 +185,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       else notImplemented()
 	       )
 	  else (
-	       (basering,flatmonoid) := if R.?isBasic then (R,M) else (R.basering, M ** R.flatmonoid);
 	       rawRM := rawPolynomialRing(raw basering, raw flatmonoid);
 	       if class R === QuotientRing and class ultimate(ambient,R) === PolynomialRing then rawRM = rawQuotientRing(rawRM, raw R);
 	       new PolynomialRing from rawRM
