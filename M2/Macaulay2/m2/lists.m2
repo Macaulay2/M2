@@ -69,10 +69,7 @@ sum(ZZ,Function) := (n,f) -> (
      scan(n,x -> g x);
      s);
 
-sum(Sequence, List, Function) :=
-sum(List, Sequence, Function) :=
-sum(Sequence, Sequence, Function) :=
-sum(List, List, Function) := (v,w,f) -> sum(apply(v,w,identity),f)
+sum(VisibleList, VisibleList, Function) := (v,w,f) -> sum(apply(v,w,identity),f)
 
 product List := x -> times toSequence x
 
@@ -86,10 +83,7 @@ product(ZZ,Function) := (n,f) -> (
      scan(n,x -> g x);
      s);
 
-product(Sequence, List, Function) :=
-product(List, Sequence, Function) :=
-product(Sequence, Sequence, Function) :=
-product(List, List, Function) := (v,w,f) -> product(apply(v,w,identity),f)
+product(VisibleList, VisibleList, Function) := (v,w,f) -> product(apply(v,w,identity),f)
 
 rotate = method()
 rotate(VisibleList,ZZ) := (s,n) -> (

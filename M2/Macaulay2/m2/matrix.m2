@@ -349,17 +349,14 @@ Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,)
 
 Matrix _ ZZ := Vector => (m,i) -> error "vectors not re-implemented yet"
 
-submatrix(Matrix,Sequence,Sequence) := 
-submatrix(Matrix,Sequence,List) := 
-submatrix(Matrix,List,Sequence) := 
-submatrix(Matrix,List,List) := Matrix => (m,rows,cols) -> (
+submatrix(Matrix,VisibleList,VisibleList) := Matrix => (m,rows,cols) -> (
      if not isFreeModule source m or not isFreeModule target m then error "expected a homomorphism between free modules";
      map(ring m,rawSubmatrix(raw m, listZ toList splice rows, listZ toList splice cols)))
-submatrix(Matrix,List) := Matrix => (m,cols) -> (
+submatrix(Matrix,VisibleList) := Matrix => (m,cols) -> (
      if not isFreeModule source m or not isFreeModule target m then error "expected a homomorphism between free modules";
      map(ring m,rawSubmatrix(raw m, listZ toList splice cols)))
-submatrix(Matrix,Nothing,List) := (m,rows,cols) -> submatrix(m,cols)
-submatrix(Matrix,List,Nothing) := (m,rows,cols) -> submatrix(m, rows, 0 .. numgens source m - 1)
+submatrix(Matrix,Nothing,VisibleList) := (m,rows,cols) -> submatrix(m,cols)
+submatrix(Matrix,VisibleList,Nothing) := (m,rows,cols) -> submatrix(m, rows, 0 .. numgens source m - 1)
 
 bothFree := (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f
