@@ -179,7 +179,7 @@ document { "modules I",
      MENU {
 	  ("basic construction of modules",
 	       MENU {
-		    TO "free modules",
+		    TO "construction of free modules",
 		    TO "matrices to and from modules",
 		    TO "ideals to and from modules"
 		    }
@@ -426,51 +426,14 @@ document { "substitute values for variables",
 	  }
      }
 
-document { "working with multiple rings",
-     MENU {
-	  TO "use",
-	  TO "substitute(J,S)",
-	  TO "substitute(J,vars S)",
-	  }
-     }
-
-document { "basic construction, source and target of a ring map",
-     MENU {
-	  TO "map",
-	  TO "source",
-	  TO "target",
-	  TO "F.matrix"
-	  }
-     }
-
-document { "evaluation and composition of ring maps",
-     MENU {
-	  TO "F(m)",
-	  TO "F*G"
-	  }
-     }
-
-document { "kernel and image of a ring map",
-     MENU {
-	  TO "kernel",
-	  TO "image"
-	  }
-     -- if module and ring map are homogeneous, and Hilbert F is known,
-     -- this is used in computing the kernel (or image).
-     }
-
 -------------------
 -- module nodes ---
 -------------------
 
-document { "free modules",
-     -- node already
+document { "construction of free modules",
      }
 
 document { "matrices to and from modules",
-     }
-
-document { "ideals to and from modules",
      }
 
 document { "extracting elements",

@@ -61,60 +61,66 @@ document { "ideals to and from matrices",
      }
 
 document { "ideals to and from modules",
-     MENU {
-	  TO "module",
-	  TO "ideal",
-	  TO "coker gens, or R^1/I",
-	  "modules versus ideals for computations"
-	  },
---     "There are two main ways to consider an ideal as 
---     a module.  First, as a submodule of the rank one free 
---     module, ", TT "R", " as the image of the map defined 
---     by the 1 by n matrix consisting of the generators. The 
---     easiest way to do this is to use the 
---     function ", TT "module", ".",
-     "An ideal ", TT "I", " is also an ", TT, "R", "-submodule.  In
-     Macaulay 2 we distinguish between when we are thinking of ", TT "I", " as
-     as ideal or a module.  If it is first defined as an ideal, it is easily
-     turned into a module using the function ", TT "module", " and for any
-     submodule of the rank one free module ", TT "R", " we can obtain an ideal of the generators using the function ", TT "ideal", ".",
-     EXAMPLE {
-	  "R = ZZ/32003[x,y,z];",
-	  "I = ideal(x^2,y*z-x);",
-	  "module I"
-	  },
-     NOINDENT, " For any submodule of the rank one free 
-     module ", TT "R", " we can obtain an ideal of the generators 
-     using the function ", TT "ideal", ".",
-     EXAMPLE {
-	  "A = matrix{{x*y-z,z^3}};",
-	  "M = image A",
-	  "ideal M",
-	  },
-     NOINDENT, "We also often work with ", TT "R/I", " as 
-     an ", TT "R", "-module.  Simply typing ", TT "R/I", " at a prompt
-     in Macaulay 2 constructs the quotient ring (see ", TO "quotient rings", ").  
-     There are two ways to tell Macaulay 2 that we want to work with this 
-     as a module.",
-     EXAMPLE {
-	  "coker generators I",
-	  "R^1/I"
-	  },
-     "Some functions in Macaulay 2 try to make an informed decision 
-     about ideal and modules.  For example, ", 
-     EXAMPLE {
-	  --"J = ideal(x*y-z^2,x*z^3-y^4);",
-	  "resolution I"
-	  },
-     NOINDENT, "computes the resolution of the module ", TT "R^1/I", ".  
-     The functions ", TO "dimension", " and ", TO "degree", " also 
-     operate on ", TT "R^1/I", " if the input 
-     is ", TT "I", " or ", TT "R^1/I", ".  However, the 
-     function ", TO "hilbertPolynomial", " computes the Hilbert 
-     polynomial of the module ", TT "I", " if the input 
-     is ", TT "hilbertPolynomial I", ".",     
-     PARA, "For basic information about working with 
-     modules see ", TO "modules I", "."
+     TOC {
+	  SECTION { "from ideals to modules",
+	       --     "There are two main ways to consider an ideal as 
+	       --     a module.  First, as a submodule of the rank one free 
+	       --     module, ", TT "R", " as the image of the map defined 
+	       --     by the 1 by n matrix consisting of the generators. The 
+	       --     easiest way to do this is to use the 
+	       --     function ", TT "module", ".",
+	       "An ideal ", TT "I", " is also an ", TT, "R", "-submodule.  In
+	       Macaulay 2 we distinguish between when we are thinking of ", TT "I", " as
+	       as ideal or a module.  If it is first defined as an ideal, it is easily
+	       turned into a module using the function ", TO "module", " and for any
+	       submodule of the rank one free module ", TT "R", " we can obtain an ideal 
+	       of the generators using the function ", TO "ideal", ".",
+	       EXAMPLE {
+		    "R = ZZ/32003[x,y,z];",
+		    "I = ideal(x^2,y*z-x);",
+		    "module I"
+		    }
+	       },
+	  SECTION { "from modules to ideals",
+	       "For any submodule of the rank one free 
+	       module ", TT "R", " we can obtain an ideal of the generators 
+	       using the function ", TT "ideal", ".",
+	       EXAMPLE {
+		    "A = matrix{{x*y-z,z^3}};",
+		    "M = image A",
+		    "ideal M",
+		    }
+	       },
+	  SECTION { "getting the quotient module corresponding to an ideal",
+	       NOINDENT, "We also often work with ", TT "R/I", " as 
+	       an ", TT "R", "-module.  Simply typing ", TT "R/I", " at a prompt
+	       in Macaulay 2 constructs the quotient ring (see ", TO "quotient rings", ").  
+	       There are two ways to tell Macaulay 2 that we want to work with this 
+	       as a module.",
+	       EXAMPLE {
+		    "coker generators I",
+		    "R^1/I"
+		    }
+	       },
+	  SECTION { "modules versus ideals for computations",
+	       "Some functions in Macaulay 2 try to make an informed decision 
+	       about ideal and modules.  For example, if ", TO "resolution", " is
+	       given an ideal ", TT "I", ", it will compute a resolution of
+	       the module ", TT "R^1/I", ", as in the following example.",
+	       EXAMPLE {
+		    --"J = ideal(x*y-z^2,x*z^3-y^4);",
+		    "resolution I"
+		    },
+	       "The functions ", TO "dimension", " and ", TO "degree", " also 
+	       operate on ", TT "R^1/I", " if the input 
+	       is ", TT "I", " or ", TT "R^1/I", ".  However, the 
+	       function ", TO "hilbertPolynomial", " computes the Hilbert 
+	       polynomial of the module ", TT "I", " if the input 
+	       is ", TT "hilbertPolynomial I", ".",     
+	       PARA, "For basic information about working with 
+	       modules see ", TO "modules I", "."
+	       }
+	  }
      }
 
 document { "sums, products, and powers of ideals",
@@ -442,12 +448,6 @@ document { "primary decomposition",
 -------------------
 -- RING MAP nodes -
 -------------------
-
-document { "substitute values for variables",
-     MENU {
-	  TO "substitute",
-	  }
-     }
 
 document { "working with multiple rings",
      MENU {
