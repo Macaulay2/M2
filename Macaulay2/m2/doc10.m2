@@ -950,11 +950,7 @@ document {
 	       over the coefficient field of ", TT "X", "." 
 	       }
 	  },
-     SeeAlso => "coherent sheaves",
-     SeeAlso => {
-	  "HH",
-	  (cohomology, ZZ, SumOfTwists)
-	  }
+     SeeAlso => {"coherent sheaves", "HH", (cohomology, ZZ, SumOfTwists) }
      }
 
 document {

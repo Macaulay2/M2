@@ -244,7 +244,7 @@ file := null
 -----------------------------------------------------------------------------
 
 extractOptions := x -> x
-extractBody := x -> x.Discussion
+extractBody := x -> x.Description
 getRecord := (pkg,key) -> pkg#"documentation"#key	    -- for Databases, insert 'value' here
 getPackage := key -> scan(
      value \ values PackageDictionary,
@@ -258,12 +258,9 @@ getDoc := key -> (
 if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
 getOption := (key,tag) -> (
      s := getDoc key;
-     if s =!= null then s#tag)
-etHeadline := key -> (
-     d := getOption(key, Headline);
-     if d =!= null then SEQ join( {"  --  ", SEQ d} ))
+     if s =!= null and s#?tag then s#tag)
 getSynopsis := key -> getDoc key
-getBody := key -> getOption(key,Discussion)
+getBody := key -> getOption(key,Description)
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
@@ -344,55 +341,66 @@ processExamples := (pkg,fkey,docBody) -> (
 fixupList := x -> apply(select(x,t->t=!=null),fixup)
 enlist := x -> if class x === List then x else {x}
 fixupTable := new HashTable from {
-     	  Key => identity,
-     	  FormattedKey => identity,
-	  Usage => fixup,
-	  Function => fixup,
-	  Inputs => fixupList,
-	  Outputs => fixupList,
-	  Results => fixupList,
-	  OldSynopsis => identity,				    -- old
-	  FileName => fixup,
-	  Headline => fixup,
-	  Discussion => extractExamples @@ hypertext,
-     	  Caveat => v -> if v =!= null then fixup SEQ { PARA BOLD "Caveat", SEQ v },
-     	  SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ enlist v) },
-	  Menu => fixup }
-document = method(
-     SingleArgumentDispatch => true,
-     Options => {
-     	  Key => null,
-     	  FormattedKey => null,
-	  Usage => null,
-	  Function => null,
-	  Inputs => {},
-	  Outputs => {},
-	  Results => {},
-	  OldSynopsis => null,				    -- old
-	  FileName => null,
-	  Headline => null,
-	  Discussion => null,				    -- the "body"
-     	  SeeAlso => null,
-     	  Caveat => null,
-	  Menu => null })
+     Key => identity,
+     FormattedKey => identity,
+     Usage => fixup,
+     Function => fixup,
+     Inputs => fixupList,
+     Outputs => fixupList,
+     Results => fixupList,
+     OldSynopsis => identity,				    -- old
+     FileName => identity,
+     Headline => v -> if v =!= null then concatenate(" -- ",v),
+     Description => extractExamples @@ hypertext,
+     Caveat => v -> if v =!= null then fixup SEQ { PARA BOLD "Caveat", SEQ v },
+     SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ enlist v) },
+     Menu => fixup }
+caveat := key -> getOption(key,Caveat)
+seealso := key -> getOption(key,SeeAlso)
+documentOptions := new HashTable from {
+     Key => true,
+     FormattedKey => true,
+     Usage => true,
+     Function => true,
+     Inputs => true,
+     Outputs => true,
+     Results => true,
+     OldSynopsis => true,				    -- old
+     FileName => true,
+     Headline => true,
+     Description => true,				    -- the "body"
+     SeeAlso => true,
+     Caveat => true,
+     Menu => true }
+document = method( SingleArgumentDispatch => true )
 
-document List := opts -> z -> document prepend(opts,toSequence z)
-document Thing := opts -> z -> document (1:z,opts)
-document Sequence := opts -> args -> (
-     if opts.Key === null then error "missing Key";
+document List := z -> document toSequence z
+document Thing := z -> document singleton z
+document Sequence := args -> (
+     opts := new MutableHashTable;
+     scan(args, arg -> if class arg === Option then (
+	       key := arg#0;
+	       val := arg#1;
+	       if not documentOptions#key then error("unknown option ",key);
+	       if opts#?key then error("option ",key," encountered twice");
+	       opts#key = val;
+	       ));
+     args = select(args, arg -> class arg =!= Option);
+     if not opts.?Key then error "missing Key";
      key := normalizeDocumentTag opts.Key;
      verifyTag key;
      if not isDocumentableTag key then error("undocumentable item encountered");
-     currentNodeName = formatDocumentTag key;
+     opts.FormattedKey = currentNodeName = formatDocumentTag key;
      pkg := packageTag key;
      if pkg =!= currentPackage then error("documentation for \"",key,"\" belongs in package ",pkg," but current package is ",currentPackage);
      if #args > 0 then (
-	  if opts.Discussion =!= null then error "Discussion option provided, as well as items in the list";
-	  opts = merge(opts, new HashTable from {Discussion => toList args}, (x,y) -> y);
+	  if opts.?Description then error "Description option provided, as well as items in the list";
+	  opts.Description = toList args;
 	  );
-     exampleBaseFilename = makeFileName(currentNodeName,opts.FileName,currentPackage);
+     exampleBaseFilename = makeFileName(currentNodeName,if opts.?FileName then opts.FileName,currentPackage);
      if currentPackage === null then error "documentation encountered outside a package";
      if currentPackage#"documentation"#?currentNodeName then duplicateDocWarning();
+     opts = new HashTable from opts;
      opts = applyPairs(opts,(key,val) -> (key,fixupTable#key val));
      currentPackage#"documentation"#currentNodeName = opts;
      currentNodeName = null;
@@ -517,7 +525,8 @@ makeDocBody Thing := key -> (
      fkey := formatDocumentTag key;
      pkg := getPackage fkey;
      if pkg =!= null then (
-	  docBody := extractBody getRecord(pkg,fkey);
+	  rec := getRecord(pkg,fkey);
+	  docBody := extractBody rec;
 	  if #docBody > 0 then (
 	       if doExamples then docBody = processExamples(pkg, fkey, docBody);
 	       if class key === String 
@@ -626,19 +635,21 @@ synopsisOpts := new OptionTable from {			    -- old
      Results => {}
      }
 synopsis := method(SingleArgumentDispatch => true)
-synopsis Thing := f -> (
+synopsis Thing := key -> (
      -- we still want to put
      --	       moreGeneral s
      -- back somewhere....
-     o := getSynopsis f;
+     o := getDoc key;
      if o === null then o = synopsisOpts;
-     res := o.Results;
-     inp := o.Inputs;
-     out := o.Outputs;
+     inp := if o.?Inputs then o.Inputs else {};
+     out := if o.?Outputs then o.Outputs else {};
+     res := if o.?Results then o.Results else {};
+     usa := if o.?Usage then o.Usage;
+     fun := if o#?Function then o#Function;
      iso := x -> instance(x,Option) and #x==2 and instance(x#0,Symbol);
      if class inp === SEQ then inp = toList inp;
      ino := select(inp, x -> iso x);
-     opt := optin f;
+     opt := optin key;
      ino = new HashTable from toList ino;
      ino = apply(sort pairs opt, (tag,dft) -> (
 	       if ino#?tag 
@@ -646,7 +657,7 @@ synopsis Thing := f -> (
 	       else SEQ { TO toString tag, " => ... [", net dft, "]" }
 	       ));	       
      inp = select(inp, x -> not iso x);
-     (inp',out') := types f;
+     (inp',out') := types key;
      if out' === {Thing} then out' = {};		    -- not informative enough
      if #inp === 0 then (
 	  inp = apply(inp', T -> T => "");
@@ -669,12 +680,12 @@ synopsis Thing := f -> (
 	  SEQ {						    -- to be implemented
      	       PARA BOLD "Synopsis",
 	       UL {
-     	       	    if o.Usage =!= null then PARA { "Usage: ", if class o.Usage === String then TT o.Usage else o.Usage},
-		    if o#Function =!= null then SEQ { "Function: ", TO o#Function }
-		    else if class f === Sequence and f#?0 then (
-	       		 if class f#0 === Function 
-			 then SEQ { "Function: ", TO f#0 }
-			 else SEQ { "Operator: ", TO f#0 }
+     	       	    if usa =!= null then PARA { "Usage: ", if class usa === String then TT usa else usa},
+		    if fun =!= null then SEQ { "Function: ", TO fun }
+		    else if class key === Sequence and key#?0 then (
+	       		 if class key#0 === Function 
+			 then SEQ { "Function: ", TO key#0 }
+			 else SEQ { "Operator: ", TO key#0 }
 			 ),
 		    if inp#?0 then PARA { "Inputs:", UL inp },
 		    if ino#?0 then PARA { "Optional inputs:", UL ino },
@@ -714,15 +725,15 @@ x -> (
 	       if s =!= null then << endl << s << endl;)))
 
 documentation = method(SingleArgumentDispatch => true)
-documentation String := s -> (
-     if unformatTag#?s then documentation unformatTag#s 
-     else if isGlobalSymbol s then (
-	  t := getGlobalSymbol s;
+documentation String := key -> (
+     if unformatTag#?key then documentation unformatTag#key 
+     else if isGlobalSymbol key then (
+	  t := getGlobalSymbol key;
 	  documentation t)
      else (
-	  b := makeDocBody(s);
+	  b := makeDocBody key;
 	  if b === null then null
-	  else prepend(title s, b)))
+	  else Hypertext join({title key}, b, {caveat key, seealso key})))
 
 binary := set binaryOperators; erase symbol binaryOperators
 prefix := set prefixOperators; erase symbol prefixOperators
@@ -833,26 +844,30 @@ documentation Symbol := S -> (
      Hypertext {
 	  title S, 
 	  synopsis S,
-	  makeDocBody(S),
+	  makeDocBody S,
 	  op S,
 	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", smenu a},
 	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", smenu b},
      	  documentationValue(S,value S),
-	  type S
+	  type S,
+	  caveat S,
+	  seealso S
      	  }
      )
 
-documentation Sequence := s -> (
-     if s#?-1 and instance(s#-1,Symbol) then (		    -- optional argument
-	  fn := unSingleton drop(s,-1);
-	  opt := s#-1;
+documentation Sequence := key -> (
+     if key#?-1 and instance(key#-1,Symbol) then (		    -- optional argument
+	  fn := unSingleton drop(key,-1);
+	  opt := key#-1;
 	  if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
 	  default := (options fn)#opt;
 	  Hypertext { 
-	       title s,
-	       synopsis s,
-	       makeDocBody(s),
-	       PARA BOLD "See also",
+	       title key,
+	       synopsis key,
+	       makeDocBody key,
+	       caveat key,
+	       seealso key,
+	       PARA BOLD "Further information",
 	       UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
 		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
@@ -861,12 +876,13 @@ documentation Sequence := s -> (
 	       }
 	  )
      else (						    -- method key
-	  if null === lookup s then error("expected ", toString s, " to be a method");
+	  if null === lookup key then error("expected ", toString key, " to be a method");
 	  Hypertext {
-	       title s, 
-	       synopsis s,
-	       makeDocBody s,
-	       -- seecode s
+	       title key, 
+	       synopsis key,
+	       makeDocBody key,
+	       caveat key,
+	       seealso key
 	       }
 	  ))
 

@@ -20,7 +20,7 @@ document {						    -- rewrite this!
 	  TOH "Outputs",
 	  TOH "Results",
 	  TOH "FileName",
-	  TOH "Discussion",
+	  TOH "Description",
 	  TOH "Caveat",
 	  TOH "EXAMPLE",
 	  TOH "SeeAlso",
