@@ -217,10 +217,17 @@ export wrap(wid:int, sep:char, t:Net):Net := (
 	  breaks << rightbkpt;
 	  leftbkpt = nextleftbkpt;
 	  );
-     sepline := toNet(new string len wid do provide sep);
      j := 0;
-     pieces := new array(Net) len breaks.size - 1 do (
-	  provide subnet(t,breaks.ints.j,breaks.ints.(j+1)-breaks.ints.j); j = j+2;
-	  provide sepline;
-	  );
-     VerticalJoin(pieces));
+     VerticalJoin(
+	  if length(t.body) > 1 then (
+     	       sepline := toNet(new string len wid do provide sep);
+     	       new array(Net) len breaks.size - 1 do (
+	  	    provide subnet(t,breaks.ints.j,breaks.ints.(j+1)-breaks.ints.j);
+		    j = j+2;
+	  	    provide sepline;
+	  	    ))
+	  else (
+     	       new array(Net) len breaks.size/2 do (
+		    provide subnet(t,breaks.ints.j,breaks.ints.(j+1)-breaks.ints.j);
+	       	    j = j+2;
+		    ))));
