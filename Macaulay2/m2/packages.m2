@@ -61,7 +61,7 @@ newPackage = method(
 newPackage(String) := opts -> (title) -> (
      originalTitle := title;
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
-     stderr << "--package \"" << title << "\" loading" << endl;
+     -- stderr << "--package \"" << title << "\" loading" << endl;
      dismiss title;
      saveD := globalDictionaries;
      saveP := packages;
@@ -283,7 +283,7 @@ use Package := pkg -> if not member(pkg,packages) then (
 forceLoadDocumentation = false
 beginDocumentation = () -> (
      if not forceLoadDocumentation and currentPackage#?"processed documentation database" and isOpen currentPackage#"processed documentation database" then (
-	  stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
+	  -- stderr << "--beginDocumentation: using documentation database, skipping the rest of " << currentFileName << endl;
 	  return end;
 	  );
      )
