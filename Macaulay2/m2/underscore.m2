@@ -52,7 +52,7 @@ document { "_",
      MENU {
 	  (TO "w_i", "        -- get an entry from a list or sequence"),
 	  (TO "w_{i,j}", "    -- get entries from a list or sequence"),
-	  (TO "C_i", "        -- get a module from a chain complex"),
+	  (TO (quote _, ChainComplex, ZZ), "        -- get a module from a chain complex"),
 	  (TO "f_i", "        -- get a column from a matrix"),
 	  (TO "p_i", "        -- get a component from a map of chain complexes"),
 	  (TO "f_(i,j)", "    -- get an entry from a matrix"),

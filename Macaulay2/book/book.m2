@@ -13,7 +13,11 @@ bk << ///
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% some macros
 
-\hsize=420pt
+\hsize=7 true in
+\vsize=9.1 true in
+
+\parindent=10pt
+\parskip=4pt
 
 \def\cite#1#2{{\bf #1} [#2]}
 {\obeyspaces\global\let =\ \tt}
@@ -22,6 +26,7 @@ bk << ///
      % \parindent=24pt
      \baselineskip=9.5pt
      \tt
+     \parskip=0pt
      \obeyspaces\def\par{\leavevmode\hss\endgraf}\obeylines}
 \def\endverbatim{\endgroup}
 
@@ -144,6 +149,7 @@ bk << ///
 -- a small integer being the integer itself
 
 scan(pairs nodeTable, (i,node) -> (
+	  if class node =!= String then node = name node;
 	  bk << ///
 
 \sectionhdr{///

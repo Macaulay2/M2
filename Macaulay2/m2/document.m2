@@ -48,6 +48,30 @@ GlobalAssignHook Function := (X,x) -> if not Documentation#?x then Documentation
 --     stderr << "warning: " << string F << " redefined" << endl;
 --     )
 
+Documentation = new MutableHashTable
+
+DocumentableValueType := new MutableHashTable
+DocumentableValueType#HashTable = true
+DocumentableValueType#Function = true
+DocumentableValueType#BasicList = true
+DocumentableValueType#Nothing = true
+
+UndocumentableLabel := new MutableHashTable
+UndocumentableLabel.environment = true
+UndocumentableLabel.commandLine = true
+
+documentableValue := key -> (
+     class key === Symbol
+     and value key =!= key
+     and not mutable key
+     and not UndocumentableLabel#?key
+     and DocumentableValueType#?(basictype value key)
+     )
+
+scanPairs(symbolTable(),
+     (name,symbol) -> if documentableValue symbol then Documentation#(value symbol) = symbol
+     )
+
 name Function := f -> (
      if Documentation#?f then (
 	  s := Documentation#f;
@@ -59,10 +83,9 @@ name Function := f -> (
      )
 
 repl := z -> (
-     if class z === List or class z === Sequence 
-     then SEQ apply(toList z, repl)
-     else if instance(z,BasicList)
-     then apply(z,repl)
+     if class z === List or class z === Sequence then SEQ apply(toList z, repl)
+     else if class z === TO then z     
+     else if instance(z,HtmlList) then apply(z,repl)
      else z
      )
 
@@ -88,7 +111,7 @@ keysDoc := () -> (
 
 -----------------------------------------------------------------------------
 
-topicList = () -> sort(select( keysDoc(), i -> basictype i === String))
+topicList = () -> sort select(keysDoc(), i -> class i === String)
 
 examples = x -> (
      if Documentation#?x then x = Documentation#x;
@@ -209,22 +232,22 @@ help2 := (o,s) -> (
 --	       hr o;
 --	       );
 --	  );
-     if # options value s > 0 then (
-	  o << "Options and default values:" << endl;
-	  hr o;
-	  scan(rsort pairs options value s, (option,default) -> (
-		    o << s << "( ... , " << option << " => " << default << ") :" << endl;
-		    if Documentation#?(value s,option)
-		    then (
-			 o << endl << text repl Documentation#(value s,option) << endl;
-			 )
-		    else (
-			 o << endl << "No documentation available." << endl;
-			 );
-		    hr o;
-		    )
-	       );
-	  );
+--     if # options value s > 0 then (
+--	  o << "Options and default values:" << endl;
+--	  hr o;
+--	  scan(rsort pairs options value s, (option,default) -> (
+--		    o << s << "( ... , " << option << " => " << default << ") :" << endl;
+--		    if Documentation#?(value s,option)
+--		    then (
+--			 o << endl << text repl Documentation#(value s,option) << endl;
+--			 )
+--		    else (
+--			 o << endl << "No documentation available." << endl;
+--			 );
+--		    hr o;
+--		    )
+--	       );
+--	  );
      )
 
 OS := "operating system"
@@ -328,29 +351,6 @@ if phase === 2 then (
 	       ));
      )
 
-
-documentOption = z -> (
-     if class z != List then error "expected a list";
-     if #z < 2 then error "expected a list of length at least 2";
-     fn := z#0;
-     opt := z#1;
-     doc := drop(z,2);
-     if not (options fn)#?opt then (
-	  error ("expected ", name opt, " to be an option of ", name fn);
-	  );
-     Documentation#(fn,opt) = doc;
-     )
-
-DocumentableValueType := new MutableHashTable
-DocumentableValueType#HashTable = true
-DocumentableValueType#Function = true
-DocumentableValueType#BasicList = true
-DocumentableValueType#Nothing = true
-
-UndocumentableLabel := new MutableHashTable
-UndocumentableLabel.environment = true
-UndocumentableLabel.commandLine = true
-
 nodeName := ""
 nodeBaseFilename := ""
 exampleCounter := 0
@@ -422,18 +422,33 @@ document = z -> (
      if class z != List then error "expected a list";
      if #z === 0 then error "expected a nonempty list";
      key := z#0;
-     if not ( class key === Symbol or class key === String )
-     then error "expected first element of list to be a symbol or string";
-     nodeName = string key;
+     if class key === Option then (
+	  -- a key of the form f=>p indicates that we are documenting the option named
+	  -- p for the function f
+	  fn := key#0;
+	  opt := key#1;
+	  if not (options fn)#?opt then error ("expected ", name opt, " to be an option of ", name fn);
+	  );
+     if class key === String
+     then (
+	  nodeName = key;
+	  )
+     else if class key === Symbol
+     then (
+	  nodeName = string key;	  -- string and name differ on symbols like "quote @"!
+	  Documentation#key = nodeName;
+	  )
+     else (
+	  nodeName = name key;
+	  Documentation#key = nodeName;
+	  );
+     if phase === 1 and not writableGlobals#?key and class key === Symbol 
+     then protect key;
+     if documentableValue key then Documentation#(value key) = nodeName;
      nodeBaseFilename = makeBaseFilename();
      docBody := repl toList apply(1 .. #z - 1, i -> z#i); -- drop isn't defined yet
      docBody = processExamples docBody;
      storeDoc docBody;
-     if phase === 1 and not writableGlobals#?key and class key === Symbol 
-     then protect key;
-     if class key === Symbol and value key =!= key and not mutable key
-     and not UndocumentableLabel#?key and DocumentableValueType#?(basictype value key)
-     then Documentation#(value key) = nodeName;
      )
 
 exportDocumentation = () -> (
@@ -466,25 +481,19 @@ SEEALSO = v -> (
 	  if #v === 1 then {TO v#0}
 	  else if #v === 2 then {TO v#0, " and ", TO v#1}
 	  else mingle(
-	       apply(v, i -> TO i),
+	       apply(v, i -> TO {i}),
 	       append(#v-2 : ", ", ", and ")
 	       ),
      	  "."))
 
-Nothing << Thing := { Nothing,
-     (x,y) -> null,
-     "null << x", " -- does nothing and returns ", TT "null", ".",
-     PARA,
-     "The intention here is that you can use ", TT "null", " as a dummy
-     output file."
-     }
+Nothing << Thing := (x,y) -> null
 
 document { quote document,
      TT "document {quote s, d}", " -- install documentation d for symbol s.",
      PARA,
      "The documentation d should be ", TO "hypertext", ".",
      PARA,
-     SEEALSO ("help", "doc", "phase", "examples")
+     SEEALSO ("help", "doc", "phase", "examples", "Documentation")
      }
 
 document { quote TEST,

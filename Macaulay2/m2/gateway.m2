@@ -136,10 +136,15 @@ document { quote HH,
      PARA,
      "Specific examples:",
      MENU {
-	  (TO "HH_i C", "          -- homology of a chain complex"),
-	  (TO "HH^i C", "          -- cohomology of a chain complex")
+	  (TO (homology, ZZ, ChainComplex), "      -- homology of a chain complex"),
+	  (TO (homology, ChainComplex), "          -- total homology of a chain complex"),
+	  (TO (homology, ZZ, ChainComplexMap), "   -- homology as a functor"),
+	  (TO (homology, Matrix, Matrix), "        -- homology of a pair of maps"),
+	  (TO (cohomology, ZZ, ChainComplex), "    -- cohomology of a chain complex"),
+	  (TO (cohomology, ZZ, ChainComplexMap), " -- cohomology as a functor")
 	  }
      }
+
 TEST ("
      R=ZZ/101[a..d]
      C=resolution cokernel vars R

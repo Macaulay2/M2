@@ -11,7 +11,7 @@ scandb = (db,f) -> scanKeys(db,k->f(k,db#k))
 process := (key,doc) -> (
      filename := linkFilename key;
      conceptTable#key = filename;
-     filename << html SEQ { 
+     filename << html HTML { 
 	  HEAD {
 	       TITLE key
 	       },
@@ -36,33 +36,35 @@ process := (key,doc) -> (
 --	       )))
 
 scan(linkFilenameKeys(),
-     key -> if not conceptTable#?key then linkFilename key << html SEQ { 
-	   TITLE key, H2 key,
-	   PARA,
-	   "The text for this node has not been written yet.",
-	   if key != "index" then SEQ {
-		PARA,
-		"Go to ", HREF {"index.html", "main index"}, "."
-		},
-	   PARA,
-	   "Go to ", HREF {"concepts.html", "concepts index"}, "."
-	   } << endl << close)
+     key -> if not conceptTable#?key then (
+	  stderr << "Documentation for '" << key << "' missing." << endl;
+	  linkFilename key << html HTML { 
+	       HEAD {
+		    TITLE key
+		    },
+	       BODY {
+		    H2 key,
+		    PARA,
+		    "The text for this node has not been written yet.",
+		    if key != "index" then SEQ {
+			 PARA,
+			 "Go to ", HREF {"index.html", "main index"}, "."
+			 },
+		    PARA,
+		    "Go to ", HREF {"concepts.html", "concepts index"}, "."
+		    }
+	       } << endl << close;
+	  ))
 
-concepts = openOut "concepts.html";
-concepts << html SEQ { TITLE "Concepts Index", H2 "Concepts Index" }
-concepts << "<MENU>\n";
-scan(sort keys conceptTable,
-     key -> (
-	  filename := conceptTable#key;
-	  concepts
-	  << "<LI> <A href=\"" 
-	  << filename 
-	  << "\">" 
-	  << key 
-	  << "</A>\n"))
-concepts << "</MENU>\n"
-concepts << html {
-     PARA, "Go to ", HREF {"index.html", "main index"}, "."
+"concepts.html" << html HTML {
+     HEAD {
+	  TITLE "Concepts Index"
+	  },
+     BODY {
+	  H2 "Concepts Index",
+	  MENU apply(sort pairs conceptTable, (key, fname) -> HREF {fname, key}),
+     	  PARA, "Go to ", HREF {"index.html", "main index"}, "."
+	  }
      } << endl << close
 
 OS := "operating system"

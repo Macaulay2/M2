@@ -60,8 +60,7 @@ QuotientRing ** PolynomialRing :=
 PolynomialRing ** QuotientRing :=
 QuotientRing ** QuotientRing := (R,S) -> tensor(R,S)
 
-Ring ** Ring := { Ring, 
-     ,					  -- no function, just documentation!
+document { (quote **, Ring, Ring),
      TT "R ** S", " -- tensor product of rings.",
      PARA,
      "For complete documentation, see ", TO "tensor", "."
@@ -120,12 +119,12 @@ graphIdeal RingMap := (f,options) -> (
      --             options);
      yvars := (vars RS)_{numgens R .. numgens RS - 1};
      xvars := (vars RS)_{0..numgens R - 1};
-     yvars - substitute(I, xvars)
-     )
+     ideal(yvars - substitute(I, xvars)))
 
-graphRing RingMap := (f,options) -> (
+graphRing RingMap := (f,options) -> if f.?graphRing then f.graphRing else f.graphRing = (
      I := graphIdeal(f,options);
-     (ring I)/(image I))
+     R := ring I;
+     R/I)
 
 document { quote graphIdeal,
      TT "graphIdeal f", " -- provides the ideal of the graph of the map

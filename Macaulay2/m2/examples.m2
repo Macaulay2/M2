@@ -290,6 +290,7 @@ document {
 	  TO "SEQ",
 	  TO "SHIELD",
 	  TO "STRONG",
+	  TO "TABLE",
 	  TO "TEST",
 	  TO "TEX",
 	  TO "TITLE",
@@ -559,6 +560,10 @@ document { quote EXAMPLE,
      "See also ", TO "hypertext", "."
      }
 
+document { quote TABLE,
+     TT "TABLE x", " -- produces a hypertext TABLE from a list of lists."
+     }
+
 document { quote VAR,
      TT "VAR x", " -- encloses x in a hypertext VAR item.",
      PARA,
@@ -724,8 +729,8 @@ document { quote CODE,
      }
 
 document { quote HREF,
-     TT "HREF(u,p)", " -- encloses the phrase p in a hypertext HREF link
-     pointing to the url u.",
+     TT "HREF{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext HREF link
+     pointing to the url ", TT "u", ".",
      PARA,
      "See also ", TO "hypertext", "."
      }
@@ -815,10 +820,25 @@ document { quote NOINDENT,
      }
 
 document { quote TO,
-     TT "TO x", " -- produces a hypertext link to the documentation page labelled x",
+     TT "TO \"x\"", " -- produces a hypertext link to the documentation page labelled ", TT "x", ".",
      PARA,
      "See also ", TO "hypertext", ".  The word ", ITALIC "hypertext", " in the previous
-     sentence is an example of the use of ", TT "TO", "."
+     sentence is an example of the use of ", TT "TO", ".",
+     PARA,
+     "The special form ", TT "TO {\"x\", \"s\"}", " produces a hypertext link to
+     the page labelled ", TT "x", ", but with the string \"s\" appended to the
+     string \"x\" at the point where the reference occurs.  This form is needed
+     because in some modes of output the link is indicated with a section number
+     in brackets.",
+     PARA,
+     "The special form ", TT "TO (f,X)", " produces a hypertext link to
+     the page documenting the method used for applying the function ", TT "f", " to
+     an argument of class ", TT "X", ".  For more arguments, use ", TT "TO (f,X,Y)", "
+     or ", TT "TO (f,X,Y,Z)", ".",
+     PARA,
+     "The special form ", TT "TO (f => X)", " produces a hypertext link to the
+     page documenting the optional argument named ", TT "X", " for the 
+     function ", TT "f", "."
      }
 
 document { quote Command,

@@ -732,3 +732,43 @@ computeAndCache := (M,options,name,goodEnough,computeIt) -> (
 	  ret)
      else M#name#1
      )
+-----------------------------------------------------------------------------
+X := new Type of HashTable
+X X := identity
+SPACE := (keys X)#0#0
+alphabet := new MutableHashTable
+scan( characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+     c -> alphabet#c = true)
+operators := new MutableHashTable
+operators#SPACE = true			  -- bug: SPACE isn't in symbolTable()
+scan(values symbolTable(), s -> if not alphabet#?((string s)#0) then operators#s=true)
+alphabet = null
+
+name Symbol := s -> (
+     if operators#?s 
+     -- or value s =!= s 
+     -- must get rid of S.syms in quotring.m2
+     then concatenate("quote ", string s)
+     else string s
+     )
+
+net Symbol := s -> (
+     if operators#?s
+     then concatenate("quote ", string s)
+     else string s
+     )
+
+BeforePrint Symbol := net
+
+-----------------------------------------------------------------------------
+document { (quote <<, Nothing, Thing),
+     "null << x", " -- does nothing and returns ", TT "null", ".",
+     PARA,
+     "The intention here is that you can use ", TT "null", " as a dummy
+     output file."
+     }
+
+document { (quote =>, Thing, Thing),
+     TT "x => y", " -- an ", TO "Option", ", used as an optional argument with 
+     some functions."
+     }

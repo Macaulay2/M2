@@ -35,9 +35,8 @@ document { quote Module,
      PARA,
      "The most general module M is represented as a submodule of a 
      quotient module of a free module F.  The matrix of relations used to
-     produce the quotient module is stored as ",
-     PRE "M.relations",
-     " and the matrix of generators is stored as ", TT "M.generators", ".",
+     produce the quotient module is stored as ", TT "M.relations", " and 
+     the matrix of generators is stored as ", TT "M.generators", ".",
      PARA,
      "Functions which create modules:",
      MENU {
@@ -62,8 +61,10 @@ document { quote Module,
      MENU {
 	  TO "==",
 	  TO "M_i",
+	  TO (quote +,Module,Module),
+	  TO (quote **,Module,Ring),
 	  ("M ", TO "++", " N -- direct sum"),
-	  ("M ", TOMETHOD (quote **, Module, Module), " N -- tensor product"),
+	  ("M ", TO (quote **, Module, Module), " N -- tensor product"),
 	  ("M ", TO ":", " N -- the submodule quotient M : N"),
 	  ("M ", TO "/", " N -- the cokernel module (M+N)/N"),
 	  TO "ambient",
@@ -97,7 +98,7 @@ document { quote Module,
 	  TO "rank",
 	  TO "relations",
 	  TO "removeLowestDimension",
-	  (TO "resolution", "M -- a finite free resolution of M"),
+	  (TO "resolution", " M -- a finite free resolution of M"),
 	  TO "super",
 	  TO "top",
   	  (TO "Tor", "_i(M,N) -- the tor module"),
@@ -328,11 +329,11 @@ expression Vector := v -> (
 		    callgg(ggtonet, v))}))
 name Vector := x -> name expression x
 net Vector := x -> net expression x
-Vector + Vector := {Vector, (x,y) -> (
+Vector + Vector := (x,y) -> (
      M := class x;
      if M != class y then error "no method for '+'";
      sendgg(ggPush x, ggPush y, ggadd);
-     new M)}
+     new M)
 Vector - Vector := (x,y) -> (
      M := class x;
      if M != class y then error "no method for '-'";
@@ -537,6 +538,9 @@ document { quote components,
      formed as a direct sum, or ", TT "{M}", " if ", TT "M", " was not formed as a 
      direct sum.  Works also for homomorphism, chain complexes, and graded modules.",
      PARA,
+     MENU {
+	  TO (components,ChainComplex)
+	  },
      SEEALSO ("vector", "directSum", "++")
      }
 
@@ -558,7 +562,7 @@ Ring ^ ZZ := (
      )
 
 document { "Ring ^ ZZ",
-     TT "R ^ n", " -- produce a free module of rank n over the ring R",
+     TT "R^n", " -- produce a free module of rank n over the ring R",
      PARA,
      SEEALSO("^", "isFreeModule", "Ring ^ List")
      }

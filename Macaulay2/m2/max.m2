@@ -17,6 +17,12 @@ document { quote infinity,
 
 IndeterminateNumber = new Type of HashTable
 indeterminate = new IndeterminateNumber from {quote name => quote indeterminate}
+document { quote IndeterminateNumber,
+     TT "IndeterminateNumber", " -- the class of indeterminate numbers (of
+     which there is only one).",
+     PARA,
+     SEEALSO "indeterminate"
+     }
 
 InfiniteNumber + ZZ := (i,j) -> i
 ZZ + InfiniteNumber := (i,j) -> j
@@ -31,8 +37,10 @@ neginfinity := new InfiniteNumber from {
      }
 
 document { quote indeterminate,
-     TT "indeterminate", " -- a representaiton of an indeterminat number, such as might
-     result from multiplying 0 by infinity."
+     TT "indeterminate", " -- a representation of an indeterminat number, such as might
+     result from multiplying 0 by infinity.",
+     PARA,
+     SEEALSO "IndeterminateNumber"
      }
 
 document { "-infinity",

@@ -278,48 +278,59 @@ document { quote gb,
      PARA,
      "Optional arguments and flags:",
      MENU {
-	  (TO "DegreeLimit", "      -- compute only up to this degree"),
+	  (TO (gb => DegreeLimit), "   -- compute only up to this degree"),
 	  (TO "BasisElementLimit", "   -- stop when this number of minimal generators is obtained"),
-	  (TO "SyzygyLimit", "      -- stop when this number of syzygies is obtained"),
-	  (TO "PairLimit", "        -- stop when this number of pairs is handled"),
-	  (TO "CodimensionLimit", " -- stop when this codimension is reached"),
-	  (TO "Strategy", "         -- specify the strategy used to compute Groebner bases")
+	  (TO (gb => SyzygyLimit), "   -- stop when this number of syzygies is obtained"),
+	  (TO "PairLimit", "           -- stop when this number of pairs is handled"),
+	  (TO "CodimensionLimit", "    -- stop when this codimension is reached"),
+	  (TO "Strategy", "            -- specify the strategy used to compute Groebner bases")
 	  },
      "Optional arguments and flags for internal use only:",
      MENU {
-	  (TO "ChangeMatrix", "              -- whether to produce the change of basis matrix"),
-	  (TO "StopBeforeComputation", "     -- whether to stop the computation immediately"),
-	  (TO "StopWithMinimalGenerators", " -- whether to produce a set of minimal generators"),
-	  (TO "Syzygies", "                  -- whether to collect syzygies"),
-	  (TO "SyzygyRows", "                -- if syzygies are to be collected, the number
+	  (TO "ChangeMatrix", "                -- whether to produce the change of basis matrix"),
+	  (TO (gb => StopBeforeComputation), " -- whether to stop the computation immediately"),
+	  (TO "StopWithMinimalGenerators", "   -- whether to produce a set of minimal generators"),
+	  (TO "Syzygies", "                    -- whether to collect syzygies"),
+	  (TO "SyzygyRows", "                  -- if syzygies are to be collected, the number
 	       rows of the syzygy matrix to collect")
 	  },
      SEEALSO "GroebnerBasis"
      }
-
-document { quote StopBeforeComputation,
+document { gb => StopBeforeComputation,
      TT "StopBeforeComputation", " -- keyword for an optional argument used with
-     ", TO "gb", " and ", TO "resolution", ", and ", TO "pushForward1", ".",
+     ", TO "gb", ".",
      PARA,
      "Tells whether to start the computation, with the default value
      being ", TT "true", ".  This can be useful when you want to obtain
-     the partially computed resolution or Groebner basis contained in
-     an interrupted computation."
+     the partially computed Groebner basis contained in an interrupted
+     computation."
      }
-document { quote DegreeLimit,
+
+document { DegreeLimit,
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
-     ", TO "gb", ", ", TO "resolution", ", and ", TO "quotient", ", which specifies
-     that the computation should halt after dealing with degree n.",
+     various functions which specifies that the computation should halt after dealing 
+     with degree n.",
+     PARA,
+     MENU {
+	  TO (gb => DegreeLimit),
+	  TO (pushForward1 => DegreeLimit),
+	  TO (resolution => DegreeLimit),
+	  TO (saturate => DegreeLimit),
+	  }
+     }
+
+document { gb => DegreeLimit,
+     TT "DegreeLimit => n", " -- keyword for an optional argument used with
+     ", TO "gb", " which specifies that the computation should halt after dealing 
+     with degree n.",
      PARA,
      "This option is relevant only for homogeneous matrices.",
-     PARA,
-     "For resolutions, one might get some matrix entries of slightly higher degree 
-     than requested.",
      EXAMPLE "R = ZZ/101[x,y,z,w]",
      EXAMPLE "I = ideal(x*y-z^2,y^2-w^2)",
      EXAMPLE "gb(I,DegreeLimit => 2)",
      EXAMPLE "gb(I,DegreeLimit => 3)"
      }
+
 document { quote BasisElementLimit,
      TT "BasisElementLimit", " -- keyword for an optional argument used with
      ", TO "gb", ", which can be used to specify that the computation should
@@ -332,11 +343,22 @@ document { quote BasisElementLimit,
      EXAMPLE "gb(I,BasisElementLimit => 4)",
      EXAMPLE "gb(I,BasisElementLimit => 5)"
      }
+
 document { quote SyzygyLimit,
-     TT "SyzygyLimit", " -- keyword for an optional argument used with
-     ", TO "gb", " and ", TO "resolution", ", which specifies that
-     the computation should stop after a certain number of syzygies
+     TT "SyzygyLimit", " -- keyword for an optional argument which specifies
+     that the computation should stop after a certain number of syzygies 
      have computed.",
+     PARA,
+     MENU {
+	  TO (gb => SyzygyLimit),
+	  TO (resolution => SyzygyLimit)
+	  }
+     }
+
+document { gb => SyzygyLimit,
+     TT "SyzygyLimit", " -- keyword for an optional argument used with
+     ", TO "gb", " which specifies that the computation should stop
+     after a certain number of syzygies have computed.",
      PARA,
      "This option is relevant only if ", TT "Syzygies => true", " has
      been specified.",
@@ -350,17 +372,30 @@ document { quote SyzygyLimit,
      EXAMPLE "gb(I,SyzygyLimit => infinity, Syzygies => true)",
      EXAMPLE "syz oo"
      }
-document { quote PairLimit,
+
+document { PairLimit,
      TT "PairLimit", " -- keyword for an optional argument used with
-     ", TO "gb", " and ", TO "resolution", ", which specifies that the
+     certain functions which specifies that the
+     computation should be stopped after a certain number of S-pairs
+     have been reduced.",
+     MENU {
+	  TO (gb => PairLimit),
+	  TO (resolution => PairLimit)
+	  }
+     }
+
+document { gb => PairLimit,
+     TT "PairLimit", " -- keyword for an optional argument used with
+     ", TO "gb", " which specifies that the
      computation should be stopped after a certain number of S-pairs
      have been reduced.",
      EXAMPLE "R = QQ[x,y,z,w]",
      EXAMPLE "I = ideal(x*y-z,y^2-w-1,w^4-3)",
-     EXAMPLE "gb(I,PairLimit => 1)",
-     EXAMPLE "gb(I,PairLimit => 2)",
-     EXAMPLE "gb(I,PairLimit => 3)"
+     EXAMPLE "gb(I, PairLimit => 1)",
+     EXAMPLE "gb(I, PairLimit => 2)",
+     EXAMPLE "gb(I, PairLimit => 3)"
      }
+
 document { quote CodimensionLimit,
      TT "CodimensionLimit", " -- keyword for an optional argument used with
      ", TO "gb", ", which specifies that the computation should stop when

@@ -16,6 +16,7 @@ document { quote GradedModule,
 	  },
      "Producing graded modules:",
      MENU {
+	  TO "coimage",
 	  TO "gradedModule"
 	  },
      SEEALSO "GradedModuleMap"
@@ -89,16 +90,14 @@ GradedModule#id = (M) -> (
      g.ring = f.ring;
      scan(spots f, i -> g#i = -f_i);
      g)
-RingElement + GradedModuleMap := { GradedModuleMap,
-     (r,f) -> (
-	  if source f == target f and f.degree === 0 
-	  then r*id_(source f) + f
-	  else error "expected map to have same source and target and to have degree 0") }
-GradedModuleMap + RingElement := {GradedModuleMap,
-     (f,r) -> (
-	  if source f == target f and f.degree === 0 
-	  then r*id_(source f) + f
-	  else error "expected map to have same source and target and to have degree 0")}
+RingElement + GradedModuleMap := (r,f) -> (
+     if source f == target f and f.degree === 0 
+     then r*id_(source f) + f
+     else error "expected map to have same source and target and to have degree 0")
+GradedModuleMap + RingElement := (f,r) -> (
+     if source f == target f and f.degree === 0 
+     then r*id_(source f) + f
+     else error "expected map to have same source and target and to have degree 0")
 RingElement - GradedModuleMap := (r,f) -> (
      if source f == target f and f.degree === 0 
      then r*id_(source f) - f
@@ -167,20 +166,19 @@ GradedModuleMap ^ ZZ := (f,n) -> (
 			 )
 		    ));
 	  g))
-GradedModuleMap + GradedModuleMap := {GradedModuleMap, 
-     (f,g) -> (
-	  if source f != source g
-	  or target f != target g
-	  or f.degree != g.degree then (
-	       error "expected maps of the same degree with the same source and target";
-	       );
-	  h := new GradedModuleMap;
-	  h.ring = f.ring;
-	  h.source = f.source;
-	  h.target = f.target;
-	  h.degree = f.degree;
-	  scan(union(spots f, spots g), i -> h#i = f_i + g_i);
-	  h)}
+GradedModuleMap + GradedModuleMap := (f,g) -> (
+     if source f != source g
+     or target f != target g
+     or f.degree != g.degree then (
+	  error "expected maps of the same degree with the same source and target";
+	  );
+     h := new GradedModuleMap;
+     h.ring = f.ring;
+     h.source = f.source;
+     h.target = f.target;
+     h.degree = f.degree;
+     scan(union(spots f, spots g), i -> h#i = f_i + g_i);
+     h)
 GradedModuleMap - GradedModuleMap := (f,g) -> (
      if source f != source g
      or target f != target g
@@ -389,6 +387,15 @@ coimage GradedModuleMap := (f) -> (
      scan(spots f, i -> E#i = coimage f#i);
      E
      )
+
+document { quote coimage,
+     TT "coimage f", " -- coimage of a map of graded modules.",
+     PARA,
+     "The coimage of a map differs slightly from the image, in that the
+     coimage is a quotient module of the source of the map, but the image
+     is a submodule of the target of the map.",
+     SEEALSO "GradedModule"
+     }
 
 cokernel GradedModuleMap := (f) -> (
      E := new GradedModule;

@@ -250,7 +250,7 @@ bump();
 bump();
      export AmpersandS := makeProtectedSymbolClosure(binaryleft("&"));
 bump();
-     export TildeS := makeProtectedSymbolClosure(unary("~"));
+     export TildeS := makeProtectedSymbolClosure(postfix("~"));
 bump();
      export DotDotS := makeProtectedSymbolClosure(binaryleft(".."));
 bump();

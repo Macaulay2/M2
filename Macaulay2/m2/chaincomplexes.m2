@@ -1,13 +1,13 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 ChainComplex = new Type of GradedModule
-new ChainComplex := { ChainComplex,
-     (cl) -> (
-	  C := newClass(ChainComplex,new MutableHashTable); -- sigh
-	  b := C.dd = new ChainComplexMap;
-	  b.degree = -1;
-	  b.source = b.target = C;
-	  C),
+new ChainComplex := (cl) -> (
+     C := newClass(ChainComplex,new MutableHashTable); -- sigh
+     b := C.dd = new ChainComplexMap;
+     b.degree = -1;
+     b.source = b.target = C;
+     C)
+document { (NewMethod, ChainComplexMap),  -- ????
      TT "C = new ChainComplexMap", " -- make a new chain complex.",
      PARA,
      "The new chain complex is initialized with a differential of
@@ -52,13 +52,17 @@ document { quote ChainComplex,
      "Here are some functions for producing or manipulating chain complexes.",
      MENU {
 	  (TO "++", "           -- direct sum"),
+	  (TO (quote .,ChainComplex,dd), " -- obtain the differentials."),
+	  (TO (ChainComplex, Array), " -- shift a chain complex"),
 	  (TO "C.dd_i", "       -- select a differential"),
 	  (TO "betti", "        -- display degrees in a free resolution"),
 	  (TO "chainComplex", " -- make a chain complex"),
 	  (TO "complete", "     -- complete the internal parts of a chain complex"),
 	  (TO "dual", "         -- dual complex"),
+	  (TO (Hom,ChainComplex,Module), " -- Hom"),
 	  (TO "length", "       -- length of a chain complex"),
 	  (TO "poincare", "     -- assemble degrees into polynomial"),
+	  TO "poincareN",
 	  (TO "nullhomotopy", " -- produce a null homotopy"),
 	  (TO "regularity", "   -- compute the regularity"),
 	  (TO "resolution", "   -- make a projective resolution"),
@@ -74,10 +78,11 @@ document { quote ChainComplex,
      EXAMPLE "C.dd",
      SEEALSO ("Resolution", "dd")
      }
-complete ChainComplex := { ChainComplex,     
-     C -> (
-     	  if C.?Resolution then (i := 0; while C_i != 0 do i = i+1);
-     	  C),
+
+complete ChainComplex := C -> (
+     if C.?Resolution then (i := 0; while C_i != 0 do i = i+1);
+     C)
+document { (complete, ChainComplex),
      TT "complete C", " -- fills in the modules of a chain complex
      obtained as a resolution with information from the engine.",
      PARA,
@@ -95,24 +100,24 @@ complete ChainComplex := { ChainComplex,
      EXAMPLE "keys C"     
      }
 
-ChainComplex _ ZZ := { ChainComplex,
-     (C,i) -> (
-	  if C#?i 
-	  then C#i
-	  else if C.?Resolution then (
-	       gr := C.Resolution;
-	       sendgg(ggPush gr, ggPush i, ggresmodule);
-	       F := new Module from ring C;
-	       if F != 0 then C#i = F;
-	       F)
-	  else (ring C)^0
-	  ),
+ChainComplex _ ZZ := (C,i) -> (
+     if C#?i 
+     then C#i
+     else if C.?Resolution then (
+	  gr := C.Resolution;
+	  sendgg(ggPush gr, ggPush i, ggresmodule);
+	  F := new Module from ring C;
+	  if F != 0 then C#i = F;
+	  F)
+     else (ring C)^0
+     )
+document { (quote _, ChainComplex, ZZ),
      TT "C_i", " -- yields the i-th module in a chain complex C.",
      PARA,
      "Returns the zero module if no module has been stored in the
      i-th spot.  You can use code like ", TT "C#?i", " to determine
-     if there is a module in the i-th spot (if the chain complex
-     arose as a resolution, use ", TO "complete ChainComplex", " to 
+     if there is a module in the i-th spot, but if the chain complex
+     arose as a resolution, first use ", TO (complete, ChainComplex), " to 
      fill all the spots with their modules."
      }
 
@@ -121,12 +126,12 @@ union := (x,y) -> keys(set x + set y)
 
 rank ChainComplex := C -> sum(spots C, i -> rank C_i)
 
-length ChainComplex := { ChainComplex,
-     (C) -> (
-	  complete C;
-	  s := spots C;
-	  if #s === 0 then 0 else max s - min s
-	  ),
+length ChainComplex := (C) -> (
+     complete C;
+     s := spots C;
+     if #s === 0 then 0 else max s - min s
+     )
+document { (length, ChainComplex),
      TT "length C", " -- the length of a chain complex.",
      PARA,
      "The length of a chain complex is defined to be the difference
@@ -269,12 +274,11 @@ ChainComplex#id = (C) -> (
      g.degree = f.degree;
      scan(spots f, i -> g#i = -f_i);
      g)
-RingElement + ChainComplexMap := {ChainComplexMap,
-     (r,f) -> (
-	  if source f == target f and f.degree === 0 
-	  then r*id_(source f) + f
-	  else error "expected map to have same source and target and to have degree 0")}
-ChainComplexMap + RingElement := {ChainComplexMap, (f,r) -> r+f}
+RingElement + ChainComplexMap := (r,f) -> (
+     if source f == target f and f.degree === 0 
+     then r*id_(source f) + f
+     else error "expected map to have same source and target and to have degree 0")
+ChainComplexMap + RingElement := (f,r) -> r+f
 
 ChainComplexMap + ZZ := (f,i) -> (
      if i === 0 then f
@@ -342,21 +346,20 @@ ChainComplexMap ^ ZZ := (f,n) -> (
 			 )
 		    ));
 	  g))
-ChainComplexMap + ChainComplexMap := {ChainComplexMap,
-     (f,g) -> (
-	  if source f != source g
-	  or target f != target g
-	  or f.degree != g.degree then (
-	       error "expected maps of the same degree with the same source and target";
-	       );
-	  h := new ChainComplexMap;
-	  h.source = f.source;
-	  h.target = f.target;
-	  h.degree = f.degree;
-	  complete f;
-	  complete g;
-	  scan(union(spots f, spots g), i -> h#i = f_i + g_i);
-	  h)}
+ChainComplexMap + ChainComplexMap := (f,g) -> (
+     if source f != source g
+     or target f != target g
+     or f.degree != g.degree then (
+	  error "expected maps of the same degree with the same source and target";
+	  );
+     h := new ChainComplexMap;
+     h.source = f.source;
+     h.target = f.target;
+     h.degree = f.degree;
+     complete f;
+     complete g;
+     scan(union(spots f, spots g), i -> h#i = f_i + g_i);
+     h)
 ChainComplexMap - ChainComplexMap := (f,g) -> (
      if source f != source g
      or target f != target g
@@ -589,21 +592,21 @@ document { quote poincare,
 	  }
      }
 
-poincareN ChainComplex := { ChainComplex,
-     (C) -> (
-	  s := local S;
-	  t := local T;
-	  G := group [s, t_0 .. t_(degreeLength ring C - 1)];
-	  -- this stuff has to be redone as in Poincare itself, DRG
-	  R := ZZ G;
-	  use R;
-	  f := 0_R;
-	  complete C;
-	  scan(keys C, n -> (
-		    if class n === ZZ
-		    then scanPairs(tally degrees C_n, 
-			 (d,m) -> f = f + m * G_0^n * product(# d, j -> G_(j+1)^(d_j)))));
-	  f ),
+poincareN ChainComplex := (C) -> (
+     s := local S;
+     t := local T;
+     G := group [s, t_0 .. t_(degreeLength ring C - 1)];
+     -- this stuff has to be redone as in Poincare itself, DRG
+     R := ZZ G;
+     use R;
+     f := 0_R;
+     complete C;
+     scan(keys C, n -> (
+	       if class n === ZZ
+	       then scanPairs(tally degrees C_n, 
+		    (d,m) -> f = f + m * G_0^n * product(# d, j -> G_(j+1)^(d_j)))));
+     f )
+document { poincareN,
      TT "poincareN C", " -- encodes information about the degrees of basis elements
      of a free chain complex in a polynomial.",
      PARA,
@@ -614,37 +617,31 @@ poincareN ChainComplex := { ChainComplex,
      EXAMPLE "poincareN resolution cokernel vars R"
      }
 
-ChainComplex ** Module := { ChainComplex,
-     (C,M) -> (
-	  D := new ChainComplex;
-	  D.ring = ring C;
-	  complete C.dd;
-	  scan(keys C.dd,i -> if class i === ZZ then (
-		    f := D.dd#i = C.dd#i ** M;
-		    D#i = source f;
-		    D#(i-1) = target f;
-		    ));
-	  D),
-     "tensor product"
-     }
+ChainComplex ** Module := (C,M) -> (
+     D := new ChainComplex;
+     D.ring = ring C;
+     complete C.dd;
+     scan(keys C.dd,i -> if class i === ZZ then (
+	       f := D.dd#i = C.dd#i ** M;
+	       D#i = source f;
+	       D#(i-1) = target f;
+	       ));
+     D)
 
-Module ** ChainComplex := { ChainComplex,
-     (M,C) -> (
-	  D := new ChainComplex;
-	  D.ring = ring C;
-	  complete C.dd;
-	  scan(keys C.dd,i -> if class i === ZZ then (
-		    f := D.dd#i = M ** C.dd#i;
-		    D#i = source f;
-		    D#(i-1) = target f;
-		    ));
-	  D),
-     "tensor product"
-     }
+Module ** ChainComplex := (M,C) -> (
+     D := new ChainComplex;
+     D.ring = ring C;
+     complete C.dd;
+     scan(keys C.dd,i -> if class i === ZZ then (
+	       f := D.dd#i = M ** C.dd#i;
+	       D#i = source f;
+	       D#(i-1) = target f;
+	       ));
+     D)
 -----------------------------------------------------------------------------
 
-homology(ZZ,ChainComplex) := { Module,
-     (i,C) -> homology(C.dd_i, C.dd_(i+1)),
+homology(ZZ,ChainComplex) := (i,C) -> homology(C.dd_i, C.dd_(i+1))
+document { (homology,ZZ,ChainComplex),
      TT "HH_i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      EXAMPLE "R = ZZ/101[x,y]",
      EXAMPLE "C = chainComplex(matrix{{x,y}},matrix{{x*y},{-x^2}})",
@@ -664,8 +661,8 @@ assert ( 0 == HH_4 res M )
 "
 
 
-cohomology(ZZ,ChainComplex) := { ChainComplex,
-     (i,C) -> homology(-i, C),
+cohomology(ZZ,ChainComplex) := (i,C) -> homology(-i, C)
+document { (cohomology,ZZ,ChainComplex),
      TT "HH^i C", " -- homology at the i-th spot of the chain complex ", TT "C", ".",
      PARA,
      "By definition, this is the same as HH_(-i) C."
@@ -687,35 +684,41 @@ cohomology(ZZ,ChainComplexMap) := (i,f) -> homology(-i,f)
 chainComplex = method(SingleArgumentDispatch=>true)
 
 document { quote chainComplex,
-     TT "chainComplex", " -- a method for creating chain complexes."
+     TT "chainComplex", " -- a method for creating chain complexes.",
+     PARA,
+     "See:",
+     MENU {
+	  TO (chainComplex,Matrix),
+	  TO (chainComplex,Sequence)
+	  }
      }
 
-chainComplex Matrix := { ChainComplex,
-     f -> chainComplex {f},
+chainComplex Matrix := f -> chainComplex {f}
+document { (chainComplex, Matrix),
      TT "chainComplex f", " -- create a chain complex ", TT "C", " with
      the map ", TT "f", " serving as the differential ", TT "C.dd_1", "."
      }
 
-chainComplex Sequence := chainComplex List := { ChainComplex,
-     maps -> (
-	  if #maps === 0 then error "expected at least one map";
-	  C := new ChainComplex;
-	  R := C.ring = ring target maps#0;
-	  scan(#maps, i -> (
-		    f := maps#i;
-		    if R =!= ring f
-		    then error "expected maps over the same ring";
-		    if i > 0 and C#i != target f then (
-			 diff := degrees C#i - degrees target f;
-			 if same diff
-			 then f = f ** R^(- diff#0)
-			 else error "expected composable maps";
-			 );
-		    C.dd#(i+1) = f;
-		    if i === 0 then C#i = target f;
-		    C#(i+1) = source f;
-		    ));
-	  C),
+chainComplex Sequence := chainComplex List := maps -> (
+     if #maps === 0 then error "expected at least one map";
+     C := new ChainComplex;
+     R := C.ring = ring target maps#0;
+     scan(#maps, i -> (
+	       f := maps#i;
+	       if R =!= ring f
+	       then error "expected maps over the same ring";
+	       if i > 0 and C#i != target f then (
+		    diff := degrees C#i - degrees target f;
+		    if same diff
+		    then f = f ** R^(- diff#0)
+		    else error "expected composable maps";
+		    );
+	       C.dd#(i+1) = f;
+	       if i === 0 then C#i = target f;
+	       C#(i+1) = source f;
+	       ));
+     C)
+document { (chainComplex, Sequence),
      TT "chainComplex(f,g,h,...)", " -- create a chain complex ", TT "C", " whose
      differentials are the maps ", TT "f", ", ", TT "g", ", ", TT "h", ".",
      PARA,
@@ -753,66 +756,63 @@ betti Module := M -> (
 	  )
      )
 
-ChainComplex ++ ChainComplex := { ChainComplex,
-     (C,D) -> (
-	  Cd := C.dd;
-	  Dd := D.dd;
-	  E := new ChainComplex;
-	  Ed := E.dd;
-	  R := E.ring = ring C;
-	  if R =!= ring D then error "expected chain complexes over the same ring";
-	  complete C;
-	  complete D;
-	  scan(union(spots C, spots D), i -> E#i = C_i ++ D_i);
-	  complete Cd;
-	  complete Dd;
-	  scan(union(spots Cd, spots Dd), i -> Ed#i = Cd_i ++ Dd_i);
-	  E.components = {C,D};
-	  E),
-     "direct sum"
-     }
+ChainComplex ++ ChainComplex := (C,D) -> (
+     Cd := C.dd;
+     Dd := D.dd;
+     E := new ChainComplex;
+     Ed := E.dd;
+     R := E.ring = ring C;
+     if R =!= ring D then error "expected chain complexes over the same ring";
+     complete C;
+     complete D;
+     scan(union(spots C, spots D), i -> E#i = C_i ++ D_i);
+     complete Cd;
+     complete Dd;
+     scan(union(spots Cd, spots Dd), i -> Ed#i = Cd_i ++ Dd_i);
+     E.components = {C,D};
+     E)
 
-components ChainComplex := { ChainComplex,
-     C -> if C.?components then C.components else {C},
+components ChainComplex := C -> if C.?components then C.components else {C}
+document { (components, ChainComplex),
      TT "components C", " -- returns from which C was formed, if C
      was formed as a direct sum.",
      PARA,
      SEEALSO "isDirectSum"
      }
 
-ChainComplex Array := { ChainComplex,
-     (C,A) -> (
-	  if # A =!= 1 then error "expected array of length 1";
-	  n := A#0;
-	  D := new ChainComplex;
-	  b := D.dd;
-	  D.ring = ring C;
-	  complete C;
-	  scan(pairs C,(i,F) -> if class i === ZZ then D#(i-n) = F);
-	  complete C.dd;
-	  if even n
-	  then scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = f)
-	  else scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = -f);
-	  D),
+ChainComplex Array := (C,A) -> (
+     if # A =!= 1 then error "expected array of length 1";
+     n := A#0;
+     D := new ChainComplex;
+     b := D.dd;
+     D.ring = ring C;
+     complete C;
+     scan(pairs C,(i,F) -> if class i === ZZ then D#(i-n) = F);
+     complete C.dd;
+     if even n
+     then scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = f)
+     else scan(pairs C.dd, (i,f) -> if class i === ZZ then b#(i-n) = -f);
+     D)
+document { (ChainComplex, Array),
      TT "C[i]", " -- shifts the chain complex C, producing a new chain complex
      D in which D_j is C_(i+j).  The signs of the differentials are reversed
      if i is odd."
      }
 
-Hom(ChainComplex, Module) := { ChainComplex,
-     (C,N) -> (
-	  c := C.dd;
-	  complete c;
-	  D := new ChainComplex;
-	  D.ring = ring C;
-	  b := D.dd;
-	  scan(spots c, i -> (
-		    j := - i + 1;
-		    f := b#j = Hom(c_i,N);
-		    D#j = source f;
-		    D#(j-1) = target f;
-		    ));
-	  D),
+Hom(ChainComplex, Module) := (C,N) -> (
+     c := C.dd;
+     complete c;
+     D := new ChainComplex;
+     D.ring = ring C;
+     b := D.dd;
+     scan(spots c, i -> (
+	       j := - i + 1;
+	       f := b#j = Hom(c_i,N);
+	       D#j = source f;
+	       D#(j-1) = target f;
+	       ));
+     D)
+document { (Hom,ChainComplex,Module),
      TT "Hom(C,M)", " -- produces the Hom complex from a chain complex C and
      a module M."
      }
@@ -828,10 +828,10 @@ Hom(Module, ChainComplex) := (M,C) -> (
 	       ));
      D)
 
-dual ChainComplex := { ChainComplex,
-     (C) -> (
+dual ChainComplex := (C) -> (
 	  R := ring C;
-	  Hom(C,R^1) ),
+	  Hom(C,R^1))
+document { (dual, ChainComplex),
      TT "dual C", " -- the dual of a chain complex."
      }
 
@@ -1032,107 +1032,6 @@ assert( P == poincare kernel f + poincare cokernel f )
 assert( P == poincare prune W )
 "
 
------------------------------------------------------------------------------
-pairs := g -> (
-    sendgg(ggPush g, ggpairs);
-    eePopIntarray())
-remaining := g -> (
-    sendgg(ggPush g, ggremaining);
-    eePopIntarray())
-nmonoms := g -> (
-    sendgg(ggPush g, ggnmonoms);
-    eePopIntarray())
-
-ResolutionStatus := (r,options) -> (
-     v := {};
-     lab := {};
-     if options#TotalPairs     === true then (
-	  v = append(v,pairs r);
-	  lab = append(lab,"total pairs");
-	  );
-     if options#PairsRemaining === true then (
-	  v = append(v,remaining r);
-	  lab = append(lab,"pairs remaining");
-	  );
-     if options#Monomials      === true then (
-	  v = append(v,nmonoms r);
-	  lab = append(lab,"monomials");
-	  );
-     numops := # v;
-     if numops === 1 
-     then lab = concatenate( "        : ", lab)
-     else lab = concatenate( "        : (", between(",",lab), ")" );
-     if numops === 0 then error "expected at least one option to be true";
-     ss := v#0;
-     minrow := ss_0;
-     maxrow := ss_1;
-     mincol := 0;
-     maxcol := ss_2;
-     leftside := apply(
-	  splice {"totals:", apply(minrow .. maxrow, i -> string i | ":")},
-	  s -> (9-# s,s));
-     v = transpose v;
-     v = drop(v,3);
-     v = pack(v,maxcol-mincol+1);
-     totals := apply(transpose v, sum);
-     v = prepend(totals,v);
-     v = transpose v;
-     v = applyTable(v, toSequence);
-     if numops === 1
-     then v = applyTable(v,(i) -> if i === 0 then "." else name i)
-     else v = applyTable(v,args -> concatenate("(", between(",",apply(args,name)), ")" ));
-     just := (
-	  if numops === 1
-	  then (wid,s) -> (wid - # s, s)  -- right justify
-	  else (wid,s) -> (			  -- center
-	       n := # s;
-	       w := (wid - n + 1)//2; 
-	       (w, s, wid-w-n)));
-     v = apply(v, col -> apply(col, s -> just(1 + max apply(col, i -> #i), s)));
-     v = prepend(leftside,v);
-     v = transpose v;
-     v = apply(v, row -> (row,"\n"));
-     << lab << endl;
-     printString(stdout,v);
-     )
-statusDefaults := new OptionTable from {
-     TotalPairs => true,
-     PairsRemaining => false,
-     Monomials => false
-     }
-status = method (Options => statusDefaults)
-status ChainComplex := (C,options) -> ResolutionStatus(C.Resolution, options)
-document { quote status,
-     TT "status C", " -- displays the status of the computation of a
-     chain complex C constructed by ", TO "resolution", ".  The display has
-     the same shape as the display produced by ", TO "betti", ", but
-     the number(s) displayed in each degree differ.",
-     PARA,
-     "Options:",
-     MENU {
-	  {TO "TotalPairs", "     -- display the total number of S-pairs"},
-	  {TO "PairsRemaining", " -- display the number of S-pairs remaining"},
-	  {TO "Monomials", "      -- display the number of monomials"}
-	  },
-     "Default values:",
-          MENU {
-	  {TO "TotalPairs", "     => ", statusDefaults.TotalPairs},
-	  {TO "PairsRemaining", " => ", statusDefaults.PairsRemaining},
-	  {TO "Monomials", "      => ", statusDefaults.Monomials}
-	  }
-     }
-document { quote TotalPairs,
-     TT "TotalPairs", " -- an option for ", TO "status", " which specifies
-     whether to display the total number of S-pairs."
-     }
-document { quote PairsRemaining,
-     TT "PairsRemaining", " -- an option for ", TO "status", " which specifies
-     whether to display number of S-pairs remaining."
-     }
-document { quote Monomials,
-     TT "Monomials", " -- an option for ", TO "status", " which specifies
-     whether to display the number of monomials."
-     }
 -----------------------------------------------------------------------------
 syzygyScheme = (C,i,v) -> (
      -- this doesn't work any more because 'resolution' replaces the presentation of a cokernel

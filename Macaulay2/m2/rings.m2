@@ -79,6 +79,10 @@ document { quote coefficientRing,
 
 isCommutative = method()
 isCommutative Ring := R -> R.isCommutative
+document { quote isCommutative,
+     TT "isCommutative R", " -- tells whether the ring R is commutative."
+     }
+
 ZZ.isCommutative = true
 QQ.isCommutative = true
 RR.isCommutative = true

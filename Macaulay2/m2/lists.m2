@@ -4,9 +4,8 @@ List _ ZZ     := (x,i) -> x#i
 ggPush List  := v -> (ggINTARRAY, gg v)
 List | List  := join
 
-List + List  := {
-     List,
-     (v,w) -> apply(v,w,plus),
+List + List  := (v,w) -> apply(v,w,plus)
+document { (quote +, List, List),
      TT "v + w", " -- the sum of two vectors represented as lists."
      }
 

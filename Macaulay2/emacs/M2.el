@@ -139,7 +139,8 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
 
 (defun M2-match-next-bracketed-input()
   "Move forward to the next region bracketed by <<< and >>>, marking
-it with the point and the mark."
+it with the point and the mark.  After marking the region, the code
+can be executed with \\[M2-send-to-program]."
   (interactive)
   (goto-char
    (prog1
@@ -150,7 +151,8 @@ it with the point and the mark."
 
 (defun M2-match-previous-bracketed-input()
   "Move backward to the previous region bracketed by <<< and >>>, marking
-it with the point and the mark."
+it with the point and the mark.  After marking the region, the code
+can be executed with \\[M2-send-to-program]."
   (interactive)
   (goto-char
    (progn

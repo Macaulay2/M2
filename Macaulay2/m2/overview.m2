@@ -847,10 +847,29 @@ document { "making modules from matrices",
      }
 
 document { "manipulating modules",
+	  -- document the way to get maps between a module M and its
+	  -- version as a cokernel in the overview
      }
 
 document { "maps between modules",
+     	  -- (R^5)_{0}
      }
 
 document { "bases of parts of modules",
      }
+
+document { "free resolutions of modules",
+     }
+
+document { "making chain complexes by hand",
+     }
+
+document { "extracting information from chain complexes",
+     }
+
+document { "manipulating chain complexes",
+     }
+
+document { "maps between chain complexes",
+     }
+

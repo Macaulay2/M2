@@ -1,10 +1,15 @@
 --		Copyright 1996 by Daniel R. Grayson
 
-net Option := z -> horizontalJoin splice (
-     if precedence z >= precedence z#0 then ("(",net z#0,")") else net z#0,
-     " => ",
-     if precedence z > precedence z#1 then ("(",net z#1,")") else net z#1
-     )
+toString = method(SingleArgumentDispatch => true)
+toString String := identity
+toString Thing := name
+
+document { quote toString,
+     TT "toString x", " -- converts ", TT "x", " to a string using ", TT "name", ", unless
+     ", TT "x", " is already a string, in which case ", TT "x", " is returned."
+     }
+
+net Option := z -> net expression z
 
 Net | Net := Net | String := String | Net := horizontalJoin
 String || String := Net || Net := Net || String := String || Net := verticalJoin

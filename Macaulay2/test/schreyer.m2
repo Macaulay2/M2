@@ -18,7 +18,7 @@ artinianGorensteinRing = (p,n,d,s) -> (
      I := map(R^1,R^0,0);
      v := symmetricPower(d,vars R);
      while (
-	  c := codim I;
+	  c := codim cokernel I;
 	  c < n+1 
 	  -- or c === n+1 and numgens source mingens image (v % I) > 1
 	  ) do (
