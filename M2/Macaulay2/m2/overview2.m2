@@ -16,7 +16,7 @@ document {
      and the submodule is represented internally by a matrix whose columns
      generate the submodule.  The two matrices the same number of rows, namely,
      the rank of ", TT "F", ".",
-     UL {
+     Subnodes => {
 	  TO "ideals",
 	  TO "free modules",
 	  TO "making modules from matrices", -- coker, ker, image, etc.
@@ -441,8 +441,7 @@ document {
      Key => "Language and Programming Overview",
      "In this section we give a comprehensive overview of the user
      language and the main programming features of Macaulay 2.",
-     PARA,
-     UL {
+     Subnodes => {
 	  TO "syntax",
 	  TO "variables and symbols",
 	  TO "functions",
@@ -461,7 +460,7 @@ document {
 document {
      Key => "variables and symbols",
      Headline => "an overview",
-     UL {
+     Subnodes => {
 	  TO "valid names",
 	  TO "assigning values",
 	  TO "local variables in a file",
@@ -476,7 +475,7 @@ document {
      Headline => "an overview",
      "In this section we present an overview of functions.",
      PARA,
-     UL {
+     Subnodes => {
 	  TO "using functions",
 	  TO "making functions",
 	  TO "local variables in a function",
@@ -494,9 +493,8 @@ document {
      essentially implemented internally.  It is not possible for
      the user to create new basic types.  For details, see
      ", TT "basictype", ".",
-     PARA,
-     "Some common basic types:",     
-     UL {
+     Subnodes => {
+     	  "Some common basic types:",
 	  TO "strings",
 	  TO "nets",
 	  TO "lists",
@@ -508,7 +506,7 @@ document {
 document {
      Key => "control structures",
      Headline => "an overview",
-     UL {
+     Subnodes => {
 	  TO "loops",
 	  TO "mapping over lists",
 	  TO "mapping over hash tables",
@@ -521,7 +519,7 @@ document {
 document {
      Key => "input and output",
      Headline => "an overview",
-     UL {
+     Subnodes => {
 	  TO "printing to the screen",
 	  TO "reading files",
 	  TO "getting input from the user",
@@ -535,21 +533,15 @@ document {
 document {
      Key => "classes and types",
      Headline => "an overview",
-     UL {
+     Subnodes => {
 	  TO "what a class is",
 	  TO "installing methods",
 	  TO "binary methods",
 	  TO "making new classes",
 	  TO "inheritance from parents",
 	  TO "printing and formatting for new classes",
-	  SEQ (
-	       "method functions",
-	       UL {
-		    TO "making a new method function",
-		    TO (method,SingleArgumentDispatch),
-		    TO (method,Options),
-		    }
-	       ),
+	  TO "method functions",
+	  TO "making a new method function",
 	  }
      }
 
@@ -1121,8 +1113,8 @@ fghij"///,
 	  "substring(5,x)",
 	  "substring(5,2,x)",
 	  },
-     UL {
-     	  SEQ {"The class of all strings is ", TO "String", "."}
+     Subnodes => {
+     	  TO "String"
 	  }
      }
 
@@ -1171,10 +1163,8 @@ document {
 	  "peek oo",
 	  "stack v"
 	  },
-     UL {
-	  SEQ {
-     	       "The class of all nets is ", TO "Net", "."
-	       }
+     Subnodes => {
+	  TO "Net"
 	  }
      }
 
@@ -1237,7 +1227,7 @@ document {
      TO "take", ", and ",
      TO "unique", ".",
      PARA,
-     UL {
+     Subnodes => {
 	  TOH "List",
 	  TOH "VisibleList",
 	  TOH "BasicList",
@@ -1303,7 +1293,7 @@ document {
 	  },
      "Other functions for dealing especially with sequences
      include ", TO "sequence", " and ", TO "deepSplice", ".",
-     UL {
+     Subnodes => {
 	  TOH "Sequence"
 	  }
      }
@@ -2060,8 +2050,7 @@ document {
      hash table are constructed in a certain way from the function and the
      types of its arguments whose details the user doesn't need to know.",
      PARA,
-     "For more details, see one of the topics below.",
-     UL {
+     Subnodes => {
 	  TO "class",
 	  TO "parent",
 	  TO "instance",
@@ -2069,16 +2058,7 @@ document {
 	  TO "newClass",
 	  TO "new",
 	  },
-     "For related topics, see one of the following.",
-     UL {
-	  TO "uniform",
-	  TO "Thing",
-	  TO "Nothing",
-	  TO "Type",
-	  TO "MutableList",
-	  TO "MutableHashTable",
-	  TO "SelfInitializingType"
-	  }
+     SeeAlso => { "uniform", "Thing", "Nothing", "Type", "MutableList", "MutableHashTable", "SelfInitializingType" }
      }
 
 document {

@@ -3,6 +3,11 @@
 -- These installations are not really methods: we install them just for documentation
 -- None of this code will ever get called, because the functions are built-in.
 
+typicalValues#basictype = Type
+typicalValues#class = Type
+typicalValues#parent = Type
+typicalValues#singleton = Sequence
+
 dummy := method(SingleArgumentDispatch=>true)	    -- a compiled function closure is pretty anonymous
 installMethod(symbol !, ZZ, ZZ => dummy)
 installMethod(symbol ##, Function, Sequence, Thing => dummy)
@@ -66,9 +71,6 @@ isReady(File) := Boolean => isReady
 mutable(Thing) := Boolean => mutable
 instance(Thing,Type) := Boolean => instance
 matches(String,String) := List => match
-basictype Thing := Type => basictype
-class Thing := Type => class
-parent Thing := Type => parent
 characters String := List => characters
 concatenate List := String => concatenate
 deepSplice BasicList := BasicList => deepSplice
@@ -102,7 +104,6 @@ select(BasicList,Function) := BasicList => select
 select(HashTable,Function) := HashTable => select
 select(ZZ,BasicList,Function) := BasicList => select
 select(ZZ,HashTable,Function) := HashTable => select
-sequence Thing := Sequence => singleton
 set List := set Sequence := Set => set
 tally List := tally Sequence := Tally => tally
 splice BasicList := BasicList => splice

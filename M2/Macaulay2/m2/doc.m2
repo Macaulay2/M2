@@ -19,14 +19,14 @@ document {
      }
 
 document {
-     Key => (parent,Thing),
+     Key => parent,
      Headline => "parent type of an object",
      Usage => "X = parent x",
      Inputs => {
 	  "x" => ""
 	  },
      Outputs => {
-	  "X" => { ", the parent class of ", TT "x" }
+	  "X" => { "the parent class of ", TT "x" }
 	  },
      "Methods for the instances of ", TT "X", " which are not found
      in ", TT "X", " itself are sought in ", TT "P", ", and its parent, and so on.
