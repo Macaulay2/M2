@@ -1,8 +1,26 @@
  -*- Mode: sh -*-
 AC_INIT(Makeconf)
+
 VERSION="`cat $srcdir/version`"
 AC_SUBST(VERSION)
 AC_DEFINE_UNQUOTED(VERSION,"$VERSION",version number)
+
+NODENAME="`uname -n`"
+AC_SUBST(NODENAME)
+AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
+
+REL="`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `"
+AC_SUBST(REL)
+AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
+
+ARCH="`  uname -m | sed s=/=-=g  `"
+AC_SUBST(ARCH)
+AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type, obtained with uname -m])
+
+OS="`  uname -s | sed s=/=-=g  `"
+AC_SUBST(OS)
+AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s])
+
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_HOST()
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
@@ -23,7 +41,19 @@ case "$CC" in
 esac
 
 AC_PROG_YACC()
+
 M2_ENABLE_DUMPDATA()
+M2_WITH_SOCKS()
+M2_ENABLE_SHARED()
+M2_ENABLE_STRIP()
+M2_ENABLE_PROFILE()
+M2_ENABLE_OPTIMIZE()
+M2_ENABLE_DEBUG()
+M2_ENABLE_STATIC()
+M2_ENABLE_MEMDEBUG()
+M2_ENABLE_VERBOSE()
+M2_WITH_FACTORY()
+
 AC_CHECK_FUNC(__finite,,AC_DEFINE(__finite,finite,whether __finite is missing))
 AC_CHECK_FUNC(__isnan,,AC_DEFINE(__isnan,isnan,whether __isnan is missing))
 AC_CHECK_FUNC(__isinf,,AC_DEFINE(__isinf,isinf,whether __isinf is missing))

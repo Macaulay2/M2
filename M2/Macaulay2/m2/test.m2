@@ -1,6 +1,6 @@
-errorDepth 0
-l = matrix {{5}}
-if instance(ZZZ, Type) then (
+errorDepth 0CO:
+l = matrix {CO:{5}}
+if instance(ZZZ, Type) then (CO:
     m = matrix {{5_ZZZ}};
     print m;
     ideal 5_ZZZ;

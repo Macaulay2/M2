@@ -1,7 +1,3 @@
-## useful flags:
-#	NOSTRIP=TRUE - don't strip symbols from ../bin/Macaulay2
-
-############################## includes
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
 srcdir = @srcdir@
@@ -76,7 +72,7 @@ SCC1 := ../c/scc1
 
 SCCFLAGS =
 
-ifndef NOOPTIM
+ifeq "$(OPTIMIZE)" "yes"
 SCCFLAGS += -O
 endif
 
@@ -109,7 +105,7 @@ endif
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
 
-CPPFLAGS := -I$(INCDIR) -I.
+CPPFLAGS := -I../../include -I.
 # the purpose of the -I. is so scclib.c can find ./alloca.h if it's missing
 # from the gcc installation, as it often is
 
@@ -135,7 +131,7 @@ endif
 CXXFLAGS += $(WARNINGS)
 
 ifneq "$(CC)" "cl"
-LDLIBS  += -L${LIBDIR}
+LDLIBS  += -L../../lib
 endif
 
 ifeq ($(OS),linux-gnu)
@@ -161,7 +157,7 @@ CPPFLAGS += -DincludeX11
 LDLIBS += -lX11
 endif
 
-ifdef SOCKS
+ifeq "$(SOCKS)" "yes"
 LDLIBS += -lsocks5
 endif
 
@@ -174,8 +170,8 @@ endif
 # __underflow
 # LDLIBS+= -lc
 
-ifndef SHAREDLIBS
-ifndef NOSTATIC
+ifeq "$(SHAREDLIBS)" "no"
+ifeq "$(STATIC)" "yes"
 LDFLAGS += -static
 ifeq ($(OS),linux-gnu)
 # this is for gc somehow, see the end of gc/config.h
@@ -190,14 +186,15 @@ ifeq ($(OS),solaris2.7)
 LDLIBS += -lsocket -lnsl
 endif
 
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 # This next bit is really needed only for gnu libc6 (glibc-2.0.7)
 # Without it, it does dynamic linking at run time and breaks our dumpdata scheme
 # Don't link statically, so that these libraries actually get loaded at run time.
 # If we must link statically, we should find out how to link all members.
 # LDLIBS += -lnsl -lnss_files -ldb -lnss_compat -lnss_db -lnss_dns -lnss_nis -lresolv
 endif
-ifndef NOSTATIC
+
+ifeq "$(STATIC)" "yes"
 ifeq ($(OS),linux-gnu)
 # so I tried it, but it doesn't work...
 # ALLOBJ += /usr/lib/libnsl.a /usr/lib/libnss_*.a
@@ -243,15 +240,15 @@ ifeq "$(CC)" "cl"
 compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
 else
-compat.c compat.h : configure ../../Makeconf.h
+compat.c compat.h : configure ../../include/config.h
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" ./configure
 endif
 
 M2lib.o scclib.o M2lib.lo scclib.lo : compat.h
 M2lib.o scclib.o M2lib.lo scclib.lo : \
-	../c/compat.h ../c/compat.c types.h ../../Makeconf.h memdebug.h
+	../c/compat.h ../c/compat.c types.h memdebug.h ../../include/config.h
 memdebug.o scclib.o actors5.oo gc_cpp.o memdebug.lo scclib.lo actors5.loo gc_cpp.lo : memdebug.h
-gc_cpp.o gc_cpp.lo : ../../Makeconf.h
+gc_cpp.o gc_cpp.lo : ../../include/config.h
 
 allc : $(PROJECT:.d=.c) tmp_init.c
 
@@ -269,7 +266,7 @@ ifeq ($(OS),linux-gnu)
 # LDFLAGS += -rdynamic
 endif
 
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 LOADLIBES += -L../lib
 LIBRARYFILES += ../lib/libengine1.so
 LIBRARYOPTIONS += -lengine1
@@ -344,7 +341,7 @@ interpret.a : $(ALLOBJ)
 	ar rcs $@ $^ tmp_init.o
 ############################## probe memory for dumpdata
 probe : probe.c probe.h
-	$(CC) -g -static -I$(INCDIR) probe.c $(OUTPUT_OPTION)
+	$(CC) -g -static -I../../include probe.c $(OUTPUT_OPTION)
 probe.h :
 	echo "/* insert temporary fixes here */" >$@
 test-probe : probe
@@ -381,7 +378,7 @@ ifdef MP
 LIBRARYFILES += ../../lib/libMP.a
 LIBRARYOPTIONS += ../../lib/libMP.a
 endif
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 LIBRARYFILES += ../lib/libfac.so
 LIBRARYOPTIONS += -lfac
 LIBRARYFILES += ../lib/libcf.so

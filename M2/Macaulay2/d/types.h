@@ -1,5 +1,4 @@
-#include "../../Makeconf.h"	/* MP, FACTORY, and DUMPDATA are defined here */
-#include "config.h"		/* VERSION is defined here */
+#include "config.h"
 #include "compat.h"		/* same include files seen by *.c files produced from *.d files */
 
 #include "../c2/targettypes.h"

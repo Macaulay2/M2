@@ -57,7 +57,7 @@ else
 CXXFLAGS += -g $(WARNINGS)
 endif
 
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 CXXFLAGS += -fPIC
 endif
 
@@ -232,7 +232,7 @@ CCFILES := $(addsuffix .cpp,$(CC_FILES))
 CFILES := $(addsuffix .c,$(C_FILES))
 OFILES := $(addsuffix .o,$(C_FILES) $(CC_FILES))
 
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 OBJFILES := $(LOFILES)
 else
 OBJFILES := $(OFILES)
@@ -253,7 +253,7 @@ ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) $(ESTUFF)
 #############
 all:: cmdnames.m2 $(addsuffix .hpp, $(GENERATED_H))
 
-ifdef SHAREDLIBS
+ifeq "$(SHAREDLIBS)" "yes"
 all:: ../lib/libengine1.so ../lib/libengine2.so
 else
 all:: $(OFILES)
@@ -306,7 +306,9 @@ Makefile-lo.depends: Makefile $(HFILES) $(CCFILES) $(CFILES)
 
 ifndef NODEPENDS
 include Makefile-o.depends
+ifeq "$(SHAREDLIBS)" "yes"
 include Makefile-lo.depends
+endif
 endif
 
 allfiles: Makefile

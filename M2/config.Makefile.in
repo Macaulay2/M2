@@ -1,14 +1,25 @@
 
-# cygwin make might get confused by this!
+# cygwin 'make' might get confused by setting SHELL
 SHELL = @SHELL@
 
-# export ARCH           := $(shell uname -m | sed s=/=-=g )
-ARCH = @host_cpu@
-
-# export OS             := $(shell uname -s | sed s=/=-=g )
-OS   = @host_os@
-
+ARCH = @ARCH@
+OS   = @OS@
 VERSION = @VERSION@
+DUMPDATA = @DUMPDATA@
+SOCKS = @SOCKS@
+REL = @REL@
+NODENAME = @NODENAME@
+SHAREDLIBS = @SHAREDLIBS@
+FACTORY = @FACTORY@
+FACTORYVERSION = @FACTORYVERSION@
+PROFILE = @PROFILE@
+STRIP = @STRIP@
+OPTIMIZE = @OPTIMIZE@
+DEBUG = @DEBUG@
+MEMDEBUG = @MEMDEBUG@
+VERBOSE = @VERBOSE@
+STATIC = @STATIC@
+
 CC = @CC@
 CXX = @CXX@
 YACC = @YACC@
@@ -36,4 +47,4 @@ oldincludedir = @oldincludedir@
 infodir = @infodir@
 mandir = @mandir@
 RANLIB = @RANLIB@
-DUMPDATA = @DUMPDATA@
+AR = ar

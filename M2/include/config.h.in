@@ -3,11 +3,35 @@
 /* version number */
 #undef VERSION
 
+/* hostname used for compilation */
+#undef NODENAME
+
+/* operating system release, obtained with uname -r */
+#undef REL
+
+/* machine hardware type, obtained with uname -m */
+#undef ARCH
+
+/* operating system name, obtained with uname -s */
+#undef OS
+
 /* whether to use the new version of dumpdata */
 #undef NEWDUMPDATA
 
 /* whether to use dumpdata */
 #undef DUMPDATA
+
+/* whether to compile and link with socks5 */
+#undef SOCKS
+
+/* whether to use shared libraries */
+#undef SHAREDLIBS
+
+/* factory version number */
+#undef FACTORYVERSION
+
+/* whether to link with factory */
+#undef FACTORY
 
 /* whether __finite is missing */
 #undef __finite

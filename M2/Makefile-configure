@@ -1,9 +1,16 @@
 # -*- Mode: Makefile -*-
+default : stage2
 
 CONFIGURE_OPTIONS = --prefix=/tmp/Macaulay2-$(shell cat version) --cache-file=config.cache
 CONFIGURE_ENVIRON = CFLAGS="-O2" CXXFLAGS="-O2"
 
--include Makefile-configure.overrides
+include Makefile-configure.overrides
+Makefile-configure.overrides :
+	echo "# -*- Mode: Makefile -*-" > $@
+	echo "# CONFIGURE_OPTIONS += --disable-dumpdata" >>$@
+	echo "# CONFIGURE_OPTIONS += --enable-dumpdata=old" >>$@
+	echo "# CONFIGURE_OPTIONS += --with-socks" >>$@
+	echo "# CONFIGURE_OPTIONS += --enable-shared" >>$@
 
 ## to build:
 ##	add overrides to the file Makefile-configure.overrides
@@ -58,8 +65,6 @@ export CONFIGURED_FILES := \
 	Macaulay2/setup \
 	Macaulay2/util/Makefile
 #############################################################################
-
-default : stage2
 
 stage1 : configure include/config.h.in
 configure : configure.in aclocal.m4

@@ -3,6 +3,16 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+The procedure for compiling is different now, as we use "configure".
+Try "make -f Makefile-configure".  We don't yet have a "make install" target.
+
+Warning: things of class Matrix and Ideal are now immutable.  If you want
+to cache information about a matrix or ideal I, you may use the new cache
+table I.cache.  That cache table is of type "CacheTable", and new type
+of mutable hash table.  Cache tables always have hash code 0, and equality
+of two cache tables is determined by comparing only the parents and the classes,
+not the contents (key-value pairs).
+
 The multi-degrees used in total Ext modules computed by "Ext" are slightly
 different now - the homological degree is now the first component instead of
 the second.
