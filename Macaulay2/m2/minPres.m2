@@ -1,24 +1,21 @@
 -- This file written by Amelia Taylor <ataylor@stolaf.edu>
 
------ This file was last updated on January 16, 2005
+----- This file was last updated on March 12, 2005
 
 --------------------------------------------------------------
 -- This begins the code for minPres which takes both ideals and 
 -- quotient rings as input.   
 
--- mytrim, checkpoly, finishmap are called in the main program below.  
-
-mytrim := (I) -> (
-     -- uses trim if I is homogeneous, sets up with a gb otherwise.
-     if isHomogeneous I then (trim I)
-     else (ideal generators gb I)
-     )
+-- checkpoly, finishmap, monOrder and coreProgram are called 
+-- in the top-level program minPres.  
 
 checkpoly := (f)->(
-     --input: a polynomial.
-     --output: a list of the index of the first (by index in the ring) 
-     --variable that occurs linearly in f and does not occur in any other
-     --term of f and a polynomial with that term eliminated.
+     -- 1 Argument:  A polynomial.
+     -- Return:      A list of the index of the first 
+     --              (by index in the ring) variable that occurs 
+     --              linearly in f and does not occur in any other 
+     --              term of f and a polynomial with that term 
+     --              eliminated.
      A := ring(f);
      p := first entries contract(vars A,f);
      i := position(p, g -> g != 0 and first degree g === 0);
@@ -32,7 +29,12 @@ checkpoly := (f)->(
      )
     
 finishMap := (L,xmap) -> (
-     -- 
+     -- 2 Arguments:  A matrix and a new mutable list.
+     -- Return:       a map from the ring corresponding to 
+     --               entries in the matix to itself given by 
+     --               entries in the matrix which have a linear
+     --               term that does not occur elsewhere in the 
+     --               polynomial. 
      A := ring L_0;
      count := #L;
      while count > 0 do (
@@ -47,92 +49,16 @@ finishMap := (L,xmap) -> (
      map(A,A,toList xmap)
      )
 
-minPres = method(Options=>{Variable => null})
-
-minPres Ideal := o -> (I) -> (
-     --Input:  Any ideal.
-     --Output:  An ideal where the generators that have a 
-     --         linear term where that variable does not occur 
-     --         in other terms removed.  
-     --Method:  We use minMapNew which calls finishMap, 
-     --         dumpHighDegree, slice and getSingletons.
-     R := ring I;
-     if I == 0 then I else (
-     	  F := finishMap(flatten entries generators I, new MutableList from first entries (vars R)); 
-	  -- The core computation.  The rest is to set up maps for 
-	  -- later use and to put the result in the correct ring. 
-     	  LF := flatten entries F.matrix;
-     	  l1 := apply(LF, f -> sum(exponents f));
-     	  l := positions(l1,f -> if f===0 then false else (sum f) === 1);
-	  -- l contains the indices for the remaining variables.  Needed to 
-	  -- set the vars for the resulting ring as well as getting the correct 
-	  -- degrees and the correct monomial order. 
-	  varsR := apply(l,f->R_f);  
-     	  degreesS := apply(l,i->((monoid R).degrees)#i);
-	  oldMonOrder := (monoid R).Options.MonomialOrder;
-	  if (oldMonOrder === Lex or oldMonOrder === GRevLex or oldMonOrder === RevLex)
-	  then monOrder := oldMonOrder
-	  -- The else puts together the Product Order when the original 
-	  -- ideal is given in a produect order. 
-	  else (oldpieces := toList oldMonOrder;  
-	       newpieces := {};
-	       count := 0;
-	       done := #oldpieces;
-	       m := l;
-	       while done > 0 do (
-		    sm := #(select(m, i -> i < oldpieces#0 + count));
-		    newpieces = append(newpieces, sm);
-		    if sm == 0 then m = m else m = drop(m, sm);
-		    count = count + oldpieces#0;
-		    oldpieces = drop(oldpieces, 1);
-       	    	    done = #oldpieces;
-		    );
-	       newpieces = select(newpieces, i -> i != 0);
-	       monOrder = ProductOrder newpieces;
-	       );   	              	    
-	  -- Next we set the new ring - call it S.  Uses new var names if desired and 
-	  -- sets up a map from the old ring to the new in case new vars are used.
-     	  if o.Variable === null then (
-	       S := (coefficientRing R)[varsR, Degrees => degreesS, MonomialOrder => monOrder];
-     	       FmatS := substitute(F.matrix, S);
-	       vv := map(S,S);)
-     	  else (
-	       R2 := (coefficientRing R)[varsR2];
-	       y := o.Variable;
-     	       var := splice{y_0..y_(#l-1)};
-     	       S = (coefficientRing R)[var,Degrees => degreesS, MonomialOrder => monOrder];
-     	       vv = map(S,R2,vars S);
-     	       J := substitute (ideal(compress generators F(I)),S);
-     	       FmatS = vv(substitute(F.matrix,R2)););
-     	  I.cache.minPresMap = map(S,R,FmatS);  
-	  -- This is the key map from old ring R to new Ring S
-     	  I.cache.minPresMapInv = map(R,S,varsR);
-     	  mytrim vv(substitute (ideal compress generators F(I),S)) -- question the need for mytrim!
-     	  )
-     )
-
-minPres Ring := o -> (R) -> (
-     --Input:  Any ring R.
-     --Output:  A ring R'that is the input simplified.  So
-     --R'=k[a1..an]/J' where a1..an are a subset of the 
-     --vars of R and R' is isomorphic to R.  The maps from 
-     --R to R' and from R' to R are encoded on R' as 
-     --R'.minPresMap and R'.minPresMapInv.
-     --Method:  First we get a map from the presentation of R to 
-     --itself using minMapNew which in turn calls checkpoly.
-     M := presentation R;
-     F := finishMap(flatten entries M, new MutableList from first entries (vars ring ideal M)); 
-     LF := flatten entries F.matrix;    
-     l1 := apply(LF, f -> sum(exponents f));
-     l := positions(l1,f -> if f===0 then false else (sum f) === 1); 
-     varsR := apply(l,f->(ring M)_f);
-     degreesR := apply(l,i->((monoid R).degrees)#i);
-     oldMonOrder := (monoid R).Options.MonomialOrder;
-     if (oldMonOrder === Lex or oldMonOrder === GRevLex or oldMonOrder === RevLex)
-     then monOrder := oldMonOrder
-     -- The else puts together the Product Order when the original 
-     -- ideal is given in a produect order. 
-     else (oldpieces := toList oldMonOrder;  
+monOrder := (Ord, l) -> (
+     -- 2 arguments: a monomial order and a list of variables.
+     -- return:  a new monomial order corresponding to the subset of 
+     --          of variables in l.
+     if (Ord === Lex or Ord === GRevLex or Ord === RevLex)
+     then newOrd := Ord
+     -- The order for the original ring is a product order.  
+     -- Build a new product order based on variables remaining 
+     -- for the minimal presentation.
+     else (oldpieces := toList Ord;  
 	  newpieces := {};
 	  count := 0;
 	  done := #oldpieces;
@@ -146,47 +72,117 @@ minPres Ring := o -> (R) -> (
 	       done = #oldpieces;
 	       );
 	  newpieces = select(newpieces, i -> i != 0);
-	  monOrder = ProductOrder newpieces;
-	  );   	              	 
-     if o.Variable === null then(
-     	  S := (coefficientRing R)[varsR, Degrees => degreesR, MonomialOrder => monOrder];
-     	  I := ideal(compress F(M));
-     	  S2 := S/(mytrim(substitute(I,S)));
-	  FmatS := substitute(F.matrix, S2);
-	  )
-     else (R2 := (coefficientRing R)[varsR];
-	  y := o.Variable;
-     	  var := splice{y_0..y_(#l-1)};
-     	  S = (coefficientRing R)[var,Degrees => degreesR, MonomialOrder => monOrder];
-     	  vv := map(S,R2,vars S);
-     	  I = substitute (ideal(compress F(M)),R2);
-     	  S2 = S/(mytrim vv(I));
-     	  FmatR2 := vv(substitute(F.matrix,R2));
-	  FmatS = substitute(FmatR2, S2);
+	  newOrd = ProductOrder newpieces;
 	  );
-     R.minPresMap = map(S2,R,FmatS); 
-     R.minPresMapInv = map(R,S2,varsR);
-     S2)
+     newOrd
+     )   	            
+
+monOrder = (Ord, l) -> GRevLex=>#l
+     
+coreProgram := (I, newvar) -> (
+     -- 2 Arguments:  An ideal and a variable, or null.
+     -- Return:       A list consisting of an ideal, a 
+     --               quotient ring, a polynomial ring, 
+     --               two matrices and a list of variables.
+     -- Note:         The ideal is the ideal promised by 
+     --               minPres ideal and the polynomial ring, 
+     --               the ring for this idea.  The quotient 
+     --               ring similar for minPres ring.  The 
+     --               matrices set up the maps.
+     R := ring I;
+     F := finishMap(flatten entries generators I, new MutableList from first entries (vars R)); 
+     -- The key computation of the polynomials with linear 
+     -- terms is complete.  Now build desired rings, ideals 
+     -- and maps through this map.
+     LF := flatten entries F.matrix;
+     l1 := apply(LF, f -> sum(exponents f));
+     l := positions(l1,f -> if f===0 then false else (sum f) === 1);
+     -- l contains the indices for the variables remaining in 
+     -- the minimal presentation.  l is used to set new rings, 
+     -- including getting the correct monomial order.
+     varsR := apply(l,f->R_f);  
+     degreesS := apply(l,i->((monoid R).degrees)#i);
+     newMonOrder := monOrder((monoid R).Options.MonomialOrder, l);
+     -- The two cases cover if the user does not or does (respectively
+     -- give a new variable name for the minimal presentation ring.
+     if newvar === null then (
+	  S := (coefficientRing R)[varsR, Degrees => degreesS, MonomialOrder => newMonOrder];
+	  vv := map(S,S);
+	  newI := trim vv(substitute (ideal compress generators F(I), S));
+	  S2 := S/newI;
+	  FmatS := substitute(F.matrix, S);
+	  FmatS2 := substitute(F.matrix, S2))
+     else (
+	  R2 := (coefficientRing R)[varsR];
+	  y := newvar;
+	  var := splice{y_0..y_(#l-1)};
+	  S = (coefficientRing R)[var,Degrees => degreesS, MonomialOrder => newMonOrder];
+	  vv = map(S, R2,vars S);
+	  J := substitute (ideal compress generators F(I), R2);
+	  newI = trim vv(J);
+	  S2 = S/newI;
+	  FmatS = vv(substitute(F.matrix,R2));
+	  FmatS2 = substitute(FmatS, S2);
+	  );
+     (newI, S, S2, FmatS, FmatS2, varsR)	      	   	
+     )
+
+
+minPres = method(Options=>{Variable => null})
+
+minPres Ideal := o -> (I) -> (
+     --1 Argument: Any ideal in a polynomial ring.
+     --Return:     An ideal J in a polynomial ring S such that 
+     --            S/J is isomorphic with R/I. Maps from R to S 
+     --            and S to R are encoded in I.cache.minPresMap
+     --            and I.cache.minPresMapInv respectively.
+     --Method:     Generators of I that are linear and occur 
+     --            only once in that generator are removed.  
+     --            This top level program calls coreProgram.
+     --            coreProgram calls monOrder and finishMap.
+     --            finishMap calls checkpoly.
+     if I == 0 then I else (
+	  S := coreProgram(I,o.Variable);
+	  I.cache.minPresMap = map(S_1, ring I, S_3);
+     	  I.cache.minPresMapInv = map(ring I, S_1, S_5);
+	  S_0
+     	  )
+     )
+
+minPres Ring := o -> (R) -> (
+     -- 1 Argument: Any quotient of a polynomial ring R.
+     -- Return:     An quotient ring R' = S'/J isomorphic to 
+     --             R. Maps from R to R' and R' to R are 
+     --             encoded in R.minPresMap and R.minPresMapInv
+     --             respectively.
+     --Method:      Write R as S/I, then generators of I that 
+     --             are linear and occur only once in that 
+     --             generator are removed.  This top level 
+     --             program calls coreProgram. 
+     --             coreProgram calls monOrder and finishMap.
+     --             finishMap calls checkpoly.
+     M := presentation R;
+     S := coreProgram(ideal M, o.Variable);
+     R.minPresMap = map(S_2,R,S_4); 
+     R.minPresMapInv = map(R,S_2,S_5);
+     S_1)
     
 ---------------------------
 minPresMap = method()
 
 minPresMap Ring := (R) -> (
-     --Input:  A quotient ring.
-     --Output:  A map from R to a ring isomorphic to R but has a minimal
-     --presentation.
+     --Input:   A quotient ring.
+     --Output:  A map from R to a ring isomorphic 
+     --         to R but has a minimal presentation.
      finishMap(flatten entries presentation R, new MutableList from first entries (vars ideal presentation R)); 
           )
 
 minPresMap Ideal := (I) -> ( 
-     --Input:  An ideal.
-     --Output:  A map from the ring of I, call it A, to a ring with 
-     --fewer variables, say R such that A/I is isomorphic to R/minPres(I) 
-     --via the output of this function.
+     --Input:   An ideal.
+     --Output:  A map from the ring of I, call it A, 
+     --         to a ring with fewer variables, say R 
+     --         such that A/I is isomorphic to R/minPres(I) 
+     --         via the output of this function.
       I = minPres I;
       I.cache.minPresMap
       )
-           
-      
-      
-

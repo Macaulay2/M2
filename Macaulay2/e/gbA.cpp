@@ -230,7 +230,7 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
   g->lead = R->exponents_make();
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = deg;
-  g->alpha = deg - weightInfo_->gbvector_term_weight(f);
+  g->alpha = weightInfo_->gbvector_weight(f) - weightInfo_->gbvector_term_weight(f);
   g->minlevel = minlevel;
   return g;
 }
@@ -438,7 +438,7 @@ void gbA::remove_unneeded_pairs(int id)
 	spair *tmp = p->next;
 	p->next = tmp->next;
 	tmp->next = 0;
-	if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
+	if (gbTrace >= 10)
 	  {
 	    buffer o;
 	    o << "removing unneeded ";
@@ -963,7 +963,7 @@ bool gbA::reduce(spair *p)
 	  h.f = R->gbvector_copy(p->x.f.f);
 	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
 	  insert(h,ELEM_NON_MIN_GB);
-	  if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
+	  if (gbTrace >= 10)
 	    {
 	      buffer o;
 	      o << "deferring A spair ";
@@ -1000,7 +1000,7 @@ bool gbA::reduce(spair *p)
       if (alpha > 0)
 	{
 	  p->deg += alpha;
-	  if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
+	  if (gbTrace >= 10)
 	    {
 	      buffer o;
 	      o << "deferring B spair ";
@@ -1767,7 +1767,9 @@ void gbA::showgb()
   emit_line(o.str()); o.reset();
   for (unsigned int i=0; i<gb.size(); i++)
     {
-      o << "    " << i << '\t';
+      o << "    " << i << '\t' << "deg " << gb[i]->deg << '\t' 
+        << "alpha " << gb[i]->alpha << '\t'
+        << "min " << gb[i]->minlevel << '\t';
       R->gbvector_text_out(o, _F, gb[i]->g.f);
       emit_line(o.str()); o.reset();
     }
