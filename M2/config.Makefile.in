@@ -2,8 +2,17 @@
 # cygwin make might get confused by this!
 SHELL = @SHELL@
 
-PACKAGE = @PACKAGE@
+# export ARCH           := $(shell uname -m | sed s=/=-=g )
+ARCH = @host_cpu@
+
+# export OS             := $(shell uname -s | sed s=/=-=g )
+OS   = @host_os@
+
 VERSION = @VERSION@
+CC = @CC@
+CXX = @CXX@
+YACC = @YACC@
+AWK = @AWK@
 CFLAGS = @CFLAGS@
 CPPFLAGS = @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
@@ -27,5 +36,4 @@ oldincludedir = @oldincludedir@
 infodir = @infodir@
 mandir = @mandir@
 RANLIB = @RANLIB@
-
--include config.Makefile.overrides
+DUMPDATA = @DUMPDATA@

@@ -14,8 +14,6 @@ TOPDIR		      := UNDEFINED_TOPDIR
 endif
 
 export NODENAME       := $(shell uname -n)
-export ARCH           := $(shell uname -m | sed s=/=-=g )
-export OS             := $(shell uname -s | sed s=/=-=g )
 export REL            := $(shell uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g' )
 
 export SYSTEM         := $(ARCH) $(OS) $(REL)
@@ -23,7 +21,6 @@ export LIBDIR	      := ../../lib
 export INCDIR	      := ../../include
 
 AR = ar
-RANLIB = ranlib
 
 ifeq "$(OS)" "CYGWIN32_95"
 export CYGWIN32 = TRUE
@@ -90,8 +87,6 @@ $(TOPDIR)/Makeconf.lcl :
 	echo '# DEBUG       := TRUE' >>$@
 	echo '# VERBOSE     := TRUE' >>$@
 	echo 'export OLDENGINE := TRUE' >>$@
-	echo '# NODUMPDATA  := TRUE' >>$@
-	echo 'NEWDUMPDATA   := TRUE' >>$@
 	echo 'NOMP          := TRUE' >>$@
 	echo '# NOFACTORY   := TRUE' >>$@
 	echo '# SOCKS       := TRUE' >>$@
@@ -186,14 +181,6 @@ endif
 export FACTORY := TRUE
 ifdef NOFACTORY
 FACTORY :=
-endif
-
-export DUMPDATA := TRUE
-ifdef CYGWIN32
-DUMPDATA :=
-endif
-ifdef NODUMPDATA
-DUMPDATA :=
 endif
 
 export DEBUGFLAGS :=

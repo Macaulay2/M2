@@ -1,3 +1,8 @@
+define(M2_UPPER,[translit($1, `a-z', `A-Z')])
+
+AC_DEFUN(M2_IS_THERE,[
+  AC_CHECK_FUNC($1,,AC_DEFINE(M2_UPPER(NO_$1),1,whether $1 is missing))
+])
 
 AC_DEFUN(M2_IS_DECLARED,[
   AC_CACHE_CHECK(whether $2 is declared, m2_cv_$2_is_declared,
@@ -10,7 +15,7 @@ AC_DEFUN(M2_IS_DECLARED,[
       m2_cv_$2_is_declared=yes,
       m2_cv_$2_is_declared=no))
   if test "$m2_cv_$2_is_declared" = yes
-  then AC_DEFINE(translit($2_IS_DECLARED, `a-z', `A-Z'),,whether $2 is declared in errno.h or stdio.h)
+  then AC_DEFINE(M2_UPPER($2_IS_DECLARED),,whether $2 is declared in errno.h or stdio.h)
   fi
 ])
 

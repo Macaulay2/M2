@@ -1,7 +1,12 @@
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = $(srcdir)
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
 include $(TOPDIR)/Makeconf
-
 
 ELFILES = M2-mode.el M2.el
 ALLFILES = makesyms.m2 Makefile $(ELFILES) emacs-hlp.txt emacs.m2

@@ -13,7 +13,8 @@ INSTALL_DATA = $(INSTALL)
 include $(TOPDIR)/Makeconf
 
 ############################## main target
-all :: compat.h ../bin/Macaulay2
+all :: compat.h
+all :: ../bin/Macaulay2
 ############################## useful targets
 all-c-files ::
 remove-c-files ::
@@ -93,11 +94,11 @@ endif
 	$(SCC1) $(SCCFLAGS) +gc -J. -noline $<
 %.oo  : %.d
 	$(SCC1) $(SCCFLAGS) +gc -J. $<
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $*.c $(OUTPUT_OPTION)
+	$(COMPILE.c) $*.c $(OUTPUT_OPTION)
 	rm $*.c
 %.loo  : %.d
 	$(SCC1) $(SCCFLAGS) +gc -J. $<
-	$(CC) $(CPPFLAGS) $(CFLAGS) -fPIC -c $*.c $(OUTPUT_OPTION)
+	$(COMPILE.c) -fPIC $*.c $(OUTPUT_OPTION)
 	rm $*.c
 %     : %.oo;	$(LINK.o)                $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 %.o   : %.c;	$(COMPILE.c) $(WARNINGS) $<                        $(OUTPUT_OPTION)
@@ -246,8 +247,9 @@ compat.c compat.h : configure ../../Makeconf.h Makefile
 	FLAGS="$(LDFLAGS) $(LOADLIBES) $(LDLIBS)" ./configure
 endif
 
+M2lib.o scclib.o M2lib.lo scclib.lo : compat.h
 M2lib.o scclib.o M2lib.lo scclib.lo : \
-	../c/compat.h ../c/compat.c types.h ../../Makeconf.h compat.h memdebug.h
+	../c/compat.h ../c/compat.c types.h ../../Makeconf.h memdebug.h
 memdebug.o scclib.o actors5.oo gc_cpp.o memdebug.lo scclib.lo actors5.loo gc_cpp.lo : memdebug.h
 gc_cpp.o gc_cpp.lo : ../../Makeconf.h
 
@@ -283,16 +285,14 @@ ALLOBJ += $(MISCO)
 ALLOBJ += ../e/libgb.a
 endif
 
-ifdef NEWDUMPDATA
-ifndef NODUMPDATA
+ifeq "$(DUMPDATA)" "yes"
 LOADLIBES += -L../dumpdata
 LIBRARYFILES += ../dumpdata/libdump.a
 LIBRARYOPTIONS += -ldump
 endif
-endif
 
 ifneq "$(CC)" "cl"
-ALLOBJ += compat.o
+# ALLOBJ += compat.o
 endif
 
 ifeq ($(OS),Linux)
@@ -335,7 +335,8 @@ tmp_init.c : Makefile $(TOPDIR)/Makeconf $(PROJECT)
 .._c_compat.c: ../c/compat.c; cp $^ $@
 .._c_compat.h: ../c/compat.h; cp $^ $@
 
-c-port: $(ALLC) tmp_init.c gc_cpp.cc scclib.c memdebug.c memdebug.h compat.c compat.h \
+c-port: $(ALLC) tmp_init.c gc_cpp.cc scclib.c memdebug.c memdebug.h \
+		compat.c compat.h \
 		.._c_compat.c .._c_compat.h
 	tar cfz /tmp/c-port.tgz $^
 

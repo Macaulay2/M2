@@ -69,11 +69,9 @@ tests ::; $(MAKE) -C dbm tests
 clean ::; $(MAKE) NODEPENDS=1 -C dbm clean
 wc ::;  $(MAKE) -C dbm NODEPENDS=1 wc
 ################################# dumpdata
-ifndef NODUMPDATA
-ifdef NEWDUMPDATA
+ifeq "$(DUMPDATA)" "yes"
 justM2 all ::; $(MAKE) -C dumpdata all
 tests ::; $(MAKE) -C dumpdata tests
-endif
 endif
 clean ::; $(MAKE) NODEPENDS=1 -C dumpdata clean
 wc ::;  $(MAKE) -C dumpdata NODEPENDS=1 wc
@@ -104,15 +102,7 @@ clean ::; $(MAKE) -C test clean
 tests ::; if [ -d schubert ]; then $(MAKE) -C schubert tests; fi
 ################################# setup
 all :: setup
-ifdef DUMPDATA
-setup : setup.template ../Makeconf.lcl
-	sed -e 's/%DUMPDATA%/true/' <$< >$@
-	chmod a+x $@
-else
-setup : setup.template ../Makeconf.lcl
-	sed -e 's/%DUMPDATA%/false/' <$< >$@
-	chmod a+x $@
-endif
+	[ -x $< ] || chmod a+x $<
 ################################# experiments
 clean ::; if [ -d experiments ]; then $(MAKE) -C experiments clean; fi
 all   ::; if [ -d experiments ]; then $(MAKE) -C experiments all; fi

@@ -3,11 +3,26 @@
 /* version number */
 #undef VERSION
 
-/* if __finite is missing */
+/* whether to use the new version of dumpdata */
+#undef NEWDUMPDATA
+
+/* whether to use dumpdata */
+#undef DUMPDATA
+
+/* whether __finite is missing */
 #undef __finite
 
-/* if __isnan is missing */
+/* whether __isnan is missing */
 #undef __isnan
+
+/* whether __isinf is missing */
+#undef __isinf
+
+/* whether sys_errlist is missing */
+#undef NO_SYS_ERRLIST
+
+/* whether herror is missing */
+#undef NO_HERROR
 
 /* whether sys_errlist is declared in errno.h or stdio.h */
 #undef SYS_ERRLIST_IS_DECLARED
