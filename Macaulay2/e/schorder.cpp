@@ -2,6 +2,7 @@
 #include "matrix.hpp"
 #include "comb.hpp"
 #include "polyring.hpp"
+#include "Eschreyer.hpp"
 
 void SchreyerOrder::append(int compare_num0, const int *baseMonom)
 {
@@ -47,6 +48,54 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
       else
 	M->mult(P->lead_flat_monomial(v->coeff), S->base_monom(i), base);
 
+      result->append(ties[i], base);
+    }
+
+  M->remove(base);
+  deletearray(tiebreaks);
+  deletearray(ties);
+  return result;
+}
+
+SchreyerOrder *SchreyerOrder::create(const GBMatrix *m)
+{
+  int i;
+  const FreeModule *F = m->get_free_module();
+  const Ring *R = F->get_ring();
+  const SchreyerOrder *S = F->get_schreyer_order();
+  const PolynomialRing *P = R->cast_to_PolynomialRing();
+  const Monoid *M = P->getMonoid();
+  SchreyerOrder *result = new SchreyerOrder(M);
+  int rk = m->elems.size();
+  if (rk == 0) return result;
+
+  int *base = M->make_one();
+  int *tiebreaks = newarray(int,rk);
+  int *ties = newarray(int,rk);
+  for (i=0; i<rk; i++)
+    {
+      gbvector *v = m->elems[i];
+      if (v == NULL || S == NULL)
+	tiebreaks[i] = i;
+      else
+	tiebreaks[i] = i + rk * S->compare_num(v->comp-1);
+    }
+  // Now sort tiebreaks in increasing order.
+  std::sort<int *>(tiebreaks, tiebreaks+rk);
+  for (i=0; i<rk; i++)
+    ties[tiebreaks[i] % rk] = i;
+  for (i=0; i<rk; i++)
+    {
+      gbvector *v = m->elems[i];
+      if (v == NULL)
+	M->one(base);
+      else //if (S == NULL)
+	M->copy(v->monom, base);
+#warning "Schreyer unencoded case not handled here"
+#if 0
+      else
+	M->mult(v->monom, S->base_monom(i), base);
+#endif
       result->append(ties[i], base);
     }
 
@@ -242,6 +291,19 @@ int SchreyerOrder::schreyer_compare(const int *m,
       if (cmp > 0) return GT;
     }
   int cmp = compare_num(m_comp) - compare_num(n_comp);
+  if (cmp < 0) return LT;
+  if (cmp > 0) return GT;
+  return EQ;
+}
+
+int SchreyerOrder::schreyer_compare_encoded(const int *m,
+					    int m_comp,
+					    const int *n,
+					    int n_comp) const
+{
+  int cmp = M->compare(m,n);
+  if (cmp != EQ) return cmp;
+  cmp = compare_num(m_comp) - compare_num(n_comp);
   if (cmp < 0) return LT;
   if (cmp > 0) return GT;
   return EQ;

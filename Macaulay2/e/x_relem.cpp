@@ -196,10 +196,10 @@ const RingOrNull *IM2_Ring_solvable_algebra(const Ring *R,
 const RingOrNull *IM2_Ring_frac(const Ring *R)
 {
   if (R == globalZZ) return globalQQ;
-  const PolyRing *P = R->cast_to_PolyRing();
+  const PolyRingFlat *P = R->cast_to_PolyRingFlat();
   if (P == 0)
     {
-      ERROR("expected polynomial ring with no fractions");
+      ERROR("expected polynomial ring");
       return 0;
     }
   return FractionField::create(P);

@@ -4,18 +4,62 @@
 #include "matrix.hpp"
 #include "comp.hpp"
 #include "text_io.hpp"
+#include "gbring.hpp"
+#include "matrixcon.hpp"
 
-GBKernelComputation::GBKernelComputation(const Matrix *m)
-  : R(m->get_ring()->cast_to_PolynomialRing()),
-    K(m->get_ring()->Ncoeffs()),
-    M(m->get_ring()->Nmonoms()),
-    F(m->rows()),
-    G(m->cols()),
+GBMatrix::GBMatrix(const FreeModule *F0)
+  : F(F0)
+{
+}
+
+GBMatrix::GBMatrix(const Matrix *m)
+  : F(m->rows())
+{
+  const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
+  assert(R != 0);
+  for (int i=0; i<m->n_cols(); i++)
+    {
+      ring_elem denom;
+      gbvector *g = R->translate_gbvector_from_vec(F, m->elem(i), denom);
+      append(g);
+    }
+}
+
+void GBMatrix::append(gbvector *g)
+{
+  elems.push_back(g);
+}
+
+Matrix *GBMatrix::to_matrix()
+{
+  const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
+  assert(R != 0);
+  MatrixConstructor mat(F, elems.size());
+  for (int i=0; i<elems.size(); i++)
+    {
+      vec v = R->translate_gbvector_to_vec(F,elems[i]);
+      mat.set_column(i, v);
+    }
+  return mat.to_matrix();
+}
+
+GBKernelComputation::GBKernelComputation(const GBMatrix *m)
+  : F(m->get_free_module()),
     n_ones(0),
     n_unique(0),
     n_others(0),
     total_reduce_count(0)
 {
+  const PolynomialRing *R0 = F->get_ring()->cast_to_PolynomialRing();
+  GR = R0->get_gb_ring();
+  R = R0;
+  K = R->getCoefficients();
+  M = R->getMonoid();
+
+  G = FreeModule::make_schreyer(m);
+  SF = F->get_schreyer_order();
+  SG = G->get_schreyer_order();
+
   one = K->from_int(1);
   PAIRS_mon = M->make_one();
   REDUCE_mon = M->make_one();
@@ -41,11 +85,11 @@ int GBKernelComputation::calc()
   // First find the skeleton
   for (int i=0; i<gb.length(); i++) new_pairs(i);
 
+#if 0
   Matrix *mm = new Matrix(G);
   for (int p=0; p<syzygies.length(); p++)
     mm->append(G->copy(syzygies[p]));
 
-#if 0
   buffer o;
   o << "skeleton = " << newline;
   mm.text_out(o);
@@ -56,16 +100,16 @@ int GBKernelComputation::calc()
   // Now reduce each one of these elements
   for (int j=0; j<syzygies.length(); j++)
     {
-      vec v = s_pair(syzygies[j]);
+      gbvector *v = s_pair(syzygies[j]);
       reduce(v,syzygies[j]);
     }
   return COMP_DONE;
 }
 
-Matrix *GBKernelComputation::get_syzygies()
+GBMatrix *GBKernelComputation::get_syzygies()
 {
   // Make the Schreyer free module H.
-  Matrix *result = new Matrix(G);
+  GBMatrix *result = new GBMatrix(G);
   for (int i=0; i<syzygies.length(); i++)
     {
       result->append(syzygies[i]);
@@ -77,40 +121,37 @@ Matrix *GBKernelComputation::get_syzygies()
 //////////////////////
 // Private routines //
 //////////////////////
-vec GBKernelComputation::make_syz_term(ring_elem c, const int *m, int comp) const
+gbvector * GBKernelComputation::make_syz_term(ring_elem c, const int *m, int comp) const
 {
-  return G->new_term(comp, c, m);
+#warning "this might add in the Schreyer up"
+  return GR->gbvector_raw_term(c,m,comp);
 }
-void GBKernelComputation::strip_gb(const Matrix *m)
+
+void GBKernelComputation::strip_gb(const GBMatrix *m)
 {
+  const std::vector<gbvector *, gc_allocator<gbvector *> > &g = m->elems;
   int i;
   int *components = newarray(int,F->rank());
-  for (i=0; i<m->n_rows(); i++)
+  for (i=0; i<F->rank(); i++)
     components[i] = 0;
-  for (i=0; i<m->n_cols(); i++)
-    if ((*m)[i] != 0)
-      components[(*m)[i]->comp]++;
-  for (i=0; i<m->n_cols(); i++)
+  for (i=0; i<g.size(); i++)
+    if (g[i] != 0)
+      components[g[i]->comp-1]++;
+
+  for (i=0; i<g.size(); i++)
     {
-      vecterm head;
-      vecterm *last = &head;
-      for (vec v = (*m)[i]; v != 0; v = v->next)
-	if (components[v->comp] > 0)
+      gbvector head;
+      gbvector *last = &head;
+      for (gbvector * v = g[i]; v != 0; v = v->next)
+	if (components[v->comp-1] > 0)
 	  {
-	    vec t = F->copy_term(v);
+	    gbvector * t = GR->gbvector_copy_term(v);
 	    last->next = t;
 	    last = t;
 	  }
       last->next = 0;
       gb.append(head.next);
     }
-#if 0
-  for (i=0; i<F->rank(); i++)
-    if (components[i] > 0)
-      mi[i] = MonomialIdeal(R);
-  else
-    mi[i] = 0;
-#endif
   for (i=0; i<F->rank(); i++)
     mi[i] = new MonomialIdeal(R);
   deletearray(components);
@@ -125,33 +166,34 @@ void GBKernelComputation::new_pairs(int i)
   intarray vp;			// This is 'p'.
   intarray thisvp;
 
-  M->divide(gb[i]->monom, F->base_monom(gb[i]->comp), PAIRS_mon);
-  M->to_varpower(PAIRS_mon, vp);
+  if (SF) 
+    {
+      SF->schreyer_down(gb[i]->monom, gb[i]->comp-1, PAIRS_mon);
+      M->to_varpower(PAIRS_mon, vp);
+    }
+  else
+    M->to_varpower(gb[i]->monom, vp);
+
 
   // First add in syzygies arising from exterior variables
   // At the moment, there are none of this sort.
 
-  if (M->is_skew())
+  if (R->is_skew_commutative())
     {
       intarray vplcm;
-      intarray find_pairs_vp;
+      int * find_pairs_exp = newarray(int, M->n_vars());
 
-      int *skewvars = newarray(int,M->n_vars());
-      varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_vp);
-      int nskew = M->exp_skew_vars(find_pairs_vp.raw(), skewvars);
-      
-      // Add in syzygies arising from exterior variables
-      for (int v=0; v < nskew; v++)
-	{
-	  int w = skewvars[v];
+      varpower::to_ntuple(M->n_vars(), vp.raw(), find_pairs_exp);
+      for (int w=0; w<R->n_skew_commutative_vars(); w++)
+	if (find_pairs_exp[R->skew_variable(w)] > 0)
+	  {
+	    thisvp.shrink(0);
+	    varpower::var(w,1,thisvp);
+	    Bag *b = new Bag(static_cast<void *>(0), thisvp);
+	    elems.insert(b);
+	  }
 
-	  thisvp.shrink(0);
-	  varpower::var(w,1,thisvp);
-	  Bag *b = new Bag((void *)0, thisvp);
-	  elems.insert(b);
-	}
-      // Remove the local variables
-      deletearray(skewvars);
+      deletearray(find_pairs_exp);
     }
 
   // Second, add in syzygies arising from the base ring, if any
@@ -168,7 +210,7 @@ void GBKernelComputation::new_pairs(int i)
 	  varpower::quotient((*Rideal)[j]->monom().raw(), vp.raw(), thisvp);
 	  if (varpower::is_equal((*Rideal)[j]->monom().raw(), thisvp.raw()))
 	    continue;
-	  Bag *b = new Bag((void *)0, thisvp);
+	  Bag *b = new Bag(static_cast<void *>(0), thisvp);
 	  elems.insert(b);
 	}
     }
@@ -176,7 +218,7 @@ void GBKernelComputation::new_pairs(int i)
   // Third, add in syzygies arising from previous elements of this same level
   // The baggage of each of these is their corresponding res2_pair
 
-  MonomialIdeal *mi_orig = mi[gb[i]->comp];
+  MonomialIdeal *mi_orig = mi[gb[i]->comp-1];
   for (j = mi_orig->first(); j.valid(); j++)
     {
       Bag *b = new Bag();
@@ -192,17 +234,17 @@ void GBKernelComputation::new_pairs(int i)
 
   queue<Bag *> rejects;
   Bag *b;
-  MonomialIdeal * mi = new MonomialIdeal(R, elems, rejects);
+  MonomialIdeal * new_mi = new MonomialIdeal(R, elems, rejects);
   while (rejects.remove(b))
     deleteitem(b);
 
   int *m = M->make_one();
-  for (j = mi->first(); j.valid(); j++)
+  for (j = new_mi->first(); j.valid(); j++)
     {
-      M->from_varpower((*mi)[j]->monom().raw(), m);
+      M->from_varpower((*new_mi)[j]->monom().raw(), m);
       M->mult(m, gb[i]->monom, m);
       
-      vec q = make_syz_term(K->from_int(1),m,i);
+      gbvector * q = make_syz_term(K->from_int(1),m,i+1);
       syzygies.append(q);
     }
 }
@@ -211,7 +253,7 @@ void GBKernelComputation::new_pairs(int i)
 //  S-pairs and reduction ////////////////////
 //////////////////////////////////////////////
 
-bool GBKernelComputation::find_ring_divisor(const int *exp, ring_elem &result)
+bool GBKernelComputation::find_ring_divisor(const int *exp, const gbvector *&result)
      // If 'exp' is divisible by a ring lead term, then 1 is returned,
      // and result is set to be that ring element.
      // Otherwise 0 is returned.
@@ -221,31 +263,31 @@ bool GBKernelComputation::find_ring_divisor(const int *exp, ring_elem &result)
   if (!R->get_quotient_monomials()->search_expvector(exp, b))
     return false;
   int index = b->basis_elem();
-  result = R->quotient_element(index);
+  result = R->quotient_gbvector(index);
   return true;
 }
 
-int GBKernelComputation::find_divisor(const MonomialIdeal *mi, 
-				   const int *exp,
-				   int &result)
+int GBKernelComputation::find_divisor(const MonomialIdeal *this_mi, 
+				      const int *exp,
+				      int &result)
 {
   // Find all the posible matches, use some criterion for finding the best...
   array<Bag *> bb;
-  mi->find_all_divisors(exp, bb);
+  this_mi->find_all_divisors(exp, bb);
   int ndivisors = bb.length();
   if (ndivisors == 0) return 0;
   result = bb[0]->basis_elem();
   // Now search through, and find the best one.  If only one, just return it.
-  if (comp_printlevel >= 5)
-    if (mi->length() > 1)
+  if (gbTrace >= 5)
+    if (this_mi->length() > 1)
       {
 	buffer o;
-	o << ":" << mi->length() << "." << ndivisors << ":";
+	o << ":" << this_mi->length() << "." << ndivisors << ":";
 	emit(o.str());
       }
   if (ndivisors == 1)
     {
-      if (mi->length() == 1)
+      if (this_mi->length() == 1)
 	n_ones++;
       else
 	n_unique++;
@@ -264,56 +306,60 @@ int GBKernelComputation::find_divisor(const MonomialIdeal *mi,
   return ndivisors;
 }
 
-vec GBKernelComputation::s_pair(vec gsyz) const
+gbvector * GBKernelComputation::s_pair(gbvector * gsyz) const
 {
-  vec result = NULL;
+  gbvector * result = NULL;
   int *si = M->make_one();
-  for (vec f = gsyz; f != 0; f = f->next)
+  for (gbvector * f = gsyz; f != 0; f = f->next)
     {
-      M->divide(f->monom, G->base_monom(f->comp), si);
-      vec h = F->mult_by_term(f->coeff, si, gb[f->comp]);
-      F->add_to(result, h);
+      SG->schreyer_down(f->monom, f->comp-1, si);
+      gbvector * h = GR->mult_by_term(F, gb[f->comp-1], f->coeff, si, 0);
+      GR->gbvector_add_to(F,result, h);
     }
   M->remove(si);
   return result;
 }
 
-void GBKernelComputation::reduce(vec &f, vec &fsyz)
+void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
 {
-  vec lastterm = fsyz;  // fsyz has only ONE term.
-  ring_elem rg;
-  vecHeap fb(F);
+  gbvector * lastterm = fsyz;  // fsyz has only ONE term.
+  const gbvector * r;
+  gbvectorHeap fb(GR,F);
   fb.add(f);
   f = NULL;
-  const vecterm *lead;
+  const gbvector *lead;
   int q;
 
   int count = 0;
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     emit_wrapped(",");
 
   while ((lead = fb.get_lead_term()) != NULL)
     {
-      M->divide(lead->monom, F->base_monom(lead->comp), REDUCE_mon);
-      M->to_expvector(REDUCE_mon, REDUCE_exp);
-      if (find_ring_divisor(REDUCE_exp, rg))
+      if (SF)
+	{
+	  SF->schreyer_down(lead->monom, lead->comp-1, REDUCE_mon);
+	  M->to_expvector(REDUCE_mon, REDUCE_exp);
+	}
+      else
+	M->to_expvector(lead->monom, REDUCE_exp);
+      if (find_ring_divisor(REDUCE_exp, r))
 	{
 	  // Subtract off f, leave fsyz alone
-	  Nterm *r = rg;
 	  M->divide(lead->monom, r->monom, REDUCE_mon);
 	  ring_elem c = K->negate(lead->coeff);
-	  vec h = F->imp_ring_mult_by_term(r, c, REDUCE_mon, lead->comp);
+	  gbvector * h = GR->mult_by_term(F, r, c, REDUCE_mon, lead->comp);
 	  K->remove(c);
 	  fb.add(h);
 	  total_reduce_count++;
 	  count++;
 	}
-      else if (find_divisor(mi[lead->comp], REDUCE_exp, q))
+      else if (find_divisor(mi[lead->comp-1], REDUCE_exp, q))
 	{
 	  ring_elem c = K->negate(lead->coeff);
 	  M->divide(lead->monom, gb[q]->monom, REDUCE_mon);
-	  vec h = F->imp_mult_by_term(c, REDUCE_mon, gb[q]);
-	  lastterm->next = make_syz_term(c, lead->monom, q); // grabs c.
+	  gbvector * h = GR->mult_by_term(F, gb[q], c, REDUCE_mon, 0);
+	  lastterm->next = make_syz_term(c, lead->monom, q+1); // grabs c.
 	  lastterm = lastterm->next;
 	  fb.add(h);
 	  total_reduce_count++;
@@ -327,7 +373,7 @@ void GBKernelComputation::reduce(vec &f, vec &fsyz)
 	}
     }
 
-  if (comp_printlevel >= 4)
+  if (gbTrace >= 4)
     {
       buffer o;
       o << count;

@@ -5,6 +5,8 @@
 #include "polyring.hpp"
 #include "matrix.hpp"
 #include "matrixcon.hpp"
+#include "Eschreyer.hpp"
+#include "gbring.hpp"
 
 //////////////////////////////////////////////
 //  Construction/Destruction routines ////////
@@ -52,6 +54,29 @@ FreeModule *FreeModule::make_schreyer(const Matrix *m)
   F->schreyer = SchreyerOrder::create(m);
 
   return F;
+}
+
+FreeModule *FreeModule::make_schreyer(const GBMatrix *m)
+{
+  const FreeModule *F = m->get_free_module();
+  const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
+  assert(R);
+  FreeModule *G = R->make_FreeModule();
+  int rk = m->elems.size();
+  if (rk == 0) return G;
+
+  for (int i=0; i<rk; i++)
+    {
+      int *deg = R->degree_monoid()->make_one();
+      gbvector * v = m->elems[i];
+      if (v != 0)
+	R->get_gb_ring()->gbvector_multidegree(F, v, deg);
+      G->append(deg);
+    }
+
+  G->schreyer = SchreyerOrder::create(m);
+
+  return G;
 }
 
 Matrix * FreeModule::get_induced_order() const

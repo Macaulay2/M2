@@ -1,12 +1,7 @@
--- This file written by Amelia Taylor <ataylor@math.rutgers.edu>
 
-
---This is not really a test file yet.  It computes the minimal presentations,
---but does not have boolean tests for checking computations the way we want to.
+--- Last Updated on January 16, 2005.  This is the current test file.
 
 load "minPres.m2"
-
---A test underconstruction for minPres.m2
 
 C=ZZ/101[x,y,z,Degrees => {2,3,1}]/ideal(x-x^2-y,z+x*y)
 V= time minPres(C)
@@ -41,7 +36,3 @@ ideal V == ideal(a_5*a_9-a_6*a_10,a_4*a_8-a_0*a_9,a_1*a_4-a_6*a_10,a_0*a_4-a_1*a
 
 
 
-
--- Local Variables:
--- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
--- End:

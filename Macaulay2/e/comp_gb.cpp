@@ -19,7 +19,7 @@ void GBComputation::text_out(buffer &o)
   o << "-- a raw Groebner basis computation --";
 }
 
-ComputationOrNull *GBComputation::choose_gb(const Matrix *m,
+GBComputation *GBComputation::choose_gb(const Matrix *m,
 					  M2_bool collect_syz,
 					  int n_rows_to_keep,
 					  M2_arrayint gb_weights,

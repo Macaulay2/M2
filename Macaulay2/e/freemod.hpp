@@ -7,6 +7,7 @@
 #include "schorder.hpp"
 
 class Matrix;
+class GBMatrix;
 
 class FreeModule : public immutable_object
 {
@@ -29,6 +30,7 @@ public:
   // if n>0, and has_schreyer_order is true, then all base monomials are set to 0.
 
   static FreeModule *make_schreyer(const Matrix *m);
+  static FreeModule *make_schreyer(const GBMatrix *m);
 
   Matrix * get_induced_order() const;
 
