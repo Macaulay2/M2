@@ -2144,27 +2144,18 @@ export rawResolutionStatusLevel(e:Expr):Expr := (
      );
 setupfun("rawResolutionStatusLevel", rawResolutionStatusLevel);
 
--- export rawGBGetLeadTerms(e:Expr):Expr := (
---      when e is a:Sequence do 
---      if length(a) == 3 then 
---      when a.0 is G:RawComputation do 
---      when a.1 is nparts:Integer do
---      if !isInt(nparts) then WrongArgSmallInteger(2) else
---      when a.2 is level:Integer do
---      if !isInt(level) then WrongArgSmallInteger(3) else
---      toExpr(
--- 	  Ccode(RawMatrixOrNull, 
--- 		    "(engine_RawMatrixOrNull)IM2_GB_get_leadterms(",
--- 		    "(Computation *)", G, ",",
--- 		    toInt(nparts), ",",
--- 		    toInt(level),
--- 		    ")" ))
---      else WrongArgInteger(3)
---      else WrongArgInteger(2)
---      else WrongArg(1,"a raw computation")
---      else WrongNumArgs(3)
---      else WrongNumArgs(3));
--- setupfun("rawGBGetLeadTerms", rawGBGetLeadTerms);
+export rawGBGetLeadTerms(e:Expr):Expr := (
+     when e is a:Sequence do 
+     if length(a) == 2 then 
+     when a.0 is G:RawComputation do 
+     when a.1 is nparts:Integer do
+     if !isInt(nparts) then WrongArgSmallInteger(2) else
+     toExpr( Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBGetLeadTerms(", "(Computation *)", G, ",", toInt(nparts), ")" ))
+     else WrongArgInteger(2)
+     else WrongArg(1,"a raw computation")
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("rawGBGetLeadTerms", rawGBGetLeadTerms);
 
 export rawResolutionGetFree(e:Expr):Expr := (
      when e is a:Sequence do 

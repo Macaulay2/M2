@@ -116,6 +116,7 @@ EngineRing / Ideal := (R,I) -> (
      while class A === QuotientRing do A = last A.baseRings;
      gensI := I.generators ** R;
      gensgbI := generators gb gensI;
+     rawQuotientRing(raw R, raw gensbI);
      sendgg(ggPush gensgbI, ggqring);
      S := new QuotientRing from newHandle();
      if R.?Adjust then S.Adjust = R.Adjust;

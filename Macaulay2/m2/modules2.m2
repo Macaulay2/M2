@@ -111,6 +111,7 @@ poincare Module := M -> (
      if M.cache.?poincare then M.cache.poincare else M.cache.poincare = (
 	if not M.?poincareComputation then (
             g := generators gb presentation M;
+	    error "Poincare polynomial (Hilbert numerator): not re-implemented yet";
 	    sendgg(ggPush ZZn, ggPush g, gghilb);
 	    M.poincareComputation = newHandle());
         sendgg(ggPush M.poincareComputation, ggPush (-1), ggcalc, ggpop);
