@@ -28,21 +28,23 @@ buildPackage = ""					    -- name of the package currently being built
 
 
 rel := url -> (
-     -- stderr << "url           = " << url << endl;
-     -- stderr << "htmlDirectory = " << htmlDirectory << endl;
+     stderr << "url           = " << url << endl;
+     stderr << "htmlDirectory = " << htmlDirectory << endl;
      if isAbsolute url 
      then url
      else relativizeFilename(htmlDirectory, url)
      )
 
-
-htmlFilename = method()
-htmlFilename(String) := (nodename) -> (	-- returns the path from the PREFIX to the file
+htmlFilename = (nodename) -> (	-- returns the path from the PREFIX to the file
      basename := toFilename nodename | ".html";
-     fn0 := "share/doc/Macaulay2/currentVersion/html/"|basename;
-     if PREFIX =!= "" and fileExists (PREFIX|"/"|fn0) -- depends on M2 being installed there
-     then fn0
-     else concatenate("share/doc/Macaulay2/packages/", buildPackage, "/html/", basename)
+     if buildPackage === "" 
+     then "share/doc/Macaulay2/" | version#"VERSION" | "/html/"|basename
+     else (
+     	  fn0 := "share/doc/Macaulay2/currentVersion/html/"|basename;
+	  if PREFIX =!= "" and fileExists (PREFIX|"/"|fn0)
+     	  then fn0
+     	  else concatenate("share/doc/Macaulay2/packages/", buildPackage, "/html/", basename)
+	  )
      )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"

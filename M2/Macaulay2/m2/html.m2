@@ -37,9 +37,14 @@ scope1 := method(SingleArgumentDispatch => true)
 
 follow := key -> (
      fkey := formatDocumentTag key;
+     -- stderr << "key     = " << key << endl;
+     -- stderr << "fkey    = " << fkey << endl; 
+     -- stderr << "prefix  = " << prefix << endl; 
+     -- stderr << "linkFollowedTable#?fkey  = " << linkFollowedTable#?fkey << endl; 
      if not linkFollowedTable#?fkey then (
 	  fn := htmlFilename fkey;
-	  if prefix == substring(fn,0,#prefix) then (	    -- don't stray outside this package
+     	  -- stderr << "fn      = " << fn << endl;
+	  if true or prefix == substring(fn,0,#prefix) then (	    -- don't stray outside this package???
 	       linkFollowedTable#fkey = true;
 	       if class key =!= Option and class key =!= Sequence then masterIndex#(fkey,key) = true;
 	       saveThisKey := thisKey;
