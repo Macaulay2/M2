@@ -1,27 +1,15 @@
 # @configure_input@
+
+# this Makefile used to be in ../html, so if anything is missing, look there.
+
 include ../../include/config.Makefile
+VPATH = @srcdir@
 IMAGES = up.gif next.gif previous.gif top.gif index.gif null.gif recbg.jpg 9planets.gif Grayson2.jpg
-
-all :: $(IMAGES)
-
-ifneq "@srcdir@" "."
-up.gif : @srcdir@/up.gif ; cp $< $@
-next.gif : @srcdir@/next.gif ; cp $< $@
-previous.gif : @srcdir@/previous.gif ; cp $< $@
-index.gif : @srcdir@/index.gif ; cp $< $@
-top.gif : @srcdir@/top.gif ; cp $< $@
-null.gif : @srcdir@/null.gif ; cp $< $@
-recbg.jpg : @srcdir@/recbg.jpg ; cp $< $@
-9planets.gif : @srcdir@/9planets.gif ; cp $< $@
-Grayson2.jpg : @srcdir@/Grayson2.jpg ; cp $< $@
-clean ::; rm -f *.gif *.jpg
-endif
-
-clean::; rm -rf *.doc *.fn *.hl *.inv* *.cat *.src *.dct
+clean::
 distclean: clean; rm -f Makefile
-install:: $(htmldocdir)
-$(htmldocdir):; $(INSTALL) -d "$@"
-install:: ; $(INSTALL_DATA) $(IMAGES) $(htmldocdir)
+install:: $(imagesdir)
+$(imagesdir):; $(INSTALL) -d "$@"
+install:: $(IMAGES) ; $(INSTALL_DATA) $^ $(imagesdir)
 
 # for gimp to find this *.scm file, put
 # (script-fu-path "${gimp_dir}/scripts:${gimp_data_dir}/scripts:/home/geometry/dan/src/M2/Macaulay2/html")

@@ -306,7 +306,7 @@ document {  "Developer's Corner",
 
 document { "Macaulay 2",
      FileName => "index",
-     IMG "../html/9planets.gif", PARA,
+     IMG "../images/9planets.gif", PARA,		    -- see LAYOUT for final location
      "Macaulay 2 is a software system devoted to supporting research in 
      algebraic geometry and commutative algebra, developed with funding
      from the National Science Foundation.  The current version is 
