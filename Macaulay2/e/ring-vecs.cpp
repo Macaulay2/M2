@@ -164,6 +164,7 @@ void Ring::mult(vec &v, const ring_elem r, bool opposite_mult) const
     {
       remove(v);
       v = 0;
+      return;
     }
   vecterm head;
   head.next = v;

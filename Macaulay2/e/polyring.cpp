@@ -640,7 +640,7 @@ void PolynomialRing::remove(ring_elem &f) const
 {
 }
 
-void PolynomialRing::negate_to(ring_elem &f) const
+void PolynomialRing::internal_negate_to(ring_elem &f) const
 {
   Nterm *v = f;
   while (v != NULL)
@@ -650,7 +650,7 @@ void PolynomialRing::negate_to(ring_elem &f) const
     }
 }
 
-void PolynomialRing::add_to(ring_elem &ff, ring_elem &gg) const
+void PolynomialRing::internal_add_to(ring_elem &ff, ring_elem &gg) const
 {
   Nterm *f = ff;
   Nterm *g = gg;
@@ -716,10 +716,10 @@ void PolynomialRing::add_to(ring_elem &ff, ring_elem &gg) const
       }
 }
 
-void PolynomialRing::subtract_to(ring_elem &f, ring_elem &g) const
+void PolynomialRing::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
-  negate_to(g);
-  add_to(f,g);
+  internal_negate_to(g);
+  internal_add_to(f,g);
 }
 
 ring_elem PolynomialRing::negate(const ring_elem f) const
@@ -741,7 +741,7 @@ ring_elem PolynomialRing::add(const ring_elem f, const ring_elem g) const
 {
   ring_elem a = copy(f);
   ring_elem b = copy(g);
-  add_to(a, b);
+  internal_add_to(a, b);
   return a;
 }
 
@@ -749,7 +749,7 @@ ring_elem PolynomialRing::subtract(const ring_elem f, const ring_elem g) const
 {
   ring_elem a = copy(f);
   ring_elem b = negate(g);
-  add_to(a, b);
+  internal_add_to(a, b);
   return a;
 }
 

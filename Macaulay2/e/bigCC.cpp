@@ -311,9 +311,11 @@ ring_elem bigCC::copy(const ring_elem f) const
 
 void bigCC::remove(ring_elem &f) const
 {
+#if 0
   M2_BigComplex z = BIGCC_VAL(f);
   remove_elem(z); // does nothing... get rid of this code?
   f = BIGCC_RINGELEM(NULL);
+#endif
 }
 
 // TO DO: MAKE IT SAME AS CC
@@ -322,20 +324,20 @@ ring_elem bigCC::preferred_associate(ring_elem f) const
   return from_int(1);
 }
 
-void bigCC::negate_to(ring_elem &f) const
+void bigCC::internal_negate_to(ring_elem &f) const
 {
   mpf_neg(BIGCC_RE(f), BIGCC_RE(f));
   mpf_neg(BIGCC_IM(f), BIGCC_IM(f));
 }
 
-void bigCC::add_to(ring_elem &f, ring_elem &g) const
+void bigCC::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   mpf_add(BIGCC_RE(f), BIGCC_RE(f), BIGCC_RE(g));
   mpf_add(BIGCC_IM(f), BIGCC_IM(f), BIGCC_IM(g));
   // remove(g); should this be removed?
 }
 
-void bigCC::subtract_to(ring_elem &f, ring_elem &g) const
+void bigCC::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   mpf_sub(BIGCC_RE(f), BIGCC_RE(f), BIGCC_RE(g));
   mpf_sub(BIGCC_IM(f), BIGCC_IM(f), BIGCC_IM(g));

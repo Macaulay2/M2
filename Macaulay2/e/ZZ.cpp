@@ -184,9 +184,11 @@ ring_elem ZZ::copy(const ring_elem f) const
 
 void ZZ::remove(ring_elem &f) const
 {
+#if 0
   mpz_ptr a = MPZ_VAL(f);
   remove_elem(a);
   f = MPZ_RINGELEM(NULL);
+#endif
 }
 
 ring_elem ZZ::preferred_associate(ring_elem f) const
@@ -197,18 +199,18 @@ ring_elem ZZ::preferred_associate(ring_elem f) const
   return from_int(-1);
 }
 
-void ZZ::negate_to(ring_elem &f) const
+void ZZ::internal_negate_to(ring_elem &f) const
 {
   mpz_sub(MPZ_VAL(f), _zero_elem, MPZ_VAL(f));
 }
 
-void ZZ::add_to(ring_elem &f, ring_elem &g) const
+void ZZ::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   mpz_add(MPZ_VAL(f), MPZ_VAL(f), MPZ_VAL(g));
   remove(g);
 }
 
-void ZZ::subtract_to(ring_elem &f, ring_elem &g) const
+void ZZ::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   mpz_sub(MPZ_VAL(f), MPZ_VAL(f), MPZ_VAL(g));
   remove(g);
@@ -410,9 +412,9 @@ void ZZ::syzygy(const ring_elem a, const ring_elem b,
   x = ZZ::divide(b,g);
   ZZ::remove(g);
   if (mpz_sgn(MPZ_VAL(x)) > 0)
-    ZZ::negate_to(y);
+    ZZ::internal_negate_to(y);
   else
-    ZZ::negate_to(x);
+    ZZ::internal_negate_to(x);
 }
 
 ring_elem ZZ::eval(const RingMap *map, const ring_elem f) const

@@ -196,7 +196,9 @@ ring_elem QQ::copy(const ring_elem f) const
 
 void QQ::remove(ring_elem &f) const
 {
+#if 0
   f = MPQ_RINGELEM(NULL);
+#endif
 }
 
 ring_elem QQ::preferred_associate(ring_elem f) const
@@ -207,18 +209,18 @@ ring_elem QQ::preferred_associate(ring_elem f) const
   return QQ::from_int(-1);
 }
 
-void QQ::negate_to(ring_elem &f) const
+void QQ::internal_negate_to(ring_elem &f) const
 {
   mpq_sub(MPQ_VAL(f), _zero_elem, MPQ_VAL(f));
 }
 
-void QQ::add_to(ring_elem &f, ring_elem &g) const
+void QQ::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   mpq_add(MPQ_VAL(f), MPQ_VAL(f), MPQ_VAL(g));
   remove(g);
 }
 
-void QQ::subtract_to(ring_elem &f, ring_elem &g) const
+void QQ::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   mpq_sub(MPQ_VAL(f), MPQ_VAL(f), MPQ_VAL(g));
   remove(g);
@@ -370,7 +372,7 @@ void QQ::syzygy(const ring_elem a, const ring_elem b,
 {
   x = QQ::from_int(1);
   y = QQ::divide(a,b);
-  QQ::negate_to(y);
+  QQ::internal_negate_to(y);
 }
 
 ring_elem QQ::eval(const RingMap *map, const ring_elem a) const

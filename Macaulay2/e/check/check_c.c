@@ -13,6 +13,7 @@ extern void M2inits();
 
 int main()
 {
+  int nfailed = 0;
   M2inits(); /* calls IM2_initialize */
   Suite *s = cs_create("Engine C Interface");
   cs_addTest(s,monomial_test());
@@ -20,14 +21,19 @@ int main()
   cs_addTest(s,monoid_test());
   cs_addTest(s,ring_test());
   cs_addTest(s,freemodule_test());
-#if 0
   cs_addTest(s,matrix_test());
+#if 0
   cs_addTest(s,sparsemat_test());
   /*  cs_addTest(s,lapack_test());*/
 #endif
   cs_run(s);
-  cs_report(s);
+  nfailed = cs_report(s);
   cs_destroy(s,1);
+  if (nfailed != 0) 
+    {
+      printf("## %d tests FAILED ##\n", nfailed);
+      return 1;
+    }
   return 0;
 }
 

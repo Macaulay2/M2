@@ -296,13 +296,13 @@ void FractionField::remove(ring_elem &a) const
 {
 }
 
-void FractionField::negate_to(ring_elem &a) const
+void FractionField::internal_negate_to(ring_elem &a) const
 {
   frac_elem *f = FRAC_VAL(a);
   R_->negate_to(f->numer);
 }
 
-void FractionField::add_to(ring_elem &a, ring_elem &b) const
+void FractionField::internal_add_to(ring_elem &a, ring_elem &b) const
 {
   frac_elem *f = FRAC_VAL(a);
   frac_elem *g = FRAC_VAL(b);
@@ -320,7 +320,7 @@ void FractionField::add_to(ring_elem &a, ring_elem &b) const
   a = FRAC_RINGELEM(f);
 }
 
-void FractionField::subtract_to(ring_elem &a, ring_elem &b) const
+void FractionField::internal_subtract_to(ring_elem &a, ring_elem &b) const
 {
   frac_elem *f = FRAC_VAL(a);
   frac_elem *g = FRAC_VAL(b);
@@ -529,7 +529,7 @@ void FractionField::syzygy(const ring_elem a, const ring_elem b,
 {
   x = FractionField::from_int(1);
   y = FractionField::divide(a,b);
-  FractionField::negate_to(y);
+  y = FractionField::negate(y);
 }
 
 ring_elem FractionField::eval(const RingMap *map, const ring_elem a) const

@@ -239,9 +239,11 @@ ring_elem CC::copy(const ring_elem f) const
 
 void CC::remove(ring_elem &f) const
 {
+#if 0
   M2_CC a = CCELEM_VAL(f);
   remove_elem(a);
   f = CC_RINGELEM(NULL);
+#endif
 }
 
 ring_elem CC::preferred_associate(ring_elem f) const
@@ -250,14 +252,14 @@ ring_elem CC::preferred_associate(ring_elem f) const
   return CC::from_double(-1.0);
 }
 
-void CC::negate_to(ring_elem &f) const
+void CC::internal_negate_to(ring_elem &f) const
 {
   M2_CC a = CCELEM_VAL(f);
   a->re = - a->re;
   a->im = - a->im;
 }
 
-void CC::add_to(ring_elem &f, ring_elem &g) const
+void CC::internal_add_to(ring_elem &f, ring_elem &g) const
 {
   M2_CC a = CCELEM_VAL(f);
   a->re += CC_RE(g);
@@ -265,7 +267,7 @@ void CC::add_to(ring_elem &f, ring_elem &g) const
   remove(g);
 }
 
-void CC::subtract_to(ring_elem &f, ring_elem &g) const
+void CC::internal_subtract_to(ring_elem &f, ring_elem &g) const
 {
   M2_CC a = CCELEM_VAL(f);
   a->re -= CC_RE(g);

@@ -8,8 +8,8 @@ CTESTS = \
 	check_monoid.o \
 	check_ring.o \
 	check_freemodule.o \
+	check_matrix.o \
 
-#	check_matrix.o \
 #	check_sparsemat.o
 
 #	check_lapack.o
