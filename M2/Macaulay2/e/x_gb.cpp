@@ -2,14 +2,11 @@
 
 #include "interp.hpp"
 
-#include "gb.hpp"
-#include "gbinhom.hpp"
+#include "gb_comp.hpp"
+
 #include "gbbinom.hpp"
-#include "gbZZ.hpp"
 #include "comp.hpp"
 #include "hilb.hpp"
-#include "hermite.hpp"
-#include "gauss.hpp"
 
 #include "gb2.hpp"
 #include "res.hpp"
@@ -26,7 +23,15 @@
 extern int comp_printlevel;
 extern Z *ZZ;
 
-extern void make_EGB_comp(const Matrix &m, bool dosyz, int nsyz, int strategy);
+#if 0
+void i_EGB()
+{
+}
+gb_comp * make_EGB_comp(const Matrix &m, bool dosyz, int nsyz, int strategy)
+{
+  return 0;
+}
+#endif
 
 void cmd_NGB_tracing(object &on)
 {
@@ -35,57 +40,18 @@ void cmd_NGB_tracing(object &on)
   comp_printlevel = n;
 }
 
+
 void cmd_gb_make(object &om, 
 		 object &odosyz,
 		 object &osyz,
 		 object &ostrategy)
 {
   Matrix m = om->cast_to_Matrix();
-  const Ring *R = m.get_ring();
   int dosyz = odosyz->int_of();
   int nsyz = osyz->int_of();
   int strategy = ostrategy->int_of();
 
-  // Now we dispatch according to the kind of computation we are
-  // asked to do.
-  
-  if (R->n_vars() == 0 && R->is_field())
-    gStack.insert(new GaussElimComputation(m, dosyz, nsyz));
-  else if (R->is_Z()) // MES later: || R->is_pid())
-    gStack.insert(new HermiteComputation(m, dosyz, nsyz));
-  else if (R->is_poly_ring() && R->Ncoeffs()->is_field())
-    {
-      if ((strategy & 3) == 3)
-	{
-	  // This next inserts the computation onto the stack.
-	  make_EGB_comp(m, dosyz, nsyz, strategy);
-	  return;
-	}
-      if (R->is_graded() && m.is_homogeneous())
-	{
-	  if ((strategy & 3) == 1)
-	    {
-	      //gStack.insert(new NGB_comp(m, dosyz, nsyz));
-	      gStack.insert(new GB_comp(m, dosyz, nsyz, strategy));
-	    }
-	  else if ((strategy & 3) == 2)
-	    gStack.insert(new GBinhom_comp(m, dosyz, nsyz, strategy));
-	  else 
-	    gStack.insert(new GB_comp(m, dosyz, nsyz, strategy));
-	}
-      else
-	gStack.insert(new GBinhom_comp(m, dosyz, nsyz, strategy));
-    }
-  else if (R->is_poly_ring() && R->Ncoeffs()->is_Z())
-    {
-      gStack.insert(new GBZZ_comp(m, dosyz, nsyz, strategy));
-    }
-  else if (R->is_poly_ring() && R->Ncoeffs()->is_pid())
-    {
-      gError << "GB for polynomial rings over PID's not yet implemented";
-    }
-  else 
-    gError << "cannot compute Groebner bases or syzygies over this ring";
+  gStack.insert(gb_comp::make(m,dosyz,nsyz,strategy));
 }
 
 void cmd_gb_make1(object &om, 
@@ -95,90 +61,14 @@ void cmd_gb_make1(object &om,
 		  object &ostrategy)
 {
   int dosyz = odosyz->int_of();
-  if (dosyz)
-    {
-      cmd_gb_make(om,odosyz,osyz,ostrategy);
-      return;
-    }
   Matrix m = om->cast_to_Matrix();
-  const Ring *R = m.get_ring();
   int nsyz = osyz->int_of();
   int strategy = ostrategy->int_of();
   RingElement hf = ohf->cast_to_RingElement();
 
-  // Now we dispatch according to the kind of computation we are
-  // asked to do.
-  
-  if (R->is_field())
-    gError << "GB for ring = field together with Hilbert function is not yet implemented";
-  else if (R->is_Z()) // MES later: || R->is_pid())
-    gError << "GB for Z, using Hilbert function, is not yet implemented";
-  else if (R->is_poly_ring() && R->Ncoeffs()->is_field())
-    {
-      if (R->is_graded() && m.is_homogeneous())
-	{
-	  gStack.insert(new GB_comp(m, dosyz, nsyz, hf, strategy));
-	}
-      else
-	gError << "cannot use Hilbert function for an inhomogeneous GB";
-    }
-  else if (R->is_poly_ring() && R->Ncoeffs()->is_pid())
-    {
-      gError << "GB for polynomial rings over PID's not yet implemented";
-    }
-  else 
-    gError << "cannot compute Groebner bases or syzygies over this ring";
+  gStack.insert(gb_comp::make(m,dosyz,nsyz,hf,strategy));
 }
 
-#if 0
-void cmd_NGB_make(object &om, 
-		 object &odosyz,
-		 object &osyz,
-		 object &obits)
-{
-  Matrix m = om->cast_to_Matrix();
-  const Ring *R = m.get_ring();
-  int dosyz = odosyz->int_of();
-  int bits = obits->int_of();
-  if (bits <= 0) bits = -1;
-  int nsyz = osyz->int_of();
-
-  if (R == (Ring *) ZZ)
-    gStack.insert(new HermiteComputation(m, dosyz, nsyz));
-  else
-    gStack.insert(new NGB_comp(m, dosyz, nsyz));
-}
-#endif
-void cmd_NGB_make1(object &om, 
-		  object &odosyz,
-		  object &osyz,
-		  object &ohf,
-		  object &obits)
-{
-  Matrix m = om->cast_to_Matrix();
-  int dosyz = odosyz->int_of();
-  int bits = obits->int_of();
-  if (bits <= 0) bits = -1;
-  int nsyz = osyz->int_of();
-  RingElement hf = ohf->cast_to_RingElement();
-  // MES: check that the ring of hf is 'correct'
-  GB_comp *p = new GB_comp(m, dosyz, nsyz, hf.get_value());
-  gStack.insert(p);
-}
-
-object_element *make_forceGB(Matrix gens, Matrix gb, Matrix change, Matrix syz)
-{
-  const Ring *R = gens.get_ring();
-  if (R->is_poly_ring())
-    {
-      if (R->Ncoeffs()->is_field())
-	return new GB_comp(gens, gb, change, syz);
-      else if (R->Ncoeffs()->is_Z())
-	return new GBZZ_comp(gens, gb, change, syz);
-    }
-  gError << "Cannot create the desired forced Groebner basis";
-  return NULL;
-}
 
 void cmd_NGB_force(object &ogens, object &ogb, object &ochange)
 {
@@ -186,7 +76,7 @@ void cmd_NGB_force(object &ogens, object &ogb, object &ochange)
   Matrix m    = ogb->cast_to_Matrix();
   Matrix change = ochange->cast_to_Matrix();
   Matrix syz(change.rows());
-  object_element *p = make_forceGB(gens,m,change,syz);
+  object_element *p = gb_comp::force(gens,m,change,syz);
   gStack.insert(p);
 }
 
@@ -196,7 +86,7 @@ void cmd_NGB_force1(object &ogens, object &ogb, object &ochange, object &osyz)
   Matrix m      = ogb->cast_to_Matrix();
   Matrix change = ochange->cast_to_Matrix();
   Matrix syz    = osyz->cast_to_Matrix();
-  object_element *p = make_forceGB(gens,m,change,syz);
+  object_element *p = gb_comp::force(gens,m,change,syz);
   gStack.insert(p);
 }
 

@@ -18,6 +18,7 @@
 
 struct egb_elem;
 struct ering_elem;
+
 struct es_pair
 {
   es_pair *next;
@@ -49,6 +50,46 @@ struct es_pair
   void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
+#if 0
+struct es_pair
+{
+  es_pair *next;
+  int degree;
+  monomial *lcm;  // exponent vector??
+
+  EVector gsyz; // the pair
+  EVector rsyz; // the ring part of the pair.
+  EVector fsyz;	// the part from the original generators
+  EVector f;	// if f != 0, then the spolynomial has already been constructed.
+
+  egb_elem *i;	  // the first (main) part of the s-pair.
+  int type; // SP_SYZ, SP_RING, SP_SKEW, SP_GEN
+  union {
+    egb_elem *syz; // SP_SYZ
+    ering_elem *ringsyz; // SP_RING
+    int v;		 // SP_SKEW, SP_GEN(?)
+  } s;
+#if 0    
+  union {
+    struct {  // SP_SYZ
+      egb_elem *j;
+    } syz;
+    struct {  // SP_RING
+      ering_elem *j;
+    } ringsyz;
+    struct {  // SP_SKEW
+      int v;
+    } skewsyz;
+    struct { // SP_GEN
+    } gen;
+  } s;
+#endif
+  friend void i_Ecommands();
+  static stash *mystash;
+  void *operator new(size_t) { return mystash->new_elem(); }
+  void operator delete(void *p) { mystash->delete_elem(p); }
+};
+#endif
 
 class ESPairSet
 {

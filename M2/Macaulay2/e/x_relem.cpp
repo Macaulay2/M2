@@ -492,6 +492,11 @@ void i_ring_elem_cmds(void)
 
   // Ring Creation
   install(ggZ, cmd_Z);
+
+#if !defined(MIKE_NEWENGINE)
+  install(ggEZZ, cmd_Z);
+#endif
+
   install(ggcharp, cmd_Z_mod, TY_INT, TY_MONOID);
   install(ggGF, cmd_GF, TY_RING_ELEM);
   //  install(ggGF, cmd_GF2, TY_RING);

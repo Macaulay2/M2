@@ -17,10 +17,9 @@ void i_EGB()
   EGB1::mystash = new stash("EGB1", sizeof(EGB1));
   es_pair::mystash = new stash("es_pair", sizeof(es_pair));
 }
-void make_EGB_comp(const Matrix &m, bool dosyz, int nsyz, int strategy)
+gb_comp * make_EGB_comp(const Matrix &m, bool dosyz, int nsyz, int strategy)
 {
-  EGB1 *p = new EGB1(m,dosyz,nsyz,strategy);
-  gStack.insert(p);
+  return new EGB1(m,dosyz,nsyz,strategy);
 }
 
 ERingTable *EGB1::create_ring_table() const

@@ -101,6 +101,7 @@ public:
 
   virtual ring_elem copy(const ring_elem f) const = 0;
   virtual void remove(ring_elem &f) const = 0;
+  void remove_vector(vec &v) const;
 
   virtual void negate_to(ring_elem &f) const = 0;
   virtual void add_to(ring_elem &f, ring_elem &g) const = 0;

@@ -83,6 +83,17 @@ ring_elem Ring::get_zero_divisor() const
 }
 
 
+void Ring::remove_vector(vec &v) const
+{
+  while (v != NULL)
+    {
+      vecterm *tmp = v;
+      v = v->next;
+      K->remove(tmp->coeff);
+      vecstash->delete_elem(tmp);
+    }
+}
+
 void Ring::mult_to(ring_elem &f, const ring_elem g) const
 {
   ring_elem h = mult(f,g);

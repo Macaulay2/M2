@@ -11,7 +11,11 @@
 #include "ringmap.hpp"
 
 #include "monideal.hpp"
+
+#if defined(MIKE_NEWMONIDEAL)
 #include "monideal2.hpp"
+#endif
+
 #include "termideal.hpp"
 
 #include "monomial.hpp"
@@ -235,7 +239,9 @@ void cmd_Matrix_add(object &oa, object &ob)
   gStack.insert(a+b);
 }
 
+#if defined(MIKE_NEWENGINE)
 extern void cmd_EMatrix_concatenate(object &o1);
+#endif
 
 void cmd_Matrix_concat(object &on)
 {
@@ -246,11 +252,13 @@ void cmd_Matrix_concat(object &on)
       gError << "concat: expected at least one matrix";
       return;
     }
+#if defined(MIKE_NEWENGINE)
   if (gStack[0]->type_id() == TY_EMatrix)
     {
       cmd_EMatrix_concatenate(on);
       return;
     }
+#endif
   for (i=0; i<n; i++)
     if (!gStack.in_bounds(i) || gStack[i]->type_id() != TY_MATRIX)
       {
@@ -947,7 +955,7 @@ void cmd_Nmi_assprimes(object &oa)
 //////////////////////////////////////////
 // New Monomial ideal commands ///////////
 //////////////////////////////////////////
-
+#if defined(MIKE_NEWMONIDEAL)
 void cmd_MonomialIIdeal(object &oa, object &on, object &/*onotused*/)
 {
   Matrix m = oa->cast_to_Matrix();
@@ -1052,7 +1060,7 @@ void cmd_mi_assprimes(object &oa)
   gStack.insert(ap.associated_primes());
 #endif
 }
-
+#endif
 /////////////////////////
 // Term ideal routines //
 /////////////////////////
@@ -1548,6 +1556,7 @@ void i_Matrix_cmds(void)
   install(ggcodim, cmd_Nmi_codim, TY_MONIDEAL);
   install(ggprimes, cmd_Nmi_assprimes, TY_MONIDEAL);
 
+#if defined(MIKE_NEWMONIDEAL)
   // new monideal commands
   install(ggmonideal, cmd_MonomialIIdeal, TY_MATRIX, TY_INT, TY_INT);
   //2nd int is in order to distinguish it from other ggmonideal command.
@@ -1569,7 +1578,7 @@ void i_Matrix_cmds(void)
 
   install(ggcodim, cmd_mi_codim, TY_MonomialIdeal);
   install(ggprimes, cmd_mi_assprimes, TY_MonomialIdeal);
-
+#endif
   // termideal routines
   install(ggmatrix, cmd_ti_matrix, TY_TERMIDEAL);
   install(ggtermideal, cmd_ti_ti, TY_MATRIX, TY_INT);
