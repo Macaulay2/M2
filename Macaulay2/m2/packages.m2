@@ -195,7 +195,7 @@ newPackage("Macaulay2",
      Version => version#"VERSION", 
      Headline => "A computer algebra system designed to support algebraic geometry")
 
-Macaulay2#"test inputs" = saveCurrentPackage#"test inputs"
+-- Macaulay2#"test inputs" = saveCurrentPackage#"test inputs"
 
 findSynonyms = method()
 findSynonyms Symbol := x -> (

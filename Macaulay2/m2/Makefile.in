@@ -13,14 +13,13 @@ emacs html: all; $(MAKE) -C ../$@
 .PHONY: clean all install html distclean check default initialize prep always tags install-tmp
 
 LOADSEQUENCE = $(shell cat @srcdir@/loadsequence)
-DOCSEQUENCE  = $(shell cat @srcdir@/docseq)
 EXAMPLEDATAFILES = expression sample
 
 # there is a parallel list of tutorials in overview3.m2
 TUTORIALS = $(patsubst %, ../tutorial/final/%, Fano.out canEmbed.out divisors.out elementary.out)
 
 # M2 files made in the build directory are not mentioned in LOADSEQUENCE above
-MADEM2FILES := loads.m2 Macaulay2-doc.m2 statuscodes.m2
+MADEM2FILES := loads.m2 statuscodes.m2
 
 ifdef MP
 mpcodes.m2: ../../include/MP.h mpcodes.sed
@@ -30,8 +29,6 @@ MADEM2FILES += mpcodes.m2
 endif
 
 DUMPEDM2FILES := $(LOADSEQUENCE) setup.m2 startup.m2 $(MADEM2FILES)
-
-DUMPEDM2FILES += $(DOCSEQUENCE) # this depends on whether we load the documentation in last.m2
 
 ifneq "$(DUMPDATA)" "no"
 DUMPEDM2FILES := $(DUMPEDM2FILES)
@@ -45,11 +42,6 @@ loads.m2 : loads.awk loadsequence
 	@echo making $@
 	@awk -f $^ >$@
 
-Macaulay2-doc.m2 : loads.awk docseq 
-	@echo making $@
-	@awk -f $^ >$@
-clean::; rm -f Macaulay2-doc.m2
-
 #################################
 
 default:: 
@@ -57,7 +49,7 @@ default::
 all default justM2:: tags
 tags: @srcdir@/TAGS @srcdir@/TAGS.doc
 clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
-@srcdir@/TAGS: loadsequence docseq Makefile.in $(NONDOCM2FILES) $(DOCSEQUENCE) @srcdir@/*.awk @srcdir@/../basictests/*.m2 @srcdir@/../test/*.m2 @srcdir@/../test/engine/*.m2 \
+@srcdir@/TAGS: loadsequence Makefile.in $(NONDOCM2FILES) @srcdir@/*.awk @srcdir@/../basictests/*.m2 @srcdir@/../test/*.m2 @srcdir@/../test/engine/*.m2 \
 		@srcdir@/../book/*.m2 @srcdir@/../packages/*.m2 @srcdir@/../packages/*/*.m2 ../emacs/makehlp.m2 ../emacs/makem2.m2 \
 		@srcdir@/README.DOC @srcdir@/../*/COPYRIGHT ../emacs/makesyms.m2 @srcdir@/../tutorial/prelim/*.m2 \
 		@srcdir@/../tutorial/final/*.m2 Makefile.tests @srcdir@/../e/statuscodes @srcdir@/doc.css @srcdir@/doc-no-buttons.css \
@@ -67,7 +59,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 	  cd @srcdir@ && \
 	  for i in $(patsubst @srcdir@/%, %, $^) ; \
 	  do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
-@srcdir@/TAGS.doc: docseq Makefile.in $(DOCSEQUENCE)
+@srcdir@/TAGS.doc: Makefile.in @srcdir@/../packages/M2doc/*.m2
 	@echo making $@
 	@ set -e ; \
 	  cd @srcdir@ && \
@@ -120,9 +112,11 @@ test1 : test.m2 phase1
 	../bin/M2 -e 'errorDepth = 0' -q test.m2 -e '<< "--test succeeded" << endl' -e 'exit 0'
 	touch $@
 
-check:: tmp test2
+TMPDIR = tmp
+
+check:: $(TMPDIR) test2
 test2: phase1 ../bin/M2$(EXE)
-	$(MAKE) -k -C tmp -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
+	$(MAKE) -k -C $(TMPDIR) -f $(srcdir)/Makefile.tests srcdir=$(srcdir)
 	touch $@
 clean::; rm -f test2
 
@@ -144,7 +138,7 @@ install:: $(datam2dir)
 $(datam2dir) :
 	$(INSTALL) -d $(datam2dir)
 
-install:: $(DUMPEDM2FILES) $(DOCSEQUENCE) $(TUTORIALS)
+install:: $(DUMPEDM2FILES) $(TUTORIALS)
 	$(INSTALL) -d "$(m2dir)"
 	$(INSTALL_DATA) $^ "$(m2dir)"
 
@@ -169,14 +163,8 @@ statuscodes.m2 : ../e/statuscodes
 	) <$< >$@
 clean::; rm -f statuscodes.m2
 
-all:: tmp tmp/.documentation-made
-tmp :; mkdir "$@"
-#	see startup.m2, too, for setting "prefixDirectory" to ./tmp while building, so it can find example output files
+install:: all
 
-PACKAGEPREFIX = tmp
-clean::; rm -rf $(PACKAGEPREFIX)/Macaulay2-$(PACKAGE_VERSION)
-
-MAKEINFO = true
 M2OPTIONS := -q
 ifndef INTERACTIVE
 M2OPTIONS += --stop
@@ -184,42 +172,18 @@ M2OPTIONS += --no-debug
 endif
 M2OPTIONS += -e errorDepth=0
 M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => "$(PACKAGEPREFIX)/", MakeLinks => false, RemakeAllDocumentation => false) '
+M2OPTIONS += -e 'installPackage(Macaulay2, Encapsulate => true, PackagePrefix => "$(TMPDIR)/", MakeLinks => false)'
 ifndef INTERACTIVE
 M2OPTIONS += -e 'exit 0 '
 endif
 
-% : %.in
-	cp "$<" "$@"
-
-clean::; rm -f $(EXAMPLEDATAFILES)
-tmp/.documentation-made : $(DOCSEQUENCE) $(EXAMPLEDATAFILES)
-	@ echo making the Macaulay2 package, including the documentation and example output
+$(TMPDIR) :; mkdir "$@"
+install:: $(TMPDIR)
+	@ echo installing the Macaulay2 package
 	@ set -x ; time ../bin/M2 $(M2OPTIONS)
 	touch "$@"
-clean::; rm -f tmp/.documentation-made
 
-remake-all: remake-doc remake2 remake3 remake4
-remake-html : remake-doc remake3
-remake-nodes: remake-doc remake2
-remake-examples: remake-doc remake4
-remake-failed-examples: remake-doc remake5
-remake-doc:
-	@ set -x ; rm -f tmp/.documentation-made
-remake2:
-	@ set -x ; rm -f $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagedocRelDir)/*documentation.db tmp/*/$(packagedocRelDir)/*documentation.db)
-remake3:
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagehtmlRelDir) tmp/*/$(packagehtmlRelDir))
-remake4:
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir) tmp/*/$(packageexamplesRelDir))
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagetestsRelDir) tmp/*/$(packagetestsRelDir))
-remake5:;
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packageexamplesRelDir)/*.errors tmp/*/$(packageexamplesRelDir)/*.errors)
-	@ set -x ; rm -rf $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagetestsRelDir)/*.errors tmp/*/$(packagetestsRelDir)/*.errors)
-
-install::all install-main
-install-main:; tar cf - -C tmp/$(package) . | tar xf - -C $(encapdir)
-clean::; rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles Macaulay2-doc.m2 loads.m2 docloads.m2 mpcodes.m2 version.m2 core
+clean::; rm -rf ../$(DUMPDATAFILE) cache *.obj *.exe runexample temp.data distfiles loads.m2 mpcodes.m2 version.m2 core
 distclean : clean; rm -f Makefile
 always:
 
