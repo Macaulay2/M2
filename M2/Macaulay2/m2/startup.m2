@@ -157,25 +157,22 @@ getRealPath := fn -> (
      s := realpath fn;
      if s =!= null then s
      else (
-     	  while (
-	       s = readlink fn;
-	       s =!= null
-	       ) 
-	  do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
+     	  while ( s = readlink fn; s =!= null ) do fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s);
      	  fn))
+
+pathsearch := e -> (
+     if not isAbsoluteExecPath e then (
+	  -- we search the path, but we don't do it the same way execvp does, too bad.
+	  PATH := separate(":",if "" =!= getenv "PATH" then getenv "PATH" else ".:/bin:/usr/bin");
+	  PATH = apply(PATH, x -> if x === "" then "." else x);
+	  scan(PATH, p -> if fileExists (p|"/"|e) then (e = p|"/"|e; break));
+	  );
+     e)
 
 exe := (
      processExe := "/proc/" | toString processID() | "/exe";  -- this is a reliable way to get the executable in linux
      if fileExists processExe then getRealPath processExe
-     else (
-	  e := commandLine#0;
-	  if not isAbsoluteExecPath e then (
-	       -- the only other choice is to search the path, but we don't do it the same way execvp does, too bad.
-	       PATH := separate(":",if "" =!= getenv "PATH" then getenv "PATH" else ".:/bin:/usr/bin");
-	       PATH = apply(PATH, x -> if x === "" then "." else x);
-	       scan(PATH, p -> if fileExists (p|"/"|e) then (e = p|"/"|e; break));
-	       );
-	  getRealPath e))
+     else getRealPath pathsearch commandLine#0)
 bindir := dir exe
 bindirsuffix := LAYOUT#"bin";
 
@@ -197,6 +194,21 @@ if bindirsuffix === substring(bindir,-#bindirsuffix) then (
      )
 
 if prefixDirectory === null and sourceHomeDirectory === null then stderr << "warning: can't determine prefixDirectory or sourceHomeDirectory" << endl
+
+encapDirectory = null
+
+if prefixDirectory =!= null and fileExists (prefixDirectory | "encapinfo") then (
+     -- now get the second to last entry in the chain of symbolic links, which will be in the final prefix directory
+     encapDirectory = prefixDirectory;
+     prev := null;
+     fn := pathsearch commandLine#0;
+     while ( s = readlink fn; s =!= null ) do (prev = fn; fn = if isAbsolutePath s then s else minimizeFilename(fn|"/../"|s););
+     if prev =!= null then (
+	  bindir = dir prev;
+	  if bindirsuffix === substring(bindir,-#bindirsuffix) then (
+	       prefixdir = substring(bindir,0,#bindir-#bindirsuffix);
+	       if fileExists(prefixdir | LAYOUT#"share") then (
+		    prefixDirectory = prefixdir))))
 
 silence := arg -> null
 notyeterr := arg -> error("command line option ", arg, " not re-implemented yet")
