@@ -109,7 +109,6 @@ document { "language and programming overview",
 	  (
 	       "interfacing with the system",
 	       MENU {
-		    TO "running programs",
 		    }
 	       ),
 	  (
@@ -1160,39 +1159,52 @@ document { "printing to the screen",
      }
 
 document { "reading files",
-     "Typically a file will contain code written in the Macaulay 2 language.
-     To load and execute that code, use ", TO "load", ".",
+     "Sometimes a file will contain a single expression whose value you wish
+     to have access to.  For example, it might be a polynomial produced by
+     another program.  The function ", TO "get", " can be used to obtain 
+     the entire contents of a file as a single string.  We illustrate this
+     here with a file whose name is ", TT "expression", ".",
+     EXAMPLE ///get "expression"///,
+     "This isn't quite what you want, because a string containing a description
+     of a polynomial is not the same as a polynomial.  We may use
+     ", TO "value", " to evaluate the string and produce the corresponding
+     polynomial, after first setting up a polynomial ring to contain it.",
+     EXAMPLE {
+	  ///R = ZZ/101[x,y,z]///,
+	  ///f = value get "expression"///,
+	  ///factor f///,
+	  },
+     "Often a file will contain code written in the Macaulay 2 language.
+     We have a file called ", TT "sample", " with two lines of code.",
+     EXAMPLE ///<< get "sample";///,
+     "To load and execute that code, use ", TO "load", ".",
      EXAMPLE ///load "sample"///,
      "The command ", TO "needs", " can be used to load a file only if
      it hasn't already been loaded.",
      EXAMPLE ///needs "sample"///,
-     "For debugging purposes, it is sometimes useful to be able to simulate
-     entering the lines of a file one by one.  We use ", TO "input", " for
+     "For debugging or dipslay purposes, it is sometimes useful to be able 
+     to simulate entering the lines of a file one by one, so they appear
+     on the screen along with prompts and output lines.  We use
+     ", TO "input", " for
      this.",
      EXAMPLE ///input "sample"///,
-     "The functions above look for files in every directory listed by
-     the variable ", TO "path", ".  Our sample file is located in the
-     directory called ", TT "packages", ", which is on the path.  Another
-     copy of the sample file is located in our current directory.",
-     EXAMPLE "path",
-     "The function ", TO "get", " can be used to obtain the entire contents
-     of a file as a single string.",
-     EXAMPLE ///x = get "sample"///,
-     "Use ", TO "peek", " to observe the extent of this string.",
-     EXAMPLE ///peek x///,
+     "There are other ways to manipulate the contents of a file with
+     multiple lines.  First, let's use ", TO "peek", " to observe the 
+     extent of this string returned by ", TO "get", ".",
+     EXAMPLE ///peek get "sample"///,
      "The resulting string has newlines in it; we can use ", TO "lines", "
      to break it apart into a list of strings, with one row in each string.",
-     EXAMPLE ///y = lines x///,
-     "Use ", TO "peek", " to observe the extent of these strings.",
-     EXAMPLE ///peek y///,
+     EXAMPLE ///lines get "sample"///,
+     "We may use ", TO "peek", " to observe the extent of these strings.",
+     EXAMPLE ///peek lines get "sample"///,
      "We could even use ", TO "stack", " to assemble the lines of the
      file into a net.",
-     EXAMPLE ///stack y///,
+     EXAMPLE ///stack lines get "sample"///
      }
 
 document { "getting input from the user",
      "The function ", TO "read", " can be used to prompt the user and obtain
-     a line of input as a string.  In response to the prompt, we enter
+     a line of input as a string.  In response to the prompt, the user enters
      ", TT "sample", " and press return.",
      EXAMPLE {
 	  ///filename = read "file name : "
@@ -1219,9 +1231,8 @@ document { "creating and writing files",
      and we close the file with ", TO "close", ".  Files must be closed
      before they can be used for something else.",
      EXAMPLE {
-	  ///"testfile" << "print " << 2^100 << endl << close///,
-	  ///get "testfile"///,
-	  ///load "testfile"///,
+	  ///"testfile" << 2^100 << endl << close///,
+	  ///value get "testfile"///,
 	  },
      "More complicated files may require printing to the file multiple times.  One
      way to handle this is to assign the open file created the first time we
@@ -1232,7 +1243,7 @@ document { "creating and writing files",
 	  ///f << "hi" << endl///,
 	  ///f << "ho" << endl///,
 	  ///f << close///,
-	  ///peek get "testfile"///,
+	  ///<< get "testfile";///,
 	  },
      }
 
@@ -1258,7 +1269,7 @@ document { "two dimensional formatting",
 	  },
      "Output of routines such as ", TO "betti", " and ", TO "net", " that
      return nets can be easily incorporated into more complex displays 
-     using standard operations on nets.",
+     using standard operations on nets (see ", TO "Net", ").",
      EXAMPLE {
 	  "C = resolution cokernel f",
 	  "be = betti C",
@@ -1302,7 +1313,8 @@ document { "two dimensional formatting",
 	  "peek2(e,2)",
 	  },
      "Other types of ", TO "Expression", " which can be used for formatting
-     nested lists are ", TO "MatrixExpression", " and ", TO "Table", ".",
+     nested lists as two dimensional arrays are ", TO "MatrixExpression", "
+     and ", TO "Table", ".",
      EXAMPLE {
 	  "Table{{1,2,3},{a,bb,ccc}}",
 	  "MatrixExpression{{1,2,3},{a,bb,ccc}}",
@@ -1318,8 +1330,8 @@ document { quote isReady,
      SEEALSO {"File"}
      }
 
-document { quote isEOF,
-     TT "isEOF f", " -- tells whether an input file ", TT "f", " is at the end.",
+document { quote atEndOfFile,
+     TT "atEndOfFile f", " -- tells whether an input file ", TT "f", " is at the end.",
      PARA,
      SEEALSO {"File"}
      }
@@ -1329,20 +1341,20 @@ document { "communicating with programs",
      it, let it communicate directly with the user, and wait for it to
      finish.  This is done with the ", TO "run", " command.",
      EXAMPLE ///run "uname -a"///,
-     "More often, one wants access Macaulay 2 code to be able to obtain
-     and manipulate the output from the other program.  If one
-     needs only to receive data, as in the example above, then we can
+     "More often, one wants to write Macaulay 2 code to obtain
+     and manipulate the output from the other program.  If the program
+     requires no input data from us, as in the example above, then we can
      use ", TO "get", " with a file name whose first character is an
      exclamation point; the rest of the file name will be taken as the
-     command to run.  Then we peek at the string to see whether it includes
-     a newline character.",
+     command to run.  In this example, we also peek at the string
+     to see whether it includes a newline character.",
      EXAMPLE {
-	  ///get "!uname -a"///,
-	  ///peek oo///,
+	  ///peek get "!uname -a"///,
 	  },
-     "We can even use this method to call upon Macaulay2 itself for a 
-     computation, putting the computational request into the command line.  We
-     then use ", TO "value", " to convert the string returned to a number.",
+     "We can even use this method to call upon Macaulay 2 itself for a 
+     computation, putting the computational request into the command line.
+     We could then use ", TO "value", " to convert the string returned to 
+     a number.",
      EXAMPLE {
 	  ///g = get "!M2 -q -silent -e'<< 2^100' -e'exit 0'"///,
 	  ///peek g///,
@@ -1350,7 +1362,7 @@ document { "communicating with programs",
 	  },
      "Bidirectional communication with a program is also possible.  We use
      ", TO "openInOut", " to create a file that serves as a bidirectional
-     connection to a program.  We call such a file an input output file.  In
+     connection to a program.  That file is called an input output file.  In
      this example we open a connection to the unix utility ", TT "egrep", "
      and use it to locate the symbol names in Macaulay2 that begin with
      ", TT "in", ".",
@@ -1371,7 +1383,7 @@ document { "communicating with programs",
      PARA,
      "A useful function in this connection is ", TO "isReady", " which will
      tell you whether an input file has any input available for reading, or
-     whether it has arrived at the end.  We illustrate that in the following
+     whether it has arrived at the end.  We illustrate it in the following
      example by simulating a computation that takes 5 seconds to complete,
      printing one dot per second while waiting.",
      EXAMPLE {
@@ -1380,12 +1392,16 @@ document { "communicating with programs",
 	  ///while not isReady f do (sleep 1; << "." << flush)///,
 	  ///read f///,
 	  ///isReady f///,
-	  ///isEOF f///,
+	  ///atEndOfFile f///,
 	  ///close f///
 	  },
      "We also allow for bidirectional communication
      through sockets over the internet.  See ", TO "openInOut", "
-     and ", TO "openListener", "."
+     and ", TO "openListener", ", or the next section."
+     }
+
+document { "using sockets",
+     "This node has not been written yet."
      }
 
 document { "making new types",
@@ -1409,14 +1425,6 @@ document { "method functions with a variable number of arguments",
      }
 
 document { "inheritance from parents",
-     "This node has not been written yet."
-     }
-
-document { "running programs",
-     "This node has not been written yet."
-     }
-
-document { "using sockets",
      "This node has not been written yet."
      }
 

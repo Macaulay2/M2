@@ -558,11 +558,11 @@ isReadyFun(e:Expr):Expr := (
      else WrongArg("a file"));
 setupfun("isReady",isReadyFun);
 
-isEOFfun(e:Expr):Expr := (
+atEOFfun(e:Expr):Expr := (
      when e
      is f:file do toBoolean ( !f.input || f.eof || f.insize == f.inindex && isReady(f.infd) > 0 && !filbuf(f) )
      else WrongArg("a file"));
-setupfun("isEOF",isEOFfun);
+setupfun("atEndOfFile",atEOFfun);
 
 tokenbuf := newvarstring(100);
 getline(o:file):string := (

@@ -493,13 +493,14 @@ document { quote value,
       	  "x",
       	  "value x",
 	  "p = (expression 2)^3 * (expression 3)^2",
-      	  "value p"
+      	  "value p",
+	  ///value "2 + 2"///,
 	  },
      "If ", TT "s", " is a string, its contents are treated as code in the
-     Macaulay 2 language, parsed it in its own scope, and evaluated.",
+     Macaulay 2 language, parsed it in its own scope, the same way a file is,
+     and evaluated.  The string may even contain multiple lines.",
      EXAMPLE {
-	  ///value "2 + 2"///,
-      	  ///value "a := 2"///,
+      	  ///value "a := 2 \n a+a"///,
 	  },
      "Since the local assignment to ", TT "a", " above occurred in a new scope,
      the value of the global variable ", TT "a", " is unaffected.",

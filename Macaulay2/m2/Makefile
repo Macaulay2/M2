@@ -134,8 +134,12 @@ ifneq "$(CC)" "cl"
 all :: bare
 endif
 
+INPUTS := ../tmp/Examples/sample  ../tmp/Examples/expression
+../tmp/Examples/sample: sample; cp $< $@
+../tmp/Examples/expression: expression; cp $< $@
+
 all :: ../cache/Macaulay2.doc
-../cache/Macaulay2.doc : ../cache/Macaulay2.pre $(MADEGFILES)
+../cache/Macaulay2.doc : ../cache/Macaulay2.pre $(MADEGFILES) $(INPUTS)
 	$(MAKE) -k -C ../tmp/Examples -f ../../m2/Makefile.egs
 	rm -f ../cache/Macaulay2.tmp
 	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'

@@ -542,15 +542,15 @@ nl := if length(newline) > 0 then newline.(length(newline)-1) else '\n';
 
 prepare(o:file):void := (
      o.bol = false;
-     o.prompt(o);
-     flush(o);
+     o.prompt(stdout);
+     flush(stdout);
      if o.echo then (
 	  filbuf(o);
 	  i := o.inindex;
 	  c := ' ';
-	  while i < o.insize && (c = o.inbuffer.i; c != '\n' && c != '\r') do (o << c; i = i+1);
-	  endlfun(o);
-	  flush(o);););
+	  while i < o.insize && (c = o.inbuffer.i; c != '\n' && c != '\r') do (stdout << c; i = i+1);
+	  endlfun(stdout);
+	  flush(stdout)));
 export getc(o:file):int := (
      if !o.input then return(EOF);
      if o.bol then prepare(o);

@@ -115,8 +115,10 @@ markLoaded := (filename) -> (
      if notify then << "--loaded " << filename << endl;
      )
 
+isSpecial := filename -> filename#0 === "$" or filename#0 === "!"
+
 tryload := (filename,load) -> (
-     if isAbsolutePath filename then (
+     if isAbsolutePath filename or isSpecial filename then (
 	  if load filename then (
 	       markLoaded filename;
 	       true)
