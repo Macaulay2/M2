@@ -112,7 +112,7 @@ export setprompt(file:TokenFile,prompt:function(file):void):void := (
      setprompt(file.posFile,prompt)
      );
 export flush(file:TokenFile):void := flush(file.posFile);
-export close(file:TokenFile):void := close(file.posFile);
+export close(file:TokenFile):int := close(file.posFile);
 export gettoken(file:TokenFile,obeylines:bool):Token := (
      when file.last
      is null do gettoken(file.posFile,obeylines)
