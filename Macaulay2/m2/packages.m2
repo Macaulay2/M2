@@ -202,7 +202,7 @@ checkShadow = () -> (
      n := #d;
      for i from 0 to n-1 do
      for j from i+1 to n-1 do
-     scan(keys d#i, nam -> if d#j#?nam then (
+     scan(keys d#i, nam -> if d#j#?nam and d#i#nam =!= d#j#nam then (
 	       stderr << "--warning: symbol '" << nam << "' in " << d#j << " is shadowed by symbol in " << d#i << endl;
 	       sym := d#j#nam;
 	       w := findSynonyms sym;
