@@ -383,7 +383,8 @@ degree Module := M -> (
   T := (ring hf)_0;
   if hf == 0 then 0
   else (
-       while substitute(hf,{T=>1}) == 0 do hf = hf // (1-T);
+       -- while substitute(hf,{T=>1}) == 0 do hf = hf // (1-T);
+       while hf % (1 - T) == 0 do hf = hf // (1-T);
        substitute(hf,{T=>1})))
 
 -----------------------------------------------------------------------------
