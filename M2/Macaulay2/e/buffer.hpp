@@ -60,10 +60,10 @@ public:
   buffer &operator<<(long n) { put(n); return *this; }
   buffer &operator<<(unsigned int n) { put(n); return *this; }
   buffer &operator<<(unsigned long n) { put(n); return *this; }
-  buffer &operator<<(unsigned short n) { put(reinterpret_cast<unsigned int>(n)); return *this; }
+  buffer &operator<<(unsigned short n) { put(static_cast<unsigned int>(n)); return *this; }
   buffer &operator<<(int n) { put(n); return *this; }
   buffer &operator<<(char c) { put(c); return *this; }
-  buffer &operator<<(unsigned char c) { put(reinterpret_cast<char>(c)); return *this; }
+  buffer &operator<<(unsigned char c) { put(static_cast<char>(c)); return *this; }
 };
 
 #endif
