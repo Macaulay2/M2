@@ -24,10 +24,10 @@ AC_DEFUN(M2_SHOW_CONFDEFS,[
   sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
   ])
 
-dnl this list is the same as the one in Makefile-configure
+dnl this list is the same as the one in Makefile
 AC_DEFUN(M2_CONFIGURED_FILES,
 [config.Makefile\
- Makefile\
+ Makefile-run\
  Macaulay2/Makefile\
  Macaulay2/m2/Makefile\
  Macaulay2/basictests/Makefile\

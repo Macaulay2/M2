@@ -1,4 +1,7 @@
  -*- Mode: sh -*-
+
+# see also ./aclocal.m4
+
 AC_INIT(Macaulay2.LSM)
 
 # 5 compiler messages saved in config.log
