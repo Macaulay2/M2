@@ -10,6 +10,12 @@ Substitution in skew commutative algebras now works correctly.
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+Source files for Macaulay 2 code are now interpreted as text files, in the
+sense that RETURN-NEWLINE and RETURN character sequences are automatically
+converted to NEWLINE.  Thus, the behavior of your program should not depend
+on whether the newline characters have been replaced by the analogues used
+under MSDOS or MACOS.
+
 The parser now checks for instances where a function and its arguments are on
 separate lines, and prints out a message, "missing semicolon before this token?".
 It does the same any time the "adjacency" operator is applied to a pair of tokens on
