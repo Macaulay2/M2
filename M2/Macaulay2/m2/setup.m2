@@ -144,6 +144,7 @@ X := new Type of HashTable
 X X := identity
 erase (keys X)#0#0
 
+<< "--loading source code..." << endl
 load "loads.m2"
 
 setrecursionlimit 300

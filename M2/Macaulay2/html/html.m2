@@ -9,10 +9,14 @@ conceptTable = new MutableHashTable
 scandb = (db,f) -> scanKeys(db,k->f(k,db#k))
 
 process := (key,doc) -> (
-	  filename := linkFilename key;
-	  conceptTable#key = filename;
-	  filename << html SEQ { 
-	       TITLE key, H2 key,
+     filename := linkFilename key;
+     conceptTable#key = filename;
+     filename << html SEQ { 
+	  HEAD {
+	       TITLE key
+	       },
+	  BODY {
+	       H2 key,
 	       try evaluate doc else error ("evaluate ", doc),
 	       if key != "index" then SEQ {
 		    PARA,
@@ -20,12 +24,16 @@ process := (key,doc) -> (
 		    },
 	       PARA,
 	       "Go to ", HREF {"concepts.html", "concepts index"}, "."
-	       } << endl << close)
-try scandb(openDatabase "../cache/Macaulay2.doc", process) else
-    scan(keys Documentation, k -> (
-		v := Documentation#k;
-		if class v === SEQ then process (k,name v)
-		))
+	       }
+	  } << endl << close)
+--try (
+     scandb(openDatabase "../cache/Macaulay2.doc", process) 
+--     )
+--else (
+--     scan(keys Documentation, k -> (
+--	       v := Documentation#k;	  -- this doesn't work???
+--	       if class v === SEQ then process (k,name v)
+--	       )))
 
 scan(linkFilenameKeys(),
      key -> if not conceptTable#?key then linkFilename key << html SEQ { 

@@ -4,9 +4,20 @@
 -----------------------------------------------------------------------------
 htmlLiteralTable := new MutableHashTable
 scan(characters ascii(0 .. 255), c -> htmlLiteralTable#c = c)
+htmlLiteralTable#"\"" = "&quot;"
 htmlLiteralTable#"<" = "&lt;"
+htmlLiteralTable#"&" = "&amp;"
 htmlLiteralTable#">" = "&gt;"
 htmlLiteral := s -> concatenate apply(characters s, c -> htmlLiteralTable#c)
+
+htmlExtraLiteralTable := new MutableHashTable
+scan(characters ascii(0 .. 255), c -> htmlExtraLiteralTable#c = c)
+htmlExtraLiteralTable#"\"" = "&quot;"
+htmlExtraLiteralTable#" " = "&nbsp;"
+htmlExtraLiteralTable#"&" = "&amp;"
+htmlExtraLiteralTable#"<" = "&lt;"
+htmlExtraLiteralTable#">" = "&gt;"
+htmlExtraLiteral := s -> concatenate apply(characters s, c -> htmlExtraLiteralTable#c)
 -----------------------------------------------------------------------------
 ttLiteralTable := new MutableHashTable
 scan(0 .. 255, 
@@ -176,7 +187,25 @@ PARA          = ParaHead {}
 
 EXAMPLE    = newListHead "EXAMPLE"
 text EXAMPLE := x -> text PRE x#0
-html EXAMPLE := x -> html PRE x#0
+
+html EXAMPLE := x -> html TABLE {{PRE x}}
+-- html EXAMPLE := x -> html PRE x#0
+-- html EXAMPLE := x -> html TABLE {{ CODE x#0 }}
+
+TABLE      = newListHead "TABLE"
+html TABLE := x -> concatenate(
+     newline,
+     "<P>",
+     "<CENTER>",
+     "<TABLE cellspacing='5' cellpadding='9' border='1' bgcolor='#80ffff' width='100%'>",
+     apply(x, row -> ( 
+	       "<TR>", 
+	       apply(row, item -> ("<TD NOWRAP>", html item, "</TD>")),
+	       "</TR>")),
+     "</TABLE>",
+     "</CENTER>",
+     "<P>"
+     )			 
 
 PRE        = newListHead "PRE"
 text PRE   := x -> concatenate(
@@ -221,6 +250,14 @@ tex PRE := x -> concatenate (
 TITLE      = newListHead "TITLE"
 HEAD       = newListHead "HEAD"
 BODY       = newListHead "BODY"
+html BODY := x -> concatenate(
+     "<BODY BACKGROUND='/Icons/Backgrounds/recbg.jpg'>",
+     newline,
+     toList x / html,
+     newline,
+     "</BODY>",
+     newline
+     )
 
 IMG	   = newListHead "IMG"
 html IMG  := x -> "<IMG src=\"" | x#0 | "\">"
@@ -265,7 +302,16 @@ text TT := x -> concatenate("'", x#0, "'")
 EM         = newListHead "EM"
 CITE       = newListHead "CITE"
 BOLD       = newListHead "B"; BOLD.name = "BOLD"
+
 CODE       = newListHead "CODE"
+html CODE   := x -> concatenate( 
+     "<CODE>", 
+     demark(
+	  ("<BR>",newline),
+	  apply(lines concatenate x, s -> htmlExtraLiteral concatenate("   ",s))
+	  ),
+     "</CODE>"
+     )
 
 hypertex = true
 

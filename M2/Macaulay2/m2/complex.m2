@@ -113,7 +113,6 @@ CC == RR := (z,i) -> z#0 == i and z#1 == 0
 RR == CC := (i,z) -> z#0 == i and z#1 == 0
 
 TEST "
-     use CC
      z = 2 - 3*ii
      w = 4 + 5*ii
      x = 2 + ii - ii

@@ -367,18 +367,22 @@ makeBaseFilename := () -> (
 	       )
 	  )
      );
+
+-- exampleBox := x -> PRE x
+exampleBox := x -> TABLE {{CODE x}}
+
 processExamplesLoop := s -> (
      if class s === EXAMPLE then (
 	  exampleCounter = exampleCounter + 1;
 	  exampleOutputFile << s#0 << endl;
 	  if exampleResults#?exampleCounter
-	  then PRE exampleResults#exampleCounter
+	  then exampleBox exampleResults#exampleCounter
 	  else (
 	       if #exampleResults === exampleCounter then (
 		    stderr << "warning : input file " << nodeBaseFilename 
 		    << ".out terminates prematurely" << endl;
 		    );
-	       PRE concatenate("in = ",s#0)
+	       exampleBox concatenate("in = ",s#0)
 	       ))
      else if class s === Sequence or basictype s === List
      then apply(s,processExamplesLoop)

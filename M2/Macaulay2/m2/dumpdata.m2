@@ -1,3 +1,4 @@
+if not version#"dumpdata" then error "can't dump data with this version of Macaulay 2"
 phase = 0
 scan(openFiles(), f -> (
 	  flush stderr;
@@ -7,7 +8,6 @@ scan(openFiles(), f -> (
 	       << "--closing file " << name f << "\n";
 	       close f;
 	       )))
-errorDepth (reloaded + 1)
 collectGarbage()
 fn := concatenate("../cache/Macaulay2-",
      try first lines get "!uname -m | sed s=/=-=g" else version#"architecture", 

@@ -7,7 +7,6 @@ ZZ _ Monoid := (i,M) -> (
      else error "expected integer to be 1"
      )
 
-use Monoid := M -> (M.use M; M)
 document { quote Monoid,
      TT "Monoid", " -- denotes the class of all monoids.",
      PARA,

@@ -443,14 +443,16 @@ document { "quotient rings",
      "In the example above you might have wondered whether typing ", TT "x", "
      would give an element of ", TT "S", " or an element of ", TT "QQ[x,y,z]", ".  Our
      convention is that typing ", TT "x", " gives an element of the 
-     quotient ring unless the polynomial ring has been assigned to a global variable.
-     Here is an example of the opposite behavior.",
+     last ring which has been assigned to a global variable.  Here is another
+     example.",
      EXAMPLE "T = ZZ/101[r,s,t]",
-     EXAMPLE "U = T/(r^3+s^3+t^3)",
+     EXAMPLE "T/(r^3+s^3+t^3)",
      EXAMPLE "r^3+s^3+t^3",
-     "Notice that this time, the variables end up in the ring ", TT "T", ".  The
-     command ", TO "use", " will install variables for a specified ring.",
-     EXAMPLE "use U",
+     "Notice that this time, the variables end up in the ring ", TT "T", ", because
+     we didn't assign the quotient ring to a global variable.  The
+     command ", TO "use", " would install the variables for us, or we could
+     assign the ring to a global variable.",
+     EXAMPLE "U = ooo",
      EXAMPLE "r^3+s^3+t^3",
      "The functions ", TO "lift", " and ", TO "promote", " can be used to transfer
      elements between the polynomial ring and its quotient ring.",
@@ -531,12 +533,13 @@ document { "fraction fields",
      EXAMPLE "frac R",
      "At the moment, it is also required that the coefficient ring be finite.",
      PARA,
-     "After defining such a ring, fractions in it can be obtained by writing them
-     explicitly.",
+     "After defining a ring such as ", TT "R", ", fractions in it can be obtained 
+     by writing them explicitly.",
      EXAMPLE "x",
      EXAMPLE "1/x",
      EXAMPLE "x/1",
-     "Alternatively, after applying the function ", TO "use", " the symbols you used
+     "Alternatively, after applying the function ", TO "use", ", or assigning the
+     fraction ring to a global variable, the symbols you used
      become associated with the corresponding elements of the fraction field.",
      EXAMPLE "use frac R",
      EXAMPLE "x",
@@ -593,16 +596,7 @@ document { "symmetric algebras",
      EXAMPLE "S = symmetricAlgebra(R^3, Variables => {t,u,v})",
      "We can construct the symmetric algebra of a module that isn't
      necessarily free.",
-     EXAMPLE "symmetricAlgebra(R^1/(R_0,R_1^3), Variables => {t})",
-     "Notice that none of the variables is in the ring yet.",
-     EXAMPLE "a",
-     EXAMPLE "t",
-     NOINDENT,
-     "With the ", TO "use", " function, we can arrange for values in the
-     symmetric algebra to be associated with the variable names.",
-     EXAMPLE "use S",
-     EXAMPLE "a",
-     EXAMPLE "t"
+     EXAMPLE "symmetricAlgebra(R^1/(R_0,R_1^3), Variables => {t})"
      }
 
 document { "Weyl algebras",

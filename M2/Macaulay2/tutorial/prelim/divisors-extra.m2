@@ -15,7 +15,6 @@
 RC = Z/32003[a..d]
 IC = monomialCurve({1,3,4},RC)
 SC = RC/IC
-use SC
 
 -- Def. Define e(X) to be the degree of non-saturation
 -- of S_X/f, where f is a non-zero linear form in S_X:

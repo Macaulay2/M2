@@ -543,7 +543,7 @@ makeit2 := (args,options) -> (
      options = new OptionTable from options;
      makeMonoid options)
 
-monoid Array := (args) -> use processArgs(toSequence args,monoidDefaults,makeit2)
+monoid Array := (args) -> processArgs(toSequence args,monoidDefaults,makeit2)
 OptionsRegistry#monoid = monoidDefaults
 monoid Ring := R -> R.monoid
 

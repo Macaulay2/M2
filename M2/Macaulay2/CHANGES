@@ -1,11 +1,16 @@
 Changes made, most recent ones first:
 
-new type : AbstractSet
-
 New in 0.8.39:
 -----------------------------------------------------------------------------
+There is a new convention about automatic assignment of generators of rings
+to global variables.  The old convention was that this happened automatically
+when the polynomial ring was created.  The new convention is that it happens
+when the ring is itself assigned to a global variable.
+
 Groebner bases now print out the matrix of generators when displayed,
 whereas before, they 
+
+new type : AbstractSet
 
 -----------------------------------------------------------------------------
 New in 0.8.38:
