@@ -155,7 +155,7 @@ document { "polynomial rings",
      "A random element of degree ", TT "n", " can be obtained with ", TO "random", ".",
      EXAMPLE "random(2,R)",
      "We may construct polynomial rings over polynomial rings.",
-     EXAMPLE "ZZ[a,b,c][d,e,f]",
+     EXAMPLE "ZZ[a,b,c][d,e,f];",
      "When displaying an element of an iterated polynomial ring,
      parentheses may be used to organize the coefficients, which
      may themselves be polynomials (sums).",
@@ -167,7 +167,7 @@ document { "polynomial rings",
 	  },
      "There are various other ways to specify the variables to be used in a polynomial
      ring.  A sequence of variables can be obtained as follows.",
-     EXAMPLE "ZZ[b..k]",
+     EXAMPLE "ZZ[b..k];",
      "The single-letter variables can be obtained with ", TO "vars", ".",
      EXAMPLE {
 	  "vars (0..4)",
@@ -175,7 +175,7 @@ document { "polynomial rings",
 	  },
      "Subscripted variables can be used, provided the base for the subscripted
      variable has not bee used for something else.",
-     EXAMPLE "ZZ[t,p_0,p_1,q_0,q_1]",
+     EXAMPLE "ZZ[t,p_0,p_1,q_0,q_1];",
      "Sequences of subscripted variables can be obtained.",
      EXAMPLE {
       	  "ZZ[p_(0,0) .. p_(2,1),q_0..q_5]",

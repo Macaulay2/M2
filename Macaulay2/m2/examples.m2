@@ -156,7 +156,7 @@ document { "getting started",
      EXAMPLE "betti C",
      "Let's try a harder example.  We can use ", TO "vars", " to create a sequence
      of variables.",
-     EXAMPLE "R = ZZ/101[a .. r]",
+     EXAMPLE "R = ZZ/101[a .. r];",
      "We use ", TO "genericMatrix", " to make a 3 by 6 generic matrix whose
      entries are drawn from the variables of the ring ", TT "R", ".",
      EXAMPLE "g = genericMatrix(R,a,3,6)",
@@ -168,7 +168,7 @@ document { "getting started",
      "As before, we may examine the degrees of its components, or display it.",
      EXAMPLE "betti C",
      "We can make a polynomial ring with 18 ", TO "IndexedVariable", "s.",
-     EXAMPLE "S = ZZ/101[t_1 .. t_9, u_1 .. u_9]",
+     EXAMPLE "S = ZZ/101[t_1 .. t_9, u_1 .. u_9];",
      "We can use ", TO "genericMatrix", " to pack the variables into 
      3-by-3 matrices.",
      EXAMPLE {

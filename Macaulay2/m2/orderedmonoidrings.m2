@@ -359,7 +359,7 @@ document { quote WeylAlgebra,
      "A Weyl algebra is an algebra in which some of the variables behave
      as derivatives with respect to the other variables.",
      PARA,
-     EXAMPLE "R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}]",
+     EXAMPLE "R = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}];",
      "The list ", TT "{x=>dx, y=>dy}", " indicates that the variable ", TT "dx", "
      is to play the role of the derivative with respect to ", TT "x", ", and
      that ", TT "y", " is to play the role of the derivative with respect

@@ -3950,8 +3950,12 @@ document { quote evaluate,
      the value.",
      PARA,
      EXAMPLE {
-	  "evaluate \"2+2\"",
-      	  "evaluate \"a :=2\"",
+	  "evaluate \"2 + 2\"",
+      	  "evaluate \"a := 2\"",
+	  },
+     "Since the local assignment to ", TT "a", " above occurred in a new scope,
+     the value of the global variable ", TT "a", " is unaffected.",
+     EXAMPLE {
       	  "a"
 	  }
      }

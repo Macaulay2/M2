@@ -65,7 +65,7 @@ linear forms in six variables.",
 PARA,
 
 TEX "Define the ring of ${\\bf P}^5$",
-EXAMPLE "S = ZZ/32003[vars(0..5)]",
+EXAMPLE "S = ZZ/32003[vars(0..5)];",
 TEX "Define the ring map.  A ring map $S \mapfrom R$ is determined by the images of the
 variables in $R$.  We use the random function to produce ten random linear forms
 in $S$.",

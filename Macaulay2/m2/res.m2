@@ -25,7 +25,7 @@ resolution = method(
 	  PairLimit => infinity,	  -- number of pairs computed
 	  HardDegreeLimit => {},          -- throw out information in degrees above this one
 	  -- HardLengthLimit => infinity,    -- throw out information in lengths above this one
-	  SortStrategy => 0,		  -- strategy choice for sorting s-pairs
+	  SortStrategy => 0,		  -- strategy choice for sorting S-pairs
           Algorithm => null		  -- algorithm to use, usually 1, but sometimes 2
 	  }
      )
@@ -166,7 +166,7 @@ document { resolution => Algorithm,
 	  (TT "Algorithm => 2", " -- Compute syzygies on the minimal generators of each 
 	       matrix in the resolution.  Over quotient rings, preferred."),
 	  (TT "Algorithm => 3", " -- Same as algorithm 2, but compute those Hilbert functions 
-	       which allow removal of s-pairs (a la Robbiano, et al.).  
+	       which allow removal of S-pairs (a la Robbiano, et al.).  
 	       Sometimes this improvement can be very dramatic.")
 	  },
      "All algorithms use induced monomial orders (Schreyer orders), since 

@@ -572,7 +572,7 @@ If f = g/h is an element of a fraction field frac(R), return the numerator g in 
 ggpairs
 pairs
 res_comp >> intarray
-Return an intarray describing upper bounds on the graded betti numbers.  Equivalently, these numbers represent the number of s-pair computations that have been/or will be computed.  The format for this array is: [low degree, high degree, max level, b0, b1, ...], where the betti numbers have been flattened by rows.  Thus, b_((i-lo)*len + lev) gives the number of elements at level 'lev' in slanted degree 'i', where lo, hi, len are the first three elements in the output intarray.
+Return an intarray describing upper bounds on the graded betti numbers.  Equivalently, these numbers represent the number of S-pair computations that have been/or will be computed.  The format for this array is: [low degree, high degree, max level, b0, b1, ...], where the betti numbers have been flattened by rows.  Thus, b_((i-lo)*len + lev) gives the number of elements at level 'lev' in slanted degree 'i', where lo, hi, len are the first three elements in the output intarray.
 
 ggpfaffs
 pfaffs
@@ -637,7 +637,7 @@ Reduce the given matrix using the Groebner basis, obtaining the matrix red.  The
 ggremaining
 remaining
 res_comp >> intarray
-Return an intarray describing the number of s-pair computations that remain to be computed.  The format for the array is that of 'ggpairs'.
+Return an intarray describing the number of S-pair computations that remain to be computed.  The format for the array is that of 'ggpairs'.
 
 ggringmap
 ringmap
@@ -757,7 +757,7 @@ Push a string containing the types of the stack elements.
 ggstats
 stats
 gb_comp >> .;  OR res_comp >> .
-Return a string describing the state of the Groebner or resolution computation, and the number of s-pair and generator computations remaining in each degree.
+Return a string describing the state of the Groebner or resolution computation, and the number of S-pair and generator computations remaining in each degree.
 
 ggSTRING
 string

@@ -1302,7 +1302,7 @@ document { quote matrix,
   the matrix can be provided explicitly, or the source and target modules can be 
   provided.  There are other alternatives.",
   PARA,
-  "Various ways to use ", TO "matrix", ".",
+  "Various ways to use ", TT "matrix", ":",
   MENU {
        TO (matrix, List),
        TO (matrix,Matrix),
@@ -2095,7 +2095,7 @@ document { (quote _, Matrix, List),
      the number of columns, then the result is the corresponding permutation
      of the columns of f.",
      PARA,
-     EXAMPLE "R = ZZ/101[a..f]",
+     EXAMPLE "R = ZZ/101[a..f];",
      EXAMPLE {
 	  "p = matrix {{a,b,c},{d,e,f}}",
       	  "p_{1}",
