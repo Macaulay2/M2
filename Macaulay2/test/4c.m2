@@ -32,3 +32,6 @@ assert( regularity C == 1 )
 assert( rank C_5 == 281 )
 assert( tally degrees C_3 === tally splice {51 : {3}, 1 : {4}} )
 assert( tally degrees C_5 === tally splice {216 : {5}, 65 : {6}} )
+-- Local Variables:
+-- compile-command: "make 4c.okay"
+-- End:

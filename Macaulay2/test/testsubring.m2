@@ -161,3 +161,6 @@ test7()
 test8()
 testx()
 testx1()
+-- Local Variables:
+-- compile-command: "make testsubring.okay"
+-- End:

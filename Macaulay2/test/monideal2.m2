@@ -138,3 +138,6 @@ I = ideal(b*c, c^2 - b*d, -a*c+b^2)
 M = monomialSubideal(I)
 J = intersect(ideal leadTerm I, I)
 assert( monomialIdeal J == J )
+-- Local Variables:
+-- compile-command: "make monideal2.okay"
+-- End:

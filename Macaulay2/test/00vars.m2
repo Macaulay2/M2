@@ -50,3 +50,6 @@ W=1
 X=1
 Y=1
 Z=1
+-- Local Variables:
+-- compile-command: "make 00vars.okay"
+-- End:

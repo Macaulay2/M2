@@ -234,6 +234,7 @@ bump();
 bump();
      export SlashHatS := makeKeyword(binaryleft("/^"));
      export PowerS := makeKeyword(binaryleft("^"));
+     export PowerStarStarS := makeKeyword(binaryleft("^**"));
      export UnderscoreS := makeKeyword(binaryleft("_"));
      export SharpS := makeKeyword(unaryleft("#"));
      SharpS.symbol.word.parse.unaryStrength = precSpace-1;
@@ -463,7 +464,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LessLessS, GreaterGreaterS, EqualEqualS, QuestionS, BarBarS, LongDoubleArrowS,
      AmpersandAmpersandS, ColonS, BarS, HatHatS, AmpersandS, DotDotS, MinusS, PlusS, PlusPlusS,
      StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS);
+     AdjacentS, AtAtS, SlashHatS, PowerS, UnderscoreS, PowerStarStarS);
 export opsWithUnaryMethod := array(SymbolClosure)( StarS, MinusS, LessLessS,
      LessS, GreaterS, LessEqualS, GreaterEqualS);
 export opsWithPostfixMethod := array(SymbolClosure)( TildeS, ParenStarParenS );

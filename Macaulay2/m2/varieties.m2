@@ -50,7 +50,8 @@ ring CoherentSheaf := (F) -> ring F.module
 module CoherentSheaf := Module => (F) -> F.module
 Ideal * CoherentSheaf := (I,F) -> sheaf(variety F, I * module F)
 CoherentSheaf ++ CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(variety F, F.module ++ G.module)
-CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(variety F, F.module ** G.module)
+tensor(CoherentSheaf,CoherentSheaf) := CoherentSheaf => options -> (F,G) -> F**G
+CoherentSheaf ** CoherentSheaf := CoherentSheaf => (F,G) -> prune sheaf(variety F, F.module ** G.module)
 CoherentSheaf ZZ := CoherentSheaf => (F,n) -> sheaf(variety F, F.module ** (ring F)^{n})
 CoherentSheaf / CoherentSheaf := CoherentSheaf => (F,G) -> sheaf(variety F, F.module / G.module)
 annihilator CoherentSheaf := Ideal => (F) -> annihilator F.module
@@ -66,33 +67,51 @@ degreeList := (M) -> (
      H = H // (1-T)^(numgens ring M);
      exponents H / first)
 
-cohomology(ZZ,CoherentSheaf) :=  Module => opts -> (i,G) -> (
+globalSectionsModule := (G,bound) -> (
+     -- compute global sections
      M := module G;
-     if i =!= 0 
-     then HH^(i+1)(M,opts)
-     else (
-          -- compute global sections
-          A := ring M;
-          M = cokernel presentation M;
-          M = M / saturate image map(M,A^0,0);
-          F := presentation A;
-          R := ring F;
-          N := coker lift(presentation M,R) ** coker F;
-          r := numgens R;
-          wR := R^{-r};
-          if pdim N >= r-1 then (
-               E1 := Ext^(r-1)(N,wR);
-               p := (
-                    if dim E1 <= 0
-                    then (
-                         -- this is big enough to compute it all, so we can ignore opts.Degree!
-                         max degreeList E1 - min degreeList E1 + 1
-                         )
-                    else opts.Degree - first min degrees E1 + 1
-                    );
-               if p > 0 then M = Hom(image matrix {apply(numgens A, j -> A_j^p)}, M);
-               );
-          M))
+     A := ring M;
+     M = cokernel presentation M;
+     M = M / saturate image map(M,A^0,0);
+     F := presentation A;
+     R := ring F;
+     N := coker lift(presentation M,R) ** coker F;
+     r := numgens R;
+     wR := R^{-r};
+     if bound < infinity and pdim N >= r-1 then (
+	  E1 := Ext^(r-1)(N,wR);
+	  p := (
+	       if dim E1 <= 0
+	       then max degreeList E1 - min degreeList E1 + 1
+	       else 1 - first min degrees E1 - bound
+	       );
+	  if p === infinity then error "global sections module not finitely generated, can't compute it all";
+	  if p > 0 then M = Hom(image matrix {apply(numgens A, j -> A_j^p)}, M);
+	  );
+     prune M)
+
+LowerBound = new SelfInitializingType of BasicList
+>  InfiniteNumber := >  ZZ := i -> LowerBound{i+1}
+>= InfiniteNumber := >= ZZ := i -> LowerBound{i}
+CoherentSheaf(*) := F -> F(>=-infinity)
+
+SumOfTwists = new Type of HashTable
+CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from { "object" => F, "bound" => b}
+net SumOfTwists := S -> net S#"object" | "(>=" | net S#"bound" | ")"
+
+cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (
+     F := S#"object";
+     R := ring F;
+     if not isAffineRing R then error "expected coherent sheaf over a variety over a field";
+     b := first S#"bound";
+     if i == 0 then globalSectionsModule(F,b) else HH^(i+1)(module F,Degree => b))
+
+cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
+     R := ring F;
+     if not isAffineRing R then error "expected coherent sheaf over a variety over a field";
+     k := coefficientRing R;
+     n := rank source basis(0, HH^i F(>=0));
+     k^n)
 
 structureSheaf := method()		  -- private
 structureSheaf(Variety) := (X) -> sheaf(X, (ring X)^1)
@@ -110,7 +129,7 @@ OO = new ScriptedFunctor from { subscript => structureSheaf }
 
 prune CoherentSheaf := F -> (
      X := variety F;
-     sheaf_X prune HH^0 F
+     sheaf_X prune HH^0 F(>=0)
      )
 
 cotangentSheaf = method()
@@ -153,3 +172,20 @@ hilbertSeries CoherentSheaf := options -> F -> hilbertSeries(F.module,options)
 hilbertPolynomial CoherentSheaf := options -> F -> hilbertPolynomial(F.module,options)
 hilbertFunction(List,CoherentSheaf) := 
 hilbertFunction(ZZ,CoherentSheaf) := (d,F) -> hilbertFunction(d,F.module)
+dual CoherentSheaf := F -> sheaf_(F.variety) dual F.module
+betti CoherentSheaf := F -> betti F.module
+
+binaryPower := (W,n,times,unit,inverse) -> (
+     if n === 0 then return unit();
+     if n < 0 then (W = inverse W; n = -n);
+     Z := null;
+     while (
+	  if odd n then if Z === null then Z = W else Z = times(Z,W);
+	  n = n // 2;
+	  n =!= 0
+	  )
+     do W = times(W, W);
+     Z)
+
+Module        ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> (ring F)^1, dual)
+CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety), dual)

@@ -7,3 +7,6 @@ ker f
 P0 = hilbertPolynomial (R2/(x,y,z))
 P1 = hilbertPolynomial (R2/(x,y))
 assert ( hilbertPolynomial coker gens ker f == 4 * P1 - 3 * P0 )
+-- Local Variables:
+-- compile-command: "make galois.okay"
+-- End:

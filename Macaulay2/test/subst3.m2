@@ -21,3 +21,6 @@ c2 = substitute(c, {x => 0_R})
 -- assert(c0 == c) -- this fails (Macaulay2-0-8-58)
 assert(c1 == c) -- this works
 assert(c2 == c) -- this works
+-- Local Variables:
+-- compile-command: "make subst3.okay"
+-- End:

@@ -14,3 +14,6 @@ assert( unSingleton (1,2,3) === (1,2,3) )
 assert( unSingleton 1 === 1 )
 assert( unSingleton singleton 1 === 1 )
 assert( unSingleton () === () )
+-- Local Variables:
+-- compile-command: "make B44.okay"
+-- End:

@@ -3,4 +3,6 @@ try (
      error "symbol 'res' not protected";
      )
 
-     
+     -- Local Variables:
+-- compile-command: "make protection.okay"
+-- End:

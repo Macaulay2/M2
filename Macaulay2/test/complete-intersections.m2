@@ -43,3 +43,6 @@ rks1 = take (flatten entries last coefficients r, m)
 psi = map(K,B)
 rks2 = apply(m, i -> rank (psi ** Ext^i(M,coker vars B)))
 assert( rks1 == rks2 )
+-- Local Variables:
+-- compile-command: "make complete-intersections.okay"
+-- End:

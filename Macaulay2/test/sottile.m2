@@ -13,3 +13,6 @@ while i < 5 do (
         i=i+1)
 J = substitute(ideal I,S);
 dim J
+-- Local Variables:
+-- compile-command: "make sottile.okay"
+-- End:

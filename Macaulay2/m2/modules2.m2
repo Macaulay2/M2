@@ -15,6 +15,7 @@ Module + Module := Module => (M,N) -> (
 	  )
      )
 
+tensor(Module, Module) := Module => options -> (M,N) -> M**N
 Module ** Module := Module => (M,N) -> (
      P := youngest(M,N);
      key := (M,N,symbol **);
@@ -701,4 +702,3 @@ isSubset(Module,Module) := (M,N) -> (
 isSubset(Ideal,Ideal) := (I,J) -> isSubset(module I, module J)
 isSubset(Module,Ideal) := (M,J) -> isSubset(M, module J)
 isSubset(Ideal,Module) := (I,N) -> isSubset(module I, N)
-

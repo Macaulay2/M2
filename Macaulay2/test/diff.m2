@@ -21,3 +21,6 @@ scan(q, l -> (
      -- << "h_(g*i+j,q*k+l)       = " << h_(g*i+j,q*k+l) << endl;
      assert( diff(m_(i,k),n_(j,l)) == h_(g*i+j,q*k+l) )
 )))))
+-- Local Variables:
+-- compile-command: "make diff.okay"
+-- End:

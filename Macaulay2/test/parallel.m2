@@ -10,3 +10,6 @@ assert( a == 4 and b == 5 and c == (6,7) )
 assert( a == 4 and b == 5 and c == (6,7,8) )
 (a,b,c) = ()
 assert( a == null and b == null and c == null )
+-- Local Variables:
+-- compile-command: "make parallel.okay"
+-- End:

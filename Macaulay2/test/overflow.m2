@@ -5,3 +5,6 @@ ourpoints = ideal(y^5-x^4, x*y^2-1, x^5-y^3, x^5+y^5+z^5-1)
 gb ourpoints
 
 -- tell Bernd when this starts working
+-- Local Variables:
+-- compile-command: "make overflow.okay"
+-- End:

@@ -15,3 +15,6 @@ time scanKeys(docFile,
 		    linkFilename fkey;
 		    allDoc#fkey = doc))))
 close docFile
+-- Local Variables:
+-- compile-command: "make missingDoc.okay"
+-- End:

@@ -7,3 +7,6 @@ betti res (coker lift(presentation H,A) ** coker presentation R )
 q = hilbertSeries H
 h = hilbertFunction(0,H)
 assert( h == 1 )
+-- Local Variables:
+-- compile-command: "make hh.okay"
+-- End:

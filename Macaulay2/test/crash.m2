@@ -6,3 +6,6 @@ C = resolution cokernel substitute(
      R/monomialCurve(R,{1,3,4})
      )
 try transpose C.dd_2 % C.dd_1
+-- Local Variables:
+-- compile-command: "make crash.okay"
+-- End:

@@ -16,3 +16,6 @@ assert( isHomogeneous f )
 E = cokernel f
 
 assert( HH_1 res E == 0 )
+-- Local Variables:
+-- compile-command: "make ext.okay"
+-- End:

@@ -15,3 +15,6 @@ I = ideal(
      x_10^2 + t*x_1+t*x_2+t*x_3+t*x_4+t*x_5+t*x_6+t*x_7+t*x_8+t*x_9+t*x_10)
 time assert( 638 == degree( saturate( ideal(leadTerm gens gb I),ideal(t))) )
      -- used 232.26 seconds
+-- Local Variables:
+-- compile-command: "make sturmfels.okay"
+-- End:

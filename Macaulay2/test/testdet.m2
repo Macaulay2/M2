@@ -79,3 +79,6 @@ exteriorPower(0,F)  -- doesn't even accept this yet!
 target exteriorPower(0,id_F)
 F == target exteriorPower(1,id_F)
 target exteriorPower(2,id_F)
+-- Local Variables:
+-- compile-command: "make testdet.okay"
+-- End:
