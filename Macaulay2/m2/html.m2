@@ -42,6 +42,7 @@ htmlFilename DocumentTag := tag -> (
      else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"top node name" then topFileName else toFilename fkey|".html" )
 
 html IMG  := x -> concatenate("<img src=\"", rel first x, "\">")
+html LINK := x -> concatenate("<link href=\"", rel first x, "\"", concatenate drop(x,1), ">",newline)
 html HREF := x -> concatenate("<a href=\"", rel first x, "\">", html last x, "</a>")
 tex  HREF := x -> concatenate("\special{html:<a href=\"", texLiteral rel first x, "\">}", tex last x, "\special{html:</a>}")
 html LABEL:= x -> concatenate("<label title=\"", x#0, "\">", html x#1, "</label>")
@@ -62,10 +63,23 @@ next := tag -> if NEXT#?tag then LABEL { "Next node",     HREF { htmlFilename NE
 prev := tag -> if PREV#?tag then LABEL { "Previous node", HREF { htmlFilename PREV#tag, prevButton } } else nullButton
 up   := tag -> if   UP#?tag then LABEL { "Parent node",   HREF { htmlFilename   UP#tag,   upButton } } else nullButton
 
-style := () -> LITERAL {
-     "<link rel=\"stylesheet\" title=\"Macaulay 2 document\" type=\"text/css\" href=\""
-     | rel ( LAYOUT#"style" | "doc.css" )
-     | "\"/>" }
+links := tag -> SEQ {
+     if tag =!= () then (
+	  fkey := DocumentTag.FormattedKey tag;
+	  h := concatenate(
+	       " title=\"",
+	       fkey,
+	       commentize headline tag,
+	       "\""
+	       );
+	  SEQ {
+	       if NEXT#?tag then LINK { htmlFilename NEXT#tag, " rel=\"Next\"",h },
+	       if PREV#?tag then LINK { htmlFilename PREV#tag, " rel=\"Previous\"",h },
+	       if UP#?tag then LINK { htmlFilename UP#tag, " rel=\"Up\"",h }
+	       }
+	  ),
+     LINK { LAYOUT#"style" | "doc.css", " rel=\"stylesheet\" title=\"Macaulay 2 document\" type=\"text/css\"" }
+     }
 
 BUTTON := (s,alt) -> (
      s = rel s;
@@ -74,21 +88,8 @@ BUTTON := (s,alt) -> (
      else LITERAL concatenate("<img class=\"button\" src=\"",s,"\" alt=\"[", alt, "]\">\n")
      )
 
------------------------------------------------------------------------------
-
 encoding := ///<?xml version="1.0" encoding="us-ascii"?>///
 doctype := ///<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">///
-
-
-links := () -> ""
--- LITERAL ///
---     <link rel="Home" title="Advanced Bash-Scripting Guide" href="index.html">
---     <link rel="Up" title="Advanced Topics" href="part4.html">
---     <link rel="Previous" title="Advanced Topics" href="part4.html">
---     <link rel="Next" title="Globbing" href="globbingref.html">
---     <link rel="Index" title="Globbing" href="index.html">
---     <link rel="stylesheet" href="common/kde-common.css" type="text/css">
--- ///
 
 -- validate := LITERAL ///
 -- <a href="http://validator.w3.org/check/referer">Validate</a> the html on this page, or <a href="http://jigsaw.w3.org/css-validator/check/referer">validate</a> the css on this page.
@@ -309,7 +310,7 @@ makeMasterIndex := keylist -> (
      << encoding << endl
      << doctype << endl     
      << html HTML {
-	  HEAD { TITLE title, style(), links() },
+	  HEAD { TITLE title, links() },
 	  BODY {
 	       HEADER2 title, PARA,
 	       topNodeButton, tocButton, homeButton,
@@ -330,7 +331,7 @@ makeTableOfContents := () -> (
      << encoding << endl
      << doctype << endl     
      << html HTML {
-	  HEAD { TITLE title, style(), links() },
+	  HEAD { TITLE title, links() },
 	  BODY {
 	       HEADER2 title, PARA,
 	       topNodeButton, masterIndexButton, homeButton,
@@ -655,7 +656,7 @@ installPackage Package := o -> pkg -> (
 	  << html HTML { 
 	       HEAD {
 		    TITLE {fkey, commentize headline key},
-		    style(), links()
+		    links tag
 		    },
 	       BODY { 
 		    buttonBar tag,
@@ -712,7 +713,7 @@ makePackageIndex String := prefixDirectory -> (
      << html HTML { 
 	  HEAD {
 	       TITLE {key, commentize headline key},
-	       style(), links()
+	       links()
 	       },
 	  BODY { 
 	       buttonBar tag,

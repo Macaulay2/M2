@@ -536,7 +536,7 @@ headline DocumentTag := tag -> (
      if d#?Headline then d#Headline
      else headline DocumentTag.Key tag			    -- revert to old method, eliminate?
      )
-commentize := s -> if s =!= null then concatenate(" -- ",s)
+commentize = s -> if s =!= null then concatenate(" -- ",s)
 -----------------------------------------------------------------------------
 -- these menus have to get sorted, so optTO and optTOCLASS return pairs:
 --   the first member fo the pair is the string to use for sorting

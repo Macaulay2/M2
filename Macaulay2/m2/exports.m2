@@ -530,7 +530,6 @@ export (
 	symbol HEADER6,
 	symbol HeaderType,
 	symbol Headline,
-	symbol headline,
 	symbol height,
 	symbol help,
 	symbol HH,
