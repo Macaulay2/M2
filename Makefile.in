@@ -84,10 +84,13 @@ Macaulay2-$(DESC).tar.gz : Makefile $(DISTFILES)
 # 	@echo "-----------------------------------------------------------------------------"
 clean ::; $(MAKE) -C Macaulay2 $@
 ###################### Macaulay 2 porting source distribution
-PORTING := CVS \
+PORTING := \
+	CVS \
+	bin \
+	config \
+	include \
 	Macaulay2/CVS \
 	Macaulay2/basictests \
-	Macaulay2/book \
 	Macaulay2/c \
 	Macaulay2/c2 \
 	Macaulay2/d \
@@ -102,9 +105,7 @@ PORTING := CVS \
 	Macaulay2/packages \
 	Macaulay2/test \
 	Macaulay2/tutorial \
-	Macaulay2/util \
-	WindowsNT \
-	bin factory gc gcStatic gmp libfac config include
+	Macaulay2/util
 portfilenames:
 	Export3 $(PORTING)
 port: Macaulay2-$(VERSION)-porting-src.tar.gz
@@ -122,11 +123,6 @@ testport-go:
 	$(MAKE) -C tmp/M2
 ###################### Macaulay 2 documentation
 DOCFILES = Macaulay2/html
-# DOCFILES += Macaulay2/Vasconcelos-appendix/appendix.dvi
-# DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.dvi
-# DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.pdf
-# DOCFILES += Macaulay2/book/Macaulay2-$(VERSION)-book.ps
-
 Macaulay2-$(VERSION)-doc.tar.gz : $(DOCFILES)
 	tar cf - $(DOCFILES) | gzip >$@
 	@echo "-----------------------------------------------------------------------------"

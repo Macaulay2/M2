@@ -20,7 +20,7 @@ CHAPTERS = completeIntersections \
 	   varieties
 
 Makefile : Makefile.in
-	cd $(TOPDIR); config.status Macaulay2/packages/ComputationsBook/Makefile
+	cd $(TOPDIR); ./config.status Macaulay2/packages/ComputationsBook/Makefile
 distclean:; rm -f Makefile
 
 check : $(CHAPTERS:=.test)

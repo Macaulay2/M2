@@ -6,6 +6,8 @@ if [ ! -d bin ]
 then mkdir bin || exit 1
 fi
 cd m2
+M2HOME=..
+export M2HOME
 ARCH=`uname -m`
 export ARCH
 if [ "$DUMPDATA" != no ]

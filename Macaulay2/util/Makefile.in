@@ -4,24 +4,18 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA = $(INSTALL)
 
-# LDFLAGS =
-# CFLAGS =
+EXES := echoout timestmp restart update targettypes
 
-CPPFLAGS += -I../include
-EXES := echoout timestmp restart update
 ifeq ($(OS),Linux)
 EXES += screen
 endif
 
-ifeq "$(GCC)" "yes"
-CFLAGS += -Wall
-endif
-
 .PHONY : all clean distclean wc
 
-all:: $(EXES)
+all:: $(EXES) targettypes.h
+targettypes.h : targettypes ; ./$^ >$@
 update.o : restart.h
-clean :; rm -f $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj)
+clean :; rm -f $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h
 ../bin/linkexec : linkexec ; cp -a $< $@
 
 ifeq "$(OS)" "Windows-95-98-NT"
