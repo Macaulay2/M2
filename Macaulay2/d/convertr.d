@@ -522,9 +522,10 @@ export WrongArg(desc:string):Expr := buildErrorPacket("expected " + desc);
 export WrongArg(n:int,desc:string):Expr := (
      buildErrorPacket("expected argument " + tostring(n) + " to be " + desc));
 export WrongArgInteger():Expr := WrongArg("an integer");
+export WrongArgString():Expr := WrongArg("a string");
 export WrongArgSmallInteger():Expr := WrongArg("a small integer");
 export WrongArgInteger(n:int):Expr := WrongArg(n,"an integer");
-export WrongArgString():Expr := WrongArg("a string");
+export WrongArgString(n:int):Expr := WrongArg(n,"a string");
 export WrongArgSmallInteger(n:int):Expr := WrongArg(n,"a small integer");
 export ArgChanged(name:string,n:int):Expr := (
      buildErrorPacket(quoteit(name) + " expected argument " + tostring(n)

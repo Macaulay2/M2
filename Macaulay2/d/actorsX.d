@@ -37,7 +37,7 @@ XCreateWindowfun(ee:Expr):Expr := (
 		    toInt(height),
 		    toInt(borderwidth),
 		    name)))
-     else WrongArg(6+1,"a string")
+     else WrongArgString(6+1)
      else WrongArg(5+1,"a small integer")
      else WrongArg(5+1,"an integer")
      else WrongArg(4+1,"a small integer")

@@ -200,7 +200,7 @@ $(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../lib
 	 #------ phase 5: making html documentation
 	M2HOME=.. M2LIB=.. ../../bin/M2 -q -silent \
 		'-e phase = 5; errorDepth 0' \
-		'-e makeHTML "$(prefix)/"' \
+		'-e makeHTML("$(prefix)/","@prefix@")' \
 		'-e exit 0'
 install ::
 	install -d $(docm2dir)

@@ -294,7 +294,7 @@ convertfun(e:Expr):Expr := (
 	       cvtstr = savecvtstr;
 	       cvtlen = savecvtlen;
 	       r)
-	  else WrongArg(1+1,"a string"))
+	  else WrongArgString(1+1))
      else WrongNumArgs(2)
      else WrongArg(0+1,"an integer"));
 setupfun("convert",convertfun);
@@ -376,7 +376,7 @@ dumpdatafun(e:Expr):Expr := (
 	  stdin.inindex = q;
 	  if 0 == r then nullE
 	  else buildErrorPacket("failed to dump data to '" + s + "'"))
-     else WrongArg(0+1,"a string")
+     else WrongArgString(0+1)
      );
 setupfun("dumpdata",dumpdatafun);
 
@@ -386,7 +386,7 @@ loaddatafun(e:Expr):Expr := (
 	  loaddata(s);			  -- should not return
 	  buildErrorPacket("failed to load data from '" + s + "'")
 	  )
-     else WrongArg(0+1,"a string")
+     else WrongArgString(0+1)
      );
 setupfun("loaddata",loaddatafun);
 
@@ -568,8 +568,8 @@ matchfun(e:Expr):Expr := (
      when a.1
      is pattern:string do
      if match(subject,0,pattern,0) then True else False
-     else WrongArg(2,"a string")
-     else WrongArg(1,"a string")
+     else WrongArgString(2)
+     else WrongArgString(1)
      else WrongNumArgs(2)
      else WrongNumArgs(2)
      );
@@ -1346,7 +1346,7 @@ unhex(s:string):string := (
 unhex(e:Expr):Expr := (
      when e
      is s:string do Expr(unhex(s))
-     else WrongArg("a string"));
+     else WrongArgString());
 setupfun("unhex",unhex);
 
 echo(f:file,v:bool):Expr := (
@@ -1403,7 +1403,7 @@ setupfun("clearEcho",clearEcho);
 
 readlink(e:Expr):Expr := (
      when e is filename:string do Expr(readlink(filename))
-     else WrongArg("a string"));
+     else WrongArgString());
 setupfun("readlink",readlink);
 
 setupconst("typicalValues", Expr(typicalValues));
@@ -1418,9 +1418,16 @@ setupconst("otherOperators",Expr(new array(Expr) len length(opsOther) do (
 
 fileExists(e:Expr):Expr := (
      when e is name:string do toBoolean(fileExists(name))
-     else buildErrorPacket("expected a string as file name")
+     else WrongArgString()
      );
 setupfun("fileExists",fileExists);
+
+directoryExists(e:Expr):Expr := (
+     when e is name:string do toBoolean(directoryExists(name))
+     else WrongArgString()
+     );
+setupfun("directoryExists",directoryExists);
+
 --import setFactorySeed(s:int):void;
 --setFactorySeed(e:Expr):Expr := (
 --     when e is s:Integer do (
@@ -1436,7 +1443,7 @@ setupfun("fileExists",fileExists);
 
 minimizeFilename(e:Expr):Expr := (
      when e is s:string do Expr(minimizeFilename(s))
-     else WrongArg("a string")
+     else WrongArgString()
      );
 setupfun("minimizeFilename",minimizeFilename);
 
@@ -1446,8 +1453,8 @@ relativizeFilename(e:Expr):Expr := (
      if length(t) == 2 then
      when t.0 is cwd:string do
      when t.1 is filename:string do Expr(relativizeFilename(cwd,filename))
-     else WrongArg(2,"a string")
-     else WrongArg(1,"a string")
+     else WrongArgString(2)
+     else WrongArgString(1)
      else WrongArg("a string or a pair of strings")
      is filename:string do Expr(relativizeFilename(filename))
      else WrongArg("a string or a pair of strings")
@@ -1460,7 +1467,7 @@ isGlobalSymbol(e:Expr):Expr := (
 	  is x:Symbol do True
 	  is null do False
 	  )
-     else WrongArg("a string"));
+     else WrongArgString());
 setupfun("isGlobalSymbol",isGlobalSymbol);
 
 getGlobalSymbol(e:Expr):Expr := (
@@ -1470,5 +1477,5 @@ getGlobalSymbol(e:Expr):Expr := (
 	  is null do (
 	       t := makeSymbol(w,dummyPosition,globalScope);
 	       globalFrame.values.(t.frameindex)))
-     else WrongArg("a string"));
+     else WrongArgString());
 setupfun("getGlobalSymbol",getGlobalSymbol);

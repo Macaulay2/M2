@@ -467,6 +467,14 @@ int system_fileExists(M2_string name) {
   return r != ERROR;
 }
 
+int system_directoryExists(M2_string name) {
+  char *cname = tocharstar(name);
+  struct stat buf;
+  int r = stat(cname,&buf);
+  GC_FREE(cname);
+  return r != ERROR && S_ISDIR(buf.st_mode);
+}
+
 int system_fileLength(int fd) {
   struct stat statbuf;
   if (ERROR == fstat(fd,&statbuf)) return ERROR;
@@ -675,8 +683,7 @@ extern const char * const h_errlist[];
 #endif
 #endif
 
-//#ifdef 0 // SYS_ERRLIST_NOT_CONST
-#ifndef SYS_ERRLIST_IS_DECLARED
+#ifndef HAVE_DECL_SYS_ERRLIST
 extern const char * const sys_errlist[];
 #endif
 
