@@ -1,6 +1,6 @@
 --		Copyright 1995-2000 by Daniel R. Grayson
 
-RingMap = new Type of MutableHashTable
+RingMap = new Type of HashTable
 RingMap.synonym = "ring map"
 toString RingMap := f -> concatenate(
      "map(", toString target f, ",", toString source f, ",", toString first entries f.matrix, ")"
@@ -12,6 +12,18 @@ expression RingMap := f -> new FunctionApplication from {
      map, expression (target f, source f, f.matrix)}
 
 map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
+     if not isFreeModule target m or not isFreeModule source m
+     then error "expected a homomorphism between free modules";
+     if ring m === (try coefficientRing R) and ring m === (try coefficientRing S)
+     then (
+	  if numgens R != rank target m
+	  then error ("expected a matrix with ", toString numgens R, " rows");
+	  m = vars R * (m ** R);   -- handle a change of coordinates
+	  )
+     else if ring m =!= R
+     then error "expected a matrix over the target ring";
+     if rank target m != 1
+     then error "expected a matrix with 1 row";
      degmap := (
 	  if options.DegreeMap =!= null then (
 	       if degreeLength R =!= # (options.DegreeMap apply(degreeLength S, i -> 0))
@@ -25,44 +37,26 @@ map(Ring,Ring,Matrix) := RingMap => options -> (R,S,m) -> (
 	       d := toList ( degreeLength R : 0 );
 	       e -> d
 	       ));
-     if (     ring m === (try coefficientRing R)
-     	  and ring m === (try coefficientRing S)
-     	  and isFreeModule target m
-     	  and isFreeModule source m
-	  ) then m = vars R * (m ** R);
-     if isFreeModule target m
-     and isFreeModule source m
-     and 1 == numgens target m 
-     and ring m === R
-     then (
-	  n := 0;
-	  ultimate( A -> (
-		    r := numgens source m;
-		    if r === n 
-		    then m = vars A ** R | m
-		    else if r < n
-		    then error ("encountered values for ", toString r, " variables");
-		    n = n + numgens A;
-		    coefficientRing A),
-	       S);
-	  if n != numgens source m 
-	  then error ("encountered values for ", toString numgens source m," variables");
-	  new RingMap from {
-	       symbol source => S,
-	       symbol target => R,
-	       symbol matrix => m,
-	       symbol handle => newHandle(ggPush m, ggringmap),
-	       symbol DegreeMap => degmap
-	       }
-	  )
-     else error (
-	  if try coefficientRing R === try coefficientRing S
-	  then (
-	       "expected a 1 by ", numgens S, " matrix over ", toString R, 
-	       " or a ", numgens R, " by ", numgens S, " matrix over ", toString coefficientRing S
-	       )
-	  else ( "expected a 1 by ", numgens S, " matrix over ", toString R )
-	  )
+     n := 0;
+     ultimate( A -> (
+	       r := numgens source m;
+	       if r === n 
+	       then m = vars A ** R | m
+	       else if r < n
+	       then error ("encountered values for ", toString r, " variables");
+	       n = n + numgens A;
+	       coefficientRing A),
+	  S);
+     if n != numgens source m 
+     then error ("encountered values for ", toString numgens source m," variables");
+     new RingMap from {
+	  symbol source => S,
+	  symbol target => R,
+	  symbol matrix => m,
+	  symbol handle => newHandle(ggPush m, ggringmap),
+	  symbol DegreeMap => degmap,
+	  symbol cache => new CacheTable
+	  }
      )
 
 map(Ring,Matrix) := RingMap => options -> (S,m) -> map(ring m,S,m)
@@ -117,7 +111,7 @@ RingMap Matrix := Matrix => (p,m) -> (
      f := getMatrix S;
      map(F,E,f, Degree => p.DegreeMap degree m))
 
-kernel RingMap := Ideal => options -> (f) -> if f.?kernel then f.kernel else f.kernel = (
+kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.kernel else f.cache.kernel = (
      R := source f;
      n2 := numgens R;
      F := target f;
@@ -201,7 +195,8 @@ RingMap * RingMap := RingMap => (g,f) -> (
 	  symbol target => target g,
 	  symbol matrix => m,
 	  symbol handle => newHandle(ggPush m, ggringmap),
-	  symbol DegreeMap => g.DegreeMap @@ f.DegreeMap
+	  symbol DegreeMap => g.DegreeMap @@ f.DegreeMap,
+	  symbol cache => new CacheTable
 	  }
      )
 
@@ -209,7 +204,10 @@ isHomogeneous RingMap := (f) -> (
      R := f.source;
      S := f.target;
      isHomogeneous R and isHomogeneous S and
-     all(allGenerators R, r -> degree f r === f.DegreeMap degree r))
+     all(allGenerators R, r -> (
+	       s := f r;
+	       s == 0 or degree s === f.DegreeMap degree r
+	       )))
 
 sub = substitute
 
@@ -283,8 +281,15 @@ RingMap Module := Module => (f,M) -> (
      S := target f;
      if R =!= ring M then error "expected module over source ring";
      if M.?relations then error "ring map applied to module with relations: use '**' instead";
-     if M.?generators then cokernel f M.generators
-     else S^-(f.DegreeMap \ degrees M))
+     if M.?generators then image f M.generators
+     else (
+	  d := degrees M;
+	  e := f.DegreeMap \ d;
+	  if R === S and d === e
+	  then M -- use the same module if we can
+     	  else S^-e
+	  )
+     )
 
 RingMap ** Module := Module => (f,M) -> (
      R := source f;

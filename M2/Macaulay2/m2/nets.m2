@@ -1,6 +1,7 @@
---		Copyright 1996 by Daniel R. Grayson
+--		Copyright 1996-2000 by Daniel R. Grayson
 
------------------------------------------------------------------------------
+Net.AfterPrint = identity
+
 toString String := identity
 toString Symbol := string
 toString MutableHashTable := s -> if s.?name and class s.name === String then s.name else concatenate (

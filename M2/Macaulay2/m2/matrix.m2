@@ -646,3 +646,19 @@ relations Module := Matrix => M -> (
 degrees Matrix := f -> {degrees target f, degrees source f}
 
 coverMap(Module) := Matrix => (M) -> map(M, cover M, gens M)
+
+ambient Matrix := Matrix => f -> (
+     M := target f;
+     N := source f;
+     if N.?generators then error "ambient matrix requested, but source has generators";
+     if N.?relations then (
+	  if M.?generators then M.generators * map(M.generators.source,N.relations.target,f)
+	  else if M.?relations then map(M.relations.target,N.relations.target,f)
+	  else map(M,N.relations.target,f)
+	  )
+     else (
+	  if M.?generators then M.generators * map(M.generators.source,N,f)
+	  else if M.?relations then map(M.relations.target,N,f)
+	  else f
+	  )
+     )

@@ -1566,6 +1566,10 @@ document { betti,
      TT "betti G", " -- display the graded Betti numbers for the matrix of generators
      of a ", TO "GroebnerBasis", " G.",
      PARA,
+     "The display can be used to determine the degrees of the entries in the matrices
+     of the differentials in the chain complex, provided they are homogeneous maps
+     of degree 0.",
+     PARA,
      "Here is a sample display:",
      EXAMPLE {
 	  "R = ZZ/101[a..h]",
@@ -1574,9 +1578,9 @@ document { betti,
       	  "C = resolution cokernel leadTerm q",
       	  "betti C",
 	  },
-     "The top row of the display indicates the ranks of the free module C_j
-     in column j.  The entry below in row i column j gives the number of
-     basis elements of degree i+j.",
+     "The top row of the display indicates the ranks of the free module ", TT "C_j", "
+     in column ", TT "j", ".  The entry below in row ", TT "i", " column ", TT "j", " gives the number of
+     basis elements of degree ", TT "i+j", ".",
      PARA,
      "If these numbers are needed in a program, one way to get them is
      with ", TO "tally", ".",

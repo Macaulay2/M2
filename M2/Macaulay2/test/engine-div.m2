@@ -168,11 +168,11 @@ checkremquot(f,1-x^-1-y^-1)
 
 R = QQ[t,u,Inverses => true]
 
-(1 - t^4) / (1 - t^2)
-(1 + t^4) / (1 - t^2)
-(1 - t^-4) / (1 - t^-2)
-(1 + t^-4) / (1 - t^-2)
-(1 - t^-4 * u^-4) / (1 - t^-2 * u^-2)
+-- (1 - t^4) / (1 - t^2)
+-- (1 + t^4) / (1 - t^2)
+-- (1 - t^-4) / (1 - t^-2)
+-- (1 + t^-4) / (1 - t^-2)
+-- (1 - t^-4 * u^-4) / (1 - t^-2 * u^-2)
 remquot((1 + t + t^-4 * u^-4), (1 - t^-2 * u^-2))
 
 -- Polynomials in a skew commutative polynomial ring

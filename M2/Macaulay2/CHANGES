@@ -3,6 +3,38 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+'Ext(M,N)' now caches the result for future reference
+
+'betti f', where 'f' is a matrix of nonzero degree, is now interpreted
+slightly differently.  Formerly, the degres of the source of f were
+adjusted so that f would have degree 0.  Now the degree of f is simply
+ignored.  This brings it into conformance with the behavior of 'betti C'
+where C is a chain complex whose differentials, although usually of 
+degree 0, may have nonzero degrees, which are nevertheless ignored.
+
+I _ {i,j,k,...}, where I is an ideal, is now interpreted as
+(module I) _ {i,j,k,...}.  Recall that M_{i,j,k,...}, where M is a module,
+gives the map to M from a free module determined by the generators with
+indices i,j,k...
+
+'degrees M', where M is a nonfree module, now gives the degrees of
+the generators, not the degrees of the basis elements of the ambient
+free module.  And 'degrees I' where I is an ideal, now gives the degrees
+of the generators, whereas before (this is a new method).
+
+When creating a ring map with 'map' you may now specify a function for
+transforming the degrees of basis elements of free modules with the DegreeMap
+option.  The default function is the identity function, but when the two
+rings have different degree lengths, a function must be provided that
+transforms the lengths of the degree vectors appropriately, or else the
+default function which maps every degree to {0,...,0} will be provided.
+
+If f is a ring map f : R --> S and M is an M-module, then we've restricted
+the use of 'f M' to the case where M is explicitly a submodule of a free
+module R^n, and it returns the corresponding submodule of S^n.  In the
+case where M is a quotient module or a subquotient module, what one usually
+wants is the tensor product, and now you may write 'f ** M' to obtain that.
+
 Division and remainder (/ and %) in polynomial rings with one variable where
 the variable has an inverse (such as R = QQ[t,Inverses=>true]) have been
 repaired so they work as they ought to in this Euclidean domain.  Similarly

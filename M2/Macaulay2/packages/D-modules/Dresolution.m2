@@ -32,10 +32,10 @@ kerGB := m -> (
      -- m should be a matrix which is a GB, and
      -- whose source has the Schreyer order.
      sendgg(ggPush m, ggker);
-     m.kerGB = newHandle();
-     sendgg(ggPush m.kerGB, ggcalc);
-     m.kerGBstatus = eePopInt();
-     sendgg(ggPush m.kerGB, gggetsyz);
+     m.cache.kerGB = newHandle();
+     sendgg(ggPush m.cache.kerGB, ggcalc);
+     m.cache.kerGBstatus = eePopInt();
+     sendgg(ggPush m.cache.kerGB, gggetsyz);
      fix getMatrix ring m)
 
 fix = method()

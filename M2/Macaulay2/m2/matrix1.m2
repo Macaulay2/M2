@@ -304,8 +304,8 @@ matrix(List) := Matrix => options -> (m) -> (
 	       if isTable m then (matrixTable options)(m)
 	       else error "expected rows all to be the same length"
 	       )
-	  else error "expected a table of ring elements or matrices")
-     else error "expected a table of ring elements or matrices")
+	  else error "expected a table of ring elements or matrices, or a list of elements of the same module")
+     else error "expected a table of ring elements or matrices, or a list of elements of the same module")
 
 --------------------------------------------------------------------------
 
@@ -479,6 +479,9 @@ net Ideal := (I) -> (
 toString Ideal := (I) -> if I.cache.?name then I.cache.name else toString expression I
 
 isHomogeneous Ideal := (I) -> isHomogeneous I.generators
+
+degrees Ideal := I -> degrees source gens I
+
 genera(Ideal) := (I) -> genera module I
 euler(Ideal) := (I) -> euler module I
 
@@ -512,6 +515,7 @@ leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
 poincare Ideal := (I) -> poincare module I
+Ideal _ List := (I,w) -> (module I)_w
 
 protect symbol Order
 assert( class infinity === InfiniteNumber )
