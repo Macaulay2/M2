@@ -92,7 +92,7 @@ MOgeneral := (degs, ord, invord, invdegs) -> (
 degreesMonoid2 := memoize(
      (n) -> (
 	  T := local T;
-	  Zn := group [if n === 1 then T else T_0 .. T_(n-1), Degrees => {}];
+	  Zn := group [if n === 1 then T else T_0 .. T_(n-1), Degrees => {}, MonomialOrder => RevLex];
 	  Zn.name = "ZZ^" | toString n;
 	  Zn))
 
