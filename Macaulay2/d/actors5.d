@@ -598,9 +598,6 @@ setup(AtAtS,AtAtfun);
 StarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,StarStarS);
 setup(StarStarS,StarStarfun);
 
--- doublecolonfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,ColonColonS);
--- setup(ColonColonS,doublecolonfun);
-
 doubleplusfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,PlusPlusS);
 setup(PlusPlusS,doubleplusfun);
 

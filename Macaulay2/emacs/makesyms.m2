@@ -1,10 +1,16 @@
-upper := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+symbols := values symbolTable()
+alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+isKeyword := s -> not mutable s and s =!= symbol null and value s === null
+isAlpha := s -> alphabet#?((toString s)#0)
+is := X -> s -> instance(value s, X)
+Function && Function := (f,g) -> s -> f s and g s
+
 f := openOut "M2-symbols.el"
 
 f << "(defvar M2-symbols '(" << endl
-scan(
-     sort select (keys symbolTable(), n -> #n > 1 and upper#?(n#0) ),
-     s -> f << "    " << format s << endl)
+
+scan( rsort select (symbols, isAlpha), s -> f << "    " << format toString s << endl)
+
 f << "   )" << endl
 f << "  " << format ///A list of the symbols available in Macaulay 2, for use with dynamic completion./// << endl
 f << "  )" << endl
@@ -21,53 +27,21 @@ add := (face,words) -> (
      <<  " . " << face << ")" << endl
      )
 
-add( "font-lock-keyword-face",
-     { "if", "do", "else", "then", "or", "and", "not", "try", "new", "while", "list", "break", "return",
-	  "for", "from", "to", "when", "symbol", "global", "local", "of", "from" })
+add( "font-lock-keyword-face", toString \ select(symbols, isKeyword && isAlpha))
+add( "font-lock-type-face", toString \ select(symbols, is Type))
+add( "font-lock-function-name-face", toString \ select(symbols, is Function))
+add( "font-lock-constant-face", toString \ select(symbols, sym -> (
+	       not (is Function) sym
+	       and not (is Type) sym
+	       and (sym === symbol null or value sym =!= null)
+	       and not mutable sym
+	       and isAlpha sym)))
 
-add( "font-lock-type-face",
-     first \ select(pairs symbolTable(), (str,sym) -> instance(value sym,Type)))
-
- -- add( "font-lock-type-face",
- --      { 
- -- 	"AffineVariety", "Array", "BasicList", "Boolean", "CC",
- -- 	"ChainComplex", "ChainComplexMap", "CoherentSheaf", "Database",
- -- 	"Field", "File", "FractionField", "Function", "GaloisField",
- -- 	"GradedModule", "GradedModuleMap", "GroebnerBasis", "HashTable",
- -- 	"Ideal", "List", "Matrix", "Module", "ModuleMap", "Monoid",
- -- 	"MonomialIdeal", "MutableHashTable", "MutableList", "Net", "Option",
- -- 	"OrderedMonoid", "PolynomialRing", "ProjectiveVariety", "QQ",
- -- 	"QuotientRing", "RR", "Ring", "RingMap", "SchurRing", "Sequence",
- -- 	"Set", "String", "Symbol", "Tally", "Thing", "Type", "Variety",
- -- 	"Vector", "VisibleList"
- -- 	}
- --    )
-
-add( "font-lock-function-name-face",
-     first \ select(pairs symbolTable(), (str,sym) -> instance(value sym,Function)))
-
-alphabet := new MutableHashTable
-scan( characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", c -> alphabet#c = true)
-
-add( "font-lock-constant-face",
-     first \ select(pairs symbolTable(), (str,sym) -> (
-	       not instance(value sym,Function)
-	       and 
-	       not instance(value sym,Type)
-	       and
-	       not mutable sym
-	       and
-	       alphabet#?((toString sym)#0)
-	       )
-	  ))
-
-add( "font-lock-builtin-face", { "shield", "timing", "time" })
-
-f << "    (" << format "///\\([^/]\\|//?[^/]\\)*/?/?/?" << " . (0 font-lock-string-face t))" << endl
+f << "    (" << format "///\\(/?/?[^/]\\)*///" << " . (0 font-lock-string-face t))" << endl
 f << "   )" << endl
-f << "  )" << endl
+f << ///  )/// << endl
 
-f << "(font-lock-add-keywords 'M2-mode M2-mode-font-lock-keywords)" << endl
+f << "(font-lock-add-keywords 'M2-mode M2-mode-font-lock-keywords 'set)" << endl
 
 f << "(provide 'M2-symbols)" << endl
 
