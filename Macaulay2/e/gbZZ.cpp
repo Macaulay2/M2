@@ -1107,23 +1107,6 @@ bool GBZZ_comp::is_equal(const gb_comp *q)
   return false;
 }
 
-Vector *GBZZ_comp::reduce(const Vector *v, Vector *&lift)
-{
-  if (!v->free_of()->is_equal(F))
-    {
-      ERROR("reduce: vector is in incorrect free module");
-      return 0;
-    }
-  vec f = F->copy(v->get_value());
-  vec fsyz = NULL;
-
-  gb_reduce(f, fsyz);
-  Fsyz->negate_to(fsyz);
-
-  lift = Vector::make_raw(Fsyz, fsyz);
-  return Vector::make_raw(F, f);
-}
-
 //--- Obtaining matrices as output -------
 Matrix *GBZZ_comp::min_gens_matrix()
 {

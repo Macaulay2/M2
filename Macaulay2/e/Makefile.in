@@ -76,7 +76,6 @@ INTERFACE = \
 	sparsemat \
 	text_io \
 	varpower \
-	vector \
 	weylalg \
 	z_mod_p
 

@@ -251,29 +251,6 @@ Matrix *gbres_comp::reduce(const Matrix *m, Matrix *&lift)
   return red;
 }
 
-Vector *gbres_comp::reduce(const Vector *v, Vector *&lift)
-{
-  const FreeModule *F = nodes[0]->output_free_module();
-  if (!v->free_of()->is_equal(F))
-    {
-      ERROR("reduce: vector is in incorrect free module");
-      return 0;
-    }
-  const FreeModule *Fsyz = nodes[1]->output_free_module();
-
-  ring_elem denom;
-  gbvector *f = originalR->translate_gbvector_from_vec(F, v->get_value(), denom);
-  gbvector *fsyz = NULL;
-
-  nodes[1]->reduce(f, fsyz);
-
-  vec fv = originalR->translate_gbvector_to_vec_denom(F, f, denom);
-  GR->get_flattened_coefficients()->negate_to(denom);
-  vec fsyzv = originalR->translate_gbvector_to_vec_denom(Fsyz,fsyz, denom);
-
-  lift = Vector::make_raw(Fsyz, fsyzv);
-  return Vector::make_raw(F, fv);
-}
 
 //////////////////////////////////
 // Obtaining matrices as output //

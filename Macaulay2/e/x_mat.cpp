@@ -55,17 +55,6 @@ const RingElementOrNull * IM2_Matrix_get_entry(const Matrix *M, int r, int c)
   return RingElement::make_raw(M->get_ring(), M->elem(r,c));
 }
 
-const Vector * IM2_Matrix_get_column(const Matrix *M, int c)
-{
-  if (c < 0 || c >= M->n_cols())
-    {
-      ERROR("matrix index %d out of range 0 .. %d", c, M->n_cols()-1);
-      return 0;
-    }
-  /* SHOULD WE COPY M->elem(c) ?? */
-  return Vector::make_raw(M->rows(), (*M)[c]);
-}
-
 const MatrixOrNull * IM2_Matrix_make1(const FreeModule *target,
 				      int ncols,
 				      const RingElement_array *M,
@@ -333,26 +322,6 @@ const MatrixOrNull * IM2_Matrix_scalar_mult(const RingElement *f,
 
 const MatrixOrNull * IM2_Matrix_scalar_right_mult(const Matrix *M, 
 						  const RingElement *f); /* TODO */
-
-const VectorOrNull * IM2_Matrix_scalar_mult_vec(const Matrix *M, 
-						const Vector *v)
-{
-  // Check that M,v have the same ring
-  // Check that #cols(M) = #rows(v)
-
-  if (M->get_ring() != v->get_ring())
-    {
-      ERROR("expected the same ring");
-      return 0;
-    }
-  if (M->n_cols() != v->free_of()->rank())
-    {
-      ERROR("wrong sizes for matrix.vector multiplication");
-      return 0;
-    }
-  vec w = M->rows()->mult_by_matrix(M, v->free_of(), v->get_value());
-  return Vector::make_raw(M->rows(), w);
-}
 
 const MatrixOrNull * IM2_Matrix_concat(const Matrix_array *Ms)
 {

@@ -10,7 +10,6 @@ class binomialGB_comp;
 class sagbi_comp;
 class Matrix;
 class RingElement;
-class Vector;
 class PolynomialRing;
 
 extern "C" char system_interrupted;
@@ -237,7 +236,6 @@ public:
   virtual Matrix *initial_matrix(int n=-1) = 0;
 
   virtual Matrix *reduce(const Matrix *m, Matrix * &result_lift) = 0;
-  virtual Vector *reduce(const Vector *v, Vector * &result_lift) = 0;
 
   virtual int contains(const Matrix *m) = 0;
   virtual bool is_equal(const gb_comp *q) = 0;

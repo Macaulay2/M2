@@ -11,6 +11,8 @@ vec sagbi::subduct(const FreeModule *F,
   vecterm head;
   vec result = &head;
 
+#warning "subduct required Vector reduction: rewrite"
+#if 0
   while (f != NULL)
     {
       vec g = f;
@@ -36,6 +38,7 @@ vec sagbi::subduct(const FreeModule *F,
 	  result = g;
 	}
     }
+#endif
 
   result->next = NULL;
   return head.next;
@@ -230,11 +233,6 @@ int sagbi_comp::calc(const int *deg, const intarray &stop_conditions)
 }
 
 Matrix *sagbi_comp::reduce(const Matrix *m, Matrix *&lift)
-{
-return 0;
-}
-
-Vector *sagbi_comp::reduce(const Vector *v, Vector *&lift)
 {
 return 0;
 }

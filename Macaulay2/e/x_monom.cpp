@@ -25,14 +25,22 @@ M2_bool IM2_Monomial_is_one(const Monomial *a)
   return a->is_one();
 }
 
-int IM2_Monomial_compare(const Monomial *a, const Monomial *b)
+int IM2_Monomial_compare(const Monoid *M, const Monomial *a, const Monomial *b)
 {
-  return a->compare(*b);
+  return a->compare(M,*b);
 }
 
-M2_bool IM2_Monomial_divides(const Monomial *a, const Monomial *b)
+M2_bool IM2_Monomial_divides(const Monoid *M, const Monomial *a, const Monomial *b)
 {
-  return a->divides(*b);
+  return a->divides(M,*b);
+}
+
+MonomialOrNull *IM2_Monomial_divide(const Monoid *M, const Monomial *a, const Monomial *b)
+{
+  if (a->divides(M,*b))
+    return (*a)/(*b);
+  else
+    return 0;
 }
 
 int IM2_Monomial_degree(const Monomial *a)
@@ -45,7 +53,7 @@ const Monomial *IM2_Monomial_mult(const Monomial *a, const Monomial *b)
   return (*a) * (*b);
 }
 
-const Monomial *IM2_Monomial_quotient(const Monomial *a, const Monomial *b)
+const Monomial *IM2_Monomial_colon(const Monomial *a, const Monomial *b)
 {
   return (*a) / (*b);
 }

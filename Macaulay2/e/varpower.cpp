@@ -279,7 +279,7 @@ void varpower::mult(const int *a, const int *b, intarray &result)
 }
 
 void varpower::quotient(const int *a, const int *b, intarray &result)
-    // divide a by b.
+    // return a:b
 {
   int csize = result.start();
   int alen = *a++;

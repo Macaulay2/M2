@@ -287,22 +287,6 @@ Matrix *GaussElimComputation::reduce(const Matrix *m, Matrix *&lift)
   return red;
 }
 
-Vector *GaussElimComputation::reduce(const Vector *v, Vector *&lift)
-{
-  if (!v->free_of()->is_equal(gens->rows()))
-    {
-      ERROR("reduce: vector is in incorrect free module");
-      return 0;
-    }
-  vec f = gens->rows()->translate(v->free_of(), v->get_value());
-  vec fsyz = NULL;
-
-  reduce(f, fsyz);
-  syz->rows()->negate_to(fsyz);
-
-  lift = Vector::make_raw(syz->rows(), fsyz);
-  return Vector::make_raw(gens->rows(), f);
-}
 int GaussElimComputation::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
