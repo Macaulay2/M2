@@ -1,5 +1,4 @@
 Makefile
-config.cache
 include
 lib
 share
@@ -16,3 +15,5 @@ Makefile
 config.Makefile
 config.log
 config.status
+config.Makefile.overrides
+config.cache
