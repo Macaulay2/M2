@@ -51,7 +51,7 @@ export storeInDictionary(dc:DictionaryClosure,i:Code,rhs:Code):Expr := (
 	  rhsval := eval(rhs);
 	  when rhsval
 	  is sc:SymbolClosure do (
-	       if dc.frame != sc.frame then buildErrorPacket("expected a symbol in the same dictionary")
+	       if dc.frame != sc.frame then buildErrorPacket("expected a symbol with the same dictionary frame")
 	       else (
      		    newword := makeUniqueWord(newname,sc.symbol.word.parse);
 		    when lookup(newword,dc.dictionary.symboltable)
