@@ -270,6 +270,7 @@ bump();
      export StarS := makeProtectedSymbolClosure(unaryleft("*"));
      export DivideS := makeProtectedSymbolClosure(binaryleft("/"));
      export LeftDivideS := makeProtectedSymbolClosure(binaryright("\\"));
+     export BackslashBackslashS := makeProtectedSymbolClosure(binaryright("\\\\"));
      export PercentS := makeProtectedSymbolClosure(binaryleft("%"));
      export SlashSlashS := makeProtectedSymbolClosure(binaryleft("//"));
 bump();
@@ -482,7 +483,7 @@ opsWithBinaryMethod := array(Symbol)(
      -- ColonColonS.symbol,
      BarS.symbol, HatHatS.symbol, AmpersandS.symbol, TildeS.symbol,
      DotDotS.symbol, MinusS.symbol, PlusS.symbol, PlusPlusS.symbol,
-     StarStarS.symbol, StarS.symbol, 
+     StarStarS.symbol, StarS.symbol, BackslashBackslashS.symbol,
      DivideS.symbol, LeftDivideS.symbol, PercentS.symbol,
      SlashSlashS.symbol, AtS.symbol, AdjacentS.symbol, AtAtS.symbol,
      SlashHatS.symbol, PowerS.symbol, UnderscoreS.symbol

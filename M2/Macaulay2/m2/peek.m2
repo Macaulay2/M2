@@ -2,6 +2,7 @@
 
 peek2 := method()
 
+peek2(Nothing,ZZ) := (s,depth) -> "null"
 peek2(Symbol,ZZ) := (s,depth) -> if depth === 0 then string s else name s
 peek2(Thing,ZZ) := (s,depth) -> net s
 peek2(BasicList,ZZ) := (s,depth) -> (

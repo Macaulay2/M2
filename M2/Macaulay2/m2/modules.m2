@@ -645,6 +645,7 @@ assert ( euler R == {0,3} )
 
 rank Module := M -> (
      if isFreeModule M then numgens M 
+     else if degreeLength ring M === 0 and isField ring M then numgens prune M
      else (
 	  f := poincare M;
 	  T := (ring f)_0;

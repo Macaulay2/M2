@@ -9,15 +9,25 @@ protect quote error
 
 on = f -> (
      n := name f;
+     depth := 0;
+     totaltime := 0.;
      i := 0;
      if class f =!= Function then error("expected a function");
      x -> (
 	  j := i;
 	  i = i+1;
-     	  stderr << n << " (" << j << ") called with args : " << name x << endl;
-     	  r := f x;
-     	  stderr << n << " (" << j << ") returned value   : " << name r << endl;
-     	  r)
+     	  stderr << n << " (" << depth << ", " << j << ") called with args : " << x << endl;
+	  depth = depth + 1;
+     	  r := timing f x;
+	  timeused := r#0;
+	  value := r#1;
+	  depth = depth - 1;
+	  if depth === 0 then totaltime = totaltime + timeused;
+     	  stderr << n << " (" << depth << ", " << j << ", " << timeused << " seconds";
+	  if depth === 0 
+	  then stderr << ", total " << totaltime << " seconds";
+	  stderr << ")" << endl << "      returned value  : " << value << endl;
+     	  value)
      )
 
 document { quote on,

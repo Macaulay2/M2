@@ -182,7 +182,10 @@ document { (quote //, Matrix, Matrix),
      TT "f//g", " -- yields a matrix ", TT "h", " from matrices ", TT "f", " and ", TT "g", " 
      such that ", TT "f - g*h", " is the reduction of ", TT "f", " modulo a Groebner basis 
      for the image of ", TT "g", ".",
-     SEEALSO "%"
+     PARA,
+     "If the remainder ", TT "f - g*h", " is zero, then the quotient ", TT "f//g", "
+     satisfies the equation ", TT "f = g * (f//g)", ".",
+     SEEALSO {"%", "\\\\"}
      } 
 
 TEST "

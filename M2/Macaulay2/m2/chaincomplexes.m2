@@ -96,6 +96,9 @@ ChainComplex _ ZZ := (C,i) -> (
 	  F)
      else (ring C)^0
      )
+
+ChainComplex ^ ZZ := (C,i) -> C_-i
+
 document { (quote _, ChainComplex, ZZ),
      TT "C_i", " -- yields the i-th module in a chain complex C.",
      PARA,
@@ -783,21 +786,16 @@ betti Module := M -> (
 	  )
      )
 
-ChainComplex ++ ChainComplex := (C,D) -> (
-     Cd := C.dd;
-     Dd := D.dd;
-     E := new ChainComplex;
-     Ed := E.dd;
-     R := E.ring = ring C;
-     if R =!= ring D then error "expected chain complexes over the same ring";
-     complete C;
-     complete D;
-     scan(union(spots C, spots D), i -> E#i = C_i ++ D_i);
-     complete Cd;
-     complete Dd;
-     scan(union(spots Cd, spots Dd), i -> Ed#i = Cd_i ++ Dd_i);
-     E.components = {C,D};
-     E)
+
+ChainComplex.directSum = args -> (
+     C := new ChainComplex;
+     C.components = toList args;
+     C.ring = ring args#0;
+     scan(args,D -> (complete D; complete D.dd;));
+     scan(unique flatten (args/spots), n -> C#n = directSum apply(args, D -> D_n));
+     scan(spots C, n -> if C#?(n-1) then C.dd#n = directSum apply(args, D -> D.dd_n));
+     C)
+ChainComplex ++ ChainComplex := (C,D) -> directSum(C,D)
 
 document { (quote ++,ChainComplex,ChainComplex),
      TT "C++D", " -- direct sum of chain complexes.",
@@ -1141,28 +1139,40 @@ document { (chainComplex,GradedModule),
      }
 -----------------------------------------------------------------------------
 
+ggConcatCols := (mats) -> (
+     sendgg(apply(mats,ggPush), ggPush (#mats), ggconcat);
+     getMatrix R)
+
+ggConcatBlocks := (mats) -> (
+     sendgg (
+	  apply(mats, row -> ( apply(row, m -> ggPush m), 
+		    ggPush(#row), ggconcat, ggtranspose )),
+	  ggPush(#mats), ggconcat, ggtranspose );
+     getMatrix R)
+
+tens := (f,g) -> (
+     sendgg (ggPush f, ggPush g, ggtensor);
+     getMatrix R)
+
 ChainComplex ** ChainComplex := (C,D) -> (
+     R := ring C;
+     if ring D =!= R then error "expected chain complexes over the same ring";
      E := chainComplex (lookup(quote **, GradedModule, GradedModule))(C,D);
-     e := spots E;
-     scan(e, i -> if E#?i and E#?(i-1) then (
-	       E.dd#i = matrix table(
+     scan(spots E, i -> if E#?i and E#?(i-1) then E.dd#i = map(
+	       E#(i-1),
+	       E#i,
+	       ggConcatBlocks table(
 		    E#(i-1).indices,
 		    E#i.indices,
 		    (j,k) -> (
-			 if j#0 === k#0 and j#1 === k#1 - 1 then (
-			      (-1)^(k#0) * map(C#(j#0),C#(k#0),1) ** D.dd_(k#1)
-			      )
-			 else 
-			 if j#0 === k#0 - 1 and j#1 === k#1 then (
-			      C.dd_(k#0) ** map(D#(j#1),D#(k#1),1)
-			      )
-			 else (
-			      map(C#(j#0),C#(k#0),0) ** map(D#(j#1),D#(k#1),0)
-			      )
-			 )
-		    )
-	       )
-	  );
+			 if j#0 === k#0 and j#1 === k#1 - 1 
+			 then (-1)^(k#0) * tens(map cover C#(j#0), matrix D.dd_(k#1))
+			 else if j#0 === k#0 - 1 and j#1 === k#1 
+			 then tens(matrix C.dd_(k#0), map cover D#(k#1))
+			 else map(
+			      E#(i-1).components#(E#(i-1).indexComponents#j),
+			      E#i.components#(E#i.indexComponents#k),
+			      0)))));
      E)
 
 document { (quote **, ChainComplex, ChainComplex),
@@ -1245,21 +1255,46 @@ tensorAssociativity = method()
 
 tensorAssociativity(Module,Module,Module) := (A,B,C) -> map((A**B)**C,A**(B**C),1)
 
+newMatrix := (tar,src) -> (
+     R := ring tar;
+     p := new Matrix;
+     p.source = src;
+     p.target = tar;
+     p.handle = newHandle "";
+     p)
+     
 tensorAssociativity(ChainComplex,ChainComplex,ChainComplex) := (A,B,C) -> (
-     h := new ChainComplexMap;
-     h.degree = 0;
-     h.source = E :=  A ** (BC := B ** C);
-     h.target = F := (AB := A ** B) ** C;
-     scan(spots E, k -> map(F_k, E_k, 
-	       h#k = sum(E_k.indices, (a,bc) -> (
-			      sum(BC_bc.indices, (b,c) -> (
-					F_k_[(a+b,c)]
-					* (AB_(a+b)_[(a,b)] ** C_c)
-					* tensorAssociativity(A_a,B_b,C_c)
-					* (A_a ** BC_(b+c)^[(b,c)])
-					* E_k^[(a,b+c)]
-					))))));
-     h)
+     R = ring A;			  -- our temporary ring
+     map(
+	  F := (AB := A ** B) ** C,
+	  E :=  A ** (BC := B ** C),
+	  k -> ggConcatBlocks apply(F_k.indices, (ab,c) -> (
+		    apply(E_k.indices, (a,bc) -> (
+			      b := bc-c;  -- ab+c=k=a+bc, so b=bc-c=ab-a
+			      if A#?a and B#?b and C#?c
+			      then (
+			      	   (AB#ab_[(a,b)] ** C#c)
+			      	   * tensorAssociativity(A#a,B#b,C#c)
+			      	   * (A#a ** BC#bc^[(b,c)])
+				   )
+			      else map(F_k.components#(F_k.indexComponents#(ab,c)),
+					E_k.components#(E_k.indexComponents#(a,bc)),
+					0)))))
+ --	  k -> ggConcatCols(F, E, apply (E_k.indices, (a,bc) -> 
+ --		    sum(BC_bc.indices, (b,c) -> (
+ --			      F_k_[(a+b,c)]
+ --			      * (AB_(a+b)_[(a,b)] ** C_c)
+ --			      * tensorAssociativity(A_a,B_b,C_c)
+ --			      * (A_a ** BC_bc^[(b,c)])
+ --			      ))))
+-- 	  k -> sum(E_k.indices, (a,bc) -> (
+-- 		    sum(BC_bc.indices, (b,c) -> (
+-- 			      F_k_[(a+b,c)]
+-- 			      * (AB_(a+b)_[(a,b)] ** C_c)
+-- 			      * tensorAssociativity(A_a,B_b,C_c)
+-- 			      * (A_a ** BC_bc^[(b,c)])
+-- 			      )) * E_k^[(a,bc)]))
+	  ))
 
 document { quote tensorAssociativity,
      TT "tensorAssociativity(A,B,C)", " -- produces the isomorphism from
@@ -1271,7 +1306,7 @@ document { quote tensorAssociativity,
 
 TEST ///
      -- here we test the commutativity of the pentagon of associativities!
-     C = QQ^1[0] ++ QQ^2[-1] ++ QQ^1[-2]
+     C = QQ^1[0] ++ QQ^1[-1]
      assert(
 	  (tensorAssociativity(C,C,C) ** C) * tensorAssociativity(C,C**C,C) * (C ** tensorAssociativity(C,C,C))
 	  ==
@@ -1284,8 +1319,8 @@ Module Array := (M,v) -> (
      n := v#0;
      if class n =!= ZZ then error "expected [n] with n an integer";
      C := new ChainComplex;
-     C#-n = M;
      C.ring = ring M;
+     C#-n = M;
      C)
 
 document { (quote " ", Module, Array),
@@ -1295,3 +1330,124 @@ document { (quote " ", Module, Array),
      SEEALSO "ChainComplex"
      }
 
+ChainComplexMap _ Array := (f,v) -> f * (source f)_v
+ChainComplexMap ^ Array := (f,v) -> (target f)^v * f
+
+trans := (C,v) -> (
+     if C.?indexComponents then (
+	  Ci := C.indexComponents;
+	  apply(v, i -> if Ci#?i then Ci#i else error "expected an index of a component of the direct sum"))
+     else (
+     	  if not C.?components then error "expected a direct sum of chain complexes";
+	  Cc := C.components;
+	  apply(v, i -> if not Cc#?i then error "expected an index of a component of the direct sum");
+	  v)
+     )
+ChainComplex _ Array := (C,v) -> if C#?(quote _,v) then C#(quote _,v) else C#(quote _,v) = (
+     v = trans(C,v);
+     D := directSum apply(toList v, i -> C.components#i);
+     map(C,D,k -> C_k_v))
+
+ChainComplex ^ Array := (C,v) -> if C#?(quote ^,v) then C#(quote ^,v) else C#(quote ^,v) = (
+     v = trans(C,v);
+     D := directSum apply(toList v, i -> C.components#i);
+     map(D,C,k -> C_k^v))
+
+map(ChainComplex,ChainComplex,Function) := (C,D,f,options) -> (
+     h := new ChainComplexMap;
+     h.source = D;
+     h.target = C;
+     deg := h.degree = if options.Degree === null then 0 else options.Degree;
+     scan(spots D, k -> (
+	       if C#?(k+deg) then (
+		    g := f(k);
+		    if g =!= null and g != 0 then h#k = map(C#(k+deg),D#k,g);
+		    )));
+     h
+     )
+
+document { (map,ChainComplex,ChainComplex,Function),
+     TT "map(C,D,f)", " -- construct a map from the chain complex ", TT "D", " to the chain
+     complex ", TT "C", " which in degree ", TT "k", " is the map provided
+     as the value of ", TT "f(k)", ".",
+     PARA,
+     "As a convenience, the value returned by f(k) is used as the third argument
+     in ", TT "map(C_k,D_k,f(k))", ".",
+     PARA,
+     "The function ", TT "f", " is called only for those indices which represent spots
+     occupied in both the source and target chain complexes.",
+     PARA,
+     SEEALSO "ChainComplex"
+     }
+
+map(ChainComplex,ChainComplex) := (C,D,options) -> (
+     h := new ChainComplexMap;
+     h.source = D;
+     h.target = C;
+     deg := h.degree = if options.Degree === null then 0 else options.Degree;
+     scan(spots D, k -> if C#?(k+deg) then h#k = map(C#(k+deg),D#k));
+     h
+     )
+
+kernel ChainComplexMap := (f,options) -> (
+     D := source f;
+     C := new ChainComplex;
+     C.ring = ring f;
+     complete D;
+     scan(spots D, k -> C#k = kernel f_k);
+     scan(spots C, k -> if C#?(k-1) then C.dd#k = (D.dd_k * map(D_k,C_k)) // map(D_(k-1),C_(k-1)));
+     C)
+
+coimage ChainComplexMap := (f) -> (
+     D := source f;
+     C := new ChainComplex;
+     C.ring = ring f;
+     complete D;
+     scan(spots D, k -> C#k = coimage f_k);
+     scan(spots C, k -> if C#?(k-1) then C.dd#k = map(C#(k-1),C#k,matrix D.dd_k));
+     C)
+
+cokernel ChainComplexMap := (f) -> (
+     D := target f;
+     deg := f.degree;
+     C := new ChainComplex;
+     C.ring = ring f;
+     complete D;
+     scan(spots D, k -> C#k = cokernel f_(k-deg));
+     scan(spots C, k -> if C#?(k-1) then C.dd#k = map(C#(k-1),C#k,matrix D.dd_k));
+     C)
+
+image ChainComplexMap := (f) -> (
+     D := target f;
+     E := source f;
+     deg := f.degree;
+     C := new ChainComplex;
+     C.ring = ring f;
+     complete D;
+     scan(spots D, k -> C#k = image f_(k-deg));
+     scan(spots C, k -> if C#?(k-1) then C.dd#k = map(C#(k-1),C#k,matrix E.dd_(k-deg)));
+     C)
+
+TEST ///
+     R = QQ[x,y,z]
+     C = res coker vars R
+     D = C ++ C
+     E = ker D_[0]
+     E = coim D_[0]
+     E = coker D_[0]
+     E = im D_[0]
+///
+
+prune ChainComplex := (C) -> (
+     D := new ChainComplex;
+     complete C;
+     complete C.dd;
+     D.ring = ring C;
+     scan(spots C, i -> D#i = prune C#i);
+     scan(spots C.dd, i -> D.dd#i = prune C.dd#i);
+     D)
+
+prune ChainComplexMap := (f) -> (
+     complete f;
+     map(prune target f, prune source f, k -> prune f#k)
+     )

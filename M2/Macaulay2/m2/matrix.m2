@@ -426,13 +426,25 @@ ggConcatRows := (tar,src,mats) -> (
      if same(degree \ mats)
      and degree f != degree mats#0
      then f = map(target f, source f, f, Degree => degree mats#0);
-     f )
+     f)
+
+ggConcatBlocks := (tar,src,mats) -> (
+     sendgg (
+	  apply(mats, row -> ( 
+		    apply(row, m -> ggPush m), 
+		    ggPush(#row), ggconcat, ggtranspose )),
+	  ggPush(#mats), ggconcat, ggtranspose );
+     f := newMatrix(tar,src);
+     if same(degree \ flatten mats)
+     and degree f != degree mats#0#0
+     then f = map(target f, source f, f, Degree => degree mats#0#0);
+     f)
 
 samering := mats -> (
      R := ring mats#0;
      if not all ( mats, m -> ring m === R )
      then error "expected matrices over the same ring";
-     )
+     R)
 
 directSum Matrix := identity
 
@@ -494,6 +506,11 @@ Option.directSum = args -> (
      keys := S.indices = toList args/first;
      S.indexComponents = new HashTable from toList apply(#keys, i -> keys#i => i);
      S)
+
+indices = method()
+indices MutableHashTable := X -> (
+     if not X.?components then error "expected an object with components";
+     if X.?indices then X.indices else toList ( 0 .. #X.components - 1 ) )
 
 directSum Sequence := args -> (
      if #args === 0 then error "expected more than 0 arguments";
@@ -620,6 +637,27 @@ concatRows := mats -> (
 	  and not all(sources, F -> isFreeModule F)
 	  then error "unequal sources";
 	  ggConcatRows(Module.directSum apply(mats,target), sources#0, mats)))
+
+concatBlocks := mats -> (
+     if not isTable mats then error "expected a table of matrices";
+     if #mats === 1
+     then concatCols mats#0
+     else if #(mats#0) === 1
+     then concatRows (mats/first)
+     else (
+     	  samering flatten mats;
+	  sources := unique applyTable(mats,source);
+	  N := sources#0;
+	  if not all(sources, F -> F == N) and not all(sources, F -> all(F,isFreeModule))
+	  then error "unequal sources";
+	  targets := unique transpose applyTable(mats,target);
+	  M := targets#0;
+	  if not all(targets, F -> F == M) and not all(targets, F -> all(F,isFreeModule))
+	  then error "unequal targets";
+     	  ggConcatBlocks(
+	       Module.directSum (mats/first/target),
+	       Module.directSum (mats#0/source),
+	       mats)))
 
 Matrix | Matrix := (f,g) -> concatCols(f,g)
 RingElement | Matrix := (f,g) -> concatCols(f**id_(target g),g)
@@ -927,7 +965,7 @@ map(Module,Module,RingElement) := (M,N,r,options) -> (
 	  f.target = M;
 	  f.ring = ring M;
 	  f)
-     else if rank cover M == rank cover N then map(M,N,r * id_(R^(rank cover M))) 
+     else if numgens cover M == numgens cover N then map(M,N,r * id_(cover M)) 
      else error "expected 0, or source and target with same number of generators")
 
 map(Module,Module,ZZ) := (M,N,i,options) -> (
@@ -940,7 +978,8 @@ map(Module,Module,ZZ) := (M,N,i,options) -> (
 	  f.ring = ring M;
 	  f)
      else if M == N then map(M,i)
-     else error "expected 0, or same source and target")
+     else if numgens cover M == numgens cover N then map(M,N,i * id_(cover M)) 
+     else error "expected 0, or source and target with same number of generators")
 
 map(Module,RingElement) := (M,r,options) -> (
      R := ring M;
@@ -1226,7 +1265,7 @@ fixDegree := (m,d) -> (
      newMatrix(M,N)
      )
 
-Matrix.matrix = (f,options) -> concatRows apply(f, v -> concatCols v)
+Matrix.matrix = (f,options) -> concatBlocks f
 
 matrixTable := (f,options) -> (
      types := unique apply(flatten f, class);
@@ -1307,7 +1346,7 @@ matrixTable := (f,options) -> (
 					M = tars#i = srcs#j = R^1;
 					f#i#j = map(M,M,0);
 					))))));
-	  mm := concatRows apply(f, row -> concatCols row);
+	  mm := concatBlocks f;
 	  if options.Degree === null
 	  then mm
 	  else fixDegree(mm,options.Degree)
@@ -1355,7 +1394,9 @@ document { "making module maps",
        	  TO (map,Module,ZZ,List),
        	  TO (map,Module,ZZ,Function),
        	  TO (map,Module,Matrix),
-	  TO (map,Module,Module,RingElement)
+	  TO (map,Module,Module,RingElement),
+	  TO (map,Module,Module,ZZ),
+	  TO (map,ChainComplex,ChainComplex,Function),
 	  },
      SEEALSO {"map", "matrix"}
      }
@@ -1445,11 +1486,11 @@ document { (map,Module,Module,Matrix),
      SEEALSO {"map", "matrix"}
      }
 document { (map,Module,Module,RingElement),
-     TT "map(M,N,r)", " -- construct a map from a module N to M which provided
-     by the ring element r.",
+     TT "map(M,N,r)", " -- construct a map from a module ", TT "N", " to ", TT "M", " which is provided
+     by the ring element ", TT "r", ".",
      PARA,
-     "If r is nonzero, then M and N should be equal, or differ at most by
-     a degree (i.e., by tensoring with a graded free module of rank 1).",
+     "If ", TT "r", " is nonzero, then ", TT "M", " and ", TT "N", " should be equal, 
+     or at least have the same number of generators.",
      PARA,
      EXAMPLE {
 	  "R = ZZ/101[x]",
@@ -1459,7 +1500,35 @@ document { (map,Module,Module,RingElement),
       	  "isHomogeneous q",
 	  },
      PARA,
-     SEEALSO {"map", "matrix"}
+     SEEALSO {(map,Module,Module,ZZ), "map", "matrix"}
+     }
+document { (map,Module,Module,ZZ),
+     TT "map(M,N,k)", " -- construct a map from a module ", TT "N", " to ", TT "M", " 
+     which is provided by the integer ", TT "k", ".",
+     PARA,
+     "If ", TT "k", " is ", TT "0", ", then the zero map is constructed.  If ", TT "k", " is 1,
+     then ", TT "M", " and ", TT "N", " should have the same number and degrees of generators 
+     in the sense that the modules ", TT "cover M", " and ", TT "cover N", " are equal, and then the map
+     which sends the ", TT "i", "-th generator of ", TT "N", " to the ", TT "i", "-th generator 
+     of ", TT "M", " is constructed (and it may not be well-defined).
+     Otherwise, ", TT "M", " and ", TT "N", " should be equal, or 
+     at least have the same number of generators.",
+     PARA,
+     EXAMPLE {
+	  "R = QQ[x,y];",
+	  "M = image vars R",
+	  "N = coker presentation M",
+	  "f = map(M,N,1)",
+	  "isWellDefined f",
+	  "isIsomorphism f",
+	  "g = map(M,cover M,1)",
+	  "isWellDefined g",
+	  "isIsomorphism g",
+	  "h = map(cover M,M,1)",
+	  "isWellDefined h",
+	  },
+     PARA,
+     SEEALSO {(map,Module,Module,RingElement), "map", "matrix"}
      }
 document { (map,Module),
      TT "map M", " -- construct the identity map from M to itself.",
@@ -1723,7 +1792,6 @@ document { quote subquotient,
 	  },
      SEEALSO {"generators", "relations"}
      }
-
 
 Matrix ** Matrix := (f,g) -> (
      R := ring f;
