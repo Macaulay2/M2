@@ -8,7 +8,7 @@
 
 #include "freemod.hpp"
 
-void Ring::initialize_ring(int P,
+void Ring::initialize_ring(int P0,
 			   int nvars,
 			   int totalvars,
 			   const Ring *K,
@@ -18,7 +18,7 @@ void Ring::initialize_ring(int P,
   // Remember: if this is a poly ring, the ring is K[M].
   // If this is a basic routine, K = this, M = trivial monoid.
   // If this is a frac field, K = R, M = trivial monoid.
-  _P = P;
+  P = P0;
   _nvars = nvars;
   _totalvars = totalvars;
   _K = K;
