@@ -155,7 +155,6 @@ checkArgGB := f -> (
      if ring source f =!= R then error "expected module map with source and target over the same ring";
      if not isFreeModule target f then error "Groebner bases of subquotient modules not yet implemented";
      if not isFreeModule source f then f = ambient f * generators source f;   -- sigh
-     if isPolynomialRing R and not (isField coefficientRing R or coefficientRing R === ZZ) then error "expected coefficient ring to be ZZ or a field"; -- remove later
      )
 
 recordOptions := (G,opts) -> (

@@ -31,9 +31,8 @@ pretty := relns -> (
      if #s === 1 then s = first s;
      s)
 
-toString QuotientRing := S -> if S.?name then S.name else (
-     concatenate( toString last S.baseRings, "/", toString pretty S.relations)
-     )
+toExternalString QuotientRing := S -> concatenate(toString last S.baseRings, "/", toString pretty S.relations)
+toString QuotientRing := S -> if S.?name then S.name else toExternalString S
 
 random QuotientRing := S -> (
      if S.baseRings === {ZZ} then (random char S)_S
