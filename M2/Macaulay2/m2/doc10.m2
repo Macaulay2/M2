@@ -196,13 +196,13 @@ document { (resolution,Module),
 	  "C = resolution(M, LengthLimit=>6)"
 	  },
      "For an overview of resolutions, in order of increasing detail, see",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  SEQ (TO "Hilbert functions and free resolutions"),
 	  TO "free resolutions of modules",
 	  SEQ (TO "computing resolutions", " -- most detailed")
 	  },
      "Some useful related functions",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TO (betti,ChainComplex),
 	  TO (status,Resolution),
 	  }

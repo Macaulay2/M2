@@ -163,7 +163,7 @@ formatDocumentTag Sequence := record(
 	  else if             fSeq#?#s                          then fSeq#(#s)
 								else toString) s)
 
-fSeqTO := fSeqInitialize(i -> SHIELD TO i, i -> SHIELD TO i)
+fSeqTO := fSeqInitialize(i -> NOCONTENTS TO i, i -> NOCONTENTS TO i)
 formatDocumentTagTO := method(SingleArgumentDispatch => true)
 formatDocumentTagTO Thing := x -> TT formatDocumentTag x
 formatDocumentTagTO Sequence := (
@@ -475,8 +475,8 @@ justClass := X -> SEQ {"an instance of class ", TO X}
 
 OFCLASS = X -> (
      if parent X === Nothing then error "expected a class";
-     if X.?synonym then SEQ {indefiniteArticle X.synonym, SHIELD TO2 {X, X.synonym}}
-     else SEQ {"an object of class ", SHIELD TO X}
+     if X.?synonym then SEQ {indefiniteArticle X.synonym, NOCONTENTS TO2 {X, X.synonym}}
+     else SEQ {"an object of class ", NOCONTENTS TO X}
      )
 
 getDocBody := method(SingleArgumentDispatch => true)
@@ -575,10 +575,10 @@ optargs := method(SingleArgumentDispatch => true)
 optargs Thing := x -> null
 optargs Function := f -> (
      o := options f;
-     if o =!= null then PARA { "Optional arguments :", SHIELD smenu apply(keys o, t -> f => t)})
+     if o =!= null then PARA { "Optional arguments :", NOCONTENTS smenu apply(keys o, t -> f => t)})
 optargs Sequence := s -> (
      o := options s;
-     if o =!= null then PARA { "Optional arguments :", SHIELD smenu apply(keys o, t -> s => t)}
+     if o =!= null then PARA { "Optional arguments :", NOCONTENTS smenu apply(keys o, t -> s => t)}
      else optargs s#0)
 
 optin0 := new OptionTable from {}
@@ -653,16 +653,16 @@ synopsis Thing := f -> (
      	       PARA BOLD "Synopsis",
 	       UL {
      	       	    if usa#?0 then PARA { "Usage: ", if class usa === String then TT usa else usa},
-		    if fun =!= null then SEQ { "Function: ", SHIELD TO fun }
+		    if fun =!= null then SEQ { "Function: ", NOCONTENTS TO fun }
 		    else if class f === Sequence and f#?0 then (
 	       		 if class f#0 === Function 
-			 then SEQ { "Function: ", SHIELD TO f#0 }
-			 else SEQ { "Operator: ", SHIELD TO f#0 }
+			 then SEQ { "Function: ", NOCONTENTS TO f#0 }
+			 else SEQ { "Operator: ", NOCONTENTS TO f#0 }
 			 ),
-		    if inp#?0 then PARA { "Inputs:", SHIELD UL inp },
-		    if ino#?0 then PARA { "Optional inputs:", SHIELD UL ino },
-		    if out#?0 then PARA { "Outputs:", SHIELD UL out },
-		    if res#?0 then PARA { "Results:", SHIELD UL res }
+		    if inp#?0 then PARA { "Inputs:", NOCONTENTS UL inp },
+		    if ino#?0 then PARA { "Optional inputs:", NOCONTENTS UL ino },
+		    if out#?0 then PARA { "Outputs:", NOCONTENTS UL out },
+		    if res#?0 then PARA { "Results:", NOCONTENTS UL res }
 		    }
 	       }
 	  ))
@@ -674,7 +674,7 @@ fmeth := f -> (
      b := documentableMethods f;
      if methodFunctionOptions#?f and not methodFunctionOptions#f.SingleArgumentDispatch
      then b = select(b, x -> x =!= (f,Sequence));
-     if #b > 0 then SEQ { PARA { "Ways to use ", TT toString f }, SHIELD smenu b } )
+     if #b > 0 then SEQ { PARA { "Ways to use ", TT toString f }, NOCONTENTS smenu b } )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 briefDocumentation = method(SingleArgumentDispatch => true)
@@ -775,14 +775,14 @@ documentationValue(Symbol,Type) := (s,X) -> (
      SEQ {
 	  if #b > 0 then SEQ { 
 	       PARA {"Types of ", if X.?synonym then X.synonym else toString X, " :"},
-	       SHIELD smenu b},
-	  if #a > 0 then PARA {"Functions and methods returning ", indefinite synonym X, " :", SHIELD smenu a },
-	  if #c > 0 then PARA {"Methods for using ", indefinite synonym X, " :", SHIELD smenu c},
-	  if #e > 0 then PARA {"Fixed objects of class ", toString X, " :", SHIELD smenu e},
+	       NOCONTENTS smenu b},
+	  if #a > 0 then PARA {"Functions and methods returning ", indefinite synonym X, " :", NOCONTENTS smenu a },
+	  if #c > 0 then PARA {"Methods for using ", indefinite synonym X, " :", NOCONTENTS smenu c},
+	  if #e > 0 then PARA {"Fixed objects of class ", toString X, " :", NOCONTENTS smenu e},
 	  })
 documentationValue(Symbol,HashTable) := (s,x) -> (
      c := documentableMethods x;
-     SEQ { if #c > 0 then PARA {"Functions installed in ", toString x, " :", SHIELD smenu c}})
+     SEQ { if #c > 0 then PARA {"Functions installed in ", toString x, " :", NOCONTENTS smenu c}})
 documentationValue(Symbol,Thing) := (s,x) -> SEQ { }
 documentationValue(Symbol,Package) := (s,pkg) -> (
      e := pkg#"exported symbols";
@@ -821,8 +821,8 @@ documentation Symbol := S -> (
 	  synopsis S,
 	  getDocBody(S),
 	  op S,
-	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", SHIELD smenu a},
-	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", SHIELD smenu b},
+	  if #a > 0 then PARA {"Functions with optional argument named ", toExternalString S, " :", NOCONTENTS smenu a},
+	  if #b > 0 then PARA {"Methods for ", toExternalString S, " :", NOCONTENTS smenu b},
      	  documentationValue(S,value S),
 	  type S
      	  }
@@ -839,7 +839,7 @@ documentation Sequence := s -> (
 	       synopsis s,
 	       getDocBody(s),
 	       PARA BOLD "See also",
-	       SHIELD UL {
+	       NOCONTENTS UL {
 		    SEQ{ "Default value: ", if hasDocumentation default then TOH default else TT default },
 		    SEQ{ if class fn === Sequence then "Method: " else "Function: ", TOH fn },
 		    SEQ{ "Option name: ", TOH opt }
@@ -888,9 +888,9 @@ TEST List := y -> TEST \ y
 
 SEEALSO = v -> (
      if class v =!= List then v = {v};
-     if #v > 0 then SEQ { PARA BOLD "See also", SHIELD UL (TO \ v) })
+     if #v > 0 then SEQ { PARA BOLD "See also", NOCONTENTS UL (TO \ v) })
 
-CAVEAT = v -> SEQ { PARA BOLD "Caveat", SHIELD UL { SEQ v } }
+CAVEAT = v -> SEQ { PARA BOLD "Caveat", NOCONTENTS UL { SEQ v } }
 
 -----------------------------------------------------------------------------
 -- html output
@@ -977,7 +977,7 @@ net MarkUpList := x -> horizontalJoin apply(x,net)
 texMath MarkUpList := x -> concatenate apply(x,texMath)
 mathML MarkUpList := x -> concatenate apply(x,mathML)
 
-net SEQ := x -> (					    -- we have to be prepared for a mixture of vertical and horizontal items
+net SEQ := net PARA := x -> (					    -- we have to be prepared for a mixture of vertical and horizontal items
      x = toList x;
      p := positions(x, i -> instance(i,MarkUpListParagraph)); -- these ones have to stand as independent paragraphs, the ones in between can be joined horizontally
      x = select(
@@ -1048,10 +1048,9 @@ tex PARA := x -> concatenate(///
      apply(x,tex))
 
 
-trimline := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
-
 html EXAMPLE := x -> concatenate html ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
-net ExampleTABLE := x -> "    " | stack between("",apply(toList x, y -> "" | net y#1 || ""))
+net ExampleTABLE := x -> "    " | boxNets apply(toList x, y -> net y#1)
+net EXAMPLE := x -> net ExampleTABLE apply(#x, i -> {x#i, CODE concatenate("i",toString (i+1)," : ",x#i)})
 
 tex TABLE := x -> concatenate applyTable(x,tex)
 texMath TABLE := x -> concatenate (
@@ -1182,8 +1181,8 @@ tex ANCHOR := x -> (
 	  )
      )
 
-html SHIELD := x -> concatenate apply(x,html)
-net SHIELD := x -> horizontalJoin apply(x,net)
+html NOCONTENTS := x -> concatenate apply(x,html)
+net NOCONTENTS := x -> horizontalJoin apply(x,net)
 
 html TEX := x -> x#0
 

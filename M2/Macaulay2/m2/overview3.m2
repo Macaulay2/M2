@@ -67,7 +67,7 @@ document { "Singular-Factory",
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
      PARA,
      "The following important routines call upon it:",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TOH "factor",
 	  TOH "gcd",
 	  TOH "decompose",
@@ -87,7 +87,7 @@ document { "Singular-Libfac",
      is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
      PARA,
      "The following important routines call upon it:",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TOH "factor",
 	  TOH "gcd",
 	  TOH "decompose",

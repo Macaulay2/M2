@@ -753,7 +753,7 @@ document { (monoid, Array),
      TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
      PARA,
      "Optional arguments (placed between the brackets):",
-     SHIELD UL (TO \ keys monoidOptions),
+     NOCONTENTS UL (TO \ keys monoidOptions),
      SEEALSO {(symbol " ", Ring, Array)}
      }
 
@@ -891,7 +891,7 @@ document { Module,
      Headline => "the class of all modules",
      PARA,
      "Common ways to make a module:",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TO (symbol ^, Ring, ZZ),
 	  TO (symbol ^, Ring, List),
 	  TO (cokernel, Matrix),
@@ -1473,7 +1473,7 @@ document { (symbol ++,Module,Module),
       	  "image vars R ++ kernel vars R",
 	  },
      "Projection and inclusion maps for direct sums:",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TO (symbol ^,Module,Array),
 	  TO (symbol _,Module,Array)
 	  },
@@ -1493,7 +1493,7 @@ document { (symbol ++,Matrix,Matrix),
       	  "a++b++c",
 	  },
      "Selecting rows or columns of blocks:",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TO (symbol ^,Matrix,Array),
 	  TO (symbol _,Matrix,Array)
 	  },
@@ -1507,7 +1507,7 @@ document { directSum,
      "The components can be recovered later with ", TO "components", ".",
      PARA,
      "Projection and inclusion maps for direct sums:",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TO (symbol ^,Module,Array),
 	  TO (symbol _,Module,Array),
 	  TO (symbol ^,Matrix,List),

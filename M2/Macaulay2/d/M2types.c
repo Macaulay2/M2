@@ -53,13 +53,16 @@ char **tocharstarstar_malloc(M2_stringarray p)
   return s;
 }
 
+static struct M2_string_struct emptyM2String;
+
 M2_string strings_substr(M2_string x, int start, int len)
 {
   M2_string p;
   if (start < 0) start += x->len;	/* start<0 means count from the end */
   if (start < 0) len += start, start = 0;
   if (start + len > (int)x->len) len = x->len - start;
-  if (len < 0) len = 0;
+  if (len <= 0) return &emptyM2String;
+  if (start == 0 && len == (int)x->len) return x;
   p = (M2_string) getmem_atomic(sizeofarray(p,len));
   p->len = len;
   memcpy(p->array,x->array+start,len);

@@ -412,7 +412,7 @@ document { Boolean,
      expect to receive them as arguments.",
      PARA,
      "Special operators dealing with truth values.",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TO "not",
 	  TO "and",
 	  TO "or",

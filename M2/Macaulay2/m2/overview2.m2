@@ -119,7 +119,7 @@ document { "manipulating modules",
      both represented as modules with two generators.",
      PARA,
      "Functions for finding related modules:",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TO "ambient",
 	  TO "cover",
 	  TO "super",

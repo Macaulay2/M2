@@ -278,7 +278,7 @@ document { toString symbol environment,
 document { Function,
      Headline => "the class of all functions",
      "Common ways to make a function:",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  TO "->"
 	  },
      "Returning from functions:",
@@ -353,12 +353,12 @@ document { HashTable,
      which consists of those hash tables whose entries can be changed.",
      PARA,
      "Access functions:",
-     SHIELD UL {
+     NOCONTENTS UL {
  	  TO "#",
  	  TO "."
  	  },
      "Query functions:",
-     SHIELD UL {
+     NOCONTENTS UL {
  	  TO "#?",
  	  TO ".?"
  	  }

@@ -89,7 +89,7 @@ document { "ideals",
 	  SEQ ("conversions",
 	       UL {
 		    TO "ideals to and from matrices",
-		    SHIELD TO "ideals to and from modules"
+		    NOCONTENTS TO "ideals to and from modules"
 		    }
 	       ),
 	  SEQ ("basic operations on ideals",
@@ -110,7 +110,7 @@ document { "ideals",
 		    TO "primary decomposition"
 		    }
 	       ),
-	  SHIELD TO "Groebner bases and related computations",
+	  NOCONTENTS TO "Groebner bases and related computations",
           },
      "For those operations where we consider an ideal as a module, such
      as computing Hilbert functions and polynomials, syzygies, free resolutions, see ",

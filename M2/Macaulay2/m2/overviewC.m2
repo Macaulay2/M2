@@ -3,7 +3,7 @@
 document { "basic rings",
      "The following rings are initially present in every session with
      Macaulay 2.",
-     SHIELD UL { 
+     NOCONTENTS UL { 
 	  TO "ZZ", 
 	  TO "QQ", 
 	  TO "RR", 

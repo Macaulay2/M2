@@ -38,7 +38,7 @@ document { (ass, Ideal),
 
 document { (ass,Strategy),
      "The strategy option value should be one of the following.",
-     SHIELD UL{
+     NOCONTENTS UL{
 	  SEQ ("1", " -- The assasinator is found using Ext modules."),
 	  SEQ ("2", " -- The assasinator is found using ", TO(top), " on a 
 	       series of ideals.")
@@ -58,7 +58,7 @@ document { (ass,Strategy),
 
 document { (ass,PrintLevel),
      "The PrintLevel should be one of the following.",
-     SHIELD UL {
+     NOCONTENTS UL {
 	  SEQ ("0", " -- (default) Returns the list of associated primes."),
 	  SEQ ("1", " -- Returns strategy number, associated primes as they are 
 	       found, and full list at the end."),
@@ -111,7 +111,7 @@ document { (localize,Ideal,Ideal),
 ///
 document { (localize,Strategy),
 	  "The strategy option value should be one of the following.",
-	  SHIELD UL{
+	  NOCONTENTS UL{
 	       SEQ ("0" , " -- Uses the algorithm of Eisenbud-Huneke-Vasconcelos"),
 	       SEQ ("1" , " -- Uses a separator to find the localization")
 	       },
@@ -138,7 +138,7 @@ document { (localize,Strategy),
 ///
 document { (localize,PrintLevel),
 	  "The PrintLevel option value should be one of the following.",
-	  SHIELD UL{
+	  NOCONTENTS UL{
 	       SEQ ("0", " -- default"),
 	       SEQ ("1" , " -- Informs the user of the current operation"),
 	       SEQ ("2" , " -- Prints the current operation and its result")},
@@ -182,7 +182,7 @@ document { (primaryComponent, Ideal, Ideal),
 document { (primaryComponent,Strategy),
      "The Strategy option value sets the localize strategy 
      option, and should be one of the following.",
-     SHIELD UL{
+     NOCONTENTS UL{
 	  SEQ ("0", " -- Uses ", TT "localize", " Strategy 0"),
 	  SEQ ("1", " -- Uses ", TT "localize", " Strategy 1"),
 	  SEQ ("2", " -- Uses ", TT "localize", " Strategy 2")}
@@ -200,7 +200,7 @@ document { (primaryComponent,Increment),
 
 document { (primaryComponent,PrintLevel),     
       "The Strategy option value should be one of the following.",
-     SHIELD UL{
+     NOCONTENTS UL{
 	  SEQ ("0", " -- default"),
 	  SEQ ("1", " -- informs user of the current power being checked."),
 	  SEQ ("2", " -- gives output of time-consuming processes.")
@@ -239,7 +239,7 @@ document { (primaryDecomposition, Ideal),
 
 document { (primaryDecomposition,Strategy),
      "The strategy option value should be one of the following.",
-     SHIELD UL {
+     NOCONTENTS UL {
           SEQ ("Monomial", " -- uses Alexander duality of a monomial ideal"),
 	  SEQ ("Binomial", " -- finds a cellular resolution of a 
 	                     binomial ideal"),
