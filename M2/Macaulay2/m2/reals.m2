@@ -23,20 +23,20 @@ QQ == RR := (r,x) -> x === r+0.
 
 isConstant RR := i -> true
 
-BigReal#0 = 0.
-BigReal#1 = 1.
-BigReal.char = 0
-BigReal.InverseMethod = x -> 1/x
-BigReal.degreeLength = 0
-BigReal.isField = true
-BigReal.RawRing = rawBigRR()
-BigReal.frac = BigReal
-BigReal.baseRings = {}
-BigReal.dim = 0
-BigReal.char = 0
-BigReal.Engine = true
-degree BigReal := i -> {}
-isConstant BigReal := i -> true
+BigRR#0 = 0.
+BigRR#1 = 1.
+BigRR.char = 0
+BigRR.InverseMethod = x -> 1/x
+BigRR.degreeLength = 0
+BigRR.isField = true
+BigRR.RawRing = rawBigRR()
+BigRR.frac = BigRR
+BigRR.baseRings = {}
+BigRR.dim = 0
+BigRR.char = 0
+BigRR.Engine = true
+degree BigRR := i -> {}
+isConstant BigRR := i -> true
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

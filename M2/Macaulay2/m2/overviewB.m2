@@ -868,7 +868,7 @@ document {
      Key => "concatenating matrices",
      
 	  SUBSECTION "concatenate horizontally",
-	       "Use ", TO "|", "to concatenate two matrices horizontally.",
+	       "Use ", TO "|", " to concatenate two matrices horizontally.",
 	       EXAMPLE {
 		    "R = ZZ/32003[a..f];",
 		    "M = genericMatrix(R,a,3,2)",
@@ -877,7 +877,7 @@ document {
 		    }
 	       ,	       
 	  SUBSECTION "concatenate vertically",
-	       "Use ", TO "||", "to concatenate two matrices vertically.",
+	       "Use ", TO "||", " to concatenate two matrices vertically.",
 	       EXAMPLE {
 		    "P = matrix{{d^2,a*d,e*f},{b*c,b*d,b*e},{a,c,d}}",
 		    "transpose(M)||P"
@@ -885,7 +885,7 @@ document {
 	       ,	       
 	  SUBSECTION "making block matrices",
 	       "The matrix function can take matrices as input as long as the sizes 
-	       match up.  ",
+	       match up.",
 	       EXAMPLE { 
 	       "matrix{{id_(R^3),M,P},{random(R^1,R^3),random(R^1,R^3),random(R^1,R^2)}}"
 	       	    },

@@ -14,15 +14,15 @@ CC#1 = new CC from (1.,0.)
 CC.degreeLength = 0
 degree CC := i -> {}
 
-BigComplex.synonym = "big complex number"
-BigComplex.isCommutative = true
-BigComplex.texMath = ///{\mathbb C}///
-BigComplex.isField = true
-BigComplex.RawRing = rawBigCC()
-BigComplex.mathML = "<mi>&Copf;</mi>"
-BigComplex.char = 0
-BigComplex.degreeLength = 0
-degree BigComplex := i -> {}
+BigCC.synonym = "big complex number"
+BigCC.isCommutative = true
+BigCC.texMath = ///{\mathbb C}///
+BigCC.isField = true
+BigCC.RawRing = rawBigCC()
+BigCC.mathML = "<mi>&Copf;</mi>"
+BigCC.char = 0
+BigCC.degreeLength = 0
+degree BigCC := i -> {}
 
 conjugate = method(TypicalValue => CC)
 conjugate ZZ := identity
