@@ -82,7 +82,7 @@ clean ::; $(MAKE) -C html clean
 book ::;  $(MAKE) -C book all
 clean ::; $(MAKE) -C book clean
 ################################# emacs
-emacs ::;  $(MAKE) -C emacs all
+all ::;  $(MAKE) -C emacs all
 clean ::; $(MAKE) -C emacs clean
 ################################# appendix to Vasconcelos' book
 Vasconcelos-appendix ::; $(MAKE) -C Vasconcelos-appendix all
