@@ -527,8 +527,8 @@ document { "classes and types",
 	       "method functions",
 	       UL {
 		    TO "making a new method function",
-		    TO (method => SingleArgumentDispatch),
-		    TO (method => Options),
+		    TO (method,SingleArgumentDispatch),
+		    TO (method,Options),
 		    }
 	       ),
 	  }
@@ -2191,7 +2191,7 @@ document { "inheritance from parents",
      ", TO "method", "."
      }
 
-document { method => Options,
+document { (method,Options),
      Headline => "method functions with optional arguments",
      OldSynopsis => {
 	  "f = method(Options => {a=>x, b=>y, ...})",

@@ -61,7 +61,7 @@ normalizeDocumentTag           = method(SingleArgumentDispatch => true)
 normalizeDocumentTag   String := s -> if isGlobalSymbol s then getGlobalSymbol s else s
 normalizeDocumentTag   Symbol := identity
 normalizeDocumentTag Sequence := identity
-normalizeDocumentTag   Option := identity
+-- normalizeDocumentTag   Option := identity
 normalizeDocumentTag  Nothing := x -> symbol null
 normalizeDocumentTag    Thing := x -> (
      if x.?Symbol and value x.Symbol === x then return x.Symbol;
@@ -76,14 +76,14 @@ packageTag   Symbol := s -> if class value s === Package and toString value s ==
 packageTag   String := s -> currentPackage
 packageTag  Package := identity
 packageTag Sequence := s -> youngest \\ package \ s
-packageTag   Option := s -> package youngest toSequence s
+-- packageTag   Option := s -> package youngest toSequence s
 packageTag    Thing := s -> error "can't determine package for documentation tag of unknown type"
 
 isDocumentableTag          = method(SingleArgumentDispatch => true)
 isDocumentableTag   Symbol := s -> null =!= packageTag s
 isDocumentableTag   String := s -> true
 isDocumentableTag Sequence := s -> all(s, isDocumentableThing)
-isDocumentableTag   Option := s -> all(toList s, isDocumentableThing)
+-- isDocumentableTag   Option := s -> all(toList s, isDocumentableThing)
 isDocumentableTag    Thing := s -> false
 
 -----------------------------------------------------------------------------
@@ -99,18 +99,18 @@ alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 formatDocumentTag Thing    := toString
 formatDocumentTag String   := s -> s
 
-after := (w,s) -> mingle(w,#w:s)
-formatDocumentTag Option   := record(
-     s -> concatenate (
-	  if class s#0 === Sequence 
-	  then (
-	       if class s#0#0 === Symbol
-	       then ( "(", formatDocumentTag s#0, ", ", toString s#1, " => ...)" )
-	       else ( toString s#0#0, "(", after(toString \ drop(s#0,1), ", "), " ", toString s#1, " => ...)" )
-	       )
-	  else ( toString s#0, "(..., ", toString s#1, " => ...)" )
-	  )
-     )
+--after := (w,s) -> mingle(w,#w:s)
+--formatDocumentTag Option   := record(
+--     s -> concatenate (
+--	  if class s#0 === Sequence 
+--	  then (
+--	       if class s#0#0 === Symbol
+--	       then ( "(", formatDocumentTag s#0, ", ", toString s#1, " => ...)" )
+--	       else ( toString s#0#0, "(", after(toString \ drop(s#0,1), ", "), " ", toString s#1, " => ...)" )
+--	       )
+--	  else ( toString s#0, "(..., ", toString s#1, " => ...)" )
+--	  )
+--     )
 
 fSeqInitialize := (toString,toStr) -> new HashTable from {
      (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toStr s#3),
@@ -144,50 +144,37 @@ fSeqInitialize := (toString,toStr) -> new HashTable from {
 	  else (toString s#0, "^", toStr s#1, "(", toStr s#2, ",", toStr s#3, ")")),
      4 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toStr s#3, ")"),
      3 => s -> (toString s#0, "(", toStr s#1, ",", toStr s#2, ")"),
-     2 => s -> (toString s#0, " ", toStr s#1)
+     2 => s -> (toString s#0, " ", toStr s#1),
+     (Symbol,5)=>s -> ( toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toStr s#3, ",", toString s#-1, "=>...)" ),
+     (Symbol,4)=>s -> ( toString s#0, "(", toStr s#1, ",", toStr s#2, ",", toString s#-1, "=>...)" ),
+     (Symbol,3)=>s -> ( toString s#0, "(", toStr s#1, ",", toString s#-1, "=>...)" ),
+     (Symbol,2)=>s -> ( toString s#0, "(..., ", toString s#-1, "=>...)" )
      }
 
-fSeq := null
+fSeq := fSeqInitialize(toString,toStr)
 formatDocumentTag Sequence := record(
-     s -> (
-	  if fSeq === null then (
-	       fSeq = fSeqInitialize(toString,toStr);
-	       );
-	  concatenate (
-	       if #s == 0                                            then toString
-	       else if             fSeq#?(#s,s#0)                    then fSeq#(#s,s#0)
-	       else if #s >= 1 and fSeq#?(#s,s#0,s#1)                then fSeq#(#s,s#0,s#1)
-	       else if #s >= 1 and fSeq#?(#s, class, class s#0, s#1) then fSeq#(#s, class, class s#0, s#1)
-	       else if             fSeq#?(#s, class, class s#0)      then fSeq#(#s, class, class s#0)
-	       else if             fSeq#?#s                          then fSeq#(#s)
-						                     else toString) s))
+     s -> concatenate (
+	  if #s == 0                                            then toString
+	  else if             fSeq#?(#s,s#0)                    then fSeq#(#s,s#0)
+	  else if #s >= 1 and fSeq#?(#s,s#0,s#1)                then fSeq#(#s,s#0,s#1)
+	  else if #s >= 1 and fSeq#?(#s, class, class s#0, s#1) then fSeq#(#s, class, class s#0, s#1)
+	  else if             fSeq#?(#s, class, class s#0)      then fSeq#(#s, class, class s#0)
+	  else if             fSeq#?(class s#-1,#s)             then fSeq#(class s#-1,#s)
+	  else if             fSeq#?#s                          then fSeq#(#s)
+								else toString) s)
 
-fSeqTO := null
+fSeqTO := fSeqInitialize(i -> TO i, i -> TO i)
 formatDocumentTagTO := method(SingleArgumentDispatch => true)
 formatDocumentTagTO Thing := x -> TT formatDocumentTag x
-formatDocumentTagTO Option := x -> (
-     if #x === 2 and (
-	  key := toString x#1;				    -- toString?  or maybe formatDocumentTag?
-	  pkg := getPackage key;
-	  pkg =!= null and getRecord(pkg,key) =!= null 
-	  )
-     then SEQ { toString x#0, "(..., ", TO x#1, " => ...)", headline x#1 }
-     else TT formatDocumentTag x
-     )
 formatDocumentTagTO Sequence := (
-     s -> SEQ (
-	  if fSeqTO === null then (
-	       fSeqTO = fSeqInitialize(i -> TO i, i -> TO i);
-	       );
-	  toList (
-	       if #s == 0                               then toString
-	       else if fSeqTO#?(#s,s#0)                 then fSeqTO#(#s,s#0)
-	       else if #s >= 1 and fSeqTO#?(#s,s#0,s#1) then fSeqTO#(#s,s#0,s#1)
-	       else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) 
-	       					        then fSeqTO#(#s, class, class s#0, s#1)
-	       else if fSeqTO#?(#s, class, class s#0)   then fSeqTO#(#s, class, class s#0)
-	       else if fSeqTO#?#s                       then fSeqTO#(#s)
-						        else toString) s))
+     s -> SEQ toList (
+	  if #s == 0                                              then toString
+	  else if             fSeqTO#?(#s,s#0)                    then fSeqTO#(#s,s#0)
+	  else if #s >= 1 and fSeqTO#?(#s,s#0,s#1)                then fSeqTO#(#s,s#0,s#1)
+	  else if #s >= 1 and fSeqTO#?(#s, class, class s#0, s#1) then fSeqTO#(#s, class, class s#0, s#1)
+	  else if             fSeqTO#?(#s, class, class s#0)      then fSeqTO#(#s, class, class s#0)
+	  else if             fSeqTO#?#s                          then fSeqTO#(#s)
+	                                                          else toString) s)
 
 -----------------------------------------------------------------------------
 -- verifying the keys
@@ -195,25 +182,24 @@ formatDocumentTagTO Sequence := (
 verifyTag := method(SingleArgumentDispatch => true)
 verifyTag Thing    := s -> null
 verifyTag Sequence := s -> (
-     if #s === 2 and class s#1 === Symbol then (	    -- optional argument (a method sequence has types in positions 1,2,...)
-	  fn := s#0;
-	  opt := s#1;
-	  if class fn === Sequence then (
-	       fn' := lookup fn;
-	       if class fn' =!= Function then error("documentation provided for '", formatDocumentTag fn, "' but no method installed");
+     if s#?-1 and class s#-1 === Symbol then (		    -- e.g., (res,Strategy) or (res,Module,Strategy)
+	  fn := drop(s,-1);
+	  opt := s#-1;
+	  if #fn === 1 then (
+	       fn = fn#0;
+	       if not instance(fn, Function) then error "expected first element to be a function";
+	       )
+	  else (
+	       if not instance(lookup fn, Function) then error("documentation provided for '", formatDocumentTag fn, "' but no method installed");
 	       fn = fn#0;
 	       );
-	  if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
-     else (
+	  if not (options fn)#?opt then error("expected ", opt, " to be an option of ", fn))
+     else (						    -- e.g., (res,Module) or (symbol **, Module, Module)
 	  if class lookup s =!= Function then (
 	       error("documentation provided for '", formatDocumentTag s, "' but no method installed");
 	       -- stderr << "warning: documentation provided for '" << formatDocumentTag s << "' but no method installed" << endl ;
 	  )))
-verifyTag Option   := s -> (
-     -- error "old style option documentation tag";
-     fn := s#0;
-     opt := s#1;
-     if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
+verifyTag Option   := s -> error "old style option documentation tag"
 
 -----------------------------------------------------------------------------
 -- installing the documentation
@@ -242,13 +228,47 @@ fixup String     := z -> z				    -- "..."
 fixup List       := z -> SEQ apply(z, fixup)		    -- {...} becomes SEQ{...}
 fixup Sequence   := z -> SEQ toList apply(z, fixup)	    -- (...) becomes SEQ{...}
 fixup MarkUpList := z -> apply(z,fixup)			    -- recursion
-fixup Option     := z -> z#0 => fixup z#1		    -- Headline => "...", Usage => "..."
+fixup Option     := z -> z#0 => fixup z#1		    -- Headline => "...", ...
 fixup TO         := z -> z				    -- TO{x}
 fixup TOH        := z -> z				    -- TOH{x}
 fixup MarkUpType := z -> z{}				    -- convert PARA to PARA{}
+fixup Function   := z -> z     				    -- allow Function => f in Synopsis
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
 
 file := null
+
+-----------------------------------------------------------------------------
+-- getting database records
+-----------------------------------------------------------------------------
+
+getOption := (s,tag) -> (
+     if class s === SEQ then (
+     	  x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
+     	  if #x > 0 then x#0#1 else null)
+     else null
+     )
+
+getOptionList := (s,tag) -> (
+     r := getOption(s,tag);
+     if class r === List then r
+     else if class r === SEQ then toList r
+     else if r === null then {}
+     else {r}
+     )
+
+getDoc := key -> (
+     fkey := formatDocumentTag key;
+     pkg := getPackage fkey;
+     if pkg =!= null then value getRecord(pkg,fkey)
+     )
+if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
+ 
+getHeadline := key -> (
+     d := getOption(getDoc key, Headline);
+     if d =!= null then SEQ join( {"  --  ", SEQ d} ))
+
+getSynopsis := key -> getOption(getDoc key, OldSynopsis)
+getNewSynopsis := key -> getOption(getDoc key, Synopsis)
 
 -----------------------------------------------------------------------------
 -- process examples
@@ -406,52 +426,16 @@ nextMoreGeneral4 := (f,A,B,C) -> (
      if l then (f,A',B',C'))
 nextMoreGeneral := s -> (
      if class s === Sequence then (
-     	  if #s === 2 then nextMoreGeneral2 s else
-     	  if #s === 3 then nextMoreGeneral3 s else
-     	  if #s === 4 then nextMoreGeneral4 s)
-     else if class s === Option and #s === 2 then s#1
-     )
-
------------------------------------------------------------------------------
--- getting database records
------------------------------------------------------------------------------
-
-getOption := (s,tag) -> (
-     if class s === SEQ then (
-     	  x := select(1, toList s, i -> class i === Option and #i === 2 and first i === tag);
-     	  if #x > 0 then x#0#1 else null)
-     else null
-     )
-
-getOptionList := (s,tag) -> (
-     r := getOption(s,tag);
-     if class r === List then r
-     else if class r === SEQ then toList r
-     else if r === null then {}
-     else {r}
-     )
-
-getDoc := key -> (
-     fkey := formatDocumentTag key;
-     pkg := getPackage fkey;
-     if pkg =!= null then value getRecord(pkg,fkey)
-     )
-if debugLevel > 10 then getDoc = on (getDoc, Name => "getDoc")
- 
-getHeadline := key -> (
-     d := getOption(getDoc key, Headline);
-     if d =!= null then SEQ join( {"  --  ", SEQ d} ))
-
-getUsage := key -> (
-     x := getOption(getDoc key, Usage);
-     if x =!= null then SEQ x)
-
-getSynopsis := key -> getOption(getDoc key, OldSynopsis)
-getNewSynopsis := key -> getOption(getDoc key, Synopsis)
+	  if #s === 0 then null 
+	  else if class s#-1 === Symbol then unSingleton drop(s,-1) -- dropping optional argument tag
+	  else if #s === 2 then nextMoreGeneral2 s 
+	  else if #s === 3 then nextMoreGeneral3 s 
+	  else if #s === 4 then nextMoreGeneral4 s))
 
 evenMoreGeneral := key -> (
      t := nextMoreGeneral key;
      if t === null and class key === Sequence then key#0 else t)
+
 headline = memoize (
      key -> (
 	  while ( d := getHeadline key ) === null and ( key = evenMoreGeneral key ) =!= null do null;
@@ -621,7 +605,8 @@ typicalValue := k -> (
      )
 
 types := method(SingleArgumentDispatch => true)
-types Thing := x -> ({},{typicalValue x})
+types Thing := x -> ({},{})
+types Function := x -> ({},{typicalValue x})
 types Sequence := x -> ( drop(toList x,1), { typicalValue x } )
 
 isopt := x -> class x === Option and #x === 2
@@ -666,6 +651,9 @@ optin Sequence := s -> (
 
 newSynopsis := method(SingleArgumentDispatch => true)
 newSynopsis Thing := f -> (
+     -- we still want to put
+     --	       moreGeneral s
+     -- back somewhere....
      SYN := getNewSynopsis f;
      usa := getOption(SYN,Usage);
      inp := getOptionList(SYN,Inputs);
@@ -683,6 +671,7 @@ newSynopsis Thing := f -> (
      out := getOptionList(SYN,Outputs);
      res := getOptionList(SYN,Results);
      (inp',out') := types f;
+     if out' === {Thing} then out' = {};		    -- not informative enough
      if #inp === 0 then (
 	  inp = apply(inp', T -> T => "");
 	  )
@@ -699,12 +688,14 @@ newSynopsis Thing := f -> (
 	  );
      inp = alter \ inp;
      out = alter \ out;
+     fun := getOption(SYN,Function);			    -- yes, Function is not a symbol
      if SYN =!= null then (
 	  SEQ {						    -- to be implemented
      	       PARA BOLD "Synopsis",
 	       UL {
      	       	    if usa#?0 then PARA { "Usage: ", TT usa },
-		    if class f === Sequence and f#?0 then (
+		    if fun =!= null then SEQ { "Function: ", TO fun }
+		    else if class f === Sequence and f#?0 then (
 	       		 if class f#0 === Function 
 			 then SEQ { "Function: ", TO f#0 }
 			 else SEQ { "Operator: ", TO f#0 }
@@ -717,81 +708,6 @@ newSynopsis Thing := f -> (
 	       }
 	  ))
 
-synopsis := method(SingleArgumentDispatch => true)
-synopsis Thing := f -> (
-     SYN := getSynopsis f;
-     if SYN =!= null then (
-	  t := i -> if SYN#?(i+1) then (
-	       if class SYN#i === Option 
-	       then SEQ { TT SYN#i#0, if SYN#i#1 =!= null then SEQ {": ", SEQ SYN#i#1} }
-	       else SEQ SYN#i
-	       );
-	  SEQ {
-	       PARA BOLD "Old Synopsis",
-	       SHIELD UL {
-		    if SYN#?0 then SEQ { "Usage: ", TT SYN#0},
-		    if SYN#?1 then SEQ { "Input:", UL { t 1, t 2, t 3 } },
-		    if SYN#?1 and SYN#-1 =!= null then SEQ { "Output:", UL { t(-1) } }
-		    }
-	       }
-	  )
-     )
-
-synopsis Sequence := s -> (
-     t := typicalValue s;
-     desc1 := desc2 := desc3 := descv := ".";
-     retv := arg1 := arg2 := arg3 := null;
-     SYN := getSynopsis s;
-     d := x -> if x === null then "." else SEQ { ": ", SEQ x };
-     if SYN =!= null then (
-	  if SYN#?1 and s#?1 then (
-	       if class SYN#1 === Option then (arg1 = TT SYN#1#0; desc1 = d SYN#1#1;)
-	       else desc1 = d SYN#1;
-	  if SYN#?2 and s#?2 then (
-	       if class SYN#2 === Option then (arg2 = TT SYN#2#0; desc2 = d SYN#2#1;)
-	       else desc2 = d SYN#2);
-	  if SYN#?3 and s#?3 then (
-	       if class SYN#3 === Option then (arg3 = TT SYN#3#0; desc3 = d SYN#3#1;)
-	       else desc3 = d SYN#3);
-     	  if SYN#?-1 then (
-	       if class SYN#-1 === Option then (retv = TT SYN#-1#0; descv = d SYN#-1#1;)
-	       else descv = d SYN#-1);
-	       );
-	  );
-     SEQ {
-	  PARA BOLD "Old Synopsis",
-	  SHIELD UL {
-	       if SYN#?0 then SEQ{ "Usage: ", TT SYN#0},
-	       SEQ { if class s#0 === Function then "Function: " else "Operator: ", TO s#0, headline s#0 },
-	       SEQ { "Input:",
-		    UL {
-			 if arg1 === null
-			 then SEQ {justSynonym s#1, desc1 }
-			 else SEQ {arg1, ", ", justSynonym s#1, desc1 }, 
-			 if #s > 2 then
-			 if arg2 === null
-			 then SEQ {justSynonym s#2, desc2 } 
-			 else SEQ {arg2, ", ", justSynonym s#2, desc2 }, 
-			 if #s > 3 then
-			 if arg3 === null
-			 then SEQ {justSynonym s#3, desc3 }
-			 else SEQ {arg3, ", ", justSynonym s#3, desc3 }
-			 }
-		    },
-	       if t =!= Thing or retv =!= null or descv =!= "." 
-	       then SEQ {
-	       	    "Output:",
-	       	    UL {
-		    	 if retv === null
-		    	 then SEQ {justSynonym t, descv}
-		    	 else SEQ {retv, ", ", justSynonym t  , descv}
-		    	 }
-		    },
-	       optargs s,
-	       moreGeneral s
-     	       }
-	  }
-     )
 
 documentableMethods := s -> select(methods s, isDocumentableTag)
 
@@ -807,25 +723,23 @@ fmeth := f -> (
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 briefDocumentation = method(SingleArgumentDispatch => true)
 
-briefDocumentation Thing :=
 briefDocumentation VisibleList := x -> null
 
-briefDocumentation File := 
-briefDocumentation BasicList := 
-briefDocumentation Function := 
-briefDocumentation MutableHashTable := 
-briefDocumentation HashTable := x -> (
+briefDocumentation Thing :=
+-- briefDocumentation File := 
+-- briefDocumentation BasicList := 
+-- briefDocumentation Function := 
+-- briefDocumentation MutableHashTable := 
+-- briefDocumentation HashTable := 
+x -> (
      if noBriefDocThings#?x or not isDocumentableThing x then return null;
-     r := getUsage x;
+     r = newSynopsis x;
      if r =!= null then << endl << text r << endl
      else (
-	  r = newSynopsis x;
-	  if r =!= null then << endl << text r << endl
-	  else (
-	       if headline x =!= null then << endl << headline x << endl;
-	       if class x === Function then (
-		    s := fmeth x;
-		    if s =!= null then << endl << text s << endl;))))
+	  if headline x =!= null then << endl << headline x << endl;
+	  if class x === Function then (
+	       s := fmeth x;
+	       if s =!= null then << endl << text s << endl;)))
 
 documentation = method(SingleArgumentDispatch => true)
 documentation String := s -> (
@@ -889,7 +803,7 @@ seecode := x -> (
      )
 
 documentationValue := method()
-documentationValue(Symbol,Function) := (s,f) -> SEQ { ret f, fmeth f, optargs f, seecode f }
+documentationValue(Symbol,Function) := (s,f) -> SEQ { ret f, fmeth f, seecode f }
 documentationValue(Symbol,Type) := (s,X) -> (
      syms := unique flatten(values \ globalDictionaries);
      a := apply(select(pairs typicalValues, (key,Y) -> Y===X and isDocumentableTag key), (key,Y) -> key);
@@ -945,8 +859,10 @@ documentation Symbol := S -> (
      	  }
      )
 
-documentation Option := v -> (
-     (fn, opt) -> (
+documentation Sequence := s -> (
+     if s#?-1 and instance(s#-1,Symbol) then (		    -- optional argument
+	  fn := unSingleton drop(s,-1);
+	  opt := s#-1;
 	  if not (options fn)#?opt then error ("function ", fn, " does not accept option key ", opt);
 	  default := (options fn)#opt;
 	  SEQ { 
@@ -961,17 +877,15 @@ documentation Option := v -> (
 		    }
 	       }
 	  )
-     ) toSequence v
-
-documentation Sequence := s -> (
-     if null === lookup s then error("expected ", toString s, " to be a method");
-     SEQ {
-	  title s, 
-	  newSynopsis s,
-	  getDocBody(s),
-	  seecode s
-	  }
-     )
+     else (						    -- method key
+	  if null === lookup s then error("expected ", toString s, " to be a method");
+	  SEQ {
+	       title s, 
+	       newSynopsis s,
+	       getDocBody(s),
+	       seecode s
+	       }
+	  ))
 
 documentation Thing := x -> if ReverseDictionary#?x then return documentation ReverseDictionary#x else SEQ{ " -- undocumented -- "}
 
@@ -1622,6 +1536,7 @@ undocumentedSymbols = () -> select(
 
 -----------------------------------------------------------------------------
 
+new TO from Sequence := (TO,x) -> new TO from {x}
 new TO from List := (TO,x) -> (
      verifyTag first x;
      x)

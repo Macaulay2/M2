@@ -668,7 +668,7 @@ document { saturate,
      This will be changed in a later version."
      }
 
-document { saturate => Strategy,
+document { (saturate,Strategy),
      "The strategy option value should be one of the following:",
      SHIELD UL {
           TO "Linear",
@@ -678,7 +678,7 @@ document { saturate => Strategy,
           }
      }
 
-document { saturate => DegreeLimit,
+document { (saturate,DegreeLimit),
      TT "DegreeLimit => n", " -- keyword for an optional argument used with
      ", TO "saturate", " which specifies that the computation should halt after dealing 
      with degree n."

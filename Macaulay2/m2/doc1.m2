@@ -10,32 +10,82 @@ document { document,
      Headline => "install documentation",
      TT "document {s, d}", " -- install documentation ", TT "d", " for 
      the topic ", TT "s", ".",
-     PARA,
-     "The documentation ", TT "d", " should be ", TO "hypertext", ".  The topic
-     ", TT "s", " may be one of the special forms useable with ", TO "TO", ".  As
-     a convenience, lists and sequences in ", TT "d", " are converted to ", TT "SEQ", "
-     mark up items, and instances of ", TO "MarkUpType", ", such as ", TO "PARA", "
-     are converted to empty instances of their type.",
-     PARA,
-     "Special documentation entries:",
+     PARA {
+	  "The documentation ", TT "d", " should be ", TO "hypertext", ".  The topic
+	  ", TT "s", " may be one of the special forms useable with ", TO "TO", ".  As
+	  a convenience, lists and sequences in ", TT "d", " are converted to ", TT "SEQ", "
+	  mark up items, and instances of ", TO "MarkUpType", ", such as ", TO "PARA", "
+	  are converted to empty instances of their type."},
+     PARA "Special documentation entries:",
      UL {
-	  SEQ { TT "Headline => \"...\"", " -- some text to be displayed along
-	       with menu items that lead to this node.  The text should be
-	       less than a line full." },
-	  SEQ { TT "Usage => ...", " -- text to be displayed as a usage message
-	       when the user types the name of this object at top level.  In its
-	       absence, the synopsis, if any, is displayed, otherwise the
-	       available methods are displayed." },
-	  SEQ { TT ///OldSynopsis => { "z = f(x,y)", "x" => ..., "y" => ..., "z" => ... }///,
-	       " -- synopsis of the use of a function with a return value."
-	       },
-	  SEQ { TT ///OldSynopsis => { "f(x,y)", "x" => ..., "y" => ..., null }///,
-	       " -- synopsis of the use of a function without a return value."
-	       },
-	  SEQ { TT ///EXAMPLE { "...", "..." }///, " -- bits of example code to display"},
-	  SEQ { TT ///SEEALSO { "a", "b" }///, " -- a menu of related nodes to visit." },
-	  },
+	  TOH "Headline",
+	  TOH "Synopsis",
+	  TOH "EXAMPLE",
+	  TOH "SEEALSO"
+	  }
      }
+
+document { Synopsis,
+     Headline => "specify the synopsis section of a documentation node",
+     Synopsis => {
+	  Usage => "document { x, Synopsis => opts, ... }",
+	  Inputs => {
+	       "opts" => List => "a list of options",
+	       },
+	  Results => {
+	       "provides the synopsis section of a documentation node"
+	       }
+	  },
+     PARA {
+	  "The list ", TT "opts", " should be a list of options, each of which is in one of the
+	  following forms."},
+     UL {
+	  TT "Usage => \"USAGESTRING\"",
+	  TT "Inputs => INPUTLIST",
+	  TT "Outputs => OUTPUTLIST",
+	  TT "Results => RESULTLIST"
+	  },
+     PARA {
+	  "The only entry that is mandatory is USAGESTRING, which should show a typical usage of
+	  the documented item, ", TT "x", ".  Each of the other lists should consist of items in one of the
+	  following forms."},
+     UL {
+	  TT "HYPERTEXTLIST",
+	  TT "CLASS => HYPERTEXTLIST",
+	  TT "STRING => HYPERTEXTLIST",
+	  TT "STRING => CLASS => HYPERTEXTLIST",
+	  TT "SYMBOL => HYPERTEXTLIST",
+	  TT "SYMBOL => CLASS => HYPERTEXTLIST"
+	  },
+     PARA {
+	  "Here ", TT "STRING", " should be the name of one of the symbols appearing in ", TT "USAGESTRING", ", ", TT "SYMBOL", " should
+	  be the symbol used as a tag for an optional argument to the function, ", TT "CLASS", " should be a type giving
+	  the class typically expected for the input or typically provided by the output, and ", TT "HYPERTEXTLIST", "
+	  may be a string of a list of ", TO "hypertext", " items."},
+     PARA {
+	  "The types of the inputs and outputs are often provided in other ways, see ", TO "typicalValues", "."
+	  }
+     }
+
+document { Headline,
+     Headline => "make a headline for a documentation node",
+     Synopsis => {
+	  Usage => "document { x, Headline => HEADLINE, ... }",
+	  Function => document,
+	  Inputs => {
+	       "HEADLINE" => String => "a brief headline"
+	       },
+	  Results => {
+	       { "the headline string will be used to annotate itemized lists of cross references to ", TT "x", " in the documentation" }
+	       }
+	  },
+     SEEALSO "hypertext"
+     }
+
+document { Usage, "See ", TO "Synopsis", "." }
+document { Results, "See ", TO "Synopsis", "." }
+document { Inputs, "See ", TO "Synopsis", "." }
+document { Outputs, "See ", TO "Synopsis", "." }
 
 document { TEST,
      Headline => "commands for testing later",
@@ -431,33 +481,32 @@ document { (symbol ">>>", List, Function),
 
 document { (symbol ">>>", OptionTable, Function),
      Headline => "attaching options to a function",
-     Usage => { TT "defs >>> fun", " -- a new function made from the
-	  function ", TT "fun", " that processes optional arguments
-	  specified by ", TT "defs", "."},
-     OldSynopsis => {
-	  "g = defs >>> fun",
-	  "defs" => { "a hash table whose keys are the names
-     of the optional arguments, and whose values are the
-     corresponding default values." },
-     	  "fun" => { "a function that expects optional arguments." },
-     	  "g" => { "a new function that pre-processes the optional
-     arguments and then calls ", TT "fun", "." }
+     Synopsis => {
+	  Usage => "g = defs >>> fun",
+	  Inputs => {
+	       "defs" => { 
+		    "a hash table whose keys are the names of the optional arguments, and whose values are the
+	  	    corresponding default values"},
+	       "fun" => { "a function that expects optional arguments" }
+	       },
+	  Outputs => {
+     	       "g" => { "a new function that pre-processes the optional arguments and then calls ", TT "fun" }
+	       }
      	  },
-     PARA,
-     "The new function ", TT "g", " works as follows.
-     The value of ", TT "g args", ", say, is obtained by evaluation of 
-     ", TT "(fun opts)(args')", ", where ", TT "args'", " is obtained from
-     ", TT "args", " by removing the options of the form ", TT "X=>A", " 
-     (where ", TT "X", " is a name of an optional argument), and ", TT "opts", " 
-     is a hash table of the same form as ", TT "defs", " in which the default
-     values have been replaced by the user-supplied values, e.g., the
-     value stored under the key ", TT "X", " has been replaced by
-     ", TT "A", ".",
-     PARA,
-     "Remark: ", TT "defs", " can also be simply a list of options.",
-     PARA,
-     "In the following example we use a simple definition for ", TT "fun", "
-     so we can see everything that ", TT "fun", " receives.",
+     PARA {
+	  "The new function ", TT "g", " works as follows.
+	  The value of ", TT "g args", ", say, is obtained by evaluation of 
+	  ", TT "(fun opts)(args')", ", where ", TT "args'", " is obtained from
+	  ", TT "args", " by removing the options of the form ", TT "X=>A", " 
+	  (where ", TT "X", " is a name of an optional argument), and ", TT "opts", " 
+	  is a hash table of the same form as ", TT "defs", " in which the default
+	  values have been replaced by the user-supplied values, e.g., the
+	  value stored under the key ", TT "X", " has been replaced by
+	  ", TT "A", "."},
+     PARA { "Remark: ", TT "defs", " can also be simply a list of options." },
+     PARA {
+     	  "In the following example we use a simple definition for ", TT "fun", "
+     	  so we can see everything that ", TT "fun", " receives."},
      EXAMPLE {
 	  "g = {a=>1, b=>2} >>> opts -> args -> {args, opts}",
 	  "g x",
@@ -467,7 +516,7 @@ document { (symbol ">>>", OptionTable, Function),
      SEEALSO {"making new functions with optional arguments", "OptionTable", "Option", "=>"}
      }
 
-document { method => SingleArgumentDispatch,
+document { (method, SingleArgumentDispatch),
      Headline => "method functions with a variable number of arguments",
      OldSynopsis => {
 	  "f = method(SingleArgumentDispatch => true)",
@@ -498,7 +547,7 @@ document { symbol "typicalValues",
      SEEALSO { "specifying typical values" }
      }
 
-document { (method => TypicalValue),
+document { (method,TypicalValue),
      Headline => "specify return value type",
      TT "TypicalValue => X", " -- an option to ", TO "method", "
      which specifies that values returned by the method function will
@@ -528,7 +577,7 @@ document { method,
      SEEALSO {"methods" }
      }
 
-document { method => Associative,
+document { (method,Associative),
      Headline => "allows associative methods to be created",
      NOINDENT,
      TT "f = method(Associative=>true)", " -- creates an associative
@@ -656,12 +705,14 @@ document { vars,
 
 document { (vars,Ring),
      Headline => "row matrix of the variables",
-     Usage => {
-	  "v = vars R",
-	  "R" => null,
-	  "v" => { "the ", TT "1", " by ", TT "n", " matrix whose 
-	       entries are the variables of the polynomial 
-	       ring ", TT "R", "."}
+     Synopsis => {
+	  Usage => "vars R",
+	  Inputs => {
+	       "R" => "",
+	       },
+	  Outputs => {
+	       { "the ", TT "1", " by ", TT "n", " matrix whose entries are the variables of the polynomial ring ", TT "R"}
+	       }
 	  },
      EXAMPLE {
       	  "R = QQ[a..e]",
@@ -673,11 +724,14 @@ document { (vars,Ring),
      }
 
 document { (vars,Sequence),
-     Usage => {
-	  "w = vars(i .. j)",
-	  "(i .. j)" => "a sequence of integers",
-	  "w" => { "a sequence of symbols which can be used as indeterminates
-	  in a polynomial ring, the ", TT "i", "-th one through the ", TT "j", "-th one." }
+     Synopsis => {
+	  Usage => "vars(i .. j)",
+	  Inputs => {
+	       "(i .. j)" => "a sequence of integers",
+	       },
+	  Outputs => {
+	       { "a sequence of symbols which can be used as indeterminates in a polynomial ring, the ", TT "i", "-th one through the ", TT "j", "-th one." }
+	       },
 	  },
      "There is no limit on the size or sign of the integers ", TT "i", " 
      and ", TT "j", ".  The symbols returned are single letters, or the letter 
@@ -721,23 +775,6 @@ document { flatten,
      EXAMPLE "flatten {{2,3,4},{{5}},6}"
      }
 
-///
-document docTemplate {
-     Header => (flatten,Matrix),
-     Briefly => "produce a row matrix with the same entries as a given matrix",
-     Usage => "g = flatten f",
-     Input => {("f",Matrix) => { "An m by n matrix" }},
-     Output => {("g",Matrix) => { "The 1 by mn matrix with the same entries as f" }},
-     Description => {"The matrix produced consists of the first column followed by
-	  the second, and so on.  Both the target and the source of the matrix ", 
-	  TT "f", " must be free modules."},
-     Example => {
-       "R = QQ[a..f]; m = matrix{{a,b,c},{d,e,f}}",
-       "flatten m"
-       }
-     }
-///
-
 document { symbol cokernel,
      Headline => "cokernel of a map",
      TT "cokernel f", " -- produces the cokernel of the module homomorphism f",
@@ -748,7 +785,6 @@ document { symbol cokernel,
      "The generators of the cokernel are provided by the generators of the target
      of ", TT "f", ".  In other words, ", TT "cover target f", " and ", TT "cover cokernel f", " are equal.",
      PARA,
-     "For an abbreviation, use ", TT "coker", ".",
      SEEALSO {"kernel", "cover"}
      }
 
@@ -832,8 +868,6 @@ document { Hom,
 document { generators,
      Headline => "matrix of generators",
      TT "generators x", " -- produces the generators of x.",
-     PARA,
-     "For an abbreviation, use ", TT "gens", ".",
      PARA,
      "Produces the generators of a Groebner basis, a polynomial ring,
      a monoid ring, a free module, a free group, a submodule given by

@@ -100,17 +100,6 @@ document { HEAD,
      SEEALSO "hypertext"
      }
 
-document { Headline,
-     Headline => "make a documentation Headline item",
-     TT "Headline => x", " -- an option for ", TO "document", " to specify
-     the headline.",
-     PARA,
-     "The argument ", TT "x", " should be a string, to be used as a brief
-     descriptor to accompany links to the node from menus in other nodes.",
-     PARA,
-     SEEALSO "hypertext"
-     }
-
 document { BODY,
      Headline => "HTML BODY item",
      TT "BODY x", " -- encloses ", TT "x", " in a hypertext BODY item.",
@@ -673,7 +662,7 @@ document { TO,
      an argument of class ", TT "X", ".  For more arguments, use ", TT "TO (f,X,Y)", "
      or ", TT "TO (f,X,Y,Z)", ".",
      PARA,
-     "The special form ", TT "TO (f => X)", " produces a hypertext link to the
+     "The special form ", TT "TO (f,X)", " produces a hypertext link to the
      page documenting the optional argument named ", TT "X", " for the 
      function ", TT "f", ".",
      PARA,
