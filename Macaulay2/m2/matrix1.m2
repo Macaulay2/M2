@@ -638,12 +638,21 @@ document { quote flip,
      TT "flip(F,G)", " -- yields the matrix representing the map F ** G --> G ** F."
      }
 
+align := f -> (
+     if any(degree f, i -> i =!= 0) 
+     then (
+	  g := map(target f,,f);
+	  if isHomogeneous g then g else f
+	  )
+     else f
+     )
+
 subquotient(Nothing,Matrix) := (null,relns) -> (
      M := new Module of Vector;
      M.ring = ring relns;
      E := target relns;
      M.handle = handle E;
-     relns = matrix relns;
+     relns = align matrix relns;
      if E.?generators then (
 	  M.generators = E.generators;
 	  relns = E.generators * relns;
@@ -656,7 +665,7 @@ subquotient(Nothing,Matrix) := (null,relns) -> (
 subquotient(Matrix,Nothing) := (subgens,null) -> (
      M := new Module of Vector;
      E := target subgens;
-     subgens = matrix subgens;
+     subgens = align matrix subgens;
      if E.?generators then subgens = E.generators * subgens;
      M.handle = E.handle;
      M.generators = subgens;
@@ -675,8 +684,8 @@ subquotient(Matrix,Matrix) := (subgens,relns) -> (
      M#0 = ( sendgg(ggPush M, ggzero); new M);
      if M == 0 then M
      else (
-	  relns = matrix relns;
-	  subgens = matrix subgens;
+	  relns = align matrix relns;
+	  subgens = align matrix subgens;
 	  if E.?generators then (
 	       relns = E.generators * relns;
 	       subgens = E.generators * subgens;
