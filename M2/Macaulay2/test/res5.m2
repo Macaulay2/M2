@@ -12,7 +12,10 @@ assert ( D.dd != 0 )
 assert ( rank D_2 == 12 )
 scan ( length D + 1 , i -> assert ( unique degrees D_i == {{i}} ))
 
--- T = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}]
+T = ZZ/101[x,dx,y,dy,WeylAlgebra => {x=>dx, y=>dy}]
+assert( dx * x == x*dx + 1 )
+
+
 -- Local Variables:
 -- compile-command: "make res5.okay"
 -- End:
