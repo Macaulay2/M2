@@ -63,7 +63,7 @@ expression GeneralOrderedMonoid := M -> (
           then v = append(v, MonomialOrder => M.Options.MonomialOrder);
           if M.Options.MonomialSize =!= (options monoid).MonomialSize
           then v = append(v, MonomialSize => M.Options.MonomialSize);
-	  if M.Options.SkewCommutative
+	  if M.Options.SkewCommutative != false
 	  then v = append(v, SkewCommutative => M.Options.SkewCommutative);
 	  new Array from apply(v,expression)
 	  )
@@ -79,7 +79,7 @@ name GeneralOrderedMonoid := M -> (
           then v = append(v, MonomialOrder => M.Options.MonomialOrder);
           if M.Options.MonomialSize =!= (options monoid).MonomialSize
           then v = append(v, MonomialSize => M.Options.MonomialSize);
-	  if M.Options.SkewCommutative
+	  if M.Options.SkewCommutative != false
 	  then v = append(v, SkewCommutative => M.Options.SkewCommutative);
      	  concatenate("[",between(",",name\v),"]")
 	  ))

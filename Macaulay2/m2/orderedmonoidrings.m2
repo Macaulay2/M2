@@ -210,6 +210,11 @@ commden := (f) -> (
 	  first entries lift((coefficients f)#1, QQ),
 	  denominator))
 
+indices := (M,vars) -> apply(vars, x -> (
+	  x = baseName x;
+	  if M.index#?x then M.index#x
+	  else error "expected a variable of the ring"))
+
 Ring OrderedMonoid := (			  -- no memoize
      (R,M) -> (
 	  if not (M.?Engine and M.Engine) 
@@ -219,12 +224,73 @@ Ring OrderedMonoid := (			  -- no memoize
 	  if R.?newEngine != M.?newEngine
 	  then error "expected both ring and monoid to be handled by new engine routines";
 	  Weyl := M.Options.WeylAlgebra =!= {};
+	  Skew := M.Options.SkewCommutative != false;
 	  degRing := (
 	       if M.?newEngine or R.?newEngine
 	       then if degreeLength M != 0 then newDegreesRing degreeLength M else ZZZ
 	       else if degreeLength M != 0 then degreesRing degreeLength M else ZZ
 	       );
-	  RM := if not Weyl then (
+	  RM := if Weyl then (
+	       diffs := M.Options.WeylAlgebra;
+	       if class diffs === Option 
+	       then diffs = {diffs}
+	       else if class diffs =!= List 
+	       then error "expected list as WeylAlgebra option";
+	       diffs = apply(diffs, x -> if class x === Option then toList x else x);
+	       h    := select(diffs, x -> class x =!= List);
+	       if #h > 1 then error "WeylAlgebra: expected at most one homogenizing element";
+	       h = indices(M,h);
+	       if #h === 1 then h = h#0 else h = -1;
+	       diffs = select(diffs, x -> class x === List);
+	       diffs = apply(diffs, x -> (
+			 if #x =!= 2 then error "WeylAlgebra: expected x=>dx, {x,dx}";
+			 if class x#0 === Sequence and class x#1 === Sequence
+			 then (
+			      if #(x#0) =!= #(x#1) then error "WeylAlgebra: expected sequences of the same length";
+			      mingle x
+			      )
+			 else toList x
+			 ));
+	       diffs = flatten diffs;
+	       if R.?newEngine then (
+		    diffs = pack(diffs,2);
+		    diffs0 := indices(M,first\diffs);
+		    diffs1 := indices(M,last\diffs);
+		    scan(diffs0,diffs1,(x,dx) -> 
+			 if not x<dx
+			 then error "WeylAlgebra: expected differentiation variables to occur to the right of their variables"
+			 );
+	       	    new PolynomialRing from (ggPush R, ggPush M, 
+			 ggPush diffs1, ggPush diffs0,
+			 ggPush h,
+			 ggweylalgebra)
+		    )
+	       else (
+	       	    diffs = indices(M,diffs);
+	       	    new PolynomialRing from (ggPush R, ggPush M, ggPush diffs, ggweylalgebra)
+		    )
+	       )
+	  else if Skew then (
+	       if M.?newEngine
+	       then (
+		    skews := (
+		    	 if M.Options.SkewCommutative == true
+			 then toList (0 .. numgens M - 1)
+			 else if class M.Options.SkewCommutative === List
+			 then indices(M,M.Options.SkewCommutative)
+			 else error "expected SkewCommutative option to be 'true' or a list of variables"
+			 );
+		    new PolynomialRing from (
+		    	 ggPush degRing, 
+		    	 ggPush flatten (options M).Degrees, 
+		    	 ggPush R, 
+		    	 ggPush M,
+		    	 ggPush skews,
+		    	 ggskewpolyring
+		    ))
+	       else new PolynomialRing from (ggPush R, ggPush M, ggpolyring)
+	       )
+	  else (
 	       if M.?newEngine
 	       then new PolynomialRing from (
 		    ggPush degRing, 
@@ -234,31 +300,6 @@ Ring OrderedMonoid := (			  -- no memoize
 		    ggpolyring
 		    )
 	       else new PolynomialRing from (ggPush R, ggPush M, ggpolyring)
-	       )
-	  else (
-	       diffs := M.Options.WeylAlgebra;
-	       if class diffs === Option 
-	       then diffs = {diffs}
-	       else if class diffs =!= List 
-	       then error "expected list as WeylAlgebra option";
-	       diffs = apply(diffs, x -> (
-			 if not ((class x === Option or class x === List) and #x === 2)
-			 then error "expected x=>dx or {x,dx}";
-			 if class x#0 === Sequence and class x#1 === Sequence
-			 then (
-			      if #(x#0) =!= #(x#1)
-			      then error "expected sequences of the same length";
-			      x = mingle x;
-			      )
-			 else x = toList x;
-			 x));
-	       diffs = flatten diffs;
-	       diffs = apply(diffs, x -> (
-			 x = baseName x;
-			 if M.index#?x
-			 then M.index#x
-			 else error "expected a variable of the ring"));
-	       new PolynomialRing from (ggPush R, ggPush M, ggPush diffs, ggweylalgebra)
 	       );
 	  RM.baseRings = append(R.baseRings,R);
 	  if M.?newEngine then RM.newEngine = true;
