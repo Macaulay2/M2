@@ -674,10 +674,13 @@ NewOfFromFun = newoffromfun;
 whiledofun(predicate:Code,body:Code):Expr := (
      while true do (
 	  p := eval(predicate);
-	  when p is Error do return(p)
+	  when p is err:Error 
+	  do return(if err.message == breakMessage then err.report else p)
 	  else if p == True then (
 	       b := eval(body);
-	       when b is Error do return(b) else nothing;
+	       when b is err:Error 
+	       do return(if err.message == breakMessage then err.report else b) 
+	       else nothing;
 	       )
 	  else if p == False then break
 	  else return(errorpos(predicate,"expected true or false")));
@@ -690,10 +693,13 @@ whilelistfun(predicate:Code,body:Code):Expr := (
      i := 0;
      while true do (
 	  p := eval(predicate);
-	  when p is Error do return(p)
+	  when p is err:Error
+	  do return(if err.message == breakMessage then err.report else p)
 	  else if p == True then (
 	       b := eval(body);
-	       when b is Error do return(b) else (
+	       when b is err:Error 
+	       do return(if err.message == breakMessage then err.report else b) 
+	       else (
 		    if i == n then (
 			 n = 2*n;
 			 r = new Sequence len n do (
@@ -719,10 +725,12 @@ whilelistdofun(predicate:Code,listClause:Code,doClause:Code):Expr := (
      i := 0;
      while true do (
 	  p := eval(predicate);
-	  when p is Error do return(p)
+	  when p is err:Error do return(if err.message == breakMessage then err.report else p)
 	  else if p == True then (
 	       b := eval(listClause);
-	       when b is Error do return(b) else (
+	       when b is err:Error
+	       do return(if err.message == breakMessage then err.report else b)
+	       else (
 		    if i == length(r) then (
 			 r = new Sequence len 2*length(r) do (
 			      foreach x in r do provide x;
@@ -733,7 +741,9 @@ whilelistdofun(predicate:Code,listClause:Code,doClause:Code):Expr := (
 		    i = i+1;
 		    );
      	       c := eval(doClause);
-	       when c is Error do return(c) else nothing;
+	       when c is err:Error
+	       do return(if err.message == breakMessage then err.report else c) 
+	       else nothing;
 	       )
 	  else if p == False then break
 	  else return(errorpos(predicate,"expected true or false")));
@@ -774,13 +784,20 @@ forfun(c:forCode):Expr := (
      	  j = j+1;
 	  if predicate != dummyCode then (
 	       p := eval(predicate);
-	       when p is Error do return(p)
+	       when p is err:Error do (
+		    if err.message == breakMessage then return(err.report)
+		    else return(p)
+		    )
 	       else if p == False then break
 	       else if p != True then return(errorpos(predicate,"expected true or false"));
 	       );
 	  if listClause != dummyCode then (
 	       b := eval(listClause);
-	       when b is Error do return(b) else (
+	       when b is err:Error do (
+		    if err.message == breakMessage then return(err.report)
+		    else return(b)
+		    )
+	       else (
 		    if i == length(r) then (
 			 r = new Sequence len 2*length(r) do (
 			      foreach x in r do provide x;
@@ -793,7 +810,11 @@ forfun(c:forCode):Expr := (
 	       );
 	  if doClause != dummyCode then (
 	       b := eval(doClause);
-	       when b is Error do return(b) else nothing;
+	       when b is err:Error do (
+		    if err.message == breakMessage then return(err.report)
+		    else return(b)
+		    )
+	       else nothing;
 	       );
 	  );
      if listClause == dummyCode then nullE
@@ -804,18 +825,6 @@ forfun(c:forCode):Expr := (
 	       else new Sequence len i do foreach x in r do provide x)));
 ForFun = forfun;
 
-untilfun(predicate:Code,body:Code):Expr := (
-     while true do (
-	  p := eval(predicate);
-	  when p is Error do return(p)
-	  else if p == False then (
-	       b := eval(body);
-	       when b is Error do return(b) else nothing;
-	       )
-	  else if p == True then break
-	  else return(errorpos(predicate,"expected true or false")));
-     nullE);
-UntilFun = untilfun;
 setupconst("stdio",Expr(stdIO));
 --setupconst("stdin",Expr(stdin));
 --setupconst("stdout",Expr(stdout));
