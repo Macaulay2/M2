@@ -446,8 +446,6 @@ samering := mats -> (
      then error "expected matrices over the same ring";
      R)
 
-directSum Matrix := identity
-
 Matrix.directSum = args -> (
      R := ring args#0;
      if not all(args, f -> ring f === R) 
@@ -500,25 +498,41 @@ single := v -> (
      then error "incompatible objects in direct sum";
      v#0)
 
-Option ++ Option := directSum
-Option.directSum = args -> (
-     S := directSum (args/last);
-     keys := S.indices = toList args/first;
-     S.indexComponents = new HashTable from toList apply(#keys, i -> keys#i => i);
-     S)
-
 indices = method()
 indices MutableHashTable := X -> (
      if not X.?components then error "expected an object with components";
      if X.?indices then X.indices else toList ( 0 .. #X.components - 1 ) )
 
+document { quote youngest,
+     TT "youngest s", " -- return the youngest mutable hash table in the sequence
+     ", TT "s", ", if any, else ", TT "null", "."
+     }
+
+directSum List := args -> directSum toSequence args
 directSum Sequence := args -> (
      if #args === 0 then error "expected more than 0 arguments";
-     type := single apply(args, class);
-     if type.?directSum then type.directSum args
-     else error "no method for direct sum"
-     )
-directSum List := args -> directSum toSequence args
+     y := youngest args;
+     key := (directSum, args);
+     if y =!= null and y#?key then y#key else (
+	  type := single apply(args, class);
+	  if not type.?directSum then error "no method for direct sum";
+	  S := type.directSum args;
+	  if y =!= null then y#key = S;
+	  S))
+Option ++ Option := directSum
+Option.directSum = args -> (
+     if #args === 0 then error "expected more than 0 arguments";
+     modules := apply(args,last);
+     y := youngest modules;
+     key := (directSum, args);
+     if y =!= null and y#?key then y#key else (
+	  type := single apply(modules, class);
+	  if not type.?directSum then error "no method for direct sum";
+	  S := type.directSum modules;
+	  if y =!= null then y#key = S;
+     	  keys := S.indices = toList args/first;
+     	  S.indexComponents = new HashTable from toList apply(#keys, i -> keys#i => i);
+	  S))
 Matrix ++ Matrix := directSum
 Module ++ Module := directSum
 
@@ -1793,7 +1807,7 @@ document { quote subquotient,
      SEEALSO {"generators", "relations"}
      }
 
-Matrix ** Matrix := (f,g) -> (
+Matrix ** Matrix := (f,g) -> f ** g := (
      R := ring f;
      if ring g =!= R then error "expected matrices over the same ring";
      sendgg (ggPush f, ggPush g, ggtensor);
@@ -2379,3 +2393,5 @@ document { quote content,
      }
 
 cover(Matrix) := (f) -> matrix f
+
+rank Matrix := (f) -> rank image f

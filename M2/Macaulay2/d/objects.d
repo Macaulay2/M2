@@ -679,38 +679,12 @@ export unarymethod(right:Expr,methodkey:SymbolClosure):Expr := (
      if method == nullE then MissingMethod(methodkey)
      else apply(method,right));
 -----------------------------------------------------------------------------
--- method documentation
--- Documentation := newHashTable(mutableHashTableClass,nothingClass);
--- setupconst("Documentation", Expr(Documentation));
 installIt(h:HashTable,key:Expr,value:Expr):Expr := (
      when value is Error do value
      is FunctionClosure do storeInHashTable(h,key,value)
      is CompiledFunction do storeInHashTable(h,key,value)
      is CompiledFunctionClosure do storeInHashTable(h,key,value)
---     is x:List do (
---	  if x.class == listClass then (
---	       if length(x.v) >= 2 then (
---		    f := x.v.1;
---		    when f
---		    is FunctionClosure do (
---			 storeInHashTable(h,key,f);
---		    	 storeInHashTable(Documentation, key, value))
---		    is CompiledFunction do (
---			 storeInHashTable(h,key,f);
---		    	 storeInHashTable(Documentation, key, value))
---		    is CompiledFunctionClosure do (
---			 storeInHashTable(h,key,f);
---		    	 storeInHashTable(Documentation, key, value))
---		    is Nothing do (
---			 -- documentation only
---			 storeInHashTable(Documentation, key, value))
---     		    else errorExpr("expected second entry in list to be a function")
---		    )
---	       else errorExpr("expected a list of length at least 2")
---	       )
---	  else errorExpr("expected a list of class List")
---	  )
-     else errorExpr("expected a function"));
+     else errorExpr("expected a function as method"));
 -----------------------------------------------------------------------------
 -- unary methods
 export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
@@ -718,26 +692,14 @@ export installMethod(meth:Expr,s:HashTable,value:Expr):Expr := (
      is FunctionClosure do storeInHashTable(s,meth,value)
      is CompiledFunction do storeInHashTable(s,meth,value)
      is CompiledFunctionClosure do storeInHashTable(s,meth,value)
---     is x:List do (
---	  if x.class == listClass then (
---	       if length(x.v) >= 3 then (
---		    f := x.v.1;
---		    when f
---		    is FunctionClosure do (
---			 storeInHashTable(s,meth,f);
---		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
---		    is CompiledFunction do (
---			 storeInHashTable(s,meth,f);
---		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
---		    is CompiledFunctionClosure do (
---			 storeInHashTable(s,meth,f);
---		    	 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
---		    is Nothing do (
---			 storeInHashTable( Documentation, Expr(Sequence(meth,Expr(s))), value))
---     		    else errorExpr("expected second entry in list to be a function"))
---	       else errorExpr("expected a list of length at least 3"))
---	  else errorExpr("expected a list of class List"))
-     else errorExpr("expected a function or list"));
+     else errorExpr("expected a method function"));
+key1 := Sequence(nullE,nullE);
+key1E := Expr(key1);
+export lookupUnaryValue(s:HashTable,meth:Expr,methhash:int):Expr := (
+     -- the big numbers here are the same as in hash() for sequences in structure.d
+     key1.0 = Expr(s);
+     key1.1 = meth;
+     lookup1(s, key1E, (27449 * 27457 + s.hash) * 27457 + methhash));
 -----------------------------------------------------------------------------
 -- binary methods
 export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
@@ -745,8 +707,13 @@ export installMethod(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
 	  if lhs.hash > rhs.hash then lhs else rhs,
 	  Expr(Sequence(meth,Expr(lhs),Expr(rhs))),
 	  value));
+export installValue(meth:Expr,lhs:HashTable,rhs:HashTable,value:Expr):Expr := (
+     storeInHashTable(
+	  if lhs.hash > rhs.hash then lhs else rhs,
+	  Expr(Sequence(Expr(lhs),Expr(rhs),meth)),
+	  value));
 key2 := Sequence(nullE,nullE,nullE);
-keyE := Expr(key2);
+key2E := Expr(key2);
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (
      key2.0 = meth;
      -- the big numbers here are the same as in hash() for sequences in structure.d
@@ -762,7 +729,7 @@ export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Ex
 	       keyhash := keyhash1 * 27457 + righthash;
 	       s := lookup1(
 		    if lefthash > righthash then lhs else rhsptr,
-		    keyE, keyhash);
+		    key2E, keyhash);
 	       if s != nullE then return(s);
 	       if rhsptr == thingClass then break;
 	       rhsptr = rhsptr.parent;
@@ -771,10 +738,24 @@ export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Ex
 	  lhs = lhs.parent;
 	  );
      nullE);
+export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:Expr,methhash:int):Expr := (
+     key2.0 = meth;
+     -- the big numbers here are the same as in hash() for sequences in structure.d
+     key2.1 = Expr(lhs);
+     lefthash := lhs.hash;
+     keyhash1 := ;
+     key2.2 = Expr(rhs);
+     righthash := ;
+     keyhash := ((27449 * 27457 + methhash) * 27457 + lefthash) * 27457 + rhs.hash;
+     lookup1(if lefthash > righthash then lhs else rhs, key2E, keyhash));
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:Expr):Expr := (
      lookupBinaryMethod(lhs,rhs,meth,hash(meth)));
 export lookupBinaryMethod(lhs:HashTable,rhs:HashTable,meth:SymbolClosure):Expr := (
      lookupBinaryMethod(lhs,rhs,Expr(meth),meth.symbol.hash));
+export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:Expr):Expr := (
+     lookupBinaryValue(lhs,rhs,meth,hash(meth)));
+export lookupBinaryValue(lhs:HashTable,rhs:HashTable,meth:SymbolClosure):Expr := (
+     lookupBinaryValue(lhs,rhs,Expr(meth),meth.symbol.hash));
 -----------------------------------------------------------------------------
 -- ternary methods
 export installMethod(meth:Expr,s1:HashTable,s2:HashTable,s3:HashTable,value:Expr):Expr := (

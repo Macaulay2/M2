@@ -943,3 +943,23 @@ locate(e:Expr):Expr := (
 		    )))
      else WrongArg("a function or symbol"));
 setupfun("locate",locate);
+
+youngest(e:Expr):Expr := (
+     when e
+     is y:HashTable do if !y.mutable then nullE else e
+     is b:Sequence do (
+	  if length(b) == 0
+	  then nullE
+	  else (
+	       h := 0;
+	       e = nullE;
+	       foreach x in b do (
+		    when x
+		    is y:HashTable do (
+			 if y.mutable && y.hash>h then ( h = y.hash; e = x; );
+			 )
+		    else nothing;
+		    );
+	       e))
+     else nullE);
+setupfun("youngest", youngest);
