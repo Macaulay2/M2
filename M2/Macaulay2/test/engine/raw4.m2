@@ -128,7 +128,7 @@ msyz = rawGBSyzygies Gcomp
 
 --- Tests for gbA: inhomogeneous and local
 needs "raw-util.m2"
-R1 = polyring(rawQQ(), (x,y,z))
+R1 = polyring(rawQQ(), (symbol x,symbol y,symbol z))
 algorithm = 1
 
 G = mat {{x*y-1, x^2-x, x^3-z-1}}
@@ -291,15 +291,10 @@ z = rawRingVar(R2,4,1)
 G = mat{{x - 3*u-3*u*v^2+u^3, y-3*v-3*u^2*v+v^3, z-3*u^2+3*v^2}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
 gbTrace = 4
-rawStartComputation Gcomp  -- Groebner basis -- WRONG!!
+rawStartComputation Gcomp 
 time m = rawGBGetMatrix Gcomp
 rawGBGetLeadTerms(Gcomp,6)
 
-
-
-rawGB(oo,false,0,{},false,0,algorithm,0)
-rawStartComputation oo
-rawGBGetMatrix oo
 
 -- Is this correct?
 
@@ -310,7 +305,7 @@ rawGBGetMatrix oo
 -- rawStatus, rawStatusLevel, rawGBBetti
 -- rawGBMatrixRemainder, rawGBMatrixLift, rawGBContains
 
-load "raw-util.m2"
+needs "raw-util.m2"
 R1 = rawPolynomialRing(rawQQ(), singlemonoid{a,b,c,d})
 a = rawRingVar(R1,0,1)
 b = rawRingVar(R1,1,1)
@@ -326,7 +321,7 @@ f = (7*a^2+a+1)*(a^20+a^17+4*a^13+1)^7
 g = (7*a^2+a+1)*(6*a^20-123*a^17+4*a^13+1)^6
 G = mat{{f,g}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
-time rawStartComputation Gcomp
+time rawStartComputation Gcomp -- seems to be in an INFINITE LOOP!!
 m = rawGBGetMatrix Gcomp
 assert(m === mat{{7*a^2+a+1}})
 
