@@ -99,6 +99,16 @@ $(TOPDIR)/Makeconf.lcl :
 	echo 'CXX           := g++' >>$@
 
 include $(TOPDIR)/Makeconf.lcl
+ifdef NEWDUMPDATA
+        An error on this line means you should remove the definition of
+        NEWDUMPDATA from your Makeconf.lcl, as 'configure' now takes care
+        of that.
+endif
+ifdef NODUMPDATA
+        An error on this line means you should remove the definition of
+        NODUMPDATA from your Makeconf.lcl, as 'configure' now takes care
+        of that.
+endif
 
 export DESC           := $(VERSION)-$(ARCH)-$(OS)-$(REL)
 ifndef NOSTATIC
