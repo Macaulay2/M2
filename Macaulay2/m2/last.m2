@@ -20,4 +20,4 @@ erase symbol outputSymbols
 
 -- make sure this is after all global symbols are defined or erased
 end Macaulay2
-User = newPackage( "User", "0.0" )
+newPackage( "User", "0.0" )

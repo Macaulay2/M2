@@ -443,14 +443,14 @@ examine(e:Expr):Expr := (
 	  f := sc.frame;
 	  s := sc.symbol;
 	  stdout
-	  << s.position << endl
-	  << " word.name:" << present(s.word.name) << endl
-	  << " frameID:" << s.frameID << endl
-	  << " frameindex:" << s.frameindex << endl
-	  << " lookupCount:" << s.lookupCount << endl
-	  << " protected:" << s.protected << endl
-	  << " valueCouldChange:" << s.valueCouldChange << endl
-	  << " frames bound for scopes:";
+	  << " position : " << s.position << endl
+	  << " word.name : " << present(s.word.name) << endl
+	  << " frameID : " << s.frameID << endl
+	  << " frameindex : " << s.frameindex << endl
+	  << " lookupCount : " << s.lookupCount << endl
+	  << " protected : " << s.protected << endl
+	  << " transient : " << s.transient << endl
+	  << " frames bound for scopes :";
 	  while f.frameID >= 0 do (
 	       stdout << " " << f.frameID;
 	       f = f.outerFrame;
@@ -462,12 +462,12 @@ examine(e:Expr):Expr := (
 	  model := fc.model;
 	  desc := model.desc;
 	  stdout
-	  << " restargs:" << desc.restargs << endl
-	  << " frameID:" << desc.frameID << endl
-	  << " framesize:" << desc.framesize << endl
-	  << " numparms:" << desc.numparms << endl
-	  << " hasClosure:" << desc.hasClosure << endl
-	  << " frames bound for scopes:";
+	  << " restargs : " << desc.restargs << endl
+	  << " frameID : " << desc.frameID << endl
+	  << " framesize : " << desc.framesize << endl
+	  << " numparms : " << desc.numparms << endl
+	  << " hasClosure : " << desc.hasClosure << endl
+	  << " frames bound for scopes :";
 	  while f.frameID >= 0 do (
 	       stdout << " " << f.frameID;
 	       f = f.outerFrame;
@@ -477,7 +477,7 @@ examine(e:Expr):Expr := (
      is s:Sequence do (
 	  if length(s) == 0 then (
 	       f := localFrame;
-	       stdout << "frames currently bound for scopes:";
+	       stdout << "frames currently bound for scopes :";
 	       while f.frameID >= 0 do (
 		    stdout << " " << f.frameID;
 		    f = f.outerFrame;
@@ -1268,56 +1268,36 @@ frames(e:Expr):Expr := (
      else WrongArg("a function, a symbol, or ()"));
 setupfun("frames", frames);
 
-getGlobalDictionaryList(e:Expr):Expr := (
+dictionaries(e:Expr):Expr := (
      when e
-     is a:Sequence do if length(a) == 0 then (
-	  g := globalDictionaryList;
-	  n := 0;
-	  while ( n = n+1; g != g.next ) do g = g.next;
-	  g = globalDictionaryList;
-	  Expr(list(new Sequence len n do while true do ( provide Expr(g.dictionary); g = g.next ))))
-     else WrongNumArgs(0)
-     else WrongNumArgs(0));
-setupfun("globalDictionaryList", getGlobalDictionaryList);
-
-pushDictionary(e:Expr):Expr := (
-     when e
-     is a:Sequence do if length(a) == 0 then (
-	  g := newGlobalDictionary(globalDictionaryList.dictionary);
-	  globalDictionaryList.dictionary = g;
-	  Expr(g))
-     else WrongNumArgs(0)
-     else WrongNumArgs(0));
-setupfun("pushDictionary", pushDictionary);
-
-popDictionary(e:Expr):Expr := (
-     when e
-     is a:Sequence do if length(a) == 0 then (
-	  o := globalDictionaryList.dictionary;
-	  if o.outerDictionary == o then buildErrorPacket("no more dictionaries to pop")
-	  else (
-	       globalDictionaryList.dictionary = o.outerDictionary;
-	       Expr(o)))
-     else WrongNumArgs(0)
-     else WrongNumArgs(0));
-setupfun("popDictionary", popDictionary);
-
-outerDictionary(e:Expr):Expr := (
-     when e is d:Dictionary do Expr(d.outerDictionary)
-     else WrongArg("a dictionary"));
-setupfun("outerDictionary", outerDictionary);
-
-useDictionary(e:Expr):Expr := (
-     when e is d:Dictionary do (
-	  -- insert this dictionary second in the list
-     	  g := globalDictionaryList;
-	  g.next = (
-	       if g.next == g then (
-	       	    -- detect pointer to self indicating end
-	       	    DictionaryList(d,self))
-	       else (
-	       	    -- 'next' pointer is legitimate, so use it
-	       	    DictionaryList(d,g.next)));
+     is a:Sequence do (
+	  if length(a) == 0 then (		    -- get the current globalDictionaryList
+	       g := globalDictionaryList;
+	       n := 0;
+	       while ( n = n+1; g != g.next ) do g = g.next;
+	       g = globalDictionaryList;
+	       Expr(list(new Sequence len n do while true do ( provide Expr(g.dictionary); g = g.next ))))
+     	  else WrongNumArgs(0))
+     is t:List do (					    -- set the current globalDictionaryList
+	  s := t.v;
+	  n := length(s);
+	  if n == 0 then return(WrongArg("expected a nonempty list of dictionaries"));
+	  sawM2dict := false;
+	  foreach x in s do 
+	  when x is d:Dictionary do (
+	       if d == Macaulay2Dictionary then sawM2dict = true;
+	       )
+	  else return(WrongArg("expected a list of dictionaries"));
+	  if !sawM2dict then return(WrongArg("expected a list of dictionaries containing Macaulay2Dictionary"));
+     	  y := when s.(n-1) is d:Dictionary do DictionaryList(d,self) else dummyDictionaryList;
+	  for i from n-2 to 0 by -1 do when s.i is d:Dictionary do y = DictionaryList(d,y) else nothing;
+	  globalDictionaryList = y;
 	  e)
-     else WrongArg("a dictionary"));
-setupfun("useDictionary", useDictionary);
+     else WrongNumArgs(0));
+setupfun("dictionaries", dictionaries);
+
+newDictionaryFun(e:Expr):Expr := (
+     when e is a:Sequence do if length(a) == 0 then Expr(newGlobalDictionary())
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("newDictionary", newDictionaryFun);

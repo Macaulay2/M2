@@ -43,7 +43,7 @@ export Symbol := {		    -- symbol table entry for a symbol
      frameindex:int,		    -- index within the frame of its value
      lookupCount:int,		    -- number of times looked up
      protected:bool,	            -- whether protected against assignment by the user
-     valueCouldChange:bool,         -- whether its value could ever change, even if protected, e.g., commandLine, or by rebinding in a transient dictionary
+     transient:bool,         -- whether its value could ever change, even if protected, e.g., commandLine, or by rebinding in a transient dictionary
      flagLookup:bool		    -- whether to warn when symbol is used
      };
 export SymbolListCell := {entry:Symbol, next:SymbolList};
@@ -257,20 +257,16 @@ export newSymbolHashTable():SymbolHashTable := SymbolHashTable( new array(Symbol
 
 
 dummySymbolFrameIndex := 0;
-globalDictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,dummySymbolFrameIndex+1,false);
+export Macaulay2Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,dummySymbolFrameIndex+1,false);
 export globalFrame := Frame(dummyFrame,0,1,Sequence(
 	  nullE						    -- value for dummySymbol, the first symbol
 	  ));
-export newGlobalDictionary(dictionary:Dictionary):Dictionary := Dictionary(nextHash(),newSymbolHashTable(),dictionary,0,0,false);
+export newGlobalDictionary():Dictionary := Dictionary(nextHash(),newSymbolHashTable(),self,0,0,false);
 export DictionaryList := {
      dictionary:Dictionary, 
      next:DictionaryList				    -- pointer to self ends the list
      };
-export globalDictionaryList := (
-     -- search this list of global dictionaries after searching the local ones
-     -- for each one on the list, also search the links to outerDictionary, which indicate nesting of packages
-     DictionaryList(globalDictionary,self)
-     );
+export globalDictionaryList := DictionaryList(Macaulay2Dictionary,self);
 
 numLocalScopes := 0;
 export localFrame := globalFrame;
@@ -313,6 +309,7 @@ export dummySymbolHashTable := newSymbolHashTable();
 export dummyDictionary := (
      numLocalScopes = numLocalScopes + 1;
      Dictionary(nextHash(),dummySymbolHashTable,self,numLocalScopes,0,false));
+export dummyDictionaryList := DictionaryList(dummyDictionary,self);
 
 export dummyTree    := ParseTree(dummy(dummyPosition));
 export emptySequence := Sequence();
@@ -340,12 +337,12 @@ export thingClass := HashTable(
 export dummySymbol := Symbol(
      dummyWord,nextHash(),dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
-     globalDictionary.frameID,dummySymbolFrameIndex,1,true,true,false
+     Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,true,true,false
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(exprCode(Expr(dummySymbolClosure),dummyPosition)); -- was Code(CodeSequence());
-export dummyToken   := Token(dummyWord,dummyPosition,globalDictionary,dummySymbol,false);
+export dummyToken   := Token(dummyWord,dummyPosition,Macaulay2Dictionary,dummySymbol,false);
 export parseEOF     := newParseinfo();
 export parseWORD    := newParseinfo();
 
