@@ -21,9 +21,15 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
 	return DenseMutableMatrixRR::zero_matrix(nrows,ncols);
       if (R == globalCC)
 	return DenseMutableMatrixCC::zero_matrix(nrows,ncols);
-      return DenseMutableMatrix::zero_matrix(R,nrows,ncols);
+      return DenseMutableMatrixRing::zero_matrix(R,nrows,ncols);
     }
   return SparseMutableMatrix::zero_matrix(R,nrows,ncols);
+}
+
+MutableMatrix *MutableMatrix::identity(const Ring *R, int nrows, bool dense)
+{
+#warning "implement this one"
+  return 0;
 }
 
 bool MutableMatrix::setRowChangeMatrix(MutableMatrix *rops)
@@ -84,6 +90,40 @@ inline bool MutableMatrix::errorRowBound(int r) const
       return true;
     }
   return false;
+}
+
+SparseMutableMatrix *
+SparseMutableMatrix::zero_matrix(const Ring *R, 
+				 int nrows, 
+				 int ncols)
+{
+#warning "implement this one"
+  return 0;
+}
+
+DenseMutableMatrixRing *
+DenseMutableMatrixRing::zero_matrix(const Ring *R, 
+				    int nrows, 
+				    int ncols)
+{
+#warning "implement this one"
+  return 0;
+}
+
+DenseMutableMatrixRR *
+DenseMutableMatrixRR::zero_matrix(int nrows, 
+				  int ncols)
+{
+#warning "implement this one"
+  return 0;
+}
+
+DenseMutableMatrixCC *
+DenseMutableMatrixCC::zero_matrix(int nrows, 
+				  int ncols)
+{
+#warning "implement this one"
+  return 0;
 }
 
 #if 0
