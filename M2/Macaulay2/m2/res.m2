@@ -186,6 +186,7 @@ resolutionBySyzygies := (M,options) -> (
      C)
 
 resolutionInEngine := (M,options) -> (
+     local C;
      R := ring M;
      degreelimit := (
 	  if class options.DegreeLimit === ZZ then {options.DegreeLimit}
