@@ -2,6 +2,8 @@
 
 if class oooo =!= Symbol then error "setup.m2 already loaded"
 
+if class RawMutableMatrix =!= Type then error "where is RawMutableMatrix?"
+
 OutputDictionary = new Dictionary
 globalDictionaries = append(globalDictionaries,OutputDictionary)
 

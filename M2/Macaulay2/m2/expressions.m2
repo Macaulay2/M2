@@ -1091,6 +1091,8 @@ List << Thing := List => (o,x) -> (x = net x; scan(o, o -> printString(o,x)); o)
 
 o := () -> concatenate(interpreterDepth:"o")
 
+symbol briefDocumentation <- identity			    -- temporary assignment
+
 Thing.AfterPrint = x -> (
      << endl;				  -- double space
      << o() << lineNumber << " : " << class x;
