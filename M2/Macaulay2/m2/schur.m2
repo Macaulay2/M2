@@ -10,6 +10,9 @@ newSchur := (R,M) -> (
      if not (R.?Engine and R.Engine) 
      then error "expected coefficient ring handled by the engine";
      SR := new SchurRing from (ggPush R, ggPush M, ggschur);
+     SR.baseRings = append(R.baseRings,R);
+     if R.?newEngine or M.?newEngine then SR.newEngine = true;
+     installEngineRingUnits SR;
      ONE := SR#1;
      if degreeLength M != 0 then (
 	  -- there must be something smarter to do, but if we
@@ -22,9 +25,6 @@ newSchur := (R,M) -> (
      else (
 	  SR.degreesRing = ZZ;
 	  );
-     SR.baseRings = append(R.baseRings,R);
-     if R.?newEngine or M.?newEngine then SR.newEngine = true;
-     installEngineRingUnits SR;
      if R.?char then SR.char = R.char;
      SR.monoid = M;
      SR ? SR := (f,g) -> (
