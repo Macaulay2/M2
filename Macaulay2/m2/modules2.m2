@@ -316,14 +316,17 @@ hilbertFunctionQ(ZZ,ZZ) := memoize(
      	  if d === 0 then hilbertFunctionQ(n)
      	  else substitute(hilbertFunctionQ(n), {i => i+d})))
 
-hilbertPolynomial Module := ProjectiveHilbertPolynomial => options -> (M) -> (
-    if degreeLength ring M != 1 
+hilbertPolynomial Module := ProjectiveHilbertPolynomial => o -> (M) -> (
+    R := ring M;
+    if degreeLength R != 1 
     then error "expected a singly graded ring";
+    if not all((options R).Degrees, d -> d === {1})
+    then error "expected a ring whose variables all have degree 1";
     n := numgens ring M - 1;
     f := poincare M;
     T := (ring f)_0;
     p := pairs standardForm f;
-    if options.Projective 
+    if o.Projective 
     then (
 	 if #p===0 
 	 then new ProjectiveHilbertPolynomial from {}
@@ -504,7 +507,7 @@ Module / Sequence := Module / List := Module => (M,v) -> (
      v = toList v;
      if all(v, w -> class w === M)
      then M / image matrix v
-     else if all(v, w -> class w == R)
+     else if all(v, w -> class w === R)
      then M / (ideal v * M)
      else error("expected a list of elements of ", toString M, " or of ", toString R)
      )

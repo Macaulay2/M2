@@ -274,9 +274,12 @@ RingMap Module := Module => (f,M) -> (
      S := target f;
      if R =!= ring M then error "expected module over source ring";
      if M.?generators or M.?relations 
-     then subquotient(
-	  if M.?generators then fixup f M.generators, 
-	  if M.?relations then fixup f M.relations)
+     then (
+	  if M.?generators and M.?relations 
+	  then error "warning: RingMap applied to Module is not the same as tensor product.";
+	  subquotient(
+	       if M.?generators then fixup f M.generators, 
+	       if M.?relations then fixup f M.relations))
       else if degreesRing R === degreesRing S then
           S^(-degrees M)
       else
