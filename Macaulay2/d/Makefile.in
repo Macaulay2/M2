@@ -3,10 +3,12 @@ include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
 ############################## main targets
-all :: gc_test; ./$<
+all :: gc_tested
 all :: tags
 all :: compat.h
 all :: ../bin/M2$(EXE)
+
+gc_tested: gc_test; ./$<; touch $@
 
 ## standard options
 
@@ -35,7 +37,8 @@ M2_OBJECTS += debug.o
 endif
 
 OPTCFILES += M2inits1.c M2inits2.c
-CFILES += M2inits.c M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c factory_allocator.c
+CFILES += M2inits.c M2types.c M2mem.c scclib.c M2lib.c gmp_aux.c memdebug.c gdbm_interface.c 
+# CFILES += factory_allocator.c
 SRCFILES += $(OPTCFILES) $(CFILES)
 M2_OBJECTS += $(CFILES:.c=.o)
 
