@@ -9,7 +9,7 @@ axisSaturate = (m,i) -> (
      R := ring m;
      n := numgens R;
      if i < 0 or i >= n then error "variable out of range";
-     R1 = (coefficientRing R)[Variables=>n];
+     R1 = (coefficientRing R)[Variables=>n,MonomialSize=>16];
      if i === n-1 then (
 	 perm1 = map(R1,R,vars R1);
 	 perm2 = map(R,R1,vars R);)
@@ -26,11 +26,11 @@ axisSaturate = (m,i) -> (
   	 perm2 = map(R,R1, apply(p2, i -> R_i));
 	 );
      m1 = perm1 m;
-     gb m1;  -- use the binomial code here.
-     m2 = perm2 divideByVariable(gens gb m1, R1_(n-1));
+     m1gb := gens gb m1; -- use the binomial code here.
+     m2 = perm2 divideByVariable(matrix entries m1gb, R1_(n-1));
      -- now determine the degree, since it is not returned in the above
-     inm = leadTerm gens gb m1;
-     degs = substitute(inm, matrix{splice{(n-1):1,R1_(n-1)}});
+     inm = leadTerm m1gb;
+     degs = matrix entries substitute(inm, matrix{splice{(n-1):1,R1_(n-1)}});
      degs = max degrees source degs;
      {degs#0, mingens ideal m2}
      )
@@ -81,7 +81,7 @@ binomialPD = (I) -> (
 			J2 = L#2 + ideal(R_i^k);
 			-- We need to remove any components supported on the first vars
 			J2 = saturate(J2, L#0);
-			if J2 != ideal(1_R) then
+			if J2 != 1 then
 			    ToDo = prepend({L#0, newL1, J2},ToDo));
 		   if J != ideal(1_R) then ToDo = prepend({R_i * L#0, newL1, J},ToDo);
 		   );

@@ -48,6 +48,15 @@ EMatrix *EMatrix::make(const EFreeModule *F,
   return result;
 }
 EMatrix *EMatrix::make(const EFreeModule *F,
+	      int ncols,
+	      EVector *elements,
+	      int type,
+	      const monomial *d)  // GRABS the array and elements in 'elements'.
+{
+  EFreeModule *G = EFreeModule::makeFreeModuleFromDegrees(F->getRing(),ncols,elements);
+  return new EMatrix(F,G,elements,type,d);
+}
+EMatrix *EMatrix::make(const EFreeModule *F,
 	  const EFreeModule *G,
 	  const EMatrix *elements, // Take the columns from 'elements'
 	  int type,

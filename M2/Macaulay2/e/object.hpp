@@ -87,6 +87,7 @@ public:
   virtual EZZp * cast_to_EZZp() { return 0; }
   virtual EMonomialOrder * cast_to_EMonomialOrder() { return 0; }
   virtual EMonoid * cast_to_EMonoid() { return 0; }
+  virtual EMonomialIdeal * cast_to_EMonomialIdeal() { return 0; }
   virtual EPolynomialRing * cast_to_EPolynomialRing() { return 0; }
   virtual object_ERingElement *cast_to_ERingElement() { return 0; }
   virtual EFreeModule * cast_to_EFreeModule() { return 0; }
@@ -99,6 +100,7 @@ public:
   virtual const EZZp * cast_to_EZZp() const { return 0; }
   virtual const EMonomialOrder * cast_to_EMonomialOrder() const { return 0; }
   virtual const EMonoid * cast_to_EMonoid() const { return 0; }
+  virtual const EMonomialIdeal * cast_to_EMonomialIdeal() const { return 0; }
   virtual const EPolynomialRing * cast_to_EPolynomialRing() const { return 0; }
   virtual const object_ERingElement *cast_to_ERingElement() const { return 0; }
   virtual const EFreeModule * cast_to_EFreeModule() const { return 0; }

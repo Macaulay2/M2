@@ -98,7 +98,12 @@ ESTUFF = \
 	Eringmap \
 	Eio \
 	EGB \
-	Ecommands
+	Ecommands \
+
+#	Espairs \
+#	EGB1
+#	Emonlookup \
+#	Emonideal
 
 E_H = \
 	Edefs.hpp \
@@ -219,7 +224,7 @@ OTHERS := Makefile \
 	res_aux.cpp res_aux2.cpp geoT.hpp \
 	tests misc keep newmonoid.hpp newmonoid.cpp
 
-ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) 
+ALLFILES := $(CCFILES) $(CFILES) $(HHFILES) $(OTHERS) $(ESTUFF)
 
 ###################################################################
 ## Targets ##

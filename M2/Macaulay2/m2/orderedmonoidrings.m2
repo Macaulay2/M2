@@ -125,10 +125,11 @@ Ring OrderedMonoid := (			  -- no memoize
 			 else toList x
 			 ));
 	       diffs = flatten diffs;
+	       local diffs0, diffs1;
 	       if R.?newEngine then (
 		    diffs = pack(diffs,2);
-		    diffs0 := indices(M,first\diffs);
-		    diffs1 := indices(M,last\diffs);
+		    diffs0 = indices(M,first\diffs);
+		    diffs1 = indices(M,last\diffs);
 		    scan(diffs0,diffs1,(x,dx) -> 
 			 if not x<dx
 			 then error "WeylAlgebra: expected differentiation variables to occur to the right of their variables"
@@ -143,8 +144,21 @@ Ring OrderedMonoid := (			  -- no memoize
 			 ggweylalgebra)
 		    )
 	       else (
-	       	    diffs = indices(M,diffs);
-	       	    new PolynomialRing from (ggPush R, ggPush M, ggPush diffs, ggweylalgebra)
+		    diffs = pack(diffs,2);
+		    diffs0 = indices(M,first\diffs);
+		    diffs1 = indices(M,last\diffs);
+		    scan(diffs0,diffs1,(x,dx) -> 
+			 if not x<dx
+			 then error "WeylAlgebra: expected differentiation variables to occur to the right of their variables"
+			 );
+	       	    new PolynomialRing from (
+			 ggPush R, ggPush M, 
+			 ggPush diffs0,
+			 ggPush diffs1,
+			 ggPush h,
+			 ggweylalgebra)
+--	       	    diffs = indices(M,diffs);
+--	       	    new PolynomialRing from (ggPush R, ggPush M, ggPush diffs, ggweylalgebra)
 		    )
 	       )
 	  else if Skew then (

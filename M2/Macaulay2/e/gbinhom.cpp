@@ -42,6 +42,8 @@ void GBinhom_comp::set_up0(const Matrix &m, int csyz, int nsyz)
 
   collect_syz = csyz;
   is_ideal = (F->rank() == 1 && csyz == 0);
+  if (R->cast_to_WeylAlgebra() != 0)
+    is_ideal = false;
   need_resize = 0;
 
   for (i=0; i<F->rank(); i++)
@@ -438,9 +440,12 @@ void GBinhom_comp::compute_s_pair(s_pair *p)
   if (p->f == NULL)
     {
       int *s = M->make_one();
+      ring_elem one = R->Ncoeffs()->from_int(1);
       M->divide(p->lcm, p->first->f->monom, s);
-      p->f = F->mult_by_monomial(s, p->first->f);
-      p->fsyz = Fsyz->mult_by_monomial(s, p->first->fsyz);
+      //p->f = F->mult_by_monomial(s, p->first->f);
+      //p->fsyz = Fsyz->mult_by_monomial(s, p->first->fsyz);
+      p->f = F->imp_mult_by_term(one, s, p->first->f);
+      p->fsyz = Fsyz->imp_mult_by_term(one, s, p->first->fsyz);
       if (Fsyz->is_quotient_ring) Fsyz->normal_form(p->fsyz);
       if (p->syz_type == SPAIR_PAIR)
 	{
@@ -456,6 +461,7 @@ void GBinhom_comp::compute_s_pair(s_pair *p)
 	  //R->Ncoeffs()->remove(a);
 	}
       M->remove(s);
+      R->Ncoeffs()->remove(one);
     }
 }
 

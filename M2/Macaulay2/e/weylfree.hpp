@@ -15,12 +15,23 @@ protected:
   WeylFreeModule(const Ring *R);
   WeylFreeModule(const Ring *R, int n);
 
+  vec weyl_diff(
+		const ring_elem c,
+		const int *expf,  // The exponent vector of f
+		const int *derivatives, 
+		const vec g) const;  // An entire polynomial
+
 public:
-  ~WeylFreeModule();
+  virtual ~WeylFreeModule();
 
   class_identifier class_id() const { return CLASS_WeylFreeModule; }
 
   virtual vec imp_mult_by_term(const ring_elem c, const int *m, const vec v) const;
+
+  friend void i_stashes();
+  static stash *mystash;
+  void *operator new(size_t) { return mystash->new_elem(); }
+  void operator delete(void *p) { mystash->delete_elem(p); }
 };
 
 #endif

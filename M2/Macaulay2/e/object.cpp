@@ -7,6 +7,7 @@
 #include "relem.hpp"
 #include "vector.hpp"
 #include "freemod.hpp"
+#include "weylfree.hpp"
 #include "matrix.hpp"
 #include "monideal.hpp"
 #include "termideal.hpp"
@@ -77,6 +78,7 @@ void i_stashes()
   RingElement_rec::mystash = new stash("Ringelem", sizeof(RingElement_rec));
   Vector_rec::mystash     = new stash("Vector", sizeof(Vector_rec));
   FreeModule::mystash     = new stash("FreeModule", sizeof(FreeModule));
+  WeylFreeModule::mystash = new stash("WeylFreeModule", sizeof(WeylFreeModule));
   Matrix_rec::mystash     = new stash("Matrix", sizeof(Matrix_rec));
   RingMap::mystash        = new stash("Ringmap", sizeof(RingMap));
 
@@ -117,6 +119,7 @@ void i_stashes()
 
   binomialGB_comp::mystash = new stash("binomialGB", sizeof(binomialGB_comp));
   sagbi_comp::mystash = new stash("sagbi", sizeof(sagbi_comp));
+
 }
 
 
