@@ -235,6 +235,7 @@ matrixTable := options -> (f) -> (
 					M = tars#i = srcs#j = R^1;
 					f#i#j = map(M,M,0);
 					))))));
+	  f = toList \ f;
 	  mm := concatBlocks f;
 	  if options.Degree === null
 	  then mm

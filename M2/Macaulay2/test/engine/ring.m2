@@ -75,6 +75,10 @@ x*v
 
 t = matrix {{x,y,z},{y,z,x},{z,x,y}}
 
+matrix({{v,v},{v,v}})
+
+end
+
 toString submatrix(t,{1,2})
 assert( submatrix(t,{1,2}) == matrix {{y,z},{z,x},{x,y}} )
 assert( submatrix(t,{1,2},{2,0}) == matrix {{x, y}, {y, z}} )
