@@ -7,7 +7,6 @@ M2book.tex
 *.tmp
 *.pdf
 *.out
-*.bib
 *.bbl
 *.blg
 M2book-prelim.dvi
