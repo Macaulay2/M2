@@ -7,7 +7,7 @@
 << "                      -- do not edit -- " << endl
 << endl
 << endl
-<< text documentation "running Macaulay 2 in emacs"
+<< documentation "running Macaulay 2 in emacs"
 << close
 )
 

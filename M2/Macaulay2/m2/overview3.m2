@@ -218,8 +218,7 @@ document { "Writing documentation",
      UL {
 	  TOH "html",
 	  TOH "mathML",
-	  TOH "tex",
-	  TOH "text",
+	  TOH "tex"
 	  },
      }
 

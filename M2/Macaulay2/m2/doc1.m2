@@ -133,7 +133,7 @@ document { briefDocumentation,
      Headline => "get brief documentation",
      TT "briefDocumentation s", " -- provides the first paragraph of the online
      documentation for the topic ", TT "s", ", in internal ", TO "hypertext", "
-     form, suitable for conversion to text with ", TO "text", " or to html 
+     form, suitable for conversion to text with ", TO "net", " or to html 
      with ", TO "html", ".",
      SEEALSO "documentation"
      }
@@ -142,7 +142,7 @@ document { documentation,
      Headline => "get documentation, unformatted",
      TT "documentation s", " -- provides the online documention for the topic s, in
      internal ", TO "hypertext", " form, suitable for conversion to
-     text with ", TO "text", " or to html with ", TO "html", ".",
+     text with ", TO "net", " or to html with ", TO "html", ".",
      PARA,
      EXAMPLE "documentation partitions"
      }

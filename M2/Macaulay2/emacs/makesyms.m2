@@ -33,7 +33,7 @@ f << ///
 add := (face,words) -> (
      f
      << "         (" 
-     << ///,(concat "\\<\\(" (regexp-opt '(/// << concatenate between(" ", format\words) << ///)) "\\)\\>")///
+     << ///,(concat "\\<\\(" (regexp-opt '(/// << demark(" ", format\words) << ///)) "\\)\\>")///
      <<  " . " << face << ")" << endl
      )
 

@@ -7,9 +7,10 @@ document {
      hypertext form in a special internal format which can be easily
      manipulated or examined.  The function ", TO "html", " can be used to 
      convert it to standard world-wide web format, suitable for use with
-     a world-wide web server such as netscape.  The function ", TO "text", "
+     a world-wide web server such as netscape.  The function ", TO "net", "
      can be used to convert it to straight ascii text, suitable for
-     viewing on an ascii terminal.",
+     viewing on an ascii terminal, but in most circumstances, that conversion
+     will be done automatically when hypertext is displayed.",
      SEEALSO {"MarkUpList", "MarkUpType", "Entity"}
      }
 
