@@ -4,8 +4,8 @@ CFLAGS := -Wall -g
 LDFLAGS := 
 
 all :: check
-	check dump
-	check load
+	check dump "hi there"
+	check load "look!"
 check : dumpdata.o check.o
 dumpdata.o check.o : dumpdata.h
 
