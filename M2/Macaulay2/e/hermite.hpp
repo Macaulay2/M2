@@ -6,7 +6,7 @@
 #include "matrix.hpp"
 #include "polyring.hpp"
 #include "comp.hpp"
-#include "gb_comp.hpp"
+#include "comp_gb.hpp"
 #include "ZZ.hpp"
 
 struct hm_elem
@@ -17,7 +17,7 @@ struct hm_elem
   vec fsyz;
 };
 
-class HermiteComputation : public gb_comp
+class HermiteComputation : public GBComputation
 {
 private:
   int row;
@@ -41,27 +41,53 @@ private:
   hm_elem *merge(hm_elem *f, hm_elem *g);
   void sort(hm_elem *&p);
   void reduce(hm_elem *&p, hm_elem *q);
+
+  void gb_reduce(vec &f, vec & /*fsyz*/) const;
+  
+  // performing the computation
+  int calc(const int *deg, const intarray &stop);  // 'deg' is ignored here
 public:
   // An honest GB computation
   HermiteComputation(const Matrix *m, int collect_syz, int n_syz);
   ~HermiteComputation();
 
-  // performing the computation
-  int calc(const int *deg, const intarray &stop);  // 'deg' is ignored here
+  virtual void start_computation() = 0;
 
-  // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
-  Matrix *min_gens_matrix();
-  Matrix *initial_matrix(int n);
-  Matrix *gb_matrix();
-  Matrix *change_matrix();
-  Matrix *syz_matrix();
-  void stats() const;
+  virtual enum ComputationStatusCode gb_status(int *degree); 
+  // The computation is complete up through this degree.
 
-  void gb_reduce(vec &f, vec &fsyz) const;
-  Matrix *reduce(const Matrix *m, Matrix *&lift);
+  ////////////////////////////////
+  // Results of the computation //
+  ////////////////////////////////
+  virtual const MatrixOrNull *get_gb();
+
+  virtual const MatrixOrNull *get_mingens();
+
+  virtual const MatrixOrNull *get_change();
+
+  virtual const MatrixOrNull *get_syzygies();
+
+  virtual const MatrixOrNull *get_initial(int nparts);
+
+  ////////////////////////////////
+  // Normal forms and lifting ////
+  ////////////////////////////////
+
+  virtual const MatrixOrNull *matrix_remainder(const Matrix *m);
+
+  virtual void matrix_lift(const Matrix *m,
+			   MatrixOrNull **result_remainder,
+			   MatrixOrNull **result_quotient);
 
   virtual int contains(const Matrix *m);
-  virtual bool is_equal(const gb_comp *q);
+
+  //////////////////////////////////////
+  // Statistics and spair information //
+  //////////////////////////////////////
+
+  virtual void text_out(buffer &o);
+  // This displays statistical information, and depends on the
+  // gbTrace value.
 };
 #endif
 

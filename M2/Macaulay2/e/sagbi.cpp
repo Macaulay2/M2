@@ -1,5 +1,7 @@
 // Copyright 1997  Michael E. Stillman
 
+#warning "sagbi code commented out"
+#if 0
 #include "sagbi.hpp"
 #include "vector.hpp"
 
@@ -276,7 +278,7 @@ return 0;
 void sagbi_comp::stats() const
 {
 }
-
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

@@ -108,14 +108,18 @@ const PolynomialRing *PolynomialRing::make_flattened_ring()
   return 0;
 }
 
-PolynomialRing *PolynomialRing::create_quotient_ring(Computation *G)
+PolynomialRing *PolynomialRing::create_quotient_ring(GBComputation *G)
 {
+#warning "write create_quotient_ring"
+#if 0
   const PolynomialRing *R = G->get_ring();
   PolynomialRing *result = new PolynomialRing;
   *result = *R;
   result->_quotient_gb = G;
   result->_base_ring = R;
   return result;
+#endif
+  return 0;
 }
 
 #if 0

@@ -903,7 +903,7 @@ int gbA::computation_is_complete()
   return COMP_COMPUTING;
 }
 
-void gbA::compute()
+void gbA::start_computation()
 {
   int npairs;
   int is_done = COMP_COMPUTING;
@@ -996,102 +996,65 @@ ComputationOrNull *gbA::set_hilbert_function(const RingElement *hf)
   return 0;
 }
 
-const MatrixOrNull *gbA::get_matrix(int level, M2_bool minimize)
+const MatrixOrNull *gbA::get_gb()
 {
-  // level 1, minimal:  mingens (or trimmed set of gens)
-  // level 1, nonminimal: GB matrix
-  // level 2, nonminimal: syz matrix (NOT a GB!!)
-
-#warning: "things to do here"
-  // TODO
-  if (level > 2 || (level == 2 && minimize))
-    {
-      ERROR("GB computation: matrix was not computed");
-      return 0;
-    }
-  if (level == 2)
-    {
-      // The (non-minimal) syzygy matrix
-      compute();
-      Matrix *result = new Matrix(_Fsyz);
-      for (vector<gbvector *>::iterator i = _syz.begin(); i != _syz.end(); i++)
-	result->append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
-      return result;
-    }
-  else if (minimize)
-    {
-      // return the minimal generators (or as minimal as possible?)
-      compute();
-      return G->get_minimal_gens();
-    }
-  else
-    {
-      // The (minimal) Groebner basis itself
-      compute();
-      return G->get_minimal_gb();
-    }
-  return 0;
+  start_computation();
+  return G->get_minimal_gb();
 }
 
-const MatrixOrNull *gbA::get_change(int level)
+const MatrixOrNull *gbA::get_mingens()
 {
-  if (level > 1)
-    {
-      ERROR("matrix not computed");
-      return 0;
-    }
-  compute();
+  // return the minimal generators (or as minimal as possible?)
+  start_computation();
+  return G->get_minimal_gens();
+}
+
+const MatrixOrNull *gbA::get_change()
+{
+  start_computation();
   return G->get_change();
 }
 
-const MatrixOrNull *gbA::get_leadterms(int nparts, int level)
+const MatrixOrNull *gbA::get_syzygies()
 {
-  if (level > 1)
-    {
-      ERROR("matrix not computed");
-      return 0;
-    }
-  compute();
-  return G->get_leadterms(nparts);
-}
-  
-const FreeModuleOrNull *gbA::get_free(int level, M2_bool minimal)
-{
-  if (level == 0) return _F;
-  if (level > 1 || level < 0) 
-    {
-      ERROR("free module at level %d not computed", level);
-      return 0;
-    }
-  compute();
-  return G->get_free(minimal);
+  // The (non-minimal) syzygy matrix
+  start_computation();
+  Matrix *result = new Matrix(_Fsyz);
+  for (vector<gbvector *>::iterator i = _syz.begin(); i != _syz.end(); i++)
+    result->append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
+  return result;
 }
 
-const MatrixOrNull *gbA::matrix_remainder(int level,
-					  const Matrix *m)
+const MatrixOrNull *gbA::get_initial(int nparts)
 {
-  if (level > 1)
+  start_computation();
+  return G->get_leadterms(nparts);
+}
+
+const MatrixOrNull *gbA::matrix_remainder(const Matrix *m)
+{
+  if (m->get_ring() != originalR)
     {
-      ERROR("that Groebner basis not computed");
+      ERROR("expected matrix over the same ring");
       return 0;
     }
+
   if (m->n_rows() != _F->rank()) {
        ERROR("expected matrices to have same number of rows");
        return 0;
   }
-  compute();
+  start_computation();
   return G->matrix_remainder(m);
 }
 
-void gbA::matrix_lift(int level,
-		 const Matrix *m,
+void gbA::matrix_lift(const Matrix *m,
 		 MatrixOrNull **result_remainder,
 		 MatrixOrNull **result_quotient
 		 )
 {
-  if (level > 1)
+  if (m->get_ring() != originalR)
     {
-      ERROR("that Groebner basis not computed");
+      ERROR("expected matrix over the same ring");
       *result_remainder = 0;
       *result_quotient = 0;
     }
@@ -1100,65 +1063,33 @@ void gbA::matrix_lift(int level,
       *result_remainder = 0;
       *result_quotient = 0;
   }
-  compute();
+  start_computation();
   G->matrix_lift(m, result_remainder, result_quotient);
 }
 
-int gbA::contains(int level,
-		       const Matrix *m)
+int gbA::contains(const Matrix *m)
   // Return -1 if every column of 'm' reduces to zero.
   // Otherwise return the index of the first column that
   // does not reduce to zero.
 {
-  if (level > 1)
+  // Reduce each column of m one by one.
+  if (m->get_ring() != originalR)
     {
-      ERROR("that Groebner basis not computed");
+      ERROR("expected matrix over the same ring");
       return -2;
     }
-  // Reduce each column of m one by one.
-  compute();
+  start_computation();
   return G->contains(m);
 }
 
-int gbA::status(int * complete_up_through_this_degree,
-		     int * complete_up_through_this_level)
-  /* -1: error condition, and the error message is set.
-     0: not made, and in fact it won't ever be done...
-     1: not started,
-     2: started, 
-     3: stopped because of a stopping condition
-     4: finished the computation completely
-  */
+enum ComputationStatusCode gbA::gb_status(int *degree)
+  // The computation is complete up through this degree.
 {
-#warning: "things to do here"
-  // TODO: what is this really supposed to do
-  *complete_up_through_this_level = 1;
-  *complete_up_through_this_degree = _this_degree-1;
-#warning: "things to do here"
-  return -1; // TODO
+  *degree = _this_degree - 1;
+#warning "set *degree correctly"
+  return status();
 }
 
-int gbA::status_level(int level, 
-			   M2_bool minimize,
-			   int * complete_up_through_this_degree)
-  /* Same return values */
-{
-#warning: "function unimplemented"
-  return -1;
-}
-
-const M2_arrayint gbA::betti(int type)
-  /* 0: minimal betti numbers,
-     1:
-     2:
-     3:
-  */
-{
-#warning: "function unimplemented"
-  // TODO
-  return NULL;
-}
-  
 void gbA::text_out(buffer &o)
   /* This displays statistical information, and depends on the
      gbTrace value */

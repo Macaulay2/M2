@@ -14,6 +14,7 @@ class TermIdeal;
 class Matrix;
 class GBRing;
 class GBRingSkew;
+class GBComputation;
 
 #if 0
 class QuotientInfo
@@ -64,7 +65,7 @@ protected:
 
   // Quotient ring information
   const PolynomialRing *_base_ring; // == NULL iff this is not a quotient ring
-  Computation *_quotient_gb;
+  GBComputation *_quotient_gb;
 
 #if 0
   QuotientInfo Quotient;
@@ -84,7 +85,7 @@ protected:
 
   int *_EXP1, *_EXP2, *_EXP3;
 public:
-  static PolynomialRing *create_quotient_ring(Computation *G);
+  static PolynomialRing *create_quotient_ring(GBComputation *G);
 
   virtual const PolynomialRing * cast_to_PolynomialRing()  const { return this; }
   virtual       PolynomialRing * cast_to_PolynomialRing()        { return this; }

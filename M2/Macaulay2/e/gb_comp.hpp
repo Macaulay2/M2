@@ -1,3 +1,5 @@
+#if 0
+
 // Copyright 1996 Michael E. Stillman.
 
 #ifndef _gb_comp_hh_
@@ -12,11 +14,7 @@ class Matrix;
 class RingElement;
 class PolynomialRing;
 
-extern "C" char system_interrupted;
-extern int gbTrace;
 
-// The printlevel flags
-const int PRINT_SPAIR_TRACKING=1024;
 
 // The various kinds of GB computations
 const int COMP_NGB = 10;
@@ -32,26 +30,6 @@ const int USE_HILB = 1;
 const int USE_GEOBUCKET = 8;
 const int USE_SORT = 16;
 
-// These are the possible states of a GB computation
-const int GB_COMP_NEWDEGREE        = 1; 
-const int GB_COMP_NEED_RESIZE      = 2;
-const int GB_COMP_S_PAIRS          = 3;
-const int GB_COMP_GENS             = 4;
-const int GB_COMP_AUTO_REDUCE      = 5;
-const int GB_COMP_NEWPAIRS         = 6;
-const int GB_COMP_DONE             = 7;
-
-// The following are the return values from s_pair_step,
-const int SPAIR_DONE   = 0;
-const int SPAIR_GB     = 1;
-const int SPAIR_SYZ    = 2;
-const int SPAIR_ZERO   = 3;
-const int SPAIR_MINGEN = 4;
-const int SPAIR_GEN    = 5;
-const int SPAIR_PAIR   = 6;
-const int SPAIR_RING   = 7;
-const int SPAIR_REMOVED = 8;
-const int SPAIR_DEFERRED = 9;
 
 //--- To be removed soon -----------------------------------
 // These are the possible states of a GB computation
@@ -76,20 +54,6 @@ const int STOP_CODIM    = 4;
 const int STOP_MIN_GENS = 5;
 //--- above to be removed soon -----------------------------
 
-struct StopConditions
-{
-  bool always_stop;
-  bool stop_after_degree;
-  M2_arrayint degree_limit; // Stop after completing this 'slanted' degree
-  unsigned int basis_element_limit; // Number of gb elements
-  unsigned int syzygy_limit;
-  unsigned int pair_limit;
-  bool use_codim_limit;
-  unsigned int codim_limit;
-  unsigned int subring_limit;
-  M2_bool just_min_gens;
-  M2_arrayint length_limit; // ignored for GB computations
-};
 
 class Computation : public mutable_object
 // This is the base type for all Groebner basis and syzygy computations
@@ -253,7 +217,7 @@ public:
 };
 
 #endif
-
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // End:

@@ -1149,25 +1149,43 @@ extern "C" {
   /**** Groebner basis and resolution routines ******/
   /**************************************************/
 
-  /* Each of these routines can return NULL, because of errors */
+enum ComputationStatusCode
+{
+  COMP_NEED_RESIZE = -3,
+  COMP_ERROR = -2,
+  COMP_INTERRUPTED = -1,
+  COMP_DONE = 0,
+  COMP_DONE_DEGREE_LIMIT = 1,
+  COMP_DONE_LENGTH_LIMIT = 2,
+  COMP_DONE_SYZYGY_LIMIT = 3,
+  COMP_DONE_PAIR_LIMIT   = 4,
+  COMP_DONE_GB_LIMIT     = 5,
+  COMP_DONE_SYZ_LIMIT    = 6,
+  COMP_DONE_CODIM        = 7,
+  COMP_DONE_MIN_GENS     = 8,
+  COMP_DONE_STEPS        = 9,  // Possible Hilbert function return value
+  COMP_DONE_SUBRING_LIMIT= 10,
+  COMP_COMPUTING = 100
+};
 
-  ComputationOrNull *IM2_GB_make(const Matrix *m,
-				 M2_bool collect_syz,
-				 int n_rows_to_keep,
-				 M2_arrayint gb_degrees,
-				 M2_bool use_max_degree,
-				 int max_degree,
-				 int algorithm,
-				 int strategy); /* drg: connected rawGB */
+enum StrategyValues
+  {
+    STRATEGY_LONGPOLYNOMIALS = 1,
+    STRATEGY_SORT = 2,
+    STRATEGY_USE_HILB = 4
+  };
 
-  ComputationOrNull *IM2_GB_set_hilbert_function(Computation *G,
-						 const RingElement *h); /* drg: connected rawGBSetHilbertFunction */
+enum Algorithms
+  {
+    GB_polyring_field = 1, /* The main GB algorithm to use */
+    GB_polyring_field_homog = 2
+  };
 
-
-
-  ComputationOrNull *IM2_GB_force(const Matrix *m,
-				  const Matrix *gb,
-				  const Matrix *change); /* drg: connected rawGBForce */
+enum gbTraceValues
+  {
+    // The printlevel flags
+    PRINT_SPAIR_TRACKING=1024
+  };
   
   ComputationOrNull* IM2_Computation_set_stop(Computation *G,          
 				     M2_bool always_stop,       /* 1 */
@@ -1182,6 +1200,84 @@ extern "C" {
 				     M2_arrayint length_limit   /* 9 */  /* not for GB */
 				     ); /* drg: connected rawGBSetStop */
 
+  /* Each of these routines can return NULL, because of errors */
+
+  void rawStartComputation(Computation *G);
+  /* start or continue the computation */
+
+  enum ComputationStatusCode rawStatus1(Computation *C);
+
+  const M2_string IM2_GB_to_string(Computation *C); /* drg: connected, in actors4.d */
+
+  int IM2_GB_hash(const Computation *C); /* drg: connected, in basic.d */
+
+  int IM2_GB_verbose(int level); /* drg; connected rawGBverbose */
+
+  /*******************************************
+   * Computation routines for Groebner bases *
+   *******************************************/
+
+  ComputationOrNull *IM2_GB_make(const Matrix *m,
+				 M2_bool collect_syz,
+				 int n_rows_to_keep,
+				 M2_arrayint gb_degrees,
+				 M2_bool use_max_degree,
+				 int max_degree,
+				 int algorithm,
+				 int strategy); /* drg: connected rawGB */
+
+  ComputationOrNull *IM2_GB_force(const Matrix *m,
+				  const Matrix *gb,
+				  const Matrix *change); /* drg: connected rawGBForce */
+  
+  ComputationOrNull *IM2_GB_set_hilbert_function(Computation *G,
+						 const RingElement *h); /* drg: connected rawGBSetHilbertFunction */
+
+
+  const MatrixOrNull *rawGBMatrix(Computation *C);
+  /* Get the minimal, auto-reduced GB of a GB computation.
+     Each call to this will produce a different raw matrix */
+
+  const MatrixOrNull *rawGBMinimalGenerators(Computation *C);
+  /* Yields a matrix whose columns form a minimal generating set
+     for the ideal or submodule, as computed so far.  In the
+     inhomogeneous case, this yields a generating set which is
+     sometimes smaller than the entire Groebner basis. */
+
+  const MatrixOrNull *rawGBChangeOfBasis(Computation *C);
+  /* Yields the change of basis matrix from the Groebner basis to
+     the original generators, at least if n_rows_to_keep was set
+     when creating the GB computation.  This matrix, after the 
+     computation has run to completion, should satisfy:
+     (original matrix) = (GB matrix) * (change of basis matrix). */
+
+  const MatrixOrNull *rawGBSyzygies(Computation *C);  
+  /* Yields a matrix containing the syzygies computed so far
+     via the GB computation C, assuming that 'collect_syz' was
+     set when the computation was created.  If 'n_rows_to_keep' was
+     set to a non-negative integer, then only that many rows of each
+     syzygy are kept. */
+
+  const MatrixOrNull *rawGBMatrixRemainder(Computation *G, 
+						int level,
+						const Matrix *m); /* drg: connected rawGBMatrixRemainder */
+
+  void IM2_GB_matrix_lift(Computation *G,
+			  int level,
+			  const Matrix *m,
+			  MatrixOrNull **result_remainder,
+			  MatrixOrNull **result_quotient
+			  ); /* drg: connected rawGBMatrixLift */
+
+  int IM2_GB_contains(Computation *G, 
+		      int level,
+		      const Matrix *m); /* drg: connected rawGBContains */
+
+
+  /*******************************************
+   * Computation routines for Resolutions ****
+   *******************************************/
+
   /* LongPolynomial, Sort, Primary, Inhomogeneous, Homogeneous */
   /* Res: SortStrategy, 0, 1, 2, 3 ?? */
 
@@ -1193,9 +1289,6 @@ extern "C" {
 				  int algorithm,
 				  int strategy /* drg: connected rawResolution */
 				  );
-
-  void rawStartComputation(Computation *G);
-  /* start or continue the computation */
 
   const MatrixOrNull *IM2_GB_get_matrix(Computation *G, int level, M2_bool minimize); 
   /* drg: connected rawGBGetMatrix */
@@ -1236,21 +1329,6 @@ extern "C" {
     /*drg: connected rawGBGetFree*/
 
 
-  const MatrixOrNull *rawGBMatrixRemainder(Computation *G, 
-						int level,
-						const Matrix *m); /* drg: connected rawGBMatrixRemainder */
-
-  void IM2_GB_matrix_lift(Computation *G,
-			  int level,
-			  const Matrix *m,
-			  MatrixOrNull **result_remainder,
-			  MatrixOrNull **result_quotient
-			  ); /* drg: connected rawGBMatrixLift */
-
-  int IM2_GB_contains(Computation *G, 
-		      int level,
-		      const Matrix *m); /* drg: connected rawGBContains */
-
   const M2_arrayint IM2_GB_betti(Computation *G,
 				 int type); /* drg: connected rawGBBetti */
   /* 0: minimal betti numbers,
@@ -1259,17 +1337,12 @@ extern "C" {
      3:
   */
 
-  const M2_string IM2_GB_to_string(Computation *G); /* drg: connected, in actors4.d */
-
-  int IM2_GB_hash(const Computation *G); /* drg: connected, in basic.d */
-
-  int IM2_GB_verbose(int level); /* drg; connected rawGBverbose */
   
   /**************************************************/
   /**** Fraction free LU decomposition **************/
   /**************************************************/
 
-  M2_arrayint_OrNull IM2_FF_LU_decomp(MutableMatrix *M);
+  M2_arrayint_OrNull IM2_FF_LU_decomp(Matrix *M);
 
 #if defined(__cplusplus)
 }

@@ -6,11 +6,11 @@
 #include "matrix.hpp"
 #include "polyring.hpp"
 #include "comp.hpp"
-#include "gb_comp.hpp"
+#include "comp_gb.hpp"
 
 #include "spair.hpp"
 
-class GBinhom_comp : public gb_comp
+class GBinhom_comp : public GBComputation
 {
 private:
   // Ring information
@@ -100,7 +100,6 @@ public:
   Matrix *reduce(const Matrix *m, Matrix *&lift);
 
   virtual int contains(const Matrix *m);
-  virtual bool is_equal(const gb_comp *q);
 
   // obtaining: mingens matrix, GB matrix, change of basis matrix, stats.
   Matrix *min_gens_matrix();

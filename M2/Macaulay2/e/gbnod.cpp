@@ -4,6 +4,7 @@
 #include "gb2.hpp"
 #include "hilb.hpp"
 #include "text_io.hpp"
+#include "comp_gb.hpp"
 
 void gb2_comp::setup(FreeModule *FFsyz,
 		     gb_node *ggens,
@@ -75,7 +76,7 @@ gb2_comp::gb2_comp(FreeModule *Fsyz0,
 void gb2_comp::set_output(gb_node *p) 
 {
   syz = p;
-  use_hilb = (strategy_flags & USE_HILB) && (syz != NULL);
+  use_hilb = (strategy_flags & STRATEGY_USE_HILB) && (syz != NULL);
 }
 void gb2_comp::remove_pair(s_pair *& p)
 {
@@ -315,7 +316,7 @@ void gb2_comp::compute_s_pair(s_pair *p)
 
 void gb2_comp::gb_reduce(gbvector * &f, gbvector * &fsyz)
 {
-  if ((strategy_flags & USE_GEOBUCKET) != 0)
+  if ((strategy_flags & STRATEGY_LONGPOLYNOMIALS) != 0)
     {
       gb_geo_reduce(f,fsyz);
       return;
@@ -679,7 +680,7 @@ bool gb2_comp::receive_generator(gbvector *f, int n, const ring_elem denom)
 
 void gb2_comp::end_degree()
 {
-  if ((strategy_flags & USE_SORT) != 0)
+  if ((strategy_flags & STRATEGY_SORT) != 0)
     {
       gb_sort(n_gb_first, n_gb-1); // This is the range of elements to sort.
     }
