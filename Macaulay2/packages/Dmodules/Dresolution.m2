@@ -27,6 +27,8 @@ shifts := (m, w, oldshifts) -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+debug Macaulay2
+
 kerGB := m -> (
      -- m should be a matrix which is a GB, and
      -- whose source has the Schreyer order.
