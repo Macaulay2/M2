@@ -63,7 +63,7 @@ newPackage(String) := opts -> (title) -> (
 	  "example outputs" => new MutableHashTable,
 	  "edited documentation" => new MutableHashTable,
 	  "html documentation" => new MutableHashTable,
-	  "file directory" => currentFileDirectory,
+	  "source directory" => currentFileDirectory,
 	  "package prefix" => if title === "Main" then prefixDirectory else (
 	       m := matches("(/|^)" | LAYOUT#"packages" | "$", currentFileDirectory);
 	       if m#?1 then substring(currentFileDirectory,0,m#1#0 + m#1#1)

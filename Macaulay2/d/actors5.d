@@ -1152,29 +1152,27 @@ relativizeFilename(e:Expr):Expr := (
      );
 setupfun("relativizeFilename",relativizeFilename);
 
-getsym(d:Dictionary,s:string):Expr := (
-     w := makeUniqueWord(s,parseWORD);
-     when lookup(w,d.symboltable) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
-     is null do (
-	  t := makeSymbol(w,dummyPosition,d);
-	  globalFrame.values.(t.frameindex)));
+isglobalsym(s:string):Expr := when globalLookup(makeUniqueWord(s,parseWORD)) is x:Symbol do True is null do False;
+issym(d:Dictionary,s:string):Expr := when lookup(makeUniqueWord(s,parseWORD),d) is x:Symbol do True is null do False;
 
-issym(d:Dictionary,s:string):Expr := (
+getglobalsym(d:Dictionary,s:string):Expr := (
      w := makeUniqueWord(s,parseWORD);
-     when globalLookup(w)
-     is x:Symbol do True
-     is null do False);
+     when globalLookup(w) is x:Symbol do Expr(SymbolClosure(globalFrame,x))
+     is null do (
+	  t := makeSymbol(w,dummyPosition,globalDictionary);
+	  globalFrame.values.(t.frameindex)));
+getglobalsym(s:string):Expr := getglobalsym(globalDictionary,s);
 
 getGlobalSymbol(e:Expr):Expr := (
      when e 
-     is s:string do getsym(globalDictionary,s)
+     is s:string do getglobalsym(s)
      is z:Sequence do if length(z) != 2 then WrongNumArgs(2) else (
 	  when z.0
 	  is dc:DictionaryClosure do (
 	       d := dc.dictionary;
 	       if d.transient || d.frameID != 0 then WrongArg(1,"a global dictionary") else
 	       when z.1
-	       is s:string do getsym(d,s)
+	       is s:string do getglobalsym(d,s)
 	       else WrongArgString(2)
 	       )
 	  else WrongArg(1,"a dictionary")
@@ -1183,11 +1181,7 @@ getGlobalSymbol(e:Expr):Expr := (
 setupfun("getGlobalSymbol",getGlobalSymbol);
 
 isGlobalSymbol(e:Expr):Expr := (
-     when e is s:string do (
-	  when globalLookup(makeUniqueWord(s,parseWORD))
-	  is x:Symbol do True
-	  is null do False
-	  )
+     when e is s:string do isglobalsym(s)
      is z:Sequence do if length(z) != 2 then WrongNumArgs(2) else (
 	  when z.0
 	  is dc:DictionaryClosure do (
