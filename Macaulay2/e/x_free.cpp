@@ -220,7 +220,8 @@ void cmd_Nvec_from_int(object &oF, object &on)
 {
   const FreeModule *F = oF->cast_to_FreeModule();
   int n = on->int_of();
-  gStack.insert(Vector(F,n));
+  vec v = F->e_sub_i(n);
+  gStack.insert(Vector(F,v));
 }
 
 void cmd_Nvec_zero(object &oF)

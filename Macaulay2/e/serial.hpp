@@ -3,11 +3,12 @@
 #ifndef _serial_hpp_
 #define _serial_hpp_
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__MWERKS__) 
 #include <iostream.h>
 #else
 #include <stream.h>
 #endif
+
 
 #include "object.hpp"
 

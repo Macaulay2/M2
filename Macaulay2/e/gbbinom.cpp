@@ -952,7 +952,7 @@ bool binomialGB::reduce(binomial &f) const
 #endif
 int binomialGB::n_masks() const
 {
-  int masks[100000];
+  int *masks = new int[100000];
   buffer o;
   unsigned int nmasks = 1;
   masks[0] = first->mask;
@@ -970,6 +970,7 @@ int binomialGB::n_masks() const
 	masks[nmasks++] = p->mask;
     }
   emit(o.str());
+  delete masks;
   return nmasks;
 }
 void binomialGB::debug_display() const

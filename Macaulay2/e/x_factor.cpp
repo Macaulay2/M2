@@ -1,7 +1,7 @@
 // copyright Daniel R. Grayson, 1995
 
-#if !defined(__MWERKS__)
-
+//#if !defined(__MWERKS__)
+#if 1
 #include <assert.h>
 #include <iostream.h>
 #include "interp.hpp"

@@ -296,6 +296,24 @@ static void dummy_GC_warn_proc(char *msg, GC_word arg) {
 }
 #endif
 
+#if defined(__MWERKS__)
+
+void SetMinimumStack(long minSize)
+{
+	long newApplLimit;
+
+	if (minSize > LMGetDefltStack())
+	{
+		newApplLimit = (long) GetApplLimit()
+				- (minSize - LMGetDefltStack());
+		SetApplLimit((Ptr) newApplLimit);
+		MaxApplZone();
+	}
+}
+
+#define cMinStackSpace (512L * 1024L)
+#endif
+
 int main(argc,argv)
 int argc; 
 char **argv;
@@ -310,6 +328,14 @@ char **argv;
      static void *reserve = NULL;
      extern void actors4_setupargv();
      extern void interp_process();
+
+#if defined(__MWERKS__) && !defined(__BUILDING_MPW__)
+	int n_mac_args = 4;
+	char *mac_args[4] = {"-e phase=1","setup.m2","-e phase=0","-e runStartFunctions()"};
+	char *mac_argv[5] = {"M2", "-e phase=1","setup.m2","-e phase=0","-e runStartFunctions()"};
+	argv = mac_argv;
+	argc = 5;
+#endif
 
      ONSTACK(saveenvp);
 
@@ -345,6 +371,10 @@ char **argv;
 #endif
 
 #ifdef __MWERKS__
+	/* Make sure we have lots and lots of stack space. 	*/
+	SetMinimumStack(cMinStackSpace);
+	/* Cheat and let stdio initialize toolbox for us.	*/
+	printf("MacOS Macaulay2...\n");
      saveargv = argv;
 #else
      /* save arguments on stack in case they're on the heap */
@@ -505,7 +535,12 @@ char **argv;
 	  }
      system_envp = tostrings(envc,saveenvp);
      system_argv = tostrings(argc,saveargv);
+#if defined(__MWERKS__) && !defined(__BUILDING_MPW__)
+	 system_args = tostrings(n_mac_args,mac_args);
+#else
      system_args = tostrings(argc == 0 ? 0 : argc - 1, saveargv + 1);
+#endif
+
 #ifdef includeX11
      display = XOpenDisplay(NULL);
      font = XLoadFont(display,"6x13");
@@ -1452,13 +1487,24 @@ short htons(short x) { return x; }
 #define ENOSYS 0
 #endif
 #undef getpid
+/* Added for MPW support: I can't find the routines yet! */
+/* MES: 8/27/98 */
+#if defined(__BUILDING_MPW__)
+int system(const char * s) { return ERROR; }
+char * getcwd(char * s, int n) { return ""; }
+int exec(const char *s,...) { return ERROR; }
+/* End of MPW missing stuff */
+#else
+char * getcwd(char * s, int n) { return ""; }
+#endif
+
 int getpid(){ return ERROR; }
 int dup2() { return ERROR; }
 int fork() { return ERROR; }
 int pipe(int v[2]) { return ERROR; }
 int wait() { return ERROR; }
 int alarm(int i) { return ERROR ; }
-int sleep(int i) { return ERROR; }
+//unsigned int sleep(unsigned int i) { return ERROR; }
 int getpagesize() { return 4096; }
 int brk() { return 0; }
 void *sbrk(int i) { return 0; }

@@ -24,11 +24,7 @@ extern char newline[];
 extern char *libfac_version;
 #endif
 
-#ifdef __MWERKS__
-#include ".._c_compat.h"
-#else
 #include "../c/compat.h"
-#endif
 
 #undef malloc
 #undef free

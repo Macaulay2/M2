@@ -24,7 +24,7 @@ vec FreeModule::new_term() const
 {
   vec result = (vec) R->vecstash->new_elem();
   result->next = NULL;
-  result->coeff = NULL;
+  result->coeff = 0;
   return result;
 }
 vec FreeModule::copy_term(vec v) const
@@ -243,7 +243,7 @@ ring_elem FreeModule::get_coefficient(vec v, int e) const
       result->next = NULL;
       return head.next;
     }
-  return NULL;
+  return 0;
 }
 
 vec FreeModule::get_terms(vec v, int lo, int hi) const
