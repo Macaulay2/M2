@@ -15,8 +15,8 @@ errorDepth = 0
 --   rawGaloisField
 --   rawRR
 --   rawCC
---   rawBigRR
---   rawBigCC
+--   rawRRR
+--   rawCCC
 --   rawPolynomialRing (2 forms)
 --   rawSkewPolynomialRing
 --   rawWeylAlgebra

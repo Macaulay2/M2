@@ -2,6 +2,7 @@
 
 
 QQ.RawRing = rawQQ()
+QQ.isBasic = true
 -- from raw QQ to toplevel QQ
 --MES removed --new QQ from RawRingElement := (QQ,x) -> rawToInteger rawNumerator x / rawToInteger rawDenominator x
 new QQ from RawRingElement := (QQ,x) -> rawToRational x

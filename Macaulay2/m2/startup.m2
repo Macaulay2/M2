@@ -21,7 +21,7 @@ if firstTime then (
      ReverseDictionary = new MutableHashTable;
      PrintNames = new MutableHashTable;
      scan(
-	  {symbol Array, symbol BasicList, symbol BigRR, symbol BigCC,
+	  {symbol Array, symbol BasicList, symbol RRR, symbol CCC,
 		symbol Boolean, symbol CacheTable, symbol Pseudocode, symbol Database,
 		symbol Dictionary, symbol File, symbol Function, symbol HashTable,
 		symbol List, symbol MutableHashTable, symbol MutableList, symbol Net,

@@ -94,7 +94,7 @@ EqualEqualfun(x:Expr,y:Expr):Expr := (
      is SymbolClosure do when y is SymbolClosure do equal(x,y) else equalmethod(x,y)
      is Rational do when y is Rational do equal(x,y) else equalmethod(x,y)
      is Real do when y is Real do equal(x,y) else equalmethod(x,y)
-     is BigReal do when y is BigReal do equal(x,y) else equalmethod(x,y)
+     is RRR do when y is RRR do equal(x,y) else equalmethod(x,y)
      is Boolean do when y is Boolean do equal(x,y) else equalmethod(x,y)
      is Net do when y is Net do equal(x,y) else equalmethod(x,y)
      is string do when y is string do equal(x,y) else equalmethod(x,y)
@@ -148,7 +148,7 @@ NotEqualfun(lhs:Code,rhs:Code):Expr := (
 	  is SymbolClosure do when x is SymbolClosure do not(equal(x,y)) else notequalmethod(x,y)
 	  is Rational do when x is Rational do not(equal(x,y)) else notequalmethod(x,y)
 	  is Real do when x is Real do not(equal(x,y)) else notequalmethod(x,y)
-	  is BigReal do when x is BigReal do not(equal(x,y)) else notequalmethod(x,y)
+	  is RRR do when x is RRR do not(equal(x,y)) else notequalmethod(x,y)
 	  is Boolean do when x is Boolean do not(equal(x,y)) else notequalmethod(x,y)
 	  is Net do when x is Net do not(equal(x,y)) else notequalmethod(x,y)
 	  is string do when x is string do not(equal(x,y)) else notequalmethod(x,y)
@@ -166,7 +166,7 @@ compare(left:Expr,right:Expr):Expr := (
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:Rational do
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
-	  is y:BigReal do (
+	  is y:RRR do (
 	       r := compare(toBigReal(x),y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
@@ -197,13 +197,13 @@ compare(left:Expr,right:Expr):Expr := (
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
 	  is y:Rational do
 	  if x < y then LessE else if x > y then GreaterE else EqualEqualE
-	  is y:BigReal do (
+	  is y:RRR do (
 	       r := compare(toBigReal(x),y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
 	  else binarymethod(left,right,QuestionS))
-     is x:BigReal do (
+     is x:RRR do (
 	  when right
 	  is y:Real do (
 	       r := compare(x,toBigReal(y.v));
@@ -217,7 +217,7 @@ compare(left:Expr,right:Expr):Expr := (
 	       r := compare(x,toBigReal(y));
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
-	  is y:BigReal do (
+	  is y:RRR do (
 	       r := compare(x,y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
@@ -231,7 +231,7 @@ compare(left:Expr,right:Expr):Expr := (
 	  if x.v < y then LessE else if x.v > y then GreaterE else EqualEqualE
 	  is y:Rational do
 	  if x.v < y then LessE else if x.v > y then GreaterE else EqualEqualE
-	  is y:BigReal do (
+	  is y:RRR do (
 	       r := compare(toBigReal(x.v),y);
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
@@ -696,7 +696,7 @@ setupfun("run",run);
 sqrt(a:Expr):Expr := (
      when a
      is x:Real do Expr(Real(sqrt(x.v)))
-     is x:BigReal do Expr(sqrt(x))
+     is x:RRR do Expr(sqrt(x))
      is Error do a
      else WrongArg("a double or big real"));
 setupfun("sqrt",sqrt);

@@ -1,5 +1,6 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+RR.isBasic = true
 RR#0 = 0.
 RR#1 = 1.
 RR.char = 0
@@ -25,20 +26,21 @@ QQ == RR := (r,x) -> x === r+0.
 
 isConstant RR := i -> true
 
-BigRR#0 = 0.
-BigRR#1 = 1.
-BigRR.char = 0
-BigRR.InverseMethod = x -> 1/x
-BigRR.degreeLength = 0
-BigRR.isField = true
-BigRR.RawRing = rawBigRR()
-BigRR.frac = BigRR
-BigRR.baseRings = {}
-BigRR.dim = 0
-BigRR.char = 0
-BigRR.Engine = true
-degree BigRR := i -> {}
-isConstant BigRR := i -> true
+RRR.isBasic = true
+RRR#0 = 0.
+RRR#1 = 1.
+RRR.char = 0
+RRR.InverseMethod = x -> 1/x
+RRR.degreeLength = 0
+RRR.isField = true
+RRR.RawRing = rawRRR()
+RRR.frac = RRR
+RRR.baseRings = {}
+RRR.dim = 0
+RRR.char = 0
+RRR.Engine = true
+degree RRR := i -> {}
+isConstant RRR := i -> true
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -289,8 +289,8 @@ export Complex := { re:double, im:double };
 export ComplexOrNull := Complex or null;
 
 export Expr := (
-     BigComplex or
-     BigReal or
+     CCC or
+     RRR or
      Boolean or
      CodeClosure or
      CompiledFunction or

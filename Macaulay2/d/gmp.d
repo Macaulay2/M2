@@ -745,25 +745,25 @@ export (x:Rational) >= (y:double) : bool := numeratorRef(x) >= y * denominatorRe
 -- big reals
 -----------------------------------------------------------------------------
 
-export BigReal := { prec:int, size:int, exp:int, limbs:limbPointer }; -- must agree with __mpf_struct in gmp.h, and with M2_BigReal in M2types.h
-export BigComplex := { 					    -- must agree with M2_BigComplex in M2types.h
+export RRR := { prec:int, size:int, exp:int, limbs:limbPointer }; -- must agree with __mpf_struct in gmp.h, and with M2_RRR in M2types.h
+export CCC := { 					    -- must agree with M2_CCC in M2types.h
      REprec:int, REsize:int, REexp:int, RElimbs:limbPointer,
      IMprec:int, IMsize:int, IMexp:int, IMlimbs:limbPointer
      };
 
-export realPart(z:BigComplex):BigReal := BigReal(z.REprec, z.REsize, z.REexp, z.RElimbs);
-export imaginaryPart(z:BigComplex):BigReal := BigReal(z.IMprec, z.IMsize, z.IMexp, z.IMlimbs);
-export bigComplex(x:BigReal,y:BigReal):BigComplex := BigComplex(x.prec, x.size, x.exp, x.limbs, y.prec, y.size, y.exp, y.limbs);
+export realPart(z:CCC):RRR := RRR(z.REprec, z.REsize, z.REexp, z.RElimbs);
+export imaginaryPart(z:CCC):RRR := RRR(z.IMprec, z.IMsize, z.IMexp, z.IMlimbs);
+export bigComplex(x:RRR,y:RRR):CCC := CCC(x.prec, x.size, x.exp, x.limbs, y.prec, y.size, y.exp, y.limbs);
 
-isPositive(x:BigReal):bool ::=  1 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
-isZero    (x:BigReal):bool ::=  0 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
-isNegative(x:BigReal):bool ::= -1 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
+isPositive(x:RRR):bool ::=  1 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
+isZero    (x:RRR):bool ::=  0 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
+isNegative(x:RRR):bool ::= -1 == Ccode(int, "mpf_sgn((__mpf_struct *)", x, ")");
 
-export precision(x:BigReal):int := int(Ccode(ulong, "mpf_get_prec((__mpf_struct*)",x,")"));
+export precision(x:RRR):int := int(Ccode(ulong, "mpf_get_prec((__mpf_struct*)",x,")"));
 
 BitsPerLimb := int(Ccode(int,"__GMP_BITS_PER_MP_LIMB"));
-accuracy(x:BigReal):int := BitsPerLimb * (x.prec - x.exp);
-size(x:BigReal):int := BitsPerLimb * x.exp;
+accuracy(x:RRR):int := BitsPerLimb * (x.prec - x.exp);
+size(x:RRR):int := BitsPerLimb * x.exp;
 
 bigprec := 0;
 export setprec(prec:int):int := (
@@ -773,39 +773,39 @@ export setprec(prec:int):int := (
      oldprec);
 setprec(100);
 
-newBigReal():BigReal := (
-     x := BigReal(0,0,0,null());
+newBigReal():RRR := (
+     x := RRR(0,0,0,null());
      Ccode( void, "mpf_init(", "(__mpf_struct *)", x, ")" );
      x);
 
-export toBigReal(x:Rational):BigReal := (
+export toBigReal(x:Rational):RRR := (
      z := newBigReal();
      Ccode( void, "mpf_set_q(", "(__mpf_struct *)", z, ",", "(__mpq_struct *)", x, ")" );
      z);
 
-export toBigReal(x:Integer):BigReal := (
+export toBigReal(x:Integer):RRR := (
      z := newBigReal();
      Ccode( void, "mpf_set_z(", "(__mpf_struct *)", z, ",", "(__mpz_struct *)", x, ")" );
      z);
 
-export toBigReal(n:int):BigReal := (
+export toBigReal(n:int):RRR := (
      x := newBigReal();
      Ccode( void, "mpf_set_si(", "(__mpf_struct *)", x, ",(long)", n, ")" );
      x);
 
-export toBigReal(n:ulong):BigReal := (
+export toBigReal(n:ulong):RRR := (
      x := newBigReal();
      Ccode( void, "mpf_set_ui(", "(__mpf_struct *)", x, ",(unsigned long)", n, ")" );
      x);
 
-export toBigReal(n:double):BigReal := (
+export toBigReal(n:double):RRR := (
      x := newBigReal();
      Ccode( void, "mpf_set_d(", "(__mpf_struct *)", x, ",", n, ")" );
      x);
 
-export toDouble(x:BigReal):double := Ccode( double, "mpf_get_d(", "(__mpf_struct *)", x, ")" );
+export toDouble(x:RRR):double := Ccode( double, "mpf_get_d(", "(__mpf_struct *)", x, ")" );
 
-getstr(str:Cstring, exp:long, base:int, digits:int, x:BigReal):Cstring ::= Ccode(Cstring,
+getstr(str:Cstring, exp:long, base:int, digits:int, x:RRR):Cstring ::= Ccode(Cstring,
      "(Cstring) mpf_get_str(",
 	 "(char *)", str, ",",				    -- target string
 	 "&", exp, ",",					   -- target exponent
@@ -815,59 +815,59 @@ getstr(str:Cstring, exp:long, base:int, digits:int, x:BigReal):Cstring ::= Ccode
      ")"
      );
 
-export tostring(x:BigReal):string := (
+export tostring(x:RRR):string := (
      e := long(0);
      s := getstr(Cstring(null()), e, base, 0, x);
      "."+tostring(s) + "*10^" + tostring(int(e)));
 
-export tostring(x:BigReal,digits:int):string := (
+export tostring(x:RRR,digits:int):string := (
      e := long(0);
      s := getstr(Cstring(null()), e, base, digits, x);
      "."+tostring(s) + "*10^" + tostring(int(e)));
 
-compare0(x:BigReal, y:BigReal):int ::= Ccode( int,
+compare0(x:RRR, y:RRR):int ::= Ccode( int,
      "mpf_cmp(",
 	 "(__mpf_struct *)", x, ",", 
 	 "(__mpf_struct *)", y,
      ")" 
      );
-export compare(x:BigReal, y:BigReal):int := Ccode( int,
+export compare(x:RRR, y:RRR):int := Ccode( int,
      "mpf_cmp(",
 	 "(__mpf_struct *)", x, ",", 
 	 "(__mpf_struct *)", y,
      ")" 
      );
-export (x:BigReal) === (y:BigReal) : bool := compare0(x,y) == 0;
-export (x:BigReal)  >  (y:BigReal) : bool := compare0(x,y) >  0;
-export (x:BigReal)  <  (y:BigReal) : bool := compare0(x,y) <  0;
-export (x:BigReal)  >= (y:BigReal) : bool := compare0(x,y) >= 0;
-export (x:BigReal)  <= (y:BigReal) : bool := compare0(x,y) <= 0;
+export (x:RRR) === (y:RRR) : bool := compare0(x,y) == 0;
+export (x:RRR)  >  (y:RRR) : bool := compare0(x,y) >  0;
+export (x:RRR)  <  (y:RRR) : bool := compare0(x,y) <  0;
+export (x:RRR)  >= (y:RRR) : bool := compare0(x,y) >= 0;
+export (x:RRR)  <= (y:RRR) : bool := compare0(x,y) <= 0;
 
-compare0(x:BigReal, y:long):int ::= Ccode( int, "mpf_cmp_si(", "(__mpf_struct *)", x, ",", y, ")" );
-export (x:BigReal)  >  (y:int) : bool :=  compare0(x,long(y)) >  0;
-export (x:BigReal)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0;
-export (x:BigReal) === (y:int) : bool :=  compare0(x,long(y)) == 0;
-export (x:BigReal)  <  (y:int) : bool :=  compare0(x,long(y)) <  0;
-export (x:BigReal)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0;
+compare0(x:RRR, y:long):int ::= Ccode( int, "mpf_cmp_si(", "(__mpf_struct *)", x, ",", y, ")" );
+export (x:RRR)  >  (y:int) : bool :=  compare0(x,long(y)) >  0;
+export (x:RRR)  >= (y:int) : bool :=  compare0(x,long(y)) >= 0;
+export (x:RRR) === (y:int) : bool :=  compare0(x,long(y)) == 0;
+export (x:RRR)  <  (y:int) : bool :=  compare0(x,long(y)) <  0;
+export (x:RRR)  <= (y:int) : bool :=  compare0(x,long(y)) <= 0;
 
-export (x:BigComplex) === (y:BigComplex) : bool := (
+export (x:CCC) === (y:CCC) : bool := (
      0 == Ccode( int, "mpf_cmp((__mpf_struct *)", x, ",(__mpf_struct *)", y, ")" )
      &&
      0 == Ccode( int, "mpf_cmp((__mpf_struct *)(&", x, "->IMprec),(__mpf_struct *)(&", y, "->IMprec))" )
      );
 
-export hash(x:BigReal):int := Ccode(int, 
+export hash(x:RRR):int := Ccode(int, 
      "mpf_hash(",					    -- see gmp_aux.c for this function
          "(__mpf_struct *)", x, 
      ")"
      );
-export hash(x:BigComplex):int := (
+export hash(x:CCC):int := (
      Ccode(int, "mpf_hash(", "(__mpf_struct *)", x, ")" )
      + 111 * 
      Ccode(int, "mpf_hash(", "(__mpf_struct *)(&", x, "->IMprec))" )
      );
      
-export (x:BigReal) + (y:BigReal) : BigReal := (
+export (x:RRR) + (y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
           "mpf_add(",
@@ -878,7 +878,7 @@ export (x:BigReal) + (y:BigReal) : BigReal := (
      );
      z);
 
-export (x:BigReal) - (y:BigReal) : BigReal := (
+export (x:RRR) - (y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
           "mpf_sub(",
@@ -889,7 +889,7 @@ export (x:BigReal) - (y:BigReal) : BigReal := (
      );
      z);
 
-export - (y:BigReal) : BigReal := (
+export - (y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
 	  "mpf_neg(",
@@ -899,9 +899,9 @@ export - (y:BigReal) : BigReal := (
      );
      z);
 
-export abs(x:BigReal) : BigReal := if isNegative(x) then -x else x;
+export abs(x:RRR) : RRR := if isNegative(x) then -x else x;
 
-export (x:BigReal) * (y:BigReal) : BigReal := (
+export (x:RRR) * (y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
           "mpf_mul(",
@@ -912,7 +912,7 @@ export (x:BigReal) * (y:BigReal) : BigReal := (
      );
      z);
 
-export (x:BigReal) / (y:BigReal) : BigReal := (
+export (x:RRR) / (y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
           "mpf_div(",
@@ -923,7 +923,7 @@ export (x:BigReal) / (y:BigReal) : BigReal := (
      );
      z);
 
-pow(x:BigReal, y:BigReal, n:ulong):void ::= Ccode( void,
+pow(x:RRR, y:RRR, n:ulong):void ::= Ccode( void,
      "mpf_pow_ui(",
 	 "(__mpf_struct *)", x, ",", 
 	 "(__mpf_struct *)", y, ",", 
@@ -931,7 +931,7 @@ pow(x:BigReal, y:BigReal, n:ulong):void ::= Ccode( void,
      ")" 
      );
 
-export (x:BigReal) ^ (n:int) : BigReal := (
+export (x:RRR) ^ (n:int) : RRR := (
      if n == 0 then return toBigReal(1);
      if n < 0 then (
 	  x = toBigReal(1) / x;
@@ -940,7 +940,7 @@ export (x:BigReal) ^ (n:int) : BigReal := (
      pow(z,x,ulong(n));
      z);
 
-export sqrt(y:BigReal) : BigReal := (
+export sqrt(y:RRR) : RRR := (
      z := newBigReal();
      Ccode( void,
 	  "mpf_sqrt(",

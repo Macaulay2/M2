@@ -1,6 +1,7 @@
 --		Copyright 1993-1999,2004 by Daniel R. Grayson
 
 
+CC.isBasic = true
 CC.synonym = "complex number"
 CC.isCommutative = true
 CC.texMath = ///{\mathbb C}///
@@ -14,15 +15,16 @@ CC#1 = new CC from (1.,0.)
 CC.degreeLength = 0
 degree CC := i -> {}
 
-BigCC.synonym = "big complex number"
-BigCC.isCommutative = true
-BigCC.texMath = ///{\mathbb C}///
-BigCC.isField = true
-BigCC.RawRing = rawBigCC()
-BigCC.mathML = "<mi>&Copf;</mi>"
-BigCC.char = 0
-BigCC.degreeLength = 0
-degree BigCC := i -> {}
+CCC.isBasic = true
+CCC.synonym = "big complex number"
+CCC.isCommutative = true
+CCC.texMath = ///{\mathbb C}///
+CCC.isField = true
+CCC.RawRing = rawCCC()
+CCC.mathML = "<mi>&Copf;</mi>"
+CCC.char = 0
+CCC.degreeLength = 0
+degree CCC := i -> {}
 
 conjugate = method(TypicalValue => CC)
 conjugate ZZ := identity

@@ -47,7 +47,7 @@ k  = 27_Z
 3.5_Z
 
 -- not implemented yet:
--- (toBigRR 3.5)_Z
+-- (toRRR 3.5)_Z
 
 i+j
 i-j
@@ -293,8 +293,8 @@ assert( 11_R == 11_Z_R )
 -- rawQQ()
 -- rawRR()
 -- rawCC()
--- rawBigRR()
--- rawBigCC()
+-- rawRRR()
+-- rawCCC()
 -- rawAssociativeRing(K,noncommM)
 -- rawQuiverAlgebra(R,quiver)
 -- Other rings to implement:

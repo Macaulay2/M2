@@ -8,9 +8,9 @@ document {
 	  TO "ZZ", 
 	  TO "QQ", 
 	  TO "RR",
-	  TO "BigRR",
+	  TO "RRR",
 	  TO "CC",
-	  TO "BigCC"
+	  TO "CCC"
 	  },
      "The names of some of these rings are double letters so the corresponding symbols
      with single letters are preserved for use as variables.",

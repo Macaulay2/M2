@@ -102,7 +102,7 @@ ring_elem CC::from_doubles(double a, double b) const
   return CC_RINGELEM(result);
 }
 
-ring_elem CC::from_BigComplex(M2_BigComplex z) const
+ring_elem CC::from_BigComplex(M2_CCC z) const
 {
   M2_CC result = reinterpret_cast<M2_CC>(getmem(sizeof(M2_CC_struct)));
   result->re = mpf_get_d(&z->re);

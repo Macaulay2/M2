@@ -9,11 +9,11 @@
 #include <gmp.h>
 
 #if 0
-#define BIGCC_VAL(f) (M2_BigComplex ((f).poly_val))
+#define BIGCC_VAL(f) (M2_CCC ((f).poly_val))
 #define BIGCC_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-#define BIGCC_VAL(f) (reinterpret_cast<M2_BigComplex>((f).poly_val))
+#define BIGCC_VAL(f) (reinterpret_cast<M2_CCC>((f).poly_val))
 #define BIGCC_RINGELEM(a) (ring_elem(reinterpret_cast<Nterm *>(a)))
 
 #define BIGCC_RE(f) (&BIGCC_VAL(f)->re)  // returns actual value, not copy
@@ -23,11 +23,11 @@ class CCC : public Ring
 {
   int _elem_size;
 
-  M2_BigComplex _zero_elem;
+  M2_CCC _zero_elem;
 
   mpf_ptr new_mpf() const;
-  M2_BigComplex new_elem() const;
-  void remove_elem(M2_BigComplex f) const;
+  M2_CCC new_elem() const;
+  void remove_elem(M2_CCC f) const;
 
   static mpf_ptr _epsilon;  // Components (real or imag) less than this are considered zero.
 
@@ -72,7 +72,7 @@ public:
   virtual ring_elem from_rational(mpq_ptr r) const;
   virtual ring_elem from_complex(M2_CC z) const;
   virtual ring_elem from_BigReal(mpf_ptr r) const;
-  virtual ring_elem from_BigComplex(M2_BigComplex z) const;
+  virtual ring_elem from_BigComplex(M2_CCC z) const;
   virtual ring_elem var(int v, int n) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
   virtual bool lift(const Ring *R, const ring_elem f, ring_elem &result) const;
