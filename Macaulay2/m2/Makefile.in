@@ -101,7 +101,7 @@ phase1 :: prep
 
 ifneq "$(DUMPDATA)" "no"
 phase1 :: ../$(DUMPDATAFILE)
-../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../libexec/Macaulay2
+../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../bin/Macaulay2
 	 #------ phase 1: reading *.m2 (not the documentation), making $@
 	rm -f ../$(DUMPDATAFILE)
 	time $(ENV) ../bin/Macaulay2 -q --silent --stop @srcdir@/dumpdata.m2 '-edump()'
@@ -117,7 +117,7 @@ phase2 :: ../cache/Macaulay2-pre cache/doc/.made
 	touch $@
 
 ../cache/Macaulay2-pre cache/doc/.made : \
-		$(DUMPEDM2FILES) ../libexec/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS) docseq Macaulay2-doc.m2
+		$(DUMPEDM2FILES) ../bin/Macaulay2 $(DOCSEQUENCE) $(TUTORIALS) docseq Macaulay2-doc.m2
 	 #------ phase 2: making cache/doc/*.example, cache/tests/*.m2, and $@
 	rm -rf ../cache/Macaulay2-tmp
 	rm -rf cache/tests
@@ -191,7 +191,7 @@ install :: phase5
 $(htmldocdir) : ; install -d $@
 
 phase5 : phase4 $(htmldocdir) $(htmldocdir)/index.html always
-$(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
+$(htmldocdir)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../bin/Macaulay2
 	 #------ phase 5: making html documentation
 	$(ENV) ../../bin/M2 -q --silent --stop \
 		'-e phase = 5; errorDepth 0' \

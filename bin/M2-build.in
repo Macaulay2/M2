@@ -18,7 +18,7 @@ M2HOME="`dirname $0`/../Macaulay2"
 M2LIB="$M2HOME"
 export M2HOME M2LIB
 
-DATA="$M2HOME/libexec/Macaulay2-`uname -m |sed s=/=-=g`-data"
+DATA="$M2HOME/cache/Macaulay2-`uname -m |sed s=/=-=g`-data"
 INIPATH="-e path = { \"$SRCHOME/m2/\", \"$M2HOME/m2/\" }" \
 M2PATH="-e path = join(path,{ \"$SRCHOME/m2/\", \"$SRCHOME/packages/\", \"$SRCHOME/experiments/\" })"
 START="-e runStartFunctions()"

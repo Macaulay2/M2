@@ -54,8 +54,7 @@ extern char *libfac_version;
 #include <string.h>
 #include <math.h>
 
-#if defined(_WIN32) && !defined(__CYGWIN32__)
-#else
+#if HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
 

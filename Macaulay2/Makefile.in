@@ -88,12 +88,7 @@ clean ::; rm -rf bin
 initialize :: bin
 install :: $(bindir)/Macaulay2$(EXE)
 $(bindir)/Macaulay2 : bin/Macaulay2$(EXE); $(INSTALL_PROGRAM) $^ $(bindir)/Macaulay2$(EXE)
-################################# libexec
-libexec :; mkdir $@
-clean ::; rm -rf libexec
-initialize :: libexec
-install :: $(libexecdir)
-$(libexecdir):; $(INSTALL) -d "$@"
+################################# cache
 ifeq "$(DUMPDATA)" "yes"
 ifeq "$(encap)" "no"
 install :: $(cachedir)/$(DUMPDATAFILE)
