@@ -34,8 +34,6 @@ protected:
   int _totalvars;		// The total number of variables, including all base rings
                                 // BUT: not including basic fields.
   const Monoid *D_;
-  const PolynomialRing *_HRing;	// Hilbert function ring, if D has >= 1 variables.
-				// Otherwise, this will be NULL.
 
   ring_elem _zero_divisor;
   bool _isfield;		// true means yes, or declared yes.
@@ -61,7 +59,7 @@ public:
   // The ultimate number of fraction field variables.
 
   const Monoid * degree_monoid() const { return D_; }
-  const PolynomialRing *HilbertRing() const { return _HRing; }
+  const PolynomialRing *get_degree_ring() const { return D_->get_degree_ring(); }
 
   virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
   virtual bool is_ZZ() const { return false; }

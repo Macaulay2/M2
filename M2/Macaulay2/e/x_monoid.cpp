@@ -2,6 +2,7 @@
 
 #include "monoid.hpp"
 #include "engine.h"
+#include "ring.hpp"
 
 bool check_all_positive(const M2_arrayint degs)
 {
@@ -19,12 +20,18 @@ Monoid *IM2_Monoid_trivial()
   return Monoid::get_trivial_monoid(); // Set up in IM2_initialize()
 }
 
-Monoid *IM2_Monoid_make(MonomialOrdering *mo,
+MonoidOrNull *IM2_Monoid_make(MonomialOrdering *mo,
 			M2_stringarray names,
-			Monoid *deg_monoid,
+			Ring *deg_ring,
 			M2_arrayint degs)
 {
-  return Monoid::create(mo,names,deg_monoid,degs);
+  const PolynomialRing *P = deg_ring->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      ERROR("expected polynomial ring");
+      return 0;
+    }
+  return Monoid::create(mo,names,P,degs);
 }
 
 unsigned long IM2_Monoid_hash(Monoid *M)

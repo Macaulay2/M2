@@ -847,7 +847,7 @@ int gb2_comp::hilbertNumerator(RingElement *&result)
 #warning "do hilb comp elsewhere"
 #if 0
   if (hf_comp == NULL)
-    hf_comp = new hilb_comp(R->HilbertRing(), gbmatrix);
+    hf_comp = new hilb_comp(R->get_degree_ring(), gbmatrix);
 #endif
 
   int retval = hf_comp->calc(-1);

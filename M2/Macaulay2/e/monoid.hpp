@@ -8,6 +8,8 @@
 #include "array.hpp"
 #include "newdelete.hpp"
 
+class PolynomialRing;
+
 class monoid_info : our_new_delete
 {
   friend class Monoid;
@@ -20,10 +22,12 @@ class monoid_info : our_new_delete
 				// degree monoid.
   M2_arrayint primary_degree_of_var;
 
+  const PolynomialRing *degree_ring;
   const Monoid *degree_monoid;
 
   MonomialOrdering *_mo;
   const mon_order *mo;
+
 
   bool isgroup;		
   bool use_packing;	// If so, then nwords == nvars, no packing is done
@@ -37,7 +41,7 @@ public:
   monoid_info(MonomialOrdering *mo,
 	      mon_order *mmo,
 	      M2_stringarray s,
-	      const Monoid *deg_monoid,
+	      const PolynomialRing *deg_ring,
 	      M2_arrayint degs);
 };
 
@@ -70,7 +74,7 @@ protected:
 public:
   static Monoid *create(MonomialOrdering *mo,
 			M2_stringarray names,
-			const Monoid *D,
+			const PolynomialRing *DR, /* degree ring */
 			M2_arrayint degs);
 
   static Monoid *tensor_product(const Monoid *M1, const Monoid *M2);
@@ -78,6 +82,9 @@ public:
   ~Monoid();
 
   monoid_info *get_private_monoid_info() const { return moninfo; }
+
+  static void set_trivial_monoid_degree_ring(const PolynomialRing *DR);
+  // ONLY to be called by PolynomialRing::get_trivial_poly_ring()
 
   static Monoid *get_trivial_monoid();
 
@@ -128,6 +135,7 @@ public:
   int degree_weights(const int *m, const M2_arrayint wts) const;
   void degree_of_varpower(const int *vp, int *result) const;
 
+  const PolynomialRing *get_degree_ring() const { return moninfo->degree_ring; }
   const Monoid *degree_monoid() const { return moninfo->degree_monoid; }
   const int *degree_of_var(int v) const { return moninfo->degree_of_var[v]; }
   int primary_degree_of_var(int v) const { return moninfo->primary_degree_of_var->array[v]; }

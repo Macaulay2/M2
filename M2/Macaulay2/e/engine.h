@@ -257,7 +257,7 @@ extern "C" {
 
   MonoidOrNull *IM2_Monoid_make(MonomialOrdering *mo,
 				M2_stringarray names,
-				Monoid *DegreeMonoid,
+				Ring *DegreeRing,
 				M2_arrayint degs); /* drg: connected rawMonoid*/
     /* This function will return NULL if the monomial order cannot be handled
        currently, if the first components for each degree are not all
@@ -304,6 +304,9 @@ extern "C" {
   const RingOrNull *IM2_Ring_polyring(const Ring *K, 
 				      const Monoid *M); /* drg: connected rawPolynomialRing*/
   /* K can be either commutative or not. */
+
+  const Ring *IM2_Ring_trivial_polyring();
+  /* This returns the polynomial ring ZZ[], whose degree ring is itself */
 
   const RingOrNull *IM2_Ring_skew_polyring(const Ring *R,
 					   M2_arrayint skewvars); /* drg: reconnected rawSkewPolynomialRing */

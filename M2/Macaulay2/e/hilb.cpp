@@ -553,7 +553,7 @@ void hilb_comp::stats() const
 #if 0
 int hilb_comp::hilbertSeries(const Matrix *M, RingElement *&result)
 {
-  const PolynomialRing *P = M->get_ring()->HilbertRing();
+  const PolynomialRing *P = M->get_ring()->get_degree_ring();
   hilb_comp *hf = new hilb_comp(P,M);
   int retval = hf->calc(-1);
   if (retval != COMP_DONE) return 1;
@@ -568,7 +568,7 @@ RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
      NULL is returned if the ring is not appropriate for
      computing Hilbert series, or the computation was interrupted. */
 {
-  const PolynomialRing *P = M->get_ring()->HilbertRing();
+  const PolynomialRing *P = M->get_ring()->get_degree_ring();
   if (P == 0) return 0;
   hilb_comp *hf = new hilb_comp(P,M);
   int retval = hf->calc(-1);
@@ -581,7 +581,7 @@ RingElement *hilb_comp::hilbertNumerator(const Matrix *M)
 #if 0
 RingElement hilb_comp::hilbertSeries(const FreeModule *F)
 {
-  const Ring *P = F->get_ring()->HilbertRing();
+  const Ring *P = F->get_ring()->get_degree_ring();
   RingElement result(P);
   for (int i=0; i<F->rank(); i++)
     result += RingElement(P,...);
