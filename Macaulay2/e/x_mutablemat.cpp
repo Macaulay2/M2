@@ -28,14 +28,12 @@ MutableMatrixOrNull * IM2_MutableMatrix_make(const Ring *R,
 
 MutableMatrix * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool is_dense)
 {
-#warning "write this"
-  return 0;
+  return MutableMatrix::from_matrix(M, is_dense);
 }
 
 const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrix *M)
 {
-#warning "write this"
-  return 0;
+  return M->to_matrix();
 }
 
 const M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M)
@@ -334,22 +332,19 @@ const RingElement * IM2_Matrix_dot_product(const MutableMatrix *M, int c1, int c
 
 const M2_bool IM2_MutableMatrix_is_zero(const MutableMatrix *M)
 {
-  ERROR("not re-implemented yet");
-  return false;
+  return M->is_zero();
 }
 
 const M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M, 
 					 const MutableMatrix *N)
 /* This checks that the entries of M,N are the same */
 {
-  ERROR("not re-implemented yet");
-  return false;
+  return M->is_equal(N);
 }
 
 MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense)
 {
-  ERROR("not re-implemented yet");
-  return 0;
+  return M->copy(prefer_dense);
 }
 
 M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M, 
@@ -357,9 +352,7 @@ M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M,
 				     M2_arrayint cols,
 				     RingElement_array *values)
 {
-#warning "remember to chage these values!!"
-  ERROR("not re-implemented yet");
-  return 0;
+  return M->set_values(rows,cols,values);
 }
 
 
@@ -369,8 +362,7 @@ MutableMatrixOrNull * IM2_MutableMatrix_add(const MutableMatrix *M, const Mutabl
    of the result is set to have each degree zero.  Similarly with the
    source, and also with the degree of the matrix. */
 {
-  ERROR("not re-implemented yet");
-  return 0;
+  return M->add(N);
 }
 
 MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const MutableMatrix *N)
@@ -379,14 +371,12 @@ MutableMatrixOrNull * IM2_MutableMatrix_subtract(const MutableMatrix *M, const M
    of the result is set to have each degree zero.  Similarly with the
    source, and also with the degree of the matrix. */
 {
-  ERROR("not re-implemented yet");
-  return 0;
+  return M->subtract(N);
 }
 
 MutableMatrix * IM2_MutableMatrix_negate(const MutableMatrix *M)
 {
-  ERROR("not re-implemented yet");
-  return 0;
+  return M->negate();
 }
 
 MutableMatrixOrNull * IM2_MutableMatrix_mult(const MutableMatrix *M, 
@@ -396,31 +386,27 @@ MutableMatrixOrNull * IM2_MutableMatrix_mult(const MutableMatrix *M,
    the multiplication is performed, and the source and target are taken from N,M
    respectively.  The degree of the result is the sum of the two degrees */
 {
-  ERROR("not re-implemented yet");
-  return 0;
+  return M->mult(N, opposite_mult);
 }
 
 MutableMatrixOrNull * IM2_MutableMatrix_scalar_mult(const RingElement *f,
 						    const MutableMatrix *M, 
 						    M2_bool opposite_mult)
 {
-  ERROR("not re-implemented yet");
-  return 0;
+  return M->mult(f, opposite_mult);
 }
 
 MutableMatrixOrNull * IM2_MutableMatrix_submatrix(const MutableMatrix *M,
 						  const M2_arrayint rows,
 						  const M2_arrayint cols)
 {
-  ERROR("not re-implemented yet");
-  return 0;
+  return M->submatrix(rows,cols);
 }
 
 MutableMatrixOrNull * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
 						   const M2_arrayint cols)
 {
-  ERROR("not re-implemented yet");
-  return 0;
+  return M->submatrix(cols);
 }
 
 

@@ -106,7 +106,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
 	  p = toSequence makeRawTable(R,p);
 	  h := (
 	       if N === null 
-	       then rawMatrix1(raw cover M, rankN, flatten p, false, 0)
+	       then rawMatrix1(raw cover M, rankN, flatten p, 0)
 	       else rawMatrix2(raw cover M, raw cover N, if options.Degree === null then (degreeLength R):0 else degreeCheck(options.Degree,R),flatten p,false,0)
 	       );
 	  new Matrix from {

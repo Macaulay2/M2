@@ -231,7 +231,7 @@ RawFreeModule ++ RawFreeModule := rawDirectSum
 degrees RawFreeModule := rawMultiDegree
 
 ZZ _ RawFreeModule := (i,F) -> (
-     if i === 0 then rawZero(F,F,false,0)
+     if i === 0 then rawZero(F,F,0)
      else error "expected integer to be 0"
      )
 
@@ -275,7 +275,7 @@ rawConcatColumns = (mats) -> rawConcat toSequence mats
 rawConcatRows = (mats) -> rawDual rawConcat apply(toSequence mats,rawDual)
 rawConcatBlocks = (mats) -> rawDual rawConcat apply(toSequence mats, row -> rawDual rawConcat toSequence (raw \ row))
 
-new RawMatrix from RawRingElement := (RawMatrix,f) -> rawMatrix1(rawFreeModule(raw ring f,1),1,1:f,false,0)
+new RawMatrix from RawRingElement := (RawMatrix,f) -> rawMatrix1(rawFreeModule(raw ring f,1),1,1:f,0)
 
 -- computations
 

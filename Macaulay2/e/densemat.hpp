@@ -11,6 +11,10 @@ class DenseMutableMatrixRing : public DenseMutableMatrix
                      // columns stored one after another
 
   void initialize(int nrows, int ncols, ring_elem *array);
+
+  DenseMutableMatrixRing(const Ring *R, int nrows, int ncols);
+
+  virtual ~DenseMutableMatrixRing() {}
 public:
   static DenseMutableMatrixRing *zero_matrix(const Ring *R, int nrows, int ncols);
 
@@ -21,7 +25,6 @@ public:
 
   virtual MutableMatrix *copy(bool prefer_dense) const;
 
-  virtual void text_out(buffer &o) const;
 public:
   ///////////////////////////////
   // Row and column operations //
@@ -31,10 +34,6 @@ public:
 
   virtual bool get_entry(int r, int c, ring_elem &result) const; 
   // Returns false if (r,c) is out of range.
-
-  virtual bool get_nonzero_entry(int r, int c, ring_elem &result) const;
-  // Returns false if (r,c) entry is either zero or out of range.
-  // Otherwise, returns true, and sets result to be the matrix entry at (r,c)
 
   virtual bool set_entry(int r, int c, const ring_elem a); // DONE
   // Returns false if (r,c) is out of range, or the ring of a is wrong.

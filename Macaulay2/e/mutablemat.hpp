@@ -23,11 +23,13 @@ protected:
   MutableMatrix *colOps;	// Transpose of column matrix
 
   MutableMatrix() : R(0), nrows(0), ncols(0) {}
-  MutableMatrix(const Ring *RR, int r, int c) : R(R), nrows(r), ncols(c) {}
+  MutableMatrix(const Ring *R0) : R(R0), nrows(0), ncols(0) {}
 
   bool error_column_bound(int c) const; // Sets an error if false is returned.
 
   bool error_row_bound(int r) const; // Sets an error if false is returned.
+
+  virtual ~MutableMatrix() {}
 public:
   const Ring * get_ring() const { return R; }
   int n_rows() const { return nrows; }
@@ -59,9 +61,9 @@ public:
   // If the ring is RR or CC, and dense is true, then MutableMatrixRR or 
   // MutableMatrixCC will be used.
 
-  virtual Matrix *to_matrix() const;
+  virtual Matrix *to_matrix() const = 0;
 
-  virtual MutableMatrix *copy(bool prefer_dense) const;
+  virtual MutableMatrix *copy(bool prefer_dense) const = 0;
 
   virtual SparseMutableMatrix * cast_to_SparseMutableMatrix() { return 0; }
   virtual DenseMutableMatrix * cast_to_DenseMutableMatrix() { return 0; }
@@ -173,6 +175,10 @@ public:
 
 class DenseMutableMatrix : public MutableMatrix
 {
+protected:
+  DenseMutableMatrix() {}
+  DenseMutableMatrix(const Ring *R0) : MutableMatrix(R0) {}
+  virtual ~DenseMutableMatrix() {}
 public:
   virtual DenseMutableMatrix * cast_to_DenseMutableMatrix() { return this; }
 };
