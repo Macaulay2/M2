@@ -121,29 +121,31 @@ elseSomething := method()
 elseSomething(Thing  ,Function) := (x,f) -> x
 elseSomething(Nothing,Function) := (x,f) -> f()
 
+showargs := (n,x) -> (<< n << x << endl; x)
+
 newGB := (f,type,opts) -> (
      G := new GroebnerBasis;
      G.matrix = Bag{f};
      G.ring = ring f;
      G.target = target f;
-     G.RawComputation = rawGB(
+     G.RawComputation = rawGB showargs("rawGB", (
 	  raw f,
 	  type.Syzygies,
 	  toEngineNat type.SyzygyRows,
 	  checkListOfIntegers {},			    -- later: gb degree list
-	  opts.HardDegreeLimit =!= null,
-	  if opts.HardDegreeLimit =!= null then opts.HardDegreeLimit else 0,
+	  opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit,
+	  if opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit then opts.HardDegreeLimit else 0,
 	  processAlgorithm opts.Algorithm,
 	  processStrategy opts.Strategy
-	  );
+	  ));
      f.cache#type = G;			  -- do this last, in case of an interrupt
      G)
 
 setStopGB := (G,opts) -> (
-     rawGBSetStop(G.RawComputation,
+     rawGBSetStop showargs("rawGBSetStop", (G.RawComputation,
 	  opts.StopBeforeComputation,
-	  opts.DegreeLimit =!= null,
-	  if opts.DegreeLimit =!= null then checkListOfIntegers opts.DegreeLimit else {},
+	  opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit,
+	  if opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit then checkListOfIntegers opts.DegreeLimit else {},
      	  toEngineNat opts.BasisElementLimit,
      	  toEngineNat opts.SyzygyLimit,
      	  toEngineNat opts.PairLimit,
@@ -151,7 +153,7 @@ setStopGB := (G,opts) -> (
      	  toEngineNat opts.SubringLimit,
      	  toEngineNat opts.StopWithMinimalGenerators,
 	  {}						    -- not used, just for resolutions
-	  );
+	  ));
      )
 
 checkArgGB := f -> (
@@ -179,8 +181,8 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      G)
 
 syz = method(Options => options gb)			    -- we seem to be ignoring these options!!
-generators      GroebnerBasis := Matrix =>            (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,false))
-mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix(G.RawComputation,true))
+generators      GroebnerBasis := Matrix =>            (G) -> map(target unbag G.matrix,,rawGBGetMatrix G.RawComputation)
+mingens         GroebnerBasis := Matrix => options -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix G.RawComputation)
 syz             GroebnerBasis := Matrix => options -> (G) -> notImplemented() -- rawGBSyzygies
 getChangeMatrix GroebnerBasis := Matrix =>            (G) -> notImplemented() -- rawGBChangeOfBasis
 
