@@ -15,3 +15,10 @@ with the command line argument
 I think it's a bug in Microsoft's development environment that the
 information above is saved in the file M2.opt instead of in
 Macaulay2/Macaulay2.dsp.
+
+Notes:
+
+	1) I had to turn off optimization on the file
+		e/monideal.cpp in order to prevent it crashing when
+		computing the ideal of 4x4 Pfaffians of a generic 6x6
+		matrix.

@@ -90,12 +90,20 @@ SOURCE=.\Makeconf
 # Begin Source File
 
 SOURCE=.\Makeconf.var
-USERDEP__MAKEC="envh.awk"	"Makeconf.var"	"Makeconf"	
 
 !IF  "$(CFG)" == "root - Win32 Release"
 
+# Begin Custom Build - Making Makeconf.h
+InputPath=.\Makeconf.var
+
+"Makeconf.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	make Makeconf.h
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "root - Win32 Debug"
 
+USERDEP__MAKEC="envh.awk"	"Makeconf.var"	"Makeconf"	
 # Begin Custom Build - Making Makeconf.h
 InputPath=.\Makeconf.var
 
