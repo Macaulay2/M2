@@ -149,7 +149,7 @@ net List := x -> horizontalJoin deepSplice (
      "}")
 
 VerticalList = new Type of List
-net List := x -> "{" | stack toSequence apply(x,net) | "}"
+net VerticalList := x -> "{" | stack toSequence apply(x,net) | "}"
 
 net Array := x -> horizontalJoin deepSplice (
      "[",
@@ -172,7 +172,10 @@ net HashTable := x -> (
 	  "}" 
      	  )
      )
-net MutableHashTable := x -> if x.?name then x.name else horizontalJoin ( net class x, "{...}" )
+net MutableHashTable := x -> (
+     if x.?name then x.name 
+     else horizontalJoin ( net class x, if #x > 0 then "{...}" else "{}" )
+     )
 
 texMath Net := n -> concatenate (
      ///{\arraycolsep=0pt
