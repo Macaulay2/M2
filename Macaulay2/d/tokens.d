@@ -266,7 +266,10 @@ export newSymbolHashTable():SymbolHashTable := SymbolHashTable(
      do provide NULL,
      0);
 
-export dummyFrame := Frame(self,-1,0,Sequence());
+export dummyFrame := Frame(self,
+     -1,						    -- negative frame id's are ignored and give warning messages
+     0,
+     Sequence());
 
 dummySymbolFrameIndex := 0;
 globalFramesize := dummySymbolFrameIndex+1;
@@ -305,22 +308,42 @@ export getLocalDictionary(frameID:int):Dictionary := (
 	  p != p.next) do p = p.next;
      error("internal error: local dictionary with frameID " + tostring(frameID) + " not found");
      dummyDictionary);
+export localDictionaryClosure(f:Frame):DictionaryClosure := DictionaryClosure(f,getLocalDictionary(f.frameID));
 
 export newLocalDictionary(dictionary:Dictionary):Dictionary := (
      numLocalDictionaries = numLocalDictionaries + 1;
      d := Dictionary(nextHash(),newSymbolHashTable(),dictionary,numLocalDictionaries,0,true,false);
      allLocalDictionaries = LocalDictionaryList(d,allLocalDictionaries);
      d);
-export newLocalDictionary():Dictionary := (
+export newStaticLocalDictionary(dictionary:Dictionary):Dictionary := ( -- obsolete and bad!!!
      numLocalDictionaries = numLocalDictionaries + 1;
-     d := Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,0,
-	  false, -- the first local dictionary is usually (?) non-transient
+     d := Dictionary(nextHash(),newSymbolHashTable(),dictionary,0,0,false,false);
+     allLocalDictionaries = LocalDictionaryList(d,allLocalDictionaries);
+     d);
+export newStaticLocalDictionary():Dictionary := (
+     numLocalDictionaries = numLocalDictionaries + 1;
+     d := Dictionary(nextHash(),newSymbolHashTable(),self,numLocalDictionaries,
+	  0,      -- 0 for the global frame containing the static symbols' values
+	  false,  -- the first local dictionary is usually (?) non-transient
 	  false
 	  );
      allLocalDictionaries = LocalDictionaryList(d,allLocalDictionaries);
      d);
+export emptyLocalDictionary := newStaticLocalDictionary();
 
-export newLocalFrame(dictionary:Dictionary):Frame := Frame(dummyFrame, dictionary.frameID, dictionary.framesize, new Sequence len dictionary.framesize do provide nullE);
+export newLocalFrame(d:Dictionary):Frame := Frame(dummyFrame, d.frameID, d.framesize, new Sequence len d.framesize do provide nullE);
+export newLocalFrame(outerFrame:Frame,d:Dictionary):Frame := Frame(outerFrame, d.frameID, d.framesize, new Sequence len d.framesize do provide nullE);
+export newLocalDictionaryClosure(d:Dictionary):DictionaryClosure := DictionaryClosure(newLocalFrame(d),d);
+export newStaticLocalDictionaryClosure():DictionaryClosure := (
+     d := newStaticLocalDictionary();
+     DictionaryClosure(newLocalFrame(d),d));
+
+export newStaticLocalDictionaryClosure(dc:DictionaryClosure):DictionaryClosure := (
+     d := newLocalDictionary(dc.dictionary);
+     f := newLocalFrame(dc.frame,d);
+     DictionaryClosure(f,d));
+
+export emptyFrame := newLocalFrame(emptyLocalDictionary);
 
 -- hash tables for exprs
 

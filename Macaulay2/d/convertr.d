@@ -584,6 +584,11 @@ export printErrorMessage(e:Code,message:string,report:Expr):Expr := (
      else buildErrorPacket(message));
 use engine;
 
+
+dummyBreakLoop(f:Frame):bool := false;
+export breakLoopFun := dummyBreakLoop;
+export debuggingMode := false;
+
 export eval(c:Code):Expr;
 hadError := false;
 errm := nullE;

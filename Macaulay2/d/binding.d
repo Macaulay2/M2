@@ -65,21 +65,16 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
 	  dictionary = dictionary.outerDictionary;
 	  );
      frameindex := 0;
-     if dictionary.transient then (
-	  -- this is a dynamic frame, not allocated yet
-	  frameindex = dictionary.framesize;
-	  dictionary.framesize = dictionary.framesize + 1;
-	   )
-     else if dictionary.frameID == 0 then (
+     if dictionary.frameID == 0 then (
 	  -- this allows the global frame to grow
 	  frameindex = enlarge(globalFrame))
      else if dictionary.frameID == localFrame.frameID then (
 	  -- this should take care of scopes which span a file,
+	  -- or the dictionary for a break loop
 	  -- and have a single frame which ought to be allowed to grow
 	  frameindex = enlarge(localFrame) )
      else (
-	  -- shouldn't occur
-	  error("non-transient frame missing"); -- let's assume it's transient:
+	  -- this is a dynamic frame, not allocated yet
 	  frameindex = dictionary.framesize;
 	  dictionary.framesize = dictionary.framesize + 1;
 	  );

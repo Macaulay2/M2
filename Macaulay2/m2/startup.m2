@@ -170,6 +170,7 @@ usage := arg -> (
      << "options:"  << newline
      << "    --help             print brief help message and exit" << newline
      << "    --copyright        display full copyright messasge" << newline
+     << "    --debug            enter a command loop upon error (not implemented yet)" << newline
      << "    --example-prompts  examples prompt mode" << newline
      << "    --no-loaddata      don't try to load the dumpdata file" << newline
      << "    --no-prompts       print no input prompts" << newline;
@@ -203,6 +204,7 @@ action := hashTable {
      "-mpwprompt" => notyeterr,
      "-q" => silence,					    -- implemented in setup.m2
      "--silent" => arg -> nobanner = true,
+     "--debug" => arg -> debuggingMode true,		    -- not implemented yet
      "-silent" => obsolete,
      "-tty" => notyet,
      "-n" => obsolete,

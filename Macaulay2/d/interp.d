@@ -145,25 +145,19 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):
      -- now we let filbuf handle all prompting:
      -- if isatty(file) then stdout << endl;
      returnvalue);
-readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary):Expr := (
-     savecf := getGlobalVariable(currentFileName);
-      savecd := getGlobalVariable(currentFileDirectory);
-       setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
-       setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
-       ret := readeval4(file,printout,AbortIfError,dictionary);
-      setGlobalVariable(currentFileDirectory,savecd);
-     setGlobalVariable(currentFileName,savecf);
-     ret);
-     
-readeval2(file:TokenFile,printout:bool,AbortIfError:bool):Expr := (
-     -- wrap a new dictionary around the file
+readeval3(file:TokenFile,printout:bool,AbortIfError:bool,dc:DictionaryClosure):Expr := (
      saveLocalFrame := localFrame;
-     dictionary := newLocalDictionary();	  -- don't nest the scopes of files loaded; (dictionary.transient is set to false)
-     localFrame = newLocalFrame(dictionary);
-     ret := readeval3(file,printout,AbortIfError,dictionary);
+     localFrame = dc.frame;
+      savecf := getGlobalVariable(currentFileName);
+       savecd := getGlobalVariable(currentFileDirectory);
+	setGlobalVariable(currentFileName,Expr(file.posFile.file.filename));
+	setGlobalVariable(currentFileDirectory,Expr(dirname(file.posFile.file.filename)));
+	ret := readeval4(file,printout,AbortIfError,dc.dictionary);
+       setGlobalVariable(currentFileDirectory,savecd);
+      setGlobalVariable(currentFileName,savecf);
      localFrame = saveLocalFrame;
      ret);
-readeval(file:TokenFile):Expr := readeval2(file,false,true);
+readeval(file:TokenFile):Expr := readeval3(file,false,true,newStaticLocalDictionaryClosure());
 export StopIfError := false;
 stopIfError(e:Expr):Expr := (
      ret := toExpr(StopIfError);
@@ -184,17 +178,13 @@ topLevelPrompt():string := (
      else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
      );
 
-loadprint(s:string,StopIfError:bool):Expr := (
+loadprint(s:string,StopIfError:bool,dc:DictionaryClosure):Expr := (
      when openTokenFile(s)
      is errmsg do False
      is file:TokenFile do (
 	  if file.posFile.file != stdin then file.posFile.file.echo = true;
 	  setprompt(file,topLevelPrompt);
-     	  saveLocalFrame := localFrame;
-	  d := newLocalDictionary();
-     	  localFrame = newLocalFrame(d);
-	  r := readeval3(file,true,StopIfError,d);
-     	  localFrame = saveLocalFrame;
+	  r := readeval3(file,true,StopIfError,dc);
 	  t := (
 	       if s === "-"			 -- whether it's stdin
 	       then (
@@ -229,7 +219,7 @@ input(e:Expr):Expr := (
      when e
      is s:string do (
 	  -- we should have a way of setting normal prompts while inputting
-	  ret := loadprint(s,true);
+	  ret := loadprint(s,true,newStaticLocalDictionaryClosure());
 	  laststmtno = -1;
 	  ret)
      else buildErrorPacket("expected string as file name"));
@@ -270,9 +260,28 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       )),
 	  NULL));
 
-export topLevel():bool := when loadprint("-",StopIfError) is Error do false else true;
-topLevel(e:Expr):Expr := toExpr(topLevel());
+export topLevel():bool := when loadprint("-",StopIfError,newStaticLocalDictionaryClosure()) is Error do false else true;
+topLevel(d:DictionaryClosure):bool := when loadprint("-",StopIfError,d) is Error do false else true;
+topLevel(f:Frame):bool := topLevel(newStaticLocalDictionaryClosure(localDictionaryClosure(f)));
+topLevel(e:Expr):Expr := (
+     when e is s:Sequence do (
+	  if length(s) == 0 then toExpr(topLevel())
+	  else WrongNumArgs(0,1)
+	  )
+     is sc:SymbolClosure do toExpr(topLevel(sc.frame))
+     is fc:FunctionClosure do toExpr(topLevel(fc.frame))
+     is cfc:CompiledFunctionClosure do toExpr(topLevel(emptyFrame))	    -- some values are there, but no symbols
+     is CompiledFunction do toExpr(topLevel(emptyFrame))		    -- no values or symbols are there
+     else WrongArg("a function, a symbol, or ()")
+     );
 setupfun("topLevel",topLevel);
+
+breakLoop(f:Frame):bool := (
+     when loadprint("-",StopIfError, 
+	  newStaticLocalDictionaryClosure(localDictionaryClosure(f))
+	  ) is Error do false else true
+     );
+breakLoopFun = breakLoop;
 
 value(e:Expr):Expr := (
      when e
