@@ -141,12 +141,9 @@ time follow topNodeName
 << "pass 2, checking for unreachable documentation nodes" << endl
 time scanKeys(DocDatabase,
      key -> (
-	  if not match(DocDatabase#key,"goto *") then (
-	       fkey := formatDocumentTag value key;
-	       if not linkFollowedTable#?fkey then (
-	       	    haderror = true;
-	       	    stderr << "documentation node '" << key << "' not reachable" << endl;
-	       	    )
+	  if not linkFollowedTable#?key then (
+	       haderror = true;
+	       stderr << "documentation node '" << key << "' not reachable" << endl;
 	       )
 	  )
      )

@@ -8,17 +8,17 @@ error = args -> olderror apply(
 protect symbol error
 
 on = { CallLimit => 100000 } ==> opts -> f -> (
-     n := try toString f else string f;
      depth := 0;
      totaltime := 0.;
      callCount := 0;
      limit := opts.CallLimit;
      if class f =!= Function then error("expected a function");
+     fn := () -> try toString f else string f;
      x -> (
 	  saveCallCount := callCount = callCount+1;
-     	  << n << " (" << saveCallCount << ")";
+     	  << fn() << " (" << saveCallCount << ")";
 	  if depth > 0 then << " [" << depth << "]";
-	  << "  called with " << class x << " : " << x << endl;
+	  << " called with " << class x << " " << x << endl;
 	  if callCount > limit then error "call limit exceeded";
 	  depth = depth + 1;
      	  r := timing f x;
@@ -26,11 +26,11 @@ on = { CallLimit => 100000 } ==> opts -> f -> (
 	  value := r#1;
 	  depth = depth - 1;
 	  if depth === 0 then totaltime = totaltime + timeused;
-     	  << n << " (" << saveCallCount << ")";
+     	  << fn() << " (" << saveCallCount << ")";
 	  if depth > 0 then << " [" << depth << "]";
-	  << " " << timeused << " seconds";
-	  if depth === 0 then << ", used " << totaltime << " seconds";
-	  << "  returned " << class value << " : " << value << endl;
+	  if timeused > 1. then << " used " << timeused << " seconds";
+	  if totaltime > 1. and depth === 0 then << " (total " << totaltime << " seconds)";
+	  << " returned " << class value << " " << value << endl;
      	  value)
      )
 

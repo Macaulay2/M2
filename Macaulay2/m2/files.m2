@@ -24,31 +24,20 @@ tt#"/" = "_sl_"				  -- can't occur in a file name: unix
 tt#"%" = "_pc_"					     -- has a meaning in URLs
 tt#"?" = "_qu_"					     -- has a meaning in URLs
 tt#"#" = "_sh_"					     -- has a meaning in URLs
-tt#"\""= "_qu_"				    -- has a meaning for shells: unix
-tt#"\\"= "_bs_"				    -- has a meaning for shells: unix
-tt#"$" = "_do_"				    -- has a meaning for shells: unix
-tt#"&" = "_am_"				    -- has a meaning for shells: unix
-tt#"<" = "_lt_"				    -- has a meaning for shells: unix
-tt#">" = "_gt_"				    -- has a meaning for shells: unix
-tt#"!" = "_ep_"				    -- has a meaning for shells: unix
-tt#"|" = "_vb_"				    -- has a meaning for shells: unix
-tt#":" = "_co_"				    -- has a meaning for shells: unix
-tt#";" = "_sc_"				    -- has a meaning for shells: unix
-tt#" " = "_sp_"				    -- has a meaning for shells: unix
+tt#"\\"= "_bs_"				 -- can't occur in a file name: MSDOS
+tt#" " = "_sp_"					      -- can't occur in a URL
 tt#"_" = "_us_"					      -- our escape character
 
-uu := new HashTable from {
-     "index" => "index%",
-     "" => "%"
-     }
+tt#":" = "_co_"					-- has a meaning for gnu make
+tt#"$" = "_do_"					-- has a meaning for gnu make
+tt#";" = "_se_"					-- has a meaning for gnu make
 
 toFilename = method()
 toFilename String := s -> (
-     -- Convert a string to a new string usable as a file name.
-     -- avoid ".", "..", and any string with "/" in it.
-     s = concatenate(apply(characters s, c -> tt#c));
-     if uu#?s then s = uu#s;
-     if s#0 == "." then s = concatenate("%",s);
+     -- Convert a string to a new string usable as a file name, and with
+     -- at least one special character prefixed, to avoid collisions with
+     -- package names and with index.html.
+     s = concatenate("_",apply(characters s, c -> tt#c));
      s)
 -----------------------------------------------------------------------------
 queryFun := symbol queryFun
@@ -74,7 +63,7 @@ indexTable := memoize(
 	       if not mutable tb then error (
 		    if class tb === HashTable 
 	       	    then ("failed to open database file for writing or reading: ", fn)
-	       	    else ("database file ", fn, " is read-only")
+	       	    else ("database file ", fn, " is read-only or in use by another process")
 		    );
 	       tb#key = val
 	       );
@@ -109,16 +98,15 @@ indexTable := memoize(
 
 cacheFileName = method()
 -- cacheFileName(String) := (prefix) -> (
---      apply((indexTable prefix)#keysFun (), value)
+--      (indexTable prefix)#keysFun ()
 --      )
-cacheFileName(String,Thing) := (prefix,key) -> (
-     (indexTable prefix)#getFun toExternalString key
+cacheFileName(String,String) := (prefix,key) -> (
+     (indexTable prefix)#getFun key
      )
-cacheFileName(String,Thing,String) := (prefix,key,val) -> (
-     (indexTable prefix)#setFun(toExternalString key,val)
+cacheFileName(String,String,String) := (prefix,key,val) -> (
+     (indexTable prefix)#setFun(key,val)
      )
-cacheFileName(List,Thing) := (path,key) -> (
-     key = toExternalString key;
+cacheFileName(List,String) := (path,key) -> (
      apply(
 	  select(path, prefix -> (indexTable prefix)#queryFun key),
 	  prefix -> (indexTable prefix)#getFun key
