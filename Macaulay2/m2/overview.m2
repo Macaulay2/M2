@@ -639,8 +639,6 @@ document { "fraction fields",
       	  "R = ZZ/101[x,y]/(x^3 + 1 + y^3)",
       	  "frac R",
 	  },
-     "At the moment, it is also required that the coefficient ring be finite.",
-     PARA,
      "After defining a ring such as ", TT "R", ", fractions in it can be obtained 
      by writing them explicitly.",
      EXAMPLE {

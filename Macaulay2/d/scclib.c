@@ -572,22 +572,32 @@ M2_string serv;
 
 M2_string system_syserrmsg()
 {
-     extern int errno, sys_nerr, h_nerr;
-     extern char * h_errlist[];
-#if 0
+     extern int errno, sys_nerr;
+     extern int h_nerr;
+#if 1				/* figure out the criterion */
      extern char * sys_errlist[];
+     extern char * h_errlist[];
+#else
+     extern const char * sys_errlist[];
+     extern const char * h_errlist[];
 #endif
 #if defined(__MWERKS__)
      return tostring("");
 #else
      M2_string s = (
+#ifndef NO_HERROR
 	  h_errno > 0 && h_errno < h_nerr
 	  ? tostring(h_errlist[h_errno])
-	  : errno > 0 && errno < sys_nerr 
+	  : 
+#endif
+	    errno > 0 && errno < sys_nerr 
 	  ? tostring(sys_errlist[errno])
 	  : tostring("") 
 	  );
-     errno = h_errno = 0;
+#ifndef NO_HERROR
+     h_errno = 0;
+#endif
+     errno = 0;
      return s;
 #endif
      }
