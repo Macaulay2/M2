@@ -23,25 +23,27 @@ version, now 3.2.2.  It's a good idea to compile them in the order listed
 here, as some of the later ones depend on some of the earlier ones.
 
     library: gc
-    release: 6.1 (see file gc/version.h)
+    release: 6.3alpha2 (see file gc/version.h)
      author: Hans Boehm <hboehm@exch.hpl.hp.com>
   home page: http://www.hpl.hp.com/personal/Hans_Boehm/gc/
      get at: http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc6.1.tar.gz
+      email: 
     license: gc/README
     install: -- edit Makefile
 		    set CC=gcc
-		    value of CFLAGS : remove -DALL_INTERIOR_POINTERS
+		    value of CFLAGS : keep -DALL_INTERIOR_POINTERS
 				      add -DLARGE_CONFIG
 	     -- make
 	     -- cp gc.a /usr/lib/libgc.a
 	     -- cp include/gc.h include/gc_cpp.h /usr/include
 
     library: gdbm
-    release: gdbm-1.8.0
+    release: gdbm-1.8.3
      author: phil@cs.wwu.edu
   home page: 
     bugs to: downsj@downsj.com
      get at: ftp://ftp.gnu.org/pub/gnu/gdbm/
+      email: 
     license: GNU GENERAL PUBLIC LICENSE
       notes: Makefile.in has "prefix = /usr/local", so when installing, you must
 		use "make prefix=/whatever" to install in a nonstandard place.
@@ -49,11 +51,12 @@ here, as some of the later ones depend on some of the earlier ones.
 		the installed files, so change BINOWN and BINGRP to suit you.
 
     library: gmp
-    release: gmp-4.1
+    release: gmp-4.1.2
      author: Torbjorn Granlund <tege@nada.kth.se>
   home page: 
     bugs to: <bug-gmp@prep.ai.mit.edu>
      get at: ftp://ftp.gnu.org/gnu/gmp
+      email: 
     license: gmp/COPYING.LIB
       notes: on Solaris, gmp will use both cc and gcc; don't worry
 
@@ -66,6 +69,7 @@ here, as some of the later ones depend on some of the earlier ones.
 	     H. Schoenemann <hannes@mathematik.uni-kl.de>
   home page: http://www.singular.uni-kl.de/
      get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/SOURCES/
+      email: 
     license: GPL
       notes: ./configure --disable-streamio --with-memman=no --enable-NTL
 	     make
@@ -77,6 +81,7 @@ here, as some of the later ones depend on some of the earlier ones.
      author: Michael Messollen <mmessollen@web.de>
   home page: http://www.singular.uni-kl.de/
      get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/SOURCES/
+      email: 
     license: GPL
       notes: ./configure --with-NOSTREAMIO
 	     make DEFS=-DHAVE_SINGULAR_ERROR
@@ -91,39 +96,45 @@ here, as some of the later ones depend on some of the earlier ones.
 		it in $prefix/include.
 
     library: NTL
-    release: 5.2
+    release: 5.3.1
      author: Victor Shoup
   home page: http://www.shoup.net/
      get at: ftp://www.mathematik.uni-kl.de/pub/Math/Singular/src/Singular-NTL-5.2.tar.gz
+      email: 
     license: GPL
       notes: The version available through Singular, mentioned above, has had unneeded routines that
 	     use iostreams stripped out.
+	     This package uses calls to malloc() to allocate memory for such things as integers used
+	     by the gmp package above.  That's bad, because gmp allows the use of various memory managers,
+	     and we tell gmp that we are using the gc package as memory manager.
 
-Other unusual libraries needed, with --enable-lapack (well, actually, you need these, currently!):
-
-    library: blas
-    release: 
-     author: 
-  home page: 
-     get at: 
-    license: 
-      notes: 
+    library: blas - Basic Linear Algebra Subprograms
+    release: unnumbered
+     author: Jack Dongarra, Argonne National Laboratory, et al.
+  home page: http://www.netlib.org/blas/
+     get at: http://www.netlib.org/blas/blas.tgz
+      email: 
+    license: presumably public domain
+      notes: Provides libf77blas.a
 
     library: lapack
-    release: 
-     author: 
-  home page: 
-     get at: 
-    license: 
-      notes: 
+    release: 3.0
+     author: Jack Dongarra
+  home page: http://www.netlib.org/lapack/
+     get at: http://www.netlib.org/lapack/lapack.tgz
+      email: lapack@cs.utk.edu
+    license: unknown -- the README file says it is copyright but freely available
+      notes: Provides liblapack.a
+	     Includes a copy of blas.
 
-    library: cblas
-    release: 
+    library: cblas -- C interface to the BLAS
+    release: unnumbered
      author: 
-  home page: 
+  home page: http://www.netlib.org/blas/blast-forum/
      get at: 
+      email: 
     license: 
-      notes: 
+      notes: Provides libcblas.a
 
 Other common libraries that we assume are on your system already:
 
@@ -139,30 +150,52 @@ Quick and easy:
 
 	./configure
 	make
-	make check
+	make check			# optional
 	make install
 
-To compile in another directory, for example, in a subdirectory:
+The script "configure" is made by autoconf, and we support the
+standard features, such as compilation in a separate build directory,
+as much as possible.
 
-	mkdir COMPILE
-	cd COMPILE
-	../configure
-	make
-	make check
-	make install
+By default, the files are installed in appropriate subdirectories of
+/usr/local.  To specify a different location (prefix) replace the last
+command above by something like this
 
-To make a distribution tarball suitable for use with epkg:
+	make prefix=/foo/bar install
 
-	../configure --enable-encap
-	make
-	make check
-	make prefix=/tmp install
+In that case, files will be installed in the following directories:
 
-You'll find the result in /tmp/Macaulay2-*/.
+	/foo/bar/bin
+	/foo/bar/share/Macaulay2
+	/foo/bar/share/doc/Macaulay2
+	/foo/bar/share/man/man1
+	/foo/bar/share/emacs/site-lisp
+	/foo/bar/lib/Macaulay2
 
-(The effect of the option --enable-encap is to place a few extra files
-in the top level directory of the tree.  The epkg program reads those
-files and uses them to decide what to do at installation time.)
+To make an encapsulated directory tree or distribution tarball
+suitable for use with the program epkg (see
+http://encap.cites.uiuc.edu/), replace the configuration command with:
+
+	./configure --enable-encap
+
+The effect is to insert one more component into the path names used at
+installation time, so that in response to 
+
+	make prefix=/foo/bar install
+
+files will be installed in the following directories:
+
+	/foo/bar/Macaulay2-*/bin
+	/foo/bar/Macaulay2-*/share/Macaulay2
+	/foo/bar/Macaulay2-*/share/doc/Macaulay2
+	/foo/bar/Macaulay2-*/share/man/man1
+	/foo/bar/Macaulay2-*/share/emacs/site-lisp
+	/foo/bar/Macaulay2-*/lib/Macaulay2
+
+Each * above is replaced by the current version number.  There will
+also be a few extra files placed in the directory /foo/bar/Macaulay2-*
+which instruct epkg how to make appropriate symbolic links to install
+our program, and how to initialize the dumped data file.
 
 To use a different prefix, say /mnt/local, for finding libraries and include
 files installed in a nonstandard location:
