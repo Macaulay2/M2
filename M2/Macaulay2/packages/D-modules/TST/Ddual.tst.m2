@@ -1,6 +1,6 @@
-clearAll()
-path = join(path, {"../"})
-load "D-modules.m2"
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+needs "D-modules.m2"
 
 -- dual of an Appell F1
 I = AppellF1({2,-3,-2,5}, Vars => Local);

@@ -1,5 +1,10 @@
-clearAll()
-load "D-modules.m2"
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+needs "D-modules.m2"
+
+x = symbol x; Dx = symbol Dx; 
+y = symbol y; Dy = symbol Dy; 
+a = symbol a; b = symbol b; c = symbol c; d = symbol d; 
 A =  (QQ [a,b,c,d]) [x, y, Dx, Dy, WeylAlgebra => {x=>Dx, y=>Dy}]
 Dtrace 1
 pInfo(1, "testing paramBpoly...")

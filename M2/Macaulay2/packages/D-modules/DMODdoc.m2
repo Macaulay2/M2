@@ -710,10 +710,10 @@ document { (pruneLocalCohom),
      Headline => "prunes local cohomology modules",
      SEEALSO {"localCohom"} 
      }
-
 document { (paramBpoly=>GroundField),
      Headline => "characteristic for modular computation"
      }
+document {(GroundField)}
 document { (paramBpoly),
      Headline => "compute the list of all possible Bernstein-Sato polynomials 
      for a polynomial with parametric coefficients",
@@ -739,8 +739,7 @@ document { (paramBpoly),
 	  }
      }  
 
-document { (makeCyclic--,Matrix
-	  ),
+document { (makeCyclic),
      Headline => "finds a cyclic generator of a D-module",
      Synopsis => {
      	  "H = makeCyclic M", 
@@ -763,6 +762,15 @@ document { (makeCyclic--,Matrix
      CAVEAT {"The module ", EM "M", " must be holonomic."},
      SEEALSO {"isHolonomic"}
      }  
+document {(Generator),
+     Headline => "a key created by makeCyclic",
+     "See ", TO "makeCyclic", "."
+     }
+document {(AnnG),
+     Headline => "a key created by makeCyclic",
+     "See ", TO "makeCyclic", "."
+     }
+
 document {(isHolonomic),
      Headline => "determines whether a D-module (or ideal in Weyl algebra) is holonomic"
      } 

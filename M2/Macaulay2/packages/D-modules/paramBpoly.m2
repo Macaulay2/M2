@@ -1,30 +1,50 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
 local factorBFunctionZmodP 
-local children
-local ringOpts
-local tempI
-local tempN
-local tempT
-local tempBF
-local poly
 local loadVTree
-local inv
 local CALLglobalBFunctionParam
-local iList
-local tempV'
-local parentNODE
 local saveVTree
 local paramGB
-local Itype
 local gbWparam
-local tempV''
 local setBSwitch
-local level
-local coeff
 local inWparam
 local takeCareOf
+local deleteDollars
+--local GroundField
+
+--keys
+local children
+children = symbol children
+local ringOpts
+ringOpts = symbol ringOpts
+local tempI
+tempI = symbol tempI 
+local tempN
+tempN = symbol tempN
+local tempT
+tempT = symbol tempT
+local tempBF
+tempBF = symbol tempBF
+local poly
+poly = symbol poly
+local inv
+inv = symbol inv
+local iList
+iList = symbol iList
+local tempV'
+tempV' = symbol tempV'
+local parentNODE
+parentNODE = symbol parentNODE
+local Itype
+Itype = symbol Itype
+local tempV''
+tempV'' = symbol tempV''
+local level
+level = symbol level
+local coeff
+coeff = symbol coeff 
 local cSet
+cSet = symbol cSet 
 
 -- attempts to compute the b-polys for a poly with parameters
 -- IN>  f: RingElement (an element in a Weyl algebra)
@@ -206,9 +226,17 @@ saveVTree(HashTable, String) := (V, filename) -> (
      filename << toString V#coeff << endl << toString V#ringOpts << endl
      << toString V#poly << endl << toString V#tempN	<< endl << close )
 
+deleteDollars = method()
+deleteDollars(String) := (s) -> (
+     cs := characters s;
+     ret := "";
+     scan(cs, c->(if c!="$" then ret=ret|c));
+     ret 
+     ) 
 loadVTree = method()
 loadVTree(String) := filename -> (
      f := lines get filename;
+     f = apply(f, deleteDollars);
      K := value f#0;
      opts := value f#1;
      A := K[opts];
@@ -356,12 +384,8 @@ chooseMinListList := (l1, l2) -> (
      );
  
 VTree2bSet2 := V -> (
-     print V#tempN;
-     Itype = symbol Itype;
-     if any(V#tempN, u -> (
-	       print class Itype; 
-	       print (keys u/class); 
-	       u#Itype == NOTCOMPUTED)) then
+     --Itype = symbol Itype;
+     if any(V#tempN, u -> (u#Itype == NOTCOMPUTED)) then
      error "VTree is not complete"; 
      
      -- for each b(s) \in B(n,d)
@@ -472,7 +496,12 @@ BSet2tex := (s, filename) -> (
 		    S := symbol S; 
 		    R := (ZZ/DBIGPRIME)[S];
 		    toString factorBFunctionZmodP sum(u#tempBF, 
-			v->v#1 * R_(v#0))
+			v->(if class v#1 === ZZ 
+			     -- hashtable was loaded from file
+			     then v#1
+			     -- original hashtable
+			     else substitute(v#1,ZZ)) 
+			* R_(v#0))
 	       ) << ",$$";
 	       
 	       i := 0;
@@ -841,8 +870,8 @@ paramBpoly = method(Options => {GroundField => 32749}) -- 0 stays for QQ
 paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
      QQflag = (o#GroundField == 0);
      if not QQflag then (
-	  if isPrime o.GroundField 
-     	  then DBIGPRIME = o.GroundField
+	  if isPrime o#GroundField 
+     	  then DBIGPRIME = o#GroundField
      	  else error "need a prime";
 	  )
      else error "algorithm is implemented over finite field so far"; 
@@ -860,9 +889,9 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
      while (num = position(V#tempN, u -> u#Itype == NOTCOMPUTED)) =!= null 
      do ( 
      	  V = takeCareOf(V, num);
-     	  saveVTree(V, (fname| ".v3"));
+     	  --!!!saveVTree(V, (fname| ".v3"));
      	  );
-     V = loadVTree((fname| ".v3"));
+     --!!!V = loadVTree((fname| ".v3"));
      -- transform into bSet
      (fname | ".tex")  << toString V#poly << endl; 
      bs := VTree2bSet2 V;
@@ -871,7 +900,14 @@ paramBpoly(RingElement, String) := List => o -> (f, fname) -> (
      apply(bs, u->(
 	       s := symbol s;
 	       RZ := (ZZ/DBIGPRIME)[s];
-	       factorBFunctionZmodP(sum(u#tempBF, v->v#1*RZ_(v#0))) 
+	       factorBFunctionZmodP(
+		    sum(u#tempBF, v->
+			 (if class v#1 === ZZ 
+			     -- hashtable was loaded from file
+			     then v#1
+			     -- original hashtable
+			     else substitute(v#1,ZZ)) 
+			* RZ_(v#0))) 
 	       ))
      );
 

@@ -1,3 +1,5 @@
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
 -- Anton's tests
 load "AnnFs.tst.m2"
 load "b-function.ideal.tst.m2"

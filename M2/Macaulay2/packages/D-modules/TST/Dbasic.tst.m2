@@ -1,8 +1,9 @@
-clearAll()
-path = join(path, {"../"})
-load "D-modules.m2";
+-- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
+
+needs "D-modules.m2";
 
 -- Boundary cases
+x = symbol x; Dx = symbol Dx;
 W = QQ[x,Dx,WeylAlgebra => {x=>Dx}];
 I0 = ideal (0_W);
 I1 = ideal (1_W);
