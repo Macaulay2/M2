@@ -27,8 +27,8 @@ sortcols = (m) -> m_(sortColumns m)
        "bc-cd ac-d2 ab-c2 bd2-d3 c3-d3 c2d2-ad3 a2d3-cd4 "
 --          "ab-c2 ac-d2 bc-cd c3-d3 bd2-d3 c2d2-ad3 a2d3-cd4 "
        | newline);
-    assert(image m == image matrix 
-       {{b*c-c*d, a*c-d^2, a*b-c^2, b*d^2-d^3, c^3-d^3, c^2*d^2-a*d^3, a^2*d^3-c*d^4}})
+    assert(image m == image matrix (
+       {{b*c-c*d, a*c-d^2, a*b-c^2, b*d^2-d^3, c^3-d^3, c^2*d^2-a*d^3, a^2*d^3-c*d^4}}))
 
 
     R = ZZ/101[a,b,c,d, Degrees => {1,2,3,4}];

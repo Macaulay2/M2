@@ -192,7 +192,7 @@ test2: $(SCRIPTS)
 
 tests:: test3
 test3:
-	echo 2+3 | M2
+	echo 2+3 | ../bin/M2
 	touch $@
 
 ifeq ($(OS),Linux)

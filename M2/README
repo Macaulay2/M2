@@ -121,6 +121,20 @@ library doesn't exist on your system.  It exists in Slackware Linux, at least
 old versions, but not in RedHat Linux.
 
 ----------------------
+FreeBSD notes
+----------------------
+
+The gmp package didn't compile, but luckily I was able to use
+the installed libgmp.a instead.  I did this:
+
+	cd lib
+	ln -s /usr/lib/libgmp.a libgmp.a
+
+and commented out the Makefile line
+
+	all:: GMP
+
+----------------------
 MS-DOS notes
 ----------------------
 

@@ -19,6 +19,7 @@ cat <<EOF >compat.c
 EOF
 
 cat <<EOF >compat.mak
+# this file was machine generated
 EOF
 
 cat <<'EOF' >$TMP

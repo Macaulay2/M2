@@ -56,7 +56,7 @@ lookupi := x -> (
 toString Expression := v -> (
      op := class v;
      p := precedence v;
-     names := apply(v,term -> (
+     names := apply(toList v,term -> (
 	       if precedence term <= p
 	       then "(" | toString term | ")"
 	       else toString term
@@ -71,6 +71,7 @@ Holder.synonym = "holder"
 
 texMath Holder := v -> "{" | texMath v#0 | "}"
 mathML Holder := v -> mathML v#0
+text Holder := v -> text v#0
 html Holder := v -> html v#0
 net Holder := v -> net v#0
 toString Holder := v -> toString v#0
@@ -111,7 +112,7 @@ net Equation := v -> (
      else (
 	  p := precedence v;
 	  horizontalJoin toList between(" == ", 
-	       apply(v, e -> if precedence e <= p then "(" | net e | ")" else net e))))
+	       apply(toList v, e -> if precedence e <= p then "(" | net e | ")" else net e))))
 toString Equation := v -> (
      n := # v;
      if n === 0 then "Equation{}"
@@ -119,7 +120,7 @@ toString Equation := v -> (
      else (
 	  p := precedence v;
 	  concatenate between(" == ", 
-	       apply(v, e -> if precedence e <= p then ("(", toString e, ")") else toString e))))
+	       apply(toList v, e -> if precedence e <= p then ("(", toString e, ")") else toString e))))
 -----------------------------------------------------------------------------
 ZeroExpression = new Type of Holder
 ZeroExpression.synonym = "zero expression"
@@ -160,7 +161,7 @@ DoubleArrow = new HeaderType of Expression
 DoubleArrow.synonym = "double arrow expression"
 DoubleArrow#operator = "=>"
 value DoubleArrow := (v) -> value v#0 => value v#1
-expression Option := v -> new DoubleArrow from apply(v,expression)
+expression Option := v -> new DoubleArrow from apply(toList v,expression)
 net DoubleArrow := v -> (
      p := precedence v;
      v0 := net v#0;
@@ -506,6 +507,18 @@ net Adjacent := net FunctionApplication := m -> (
      then horizontalJoin (net fun, "(", net args, ")")
      else horizontalJoin ("(",net fun,")(", net args, ")")
      )
+texMath Adjacent := texMath FunctionApplication := m -> (
+     p := precedence m;
+     fun := m#0;
+     args := m#1;
+     if precedence args >= p
+     then if precedence fun > p
+     then concatenate (texMath fun, " ", texMath args)
+     else concatenate ("(", texMath fun, ")", texMath args)
+     else if precedence fun > p
+     then concatenate (texMath fun, "(", texMath args, ")")
+     else concatenate ("(",texMath fun,")(", texMath args, ")")
+     )
 -----------------------------------------------------------------------------
 	      precedence Sequence := x -> if #x === 0 then 70 else if #x === 1 then 40 else 70
 	   precedence DoubleArrow := x -> 5
@@ -569,6 +582,7 @@ net Subscript := x -> (
      then horizontalJoin( "(", net x#0, ")", n^-(height n) )
      else net x#0 | n^-(height n)
      )
+
 net Superscript := x -> (
      n := net x#1;
      if precedence x#0 < PowerPrecedence
@@ -764,7 +778,7 @@ mathML MatrixExpression := x -> concatenate(
 texMath Expression := v -> (
      op := class v;
      p := precedence v;
-     names := apply(v,term -> (
+     names := apply(toList v,term -> (
 	       if precedence term <= p
 	       then ("{(", texMath term, ")}")
 	       else ("{", texMath term, "}") ) );
@@ -781,7 +795,7 @@ texMath Expression := v -> (
 html Expression := v -> (
      op := class v;
      p := precedence v;
-     names := apply(v,term -> (
+     names := apply(toList v,term -> (
 	       if precedence term <= p
 	       then ("(", html term, ")")
 	       else html term));
@@ -812,7 +826,17 @@ html Minus := v -> (
      else "-" | html term
      )
 
-texMath Divide := x -> "\\frac{" | texMath x#0 | "}{" | texMath x#1 | "}"
+--texMath Divide := x -> "\\frac{" | texMath x#0 | "}{" | texMath x#1 | "}"
+
+texMath Divide := x -> (
+     if precedence x#0 < precedence x
+     then "(" | texMath x#0 | ")"
+     else texMath x#0
+     ) | "/" | (
+     if precedence x#1 < precedence x
+     then "(" | texMath x#1 | ")"
+     else texMath x#1
+     )
 
 html Divide := x -> (
      p := precedence x;
@@ -933,8 +957,8 @@ texMath Power := v -> (
 	  p := precedence v;
 	  x := texMath v#0;
 	  y := texMath v#1;
-	  if precedence v#0 <  p then x = "(" | x | ")";
-	  concatenate("{",x,"}",(class v)#operator,"{",y,"}")))
+	  if precedence v#0 <  p then x = "({" | x | "})";
+	  concatenate(x,(class v)#operator,"{",y,"}")))
 
 texMath Subscript := texMath Superscript := v -> (
      p := precedence v;
@@ -994,12 +1018,19 @@ TeX = x -> (
      ctr = ctr + 1;
      f := tmpname "tx" | toString ctr;
      f | ".tex" 
-     << "\\magnification = \\magstep 0" << endl
-     << tex x << endl
-     << "\\end" << endl << close;
-     if 0 === run("cd /tmp; tex " | f)
-     then run("(xdvi -s 4 "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log)&")
-     else run("rm -f "|f|".tex "|f|".dvi "|f|".log");
+     << ///\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+///  
+     << tex x <<
+///
+\end{document}
+///  
+     << close;
+     if 0 === run("cd /tmp; latex " | f)
+     then run("(xdvi -s 4 "|f|".dvi; rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
+     else error ("latex failed on input file " | f | ".tex")
      )
 
 -----------------------------------------------------------------------------

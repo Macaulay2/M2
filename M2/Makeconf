@@ -115,7 +115,8 @@ CFLAGS = -g
 CXXFLAGS = -g
 ifndef NOOPTIM 
 CFLAGS += -O2
-CXXFLAGS += -O2
+# CXXFLAGS += -O2
+CXXFLAGS += -O3 -fexpensive-optimizations
 endif
 
 ifdef CYGWIN32

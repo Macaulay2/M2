@@ -813,8 +813,14 @@ tex String := cmrLiteral
 texMath String := cmrLiteral
 text String := identity
 
+text Thing := toString
+
 texMath List := x -> concatenate("\\{", between(",", apply(x,texMath)), "\\}")
+texMath Array := x -> concatenate("[", between(",", apply(x,texMath)), "]")
 texMath Sequence := x -> concatenate("(", between(",", apply(x,texMath)), ")")
+
+texMath HashTable := x -> if x.?tex then x.tex else texMath expression x
+tex HashTable := x -> if x.?tex then "$" | x.tex | "$" else tex expression x
 
 mathML Nothing := texMath Nothing := tex Nothing := html Nothing := text Nothing := x -> ""
 
@@ -1020,7 +1026,7 @@ texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
 texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
 html ITALIC := x -> concatenate("<I>",apply(x,html),"</I>")
 
-texMath TEX := tex TEX := identity
+texMath TEX := tex TEX := x -> concatenate toList x
 
 texMath SEQ := tex SEQ := x -> concatenate(apply(x, tex))
 text SEQ := x -> concatenate(apply(x, text))
@@ -1033,7 +1039,7 @@ net SEQ := x -> (
 	  )
      )
 
-tex Sequence := tex List := x -> concatenate("$",texMath x,"$")
+tex Sequence := tex List := tex Array := x -> concatenate("$",texMath x,"$")
 
 text Sequence := x -> concatenate("(", between(",", apply(x,text)), ")")
 text List := x -> concatenate("{", between(",", apply(x,text)), "}")

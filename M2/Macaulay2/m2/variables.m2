@@ -20,7 +20,7 @@ toString IndexedVariable := v -> (
 net IndexedVariable := v -> (
      x := v#0;
      i := v#1;
-     net new Subscript from { expression x, expression i}
+     net new Subscript from { x.name, i}
      )
 vars IndexedVariable := x -> {x}
 IndexedVariable ? IndexedVariable := (x,y) -> (

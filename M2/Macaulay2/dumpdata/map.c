@@ -4,6 +4,8 @@
 #include "map-solaris.c"
 #elif defined(__alpha__) && defined(__osf__)
 #include "map-solaris.c"
+#elif defined(__FreeBSD__)
+#include "map-freebsd.c"
 #elif
  ... map functions not implemented yet for this architecture ...
 #endif

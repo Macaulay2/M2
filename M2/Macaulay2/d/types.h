@@ -107,15 +107,20 @@ extern char *libfac_version;
 #define O_BINARY 0		/* for non msdos systems */
 #endif
 
+#if !defined(__FreeBSD__)
 #ifndef PAGESIZE
 #if !defined(__linux__) && !defined(__osf__)
 extern size_t getpagesize();
 #endif
 #define PAGESIZE getpagesize()
 #endif
+#endif
+
 #define RUP(x) ((((x) + PAGESIZE - 1) / PAGESIZE) * PAGESIZE)
 
+#if !defined(__FreeBSD__)
 void *sbrk();		/* not really ansi standard, sigh */
+#endif
 
 #ifdef MP
 #define link _link
@@ -127,7 +132,9 @@ void *sbrk();		/* not really ansi standard, sigh */
  /* on the NeXT Step i386 machine, brk always returns -1, and doesn't work. */
 #   define brk(p) (int)sbrk(p-sbrk(0))
 #else
+#if !defined(__FreeBSD__)
 int brk();		/* not really ansi standard, sigh */
+#endif
 #endif
 
 #define STDIN 0

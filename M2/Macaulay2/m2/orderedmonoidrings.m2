@@ -25,7 +25,19 @@ isPolynomialRing PolynomialRing := (R) -> true
 
 exponents RingElement := (f) -> listForm f / ( (monom,coeff) -> monom )
 
-expression PolynomialRing := R -> if R.?name then hold R.name else (expression last R.baseRings) (expression monoid R)
+expression PolynomialRing := R -> (
+     if R.?name
+     then hold R.name
+     else (expression last R.baseRings) (expression monoid R)
+     )
+
+tex PolynomialRing := R -> "$" | texMath R | "$"	    -- silly!
+
+texMath PolynomialRing := R -> (
+     if R.?tex then R.tex
+     else (texMath last R.baseRings)|(texMath expression monoid R)
+     )
+
 net PolynomialRing := R -> net expression R
 toString PolynomialRing := toExternalString PolynomialRing := R -> toString expression R
 
