@@ -2076,6 +2076,12 @@ export rawGBGetMatrix(e:Expr):Expr := (
      else WrongArg("a raw Groebner basis computation"));
 setupfun("rawGBGetMatrix", rawGBGetMatrix);
 
+export rawGBMinimalGenerators(e:Expr):Expr := (
+     when e is G:RawComputation do 
+     toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBMinimalGenerators(", "(Computation *)", G, ")" ))
+     else WrongArg("a raw Groebner basis computation"));
+setupfun("rawGBMinimalGenerators", rawGBMinimalGenerators);
+
 export rawGBChangeOfBasis(e:Expr):Expr := (
      when e is G:RawComputation do 
      toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawGBChangeOfBasis(", "(Computation *)", G, ")" ))
