@@ -10,7 +10,7 @@
 -- we've turned off checking for existence of files...
 
 local prefix, local topNodeButton
-local haderror, local nullButton, local masterIndexButton, local tocButton
+local haderror, local nullButton, local masterIndexButton, local tocButton, local homeButton
 local NEXT, local PREV, local UP, local CONTENTS
 local nextButton, local prevButton, local upButton
 local masterIndex
@@ -150,6 +150,7 @@ buttonBar := (key) -> TABLE { {
      	       if key =!= topNodeName then topNodeButton else nullButton,
      	       masterIndexButton,
      	       tocButton,
+     	       homeButton,
      	       LITERAL ///</p>///
 	       },
 
@@ -367,6 +368,7 @@ setupButtons := () -> (
      gifpath := LAYOUT#"images";
      topNodeButton = LABEL { "top node", HREF { htmlDirectory|topFileName, BUTTON (gifpath|"top.gif","top") } };
      tocButton = LABEL { "table of contents", HREF { htmlDirectory|tocFileName, BUTTON (gifpath|"toc.gif","toc") } };
+     homeButton = LABEL { "table of contents", HREF { "http://www.math.uiuc.edu/Macaulay2/" , BUTTON (gifpath|"home.gif","home") } };
      nullButton = BUTTON(gifpath|"null.gif","null");
      masterIndexButton = LABEL { "index", HREF { htmlDirectory|indexFileName, BUTTON(gifpath|"index.gif","index") } };
      nextButton = BUTTON(gifpath|"next.gif","next");
@@ -401,7 +403,7 @@ makeMasterIndex := keylist -> (
 	  HEAD { TITLE title, style(), links() },
 	  BODY {
 	       HEADER2 title, PARA,
-	       topNodeButton, tocButton,
+	       topNodeButton, tocButton, homeButton,
 	       PARA between(LITERAL "&nbsp;&nbsp;&nbsp;",apply(alpha, c -> HREF {"#"|c, c})), 
 	       UL apply(sort keylist, (fkey) -> SEQ { anchor fkey, TOH fkey }),
 	       }
@@ -419,7 +421,7 @@ makeTableOfContents := () -> (
 	  HEAD { TITLE title, style(), links() },
 	  BODY {
 	       HEADER2 title, PARA,
-	       topNodeButton, masterIndexButton,
+	       topNodeButton, masterIndexButton, homeButton,
 	       HR{},
 	       toDoc CONTENTS
 	       }
@@ -505,7 +507,9 @@ installPackage Package := o -> pkg -> (
 	       outf := outfn nodename;
 	       tmpf := tmpfn nodename;
 	       if fileExists outf and fileTime outf >= fileTime inf
-	       then stderr << "--leaving example results file for " << nodename << endl
+	       then (
+		    -- stderr << "--leaving example results file for " << nodename << endl
+		    )
 	       else (
 		    stderr << "--making example results file for " << nodename << endl;
 		    loadargs := if pkg === Main then "" else "-e 'load \""|fn|"\"'";
