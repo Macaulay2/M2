@@ -132,9 +132,9 @@ void stash::text_out(buffer &o) const
 	  name, 
 	  (element_size * highwater + 1023)/1024,
 	  (element_size * n_inuse + 1023)/1024,
-	  element_size,
-	  n_allocs,
-	  n_inuse,
+	  (int)element_size,
+	  (int)n_allocs,
+	  (int)n_inuse,
 	  highwater,
 	  n_frees,
 	  newline);
