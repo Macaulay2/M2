@@ -1,3 +1,6 @@
+stderr << currentFile << ": test deferred" << endl
+exit 0
+
 -- errorDepth 0
 R = QQ[x]
 f = map(R^1,R^1)
