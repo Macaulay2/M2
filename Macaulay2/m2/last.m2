@@ -34,4 +34,4 @@ List.BeforePrint =
 Sequence.BeforePrint = x -> wrap(- width stack lines ZZ.InputPrompt lineNumber() + if width stdio > 0 then width stdio else 80, net x) -- 10 to allow for the prompt
 
 -- make sure this is after all global symbols are defined or erased
-endPackage Macaulay2
+closePackage Macaulay2

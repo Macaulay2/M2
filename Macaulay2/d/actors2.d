@@ -1079,10 +1079,20 @@ flush(g:Expr):Expr := (
 setupfun("simpleFlush",flush);
 protect(e:Expr):Expr := (
      when e
+     is d:Dictionary do (
+	  okay := false;
+	  t := globalDictionary;
+	  while (
+	       if t != d && !t.protected then okay = true;
+	       t != t.outerDictionary ) do t = t.outerDictionary;
+	  if !okay then buildErrorPacket("tried to protect last remaining visible dictionary")
+	  else (
+	       d.protected = true;
+	       nullE))
      is q:SymbolClosure do (
 	  q.symbol.protected = true; 
 	  nullE)
-     else WrongArg( "a symbol"));
+     else WrongArg("a symbol or a dictionary"));
 setupfun("protect",protect);
 flagSymbol(e:Expr):Expr := (
      when e

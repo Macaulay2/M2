@@ -55,6 +55,15 @@ enlarge(f:Frame):int := (
 	       while true do provide nullE));
      n);
 export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
+     while dictionary.protected do (
+	  if dictionary == dictionary.outerDictionary then (
+	       -- shouldn't occur
+	       -- "dictionaries" in actors5.d and "protect" in actors2.d enforce this!
+	       error("internal error: global dictionaries all protected");
+	       return(dummySymbol);
+	       );
+	  dictionary = dictionary.outerDictionary;
+	  );
      frameindex := 0;
      if dictionary.transient then (
 	  -- this is a dynamic frame, not allocated yet

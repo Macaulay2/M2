@@ -171,3 +171,4 @@ addStartFunction(
 		    tryload(getenv "HOME" | "/.init.m2", simpleLoad)))))
 erase symbol simpleLoad
 newPackage User
+protect Macaulay2Dictionary

@@ -1281,13 +1281,16 @@ dictionaries(e:Expr):Expr := (
 	  s := t.v;
 	  n := length(s);
 	  if n == 0 then return(WrongArg("expected a nonempty list of dictionaries"));
+          sawUnprotected := false;
 	  sawM2dict := false;
 	  foreach x in s do 
 	  when x is d:Dictionary do (
 	       if d == Macaulay2Dictionary then sawM2dict = true;
+	       if !d.protected then sawUnprotected = true;
 	       )
 	  else return(WrongArg("expected a list of dictionaries"));
 	  if !sawM2dict then return(WrongArg("expected a list of dictionaries containing Macaulay2Dictionary"));
+          if !sawUnprotected then return(WrongArg("expected a list of dictionaries, not all protected"));
      	  a := new array(Dictionary) len n do foreach x in s do when x is d:Dictionary do provide d else nothing;
      	  a.(n-1).outerDictionary = a.(n-1);
      	  for i from 0 to n-2 do a.i.outerDictionary = a.(i+1);

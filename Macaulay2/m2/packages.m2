@@ -51,12 +51,12 @@ newPackage(String) := opts -> (title) -> (
 
 newPackage(M2title,Version => version#"VERSION")
 
-endPackage = p -> (
+closePackage = p -> (
      if p =!= currentPackage then error ("package not open");
-     if p =!= Macaulay2 then (
-	  if first dictionaries() =!= p#"dictionary" then error ("another dictionary is open");
-	  dictionaries rotate(dictionaries(),1);
+     if p =!= Macaulay2 then (			    -- protect it later, after package User is open
+	  protect p#"dictionary";
 	  );
+     if first dictionaries() =!= p#"dictionary" then error ("another dictionary is open");
      currentPackage = null;
      p)
 
