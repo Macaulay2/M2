@@ -317,3 +317,7 @@ ring_elem DetComputation::calc_det(int *r, int *c, int p0)
 
   return answer;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -389,3 +389,7 @@ assert(B*x == b)
 rawLeastSquaresDeficient(B,b,y)
 assert(B*y == b)
 assert(x != y)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

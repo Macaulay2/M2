@@ -408,3 +408,7 @@ ring_elem RR::get_terms(const ring_elem f, int, int) const
 {
   return f;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

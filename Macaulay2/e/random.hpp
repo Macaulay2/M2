@@ -36,3 +36,7 @@ public:
   static void random_integer(M2_Integer a); // a should be an mpz_t which has been initialized
 };
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -34,3 +34,7 @@ makeRing monomialOrder(Weights=>{-1,-1,-1,-1,-1,-1},RevLex=>6)
 see R 
 c+a^2+b^2
 assert(leadTerm(a^2+b^2+c) == c)
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

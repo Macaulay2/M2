@@ -558,3 +558,7 @@ getentries = (m) -> (
      nrows := rank targ m;
      ncols := rank src m;
      apply(nrows, r -> apply(ncols, c -> m_(r,c))))
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

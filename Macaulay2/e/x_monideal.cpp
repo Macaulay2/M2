@@ -99,3 +99,7 @@ const MonomialIdeal *IM2_MonomialIdeal_assprimes(const MonomialIdeal *I)
   return I->assprimes();
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -206,3 +206,7 @@ assert(f-g  == 2*x)
 
 ring leadCoefficient(f*g)
 see R2
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

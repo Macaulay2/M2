@@ -91,3 +91,7 @@ public:
   const sagbi_comp * cast_to_sagbi_comp() const { return this; }
 };
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

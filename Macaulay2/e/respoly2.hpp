@@ -70,3 +70,7 @@ inline const int *res2_poly::lead_monomial(const res2term *f) const
     { return f->monom; }
 
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

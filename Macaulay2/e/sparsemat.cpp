@@ -1329,3 +1329,7 @@ void SparseMutableMatrix::display() const
   o << newline;
   emit(o.str());
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -10,3 +10,7 @@ extern "C" {
 void factory_setup() {
   On(SW_USE_NTL);		/* tell factory to use NTL */
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

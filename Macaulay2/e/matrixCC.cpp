@@ -1056,3 +1056,7 @@ LMatrixCCOrNull * LMatrixCC::least_squares_deficient(LMatrixCC *b, LMatrixCC *x)
 
   return x;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

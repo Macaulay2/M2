@@ -53,3 +53,7 @@ public:
   static bool LLL(const Matrix *m, const RingElement *threshold, Matrix *&LLLbasis, Matrix * &ChangeOfBasis);
 };
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -286,3 +286,7 @@ public:
   gbres_comp *cast_to_gbres_comp() { return this; }
 };  
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -224,3 +224,7 @@ void SchreyerOrder::text_out(buffer &o) const
       o << compare_num(i);
     }
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

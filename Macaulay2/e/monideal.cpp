@@ -733,3 +733,7 @@ int MonomialIdeal::codim() const
 
 //   linear versions of: quotient, ...
 //   hilbert series
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

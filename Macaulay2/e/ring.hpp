@@ -230,3 +230,7 @@ extern Z *ZZ;
 extern QQ *globalQQ;
 extern RR *RRR;
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -237,3 +237,7 @@ void s_pair_heap::put_back(s_pair *&p)
 void s_pair_heap::stats()
 {
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

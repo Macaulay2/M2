@@ -303,3 +303,7 @@ void i_factor_cmds() {
 #else
 
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

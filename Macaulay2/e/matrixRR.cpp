@@ -1000,3 +1000,7 @@ LMatrixRROrNull * LMatrixRR::least_squares_deficient(LMatrixRR *b, LMatrixRR *x)
   return x;
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

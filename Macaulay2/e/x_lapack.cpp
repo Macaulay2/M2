@@ -345,3 +345,7 @@ const M2_bool LP_LMatrixCC_is_equal(const LMatrixCC *M, const LMatrixCC *N)
 {
   return M->is_equal(*N);
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

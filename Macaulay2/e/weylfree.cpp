@@ -133,3 +133,7 @@ vec WeylFreeModule::imp_mult_by_term(const ring_elem c,
   return result.value();
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -155,3 +155,7 @@ inline VECTYPE geobucket::current_value() const
     }
   return result;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

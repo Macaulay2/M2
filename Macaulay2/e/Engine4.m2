@@ -351,3 +351,7 @@ m * (R^4)_2
       is another parameter. (in leadTerm, not in inSubring).
   
 ///
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

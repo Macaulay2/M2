@@ -97,3 +97,7 @@ unsigned long IM2_Monomial_hash(const Monomial *a)
 {
   return a->get_hash_value();
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

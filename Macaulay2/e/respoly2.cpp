@@ -333,3 +333,7 @@ const res2term *res2_poly::component_occurs_in(const res2_pair *x,
     if (tm->comp == x) return tm;
   return NULL;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

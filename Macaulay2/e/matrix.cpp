@@ -1813,3 +1813,7 @@ Matrix *Matrix::k_basis(Matrix &bot) const
   kb_P = 0;
   return result;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

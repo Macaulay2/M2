@@ -1945,3 +1945,7 @@ void i_Matrix_cmds(void)
   //  install(ggtest, cmd_ALP_eigenvals, TY_MATRIX);
 }
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -516,3 +516,7 @@ step G
 view G.spairs
 calc G
 ///
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+-- End:

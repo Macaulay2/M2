@@ -1761,3 +1761,7 @@ void res2_comp::handle_pair_by_degree(res2_pair *p)
 
 
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

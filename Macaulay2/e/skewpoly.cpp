@@ -76,3 +76,7 @@ ring_elem SkewPolynomialRing::power(const ring_elem f, int n) const
   return PolynomialRing::power2(f,n);
 }
 
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -24,3 +24,7 @@ inline void emit_wrapped(int prlevel, char *s) {
 void emit(char *s); // print onto stderr, or cerr.
 void emit_line(char *s); // print onto stderr, or cerr.
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

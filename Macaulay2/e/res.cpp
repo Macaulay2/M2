@@ -1301,3 +1301,7 @@ void res_comp::skeleton(int strategy)
   // Now display the skeleton and stats on it
   skeleton_stats(reslevel);
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

@@ -614,3 +614,7 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
   delete [] exp;
   return result;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

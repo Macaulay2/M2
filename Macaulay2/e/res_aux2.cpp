@@ -609,3 +609,7 @@ int i_res2_cmds()
   return 1;
 }
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:

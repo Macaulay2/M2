@@ -419,3 +419,7 @@ bool LLLoperations::LLL(const Matrix *m, const RingElement *threshold, Matrix *&
   ChangeOfBasis = A->getColumnChangeMatrix()->toMatrix();
   return true;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e"
+// End:
