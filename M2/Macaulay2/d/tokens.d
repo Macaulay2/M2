@@ -482,7 +482,7 @@ export breakMessage := "break command";
 export unwindMessage := "unwind command";
 export interruptMessage := "interrupted";
 export alarmMessage := "alarm occurred";
-
+export steppingMessage := "stepping";
 
 export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,dummyCodeClosureList,nullE,false));
 export buildErrorPacket(message:string,report:CodeClosureList):Expr := Expr(Error(dummyPosition,message,report,nullE,false));

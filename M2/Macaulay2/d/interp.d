@@ -70,17 +70,18 @@ readeval4(file:TokenFile,printout:bool,AbortIfError:bool,dictionary:Dictionary,r
      lastvalue := nullE;
      while true do (
      	  if printout then setLineNumber(lineNumber + 1);
-	  interrupted = false;
-	  interruptPending = false;
+	  clearAllFlags();
 	  while peektoken(file,true).word == NewlineW do (
 	       -- previousLineNumber = -1; -- so there will be a new prompt after a blank line
 	       -- but now we don't like so many extra prompts
-	       interrupted = false;
+	       interruptedFlag = false;
 	       interruptPending = false;
+     	       determineExceptionFlag();
 	       gettoken(file,true);
 	       );
-	  interrupted = false;
+	  interruptedFlag = false;
 	  interruptPending = false;
+     	  determineExceptionFlag();
 	  parsed := parse(file,SemicolonW.parse.precedence,true);
 	  if equal(parsed,wordEOF) then return if returnLastvalue then lastvalue else nullE;
 	  if parsed == errorTree then (
@@ -302,8 +303,8 @@ setupfun("commandInterpreter",commandInterpreter);
 
 errorCodeS := setupconst("errorCode",nullE);
 debugger(f:Frame,c:Code):Expr := (
-     oldrecursiondepth := recursiondepth;
-     recursiondepth = 0;
+     oldrecursionDepth := recursionDepth;
+     recursionDepth = 0;
      setDebuggingMode(false);
        oldDebuggerCode := getGlobalVariable(errorCodeS);
        setGlobalVariable(errorCodeS,Expr(CodeClosure(f,c)));
@@ -316,7 +317,7 @@ debugger(f:Frame,c:Code):Expr := (
 	 decrementInterpreterDepth();
        setGlobalVariable(errorCodeS,oldDebuggerCode);
      setDebuggingMode(true);
-     recursiondepth = oldrecursiondepth;
+     recursionDepth = oldrecursionDepth;
      ret);
 debuggerFun = debugger;
 

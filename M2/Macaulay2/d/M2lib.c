@@ -46,17 +46,20 @@ Display *display;
 Font font;
 #endif
 
-M2_bool system_interrupted = FALSE;
+M2_bool system_exceptionFlag = FALSE;
+M2_bool system_interruptedFlag = FALSE;
 M2_bool system_interruptPending = FALSE;
 M2_bool system_interruptShield = FALSE;
-M2_bool system_alarmed = FALSE;
+M2_bool system_alarmedFlag = FALSE;
 
 static void alarm_handler(int sig)
 {
-     system_alarmed = TRUE;
+     extern void evaluate_setAlarmedFlag();
+     evaluate_setAlarmedFlag();
      if (system_interruptShield) system_interruptPending = TRUE;
      else {
-	  system_interrupted = TRUE;
+	  extern void evaluate_setInterruptFlag();
+	  evaluate_setInterruptFlag();
 #         ifdef FACTORY
      	  libfac_interruptflag = TRUE;
 #         endif
@@ -71,7 +74,7 @@ static bool abort_jump_set = FALSE;
 
 static void interrupt_handler(int sig)
 {
-     if (system_interrupted || system_interruptPending) {
+     if (system_interruptedFlag || system_interruptPending) {
 	  if (isatty(STDIN) && isatty(STDOUT)) while (TRUE) {
 	       char buf[10];
 	       printf("\nAbort (y/n)? ");
@@ -85,15 +88,17 @@ static void interrupt_handler(int sig)
      		      trap();
 #                   endif
 		    if (!tokens_stopIfError && abort_jump_set) {
+			 extern void evaluate_clearInterruptFlag(), evaluate_determineExceptionFlag(), evaluate_clearAlarmedFlag();
      	  		 fprintf(stderr,"returning to top level\n");
      	  		 fflush(stderr);
-			 system_interrupted = FALSE;
+			 evaluate_clearInterruptFlag();
 #                        ifdef FACTORY
 			 libfac_interruptflag = FALSE;
 #                        endif
 			 system_interruptPending = FALSE;
 			 system_interruptShield = FALSE;
-			 system_alarmed = FALSE;
+			 evaluate_clearAlarmedFlag();
+			 evaluate_determineExceptionFlag();
      	  		 siglongjmp(abort_jump,1);
 			 }
 		    else {
@@ -120,7 +125,7 @@ static void interrupt_handler(int sig)
 		    fprintf(stderr,"interrupted, stopping%s",NEWLINE);
 		    exit(interruptExit);
 	       }
-	       system_interrupted = TRUE;
+	       evaluate_setInterruptFlag();
 #ifdef FACTORY
 	       libfac_interruptflag = TRUE;
 #endif
