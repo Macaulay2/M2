@@ -9,28 +9,28 @@ CTESTS = check_monomial.o
 #	test_matrix test_sparsemat test_lapack
 
 CPPFLAGS += -I@srcdir@/.. -I../../util
-LIBRARYFILES += ../libgb.a
+LIBRARYFILES += ../libgb.a 
 
 ifeq "$(OS)" "Darwin"
 LDFLAGS += -multiply_defined suppress
 endif
 
-LDLIBS += $(LIBRARYFILES) $(LAPACKLIBS) -lfac -lcf -lgmp -lgc -lm -lc -lstdc++
+#LDLIBS += $(LIBRARYFILES) $(LAPACKLIBS) -lfac -lcf -lntl $(LIBGMP) ../../d/libM2d.a -lgc -lm -lc -lstdc++
+LDLIBS += $(LIBRARYFILES) $(LAPACKLIBS) -lfac -lcf -lntl $(LIBGMP) -lgc -lm -lc -lstdc++
+
 
 CFLAGS += -g -ansi
 
-all :: check checkc
+all :: check
 
-check_all : $(TESTS) ../../d/M2types.o util.o src_test/test.o src_test/suite.o
+check_cc : $(TESTS) ../../d/M2types.o util.o src_test/test.o src_test/suite.o
 
 check_c : $(CTESTS) ../../d/M2types.o util.o src_test/Ctest.o src_test/Csuite.o
 
-check : check_all
-	./check_all
-
-checkc : check_c
+check : check_cc check_c
+	./check_cc
 	./check_c
 
 clean : 
-	rm -f *.o check_all check_c
+	rm -f *.o check_cc check_c
 
