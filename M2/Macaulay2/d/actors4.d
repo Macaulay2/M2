@@ -548,7 +548,15 @@ readpromptfun():void := (
 import isReady(fd:int):int;
 isReadyFun(e:Expr):Expr := (
      when e
-     is f:file do toBoolean ( f.input && !f.eof && ( f.insize > f.inindex || isReady(f.infd) > 0 ) )
+     is f:file do toBoolean ( 
+	  f.input && !f.eof && ( f.insize > f.inindex || isReady(f.infd) > 0 ) 
+	  ||
+	  f.listener && (
+	       f.connection != -1
+	       ||
+	       ( sd := acceptNonblocking(f.listenerfd); f.connection = sd; sd != -1 )
+	       )
+	  )
      else WrongArg("a file"));
 setupfun("isReady",isReadyFun);
 
@@ -750,11 +758,19 @@ tostringfun(e:Expr):Expr := (
 	  else if f == stdin then "stdin"
 	  else if f == stdout then "stdout"
 	  else if f == stderr then "stderr"
-	  else if f.infd == -1 && f.outfd == -1 then "--closed file--"
-	  else if f.input && f.output then "--open input output file "+f.filename+"--"
-	  else if f.input then "--open input file "+f.filename+"--"
-	  else if f.output then "--open output file "+f.filename+"--"
-	  else "--open file "+f.filename+"--"
+	  else if f.listener then "--open listener "+f.filename+" [" + tostring(f.numconns) + "]--"
+	  else if f.numconns == 0 then (
+	       if f.input && f.output then "--open input output file "+f.filename+"--"
+	       else if f.input then "--open input file "+f.filename+"--"
+	       else if f.output then "--open output file "+f.filename+"--"
+	       else "--closed file--"
+	       )
+	  else (
+	       if f.input && f.output then "--open input output file "+f.filename+" [" + tostring(f.numconns) + "]--"
+	       else if f.input then "--open input file "+f.filename+" [" + tostring(f.numconns) + "]--"
+	       else if f.output then "--open output file "+f.filename+" [" + tostring(f.numconns) + "]--"
+	       else "--closed file--"
+	       )
 	  )
      is b:Boolean do Expr(if b.v then "true" else "false")
      is b:Nothing do Expr("null")

@@ -641,8 +641,7 @@ tex PRE := x -> concatenate (
      )
 
 html BODY := x -> concatenate(
-     "<BODY BACKGROUND='recbg.jpg'>",
-     -- "<BODY bgcolor='#e4e4ff'>",
+     "<BODY bgcolor='#e4e4ff'>",
      newline,
      apply(x, html),
      newline,

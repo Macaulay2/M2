@@ -175,11 +175,15 @@ setupfun("input",input);
 stringTokenFile(name:string,contents:string):TokenFile := (
      TokenFile(
 	  makePosFile(
-	  file(
+	  file(nextHash(),     	    	  -- hash
 	       name,	 		  -- filename
 	       0,			  -- pid
+	       false,	       	    	  -- listener
+	       NOFD,   	    	          -- listenerfd
+	       NOFD,	      	   	  -- connection
+	       0,     	   	     	  -- numconns
 	       true,			  -- input
-	       -1,			  -- infd
+	       NOFD,			  -- infd
 	       false,			  -- inisatty
 	       contents,		  -- inbuffer
 	       0,			  -- inindex
@@ -189,9 +193,9 @@ stringTokenFile(name:string,contents:string):TokenFile := (
      	       true,	       	    	  -- bol
 	       false,			  -- echo
 	       false,			  -- output
-	       -1,			  -- outfd
+	       NOFD,			  -- outfd
 	       false,			  -- outisatty
-	       "",			  -- outbuffer,
+	       "",			  -- outbuffer
 	       0,			  -- outindex
 	       0,     	   	     	  -- outbol
 	       false,	       	    	  -- hadNet
