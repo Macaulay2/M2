@@ -77,10 +77,10 @@ DEBUGFLAGS :=
 # DEBUGFLAGS := -DMEM_DEBUG
 
 STRIPFLAG :=
-STRIPFLAG := -s
+# STRIPFLAG := -s
 
 STRIPCMD := :
-STRIPCMD := strip
+# STRIPCMD := strip
 
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
@@ -98,8 +98,6 @@ CXXFLAGS := $(CFLAGS)
 LOADLIBES:= 
 LDFLAGS  := -L${LIBDIR} $(STRIPFLAG) #-pg
 #################################
-# libgc.a is the Boehm garbage collector
-LOADLIBES += -lgc
 
 ifdef includeX11
 CPPFLAGS += -DincludeX11
@@ -139,20 +137,7 @@ LDFLAGS += -static
 # Messollen's multivariate factoring stuff
 ifdef FACTOR
 CPPFLAGS += -DFACTOR
-# LDFLAGS += -L$(LIBDIR)/factory/1.2c
-# LOADLIBES += -lfac-g
-# LDFLAGS += -Xlinker -y_sqrFreeZ__FRC13CanonicalForm
-LOADLIBES += -lfac
-# LOADLIBES += -lcf-debug
-# LOADLIBES += -lcf-optimize -lmemman
-# LOADLIBES += -lsingcf
-LOADLIBES += -lcf -lcfmem
-# the gmp-macros will be needed if we use their binaries and they still
-# use the old version of gmp, older than version 2.00
-# LOADLIBES += -lgmp-macros
 endif
-
-LOADLIBES += -lgmp -lmpz -lmpn
 
 # -lsunmath makes suns obey ieee for floating point operations, at
 # -liberty is /usr/local/lib/libiberty.a, and it has random() in it
@@ -217,8 +202,6 @@ test-probe : probe
 	sort syms > addresses
 	rm syms
 ############################## miscellaneous
-#		../../lib/factory/1.2b/libcf-optimize.a
-#		../../lib/factory/1.2b/libmem-optimize.a \
 
 ../bin/Macaulay2 : $(ALLOBJ) ../e/*.o tmp_init.o \
 		../../lib/libgc.a \
