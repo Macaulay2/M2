@@ -102,7 +102,9 @@ static void interrupt_handler(int sig)
 		    }
 	       }
 	  else {
+#              ifndef NDEBUG
      	       trap();
+#              endif
 	       exit(1);
 	       }
 	  }
@@ -371,7 +373,9 @@ char **argv;
 #      endif
      }
 
+#    ifndef NDEBUG
      trap();
+#    endif
      arginits(argc,saveargv);
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
@@ -465,7 +469,9 @@ static void clean_up(void) {
 	  final_list->final();
 	  final_list = final_list->next;
 	  }
+#    ifndef NDEBUG
      trap();
+#    endif
      }
 
 void system_exit(x)

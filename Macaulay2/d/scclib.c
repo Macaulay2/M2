@@ -28,7 +28,9 @@ va_dcl
      fprintf(stderr,"\n");
      fflush(stderr);
      va_end(ap);
+#ifndef NDEBUG
      trap();
+#endif
      exit(1);
      }
 
