@@ -107,6 +107,7 @@ BOLD       = new MarkUpType of MarkUpList
 CODE       = new MarkUpType of MarkUpList
 HREF       = new MarkUpType of MarkUpList
 ANCHOR     = new MarkUpType of MarkUpList
+Hypertext  = new MarkUpType of MarkUpList		    -- top level, to be returned to user by "help" and "hypertext", includes text that has been already fixed up
 
 UL         = new MarkUpType of MarkUpListParagraph
 
@@ -130,17 +131,32 @@ trimline0 := x -> selectRegexp ( "^(.*[^ ]|) *$",1, x)
 trimline  := x -> selectRegexp ( "^ *(.*[^ ]|) *$",1, x)
 trimline1 := x -> selectRegexp ( "^ *(.*[^ ]|)$",1, x)
 addspaces := x -> if x#?0 then if x#-1=="." then concatenate(x,"  ") else concatenate(x," ") else x
-fix := s -> (						    -- remove clumsy newlines within strings
+
+fixup := method(SingleArgumentDispatch => true)
+flat := method()
+flat Thing := identity
+flat SEQ := x -> toSequence x
+flat Nothing := x -> ()
+fixflat := z -> splice apply(z, i -> flat fixup i)
+fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
+fixup Nothing    := identity				       -- null
+fixup Sequence   := 
+fixup List       := z -> SEQ fixflat z
+fixup MarkUpList := z -> apply(z,fixup)			       -- recursion
+fixup Option     := z -> z#0 => fixup z#1		       -- Headline => "...", ...
+fixup PRE        := 
+fixup TO         := 
+fixup TO2        := 
+fixup TOH        := identity
+fixup MarkUpType := z -> z{}				       -- convert PARA to PARA{}
+fixup Function   := z -> z				       -- allow Function => f in Synopsis
+fixup String     := s -> (				       -- remove clumsy newlines within strings
      ln := lines s;
      if not ln#?1 then return s;
      concatenate ({addspaces trimline0 ln#0}, addspaces \ trimline \take(ln,{1,#ln-2}), {trimline1 ln#-1}))
-new PARA from List := 
-new SECTION from List := 
-new SEQ from List := (seq,z) -> (
-     z = select(toList z, i -> i =!= null);
-     z = apply(z, i -> if class i === SEQ then toList i else i);
-     z = apply(z, i -> if class i === String then fix i else i);
-     flatten splice z)
+
+new Hypertext from List := (h,x) -> splice apply(x, i -> flat i)
+hypertext = x -> Hypertext fixup x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
