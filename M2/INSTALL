@@ -121,6 +121,13 @@ To make a distribution tarball:
 	make install
 	make distribution
 
+To use a different prefix, say /mnt/local, for finding libraries and include
+files installed in a nonstandard location:
+
+	LDFLAGS=-L/mnt/local/lib CPPFLAGS=-I/mnt/local/include ../configure ...
+
+where ... represents the remaining arguments, as above.
+
 -----------------------
 Windows 95, 98 and NT notes
 -----------------------
