@@ -663,15 +663,13 @@ document {
      PARA,
      "Not implemented yet.",
      SeeAlso => "monoid"}
-monoidOptions := first frame first frame lookup(monoid,Array)
-assert( monoidOptions #? MonomialOrder )
 document {
      Key => (monoid, Array),
      Headline => "make a polynomial ring or monoid ring",
      TT "monoid [a,b,c,...]", " -- makes a free ordered commutative monoid on the variables listed.",
      PARA,
      "Optional arguments (placed between the brackets):",
-     UL (TO \ keys monoidOptions),
+     UL (TO \ keys value Macaulay2#"private dictionary"#"monoidDefaults"),
      SeeAlso => {(symbol " ", Ring, Array)}}
 document {
      Key => (symbol " ", Ring, Array),
@@ -682,7 +680,7 @@ document {
      "This is the customary way to make a polynomial ring.",
      PARA,
      "Optional arguments (placed inside the array):",
-     UL (TO \ keys monoidOptions),
+     UL (TO \ keys value Macaulay2#"private dictionary"#"monoidDefaults"),
      SeeAlso => "polynomial rings"}
 document {
      Key => (symbol " ",Ring, OrderedMonoid),
