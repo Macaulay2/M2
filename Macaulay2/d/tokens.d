@@ -15,8 +15,8 @@ export parsefuns := {
      };
 export parseinfo := {
      precedence:int,
-     scope:int,
-     strength:int,
+     binaryStrength:int,
+     unaryStrength:int,
      funs:parsefuns
      };
 export TCnone := 0;			-- for artificial words: dummyWord, wordEOF

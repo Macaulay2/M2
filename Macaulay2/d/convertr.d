@@ -703,8 +703,8 @@ export setupop(word:Word,fun:unop):void := (
 export setupfun(name:string,fun:unop):void := (
      word := unique(name, parseinfo(
 	       parseWORD.precedence,
-	       parseWORD.scope,
-	       parseWORD.strength,
+	       parseWORD.binaryStrength,
+	       parseWORD.unaryStrength,
 	       parsefuns(unaryop, defaultbinary)));
      entry := makeSymbol(word,dummyPosition,globalScope);
      entry.unary = fun;
