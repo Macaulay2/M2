@@ -86,7 +86,9 @@ values(e:Expr):Expr := (
 			 p := bucket;
 			 while true do (
 			      when p
-			      is q:SymbolListCell do (provide Expr(SymbolClosure(f,q.entry)); p=q.next;)
+			      is q:SymbolListCell do (
+				   provide Expr(SymbolClosure(f,q.entry));
+				   p=q.next;)
 			      else break;
 			      )))))
      is o:HashTable do list(
@@ -110,7 +112,9 @@ pairs(e:Expr):Expr := (
 			      p := bucket;
 			      while true do (
 				   when p
-				   is q:SymbolListCell do (provide Expr(Sequence(Expr(q.word.name),Expr(SymbolClosure(f,q.entry)))); p=q.next;)
+				   is q:SymbolListCell do (
+					provide Expr(Sequence(Expr(q.word.name),Expr(SymbolClosure(f,q.entry))));
+					p=q.next;)
 				   else break; ));
 			 ))))
      is o:HashTable do list(
@@ -123,9 +127,7 @@ pairs(e:Expr):Expr := (
      else WrongArg("a hash table or a raw polynomial"));
 setupfun("pairs",pairs);
 
-
 -- operators
-
 
 basictype(e:Expr):HashTable := basictype(Class(e));
 basictypefun(e:Expr):Expr := Expr(basictype(e));
