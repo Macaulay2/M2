@@ -130,11 +130,11 @@ void stash::text_out(buffer &o) const
   char s[200];
   sprintf(s, "%16s %9dk %9dk %10d %10d %10d %10d %10d%s",
 	  name, 
-	  (element_size * highwater + 1023)/1024,
-	  (element_size * n_inuse + 1023)/1024,
+	  (int)((element_size * highwater + 1023)/1024),
+	  (int)((element_size * n_inuse + 1023)/1024),
 	  (int)element_size,
-	  (int)n_allocs,
-	  (int)n_inuse,
+	  n_allocs,
+	  n_inuse,
 	  highwater,
 	  n_frees,
 	  newline);
