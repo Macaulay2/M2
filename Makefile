@@ -79,7 +79,8 @@ $(CONFIGURED_FILES) include/config.h : $(CONFIGURED_FILES:=.in) config.status in
 	./config.status
 	touch include/config.h
 
-TARGETS = all install dist check clean distclean uninstall doc
+TARGETS = all install dist check clean distclean uninstall doc \
+	FACTORY LIBFAC GMP GC
 
 $(TARGETS) :: Makefile-run include/config.h
 	make $@ -f Makefile-run
