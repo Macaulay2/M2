@@ -50,7 +50,7 @@ if not Macaulay2#?"raw documentation database" or not isOpen Macaulay2#"raw docu
      currentPackage = null;
      )
 
-addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2#"source directory" = sourceHomeDirectory )
+addStartFunction( () -> if sourceHomeDirectory =!= null then Macaulay2#"source directory" = sourceHomeDirectory|"m2/" )
 
 addStartFunction( () -> if not member("-q",commandLine) then makePackageIndex() )
 

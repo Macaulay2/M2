@@ -13,6 +13,9 @@ install-strip :: $(bindir); $(INSTALL_PROGRAM) -s M2$(EXE) $(bindir)/M2$(EXE)
 install       :: $(bindir)/M2-load-libs
 $(bindir)/M2-load-libs : M2-load-libs ; $(INSTALL) $^ $@
 
+install       :: $(bindir)/M2-emacs
+$(bindir)/M2-emacs : M2-emacs ; $(INSTALL) $^ $@
+
 distclean : clean; rm -f Makefile
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/bin/Makefile
 # Local Variables:
