@@ -1112,13 +1112,14 @@ text SEQ := x -> (
      concatenate \\ text \ x
      )
 html SEQ := x -> concatenate(apply(toList x, html))
-net SEQ := x -> (
-     x = toList x;
-     p := join({-1},positions(x,i -> class i === PARA or class i === BR),{#x});
-     stack apply(#p - 1, 
-	  i -> horizontalJoin apply(take(x,{p#i+1, p#(i+1)-1}), net)
-	  )
-     )
+net SEQ := x -> boxNets prepend("SEQ", net \ toList x)
+-- this is wrong:
+--      x = toList x;
+----      x = deepSplice apply(x, y -> if class y === PARA then (PARA{}, toSequence y) else y);
+--      p := join({-1},positions(x,i -> class i === PARA or class i === BR),{#x});
+--      stack apply(#p - 1, 
+-- 	  i -> horizontalJoin apply(take(x,{p#i+1, p#(i+1)-1}), net)
+-- 	  )
 
 tex Sequence := tex List := tex Array := x -> concatenate("$",texMath x,"$")
 
