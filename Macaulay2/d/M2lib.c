@@ -314,7 +314,7 @@ double system_etime(){
      }
 #endif
 
-extern char **__environ;
+extern char **_environ;
 extern char timestamp[];
 static void clean_up();
 
@@ -434,11 +434,11 @@ char **argv;
 
 #if !defined(__MWERKS__)
      /* save environment on stack in case it's on the heap */
-     for (envc=0, x=__environ; *x; x++) envc++;
+     for (envc=0, x=_environ; *x; x++) envc++;
      saveenvp = (char **)alloca((envc + 1)*sizeof(char *));
      for (i=0; i<envc; i++) {
-	  saveenvp[i] = alloca(strlen(__environ[i]) + 1);
-	  strcpy(saveenvp[i],__environ[i]);
+	  saveenvp[i] = alloca(strlen(_environ[i]) + 1);
+	  strcpy(saveenvp[i],_environ[i]);
      }
      saveenvp[i] = NULL;
 #endif
@@ -489,17 +489,17 @@ char **argv;
 	  GC_stackbottom = &dummy;
 	  old_collections = GC_gc_no;
 #if !defined(__MWERKS__)
-     	  __environ = saveenvp;	/* __environ is a static variable that points
+     	  _environ = saveenvp;	/* _environ is a static variable that points
 				   to the heap and has been overwritten by
 				   loaddata(), thereby pointing to a previous
 				   incarnation of the heap. */
-	  /* Make a copy of the environment on the heap for '__environ'. */
+	  /* Make a copy of the environment on the heap for '_environ'. */
 	  /* In some systems, putenv() calls free() on the old item,
 	     so we are careful to use malloc here, and not GC_malloc. */
 	  environ0 = (char **)malloc((envc + 1)*sizeof(char *));
 	  /* amazing but true:
 	     On linux, malloc calls getenv to get values for tunable
-	     parameters, so don't trash __environ yet.
+	     parameters, so don't trash _environ yet.
 	     */
 	  if (environ0 == NULL) fatal("out of memory");
 	  for (i=0; i<envc; i++) {
@@ -508,7 +508,7 @@ char **argv;
 	       strcpy(environ0[i],saveenvp[i]);
 	  }
 	  environ0[i] = NULL;
-	  __environ = environ0;
+	  _environ = environ0;
 #endif
 	  }
 

@@ -264,7 +264,7 @@ M2-send-to-prorgram can obtain lines from this buffer."
   (let* ((f (prog1
 	      (select-frame 
 	       (new-frame
-		'((height . 26)
+		'((height . 24)
 		  (width . 65)
 		  (visiblity . t)
 		  (minibuffer . nil)

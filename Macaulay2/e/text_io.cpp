@@ -47,15 +47,18 @@ void emit_wrapped(char *s)
     fprintf(stderr, "\n");
   }
   fprintf(stderr, s);
+  fflush(stderr);
 }
 
 void emit(char *s)
 {
   fprintf(stderr, s);
+  fflush(stderr);
 }
 
 void emit_line(char *s)
 {
   fprintf(stderr, "%s%s", s, "\n");
+  fflush(stderr);
 }
 

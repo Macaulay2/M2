@@ -292,6 +292,8 @@ dups-okay: dups-tmp
 	@if [ -s $< ]; then echo "Multiple definitions found:"; cat $<; exit 1; \
 	 else touch $@; fi
 
+tests::
+
 ifeq ($(OS),Linux)
 	# don't run it elsewhere because we may not have gnu sort and gnu uniq there
 tests:: dups-okay

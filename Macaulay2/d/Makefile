@@ -251,7 +251,7 @@ ALLOBJ += $(PROJECT:.d=.oo)
 ALLOBJ += $(MISCO)
 endif
 
-ifeq ($(OS),Linux)
+ifdef NEWDUMPDATA
 ifndef NODUMPDATA
 LOADLIBES += -L../dumpdata
 LIBRARYFILES += ../dumpdata/libdump.a
