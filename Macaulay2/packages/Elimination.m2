@@ -85,7 +85,8 @@ discriminant(RingElement, RingElement) := (f,x) -> resultant(f, diff(x,f), x)
 beginDocumentation()
 
 document {
-     Key => Elimination
+     Key => Elimination,
+     Headline => "eliminating specified variables, and applications"
      }
 
 document {

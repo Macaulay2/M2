@@ -430,6 +430,7 @@ installPackage = method(Options => {
 	  Encapsulate => true,
 	  IgnoreExampleErrors => true,
 	  MakeInfo => true,
+	  RemakeAllDocumentation => true,
 	  AbsoluteLinks => false,
 	  MakeLinks => true,
 	  RunDirectory => "."
@@ -655,7 +656,7 @@ installPackage Package := o -> pkg -> (
      stderr << "--processing documentation nodes..." << endl;
      scan(nodes, tag -> (
 	       fkey := DocumentTag.FormattedKey tag;
-	       if rawDocUnchanged#?fkey then (
+	       if not o.RemakeAllDocumentation and rawDocUnchanged#?fkey then (
 	       	    -- stderr << "--skipping   " << tag << endl;
 		    )
 	       else (
@@ -781,7 +782,7 @@ installPackage Package := o -> pkg -> (
 	  key := DocumentTag.Key tag;
 	  fkey := DocumentTag.FormattedKey tag;
 	  fn := buildDirectory | htmlFilename tag;
-	  if fileExists fn and rawDocUnchanged#?fkey then return;
+	  if fileExists fn and not o.RemakeAllDocumentation and rawDocUnchanged#?fkey then return;
 	  stderr << "--making html page for " << tag << endl;
 	  fn
 	  << html HTML { 

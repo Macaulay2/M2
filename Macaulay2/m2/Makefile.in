@@ -184,7 +184,7 @@ M2OPTIONS += --no-debug
 endif
 M2OPTIONS += -e errorDepth=0
 M2OPTIONS += -e debugLevel=0
-M2OPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => "$(PACKAGEPREFIX)/", MakeLinks => false) '
+M2OPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => "$(PACKAGEPREFIX)/", MakeLinks => false, RemakeAllDocumentation => false) '
 ifndef INTERACTIVE
 M2OPTIONS += -e 'exit 0 '
 endif

@@ -1,5 +1,5 @@
 # @configure_input@
-PACKAGES = minimal.m2 FirstPackage.m2 CacheFileName.m2 Elimination.m2 Dmodules.m2
+PACKAGES = minimal.m2 FirstPackage.m2 CacheFileName.m2 Elimination.m2 Markov.m2 Dmodules.m2
 include ../../include/config.Makefile
 VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; pwd)
@@ -15,7 +15,7 @@ distclean::; rm -f Makefile
 all :: $(PACKAGES:.m2=.installed)
 
 %.installed : %.m2
-	M2 -q --stop -e errorDepth=0 -e "installPackage(\"$*\", Encapsulate => false, PackagePrefix => \"./tmp-packages/\")" -e "exit 0"
+	M2 -q --stop -e errorDepth=0 -e "installPackage(\"$*\", Encapsulate => false, RemakeAllDocumentation => true, PackagePrefix => \"./tmp-packages/\")" -e "exit 0"
 	touch "$@"
 
 clean::; rm -rf tmp tmp-packages *.installed
