@@ -25,7 +25,7 @@ docFilename := () -> (
      if substring(progname,0,1) === "\"" then progname = substring(progname,1);
      if version#"operating system" === "MACOS" then "::cache:Macaulay2-doc"
      else concatenate(
-	  between(pathSeparator,drop(lines(progname,pathSeparator),-2)),
+	  between(pathSeparator,drop(separate(progname,pathSeparator),-2)),
 	  pathSeparator, "cache", pathSeparator, "Macaulay2", docExtension()))
 if phase === 1 then addStartFunction( 
      () -> DocDatabase = (
@@ -339,7 +339,7 @@ processExamples := (docBody) -> (
 		    );
 	       ""
 	       );
-	  exampleResults = lines(exampleResults,"\1");
+	  exampleResults = separate(exampleResults,"\1");
 	  exampleCounter = 0;
 	  docBody = apply(docBody,processExamplesLoop);
 	  close exampleOutputFile;

@@ -578,7 +578,7 @@ basis(List,Ring) := Matrix => (deg,R) -> basis(deg, R^1)
 
 basis(ZZ,Ring) := Matrix => (deg,R) -> basis({deg}, R^1)
 
-basis Module := Matrix => M -> (
+basis Module := Matrix => M -> if M.?basis then M.basis else M.basis = (
      -- check the following:
      --     R = ring m is a polynomial ring
      --     
@@ -592,8 +592,8 @@ basis Module := Matrix => M -> (
      sendgg(ggPush top, ggPush bottom, ggkbasis);
      map(M,,getMatrix R))
 
-basis Ring := Matrix => R -> basis(R^1)
-basis Ideal := Matrix => I -> basis module I
+basis Ring := Matrix => R -> if R.?basis then R.basis else R.basis = basis(R^1)
+basis Ideal := Matrix => I -> if I.?basis then I.basis else I.basis = basis module I
 -----------------------------------------------------------------------------
 
 truncate(List,Ideal) := Ideal => (deg,I) -> ideal truncate(deg,module I)

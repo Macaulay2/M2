@@ -127,20 +127,17 @@ cursor is at the end of the buffer.  Set it with M2-set-demo-buffer."
 	     (local-set-key "\^Cr" 'scroll-right)
 	     (local-set-key [ f8 ] 'switch-to-completions)
 	     (local-set-key "\^Cc" 'switch-to-completions)
+	     (local-set-key "\^Cd" 'M2-find-documentation)
 	     (set-syntax-table M2-mode-syntax-table)
 	     (turn-on-font-lock)
-	     ;; (make-local-variable 'font-lock-defaults)
-	     ;; (setq font-lock-defaults '(M2-font-lock-keywords t))
+	     (make-local-variable 'font-lock-keywords)
+	     (setq font-lock-keywords M2-mode-font-lock-keywords)
 	     (setq comint-dynamic-complete-functions 
 		   '(
 		     M2-dynamic-complete-symbol
 		     comint-dynamic-complete-filename)))))
 
-(defvar M2-symbols '()
-  "A list of the symbols available in Macaulay 2, for use with
-  dynamic completion."
-  )
-(load "M2-symbols" t t) 
+(require 'M2-symbols) 
 
 (defun M2-to-end-of-prompt()
      "Move to end of prompt matching M2-comint-prompt-regexp on this line."

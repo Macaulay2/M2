@@ -289,7 +289,13 @@ PARA,
 your cursor at the end of the buffer, and then use ", TT "M-p", " and ", TT "M-n", " 
 to move to the previous and next line of input remembered in the history.  When you 
 get to one you'd like to run again, simply press return to do so.  Or edit it
-slightly to change it before pressing return."
+slightly to change it before pressing return.",
+PARA,
+"Assuming you have installed the ", TO "w3", " emacs web browser,
+you may explore the documentation by positioning the cursor near a documented
+word such as ", TT "List", " and pressing ", TT "C-H d", ".  Alternatively,
+when the prompt appears, you can type the key whose documentation should be
+found."
 }
 
 document { "editing Macaulay 2 code with emacs",
@@ -330,9 +336,22 @@ PARA,
 "Type ", TT "res", " somewhere and then press ", TT "C-C TAB", " to bring up the
 possible completions of the word to documented Macaulay 2 symbols.",
 PARA,
-"Finally, notice how ", TT "C-H m", " will display the keystrokes peculiar to 
-the mode in a help window."
+"Notice how ", TT "C-H m", " will display the keystrokes peculiar to 
+the mode in a help window.",
+PARA,
+"Assuming you have installed the ", TO "w3", " emacs web browser,
+you may explore the documentation by positioning the cursor near a documented
+word such as ", TT "List", " and pressing ", TT "C-H d", ".  Alternatively,
+when the prompt appears, you can type the key whose documentation should be
+found."
 }
+
+document { "w3",
+     "You may download the package ", TT "w3", ", by William M. Perry, from 
+     ", TT "http://www.cs.indiana.edu/elisp/w3/docs.html", ".  It is an
+     emacs package that implements a web browser that displays web pages
+     within emacs in emacs buffers."
+     }
 
 document { "engine communication protocol",
      "Here is a description of the protocol for communication between the 

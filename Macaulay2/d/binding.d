@@ -19,51 +19,26 @@ prec := 0;
 step := 2;
 bump():void := prec = prec + step;
 bump(i:int):void := prec = prec + i*step;
-unary(s:string):Word := (
-     install(s,unique(s,parseinfo(prec,prec,prec,
-		    parsefuns(unaryop,defaultbinary)))));
-unaryword(s:string):Word := (
-     unique(s,parseinfo(prec,prec,prec,
-		    parsefuns(unaryop,defaultbinary))));
-biunary(s:string):Word := (
-     install(s,unique(s,parseinfo(prec,prec,prec,
-		    parsefuns(unaryop,postfixop)))));
-postfix(s:string):Word := (
-     install(s,unique(s,parseinfo(prec,prec,prec,
-		    parsefuns(errorunary,postfixop)))));
-unaryleft(s:string):Word := (
-     install(s,unique(s,parseinfo(prec,prec,prec,
-		    parsefuns(unaryop,binaryop))))
-     );
-unaryright(s:string):Word := (
-     install(s,unique(s,parseinfo(prec,prec-step,prec,
-		    parsefuns(unaryop,binaryop))))
-     );
-binaryleft(s:string):Word := (
-     install(s,unique(s,parseinfo(prec,prec,prec,
-		    parsefuns(errorunary,binaryop)))));
-binaryleftword(s:string):Word := (
-     unique(s,
-	  parseinfo(prec,prec,prec, parsefuns(errorunary,binaryop))));
-nleft(s:string):Word := (
-     install(s,unique(s,parseinfo(prec,prec,prec,
-		    parsefuns(errorunary,nbinaryop)))));
-nleftword(s:string):Word := (
-     unique(s,parseinfo(prec,prec,prec,
-		    parsefuns(errorunary,nbinaryop))));
-nunaryleft(s:string):Word := (
-     install(s,unique(s,parseinfo(prec,prec,prec,
-		    parsefuns(nunaryop,nbinaryop)))));
+unary(s:string)         :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(unaryop   ,defaultbinary))));
+unaryword(s:string)     :Word :=           unique(s,parseinfo(prec,prec     ,prec,parsefuns(unaryop   ,defaultbinary)));
+biunary(s:string)       :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(unaryop   ,postfixop))));
+postfix(s:string)       :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(errorunary,postfixop))));
+unaryleft(s:string)     :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(unaryop   ,binaryop))));
+unaryright(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec-step,prec,parsefuns(unaryop   ,binaryop))));
+binaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(errorunary,binaryop))));
+binaryleftword(s:string):Word :=           unique(s,parseinfo(prec,prec     ,prec,parsefuns(errorunary,binaryop)));
+nleft(s:string)         :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(errorunary,nbinaryop))));
+nleftword(s:string)     :Word :=           unique(s,parseinfo(prec,prec     ,prec,parsefuns(errorunary,nbinaryop)));
+nunaryleft(s:string)    :Word := install(s,unique(s,parseinfo(prec,prec     ,prec,parsefuns(nunaryop  ,nbinaryop))));
 binaryright(s:string,binary:function(ParseTree,Token,TokenFile,int,bool):ParseTree):Word := (
-     install(s,unique(s,parseinfo(prec,prec-step,prec,
-		    parsefuns(errorunary,binary)))));
-binaryright(s:string):Word := binaryright(s,binaryop);
+                                 install(s,unique(s,parseinfo(prec,prec-step,prec,parsefuns(errorunary,binary)))));
+binaryright(s:string)   :Word := binaryright(s,binaryop);
+
 specialprec := -1;			  -- filled in below
 export special(s:string,f:function(Token,TokenFile,int,bool):ParseTree):Word := (
-     unique(s, parseinfo(precObject,specialprec,specialprec,
-	       parsefuns(f, defaultbinary))));
-token(s:string):Word := unique(s,
-     parseinfo(prec,prec,prec, parsefuns(errorunary,errorbinary)));
+     unique(s, parseinfo(precObject,specialprec,specialprec, parsefuns(f, defaultbinary))));
+token(s:string)         :Word :=           unique(s,parseinfo(prec,prec,prec,parsefuns(errorunary,errorbinary)));
+
 export parens(binaryleft:string,binaryright:string,prec:int,scope:int,strength:int):Word := (
      l := unique(binaryleft, parseinfo(prec,scope,strength,leftparen));
      binaryleft = l.name;
@@ -82,7 +57,7 @@ export treePosition(e:ParseTree):Position := (
 	  when e
 	  is dummy do return(dummyPosition)
 	  is token:Token do return(token.position)
-	  is adjacent:Adjacent do e = adjacent.lhs
+	  is adjacent:Adjacent do e = adjacent.rhs
 	  is binary:Binary do return(binary.operator.position)
 	  is a:Arrow do return(a.operator.position)
 	  is unary:Unary do return(unary.operator.position)

@@ -66,7 +66,7 @@ progname := commandLine#0
 -- quotation marks are needed because the path may contain spaces
 if substring(progname,0,1) === "\"" then progname = substring(progname,1)
 
-dir := splice(apply(lines(progname, "/"), i -> if i === "" then i else toSequence lines(i, "\\")))
+dir := splice(apply(separate(progname, "/"), i -> toSequence separate(i, "\\")))-- ???
 
 if #dir > 1
 then (
@@ -74,8 +74,6 @@ then (
      -- << "source dir = " << sourcedir << endl;		    -- debugging
      path = join({sourcedir}, path);
      )
-
--- hasColon := s -> # ( lines  ( concatenate(" ",s," "), ":" ) ) =!= 1
 
 isAbsolutePath := (
      if version#"operating system" === "MACOS"

@@ -125,8 +125,8 @@ document { diff,
      EXAMPLE {
 	  "R = ZZ/101[x]",
 	  "A = R^{0,-1}; B = R^{0,-2}; C = R^{0,-4}; D = R^{0,-8};",
-	  "m = random(A,B)"
-	  "n = random(C,D)"
+	  "m = random(A,B)",
+	  "n = random(C,D)",
 	  "diff(m,n)",
 	  "degrees target oo, degrees source oo",
 	  "degrees (dual A ** C), degrees (dual B ** D)",
@@ -173,8 +173,8 @@ document { contract,
      EXAMPLE {
 	  "R = ZZ/101[x]",
 	  "A = R^{0,-1}; B = R^{0,-2}; C = R^{0,-4}; D = R^{0,-8};",
-	  "m = random(A,B)"
-	  "n = random(C,D)"
+	  "m = random(A,B)",
+	  "n = random(C,D)",
 	  "contract(m,n)",
 	  "degrees target oo, degrees source oo",
 	  "degrees (dual A ** C), degrees (dual B ** D)",

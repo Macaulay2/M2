@@ -256,3 +256,7 @@ ultimate = method()
 ultimate(Function,Thing) := (f,x) -> (
      while try (ox := x; x = f x; ox =!= x) else false do ();
      x)
+
+lines = x -> (
+     l := separate x;
+     if l#-1 === "" then drop(l,-1) else l)

@@ -4,7 +4,7 @@ TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
 all:: initialize
-html: all; $(MAKE) -C ../html
+emacs html: all; $(MAKE) -C ../$@
 
 ##############################
 .SUFFIXES: .m2
@@ -147,6 +147,13 @@ cache-tmp/Examples/FileNames ../cache/Macaulay2-pre : $(DUMPEDGFILES) \
 	rm -rf ../cache/Macaulay2-tmp
 	../bin/Macaulay2 -q -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
+
+all:: .gdbinit
+.gdbinit : 
+	if [ -f ".gdbinit.$(USER)" ] ;\
+	then cp ".gdbinit.$(USER)" $@ ;\
+	else cp .gdbinit.dan $@ ;\
+	fi
 
 backup : CVS/Entries
 CVS/Entries : $(GFILES)

@@ -180,17 +180,13 @@ Matrix ^ ZZ := Matrix => (f,n) -> (
      if n === 0 then id_(target f)
      else SimplePowerMethod (f,n))
 
-transpose Matrix := Matrix => (m) -> (
+transpose Matrix := Matrix => (m) -> if m.?transpose then m.transpose else m.transpose = (
      if not (isFreeModule source m and isFreeModule target m) 
      then error "expected a map between free modules";
      sendgg (ggPush m, ggtranspose);
      getMatrix ring m)
 
-ring(Matrix) := m -> (
-     R := m.source.ring;
-     if R =!= m.target.ring
-     then error "expected map to have source and target over same ring";
-     R)
+ring(Matrix) := m -> m.target.ring
 
 Matrix * Vector := Vector => (m,v) -> (
      if class v =!= source m then error "map not applicable to vector";

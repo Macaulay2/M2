@@ -131,7 +131,13 @@ Net | Net := Net => horizontalJoin
 Net || Net := Net => stack
 String ^ ZZ := Net => (s,i) -> raise(horizontalJoin s,i)
 Net ^ ZZ := Net => raise; erase symbol raise
-String ^ Sequence := Net => (s,p) -> ((height,depth) -> (stack apply(height+depth,i->s))^(height-1))(p)
+String ^ Sequence := Net => (s,p) -> (
+     (height,depth) -> (
+	  tot := height + depth;
+	  if tot <= 0 then (stack())^height
+	  else (stack apply(tot,i->s))^(height-1)
+	  )
+     ) p
 
 net Net := identity
 ---- this old routine draws a box around a net

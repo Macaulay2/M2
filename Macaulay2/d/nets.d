@@ -36,12 +36,12 @@ untabify(s:string):string := (
 	  )
      else s);
 export lines(s:string):array(string) := (
-     nlines := 0;
+     nlines := 1;
      i := 0;
      while true do (
 	  j := index(s,i);
 	  if j == -1 then (
-     	       if i != length(s) then nlines = nlines + 1;
+     	       -- if i != length(s) then nlines = nlines + 1;
 	       break;
 	       );
 	  if j+1 < length(s) && s.j == '\r' && s.(j+1) == '\n'
@@ -54,7 +54,8 @@ export lines(s:string):array(string) := (
 	  while true do (
 	       j := index(s,i);
 	       if j == -1 then (
-		    if i != length(s) then provide untabify(substr(s,i));
+		    -- if i != length(s) then provide untabify(substr(s,i));
+		    provide untabify(substr(s,i));
 		    break;
 		    )
 	       else (

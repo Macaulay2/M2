@@ -1082,7 +1082,7 @@ expression RR := x -> (
 hold = x -> new Holder from {x}
 typicalValues#hold = Holder
 
-expression Boolean := expression Symbol := expression File := 
+expression Boolean := expression Symbol := expression File := expression String := expression Net := 
      expression Handle := expression Nothing := expression Database := 
      expression Function := x -> new Holder from {x}
 
