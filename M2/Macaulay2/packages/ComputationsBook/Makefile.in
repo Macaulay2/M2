@@ -22,13 +22,17 @@ distclean:; rm -f Makefile
 
 .PHONY: clean changes distclean all check
 
+ifneq "@srcdir@" "."
+check :: $(CHAPTERS)
+$(CHAPTERS):; mkdir "$@"
+endif
+
 check :: $(patsubst %, %/Makefile, $(CHAPTERS))
-$(patsubst %, %/Makefile, $(CHAPTERS)) : Makefile.chapter ; cp $< $@
+$(patsubst %, %/Makefile, $(CHAPTERS)): Makefile.chapter; cp $< $@
 
 check ::
 	for d in $(CHAPTERS) ; \
-	   do mkdir -p $$d ; \
-	      $(MAKE) -C $$d srcdir=$(srcdir)/$$d || exit 1; \
+	   do $(MAKE) -C $$d srcdir=$(srcdir)/$$d || exit 1; \
 	   done
 
 changes:
