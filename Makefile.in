@@ -15,13 +15,14 @@ install all clean distclean::
 
 # first install target:
 install :: all
-
+install :: ; rm -f INSTALLDIR && ln -s $(target) INSTALLDIR
 distclean::; rm -f config.cache config.log config.status configure.options
 distclean:: clean
 ifeq "$(CC)" "cl"
 all:: ;	$(MAKE) -C WindowsNT
 endif
 all install clean :: ; $(MAKE) -C bin $@
+all install :: ; $(MAKE) -C man $@
 all distclean check clean install :: ; $(MAKE) -C Macaulay2 $@
 all::; $(MAKE) -C Macaulay2 doc
 DIRS := $(target) $(bindir) $(libm2dir) $(man1dir) $(emacsdir) $(m2dir) $(docm2reldir)

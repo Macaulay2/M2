@@ -1,12 +1,14 @@
-#! /bin/sh
+#! /bin/sh -xe
 DUMPDATA="@DUMPDATA@"
-cd m2
+cd cache
+M2DIR=../../../../share/Macaulay2/@PACKAGE_VERSION@/m2
+test -d "$M2DIR"
 ARCH=`uname -m`
 export ARCH
 if [ "$DUMPDATA" = yes ]
 then echo Dumping data
      M2HOME=.. \
      ../libexec/Macaulay2 -silent -q '-e phase=1' \
-	setup.m2 dumpdata.m2  '-edump()' '-e exit 0' \
+	"$M2DIR/setup.m2" "$M2DIR/dumpdata.m2"  '-edump()' '-e exit 0' \
     || exit 1
 fi
