@@ -48,25 +48,6 @@ VisibleList // Command  :=
 VisibleList // Function := VisibleList => (v,f) -> f v
 
 use = identity				  -- just temporary, until methods.m2
-
-globalAssignFunction = (X,x) -> (
-     if not x#?(symbol name) then (
-	  x.Symbol = X;
-	  x.name = toString X;
-	  );
-     use x;
-     )
-
-globalReleaseFunction = (X,x) -> (
-     if x.?Symbol and X === x.Symbol
-     then (
-	  remove(x,symbol name);
-	  remove(x,symbol symbol);
-	  )
-     )
-
-Type.GlobalAssignHook = globalAssignFunction
-Type.GlobalReleaseHook = globalReleaseFunction
 -----------------------------------------------------------------------------
 
 -- miscellaneous stuff:
