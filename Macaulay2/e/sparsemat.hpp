@@ -143,7 +143,7 @@ public:
   // Routines special to sparse mutable matrices //
   /////////////////////////////////////////////////
 
-  void reducePivots(); // Harrison Tsai's routine
+  void reduce_pivots(); // Harrison Tsai's routine
 };
 
 #endif
