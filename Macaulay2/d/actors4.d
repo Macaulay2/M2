@@ -257,38 +257,6 @@ ascii(e:Expr):Expr := (
      else buildErrorPacket("expects a string, a small integer, or an array of small integers"));
 setupfun("ascii",ascii);
 
-transnet(e:Expr):Expr := (
-     if isIntArray(e)
-     then Expr((
-	       v := toIntArray(e);
-	       new string len 4 * length(v) do foreach i in v do (
-	       	    provide char(i >> 24);
-	       	    provide char(i >> 16);
-	       	    provide char(i >> 8);
-	       	    provide char(i);
-	       	    )))
-     else when e is s:string do (
-	  if length(s) % 4 != 0
-	  then WrongArg("a string whose length is a multiple of 4")
-	  else (
-	       j := 0;
-	       list(new Sequence len length(s)/4 do (
-		    i := 0xff & int(s.j);
-		    i = i << 8;
-		    j = j+1;
-		    i = i + (0xff & int(s.j));
-		    i = i << 8;
-		    j = j+1;
-		    i = i + (0xff & int(s.j));
-		    i = i << 8;
-		    j = j+1;
-		    i = i + (0xff & int(s.j));
-		    j = j+1;
-		    provide Expr(toInteger(i));
-		    ))))
-     else WrongArg("a string or array of small integers"));
-setupfun("transnet",transnet);
-
 export checknoargs(e:Expr):Expr := (
      when e
      is v:Sequence do (

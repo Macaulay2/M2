@@ -1338,7 +1338,7 @@ export setGlobalVariable(x:Symbol,y:Expr):void := globalFrame.values.(x.frameind
 export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
 
 export lineNumber := 0;
-export interpreterHook := nullE;
+export debuggerHook := nullE;
 
 backtraceS := dummySymbol;
 debugLevelS := dummySymbol;
@@ -1346,7 +1346,7 @@ debuggingModeS := dummySymbol;
 errorDepthS := dummySymbol;
 fullBacktraceS := dummySymbol;
 gbTraceS := dummySymbol;
-interpreterHookS := dummySymbol;
+debuggerHookS := dummySymbol;
 lineNumberS := dummySymbol;
 loadDepthS := dummySymbol;
 printingPrecisionS := dummySymbol;
@@ -1360,7 +1360,7 @@ syms := SymbolSequence(
      (  errorDepthS = setupvar("errorDepth",toExpr(errorDepth));  errorDepthS  ),
      (  fullBacktraceS = setupvar("fullBacktrace",toExpr(fullBacktrace));  fullBacktraceS  ),
      (  gbTraceS = setupvar("gbTrace",toExpr(gbTrace));  gbTraceS  ),
-     (  interpreterHookS = setupvar("interpreterHook",interpreterHook);  interpreterHookS  ),
+     (  debuggerHookS = setupvar("debuggerHook",debuggerHook);  debuggerHookS  ),
      (  lineNumberS = setupvar("lineNumber",toExpr(lineNumber));  lineNumberS  ),
      (  loadDepthS = setupvar("loadDepth",toExpr(loadDepth));  loadDepthS  ),
      (  printingPrecisionS = setupvar("printingPrecision",toExpr(printingPrecision));  printingPrecisionS  ),
@@ -1391,16 +1391,16 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	  sym := s.0;
 	  when s.1
 	  is CompiledFunction do (
-	       if sym === interpreterHookS then (interpreterHook = s.1; e)
+	       if sym === debuggerHookS then (debuggerHook = s.1; e)
 	       else buildErrorPacket(msg))
 	  is CompiledFunctionClosure do (
-	       if sym === interpreterHookS then (interpreterHook = s.1; e)
+	       if sym === debuggerHookS then (debuggerHook = s.1; e)
 	       else buildErrorPacket(msg))
 	  is FunctionClosure do (
-	       if sym === interpreterHookS then (interpreterHook = s.1; e)
+	       if sym === debuggerHookS then (debuggerHook = s.1; e)
 	       else buildErrorPacket(msg))
 	  is Nothing do (
-	       if sym === interpreterHookS then (interpreterHook = s.1; e)
+	       if sym === debuggerHookS then (debuggerHook = s.1; e)
 	       else buildErrorPacket(msg))
 	  is b:Boolean do (
 	       n := b.v;

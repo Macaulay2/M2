@@ -823,10 +823,16 @@ installfun(e:Expr):Expr := (
      else WrongNumArgs(3,5));
 setupfun("installMethod",installfun);
 -----------------------------------------------------------------------------
+export NullaryMethods := (
+     x := newHashTable(mutableHashTableClass,nothingClass);
+     sethash(x,true);
+     x);
+setupconst("nullaryMethods",Expr(NullaryMethods));
 export lookupfun(e:Expr):Expr := (
      when e 
      is a:Sequence do
-     if length(a)== 2 then
+     if length(a) == 1 then lookup1(NullaryMethods,e)
+     else if length(a) == 2 then
      when a.1
      is s:HashTable do lookup(s,a.0)
      else nullE

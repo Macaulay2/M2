@@ -757,22 +757,6 @@ document { (ascii, String),
      SEEALSO { (ascii, List) }
      }
 
-document { transnet,
-     Headline => "assemble bytes into 4-byte integers",
-     TT "transnet v", " -- takes a list ", TT "v", " of integers, and assembles the bytes of the
-     integers, four at a time, in network order (high order byte
-     first), into a string.",
-     BR,
-     BR,
-     NOINDENT,
-     TT "transnet s", " -- takes a string ", TT "s", " whose length is a multiple 
-     of 4, and assembles its bytes four at a time into integers, returning the list 
-     of assembled integers.",
-     PARA,
-     EXAMPLE { "transnet {1,2,3}", "transnet oo"},
-     SEEALSO{ "String" }
-     }
-
 document { symbol " ", 
      Headline => "blank operator for adjacent expressions",
      SEEALSO(symbol " ", Function, Thing)		    -- not really a method
