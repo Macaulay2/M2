@@ -18,6 +18,10 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 -- Linux noether.matematik.su.se 2.1.121 #3 Wed Sep 16 10:05:16 CEST 1998 alpha unknown (600 mHz)
 -- 1.20106 seconds, 0.8.46
 
+-- Linux localhost.localdomain 2.2.1 #101 Fri Feb 5 16:17:12 EST 1999 ppc unknown
+-- (250 MHz Macintosh Powerbook G3)
+-- 1.67 seconds, Macaulay 2 version 0.8.52
+
 -- Linux geometry 2.1.121 #33 SMP Tue Sep 15 21:44:25 CDT 1998 i586
 -- 4.01 seconds, Macaulay 2 version 0.8.47, compiled with gcc
 

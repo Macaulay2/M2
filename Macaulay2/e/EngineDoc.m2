@@ -124,6 +124,64 @@ document { quote ggweylalg,
       are not yet allowed.  This restriction will be gone soon."
      } 
 
+document { "Engine FreeModule API",
+     "One of the basic engine data types is", TT "EFreeModule", " .  Each such free module
+     is defined over a ring, and is graded according to the (multi)grading of this ring.
+     Additionally, the monomial order may be an induced (Schreyer) order.",
+     "The following functions are the operations on, or involving free modules.",
+     MENU {
+	(TT "ggfree(R:ERing,n:int):EFreeModule", " -- yields R^n"),
+	(TT "ggfree(R:ERing,n:intarray):EFreeModule", " -- yields R^n, a graded free module"),
+	(TT "ggfree(m:EMatrix):EFreeModule", " -- yields a free module with a Schreyer order"),
+	(TT "ggrank(F:EFreeModule):int", " -- the number of generators of F."),
+	(TT "ggdegree(F:EFreeModule):list", " -- yields a list of degrees of its generators."),
+	(TT "gggetcols(F:EFreeModule):EMatrix", " -- yields the matrix encoding the monomial order. RENAME IT"),
+	(TT "ggisequal(F,G:EFreeModule):bool", " -- returns true if F and G are equal"),
+	(TT "ggadd(F,G:EFreeModule):EFreeModule", " -- the direct sum F ++ G."),
+	(TT "ggmult(F,G:EFreeModule):EFreeModule", " -- the tensor product F ** G."),
+	(TT "ggtranspose(F:EFreeModule):EFreeModule", " -- the dual of F."),
+	(TT "ggsubmodule(F:EFreeModule,a:intarray):EFreeModule", " -- F_a."),
+	(TT "ggsymm(F:EFreeModule,n:int):EFreeModule", " -- The symmetric power S^n(F).  NOT DONE YET"),
+	(TT "ggexterior(F:EFreeModule,n:int):EFreeModule", " -- The nth exterior power of F."),
+	(TT "ggshift(F:EFreeModule,d:intarray):EFreeModule", " -- return F(d).")
+	}
+   }
+
+document { "Engine RingElement API",
+     "A basic data type in the engine.  Each ring element is a member of an engine ring (ERing),
+     and each ring element has a hash value, which is unique for all ring elements.",
+     "The following functions are the engine operations on ring elements",
+     MENU {
+	(TT "ggfromint(R:ERing,n:int):ERingElement", " -- return n_R."),
+	(TT "ggvar(v:int,d:int,R:ERing):ERingElement", " -- return (R_v)^d."),
+	(TT "ggterm(R:ERing,a:ERingElement,m:intarray):ERingElement", " -- return a*m, where 
+	     a is in the coefficient ring of R, and m is an intarray of (var,exponent)'s."),
+	(TT "ggisequal(a,b:ERingElement):bool", " -- is a == b?"),
+	(TT "ggisequal(a:ERingElement,n:int):bool", " -- is a == n?"),
+	(TT "ggiszero(a:ERingElement):bool", " -- is a == 0?"),
+	(TT "ggnegate(a:ERingElement):ERingElement", " -- return -a."),
+	(TT "ggadd(a,b:ERingElement):ERingElement", " -- return a+b, (a,b in same ring)."),
+	(TT "ggsubtract(a,b:ERingElement):ERingElement", " -- return a-b, (a,b in same ring)."),
+	(TT "ggmult(n:int,b:ERingElement):ERingElement", " -- return n*b."),
+	(TT "ggmult(a,b:ERingElement):ERingElement", " -- return a*b, (a,b in same ring)."),
+	(TT "ggpower(a:ERingElement,n:int):ERingElement", " -- return a^n."),
+	(TT "ggleadcoeff(a:ERingElement):ERingElement", " -- return the lead coefficient of a (in
+	     the coefficient ring of (ring a)."),
+	(TT "ggleadterm(a:ERingElement):ERingElement", " -- return lead term of a, in same ring"),
+	(TT "ggleadmonom(a:ERingElement):intarray", " -- return a list of (variable,exponent)'s."),
+	(TT "ggdegree(a:ERingElement):intarray", " -- return the (multi-degree) of a."),
+	(TT "ggdegree(a:ERingElement,wts:intarray):(int,int)", " -- return (min,max) values of 'wts'
+	     applied to the terms of a."),
+	(TT "ggishomogeneous(a:ERingElement):bool", " -- is a homogeneous?"),
+	(TT "gghomogenize(a:ERingElement,wts:intarray,var:int):ERingElement", " -- homogenize 'a'. NOT DONE"),
+	(TT "gggetterms(a:ERingElement,lo,hi:int):ERingElement", " -- return a subset of terms of a.")
+	     }
+	
+	}
+   
+	     
+	     
+	
 TEST ///
 -------------------------------------
 -- ZZZ: ring,vector,matrix operations
@@ -340,6 +398,8 @@ assert(degree(1_R) == {0})
 degree(0_R) == -infinity  -- is this really what we want?
 try degree(1_R, {0,4,0,0}) == 8 else "ERROR: ggdegree with weights needs front-end interface"
 try random R else error "random not working yet" -- ERROR: routine not implemented
+-- homogenization, isGraded??
+
 -- vectors
 F = R^4
 v = (3*a*b+1)*F_0 + (a+b+c+d)*F_1 + 0*F_2
