@@ -230,7 +230,7 @@ compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
 compat.mak : ; echo >$@
 else
-compat.c compat.h compat.mak : configure; ./configure
+compat.c compat.h compat.mak : configure ../../Makeconf.h ; ./configure
 endif
 
 M2lib.o scclib.o M2lib.lo scclib.lo : \
