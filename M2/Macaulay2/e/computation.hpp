@@ -3,7 +3,7 @@
 #ifndef _computation_hpp_
 #define _computation_hpp_
 
-extern char system_interrupted;
+extern char system_interruptedFlag;
 extern int gbTrace;
 
 #include "engine.h"

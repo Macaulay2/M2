@@ -773,7 +773,7 @@ int gb2_comp::calc_gb(int deg, const intarray &stop)
       for (;;)
 	{
 	  if (ret != COMP_COMPUTING) break;
-	  if (system_interrupted) 
+	  if (system_interruptedFlag) 
 	    {
 	      ret = COMP_INTERRUPTED;
 	      break;

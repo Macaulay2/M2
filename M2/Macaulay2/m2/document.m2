@@ -271,6 +271,7 @@ fixup Nothing    := x -> ()				       -- so it will get removed by splice later
 fixup BR         := identity
 fixup PRE        := identity
 fixup CODE       := identity
+fixup EXAMPLE    := identity
 fixup LITERAL    := identity
 fixup ANCHOR     := identity
 fixup List       := z -> fixup SEQ z

@@ -7,7 +7,7 @@
 #include "termideal.hpp"
 #include "vector.hpp"
 
-extern char system_interrupted;
+extern char system_interruptedFlag;
 extern int comp_printlevel;
 
 void GBZZ_comp::set_up0(const Matrix *m, int csyz, int nsyz)
@@ -960,7 +960,7 @@ int GBZZ_comp::calc(const int *deg, const intarray &stop)
 				     stop_gb, stop_syz, stop_pairs, 
 				     stop_codim, stop_min_gens, stop_subring);
       if (is_done != COMP_COMPUTING) break;
-      if (system_interrupted) 
+      if (system_interruptedFlag) 
 	{
 	  is_done = COMP_INTERRUPTED;
 	  break;

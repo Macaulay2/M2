@@ -5,7 +5,7 @@
 #include "sparsemat.hpp"
 #include "text_io.hpp"
 
-extern "C" char system_interrupted;
+extern "C" char system_interruptedFlag;
 extern int gbTrace;
 
 MatrixComputation::MatrixComputation(const Matrix *m, bool do_rowchange, bool do_colchange)
@@ -99,7 +99,7 @@ int MatrixComputation::calc(int nsteps)
   if (last_col < 0) return 0;	// Done
   while (last_col >= 0)
     {
-      if (system_interrupted) return -1;
+      if (system_interruptedFlag) return -1;
       if (nsteps-- <= 0) break;
       if (gbTrace >= 1)
 	{
@@ -278,7 +278,7 @@ bool FF_LUComputation::calc()
   int c1;
   while (choose_pivot_column(0,--pivot_col,c1))
     {
-      if (system_interrupted)
+      if (system_interruptedFlag)
 	return false;
 
       if (pivot_col != c1)

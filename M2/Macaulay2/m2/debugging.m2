@@ -158,7 +158,8 @@ usage := () -> (
      << " --     end                     restart debugger one step earlier" << endl
      << " --     listLocalSymbols        display local symbols and their values" << endl
      << " --     listUserSymbols         display user symbols and their values" << endl
-     << " --     continue                execute the same code again" << endl
+     << " --     continue                execute the code again" << endl
+     << " --     continue n              execute the code again, stop after n steps" << endl
      << " --     return                  return 'null' as the value of the code" << endl
      << " --     return x                return 'x' as the value of the code" << endl
      )

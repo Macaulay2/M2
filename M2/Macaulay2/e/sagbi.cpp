@@ -199,7 +199,7 @@ int sagbi_comp::calc(const int *deg, const intarray &stop_conditions)
 	return COMP_DONE;
       if (++nloops > maxnloops) return COMP_DONE_STEPS;
       if (*deg && (_current_degree > *deg)) return COMP_DONE_DEGREE_LIMIT;
-      if (system_interrupted) return COMP_INTERRUPTED;
+      if (system_interruptedFlag) return COMP_INTERRUPTED;
 
       // Determine S-pairs
       ret = find_pairs();  // sets _new_pairs, uses _current_degree.

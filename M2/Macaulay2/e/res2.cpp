@@ -6,7 +6,7 @@
 #include "buffer.hpp"
 #include "text_io.hpp"
 
-extern char system_interrupted;
+extern char system_interruptedFlag;
 extern int comp_printlevel;
 
 static int n_ones = 0;
@@ -45,7 +45,7 @@ int res2_comp::skeleton(int level)
       // so this routine may be used to increase the degree bound
       // note: also need to redo monomial ideals...
       new_pairs(p);
-      if (system_interrupted) return COMP_INTERRUPTED;	  
+      if (system_interruptedFlag) return COMP_INTERRUPTED;	  
     }
   resn[level]->state = RES_MONORDER;
   return COMP_DONE;
@@ -126,7 +126,7 @@ int res2_comp::do_pairs(int level, int degree)
 	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	    return COMP_DONE_SYZ_LIMIT;
 	}
-      if (system_interrupted) return COMP_INTERRUPTED;
+      if (system_interruptedFlag) return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
 }
@@ -152,7 +152,7 @@ int res2_comp::do_pairs_by_level(int level)
       resn[level]->next_pair = p->next;
       handle_pair_by_level(p);
       if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
-      if (system_interrupted) return COMP_INTERRUPTED;
+      if (system_interruptedFlag) return COMP_INTERRUPTED;
     }
 
   if (do_by_level == 2) 
@@ -229,7 +229,7 @@ int res2_comp::do_pairs_by_degree(int level, int degree)
 	  if (SyzygyLimit >= 0 && nminimal >= SyzygyLimit)
 	    return COMP_DONE_SYZ_LIMIT;
 	}
-      if (system_interrupted) return COMP_INTERRUPTED;
+      if (system_interruptedFlag) return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
 }

@@ -40,7 +40,7 @@ int PfaffianComputation::calc(int nsteps)
 	return COMP_DONE;
       if (--nsteps == 0)
 	return COMP_DONE_STEPS;
-      if (system_interrupted)
+      if (system_interruptedFlag)
 	return COMP_INTERRUPTED;
       
     }
