@@ -54,10 +54,15 @@ record      := f -> x -> (
 -- getting database records
 -----------------------------------------------------------------------------
 
+thePackage := null
+
 getRecord = key -> scan(packages, 			    -- later, we make this function local to this file
      pkg -> (
 	  d := pkg#"raw documentation";	-- later on, we will use the processed documentation
-	  if d#?key then break d#key;
+	  if d#?key then (
+	       thePackage = pkg;
+	       break d#key;
+	       )
 	  )
      )
 
@@ -238,6 +243,16 @@ separateM2output String := r -> (
      while r#-1 == "\n" do r = substring(0,#r-1,r);
      separateRegexp(M2outputRE,M2outputREindex,r))
 
+getFileName := body -> (
+     x := select(1, body, i -> class i === Option and #i === 2 and first i === FileName);
+     if #x > 0 then x#0#1 else null
+     )
+
+makeFileName := (key,filename,pkg) -> (			 -- may return 'null'
+     if pkg#"package prefix" =!= null 
+     then pkg#"package prefix" | LAYOUT#"packageexamples" pkg.name | if filename =!= null then filename else toFilename key
+     )
+
 exampleResultsFound := false
 exampleResults := {}
 exampleCounter := 0
@@ -246,7 +261,7 @@ checkForExampleOutputFile := () -> (
      exampleResults = {};
      exampleResultsFound = false;
      exampleOutputFilename = null;
-     -- error "break";
+     error "break";
      if exampleBaseFilename =!= null then (
 	  exampleOutputFilename = exampleBaseFilename | ".out";
 	  if fileExists exampleOutputFilename then (
@@ -268,30 +283,22 @@ processExample := x -> (
      exampleCounter = exampleCounter + 1;
      a)
 processExamplesLoop := s -> (
-     if class s === EXAMPLE then {
+     if class s === EXAMPLE then SEQ{
 	  PARA{},
 	  ExampleTABLE apply(select(toList s, i -> i =!= null), processExample),
 	  PARA{}}
      else if class s === Sequence or instance(s,MarkUpList)
      then apply(s,processExamplesLoop)
      else s)
-processExamples := (docBody) -> (
+processExamples := (key,docBody) -> (
+     currentNodeName = formatDocumentTag key;
+     exampleBaseFilename = makeFileName(currentNodeName,getFileName docBody,thePackage);
      checkForExampleOutputFile();
      processExamplesLoop docBody)
 
 -----------------------------------------------------------------------------
 -- 'document' function
 -----------------------------------------------------------------------------
-
-getFileName := body -> (
-     x := select(1, body, i -> class i === Option and #i === 2 and first i === FileName);
-     if #x > 0 then x#0#1 else null
-     )
-
-makeFileName := (key,filename) -> (			 -- may return 'null'
-     if currentPackage#"package prefix" =!= null 
-     then currentPackage#"package prefix" | LAYOUT#"packageexamples" currentPackage.name | if filename =!= null then filename else toFilename key
-     )
 
 document = method()
 document List := z -> (
@@ -301,7 +308,7 @@ document List := z -> (
      body := drop(z,1);
      if unDocumentable key then error("undocumentable type of thing: '",class key,"'");
      currentNodeName = formatDocumentTag key;
-     exampleBaseFilename = makeFileName(currentNodeName,getFileName body);
+     exampleBaseFilename = makeFileName(currentNodeName,getFileName body,currentPackage);
      d := currentPackage#"raw documentation";
      if d#?currentNodeName then duplicateDocWarning();
      d#currentNodeName = toExternalString extractExamples fixup body;
@@ -394,7 +401,7 @@ getDoc := key -> value getRecord formatDocumentTag key
  
 getDocBody := key -> (
      a := getDoc key;
-     if a =!= null then processExamples select(a, s -> class s =!= Option))
+     if a =!= null then processExamples(key, select(a, s -> class s =!= Option)))
 
 getHeadline := key -> (
      d := getOption(getDoc key, Headline);
