@@ -962,6 +962,8 @@ document { quote File,
      MENU {
           (TO "getc", "     -- get one character from a file"),
           (TO "get", "      -- get contents of a file"),
+	  (TO "isEOF", "    -- whether the file is at the end"),
+	  (TO "isReady", "  -- whether data is available from a file, or it's at the end"),
 	  (TO "read", "     -- get some bytes from a file")
 	  },
      "Further processing for data obtained from a file:",

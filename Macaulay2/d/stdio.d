@@ -275,7 +275,7 @@ export (o:file) << (c:char) : file := (
 	  );
      o
      );
-filbuf(o:file):bool := (
+export filbuf(o:file):bool := (
      -- returns true if it managed to get some more characters
      if ! o.input then return(false);
      if o.inindex > 0
