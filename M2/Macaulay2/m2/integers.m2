@@ -21,19 +21,9 @@ ZZ >> ZZ := ZZ => (i,j) -> i << -j
 
 oldgcd := gcd
 erase symbol gcd
-gcd = method(SingleArgumentDispatch => true)
+gcd = method()
 
-gcd ZZ := x -> abs x
-
-gcd Sequence := ZZ => x -> (
-     if #x === 0 then error "expected at least one argument";
-     t := class \ x;
-     if not (same t and first t === ZZ) then error "expected integer arguments";
-     if #x === 1 then abs(x#0)
-     else if #x === 2 then oldgcd x
-     else oldgcd(first x, gcd drop(x,1)))
-
-gcd List := ZZ => x -> gcd toSequence x
+gcd(ZZ,ZZ) := ZZ => (x,y) -> oldgcd(x,y)
 
 -- powermod := (m,e,p) -> m^e % p;
 

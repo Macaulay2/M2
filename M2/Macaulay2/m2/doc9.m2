@@ -68,18 +68,18 @@ document { Ext,
      presented module over a new ring with one additional variable for each
      equation of ", TT "R", ".  The variables in this new ring have degree
      length 2; we would have liked to arrange for the degree ", TT "i", "-- 
-     part of ", TT "Ext^d(M,N)", " to appear as the degree ", TT "{i,-d}", "
+     part of ", TT "Ext^d(M,N)", " to appear as the degree ", TT "{-d,i}", "
      part of ", TT "E = Ext(M,N)", ", but for technical and hopefully temporary
      reasons, this wasn't possible.  So meanwhile, we provide a function 
      ", TT "E.adjust", " in the result returned by ", TT "Ext", " which can
-     be used to convert ", TT "{i,-d}", " into the degree actually used.
+     be used to convert ", TT "{-d,i}", " into the degree actually used.
      This adjusted multi-degree can be used with ", TO "basis", ", as in the
      example below.",
      EXAMPLE {
 	  "R = ZZ/101[x,y]/ideal(x^3,y^2);",
       	  "N = cokernel random (R^1, R^{-2,-2})",
       	  "E = Ext(N,N)",
-      	  "rank source basis( E.adjust {-3,-2}, E)",
+      	  "rank source basis( E.adjust {-2,-3}, E)",
       	  "rank source basis( {-3}, Ext^2(N,N) )",
 	  },
      SEEALSO{"ScriptedFunctor", "adjust"}
@@ -1052,7 +1052,7 @@ T = (degreesRing R)_0
 p = poincare E
 assert ( p == 3*T^(-3)-5*T^(-2)+1*T^(-1)+1 )
 assert( dim E === 2 )
-assert( dim Ext^1(M,R^1) === -1 )
+assert( dim Ext^1(M,R^1) === -infinity )
 -- assert ( poincare prune Ext^2(M,M) == (4T^-3 + 2T^-2 - 5T^-1 + 3) (1 - T)^2 )
 
 F = Ext^3(M, R^1)
@@ -1063,7 +1063,7 @@ assert( Ext^4(M,R^1) == 0 )
 
 k = cokernel vars R
 N = cokernel matrix {{1_R}}
-assert( dim Ext^2(N,k) === -1 )
+assert( dim Ext^2(N,k) === -infinity )
 
 g = vars R
 P = (image g) / (image matrix {{a^2, b^2, c^2, d^2}})
@@ -1115,7 +1115,7 @@ TEST ///
      scan(4, d -> (
 	  bd := basis Ext^d(N,M);
 	  assert(
-	       tally splice apply(-10..10,i -> rank source basis(adj {i,-d},E) : {i}) ===
+	       tally splice apply(-10..10,i -> rank source basis(adj {-d,i},E) : {i}) ===
 	       tally apply(rank source bd, i -> degree bd_i))))
 ///
 
