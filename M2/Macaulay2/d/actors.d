@@ -638,6 +638,8 @@ installMethodFun(args:CodeSequence):Expr := (
      else errorExpr("expected a hash table"));
 InstallMethodFun = installMethodFun;
 
+mess1 := "objects on left hand side of assignment are not types (use ':=' instead?)";
+
 installValueFun(args:CodeSequence):Expr := (
      a := eval(args.1);
      when a is Error do a
@@ -648,8 +650,8 @@ installValueFun(args:CodeSequence):Expr := (
 	       opr := eval(args.0);
 	       when opr is Error do opr
 	       else installValue(opr,aa,bb,eval(args.3)))
-	  else errorExpr("caching not possible without hash tables"))
-     else errorExpr("caching not possible without hash tables"));
+	  else errorExpr(mess1))
+     else errorExpr(mess1));
 InstallValueFun = installValueFun;
 
 unaryInstallMethodFun(meth:Code,argtype:Code,body:Code):Expr := (

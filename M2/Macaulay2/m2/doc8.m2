@@ -1097,6 +1097,7 @@ document { isAffineRing,
 
 document { RingMap,
      TT "RingMap", " -- the class of all ring maps.",
+     PARA,
      "Operations which produce ring maps:",
      MENU {
 	  TO "maps between rings",

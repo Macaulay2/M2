@@ -3,7 +3,7 @@
 ############################### targets to use
 all ::				# everything needed for the distribution
 tests ::
-doc:: html book 
+doc:: html book ComputationsBook
 ifndef CYGWIN32
 doc:: Vasconcelos-appendix
 endif
@@ -37,11 +37,7 @@ lib :; mkdir $@
 endif
 clean ::; rm -rf lib
 ################################# tmp
-tmp :; mkdir $@
-tmp/Tests :; mkdir $@
-tmp/Examples :; mkdir $@
 clean ::; rm -rf tmp
-initialize :: tmp tmp/Tests tmp/Examples
 ################################# util
 initialize ::; $(MAKE) -C util all
 clean ::; $(MAKE) NODEPENDS=1 -C util clean
@@ -116,6 +112,9 @@ clean ::; $(MAKE) -C html clean
 ################################# book
 book ::;  $(MAKE) -C book all
 clean ::; $(MAKE) -C book clean
+################################# ComputationsBook
+ComputationsBook ::;  $(MAKE) -C ComputationsBook all
+clean ::; $(MAKE) -C ComputationsBook clean
 ################################# emacs
 all ::;  $(MAKE) -C emacs all
 clean ::; $(MAKE) -C emacs clean

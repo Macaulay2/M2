@@ -3,7 +3,7 @@ default : phase1
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
 
-all::
+all:: initialize
 
 ##############################
 .SUFFIXES: .m2
@@ -67,6 +67,14 @@ tutorials.m2 : ../tutorial/final/*.out
 	@ echo making tutorials.m2
 	@ ls ../tutorial/final/*.out |awk '{printf "load \"%s\"\n", $$0}' >$@
 
+################################# tmp
+cache-tmp :; mkdir $@
+cache-tmp/Tests :; mkdir $@
+cache-tmp/Examples :; mkdir $@
+clean ::; rm -rf cache-tmp
+initialize :: cache-tmp cache-tmp/Tests cache-tmp/Examples
+#################################
+
 gbdoc.m2 : ../e/misc/cmdnames.input gbdoc.awk
 	awk -f gbdoc.awk ../e/misc/cmdnames.input >tmp
 	mv tmp $@
@@ -127,8 +135,6 @@ endif
 ../cache/Macaulay2-pre : $(DUMPEDGFILES) ../bin/Macaulay2$(EXESUFFIX)
 	 # phase 2 makes the example and test files
 	rm -rf ../cache/Macaulay2-tmp
-	 # rm -rf ../tmp/Examples ../tmp/Tests
-	 # @ mkdir ../tmp/Examples ../tmp/Tests
 	../bin/Macaulay2 -q -silent '-ephase=2' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-pre
 
@@ -146,13 +152,13 @@ ifneq "$(CC)" "cl"
 all :: bare
 endif
 
-INPUTS := ../tmp/Examples/sample  ../tmp/Examples/expression
-../tmp/Examples/sample: sample; cp $< $@
-../tmp/Examples/expression: expression; cp $< $@
+INPUTS := cache-tmp/Examples/sample cache-tmp/Examples/expression
+cache-tmp/Examples/sample: sample; cp $< $@
+cache-tmp/Examples/expression: expression; cp $< $@
 
 all :: ../cache/Macaulay2-doc
 ../cache/Macaulay2-doc : ../cache/Macaulay2-pre $(MADEGFILES) $(INPUTS)
-	$(MAKE) -k -C ../tmp/Examples -f ../../m2/Makefile.egs
+	$(MAKE) -k -C cache-tmp/Examples -f ../../Makefile.egs
 	rm -f ../cache/Macaulay2-tmp
 	../bin/Macaulay2 -q -silent '-ephase=4' setup.m2 '-eexit(0)'
 	mv ../cache/Macaulay2-tmp ../cache/Macaulay2-doc
@@ -165,7 +171,7 @@ test1 : test.m2 phase1 $(SCRIPTS)
 endif
 tests:: test2
 test2: $(SCRIPTS)
-	 $(MAKE) -k -C ../tmp/Tests -f ../../m2/Makefile.tests
+	 $(MAKE) -k -C cache-tmp/Tests -f ../../Makefile.tests
 	touch $@
 
 tests:: test3
@@ -184,8 +190,7 @@ gdb :; gdb ../bin/Macaulay2
 
 clean::
 	rm -rf ../cache/Macaulay2-$(ARCH)-data ../cache/Macaulay2-doc \
-		../tmp/Examples ../tmp/Tests *.obj *.exe bare \
-		TAGS ../bin/M2 runexample \
+		cache-tmp *.obj *.exe bare TAGS ../bin/M2 runexample \
 		temp.data allfiles distfiles \
 		gbdoc.m2 gbfunctions.m2 loads.m2 docloads.m2 tutorials.m2 cmdnames.m2 \
 		mpcodes.m2 tutorials.m2 version.m2 core

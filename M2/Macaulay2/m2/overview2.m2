@@ -146,7 +146,7 @@ document { "valid names",
      EXAMPLE {
 	  "o2",
 	  },
-     "Other symbols refer to functions built in to Macaulay 2 which provide
+     "Other symbols refer to functions built in to Macaulay 2 that provide
      much of its functionality, as we will learn.",
      PARA,
      "The class of all symbols is ", TO "Symbol", "."
@@ -162,12 +162,12 @@ document { "assigning values",
      "Before assignment, any reference to a variable provides the symbol
      with that name.  After assignment, the assigned value is provided.
      The variable created is global, in the sense that any code placed
-     elsewhere which contains a reference to a variable called ", TT "x", "
+     elsewhere that contains a reference to a variable called ", TT "x", "
      will refer to the one we just set.",
      }
 
 document { "local variables in a file",
-     "There is a way to construct variables which can be used within a given
+     "There is a way to construct variables that can be used within a given
      source file, and are invisible to code placed in other files.  We use
      ", TO ":=", " for this.  Assume the code below is placed in a file, and
      that the file is loaded with the ", TO "load", " command.",
@@ -318,7 +318,7 @@ document { "making functions",
 	  },
      "Code that implements composition of functions is easy to write, because
      functions can create new functions and return them.  We illustrate
-     this by writing a function called ", TT "compose", " which will
+     this by writing a function called ", TT "compose", " that will
      compose two functions, just as the operator ", TO "@@", " did
      above.",
      EXAMPLE {
@@ -332,7 +332,7 @@ document { "making functions",
      important point.  The parameters ", TT "f", " and ", TT "g", " acquire
      values when ", TT "sincos", " is created, and they acquire different values when
      ", TT "cossin", " is created.  These two sets of values do not interfere 
-     which each other, and the memory they occupy will be retained as long 
+     with each other, and the memory they occupy will be retained as long 
      as they are needed.  Indeed, the body of both functions is
      ", TT "x -> f(g(x))", ", and the only difference between them is the
      values assigned to the parameters ", TT "f", " and ", TT "g", ".",
@@ -367,7 +367,7 @@ document { "making functions with a variable number of arguments",
 	  "f(3,4,5)",
 	  },
      "As an aside, we reveal that there is a way to define a function of one argument
-     which will signal an error if it's given more than one argument: put
+     that will signal an error if it's given more than one argument: put
      parentheses around the single parameter in the definition of the function.
      As a side effect it can be used to extract the single element from a
      singleton sequence.",
@@ -457,7 +457,7 @@ document { "conditional execution",
      (i -> if i < 0 then "neg" 
 	  else if i == 0 then "zer")///
 	  },
-     "There is a variety of predicate functions (such as ", TT "<", ") which yield
+     "There is a variety of predicate functions (such as ", TT "<", ") that yield
      ", TT "true", " or ", TT "false", " and can be used as the predicate in 
      an ", TT "if", " expression. They include ",
      TO "==", ", ",
@@ -518,7 +518,7 @@ document { "loops",
 	  },
      "In the example above, ", TT "X", " is the predicate ", TT "i < 20", " and ", TT "Y", " is
      the code ", TT ///(<< " " << i; i = i + 1)///, ".  Notice the use of the
-     semicolon within Y which separates two expression.",
+     semicolon within Y to separates two expressions.",
      PARA,
      "The semicolon can also be used with the predicate ", TT "X", " to do other things
      before the test is performed.  This works because the value of an expression
@@ -555,7 +555,7 @@ document { "numbered variables",
      }
 
 document { "local variables in a function",
-     "A local variable in a function is one which is not visible to
+     "A local variable in a function is one that is not visible to
      code in other locations.  Correct use of local variables is
      important, for data stored in global variables will stay around
      forever, needlessly occupying valuable memory space.  For recursive
@@ -574,12 +574,12 @@ document { "local variables in a function",
 	  "i"
 	  },
      "In the example above, we see that the function ", TT "f", " does 
-     its work with a local variable ", TT "i", " which is unrelated to the global 
+     its work with a local variable ", TT "i", " that is unrelated to the global 
      variable ", TT "i", " introduced on the first line.",
      PARA,
      "In the next example, we show that the local variables in two
      invocations of a function don't interfere with each other.  We
-     write a function f which returns a newly created counting function.  
+     write a function ", TT "f", " that returns a newly created counting function.  
      The counting function simply returns the number of times it has 
      been called.",
      EXAMPLE {
@@ -595,9 +595,10 @@ document { "local variables in a function",
      }
 
 document { "strings",
-     "A string is a sequence of characters.  These strings can
+     "A string is a sequence of characters.  Strings can
      be manipulated in various ways to produce printed output.
-     One enters a string by surrounding them with quotation marks.",
+     One enters a string by surrounding a sequence of characters with
+     quotation marks.",
      EXAMPLE {
 	  ///"abcdefghij"///,
 	  },
@@ -606,7 +607,7 @@ document { "strings",
 fghij"///,
      "Strings, like anything else, can be assigned to variables.",
      EXAMPLE ///x = "abcdefghij"///,
-     "There are escape sequences which make it possible to
+     "There are escape sequences that make it possible to
      enter special characters:",  PRE 
 "      \\n             newline
       \\f             form feed
@@ -674,7 +675,7 @@ document { "nets",
 	  },
      "Nets and strings can be concatenated horizontally with the operator ", TO "|", ".",
      EXAMPLE ///x^2 | "-------" | x///,
-     "Each net has a width, depth, and height.  The width is the number
+     "Each net has a width, a depth, and a height.  The width is the number
      of characters in each row.  The depth is the number of rows below
      the baseline, and the height is the number of rows above the baseline.
      The depth and the height can be negative.",
@@ -745,7 +746,7 @@ document { "lists",
      TO "unique", ".",
      PARA,
      "The class of all lists is ", TO "List", ", and the class of all
-     basic lists, useful for deriving news types of list which do not
+     basic lists, useful for deriving news types of list that do not
      inherit methods for treating lists as vectors, is ", TO "BasicList", "."
      }
 
@@ -792,7 +793,7 @@ document { "sequences",
      This may be a problem if the user intended to produce the list 
      ", TT "{3, 4, 5, 6, 9, 12, 12, 12}", ".  The function ", TO "splice", " can
      be used to flatten out one level of nesting - think of it as removing those
-     pairs of parentheses which are one level in.",
+     pairs of parentheses that are one level in.",
      EXAMPLE "splice z",
      "The difference between ", TO "splice", " and ", TO "flatten", " is that
      ", TO "flatten", " removes pairs of braces.",
@@ -927,7 +928,7 @@ document { "hashing",
      	       "One way to assign hash codes to mutable things is to give 
      	       the same hash code, say 1000000, to every mutable thing.  We
 	       could then implement a strong comparison operator for mutable
-	       things which would proceed by examining the contents of the
+	       things that would proceed by examining the contents of the
 	       things, so that two mutable things would be equal if and only
 	       if their contents were equal.  A
 	       disadvantage of this approach would be that a hash table in
@@ -988,7 +989,7 @@ document { "hashing",
      }
 
 document { "mapping over lists",
-     "In programming, loops which operate on consecutive elements of a
+     "In programming, loops that operate on consecutive elements of a
      list are common, so we offer various ways to apply functions to
      each of the elements of a list, along with various ways to treat the
      returned values.",
@@ -1094,7 +1095,7 @@ document { "mapping over hash tables",
      "The function ", TO "merge", " can be used to merge two hash tables.  The
      result is a hash table whose keys are those occuring in one of the two
      incoming hash tables.  We must provide a function of two arguments
-     which is used to combine the values when a key occurs in both hash tables.",
+     that is used to combine the values when a key occurs in both hash tables.",
      EXAMPLE {
 	  "y = new HashTable from {b=>200, c=>300}",
 	  "merge(x, y, plus)",
@@ -1274,7 +1275,7 @@ document { "two dimensional formatting",
      to set up things that print out as powers, sums, products,
      matrices, and so on.  There are various types of expression, such as
      ", TO "Power", ", ", TO "Sum", ", ", TO "Divide", ", ", TO "Minus", ",
-     and ", TO "Product", " which we can use for this.",
+     and ", TO "Product", " that we can use for this.",
      EXAMPLE {
 	  "Divide(Minus a,b)",
 	  "Power(Sum(3,4,5),7)",
@@ -1304,7 +1305,7 @@ document { "two dimensional formatting",
      EXAMPLE {
 	  "peek2(e,2)",
 	  },
-     "Other types of ", TO "Expression", " which can be used for formatting
+     "Other types of ", TO "Expression", " that can be used for formatting
      nested lists as two dimensional arrays are ", TO "MatrixExpression", "
      and ", TO "Table", ".",
      EXAMPLE {
@@ -1370,7 +1371,7 @@ document { "communicating with programs",
      so that the two programs take turns using the communication channel, so
      that when one is writing data, the other is reading it.",
      PARA,
-     "A useful function in this connection is ", TO "isReady", " which will
+     "A useful function in this connection is ", TO "isReady", ", which will
      tell you whether an input file has any input available for reading, or
      whether it has arrived at the end.  We illustrate it in the following
      example by simulating a computation that takes 5 seconds to complete,

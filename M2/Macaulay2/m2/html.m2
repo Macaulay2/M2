@@ -1,4 +1,7 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1993-1999 by Daniel R. Grayson
+
+error ""
+
 -- this file is loaded early so put the documentation in doc.m2
 
 -----------------------------------------------------------------------------
@@ -301,7 +304,7 @@ html SEQ   := x -> concatenate(apply(x, html))
 
 TT         = newListHead "TT"
 tex TT := x -> concatenate(///{\tt {}///, ttLiteral x#0, "}")
-text TT := x -> concatenate("'", x#0, "'")
+text TT := x -> concatenate("\"", x#0, "\"")
 
 EM         = newListHead "EM"
 CITE       = newListHead "CITE"
