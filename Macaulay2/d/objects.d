@@ -163,6 +163,9 @@ equal(x:HashTable,y:HashTable):Expr := (
 		    p = p.next;
 		    )));
      True);
+
+export isMutable(x:RawMatrix):bool := Ccode( bool, "IM2_Matrix_is_mutable(", "(Matrix*)",x, ")" );
+
 export equal(lhs:Expr,rhs:Expr):Expr := (
      if lhs == rhs then True else 
      when lhs
@@ -326,10 +329,9 @@ export equal(lhs:Expr,rhs:Expr):Expr := (
 	  else False
 	  )
      is x:RawMatrix do (
+	  if isMutable(x) then False else
 	  when rhs
-	  is y:RawMatrix do (
-	       toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")")) -- reminder: mutable things are unequal
-	       )
+	  is y:RawMatrix do if isMutable(y) then False else toExpr(Ccode(bool, "IM2_Matrix_is_equal((Matrix *)",x,",(Matrix *)",y,")"))
 	  else False
 	  )
      is x:RawComputation do (
