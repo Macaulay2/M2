@@ -62,20 +62,19 @@ I = ideal(
 F = x*y*z
 time gb generators I
 time gb I
-time quotient(generators I,F)
 time (I:F)
-time (quotMin(generators I,{x,y,z},F))
-time (minSatPPD(I,{x,y,z}))
+time quotMin(I,{x,y,z},F)
+time minSatPPD(I,{x,y,z})
 
 I1 = I + ideal(v*w*y, u*v*x, s*v*y, s*t*y, b*s*x, x*y*z, s*t*v, u*v*w, 
      b*s*t, b*s*u, u*w*x, b*u*x, b*t*x, b*t*u, t*w*z)
-time (minSatPPD(I1,{b,t}))
+time minSatPPD(I1,{b,t})
 
 ///
 
 removeScalarMultipleColumns := m -> notImplemented()	    -- Mike will implement
 
-newdecompose = method()
+newdecompose := method()
 newdecompose(Ideal) := List => (I) -> (
      squarefree := (f) -> (
      	  g := factor f;
@@ -101,11 +100,7 @@ independentSets = (I) -> (
 
 -- Make a list of the variables which occur in the lead 
 -- monomial of f.
-variables = (f) -> (
-     m := leadMonomial f;
-     m1 := select(m, i -> i#1 > 0);
-     m1 = new List from m1;
-     apply(m1, i -> (ring f)_(i#0)))
+variables := (f) -> apply(positions(exponents leadMonomial f, i -> i>0),j -> (ring f)_j)
  
 -- Compute the flattener with respect to the 
 -- variables in a monomial
