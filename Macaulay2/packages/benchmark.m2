@@ -43,6 +43,11 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 -- res39: 1.29 seconds
 -- resG25: 19.97 seconds
 
+-- SunOS sg0.math.cornell.edu 5.7 Generic_106541-08 sun4u sparc SUNW,Ultra-Enterprise
+-- Macaulay2 0.8.60, compiled with gcc 2.95
+-- res39: 1.37 seconds
+-- resG25: 18.29 seconds
+
 -- Linux localhost.localdomain 2.2.1 #101 Fri Feb 5 16:17:12 EST 1999 ppc unknown
 -- (250 MHz Macintosh Powerbook G3)
 -- 1.67 seconds, Macaulay 2 version 0.8.52
