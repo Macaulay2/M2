@@ -38,6 +38,8 @@ document { "replacements for commands and scripts from Macaulay",
 	       ("copy -- ", TO "not documented yet"),
 	       ("degree -- ", TO "degree"),
 	       ("determinants -- ", TO "minors"),
+	       ("diag -- ", "The command ", TT "diag m n", " is equivalent to the Macaulay2
+		    expression ", BR, TT "n = map((ring m)^(numgens source m), source m,(i,j) -> if i === j then m_(0,i) else 0)"),
 	       ("diag -- ", TO "not documented yet"),
 	       ("diff -- ", TO "diff"),
 	       ("dshift -- ", TO "not documented yet"),
@@ -104,26 +106,27 @@ document { "replacements for commands and scripts from Macaulay",
 	       ("poly -- ", TO "not documented yet"),
 	       ("power -- ", TO "^"),
 	       ("pr -- ", TO "not documented yet"),
-	       ("pres -- ", TO "not documented yet"),
+	       (BOLD "pres <C:complex> -- ", "Use ", TT "C.dd", " or ", TO "print C.dd"),
 	       ("present_ring -- ", TO "not documented yet"),
 	       ("pring -- ", TO "not documented yet"),
 	       ("prmat -- ", TO "print", " or ", TO "toString"),
 	       ("putchange -- ", TO "not documented yet"),
 	       ("putmat -- ", TO "not documented yet"),
 	       ("putstd -- ", TO "not documented yet"),
-	       ("qring -- ", TO "not documented yet"),
-	       ("quit -- ", TO "not documented yet"),
+	       (BOLD "qring <I:ideal> <result A:ring> -- ", "In Macaulay2, if ", TT "I", " is 
+		    an ideal, then ", TT "A = (ring I)/I", " is equivalent, except that in Macaulay2,
+		    a Groebner basis of I is computed for you, if it is needed"),
+	       ("quit -- ", TO "quit"),
 	       ("quotient -- ", TO "not documented yet"),
 	       ("random -- ", TO "not documented yet"),
 	       ("reduce -- ", TO "not documented yet"),
 	       ("res -- ", TO "not documented yet"),
-	       ("reset -- ", TO "not documented yet"),
+	       ("reset -- ", TO "restart"),
 	       ("ring -- ", TO "not documented yet"),
 	       ("ring-from-rows -- ", TO "not documented yet"),
 	       ("ring_from_cols -- ", TO "not documented yet"),
 	       ("ring_from_rows -- ", TO "not documented yet"),
 	       ("ring_sum -- ", TO "not documented yet"),
-	       ("rings -- ", TO "not documented yet"),
 	       ("rmap -- ", TO "not documented yet"),
 	       ("row_degree -- ", TO "not documented yet"),
 	       ("row_degs -- ", TO "not documented yet"),
@@ -132,7 +135,7 @@ document { "replacements for commands and scripts from Macaulay",
 	       ("set_value -- ", TO "not documented yet"),
 	       ("setcoldegs -- ", TO "not documented yet"),
 	       ("setdegs -- ", TO "not documented yet"),
-	       ("setring -- ", TO "not documented yet"),
+	       ("setring -- ", TO "use"),
 	       ("shout -- ", TO "not documented yet"),
 	       ("size -- ", TO "not documented yet"),
 	       ("smult -- ", TO "*"),
@@ -140,17 +143,14 @@ document { "replacements for commands and scripts from Macaulay",
 	       ("spairs -- ", TO "not documented yet"),
 	       ("spare -- ", TO "not documented yet"),
 	       ("sparse -- ", TO "not documented yet"),
-	       ("standard -- ", TO "gb"),
 	       ("std -- ", TO "not documented yet"),
 	       ("std_minimal -- ", TO "not documented yet"),
 	       ("stdpart -- ", TO "not documented yet"),
-	       ("sub -- ", TO "not documented yet"),
 	       ("submat -- ", TO "submatrix"),
 	       ("subtract -- ", TO "-"),
 	       ("syz -- ", TO "syz", ",", TO "kernel"),
-	       ("tensor -- ", TO "not documented yet"),
-	       ("to-ring -- ", TO "not documented yet"),
-	       ("tr -- ", TO "not documented yet"),
+	       ("tensor <matrix M> <matrix N> <result matrix M.N> -- ", 
+		    TT "cokernel M ** cokernel N"),
 	       ("trace -- ", TO "trace"),
 	       ("transpose -- ", TO "transpose"),
 	       ("truncate -- ", TO "truncate"),
@@ -333,3 +333,19 @@ document { "not documented yet",
      "We haven't documented yet the way to replace this Macaulay function or
      script."
      }
+
+///
+-- Here we put routines that mimic the Macaulay commands
+
+diag = (m) -> (
+     -- input: m : Matrix of size 1 by n
+     -- returns a n by n matrix whose diagonal entries are the entries of m.
+     F := source m;
+     map((ring m)^(numgens F), F, (i,j) -> if i === j then m_(0,i) else 0))
+
+R = ZZ/101[vars(0..4)]
+m = matrix{{a,b,c,d,e}}
+n = diag m
+isHomogeneous n
+
+///
