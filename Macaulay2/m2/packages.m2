@@ -206,6 +206,7 @@ package TO := x -> (
      key := normalizeDocumentTag x#0;
      pkg := packageTag key;
      fkey := formatDocumentTag key;
+     assert (fkey =!= "     f(X,Y) := (x,y) -> ...");
      p := select(value \ values PackageDictionary, P -> P#"documentation"#?fkey); -- speed this up by implementing break for scanValues
      if #p == 1 then (
 	  p = p#0;

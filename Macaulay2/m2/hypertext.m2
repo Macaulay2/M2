@@ -380,12 +380,11 @@ tex  TO := x -> (
 net TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
 info TO := x -> concatenate ("*Note ",formatDocumentTag x#0,"::")
 
-info TO2 := net TO2 := x -> concatenate drop(toList x,1)
+info TO2 := net TO2 := x -> x#1
 info IMG := net IMG := tex IMG  := x -> ""
 info HREF := net HREF := x -> net last x
 
-             toh := op -> x -> op SEQ{ new TO from x, commentize headline x#0 }
-            htoh := op -> x -> op SEQ{ new TO from x, commentize headline x#0 }
+toh := op -> x -> op SEQ{ new TO from x, commentize headline x#0 }
 net TOH :=  toh net
 html TOH :=  toh html
 tex TOH :=  toh tex
@@ -518,12 +517,14 @@ net TOC := net @@ redoTOC
 info TOC := info @@ redoTOC
 tex TOC := tex @@ redoTOC
 
-net MENU := r -> net SEQ prepend(
+redoMENU := r -> SEQ prepend(
      PARA BOLD "Menu",
      sublists(toList r, 
 	  x -> not ( class x === TO ),
 	  x -> PARA{x},
 	  v -> UL apply(v, i -> TOH i#0 )))
+net MENU := x -> net redoMENU x
+html MENU := x -> html redoMENU x
 
 info MENU := r -> stack join(
      {"* Menu:",""},
