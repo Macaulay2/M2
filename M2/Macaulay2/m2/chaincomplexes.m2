@@ -15,7 +15,10 @@ new ChainComplex := ChainComplex => (cl) -> (
      C)
 
 complete ChainComplex := ChainComplex => C -> (
-     if C.?Resolution then (i := 0; while C_i != 0 do i = i+1);
+     if C.?Resolution and not C.?complete then (
+	  for i from 0 to C.Resolution.length do if 0 == (C#i = C_i) then break;
+     	  C.complete = true;
+	  );
      C)
 
 ChainComplex _ ZZ := Module => (C,i) -> (
@@ -27,7 +30,7 @@ ChainComplex _ ZZ := Module => (C,i) -> (
 	  F := new Module from ring C;
 	  if F != 0 then C#i = F;
 	  F)
-     else (ring C)^0					    -- for chain complexes of sheaves we'll want something else!
+     else (ring C)^0                           -- for chain complexes of sheaves we'll want something else!
      )
 
 ChainComplex ^ ZZ := Module => (C,i) -> C_-i
