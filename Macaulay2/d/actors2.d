@@ -454,14 +454,14 @@ transform(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
 	       then e
 	       else (
 	       	    mutable := ancestor(class,mutableHashTableClass);
-		    Expr(
-			 sethash(
-			      HashTable(
-				   if mutable || o.mutable 
-				   then copy(o.table) else o.table,
-				   class,parent,
-				   o.numEntries,0,false),
-			      mutable))))
+		    x := HashTable(
+			 if mutable || o.mutable then copy(o.table) else o.table,
+			 class, parent, o.numEntries, 0, mutable);
+		    if mutable then (
+			 if !ancestor(class,cacheTableClass) then o.hash = nextHash();
+			 )
+		    else o.hash = hash(o);
+		    Expr(o)))
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
@@ -563,12 +563,9 @@ makenew(class:HashTable,parent:HashTable):Expr := (
 		    break;
 		    );
 	       if p == mutableHashTableClass then (
-		    -- o.mutable = true;
-		    -- o.hash = nextHash();
 		    break;
 		    );
 	       if p == cacheTableClass then (
-		    -- o.mutable = true;
 		    o.hash = 0;
 		    break;
 		    );

@@ -3,6 +3,8 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+'stats' has been renamed to 'summary'
+
 an important memory leak was found and repaired -- rings and monoids were
 never getting freed!  This should make a vast improvement for those who
 create many rings.

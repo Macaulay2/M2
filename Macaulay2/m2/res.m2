@@ -268,3 +268,5 @@ status Resolution := options -> (r) -> (
 
 status ChainComplex := options -> (C) -> status(C.Resolution, options)
 
+summary Resolution := g -> (sendgg(ggPush g, ggstats);)
+summary ChainComplex := C -> if C.?Resolution then summary C.Resolution
