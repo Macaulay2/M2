@@ -16,6 +16,11 @@ Changes made, most recent ones first:
 
 New in 0.9.5:
 
+The operator '==' used to return True when the two arguments are
+identical, even if no method for the comparison is defined.  That was
+a misfeature -- now the method is called even in that case, so, for
+example, equations of the form x == x can be considered explicitly.
+
 The function "remove" can now be used to remove an element from a list
 or sequence, like this: remove({a,b,c},1).
 
