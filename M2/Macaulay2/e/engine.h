@@ -1612,7 +1612,7 @@ enum gbTraceValues
   /**** Fraction free LU decomposition **************/
   /**************************************************/
 
-  M2_arrayint_OrNull IM2_FF_LU(MutableMatrix *M); /* Dan, please connect */
+  M2_arrayint_OrNull IM2_FF_LU(MutableMatrix *M); /* connected to rawFFLU */
   /* Replace M by a column echelon form.  No fractions are generated, but the
      base ring should be a domain.
      If M has a column change of basis matrix attached, it will be modified accordingly. 

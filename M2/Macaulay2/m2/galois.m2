@@ -108,7 +108,7 @@ GF(Ring) := GaloisField => options -> (S) -> unpack(S, (R,p,n,f) -> (
      F.baseRings = append(S.baseRings,S);
      F.isCommutative = true;
      expression F := t -> expression lift(t, S);
-     F.degreeLength = degreeLength R;
+     F.degreeLength = 0;
      F.char = p;
      F.frac = F;
      F.generators = {};
