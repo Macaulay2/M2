@@ -281,16 +281,21 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  net RM := x -> net expression x;
 	  fac := options -> f -> (
 	       sendgg(ggPush f, ggfactor);
-	       new Product from 
-	       apply(eePopInt(), i -> ( exp := eePopInt(); new Power from {RM.pop(),exp})));
+	       v := apply(eePopInt(), i -> ( exp := eePopInt(); new Power from {RM.pop(),exp}));
+	       v = select(v, power -> first power != 1);
+	       new Product from v);
 	  factor RM := if R === QQ then (
 	       options -> f -> (
-		    error "factorization over QQ not implemented yet";
+		    -- error "factorization over QQ not implemented yet";
 	       	    d := commden f;
 		    f = d * f;
-		    if d === 1 
-		    then (fac options)(f) 
-		    else new Divide from { (fac options)(f), d }
+		    s := (fac options) f;
+		    if d === 1 then s
+		    else (
+			 if degree first last s == {0}
+			 then s = append(drop(s,-1), new Power from { (1/d) * first last s, 1 })
+			 else s = append(s,          new Power from { (1/d) * 1_RM        , 1 })
+			 )
 		    )
 	       )
 	  else fac;

@@ -3,6 +3,13 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
+'decompose' now works over polynomial rings over QQ
+
+'decompose' now works over quotient rings.  A bug which caused it to
+crash when given the zero ideal has been fixed.  A bug which caused it
+to give the empty list when given an ideal with a zero generator has been
+fixed.
+
 'stats' has been renamed to 'summary'
 
 an important memory leak was found and repaired -- rings and monoids were

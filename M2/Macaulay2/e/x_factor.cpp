@@ -242,7 +242,7 @@ static void ideal_reorder(object &mm) {
      for (i=0; ii.hasItem(); ii++, i++) u.append(
 					      (n-1)-(ii.getItem()-1) // REVERSE!
 					      );
-     for (i=(n-1)/2; i>=0; i--) { // REVERSE!
+     if (n>0) for (i=(n-1)/2; i>=0; i--) { // REVERSE!
 	  int tmp = u[n-1-i];
 	  u[n-1-i] = u[i];
 	  u[i] = tmp;

@@ -699,7 +699,7 @@ document { VariableBaseName,
 
 document { MonomialOrder,
      Headline => "monomial ordering",
-     TT "MonomialOrder", " -- a key used with monoids to indicate a
+     TT "MonomialOrder", " -- an optional argument used with monoids to indicate a
      monomial ordering other than the default (graded reverse lexicographic)",
      PARA,
      "Permissible values:",

@@ -62,16 +62,13 @@ commden := (f) -> (
 irreducibleCharacteristicSeries = method()
 irreducibleCharacteristicSeries Ideal := I -> (
      f := generators I;
+     f = compress f;					    -- avoid a bug 
      R := ring I;
      if not isPolynomialRing R 
      then error "expected ideal in a polynomial ring";
      k := coefficientRing R;
-     if k === QQ then (
-	  error "factorization over QQ not implemented yet";
-     	  f = matrix {
-	       first entries f / (r -> r * commden r)
-	       };
-	  );
+     if not isField k then error "factorization not implemented for coefficient rings that are not fields";
+     if k === QQ then f = matrix { first entries f / (r -> r * commden r) };
      re := reorder I;
      n := #re;
      x := symbol x;
@@ -96,8 +93,14 @@ topCoefficients Matrix := f -> (
 
 decompose = method()
 decompose(Ideal) := (I) -> if I.cache.?decompose then I.cache.decompose else I.cache.decompose = (
-     if not isPolynomialRing ring I
-     then error "expected ideal in a polynomial ring";
+     R := ring I;
+     if isQuotientRing R then (
+	  A := ultimate(ambient, R);
+	  I = lift(I,A);
+	  )
+     else A = R;
+     if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
+     if I == 0 then return {if A === R then I else ideal 0_R};
      ics := irreducibleCharacteristicSeries I;
      Psi := apply(ics#0, CS -> (
 	       CS = matrix {CS};
@@ -106,7 +109,10 @@ decompose(Ideal) := (I) -> if I.cache.?decompose then I.cache.decompose else I.c
 	       chk = first entries chk;
 	       iniCS := select(chk, i -> degree i =!= {0});
 	       CS = ideal CS;
+	       -- << "saturating " << CS << " with respect to " << iniCS << endl;
+	       -- warning: over ZZ saturate does unexpected things.
 	       scan(iniCS, a -> CS = saturate(CS, a));
+	       -- << "result is " << CS << endl;
 	       CS));
      Psi = new MutableList from Psi;
      p := #Psi;
@@ -116,5 +122,9 @@ decompose(Ideal) := (I) -> if I.cache.?decompose then I.cache.decompose else I.c
 	       if isSubset(Psi#i, Psi#j) then Psi#j = null else
 	       if isSubset(Psi#j, Psi#i) then Psi#i = null));
      Psi = toList select(Psi,i -> i =!= null);
-     apply(Psi, p -> ics#1 p)
+     components := apply(Psi, p -> ics#1 p);
+     if A =!= R then (
+	  components = apply(components, I -> ideal(gens I ** R));
+	  );
+     components
      )
