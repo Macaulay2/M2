@@ -89,3 +89,69 @@ the package "D-modules".
 						    *.jpg
 					     html/index.html    [ packagehtmldir ]
 						  *.html
+
+This file may get obsolete: the official layout is prescribed in include/config.Makefile.in at
+compile time, and in the hash table LAYOUT at run time.  Here is how to look at the layout inside
+Macaulay2:
+
+    i2 : LAYOUT
+
+    o2 = HashTable{bin => bin/                                                     }
+		   cache => lib/Macaulay2/0.9.3/cache/
+		   data => share/
+		   datam2 => share/Macaulay2/
+		   doc => share/doc/
+		   docm2 => share/doc/Macaulay2/
+		   docm2rel => share/doc/Macaulay2/0.9.3/
+		   docpackages => share/doc/Macaulay2/packages/
+		   emacs => share/emacs/site-lisp/
+		   emacsdoc => share/doc/Macaulay2/0.9.3/emacs/
+		   htmldoc => share/doc/Macaulay2/0.9.3/html/
+		   images => share/doc/Macaulay2/0.9.3/images/
+		   lib => lib/
+		   libexec => lib/Macaulay2/0.9.3/libexec/
+		   libm2 => lib/Macaulay2/0.9.3/
+		   m2 => share/Macaulay2/0.9.3/m2/
+		   man => share/man/
+		   man1 => share/man/man1/
+		   man3 => share/man/man3/
+		   packagedoc => --Function[../tmp/Macaulay2/m2/layout.m2:1:1]--
+		   packagehtml => --Function[../tmp/Macaulay2/m2/layout.m2:1:1]--
+		   packageimages => --Function[../tmp/Macaulay2/m2/layout.m2:1:1]--
+		   packages => share/Macaulay2/packages/
+		   packagesrc => --Function[../tmp/Macaulay2/m2/layout.m2:1:1]--
+		   share => share/Macaulay2/0.9.3/
+
+    o2 : HashTable
+
+To apply those functions to a sample package name, do this:
+
+    i3 : applyValues (LAYOUT, x -> if class x === Function then x "StateTables" else x)
+
+    o3 = HashTable{bin => bin/                                                      }
+		   cache => lib/Macaulay2/0.9.3/cache/
+		   data => share/
+		   datam2 => share/Macaulay2/
+		   doc => share/doc/
+		   docm2 => share/doc/Macaulay2/
+		   docm2rel => share/doc/Macaulay2/0.9.3/
+		   docpackages => share/doc/Macaulay2/packages/
+		   emacs => share/emacs/site-lisp/
+		   emacsdoc => share/doc/Macaulay2/0.9.3/emacs/
+		   htmldoc => share/doc/Macaulay2/0.9.3/html/
+		   images => share/doc/Macaulay2/0.9.3/images/
+		   lib => lib/
+		   libexec => lib/Macaulay2/0.9.3/libexec/
+		   libm2 => lib/Macaulay2/0.9.3/
+		   m2 => share/Macaulay2/0.9.3/m2/
+		   man => share/man/
+		   man1 => share/man/man1/
+		   man3 => share/man/man3/
+		   packagedoc => share/doc/Macaulay2/packages/StateTables/
+		   packagehtml => share/doc/Macaulay2/packages/StateTables/html/
+		   packageimages => share/doc/Macaulay2/packages/StateTables/images/
+		   packages => share/Macaulay2/packages/
+		   packagesrc => share/Macaulay2/packages/StateTables/
+		   share => share/Macaulay2/0.9.3/
+
+    o3 : HashTable

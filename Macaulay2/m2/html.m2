@@ -1,16 +1,93 @@
+-- -*- fill-column: 107 -*-
 --		Copyright 1993-2002 by Daniel R. Grayson
 
 -- we've turned off checking for existence of files...
 
--- produce html form of documentation, for Macaulay 2 and for packages
-
-local prefix, local topNodeName, local topFileName, local topNodeButton
-local haderror, local databaseFileName, local nullButton, local masterIndexButton, local masterFileName
+local prefix, local topNodeButton
+local haderror, local nullButton, local masterIndexButton
 local NEXT, local PREV, local UP
 local nextButton, local prevButton, local upButton
 local lastKey, local thisKey
 local linkFollowedTable, local masterIndex
 local docdatabase
+
+buildPackage := null					    -- name of the package currently being built
+topNodeName := null					    -- name of the top node of this package
+topFileName := "index.html"				    -- top node file name
+masterFileName := "master.html";			    -- master index file of all topics
+finalDirectory := "/usr/local/"
+buildDirectory := "/tmp/"				    -- the root of the relative paths:
+htmlDirectory := ""					    -- relative path to the html directory
+
+isAbsolute := url -> (				       -- drg: replace with regexp after merging the branch
+     "#" == substring(url,0,1) or
+     "http://" == substring(url,0,7) or
+     "ftp://" == substring(url,0,6) or
+     "mailto:" == substring(url,0,7)
+     )
+
+
+rel := url -> (
+     if isAbsolute url 
+     then url
+     else relativizeFilename(htmlDirectory, url)
+     )
+
+htmlFilename = (nodename) -> (	-- returns the relative path from the PREFIX to the file
+     if nodename === topNodeName then (
+	  if buildPackage === null
+	  then LAYOUT#"htmldoc" | topFileName
+	  else LAYOUT#"packagehtml" buildPackage | topFileName
+	  )
+     else (
+	  basename := toFilename nodename | ".html";
+	  if buildPackage === null
+	  or finalDirectory =!= "" 
+	  and fileExists minimizeFilename(finalDirectory | "/" | LAYOUT#"htmldoc" | basename)
+	  then LAYOUT#"htmldoc" | basename
+	  else LAYOUT#"packagehtml" buildPackage | basename
+	  )
+     )
+
+html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
+text IMG  := x -> ""
+tex  IMG  := x -> ""
+
+html HREF := x -> (
+     "<A HREF=\"" 					    -- "
+     | rel first x 
+     | "\">" 						    -- "
+     | html last x 
+     | "</A>"
+     )
+text HREF := x -> "\"" | last x | "\""
+tex HREF := x -> (
+     concatenate(
+	  ///\special{html:<A href="///, 		    -- "
+	       texLiteral rel first x,
+	       ///">}///,				    -- "
+	  tex last x,
+	  ///\special{html:</A>}///
+	  )
+     )
+
+html TO := x -> (
+     key := x#0;
+     formattedKey := formatDocumentTag key;
+     concatenate ( 
+     	  ///<A HREF="///,				    -- "
+	  rel htmlFilename formattedKey,
+	  ///">///, 					    -- "
+     	  htmlExtraLiteral formattedKey,
+     	  "</A>",
+     	  drop(toList x,1) 
+     	  )
+     )
+html BASE := x -> concatenate("<BASE HREF=\"",rel first x,"\">")
+
+
+
+-- produce html form of documentation, for Macaulay 2 and for packages
 
 documentationMemo := memoize documentation		    -- for speed
 
@@ -155,8 +232,7 @@ fakeMenu := x -> (
 
 makeHtmlNode = fkey -> (
      -- stderr << "--fkey=" << fkey << endl;		    --  debugging
-     -- fn := buildDirectory | "/" | htmlFilename fkey;
-     fn := "cache/html/" | toFilename fkey | ".html";
+     fn := buildDirectory | "/" | htmlFilename fkey;
      fn << html HTML { 
 	  HEAD TITLE {fkey, headline fkey},
 	  BODY { 
@@ -186,9 +262,10 @@ anchor := entry -> if alpha#?anchorPoint and entry >= alpha#anchorPoint then (
      )
 
 pass5 := () -> (
-     << "pass 5, creating the master index in " << masterFileName << endl;
+     fn := buildDirectory | htmlDirectory | masterFileName;
+     << "pass 5, creating the master index in " << fn << endl;
      masterNodeName := topNodeName | " Index";
-     masterFileName << html HTML {
+     fn << html HTML {
 	  HEAD { TITLE masterNodeName },
 	  BODY {
 	       HEADER2 masterNodeName, PARA,
@@ -220,20 +297,19 @@ cacheVars := varlist -> (
      valuelist := apply(varlist, x -> value x);
      () -> apply(varlist, valuelist, (x,n) -> x <- n))
 
-makeHTML = (topnode,docdatabase0) -> (
+makeHTML = builddir -> (
+     buildDirectory = minimizeFilename(builddir | "/");
+     docdatabase = DocDatabase;				    -- used to be an argument
+     topNodeName = "Macaulay 2";			    -- used to be an argument
+     htmlDirectory = LAYOUT#"htmldoc";
+     buildPackage = null;
      restore := cacheVars{symbol documentationPath};
-     gifpath := "cache/images/";
-     prefix = "cache/html/";
-     docdatabase = docdatabase0;
+     gifpath := LAYOUT#"images";
+     prefix = htmlDirectory;
      checkDirectory prefix;
      checkDirectory gifpath;
-     -- documentationPath = unique prepend(prefix,documentationPath);
-     topNodeName = topnode;
-     topFileName = cacheFileName(prefix,topNodeName) | ".html";
      topNodeButton = HREF { topFileName, BUTTON (checkFile(gifpath|"top.gif"),"top") };
-     databaseFileName = "../cache/Macaulay2-doc";
      nullButton = BUTTON(checkFile(gifpath|"null.gif"),null);
-     masterFileName = prefix | "master.html";
      masterIndexButton = HREF { masterFileName, BUTTON(checkFile(gifpath|"index.gif"),"index") };
      nextButton = BUTTON(checkFile(gifpath|"next.gif"),"next");
      prevButton = BUTTON(checkFile(gifpath|"previous.gif"),"previous");
@@ -267,3 +343,20 @@ makeHTML = (topnode,docdatabase0) -> (
 	  );
      restore();
      )     
+
+-----------------------------------------------------------------------------
+-- making html for packages -- eventually to be merged with 
+-- the code above for making html for Macaulay 2 itself
+-----------------------------------------------------------------------------
+
+makeHTMLPages = method(Options => { TemporaryDirectory => "tmp/" })
+makeHTMLPages Package := o -> pkg -> (
+     topNodeName = pkg.name;
+     buildPackage = pkg.name;
+     buildDirectory = o.TemporaryDirectory | pkg.name | "-" | pkg.version | "/";
+     htmlDirectory = LAYOUT#"packagehtml" pkg.name;
+     keys := unique join(pkg#"symbols",pkg#"docs");
+     stderr << "making html pages in " << buildDirectory << htmlDirectory << endl;
+     ret := makeHtmlNode \ keys;
+     "pages " | stack keys | " in " | htmlDirectory
+     )
