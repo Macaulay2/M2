@@ -118,8 +118,8 @@ clean ::; $(MAKE) -C html clean
 book ::;  $(MAKE) -C book all
 clean ::; $(MAKE) -C book clean
 ################################# ComputationsBook
-ComputationsBook ::;  $(MAKE) -C ComputationsBook all
-clean ::; $(MAKE) -C ComputationsBook clean
+ComputationsBook ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook all; fi
+clean ::; if [ -d ComputationsBook ]; then $(MAKE) -C ComputationsBook clean; fi
 ################################# emacs
 all ::;  $(MAKE) -C emacs all
 clean ::; $(MAKE) -C emacs clean
