@@ -45,10 +45,6 @@ include $(PROJECT:.d=.dep)
 endif
 ##############################
 DNAMES := $(PROJECT)
-############################## old files
-DNAMES += t.d u.d optim.d actorsX.d
-DNAMES += gr.d grx.d
-DNAMES += testall.d pp.d redblk.d
 ############################## more files
 WRAPPERS := scclib.c getpagesize.h gc_cpp.cc memdebug.c memdebug.h
 #############################################################################

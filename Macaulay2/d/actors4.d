@@ -50,6 +50,7 @@ getpidfun(e:Expr):Expr := (
 	  then Expr(toInteger(getpid()))
 	  else WrongNumArgs(0))
      else WrongNumArgs(0));
+-- processID is a function, in case we have threads!
 setupfun("processID",getpidfun);
 
 absfun(e:Expr):Expr := (
