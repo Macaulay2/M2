@@ -72,7 +72,7 @@ if substring(progname,0,1) === "\"" then progname = substring(progname,1)
 
 path = { currentFileDirectory }
 
-dir := splice(apply(separate(progname, "/"), i -> toSequence separate(i, "\\")))-- ???
+dir := splice(apply(separate("/",progname), i -> toSequence separate("\\", i)))-- ???
 if #dir > 1
 then (
      packagedir := concatenate ( apply(#dir-2, i -> (dir#i,pathSeparator)), "packages", pathSeparator);

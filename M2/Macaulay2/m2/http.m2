@@ -53,11 +53,11 @@ getWWW (String,Nothing) := (url,body) -> (
      	       if substring(url,0,#prot) == prot 
 	       then (
 		    url = substring(url,#prot);
-		    host := (separate(url,"/"))#0;
+		    host := (separate("/",url))#0;
 		    url = substring(url,#host);
 		    if url == "" then url = "/";
 		    port := null;
-		    x := separate(host,":");
+		    x := separate(":",host);
 		    if #x == 2 then (host = x#0; port = x#1);
 		    ret = meth(host,port,url,body);
 		    true)

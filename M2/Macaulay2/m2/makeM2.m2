@@ -1,6 +1,6 @@
 --		Copyright 1996 by Daniel R. Grayson
 
-split := s -> flatten apply(separate(s,"/"), i -> separate(i,"\\")) -- sigh...
+split := s -> flatten apply(separate("/",s), i -> separate("\\",i)) -- sigh...
 
 M2HOME := concatenate between(pathSeparator, drop(split currentDirectory(), -1))
 
@@ -9,7 +9,7 @@ fix := s -> format concatenate s
 (
   if version#"operating system" === "Windows-95-98-NT"
   then (
-       dossify := s -> concatenate between("\\",lines(s,"/"));
+       dossify := s -> concatenate between("\\",lines("/",s));
        "../bin/M2.arg"
        << "'-e loaddata \"" << M2HOME << "/cache/Macaulay2-"
        << version#"architecture"

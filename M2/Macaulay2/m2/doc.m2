@@ -996,15 +996,15 @@ document { get,
 
 document { separate,
      Headline => "split a string into pieces",
-     TT "separate(s,d)", " -- split the string ", TT "s", " into pieces 
+     TT "separate(d,s)", " -- split the string ", TT "s", " into pieces 
      delimited by the string ", TT "d", ".",
      PARA,
      "The value is a list of the pieces, the number of which is one
      more than the number of occurences of d in s, so that the pieces
      may be reassembled with ", TO "between", ".",
      EXAMPLE {
-	  ///separate( "a.b.c.d", "." )///,
-	  ///peek separate( "a.b.c.d", "." )///,
+	  ///separate( ".", "a.b.c.d" )///,
+	  ///peek separate( ".", "a.b.c.d" )///,
 	  ///concatenate between("=",ooo)///
 	  }
      }
@@ -1014,7 +1014,7 @@ document { lines,
      TT "lines s", " -- yields an array of strings obtained from the
      string ", TT "s", " by breaking it at newline or return characters.",
      BR,NOINDENT,
-     TT "lines(s,nl)", " -- yields an array of strings obtained from the 
+     TT "lines(nl,s)", " -- yields an array of strings obtained from the 
      string ", TT "s", " by breaking it at the newline characters
      specified by the string ", TT "nl", ".",
      PARA,
