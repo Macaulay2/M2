@@ -2,7 +2,7 @@
 use system;
 use strings;
 use C;
-use varstrings;
+use varstrin;
 use nets;
 
 export ERROR := -1;

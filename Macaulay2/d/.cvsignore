@@ -1,6 +1,7 @@
 *.dp
 *.dep
 *.oo
+*.obj
 *.sg
 *.sig
 allfiles

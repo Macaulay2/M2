@@ -6,7 +6,7 @@ use err;
 use system;
 use stdio;
 use strings;
-use varstrings;
+use varstrin;
 use C;
 
 valn2(x:int):int := (

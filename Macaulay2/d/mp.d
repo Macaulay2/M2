@@ -1,23 +1,23 @@
 --		Copyright 1995 by Daniel R. Grayson
 
 use system; 
-use converter;
+use convertr;
 use binding;
 use parser;
 use lex;
-use arithmetic;
+use arith;
 use nets;
 use tokens;
 use err;
 use stdiop;
 use ctype;
 use stdio;
-use varstrings;
+use varstrin;
 use strings;
 use C;
 use actors;
 use actors2;
-use structure;
+use struct;
 use objects;
 use GB;
 

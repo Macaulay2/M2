@@ -9,9 +9,9 @@ use nets;
 use tokens;
 use err;
 use stdio;
-use arithmetic;
+use arith;
 use basic;
-use converter;
+use convertr;
 
 export copy(e:Expr):Expr := (
      when e

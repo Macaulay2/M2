@@ -7,7 +7,7 @@ use stdio;
 use stdiop;
 use strings;
 use nets;
-use arithmetic;
+use arith;
 
 export parsefuns := {
      unary:function(Token,TokenFile,int,bool):ParseTree,

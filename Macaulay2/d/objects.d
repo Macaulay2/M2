@@ -4,12 +4,12 @@ use system;
 use strings;
 use system;
 use stdio;
-use arithmetic;
+use arith;
 use nets;
 use tokens;
 use basic;
-use converter;
-use structure;
+use convertr;
+use struct;
 use binding;
 
 enlarge(object:HashTable):void := (

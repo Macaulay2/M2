@@ -1,5 +1,5 @@
 --		Copyright 1994 by Daniel R. Grayson
-use varstrings;
+use varstrin;
 use system;
 use strings;
 use stdio;

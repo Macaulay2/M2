@@ -2,24 +2,24 @@
 
 
 use system; 
-use converter;
+use convertr;
 use binding;
 use nets;
 use parser;
 use lex;
-use arithmetic;
+use arith;
 use tokens;
 use err;
 use stdiop;
 use ctype;
 use stdio;
-use varstrings;
+use varstrin;
 use strings;
 use C;
 use actors;
 use actors2;
 use basic;
-use structure;
+use struct;
 use objects;
 use GB;
 use actors4;
@@ -424,16 +424,18 @@ applythem(obj:HashTable,fn:FunctionClosure):void := (
      );
 RegisterFinalizer( obj:Handle, fn:function(Handle,int):void):void ::= 
      Ccode( void,
-     	  "GC_register_finalizer((void *)(",
+     	  "GC_register_finalizer(__subfront__(",
      	  h,
-	  " - sizeof(front)),(void *)(", 
+	  "),(GC_finalization_proc)", 
 	  fn,
-	  "),(void *)(", 
+	  ",(void *)(", 
 	  0,
 	  "),0,0)" 
 	  );
 
-FixUp( obj:Handle ):void ::= Ccode( void, "((void *) ", obj, ") += sizeof(front)" );
+ -- see memdebug.h
+ -- FixUp( obj:Handle ):void ::= Ccode( void, "((void *) ", obj, ") += sizeof(front)" );
+    FixUp( obj:Handle ):void ::= Ccode( void, "(", obj, " = __addfront__(", obj, "))" );
 
 --RegisterFinalizerFun(e:Expr):Expr := (
 --     when e

@@ -12,22 +12,22 @@ remove-c-files ::
 # least dependent so that "make" can remake the *.dep makefiles
 
 PROJECT := 
-PROJECT += interpret.d
+PROJECT += interp.d
 PROJECT += mp.d
 # PROJECT += actorsX.d
 PROJECT += actors5.d actors4.d actors3.d actors2.d actors.d
 PROJECT += objects.d
-PROJECT += structure.d
+PROJECT += struct.d
 PROJECT += GC.d
-PROJECT += converter.d basic.d binding.d
+PROJECT += convertr.d basic.d binding.d
 PROJECT += parser.d lex.d tokens.d
-PROJECT += arithmetic.d
+PROJECT += arith.d
 PROJECT += err.d
 PROJECT += stdiop.d
 PROJECT += ctype.d
 PROJECT += stdio.d
 PROJECT += nets.d
-PROJECT += varstrings.d
+PROJECT += varstrin.d
 PROJECT += strings.d 
 PROJECT += X.d
 PROJECT += GB.d
@@ -61,15 +61,10 @@ SCC1 := ../c/scc1
 	$(SCC1) -nogcc -dep -J. $*.d
 	mv $*.dp $*.dep
 	../util/update $*.sg $*.sig
-interpret.dep : interpret.d
-structure.dep : structure.d
-varstrings.dep : varstrings.d
-arithmetic.dep : arithmetic.d
-converter.dep : converter.d
 %.c   : %.d
-	$(SCC1) -O +gc -J. -noline -nogcc $<
+	$(SCC1) $(SCCFLAGS) +gc -J. -noline -nogcc $<
 %.oo  : %.d
-	$(SCC1) -O +gc -J. -nogcc $<
+	$(SCC1) $(SCCFLAGS) +gc -J. -nogcc $<
 	$(CC) -o $*.oo $(CPPFLAGS) $(CCFLAGS) -c $*.c
 	rm $*.c
 %     : %.oo;	$(CC) -o $@ $< $(LDFLAGS) $(LOADLIBES)
@@ -94,7 +89,10 @@ CPPFLAGS := -I$(INCDIR) -I. -DGaCo=1 $(DEBUGFLAGS)
 # from the gcc installation, as it often is
 
 WARNINGS := -Wall -Wshadow -Wcast-qual
+
+SCCFLAGS := -O
 CCFLAGS  := -O3 -g
+
 CFLAGS   := $(CCFLAGS) $(WARNINGS)
 CXXFLAGS := $(CFLAGS)
 LOADLIBES:= 
@@ -163,8 +161,10 @@ ALLOBJ := $(PROJECT:.d=.oo) scclib.o compat.o gc_cpp.o tmp_init.o memdebug.o
 ALLC := $(PROJECT:.d=.c)
 all-c-files :: $(ALLC)
 remove-c-files ::; rm -rf $(ALLC)
+c-files.tar :: $(ALLC)
+	tar cf $@ $(ALLC)
 ##############################
-tmp_init.c : Makefile ../util/timestmp ../../Makeconf
+tmp_init.c : Makefile ../../Makeconf
 	timestmp >>tmp
 	@echo "echoout '>>tmp' ..."
 	@echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 
@@ -222,4 +222,4 @@ clean :
 	rm -f *.log *.sym *.out *.o *.a *.oo *.sig *.dep \
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
 		$(DNAMES:.d=.c) allfiles TAGS \
-		core core.*
+		core core.* compat.c compat.h
