@@ -348,14 +348,15 @@ assemble Package := o -> pkg -> (
      -- copy source file
      pkgDirectory := LAYOUT#"packages";
      makeDirectory (buildDirectory|pkgDirectory);
-     fn := currentSourceDir | pkg.name | ".m2";
+     bn := pkg.name | ".m2";
+     fn := currentSourceDir|bn;
      if not fileExists fn then error("file ", fn, " not found");
-     copyFile(fn, buildDirectory|pkgDirectory|fn, Verbose=>true);
+     copyFile(fn, buildDirectory|pkgDirectory|bn, Verbose=>true);
 
      -- copy source subdirectory
      srcDirectory := LAYOUT#"packagesrc" pkg.name;
      makeDirectory (buildDirectory|srcDirectory);
-     dn := currentSourceDir | pkg.name;
+     dn := currentSourceDir|pkg.name;
      stderr << "--copying auxiliary source files from " << dn << endl;
      if fileExists dn
      then copyDirectory(dn, buildDirectory|srcDirectory, Verbose=>true, Exclude => {"CVS"});
@@ -368,11 +369,37 @@ assemble Package := o -> pkg -> (
      ret := makeHtmlNode \ toString \ nodes;
 
      -- make example input files
-     exampleDir := buildDirectory | LAYOUT#"packageexamples" pkg.name;
-     stderr << "--making example input files in " << exampleDir << endl;
+     exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg.name;
+     infn := nodename -> exampleDir|toFilename nodename|".m2";
+     outfn := nodename -> exampleDir|toFilename nodename|".out";
+     stderr << "--making example files in " << exampleDir << endl;
      makeDirectory exampleDir;
      scan(pairs pkg#"example inputs", (nodename,inputs) -> (
-	       stderr << "--making example input file for " << nodename << endl;
-	       exampleDir|toFilename nodename|".m2" << stack values inputs << close
-	       ));
+	       inf := infn nodename;
+	       val := concatenate apply(values inputs, s -> s|"\n");
+	       if fileExists inf and get inf === val
+	       then stderr << "--leaving example input file for " << nodename << endl
+	       else (
+		    stderr << "--making example input file for " << nodename << endl;
+		    inf << val << close;
+		    )));
+
+     -- make example output files
+     haderror := false;
+     scan(pairs pkg#"example inputs", (nodename,inputs) -> (
+	       inf := infn nodename;
+	       outf := outfn nodename;
+	       if fileExists outf and fileTime outf >= fileTime inf
+	       then stderr << "--leaving example output file for " << nodename << endl
+	       else (
+		    stderr << "--making example output file for " << nodename << endl;
+		    -- later we'll figure out how to start *this* version of M2!!!
+		    cmd := "M2 -silent -q -x -e'errorDepth 0' -e'load \""|pkg.name|".m2\"' <"|inf|" >"|outf;
+		    stderr << cmd << endl;
+		    r := run cmd;
+		    if r != 0 then (
+			 stderr << "--error return code: " << r << endl;
+			 haderror = true;
+			 ))));
+     if haderror then error "error occurred running example files";
      )
