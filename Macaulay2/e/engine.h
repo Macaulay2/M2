@@ -860,7 +860,7 @@ extern "C" {
 
   const MatrixOrNull * rawWedgeProduct(int p,
 				       int q,
-				       const FreeModule *F); /* Dan: Please connect */
+				       const FreeModule *F); /* drg: connected rawWedgeProduct */
   /* Constructs the map
      exterior(p,F) ** exterior(q,F) --> exterior(p+q,F)
   */

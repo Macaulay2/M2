@@ -59,13 +59,8 @@ exteriorPower(ZZ, Matrix) := Matrix => options -> (p,m) -> (
 
 wedgeProduct = method()
 wedgeProduct(ZZ,ZZ,Module) := Matrix => (p,q,M) -> (
-     if isFreeModule M then (
-	  R := ring M;
-	  error "ggexteriorproduct not re-implemented yet";
-	  sendgg(ggPush p, ggPush q, ggPush M, ggexteriorproduct);
-	  getMatrix R)
+     if isFreeModule M then map(ring M, rawWedgeProduct(p,q,raw M))
      else map(exteriorPower(p+q,M),exteriorPower(p,M)**exteriorPower(q,M),wedgeProduct(p,q,cover M)))
-
 
 someMinors := (j,m,options) -> (
      strat := getMinorsStrategy(ring m,options);

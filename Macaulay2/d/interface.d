@@ -2030,6 +2030,18 @@ export rawMatrixRowOperation2(e:Expr):Expr := (
      else WrongNumArgs(8));
 setupfun("rawMatrixRowOperation2",rawMatrixRowOperation2);
 
+export rawWedgeProduct(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is p:Integer do if !isInt(p) then WrongArgSmallInteger(1) else
+     when s.1 is q:Integer do if !isInt(q) then WrongArgSmallInteger(2) else
+     when s.2 is M:RawFreeModule do toExpr(Ccode(RawMatrixOrNull, "(engine_RawMatrixOrNull)rawWedgeProduct(", toInt(p), ",", toInt(q), ",", "(FreeModule*)", M, ")" ))
+     else WrongArg(3,"a raw free module")
+     else WrongArgInteger(2)
+     else WrongArgInteger(1)
+     else WrongNumArgs(3));
+setupfun("rawWedgeProduct",rawWedgeProduct);
+
 -----------------------------------------------------------------------------
 -- monomial ideals
 
