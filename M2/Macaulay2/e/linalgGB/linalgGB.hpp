@@ -47,10 +47,16 @@ public:
   };
 
 private:
+  const PolynomialRing *originalR;
+  int n_subring; // number of GB elements in the first subring
+  int n_pairs_computed;
+  int n_gens_left;
+
   MonomialSet H; // Hash table of monomials in the ring
   SPairSet S;
 
   MonomialTable *lookup; // This should be the monomial ideal type
+  int this_degree;
 #if 0
   const MonomialTable *ringtable;    // At most one of these two will be non-NULL.
   const MonomialTableZZ *ringtableZZ;
@@ -61,6 +67,8 @@ private:
   // Need: Hash table for (monom,int) --> column index
   // Need: allocator for vectors in the matrix
   // Need: GB itself.
+
+  std::vector<poly *, gc_allocator<poly *> > gb;
 
   // The matrix
   std::vector<row_elem, gc_allocator<row_elem> > rows;
@@ -96,7 +104,7 @@ private:
     /* Make a new column, insert it.  Also put m into the table of all
        monomials */
 
-  void process_s_pair(spair p);
+  void process_s_pair(SPairSet::spair *p);
     /*
       3 cases:
       (a) an spair or ringpair
@@ -115,7 +123,7 @@ private:
     /* set the comparison values in the current matrix */
     /* Should we also go thru the matrix and set the values? */
 
-  void make_matrix(spair list);
+  void make_matrix();
     /* loop through all spairs, process,
        then while there are any columns to process, do so,
        then process rows.

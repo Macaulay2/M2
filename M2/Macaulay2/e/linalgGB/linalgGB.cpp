@@ -1,4 +1,5 @@
 #include "linalgGB.hpp"
+#include <vector>
 
 void LinearAlgebraGB::append_row(monomial m, int elem)
 {
@@ -6,10 +7,10 @@ void LinearAlgebraGB::append_row(monomial m, int elem)
      process_row (and therefore process_vector)  here?
 
   */
-  rows.push_back();
-  row_elem &r = rows[rows.size()-1];
+  row_elem r;
   r.monom = m;
   r.elem = elem;
+  rows.push_back(r);
 }
 
 void LinearAlgebraGB::process_row(int r)
@@ -24,7 +25,7 @@ void LinearAlgebraGB::process_row(int r)
  */
 }
 
-void LinearAlgebraGB::process_vector(POLY f)
+void LinearAlgebraGB::import_vector(vec f)
 {
   /* Creates a sparse_matrix row, and appends it to the current
      matrix being made */
@@ -39,13 +40,13 @@ void LinearAlgebraGB::process_column(int c)
   */
 }
 
-void LinearAlgebraGB::append_column(monomial m, int gbelem, bool islead)
+void LinearAlgebraGB::append_column(monomial m, int elem, bool islead)
 {
   /* Make a new column, insert it.  Also put m into the table of all
      monomials */
 }
 
-void LinearAlgebraGB::process_s_pair(spair p)
+void LinearAlgebraGB::process_s_pair(SPairSet::spair *p)
 {
   /*
     3 cases:
@@ -69,14 +70,21 @@ void LinearAlgebraGB::set_comparisons()
   /* Should we also go thru the matrix and set the values? */
 }
 
-void LinearAlgebraGB::make_matrix(spair list)
+void LinearAlgebraGB::make_matrix()
 {
   /* loop through all spairs, process,
      then while there are any columns to process, do so,
      then process rows.
      Is this the best order to do it in?  Maybe not...
   */
- 
+
+  SPairSet::spair *p;
+  while (p = S.get_next_pair())
+    {
+      // Append left half, append right half
+      // remove pair
+    }
+
   for (;;)
     {
       if (next_row_to_process < rows.size())
@@ -87,7 +95,7 @@ void LinearAlgebraGB::make_matrix(spair list)
     }
 
   /* Now sort the monomials */
-  set_comparisons(C);
+  set_comparisons();
 }
 
 void LinearAlgebraGB::LU_decompose()
@@ -107,57 +115,70 @@ void LinearAlgebraGB::new_GB_elements()
   */
 }
 
-void LinearAlgebraGB::s_pair_step(C)
+void LinearAlgebraGB::s_pair_step()
 {
-  make_matrix(C);
-  LU_decompose(C);
-  new_GB_elements(C);
+  make_matrix();
+  LU_decompose();
+  new_GB_elements();
 }
 
-int LinearAlgebraGB::compute(stop_conditions Stop)
+enum ComputationStatusCode LinearAlgebraGB::computation_is_complete()
+{
+  // This handles everything but stop_.always, stop_.degree_limit
+  if (stop_.basis_element_limit > 0 && gb.size() > stop_.basis_element_limit) 
+    return COMP_DONE_GB_LIMIT;
+  if (stop_.pair_limit > 0 && n_pairs_computed > stop_.pair_limit)
+    return COMP_DONE_PAIR_LIMIT;
+  if (stop_.just_min_gens && n_gens_left == 0)
+    return COMP_DONE_MIN_GENS;
+  if (stop_.subring_limit > 0 && n_subring > stop_.subring_limit)
+    return COMP_DONE_SUBRING_LIMIT;
+  if (stop_.use_codim_limit)
+    {
+#warning "compute the codimension"
+      int c = 0; // replace this line
+      //int c = codim_of_lead_terms();
+      if (c >= stop_.codim_limit)
+	return COMP_DONE_CODIM;
+    }
+  return COMP_COMPUTING;
+}
+
+void LinearAlgebraGB::start_computation()
 {
   int npairs;
-  int is_done = COMP_COMPUTING;
-  M2_ring_make_current(C->R);
+  enum ComputationStatusCode is_done = COMP_COMPUTING;
 
   for (;;)
     {
-      system_spincursor();
-      if (system_interrupted) 
+      if (system_interruptedFlag) 
 	{
 	  is_done = COMP_INTERRUPTED;
 	  break;
 	}
 
-      is_done = is_computation_complete(C,Stop);
+      is_done = computation_is_complete();
       if (is_done != COMP_COMPUTING) break;
 
-      if (error())
+      this_degree = S.prepare_next_degree(-1, npairs);
+      
+      if (npairs == 0)
 	{
-	  log_error();
-	  is_done = COMP_ERROR;
+	  is_done = COMP_DONE;
 	  break;
 	}
-      
-      /* If we need to move to the next degree, do it. */
-      if (C->S->n_in_degree  == 0)
+      if (stop_.stop_after_degree && this_degree > stop_.degree_limit->array[0])
 	{
-	  npairs = SPairSet_prepare_next_degree(C->S, &C->this_degree);
-
-	  if (npairs == 0)
-	    {
-	      is_done = COMP_DONE;
-	      break;
-	    }
-	  if (Stop->degree && C->this_degree > Stop->degree_limit)
-	    {
-	      is_done = COMP_DONE_DEGREE_LIMIT;
-	      break;
-	    }
-	  fprintf(stdout, "DEGREE %d (npairs %d)\n", C->this_degree, npairs);
+	  is_done = COMP_DONE_DEGREE_LIMIT;
+	  break;
 	}
+      fprintf(stdout, "DEGREE %d (npairs %d)\n", this_degree, npairs);
 
       s_pair_step();
     }
-  return is_done;
+  set_status(is_done);
 }
+
+// Local Variables:
+//  compile-command: "make -C $M2BUILDDIR/Macaulay2/e/linalgGB "
+//  End:
