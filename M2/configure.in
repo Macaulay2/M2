@@ -7,6 +7,12 @@ AC_INIT(Macaulay2.LSM)
 # 5 compiler messages saved in config.log
 # 6 checking for... messages and results
 
+if make -n --version nothing | grep GNU >/dev/null 2>&1
+then :
+else echo "`basename $0`: make: GNU make is required" >&2
+     exit 1
+fi
+
 VERSION="`cat $srcdir/version`"
 AC_SUBST(VERSION)
 AC_DEFINE_UNQUOTED(VERSION,"$VERSION",version number)
@@ -75,7 +81,7 @@ case "$GMP" in
 	then GMPLIB=/opt/lib/libgmp.a
 	elif test -f /usr/local/lib/libgmp.a
 	then GMPLIB=/usr/local/lib/libgmp.a
-	else echo "configure: error: can't find libgmp.a" >&2; exit 1
+	else echo "`basename $0`: libgmp.a: can't find file" >&2; exit 1
 	fi
 	;;
    *) echo configure: error: unrecognized value --with-gmp="$withval" >&2; exit 1 ;;
