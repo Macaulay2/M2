@@ -352,13 +352,13 @@ fixupTable := new HashTable from {
      Description => extractExamples @@ hypertext,
      Caveat => v -> if v =!= null then fixup SEQ { PARA BOLD "Caveat", SEQ v },
      SeeAlso => v -> if v =!= {} and v =!= null then fixup SEQ { PARA BOLD "See also", UL (TO \ enlist v) },
-     Menu => keys -> apply(keys,key -> formatDocumentTag normalizeDocumentTag key)
+     Menu => identity
      }
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
 theMenu := key -> (
      r := getOption(key,Menu);
-     if r =!= null then SEQ { PARA BOLD "Menu", UL (TO \ r)})
+     if r =!= null then SEQ prepend(PARA BOLD "Menu", apply(r, x -> if class x === TO then UL{x} else PARA{x})))
 documentOptions := new HashTable from {
      Key => true,
      FormattedKey => true,
@@ -1010,6 +1010,18 @@ tex MarkUpList := x -> concatenate apply(x,tex)
 net MarkUpList := x -> horizontalJoin apply(x,net)
 texMath MarkUpList := x -> concatenate apply(x,texMath)
 mathML MarkUpList := x -> concatenate apply(x,mathML)
+
+sublists = (x,f) -> (
+     p := positions(x, f);			    -- these ones have to stand as independent paragraphs, the ones in between can be joined horizontally
+     x = select(
+	  apply(
+	       mingle(
+		    apply( prepend(-1,p), append(p,#x), (i,j) -> {i+1,j-1}),
+		    apply( p, i -> {i,i} )),
+	       i -> take(x,i)),
+	  s -> #s>0);
+     x = apply(x, i -> horizontalJoin \\ net \ i);
+     net new ParagraphList from between("",x))
 
 net SEQ := net PARA := net Hypertext := x -> (					    -- we have to be prepared for a mixture of vertical and horizontal items
      x = toList x;

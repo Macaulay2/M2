@@ -92,7 +92,6 @@ document {
      Key => List,
      Headline => "the class of all lists -- {...}",
      SeeAlso => "lists",
-     PARA,
      "Common operations on lists:",
      UL {
 	  TO "append",
