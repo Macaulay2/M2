@@ -281,7 +281,13 @@ LIBRARYOPTIONS += -lgc -ldl
 endif
 
 LIBRARYOPTIONS += -lgdbm
+
+ifeq ($(OS),Darwin)
+LIBRARYOPTIONS += -lreadline -lhistory
+else
 LIBRARYOPTIONS += -lreadline -lhistory -lcurses
+endif
+
   # we successfully avoid using streamio, but we need the personality function in libstc++
 LIBRARYOPTIONS += -lstdc++
 LIBRARYOPTIONS += -lm
