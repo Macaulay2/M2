@@ -427,7 +427,7 @@ checkForExampleOutputFile := () -> (
 
 extractExamples            := method(SingleArgumentDispatch => true)
 extractExamples Thing      := x -> {}
-extractExamples EXAMPLE    := x -> toList x
+extractExamples EXAMPLE    := x -> select(toList x,e -> e =!= null)
 extractExamples MarkUpList := x -> join apply(toSequence x, extractExamples)
 
 processExample := x -> (
