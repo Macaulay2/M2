@@ -135,7 +135,7 @@ AC_ARG_ENABLE(memdebug,[  --enable-memdebug       enable memory allocation debug
 
 OPTIMIZE=yes
 AC_SUBST(OPTIMIZE)
-AC_ARG_ENABLE(profile,[  --disable-optimize      disable optimization],OPTIMIZE="$enableval")
+AC_ARG_ENABLE(optimize,[  --disable-optimize      disable optimization],OPTIMIZE="$enableval")
 
 STRIP=yes
 AC_SUBST(STRIP)
