@@ -10,3 +10,8 @@ assert(f === flatten f)
 
 -- make sure alarms are turned off after an error
 try ( alarm 1 ; error "" ) else sleep 3
+
+-- test regexp
+assert( matches ( "^(.*[^ ]|) *$", " abcdef " ) === {(0, 8), (0, 7)} )
+assert( matches ( "^ *(.*[^ ]|) *$", " abcdef " ) === {(0, 8), (1, 6)} )
+assert( matches ( "^ *(.*)$", " abcdef " ) === {(0, 8), (1, 7)} )
