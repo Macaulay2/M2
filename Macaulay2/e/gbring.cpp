@@ -980,6 +980,17 @@ void GBRing::gbvector_auto_reduce(const FreeModule *F,
       gbvector_add_to(F,f,g1);
       gbvector_add_to(Fsyz,fsyz,gsyz1);
       gbvector_remove_content(f,fsyz);
+
+      if (gbTrace == 10)
+	{
+	  buffer o;
+	  o << "auto reducing by ";
+	  gbvector_text_out(o, F, g);
+	  o << "\n  --  giving ";
+	  gbvector_text_out(o, F, f);
+	  emit_line(o.str());
+	}
+
     }
 }
 

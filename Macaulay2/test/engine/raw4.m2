@@ -89,13 +89,15 @@ m
 
 m * mchange
 -- Test 5. -- Semi-random cubics
+needs "raw-util.m2"
+R2 = polyring(rawQQ(), symbol a .. symbol f)
 M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
 Gcomp = rawGB(M,false,0,{0},false,0,0,0)
 rawStartComputation Gcomp
-mgb = rawGBGetMatrix Gcomp
+mgb = rawGBGetMatrix Gcomp ;
 Gcomp = rawGB(M,false,0,{0},false,0,1,0)
 rawStartComputation Gcomp
-mgb = rawGBGetMatrix Gcomp
+mgb = rawGBGetMatrix Gcomp -- I get warnings from gc here...
 
 rawGBGetLeadTerms(Gcomp,6)
 
@@ -104,7 +106,7 @@ R2 = polyring(rawZZp(101), symbol a .. symbol f)
 M = mat {{(5*a+b+3*c)^10, (3*a+17*b+4*d)^10, (9*b+13*c+12*d)^10}}
 Gcomp = rawGB(M,false,0,{0},false,0,0,0)
 rawStartComputation Gcomp  -- crashes due to bad access in spair_sorter
-mgb = rawGBGetMatrix Gcomp
+mgb = rawGBGetMatrix Gcomp;
 Gcomp = rawGB(M,false,0,{0},false,0,1,0)
 rawStartComputation Gcomp
 mgb = rawGBGetMatrix Gcomp
@@ -118,7 +120,7 @@ mmin = rawGBMinimalGenerators Gcomp
 msyz = rawGBSyzygies Gcomp
 
 --- Tests for gbA: inhomogeneous and local
-load "raw-util.m2"
+needs "raw-util.m2"
 R1 = polyring(rawQQ(), (x,y,z))
 algorithm = 1
 
@@ -159,7 +161,7 @@ rawStartComputation G1
 gb1 = rawGBGetMatrix G1
 ch1 = rawGBChangeOfBasis G1
 f2 = rawGBSyzygies G1
-assert(f1 * ch1 - gb1 == 0) -- bad memory access CRASH
+assert(f1 * ch1 - gb1 == 0) 
 assert(f1 * f2 == 0)
 
 G2 = rawGB(f2,true,-1,{},false,0,algorithm,0)
@@ -200,7 +202,7 @@ rawStartComputation Gcomp
 m = rawGBGetMatrix Gcomp
 
 -- Koszul syzygies
-load "raw-util.m2"
+needs "raw-util.m2"
 R1 = rawPolynomialRing(rawQQ(), singlemonoid{x,y,z,w,t})
 x = rawRingVar(R1,0,1)
 y = rawRingVar(R1,1,1)
@@ -237,7 +239,7 @@ syz oo
 ooo * oo
 ///
 
-load "raw-util.m2"
+needs "raw-util.m2"
 algorithm = 1
 
 R1 = rawPolynomialRing(rawQQ(), elim({t},{a,b,c,d}))
@@ -248,7 +250,7 @@ c = rawRingVar(R1,3,1)
 d = rawRingVar(R1,4,1)
 G = mat{{b^4-13*a*c, 12*b*c^2-7*a*d^3, t*a-1}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
-rawStartComputation Gcomp -- Groebner basis -- infinite loop BUG!!
+rawStartComputation Gcomp -- Groebner basis
 m = rawGBGetMatrix Gcomp
 
 R2 = rawPolynomialRing(rawQQ(), lex{u,v,x,y,z})
@@ -259,9 +261,34 @@ y = rawRingVar(R2,3,1)
 z = rawRingVar(R2,4,1)
 G = mat{{x - 3*u-3*u*v^2+u^3, y-3*v-3*u^2*v+v^3, z-3*u^2+3*v^2}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+gbTrace = 4
 rawStartComputation Gcomp  -- Groebner basis -- infinite loop BUG!!
 time m = rawGBGetMatrix Gcomp
 rawGBGetLeadTerms(Gcomp,6)
+
+///
+R = ZZ/32003[u,v,x,y,z,t,MonomialOrder=>Lex]
+G = matrix{{x - 3*u-3*u*v^2+u^3, y-3*v-3*u^2*v+v^3, z-3*u^2+3*v^2}}
+G = homogenize(G,t)
+gens gb G
+///
+
+needs "raw-util.m2"
+algorithm = 1
+R2 = rawPolynomialRing(rawZZp(32003), lex{u,v,x,y,z})
+u = rawRingVar(R2,0,1)
+v = rawRingVar(R2,1,1)
+x = rawRingVar(R2,2,1)
+y = rawRingVar(R2,3,1)
+z = rawRingVar(R2,4,1)
+G = mat{{x - 3*u-3*u*v^2+u^3, y-3*v-3*u^2*v+v^3, z-3*u^2+3*v^2}}
+Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
+gbTrace = 4
+rawStartComputation Gcomp  -- Groebner basis -- WRONG!!
+time m = rawGBGetMatrix Gcomp
+rawGBGetLeadTerms(Gcomp,6)
+
+
 
 rawGB(oo,false,0,{},false,0,algorithm,0)
 rawStartComputation oo

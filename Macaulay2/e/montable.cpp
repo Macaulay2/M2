@@ -207,7 +207,9 @@ struct sorter : public binary_function<exponents,exponents,bool> {
     exponents yy = exps[y];
     for (int i=0; i<nvars; i++)
       if (xx[i] < yy[i]) return true;
+      else if (xx[i] > yy[i]) return false;
     if (comps[x] < comps[y]) return true;
+    else if (comps[x] > comps[y]) return false;
     return false;
   }
 };
@@ -218,7 +220,8 @@ void MonomialTable::minimalize(int nvars,
 			       bool keep_duplicates, 
 			       vector<int,gc_alloc> &result_positions)
 {
-  /* Step 1: Sort an intarray into ascending order.  In this order, if e divides f, then e should appear
+  /* Step 1: Sort an intarray into ascending order.  
+     In this order, if e divides f, then e should appear
      before f. Don't actually change 'exp'.  Need a special compare routine.  */
 
   /* Step 2: Make a monomial table. */

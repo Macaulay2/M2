@@ -92,7 +92,8 @@ Monoid::Monoid(monoid_info *moninf,  int nb)
   nwords = nweights + npacked_words;
 
   // MES: will the next line work correctly if nwords == 0?
-  monom_stash = new stash("packed monoms", nwords*sizeof(int));
+  //  monom_stash = new stash("packed monoms", nwords*sizeof(int));
+  monom_stash = 0;
 
   if (nvars != 0 && moninfo->use_packing)
     {
@@ -518,14 +519,16 @@ int Monoid::compare(int n, const int *m1, const int *m2) const
 int *Monoid::make_new(const int *d) const
 {
   if (nvars == 0) return NULL;
-  int *result = (int *) monom_stash->new_elem();
+  //int *result = (int *) monom_stash->new_elem();
+  int *result = newarray(int,nwords);
   copy(d, result);
   return result;
 }
 int *Monoid::make_one() const
 {
   if (nvars == 0) return NULL;
-  int *result = (int *) monom_stash->new_elem();
+  //int *result = (int *) monom_stash->new_elem();
+  int *result = newarray(int,nwords);
   one(result);
   return result;
 }

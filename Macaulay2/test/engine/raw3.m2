@@ -165,12 +165,13 @@ assert(f === sum apply(#cs, i -> rawTerm(R1,cs#i, ms#i)))
 
 A = polyring(rawZZ(), {symbol a, symbol b, symbol c})
 stderr << "warning: flattening not rewritten yet" << endl
--- B = polyring(A, {symbol x, symbol y, symbol z})
--- a = rawPromote(B,a)
--- ring a === B
--- b = rawPromote(B,b)
--- c = rawPromote(B,c)
--- f = (a+b+1)*(x^2-y*z^5-1) -- display is a bit off
+B = polyring(A, {symbol x, symbol y, symbol z})
+a = rawPromote(B,a)
+ring a === B
+b = rawPromote(B,b)
+c = rawPromote(B,c)
+f = (a+b+1)*(x^2-y*z^5-1) -- display is a bit off
+f^2
 -- rawFromNumber(B,3462346246246246263287642) * c
 -- assert(rawTermCount f === 3)
 -- assert(rawGetTerms(f,1,1) === (a+b+1)*x^2)
@@ -185,6 +186,22 @@ stderr << "warning: flattening not rewritten yet" << endl
 -- assert rawIsHomogeneous (a^100*x^2-b*x*z-z^2)
 -- rawHomogenize(a*x-y^3-1, 2, {1,1,1})
 
+--------------------------------------
+-- poly rings over other poly rings --
+--------------------------------------
+needs "raw-util.m2"
+A = polyring(rawZZ(), (symbol r, symbol s))
+B = rawPolynomialRing(A, singlemonoid(symbol x, symbol y, symbol z))
+C = rawPolynomialRing(B, singlemonoid(symbol X, symbol Y, symbol Z))
+X = C_0
+Y = C_1
+ring X === C
+x = rawPromote(C,B_0)
+ring x === C
+((1_C+x)*X+Y)^3
+r = rawPromote(C, rawPromote(B,A_0))
+s = rawPromote(C, rawPromote(B,A_1))
+(r+s+x+X)^3
 --------------------------
 -- free module routines --
 --------------------------
