@@ -11,7 +11,7 @@ local currentNodeName
 fixup := method(SingleArgumentDispatch => true)
 
 rawKey := "raw documentation"
-rawKeyDB := "raw documentation"
+rawKeyDB := "raw documentation database"
 fetchRawDocumentation := (pkg,fkey) -> (		    -- returns null if none
      d := pkg#rawKey;
      if d#?fkey then d#fkey
