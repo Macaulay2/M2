@@ -931,7 +931,7 @@ document { "Hilbert functions and free resolutions",
      care must be taken in interpreting the output.  Here, we just consider the
      standard grading case.",
      TOC {
-	  SECTION { "checking homogeniety",
+	  SECTION { "checking homogeneity",
 	       "Let's start by making a module over a ring with 18 variables",
 	       EXAMPLE {
 		    "R = ZZ/32003[vars(0..17)];",
