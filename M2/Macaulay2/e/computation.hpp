@@ -62,6 +62,12 @@ public:
 
   enum ComputationStatusCode status() { return computation_status; }
 
+  virtual int complete_thru_degree() const = 0;
+  // This is computation specific information.  However, for homogeneous
+  // GB's, the GB coincides with the actual GB in degrees <= the returned value.
+  // For resolutions of homogeneous modules, the resolution 
+  // coincides with the actual one in (slanted) degrees <= the returned value.
+
   virtual void start_computation() = 0;
   // Do the computation as specified by the stop conditions.
   // This routine should set the status of the computation.

@@ -277,10 +277,6 @@ vec res_poly::to_vector(const resterm *f, const FreeModule *F,
 
 resterm *res_poly::from_vector(const array<res_pair *> &base, const vec v) const
 {
-  // The 'base' and the freemodule of 'v' are assumed to be the same: same monomial order,
-  // same Schreyer monomials, etc.
-
-  // We will need to sort these after we collect them all...
   resterm head;
   resterm *result = &head;
   for (vecterm *w = v; w != NULL; w = w->next)
@@ -293,8 +289,9 @@ resterm *res_poly::from_vector(const array<res_pair *> &base, const vec v) const
 	M->copy(t->monom, result->monom);
 	M->mult(result->monom, result->comp->base_monom, result->monom);
     }
-  // Now we must sort these
   result->next = NULL;
+  // Now we must sort these
+  sort(result);
   return head.next;
 }
 

@@ -9,7 +9,7 @@
 #include "matrix.hpp"
 #include "monideal.hpp"
 #include "polyring.hpp"
-#include "comp.hpp"
+#include "comp_res.hpp"
 
 struct res2_pair;
 class res2_comp;
@@ -59,14 +59,14 @@ const int COMPUTE_MONORDER = 1;
 const int COMPUTE_MONOMIAL_RES = 2;
 const int COMPUTE_RES = 3;
 
-struct auto_reduce_node
+struct auto_reduce_node : public our_new_delete
 {
   auto_reduce_node *next;
   res2term *pivot;
   res2_pair *p;
 };
 
-struct res2_level
+struct res2_level : public our_new_delete
     // Collection of pairs all at same syzygy level
 {
   res2_pair *pairs;
@@ -84,7 +84,7 @@ struct res2_level
   res2_level() : pairs(NULL), npairs(0), nleft(0), nminimal(0) {}
 };
 
-class res2_comp : public mutable_object
+class res2_comp : public ResolutionComputation
 {
   // Base ring and input
   const PolynomialRing *P;
@@ -211,12 +211,12 @@ public:
 //////////////////////////////////////////////
 
   void increase_level(int newmax);
-  int skeleton(int level);
+  enum ComputationStatusCode skeleton(int level);
   void new_pairs(res2_pair *p);
-  int do_pairs(int level, int degree);
-  int do_all_pairs(int level, int degree);
-  int do_pairs_by_level(int level);
-  int do_pairs_by_degree(int level, int degree);
+  enum ComputationStatusCode do_pairs(int level, int degree);
+  enum ComputationStatusCode do_all_pairs(int level, int degree);
+  enum ComputationStatusCode do_pairs_by_level(int level);
+  enum ComputationStatusCode do_pairs_by_degree(int level, int degree);
 
   int calc(const int *DegreeLimit, 
 	   int LengthLimit, 
@@ -225,6 +225,12 @@ public:
 	   int SyzLimitValue,
 	   int SyzLimitLevel,
 	   int SyzLimitDegree);
+
+  bool stop_conditions_ok();
+
+  void start_computation();
+
+  int complete_thru_degree() const;
 
 //////////////////////////////////////////////
 //  Result matrices of the resolution ////////
@@ -241,6 +247,10 @@ public:
   Matrix *make(int i) const;
   Matrix *make_minimal(int i) const;
 
+  const MatrixOrNull *get_matrix(int level) { return make_minimal(level); }
+
+  const FreeModuleOrNull *get_free(int level) { return minimal_free_of(level); }
+
 //////////////////////////////////////////////
 //  Betti routines and numbers associated ////
 //  with the resolution                   ////
@@ -254,12 +264,13 @@ public:
 //////////////////////////////////////////////
 
   void betti_init(int lo, int hi, int len, int *&bettis) const;
-  void betti_make(int lo, int hi, int len, int *bettis, intarray &result) const;
 
-  void betti_skeleton(intarray &result) const;
-  void betti_remaining(intarray &result) const;
-  void betti_minimal(intarray &result) const;
-  void betti_nmonoms(intarray &result) const;
+  M2_arrayint betti_skeleton() const;
+  M2_arrayint betti_remaining() const;
+  M2_arrayint betti_minimal() const;
+  M2_arrayint betti_nmonoms() const;
+
+  const M2_arrayint get_betti(int type) const;
 
 //////////////////////////////////////////////
 //  Debugging ////////////////////////////////
@@ -270,7 +281,9 @@ public:
   void text_out() const;
 
   void text_out(buffer &o, const res2_pair *p) const;
-  void stats() const;
+  void stats();
+
+  void text_out(buffer &o);
 
 //////////////////////////////////////////////
 //  Infrastructure ///////////////////////////

@@ -24,6 +24,8 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 INTERFACE = \
+	respoly2 \
+	res2 \
 	comp_res \
 	res \
 	respoly \
@@ -89,8 +91,6 @@ INTERFACE = \
 
 
 STILLTOCOMPILE = \
-	respoly2 \
-	res2 \
 	newspair \
 	weylfree \
 	Eschreyer \

@@ -17,6 +17,9 @@ protected:
   // If the stop conditions in stop_ are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
+  M2_arrayint betti_make(int lo, int hi, int len, int *bettis) const;
+
+  void betti_display(buffer &o, const M2_arrayint a) const;
 public:
   virtual ResolutionComputation * cast_to_ResolutionComputation() { return this;} 
 
@@ -32,7 +35,7 @@ public:
 
   virtual void start_computation() = 0;
 
-  virtual int res_complete_thru_degree() = 0;
+  virtual int complete_thru_degree() const = 0;
   // The computation is complete up through this slanted degree.
 
   ////////////////////////////////

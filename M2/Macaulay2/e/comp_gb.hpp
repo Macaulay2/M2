@@ -53,7 +53,7 @@ public:
 
   virtual void start_computation() = 0;
 
-  virtual int gb_complete_thru_degree() = 0;
+  virtual int complete_thru_degree() const = 0;
   // The computation is complete up through this degree.
 
   // Recall that the status of the computation is maintained by the Computation class,

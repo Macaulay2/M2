@@ -863,7 +863,7 @@ bool res_comp::stop_conditions_ok()
   return true;
 }
 
-int res_comp::res_complete_thru_degree()
+int res_comp::complete_thru_degree() const
 {
   return n_degree-1;
 }

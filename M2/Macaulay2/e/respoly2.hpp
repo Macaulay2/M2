@@ -7,7 +7,7 @@
 #include "respair2.hpp"
 struct res2term;
 
-struct res2term
+struct res2term : public our_new_delete
 {
   res2term *next;
   res2_pair *comp;
@@ -15,7 +15,7 @@ struct res2term
   int monom[1];
 };
 
-class res2_poly
+class res2_poly : public our_new_delete
 {
   const PolynomialRing *R;
   const Monoid *M;
@@ -25,6 +25,7 @@ class res2_poly
 
   res2term *new_term() const;
 
+  void sort(res2term *&f) const;
 public:
   res2_poly(PolynomialRing *R);
   ~res2_poly();

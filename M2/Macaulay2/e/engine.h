@@ -1442,6 +1442,7 @@ enum gbTraceValues
      A betti diagram with all -1's is displayed.
   */
 
+  /* I don't know what this is supposed to do (mike) */
   int IM2_Resolution_status(Computation *G,
 		    int * complete_up_through_this_degree,
 		    int * complete_up_through_this_level); /* drg: TODO */
@@ -1453,13 +1454,12 @@ enum gbTraceValues
      4: finished the computation completely
   */
 
-  int IM2_Resolution_status_level(Computation *G, 
-			  int level, 
-			  M2_bool minimize,
-			  int * complete_up_through_this_degree); /* drg: connected rawResolutionStatusLevel */
-  /* Same return values */
-
-
+  enum ComputationStatusCode IM2_Resolution_status_level(Computation *G, 
+							 int level, 
+							 M2_bool minimize,
+							 int * complete_up_through_this_degree); 
+  /* WARNING: 'minimize' is completely ignored, and should be removed from the interface */
+  /* drg: connected rawResolutionStatusLevel */
   
   /**************************************************/
   /**** Fraction free LU decomposition **************/
