@@ -794,7 +794,7 @@ documentableMethods := s -> select(methods s,isDocumentableMethod)
 
 fmeth := f -> (
      b := documentableMethods f;
-     if #b > 0 then SEQ { PARA { "Ways to use ", TT toString f }, smenu b } )
+     if #b > 0 then SEQ { SUBSECTION { "Ways to use ", TT toString f }, smenu b } )
 
 noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == => true }
 briefDocumentation = method(SingleArgumentDispatch => true)
