@@ -466,7 +466,7 @@ new Module from Ring := (Module,R) -> (
      M := new Module of Vector;
      M.handle = newHandle ggdup;
      M.ring = R;
-     M.numgens = (sendgg gglength; eePopInt());
+     M.numgens = (sendgg if R.?newEngine then ggrank else gglength; eePopInt());
      M#0 = (sendgg(ggPush M, ggzero); new M);
      M)
 

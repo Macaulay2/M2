@@ -57,7 +57,6 @@ document { quote RingElement,
      }
 
 EngineRing = new Type of Ring
-NewEngineRing = new Type of EngineRing
 
 document { quote EngineRing,
      TT "EngineRing", " -- denotes the class of all special-purpose engine
@@ -118,25 +117,8 @@ new EngineRing from String := (EngineRing, ggcmds) -> (
 		    toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
 		    ) } );
      R.pop = () -> new R;
-     R#0 = 0_R;
-     R#1 = 1_R;
-     R)
-
-new NewEngineRing from List :=
-new NewEngineRing from Sequence :=
-new NewEngineRing from String := (NewEngineRing, ggcmds) -> (
-     R := new NewEngineRing of RingElement;
-     R.newEngine = true;
-     R.Engine = true;
-     R.handle = newHandle ggcmds;
-     new R from Handle := (R,h) -> new R from { (quote handle, h) };
-     new R := R -> newClass( R, hashTable { (
-		    quote handle, 
-		    toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
-		    ) } );
-     R.pop = () -> new R;
-     -- R#0 = 0_R;
-     -- R#1 = 1_R;
+     try R#0 = 0_R;
+     try R#1 = 1_R;
      R)
 
 TEST "
@@ -731,14 +713,11 @@ promote(RingElement, RingElement) := (r,o) -> (
 
 
 ZZ _ EngineRing := 
-promote(ZZ,EngineRing) := (i,R) -> new R from {(
-	  quote handle, 
-	  newHandle (ggPush R, ggINT, gg i, ggfromint))}
-
-ZZ _ NewEngineRing := 
-promote(ZZ,NewEngineRing) := (i,R) -> new R from {(
-	  quote handle, 
-	  newHandle (ggPush R, ggINT, gg i, ggfromint))}
+promote(ZZ,EngineRing) := (i,R) -> (
+     if R.?newEngine
+     then error "not implemented yet"
+     else new R from {( quote handle, newHandle (ggPush R, ggINT, gg i, ggfromint))}
+     )
 
 promote(ZZ,RingElement) := (i,o) -> promote(i, ring o)
 
