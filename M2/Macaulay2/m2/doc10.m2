@@ -20,7 +20,7 @@ document { Resolution,
     PARA,
     "Functions dealing with resolutions:",
     MENU {
-	 TO "status"
+	 TOH "status"
 	 }
     }
 
@@ -28,17 +28,7 @@ document { "res",
     "See ", TO "resolution", ", of which ", TT "res", " is a synonym."
     }
 
-document { resolution,
-     HEADLINE "make a projective resolution",
-     TT "resolution", " -- a command for producing resolutions.",
-     PARA,
-     "See one of the following entries.",
-     MENU {
-	  TO (resolution, Module),
-	  TO (resolution, Matrix),
-	  TO (resolution, Ideal)
-	  }
-     }
+document { resolution, HEADLINE "make a projective resolution" }
 
 document { resolution => DegreeLimit,
      HEADLINE "compute only up to this degree",
@@ -339,8 +329,8 @@ document { removeLowestDimension,
      }
 
 document { "component example",
-     "The following simple example illustrates the use of ", 
-     TO "removeLowestDimension", ",", TO "top", ",", TO "radical",
+     "The following simple example illustrates the use of 
+     ", TO "removeLowestDimension", ",", TO "top", ",", TO "radical",
      ", and ", TO "decompose", ".",
      EXAMPLE {
 	  "R = ZZ/32003[a..d];",
@@ -355,8 +345,8 @@ document { "component example",
      }
 
 document { "top-method",
-     "If M is a module in a polynomial ring R, then the implementations of ",
-     TO "top", " and ", TO "removeLowestDimension", " are based on 
+     "If M is a module in a polynomial ring R, then the implementations of 
+     ", TO "top", " and ", TO "removeLowestDimension", " are based on 
      the following observations:",
      MENU {
 	  "codim Ext^d(M,R) >= d, for all d (if the module is non-zero)",
@@ -744,8 +734,8 @@ document { Variety,
      NOINDENT,
      "Types of algebraic varieties:",
      MENU {
-	  TO "AffineVariety",
-	  TO "ProjectiveVariety",
+	  TOH "AffineVariety",
+	  TOH "ProjectiveVariety",
 	  },
      SEEALSO "CoherentSheaf"
      }
@@ -794,51 +784,8 @@ document { Proj,
      SEEALSO "ProjectiveVariety"
      }
 
-document { CoherentSheaf,
-     TT "CoherentSheaf", " -- the class of all coherent sheaves on varieties or schemes.",
-     PARA,
-     NOINDENT,
-     "Methods for making coherent sheaves:",
-     MENU {
-	  TO "OO",
-	  TO "sheaf",
-	  TO "cotangentSheaf",
-	  TO (symbol ~, Module),
-	  TO (symbol ~, Ring),
-	  },
-     PARA,
-     NOINDENT,
-     "Operations on coherent sheaves:",
-     MENU {
-	  TO variety,
-	  TO (ring, CoherentSheaf),
-	  TO (module, CoherentSheaf),
-	  TO (symbol ++, CoherentSheaf, CoherentSheaf),
-	  TO (symbol **, CoherentSheaf, CoherentSheaf),
-	  TO (symbol " ", CoherentSheaf, ZZ),
-	  TO (symbol /, CoherentSheaf, CoherentSheaf),
-	  TO annihilator,
-	  TO (codim, CoherentSheaf),
-	  TO (rank, CoherentSheaf),
-	  TO (exteriorPower, ZZ, CoherentSheaf),
-	  TO (degrees, CoherentSheaf),
-	  TO (cohomology,ZZ,CoherentSheaf),
-	  }
-     }
-
-document { sheaf,
-     TT "sheaf", " -- a function used for creating sheaves on varieties.",
-     PARA,
-     NOINDENT,
-     "Here are the ways to use it:",
-     MENU {
-	  TO (sheaf, Module),
-	  TO (sheaf, Ring),
-	  TO (sheaf, Module, Variety),
-	  },
-     SEEALSO "CoherentSheaf"
-     }
-
+document { CoherentSheaf, HEADLINE "the class of all coherent sheaves" }
+document { sheaf, HEADLINE "make a sheaf" }
 document { (sheaf, Module, Variety),
      TT "sheaf(M,X)", " -- produce the coherent sheaf on the variety ", TT "X", " corresponding
      to the module ", TT "M", ".",
@@ -886,14 +833,7 @@ document { (variety, CoherentSheaf),
      PARA,
      SEEALSO "CoherentSheaf"
      }
-document { variety,
-     TT "variety F", " -- produce the variety associated to ", TT "F", ".",
-     PARA,
-     MENU {
-	  TO (variety, CoherentSheaf),
-	  }
-     }
-
+document { variety, HEADLINE "make a variety" }
 document { (ring, CoherentSheaf),
      TT "ring F", " -- produce the coordinate ring of the variety on which a coherent sheaf
      ", TT "F", " is defined.",
@@ -1000,22 +940,10 @@ document { (cotangentSheaf, ProjectiveVariety),
      PARA,
      SEEALSO {"CoherentSheaf", (cotangentSheaf, ZZ, ProjectiveVariety)}
      }
-document { cotangentSheaf,
-     TT "cotangentSheaf", " -- a function used for producing the contangent sheaf
-     of a variety, or exterior powers of it.",
-     PARA,
-     MENU {
-	  TO (cotangentSheaf, ProjectiveVariety),
-	  TO (cotangentSheaf, ZZ, ProjectiveVariety),
-	  },
-     SEEALSO "CoherentSheaf"
-     }
-
+document { cotangentSheaf, HEADLINE "make a cotangent sheaf" }
 document { (cotangentSheaf, ZZ, ProjectiveVariety),
      TT "cotangentSheaf(p,X)", " -- calculate the ", TT "p", "-th exterior power of
-     the cotangent sheaf of a variety ", TT "X", ".",
-     PARA,
-     SEEALSO {"CoherentSheaf", (cotangentSheaf, ProjectiveVariety)}
+     the cotangent sheaf of a variety ", TT "X", "."
      }
 
 document { Options,

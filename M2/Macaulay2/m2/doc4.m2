@@ -243,9 +243,9 @@ document { Manipulator,
      PARA,
      "Examples:",
      MENU { 
-	  TO "endl",
-	  TO "flush",
-	  TO "close"
+	  TOH "endl",
+	  TOH "flush",
+	  TOH "close"
 	  }
      }
 
@@ -387,16 +387,16 @@ document { Database,
 	  },
      "Functions:",
      MENU {
-	  {TO "openDatabase", "    -- open a database file"},
-	  {TO "openDatabaseOut", " -- open a database file for writing"},
-	  {TO "close", "           -- close a database file"},
-	  {TO "#", " -- fetch or store in a database file"},
-	  {TO "#?", " -- query a database file"},
-	  {TO "firstkey", "        -- get the first key"},
-	  {TO "mutable", "         -- whether changes can be made"},
-	  {TO "nextkey", "         -- get the next key"},
-	  {TO "reorganize", "      -- compactify a database file"},
-	  {TO "scanKeys", "        -- apply a function to each key"}
+	  {TOH "openDatabase"},
+	  {TOH "openDatabaseOut"},
+	  {TOH "close"},
+	  {TOH "#"},
+	  {TOH "#?"},
+	  {TOH "firstkey"},
+	  {TOH "mutable"},
+	  {TOH "nextkey"},
+	  {TOH "reorganize"},
+	  {TOH "scanKeys"}
 	  }
      }
 
@@ -791,13 +791,7 @@ document { map,
      TT "map(Y,X,d)", " -- constructs a map to ", TT "Y", " from ", TT "X", " defined by data ", TT "d", ".",
      PARA,
      "This is intended to be a general mechanism for constructing maps
-     (homomorphisms) between objects in various categories.",
-     PARA,
-     "Installed methods:",
-     MENU {
-	  (TO "making ring maps"),
-	  (TO "making module maps")
-	  }
+     (homomorphisms) between objects in various categories."
      }
 document { precedence,
      TT "precedence x", " -- returns the parsing precedence of ", TT "x", " for use in
@@ -871,10 +865,10 @@ document { saturate,
 document { saturate => Strategy,
      "The strategy option value should be one of the following:",
     MENU {
-        (TO "Linear", "      -- use the reverse lex order"),
-	(TO "Iterate", "     -- use successive ideal quotients (the default)"),
-	(TO "Bayer", "       -- use the method in Bayer's thesis"),
-	(TO "Elimination", " -- compute the saturation ", TT "(I:f)", " by eliminating ", TT "z", " from ", TT "(I,f*z-1)", "")
+        (TOH "Linear", "      -- use the reverse lex order"),
+	(TOH "Iterate", "     -- use successive ideal quotients (the default)"),
+	(TOH "Bayer", "       -- use the method in Bayer's thesis"),
+	(TOH "Elimination", " -- compute the saturation ", TT "(I:f)", " by eliminating ", TT "z", " from ", TT "(I,f*z-1)", "")
         },
      }
 

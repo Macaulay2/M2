@@ -118,48 +118,48 @@ document { "programming",
      "Here are some useful programming constructs for controlling the flow 
      of execution.",
      MENU {
-	  (TO "apply", "  -- loop over a list, keeping results"),
-	  (TO "if", "     -- condition testing"),
-	  (TO "scan", "   -- loop over a list"),
-	  (TO "while", "  -- loop control"),
-	  (TO ";", "      -- statement separator")
+	  (TOH "apply"),
+	  (TOH "if"),
+	  (TOH "scan"),
+	  (TOH "while"),
+	  (TOH ";"),
 	  },
      "Controlling the scope of variables:",
      MENU {
-	  (TO ":=", "        -- assignment to and declaring a new local variable"),
-	  (TO "global", "    -- using global symbols which have values"),
-	  (TO "local", "     -- declaring new local symbols"),
-	  (TO "symbol", "     -- using symbols which have values")
+	  (TOH ":="),
+	  (TOH "global"),
+	  (TOH "local"),
+	  (TOH "symbol")
 	  },
      "Miscellaneous items:",
      MENU {
-	  (TO "--", "                -- introducing comments"),
-	  (TO "==>", "               -- process optional arguments to functions"),
-	  (TO "addEndFunction", "    -- do something upon exiting"),
-	  (TO "addStartFunction", "  -- do something after loading dumped data"),
-	  (TO "clearOutput", "       -- release some memory"),
-	  (TO "clearAll", "          -- release more memory"),
-	  (TO "Command", "           -- top level commands"),
-     	  (TO "erase", "             -- remove a symbol"),
-	  (TO "value", "             -- evaluate a string, symbol, or expression"),
-	  (TO "memoize", "           -- memoizing functions"),
-	  (TO "using methods", "     -- using methods"),
-	  (TO "notImplemented", "    -- 'not implemented yet' error message"),
-	  (TO "protect", "           -- protecting the value of a symbol"),
-	  (TO "runEndFunctions", "   -- run the ending functions"),
-	  (TO "runStartFunctions", " -- run the starting functions"),
-	  (TO "setrecursionlimit", " -- limits on recursion depth"),
+	  (TOH "--"),
+	  (TOH "==>"),
+	  (TOH "addEndFunction"),
+	  (TOH "addStartFunction"),
+	  (TOH "clearOutput"),
+	  (TOH "clearAll"),
+	  (TOH "Command"),
+     	  (TOH "erase"),
+	  (TOH "value"),
+	  (TOH "memoize"),
+	  (TOH "using methods"),
+	  (TOH "notImplemented"),
+	  (TOH "protect"),
+	  (TOH "runEndFunctions"),
+	  (TOH "runStartFunctions"),
+	  (TOH "setrecursionlimit"),
 	  SHIELD {
-	       (TO "syntax", "            -- the syntax of the language")
+	       (TO "syntax", " -- the syntax of the language")
 	       },
-	  (TO "value", "             -- getting values of symbols")
+	  (TOH "value")
 	  },
      "For internal use only:",
      MENU {
-	  (TO "lineNumber", "        -- the current line number"),
-	  (TO "lookupCount", "       -- how many times a symbol has been seen"),
-	  (TO "phase", "             -- internal variable for compilation"),
-	  (TO "runStartFunctions", " -- run the start functions")
+	  (TOH "lineNumber"),
+	  (TOH "lookupCount"),
+	  (TOH "phase"),
+	  (TOH "runStartFunctions")
 	  }
      }
 
@@ -215,36 +215,36 @@ document { Position,
 document { "debugging",
      "Here are some debugging tools.",
      MENU {
-	  (TO "assert", "           -- insist on something"),
-	  (TO "backtrace", "        -- trace the evaluation chain after an error"),
-	  (TO "benchmark", "        -- benchmark some code"),
-	  (TO "browse", "           -- examine a list or hash table"),
-	  (TO "code", "             -- display source code for a function"),
-	  (TO "currentFile", "      -- name of current source file"),
-	  (TO "edit", "             -- edit source code for a function"),
-	  (TO "error", "            -- signalling an error"),
-	  (TO "errorDepth", "       -- set the error depth"),
-	  (TO "examine", "          -- examine socpes bound in a closure"),
-	  (TO "flag", "             -- flag each use of a symbol"),
-	  (TO "frame", "            -- get frame for a function closure"),
-	  (TO "listUserSymbols", "  -- display global variables defined by user"),
-     	  (TO "locate", "           -- locate the source code of a function"),
-	  (TO "methods", "          -- find methods installed for a function"),
-	  (TO "on", "               -- trace entry into a function"),
-	  (TO "peek", "             -- print contents of something"),
-	  (TO "peek2", "            -- print contents of something to a certain depth"),
-	  (TO "profile", "          -- record run times for functions"),
-	  (TO "shield", "           -- shield interpreted code from interrupts"),
-	  (TO "showStructure", "    -- show class structure"),
-	  (TO "showUserStructure", "-- show user's class structure"),
-	  (TO "try", "              -- catching errors"),
-	  (TO "userSymbols", "      -- list global variables defined by user")
+	  (TOH "assert"),
+	  (TOH "backtrace"),
+	  (TOH "benchmark"),
+	  (TOH "browse"),
+	  (TOH "code"),
+	  (TOH "currentFile"),
+	  (TOH "edit"),
+	  (TOH "error"),
+	  (TOH "errorDepth"),
+	  (TOH "examine"),
+	  (TOH "flag"),
+	  (TOH "frame"),
+	  (TOH "listUserSymbols"),
+     	  (TOH "locate"),
+	  (TOH "methods"),
+	  (TOH "on"),
+	  (TOH "peek"),
+	  (TOH "peek2"),
+	  (TOH "profile"),
+	  (TOH "shield"),
+	  (TOH "showStructure"),
+	  (TOH "showUserStructure"),
+	  (TOH "try"),
+	  (TOH "userSymbols")
 	  },
      "These functions are for debugging the kernel interpreter itself, and
      are not intended for users.",
      MENU {
-	  (TO "buckets", "   -- display contents of buckets in a hash table"),
-	  TO "seeParsing"
+	  (TOH "buckets"),
+	  TOH "seeParsing"
 	  }
      }
 
@@ -318,21 +318,21 @@ document { "classes",
      PARA,
      "For more details, see one of the topics below.",
      MENU {
-	  TO "newClass",
-	  TO "new",
-	  TO "ancestor",
-	  TO "instance"
+	  TOH "newClass",
+	  TOH "new",
+	  TOH "ancestor",
+	  TOH "instance"
 	  },
      "For related topics, see one of the following.",
      MENU {
-	  TO "uniform",
-	  TO "Thing",
-	  TO "Nothing",
-	  TO "Type",
-	  TO "MutableList",
-	  TO "MutableHashTable",
-	  TO "MutableHashTable",
-	  TO "SelfInitializingType"
+	  TOH "uniform",
+	  TOH "Thing",
+	  TOH "Nothing",
+	  TOH "Type",
+	  TOH "MutableList",
+	  TOH "MutableHashTable",
+	  TOH "MutableHashTable",
+	  TOH "SelfInitializingType"
 	  }
      }
 
@@ -350,74 +350,74 @@ document { "mathematics",
      "Here we document the mathematical objects which form the heart of 
      the system.",
      MENU{
-	  TO "combinatorial functions",
-     	  TO "Set",
-	  TO "Monoid",
-	  TO "Ring",
-	  TO "Ideal",
-	  TO "Module",
-	  TO "ModuleMap",
-	  TO "Matrix",
-	  TO "GradedModule",
-	  TO "ChainComplex",
-	  TO "GroebnerBasis",
-	  TO "MonomialIdeal",
-	  TO "Variety",
-	  TO "CoherentSheaf",
+	  TOH "combinatorial functions",
+     	  TOH "Set",
+	  TOH "Monoid",
+	  TOH "Ring",
+	  TOH "Ideal",
+	  TOH "Module",
+	  TOH "ModuleMap",
+	  TOH "Matrix",
+	  TOH "GradedModule",
+	  TOH "ChainComplex",
+	  TOH "GroebnerBasis",
+	  TOH "MonomialIdeal",
+	  TOH "Variety",
+	  TOH "CoherentSheaf",
 	  }
      }
 
 document { "system",
      "Loading files:",
      MENU {
-	  TO "autoload",
+	  TOH "autoload",
 	  TO "initialization file",
-	  TO "input",
-	  TO "load",
-	  TO "needs"
+	  TOH "input",
+	  TOH "load",
+	  TOH "needs"
 	  },
      "Dumping and restoring the state of the system:",
      MENU {
-	  TO "dumpdata",
-	  TO "loaddata",
-	  TO "reloaded",
-	  TO "restart",
-	  TO "addStartFunction"
+	  TOH "dumpdata",
+	  TOH "loaddata",
+	  TOH "reloaded",
+	  TOH "restart",
+	  TOH "addStartFunction"
 	  },
      "Interface to the operating system:",
      MENU{
 	  TO "top level loop",
-	  TO "alarm",
-	  TO "currentDirectory",
-	  TO "exec",
-	  TO "exit",
-	  TO "fork",
-	  TO "getenv",
-	  TO "processID",
-	  TO "path",
-	  TO "pathSeparator",
-	  TO "quit",
-	  TO "run",
-	  TO "sleep",
-	  TO "time",
-	  TO "timing",
-	  TO "tmpname",
-	  TO "wait"
+	  TOH "alarm",
+	  TOH "currentDirectory",
+	  TOH "exec",
+	  TOH "exit",
+	  TOH "fork",
+	  TOH "getenv",
+	  TOH "processID",
+	  TOH "path",
+	  TOH "pathSeparator",
+	  TOH "quit",
+	  TOH "run",
+	  TOH "sleep",
+	  TOH "time",
+	  TOH "timing",
+	  TOH "tmpname",
+	  TOH "wait"
 	  },
      "Variables with information about the state of the current process:",
      MENU {
-	  TO "commandLine",
-	  TO "environment",
-	  TO "version"
+	  TOH "commandLine",
+	  TOH "environment",
+	  TOH "version"
 	  },
      "Miscellaneous commands:",
      MENU {
-	  TO "getWWW"
+	  TOH "getWWW"
 	  },
      "Dealing with the garbage collector:",
      MENU {
-	  TO "collectGarbage",
-	  TO "gcDump"
+	  TOH "collectGarbage",
+	  TOH "gcDump"
 	  }
      }
 
@@ -461,19 +461,19 @@ document { Field,
      PARA,
      "Some fields:",
      MENU {
-	  TO "QQ",
-	  TO "RR",
-	  TO "CC"
+	  TOH "QQ",
+	  TOH "RR",
+	  TOH "CC"
 	  },
      "Functions for creating fields:",
      MENU {
-	  TO "frac",
-	  TO "GF"
+	  TOH "frac",
+	  TOH "GF"
 	  },
      "Functions that can be applied to fields and rings:",
      MENU {
-	  TO "char",
-	  TO "isField"
+	  TOH "char",
+	  TOH "isField"
 	  },
      EXAMPLE "isField (ZZ/101)",
      SEEALSO "coefficientRing"
@@ -569,16 +569,16 @@ document { String,
      PARA,
      "Operations on strings:",
      MENU {
-	  (TO "String # ZZ", " -- getting a character from a string"),
-	  (TO "#", " -- length of a string"),
- 	  (TO (symbol |, String, String), "        -- concatenation"),
- 	  (TO "ascii", " -- ASCII conversion"),
- 	  (TO "substring", " -- substring extraction"),
- 	  (TO "concatenate", " -- concatenation"),
- 	  (TO "characters", " -- extraction of characters"),
-	  (TO "unhex", "      -- translate key strings from web browsers"),
- 	  (TO "transnet", "   -- convert integers into network order"),
-	  (TO "match", "      -- match patterns")
+	  (TOH "String # ZZ"),
+	  (TOH "#"),
+ 	  (TOH (symbol |, String, String), "        -- concatenation"),
+ 	  (TOH "ascii"),
+ 	  (TOH "substring"),
+ 	  (TOH "concatenate"),
+ 	  (TOH "characters"),
+	  (TOH "unhex"),
+ 	  (TOH "transnet"),
+	  (TOH "match")
  	  }
      }
 
@@ -635,19 +635,19 @@ document { Net,
      PARA,
      "Operations on nets:",
      MENU {
-	  TO (symbol |, String, String),
-	  TO (symbol ||, Net, Net),
-	  TO (symbol ^,Net, ZZ),
-	  TO "depth",
-	  TO "height",
-	  TO "horizontalJoin",
-	  TO "netRows",
-	  TO "stack",
-	  TO "width",
+	  TOH (symbol |, String, String),
+	  TOH (symbol ||, Net, Net),
+	  TOH (symbol ^,Net, ZZ),
+	  TOH "depth",
+	  TOH "height",
+	  TOH "horizontalJoin",
+	  TOH "netRows",
+	  TOH "stack",
+	  TOH "width",
 	  },
      "Formatting expressions:",
      MENU {
-	  TO "net"
+	  TOH "net"
 	  },
      SEEALSO "String"
      }
@@ -761,11 +761,11 @@ document { class,
 
 document { "combinatorial functions",
      MENU {
-	  (TO "random", "               -- random real number or integer"),
-	  (TO "binomial", "             -- binomial coefficients"),
-	  (TO "subsets", "              -- subsets"),
-	  (TO "tally", "                -- tally occurrences in a list"),
-	  (TO "partitions", "           -- partitions of an integer")
+	  (TOH "random"),
+	  (TOH "binomial"),
+	  (TOH "subsets"),
+	  (TOH "tally"),
+	  (TOH "partitions")
 	  }
      }
 
@@ -797,8 +797,8 @@ document { "top level loop",
      unless the printing is to be suppressed, as indicated by a semicolon at the end
      of the statement, in which case the ", TO "NoPrint", " method is applied.",
      MENU {
-	  TO "Print",
-	  TO "NoPrint"
+	  TOH "Print",
+	  TOH "NoPrint"
 	  }
      }
 
@@ -814,9 +814,9 @@ document { BasicList,
      PARA,
      "Other types of list:",
      MENU {
-	  TO "Array",
-	  TO "List",
-	  TO "MutableList"
+	  TOH "Array",
+	  TOH "List",
+	  TOH "MutableList"
 	  },
      }
 
@@ -841,22 +841,22 @@ document { Boolean,
      PARA,
      "Functions dealing with truth values.",
      MENU {
-	  (TO "not", "     -- negation"),
-	  (TO "and", "     -- conjunction"),
-	  (TO "or", "      -- disjunction"),
-	  (TO "if", "      -- condition testing"),
-	  (TO "select", "  -- selection of elements"),
-	  (TO "while", "   -- loop control")
+	  (TOH "not"),
+	  (TOH "and"),
+	  (TOH "or"),
+	  (TOH "if"),
+	  (TOH "select"),
+	  (TOH "while")
 	  }
      }
 
 document { "numbers",
      "There are four types of numbers:",
      MENU {
-	  (TO "CC", " -- the class of complex numbers."),
-	  (TO "QQ", " -- the class of rational numbers."),
-	  (TO "RR", " -- the class of real numbers."),
-	  (TO "ZZ", " -- the class of integers.")
+	  (TOH "CC"),
+	  (TOH "QQ"),
+	  (TOH "RR"),
+	  (TOH "ZZ")
 	  },
      "Operations on numbers:",
      MENU {
@@ -866,14 +866,14 @@ document { "numbers",
 	  },
      "Standard predefined numbers:",
      MENU {
-          (TO "pi", " -- pi."),
-          (TO "ii", " -- the square root of -1.")
+          (TOH "pi"),
+          (TOH "ii")
 	  },
      "Some other quantities which are not quite numbers:",
      MENU {
-	  TO "infinity",
+	  TOH "infinity",
 	  TO "-infinity",
-	  TO "indeterminate"
+	  TOH "indeterminate"
 	  }
      }
 
@@ -904,70 +904,69 @@ document { File,
      PARA,
      "Some standard files, already open:",
      MENU {
-          (TO "stdio", "    -- standard input output file"),
-          (TO "stderr", "   -- standard error output file")
+          (TOH "stdio"),
+          (TOH "stderr")
 	  },
      "Ways to create new files:",
      MENU {
-          (TO "openIn", "        -- open an input file"),
-          (TO "openOut", "       -- open an output file"),
-          (TO "openInOut", "     -- open an input output file"),
-          (TO "openListener", "  -- open a listener"),
+          (TOH "openIn"),
+          (TOH "openOut"),
+          (TOH "openInOut"),
+          (TOH "openListener"),
 	  },
      "Ways to change the state of files:",
      MENU {
-	  (TO "echoOff", " -- set echoing off"),
-	  (TO "echoOn", "  -- set echoing on"),
+	  (TOH "echoOff"),
+	  (TOH "echoOn"),
 	  },
      "Input operations:",
      MENU {
-          (TO "getc", "        -- get one character from a file"),
-          (TO "get", "         -- get contents of a file"),
-	  (TO "read", "        -- get some bytes from a file"),
-	  (TO "atEndOfFile", " -- whether the file is at the end"),
-	  (TO "isReady", "     -- whether data is available from a file, or it's at the end"),
+          (TOH "getc"),
+          (TOH "get"),
+	  (TOH "read"),
+	  (TOH "atEndOfFile"),
+	  (TOH "isReady"),
 	  },
      "Further processing for data obtained from a file:",
      MENU {
-          (TO "lines", "    -- split a string into lines")
+          (TOH "lines")
 	  },
      "Output operations:",
      MENU {
-          (TO "<<", "         -- print to file"),
-	  (TO "endl", "       -- end a line"),
-          (TO "flush", "      -- flush a file"),
-	  -- (TO "netscape", "   -- call netscape to display an expression"),
-	  (TO "printString", "  -- print a generalized string"),
-          (TO "print", "      -- print an expression on a line"),
-	  (TO "TeX", "        -- call TeX to display an expression")
+          (TOH "<<"),
+	  (TOH "endl"),
+          (TOH "flush"),
+	  (TOH "printString"),
+          (TOH "print"),
+	  (TOH "TeX")
 	  },
      "Preparing expressions for output:",
      MENU {
-          TO "columnate",
-	  TO "expression",
-	  TO "format",
-          {TO "null", "     -- a symbol which doesn't print"},
-          TO "pad",
-	  TO "tex",
-	  TO "toExternalString",
-	  TO "toString"
+          TOH "columnate",
+	  TOH "expression",
+	  TOH "format",
+          {TOH "null"},
+          TOH "pad",
+	  TOH "tex",
+	  TOH "toExternalString",
+	  TOH "toString"
 	  },
      "Destroying files:",
      MENU {
-          {TO "close", "    -- close a file"},
-          {TO "closeIn", "  -- close a file for input"},
-          {TO "closeOut", " -- close a file for output"},
-	  {TO "kill", "     -- kill a process associated with a file"},
+          {TOH "close"},
+          {TOH "closeIn"},
+          {TOH "closeOut"},
+	  {TOH "kill"},
 	  },
      "Information about files",
      MENU { 
-	  {TO "width", "           -- width of a terminal"},
-          {TO "openFiles", "       -- list open files"},
-	  {TO "isOpenFile", "      -- whether it's an open file"},
-	  {TO "isInputFile", "     -- whether it's an input file"},
-	  {TO "isOutputFile", "    -- whether it's an output file"},
-	  {TO "isListener", "      -- whether it's a listener"},
-	  {TO "connectionCount", " -- number of connections accepted by a listener"},
+	  {TOH "width"},
+          {TOH "openFiles"},
+	  {TOH "isOpenFile"},
+	  {TOH "isInputFile"},
+	  {TOH "isOutputFile"},
+	  {TOH "isListener"},
+	  {TOH "connectionCount"},
 	  },
      }
 
@@ -1013,30 +1012,30 @@ document { "help functions",
      NOINDENT,
      "Functions for accessing the documentation:",
      MENU {
-	  TO "apropos",
-	  TO "briefDocumentation",
-	  TO "documentation",
-	  TO "examples",
-	  TO "help", 
-	  TO "topicList", 
-	  TO "topics"
+	  TOH "apropos",
+	  TOH "briefDocumentation",
+	  TOH "documentation",
+	  TOH "examples",
+	  TOH "help", 
+	  TOH "topicList", 
+	  TOH "topics"
 	  },
      "How to write documentation yourself:",
      MENU {
-	  TO "document",
-	  TO "hypertext",
+	  TOH "document",
+	  TOH "hypertext",
 	  },
      "Output formatting routines:",
      MENU {
-	  TO "html",
-	  TO "mathML",
-	  TO "tex",
-	  TO "text",
+	  TOH "html",
+	  TOH "mathML",
+	  TOH "tex",
+	  TOH "text",
 	  },
      "Some internals:",
      MENU {
-	  TO "Documentation",
-	  TO "phase",
+	  TOH "Documentation",
+	  TOH "phase",
 	  },
      SEEALSO "reading the documentation"
      }
@@ -1045,52 +1044,52 @@ document { "arithmetic functions",
      "These arithmetic functions act on numbers, but some of them
      are also act on more abstract entities, such as polynomials.",
      MENU {
-	  (TO "+", "          -- addition"),
-	  (TO "plus", "       -- addition"),
-	  (TO "-", "          -- subtraction and minus"),
-	  (TO "minus", "      -- minus"),
-	  (TO "difference", " -- subtraction"),
-          (TO "*", "          -- multiplication"),
-          (TO "times", "      -- multiplication"),
-          (TO "/", "          -- division"),
-          (TO "//", "         -- quotient"),
-          (TO "\\\\", "         -- left quotient"),
-          (TO "%", "          -- remainder"),
-	  (TO "mod", "        -- reduction modulo n"),
-          (TO "^", "          -- power"),
-          (TO "power", "      -- power"),
-          (TO "!", "          -- factorial"),
-          (TO "xor", "        -- bitwise EXCLUSIVE OR of two integers"),
-          (TO "&", "          -- bitwise AND of two integers"),
-          (TO "|", "          -- bitwise OR of two integers"),
-          (TO "<<", "         -- shift bits"),
-          (TO ">>", "         -- shift bits"),
-          (TO "gcd", "        -- greatest common divisor"),
-          (TO "odd", "        -- predicate for odd integers"),
-          (TO "even", "       -- predicate for even integers"),
-          (TO "ceiling", "    -- ceiling"),
-          (TO "floor", "      -- floor"),
-	  (TO "isPrime", "    -- primality test"),
-	  (TO "factor", "     -- factor"),
-          (TO "Numeric", "    -- numeric conversion")
+	  (TOH "+"),
+	  (TOH "plus"),
+	  (TOH "-"),
+	  (TOH "minus"),
+	  (TOH "difference"),
+          (TOH "*"),
+          (TOH "times"),
+          (TOH "/"),
+          (TOH "//"),
+          (TOH "\\\\"),
+          (TOH "%"),
+	  (TOH "mod"),
+          (TOH "^"),
+          (TOH "power"),
+          (TOH "!"),
+          (TOH "xor"),
+          (TOH "&"),
+          (TOH "|"),
+          (TOH "<<"),
+          (TOH ">>"),
+          (TOH "gcd"),
+          (TOH "odd"),
+          (TOH "even"),
+          (TOH "ceiling"),
+          (TOH "floor"),
+	  (TOH "isPrime"),
+	  (TOH "factor"),
+          (TOH "Numeric")
 	  }
      }
 
 document { "transcendental functions",
      MENU {
-	  (TO "abs", "   -- absolute value"),
-	  (TO "sin", "   -- sine"),
-	  (TO "cos", "   -- cosine"),
-	  (TO "tan", "   -- tangent"),
-	  (TO "asin", "  -- arcsine"),
-	  (TO "acos", "  -- arccosine"),
-	  (TO "atan", "  -- arctangent"),
-	  (TO "sinh", "  -- hyperbolic sine"),
-	  (TO "cosh", "  -- hyperbolic cosine"),
-	  (TO "tanh", "  -- hyperbolic tangent"),
-	  (TO "exp", "   -- exponential"),
-	  (TO "log", "   -- logarithm"),
-	  (TO "sqrt", "  -- square root")
+	  (TOH "abs"),
+	  (TOH "sin"),
+	  (TOH "cos"),
+	  (TOH "tan"),
+	  (TOH "asin"),
+	  (TOH "acos"),
+	  (TOH "atan"),
+	  (TOH "sinh"),
+	  (TOH "cosh"),
+	  (TOH "tanh"),
+	  (TOH "exp"),
+	  (TOH "log"),
+	  (TOH "sqrt")
 	  }
      }
 

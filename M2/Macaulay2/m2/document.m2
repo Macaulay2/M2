@@ -210,6 +210,7 @@ OL         = new MarkUpType
 NL         = new MarkUpType
 DL 	   = new MarkUpType
 TO         = new MarkUpType
+TOH        = new MarkUpType
 
 MarkUpList ^ MarkUpList := (x,y) -> SEQ{x,SUP y}
 MarkUpList _ MarkUpList := (x,y) -> SEQ{x,SUB y}
@@ -240,6 +241,7 @@ fixup List       := z -> SEQ apply(z, fixup)		    -- {...} becomes SEQ{...}
 fixup Sequence   := z -> SEQ toList apply(z, fixup)	    -- (...) becomes SEQ{...}
 fixup MarkUpList := z -> apply(z,fixup)			    -- recursion
 fixup TO         := z -> z				    -- TO{x}
+fixup TOH        := z -> z				    -- TOH{x}
 fixup MarkUpType := z -> z{}				    -- convert PARA to PARA{}
 fixup Thing      := z -> error("unrecognizable item inside documentation: ", toString z)
 
@@ -362,11 +364,8 @@ noBriefDocThings := hashTable { symbol <  => true, symbol >  => true, symbol == 
 noBriefDocClasses := hashTable { String => true, Option => true, Sequence => true }
 briefDocumentation = x -> (
      if noBriefDocClasses#?(class x) or noBriefDocThings#?x then null
-     else (
-	 d := headline x;
-	 if d =!= null then << endl << d << endl
-	 )
-    )
+     else if headline x =!= null then << endl << headline x << endl
+     )
 
 smenu := s -> MENU ((i -> SEQ{ TO i, headline i }) \ sort (formatDocumentTag \ s))
 menu := s -> MENU apply(s, i -> SEQ{ TO formatDocumentTag i, headline i } )
@@ -1025,9 +1024,16 @@ text DL   := x -> concatenate(
 
 texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
 texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
+
 net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
 html TO := x -> concatenate ( "<A HREF=\"", "\">", html formatDocumentTag x#0, "</A>", drop(toList x,1) )
 tex  TO := x -> tex TT formatDocumentTag x#0
+
+net  TOH := x -> net  SEQ{ new TO from x, headline x }
+text TOH := x -> text SEQ{ new TO from x, headline x }
+html TOH := x -> html SEQ{ new TO from x, headline x }
+tex  TOH := x -> tex  SEQ{ new TO from x, headline x }
+
 html LITERAL := x -> x#0
 html EmptyMarkUpType := html MarkUpType := X -> html X{}
 html ITALIC := htmlMarkUpType "I"

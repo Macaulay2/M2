@@ -213,42 +213,42 @@ document { HashTable,
      PARA,
      "Access functions:",
      MENU {
- 	  TO "#",
- 	  TO ".",
- 	  TO "pairs",
- 	  TO "keys",
- 	  TO "values"
+ 	  TOH "#",
+ 	  TOH ".",
+ 	  TOH "pairs",
+ 	  TOH "keys",
+ 	  TOH "values"
  	  },
      "Query functions:",
      MENU {
- 	  TO "#?",
- 	  TO ".?",
-	  TO "mutable"
+ 	  TOH "#?",
+ 	  TOH ".?",
+	  TOH "mutable"
  	  },
      "Structural functions:",
      MENU {
- 	  TO "copy",
-	  TO "remove"
+ 	  TOH "copy",
+	  TOH "remove"
  	  },
      "Other functions:",
      MENU {
- 	  TO "applyKeys",
- 	  TO "applyPairs",
- 	  TO "combine",
-	  TO "hashTable",
- 	  TO "merge",
-     	  TO "new",
-	  TO (NewFromMethod, HashTable, List),
-	  TO "scanKeys",
- 	  TO "scanPairs",
-	  TO "scanValues",
-	  TO "select"
+ 	  TOH "applyKeys",
+ 	  TOH "applyPairs",
+ 	  TOH "combine",
+	  TOH "hashTable",
+ 	  TOH "merge",
+     	  TOH "new",
+	  TOH (NewFromMethod, HashTable, List),
+	  TOH "scanKeys",
+ 	  TOH "scanPairs",
+	  TOH "scanValues",
+	  TOH "select"
  	  },
      "Examining hash tables:",
      MENU {
-	  TO "browse",
-	  TO "peek",
-	  TO "peek2",
+	  TOH "browse",
+	  TOH "peek",
+	  TOH "peek2",
 	  }
      }
 
@@ -643,8 +643,8 @@ document { symbol "^",
      PARA,
      "When computing powers, one of the following methods is used.",
      MENU {
-	  TO "SimplePowerMethod",
-	  TO "BinaryPowerMethod"
+	  TOH "SimplePowerMethod",
+	  TOH "BinaryPowerMethod"
 	  },
      NOINDENT, "In addition, if n is 0, then the unit element 
      ", TT "(class x)#1", " is returned.  If n is negative, then the method

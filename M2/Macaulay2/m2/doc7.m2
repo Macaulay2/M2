@@ -229,8 +229,8 @@ document { inducedMap,
      PARA,
      "Options: ",
      MENU {
-	  TO (inducedMap => Verify),
-	  TO (inducedMap => Degree)
+	  TOH (inducedMap => Verify),
+	  TOH (inducedMap => Degree)
 	  },
      SEEALSO "inducesWellDefinedMap"
      }
@@ -245,7 +245,7 @@ document { Verify,
      that a map is well defined.",
      PARA,
      MENU {
-	  TO (inducedMap => Verify)
+	  TOH (inducedMap => Verify)
 	  }
      }
 
@@ -279,30 +279,7 @@ document { matrix,
      SEEALSO {"map"}
      }
 
-document { "making module maps",
-     "There are several different ways to use ", TO "map", " to make maps
-     maps between modules.  In all case, if a matrix is provided, and the
-     modules are subquotient modules, then the matrix is understood to be
-     formed with respect to generators of the subquotient modules.",
-     PARA,
-     MENU {
-	  TO (map,Matrix),
-	  TO (map,Module),
-       	  TO (map,Module,Module),
-       	  TO (map,Module,Module,List),
-       	  TO (map,Module,Module,Function),
-       	  TO (map,Module,Module,Matrix),
-       	  TO (map,Module,RingElement),
-       	  TO (map,Module,Nothing,List),
-       	  TO (map,Module,ZZ,List),
-       	  TO (map,Module,ZZ,Function),
-       	  TO (map,Module,Matrix),
-	  TO (map,Module,Module,RingElement),
-	  TO (map,Module,Module,ZZ),
-	  TO (map,ChainComplex,ChainComplex,Function),
-	  },
-     SEEALSO {"map", "matrix"}
-     }
+
 
 document { (map,Matrix),
      TT "map(f, Degree => d)", " -- make a map of degree d from a map f
@@ -586,9 +563,9 @@ document { subquotient,
      PARA,
      "Functions:",
      MENU {
-	  {TO "generators", " -- recover the generators"},
-	  {TO "relations", "  -- recover the relations"},
-	  {TO "prune", "      -- convert to a module with presentation"}
+	  {TOH "generators"},
+	  {TOH "relations"},
+	  {TOH "prune"}
 	  },
      "This is the general form in which modules are represented, and
      subquotient modules are often returned as values of computations.",
@@ -650,25 +627,25 @@ document { Ideal,
      PARA,
      "Creating ideals:",
      MENU {
-	  TO "annihilator",
-	  TO "fittingIdeal",
-	  TO "Grassmannian",
-	  TO "ideal",
-	  TO "quotient"
+	  TOH "annihilator",
+	  TOH "fittingIdeal",
+	  TOH "Grassmannian",
+	  TOH "ideal",
+	  TOH "quotient"
 	  },
      "Operations on ideals:",
      MENU {
-	  TO (symbol +,Ideal,Ideal),
-	  TO (symbol *,Ideal, Ideal),
-	  TO (symbol ^,Ideal, ZZ),
-	  TO "codim",
-	  TO "decompose",
-	  TO "dim",
-	  TO "Fano",
-	  TO "module",
-	  TO "radical",
-	  TO "removeLowestDimension",
-	  TO "top"
+	  TOH (symbol +,Ideal,Ideal),
+	  TOH (symbol *,Ideal, Ideal),
+	  TOH (symbol ^,Ideal, ZZ),
+	  TOH "codim",
+	  TOH "decompose",
+	  TOH "dim",
+	  TOH "Fano",
+	  TOH "module",
+	  TOH "radical",
+	  TOH "removeLowestDimension",
+	  TOH "top"
 	  }
      }
 
@@ -713,7 +690,7 @@ document { kernel,
      PARA,
      "Options:",
      MENU {
-	  TO "SubringLimit"
+	  TOH "SubringLimit"
 	  },
      PARA,
      "For an abbreviation, use ", TO "ker", "."
@@ -991,12 +968,12 @@ document { minors,
      PARA,
      "Options:",
      MENU {
-	  TO "Limit"
+	  TOH "Limit"
 	  },
      PARA,
      "Uses:",
      MENU {
-	  TO "MinorsComputation"
+	  TOH "MinorsComputation"
 	  },
      PARA,
      SEEALSO {"det", "exteriorPower"}
@@ -1023,7 +1000,7 @@ document { pfaffians,
      PARA,
      "Options:",
      MENU {
-	  TO "Limit"
+	  TOH "Limit"
 	  },
      SEEALSO "PfaffiansComputation"
      }
@@ -1246,22 +1223,6 @@ document { ProjectiveHilbertPolynomial,
      polynomials expressed in terms of the Hilbert polynomials of projective
      space.",
      PARA,
-     "Functions which produce projective Hilbert polynomials:",
-     MENU {
-	  TO "hilbertPolynomial",
-	  TO "projectiveHilbertPolynomial"
-	  },
-     "Functions on projective Hilbert polynomials:",
-     MENU {
-	  (TO "diff", "   -- compute the difference polynomial P(n)-P(n-1)."),
-	  (TO "degree", " -- degree of a projective Hilbert polynomial"),
-	  (TO "dim", "    -- dimension of a projective Hilbert polynomial"),
-	  (TO "euler", "  -- compute the Euler characteristic P(0)"),
-	  (TO "+", "      -- add two projective Hilbert polynomials"),
-	  (TO "-", "      -- subtract two projective Hilbert polynomials"),
-	  (TO "*", "      -- multiply a projective Hilbert polynomial by an integer"),
-	  (TO (symbol " ", ProjectiveHilbertPolynomial, ZZ), "   -- evaluate a projective Hilbert polynomial at an integer")
-	  },
      "The functions ", TO "degree", " and ", TO "dim", " are designed so they
      correspond the degree and dimension of the algebraic variety that may have
      been used to produce the Hilbert polynomial."
@@ -1350,13 +1311,7 @@ document { Projective,
 
 document { hilbertPolynomial,
      TT "hilbertPolynomial M", " -- the Hilbert polynomial of the module M as
-     a polynomial in T.",
-     PARA,
-     "Options:",
-     MENU {
-	  TO "Projective"
-	  },
-     PARA,
+     a polynomial in T."
      }
 
 document { codim,
@@ -1450,9 +1405,9 @@ document { dual,
      PARA,
      "For details, see one of the following.",
      MENU {
-	  TO (dual,ChainComplex),
-	  TO (dual,Matrix),
-	  TO (dual,Module)
+	  TOH (dual,ChainComplex),
+	  TOH (dual,Matrix),
+	  TOH (dual,Module)
 	  }
      }
 

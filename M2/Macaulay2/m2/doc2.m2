@@ -917,8 +917,10 @@ document { "Macaulay 2",
 	       "Here are the basic concepts needed to use Macaulay 2 effectively.",
 	       MENU {
 		    TO "getting started",
+	  	    TO "invoking the program",
 		    TO "mathematical overview",
 		    TO "language and programming overview",
+		    TO "miscellaneous topics",
 		    },
 	       },
 	  {
@@ -941,19 +943,8 @@ document { "Macaulay 2",
 	       "This section is intended to offer detailed documentation on
 	       every aspect of the system of interest to users.",
 	       MENU {
-		    TO "invoking the program",
-		    TO "classes",
-		    TO "operators",
-		    TO "Thing", 
-		    TO "programming",
-		    TO "mathematics", 
-		    TO "executing other programs",
-		    TO "debugging",
-		    TO "system",
-	       	    TO "help functions",
-		    TO "syntax",
-		    TO "replacements for commands and scripts from Macaulay",
-		    TO "obsolete functions and symbols",
+		    TOH "Thing",
+		    TO "index by class",
 		    },
      	       },
 	  {
@@ -966,12 +957,48 @@ document { "Macaulay 2",
 	  }
      }
 
+
+types := new MutableHashTable
+itemize := (sym) -> (
+     thing := value sym;
+     type := class thing;
+     if not types#?type then types#type = new MutableHashTable;
+     types#type#sym = true;
+     )
+itemize \ values symbolTable()
+sortByName := v -> (i -> i#1) \ sort ((i -> (toString i, i)) \ v)
+document { "index by class",
+     MENU apply(sortByName keys types, type -> SEQ {
+	       TOH type, ":",
+	       MENU ((i -> TOH toString i) \ sortByName keys types#type)
+	       }
+	  )
+     }
+types = null
+
+document { "miscellaneous topics",
+     "Some of these topics will have to be merged with sections above.",
+     MENU {
+	  TO "classes",
+	  TO "operators",
+	  TO "programming",
+	  TO "mathematics", 
+	  TO "executing other programs",
+	  TO "debugging",
+	  TO "system",
+	  TO "help functions",
+	  TO "syntax",
+	  TO "replacements for commands and scripts from Macaulay",
+	  TO "obsolete functions and symbols",
+     	  }
+     }     
+
 document { "internals",
      "Here are some functions and classes that are intended for internal use 
      by the developers only.",
      MENU {
-	  TO "formatDocumentTag",
-	  TO "setSpin",
+	  TOH "formatDocumentTag",
+	  TOH "setSpin",
 	  }
      }
 
