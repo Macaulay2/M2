@@ -193,7 +193,7 @@ public:
   bool column_op(int i, ring_elem r, int j, bool opposite_mult, bool do_recording=true);
   /* column(i) <- column(i) + r * column(j) */
 
-  void dot_product(int i, int j, ring_elem &result) const;
+  ring_elem dot_product(int i, int j, ring_elem &result) const;
 
   ///////////////////////////////////////////
 

@@ -582,7 +582,7 @@ void Matrix::column2by2(int c1, int c2,
 
 
 
-void Matrix::dot_product(int i, int j, ring_elem &result) const
+ring_elem Matrix::dot_product(int i, int j, ring_elem &result) const
 {
   if (error_column_bound(i) || error_column_bound(j))
     return get_ring()->zero();
@@ -970,7 +970,7 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
   const FreeModule *G = cols()->direct_sum(m->cols());
 
   MatrixConstructor mat(F,G,is_mutable() && m->is_mutable(),deg);
-  degree_monoid()->remove(deg);
+  degree_monoid()->remove((int *)deg);
 
   int i;
   int nr = n_rows();
