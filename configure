@@ -3611,8 +3611,6 @@ fi;
 if test "${with_encapdir+set}" = set; then
   withval="$with_encapdir"
   encapdir="$withval"
-else
-  encapdir='$(prefix)/encap'
 fi;
 
 

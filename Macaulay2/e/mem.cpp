@@ -256,6 +256,14 @@ void operator delete []( void* obj ) {
 
 
 // the old way:
+#if 0
+
+// g++ -g -O2 -Wall -Wshadow -Wcast-qual -Wno-parentheses -O3 -fexpensive-optimizations -Wno-shadow -Wno-cast-qual  -DDEBUG -I/capybara/include -I/capybara/encap/Macaulay2-0.9.5/include -I../../include -I../util -I.  -c -o mem.o ../../../Macaulay2/e/mem.cpp
+// /tmp/ccYQ57ad.s: Assembler messages:
+// /tmp/ccYQ57ad.s:2492: Error: symbol `__builtin_new' is already defined
+// /tmp/ccYQ57ad.s:2543: Error: symbol `__builtin_delete' is already defined
+// /tmp/ccYQ57ad.s:2581: Error: symbol `__builtin_vec_new' is already defined
+// /tmp/ccYQ57ad.s:2632: Error: symbol `__builtin_vec_delete' is already defined
 
 void* __builtin_new( unsigned int size ) {
   void *p = GC_MALLOC( size );
@@ -276,3 +284,5 @@ void* __builtin_vec_new( unsigned int size ) {
 void __builtin_vec_delete( void* obj ) {
   if (obj != NULL) GC_FREE( obj );
 }
+
+#endif

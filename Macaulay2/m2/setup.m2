@@ -106,7 +106,7 @@ Thing.Print = x -> (
      y := applyMethod(BeforePrint,x);
      if y =!= null then (
 	  << endl;			  -- double space
-	  << outputLabel << " = " << net y << endl;
+	  << outputLabel << " = " << (try net y else try string y else "--something--") << endl;
 	  );
      applyMethod(AfterPrint,x);
      )

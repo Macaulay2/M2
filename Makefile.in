@@ -14,14 +14,14 @@ VPATH = @srcdir@
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files
 	$(MAKE) -C @srcdir@ -f Makefile-configuration
 	@echo '-----------------------------------------------------------------------------'
-	@echo '| $@ has just been remade                                                   |'
-	@echo '| exiting so you can run it again the same way you did before               |'
+	@echo '| $@ has just been remade'
+	@echo '| exiting so you can run it again the same way you did before'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
 config.status : @srcdir@/configure
 	@echo '-----------------------------------------------------------------------------'
-	@echo '| error: $^ newer than $@                                                   |'
-	@echo '| exiting so you can run it again the same way you did before               |'
+	@echo '| error: $^ newer than $@'
+	@echo '| exiting so you can run it again the same way you did before'
 	@echo '-----------------------------------------------------------------------------'
 	@exit 1
 
