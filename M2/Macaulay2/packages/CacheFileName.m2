@@ -1,4 +1,7 @@
-newPackage("CacheFileName", Version => "1.0")
+newPackage(
+     "CacheFileName", 
+     Version => "1.0",
+     Headline => "creating filenames for files to be used for caching information")
 
 export (cacheFileName)
 

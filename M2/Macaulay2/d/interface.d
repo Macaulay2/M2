@@ -2900,18 +2900,8 @@ setupfun("rawSolve", rawSolve);
 -----------------------------------------------------------------------------
 
 export rawLU(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) != 4 then WrongNumArgs(4) else
-     when s.0 is A:RawMutableMatrix do 
-     when s.1 is L:RawMutableMatrix do
-     when s.2 is U:RawMutableMatrix do
-     when s.3 is P:RawMutableMatrix do possibleEngineError(
-	  Ccode(bool, "rawLU(", "(MutableMatrix *)", A, ",", "(MutableMatrix *)", L, ",", "(MutableMatrix *)", U, ",", "(MutableMatrix *)", P, ")"))
-     else WrongArgMutableMatrix(4)
-     else WrongArgMutableMatrix(3)
-     else WrongArgMutableMatrix(2)
-     else WrongArgMutableMatrix(1)
-     else WrongNumArgs(4));
+     when e is A:RawMutableMatrix do toExpr(Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)rawLU(", "(MutableMatrix *)", A, ")"))
+     else WrongArgMutableMatrix());
 setupfun("rawLU", rawLU);
 
 export rawFFLU(e:Expr):Expr := (

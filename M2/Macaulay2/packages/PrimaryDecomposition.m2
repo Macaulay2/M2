@@ -1,4 +1,7 @@
-newPackage "PrimaryDecomposition"
+newPackage(
+     "PrimaryDecomposition",
+     Headline => "functions for primary decomposition (pre-loaded)"
+     )
 export (
      EHV,					    -- cryptic
      binomialCD,

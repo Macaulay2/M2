@@ -4,7 +4,7 @@ newPackage(
     	Date => "January 12, 2005",
     	Author => "Greg Smith <ggsmith@math.umast.ca>",
     	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
-    	Headline => "A Macaulay2 package for convex hulls and polar cones",
+    	Headline => "convex hulls and polar cones",
     	DebuggingMode => true
     	)
 

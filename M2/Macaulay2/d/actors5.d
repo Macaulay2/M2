@@ -1282,7 +1282,7 @@ setupfun("wrap",wrap);
 dillyDallyFun(e:Expr):Expr := (				    -- for debugging interrupts in compiled code
      while true do (
 	  sleep(1);
-	  if interruptedFlag then return buildErrorPacket("dilly dally: interrupted");
+	  if interruptedFlag then return buildErrorPacket("dillyDally: interrupted");
 	  ));
 setupfun("dillyDally",dillyDallyFun);
 
