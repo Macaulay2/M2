@@ -74,10 +74,8 @@ factor QQ := options -> (r) -> factor numerator r / factor denominator r
 topCoefficients = method()
 topCoefficients Matrix := f -> (
      R := ring f;
-     sendgg(ggPush f, ggcoeffs);
-     monoms := getMatrix R;
-     coeffs := getMatrix R;
-     {monoms, coeffs})
+     (monoms, coeffs) := rawTopCoefficients f.RawMatrix;
+     (map(R,monoms), map(R,coeffs)))
 
 decompose = method()
 decompose(Ideal) := (I) -> if I.cache.?decompose then I.cache.decompose else I.cache.decompose = (

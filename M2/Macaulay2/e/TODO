@@ -180,26 +180,63 @@ do:
 -------------------------------------------------
 -- files:
 --    factor.m2
+	gggcdextended
+	rawTopCoefficients -- can start debugging 'decompose' after this is connected.
 --    galois.m2
+	GF Ring
 --    gb.m2
+	forceGB
+	GroebnerBasis == GroebnerBasis
+	autoReduce
 --    genmat.m2
+	random: add Options
 --    matrix.m2
+	Matrix * Vector
 --    matrix1.m2
+	fixDegree, called from matrixTable
+	matrix(List)
 --    matrix2.m2
+	oldCoefficients
+	compress -- rawMatrixCompress
 --    modules2.m2
+	truncate(List,Module)
 --    monideal.m2
+	monomialIdeal MonomialIdeal
+	poincare MonomialIdeal
+	minprimes MonomialIdeal
 --    multilin.m2
+	someMinors -- this is never called? But we want the functionality
 --    ofcm.m2
+	promote(MonoidElement,RingElement)
 --    orderedmonoidrings.m2
+	is skew ring degree info correct?
+	RM ? RM
 --    overviewC.m2
+	remove Ring ^ Matrix
+	add routine: leadTerm(ZZ,RingElement)
+	at end of file: some suggestions for routines to implement
 --    primdecomp-SY.m2
+	simplify
+	newdecompose -- this routine looks awful
+	findNonMember
 --    primdecomp-fastgb.m2
+	fastmingens  -- these routines should become part of the mainstream routines?
+	fastgb
+	fastquotient
+	fastequal
 --    quotring.m2
+	toField
+	getNonUnit
+	getZeroDivisor
 --    ringmap.m2
---    sagbi.m2
+	RingMap * RingMap -- should be easy to replace
+--    sagbi.m2 -- is this functional?
+      	sagbi
+	subduction
 --    schur.m2
+        Schur ZZ
 --    system.m2
-
+	setRandomSeed
 --
 -- these represent the following routines/computations:
 --   factorization/char series
