@@ -175,9 +175,11 @@ EVector *EVector::multiply_by_ZZ(int m) const
 {
   const EPolynomialRing *R = F->getRing();
   const ECoefficientRing *K = R->getCoefficientRing();
+  field m1 = K->from_int(m);
+  if (K->is_zero(m1))
+    return F->zero();
   poly head;
   poly *result = &head;
-  field m1 = K->from_int(m);
   for (poly *a = elems; a != 0; a = a->next)
     {
       result->next = R->newTerm();

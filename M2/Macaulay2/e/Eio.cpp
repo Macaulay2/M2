@@ -14,14 +14,11 @@
 #include "Efreemod.hpp"
 #include "Evector.hpp"
 
+#include "bin_io.hpp"
+
 extern int p_one;
 extern int p_parens;
 extern int p_plus;
-
-static void bin_int_out(ostream &o, int a)
-{
-  o << " " << a << " ";  // MES: just for now!!
-}
 
 static void bin_int_in(istream &i, int &a)
 {
@@ -39,24 +36,18 @@ static bool get_magic_number(istream &i, int magic)
 // EZZ //////////////
 /////////////////////
 
-void EZZ::text_out(ostream &o) const
-{
-  o << "ZZ";
-}
-
 void EZZ::text_out(buffer &o) const
 {
   o << "ZZ";
 }
 
-void EZZ::binary_out(ostream &o) const
+void EZZ::bin_out(buffer &o) const
 {
   bin_int_out(o, MAGIC_ZZ);
 }
 
 EZZ *EZZ::binary_in(istream &i)
 {
-  int p;
   if (!get_magic_number(i,MAGIC_ZZ))
     return 0;
   return new EZZ();
@@ -80,16 +71,9 @@ void EZZ::elem_text_out(buffer &o, int a) const
 
 }
 
-void EZZ::elem_text_out(ostream &o, int a) const
+void EZZ::elem_bin_out(buffer &o, int a) const
 {
-  buffer b;
-  elem_text_out(b,a);
-  o << b.str();
-}
-
-void EZZ::elem_binary_out(ostream &o, int a) const
-{
-  bin_int_out(o, a);
+  bin_int_out(o, a);  // CHANGE WHEN element can be infinite precision
 }
 
 int EZZ::elem_binary_in(istream &i) const
@@ -103,17 +87,12 @@ int EZZ::elem_binary_in(istream &i) const
 // EZZp /////////////
 /////////////////////
 
-void EZZp::text_out(ostream &o) const
-{
-  o << "ZZ/" << P;
-}
-
 void EZZp::text_out(buffer &o) const
 {
   o << "ZZ/" << P;
 }
 
-void EZZp::binary_out(ostream &o) const
+void EZZp::bin_out(buffer &o) const
 {
   bin_int_out(o, MAGIC_ZZP);
   bin_int_out(o, P);
@@ -150,14 +129,7 @@ void EZZp::elem_text_out(buffer &o, int a) const
 
 }
 
-void EZZp::elem_text_out(ostream &o, int a) const
-{
-  buffer b;
-  elem_text_out(b,a);
-  o << b.str();
-}
-
-void EZZp::elem_binary_out(ostream &o, int a) const
+void EZZp::elem_bin_out(buffer &o, int a) const
 {
   bin_int_out(o, a);
 }
@@ -371,22 +343,16 @@ void EMonomialOrder::text_out(buffer &o) const
   o << "]";
 }
 
-void EMonomialOrder::text_out(ostream &o) const
-{
-  buffer b;
-  text_out(b);
-  o << b.str();
-}
-
 int *EMonomialOrder::put_binary() const
 {
   // MESXX
   return 0;
 }
 
-void EMonomialOrder::binary_out(ostream &o) const
+void EMonomialOrder::bin_out(buffer &o) const
 {
   int *moncodes = put_binary();
+  if (moncodes == 0) return;  // WRITE put_binary()
   int len = moncodes[1];
   for (int i=0; i<len; i++)
     bin_int_out(o, moncodes[i]);
@@ -428,14 +394,8 @@ void ECommMonoid::text_out(buffer &o) const
   monorder->text_out(o);
   o << "]";
 }
-void ECommMonoid::text_out(ostream &o) const
-{
-  buffer b;
-  text_out(b);
-  o << b.str();
-}
 
-void ECommMonoid::binary_out(ostream &) const
+void ECommMonoid::bin_out(buffer &) const
 {
   // MES: write
 }
@@ -462,14 +422,8 @@ void ENCMonoid::text_out(buffer &o) const
   monorder->text_out(o);
   o << ">>";
 }
-void ENCMonoid::text_out(ostream &o) const
-{
-  buffer b;
-  text_out(b);
-  o << b.str();
-}
 
-void ENCMonoid::binary_out(ostream &) const
+void ENCMonoid::bin_out(buffer &) const
 {
   // MES: write
 }
@@ -507,14 +461,7 @@ void ECommMonoid::elem_text_out(buffer &o, const monomial *a) const
   if (len == 0 && p_one) o << "1";
 }
 
-void ECommMonoid::elem_text_out(ostream &o, const monomial *a) const
-{
-  buffer b;
-  elem_text_out(b,a);
-  o << b.str();
-}
-
-void ECommMonoid::elem_binary_out(ostream &o, const monomial *a) const
+void ECommMonoid::elem_bin_out(buffer &o, const monomial *a) const
 {
   int *exp = a->exponents;
   int i;
@@ -579,14 +526,7 @@ void ENCMonoid::elem_text_out(buffer &o, const monomial *a) const
   if (len == 0 && p_one) o << "1";
 }
 
-void ENCMonoid::elem_text_out(ostream &o, const monomial *a) const
-{
-  buffer b;
-  elem_text_out(b,a);
-  o << b.str();
-}
-
-void ENCMonoid::elem_binary_out(ostream &o, const monomial *a) const
+void ENCMonoid::elem_bin_out(buffer &o, const monomial *a) const
 {
   // MES: this is NOT VALID for NC monoids!!
   int *exp = a->exponents;
@@ -631,17 +571,11 @@ void ECommPolynomialRing::text_out(buffer &o) const
   M->text_out(o);
 }
 
-void ECommPolynomialRing::text_out(ostream &o) const
-{
-  K->text_out(o);
-  M->text_out(o);
-}
-
-void ECommPolynomialRing::binary_out(ostream &o) const
+void ECommPolynomialRing::bin_out(buffer &o) const
 {
   bin_int_out(o, MAGIC_POLYRING);
-  //K->binary_out(o);
-  M->binary_out(o);
+  K->bin_out(o);
+  M->bin_out(o);
 }
 
 ECommPolynomialRing *ECommPolynomialRing::binary_in(istream &i)
@@ -679,18 +613,12 @@ void EWeylAlgebra::text_out(buffer &o) const
   }
   o << "))";
 }
-void EWeylAlgebra::text_out(ostream &o) const
-{
-  buffer b;
-  text_out(b);
-  o << b.str();
-}
 
-void EWeylAlgebra::binary_out(ostream &o) const
+void EWeylAlgebra::bin_out(buffer &o) const
 {
   bin_int_out(o, MAGIC_POLYRING);
-  //K->binary_out(o);
-  M->binary_out(o);
+  K->bin_out(o);
+  M->bin_out(o);
 }
 
 EWeylAlgebra *EWeylAlgebra::binary_in(istream &i)
@@ -728,23 +656,11 @@ void ESkewCommPolynomialRing::text_out(buffer &o) const
   o << "))";
 }
 
-void ESkewCommPolynomialRing::text_out(ostream &o) const
-{
-  buffer b;
-  text_out(b);
-  o << b.str();
-}
-
 //////////////////////
 // ENCPolynomialRing //
 //////////////////////
  
 void ENCPolynomialRing::text_out(buffer &o) const
-{
-  K->text_out(o);
-  M->text_out(o);
-}
-void ENCPolynomialRing::text_out(ostream &o) const
 {
   K->text_out(o);
   M->text_out(o);
@@ -804,12 +720,6 @@ void EFreeModule::text_out(buffer &o) const
       o << " ";
     }
 }
-void EFreeModule::text_out(ostream &o) const
-{
-  buffer b;
-  text_out(b);
-  o << b.str();
-}
 
 void EVector::text_out(buffer &o) const
 {
@@ -826,14 +736,10 @@ void EVector::text_out(buffer &o) const
   int old_parens = p_parens;
   int old_plus = p_plus;
 
-  if (isring) 
-    p_one = 1;
-  else
-    p_one = 0;
-
   for (poly *t = elems; t != 0; t = t->next)
     {
       int isone = M->is_one(t->monom);
+      p_one = (isone && p_one && isring);
       K->elem_text_out(o,t->coeff);
       if (!isone)
 	M->elem_text_out(o, t->monom);
@@ -847,11 +753,18 @@ void EVector::text_out(buffer &o) const
   p_plus = old_plus;
 }
 
-void EVector::text_out(ostream &o) const
+void EVector::bin_out(buffer &o) const
 {
-  buffer b;
-  text_out(b);
-  o << b.str();
+  const EMonoid *M = F->getRing()->getMonoid();
+  const ECoefficientRing *K = F->getRing()->getCoefficientRing();
+  bin_int_out(o,len);
+
+  for (const poly *t=elems; t != 0; t = t->next)
+    {
+      bin_int_out(o, t->component);
+      M->elem_bin_out(o, t->monom);
+      K->elem_bin_out(o, t->coeff);
+    }
 }
 
 #if 0

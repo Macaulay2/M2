@@ -280,8 +280,6 @@ EVector *EFreeModule::tensor(const EVector *v, const EVector *w) const
 {
   int n = w->getFreeModule()->rank();
   EVectorHeap H(this);
-  const ECoefficientRing *K = R->getCoefficientRing();
-  const EMonoid *M = R->getMonoid();
   for (poly *a = v->elems; a != 0; a = a->next)
     {
       EVector *v1 = makeTerm(a->coeff, a->monom, 0);

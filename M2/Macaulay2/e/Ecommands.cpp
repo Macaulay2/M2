@@ -198,18 +198,6 @@ static void cmd_EZZ()
   gStack.insert((object_element *)EPolynomialRing::getTrivialRing());
 }
 
-static void cmd_EZZp0(object &r)
-{
-  // MES: check the size of p: If large, make a different coefficient ring.
-  int p = r->int_of();
-  if (p > 0)
-    gStack.insert(EZZp::make(p));
-  else if (p == 0)
-    gStack.insert((object_element *)EZZ::ZZ());
-  else
-    gError << "ZZ/p: p must be non-negative";
-}
-
 static void cmd_EZZp(object &r)
 {
   // MES: check the size of p: If large, make a different coefficient ring.
@@ -516,7 +504,6 @@ void cmd_EFreeModule_exterior(object &oV, object &on)
   gStack.insert(V->exterior(n));
 }
 
-
 //////////////////////
 // Vectors  //////////
 //////////////////////
@@ -610,7 +597,7 @@ static void cmd_EVector_make(object &o1)
       return;
     }
   // Now grab each element in term.
-  EVector **elems = new EVector *[F->rank()];
+  const EVector **elems = new const EVector *[F->rank()];
   for (int i=0; i<F->rank(); i++)
     elems[i] = gStack[F->rank() - 1 - i]->cast_to_EVector();
   EVector *v = F->makeVector(elems);
@@ -629,7 +616,7 @@ static void cmd_EVector_sparse(object &o1, object &o2)
       return;
     }
   // Now grab each element in term.
-  EVector **elems = new EVector *[len];
+  const EVector **elems = new const EVector *[len];
   for (int i=0; i<len; i++)
     elems[i] = gStack[len - 1 - i]->cast_to_EVector();
   EVector *v = F->makeSparseVector(elems, *a);
@@ -667,6 +654,19 @@ static void cmd_EVector_leadCoefficient(object &o1)
   // This will CHANGE when better coefficients are ready!!
   EVector *v = o1->cast_to_EVector();
   gStack.insert(make_object_int(v->leadCoefficient()));
+}
+static void cmd_EVector_leadMonomial(object &o1)
+{
+  EVector *v = o1->cast_to_EVector();
+  intarray a;
+  const monomial *m = v->leadMonomial();
+  if (m == 0)
+    {
+      gError << "zero vector has no lead monomial";
+      return;
+    }
+  v->getFreeModule()->getRing()->getMonoid()->get_variable_exponent_pairs(m,a);
+  gStack.insert(new object_intarray(a));
 }
 static void cmd_EVector_leadTerm(object &o1, object &o2, object &o3)
 {
@@ -808,6 +808,41 @@ static void cmd_EVector_homogenize1(object &ov, object &ovar, object &odeg, obje
   EVector *result = v->homogenize(var,deg,wts->raw());
   gStack.insert(make_object_EVector(result));
 }
+
+//////////////////////
+// Ring Elements /////
+//////////////////////
+  
+// Currently, ring elements are merely elements of R^1
+
+static void cmd_ERingElement_fromInteger(object &o1, object &o2)
+{
+  // WARNING!! THIS NEEDS TO CHANGE WITH ZZ...!!
+  const EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  int a = o2->int_of();
+  ERingElement *result = R->fromInteger(a);
+  gStack.insert(make_object_EVector(result));
+}
+
+static void cmd_ERingElement_var(object &o1, object &o2, object &o3)
+{
+  const EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  int v = o2->int_of();
+  int e = o3->int_of();
+  ERingElement *result = R->makeRingVariable(v,e);
+  if (result == 0) return;
+  gStack.insert(make_object_EVector(result));
+}
+
+static void cmd_ERingElement_term(object &o1, object &o2, object &o3)
+{
+  const EPolynomialRing *R = o1->cast_to_EPolynomialRing();
+  ERingElement *c = o2->cast_to_EVector();
+  intarray *a = o3->intarray_of();
+  ERingElement *result = R->makeRingTerm(c,*a);
+  if (result == 0) return;
+  gStack.insert(make_object_EVector(result));
+}
 ///////////////////////
 // Matrix Operations //
 ///////////////////////
@@ -888,7 +923,7 @@ EMatrix **getMatricesFromStack(int n)
 
 EFreeModule *makeFreeModuleFromDegrees(const EPolynomialRing *R, int ncols, EVector **cols)
 {
-  monomial **degs = new monomial *[ncols];
+  const monomial **degs = new const monomial *[ncols];
   for (int i=0; i<ncols; i++)
     degs[i] = cols[i]->degree();
   return R->makeFreeModule(ncols,degs);
@@ -1265,7 +1300,17 @@ void i_Ecommands(void)
   install(ggexterior, cmd_EFreeModule_exterior, TY_EFreeModule, TY_INT);
 
   install(ggshift, cmd_EFreeModule_shift, TY_EFreeModule, TY_INTARRAY);
+
+  //////////////////////
+  // Ring Elements /////
+  //////////////////////
   
+    // Currently, ring elements are merely elements of R^1
+
+  install(ggfromint, cmd_ERingElement_fromInteger, TY_ERing, TY_INT);
+  install(ggvar, cmd_ERingElement_var, TY_ERing, TY_INT, TY_INT);
+  install(ggterm, cmd_ERingElement_term, TY_ERing, TY_EVector, TY_INTARRAY);
+
   //////////////////////
   // Vectors ///////////
   //////////////////////
@@ -1284,7 +1329,8 @@ void i_Ecommands(void)
   install(ggleadcomp, cmd_EVector_leadComponent, TY_EVector);
   install(ggleadcoeff, cmd_EVector_leadCoefficient, TY_EVector);
   install(ggleadterm, cmd_EVector_leadTerm, TY_EVector, TY_INT, TY_INT);
-  
+  install(ggleadmonom, cmd_EVector_leadMonomial, TY_EVector);
+
   install(ggisequal, cmd_EVector_isequal, TY_EVector, TY_EVector);
   install(ggiszero, cmd_EVector_iszero, TY_EVector);
   install(ggnegate, cmd_EVector_negate, TY_EVector);

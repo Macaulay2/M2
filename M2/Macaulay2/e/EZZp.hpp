@@ -11,8 +11,8 @@ class ECoefficientRing : public type
 public:
   virtual ~ECoefficientRing() {}
 
-  virtual void text_out(ostream &o) const = 0;
   virtual void text_out(buffer &o) const = 0;
+  virtual void bin_out(buffer &o) const = 0;
 
   virtual int characteristic() const = 0;
   virtual field from_int(int n) const = 0;
@@ -28,8 +28,8 @@ public:
   virtual bool is_zero(field a) const = 0;
   virtual bool is_equal(field a, field b) const = 0;
 
-  virtual void elem_text_out(ostream &o, field a) const = 0;
   virtual void elem_text_out(buffer &o, field a) const = 0;
+  virtual void elem_bin_out(buffer &o, field a) const = 0;
 
   virtual ECoefficientRing * cast_to_ECoefficientRing() { return this; }
   virtual const ECoefficientRing * cast_to_ECoefficientRing() const { return this; }
@@ -48,9 +48,8 @@ public:
   
   static const EZZ *make() { return ZZ(); }
 
-  virtual void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
-  void binary_out(ostream &o) const;
+  virtual void bin_out(buffer &o) const;
   static EZZ *binary_in(istream &i);
 
   virtual int characteristic() const
@@ -89,9 +88,8 @@ public:
   virtual bool is_equal(field a, field b) const
     { return a == b; }
 
-  virtual void elem_text_out(ostream &o, field a) const;
   virtual void elem_text_out(buffer &o, field a) const;
-  void elem_binary_out(ostream &o, int a) const;
+  virtual void elem_bin_out(buffer &o, field a) const;
   int elem_binary_in(istream &i) const;
   
   class_identifier class_id() const { return CLASS_EZZ; }
@@ -106,13 +104,11 @@ public:
 
   static EZZp *make(int p) { return new EZZp(p); }
 
-  virtual void text_out(ostream &o) const;
   virtual void text_out(buffer &o) const;
+  virtual void bin_out(buffer &o) const;
+  static EZZp *binary_in(istream &i);
 
   virtual int characteristic() const { return P; }
-
-  void binary_out(ostream &o) const;
-  static EZZp *binary_in(istream &i);
 
   void gcd_extended(int a, int b, int &u, int &v, int &g) const;
 
@@ -143,9 +139,8 @@ public:
     { int c = invert(b); return mult(a,c); }
 
   // I/O
-  void elem_text_out(ostream &o, int a) const;
   void elem_text_out(buffer &o, int a) const;
-  void elem_binary_out(ostream &o, int a) const;
+  void elem_bin_out(buffer &o, int a) const;
   int elem_binary_in(istream &i) const;
 
   class_identifier class_id() const { return CLASS_EZZp; }

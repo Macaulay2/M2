@@ -187,6 +187,35 @@ monomial *ECommMonoid::monomial_from_encoded(const int *encoded) const
   return T->lookup_and_insert_encoded(encoded);
 }
 
+void ECommMonoid::get_variable_exponent_pairs(const monomial *m, intarray &result) const
+{
+  const int *exp = m->exponents;
+  for (int i=0; i<nvars; i++)
+    if (exp[i] != 0)
+      {
+	result.append(i);
+	result.append(exp[i]);
+      }
+}
+monomial *ECommMonoid::monomial_from_variable_exponent_pairs(const intarray &term) const
+{
+  int *exp = new int[nvars];
+  for (int i=0; i<nvars; i++)
+    exp[i] = 0;
+  for (int j = 0; j < term.length()-1; j += 2)
+    {
+      int v = term[j];
+      int e = term[j+1];
+      if (v < 0 || v >= nvars)
+	{
+	  gError << "variable out of range";
+	  delete [] exp;
+	  return 0;
+	}
+      exp[v] += e;
+    }
+  return monomial_from_exponents(exp);
+}
 uint32 ECommMonoid::hash_exponents(const int *exponents) const
 {
   // !! TUNE THIS !!
@@ -376,6 +405,40 @@ monomial *ENCMonoid::monomial_from_exponents(const int *exp) const
 monomial *ENCMonoid::monomial_from_encoded(const int *encoded) const
 {
   return T->lookup_and_insert_encoded(encoded);
+}
+
+void ENCMonoid::get_variable_exponent_pairs(const monomial *m, intarray &result) const
+{
+  // WRITE THIS!!
+}
+
+monomial *ENCMonoid::monomial_from_variable_exponent_pairs(const intarray &term) const
+{
+  int *exp = new int[nvars];
+  for (int i=0; i<nvars; i++)
+    exp[i] = 0;
+  monomial *result = one();
+  for (int j = 0; j < term.length()-1; j += 2)
+    {
+      int v = term[j];
+      int e = term[j+1];
+      if (v < 0 || v >= nvars)
+	{
+	  gError << "variable out of range";
+	  delete [] exp;
+	  return 0;
+	}
+      exp[v] = e;
+      monomial *m = monomial_from_exponents(exp);
+      if (m == 0) 
+	{
+	  delete [] exp;
+	  return 0;
+	}
+      result = mult(result,m);
+    }
+  delete [] exp;
+  return result;
 }
 
 const int * ENCMonoid::to_exponents(const monomial *m) const
