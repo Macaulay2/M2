@@ -474,7 +474,7 @@ ancestors1 := X -> if X === Thing then {Thing} else prepend(X, ancestors1 parent
 ancestors := X -> if X === Thing then {} else ancestors1(parent X)
 
 vowels := set characters "aeiouAEIOU"
-indefinite := s -> concatenate(if vowels#?(s#0) then "an " else "a ", s)
+indefinite := s -> concatenate(if vowels#?(s#0) and not match(s,"one *") then "an " else "a ", s)
 
 synonym := X -> if X.?synonym then X.synonym else "object of class " | toString X
 
@@ -642,7 +642,9 @@ ret := k -> (
 seecode := x -> (
      f := lookup x;
      n := code f;
-     if n =!= null then SEQ { "Code:", PRE concatenate between(newline,netRows n) }
+     if n =!= null 
+     and height n + depth n <= 10
+     then SEQ { "Code:", PRE concatenate between(newline,netRows n) }
      )
 documentation Function := f -> SEQ { title f, usage f, type f, ret f, fmeth f, optargs f, seecode f }
 

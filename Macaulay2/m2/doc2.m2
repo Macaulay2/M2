@@ -688,7 +688,7 @@ document { currentDirectory,
      TT "currentDirectory()", " -- returns the name of the current directory."
      }
 
-document { symbol "~"
+document { symbol "~",
      HEADLINE "a unary postfix operator",
      }
 

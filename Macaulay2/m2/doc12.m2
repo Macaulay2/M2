@@ -553,7 +553,7 @@ document { WrapperType,
      SEEALSO {"HeaderType", "SelfInitializingType"}
      }
 
-document { AssociativeExpression
+document { AssociativeExpression,
      HEADLINE "the class of associative expressions"
      }
 

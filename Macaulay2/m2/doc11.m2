@@ -15,7 +15,7 @@ document { MarkUpType,
      SEEALSO "EmptyMarkUpType"
      }
 
-document { EmptyMarkUpType
+document { EmptyMarkUpType,
      HEADLINE "the class of empty mark-up types used with hypertext", 
      }
 
@@ -703,7 +703,7 @@ document { monomialCurve,
      EXAMPLE "monomialCurve(R,{3,4,5})",
      "Here is one with two singular points, genus 7.",
      EXAMPLE "monomialCurve(R,{6,7,8,9,11})",
-     "Finally, here is the smooth rational quartic in P^3."
+     "Finally, here is the smooth rational quartic in P^3.",
      EXAMPLE "monomialCurve(R,{1,3,4})"
      }
 
