@@ -20,10 +20,9 @@ addStartFunction(
 	       	    filepath{home,"packages"}
 		    });
 	  documentationPath = {
-	       filepath{"cache","doc"},			    -- this is where documentation is written
+	       filepath{"cache","doc"},			    -- this is where new documentation is written
 	       filepath{home,"m2","cache","doc"},
-	       filepath{home,"packages","cache","doc"},
-	       filepath{home,"packages","D-modules","cache","doc"}
+	       filepath{home,"packages","cache","doc"}
 	       };
 	  )
      )
@@ -215,13 +214,15 @@ formatDocumentTagTO Sequence := (
 -----------------------------------------------------------------------------
 verifyTag := method(SingleArgumentDispatch => true)
 verifyTag Thing    := s -> null
- -- verifyTag Sequence := s -> (
- --      if class lookup s =!= Function then error("no method installed for '", formatDocumentTag s, "'"))
- -- verifyTag Option   := s -> (
- --      fn := s#0;
- --      opt := s#1;
- --      if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
-
+verifyTag Sequence := s -> (
+     if class lookup s =!= Function then error(
+	  "documentation provided for '", formatDocumentTag s, "' but no method installed")
+     )
+verifyTag Option   := s -> (
+     fn := s#0;
+     opt := s#1;
+     if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn)
+     )
 -----------------------------------------------------------------------------
 -- html input
 -----------------------------------------------------------------------------
@@ -369,18 +370,18 @@ fourDigits := i -> ( i = toString i; concatenate(4-#i:"0", i) )
 -----------------------------------------------------------------------------
 -- process examples
 -----------------------------------------------------------------------------
-checkForNodeBaseFilename := nodeName -> (
+checkForNodeBaseFilename := key -> (
      t := cacheFileName(
 	  if writing() then take(documentationPath,1) else documentationPath,
-	  nodeName);
+	  key);
      if #t > 1 then (
-	  stderr << "warning: documentation node '" << nodeName << "' occurs in multiple locations:" << endl;
+	  stderr << "warning: documentation node '" << key << "' occurs in multiple locations:" << endl;
 	  apply(t, fn -> stderr << "    " << fn << endl );
 	  );
      nodeBaseFilename = (
 	  if #t > 0 then first t
 	  else if writingInputFiles() or writingHtmlFiles()
-	  then cacheFileName(first documentationPath, nodeName)
+	  then cacheFileName(first documentationPath, key)
 	  else null
      	  );
      )
@@ -463,17 +464,32 @@ writeHtmlPage := nodeName -> (
 	  }
      << close)
 -----------------------------------------------------------------------------
+-- check whether a string, used as a key, is actually the name of a symbol
+-----------------------------------------------------------------------------
+perhapsValue := key -> (
+     if class key === String and isGlobalSymbol key then (
+	  key = value ("global " | key);
+	  if (class value key === Function 
+	       or class value key === ScriptedFunctor
+	       or ancestor(class value key, Type)
+	       )
+	  then value key
+	  else key
+	  )
+     else key
+     )
+-----------------------------------------------------------------------------
 -- 'document' function
 -----------------------------------------------------------------------------
 document = method()
 document List := z -> (
      if #z === 0 then error "expected a nonempty list";
-     key := z#0;
+     key := perhapsValue z#0;
      verifyTag key;
      body := drop(z,1);
      skey := toExternalString key;
      nodeName := formatDocumentTag key;
-     checkForNodeBaseFilename nodeName;
+     checkForNodeBaseFilename key;
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
      if writingHtmlFiles() then writeHtmlPage nodeName;
@@ -1381,17 +1397,18 @@ text SUB := x -> "_" | text x#0
 
 net  TO := text TO := x -> concatenate ( "\"", formatDocumentTag x#0, "\"", drop(toList x, 1) )
 
-htmlFilename := fkey -> (
-     v := cacheFileName(documentationPath, fkey);
-     if v =!= {} then first v else cacheFileName(first documentationPath, fkey)
+htmlFilename := key -> (
+     v := cacheFileName(documentationPath, key);
+     if v =!= {} then first v else cacheFileName(first documentationPath, key)
      ) | ".html"
 
 html TO := x -> (
-     fkey := formatDocumentTag x#0;
+     key := perhapsValue x#0;
+     formattedKey := formatDocumentTag key;
      nodeBaseDirectory := filepath ( nodeBaseFilename, ".." );
      concatenate ( 
-     	  "<A HREF=\"", relativizeFilename(nodeBaseDirectory, htmlFilename fkey), "\">", 
-     	  htmlExtraLiteral fkey,
+     	  "<A HREF=\"", relativizeFilename(nodeBaseDirectory, htmlFilename key), "\">", 
+     	  htmlExtraLiteral formattedKey,
      	  "</A>",
      	  drop(toList x,1) 
      	  )

@@ -85,12 +85,12 @@ net Manipulator := toString
 net Thing := toString
 -----------------------------------------------------------------------------
 toExternalString Symbol := s -> (
-     if value s =!= s then (
+     if not mutable s and value s === s then string s
+     else (
 	  if s === symbol " "
 	  then ///symbol " "///
 	  else concatenate("symbol ",string s)
 	  )
-     else string s
      )
 
 net Symbol := string
