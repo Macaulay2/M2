@@ -84,7 +84,10 @@ export stdIO  := file(nextHash(),  "stdio",  0,
      true,  STDIN ,0!=isatty(0), newbuffer(), 0,0,false,false,noprompt,true,false,
      true,  STDOUT,0!=isatty(1), newbuffer(), 0,0,false,dummyNetList,0,-1,false);
 
-init():void := stdIO.readline = stdIO.infd == STDIN && stdIO.inisatty ;
+init():void := (
+     stdIO.readline = stdIO.infd == STDIN && stdIO.inisatty ;
+     foreach arg in args do if arg === "-x" then stdIO.readline = false;
+     );
 
 everytime(init);
 

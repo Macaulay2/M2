@@ -38,6 +38,7 @@ exportMutable (
 	)
 
 export (
+        symbol examplePrompts,
         symbol RunDirectory,
         symbol monomials,
         symbol MakeLinks,
