@@ -37,8 +37,17 @@ document { quote factor,
 gcd(RingElement,RingElement) := (f,g) -> (
      R := ring f;
      if R =!= ring g then error "expected elements of the same ring";
-     sendgg(ggPush f, ggPush g, ggfactor1);
+     sendgg(ggPush f, ggPush g, ggfactor1);		    -- bug in factory?? see next routine.
      R.pop())
+
+gcd(RingElement,RingElement) := (r,s) -> (
+     z := syz( matrix{{r,s}}, SyzygyLimit => 1 );
+     a := z_(0,0);
+     if s%a != 0 then error "can't find gcd in this ring";
+     t := s // a;
+     c := leadCoefficient t;
+     t // c
+     )
 
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (
      R := ring f;
