@@ -320,6 +320,36 @@ gbvector * GBKernelComputation::s_pair(gbvector * gsyz) const
   return result;
 }
 
+void GBKernelComputation::wipe_unneeded_terms(gbvector * & f)
+{
+  // Remove every term of f (except the lead term)
+  // which is NOT divisible by an element of mi.
+  int *exp = newarray(int,GR->n_vars());
+  int nterms = 0;
+  int nsaved = 0;
+  for (gbvector *g = f; g->next != 0; g=g->next)
+    {
+      // First check to see if the term g->next is in the monideal
+      nterms++;
+      Bag *b;
+      GR->gbvector_get_lead_exponents(F,f,exp);
+      if (mi[f->comp-1]->search(exp,b))
+        continue;
+	nsaved++;
+      // Otherwise, remove the term
+      gbvector *tmp = g->next;
+      g->next = tmp->next;
+      tmp->next = 0;
+      GR->gbvector_remove(tmp);
+    }
+    if (gbTrace >= 5) 
+      {
+        buffer o;
+	o << "[" << nterms << ",s" << nsaved << "]";
+	emit(o.str());
+      }
+}
+
 void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
 {
   gbvector * lastterm = fsyz;  // fsyz has only ONE term.
