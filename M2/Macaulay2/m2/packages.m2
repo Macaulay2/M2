@@ -214,10 +214,10 @@ checkShadow = () -> (
 	       w := findSynonyms sym;
 	       w = select(w, s -> s != nam);
 	       if #w > 0 then stderr << "--   synonym" << (if #w > 1 then "s") << " for " << nam << ": " << demark(", ",w) << endl
-	       else if member(User.Dictionary,globalDictionaries) then for i from 0 do (
+	       else if member(User#"private dictionary",globalDictionaries) then for i from 0 do (
 		    newsyn := nam | "$" | toString i;
 		    if not isGlobalSymbol newsyn then (
-			 User.Dictionary#newsyn = sym;
+			 User#"private dictionary"#newsyn = sym;
 			 stderr << "--   new synonym provided for '" << nam << "': " << newsyn << endl;
 			 break)))))
 
