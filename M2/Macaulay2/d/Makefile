@@ -77,10 +77,10 @@ DEBUGFLAGS :=
 # DEBUGFLAGS := -DMEM_DEBUG
 
 STRIPFLAG :=
-# STRIPFLAG := -s
+STRIPFLAG := -s
 
 STRIPCMD := :
-# STRIPCMD := strip
+STRIPCMD := strip
 
 PURIFYCMD :=
 # PURIFYCMD := purify -always-use-cache-dir
@@ -211,12 +211,12 @@ endif
 		../../lib/libgc.a \
 		../../lib/libgmp.a \
 		$(LIBMP) \
+		../../lib/libfac.a \
 		../../lib/libcf.a ../../lib/libcfmem.a \
 		../../lib/libmpf.a \
-		../../lib/libmpn.a \
-		../../lib/libmpq.a \
 		../../lib/libmpz.a \
-		../../lib/libfac.a
+		../../lib/libmpn.a \
+		../../lib/libmpq.a
 	rm -f $@
 	@ echo 'linking $@ with $(LDFLAGS) $(LOADLIBES)'
 	@ time $(PURIFYCMD) $(CC) -o $@ $(LDFLAGS) $^ $(LOADLIBES)

@@ -1,4 +1,4 @@
-<< "-- this one is from David Eisenbud, makes version 0.4.48 crash" << endl
+-- this one is from David Eisenbud, makes version 0.4.48 crash
 
 R = ZZ/32003[a..d]
 C = resolution cokernel substitute(

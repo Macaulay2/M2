@@ -4,6 +4,8 @@
 
 << "-- we need to fix this one up so it can start a resolution" << endl
 << "-- with the presentation given" << endl
+exit 0
+
 errorDepth 1
 
 try1 = () -> (

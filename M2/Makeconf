@@ -23,7 +23,10 @@ export LIBDIR	      := ../../lib
 export INCDIR	      := ../../include
 export PATH           := ..$(PATHSEP)bin:$(PATH)
 
+ifneq ($(OS),SunOS)
 MP := TRUE
+endif
+
 FACTOR := TRUE
 # includeX11 = TRUE
 
