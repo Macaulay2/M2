@@ -175,10 +175,6 @@ kernel RingMap := Ideal => options -> (f) -> if f.cache.?kernel then f.cache.ker
 	       MonomialOrder => Eliminate n1, 
 	       MonomialSize => 16,
 	       VariableBaseName => local X);
-	  print("f = " | toString f);
-	  print("ring f = " | toString ring f);
-	  fff = f;
-	  error "got here";
 	  if isHomogeneous JJ then (
 	      hf := poincare (target f)^1;
 	      T := (ring hf)_0;
