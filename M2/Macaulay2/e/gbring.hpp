@@ -30,6 +30,11 @@ struct gbvector {
   int monom[1];
 };
 
+struct POLY {
+  gbvector *f;
+  gbvector *fsyz;
+};
+
 class TermIdeal;
 typedef int * monomial;
 

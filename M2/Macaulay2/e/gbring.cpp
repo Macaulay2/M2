@@ -15,7 +15,8 @@
 
 gbvector * GBRing::new_raw_term()
 {
-  return (gbvector *) GC_MALLOC(gbvector_size);
+  gbvector * result = (gbvector *) GC_MALLOC(gbvector_size);
+  return result;
 }
 
 /*************************
@@ -808,21 +809,34 @@ void GBRing::gbvector_replace_2by2_ZZ(
   mpz_init(gd);
   mpz_gcdext(gd,u,v,MPZ_VAL(f->coeff), MPZ_VAL(g->coeff));
 
-  gbvector *new_g = gbvector_mult_by_coeff(f,MPZ_RINGELEM(u));
-  gbvector *g2 = gbvector_mult_by_coeff(g,MPZ_RINGELEM(v));
-  gbvector_add_to(F,new_g,g2);
+  gbvector *new_g = 0;
+  gbvector *g2 = 0;
+  gbvector *new_gsyz = 0;
+  gbvector *gsyz2 = 0;
 
-  gbvector *new_gsyz = gbvector_mult_by_coeff(fsyz,MPZ_RINGELEM(u));
-  gbvector *gsyz2 = gbvector_mult_by_coeff(gsyz,MPZ_RINGELEM(v));
+  if (mpz_sgn(v) != 0)
+    {
+      g2 = gbvector_mult_by_coeff(g,MPZ_RINGELEM(v));
+      gsyz2 = gbvector_mult_by_coeff(gsyz,MPZ_RINGELEM(v));
+    }
+  if (mpz_sgn(u) != 0)
+    {
+      new_g = gbvector_mult_by_coeff(f,MPZ_RINGELEM(u));
+      new_gsyz = gbvector_mult_by_coeff(fsyz,MPZ_RINGELEM(u));
+    }
+
+  gbvector_add_to(F,new_g,g2);
   gbvector_add_to(Fsyz,new_gsyz,gsyz2);
 
   mpz_div(u,MPZ_VAL(g->coeff),gd);
   mpz_div(v,MPZ_VAL(f->coeff),gd);
   mpz_neg(v,v);
+
   gbvector *new_f = gbvector_mult_by_coeff(f,MPZ_RINGELEM(u));
   gbvector *new_fsyz = gbvector_mult_by_coeff(fsyz,MPZ_RINGELEM(u));
   gbvector *f2 = gbvector_mult_by_coeff(g,MPZ_RINGELEM(v));
   gbvector *fsyz2 = gbvector_mult_by_coeff(gsyz,MPZ_RINGELEM(v));
+
   gbvector_add_to(F,new_f,f2);
   gbvector_add_to(Fsyz,new_fsyz,fsyz2);
   

@@ -55,6 +55,11 @@ public:
   bool is_strong_member(mpz_ptr c, exponents exp, int comp) const;
   // Is [c,exp,comp] divisible by one of the terms in 'this'?
 
+  int find_smallest_coeff_divisor(exponents exp, int comp) const;
+  // Of all of the elements which divide exp*comp, return the index of the 
+  // smallest coefficient one, or return -1, if no element divides exp*comp.
+
+
   int find_term_divisors(int max,
 			 mpz_t coeff,
 			 exponents exp, 

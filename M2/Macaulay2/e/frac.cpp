@@ -6,6 +6,7 @@
 #include "ringmap.hpp"
 #include "gbring.hpp"
 #include "../d/M2mem.h"
+#include "relem.hpp"
 
 #define FRAC_VAL(f) ((frac_elem *) (f).poly_val)
 #define FRAC_RINGELEM(a) ((ring_elem) (Nterm *) (a))
@@ -31,6 +32,7 @@ bool FractionField::initialize_frac(const Ring *R)
 		  Monoid::get_trivial_monoid(),
 		  R->degree_monoid());
 
+  R_ = R;
   _elem_size = sizeof(frac_elem);
   _MINUS_ONE = R->from_int(-1);
 
@@ -81,20 +83,35 @@ ring_elem FractionField::fraction(const ring_elem top, const ring_elem bottom) c
 void FractionField::simplify(frac_elem *f) const
 {
   ring_elem x, y;
-  R_->syzygy(f->numer, f->denom, x, y);
-  if (R_->is_zero(x))
+  if (true)
     {
-      //R_->zero_divisor = y;
-      R_->remove(x);
-      ERROR("zero divisor found");
-      return;
-      // NOW QUIT whatever computation is going on!! MES
+      y = f->denom;
+      if (R_->is_equal(y, R_->one())) return;
+      x = f->numer;
+      const RingElement *a = RingElement::make_raw(R_,x);
+      const RingElement *b = RingElement::make_raw(R_,y);
+      const RingElement *c = rawGCDRingElement(a,b);
+      if (R_->is_equal(c->get_value(), R_->one())) return;
+      f->numer = R_->divide(f->numer, c->get_value());
+      f->denom = R_->divide(f->denom, c->get_value());
     }
-  R_->negate_to(y);
-  R_->remove(f->numer);
-  R_->remove(f->denom);
-  f->numer = y;
-  f->denom = x;
+  else
+    {
+      R_->syzygy(f->numer, f->denom, x, y);
+      if (R_->is_zero(x))
+	{
+	  //R_->zero_divisor = y;
+	  R_->remove(x);
+	  ERROR("zero divisor found");
+	  return;
+	  // NOW QUIT whatever computation is going on!! MES
+	}
+      R_->negate_to(y);
+      R_->remove(f->numer);
+      R_->remove(f->denom);
+      f->numer = y;
+      f->denom = x;
+    }
 #if 0
   if (R_->is_zero(f->numer))
     {
