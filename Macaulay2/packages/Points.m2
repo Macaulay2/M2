@@ -17,7 +17,7 @@ export (
      makeRingMaps
      )
 
-debug Macaulay2
+debug Macaulay2Core
 points = method()
 pointsByIntersection = method()
 

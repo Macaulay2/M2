@@ -526,8 +526,8 @@ document {
      "A dictionary is a special sort of hash table whose keys are the strings, and whose values are the
      corresponding symbols.",
      EXAMPLE {
-	  "Macaulay2.Dictionary # \"sin\"",
-	  "Macaulay2.Dictionary #? \"sin\""
+	  "Macaulay2Core.Dictionary # \"sin\"",
+	  "Macaulay2Core.Dictionary #? \"sin\""
 	  }
      }
 

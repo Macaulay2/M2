@@ -7,7 +7,7 @@
 
 -- this next file loads before this:
 
-debug Macaulay2
+debug Macaulay2Core
 
 quotMin = (I, facs, F) -> (
      J := quotient(I,F);
@@ -50,7 +50,7 @@ minSatPPD = (I, facs) -> (
      )
 
 TEST ///
-debug Macaulay2
+debug Macaulay2Core
 R = ZZ/32003[b,s,t,u,v,w,x,y,z]
 I = ideal(
     b*v+s*u,
@@ -141,7 +141,7 @@ flattener = (I, m) -> (
      )
      
 TEST ///
-debug Macaulay2
+debug Macaulay2Core
 R = ZZ/32003[a..d]
 I = monomialCurveIdeal(R,{1,3,4})
 IS = independentSets I
@@ -287,7 +287,7 @@ extract = (I,P) -> (
      )
 
 TEST ///
-debug Macaulay2
+debug Macaulay2Core
 R = ZZ/32003[a..d]
 I = monomialCurveIdeal(R,{1,3,4})
 L = I^2
@@ -324,7 +324,7 @@ PPD = (I,PP) -> (
           {PPP, I'}))
 
 TEST ///
-debug Macaulay2
+debug Macaulay2Core
 R = ZZ/32003[a..d]
 I = ideal(a,b,c-1)
 J = ideal(c,d,a-1)
@@ -367,7 +367,7 @@ PPDSpecialCharSets = (I, PP) -> (
      )
 
 TEST ///
-debug Macaulay2
+debug Macaulay2Core
 R = ZZ/32003[a..d]
 I = ideal(a,b,c-1)
 J = ideal(c,d,a-1)

@@ -1,6 +1,6 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-debug Macaulay2
+debug Macaulay2Core
 
 reduceCompress = method()
 reduceCompress Matrix := (m) -> (

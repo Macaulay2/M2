@@ -1818,7 +1818,7 @@ document {
      ", TT "in", ".",
      EXAMPLE {
 	  ///f = openInOut "!egrep '^in'"///,
-	  ///scan(keys Macaulay2.Dictionary, key -> f << key << endl)///,
+	  ///scan(keys Macaulay2Core.Dictionary, key -> f << key << endl)///,
 	  ///f << closeOut///,
 	  ///get f///
 	  },
