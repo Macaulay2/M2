@@ -528,27 +528,28 @@ op := s -> if operator#?s then (
      SEQ {
 	  if binary#?s then SEQ {
 	       NOINDENT{}, 
-	       "This operator may be used as a binary operator in an expression
-	       like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary method", "s"}, "
-	       for handling such expressions with code such as ",
+	       "This operator may be used as a binary operator in an expression \n",
+	       "like ", TT ("x "|ss|" y"), ".  The user may install ", TO {"binary method", "s"}, " \n",
+	       "for handling such expressions with code such as ",
 	       PRE ("         X "|ss|" Y := (x,y) -> ..."), 
 	       NOINDENT{},
-	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-	       class of ", TT "y", ".", PARA{}
+	       "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the \n",
+	       "class of ", TT "y", ".", PARA{}
 	       },
 	  if prefix#?s then SEQ {
 	       NOINDENT{}, 
-	       "This operator may be used as a prefix unary operator in an expression
-	       like ", TT (ss|" y"), ".  The user may install a method for handling
-	       such expressions with code such as ",
+	       "This operator may be used as a prefix unary operator in an expression \n",
+	       "like ", TT (ss|" y"), ".  The user may install a method for handling \n",
+	       "such expressions with code such as \n",
 	       PRE ("           "|ss|" Y := (y) -> ..."),
-	       NOINDENT{}, "where ", TT "Y", " is the class of ", TT "y", ".", PARA{}
+	       NOINDENT{},
+	       "where ", TT "Y", " is the class of ", TT "y", ".", PARA{}
 	       },
 	  if postfix#?s then SEQ {
 	       NOINDENT{}, 
-	       "This operator may be used as a postfix unary operator in an expression
-	       like ", TT ("x "|ss), ".  The user may install a method for handling
-	       such expressions with code such as ",
+	       "This operator may be used as a postfix unary operator in an expression \n",
+	       "like ", TT ("x "|ss), ".  The user may install a method for handling \n",
+	       "such expressions with code such as \n",
 	       PRE ("         X "|ss|"   := (x,y) -> ..."),
 	       NOINDENT{}, "where ", TT "X", " is the class of ", TT "x", ".", PARA{}
 	       },
