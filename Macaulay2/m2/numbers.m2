@@ -4,6 +4,8 @@ odd  = x -> 1 === x%2
 
 even = x -> 0 === x%2
 
+zero = x -> x == 0					    -- we use == so this can apply to all types of things
+
 numeric = x -> (
      if basictype x === ZZ or basictype x === QQ
      then 0. + x

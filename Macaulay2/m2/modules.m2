@@ -404,6 +404,7 @@ genera(Module) := (M) -> (
      d := dim M - 1;
      apply(#e, i -> (-1)^(i+d) * (e#i - 1)))
 genera(Ring) := (R) -> genera R^1
+genus(Ring) := R -> first genera R
 
 rank Module := M -> (
      if isFreeModule M then numgens M 
@@ -445,7 +446,11 @@ Module.AfterPrint = M -> (
      if M.?relations then << ", subquotient of " << ambient M
      else << ", submodule of " << ambient M
      else if M.?relations then << ", quotient of " << ambient M
-     else if n > 0 then << ", free";
+     else if n > 0 then (
+	  << ", free";
+	  if not all(degrees M, d -> all(d, zero)) 
+	  then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
+	  );
      << endl;
      )
 
@@ -463,3 +468,4 @@ isHomogeneous Module := Boolean => (M) -> ring M === ZZ or (
      ))
 
 degreesRing Module := M -> degreesRing ring M
+degreeLength Module := M -> degreeLength ring M
