@@ -574,6 +574,9 @@ document { "initialization file",
      PARA,
      "The file is sought in each of the directories of the ", TO "path", ",
      and also in the home directory of the user.  At most one file is loaded.",
+     PARA,
+     "As an added convenience, if the file is in the home directory, its name can
+     be ", TT ".init.m2", ".",
      SEEALSO "load"
      }
 
