@@ -187,7 +187,7 @@ geores.hpp  : geoT.hpp; sed $(RES)   $^ >$@
 initialize :: $(addsuffix .hpp, $(GENERATED_H))
 
 all tags:: TAGS
-TAGS: $(HHFILES) $(CCFILES); etags $^
+TAGS: Makefile $(HHFILES) $(CCFILES); etags $^
 clean::; rm -f *.lo *.o $(LIBGB) TAGS $(addsuffix .hpp, $(GENERATED_H))
 clean::; $(MAKE) -C tests $@
 Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
