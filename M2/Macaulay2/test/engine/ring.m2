@@ -40,6 +40,10 @@ G = F**F
 raw G
 assert( rank G == 9 )
 
+H = R^{-1,-2,-3}
+degrees H
+assert ( degrees H == {{1}, {2}, {3}} )
+
 --matrices
 v = vars R
 
@@ -63,7 +67,16 @@ x*v
 
 
 -- remaking matrices
-w = map(R^1,,v)						    -- Mike will make remake1
+w = map(R^1,,v)
+degrees source w
+assert ( degrees source w == {{1}, {1}, {1}} )
+w = map(R^1,R^3,v)
+degrees source w
+assert( degrees source w == {{0}, {0}, {0}} )
+
+w = map(R^1,R^{-1,-2,-3},v)
+degrees source w
+assert( degrees source w == {{1}, {2}, {3}} )
 
 -- eventually:
 -- raw v * raw x
@@ -71,5 +84,5 @@ w = map(R^1,,v)						    -- Mike will make remake1
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/test/engine ring.okay"
--- compile-command: "M2 --debug-M2 --stop -e 'input \"ring.m2\"'"
+-- compile-command: "M2 --debug-M2 --stop -e 'input \"ring.m2\"'" -e 'exit 0'
 -- End:
