@@ -31,7 +31,7 @@ document { quote subtable,
      list u of row numbers and the list v of column numbers.",
      PARA,
      EXAMPLE "m = table(5,5,identity)",
-     EXAMPLE "subtable({1,3,4},elements(2..4), m)"
+     EXAMPLE "subtable({1,3,4},toList(2..4), m)"
      }
 
 isTable = m -> (

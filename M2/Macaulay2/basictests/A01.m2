@@ -10,9 +10,9 @@ assert = x -> if not x then error "assertion failed "
 assert( class {1,2,3} === List )
 assert( # {1,2,3} === 3 )
 
--- test unlist
-assert( unlist {1,2,3} === (1,2,3) )
-assert( unlist (1,2,3) === (1,2,3) )
+-- test toSequence
+assert( toSequence {1,2,3} === (1,2,3) )
+assert( toSequence (1,2,3) === (1,2,3) )
 
 -- test seq
 assert( # seq (1,2,3) === 1 )
@@ -36,13 +36,13 @@ assert( bb#1 === 44 )
 assert( aa#1 === 2 )
 
 -- test list
-assert( elements (1,2,3) === {1,2,3} )
-assert( elements () === {} )
-assert( elements {} === {} )
-assert( elements {1} === {1} )
-assert( elements {1,2} === {1,2} )
+assert( toList (1,2,3) === {1,2,3} )
+assert( toList () === {} )
+assert( toList {} === {} )
+assert( toList {1} === {1} )
+assert( toList {1,2} === {1,2} )
 aa = newClass(MutableList, {1,2,3})
-bb = elements aa
+bb = toList aa
 aa#2 = 444
 assert( not  mutable bb )
 assert( aa#2 === 444 )

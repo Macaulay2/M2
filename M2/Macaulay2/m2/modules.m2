@@ -458,7 +458,7 @@ degrees Module := M -> (
 	  nd := degreeLength R;
 	  M.degrees = (
 	       if nd == 0 
-	       then elements (rk : {})
+	       then toList (rk : {})
 	       else (
 	  	    sendgg ggPush M;
 		    pack(eePopIntarray(), nd)))))
@@ -569,7 +569,7 @@ document { "Ring ^ ZZ",
 --      use ZZ G;
 --      h := U^-N * (substitute(f,{(ring f)_0 => 1-u})) * (sum(N+1,i->U^i));
 --           -- f might have negative exponents in it here!
---      c := elements apply(0 .. N, i -> h_(U^-i));
+--      c := toList apply(0 .. N, i -> h_(U^-i));
 --      k := position(reverse c, j -> j != 0);
 --      if k === null then k = N+1;
 --      c = drop(c,-k);
@@ -579,7 +579,7 @@ document { "Ring ^ ZZ",
 --      )
 euler(Module) := (M) -> (
      h := hilbertPolynomial M;
-     apply(elements ( 0 .. dim h ), i -> euler diff(h,i) ))
+     apply(toList ( 0 .. dim h ), i -> euler diff(h,i) ))
 euler(Ring) := (R) -> euler R^1
 
 document { quote euler,

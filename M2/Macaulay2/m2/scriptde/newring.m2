@@ -107,7 +107,7 @@ graphIdeal RingMap := (f,options) -> (
      if vars k ** R != f (vars k ** S)	  -- vars k isn't really enough...
      then error "expected ring map to be identity on coefficient ring";
      t := numgens source f.matrix;
-     I := submatrix(f.matrix,,elements(t - numgens S .. t - 1));
+     I := submatrix(f.matrix,,toList(t - numgens S .. t - 1));
      options = new MutableHashTable from options;
      options.Degrees = join((monoid R).degrees, 
 	  apply(degrees source I, d -> if d === {0} then {1} else d)

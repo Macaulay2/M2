@@ -194,7 +194,7 @@ bump();
 bump(2);
      semicolonW = nleft(";");
      export semicolonS := makeProtectedSymbolClosure(semicolonW);
-     newlineW = nleft("\n");
+     newlineW = nleft("--newline--");
      export newlineS := makeProtectedSymbolClosure(newlineW);
 bump();
      export commaW := nunaryleft(",");

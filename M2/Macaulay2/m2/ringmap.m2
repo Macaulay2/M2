@@ -177,7 +177,7 @@ kernel RingMap := (f,options) -> if f.?kernel then f.kernel else f.kernel = (
 	       images#i = apply(images#i, s -> s*b);
 	       i = i+1;
 	       );
-	  images = elements images;
+	  images = toList images;
 	  commonDenominator := images#0#1;
 	  k := coefficientRing R;
 	  d := quote d;
@@ -306,7 +306,7 @@ sub2 := (R,v) -> (
 		    "expected ", name x, " to be a generator of ", name R
 		    );
 	       m#((monoid R).index#s) = y));
-     f := matrix{elements m};
+     f := matrix{toList m};
      S := ring f;
      map(S,R,f))
 

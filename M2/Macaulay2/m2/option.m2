@@ -59,7 +59,7 @@ processArgs = (args,defaults,function) -> (
 	  false);
      args = select(deepSplice sequence args,
 	  a -> (
-	       if class a === Option then op unlist a
+	       if class a === Option then op toSequence a
 	       else if class a === OptionTable then scanPairs(a, op)
 	       else true
 	       )

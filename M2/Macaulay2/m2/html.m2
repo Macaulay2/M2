@@ -117,7 +117,7 @@ ListHead = new Type of Type
 ListHead List := (h,y) -> new h from y
 ListHead HtmlList := (h,y) -> new h from {y}
 ListHead String := (h,s) -> h {s}
-ListHead Sequence := (h,s) -> h elements s
+ListHead Sequence := (h,s) -> h toList s
 GlobalAssignHook ListHead := (X,x) -> (
      if not x#?(quote name) then x.name = X
      )
@@ -233,7 +233,7 @@ H4         = newListHead "H4"
 H5         = newListHead "H5"
 H6         = newListHead "H6"
 LISTING    = newListHead "LISTING"
-html LISTING := t -> "<LISTING>" | concatenate unlist t | "</LISTING>";
+html LISTING := t -> "<LISTING>" | concatenate toSequence t | "</LISTING>";
 XMP        = newListHead "XMP"
 BLOCKQUOTE = newListHead "BLOCKQUOTE"
 VAR        = newListHead "VAR"

@@ -49,9 +49,9 @@ name HashTable := s -> concatenate (
 name MutableList := s -> concatenate(name class s, "{...}")
 name BasicList := s -> concatenate(
      (if class s === List then "{" else (name class s,"{")),
-     between(", ",apply(elements s,name)),
+     between(", ",apply(toList s,name)),
      "}" )
-name Array := s -> concatenate ( "[", between(", ",name \ elements s), "]" )
+name Array := s -> concatenate ( "[", between(", ",name \ toList s), "]" )
 name Sequence := s -> (
      if # s === 1 then concatenate("seq ",name s#0)
      else concatenate("(",between(",",name \ s),")")

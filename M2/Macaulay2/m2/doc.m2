@@ -2957,7 +2957,7 @@ document { "lists, arrays, and sequences",
      MENU {
 	  TO "..",
 	  TO ":",
-	  TO "elements",
+	  TO "toList",
 	  TO "newClass",
 	  TO "seq",
 	  TO "sequence"
@@ -2988,7 +2988,7 @@ document { "lists, arrays, and sequences",
 	  TO "splice",
 	  TO "take",
 	  TO "unique",
-	  TO "unlist"
+	  TO "toSequence"
 	  },
      "Examining lists:",
      MENU {
@@ -3035,13 +3035,13 @@ document { quote BasicList,
      SEEALSO ("List", "lists, arrays, and sequences")
      }
 
-document { quote unlist,
-     TT "unlist x", " -- yields the elements of a list x as a sequence.",
+document { quote toSequence,
+     TT "toSequence x", " -- yields the elements of a list x as a sequence.",
      PARA,
      "If x is a sequence, then x is returned.",
      PARA,
-     EXAMPLE "unlist {1,2,3}",
-     EXAMPLE "unlist (1,2,3)"
+     EXAMPLE "toSequence {1,2,3}",
+     EXAMPLE "toSequence (1,2,3)"
      }
 
 document { quote Boolean,
@@ -3814,8 +3814,8 @@ document { quote hashTable,
      EXAMPLE "x#a"
      }
 
-document { quote elements,
-     TT "elements x", " -- yields a list of the elements in a list, sequence,
+document { quote toList,
+     TT "toList x", " -- yields a list of the elements in a list, sequence,
      or set ", TT "x", ".",
      PARA,
      "This is a good way to convert a list of some type to a list of type

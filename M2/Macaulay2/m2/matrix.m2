@@ -312,7 +312,7 @@ Matrix * Matrix := (m,n) -> (
 	       newMatrix(M,N))
 	  else (
 	       sendgg (ggPush m, ggPush n, ggmult, 
-		    ggdup, ggPush elements (degreeLength R:0), ggsetshift);
+		    ggdup, ggPush toList (degreeLength R:0), ggsetshift);
 	       reduce M;
 	       newMatrix(M,N))))
 
@@ -416,7 +416,7 @@ Matrix.directSum = args -> (
      then error "expected matrices all over the same ring";
      sendgg(apply(args, ggPush), ggPush (#args), ggdirectsum);
      f := newMatrix(directSum apply(args,target),directSum apply(args,source));
-     f.components = elements args;
+     f.components = toList args;
      f)
 
 isDirectSum = method()
@@ -444,7 +444,7 @@ Module.directSum = args -> (
 	  N := if all(args, M -> not M.?generators) 
 	  then (
 	       if all(args, M -> not M.?relations) 
-	       then R ^ (- join unlist apply(args, degrees))
+	       then R ^ (- join toSequence apply(args, degrees))
 	       else subquotient( null, directSum apply(args,relations) )
 	       )
 	  else (
@@ -454,7 +454,7 @@ Module.directSum = args -> (
 	       else subquotient(
 		    directSum apply(args,generators), 
 		    directSum apply(args,relations)));
-	  N.components = elements args;
+	  N.components = toList args;
 	  N)
 
 single := v -> (
@@ -468,7 +468,7 @@ directSum Sequence := args -> (
      if type.?directSum then type.directSum args
      else error "no method for direct sum"
      )
-directSum List := args -> directSum unlist args
+directSum List := args -> directSum toSequence args
 Matrix ++ Matrix := directSum
 Module ++ Module := directSum
 
@@ -483,7 +483,7 @@ RingElement ++ Matrix := (r,f) -> matrix {{r}} ++ f
 RingElement ++ RingElement := (r,s) -> matrix {{r}} ++ matrix {{s}}
 
 concatCols := mats -> (
-     mats = select(elements mats,m -> m =!= null);
+     mats = select(toList mats,m -> m =!= null);
      if # mats === 1 
      then mats#0
      else (
@@ -496,7 +496,7 @@ concatCols := mats -> (
 	  ggConcatCols(targets#0, Module.directSum apply(mats,source), mats)))
 
 concatRows := mats -> (
-     mats = select(elements mats,m -> m =!= null);
+     mats = select(toList mats,m -> m =!= null);
      if # mats === 1 
      then mats#0
      else (
@@ -539,16 +539,16 @@ submatrix(Matrix,List,Sequence) :=
 submatrix(Matrix,List,List) := (m,rows,cols) -> (
      if not isFreeModule source m or not isFreeModule target m
      then error "expected a homomorphism between free modules";
-     rows = elements splice rows;
+     rows = toList splice rows;
      listZ rows;
-     cols = elements splice cols;
+     cols = toList splice cols;
      listZ cols;
      sendgg(ggPush m, 
 	  ggINTARRAY, gg rows, ggINTARRAY, gg cols, ggsubmatrix);
      getMatrix ring m)
 
 submatrix(Matrix,List) := (m,cols) -> (
-     cols = elements splice cols;
+     cols = toList splice cols;
      listZ cols;
      sendgg(ggPush m, 
 	  ggINTARRAY, gg cols, 
@@ -867,7 +867,7 @@ map(Module,Module,Matrix) := (M,N,f,options) -> (
 	  sendgg (ggPush cover M, ggPush cover N, ggPush f,
 	       ggPush (
 		    if options.Degree === null
-		    then elements (degreeLength R : 0)
+		    then toList (degreeLength R : 0)
 		    else degreeCheck(options.Degree, R)),
 	       ggmatrix);
 	  reduce M;
@@ -978,7 +978,7 @@ map(Module,Nothing,List) := map(Module,Module,List) := (M,N,p,options) -> (
 	       ggPush cover N,
 	       ggPush (
 		    if options.Degree === null
-	       	    then elements (degreeLength R:0)
+	       	    then toList (degreeLength R:0)
 	       	    else degreeCheck(options.Degree,R)
 		    )
 	       ),
@@ -1509,7 +1509,7 @@ precedence Matrix := x -> precedence quote x
 net Matrix := f -> (
      if f == 0 
      then "0"
-     else verticalJoin unlist apply(
+     else verticalJoin toSequence apply(
 	  lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"))
      )
 
@@ -1526,7 +1526,7 @@ image RingElement := f -> image matrix {{f}}
 Ideal = new Type of MutableHashTable
 net Ideal := (I) -> net new FunctionApplication from { ideal, I.generators }
 name Ideal := (I) -> name new FunctionApplication from { ideal, 
-     unlist first entries gens I }
+     toSequence first entries gens I }
 
 isHomogeneous Ideal := (I) -> isHomogeneous I.generators
 genera(Ideal) := (I) -> genera module I
@@ -1661,8 +1661,8 @@ ideal Module := (M) -> (
      if isSubmodule M and rank F === 1 then ideal generators M
      else error "expected a submodule of a free module of rank 1"
      )
-ideal List := ideal Sequence := v -> ideal matrix {elements v}
-submodule List := submodule Sequence := v -> image matrix elements v
+ideal List := ideal Sequence := v -> ideal matrix {toList v}
+submodule List := submodule Sequence := v -> image matrix toList v
 ideal RingElement := v -> ideal {v}
 submodule(Vector) := (v) -> image matrix {v}
 ideal ZZ := v -> ideal {v}

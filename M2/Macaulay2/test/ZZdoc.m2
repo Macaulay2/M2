@@ -67,7 +67,7 @@ scan(sort keys unreachable,
 	  "documentation for '"|s|"' not reachable"))
 
 DocumentationNotNeeded = new MutableHashTable from apply(
-     elements (tab#"a" .. tab#"Z"), s -> (s,true))
+     toList (tab#"a" .. tab#"Z"), s -> (s,true))
 DocumentationNotNeeded#(quote
      ) = true
 DocumentationNotNeeded#(quote[) = true

@@ -111,6 +111,7 @@ methods = F -> (
 		    else found#(key,F) = true
 		    )));
      if class F === Sequence then (
+	  tallyF := tally F;
 	  scanPairs(symbolTable(),
 	       (Name,symbol) -> (
 		    x := value symbol;
@@ -118,7 +119,7 @@ methods = F -> (
 			 seen#x = true;
 			 scan(pairs x, (key,meth) -> (
 				   if class meth === Function 
-				   and class key === Sequence and isSubset(F,key)
+				   and class key === Sequence and tallyF <= tally key
 				   then found#key = true))))))
      else (
 	  scanPairs(symbolTable(),
@@ -136,6 +137,17 @@ methods = F -> (
 document { quote methods,
      TT "methods F", " -- produces a list of those methods associated with the
      function or type F.",
+     BR, NOINDENT,
+     TT "methods quote **", " -- produces a list of the methods 
+     usable with the operator ", TT "**", ".",
+     BR, NOINDENT,
+     TT "methods (quote **, X)", " -- produces a list of the 
+     methods usable with the operator ", TT "**", " and a thing of
+     class ", TT "X", ".",
+     BR, NOINDENT,
+     TT "methods (X, Y)", " -- produces a list of the 
+     methods usable with a thing of class ", TT "X", " and a thing of class
+     ", TT "Y", ".",
      PARA,
      "This function operates by examining those types which are values of
      global symbols for keys which appear to be storing references to

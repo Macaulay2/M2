@@ -49,7 +49,7 @@ newSchur := (R,M) -> (
 	  args -> (
 	       if # args === 1 
 	       then args#0
-	       else new Sum from elements args
+	       else new Sum from toList args
 	       ),
 	  ConvertRepeat ConvertApply ( 
 	       (m,r) -> r * m,

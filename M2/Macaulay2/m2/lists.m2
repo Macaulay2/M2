@@ -79,7 +79,7 @@ document { quote member,
      "See also ", TO "positions", "."
      }
 
-sum(List) := x -> plus unlist x
+sum(List) := x -> plus toSequence x
 
 sum(List,Function) := 
 sum(Sequence,Function) := 
@@ -115,7 +115,7 @@ document { quote sum,
      "See also ", TO "product", "."
      }
 
-product List := x -> times unlist x
+product List := x -> times toSequence x
 
 product(List,Function) := 
 product(Sequence,Function) := 

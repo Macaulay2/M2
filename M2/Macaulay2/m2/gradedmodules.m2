@@ -44,7 +44,7 @@ GradedModuleMap = new Type of MutableHashTable
 net GradedModuleMap := f -> (
      d := f.degree;
      v := between("",
-	  apply( sort elements (
+	  apply( sort toList (
 		    set spots f +
 		    set spots source f +
 		    set (apply(spots target f, i -> i-d))
@@ -215,7 +215,7 @@ GradedModule.directSum = v -> (
      E.ring = rings#0;
      spts := new MutableHashTable;
      scan(v, M -> scan(spots M, i -> spts#i = 1));
-     spts = elements spts;
+     spts = toList spts;
      scan(spts, i -> E#i = directSum apply(v, M -> M_i));
      E	       
      )
@@ -310,7 +310,7 @@ GradedModule ** GradedModule := (C,D) -> (
 		    p := if not pairs#?k then pairs#k = new MutableHashTable else pairs#k;
 		    p#{i,j} = 1;
 		    )));
-     scan(keys pairs, k -> pairs#k = sort elements pairs#k);
+     scan(keys pairs, k -> pairs#k = sort toList pairs#k);
      E := new GradedModule;
      E.ring = R;
      scan(keys pairs, k -> (
@@ -360,7 +360,7 @@ GradedModuleMap.matrix = (e,options) -> (
      f.degree = 0;
      src := f.source = directSum srcs;
      tar := f.target = directSum tars;
-     scan(elements(set spots src * set spots tar), k -> (
+     scan(toList(set spots src * set spots tar), k -> (
 	       f#k = matrix apply(nrows, i -> apply(ncols, j -> (
 			      if e#i#j#?k then e#i#j#k else map(tars#i_k,srcs#j_k,0)
 			      )));

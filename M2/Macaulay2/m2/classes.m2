@@ -43,13 +43,13 @@ document { quote newClass,
      "If m is mutable, and instances of class N are also mutable, then
      copying is not required, and is not done.",
      PARA,
-     SEEALSO ( "copy", "elements" )
+     SEEALSO ( "copy", "toList" )
      }
 
 document { quote MutableList,
      TT "MutableList", " -- the class of all mutable Lists.",
      PARA,
-     "Normally the entries in a mutable hash table are not printed, to prevent
+     "Normally the entries in a mutable list are not printed, to prevent
      infinite loops in the printing routines.  To print them out, use 
      ", TO "peek", ".",
      PARA,

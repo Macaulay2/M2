@@ -38,7 +38,7 @@ Thing .. Thing := (a,z) -> (
 	  )
      else nometh2(quote .., a,z);
      if a === aa and z === zz then nometh2(quote .., a,z);
-     unlist apply(aa .. zz, value)
+     toSequence apply(aa .. zz, value)
      )
 
 document { "..",
@@ -51,7 +51,7 @@ document { "..",
      PARA,
      EXAMPLE "1..5",
      EXAMPLE "{1..5}",
-     EXAMPLE "elements(1..5)",
+     EXAMPLE "toList(1..5)",
      EXAMPLE "{10..10}",
      EXAMPLE "{10..8}",
      EXAMPLE "{3..5,8..10}",
@@ -83,7 +83,7 @@ document { "indeterminates",
      use are : ", 
      concatenate 
      ((s) -> mingle(s,append(#s-2 : ", ", ", and ")))
-     elements (
+     toList (
 	  set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	  - set apply(indeterminates, name)
 	  ),

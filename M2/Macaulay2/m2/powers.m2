@@ -1,7 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 
 --binomialRow := memoize ( 
---     n -> accumulate((x,j) -> (x * (n-j+1))//j, 1, elements (1 .. n)) 
+--     n -> accumulate((x,j) -> (x * (n-j+1))//j, 1, toList (1 .. n)) 
 --     )
 --binomial ZZ := n -> binomialRow n
 binomial(ZZ,ZZ) := memoize (

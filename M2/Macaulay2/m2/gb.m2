@@ -497,8 +497,8 @@ assert(f%a + a * (f//a) == f)
 
 TEST "
 S = ZZ/101[t_1 .. t_9,u_1 .. u_9]
-m = matrix pack (elements (t_1 .. t_9),3)			  -- 3 by 3
-n = matrix pack (elements (u_1 .. u_9),3)			  -- 3 by 3
+m = matrix pack (toList (t_1 .. t_9),3)			  -- 3 by 3
+n = matrix pack (toList (u_1 .. u_9),3)			  -- 3 by 3
 j = flatten (m * n - n * m)
 k = flatten (m * n - n * m)
 G = gb j

@@ -27,8 +27,8 @@ Expression#expandFunction = first
 AssociativeExpression = new Type of Expression
 --new AssociativeExpression from Sequence := 
 --new AssociativeExpression from List := (type,v) -> (
---     elements splice apply(v, 
---	  term -> if class term === type then unlist term else term
+--     toList splice apply(v, 
+--	  term -> if class term === type then toSequence term else term
 --	  )
 --     )
 
@@ -121,7 +121,7 @@ net Equation := v -> (
      else if n === 1 then "Equation{" | net v#0 | "}"
      else (
 	  p := precedence v;
-	  horizontalJoin elements between(" == ", 
+	  horizontalJoin toList between(" == ", 
 	       apply(v, e -> if precedence e <= p then "(" | net e | ")" else net e))))
 name Equation := v -> (
      n := # v;
@@ -333,7 +333,7 @@ document { quote expand,
      EXAMPLE "expand p"
      } 
 
-expand Expression := v -> (class v)#expandFunction apply(unlist v,expand)
+expand Expression := v -> (class v)#expandFunction apply(toSequence v,expand)
 expand Thing := identity
 
 -----------------------------------------------------------------------------
@@ -357,7 +357,7 @@ name SparseMonomialVectorExpression := v -> name (
      )
 -----------------------------------------------------------------------------
 MatrixExpression = new Type of Expression
-MatrixExpression#expandFunction = x -> matrix applyTable(elements x,expand)
+MatrixExpression#expandFunction = x -> matrix applyTable(toList x,expand)
 name MatrixExpression := m -> concatenate(
      "{",
      between(",",apply(m,row->("{", between(",",apply(row,name)), "}"))),
@@ -741,7 +741,7 @@ center := (s,wid) -> (
      	  horizontalJoin(spaces w,s,spaces(wid-w-n))))
 
 net MatrixExpression := x -> (
-     x = elements x;
+     x = toList x;
      if # x === 0 or # (x#0) === 0 then "|  |"
      else (
      	  x = applyTable(x,net);
@@ -971,7 +971,7 @@ document { quote hold,
 Position = new Type of BasicList
 name Position := net Position := i -> concatenate(i#0,":",string i#1,":",string i#2)
 
-backtrace = () -> apply(elements deepSplice report, 
+backtrace = () -> apply(toList deepSplice report, 
      i -> (
 	  if class i#0 === String then new Position from i
 	  else if class i#0 === Function then new FunctionApplication from i

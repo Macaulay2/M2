@@ -1594,7 +1594,7 @@ toSequence(e:Expr):Expr := (
 	  else Expr(b.v)
 	  )
      else WrongArg("a list or sequence"));
-setupfun("unlist",toSequence);
+setupfun("toSequence",toSequence);
 
 sequencefun(e:Expr):Expr := (
      when e
