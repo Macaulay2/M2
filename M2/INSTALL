@@ -30,7 +30,7 @@ depend on some of the earlier ones.
     install: -- edit Makefile
 		    set CC=gcc
 		    value of CFLAGS : remove -DALL_INTERIOR_POINTERS
-				      add    -DLARGE_CONFIG -DNO_DEBUGGING
+				      add -DLARGE_CONFIG -DNO_DEBUGGING
 	     -- make
 	     -- cp gc.a /usr/lib/libgc.a
 	     -- cp include/gc.h and include/gc_cpp.h /usr/include

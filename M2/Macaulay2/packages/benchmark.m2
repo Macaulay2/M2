@@ -60,6 +60,12 @@ assert( vv == {1, 35, 140, 301, 735, 1080, 735, 301, 140, 35, 1} )
 -- res39: 1.71 seconds
 -- resG25: 25. seconds
 
+-- beginning computation Sun Sep  9 19:33:49 CDT 2001
+-- Linux rhenium 2.4.9 #67 Mon Sep 3 11:10:40 CDT 2001 i686 unknown
+-- Macaulay2 0.9, compiled with gcc 3.0.1  (faster than 3.0 below)
+-- res39: 1.71 seconds
+-- resG25: 27.27 seconds
+
 -- Linux rhenium 2.4.4 #55 Tue Jun 26 13:44:25 CDT 2001 i686 unknown
 -- Macaulay2 0.9, compiled with gcc 3.0
 -- res39: 1.93 seconds
