@@ -522,22 +522,17 @@ fi
 
 
 
- VERSION=0.8.61 
+VERSION=0.8.61
+
 cat >> confdefs.h <<EOF
 #define VERSION "$VERSION"
-EOF
-
-
- PACKAGE=Macaulay2
-cat >> confdefs.h <<EOF
-#define PACKAGE "$PACKAGE"
 EOF
 
 
 # Extract the first word of "ranlib", so it can be a program name with args.
 set dummy ranlib; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:541: checking for $ac_word" >&5
+echo "configure:536: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_RANLIB'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -595,7 +590,7 @@ ac_configure=$ac_aux_dir/configure # This should be Cygnus configure.
 # SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
 # ./install, which can be erroneously created by make from ./install.sh.
 echo $ac_n "checking for a BSD compatible install""... $ac_c" 1>&6
-echo "configure:599: checking for a BSD compatible install" >&5
+echo "configure:594: checking for a BSD compatible install" >&5
 if test -z "$INSTALL"; then
 if eval "test \"`echo '$''{'ac_cv_path_install'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -647,6 +642,191 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL_PROGRAM}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
+
+echo $ac_n "checking for __finite""... $ac_c" 1>&6
+echo "configure:648: checking for __finite" >&5
+if eval "test \"`echo '$''{'ac_cv_func___finite'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext <<EOF
+#line 653 "configure"
+#include "confdefs.h"
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char __finite(); below.  */
+#include <assert.h>
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char __finite();
+
+int main() {
+
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub___finite) || defined (__stub_____finite)
+choke me
+#else
+__finite();
+#endif
+
+; return 0; }
+EOF
+if { (eval echo configure:676: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+  rm -rf conftest*
+  eval "ac_cv_func___finite=yes"
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -rf conftest*
+  eval "ac_cv_func___finite=no"
+fi
+rm -f conftest*
+fi
+
+if eval "test \"`echo '$ac_cv_func_'__finite`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+  :
+else
+  echo "$ac_t""no" 1>&6
+cat >> confdefs.h <<\EOF
+#define __finite finite
+EOF
+
+fi
+
+echo $ac_n "checking for __isnan""... $ac_c" 1>&6
+echo "configure:700: checking for __isnan" >&5
+if eval "test \"`echo '$''{'ac_cv_func___isnan'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext <<EOF
+#line 705 "configure"
+#include "confdefs.h"
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char __isnan(); below.  */
+#include <assert.h>
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char __isnan();
+
+int main() {
+
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub___isnan) || defined (__stub_____isnan)
+choke me
+#else
+__isnan();
+#endif
+
+; return 0; }
+EOF
+if { (eval echo configure:728: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+  rm -rf conftest*
+  eval "ac_cv_func___isnan=yes"
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -rf conftest*
+  eval "ac_cv_func___isnan=no"
+fi
+rm -f conftest*
+fi
+
+if eval "test \"`echo '$ac_cv_func_'__isnan`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+  :
+else
+  echo "$ac_t""no" 1>&6
+cat >> confdefs.h <<\EOF
+#define __isnan isnan
+EOF
+
+fi
+
+
+echo contents of confdefs.h: >&6
+sed -e '/^$/d' -e 's/^/   /' confdefs.h >&6
+
+
+  echo $ac_n "checking whether sys_errlist is declared""... $ac_c" 1>&6
+echo "configure:757: checking whether sys_errlist is declared" >&5
+if eval "test \"`echo '$''{'m2_cv_sys_errlist_is_declared'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext <<EOF
+#line 762 "configure"
+#include "confdefs.h"
+
+      #include <stdio.h>
+      #include <errno.h>
+      
+int main() {
+char ** x = sys_errlist
+; return 0; }
+EOF
+if { (eval echo configure:772: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+  rm -rf conftest*
+  m2_cv_sys_errlist_is_declared=yes
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -rf conftest*
+  m2_cv_sys_errlist_is_declared=no
+fi
+rm -f conftest*
+fi
+
+echo "$ac_t""$m2_cv_sys_errlist_is_declared" 1>&6
+  if test "$m2_cv_sys_errlist_is_declared" = yes
+  then cat >> confdefs.h <<\EOF
+#define sys_errlist_IS_DECLARED 
+EOF
+
+  fi
+
+
+  echo $ac_n "checking whether h_errlist is declared""... $ac_c" 1>&6
+echo "configure:794: checking whether h_errlist is declared" >&5
+if eval "test \"`echo '$''{'m2_cv_h_errlist_is_declared'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext <<EOF
+#line 799 "configure"
+#include "confdefs.h"
+
+      #include <stdio.h>
+      #include <errno.h>
+      
+int main() {
+char ** x = h_errlist
+; return 0; }
+EOF
+if { (eval echo configure:809: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+  rm -rf conftest*
+  m2_cv_h_errlist_is_declared=yes
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -rf conftest*
+  m2_cv_h_errlist_is_declared=no
+fi
+rm -f conftest*
+fi
+
+echo "$ac_t""$m2_cv_h_errlist_is_declared" 1>&6
+  if test "$m2_cv_h_errlist_is_declared" = yes
+  then cat >> confdefs.h <<\EOF
+#define h_errlist_IS_DECLARED 
+EOF
+
+  fi
+
+
+################ finish up
 
 trap '' 1 2 15
 cat > confcache <<\EOF
@@ -749,10 +929,56 @@ done
 ac_given_srcdir=$srcdir
 ac_given_INSTALL="$INSTALL"
 
-trap 'rm -fr `echo "config.Makefile
-	Makefile
-	Macaulay2/Makefile
-	Macaulay2/m2/Makefile
+trap 'rm -fr `echo "	config.Makefile \
+	Makefile \
+	Macaulay2/Makefile \
+	Macaulay2/m2/Makefile \
+	Macaulay2/ComputationsBook/Makefile \
+	Macaulay2/ComputationsBook/book/Makefile \
+	Macaulay2/ComputationsBook/chapters/TEMPLATE/Makefile \
+	Macaulay2/ComputationsBook/chapters/authorInstructions/Makefile \
+	Macaulay2/ComputationsBook/chapters/completeIntersections/Makefile \
+	Macaulay2/ComputationsBook/chapters/d-modules/Makefile \
+	Macaulay2/ComputationsBook/chapters/sample1/Makefile \
+	Macaulay2/ComputationsBook/chapters/sample2/Makefile \
+	Macaulay2/ComputationsBook/chapters/schemes/Makefile \
+	Macaulay2/ComputationsBook/chapters/solving/Makefile \
+	Macaulay2/ComputationsBook/inputs/Makefile \
+	Macaulay2/ComputationsBook/lncse-macros/Makefile \
+	Macaulay2/ComputationsBook/proposals/Makefile \
+	Macaulay2/ComputationsBook/util/Makefile \
+	Macaulay2/Mathematica/Makefile \
+	Macaulay2/Vasconcelos-appendix/Makefile \
+	Macaulay2/basictests/Makefile \
+	Macaulay2/benchmarks/Makefile \
+	Macaulay2/benchmarks2/Makefile \
+	Macaulay2/book/Makefile \
+	Macaulay2/c/Makefile \
+	Macaulay2/c2/Makefile \
+	Macaulay2/d/Makefile \
+	Macaulay2/dbm/Makefile \
+	Macaulay2/docs/Makefile \
+	Macaulay2/docs/nsf-final-report-2000/Makefile \
+	Macaulay2/docs/nsf-proposal-1998/Makefile \
+	Macaulay2/dumpdata/Makefile \
+	Macaulay2/e/Makefile \
+	Macaulay2/emacs/Makefile \
+	Macaulay2/experiments/Makefile \
+	Macaulay2/gmp-macros/Makefile \
+	Macaulay2/html/Makefile \
+	Macaulay2/mike-slides/Makefile \
+	Macaulay2/mike-tut/Makefile \
+	Macaulay2/packages/Makefile \
+	Macaulay2/schubert/Makefile \
+	Macaulay2/screen/Makefile \
+	Macaulay2/slides/Makefile \
+	Macaulay2/socket/Makefile \
+	Macaulay2/test/Makefile \
+	Macaulay2/tex/Makefile \
+	Macaulay2/texmacs/Makefile \
+	Macaulay2/thread/Makefile \
+	Macaulay2/tutorial/Makefile \
+	Macaulay2/util/Makefile
 	 include/config.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 EOF
 cat >> $CONFIG_STATUS <<EOF
@@ -786,7 +1012,6 @@ s%@oldincludedir@%$oldincludedir%g
 s%@infodir@%$infodir%g
 s%@mandir@%$mandir%g
 s%@VERSION@%$VERSION%g
-s%@PACKAGE@%$PACKAGE%g
 s%@RANLIB@%$RANLIB%g
 s%@INSTALL_PROGRAM@%$INSTALL_PROGRAM%g
 s%@INSTALL_SCRIPT@%$INSTALL_SCRIPT%g
@@ -832,10 +1057,56 @@ EOF
 
 cat >> $CONFIG_STATUS <<EOF
 
-CONFIG_FILES=\${CONFIG_FILES-"config.Makefile
-	Makefile
-	Macaulay2/Makefile
-	Macaulay2/m2/Makefile
+CONFIG_FILES=\${CONFIG_FILES-"config.Makefile \
+	Makefile \
+	Macaulay2/Makefile \
+	Macaulay2/m2/Makefile \
+	Macaulay2/ComputationsBook/Makefile \
+	Macaulay2/ComputationsBook/book/Makefile \
+	Macaulay2/ComputationsBook/chapters/TEMPLATE/Makefile \
+	Macaulay2/ComputationsBook/chapters/authorInstructions/Makefile \
+	Macaulay2/ComputationsBook/chapters/completeIntersections/Makefile \
+	Macaulay2/ComputationsBook/chapters/d-modules/Makefile \
+	Macaulay2/ComputationsBook/chapters/sample1/Makefile \
+	Macaulay2/ComputationsBook/chapters/sample2/Makefile \
+	Macaulay2/ComputationsBook/chapters/schemes/Makefile \
+	Macaulay2/ComputationsBook/chapters/solving/Makefile \
+	Macaulay2/ComputationsBook/inputs/Makefile \
+	Macaulay2/ComputationsBook/lncse-macros/Makefile \
+	Macaulay2/ComputationsBook/proposals/Makefile \
+	Macaulay2/ComputationsBook/util/Makefile \
+	Macaulay2/Mathematica/Makefile \
+	Macaulay2/Vasconcelos-appendix/Makefile \
+	Macaulay2/basictests/Makefile \
+	Macaulay2/benchmarks/Makefile \
+	Macaulay2/benchmarks2/Makefile \
+	Macaulay2/book/Makefile \
+	Macaulay2/c/Makefile \
+	Macaulay2/c2/Makefile \
+	Macaulay2/d/Makefile \
+	Macaulay2/dbm/Makefile \
+	Macaulay2/docs/Makefile \
+	Macaulay2/docs/nsf-final-report-2000/Makefile \
+	Macaulay2/docs/nsf-proposal-1998/Makefile \
+	Macaulay2/dumpdata/Makefile \
+	Macaulay2/e/Makefile \
+	Macaulay2/emacs/Makefile \
+	Macaulay2/experiments/Makefile \
+	Macaulay2/gmp-macros/Makefile \
+	Macaulay2/html/Makefile \
+	Macaulay2/mike-slides/Makefile \
+	Macaulay2/mike-tut/Makefile \
+	Macaulay2/packages/Makefile \
+	Macaulay2/schubert/Makefile \
+	Macaulay2/screen/Makefile \
+	Macaulay2/slides/Makefile \
+	Macaulay2/socket/Makefile \
+	Macaulay2/test/Makefile \
+	Macaulay2/tex/Makefile \
+	Macaulay2/texmacs/Makefile \
+	Macaulay2/thread/Makefile \
+	Macaulay2/tutorial/Makefile \
+	Macaulay2/util/Makefile
 	"}
 EOF
 cat >> $CONFIG_STATUS <<\EOF
