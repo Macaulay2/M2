@@ -308,7 +308,7 @@ public:
   }
 
   virtual vec vec_top_coefficient(const vec v, int &x, int &e) const {
-#warning "vec_top_coefficient not implemented for fraction rings"
+#warning "vec_top_coefficient not implemented for quotient rings"
     return 0;
   }
 
@@ -340,36 +340,6 @@ public:
     return R_->PolyRing::translate_gbvector_to_vec_denom(F,v,denom);
   }
 };
-
-#if 0
-class QuotientInfo
-{
-public:
-  bool is_quotient() const;
-  vector<gbvector *,gc_alloc> elements;
-  const PolyRing *ambient_ring;
-#if 0
-  MonomialIdeal * _Rideal;	// This is used if the coeff ring is not ZZ.
-  TermIdeal *_RidealZZ;		// This is used if the coeff ring is ZZ.
-#endif
-};
-#endif
-
-#if 0
-// These were in PolynomialRing
-  static PolynomialRing *create_quotient_ring(const PolynomialRing *R, const array<ring_elem> &I);
-  MonomialIdeal *  get_quotient_monomials() const { return _Rideal; }
-  const TermIdeal *get_quotient_monomials_ZZ() const { return _RidealZZ; }
-  const FreeModule *get_Rsyz() const;
-
-  Matrix     get_ideal() const;
-  ring_elem get_quotient_elem(int i) const { return _quotient_ideal[i]; }
-  int        get_quotient_elem_length() const { return _quotient_ideal.length(); }
-
-
-  void initialize_quotients(const array<ring_elem> &I);
-#endif
-
 
 #endif
 
