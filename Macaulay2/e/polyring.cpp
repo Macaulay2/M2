@@ -269,14 +269,9 @@ bool PolyRing::promote(const Ring *Rf, const ring_elem f, ring_elem &result) con
   // case 1:  Rf = A[x]/J ---> A[x]/I  is one of the 'base_ring's of 'this'.
   // case 2:  Rf = A      ---> A[x]/I  is the ring of scalars
 
-  if (K_ == Rf)
-    {
-      int *m = M_->make_one();
-      result = make_flat_term(f,m);
-      //      M_->remove(m);
-      return true;
-    }
-  if (logicalK_ == Rf)
+  const PolynomialRing *R1 = Rf->cast_to_PolynomialRing();
+
+  if (logicalK_ == Rf || (R1 != 0 && logicalK_ == R1->getAmbientRing()))
     {
       int *m = logicalM_->make_one();
       result = make_logical_term(f,m);

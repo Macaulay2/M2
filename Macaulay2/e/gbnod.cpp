@@ -35,10 +35,6 @@ void gb2_comp::setup(FreeModule *FFsyz,
 
   spairs = new s_pair_heap(M);
 
-#warning "broken hf_matrix"
-#if 0
-  hf_matrix = const_cast<Matrix *>(Matrix::make(F, 0, 0, true));
-#endif
   n_gb = n_mingens = n_subring = 0;
   n_gb_first = 0;
   n_pairs = n_pairs_computed = 0;
@@ -509,21 +505,6 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
   monideals[p->f->comp]->mi_search->insert(new Bag(p, vp));
   gb.append(p);
 
-  if (use_hilb)
-    {
-      // Make the element 1 * m * comp, as an element of _hilb_matrix->get_ring().
-      // and append it as the last column of _hilb_matrix.
-
-      gbvector *new_f = p->f;
-      ring_elem a = originalR->make_flat_term(originalR->getCoefficients()->one(), 
-					      f_m);
-#warning "broken hf_matrix"
-#if 0
-      hf_matrix->append_column(0);
-      hf_matrix->set_entry(new_f->comp-1,hf_matrix->n_cols()-1, a);
-#endif
-    }
-
   M->remove(f_m);
 
   // Now do auto-reduction of previous elements using this one.
@@ -885,35 +866,20 @@ bool gb2_comp::is_done()
 // Hilbert function computing //
 ////////////////////////////////
 
-#if 0
-enum ComputationStatusCode gb2_comp::hilbertNumerator(RingElement *&result)
+Matrix *gb2_comp::make_lead_term_matrix()
 {
-  // It is possible that the computation was not completed before.
-  if (n_hf == n_gb)
+  MatrixConstructor result(F, gb.length());
+  ring_elem one = originalR->Ncoeffs()->one();
+  for (int i=0; i<gb.length(); i++)
     {
-      // No more is needed to be computed
-      result = hf;
-      return COMP_DONE;
+      gb_elem *g = gb[i];
+      gbvector *f = g->f;
+      int x = f->comp-1;
+      ring_elem a = originalR->make_flat_term(one, f->monom);
+      result.set_entry(x,i,a);
     }
-
-  hf = hilb_comp::hilbertNumerator(hf_matrix);
-  // hf is NULL if the computation was interrupted
-  if (hf == 0)
-    return COMP_INTERRUPTED;
-  result = hf;
-  n_hf = n_gb;
-  return COMP_DONE;
+  return result.to_matrix();
 }
-
-enum ComputationStatusCode gb2_comp::hilbertNumeratorCoefficient(int deg, int &result)
-{
-  RingElement *f;
-  enum ComputationStatusCode ret = hilbertNumerator(f);
-  if (ret != COMP_DONE) return ret;
-  result = hilb_comp::coeff_of(f, deg);
-  return COMP_DONE;
-}
-#endif
 
 RingElementOrNull *gb2_comp::hilbertNumerator()
 {
@@ -924,7 +890,7 @@ RingElementOrNull *gb2_comp::hilbertNumerator()
       return hf;
     }
 
-  
+  Matrix *hf_matrix = make_lead_term_matrix();
   hf = hilb_comp::hilbertNumerator(hf_matrix);
 
   // hf is NULL if the computation was interrupted

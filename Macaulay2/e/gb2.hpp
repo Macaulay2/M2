@@ -182,9 +182,7 @@ private:
   int hf_numgens_gb;			// The HF has been computed for this many GB elements.
 				// (Used to determine whether to recompute HF).
   int hf_numgens_F;             // The HF was computed using this size of F.
-  Matrix *hf_matrix;		// The mutable matrix of initial monomials, used to determine HF.
   int n_gb_syz;
-
 
   const RingElement *hf_orig;
   int n_in_degree;		// The number of new elements that we expect to find
@@ -212,6 +210,7 @@ private:
   void gb_sort(int lo, int hi);
 
   void flush_pairs();
+  Matrix *make_lead_term_matrix(); // for computing hilbert functions
   
   int computation_complete(int stop_gb, 
 			   int stop_syz, 

@@ -309,7 +309,8 @@ extern "C" {
 
   const RingOrNull *IM2_Ring_polyring(const Ring *K, 
 				      const Monoid *M); /* drg: connected rawPolynomialRing(,) */
-  /* K can be either commutative or not. */
+  /* K can be either commutative or not. If K is a quotient ring, the relations are
+   ignored.  Use rawQuotientRing to then make the desired quotient ring. */
 
   const Ring *IM2_Ring_trivial_polyring(); /* drg: connected rawPolynomialRing() */
   /* This returns the polynomial ring ZZ[], whose degree ring is itself */
@@ -353,11 +354,13 @@ extern "C" {
 
   const RingOrNull * IM2_Ring_quotient(const Ring *R, 
 				       const Matrix *I); /*drg: connected rawQuotientRing */
+  /* Given a quotient of an ambient poly ring R = A/J, and a GB I in R, form
+     the quotient ring A/(I+J). */
 
   const RingOrNull * IM2_Ring_quotient1(const Ring *R, 
 					const Ring *B); /*drg: connected rawQuotientRing */
-  /* if R is a polynomial ring of the form A[x]/J, and B = A/I (where A is a poly ring)
-     then form the quotient ring B[x]/J. */
+  /* if R is a polynomial ring of the form A[x], and B = A/I (where A is a poly ring)
+     then form the quotient ring B[x]. */
 
   const RingOrNull *IM2_Ring_schur(const Ring *R); /* drg: reconnected rawSchurRing */
 
