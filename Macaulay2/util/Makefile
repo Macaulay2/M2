@@ -1,6 +1,7 @@
 TOPDIR = ../..
 include $(TOPDIR)/config.Makefile
 include $(TOPDIR)/Makeconf
+
 # LDFLAGS =
 # CFLAGS =
 

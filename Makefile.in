@@ -23,6 +23,9 @@ include $(TOPDIR)/config.Makefile
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = $(srcdir)
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA = $(INSTALL)
 #############################################################################
 .PHONY : all always dirs clean FACTORYmade FACTORYconfigured FACTORYexports \
 	announce MACAULAY2 MACAULAY2.doc doc port default

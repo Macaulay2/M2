@@ -27,6 +27,5 @@ oldincludedir = @oldincludedir@
 infodir = @infodir@
 mandir = @mandir@
 RANLIB = @RANLIB@
-INSTALL = @INSTALL@
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA = $(INSTALL)
+
+-include config.Makefile.overrides

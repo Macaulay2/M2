@@ -93,9 +93,9 @@ Ext(Module,Module) := Module => (N,M) -> (
   else (
     p := presentation R;
     Q := ring p;
-    I := ideal p;
+    I := ideal mingens ideal p;
     n := numgens Q;
-    c := rank source mingens I;
+    c := numgens I;
     if c =!= codim R 
     then error "total Ext available only for complete intersections";
     f := apply(c, i -> I_i);
