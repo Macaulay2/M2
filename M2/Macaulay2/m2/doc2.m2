@@ -102,29 +102,25 @@ document { "for",
 	  "for i from 3 to 6 do print i",
 	  "for i when i^2 < 90 list i",
 	  },
-     SEEALSO { "while", "return" }
+     SEEALSO { "loops", "while", "return" }
      }     
 
 document { "while",
      Headline => "loop control",
      TT "while p do x", " -- repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ", returning 
-     ", TT "null", ".",BR,
+     ", TT "null", ".",
+     BR,NOINDENT,
      TT "while p list x", " -- repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ", returning a
      list of the values of ", TT "x", " encountered.",
+     BR,NOINDENT,
      TT "while p list x do z", " -- repeatedly evaluates ", TT "x", " 
-     and ", TT "x", " as long as the value of ", TT "p", " remains
+     and ", TT "z", " as long as the value of ", TT "p", " remains
      ", TO "true", ", returning a list of the values of ", TT "x", " 
      encountered.",BR,
      PARA,
-     EXAMPLE {
-	  ///i = 1; while i < 100 do (<< i << " "; i = 2*i); << endl///,
-	  ///i = 1; while (i = 2*i; i < 100) list i///,
-	  ///i = 1; while i < 100 list i do i = 2*i///,
-	  ///i = List; while i =!= Thing list i do i = parent i///
-	  },
-     SEEALSO { "for", "return" }
+     SEEALSO { "loops", "break", "for" }
      }
 
 document { "break",
@@ -133,11 +129,7 @@ document { "break",
      ", TT "x", " as the value of the loop currently being evaluated.",BR,
      TT "break;", " -- interrupts execution of a loop, returning
      ", TO "null", " as the value of the function currently being evaluated.",
-     PARA,
-     EXAMPLE {
-	  "scan({3,5,7,11,44,55,77}, i -> if even i then break i)"
-	  },
-     SEEALSO { "return" }
+     SEEALSO { "mapping over lists", "scan", "apply", "while", "for" }
      }
 
 document { "return",
@@ -544,82 +536,153 @@ document { abs,
 
 document { sin,
      Headline => "sine function", 
-     TT "sin x", " -- computes the sine of ", TT "x", "."
+     Synopsis => {
+	  "y = sin x",
+	  "x" => null,
+	  "y" => { "the sine of ", TT "x", "" }
+	  },
      }
 
 document { cos,
      Headline => "cosine function", 
-     TT "cos x", " -- computes the cosine of ", TT "x", "."
+     Synopsis => {
+	  "y = cos x",
+	  "x" => null,
+	  "y" => { "the cosine of ", TT "x", "" }
+	  },
      }
 
 document { tan,
      Headline => "tangent function",
-     TT "tan x", " -- computes the tangent of ", TT "x", "."
+     Synopsis => {
+	  "y = tan x",
+	  "x" => null,
+	  "y" => { "the tangent of ", TT "x", "" }
+	  }
      }
 
 document { asin,
      Headline => "arcsine function", 
-     TT "asin x", " -- computes the arcsine of ", TT "x", "."
+     Synopsis => {
+	  "y = asin x",
+	  "x" => null,
+	  "y" => { "the arcsine of ", TT "x", "" }
+	  }
      }
+
 document { acos,
      Headline => "arccosine function", 
-     TT "acos x", " -- computes the arccosine of ", TT "x", "."
+     Synopsis => {
+	  "y = acos x",
+	  "x" => null,
+	  "y" => { "the arccosine of ", TT "x", "" }
+	  }
      }
+
 document { atan,
-     Headline => "arctangent function", 
-     TT "atan x", " -- computes the arctangent of ", TT "x", ".",
-     BR,NOINDENT,
-     TT "atan(x,y)", " -- computes the angle formed with the 
-     x-axis by the ray from the origin ", TT "{0,0}", " to the point ", TT "{x,y}", "."
+     Headline => "arctangent function"
+     }
+
+document { (atan,RR),
+     Synopsis => {
+	  "y = atan x",
+	  "x" => null,
+	  "y" => { "the arctangent of ", TT "x", "" }
+	  }
+     }
+
+document { (atan,RR,RR),
+     Synopsis => {
+	  "t = atan(x,y)",
+	  "x" => null,
+	  "y" => null,
+	  "y" => { "the angle formed with the x-axis by the
+	       ray from the origin to the point ", TT "{x,y}"
+	       }
+	  }
     }
 
 document { sinh,
      Headline => "hyperbolic sine function",
-     TT "sinh x", " -- computes the hyperbolic sine of ", TT "x", "."
+     Synopsis => {
+	  "y = sinh x",
+	  "x" => null,
+	  "y" => { "the hyperbolic sine of ", TT "x", "" }
+	  }
      }
 
 document { cosh,
      Headline => "hyperbolic cosine function",
-     TT "cosh x", " -- computes the hyperbolic cosine of ", TT "x", "."
+     Synopsis => {
+	  "y = cosh x",
+	  "x" => null,
+	  "y" => { "the hyperbolic cosine of ", TT "x", "" }
+	  }
      }
 
 document { tanh,
      Headline => "hyperbolic tangent function",
-     TT "tanh x", " -- computes the hyperbolic tangent of ", TT "x", "."
+     Synopsis => {
+	  "y = tanh x",
+	  "x" => null,
+	  "y" => { "the hyperbolic tangent of ", TT "x", "" }
+	  }
      }
 
 document { exp,
      Headline => "exponential function",
-     TT "exp x", " -- computes the exponential of ", TT "x", "."
+     Synopsis => {
+	  "y = exp x",
+	  "x" => null,
+	  "y" => { "the exponential of ", TT "x", "" }
+	  }
      }
 
 document { log,
      Headline => "logarithm function",
-     TT "log x", " -- computes the logarithm of ", TT "x", "."
+     Synopsis => {
+	  "y = log x",
+	  "x" => null,
+	  "y" => { "the logarithm of ", TT "x", "" }
+	  }
      }
 
 document { sqrt,
      Headline => "square root function",
-     TT "sqrt x", " -- provides the square root of the number ", TT "x", "."
+     Synopsis => {
+	  "y = sqrt x",
+	  "x" => null,
+	  "y" => { "the square root of ", TT "x", "" }
+	  }
      }
 
 document { floor,
      Headline => "floor function",
-     TT "floor x", " -- provides the largest integer less than or equal to the number ", TT "x", "."
+     Synopsis => {
+	  "y = floor x",
+	  "x" => null,
+	  "y" => { "the largest integer less than or equal to the number ", TT "x" }
+	  }
     }
 
 document { ceiling,
      Headline => "ceiling function",
-     TT "ceiling x", " -- provides the largest integer greater than or equal to the number ", TT "x", "."
+     Synopsis => {
+	  "y = ceiling x",
+	  "x" => null,
+	  "y" => { "the largest integer greater than or equal to the number ", TT "x" }
+	  }
      }
 
 document { run,
      Headline => "run an external command", 
-     TT "run s", " -- runs the command string ", TT "s", "
-     by passing it to the operating system.",
-     PARA,
-     "The return value is the exit status of the command, a small
-     integer which is usually zero."
+     Synopsis => {
+	  "r = run s",
+	  "s" => {"a command string ", TT "s", " understandable by your operating system"},
+	  "r" => "the exit status of the command (a small integer which is normally zero)"
+	  },
+     "The command is run by passing it to the operating system.  While it's
+     running, Macaulay 2 simply waits.",
      }
 
 document { wait,
@@ -635,29 +698,54 @@ document { wait,
      }
 
 document { value,
-     Headline => "evaluate", 
-     TT "value s", " -- provides the value of ", TT "s", ", which may be a
-     symbol, string, or an expression.",
-     PARA,
-     EXAMPLE {
-	  "a = 11111111111",
-      	  "x = symbol a",
-      	  "x",
-      	  "value x",
-	  "p = (expression 2)^3 * (expression 3)^2",
-      	  "value p",
-	  ///value "2 + 2"///,
+     Headline => "evaluate"
+     }
+
+document { (value,Symbol),
+     Headline => "evaluate a symbol",
+     Synopsis => {
+	  "x = value s",
+	  "s" => null,
+	  "x" => {"the value of ", TT "s", ""}
 	  },
-     "If ", TT "s", " is a string, its contents are treated as code in the
-     Macaulay 2 language, parsed it in its own scope, the same way a file is,
+     EXAMPLE {
+	  "x = s",
+	  "s = 11111111111",
+      	  "x",
+      	  "value x"
+	  }
+     }
+
+document { (value,String),
+     Headline => "evaluate a string",
+     Synopsis => {
+	  "x = value s",
+	  "s" => {},
+	  "x" => {"the value of ", TT "s", ""}
+	  },
+     "The contents of ", TT "s", " are treated as code in the
+     Macaulay 2 language, parsed it in its own scope (the same way a file is)
      and evaluated.  The string may even contain multiple lines.",
      EXAMPLE {
-      	  ///value "a := 2 \n a+a"///,
+	  ///value "2 + 2"///,
+      	  ///value "a := 33
+a+a"///,
+     	  ///a///
 	  },
      "Since the local assignment to ", TT "a", " above occurred in a new scope,
-     the value of the global variable ", TT "a", " is unaffected.",
+     the value of the global variable ", TT "a", " is unaffected."
+     }
+
+document { (value,Expression),
+     Headline => "evaluate an expression",
+     Synopsis => {
+	  "x = value s",
+	  "s" => null,
+	  "x" => {"the value of ", TT "s", ""}
+	  },
      EXAMPLE {
-      	  "a"
+	  "p = (expression 2)^3 * (expression 3)^2",
+      	  "value p",
 	  }
      }
 

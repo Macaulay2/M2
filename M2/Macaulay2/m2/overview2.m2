@@ -598,6 +598,12 @@ document { "functions",
 
 document { "basic types",
      Headline => "an overview",
+     "The basic type of an object is the way the object is
+     essentially implemented internally.  It is not possible for
+     the user to create new basic types.  For details, see
+     ", TT "basictype", ".",
+     PARA,
+     "Some common basic types:",     
      MENU {
 	  TO "strings",
 	  TO "nets",
@@ -614,6 +620,7 @@ document { "control structures",
 	  TO "mapping over lists",
 	  TO "mapping over hash tables",
 	  TO "conditional execution",
+	  TO "alarm",
 	  TO "error handling",
 	  }
      }
@@ -644,8 +651,8 @@ document { "classes and types",
 	       "method functions",
 	       MENU {
 		    TO "making a new method function",
-		    TO "method functions with a variable number of arguments",
-		    TO "method functions with optional arguments",
+		    TO (method => SingleArgumentDispatch),
+		    TO (method => Options),
 		    }
 	       ),
 	  }
@@ -674,7 +681,6 @@ document { "valid names",
 document { "assigning values",
      "Use an equal sign to assign values to variables.",
      EXAMPLE {
-	  "x",
 	  "x = \"abcde\"",
 	  "x"
 	  },
@@ -683,6 +689,46 @@ document { "assigning values",
      The variable created is global, in the sense that any code placed
      elsewhere that contains a reference to a variable called ", TT "x", "
      will refer to the one we just set.",
+     PARA,
+     "It is important to distinguish between a symbol and its value.  The
+     initial value of a global symbol is the symbol itself, and the initial
+     value of a local variable is ", TO "null", ".  One possibility for
+     confusion comes from the possibility of having a symbol whose value is
+     another symbol; it's even more confusing if the two symbols have the
+     same name but different scopes, for example, if one of them is global
+     and the other is local.",
+     EXAMPLE {
+	  "y",
+	  "y = z",
+	  "y",
+	  "z = 444",
+	  "z",
+	  "y"
+	  },
+     "In the example above, the final value of ", TT "y", " is the
+     symbol ", TT "z", ", even though the symbol z has acquired a 
+     value of its own.  The function ", TT "value", " can be used to
+     get the value of a symbol.",
+     EXAMPLE {
+	  "value y"
+	  },
+     "The operator ", TO "<-", " can be used to set the value of a
+     symbol.  This operator differs from ", TO "=", " in that
+     the symbol or expression on the left hand side is evaluated.",
+     EXAMPLE {
+	  "y <- 555",
+	  "y",
+	  "z",
+	  "y = 666",
+	  "y",
+	  "z"
+	  },
+     "One reason the user needs to understand this concept is that
+     assignments with the operator ", TO "<-", " are occasionally done
+     on the user's behalf by bits of code already in the system,
+     for example, when creating a polynomial ring the prospective
+     variables are given new values which are the generators of the 
+     polynomial ring.",
      PARA,
      SEEALSO { "GlobalAssignHook", "GlobalReleaseHook" }
      }
@@ -958,12 +1004,15 @@ document { "making new functions with optional arguments",
      }
 
 document { "conditional execution",
+     Headline => "execute some code if a condition is true",
      "The basic way to control the execution of code is with the ", TO "if", "
-     expression.  Such an expression typically has the form ", TT "if X then Y else Z", "
-     and is evaluated as follows.  First ", TT "X", " is evaluated.  If the result is ", TT "true", ",
-     then the value of ", TT "Y", " is provided, and if the result is ", TT "false", ", then the value of ", TT "Z", "
-     is provided.  An error is signalled if the value of ", TT "X", " is anything but ", TT "true", " or
-     ", TT "false", ".",
+     expression.  Such an expression typically has the form
+     ",  PRE "if X then Y else Z", "
+     and is evaluated as follows.  First ", TT "X", " is evaluated.  If the 
+     result is ", TT "true", ", then the value of ", TT "Y", " is provided, 
+     and if the result is ", TT "false", ", then the value of ", TT "Z", "
+     is provided.  An error is signalled if the value of ", TT "X", " is 
+     anything but ", TT "true", " or ", TT "false", ".",
      EXAMPLE {
 	  ///(-4 .. 4) / 
      (i -> if i < 0 then "neg" 
@@ -980,40 +1029,77 @@ document { "conditional execution",
 	  },
      "There are a variety of predicate functions (such as ", TT "<", ", used above)
      that yield ", TT "true", " or ", TT "false", " and can be used as the predicate 
-     in an ", TT "if", " expression. For a list, see ", TO "Boolean", ".  Boolean
+     in an ", TT "if", " expression.  For a list, see ", TO "Boolean", ".  Boolean
      results may be combined with ", TO "not", ", ", TO "and", ", and ", TO "or", "."
      }
 
 document { "loops",
-     "An expression of the form ", TT "while X do Y", " operates by evaluating
+     Headline => "evaluate code repeatedly",
+     "One good way to perform an operation several times is with the
+     keyword ", TO "while", ".  An expression of the form
+     ", TT "while X do Y", " operates by evaluating
      ", TT "X", " repeatedly.  Each time the value of ", TT "X", " is true, 
      ", TT "Y", " is evaluated and its value is discarded.  When finally
      the value of ", TT "X", " is false the special value ", TT "null", " is 
      returned as the value of the ", TT "while", " expression.",
      EXAMPLE {
 	  "i = 0;",
-	  ///while i < 20 do (<< " " << i; i = i + 1); << endl;///
+	  ///while i < 20 do (<< " " << i; i = i + 1)///
 	  },
      "In the example above, ", TT "X", " is the predicate ", TT "i < 20", " and ", TT "Y", " is
      the code ", TT ///(<< " " << i; i = i + 1)///, ".  Notice the use of the
-     semicolon within Y to separates two expressions.",
+     semicolon within ", TT "Y", " to separate two expressions.",
      PARA,
-     "The semicolon can also be used with the predicate ", TT "X", " to do other things
-     before the test is performed.  This works because the value of an expression
+     "The semicolon can also be used within the predicate ", TT "X", " to do other 
+     things before the test is performed.  This works because the value of an expression
      of the form ", TT "(A;B;C;D;E)", " is obtained by evaluating each of the
      parts, and providing the value of the last part (in this case, ", TT "E", "),
-     as the value of the whole expression.  Thus, if the value of E is always
+     as the value of the whole expression.  Thus, if the value of ", TT "E", " is always
      true or false, the expression ", TT "(A;B;C;D;E)", " can be used as
      the predicate ", TT "X", ".  We illustrate this in the following example.",
      EXAMPLE {
 	  "i = 0;",
-	  ///while (<< " " << i; i < 20) do i = i+1; << endl///
+	  ///while (<< " " << i; i < 20) do i = i+1///
 	  },
-     "As a further indication of the power of this construction, consider
-     an expression of the following form.", 
-     PRE "     while (A; not B) and (C; not D) do (E; F)",
-     "It is the Macaulay 2 equivalent of C code that looks like this:",
-     PRE "     while (TRUE) { A; if (B) break; C; if (D) break; E; F; }",
+     "If we use the form ", TT "while X list Y", " then the final value
+     of the expression is a list of all the values of ", TT "Y", " encountered.",
+     EXAMPLE {
+	  ///i = 1; while (i = 2*i; i < 100) list i///
+	  },
+     "The two keywords can be combined in an expression of the form
+     ", TT "while X list Y do Z", ", in which case Y and Z are both evaluated
+     each time, and the final value is a list of all the values 
+     of ", TT "Y", " encountered.",
+     EXAMPLE {
+	  ///i = 1; while i < 100 list i do i = 2*i///,
+	  ///i = List; while i =!= Thing list i do i = parent i///
+	  },
+     "The keyword ", TO "break", " can be used to terminate a loop early,
+     and optionally to specify a return value for the while-expression.",
+     EXAMPLE {
+	  "i = 0; while true do (j = i!; if j > 1000000 then break j else i = i+1)"
+	  },
+     "Another good way to perform an operation several times is with
+     the keyword ", TO "for", ", especially when we are looping over
+     consecutive integers, as with the variable ", TT "i", " in the
+     previous example.  Here is the same computation, implemented
+     with ", TO "for", ".",
+     EXAMPLE "for i do (k := i!; if k > 1000000 then break k)",
+     "Note: a for-loop starts a new lexical scope for local variables,
+     and hence the value of ", TT "k", " is not known outside the 
+     loop; see ", TO ":=", ".",
+     PARA,
+     "The keyword ", TO "when", " can be used with ", TO "for", " to
+     specify a predicate which must remain true for execution to
+     continue, and the keyword ", TO "list", " can be used to
+     specify values which should be accumulated into a list and
+     return as the value of the for-loop.  The keywords ", TO "from", " and 
+     ", TO "to", " can be used to specify numerical limits for the loop
+     variable.  Here is an example that illustrate all of these keywords
+     at once.",
+     EXAMPLE {
+	  "for i from 10 to 30 when i<15 list 100*i do print i"
+	  }
      }
 
 document { "numbered variables",
@@ -1073,6 +1159,7 @@ document { "local variables in a function",
      }
 
 document { "strings",
+     Headline => "an overview",
      "A string is a sequence of characters.  Strings can
      be manipulated in various ways to produce printed output.
      One enters a string by surrounding a sequence of characters with
@@ -1124,6 +1211,7 @@ fghij"///,
      }
 
 document { "nets",
+     Headline => "an overview",
      "A net is a rectangular two-dimensional array of characters, together
      with an imaginary horizontal baseline that allows nets to be assembled
      easily into lines of text.  A string is regarded as a net with one row.",
@@ -1168,6 +1256,7 @@ document { "nets",
      }
 
 document { "lists",
+     Headline => "an overview",
      "A list is a handy way to store a series of things.  We create one
      by separating the elements of the series by commas and surrounding 
      the series with braces.",
@@ -1230,6 +1319,7 @@ document { "lists",
      }
 
 document { "sequences",
+     Headline => "an overview",
      "A sequence is like a list, except that parentheses are used
      instead of braces to create them and to print them.  Sequences
      are implemented in a more efficient way than lists, since a sequence is 
@@ -1289,6 +1379,7 @@ document { "sequences",
      }
 
 document { "hash tables",
+     Headline => "an overview",
      "A hash table is a data structure that can implement a function
      whose domain is a finite set.  An element of the domain is called
      a key.  The hash table stores the key-value pairs in such a way
@@ -1468,6 +1559,7 @@ document { "hashing",
      }
 
 document { "mapping over lists",
+     Headline => "apply a function to each element of a list",
      "In programming, loops that operate on consecutive elements of a
      list are common, so we offer various ways to apply functions to
      each of the elements of a list, along with various ways to treat the
@@ -1477,8 +1569,15 @@ document { "mapping over lists",
      a function consecutively to each element of a list, discarding the
      values returned.",
      EXAMPLE "scan({a,b,c}, print)",
-     "By contrast, ", TO "apply", " will produced a list containing the
-     values returned.",
+     "The keyword ", TO "break", " can be used to terminate the scan
+     prematurely, and optionally to specify a return value for the
+     expression.  Here we use it to locate the first even number in
+     a list.",
+     EXAMPLE {
+	  "scan({3,5,7,11,44,55,77}, i -> if even i then break i)"
+	  },
+     "The function ", TO "apply", " is similar to ", TO "scan", " but
+     will produce a list containing the values returned.",
      EXAMPLE "apply({1,2,3,4}, i -> i^2)",
      "This operation is so common that we offer two shorthand notations for
      it, one with the function on the right and one with the function on
@@ -1502,14 +1601,14 @@ document { "mapping over lists",
 	  },
      "The function ", TO "table", " can be used to create a table (doubly
      nested list) from two lists and a function of two arguments.  It applies
-     the function consecutively to an element from the first list and an
-     element from the second list.",
+     the function consecutively to each element from the first list paired
+     with each element from the second list, so the total number of evaluations
+     of the function is the product of the lengths of the two lists.",
      EXAMPLE {
 	  "table({1,2,3},{7,8},(i,j) -> 1000*i+j)"
 	  },
      "The function ", TO "applyTable", " can be used to apply a function to 
-     each element of a doubly nested list (table).  Occasionally matrices
-     are represented as a table, so this is a useful facility.",
+     each element of table.",
      EXAMPLE {
 	  "applyTable( {{1,2,3},{4,5}}, i -> i^2)"
 	  },
@@ -1549,6 +1648,7 @@ document { "mapping over lists",
      }
 
 document { "mapping over hash tables",
+     Headline => "apply a function to each element of a hash table",
      "Each entry in a hash table consists of a key and a value.  We provide
      three ways to map functions over a hash table, depending on whether the
      function is to receive a value and return a new value, to receive a key
@@ -1591,6 +1691,7 @@ document { "mapping over hash tables",
      }
 
 document { "error handling",
+     Headline => "signalling and trapping errors",
      "When an error occurs in your program, an error message will appear that
      gives the name of the file, the line number, and the column number of
      the code that provoked the error.",
@@ -1952,7 +2053,7 @@ document { "making a new method function",
 	  "f String := s -> s|s;",
 	  ///f ".abcd."///
 	  },
-     "We can check for the types of more than one argument, too.",
+     "We can check for the types of up to three arguments, too.",
      EXAMPLE {
 	  "f(ZZ,String) := (n,s) -> concatenate (n:s);",
 	  ///f(5,".abcd.")///,
@@ -2030,7 +2131,7 @@ document { "binary methods",
      both the type of ", TT "x", " and the type of ", TT "y", " must enter into the selection of
      the method, we refer to these methods as binary methods.  Each binary
      method is a function of two variables, and is stored either in the class
-     of ", TT "x", " or in the class of ", TT "y", ".  See also ", TO "lookup", ".",
+     of ", TT "x", " or in the class of ", TT "y", ".",
      PARA,
      "Let's assume that ", TT "X", " is the class (or type) of ", TT "x", ", 
      and that ", TT "Y", " is the class of ", TT "y", ".  The way to install a 
@@ -2052,7 +2153,7 @@ document { "binary methods",
      unless there isn't one, in which case the binary method for ", TT "P+Q", "
      is applied.  In general this search for a binary method continues all
      the way up the chain of parents to the topmost ancestor of everything,
-     which is called ", TO "Thing", ".",
+     which is called ", TO "Thing", ".  (See also ", TO "lookup", ".)",
      PARA,
      "As an extreme example of inheritance, the code ", 
      PRE "Thing + Thing := (x,y) -> ( ... )",
@@ -2104,7 +2205,8 @@ document { "installing methods",
      PRE "- Thing := x -> ...",
      "will install a method for negating anything, which will take
      effect as a last resort whenever a more specifically defined method
-     isn't found.",
+     isn't found.  It probably isn't a good idea to install such a method,
+     for usually all it can do is to print an error message.",
      PARA,
      "The user may introduce new methods as well as new method names.  So it
      is important to understand how methods are installed and consulted.",
@@ -2120,11 +2222,8 @@ document { "installing methods",
      PRE "C X := (x) -> ( ... )",
      "where ", TT "( ... )", " represents suitable code for the operation at hand.",
      PARA,
-     "Here is the routine for making new methods.",
-     MENU {
-	  TO "method"
-	  },
-     SEEALSO{"binary methods", "classes and types", "lookup"}
+     "The routine for making new methods is ", TO "method", ".",
+     SEEALSO{"binary methods"}
      }
 
 document { "inheritance from parents",
@@ -2150,7 +2249,7 @@ document { "inheritance from parents",
      happens, no method for this has been installed for basic lists,
      as we can check with ", TO "lookup", ".",
      EXAMPLE "lookup(symbol -, X) === null",
-     "We install and test a new method as described in ", TT "installing methods", ".",
+     "We install and test a new method as described in ", TO "installing methods", ".",
      EXAMPLE {
 	  "- X := t -> apply(t,i -> -i);",
 	  "- x"
@@ -2179,60 +2278,48 @@ document { "inheritance from parents",
 	  },
      "The result is the symbol ", TT "XY", ".  The reason is that
      after finding that no method applies directly for adding
-     an instance of Y to an instance of Z, we replace Z by its
-     parent X, and look again, and so on.  (After enough unsuccessful 
-     iterations of this, we would replace the first type Y by its 
-     parent, reset the second type to Z, and continue the search.)",
+     an instance of ", TT "Y", " to an instance of ", TT "Z", ", the 
+     search continues: ", TT "Z", " is replaced by its parent ", TT "X", ", 
+     and so on.  (After enough unsuccessful iterations of this, the 
+     second type is reset to ", TT "Z", ", the first type is replaced 
+     by its parent, and the search continues.)",
      PARA,
      "The same search order applies to method functions defined with
      ", TO "method", "."
      }
 
-document { "method functions with a variable number of arguments",
-     "We use the ", TO "SingleArgumentDispatch", " option of ", TO "method", " to
-     create a method function that will receive all of its arguments
-     as a single sequence whenever it is called with more than
-     one argument.  Here is an example.",
-     EXAMPLE {
-	  "f = method(SingleArgumentDispatch=>true);",
-	  "f ZZ := i -> -i;",
-	  "f Sequence := S -> reverse S;",
-	  "f 44",
-	  "f(3,4,5)"
-	  },
-     PARA,
-     "Normally, the types of up to the three arguments would have been
-     considered."
-     }
-
 document { method => Options,
-     Headline => "create a method function that accepts optional arguments",
-     TT "f = method(Options => {a=>x, b=>y, ...})", " -- creates a method
-     function that accepts optional arguments ", TT "a", ", ", TT "b", ", ..., with default
-     values ", TT "x", ", ", TT "y", ", ...",
+     Headline => "method functions with optional arguments",
+     Synopsis => {
+	  "f = method(Options => {a=>x, b=>y, ...})",
+	  "{a=>x, b=>y, ...}" => {
+	       "a list of names ", TT "a", ", ", TT "b", ", ..., for optional
+	       arguments with default values ", TT "x", ", ", TT "y", ", ... ."
+	       },
+	  "f" => "a method function that accepts optional arguments"
+	  },
+     "The list of options could be replaced by the corresponding ", TT "OptionTable", ".",
      PARA,
-     "The list of options could be replaced by the corresponding
-     ", TT "OptionTable", "."
-     }
-
-document { "method functions with optional arguments",
-     "In the section entitled ", TO "making new functions with optional arguments", "
-     we have seen how to make single functions that handle optional arguments.
-     Method functions created with ", TO "method", " involve a bit of
-     extra handling, so the optional arguments do not participate when
-     deciding which method function will be applied in a given evaluation.",
+     "The methods installed for this method function should be written in
+     the form ", TT "opts -> args -> (...)", ".  The argument ", TT "args", "
+     will be assigned a hash table of type ", TO "OptionTable", " containing 
+     the optional argument names and their current values.  For example,
+     in the body of the function, the current value for the argument named
+     ", TT "b", " can be recovered with ", TT "opts#b", ", or with ", TT "opts.b", ",
+     in case ", TT "b", " is known to be a global symbol.  Warning: be careful 
+     not to change the value of ", TT "b", ", or the code will stop working; it
+     would be a good idea to protect it.  The default option table for ", TT "f", " 
+     can be recovered with the function ", TO "options", ".",
+     PARA,
+     "In this example we make a linear function of a single real variable whose 
+     coefficients are provided as optional arguments.",
      EXAMPLE {
-	  "f = method(Options => {limit => 4000});",
-	  },
-     "We install a method to be used when ", TT "f", " is applied
-     to an integer; the body of the function accepts first the table
-     ", TT "opt", " of optional arguments and second the integer ", TT "i", ".",
-     EXAMPLE {
-	  "f ZZ := opts -> i -> [i, opts#limit];",
-	  },
-     EXAMPLE {
-	  "f 44",
-	  "f(55,limit => 20000)"
+	  "protect Slope; protect Intercept;",
+	  "f = method(Options => {Slope => 1, Intercept => 1})",
+      	  "f RR := o -> x -> o.Slope * x + o.Intercept",
+      	  "f(5.)",
+      	  "f(5.,Slope=>100)",
+	  "options f",
 	  }
      }
 
@@ -2266,7 +2353,7 @@ document { "printing and formatting for new classes",
      	  },
      "Of course, now that we've decided that there should be certain
      quaternions called ", TT "I", ", ", TT "J", ", and ", TT "K", ",
-     perhaps we should install them",
+     perhaps we should install them, too.",
      EXAMPLE {
 	  "I = new Qu from {0,1,0,0}",
 	  "J = new Qu from {0,0,1,0}",

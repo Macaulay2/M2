@@ -28,9 +28,12 @@ endif
 	 then touch $*.out ; \
 	 else \
 	   echo "running example $*"; \
-	   $(M2HOME)/bin/Macaulay2 $(ARGS) <"$*.m2" >$*.tmp && \
-	   mv $*.tmp $*.out && \
-	   cp $*.m2 $*.old ; \
+	   if $(M2HOME)/bin/Macaulay2 $(ARGS) <"$*.m2" >$*.tmp ; \
+	   then mv $*.tmp $*.out ; \
+                cp $*.m2 $*.old ; \
+	   else echo "contents of $*.m2:" ; \
+		cat $*.m2 ; \
+	   fi ; \
 	 fi
 # endif
 

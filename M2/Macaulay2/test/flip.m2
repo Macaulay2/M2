@@ -25,3 +25,17 @@ assert( target adjoint(f,A,B) == dual B ** C )
 g = map(B**C,A,0)
 assert( source adjoint1(g,B,C) == A ** dual B)
 assert( target adjoint1(g,B,C) == C )
+
+-- square matrices
+assert(isHomogeneous flip(R^{0,1},R^{0,5}))
+assert(isHomogeneous flip(R^{0,1,2},R^{0,5,10}))
+assert(isHomogeneous flip(R^{0,1,2,3},R^{0,5,10,15}))
+
+-- rectangular matrices
+assert(isHomogeneous flip(R^{0,1},R^{0,5,10}))
+assert(source flip(R^{0,1},R^{0,5,10}) == R^{0,1} ** R^{0,5,10})
+assert(target flip(R^{0,1},R^{0,5,10}) == R^{0,5,10} ** R^{0,1})
+
+assert(isHomogeneous flip(R^{0,1},R^{0,5,10,15}))
+assert(isHomogeneous flip(R^{0,1,2,3},R^{0,5,10}))
+assert(isHomogeneous flip(R^{0,1,2,3,4},R^{0,5,10}))

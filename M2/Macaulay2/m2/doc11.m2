@@ -484,7 +484,7 @@ document { TEX,
 
 document { TT,
      Headline => "HTML TT item",
-     TT "TT x", " -- encloses ", TT "x", " in a hypertext TT item.",
+     TT "TT x", " -- encloses ", TT "x", " in a hypertext ", TT "TT", " item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
      strings or hypertext items.",

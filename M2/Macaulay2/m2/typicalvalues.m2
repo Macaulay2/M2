@@ -30,7 +30,7 @@ installMethod(symbol >=, Thing, Thing, Boolean => dummy)
 
 acos RR := acos ZZ := RR => acos
 asin RR := asin ZZ := RR => asin
-atan RR := atan ZZ := RR => atan
+atan(RR,RR) := atan RR := atan ZZ := RR => atan
 cos RR := cos ZZ := RR => cos
 sin RR := sin ZZ := RR => sin
 tan RR := tan ZZ := RR => tan
@@ -98,6 +98,7 @@ select(HashTable,Function) := HashTable => select
 select(ZZ,BasicList,Function) := BasicList => select
 select(ZZ,HashTable,Function) := HashTable => select
 sequence Thing := Sequence => singleton
+setrecursionlimit ZZ := ZZ => setrecursionlimit
 set List := set Sequence := Set => set
 tally List := tally Sequence := Tally => tally
 splice BasicList := BasicList => splice
