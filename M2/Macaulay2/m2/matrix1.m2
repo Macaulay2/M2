@@ -537,6 +537,8 @@ ideal RingElement := Ideal => v -> ideal {v}
 ideal ZZ := v -> ideal {v}
 ideal QQ := v -> ideal {v}
 
+ideal Ring := R -> ideal 0_R
+
 kernel = method(Options => {
 	  SubringLimit => infinity
 	  })

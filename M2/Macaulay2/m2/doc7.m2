@@ -705,6 +705,11 @@ document { (module, Ideal),
      ideal ", TT "I", " in a ring ", TT "R", "."
      }
 
+document { (ideal, Ring),
+     HEADLINE "get the ideal used to form a quotient ring",
+     TT "ideal R", " -- for a quotient ring R=A/I, returns I"
+     }
+
 document { ideal,
      HEADLINE "make an ideal",
      "ideal v", " -- produces the ideal spanned by a list or sequence of ring
