@@ -86,7 +86,7 @@ justM2 all::; $(MAKE) -C tutorial all
 clean::; $(MAKE) -C tutorial clean
 ################################# m2
 all ::; $(MAKE) -C m2 all
-justM2 ::; $(MAKE) -C m2 default
+justM2 ::; $(MAKE) -C m2 justM2
 tests ::;  $(MAKE) -C m2 tests
 clean ::; $(MAKE) -C m2 clean
 wc ::;  $(MAKE) -C m2 wc

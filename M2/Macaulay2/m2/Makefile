@@ -1,4 +1,4 @@
-default :: phase1
+justM2 default :: phase1
 
 TOPDIR = ../..
 include $(TOPDIR)/Makeconf
