@@ -143,24 +143,32 @@ accept(f:file,input:bool,output:bool):(file or errmsg) := (
 openpipe(filename:string,input:bool,output:bool):(file or errmsg) := (
      toChild := array(int)(NOFD,NOFD);
      fromChild := array(int)(NOFD,NOFD);
-     if pipe(toChild) == ERROR || pipe(fromChild) == ERROR then return(errmsg("can't make pipe : "+syserrmsg()));
+     if output && pipe(toChild) == ERROR || input && pipe(fromChild) == ERROR 
+     then (
+	  close(  toChild.0);
+	  close(  toChild.1);
+	  close(fromChild.0);
+	  close(fromChild.1);
+	  return(errmsg("can't make pipe : "+syserrmsg()));
+	  );
      pid := fork();
      listener := false;
      if pid == 0 then (
-	  close(  toChild.1);
-	  close(fromChild.0);
-	  dup2(   toChild.0, 0);
-	  dup2( fromChild.1, 1);
-	  if      toChild.0 != 0 then close(toChild.0);
-	  if    fromChild.1 != 1 then close(fromChild.1);
+	  close(STDIN);
+	  if output then (
+	       close(  toChild.1);
+	       if toChild.0 != STDIN then (dup2(toChild.0, STDIN); close(toChild.0););
+	       );
+	  if input then (
+	       close(fromChild.0);
+	       if fromChild.1 != STDOUT then (dup2(fromChild.1, STDOUT); close(fromChild.1););
+	       );
 	  exec(array(string)("/bin/sh","-c",substr(filename,1)));
 	  write(2,"exec of /bin/sh failed!\n",24);
 	  exit(1);
 	  );
-     close(fromChild.1);
-     close(toChild.0);
-     if !input then close(fromChild.0);
-     if !output then close(toChild.1);
+     if input then close(fromChild.1);
+     if output then close(toChild.0);
      (file or errmsg)(addfile(file(nextHash(), filename, pid, 
 	  listener, NOFD,NOFD,0,
 	  input, if input then fromChild.0 else NOFD, false, if input then newbuffer() else "", 

@@ -340,7 +340,8 @@ document { "manipulating polynomials",
       	  "f == quot * g + rem",
 	  },
      NOINDENT,
-     "(Notice that comparison of polynomials is done with the operator ", TO "==", ".)",
+     "Notice that as in the example above, comparison of polynomials is done
+     with the operator ", TO "==", ".",
      PARA,
      "Polynomials can be homogenized with respect to one of the variables in the
      ring with ", TO "homogenize", ".",
@@ -371,6 +372,10 @@ document { "manipulating polynomials",
      "You can use this in a program to check whether two ring elements 
      come from the same ring.",
      EXAMPLE "ring f === ring g",
+     "Notice that in the comparison above, the strict equality operator ", TO "===", "
+     is used.  For clarification about whether to use ", TO "===", " or ", TO "==", "
+     in such situations, see ", TO "comparison operators", ".",
+     PARA,
      "The coefficient of a monomial in a polynomial can be obtained with ", TO "_", ".",
      EXAMPLE {
 	  "f_1",
@@ -390,7 +395,8 @@ document { "manipulating polynomials",
      "Notice that the lead monomial is an element of a monoid whose name is
      ", TT "[a,b]", ".  Its exponents can be extracted with ", TO "exponents", ".",
      EXAMPLE "exponents leadMonomial g",
-     "We can get all of the coefficients at once, assembled into matrices.",
+     "We can get all of the coefficients at once, assembled a one-rowed matrix,
+     along with a matrix containing the corresponding monomials.",
      EXAMPLE {
 	  "coefficients f",
       	  "coefficients g",
@@ -431,9 +437,12 @@ document { "manipulating polynomials",
      lead monomials and comparing them.",
      EXAMPLE {
 	  "f < g",
-      	  "f ? g",
       	  "sort {b^2-1,a*b,a+1,a,b}"
 	  },
+     "The comparison operator ", TO "?", " returns a symbol indicating how two
+     polynomials, or rather, their lead monomials, stand with respect to each 
+     other in the monomial ordering.",
+     EXAMPLE "f ? g",
      }
 
 document { "multi-graded polynomial rings",
@@ -1053,7 +1062,7 @@ document { "displaying matrices",
 	  "f",
 	  },
      "We may use ", TO "toString", " to produce a string, useful as input into
-     other programs.",
+     other programs, or into Macaulay 2 at another time.",
      EXAMPLE "toString f",
      "The function ", TO "toExternalString", " tries harder: it gives
      complete information about the source, target, and degree of the map.",

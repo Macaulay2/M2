@@ -664,12 +664,14 @@ document { integrate,
      }
 
 document { getWWW,
-     TT "getWWW URL", " -- obtain the contents of a URL from an http server.",
+     TT "getWWW URL", " -- obtain the contents of the web page addressed
+     by ", TT "URL", " from an http server.",
      BR,NOINDENT,
-     TT "getWWW(URL,TEXT)", " -- obtain the contents of a URL from an 
-     http server, using the 'POST' method, provided with the TEXT.",
+     TT "getWWW(URL,TEXT)", " -- obtain the contents of the web page addressed
+     by ", TT "URL", " from an http server, using the POST method, provided 
+     with ", TT "TEXT", ".",
      PARA,
-     "This doesn't work under solaris because Sun doesn't provide sockets
+     "This doesn't work under Solaris because Sun doesn't provide sockets
      or name service to statically linked programs like this one."
      }
 

@@ -183,7 +183,10 @@ document { openInOut,
      PARA,
      "The various forms listed above can be used also with ", TO "openIn", "
      and ", TO "openOut", ", with data transfer possible only in the
-     direction specified.",
+     direction specified.  The only subtlety is that with ", TO ///openIn "!foo"///, "
+     the standard input of the command ", TT "foo", " is closed, but with
+     ", TO ///openOut "!foo"///, " the standard output of the command ", TT "foo", "
+     is connected to the standard output of the parent Macaulay 2 process.",
      RETURNS "File"
      }
 
