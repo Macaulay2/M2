@@ -4,7 +4,7 @@ addStartFunction( () -> path = join({"./", sourceHomeDirectory|"packages/"},path
 
 currentPackage = null
 
-packages = new VerticalList from {}
+packages = {}
 
 Package = new Type of MutableHashTable
 Package.synonym = "package"
@@ -21,8 +21,8 @@ record := (sym,val) -> (
      Symbols#val = sym;
      )
 
-newPackage = method( Options => { Using => {} } )
-newPackage(String,String) := opts -> (title,vers) -> (
+newPackage = method( Options => { Using => {}, Version => "0.0" } )
+newPackage(String) := opts -> (title) -> (
      if not match("^[a-zA-Z0-9]+$",title) then error( "package title not alphanumeric: ",title);
      sym := value ("symbol " | title);
      p := global currentPackage <- new Package from {
@@ -30,15 +30,13 @@ newPackage(String,String) := opts -> (title,vers) -> (
 	  symbol Symbol => sym,
 	  "outerPackage" => currentPackage,
      	  "dictionary" => if title === M2title then first dictionaries() else first dictionaries prepend(newDictionary(),dictionaries()),
-	  "package title" => title,
-	  "package version" => vers,
+	  "version" => opts.Version,
 	  "test inputs" => new MutableHashTable,
 	  "raw documentation" => new MutableHashTable,
 	  "example inputs" => new MutableHashTable,
 	  "example outputs" => new MutableHashTable,
 	  "edited documentation" => new MutableHashTable,
 	  "html documentation" => new MutableHashTable,
-	  "options" => opts,
 	  "file directory" => currentFileDirectory
 	  };
      record(value ("symbol " | title | "Dictionary"), p#"dictionary");
@@ -47,16 +45,13 @@ newPackage(String,String) := opts -> (title,vers) -> (
      packages = append(packages,p);
      p)
 
-Package _ Symbol := (p,s) -> value p#"dictionary"#(toString s)
-
-newPackage(M2title,version#"VERSION")
+newPackage(M2title,Version => version#"VERSION")
 
 end Package := p -> (
      if p =!= currentPackage then error ("package not open");
-     if not p.?name then p.name = p#"package title";
      if p =!= Macaulay2 then (
 	  d := dictionaries();
 	  assert( d#0 === p#"dictionary" );
-	  dictionaries append(drop(d,1),d);		    -- move this dictionary to the end
+	  dictionaries rotate(d,1);		    -- move this dictionary to the end
 	  );
      p)

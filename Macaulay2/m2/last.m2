@@ -18,6 +18,15 @@ addEndFunction(() -> (
 
 erase symbol outputSymbols
 
+writableGlobals := set (
+     symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory,
+     symbol documentationPath, symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm,
+     symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol currentPrompts, symbol currentPackage,
+     symbol packages, symbol currentDictionary, symbol UserDictionary
+     )
+
+scan(pairs Macaulay2Dictionary, (name,sym) -> if not writableGlobals#?sym then protect sym)
+
+
 -- make sure this is after all global symbols are defined or erased
 end Macaulay2
-newPackage( "User", "0.0" )

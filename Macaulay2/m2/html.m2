@@ -358,10 +358,10 @@ assemble Package := o -> pkg -> (
      topNodeName = pkg.name;
      buildPackage = pkg.name;
      buildDirectory = o.TemporaryDirectory | "/";
-     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg#"package version"|"/";
+     if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg#"version"|"/";
      buildPackage = minimizeFilename buildPackage;
      finalDirectory = minimizeFilename(o.FinalDirectory | "/");
-     stderr << "--assembling package " << pkg#"package title" << " in " << buildDirectory << endl;
+     stderr << "--assembling package " << pkg << " in " << buildDirectory << endl;
 
      currentSourceDir := pkg#"file directory";
      stderr << "--using package sources found in " << currentSourceDir << endl;

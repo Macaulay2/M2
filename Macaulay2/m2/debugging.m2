@@ -89,14 +89,13 @@ showStructure = Command(types -> show1 if types === () then select1 values globa
 
 userSymbols = type -> (
      if type === () then type = Thing;
-     v := select(values globalDictionary(),
-	  symb -> (
-	       hash symb > hash lastSystemSymbol  -- hash codes of symbols are sequential
-	       and mutable symb
-	       and instance(value symb,type)
-	       )
-	  );
-     apply(sort(apply(v, symb -> (hash symb, symb))), (h,s) -> s))
+     apply(
+	  sort apply(
+	       select(values UserDictionary, sym -> mutable sym and instance(value sym,type)),
+	       symb -> (hash symb, symb)
+	       ),
+	  (h,s) -> s
+	  ))
 
 listUserSymbols = Command (
      type -> stack apply(userSymbols type, s ->  toString s | ": " | toString class value s)
