@@ -16,6 +16,86 @@ use varstrin;
 use strings;
 use basic;
 
+export codePosition(e:Code):Position := (
+     when e
+     is f:binaryCode do f.position
+     is f:forCode do f.position
+     is f:ifCode do f.position
+     is f:tryCode do f.position
+     is f:functionCode do codePosition(f.parms)
+     is f:globalAssignmentCode do f.position
+     is f:globalMemoryReferenceCode do f.position
+     is f:globalSymbolClosureCode do f.position
+     is f:integerCode do f.position
+     is f:localAssignmentCode do f.position
+     is f:localMemoryReferenceCode do f.position
+     is f:localSymbolClosureCode do f.position
+     is f:multaryCode do f.position
+     is f:nullCode do dummyPosition
+     is f:newLocalFrameCode do codePosition(f.body)
+     is f:parallelAssignmentCode do f.position
+     is f:realCode do f.position
+     is f:sequenceCode do f.position
+     is f:listCode do f.position
+     is f:arrayCode do f.position
+     is f:stringCode do dummyPosition
+     is f:ternaryCode do f.position
+     is f:unaryCode do f.position
+     );
+
+export tostring(c:Code):string := (
+     when c
+     is x:arrayCode do concatenate(array(string)( "(array ", between(" ",new array(string) len length(x.z) do foreach s in x.z do provide tostring(s)), ")"))
+     is x:binaryCode do concatenate(array(string)("(2-OP ",tostring(x.lhs)," ",tostring(x.rhs),")"))
+     is x:forCode do concatenate(array(string)(
+	       "(for from: ",tostring(x.fromClause),
+	       " to: ",tostring(x.toClause),
+	       " when: ",tostring(x.whenClause),
+	       " list: ",tostring(x.listClause),
+	       " do: ",tostring(x.doClause),
+	       ")"))
+     is x:functionCode do concatenate(array(string)(
+	       "(function restargs: ",tostring(x.desc.restargs),
+	       " numparms: ",tostring(x.desc.numparms),
+	       " framesize: ",tostring(x.desc.framesize),
+	       " frameID: ",tostring(x.desc.frameID),
+	       " ",tostring(x.body),")"))
+     is x:globalAssignmentCode do concatenate(array(string)("(= ",x.lhs.word.name," ",tostring(x.rhs),")"))
+     is x:globalMemoryReferenceCode do concatenate(array(string)("(fetch ",tostring(x.frameindex),")"))
+     is x:globalSymbolClosureCode  do join("'",x.symbol.word.name)
+     is x:integerCode do tostring(x.x)
+     is x:listCode do concatenate(array(string)( "(list ", between(" ",new array(string) len length(x.y) do foreach s in x.y do provide tostring(s)), ")"))
+     is x:localAssignmentCode do concatenate(array(string)("(store ",tostring(x.frameindex)," ",tostring(x.nestingDepth)," ",tostring(x.rhs),")"))
+     is x:localMemoryReferenceCode do concatenate(array(string)("(fetch ",tostring(x.frameindex)," ",tostring(x.nestingDepth),")"))
+     is x:localSymbolClosureCode do concatenate(array(string)("(local ",x.symbol.word.name," nestingDepth: ",tostring(x.nestingDepth),")"))
+     is x:multaryCode do concatenate(array(string)( "(OP ", between(" ",new array(string) len length(x.args) do foreach c in x.args do provide tostring(c)), ")" ))
+     is x:newLocalFrameCode do concatenate(array(string)())
+     is x:nullCode do "(null)"
+     is x:parallelAssignmentCode do (
+	  n := length(x.nestingDepth);
+	  concatenate(
+	       array(string)(
+	       	    "(parallel= (",
+		    between(" ",
+			 new array(string) len length(x.nestingDepth) do 
+			 for i from 0 to n-1 do 
+			 if x.lhs.i == dummySymbol 
+			 then provide concatenate(array(string)("(",tostring(x.frameindex.i)," ",tostring(x.nestingDepth.i),")"))
+			 else provide join("'",x.lhs.i.word.name)),
+		    ") ", tostring(x.rhs), ")" ) ) )
+     is x:realCode do tostring(x.x)
+     is x:sequenceCode do (
+	  concatenate(array(string)(
+		    "(sequence ",
+		    between(" ",new array(string) len length(x.x) do foreach s in x.x do provide tostring(s)),
+     	       	    ")")))
+     is x:stringCode do concatenate(array(string)("\"",present(x.x),"\""))
+     is x:ternaryCode do concatenate(array(string)("(3-OP ",tostring(x.arg1)," ",tostring(x.arg2)," ",tostring(x.arg3),")"))
+     is x:ifCode do concatenate(array(string)("(if ",tostring(x.predicate)," ",tostring(x.thenClause)," ",tostring(x.elseClause),")"))
+     is x:tryCode do concatenate(array(string)("(try ",tostring(x.code)," ",tostring(x.elseClause),")"))
+     is x:unaryCode do concatenate(array(string)("(1-OP ",tostring(x.rhs),")"))
+     );
+
 export setup(word:Word):void := (
      makeSymbol(word,dummyPosition,globalDictionary);
      );

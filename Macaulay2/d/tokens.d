@@ -163,6 +163,7 @@ export globalAssignmentCode := {
      position:Position
      };
 export ifCode := { predicate:Code, thenClause:Code, elseClause:Code, position:Position };
+export tryCode := { code:Code, elseClause:Code, position:Position };
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {
@@ -226,6 +227,7 @@ export Code := (
      or listCode
      or arrayCode
      or ifCode
+     or tryCode
      or newLocalFrameCode				    -- soon obsolete
      or functionCode
      );
@@ -576,32 +578,6 @@ export (x:Symbol) === (y:Expr):bool := (
      );
 export (x:Expr) === (y:Symbol):bool := (
      when x is z:SymbolClosure do y == z.symbol else false
-     );
-
-export codePosition(e:Code):Position := (
-     when e
-     is f:binaryCode do f.position
-     is f:forCode do f.position
-     is f:ifCode do f.position
-     is f:functionCode do codePosition(f.parms)
-     is f:globalAssignmentCode do f.position
-     is f:globalMemoryReferenceCode do f.position
-     is f:globalSymbolClosureCode do f.position
-     is f:integerCode do f.position
-     is f:localAssignmentCode do f.position
-     is f:localMemoryReferenceCode do f.position
-     is f:localSymbolClosureCode do f.position
-     is f:multaryCode do f.position
-     is f:nullCode do dummyPosition
-     is f:newLocalFrameCode do codePosition(f.body)
-     is f:parallelAssignmentCode do f.position
-     is f:realCode do f.position
-     is f:sequenceCode do f.position
-     is f:listCode do f.position
-     is f:arrayCode do f.position
-     is f:stringCode do dummyPosition
-     is f:ternaryCode do f.position
-     is f:unaryCode do f.position
      );
 
 export debugLevel := 0;

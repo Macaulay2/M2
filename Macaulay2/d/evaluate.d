@@ -241,32 +241,89 @@ assignquotedelemfun(lhsarray:Code,lhsindex:Code,rhs:Code):Expr := (
      else printErrorMessage(lhsarray,"'.' expected left hand side to be a hash table")
      );
 AssignQuotedElemFun = assignquotedelemfun;
-tryelsefun(primary:Code,alternate:Code):Expr := (
-     oldSuppressErrors := SuppressErrors;
-     SuppressErrors = true;
-     p := eval(primary);
-     if !SuppressErrors then p		  -- eval could have turned it off
-     else (
-     	  SuppressErrors = oldSuppressErrors;
-	  when p is err:Error do (
-	       if err.message == breakMessage || err.message == returnMessage || err.message == continueMessage then p
-	       else eval(alternate)
+
+whiledofun(predicate:Code,body:Code):Expr := (
+     while true do (
+	  p := eval(predicate);
+	  when p is err:Error 
+	  do return if err.message == breakMessage then err.value else p
+	  else if p == True then (
+	       b := eval(body);
+	       when b is err:Error 
+	       do return if err.message == breakMessage then err.value else b 
+	       else nothing;
 	       )
-	  else p));
-TryElseFun = tryelsefun;
-tryfun(primary:Code):Expr := (
-     oldSuppressErrors := SuppressErrors;
-     SuppressErrors = true;
-     p := eval(primary);
-     if !SuppressErrors then p		  -- eval could have turned it off
-     else (
-     	  SuppressErrors = oldSuppressErrors;
-	  when p 
-	  is err:Error do (
-	       if err.message == breakMessage || err.message == returnMessage || err.message == continueMessage then p
-	       else nullE)
-	  else p));
-TryFun = tryfun;
+	  else if p == False then break
+	  else return printErrorMessage(predicate,"expected true or false"));
+     nullE);
+WhileDoFun = whiledofun;
+
+whilelistfun(predicate:Code,body:Code):Expr := (
+     n := 1;
+     r := new Sequence len n do provide nullE;
+     i := 0;
+     while true do (
+	  p := eval(predicate);
+	  when p is err:Error
+	  do return if err.message == breakMessage then err.value else p
+	  else if p == True then (
+	       b := eval(body);
+	       when b is err:Error 
+	       do return if err.message == breakMessage then err.value else b 
+	       else (
+		    if i == n then (
+			 n = 2*n;
+			 r = new Sequence len n do (
+			      foreach x in r do provide x;
+			      while true do provide nullE;
+			      );
+			 );
+		    r.i = b;
+		    i = i+1;
+		    );
+	       )
+	  else if p == False then break
+	  else return printErrorMessage(predicate,"expected true or false"));
+     Expr(
+	  list(
+	       if i == 0 then emptySequence
+	       else if i == n then r
+	       else new Sequence len i do foreach x in r do provide x)));
+WhileListFun = whilelistfun;
+
+whilelistdofun(predicate:Code,listClause:Code,doClause:Code):Expr := (
+     r := new Sequence len 1 do provide nullE;
+     i := 0;
+     while true do (
+	  p := eval(predicate);
+	  when p is err:Error do return if err.message == breakMessage then err.value else p
+	  else if p == True then (
+	       b := eval(listClause);
+	       when b is err:Error
+	       do return if err.message == breakMessage then err.value else b
+	       else (
+		    if i == length(r) then (
+			 r = new Sequence len 2*length(r) do (
+			      foreach x in r do provide x;
+			      while true do provide nullE;
+			      );
+			 );
+		    r.i = b;
+		    i = i+1;
+		    );
+     	       c := eval(doClause);
+	       when c is err:Error
+	       do return if err.message == breakMessage then err.value else c 
+	       else nothing;
+	       )
+	  else if p == False then break
+	  else return printErrorMessage(predicate,"expected true or false"));
+     Expr(
+	  list(
+	       if i == 0 then emptySequence
+	       else if i == length(r) then r
+	       else new Sequence len i do foreach x in r do provide x)));
+WhileListDoFun = whilelistdofun;
 
 dummyBreakLoop(f:Frame,c:Code):Expr := nullE;
 export breakLoopFun := dummyBreakLoop;
@@ -361,6 +418,17 @@ export eval(c:Code):Expr := (
      is a:globalAssignmentCode do globalAssignmentFun(a)
      is p:parallelAssignmentCode do parallelAssignmentFun(p)
      is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
+     is c:tryCode do (
+	  oldSuppressErrors := SuppressErrors;
+	  SuppressErrors = true;
+	  p := eval(c.code);
+	  if !SuppressErrors then p		  -- eval could have turned it off
+	  else (
+	       SuppressErrors = oldSuppressErrors;
+	       when p is err:Error do (
+		    if err.message == breakMessage || err.message == returnMessage || err.message == continueMessage || err.message == unwindMessage then p
+		    else eval(c.elseClause))
+	       else p))
      is c:ifCode do (
 	  p := eval(c.predicate);
 	  when p is Error do p
@@ -382,7 +450,71 @@ export eval(c:Code):Expr := (
 	  return Expr(SymbolClosure(f,r.symbol)))
      is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
      is b:multaryCode do b.f(b.args)
-     is n:forCode do ForFun(n)
+     is c:forCode do (
+	  fromClause := c.fromClause;
+	  toClause := c.toClause;
+	  predicate := c.whenClause;
+	  listClause := c.listClause;
+	  doClause := c.doClause;
+	  r := if listClause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
+	  i := 0;				    -- index in r
+	  j := 0;				    -- the value of the loop variable
+	  n := 0;				    -- the upper bound on j, if there is a toClause.
+	  if fromClause != dummyCode then (
+	       fromvalue := eval(fromClause);
+	       when fromvalue is f:Integer do (
+		    if isInt(f) then j = toInt(f)
+		    else return printErrorMessage(fromClause,"expected a small integer"))
+	       else return printErrorMessage(fromClause,"expected an integer"));
+	  if toClause != dummyCode then (
+	       tovalue := eval(toClause);
+	       when tovalue is f:Integer do (
+		    if isInt(f) then n = toInt(f)
+		    else return printErrorMessage(toClause,"expected a small integer"))
+	       else return printErrorMessage(toClause,"expected an integer"));
+	  localFrame = Frame(localFrame,c.frameID,c.framesize,false,new Sequence len c.framesize do provide nullE);
+	  while true do (
+	       if toClause != dummyCode && j > n then break;
+	       localFrame.values.0 = toInteger(j);		    -- should be the frame spot for the loop var!
+	       j = j+1;
+	       if predicate != dummyCode then (
+		    p := eval(predicate);
+		    when p is err:Error do (
+			 localFrame = localFrame.outerFrame;
+			 return if err.message == breakMessage then err.value else p)
+		    else if p == False then break
+		    else if p != True then (
+			 localFrame = localFrame.outerFrame;
+			 return printErrorMessage(predicate,"expected true or false")));
+	       if listClause != dummyCode then (
+		    b := eval(listClause);
+		    when b is err:Error do (
+			 if err.message == continueMessage then b = err.value
+			 else (
+			      localFrame = localFrame.outerFrame;
+			      return if err.message == breakMessage then err.value else b))
+		    else nothing;
+		    if i == length(r) then (
+			 r = new Sequence len 2*length(r) do (
+			      foreach x in r do provide x;
+			      while true do provide nullE));
+		    r.i = b;
+		    i = i+1;
+		    );
+	       if doClause != dummyCode then (
+		    b := eval(doClause);
+		    when b is err:Error do (
+			 if err.message != continueMessage then (
+			      localFrame = localFrame.outerFrame;
+			      return if err.message == breakMessage then err.value else b))
+		    else nothing));
+	  localFrame = localFrame.outerFrame;
+	  if listClause == dummyCode then nullE
+	  else Expr(
+	       list(
+		    if i == 0 then emptySequence
+		    else if i == length(r) then r
+		    else new Sequence len i do foreach x in r do provide x)))
      is n:newLocalFrameCode do (
 	  localFrame = Frame(localFrame,n.frameID,n.framesize,false, new Sequence len n.framesize do provide nullE);
 	  x := eval(n.body);

@@ -1006,6 +1006,52 @@ exec(e:Expr):Expr := (
      else WrongArg( "a string or a sequence or list of strings"));
 setupfun("exec",exec);
 
+youngest(e:Expr):Expr := (
+     when e
+     is y:HashTable do if !y.mutable then nullE else e
+     is b:Sequence do (
+	  if length(b) == 0
+	  then nullE
+	  else (
+	       h := 0;
+	       e = nullE;
+	       foreach x in b do (
+		    when x
+		    is y:HashTable do (
+			 if y.mutable && y.hash>h then ( h = y.hash; e = x; );
+			 )
+		    else nothing;
+		    );
+	       e))
+     else nullE);
+setupfun("youngest", youngest);
+
+toBigReal(e:Expr):Expr := (
+     when e
+     is x:Rational do Expr(toBigReal(x))
+     is x:Integer do Expr(toBigReal(x))
+     is x:Real do Expr(toBigReal(x.v))
+     else WrongArg("a number")
+     );
+setupfun("toBigReal",toBigReal);
+
+precision(e:Expr):Expr := (
+     when e 
+     is x:BigReal do Expr(toInteger(precision(x)))
+     else WrongArg("a big real number")
+     );
+setupfun("precision",precision);
+
+setprec(e:Expr):Expr := (
+     when e
+     is i:Integer do (
+	  if isInt(i) then Expr(toInteger(setprec(toInt(i))))
+	  else WrongArgSmallInteger())
+     else WrongArgInteger());
+setupfun("setPrecision",setprec);
+
+-- locate:
+
 extent := {filename:string, minline:int, mincol:int, maxline:int, maxcol:int};
 code := extent("",0,0,0,0);
 
@@ -1051,6 +1097,11 @@ locate(e:Code):void := (
 	  lookat(f.position);
 	  locate(f.predicate);
 	  locate(f.thenClause);
+	  locate(f.elseClause);
+	  )
+     is f:tryCode do (
+	  lookat(f.position);
+	  locate(f.code);
 	  locate(f.elseClause);
 	  )
      is f:forCode do (
@@ -1116,47 +1167,3 @@ locate(e:Expr):Expr := (
 	  locate1())
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate",locate);
-
-youngest(e:Expr):Expr := (
-     when e
-     is y:HashTable do if !y.mutable then nullE else e
-     is b:Sequence do (
-	  if length(b) == 0
-	  then nullE
-	  else (
-	       h := 0;
-	       e = nullE;
-	       foreach x in b do (
-		    when x
-		    is y:HashTable do (
-			 if y.mutable && y.hash>h then ( h = y.hash; e = x; );
-			 )
-		    else nothing;
-		    );
-	       e))
-     else nullE);
-setupfun("youngest", youngest);
-
-toBigReal(e:Expr):Expr := (
-     when e
-     is x:Rational do Expr(toBigReal(x))
-     is x:Integer do Expr(toBigReal(x))
-     is x:Real do Expr(toBigReal(x.v))
-     else WrongArg("a number")
-     );
-setupfun("toBigReal",toBigReal);
-
-precision(e:Expr):Expr := (
-     when e 
-     is x:BigReal do Expr(toInteger(precision(x)))
-     else WrongArg("a big real number")
-     );
-setupfun("precision",precision);
-
-setprec(e:Expr):Expr := (
-     when e
-     is i:Integer do (
-	  if isInt(i) then Expr(toInteger(setprec(toInt(i))))
-	  else WrongArgSmallInteger())
-     else WrongArgInteger());
-setupfun("setPrecision",setprec);
