@@ -536,6 +536,119 @@ document {
      SeeAlso => "inducedMap"
      }
 document {
+     Key => matrix,
+     Headline => "make a matrix",
+     "This function can be used to create a matrix or map (homomorphism) between
+     modules, but it is complicated because there are many different ways it can
+     be used.  The entries of the matrix can be provided as a list of lists of ring
+     elements, or as a function which accepts row and column indices.  The ring of
+     the matrix can be provided explicitly, or the source and target modules can be 
+     provided.  There are other alternatives.",
+     PARA,
+     SeeAlso => {"map"}
+     }
+document {
+     Key => (matrix,Matrix),
+     TT "matrix f", " -- produce the matrix of a map f.",
+     PARA,
+     "If the source and target of f are free, then the result is
+     f itself.  Otherwise, the source and target will be replaced by
+     the free modules whose basis elements correspond to the generators
+     of the modules.",
+     SeeAlso => {"map", "matrix"}
+     }
+document {
+     Key => (matrix,Ring,List),
+     TT "matrix(R,v)", " -- create a matrix over R from a doubly-nested list of
+     ring elements or matrices.",
+     PARA,
+     "This is essentially the same as ", TO (matrix,List), " together with
+     the specification of the ring.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[a..f]",
+      	  "matrix(R, {{a,b,0},{d,0,f}})",
+	  },
+     SeeAlso => {"map", "matrix"}
+     }
+document {
+     Key => (matrix,List),
+     TT "matrix v", " -- create a matrix from a doubly-nested list of
+     ring elements or matrices, or from a list of (column) vectors.",
+     PARA,
+     "An attempt is made to coerce the ring elements and matrices to
+     a common ring.  If the entries are ring elements, they are used as
+     the entries of the matrix, and if the entries are matrices, then
+     they are used to provide blocks of entries in the resulting matrix.",
+     PARA,
+     "An attempt is made to set up the degrees of the generators of the
+     free module serving as source so that the map will be homogeneous and of
+     degree zero.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z]",
+      	  "p = matrix {{x,y,z}}",
+      	  "degrees source p",
+      	  "isHomogeneous p",
+	  },
+     "Notice that the degrees were set up so that p is homogeneous, because
+     the source module is not explicitly specified by the user.  The next
+     example involves block matrices.",
+     EXAMPLE {
+	  "q = vars R",
+      	  "matrix {{q,q,q}}",
+      	  "matrix {{q},{q},{q}}",
+	  },
+     "Here we construct a matrix from column vectors.",
+     EXAMPLE {
+	  "F = R^3",
+      	  "matrix {F_2, F_1, x*F_0 + y*F_1 + z*F_2}",
+	  },
+     SeeAlso => {"map", "matrix"}
+     }
+document {
+     Key => map,
+     Headline => "make a map",
+     Usage => "map(Y,X,d) or map(Y,X)",
+     Inputs => {
+	  "Y" => "an object, such as a ring, module, or chain complex",
+	  "X" => {"another object of the same type"},
+	  "d" => "a specification, such as a function, list, or 
+	          matrix, or if omitted, understood to specify the identity map"
+	  },
+     Outputs => {
+	  {"a map to ", TT "Y", " from ", TT "X", " defined by data ", TT "d", "."},
+	  },
+     "The function ", TT "map", " provides a general mechanism for constructing a map
+     (homomorphism) between rings (", OFCLASS RingMap, "), modules (", OFCLASS Matrix,
+     "), chain complexes (", OFCLASS ChainComplexMap, "), 
+      or between objects in other categories.",
+     PARA,
+     "See also the function ", TO matrix, ", which focuses on creating new matrices from
+     rectangular arrays of ring elements or matrices.",
+     Subnodes => {
+	  "Creating a map between modules (a matrix)",
+	  TO (map,Module,Module,Function),
+	  TO (map,Module,Module,List),
+	  TO (map,Module,Module,RingElement),
+	  TO (map,Module,Module,Matrix),
+	  TO (map,Module,Module),
+     	  "Creating a map between modules, where the source module is computed",
+	  TO (map,Module,ZZ,Function),
+	  TO (map,Module,Nothing,List),
+	  TO (map,Module,Nothing,Matrix),
+	  "Creating a map with a different degree",
+	  TO (map,Matrix),
+	  "Creating a map between rings",
+	  TO (map,Ring,Ring),
+	  TO (map,Ring,Ring,List),
+	  TO (map,Ring,Ring,Matrix),
+	  "Creating a map between chain complexes",
+	  TO (map,ChainComplex,ChainComplex,ChainComplexMap),
+	  TO (map,ChainComplex,ChainComplex,Function)
+	  }
+     }
+document {
      Key => (map,Module,Module,Function),
      Headline => "create a matrix by specifying a function which gives each entry",
      Usage => "map(M,N,f)",
@@ -580,104 +693,6 @@ document {
 	  "degrees h",
 	  "isHomogeneous h"
 	  }
-     }
-document {
-     Key => matrix,
-     Headline => "make a matrix",
-     "This function can be used to create a matrix or map (homomorphism) between
-     modules, but it is complicated because there are many different ways it can
-     be used.  The entries of the matrix can be provided as a list of lists of ring
-     elements, or as a function which accepts row and column indices.  The ring of
-     the matrix can be provided explicitly, or the source and target modules can be 
-     provided.  There are other alternatives.",
-     PARA,
-     SeeAlso => {"map"}
-     }
-document {
-     Key => (map,Matrix),
-     Headline => "make a matrix with a different degree",
-     Usage => "map(f, Degree => d)",
-     Inputs => {
-	  "f" => Matrix => null,
-	  },
-     Outputs => {
-	  {"a map identical to ", TT "f", ", except that it has degree ", 
-	       TT "d", ", and the source
-	       module has been tensored by a graded free module of rank 1 of 
-	       the appropriate degree."},
-	  },
-      "The input ", TT "d", " should be ", OFCLASS ZZ, ", or a list of integers",
-      PARA,
-      "This routine is often used to take a matrix which has a non-zero degree, 
-      and make the degree zero.",
-      PARA,
-      "For example, multiplication of a matrix by a scalar increases the 
-      degree, leaving the source and target fixed:",
-      EXAMPLE {
-	   "R = QQ[a,b];",
-	   "f1 = matrix{{a,b}}",
-	   "f = a * f1",
-	   "degree f",
-	   "source f == source f1",
-	   },
-      "One solution is to change the degree:",
-      EXAMPLE {
-	   "g = map(f, Degree => 0)",
-	   "degree g",
-	   "source g == (source f) ** R^{-1}"
-	   },
-      "An alternate solution would be to use tensor product with the scalar.",
-      EXAMPLE {
-     	  "g2 = a ** matrix{{a,b}}",
-	  "degree g2",
-	  "isHomogeneous g2"
-	  }
-     }
-document {
-     Key => (matrix,Matrix),
-     TT "matrix f", " -- produce the matrix of a map f.",
-     PARA,
-     "If the source and target of f are free, then the result is
-     f itself.  Otherwise, the source and target will be replaced by
-     the free modules whose basis elements correspond to the generators
-     of the modules.",
-     SeeAlso => {"map", "matrix"}
-     }
-document {
-     Key => (matrix,Ring,List),
-     TT "matrix(R,v)", " -- create a matrix over R from a doubly-nested list of
-     ring elements or matrices.",
-     PARA,
-     "This is essentially the same as ", TO (matrix,List), " together with
-     the specification of the ring.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[a..f]",
-      	  "matrix(R, {{a,b,0},{d,0,f}})",
-	  },
-     SeeAlso => {"map", "matrix"}
-     }
-document {
-     Key => (map,Module,Module),
-     TT "map(M,N)", " -- constructs the natural map from N to M.",
-     PARA,
-     "The modules ", TT "M", " and ", TT "N", " should be subquotient modules of the same
-     free module",
-     SeeAlso => {"map", "isWellDefined"}
-     }
-document {
-     Key => (map,Module,Matrix),
-     TT "map(M,p)", " -- recasts a matrix p to a map whose target is M by
-     tensoring p with a graded free module of rank 1.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y]",
-      	  "p = matrix{{x,y}}",
-      	  "q = map(R^{3},p)",
-      	  "degrees target q",
-      	  "degrees source q",
-	  },
-     SeeAlso => {"map", "matrix"}
      }
 document {
      Key => (map,Module,Module,List),
@@ -735,6 +750,68 @@ document {
 	  },
      PARA,
      SeeAlso => {(map,Module,Module,ZZ), "map", "matrix"}
+     }
+document {
+     Key => (map,Module,Module),
+     TT "map(M,N)", " -- constructs the natural map from N to M.",
+     PARA,
+     "The modules ", TT "M", " and ", TT "N", " should be subquotient modules of the same
+     free module",
+     SeeAlso => {"map", "isWellDefined"}
+     }
+document {
+     Key => (map,Matrix),
+     Headline => "make a matrix with a different degree",
+     Usage => "map(f, Degree => d)",
+     Inputs => {
+	  "f" => Matrix => null,
+	  },
+     Outputs => {
+	  {"a map identical to ", TT "f", ", except that it has degree ", 
+	       TT "d", ", and the source
+	       module has been tensored by a graded free module of rank 1 of 
+	       the appropriate degree."},
+	  },
+      "The input ", TT "d", " should be ", OFCLASS ZZ, ", or a list of integers",
+      PARA,
+      "This routine is often used to take a matrix which has a non-zero degree, 
+      and make the degree zero.",
+      PARA,
+      "For example, multiplication of a matrix by a scalar increases the 
+      degree, leaving the source and target fixed:",
+      EXAMPLE {
+	   "R = QQ[a,b];",
+	   "f1 = matrix{{a,b}}",
+	   "f = a * f1",
+	   "degree f",
+	   "source f == source f1",
+	   },
+      "One solution is to change the degree:",
+      EXAMPLE {
+	   "g = map(f, Degree => 0)",
+	   "degree g",
+	   "source g == (source f) ** R^{-1}"
+	   },
+      "An alternate solution would be to use tensor product with the scalar.",
+      EXAMPLE {
+     	  "g2 = a ** matrix{{a,b}}",
+	  "degree g2",
+	  "isHomogeneous g2"
+	  }
+     }
+document {
+     Key => (map,Module,Matrix),
+     TT "map(M,p)", " -- recasts a matrix p to a map whose target is M by
+     tensoring p with a graded free module of rank 1.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[x,y]",
+      	  "p = matrix{{x,y}}",
+      	  "q = map(R^{3},p)",
+      	  "degrees target q",
+      	  "degrees source q",
+	  },
+     SeeAlso => {"map", "matrix"}
      }
 document {
      Key => (map,Module,Module,ZZ),
@@ -814,41 +891,6 @@ document {
       	  "f = map(R^2,,{{x^2,y^2},{x*y,0}})",
       	  "degrees source f",
       	  "isHomogeneous f",
-	  },
-     SeeAlso => {"map", "matrix"}
-     }
-document {
-     Key => (matrix,List),
-     TT "matrix v", " -- create a matrix from a doubly-nested list of
-     ring elements or matrices, or from a list of (column) vectors.",
-     PARA,
-     "An attempt is made to coerce the ring elements and matrices to
-     a common ring.  If the entries are ring elements, they are used as
-     the entries of the matrix, and if the entries are matrices, then
-     they are used to provide blocks of entries in the resulting matrix.",
-     PARA,
-     "An attempt is made to set up the degrees of the generators of the
-     free module serving as source so that the map will be homogeneous and of
-     degree zero.",
-     PARA,
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z]",
-      	  "p = matrix {{x,y,z}}",
-      	  "degrees source p",
-      	  "isHomogeneous p",
-	  },
-     "Notice that the degrees were set up so that p is homogeneous, because
-     the source module is not explicitly specified by the user.  The next
-     example involves block matrices.",
-     EXAMPLE {
-	  "q = vars R",
-      	  "matrix {{q,q,q}}",
-      	  "matrix {{q},{q},{q}}",
-	  },
-     "Here we construct a matrix from column vectors.",
-     EXAMPLE {
-	  "F = R^3",
-      	  "matrix {F_2, F_1, x*F_0 + y*F_1 + z*F_2}",
 	  },
      SeeAlso => {"map", "matrix"}
      }
