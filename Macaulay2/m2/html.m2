@@ -323,7 +323,10 @@ assembleTree Package := pkg -> (
      fkey := formatDocumentTag key;			    -- same as topNodeName
      nodes := packageNodes(pkg,topNodeName);
      linkTable = new MutableHashTable from { };
-     nodesToScope = new MutableHashTable from { (fkey,key) => true };
+     nodesToScope = new MutableHashTable from join(
+	  { (fkey,key) => true },
+	  apply(keys pkg#"documentation", fkey -> (fkey,fkey) => true)
+	  );
      UP = new MutableHashTable;
      NEXT = new MutableHashTable;
      PREV = new MutableHashTable;
