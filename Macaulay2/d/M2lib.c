@@ -63,12 +63,6 @@ static void alarm_handler(int sig)
 #endif
      }
 
-#if defined(__MWERKS__) || (defined(_WIN32) && !defined(__CYGWIN__))
-#define sigjmp_buf jmp_buf
-#define siglongjmp(j,c) longjmp(j,c)
-#define sigsetjmp(j,m) setjmp(j)
-#endif
-
 static sigjmp_buf loaddata_jump, out_of_memory_jump, abort_jump;
 static bool out_of_memory_jump_set = FALSE, abort_jump_set = FALSE;
 
@@ -255,24 +249,6 @@ void *p;
 void dummy_GC_warn_proc(char *msg, GC_word arg) { }
 #endif
 
-#if defined(__MWERKS__)
-
-void SetMinimumStack(long minSize)
-{
-	long newApplLimit;
-
-	if (minSize > LMGetDefltStack())
-	{
-		newApplLimit = (long) GetApplLimit()
-				- (minSize - LMGetDefltStack());
-		SetApplLimit((Ptr) newApplLimit);
-		MaxApplZone();
-	}
-}
-
-#define cMinStackSpace (512L * 1024L)
-#endif
-
 #define stringify(x) #x
 
 #if defined(__GNUC__)
@@ -282,35 +258,9 @@ char CCVERSION[] = "gcc " stringize(__GNUC__) "." stringize(__GNUC_MINOR__) ;
 char CCVERSION[] = "unknown" ;
 #endif
 
-/* we test gc to whether it properly marks pointers found in registers */
-static void uniq(void *p, ...) {
-  va_list a;
-  void *q[100];
-  int n = 0, i, j;
-  q[n++] = p;
-  va_start(a,p);
-  for (;(q[n] = va_arg(a,void *));n++) ;
-  va_end(a);
-  for (i=0; i<n; i++) for (j=0; j<i; j++) if (q[i] == q[j]) {
-    fprintf(stderr,
-	    "%s: error: gc library doesn't find all the active pointers!\n"
-	    "           Perhaps GC_push_regs was configured incorrectly.\n",
-	    progname
-	    );
-    exit(1);
-  }
-}
-static void testgc () {
-  uniq(
-       GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
-       GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
-       GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
-       GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
-       GC_malloc(12), GC_malloc(12), GC_malloc(12), (GC_gcollect(),GC_malloc(12)),
-       (void *)0);
-}
 
 extern void init_readline_variables();
+extern char *GC_stackbottom;
 
 int Macaulay2_main(argc,argv)
 int argc; 
@@ -318,7 +268,6 @@ char **argv;
 {
      char dummy;
      int returncode = 0;
-     extern char *GC_stackbottom;
      char **x;
      char **saveenvp = NULL;
      int envc = 0;
@@ -330,8 +279,6 @@ char **argv;
      extern void actors4_setupargv();
      extern void interp_process(), interp_process2();
      extern int interp_topLevel();
-
-     //MES     GC_stackbottom = &dummy;
 
      ONSTACK(saveenvp);
 
@@ -366,13 +313,6 @@ char **argv;
      __file_handle_modes[STDERR] = O_BINARY;
 #endif
 
-#ifdef __MWERKS__
-	/* Make sure we have lots and lots of stack space. 	*/
-	SetMinimumStack(cMinStackSpace);
-	/* Cheat and let stdio initialize toolbox for us.	*/
-	/* printf("Macaulay2 for the MacOS\n"); */
-     saveargv = argv;
-#else
      /* save arguments on stack in case they're on the heap */
      saveargv = (char **)alloca((argc + 1)*sizeof(char *));
      for (i=0; i<argc; i++) {
@@ -380,9 +320,8 @@ char **argv;
 	  strcpy(saveargv[i],argv[i]);
      }
      saveargv[i] = NULL;
-#endif
 
-#if defined(DUMPDATA) && !defined(__MWERKS__) && !defined(__CYGWIN__)
+#if defined(DUMPDATA)
      /* save environment on stack in case it's on the heap */
      for (envc=0, x=__environ; *x; x++) envc++;
      saveenvp = (char **)alloca((envc + 1)*sizeof(char *));
@@ -393,21 +332,13 @@ char **argv;
      saveenvp[i] = NULL;
 #endif
 
-#if !defined(__MWERKS__)
      ONSTACK(envc);
-#endif
-
-#ifdef MEM_DEBUG
-     GC_all_interior_pointers = TRUE; /* set this before using gc routines!  (see gc.h) */
-#endif
-     GC_free_space_divisor = 2;	/* this was intended to be used only when we are about to dump data */
-
      if (0 != sigsetjmp(loaddata_jump,TRUE)) {
 	  char **environ0;
      	  GC_free_space_divisor = 4;
 	  if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
 	  old_collections = GC_gc_no;
-#if defined(DUMPDATA) && !defined(__MWERKS__) && !defined(__CYGWIN__)
+#if defined(DUMPDATA)
      	  __environ = saveenvp;	/* __environ is a static variable that points
 				   to the heap and has been overwritten by
 				   loaddata(), thereby pointing to a previous
@@ -444,11 +375,9 @@ char **argv;
 
      trap();
      progname = saveargv[0];
-     /* for (p=progname; *p; p++) if (*p=='/') progname = p+1; */
-     testgc();
+     M2inits();
 
      if (GC_stackbottom == NULL) GC_stackbottom = &dummy;
-     M2_init_gmp();
      system_newline = tostring(newline);
      actors5_CCVERSION = tostring(get_cc_version());
      actors5_VERSION = tostring(PACKAGE_VERSION);
@@ -585,7 +514,7 @@ int system_loaddata(M2_string datafilename){
 void C__prepare() {}
 
 int actors4_isReady(int fd) {
-#if defined(__MWERKS__) || defined(_WIN32)
+#if defined(_WIN32)
      return 1;
 #else
   int ret;
@@ -600,7 +529,7 @@ int actors4_isReady(int fd) {
 }
 
 int actors5_WindowWidth(int fd) {
-#if defined(__DJGPP__) || defined(__alpha) || defined(__MWERKS__) || defined(_WIN32)
+#if defined(__DJGPP__) || defined(__alpha) || defined(_WIN32)
      return 0;
 #else
      struct winsize x;
