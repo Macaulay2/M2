@@ -38,10 +38,10 @@ record      := f -> x -> (
 -----------------------------------------------------------------------------
 -- getting database records
 -----------------------------------------------------------------------------
-getPackage := key -> scan(values PackagesDictionary,
+getPackage := key -> scan(value \ values PackageDictionary,
      pkg -> (
 	  d := pkg#"documentation";
-	  if d#?key then break pkg)) 
+	  if d#?key then break pkg))
 
 getRecord := (pkg,key) -> pkg#"documentation"#key
 
@@ -776,7 +776,7 @@ documentation Thing := x -> if ReverseDictionary#?x then return documentation Re
 
 hasDocumentation = x -> (
      fkey := formatDocumentTag x;
-     p := select(values PackagesDictionary, P -> P#"documentation"#?fkey);
+     p := select(value \ values PackageDictionary, P -> P#"documentation"#?fkey);
      0 < #p)
 
 hr1 := newline | "-----------------------------------------------------------------------------" | newline
