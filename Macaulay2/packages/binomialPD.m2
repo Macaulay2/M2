@@ -280,7 +280,7 @@ time binomialPD I     -- time: 258.4 seconds
 
 
 ///
-gbTrace 3
+gbTrace = 3
 R = ZZ/32003[a..h]
 I = ideal(
   a*(a*d-b*c),
@@ -288,7 +288,7 @@ I = ideal(
   c*(b*d-c^2))
 time binomialPD I
 
-gbTrace 3
+gbTrace = 3
 R = ZZ/32003[a..h]
 I = ideal(
   a*d*e*g-b^2*f*h, 

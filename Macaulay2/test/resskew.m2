@@ -28,7 +28,7 @@ n=matrix{{y_1*y_2*y_4},
          {y_3*y_5*y_6}}
 betti(fnt=res(image transpose n,LengthLimit=>4))
 M = fnt.dd_2;
-gbTrace 3
+gbTrace = 3
 gens gb M
 gens gb (M, Strategy => Inhomogeneous)
 --gens gb (M, Strategy=>Primary)

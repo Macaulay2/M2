@@ -206,8 +206,8 @@ int IM2_GB_hash(const Computation *G)
 
 int IM2_GB_verbose(int level)
 {
-  int result = comp_printlevel;
-  comp_printlevel = level;
+  int result = gbTrace;
+  gbTrace = level;
   return result;
 }
 
@@ -230,7 +230,7 @@ int IM2_GB_verbose(int level)
 
 #include "Eschreyer.hpp"
 
-extern int comp_printlevel;
+extern int gbTrace;
 extern Z *ZZ;
 
 #if 0
@@ -248,8 +248,8 @@ gb_comp * make_EGB_comp(const Matrix &m, bool dosyz, int nsyz, int strategy)
 void cmd_NGB_tracing(object &on)
 {
   int n = on->int_of();
-  gStack.insert(make_object_int(comp_printlevel));
-  comp_printlevel = n;
+  gStack.insert(make_object_int(gbTrace));
+  gbTrace = n;
 }
 
 

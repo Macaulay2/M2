@@ -6,7 +6,7 @@
 #include "text_io.hpp"
 
 extern "C" char system_interrupted;
-extern int comp_printlevel;
+extern int gbTrace;
 
 MatrixComputation::MatrixComputation(const Matrix *m, bool do_rowchange, bool do_colchange)
   : R(m->get_ring())
@@ -102,7 +102,7 @@ int MatrixComputation::calc(int nsteps)
       system_spincursor();
       if (system_interrupted) return -1;
       if (nsteps-- <= 0) break;
-      if (comp_printlevel >= 1)
+      if (gbTrace >= 1)
 	{
 	  buffer o;
 	  o << "." << last_col;
@@ -111,7 +111,7 @@ int MatrixComputation::calc(int nsteps)
       hermiteStep();
     }
   // If reductions are done at the end:
-  if (comp_printlevel >= 1)
+  if (gbTrace >= 1)
     {
       buffer o;
       o << "." << "reduce" << newline;

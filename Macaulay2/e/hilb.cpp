@@ -4,7 +4,7 @@
 #include "relem.hpp"
 
 extern char system_interrupted;
-extern int comp_printlevel;
+extern int gbTrace;
 
 int partition_table::representative(int x)
 {

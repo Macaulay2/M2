@@ -187,7 +187,7 @@ int gbres_comp::calc(const int *stop_degree, const intarray &stop)
   int ret;
   int old_compare_type = compare_type;
   compare_type = (strategy_flags >> 10);
-  if (comp_printlevel >= 4) 
+  if (gbTrace >= 4) 
     {
       buffer o;
       o << "compare=" << compare_type << newline;
@@ -200,7 +200,7 @@ int gbres_comp::calc(const int *stop_degree, const intarray &stop)
 	  ret = COMP_DONE_DEGREE_LIMIT;
 	  break;
 	}
-      if (comp_printlevel >= 1)	
+      if (gbTrace >= 1)	
 	{
 	  buffer o;
 	  o << "{" << i << "}";

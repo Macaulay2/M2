@@ -872,7 +872,7 @@ assert( transpose ff - matrix{{a,b,c},{d,e,f},{g,h,i},{j,k,l},{m,n,o},{p,q,r}} =
 M = cokernel ff
 assert ( ff === presentation M )		  -- original map saved
 assert ( cokernel ff === M )		  -- cokernel memoized
--- gbTrace 3
+-- gbTrace = 3
 -- << \"gb ff ...\" << flush
 G = gb ff
 pM = poincare M

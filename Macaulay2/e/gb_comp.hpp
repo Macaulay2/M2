@@ -14,7 +14,7 @@ class Vector;
 class PolynomialRing;
 
 extern "C" char system_interrupted;
-extern int comp_printlevel;
+extern int gbTrace;
 
 // The printlevel flags
 const int PRINT_SPAIR_TRACKING=1024;
@@ -183,7 +183,7 @@ public:
   
   virtual void text_out(buffer &o) = 0;
   /* This displays statistical information, and depends on the
-     comp_printlevel value */
+     gbTrace value */
 };
 
 class GBComputation : public Computation

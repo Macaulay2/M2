@@ -26,7 +26,7 @@
 
 R = QQ[w,x,y,z,MonomialOrder => Lex]
 
-gbTrace 3
+gbTrace = 3
 
 -- I had to comment this out to get the tests to run, but to reinstate this test later.
 

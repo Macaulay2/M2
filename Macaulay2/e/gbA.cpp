@@ -346,7 +346,7 @@ void gbA::remove_unneeded_pairs(int id)
 	spair *tmp = p->next;
 	p->next = tmp->next;
 	tmp->next = 0;
-	if ((comp_printlevel & PRINT_SPAIR_TRACKING) != 0)
+	if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
 	  {
 	    buffer o;
 	    o << "removing unneeded ";
@@ -434,7 +434,7 @@ void gbA::minimalize_pairs(spairs &new_set)
 	  if (_is_ideal && is_gcd_one_pair(p))
 	    {
 	      _stats_ngcd1++;
-	      if ((comp_printlevel & PRINT_SPAIR_TRACKING) != 0)
+	      if ((gbTrace & PRINT_SPAIR_TRACKING) != 0)
 		{
 		  buffer o;
 		  o << "removing spair because of gcd: ";
@@ -656,7 +656,7 @@ void gbA::spairs_sort(int len, spair *&ps)
 void gbA::compute_s_pair(spair *p)
 {
   POLY f,g;
-  if (comp_printlevel >= 5)
+  if (gbTrace >= 5)
     {
       buffer o;
       spair_text_out(o,p);
@@ -685,7 +685,7 @@ void gbA::compute_s_pair(spair *p)
 				    p->fsyz());
     }
   p->type = SPAIR_ELEM;
-  if (comp_printlevel >= 5)
+  if (gbTrace >= 5)
     {
       buffer o;
       o << "    ";
@@ -700,7 +700,7 @@ bool gbA::reduce(spair *p)
   /* If false is returned, this routine has grabbed the spair 'p'. */
   int count = 0;
   compute_s_pair(p); /* Changes the type, possibly */
-  if (comp_printlevel == 10)
+  if (gbTrace == 10)
     {
       buffer o;
       o << "reducing ";
@@ -723,7 +723,7 @@ bool gbA::reduce(spair *p)
 	  h.f = R->gbvector_copy(p->x.f.f);
 	  h.fsyz = R->gbvector_copy(p->x.f.fsyz);
 	  insert(h,ELEM_NON_MIN_GB);
-	  if ((comp_printlevel % PRINT_SPAIR_TRACKING) != 0)
+	  if ((gbTrace % PRINT_SPAIR_TRACKING) != 0)
 	    {
 	      buffer o;
 	      o << "deferring A spair ";
@@ -737,7 +737,7 @@ bool gbA::reduce(spair *p)
 				   p->f(), p->fsyz(), /* modifies these */
 				   g.f, g.fsyz);
       _stats_nreductions++;
-      if (comp_printlevel == 10)
+      if (gbTrace == 10)
 	{
 	  buffer o;
 	  o << "  reducing by ";
@@ -750,7 +750,7 @@ bool gbA::reduce(spair *p)
       if (alpha > 0)
 	{
 	  p->deg += alpha;
-	  if ((comp_printlevel % PRINT_SPAIR_TRACKING) != 0)
+	  if ((gbTrace % PRINT_SPAIR_TRACKING) != 0)
 	    {
 	      buffer o;
 	      o << "deferring B spair ";
@@ -762,7 +762,7 @@ bool gbA::reduce(spair *p)
 	  return false;
 	}
     }
-  if (comp_printlevel == 3) 
+  if (gbTrace == 3) 
     {
       buffer o;
       o << "." << count;
@@ -801,7 +801,7 @@ void gbA::insert(POLY f, int minlevel)
 
   int me = G->insert(f.f, f.fsyz, (gbelem_type)minlevel, _this_degree);
 
-  if (comp_printlevel >= 5)
+  if (gbTrace >= 5)
     {
       char s[100];
       buffer o;
@@ -843,19 +843,19 @@ bool gbA::s_pair_step()
       if (!R->gbvector_is_zero(f.f))
 	{
 	  insert(f,minlevel);
-	  if (comp_printlevel == 3)
+	  if (gbTrace == 3)
 	    emit("m");
 	}
       else if (!R->gbvector_is_zero(f.fsyz))
 	{
 	  /* This is a syzygy */
 	  collect_syzygy(f.fsyz);
-	  if (comp_printlevel == 3)
+	  if (gbTrace == 3)
 	    emit("z");
 	}
       else
 	{
-	  if (comp_printlevel == 3)
+	  if (gbTrace == 3)
 	    emit("o");
 	}
     }
@@ -918,7 +918,7 @@ int gbA::compute()
 	      is_done = COMP_DONE_DEGREE_LIMIT;
 	      break;
 	    }
-	  if (comp_printlevel >= 1)
+	  if (gbTrace >= 1)
 	    {
 	      char s[100];
 	      sprintf(s, "DEGREE %d (npairs %d)\n", _this_degree, npairs);
@@ -1138,10 +1138,10 @@ const M2_arrayint gbA::betti(int type)
   
 void gbA::text_out(buffer &o)
   /* This displays statistical information, and depends on the
-     comp_printlevel value */
+     gbTrace value */
 {
   o << "# pairs computed = " << _n_pairs_computed << newline;
-  if (comp_printlevel >= 5 && comp_printlevel % 2 == 1)
+  if (gbTrace >= 5 && gbTrace % 2 == 1)
     for (int i=0; i<G->gb.size(); i++)
       {
 	o << i << '\t';

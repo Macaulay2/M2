@@ -79,9 +79,9 @@ newPackage(M2title,
      Version => version#"VERSION",
      WritableSymbols => {
 	  symbol oooo, symbol ooo, symbol oo, symbol path, symbol phase, symbol currentDirectory,
-	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm,
+	  symbol DocDatabase, symbol currentFileName, symbol compactMatrixForm, symbol gbTrace,
 	  symbol buildHomeDirectory, symbol sourceHomeDirectory, symbol prefixDirectory, symbol currentPrompts, symbol currentPackage,
-	  symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify, symbol loadDepth, 
+	  symbol packages, symbol currentDictionary, symbol UserDictionary, symbol notify, symbol loadDepth, symbol printingPrecision,
 	  symbol errorDepth, symbol recursionLimit, symbol globalDictionaries, symbol Output, symbol debuggingMode, 
 	  symbol stopIfError, symbol debugLevel, symbol lineNumber
 	  })

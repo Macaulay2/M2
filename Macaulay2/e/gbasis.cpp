@@ -7,7 +7,7 @@
 #include "polyring.hpp"
 #include "ntuple.hpp"
 
-extern int comp_printlevel;
+extern int gbTrace;
 // todo: minimalize_gb, remainder
 
 GBasis::GBasis(const FreeModule *F, const FreeModule *Fsyz)
@@ -183,7 +183,7 @@ void GBasis::remainder(POLY &f, int degf)
 				       g.f, g.fsyz);
 	  count++;
 	  //	  _stats_ntail++;
-	  if (comp_printlevel == 10)
+	  if (gbTrace == 10)
 	    {
 	      buffer o;
 	      o << "  tail reducing by ";
@@ -201,7 +201,7 @@ void GBasis::remainder(POLY &f, int degf)
   R->gbvector_remove_content(h.f, h.fsyz,denom);
   f.f = h.f;
   f.fsyz = h.fsyz;
-  if (comp_printlevel == 3)
+  if (gbTrace == 3)
     {
       buffer o;
       o << "," << count;
@@ -262,7 +262,7 @@ void GBasis::remainder(POLY &f, int degf, ring_elem &denom)
 					     denom); // multiplies to denom.
 	  count++;
 	  //	  _stats_ntail++;
-	  if (comp_printlevel == 10)
+	  if (gbTrace == 10)
 	    {
 	      buffer o;
 	      o << "  tail reducing by ";
@@ -278,7 +278,7 @@ void GBasis::remainder(POLY &f, int degf, ring_elem &denom)
   R->gbvector_remove_content(h.f, h.fsyz,denom);
   f.f = h.f;
   f.fsyz = h.fsyz;
-  if (comp_printlevel == 3)
+  if (gbTrace == 3)
     {
       buffer o;
       o << "," << count;

@@ -1334,6 +1334,7 @@ export getGlobalVariable(x:Symbol):Expr := globalFrame.values.(x.frameindex);
 export stopIfError := false;
 export lineNumber := 0;
 
+gbTraceS := setupvar("gbTrace",toExpr(gbTrace));
 printingPrecisionS := setupvar("printingPrecision",toExpr(printingPrecision));
 debuggingModeS := setupvar("debuggingMode",toExpr(debuggingMode));
 debugLevelS := setupvar("debugLevel",toExpr(debugLevel));
@@ -1381,6 +1382,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	       else if sym === recursionLimitS then (recursionlimit = n; e)
 	       else if sym === lineNumberS then (lineNumber = n; e)
 	       else if sym === printingPrecisionS then (printingPrecision = n; e)
+	       else if sym === gbTraceS then (gbTrace = n; e)
 	       else buildErrorPacket(msg))
 	  else buildErrorPacket(msg))
      else WrongNumArgs(2));

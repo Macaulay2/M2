@@ -4,7 +4,7 @@
 #include "monoid.hpp"
 #include "text_io.hpp"
 
-extern int comp_printlevel;
+extern int gbTrace;
 
 Nmi_node::~Nmi_node()
 {
@@ -498,7 +498,7 @@ void MonomialIdeal::text_out(buffer &o) const
       const int *n = operator[](j)->monom().raw();
       get_ring()->Nmonoms()->from_varpower(n, m);
       get_ring()->Nmonoms()->elem_text_out(o, m);
-      if (comp_printlevel > 0)
+      if (gbTrace > 0)
 	o << '(' << operator[](j)->basis_elem() << ")";
       o << ' ';
     }

@@ -485,7 +485,7 @@ matrix ms
 n = 45
 m = sparsemat(n,n,.5,5)
 mm = matrix m
-gbTrace 1
+gbTrace = 1
 time smith mm;
 time gens gb mm;
 
@@ -493,7 +493,7 @@ time gens gb mm;
 n = 100
 m = sparsemat(n,n,.9,1)
 mm = matrix m
-gbTrace 1
+gbTrace = 1
 time smith mm;
 time gens gb mm;
 

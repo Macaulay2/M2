@@ -3,7 +3,7 @@
 #include "det.hpp"
 #include "text_io.hpp"
 
-extern int comp_printlevel;
+extern int gbTrace;
 
 DetComputation::DetComputation(const Matrix *M, int p,
 			       bool do_exterior,
@@ -163,7 +163,7 @@ int DetComputation::calc(int nsteps)
   for (;;)
     {
       int result = step();
-      if (comp_printlevel >= 3)
+      if (gbTrace >= 3)
 	emit_wrapped(".");
       if (result == COMP_DONE)
 	return COMP_DONE;

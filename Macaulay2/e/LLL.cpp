@@ -307,11 +307,11 @@ int LLLoperations::doLLL(SparseMutableMatrix *A,
   while (k < n && nsteps != 0 && !system_interrupted)
     {
       system_spincursor();
-      if (comp_printlevel >= 1)
+      if (gbTrace >= 1)
 	{
 	  o.reset();
 	  o << ".";
-	  if (comp_printlevel >= 2)
+	  if (gbTrace >= 2)
 	    o << k;
 	  if (nsteps % 20 == 0)
 	    o << newline;
@@ -321,7 +321,7 @@ int LLLoperations::doLLL(SparseMutableMatrix *A,
 
       if (k > kmax)
 	{
-	  if (comp_printlevel == 1)
+	  if (gbTrace == 1)
 	    {
 	      o.reset();
 	      o << "." << k;

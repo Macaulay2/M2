@@ -598,11 +598,11 @@ export tostring(x:double) : string := (
      if i<0 then (
 	  if -i <= l 
 	  then digits(o,oldx,1,s-i-1)
-	  else (digits(o,x,1,s-1); o << " 10^" << tostring(i);))
+	  else (digits(o,x,1,s-1); o << "e" << tostring(i);))
      else if i+1 > s then (
 	  if i+1-s <= t
 	  then digits(o,x,i+1,0)
-	  else (digits(o,x,1,s-1); o << " 10^" << tostring(i);))
+	  else (digits(o,x,1,s-1); o << "e" << tostring(i);))
      else digits(o,x,i+1,s-i-1);
      tostring(o));
 export (o:file) << (x:double) : file := o << tostring(x);
