@@ -256,7 +256,8 @@ assert( toString vv == "z<2>+y<1>+x<0>" ) -- was "x<0>+y<1>+z<2>" before
 
 show = v -> << v << " = " << value v << endl
 
-f = rawMatrix(F,(v,w))
+-- old : f = rawMatrix(F,(v,w))
+f = rawMatrix1(F,3,(x,y,z),false)
 show "entries f"
 show "f"
 
