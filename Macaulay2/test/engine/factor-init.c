@@ -79,12 +79,11 @@ void     freeBlock ( void * block, size_t size                    ) { GC_FREE(bl
 					  return (void*)retval; \
 				      } else { \
 					  char* retval = (char*)malloc( size ); \
-					  *((int*)retval) = size-4; \
-					  retval += 4; \
-					  return (void*)retval; \
+					  *((int*)retval) = (size)-4; \
+					  return (void*)(retval+4); \
 				      } }
 #   define FREEBLOCK( list, block ) { \
-					 listentry* dummy = (listentry*)block; \
+					 listentry* dummy = (listentry*)(block); \
 					 dummy->next = blocklist[list]; \
 					 blocklist[list] = dummy; \
 				     }
@@ -124,10 +123,14 @@ void     freeBlock ( void * block, size_t size                    ) { GC_FREE(bl
 
     void* reallocBlock ( void* block, size_t oldsize, size_t newsize )
     {
-	void* dummy = getBlock( newsize );
-	memcpy( dummy, block, (newsize < oldsize) ? newsize : oldsize );
-	freeBlock( block, oldsize );
-	return dummy;
+      // improvement here saves calls to getBlock and freeBlock 10% of the time:
+      char* dum = (char*)block - 4;
+      int size = *((int*)dum);
+      if (newsize <= size) return block;
+      void* dummy = getBlock( newsize );
+      memcpy( dummy, block, newsize < oldsize ? newsize : oldsize );
+      freeBlock( block, oldsize );
+      return dummy;
     }
 
 #undef malloc
