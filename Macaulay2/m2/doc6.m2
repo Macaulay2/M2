@@ -940,7 +940,12 @@ document { Module,
 	  TO (degrees, Module),
 	  TO (generators, Module),
 	  TO (relations, Module),
+	  TO "isFreeModule",
 	  TO (isHomogeneous, Module),
+	  TO "rank",
+	  TO (ambient, Module),
+	  TO (cover, Module),
+	  TO (super, Module),
 	  },
      "Common operations on modules:",
      MENU {
@@ -1163,18 +1168,17 @@ document { degrees,
 
 document { (symbol ^, Ring, List),
      Headline => "make a free module",
-     TT "R^{i,j, k, ...}", " -- produce a free module over R whose generators have
-     degrees -i, -j, -k, ...",
-     PARA,
-     "The degrees i, j, ... may themselves be multi-degrees, represented
-     as lists of integers.  The operator ", TO ":", " may be used to
-     indicate repetitions.",
-     EXAMPLE {
-	  "R = ZZ/101[x,y,z];",
-      	  "F = R^{1,4:2,3,3:4}",
-      	  "degrees F",
+     Synopsis => {
+	  "M = R^{i,j,k,...}",
+	  "R" => null,
+	  "{i,j,k, ...}" => {"a list of integers or lists of integers"},
+	  "M" => {"a free module over ", TT "R", " whose generators have
+     	       degrees ", TT "-i", ", ", TT "-j", ", ", TT "-k", ", ..."}
 	  },
-     SEEALSO {"degrees"}
+     PARA,
+     "If ", TT "i", ", ", TT "j", ", ... are lists of integers, then
+     they represent multi-degrees, as in ", TO "multi-graded polynomial rings", ".",
+     SEEALSO {"degrees", "free modules"}
      }
 
 document { components,
@@ -1192,11 +1196,16 @@ document { components,
      SEEALSO {"vector", "directSum", "++"}
      }
 
-document { (symbol ^, Ring, ZZ),
+document { (symbol ^,Module,ZZ),
      Headline => "make a free module",
-     TT "R^n", " -- produce a free module of rank ", TT "n", " over the ring ", TT "R", "",
-     PARA,
-     SEEALSO{"^", "isFreeModule", (symbol ^, Ring, List)}
+     Synopsis => {
+	  "F = R^n",
+	  "R" => {"a ring"},
+	  "n" => null,
+	  "F" => {"a new free ", TT "R", "-module of rank ", TT "n", "." }
+	  },
+     "The new free module has basis elements of degree zero.  To specify the
+     degrees explicitly, see ", TO (symbol ^,Ring,List), "."
      }
 
 document { euler,
@@ -1307,7 +1316,11 @@ document { Matrix,
      Headline => "the class of all matrices",
      "A matrix is a homomorphism between two modules, together with
      an integer (or vector of integers) called its degree, which is
-     used when determining whether the map is homogeneous.",
+     used when determining whether the map is homogeneous.  The matrix
+     is stored in the usual way as a rectangular array of ring elements.
+     When the source or target modules are not free, the matrix is
+     interpreted as a linear transformation in terms of the generators
+     of the modules.",
      SEEALSO "matrices",
      "Common ways to make a matrix:",
      MENU {
@@ -1318,6 +1331,7 @@ document { Matrix,
      MENU {
 	  TO (degree, Matrix),
 	  TO (isHomogeneous, Matrix),
+	  TO (matrix, Matrix),
 	  },
      "Common operations on matrices:",
      MENU {

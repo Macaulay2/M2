@@ -136,11 +136,62 @@ document { "ideals",
      }
 
 document { "free modules",
-     "This node has not been written yet."
+     "We use ", TO (symbol ^,Ring,ZZ), " to make a new free module.",
+     PARA,
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z];",
+	  "M = R^4"
+	  },
+     "Such modules are often made as a side effect when creating matrices,
+     to serve as the source and target of the corresponding homomorphism.",
+     PARA,
+     "When the ring is graded, so are its free modules.  By default,
+     the degrees of the basis elements are taken to be 0.",
+     EXAMPLE {
+	  "degrees M",
+	  },
+     "We can use ", TO (symbol ^, Ring, List), " to specify other degrees,
+     or more precisely, their additive inverses.",
+     EXAMPLE {
+	  "F = R^{1,4:2,3,3:4}",
+      	  "degrees F",
+	  },
+     "Notice the use of ", TO ":", " above to indicate repetition.",
+     PARA,
+     "If the variables of the ring have multi-degrees represented by
+     lists (vectors) of integers, as described in
+     ", TO "multi-graded polynomial rings", ", then the degrees of a
+     free module must also be multi-degrees.",
+     EXAMPLE {
+	  "S = ZZ[a,b,c, Degrees=>{{1,2},{2,0},{3,3}}]",
+	  "N = S ^ {{-1,-1},{-4,4},{0,0}}",
+	  "degree N_0",
+	  "degree (a*b*N_1)",
+	  }
      }
 
 document { "making modules from matrices",
-     "This node has not been written yet."
+     "Let's make some matrices.",
+     EXAMPLE {
+	  "R = ZZ/101[a..c];",
+	  "f = vars R",
+	  },
+     "We can easily compute a ", TO "kernel", ",", TO "image", "
+     or ", TT "cokernel", ".",
+     EXAMPLE {
+	  "ker f",
+	  "coker f",
+	  "image f",
+	  },
+     "Every module is represented internally as a submodule of
+     a quotient module.  Such modules often appear in computations,
+     for example, when taking the direct sum of a quotient module and
+     a submodule.",
+     EXAMPLE {
+	  "image f ++ coker f"
+	  },
+     "We may use ", TO "subquotient", " to make such modules directly,
+     although it's usually more convenient to use other operations."
      }
 
 document { "manipulating modules",
@@ -149,9 +200,31 @@ document { "manipulating modules",
      "This node has not been written yet."
      }
 
-document { "maps between modules",
-     	  -- (R^5)_{0}
-     "This node has not been written yet."
+document { "maps between modules",			    -- map
+     "Maps between free modules are usual specified as matrices, as
+     described in the section on ", TO "matrices", ".  In this section 
+     we cover a few other techniques.",
+     PARA,
+     "Let's set up a ring, a matrix, and a free module.",
+     EXAMPLE {
+	  "R = ZZ/101[x,y,z];",
+	  "f = vars R",
+	  "M = R^4",
+	  },
+     "We can use ", TO (symbol ^, Module,List), " to produce projection maps
+     to quotient modules and injection maps from submodules corresponding
+     to specified basis vectors.",
+     EXAMPLE {
+     	  "M^{0,1}",
+     	  "M_{2,3}",
+	  },
+     PARA,
+     "Natural maps between modules can be obtained with ", TO "map", ".",
+     EXAMPLE {
+	  "map(source f, ker f)",
+	  "map(coker f, target f)",
+	  },
+     "The rest of this node has not been written yet."
      }
 
 document { "bases of parts of modules",
@@ -221,12 +294,18 @@ document { "Language and Programming Overview",
      language and the main programming features of Macaulay 2.",
      PARA,
      MENU {
+	  TO "syntax",
 	  TO "variables and symbols",
 	  TO "functions",
      	  TO "basic types",
 	  TO "control structures",
 	  TO "input and output",
-	  TO "classes and types"
+	  TO "classes and types",
+	  TO "system",
+	  TO "debugging",
+	  TO "classes",
+	  TO "operators",
+	  TO "executing other programs",
 	  }
      }
 
@@ -343,6 +422,8 @@ document { "assigning values",
      The variable created is global, in the sense that any code placed
      elsewhere that contains a reference to a variable called ", TT "x", "
      will refer to the one we just set.",
+     PARA,
+     SEEALSO { "GlobalAssignHook", "GlobalReleaseHook" }
      }
 
 document { "local variables in a file",
@@ -1493,8 +1574,7 @@ document { "communicating with programs",
 	  ///f = openInOut "!egrep '^in'"///,
 	  ///scan(keys symbolTable(), key -> f << key << endl)///,
 	  ///f << closeOut///,
-	  ///stack sort lines read f///,
-	  ///close f///,
+	  ///get f///
 	  },
      "With this form of bidirectional communication there is always a danger
      of blocking, because the buffers associated with the communication
@@ -1531,7 +1611,42 @@ document { "communicating with programs",
      }
 
 document { "using sockets",
-     "This node has not been written yet."
+     "It's easy to use sockets as though they were files.  Simply replace
+     the file name by a string of the form ", TT "$host:service", " where
+     ", TT "host", " is the name of IP number of host to contact, and
+     ", TT "service", " is the port number or name to use.  If ", TT "service", "
+     is omitted, then port 2500 is used.  If ", TT "host", " is omitted, then
+     an incoming connection will be listened for.",
+     PARA,
+     "For the demonstration, we use ", TO "fork", " to create a
+     separate process which will listen for a connection on port
+     7500 and then send us a message.",
+     if version#"operating system" === "Windows-95-98-NT"
+     then PRE "<< example doesn't work under Windows >>"
+     else
+     EXAMPLE {
+	  ///if (pid = fork()) == 0 then (
+     try "$:7500" << "hi there" << close;
+     exit 0;
+     )///},
+     "Let's wait for a while to make sure the child process is listening.",
+     if version#"operating system" === "Windows-95-98-NT"
+     then PRE "<< example doesn't work under Windows >>"
+     else
+     EXAMPLE "sleep 2",
+     "Now we can use an ordinary input command like ", TO "get", " to obtain 
+     the entire message.",
+     if version#"operating system" === "Windows-95-98-NT"
+     then PRE "<< example doesn't work under Windows >>"
+     else
+     EXAMPLE ///get "$localhost:7500"///,
+     "Finally, we can wait for the child process to finish.",
+     if version#"operating system" === "Windows-95-98-NT"
+     then PRE "<< example doesn't work under Windows >>"
+     else
+     EXAMPLE "wait pid",
+     PARA,
+     SEEALSO { "openInOut", "openListener" }
      }
 
 document { "making new types",

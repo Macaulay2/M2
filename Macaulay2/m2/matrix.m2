@@ -624,3 +624,5 @@ relations Module := Matrix => M -> (
 	  map(ambient M,R^0,0)
 	  )
      )
+
+degrees Matrix := f -> {degrees target f, degrees source f}

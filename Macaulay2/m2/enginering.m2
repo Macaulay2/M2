@@ -93,6 +93,10 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 		 else net new FunctionApplication from { frac, last F.baseRings }
 		 )
 
+     expression FractionField := R -> (
+                 if R.?name then hold R.name
+		 else (expression frac) (expression last R.baseRings))
+
 freduce := (f) -> (numerator f)/(denominator f)
 
 isHomogeneous FractionField := (F) -> isHomogeneous last F.baseRings

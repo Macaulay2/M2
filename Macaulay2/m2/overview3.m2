@@ -185,14 +185,7 @@ load "tutorials.m2"
 document { "Miscellaneous Topics",
      "Some of these topics will have to be merged with sections above.",
      MENU {
-	  TO "classes",
-	  TO "operators",
-	  TO "programming",
-	  TO "executing other programs",
-	  TO "debugging",
-	  TO "system",
 	  TO "help functions",
-	  TO "syntax",
 	  TO "replacements for commands and scripts from Macaulay",
 	  TO "obsolete functions and symbols",
      	  }

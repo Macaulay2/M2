@@ -873,7 +873,7 @@ document { get,
      PARA,
      NOINDENT,
      TT "get f", " -- yields a string containing the rest of the input from the 
-     file f.",
+     file ", TT "f", ", closing the file.",
      PARA,
      EXAMPLE {
 	  ///"junk" << "hi there" << close///,

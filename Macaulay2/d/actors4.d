@@ -548,7 +548,10 @@ getfun(e:Expr):Expr := (
 	  then WrongArg("an open input file")
 	  else (
 	       when readfile(f.infd)
-	       is s:string do Expr(s)
+	       is s:string do (
+		    closeIn(f);
+		    Expr(s)
+		    )
 	       else errorExpr("unable to read file: "+syserrmsg())
 	       )
 	  )

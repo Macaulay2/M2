@@ -340,7 +340,7 @@ probe : probe.c
 	$(CC) -g -static -I$(INCDIR) probe.c $(OUTPUT_OPTION)
 test-probe : probe
 	nm probe |grep -v "gcc2_compiled\|gnu_compiled\0| \." >syms
-	./probe a b c d >> syms
+	./probe abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz b c d >> syms
 	sort syms > addresses
 	rm syms
 ############################## miscellaneous
