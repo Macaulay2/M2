@@ -2,6 +2,11 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.55:
 
+The parsing precedence of => is now a bit lower: lower than 'of' and 'from', and
+the same as other assignments and arrows (:= = <- ->).
+
+The message issued when a file is loaded is not sent to 'stderr' insted of 'stdout'.
+
 x==y will now return the result of strict equality testing with x===y if no
 method is installed for mathematical equality.
 

@@ -4,13 +4,8 @@ Option = new Type of BasicList
 html Option := x -> toString x
 text Option := x -> toString x
 
-toString Option := z -> concatenate splice (
-     if precedence z > precedence z#0 then ("(",toString z#0,")") else toString z#0,
-     " => ",
-     if precedence z > precedence z#1 then ("(",toString z#1,")") else toString z#1
-     )
-
-Thing => Thing := (x,y) -> new Option from {x,y}
+-- oops, can't parse the good version yet: Thing => Thing := (x,y) -> new Option from {x,y}
+installMethod(quote =>, Thing, Thing, (x,y) -> new Option from {x,y})
 
 new HashTable from List := (O,v) -> hashTable v
 -- erase quote hashTable
