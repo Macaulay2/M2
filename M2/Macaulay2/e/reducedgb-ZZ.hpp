@@ -9,7 +9,8 @@ class ReducedGB_ZZ : public ReducedGB
 {
   friend ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
 				      const FreeModule *F0,
-				      const FreeModule *Fsyz0);
+				      const FreeModule *Fsyz0,
+				      const GBWeight *wt0);
 
   enum divisor_type { DIVISOR_NONE, DIVISOR_RING, DIVISOR_MODULE};
 

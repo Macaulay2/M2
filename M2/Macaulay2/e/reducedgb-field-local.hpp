@@ -4,22 +4,43 @@
 #define _reducedgb_field_local_
 
 #include "reducedgb-field.hpp"
+class GBWeight;
 
 class ReducedGB_Field_Local : public ReducedGB_Field
 {
   friend ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
 				      const FreeModule *F0,
-				      const FreeModule *Fsyz0);
+				      const FreeModule *Fsyz0,
+				      const GBWeight *wt0);
   // The polynomials themselves are in MinimalGB
   // The monomial ideals are in MinimalGB_Field
 protected:
-  vector<int, gc_allocator<int> > alpha;
-  vector<int, gc_allocator<int> > deg;
+  MonomialTable *T1; // elements added in
+  const GBWeight *wt;
+  vector<int, gc_allocator<int> > alpha; // for GB array
+  vector<int, gc_allocator<int> > ring_alpha; // for quotient ring elements
+  vector<int, gc_allocator<int> > newpol_alpha;
+  vector<POLY, gc_allocator<POLY> > newpol;
+
+  bool find_good_divisor(exponents h_exp,
+			 int h_comp,
+			 int h_deg,
+			 int &h_alpha,           // result value
+			 POLY &result_g,         // result value
+			 int & result_g_alpha);   // result value
+
+  void reset_table();
+
+  void store_in_table(const POLY &h, 
+		      exponents h_exp,
+		      int h_comp,
+		      int h_alpha);
 
   ReducedGB_Field_Local(GBRing *R0,
 			const PolynomialRing *originalR0,
 			const FreeModule *F0,
-			const FreeModule *Fsyz0);
+			const FreeModule *Fsyz0,
+			const GBWeight *wt0);
 
 public:
   virtual ~ReducedGB_Field_Local();

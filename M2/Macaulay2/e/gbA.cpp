@@ -110,8 +110,7 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
       for (int i=0; i<_first_gb_element; i++)
 	{
 	  gbvector *f = const_cast<gbvector *>(originalR->quotient_gbvector(i));
-	  int deg = weightInfo_->gbvector_weight(f);
-	  gbelem *g = gbelem_make(f, 0, ELEM_IN_RING, deg);
+	  gbelem *g = gbelem_ring_make(f);
 	  gb.push_back(g);
 	}
     }
@@ -215,18 +214,35 @@ static bool exponents_less_than(int nvars, exponents a, exponents b)
  * gbelem handling *******
  *************************/
 
+gbA::gbelem *gbA::gbelem_ring_make(gbvector *f)
+{
+  int f_leadweight;
+  gbelem *g = new gbelem;
+  g->g.f = f;
+  g->g.fsyz = 0;
+  g->lead = R->exponents_make();
+  R->gbvector_get_lead_exponents(_F, f, g->lead);
+  g->deg = weightInfo_->gbvector_weight(f, f_leadweight);
+  g->alpha = g->deg - f_leadweight;
+  g->minlevel = ELEM_IN_RING;
+  return g;
+}
+
+
 gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
 			      gbvector *fsyz, // grabs fsyz
 			      gbelem_type minlevel,
 			      int deg)
 {
+  int f_wt, f_leadweight;
   gbelem *g = new gbelem;
   g->g.f = f;
   g->g.fsyz = fsyz;
   g->lead = R->exponents_make();
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = deg;
-  g->alpha = weightInfo_->gbvector_weight(f) - weightInfo_->gbvector_term_weight(f);
+  f_wt = weightInfo_->gbvector_weight(f, f_leadweight);
+  g->alpha = f_wt - f_leadweight;
   g->minlevel = minlevel;
   return g;
 }

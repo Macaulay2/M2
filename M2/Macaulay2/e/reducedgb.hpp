@@ -8,6 +8,7 @@
 #include "gbring.hpp"
 #include "montable.hpp"
 #include "montableZZ.hpp"
+#include "gbweight.hpp"
 
 class ReducedGB : public GBComputation
 {
@@ -32,7 +33,8 @@ public:
 
   static ReducedGB *create(const PolynomialRing *originalR0,
 			   const FreeModule *F0,
-			   const FreeModule *Fsyz0);
+			   const FreeModule *Fsyz0,
+			   const GBWeight *wt0 = 0);
 
   virtual GBComputation * cast_to_GBComputation() { return this;} 
 

@@ -10,14 +10,15 @@
 
 ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
 			     const FreeModule *F0,
-			     const FreeModule *Fsyz0)
+			     const FreeModule *Fsyz0,
+			     const GBWeight *wt0) // better be 0 or set with same F0
 {
   // Depending on whether the ring is over a field, or over ZZ, or
   // has local variables, we create a different class.
 
   bool over_ZZ = originalR0->coefficient_type() == Ring::COEFF_ZZ;
-  M2_arrayint local_vars = rawNonTermOrderVariables(originalR0->getMonoid()->getMonomialOrdering());
-  bool is_local = local_vars->len > 0;
+  M2_arrayint local_vars = originalR0->getMonoid()->getNonTermOrderVariables();
+  bool is_local = (local_vars->len > 0);
   GBRing *R = originalR0->get_gb_ring();
 
   if (over_ZZ)
@@ -25,7 +26,7 @@ ReducedGB *ReducedGB::create(const PolynomialRing *originalR0,
   else
     {
       if (is_local)
-	return new ReducedGB_Field_Local(R,originalR0,F0,Fsyz0);
+	return new ReducedGB_Field_Local(R,originalR0,F0,Fsyz0,wt0);
       else
 	return new ReducedGB_Field(R,originalR0,F0,Fsyz0);
     }
