@@ -27,7 +27,7 @@ CFLAGS += -O2
 CFLAGS += -fomit-frame-pointer
 CXXFLAGS := $(CFLAGS)
 LDFLAGS =  -g -L/capybara/lib
-LDFLAGS += -Wl,-Map,mapfile
+# LDFLAGS += -Wl,-Map,mapfile
 
 %.s : %.c  ; $(COMPILE.c ) -S $(OUTPUT_OPTION) $<
 %.s : %.cc ; $(COMPILE.cc) -S $(OUTPUT_OPTION) $<
@@ -46,7 +46,7 @@ endif
 
 LDLIBS += -lgc$(PROF) -ldl
 
-benchmark gmon.out : factor factor.poly mapfile.demangled
+benchmark gmon.out : factor factor.poly
 	time ./factor < @srcdir@/factor.poly >factor.out
 	cat factor.out
 	fgrep -s '( (x^2-y*x-13*z^2*x+y^4+z^7+12)^3, (x+3*y-14)^15 )' factor.out >/dev/null
