@@ -14,14 +14,14 @@ List ^ List := (Vars, Exps) -> (
 findExps := (w, k0, k1) -> (
      local minimum, local alpha, local tempExps;
      -- base case: weight vector w has dim 1
-     if (#w == 1 and k0 >= 0) then (
-	  tempExps = (toList((k0//w#0+1)..k1//w#0) / (i -> {i}) ) )
-     else if (#w == 1 and k0 < 0) then (
+     if #w == 1 and k0 >= 0 then (
+     	  tempExps = (toList((k0//w#0+1)..k1//w#0) / (i -> {i}) ) )
+     else if #w == 1 and k0 < 0 then (
 	  tempExps = ( toList(0..k1//w#0) / (i -> {i}) ) )
      else ( -- general case
 	  tempExps = {};
 	  alpha = 0;
-	  while (alpha <= k1//w#0) do (
+	  while alpha <= k1//w#0 do (
 	       tempExps = join( tempExps,
 		    apply ( findExps( drop(w,1), k0-alpha*(w#0), 
 			      k1-alpha*(w#0) ), j -> prepend(alpha,j) ) );
@@ -55,11 +55,10 @@ Drestrict(ZZ,Module,List) := options->(k,M,w)->(Drestriction(k,M,w,options))
 
 Drestriction = method( Options => {Strategy => Schreyer} )
 Drestriction(Ideal,List) := options -> (I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     Drestriction (I.cache.quotient, w, options )     )
+     Drestriction ((ring I)^1/I, w, options )     )
 
 Drestriction(Module, List) := options -> (M,w) -> (
-     if (zeroize gens M != map((ring M)^(numgens source gens M)) )
+     if zeroize gens M != map (ring M)^(numgens source gens M)
      then error "Drestriction currently only handles quotient modules";
      d := #positions(w, i -> (i>0));
      outputRequest := {HomologyModules};
@@ -69,14 +68,13 @@ Drestriction(Module, List) := options -> (M,w) -> (
      )
 
 Drestriction(ZZ,Ideal,List) := options -> (k,I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     Drestriction (k, I.cache.quotient, w, options)     )
+     Drestriction (k, (ring I)^1/I, w, options)     )
 
 Drestriction(ZZ,Module,List) := options -> (k,M,w) -> (
-     if (zeroize gens M != map((ring M)^(numgens source gens M)) )
+     if zeroize gens M != map (ring M)^(numgens source gens M)
      then error "Drestriction currently only handles quotient modules";
      d := #positions(w, i -> (i>0));
-     if (k > d) then output := 0
+     if k > d then output := 0
      else (
      	  outputRequest := {HomologyModules};
      	  outputTable := computeRestriction (M, w, k-1, k+1, 
@@ -102,15 +100,14 @@ DrestrictClasses(Module,List,ZZ) := options->(M,w,k)->(
 
 DrestrictionClasses = method( Options => {Strategy => Schreyer} )
 DrestrictionClasses(Ideal,List) := options -> (I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     DrestrictionClasses (I.cache.quotient, w, options)     )
+     DrestrictionClasses ((ring I)^1/I, w, options)     )
 
 DrestrictionClasses(Module, List) := options -> (M,w) -> (
-     if (zeroize gens M != map((ring M)^(numgens source gens M)) )
+     if zeroize gens M != map (ring M)^(numgens source gens M) 
      then error "Drestriction currently only handles quotient modules";
      d := #positions(w, i -> (i>0));
      n := numgens ring M;
-     if (n == 2*d) then outputRequest := {GenCycles,
+     if n == 2*d then outputRequest := {GenCycles,
 	  VResolution, Explicit}
      else outputRequest = {Cycles, Boundaries, 
 	  VResolution, Explicit};
@@ -120,17 +117,16 @@ DrestrictionClasses(Module, List) := options -> (M,w) -> (
      )
 
 DrestrictionClasses(ZZ,Ideal,List) := options -> (k,I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     DrestrictionClasses (k, I.cache.quotient, w, options)     )
+     DrestrictionClasses (k, (ring I)^1/I, w, options)     )
 
 DrestrictionClasses(ZZ,Module,List) := options -> (k,M,w) -> (
-     if (zeroize gens M != map((ring M)^(numgens source gens M)) )
+     if zeroize gens M != map (ring M)^(numgens source gens M)
      then error "Drestriction currently only handles quotient modules";
      d := #positions(w, i -> (i>0));
      W := ring M;
      n := numgens W;
-     if (k > d) then (
-	  if (n == 2*d) then output := hashTable {
+     if k > d then (
+	  if n == 2*d then output := hashTable {
 	       GenCycles => hashTable {k => gens W^0},
 	       VResolution => null}
 	  else output = hashTable {
@@ -139,7 +135,7 @@ DrestrictionClasses(ZZ,Module,List) := options -> (k,M,w) -> (
 	       VResolution => null};
 	  )
      else (
-     	  if (n == 2*d) then outputRequest := {GenCycles,
+     	  if n == 2*d then outputRequest := {GenCycles,
 	       VResolution,Explicit}
      	  else outputRequest = {Cycles, Boundaries, 
 	       VResolution, Explicit};
@@ -167,11 +163,10 @@ DrestrictComplex(Module,List,ZZ) := options->(M,w,k)->(
 
 DrestrictionComplex = method( Options => {Strategy => Schreyer} )
 DrestrictionComplex(Ideal,List) := options -> (I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     DrestrictionComplex (I.cache.quotient, w, options)     )
+     DrestrictionComplex ((ring I)^1/I, w, options)     )
 
 DrestrictionComplex(Module, List) := options -> (M,w) -> (
-     if (zeroize gens M != map((ring M)^(numgens source gens M)) )
+     if zeroize gens M != map (ring M)^(numgens source gens M)
      then error "Drestriction currently only handles quotient modules";
      d := #positions(w, i -> (i>0));
      outputRequest := {RestrictComplex};
@@ -186,16 +181,16 @@ DrestrictIdeal(Ideal,List)  := options -> (I,w) -> (
 
 DrestrictionIdeal = method( Options => {Strategy => Schreyer} )
 DrestrictionIdeal(Ideal,List) := options -> (I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
      d := #positions(w, i -> (i>0));
      outputRequest := {RestrictComplex, Explicit};
-     outputTable := computeRestriction (I.cache.quotient, w, -1, 1, 
+     outputTable := computeRestriction ((ring I)^1/I, w, -1, 1, 
 	  outputRequest, options);
      M := cokernel (outputTable#RestrictComplex).dd#1;
      R := ring M;
-     if (M == 0) then outputIdeal := ideal 1_R
+     if M == 0 then outputIdeal := ideal 1_R
      else (
-	  F := map(M, R^1, matrix ({{1_R}} | toList(rank ambient M - 1: {0_R})) );
+	  F := map(M, R^1, matrix ({{1_R}} | 
+		    toList(rank ambient M - 1: {0_R})) );
 	  outputIdeal = ideal kernel F;
 	  );
      outputIdeal
@@ -210,15 +205,14 @@ DrestrictAll(Module,List) := options -> (M,w) -> (
 
 DrestrictionAll = method( Options => {Strategy => Schreyer} )
 DrestrictionAll(Ideal,List) := options -> (I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     DrestrictionAll (I.cache.quotient, w, options)     )
+     DrestrictionAll ((ring I)^1/I, w, options)     )
 
 DrestrictionAll(Module, List) := options -> (M,w) -> (
-     if (zeroize gens M != map((ring M)^(numgens source gens M)) )
+     if zeroize gens M != map (ring M)^(numgens source gens M)
      then error "Drestriction currently only handles quotient modules";
      d := #positions(w, i -> (i>0));
      n := numgens ring M;
-     if (n == 2*d) then outputRequest := {GenCycles, HomologyModules,
+     if n == 2*d then outputRequest := {GenCycles, HomologyModules,
 	  VResolution, BFunction, RestrictComplex, Exponents, 
 	  Explicit}
      else outputRequest = {Cycles, Boundaries, HomologyModules,
@@ -245,53 +239,47 @@ Dintegrate(ZZ,Module,List) := options -> (k,M,w) -> (Dintegration(k,M,w,options)
 
 Dintegration = method( Options => {Strategy => Schreyer} )
 Dintegration(Ideal,List) := options -> (I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     Dintegration (I.cache.quotient, w, options)     )
+     Dintegration ((ring I)^1/I, w, options)     )
 
 Dintegration(Module, List) := options -> (M,w) -> (
      W := ring M;
-     if ( zeroize gens M != map(W^(numgens source gens M)) )
+     if zeroize gens M != map W^(numgens source gens M)
      then error "Dintegration currently only handles quotient modules";
 
      d := #positions(w, i -> (i>0));
-     if (W.?Fourier === false) then createFourier(W);
-     MF := cokernel W.Fourier relations M; 
+     MF := cokernel Fourier relations M; 
      outputRequest := {HomologyModules};
      restrictOut := (computeRestriction(MF, w, -1, d+1, 
 	       outputRequest, options))#HomologyModules;
      
      resW := ring restrictOut#0;
      nrW := numgens resW;
-     if (nrW > 0) then createFourier resW;
-     if (nrW == 0) then Mout := restrictOut
+     if nrW == 0 then Mout := restrictOut
      else Mout = hashTable apply(toList(0..d), i -> 
-	  (i => resW.FourierInverse restrictOut#i) );     
-     
+	  (i => FourierInverse restrictOut#i) );     
+
      use W;
      Mout
      )     
 
 Dintegration(ZZ, Ideal, List) := options -> (k,I,w)  -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     Dintegration (k, I.cache.quotient, w, options)	 )
+     Dintegration (k, (ring I)^1/I, w, options)	 )
 
 Dintegration(ZZ, Module, List) := options -> (k,M,w)  -> (
      W := ring M;
-     if ( zeroize gens M != map(W^(numgens source gens M)) )
+     if zeroize gens M != map W^(numgens source gens M)
      then error "Dintegration currently only handles quotient modules";
 
      d := #positions(w, i -> (i>0));
-     if (W.?Fourier === false) then createFourier(W);
-     MF := cokernel W.Fourier relations M; 
+     MF := cokernel Fourier relations M; 
      outputRequest := {HomologyModules};
      restrictOut := (computeRestriction (MF, w, k-1, k+1,
 	       outputRequest, options))#HomologyModules#k;
      
      resW := ring restrictOut;
      nrW := numgens resW;
-     if (nrW > 0) then createFourier resW;
-     if (nrW == 0) then Mout := restrictOut
-     else Mout = resW.FourierInverse restrictOut; 
+     if nrW == 0 then Mout := restrictOut
+     else Mout = FourierInverse restrictOut; 
      
      use W;
      Mout
@@ -309,53 +297,50 @@ DintegrateClasses(ZZ,Module,List) := options->(k,M,w)->(
 
 DintegrationClasses = method( Options => {Strategy => Schreyer} )
 DintegrationClasses(Ideal,List) := options -> (I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     DintegrationClasses (I.cache.quotient, w, options)     )
+     DintegrationClasses ((ring I)^1/I, w, options)     )
 
 DintegrationClasses(Module, List) := options -> (M,w) -> (
      W := ring M;
-     if (zeroize gens M != map(W^(numgens source gens M)) )
+     if zeroize gens M != map W^(numgens source gens M)
      then error "Dintegration currently only handles quotient modules";
      d := #positions(w, i -> (i>0));
      n := numgens W;
-     if (n == 2*d) then outputRequest := {GenCycles,
+     if n == 2*d then outputRequest := {GenCycles,
 	  VResolution,Explicit}
      else outputRequest = {Cycles, Boundaries, 
 	  VResolution,Explicit};
-     if (W.?Fourier === false) then createFourier(W);
-     MF := cokernel W.Fourier relations M; 
+     MF := cokernel Fourier relations M; 
      outputTable := computeRestriction (MF, w, -1, d+1, 
 	  outputRequest, options);
-     if (outputTable#VResolution =!= null) then
-     outputList := {VResolution => W.FourierInverse outputTable#VResolution}
+     if outputTable#VResolution =!= null then
+     outputList := {VResolution => FourierInverse outputTable#VResolution}
      else outputList = {VResolution => null};
 
-     if (n == 2*d) then outputList = outputList | {
+     if n == 2*d then outputList = outputList | {
 	  GenCycles => hashTable apply(toList(0..d), i -> 
-	       (i => W.FourierInverse outputTable#GenCycles#i))}
+	       (i => FourierInverse outputTable#GenCycles#i))}
      else outputList = outputList | {
 	  Cycles => hashTable apply(toList(0..d), 
-	       i -> (i => W.FourierInverse outputTable#Cycles#i)),
+	       i -> (i => FourierInverse outputTable#Cycles#i)),
 	  Boundaries => hashTable apply(toList(0..d), 
-	       i -> (i => W.FourierInverse outputTable#Boundaries#i))
+	       i -> (i => FourierInverse outputTable#Boundaries#i))
 	  };
 
      hashTable outputList
      )
 
 DintegrationClasses(ZZ,Ideal,List) := options -> (k,I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     DintegrationClasses (k, I.cache.quotient, w, options)     )
+     DintegrationClasses (k, (ring I)^1/I, w, options)     )
 
 DintegrationClasses(ZZ,Module,List) := options -> (k,M,w) -> (
      W := ring M;
-     if (zeroize gens M != map((ring M)^(numgens source gens M)) )
+     if zeroize gens M != map (ring M)^(numgens source gens M)
      then error "Dintegration currently only handles quotient modules";
      d := #positions(w, i -> (i>0));
      n := numgens ring M;
 
-     if (k > d) then (
-	  if (n == 2*d) then output := hashTable {
+     if k > d then (
+	  if n == 2*d then output := hashTable {
 	       GenCycles => hashTable {k => gens W^0},
 	       VResolution => null}
 	  else output = hashTable {
@@ -364,26 +349,25 @@ DintegrationClasses(ZZ,Module,List) := options -> (k,M,w) -> (
 	       VResolution => null};
 	  )
      else (
-          if (n == 2*d) then outputRequest := {GenCycles,
+          if n == 2*d then outputRequest := {GenCycles,
 	       VResolution,Explicit}
      	  else outputRequest = {Cycles, Boundaries, 
 	       VResolution, Explicit};
-     	  if (W.?Fourier === false) then createFourier(W);
-     	  MF := cokernel W.Fourier relations M; 
+     	  MF := cokernel Fourier relations M; 
      	  outputTable := computeRestriction (MF, w, k-1, k+1, 
 	       outputRequest, options);
-     	  if (outputTable#VResolution =!= null) then
-     	  outputList := {VResolution => W.FourierInverse outputTable#VResolution}
+     	  if outputTable#VResolution =!= null then
+     	  outputList := {VResolution => FourierInverse outputTable#VResolution}
      	  else outputList = {VResolution => null};
 	  
-	  if (n == 2*d) then outputList = outputList | {
+	  if n == 2*d then outputList = outputList | {
 	       GenCycles => hashTable { k => 
-	       	    W.FourierInverse outputTable#GenCycles#k } }
+	       	    FourierInverse outputTable#GenCycles#k } }
      	  else outputList = outputList | {
 	       Cycles => hashTable { k =>
-	       	    W.FourierInverse outputTable#Cycles#k },
+	       	    FourierInverse outputTable#Cycles#k },
 	       Boundaries => hashTable { k => 
-	       	    W.FourierInverse outputTable#Boundaries#k }
+	       	    FourierInverse outputTable#Boundaries#k }
 	       };
 	  output = hashTable outputList;
 	  );
@@ -401,27 +385,21 @@ DintegrateComplex(Module,List) := options -> (M,w) -> (
 
 DintegrationComplex = method( Options => {Strategy => Schreyer} )
 DintegrationComplex(Ideal, List) := options -> (I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     DintegrationComplex (I.cache.quotient, w, options)     )
+     DintegrationComplex ((ring I)^1/I, w, options)     )
 
 DintegrationComplex(Module, List) := options -> (M,w) -> (
      W := ring M;
-     if (zeroize gens M != map(W^(numgens source gens M)) )
+     if zeroize gens M != map W^(numgens source gens M)
      then error "Dintegration currently only handles quotient modules";
      d := #positions(w, i -> (i>0));
      n := numgens W;
-     if (W.?Fourier === false) then createFourier(W);
-     MF := cokernel W.Fourier relations M; 
+     MF := cokernel Fourier relations M; 
      outputRequest := {RestrictComplex,Explicit};
      outputTable := computeRestriction (MF, w, -1, d+1, 
 	  outputRequest, options);
      F := outputTable#RestrictComplex;
 
-     if (n != 2*d) then (
-     	  resW := ring F#0;
-     	  createFourier resW;
-	  F = resW.FourierInverse F;
-	  );
+     if n != 2*d then F = FourierInverse F;
      F
      )
 
@@ -434,18 +412,16 @@ DintegrationIdeal(Ideal,List) := options -> (I,w) -> (
      W := ring I;
      d := #positions(w, i -> (i>0));
      n := numgens W;
-     if (W.?Fourier === false) then createFourier(W);
-     IF := W.Fourier I; 
+     IF := Fourier I; 
      outputRequest := {RestrictComplex, Explicit};
      outputTable := computeRestriction (W^1/IF, w, -1, 1, 
 	  outputRequest, options);
      M := cokernel (outputTable#RestrictComplex).dd#1;
      resW := ring M;
-     if (M == 0) then outputIdeal := ideal 1_resW
+     if M == 0 then outputIdeal := ideal 1_resW
      else (
-	  if (n != 2*d) then (
-	       createFourier resW;
-	       M = resW.FourierInverse M;
+	  if n != 2*d then (
+	       M = FourierInverse M;
 	       );
 	  F := map(M, (resW)^1, matrix ({{1_resW}} | 
 		    toList(rank ambient M - 1: {0_resW})) );
@@ -463,51 +439,45 @@ DintegrateAll(Module,List) := options -> (M,w) -> (
 
 DintegrationAll = method( Options => {Strategy => Schreyer} )
 DintegrationAll(Ideal,List) := options -> (I,w) -> (
-     if (I.cache.?quotient == false) then (I.cache.quotient = (ring I)^1/I);
-     DintegrationAll (I.cache.quotient, w, options)     )
+     DintegrationAll ((ring I)^1/I, w, options)     )
 
 DintegrationAll(Module, List) := options -> (M,w) -> (
      W := ring M;
-     if (zeroize gens M != map((ring M)^(numgens source gens M)) )
+     if zeroize gens M != map (ring M)^(numgens source gens M)
      then error "Dintegration currently only handles quotient modules";
      d := #positions(w, i -> (i>0));
      n := numgens ring M;
-     if (n == 2*d) then outputRequest := {GenCycles, HomologyModules,
+     if n == 2*d then outputRequest := {GenCycles, HomologyModules,
 	  VResolution, BFunction, RestrictComplex, Exponents, 
 	  Explicit}
      else outputRequest = {Cycles, Boundaries, HomologyModules,
 	  VResolution, BFunction, RestrictComplex, Exponents,
 	  Explicit};
      
-     if (W.?Fourier === false) then createFourier(W);
-     MF := cokernel W.Fourier relations M; 
+     MF := cokernel Fourier relations M; 
      outputTable := computeRestriction (MF, w, -1, d+1, 
 	  outputRequest, options);
      outputList := {BFunction => outputTable#BFunction};
-     if (outputTable#VResolution =!= null) then 
+     if outputTable#VResolution =!= null then 
      outputList = append(outputList, 
-	  VResolution => W.FourierInverse outputTable#VResolution)
+	  VResolution => FourierInverse outputTable#VResolution)
      else outputList = append(outputList, VResolution => null);
 
-     if (n == 2*d) then outputList = outputList | {
+     if n == 2*d then outputList = outputList | {
 	  GenCycles => hashTable apply(toList(0..d), 
-		    i -> (i => W.FourierInverse outputTable#GenCycles#i)),
+		    i -> (i => FourierInverse outputTable#GenCycles#i)),
 	       HomologyModules => hashTable apply(toList(0..d), 
 		    i -> (i => outputTable#HomologyModules#i)),
 	       IntegrateComplex => outputTable#RestrictComplex}
      else (
-     	  resW := ring outputTable#HomologyModules#0;
-     	  createFourier resW;
      	  outputList = outputList | {
 	       HomologyModules => hashTable apply(toList(0..d), 
-		    i -> i => resW.FourierInverse (
-			 outputTable#HomologyModules#i)),
+		    i -> (i => FourierInverse outputTable#HomologyModules#i)),
 	       Cycles => hashTable apply(toList(0..d), 
-		    i -> i => W.FourierInverse outputTable#Cycles#i),
+		    i -> (i => FourierInverse outputTable#Cycles#i)),
 	       Boundaries => hashTable apply(toList(0..d), 
-		    i -> i => W.FourierInverse outputTable#Boundaries#i),
-	       IntegrateComplex => resW.FourierInverse (
-	       	    outputTable#RestrictComplex)};
+		    i -> (i => FourierInverse outputTable#Boundaries#i)),
+	       IntegrateComplex => FourierInverse outputTable#RestrictComplex};
 	  );
 
      hashTable outputList
@@ -550,11 +520,11 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 
 -- ERROR CHECKING
      W := ring M;
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      -- check weight vector
-     if (#wt != #W.dpairInds#0)
+     if #wt != #W.dpairInds#0
      then error ("expected weight vector of length " | #W.dpairInds#0);
-     if ( any(wt, i -> (i<0)) )
+     if any(wt, i -> (i<0))
      then error "expected non-negative weight vector";
 
 -- PREPROCESSING
@@ -564,7 +534,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      -- make the (-w,w) weight vector
      w := new MutableList from join(W.dpairInds#0,W.dpairInds#1);
      i := 0;
-     while (i < #W.dpairInds#0) do (
+     while i < #W.dpairInds#0 do (
 	  w#(W.dpairInds#0#i) = -wt#i;
 	  w#(W.dpairInds#1#i) = wt#i; 
 	  i = i+1;
@@ -586,7 +556,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 
 -- MAKE THE WEYL ALGEBRA "resW" OF THE RESTRICTED SUBSPACE
      -- Case 1: if restriction to pt, then "resW" a field
-     if (#otherVars == 0) then (
+     if #otherVars == 0 then (
 	  resW := coefficientRing W;
 	  WtoresW := map(resW, W, matrix{toList(numgens W: 0_resW)});
 	  resWtoW := map(W, resW)
@@ -595,7 +565,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      --         resW a Weyl algebra D_d.
      else (i = 0;
      	  resPairsList := {};
-     	  while (i < #otherVars) do (
+     	  while i < #otherVars do (
 	       deriv := select(otherVars, j -> 
 		    (j*otherVars#i - otherVars#i*j == 1));
 	       if (#deriv == 1) then 
@@ -608,8 +578,8 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      	  tempList := {};
 	  WList := {};
 	  i = 0;
-     	  while (i < numgens W) do (
-	       if (w#i == 0) then (
+     	  while i < numgens W do (
+	       if w#i == 0 then (
 	       	    tempList = append(tempList, resW_counter);
 		    WList = append(WList, W_i);
 	       	    counter = counter+1;)
@@ -631,14 +601,14 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  restrictComplex.ring = resW;
 	  );
      outputList := {};
-     if (member(Cycles, output) or member(Boundaries, output) or
-	  member(GenCycles, output)) then explicitFlag := true 
+     if member(Cycles, output) or member(Boundaries, output) or
+     member(GenCycles, output) then explicitFlag := true 
      else explicitFlag = false;
 
 -- GET MIN AND MAX ROOTS OF THE B-FUNCTION
      --<< "Computing b-function ";
-     if (n0 >= d) then ( b := 1_(QQ[tempvar]); )
-     else if (rank ambient M == 1) then (
+     if n0 >= d then b := 1_(QQ[tempvar])
+     else if rank ambient M == 1 then (
 	  -- used to use "ideal presentation M" here
 	  --<< "using ideal bFunction ";
 	  pInfo(1, "Computing b-function using ideal bFunction... ");
@@ -653,15 +623,15 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	       );
 	  );
      
-     if (b == 0) then (
+     if b == 0 then (
 	  use W;
      	  error "Module not specializable. Restriction cannot be computed.";
 	  );
 
-     intRoots := getIntRoots(b);
+     intRoots := getIntRoots b;
 	  
 -- NO INTEGER ROOTS
-     if (#intRoots == 0) then (
+     if #intRoots == 0 then (
      	  k0 := 0;
      	  k1 := 0;
      	  pInfo(4, "\t bFunction = " | toString b);
@@ -670,12 +640,12 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  if member(RestrictComplex, output) then (
 	       restrictComplex#n0 = resW^0;
 	       restrictComplex#n1 = resW^0;
-	       restrictComplex.dd#n0 = map(resW^0);
-	       restrictComplex.dd#n1 = map(resW^0);
+	       restrictComplex.dd#n0 = map resW^0;
+	       restrictComplex.dd#n1 = map resW^0;
 	       i = n0+1;
-	       while (i < n1) do (
+	       while i < n1 do (
 	       	    restrictComplex#i = resW^0;
-	       	    restrictComplex.dd#i = map(resW^0);
+	       	    restrictComplex.dd#i = map resW^0;
 	       	    i = i+1;
 	       	    );
 	       );
@@ -691,8 +661,8 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      
 -- INTEGER ROOTS EXIST
      else (
-     k0 = (min intRoots) - 1;
-     k1 = (max intRoots);
+     k0 = min intRoots - 1;
+     k1 = max intRoots;
      pInfo(4, "\t bFunction = " | toString b);
      pInfo(2, "\t min root =  " | k0+1 | " , max root =  " | k1);
      pInfo(3, "\t time = " | tInfo | " seconds");
@@ -728,12 +698,12 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      	  targetGens := {};
      	  if explicitFlag then targetMat := map(W^0,W^0);
      	  i = 0;
-     	  while (i < s) do (
+     	  while i < s do (
 	       tempExps := findExps(posWeights, k0-targetDeg#i#0, k1-targetDeg#i#0);
 	       tempGens := apply(tempExps, j -> posVars^j);
 	       targetGens = append(targetGens, tempGens);
 	       if explicitFlag then (
-	       	    if (tempGens == {}) then (
+	       	    if tempGens == {} then (
 		    	 targetMat = directSum(targetMat, compress matrix{{0_W}}); )
 	       	    else (
 		    	 targetMat = directSum(targetMat, matrix{tempGens}); );
@@ -752,7 +722,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      	  sourceGens := {};
      	  if explicitFlag then sourceMat := map(W^0,W^0);
      	  i = 0;
-     	  while (i < r) do (
+     	  while i < r do (
 	       -- Find generators of the current source
 	       --    "F_k1(D_n/tD_n)^r/F_k0(D_n/tD_n)^r"
 	       -- as a left D_m module.
@@ -762,7 +732,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	       tempGens = apply(tempExps, j -> posVars^j);
 	       sourceGens = append(sourceGens, tempGens );
 	       if explicitFlag then (
-	       	    if (tempGens == {}) then (
+	       	    if tempGens == {} then (
 		    	 sourceMat = directSum(sourceMat, compress matrix{{0_W}}); )
 	       	    else (
 		    	 sourceMat = directSum(sourceMat, matrix{tempGens}); );
@@ -773,11 +743,11 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 
 	  
 	  -- MAKE THE DIFFERENTIAL AS MATRIX OF D_m MODULES
-     	  if (sourceSize == 0 and targetSize == 0) then (
-	       oldDiff := map(resW^0) )
-     	  else if (sourceSize == 0) then ( oldDiff =
+     	  if sourceSize == 0 and targetSize == 0 then (
+	       oldDiff := map resW^0 )
+     	  else if sourceSize == 0 then ( oldDiff =
 	       compress matrix toList(targetSize:{0_resW}) )
-     	  else if (targetSize == 0) then ( oldDiff =
+     	  else if targetSize == 0 then ( oldDiff =
 	       transpose compress matrix toList(sourceSize:{0_resW}) )
      	  else (
 	       -- For each generator j = \prod_i D_i^{a_i}, compute its image
@@ -788,8 +758,8 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	       oldDiff = transpose compress matrix toList(sourceSize:{0_W});
 	       i = 0;
 	       -- compute the induced image
-	       while (i < s) do (
-	       	    if (targetGens#i =!= {}) 
+	       while i < s do (
+	       	    if targetGens#i =!= {} 
 	       	    then oldDiff = oldDiff || substitute( 
 		    	 contract(transpose matrix{targetGens#i}, imageMat^{i}), 
 		    	 diffSub);
@@ -803,8 +773,8 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	       restrictComplex.dd#(n0+1) = map(restrictComplex#n0,
 	       	    restrictComplex#(n0+1), oldDiff);
 	       );
-     	  if (member(Cycles, output) or member(Boundaries, output)
-	       or member(GenCycles, output)) then (
+     	  if member(Cycles, output) or member(Boundaries, output)
+	  or member(GenCycles, output) then (
 	       newKernel := zeroize mingens kernel oldDiff;
 	       -- newKernel := zeroize gens kernel oldDiff;
 	       explicitKernel := compress (sourceMat * resWtoW(newKernel));
@@ -821,7 +791,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      currDeg := n0 + 2;
      --newKernel = 0;
      --explicitKernel = 0;
-     while (currDeg <= n1 and C#?(currDeg)) do (
+     while currDeg <= n1 and C#?(currDeg) do (
 	  -- MAKE THE NEXT SOURCE MODULE
 	  -- "sourceGens" is a list of r lists, where the i-th list contains
 	  -- the monomial generators {dx^a} (as left D_m-module) of
@@ -832,9 +802,9 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  m = C.dd#currDeg;
 	  sourceDeg = degrees C#(currDeg);
 	  sourceGens = {};
-	  if explicitFlag then sourceMat = map(W^0,W^0);
+	  if explicitFlag then sourceMat = map W^0;
 	  i = 0;
-	  while (i < r) do (
+	  while i < r do (
 	       -- Find generators of the current source
 	       --    "F_k1(D_n/tD_n)^r/F_k0(D_n/tD_n)^r"
 	       -- as a left D_m module.
@@ -844,7 +814,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	       tempGens = apply(tempExps, j -> posVars^j);
 	       sourceGens = append(sourceGens, tempGens );
 	       if explicitFlag then (
-		    if (tempGens == {}) then (
+		    if tempGens == {} then (
  	       		 sourceMat = directSum(sourceMat, compress matrix{{0_W}}); )
 		    else (
 	       		 sourceMat = directSum(sourceMat, matrix{tempGens}); );
@@ -854,11 +824,11 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	  sourceSize = sum(sourceGens, i -> #i);
 	  
 	  -- MAKE THE NEXT DIFFERENTIAL OF D_m MODULES	       
-	  if (sourceSize == 0 and targetSize == 0) then (
+	  if sourceSize == 0 and targetSize == 0 then (
 	       newDiff = map(resW^0) )
-	  else if (sourceSize == 0) then ( newDiff =
+	  else if sourceSize == 0 then ( newDiff =
 	       compress matrix toList(targetSize:{0_resW}) )
-	  else if (targetSize == 0) then ( newDiff =
+	  else if targetSize == 0 then ( newDiff =
 	       transpose compress matrix toList(sourceSize:{0_resW}) )
 	  else (
 	       -- For each generator j = \prod_i D_i^{a_i}, compute its image
@@ -868,8 +838,8 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	       -- differentiate with respect to targetGens
 	       newDiff = transpose compress matrix toList(sourceSize:{0_W});
 	       i = 0;
-	       while (i < s) do (
-		    if (targetGens#i =!= {}) 
+	       while i < s do (
+		    if targetGens#i =!= {}
 		    then newDiff = newDiff || substitute( 
 			 contract(transpose matrix{targetGens#i}, imageMat^{i}), 
 			 diffSub);
@@ -886,23 +856,23 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
 	       );
 	  if member(HomologyModules, output) then (
 	       tempHomology := homology(zeroize oldDiff, zeroize newDiff);
-	       if (tempHomology =!= null) then
+	       if tempHomology =!= null then
 	       tempHomology = cokernel Dprune presentation tempHomology;
-	       if (tempHomology === null) then tempHomology = resW^0;
+	       if tempHomology === null then tempHomology = resW^0;
 	       homologyList = append(homologyList,
 		    (currDeg-1) => tempHomology);
 	       );
 	  
 	  -- MAKE EXPLICIT COHOMOLOGY CLASSES	       
-     	  if (member(Cycles, output) or member(Boundaries, output) or
-	       member(GenCycles, output)) then (
+     	  if member(Cycles, output) or member(Boundaries, output) or
+	  member(GenCycles, output) then (
 	       oldImage := zeroize mingens image newDiff;
 	       -- oldImage := zeroize gens image newDiff;
 	       if member(GenCycles, output) then (
-	       	    if (#otherVars == 0) then (
+	       	    if #otherVars == 0 then (
 		    	 explicitList = append(explicitList,
 			      (currDeg-1) => targetMat *
-			      resWtoW(mingens(subquotient(newKernel, oldImage)))) )
+			      resWtoW(mingens subquotient(newKernel, oldImage))) )
 	       	    else (
 		    	 explicitList = append(explicitList,
 			      (currDeg-1) => explicitKernel);
@@ -934,13 +904,6 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      pInfo(2, "\t\t\t Total time = " | tInfo | " seconds");
      pInfo(2, " ");
   );
-
---if (options.Special == LC) then (
---     if (options.Output == HomologyModules) then
---     	  homologyList = append(homologyList, RestoOrigRing => resWtoW)
---     else if (options.Output == Complex) then
---	  restrictComplex = resWtoW restrictComplex;
---     );
 
 -- OUTPUT FORMAT
 if member(HomologyModules, output) then outputList = append(

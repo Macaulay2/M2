@@ -11,8 +11,7 @@ Dlocalize(Module, RingElement) := options -> (M, f) -> (Dlocalization(M,f,option
      
 Dlocalization = method( Options => {Strategy => OTW})
 Dlocalization(Ideal, RingElement) := options -> (I, f) -> (
-     if (I.cache.?quotient === false) then I.cache.quotient = (ring I)^1/I;
-     Dlocalize(I.cache.quotient, f, options) )
+     Dlocalize((ring I)^1/I, f, options) )
 Dlocalization(Module, RingElement) := options -> (M, f) -> (
      outputRequest := {LocModule};
      outputTable := computeLocalization(M, f, outputRequest, options);
@@ -24,8 +23,7 @@ DlocalizeMap(Module, RingElement) := options -> (M, f) -> (DlocalizationMap(M,f,
      
 DlocalizationMap = method( Options => {Strategy => OTW})
 DlocalizationMap(Ideal, RingElement) := options -> (I, f) -> (
-     if (I.cache.?quotient === false) then I.cache.quotient = (ring I)^1/I;
-     DlocalizeMap(I.cache.quotient, f, options) )
+     DlocalizeMap((ring I)^1/I, f, options) )
 DlocalizationMap(Module, RingElement) := options -> (M, f) -> (
      outputRequest := {LocMap};
      outputTable := computeLocalization(M, f, outputRequest, options);
@@ -37,8 +35,7 @@ DlocalizeAll(Module, RingElement) := options -> (M, f) -> (DlocalizationAll(M,f,
      
 DlocalizationAll = method( Options => {Strategy => OTW})
 DlocalizationAll(Ideal, RingElement) := options -> (I, f) -> (
-     if (I.cache.?quotient === false) then I.cache.quotient = (ring I)^1/I;
-     DlocalizeAll(I.cache.quotient, f, options) )
+     DlocalizeAll((ring I)^1/I, f, options) )
 DlocalizationAll(Module, RingElement) := options -> (M, f) -> (
      outputRequest := {LocModule, LocMap, Bfunction, 
 	  IntegrateBfunction, Boperator, GeneratorPower, annFS};
@@ -71,10 +68,10 @@ computeLocalization = (M, f, output, options) -> (
    W := ring M;
    r := numgens target gens M; 
    -- case 1: M is a proper submodule of (D_n)^r/N
-   if (gens M != map(W^r) ) 
+   if gens M != map(W^r) 
    then error "expected input to be a cokernel";
    -- case 2: M is a cokernel
-   if (r > 1) then error "non-cyclic modules not yet supported";
+   if r > 1 then error "non-cyclic modules not yet supported";
 
    outputList := {};
    pInfo(1, "localize: Computing localization with " | 
@@ -101,8 +98,8 @@ computeLocalization = (M, f, output, options) -> (
      	     tInfo = toString first timing (
 	     	  gbH := gb(H, ChangeMatrix => true);
      	     	  bpolys := selectInSubring(1, gens gbH);
-     	     	  if (bpolys == 0) then error "module not specializable";
-     	     	  if (rank source bpolys > 1) then error "ideal principal but not
+     	     	  if bpolys == 0 then error "module not specializable";
+     	     	  if rank source bpolys > 1 then error "ideal principal but not
      	     	  realized as such.  Need better implementation";
      	     	  bpoly := bpolys_(0,0);
 	     	  ind := position((entries gens gbH)#0, i -> (i == bpoly));
@@ -118,21 +115,22 @@ computeLocalization = (M, f, output, options) -> (
 	     	  bpoly = (mingens ideal selectInSubring(1, gens gb H))_(0,0);
 		  );
 	     pInfo(2, "\t\t\t time = " | tInfo | " seconds");	     
-	     if (bpoly == 0) then error "module not specializable";
+	     if bpoly == 0 then error "module not specializable";
 	     );
 
      	bpoly = substitute(bpoly, (coefficientRing W)[Ws_(ns-1)]);
      	bestPower := min (getIntRoots (bpoly));
-        if (bestPower == infinity) then bestPower = 0;
+        if bestPower == infinity then bestPower = 0;
      	locIdeal := substitute(substitute(AnnI, {Ws_(ns-1) => bestPower}), W);
      	locModule := W^1/locIdeal;
-
+     	local locMap;
+	
      	if member (LocMap, output) then (
-	     if (locModule == 0) then locMap = map(W^0, M, 
+	     if locModule == 0 then locMap = map(W^0, M, 
 		  transpose compress matrix{{0_W}})
        	     else (
-	     	  if (bestPower > 0) then (
-	     	       pInfo(0, "Warning: Still need to add b-operator.  Adjusting
+	     	  if bestPower > 0 then (
+	     	       pInfo(1, "Warning: Still need to add b-operator.  Adjusting
 		       generator to make localization map simple");
 		       bestPower = 0;
 		       locIdeal = substitute(substitute(AnnI, 
@@ -145,10 +143,10 @@ computeLocalization = (M, f, output, options) -> (
 	     );
 	)
    
-   else if (options.Strategy == OTW) then (
+   else if options.Strategy == OTW then (
        	N := relations M;
        	nW := numgens W;
-       	if (W.?dpairVars === false) then createDpairs(W);
+       	createDpairs W;
        	n := #W.dpairVars#0;
        	-- create the auxilary ring D_n<a,Da> 
        	a := symbol a;
@@ -158,7 +156,6 @@ computeLocalization = (M, f, output, options) -> (
        	nLW := numgens LW;
        	WtoLW := map(LW, W, (vars LW)_{0..nW-1});
        	LWtoW := map(W, LW, (vars W) | matrix{{0_W,0_W}});
-       	createFourier(LW);
        	-- weight vectors for integration to a = 0
        	w := append( toList(n:0), -1);
        	wt := join( toList(nW:0), {1,-1} );
@@ -168,22 +165,22 @@ computeLocalization = (M, f, output, options) -> (
 	     i -> LW_i - (LW_i*Lf - Lf*LW_i) * a^2 * Da );
        	twistMap := map(LW, LW, matrix{twistList});
        	LN := WtoLW N;
-       	twistN = matrix{{1-Lf*a}} | twistMap LN;
+       	twistN := matrix{{1-Lf*a}} | twistMap LN;
 	pInfo (1, "localize: computing Bpoly...");
        	tInfo = toString first timing (
 	     bpoly = bFunction(ideal twistN, w);
 	     );
 	pInfo(2, "\t\t\t time = " | tInfo | " seconds");
-       	if (bpoly == 0) then (
+       	if bpoly == 0 then (
 	     use W;
        	     error "Module not specializable. Localization cannot be computed.";
 	     );
        	bpoly = substitute(bpoly, {(ring bpoly)_0 => (ring bpoly)_0 + 1});
        	intRoots := getIntRoots(bpoly);
-       	if (#intRoots == 0) then maxRoot := -infinity
+       	if #intRoots == 0 then maxRoot := -infinity
        	else maxRoot = max intRoots;
        	-- case 1: no non-negative integer roots
-       	if (maxRoot < 0) then (
+       	if maxRoot < 0 then (
 	     locModule = W^0;
 	     locMap = map(W^0, M, transpose compress matrix{{0_W}});
 	     maxRoot = 0;
@@ -199,14 +196,14 @@ computeLocalization = (M, f, output, options) -> (
 	     pInfo(2, "\t\t\t time = " | tInfo | " seconds");
 	     i := 0;
 	     relationsList := {};
-	     while (i < numgens source G) do (
+	     while i < numgens source G do (
 	       	  gi := G_(0,i);
 	       	  weight := max apply(exponents gi, e -> sum(e, wt, (b,c)->b*c) );
 	       	  j := 0;
-	       	  while (j <= maxRoot - weight) do (
-		       tmp := LW.Fourier (a^j * gi);
+	       	  while j <= maxRoot - weight do (
+		       tmp := Fourier (a^j * gi);
      	       	       relationsList = append(relationsList, 
-			    LW.FourierInverse substitute(tmp, {a => 0}) );
+			    FourierInverse substitute(tmp, {a => 0}) );
 		       j = j+1;
 		       );
 	       	  i = i+1;
@@ -218,13 +215,14 @@ computeLocalization = (M, f, output, options) -> (
 	     targSize := numgens target presMat;
 	     genIndex := position((entries tempL#0)#0, e->(e==a^maxRoot));
 	     permList := apply( targSize, i ->
-	       	  if (i == genIndex) then (targSize-1)
-	       	  else if (i == targSize-1) then genIndex
+	       	  if i == genIndex then targSize-1
+	       	  else if i == targSize-1 then genIndex
 	       	  else i );
 	     presMat = map(LW^targSize, LW^srcSize, presMat^permList);
 	     -- eliminate the first "maxRoot" components to get annihilating ideal
 	     -- of "a^(maxRoot)"
-	     HW := (coefficientRing W)[symbol homVar, (entries vars W)#0,
+	     homVar := symbol homVar;
+	     HW := (coefficientRing W)[homVar, (entries vars W)#0,
 	       	  WeylAlgebra => W.monoid.Options.WeylAlgebra,
 	       	  MonomialOrder => Eliminate 1];
 	     HWtoW := map(W, HW, matrix{{1_W}} | (vars W) );
@@ -243,13 +241,13 @@ computeLocalization = (M, f, output, options) -> (
 	       	  matrix append( toList(targSize-1 : toList(targSize:0_HW)),
 		       append(toList(targSize-1:0_HW), 1_HW) ) );
 	     i = 0;
-	     tempList = {};
-	     while (i < numgens source I5) do (
-	       	  if (testMap * I5_{i} == I5_{i}) then (
+	     tempList := {};
+	     while i < numgens source I5 do (
+	       	  if testMap * I5_{i} == I5_{i} then (
 		       tempList = append(tempList, I5_(targSize-1,i)) );
 	       	  i = i+1;
 	       	  );
-	     if (tempList === {}) then (
+	     if tempList === {} then (
 		  locModule = W^0;
 		  locMap = map(W^0, M, transpose compress matrix{{0_W}});
 		  )

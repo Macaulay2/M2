@@ -11,12 +11,12 @@ gkz(Matrix, List) := options -> (A, b) -> (
      tempList := {};
      i := 0;
      Ker := kernel A;
-     while (i < numgens Ker) do (
+     while i < numgens Ker do (
 	  posComp := {};
 	  negComp := {};
 	  j := 0;
-	  while (j < n) do (
-	       if (Ker_i_j >= 0) then (
+	  while j < n do (
+	       if Ker_i_j >= 0 then (
 		    posComp = append(posComp, Ker_i_j);
 		    negComp = append(negComp, 0);)
 	       else (
@@ -33,7 +33,7 @@ gkz(Matrix, List) := options -> (A, b) -> (
      -- should do smarter saturation in future
      J := saturate ( ideal(tempList), product toList(y_1..y_n) );
      -- local version: better way to do this?
-     if (options.Vars == Local) then (
+     if options.Vars == Local then (
 	  u := symbol u;
 	  Du := symbol Du;
 	  R := QQ[u_1 .. u_n, Du_1 .. Du_n,
@@ -41,7 +41,7 @@ gkz(Matrix, List) := options -> (A, b) -> (
      	  StoR := map(R, S, (vars R)_{n..numgens R - 1});
      	  i = 0;
      	  tempList = {};
-     	  while (i < d) do (
+     	  while i < d do (
 	       tempList = append(tempList,
 	       	    sum(1..n, j -> (A^{i}_(0,j-1))*u_j*Du_j) - b#i);
 	       i = i+1;
@@ -63,7 +63,7 @@ gkz(Matrix, List) := options -> (A, b) -> (
 	  );
      out)
 
-gkz(Matrix) := (A) -> (
+gkz Matrix := A -> (
      d := numgens target A;     
      n := numgens source A;
      y := symbol y;
@@ -71,12 +71,12 @@ gkz(Matrix) := (A) -> (
      tempList := {};
      i := 0;
      Ker := kernel A;
-     while (i < numgens Ker) do (
+     while i < numgens Ker do (
 	  posComp := {};
 	  negComp := {};
 	  j := 0;
-	  while (j < n) do (
-	       if (Ker_i_j >= 0) then (
+	  while j < n do (
+	       if Ker_i_j >= 0 then (
 		    posComp = append(posComp, Ker_i_j);
 		    negComp = append(negComp, 0);)
 	       else (
@@ -99,7 +99,7 @@ gkz(Matrix) := (A) -> (
      StoR := map(R, S, (vars R)_{d+n..numgens R - 1});
      i = 0;
      tempList = {};
-     while (i < d) do (
+     while i < d do (
 	  tempList = append(tempList,
 	       sum(1..n, j -> (A^{i}_(0,j-1))*x_j*D_j) - s_(i+1));
 	  i = i+1;
@@ -108,9 +108,9 @@ gkz(Matrix) := (A) -> (
 
 -- Appell F1 system --
 AppellF1 = method(Options => {Vars => Global})
-AppellF1(List) := options -> (w) -> (
-     if (#w != 4) then error "expected list of 4 parameters";
-     if (options.Vars == Local) then (
+AppellF1 List := options -> w -> (
+     if #w != 4 then error "expected list of 4 parameters";
+     if options.Vars == Local then (
      	  u := symbol u;
      	  v := symbol v;
      	  Du := symbol Du;
@@ -134,16 +134,16 @@ AppellF1(List) := options -> (w) -> (
 -- This routine takes a polynomial element f of the Weyl algebra 
 -- and returns its annihilator ideal.
 PolyAnn = method()
-PolyAnn(RingElement) := (f) -> (
+PolyAnn RingElement := f -> (
      W := ring f;
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      dpV := W.dpairVars;
      -- error checking
-     if (W.monoid.Options.WeylAlgebra === {}) then
+     if W.monoid.Options.WeylAlgebra === {} then
      error "Expected element of a Weyl algebra";
-     if (substitute(f, (dpV#1 | dpV#2) / (i->(i=>0))) != f) then
+     if substitute(f, (dpV#1 | dpV#2) / (i->(i=>0))) != f then
      error "Expected polynomial element of Weyl algebra";
-     if(W.monoid.Options.Degrees =!= toList(numgens W:{1})) then
+     if W.monoid.Options.Degrees =!= toList(numgens W:{1}) then
      error "Expect all degrees in a Weyl algebra to be 1";
      tempL := (dpV#1 / (i -> 2*f*i - i*f));  -- (fD_i - df/dx_i)
      suffHigh := (degree f)#0 + 1;
@@ -155,25 +155,25 @@ PolyAnn(RingElement) := (f) -> (
 -- and returns the annihilator ideal of 1/f, or takes two polynomials
 -- g and f and returns the annihilator ideal of g/f
 RatAnn = method()
-RatAnn(RingElement) := (f) -> (
+RatAnn RingElement := f -> (
      W := ring f;
      RatAnn(1_W, f)
      )
 
 RatAnn(RingElement, RingElement) := (g,f) -> (
      W := ring f;
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      dpV := W.dpairVars;
      -- error checking
-     if (W != ring g) then
+     if W != ring g then
      error "Expected elements of the same ring";
-     if (W.monoid.Options.WeylAlgebra === {}) then
+     if W.monoid.Options.WeylAlgebra === {} then
      error "Expected element of a Weyl algebra";
-     if (substitute(f, (dpV#1 | dpV#2) / (i->(i=>0))) != f) then
+     if substitute(f, (dpV#1 | dpV#2) / (i->(i=>0))) != f then
      error "Expected polynomial element of Weyl algebra";
-     if (substitute(g, (dpV#1 | dpV#2) / (i->(i=>0))) != g) then
+     if substitute(g, (dpV#1 | dpV#2) / (i->(i=>0))) != g then
      error "Expected polynomial element of Weyl algebra";
-     if(W.monoid.Options.Degrees =!= toList(numgens W:{1})) then
+     if W.monoid.Options.Degrees =!= toList(numgens W:{1}) then
      error "Expect all degrees in a Weyl algebra to be 1";
 
      -- get min root of b-function
@@ -184,7 +184,7 @@ RatAnn(RingElement, RingElement) := (g,f) -> (
      nFs := numgens WFs;
      Ia := substitute ( substitute(IFs, {WFs_(nFs-1) => a}), W);
      
-     if (a == -1 and g == 1_W) then Ia
+     if a == -1 and g == 1_W then Ia
      else (
 	  compensate = -1 - a;
 	  F = map(W^1/Ia, W^1, matrix{{g*f^compensate}});

@@ -14,14 +14,14 @@ List ^ List := (Vars, Exps) -> (
 findExps := (w, k0, k1) -> (
      local minimum, local alpha, local tempExps;
      -- base case: weight vector w has dim 1
-     if (#w == 1 and k0 >= 0) then (
-	  tempExps = (toList((k0//w#0+1)..k1//w#0) / (i -> {i}) ) )
-     else if (#w == 1 and k0 < 0) then (
-	  tempExps = ( toList(0..k1//w#0) / (i -> {i}) ) )
+     if #w == 1 and k0 >= 0 
+     then tempExps = ( toList((k0//w#0+1)..k1//w#0) / (i -> {i}) )
+     else if (#w == 1 and k0 < 0) 
+     then tempExps = ( toList(0..k1//w#0) / (i -> {i}) )
      else ( -- general case
 	  tempExps = {};
 	  alpha = 0;
-	  while (alpha <= k1//w#0) do (
+	  while alpha <= k1//w#0 do (
 	       tempExps = join( tempExps,
 		    apply ( findExps( drop(w,1), k0-alpha*(w#0), 
 			      k1-alpha*(w#0) ), j -> prepend(alpha,j) ) );
@@ -31,9 +31,9 @@ findExps := (w, k0, k1) -> (
      tempExps)
 
 divideOutGCD = method()
-divideOutGCD(RingElement) := (L) -> (
+divideOutGCD RingElement := L -> (
      W := ring L;
-     if (not W.?dpairVars) then createDpairs(W);
+     createDpairs W;
      LCMexps = apply(toList(0..numgens W-1), j -> (
 	       if member(j, W.dpairInds#1) then 0
 	       else min apply(exponents L, i -> i#j)) );
@@ -41,8 +41,8 @@ divideOutGCD(RingElement) := (L) -> (
      sum(newlistForm, i -> (i#1)*( ((entries vars W)#0)^(i#0) ) )
      )
 
-divideOutGCD(Matrix) := (m) -> (
-     if (rank target m > 1) then error "only handles 1 by n matrices";
+divideOutGCD Matrix := m -> (
+     if rank target m > 1 then error "only handles 1 by n matrices";
      matrix{apply(flatten entries m, i -> divideOutGCD i)}
      )
 
@@ -53,19 +53,17 @@ divideOutGCD(Matrix) := (m) -> (
 --------------------------------------------------------------------------------
 PolySols = method(Options => {Alg => GD} )
 
-PolySols(Ideal) := options -> (I) -> ( 
-     if (I.cache.?quotient == false) then I.cache.quotient = (ring I)^1/I;
-     PolySols(I.cache.quotient, options) )
+PolySols Ideal := options -> I -> ( 
+     PolySols((ring I)^1/I, options) )
 
 PolySols(Ideal,List) := options -> (I,w) -> ( 
-     if (I.cache.?quotient == false) then I.cache.quotient = (ring I)^1/I;
-     PolySols(I.cache.quotient, w, options) )
+     PolySols((ring I)^1/I, w, options) )
 
-PolySols(Module) := options -> (M) -> (
+PolySols Module := options -> M -> (
      W := ring M;
-     if (W.monoid.Options.WeylAlgebra === {}) then
+     if W.monoid.Options.WeylAlgebra === {} then
      error "expected an element of a Weyl algebra";     
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;     
      w := toList(n:1);
      PolySols(M, w, options)
@@ -77,41 +75,39 @@ PolySols(Module, List) := options -> (M, w) -> (
      W := ring M;
      K := coefficientRing W;
      outputList := {};     
-     if (W.monoid.Options.WeylAlgebra === {}) then
+     if W.monoid.Options.WeylAlgebra === {} then
      error "expected a Weyl algebra";
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;
 
-     if (options.Alg == GD) then (
+     if options.Alg == GD then (
 	  -- error checking
-	  if (not isQuotientModule M) then error "expected
+	  if not isQuotientModule M then error "expected
 	  input to be a quotient module";
-     	  if (numgens target gens M > 1) then error "non-cyclic
+     	  if numgens target gens M > 1 then error "non-cyclic
 	  modules not yet supported for Grobner deformation method";
-     	  if (any(w, i -> i <= 0)) then error "expected strictly
+     	  if any(w, i -> i <= 0) then error "expected strictly
 	  positive weight vector";
 	  
      	  I := ideal relations M;
 	  inI := inw(I, join(w,-w));
-	  if (W.?ThetaRing === false) then createThetaRing(W);
-	  if (all(flatten entries gens inI, W.isGeneric)) then (
+	  if not W.?ThetaRing then createThetaRing W;
+	  if all(flatten entries gens inI, W.isGeneric) then (
 	       genI := gens inI;
-	       inI = ideal divideOutGCD (gens inI);
+	       inI = ideal divideOutGCD gens inI;
 	       )
 	  else pInfo(0, "Warning: not a generic weight vector.  Could be difficult...");
 	       
      	  b := bFunction(inI,-w,Strategy => TryGeneric);
-          if (b == 0) then (
-     	       error "Module not specializable. Poly Sols cannot be computed by
-	       Grobner deformations.  Try taking Weyl closure first.";
-	       );
-     	  intRoots := getIntRoots(b);
+          if b == 0 
+	  then error "Module not specializable. Poly Sols cannot be computed by
+	  Grobner deformations.  Try taking Weyl closure first.";
+     	  intRoots := getIntRoots b;
 
-     	  if (#intRoots == 0) then answer := {0_W}
-
+     	  if #intRoots == 0 then answer := {0_W}
      	  else (
 	       degBound := -(min intRoots);
-	       if (degBound < 0) then answer = {0_W}
+	       if degBound < 0 then answer = {0_W}
 	       else (
 		    possExps = findExps(w, -1, degBound);
 		    nUnknowns = #possExps;
@@ -121,7 +117,7 @@ PolySols(Module, List) := options -> (M, w) -> (
 	       	    WtoSW := map(SW, W, vars SW);
 	       	    SWtoS := map(S, SW, toList(numgens SW: 1_S));
 	       	    matI := WtoSW gens I;
-	       	    createDpairs(SW);
+	       	    createDpairs SW;
 		    monBasis := matrix{ apply(possExps, i -> 
 			      (W.dpairVars#0)^i) };
 	       	    testPoly = (vars S)*(transpose WtoSW monBasis);
@@ -130,7 +126,7 @@ PolySols(Module, List) := options -> (M, w) -> (
 		    	 apply(SW.dpairVars#1, i -> i => 0));
 	       	    linEqns = SWtoS (coefficients resultPolys_(0,0))#1;
 	       	    i = 1;
-	       	    while (i < numgens source resultPolys) do (
+	       	    while i < numgens source resultPolys do (
 		    	 linEqns = linEqns |
 		    	 SWtoS (coefficients resultPolys_(0,i))#1;
      	       	    	 i = i + 1;
@@ -148,10 +144,10 @@ PolySols(Module, List) := options -> (M, w) -> (
 	       );
      	  )
 
-     else if (options.Alg == Duality) then (
+     else if options.Alg == Duality then (
      	  diffSub := apply(W.dpairVars#1, i -> i => 0);
-     	  if (#w != n) then error "expected weight vector of length n";
-     	  if (any(w, i->i<=0)) then error "expected strictly positive weight vector";
+     	  if #w != n then error "expected weight vector of length n";
+     	  if any(w, i->i<=0) then error "expected strictly positive weight vector";
 	  B := Dres(M, LengthLimit => n+1);
      	  pInfo (1, "Dualizing (slow method for now) ...");
 	  tInfo := toString first timing (
@@ -170,7 +166,7 @@ PolySols(Module, List) := options -> (M, w) -> (
      	  F := outTable#VResolution;
 	  integrateTable := outTable#GenCycles;
 
-     	  if (integrateTable#n == 0) then answer = matrix{{0_K}}
+     	  if integrateTable#n == 0 then answer = matrix{{0_K}}
      	  else (
      	       chainMap := new MutableHashTable;
      	       chainMap.source = F;
@@ -180,13 +176,13 @@ PolySols(Module, List) := options -> (M, w) -> (
 	       pInfo(1, "computing chain map 1 ...");
 	       tInfo = toString first timing (
 	       bottomCompose := (Ker)*F.dd#1;
-	       if ((zeroize bottomCompose)%(zeroize C.dd#-(n-1)) != 0) then 
+	       if (zeroize bottomCompose)%(zeroize C.dd#-(n-1)) != 0 then 
 	       error "expected reduction to 0 -- possible lack of gb problem?";
 	       nextLiftMap := (zeroize bottomCompose)//(zeroize C.dd#-(n-1));
 	       chainMap#1 = map(C#-(n-1), F#1, nextLiftMap); );
 	       pInfo (2, "\t\t\t time = " | tInfo | " seconds");
 	       i = 2;
-	       while (i <= n) do (
+	       while i <= n do (
 	       	    pInfo(1, "computing chain map " | i | " ...");
 		    tInfo = toString first timing (
 	       	    	 bottomCompose = nextLiftMap*F.dd#i;
@@ -223,15 +219,14 @@ PolySols(Module, List) := options -> (M, w) -> (
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 PolyExt = method(Options => {Strategy => Schreyer})
-PolyExt(Ideal) := options -> (I) -> (
-     if (I.cache.?quotient == false) then I.cache.quotient = (ring I)^1/I;
-     PolyExt (I.cache.quotient, options)
+PolyExt Ideal := options -> I -> (
+     PolyExt ((ring I)^1/I, options)
      )
 
-PolyExt(Module) := options -> (M) -> (
+PolyExt Module := options -> (M) -> (
      pInfo (1, "ENTERING PolyExt ...");
      W := ring M;
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;
      w := toList(n:1);
      outputList := {};
@@ -243,14 +238,14 @@ PolyExt(Module) := options -> (M) -> (
      )
 
 PolyExt(ZZ, Ideal) := options -> (k, I) -> (
-     if (I.cache.?quotient == false) then I.cache.quotient = (ring I)^1/I;
-     PolyExt (k, I.cache.quotient, options)
+     if not I.?quotient then I.quotient = (ring I)^1/I;
+     PolyExt (k, I.quotient, options)
      )
 
 PolyExt(ZZ, Module) := options -> (k, M) -> (
      pInfo (1, "ENTERING PolyExt ...");
      W := ring M;
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;
      w := toList(n:1);
      outputList := {};
@@ -268,7 +263,7 @@ PolyExt(ZZ, Module) := options -> (k, M) -> (
 RatSols = method()
 RatSols(Ideal) := (I) -> (
      W := ring I;
-     if (not W.?dpairVars) then createDpairs(W);
+     createDpairs W;
      w := toList(#W.dpairVars#0: 1);
      f := (singLocus I)_0;
      RatSols(I, f, w)
@@ -281,16 +276,16 @@ RatSols(Ideal, List) := (I, w) -> (
 
 RatSols(Ideal, RingElement) := (I, f) -> (
      W := ring I;
-     if (not W.?dpairVars) then createDpairs(W);
+     createDpairs W;
      w := toList(#W.dpairVars#0: 1);
      RatSols(I, f, w)
      )
 
 RatSols(Ideal, RingElement, List) := (I, f, w) -> (
      W := ring I;
-     bfunc := globalBFunction(I, f);
+     bfunc := (globalB(I, f))#Bpolynomial;
      k := (max getIntRoots bfunc) + 1;
-     if (k > 0) then (
+     if k > 0 then (
 	  twistI := TwistOperator(I, f, k);
      	  numerators := PolySols (twistI, w);
      	  R := (coefficientRing W)[W.dpairVars#0];
@@ -304,11 +299,11 @@ RatSols(Ideal, RingElement, List) := (I, f, w) -> (
 
 RatSols(Ideal, List, List) := (I, f, w) -> (
      W := ring I;
-     if (not W.?dpairVars) then createDpairs(W);
-     bfuncs := apply(f, i -> globalBFunction(I, i));
+     createDpairs W;
+     bfuncs := apply(f, i -> (globalB(I, i))#Bpolynomial);
      k := apply(bfuncs, i -> (max getIntRoots i) + 1);
      nonzero := positions(k, i -> (i > 0));
-     if (nonzero != {}) then (
+     if nonzero != {} then (
 	  newk := k_nonzero;
 	  newf := f_nonzero;
      	  twistI := TwistOperator(I, newf, newk);
@@ -332,7 +327,7 @@ TwistOperator(Ideal, List, List) := (I, f, k) -> (
 
 TwistOperator(RingElement, RingElement, ZZ) := (L, f, k) -> (
      W := ring L;
-     if (not W.?dpairVars) then createDpairs W;
+     createDpairs W;
      partialf := hashTable apply(W.dpairInds#1, i -> i => (W_i*f-f*W_i));
      twistList := hashTable apply(W.dpairInds#1, i -> i => (f*W_i - k*(W_i*f-f*W_i)));
      setOneSub := apply (W.dpairVars#0, i -> (i => 1));
@@ -344,7 +339,7 @@ TwistOperator(RingElement, RingElement, ZZ) := (L, f, k) -> (
      newL := 0_W;
      currL := L;
      
-     while (currL != 0) do (
+     while currL != 0 do (
 	  currDiff := substitute((1/leadCoefficient currL)*leadTerm currL, setOneSub);
 	  currPoly := (substitute(contract(matrix{{currDiff}}, matrix{{currL}}), 
 		    diffSub))_(0,0);
@@ -353,7 +348,7 @@ TwistOperator(RingElement, RingElement, ZZ) := (L, f, k) -> (
 	  currk := multFactor-1;
 	  currNew := f^(ordL - multFactor);
 	  i := 0;
-	  while (i < #currExp) do (
+	  while i < #currExp do (
      	       j := 0;
      	       while (j < currExp#i) do (
 	  	    currNew  = currNew * (twistList#i-currk*partialf#i);
@@ -370,12 +365,12 @@ TwistOperator(RingElement, RingElement, ZZ) := (L, f, k) -> (
 
 TwistOperator(RingElement, List, List) := (L, f, k) -> (
      W := ring L;
-     if (not W.?dpairVars) then createDpairs W;
+     createDpairs W;
      fprod := product f;
      partialfprod := hashTable apply(W.dpairInds#1, i -> i => (W_i*fprod-fprod*W_i));
      fhat := apply(f, i -> product(apply(f, j -> if (j == i) then 1_W else j)) );
-     partialf := apply(f, i-> hashTable (
-	       apply(W.dpairInds#1, j -> j => (W_j*i-i*W_j))) );
+     partialf := apply(f, i-> (
+	       hashTable apply(W.dpairInds#1, j -> j => (W_j*i-i*W_j))) );
      twistList := hashTable apply(W.dpairInds#1, i -> 
 	  i => (fprod*W_i - sum(toList(0..#f-1), j -> k_j*fhat_j*(partialf_j#i))) );
      setOneSub := apply (W.dpairVars#0, i -> (i => 1));
@@ -387,7 +382,7 @@ TwistOperator(RingElement, List, List) := (L, f, k) -> (
      newL := 0_W;
      currL := L;
      
-     while (currL != 0) do (
+     while currL != 0 do (
 	  currDiff := substitute((1/leadCoefficient currL)*leadTerm currL, setOneSub);
 	  currPoly := (substitute(contract(matrix{{currDiff}}, matrix{{currL}}), 
 		    diffSub))_(0,0);
@@ -396,9 +391,9 @@ TwistOperator(RingElement, List, List) := (L, f, k) -> (
 	  currk := multFactor-1;
 	  currNew := fprod^(ordL - multFactor);
 	  i := 0;
-	  while (i < #currExp) do (
+	  while i < #currExp do (
      	       j := 0;
-     	       while (j < currExp#i) do (
+     	       while j < currExp#i do (
 	  	    currNew  = currNew * (twistList#i-currk*partialfprod#i);
 	  	    currk = currk - 1;
 	  	    j = j+1;
@@ -420,18 +415,18 @@ TwistOperator(RingElement, List, List) := (L, f, k) -> (
 --------------------------------------------------------------------------------
 RatExt = method(Options => {Strategy => Schreyer} )
 
-RatExt(Ideal) := options -> (I) -> (
+RatExt Ideal := options -> I -> (
      f := (singLocus(I))_0;
      RatExt (I, f)
      )
 
-RatExt(Module) := options -> (M) -> (
+RatExt Module := options -> M -> (
      r := numgens target gens M; 
      -- case 1: M is a proper submodule of (D_n)^r/N
-     if (gens M != map((ring M)^r) ) 
+     if gens M != map (ring M)^r
      then error "expected input to be a cokernel";
      -- case 2: M is a cokernel
-     if (r > 1) then error "non-cyclic modules not yet supported";
+     if r > 1 then error "non-cyclic modules not yet supported";
      
      f := (mingens singLocus(ideal relations M))_(0,0);
      RatExt (M, f)
@@ -439,14 +434,13 @@ RatExt(Module) := options -> (M) -> (
 
 
 RatExt(Ideal, RingElement) := options -> (I, f) -> (
-     if (I.cache.?quotient == false) then I.cache.quotient = (ring I)^1/I;
-     RatExt (I.cache.quotient, f, options)
+     RatExt ((ring I)^1/I, f, options)
      )
 
 RatExt(Module, RingElement) := options -> (M, f) -> (
      pInfo (1, "ENTERING RatlExt ...");
      W := ring M;
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;
      w := toList(n:1);
      outputList := {};
@@ -461,7 +455,7 @@ RatExt(Module, RingElement) := options -> (M, f) -> (
 RatExt(ZZ, Module) := options -> (k, M) -> (
      r := numgens target gens M; 
      -- case 1: M is a proper submodule of (D_n)^r/N
-     if gens M != map((ring M)^r)
+     if gens M != map (ring M)^r 
      then error "expected input to be a cokernel";
      -- case 2: M is a cokernel
      if r > 1 then error "non-cyclic modules not yet supported";
@@ -476,14 +470,13 @@ RatExt(ZZ, Ideal) := options -> (k, I) -> (
      )
 
 RatExt(ZZ, Ideal, RingElement) := options -> (k, I, f) -> (
-     if (I.cache.?quotient == false) then I.cache.quotient = (ring I)^1/I;
-     RatExt (k, I.cache.quotient, f, options)
+     RatExt (k, (ring I)^1/I, f, options)
      )
 
 RatExt(ZZ, Module, RingElement) := options -> (k, M, f) -> (
      pInfo (1, "ENTERING RatlExt ...");
      W := ring M;
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;
      w := toList(n:1);
      outputList := {};
@@ -505,7 +498,7 @@ DHom = method(Options => {Strategy => Schreyer})
 
 DHom(Ideal, Ideal) := options -> (I, J) -> (
      W := ring I;
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;
      w := toList(2*n:1);
      DHom(W^1/I, W^1/J, w, options)
@@ -513,7 +506,7 @@ DHom(Ideal, Ideal) := options -> (I, J) -> (
      
 DHom(Module, Module) := options -> (M, N) -> (
      W := ring M;
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;
      w := toList(2*n:1);
      DHom(M, N, w, options)
@@ -529,12 +522,12 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      if (ring N != W) then error "expected modules over the same Weyl algebra";
      if (W.monoid.Options.WeylAlgebra === {}) then
      error "expected an element of a Weyl algebra";
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;
      naux := #W.dpairVars#2;
-     if (naux > 0) then error "expected Weyl algebra without parameters";
-     if (#w != 2*n) then error "expected weight vector of length 2n";
-     if (any(w, i->i<=0)) then error "expected strictly positive weight vector";
+     if naux > 0 then error "expected Weyl algebra without parameters";
+     if #w != 2*n then error "expected weight vector of length 2n";
+     if any(w, i->i<=0) then error "expected strictly positive weight vector";
      
      pInfo(1, "Beginning computation of Hom_D(M,N) ...");
      pInfo(1, "Computing resolution of M");
@@ -555,7 +548,7 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      Rels := presentation image Ker;
      Im := zeroize C.dd#1;
 
-     if (Im%Ker) != 0 then error "expected reduction to 0";
+     if Im%Ker != 0 then error "expected reduction to 0";
      Syz := Im//Ker;
      NewRels := Rels | Syz;
      twistMN := cokernel NewRels;
@@ -565,7 +558,7 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      F := outTable#VResolution;
      restrictTable := outTable#GenCycles;
 
-     if (restrictTable#n == 0) then answer = 0_K
+     if restrictTable#n == 0 then answer = 0_K
      else (
      	  chainMap := new MutableHashTable;
      	  chainMap.source = F;
@@ -575,18 +568,18 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      	  pInfo(1, "computing chain map 1 ... ");
 	  tInfo := toString first timing (
 	  bottomCompose := (Ker)*F.dd#1;
-	  if ((zeroize bottomCompose)%(zeroize C.dd#1) != 0) then 
+	  if (zeroize bottomCompose)%(zeroize C.dd#1) != 0 then 
 	  error "expected reduction to 0 -- possible lack of gb problem?";
 	  nextLiftMap := (zeroize bottomCompose)//(zeroize C.dd#1);
 	  chainMap#1 = map(C#1, F#1, nextLiftMap);
 	  );
           pInfo (2, "\t\t\t time = " | tInfo | " seconds");
 	  i := 2;
-	  while (i <= n) do (
+	  while i <= n do (
 	       pInfo(1, "computing chain map " | i | " ..." );
 	       tInfo = toString first timing (
 	       bottomCompose = nextLiftMap*F.dd#i;
-	       if ((zeroize bottomCompose)%(zeroize C.dd#i) != 0) then 
+	       if (zeroize bottomCompose)%(zeroize C.dd#i) != 0 then 
 	       error "expected reduction to 0 -- possible lack of gb problem?";
 	       nextLiftMap = (zeroize bottomCompose)//(zeroize C.dd#i);
 	       chainMap#i = map(C#i, F#i, nextLiftMap);
@@ -599,7 +592,7 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      	  chainMap = new ChainComplexMap from chainMap;
 	  );
      
-     if (answer == 0) then basisList := matrix{{0_K}}
+     if answer == 0 then basisList := matrix{{0_K}}
      else (
 	  answer = WW.projMap2 Dtransposition ( (Dtransposition answer)%
 	       (directSum (rank target answer:gens Dtransposition WW.diagonal)));
@@ -607,8 +600,8 @@ DHom(Module, Module, List) := options -> (M, N, w) -> (
      	  answerInds := {rank target answer - homSize..rank target answer-1};
      	  answer = answer^answerInds;
      	  basisList = apply(toList(0..rank source answer - 1), i ->
-	       map(N, M, transpose matrix (
-	       	    pack( (entries transpose answer_{i})#0, rank ambient N))));
+	       map(N, M, transpose matrix pack( 
+			 (entries transpose answer_{i})#0, rank ambient N) ) );
      	  );
      
      basisList
@@ -627,7 +620,7 @@ DExt = method(Options => {Strategy => Schreyer, Info => 1,
 
 DExt(Module, Module) := options -> (M, N) -> (
      W := ring M;
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;
      w := toList(2*n:1);
      DExt(M, N, w, options)
@@ -641,16 +634,16 @@ DExt(Module, Module, List) := options -> (M, N, w) -> (
      outputList := {};
 
      -- ERROR CHECKING
-     if (ring M != ring N) then
+     if ring M != ring N then
      error "Expected modules over the same rings";
-     if (W.monoid.Options.WeylAlgebra === {}) then
+     if W.monoid.Options.WeylAlgebra === {} then
      error "expected an element of a Weyl algebra";
-     if (W.?dpairVars === false) then createDpairs(W);
+     createDpairs W;
      n := #W.dpairVars#0;
      naux := #W.dpairVars#2;
-     if (naux > 0) then error "expected Weyl algebra without parameters";
-     if (#w != 2*n) then error "expected weight vector of length 2n";
-     if (any(w, i->i<=0)) then 
+     if naux > 0 then error "expected Weyl algebra without parameters";
+     if #w != 2*n then error "expected weight vector of length 2n";
+     if any(w, i->i<=0) then 
      error "expected strictly positive weight vector";
      
      --<< "Computing holonomic dual of M";
@@ -676,14 +669,14 @@ ExternalProduct(Module, Module) := options -> (M, N) -> (
      pInfo(1, "ENTERING ExternalProduct ...");
 
 -- CURRENT LIMITATIONS
-     if ( not isQuotientModule M or not isQuotientModule N)
+     if not isQuotientModule M or not isQuotientModule N
      then error "ExternalProduct currently only handles quotient modules";     
 
 -- PRE-PROCESSING     
      W1 := ring M; 
      W2 := ring N;
-     if (W1.?dpairVars === false) then createDpairs(W1);
-     if (W2.?dpairVars === false) then createDpairs(W2);
+     createDpairs W1;
+     createDpairs W2;
      n1 := #W1.dpairVars#0;
      m1 := #W1.dpairVars#2;
      nW1 := numgens W1;
@@ -698,7 +691,7 @@ ExternalProduct(Module, Module) := options -> (M, N) -> (
      Db := symbol Db;
      Ca := symbol Ca;
      Cb := symbol Cb;
-     if (#W1.dpairVars#2 == 0) then
+     if #W1.dpairVars#2 == 0 then
      WW := (coefficientRing W1)[a_1..a_n1, Da_1..Da_n1, b_1..b_n2, Db_1..Db_n2,
           WeylAlgebra => join( apply(toList(1..n1), i -> a_i => Da_i),
 	       apply(toList(1..n2), i -> b_i => Db_i))]
@@ -721,7 +714,7 @@ ExternalProduct(Module, Module) := options -> (M, N) -> (
      WW.projMap2 = map(W2, WW, join(toList(nW1:0), projList2));
 
 -- MAKE TWISTMAP TO DIAGONAL
-     if (W1 == W2 and options.TwistMap) then (
+     if W1 == W2 and options.TwistMap then (
 	  n := n1;
 	  nW := nW1;
 	  naux := m1;
@@ -745,7 +738,6 @@ ExternalProduct(Module, Module) := options -> (M, N) -> (
 	  WW.diagonal = ideal join(
 	       apply (toList(0..n-1), i -> WW_i - WW_(nW+i)),
 	       apply (toList(0..n-1), i -> WW_(n+i) + WW_(nW+n+i)));
-	  createFourier(WW);
 	  );
 
 -- MAKE M (external tensor) N
@@ -761,8 +753,8 @@ ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
 -- PRE-PROCESSING     
      W1 := ring F; 
      W2 := ring G;
-     if (W1.?dpairVars === false) then createDpairs(W1);
-     if (W2.?dpairVars === false) then createDpairs(W2);
+     createDpairs W1;
+     createDpairs W2;
      n1 := #W1.dpairVars#0;
      m1 := #W1.dpairVars#2;
      nW1 := numgens W1;
@@ -777,7 +769,7 @@ ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
      Db := symbol Db;
      Ca := symbol Ca;
      Cb := symbol Cb;
-     if (#W1.dpairVars#2 == 0) then
+     if #W1.dpairVars#2 == 0 then
      WW := (coefficientRing W1)[a_1..a_n1, Da_1..Da_n1, b_1..b_n2, Db_1..Db_n2,
           WeylAlgebra => join( apply(toList(1..n1), i -> a_i => Da_i),
 	       apply(toList(1..n2), i -> b_i => Db_i))]
@@ -801,7 +793,7 @@ ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
 
 
 -- MAKE TWISTMAP TO DIAGONAL
-     if (W1 == W2 and options.TwistMap) then (
+     if W1 == W2 and options.TwistMap then (
 	  n := n1;
 	  nW := nW1;
 	  naux := m1;
@@ -825,7 +817,6 @@ ExternalProduct(ChainComplex, ChainComplex) := options -> (F, G) -> (
 	  WW.diagonal = ideal join(
 	       apply (toList(0..n-1), i -> WW_i - WW_(nW+i)),
 	       apply (toList(0..n-1), i -> WW_(n+i) + WW_(nW+n+i)));
-	  createFourier(WW);
 	  );
 
 -- MAKE F (external tensor) G

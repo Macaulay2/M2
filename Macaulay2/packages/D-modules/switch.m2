@@ -9,19 +9,21 @@
 -- 	2: benchmarks: "time = ..."
 --      666: debugging info, reserved for developers.
 ---------------------------------------------------------------------------------
-INFOLEVEL = 0
+ 
+INFOLEVEL := 0
 
-setInfoLevel = method()
-setInfoLevel (ZZ) := level -> (t := INFOLEVEL;  INFOLEVEL = level; t)
-    
+Dtrace  = method()
+Dtrace ZZ := ZZ => level -> (t := INFOLEVEL;  INFOLEVEL = level; t)
+getDtrace = () -> INFOLEVEL
+
 -- prints Info 
 -- format: pInfo(min_level, Thing)
 pInfo = method();
 pInfo(ZZ, Thing) := (minLevel, s) -> (
-     if minLevel <= INFOLEVEL then print s 
+     if minLevel <= getDtrace() then print s 
      ); 
 pInfo(ZZ, List) := (minLevel, l) -> (
-     if minLevel <= INFOLEVEL then (
+     if minLevel <= getDtrace() then (
 	  scan(l, u-><<u); 
      	  << endl;
 	  )
@@ -30,11 +32,14 @@ pInfo(ZZ, List) := (minLevel, l) -> (
 -- Homogenization switch 
 -- determines whether homogenized Weyl algebra is used in certain algorithms
 ---------------------------------------------------------------------------------- 
-HOMOGENIZATION = true
+HOMOGENIZATION := true
 
 setHomSwitch = method ()
-setHomSwitch(Boolean) := s -> (t := HOMOGENIZATION; HOMOGENIZATION = s; t) 
-
+setHomSwitch(Boolean) := Boolean => s -> (
+     t := HOMOGENIZATION; 
+     HOMOGENIZATION = s; 
+     t) 
+getHomSwitch = ()->HOMOGENIZATION
 
 
 
