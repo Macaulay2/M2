@@ -386,10 +386,22 @@ ifdef MP
 LIBRARYFILES += ../../lib/libMP.a
 LIBRARYOPTIONS += ../../lib/libMP.a
 endif
+
+###################### statically linked libraries
+ifeq "$(CC) $(STATIC)" "gcc no"
+LIBRARYOPTIONS += -Wl,-Bstatic
+endif
+
 LIBRARYOPTIONS += -lfac
 LIBRARYOPTIONS += -lcf
 LIBRARYOPTIONS += -lgmp
 LIBRARYOPTIONS += -lgc
+
+ifeq "$(CC) $(STATIC)" "gcc no"
+LIBRARYOPTIONS += -Wl,-Bdynamic
+endif
+###################### end statically linked libraries
+
 endif
 
 ftmpl_inst.o: $(prefix)/include/templates/ftmpl_inst.cc
@@ -444,3 +456,6 @@ clean ::
 		core core.* compat.c compat.h c-files.tar tmp_init.c
 distclean : clean
 	rm -f Makefile
+
+Makefile : Makefile.in
+	cd $(TOPDIR); ./config.status Macaulay2/d/Makefile
