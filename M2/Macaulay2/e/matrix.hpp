@@ -140,6 +140,13 @@ public:
 
   Matrix *exterior(int p,int strategy) const;
   Matrix *minors(int p,int strategy) const;
+  MatrixOrNull *minors(int p,
+		       int strategy, 
+		       int n_to_compute, // -1 means all
+		       M2_arrayint_OrNull first_row, // possibly NULL
+		       M2_arrayint_OrNull first_col // possibly NULL
+		       ) const;
+    
   Matrix *pfaffians(int p) const;  // in pfaff.cpp
   static Matrix *wedge_product(int p, int q, const FreeModule *F);
 //  static Matrix wedge_dual(int p, const FreeModule *F);
@@ -188,6 +195,7 @@ public:
 
   Matrix *compress() const; // Remove zero columns
   Matrix *remove_monomial_factors(bool make_squarefree_only) const;
+  Matrix *remove_scalar_multiples() const;
 
   static Matrix *random(const Ring *R, int r, int c);
 

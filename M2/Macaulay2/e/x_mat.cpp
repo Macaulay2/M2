@@ -369,6 +369,22 @@ const Matrix * IM2_Matrix_minors(int p, const Matrix *M, int strategy)
   return M->minors(p,strategy);
 }
 
+const Matrix * rawMinors(int p, 
+			 const Matrix *M, 
+			 int strategy,
+			 int n_minors_to_compute, /* -1 means all */
+			 M2_arrayint_OrNull first_row_set,
+			 M2_arrayint_OrNull first_col_set
+			 ) /* Dan: please connect rawMinors to this version */
+/* If first_row_set or first_col_set is not NULL, they should both be non-NULL,
+   and both have length p.  If not, NULL is returned.
+   Compute n_minors_to_compute minors, starting at (first_row_set,first_col_set) if given,
+   otherwise starting at the first (0..p-1,0..p-1).
+*/
+{
+  return M->minors(p,strategy,n_minors_to_compute,first_row_set,first_col_set);
+}
+
 const MatrixOrNull * IM2_Matrix_pfaffians(int p, const Matrix *M)
 {
   return M->pfaffians(p);
@@ -571,6 +587,11 @@ const Matrix * rawMatrixCompress(const Matrix *M)
 const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree_only)
 {
   return m->remove_monomial_factors(make_squarefree_only);
+}
+
+const Matrix * rawScalarMultiples(const Matrix *m)
+{
+  return m->remove_scalar_multiples();
 }
 
 // Local Variables:

@@ -350,7 +350,7 @@ public:
   vec vec_divide_by_expvector(const int *exp, const vec v) const;
 
   // Some divisibility routines
-  int vec_is_scalar_multiple(vec f, vec g) const;// is cf = dg, some scalars c,d? (not both zero).
+  bool vec_is_scalar_multiple(vec f, vec g) const;// is cf = dg, some scalars c,d? (not both zero).
   void vec_monomial_divisor(vec f, int *exp) const;
   vec vec_monomial_squarefree(vec f) const;
   vec vec_remove_monomial_divisors(vec f) const;

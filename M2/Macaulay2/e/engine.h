@@ -913,6 +913,19 @@ extern "C" {
   const Matrix * IM2_Matrix_minors(int p, const Matrix *M, int strategy); /* drg: connected rawMinors*/
   /* can this really not return null ? */
 
+  const Matrix * rawMinors(int p, 
+			   const Matrix *M, 
+			   int strategy,
+			   int n_minors_to_compute, /* -1 means all */
+			   M2_arrayint_OrNull first_row_set,
+			   M2_arrayint_OrNull first_col_set
+			   ); /* Dan: please connect rawMinors to this version */
+  /* If first_row_set or first_col_set is not NULL, they should both be non-NULL,
+     and both have length p.  If not, NULL is returned.
+     Compute n_minors_to_compute minors, starting at (first_row_set,first_col_set) if given,
+     otherwise starting at the first (0..p-1,0..p-1).
+  */
+
   const MatrixOrNull * IM2_Matrix_pfaffians(int p, const Matrix *M); /* drg: connected rawPfaffians*/
 
   const Matrix * rawMatrixCompress(const Matrix *M); /* connected rawMatrixCompress */
@@ -926,6 +939,8 @@ extern "C" {
      v and w are scalar multiplies iff d*v == c*w.  
      Warning: Over non-domains, this might not be the intended effect.
   */
+
+  const Matrix * rawRemoveScalarMultiples(const Matrix *m); /* DAN: please connect */
 
   const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree_only);
   /* connected to rawRemoveMonomialFactors */

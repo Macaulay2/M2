@@ -1297,6 +1297,30 @@ vec Matrix::strip_vector(vec &f, const int *vars,
 }
 #endif
 
+Matrix *Matrix::remove_scalar_multiples() const
+{
+  bool keep;
+  MatrixConstructor result(rows(), 0);
+  for (int i=0; i<n_cols(); i++)
+    {
+      vec f = elem(i);
+      if (f == NULL) continue;
+      keep = true;
+      for (int j=i+1; j<n_cols(); j++)
+	{
+	  vec g = elem(j);
+	  if (g == NULL) continue;
+	  if (get_ring()->vec_is_scalar_multiple(f, g))
+	    {
+	      keep = false;
+	      break;
+	    }
+	}
+      if (keep) result.append(get_ring()->copy_vec(f));
+    }
+  return result.to_matrix();
+}
+
 Matrix *Matrix::remove_monomial_factors(bool make_squarefree_only) const
 // Divide each column v by the maximal monomial 'm' which divides v.
 // If keep_one is true, divide by somewhat less, making the resulting monomial
