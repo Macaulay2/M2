@@ -1040,7 +1040,7 @@ tex  NOINDENT := x -> ///
 \noindent\ignorespaces
 ///
 
-html BIG := x -> concatenate( "<B><FONT SIZE=18>", apply(x, html), "</FONT></B>" )
+html BIG := x -> concatenate( "<B><FONT SIZE=4>", apply(x, html), "</FONT></B>" )
 
 html HEAD := html CENTER := 
 x -> concatenate(newline, 

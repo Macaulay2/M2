@@ -10,7 +10,7 @@ local lastKey, local thisKey
 local linkFollowedTable, local masterIndex
 local docdatabase
 
-linkFilename := s -> first cacheFileName(first documentationPath, documentationPath, s) | ".html"
+linkFilename := s -> first cacheFileName(prefix, documentationPath, s) | ".html"
 
 documentationMemo := memoize documentation		    -- for speed
 
@@ -214,7 +214,7 @@ cacheVars := varlist -> (
 makeHTML = (topnode,docdatabase0) -> (
      restore := cacheVars{symbol documentationPath};
      gifpath := minimizeFilename( getenv "M2HOME" | "/html/" );
-     prefix = "cache/doc/";
+     prefix = first documentationPath;
      docdatabase = docdatabase0;
      checkDirectory prefix;
      checkDirectory gifpath;

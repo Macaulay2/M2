@@ -20,12 +20,19 @@ tt#"%" = "_pc_"					     -- has a meaning in URLs
 tt#"?" = "_qu_"					     -- has a meaning in URLs
 tt#"#" = "_sh_"					     -- has a meaning in URLs
 tt#"\\"= "_bs_"				 -- can't occur in a file name: MSDOS
-tt#" " = "_sp_"					      -- can't occur in a URL
+tt#" " = "_sp_"           -- can't occur in a URL and has a meaning for xargs
 tt#"_" = "_us_"					      -- our escape character
-
 tt#":" = "_co_"					-- has a meaning for gnu make
 tt#"$" = "_do_"					-- has a meaning for gnu make
 tt#";" = "_se_"					-- has a meaning for gnu make
+tt#"'" = "_sq_"					   -- has a meaning for xargs
+tt#"\""= "_dq_"					 -- " has a meaning for xargs
+
+for i from 1 to 26 do (			    -- some OSes are case insensitive
+     cap := ascii (64 + i);
+     low := ascii (96 + i);
+     tt#cap = concatenate("_", low, "_");
+     )
 
 toFilename = method()
 toFilename String := s -> (
@@ -62,11 +69,11 @@ indexTable := memoize(
 	       );
      	  next := null;
 	  makeName := key -> (
-	       if false
+	       if true
 	       then (
-	       	    toFilename key	    -- for long file names
+	       	    toFilename key	    -- for long file names, determined just by the key
 	       	    )
-	       else (			    -- for short file names
+	       else (			    -- for short file names, assigned sequentially
      	       	    if next === null then next = #(keys tb);
 	       	    val := toString next;
 	       	    next = next+1;

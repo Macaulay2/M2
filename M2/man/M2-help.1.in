@@ -19,3 +19,8 @@ The documentation for Macaulay 2 is available locally starting in
 /usr/share/doc/Macaulay2/index.html, but /usr may have to be replaced by
 /usr/local or by /sw.  This simple shell script will start your web browser
 up reading that top level html file.
+
+.\" -- Local Variables:
+.\" -- mode: nroff
+.\" -- fill-column: 100
+.\" -- End:

@@ -168,7 +168,7 @@ cache/doc/expression: expression; cp $< $@
 
 phase3 : initialize phase2 cache/doc/sample cache/doc/expression
 	 #------ phase 3: running new example input files: cache/doc/*.example
-	$(MAKE) -C cache/doc -f $(srcdir)/Makefile.egs srcdir=$(srcdir)
+	M2HOME=.. M2LIB=.. $(MAKE) -C cache/doc -f $(srcdir)/Makefile.egs srcdir=$(srcdir)
 	touch $@
 
 all :: phase4
@@ -186,14 +186,20 @@ phase4 : phase3 ../cache/Macaulay2-doc
 	touch $@
 
 all :: phase5
+
+# this directory must be the same as the prefix in makeHTML() in html.m2:
 TARGETDIR = cache/doc
-phase5 : $(TARGETDIR)/index.html
+
+phase5 : $(TARGETDIR) $(TARGETDIR)/index.html
 $(TARGETDIR)/index.html : ../cache/Macaulay2-made ../cache/Macaulay2-doc ../libexec/Macaulay2
 	 #------ phase 5: making html documentation
 	M2HOME=.. M2LIB=.. ../../bin/M2 -q -silent \
 		'-e phase = 5' \
 		'-e errorDepth 0' \
 		'-e makeHTML("Macaulay 2", DocDatabase)' '-e exit 0'
+install ::
+	$(INSTALL_PROGRAM) -d "$(htmldocdir)"
+	cd $(TARGETDIR) && find . -name '*.html' | xargs tar cf - | tar xf - -C "$(htmldocdir)"
 
 HOMEDIR := $(shell cd .. && pwd)
 check :: check-links
