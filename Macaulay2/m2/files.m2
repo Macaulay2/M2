@@ -20,7 +20,7 @@ copyFile = method(Options => fileOptions)
 copyFile(String,String) := opts -> (src,tar) -> (
      if opts.Verbose then stderr << "--copying: " << src << " -> " << tar << endl;
      tar << get src << close;
-     )
+     fileChangeMode(tar,fileMode src))
 
 baseFilename = fn -> (
      fn = separate("/",fn);
