@@ -1,5 +1,6 @@
 ############################## includes
-include ../../Makeconf
+TOPDIR = ../..
+include $(TOPDIR)/Makeconf
 ############################## main target
 all :: compat.h ../bin/Macaulay2
 ############################## useful targets
@@ -143,7 +144,7 @@ else
 compat.c compat.h : configure; ./configure
 endif
 
-scclib.o : ../c/compat.h ../c/compat.c ../../Makeconf.h
+scclib.o : ../c/compat.h ../c/compat.c $(TOPDIR)/Makeconf.h
 memdebug.o scclib.o actors5.oo gc_cpp.o : memdebug.h
 allc : $(PROJECT:.d=.c) tmp_init.c
 ALLOBJ := $(PROJECT:.d=.oo) scclib.o compat.o gc_cpp.o tmp_init.o memdebug.o
@@ -155,7 +156,7 @@ remove-c-files ::; rm -rf $(ALLC)
 c-files.tar :: $(ALLC)
 	tar cf $@ $(ALLC)
 ##############################
-tmp_init.c : Makefile ../../Makeconf
+tmp_init.c : Makefile $(TOPDIR)/Makeconf
 	timestmp >>tmp
 	@echo "echoout '>>tmp' ..."
 	@echoout '>>tmp' $(foreach f, $(PROJECT:.d=), 'void $(f)__prepare();') 

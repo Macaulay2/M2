@@ -1,4 +1,6 @@
-include ../../Makeconf
+TOPDIR = ../..
+include $(TOPDIR)/Makeconf
+
 
 all : index.html
 index.html : ../cache/Macaulay2-$(ARCH).data html.m2

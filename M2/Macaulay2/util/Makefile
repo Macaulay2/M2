@@ -1,6 +1,8 @@
-include ../../Makeconf
+TOPDIR = ../..
+include $(TOPDIR)/Makeconf
+
 CPPFLAGS += -I../include
 EXES = echoout timestmp restart update
-all : $(EXES)
+all:: $(EXES)
 update.o : restart.h
 clean :; rm -f $(EXES) *.o

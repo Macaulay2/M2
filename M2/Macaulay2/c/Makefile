@@ -1,8 +1,9 @@
 # this makefile is readable only by the gnu make program
 ############################## main target
 CC=gcc
-all : scc1
-include ../../Makeconf
+all:: scc1
+TOPDIR = ../..
+include $(TOPDIR)/Makeconf
 ############################################
 %.c        : %.y
 	$(YACC) $(YFLAGS) $^

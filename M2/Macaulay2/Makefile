@@ -6,7 +6,8 @@ tests ::
 doc : html book Vasconcelos-appendix
 ################################# setup
 all :: initialize config
-include ../Makeconf
+TOPDIR = ..
+include $(TOPDIR)/Makeconf
 .PHONY: default tests all clean dirs misc config \
 		initialize doc html book exe zip
 ROOT := $(shell basename `pwd`)
