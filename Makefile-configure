@@ -6,7 +6,8 @@ CONFIGURE_ENVIRON = CFLAGS="-O2" CXXFLAGS="-O2"
 -include Makefile-configure.overrides
 
 ## to build:
-##	edit the lines above
+##	add overrides to the file Makefile-configure.overrides
+##		example: CONFIGURE_OPTIONS += --disable-dumpdata
 ##	make -f Makefile-configure
 ##	make
 ##      make install
