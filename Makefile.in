@@ -18,7 +18,8 @@ ifdef XYZZY
   available at ftp://ftp.gnu.org/pub/gnu/make.
 endif
 #############################################################################
-include config.Makefile
+TOPDIR = .
+include $(TOPDIR)/config.Makefile
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 VPATH = $(srcdir)
@@ -30,8 +31,7 @@ default: all # doc
 ################################# all
 all::
 #################################
-TOPDIR = .
-include Makeconf
+include $(top_srcdir)/Makeconf
 FILES := Makefile Makeconf README patches
 SUBDIRS := gc gmp factory libfac Macaulay2
 export PATH := bin:$(PATH)
