@@ -131,6 +131,12 @@ setup((), {
 	  truncate, fraction
 	  })
 
+status = method (Options => new OptionTable from {
+     	  TotalPairs => true,
+     	  PairsRemaining => false,
+     	  Monomials => false
+     	  })
+
 setup(SingleArgumentDispatch => true, {transpose} )
 setup(TypicalValue => RR, {realPart, imaginaryPart})
 setup(TypicalValue => Boolean,
