@@ -2891,7 +2891,31 @@ setupfun("rawSolve", rawSolve);
 
 
 -----------------------------------------------------------------------------
--- LLL
+-- LU
+-----------------------------------------------------------------------------
+
+export rawLU(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 4 then WrongNumArgs(4) else
+     when s.0 is A:RawMutableMatrix do 
+     when s.1 is L:RawMutableMatrix do
+     when s.2 is U:RawMutableMatrix do
+     when s.3 is P:RawMutableMatrix do possibleEngineError(
+	  Ccode(bool, "rawLU(", "(MutableMatrix *)", A, ",", "(MutableMatrix *)", L, ",", "(MutableMatrix *)", U, ",", "(MutableMatrix *)", P, ")"))
+     else WrongArgMutableMatrix(4)
+     else WrongArgMutableMatrix(3)
+     else WrongArgMutableMatrix(2)
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(4));
+setupfun("rawLU", rawLU);
+
+export rawFFLU(e:Expr):Expr := (
+     when e is M:RawMutableMatrix do toExpr( Ccode(RawArrayIntOrNull, "(engine_RawArrayIntOrNull)IM2_FF_LU(", "(MutableMatrix *)", M, ")" ) )
+     else WrongArgMutableMatrix());
+setupfun("rawFFLU",rawFFLU);
+
+-----------------------------------------------------------------------------
+-- integer matrix normal forms
 -----------------------------------------------------------------------------
 
 export rawLLL(e:Expr):Expr := (
@@ -2903,6 +2927,16 @@ export rawLLL(e:Expr):Expr := (
      else WrongArg(0,"a mutable raw matrix")
      else WrongNumArgs(2));
 setupfun("rawLLL",rawLLL);
+
+export rawSmithNormalForm(e:Expr):Expr := (
+     when e is M:RawMutableMatrix do possibleEngineError( Ccode(bool, "IM2_SmithNormalForm(", "(MutableMatrix *)", M, ")" ) )
+     else WrongArgMutableMatrix());
+setupfun("rawSmithNormalForm",rawSmithNormalForm);
+
+export rawHermiteNormalForm(e:Expr):Expr := (
+     when e is M:RawMutableMatrix do possibleEngineError( Ccode(bool, "IM2_HermiteNormalForm(", "(MutableMatrix *)", M, ")" ) )
+     else WrongArgMutableMatrix());
+setupfun("rawHermiteNormalForm",rawHermiteNormalForm);
 
 -----------------------------------------------------------------------------
 -- LAPACK 
@@ -3008,21 +3042,6 @@ export rawGetSubmatrix(e:Expr):Expr := (
      else WrongNumArgs(3)
      );
 setupfun("rawGetSubmatrix",rawGetSubmatrix);
-
-export rawLU(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) != 4 then WrongNumArgs(4) else
-     when s.0 is A:RawMutableMatrix do 
-     when s.1 is L:RawMutableMatrix do
-     when s.2 is U:RawMutableMatrix do
-     when s.3 is P:RawMutableMatrix do possibleEngineError(
-	  Ccode(bool, "rawLU(", "(MutableMatrix *)", A, ",", "(MutableMatrix *)", L, ",", "(MutableMatrix *)", U, ",", "(MutableMatrix *)", P, ")"))
-     else WrongArgMutableMatrix(4)
-     else WrongArgMutableMatrix(3)
-     else WrongArgMutableMatrix(2)
-     else WrongArgMutableMatrix(1)
-     else WrongNumArgs(4));
-setupfun("rawLU", rawLU);
 
 export rawEigenvalues(e:Expr):Expr := (
      when e is s:Sequence do

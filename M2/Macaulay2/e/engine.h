@@ -1633,7 +1633,7 @@ enum gbTraceValues
      If M has a column change of basis matrix attached, it will be modified accordingly. 
   */
 
-  M2_bool IM2_SmithNormalForm(MutableMatrix *M); /* Dan: please connect */
+  M2_bool IM2_SmithNormalForm(MutableMatrix *M); /* connected rawSmithNormalForm */
   /* Given a mutable matrix over ZZ, compute the Smith normal form for M. (replaces
      M with this normal form.
      Currently the algorithm used makes computing the change of basis matrices
@@ -1641,7 +1641,7 @@ enum gbTraceValues
      If there is an error, then an error is flagged and false is returned.
   */
 
-  M2_bool IM2_HermiteNormalForm(MutableMatrix *M); /* Dan: please connect */
+  M2_bool IM2_HermiteNormalForm(MutableMatrix *M); /* connect rawHermiteNormalForm */
   /* Given a mutable matrix over ZZ, compute the Hermite normal form for M. (replaces
      M with this normal form.
      Currently the algorithm used makes computing the change of basis matrices
@@ -1654,7 +1654,7 @@ enum gbTraceValues
   /**************************************************/
 
   const RingElementOrNull *rawGCDRingElement(const RingElement *f, const RingElement *g); /* connected to rawGCD */
-  const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B); /* connect to rawExtendedGCD */
+  const RingElementOrNull *rawExtendedGCDRingElement(const RingElement *f, const RingElement *g, const RingElement **A, const RingElement **B); /* connected to rawExtendedGCD */
   const RingElementOrNull *rawPseudoRemainder(const RingElement *f, const RingElement *g); /* connected to rawPseudoRemainder */
   void rawFactor(const RingElement *f, 
 		 RingElement_array_OrNull **result_factors, 

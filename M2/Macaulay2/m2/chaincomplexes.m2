@@ -604,7 +604,7 @@ regularity ChainComplex := C -> (
 
 regularity Module := (M) -> regularity resolution M
 
-rawbetti = method()
+rawbetti := method()
      -- returns a hash table with pairs of the form (d,i) => n
      -- where d is the multi-degree, i is the homological degree, and 
      -- n is the betti number.
