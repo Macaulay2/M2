@@ -761,7 +761,7 @@ int GB_comp::coeff_of(const RingElement &h, int deg) const
 
 //---- Completion testing -----------------------------
 
-int GB_comp::computation_complete(const int *stop_degree,
+int GB_comp::computation_complete(const int * /* stop_degree */,
 				  int stop_gb, int stop_syz, 
 				  int /*stop_codim*/,
 				  int stop_pairs, int stop_min_gens,

@@ -37,7 +37,7 @@ binomial_ring::binomial_ring(const Ring *RR,
   monstash = new stash("monomials", sizeof(int)*nslots);
 }
 
-binomial_ring::binomial_ring(const Ring *RR)
+binomial_ring::binomial_ring(const Ring * /* RR */)
 {
   *gError << "MES: not implemented yet";
 }

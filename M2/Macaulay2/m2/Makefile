@@ -7,7 +7,7 @@ all::
 .PHONY: clean all install
 CFLAGS =
 LDFLAGS = -s
-DUMPSEQUENCE = $(shell cat dumpsequence)
+DUMPSEQUENCE = $(shell cat dumpseq)
 
 MADEGFILES := gbdoc.m2 gbfunctions.m2 loads.m2 tutorials.m2 cmdnames.m2
 
@@ -34,9 +34,9 @@ endif
 
 wc:		;			wc -l $(GFILES)
 
-loads.m2 : dumpsequence
+loads.m2 : dumpseq loads.awk
 	@echo making loads.m2
-	@../util/echoout '>loads.m2' $(foreach i, $(DUMPSEQUENCE), 'load "$(i)"')
+	@awk -f loads.awk <$< >$@
 
 version.m2 : ../../Makeconf ../../Makeconf-m2
 	../../Makeconf-m2 >version.tmp
@@ -45,13 +45,13 @@ version.m2 : ../../Makeconf ../../Makeconf-m2
 TUTORIALS = $(wildcard ../tutorial/final/*.out)
 tutorials.m2 : Makefile
 	@ echo making tutorials.m2
-	@../util/echoout '>tutorials.m2' $(foreach i, $(TUTORIALS), 'load "$(i)"')
+	@ ls ../tutorial/final/*.out |awk '{printf "load \"%s\"\n", $$0}' >$@
 
 gbdoc.m2 : ../e/misc/cmdnames.input gbdoc.awk
 	awk -f gbdoc.awk ../e/misc/cmdnames.input >tmp
 	mv tmp $@
-gbfunctions.m2 :  ../e/misc/cmdnames.input gbfunctions.awk
-	awk -f gbfunctions.awk ../e/misc/cmdnames.input >tmp
+gbfunctions.m2 :  ../e/misc/cmdnames.input gbfuns.awk
+	awk -f gbfuns.awk ../e/misc/cmdnames.input >tmp
 	mv tmp $@
 all:: TAGS
 TAGS: Makefile
