@@ -2587,21 +2587,24 @@ setupfun("rawGBSetHilbertFunction", rawGBSetHilbertFunction);
 
 export rawGBForce(e:Expr):Expr := (
      when e is a:Sequence do 
-     if length(a) == 3 then 
+     if length(a) == 4 then 
      when a.0 is m:RawComputation do 
      when a.1 is gb:RawMatrix do 
-     when a.2 is change:RawMatrix do toExpr(
+     when a.2 is change:RawMatrix do 
+     when a.3 is syz:RawMatrix do toExpr(
 	  Ccode(RawComputationOrNull, 
 		    "(engine_RawComputationOrNull)IM2_GB_force(",
 		    "(Matrix *)", m,
 		    ",(Matrix *)", gb,
 		    ",(Matrix *)", change,
+		    ",(Matrix *)", syz,
 		    ")" ))
+     else WrongArg(4,"a raw matrix")
      else WrongArg(3,"a raw matrix")
      else WrongArg(2,"a raw matrix")
      else WrongArg(1,"a raw matrix")
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
+     else WrongNumArgs(4)
+     else WrongNumArgs(4));
 setupfun("rawGBForce", rawGBForce);
 
 export rawGBSetStop(e:Expr):Expr := (
