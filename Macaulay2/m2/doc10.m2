@@ -11,16 +11,14 @@ TEST ///
      E = coimage D_[0]
 ///
 
-document { symbol Resolution,
-     Headline => "a key for storing resolutions",
-     "A key used in a ", TO "ChainComplex", " to store the resolution it comes from."
-     }
-
 document { Resolution,
      Headline => "the class of all resolution computations",
      PARA,
      "These resolutions are internal engine objects not meant to be examined
      by the user.",
+     PARA,
+     "The symbol ", TT "Resolution", " is also used in a ", TO "ChainComplex", " to 
+     store the resolution it comes from."
      }
 
 document { symbol "res",

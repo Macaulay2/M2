@@ -187,8 +187,8 @@ phase5 : phase4
 	 #------ phase 5: making cache/doc/*.html
 	../../bin/M2 -q -silent '-e phase = 5' \
 		'-e errorDepth 0' \
-		'-e DocDatabase = new MutableHashTable' \
-		docloads.m2 '-eexit(0)'
+		'-e DocDatabase = new MutableHashTable' docloads.m2 \
+		@srcdir@/docfinish.m2 '-eexit(0)'
 	touch $@
 
 all :: phase5

@@ -15,10 +15,12 @@ addStartFunction(
 	  home := getenv "M2HOME";
 	  if home === "" then error "environment variable M2HOME not set";
 	  home = minimizeFilename home;
-	  path = join(apply(path, minimizeFilename), {
+	  p := join(apply(path, minimizeFilename), {
 	       	    filepath{home,"m2"},
 	       	    filepath{home,"packages"}
 		    });
+	  path = {};
+	  apply(p, dir -> if not member(dir,path) then path = append(path,dir));
 	  documentationPath = {
 	       filepath{"cache","doc"},			    -- this is where new documentation is written
 	       filepath{home,"m2","cache","doc"},
@@ -45,7 +47,8 @@ local exampleResultsFound
 local exampleResults
 docFilename := () -> (
      progname := commandLine#0;
-     if substring(progname,0,1) === "\"" then progname = substring(progname,1);
+     if substring(progname,0,1) === "\""  -- sigh "
+     then progname = substring(progname,1);
      if version#"operating system" === "MACOS" then "::cache:Macaulay2-doc"
      else (
 	  if getenv "M2HOME" === "" 
@@ -75,7 +78,6 @@ storeDoc := (nodeName,docBody) -> (
      	  Documentation#nodeName = docBody;
 	  )
      )
-
 -----------------------------------------------------------------------------
 -- getting database records
 -----------------------------------------------------------------------------
@@ -111,16 +113,18 @@ record                     := f -> x -> (val := f x; unformatTag#val = x; val)
 alphabet := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 
 formatDocumentTag Thing    := s -> toString s
-formatDocumentTag Function := record toString
-formatDocumentTag Symbol   := record(
-     s -> (
-	  n := toString s;
-	  if value s === s then n
-	  else if n === "" or n === " " then concatenate("symbol \"",n,"\"")
-	  else if alphabet#?(n#0) then concatenate("symbol ",n)
-	  else n
-	  )
-     )
+formatDocumentTag String   := s -> s
+
+-- formatDocumentTag Function := record toString
+-- formatDocumentTag Symbol   := record(
+--      s -> (
+-- 	  n := toString s;
+-- 	  if value s === s then n
+-- 	  else if n === "" or n === " " then concatenate("symbol \"",n,"\"")
+-- 	  else if alphabet#?(n#0) then concatenate("symbol ",n)
+-- 	  else n
+-- 	  )
+--      )
 
 after := (w,s) -> mingle(w,#w:s)
 formatDocumentTag Option   := record(
@@ -449,42 +453,12 @@ processExamples := (docBody) -> (
 	  );
      docBody)
 -----------------------------------------------------------------------------
--- produce html page
------------------------------------------------------------------------------
-writeHtmlPage := nodeName -> (
-     nodeBaseFilename | ".html" << html HTML { 
-	  HEAD TITLE {nodeName, headline nodeName},
-	  BODY { 
-	       -- buttonBar key, 
-	       HR{}, 
-	       documentation nodeName,
-	       HR{}, 
-	       -- buttonBar key 
-	       }
-	  }
-     << close)
------------------------------------------------------------------------------
--- check whether a string, used as a key, is actually the name of a symbol
------------------------------------------------------------------------------
-perhapsValue := key -> (
-     if class key === String and isGlobalSymbol key then (
-	  key = value ("global " | key);
-	  if (class value key === Function 
-	       or class value key === ScriptedFunctor
-	       or ancestor(class value key, Type)
-	       )
-	  then value key
-	  else key
-	  )
-     else key
-     )
------------------------------------------------------------------------------
 -- 'document' function
 -----------------------------------------------------------------------------
 document = method()
 document List := z -> (
      if #z === 0 then error "expected a nonempty list";
-     key := perhapsValue z#0;
+     key := z#0;
      verifyTag key;
      body := drop(z,1);
      skey := toExternalString key;
@@ -492,7 +466,8 @@ document List := z -> (
      checkForNodeBaseFilename key;
      if nodeName =!= key then storeDoc(toExternalString nodeName,"goto "|skey);
      storeDoc(skey,toExternalString processExamples fixup body);
-     if writingHtmlFiles() then writeHtmlPage nodeName;
+     -- we can't write the html files now, because we need to have all the documentation
+     -- in hand
      )
 
 -----------------------------------------------------------------------------
@@ -1403,18 +1378,19 @@ htmlFilename := key -> (
      ) | ".html"
 
 html TO := x -> (
-     key := perhapsValue x#0;
+     key := x#0;
      formattedKey := formatDocumentTag key;
      nodeBaseDirectory := filepath ( nodeBaseFilename, ".." );
      concatenate ( 
-     	  "<A HREF=\"", relativizeFilename(nodeBaseDirectory, htmlFilename key), "\">", 
+     	  ///<A HREF="///, relativizeFilename(nodeBaseDirectory, htmlFilename formattedKey), ///">///, 
      	  htmlExtraLiteral formattedKey,
      	  "</A>",
      	  drop(toList x,1) 
      	  )
      )
 tex  TO := x -> (
-     node := formatDocumentTag x#0;
+     key := x#0;
+     node := formatDocumentTag key;
      tex SEQ {
      	  TT formatDocumentTag x#0,
      	  " [", LITERAL { ///\ref{///, 
