@@ -16,7 +16,9 @@ document { "obsolete functions and symbols",
      MENU {
 	  TO "unlist",
 	  TO "elements",
-	  TO "syms"
+	  TO "syms",
+	  TO "expand",
+	  TO "evaluate",
 	  }
      }
 
@@ -36,4 +38,16 @@ document { quote syms,
      TT "syms",
      PARA,
      "A symbol, replaced by ", TO "generatorSymbols", "."
+     }
+
+document { quote expand,
+     TT "expand",
+     PARA,
+     "A function replaced by ", TO "value", "."
+     }
+
+document { quote evaluate,
+     TT "evaluate",
+     PARA,
+     "A function replaced by ", TO "value", "."
      }

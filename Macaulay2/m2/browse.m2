@@ -16,7 +16,7 @@ showit := (ITEMS,SAME,DEFAULT) -> (
 	  apply(#ITEMS, i -> concatenate {pad(wid,name i), ":", ITEMS#i#0}),
 	  if width stdout != 0 then width stdout - 1 else 79) << endl;
      while (
-     	  i := evaluate read concatenate("menu item [",string DEFAULT,"]: ");
+     	  i := value read concatenate("menu item [",string DEFAULT,"]: ");
      	  if i === null then i = DEFAULT;
      	  not (class i === ZZ and i >= 0 and i < # ITEMS)
 	  ) do (

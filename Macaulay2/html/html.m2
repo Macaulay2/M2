@@ -18,13 +18,13 @@ process := (key,doc) -> (
      -- stderr << key << endl;
      filename := linkFilename key;
      masterIndex#key = filename;
-     key = evaluate key;
+     key = value key;
      title := formatDocumentTag key;
      filename << html HTML { 
 	  HEAD TITLE title,
 	  BODY {
 	       H2 title,
-	       try evaluate doc else error ("evaluate ", doc),
+	       try value doc else error ("value ", doc),
 	       if key =!= topNodeName then SEQ {
 		    PARA{
 		    	 "Go to ", HREF {topFileName, topNodeAlias}, "."
@@ -67,7 +67,7 @@ masterFileName << html HTML {
 	  },
      BODY {
 	  H2 masterNodeName,
-	  MENU apply(sort pairs masterIndex, (key, fname) -> HREF {fname, formatDocumentTag key}),
+	  MENU apply(sort pairs masterIndex, (key, fname) -> HREF {fname, formatDocumentTag value key}),
      	  PARA{
 	       "Go to ", HREF {topFileName, topNodeAlias}, "."
 	       },

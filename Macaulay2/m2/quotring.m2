@@ -56,8 +56,7 @@ random QuotientRing := S -> (
      else notImplemented())
 
 expression QuotientRing := S -> (
-     if S.?symbol
-     then expression S.symbol
+     if S.?name then S.name
      else new Divide from { 
 	  expression last S.baseRings,  
 	  expression pretty S.relations 
@@ -161,10 +160,11 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else (
      S.ConvertToExpression = R.ConvertToExpression;
      S.isCommutative = R.isCommutative;
      S.baseRings = append(R.baseRings,R);
-     if R.?generatorSymbols then (
-	  S.generatorSymbols = R.generatorSymbols;
-	  scan(R.generatorSymbols, x -> (
-		    a := if class x === Symbol then string x else name x;
+     if R.?generatorSymbols then S.generatorSymbols = R.generatorSymbols;
+     if R.?generatorExpressions then (
+	  S.generatorExpressions = R.generatorExpressions;
+	  scan(R.generatorExpressions, x -> (
+		    a := name x;
 		    S#a = promote(R#a,S);
 		    ));
 	  );

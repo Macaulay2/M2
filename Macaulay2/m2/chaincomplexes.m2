@@ -134,7 +134,7 @@ ChainComplex == ChainComplex := (C,D) -> (
 ChainComplex == ZZ := (C,i) -> all(spots C, i -> C_i == 0)
 ZZ == ChainComplex := (i,C) -> all(spots C, i -> C_i == 0)
 
-net ChainComplex := C -> if C.?symbol then net expression C.symbol else (
+net ChainComplex := C -> if C.?name then C.name else (
      complete C;
      s := sort spots C;
      if # s === 0 then "0"
@@ -978,13 +978,12 @@ betti ChainComplex := C -> (
 	  maxcol := v#2;
 	  leftside := apply(
 	       splice {"total:", apply(minrow .. maxrow, i -> string i | ":")},
-	       s -> (10-# s,s));
+	       s -> (6-# s,s));
 	  v = drop(v,3);
 	  v = pack(v,maxcol-mincol+1);
 	  totals := apply(transpose v, sum);
 	  v = prepend(totals,v);
 	  v = transpose v;
-	  -- v = applyTable(v, toSequence); -- why did we have this?
 	  t := 0;
 	  while t < #v and sum v#(-t-1) === 0 do t = t + 1;
 	  v = drop(v,-t);
@@ -998,8 +997,7 @@ betti ChainComplex := C -> (
 			      ))));
 	  v = prepend(leftside,v);
 	  v = transpose v;
-	  scan(v, row -> << concatenate row << endl);
-	  )
+	  verticalJoin apply(v, concatenate))
      else (
 	  betti := BettiNumbers C;
 	  mincol = betti#"mincol";
@@ -1015,26 +1013,23 @@ betti ChainComplex := C -> (
 			 ) k 
 		    ) 
 	       );
-	  apply(splice {"total", minrow .. maxrow},
+	  verticalJoin apply(splice {"total", minrow .. maxrow},
 	       row -> (
-		    << pad(9,string row) << ":";
+		    concatenate(pad(5,string row), ":",
 		    toList apply(mincol .. maxcol,
-			 col -> << pad(
+			 col -> pad(
 			      1+colwids#(col-mincol),
 			      if not betti#?(row,col) then "." else betti#(row,col)
-			      ));
-		    << endl; 
-		    ) 
-	       ); 
-	  )
-     )
+			      )))))))
 document { quote betti,
      TT "betti C", " -- display the graded Betti numbers for a ", TO "ChainComplex", " C.",
      PARA,
-     "betti f -- display the graded Betti numbers for a ", TO "Matrix", " f,
+     NOINDENT,
+     TT "betti f", " -- display the graded Betti numbers for a ", TO "Matrix", " f,
      regarding it as a complex of length one.",
      PARA,
-     "betti G -- display the graded Betti numbers for the matrix of generators
+     NOINDENT,
+     TT "betti G", " -- display the graded Betti numbers for the matrix of generators
      of a ", TO "GroebnerBasis", " G.",
      PARA,
      "Here is a sample display:",

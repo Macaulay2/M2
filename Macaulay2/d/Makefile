@@ -74,10 +74,10 @@ endif
 	$(SCC1) $(SCCFLAGS) +gc -J. -noline $<
 %.oo  : %.d
 	$(SCC1) $(SCCFLAGS) +gc -J. $<
-	$(CC) -o $*.oo $(CPPFLAGS) $(CFLAGS) -c $*.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $*.c $(OUTPUT_OPTION)
 	rm $*.c
-%     : %.oo;	$(CC) -o $@ $< $(LDFLAGS) $(LDLIBS)
-%.o   : %.c;	$(CC) -o $@ $< -c $(CPPFLAGS) $(CFLAGS) $(WARNINGS)
+%     : %.oo;	$(CC) $< $(LDFLAGS) $(LDLIBS) $(OUTPUT_OPTION)
+%.o   : %.c;	$(CC) $< -c $(CPPFLAGS) $(CFLAGS) $(WARNINGS) $(OUTPUT_OPTION)
 ############################## flags
 
 PURIFYCMD :=
@@ -87,13 +87,25 @@ CPPFLAGS := -I$(INCDIR) -I. -DGaCo=1
 # the purpose of the -I. is so scclib.c can find ./alloca.h if it's missing
 # from the gcc installation, as it often is
 
+ifeq "$(CC)" "cl"
+WARNINGS := -W3
+else
 WARNINGS := -Wall -Wshadow -Wcast-qual
+endif
 
 # we can't do this because our manufactured c files have lots of unused labels
 # CFLAGS  += -Wall -Wshadow -Wcast-qual
 
+ifeq "$(CC)" "cl"
+CFLAGS += -Za -W0
+endif
+
 CXXFLAGS += $(WARNINGS)
-LDFLAGS  += -L${LIBDIR} $(STRIPFLAG)
+# LDFLAGS  += $(STRIPFLAG)
+
+ifneq "$(CC)" "cl"
+LDFLAGS  += -L${LIBDIR}
+endif
 
 ifeq ($(OS),Linux)
 ## - use this to get a memory map listing from the gnu linker
@@ -117,14 +129,15 @@ endif
 # libdbm2.a is our own database manager
 # libgdbm.a is the gnu database manager
 # libndbm.a is the new database manager
-LDLIBS += ../dbm/libdbm2.a
 
 # hopefully, this will prevent us from getting the buggy version of 
 # __underflow
 # LDLIBS+= -lc
 
 ifndef NOSTATIC
+ifneq "$(CC)" "cl"
 LDFLAGS += -static
+endif
 endif
 
 ifeq ($(OS),Linux)
@@ -146,11 +159,11 @@ ifeq ($(OS),MS-DOS)
 LDLIBS += -lgpp
 else
 
-# LDLIBS += -lc -lstdc++
-
+ifneq "$(CC)" "cl"
 LDLIBS += -lstdc++
+endif
 
-#	It may look strange to put -lc in here, but it's for a good reason.
+#	We used to -lc in here, but it's for a good reason.
 #	Under linux, I have a modern version 2.8.0 of libstdc++ that defines
 #	the routine _IO_init which is called by sprintf, indirectly.  My sprintf
 #	comes from the old libc, and the _IO_init is incompatible, for some reason.
@@ -163,13 +176,9 @@ endif
 # not used automatically, so put it in anyway.
 # LDLIBS += -liostream
 
-LDLIBS += -lgmp
-LDLIBS += -lgc
-LDLIBS += -lm
-
 ############################## compiling
 
-ifeq "$(OS)" "MS-DOS"
+ifeq "$(CC)" "cl"
 compat.c : ../msdos/compat.c; cp $< $@
 compat.h : ../msdos/compat.h; cp $< $@
 else
@@ -182,12 +191,18 @@ gc_cpp.o : ../../Makeconf.h
 
 allc : $(PROJECT:.d=.c) tmp_init.c
 
-ALLOBJ := $(PROJECT:.d=.oo) M2lib.o scclib.o compat.o gc_cpp.o tmp_init.o memdebug.o 
+ALLOBJ := $(PROJECT:.d=.oo) M2lib.o scclib.o gc_cpp.o tmp_init.o memdebug.o ../e/*.o
+
+ifneq "$(CC)" "cl"
+ALLOBJ += compat.o
+endif
 
 ifeq ($(OS),Linux)
+# The maintainers of linux' libstdc++ unwisely decided to incorporate
+# their own private versions of routines from libc in their library!
+# Unforgiveable!
 ALLOBJ += putc.o
-putc.o : /usr/lib/libc.a
-	ar x $^ $@
+putc.o : /usr/lib/libc.a; ar x $^ $@
 endif
 
 ################################# c file production for porting
@@ -225,7 +240,7 @@ interpret.a : $(ALLOBJ)
 	ar rcs $@ $^ tmp_init.o
 ############################## probe memory for dumpdata
 probe : probe.c
-	$(CC) -static -I$(INCDIR) -g -o probe probe.c
+	$(CC) -static -I$(INCDIR) probe.c $(OUTPUT_OPTION)
 test-probe : probe
 	nm probe |grep -v "gcc2_compiled\|gnu_compiled\0| \." >syms
 	./probe a b c d >> syms
@@ -233,34 +248,52 @@ test-probe : probe
 	rm syms
 ############################## miscellaneous
 
-ifdef MP
-LIBMP = ../../lib/libMP.a
+
+
+ifeq "$(CC)" "cl"
+LIBRARIES += ../dbm/dbm2.lib
+LIBRARIES += ../../lib/gc.lib
+LIBRARIES += ../../lib/gmp.lib
+LIBRARIES += ../../lib/libfac.lib
+LIBRARIES += ../../lib/cf.lib
 else
-LIBMP =
+LIBRARIES += ../dbm/libdbm2.a
+ifdef MP
+LIBRARIES += ../../lib/libMP.a
+endif
+LIBRARIES += ../../lib/libfac.a
+LIBRARIES += ../../lib/libcf.a
+LIBRARIES += ../../lib/libmpf.a
+LIBRARIES += ../../lib/libmpz.a
+LIBRARIES += ../../lib/libmpn.a
+LIBRARIES += ../../lib/libmpq.a
+LIBRARIES += ../../lib/libgmp.a
+LIBRARIES += ../../lib/libgc.a
 endif
 
-#../bin/Macaulay2 : $(ALLOBJ) ../e/libgb.a tmp_init.o \
+LDLIBS := $(LIBRARIES) $(LDLIBS)
 
-../bin/Macaulay2 : $(ALLOBJ) ../e/*.o tmp_init.o \
-		../../lib/libgc.a \
-		../../lib/libgmp.a \
-		$(LIBMP) \
-		../../lib/libfac.a \
-		../../lib/libcf.a \
-		../../lib/libmpf.a \
-		../../lib/libmpz.a \
-		../../lib/libmpn.a \
-		../../lib/libmpq.a
+ifeq "$(CC)" "cl"
+LINK_OUTPUT_OPTION = -link -out:$@.exe
+else
+LINK_OUTPUT_OPTION = $(OUTPUT_OPTION)
+endif
+
+ifneq "$(CC)" "cl"
+LDLIBS += -lm
+endif
+
+../bin/Macaulay2 : $(ALLOBJ) $(LIBRARIES)
 	rm -f $@
 	@ echo 'linking $@ with $(LDFLAGS) $(LDLIBS)'
-	@ time $(PURIFYCMD) $(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
+	@ time $(PURIFYCMD) $(CC) $(LDFLAGS) $(ALLOBJ) $(LDLIBS) $(LINK_OUTPUT_OPTION)
 ifndef CYGWIN32
 	$(STRIPCMD) $@
 endif
 
 t_main.o : types.h
 t : t_main.o gmp.oo stdio.oo strings.oo system.oo varstrin.oo nets.oo scclib.o C.oo t.oo
-	$(CC) -g -o $@ $(LDFLAGS) $^ $(LDLIBS)
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
 all:: TAGS
 
@@ -286,3 +319,4 @@ clean :
 		$(DTESTS:.d=) *_inits.c *.sg *.sgn \
 		$(DNAMES:.d=.c) allfiles TAGS \
 		core core.* compat.c compat.h c-files.tar tmp_init.c
+

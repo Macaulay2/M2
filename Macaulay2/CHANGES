@@ -1,5 +1,29 @@
 Changes made, most recent ones first:
 
+New in 0.8.46:
+
+Matrices whose source ring and target ring are different can now be used in
+tensor products.  Such matrices are produced by 'basis'.
+
+'peek' no longer takes a second argument.  Use 'peek2' instead.
+
+'betti' now returns a Net as its value, and does not print it
+by default.  In a program, you may print it a line like
+	<< betti C << endl;
+The reason for this change is to make it easier to send the output
+from 'betti' to a file, or to incorporate it into a larger display.
+
+'evaluate' and 'expand' have been eliminated in favor of 'value', into
+which all three functions have been merged.
+
+generatorsExpressions - a new key in monoids and polynomial rings used to
+	hold expressions for the generators used in printing the generators
+
+Unquote - new type of expression.
+
+Caching of tensor products done now.  Caching of direct sums was installed in
+an earlier version.
+
 New in 0.8.45:
 
 the default changeMatrix for forceGB is now the identity.

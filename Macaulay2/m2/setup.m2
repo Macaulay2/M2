@@ -10,13 +10,13 @@ pathSeparator = (
 	else
 	if version#OS === "Windows NT"
 	or version#OS === "MS-DOS"
-	or version#OS === "CYGWIN32-NT"
-	or version#OS === "CYGWIN32-95"
+	-- or version#OS === "CYGWIN32_NT"
+	-- or version#OS === "CYGWIN32_95"
 	then "\\"
 	else "/"
 	)
 
-dir:= lines(commandLine#0, pathSeparator)
+dir:= splice(apply(lines(commandLine#0, "/"), i -> toSequence lines(i, "\\")))
 if #dir > 2 
 then path = join({concatenate (apply(#dir-2, i -> (dir#i,pathSeparator)), "m2")}, path);
 
@@ -72,9 +72,9 @@ outputSymbols := new MutableHashTable
 Print Thing := x -> (
      o := concatenate("o",string lineNumber());
      x = applyMethod(AfterEval,x);
-     o = evaluate concatenate("quote ",o);
-     outputSymbols#o = true;
-     o <- x;
+     s := value concatenate("quote ",o);
+     outputSymbols#s = true;
+     s <- x;
      rot x;
      y := applyMethod(BeforePrint,x);
      if y =!= null then (
@@ -87,8 +87,8 @@ Print Thing := x -> (
 NoPrint Thing := x -> (
      o := concatenate("o",string lineNumber());
      x = applyMethod(AfterEval,x);
-     o = evaluate concatenate("quote ",o);
-     o <- x;
+     s := value concatenate("quote ",o);
+     s <- x;
      rot x;
      applyMethod(AfterNoPrint,x);
      )

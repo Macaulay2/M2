@@ -16,7 +16,7 @@ globalAssignFunction = (X,x) -> (
      )
 
 globalReleaseFunction = (X,x) -> (
-     if x.?symbol and X === x.symbol
+     if x.?name and X === x.name
      then (
 	  remove(x,quote name);
 	  remove(x,quote symbol);
@@ -76,7 +76,7 @@ operators#(quote " ") = ///quote " "///
 
 name Symbol := s -> (
      if operators#?s then operators#s 
-     -- else if value s =!= s then concatenate("quote ", string s)
+     else if value s =!= s then concatenate("quote ", string s)
      else string s
      )
 

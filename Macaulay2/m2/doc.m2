@@ -147,6 +147,9 @@ document { quote name,
      is applied to x in order to produce the name. Otherwise, the name
      provided is a suitable visible representation of the expression.",
      PARA,
+     "If ", TT "x", " is a symbol, then the string \"quote x\" is returned
+     unless the value of ", TT "x", " is ", TT "x", " itself.",
+     PARA,
      NOINDENT,
      TT "x.name = \"x\"", " -- sets the name of ", TT "x", " to ", TT "\"x\"", ".",
      PARA,
@@ -261,7 +264,8 @@ document { quote HashTable,
      "Examining hash tables:",
      MENU {
 	  TO "browse",
-	  TO "peek"
+	  TO "peek",
+	  TO "peek2",
 	  },
      "Types of hash tables:",
      MENU {
@@ -835,8 +839,8 @@ document { quote get,
       	  ///get "!date"///,
 	  },
      if version#"operating system" =!= "SunOS"
-     and version#"operating system" =!= "CYGWIN32-NT"
-     and version#"operating system" =!= "CYGWIN32-95"
+     and version#"operating system" =!= "CYGWIN32_NT"
+     and version#"operating system" =!= "CYGWIN32_95"
      then EXAMPLE ///get "$localhost:daytime"///,
      SEEALSO{ "File", "String", "read" }
      }
@@ -1552,15 +1556,27 @@ document { quote wait,
      }
 
 document { quote value,
-     TT "value s", " -- provides the value of the symbol ", TT "s", ".",
-     PARA,
-     "The expression ", TT "s", " is evaluated, so this is different from simply typing ", TT "s", ".",
+     TT "value s", " -- provides the value of ", TT "s", ", which may be a
+     symbol, string, or an expression.",
      PARA,
      EXAMPLE {
-	  "t = 11",
-      	  "x = quote t",
+	  "a = 11111111111",
+      	  "x = quote a",
       	  "x",
-      	  "value x"
+      	  "value x",
+	  "p = (expression 2)^3 * (expression 3)^2",
+      	  "value p"
+	  },
+     "If ", TT "s", " is a string, its contents are treated as code in the
+     Macaulay 2 language, parsed it in its own scope, and evaluated.",
+     EXAMPLE {
+	  ///value "2 + 2"///,
+      	  ///value "a := 2"///,
+	  },
+     "Since the local assignment to ", TT "a", " above occurred in a new scope,
+     the value of the global variable ", TT "a", " is unaffected.",
+     EXAMPLE {
+      	  "a"
 	  }
      }
 
@@ -2329,7 +2345,7 @@ document { "programming",
 	  (TO "clearAll", "          -- release some memory"),
 	  (TO "Command", "           -- top level commands"),
      	  (TO "erase", "             -- remove a symbol"),
-	  (TO "evaluate", "          -- evaluate a string"),
+	  (TO "value", "             -- evaluate a string, symbol, or expression"),
 	  (TO "memoize", "           -- memoizing functions"),
 	  (TO "using methods", "     -- using methods"),
 	  (TO "notImplemented", "    -- 'not implemented yet' error message"),
@@ -2397,7 +2413,7 @@ document { quote backtrace,
      steps in the computation that led to the error.",
      PARA,
      "The elements in the list are expressions that can be examined, or
-     reevaluated with ", TO "expand", ", or are references to positions in the 
+     reevaluated with ", TO "value", ", or are references to positions in the 
      source code.",
      PARA,
      "Bug: some of the expressions are reconstructed from the local variables
@@ -2433,6 +2449,7 @@ document { "debugging",
 	  (TO "methods", "          -- find methods installed for a function"),
 	  (TO "on", "               -- trace entry into a function"),
 	  (TO "peek", "             -- print contents of something"),
+	  (TO "peek2", "            -- print contents of something to a certain depth"),
 	  (TO "profile", "          -- record run times for functions"),
 	  (TO "shield", "           -- shield interpreted code from interrupts"),
 	  (TO "try", "              -- catching errors"),
@@ -3742,6 +3759,11 @@ document { quote format,
 
 
 document { quote generatorSymbols,
+     TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under
+     which is stored a list of the symbols used as generators for the monoid."
+     }
+
+document { quote generatorExpressions,
      TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under which is stored a list
      of the symbols used as generators for the monoid."
      }
@@ -4009,22 +4031,6 @@ document { quote nextkey,
      "Returns ", TT "null", " if none.",
      PARA,
      SEEALSO "Database"
-     }
-
-document { quote evaluate,
-     TT "evaluate s", " -- treating the contents of the string s as code in the
-     Macaulay 2 language, parse it in its own scope, evaluate it and return
-     the value.",
-     PARA,
-     EXAMPLE {
-	  "evaluate \"2 + 2\"",
-      	  "evaluate \"a := 2\"",
-	  },
-     "Since the local assignment to ", TT "a", " above occurred in a new scope,
-     the value of the global variable ", TT "a", " is unaffected.",
-     EXAMPLE {
-      	  "a"
-	  }
      }
 
 document { quote addStartFunction,
@@ -4642,7 +4648,7 @@ document { quote netRows,
      EXAMPLE {
 	  "R = ZZ[x,y];",
 	  "net (x+y)^3",
-	  "peek(oo,2)",
+	  "peek2(oo,2)",
 	  }
      }
 

@@ -484,12 +484,6 @@ waitf(e:Expr):Expr := (
      );
 setupfun("wait",waitf);
 
-value(e:Expr):Expr := (
-     when e
-     is q:SymbolClosure do q.frame.values.(q.symbol.frameindex)
-     else e);
-setupfun("value",value);
-
 sqrt(a:Expr):Expr := (
      when a
      is x:Real do Expr(Real(sqrt(x.v)))

@@ -592,7 +592,7 @@ static void handler2(int k)
      longjmp(jumpbuffer,2);
      }
 
-#if !defined(__MWERKS__)
+#if !defined(__MWERKS__) && !defined(__CYGWIN32__)
 static void *first_rw_page_after_etext() {
      void (*oldhandler)(int) = signal(SIGSEGV,handler);
      char *p = (char *)RUP((long)&etext);

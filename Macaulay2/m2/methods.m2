@@ -177,7 +177,7 @@ scan({
 	  height, depth, width, regularity, nullhomotopy,
 	  hilbertFunction, content,
 	  isPrime, leadTerm, leadCoefficient, leadMonomial, isField,
-	  leadComponent, expand, degreesRing, degrees, annihilator,
+	  leadComponent, degreesRing, degrees, annihilator,
 	  chainComplex, assign, numgens,
 	  autoload, ggPush, char, minprimes, relations, cone, pdim, random,
 	  frac, betti, det, ring, presentation, quote use, degreesMonoid, submatrix,
@@ -460,7 +460,11 @@ tex Boolean := tex Symbol :=
 text Symbol := text Boolean := 
 html Symbol := html Boolean := string
 
-net Symbol := s -> if operators#?s then operators#s else string s
+net Symbol := s -> (
+     if operators#?s then operators#s 
+     -- else if s =!= value s then concatenate("quote ", string s)
+     else string s
+     )
 File << Symbol := (o,s) -> o << net s	  -- replaces a method installed in setup.m2
 erase quote operators			  -- created in name.m2
 

@@ -255,8 +255,9 @@ export process():void := (
 		    )));
      when loadprint("-") is Error do exit(2) else nothing;
      );
-eval(e:Expr):Expr := (
+value(e:Expr):Expr := (
      when e
+     is q:SymbolClosure do q.frame.values.(q.symbol.frameindex)
      is s:string do (
 	  r := readeval(stringTokenFile("a string", s+newline));
 	  when r 
@@ -266,6 +267,6 @@ eval(e:Expr):Expr := (
 	       then r
 	       else errorExpr("--backtrace--"))
 	  else r)
-     else WrongArgString());
-setupfun("evaluate",eval);
+     else WrongArg(1,"a string or a symbol"));
+setupfun("value",value);
 

@@ -1,8 +1,8 @@
 /*		Copyright 1993 by Daniel R. Grayson		*/
 
 #if 1
-#define assertpos(e,f)     ((e) ? 0 : failpos(__FILE__, __LINE__,f))
-#define assert(e)          ((e) ? 0 : fail(__FILE__, __LINE__))
+#define assertpos(e,f)     ((e) ? 0 : (failpos(__FILE__, __LINE__,f),0))
+#define assert(e)          ((e) ? 0 : (fail(__FILE__, __LINE__),0))
 #else
 #define assertpos(e,f)     1
 #define assert(e)          1

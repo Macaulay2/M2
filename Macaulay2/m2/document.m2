@@ -101,7 +101,7 @@ getDocumentationTag = x -> (
 doc = x -> (
      x = getDocumentationTag x;
      if Documentation#?x and class Documentation#x === SEQ then Documentation#x
-     else if DocDatabase#?x then evaluate DocDatabase#x
+     else if DocDatabase#?x then value DocDatabase#x
      else null
      )
 
@@ -316,9 +316,9 @@ saveNameHashTable := null
 NameHashTable := () -> (
      NameHashTable = () -> saveNameHashTable;
      saveNameHashTable = (
-     	  if phase === 4 then hashTable evaluate get NameFile
+     	  if phase === 4 then hashTable value get NameFile
      	  else (
-      	       try new MutableHashTable from hashTable evaluate get NameFile
+      	       try new MutableHashTable from hashTable value get NameFile
      	       else new MutableHashTable
 	       )
 	  )
