@@ -309,7 +309,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC DUMPDATA PROFILE DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE STRIP encap LAPACK encapdir GC_FOR_NEW CPP EGREP CONFIGURED_FILES LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS MAKE NODENAME REL ARCH OS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CXX RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA AWK CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT GCC CXXFLAGS ac_ct_CXX YACC ALLOCA CPP EGREP DUMPDATA PROFILE DEBUG VERBOSE STATIC MEMDEBUG OPTIMIZE STRIP encap LAPACK encapdir GC_FOR_NEW CONFIGURED_FILES LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -2920,309 +2920,6 @@ done
 test -n "$YACC" || YACC="yacc"
 
 
-DUMPDATA=yes
-
-# Check whether --enable-dumpdata or --disable-dumpdata was given.
-if test "${enable_dumpdata+set}" = set; then
-  enableval="$enable_dumpdata"
-  DUMPDATA="$enableval"
-fi;
-case "$DUMPDATA" in
-   no) ;;
-   old) ;;
-   yes)
-cat >>confdefs.h <<\_ACEOF
-#define NEWDUMPDATA
-_ACEOF
- ;;
-   *) echo configure: error: unrecognized value --enable-dumpdata="$enableval" >&2; exit 1 ;;
-esac
-case "$DUMPDATA" in
-   yes|old)
-cat >>confdefs.h <<\_ACEOF
-#define DUMPDATA
-_ACEOF
- ;;
-esac
-
-
-# Check whether --enable-profile or --disable-profile was given.
-if test "${enable_profile+set}" = set; then
-  enableval="$enable_profile"
-  PROFILE="$enableval"
-else
-  PROFILE=no
-fi;
-
-
-# Check whether --enable-debug or --disable-debug was given.
-if test "${enable_debug+set}" = set; then
-  enableval="$enable_debug"
-  DEBUG="$enableval"
-else
-  DEBUG=no
-fi;
-
-
-# Check whether --enable-verbose or --disable-verbose was given.
-if test "${enable_verbose+set}" = set; then
-  enableval="$enable_verbose"
-  VERBOSE="$enableval"
-else
-  VERBOSE=no
-fi;
-
-
-# Check whether --enable-static or --disable-static was given.
-if test "${enable_static+set}" = set; then
-  enableval="$enable_static"
-  STATIC="$enableval"
-else
-  STATIC=no
-fi;
-
-
-# Check whether --enable-memdebug or --disable-memdebug was given.
-if test "${enable_memdebug+set}" = set; then
-  enableval="$enable_memdebug"
-  MEMDEBUG="$enableval"
-else
-  MEMDEBUG=no
-fi;
-
-
-# Check whether --enable-optimize or --disable-optimize was given.
-if test "${enable_optimize+set}" = set; then
-  enableval="$enable_optimize"
-  OPTIMIZE="$enableval"
-else
-  OPTIMIZE=yes
-fi;
-
-
-# Check whether --enable-strip or --disable-strip was given.
-if test "${enable_strip+set}" = set; then
-  enableval="$enable_strip"
-  STRIP="$enableval"
-else
-  STRIP=yes
-fi;
-
-
-# Check whether --enable-encap or --disable-encap was given.
-if test "${enable_encap+set}" = set; then
-  enableval="$enable_encap"
-  encap="$enableval"
-else
-  encap=no
-fi;
-
-
-# Check whether --enable-lapack or --disable-lapack was given.
-if test "${enable_lapack+set}" = set; then
-  enableval="$enable_lapack"
-   LAPACK="$enableval" ;
-cat >>confdefs.h <<\_ACEOF
-#define LAPACK
-_ACEOF
-
-else
-  LAPACK=no
-fi;
-
-
-
-# Check whether --with-encapdir or --without-encapdir was given.
-if test "${with_encapdir+set}" = set; then
-  withval="$with_encapdir"
-  encapdir="$withval"
-else
-  encapdir='$(prefix)/encap'
-fi;
-
-
-# Check whether --enable-gc_for_new or --disable-gc_for_new was given.
-if test "${enable_gc_for_new+set}" = set; then
-  enableval="$enable_gc_for_new"
-  GC_FOR_NEW="$enableval"
-else
-  GC_FOR_NEW=no
-fi;
-
-
-echo "$as_me:$LINENO: checking whether __finite is declared" >&5
-echo $ECHO_N "checking whether __finite is declared... $ECHO_C" >&6
-if test "${ac_cv_have_decl___finite+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <math.h>
-
-int
-main ()
-{
-#ifndef __finite
-  char *p = (char *) __finite;
-#endif
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_have_decl___finite=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_have_decl___finite=no
-fi
-rm -f conftest.$ac_objext conftest.$ac_ext
-fi
-echo "$as_me:$LINENO: result: $ac_cv_have_decl___finite" >&5
-echo "${ECHO_T}$ac_cv_have_decl___finite" >&6
-if test $ac_cv_have_decl___finite = yes; then
-  :
-else
-
-cat >>confdefs.h <<\_ACEOF
-#define __finite finite
-_ACEOF
-
-fi
-
-echo "$as_me:$LINENO: checking whether __isnan is declared" >&5
-echo $ECHO_N "checking whether __isnan is declared... $ECHO_C" >&6
-if test "${ac_cv_have_decl___isnan+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <math.h>
-
-int
-main ()
-{
-#ifndef __isnan
-  char *p = (char *) __isnan;
-#endif
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_have_decl___isnan=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_have_decl___isnan=no
-fi
-rm -f conftest.$ac_objext conftest.$ac_ext
-fi
-echo "$as_me:$LINENO: result: $ac_cv_have_decl___isnan" >&5
-echo "${ECHO_T}$ac_cv_have_decl___isnan" >&6
-if test $ac_cv_have_decl___isnan = yes; then
-  :
-else
-
-cat >>confdefs.h <<\_ACEOF
-#define __isnan isnan
-_ACEOF
-
-fi
-
-echo "$as_me:$LINENO: checking whether __isinf is declared" >&5
-echo $ECHO_N "checking whether __isinf is declared... $ECHO_C" >&6
-if test "${ac_cv_have_decl___isinf+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.$ac_ext <<_ACEOF
-#line $LINENO "configure"
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <math.h>
-
-int
-main ()
-{
-#ifndef __isinf
-  char *p = (char *) __isinf;
-#endif
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
-  (eval $ac_compile) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-         { ac_try='test -s conftest.$ac_objext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_have_decl___isinf=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_have_decl___isinf=no
-fi
-rm -f conftest.$ac_objext conftest.$ac_ext
-fi
-echo "$as_me:$LINENO: result: $ac_cv_have_decl___isinf" >&5
-echo "${ECHO_T}$ac_cv_have_decl___isinf" >&6
-if test $ac_cv_have_decl___isinf = yes; then
-  :
-else
-
-cat >>confdefs.h <<\_ACEOF
-#define __isinf isinf
-_ACEOF
-
-fi
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -3473,6 +3170,633 @@ echo "$as_me:$LINENO: result: $ac_cv_prog_egrep" >&5
 echo "${ECHO_T}$ac_cv_prog_egrep" >&6
  EGREP=$ac_cv_prog_egrep
 
+
+# The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
+# for constant arguments.  Useless!
+echo "$as_me:$LINENO: checking for working alloca.h" >&5
+echo $ECHO_N "checking for working alloca.h... $ECHO_C" >&6
+if test "${ac_cv_working_alloca_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <alloca.h>
+int
+main ()
+{
+char *p = (char *) alloca (2 * sizeof (int));
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_working_alloca_h=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_working_alloca_h=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_working_alloca_h" >&5
+echo "${ECHO_T}$ac_cv_working_alloca_h" >&6
+if test $ac_cv_working_alloca_h = yes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_ALLOCA_H 1
+_ACEOF
+
+fi
+
+echo "$as_me:$LINENO: checking for alloca" >&5
+echo $ECHO_N "checking for alloca... $ECHO_C" >&6
+if test "${ac_cv_func_alloca_works+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#ifdef __GNUC__
+# define alloca __builtin_alloca
+#else
+# ifdef _MSC_VER
+#  include <malloc.h>
+#  define alloca _alloca
+# else
+#  if HAVE_ALLOCA_H
+#   include <alloca.h>
+#  else
+#   ifdef _AIX
+ #pragma alloca
+#   else
+#    ifndef alloca /* predefined by HP cc +Olibcalls */
+char *alloca ();
+#    endif
+#   endif
+#  endif
+# endif
+#endif
+
+int
+main ()
+{
+char *p = (char *) alloca (1);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_func_alloca_works=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_func_alloca_works=no
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_func_alloca_works" >&5
+echo "${ECHO_T}$ac_cv_func_alloca_works" >&6
+
+if test $ac_cv_func_alloca_works = yes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_ALLOCA 1
+_ACEOF
+
+else
+  # The SVR3 libPW and SVR4 libucb both contain incompatible functions
+# that cause trouble.  Some versions do not even contain alloca or
+# contain a buggy version.  If you still want to use their alloca,
+# use ar to extract alloca.o from them instead of compiling alloca.c.
+
+ALLOCA=alloca.$ac_objext
+
+cat >>confdefs.h <<\_ACEOF
+#define C_ALLOCA 1
+_ACEOF
+
+
+echo "$as_me:$LINENO: checking whether \`alloca.c' needs Cray hooks" >&5
+echo $ECHO_N "checking whether \`alloca.c' needs Cray hooks... $ECHO_C" >&6
+if test "${ac_cv_os_cray+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#if defined(CRAY) && ! defined(CRAY2)
+webecray
+#else
+wenotbecray
+#endif
+
+_ACEOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  $EGREP "webecray" >/dev/null 2>&1; then
+  ac_cv_os_cray=yes
+else
+  ac_cv_os_cray=no
+fi
+rm -f conftest*
+
+fi
+echo "$as_me:$LINENO: result: $ac_cv_os_cray" >&5
+echo "${ECHO_T}$ac_cv_os_cray" >&6
+if test $ac_cv_os_cray = yes; then
+  for ac_func in _getb67 GETB67 getb67; do
+    as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
+echo "$as_me:$LINENO: checking for $ac_func" >&5
+echo $ECHO_N "checking for $ac_func... $ECHO_C" >&6
+if eval "test \"\${$as_ac_var+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char $ac_func ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_$ac_func) || defined (__stub___$ac_func)
+choke me
+#else
+char (*f) () = $ac_func;
+#endif
+#ifdef __cplusplus
+}
+#endif
+
+int
+main ()
+{
+return f != $ac_func;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  eval "$as_ac_var=yes"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+eval "$as_ac_var=no"
+fi
+rm -f conftest.$ac_objext conftest$ac_exeext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_var'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_var'}'`" >&6
+if test `eval echo '${'$as_ac_var'}'` = yes; then
+
+cat >>confdefs.h <<_ACEOF
+#define CRAY_STACKSEG_END $ac_func
+_ACEOF
+
+    break
+fi
+
+  done
+fi
+
+echo "$as_me:$LINENO: checking stack direction for C alloca" >&5
+echo $ECHO_N "checking stack direction for C alloca... $ECHO_C" >&6
+if test "${ac_cv_c_stack_direction+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test "$cross_compiling" = yes; then
+  ac_cv_c_stack_direction=0
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+int
+find_stack_direction ()
+{
+  static char *addr = 0;
+  auto char dummy;
+  if (addr == 0)
+    {
+      addr = &dummy;
+      return find_stack_direction ();
+    }
+  else
+    return (&dummy > addr) ? 1 : -1;
+}
+
+int
+main ()
+{
+  exit (find_stack_direction () < 0);
+}
+_ACEOF
+rm -f conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_c_stack_direction=1
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+ac_cv_c_stack_direction=-1
+fi
+rm -f core core.* *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+fi
+echo "$as_me:$LINENO: result: $ac_cv_c_stack_direction" >&5
+echo "${ECHO_T}$ac_cv_c_stack_direction" >&6
+
+cat >>confdefs.h <<_ACEOF
+#define STACK_DIRECTION $ac_cv_c_stack_direction
+_ACEOF
+
+
+fi
+
+
+DUMPDATA=yes
+
+# Check whether --enable-dumpdata or --disable-dumpdata was given.
+if test "${enable_dumpdata+set}" = set; then
+  enableval="$enable_dumpdata"
+  DUMPDATA="$enableval"
+fi;
+case "$DUMPDATA" in
+   no) ;;
+   old) ;;
+   yes)
+cat >>confdefs.h <<\_ACEOF
+#define NEWDUMPDATA
+_ACEOF
+ ;;
+   *) echo configure: error: unrecognized value --enable-dumpdata="$enableval" >&2; exit 1 ;;
+esac
+case "$DUMPDATA" in
+   yes|old)
+cat >>confdefs.h <<\_ACEOF
+#define DUMPDATA
+_ACEOF
+ ;;
+esac
+
+
+# Check whether --enable-profile or --disable-profile was given.
+if test "${enable_profile+set}" = set; then
+  enableval="$enable_profile"
+  PROFILE="$enableval"
+else
+  PROFILE=no
+fi;
+
+
+# Check whether --enable-debug or --disable-debug was given.
+if test "${enable_debug+set}" = set; then
+  enableval="$enable_debug"
+  DEBUG="$enableval"
+else
+  DEBUG=no
+fi;
+
+
+# Check whether --enable-verbose or --disable-verbose was given.
+if test "${enable_verbose+set}" = set; then
+  enableval="$enable_verbose"
+  VERBOSE="$enableval"
+else
+  VERBOSE=no
+fi;
+
+
+# Check whether --enable-static or --disable-static was given.
+if test "${enable_static+set}" = set; then
+  enableval="$enable_static"
+  STATIC="$enableval"
+else
+  STATIC=no
+fi;
+
+
+# Check whether --enable-memdebug or --disable-memdebug was given.
+if test "${enable_memdebug+set}" = set; then
+  enableval="$enable_memdebug"
+  MEMDEBUG="$enableval"
+else
+  MEMDEBUG=no
+fi;
+
+
+# Check whether --enable-optimize or --disable-optimize was given.
+if test "${enable_optimize+set}" = set; then
+  enableval="$enable_optimize"
+  OPTIMIZE="$enableval"
+else
+  OPTIMIZE=yes
+fi;
+
+
+# Check whether --enable-strip or --disable-strip was given.
+if test "${enable_strip+set}" = set; then
+  enableval="$enable_strip"
+  STRIP="$enableval"
+else
+  STRIP=yes
+fi;
+
+
+# Check whether --enable-encap or --disable-encap was given.
+if test "${enable_encap+set}" = set; then
+  enableval="$enable_encap"
+  encap="$enableval"
+else
+  encap=no
+fi;
+
+
+# Check whether --enable-lapack or --disable-lapack was given.
+if test "${enable_lapack+set}" = set; then
+  enableval="$enable_lapack"
+   LAPACK="$enableval" ;
+cat >>confdefs.h <<\_ACEOF
+#define LAPACK
+_ACEOF
+
+else
+  LAPACK=no
+fi;
+
+
+
+# Check whether --with-encapdir or --without-encapdir was given.
+if test "${with_encapdir+set}" = set; then
+  withval="$with_encapdir"
+  encapdir="$withval"
+else
+  encapdir='$(prefix)/encap'
+fi;
+
+
+# Check whether --enable-gc_for_new or --disable-gc_for_new was given.
+if test "${enable_gc_for_new+set}" = set; then
+  enableval="$enable_gc_for_new"
+  GC_FOR_NEW="$enableval"
+else
+  GC_FOR_NEW=no
+fi;
+
+echo "$as_me:$LINENO: checking whether __finite is declared" >&5
+echo $ECHO_N "checking whether __finite is declared... $ECHO_C" >&6
+if test "${ac_cv_have_decl___finite+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <math.h>
+
+int
+main ()
+{
+#ifndef __finite
+  char *p = (char *) __finite;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_have_decl___finite=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_have_decl___finite=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_have_decl___finite" >&5
+echo "${ECHO_T}$ac_cv_have_decl___finite" >&6
+if test $ac_cv_have_decl___finite = yes; then
+  :
+else
+
+cat >>confdefs.h <<\_ACEOF
+#define __finite finite
+_ACEOF
+
+fi
+
+echo "$as_me:$LINENO: checking whether __isnan is declared" >&5
+echo $ECHO_N "checking whether __isnan is declared... $ECHO_C" >&6
+if test "${ac_cv_have_decl___isnan+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <math.h>
+
+int
+main ()
+{
+#ifndef __isnan
+  char *p = (char *) __isnan;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_have_decl___isnan=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_have_decl___isnan=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_have_decl___isnan" >&5
+echo "${ECHO_T}$ac_cv_have_decl___isnan" >&6
+if test $ac_cv_have_decl___isnan = yes; then
+  :
+else
+
+cat >>confdefs.h <<\_ACEOF
+#define __isnan isnan
+_ACEOF
+
+fi
+
+echo "$as_me:$LINENO: checking whether __isinf is declared" >&5
+echo $ECHO_N "checking whether __isinf is declared... $ECHO_C" >&6
+if test "${ac_cv_have_decl___isinf+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+#line $LINENO "configure"
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <math.h>
+
+int
+main ()
+{
+#ifndef __isinf
+  char *p = (char *) __isinf;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+         { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_have_decl___isinf=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_have_decl___isinf=no
+fi
+rm -f conftest.$ac_objext conftest.$ac_ext
+fi
+echo "$as_me:$LINENO: result: $ac_cv_have_decl___isinf" >&5
+echo "${ECHO_T}$ac_cv_have_decl___isinf" >&6
+if test $ac_cv_have_decl___isinf = yes; then
+  :
+else
+
+cat >>confdefs.h <<\_ACEOF
+#define __isinf isinf
+_ACEOF
+
+fi
 
 echo "$as_me:$LINENO: checking for ANSI C header files" >&5
 echo $ECHO_N "checking for ANSI C header files... $ECHO_C" >&6
@@ -5452,6 +5776,9 @@ s,@GCC@,$GCC,;t t
 s,@CXXFLAGS@,$CXXFLAGS,;t t
 s,@ac_ct_CXX@,$ac_ct_CXX,;t t
 s,@YACC@,$YACC,;t t
+s,@ALLOCA@,$ALLOCA,;t t
+s,@CPP@,$CPP,;t t
+s,@EGREP@,$EGREP,;t t
 s,@DUMPDATA@,$DUMPDATA,;t t
 s,@PROFILE@,$PROFILE,;t t
 s,@DEBUG@,$DEBUG,;t t
@@ -5464,8 +5791,6 @@ s,@encap@,$encap,;t t
 s,@LAPACK@,$LAPACK,;t t
 s,@encapdir@,$encapdir,;t t
 s,@GC_FOR_NEW@,$GC_FOR_NEW,;t t
-s,@CPP@,$CPP,;t t
-s,@EGREP@,$EGREP,;t t
 s,@CONFIGURED_FILES@,$CONFIGURED_FILES,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t

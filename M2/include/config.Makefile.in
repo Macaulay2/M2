@@ -87,7 +87,6 @@ packagehtmlRelDir = $(packagedocRelDir)/html
 packageexamplesRelDir = $(packagedocRelDir)/examples
 libm2RelDir = $(libRelDir)/Macaulay2/$(PACKAGE_VERSION)
 cacheRelDir = $(libm2RelDir)/cache
-libexecRelDir = $(libm2RelDir)/libexec
 datam2RelDir = $(dataRelDir)/Macaulay2
 shareRelDir = $(datam2RelDir)/$(PACKAGE_VERSION)
 m2RelDir = $(shareRelDir)/m2
@@ -109,7 +108,6 @@ packagesdir = $(prefix)/$(packagesRelDir)
 docpackagesdir = $(prefix)/$(docpackagesRelDir)
 libm2dir = $(prefix)/$(libm2RelDir)
 cachedir = $(prefix)/$(cacheRelDir)
-libexecdir = $(prefix)/$(libexecRelDir)
 datam2dir = $(prefix)/$(datam2RelDir)
 sharedir = $(prefix)/$(shareRelDir)
 m2dir = $(prefix)/$(m2RelDir)
@@ -140,7 +138,6 @@ LAYOUT += "packages" => "$(packagesRelDir)/",
 LAYOUT += "docpackages"=>"$(docpackagesRelDir)/",
 LAYOUT += "libm2"=>"$(libm2RelDir)/",
 LAYOUT += "cache"=>"$(cacheRelDir)/",
-LAYOUT += "libexec"=>"$(libexecRelDir)/",
 LAYOUT += "datam2"=>"$(datam2RelDir)/",
 LAYOUT += "share"=>"$(shareRelDir)/",
 LAYOUT += "m2"=>"$(m2RelDir)/",
@@ -235,7 +232,7 @@ ifeq "$(MEMDEBUG)" "yes"
 DEBUGFLAGS += -DMEM_DEBUG
 endif
 
-DUMPDATAFILE := libexec/Macaulay2-$(ARCH)-data
+DUMPDATAFILE := cache/Macaulay2-$(ARCH)-data
 
 ifneq "$(prefix)" "/usr"
 ifneq "$(prefix)" "/usr/local"
