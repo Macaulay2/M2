@@ -32,6 +32,9 @@ you can compile and link Macaulay 2.  We always compile with gcc.
 	     http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/src/
     license: GPL
       notes: ./configure --disable-streamio
+	     make
+	     make install
+		-- don't bother with 'make gftables'
 
     library: Singular-libfac
     release: libfac-0.3.2, tar file date 2001/06/28
