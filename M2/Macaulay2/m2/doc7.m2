@@ -537,12 +537,15 @@ document {
      }
 document {
      Key => (map,Module,Module,Function),
-     OldSynopsis => {
-	  "h = map(M,N,f)",
-	  "M" => {},
-	  "N" => {},
-	  "f" => {},
-	  "h" => {"a map from the module ", TT "N", " to the module ", TT "M", " 
+     Headline => "create a matrix by specifying each entry",
+     Usage => "map(M,N,f)",
+     Inputs => {
+	  "M" => null,
+	  "N" => null,
+	  "f" => null
+	  },
+     Outputs => {
+	  {"a map from the module ", TT "N", " to the module ", TT "M", " 
 	       whose matrix entry ", TT "h_(i,j)", " is obtained from the
 	       function ", TT "f", " by evaluating ", TT "f(i,j)", "."
 	       }
@@ -554,6 +557,7 @@ document {
      "We specified the degrees of the source basis elements explicitly
      to ensure the matrix would be homogeneous.",
      EXAMPLE "isHomogeneous f",
+     SUBSECTION "Alternate approaches",
      "We could have let Macaulay2 take care of that for us, by replacing
      the source module by its desired rank.",
      EXAMPLE {
@@ -584,9 +588,40 @@ document {
      }
 document {
      Key => (map,Matrix),
-     TT "map(f, Degree => d)", " -- make a map of degree d from a map f
-     of modules by tensoring the source module with a free module of
-     rank 1 and appropriate degree."
+     Headline => "make a matrix with a different degree",
+     Usage => "map(f, Degree => d)",
+     Inputs => {
+	  "f" => null
+	  },
+     Outputs => {
+	  {"a map identical to f, except that it has degree d, and the source
+	       module has been tensored by a graded free module of rank 1 of 
+	       the appropriate degree."},
+	  },
+      "This routine is often used to take a matrix which has a non-zero degree, 
+      and make the degree zero.",
+      PARA,
+      "For example, multiplication of a matrix by a scalar increases the 
+      degree, leaving the source and target fixed:",
+      EXAMPLE {
+	   "R = QQ[a,b];",
+	   "f1 = matrix{{a,b}}",
+	   "f = a * f1",
+	   "degree f",
+	   "source f == source f1",
+	   },
+      "One solution is to change the degree:",
+      EXAMPLE {
+	   "g = map(f, Degree => 0)",
+	   "degree g",
+	   "source g == (source f) ** R^{-1}"
+	   },
+      "An alternate solution would be to use tensor product with the scalar.",
+      EXAMPLE {
+     	  "g2 = a ** matrix{{a,b}}",
+	  "degree g2",
+	  "isHomogeneous g2"
+	  }
      }
 document {
      Key => (matrix,Matrix),
@@ -692,28 +727,7 @@ document {
      Otherwise, ", TT "M", " and ", TT "N", " should be equal, or 
      at least have the same number of generators.",
      PARA,
-     EXAMPLE {
-	  "R = QQ[x,y];",
-	  "M = image vars R",
-	  "N = coker presentation M",
-	  "f = map(M,N,1)",
-	  "isWellDefined f",
-	  "isIsomorphism f",
-	  "g = map(M,cover M,1)",
-	  "isWellDefined g",
-	  "isIsomorphism g",
-	  "h = map(cover M,M,1)",
-	  "isWellDefined h",
-	  },
-     PARA,
      SeeAlso => {(map,Module,Module,RingElement), "map", "matrix"}
-     }
-document {
-     Key => (map,Module),
-     TT "map M", " -- construct the identity map from M to itself.",
-     PARA,
-     "This can also be accomplished with ", TT "id_M", " or ", TT "map(M,1)", ".",
-     SeeAlso => {"map", "id"}
      }
 document {
      Key => (map,Module,RingElement),
@@ -822,16 +836,28 @@ document {
      TT "id_M", " -- the identity homomorphism from ", TT "M", " to ", TT "M", "."
      }
 document {
-     Key => reshape,
+     Key => (reshape,Module,Module,Matrix),
      Headline => "reshape a matrix",
-     TT "reshape(F,G,m)", " -- reshapes the matrix ", TT "m", " to give
-     a map from ", TT "G", " to ", TT "F", ".",
-     PARA,
-     "It yields the matrix obtained from ", TT "m", " of shape F <--- G, by
-     taking elements from the first row of ", TT "m", ", then the second, and
-     so on, filling them into the result row by row.  Currently, it is assumed
-     that ", TT "m", " and the result both have the same number of entries.
-     The resulting map is always of degree zero."
+     Usage => "reshape(F,G,f)",
+     Inputs => {
+	  "F" => "a free module",
+	  "G" => "a free module",
+	  "f" => null
+	  },
+     Outputs => {
+	  { " ", TT "F <-- G", " obtained from f by 
+     	       taking elements from the first column of ", TT "f", ", 
+	       then the second, and
+     	       so on, filling them into the result column by column."
+	       }
+	  },
+     "Currently, it is assumed
+     that ", TT "f", " and the result both have the same 
+     number of entries.  The resulting map is always of degree zero.",
+     EXAMPLE {
+	  "f = matrix{{1,3,5,7,9,11},{2,4,6,8,10,12}}",
+	  "reshape(ZZ^3,ZZ^4,f)"
+	  }
      }
 TEST "
 R=ZZ/101[a..d]
@@ -841,20 +867,69 @@ g = reshape(R^1, R^{-1}, f)
 assert isHomogeneous g
 "
 document {
-     Key => adjoint1,
-     Headline => "the adjoint map",
-     TT "adjoint1 (f,G,H)", " -- if f is a homomorphism of free modules of the
-     form F -> G ** H, then produce the adjoint homomorphism of the
-     form F ** (dual G) -> H.",
-     SeeAlso => "adjoint"
+     Key => (adjoint1,Matrix,Module,Module),
+     Headline => "an adjoint map",
+     Usage => "adjoint1(f,G,H)",
+     Inputs => {
+	  "f" => {"a homomorphism ", TT "F --> G ** H", " between free modules"},
+	  "G" => "a free module",
+	  "H" => "a free module"
+	  },
+     Outputs => {
+	  {"the adjoint homomorphism ", TT "F ** (dual G) --> H"}
+	  },
+     "All modules should be free modules over the same base ring, and the rank of the
+     target of ", TT "f", " should be the product of the ranks of ", TT "G", " and ", 
+     TT "H", ".  Recall that ", 
+     TT "**", " refers to the tensor product of modules, and that ", TT "dual G", " is 
+     a free module with the same rank as ", TT "G", ".",
+     PARA,
+     "No computation is required.  The resulting matrix has the same entries as ", 
+     TT "f", ", but in a different layout.",
+     PARA,
+     "If ", TT "f", " is homogeneous, and ", TT "target f == G ** H", ",including 
+     the grading, then the resulting matrix will be homogeneous.",
+     PARA,
+     EXAMPLE {
+	  "R = QQ[x_1 .. x_12];",
+	  "f = genericMatrix(R,6,2)",
+	  "g = adjoint1(f,R^2,R^3)",
+	  "isHomogeneous g"
+	  },
+     SeeAlso => {adjoint, flip, reshape, (symbol**,Module,Module), dual}
      }
 document {
-     Key => adjoint,
-     Headline => "the adjoint map",
-     TT "adjoint (f,F,G)", " -- if f is a homomorphism of free modules of the
-     form F ** G -> H, then produce the adjoint homomorphism of the
-     form F -> (dual G) ** H.",
-     SeeAlso => "adjoint1"
+     Key => (adjoint,Matrix,Module,Module),
+     Headline => "an adjoint map",
+     Usage => "adjoint(f,G,H)",
+     Inputs => {
+	  "f" => {"a homomorphism ", TT "F ** G --> H", " between free modules"},
+	  "F" => "a free module",
+	  "G" => "a free module"
+	  },
+     Outputs => {
+	  {"the adjoint homomorphism ", TT "F --> (dual G) ** H"}
+	  },
+     "All modules should be free modules over the same base ring, and the rank of the
+     source of ", TT "f", " should be the product of the ranks of ", TT "F", " and ", 
+     TT "G", ".  Recall that ", 
+     TT "**", " refers to the tensor product of modules, and that ", TT "dual G", " is 
+     a free module with the same rank as ", TT "G", ".",
+     PARA,
+     "No computation is required.  The resulting matrix has the same entries as ", 
+     TT "f", ", but in a different layout.",
+     PARA,
+     "If ", TT "f", " is homogeneous, and ", TT "source f == F ** G", 
+     ", including the grading, then 
+     the resulting matrix will be homogeneous.",
+     PARA,
+     EXAMPLE {
+	  "R = QQ[x_1 .. x_12];",
+	  "f = genericMatrix(R,2,6)",
+	  "g = adjoint(f,R^2,R^{-1,-1,-1})",
+	  "isHomogeneous g"
+	  },
+     SeeAlso => {adjoint1, flip, reshape, (symbol**,Module,Module), dual}
      }
 document {
      Key => (flip,Module,Module),
@@ -1591,7 +1666,7 @@ document {
 	  },
      Outputs => {
 	  {"An ", TT "m", " by ", TT "n", " matrix of indeterminates drawn from the ring ", 
-	       TT "R", ", starting with the first one."}
+	       TT "R", ", starting with the first indeterminate."}
 	  },
      EXAMPLE {
 	  "R = ZZ[a..f];",
@@ -1632,7 +1707,7 @@ document {
      Outputs => {
 	  {"An ", TT "n", " by ", TT "n", " skew symmetric
             matrix whose entries above the diagonal are the indeterminates of ", TT "R", ", 
-	    starting with the first one."}
+	    starting with the first indeterminate."}
 	  },
      EXAMPLE {
 	  "R = ZZ[a..f];",
@@ -1653,7 +1728,7 @@ document {
      Outputs => {
 	  {"An ", TT "n", " by ", TT "n", " symmetric 
 	       matrix whose entries on and above the diagonal
-	       are drawn from the ring ", 
+	       are indeterminates drawn from the ring ", 
 	       TT "R", ", starting with ", TT "x", "."}
 	  },
      EXAMPLE {
@@ -1674,12 +1749,12 @@ document {
      Outputs => {
 	  {"An ", TT "n", " by ", TT "n", " symmetric matrix whose entries
 	       on and above the diagonal
-	       are drawn from the ring ", 
-	       TT "R", ", starting with the first one."}
+	       are the indeterminates drawn from the ring ", 
+	       TT "R", ", starting with the first indeterminate."}
 	  },
      EXAMPLE {
 	  "R = ZZ[a..j];",
-      	  "genericSkewMatrix(R,4)"
+      	  "genericSymmetricMatrix(R,4)"
 	  },
      SeeAlso => {genericMatrix, genericSkewMatrix}
      }

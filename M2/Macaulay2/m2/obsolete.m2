@@ -18,6 +18,24 @@ stats = X -> error "'stats' has been replaced by 'summary'"
 monomialCurve = X -> error "'monomialCurve' has been replaced by 'monomialCurveIdeal'"
 assign = X -> error "assign' has been replaced by <-'"
 
+undocumented(map,Module)
+map(Module) := Matrix => options -> (M) -> (
+     stderr << "warning: map applied to a Module M has been deprecated.  Use 'map(M,1)' instead" << endl;
+     R := ring M;
+     if options.Degree =!= null then error "Degree option encountered with identity matrix";
+     map(M, M, reduce(M, rawIdentity(M.RawFreeModule,false,0))))
+
+undocumented(map,Ideal)
+undocumented(map,Ideal,Ideal)
+map(Ideal) := Matrix => options -> (I) -> (
+     stderr << "warning: map(Ideal) has been deprecated: use 'map(module I, 1)' instead" << endl;
+     map(module I,options)
+     )
+map(Ideal,Ideal) := Matrix => options -> (I,J) -> (
+  stderr << "warning: map(Ideal,Ideal) has been deprecated: use 'map(module I,module J)' instead" << endl;
+  map(module I,module J,options)
+  )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
