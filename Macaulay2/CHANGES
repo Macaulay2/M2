@@ -3,8 +3,14 @@ Changes made, most recent ones first:
 -----------------------------------------------------------------------------
 New in 0.8.61:
 
-The 'dual' of a chain complex C now inserts the right sign in the
-differential maps.  Same for Hom(C,M).
+Division and remainder (/ and %) in polynomial rings with one variable where
+the variable has an inverse (such as R = QQ[t,Inverses=>true]) have been
+repaired so they work as they ought to in this Euclidean domain.  Similarly
+for R = ZZ[t,Inverses=>true] when the denominator is monic.
+
+The 'transpose' or  'dual' of a chain complex C now inserts the right sign 
+in the differential maps.  Same for Hom(C,M).  Same for 'Hom(f,M)' and 
+'dual f' where f : C --> D is a map of chain complexes.
 
 The operation of 'path' with 'load' has changed slightly -- no matter what
 the path is, we first look in the directory containing the file in which the
