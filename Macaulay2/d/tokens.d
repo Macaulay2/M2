@@ -417,7 +417,7 @@ export dummySymbol := Symbol(
      dummyWord,nextHash(),dummyPosition,
      dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
-     false,						    -- not protectes, so we can use it in parallelAssignmentFun
+     false,						    -- not protected, so we can use it in parallelAssignmentFun
      true,false
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
