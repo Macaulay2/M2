@@ -144,6 +144,18 @@ it with the point and the mark."
      (set-mark (match-beginning 0)))))
 (global-set-key [ f10 ] 'M2-match-next-bracketed-input)
 
+(defun M2-match-previous-bracketed-input()
+  "Move backward to the previous region bracketed by <<< and >>>, marking
+it with the point and the mark."
+  (interactive)
+  (goto-char
+   (progn
+     (re-search-backward ">>>")
+     (set-mark (match-beginning 0))
+     (re-search-backward "<<<")
+     (match-end 0))))
+(global-set-key [ M-f10 ] 'M2-match-previous-bracketed-input)
+
 (defun M2-send-to-program() 
      "Send the current line except for a possible prompt, or the region,
      if the mark is active, to Macaulay 2 in its buffer, making its

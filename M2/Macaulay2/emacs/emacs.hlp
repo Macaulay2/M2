@@ -118,7 +118,8 @@ put the line
 	(setq transient-mark-mode t)
 into your .emacs init file.  Then pressing F11 will send 1*2*3*4 to Macaulay 2
 for execution: try it now.  A sequence of such Macaulay 2 commands can be
-executed by alternately pressing F10 and F11.
+executed by alternately pressing F10 and F11.  You may also use M-F10 to move
+backward to the previous bracketed expression.
 
 Now let's see how we can handle wide and tall Macaulay 2 output.  Execute the
 following line of code (with the F11 key as above.)
