@@ -182,6 +182,7 @@ addStartFunction( () -> if prefixDirectory =!= null then Macaulay2#"package pref
 saveCurrentPackage := currentPackage
 
 newPackage("Macaulay2", 
+     Author => "Daniel R. Grayson and Michael E. Stillman",
      DebuggingMode => debuggingMode, 
      Version => version#"VERSION", 
      Headline => "A computer algebra system designed to support algebraic geometry")
