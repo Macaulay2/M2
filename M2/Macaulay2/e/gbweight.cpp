@@ -47,11 +47,13 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
   EXP_ = newarray(int, nvars_);
 }
 
-int GBWeight::exponents_weight(const int *e) const
+int GBWeight::exponents_weight(const int *e, int comp) const
 {
   int sum = 0;
   for (int i=0; i<nvars_; i++)
     sum += e[i] * wts_->array[i];
+  if (use_component_degrees_ && comp > 0)
+    sum += F_->primary_degree(comp-1);
   return sum;
 }
 
@@ -59,11 +61,7 @@ int GBWeight::gbvector_term_weight(const gbvector *f) const
 {
   if (f == 0) return 0;
   R_->gbvector_get_lead_exponents(F_,f,EXP_);
-  int fdeg = 0;
-  if (use_component_degrees_ && f->comp > 0)
-    fdeg = F_->primary_degree(f->comp-1);
-  fdeg += exponents_weight(EXP_);
-  return fdeg;
+  return exponents_weight(EXP_,f->comp);
 }
 
 int GBWeight::gbvector_weight(const gbvector *f) const
@@ -74,11 +72,7 @@ int GBWeight::gbvector_weight(const gbvector *f) const
   if (f == 0) return 0;
   for (const gbvector *t=f; t != 0; t = t->next)
     {
-      R_->gbvector_get_lead_exponents(F_,t,EXP_);
-      int tdeg = 0;
-      if (use_component_degrees_ && t->comp > 0)
-	tdeg = F_->primary_degree(t->comp-1);
-      tdeg += exponents_weight(EXP_);
+      int tdeg = gbvector_term_weight(t);
       if (first_term)
 	{
 	  deg = tdeg;
@@ -93,11 +87,7 @@ int GBWeight::gbvector_weight(const gbvector *f) const
 int GBWeight::monomial_weight(const int *monom, int comp) const
 {
   R_->get_flattened_monoid()->to_expvector(monom, EXP_);
-  int fdeg = 0;
-  if (use_component_degrees_ && comp >= 0)
-    fdeg = F_->primary_degree(comp);
-  fdeg += exponents_weight(EXP_);
-  return fdeg;
+  return exponents_weight(EXP_, comp);
 }
 
 // Local Variables:

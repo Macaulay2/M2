@@ -191,7 +191,7 @@ s_pair *GB_comp::new_ring_pair(gb_elem *p, const int *lcm)
   s_pair *result = new s_pair;
   result->next = NULL;
   result->syz_type = SPAIR_RING;
-  result->degree = weightInfo_->monomial_weight(lcm, p->f->comp-1); //_M->primary_degree(lcm) + _F->primary_degree(p->f->comp-1);
+  result->degree = weightInfo_->monomial_weight(lcm, p->f->comp); //_M->primary_degree(lcm) + _F->primary_degree(p->f->comp-1);
   result->compare_num = 0;
   result->first = p;
   result->second = NULL;
@@ -208,7 +208,7 @@ s_pair *GB_comp::new_s_pair(gb_elem *p, gb_elem *q, const int *lcm)
   s_pair *result = new s_pair;
   result->next = NULL;
   result->syz_type = SPAIR_PAIR;
-  result->degree = weightInfo_->monomial_weight(lcm, p->f->comp-1); //_M->primary_degree(lcm) + _F->primary_degree(p->f->comp-1);
+  result->degree = weightInfo_->monomial_weight(lcm, p->f->comp); //_M->primary_degree(lcm) + _F->primary_degree(p->f->comp-1);
   result->compare_num = 0;
   result->first = p;
   result->second = q;

@@ -8,6 +8,11 @@ DEPENDS = yes
 	@ echo " ** compiling $<"
 	@ $(COMPILE.cc) $(OUTPUT_OPTION) $<
 
+ntl_interface.o : ntl_interface.cpp
+	@ echo '$(COMPILE.cc) $(OUTPUT_OPTION) $<' >> LOGFILE
+	@ echo " ** compiling $<"
+	@ $(COMPILE.cc) $(OUTPUT_OPTION) $< -Wno-old-style-cast
+
 %.o : %.c
 	@ echo '$(COMPILE.c) $(OUTPUT_OPTION) $<' >> LOGFILE
 	@ echo " ** compiling $<"
@@ -22,6 +27,7 @@ DEPENDS = yes
 	@ echo "$(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
 	@ echo " ** creating $@ from $<"
 	@ $(CC)  -MM $(CPPFLAGS) $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+
 
 CPPFLAGS += -I../../include
 CPPFLAGS += -I../util
@@ -41,6 +47,7 @@ PRE.cc   = $(COMPILE.cc) -E
 ##################
 
 INTERFACE = \
+	ntl_interface \
 	gbweight \
 	qring \
 	polyQQ \
