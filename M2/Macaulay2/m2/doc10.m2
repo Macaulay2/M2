@@ -137,7 +137,7 @@ document { (resolution,Strategy),
 
 document { SortStrategy,
      Headline => "specify a strategy for sorting S-pairs",
-     TT "SortStrategy", " -- an keyword for an optional argument which 
+     TT "SortStrategy", " -- a keyword for an optional argument which 
      specifies the strategy to be used for sorting S-pairs."
      }
 
