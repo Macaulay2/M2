@@ -587,23 +587,24 @@ const Matrix * rawMatrixCompress(const Matrix *M)
   //return M->compress();
 }
 
-#if 0
+#include "Eschreyer.hpp"
 
-// Code for doing ESchreyer
+Matrix * IM2_kernel_of_GB(const Matrix *m)
+  /* Assuming that the columns of G form a GB, this computes
+     a Groebner basis of the kernel of these elements, using an appropriate Schreyer order on the
+     source of G. */
+{
   GBMatrix *n = new GBMatrix(m);
   GBKernelComputation G(n);
   G.calc();
   GBMatrix *syz = G.get_syzygies();
   return syz->to_matrix();
-
-#endif
+}
 
 const Matrix * rawRemoveMonomialFactors(const Matrix *m, M2_bool make_squarefree_only)
 {
   return m->remove_monomial_factors(make_squarefree_only);
 }
-
-#include "Eschreyer.hpp"
 
 const Matrix * rawRemoveScalarMultiples(const Matrix *m)
 {
