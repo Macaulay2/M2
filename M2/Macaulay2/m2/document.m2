@@ -528,7 +528,7 @@ getExampleInputs MarkUpList   := t -> join apply(toSequence t, getExampleInputs)
 examples = x -> getExampleInputs documentation x
 printExamples = f -> scan(examples f, i -> << i << endl)
 topics = Command (() -> pager columnate(if printWidth != 0 then printWidth else 80, format \ topicList()))
-apropos = (pattern) -> sort select(flatten \\ keys \ globalDictionaries, i -> match(toString pattern,i))
+apropos = (pattern) -> sort unique (toString \ getGlobalSymbol \ select(flatten \\ keys \ globalDictionaries, i -> match(toString pattern,i)))
 -----------------------------------------------------------------------------
 headline = method(SingleArgumentDispatch => true)
 headline Thing := key -> getOption(key,Headline)	    -- old method

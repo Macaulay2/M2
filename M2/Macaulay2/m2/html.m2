@@ -87,7 +87,7 @@ links := tag -> (
      f := FORWARD tag;
      b := BACKWARD tag;
      SEQ {
-	  LINK { htmlDirectory|topFileName,   " rel=\"Top\"", linkTitleTag topDocumentTag},
+	  if topDocumentTag =!= null then LINK { htmlDirectory|topFileName,   " rel=\"Top\"", linkTitleTag topDocumentTag},
 	  LINK { htmlDirectory|indexFileName, " rel=\"Index\""},
 	  LINK { htmlDirectory|tocFileName,   " rel=\"Table-of-Contents\""},
 	  LINK { Macaulay2HomePage (), " rel=\"Macaulay-2-Home-Page\""},
@@ -728,7 +728,7 @@ makePackageIndex String := prefixDirectory -> (
      r = select(r, fn -> fn != "." and fn != "..");
      r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
      key := "package index";
-     tag := makeDocumentTag key;
+     -- tag := makeDocumentTag key;
      p | "index.html"
      << html HTML { 
 	  HEAD {
@@ -736,7 +736,7 @@ makePackageIndex String := prefixDirectory -> (
 	       links()
 	       },
 	  BODY { 
-	       buttonBar tag,
+	       -- buttonBar tag,
 	       HR{},
 	       PARA BOLD "Index of installed packages:",
 	       UL apply(r, pkg -> HREF { LAYOUT#"packagehtml" pkg | "index.html", pkg })
