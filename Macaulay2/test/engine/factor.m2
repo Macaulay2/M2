@@ -8,8 +8,6 @@ R = polyring(rawZZ(), (symbol x,symbol y,symbol z))
 f = (x+3*y-14)^15*(x^2+y^4+z^7-x*y-13*x*z^2+12)^3;
 time rawFactor f
 
-end
-
 -- Example 1 reversed
 
 R = polyring(rawZZ(), (symbol z,symbol y,symbol x))

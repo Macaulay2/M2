@@ -75,7 +75,7 @@ static void test_gc (void) {
 
 static void *GC_malloc1 (size_t size_in_bytes) {
      void *p;
-     p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
+     p = GC_MALLOC(size_in_bytes);
      if (p == NULL) outofmem();
      return p;
      }
@@ -96,7 +96,7 @@ static void *GC_realloc3 (void *s, size_t old, size_t new) {
 
 static void *GC_malloc1 (size_t size_in_bytes) {
      void *p;
-     p = GC_MALLOC_UNCOLLECTABLE(size_in_bytes);
+     p = GC_MALLOC(size_in_bytes);
      if (p == NULL) outofmem();
      trapchk(p);
      return p;
@@ -121,9 +121,10 @@ void drg_GC_malloc_free() {}
 #endif
 
 static void init_gmp(void) {
-     mp_set_memory_functions(GC_malloc1,GC_realloc3,GC_free2);
+     mp_set_memory_functions(GC_malloc,GC_realloc3,GC_free); /* mismatched function types okay here, just ignoring extra args */
      }
 
+#if 0
 /* these next three functions are simply aliases for libcf in case it was configured 
    with --with-memman-old.  The three functions are declared in libcfmem.a, but we don't
    want to use their memory manager.  We make our own call to mp_set_memory_functions() 
@@ -133,13 +134,16 @@ static void init_gmp(void) {
 void*     getBlock ( size_t size                                  ) { return GC_malloc1(size);                   }
 void* reallocBlock ( void * block, size_t oldsize, size_t newsize ) { return GC_realloc3(block,oldsize,newsize); }
 void     freeBlock ( void * block, size_t size                    ) { return GC_free2(block, size);              }
+#endif
 
 int M2inits_run;
 
 void M2inits(void) {
   if (M2inits_run) return;
   init_gc();
-  test_gc();
+#if 0
+  test_gc();			/* this takes some time, so skip it */
+#endif
   init_gmp();
   IM2_initialize();
   M2inits_run = 1;

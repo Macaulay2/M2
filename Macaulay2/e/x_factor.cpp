@@ -19,6 +19,8 @@
 #include "text_io.hpp"
 #include "buffer.hpp"
 
+#define REVERSE_VARIABLES 0	// did we have a good reason for reversing the variables before?
+
 #ifdef drg
 // debugging display routines to be called from gdb
 // needs factory to be configured without option --disable-streamio 
@@ -64,7 +66,11 @@ static const RingElement * convert(const Ring *R, CanonicalForm h) {
      for (int j = 0; j <= h.degree(); j++) {
        const RingElement *r = convert(R, h[j]);
        ring_elem r1 = r->get_value();
-       ring_elem v = R->var((n-1) - (h.level()-1), j);
+       ring_elem v = R->var(
+#                   if REVERSE_VARIABLES
+			    (n-1) - 
+#                   endif
+			    (h.level()-1), j);
        r1 = R->mult(r1,v);
        R->add_to(result,r1);
      }
@@ -168,7 +174,10 @@ static CanonicalForm convert(const RingElement &g) {
        for (int l = 1; l < vp[0] ; l++) {
 	 m *= power(
 		    Variable(1 + (
-				  (n-1) - varpower::var(vp[l]) // REVERSE !
+#                       if REVERSE_VARIABLES
+				  (n-1) - 
+#                       endif
+				  varpower::var(vp[l])
 				  )), 
 		    varpower::exponent(vp[l])
 		    );
@@ -217,13 +226,13 @@ void rawFactor(const RingElement *g,
   const Ring *R = g->get_ring();
   CanonicalForm h = convert(*g);
   // displayCF(R,h);
-#ifdef drg
-  GC_gcollect();			// debugging
-#endif
-  CFFList q = Factorize(h);
-#ifdef drg
-  GC_gcollect();			// debugging
-#endif
+  CFFList q;
+  if (R->charac() == 0) {
+    q = factorize(h);		// suitable for k = QQ, comes from libcf (factory)
+  }
+  else {
+    q = Factorize(h);		// suitable for k = ZZ/p, comes from libfac
+  }
   int nfactors = q.length();
 
   *result_factors = (RingElement_array *) getmem(sizeofarray((*result_factors),nfactors));
