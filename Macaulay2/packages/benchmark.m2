@@ -15,6 +15,12 @@ assert( vv == {3, 9, 126, 378, 504, 360, 135, 21} )
 
 -- Results:
 
+-- OSF1 cosimo.medicis.polytechnique.fr V4.0 1229 alpha
+-- 0.683216 seconds, Macaulay2 0.8.57, compiled with gcc 2.95
+
+-- OSF1 agnesi.matematik.su.se V4.0 1091 alpha
+-- 0.708576 seconds, Macaulay2 0.8.57, compiled with gcc 2.95
+
 -- OSF1 despina.ks.uiuc.edu V4.0 1229 alpha
 -- 0.75152 seconds, Macaulay2 0.8.52
 

@@ -655,7 +655,7 @@ net Minus := x -> (
      horizontalJoin
      if precedence term < precedence x 
      then ("-", "(", net term, ")")
-     else ("-", net term))
+     else ("- ", net term))
 
 dashes1 := n -> concatenate (n:"-")
 dashes2 := memoize dashes1

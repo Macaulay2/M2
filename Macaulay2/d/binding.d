@@ -51,7 +51,7 @@ export parens(binaryleft:string,binaryright:string,prec:int,scope:int,strength:i
      );
 
 HadError := false;
-unknown := Position("--unknown position--",ushort(0),uchar(0),uchar(reloaded));
+unknown := Position("--unknown position--",ushort(0),ushort(0),uchar(reloaded));
 export treePosition(e:ParseTree):Position := (
      while true do (
 	  when e

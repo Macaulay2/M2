@@ -9,8 +9,8 @@ use strings;
 use stdio;
 use ctype;
 
-export Position := {filename:string, line:ushort, column:uchar, reloaded:uchar};
-export dummyPosition := Position("--dummy file name--",ushort(0),uchar(0),uchar(reloaded));
+export Position := {filename:string, line:ushort, column:ushort, reloaded:uchar};
+export dummyPosition := Position("--dummy file name--",ushort(0),ushort(0),uchar(reloaded));
 shorten(s:string):string := (
      -- shorten filenames like "/a/b/c/../d/e/f" to "/a/b/d/e/f"
      while true do (
@@ -78,7 +78,7 @@ export copy(p:Position):Position := Position(
      p.filename, p.line, p.column, uchar(reloaded));
 export PosFile := {file:file, pos:Position};
 export makePosFile(o:file):PosFile := PosFile(o, 
-     Position(o.filename, ushort(1), uchar(0), uchar(reloaded)));
+     Position(o.filename, ushort(1), ushort(0), uchar(reloaded)));
 export peek(o:PosFile, offset:int):int := peek(o.file,offset);
 export peek(o:PosFile):int := peek(o.file);
 export isatty(o:PosFile):bool := o.file.inisatty;
@@ -93,7 +93,7 @@ export openPosIn(filename:string):(PosFile or errmsg) := (
 		    if isAbsolutePath(f.filename)
 		    then f.filename
 		    else getcwd() + '/' + f.filename,
-		    ushort(1),uchar(0),uchar(reloaded))))
+		    ushort(1),ushort(0),uchar(reloaded))))
      is s:errmsg do (PosFile or errmsg)(s)
      );
 roundup(n:uchar,d:int):uchar := uchar(((int(n)+d-1)/d)*d);
@@ -103,10 +103,10 @@ export getc(o:PosFile):int := (
      if c != EOF then (
  	  if isnewline(c) then (
 	       o.pos.line = o.pos.line + 1;
-	       o.pos.column = uchar(0);
+	       o.pos.column = ushort(0);
 	       )
 	  else if c == int('\t') then (
-	       o.pos.column = uchar(((int(o.pos.column)+8)/8)*8);
+	       o.pos.column = ushort(((int(o.pos.column)+8)/8)*8);
 	       )
 	  else (
 	       o.pos.column = o.pos.column + 1;
