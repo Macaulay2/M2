@@ -4,19 +4,6 @@
 #include "engine.h"
 #include "ring.hpp"
 
-#if 0
-bool check_all_positive(const M2_arrayint degs)
-{
-  for (unsigned int i=0; i<degs->len; i++)
-    if (degs->array[i] <= 0)
-      {
-	ERROR("all primary(first) degrees must be strictly positive");
-	return false;
-      }
-  return true;
-}
-#endif
-
 Monoid *IM2_Monoid_trivial()
 {
   return Monoid::get_trivial_monoid(); // Set up in IM2_initialize()

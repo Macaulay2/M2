@@ -301,8 +301,8 @@ public:
     return R_->PolyRing::diff(a,b,use_coeff);
   }
 
-  virtual bool in_subring(int n, const ring_elem a) const {
-    return R_->PolyRing::in_subring(n,a);
+  virtual bool in_subring(int nslots, const ring_elem a) const {
+    return R_->PolyRing::in_subring(nslots,a);
   }
 
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const {

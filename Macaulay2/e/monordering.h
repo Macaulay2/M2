@@ -1,3 +1,5 @@
+#ifndef __monordering_h_
+#define __monordering_h_
 enum MonomialOrdering_type
 {
   MO_LEX = 1,
@@ -30,6 +32,8 @@ struct MonomialOrdering {
   unsigned int len;
   mon_part array[1];
 };
+
+#endif
 
 /*
 // Local Variables:

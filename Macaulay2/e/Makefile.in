@@ -71,7 +71,7 @@ INTERFACE = \
 	matrixCC \
 	mem \
 	monideal \
-	monoid \
+	monoid2 \
 	monomial \
 	ntuple \
 	polyring \
@@ -140,9 +140,11 @@ NAMES_H = comp \
 	newdelete \
 	hash \
 	index \
-	respair2
+	respair2 \
+	monoid1 \
+	monoid2
 
-C_FILES = error table exptable monordering
+C_FILES = error table exptable monordering imonorder
 
 ##############################
 ## end of source code files ##

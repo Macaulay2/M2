@@ -762,7 +762,7 @@ ring_elem PolyRing::invert(const ring_elem f) const
 	M_->one(t->monom);
 	return t;
       }
-    else if (M_->is_group())
+    else if (M_->is_invertible(ft->monom))
       {
 	Nterm *t = new_term();
 	t->coeff = K_->invert(ft->coeff);
@@ -1697,10 +1697,10 @@ void PolyRing::sort(Nterm *&f) const
   f = g;
 }
 
-bool PolyRing::in_subring(int n, const ring_elem a) const
+bool PolyRing::in_subring(int nslots, const ring_elem a) const
 {
   for (Nterm *t = a; t != 0; t = t->next)
-    if (!M_->in_subring(n,t->monom)) return false;
+    if (!M_->in_subring(nslots,t->monom)) return false;
   return true;
 }
 
@@ -1778,9 +1778,10 @@ ring_elem PolyRing::lead_term(int nparts, const ring_elem f) const
   Nterm *lead = f;
   Nterm head;
   Nterm *result = &head;
+  int nslots = M_->n_slots(nparts);
   for (Nterm *a = f; a != NULL; a = a->next)
     {
-      if (M_->compare(nparts, lead->monom, a->monom) != EQ)
+      if (M_->compare(nslots, lead->monom, a->monom) != EQ)
 	break;
       result->next = new_term();
       result = result->next;

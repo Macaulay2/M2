@@ -44,7 +44,8 @@ int rawNumberOfInvertibleVariables(const MonomialOrdering *mo)
 {
   int i, sum = 0;
   for (i=0; i<mo->len; i++)
-    if (mo->array[i]->type == MO_LAURENT)
+    if (mo->array[i]->type == MO_LAURENT 
+	|| mo->array[i]->type == MO_LAURENT_REVLEX)
       sum += mo->array[i]->nvars;
   return sum;
 }
