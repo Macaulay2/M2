@@ -205,7 +205,11 @@ packageKey = method(SingleArgumentDispatch => true)	    -- assume the input key 
 --packageKey   Symbol := key -> package key
 packageKey   String := fkey -> (
      r := scan(packages, pkg -> if fetchRawDocumentation(pkg,fkey) =!= null then break pkg);
-     if r === null then value PackageDictionary#"Missing" else r)
+     if r === null then (
+	  if debugLevel > 0 then error "debug me";
+	  value PackageDictionary#"Missing"
+	  )
+     else r)
 --packageKey  Package := identity
 --packageKey    Array := key -> youngest \\ package \ toSequence key
 --packageKey Sequence := key -> youngest splice apply(key, i -> if class i === Sequence then apply(i,package) else package i)
@@ -533,7 +537,7 @@ document Sequence := args -> (
      pkg := DocumentTag.Package tag;
      opts.Description = toList args;
      exampleBaseFilename = makeFileName(currentNodeName,currentPackage);
-     if currentPackage#rawKey#?currentNodeName then error ("warning: documentation already provided for '", currentNodeName, "'");
+     if currentPackage#rawKey#?currentNodeName then stderr << "warning: documentation already provided for '" << currentNodeName << "'" << endl;
      opts = new HashTable from apply(pairs opts,(key,val) -> (key,fixupTable#key val));
      currentPackage#rawKey#currentNodeName = opts;
      currentNodeName = null;
