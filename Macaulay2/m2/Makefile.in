@@ -179,7 +179,7 @@ EXAMPLEOPTIONS += --no-debug
 endif
 EXAMPLEOPTIONS += -e errorDepth=0
 EXAMPLEOPTIONS += -e debugLevel=0
-EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, Prefix => ".") '
+EXAMPLEOPTIONS += -e 'installPackage(Macaulay2, MakeInfo => $(MAKEINFO), IgnoreExampleErrors => true, Encapsulate => true, PackagePrefix => ".") '
 ifndef INTERACTIVE
 EXAMPLEOPTIONS += -e 'exit 0 '
 endif
