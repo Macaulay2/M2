@@ -502,3 +502,13 @@ document { mutable, HEADLINE "whether something may be modified",
      with ", TO "===", " or in ", TO "hashing", ".",
      SEEALSO {"MutableList", "MutableHashTable"}
      }
+
+document { setEcho,
+     TT "setEcho stdio", " -- turn on echoing of characters typed to the standard
+     input."
+     }
+
+document { clearEcho,
+     TT "clearEcho stdio", " -- turn off echoing of characters typed to the standard
+     input."
+     }

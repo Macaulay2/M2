@@ -581,6 +581,11 @@ document { "system",
 	  TO "load",
 	  TO "needs"
 	  },
+     "Echoing characters:",
+     MENU {
+	  TO "clearEcho",
+	  TO "setEcho"
+	  },
      "Dumping and restoring the state of the system:",
      MENU {
 	  TO "dumpdata",
