@@ -13,7 +13,7 @@
 #include "interp.hpp"
 #include "Ehashtab.hpp"
 
-EHashTable EUniqueObjects;
+EHashTable *EUniqueObjects = 0;
 const EZZ *EZ;
 
 template class array<EVector>;
@@ -45,7 +45,7 @@ const monomial *monomialFromIntarray(const EMonoid *D, const intarray &mapdeg)
 
 static void cmd_EHashTable_stats()
 {
-  EUniqueObjects.showshape();
+  EUniqueObjects->showshape();
 }
 
 
@@ -474,7 +474,7 @@ object_ERingElement * make_object_ERingElement(const ERing *R, ERingElement a)
 {
   object_ERingElement *result = new object_ERingElement(R,a);
   object_element *b = result;
-  //  EUniqueObjects.insert(b);
+  //  EUniqueObjects->insert(b);
   result = (object_ERingElement *)b;
   return result;
 }  
@@ -486,7 +486,7 @@ object_EVector * make_object_EVector(EVector &v)
 
   object_EVector *result = new object_EVector(v);
   object_element *a = result;
-  EUniqueObjects.insert(a);
+  EUniqueObjects->insert(a);
   result = (object_EVector *)a;
   return result;
 }
@@ -1680,6 +1680,7 @@ static void cmd_EMatrix_divideByVariables(object &oM, object &on, object &omax)
 
 void i_Ecommands(void)
 {
+  EUniqueObjects = new EHashTable;
   EZ = EZZ::make();
   install(ggEZZ, cmd_EZZ);
   // Initialize stashes.

@@ -235,10 +235,11 @@ endif
 ../lib/libengine2.so : $(LOFILES2); $(CC) -shared $^ $(OUTPUT_OPTION)
 
 geovec.hpp: geoT.hpp
-	awk '{sub(/FREEMODULETYPE/, "FreeModule"); sub(/VECTYPE/, "vecterm *"); print }' geoT.hpp >$@
+	awk '{sub(/geobucket/, "vecHeap"); sub(/geobucket/, "vecHeap"); sub(/FREEMODULETYPE/, "FreeModule"); sub(/VECTYPE/, "vecterm *"); print }' geoT.hpp >$@
+#	awk '{sub(/FREEMODULETYPE/, "FreeModule"); sub(/VECTYPE/, "vecterm *"); print }' geoT.hpp >$@
 
 geores.hpp: geoT.hpp
-	awk '{sub(/FREEMODULETYPE/, "res2_poly"); sub(/VECTYPE/, "res2term *"); print }' geoT.hpp >$@
+	awk '{sub(/geobucket/, "respolyHeap"); sub(/geobucket/, "respolyHeap"); sub(/FREEMODULETYPE/, "res2_poly"); sub(/VECTYPE/, "res2term *"); print }' geoT.hpp >$@
 
 #geopoly.hpp: geoT.hpp
 #	awk '{sub(/FREEMODULETYPE/, "Ring"); sub(/VECTYPE/, "Nterm *"); print }' geoT.hpp >$@

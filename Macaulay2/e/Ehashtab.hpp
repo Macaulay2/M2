@@ -160,5 +160,5 @@ public:
   }
 };
 
-extern EHashTable EUniqueObjects;
+extern EHashTable *EUniqueObjects;
 #endif

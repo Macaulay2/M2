@@ -15,7 +15,7 @@
 
 const int GEOHEAP_SIZE = 15;
 
-class geobucket
+class polyheap
 {
   const Ring *F;		// Our elements will be vectors in here
   const Ring *K;		// The coefficient ring
@@ -23,13 +23,13 @@ class geobucket
   int top_of_heap;
 
 public:
-  geobucket(const Ring *F);
-  ~geobucket();
+  polyheap(const Ring *F);
+  ~polyheap();
 
   void add(Nterm * p);
   Nterm * remove_lead_term();	// Returns NULL if none.
 
-  Nterm * value();		// Returns the linearized value, and resets the geobucket.
+  Nterm * value();		// Returns the linearized value, and resets the polyheap.
 
   Nterm * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
 };
@@ -39,7 +39,7 @@ static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
 				    16777216, 67108864, 268435456,
 				    1073741824};
 
-inline geobucket::geobucket(const Ring *FF)
+inline polyheap::polyheap(const Ring *FF)
 : F(FF),
   K(FF->Ring_of()->Ncoeffs()),
   top_of_heap(-1)
@@ -50,14 +50,14 @@ inline geobucket::geobucket(const Ring *FF)
     heap[i] = NULL;
 }
 
-inline geobucket::~geobucket()
+inline polyheap::~polyheap()
 {
   // The user of this class must insure that all 'vecterm's
   // have been removed first.  Thus, we don't need to
   // do anything here.
 }
 
-inline void geobucket::add(Nterm * p)
+inline void polyheap::add(Nterm * p)
 {
   int len = F->n_terms(p);
   int i= 0;
@@ -86,7 +86,7 @@ inline void geobucket::add(Nterm * p)
     top_of_heap = i;
 }
 
-inline Nterm * geobucket::remove_lead_term()
+inline Nterm * polyheap::remove_lead_term()
 {
   int lead_so_far = -1;
   for (int i=0; i <= top_of_heap; i++)
@@ -129,7 +129,7 @@ inline Nterm * geobucket::remove_lead_term()
   return result;
 }
 
-inline Nterm * geobucket::value()
+inline Nterm * polyheap::value()
 {
   Nterm * result = NULL;
   for (int i=0; i<=top_of_heap; i++)

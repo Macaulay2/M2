@@ -116,7 +116,7 @@ ring_elem WeylAlgebra::imp_mult_by_term(const ring_elem f,
 			       const ring_elem c, const int *m) const
    // return c*m*f
 {
-  geobucket H(this);
+  polyheap H(this);
 
   int i,j;
   int *exp = new int[nvars];
@@ -224,7 +224,7 @@ ring_elem WeylAlgebra::eval(const RingMap *map, const ring_elem f) const
   if (target->is_poly_ring())
     {
       intarray vp;
-      geobucket H(target);
+      polyheap H(target);
       
       for (Nterm *t = f; t != NULL; t = t->next)
 	{

@@ -15,7 +15,7 @@
 
 const int GEOHEAP_SIZE = 15;
 
-class geobucket
+class respolyHeap
 {
   const res2_poly *F;		// Our elements will be vectors in here
   const Ring *K;		// The coefficient ring
@@ -23,13 +23,13 @@ class geobucket
   int top_of_heap;
 
 public:
-  geobucket(const res2_poly *F);
-  ~geobucket();
+  respolyHeap(const res2_poly *F);
+  ~respolyHeap();
 
   void add(res2term * p);
   res2term * remove_lead_term();	// Returns NULL if none.
 
-  res2term * value();		// Returns the linearized value, and resets the geobucket.
+  res2term * value();		// Returns the linearized value, and resets the respolyHeap.
 
   res2term * debug_list(int i) { return heap[i]; } // DO NOT USE, except for debugging purposes!
 };
@@ -39,7 +39,7 @@ static int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
 				    16777216, 67108864, 268435456,
 				    1073741824};
 
-inline geobucket::geobucket(const res2_poly *FF)
+inline respolyHeap::respolyHeap(const res2_poly *FF)
 : F(FF),
   K(FF->Ring_of()->Ncoeffs()),
   top_of_heap(-1)
@@ -50,14 +50,14 @@ inline geobucket::geobucket(const res2_poly *FF)
     heap[i] = NULL;
 }
 
-inline geobucket::~geobucket()
+inline respolyHeap::~respolyHeap()
 {
   // The user of this class must insure that all 'vecterm's
   // have been removed first.  Thus, we don't need to
   // do anything here.
 }
 
-inline void geobucket::add(res2term * p)
+inline void respolyHeap::add(res2term * p)
 {
   int len = F->n_terms(p);
   int i= 0;
@@ -76,7 +76,7 @@ inline void geobucket::add(res2term * p)
     top_of_heap = i;
 }
 
-inline res2term * geobucket::remove_lead_term()
+inline res2term * respolyHeap::remove_lead_term()
 {
   int lead_so_far = -1;
   for (int i=0; i <= top_of_heap; i++)
@@ -119,7 +119,7 @@ inline res2term * geobucket::remove_lead_term()
   return result;
 }
 
-inline res2term * geobucket::value()
+inline res2term * respolyHeap::value()
 {
   res2term * result = NULL;
   for (int i=0; i<=top_of_heap; i++)

@@ -132,15 +132,15 @@ promote(ZZ,EngineRing) := (i,R) -> (
 ZZZ = new EngineRing of RingElement
 ZZZ.generators = {}
 ZZZ.pop = () -> new ZZZ
-ZZZ.handle = newHandle ggEZZ
+--ZZZ.handle = newHandle ggEZZ
 new ZZZ from Handle := (ZZZ,h) -> new ZZZ from { (quote handle, h) };
 new ZZZ := ZZZ -> newClass( ZZZ, hashTable { (
 	       quote handle, 
 	       toHandle convert(ConvertInteger, sendgg (ggaddress,ggtonet))
 	       ) } );
 ZZZ.newEngine = true
-ZZZ#1 = 1_ZZZ
-ZZZ#0 = 0_ZZZ
+--ZZZ#1 = 1_ZZZ
+--ZZZ#0 = 0_ZZZ
 ZZZ.isCommutative = true
 ZZZ.char = 0
 ZZZ.ConversionFormat = ConvertInteger

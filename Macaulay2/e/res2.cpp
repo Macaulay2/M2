@@ -484,7 +484,7 @@ void res2_comp::initialize(Matrix mat,
   if (SortStrategy & FLAGS_LEVEL_STRIP) do_by_level = 2;
   do_by_degree = (SortStrategy & FLAGS_DEGREELEVEL ? 1 : 0);
   auto_reduce = (SortStrategy & FLAGS_AUTO) >> SHIFT_AUTO;
-  use_geobuckets = (SortStrategy & FLAGS_GEO ? 1 : 0);
+  use_respolyHeaps = (SortStrategy & FLAGS_GEO ? 1 : 0);
 
   if (do_by_degree) do_by_level = 0;
   if (comp_printlevel >= 3)
@@ -499,7 +499,7 @@ void res2_comp::initialize(Matrix mat,
 	}
       if (do_by_degree)
 	o << "computing resolution degree by slanted degree" << newline;
-      if (use_geobuckets)
+      if (use_respolyHeaps)
 	o << "using heap based reduction" << newline;
       o << "skeleton order = ";
       display_order(o, skeleton_sort);
@@ -1278,7 +1278,7 @@ res2_pair *res2_comp::reduce2(res2term * &f, res2term * &fsyz, res2term * &pivot
   return result;
 }
 
-// The 'geobucket' version of reduction
+// The 'respolyHeap' version of reduction
 
 res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot, res2_pair *)
      // Reduce f, placing the reduction history in fsyz.
@@ -1293,7 +1293,7 @@ res2_pair *res2_comp::reduce3(res2term * &f, res2term * &fsyz, res2term * &pivot
   res2_pair *result = NULL;
   res2_pair *q;
   ring_elem rg;
-  geobucket fb(R);		// No bucket is needed for fsyz, since we
+  respolyHeap fb(R);		// No bucket is needed for fsyz, since we
 				// only append elements to the end of fsyz.
   fb.add(f);
   f = NULL;
@@ -1516,7 +1516,7 @@ res2_pair *res2_comp::reduce_heap_by_level(res2term * &f, res2term * &fsyz)
   res2term *lastterm = (fsyz->next == NULL ? fsyz : fsyz->next);
   res2_pair *q;
   ring_elem rg;
-  geobucket fb(R);		// No bucket is needed for fsyz, since we
+  respolyHeap fb(R);		// No bucket is needed for fsyz, since we
 				// only append elements to the end of fsyz.
   fb.add(f);
   f = NULL;
@@ -1622,7 +1622,7 @@ void res2_comp::handle_pair(res2_pair *p)
   // This is used only for full auto reduction type 2.
   auto_reduce_node *au = (auto_reduce_node *) p->pivot_term;
 
-  if (use_geobuckets)
+  if (use_respolyHeaps)
     q = reduce3(f, p->syz, p->pivot_term, p);
   else if (auto_reduce >= 1)
     q = reduce2(f, p->syz, p->pivot_term, p);
@@ -1696,7 +1696,7 @@ void res2_comp::handle_pair_by_level(res2_pair *p)
   res2term *f = s_pair(p->syz);
   if (do_by_level == 2)
     {
-      if (use_geobuckets)
+      if (use_respolyHeaps)
 	reduce_heap_by_level(f, p->syz);
       else
 	reduce_by_level(f, p->syz);

@@ -158,13 +158,13 @@ inline int GF::to_int(int) const
   return 1;
 }
 
-inline int modulus_add(int a, int b, int p)
+static inline int modulus_add(int a, int b, int p)
 {
   int t = a+b;
   return (t <= p ? t : t-p);
 }
 
-inline int modulus_sub(int a, int b, int p)
+static inline int modulus_sub(int a, int b, int p)
 {
   int t = a-b;
   return (t <= 0 ? t+p : t);

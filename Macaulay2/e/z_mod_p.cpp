@@ -97,13 +97,13 @@ int Z_mod::coerce_to_int(ring_elem a) const
   return to_int(a.int_val);
 }
 
-inline int modulus_add(int a, int b, int p)
+static inline int modulus_add(int a, int b, int p)
 {
   int t = a+b;
   return (t < p ? t : t-p);
 }
 
-inline int modulus_sub(int a, int b, int p)
+static inline int modulus_sub(int a, int b, int p)
 {
   int t = a-b;
   return (t < 0 ? t+p : t);
@@ -308,7 +308,8 @@ ring_elem Z_mod::divide(const ring_elem f, const ring_elem g) const
 {
   if (g == ZERO) assert(0); // MES: raise an exception
   if (f == ZERO) return ZERO;
-  return modulus_sub(f, g, P1);
+  int h = modulus_sub(f, g, P1);
+  return h;
 }
 
 ring_elem Z_mod::divide(const ring_elem f, const ring_elem g, ring_elem &rem) const

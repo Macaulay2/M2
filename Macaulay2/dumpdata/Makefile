@@ -21,8 +21,8 @@ $(LIBS): /usr/lib/libc.a; $(AR) x $< $@
 libdump.a: libdump.a(file.o warning.o map.o dumpdata.o $(LIBS))
 	ranlib libdump.a
 tests2: check
-	check dump "hi there"
-	check load "look!"
+	./check dump "hi there"
+	./check load "look!"
 ifdef NODUMPDATA
 all::
 tests:

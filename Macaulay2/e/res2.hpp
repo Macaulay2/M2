@@ -142,7 +142,7 @@ class res2_comp : public type
   unsigned char do_by_level;    // if != 0, use this.  If == 2, use the strip components
 				// optimization.
   unsigned char do_by_degree;;
-  unsigned char use_geobuckets;	// 0=don't use, 1=use (and implies auto_reduce>=1)
+  unsigned char use_respolyHeaps;	// 0=don't use, 1=use (and implies auto_reduce>=1)
   int auto_reduce;		// 0=none, 1=partial, 2=full
 
   // Statistics

@@ -1217,7 +1217,7 @@ vec FreeModule::tensor(const FreeModule *F, vec v,
 vec FreeModule::tensor(const FreeModule *F, vec v, 
 			 const FreeModule *G, vec w) const
 {
-  geobucket H(this);
+  vecHeap H(this);
   int *m;
   if (M != NULL)
     m = M->make_one();
@@ -2060,7 +2060,7 @@ vec FreeModule::eval(const RingMap *map, const FreeModule *F,
   ring_elem r;
   vec g;
   intarray vp;
-  geobucket H(F);
+  vecHeap H(F);
 
   for (vecterm *t = v; t != NULL; t = t->next)
     {
