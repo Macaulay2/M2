@@ -32,6 +32,8 @@ protected:
   // return false, and use ERROR(...) to provide an error message.
 
 public:
+  virtual GBComputation * cast_to_GBComputation() { return this;} 
+
   static ComputationOrNull *choose_gb(const Matrix *m,
 				      M2_bool collect_syz,
 				      int n_rows_to_keep,

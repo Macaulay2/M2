@@ -14,9 +14,8 @@ algorithm = 1
 -- Test 1.  A very simple GB.
 G = mat {{x,y,z}}
 Gcomp = rawGB(G,false,0,{},false,0,algorithm,0)
-m = rawGBMatrix Gcomp -- Groebner basis
-
-m = rawResolutionGetMatrix(Gcomp,1,false) -- Groebner basis
+rawStartComputation Gcomp
+m = rawGBGetMatrix Gcomp -- Groebner basis
 assert(m == mat{{z,y,x}})
 
 Gcomp = rawGB(G,true,3,false,0,0,0)
