@@ -35,13 +35,11 @@ document { "Invoking the program",
 document { "COPYING",
      "This is the text of the license agreement under which Macaulay 2 is distributed.",
      PARA,
-     PRE (
-	  if sourceHomeDirectory =!= null then get(sourceHomeDirectory | "COPYING")
-	  else if prefixDirectory =!= null then get(prefixDirectory | LAYOUT#"docm2rel" | "COPYING")
-	  else (
-	       stderr << "warning: can't locate file \"COPYING\"" << endl;
-	       "see the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991, available at http://www.gnu.org/licenses/gpl.txt"
-	       )
+     if sourceHomeDirectory =!= null then PRE separate("\f",get(sourceHomeDirectory | "COPYING"))
+     else if prefixDirectory =!= null then PRE separate("\f",get(prefixDirectory | LAYOUT#"docm2rel" | "COPYING"))
+     else (
+	  stderr << "warning: can't locate file \"COPYING\"" << endl;
+	  SEQ {"See the GNU GENERAL PUBLIC LICENSE, Version 2, June 1991, available at ", HREF "http://www.gnu.org/licenses/gpl.txt", "."}
 	  )
      }
 

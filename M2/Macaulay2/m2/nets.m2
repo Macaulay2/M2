@@ -181,10 +181,12 @@ net HashTable := x -> (
      	  ))
 
 net MutableHashTable := x -> (
-     horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" ))
+     if PrintNames#?x then PrintNames#x
+     else horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" ))
 net Type := X -> (
-     if ReverseDictionary#?X then return toString ReverseDictionary#X;
-     horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
+     if PrintNames#?X then PrintNames#X
+     else if ReverseDictionary#?X then return toString ReverseDictionary#X
+     else horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
 
 texMath Net := n -> concatenate (
      ///{\arraycolsep=0pt

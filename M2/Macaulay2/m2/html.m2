@@ -32,9 +32,10 @@ rel := url -> (
 
 htmlFilename = key -> (				   -- returns the relative path from the PREFIX to the file
      key = normalizeDocumentTag key;
-     pkg := package TO key;
      fkey := formatDocumentTag key;
-     LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"title" then topFileName else toFilename fkey|".html" )
+     pkg := package TO key;
+     if pkg === null then toFilename fkey|".html"
+     else LAYOUT#"packagehtml" pkg#"title" | if fkey === pkg#"title" then topFileName else toFilename fkey|".html" )
 
 html IMG  := x -> "<IMG src=\"" | rel first x | "\">"
 text IMG  := x -> ""
@@ -190,10 +191,7 @@ makeHtmlNode = key -> (
 	       },
 	  BODY { 
 	       buttonBar key,
-	       if UP#?key then SEQ {
-		    "Parent headings:",
-		    fakeMenu apply(upAncestors key, i -> TOH i)
-		    },
+	       if UP#?key then SEQ { "Locator: ", between(" >> ", apply(upAncestors key, i -> TOH i)) },
 	       HR{}, 
 	       documentationMemo key,
 	       }
@@ -549,6 +547,35 @@ check Package := pkg -> (
 		    t()))))
 
 htmlDebug = () -> commandInterpreter local x
+
+relativizeFilename2 = on relativizeFilename
+
+makePackageIndex = method(SingleArgumentDispatch => true)
+makePackageIndex Sequence := () -> makePackageIndex prefixDirectory
+makePackageIndex String := prefixDirectory -> (
+     htmlDirectory = LAYOUT#"docm2";
+     p := prefixDirectory | htmlDirectory;
+     setupButtons();
+     r := readDirectory p;
+     r = select(r, fn -> fn != "." and fn != "..");
+     r = select(r, pkg -> fileExists (prefixDirectory | LAYOUT#"packagehtml" pkg | "index.html"));
+     key := "package index";
+     p | "index.html"
+     << encoding << endl
+     << doctype << endl
+     << html HTML { 
+	  HEAD {
+	       TITLE {key, headline key},
+	       style(), links()
+	       },
+	  BODY { 
+	       buttonBar key,
+	       HR{},
+	       PARA BOLD "Index of installed packages:",
+	       UL apply(r, pkg -> HREF { LAYOUT#"packagehtml" pkg | "index.html", pkg })
+	       }
+	  } << endl << close
+     )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
