@@ -61,10 +61,10 @@ void gb2_comp::setup(FreeModule *FFsyz,
 
   use_hilb = 0;
   hf_numgens_F = F->rank();
-  hf_numgens_gb = -1; // This will enable the initial computation of HF,
+  hf_numgens_gb = 0; // This will enable the initial computation of HF,
                       // if use_hilb is set.
   hf = hilb_comp::hilbertNumerator(F);
-  n_gb_syz = -1;
+  n_gb_syz = 0;
 
   strategy_flags = strategy;
   state = STATE_GENS;
@@ -522,7 +522,7 @@ void gb2_comp::gb_insert(gbvector * f, gbvector * fsyz, int ismin)
       // and append it as the last column of _hilb_matrix.
 
       gbvector *new_f = p->f;
-      ring_elem a = originalR->get_flattened_ring()->term(originalR->Ncoeffs()->one(), 
+      ring_elem a = originalR->term(originalR->Ncoeffs()->one(), 
 							  f_m);
       hf_matrix->append_column(0);
       hf_matrix->set_entry(new_f->comp-1,hf_matrix->n_cols()-1, a);
@@ -580,8 +580,8 @@ bool gb2_comp::s_pair_step()
      // Otherwise, compute the current s-pair, reduce it, and
      // dispatch the result.  Return true.
 {
-  //  if (use_hilb && n_gb_syz == 0)
-  //    flush_pairs();
+  if (use_hilb && n_gb_syz == 0)
+    flush_pairs();
   if (these_pairs == NULL) return false; // Done
   s_pair *p = these_pairs;
   these_pairs = these_pairs->next;
@@ -751,9 +751,8 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
 	    {
 	      hsyz = syz->hilbertNumerator();
 	      if (hsyz == 0) return COMP_INTERRUPTED;
-	      o << "hsyz = "; hsyz->text_out(o);
+	      //	      o << "hsyz = "; hsyz->text_out(o);
 	      h = (*h) + (*hsyz);
-	      o << "hsyz2= "; hsyz->text_out(o);
 	    }
 	  RingElement *hf1 = hilbertNumerator();
 	  if (hf == 0) return COMP_INTERRUPTED;
@@ -761,13 +760,15 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg, const intarray &stop)
 	  RingElement *hF = hilb_comp::hilbertNumerator(F);
 	  if (hF == 0) return COMP_INTERRUPTED;
 	  h = (*h) - (*hF);
+
+#if 0
 	  o << "\nhf   = "; hf1->text_out(o);
 	  o << "\nhF   = "; hF->text_out(o);
 	  o << "\nh    = "; h->text_out(o);
 	  o << "\n";
 	  emit(o.str());
 	  o.reset();
-
+#endif
 	  if (gbTrace >= 1 && n_gb_syz != 0)
 	    {
 	      buffer o;
@@ -936,14 +937,15 @@ RingElementOrNull *gb2_comp::hilbertNumerator()
 
   hf_numgens_F = F->rank();
   hf_numgens_gb = n_gb;
-  
+
+#if 0  
   emit("hilbert function of ");
   dfree(hf_matrix->rows());
   dmatrix(hf_matrix);
   emit("\n  is ");
   drelem(hf);
   emit("\n");
-
+#endif
 
   return hf;
 }

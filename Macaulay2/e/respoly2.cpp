@@ -308,7 +308,7 @@ res2term *res2_poly::from_vector(const array<res2_pair *> &base, const vec v) co
     }
   result->next = NULL;
   // Now we must sort these
-  sort(result);
+  sort(head.next);
   return head.next;
 }
 
