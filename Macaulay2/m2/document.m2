@@ -100,17 +100,17 @@ formatDocumentTag Thing    := toString
 formatDocumentTag String   := s -> s
 
 after := (w,s) -> mingle(w,#w:s)
-formatDocumentTag Option   := record(
-     s -> concatenate (
-	  if class s#0 === Sequence 
-	  then (
-	       if class s#0#0 === Symbol
-	       then ( "(", formatDocumentTag s#0, ", ", toString s#1, " => ...)" )
-	       else ( toString s#0#0, "(", after(toString \ drop(s#0,1), ", "), " ", toString s#1, " => ...)" )
-	       )
-	  else ( toString s#0, "(..., ", toString s#1, " => ...)" )
-	  )
-     )
+--formatDocumentTag Option   := record(
+--     s -> concatenate (
+--	  if class s#0 === Sequence 
+--	  then (
+--	       if class s#0#0 === Symbol
+--	       then ( "(", formatDocumentTag s#0, ", ", toString s#1, " => ...)" )
+--	       else ( toString s#0#0, "(", after(toString \ drop(s#0,1), ", "), " ", toString s#1, " => ...)" )
+--	       )
+--	  else ( toString s#0, "(..., ", toString s#1, " => ...)" )
+--	  )
+--     )
 
 fSeqInitialize := (toString,toStr) -> new HashTable from {
      (4,NewOfFromMethod) => s -> ("new ", toString s#1, " of ", toString s#2, " from ", toStr s#3),
@@ -154,14 +154,13 @@ formatDocumentTag Sequence := record(
 	       fSeq = fSeqInitialize(toString,toStr);
 	       );
 	  concatenate (
-	       if #s == 0                             then toString
-	       else if fSeq#?(#s,s#0)                 then fSeq#(#s,s#0)
-	       else if #s >= 1 and fSeq#?(#s,s#0,s#1) then fSeq#(#s,s#0,s#1)
-	       else if #s >= 1 and fSeq#?(#s, class, class s#0, s#1) 
-	       					      then fSeq#(#s, class, class s#0, s#1)
-	       else if fSeq#?(#s, class, class s#0)   then fSeq#(#s, class, class s#0)
-	       else if fSeq#?#s                       then fSeq#(#s)
-						      else toString) s))
+	       if #s == 0                                            then toString
+	       else if             fSeq#?(#s,s#0)                    then fSeq#(#s,s#0)
+	       else if #s >= 1 and fSeq#?(#s,s#0,s#1)                then fSeq#(#s,s#0,s#1)
+	       else if #s >= 1 and fSeq#?(#s, class, class s#0, s#1) then fSeq#(#s, class, class s#0, s#1)
+	       else if             fSeq#?(#s, class, class s#0)      then fSeq#(#s, class, class s#0)
+	       else if             fSeq#?#s                          then fSeq#(#s)
+						                     else toString) s))
 
 fSeqTO := null
 formatDocumentTagTO := method(SingleArgumentDispatch => true)
@@ -196,11 +195,22 @@ formatDocumentTagTO Sequence := (
 verifyTag := method(SingleArgumentDispatch => true)
 verifyTag Thing    := s -> null
 verifyTag Sequence := s -> (
-     if class lookup s =!= Function then (
-	  -- error("documentation provided for '", formatDocumentTag s, "' but no method installed");
-	  stderr << "warning: documentation provided for '" << formatDocumentTag s << "' but no method installed" << endl ;
-     ))
+     if #s === 2 and class s#1 === Symbol then (	    -- optional argument (a method sequence has types in positions 1,2,...)
+	  fn := s#0;
+	  opt := s#1;
+	  if class fn === Sequence then (
+	       fn' := lookup fn;
+	       if class fn' =!= Function then error("documentation provided for '", formatDocumentTag fn, "' but no method installed");
+	       fn = fn#0;
+	       );
+	  if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
+     else (
+	  if class lookup s =!= Function then (
+	       error("documentation provided for '", formatDocumentTag s, "' but no method installed");
+	       -- stderr << "warning: documentation provided for '" << formatDocumentTag s << "' but no method installed" << endl ;
+	  )))
 verifyTag Option   := s -> (
+     -- error "old style option documentation tag";
      fn := s#0;
      opt := s#1;
      if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn))
