@@ -42,3 +42,7 @@ export hash(s:string):int := (
      foreach c in s do h = 31*h + int(c);
      h & 0x7fffffff
      );
+
+-- C strings, use with care!
+
+export Cstring := null ;

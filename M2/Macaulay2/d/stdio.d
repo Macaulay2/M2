@@ -536,3 +536,13 @@ export (o:file) << (m:Manipulator) : file := (
      o
      );
 export endl := Manipulator(endlfun);
+
+element(s:Cstring, i:int):char ::= Ccode( char, "(((char *)", s, ")[", i, "])" );
+export (o:file) << (s:Cstring) : file := (
+     i := 0;
+     while element(s,i) != char(0) do (
+	  o << element(s,i);
+	  i = i+1;
+	  );
+     o
+     );
