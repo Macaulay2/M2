@@ -84,7 +84,8 @@ monoidDefaults = (
 	  VariableOrder => null,		  -- not implemented yet
 	  WeylAlgebra => {},
 	  Adjust => identity,
-	  Repair => identity
+	  Repair => identity,
+	  DegreeRank => null
 	  }
      )
 
@@ -262,17 +263,25 @@ makeMonoid := (options) -> (
 			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
      -- if length unique options.Variables < length options.Variables then error "at least one variable listed twice";
 
-     -- Check the degree list
+     -- process the degree list
+     degrk := options.DegreeRank;
      n := # options.Variables;
-     degs := options.Degrees;
-     if degs === null 
-        then degs = apply(n,i->{1})
-        else degs = splice degs;
-     if # degs === 0 
-        then degs = apply(n,i->{})
-        else if instance(degs#0,ZZ)
-            then degs = apply(degs,i -> {i});
+     degs := splice options.Degrees;
+     if degs === null then degs = (
+	  if degrk === null then apply(n,i->{1})
+	  else apply(n, i -> apply(degrk, j -> if j === i or i >= degrk and j === degrk-1  then 1 else 0))
+	  )
+     else (
+     	  degs = apply(degs, d -> if class d === ZZ then {d} else d);
+     	  scan(degs, d -> if not (class d === List and all(class \ d, i -> class i === ZZ)) then error "expected degree to be an integer or list of integers");
+     	  if degrk === null then (
+	       if not same(length \ degs) then error "expected degrees all of the same rank";
+ 	       degrk = if #degs > 0 then #degs#0 else 0;
+	       )
+	  else scan(degs, d -> if #d =!= degrk then error("expected degree of rank ",degrk));
+	  );
      options.Degrees = degs;
+     options.DegreeRank = degrk;
 
      if class options.Adjust =!= Function then error("expected 'Adjust' option to be a function");
      if class options.Repair =!= Function then error("expected 'Repair' option to be a function");
