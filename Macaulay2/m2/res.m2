@@ -1,7 +1,7 @@
 --		Copyright 1995 by Daniel R. Grayson and Michael Stillman
 
 Resolution = new Type of MutableHashTable
-name Resolution := g -> "<<resolution " | name g.handle | ">>"
+toString Resolution := g -> "<<resolution " | toString g.handle | ">>"
 
 resolution = method(
      Options => {
@@ -241,7 +241,7 @@ status Resolution := options -> (r) -> (
      mincol := 0;
      maxcol := ss_2;
      leftside := apply(
-	  splice {"totals:", apply(minrow .. maxrow, i -> string i | ":")},
+	  splice {"totals:", apply(minrow .. maxrow, i -> toString i | ":")},
 	  s -> (9-# s,s));
      v = transpose v;
      v = drop(v,3);
@@ -251,8 +251,8 @@ status Resolution := options -> (r) -> (
      v = transpose v;
      v = applyTable(v, toSequence);
      if numops === 1
-     then v = applyTable(v,(i) -> if i === 0 then "." else name i)
-     else v = applyTable(v,args -> concatenate("(", between(",",apply(args,name)), ")" ));
+     then v = applyTable(v,(i) -> if i === 0 then "." else toString i)
+     else v = applyTable(v,args -> concatenate("(", between(",",apply(args,toString)), ")" ));
      just := (
 	  if numops === 1
 	  then (wid,s) -> (wid - # s, s)  -- right justify

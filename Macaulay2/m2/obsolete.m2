@@ -6,6 +6,7 @@ document { "obsolete functions and symbols",
 	  TO "elements",
 	  TO "evaluate",
 	  TO "expand",
+	  TO "name",
 	  TO "seq",
 	  TO "syms",
 	  TO "unlist",
@@ -16,7 +17,7 @@ document { "obsolete functions and symbols",
 unlist = X -> error "'unlist' has been replaced by toSequence"
 unlist
 
-document { quote unlist,
+document { unlist,
      TT "unlist",
      PARA,
      "An obsolete function, replaced by ", TO "toSequence", "."
@@ -25,13 +26,13 @@ document { quote unlist,
 elements = X -> error "'elements' has been replace by toList"
 elements
 
-document { quote elements,
+document { elements,
      TT "elements",
      PARA,
      "An obsolete function, replaced by ", TO "toList", "."
      }
 
-document { quote syms,
+document { syms,
      TT "syms",
      PARA,
      "A symbol, replaced by ", TO "generatorSymbols", "."
@@ -40,7 +41,7 @@ document { quote syms,
 expand = X -> error "'expand' has been replaced by 'value'"
 expand
 
-document { quote expand,
+document { expand,
      TT "expand",
      PARA,
      "A function replaced by ", TO "value", "."
@@ -49,7 +50,7 @@ document { quote expand,
 evaluate = X -> error "'evaluate' has been replaced by 'value'"
 evaluate
 
-document { quote evaluate,
+document { evaluate,
      TT "evaluate",
      PARA,
      "A function replaced by ", TO "value", "."
@@ -58,7 +59,7 @@ document { quote evaluate,
 seq = X -> error "'seq' has been replaced by 'singleton'"
 seq
 
-document { quote seq,
+document { seq,
      TT "seq",
      PARA,
      "A function replaced by ", TO "singleton", "."
@@ -67,8 +68,10 @@ document { quote seq,
 verticalJoin = X -> error "'verticalJoin' has been replaced by 'stack'"
 verticalJoin
 
-document { quote verticalJoin,
+document { verticalJoin,
      TT "verticalJoin",
      PARA,
      "A function replaced by ", TO "stack", "."
      }
+
+name = X -> error "'name' has been replaced by 'toString'"

@@ -24,7 +24,7 @@ expression GeneralOrderedMonoid := M -> (
 	  new Array from apply(v,expression)
 	  )
      )
-name GeneralOrderedMonoid := M -> (
+toString GeneralOrderedMonoid := M -> if M.?name then M.name else (
      if not M.?generatorExpressions
      then "--empty GeneralOrderedMonoid--"
      else (
@@ -37,7 +37,7 @@ name GeneralOrderedMonoid := M -> (
           then v = append(v, MonomialSize => M.Options.MonomialSize);
 	  if M.Options.SkewCommutative != false
 	  then v = append(v, SkewCommutative => M.Options.SkewCommutative);
-     	  concatenate("[",between(",",name\v),"]")
+     	  concatenate("[",between(",",toString\v),"]")
 	  ))
 net GeneralOrderedMonoid := M -> (
      if M.?name then M.name
@@ -90,7 +90,7 @@ degreesMonoid2 := memoize(
      (n) -> (
 	  T := local T;
 	  Zn := group [if n === 1 then T else T_0 .. T_(n-1), Degrees => {}];
-	  Zn.name = "ZZ^" | name n;
+	  Zn.name = "ZZ^" | toString n;
 	  Zn))
 
 degreesMonoid ZZ := n -> use degreesMonoid2 n
@@ -99,7 +99,7 @@ newDegreesMonoid2 := memoize(
      (n) -> (
 	  T := local T;
 	  Zn := monoid [if n === 1 then T else T_0 .. T_(n-1), NewMonomialOrder => GroupLex => n, Degrees => {}];
-	  Zn.name = "ZZ^" | name n;
+	  Zn.name = "ZZ^" | toString n;
 	  Zn))
 
 newDegreesMonoid ZZ := n -> use newDegreesMonoid2 n
@@ -182,7 +182,7 @@ makeit1 := (options) -> (
 	       else if mo === quote GLex then MOglex firstdeg
 	       else if instance(mo, Eliminate) then MOelim(firstdeg, mo#0)
 	       else if instance(mo, ProductOrder) then MOproduct(firstdeg, toList mo)
-	       else error("invalid MonomialOrder option: ", name mo)
+	       else error("invalid MonomialOrder option: ", toString mo)
 	       )
 	  );
      M.generatorSymbols = varlist;
@@ -246,7 +246,7 @@ makeit1 := (options) -> (
      M.vars = M.generators = apply(# varlist, i -> new M from join( {(i,1)}, w#i));
      M.index = new MutableHashTable;
      scan(#varlist, i -> M.index#(varlist#i) = i);
-     name M := x -> name expression x;
+     toString M := toExternalString M := x -> toString expression x;
      net M := x -> net expression x;
      M ? M := (x,y) -> (
 	  -- comparison of two monomials
@@ -270,7 +270,7 @@ makeit1 := (options) -> (
 	  );
      M Array := (m,x) -> (
 	  if # x != n then error (
-	       "expected a list of length ", name n
+	       "expected a list of length ", toString n
 	       );
 	  x = flatten toList x;
 	  product(m, (k,v) -> if k < n then x#k^v else 1)
@@ -322,7 +322,7 @@ makeit1 := (options) -> (
 	       );
 	  );
      betwNames := (m,v) -> concatenate between(m,
-	  apply(v, x -> concatenate lines(name x, " "))
+	  apply(v, x -> concatenate lines(toString x, " "))
 	  );
      M.handle = newHandle (
 	  ggPush M.MonomialOrder,
@@ -358,7 +358,7 @@ makeMonoid := (options) -> (
 		    x->if class x === MutableList then toList x else x), 
 	       i -> (
 		    try baseName i
-		    else error ("'", name i, "'", " can't be used as a variable" )
+		    else error ("'", toString i, "'", " can't be used as a variable" )
 		    )
 	       ));
 
@@ -393,14 +393,14 @@ monoid Ring := R -> R.monoid
 
 GeneralOrderedGroup = new Type of GeneralOrderedMonoid
 GeneralOrderedGroup.Engine = true
-name GeneralOrderedGroup := M -> (
+toString GeneralOrderedGroup := M -> if M.?name then M.name else (
      if not M.?generatorExpressions
      then "--empty GeneralOrderedGroup--"
      else (
      	  v := M.generatorExpressions;
      	  if any(M.degrees, i -> i != {1}) 
 	  then v = append(v, Degrees => M.degrees);
-     	  concatenate("group [",between(",",name\v),"]")
+     	  concatenate("group [",between(",",toString\v),"]")
 	  ))
 
 group = method()

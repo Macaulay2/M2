@@ -3,10 +3,10 @@
 ScriptedFunction = new Type of MutableHashTable
 ScriptedFunction ^ Thing := (G,i) -> (
      if G#?superscript then G#superscript i
-     else error("no method for ", name G, "^", name i))
+     else error("no method for ", toString G, "^", toString i))
 ScriptedFunction _ Thing := (G,i) -> (
      if G#?subscript then G#subscript i
-     else error("no method for ", name G, "_", name i))
+     else error("no method for ", toString G, "_", toString i))
 
 GlobalAssignHook ScriptedFunction := globalAssignFunction
 GlobalReleaseHook ScriptedFunction := globalReleaseFunction
@@ -16,7 +16,7 @@ id = new ScriptedFunction from {
 	  (x) -> (
 	       r := lookup(id,class x);
 	       if r =!= null then r x
-	       else error ("no method 'id_' found for item of class ", name class x)))
+	       else error ("no method 'id_' found for item of class ", toString class x)))
      }
 
 ScriptedFunctor = new Type of MutableHashTable
@@ -25,17 +25,17 @@ GlobalReleaseHook ScriptedFunctor := globalReleaseFunction
 ScriptedFunctor ^ Thing := (G,i) -> (
      if G#?superscript 
      then G#superscript i
-     else error("no method for ", name G, "^", name i)
+     else error("no method for ", toString G, "^", toString i)
      )
 ScriptedFunctor _ Thing := (G,i) -> (
      if G#?subscript 
      then G#subscript i
-     else error("no method for ", name G, "_", name i)
+     else error("no method for ", toString G, "_", toString i)
      )
 ScriptedFunctor Thing := (G,X) -> (
      if G#?argument
      then G#argument X
-     else error("no method for ", name G, " ", name X)
+     else error("no method for ", toString G, " ", toString X)
      )
 protect argument
 protect subscript

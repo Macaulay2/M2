@@ -77,11 +77,11 @@ Matrix _ Sequence := (m,ind) -> (
 	  i := ind#0;
 	  j := ind#1;
 	  if i < 0 or i >= rows then error (
-	       "encountered row index ", name i,
-	       " out of range 0 .. ", name (rows-1));
+	       "encountered row index ", toString i,
+	       " out of range 0 .. ", toString (rows-1));
 	  if j < 0 or j >= cols then error (
-	       "encountered column index ", name j,
-	       " out of range 0 .. ", name (cols-1));
+	       "encountered column index ", toString j,
+	       " out of range 0 .. ", toString (cols-1));
      	  sendgg (ggPush m, ggINT, gg ind#0, ggINT, gg ind#1, ggelem);
      	  R.pop())
      else error "expected a sequence of length two"
@@ -91,7 +91,7 @@ Matrix _ ZZ := (m,i) -> (
      if 0 <= i and i < numgens source m then (
      	  sendgg (ggPush m, ggPush i, ggelem);
      	  new m.target)
-     else error ("subscript '", name i, "' out of range"))
+     else error ("subscript '", toString i, "' out of range"))
 
 Matrix == Matrix := (m,n) -> (
      target m == target n
@@ -200,10 +200,13 @@ Matrix * Vector := (m,v) -> (
 
 expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
 
-name Matrix := m -> concatenate (
-     -- "matrix (", name target m, ", ", name source m, ", ", name entries m, ")"
-     "matrix ", name entries m
+toExternalString Matrix := m -> concatenate (
+     "map(", toExternalString target m, ", ", toExternalString source m, ", ", toString entries m,
+     if not all(degree m, i -> i === 0) then (", Degree => ", toString degree m),
+     ")"
      )
+
+toString Matrix := m -> concatenate ( "matrix ", toString entries m )
 
 isIsomorphism Matrix := f -> coker f == 0 and ker f == 0
 

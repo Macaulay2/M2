@@ -24,7 +24,7 @@ map(Module,ZZ,List) := options -> (M,rankN,p) -> (
      p = apply(splice p,splice);
      if #p != numgens M
      or #p > 0 and ( not isTable p or # p#0 != rankN )
-     then error( "expected ", name numgens M, " by ", name rankN, " table");
+     then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      p = applyTable(p,x -> promote(x,R));
      m := new Matrix;
      m.target = M;
@@ -66,7 +66,7 @@ degreeCheck := (d,R) -> (
 	  then error "expected degree to be an integer or list of integers of length 1"
 	  else error (
 	       "expected degree to be a list of integers of length ",
-	       string degreeLength R
+	       toString degreeLength R
 	       )
 	  )
      )
@@ -104,7 +104,7 @@ map(Module,Nothing,List) := map(Module,Module,List) := options -> (M,N,p) -> (
      p = apply(splice p,splice);
      if #p != numgens M
      or #p > 0 and ( not isTable p or # p#0 != rankN )
-     then error( "expected ", name numgens M, " by ", name rankN, " table");
+     then error( "expected ", toString numgens M, " by ", toString rankN, " table");
      p = applyTable(p,x -> promote(x,R));
      m := new Matrix;
      m.target = M;
@@ -403,7 +403,7 @@ net Matrix := f -> (
 	  m := stack toSequence apply(
 	       lines sendgg(ggPush f,ggsee,ggpop), x -> concatenate("| ",x,"|"));
 	  if degreeLength R > 0 -- and isHomogeneous f
-	  then m = horizontalJoin(stack(degrees cover target f / name), " ", m);
+	  then m = horizontalJoin(stack(degrees cover target f / toString), " ", m);
 	  m)
      else net expression f				    -- add row labels somehow
      )
@@ -433,7 +433,7 @@ net Ideal := (I) -> (
      if numgens I === 0 then "0"
      else net expression I
      )
-name Ideal := (I) -> name expression I
+toString Ideal := (I) -> if I.?name then I.name else toString expression I
 
 isHomogeneous Ideal := (I) -> isHomogeneous I.generators
 genera(Ideal) := (I) -> genera module I

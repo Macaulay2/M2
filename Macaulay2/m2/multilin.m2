@@ -113,7 +113,6 @@ pfaffians(ZZ,Matrix) := options -> (j,m) -> (
 	  ))
 
 -----------------------------------------------------------------------------
-trace = method()
 trace Matrix := f -> (
      if rank source f != rank target f
      or not isFreeModule source f

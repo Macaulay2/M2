@@ -16,27 +16,27 @@ lastp := 2
 
 unpack := (S,cont) -> (			  -- a quotient ring
      if class S =!= QuotientRing
-     then error("expected ",name S," to be a quotient ring");
+     then error("expected ",toString S," to be a quotient ring");
      R := ultimate(ambient, S);			  -- original poly ring
      if R === ZZ then (
 	  if isField S then (
 	       R = S[local t];
 	       S = R/t;
 	       )
-     	  else error("expected ",name S," to be a field")
+     	  else error("expected ",toString S," to be a field")
 	  );
      if class R =!= PolynomialRing
      or numgens R =!= 1
-     then error("expected ",name R," to be a polynomial ring in one variable");
+     then error("expected ",toString R," to be a polynomial ring in one variable");
      if degreeLength R =!= 1
-     then error("expected ",name R," to be a simply graded polynomial ring");
+     then error("expected ",toString R," to be a simply graded polynomial ring");
      p := char R;
      if coefficientRing R =!= ZZ/p or (p =!= lastp and not isPrime p)
-     then error("expected ",name R," to be a polynomial ring over a finite prime field");
+     then error("expected ",toString R," to be a polynomial ring over a finite prime field");
      lastp = p;
      I := presentation S;			  -- a Matrix, sigh
      if rank source I =!= 1
-     then error("expected ",name S," to be a quotient ring by a principal ideal");
+     then error("expected ",toString S," to be a quotient ring by a principal ideal");
      f := I_(0,0);
      n := first degree f;
      cont(R,p,n,f))
@@ -68,7 +68,7 @@ GF(ZZ) := options -> (q) -> (
 
 GF(Ring) := options -> (S) -> unpack(S, (R,p,n,f) -> (
      if not isPrime f
-     then error("expected ",name S," to be a quotient ring by an irreducible polynomial");
+     then error("expected ",toString S," to be a quotient ring by an irreducible polynomial");
      g := options.PrimitiveElement;
      if g === FindOne then (
 	  t := S_0;
@@ -108,7 +108,7 @@ GF(Ring) := options -> (S) -> unpack(S, (R,p,n,f) -> (
 		    else (expression xx)^i
 		    ), 
 	       ConvertInteger);
-	  name F := h -> name expression h;
+	  toString F := h -> toString expression h;
 	  net F := h -> net expression h;
 	  );
      F.baseRings = append(S.baseRings,S);

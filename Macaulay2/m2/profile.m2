@@ -4,7 +4,7 @@ profile = method()
 
 record := new MutableHashTable
 
-profile Function := f -> profile (name f, f)
+profile Function := f -> profile (toString f, f)
 
 profile(String,Function) := (n,f) -> (
      record#n = m := new MutableList from {0,0.};

@@ -114,7 +114,7 @@ complement Matrix := (m) -> (
 index = method()
 
 index RingElement := f -> (
-    v := try (baseName f) else error("expected a ring variable but received ",name f);
+    v := try (baseName f) else error("expected a ring variable but received ",toString f);
     (monoid ring f).index#v)
 
 --------------------

@@ -1,6 +1,6 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-document { quote userSymbols,
+document { userSymbols,
      TT "userSymbols ()", " -- provides a list of variables defined by
      the user.",
      BR,
@@ -12,7 +12,7 @@ document { quote userSymbols,
      }
 
 
-document { quote listUserSymbols,
+document { listUserSymbols,
      TT "listUserSymbols", " -- a command which returns a display of the variables 
      defined by the user, along with their types.",
      BR,
@@ -24,14 +24,14 @@ document { quote listUserSymbols,
      SEEALSO {"userSymbols"}
      }
 
-document { quote clearOutput,
+document { clearOutput,
      TT "clearOutput", " -- a command which attempts to release memory by 
      clearing the values retained by the output line symbols.",
      PARA,
      SEEALSO { "clearAll" }
      }
 
-document { quote clearAll,
+document { clearAll,
      TT "clearAll", " -- a command which attempts to release memory by clearing 
      the values retained by the output line symbols and all the user symbols.",
      PARA,
@@ -57,13 +57,13 @@ document { "engine communication protocol",
      }
 
 
-document { quote ConversionFormat,
+document { ConversionFormat,
      TT "ConversionFormat", " -- a method consulted to provide an engine conversion
      format.",
      SEEALSO {"convert", "pop"}
      }
 
-document { quote convert,
+document { convert,
      TT "convert (fmt,str)", " -- converts a string ", TT "str", " containing data 
      transmitted from the engine in the ", TO "engine communication protocol", ".
      The argument ", TT "fmt", " is a recursive description of the format to
@@ -107,27 +107,27 @@ document { quote convert,
      SEEALSO {"pop"}
      }
 
-document { quote ConvertToExpression,
+document { ConvertToExpression,
      TT "ConvertToExpression", " -- a key for classes under which a
      conversion format is stored.",
      PARA,
      "See ", TO "convert", "."
      }
 
-document { quote pop,
+document { pop,
      TT "pop", " -- used as a key.  If X is a class, then X.pop will contain a
      routine which uses ", TO "convert", " to pop the top item off the
      engine's stack and return it.",
      SEEALSO "engine communication protocol"
      }
 
-document { quote ConvertInteger,
+document { ConvertInteger,
      "A format item for communication with the engine that corresponds to
      an integer.  See ", TO "transmitting an integer", "."
      }
 
 
-document { quote ConvertApply,
+document { ConvertApply,
      TT "ConvertApply(f,T1,...,Tm)", " -- a format item for communication with
      the engine that specifies that format items T1, ..., Tm should be 
      applied to the bytes received from the engine, and then the function
@@ -137,7 +137,7 @@ document { quote ConvertApply,
      }
 
 
-document { quote ConvertList,
+document { ConvertList,
      TT "ConvertList T", " -- a format item for converting data received from the
      ", TO "engine", ", which specifies that format item T be applied to each
      element in the array, returning the results as a list.",
@@ -146,7 +146,7 @@ document { quote ConvertList,
      }
 
 
-document { quote ConvertRepeat,
+document { ConvertRepeat,
      TT "ConvertRepeat T", " -- a format item for converting data received from the
      ", TO "engine", ", which specifies that format item T be applied to each
      element in the array, returning the results as a sequence.",
@@ -155,7 +155,7 @@ document { quote ConvertRepeat,
      }
 
 
-document { quote ConvertFixedRepeat,
+document { ConvertFixedRepeat,
      TT "ConvertFixedRepeat(n,T1,...,Tm)", " -- a format item for converting data
      from the engine that specifies that the format items T1,...Tm be applied
      to the incoming data a total of n times.",
@@ -164,7 +164,7 @@ document { quote ConvertFixedRepeat,
      }
 
 
-document { quote ConvertJoin,
+document { ConvertJoin,
      TT "ConvertJoin(T1,...,Tm)", " -- a format item for converting data
      from the engine that specifies that format items T1,...,Tm be applied
      to the data received, and the sequence of results returned.",
@@ -295,7 +295,7 @@ document { "transmitting an integer",
      xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx   (succeeding bytes)
      xxxxxxxx xxxxxxxx	      	           (succeeding bytes)",
      EXAMPLE "binary = s -> concatenate between (\" \",
-          apply(s,x -> apply(8, i-> string ((x >> 7-i) % 2))));",
+          apply(s,x -> apply(8, i-> toString ((x >> 7-i) % 2))));",
      EXAMPLE "<< binary ascii gg 63 << endl;",
      EXAMPLE "<< binary ascii gg 64 << endl;",
      EXAMPLE "<< binary ascii gg 127 << endl;",
@@ -308,14 +308,14 @@ document { "transmitting an integer",
      EXAMPLE "<< binary ascii gg 2^50 << endl;"
      }
 
-document { quote sendToEngine,
+document { sendToEngine,
      TT "sendToEngine s", " -- sends the string ", TT "s", " to the engine and returns the result.",
      PARA,
      "See also ", TO "engine communication protocol", "."
      }
 
 
-document { quote ConvertMissing,
+document { ConvertMissing,
      TT "ConvertMissing", " -- a format item for converting data from the engine
      which specifies that the class for which this item has been installed
      has no conversion format specified, presumably because it corresponds
@@ -345,7 +345,7 @@ TEST "
      g(10000000000000000000000000000000000000000000000000)
      "
 
-document { quote exec,
+document { exec,
      TT "exec argv", " -- uses the 'exec' operating system call to
      start up another program, replacing the current Macaulay 2 process.
      Here ", TT "argv", " is a string, or a sequence or list of strings
@@ -354,10 +354,10 @@ document { quote exec,
      }
 
 
-document { quote restart,
+document { restart,
      TT "restart", " -- restart Macaulay 2 from the beginning."
      }
-document { quote on,
+document { on,
      TT "f = on f", " -- replaces the function ", TT "f", " by a version which 
      will print out its arguments and return value each time it's called,
      together with a sequence number so the two reports can be connected.",
@@ -371,15 +371,15 @@ document { quote on,
      }
 
 
-document { quote assert,
+document { assert,
      TT "assert x", " -- prints an error message if x isn't true."
      }
-document { quote notImplemented,
+document { notImplemented,
      TT "notImplemented()", " -- print an error message that 
      says \"not implemented yet\"."
      }
 
-document { quote errorDepth,
+document { errorDepth,
      TT "errorDepth i", " -- sets the error depth to i, which should be
      a small integer, returning the old value.",
      PARA,
@@ -390,7 +390,7 @@ document { quote errorDepth,
      ", TO "loaddata", " will not appear in the backtrace."
      }
 
-document { quote benchmark,
+document { benchmark,
      TT "benchmark s", " -- produce an accurate timing for the code contained
      in the string ", TT "s", ".  The value returned is the number of seconds.",
      PARA,
@@ -399,7 +399,7 @@ document { quote benchmark,
      beforehand."
      }
 
-document { quote memoize,
+document { memoize,
      TT "memoize f", " -- produces, from a function f, a new function which
      behaves the same as f, but remembers previous answers to be provided
      the next time the same arguments are presented.",
@@ -429,7 +429,7 @@ document { quote memoize,
      SEEALSO "original"
      }
 
-document { quote original,
+document { original,
      TT "original f", " -- provides the original function from which the
      memoized function ", TT "f", " was made.",
      SEEALSO "memoize"
@@ -467,7 +467,7 @@ document { (quote _, Tally, Thing),
      SEEALSO "Tally"
      }
 
-document { quote Tally,
+document { Tally,
      TT "Tally", " -- a class designed to hold tally results, i.e., multisets.",
      PARA,
      "Operations:",
@@ -523,7 +523,7 @@ document { (quote -, Tally, Tally),
      SEEALSO "Tally"
      }
 
-document { quote tally,
+document { tally,
      TT "tally x", " -- tallies the frequencies of items in a list x.",
      PARA,
      "It produces an hash table (multiset) y which tallies the
@@ -540,11 +540,11 @@ document { quote tally,
      }
 
 TEST ///
-assert( name tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 => 1}" )
+assert( toString tally {1,1,1,2,1,3,2} === "new Tally from {1 => 4, 2 => 2, 3 => 1}" )
 assert( tally {1,1,1,2,1,3,2} === new Tally from {(1,4),(2,2),(3,1)} )
 ///
 
-document { quote Set,
+document { Set,
      TT "Set", " -- the class of all sets.",
      PARA,
      "Function for creating sets:",
@@ -579,7 +579,7 @@ document { (isSubset,Set,Set),
      PARA,
      SEEALSO "isSubset"
      }
-document { quote isSubset,
+document { isSubset,
      TT "isSubset(x,y)", " -- whether ", TT "x", " is a subset of ", TT "y", ".",
      PARA,
      MENU {
@@ -614,10 +614,10 @@ assert ( x ** y === set {
 	  } )
 assert ( x - y === set {2, 1} )
 assert ( x + y === set {1, 2, 3, 4, 5} )
-assert ( name x === \"set {1, 2, 3}\" )
+assert ( toString x === \"set {1, 2, 3}\" )
 "
 
-document { quote Handle,
+document { Handle,
      TT "Handle", " -- the class of all Handles.",
      PARA,
      "This concept is mainly for internal use.",
@@ -635,14 +635,14 @@ document { quote Handle,
 	  TO "newHandle"
 	  }
      }
-document { quote newHandle,
+document { newHandle,
      TT "newHandle x", " -- passes the commands ", TT "x", " to the engine 
      with ", TO "sendgg", ", pops an object off the engine's stack and 
      produces the handle.",
      SEEALSO {"toHandle", "Handle" }
      }
 
-document { quote toHandle,
+document { toHandle,
      TT "toHandle i", " -- convert the integer i to a ", TO "Handle", ".",
      PARA,
      "No checking is done to ensure that the integer i actually has
@@ -650,14 +650,14 @@ document { quote toHandle,
      }
 
 
-document { quote handle,
+document { handle,
      TT "handle x", " -- produces the ", TO "Handle", " for the object x.",
      PARA,
      "The corresponding symbol is used as a key under which to store
      the handle."
      }
 
-document { quote look,
+document { look,
      TT "look()", " -- display item on the top of the engine's stack.",
      PARA,
      "It's a ", TO "Command", " so it may be entered simply
@@ -671,12 +671,12 @@ document { quote look,
 	  }
      }
 
-document { quote callgg,
+document { callgg,
      TT "callgg(f,x,y,...)", " -- calls the ", TO "engine", " with engine
      command string f, after pushing engine objects corresponding to
      x, y, ... onto the engine's stack."
      }
-document { quote engineStack,
+document { engineStack,
      TT "engineStack()", " -- returns a net containing a display of the contents
      of the engine's stack.",
      PARA,
@@ -692,7 +692,7 @@ document { quote engineStack,
 	  },
      }
 
-document { quote heap,
+document { heap,
      TT "heap()", " -- display the contents of the engine's heap.",
      PARA,
      "It's a ", TO "Command", " so it may be entered simply
@@ -706,7 +706,7 @@ document { quote heap,
 	  },
      }
      
-document { quote engineMemory,
+document { engineMemory,
      TT "engineMemory()", " -- display the memory usage of the engine.",
      PARA,
      "It's a ", TO "Command", " so it may be entered simply
@@ -719,7 +719,7 @@ document { quote engineMemory,
       	  "engineMemory"
 	  }
      }
-document { quote see,
+document { see,
      TT "see i", " -- return a string which displays the engine object whose handle 
      is the integer i.",
      BR,
@@ -791,45 +791,45 @@ document { "high level gb engine commands",
 	  }
      }
 
-document { quote eePopInt,
+document { eePopInt,
      TT "eePopInt()", " -- pop the integer from the top of the engine's stack,
      returning its value.",
      PARA,
      SEEALSO "high level gb engine commands"
      }
 
-document { quote eePopIntarray,
+document { eePopIntarray,
      TT "eePopIntarray()", " -- pop the array of integers from the top of the engine's 
      stack, returning its value as a list of integers.",
      PARA,
      SEEALSO "high level gb engine commands"
      }
 
-document { quote eePopBool,
+document { eePopBool,
      TT "eePopBool()", " -- pop a boolean value from the top of the engine's stack,
      returning true or false.",
      PARA,
      SEEALSO "high level gb engine commands"
      }
 
-document { quote eePop,
+document { eePop,
      TT "eePop f", " -- take an engine conversion format string and use it
      to convert an object popped from the top of the engine's stack.",
      PARA,
      SEEALSO "high level gb engine commands"
      }
 
-document { quote eePromote,
+document { eePromote,
      TT "eePromote(f,R)", " -- promote a ring element ", TT "f", " to the
      ring ", TT "R", "."
      }
 
-document { quote eeLift,
+document { eeLift,
      TT "eeLift(f,R)", " -- lift a ring element ", TT "f", " to the
      ring ", TT "R", "."
      }
 
-document { quote accumulate,
+document { accumulate,
      TT "accumulate(f,x0,{x1,...,xn})", " -- computes the list 
      ", TT "{f(x0,x1),f(f(x0,x1),x2),...}", ".",
      BR,NOINDENT,
@@ -856,7 +856,7 @@ TEST ///
      assert( accumulate({a,b,c,d},toList) == {{a, {b, {c, d}}}, {b, {c, d}}, {c, d}} )
 ///     
 
-document { quote fold,
+document { fold,
      TT "fold(f,x0,{x1,...,xn})", " -- computes ", TT "f(...f(f(x0,x1),x2)...)}", ".",
      BR,NOINDENT,
      TT "fold({xn,...,x1},x0,f)", " -- computes ", TT "f(...f(x2,f(x1,x0))...)}", ".",
@@ -877,7 +877,7 @@ TEST ///
      assert( fold({a,b,c,d}, toList) === {a, {b, {c, d}}} )
 ///
 
-document { quote demark,
+document { demark,
      TT "demark(s,x)", " -- given a list of strings ", TT "x", " and
      a string ", TT "s", " provides the string obtained by concatenating
      the elements of ", TT "x", " with a copy of ", TT "x", " inserted
@@ -886,26 +886,26 @@ document { quote demark,
      EXAMPLE "demark(\"+\",{\"a\",\"b\",\"c\"})"
      }
 
-document { quote InfiniteNumber,
+document { InfiniteNumber,
      TT "InfiniteNumber", " -- the class of all infinite numbers.",
      PARA,
      SEEALSO { "infinity", "-infinity" }
      }
 
-document { quote infinity,
+document { infinity,
      TT "infinity", " -- a representation of infinity.",
      PARA,
      SEEALSO { "-infinity", "InfiniteNumber" }
      }
 
-document { quote IndeterminateNumber,
+document { IndeterminateNumber,
      TT "IndeterminateNumber", " -- the class of indeterminate numbers (of
      which there is only one).",
      PARA,
      SEEALSO "indeterminate"
      }
 
-document { quote indeterminate,
+document { indeterminate,
      TT "indeterminate", " -- a representation of an indeterminat number, such as might
      result from multiplying 0 by infinity.",
      PARA,
@@ -917,11 +917,11 @@ document { "-infinity",
      SEEALSO { "infinity", "InfiniteNumber" }
      }
 
-document { quote max,
+document { max,
      TT "max x", " -- yields the maximum of the elements in the list or sequence x."
      }
 
-document { quote min,
+document { min,
      TT "min x", " -- yields the minimum of the elements in the list or sequence x."
      }
 
@@ -932,7 +932,7 @@ assert(max(4,5,6) === 6)
 assert(min(4,5,6) === 4)
 ///
 
-document { quote sort,
+document { sort,
      TT "sort v", " -- produces a sorted version of the list v.",
      PARA,
      "The sort function uses ", TO "<=", " to compare elements of the
@@ -944,7 +944,7 @@ document { quote sort,
      SEEALSO { "rsort", "<=", "?" }
      }
 
-document { quote rsort,
+document { rsort,
      TT "rsort v", " -- produces a reverse sorted version of the list v.",
      PARA,
      "The rsort function uses ", TO "<=", " to compare elements of the
@@ -957,7 +957,7 @@ document { quote rsort,
      }
 
 
-document { quote pack,
+document { pack,
      TT "pack(v,n)", " -- packs the elements of the list or sequence
      ", TT "v", " into a table ", TT "n", " at a time.",
      PARA,
@@ -968,7 +968,7 @@ document { quote pack,
      EXAMPLE "pack({a,b,c,d,e,f,g,h,i,j,k},3)",
      }
 
-document { quote join,
+document { join,
      TT "join(u,v,...)", " -- joins the elements of the lists or
      sequences u, v, ... into a single list.",
      PARA,
@@ -979,7 +979,7 @@ document { quote join,
      "The operator ", TO (quote |, List, List), " can be used as a synonym."
      }
 
-document { quote take,
+document { take,
      TT "take(v,n)    ", " -- yields a list containing the first n elements of the list v.",
      BR,NOINDENT,
      TT "take(v,-n)", "    -- yields a list containing the last n elements of the list v.",
@@ -995,19 +995,19 @@ document { quote take,
      SEEALSO "drop"
      }
 
-document { quote first,
+document { first,
      TT "first v", " -- yields the first element of the list v.",
      PARA,
      "See also ", TO "last", "."
      }
 
-document { quote last,
+document { last,
      TT "last v", " -- yields the last element of the list v.",
      PARA,
      "See also ", TO "first", "."
      }
 
-document { quote positions,
+document { positions,
      TT "positions(v,f)", " -- yields a list of integers giving the positions of the
      elements of the list v which yield the value true when
      the function f is applied."
@@ -1017,12 +1017,12 @@ TEST "
 assert( 3 === position({a,b,c,d,e,f},i->i===d ) )
 "
 
-document { quote position,
+document { position,
      TT "position(v,f)", " -- returns the index of the first element of v satisfying 
      the condition f, or null if there is none."
      }
 
-document { quote delete,
+document { delete,
      TT "delete(x,v)", " -- removes any occurrences of the expression ", TT "x", "
      from the list ", TT "v", ".",
      PARA,
@@ -1057,7 +1057,7 @@ fib = stream( (i,j) -> (j,i+j), (0,1))
 scan(1 .. 22, i -> fib = fib())
 "
 
-document { quote ultimate,
+document { ultimate,
      TT "ultimate(f,x)", " -- yields the value ultimately obtained by
      applying the function ", TT "f", " to ", TT "x", ".",
      PARA,
@@ -1065,7 +1065,7 @@ document { quote ultimate,
      function, or the result is the same.  Errors are not reported."
      }
 
-document { quote tmpname,
+document { tmpname,
      TT "tmpname x", " -- create a temporary file name based on the string x
      unique to this process.",
      PARA,
@@ -1074,7 +1074,7 @@ document { quote tmpname,
      "The routine doesn't actually check to see whether file exists."
      }
 
-document { quote subsets,
+document { subsets,
      TT "subsets", " -- a function for computing a list of subsets
      of a set or list.",
      PARA,
@@ -1125,7 +1125,7 @@ assert( partitions(5,3) === {{3,2},{3,1,1},{2,2,1},{2,1,1,1},{1,1,1,1,1}} )
 "
 
 
-document { quote partitions,
+document { partitions,
      TT "partitions n", " -- returns a list of the partitions of the integer n.",
      BR, NOINDENT,
      TT "partitions(n,k)", " -- returns a list of the partitions of the integer n
@@ -1137,7 +1137,7 @@ document { quote partitions,
 	  },
      }
 
-document { quote examples,
+document { examples,
      -- this should come after the doc for partitions, because of the example
      TT "examples f", " -- returns a list of strings containing examples
      of code using the function ", TT "f", " provided in the documentation
@@ -1171,13 +1171,13 @@ document { (quote _, List, List),
      EXAMPLE "{4,2,3,1,0} _ {2,1,3,4,0}"
      }
 
-document { quote number,
+document { number,
      TT "number(x,f)", " -- the number of elements e of the list x for which f(e) is true.",
      PARA,
      "See also ", TO "positions", " and ", TO "select", "."
      }
 
-document { quote all,
+document { all,
      TT "all(v,f)", " -- whether each element x of a list or hash table
      v has f(x) true.",
      PARA,
@@ -1189,12 +1189,12 @@ document { quote all,
      SEEALSO { "scan", "apply", "select", "any", "member" }
      }
 
-document { quote same,
+document { same,
      TT "same v", " -- whether every element of the list v is the same.
      The comparison is done with ", TO "==", "."
      }
 
-document { quote member,
+document { member,
      TT "member(e,x)", " -- whether ", TT "e", " is an element of the list, set, or 
      sequence ", TT "x", ".",
      PARA,
@@ -1206,7 +1206,7 @@ document { quote member,
 	  },
      }
 
-document { quote sum,
+document { sum,
      TT "sum", " -- provides the sum of the members of a list, set, 
      or chain complex, optionally with a function applied to each one.",
      PARA,
@@ -1272,7 +1272,7 @@ document { (sum, Set),
      SEEALSO "sum"
      }
 
-document { quote product,
+document { product,
      TT "product", " -- provides the product of the members of a list or set,
      optionally with a function applied to each one.",
      PARA,
@@ -1335,12 +1335,26 @@ document { (product, Set),
      SEEALSO "product"
      }
 
-document { quote toString,
-     TT "toString x", " -- converts ", TT "x", " to a string using ", TT "name", ", unless
-     ", TT "x", " is already a string, in which case ", TT "x", " is returned."
+document { toString,
+     TT "toString x", " -- converts ", TT "x", " to a string.",
+     PARA,
+     "See also ", TO "toExternalString", " which will try to convert ", TT "x", "
+     to a string which can be read back into the program later."     
      }
 
-document { quote HeaderType,
+document { toExternalString,
+     TT "toExternalString x", " -- converts ", TT "x", " to a string, in such a way
+     that it can be read back into the program later.",
+     PARA,
+     "See also ", TO "toString", " which simply converts ", TT "x", "
+     to a string which can be displayed meaningfully.",     
+     PARA,
+     "Not everything can be converted to a string in such a way that it
+     can be read back into the program later, because circular data structures
+     are common."
+     }
+
+document { HeaderType,
      TT "HeaderType", " -- the class of all types ", TT "X", " of lists which can be
      constructed by expressions of the form ", TT "X {a,b,c,...}", ".  They
      also act on sequences.",
@@ -1352,7 +1366,7 @@ document { quote HeaderType,
      SEEALSO {"WrapperType", "SelfInitializingType"}
      }
 
-document { quote WrapperType,
+document { WrapperType,
      TT "WrapperType", " -- the class of all types ", TT "X", " of lists which can be
      constructed by expressions of the form ", TT "X {a,b,c,...}", ", or, for lists
      of length one, by an expression of the form ", TT "X a", ".  They also act
@@ -1366,7 +1380,7 @@ document { quote WrapperType,
      SEEALSO {"HeaderType", "SelfInitializingType"}
      }
 
-document { quote AssociativeExpression,
+document { AssociativeExpression,
      TT "AssociativeExpression", " -- a type of ", TO "Expression", ".",
      PARA,
      "Types of associative expression:",
@@ -1378,7 +1392,7 @@ document { quote AssociativeExpression,
      SEEALSO "Expression"
      }
 
-document { quote Holder,
+document { Holder,
      TT "Holder", " -- a type of ", TO "Expression", ".",
      PARA,
      "This type of expresssion is a container for a single, arbitrary, thing which
@@ -1388,23 +1402,23 @@ document { quote Holder,
      require special treatment."
      }
 
-document { quote ZeroExpression,
+document { ZeroExpression,
      TT "ZeroExpression", " -- a type of ", TO "Expression", " of which
      there is just one instance, an expression representing the number 0."
      }
-document { quote OneExpression,
+document { OneExpression,
      TT "OneExpression", " -- a type of ", TO "Expression", " of which
      there is just one instance, an expression representing the number 1."
      }
 
-document { quote DoubleArrow,
+document { DoubleArrow,
      TT "DoubleArrow", " -- a type of ", TO "Expression", " which represents
      something of the form ", TT "a => b", ".",
      PARA,
      "This is experimental, and intended for internal use only."
      }
 
-document { quote Expression,
+document { Expression,
      TT "Expression", " -- the class of all expressions.",
      PARA,
      "These expressions are symbolic representations of algebraic
@@ -1452,14 +1466,14 @@ document { quote Expression,
 	  TO "precedence"
 	  }
      }
-document { quote expression,
+document { expression,
      TT "expression x", " -- make an ", TO "Expression", " from x."
      }
 
-document { quote Divide,
+document { Divide,
      TT "Divide", " -- a type of ", TO "Expression", " representing a quotient."
      }
-document { quote Table,
+document { Table,
      TT "Table", " -- a type of ", TO "Expression", " representing
      a table, i.e., a list of lists of the same length.",
      PARA,
@@ -1469,27 +1483,27 @@ document { quote Table,
 	  },
      SEEALSO {"MatrixExpression"}
      }
-document { quote MatrixExpression,
+document { MatrixExpression,
      TT "MatrixExpression", " -- a type of ", TO "Expression", " representing
      a matrix.",
      PARA,
      EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
      SEEALSO {"Table"}
      }
-document { quote RowExpression,
+document { RowExpression,
      TT "RowExpression", " -- a type of ", TO "Expression", " representing
      a horizontal sequence of expressions."
      }
-document { quote Minus,
+document { Minus,
      TT "Minus", " -- a type of ", TO "Expression", " representing negation.",
      PARA,
      "This is a unary operator."
      }
-document { quote NonAssociativeProduct,
+document { NonAssociativeProduct,
      TT "NonAssociativeProduct", " -- a type of ", TO "Expression", " representing
      a nonassociative product."
      }
-document { quote Power,
+document { Power,
      TT "Power", " -- a type of ", TO "Expression", " representing a power.",
      PARA,
      "Normally power expressions with an exponent equal to 1 will not be
@@ -1499,49 +1513,49 @@ document { quote Power,
      suppress exponents equal to 1, and arrange for parenthesization
      correctly."
      }
-document { quote Product,
+document { Product,
      TT "Product", " -- a type of ", TO "Expression", " representing a product."
      }
-document { quote SparseVectorExpression,
+document { SparseVectorExpression,
      TT "SparseVectorExpression", " -- a type of ", TO "Expression", "
      representing a sparse vector."
      }
-document { quote SparseMonomialVectorExpression,
+document { SparseMonomialVectorExpression,
      TT "SparseMonomialVectorExpression", " -- a type of ", TO "Expression", "
      representing a sparse monomial vector.",
      PARA,
      "The difference between this and ", TO "SparseVectorExpression", " is that
      the basis vectors are treated like variables for printing purposes."
      }
-document { quote BinaryOperation,
+document { BinaryOperation,
      TT "BinaryOperation", " -- a type of ", TO "Expression", " representing
      the result of a binary operation."
      }
-document { quote Subscript,
+document { Subscript,
      TT "Subscript", " -- a type of ", TO "Expression", " representing a
      subscripted expression."
      }
-document { quote Adjacent,
+document { Adjacent,
      TT "Adjacent", " -- a type of ", TO "Expression", " representing a pair
      of adjacent expressions, separated only by white space."
      }
-document { quote FunctionApplication,
+document { FunctionApplication,
      TT "FunctionApplication", " -- a type of ", TO "Expression", " representing an
      application of a function."
      }
-document { quote Superscript,
+document { Superscript,
      TT "Superscript", " -- a type of ", TO "Expression", " representing a
      superscripted expression."
      }
-document { quote Equation,
+document { Equation,
      TT "Equation", " -- a type of ", TO "Expression", " representing an
      equation."
      }
-document { quote Sum,
+document { Sum,
      TT "Sum", " -- a type of ", TO "Expression", " representing a sum."
      }
 
-document { quote tex,
+document { tex,
      TT "tex x", " -- convert ", TT "x", " to TeX format.",
      PARA,
      EXAMPLE {
@@ -1551,7 +1565,7 @@ document { quote tex,
      SEEALSO {"TeX", "texMath"}
      }
 
-document { quote texMath,
+document { texMath,
      TT "texMath x", " -- convert ", TT "x", " to TeX format
      for use in TeX math mode.",
      PARA,
@@ -1565,7 +1579,7 @@ document { quote texMath,
      SEEALSO {"TeX", "tex"}
      }
 
-document { quote TeX,
+document { TeX,
      TT "TeX x", " -- convert ", TT "x", " to TeX format, and display it on the screen.",
      PARA,
      "The code for this function is Unix dependent at the moment.",
@@ -1573,7 +1587,7 @@ document { quote TeX,
      SEEALSO "tex"
      }
 
-document { quote print,
+document { print,
      TT "print x", " -- prints ", TT "x", " on the standard output followed by a new line",
      PARA,
      "The return value is ", TO "null", "."
@@ -1582,9 +1596,9 @@ document { (quote <<, File, Thing),
      TT "f << x", " -- prints the expression x on the output file f.",
      PARA,
      "Returns f as its value.  Parsing associates leftward, so that 
-     several expressions may be displayed with something like f<<x<<y<<z.
-     If f is a string, then a new file with name f is created,
-     the expression x is printed into f, and the file f is closed.",
+     several expressions may be displayed with something like ", TT "f<<x<<y<<z", ".
+     If ", TT "f", " is a string, then a new file with name ", TT "f", " is created,
+     the expression ", TT "x", " is printed into ", TT "f", ", and the file ", TT "f", " is closed.",
      PARA,
      EXAMPLE {
 	  "x = 5",
@@ -1593,7 +1607,7 @@ document { (quote <<, File, Thing),
      SEEALSO {"<<"}
      }     
 
-document { quote hold,
+document { hold,
      TT "hold x", " -- embeds it argument x in a list of class ", TO "Holder", ".",
      PARA,
      "It might be useful for displaying an integer in factored form,
@@ -1616,17 +1630,17 @@ document { quote hold,
      	  }
      }
 
-document { quote RightArrow,
+document { RightArrow,
      TT "RightArrow", " -- an entity used in hypertext to represent an
      rightward pointing arrow."
      }
 
-document { quote DownArrow,
+document { DownArrow,
      TT "DownArrow", " -- an entity used in hypertext to represent an
      downward pointing arrow."
      }
 
-document { quote peek,
+document { peek,
      TT "peek s", " -- displays contents of ", TT "s", " to depth 1, bypassing
      installed methods.",
      PARA,
@@ -1639,7 +1653,7 @@ document { quote peek,
      SEEALSO "peek2"
      }
 
-document { quote peek2,
+document { peek2,
      TT "peek2(s,n)", " -- displays contents of ", TT "s", " to depth ", TT "n", ", 
      bypassing installed methods.",
      PARA,
@@ -1653,14 +1667,14 @@ document { quote peek2,
      SEEALSO "peek"
      }
 
-document { quote pad,
+document { pad,
      TT "pad(s,n)", " -- pads the string s to length n with spaces on the right.",
      BR,
      NOINDENT, 
      TT "pad(n,s)", " -- pads the string s to length n with spaces on the left."
      }
 
-document { quote columnate,
+document { columnate,
      TT "columnate(s,w)", " -- arranges the strings in the list s in columns, returning
      a ", TO "Net", " suitable for output to a terminal with a linewidth of w.",
      PARA,
@@ -1670,7 +1684,7 @@ document { quote columnate,
 	  }
      }
 
-document { quote ScriptedFunction,
+document { ScriptedFunction,
      TT "ScriptedFunction", " -- the class of all scripted functions,
      by which we mean those functions 'f' of one argument 'x' which
      accept their argument as a subscript 'f_x' or as a superscript 'f^x'.",
@@ -1689,33 +1703,33 @@ document { quote ScriptedFunction,
      SEEALSO "ScriptedFunctor"
      }
 
-document { quote ScriptedFunctor,
+document { ScriptedFunctor,
      TT "ScriptedFunctor", " -- the class of all functors which accept a 
      subscript or a superscript, the primary example of which is ", TO "HH", ".",
      SEEALSO {"subscript", "superscript", "argument"}
      }
 
-document { quote argument,
+document { argument,
      TT "argument", " -- a key used in scripted functors under which is
      stored the function that accepts the arguments.",
      SEEALSO "ScriptedFunctor"
      }
 
-document { quote subscript,
+document { subscript,
      TT "subscript", " -- a key used in scripted functors under which is
      stored the function of one variable that accepts the subscript and
      returns a scripted functor that accepts the arguments.",
      SEEALSO "ScriptedFunctor"
      }
 
-document { quote superscript,
+document { superscript,
      TT "superscript", " -- a key used in scripted functors under which is
      stored the function of one variable that accepts the superscript and
      returns a scripted functor that accepts the arguments.",
      SEEALSO "ScriptedFunctor"
      }
 
-document { quote HH,
+document { HH,
      TT "HH", " -- general homology and cohomology functor.",
      PARA,
      "Specific examples:",
@@ -1742,7 +1756,7 @@ TEST ("
      assert( degree HH_-2 D === 1 )
      ")
 
-document { quote cohomology,
+document { cohomology,
      TT "cohomology", " -- a method name available for computing expressions
      of the forms HH^i(X) and HH^i(M,N).",
      PARA,
@@ -1752,7 +1766,7 @@ document { quote cohomology,
      SEEALSO {"homology", "ScriptedFunctor"}
      }
 
-document { quote homology,
+document { homology,
      TT "homology(f,g)", " -- computes the homology module (kernel f)/(image g).",
      BR, NOINDENT,
      TT "homology", " -- a method name available for computing expressions

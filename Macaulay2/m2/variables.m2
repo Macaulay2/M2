@@ -9,11 +9,11 @@ baseName IndexedVariableTable := x -> (
      )
 
 IndexedVariable = new Type of BasicList
-name IndexedVariable := v -> (
+toString IndexedVariable := v -> (
      x := v#0;
      i := v#1;
-     -- if x#?i then concatenate(name x.symbol,"_",name i) else 
-     concatenate(string x.symbol,"_",name i)
+     -- if x#?i then concatenate(toString x.symbol,"_",toString i) else 
+     concatenate(toString x.symbol,"_",toString i)
      )
 net IndexedVariable := v -> (
      x := v#0;
@@ -37,7 +37,7 @@ Symbol _ Thing := (v,i) -> (
      then new IndexedVariable from {value v,i}
      else (
      	  v <- x := new IndexedVariableTable;
-     	  x.name = string v;
+     	  x.name = toString v;
 	  x.symbol = v;
      	  new IndexedVariable from {x,i}
 	  )
@@ -58,9 +58,9 @@ IndexedVariable .. IndexedVariable := (v,w) -> (
      x := v#0;
      if x =!= w#0 
      then error ("unmatching base names in ",
-	  name v#0,"_",name v#1,
+	  toString v#0,"_",toString v#1,
 	  " .. ",
-	  name w#0,"_",name w#1);
+	  toString w#0,"_",toString w#1);
      toSequence apply(v#1 .. w#1, s -> x_s))	  
 
 expression IndexedVariable := x -> new Subscript from { expression x#0, expression x#1 }

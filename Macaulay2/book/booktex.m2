@@ -21,7 +21,7 @@ record = (
 	       );
 	  fileNumberTable#node = counter;
 	  nodeTable#counter = node;
-	  sectionNumberTable#counter = concatenate between(".",apply(sectionNumber,string));
+	  sectionNumberTable#counter = concatenate between(".",apply(sectionNumber,toString));
 	  )
      )
 
@@ -48,7 +48,7 @@ reach2(MarkUpList) := x -> scan(x,reach2)
 reach2(List    ) := x -> scan(x,reach2)
 reach2(SHIELD  ) := reach1
 reach2(TO      ) := (x) -> (
-     node := getDocumentationTag x#0;
+     node := toString x#0;
      if not fileNumberTable#?node
      then (
 	  record node;
@@ -97,10 +97,10 @@ close docDatabase
 ---------------
 ttLiteralTable = new MutableHashTable
 scan(characters ascii(0 .. 255), 
-     c -> ttLiteralTable#c = concatenate(///{\char///, string first ascii c, "}"))
+     c -> ttLiteralTable#c = concatenate(///{\char///, toString first ascii c, "}"))
 scan(characters ascii(32 .. 126), c -> ttLiteralTable#c = c)
 scan(characters "\\{}$&#^_%~", 
-     c -> ttLiteralTable#c = concatenate("{\\char", string first ascii c, "}"))
+     c -> ttLiteralTable#c = concatenate("{\\char", toString first ascii c, "}"))
 scan(characters "$%&#_", c -> ttLiteralTable#c = concatenate("\\",c))
 ttLiteralTable#"\n" = "\n"
 ttLiteralTable#"\t" = "\t"
@@ -134,7 +134,7 @@ crossReference := (key,text) -> (
      )
 
 booktex = method(SingleArgumentDispatch=>true)
-booktex TO  := x -> crossReference(getDocumentationTag x#0, formatDocumentTag x#0)
+booktex TO  := x -> crossReference(toString x#0, formatDocumentTag x#0)
 
 menuLevel := 2
 
@@ -149,7 +149,7 @@ booktex MENU := x -> concatenate(
 \par
 ///,
 	       apply(menuLevel-1, i -> ///\indent///),
-	       ///\hangindent///, string menuLevel, ///\parindent
+	       ///\hangindent///, toString menuLevel, ///\parindent
 ///,
 	       -- ///\textindent{$\bullet$}///,
 	       booktex x,
@@ -192,7 +192,7 @@ booktex BR := (x) -> ///\hfil\break
 ///
 booktex IMG := x -> ""
 booktex Nothing := x -> ""
-booktex Boolean := booktex Symbol := string
+booktex Boolean := booktex Symbol := toString
 booktex BasicList := booktex Sequence := x -> concatenate apply(x,booktex)
 booktex String := cmrLiteral
 booktex ITALIC := x -> concatenate("{\\sl ",booktex toList x,"}")

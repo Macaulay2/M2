@@ -1,6 +1,6 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-document { quote exit,
+document { exit,
      TT "exit n", " -- terminates the program and returns ", TT "n", " as return code.",
      BR,
      NOINDENT, 
@@ -12,7 +12,7 @@ document { quote exit,
      SEEALSO "quit"
      }
 
-document { quote quit,
+document { quit,
      TT "quit", " -- terminates the program and returns 0 as return code.",
      PARA,
      "Files are flushed and closed.  Another way to exit is to type the end of
@@ -21,27 +21,20 @@ document { quote quit,
      SEEALSO "exit"
      }
 
-document { quote fork,
+document { fork,
      TT "fork()", " -- forks the process, returning the process id of the child
      in the parent, and returning 0 in the child."
      }
 
-document { quote sleep,
+document { sleep,
      TT "sleep n", " -- sleeps for ", TT "n", " seconds."
      }
 
-document { quote processID,
+document { processID,
      TT "processID()", " -- returns the process id of the current Macaulay 2 process."
      }
 
-document { quote string,
-     TT "string x", " -- convert ", TT "x", " to a string unless it is one already.",
-     PARA,
-     "Not intended for general use, as it is primitive, and doesn't display
-     contents or names, for example.  Use ", TO "name", " instead."
-     }
-
-document { quote BinaryPowerMethod,
+document { BinaryPowerMethod,
      TT "BinaryPowerMethod(x,n)", " -- computes ", TT "x^n", " using successive squaring",
      PARA,
      "The technique depends in a standard way on the binary expansion of ", TT "n", ",
@@ -50,15 +43,15 @@ document { quote BinaryPowerMethod,
      SEEALSO "SimplePowerMethod"
      }
 
-document { quote SimplePowerMethod,
+document { SimplePowerMethod,
      TT "SimplePowerMethod(x,n)", " -- computes x^n using repeated multiplication",
      PARA,
      SEEALSO "BinaryPowerMethod"
      }
 
-document { quote dumpdata,
+document { dumpdata,
      TT "dumpdata s", " -- dump all data segments for the current process to 
-     the file whose name is stored in the string s.",
+     the file whose name is stored in the string ", TT "s", ".",
      PARA,
      "This effectively saves the entire state of the system, except that the
      input buffer for the file ", TO "stdio", " appears to have been emptied,
@@ -66,9 +59,9 @@ document { quote dumpdata,
      maintain their new values when the data is reloaded later with 
      ", TO "loaddata", "."
      }
-document { quote loaddata,
+document { loaddata,
      TT "loaddata s", " -- load all data segments for the current process from 
-     the file whose name is stored in the string s.  The file must have been
+     the file whose name is stored in the string ", TT "s", ".  The file must have been
      created with ", TO "dumpdata", " and the same version of Macaulay 2.",
      PARA,
      "The file should have been created with ", TO "dumpdata", ".  Everything will
@@ -89,21 +82,21 @@ document { quote loaddata,
      SEEALSO {"listUserSymbols"}
      }
      
-document { quote reloaded,
+document { "reloaded",
      TT "reloaded", " -- a constant whose value is the number of 
      times ", TO "loaddata", " has been executed by the current process.  Since
      loaddata completely resets the state of the system, something like this
      is needed."
      }
 
-document { quote buckets,
+document { buckets,
      TT "buckets x", " -- returns a list of the buckets used internally in an 
      hash table ", TT "x", ".",
      PARA,
      "Each bucket is represented as a list of key/value pairs."
      }
 
-document { quote ggPush,
+document { ggPush,
      TT "ggPush h", " -- provides a string which when sent to the engine will
      cause it to push the object ", TT "h", " onto the engine's stack.",
      PARA,
@@ -117,13 +110,13 @@ document { quote ggPush,
      the command has been sent."
      }
 
-document { quote identity,
+document { identity,
      TT "identity x", " -- returns x.",
      PARA,
      "This is the identity function."
      }
 
-document { quote modulus,
+document { modulus,
      TT "modulus", " -- a key used in quotient rings of the form ZZ/n to store 
      the number n.",
      PARA,
@@ -131,7 +124,7 @@ document { quote modulus,
      }
 
 if class XCreateWindow === Function then (
-document { quote XCreateWindow,
+document { XCreateWindow,
      TT "XCreateWindow(pid,x,y,a,b,w,n)", " -- makes a new window.",
      PARA,
      "Here ", TT "pid", " is the id of the parent window, ", TT "x", " 
@@ -142,27 +135,27 @@ document { quote XCreateWindow,
 ) else erase quote XCreateWindow
 
 if class XDefaultRootWindow === Function then (
-document { quote XDefaultRootWindow,
+document { XDefaultRootWindow,
      TT "XDefaultRootWindow()", " -- returns the id of the root window."
      }
 ) else erase quote XDefaultRootWindow
 
-document { quote format,
+document { format,
      TT "format s", " -- prepare a string s for output by converting nonprintable
      characters to printable ones, or to escape sequences."
      }
 
-document { quote generatorSymbols,
+document { generatorSymbols,
      TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under
      which is stored a list of the symbols used as generators for the monoid."
      }
 
-document { quote generatorExpressions,
+document { generatorExpressions,
      TT "generatorSymbols", " -- a key used in a ", TO "Monoid", " under which is stored a list
      of the symbols used as generators for the monoid."
      }
 
-document { quote match,
+document { match,
      TT "match(s,p)", " -- whether the string s matches the pattern ", TT "p", ".",
      PARA,
      "The pattern p may contain '*'s, which serve as wild card characters.
@@ -170,14 +163,14 @@ document { quote match,
      matching."
      }
 
-document { quote gg,
+document { gg,
      TT "gg x", " -- converts an integer, handle, or list of integers to the format
      required for communication with the engine.",
      PARA,
      SEEALSO "engine communication protocol"
      }
 
-document { quote pairs,
+document { pairs,
      TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
      a hash table ", TT "x", ".",
      PARA,
@@ -187,7 +180,7 @@ document { quote pairs,
 	  }
      }
 
-document { quote sequence,
+document { sequence,
      TT "sequence v", " -- returns ", TT "v", " if ", TT "v", " is a sequence, otherwise makes
      a sequence of length one containing ", TT "v", ".",
      PARA,
@@ -200,14 +193,14 @@ document { quote sequence,
      SEEALSO { "singleton", "sequences" }
      }
 
-document { quote xor,
+document { xor,
      TT "xor(i,j)", " -- produces the bitwise logical exclusive-or of
      the integers ", TT "i", " and ", TT "j", ".",
      PARA,
      EXAMPLE "xor(10,12)"
      }
 
-document { quote mingle,
+document { mingle,
      TT "mingle {v,w,...}", " -- produces a new list from the lists or
      sequences v,w,... by taking the first element from each, then the second, 
      and so on.",
@@ -226,7 +219,7 @@ document { quote mingle,
 	  }
      }
 
-document { quote SelfInitializingType,
+document { SelfInitializingType,
      TT "SelfInitializingType", " -- the class of all self initializing types.",
      PARA,
      "A self initializing type ", TT "X", " will produce an instance of X from
@@ -242,7 +235,7 @@ document { quote SelfInitializingType,
      SEEALSO {"HeaderType", "WrapperType"}
      }
 
-document { quote Manipulator,
+document { Manipulator,
      TT "Manipulator", " -- the class of all file manipulators.",
      PARA,
      "A ", TT "Manipulator", " is a type of list which, when put out to
@@ -257,7 +250,7 @@ document { quote Manipulator,
 	  }
      }
 
-document { quote close,
+document { close,
      TT "f << close", " -- closes the file ", TT "f", ".",
      BR, NOINDENT,
      TT "close f", " -- closes the file ", TT "f", ".",
@@ -283,11 +276,11 @@ document { quote close,
      SEEALSO {"File", "Manipulator", "closeIn", "closeOut", "kill"}
      }
 
-document { quote kill,
+document { kill,
      TT "kill f", " -- kill the process associated with the file ", TT "f", "."
      }
 
-document { quote closeIn,
+document { closeIn,
      TT "f << closeIn", " -- closes the input file ", TT "f", ".",
      BR, NOINDENT,
      TT "closeIn f", " -- closes the input file ", TT "f", ".",
@@ -298,7 +291,7 @@ document { quote closeIn,
      SEEALSO {"File", "Manipulator", "close", "closeOut"}
      }
 
-document { quote closeOut,
+document { closeOut,
      TT "f << closeOut", " -- closes the output file ", TT "f", ".",
      BR, NOINDENT,
      TT "close f", " -- closes the output file ", TT "f", ".",
@@ -314,13 +307,13 @@ document { quote closeOut,
      SEEALSO {"File", "Manipulator", "closeIn", "close"}
      }
 
-document { quote flush,
+document { flush,
      TT "f << flush", " -- writes out any buffered output for the output file f.",
      PARA,
      SEEALSO {"File", "Manipulator"}
      }
 
-document { quote endl,
+document { endl,
      TT "f << endl", " -- ends the line currently being put out to the
      file ", TT "f", ".",
      PARA,
@@ -332,7 +325,7 @@ document { quote endl,
      SEEALSO {"File", "Manipulator", "Net"}
      }
 
-document { quote newline,
+document { "newline",
      TT "newline", " -- a string containing the character or sequence of
      characters which represents the end of a line.  To end an output line,
      you should use ", TO "endl", " instead, because there is more to 
@@ -352,13 +345,13 @@ document { quote newline,
      SEEALSO "Net"
      }
 
-document { quote collectGarbage,
+document { collectGarbage,
      TT "collectGarbage()", " -- attempt a garbage collection.",
      PARA,
      SEEALSO "GC garbage collector"
      }
 
-document { quote gcDump,
+document { gcDump,
      TT "gcDump()", " -- produces a dump of the status of the garbage collector.",
      PARA,
      "Users will normally not want to use this function.  It calls the 
@@ -368,18 +361,18 @@ document { quote gcDump,
      SEEALSO "GC garbage collector"
      }
 
-document { quote lookupCount,
+document { lookupCount,
      TT "lookupCount s", " -- the number of times the symbol ", TT "s", " has been
      encountered in source code presented to the interpreter."
      }
 
-document { quote version,
+document { "version",
      TT "version", " -- a hash table describing this version of the program.",
      PARA,
      EXAMPLE "version"
      }
 
-document { quote Database,
+document { Database,
      TT "Database", " -- the class of all database files.",
      PARA,
      EXAMPLE {
@@ -407,20 +400,20 @@ document { quote Database,
 	  }
      }
 
-document { quote reorganize,
+document { reorganize,
      TT "reorganize x", " -- reorganize the database ", TT "file", " x, compactifying it.",
      PARA,
      SEEALSO "Database"
      }
 
-document { quote openDatabase,
+document { openDatabase,
      TT "openDatabase s", " -- open a database file corresponding to the file
      whose name is contained in the string ", TT "s", ".",
      PARA,
      SEEALSO "Database"
      }
 
-document { quote openDatabaseOut,
+document { openDatabaseOut,
      TT "openDatabaseOut s", " -- open a database file corresponding to the file
      whose name is contained in the string ", TT "s", ", and allow changes to be made
      to it.",
@@ -428,7 +421,7 @@ document { quote openDatabaseOut,
      SEEALSO "Database"
      }
 
-document { quote firstkey,
+document { firstkey,
      TT "firstkey f", " -- return the first key available in the database
      file ", TT "f", ".",
      PARA,
@@ -437,7 +430,7 @@ document { quote firstkey,
      SEEALSO "Database"
      }
 
-document { quote nextkey,
+document { nextkey,
      TT "nextkey f", " -- return the next key available in the database
      file f.",
      PARA,
@@ -446,22 +439,22 @@ document { quote nextkey,
      SEEALSO "Database"
      }
 
-document { quote addStartFunction,
+document { addStartFunction,
      TT "addStartFunction (() -> ...)", " -- record a function for later 
      execution, when the program is restarted after loading dumped data."
      }
 
-document { quote addEndFunction,
+document { addEndFunction,
      TT "addEndFunction (() -> ...)", " -- record a function for later 
      execution, when the program is exited."
      }
 
-document { quote runStartFunctions,
+document { runStartFunctions,
      TT "runStartFunctions()", " -- call all the functions previously recorded
      by ", TO "addStartFunction", " passing ", TT "()", " as argument sequence."
      }
 
-document { quote runEndFunctions,
+document { runEndFunctions,
      TT "runEndFunctions()", " -- call all the functions previously recorded
      by ", TO "addEndFunction", " passing ", TT "()", " as argument sequence."
      }
@@ -713,25 +706,25 @@ PARA,
 the mode in a help window."
 }
 
-document { quote oo,
+document { "oo",
      TT "oo", " -- denotes the value of the expression on the previous output
      line.",
      SEEALSO { "oo", "ooo", "oooo" }
      }
 
-document { quote ooo,
+document { "ooo",
      TT "ooo", " -- denotes the value of the expression on the output line
      two lines above.",
      SEEALSO { "oo", "oooo" }
      }
 
-document { quote oooo,
+document { "oooo",
      TT "oooo", " -- denotes the value of the expression on the output line
      three lines above.",
      SEEALSO { "oo", "ooo" }
      }
 
-document { quote InverseMethod,
+document { InverseMethod,
      TT "InverseMethod", " -- a key used under which is stored a method
      for computing multiplicative inverses.",
      PARA,
@@ -739,7 +732,7 @@ document { quote InverseMethod,
      the exponent is negative."
      }
 
-document { quote or,
+document { "or",
      TT "t or u", " -- returns true if ", TT "t", " is true or ", TT "u", "
      is true.",
      PARA,
@@ -747,7 +740,7 @@ document { quote or,
      SEEALSO{ "and", "not" }
      }
 
-document { quote and,
+document { "and",
      TT "t and u", " -- returns true if ", TT "t", " is true and ", TT "u", "
      is true.",
      PARA,
@@ -755,14 +748,14 @@ document { quote and,
      SEEALSO{ "or", "not" }
      }
 
-document { quote locate,
+document { locate,
      TT "locate f", " -- for an interpreted function ", TT "f", " 
      returns a sequence ", TT "(n,i,j)", " describing the location of
      the source code.  The name of the source file is ", TT "n", " and
      the code is occupies lines ", TT "i", " through ", TT "j", "."
      }
 
-document { quote MutableHashTable,
+document { MutableHashTable,
      TT "MutableHashTable", " -- the class of all mutable hash tables.",
      PARA,
      "A mutable hash table is a type of hash table whose entries can be changed.",
@@ -779,7 +772,7 @@ document { quote MutableHashTable,
      SEEALSO "HashTable"
      }
 
-document { quote map,
+document { map,
      TT "map(Y,X,d)", " -- constructs a map to ", TT "Y", " from ", TT "X", " defined by data ", TT "d", ".",
      PARA,
      "This is intended to be a general mechanism for constructing maps
@@ -791,14 +784,14 @@ document { quote map,
 	  (TO "making module maps")
 	  }
      }
-document { quote precedence,
+document { precedence,
      TT "precedence x", " -- returns the parsing precedence of ", TT "x", " for use in
      the printing routines.",
      PARA,
-     SEEALSO {"Expression", "net", "name"}
+     SEEALSO {"Expression", "net", "toString"}
      }
 
-document { quote hashTable,
+document { hashTable,
      TT "hashTable v", " -- produce a hash table from a list ", TT "v", " of key-value
      pairs.",
      PARA,
@@ -811,7 +804,7 @@ document { quote hashTable,
 	  },
      }
 
-document { quote toList,
+document { toList,
      TT "toList x", " -- yields a list of the elements in a list, sequence,
      or set ", TT "x", ".",
      PARA,
@@ -823,7 +816,7 @@ document { quote toList,
 	  },
      }
 
-document { quote saturate,
+document { saturate,
     TT "saturate(I,J,options)", " -- computes the saturation ", TT "(I : J^*)", " 
     of I with respect to ", TT "J", ".  If ", TT "J", " is not given, the 
     ideal ", TT "J", " is taken to be the ideal generated by the variables of 
@@ -893,7 +886,7 @@ document { saturate => DegreeLimit,
      with degree n."
      }
 
-document { quote profile,
+document { profile,
      TT "f = profile f", " -- replace a global function f by a profiled version.",
      PARA,
      "The new function is the same as the old one, except that when
@@ -902,12 +895,29 @@ document { quote profile,
      to display the data recorded so far."
      }
 
-document { quote profileSummary,
+document { profileSummary,
      TT "profileSummary", " -- a command which will display the data
      accumulated by running functions produced with ", TO "profile", "."
      }
 
-document { quote globalAssignFunction,
+document { name,
+     TT "name", " -- a key under which string giving the preferred name
+     of a hash table can be stored.",
+     PARA,
+     "The system takes care of storing names in under this key for the
+     major algebraic types, so the user usually doesn't have to bother.",
+     EXAMPLE {
+	  ///x = new MutableHashTable///,
+	  ///x.name = "x"///,
+	  ///x///,
+	  },
+     PARA,
+     "A obsolete function called ", TO "name", " has been replaced by
+     ", TO "toExternalString", " and ", TO "toString", ".",
+     SEEALSO{ "describe"}
+     }
+
+document { globalAssignFunction,
      TT "globalAssignFunction", " -- the standard function which can be used
      as a method for ", TO GlobalAssignHook, " so that certain types of
      mutable hash tables ", TT "X", ", when assigned to a global variable, will acquire
@@ -937,7 +947,7 @@ document { quote globalAssignFunction,
      SEEALSO { "name", "symbol", "SelfInitializingType" }
      }
 
-document { quote globalReleaseFunction,
+document { globalReleaseFunction,
      TT "globalReleaseFunction", " -- the standard function which can be used as
      a method for ", TO GlobalReleaseHook, " so that certain types of things, which
      have acquired as their name the name of a global variable to which they have
@@ -947,97 +957,7 @@ document { quote globalReleaseFunction,
      SEEALSO "globalAssignFunction"
      }
 
-document { "MP: Multi Protocol",
-     "Macaulay 2 incorporates code from the MP (Multi Protocol) subroutine
-     library written by S. Gray, N. Kajler, and P. Wang.  The license is
-     contained in its README file, part of which we provide in the file
-     ", TT "Macaulay2/licenses/mp.lic", ".",
-     PARA,
-     "The implementation is only experimental at this stage.",
-     PARA,
-     MENU {
-	  TO "PutAnnotationPacket",
-	  TO "PutCommonMetaOperatorPacket",
-	  TO "PutCommonMetaTypePacket",
-	  TO "PutCommonOperatorPacket",
-	  TO "PutOperatorPacket",
-	  TO "WritePacket",
-	  TO "closeLink",
-	  TO "openLink",
-	  TO "writeMessage",
-	  TO "writePacket",
-	  TO "writeRawPacket",
-	  }
-     }
-
-document { quote PutAnnotationPacket,
-     TT "PutAnnotationPacket", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-document { quote PutCommonMetaOperatorPacket,
-     TT "PutCommonMetaOperatorPacket", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-document { quote PutCommonMetaTypePacket,
-     TT "PutCommonMetaTypePacket", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-document { quote PutCommonOperatorPacket,
-     TT "PutCommonOperatorPacket", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-document { quote PutOperatorPacket,
-     TT "PutOperatorPacket", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-document { quote WritePacket,
-     TT "WritePacket", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-document { quote closeLink,
-     TT "closeLink", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-document { quote openLink,
-     TT "openLink", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-document { quote writeMessage,
-     TT "writeMessage", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-document { quote writePacket,
-     TT "writePacket", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-document { quote writeRawPacket,
-     TT "writeRawPacket", " -- a function used for our experimental implementation of
-     MP (Multi Protocol).",
-     PARA,
-     SEEALSO "MP: Multi Protocol"
-     }
-
-document { quote symbol,
+document { symbol,
      TT "symbol", " -- a symbol used as a key in a hash table under which to store
      the variable to which the hash table has been assigned as value.",
      PARA,
@@ -1046,7 +966,7 @@ document { quote symbol,
      SEEALSO "globalAssignFunction"
      }
 
-document { quote Entity,
+document { Entity,
      TT "Entity", " -- the class of all entities, special typsettable objects which have
      different realizations in various typesetting systems.",
      PARA,
@@ -1056,10 +976,10 @@ document { quote Entity,
 	  "peek (DownArrow,2)"
 	  },
      "Here is a list of all entities.",
-     MENU apply( select( values symbolTable(), v -> class value v === Entity ), v -> TO string v )
+     MENU apply( select( values symbolTable(), v -> class value v === Entity ), v -> TO toString v )
      }
 
-document { quote netRows,
+document { netRows,
      TT "netRows x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",
      PARA,

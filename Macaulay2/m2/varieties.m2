@@ -1,7 +1,7 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
 Variety = new Type of MutableHashTable
-document { quote Variety,
+document { Variety,
      TT "Variety", " -- the class of all algebraic varieties.",
      PARA,
      NOINDENT,
@@ -14,7 +14,7 @@ document { quote Variety,
      }
 
 AffineVariety = new Type of Variety
-document { quote AffineVariety,
+document { AffineVariety,
      TT "AffineVariety", " -- the class of all algebraic varieties, a subclass of
      ", TO "Variety", ".",
      PARA,
@@ -27,7 +27,7 @@ document { quote AffineVariety,
      }
 
 ProjectiveVariety = new Type of Variety
-document { quote ProjectiveVariety,
+document { ProjectiveVariety,
      TT "ProjectiveVariety", " -- the class of all projective varieties, a subclass of
      ", TO "Variety", ".",
      PARA,
@@ -48,7 +48,7 @@ Spec Ring := (R) -> if R.?Spec then R.Spec else R.Spec = (
      	  quote ring => R
      	  }
      )
-document { quote Spec,
+document { Spec,
      TT "Spec R", " -- create an affine variety or scheme from the ring ", TT "R", ".",
      PARA,
      EXAMPLE {
@@ -67,7 +67,7 @@ Proj Ring := (R) -> if R.?Proj then R.Proj else R.Proj = (
      	  quote ring => R
      	  }
      )
-document { quote Proj,
+document { Proj,
      TT "Proj R", " -- create a projective variety or scheme from the graded ring ", TT "R", ".",
      PARA,
      EXAMPLE {
@@ -78,7 +78,7 @@ document { quote Proj,
      }
 
 CoherentSheaf = new Type of MutableHashTable
-document { quote CoherentSheaf,
+document { CoherentSheaf,
      TT "CoherentSheaf", " -- the class of all coherent sheaves on varieties or schemes.",
      PARA,
      NOINDENT,
@@ -113,7 +113,7 @@ document { quote CoherentSheaf,
 expression CoherentSheaf := F -> new FunctionApplication from { sheaf, F.module }
 net CoherentSheaf := (F) -> net expression F
 sheaf = method()
-document { quote sheaf,
+document { sheaf,
      TT "sheaf", " -- a function used for creating sheaves on varieties.",
      PARA,
      NOINDENT,
@@ -186,7 +186,7 @@ document { (variety, CoherentSheaf),
      PARA,
      SEEALSO "CoherentSheaf"
      }
-document { quote variety,
+document { variety,
      TT "variety F", " -- produce the variety associated to ", TT "F", ".",
      PARA,
      MENU {
@@ -341,7 +341,7 @@ structureSheaf := method()		  -- private
 structureSheaf(Variety) := (X) -> sheaf((ring X)^1, X)
 
 OO = new ScriptedFunctor from { subscript => structureSheaf }
-document { quote OO,
+document { OO,
      TT "OO_X", " -- produce the structure sheaf on a variety ", TT "X", ".",
      SEEALSO "CoherentSheaf"
      }
@@ -370,7 +370,7 @@ document { (cotangentSheaf, ProjectiveVariety),
      PARA,
      SEEALSO {"CoherentSheaf", (cotangentSheaf, ZZ, ProjectiveVariety)}
      }
-document { quote cotangentSheaf,
+document { cotangentSheaf,
      TT "cotangentSheaf", " -- a function used for producing the contangent sheaf
      of a variety, or exterior powers of it.",
      PARA,

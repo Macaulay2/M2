@@ -635,7 +635,7 @@ betti ChainComplex := C -> (
 	  mincol := 0;
 	  maxcol := v#2;
 	  leftside := apply(
-	       splice {"total:", apply(minrow .. maxrow, i -> string i | ":")},
+	       splice {"total:", apply(minrow .. maxrow, i -> toString i | ":")},
 	       s -> (6-# s,s));
 	  v = drop(v,3);
 	  v = pack(v,maxcol-mincol+1);
@@ -645,7 +645,7 @@ betti ChainComplex := C -> (
 	  t := 0;
 	  while t < #v and sum v#(-t-1) === 0 do t = t + 1;
 	  v = drop(v,-t);
-	  v = applyTable(v, bt -> if bt === 0 then "." else string bt);
+	  v = applyTable(v, bt -> if bt === 0 then "." else toString bt);
 	  v = apply(v, col -> (
 		    wid := 1 + max apply(col,i -> #i);
 		    apply(col, s -> (
@@ -662,7 +662,7 @@ betti ChainComplex := C -> (
 	  minrow = betti#"minrow";
 	  maxcol = betti#"maxcol";
 	  maxrow = betti#"maxrow";
-	  betti = hashTable apply(pairs betti,(k,v) -> (k,name v));
+	  betti = hashTable apply(pairs betti,(k,v) -> (k,toString v));
 	  colwids := newClass(MutableList, apply(maxcol-mincol+1, i->1));
 	  scan(pairs betti, (k,v) -> (
 		    if class k === Sequence
@@ -673,7 +673,7 @@ betti ChainComplex := C -> (
 	       );
 	  stack apply(splice {"total", minrow .. maxrow},
 	       row -> (
-		    concatenate(pad(5,string row), ":",
+		    concatenate(pad(5,toString row), ":",
 		    toList apply(mincol .. maxcol,
 			 col -> pad(
 			      1+colwids#(col-mincol),

@@ -96,7 +96,7 @@ document { "getting started",
      "Rings and certain other types of things acquire the name of the global
      variable they are assigned to.",
      EXAMPLE "R",
-     "To see the description of a ring, use ", TO "describe", ".",
+     "To see the original description of a ring, use ", TO "describe", ".",
      EXAMPLE "describe R",
      "A free module can be created as follows.",
      EXAMPLE "F = R^3",
@@ -280,38 +280,38 @@ document {
      SEEALSO {"MarkUpList", "MarkUpType", "Entity"}
      }
 
-document { quote MarkUpList,
+document { MarkUpList,
      "MarkUpList", " -- the class of lists used with ", TO "hypertext", ".",
      PARA,
      "Intended for internal use only."
      }
 
-document { quote MarkUpType,
+document { MarkUpType,
      "MarkUpType", " -- the class of types used with ", TO "hypertext", ".",
      PARA,
      SEEALSO "EmptyMarkUpType"
      }
 
-document { quote EmptyMarkUpType,
+document { EmptyMarkUpType,
      "EmptyMarkUpType", " -- a type of ", TO "MarkUpType", " used with ", TO "hypertext", ",
      which can't accept any content."
      }
 
-document { quote SHIELD,
+document { SHIELD,
      TT "SHIELD v", " -- indicates that the ", TO "hypertext", " links in v
      will not lead immediately to subsections of the book, even though
      the expression is in a ", TO "MENU", "."
      }
 
-document { quote PARA,
+document { PARA,
      TT "PARA x", " -- a ", TO "hypertext", " paragraph.",
      }
 
-document { quote BR,
+document { BR,
      TT "BR{}", " -- a ", TO "hypertext", " line break."
      }
 
-document { quote HR,
+document { HR,
      TT "HR{}", " -- a ", TO "hypertext", " horiziontal rule."
      }
 
@@ -332,7 +332,7 @@ document {
      SEEALSO "mathML"
      }
 
-document { quote PRE,
+document { PRE,
      TT "PRE x", " -- encloses x in a hypertext PRE item.",
      PARA,
      "The argument ", TT "x", " should be a string, possibly containing newlines.",
@@ -346,7 +346,7 @@ document { quote PRE,
      SEEALSO "hypertext"
      }
 
-document { quote TITLE,
+document { TITLE,
      TT "TITLE x", " -- encloses x in a hypertext TITLE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -355,7 +355,7 @@ document { quote TITLE,
      SEEALSO "hypertext"
      }
 
-document { quote HEAD,
+document { HEAD,
      TT "HEAD x", " -- encloses x in a hypertext HEAD item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -364,7 +364,7 @@ document { quote HEAD,
      SEEALSO "hypertext"
      }
 
-document { quote BODY,
+document { BODY,
      TT "BODY x", " -- encloses x in a hypertext BODY item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -373,7 +373,7 @@ document { quote BODY,
      SEEALSO "hypertext"
      }
 
-document { quote IMG,
+document { IMG,
      TT "IMG x", " -- encloses x in a hypertext IMG item.",
      PARA,
      "The argument ", TT "x", " should be a string containing the URL of the image.",
@@ -381,7 +381,7 @@ document { quote IMG,
      SEEALSO "hypertext"
      }
 
-document { quote SEQ,
+document { SEQ,
      TT "SEQ x", " -- encloses x in a hypertext SEQ item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -391,7 +391,7 @@ document { quote SEQ,
      SEEALSO "hypertext"
      }
 
-document { quote HTML,
+document { HTML,
      TT "HTML x", " -- encloses x in a hypertext HTML item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -400,7 +400,7 @@ document { quote HTML,
      SEEALSO "hypertext"
      }
 
-document { quote H1,
+document { H1,
      TT "H1 x", " -- encloses x in a hypertext H1 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -414,7 +414,7 @@ document { quote H1,
      SEEALSO "hypertext"
      }
 
-document { quote H2,
+document { H2,
      TT "H2 x", " -- encloses x in a hypertext H2 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -428,7 +428,7 @@ document { quote H2,
      SEEALSO "hypertext"
      }
 
-document { quote H3,
+document { H3,
      TT "H3 x", " -- encloses x in a hypertext H3 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -442,7 +442,7 @@ document { quote H3,
      SEEALSO "hypertext"
      }
 
-document { quote H4,
+document { H4,
      TT "H4 x", " -- encloses x in a hypertext H4 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -456,7 +456,7 @@ document { quote H4,
      SEEALSO "hypertext"
      }
 
-document { quote H5,
+document { H5,
      TT "H5 x", " -- encloses x in a hypertext H5 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -470,7 +470,7 @@ document { quote H5,
      SEEALSO "hypertext"
      }
 
-document { quote H6,
+document { H6,
      TT "H6 x", " -- encloses x in a hypertext H6 header item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -484,7 +484,7 @@ document { quote H6,
      SEEALSO "hypertext"
      }
 
-document { quote LISTING,
+document { LISTING,
      TT "LISTING x", " -- encloses x in a hypertext LISTING item.",
      PARA,
      "The argument ", TT "x", " should be a string.",
@@ -498,7 +498,7 @@ document { quote LISTING,
      SEEALSO "hypertext"
      }
 
-document { quote XMP,
+document { XMP,
      TT "XMP x", " -- encloses x in a hypertext XMP item.",
      PARA,
      "The argument ", TT "x", " should be a string.",
@@ -512,7 +512,7 @@ document { quote XMP,
      SEEALSO "hypertext"
      }
 
-document { quote BLOCKQUOTE,
+document { BLOCKQUOTE,
      TT "BLOCKQUOTE x", " -- encloses x in a hypertext BLOCKQUOTE item.",
      PARA,
      "The argument ", TT "x", " should be a string.",
@@ -526,7 +526,7 @@ document { quote BLOCKQUOTE,
      SEEALSO "hypertext"
      }
 
-document { quote EXAMPLE,
+document { EXAMPLE,
      TT "EXAMPLE x", " -- evaluates the string or list of strings
      ", TT "x", " as Macaulay 2 code, inserting the results in
      hypertext preformatted ", TO "PRE", " items.",
@@ -538,21 +538,21 @@ document { quote EXAMPLE,
      SEEALSO "hypertext"
      }
 
-document { quote TABLE,
+document { TABLE,
      TT "TABLE x", " -- produces a hypertext TABLE from a list of lists."
      }
 
-document { quote LITERAL,
+document { LITERAL,
      TT "LITERAL x", " -- produces a special hypertext item which contains
      HTML text that should be left unchanged by ", TO "html", "."
      }
 
-document { quote ExampleTABLE,
+document { ExampleTABLE,
      TT "ExampleTABLE x", " -- produces a hypertext display suitable for displaying
      a list of examples."
      }
 
-document { quote VAR,
+document { VAR,
      TT "VAR x", " -- encloses ", TT "x", " in a hypertext VAR item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -565,7 +565,7 @@ document { quote VAR,
      SEEALSO "hypertext"
      }
 
-document { quote DFN,
+document { DFN,
      TT "DFN x", " -- encloses x in a hypertext DFN item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -577,7 +577,7 @@ document { quote DFN,
      SEEALSO "hypertext"
      }
 
-document { quote STRONG,
+document { STRONG,
      TT "STRONG x", " -- encloses x in a hypertext STRONG item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -590,7 +590,7 @@ document { quote STRONG,
      SEEALSO "hypertext"
      }
 
-document { quote CENTER,
+document { CENTER,
      TT "CENTER x", " -- encloses x in a hypertext CENTER item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -598,7 +598,7 @@ document { quote CENTER,
      SEEALSO "hypertext"
      }
 
-document { quote BIG,
+document { BIG,
      TT "BIG x", " -- encloses x in a hypertext BIG item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -611,7 +611,7 @@ document { quote BIG,
      SEEALSO "hypertext"
      }
 
-document { quote SMALL,
+document { SMALL,
      TT "SMALL x", " -- encloses x in a hypertext SMALL item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -624,7 +624,7 @@ document { quote SMALL,
      SEEALSO "hypertext"
      }
 
-document { quote SUB,
+document { SUB,
      TT "SUB x", " -- encloses ", TT "x", " in a hypertext ", TT "SUB", " item,
      thereby making it a subscript.",
      PARA,
@@ -634,7 +634,7 @@ document { quote SUB,
      SEEALSO "hypertext"
      }
 
-document { quote SUP,
+document { SUP,
      TT "SUP x", " -- encloses ", TT "x", " in a hypertext ", TT "SUP", " item,
      thereby making it a superscript.",
      PARA,
@@ -644,7 +644,7 @@ document { quote SUP,
      SEEALSO "hypertext"
      }
 
-document { quote SAMP,
+document { SAMP,
      TT "SAMP x", " -- encloses x in a hypertext SAMP item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -657,7 +657,7 @@ document { quote SAMP,
      SEEALSO "hypertext"
      }
 
-document { quote KBD,
+document { KBD,
      TT "KBD x", " -- encloses x in a hypertext KBD item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -670,7 +670,7 @@ document { quote KBD,
      SEEALSO "hypertext"
      }
 
-document { quote ITALIC,
+document { ITALIC,
      TT "ITALIC x", " -- encloses x in a hypertext ITALIC item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -684,7 +684,7 @@ document { quote ITALIC,
      SEEALSO "hypertext"
      }
 
-document { quote UNDERLINE,
+document { UNDERLINE,
      TT "UNDERLINE x", " -- encloses x in a hypertext UNDERLINE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -697,7 +697,7 @@ document { quote UNDERLINE,
      SEEALSO "hypertext"
      }
 
-document { quote TEX,
+document { TEX,
      TT "TEX s", " -- includes the string ", TT "s", ", presumably
      containing TeX commands, in the TeX version of the documentation
      containing this ", TO "hypertext", " item.",
@@ -705,7 +705,7 @@ document { quote TEX,
      "Invisible in the text and html versions."
      }
 
-document { quote TT,
+document { TT,
      TT "TT x", " -- encloses x in a hypertext TT item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -718,7 +718,7 @@ document { quote TT,
      SEEALSO "hypertext"
      }
 
-document { quote EM,
+document { EM,
      TT "EM x", " -- encloses x in a hypertext EM item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -731,7 +731,7 @@ document { quote EM,
      SEEALSO "hypertext"
      }
 
-document { quote CITE,
+document { CITE,
      TT "CITE x", " -- encloses x in a hypertext CITE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -744,7 +744,7 @@ document { quote CITE,
      SEEALSO "hypertext"
      }
 
-document { quote BOLD,
+document { BOLD,
      TT "BOLD x", " -- encloses x in a hypertext BOLD item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -757,7 +757,7 @@ document { quote BOLD,
      SEEALSO "hypertext"
      }
 
-document { quote CODE,
+document { CODE,
      TT "CODE x", " -- encloses x in a hypertext CODE item.",
      PARA,
      "The argument ", TT "x", " should be a string, or a list or sequence of
@@ -770,14 +770,14 @@ document { quote CODE,
      SEEALSO "hypertext"
      }
 
-document { quote HREF,
+document { HREF,
      TT "HREF{u,p}", " -- encloses the phrase ", TT "p", " in a hypertext HREF link
      pointing to the url ", TT "u", ".",
      PARA,
      SEEALSO "hypertext"
      }
 
-document { quote MENU,
+document { MENU,
      TT "MENU x", " -- encloses the list x as a hypertext MENU.",
      PARA,
      "The argument ", TT "x", " should be a list of hypertext items or strings.",
@@ -790,7 +790,7 @@ document { quote MENU,
      SEEALSO "hypertext"
      }
 
-document { quote UL,
+document { UL,
      TT "UL x", " -- encloses the list x as a hypertext UL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list of strings or hypertext items.",
@@ -803,7 +803,7 @@ document { quote UL,
      SEEALSO "hypertext"
      }
 
-document { quote DL,
+document { DL,
      TT "DL x", " -- encloses the list x as a hypertext DL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list, each member of which should be
@@ -824,7 +824,7 @@ document { quote DL,
      SEEALSO "hypertext"
      }
 
-document { quote OL,
+document { OL,
      TT "OL x", " -- encloses the list x as a hypertext OL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list of strings or hypertext items.
@@ -838,7 +838,7 @@ document { quote OL,
      SEEALSO "hypertext"
      }
 
-document { quote NL,
+document { NL,
      TT "NL x", " -- encloses the list x as a hypertext NL itemized list.",
      PARA,
      "The argument ", TT "x", " should be a list of strings or hypertext items.",
@@ -851,7 +851,7 @@ document { quote NL,
      SEEALSO "hypertext"
      }
 
-document { quote NOINDENT,
+document { NOINDENT,
      TT "NOINDENT{}", " -- specifies that no indentation should be used
      for following hypertext items.",
      PARA,
@@ -861,7 +861,7 @@ document { quote NOINDENT,
      SEEALSO "hypertext"
      }
 
-document { quote TO,
+document { TO,
      TT "TO \"x\"", " -- produces a hypertext link to the documentation page labelled ", TT "x", ".",
      PARA,
      "See also ", TO "hypertext", ".  The word ", ITALIC "hypertext", " in the previous
@@ -883,7 +883,7 @@ document { quote TO,
      function ", TT "f", "."
      }
 
-document { quote Command,
+document { Command,
      TT "Command", " -- denotes the class of all commands.",
      PARA,
      "A command behaves as a function does if it is followed by an adjacent
@@ -942,7 +942,7 @@ TEST "
     assert(I4 == image matrix {{b*c-a*d, c^3-b*d^2, a*c^2-b^2*d, b^3-a^2*c}});
 "
 
-document { quote Fano, 
+document { Fano, 
      TT "Fano(k,I,GR) or  Fano(k,I)", " -- computes 
      the ideal of a Fano scheme in the Grassmannian.",
      PARA,
@@ -968,7 +968,7 @@ document{quote Grassmannian,
         ZZ/31991[vars(0..binomial(r+1,k+1)-1]."
         }
 
-document { quote code,
+document { code,
      TT "code f", " -- prints out the source code of the function f.",
      BR, NOINDENT,
      TT "code(f,X)", " -- prints out the source code of the particular 
@@ -990,16 +990,35 @@ document { quote code,
      SEEALSO "methods"
      }
 
-document { quote edit,
+document { edit,
      TT "edit", " -- a command which starts the text editor",
      BR,NOINDENT,
      TT "edit f", " -- starts the text editor at the source code of the
      function f.",
+     BR,NOINDENT,
+     TT "edit(f,X)", " -- edits the source code of the particular 
+     method that would be applied if f were applied to an argument of 
+     class X.",
+     BR, NOINDENT,
+     TT "edit(f,X,Y)", " -- edits the source code of the particular 
+     method that would be applied if f were applied to arguments of
+     classes X and Y.",
+     BR, NOINDENT,
+     TT "edit(f,X,Y,Z)", " -- edits the source code of the 
+     particular method that would be applied if f were applied to 
+     arguments of classes X, Y, and Z.",
      PARA,
-     "Multiple arguments are handled as ", TO "code", " handles them."
+     "The name of the user's preferred editor is take from the environment 
+     variable ", TT "EDITOR", ".  If X is running and the editor is not
+     emacs, then the editor is started in a new ", TT "xterm", " window.",
+     PARA,
+     "For an interactive example, try ", TT "edit(dim,Module)", ".",
+     PARA,
+     "The value returned is the exit code returned by the editor, as with
+     ", TO "run", ", usually zero."
      }
 
-document { quote methods,
+document { methods,
      TT "methods F", " -- produces a list of those methods associated with the
      function or type F.",
      BR, NOINDENT,
@@ -1022,7 +1041,7 @@ document { quote methods,
      EXAMPLE "methods drop"
      }
 
-document { quote isTable,
+document { isTable,
      TT "isTable m", " -- yields the value true if m is a rectangular matrix 
      represented as a list of lists, otherwise yields the value false.",
      PARA,
@@ -1030,7 +1049,7 @@ document { quote isTable,
      as a list of lists."
      }
 
-document { quote Monoid,
+document { Monoid,
      TT "Monoid", " -- denotes the class of all monoids.",
      PARA,
      "A monoid is a set with a multiplicative operation on

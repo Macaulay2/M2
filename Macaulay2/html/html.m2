@@ -6,7 +6,7 @@ linkFilenameCounter := 0
 linkFilenameKeys = () -> keys linkFilenameTable
 
 fourDigits := i -> (
-     s := string i;
+     s := toString i;
      concatenate(4-#s:"0", s)
      )
 
@@ -21,7 +21,7 @@ linkFilename = s -> (
      ) | ".html"
 
 html TO   := x -> concatenate (
-     "<A HREF=\"", linkFilename getDocumentationTag x#0, "\">", html formatDocumentTag x#0, "</A>", 
+     "<A HREF=\"", linkFilename formatDocumentTag x#0, "\">", html formatDocumentTag x#0, "</A>", 
      drop(toList x,1)
      )
 
@@ -79,7 +79,7 @@ scope2 Thing := x -> null
 scope2 Sequence := scope2 BasicList := x -> scan(x,scope2)
 scope2 SHIELD := x -> null
 scope2 TO := x -> (
-     key := getDocumentationTag x#0;
+     key := formatDocumentTag x#0;
      if UP#?key then (
 	  stderr
 	  << "key '" << key << "' already encountered" << endl
@@ -116,7 +116,7 @@ process := (key,doc) -> (
      -- stderr << key << endl;
      filename := linkFilename key;
      masterIndex#key = filename;
-     title := formatDocumentTag key;
+     title := key;
      filename << html HTML { 
 	  HEAD TITLE title,
 	  BODY {
@@ -136,7 +136,8 @@ missing := false;
 
 scan(linkFilenameKeys(),
      key -> if not masterIndex#?key then (
-	  title := formatDocumentTag key;
+	  -- title := formatDocumentTag key;
+	  title := key;
 	  missing = true;
 	  stderr << "Documentation for '" << key << "' missing." << endl;
 	  linkFilename key << html HTML { 

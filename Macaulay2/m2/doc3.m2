@@ -179,12 +179,12 @@ document { "programming",
 --      SEEALSO "readExamples"
 --      }
 
-document { quote "shield",
+document { "shield",
      TT "shield x", " -- executes the expression ", TT "x", ", temporarily
      ignoring interrupts."
      }
 
-document { quote phase,
+document { "phase",
      TT "phase", " -- an internal variable indicating which phase of compilation we
      are in.",
      PARA,
@@ -201,11 +201,11 @@ document { quote phase,
      ", TO "document", " is used."
      }
 
-document { quote lineNumber,
+document { lineNumber,
      TT "lineNumber()", " -- returns the current line number."
      }
 
-document { quote backtrace,
+document { backtrace,
      TT "backtrace()", " -- after an error, returns a list representing the
      steps in the computation that led to the error.",
      PARA,
@@ -219,7 +219,7 @@ document { quote backtrace,
      SEEALSO {"Expression", "Position"}
      }
 
-document { quote Position,
+document { Position,
      TT "Position", " -- a type of list designed to represent a position
      in a file.",
      PARA,
@@ -261,24 +261,24 @@ document { "debugging",
 	  }
      }
 
-document { quote currentFile,
+document { "currentFile",
      TT "currentFile", " -- a variable whose value is the name of the current
      source file."
      }
 
-document { quote flag,
+document { flag,
      TT "flag x", " -- arranges for each subsequent reference to a
      symbol x to be flagged with a warning message."
      }
 
-document { quote frame,
+document { frame,
      TT "frame f", " -- provides the frame of values for local variables
      bound up in a function closure.",
      PARA,
      "This routine is provisional."
      }
 
-document { quote examine,
+document { examine,
      TT "examine ()", " -- list the sequence numbers for the scopes corresponding
      to the frames currently in use.", BR,NOINDENT, 
      TT "examine f", " -- display internal information about an interpreted 
@@ -289,7 +289,7 @@ document { quote examine,
      SEEALSO "debugging"
      }
 
-document { quote seeParsing,
+document { seeParsing,
      TT "seeParsing()", " -- print the syntax table which governs parsing
      precedence."
      }
@@ -349,7 +349,7 @@ document { "classes",
 	  }
      }
 
-document { quote instance,
+document { instance,
      TT "instance(x,X)", " -- tells whether ", TT "x", " is an instance
      of the type ", TT "X", ".",
      PARA,
@@ -434,7 +434,7 @@ document { "system",
 	  }
      }
 
-document { quote pathSeparator,
+document { "pathSeparator",
      TT "pathSeparator", " -- the character used under the current operating
      system to separate the component directory names in a file path.",
      PARA,
@@ -442,7 +442,7 @@ document { quote pathSeparator,
      ", TT ///":"///, "."
      }
 
-document { quote alarm,
+document { alarm,
      TT "alarm n", " -- arrange for an interrupt to occur in ", TT "n", "
      seconds, cancelling any previously set alarm.",
      PARA,
@@ -469,7 +469,7 @@ document { "initialization file",
      SEEALSO "load"
      }
 
-document { quote Field,
+document { Field,
      TT "Field", " -- the class of all fields.",
      PARA,
      "Some fields:",
@@ -492,14 +492,14 @@ document { quote Field,
      SEEALSO "coefficientRing"
      }
 
-document { quote char,
+document { char,
      TT "char F", " -- returns the characteristic of the ring ", TT "F", ".",
      PARA,
      "The key ", TO "char", " is used to store the characteristic
      in F after it has been computed."
      }
 
-document { quote basictype,
+document { basictype,
      TT "basictype x", " -- yields a symbol representing the basic type of ", TT "x", ".",
      PARA,
      "Every thing has basic type which tells what sort of thing it
@@ -513,7 +513,7 @@ document { quote basictype,
      SEEALSO "Thing"
      }
 
-document { quote ++,
+document { "++",
      TT "M ++ N", " -- direct sum for modules, matrices, or chain complexes and
      disjoint union for sets.",
      PARA,
@@ -531,7 +531,7 @@ document { quote ++,
      SEEALSO {"classes", "directSum"}
      }
 
-document { quote @@,
+document { "@@",
      TT "f @@ g", " -- a binary operator used for composition of functions.",
      PARA,
      "If ", TT "f", " and ", TT "g", " are homomorphisms of modules, then ", TT "f @@ g", " yields their
@@ -544,7 +544,7 @@ document { quote @@,
      class of ", TT "y", "."
      }
 
-document { quote @,
+document { "@",
      TT "x @ y", " -- a binary operator.",
      PARA,
      "This operator is right associative.",
@@ -553,14 +553,10 @@ document { quote @,
      with code such as ",
      PRE "         X @ Y := (x,y) -> ...",
      "where ", TT "X", " is the class of ", TT "x", " and ", TT "Y", " is the
-     class of ", TT "y", ".",
-     SEEALSO {
-	  (quote @, List, Function),
-	  (quote @, OptionTable, Function),
-	  }
+     class of ", TT "y", "."
      }
 
-document { quote \,
+document { "\\",
      TT ///x \ y///, " -- a binary operator used for function application.",
      PARA,
      "This operator is right associative.",
@@ -600,7 +596,7 @@ document { (quote \,Function, List),
      SEEALSO {"apply", "@@", (quote /,List, Function)}
      }
 
-document { quote String,
+document { String,
      TT "String", " -- the class of all strings.",
      PARA,
      "A string is thing which contains a sequence of characters (bytes).
@@ -630,7 +626,7 @@ document { quote String,
  	  }
      }
 
-document { quote unhex,
+document { unhex,
      TT "unhex s", " -- translates a string provided as the trailing part
      of a URL by a web browser.",
      PARA,
@@ -661,7 +657,7 @@ document { "///",
      SEEALSO "String"
      }
 
-document { quote Net,
+document { Net,
      TT "Net", " -- the class of all nets.",
      PARA,
      "A net is a generalization of a string which is designed to facilitate
@@ -699,7 +695,7 @@ document { quote Net,
      SEEALSO "String"
      }
 
-document { quote net,
+document { net,
      TT "net x", " -- format ", TT "x", " for printing.",
      PARA,
      "This function is the primary function called upon by ", TO "<<", " to
@@ -728,7 +724,7 @@ document { quote net,
      SEEALSO {"Net", "expression", "Expression", "Net"}
      }
 
-document { quote horizontalJoin,
+document { horizontalJoin,
      TT "horizontalJoin(m,n,...)", " -- joins nets or strings by concatenating
      them horizontally.  The baselines in each of the nets are aligned
      appropriately.",
@@ -740,7 +736,7 @@ document { quote horizontalJoin,
      SEEALSO {"Net", (quote |, String, String)}
      }
 
-document { quote stack,
+document { stack,
      TT "stack(m,n,...)", " -- joins nets or strings by concatenating
      them vertically.  The baseline of the result is the baseline of the
      first argument.",
@@ -766,14 +762,14 @@ document { (quote ^, Net, ZZ),
      it to a net."
      }
 
-document { quote width,
+document { width,
      TT "width f", " -- determines the width of the terminal associated to an
      output file ", TT "f", ", if any.", BR,NOINDENT, 
      TT "width n", " -- the width of a net ", TT "n", ".",
      SEEALSO {"Net", "File"}
      }
 
-document { quote height,
+document { height,
      TT "height n", " -- the height of a net ", TT "n", ".",
      PARA,
      "The height of a net is the number of rows of characters it has above
@@ -782,7 +778,7 @@ document { quote height,
      SEEALSO {"Net", "depth"}
      }
 
-document { quote depth,
+document { depth,
      TT "depth n", " -- the depth of a net ", TT "n", ".",
      PARA,
      "The depth of a net is the number of rows of characters it has below
@@ -800,7 +796,7 @@ document { "String # ZZ",
      SEEALSO "String"
      }
 
-document { quote class,
+document { class,
      TT "class x", " -- yields the class of x.",
      PARA,
      SEEALSO "classes"
@@ -839,7 +835,7 @@ document { "combinatorial functions",
 	  }
      }
 
-document { quote hash,
+document { hash,
      TT "hash x", " -- returns the hash code of ", TT "x", ".",
      PARA,
      "The hash code of ", TT "x", " is an integer produced in a deterministic way
@@ -848,7 +844,7 @@ document { quote hash,
      the hash codes used here are designed to satisfy."
      }
 
-document { quote remove,
+document { remove,
      TT "remove(x,k)", " -- removes the entry stored in the hash table ", TT "x", "
      under the key ", TT "k", ".",
      PARA,
@@ -872,7 +868,7 @@ document { "top level loop",
 	  }
      }
 
-document { quote BasicList,
+document { BasicList,
      TT "BasicList", " -- the class of all things represented internally as a
      list.  A list is a sequence of expressions indexed by integers
      0, 1, ..., N-1, where N is the length of the sequence.",
@@ -889,7 +885,7 @@ document { quote BasicList,
 	  },
      }
 
-document { quote toSequence,
+document { toSequence,
      TT "toSequence x", " -- yields the elements of a list ", TT "x", " as a sequence.",
      PARA,
      "If ", TT "x", " is a sequence, then ", TT "x", " is returned.",
@@ -900,7 +896,7 @@ document { quote toSequence,
 	  },
      }
 
-document { quote Boolean,
+document { Boolean,
      TT "Boolean", " -- the class whose two members are ", TO "true", " and
      ", TO "false", ".",
      PARA,
@@ -953,7 +949,7 @@ document { "numbers",
 	  }
      }
 
-document { quote Symbol,
+document { Symbol,
      TT "Symbol", " -- denotes the class of all symbols.",
      PARA,
      "Symbols are entered as an alphabetic character followed by a
@@ -972,7 +968,7 @@ document { quote Symbol,
      SEEALSO {"symbolTable", "local", "global", "quote", ":="}
      }
 
-document { quote File,
+document { File,
      TT "File", " -- the class of all files.",
      PARA,
      "Files may be input files, output files, pipes, or sockets.
@@ -1022,11 +1018,10 @@ document { quote File,
           TO "columnate",
 	  TO "expression",
 	  TO "format",
-          TO "name",
           {TO "null", "     -- a symbol which doesn't print"},
           TO "pad",
-          TO "string",
 	  TO "tex",
+	  TO "toExternalString",
 	  TO "toString"
 	  },
      "Destroying files:",
@@ -1055,15 +1050,15 @@ ccc = echoOff
 erase quote echoOff
 echoOff = new Command from ccc
 
-document { quote echoOn,
+document { echoOn,
      TT "echoOn f", " -- turns on echoing for the file ", TT "f", "."
      }
 
-document { quote echoOff,
+document { echoOff,
      TT "echoOff f", " -- turns off echoing for the file ", TT "f", "."
      }
 
-document { quote printString,
+document { printString,
      TT "printString(o,s)", " -- send the string ", TT "s", " to the output file ", TT "o", ".",
      PARA,
      "The argument ", TT "s", " may also be a sequence or list, in which case
@@ -1162,7 +1157,7 @@ document { "transcendental functions",
 	  }
      }
 
-document { quote mutable,
+document { mutable,
      TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
      PARA,
      "If ", TT "x", " is a hash table, list, or database, then it's mutable if its contents

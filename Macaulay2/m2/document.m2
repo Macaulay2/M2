@@ -1,5 +1,29 @@
---		Copyright 1994 by Daniel R. Grayson
+--		Copyright 1994-1999 by Daniel R. Grayson
 
+Function \ Sequence := Function \ List := (f,v) -> apply(v,f)
+Sequence / Function := List / Function := (v,f) -> apply(v,f)
+
+use = identity				  -- just temporary, until methods.m2
+
+globalAssignFunction = (X,x) -> (
+     if not x#?(quote name) then (
+	  x.symbol = X;
+	  x.name = string X;
+	  );
+     use x;
+     )
+
+globalReleaseFunction = (X,x) -> (
+     if x.?symbol and X === x.symbol
+     then (
+	  remove(x,quote name);
+	  remove(x,quote symbol);
+	  )
+     )
+
+GlobalAssignHook Type := globalAssignFunction
+GlobalReleaseHook Type := globalReleaseFunction
+-----------------------------------------------------------------------------
 endFunctions := {}
 addEndFunction = g -> (
      endFunctions = append(endFunctions,g);
@@ -56,14 +80,6 @@ if phase === 2 or phase === 4 then DocDatabase = openDatabaseOut docFilename()
 
 Documentation = new MutableHashTable
 
-Symbols = new MutableHashTable
-
-GlobalAssignHook Function := (X,x) -> if not Symbols#?x then Symbols#x = X
-
---GlobalReleaseHook Function := (F,f) -> (
---     stderr << "warning: " << string F << " redefined" << endl;
---     )
-
 DocumentableValueType := new MutableHashTable
 DocumentableValueType#HashTable = true
 DocumentableValueType#Function = true
@@ -86,7 +102,6 @@ scanPairs(symbolTable(),
      (name,symbol) -> if documentableValue symbol then Symbols#(value symbol) = symbol
      )
 
-name Function := f -> if Symbols#?f then string Symbols#f else "--function--"
 
 repl := z -> (
      if class z === List or class z === Sequence then SEQ apply(toList z, repl)
@@ -96,20 +111,14 @@ repl := z -> (
      else z
      )
 
-getDocumentationTag = x -> (
-     if class x === Symbol then string x else toString x
-     --while Documentation#?x and not class Documentation#x === SEQ do x = Documentation#x;
-     --if class x === Symbol then x = string x;
-     --x
-     )
+haveDoc := x -> Documentation#?x or class x === String and DocDatabase#?x
+getDoc := x -> if Documentation#?x then Documentation#x else value DocDatabase#x
 
 doc = x -> (
-     x = getDocumentationTag x;
-     if Documentation#?x and class Documentation#x === SEQ then Documentation#x
-     else if DocDatabase#?x then value DocDatabase#x
+     if haveDoc x then getDoc x
      else (
-	  x = name x;
-	  if DocDatabase#?x then value DocDatabase#x else null
+	  x = formatDocumentTag x;
+     	  if haveDoc x then getDoc x else null
 	  )
      )
 
@@ -117,7 +126,7 @@ err := nodeName -> (
      stderr
      << concatenate ("warning: documentation already provided for '", nodeName, "'") 
      << newline
-     << flush
+     << flush;
      )
 
 keysDoc := () -> (
@@ -143,63 +152,63 @@ formatDocumentTag = s -> concatenate (
 	       if class s#0 === ScriptedFunctor
 	       then (
 		    if s#0 .? subscript
-		    then (name s#0, "_", name s#1, "(", name s#2, ",", name s#3, ")")
-		    else (name s#0, "^", name s#1, "(", name s#2, ",", name s#3, ")")
+		    then (toString s#0, "_", toString s#1, "(", toString s#2, ",", toString s#3, ")")
+		    else (toString s#0, "^", toString s#1, "(", toString s#2, ",", toString s#3, ")")
 		    )
 	       else if s#0 === NewOfFromMethod
-	       then ("new ", name s#1, " of ", name s#2, " from ", name s#3)
+	       then ("new ", toString s#1, " of ", toString s#2, " from ", toString s#3)
 	       else if s#0 === cohomology
-	       then ("HH_", name s#1, "^", name s#2, " ", name s#3)
+	       then ("HH_", toString s#1, "^", toString s#2, " ", toString s#3)
 	       else if s#0 === homology
-	       then ("HH^", name s#1, "_", name s#2, " ", name s#3)
-	       else (name s#0, "(", name s#1, ",", name s#2, ",", name s#3, ")")
+	       then ("HH^", toString s#1, "_", toString s#2, " ", toString s#3)
+	       else (toString s#0, "(", toString s#1, ",", toString s#2, ",", toString s#3, ")")
 	       )
 	  else if #s === 3 then (
 	       if class s#0 === Symbol then (
 		    if s#0 === NewFromMethod
-		    then ("new ", name s#1, " from ", name s#2)
+		    then ("new ", toString s#1, " from ", toString s#2)
 		    else if s#0 === NewOfMethod
-		    then ("new ", name s#1, " of ", name s#2)
+		    then ("new ", toString s#1, " of ", toString s#2)
 		    else if s#0 === quote " "
-		    then (name s#1, " ", name s#2)
-		    else (formatDocumentTag s#1, " ", string s#0, " ", name s#2)
+		    then (toString s#1, " ", toString s#2)
+		    else (formatDocumentTag s#1, " ", toString s#0, " ", toString s#2)
 		    )
 	       else if s#0 === homology
-	       then ("HH_", name s#1, " ", name s#2)
+	       then ("HH_", toString s#1, " ", toString s#2)
 	       else if s#0 === cohomology
-	       then ("HH^", name s#1, " ", name s#2)
-     	       else (name s#0, "(", name s#1, ",", name s#2, ")")
+	       then ("HH^", toString s#1, " ", toString s#2)
+     	       else (toString s#0, "(", toString s#1, ",", toString s#2, ")")
 	       )
 	  else if #s === 2 then (
 	       if class s#0 === ScriptedFunction then (
 		    hh := s#0;
 		    if hh.?subscript and hh.?superscript
 		    then (
-			 (name s#0, " _ ", name s#1, "  or  ", name s#0, " ^ ", name s#1)
+			 (toString s#0, " _ ", toString s#1, "  or  ", toString s#0, " ^ ", toString s#1)
 			 )
-		    else if hh.?subscript then (name s#0, " _ ", name s#1)
-		    else (name s#0, " ^ ", name s#1)
+		    else if hh.?subscript then (toString s#0, " _ ", toString s#1)
+		    else (toString s#0, " ^ ", toString s#1)
 		    )
 	       else if s#0 === homology
-	       then ("HH ", name s#1)
+	       then ("HH ", toString s#1)
 	       else if s#0 === cohomology
-	       then ("HH ", name s#1)
-	       else if s#0 === NewMethod then ("new ", name s#1)
-	       else if s#0 === quote ~ then (name s#1, " ", string s#0) -- postfix!
-	       else if class s#0 === Symbol then (string s#0, " ", name s#1)
-	       else (name s#0, " ", name s#1)
+	       then ("HH ", toString s#1)
+	       else if s#0 === NewMethod then ("new ", toString s#1)
+	       else if s#0 === quote ~ then (toString s#1, " ", toString s#0) -- postfix!
+	       else if class s#0 === Symbol then (toString s#0, " ", toString s#1)
+	       else (toString s#0, " ", toString s#1)
 	       )
-	  else (name s)
+	  else (toString s)
 	  )
      else if class s === Option and #s === 2 and class s#0 === Function then (
-	  (name s#0, "(", name s#1, " => ...)")
+	  (toString s#0, "(", toString s#1, " => ...)")
 	  )
      else if class s === String then (
 	  if s#0 === "\"" and s#-1 === "\"" then value s
 	  else if substring(s,0,6) === "quote " then substring(s,6)
 	  else s)
-     else if class s === Symbol then string s
-     else name s
+     else if class s === Symbol then toString s
+     else toString s
      )
 
 hr := (o) -> o << "-----------------------------------------------------------------------------" << endl
@@ -279,7 +288,7 @@ topics = Command (
      )
 
 apropos = (pattern) -> (
-     mat := "*" | string pattern | "*";
+     mat := "*" | toString pattern | "*";
      sort select( keys symbolTable(), i -> match(i,mat)))
 
 testFileCounter := 0
@@ -287,7 +296,7 @@ exprCounter := 0
 file := null
 
 fourDigits := i -> (
-     s := string i;
+     s := toString i;
      concatenate(4-#s:"0", s)
      )
 
@@ -328,7 +337,7 @@ NameHashTable := () -> (
 if phase === 2 then (
      addEndFunction( () -> (
 	       stderr << "writing " << NameFile << endl;
-	       NameFile << name pairs NameHashTable() << endl << close;
+	       NameFile << toExternalString pairs NameHashTable() << endl << close;
 	       ));
      )
 
@@ -395,7 +404,7 @@ storeDoc := (docBody) -> (
 	  )
      else if phase === 2 or phase === 4 then (
 	  if DocDatabase#?nodeName then err nodeName;
-	  DocDatabase#nodeName = name docBody;
+	  DocDatabase#nodeName = toExternalString docBody;
 	  );
      )
 
@@ -408,13 +417,14 @@ document = z -> (
 	  -- p for the function f
 	  fn := key#0;
 	  opt := key#1;
-	  if not (options fn)#?opt then error("expected ", name opt, " to be an option of ", name fn);
+	  if not (options fn)#?opt then error("expected ", toString opt, " to be an option of ", toString fn);
 	  );
      if class key === Sequence and class lookup key =!= Function then (
 	  error("expected a method for ", formatDocumentTag key);
 	  );
+     if class key === ZZ then error "oops";
      -- if documentableValue key then Symbols#(value key) = key;
-     nodeName = getDocumentationTag key;
+     nodeName = formatDocumentTag key;
      Documentation#key = nodeName;
      if substring(nodeName,0,6) === "quote " then Documentation#(substring(nodeName,6)) = nodeName;
      nodeBaseFilename = makeBaseFilename();

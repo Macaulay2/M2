@@ -16,6 +16,6 @@ transpose List := m -> (
      then pack(mingle m,# m)
      else if # m === 0
           then {}
-	  else error ("expected ", name m, " to be a table"))
+	  else error ("expected ", toString m, " to be a table"))
 
 

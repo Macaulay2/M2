@@ -28,8 +28,8 @@ pretty := relns -> (
      if #s === 1 then s = first s;
      s)
 
-name QuotientRing := S -> (
-     concatenate( name last S.baseRings, "/", name pretty S.relations)
+toString QuotientRing := S -> if S.?name then S.name else (
+     concatenate( toString last S.baseRings, "/", toString pretty S.relations)
      )
 
 random QuotientRing := S -> (
@@ -60,7 +60,7 @@ isHomogeneous QuotientRing := R -> (
 
 Ring / Module := (R,I) -> (
      if ambient I != R^1 or I.?relations
-     then error ("expected ", name I, " to be an ideal of ", name R);
+     then error ("expected ", toString I, " to be an ideal of ", toString R);
      R / ideal I)
 
 savedQuotients := new MutableHashTable
@@ -157,7 +157,7 @@ EngineRing / Ideal := (R,I) -> if I == 0 then R else if R === ZZZ then ZZZquotie
      if R.?generatorExpressions then (
 	  S.generatorExpressions = R.generatorExpressions;
 	  scan(R.generatorExpressions, x -> (
-		    a := if class x === Symbol then string x else name x;
+		    a := if class x === Symbol then toString x else toString x;
 		    S#a = promote(R#a,S);
 		    ));
 	  );

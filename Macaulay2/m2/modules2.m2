@@ -463,11 +463,11 @@ Module / Sequence := Module / List := (M,v) -> (
      then M / image matrix v
      else if all(v, w -> class w == R)
      then M / (ideal v * M)
-     else error("expected a list of elements of ", name M, " or of ", name R)
+     else error("expected a list of elements of ", toString M, " or of ", toString R)
      )
 Module / Vector := (M,v) -> (
      if class v =!= M 
-     then error("expected ", name v, " to be an element of ", name M);
+     then error("expected ", toString v, " to be an element of ", toString M);
      M / image matrix {v})
 -----------------------------------------------------------------------------
 --top Module := M -> (
@@ -498,12 +498,12 @@ ZZ _ Module := (i,M) -> (
 Module _ ZZ := (M,i) -> (
      if M.?generators then (
 	  if i < 0 or i >= rank source M.generators
-	  then error ("subscript '", name i, "' out of range");
+	  then error ("subscript '", toString i, "' out of range");
 	  sendgg (ggPush M.generators, ggPush i, ggelem);
 	  new M)
      else (
 	  if i < 0 or i >= M.numgens 
-	  then error ("subscript '", name i, "' out of range");
+	  then error ("subscript '", toString i, "' out of range");
      	  sendgg(ggPush M, ggPush i, if M.?newEngine then ggbasisElement else ggfromint);
      	  new M)
      )

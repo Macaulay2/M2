@@ -45,7 +45,7 @@ eliminate (Ideal, List) := (I,v) -> (
 
 eliminate (Ideal, RingElement) := (I,v) -> eliminate(I,{v})
 
-document { quote eliminate,
+document { eliminate,
      EXAMPLE ///
 R = ZZ/101[x,a,b,c,d,Degrees=>{1,1,2,1,2}]
 f = x^2+a*x+b
@@ -89,7 +89,7 @@ resultant(RingElement, RingElement, RingElement) := (f,g,x) ->
 discriminant = method()
 discriminant(RingElement, RingElement) := (f,x) -> resultant(f, diff(x,f), x)
 
-document { quote resultant,
+document { resultant,
      TT "resultant(f:RingElement,g:RingElement,x:RingElement) --> RingElement",
      BR,NOINDENT, "  -- yields the Sylvester resultant of f and g with respect to the variable x.",
      PARA,

@@ -17,7 +17,7 @@ newMonomialIdeal := R -> (
      mi.ring = R;
      mi)
 
-name MonomialIdeal := m -> "monomialIdeal " | name generators m
+toString MonomialIdeal := m -> if m.?name then m.name else "monomialIdeal " | toString generators m
 
 UnaryMonomialIdealOperation := (operation) -> (m) -> (
      sendgg (ggPush m, operation);

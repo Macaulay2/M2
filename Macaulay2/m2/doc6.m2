@@ -1,19 +1,19 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
 
-document { quote odd,
+document { odd,
      TT "odd x", " -- returns true or false, tells whether x is an odd integer.",
      PARA,
      "See also ", TO "even", "."
      }
 
-document { quote even,
+document { even,
      TT "even x", " -- returns true or false, tells whether x is an even integer.",
      PARA,
      "See also ", TO "odd", "."
      }
 
-document { quote Numeric,
+document { Numeric,
      TT "Numeric x", " -- yields the expression obtained from x by converting the 
      integers and rational numbers within to double precision floating 
      point numbers.",
@@ -23,16 +23,16 @@ document { quote Numeric,
      "See also ", TO "RR", "."
      }
 
-document { quote pi,
+document { "pi",
      TT "pi", " -- the numerical value of the arithmetic quantity pi."
      }
 
-document { quote Engine,
+document { Engine,
      TT "Engine", " -- a key for rings which yields the value ", TT "true", " if this
      ring is supported by the ", TO "engine", "."
      }
 
-document { quote ring,
+document { ring,
      TT "ring x", " -- yields the ring associated with ", TT "x", ".",
      BR,
      NOINDENT,
@@ -61,7 +61,7 @@ document { quote ring,
      SEEALSO "Ring"
      }
 
-document { quote coefficientRing,
+document { coefficientRing,
      TT "coefficientRing R", " -- yields the coefficient ring of the ring ", TT "R", ".",
      PARA,
      "If ", TT "R", " is a polynomial ring, then the coefficient ring is
@@ -75,15 +75,15 @@ document { quote coefficientRing,
 	  },
      }
 
-document { quote isCommutative,
+document { isCommutative,
      TT "isCommutative R", " -- tells whether the ring R is commutative."
      }
 
-document { quote isRing,
+document { isRing,
      TT "isRing x", " -- determines whether x is a ring."
      }
 
-document { quote baseRings,
+document { baseRings,
      TT "baseRings", " -- a symbol used as a key in a ring ", TT "R", " under which is
      stored a list of base rings for ", TT "R", ".",
      PARA,
@@ -94,7 +94,7 @@ document { quote baseRings,
      "The base rings are presented in chronological order."
      }
 
-document { quote lift,
+document { lift,
      TT "lift(f,R)", " -- promotes a ring element ", TT "f", " to 
      the ring ", TT "R", ".",
      PARA,
@@ -103,7 +103,7 @@ document { quote lift,
      SEEALSO "baseRings"
      }
 
-document { quote liftable,
+document { liftable,
      TT "lift(f,R)", " -- tells whether a ring element ", TT "f", " can be
      lifted to the ring ", TT "R", ".",
      PARA,
@@ -112,7 +112,7 @@ document { quote liftable,
      SEEALSO "baseRings"
      }
 
-document { quote promote,
+document { promote,
      TT "promote(f,R)", " -- promotes a ring element ", TT "f", " to 
      the ring ", TT "R", ".",
      PARA,
@@ -124,7 +124,7 @@ document { quote promote,
      SEEALSO "baseRings"
      }
 
-document { quote RingElement,
+document { RingElement,
      TT "RingElement", " -- the class of all ring elements handled by the 
      ", TO "engine", ".",
      PARA,
@@ -132,7 +132,7 @@ document { quote RingElement,
      }
 
 
-document { quote EngineRing,
+document { EngineRing,
      TT "EngineRing", " -- denotes the class of all special-purpose engine
      rings, such as finite fields.",
      PARA,
@@ -159,7 +159,7 @@ document { quote EngineRing,
      }
 
 
-document { quote fraction,
+document { fraction,
      TT "fraction(f,g)", " -- manufactures the fraction f/g in the fraction
      ring of the ring containing f and g without reducing it to lowest terms."
      }
@@ -171,7 +171,7 @@ assert ( b == numerator(b/a) )
 assert ( 1 == numerator(b/b) )
 "
 
-document { quote FractionField,
+document { FractionField,
      TT "FractionField", " -- the class of all fraction fields.",
      PARA,
      "Functions:",
@@ -181,7 +181,7 @@ document { quote FractionField,
 	  }
      }
 
-document { quote frac,
+document { frac,
      TT "frac R", " -- construct the fraction field of the ring ", TT "R", ".",
      PARA,
      "If ", TT "R", " has no name yet, then the names for its symbols will
@@ -194,7 +194,7 @@ document { quote frac,
      SEEALSO "FractionField"
      }
 
-document { quote ZZ,
+document { ZZ,
      TT "ZZ", " -- denotes the class of all integers.",
      PARA,
      EXAMPLE {
@@ -219,7 +219,7 @@ assert ( isPrime 3333313)
 assert ( isPrime 3333331)
 "
 
-document { quote isPrime,
+document { isPrime,
      TT "isPrime x", " -- tests for primality",
      PARA,
      NOINDENT,
@@ -235,19 +235,19 @@ document { quote isPrime,
      is irreducible, otherwise ", TT "false", "."
      }
 
-document { quote numerator,
+document { numerator,
      TT "numerator x", " -- provides the numerator of a fraction.",
      PARA,
      EXAMPLE "numerator (4/6)"
      }
 
-document { quote denominator,
+document { denominator,
      TT "denominator x", " -- provides the denominator of a fraction.",
      PARA,
      EXAMPLE "denominator (4/6)"
      }
 
-document { quote QQ,
+document { QQ,
      TT "QQ", " -- denotes the class of all rational numbers.",
      PARA,
      EXAMPLE "1/2 + 3/5",
@@ -266,7 +266,7 @@ TEST ///
      assert( net (1/1) === "1" )
 ///
 
-document { quote RR,
+document { RR,
      TT "RR", " -- the class of all real numbers.  It is a field.",
      PARA,
      "A real number is entered as a sequence of decimal digits with a point.",
@@ -275,7 +275,7 @@ document { quote RR,
      SEEALSO {"basictype", "numbers"}
      }
 
-document { quote CC,
+document { CC,
      TT "CC", " -- the class of all complex numbers.",
      PARA,
      "The symbol ", TO "ii", " represents the square root of -1.",
@@ -296,23 +296,23 @@ document { quote CC,
      SEEALSO "numbers"
      }
 
-document { quote ii,
+document { ii,
      TT "ii", " -- the square root of -1.",
      PARA,
      SEEALSO{ "CC"}
      }
-document { quote realPart,
+document { realPart,
      TT "realPart z", " -- return the real part of a complex number z."
      }
-document { quote imaginaryPart,
+document { imaginaryPart,
      TT "imaginaryPart z", " -- return the imaginary part of a complex number z."
      }
 
-document { quote conjugate,
+document { conjugate,
      TT "conjugate z", " -- the complex conjugate of the complex number z."
      }
 
-document { quote gcdCoefficients,
+document { gcdCoefficients,
      TT "gcdCoefficients(a,b)", " -- returns ", TT "{r,s}", " so that
      ", TT"a*r + b*s", " is the greatest common divisor of ", TT "a", "
      and ", TT "b", ".",
@@ -321,12 +321,12 @@ document { quote gcdCoefficients,
      SEEALSO "gcd"
      }
 
-document { quote mod,
+document { mod,
      TT "mod(i,n)", " -- reduce the integer i modulo n, producing an
      element of ZZ/n."
      }
 
-document { quote ProductRing,
+document { ProductRing,
      TT "ProductRing", " -- the class of all product rings.",
      PARA,
      "If R and S are rings, then R * S denotes their product ring.
@@ -336,7 +336,7 @@ document { quote ProductRing,
      "This has to be rethought!"     
      }
 
-document { quote OrderedMonoid,
+document { OrderedMonoid,
      TT "OrderedMonoid", " -- the class of all ordered monoids.",
      PARA,
      "An ordered monoid is a multiplicative monoid together with an ordering of 
@@ -361,18 +361,18 @@ document { quote OrderedMonoid,
      SEEALSO  {"Monoid", "group"}
      }
 
-document { quote binomial,
+document { binomial,
      TT "binomial(n,i)", " -- returns the binomial coefficient, the coefficient
      of x^i in (1+x)^i.",
      PARA,
      EXAMPLE "binomial(13,6)"
      }
 
-document { quote isPolynomialRing,
+document { isPolynomialRing,
      TT "isPolynomialRing R", " -- tells whether R is a polynomial ring."
      }
 
-document { quote PolynomialRing,
+document { PolynomialRing,
      TT "PolynomialRing", " -- denotes the class of all ordered monoid rings.",
      PARA,
      "If R is a ring and M is an ordered monoid, then R M denotes
@@ -431,7 +431,7 @@ document { quote PolynomialRing,
      SEEALSO {"OrderedMonoid", "RingElement"},
      }
 
-document { quote isUnit,
+document { isUnit,
      TT "isUnit r", " -- determines whether a ring element is a unit.",
      PARA,
      EXAMPLE {
@@ -440,7 +440,7 @@ document { quote isUnit,
 	  }
      }
 
-document { quote exponents,
+document { exponents,
      TT "exponents m", " -- for a monomial ", TT "m", " provides the list
      of exponents.",
      TT "exponents f", " -- for a polynomial ", TT "f", " provides a list
@@ -451,7 +451,7 @@ document { quote exponents,
 	  },
      }
 
-document { quote degreesRing,
+document { degreesRing,
      TT "degreesRing n", " -- produce the ring in n variables whose monomials
      are to be used to represent degrees in another ring with multi-degrees
      of length n",
@@ -464,7 +464,7 @@ document { quote degreesRing,
      SEEALSO "poincare"
      }
 
-document { quote standardForm,
+document { standardForm,
      TT "standardForm f", " -- converts a polynomial or monomial to a
      form involving hash tables.",
      PARA,
@@ -481,7 +481,7 @@ document { quote standardForm,
 	  },
      }
 
-document { quote listForm,
+document { listForm,
      TT "listForm f", " -- converts a polynomial or monomial to a form
      represented by nested lists.",
      PARA,
@@ -502,7 +502,7 @@ document { (quote " ",Ring, OrderedMonoid),
      SEEALSO {"Ring", "OrderedMonoid"}
      }
 
-document { quote WeylAlgebra,
+document { WeylAlgebra,
      TT "WeylAlgebra", " -- an option used when creating a polynomial ring
      to specify that a Weyl algebra is to be produced.",
      PARA,
@@ -566,10 +566,11 @@ TEST "
 -- test name
 R = ZZ/101[a..e]
 f = symmetricPower(2,vars R)
-assert( f == value name f )
+assert( f == value toExternalString f )
+assert( f == value toString f )
 "
 
-document { quote Schur,
+document { Schur,
      TT "Schur n", " -- creates a Schur ring of degree n.",
      PARA,
      "This is the representation ring for the general linear group of n by n
@@ -578,7 +579,7 @@ document { quote Schur,
      SEEALSO {"SchurRing"}
      }
 
-document { quote SchurRing,
+document { SchurRing,
      TT "SchurRing", " -- the class of all Schur rings.",
      PARA,
      "A Schur ring is the representation ring for the general linear group of 
@@ -603,7 +604,7 @@ document { (quote _, SchurRing, List),
      SEEALSO "SchurRing"
      }
 
-document { quote IndexedVariableTable,
+document { IndexedVariableTable,
      TT "IndexedVariableTable", " -- the class of those hash tables which
      are used to hold the values of those indexed variables sharing a given
      base name.",
@@ -617,7 +618,7 @@ document { quote IndexedVariableTable,
      SEEALSO "IndexedVariable"
      }
 
-document { quote assign,
+document { assign,
      TT "assign(x,v)", " -- assigns v as the value of x.",
      PARA,
      "If the value of x is a symbol or indexed variable, then it
@@ -633,7 +634,7 @@ document { quote assign,
      "to work with indexed variables.  See ", TO "<-", "."
      }
 
-document { quote IndexedVariable,
+document { IndexedVariable,
      TT "IndexedVariable", " -- the class of all indexed variables.",
      PARA,
      "Indexed variables provide the possibility of producing 
@@ -654,13 +655,13 @@ document { quote IndexedVariable,
      SEEALSO "IndexedVariableTable"
      }
 
-document { quote MonoidElement,
+document { MonoidElement,
      TT "MonoidElement", " -- the class of all monoid elements.",
      PARA,
      SEEALSO "monoid"
      }
 
-document { quote Degrees,
+document { Degrees,
      TT "Degrees", " -- an option which specifies the degrees of the generators.",
      PARA,
      "Used as an option to ", TO "monoid", ", or when a polynomial ring
@@ -668,7 +669,7 @@ document { quote Degrees,
      PARA,
      "See ", TO "monoid", " for details."
      }
-document { quote SkewCommutative,
+document { SkewCommutative,
      TT "SkewCommutative", " -- name for an optional argument for monoids
      that specifies that monoid rings created from them will be skewcommutative.",
      PARA,
@@ -680,7 +681,7 @@ document { quote SkewCommutative,
 	  }
      }
 
-document { quote MonomialSize,
+document { MonomialSize,
      TT "MonomialSize => n", " -- an option which determines the maximum 
      exponent size.",
      PARA,
@@ -692,14 +693,14 @@ document { quote MonomialSize,
      "See ", TO "monoid", " for details."
      }
 
-document { quote Inverses,
+document { Inverses,
      TT "Inverses", " -- an option used in creating a monoid which tells
      whether negative exponents will be allowed, making the monoid into
      a group.",
      SEEALSO "monoid"
      }
 
-document { quote GeneralOrderedMonoid,
+document { GeneralOrderedMonoid,
      TT "GeneralOrderedMonoid", " -- the class of all ordered free 
      commutative monoids, as implemented by ", TO "monoid", ".",
      PARA,
@@ -726,19 +727,19 @@ document { (quote _, Monoid,ZZ),
      SEEALSO { "Monoid", "_" }
      }
 
-document { quote degreesMonoid,
+document { degreesMonoid,
      TT "degreesMonoid n", " -- returns the monoid whose elements correspond
      to the multi-degrees of monomials in another monoid.",
      PARA,
      "Also used as a key under which to store the result."
      }
 
-document { quote RevLex,
+document { RevLex,
      TT "RevLex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the reverse lexicographic order."
      }
-document { quote GRevLex,
+document { GRevLex,
      TT "GRevLex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the graded reverse lexicographic order.",
@@ -747,7 +748,7 @@ document { quote GRevLex,
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
-document { quote GLex,
+document { GLex,
      TT "GLex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the graded lexicographic order.",
@@ -756,12 +757,12 @@ document { quote GLex,
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
-document { quote Lex,
+document { Lex,
      TT "Lex", " -- a symbol used as an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the (non-graded) lexicographic order."
      }
-document { quote Eliminate,
+document { Eliminate,
      TT "Eliminate", " n -- an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the elimination order eliminating the
@@ -771,7 +772,7 @@ document { quote Eliminate,
      is currently only graded using the first degree vector.  This will 
      eventually change."  -- MES
      }
-document { quote ProductOrder,
+document { ProductOrder,
      TT "ProductOrder", "{n1, ..., nr} -- an optional argument of
      ", TO "MonomialOrder", " in monoids handled by the ", TO "engine", " to
      indicate that the monomial order is the product of r graded reverse lex
@@ -782,13 +783,13 @@ document { quote ProductOrder,
      eventually change."  -- MES
      }
 
-document { quote VariableBaseName,
+document { VariableBaseName,
      TT "VariableBaseName => x", " -- an optional argument used when creating
      monoids or rings to specify that the variables should be ",
      TT "x_0, ..., x_n", "."
      }
 
-document { quote MonomialOrder,
+document { MonomialOrder,
      TT "MonomialOrder", " -- a key used with monoids to indicate a
      monomial order other than the default (graded reverse lexicographic)",
      PARA,
@@ -804,7 +805,7 @@ document { quote MonomialOrder,
      "Eventually, more general monomial orders will be allowed." -- MES
      }
 
-document { quote Variables,
+document { Variables,
      TT "Variables", " -- a key used with monoids to indicate the list of 
      variable names, or the number of variables.",
      PARA,
@@ -814,14 +815,14 @@ document { quote Variables,
      over the names of the ring variables. See also ", TO "tensor", "."
      }
 
-document { quote VariableOrder,
+document { VariableOrder,
      TT "VariableOrder", " -- an option used when creating a monoid.",
      PARA,
      "Not implemented yet.",
      SEEALSO "monoid"
      }
 
-document { quote monoid,
+document { monoid,
      TT "monoid R      ", " -- yields the underlying monoid of polynomial ring, 
                         group ring, or monoid ring.",
      PARA,
@@ -862,7 +863,7 @@ document { quote monoid,
      SEEALSO {"OrderedMonoid","IndexedVariable","Symbol"}
      }
 
-document { quote GeneralOrderedGroup,
+document { GeneralOrderedGroup,
      TT "GeneralOrderedGroup", " -- the class of all ordered free 
      commutative groups, as implemented by ", TO "group", ".",
      PARA,
@@ -878,7 +879,7 @@ document { quote GeneralOrderedGroup,
      SEEALSO { "group", "Degrees" }
      }     
 
-document { quote group,
+document { group,
      TT "group R      ", " -- yields the underlying group of a group ring.",
      PARA,
      "group [a,b,c] -- makes a free ordered commutative group on the
@@ -908,7 +909,7 @@ document { (quote **, Monoid, Monoid),
      "For complete documentation, see ", TO "tensor", "."
      }
 
-document { quote tensor,
+document { tensor,
   TT "tensor(M,N)", " -- tensor product of rings or monoids.",
   PARA,
   "This method allows all of the options available for monoids, see
@@ -932,7 +933,7 @@ document { quote tensor,
   SEEALSO "**"
   }
 
-document { quote table,
+document { table,
      TT "table(u,v,f)", " -- yields a table m in which m_i_j is f(u_i,v_j).",
      PARA,
      "A table is a list of lists, all of the same length.  The entry m_i_j is 
@@ -944,7 +945,7 @@ document { quote table,
      "See also ", TO "isTable", ", and ", TO "subtable", ".",
      }
 
-document { quote applyTable,
+document { applyTable,
      TT "applyTable(m,f)", " -- applies the function f to each element of the table m.",
      PARA,
      "It yields a table of the same shape as m containing the resulting values.",
@@ -952,7 +953,7 @@ document { quote applyTable,
      "See also ", TO "table", "."
      }
 
-document { quote subtable,
+document { subtable,
      TT "subtable(u,v,m)", " -- yields the subtable of the table m obtained from the
      list u of row numbers and the list v of column numbers.",
      PARA,
@@ -962,18 +963,18 @@ document { quote subtable,
 	  },
      }
 
-document { quote transpose,
+document { transpose,
      TT "transpose m", " -- yields the transpose n of the table or homomorphism m."
      }
 
-document { quote vector,
+document { vector,
      TT "vector {a,b,c,...}", " -- produces an element of a free module from a list.",
      PARA,
      "The elements a,b,c,... must be elements of the same ring, or be
      convertible to elements of the same ring."
      }
 
-document { quote Module,
+document { Module,
      TT "Module", " -- the class of all modules which are handled
      by the ", TO "engine", ".",
      PARA,
@@ -1066,11 +1067,11 @@ document { quote Module,
      SEEALSO{ "Vector"}
      }
 
-document { quote isModule,
+document { isModule,
      TT "isModule M", " -- tells whether its argument is a module."
      }
 
-document { quote isFreeModule,
+document { isFreeModule,
      TT "isFreeModule M", " -- determine whether M is evidently a free module.  No
      computation is done.",
      PARA,
@@ -1084,23 +1085,23 @@ document { quote isFreeModule,
 	  },
      }
 
-document { quote isSubmodule,
+document { isSubmodule,
      TT "isSubmodule M", " -- tells whether M is provided as a submodule
      of a free module."
      }
 
-document { quote isQuotientModule,
+document { isQuotientModule,
      TT "isQuotientModule M", " -- tells whether M is provided as a
      quotient module of a free module."
      }
 
-document { quote isIdeal,
+document { isIdeal,
      TT "isIdeal I", " -- tells whether a module is an ideal.",
      PARA,
      "An ideal is a submodule of a free module of rank 1."
      }
 
-document { quote numgens,
+document { numgens,
      TT "numgens X", " -- yields the number of generators used to present
      a module or ring.",
      PARA,
@@ -1110,7 +1111,7 @@ document { quote numgens,
      in the matrix of generators."
      }
 
-document { quote relations,
+document { relations,
      TT "relations M", " -- produce the relations defining a module M.",
      PARA,
      "The relations are represented as a matrix, and if not stored
@@ -1139,7 +1140,7 @@ M = cokernel matrix {{a,b^2,c^3}}
 N = image M_{0}
 assert( M == N )
 "
-document { quote Vector,
+document { Vector,
      TT "Vector", " -- the class of all elements of free modules which
      are handled by the ", TO "engine", ".",
      PARA,
@@ -1160,7 +1161,7 @@ document { (quote _, Vector, ZZ),
      SEEALSO {"_"}
      }
 
-document { quote degrees,
+document { degrees,
      TT "degrees M", " -- provides a list of multi-degrees for the basis
      elements of a free module M.",
      PARA,
@@ -1188,7 +1189,7 @@ document { (quote ^, Ring, List),
      SEEALSO {"degrees", "^"}
      }
 
-document { quote components,
+document { components,
      TT "components x", " -- produces a list of the components of an element of a 
      free module.",
      BR,NOINDENT,
@@ -1208,7 +1209,7 @@ document { (quote ^, Ring, ZZ),
      SEEALSO{"^", "isFreeModule", (quote ^, Ring, List)}
      }
 
-document { quote euler,
+document { euler,
      TT "euler M", " -- provide a list of the successive sectional Euler 
      characteristics of a module, ring, or ideal.",
      PARA,
@@ -1216,7 +1217,7 @@ document { quote euler,
      hyperplane section of M."
      }
 
-document { quote genera,
+document { genera,
      TT "genera M", " -- provide a list of the successive sectional 
      arithmetic genera of a module, ring, or ideal.",
      PARA,
@@ -1233,7 +1234,7 @@ assert ( genera R == {1,2} )
 assert ( euler R == {0,3} )
 ///
 
-document { quote rank,
+document { rank,
      TT "rank M", " -- computes the rank of the module M.",
      PARA,
      EXAMPLE {
@@ -1244,14 +1245,14 @@ document { quote rank,
 	  },
      }
 
-document { quote cover,
+document { cover,
      TT "cover M", " -- yields the free module whose basis elements correspond
      to the generators of M.",
      PARA,
      SEEALSO {"ambient", "super"}
      }
 
-document { quote super,
+document { super,
      TT "super M", " -- yields the module which the module M is a submodule of.",
      BR, NOINDENT,
      TT "super f", " -- if f is a map whose target is a submodule of M, yields the
@@ -1260,16 +1261,16 @@ document { quote super,
      SEEALSO { "cover", "ambient" }
      }
 
-document { quote End,
+document { End,
      TT "End M", " -- constructs the module of endomorphisms of M."
      }
-document { quote ModuleMap,
+document { ModuleMap,
      TT "ModuleMap", " -- the class of all maps between modules.",
      PARA,
      "This class is experimental, designed to support graded modules.",
      SEEALSO {"Matrix"}
      }
-document { quote Matrix,
+document { Matrix,
      TT "Matrix", " -- the class of all matrices for which Groebner basis operations
      are available from the ", TO "engine", ".",
      PARA,
@@ -1411,14 +1412,14 @@ document { quote Matrix,
 	  }
      }
 
-document { quote gcdDegree,
+document { gcdDegree,
      TT "gcdDegree F", " -- I don't know what this is supposed to do.",
      }
-document { quote lcmDegree,
+document { lcmDegree,
      TT "lcmDegree F", " -- I don't know what this is supposed to do.",
      }
 
-document { quote getMatrix,
+document { getMatrix,
      TT "getMatrix R", " -- pops a matrix over ", TT "R", " from the top of 
      the engine's stack and returns it."
      }
@@ -1434,12 +1435,12 @@ document { (quote _, Matrix, ZZ),
      SEEALSO "_"
      }
 
-document { quote isWellDefined,
+document { isWellDefined,
      TT "isWellDefined m", " -- tells whether a map m of modules is 
      well-defined."
      }
 
-document { quote isDirectSum,
+document { isDirectSum,
      TT "isDirectSum M", " -- returns ", TT "true", " if ", TT "M", " was
      formed as a direct sum.",
      PARA,
@@ -1452,7 +1453,7 @@ assert isDirectSum (QQ^1 ++ QQ^2)
 assert isDirectSum (QQ^1 ++ QQ^2)
 "
 
-document { quote youngest,
+document { youngest,
      TT "youngest s", " -- return the youngest mutable hash table in the sequence
      ", TT "s", ", if any, else ", TT "null", "."
      }
@@ -1491,7 +1492,7 @@ document { (quote ++,Matrix,Matrix),
      SEEALSO {directSum, (quote |, Matrix, Matrix), (quote ||, Matrix, Matrix)}
      }
 
-document { quote directSum,
+document { directSum,
      TT "directSum(M,N,...)", " -- forms the direct sum of matrices or modules.",
      PARA,
      "The components can be recovered later with ", TO "components", ".",
@@ -1521,7 +1522,7 @@ document { quote directSum,
      SEEALSO {"++", "components", "indexComponents", "indices"}
      }
 
-document { quote indexComponents,
+document { indexComponents,
      TT "indexComponents", " -- a symbol used as a key in a direct sum
      under which to store a hash table in which to register preferred keys used
      to index the components of the direct sum.",
@@ -1529,7 +1530,7 @@ document { quote indexComponents,
      SEEALSO {"directSum", "components", "indices"}
      }
 
-document { quote indices,
+document { indices,
      TT "indices", " -- a symbol used as a key in a direct sum
      under which to store a list of the preferred keys used
      to index the components of the direct sum.",

@@ -6,7 +6,7 @@ assert( null =!= doc "sin")
 assert( null =!= doc quote sin)
 ///
 
-document { quote document,
+document { document,
      TT "document {s, d}", " -- install documentation ", TT "d", " for 
      the topic ", TT "s", ".",
      PARA,
@@ -19,14 +19,14 @@ document { quote document,
      SEEALSO {"help functions"}
      }
 
-document { quote TEST,
-     TT "TEST s", " -- writes the string s to a new test file.  The
+document { TEST,
+     TT "TEST s", " -- writes the string ", TT "s", " to a new test file.  The
      commands in that file can be run later as a test.",
      PARA,
      "Intended for internal use only."
      }
 
-document { quote between,
+document { between,
      TT "between(m,v)", " -- inserts ", TT "m", " between each pair of elements 
      of the list or sequence ", TT "v", ", returning a list.",
      PARA,
@@ -35,7 +35,7 @@ document { quote between,
 	  }
      }
 
-document { quote SEEALSO,
+document { SEEALSO,
      TT "SEEALSO {a, b, ...}", " -- inserts, into a documentation page, a sentence
      instructing the reader to see some other topics.",
      PARA,
@@ -43,13 +43,13 @@ document { quote SEEALSO,
      SEEALSO "document"
      }
 
-document { quote RETURNS,
+document { RETURNS,
      TT "RETURNS X", " -- inserts, into a documentation page, a sentence
      explaining that the return type is ", TT "X", ", and referring the user to
      the page for ", TT "X", "."
      }
 
-document { quote doc,
+document { doc,
      TT "doc s", " -- provides the online documention for the topic s, in
      internal ", TO "hypertext", " form, suitable for conversion to
      text with ", TO "text", " or to html with ", TO "html", ".",
@@ -57,7 +57,7 @@ document { quote doc,
      EXAMPLE "doc partitions"
      }
 
-document { quote help,
+document { help,
      -- no PARA in this documentation, so it all gets displayed.
      TT "help X", " -- displays the online documentation for ", TT "X", ".",
      BR, NOINDENT,
@@ -86,7 +86,7 @@ document { quote help,
      ", TT "Y", "."
      }
 
-document { quote topicList,
+document { topicList,
      TT "topicList()", " -- provides a complete list of topics on which help 
      is available.",
      PARA,
@@ -96,7 +96,7 @@ document { quote topicList,
      SEEALSO "help"
      }
 
-document { quote topics,
+document { topics,
      TT "topics  ", " -- displays a list of topics on which help is available.",
      PARA,
      "topics() -- Does the same in a function or file.",
@@ -104,15 +104,15 @@ document { quote topics,
      SEEALSO "help"
      }
 
-document { quote apropos,
+document { apropos,
      TT "apropos s", " -- displays a list of global symbols which match
-     the pattern specified by the string s.",
+     the pattern specified by the string ", TT "s", ".",
      PARA,
      "The pattern may contain '*'s as wild card characters.",
      EXAMPLE "apropos \"scan\""
      }
 
-document { quote printExamples,
+document { printExamples,
      TT "printExamples f", " -- prints out the examples of code using
      the function ", TT "f", " provided in the documentation for
      ", TT "f", ".",
@@ -121,7 +121,7 @@ document { quote printExamples,
      SEEALSO {"examples", "document"}
      }
 
-document { quote Symbols,
+document { "Symbols",
      TT "Symbols", " -- a hash table which can be used to obtain the global
      symbol with a particular value.",
      PARA,
@@ -129,36 +129,29 @@ document { quote Symbols,
      example."
      }
 
-document { quote Documentation,
+document { "Documentation",
      TT "Documentation", " -- a hash table which is used to store
      pointers to documentation of functions, symbols, and methods.",
      PARA,
-     "This hash table is used by the routines that display 
-     documentation, is intended for internal use only, and its format may change.",
+     "This hash table is used by the routines that display documentation,
+     is intended for internal use only, and its format may change.",
      PARA,
      "The documentation is stored both in a hash table in memory, and in a 
      database file.",
-     SEEALSO {"Symbols", ":=", "getDocumentationTag"}
+     SEEALSO {"Symbols", ":="}
      }
 
-document { quote getDocumentationTag,
-     TT "getDocumentationTag s", " -- converts an expression to a string
-     which can be used as a key into the documentation database.",
-     PARA,
-     "This function is intended for internal use only."
-     }
-
-document { quote formatDocumentTag,
+document { formatDocumentTag,
      TT "formatDocumentTag x", " -- formats the tags used with ", TO "TO", " for
      display purposes in documents.",
      PARA,
      "This function is intended for internal use only."
      }
 
-document { quote uniform,
+document { uniform,
      TT "uniform x", " -- whether all elements of the list x have the same class."
      }
-document { quote newClass,
+document { newClass,
      TT "newClass(N,m)", " -- makes a copy of m with N as the new class", BR,
      TT "newClass(N,M,m)", " -- makes a copy of m with N as class and M as parent",
      PARA,
@@ -171,7 +164,7 @@ document { quote newClass,
      SEEALSO { "copy", "toList" }
      }
 
-document { quote MutableList,
+document { MutableList,
      TT "MutableList", " -- the class of all mutable Lists.",
      PARA,
      "Normally the entries in a mutable list are not printed, to prevent
@@ -187,7 +180,7 @@ document { quote MutableList,
      SEEALSO {"BasicList"}
      }
 
-document { quote lookup,
+document { lookup,
      TT "lookup", " -- a function for looking up methods.",
      PARA,
      NOINDENT,
@@ -210,7 +203,7 @@ document { quote lookup,
      SEEALSO {"#", "classes", "installMethod", "youngest"}
      }
 
-document { quote installMethod,
+document { installMethod,
      TT "installMethod", " -- a function for installing methods.",
      PARA,
      "Most users will use a different way of installing methods.",
@@ -240,7 +233,7 @@ document { quote installMethod,
      SEEALSO{"#", "lookup",  "new", "classes"}
      }
 
-document { quote new,
+document { "new",
      TT "new A of b from c", " -- make a hash table of class ", TT "A", " and 
      parent ", TT "b", " initialized from ", TT "c", ".", BR,
      NOINDENT,
@@ -315,35 +308,35 @@ document { quote new,
      SEEALSO {"classes", "of", "from"}
      }
 
-document { quote of,
+document { "of",
      TT "of", " -- a keyword used with ", TO "new", "."
      }
 
-document { quote from,
+document { "from",
      TT "from", " -- a keyword used with ", TO "new", "."
      }
 
-document { quote NewMethod,
+document { NewMethod,
      TT "NewMethod", " -- a symbol used as a method name in conjuction with
      the ", TO "new", " operator."
      }
 
-document { quote NewOfMethod,
+document { NewOfMethod,
      TT "NewOfMethod", " -- a symbol used as a method name in conjuction with
      the ", TO "new", " operator."
      }
 
-document { quote NewFromMethod,
+document { NewFromMethod,
      TT "NewFromMethod", " -- a symbol used as a method name in conjuction with
      the ", TO "new", " operator."
      }
 
-document { quote NewOfFromMethod,
+document { NewOfFromMethod,
      TT "NewOfFromMethod", " -- a symbol used as a method name in conjuction with
      the ", TO "new", " operator."
      }
 
-document { quote Thing,
+document { Thing,
      TT "Thing", " -- the class of all things.",
      PARA,
      "Everything in Macaulay 2 is a ", ITALIC "thing", ".  This 
@@ -377,7 +370,7 @@ document { quote Thing,
 	  }
      }
 
-document { quote Nothing,
+document { Nothing,
      TT "Nothing", " -- the empty class.",
      PARA,
      "This class is useful for representing the class of an argument
@@ -385,7 +378,7 @@ document { quote Nothing,
      are not themselves types, i.e., which do not have instances." 
      }
 
-document { quote Option,
+document { Option,
      TT "Option", " -- the class of all pairs x => y.",
      PARA,
      "Such pairs are used as optional arguments for functions.  There
@@ -414,13 +407,13 @@ document { (NewFromMethod, HashTable, List),
      the key ", TT "s", "."
      }
 
-document { quote OptionTable,
+document { OptionTable,
      TT "OptionTable", " -- the class of those hash tables which are used
      to store optional named parameters to functions.",
      SEEALSO "processArgs"
      }
 
-document { quote processArgs,
+document { processArgs,
      TT "processArgs(args,defs,fun)", " -- a helper function which processes
      optional arguments.  Intended for internal use only.",
      PARA,
@@ -553,7 +546,7 @@ document { "binary method",
      ", TT "x", " provided to the routine by the system."
      }
 
-document {quote OptionsRegistry,
+document { "OptionsRegistry",
      TT "OptionsRegistry", " -- a hash table used for recording the tables of
      option names and their default values for those functions which accpet
      optional arguments.",
@@ -566,7 +559,7 @@ document {quote OptionsRegistry,
      record them here."
      }
 
-document { quote SingleArgumentDispatch,
+document { SingleArgumentDispatch,
      TT "SingleArgumentDispatch=>true", " -- an option to ", TO "method", "
      which specifies whether the method function should treat several
      arguments as a single argument, i.e., as a sequence.",
@@ -580,7 +573,7 @@ document { quote SingleArgumentDispatch,
 	  }
      }
 
-document { quote method,
+document { method,
      TT "f = method()", " -- creates a method function",
      PARA,
      "Optional arguments:",
@@ -606,7 +599,7 @@ document { quote method,
      SEEALSO {"Options", "methods", "OptionsRegistry"}
      }
 
-document { quote Associative,
+document { Associative,
      TT "Associative", " -- an option name for ", TO "method", " which
      allows associative methods to be created.",
      PARA,
@@ -625,17 +618,17 @@ document { quote Associative,
      SEEALSO "method"
      }
 
-document { quote size,
+document { size,
      TT "size x", " -- returns the size of ", TT "x", " which usually gives
      a rough indication of memory space required to store the object ", TT "x", ".",
      PARA,
      "For a polynomial, the size is the number of terms."
      }
-document { quote baseName,
+document { baseName,
      TT "baseName x", " -- returns the variable or symbol upon which a generator of a
      monoid or polynomial ring is based."
      }
-document { quote degree,
+document { degree,
      TT "degree X", " -- returns the degree of a polynomial, vector, 
      matrix, monomial, or module.",
      PARA,
@@ -656,7 +649,7 @@ document { quote degree,
      "Implemented with a method of the same name."
      }
 
-document { quote degreeLength,
+document { degreeLength,
      TT "degreeLength x", " -- returns the number of degrees of x.",
      PARA,
      "Here x may be a ring, in which case it returns the number of degrees
@@ -664,7 +657,7 @@ document { quote degreeLength,
      SEEALSO "degree"
      }
 
-document { quote coefficients,
+document { coefficients,
      TT "coefficients({i,j,...},p)", " -- yields the coefficients and
      monomials of the polynomial or matrix p with respect to variables 
      numbered i, j, ... .  This has to
@@ -675,13 +668,13 @@ document { quote coefficients,
      the polynomial or matrix p with respect to all of the variables."
      }
 
-document { quote isIsomorphism,
+document { isIsomorphism,
      TT "isIsomorphism f", " -- whether the map f of modules is an isomorphism."
      }
-document { quote isHomogeneous,
+document { isHomogeneous,
      TT "isHomogeneous x", " -- whether the polynomial or ideal x is homogeneous."
      }
-document { quote vars, 
+document { vars, 
      TT "vars R", " -- provides a 1 by n matrix whose entries are the
      variables of the polynomial ring R.",
      BR,
@@ -698,38 +691,38 @@ document { quote vars,
 	  }
      }
 
-document { quote leadCoefficient,
+document { leadCoefficient,
      TT "leadCoefficient f", " -- return the leading coefficient of the polynomial
      or vector f.",
      PARA,
      SEEALSO {"leadTerm", "leadMonomial", "leadComponent"}
      }
 
-document { quote leadComponent,
+document { leadComponent,
      TT "leadComponent f", " -- return the leading component of the vector f,
      i.e., the integer i so that f_i is the first nonzero component of f.",
      PARA,
      SEEALSO {"leadTerm", "leadCoefficient", "leadMonomial"}
      }
 
-document { quote leadMonomial,
+document { leadMonomial,
      TT "leadMonomial f", " -- return the leading monomial of the polynomial
      or vector f.",
      PARA,
      SEEALSO {"leadTerm", "leadCoefficient", "leadCoefficient"}
      }
 
-document { quote flatten,
+document { flatten,
      TT "flatten m", " -- produces a new list from m by effectively removing the braces
      surrounding the elements of any elements of m which happen to be
      lists.  Also works for matrices.",
      PARA,
      EXAMPLE "flatten {{2,3,4},{{5}},6}"
      }
-document { quote coker,
+document { "coker",
      "An abbreviation for ", TO "cokernel", "."
      }
-document { quote cokernel,
+document { "cokernel",
      TT "cokernel f", " -- produces the cokernel of the module homomorphism f",
      PARA,
      "The result will be a quotient module of the target of f.  If f is
@@ -754,7 +747,7 @@ TEST ///
 ///
 
 
-document { quote image,
+document { image,
      TT "image h", " -- yields the image of the homomorphism h.",
      PARA,
      "The result will be a submodule of the target of h",
@@ -762,15 +755,15 @@ document { quote image,
      "If h is a ring element, it is interpreted as a one by one matrix."
      }
 
-document { quote source,
+document { source,
      TT "source h", " -- the source of a morphism h.",
      }
 
-document { quote target,
+document { target,
      TT "target h", " -- the target of a morphism or Groebner basis.",
      }
 
-document { quote ambient,
+document { ambient,
      TT "ambient M", " -- yields the ambient free module for the module M.",
      BR,
      NOINDENT,
@@ -781,7 +774,7 @@ document { quote ambient,
      SEEALSO {"cover", "super"}
      }
      
-document { quote Hom,
+document { Hom,
      TT "Hom(M,N)", " -- constructs the module of homomorphisms from M to N.",
      PARA,
      "Implemented with a method of the same name.",
@@ -789,10 +782,10 @@ document { quote Hom,
      "Use ", TO "homomorphism", " to convert an element of the module of
      homomorphisms to a matrix."
      }
-document { quote gens,
+document { "gens",
      "See ", TO "generators", "."
      }
-document { quote generators,
+document { "generators",
      TT "generators x", " -- produces the generators of x.",
      PARA,
      "For an abbreviation, use ", TO "gens", ".",
@@ -809,12 +802,12 @@ document { quote generators,
      SEEALSO {"Monoid", "GroebnerBasis", "Module", "relations", "subquotient"}
      }
 
-document { quote someTerms,
+document { someTerms,
      TT "someTerms(f,i,n)", " -- selects n terms from the polynomial f, starting
      with the i-th one, and returns the resulting polynomial."
      }
 
-document { quote scanKeys,
+document { scanKeys,
      TT "scanKeys(x,f)", " -- apply the function ", TT "f", " to each key used in the
      hash table or database ", TT "x", ".",
      PARA,
@@ -822,7 +815,7 @@ document { quote scanKeys,
      a mutable hash table, use ", TT "scan(keys x, f)", "."
      }
 
-document { quote scanValues,
+document { scanValues,
      TT "scanValues(x,f)", " -- apply the function ", TT "f", " to each value
      appearing in the hash table ", TT "x", ".",
      PARA,
@@ -830,7 +823,7 @@ document { quote scanValues,
      a mutable hash table, use ", TT "scan(values x, f)", "."
      }
 
-document { quote GlobalAssignHook,
+document { GlobalAssignHook,
      TT "GlobalAssignHook", " -- a method name which is consulted when an
      assignment to a global variable occurs.",
      PARA,
@@ -847,16 +840,13 @@ document { quote GlobalAssignHook,
      as methods for this purpose.",
      PARA,
      EXAMPLE {
-	  ///GlobalAssignHook RR := (sym,val) -> << concatenate (
-     "assigning ", name val, " to ", name sym
-     ) << endl///,
+	  ///GlobalAssignHook RR := (sym,val) -> <<"assigning " <<val <<" to " <<sym <<endl;///,
           "a=4.5",
-      	  "a=5.4",
 	  },
      SEEALSO "GlobalReleaseHook"
      }
 
-document { quote GlobalReleaseHook,
+document { GlobalReleaseHook,
      TT "GlobalReleaseHook", " -- a method name which is consulted when an
      assignment to a global variable is about to occur.",
      PARA,
@@ -868,7 +858,7 @@ document { quote GlobalReleaseHook,
      PARA,
      EXAMPLE {
 	  ///GlobalReleaseHook RR := (sym,val) -> << concatenate (
-     "assigning ", name val, " to ", name sym
+     "assigning ", toString val, " to ", toString sym
      ) << endl///,
           "a=4.5",
       	  "a=5.4",
@@ -876,7 +866,7 @@ document { quote GlobalReleaseHook,
      SEEALSO "GlobalAssignHook"
      }
 
-document { quote stats,
+document { stats,
      TT "stats g", " -- describe the status of a Groebner basis computation
      or of a resolution computation.",
      PARA,
@@ -887,7 +877,7 @@ document { quote stats,
      SEEALSO { "GroebnerBasis", "Resolution" }
      }
 
-document { quote complete,
+document { complete,
      TT "complete C", " -- completely fills out the chain complex C by
      calling upon the engine to provide the maps and modules computed
      by ", TO "resolution", ".",
@@ -898,7 +888,7 @@ document { quote complete,
      spots in a chain complex are actually occupied by modules or maps."
      }
 
-document { quote drop,
+document { drop,
      TT "drop(v,n) ", " -- yields the list obtained from the list v by
      dropping the first n elements.  Also works for sequences.",
      BR, NOINDENT,
@@ -916,7 +906,7 @@ document { quote drop,
      SEEALSO{ "take"}
      }
 
-document { quote options,
+document { options,
      TT "options f", " -- returns the table of option names and default values
      provided for the function ", TT "f", ", if one has been registered.",
      BR,NOINDENT,
@@ -940,7 +930,7 @@ document { (quote =>, Thing, Thing),
      some functions."
      }
 
-document { quote mathML,
+document { mathML,
      TT "mathML x", " -- converts ", TT "x", " to MathML form.",
      PARA,
      EXAMPLE {
@@ -950,7 +940,7 @@ document { quote mathML,
      SEEALSO "hypertext"
      }
 
-document { quote #,
+document { "#",
      TT "#x", " -- provides the length of a list, sequence, array, file, or 
      string, or the number of elements in a hash table or set.",
      BR,NOINDENT,
@@ -978,7 +968,7 @@ document { quote #,
      SEEALSO{ "#?", "#" }
      }
 
-document { quote #?,
+document { "#?",
      TT "x#?i", " -- tells whether there is a value associated to the key ", TT "i", " in 
      the hash table ", TT "x", "; or else whether the i-th element of ", TT "x", " exists if ", TT "x", " is a list, 
      array, or sequence; or else whether the i-th character of ", TT "x", " exists if ", TT "x", "
@@ -988,7 +978,7 @@ document { quote #?,
      SEEALSO{ "#" }
      }
 
-document { quote _,
+document { "_",
      TT "x_i", " -- a binary operator which is used for various
      mathematical operations that are customarily written with subscripts.",
      PARA,
@@ -1026,7 +1016,7 @@ document { (quote _, Sequence, ZZ),
      TT "w_i", " -- selects an entry from a sequence."
      }
 
-document { quote .,
+document { ".",
      TT "x.k", " -- the same as ", TT "x#(global k)", ", i.e., treat ", TT "k", " as
      a global symbol and provide the value stored in the hash table ", TT "x", " 
      under the key ", TT "k", ".",
@@ -1042,14 +1032,14 @@ document { quote .,
      SEEALSO {"#", ".?", "global"}
      }
 
-document { quote .?,
+document { ".?",
      TT "x.?k", " -- the same as ", TT "x#?(global k)", ", tells whether a value is
      available with ", TT "x.k", ".",
      PARA,
      SEEALSO{ ".", "#?" }
      }
 
-document { quote autoload,
+document { autoload,
      TT "autoload(f,\"x\")", " -- arranges for a function ", TT "f", " to be 
      automatically loaded from the file named ", TT "x", " the first
      time it is used."

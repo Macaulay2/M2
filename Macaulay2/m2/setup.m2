@@ -10,10 +10,21 @@ File << Thing := (x,y) -> printString(x,string y)     -- provisional
 
 if class Manipulator =!= Symbol then error ///attempted to load "setup.m2" a second time///
 
+Symbols = new MutableHashTable
+GlobalAssignHook Function := (X,x) -> if not Symbols#?x then Symbols#x = X
+GlobalReleaseHook Function := (X,x) -> (
+     error concatenate("warning: ", X, " redefined");	    -- provisional, see definition below
+     remove(Symbols,x);
+     )
+
 Manipulator = new Type of BasicList
 new Manipulator from Function := (Manipulator,f) -> new Manipulator from {f}
 Manipulator.name = "Manipulator"
 Manipulator Database := Manipulator File := (m,o) -> m#0 o
+
+GlobalAssignHook Manipulator := (X,x) -> if not Symbols#?x then Symbols#x = X
+GlobalReleaseHook Manipulator := (X,x) -> remove(Symbols,x)
+
 Manipulator Nothing := (m,null) -> null
 File << Manipulator := (o,m) -> m#0 o
 Nothing << Manipulator := (null,m) -> null
@@ -104,7 +115,7 @@ Print Thing := x -> (
      y := applyMethod(BeforePrint,x);
      if y =!= null then (
 	  << endl;			  -- double space
-	  << o << " = " << y << endl;
+	  << o << " = " << net y << endl;
 	  );
      applyMethod(AfterPrint,x);
      )
@@ -208,15 +219,32 @@ scan((
 	  ), x -> writableGlobals#x = true)
 
 startFunctions := {}
+
 addStartFunction = g -> (
      startFunctions = append(startFunctions,g);
      g)
 runStartFunctions = () -> scan(startFunctions, f -> f())
 OLDENGINE = getenv("OLDENGINE") == "TRUE"
 lastSystemSymbol = null
+
+if not version#"mp" then (
+     erase quote PutAnnotationPacket;
+     erase quote PutCommonMetaOperatorPacket;
+     erase quote PutCommonMetaTypePacket;
+     erase quote PutCommonOperatorPacket;
+     erase quote PutOperatorPacket;
+     erase quote WritePacket;
+     erase quote closeLink;
+     erase quote openLink;
+     erase quote writeMessage;
+     erase quote writePacket;
+     erase quote writeRawPacket;
+     )
+
 load "loads.m2"
 notify = true
 lastSystemSymbol = local privateSymbol
+
 if OLDENGINE then (
      erase quote ZZZ;
      erase quote NewMonomialOrder;
@@ -238,6 +266,11 @@ erase quote lastSystemSymbol
 
 if phase === 1 then scanPairs(symbolTable(),
      (name,symbol) -> if not writableGlobals#?symbol then protect symbol
+     )
+
+GlobalReleaseHook Function := (X,x) -> (
+     stderr << "warning: " << toString X << " redefined" << endl;
+     remove(Symbols,x);
      )
 
 -- the last function restarted

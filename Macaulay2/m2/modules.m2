@@ -60,22 +60,40 @@ relations Module := M -> (
 	  )
      )
 
-name Module := M -> (
+toString Module := M -> if M.?name then M.name else (
      if M.?relations then (
 	  if M.?generators
-	  then "subquotient(" | name M.generators | "," | name M.relations | ")"
-	  else "cokernel " | name M.relations
+	  then "subquotient(" | toString M.generators | "," | toString M.relations | ")"
+	  else "cokernel " | toString M.relations
 	  )
      else (
 	  if M.?generators
-	  then "image " | name M.generators
+	  then "image " | toString M.generators
 	  else (
 	       if numgens M === 0
 	       then "0"
-	       else name ring M | "^" | name numgens M
+	       else toString ring M | "^" | toString numgens M
 	       )
 	  )
      )
+
+toExternalString Module := M -> if M.?name then M.name else (
+     if M.?relations then (
+	  if M.?generators
+	  then "subquotient(" | toExternalString M.generators | "," | toExternalString M.relations | ")"
+	  else "cokernel " | toExternalString M.relations
+	  )
+     else (
+	  if M.?generators
+	  then "image " | toExternalString M.generators
+	  else (
+	       if numgens M === 0
+	       then "0"
+	       else toString ring M | "^" | toString (- degrees M)
+	       )
+	  )
+     )
+
 net Module := M -> net (
      if M.?relations 
      then if M.?generators
@@ -169,7 +187,7 @@ expression Vector := v -> (
 	       convert(
 		    ConvertRepeat ConvertJoin(ConvertInteger,R.ConvertToExpression),
 		    callgg(ggtonet, v))}))
-name Vector := x -> if (ring x).?newEngine then see x else name expression x
+toString Vector := x -> if (ring x).?newEngine then see x else toString expression x
 net Vector := x -> if (ring x).?newEngine then see x else net expression x
 Vector + Vector := (x,y) -> (
      M := class x;
@@ -263,7 +281,7 @@ new Vector := M -> (
 new Vector from List := (M,w) -> (
      if class M =!= Module then error "expected a module";
      if # w != numgens M then error (
-	  "expected a list of length '", name numgens M, "'");
+	  "expected a list of length '", toString numgens M, "'");
      R := ring M;
      w = apply(w, r -> if class r != R then R#0 + r else r);
      sendgg(
@@ -307,13 +325,13 @@ Ring ^ List := (
 	       if #degs === 0 then ()
 	       else if all(degs,i -> class i === ZZ) then (
 		    if ndegs =!= 1
-	       	    then error ("expected each multidegree to be of length ", string ndegs))
+	       	    then error ("expected each multidegree to be of length ", toString ndegs))
 	       else if all(degs,v -> class v === List) then (
 		    scan(degs,v -> (
 			      if #v =!= ndegs
 			      then error (
 				   "expected each multidegree to be of length ",
-				   string ndegs
+				   toString ndegs
 				   );
 			      if not all(v,i->class i === ZZ)
 			      then error "expected each multidegree to be a list of integers")))
@@ -372,7 +390,7 @@ Ring ^ ZZ := (
 --      if k === null then k = N+1;
 --      c = drop(c,-k);
 --      << "sectional euler characteristics:" << endl;
---      scan(#c, i -> << " " << name i || "" || name c#i);
+--      scan(#c, i -> << " " << toString i || "" || toString c#i);
 --      << endl;
 --      )
 euler(Module) := (M) -> (

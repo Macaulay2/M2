@@ -13,25 +13,25 @@ mypromote = method()
 mylift(RingElement, EngineRing) := (f,R) -> (
      try (
           sendgg(ggPush R, ggPush f, gglift);
-     ) else error("cannot lift ", name f, " to the ring ", name R);
+     ) else error("cannot lift ", toString f, " to the ring ", toString R);
      R.pop())
 
 mylift(RingElement, Ring) := (f,R) -> (
      try (
           sendgg(ggPush R, ggPush f, gglift);
-     ) else error("cannot lift ", name f, " to the ring ", name R);
+     ) else error("cannot lift ", toString f, " to the ring ", toString R);
      R.pop())
 
 mypromote(ZZ, EngineRing) := (f,R) -> (
      try (
           sendgg(ggPush R, ggPush f, ggpromote);
-     ) else error("cannot promote ", name f, " to the ring ", name R);
+     ) else error("cannot promote ", toString f, " to the ring ", toString R);
      R.pop())
 
 mypromote(RingElement, EngineRing) := (f,R) -> (
      try (
           sendgg(ggPush R, ggPush f, ggpromote);
-     ) else error("cannot promote ", name f, " to the ring ", name R);
+     ) else error("cannot promote ", toString f, " to the ring ", toString R);
      R.pop())
 
 

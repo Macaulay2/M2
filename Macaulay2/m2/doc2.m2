@@ -1,6 +1,6 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
-document { quote "timing",
+document { "timing",
      TT "timing e", " -- evaluates e and returns a list of type ", TO "Time", "
      of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
      of cpu timing used, and ", TT "v", " is the value of the the expression.",
@@ -14,7 +14,7 @@ document { quote "timing",
      SEEALSO "Time"
      }
 
-document { quote "time",
+document { "time",
      TT "time e", " -- evaluates e, prints the amount of cpu time
      used, and returns the value of e.",
      PARA,
@@ -22,7 +22,7 @@ document { quote "time",
      SEEALSO "timing"
      }
 
-document { quote Time,
+document { Time,
      TT "Time", " -- is the class of all timing results.  Each timing result
      is a ", TO "BasicList", " of the form ", TT "{t,v}", ", where ", TT "t", " 
      is the number of seconds of cpu time used, and ", TT "v", " is the value 
@@ -30,7 +30,7 @@ document { quote Time,
      SEEALSO "timing"
      }
 
-document { quote null,
+document { null,
      TT "null", " -- a symbol that represents the presence of nothing.",
      PARA,
      "When it is the value of an expression entered into the interpreter, the
@@ -42,20 +42,20 @@ document { quote null,
      EXAMPLE {
 	  "x = {2,3,,4}",
       	  "x#2",
-      	  "name x#2",
+      	  "toString x#2",
 	  },
      SEEALSO { "Nothing" }
      }
 
-document { quote "then",
+document { "then",
      TT "then", " -- a keyword used with ", TO "if", "."
      }
 
-document { quote "else",
+document { "else",
      TT "else", " -- a keyword used with ", TO "if", "."
      }
 
-document { quote "if",
+document { "if",
      TT "if p then x else y", " -- computes ", TT "p", ", which must yield the value ", TO "true", " 
      or ", TO "false", ".  If true, then the value of ", TT "x", " is provided,
      else the value of ", TT "y", " is provided.",
@@ -67,7 +67,7 @@ document { quote "if",
      SEEALSO {"then", "else"}
      }
 
-document { quote "while",
+document { "while",
      TT "while p do x", " -- repeatedly evaluates ", TT "x", " as long 
      as the value of ", TT "p", " remains ", TO "true", ".",
      PARA,
@@ -78,11 +78,11 @@ document { quote "while",
      SEEALSO "do"
      }
 
-document { quote "do",
+document { "do",
      TT "do", " -- a keyword used with ", TO "while", "."
      }
 
-document { quote "try",
+document { "try",
      TT "try x else y ", " -- returns the value of x unless an error or
      ", TO "alarm", " occurs during the evaluation of x, in which case it 
      returns the value of y.", BR, NOINDENT,
@@ -98,13 +98,13 @@ document { quote "try",
      recommended to use this function sparingly, if at all."
      }
 
-document { quote openFiles,
+document { openFiles,
      TT "openFiles()", " -- produces a list of all currently open files.",
      PARA,
      SEEALSO { "File" }
      }
 
-document { quote stdio,
+document { stdio,
      TT "stdio", " -- the standard input output file.",
      PARA,
      "Use this file to get input from the terminal, or to display information
@@ -114,7 +114,7 @@ document { quote stdio,
      SEEALSO { "File" }
      }
 
-document { quote stderr,
+document { stderr,
      TT "stderr", " -- the standard error output file.",
      PARA,
      "Use this file to display error messages on the user's screen.",
@@ -122,7 +122,7 @@ document { quote stderr,
      SEEALSO { "File" }
      }
 
-document { quote openListener,
+document { openListener,
      TT "f = openListener \"$:service\"", "  -- opens a listener on the local
      host at the specified service port.",
      BR,NOINDENT,
@@ -134,21 +134,21 @@ document { quote openListener,
      RETURNS "File"
      }
 
-document { quote openIn,
+document { openIn,
      TT "openIn \"fff\"", "  -- opens an input file whose filename is ", TT "fff", ".",
      PARA,
      "Other options are available.  For details, see ", TO "openInOut", ".",
      RETURNS "File"
      }
 
-document { quote openOut,
+document { openOut,
      TT "openOut \"fff\"", "  -- opens an output file whose filename is fff.",
      PARA,
      "Other options are available.  For details, see ", TO "openInOut", ".",
      RETURNS "File"
      }
 
-document { quote openInOut,
+document { openInOut,
      TT "openInOut \"fff\"", "  -- opens an input output file whose 
      filename is ", TT "fff", ".",
      BR,NOINDENT,
@@ -187,7 +187,7 @@ document { quote openInOut,
      RETURNS "File"
      }
 
-document { quote protect,
+document { protect,
      TT "protect s", " -- Protects the symbol s from having its value changed.",
      PARA,
      "There is no unprotect function, because we want to allow the compiler
@@ -197,19 +197,19 @@ document { quote protect,
      it documents."
      }
 
-document { quote isInputFile,
+document { isInputFile,
      TT "isInputFile f", " -- whether ", TT "f", " is an input file.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
-document { quote isOutputFile,
+document { isOutputFile,
      TT "isOutputFile f", " -- whether ", TT "f", " is an output file.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
-document { quote isOpenFile,
+document { isOpenFile,
      TT "isOpenFile f", " -- whether ", TT "f", " is an open file.",
      PARA,
      "An open file is either an input file, an output file, an
@@ -218,13 +218,13 @@ document { quote isOpenFile,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
-document { quote isListener,
+document { isListener,
      TT "isListener f", " -- whether ", TT "f", " is a listener.",
      PARA,
      "The return value is ", TO "true", " or ", TO "false", "."
      }
 
-document { quote <<,
+document { "<<",
      TT "x << y", " -- a binary or unary operator used for file output.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -277,11 +277,11 @@ document { (quote <<, Thing),
      SEEALSO {"<<"}
      }
 
-document { quote >>,
+document { ">>",
      TT "i >> j", " -- shifts the bits in the integer i rightward j places."
      }
 
-document { quote :,
+document { ":",
      TT "x : y", " -- a binary operator.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
@@ -307,7 +307,7 @@ document { (quote :, ZZ, Thing),
      EXAMPLE "{5:a,10:b}"
      }
 
-document { quote getc,
+document { getc,
      TT "getc f", " -- obtains one byte from the input file f and provides it as a 
      string of length 1.  On end of file an empty string of is returned.",
      PARA,
@@ -316,28 +316,28 @@ document { quote getc,
      "Bug: the name is cryptic and should be changed."
      }
 
-document { quote <,
+document { "<",
      TT "x < y", " -- yields ", TO "true", " or ", TO "false", 
      " depending on whether x < y.",
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { quote <=,
+document { "<=",
      TT "x <= y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x <= y.",
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { quote >,
+document { ">",
      TT "x > y", " -- yields ", TO "true", " or ", 
      TO "false", " depending on whether x > y.",
      PARA,
      "Calls upon ", TO "?", " to perform the comparison, if necessary."
      }
 
-document { quote >=,
+document { ">=",
      TT "x >= y", " -- yields ", 
      TO "true", " or ", 
      TO "false", " depending on whether x >= y.",
@@ -346,12 +346,12 @@ document { quote >=,
      }
 
 protect incomparable
-document { quote incomparable,
+document { incomparable,
      TT "incomparable", " -- a symbol which may be returned by ", TO "?", "
      when the two things being compared are incomparable."
      }
 
-document { quote ?,
+document { "?",
      TT "x ? y", " -- compares x and y, returning ", TT "quote <", ", ",
      TT "quote >", ", ", TT "quote ==", ", or ", TO "incomparable", ".",
      PARA,
@@ -374,7 +374,7 @@ document { quote ?,
      often amount to simply comparing hash codes."  
      }
 
-document { quote ;,
+document { ";",
      TT "(e;f;...;g;h)", " -- the semicolon can be used for evaluating a sequence of 
      expressions.  The value of the sequence is the value of its
      last expression, unless it is omitted, in which case the value
@@ -385,7 +385,7 @@ document { quote ;,
 	  }
      }
 
-document { quote <-,
+document { "<-",
      TT "x <- y    ", " -- assigns the value of y to x, but x is evaluated, too.",
      PARA,
      "If the value of x is a symbol, then the value of y is assigned as the
@@ -405,7 +405,7 @@ document { quote <-,
      SEEALSO "="
      }
 
-document { quote =,
+document { "=",
      TT "x = e", "      -- assigns the value e to the variable x.",
      PARA,
      NOINDENT,
@@ -419,7 +419,7 @@ document { quote =,
      }
 
 
-document { quote :=,
+document { ":=",
      TT "x := e", " -- assign the value e to the new local variable x",
      BR,NOINDENT,
      TT "f X := (x) -> ( ... )", " -- install a method for the method function
@@ -435,50 +435,52 @@ document { quote :=,
      variable is never globally known."
      }
 
-document { quote abs,
+document { abs,
      TT "abs x", " -- computes the absolute value of ", TT "x", "." }
-document { quote sin,
+document { sin,
      TT "sin x", " -- computes the sine of ", TT "x", "." }
-document { quote cos,
+document { cos,
      TT "cos x", " -- computes the cosine of ", TT "x", "." }
-document { quote tan,
+document { tan,
      TT "tan x", " -- computes the tangent of ", TT "x", "." }
-document { quote asin,
+document { asin,
      TT "asin x", " -- computes the arcsine of ", TT "x", "."}
-document { quote acos,
+document { acos,
      TT "acos x", " -- computes the arccosine of ", TT "x", "."}
-document { quote atan,
+document { atan,
      TT "atan x", " -- computes the arctangent of ", TT "x", ".",
      BR,NOINDENT,
      TT "atan(x,y)", " -- computes the angle formed with the 
      x-axis by the ray from the origin ", TT "{0,0}", " to the point ", TT "{x,y}", "."
      }
-document { quote sinh,
+document { sinh,
      TT "sinh x", " -- computes the hyperbolic sine of ", TT "x", "."}
-document { quote cosh,
+document { cosh,
      TT "cosh x", " -- computes the hyperbolic cosine of ", TT "x", "."}
-document { quote tanh,
+document { tanh,
      TT "tanh x", " -- computes the hyperbolic tangent of ", TT "x", "."}
-document { quote exp,
+document { exp,
      TT "exp x", " -- computes the exponential of ", TT "x", "."}
-document { quote log,
+document { log,
      TT "log x", " -- computes the logarithm of ", TT "x", "."}
-document { quote sqrt,
+document { sqrt,
      TT "sqrt x", " -- provides the square root of the number ", TT "x", "."}
-document { quote floor,
+document { floor,
      TT "floor x", " -- provides the largest integer less than or equal to the number ", TT "x", "."
      }
-document { quote ceiling,
+document { ceiling,
      TT "ceiling x", " -- provides the largest integer greater than or equal to the number ", TT "x", "."
      }
 
-document { quote run,
-     TT "run s", " -- runs the command string ", TT "s", " by passing it to the operating system.",
+document { run,
+     TT "run s", " -- runs the command string ", TT "s", "
+     by passing it to the operating system.",
      PARA,
-     "The return value is the exit status of the command."
+     "The return value is the exit status of the command, a small
+     integer which is usually zero."
      }
 
-document { quote wait,
+document { wait,
      TT "wait i", " -- wait for the completion of child process with process id
      ", TT "i", ".",
      BR,NOINDENT,
@@ -489,7 +491,7 @@ document { quote wait,
      corresponding to ready files."
      }
 
-document { quote value,
+document { value,
      TT "value s", " -- provides the value of ", TT "s", ", which may be a
      symbol, string, or an expression.",
      PARA,
@@ -515,7 +517,7 @@ document { quote value,
 	  }
      }
 
-document { quote "global",
+document { "global",
      TT "global s", " -- provides the global symbol s, even if s currently has 
      a value.",
      PARA,
@@ -528,12 +530,12 @@ document { quote "global",
      SEEALSO {"local", "quote"}
      }
 
-document { quote erase,
+document { erase,
      TT "erase s", " -- removes the global symbol ", TT "s", " from the
      symbol table."
      }
 
-document { quote "local",
+document { "local",
      TT "local s", " -- provides the local symbol ", TT "s", ", creating
      a new symbol if necessary.  The initial value of a local
      symbol is ", TT "null", ".",
@@ -545,8 +547,8 @@ document { quote "local",
      SEEALSO {"global", "quote"}
      }
 
-document { quote quote,
-     TT "quote s", " -- provides the symbol s, even if s currently has a value.",
+document { "quote",
+     TT "quote s", " -- provides the symbol ", TT "s", ", even if ", TT "s", " currently has a value.",
      PARA,
      EXAMPLE {
 	  "num",
@@ -562,12 +564,12 @@ document { quote quote,
      SEEALSO {"local", "global"}
      }
 
-document { quote gcd,
+document { gcd,
      TT "gcd(x,y)", " -- yields the greatest common divisor of x and y.",
      SEEALSO "gcdCoefficients"
      }
 
-document { quote concatenate,
+document { concatenate,
      TT "concatenate(s,t,...,u)", " -- yields the concatenation of the strings s,t,...,u.",
      PARA,
      "The arguments may also be lists or sequences of strings and symbols, in
@@ -578,7 +580,7 @@ document { quote concatenate,
      SEEALSO { "String"} 
      }
 
-document { quote error,
+document { error,
      TT "error s", " -- causes an error message s to be displayed.",
      PARA,
      "The error message s (which should be a string or a sequence of
@@ -592,7 +594,7 @@ document { quote error,
      the error expression itself."
      }
 
-document { quote characters,
+document { characters,
      TT "characters s", " -- produces a list of the characters in the string s.",
      PARA,
      "The characters are represented by strings of length 1.",
@@ -602,7 +604,7 @@ document { quote characters,
      SEEALSO "String"
      }
 
-document { quote getenv,
+document { getenv,
      TT "getenv s", " -- yields the value associated with the string s in the 
      environment.",
      PARA,
@@ -611,11 +613,11 @@ document { quote getenv,
 	  }
      }
 
-document { quote currentDirectory,
+document { currentDirectory,
      TT "currentDirectory()", " -- returns the name of the current directory."
      }
 
-document { quote ~,
+document { "~",
      TT "~ x", " -- a postfix unary operator available to the user.  A method may
      be installed with code such as ", 
      PRE "           X ~ := x -> ... ",
@@ -628,7 +630,7 @@ document { quote ~,
      	  }
      }
 
-document { quote copy,
+document { copy,
      TT "copy x", " -- yields a copy of x.",
      PARA,
      "If x is an hash table, array, list or sequence, then the elements are 
@@ -642,7 +644,7 @@ document { quote copy,
      SEEALSO { "newClass" }
      }
 
-document { quote mergePairs,
+document { mergePairs,
      TT "mergePairs(x,y,f)", " -- merges sorted lists of pairs.",
      PARA,
      "It merges ", TT "x", " and ", TT "y", ", which should be lists 
@@ -659,7 +661,7 @@ document { quote mergePairs,
      SEEALSO { "merge" }
      }
 
-document { quote merge,
+document { merge,
      TT "merge(x,y,g)", " -- merges hash tables x and y using the function
      g to combine the values when the keys collide.",
      PARA,
@@ -674,7 +676,7 @@ document { quote merge,
      "See also ", TO "combine", ", which is useful for multiplying polynomials."
      }
 
-document { quote combine,
+document { combine,
      TT "combine(x,y,f,g,h)", " -- yields the result of combining hash tables
      ", TT "x", " and ", TT "y", ", using ", TT "f", " to combine keys, ", TT "g", "
      for values, and ", TT "h", " for collisions.",
@@ -697,7 +699,7 @@ document { quote combine,
      PRE "     combine(x, y, monomialTimes, coeffTimes, coeffPlus)"
      }
 
-document { quote ancestor,
+document { ancestor,
      TT "ancestor(x,y)", " -- tells whether y is an ancestor of x.",
      PARA,
      "The ancestors of x are x, parent x, parent parent x, and so on.",
@@ -705,7 +707,7 @@ document { quote ancestor,
      SEEALSO "classes"
      }
 
-document { quote unique,
+document { unique,
      TT "unique v", " -- yields the elements of the list v, without duplicates.",
      PARA,
      EXAMPLE {
@@ -716,7 +718,7 @@ document { quote unique,
      SEEALSO {"sort"}
      }
 
-document { quote Ring,
+document { Ring,
      TT "Ring", " -- the class of all rings.",
      PARA,
      "A ring is a set together with operations +, -, * and elements 0, 1 
@@ -783,7 +785,7 @@ document { (quote _, ZZ, Ring),
      }
 
 
-document { quote SymbolTable,
+document { SymbolTable,
      TT "SymbolTable", " -- the class of all symbol tables.",
      PARA,
      "In a symbol table, each key is string containing the name of 
@@ -792,7 +794,7 @@ document { quote SymbolTable,
      SEEALSO "Symbol"
      }
 
-document { quote symbolTable,
+document { symbolTable,
      TT "symbolTable()", " -- constructs an hash table containing the 
      global symbol table.",
      PARA,
@@ -802,7 +804,7 @@ document { quote symbolTable,
      SEEALSO "SymbolTable"
      }
 
-document { quote applyPairs,
+document { applyPairs,
      TT "applyPairs(x,f)", " -- applies f to each pair (k,v) in the 
      hash table x to produce a new hash table.",
      PARA,
@@ -825,7 +827,7 @@ document { quote applyPairs,
      SEEALSO { "applyValues", "applyKeys", "scanPairs"}
      }
 
-document { quote applyKeys,
+document { applyKeys,
      TT "applyKeys(x,f)", " -- applies ", TT "f", " to each key ", TT "k", " in the 
      hash table ", TT "x", " to produce a new hash table.",
      PARA,
@@ -839,7 +841,7 @@ document { quote applyKeys,
      SEEALSO {"applyValues","applyPairs"}
      }
 
-document { quote applyValues,
+document { applyValues,
      TT "applyValues(x,f)", " -- applies ", TT "f", " to each value ", TT "v", " 
      in the hash table ", TT "x", " to produce a new hash table.",
      PARA,
@@ -854,7 +856,7 @@ document { quote applyValues,
      SEEALSO {"applyPairs","applyKeys"}
      }
 
-document { quote use,
+document { use,
      TT "use S", " -- installs certain defaults associated with S.",
      PARA,
      "This will install functions or methods which make the use 
@@ -978,9 +980,11 @@ document { "internals",
 	  }
      }
 
-document { quote setSpin,
+document { setSpin,
      TT "setSpin n", " -- sets the interval between calls to spin the cursor on
-     the Macintosh."
+     the Macintosh.",
+     PARA,
+     "The value returned is the previous interval."
      }
 
 load "tutorials.m2"
@@ -1026,7 +1030,7 @@ document { "copyright and license",
      MENU {
 	  SHIELD TO "Factory library",
 	  SHIELD TO "Factorization and characteristic sets library",
-	  SHIELD TO "MP: Multi Protocol",
+	  -- SHIELD TO "MP: Multi Protocol",
 	  SHIELD TO "GNU MP",
 	  SHIELD TO "GC garbage collector"
 	  }
@@ -1134,7 +1138,7 @@ document { "operators",
      	  }
      }
 
-document { quote =>,
+document { "=>",
      TT "x => y", " -- a binary operator.",
      PARA,
      "The user may install ", TO {"binary method", "s"}, " for this operator 
