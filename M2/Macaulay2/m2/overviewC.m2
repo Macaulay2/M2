@@ -323,7 +323,7 @@ document {
 	  },
      "The explicit way to get GRevLex is given in the following example:",
      EXAMPLE {
-	  "R = ZZ[a..d,MonomialOrder=>GrevLex]"
+	  "R = ZZ[a..d,MonomialOrder=>GRevLex]"
      },
      HEADER3 "GRevLex => {...}",
      HEADER3 "Position => Up or Position => Down",
