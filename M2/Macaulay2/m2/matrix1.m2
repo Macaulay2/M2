@@ -70,7 +70,9 @@ degreeCheck := (d,R) -> (
      if class d === List
      and all(d,i -> class i === ZZ) 
      and #d === degreeLength R
-     then d
+     then (
+	  if R.?Adjust then d = R.Adjust d;
+	  )
      else (
 	  if degreeLength R === 1
 	  then error "expected degree to be an integer or list of integers of length 1"
@@ -78,8 +80,8 @@ degreeCheck := (d,R) -> (
 	       "expected degree to be a list of integers of length ",
 	       toString degreeLength R
 	       )
-	  )
-     )
+	  );
+     d)
 
 map(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
      if M === f.target and N === f.source
@@ -425,7 +427,7 @@ net Matrix := f -> (
 	  then m = horizontalJoin(
 	       stack(
 		    degrees cover target f
-		    / (if R.?Repair then R.Repair else identity)
+		    / (if R.?repair then R.repair else identity)
 		    / toString
 		    ),
 	       " ",
@@ -641,7 +643,9 @@ entries Matrix := (m) -> (
 
 getshift := (f) -> (
      sendgg(ggPush f, gggetshift);
-     eePopIntarray())
+     d := eePopIntarray();
+     R := ring f;
+     if R.?Repair then R.Repair d else d)
 
 degree Matrix := List => (f) -> (
      M := source f;
