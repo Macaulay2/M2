@@ -81,7 +81,7 @@ ifneq "$(DUMPDATA)" "no"
 phase1 :: ../$(DUMPDATAFILE)
 ../$(DUMPDATAFILE) : $(DUMPEDM2FILES) ../bin/M2
 	rm -f ../$(DUMPDATAFILE)
-	../bin/M2 -q --stop --dumpdata
+	../bin/M2 -q --stop -e 'errorDepth = 0' --dumpdata
 endif
 
 phase1 :: ../cache/Macaulay2-made
@@ -180,7 +180,7 @@ EXAMPLEOPTIONS += -e 'exit 0 '
 
 tmp/.documentation-made : $(DOCSEQUENCE)
 	@ echo making the Macaulay2 package, including the documentation
-	@ 
+	rm -f $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagedocRelDir)/*documentation.db tmp/*/$(packagedocRelDir)/*documentation.db)
 	@ cd tmp && \
 	        echo "make: Entering directory \`tmp'" >&2 \
 		&& \
@@ -191,7 +191,8 @@ tmp/.documentation-made : $(DOCSEQUENCE)
 	touch "$@"
 
 remake: remake1 remake2
-remake1:; rm -f tmp/.documentation-made
+remake1:
+	@ set -x ; rm -f tmp/.documentation-made $(subst $(M2PKGNAME),Macaulay2,tmp/$(packagedocRelDir)/*documentation.db tmp/*/$(packagedocRelDir)/*documentation.db)
 remake2: all
 
 install::all install-main

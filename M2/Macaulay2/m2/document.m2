@@ -270,7 +270,7 @@ hasDocumentation := key -> isDocumentableThing key and (
      tag := makeDocumentTag key;
      pkg := DocumentTag.Package tag;
      fkey := DocumentTag.FormattedKey tag;
-     fetchRawDocumentation(pkg,fkey))
+     null =!= fetchRawDocumentation(pkg,fkey))
 
 -----------------------------------------------------------------------------
 -- fixing up hypertext
@@ -401,7 +401,7 @@ checkForExampleOutputFile := (node,pkg) -> (
 	  exampleResults = pkg#"example results"#node;
 	  exampleResultsFound = true)
      else if fileExists (exampleBaseFilename | ".out") then (
-     	  if debugLevel > 1 then stderr << "reading example results from " << (exampleBaseFilename | ".out") << endl;
+     	  if debugLevel > 1 then stderr << "--reading example results from " << (exampleBaseFilename | ".out") << endl;
 	  exampleResults = pkg#"example results"#node = drop(separateM2output get (exampleBaseFilename | ".out"),-1);
  	  exampleResultsFound = true))
 
@@ -412,7 +412,7 @@ processExample := x -> (
      then {x, CODE exampleResults#exampleCounter}
      else (
 	  if exampleResultsFound and #exampleResults === exampleCounter then (
-	       stderr << "warning : example results terminate prematurely: " << currentExampleKey << endl;
+	       stderr << "--warning : example results terminate prematurely: " << currentExampleKey << endl;
 	       );
 	  {x, CODE concatenate("i", toString (exampleCounter+1), " : ",x)}
 	  );

@@ -761,6 +761,17 @@ document {
      which allow detailed control over the progress of the computation."
      }
 
+document { Key => "Using the debugger",
+     EXAMPLE "load \"demo1.m2\"",
+     EXAMPLE "g 4",
+     EXAMPLE "g 3",
+     EXAMPLE "g 2",
+     EXAMPLE "listLocalSymbols ",
+     EXAMPLE "end",
+     EXAMPLE "listLocalSymbols",
+     EXAMPLE "break",
+     }     
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

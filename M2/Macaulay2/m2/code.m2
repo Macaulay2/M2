@@ -68,7 +68,7 @@ editMethod String := filename -> (
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor, " ", filename))
 EDIT := method(SingleArgumentDispatch=>true)
-EDIT Nothing := arg -> (stderr << "source code not available" << endl;)
+EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
 EDIT Sequence := (filename,start,startcol,stop,stopcol) -> (
      editor := EDITOR();
      if 0 != run concatenate(

@@ -349,7 +349,22 @@ installPackage Package := o -> pkg -> (
      oldpkg := currentPackage;
      currentPackage = pkg;
      topDocumentTag = makeDocumentTag(pkg#"top node name", Package => pkg);
+
+     -- check that we've read the raw documentation
+     if #pkg#"raw documentation" > 0 or pkg#?"raw documentation database" and isOpen pkg#"raw documentation database" then null
+     else (
+	  if pkg === Macaulay2 then (
+     	       currentPackage = Macaulay2;
+     	       stderr << "--loading Macaulay2-doc.m2" << endl;
+	       load "Macaulay2-doc.m2";
+     	       currentPackage = null;
+	       )
+	  else error "raw documentation not loaded";
+	  );
+
+     -- here's where we get the list of nodes from the raw documentation
      nodes := packageTagList(pkg,topDocumentTag);
+
      buildPackage = if pkg === Macaulay2 then "Macaulay2" else pkg#"title";
      buildDirectory = minimizeFilename(o.Prefix | "/");
      if o.Encapsulate then buildDirectory = buildDirectory|buildPackage|"-"|pkg.Options.Version|"/";
@@ -386,18 +401,6 @@ installPackage Package := o -> pkg -> (
      -- to find the example output files the same way it would if the package had been loaded from there.
      pkg#"package prefix" = buildDirectory;
 
-     -- check that we've read the raw documentation
-     if #pkg#"raw documentation" > 0 or pkg#?"raw documentation database" and isOpen pkg#"raw documentation database" then null
-     else (
-	  if pkg === Macaulay2 then (
-     	       currentPackage = Macaulay2;
-     	       stderr << "--loading Macaulay2-doc.m2" << endl;
-	       load "Macaulay2-doc.m2";
-     	       currentPackage = null;
-	       )
-	  else error "raw documentation not loaded";
-	  );
-
      -- make example input files
      exampleDir := buildDirectory|LAYOUT#"packageexamples" pkg#"title";
      infn := nodename -> exampleDir|toFilename nodename|".m2";
@@ -431,7 +434,7 @@ installPackage Package := o -> pkg -> (
 	       else (
 		    stderr << "--making example results file for " << nodename << endl;
 		    loadargs := if pkg === Macaulay2 then "" else "-e 'load \""|fn|"\"'";
-		    cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --print-width 80 --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf;
+		    cmd := "ulimit -t 20 -v 60000; " | commandLine#0 | " --silent --print-width 80 --stop --int -e errorDepth=0 -q " | loadargs | " <" | inf | " >" | tmpf | " 2>&1";
 		    stderr << cmd << endl;
 		    r := run cmd;
 		    if r != 0 then (
@@ -461,7 +464,7 @@ installPackage Package := o -> pkg -> (
 			 ));
 	       -- read, separate, and store example output
 	       if fileExists outf then pkg#"example results"#nodename = drop(separateM2output get outf,-1)
-	       else stderr << "warning: missing file " << outf << endl;
+	       else stderr << "--warning: missing file " << outf << endl;
 	       ));
      if haderror and not o.IgnoreExampleErrors then error "error(s) occurred running example files";
 
@@ -486,7 +489,7 @@ installPackage Package := o -> pkg -> (
      -- process documentation
      stderr << "--processing documentation nodes..." << endl;
      scan(nodes, tag -> (
-	       -- stderr << "processing " << tag << endl;
+	       -- stderr << "--processing " << tag << endl;
 	       pkg#"processed documentation"#(DocumentTag.FormattedKey tag) = documentation tag;
 	       ));
 

@@ -47,6 +47,7 @@ closePackage "Macaulay2"
 if not Macaulay2#?"processed documentation database" or not isOpen Macaulay2#"processed documentation database" then (
      currentPackage = Macaulay2;
      stderr << "--loading Macaulay2-doc.m2" << endl;
+     notify = true;
      load "Macaulay2-doc.m2";
      currentPackage = null;
      )

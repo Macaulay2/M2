@@ -111,7 +111,9 @@ newPackage(String) := opts -> (title) -> (
 	       newpkg#"processed documentation database" = db;
 	       addEndFunction(() -> if isOpen db then close db);
 	       ));
-     addStartFunction(() -> if not isOpen newpkg#"processed documentation database" and prefixDirectory  =!= null then (
+     addStartFunction(() -> 
+	  if not ( newpkg#?"processed documentation database" and isOpen newpkg#"processed documentation database" ) and prefixDirectory =!= null 
+	  then (
 	       dbname := prefixDirectory | LAYOUT#"packagedoc" title | "documentation.db"; -- what if there is more than one prefix directory?
 	       if fileExists dbname then newpkg#"processed documentation database" = openDatabase dbname));
      pkgsym := getGlobalSymbol(PackageDictionary,title);
@@ -209,7 +211,7 @@ closePackage String := title -> (
 	       and s =!= symbol oo
 	       and s =!= symbol ooo
 	       and s =!= symbol oooo
-	       then stderr << "warning: unused writable symbol '" << s << "'" << endl));
+	       then stderr << "--warning: unused writable symbol '" << s << "'" << endl));
      ws := set pkg#"mutable symbols";
      dict := pkg.Dictionary;
      scan(sortByHash values dict, s -> if not ws#?s then (
