@@ -23,8 +23,10 @@ probe-nash-gdb.out : probe probe.gdb
 	$(TGDB) -nx -x ../../../Macaulay2/probe/probe.gdb --args ./probe $(ARGS) >$@
 
 ############################## probe memory for dumpdata experiments
-probe : probe.c probe.h
-	$(CC) -g -I../../include -L../dumpdata $< -ldump $(OUTPUT_OPTION)
+probe.o : probe.c probe.h
+	$(CC) -c -g -I../../include $< $(OUTPUT_OPTION)
+probe : probe.o ../dumpdata/libdump.a
+	$(CC) -g -L../dumpdata $< -ldump $(OUTPUT_OPTION)
 probe.h :
 	echo "/* insert temporary fixes here */" >$@
 test-probe : addresses
