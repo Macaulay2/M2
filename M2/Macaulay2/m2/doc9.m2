@@ -1587,7 +1587,7 @@ document { (betti, Matrix),
 	  },
      "The display ignores the degree of the map itself.",
      PARA,
-     "For an explanation of the display, see ", TO "(betti, ChainComplex)", "."
+     "For an explanation of the display, see ", TO (betti, ChainComplex), "."
      }
 
 document { (betti, GroebnerBasis),
@@ -1599,7 +1599,7 @@ document { (betti, GroebnerBasis),
 	       and target modules of the matrix of generators of ", TT "G", "."
 	       }
 	  },
-     "For an explanation of the display, see ", TO "(betti, ChainComplex)", "."
+     "For an explanation of the display, see ", TO (betti, ChainComplex), "."
      }
 
 document { (betti, ChainComplex),

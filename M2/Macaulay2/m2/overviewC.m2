@@ -165,7 +165,7 @@ document { "polynomial rings",
      "Use ", TO "generators", " to obtain a list of the variables of the ring.",
      EXAMPLE "gens R",
      "A (one row) matrix containing the variables of the ring can be obtained
-     using ", TO "(vars,Ring)", ".",
+     using ", TO (vars,Ring), ".",
      EXAMPLE "vars R",
      "The ", TO "index", " of a variable:",
      EXAMPLE {

@@ -600,7 +600,7 @@ document { (cacheFileName, List, Thing),
 	  },
      "The path should be a list of prefixes which correspond to existing
      directories.  A list of those file names for the given key that have already been
-     assigned (see ", TO "(cacheFileName, String, Thing)", ") in one of
+     assigned (see ", TO (cacheFileName, String, Thing), ") in one of
      the directories on the path will be returned.",
      EXAMPLE {
 	  ///documentationPath///,
