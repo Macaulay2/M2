@@ -283,7 +283,7 @@ double system_etime(){
 #if defined(DUMPDATA)
 #if defined(__sun__) || defined(_WIN32) || defined(__CYGWIN__)
 #define __environ _environ
-#elif defined(__FreeBSD__)
+#elif defined(__FreeBSD__) || defined(__MACH__) && defined(__POWERPC__)
 #define __environ environ
 #endif
 
