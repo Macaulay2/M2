@@ -1,9 +1,6 @@
 newPackage "PrimaryDecomposition"
 export (
      EHV,					    -- cryptic
-     EHVprimaryDecomposition,			    -- cryptic
-     HprimaryDecomposition,
-     Hybrid,
      binomialCD,
      extract,
      findNonMember,
@@ -11,13 +8,17 @@ export (
      independentSets,
      localize,
      minSat,
-     minSatPPD,
      primaryComponent,
-     primdecComputation,
      quotMin,
-     radicalContainment,
-     sortByDegree
+     radicalContainment
      )
+
+--     EHVprimaryDecomposition,			    -- cryptic
+--     HprimaryDecomposition,
+--     Hybrid,
+--     primdecComputation,
+--     minSatPPD,
+--     sortByDegree
 
 load "PrimaryDecomposition/Shimoyama-Yokoyama.m2"
 load "PrimaryDecomposition/Eisenbud-Huneke-Vasconcelos.m2"

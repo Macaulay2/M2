@@ -749,6 +749,13 @@ void Ring::vec_sort(vecterm *&f) const
   f = f1;
 }
 
+vec Ring::vec_lead_term(int nparts, const FreeModule *F, vec v) const
+{
+  // May be over-ridden by subclasses.  In particular, by polynomial classes.
+  if (v == 0) return 0;
+  return make_vec(v->comp, v->coeff);
+}
+
 vec Ring::vec_diff(vec v, int rankFw, vec w, int use_coeff) const
 // rankFw is the rank of the free module corresponding to w.
 {
