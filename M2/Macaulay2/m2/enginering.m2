@@ -76,6 +76,7 @@ expression ZZZ := n -> expression lift(n,ZZ)
 coefficientRing FractionField := F -> coefficientRing F.baseRings#-1
    degreeLength FractionField := F -> degreeLength F.baseRings#-1
        toString FractionField := F -> if F.?name then F.name else "frac(" | toString F.baseRings#-1 | ")"
+        numgens FractionField := F -> numgens F.baseRings#-1
 	isField FractionField := F -> true
             net FractionField := F -> (
 		 if F.?name then F.name
@@ -120,6 +121,7 @@ frac EngineRing := R -> (
 	  isHomogeneous F := (f) -> (
 	       isHomogeneous numerator f and isHomogeneous denominator f);
 	  degree F := (f) -> degree numerator f - degree denominator f;
+	  F.generators = apply(generators R, m -> promote(m,F));
 	  F + F := (x,y) -> (
 	       sendgg(ggPush x, ggPush y, ggadd);
 	       freduce new F);

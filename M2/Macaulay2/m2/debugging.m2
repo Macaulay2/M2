@@ -58,4 +58,52 @@ benchmark = (s) -> (
 	  );
      t/n)
 
+-----------------------------------------------------------------------------
+Descent := new Type of MutableHashTable
+net Descent := x -> stack sort apply(pairs x,
+     (k,v) -> (
+	  if #v === 0
+	  then net k
+	  else net k | " : " | net v))
+select1 := syms -> select(apply(syms, value), s -> instance(s, Type))
+     
+show1 := method(SingleArgumentDispatch => true)
+show1 Sequence := show1 List := types -> (
+     world := new Descent;
+     install := v -> (
+	  w := if v === Thing then world else install parent v;
+	  if w#?v then w#v else w#v = new Descent
+	  );
+     scan(types, install);
+     net world)
+show1 Thing := X -> show1 {X}
+showUserStructure = Command(() -> show1 select1 userSymbols())
+showStructure = Command(types -> show1 if types === () then select1 values symbolTable() else types)
 
+-----------------------------------------------------------------------------
+
+userSymbols = type -> (
+     if type === () then type = Thing;
+     tab := symbolTable();
+     v := select(values tab,
+	  symb -> (
+	       hash symb > hash lastSystemSymbol  -- hash codes of symbols are sequential
+	       and mutable symb
+	       and instance(value symb,type)
+	       )
+	  );
+     apply(sort(apply(v, symb -> (hash symb, symb))), (h,s) -> s))
+
+listUserSymbols = new Command from (
+     type -> stack apply(userSymbols type, s ->  toString s | ": " | toString class value s)
+     )
+
+clearedSymbol := "-- cleared symbol --"
+
+clearOutput = new Command from (() -> (
+     	  scan(keys outputSymbols, s -> (
+	       	    remove(outputSymbols,s);
+		    s <- clearedSymbol;
+	       	    erase s))))
+
+clearAll = new Command from (() -> ( clearOutput(); scan(userSymbols(), i -> i <- i)))

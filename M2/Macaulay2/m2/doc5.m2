@@ -1065,7 +1065,10 @@ document { ultimate,
      applying the function ", TT "f", " to ", TT "x", ".",
      PARA,
      "Iteration ceases when an error occurs during application of the
-     function, or the result is the same.  Errors are not reported."
+     function, or the result is the same.  Errors are not reported.",
+     PARA,
+     "It's a bad idea to use this function, because unexpected errors will
+     produce unexpected results silently."
      }
 
 document { tmpname,
