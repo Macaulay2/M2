@@ -594,7 +594,9 @@ Module _ List := Matrix => (M,v) -> (
 basis(List,Module) := Matrix => (deg,M) -> basis(deg,deg,M)
 basis(List,List,Module) := Matrix => (lo,hi,M) -> (
      R := ring M;
-     if #lo =!= degreeLength R or #hi =!= degreeLength R then error "expected degree length to match that of ring";
+     if #lo != 0 and #lo =!= degreeLength R
+     or #hi != 0 and #hi =!= degreeLength R then error "expected degree length to match that of ring";
+     if lo =!= hi and #lo > 1 then error "encountered a range of multi-degrees";
      if R.?Adjust then (
 	  lo = R.Adjust lo;
 	  hi = R.Adjust hi;
