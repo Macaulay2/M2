@@ -65,13 +65,15 @@ clean::; rm -f TAGS.doc
 all default justM2:: tags
 tags: @srcdir@/TAGS
 clean::; rm -f TAGS @srcdir@/TAGS
-@srcdir@/TAGS: loadsequence Makefile
+@srcdir@/TAGS: loadsequence docseq Makefile.in $(NONDOCM2FILES) $(DOCSEQUENCE) @srcdir@/*.awk @srcdir@/../basictests/*.m2 @srcdir@/../test/*.m2 @srcdir@/../test/engine/*.m2 \
+		@srcdir@/../book/*.m2 @srcdir@/../packages/*.m2 @srcdir@/../packages/*/*.m2 ../emacs/makehlp.m2 ../emacs/makem2.m2 \
+		@srcdir@/../*/COPYRIGHT ../emacs/makesyms.m2 @srcdir@/../tutorial/prelim/*.m2 \
+		@srcdir@/../tutorial/final/*.m2 Makefile.egs.in Makefile.tests \
+		../basictests/Makefile.in ../emacs/Makefile.in ../images/Makefile.in ../packages/Makefile.in ../tutorial/Makefile.in ../CHANGES
 	@echo making $@
 	set -e ; \
 	cd @srcdir@ && \
-	for i in $(NONDOCM2FILES) $(DOCSEQUENCE0) *.awk ../basictests/*.m2 ../test/*.m2 ../test/engine/*.m2 \
-		../book/*.m2 ../packages/*.m2 ../packages/*/*.m2 ../emacs/makehlp.m2 ../emacs/makem2.m2 \
-		../*/COPYRIGHT ../emacs/makesyms.m2 ../tutorial/prelim/*.m2 ../tutorial/final/*.m2 ../*/Makefile ../*/Makefile.in Makefile.tests ../CHANGES ; \
+	for i in $(patsubst @srcdir@/%, %, $^) ; \
 	do [ -f $$i ] || (echo "file not found: $$i" >&2; exit 1) ; echo  ; echo $$i,0 ; done >TAGS
 prep :: $(DUMPEDM2FILES)
 

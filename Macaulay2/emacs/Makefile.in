@@ -34,8 +34,7 @@ install:: $(emacsdocdir)
 install:: emacs-hlp.txt emacs.m2 README
 	$(INSTALL_DATA) $^ $(emacsdocdir)
 
-Makefile : Makefile.in
-	cd ../..; ./config.status Macaulay2/emacs/Makefile
+Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/emacs/Makefile
 
 all:: M2-init.el
 M2-init.el : M2-init.el.in
