@@ -95,6 +95,7 @@ m2RelDir = $(shareRelDir)/m2
 docm2relRelDir = $(docm2RelDir)/Main
 emacsdocRelDir = $(docm2relRelDir)/emacs
 imagesRelDir = $(docm2relRelDir)/images
+styleRelDir = $(docm2relRelDir)/style
 
 prefix = @prefix@
 
@@ -123,6 +124,7 @@ m2dir = $(encapdir)/$(m2RelDir)
 docm2reldir = $(encapdir)/$(docm2relRelDir)
 emacsdocdir = $(encapdir)/$(emacsdocRelDir)
 imagesdir = $(encapdir)/$(imagesRelDir)
+styledir = $(encapdir)/$(styleRelDir)
 packagesrcdir = $(encapdir)/$(packagesrcRelDir)
 packagedocdir = $(encapdir)/$(packagedocRelDir)
 packageimagesdir = $(encapdir)/$(packageimagesRelDir)
@@ -152,6 +154,7 @@ LAYOUT += "m2"=>"$(m2RelDir)/",
 LAYOUT += "docm2rel"=>"$(docm2relRelDir)/",
 LAYOUT += "emacsdoc"=>"$(emacsdocRelDir)/",
 LAYOUT += "images"=>"$(imagesRelDir)/",
+LAYOUT += "style"=>"$(styleRelDir)/",
 LAYOUT += $(call MAKEFUN,packagesrc),
 LAYOUT += $(call MAKEFUN,packagedoc),
 LAYOUT += $(call MAKEFUN,packageimages),
