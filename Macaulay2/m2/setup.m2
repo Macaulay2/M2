@@ -16,6 +16,10 @@ globalDictionaries = append(globalDictionaries,PackageDictionary)
 assert( not isGlobalSymbol "Macaulay2" )
 getGlobalSymbol(PackageDictionary,"Macaulay2")
 
+Macaulay2 = new MutableHashTable		     -- just temporary
+Macaulay2#"test inputs" = new MutableHashTable	     -- just temporary, so we can accumulate TEST inputs
+currentPackage = Macaulay2
+
 -----------
 
 addStartFunction(
@@ -236,7 +240,6 @@ simpleInput := input
 input = (filename) -> tryload(filename,simpleInput,false)
 needs = s -> if not loaded#?s then load s
 
-currentPackage = null
 UserDictionary = new Dictionary				    -- no package comes with this dictionary
 
 load "loads.m2"

@@ -934,19 +934,6 @@ infoHelp = key -> (
      t := infoTagConvert tag;
      run ("info "|format t);)
 
------------------------------------------------------------------------------
--- helper functions useable in documentation
------------------------------------------------------------------------------
-
-numtests := 0
-
-TEST = method()
-TEST Function := TEST String := s -> (
-     x := currentPackage#"test inputs";
-     x# #x = s;
-     )
-TEST List := y -> TEST \ y
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

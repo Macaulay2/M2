@@ -296,7 +296,7 @@ extern "C" {
     /* f should be a primitive element in a ring
        R = ZZ/p[x]/(g(x)), some p, some variable x, g irreducible, 
        monic, deg >= 2.
-       However, currently, NONE of this is checked...
+       However, currently, not all of this is checked...
     */
 
   const RingOrNull *IM2_Ring_RR(double precision); /* drg: connected rawRR */

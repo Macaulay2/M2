@@ -23,22 +23,11 @@
 static int iserror = 0;
 static char errmsg[MAXERROR] = {'\0'};
 
-#if 0
 void ERROR(char *s,...)
 {
   va_list ap;
-  if (iserror) INTERNAL_ERROR("ERROR called a second time, first message was: '%s'", errmsg);
-  va_start(ap,s);
+  if (iserror) fprintf(stderr, "--error message bumped: %s\n",errmsg);
   iserror = 1;
-  vsprintf(errmsg,s,ap);
-  va_end(ap);
-}
-#endif
-
-void ERROR(char *s,...)
-{
-  va_list ap;
-  if (iserror++) return;
   va_start(ap,s);
   vsprintf(errmsg,s,ap);
   va_end(ap);
@@ -63,10 +52,6 @@ int error()
 
 char *error_message()
 {
-#ifndef NDEBUG
-  if (iserror > 1)
-    fprintf(stderr, "error count is %d\n", iserror);
-#endif
   iserror = 0;
   return errmsg;
 }

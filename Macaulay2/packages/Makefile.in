@@ -14,7 +14,7 @@ distclean::; rm -f Makefile
 
 all ::; @ set -e; \
 	  for pkg in $(PACKAGES) ; \
-	  do ( set -x ; M2 -q --stop -e "load \"$${pkg}.m2\" " -e "installPackage($${pkg}, Encapsulate => false, Prefix => \"./tmp/\") " -e "exit 0" ) ; \
+	  do ( set -x ; M2 -q --stop -e "load \"$${pkg}.m2\" " -e "installPackage($${pkg}, Encapsulate => false, PackagePrefix => \"./tmp/\") " -e "exit 0" ) ; \
 	  done
 clean::; rm -rf tmp
 install: all; tar cf - -C tmp . | tar xfpv - -C $(encapdir)

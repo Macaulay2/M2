@@ -546,6 +546,27 @@ installPackage Package := o -> pkg -> (
 		    inf << val << close;
 		    )));
 
+     -- make test input files
+     testsDir := buildDirectory|LAYOUT#"packagetests" pkg#"title";
+     infn2  := n -> testsDir|toString n|".m2";
+     outfn2 := n -> testsDir|toString n|".out";
+     tmpfn2 := n -> testsDir|toString n|".errors";
+     stderr << "--making test input files in " << testsDir << endl;
+     makeDirectory testsDir;
+     testsDir|".linkdir" << close;
+     scan(pairs pkg#"test inputs", (key,str) -> (
+	       (n,fn) := key;
+	       inf := infn2 n;
+	       val := "-- " | fn | "\n" | str | "\n";
+	       if fileExists inf and get inf === val
+	       then (
+		    if debugLevel > 1 then stderr << "--leaving test input file: " << key << endl;
+		    )
+	       else (
+		    if debugLevel > 1 then stderr << "--making test input file: " << key << endl;
+		    inf << val << close;
+		    )));
+
      -- cache raw documentation in database, and check for changes
      rawDocUnchanged := new MutableHashTable;
      docDir := buildDirectory | LAYOUT#"packagedoc" pkg#"title";

@@ -349,6 +349,18 @@ installAssignmentMethod(Symbol,HashTable,HashTable,Function) := (op,X,Y,f) -> in
 installAssignmentMethod(Symbol,HashTable,Option) := 
 installAssignmentMethod(Symbol,HashTable,Function) := (op,Y,f) -> installMethod((op,symbol =),Y,f)
 
+-----------------------------------------------------------------------------
+-- helper functions useable in documentation
+-----------------------------------------------------------------------------
+
+TEST = method()
+testnumber := 0
+TEST Function := TEST String := s -> (
+     currentPackage#"test inputs"#(testnumber,currentFileName) = s;
+     testnumber = testnumber + 1;
+     )
+TEST List := y -> TEST \ y
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

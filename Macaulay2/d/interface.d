@@ -606,7 +606,7 @@ rawQuotientRing(e:Expr):Expr := (			    -- localization at a prime ideal
 setupfun("rawQuotientRing",rawQuotientRing);
 
 export rawGaloisField(e:Expr):Expr := (
-     when e is f:RawRingElement do toExprOrNull(Ccode(RawRingOrNull,"(engine_RawRingOrNull)rawGaloisField((RingElement *)", f, ")"))
+     when e is f:RawRingElement do toExpr(Ccode(RawRingOrNull,"(engine_RawRingOrNull)rawGaloisField((RingElement *)", f, ")"))
      else WrongArg("a raw ring element"));
 setupfun("rawGaloisField", rawGaloisField);
 
@@ -620,7 +620,7 @@ export rawFractionRing(e:Expr):Expr := (
 setupfun("rawFractionRing", rawFractionRing);
 
 export rawAmbientRing(e:Expr):Expr := (
-     when e is R:RawRing do toExprOrNull(
+     when e is R:RawRing do toExpr(
 	  Ccode(RawRingOrNull,"(engine_RawRingOrNull)rawAmbientRing(",
 	       "(Ring *)", R,
 	       ")"))

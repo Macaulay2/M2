@@ -241,8 +241,7 @@ ZZ % GroebnerBasis := (r,g) -> ((r * id_(target g)) % g)_(0,0)
 autoReduce = method()
 autoReduce Matrix := (m) -> notImplemented "IM2_Matrix_auto_reduce"
 
-///
-TEST
+TEST ///
 R = ZZ/101[a..f]
 m = matrix{{a^2-b-c,b^2-c-d,c^4-b^3-2*d}}
 autoReduce m
